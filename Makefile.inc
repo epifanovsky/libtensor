@@ -1,8 +1,8 @@
 CPP = icpc
 LD = icpc
-CPP_FLAGS = -g -DDEBUG_CHECK
-LD_FLAGS = -g
+CPPFLAGS = -g -DDEBUG_CHECK 
+LDFLAGS = -g
 INCLUDE =
 
-%.o: %.C; $(CPP) $(CPP_FLAGS) $(INCLUDE) -c $<
+%.o: %.C; $(CPP) $(CPPFLAGS) $(INCLUDE) -c $<
 
