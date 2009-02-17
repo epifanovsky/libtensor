@@ -5,8 +5,7 @@
 
 namespace libtensor {
 
-/**
-	\page permutations Permutations
+/**	\page permutations Permutations
 
 	A %permutation is an object that contains information about how
 	elements of a sequence need to be re-ordered. The most common use of
@@ -308,14 +307,16 @@ public:
 	**/
 	permutation &invert();
 
-	/**	\brief Checks if the %permutation is a unit %permutation
+	/**	\brief Checks if the %permutation is an identity %permutation
 
-		Checks if the %permutation is a unit %permutation. A unit %permutation
-		doesn't change the order of indices.
+		Checks if the %permutation is an identity %permutation.
+		An identity %permutation doesn't change the order in
+		a sequence.
 
-		\return true if this is a unit %permutation, false otherwise.
+		\return true if this is an identity %permutation, false
+		otherwise.
 	**/
-	bool is_unit() const;
+	bool is_identity() const;
 
 	/**	\brief Checks if two permutations are identical
 
@@ -332,6 +333,14 @@ public:
 		\return Index in the %permutation at the position \e i.
 	**/
 	unsigned int operator[](const unsigned int i) const throw(exception);
+
+	/**	\brief Permutes a given sequence of objects
+		\param n Length of the sequence, must be the same as the
+			permutation order
+		\param obj Pointer to the sequence
+	**/
+	template<class T>
+	void apply(const size_t n, T *obj) const;
 
 private:
 	/**	\brief Throws an exception with an error message
@@ -416,9 +425,10 @@ inline permutation &permutation::invert() {
 	return *this;
 }
 
-inline bool permutation::is_unit() const {
+inline bool permutation::is_identity() const {
 	#pragma loop count(6)
-	for(register unsigned int i=0; i<m_order; i++) if(m_idx[i] != i) return false;
+	for(register unsigned int i=0; i<m_order; i++)
+		if(m_idx[i] != i) return false;
 	return true;
 }
 
@@ -435,6 +445,14 @@ inline unsigned int permutation::operator[](const unsigned int i) const throw(ex
 	if(i >= m_order) throw_exc("operator[](cosnt uint)", "Index out of range");
 #endif
 	return m_idx[i];
+}
+
+template<class T>
+void permutation::apply(const size_t n, T *obj) const {
+	if(n != m_order) throw_exc("apply(const size_t n, T *obj)",
+		"Sequence has a wrong length");
+	T buf[n]; for(size_t i=0; i<n; i++) buf[i]=obj[i];
+	for(size_t i=0; i<n; i++) obj[i]=buf[m_idx[i]];
 }
 
 inline void permutation::throw_exc(const char *method, const char *msg) const

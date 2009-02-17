@@ -9,7 +9,7 @@ clean:
 	rm -f libtensor_tests
 
 libtensor_tests: libtensor_tests.o $(OBJS)
-	g++ -o libtensor_tests $^ ../*.o ../../libtest/libtest.a
+	g++ -g -o libtensor_tests $^ ../*.o ../../libtest/libtest.a
 
 %.o: %.C; g++ -g -c -I.. -I../../libtest $<
 

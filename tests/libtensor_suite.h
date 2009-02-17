@@ -19,8 +19,8 @@ namespace libtensor {
 class libtensor_suite : public libtest::test_suite {
 private:
 	unit_test_factory< permutation_test<permutation> > m_utf_permutation;
-	unit_test_factory< permutation_test<permutation_lehmer> >
-		m_utf_permutation_lehmer;
+//	unit_test_factory< permutation_test<permutation_lehmer> >
+//		m_utf_permutation_lehmer;
 
 public:
 	//!	Creates the suite
