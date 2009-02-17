@@ -14,5 +14,5 @@ docs:
 
 index.h: defs.h exception.h
 
-%.o: %.C; g++ -g -c $<
+%.o: %.C; icpc -g -c $<
 

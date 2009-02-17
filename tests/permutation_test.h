@@ -16,42 +16,102 @@ private:
 
 	//! Tests the permute method
 	void test_permute() throw(libtest::test_exception);
+
+	//! Tests exceptions in the apply method
+	void test_apply() throw(libtest::test_exception);
 };
 
 template<class Perm>
 void permutation_test<Perm>::perform() throw(libtest::test_exception) {
 	test_ctor();
 	test_permute();
+	test_apply();
 }
 
 template<class Perm>
 void permutation_test<Perm>::test_ctor() throw(libtest::test_exception) {
-	int seq[8];
+	char sc[8];
+	int si[8];
+
+	// Order = 2
 
 	Perm p2(2);
-	if(!p2.is_identity()) fail_test("permutation_test<Perm>::test_ctor()",
-		__FILE__, __LINE__, "!p2.is_identity()");
-	for(int i=0; i<8; i++) seq[i]=i;
-	p2.apply(2, seq);
-	if(seq[0]!=0 || seq[1]!=1)
-		fail_test("permutation_test<Perm>::test_ctor()",
-		__FILE__, __LINE__, "New permutation is not identity");
+	if(!p2.is_identity()) {
+		fail_test("permutation_test<Perm>::test_ctor()", __FILE__,
+			__LINE__, "!p2.is_identity()");
+	}
+	strcpy(sc, "ij");
+	p2.apply(2, sc);
+	if(strncmp(sc, "ij", 2)) {
+		fail_test("permutation_test<Perm>::test_ctor()", __FILE__,
+			__LINE__, "New permutation is not identity (char, 2)");
+	}
+	for(int i=0; i<8; i++) si[i]=i;
+	p2.apply(2, si);
+	if(si[0]!=0 || si[1]!=1) {
+		fail_test("permutation_test<Perm>::test_ctor()", __FILE__,
+			__LINE__, "New permutation is not identity (int, 2)");
+	}
 
 	Perm p2a(p2);
 	if(!p2a.is_identity()) fail_test("permutation_test<Perm>::test_ctor()",
 		__FILE__, __LINE__, "!p2a.is_identity()");
 	if(!p2a.equals(p2)) fail_test("permutation_test<Perm>::test_ctor()",
 		__FILE__, __LINE__, "!p2a.equals(p2)");
+	strcpy(sc, "ij");
+	p2a.apply(2, sc);
+	if(strncmp(sc, "ij", 2))
+		fail_test("permutation_test<Perm>::test_ctor()", __FILE__,
+		__LINE__, "Permutation copy is not identity (char, 2)");
+	for(int i=0; i<8; i++) si[i]=i;
+	p2a.apply(2, si);
+	if(si[0]!=0 || si[1]!=1)
+		fail_test("permutation_test<Perm>::test_ctor()", __FILE__,
+		__LINE__, "Permutation copy is not identity (int, 2)");
+
+	// Order = 3
 
 	Perm p3(3);
-	if(!p3.is_identity()) fail_test("permutation_test<Perm>::test_ctor()",
-		__FILE__, __LINE__, "!p3.is_identity()");
+	if(!p3.is_identity()) {
+		fail_test("permutation_test<Perm>::test_ctor()", __FILE__,
+			__LINE__, "!p3.is_identity()");
+	}
+	strcpy(sc, "ijk");
+	p3.apply(3, sc);
+	if(strncmp(sc, "ijk", 3)) {
+		fail_test("permutation_test<Perm>::test_ctor()", __FILE__,
+			__LINE__, "New permutation is not identity (char, 3)");
+	}
+	for(int i=0; i<8; i++) si[i]=i;
+	p3.apply(3, si);
+	if(si[0]!=0 || si[1]!=1 || si[2]!=2) {
+		fail_test("permutation_test<Perm>::test_ctor()", __FILE__,
+			__LINE__, "New permutation is not identity (int, 3)");
+	}
 
 	Perm p3a(p3);
-	if(!p3a.is_identity()) fail_test("permutation_test<Perm>::test_ctor()",
-		__FILE__, __LINE__, "!p3a.is_identity()");
-	if(!p3a.equals(p3)) fail_test("permutation_test<Perm>::test_ctor()",
-		__FILE__, __LINE__, "!p3a.equals(p3)");
+	if(!p3a.is_identity()) {
+		fail_test("permutation_test<Perm>::test_ctor()", __FILE__,
+			__LINE__, "!p3a.is_identity()");
+	}
+	if(!p3a.equals(p3)) {
+		fail_test("permutation_test<Perm>::test_ctor()", __FILE__,
+			__LINE__, "!p3a.equals(p3)");
+	}
+	strcpy(sc, "ijk");
+	p3a.apply(3, sc);
+	if(strncmp(sc, "ijk", 3)) {
+		fail_test("permutation_test<Perm>::test_ctor()", __FILE__,
+			__LINE__, "Permutation copy is not identity (char, 3)");
+	}
+	for(int i=0; i<8; i++) si[i]=i;
+	p3a.apply(3, si);
+	if(si[0]!=0 || si[1]!=1 || si[2]!=2) {
+		fail_test("permutation_test<Perm>::test_ctor()", __FILE__,
+			__LINE__, "Permutation copy is not identity (int, 3)");
+	}
+
+	// Order = 4
 
 	Perm p4(4);
 	if(!p4.is_identity()) fail_test("permutation_test<Perm>::test_ctor()",
@@ -87,14 +147,87 @@ template<class Perm>
 void permutation_test<Perm>::test_permute() throw(libtest::test_exception) {
 	Perm p2(2);
 
-	int seq[8];
-	for(int i=0; i<8; i++) seq[i]=i;
+	char s2[8]; strcpy(s2, "ij");
+	int i2[8]; i2[0] = 100; i2[1] = 200;
 
 	p2.permute(0,1);
-	p2.apply(2, seq);
-	if(seq[0]!=1 || seq[1]!=0)
+	p2.apply(2, s2);
+	if(strncmp(s2, "ji", 2)) {
 		fail_test("permutation_test<Perm>::test_permute()",
-		__FILE__, __LINE__, "p2.permute(0,1);");
+			__FILE__, __LINE__, "[0,1] permutation failed in char");
+	}
+	p2.apply(2, i2);
+	if(i2[0]!=200  || i2[1]!=100) {
+		fail_test("permutation_test<Perm>::test_permute()",
+			__FILE__, __LINE__, "[0,1] permutation failed in int");
+	}
+	p2.permute(0,1);
+	if(!p2.is_identity()) {
+		fail_test("permutation_test<Perm>::test_permute()", __FILE__,
+			__LINE__, "Double permutation not recognized");
+	}
+	strcpy(s2, "ij");
+	i2[0] = 100; i2[1] = 200;
+	p2.apply(2, s2);
+	if(strncmp(s2, "ij", 2)) {
+		fail_test("permutation_test<Perm>::test_permute()", __FILE__,
+			__LINE__, "[0,1] double permutation failed in char");
+	}
+	p2.apply(2, i2);
+	if(i2[0]!=100 || i2[1]!=200) {
+		fail_test("permutation_test<Perm>::test_permute()", __FILE__,
+			__LINE__, "[0,1] double permutation failed in int");
+	}
+}
+
+template<class Perm>
+void permutation_test<Perm>::test_apply() throw(libtest::test_exception) {
+	bool ok = false;
+	Perm p2(2), p4(4);
+	char s2[8], s4[8];
+	strcpy(s2, "ijkl"); strcpy(s4, "ijkl");
+
+	ok = false;
+	try {
+		p2.apply(2, s2);
+		ok = true;
+	} catch(...) {
+	}
+	if(!ok) fail_test("permutation_test<Perm>::test_apply()",
+		__FILE__, __LINE__, "Unexpected exception");
+
+	ok = false;
+	try {
+		p2.apply(4, s2);
+	} catch(exception e) {
+		ok = true;
+	} catch(...) {
+		fail_test("permutation_test<Perm>::test_apply()",
+			__FILE__, __LINE__, "Incorrect exception type");
+	}
+	if(!ok) fail_test("permutation_test<Perm>::test_apply()",
+		__FILE__, __LINE__, "Expected an exception, it was missing");
+
+	ok = false;
+	try {
+		p4.apply(4, s4);
+		ok = true;
+	} catch(...) {
+	}
+	if(!ok) fail_test("permutation_test<Perm>::test_apply()",
+		__FILE__, __LINE__, "Unexpected exception");
+
+	ok = false;
+	try {
+		p4.apply(2, s4);
+	} catch(exception e) {
+		ok = true;
+	} catch(...) {
+		fail_test("permutation_test<Perm>::test_apply()",
+			__FILE__, __LINE__, "Incorrect exception type");
+	}
+	if(!ok) fail_test("permutation_test<Perm>::test_apply()",
+		__FILE__, __LINE__, "Expected an exception, it was missing");
 }
 
 }

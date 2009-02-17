@@ -451,17 +451,19 @@ template<class T>
 void permutation::apply(const size_t n, T *obj) const {
 	if(n != m_order) throw_exc("apply(const size_t n, T *obj)",
 		"Sequence has a wrong length");
+
 	T buf[n]; for(size_t i=0; i<n; i++) buf[i]=obj[i];
 	for(size_t i=0; i<n; i++) obj[i]=buf[m_idx[i]];
 }
 
 inline void permutation::throw_exc(const char *method, const char *msg) const
 	throw(exception) {
-	char s[1024]; snprintf(s, 1024, "[tensor::permutation::%s] %s.", method, msg);
+	char s[1024];
+	snprintf(s, 1024, "[libtensor::permutation::%s] %s.", method, msg);
 	throw permutation_exception(s);
 }
 
-} // namespace tensor
+} // namespace libtensor
 
-#endif // __TENSOR_PERMUTATION_H
+#endif // __LIBTENSOR_PERMUTATION_H
 
