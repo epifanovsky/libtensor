@@ -17,6 +17,9 @@ private:
 	//! Tests the permute method
 	void test_permute() throw(libtest::test_exception);
 
+	//! Tests the invert method
+	void test_invert() throw(libtest::test_exception);
+
 	//! Tests exceptions in the apply method
 	void test_apply() throw(libtest::test_exception);
 };
@@ -178,6 +181,36 @@ void permutation_test<Perm>::test_permute() throw(libtest::test_exception) {
 		fail_test("permutation_test<Perm>::test_permute()", __FILE__,
 			__LINE__, "[0,1] double permutation failed in int");
 	}
+
+	Perm p4(4);
+	char s4[8];
+
+	p4.permute(0,1).permute(2,3);
+	strcpy(s4, "ijkl");
+	p4.apply(4, s4);
+	if(strncmp(s4, "jilk", 4)) {
+		fail_test("permutation_test<Perm>::test_permute()", __FILE__,
+			__LINE__, "[0,1]+[2,3] permutation failed in char");
+	}
+
+	bool ok = false;
+	try {
+		p4.permute(1,5);
+	} catch(exception e) {
+		ok = true;
+	} catch(...) {
+		fail_test("permutation_test<Perm>::test_permute()",
+			__FILE__, __LINE__, "Incorrect exception type");
+	}
+	if(!ok) {
+		fail_test("permutation_test<Perm>::test_permute()", __FILE__,
+			__LINE__, "Expected an exception, it was missing");
+	}
+
+}
+
+template<class Perm>
+void permutation_test<Perm>::test_invert() throw(libtest::test_exception) {
 }
 
 template<class Perm>
