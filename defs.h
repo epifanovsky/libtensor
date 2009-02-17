@@ -5,9 +5,8 @@
 
 /**	\brief Tensor library
 	\ingroup tensor
-	\author Evgeny Epifanovsky
 **/
-namespace tensor {
+namespace libtensor {
 
 const unsigned int max_tensor_order = 6; //!< Limits the maximum order of tensors
 
@@ -40,7 +39,6 @@ typedef unsigned long default_index_t;
 /**	\defgroup tensor_vmm Virtual memory manager
 	\ingroup tensor
 
-	\image html tensor_vmm_04.png
 **/
 
 #endif // __TENSOR_DEFS_H
