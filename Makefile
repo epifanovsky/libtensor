@@ -5,7 +5,7 @@ all: tests
 include Makefile.inc
 
 tests:
-	cd tests && $(MAKE)
+	cd tests && $(MAKE) all
 
 clean:
 	cd tests && $(MAKE) clean

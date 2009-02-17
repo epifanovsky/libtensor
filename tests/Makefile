@@ -5,6 +5,7 @@ OBJS = libtensor_suite.o
 all: libtensor_tests
 
 include ../Makefile.inc
+
 INCLUDE = -I.. -I../../libtest
 
 clean:
@@ -12,5 +13,5 @@ clean:
 	rm -f libtensor_tests
 
 libtensor_tests: libtensor_tests.o $(OBJS)
-	$(LD) -o libtensor_tests $^ ../../libtest/libtest.a
+	$(LD) $(LDFLAGS) -o libtensor_tests $^ ../../libtest/libtest.a
 
