@@ -4,12 +4,13 @@ OBJS = libtensor_suite.o
 
 all: libtensor_tests
 
+include ../Makefile.inc
+INCLUDE = -I.. -I../../libtest
+
 clean:
 	rm -f *.[ao]
 	rm -f libtensor_tests
 
 libtensor_tests: libtensor_tests.o $(OBJS)
-	icpc -o libtensor_tests $^ ../../libtest/libtest.a
-
-%.o: %.C; icpc -g -c -I.. -I../../libtest $<
+	$(LD) -o libtensor_tests $^ ../../libtest/libtest.a
 

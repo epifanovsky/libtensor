@@ -2,6 +2,8 @@
 
 all: tests
 
+include Makefile.inc
+
 tests:
 	cd tests && $(MAKE)
 
@@ -13,6 +15,4 @@ docs:
 	scp -Cpr docs/html/* hogwarts.usc.edu:public_html/libtensor_docs/
 
 index.h: defs.h exception.h
-
-%.o: %.C; icpc -g -c $<
 
