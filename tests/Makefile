@@ -4,12 +4,13 @@ OBJS  = libtensor_suite.o
 OBJS += dimensions_test.o
 OBJS += index_test.o
 OBJS += index_range_test.o
+OBJS += tensor_test.o
 
 all: libtensor_tests
 
 include ../Makefile.inc
 
-INCLUDE = -I.. -I../../libtest
+INCLUDE = -I.. -I../../libtest -I../../libvmm
 
 clean:
 	rm -f *.[ao]
@@ -23,4 +24,6 @@ dimensions_test.C: dimensions_test.h
 index_test.C: index_test.h
 
 index_range_test.C: index_range_test.h
+
+tensor_test.C: tensor_test.h
 

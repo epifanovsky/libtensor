@@ -28,6 +28,26 @@ void dimensions_test::test_ctor() throw(libtest::test_exception) {
 		fail_test("dimensions_test::test_ctor()", __FILE__, __LINE__,
 			"Incorrect total number of elements in d1");
 	}
+
+	dimensions d2(d1);
+
+	if(d2.get_order() != 2) {
+		fail_test("dimensions_test::test_ctor()", __FILE__, __LINE__,
+			"Incorrect number of dimensions in d2");
+	}
+	if(d2[0] != 2) {
+		fail_test("dimensions_test::test_ctor()", __FILE__, __LINE__,
+			"Incorrect number of elements along d2[0]");
+	}
+	if(d2[1] != 3) {
+		fail_test("dimensions_test::test_ctor()", __FILE__, __LINE__,
+			"Incorrect number of elements along d2[1]");
+	}
+	if(d2.get_size() != 6) {
+		fail_test("dimensions_test::test_ctor()", __FILE__, __LINE__,
+			"Incorrect total number of elements in d2");
+	}
+
 }
 
 } // namespace libtensor

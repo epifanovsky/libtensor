@@ -2,4 +2,5 @@
 #include "exception.h"
 #include "permutation.h"
 #include "permutation_lehmer.h"
+#include "tensor.h"
 

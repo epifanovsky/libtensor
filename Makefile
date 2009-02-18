@@ -3,6 +3,7 @@
 all: tests
 
 include Makefile.inc
+INCLUDE = -I. -I../libvmm
 
 tests:
 	cd tests && $(MAKE) all
