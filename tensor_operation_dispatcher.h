@@ -1,0 +1,64 @@
+#ifndef __LIBTENSOR_TENSOR_OPERATION_DISPATCHER_H
+#define __LIBTENSOR_TENSOR_OPERATION_DISPATCHER_H
+
+#include <libvmm.h>
+
+#include "defs.h"
+#include "exception.h"
+#include "index_range.h"
+#include "tensor_i.h"
+
+namespace libtensor {
+
+/**	\brief Dispatches %tensor operation events to appropriate handlers
+
+	\ingroup libtensor
+**/
+template<typename T>
+class tensor_operation_dispatcher :
+	public libvmm::singleton< tensor_operation_dispatcher<T> > {
+
+	friend libvmm::singleton< tensor_operation_dispatcher<T> >;
+
+protected:
+	tensor_operation_dispatcher();
+
+public:
+	T *req_dataptr(tensor_i<T> &t) throw(exception);
+	const T *req_const_dataptr(tensor_i<T> &t) throw(exception);
+	T *req_range_dataptr(tensor_i<T> &t, const index_range &ir) throw(exception);
+	const T *req_range_const_dataptr(tensor_i<T> &t, const index_range &ir) throw(exception);
+	void ret_dataptr(tensor_i<T> &t, const T *ptr) throw(exception);
+};
+
+template<typename T>
+inline T *tensor_operation_dispatcher<T>::req_dataptr(tensor_i<T> &t) throw(exception) {
+	return t.get_tensor_operation_handler().req_dataptr();
+}
+
+template<typename T>
+inline const T *tensor_operation_dispatcher<T>::req_const_dataptr(tensor_i<T> &t) throw(exception) {
+	return t.get_tensor_operation_handler().req_const_dataptr();
+}
+
+template<typename T>
+inline T *tensor_operation_dispatcher<T>::req_range_dataptr(tensor_i<T> &t, const index_range &ir)
+	throw(exception) {
+	return t.get_tensor_operation_handler().req_range_dataptr(ir);
+}
+
+template<typename T>
+inline const T *tensor_operation_dispatcher<T>::req_range_const_dataptr(tensor_i<T> &t,
+	const index_range &ir) throw(exception) {
+	return t.get_tensor_operation_handler().req_range_const_dataptr(ir);
+}
+
+template<typename T>
+inline void ret_dataptr(tensor_i<T> &t, const T *ptr) throw(exception) {
+	t.get_tensor_operation_handler().ret_dataptr(ptr);
+}
+
+} // namespace libtensor
+
+#endif // __LIBTENSOR_TENSOR_OPERATION_DISPATCHER_H
+
