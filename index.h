@@ -7,7 +7,6 @@
 namespace libtensor {
 
 /**	\brief Index of a single %tensor element
-	\ingroup libtensor
 
 	A correct %index must have the same order as the %tensor, and none of
 	the %index elements must be out of the range of the %tensor
@@ -16,6 +15,8 @@ namespace libtensor {
 	The elements of an %index can be permuted by a %permutation. Since
 	there can be multiple implementations of permutations, the method
 	permute() is a template. For more info \ref permutations.
+
+	\ingroup libtensor
 **/
 class index {
 private:

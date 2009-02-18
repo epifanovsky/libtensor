@@ -4,6 +4,7 @@
 #include <libtest.h>
 #include <libtensor.h>
 #include "index_test.h"
+#include "index_range_test.h"
 #include "permutation_test.h"
 
 using libtest::unit_test_factory;
@@ -17,6 +18,7 @@ namespace libtensor {
 	\li libtensor::permutation_test<permutation>
 	\li libtensor::permutation_test<permutation_lehmer>
 	\li libtensor::index_test
+	\li libtensor::index_range_test
 **/
 class libtensor_suite : public libtest::test_suite {
 private:
@@ -24,6 +26,7 @@ private:
 //	unit_test_factory< permutation_test<permutation_lehmer> >
 //		m_utf_permutation_lehmer;
 	unit_test_factory< index_test > m_utf_index;
+	unit_test_factory< index_range_test > m_utf_index_range;
 
 public:
 	//!	Creates the suite

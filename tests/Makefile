@@ -2,6 +2,7 @@
 
 OBJS  = libtensor_suite.o
 OBJS += index_test.o
+OBJS += index_range_test.o
 
 all: libtensor_tests
 
@@ -17,4 +18,6 @@ libtensor_tests: libtensor_tests.o $(OBJS)
 	$(LD) $(LDFLAGS) -o libtensor_tests $^ ../../libtest/libtest.a
 
 index_test.C: index_test.h
+
+index_range_test.C: index_range_test.h
 

@@ -3,6 +3,9 @@
 
 #include <cstdio>
 
+#include "defs.h"
+#include "exception.h"
+
 namespace libtensor {
 
 /**	\page permutations Permutations
@@ -163,7 +166,6 @@ namespace libtensor {
 **/
 
 /**	\brief Tensor %permutation
-	\ingroup libtensor
 
 	<b>Overview</b>
 
@@ -224,6 +226,8 @@ namespace libtensor {
 	Entities that can be permuted are called permutables an implement the interface
 	tensor::permutable_i. The order of the permutable and the %permutation must be
 	the same for the operation to be successful.
+
+	\ingroup libtensor
 **/
 class permutation {
 private:

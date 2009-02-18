@@ -3,6 +3,9 @@
 
 #include <cstring>
 
+#include "defs.h"
+#include "exception.h"
+
 namespace libtensor {
 
 /**	\brief Implementation of permutations based on the Lehmer code
