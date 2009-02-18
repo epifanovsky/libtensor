@@ -1,6 +1,7 @@
 .PHONY: all clean
 
-OBJS = libtensor_suite.o
+OBJS  = libtensor_suite.o
+OBJS += index_test.o
 
 all: libtensor_tests
 
@@ -14,4 +15,6 @@ clean:
 
 libtensor_tests: libtensor_tests.o $(OBJS)
 	$(LD) $(LDFLAGS) -o libtensor_tests $^ ../../libtest/libtest.a
+
+index_test.C: index_test.h
 
