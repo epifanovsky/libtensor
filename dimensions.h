@@ -68,6 +68,7 @@ inline dimensions::dimensions(const index_range &r) :
 	#pragma loop count(6)
 	for(register unsigned int i=0; i<m_dims.get_order(); i++)
 		m_dims[i] -= r.get_begin()[i];
+	update_increments();
 }
 
 inline size_t dimensions::get_increment(const size_t i) const
