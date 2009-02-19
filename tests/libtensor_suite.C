@@ -10,6 +10,7 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("index_range", m_utf_index_range);
 	add_test("dimensions", m_utf_dimensions);
 	add_test("tensor", m_utf_tensor);
+	add_test("tod_set", m_utf_tod_set);
 }
 
 }

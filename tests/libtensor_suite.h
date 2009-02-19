@@ -8,6 +8,7 @@
 #include "index_range_test.h"
 #include "permutation_test.h"
 #include "tensor_test.h"
+#include "tod_set_test.h"
 
 using libtest::unit_test_factory;
 
@@ -23,6 +24,7 @@ namespace libtensor {
 	\li libtensor::index_range_test
 	\li libtensor::dimensions_test
 	\li libtensor::tensor_test
+	\li libtensor::tod_set_test
 **/
 class libtensor_suite : public libtest::test_suite {
 private:
@@ -33,6 +35,7 @@ private:
 	unit_test_factory< index_range_test > m_utf_index_range;
 	unit_test_factory< dimensions_test > m_utf_dimensions;
 	unit_test_factory< tensor_test > m_utf_tensor;
+	unit_test_factory< tod_set_test > m_utf_tod_set;
 
 public:
 	//!	Creates the suite

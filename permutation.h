@@ -401,6 +401,7 @@ inline bool permutation::is_identity() const {
 }
 
 inline bool permutation::equals(const permutation &p) const {
+	if(&p == this) return true;
 	if(m_order != p.m_order) return false;
 	#pragma loop count(6)
 	for(register size_t i=0; i<m_order; i++)

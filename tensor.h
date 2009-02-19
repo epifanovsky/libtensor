@@ -136,6 +136,12 @@ private:
 			throw(exception);
 
 		virtual void ret_dataptr(const element_t *p) throw(exception);
+
+		virtual const permutation &req_simplest_permutation()
+			throw(exception);
+
+		virtual size_t req_permutation_cost(const permutation &p)
+			throw(exception);
 		//@}
 	};
 
@@ -144,7 +150,7 @@ private:
 	toh m_toh; //!< Tensor operation handler
 	ptr_t m_data; //!< Pointer to data
 	T *m_dataptr; //!< Pointer to checked out data
-	permutation m_perm; //!< Specifies how data elemens should be permuted
+	permutation m_perm; //!< Specifies current %permutation of elements
 	bool m_immutable; //!< Indicates whether the %tensor is immutable
 
 public:
@@ -357,6 +363,19 @@ void tensor<T,Alloc,Perm>::toh::ret_dataptr(const element_t *p)
 	}
 	Alloc::unlock(m_t.m_data);
 	m_t.m_dataptr = NULL;
+}
+
+template<typename T, typename Alloc, typename Perm>
+const permutation &tensor<T,Alloc,Perm>::toh::req_simplest_permutation()
+	throw(exception) {
+	return m_t.m_perm;
+}
+
+template<typename T, typename Alloc, typename Perm>
+size_t tensor<T,Alloc,Perm>::toh::req_permutation_cost(const permutation &p)
+	throw(exception) {
+	m_t.throw_exc("toh::req_permutation_cost(const permutation&)",
+		"Unhandled event");
 }
 
 } // namespace libtensor

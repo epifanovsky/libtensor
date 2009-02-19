@@ -9,7 +9,8 @@ INCLUDE = -I. -I../libvmm
 OBJS = tod_set.o
 
 libtensor.a: $(OBJS)
-	ar -r libtest.a $?
+	echo $?
+	ar -r libtensor.a $?
 
 tests: libtensor.a
 	cd tests && $(MAKE) all

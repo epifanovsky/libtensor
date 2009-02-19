@@ -10,20 +10,35 @@ namespace libtensor {
 /**	\brief Tensor (double) operation: assign all elements a value
 
 	\ingroup libtensor
-
 **/
 class tod_set : public tensor_operation<double> {
 private:
 	double m_val; //!< Value
 
 public:
-	//! Default constructor
+	//!	\name Construction and destruction
+	//@{
+
+	/**	\brief Initializes the operation
+		\param v Tensor element value
+	**/
 	tod_set(const double v = 0.0);
 
-	//! Virtual destructor
+	/**	\brief Destructor
+	**/
 	~tod_set();
 
-	virtual void perform(tensor_i<double> &t) throw(exception);
+	//@}
+
+	//!	\name Operation
+	//@{
+
+	/**	\brief Assigns the elements of a tensor a value
+		\param t Tensor.
+	**/
+	void perform(tensor_i<double> &t) throw(exception);
+
+	//@}
 };
 
 inline tod_set::tod_set(const double v) {

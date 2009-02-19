@@ -5,6 +5,7 @@ OBJS += dimensions_test.o
 OBJS += index_test.o
 OBJS += index_range_test.o
 OBJS += tensor_test.o
+OBJS += tod_set_test.o
 
 all: libtensor_tests
 
@@ -26,4 +27,6 @@ index_test.C: index_test.h
 index_range_test.C: index_range_test.h
 
 tensor_test.C: tensor_test.h
+
+tod_set_test.C: tod_set_test.h
 

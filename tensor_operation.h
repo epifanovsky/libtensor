@@ -146,6 +146,20 @@ inline void tensor_operation<T>::ret_dataptr(tensor_i<T> &t,
 	tensor_operation_dispatcher<T>::get_instance().ret_dataptr(t, ptr);
 }
 
+template<typename T>
+inline const permutation &tensor_operation<T>::req_simplest_permutation(
+	tensor_i<element_t> &t) throw(exception) {
+	tensor_operation_dispatcher<T>::get_instance().
+		req_simplest_permutation(t);
+}
+
+template<typename T>
+inline size_t tensor_operation<T>::req_permutation_cost(tensor_i<element_t> &t,
+	const permutation &p) throw(exception) {
+	tensor_operation_dispatcher<T>::get_instance().
+		req_permutation_cost(t, p);
+}
+
 } // namespace libtensor
 
 #endif // __LIBTENSOR_TENSOR_OPERATION_H
