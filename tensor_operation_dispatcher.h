@@ -6,11 +6,13 @@
 #include "defs.h"
 #include "exception.h"
 #include "index_range.h"
+#include "permutation.h"
 #include "tensor_i.h"
 
 namespace libtensor {
 
 /**	\brief Dispatches %tensor operation events to appropriate handlers
+	\param T Tensor element type.
 
 	\ingroup libtensor
 **/
@@ -20,11 +22,16 @@ class tensor_operation_dispatcher :
 
 	friend libvmm::singleton< tensor_operation_dispatcher<T> >;
 
+public:
+	typedef T element_t; //!< Tensor element type
+
 protected:
 	tensor_operation_dispatcher();
 
 public:
-	T *req_dataptr(tensor_i<T> &t) throw(exception);
+	element_t *req_dataptr(tensor_i<element_t> &t, const permutation &p)
+		throw(exception);
+
 	const T *req_const_dataptr(tensor_i<T> &t) throw(exception);
 	T *req_range_dataptr(tensor_i<T> &t, const index_range &ir) throw(exception);
 	const T *req_range_const_dataptr(tensor_i<T> &t, const index_range &ir) throw(exception);
@@ -32,29 +39,36 @@ public:
 };
 
 template<typename T>
-inline T *tensor_operation_dispatcher<T>::req_dataptr(tensor_i<T> &t) throw(exception) {
-	return t.get_tensor_operation_handler().req_dataptr();
+inline tensor_operation_dispatcher<T>::tensor_operation_dispatcher() {
 }
 
 template<typename T>
-inline const T *tensor_operation_dispatcher<T>::req_const_dataptr(tensor_i<T> &t) throw(exception) {
+inline T *tensor_operation_dispatcher<T>::req_dataptr(tensor_i<T> &t,
+	const permutation &p) throw(exception) {
+	return t.get_tensor_operation_handler().req_dataptr(p);
+}
+
+template<typename T>
+inline const T *tensor_operation_dispatcher<T>::req_const_dataptr(
+	tensor_i<T> &t) throw(exception) {
 	return t.get_tensor_operation_handler().req_const_dataptr();
 }
 
 template<typename T>
-inline T *tensor_operation_dispatcher<T>::req_range_dataptr(tensor_i<T> &t, const index_range &ir)
-	throw(exception) {
+inline T *tensor_operation_dispatcher<T>::req_range_dataptr(
+	tensor_i<T> &t, const index_range &ir) throw(exception) {
 	return t.get_tensor_operation_handler().req_range_dataptr(ir);
 }
 
 template<typename T>
-inline const T *tensor_operation_dispatcher<T>::req_range_const_dataptr(tensor_i<T> &t,
-	const index_range &ir) throw(exception) {
+inline const T *tensor_operation_dispatcher<T>::req_range_const_dataptr(
+	tensor_i<T> &t, const index_range &ir) throw(exception) {
 	return t.get_tensor_operation_handler().req_range_const_dataptr(ir);
 }
 
 template<typename T>
-inline void ret_dataptr(tensor_i<T> &t, const T *ptr) throw(exception) {
+inline void tensor_operation_dispatcher<T>::ret_dataptr(
+	tensor_i<T> &t, const T *ptr) throw(exception) {
 	t.get_tensor_operation_handler().ret_dataptr(ptr);
 }
 

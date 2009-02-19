@@ -98,7 +98,27 @@ void tensor_test::test_immutable() throw(libtest::test_exception) {
 	}
 }
 
-void tensor_test::test_op_1_int::perform(tensor_i<int> &t) throw(exception) {
+void tensor_test::test_op_set_int::perform(tensor_i<int> &t) throw(exception) {
+	dimensions d(t.get_dims());
+	permutation p(d.get_order());
+	int *ptr = req_dataptr(t, p);
+	if(ptr) {
+		for(size_t i=0; i<d.get_size(); i++) ptr[i] = m_val;
+	}
+	ret_dataptr(t, ptr);
+}
+
+void tensor_test::test_op_chkset_int::perform(tensor_i<int> &t)
+	throw(exception) {
+	m_ok = true;
+	dimensions d(t.get_dims());
+	permutation p(d.get_order());
+	int *ptr = req_dataptr(t, p);
+	if(ptr) {
+		for(size_t i=0; i<d.get_size(); i++)
+			m_ok = m_ok && (ptr[i]==m_val);
+	}
+	ret_dataptr(t, ptr);
 }
 
 void tensor_test::test_operation() throw(libtest::test_exception) {
@@ -108,8 +128,21 @@ void tensor_test::test_operation() throw(libtest::test_exception) {
 	dimensions d1(ir);
 	tensor_int t1(d1);
 
-	test_op_1_int op1;
+	test_op_set_int op1(1), op100(100);
+	test_op_chkset_int chkop1(1), chkop100(100);
+
 	t1.operation(op1);
+	t1.operation(chkop1);
+	if(!chkop1.is_ok()) {
+		fail_test("tensor_test::test_operation()", __FILE__, __LINE__,
+			"Operation failed to set all elements to 1 (t1)");
+	}
+	t1.operation(op100);
+	t1.operation(chkop100);
+	if(!chkop100.is_ok()) {
+		fail_test("tensor_test::test_operation()", __FILE__, __LINE__,
+			"Operation failed to set all elements to 100 (t1)");
+	}
 }
 
 } // namespace libtensor

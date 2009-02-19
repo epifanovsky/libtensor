@@ -14,8 +14,23 @@ public:
 	virtual void perform() throw(libtest::test_exception);
 
 private:
-	class test_op_1_int : public tensor_operation_base<int,permutation> {
+	//!	Sets all elements a given value
+	class test_op_set_int : public tensor_operation_base<int> {
+	private:
+		int m_val; //!< Value to set
 	public:
+		test_op_set_int(const int val) : m_val(val) {}
+		virtual void perform(tensor_i<int> &t) throw(exception);
+	};
+
+	//!	Check that all elements have a given value
+	class test_op_chkset_int : public tensor_operation_base<int> {
+	private:
+		int m_val; //!< Value
+		bool m_ok; //!< 
+	public:
+		test_op_chkset_int(const int val) : m_val(val), m_ok(false) {}
+		bool is_ok() const { return m_ok; }
 		virtual void perform(tensor_i<int> &t) throw(exception);
 	};
 

@@ -13,6 +13,8 @@ template<typename T> class tensor_operation_dispatcher;
 
 /**	\brief Abstract %tensor interface
 	\param T Tensor element type
+
+	\ingroup libtensor
 **/
 template<typename T>
 class tensor_i {
@@ -35,8 +37,8 @@ public:
 protected:
 	/**	\brief Returns the %tensor's operation handler
 	**/
-	virtual const tensor_operation_handler_i<T>
-		&get_tensor_operation_handler() const = 0;
+	virtual tensor_operation_handler_i<T> &get_tensor_operation_handler()
+		= 0;
 };
 
 } // namespace libtensor

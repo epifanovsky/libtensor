@@ -124,7 +124,8 @@ private:
 			m_t(t), m_dataptr(NULL) {}
 		virtual ~operation_handler() {}
 
-		virtual element_t *req_dataptr(const PermT &p) throw(exception);
+		virtual element_t *req_dataptr(const PermT &p)
+			throw(exception);
 		virtual const element_t *req_const_dataptr(const PermT &p)
 			throw(exception);
 		virtual element_t *req_range_dataptr(const PermT &p,
@@ -212,7 +213,7 @@ public:
 protected:
 	//!	\name Implementation of libtensor::tensor_i< T >
 	//@{
-	virtual const tensor_operation_handler_i<T> &get_tensor_operation_handler() const;
+	virtual tensor_operation_handler_i<T> &get_tensor_operation_handler();
 	//@}
 
 private:
@@ -284,11 +285,12 @@ inline const dimensions& tensor<T,Alloc,PermT,Perm>::get_dims() const {
 template<typename T, typename Alloc, typename PermT, typename Perm>
 inline void tensor<T,Alloc,PermT,Perm>::operation(tensor_operation_i<T> &op)
 	throw(exception) {
+	op.perform(*this);
 }
 
 template<typename T, typename Alloc, typename PermT, typename Perm>
-inline const tensor_operation_handler_i<T>&
-tensor<T,Alloc,PermT,Perm>::get_tensor_operation_handler() const {
+inline tensor_operation_handler_i<T>&
+tensor<T,Alloc,PermT,Perm>::get_tensor_operation_handler() {
 	return m_oph;
 }
 

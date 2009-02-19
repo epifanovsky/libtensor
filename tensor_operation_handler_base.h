@@ -13,15 +13,6 @@ class tensor_operation_handler_base : public tensor_operation_handler_i<_T> {
 public:
 	typedef _T element_t;
 
-private:
-	//!	\brief Exception class
-	class tensor_operation_handler_base_exception : public exception {
-	public:
-		tensor_operation_handler_base_exception(const char *msg) :
-			exception(msg) {}
-		virtual ~tensor_operation_handler_base_exception() throw() {}
-	};
-
 public:
 	virtual element_t *req_dataptr(const permutation &p) throw(exception);
 
@@ -39,7 +30,8 @@ public:
 private:
 	/**	\brief Throws an exception
 	**/
-	void throw_exc(const char *method, const char *msg) throw(exception);
+	void throw_exc(const char *method, const char *msg) const
+		throw(exception);
 };
 
 template<typename _T>
@@ -88,12 +80,12 @@ void tensor_operation_handler_base<_T>::ret_dataptr(const element_t *p)
 }
 
 template<typename _T>
-void tensor_operation_handler_base<_T>::throw_exc(const char *method, const char *msg)
-	throw(exception) {
+void tensor_operation_handler_base<_T>::throw_exc(const char *method,
+	const char *msg) const throw(exception) {
 	char s[1024];
 	snprintf(s, 1024, "[tensor::tensor_operation_handler_base<_T>::%s] %s.",
 		method, msg);
-	throw tensor_operation_handler_base_exception(s);
+	throw exception(s);
 }
 
 } // namespace libtensor
