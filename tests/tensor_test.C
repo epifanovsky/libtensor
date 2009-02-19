@@ -113,7 +113,7 @@ void tensor_test::test_op_chkset_int::perform(tensor_i<int> &t)
 	m_ok = true;
 	dimensions d(t.get_dims());
 	permutation p(d.get_order());
-	int *ptr = req_dataptr(t, p);
+	const int *ptr = req_const_dataptr(t, p);
 	if(ptr) {
 		for(size_t i=0; i<d.get_size(); i++)
 			m_ok = m_ok && (ptr[i]==m_val);

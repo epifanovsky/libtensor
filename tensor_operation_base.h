@@ -20,6 +20,9 @@ protected:
 	element_t *req_dataptr(tensor_i<element_t> &t, const permutation &p)
 		throw(exception);
 
+	const element_t *req_const_dataptr(tensor_i<element_t> &t,
+		const permutation &p) throw(exception);
+
 	void ret_dataptr(tensor_i<element_t> &t, const element_t *p)
 		throw(exception);
 };
@@ -28,6 +31,13 @@ template<typename T>
 inline T *tensor_operation_base<T>::req_dataptr(tensor_i<T> &t,
 	const permutation &p) throw(exception) {
 	return tensor_operation_dispatcher<T>::get_instance().req_dataptr(t, p);
+}
+
+template<typename T>
+inline const T *tensor_operation_base<T>::req_const_dataptr(tensor_i<T> &t,
+	const permutation &p) throw(exception) {
+	return tensor_operation_dispatcher<T>::get_instance().
+		req_const_dataptr(t, p);
 }
 
 template<typename T>

@@ -32,7 +32,9 @@ public:
 	element_t *req_dataptr(tensor_i<element_t> &t, const permutation &p)
 		throw(exception);
 
-	const T *req_const_dataptr(tensor_i<T> &t) throw(exception);
+	const T *req_const_dataptr(tensor_i<T> &t, const permutation &p)
+		throw(exception);
+
 	T *req_range_dataptr(tensor_i<T> &t, const index_range &ir) throw(exception);
 	const T *req_range_const_dataptr(tensor_i<T> &t, const index_range &ir) throw(exception);
 	void ret_dataptr(tensor_i<T> &t, const T *ptr) throw(exception);
@@ -50,8 +52,8 @@ inline T *tensor_operation_dispatcher<T>::req_dataptr(tensor_i<T> &t,
 
 template<typename T>
 inline const T *tensor_operation_dispatcher<T>::req_const_dataptr(
-	tensor_i<T> &t) throw(exception) {
-	return t.get_tensor_operation_handler().req_const_dataptr();
+	tensor_i<T> &t, const permutation &p) throw(exception) {
+	return t.get_tensor_operation_handler().req_const_dataptr(p);
 }
 
 template<typename T>
