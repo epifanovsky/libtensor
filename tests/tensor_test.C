@@ -78,12 +78,28 @@ void tensor_test::test_ctor() throw(libtest::test_exception) {
 	}
 }
 
+void tensor_test::test_op_chk_imm::perform(tensor_i<int> &t) throw(exception) {
+	m_ok = false;
+	dimensions d(t.get_dims());
+	permutation p(d.get_order());
+	int *ptr = NULL;
+	try {
+		ptr = req_dataptr(t, p);
+	} catch(exception e) {
+		m_ok = true;
+	}
+	if(ptr) {
+		ret_dataptr(t, ptr);
+		ptr = NULL;
+	}
+}
+
 void tensor_test::test_immutable() throw(libtest::test_exception) {
 	index i1(2), i2(2);
 	i2[0] = 2; i2[1] = 3;
 	index_range ir(i1, i2);
 	dimensions d1(ir);
-	tensor_d t1(d1);
+	tensor_int t1(d1);
 
 	if(t1.is_immutable()) {
 		fail_test("tensor_test::test_immutable()", __FILE__, __LINE__,
@@ -95,6 +111,13 @@ void tensor_test::test_immutable() throw(libtest::test_exception) {
 	if(!t1.is_immutable()) {
 		fail_test("tensor_test::test_immutable()", __FILE__, __LINE__,
 			"Setting t1 immutable failed");
+	}
+
+	test_op_chk_imm op;
+	op.perform(t1);
+	if(!op.is_ok()) {
+		fail_test("tensor_test::test_immutable()", __FILE__, __LINE__,
+			"Requesting non-const pointer in t1 must fail");
 	}
 }
 

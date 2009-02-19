@@ -14,6 +14,17 @@ public:
 	virtual void perform() throw(libtest::test_exception);
 
 private:
+	//!	Checks that requesting a non-const data pointer causes an
+	//!	exception
+	class test_op_chk_imm : public tensor_operation<int> {
+	private:
+		bool m_ok;
+	public:
+		test_op_chk_imm() : m_ok(false) {}
+		bool is_ok() const { return m_ok; }
+		virtual void perform(tensor_i<int> &t) throw(exception);
+	};
+
 	//!	Sets all elements a given value
 	class test_op_set_int : public tensor_operation<int> {
 	private:

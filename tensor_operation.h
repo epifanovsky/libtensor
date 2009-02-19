@@ -110,7 +110,7 @@ protected:
 	void ret_dataptr(tensor_i<element_t> &t, const element_t *p)
 		throw(exception);
 
-	/**	\brief Returns the permutation that has the least cost
+	/**	\brief Returns the %permutation that has the least cost
 		\param t Tensor.
 	**/
 	const permutation &req_simplest_permutation(tensor_i<element_t> &t)
