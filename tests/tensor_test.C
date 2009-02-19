@@ -176,6 +176,33 @@ void tensor_test::test_op_chk_dblreq::perform(tensor_i<int> &t)
 	ret_dataptr(t, const_ptr);
 }
 
+void tensor_test::test_op_chk_perm::perform(tensor_i<int> &t) throw(exception) {
+	m_ok = true; 
+	dimensions dim(t.get_dims());
+	permutation perm(dim.get_order());
+
+	// Assumes that the tensor has the second order
+
+	int *p = req_dataptr(t, perm);
+	int *pp = p;
+	for(size_t i=0; i<dim[0]; i++) {
+		for(size_t j=0; j<dim[1]; j++) {
+			*pp = i+1; pp++;
+		}
+	}
+	ret_dataptr(t, p);
+
+	perm.permute(0, 1);
+	p = req_dataptr(t, perm);
+	for(size_t j=0; j<dim[0]; j++) {
+		for(size_t i=0; i<dim[1]; i++) {
+			if(*pp != i+1) m_ok = false;
+			pp++;
+		}
+	}
+	ret_dataptr(t, p);
+}
+
 void tensor_test::test_operation() throw(libtest::test_exception) {
 	index i1(2), i2(2);
 	i2[0] = 2; i2[1] = 3;
@@ -209,6 +236,13 @@ void tensor_test::test_operation() throw(libtest::test_exception) {
 	if(!op_dblreq.is_ok()) {
 		fail_test("tensor_test::test_operation()", __FILE__, __LINE__,
 			"Double requests for data must cause an exception");
+	}
+
+	test_op_chk_perm op_perm;
+	op_perm.perform(t1);
+	if(!op_perm.is_ok()) {
+		fail_test("tensor_test::test_operation()", __FILE__, __LINE__,
+			"Requests for permuted data failed");
 	}
 }
 
