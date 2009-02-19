@@ -3,5 +3,5 @@
 #include "permutation.h"
 #include "permutation_lehmer.h"
 #include "tensor.h"
-#include "tensor_operation_base.h"
+#include "tensor_operation.h"
 

@@ -172,16 +172,6 @@ public:
 		Returns the %dimensions of the %tensor.
 	**/
 	virtual const dimensions &get_dims() const;
-
-	/**	\brief Performs an arbitrary %tensor operation
-
-		Performs an arbitrary %tensor operation.
-		For more information about tensor operations, see
-		tensor::tensor_operation_i.
-
-		\throw exception If the operation unsuccessful.
-	**/
-	virtual void operation(tensor_operation_i<T> &op) throw(exception);
 	//@}
 
 	//!	\name Overload of libtensor::tensor_operation_handler<T>
@@ -266,12 +256,6 @@ inline void tensor<T,Alloc,Perm>::set_immutable() {
 template<typename T, typename Alloc, typename Perm>
 inline const dimensions& tensor<T,Alloc,Perm>::get_dims() const {
 	return m_dims;
-}
-
-template<typename T, typename Alloc, typename Perm>
-inline void tensor<T,Alloc,Perm>::operation(tensor_operation_i<T> &op)
-	throw(exception) {
-	op.perform(*this);
 }
 
 template<typename T, typename Alloc, typename Perm>

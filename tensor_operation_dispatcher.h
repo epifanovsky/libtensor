@@ -5,7 +5,6 @@
 
 #include "defs.h"
 #include "exception.h"
-#include "index_range.h"
 #include "permutation.h"
 #include "tensor_i.h"
 

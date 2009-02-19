@@ -30,5 +30,5 @@ tensor_i.h: defs.h exception.h dimensions.h
 
 tod_set.C: tod_set.h
 
-tod_set.h: defs.h exception.h tensor_operation_base.h
+tod_set.h: defs.h exception.h tensor_operation.h
 

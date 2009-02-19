@@ -3,7 +3,7 @@
 
 #include "defs.h"
 #include "exception.h"
-#include "tensor_operation_base.h"
+#include "tensor_operation.h"
 
 namespace libtensor {
 
@@ -12,7 +12,7 @@ namespace libtensor {
 	\ingroup libtensor
 
 **/
-class tod_set : public tensor_operation_base<double> {
+class tod_set : public tensor_operation<double> {
 private:
 	double m_val; //!< Value
 

@@ -8,7 +8,6 @@
 
 namespace libtensor {
 
-template<typename T> class tensor_operation_i;
 template<typename T> class tensor_operation_dispatcher;
 
 /**	\brief Abstract %tensor interface
@@ -21,18 +20,9 @@ class tensor_i {
 	friend tensor_operation_dispatcher<T>;
 
 public:
-	//!	Tensor operation type
-	typedef tensor_operation_i<T> tensor_operation_t;
-
-public:
 	/**	\brief Returns the %dimensions of the %tensor
 	**/
 	virtual const dimensions &get_dims() const = 0;
-
-	/**	\brief Performs an arbitrary operation on the %tensor
-		\param op Tensor operation
-	**/
-	virtual void operation(tensor_operation_t &op) throw(exception) = 0;
 
 protected:
 	/**	\brief Returns the %tensor's operation handler

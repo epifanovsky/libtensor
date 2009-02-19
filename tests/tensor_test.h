@@ -3,7 +3,7 @@
 
 #include <libtest.h>
 #include "tensor.h"
-#include "tensor_operation_base.h"
+#include "tensor_operation.h"
 
 namespace libtensor {
 
@@ -15,7 +15,7 @@ public:
 
 private:
 	//!	Sets all elements a given value
-	class test_op_set_int : public tensor_operation_base<int> {
+	class test_op_set_int : public tensor_operation<int> {
 	private:
 		int m_val; //!< Value to set
 	public:
@@ -24,7 +24,7 @@ private:
 	};
 
 	//!	Check that all elements have a given value
-	class test_op_chkset_int : public tensor_operation_base<int> {
+	class test_op_chkset_int : public tensor_operation<int> {
 	private:
 		int m_val; //!< Value
 		bool m_ok; //!< Indicates a positive result
@@ -35,7 +35,7 @@ private:
 	};
 
 	//!	Checks that double requests for data cause an exception
-	class test_op_chk_dblreq : public tensor_operation_base<int> {
+	class test_op_chk_dblreq : public tensor_operation<int> {
 	private:
 		bool m_ok;
 	public:

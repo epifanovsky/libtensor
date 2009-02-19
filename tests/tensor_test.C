@@ -163,14 +163,14 @@ void tensor_test::test_operation() throw(libtest::test_exception) {
 	test_op_set_int op1(1), op100(100);
 	test_op_chkset_int chkop1(1), chkop100(100);
 
-	t1.operation(op1);
-	t1.operation(chkop1);
+	op1.perform(t1);
+	chkop1.perform(t1);
 	if(!chkop1.is_ok()) {
 		fail_test("tensor_test::test_operation()", __FILE__, __LINE__,
 			"Operation failed to set all elements to 1 (t1)");
 	}
-	t1.operation(op100);
-	t1.operation(chkop100);
+	op100.perform(t1);
+	chkop100.perform(t1);
 	if(!chkop100.is_ok()) {
 		fail_test("tensor_test::test_operation()", __FILE__, __LINE__,
 			"Operation failed to set all elements to 100 (t1)");
@@ -178,7 +178,7 @@ void tensor_test::test_operation() throw(libtest::test_exception) {
 
 	test_op_chk_dblreq op_dblreq;
 	try {
-		t1.operation(op_dblreq);
+		op_dblreq.perform(t1);
 	} catch(exception e) {
 		fail_test("tensor_test::test_operation()", __FILE__, __LINE__,
 			e.what());

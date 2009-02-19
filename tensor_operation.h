@@ -1,19 +1,18 @@
-#ifndef __LIBTENSOR_TENSOR_OPERATION_BASE_H
-#define __LIBTENSOR_TENSOR_OPERATION_BASE_H
+#ifndef __LIBTENSOR_TENSOR_OPERATION_H
+#define __LIBTENSOR_TENSOR_OPERATION_H
 
 #include "defs.h"
 #include "exception.h"
 #include "permutation.h"
-#include "tensor.h"
+#include "tensor_i.h"
 #include "tensor_operation_dispatcher.h"
-#include "tensor_operation_i.h"
 
 namespace libtensor {
 
 /**	\brief Base class for tensor operations
 **/
 template<typename T>
-class tensor_operation_base : public tensor_operation_i<T> {
+class tensor_operation {
 public:
 	typedef T element_t; //!< Tensor element type
 
@@ -29,25 +28,25 @@ protected:
 };
 
 template<typename T>
-inline T *tensor_operation_base<T>::req_dataptr(tensor_i<T> &t,
+inline T *tensor_operation<T>::req_dataptr(tensor_i<T> &t,
 	const permutation &p) throw(exception) {
 	return tensor_operation_dispatcher<T>::get_instance().req_dataptr(t, p);
 }
 
 template<typename T>
-inline const T *tensor_operation_base<T>::req_const_dataptr(tensor_i<T> &t,
+inline const T *tensor_operation<T>::req_const_dataptr(tensor_i<T> &t,
 	const permutation &p) throw(exception) {
 	return tensor_operation_dispatcher<T>::get_instance().
 		req_const_dataptr(t, p);
 }
 
 template<typename T>
-inline void tensor_operation_base<T>::ret_dataptr(tensor_i<T> &t,
+inline void tensor_operation<T>::ret_dataptr(tensor_i<T> &t,
 	const T *ptr) throw(exception) {
 	tensor_operation_dispatcher<T>::get_instance().ret_dataptr(t, ptr);
 }
 
 } // namespace libtensor
 
-#endif // __LIBTENSOR_TENSOR_OPERATION_BASE_H
+#endif // __LIBTENSOR_TENSOR_OPERATION_H
 
