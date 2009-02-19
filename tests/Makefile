@@ -17,7 +17,7 @@ clean:
 	rm -f libtensor_tests
 
 libtensor_tests: libtensor_tests.o $(OBJS)
-	$(LD) $(LDFLAGS) -o libtensor_tests $^ ../../libtest/libtest.a
+	$(LD) $(LDFLAGS) -o libtensor_tests $^ ../../libtest/libtest.a ../libtensor.a
 
 dimensions_test.C: dimensions_test.h
 
