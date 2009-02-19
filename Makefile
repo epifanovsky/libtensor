@@ -22,7 +22,11 @@ docs:
 	doxygen
 	scp -Cpr docs/html/* hogwarts.usc.edu:public_html/libtensor_docs/
 
+dimensions.h: defs.h exception.h index.h index_range.h
+
 index.h: defs.h exception.h
+
+tensor_i.h: defs.h exception.h dimensions.h
 
 tod_set.C: tod_set.h
 

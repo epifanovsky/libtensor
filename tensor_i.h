@@ -4,11 +4,11 @@
 #include "defs.h"
 #include "exception.h"
 #include "dimensions.h"
+#include "tensor_operation_handler.h"
 
 namespace libtensor {
 
 template<typename T> class tensor_operation_i;
-template<typename T> class tensor_operation_handler_i;
 template<typename T> class tensor_operation_dispatcher;
 
 /**	\brief Abstract %tensor interface
@@ -37,8 +37,7 @@ public:
 protected:
 	/**	\brief Returns the %tensor's operation handler
 	**/
-	virtual tensor_operation_handler_i<T> &get_tensor_operation_handler()
-		= 0;
+	virtual tensor_operation_handler<T> &get_tensor_operation_handler() = 0;
 };
 
 } // namespace libtensor

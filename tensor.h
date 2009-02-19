@@ -9,7 +9,6 @@
 #include "tensor_i.h"
 
 #include "permutator.h"
-#include "tensor_operation_handler_base.h"
 
 namespace libtensor {
 
@@ -102,45 +101,21 @@ namespace libtensor {
 	\ingroup libtensor
 **/
 template<typename T, typename Alloc, typename Perm = permutator<T> >
-class tensor : public tensor_i<T> {
+class tensor : public tensor_i<T>, public tensor_operation_handler<T> {
 public:
 	typedef T element_t; //!< Tensor element type
 	typedef typename Alloc::ptr_t ptr_t; //!< Memory pointer type
 
 private:
-	//! Operation handler
-	class operation_handler :
-		public tensor_operation_handler_base<element_t> {
-
-	private:
-		tensor<T,Alloc,Perm> &m_t;
-		element_t *m_dataptr;
-
-	public:
-		operation_handler(tensor<T,Alloc,Perm> &t) :
-			m_t(t), m_dataptr(NULL) {}
-		virtual ~operation_handler() {}
-
-		virtual element_t *req_dataptr(const permutation &p)
-			throw(exception);
-		virtual const element_t *req_const_dataptr(const permutation &p)
-			throw(exception);
-		virtual element_t *req_range_dataptr(const permutation &p,
-			const index_range &r) throw(exception);
-		virtual const element_t *req_range_const_dataptr(
-			const permutation &p, const index_range &r)
-			throw(exception);
-		virtual void ret_dataptr(const element_t *p) throw(exception);
-	};
-	friend operation_handler;
-
 	dimensions m_dims; //!< Tensor %dimensions
 	ptr_t m_data; //!< Pointer to data
+	T *m_dataptr; //!< Pointer to checked out data
 	permutation m_perm; //!< Specifies how data elemens should be permuted
 	bool m_immutable; //!< Indicates whether the %tensor is immutable
-	operation_handler m_oph; //!< Operation handler
 
 public:
+	//!	\name Construction and destruction
+	//@{
 	/**	\brief Creates a %tensor with specified %dimensions
 
 		Creates a %tensor with specified %dimensions.
@@ -175,6 +150,7 @@ public:
 	/**	\brief Virtual destructor
 	**/
 	virtual ~tensor();
+	//@}
 
 	/**	\brief Checks if the %tensor is immutable
 
@@ -189,7 +165,7 @@ public:
 	**/
 	void set_immutable();
 
-	//!	\name Implementation of libtensor::tensor_i< T >
+	//!	\name Implementation of libtensor::tensor_i<T>
 	//@{
 	/**	\brief Returns the %dimensions of the %tensor
 
@@ -208,10 +184,18 @@ public:
 	virtual void operation(tensor_operation_i<T> &op) throw(exception);
 	//@}
 
-protected:
-	//!	\name Implementation of libtensor::tensor_i< T >
+	//!	\name Overload of libtensor::tensor_operation_handler<T>
 	//@{
-	virtual tensor_operation_handler_i<T> &get_tensor_operation_handler();
+	virtual element_t *req_dataptr(const permutation &p) throw(exception);
+	virtual const element_t *req_const_dataptr(const permutation &p)
+		throw(exception);
+	virtual void ret_dataptr(const element_t *p) throw(exception);
+	//@}
+
+protected:
+	//!	\name Implementation of libtensor::tensor_i<T>
+	//@{
+	virtual tensor_operation_handler<T> &get_tensor_operation_handler();
 	//@}
 
 private:
@@ -220,8 +204,8 @@ private:
 
 template<typename T, typename Alloc, typename Perm>
 tensor<T,Alloc,Perm>::tensor(const dimensions &d) throw(exception) :
-	m_dims(d), m_perm(m_dims.get_order()), m_oph(*this),
-	m_data(Alloc::invalid_ptr) {
+	m_dims(d), m_perm(m_dims.get_order()), m_data(Alloc::invalid_ptr),
+	m_dataptr(NULL) {
 #ifdef TENSOR_DEBUG
 	if(m_dims.get_size() == 0) {
 		throw_exc("tensor(const dimensions&)",
@@ -234,8 +218,8 @@ tensor<T,Alloc,Perm>::tensor(const dimensions &d) throw(exception) :
 
 template<typename T, typename Alloc, typename Perm>
 tensor<T,Alloc,Perm>::tensor(const tensor_i<T> &t) throw(exception) :
-	m_dims(t.get_dims()), m_perm(m_dims.get_order()), m_oph(*this),
-	m_data(Alloc::invalid_ptr) {
+	m_dims(t.get_dims()), m_perm(m_dims.get_order()),
+	m_data(Alloc::invalid_ptr), m_dataptr(NULL) {
 #ifdef TENSOR_DEBUG
 	if(m_dims.get_size() == 0) {
 		throw_exc("tensor(const tensor_i<T>&)",
@@ -249,7 +233,7 @@ tensor<T,Alloc,Perm>::tensor(const tensor_i<T> &t) throw(exception) :
 template<typename T, typename Alloc, typename Perm>
 tensor<T,Alloc,Perm>::tensor(const tensor<T,Alloc,Perm> &t)
 	throw(exception) : m_dims(t.m_dims), m_perm(m_dims.get_order()),
-	m_oph(*this), m_data(Alloc::invalid_ptr) {
+	m_data(Alloc::invalid_ptr), m_dataptr(NULL) {
 #ifdef TENSOR_DEBUG
 	if(m_dims.get_size() == 0) {
 		throw_exc("tensor(const tensor<T,Alloc,Perm>&)",
@@ -262,6 +246,10 @@ tensor<T,Alloc,Perm>::tensor(const tensor<T,Alloc,Perm> &t)
 
 template<typename T, typename Alloc, typename Perm>
 inline tensor<T,Alloc,Perm>::~tensor() {
+	if(m_dataptr) {
+		Alloc::unlock(m_data);
+		m_dataptr = NULL;
+	}
 	Alloc::deallocate(m_data);
 }
 
@@ -287,9 +275,9 @@ inline void tensor<T,Alloc,Perm>::operation(tensor_operation_i<T> &op)
 }
 
 template<typename T, typename Alloc, typename Perm>
-inline tensor_operation_handler_i<T>&
+inline tensor_operation_handler<T>&
 tensor<T,Alloc,Perm>::get_tensor_operation_handler() {
-	return m_oph;
+	return *this;
 }
 
 template<typename T, typename Alloc, typename Perm>
@@ -302,23 +290,19 @@ inline void tensor<T,Alloc,Perm>::throw_exc(const char *method,
 }
 
 template<typename T, typename Alloc, typename Perm>
-T *tensor<T,Alloc,Perm>::operation_handler::req_dataptr(
-	const permutation &p) throw(exception) {
-
-	if(m_t.m_immutable) {
-		m_t.throw_exc(
-			"operation_handler::req_dataptr(const permutation&)",
+T *tensor<T,Alloc,Perm>::req_dataptr(const permutation &p) throw(exception) {
+	if(m_immutable) {
+		throw_exc("req_dataptr(const permutation&)",
 			"Tensor is immutable, writing operations are "
 				"prohibited");
 	}
 
 	if(m_dataptr) {
-		m_t.throw_exc(
-			"operation_handler::req_dataptr(const permutation&)",
+		throw_exc("req_dataptr(const permutation&)",
 			"Data pointer has already been checked out");
 	}
 
-	m_dataptr = Alloc::lock(m_t.m_data);
+	m_dataptr = Alloc::lock(m_data);
 
 	// Permute elements here if necessary
 
@@ -326,16 +310,15 @@ T *tensor<T,Alloc,Perm>::operation_handler::req_dataptr(
 }
 
 template<typename T, typename Alloc, typename Perm>
-const T *tensor<T,Alloc,Perm>::operation_handler::req_const_dataptr(
-	const permutation &p) throw(exception) {
+const T *tensor<T,Alloc,Perm>::req_const_dataptr(const permutation &p)
+	throw(exception) {
 
 	if(m_dataptr) {
-		m_t.throw_exc(
-			"operation_handler::req_dataptr(const permutation&)",
+		throw_exc("req_dataptr(const permutation&)",
 			"Data pointer has already been checked out");
 	}
 
-	m_dataptr = Alloc::lock(m_t.m_data);
+	m_dataptr = Alloc::lock(m_data);
 
 	// Permute elements here if necessary
 
@@ -343,32 +326,12 @@ const T *tensor<T,Alloc,Perm>::operation_handler::req_const_dataptr(
 }
 
 template<typename T, typename Alloc, typename Perm>
-T *tensor<T,Alloc,Perm>::operation_handler::req_range_dataptr(
-	const permutation &p, const index_range &r) throw(exception) {
-	m_t.throw_exc("operation_handler::req_range_dataptr"
-		"(const permutation&, const index_range&)",
-		"Event hander not implemented");
-	return NULL;
-}
-
-template<typename T, typename Alloc, typename Perm>
-const T *tensor<T,Alloc,Perm>::operation_handler::req_range_const_dataptr(
-	const permutation &p, const index_range &r) throw(exception) {
-	m_t.throw_exc("operation_handler::req_range_const_dataptr"
-		"(const permutation&, const index_range&)",
-		"Event hander not implemented");
-	return NULL;
-}
-
-template<typename T, typename Alloc, typename Perm>
-void tensor<T,Alloc,Perm>::operation_handler::ret_dataptr(
-	const element_t *p) throw(exception) {
+void tensor<T,Alloc,Perm>::ret_dataptr(const element_t *p) throw(exception) {
 	if(m_dataptr != p) {
-		m_t.throw_exc(
-			"operation_handler::ret_dataptr(const element_t*)",
+		throw_exc("ret_dataptr(const element_t*)",
 			"Unrecognized data pointer");
 	}
-	Alloc::unlock(m_t.m_data);
+	Alloc::unlock(m_data);
 	m_dataptr = NULL;
 }
 
