@@ -35,6 +35,12 @@ public:
 		throw(exception);
 
 	void ret_dataptr(tensor_i<T> &t, const T *ptr) throw(exception);
+
+	const permutation &req_simplest_permutation(tensor_i<T> &t)
+		throw(exception);
+
+	size_t req_permutation_cost(tensor_i<T> &t, const permutation &p)
+		throw(exception);
 };
 
 template<typename T>
@@ -57,6 +63,18 @@ template<typename T>
 inline void tensor_operation_dispatcher<T>::ret_dataptr(
 	tensor_i<T> &t, const T *ptr) throw(exception) {
 	t.get_tensor_operation_handler().ret_dataptr(ptr);
+}
+
+template<typename T>
+inline const permutation &tensor_operation_dispatcher<T>::
+	req_simplest_permutation(tensor_i<T> &t) throw(exception) {
+	return t.get_tensor_operation_handler().req_simplest_permutation();
+}
+
+template<typename T>
+inline size_t tensor_operation_dispatcher<T>::req_permutation_cost(
+	tensor_i<T> &t, const permutation &p) throw(exception) {
+	return t.get_tensor_operation_handler().req_permutation_cost(p);
 }
 
 } // namespace libtensor

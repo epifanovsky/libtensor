@@ -12,8 +12,7 @@
 
 namespace libtensor {
 
-/**	\brief Simple implementation of a %tensor, which stores all its
-		elements in memory
+/**	\brief Simple %tensor, which stores all its elements in memory
 
 	\param T Tensor element type.
 	\param Alloc Memory allocator.
@@ -31,6 +30,11 @@ namespace libtensor {
 		tensor_element &operator=(const tensor_element&);
 	};
 	\endcode
+
+	<b>Tensor operations</b>
+
+	Tensor elements cannot be accessed directly. Only an extension of
+	tensor_operation has the ability to read and write them.
 
 	<b>Allocator</b>
 
@@ -52,10 +56,10 @@ namespace libtensor {
 	be compatible with the %tensor in the element type and storage format.
 
 	\code
-	template<typename _T>
+	template<typename T>
 	class permutator {
 	public:
-		static void permute(const _T *src, _T *dst, const dimensions &d,
+		static void permute(const T *src, T *dst, const dimensions &d,
 			const permutation &p);
 	};
 	\endcode
@@ -74,9 +78,9 @@ namespace libtensor {
 	<b>Immutability</b>
 
 	A %tensor can be set immutable via set_immutable(), after which only
-	reading operations are allowed on the %tensor. Permutations or
-	operations that attempt to modify the elements are prohibited. Once
-	the %tensor status is set to immutable, it cannot be changed back.
+	reading operations are allowed on the %tensor. Operations that attempt
+	to modify the elements are prohibited and will cause an exception.
+	Once the %tensor status is set to immutable, it cannot be changed back.
 	To perform a check whether the %tensor is mutable or immutable,
 	is_immutable() can be used.
 
@@ -94,9 +98,9 @@ namespace libtensor {
 
 	<b>Exceptions</b>
 
-	Exceptions libtensor::exception are thrown if a requested operation
-	fails for any reason. If an %exception is thrown, the state of the
-	%tensor object is the same as it was before the operation.
+	Exceptions exception are thrown if a requested operation fails for any
+	reason. If an %exception is thrown, the state of the %tensor object
+	is undefined.
 
 	\ingroup libtensor
 **/
@@ -146,6 +150,7 @@ private:
 public:
 	//!	\name Construction and destruction
 	//@{
+
 	/**	\brief Creates a %tensor with specified %dimensions
 
 		Creates a %tensor with specified %dimensions.
@@ -180,7 +185,11 @@ public:
 	/**	\brief Virtual destructor
 	**/
 	virtual ~tensor();
+
 	//@}
+
+	//!	\name Immutability
+	//@{
 
 	/**	\brief Checks if the %tensor is immutable
 
@@ -195,19 +204,25 @@ public:
 	**/
 	void set_immutable();
 
-	//!	\name Implementation of libtensor::tensor_i<T>
+	//@}
+
+	//!	\name Implementation of tensor_i<T>
 	//@{
+
 	/**	\brief Returns the %dimensions of the %tensor
 
 		Returns the %dimensions of the %tensor.
 	**/
 	virtual const dimensions &get_dims() const;
+
 	//@}
 
 protected:
-	//!	\name Implementation of libtensor::tensor_i<T>
+	//!	\name Implementation of tensor_i<T>
 	//@{
+
 	virtual tensor_operation_handler<T> &get_tensor_operation_handler();
+
 	//@}
 
 private:
