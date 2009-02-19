@@ -121,6 +121,38 @@ void tensor_test::test_op_chkset_int::perform(tensor_i<int> &t)
 	ret_dataptr(t, ptr);
 }
 
+void tensor_test::test_op_chk_dblreq::perform(tensor_i<int> &t)
+	throw(exception) {
+	m_ok = true;
+	permutation p(t.get_dims().get_order());
+
+	int *ptr = req_dataptr(t, p);
+	try {
+		int *ptr2 = req_dataptr(t, p);
+		m_ok = false;
+	} catch(exception e) {
+	}
+	try {
+		const int *ptr2 = req_const_dataptr(t, p);
+		m_ok = false;
+	} catch(exception e) {
+	}
+	ret_dataptr(t, ptr);
+
+	const int *const_ptr = req_const_dataptr(t, p);
+	try {
+		int *ptr2 = req_dataptr(t, p);
+		m_ok = false;
+	} catch(exception e) {
+	}
+	try {
+		const int *ptr2 = req_const_dataptr(t, p);
+		m_ok = false;
+	} catch(exception e) {
+	}
+	ret_dataptr(t, const_ptr);
+}
+
 void tensor_test::test_operation() throw(libtest::test_exception) {
 	index i1(2), i2(2);
 	i2[0] = 2; i2[1] = 3;
@@ -142,6 +174,18 @@ void tensor_test::test_operation() throw(libtest::test_exception) {
 	if(!chkop100.is_ok()) {
 		fail_test("tensor_test::test_operation()", __FILE__, __LINE__,
 			"Operation failed to set all elements to 100 (t1)");
+	}
+
+	test_op_chk_dblreq op_dblreq;
+	try {
+		t1.operation(op_dblreq);
+	} catch(exception e) {
+		fail_test("tensor_test::test_operation()", __FILE__, __LINE__,
+			e.what());
+	}
+	if(!op_dblreq.is_ok()) {
+		fail_test("tensor_test::test_operation()", __FILE__, __LINE__,
+			"Double requests for data must cause an exception");
 	}
 }
 

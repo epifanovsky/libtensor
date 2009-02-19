@@ -27,9 +27,19 @@ private:
 	class test_op_chkset_int : public tensor_operation_base<int> {
 	private:
 		int m_val; //!< Value
-		bool m_ok; //!< 
+		bool m_ok; //!< Indicates a positive result
 	public:
 		test_op_chkset_int(const int val) : m_val(val), m_ok(false) {}
+		bool is_ok() const { return m_ok; }
+		virtual void perform(tensor_i<int> &t) throw(exception);
+	};
+
+	//!	Checks that double requests for data cause an exception
+	class test_op_chk_dblreq : public tensor_operation_base<int> {
+	private:
+		bool m_ok;
+	public:
+		test_op_chk_dblreq() : m_ok(false) {}
 		bool is_ok() const { return m_ok; }
 		virtual void perform(tensor_i<int> &t) throw(exception);
 	};
