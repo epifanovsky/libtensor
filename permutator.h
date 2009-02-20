@@ -44,9 +44,13 @@ void permutator<T>::permute(const T *src, T *dst, const dimensions &d,
 
 template<typename T>
 void permutator<T>::permute2(const T *src, T *dst, const dimensions &d) {
+	const T *psrc = src;
+	T *pdst = NULL;
 	for(size_t i=0; i<d[0]; i++) {
+		pdst = dst+i;
 		for(size_t j=0; j<d[1]; j++) {
-			*(dst+j*d[0]+i) = *(src+i*d[1]+j);
+			*pdst = *psrc;
+			psrc++; pdst+=d[0];
 		}
 	}
 }
