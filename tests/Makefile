@@ -1,6 +1,7 @@
 .PHONY: all clean
 
 OBJS  = libtensor_suite.o
+OBJS += default_symmetry_test.o
 OBJS += dimensions_test.o
 OBJS += index_test.o
 OBJS += index_range_test.o
@@ -21,6 +22,8 @@ clean:
 
 libtensor_tests: libtensor_tests.o $(OBJS)
 	$(LD) $(LDFLAGS) $(LIBS) -o libtensor_tests $^ ../../libtest/libtest.a ../libtensor.a
+
+default_symmetry_test.C: default_symmetry_test.h
 
 dimensions_test.C: dimensions_test.h
 

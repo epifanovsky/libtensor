@@ -3,6 +3,7 @@
 
 #include <libtest.h>
 #include <libtensor.h>
+#include "default_symmetry_test.h"
 #include "dimensions_test.h"
 #include "index_test.h"
 #include "index_range_test.h"
@@ -19,6 +20,7 @@ namespace libtensor {
 	\brief Test suite for the tensor library (libtensor)
 
 	This suite runs the following tests:
+	\li libtensor::default_symmetry_test
 	\li libtensor::permutation_test<permutation>
 	\li libtensor::permutation_test<permutation_lehmer>
 	\li libtensor::permutator_test
@@ -30,6 +32,7 @@ namespace libtensor {
 **/
 class libtensor_suite : public libtest::test_suite {
 private:
+	unit_test_factory< default_symmetry_test > m_utf_default_symmetry;
 	unit_test_factory< permutation_test<permutation> > m_utf_permutation;
 //	unit_test_factory< permutation_test<permutation_lehmer> >
 //		m_utf_permutation_lehmer;

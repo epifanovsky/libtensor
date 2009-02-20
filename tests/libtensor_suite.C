@@ -4,6 +4,7 @@
 namespace libtensor {
 
 libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
+	add_test("default_symmetry", m_utf_default_symmetry);
 	add_test("permutation", m_utf_permutation);
 //	add_test("permutation_lehmer", m_utf_permutation_lehmer);
 	add_test("permutator", m_utf_permutator);
