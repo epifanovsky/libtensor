@@ -193,9 +193,23 @@ void tensor_test::test_op_chk_perm::perform(tensor_i<int> &t) throw(exception) {
 	ret_dataptr(t, p);
 
 	perm.permute(0, 1);
+	dim.permute(perm);
 	p = req_dataptr(t, perm);
-	for(size_t j=0; j<dim[0]; j++) {
-		for(size_t i=0; i<dim[1]; i++) {
+	pp = p;
+	for(size_t i=0; i<dim[0]; i++) {
+		for(size_t j=0; j<dim[1]; j++) {
+			if(*pp != j+1) m_ok = false;
+			pp++;
+		}
+	}
+	ret_dataptr(t, p);
+
+	dim.permute(perm);
+	perm.permute(0, 1);
+	p = req_dataptr(t, perm);
+	pp = p;
+	for(size_t i=0; i<dim[0]; i++) {
+		for(size_t j=0; j<dim[1]; j++) {
 			if(*pp != i+1) m_ok = false;
 			pp++;
 		}

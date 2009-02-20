@@ -150,7 +150,7 @@ private:
 	toh m_toh; //!< Tensor operation handler
 	ptr_t m_data; //!< Pointer to data
 	T *m_dataptr; //!< Pointer to checked out data
-	permutation m_perm; //!< Specifies current %permutation of elements
+	permutation m_perm; //!< Current %permutation of the elements
 	bool m_immutable; //!< Indicates whether the %tensor is immutable
 
 public:
@@ -333,7 +333,30 @@ T *tensor<T,Alloc,Perm>::toh::req_dataptr(const permutation &p)
 
 	m_t.m_dataptr = Alloc::lock(m_t.m_data);
 
-	// Permute elements here if necessary
+	// No permutation necessary
+	if(p.equals(m_t.m_perm)) return m_t.m_dataptr;
+
+	// Tensor elements need to be permuted
+
+	typename Alloc::ptr_t data_dst =
+		Alloc::allocate(m_t.get_dims().get_size());
+	T *dataptr_dst = Alloc::lock(data_dst);
+
+	// How elemens need to be permuted from current order
+	permutation perm(m_t.m_perm, true);
+	perm.permute(p);
+
+	// Permuted dimensions
+	dimensions dims(m_t.get_dims());
+	dims.permute(m_t.m_perm);
+
+	Perm::permute(m_t.m_dataptr, dataptr_dst, dims, perm);
+
+	Alloc::unlock(m_t.m_data);
+	Alloc::deallocate(m_t.m_data);
+	m_t.m_data = data_dst;
+	m_t.m_dataptr = dataptr_dst;
+	m_t.m_perm.permute(perm);
 
 	return m_t.m_dataptr;
 }
