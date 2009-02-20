@@ -7,6 +7,7 @@
 #include "index_test.h"
 #include "index_range_test.h"
 #include "permutation_test.h"
+#include "permutator_test.h"
 #include "tensor_test.h"
 #include "tod_set_test.h"
 
@@ -20,6 +21,7 @@ namespace libtensor {
 	This suite runs the following tests:
 	\li libtensor::permutation_test<permutation>
 	\li libtensor::permutation_test<permutation_lehmer>
+	\li libtensor::permutator_test
 	\li libtensor::index_test
 	\li libtensor::index_range_test
 	\li libtensor::dimensions_test
@@ -31,6 +33,7 @@ private:
 	unit_test_factory< permutation_test<permutation> > m_utf_permutation;
 //	unit_test_factory< permutation_test<permutation_lehmer> >
 //		m_utf_permutation_lehmer;
+	unit_test_factory< permutator_test > m_utf_permutator;
 	unit_test_factory< index_test > m_utf_index;
 	unit_test_factory< index_range_test > m_utf_index_range;
 	unit_test_factory< dimensions_test > m_utf_dimensions;
