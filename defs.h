@@ -1,22 +1,16 @@
-#ifndef __TENSOR_DEFS_H
-#define __TENSOR_DEFS_H
+#ifndef LIBTENSOR_DEFS_H
+#define LIBTENSOR_DEFS_H
 
 #include <cstddef>
 
 /**	\brief Tensor library
-	\ingroup tensor
+	\ingroup libtensor
 **/
 namespace libtensor {
 
-const unsigned int max_tensor_order = 6; //!< Limits the maximum order of tensors
-
-/**	\brief Default integral type used for %tensor %index classes
-	\ingroup tensor
-
-	This integral type is used by default for %tensor %index elements and
-	therefore limits the size of tensors along each dimension.
+/**	\brief Limits the maximum order of tensors
 **/
-typedef unsigned long default_index_t;
+const unsigned int max_tensor_order = 6;
 
 }
 
@@ -25,21 +19,8 @@ typedef unsigned long default_index_t;
 #define TENSOR_DEBUG
 #endif
 
-/**	\defgroup tensor Tensor library
+/**	\defgroup libtensor Tensor library
 **/
 
-/**	\defgroup tensor_interfaces Interfaces of the tensor library
-	\ingroup tensor
-**/
-
-/**	\defgroup tensor_tod Tensor operations (tensor element type: double)
-	\ingroup tensor
-**/
-
-/**	\defgroup tensor_vmm Virtual memory manager
-	\ingroup tensor
-
-**/
-
-#endif // __TENSOR_DEFS_H
+#endif // LIBTENSOR_DEFS_H
 
