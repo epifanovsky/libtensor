@@ -57,6 +57,9 @@ public:
 	**/
 	dimensions &permute(const permutation &p) throw(exception);
 
+	//!	\name Index manipulations
+	//@{
+
 	/**	\brief Increments an %index within the %dimensions
 		\param i Index.
 		\return True on success and false if the index cannot be
@@ -71,6 +74,8 @@ public:
 			(last %index is the fastest)
 	**/
 	size_t abs_index(const index &idx) const throw(exception);
+
+	//@}
 
 private:
 	/**	\brief Updates the linear increments for each dimension
