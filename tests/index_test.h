@@ -15,6 +15,9 @@ public:
 private:
 	//!	Tests the constructors
 	void test_ctor() throw(libtest::test_exception);
+
+	//!	Tests the index::less() method
+	void test_less() throw(libtest::test_exception);
 };
 
 } // namespace libtensor

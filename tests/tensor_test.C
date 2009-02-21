@@ -27,11 +27,11 @@ void tensor_test::test_ctor() throw(libtest::test_exception) {
 		fail_test("tensor_test::test_ctor()", __FILE__, __LINE__,
 			"Incorrect tensor order (t1)");
 	}
-	if(t1.get_dims()[0] != 2) {
+	if(t1.get_dims()[0] != 3) {
 		fail_test("tensor_test::test_ctor()", __FILE__, __LINE__,
 			"Incorrect tensor dimension 0 (t1)");
 	}
-	if(t1.get_dims()[1] != 3) {
+	if(t1.get_dims()[1] != 4) {
 		fail_test("tensor_test::test_ctor()", __FILE__, __LINE__,
 			"Incorrect tensor dimension 1 (t1)");
 	}
@@ -47,11 +47,11 @@ void tensor_test::test_ctor() throw(libtest::test_exception) {
 		fail_test("tensor_test::test_ctor()", __FILE__, __LINE__,
 			"Incorrect tensor order (t2)");
 	}
-	if(t2.get_dims()[0] != 2) {
+	if(t2.get_dims()[0] != 3) {
 		fail_test("tensor_test::test_ctor()", __FILE__, __LINE__,
 			"Incorrect tensor dimension 0 (t2)");
 	}
-	if(t2.get_dims()[1] != 3) {
+	if(t2.get_dims()[1] != 4) {
 		fail_test("tensor_test::test_ctor()", __FILE__, __LINE__,
 			"Incorrect tensor dimension 1 (t2)");
 	}
@@ -68,11 +68,11 @@ void tensor_test::test_ctor() throw(libtest::test_exception) {
 		fail_test("tensor_test::test_ctor()", __FILE__, __LINE__,
 			"Incorrect tensor order (t3)");
 	}
-	if(t3.get_dims()[0] != 2) {
+	if(t3.get_dims()[0] != 3) {
 		fail_test("tensor_test::test_ctor()", __FILE__, __LINE__,
 			"Incorrect tensor dimension 0 (t3)");
 	}
-	if(t3.get_dims()[1] != 3) {
+	if(t3.get_dims()[1] != 4) {
 		fail_test("tensor_test::test_ctor()", __FILE__, __LINE__,
 			"Incorrect tensor dimension 1 (t3)");
 	}

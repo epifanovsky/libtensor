@@ -1,17 +1,17 @@
-#ifndef __LIBTENSOR_DIMENSIONS_H
-#define __LIBTENSOR_DIMENSIONS_H
+#ifndef LIBTENSOR_DIMENSIONS_H
+#define LIBTENSOR_DIMENSIONS_H
 
 #include "defs.h"
 #include "exception.h"
 #include "index.h"
 #include "index_range.h"
+#include "permutation.h"
 
 namespace libtensor {
 
 /**	\brief Contains %tensor %dimensions
 
-	Keeps the %index of the last element of a %tensor. Also keeps track
-	of linear increments along each dimension of the %tensor.
+	Stores the number of %tensor elements along each dimension.
 
 	\ingroup libtensor
 **/
@@ -22,6 +22,9 @@ private:
 	size_t m_size; //!< Total size
 
 public:
+	//!	\name Construction and destruction
+	//@{
+
 	/**	\brief Creates a copy of another dimensions object
 		\param d Another dimensions object.
 	**/
@@ -31,6 +34,8 @@ public:
 		\param r Index range
 	**/
 	dimensions(const index_range &r);
+
+	//@}
 
 	/**	\brief Returns the number of dimensions
 	**/
@@ -50,13 +55,27 @@ public:
 
 	/**	\brief Permutes the dimensions
 	**/
-	template<class Perm>
-	dimensions &permute(const Perm &p) throw(exception);
+	dimensions &permute(const permutation &p) throw(exception);
+
+	/**	\brief Increments an %index within the %dimensions
+		\param i Index.
+		\return True on success and false if the index cannot be
+			incremented (points to the last element or out of
+			bounds).
+		\throw exception If the index is incompatible with the
+			dimensions object.
+	**/
+	bool inc_index(index &i) const throw(exception);
 
 private:
 	/**	\brief Updates the linear increments for each dimension
 	**/
 	void update_increments();
+
+	/**     \brief Throws an exception with an error message
+	**/
+	void throw_exc(const char *method, const char *msg) const
+		throw(exception);
 };
 
 inline dimensions::dimensions(const dimensions &d) :
@@ -66,8 +85,10 @@ inline dimensions::dimensions(const dimensions &d) :
 inline dimensions::dimensions(const index_range &r) :
 	m_dims(r.get_end()), m_incs(m_dims.get_order()) {
 	#pragma loop count(6)
-	for(register unsigned int i=0; i<m_dims.get_order(); i++)
+	for(register unsigned int i=0; i<m_dims.get_order(); i++) {
 		m_dims[i] -= r.get_begin()[i];
+		m_dims[i] ++;
+	}
 	update_increments();
 }
 
@@ -89,10 +110,28 @@ inline size_t dimensions::get_size() const {
 	return m_size;
 }
 
-template<class Perm>
-inline dimensions &dimensions::permute(const Perm &p) throw(exception) {
+inline dimensions &dimensions::permute(const permutation &p) throw(exception) {
 	m_dims.permute(p);
 	update_increments();
+	return *this;
+}
+
+inline bool dimensions::inc_index(index &i) const throw(exception) {
+	if(m_dims.get_order() != i.get_order())
+		throw_exc("inc_index(index&)", "Incompatible index");
+	if(m_dims.less(i) || m_dims.equals(i)) return false;
+	size_t n = m_dims.get_order() - 1;
+	bool done = false;
+	while(!done && n!=0) {
+		if(i[n] < m_dims[n]-1) {
+			i[n]++;
+			for(size_t j=n+1; j<m_dims.get_order(); j++) i[j]=0;
+			done = true;
+		} else {
+			n--;
+		}
+	}
+	return done;
 }
 
 inline void dimensions::update_increments() {
@@ -105,7 +144,14 @@ inline void dimensions::update_increments() {
 	m_size = sz;
 }
 
+inline void dimensions::throw_exc(const char *method, const char *msg) const
+	throw(exception) {
+	char s[1024];
+	snprintf(s, 1024, "[libtensor::dimensions::%s] %s.", method, msg);
+	throw exception(s);
+}
+
 } // namespace libtensor
 
-#endif // __LIBTENSOR_DIMENSIONS_H
+#endif // LIBTENSOR_DIMENSIONS_H
 

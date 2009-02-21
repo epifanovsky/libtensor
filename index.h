@@ -1,8 +1,9 @@
-#ifndef __LIBTENSOR_INDEX_H
-#define __LIBTENSOR_INDEX_H
+#ifndef LIBTENSOR_INDEX_H
+#define LIBTENSOR_INDEX_H
 
 #include "defs.h"
 #include "exception.h"
+#include "permutation.h"
 
 namespace libtensor {
 
@@ -24,6 +25,9 @@ private:
 	size_t m_idx[max_tensor_order]; //!< Tensor %index
 
 public:
+	//!	\name Construction and destruction
+	//@{
+
 	/**	\brief Creates the %index of the first element of a %tensor
 			 with a given order
 		\param order Tensor order.
@@ -35,9 +39,11 @@ public:
 	**/
 	index(const index &idx);
 
-	/**	\brief Virtual destructor
+	/**	\brief Destructor
 	**/
-	virtual ~index();
+	~index();
+
+	//@}
 
 	/**	\brief Returns the order of the %index
 
@@ -51,6 +57,12 @@ public:
 	**/
 	bool equals(const index &idx) const;
 
+	/**	\brief Compares two indexes
+		\return true if this %index is smaller than the other one,
+			false otherwise.
+	**/
+	bool less(const index &idx) const;
+
 	/**	\brief Lvalue individual element accessor
 
 		Returns an individual %index element at the position \e i as an
@@ -60,7 +72,7 @@ public:
 		\return Reference to the element.
 		\throw exception If the position is out of range.
 	**/
-	size_t &operator[](const unsigned int i) throw(exception);
+	size_t &operator[](const size_t i) throw(exception);
 
 	/**	\brief Rvalue individual element accessor
 
@@ -71,7 +83,7 @@ public:
 		\return Element value.
 		\throw exception If the position is out of range.
 	**/
-	size_t operator[](const unsigned int i) const throw(exception);
+	size_t operator[](const size_t i) const throw(exception);
 
 	/**	\brief Permutes the elements of the %index
 		\param p Permutation.
@@ -79,8 +91,7 @@ public:
 		\throw exception If the %index and the %permutation are
 			incompatible.
 	**/
-	template<class Perm>
-	index &permute(const Perm &p) throw(exception);
+	index &permute(const permutation &p) throw(exception);
 
 private:
 	/**	\brief Throws an exception
@@ -100,7 +111,7 @@ inline index::index(const size_t order) {
 
 inline index::index(const index &idx) : m_order(idx.m_order) {
 	#pragma loop count(6)
-	for(register unsigned int i=0; i<m_order; i++) m_idx[i] = idx.m_idx[i];
+	for(register size_t i=0; i<m_order; i++) m_idx[i] = idx.m_idx[i];
 }
 
 inline index::~index() {
@@ -113,9 +124,19 @@ inline size_t index::get_order() const {
 inline bool index::equals(const index &idx) const {
 	if(m_order != idx.m_order) return false;
 	#pragma loop count(6)
-	for(register unsigned int i=0; i<m_order; i++)
+	for(register size_t i=0; i<m_order; i++)
 		if(m_idx[i] != idx.m_idx[i]) return false;
 	return true;
+}
+
+inline bool index::less(const index &idx) const {
+	if(m_order != idx.m_order) return m_order<idx.m_order;
+	#pragma loop count(6)
+	for(register size_t i=0; i<m_order; i++) {
+		if(m_idx[i] < idx.m_idx[i]) return true;
+		if(m_idx[i] > idx.m_idx[i]) return false;
+	}
+	return false;
 }
 
 inline size_t &index::operator[](const size_t i) throw(exception) {
@@ -136,11 +157,12 @@ inline size_t index::operator[](const size_t i) const throw(exception) {
 	return m_idx[i];
 }
 
-template<class Perm>
-inline index &index::permute(const Perm &p) throw(exception) {
+inline index &index::permute(const permutation &p) throw(exception) {
 #ifdef TENSOR_DEBUG
-	if(m_order != p.get_order())
-		throw_exc("permute(const Perm&)", "Incompatible permutation");
+	if(m_order != p.get_order()) {
+		throw_exc("permute(const permutation&)",
+			"Incompatible permutation");
+	}
 #endif
 	p.apply(m_order, m_idx);
 	return *this;
@@ -155,5 +177,5 @@ inline void index::throw_exc(const char *method, const char *msg) const
 
 } // namespace libtensor
 
-#endif // __LIBTENSOR_INDEX_H
+#endif // LIBTENSOR_INDEX_H
 
