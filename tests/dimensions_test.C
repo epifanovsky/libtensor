@@ -103,5 +103,27 @@ void dimensions_test::test_inc_index() throw(libtest::test_exception) {
 	}
 }
 
+void dimensions_test::test_abs_index() throw(libtest::test_exception) {
+	index i1(2), i2(2);
+	i2[0]=9; i2[1]=9;
+	index_range ir(i1,i2);
+	dimensions d(ir);
+
+	if(d.abs_index(i1)!=0) {
+		fail_test("dimensions::test_abs_index()", __FILE__, __LINE__,
+			"abs(0,0) in (10,10) doesn't return 0");
+	}
+	i1[0]=1; i1[1]=0;
+	if(d.abs_index(i1)!=10) {
+		fail_test("dimensions::test_abs_index()", __FILE__, __LINE__,
+			"abs(1,0) in (10,10) doesn't return 10");
+	}
+	i1[0]=9; i1[1]=9;
+	if(d.abs_index(i1)!=99) {
+		fail_test("dimensions::test_abs_index()", __FILE__, __LINE__,
+			"abs(9,9) in (10,10) doesn't return 99");
+	}
+}
+
 } // namespace libtensor
 

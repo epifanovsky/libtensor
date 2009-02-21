@@ -18,6 +18,9 @@ private:
 
 	//!	Tests the dimensions::inc_index() method
 	void test_inc_index() throw(libtest::test_exception);
+
+	//!	Tests the dimensions::abs_index() method
+	void test_abs_index() throw(libtest::test_exception);
 };
 
 } // namespace libtensor

@@ -65,7 +65,12 @@ public:
 		\throw exception If the index is incompatible with the
 			dimensions object.
 	**/
-	bool inc_index(index &i) const throw(exception);
+	bool inc_index(index &idx) const throw(exception);
+
+	/**	\brief Returns the number of the element in a sequence
+			(last %index is the fastest)
+	**/
+	size_t abs_index(const index &idx) const throw(exception);
 
 private:
 	/**	\brief Updates the linear increments for each dimension
@@ -114,24 +119,6 @@ inline dimensions &dimensions::permute(const permutation &p) throw(exception) {
 	m_dims.permute(p);
 	update_increments();
 	return *this;
-}
-
-inline bool dimensions::inc_index(index &i) const throw(exception) {
-	if(m_dims.get_order() != i.get_order())
-		throw_exc("inc_index(index&)", "Incompatible index");
-	if(m_dims.less(i) || m_dims.equals(i)) return false;
-	size_t n = m_dims.get_order() - 1;
-	bool done = false;
-	while(!done && n!=0) {
-		if(i[n] < m_dims[n]-1) {
-			i[n]++;
-			for(size_t j=n+1; j<m_dims.get_order(); j++) i[j]=0;
-			done = true;
-		} else {
-			n--;
-		}
-	}
-	return done;
 }
 
 inline void dimensions::update_increments() {
