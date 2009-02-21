@@ -10,7 +10,7 @@ namespace libtensor {
 
 template<typename T> class tensor_operation_dispatcher;
 
-/**	\brief Abstract %tensor interface
+/**	\brief Tensor interface
 	\param T Tensor element type
 
 	\ingroup libtensor
