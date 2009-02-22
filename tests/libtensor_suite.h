@@ -1,5 +1,5 @@
-#ifndef __LIBTENSOR_LIBTENSOR_SUITE_H
-#define __LIBTENSOR_LIBTENSOR_SUITE_H
+#ifndef LIBTENSOR_LIBTENSOR_SUITE_H
+#define LIBTENSOR_LIBTENSOR_SUITE_H
 
 #include <libtest.h>
 #include <libtensor.h>
@@ -7,6 +7,7 @@
 #include "dimensions_test.h"
 #include "index_test.h"
 #include "index_range_test.h"
+#include "lehmer_code_test.h"
 #include "permutation_test.h"
 #include "permutator_test.h"
 #include "tensor_test.h"
@@ -23,6 +24,7 @@ namespace libtensor {
 	\li libtensor::default_symmetry_test
 	\li libtensor::permutation_test<permutation>
 	\li libtensor::permutation_test<permutation_lehmer>
+	\li libtensor::lehmer_code_test
 	\li libtensor::permutator_test
 	\li libtensor::index_test
 	\li libtensor::index_range_test
@@ -36,6 +38,7 @@ private:
 	unit_test_factory< permutation_test<permutation> > m_utf_permutation;
 //	unit_test_factory< permutation_test<permutation_lehmer> >
 //		m_utf_permutation_lehmer;
+	unit_test_factory< lehmer_code_test > m_utf_lehmer_code;
 	unit_test_factory< permutator_test > m_utf_permutator;
 	unit_test_factory< index_test > m_utf_index;
 	unit_test_factory< index_range_test > m_utf_index_range;
@@ -50,5 +53,5 @@ public:
 
 } // namespace libtensor
 
-#endif // __LIBTENSOR_LIBTENSOR_SUITE_H
+#endif // LIBTENSOR_LIBTENSOR_SUITE_H
 

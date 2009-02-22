@@ -6,7 +6,9 @@ include Makefile.inc
 
 INCLUDE = -I. -I../libvmm
 
-OBJS = tod_set.o
+OBJS  = dimensions.o
+OBJS += lehmer_code.o
+OBJS += tod_set.o
 
 libtensor.a: $(OBJS)
 	echo $?
@@ -22,6 +24,8 @@ clean:
 docs:
 	doxygen
 	scp -Cpr docs/html/* hogwarts.usc.edu:public_html/libtensor_docs/
+
+dimensions.C: dimensions.h
 
 dimensions.h: defs.h exception.h index.h index_range.h
 

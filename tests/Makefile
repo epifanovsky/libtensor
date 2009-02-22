@@ -5,6 +5,7 @@ OBJS += default_symmetry_test.o
 OBJS += dimensions_test.o
 OBJS += index_test.o
 OBJS += index_range_test.o
+OBJS += lehmer_code_test.o
 OBJS += permutator_test.o
 OBJS += tensor_test.o
 OBJS += tod_set_test.o
@@ -30,6 +31,8 @@ dimensions_test.C: dimensions_test.h
 index_test.C: index_test.h
 
 index_range_test.C: index_range_test.h
+
+lehmer_code_test.C: lehmer_code_test.h
 
 permutator_test.C: permutator_test.h
 
