@@ -1,5 +1,5 @@
-#ifndef __LIBTENSOR_PERMUTATION_H
-#define __LIBTENSOR_PERMUTATION_H
+#ifndef LIBTENSOR_PERMUTATION_H
+#define LIBTENSOR_PERMUTATION_H
 
 #include <cstdio>
 
@@ -165,50 +165,54 @@ namespace libtensor {
 
 **/
 
-/**	\brief Tensor %permutation
+/**	\brief Permutation of tensor indexes
 
 	<b>Overview</b>
 
-	A permutation object contains a permuted order or %tensor indices starting with 0.
-	A unit %permutation doesn't change the order of indices, it is represented by a set
-	of consecutive indices.
+	A permutation object contains a permuted order or %tensor indices
+	starting with 0. The identity %permutation doesn't change the order
+	of the indexes.
 
-	For example, a fourth-order %tensor %index \e ijkl and a unit %permutation (0123).
-	The %permutation elements are indices of the permuted entity in the unpermuted
-	entity. The unit %permutation therefore doesn't change the order of indices.
-	If we swap the first two indices, the %permutation becomes (1023), and the
-	%tensor %index becomes \e jikl. If we then switch the first two pairs of indices,
-	the %permutation becomes (2310), and the %index is \e klji.
+	For example, a fourth-order %tensor %index \e ijkl and an identity
+	%permutation (0123). The %permutation elements are indexes of the
+	permuted entity in the unpermuted entity. The identity %permutation
+	therefore doesn't change the order of the indexes. If we swap the first
+	two indices, the %permutation becomes (1023), and the %tensor %index
+	becomes \e jikl. If we then switch the first two pairs of indices, the
+	%permutation becomes (2310), and the %index is \e klji.
 
-	This example shows the above operations and prints out the resulting %index.
+	This example shows the above operations and prints out the resulting
+	%index.
 	\code
-	char *idx = "ijkl"; // Starting index
-	char perm_idx[5]; // Permuted index
+	char idx[5], perm_idx[5];
+	strcpy(idx, "ijkl");
+	strcpy(perm_idx, "ijkl");
 	permutation p(4);
 
 	// Operations on the permutation p
-	p.permute(0,1);
-	p.permute_pair(0,1);
+	p.permute(0,1); // jikl
+	p.permute(0,2).permute(1,3); // klji
 
-	for(int i=0; i<4; i++) perm_idx[i] = idx[p[i]];
-	perm_idx[4] = '\0';
-	printf("%s -> %s", idx, perm_idx);
+	p.apply(4, idx, perm_idx);
+	printf("%s -> %s", idx, perm_idx); // prints ijkl -> klji
 	\endcode
 
 	<b>Inverse permutations</b>
 
-	The inverse %permutation applied to the original %permutation gives a unit
-	%permutation. The inverse of a unit %permutation is a unit %permutation.
+	The inverse %permutation applied to the original %permutation yields
+	the identity %permutation. The inverse of the identity %permutation or
+	an elementary %permutation (%permutation of just two indexes) is the
+	%permutation itself.
 	\f[ \mathcal{P} \mathcal{P}^{-1} = 1 \f]
 
-	To obtain an inverse %permutation, the copy constructor or the invert() method
-	can be used:
+	To obtain the inverse %permutation, the copy constructor or the
+	invert() method can be used:
 	\code
 	permutation p(4);
 
 	// Operations on the permutation p
 	p.permute(0,1); // ijkl -> jikl
-	p.permute_pair(0,1); // jikl -> klji
+	p.permute(0,2).permute(1,3); // jikl -> klji
 
 	permutation pc(p); // Plain copy
 	permutation pi(p, true); // Inverse copy
@@ -218,27 +222,23 @@ namespace libtensor {
 	bool b_equals = pc.equals(pi); // true
 
 	p.permute(pi); // p is now a unit permutation
-	bool b_unit = p.is_unit(); // true
+	bool b_unit = p.is_identity(); // true
 	\endcode
-
-	<b>Permutables</b>
-
-	Entities that can be permuted are called permutables an implement the interface
-	tensor::permutable_i. The order of the permutable and the %permutation must be
-	the same for the operation to be successful.
 
 	\ingroup libtensor
 **/
 class permutation {
 private:
-	unsigned int m_order; //!< Tensor order
-	unsigned int m_idx[max_tensor_order]; //!< Permuted indices
+	size_t m_order; //!< Tensor order
+	size_t m_idx[max_tensor_order]; //!< Permuted indices
 
 public:
 	/**	\brief Creates a unit %permutation of a specified order
 		\param order Tensor order.
+		\param lehmer Lehmer code.
 	**/
-	permutation(const unsigned int order) throw(exception);
+	permutation(const size_t order, const size_t lehmer = 0)
+		throw(exception);
 
 	/**	\brief Creates a copy or an inverted copy of a %permutation
 
@@ -330,23 +330,32 @@ private:
 		throw(exception);
 };
 
-inline permutation::permutation(const unsigned int order) throw(exception) {
+inline permutation::permutation(const size_t order, const size_t lehmer)
+	throw(exception) {
 #ifdef TENSOR_DEBUG
-	if(order == 0) throw_exc("permutation(const uint)", "Invalid permutation order");
+	if(order == 0) {
+		throw_exc("permutation(const size_t)",
+			"Invalid permutation order");
+	}
 #endif
 	m_order = order;
-	#pragma loop count(6)
-	for(register unsigned int i=0; i<order; i++) m_idx[i] = i;
+	if(lehmer == 0) {
+		#pragma loop count(6)
+		for(register size_t i=0; i<order; i++) m_idx[i] = i;
+	} else {
+		throw_exc("permutation(const size_t)",
+			"Lehmer codes are not implemented yet");
+	}
 }
 
 inline permutation::permutation(const permutation &p, const bool b_inverse) {
 	m_order = p.m_order;
 	if(b_inverse) {
 		#pragma loop count(6)
-		for(register unsigned int i=0; i<m_order; i++) m_idx[p.m_idx[i]] = i;
+		for(register size_t i=0; i<m_order; i++) m_idx[p.m_idx[i]] = i;
 	} else {
 		#pragma loop count(6)
-		for(register unsigned int i=0; i<m_order; i++) m_idx[i] = p.m_idx[i];
+		for(register size_t i=0; i<m_order; i++) m_idx[i] = p.m_idx[i];
 	}
 }
 
@@ -362,11 +371,11 @@ inline permutation &permutation::permute(const permutation &p) throw(exception) 
 	if(m_order != p.m_order) throw_exc("permute(const permutation&)",
 		"Incompatible permutation");
 #endif
-	unsigned int idx_cp[max_tensor_order];
+	size_t idx_cp[max_tensor_order];
 	#pragma loop count(6)
-	for(register unsigned int i=0; i<m_order; i++) idx_cp[i] = m_idx[i];
+	for(register size_t i=0; i<m_order; i++) idx_cp[i] = m_idx[i];
 	#pragma loop count(6)
-	for(register unsigned int i=0; i<m_order; i++) m_idx[i] = idx_cp[p.m_idx[i]];
+	for(register size_t i=0; i<m_order; i++) m_idx[i] = idx_cp[p.m_idx[i]];
 	return *this;
 }
 
@@ -379,23 +388,23 @@ inline permutation &permutation::permute(const size_t i, const size_t j)
 	}
 #endif
 	if(i == j) return *this;
-	register unsigned int i_cp = m_idx[i];
+	register size_t i_cp = m_idx[i];
 	m_idx[i] = m_idx[j]; m_idx[j] = i_cp;
 	return *this;
 }
 
 inline permutation &permutation::invert() {
-	unsigned int idx_cp[max_tensor_order];
+	size_t idx_cp[max_tensor_order];
 	#pragma loop count(6)
-	for(register unsigned int i=0; i<m_order; i++) idx_cp[i] = m_idx[i];
+	for(register size_t i=0; i<m_order; i++) idx_cp[i] = m_idx[i];
 	#pragma loop count(6)
-	for(register unsigned int i=0; i<m_order; i++) m_idx[idx_cp[i]] = i;
+	for(register size_t i=0; i<m_order; i++) m_idx[idx_cp[i]] = i;
 	return *this;
 }
 
 inline bool permutation::is_identity() const {
 	#pragma loop count(6)
-	for(register unsigned int i=0; i<m_order; i++)
+	for(register size_t i=0; i<m_order; i++)
 		if(m_idx[i] != i) return false;
 	return true;
 }
@@ -461,5 +470,5 @@ inline void permutation::throw_exc(const char *method, const char *msg) const
 
 } // namespace libtensor
 
-#endif // __LIBTENSOR_PERMUTATION_H
+#endif // LIBTENSOR_PERMUTATION_H
 
