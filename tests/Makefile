@@ -6,6 +6,7 @@ OBJS += index_range_test.o
 OBJS += lehmer_code_test.o
 OBJS += permutation_test.o
 OBJS += permutator_test.o
+OBJS += symmetry_test.o
 OBJS += tensor_test.o
 OBJS += tod_set_test.o
 
@@ -36,6 +37,8 @@ lehmer_code_test.C: lehmer_code_test.h
 permutation_test.C: permutation_test.h
 
 permutator_test.C: permutator_test.h
+
+symmetry_test.C: symmetry_test.h
 
 tensor_test.C: tensor_test.h
 
