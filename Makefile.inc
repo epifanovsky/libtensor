@@ -1,9 +1,10 @@
-CPP = icpc
-LD = icpc
-CPPFLAGS = -g -DDEBUG_CHECK 
+CPP = g++
+LD = g++
+CPPFLAGS = -g -DDEBUG_CHECK -DUSE_BLAS
 LDFLAGS = -g
 INCLUDE =
-LIBS =
+#LIBS = -lmkl -lguide -lpthread
+LIBS = -lblas
 
 %.o: %.C; $(CPP) $(CPPFLAGS) $(INCLUDE) -c $<
 

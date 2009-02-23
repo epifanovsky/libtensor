@@ -112,7 +112,7 @@ inline size_t dimensions::operator[](const size_t i) const
 	return m_dims[i];
 }
 
-inline unsigned int dimensions::get_order() const {
+inline size_t dimensions::get_order() const {
 	return m_dims.get_order();
 }
 

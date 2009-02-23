@@ -17,7 +17,7 @@ template<typename T> class tensor_operation_dispatcher;
 **/
 template<typename T>
 class tensor_i {
-	friend tensor_operation_dispatcher<T>;
+	friend class tensor_operation_dispatcher<T>;
 
 public:
 	/**	\brief Returns the %dimensions of the %tensor

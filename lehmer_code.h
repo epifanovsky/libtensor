@@ -10,7 +10,7 @@
 namespace libtensor {
 
 class lehmer_code : public libvmm::singleton<lehmer_code> {
-	friend libvmm::singleton<lehmer_code>;
+	friend class libvmm::singleton<lehmer_code>;
 
 protected:
 	//!	\name Construction and destruction

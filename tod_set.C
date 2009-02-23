@@ -1,4 +1,3 @@
-#include <mkl.h>
 #include "tod_set.h"
 
 namespace libtensor {

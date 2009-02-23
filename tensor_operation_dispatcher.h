@@ -19,7 +19,7 @@ template<typename T>
 class tensor_operation_dispatcher :
 	public libvmm::singleton< tensor_operation_dispatcher<T> > {
 
-	friend libvmm::singleton< tensor_operation_dispatcher<T> >;
+	friend class libvmm::singleton< tensor_operation_dispatcher<T> >;
 
 public:
 	typedef T element_t; //!< Tensor element type

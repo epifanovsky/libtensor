@@ -15,7 +15,6 @@ all: libtensor_tests
 include ../Makefile.inc
 
 INCLUDE = -I.. -I../../libtest -I../../libvmm
-LIBS = -lmkl -lguide -lpthread
 
 clean:
 	rm -f *.[ao]

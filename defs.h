@@ -19,6 +19,14 @@ const unsigned int max_tensor_order = 6;
 #define TENSOR_DEBUG
 #endif
 
+#ifdef USE_MKL
+#include <mkl.h>
+#undef USE_BLAS
+#endif
+#ifdef USE_BLAS
+#include <cblas.h>
+#endif
+
 /**	\defgroup libtensor Tensor library
 **/
 

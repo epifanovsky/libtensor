@@ -1,7 +1,6 @@
-#ifndef __LIBTENSOR_PERMUTATOR_H
-#define __LIBTENSOR_PERMUTATOR_H
+#ifndef LIBTENSOR_PERMUTATOR_H
+#define LIBTENSOR_PERMUTATOR_H
 
-#include <mkl.h>
 #include "defs.h"
 #include "exception.h"
 #include "dimensions.h"
@@ -56,21 +55,11 @@ void permutator<T>::permute2(const T *src, T *dst, const dimensions &d) {
 	}
 }
 
-template<>
-void permutator<double>::permute2(const double *src, double *dst,
-	const dimensions &d) {
-
-	const double *psrc = src;
-	for(size_t i=0; i<d[0]; i++) {
-		cblas_dcopy(d[1], psrc, 1, dst+i, d[0]);
-		psrc += d[1];
-	}
-}
-
 template<typename T>
 inline void permutator<T>::permute4(const T *src, T *dst,
 	const dimensions &d, const permutation &p) {
 
+/*
 	dimensions dperm(d); dperm.permute(p);
 
 	register const T *psrc = src;
@@ -97,9 +86,10 @@ inline void permutator<T>::permute4(const T *src, T *dst,
 		}
 		pdsti += iinc;
 	}
+*/
 }
 
 } // namespace libtensor
 
-#endif // __LIBTENSOR_PERMUTATOR_H
+#endif // LIBTENSOR_PERMUTATOR_H
 
