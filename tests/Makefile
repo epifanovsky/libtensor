@@ -10,7 +10,9 @@ OBJS += permutator_test.o
 OBJS += tensor_test.o
 OBJS += tod_set_test.o
 
-all: libtensor_tests
+all: ../Makefile.inc libtensor_tests
+
+../Makefile.inc:
 
 include ../Makefile.inc
 

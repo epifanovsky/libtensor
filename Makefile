@@ -1,6 +1,10 @@
-.PHONY: all clean tests docs
+.PHONY: all
+all: Makefile.inc libtensor.a tests
 
-all: libtensor.a tests
+Makefile.inc:
+	@echo "-----------------------------------------------"
+	@echo "Use Makefile.inc-sample to create Makefile.inc."
+	@echo "-----------------------------------------------"
 
 include Makefile.inc
 
@@ -15,13 +19,16 @@ libtensor.a: $(OBJS)
 	echo $?
 	ar -r libtensor.a $?
 
-tests: libtensor.a
+.PHONY: tests
+tests: Makefile.inc libtensor.a
 	cd tests && $(MAKE) all
 
+.PHONY: clean
 clean:
 	rm -f *.[ao]
 	cd tests && $(MAKE) clean
  
+.PHONY: docs
 docs:
 	doxygen
 	scp -Cpr docs/html/* hogwarts.usc.edu:public_html/libtensor_docs/
