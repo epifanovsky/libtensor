@@ -10,13 +10,15 @@ namespace libtensor {
 
 /**	\brief Limits the maximum order of tensors
 **/
-const unsigned int max_tensor_order = 6;
+const size_t max_tensor_order = 6;
 
 }
 
 #undef TENSOR_DEBUG
+#undef LIBTENSOR_DEBUG
 #ifdef DEBUG_CHECK
 #define TENSOR_DEBUG
+#define LIBTENSOR_DEBUG
 #endif
 
 #ifdef USE_MKL

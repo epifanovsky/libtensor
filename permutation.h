@@ -235,10 +235,8 @@ private:
 public:
 	/**	\brief Creates a unit %permutation of a specified order
 		\param order Tensor order.
-		\param lehmer Lehmer code.
 	**/
-	permutation(const size_t order, const size_t lehmer = 0)
-		throw(exception);
+	permutation(const size_t order) throw(exception);
 
 	/**	\brief Creates a copy or an inverted copy of a %permutation
 
@@ -330,8 +328,7 @@ private:
 		throw(exception);
 };
 
-inline permutation::permutation(const size_t order, const size_t lehmer)
-	throw(exception) {
+inline permutation::permutation(const size_t order) throw(exception) {
 #ifdef TENSOR_DEBUG
 	if(order == 0) {
 		throw_exc("permutation(const size_t)",
@@ -339,13 +336,8 @@ inline permutation::permutation(const size_t order, const size_t lehmer)
 	}
 #endif
 	m_order = order;
-	if(lehmer == 0) {
-		#pragma loop count(6)
-		for(register size_t i=0; i<order; i++) m_idx[i] = i;
-	} else {
-		throw_exc("permutation(const size_t)",
-			"Lehmer codes are not implemented yet");
-	}
+	#pragma loop count(6)
+	for(register size_t i=0; i<order; i++) m_idx[i] = i;
 }
 
 inline permutation::permutation(const permutation &p, const bool b_inverse) {

@@ -19,7 +19,7 @@ clean:
 	rm -f *.[ao]
 	rm -f libtensor_tests
 
-libtensor_tests: libtensor_tests.o $(OBJS)
+libtensor_tests: libtensor_tests.o $(OBJS) ../libtensor.a
 	$(LD) $(LDFLAGS) $(LIBS) -o libtensor_tests $^ ../../libtest/libtest.a ../libtensor.a
 
 default_symmetry_test.C: default_symmetry_test.h
@@ -30,7 +30,7 @@ index_test.C: index_test.h
 
 index_range_test.C: index_range_test.h
 
-lehmer_code_test.C: lehmer_code_test.h
+lehmer_code_test.C: lehmer_code_test.h ../lehmer_code.h
 
 permutator_test.C: permutator_test.h
 
