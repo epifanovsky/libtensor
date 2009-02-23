@@ -1,12 +1,14 @@
-#ifndef __LIBTENSOR_INDEX_TEST_H
-#define __LIBTENSOR_INDEX_TEST_H
+#ifndef LIBTENSOR_INDEX_TEST_H
+#define LIBTENSOR_INDEX_TEST_H
 
 #include <libtest.h>
 #include "index.h"
 
 namespace libtensor {
 
-/**	\brief Tests the index class
+/**	\brief Tests the libtensor::index class
+
+	\ingroup libtensor_tests
 **/
 class index_test : public libtest::unit_test {
 public:
@@ -22,5 +24,5 @@ private:
 
 } // namespace libtensor
 
-#endif // __LIBTENSOR_INDEX_TEST_H
+#endif // LIBTENSOR_INDEX_TEST_H
 

@@ -1,5 +1,5 @@
-#ifndef __LIBTENSOR_TENSOR_TEST_H
-#define __LIBTENSOR_TENSOR_TEST_H
+#ifndef LIBTENSOR_TENSOR_TEST_H
+#define LIBTENSOR_TENSOR_TEST_H
 
 #include <libtest.h>
 #include "tensor.h"
@@ -8,6 +8,8 @@
 namespace libtensor {
 
 /**	\brief Tests the libtensor::tensor class
+
+	\ingroup libtensor_tests
 **/
 class tensor_test : public libtest::unit_test {
 public:
@@ -77,5 +79,5 @@ private:
 
 } // namespace libtensor
 
-#endif // __LIBTENSOR_TENSOR_TEST_H
+#endif // LIBTENSOR_TENSOR_TEST_H
 

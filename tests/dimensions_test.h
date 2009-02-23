@@ -1,12 +1,14 @@
-#ifndef __LIBTENSOR_DIMENSIONS_TEST_H
-#define __LIBTENSOR_DIMENSIONS_TEST_H
+#ifndef LIBTENSOR_DIMENSIONS_TEST_H
+#define LIBTENSOR_DIMENSIONS_TEST_H
 
 #include <libtest.h>
 #include "dimensions.h"
 
 namespace libtensor {
 
-/**	\brief Tests the dimensions class
+/**	\brief Tests the libtensor::dimensions class
+
+	\ingroup libtensor_tests
 **/
 class dimensions_test : public libtest::unit_test {
 public:
@@ -25,5 +27,5 @@ private:
 
 } // namespace libtensor
 
-#endif // __LIBTENSOR_DIMENSIONS_TEST_H
+#endif // LIBTENSOR_DIMENSIONS_TEST_H
 

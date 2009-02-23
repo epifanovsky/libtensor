@@ -7,6 +7,8 @@
 namespace libtensor {
 
 /**	\brief Tests the libtensor::lehmer_code class
+
+	\ingroup libtensor_tests
 **/
 class lehmer_code_test : public libtest::unit_test {
 public:

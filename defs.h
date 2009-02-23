@@ -32,5 +32,10 @@ const size_t max_tensor_order = 6;
 /**	\defgroup libtensor Tensor library
 **/
 
+/**	\defgroup libtensor_tests Tests
+	\brief Unit tests of individual classes
+	\ingroup libtensor
+**/
+
 #endif // LIBTENSOR_DEFS_H
 
