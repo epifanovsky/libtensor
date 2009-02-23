@@ -1,5 +1,3 @@
-.PHONY: all clean
-
 OBJS  = libtensor_suite.o
 OBJS += default_symmetry_test.o
 OBJS += dimensions_test.o
@@ -10,14 +8,13 @@ OBJS += permutator_test.o
 OBJS += tensor_test.o
 OBJS += tod_set_test.o
 
-all: ../Makefile.inc libtensor_tests
-
-../Makefile.inc:
+.PHONY: all
+all: libtensor_tests
 
 include ../Makefile.inc
-
 INCLUDE = -I.. -I../../libtest -I../../libvmm
 
+.PHONY: clean
 clean:
 	rm -f *.[ao]
 	rm -f libtensor_tests
