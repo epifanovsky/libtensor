@@ -10,6 +10,40 @@
 
 namespace libtensor {
 
+/**	\brief Lehmer code for permutations: encoding and decoding
+
+	Methods in this class convert permutations into single integers and
+	back using a factorial representation of Lehmer code.
+
+	<b>Lehmer code</b>
+
+	In an effort to represent permutations as single integers and not
+	sequences of integers, the concept of the Lehmer code needs to be
+	introduced first.
+
+	Each permutation has a unique reduced representation that is based
+	on the order of elementary transpositions that have to be applied to
+	a sequence.
+
+	Reference:
+	A. Kerber, Applied Finite Group Actions, Springer-Verlag 1999
+
+	<b>Representation of Lehmer code by integers</b>
+
+	The Lehmer code can be thought of in the framework of the factorial
+	number system. Unlike the usual number system, in which a digit can
+	run from 0 to n-1, where n is the base (usually 10). So, the
+	denominations of the places come in powers of n. In the factorial
+	system, the denominations of the places are the factorials of their
+	order in the sequence: 1, 2, 6, 24, and so on. This system works
+	because 1!+2!+3!+...+k!=(k+1)!-1.
+
+	The numbers in the factorial system can be represented in the
+	conventional system (binary in computers), and therefore single
+	integers can be used to uniquely identify permutations.
+
+	\ingroup libtensor
+**/
 class lehmer_code : public libvmm::singleton<lehmer_code> {
 	friend class libvmm::singleton<lehmer_code>;
 

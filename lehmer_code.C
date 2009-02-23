@@ -39,39 +39,34 @@ const permutation &lehmer_code::code2perm(const size_t order,
 	}
 #endif // LIBTENSOR_DEBUG
 	permutation *p = (m_codes[order-2])[code];
-	if(p == NULL) {
-		p = new permutation(order);
+	if(p) return *p;
 
-		size_t c = code;
-		size_t seq[order-1];
-		size_t i=order-1;
-		do {
-			i--;
-			seq[i] = c/m_fact[i];
-			c = c%m_fact[i];
-		} while(i != 0);
+	p = new permutation(order);
 
-		//printf("order=%lu, code=%lu: <", order, code);
-		//for(size_t j=order-1; j!=0; j--) printf("%lu", seq[j-1]);
-		//printf(">\n");
+	size_t c = code;
+	size_t seq[order-1];
+	size_t i = order-1;
+	do {
+		i--;
+		seq[i] = c/m_fact[i];
+		c = c%m_fact[i];
+	} while(i != 0);
 
-		bool done = false;
-		do {
-			i = 0;
-			while(i<order-1 && seq[i]==0) i++;
-			if(i!=order-1) {
-				//printf("sigma_%lu\n", order-i-2);
-				p->permute(order-i-2, order-i-1);
-				if(i==0) seq[i]=0;
-				else { seq[i-1]=seq[i]-1; seq[i]=0; }
-			} else {
-				done = true;
-			}
-		} while(!done);
-		p->invert();
+	bool done = false;
+	do {
+		i = 0;
+		while(i<order-1 && seq[i]==0) i++;
+		if(i!=order-1) {
+			p->permute(order-i-2, order-i-1);
+			if(i==0) seq[i]=0;
+			else { seq[i-1]=seq[i]-1; seq[i]=0; }
+		} else {
+			done = true;
+		}
+	} while(!done);
+	p->invert();
 
-		(m_codes[order-2])[code] = p;
-	}
+	(m_codes[order-2])[code] = p;
 	return *p;
 }
 
