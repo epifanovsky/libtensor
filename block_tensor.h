@@ -10,6 +10,11 @@ namespace libtensor {
 
 /**	\brief Block %tensor
 
+	<b>Request to lower symmetry (req_lower_symmetry)</b>
+
+	Lowers the permutational symmetry of the block tensor to the requested
+	or lower, if necessary.
+
 	\ingroup libtensor
 **/
 template<typename T>

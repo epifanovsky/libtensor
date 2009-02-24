@@ -35,5 +35,15 @@ size_t dimensions::abs_index(const index &idx) const throw(exception) {
 	return abs;
 }
 
+void dimensions::abs_index(const size_t abs, index &idx) const
+	throw(exception) {
+	size_t a = abs;
+	register size_t imax = m_incs.get_order()-1;
+	for(register size_t i=0; i<imax; i++) {
+		idx[i] = a/m_incs[i+1];
+		a %= m_incs[i+1];
+	}
+}
+
 } // namespace libtensor
 

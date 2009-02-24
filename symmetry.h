@@ -17,6 +17,17 @@ namespace libtensor {
 	\ingroup libtensor
 **/
 class symmetry : public symmetry_i {
+private:
+	struct syminfo {
+		size_t unique;
+		size_t perm;
+		double coeff;
+	};
+	typedef std::map<size_t,syminfo> symmap;
+
+	dimensions m_dims; //!< Dimensions of blocks
+	symmap m_sym; //!< Stores replicas
+
 public:
 	//!	\name Construction and destruction
 	//@{
@@ -35,6 +46,7 @@ public:
 
 	//!	\name Implementation of symmetry_i
 	//@{
+	virtual bool is_unique(const index &i) const throw(exception);
 	virtual const index &get_unique(const index &i) const throw(exception);
 	virtual const permutation &get_perm(const index &i) const
 		throw(exception);

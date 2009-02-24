@@ -31,9 +31,11 @@ public:
 
 	//!	\name Implementation of symmetry_i
 	//@{
-	virtual const index &get_unique(const index &i) const;
-	virtual const permutation &get_perm(const index &i) const;
-	virtual double get_coeff(const index &i) const;
+	virtual bool is_unique(const index &i) const throw(exception);
+	virtual const index &get_unique(const index &i) const throw(exception);
+	virtual const permutation &get_perm(const index &i) const
+		throw(exception);
+	virtual double get_coeff(const index &i) const throw(exception);
 	//@}
 };
 
@@ -43,15 +45,23 @@ inline default_symmetry::default_symmetry(const size_t order) : m_perm(order) {
 inline default_symmetry::~default_symmetry() {
 }
 
-inline const index &default_symmetry::get_unique(const index &i) const {
+inline bool default_symmetry::is_unique(const index &i) const
+	throw(exception) {
+	return true;
+}
+
+inline const index &default_symmetry::get_unique(const index &i) const
+	throw(exception) {
 	return i;
 }
 
-inline const permutation &default_symmetry::get_perm(const index &i) const {
+inline const permutation &default_symmetry::get_perm(const index &i) const
+	throw(exception) {
 	return m_perm;
 }
 
-inline double default_symmetry::get_coeff(const index &i) const {
+inline double default_symmetry::get_coeff(const index &i) const
+	throw(exception) {
 	return 1.0;
 }
 

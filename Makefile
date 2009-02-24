@@ -13,6 +13,7 @@ INCLUDE = -I. -I../libvmm
 OBJS  = dimensions.o
 OBJS += lehmer_code.o
 OBJS += permutator.o
+OBJS += symmetry.o
 OBJS += tod_set.o
 
 libtensor.a: $(OBJS)

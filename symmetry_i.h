@@ -17,6 +17,9 @@ namespace libtensor {
 	across the diagonal: only those above the diagonal need to be actually
 	stored, the blocks below the diagonal are their transpose.
 	When there is no %symmetry at all, every block is unique.
+
+	Unique blocks must have the identity permutation and the coefficient
+	1.0.
 	
 	\ingroup libtensor
 **/

@@ -70,10 +70,14 @@ public:
 	**/
 	bool inc_index(index &idx) const throw(exception);
 
-	/**	\brief Returns the number of the element in a sequence
+	/**	\brief Returns the absolute %index within the %dimensions
 			(last %index is the fastest)
 	**/
 	size_t abs_index(const index &idx) const throw(exception);
+
+	/**	\brief Converts an absolute %index back to a normal %index
+	**/
+	void abs_index(const size_t abs, index &idx) const throw(exception);
 
 	//@}
 
