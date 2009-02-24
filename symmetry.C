@@ -28,14 +28,14 @@ bool symmetry::is_unique(const index &i) const throw(exception) {
 /**	\todo Implement symmetry::get_unique
 **/
 const index &symmetry::get_unique(const index &i) const throw(exception) {
-	typename symmap::const_iterator iter = m_sym.find(m_dims.abs_index(i));
+	symmap::const_iterator iter = m_sym.find(m_dims.abs_index(i));
 	if(iter == m_sym.end()) return i;
 
 	return i;
 }
 
 const permutation &symmetry::get_perm(const index &i) const throw(exception) {
-	typename symmap::const_iterator iter = m_sym.find(m_dims.abs_index(i));
+	symmap::const_iterator iter = m_sym.find(m_dims.abs_index(i));
 	if(iter == m_sym.end()) {
 		return lehmer_code::get_instance().code2perm(i.get_order(), 0);
 	} else {
@@ -45,7 +45,7 @@ const permutation &symmetry::get_perm(const index &i) const throw(exception) {
 }
 
 double symmetry::get_coeff(const index &i) const throw(exception) {
-	typename symmap::const_iterator iter = m_sym.find(m_dims.abs_index(i));
+	symmap::const_iterator iter = m_sym.find(m_dims.abs_index(i));
 	if(iter == m_sym.end()) return 1.0;
 	else return iter->second.coeff;
 }
