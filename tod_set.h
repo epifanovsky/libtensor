@@ -7,9 +7,9 @@
 
 namespace libtensor {
 
-/**	\brief Tensor (double) operation: assign all elements a value
+/**	\brief Assigns a value to all elements
 
-	\ingroup libtensor
+	\ingroup libtensor_tod
 **/
 class tod_set : public tensor_operation<double> {
 private:

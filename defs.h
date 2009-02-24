@@ -37,5 +37,10 @@ const size_t max_tensor_order = 6;
 	\ingroup libtensor
 **/
 
+/**	\defgroup libtensor_tod Tensor operations (double)
+	\brief Operations on tensors with real double precision elements
+	\ingroup libtensor
+**/
+
 #endif // LIBTENSOR_DEFS_H
 

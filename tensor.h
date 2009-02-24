@@ -1,5 +1,5 @@
-#ifndef __LIBTENSOR_TENSOR_H
-#define __LIBTENSOR_TENSOR_H
+#ifndef LIBTENSOR_TENSOR_H
+#define LIBTENSOR_TENSOR_H
 
 #include <libvmm.h>
 
@@ -7,9 +7,8 @@
 #include "exception.h"
 #include "immutable.h"
 #include "permutation.h"
-#include "tensor_i.h"
-
 #include "permutator.h"
+#include "tensor_i.h"
 
 namespace libtensor {
 
@@ -19,20 +18,36 @@ namespace libtensor {
 	\param Alloc Memory allocator.
 	\param Perm Permutator.
 
+	This class is a container for %tensor elements located in memory.
+	It allocates and deallocates memory for the elements, provides facility
+	for performing %tensor operations. The %tensor class doesn't perform
+	any mathematical operations on its elements, but rather establishes
+	a protocol, with which an operation of any complexity can be implemented
+	as a separate class. 
+
 	<b>Element type</b>
 
 	Tensor elements can be of any POD type or any class or structure
 	that implements a default constructor and the assignment operator.
 
 	\code
-	class tensor_element {
-	public:
-		tensor_element();
-		tensor_element &operator=(const tensor_element&);
+	struct tensor_element_t {
+		// ...
+		tensor_element_t();
+		tensor_element_t &operator=(const tensor_element_t&);
 	};
 	\endcode
 
+	The type of the elements is a template parameter:
+	\code
+	typedef libvmm::std_allocator<tensor_element_t> tensor_element_alloc;
+	tensor<tensor_element_t, tensor_element_alloc, permutator> t(...);
+	\endcode
+
 	<b>Tensor operations</b>
+
+	The %tensor class does not perform any mathematical operations, nor
+	does it allow direct access to its elements.
 
 	Tensor elements cannot be accessed directly. Only an extension of
 	tensor_operation has the ability to read and write them.
@@ -372,5 +387,5 @@ size_t tensor<T,Alloc,Perm>::toh::req_permutation_cost(const permutation &p)
 
 } // namespace libtensor
 
-#endif // __LIBTENSOR_TENSOR_H
+#endif // LIBTENSOR_TENSOR_H
 
