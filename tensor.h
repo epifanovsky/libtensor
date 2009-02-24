@@ -5,6 +5,7 @@
 
 #include "defs.h"
 #include "exception.h"
+#include "immutable.h"
 #include "permutation.h"
 #include "tensor_i.h"
 
@@ -105,7 +106,7 @@ namespace libtensor {
 	\ingroup libtensor
 **/
 template<typename T, typename Alloc, typename Perm = permutator<T> >
-class tensor : public tensor_i<T> {
+class tensor : public tensor_i<T>, public immutable {
 public:
 	typedef T element_t; //!< Tensor element type
 	typedef typename Alloc::ptr_t ptr_t; //!< Memory pointer type
@@ -151,7 +152,6 @@ private:
 	ptr_t m_data; //!< Pointer to data
 	T *m_dataptr; //!< Pointer to checked out data
 	permutation m_perm; //!< Current %permutation of the elements
-	bool m_immutable; //!< Indicates whether the %tensor is immutable
 
 public:
 	//!	\name Construction and destruction
@@ -194,24 +194,6 @@ public:
 
 	//@}
 
-	//!	\name Immutability
-	//@{
-
-	/**	\brief Checks if the %tensor is immutable
-
-		Returns true if the %tensor is immutable, false otherwise.
-	**/
-	bool is_immutable() const;
-
-	/**	\brief Sets the %tensor status as immutable.
-
-		Sets the %tensor status as immutable. If the %tensor has already
-		been set immutable, it stays immutable.
-	**/
-	void set_immutable();
-
-	//@}
-
 	//!	\name Implementation of tensor_i<T>
 	//@{
 
@@ -246,7 +228,6 @@ tensor<T,Alloc,Perm>::tensor(const dimensions &d) throw(exception) :
 	}
 #endif
 	m_data = Alloc::allocate(m_dims.get_size());
-	m_immutable = false;
 }
 
 template<typename T, typename Alloc, typename Perm>
@@ -260,7 +241,6 @@ tensor<T,Alloc,Perm>::tensor(const tensor_i<T> &t) throw(exception) :
 	}
 #endif
 	m_data = Alloc::allocate(m_dims.get_size());
-	m_immutable = false;
 }
 
 template<typename T, typename Alloc, typename Perm>
@@ -275,7 +255,6 @@ tensor<T,Alloc,Perm>::tensor(const tensor<T,Alloc,Perm> &t)
 	}
 #endif
 	m_data = Alloc::allocate(m_dims.get_size());
-	m_immutable = false;
 }
 
 template<typename T, typename Alloc, typename Perm>
@@ -285,16 +264,6 @@ inline tensor<T,Alloc,Perm>::~tensor() {
 		m_dataptr = NULL;
 	}
 	Alloc::deallocate(m_data);
-}
-
-template<typename T, typename Alloc, typename Perm>
-inline bool tensor<T,Alloc,Perm>::is_immutable() const {
-	return m_immutable;
-}
-
-template<typename T, typename Alloc, typename Perm>
-inline void tensor<T,Alloc,Perm>::set_immutable() {
-	m_immutable = true;
 }
 
 template<typename T, typename Alloc, typename Perm>
@@ -320,7 +289,7 @@ inline void tensor<T,Alloc,Perm>::throw_exc(const char *method,
 template<typename T, typename Alloc, typename Perm>
 T *tensor<T,Alloc,Perm>::toh::req_dataptr(const permutation &p)
 	throw(exception) {
-	if(m_t.m_immutable) {
+	if(m_t.is_immutable()) {
 		m_t.throw_exc("toh::req_dataptr(const permutation&)",
 			"Tensor is immutable, writing operations are "
 				"prohibited");

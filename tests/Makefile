@@ -1,6 +1,7 @@
 OBJS  = libtensor_suite.o
 OBJS += default_symmetry_test.o
 OBJS += dimensions_test.o
+OBJS += immutable_test.o
 OBJS += index_test.o
 OBJS += index_range_test.o
 OBJS += lehmer_code_test.o
