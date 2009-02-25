@@ -1,19 +1,25 @@
-#ifndef __LIBTENSOR_TENSOR_OPERATION_HANDLER_H
-#define __LIBTENSOR_TENSOR_OPERATION_HANDLER_H
+#ifndef LIBTENSOR_TENSOR_OPERATION_HANDLER_H
+#define LIBTENSOR_TENSOR_OPERATION_HANDLER_H
 
 #include "defs.h"
 #include "exception.h"
 
 namespace libtensor {
 
-/**	\brief Base class for tensor operation handlers
+/**	\brief Default %tensor operation handler
+
+	This handler provides default reaction to events during the execution
+	of a %tensor operation. All of the methods throw the "Unhandled event"
+	exception and are intended to be re-implemented by real handlers that
+	are specific to each implementation of the libtensor::tensor_i
+	interface.
 
 	\ingroup libtensor
 **/
-template<typename _T>
+template<typename T>
 class tensor_operation_handler {
 public:
-	typedef _T element_t; //!< Tensor element type
+	typedef T element_t; //!< Tensor element type
 
 public:
 	virtual element_t *req_dataptr(const permutation &p) throw(exception);
@@ -84,5 +90,5 @@ void tensor_operation_handler<T>::throw_exc(const char *method,
 
 } // namespace libtensor
 
-#endif // __LIBTENSOR_TENSOR_OPERATION_HANDLER_H
+#endif // LIBTENSOR_TENSOR_OPERATION_HANDLER_H
 

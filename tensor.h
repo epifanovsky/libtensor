@@ -30,6 +30,7 @@ namespace libtensor {
 	Tensor elements can be of any POD type or any class or structure
 	that implements a default constructor and the assignment operator.
 
+	Example:
 	\code
 	struct tensor_element_t {
 		// ...
@@ -47,10 +48,9 @@ namespace libtensor {
 	<b>Tensor operations</b>
 
 	The %tensor class does not perform any mathematical operations, nor
-	does it allow direct access to its elements.
-
-	Tensor elements cannot be accessed directly. Only an extension of
-	tensor_operation has the ability to read and write them.
+	does it allow direct access to its elements. Tensor operations are
+	implemented as separate classes by extending
+	libtensor::tensor_operation.
 
 	<b>Allocator</b>
 
@@ -63,7 +63,7 @@ namespace libtensor {
 	of the running %index. The first %index element is the slowest
 	running, the last one is the fastest running.
 
-	<b>Permutations and permutator</b>
+	<b>Permutations and %permutator</b>
 
 	(This section needs an update.)
 
@@ -91,15 +91,19 @@ namespace libtensor {
 	regarding the validity of the input parameters have been done, and
 	the input is consistent and correct.
 
+	The default %permutator implementation is libtensor::permutator.
+
 	<b>Immutability</b>
 
-	A %tensor can be set immutable via set_immutable(), after which only
+	A %tensor can be set %immutable via set_immutable(), after which only
 	reading operations are allowed on the %tensor. Operations that attempt
-	to modify the elements are prohibited and will cause an exception.
-	Once the %tensor status is set to immutable, it cannot be changed back.
-	To perform a check whether the %tensor is mutable or immutable,
-	is_immutable() can be used.
+	to modify the elements are prohibited and will cause an %exception.
+	Once the %tensor status is set to %immutable, it cannot be changed back.
+	To perform a check whether the %tensor is mutable or %immutable,
+	is_immutable() can be used. Immutability is provided by
+	libtensor::immutable.
 
+	Example:
 	\code
 	tensor<double> t(...);
 
@@ -114,9 +118,9 @@ namespace libtensor {
 
 	<b>Exceptions</b>
 
-	Exceptions exception are thrown if a requested operation fails for any
-	reason. If an %exception is thrown, the state of the %tensor object
-	is undefined.
+	Exceptions libtensor::exception are thrown if a requested operation
+	fails for any reason. If an %exception is thrown, the state of
+	the %tensor object is undefined.
 
 	\ingroup libtensor
 **/
@@ -236,7 +240,7 @@ template<typename T, typename Alloc, typename Perm>
 tensor<T,Alloc,Perm>::tensor(const dimensions &d) throw(exception) :
 	m_dims(d), m_toh(*this), m_perm(m_dims.get_order()),
 	m_data(Alloc::invalid_ptr), m_dataptr(NULL) {
-#ifdef TENSOR_DEBUG
+#ifdef LIBTENSOR_DEBUG
 	if(m_dims.get_size() == 0) {
 		throw_exc("tensor(const dimensions&)",
 			"Zero tensor size is not allowed");
@@ -249,7 +253,7 @@ template<typename T, typename Alloc, typename Perm>
 tensor<T,Alloc,Perm>::tensor(const tensor_i<T> &t) throw(exception) :
 	m_dims(t.get_dims()), m_toh(*this), m_perm(m_dims.get_order()),
 	m_data(Alloc::invalid_ptr), m_dataptr(NULL) {
-#ifdef TENSOR_DEBUG
+#ifdef LIBTENSOR_DEBUG
 	if(m_dims.get_size() == 0) {
 		throw_exc("tensor(const tensor_i<T>&)",
 			"Zero tensor size is not allowed");
@@ -263,7 +267,7 @@ tensor<T,Alloc,Perm>::tensor(const tensor<T,Alloc,Perm> &t)
 	throw(exception) : m_dims(t.m_dims), m_toh(*this),
 	m_perm(m_dims.get_order()), m_data(Alloc::invalid_ptr),
 	m_dataptr(NULL) {
-#ifdef TENSOR_DEBUG
+#ifdef LIBTENSOR_DEBUG
 	if(m_dims.get_size() == 0) {
 		throw_exc("tensor(const tensor<T,Alloc,Perm>&)",
 			"Zero tensor size is not allowed");

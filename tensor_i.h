@@ -1,5 +1,5 @@
-#ifndef __LIBTENSOR_TENSOR_I_H
-#define __LIBTENSOR_TENSOR_I_H
+#ifndef LIBTENSOR_TENSOR_I_H
+#define LIBTENSOR_TENSOR_I_H
 
 #include "defs.h"
 #include "exception.h"
@@ -12,6 +12,18 @@ template<typename T> class tensor_operation_dispatcher;
 
 /**	\brief Tensor interface
 	\param T Tensor element type
+
+	<b>Implementing this interface</b>
+
+	Implementations of this interface must realize two methods:
+	get_dims() and get_tensor_operation_handler().
+
+	get_dims() simply returns the %dimensions of the %tensor represented
+	by an object.
+
+	get_tensor_operation_handler() returns an instance of
+	libtensor::tensor_operation_handler that is responsible for reacting
+	to events that arise while a %tensor operation is performing.
 
 	\ingroup libtensor
 **/
@@ -32,5 +44,5 @@ protected:
 
 } // namespace libtensor
 
-#endif // __LIBTENSOR_TENSOR_I_H
+#endif // LIBTENSOR_TENSOR_I_H
 
