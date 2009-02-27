@@ -14,6 +14,7 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("dimensions", m_utf_dimensions);
 	add_test("symmetry", m_utf_symmetry);
 	add_test("tensor", m_utf_tensor);
+	add_test("direct_tensor", m_utf_direct_tensor);
 	add_test("tod_set", m_utf_tod_set);
 }
 

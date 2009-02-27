@@ -1,0 +1,43 @@
+#ifndef LIBTENSOR_DIRECT_TENSOR_OPERATION_H
+#define LIBTENSOR_DIRECT_TENSOR_OPERATION_H
+
+#include "defs.h"
+#include "exception.h"
+#include "tensor_operation.h"
+
+namespace libtensor {
+
+/**	\brief Underlying operation for direct tensors
+
+	Generally speaking, a %tensor operation can have any number of
+	objects as parameters and produce multiple results.
+	Directly calculated tensors (implementations of
+	libtensor::direct_tensor) can have multiple parameters, but the
+	result is a single %tensor.
+
+	Classes that implement underlying operations for direct tensors
+	must implement the methods declared here.
+
+	\ingroup libtensor
+**/
+template<typename T>
+class direct_tensor_operation: public tensor_operation<T> {
+public:
+	/**	\brief Invoked to indicate that the operation is to be
+			executed soon
+
+		The implementation should pass this event to the parameters
+		so they can be pre-fetched if stored on slow media
+	**/
+	virtual void prefetch() throw(exception) = 0;
+
+	/**	\brief Invoked to execute the operation
+		\param t The output %tensor
+	**/
+	virtual void perform(tensor_i<T> &t) throw(exception) = 0;
+};
+
+} // namespace libtensor
+
+#endif // LIBTENSOR_DIRECT_TENSOR_OPERATION_H
+
