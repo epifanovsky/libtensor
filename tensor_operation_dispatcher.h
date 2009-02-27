@@ -1,5 +1,5 @@
-#ifndef __LIBTENSOR_TENSOR_OPERATION_DISPATCHER_H
-#define __LIBTENSOR_TENSOR_OPERATION_DISPATCHER_H
+#ifndef LIBTENSOR_TENSOR_OPERATION_DISPATCHER_H
+#define LIBTENSOR_TENSOR_OPERATION_DISPATCHER_H
 
 #include <libvmm.h>
 
@@ -28,6 +28,8 @@ protected:
 	tensor_operation_dispatcher();
 
 public:
+	void req_prefetch(tensor_i<element_t> &t) throw(exception);
+
 	element_t *req_dataptr(tensor_i<element_t> &t, const permutation &p)
 		throw(exception);
 
@@ -45,6 +47,12 @@ public:
 
 template<typename T>
 inline tensor_operation_dispatcher<T>::tensor_operation_dispatcher() {
+}
+
+template<typename T>
+inline void tensor_operation_dispatcher<T>::req_prefetch(tensor_i<T> &t)
+	throw(exception) {
+	t.get_tensor_operation_handler().req_prefetch();
 }
 
 template<typename T>
@@ -79,5 +87,5 @@ inline size_t tensor_operation_dispatcher<T>::req_permutation_cost(
 
 } // namespace libtensor
 
-#endif // __LIBTENSOR_TENSOR_OPERATION_DISPATCHER_H
+#endif // LIBTENSOR_TENSOR_OPERATION_DISPATCHER_H
 

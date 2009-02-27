@@ -1,5 +1,5 @@
-#ifndef __LIBTENSOR_TENSOR_OPERATION_H
-#define __LIBTENSOR_TENSOR_OPERATION_H
+#ifndef LIBTENSOR_TENSOR_OPERATION_H
+#define LIBTENSOR_TENSOR_OPERATION_H
 
 #include "defs.h"
 #include "exception.h"
@@ -86,6 +86,11 @@ protected:
 	//!	\name Events
 	//@{
 
+	/**	\brief Request to move the %tensor data to the fast memory
+		\param t Tensor.
+	**/
+	void req_prefetch(tensor_i<element_t> &t) throw(exception);
+
 	/**	\brief Checks out a memory pointer to %tensor elements permuted
 			as requested
 		\param t Tensor.
@@ -128,6 +133,12 @@ protected:
 };
 
 template<typename T>
+inline void tensor_operation<T>::req_prefetch(tensor_i<T> &t)
+	throw(exception) {
+	tensor_operation_dispatcher<T>::get_instance().req_prefetch(t);
+}
+
+template<typename T>
 inline T *tensor_operation<T>::req_dataptr(tensor_i<T> &t,
 	const permutation &p) throw(exception) {
 	return tensor_operation_dispatcher<T>::get_instance().req_dataptr(t, p);
@@ -162,5 +173,5 @@ inline size_t tensor_operation<T>::req_permutation_cost(tensor_i<element_t> &t,
 
 } // namespace libtensor
 
-#endif // __LIBTENSOR_TENSOR_OPERATION_H
+#endif // LIBTENSOR_TENSOR_OPERATION_H
 

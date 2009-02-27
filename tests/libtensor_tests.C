@@ -13,17 +13,18 @@ public:
 	}
 
 	virtual void on_test_start(const char *test) {
-		printf("Test %s ... ", test);
+		printf("Test %s ... ", test); fflush(stdout);
 	}
 
 	virtual void on_test_end_success(const char *test) {
-		printf("done.\n");
+		printf("done.\n"); fflush(stdout);
 	}
 
 	virtual void on_test_end_exception(const char *test,
 		const test_exception &e) {
 		printf("FAIL!\n");
 		printf("%s\n", e.what());
+		fflush(stdout);
 	}
 };
 

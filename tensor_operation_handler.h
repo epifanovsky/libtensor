@@ -22,6 +22,8 @@ public:
 	typedef T element_t; //!< Tensor element type
 
 public:
+	virtual void req_prefetch() throw(exception);
+
 	virtual element_t *req_dataptr(const permutation &p) throw(exception);
 
 	virtual const element_t *req_const_dataptr(const permutation &p)
@@ -44,6 +46,12 @@ private:
 #ifdef __INTEL_COMPILER
 #pragma warning(disable:1011)
 #endif
+
+template<typename T>
+void tensor_operation_handler<T>::req_prefetch() throw(exception) {
+	throw_exc("tensor_operation_handler<T>::req_prefetch()",
+		"Unhandled event");
+}
 
 template<typename T>
 T *tensor_operation_handler<T>::req_dataptr(const permutation &p)

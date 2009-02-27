@@ -149,6 +149,8 @@ private:
 
 		//!	\name Overload of libtensor::tensor_operation_handler<T>
 		//@{
+		virtual void req_prefetch() throw(exception);
+
 		virtual element_t *req_dataptr(const permutation &p)
 			throw(exception);
 
@@ -303,6 +305,11 @@ inline void tensor<T,Alloc,Perm>::throw_exc(const char *method,
 	snprintf(s, 1024, "[libtensor::tensor<T,Alloc,Perm>::%s] %s.",
 		method, msg);
 	throw exception(s);
+}
+
+template<typename T, typename Alloc, typename Perm>
+void tensor<T,Alloc,Perm>::toh::req_prefetch() throw(exception) {
+	Alloc::prefetch(m_t.m_data);
 }
 
 template<typename T, typename Alloc, typename Perm>
