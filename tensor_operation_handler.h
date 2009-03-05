@@ -24,17 +24,11 @@ public:
 public:
 	virtual void req_prefetch() throw(exception);
 
-	virtual element_t *req_dataptr(const permutation &p) throw(exception);
+	virtual element_t *req_dataptr() throw(exception);
 
-	virtual const element_t *req_const_dataptr(const permutation &p)
-		throw(exception);
+	virtual const element_t *req_const_dataptr() throw(exception);
 
 	virtual void ret_dataptr(const element_t *p) throw(exception);
-
-	virtual const permutation &req_simplest_permutation() throw(exception);
-
-	virtual size_t req_permutation_cost(const permutation &p)
-		throw(exception);
 
 private:
 	/**	\brief Throws an exception
@@ -54,37 +48,21 @@ void tensor_operation_handler<T>::req_prefetch() throw(exception) {
 }
 
 template<typename T>
-T *tensor_operation_handler<T>::req_dataptr(const permutation &p)
-	throw(exception) {
+T *tensor_operation_handler<T>::req_dataptr() throw(exception) {
 	throw_exc("tensor_operation_handler<T>::"
-		"req_dataptr(const permutation&)", "Unhandled event");
+		"req_dataptr()", "Unhandled event");
 }
 
 template<typename T>
-const T *tensor_operation_handler<T>::req_const_dataptr(const permutation &p)
-	throw(exception) {
+const T *tensor_operation_handler<T>::req_const_dataptr() throw(exception) {
 	throw_exc("tensor_operation_handler<T>::"
-		"req_const_dataptr(const permutation&)", "Unhandled event");
+		"req_const_dataptr()", "Unhandled event");
 }
 
 template<typename T>
 void tensor_operation_handler<T>::ret_dataptr(const T *p) throw(exception) {
 	throw_exc("tensor_operation_handler<T>::"
 		"ret_dataptr(const T*)", "Unhandled event");
-}
-
-template<typename T>
-const permutation &tensor_operation_handler<T>::req_simplest_permutation()
-	throw(exception) {
-	throw_exc("tensor_operation_handler<T>::"
-		"req_simplest_permutation()", "Unhandled event");
-}
-
-template<typename T>
-size_t tensor_operation_handler<T>::req_permutation_cost(const permutation &p)
-	throw(exception) {
-	throw_exc("tensor_operation_handler<T>::"
-		"req_permutation_cost(const permutation&)", "Unhandled event");
 }
 
 template<typename T>

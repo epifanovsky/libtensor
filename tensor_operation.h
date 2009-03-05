@@ -5,7 +5,7 @@
 #include "exception.h"
 #include "permutation.h"
 #include "tensor_i.h"
-#include "tensor_operation_dispatcher.h"
+#include "tensor_operation_handler.h"
 
 namespace libtensor {
 
@@ -94,18 +94,15 @@ protected:
 	/**	\brief Checks out a memory pointer to %tensor elements permuted
 			as requested
 		\param t Tensor.
-		\param p Permutation of the elements.
 	**/
-	element_t *req_dataptr(tensor_i<element_t> &t, const permutation &p)
-		throw(exception);
+	element_t *req_dataptr(tensor_i<element_t> &t) throw(exception);
 
 	/**	\brief Checks out a const memory pointer to %tensor elements
 			permuted as requested
 		\param t Tensor.
-		\param p Permutation of the elements.
 	**/
-	const element_t *req_const_dataptr(tensor_i<element_t> &t,
-		const permutation &p) throw(exception);
+	const element_t *req_const_dataptr(tensor_i<element_t> &t)
+		throw(exception);
 
 	/**	\brief Turns in a previously checked out memory pointer.
 		\param t Tensor.
@@ -115,60 +112,30 @@ protected:
 	void ret_dataptr(tensor_i<element_t> &t, const element_t *p)
 		throw(exception);
 
-	/**	\brief Returns the %permutation that has the least cost
-		\param t Tensor.
-	**/
-	const permutation &req_simplest_permutation(tensor_i<element_t> &t)
-		throw(exception);
-
-	/**	\brief Returns how many %tensor elements will have to be
-			permuted in order to obtain a given %permutation.
-		\param t Tensor.
-		\param p Permutation of the elements.
-	**/
-	size_t req_permutation_cost(tensor_i<element_t> &t,
-		const permutation &p) throw(exception);
-
 	//@}
 };
 
 template<typename T>
 inline void tensor_operation<T>::req_prefetch(tensor_i<T> &t)
 	throw(exception) {
-	tensor_operation_dispatcher<T>::get_instance().req_prefetch(t);
+	t.get_tensor_operation_handler().req_prefetch();
 }
 
 template<typename T>
-inline T *tensor_operation<T>::req_dataptr(tensor_i<T> &t,
-	const permutation &p) throw(exception) {
-	return tensor_operation_dispatcher<T>::get_instance().req_dataptr(t, p);
+inline T *tensor_operation<T>::req_dataptr(tensor_i<T> &t) throw(exception) {
+	return t.get_tensor_operation_handler().req_dataptr();
 }
 
 template<typename T>
-inline const T *tensor_operation<T>::req_const_dataptr(tensor_i<T> &t,
-	const permutation &p) throw(exception) {
-	return tensor_operation_dispatcher<T>::get_instance().
-		req_const_dataptr(t, p);
+inline const T *tensor_operation<T>::req_const_dataptr(tensor_i<T> &t)
+	throw(exception) {
+	return t.get_tensor_operation_handler().req_const_dataptr();
 }
 
 template<typename T>
 inline void tensor_operation<T>::ret_dataptr(tensor_i<T> &t,
 	const T *ptr) throw(exception) {
-	tensor_operation_dispatcher<T>::get_instance().ret_dataptr(t, ptr);
-}
-
-template<typename T>
-inline const permutation &tensor_operation<T>::req_simplest_permutation(
-	tensor_i<element_t> &t) throw(exception) {
-	tensor_operation_dispatcher<T>::get_instance().
-		req_simplest_permutation(t);
-}
-
-template<typename T>
-inline size_t tensor_operation<T>::req_permutation_cost(tensor_i<element_t> &t,
-	const permutation &p) throw(exception) {
-	tensor_operation_dispatcher<T>::get_instance().
-		req_permutation_cost(t, p);
+	t.get_tensor_operation_handler().ret_dataptr(ptr);
 }
 
 } // namespace libtensor

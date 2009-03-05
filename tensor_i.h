@@ -4,11 +4,11 @@
 #include "defs.h"
 #include "exception.h"
 #include "dimensions.h"
-#include "tensor_operation_handler.h"
 
 namespace libtensor {
 
-template<typename T> class tensor_operation_dispatcher;
+template<typename T> class tensor_operation;
+template<typename T> class tensor_operation_handler;
 
 /**	\brief Tensor interface
 	\param T Tensor element type
@@ -29,7 +29,7 @@ template<typename T> class tensor_operation_dispatcher;
 **/
 template<typename T>
 class tensor_i {
-	friend class tensor_operation_dispatcher<T>;
+	friend class tensor_operation<T>;
 
 public:
 	/**	\brief Returns the %dimensions of the %tensor

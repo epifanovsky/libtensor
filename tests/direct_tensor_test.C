@@ -1,3 +1,4 @@
+#include <libvmm.h>
 #include "direct_tensor_test.h"
 
 namespace libtensor {

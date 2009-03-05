@@ -57,16 +57,6 @@ private:
 		virtual void perform(tensor_i<int> &t) throw(exception);
 	};
 
-	//!	Checks that requests for permuted data are handled correctly
-	class test_op_chk_perm : public tensor_operation<int> {
-	private:
-		bool m_ok;
-	public:
-		test_op_chk_perm() : m_ok(false) {}
-		bool is_ok() const { return m_ok; }
-		void perform(tensor_i<int> &t) throw(exception);
-	};
-
 	//!	Tests the constructor
 	void test_ctor() throw(libtest::test_exception);
 

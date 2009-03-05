@@ -25,9 +25,8 @@ public:
 private:
 	class toh : public tensor_operation_handler<T> {
 	public:
-		virtual element_t *req_dataptr(const permutation &p)
-			throw(exception);
-		virtual const element_t *req_const_dataptr(const permutation &p)
+		virtual element_t *req_dataptr() throw(exception);
+		virtual const element_t *req_const_dataptr()
 			throw(exception);
 		virtual void ret_dataptr(const element_t *p) throw(exception);
 	};
@@ -97,16 +96,15 @@ inline void direct_tensor<T,Alloc,Perm>::throw_exc(const char *method,
 }
 
 template<typename T, typename Alloc, typename Perm>
-T *direct_tensor<T,Alloc,Perm>::toh::req_dataptr(const permutation &p)
-	throw(exception) {
-	throw_exc("toh::req_dataptr(const permutation&)",
+T *direct_tensor<T,Alloc,Perm>::toh::req_dataptr() throw(exception) {
+	throw_exc("toh::req_dataptr()",
 		"Non-const data cannot be requested from a direct tensor");
 }
 
 template<typename T, typename Alloc, typename Perm>
-const T *direct_tensor<T,Alloc,Perm>::toh::req_const_dataptr(
-	const permutation &p) throw(exception) {
-	throw_exc("toh::req_const_dataptr(const permutation&)", "NIY");
+const T *direct_tensor<T,Alloc,Perm>::toh::req_const_dataptr()
+	throw(exception) {
+	throw_exc("toh::req_const_dataptr()", "NIY");
 }
 
 template<typename T, typename Alloc, typename Perm>

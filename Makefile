@@ -34,6 +34,11 @@ docs:
 	doxygen
 	scp -Cpr docs/html/* hogwarts.usc.edu:public_html/libtensor_docs/
 
+.PHONY: trac
+trac:
+	doxygen
+	cp -R docs/html/* /var/lib/trac/libtensor/htdocs/
+
 dimensions.C: dimensions.h
 
 dimensions.h: defs.h exception.h index.h index_range.h

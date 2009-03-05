@@ -151,19 +151,13 @@ private:
 		//@{
 		virtual void req_prefetch() throw(exception);
 
-		virtual element_t *req_dataptr(const permutation &p)
-			throw(exception);
+		virtual element_t *req_dataptr() throw(exception);
 
-		virtual const element_t *req_const_dataptr(const permutation &p)
+		virtual const element_t *req_const_dataptr()
 			throw(exception);
 
 		virtual void ret_dataptr(const element_t *p) throw(exception);
 
-		virtual const permutation &req_simplest_permutation()
-			throw(exception);
-
-		virtual size_t req_permutation_cost(const permutation &p)
-			throw(exception);
 		//@}
 	};
 
@@ -313,8 +307,7 @@ void tensor<T,Alloc,Perm>::toh::req_prefetch() throw(exception) {
 }
 
 template<typename T, typename Alloc, typename Perm>
-T *tensor<T,Alloc,Perm>::toh::req_dataptr(const permutation &p)
-	throw(exception) {
+T *tensor<T,Alloc,Perm>::toh::req_dataptr() throw(exception) {
 	if(m_t.is_immutable()) {
 		m_t.throw_exc("toh::req_dataptr(const permutation&)",
 			"Tensor is immutable, writing operations are "
@@ -328,6 +321,7 @@ T *tensor<T,Alloc,Perm>::toh::req_dataptr(const permutation &p)
 
 	m_t.m_dataptr = Alloc::lock(m_t.m_data);
 
+/*
 	// No permutation necessary
 	if(p.equals(m_t.m_perm)) return m_t.m_dataptr;
 
@@ -352,13 +346,13 @@ T *tensor<T,Alloc,Perm>::toh::req_dataptr(const permutation &p)
 	m_t.m_data = data_dst;
 	m_t.m_dataptr = dataptr_dst;
 	m_t.m_perm.permute(perm);
+*/
 
 	return m_t.m_dataptr;
 }
 
 template<typename T, typename Alloc, typename Perm>
-const T *tensor<T,Alloc,Perm>::toh::req_const_dataptr(const permutation &p)
-	throw(exception) {
+const T *tensor<T,Alloc,Perm>::toh::req_const_dataptr() throw(exception) {
 
 	if(m_t.m_dataptr) {
 		m_t.throw_exc("toh::req_dataptr(const permutation&)",
@@ -381,19 +375,6 @@ void tensor<T,Alloc,Perm>::toh::ret_dataptr(const element_t *p)
 	}
 	Alloc::unlock(m_t.m_data);
 	m_t.m_dataptr = NULL;
-}
-
-template<typename T, typename Alloc, typename Perm>
-const permutation &tensor<T,Alloc,Perm>::toh::req_simplest_permutation()
-	throw(exception) {
-	return m_t.m_perm;
-}
-
-template<typename T, typename Alloc, typename Perm>
-size_t tensor<T,Alloc,Perm>::toh::req_permutation_cost(const permutation &p)
-	throw(exception) {
-	m_t.throw_exc("toh::req_permutation_cost(const permutation&)",
-		"Unhandled event");
 }
 
 } // namespace libtensor
