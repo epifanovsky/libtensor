@@ -3,7 +3,6 @@
 
 #include <libtest.h>
 #include "tensor.h"
-#include "tensor_operation.h"
 
 namespace libtensor {
 
@@ -18,7 +17,7 @@ public:
 private:
 	//!	Checks that requesting a non-const data pointer causes an
 	//!	exception
-	class test_op_chk_imm : public tensor_operation<int> {
+	class test_op_chk_imm {
 	private:
 		bool m_ok;
 	public:
@@ -28,7 +27,7 @@ private:
 	};
 
 	//!	Sets all elements a given value
-	class test_op_set_int : public tensor_operation<int> {
+	class test_op_set_int {
 	private:
 		int m_val; //!< Value to set
 	public:
@@ -37,7 +36,7 @@ private:
 	};
 
 	//!	Check that all elements have a given value
-	class test_op_chkset_int : public tensor_operation<int> {
+	class test_op_chkset_int {
 	private:
 		int m_val; //!< Value
 		bool m_ok; //!< Indicates a positive result
@@ -48,7 +47,7 @@ private:
 	};
 
 	//!	Checks that double requests for data cause an exception
-	class test_op_chk_dblreq : public tensor_operation<int> {
+	class test_op_chk_dblreq {
 	private:
 		bool m_ok;
 	public:

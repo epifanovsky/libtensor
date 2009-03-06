@@ -3,7 +3,7 @@
 
 #include "defs.h"
 #include "exception.h"
-#include "tensor_operation.h"
+#include "tensor_i.h"
 
 namespace libtensor {
 
@@ -21,7 +21,7 @@ namespace libtensor {
 	\ingroup libtensor
 **/
 template<typename T>
-class direct_tensor_operation: public tensor_operation<T> {
+class direct_tensor_operation {
 public:
 	/**	\brief Invoked to indicate that the operation is to be
 			executed soon

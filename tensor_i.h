@@ -7,8 +7,7 @@
 
 namespace libtensor {
 
-template<typename T> class tensor_operation;
-template<typename T> class tensor_operation_handler;
+template<typename T> class tensor_ctrl;
 
 /**	\brief Tensor interface
 	\param T Tensor element type
@@ -29,7 +28,7 @@ template<typename T> class tensor_operation_handler;
 **/
 template<typename T>
 class tensor_i {
-	friend class tensor_operation<T>;
+	friend class tensor_ctrl<T>;
 
 public:
 	/**	\brief Returns the %dimensions of the %tensor
@@ -37,19 +36,14 @@ public:
 	virtual const dimensions &get_dims() const = 0;
 
 protected:
-	/**	\brief Returns the %tensor's operation handler
-	**/
-	virtual tensor_operation_handler<T> &get_tensor_operation_handler() = 0;
-
-	tensor_operation_handler<T> &get_tensor_operation_handler1(
-		tensor_i<T> &t);
+	//!	\name Event handling
+	//@{
+	virtual void on_req_prefetch() throw(exception) = 0;
+	virtual T *on_req_dataptr() throw(exception) = 0;
+	virtual const T *on_req_const_dataptr() throw(exception) = 0;
+	virtual void on_ret_dataptr(const T *p) throw(exception) = 0;
+	//@}
 };
-
-template<typename T>
-inline tensor_operation_handler<T> &tensor_i<T>::get_tensor_operation_handler1(
-	tensor_i<T> &t) {
-	return t.get_tensor_operation_handler();
-}
 
 } // namespace libtensor
 

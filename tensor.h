@@ -7,7 +7,6 @@
 #include "exception.h"
 #include "immutable.h"
 #include "permutation.h"
-#include "permutator.h"
 #include "tensor_i.h"
 
 namespace libtensor {
@@ -16,7 +15,6 @@ namespace libtensor {
 
 	\param T Tensor element type.
 	\param Alloc Memory allocator.
-	\param Perm Permutator.
 
 	This class is a container for %tensor elements located in memory.
 	It allocates and deallocates memory for the elements, provides facility
@@ -124,46 +122,14 @@ namespace libtensor {
 
 	\ingroup libtensor
 **/
-template<typename T, typename Alloc, typename Perm = permutator<T> >
+template<typename T, typename Alloc>
 class tensor : public tensor_i<T>, public immutable {
 public:
 	typedef T element_t; //!< Tensor element type
 	typedef typename Alloc::ptr_t ptr_t; //!< Memory pointer type
 
 private:
-	/**	\brief Tensor operation handler
-	**/
-	class toh : public tensor_operation_handler<T> {
-	private:
-		tensor<T,Alloc,Perm> &m_t; //!< Underlying tensor
-
-	public:
-		//!	\name Construction and destruction
-		//@{
-		//!	Initializes the handler
-		toh(tensor<T,Alloc,Perm> &t) : m_t(t) {}
-
-		//!	Destroys the handler
-		virtual ~toh() {}
-		//@}
-
-		//!	\name Overload of libtensor::tensor_operation_handler<T>
-		//@{
-		virtual void req_prefetch() throw(exception);
-
-		virtual element_t *req_dataptr() throw(exception);
-
-		virtual const element_t *req_const_dataptr()
-			throw(exception);
-
-		virtual void ret_dataptr(const element_t *p) throw(exception);
-
-		//@}
-	};
-
-private:
 	dimensions m_dims; //!< Tensor %dimensions
-	toh m_toh; //!< Tensor operation handler
 	ptr_t m_data; //!< Pointer to data
 	T *m_dataptr; //!< Pointer to checked out data
 	size_t m_ptrcount; //!< Number of read-only data pointers given out
@@ -193,7 +159,7 @@ public:
 	tensor(const tensor_i<T> &t) throw(exception);
 
 	/**	\brief Creates a %tensor with the %dimensions of another %tensor
-			(by tensor<T,Alloc,Perm> reference)
+			(by tensor<T,Alloc> reference)
 
 		Creates a %tensor with the %dimensions of another %tensor.
 		This constructor doesn't copy the data.
@@ -201,7 +167,7 @@ public:
 		\param t Another %tensor.
 		\throw exception If an initialization error occurs.
 	**/
-	tensor(const tensor<T,Alloc,Perm> &t) throw(exception);
+	tensor(const tensor<T,Alloc> &t) throw(exception);
 
 	/**	\brief Virtual destructor
 	**/
@@ -224,7 +190,10 @@ protected:
 	//!	\name Implementation of tensor_i<T>
 	//@{
 
-	virtual tensor_operation_handler<T> &get_tensor_operation_handler();
+	virtual void on_req_prefetch() throw(exception);
+	virtual T *on_req_dataptr() throw(exception);
+	virtual const T *on_req_const_dataptr() throw(exception);
+	virtual void on_ret_dataptr(const T *p) throw(exception);
 
 	//@}
 
@@ -232,10 +201,9 @@ private:
 	void throw_exc(const char *method, const char *msg) throw(exception);
 };
 
-template<typename T, typename Alloc, typename Perm>
-tensor<T,Alloc,Perm>::tensor(const dimensions &d) throw(exception) :
-	m_dims(d), m_toh(*this), m_data(Alloc::invalid_ptr), m_dataptr(NULL),
-	m_ptrcount(0) {
+template<typename T, typename Alloc>
+tensor<T,Alloc>::tensor(const dimensions &d) throw(exception) :
+	m_dims(d), m_data(Alloc::invalid_ptr), m_dataptr(NULL), m_ptrcount(0) {
 #ifdef LIBTENSOR_DEBUG
 	if(m_dims.get_size() == 0) {
 		throw_exc("tensor(const dimensions&)",
@@ -245,10 +213,10 @@ tensor<T,Alloc,Perm>::tensor(const dimensions &d) throw(exception) :
 	m_data = Alloc::allocate(m_dims.get_size());
 }
 
-template<typename T, typename Alloc, typename Perm>
-tensor<T,Alloc,Perm>::tensor(const tensor_i<T> &t) throw(exception) :
-	m_dims(t.get_dims()), m_toh(*this), m_data(Alloc::invalid_ptr),
-	m_dataptr(NULL), m_ptrcount(0) {
+template<typename T, typename Alloc>
+tensor<T,Alloc>::tensor(const tensor_i<T> &t) throw(exception) :
+	m_dims(t.get_dims()), m_data(Alloc::invalid_ptr), m_dataptr(NULL),
+	m_ptrcount(0) {
 #ifdef LIBTENSOR_DEBUG
 	if(m_dims.get_size() == 0) {
 		throw_exc("tensor(const tensor_i<T>&)",
@@ -258,21 +226,21 @@ tensor<T,Alloc,Perm>::tensor(const tensor_i<T> &t) throw(exception) :
 	m_data = Alloc::allocate(m_dims.get_size());
 }
 
-template<typename T, typename Alloc, typename Perm>
-tensor<T,Alloc,Perm>::tensor(const tensor<T,Alloc,Perm> &t)
-	throw(exception) : m_dims(t.m_dims), m_toh(*this),
-	m_data(Alloc::invalid_ptr), m_dataptr(NULL), m_ptrcount(0) {
+template<typename T, typename Alloc>
+tensor<T,Alloc>::tensor(const tensor<T,Alloc> &t)
+	throw(exception) : m_dims(t.m_dims), m_data(Alloc::invalid_ptr),
+	m_dataptr(NULL), m_ptrcount(0) {
 #ifdef LIBTENSOR_DEBUG
 	if(m_dims.get_size() == 0) {
-		throw_exc("tensor(const tensor<T,Alloc,Perm>&)",
+		throw_exc("tensor(const tensor<T,Alloc>&)",
 			"Zero tensor size is not allowed");
 	}
 #endif
 	m_data = Alloc::allocate(m_dims.get_size());
 }
 
-template<typename T, typename Alloc, typename Perm>
-inline tensor<T,Alloc,Perm>::~tensor() {
+template<typename T, typename Alloc>
+inline tensor<T,Alloc>::~tensor() {
 	if(m_dataptr) {
 		Alloc::unlock(m_data);
 		m_dataptr = NULL;
@@ -280,77 +248,68 @@ inline tensor<T,Alloc,Perm>::~tensor() {
 	Alloc::deallocate(m_data);
 }
 
-template<typename T, typename Alloc, typename Perm>
-inline const dimensions& tensor<T,Alloc,Perm>::get_dims() const {
+template<typename T, typename Alloc>
+inline const dimensions& tensor<T,Alloc>::get_dims() const {
 	return m_dims;
 }
 
-template<typename T, typename Alloc, typename Perm>
-inline tensor_operation_handler<T>&
-tensor<T,Alloc,Perm>::get_tensor_operation_handler() {
-	return m_toh;
+template<typename T, typename Alloc>
+void tensor<T,Alloc>::on_req_prefetch() throw(exception) {
+	Alloc::prefetch(m_data);
 }
 
-template<typename T, typename Alloc, typename Perm>
-inline void tensor<T,Alloc,Perm>::throw_exc(const char *method,
-	const char *msg) throw(exception) {
-	char s[1024];
-	snprintf(s, 1024, "[libtensor::tensor<T,Alloc,Perm>::%s] %s.",
-		method, msg);
-	throw exception(s);
-}
-
-template<typename T, typename Alloc, typename Perm>
-void tensor<T,Alloc,Perm>::toh::req_prefetch() throw(exception) {
-	Alloc::prefetch(m_t.m_data);
-}
-
-template<typename T, typename Alloc, typename Perm>
-T *tensor<T,Alloc,Perm>::toh::req_dataptr() throw(exception) {
-	if(m_t.is_immutable()) {
-		m_t.throw_exc("toh::req_dataptr(const permutation&)",
-			"Tensor is immutable, writing operations are "
-				"prohibited");
+template<typename T, typename Alloc>
+T *tensor<T,Alloc>::on_req_dataptr() throw(exception) {
+	if(is_immutable()) {
+		throw_exc("on_req_dataptr()", "Tensor is immutable, writing "
+			"operations are prohibited");
 	}
 
-	if(m_t.m_dataptr) {
-		m_t.throw_exc("toh::req_dataptr(const permutation&)",
-			"Data pointer has already been checked out");
+	if(m_dataptr) {
+		throw_exc("on_req_dataptr()",
+			"Data pointer is already checked out for rw");
 	}
 
-	m_t.m_dataptr = Alloc::lock(m_t.m_data);
-	return m_t.m_dataptr;
+	m_dataptr = Alloc::lock(m_data);
+	return m_dataptr;
 }
 
-template<typename T, typename Alloc, typename Perm>
-const T *tensor<T,Alloc,Perm>::toh::req_const_dataptr() throw(exception) {
-
-	if(m_t.m_dataptr) {
-		if(m_t.m_ptrcount) {
-			m_t.m_ptrcount++;
-			return m_t.m_dataptr;
+template<typename T, typename Alloc>
+const T *tensor<T,Alloc>::on_req_const_dataptr() throw(exception) {
+	if(m_dataptr) {
+		if(m_ptrcount) {
+			m_ptrcount++;
+			return m_dataptr;
 		}
-		m_t.throw_exc("toh::req_dataptr(const permutation&)",
-			"Data pointer (rw) has already been checked out");
+		throw_exc("on_req_const_dataptr()",
+			"Data pointer is already checked out for rw");
 	}
 
-	m_t.m_dataptr = Alloc::lock(m_t.m_data);
-	m_t.m_ptrcount = 1;
-	return m_t.m_dataptr;
+	m_dataptr = Alloc::lock(m_data);
+	m_ptrcount = 1;
+	return m_dataptr;
 }
 
-template<typename T, typename Alloc, typename Perm>
-void tensor<T,Alloc,Perm>::toh::ret_dataptr(const element_t *p)
-	throw(exception) {
-	if(m_t.m_dataptr != p) {
-		m_t.throw_exc("toh::ret_dataptr(const element_t*)",
+template<typename T, typename Alloc>
+void tensor<T,Alloc>::on_ret_dataptr(const element_t *p) throw(exception) {
+	if(m_dataptr != p) {
+		throw_exc("on_ret_dataptr(const element_t*)",
 			"Unrecognized data pointer");
 	}
-	if(m_t.m_ptrcount > 0) m_t.m_ptrcount--;
-	if(m_t.m_ptrcount == 0) {
-		Alloc::unlock(m_t.m_data);
-		m_t.m_dataptr = NULL;
+	if(m_ptrcount > 0) m_ptrcount--;
+	if(m_ptrcount == 0) {
+		Alloc::unlock(m_data);
+		m_dataptr = NULL;
 	}
+}
+
+template<typename T, typename Alloc>
+inline void tensor<T,Alloc>::throw_exc(const char *method,
+	const char *msg) throw(exception) {
+	char s[1024];
+	snprintf(s, 1024, "[libtensor::tensor<T,Alloc>::%s] %s.",
+		method, msg);
+	throw exception(s);
 }
 
 } // namespace libtensor

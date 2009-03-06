@@ -28,9 +28,10 @@ void direct_tensor_test::test_ctor() throw(libtest::test_exception) {
 void direct_tensor_test::test_op_set::perform(tensor_i<int> &t)
 	throw(exception) {
 	size_t sz = t.get_dims().get_size();
-	int *p = req_dataptr(t);
+	tensor_ctrl<int> tctrl(t);
+	int *p = tctrl.req_dataptr();
 	for(size_t i=0; i<sz; i++) p[i] = (int)i;
-	ret_dataptr(t, p);
+	tctrl.ret_dataptr(p);
 	m_count++;
 }
 
@@ -38,9 +39,10 @@ void direct_tensor_test::test_op_chk_set::perform(tensor_i<int> &t)
 	throw(exception) {
 	size_t sz = t.get_dims().get_size();
 	m_ok = true;
-	const int *p = req_const_dataptr(t);
+	tensor_ctrl<int> tctrl(t);
+	const int *p = tctrl.req_const_dataptr();
 	for(size_t i=0; i<sz; i++) if(p[i]!=(int)i) { m_ok=false; break; }
-	ret_dataptr(t, p);
+	tctrl.ret_dataptr(p);
 }
 
 void direct_tensor_test::test_buffering() throw(libtest::test_exception) {

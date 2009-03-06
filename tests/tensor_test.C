@@ -1,3 +1,4 @@
+#include "tensor_ctrl.h"
 #include "tensor_test.h"
 
 namespace libtensor {
@@ -82,13 +83,14 @@ void tensor_test::test_op_chk_imm::perform(tensor_i<int> &t) throw(exception) {
 	m_ok = false;
 	dimensions d(t.get_dims());
 	int *ptr = NULL;
+	tensor_ctrl<int> tctrl(t);
 	try {
-		ptr = req_dataptr(t);
+		ptr = tctrl.req_dataptr();
 	} catch(exception e) {
 		m_ok = true;
 	}
 	if(ptr) {
-		ret_dataptr(t, ptr);
+		tctrl.ret_dataptr(ptr);
 		ptr = NULL;
 	}
 }
@@ -122,59 +124,62 @@ void tensor_test::test_immutable() throw(libtest::test_exception) {
 
 void tensor_test::test_op_set_int::perform(tensor_i<int> &t) throw(exception) {
 	dimensions d(t.get_dims());
-	int *ptr = req_dataptr(t);
+	tensor_ctrl<int> tctrl(t);
+	int *ptr = tctrl.req_dataptr();
 	if(ptr) {
 		for(size_t i=0; i<d.get_size(); i++) ptr[i] = m_val;
 	}
-	ret_dataptr(t, ptr);
+	tctrl.ret_dataptr(ptr);
 }
 
 void tensor_test::test_op_chkset_int::perform(tensor_i<int> &t)
 	throw(exception) {
 	m_ok = true;
 	dimensions d(t.get_dims());
-	const int *ptr = req_const_dataptr(t);
+	tensor_ctrl<int> tctrl(t);
+	const int *ptr = tctrl.req_const_dataptr();
 	if(ptr) {
 		for(size_t i=0; i<d.get_size(); i++)
 			m_ok = m_ok && (ptr[i]==m_val);
 	}
-	ret_dataptr(t, ptr);
+	tctrl.ret_dataptr(ptr);
 }
 
 void tensor_test::test_op_chk_dblreq::perform(tensor_i<int> &t)
 	throw(exception) {
 	m_ok = true;
+	tensor_ctrl<int> tctrl(t);
 
 	// After rw-checkout, ro-checkout is not allowed
-	int *ptr = req_dataptr(t);
+	int *ptr = tctrl.req_dataptr();
 	try {
-		int *ptr2 = req_dataptr(t);
+		int *ptr2 = tctrl.req_dataptr();
 		m_ok = false;
 	} catch(exception e) {
 	}
 	try {
-		const int *ptr2 = req_const_dataptr(t);
+		const int *ptr2 = tctrl.req_const_dataptr();
 		m_ok = false;
 	} catch(exception e) {
 	}
-	ret_dataptr(t, ptr);
+	tctrl.ret_dataptr(ptr);
 
 	// After ro-checkout, rw-checkout is not allowed
-	const int *const_ptr = req_const_dataptr(t);
+	const int *const_ptr = tctrl.req_const_dataptr();
 	try {
-		int *ptr2 = req_dataptr(t);
+		int *ptr2 = tctrl.req_dataptr();
 		m_ok = false;
 	} catch(exception e) {
 	}
 
 	// Multiple ro-checkouts are allowed
 	try {
-		const int *ptr2 = req_const_dataptr(t);
-		ret_dataptr(t, ptr2);
+		const int *ptr2 = tctrl.req_const_dataptr();
+		tctrl.ret_dataptr(ptr2);
 	} catch(exception e) {
 		m_ok = false;
 	}
-	ret_dataptr(t, const_ptr);
+	tctrl.ret_dataptr(const_ptr);
 }
 
 void tensor_test::test_operation() throw(libtest::test_exception) {

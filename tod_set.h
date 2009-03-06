@@ -3,7 +3,7 @@
 
 #include "defs.h"
 #include "exception.h"
-#include "tensor_operation.h"
+#include "direct_tensor_operation.h"
 
 namespace libtensor {
 
@@ -11,7 +11,7 @@ namespace libtensor {
 
 	\ingroup libtensor_tod
 **/
-class tod_set : public tensor_operation<double> {
+class tod_set : public direct_tensor_operation<double> {
 private:
 	double m_val; //!< Value
 
@@ -38,6 +38,8 @@ public:
 	**/
 	void perform(tensor_i<double> &t) throw(exception);
 
+	virtual void prefetch() throw(exception);
+
 	//@}
 };
 
@@ -46,6 +48,9 @@ inline tod_set::tod_set(const double v) {
 }
 
 inline tod_set::~tod_set() {
+}
+
+inline void tod_set::prefetch() throw(exception) {
 }
 
 } // namespace libtensor
