@@ -40,7 +40,16 @@ protected:
 	/**	\brief Returns the %tensor's operation handler
 	**/
 	virtual tensor_operation_handler<T> &get_tensor_operation_handler() = 0;
+
+	tensor_operation_handler<T> &get_tensor_operation_handler1(
+		tensor_i<T> &t);
 };
+
+template<typename T>
+inline tensor_operation_handler<T> &tensor_i<T>::get_tensor_operation_handler1(
+	tensor_i<T> &t) {
+	return t.get_tensor_operation_handler();
+}
 
 } // namespace libtensor
 

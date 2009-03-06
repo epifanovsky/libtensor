@@ -10,7 +10,10 @@ include Makefile.inc
 
 INCLUDE = -I. -I../libvmm
 
-OBJS  = dimensions.o
+SVNREV := $(shell svnversion -n .)
+
+OBJS  = defs.o
+OBJS += dimensions.o
 OBJS += lehmer_code.o
 OBJS += permutator.o
 OBJS += symmetry.o
@@ -38,6 +41,8 @@ docs:
 trac:
 	doxygen
 	cp -R docs/html/* /var/lib/trac/libtensor/htdocs/
+
+defs.o: CPPFLAGS += -DLIBTENSOR_SVN_REV='"$(SVNREV)"'
 
 dimensions.C: dimensions.h
 

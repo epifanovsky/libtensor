@@ -145,6 +145,7 @@ void tensor_test::test_op_chk_dblreq::perform(tensor_i<int> &t)
 	throw(exception) {
 	m_ok = true;
 
+	// After rw-checkout, ro-checkout is not allowed
 	int *ptr = req_dataptr(t);
 	try {
 		int *ptr2 = req_dataptr(t);
@@ -158,16 +159,20 @@ void tensor_test::test_op_chk_dblreq::perform(tensor_i<int> &t)
 	}
 	ret_dataptr(t, ptr);
 
+	// After ro-checkout, rw-checkout is not allowed
 	const int *const_ptr = req_const_dataptr(t);
 	try {
 		int *ptr2 = req_dataptr(t);
 		m_ok = false;
 	} catch(exception e) {
 	}
+
+	// Multiple ro-checkouts are allowed
 	try {
 		const int *ptr2 = req_const_dataptr(t);
-		m_ok = false;
+		ret_dataptr(t, ptr2);
 	} catch(exception e) {
+		m_ok = false;
 	}
 	ret_dataptr(t, const_ptr);
 }

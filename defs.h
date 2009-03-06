@@ -12,6 +12,10 @@ namespace libtensor {
 **/
 const size_t max_tensor_order = 6;
 
+/**	\brief Library version (SVN revision number)
+**/
+extern const char *version;
+
 }
 
 #undef TENSOR_DEBUG

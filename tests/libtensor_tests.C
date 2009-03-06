@@ -1,5 +1,6 @@
 #include "libtensor_suite.h"
 #include <cstdio>
+#include <cstring>
 
 using namespace libtensor;
 using libtest::test_exception;
@@ -29,6 +30,14 @@ public:
 };
 
 int main(int argc, char **argv) {
+	char smsg[81], sline[81];
+	snprintf(smsg, 81, "Performing tests for libtensor revision %s",
+		libtensor::version);
+	size_t slen = strlen(smsg);
+	memset(sline, '-', 80);
+	sline[slen] = '\0';
+	puts(sline); puts(smsg); puts(sline);
+
 	suite_handler handler;
 	libtensor_suite suite;
 	suite.set_handler(&handler);

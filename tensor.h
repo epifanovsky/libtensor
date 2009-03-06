@@ -166,7 +166,7 @@ private:
 	toh m_toh; //!< Tensor operation handler
 	ptr_t m_data; //!< Pointer to data
 	T *m_dataptr; //!< Pointer to checked out data
-	permutation m_perm; //!< Current %permutation of the elements
+	size_t m_ptrcount; //!< Number of read-only data pointers given out
 
 public:
 	//!	\name Construction and destruction
@@ -234,8 +234,8 @@ private:
 
 template<typename T, typename Alloc, typename Perm>
 tensor<T,Alloc,Perm>::tensor(const dimensions &d) throw(exception) :
-	m_dims(d), m_toh(*this), m_perm(m_dims.get_order()),
-	m_data(Alloc::invalid_ptr), m_dataptr(NULL) {
+	m_dims(d), m_toh(*this), m_data(Alloc::invalid_ptr), m_dataptr(NULL),
+	m_ptrcount(0) {
 #ifdef LIBTENSOR_DEBUG
 	if(m_dims.get_size() == 0) {
 		throw_exc("tensor(const dimensions&)",
@@ -247,8 +247,8 @@ tensor<T,Alloc,Perm>::tensor(const dimensions &d) throw(exception) :
 
 template<typename T, typename Alloc, typename Perm>
 tensor<T,Alloc,Perm>::tensor(const tensor_i<T> &t) throw(exception) :
-	m_dims(t.get_dims()), m_toh(*this), m_perm(m_dims.get_order()),
-	m_data(Alloc::invalid_ptr), m_dataptr(NULL) {
+	m_dims(t.get_dims()), m_toh(*this), m_data(Alloc::invalid_ptr),
+	m_dataptr(NULL), m_ptrcount(0) {
 #ifdef LIBTENSOR_DEBUG
 	if(m_dims.get_size() == 0) {
 		throw_exc("tensor(const tensor_i<T>&)",
@@ -261,8 +261,7 @@ tensor<T,Alloc,Perm>::tensor(const tensor_i<T> &t) throw(exception) :
 template<typename T, typename Alloc, typename Perm>
 tensor<T,Alloc,Perm>::tensor(const tensor<T,Alloc,Perm> &t)
 	throw(exception) : m_dims(t.m_dims), m_toh(*this),
-	m_perm(m_dims.get_order()), m_data(Alloc::invalid_ptr),
-	m_dataptr(NULL) {
+	m_data(Alloc::invalid_ptr), m_dataptr(NULL), m_ptrcount(0) {
 #ifdef LIBTENSOR_DEBUG
 	if(m_dims.get_size() == 0) {
 		throw_exc("tensor(const tensor<T,Alloc,Perm>&)",
@@ -320,34 +319,6 @@ T *tensor<T,Alloc,Perm>::toh::req_dataptr() throw(exception) {
 	}
 
 	m_t.m_dataptr = Alloc::lock(m_t.m_data);
-
-/*
-	// No permutation necessary
-	if(p.equals(m_t.m_perm)) return m_t.m_dataptr;
-
-	// Tensor elements need to be permuted
-
-	typename Alloc::ptr_t data_dst =
-		Alloc::allocate(m_t.get_dims().get_size());
-	T *dataptr_dst = Alloc::lock(data_dst);
-
-	// How elemens need to be permuted from current order
-	permutation perm(m_t.m_perm, true);
-	perm.permute(p);
-
-	// Permuted dimensions
-	dimensions dims(m_t.get_dims());
-	dims.permute(m_t.m_perm);
-
-	Perm::permute(m_t.m_dataptr, dataptr_dst, dims, perm);
-
-	Alloc::unlock(m_t.m_data);
-	Alloc::deallocate(m_t.m_data);
-	m_t.m_data = data_dst;
-	m_t.m_dataptr = dataptr_dst;
-	m_t.m_perm.permute(perm);
-*/
-
 	return m_t.m_dataptr;
 }
 
@@ -355,14 +326,16 @@ template<typename T, typename Alloc, typename Perm>
 const T *tensor<T,Alloc,Perm>::toh::req_const_dataptr() throw(exception) {
 
 	if(m_t.m_dataptr) {
+		if(m_t.m_ptrcount) {
+			m_t.m_ptrcount++;
+			return m_t.m_dataptr;
+		}
 		m_t.throw_exc("toh::req_dataptr(const permutation&)",
-			"Data pointer has already been checked out");
+			"Data pointer (rw) has already been checked out");
 	}
 
 	m_t.m_dataptr = Alloc::lock(m_t.m_data);
-
-	// Permute elements here if necessary
-
+	m_t.m_ptrcount = 1;
 	return m_t.m_dataptr;
 }
 
@@ -373,8 +346,11 @@ void tensor<T,Alloc,Perm>::toh::ret_dataptr(const element_t *p)
 		m_t.throw_exc("toh::ret_dataptr(const element_t*)",
 			"Unrecognized data pointer");
 	}
-	Alloc::unlock(m_t.m_data);
-	m_t.m_dataptr = NULL;
+	if(m_t.m_ptrcount > 0) m_t.m_ptrcount--;
+	if(m_t.m_ptrcount == 0) {
+		Alloc::unlock(m_t.m_data);
+		m_t.m_dataptr = NULL;
+	}
 }
 
 } // namespace libtensor
