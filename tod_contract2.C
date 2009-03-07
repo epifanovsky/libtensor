@@ -13,7 +13,7 @@ tod_contract2::~tod_contract2() {
 }
 
 void tod_contract2::prefetch() throw(exception) {
-	tensor_ctrl<double> ctrl_t1(t1), ctrl_t2(t2);
+	tensor_ctrl<double> ctrl_t1(m_t1), ctrl_t2(m_t2);
 	ctrl_t1.req_prefetch();
 	ctrl_t2.req_prefetch();
 }

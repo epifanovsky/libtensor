@@ -15,6 +15,8 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("symmetry", m_utf_symmetry);
 	add_test("tensor", m_utf_tensor);
 	add_test("direct_tensor", m_utf_direct_tensor);
+	add_test("tod_add", m_utf_tod_add);
+	add_test("tod_contract2", m_utf_tod_contract2);
 	add_test("tod_set", m_utf_tod_set);
 	add_test("tod_sum", m_utf_tod_sum);
 }

@@ -4,7 +4,7 @@
 #include "defs.h"
 #include "exception.h"
 #include "tensor_i.h"
-#include "direct_tensor_additive_operation.h"
+#include "tod_additive.h"
 
 namespace libtensor {
 
@@ -21,35 +21,21 @@ namespace libtensor {
 
 	\ingroup libtensor_tod
 **/
-class tod_add : public direct_tensor_additive_operation<double> {
+class tod_add : public tod_additive {
 private:
 	struct operand {
 		tensor_i<double> &m_t;
 		const permutation &m_p;
 		const double m_c;
-		operand(tensor_i<double> &t, const permutation &p,
-			const double m_c) : m_t(t), m_p(p), m_c(c) {}
+		operand(tensor_i<double> &t, const permutation &p, double c) :
+			m_t(t), m_p(p), m_c(c) {}
 	};
 
-	tensor_i<double> &m_out; //!< Output tensor
-	permutation &m_perm_out; //!< Output permutation
-	bool m_add; //!< Add/replace output
-	dimensions m_dims_out; //!< Permuted dimensions of the output
+	//tensor_i<double> &m_out; //!< Output tensor
+	//permutation &m_perm_out; //!< Output permutation
+	//dimensions m_dims_out; //!< Permuted dimensions of the output
 
 public:
-	/**	\brief Initializes the operation
-		\param t Output tensor.
-		\param p Output permutation.
-		\param add Whether the result should be added to the tensor
-			or replace the current contents.
-	**/
-	tod_add(tensor_i<double> &t, const permutation &p, const bool add)
-		throw(exception);
-
-	/**	\brief Destroys the operation
-	**/
-	~tod_add();
-
 	/**	\brief Adds an operand
 		\param t Tensor.
 		\param p Permutation of %tensor elements.
@@ -60,12 +46,14 @@ public:
 
 	//!	\name Implementation of direct_tensor_operation<T>
 	//@{
-	void perform(tensor_i<double> &t) throw(exception);
+	virtual void prefetch() throw(exception);
 	//@}
 
-	//!	\name Implementation of direct_tensor_additive_operation<T>
+	//!	\name Implementation of tod_additive
 	//@{
-	void perform(tensor_i<double> &t, const double c) throw(exception);
+	virtual void perform(tensor_i<double> &t) throw(exception);
+	virtual void perform(tensor_i<double> &t, double c)
+		throw(exception);
 	//@}
 };
 

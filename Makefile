@@ -17,6 +17,8 @@ OBJS += dimensions.o
 OBJS += lehmer_code.o
 OBJS += permutator.o
 OBJS += symmetry.o
+OBJS += tod_add.o
+OBJS += tod_contract2.o
 OBJS += tod_set.o
 OBJS += tod_sum.o
 

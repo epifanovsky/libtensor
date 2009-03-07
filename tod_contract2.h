@@ -3,7 +3,7 @@
 
 #include "defs.h"
 #include "exception.h"
-#include "direct_tensor_additive_operation.h"
+#include "tod_additive.h"
 
 namespace libtensor {
 
@@ -21,11 +21,11 @@ namespace libtensor {
 
 	\ingroup libtensor_tod
 **/
-class tod_contract2 : public direct_tensor_additive_operation<double> {
+class tod_contract2 : public tod_additive {
 private:
 	size_t m_ncontr; //!< Number of indexes to contract over
-	tensor_i<T> &m_t1; //!< First tensor
-	tensor_i<T> &m_t2; //!< Second tensor
+	tensor_i<double> &m_t1; //!< First tensor
+	tensor_i<double> &m_t2; //!< Second tensor
 
 public:
 	//!	\name Construction and destruction
@@ -33,9 +33,10 @@ public:
 
 	/**	\brief Initializes the operation
 	**/
-	tod_contract2(const size_t n, tensor_i<T> &t1, const permutation &p1,
-		tensor_i<T> &t2, const permutation &p2,
-		const permutation &pres) throw(exception);
+	tod_contract2(const size_t n, tensor_i<double> &t1,
+		const permutation &p1, tensor_i<double> &t2,
+		const permutation &p2, const permutation &pres)
+		throw(exception);
 
 	/**	\brief Virtual destructor
 	**/
@@ -46,12 +47,12 @@ public:
 	//!	\name Implementation of direct_tensor_operation<T>
 	//@{
 	virtual void prefetch() throw(exception);
-	virtual void perform(tensor_i<T> &t) throw(exception);
 	//@}
 
-	//!	\name Implementation of direct_tensor_additive_operation<T>
+	//!	\name Implementation of tod_additive
 	//@{
-	virtual void perform(tensor_i<T> &t, const double c) throw(exception);
+	virtual void perform(tensor_i<double> &t) throw(exception);
+	virtual void perform(tensor_i<double> &t, double c) throw(exception);
 	//@}
 };
 
