@@ -23,6 +23,7 @@ public:
 
 private:
 	/**	\brief \f$ c_{ij} = \sum_{kl} a_{kl} b_{ijkl} \f$
+	**/
 	static void c_01_01_0123(double *c, const dimensions &dc,
 		const double *a, const dimensions &da,
 		const double *b, const dimensions &db);

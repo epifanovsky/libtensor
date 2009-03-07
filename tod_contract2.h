@@ -26,6 +26,8 @@ private:
 	size_t m_ncontr; //!< Number of indexes to contract over
 	tensor_i<double> &m_t1; //!< First tensor
 	tensor_i<double> &m_t2; //!< Second tensor
+	permutation m_p1; //!< Permutation of the first tensor
+	permutation m_p2; //!< Permutation of the second tensor
 
 public:
 	//!	\name Construction and destruction
