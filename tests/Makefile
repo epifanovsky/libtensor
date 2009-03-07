@@ -11,6 +11,7 @@ OBJS += permutator_test.o
 OBJS += symmetry_test.o
 OBJS += tensor_test.o
 OBJS += tod_set_test.o
+OBJS += tod_sum_test.o
 
 .PHONY: all
 all: libtensor_tests

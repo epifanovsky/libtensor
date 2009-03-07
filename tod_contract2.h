@@ -22,6 +22,11 @@ namespace libtensor {
 	\ingroup libtensor_tod
 **/
 class tod_contract2 : public direct_tensor_additive_operation<double> {
+private:
+	size_t m_ncontr; //!< Number of indexes to contract over
+	tensor_i<T> &m_t1; //!< First tensor
+	tensor_i<T> &m_t2; //!< Second tensor
+
 public:
 	//!	\name Construction and destruction
 	//@{

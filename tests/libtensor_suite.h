@@ -15,6 +15,7 @@
 #include "symmetry_test.h"
 #include "tensor_test.h"
 #include "tod_set_test.h"
+#include "tod_sum_test.h"
 
 using libtest::unit_test_factory;
 
@@ -36,6 +37,7 @@ namespace libtensor {
 	\li libtensor::symmetry_test
 	\li libtensor::tensor_test
 	\li libtensor::tod_set_test
+	\li libtensor::tod_sum_test
 **/
 class libtensor_suite : public libtest::test_suite {
 private:
@@ -51,6 +53,7 @@ private:
 	unit_test_factory<symmetry_test> m_utf_symmetry;
 	unit_test_factory<tensor_test> m_utf_tensor;
 	unit_test_factory<tod_set_test> m_utf_tod_set;
+	unit_test_factory<tod_sum_test> m_utf_tod_sum;
 
 public:
 	//!	Creates the suite
