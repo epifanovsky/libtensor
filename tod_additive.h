@@ -13,6 +13,9 @@ namespace libtensor {
 	type should implement this interface if its sole result is a %tensor
 	and it can add it an existing %tensor without allocating a buffer.
 
+	The two perform() methods must render the same operation, with the
+	only difference that one of them adds the result to a %tensor.
+
 	\ingroup libtensor
 **/
 class tod_additive : public direct_tensor_operation<double> {

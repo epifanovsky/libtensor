@@ -1,9 +1,7 @@
+#include "tod_set.h"
 #include "tod_sum.h"
 
 namespace libtensor {
-
-tod_sum::tod_sum() : m_head(NULL), m_tail(NULL) {
-}
 
 tod_sum::~tod_sum() {
 	struct list_node *node = m_head;
@@ -15,9 +13,21 @@ tod_sum::~tod_sum() {
 }
 
 void tod_sum::prefetch() throw(exception) {
+	m_baseop.prefetch();
+	struct list_node *node = m_head;
+	while(node != NULL) {
+		node->m_op.prefetch();
+		node = node->m_next;
+	}
 }
 
 void tod_sum::perform(tensor_i<double> &t) throw(exception) {
+	m_baseop.perform(t);
+	struct list_node *node = m_head;
+	while(node != NULL) {
+		node->m_op.perform(t, node->m_c);
+		node = node->m_next;
+	}
 }
 
 void tod_sum::add_op(tod_additive &op, double c) throw(exception) {

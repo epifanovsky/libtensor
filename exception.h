@@ -1,5 +1,5 @@
-#ifndef __LIBTENSOR_EXCEPTION_H
-#define __LIBTENSOR_EXCEPTION_H
+#ifndef LIBTENSOR_EXCEPTION_H
+#define LIBTENSOR_EXCEPTION_H
 
 #include <cstring>
 #include <exception>
@@ -24,7 +24,13 @@ public:
 	/**	\brief Returns the cause of the exception (message)
 	**/
 	virtual const char *what() const throw();
+
 };
+
+/**	\brief Throws an exception with a given error message
+**/
+void throw_exc(const char *clazz, const char *method, const char *error)
+	throw(exception);
 
 inline exception::exception(const char *msg) throw() {
 	if(msg == NULL) m_msg[0] = '\0';
@@ -40,5 +46,5 @@ inline const char *exception::what() const throw() {
 
 } // namespace libtensor
 
-#endif // __LIBTENSOR_EXCEPTION_H
+#endif // LIBTENSOR_EXCEPTION_H
 

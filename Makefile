@@ -14,6 +14,7 @@ SVNREV := $(shell svnversion -n .)
 
 OBJS  = defs.o
 OBJS += dimensions.o
+OBJS += exception.o
 OBJS += lehmer_code.o
 OBJS += permutator.o
 OBJS += symmetry.o

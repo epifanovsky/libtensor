@@ -3,7 +3,6 @@
 
 #include "defs.h"
 #include "exception.h"
-#include "direct_tensor_operation.h"
 #include "tod_additive.h"
 
 namespace libtensor {
@@ -21,8 +20,9 @@ private:
 		list_node(tod_additive &op, double c);
 	};
 
-	struct list_node *m_head;
-	struct list_node *m_tail;
+	direct_tensor_operation<double> &m_baseop; //!< Base operation
+	struct list_node *m_head; //!< Head of the list of additional operations
+	struct list_node *m_tail; //!< Tail of the list of additional operations
 
 public:
 	//!	\name Construction and destruction
@@ -30,7 +30,7 @@ public:
 
 	/**	\brief Default constructor
 	**/
-	tod_sum();
+	tod_sum(direct_tensor_operation<double> &op);
 
 	/**	\brief Virtual destructor
 	**/
@@ -48,6 +48,10 @@ public:
 	**/
 	void add_op(tod_additive &op, double c) throw(exception);
 };
+
+inline tod_sum::tod_sum(direct_tensor_operation<double> &op) :
+	m_baseop(op), m_head(NULL), m_tail(NULL) {
+}
 
 inline tod_sum::list_node::list_node(tod_additive &op, double c) :
 	m_op(op), m_c(c), m_next(NULL) {
