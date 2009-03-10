@@ -15,6 +15,9 @@ void tod_sum_test::perform() throw(libtest::test_exception) {
 
 	testop_set setop;
 	tod_sum op(setop);
+	testop_add add1(1.0), add2(2.0);
+	op.add_op(add1, 1.0);
+	op.add_op(add2, 1.0);
 	op.perform(t);
 
 	tensor_ctrl<double> tctrl(t);
