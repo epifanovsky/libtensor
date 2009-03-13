@@ -3,6 +3,8 @@
 
 #include "defs.h"
 #include "exception.h"
+#include "dimensions.h"
+#include "permutation.h"
 
 namespace libtensor {
 
@@ -17,9 +19,14 @@ namespace libtensor {
 **/
 class contract2_2_2i {
 public:
-	static void contract(double *c, const dimensions &dc, size_t pcc,
-		const double *a, const dimensions &da, size_t pca,
-		const double *b, const dimensions &db, size_t pcb);
+	/**	\brief \f[ c_{ij} = \mathcal{P}_c \sum_{kl}
+			\mathcal{P}_a a_{kl} \mathcal{P}_b b_{ijkl} \f]
+	**/
+	static void contract(
+		double *c, const dimensions &dc, const permutation &pcc,
+		const double *a, const dimensions &da, const permutation &pca,
+		const double *b, const dimensions &db, const permutation &pcb)
+		throw(exception);
 
 private:
 	/**	\brief \f$ c_{ij} = \sum_{kl} a_{kl} b_{ijkl} \f$

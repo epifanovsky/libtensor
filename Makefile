@@ -12,7 +12,8 @@ INCLUDE = -I. -I../libvmm
 
 SVNREV := $(shell svnversion -n .)
 
-OBJS  = defs.o
+OBJS  = contract2_2_2i.o
+OBJS += defs.o
 OBJS += dimensions.o
 OBJS += exception.o
 OBJS += lehmer_code.o
