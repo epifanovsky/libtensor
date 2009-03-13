@@ -1,3 +1,4 @@
+#include <cmath>
 #include <cstdlib>
 #include <ctime>
 #include "contract2_2_2i_test.h"
@@ -65,15 +66,27 @@ void contract2_2_2i_test::test_1() throw(libtest::test_exception) {
 	tcb.ret_dataptr(dctb); dctb = NULL;
 
 	bool ok = true;
-	for(size_t i=0; i<szc; i++) if(dctc[i]!=dtc[i]) { ok=false; break; }
+	size_t ielem;
+	double dfail_ref, dfail_act;
+	for(ielem=0; ielem<szc; ielem++) {
+		if(fabs(dctc[ielem]-dtc[ielem])>1e-15) {
+			dfail_ref = dtc[ielem]; dfail_act = dctc[ielem];
+			ok=false; break;
+		}
+	}
 
 	tcc.ret_dataptr(dctc); dctc = NULL;
 
 	delete [] dtc; delete [] dtb; delete [] dta;
 
 	if(!ok) {
+		char msg[1024];
+		snprintf(msg, 1024, "contract() result does not match "
+			"reference at element %lu: %lg(ref) vs %lg(act), "
+			"%lg(diff)", ielem, dfail_ref, dfail_act,
+			dfail_act-dfail_ref);
 		fail_test("contract2_2_2i_test::test_1()", __FILE__, __LINE__,
-			"contract() result does not match reference");
+			msg);
 	}
 }
 
