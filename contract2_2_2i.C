@@ -18,8 +18,32 @@ void contract2_2_2i::contract(
 
 void contract2_2_2i::c_01_01_0123(double *c, const dimensions &dc,
 	const double *a, const dimensions &da, const double *b,
-	const dimensions &db) {
-
+	const dimensions &db) throw(exception) {
+#ifdef LIBTENSOR_DEBUG
+	if(dc[0]!=db[0]) {
+		throw_exc("libtensor::contract2_2_2i", "c_01_01_0123(...)",
+			"Inconsistent dimension: i");
+	}
+	if(dc[1]!=db[1]) {
+		throw_exc("libtensor::contract2_2_2i", "c_01_01_0123(...)",
+			"Inconsistent dimension: j");
+	}
+	if(da[0]!=db[2]) {
+		throw_exc("libtensor::contract2_2_2i", "c_01_01_0123(...)",
+			"Inconsistent dimension: k");
+	}
+	if(da[1]!=db[3]) {
+		throw_exc("libtensor::contract2_2_2i", "c_01_01_0123(...)",
+			"Inconsistent dimension: l");
+	}
+#endif
+	size_t sza = da.get_size(), szc = dc.get_size();
+	const double *pb = b;
+	double *pc = c;
+	for(size_t i=0; i<szc; i++) {
+		*pc = cblas_ddot(sza, a, 1, pb, 1);
+		pc++; pb+=sza;
+	}
 }
 
 } // namespace libtensor
