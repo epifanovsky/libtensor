@@ -62,7 +62,9 @@ void contract2_2_3i::c_01_2013_2013(double *c, const dimensions &dc,
 	for(size_t kl=0; kl<szkl; kl++) {
 		cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasTrans,
 			szi, szj, szm, 1.0,
-			a, szi, b, szj, 1.0, c, szi);
+			//a, szi, b, szj, 1.0, c, szi);
+			pa, szm, pb, szm, 1.0, c, szj);
+		pa += szim; pb += szjm;
 	}
 }
 

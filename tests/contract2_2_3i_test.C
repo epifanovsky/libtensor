@@ -12,6 +12,7 @@ using libvmm::std_allocator;
 void contract2_2_3i_test::perform() throw(libtest::test_exception) {
 	test_ij_klm_klim_kljm(3, 4, 5, 6, 7);
 	test_ij_klm_klim_kljm(3, 3, 3, 3, 3);
+	test_ij_klm_klim_kljm(3, 1, 3, 1, 2);
 }
 
 void contract2_2_3i_test::test_ij_klm_klim_kljm(size_t ni, size_t nj, size_t nk,
@@ -74,7 +75,7 @@ void contract2_2_3i_test::test_ij_klm_klim_kljm(size_t ni, size_t nj, size_t nk,
 	size_t ielem;
 	double dfail_ref, dfail_act;
 	for(ielem=0; ielem<szc; ielem++) {
-		if(fabs(dctc[ielem]-dtc[ielem])>1e-15) {
+		if(fabs(dctc[ielem]-dtc[ielem])>fabs(dtc[ielem])*1e-15) {
 			dfail_ref = dtc[ielem]; dfail_act = dctc[ielem];
 			ok=false; break;
 		}
