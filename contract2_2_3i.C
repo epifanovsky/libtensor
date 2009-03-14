@@ -55,15 +55,14 @@ void contract2_2_3i::c_01_2013_2013(double *c, const dimensions &dc,
 	size_t szjm = db.get_increment(1);
 	size_t szij = dc.get_size();
 
-	for(size_t ij=0; ij<szij; ij++) c[ij] = 0.0;
-
 	size_t szi = dc[0], szj = dc[1], szm = da[3];
 	const double *pa = a, *pb = b;
-	for(size_t kl=0; kl<szkl; kl++) {
+	cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasTrans,
+		szi, szj, szm, 1.0, pa, szm, pb, szm, 0.0, c, szj);
+	pa += szim; pb += szjm;
+	for(size_t kl=1; kl<szkl; kl++) {
 		cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasTrans,
-			szi, szj, szm, 1.0,
-			//a, szi, b, szj, 1.0, c, szi);
-			pa, szm, pb, szm, 1.0, c, szj);
+			szi, szj, szm, 1.0, pa, szm, pb, szm, 1.0, c, szj);
 		pa += szim; pb += szjm;
 	}
 }
