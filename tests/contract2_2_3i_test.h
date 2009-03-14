@@ -15,7 +15,8 @@ public:
 	virtual void perform() throw(libtest::test_exception);
 
 private:
-	void test_1() throw(libtest::test_exception);
+	void test_ij_klm_klim_kljm(size_t ni, size_t nj, size_t nk, size_t nl,
+		size_t nm) throw(libtest::test_exception);
 };
 
 } // namespace libtensor

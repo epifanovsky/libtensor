@@ -10,14 +10,16 @@ namespace libtensor {
 using libvmm::std_allocator;
 
 void contract2_2_3i_test::perform() throw(libtest::test_exception) {
-	test_1();
+	test_ij_klm_klim_kljm(3, 4, 5, 6, 7);
+	test_ij_klm_klim_kljm(3, 3, 3, 3, 3);
 }
 
-void contract2_2_3i_test::test_1() throw(libtest::test_exception) {
+void contract2_2_3i_test::test_ij_klm_klim_kljm(size_t ni, size_t nj, size_t nk,
+	size_t nl, size_t nm) throw(libtest::test_exception) {
 	index ia1(4), ia2(4), ib1(4), ib2(4), ic1(2), ic2(2);
-	ia2[0]=2; ia2[1]=2; ia2[2]=2; ia2[3]=2;
-	ib2[0]=2; ib2[1]=2; ib2[2]=2; ib2[3]=2;
-	ic2[0]=2; ic2[1]=2;
+	ia2[0]=nk-1; ia2[1]=nl-1; ia2[2]=ni-1; ia2[3]=nm-1;
+	ib2[0]=nk-1; ib2[1]=nl-1; ib2[2]=nj-1; ib2[3]=nm-1;
+	ic2[0]=ni-1; ic2[1]=nj-1;
 	index_range ira(ia1,ia2), irb(ib1,ib2), irc(ic1,ic2);
 	dimensions dima(ira), dimb(irb), dimc(irc);
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
@@ -51,8 +53,8 @@ void contract2_2_3i_test::test_1() throw(libtest::test_exception) {
 
 	tensor_ctrl<double> tca(ta), tcb(tb), tcc(tc);
 	permutation perma(4), permb(4), permc(2);
-	perma.permute(0,2).permute(0,1);
-	permb.permute(0,2).permute(0,1);
+	perma.permute(0,2).permute(1,2); // klim -> iklm
+	permb.permute(0,2).permute(1,2); // kljm -> jklm
 	double *ptr = tca.req_dataptr();
 	for(size_t i=0; i<sza; i++) ptr[i]=dta[i];
 	tca.ret_dataptr(ptr);
@@ -83,13 +85,15 @@ void contract2_2_3i_test::test_1() throw(libtest::test_exception) {
 	delete [] dtc; delete [] dtb; delete [] dta;
 
 	if(!ok) {
-		char msg[1024];
+		char method[1024], msg[1024];
+		snprintf(method, 1024, "contract2_2_3i_test::"
+			"test_ij_klm_klim_kljm(%lu,%lu,%lu,%lu,%lu)",
+			ni, nj, nk, nl, nm);
 		snprintf(msg, 1024, "contract() result does not match "
 			"reference at element %lu: %lg(ref) vs %lg(act), "
 			"%lg(diff)", ielem, dfail_ref, dfail_act,
 			dfail_act-dfail_ref);
-		fail_test("contract2_2_3i_test::test_1()", __FILE__, __LINE__,
-			msg);
+		fail_test(method, __FILE__, __LINE__, msg);
 	}
 }
 

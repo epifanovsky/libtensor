@@ -40,13 +40,13 @@ private:
 
 	/**	\brief \f$ c_{ij} = \sum_{klm} a_{klim} b_{kljm} \f$
 	**/
-	static void c_01_1203_1203(double *c, const dimensions &dc,
+	static void c_01_2013_2013(double *c, const dimensions &dc,
 		const double *a, const dimensions &da,
 		const double *b, const dimensions &db);
 
 	/**	\brief \f$ c_{ij} = c_{ij} + x\sum_{klm} a_{klim} b_{kljm} \f$
 	**/
-	static void c_01_1203_1203a(double *c, const dimensions &dc,
+	static void c_01_2013_2013a(double *c, const dimensions &dc,
 		const double *a, const dimensions &da,
 		const double *b, const dimensions &db, double x);
 };

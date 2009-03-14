@@ -33,19 +33,22 @@ void contract2_2_3i::contract(
 	}
 #endif // LIBTENSOR_DEBUG
 
-	permutation p_1203(4);
-	p_1203.permute(0,2).permute(0,1);
-	if(pc.is_identity() && pa.equals(p_1203) && pb.equals(p_1203)) {
-		c_01_1203_1203(c, dc, a, da, b, db);
+	// ijkl[0123] -> kijl[2013]
+	permutation p_2013(4);
+	p_2013.permute(0,2).permute(1,2);
+	if(pc.is_identity() && pa.equals(p_2013) && pb.equals(p_2013)) {
+		c_01_2013_2013(c, dc, a, da, b, db);
 	} else {
 		throw_exc("contract2_2_3i", "contract(...)",
 			"Contraction not implemented");
 	}
 }
 
-void contract2_2_3i::c_01_1203_1203(double *c, const dimensions &dc,
+void contract2_2_3i::c_01_2013_2013(double *c, const dimensions &dc,
 	const double *a, const dimensions &da, const double *b,
 	const dimensions &db) {
+
+	// c_ij = \sum_klm a_klim b_kljm
 
 	size_t szkl = da[0]*da[1];
 	size_t szim = da.get_increment(1);
@@ -54,11 +57,12 @@ void contract2_2_3i::c_01_1203_1203(double *c, const dimensions &dc,
 
 	for(size_t ij=0; ij<szij; ij++) c[ij] = 0.0;
 
+	size_t szi = dc[0], szj = dc[1], szm = da[3];
 	const double *pa = a, *pb = b;
 	for(size_t kl=0; kl<szkl; kl++) {
 		cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasTrans,
-			dc[0], dc[1], da[3], 1.0,
-			a, da[2], b, db[2], 1.0, c, dc[0]);
+			szi, szj, szm, 1.0,
+			a, szi, b, szj, 1.0, c, szi);
 	}
 }
 
