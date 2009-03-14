@@ -36,12 +36,35 @@ void contract2_2_3i::contract(
 	// ijkl[0123] -> kijl[2013]
 	permutation p_2013(4);
 	p_2013.permute(0,2).permute(1,2);
+
+	permutation p_10(2);
+	p_10.permute(0,1);
+
+	if(pc.is_identity() && pa.is_identity() && pb.is_identity()) {
+		c_01_0123_0123(c, dc, a, da, b, db);
+	} else {
+	if(pc.equals(p_10) && pa.is_identity() && pb.is_identity()) {
+		c_01_0123_0123(c, dc, b, db, a, da);
+	} else {
 	if(pc.is_identity() && pa.equals(p_2013) && pb.equals(p_2013)) {
 		c_01_2013_2013(c, dc, a, da, b, db);
 	} else {
 		throw_exc("contract2_2_3i", "contract(...)",
 			"Contraction not implemented");
 	}
+	}
+	}
+}
+
+void contract2_2_3i::c_01_0123_0123(double *c, const dimensions &dc,
+	const double *a, const dimensions &da, const double *b,
+	const dimensions &db) {
+
+	// c_ij = \sum_klm a_iklm b_jklm
+
+	size_t szi = dc[0], szj = dc[1], szklm = da.get_increment(0);
+	cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasTrans,
+		szi, szj, szklm, 1.0, a, szklm, b, szklm, 0.0, c, szj);
 }
 
 void contract2_2_3i::c_01_2013_2013(double *c, const dimensions &dc,
@@ -59,11 +82,10 @@ void contract2_2_3i::c_01_2013_2013(double *c, const dimensions &dc,
 	const double *pa = a, *pb = b;
 	cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasTrans,
 		szi, szj, szm, 1.0, pa, szm, pb, szm, 0.0, c, szj);
-	pa += szim; pb += szjm;
 	for(size_t kl=1; kl<szkl; kl++) {
+		pa += szim; pb += szjm;
 		cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasTrans,
 			szi, szj, szm, 1.0, pa, szm, pb, szm, 1.0, c, szj);
-		pa += szim; pb += szjm;
 	}
 }
 
