@@ -3,6 +3,8 @@
 
 #include "defs.h"
 #include "exception.h"
+#include "dimensions.h"
+#include "permutation.h"
 
 namespace libtensor {
 
@@ -16,9 +18,18 @@ namespace libtensor {
 **/
 class contract2_2_3i {
 public:
-	static void contract(double *c, const dimensions &dc, size_t pcc,
-		const double *a, const dimensions &da, size_t pca,
-		const double *b, const dimensions &db, size_t pcb);
+	static void contract(
+		double *c, const dimensions &dc, const permutation &pc,
+		const double *a, const dimensions &da, const permutation &pa,
+		const double *b, const dimensions &db, const permutation &pb)
+		throw(exception);
+
+	static void contract(
+		double *c, const dimensions &dc, const permutation &pc,
+		const double *a, const dimensions &da, const permutation &pa,
+		const double *b, const dimensions &db, const permutation &pb,
+		double x)
+		throw(exception);
 
 private:
 	/**	\brief \f$ c_{ij} = \sum_{klm} a_{iklm} b_{jklm} \f$
@@ -26,6 +37,18 @@ private:
 	static void c_01_0123_0123(double *c, const dimensions &dc,
 		const double *a, const dimensions &da,
 		const double *b, const dimensions &db);
+
+	/**	\brief \f$ c_{ij} = \sum_{klm} a_{klim} b_{kljm} \f$
+	**/
+	static void c_01_1203_1203(double *c, const dimensions &dc,
+		const double *a, const dimensions &da,
+		const double *b, const dimensions &db);
+
+	/**	\brief \f$ c_{ij} = c_{ij} + x\sum_{klm} a_{klim} b_{kljm} \f$
+	**/
+	static void c_01_1203_1203a(double *c, const dimensions &dc,
+		const double *a, const dimensions &da,
+		const double *b, const dimensions &db, double x);
 };
 
 } // namespace libtensor
