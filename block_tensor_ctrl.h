@@ -25,7 +25,7 @@ public:
 	//!	\name Event forwarding
 	//@{
 	void req_symmetry(const symmetry_i &sym) throw(exception);
-	tensor_i<T> &req_block(const index idx) throw(exception);
+	tensor_i<T> &req_block(const index &idx) throw(exception);
 	//@}
 };
 
