@@ -14,6 +14,7 @@ SVNREV := $(shell svnversion -n .)
 
 OBJS  = contract2_2_2i.o
 OBJS += contract2_2_3i.o
+OBJS += contract2_4_1i.o
 OBJS += defs.o
 OBJS += dimensions.o
 OBJS += exception.o
