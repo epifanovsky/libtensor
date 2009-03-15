@@ -18,6 +18,7 @@ OBJS += contract2_4_1i.o
 OBJS += defs.o
 OBJS += dimensions.o
 OBJS += exception.o
+OBJS += expression_builder.o
 OBJS += lehmer_code.o
 OBJS += permutator.o
 OBJS += symmetry.o
