@@ -5,6 +5,7 @@
 #include "dimensions.h"
 #include "index.h"
 #include "permutation.h"
+#include "lehmer_code.h"
 
 #include "tensor.h"
 #include "tensor_ctrl.h"
