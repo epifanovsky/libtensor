@@ -3,7 +3,7 @@
 
 #include "defs.h"
 #include "exception.h"
-#include "block_tensor_i.h
+#include "block_tensor_i.h"
 #include "index.h"
 #include "symmetry_i.h"
 

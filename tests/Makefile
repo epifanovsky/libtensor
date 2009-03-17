@@ -1,4 +1,5 @@
 OBJS  = libtensor_suite.o
+OBJS += block_tensor_test.o
 OBJS += contract2_2_2i_test.o
 OBJS += contract2_2_3i_test.o
 OBJS += contract2_4_1i_test.o

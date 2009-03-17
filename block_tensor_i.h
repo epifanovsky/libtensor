@@ -9,7 +9,7 @@
 
 namespace libtensor {
 
-template<typename T> block_tensor_ctrl;
+template<typename T> class block_tensor_ctrl;
 
 /**	\brief Block tensor interface
 
@@ -21,8 +21,10 @@ class block_tensor_i : public tensor_i<T> {
 	friend class block_tensor_ctrl<T>;
 
 protected:
-	void req_symmetry(const symmetry_i &sym) throw(exception);
-	tensor_i<T> &req_unique_block(const index &idx) throw(exception);
+	virtual void on_req_symmetry(const symmetry_i &sym)
+		throw(exception) = 0;
+	virtual tensor_i<T> &on_req_unique_block(const index &idx)
+		throw(exception) = 0;
 };
 
 } // namespace libtensor
