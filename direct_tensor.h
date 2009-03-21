@@ -16,6 +16,23 @@ namespace libtensor {
 	\param T Tensor element type.
 	\param Alloc Memory allocator.
 
+	A direct %tensor has an underlying operator, an object of
+	direct_tensor_operation. So, instead of keeping the %tensor elements
+	in memory like the regular libtensor::tensor does, the direct
+	%tensor know how to calculate the elements. The operation is attached
+	to the direct %tensor upon creation and cannot be replaced by another
+	operation. However, since the owner of the direct %tensor also owns
+	the operation, it can be altered even after the %tensor is created.
+
+	There are two modes in which the direct %tensor can exists: the
+	buffering mode and the non-buffering (truly direct) mode. If in the
+	buffering mode, the direct %tensor is calculated upon the first
+	request, but then the elements are saved in memory to be retrieved
+	from this cache if they are needed again. In the truly direct mode,
+	the elements are discarded as soon as they are not needed anymore.
+	The modes can be switched with enable_buffering() and
+	disable_buffering(). By default, buffering is disabled.
+
 	\ingroup libtensor
 **/
 template<size_t N, typename T, typename Alloc>
@@ -110,8 +127,7 @@ inline void direct_tensor<N,T,Alloc>::disable_buffering() {
 
 template<size_t N, typename T, typename Alloc>
 void direct_tensor<N,T,Alloc>::on_req_prefetch() throw(exception) {
-	throw_exc("direct_tensor<N,T,Alloc>", "on_req_prefetch()",
-		"Unhandled event");
+	m_op.prefetch();
 }
 
 template<size_t N, typename T, typename Alloc>
