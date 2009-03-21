@@ -10,8 +10,8 @@ namespace libtensor {
 
 	\ingroup libtensor
 **/
-template<typename T, typename Alloc>
-class direct_block_tensor : public block_tensor_i<T> {
+template<size_t N, typename T, typename Alloc>
+class direct_block_tensor : public block_tensor_i<N,T> {
 };
 
 } // namespace libtensor

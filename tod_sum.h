@@ -11,16 +11,17 @@ namespace libtensor {
 
 	\ingroup libtensor
 **/
-class tod_sum : public direct_tensor_operation<double> {
+template<size_t N>
+class tod_sum : public direct_tensor_operation<N,double> {
 private:
 	struct list_node {
-		tod_additive &m_op;
+		tod_additive<N> &m_op;
 		double m_c;
 		struct list_node *m_next;
-		list_node(tod_additive &op, double c);
+		list_node(tod_additive<N> &op, double c);
 	};
 
-	direct_tensor_operation<double> &m_baseop; //!< Base operation
+	direct_tensor_operation<N,double> &m_baseop; //!< Base operation
 	struct list_node *m_head; //!< Head of the list of additional operations
 	struct list_node *m_tail; //!< Tail of the list of additional operations
 
@@ -30,7 +31,7 @@ public:
 
 	/**	\brief Default constructor
 	**/
-	tod_sum(direct_tensor_operation<double> &op);
+	tod_sum(direct_tensor_operation<N,double> &op);
 
 	/**	\brief Virtual destructor
 	**/
@@ -41,19 +42,62 @@ public:
 	//!	\name Implementation of direct_tensor_operation<T>
 	//@{
 	virtual void prefetch() throw(exception);
-	virtual void perform(tensor_i<double> &t) throw(exception);
+	virtual void perform(tensor_i<N,double> &t) throw(exception);
 	//@}
 
 	/**	\brief Adds an operation to the sequence
 	**/
-	void add_op(tod_additive &op, double c) throw(exception);
+	void add_op(tod_additive<N> &op, double c) throw(exception);
 };
 
-inline tod_sum::tod_sum(direct_tensor_operation<double> &op) :
+template<size_t N>
+inline tod_sum<N>::tod_sum(direct_tensor_operation<N,double> &op) :
 	m_baseop(op), m_head(NULL), m_tail(NULL) {
 }
 
-inline tod_sum::list_node::list_node(tod_additive &op, double c) :
+template<size_t N>
+tod_sum<N>::~tod_sum() {
+	struct list_node *node = m_head;
+	m_head = NULL; m_tail = NULL;
+	while(node != NULL) {
+		struct list_node *next = node->m_next;
+		delete node; node = next;
+	}
+}
+
+template<size_t N>
+void tod_sum<N>::prefetch() throw(exception) {
+	m_baseop.prefetch();
+	struct list_node *node = m_head;
+	while(node != NULL) {
+		node->m_op.prefetch();
+		node = node->m_next;
+	}
+}
+
+template<size_t N>
+void tod_sum<N>::perform(tensor_i<N,double> &t) throw(exception) {
+	m_baseop.perform(t);
+	struct list_node *node = m_head;
+	while(node != NULL) {
+		node->m_op.perform(t, node->m_c);
+		node = node->m_next;
+	}
+}
+
+template<size_t N>
+void tod_sum<N>::add_op(tod_additive<N> &op, double c) throw(exception) {
+	struct list_node *node = new struct list_node(op, c);
+	if(m_tail == NULL) {
+		m_head = node; m_tail = node;
+	} else {
+		m_tail->m_next = node;
+		m_tail = node;
+	}
+}
+
+template<size_t N>
+inline tod_sum<N>::list_node::list_node(tod_additive<N> &op, double c) :
 	m_op(op), m_c(c), m_next(NULL) {
 }
 

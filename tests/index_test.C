@@ -8,11 +8,11 @@ void index_test::perform() throw(libtest::test_exception) {
 }
 
 void index_test::test_ctor() throw(libtest::test_exception) {
-	index i1(2);
+	index<2> i1;
 }
 
 void index_test::test_less() throw(libtest::test_exception) {
-	index i1(2), i2(2);
+	index<2> i1, i2;
 
 	i1[0] = 1; i1[1] = 1;
 	i2[0] = 2; i2[1] = 2;

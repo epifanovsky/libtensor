@@ -21,14 +21,15 @@ namespace libtensor {
 
 	\ingroup libtensor_tod
 **/
-class tod_add : public tod_additive {
+template<size_t N>
+class tod_add : public tod_additive<N> {
 private:
 	struct operand {
-		tensor_i<double> &m_t;
-		const permutation &m_p;
+		tensor_i<N,double> &m_t;
+		const permutation<N> &m_p;
 		const double m_c;
-		operand(tensor_i<double> &t, const permutation &p, double c) :
-			m_t(t), m_p(p), m_c(c) {}
+		operand(tensor_i<N,double> &t, const permutation<N> &p,
+			double c) : m_t(t), m_p(p), m_c(c) {}
 	};
 
 	//tensor_i<double> &m_out; //!< Output tensor
@@ -41,8 +42,8 @@ public:
 		\param p Permutation of %tensor elements.
 		\param c Coefficient.
 	**/
-	void add_op(tensor_i<double> &t, const permutation &p, const double c)
-		throw(exception);
+	void add_op(tensor_i<N,double> &t, const permutation<N> &p,
+		const double c) throw(exception);
 
 	//!	\name Implementation of direct_tensor_operation<T>
 	//@{
@@ -51,11 +52,30 @@ public:
 
 	//!	\name Implementation of tod_additive
 	//@{
-	virtual void perform(tensor_i<double> &t) throw(exception);
-	virtual void perform(tensor_i<double> &t, double c)
+	virtual void perform(tensor_i<N,double> &t) throw(exception);
+	virtual void perform(tensor_i<N,double> &t, double c)
 		throw(exception);
 	//@}
 };
+
+template<size_t N>
+void tod_add<N>::add_op(tensor_i<N,double> &t, const permutation<N> &p,
+	const double c) throw(exception) {
+	dimensions<N> d(t.get_dims());
+	d.permute(p);
+}
+
+template<size_t N>
+void tod_add<N>::prefetch() throw(exception) {
+}
+
+template<size_t N>
+void tod_add<N>::perform(tensor_i<N,double> &t) throw(exception) {
+}
+
+template<size_t N>
+void tod_add<N>::perform(tensor_i<N,double> &t, double c) throw(exception) {
+}
 
 } // namespace libtensor
 

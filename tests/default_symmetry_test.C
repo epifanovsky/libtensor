@@ -3,7 +3,7 @@
 namespace libtensor {
 
 void default_symmetry_test::perform() throw(libtest::test_exception) {
-	default_symmetry ds(4);
+	default_symmetry<4> ds;
 }
 
 } // namespace libtensor

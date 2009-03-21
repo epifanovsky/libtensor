@@ -16,7 +16,7 @@ namespace libtensor {
 
 	\ingroup libtensor
 **/
-template<typename T>
+template<size_t N, typename T>
 class permutator {
 public:
 	/**	\brief Permutes raw data
@@ -25,25 +25,34 @@ public:
 		\param d Dimensions of the source data.
 		\param p Permutation to be applied
 	**/
-	static void permute(const T *src, T *dst, const dimensions &d,
-		const permutation &p);
+	static void permute(const T *src, T *dst, const dimensions<N> &d,
+		const permutation<N> &p);
 
-private:
-	static void permute2(const T *src, T *dst, const dimensions &d);
-	static void permute4(const T *src, T *dst, const dimensions &d,
-		const permutation &p);
 };
 
 template<typename T>
-void permutator<T>::permute(const T *src, T *dst, const dimensions &d,
-	const permutation &p) {
+class permutator<2,T> {
+public:
+	static void permute(const T *src, T *dst, const dimensions<2> &d,
+		const permutation<2> &p);
+};
 
-	if(d.get_order() == 2) permute2(src, dst, d);
-	//if(p.get_order() == 4) permute4(src, dst, d, p);
+template<typename T>
+class permutator<4,T> {
+public:
+	static void permute(const T *src, T *dst, const dimensions<4> &d,
+		const permutation<4> &p);
+};
+
+template<size_t N, typename T>
+void permutator<N,T>::permute(const T *src, T *dst, const dimensions<N> &d,
+	const permutation<N> &p) {
+
 }
 
 template<typename T>
-void permutator<T>::permute2(const T *src, T *dst, const dimensions &d) {
+void permutator<2,T>::permute(const T *src, T *dst, const dimensions<2> &d,
+	const permutation<2> &p) {
 	const T *psrc = src;
 	T *pdst = NULL;
 	for(size_t i=0; i<d[0]; i++) {
@@ -55,9 +64,20 @@ void permutator<T>::permute2(const T *src, T *dst, const dimensions &d) {
 	}
 }
 
+template<>
+void permutator<2,double>::permute(const double *src, double *dst,
+	const dimensions<2> &d, const permutation<2> &p) {
+
+	const double *psrc = src;
+	for(size_t i=0; i<d[0]; i++) {
+		cblas_dcopy(d[1], psrc, 1, dst+i, d[0]);
+		psrc += d[1];
+	}
+}
+
 template<typename T>
-inline void permutator<T>::permute4(const T *src, T *dst,
-	const dimensions &d, const permutation &p) {
+void permutator<4,T>::permute(const T *src, T *dst,
+	const dimensions<4> &d, const permutation<4> &p) {
 
 /*
 	dimensions dperm(d); dperm.permute(p);

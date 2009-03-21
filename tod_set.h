@@ -1,8 +1,9 @@
-#ifndef __LIBTENSOR_TOD_SET_H
-#define __LIBTENSOR_TOD_SET_H
+#ifndef LIBTENSOR_TOD_SET_H
+#define LIBTENSOR_TOD_SET_H
 
 #include "defs.h"
 #include "exception.h"
+#include "tensor_ctrl.h"
 #include "direct_tensor_operation.h"
 
 namespace libtensor {
@@ -11,7 +12,8 @@ namespace libtensor {
 
 	\ingroup libtensor_tod
 **/
-class tod_set : public direct_tensor_operation<double> {
+template<size_t N>
+class tod_set : public direct_tensor_operation<N,double> {
 private:
 	double m_val; //!< Value
 
@@ -36,24 +38,37 @@ public:
 	/**	\brief Assigns the elements of a tensor a value
 		\param t Tensor.
 	**/
-	void perform(tensor_i<double> &t) throw(exception);
+	void perform(tensor_i<N,double> &t) throw(exception);
 
 	virtual void prefetch() throw(exception);
 
 	//@}
 };
 
-inline tod_set::tod_set(const double v) {
+template<size_t N>
+inline tod_set<N>::tod_set(const double v) {
 	m_val = v;
 }
 
-inline tod_set::~tod_set() {
+template<size_t N>
+inline tod_set<N>::~tod_set() {
 }
 
-inline void tod_set::prefetch() throw(exception) {
+template<size_t N>
+void tod_set<N>::perform(tensor_i<N,double> &t) throw(exception) {
+	tensor_ctrl<N,double> tctrl(t);
+	double *d = tctrl.req_dataptr();
+	size_t sz = t.get_dims().get_size();
+	#pragma unroll(8)
+	for(size_t i=0; i<sz; i++) d[i] = m_val;
+	tctrl.ret_dataptr(d);
+}
+
+template<size_t N>
+inline void tod_set<N>::prefetch() throw(exception) {
 }
 
 } // namespace libtensor
 
-#endif // __LIBTENSOR_TOD_SET_H
+#endif // LIBTENSOR_TOD_SET_H
 

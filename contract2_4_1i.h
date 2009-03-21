@@ -19,17 +19,18 @@ namespace libtensor {
 **/
 class contract2_4_1i {
 public:
-	static void contract(double *c, const dimensions &dc,
-		const permutation &pc, const double *a, const dimensions &da,
-		const permutation &pa, const double *b, const dimensions &db,
-		const permutation &pb) throw(exception);
+	static void contract(double *c, const dimensions<4> &dc,
+		const permutation<4> &pc, const double *a,
+		const dimensions<2> &da, const permutation<2> &pa,
+		const double *b, const dimensions<4> &db,
+		const permutation<4> &pb) throw(exception);
 
 private:
 	/**	\brief \f$ c_{jikl} = \sum_{m} a_{mi} b_{jmkl} \f$
 	**/
-	static void c_1023_10_0231(double *c, const dimensions &dc,
-		const double *a, const dimensions &da,
-		const double *b, const dimensions &db);
+	static void c_1023_10_0231(double *c, const dimensions<4> &dc,
+		const double *a, const dimensions<2> &da,
+		const double *b, const dimensions<4> &db);
 };
 
 } // namespace libtensor

@@ -19,10 +19,10 @@ namespace libtensor {
 
 	\ingroup libtensor
 **/
+template<size_t N>
 class index {
 private:
-	size_t m_order; //!< Tensor order
-	size_t m_idx[max_tensor_order]; //!< Tensor %index
+	size_t m_idx[N]; //!< Tensor %index
 
 public:
 	//!	\name Construction and destruction
@@ -30,38 +30,27 @@ public:
 
 	/**	\brief Creates the %index of the first element of a %tensor
 			 with a given order
-		\param order Tensor order.
 	**/
-	index(const size_t order);
+	index();
 
 	/**	\brief Copies the %index from another instance
 		\param idx Another %index.
 	**/
-	index(const index &idx);
-
-	/**	\brief Destructor
-	**/
-	~index();
+	index(const index<N> &idx);
 
 	//@}
-
-	/**	\brief Returns the order of the %index
-
-		Returns the order of the %index.
-	**/
-	size_t get_order() const;
 
 	/**	\brief Checks if two indices are equal
 
 		Returns true if the indices are equal, false otherwise.
 	**/
-	bool equals(const index &idx) const;
+	bool equals(const index<N> &idx) const;
 
 	/**	\brief Compares two indexes
 		\return true if this %index is smaller than the other one,
 			false otherwise.
 	**/
-	bool less(const index &idx) const;
+	bool less(const index<N> &idx) const;
 
 	/**	\brief Lvalue individual element accessor
 
@@ -91,88 +80,66 @@ public:
 		\throw exception If the %index and the %permutation are
 			incompatible.
 	**/
-	index &permute(const permutation &p) throw(exception);
+	index<N> &permute(const permutation<N> &p) throw(exception);
 
-private:
-	/**	\brief Throws an exception
-	**/
-	void throw_exc(const char *method, const char *msg) const throw(exception);
 };
 
-inline index::index(const size_t order) {
-#ifdef TENSOR_DEBUG
-	if(order == 0 || order >= max_tensor_order)
-		throw_exc("index(size_t)", "Index order is not allowed");
-#endif
-	m_order = order;
-	#pragma loop count(6)
-	for(register size_t i=0; i<m_order; i++) m_idx[i] = 0;
+template<size_t N>
+inline index<N>::index() {
+	#pragma unroll(N)
+	for(register size_t i=0; i<N; i++) m_idx[i] = 0;
 }
 
-inline index::index(const index &idx) : m_order(idx.m_order) {
-	#pragma loop count(6)
-	for(register size_t i=0; i<m_order; i++) m_idx[i] = idx.m_idx[i];
+template<size_t N>
+inline index<N>::index(const index<N> &idx) {
+	#pragma unroll(N)
+	for(register size_t i=0; i<N; i++) m_idx[i] = idx.m_idx[i];
 }
 
-inline index::~index() {
-}
-
-inline size_t index::get_order() const {
-	return m_order;
-}
-
-inline bool index::equals(const index &idx) const {
-	if(m_order != idx.m_order) return false;
-	#pragma loop count(6)
-	for(register size_t i=0; i<m_order; i++)
+template<size_t N>
+inline bool index<N>::equals(const index<N> &idx) const {
+	#pragma unroll(N)
+	for(register size_t i=0; i<N; i++)
 		if(m_idx[i] != idx.m_idx[i]) return false;
 	return true;
 }
 
-inline bool index::less(const index &idx) const {
-	if(m_order != idx.m_order) return m_order<idx.m_order;
-	#pragma loop count(6)
-	for(register size_t i=0; i<m_order; i++) {
+template<size_t N>
+inline bool index<N>::less(const index<N> &idx) const {
+	#pragma unroll(N)
+	for(register size_t i=0; i<N; i++) {
 		if(m_idx[i] < idx.m_idx[i]) return true;
 		if(m_idx[i] > idx.m_idx[i]) return false;
 	}
 	return false;
 }
 
-inline size_t &index::operator[](const size_t i) throw(exception) {
-#ifdef TENSOR_DEBUG
-	if(i >= m_order)
-		throw_exc("operator[](const size_t)", "Index out of range");
-#endif
-	return m_idx[i];
-}
-
-inline size_t index::operator[](const size_t i) const throw(exception) {
-#ifdef TENSOR_DEBUG
-	if(i >= m_order) {
-		throw_exc("operator[](const size_t) const",
+template<size_t N>
+inline size_t &index<N>::operator[](const size_t i) throw(exception) {
+#ifdef LIBTENSOR_DEBUG
+	if(i >= N) {
+		throw_exc("index<N>", "operator[](const size_t)",
 			"Index out of range");
 	}
-#endif
+#endif // LIBTENSOR_DEBUG
 	return m_idx[i];
 }
 
-inline index &index::permute(const permutation &p) throw(exception) {
-#ifdef TENSOR_DEBUG
-	if(m_order != p.get_order()) {
-		throw_exc("permute(const permutation&)",
-			"Incompatible permutation");
+template<size_t N>
+inline size_t index<N>::operator[](const size_t i) const throw(exception) {
+#ifdef LIBTENSOR_DEBUG
+	if(i >= N) {
+		throw_exc("index<N>", "operator[](const size_t) const",
+			"Index out of range");
 	}
-#endif
-	p.apply(m_order, m_idx);
-	return *this;
+#endif // LIBTENSOR_DEBUG
+	return m_idx[i];
 }
 
-inline void index::throw_exc(const char *method, const char *msg) const
-	throw(exception) {
-	char s[1024];
-	snprintf(s, 1024, "[libtensor::index::%s] %s.", method, msg);
-	throw exception(s);
+template<size_t N>
+inline index<N> &index<N>::permute(const permutation<N> &p) throw(exception) {
+	p.apply(N, m_idx);
+	return *this;
 }
 
 } // namespace libtensor

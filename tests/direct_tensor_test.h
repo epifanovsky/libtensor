@@ -16,36 +16,36 @@ public:
 
 private:
 	//!	Direct tensor operation stub
-	class test_op : public direct_tensor_operation<int> {
+	class test_op : public direct_tensor_operation<2,int> {
 	private:
 		bool m_ok;
 	public:
 		test_op() : m_ok(false) {}
 		bool is_ok() const { return m_ok; }
 		virtual void prefetch() throw(exception) {}
-		virtual void perform(tensor_i<int> &t) throw(exception);
+		virtual void perform(tensor_i<2,int> &t) throw(exception);
 	};
 
 	//!	Sets every tensor element to its sequential number
-	class test_op_set : public direct_tensor_operation<int> {
+	class test_op_set : public direct_tensor_operation<2,int> {
 	private:
 		int m_count;
 	public:
 		test_op_set() : m_count(0) {}
 		int get_count() const { return m_count; }
 		virtual void prefetch() throw(exception) {}
-		virtual void perform(tensor_i<int> &t) throw(exception);
+		virtual void perform(tensor_i<2,int> &t) throw(exception);
 	};
 
 	//!	Checks if tensor elements are set correctly
-	class test_op_chk_set : public direct_tensor_operation<int> {
+	class test_op_chk_set : public direct_tensor_operation<2,int> {
 	private:
 		bool m_ok;
 	public:
 		test_op_chk_set() : m_ok(false) {}
 		bool is_ok() const { return m_ok; }
 		virtual void prefetch() throw(exception) {}
-		virtual void perform(tensor_i<int> &t) throw(exception);
+		virtual void perform(tensor_i<2,int> &t) throw(exception);
 	};
 
 	//!	Tests the constructor

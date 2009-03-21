@@ -9,17 +9,20 @@ namespace libtensor {
 
 /**	\brief Tensor control
 
+	\param N Tensor order.
+	\param T Tensor element type.
+
 	\ingroup libtensor
 **/
-template<typename T>
+template<size_t N, typename T>
 class tensor_ctrl {
 private:
-	tensor_i<T> &m_t; //!< Controlled tensor
+	tensor_i<N,T> &m_t; //!< Controlled tensor
 
 public:
 	//!	\name Construction and destruction
 	//@{
-	tensor_ctrl(tensor_i<T> &t);
+	tensor_ctrl(tensor_i<N,T> &t);
 	~tensor_ctrl();
 	//@}
 
@@ -32,31 +35,31 @@ public:
 	//@}
 };
 
-template<typename T>
-inline tensor_ctrl<T>::tensor_ctrl(tensor_i<T> &t) : m_t(t) {
+template<size_t N, typename T>
+inline tensor_ctrl<N,T>::tensor_ctrl(tensor_i<N,T> &t) : m_t(t) {
 }
 
-template<typename T>
-inline tensor_ctrl<T>::~tensor_ctrl() {
+template<size_t N, typename T>
+inline tensor_ctrl<N,T>::~tensor_ctrl() {
 }
 
-template<typename T>
-inline void tensor_ctrl<T>::req_prefetch() throw(exception) {
+template<size_t N, typename T>
+inline void tensor_ctrl<N,T>::req_prefetch() throw(exception) {
 	m_t.on_req_prefetch();
 }
 
-template<typename T>
-inline T *tensor_ctrl<T>::req_dataptr() throw(exception) {
+template<size_t N, typename T>
+inline T *tensor_ctrl<N,T>::req_dataptr() throw(exception) {
 	return m_t.on_req_dataptr();
 }
 
-template<typename T>
-inline const T *tensor_ctrl<T>::req_const_dataptr() throw(exception) {
+template<size_t N, typename T>
+inline const T *tensor_ctrl<N,T>::req_const_dataptr() throw(exception) {
 	return m_t.on_req_const_dataptr();
 }
 
-template<typename T>
-inline void tensor_ctrl<T>::ret_dataptr(const T *p) throw(exception) {
+template<size_t N, typename T>
+inline void tensor_ctrl<N,T>::ret_dataptr(const T *p) throw(exception) {
 	m_t.on_ret_dataptr(p);
 }
 

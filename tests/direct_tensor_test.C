@@ -3,57 +3,57 @@
 
 namespace libtensor {
 
-typedef direct_tensor<int, libvmm::std_allocator<int> > tensor_int;
+typedef direct_tensor<2, int, libvmm::std_allocator<int> > tensor2_int;
 
 void direct_tensor_test::perform() throw(libtest::test_exception) {
 	test_ctor();
 	test_buffering();
 }
 
-void direct_tensor_test::test_op::perform(tensor_i<int> &t) throw(exception) {
+void direct_tensor_test::test_op::perform(tensor_i<2,int> &t) throw(exception) {
 }
 
 void direct_tensor_test::test_ctor() throw(libtest::test_exception) {
-	index i1(2), i2(2);
+	index<2> i1, i2;
 	i2[0]=3; i2[1]=3;
-	index_range ir(i1,i2);
-	dimensions d(ir);
+	index_range<2> ir(i1,i2);
+	dimensions<2> d(ir);
 	test_op op;
-	tensor_int dt(d, op);
+	tensor2_int dt(d, op);
 
-	tensor_i<int> &dtref(dt);
+	tensor_i<2,int> &dtref(dt);
 	dtref.get_dims();
 }
 
-void direct_tensor_test::test_op_set::perform(tensor_i<int> &t)
+void direct_tensor_test::test_op_set::perform(tensor_i<2,int> &t)
 	throw(exception) {
 	size_t sz = t.get_dims().get_size();
-	tensor_ctrl<int> tctrl(t);
+	tensor_ctrl<2,int> tctrl(t);
 	int *p = tctrl.req_dataptr();
 	for(size_t i=0; i<sz; i++) p[i] = (int)i;
 	tctrl.ret_dataptr(p);
 	m_count++;
 }
 
-void direct_tensor_test::test_op_chk_set::perform(tensor_i<int> &t)
+void direct_tensor_test::test_op_chk_set::perform(tensor_i<2,int> &t)
 	throw(exception) {
 	size_t sz = t.get_dims().get_size();
 	m_ok = true;
-	tensor_ctrl<int> tctrl(t);
+	tensor_ctrl<2,int> tctrl(t);
 	const int *p = tctrl.req_const_dataptr();
 	for(size_t i=0; i<sz; i++) if(p[i]!=(int)i) { m_ok=false; break; }
 	tctrl.ret_dataptr(p);
 }
 
 void direct_tensor_test::test_buffering() throw(libtest::test_exception) {
-	index i1(2), i2(2);
+	index<2> i1, i2;
 	i2[0]=3; i2[1]=3;
-	index_range ir(i1,i2);
-	dimensions d(ir);
+	index_range<2> ir(i1,i2);
+	dimensions<2> d(ir);
 	test_op_set op_set;
 	test_op_chk_set op_chk_set;
 
-	tensor_int dt(d, op_set);
+	tensor2_int dt(d, op_set);
 
 	op_chk_set.perform(dt);
 	if(!op_chk_set.is_ok()) {

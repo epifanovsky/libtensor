@@ -23,16 +23,19 @@ void contract2_2_3i_test::perform() throw(libtest::test_exception) {
 void contract2_2_3i_test::test_ij_klm_iklm_jklm(size_t ni, size_t nj, size_t nk,
 	size_t nl, size_t nm) throw(libtest::test_exception) {
 
-	index ia1(4), ia2(4), ib1(4), ib2(4), ic1(2), ic2(2);
+	index<4> ia1, ia2, ib1, ib2; index<2> ic1, ic2;
 	ia2[0]=ni-1; ia2[1]=nk-1; ia2[2]=nl-1; ia2[3]=nm-1;
 	ib2[0]=nj-1; ib2[1]=nk-1; ib2[2]=nl-1; ib2[3]=nm-1;
 	ic2[0]=ni-1; ic2[1]=nj-1;
 
-	index_range ira(ia1,ia2), irb(ib1,ib2), irc(ic1,ic2);
-	dimensions dima(ira), dimb(irb), dimc(irc);
+	index_range<4> ira(ia1,ia2), irb(ib1,ib2);
+	index_range<2> irc(ic1,ic2);
+	dimensions<4> dima(ira), dimb(irb);
+	dimensions<2> dimc(irc);
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
-	tensor< double,std_allocator<double> > ta(dima), tb(dimb), tc(dimc);
+	tensor< 4,double,std_allocator<double> > ta(dima), tb(dimb);
+	tensor< 2,double,std_allocator<double> > tc(dimc);
 	double *dta = new double[sza];
 	double *dtb = new double[szb];
 	double *dtc = new double[szc];
@@ -40,7 +43,7 @@ void contract2_2_3i_test::test_ij_klm_iklm_jklm(size_t ni, size_t nj, size_t nk,
 	for(size_t i=0; i<sza; i++) dta[i]=drand48();
 	for(size_t i=0; i<szb; i++) dtb[i]=drand48();
 
-	index ia(4), ib(4), ic(2);
+	index<4> ia, ib; index<2> ic;
 	for(size_t i=0; i<dimc[0]; i++) {
 	for(size_t j=0; j<dimc[1]; j++) {
 		ic[0]=i; ic[1]=j;
@@ -58,8 +61,9 @@ void contract2_2_3i_test::test_ij_klm_iklm_jklm(size_t ni, size_t nj, size_t nk,
 	}
 	}
 
-	tensor_ctrl<double> tca(ta), tcb(tb), tcc(tc);
-	permutation perma(4), permb(4), permc(2);
+	tensor_ctrl<4,double> tca(ta), tcb(tb);
+	tensor_ctrl<2,double> tcc(tc);
+	permutation<4> perma, permb; permutation<2> permc;
 	double *ptr = tca.req_dataptr();
 	for(size_t i=0; i<sza; i++) ptr[i]=dta[i];
 	tca.ret_dataptr(ptr);
@@ -105,15 +109,18 @@ void contract2_2_3i_test::test_ij_klm_iklm_jklm(size_t ni, size_t nj, size_t nk,
 void contract2_2_3i_test::test_ij_klm_klim_kljm(size_t ni, size_t nj, size_t nk,
 	size_t nl, size_t nm) throw(libtest::test_exception) {
 
-	index ia1(4), ia2(4), ib1(4), ib2(4), ic1(2), ic2(2);
+	index<4> ia1, ia2, ib1, ib2; index<2> ic1, ic2;
 	ia2[0]=nk-1; ia2[1]=nl-1; ia2[2]=ni-1; ia2[3]=nm-1;
 	ib2[0]=nk-1; ib2[1]=nl-1; ib2[2]=nj-1; ib2[3]=nm-1;
 	ic2[0]=ni-1; ic2[1]=nj-1;
-	index_range ira(ia1,ia2), irb(ib1,ib2), irc(ic1,ic2);
-	dimensions dima(ira), dimb(irb), dimc(irc);
+	index_range<4> ira(ia1,ia2), irb(ib1,ib2);
+	index_range<2> irc(ic1,ic2);
+	dimensions<4> dima(ira), dimb(irb);
+	dimensions<2> dimc(irc);
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
-	tensor< double,std_allocator<double> > ta(dima), tb(dimb), tc(dimc);
+	tensor< 4,double,std_allocator<double> > ta(dima), tb(dimb);
+	tensor< 2,double,std_allocator<double> > tc(dimc);
 	double *dta = new double[sza];
 	double *dtb = new double[szb];
 	double *dtc = new double[szc];
@@ -121,7 +128,7 @@ void contract2_2_3i_test::test_ij_klm_klim_kljm(size_t ni, size_t nj, size_t nk,
 	for(size_t i=0; i<sza; i++) dta[i]=drand48();
 	for(size_t i=0; i<szb; i++) dtb[i]=drand48();
 
-	index ia(4), ib(4), ic(2);
+	index<4> ia, ib; index<2> ic;
 	for(size_t i=0; i<dimc[0]; i++) {
 	for(size_t j=0; j<dimc[1]; j++) {
 		ic[0]=i; ic[1]=j;
@@ -139,8 +146,9 @@ void contract2_2_3i_test::test_ij_klm_klim_kljm(size_t ni, size_t nj, size_t nk,
 	}
 	}
 
-	tensor_ctrl<double> tca(ta), tcb(tb), tcc(tc);
-	permutation perma(4), permb(4), permc(2);
+	tensor_ctrl<4,double> tca(ta), tcb(tb);
+	tensor_ctrl<2,double> tcc(tc);
+	permutation<4> perma, permb; permutation<2> permc;
 	perma.permute(0,2).permute(1,2); // klim -> iklm
 	permb.permute(0,2).permute(1,2); // kljm -> jklm
 	double *ptr = tca.req_dataptr();

@@ -9,11 +9,23 @@
 
 namespace libtensor {
 
+/**	\brief Provides information on how to do block splitting
+
+	\param N Block %tensor order
+
+	\ingroup libtensor
+**/
+template<size_t N>
 class block_info_i {
 public:
-	virtual const dimensions &get_dims() const = 0;
-	virtual const dimensions &get_block_dims(const index &i) const = 0;
-	virtual const symmetry_i &get_symmetry() const = 0;
+	/**	\brief Returns the total %dimensions
+	**/
+	virtual const dimensions<N> &get_dims() const = 0;
+
+	virtual const dimensions<N> &get_block_dims(const index<N> &i)
+		const = 0;
+
+	virtual const symmetry_i<N> &get_symmetry() const = 0;
 };
 
 } // namespace libtensor

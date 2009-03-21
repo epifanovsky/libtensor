@@ -9,6 +9,9 @@ namespace libtensor {
 
 /**	\brief Underlying operation for direct tensors
 
+	\param N Tensor order.
+	\param T Tensor element type.
+
 	Generally speaking, a %tensor operation can have any number of
 	objects as parameters and produce multiple results.
 	Directly calculated tensors (implementations of
@@ -20,7 +23,7 @@ namespace libtensor {
 
 	\ingroup libtensor
 **/
-template<typename T>
+template<size_t N, typename T>
 class direct_tensor_operation {
 public:
 	/**	\brief Invoked to indicate that the operation is to be
@@ -34,7 +37,7 @@ public:
 	/**	\brief Invoked to execute the operation
 		\param t The output %tensor
 	**/
-	virtual void perform(tensor_i<T> &t) throw(exception) = 0;
+	virtual void perform(tensor_i<N,T> &t) throw(exception) = 0;
 };
 
 } // namespace libtensor

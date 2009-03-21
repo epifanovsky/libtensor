@@ -3,41 +3,42 @@
 namespace libtensor {
 
 void contract2_2_3i::contract(
-	double *c, const dimensions &dc, const permutation &pc,
-	const double *a, const dimensions &da, const permutation &pa,
-	const double *b, const dimensions &db, const permutation &pb)
+	double *c, const dimensions<2> &dc, const permutation<2> &pc,
+	const double *a, const dimensions<4> &da, const permutation<4> &pa,
+	const double *b, const dimensions<4> &db, const permutation<4> &pb)
 	throw(exception) {
 
 #ifdef LIBTENSOR_DEBUG
-	dimensions da1(da), db1(db), dc1(dc);
+	dimensions<4> da1(da), db1(db);
+	dimensions<2> dc1(dc);
 	da1.permute(pa); db1.permute(pb); dc1.permute(pc);
 	if(dc1[0]!=da1[0]) {
-		throw_exc("contract2_2_3i", "contract(...)",
+		throw_exc("contract2_2_3i", "contract()",
                         "Inconsistent dimension: i");
 	}
 	if(dc1[1]!=db1[0]) {
-		throw_exc("contract2_2_3i", "contract(...)",
+		throw_exc("contract2_2_3i", "contract()",
                         "Inconsistent dimension: j");
 	}
 	if(da1[1]!=db1[1]) {
-		throw_exc("contract2_2_3i", "contract(...)",
+		throw_exc("contract2_2_3i", "contract()",
                         "Inconsistent dimension: k");
 	}
 	if(da1[2]!=db1[2]) {
-		throw_exc("contract2_2_3i", "contract(...)",
+		throw_exc("contract2_2_3i", "contract()",
                         "Inconsistent dimension: l");
 	}
 	if(da1[3]!=db1[3]) {
-		throw_exc("contract2_2_3i", "contract(...)",
+		throw_exc("contract2_2_3i", "contract()",
                         "Inconsistent dimension: m");
 	}
 #endif // LIBTENSOR_DEBUG
 
 	// ijkl[0123] -> kijl[2013]
-	permutation p_2013(4);
+	permutation<4> p_2013;
 	p_2013.permute(0,2).permute(1,2);
 
-	permutation p_10(2);
+	permutation<2> p_10;
 	p_10.permute(0,1);
 
 	if(pc.is_identity() && pa.is_identity() && pb.is_identity()) {
@@ -49,16 +50,16 @@ void contract2_2_3i::contract(
 	if(pc.is_identity() && pa.equals(p_2013) && pb.equals(p_2013)) {
 		c_01_2013_2013(c, dc, a, da, b, db);
 	} else {
-		throw_exc("contract2_2_3i", "contract(...)",
+		throw_exc("contract2_2_3i", "contract()",
 			"Contraction not implemented");
 	}
 	}
 	}
 }
 
-void contract2_2_3i::c_01_0123_0123(double *c, const dimensions &dc,
-	const double *a, const dimensions &da, const double *b,
-	const dimensions &db) {
+void contract2_2_3i::c_01_0123_0123(double *c, const dimensions<2> &dc,
+	const double *a, const dimensions<4> &da, const double *b,
+	const dimensions<4> &db) {
 
 	// c_ij = \sum_klm a_iklm b_jklm
 
@@ -67,9 +68,9 @@ void contract2_2_3i::c_01_0123_0123(double *c, const dimensions &dc,
 		szi, szj, szklm, 1.0, a, szklm, b, szklm, 0.0, c, szj);
 }
 
-void contract2_2_3i::c_01_2013_2013(double *c, const dimensions &dc,
-	const double *a, const dimensions &da, const double *b,
-	const dimensions &db) {
+void contract2_2_3i::c_01_2013_2013(double *c, const dimensions<2> &dc,
+	const double *a, const dimensions<4> &da, const double *b,
+	const dimensions<4> &db) {
 
 	// c_ij = \sum_klm a_klim b_kljm
 

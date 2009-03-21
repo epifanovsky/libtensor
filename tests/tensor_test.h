@@ -23,7 +23,7 @@ private:
 	public:
 		test_op_chk_imm() : m_ok(false) {}
 		bool is_ok() const { return m_ok; }
-		virtual void perform(tensor_i<int> &t) throw(exception);
+		virtual void perform(tensor_i<2,int> &t) throw(exception);
 	};
 
 	//!	Sets all elements a given value
@@ -32,7 +32,7 @@ private:
 		int m_val; //!< Value to set
 	public:
 		test_op_set_int(const int val) : m_val(val) {}
-		virtual void perform(tensor_i<int> &t) throw(exception);
+		virtual void perform(tensor_i<2,int> &t) throw(exception);
 	};
 
 	//!	Check that all elements have a given value
@@ -43,7 +43,7 @@ private:
 	public:
 		test_op_chkset_int(const int val) : m_val(val), m_ok(false) {}
 		bool is_ok() const { return m_ok; }
-		virtual void perform(tensor_i<int> &t) throw(exception);
+		virtual void perform(tensor_i<2,int> &t) throw(exception);
 	};
 
 	//!	Checks that double requests for data cause an exception
@@ -53,7 +53,7 @@ private:
 	public:
 		test_op_chk_dblreq() : m_ok(false) {}
 		bool is_ok() const { return m_ok; }
-		virtual void perform(tensor_i<int> &t) throw(exception);
+		virtual void perform(tensor_i<2,int> &t) throw(exception);
 	};
 
 	//!	Tests the constructor

@@ -18,37 +18,36 @@ namespace libtensor {
 **/
 class contract2_2_3i {
 public:
-	static void contract(
-		double *c, const dimensions &dc, const permutation &pc,
-		const double *a, const dimensions &da, const permutation &pa,
-		const double *b, const dimensions &db, const permutation &pb)
-		throw(exception);
+	static void contract(double *c, const dimensions<2> &dc,
+		const permutation<2> &pc, const double *a,
+		const dimensions<4> &da, const permutation<4> &pa,
+		const double *b, const dimensions<4> &db,
+		const permutation<4> &pb) throw(exception);
 
-	static void contract(
-		double *c, const dimensions &dc, const permutation &pc,
-		const double *a, const dimensions &da, const permutation &pa,
-		const double *b, const dimensions &db, const permutation &pb,
-		double x)
-		throw(exception);
+	static void contract(double *c, const dimensions<2> &dc,
+		const permutation<2> &pc, const double *a,
+		const dimensions<4> &da, const permutation<4> &pa,
+		const double *b, const dimensions<4> &db,
+		const permutation<4> &pb, double x) throw(exception);
 
 private:
 	/**	\brief \f$ c_{ij} = \sum_{klm} a_{iklm} b_{jklm} \f$
 	**/
-	static void c_01_0123_0123(double *c, const dimensions &dc,
-		const double *a, const dimensions &da,
-		const double *b, const dimensions &db);
+	static void c_01_0123_0123(double *c, const dimensions<2> &dc,
+		const double *a, const dimensions<4> &da,
+		const double *b, const dimensions<4> &db);
 
 	/**	\brief \f$ c_{ij} = \sum_{klm} a_{klim} b_{kljm} \f$
 	**/
-	static void c_01_2013_2013(double *c, const dimensions &dc,
-		const double *a, const dimensions &da,
-		const double *b, const dimensions &db);
+	static void c_01_2013_2013(double *c, const dimensions<2> &dc,
+		const double *a, const dimensions<4> &da,
+		const double *b, const dimensions<4> &db);
 
 	/**	\brief \f$ c_{ij} = c_{ij} + x\sum_{klm} a_{klim} b_{kljm} \f$
 	**/
-	static void c_01_2013_2013a(double *c, const dimensions &dc,
-		const double *a, const dimensions &da,
-		const double *b, const dimensions &db, double x);
+	static void c_01_2013_2013a(double *c, const dimensions<2> &dc,
+		const double *a, const dimensions<4> &da,
+		const double *b, const dimensions<4> &db, double x);
 };
 
 } // namespace libtensor

@@ -3,8 +3,8 @@
 
 namespace libtensor {
 
-typedef tensor<double, libvmm::std_allocator<double> > tensor_d;
-typedef tensor<int, libvmm::std_allocator<int> > tensor_int;
+typedef tensor<2, double, libvmm::std_allocator<double> > tensor2_d;
+typedef tensor<2, int, libvmm::std_allocator<int> > tensor2_int;
 
 void tensor_test::perform() throw(libtest::test_exception) {
 	test_ctor();
@@ -13,21 +13,17 @@ void tensor_test::perform() throw(libtest::test_exception) {
 }
 
 void tensor_test::test_ctor() throw(libtest::test_exception) {
-	index i1(2), i2(2);
+	index<2> i1, i2;
 	i2[0] = 2; i2[1] = 3;
-	index_range ir(i1, i2);
-	dimensions d1(ir);
-	tensor_d t1(d1);
+	index_range<2> ir(i1, i2);
+	dimensions<2> d1(ir);
+	tensor2_d t1(d1);
 
 	if(t1.is_immutable()) {
 		fail_test("tensor_test::test_ctor()", __FILE__, __LINE__,
 			"A new tensor must be mutable (t1)");
 	}
 
-	if(t1.get_dims().get_order() != 2) {
-		fail_test("tensor_test::test_ctor()", __FILE__, __LINE__,
-			"Incorrect tensor order (t1)");
-	}
 	if(t1.get_dims()[0] != 3) {
 		fail_test("tensor_test::test_ctor()", __FILE__, __LINE__,
 			"Incorrect tensor dimension 0 (t1)");
@@ -37,17 +33,13 @@ void tensor_test::test_ctor() throw(libtest::test_exception) {
 			"Incorrect tensor dimension 1 (t1)");
 	}
 
-	tensor_d t2(t1);
+	tensor2_d t2(t1);
 
 	if(t2.is_immutable()) {
 		fail_test("tensor_test::test_ctor()", __FILE__, __LINE__,
 			"A new tensor must be mutable (t2)");
 	}
 
-	if(t2.get_dims().get_order() != 2) {
-		fail_test("tensor_test::test_ctor()", __FILE__, __LINE__,
-			"Incorrect tensor order (t2)");
-	}
 	if(t2.get_dims()[0] != 3) {
 		fail_test("tensor_test::test_ctor()", __FILE__, __LINE__,
 			"Incorrect tensor dimension 0 (t2)");
@@ -57,18 +49,14 @@ void tensor_test::test_ctor() throw(libtest::test_exception) {
 			"Incorrect tensor dimension 1 (t2)");
 	}
 
-	tensor_i<double> *pt2 = &t2;
-	tensor_d t3(*pt2);
+	tensor_i<2,double> *pt2 = &t2;
+	tensor2_d t3(*pt2);
 
 	if(t3.is_immutable()) {
 		fail_test("tensor_test::test_ctor()", __FILE__, __LINE__,
 			"A new tensor must be mutable (t3)");
 	}
 
-	if(t3.get_dims().get_order() != 2) {
-		fail_test("tensor_test::test_ctor()", __FILE__, __LINE__,
-			"Incorrect tensor order (t3)");
-	}
 	if(t3.get_dims()[0] != 3) {
 		fail_test("tensor_test::test_ctor()", __FILE__, __LINE__,
 			"Incorrect tensor dimension 0 (t3)");
@@ -79,11 +67,12 @@ void tensor_test::test_ctor() throw(libtest::test_exception) {
 	}
 }
 
-void tensor_test::test_op_chk_imm::perform(tensor_i<int> &t) throw(exception) {
+void tensor_test::test_op_chk_imm::perform(tensor_i<2,int> &t)
+	throw(exception) {
 	m_ok = false;
-	dimensions d(t.get_dims());
+	dimensions<2> d(t.get_dims());
 	int *ptr = NULL;
-	tensor_ctrl<int> tctrl(t);
+	tensor_ctrl<2,int> tctrl(t);
 	try {
 		ptr = tctrl.req_dataptr();
 	} catch(exception e) {
@@ -96,11 +85,11 @@ void tensor_test::test_op_chk_imm::perform(tensor_i<int> &t) throw(exception) {
 }
 
 void tensor_test::test_immutable() throw(libtest::test_exception) {
-	index i1(2), i2(2);
+	index<2> i1, i2;
 	i2[0] = 2; i2[1] = 3;
-	index_range ir(i1, i2);
-	dimensions d1(ir);
-	tensor_int t1(d1);
+	index_range<2> ir(i1, i2);
+	dimensions<2> d1(ir);
+	tensor2_int t1(d1);
 
 	if(t1.is_immutable()) {
 		fail_test("tensor_test::test_immutable()", __FILE__, __LINE__,
@@ -122,9 +111,10 @@ void tensor_test::test_immutable() throw(libtest::test_exception) {
 	}
 }
 
-void tensor_test::test_op_set_int::perform(tensor_i<int> &t) throw(exception) {
-	dimensions d(t.get_dims());
-	tensor_ctrl<int> tctrl(t);
+void tensor_test::test_op_set_int::perform(tensor_i<2,int> &t)
+	throw(exception) {
+	dimensions<2> d(t.get_dims());
+	tensor_ctrl<2,int> tctrl(t);
 	int *ptr = tctrl.req_dataptr();
 	if(ptr) {
 		for(size_t i=0; i<d.get_size(); i++) ptr[i] = m_val;
@@ -132,11 +122,11 @@ void tensor_test::test_op_set_int::perform(tensor_i<int> &t) throw(exception) {
 	tctrl.ret_dataptr(ptr);
 }
 
-void tensor_test::test_op_chkset_int::perform(tensor_i<int> &t)
+void tensor_test::test_op_chkset_int::perform(tensor_i<2,int> &t)
 	throw(exception) {
 	m_ok = true;
-	dimensions d(t.get_dims());
-	tensor_ctrl<int> tctrl(t);
+	dimensions<2> d(t.get_dims());
+	tensor_ctrl<2,int> tctrl(t);
 	const int *ptr = tctrl.req_const_dataptr();
 	if(ptr) {
 		for(size_t i=0; i<d.get_size(); i++)
@@ -145,10 +135,10 @@ void tensor_test::test_op_chkset_int::perform(tensor_i<int> &t)
 	tctrl.ret_dataptr(ptr);
 }
 
-void tensor_test::test_op_chk_dblreq::perform(tensor_i<int> &t)
+void tensor_test::test_op_chk_dblreq::perform(tensor_i<2,int> &t)
 	throw(exception) {
 	m_ok = true;
-	tensor_ctrl<int> tctrl(t);
+	tensor_ctrl<2,int> tctrl(t);
 
 	// After rw-checkout, ro-checkout is not allowed
 	int *ptr = tctrl.req_dataptr();
@@ -183,11 +173,11 @@ void tensor_test::test_op_chk_dblreq::perform(tensor_i<int> &t)
 }
 
 void tensor_test::test_operation() throw(libtest::test_exception) {
-	index i1(2), i2(2);
+	index<2> i1, i2;
 	i2[0] = 2; i2[1] = 3;
-	index_range ir(i1, i2);
-	dimensions d1(ir);
-	tensor_int t1(d1);
+	index_range<2> ir(i1, i2);
+	dimensions<2> d1(ir);
+	tensor2_int t1(d1);
 
 	test_op_set_int op1(1), op100(100);
 	test_op_chkset_int chkop1(1), chkop100(100);

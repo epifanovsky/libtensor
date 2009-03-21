@@ -14,7 +14,7 @@ void permutation_test::test_ctor() throw(libtest::test_exception) {
 
 	// Order = 2
 
-	permutation p2(2);
+	permutation<2> p2;
 	if(!p2.is_identity()) {
 		fail_test("permutation_test::test_ctor()", __FILE__,
 			__LINE__, "!p2.is_identity()");
@@ -32,7 +32,7 @@ void permutation_test::test_ctor() throw(libtest::test_exception) {
 			__LINE__, "New permutation is not identity (int, 2)");
 	}
 
-	permutation p2a(p2);
+	permutation<2> p2a(p2);
 	if(!p2a.is_identity()) fail_test("permutation_test::test_ctor()",
 		__FILE__, __LINE__, "!p2a.is_identity()");
 	if(!p2a.equals(p2)) fail_test("permutation_test::test_ctor()",
@@ -50,7 +50,7 @@ void permutation_test::test_ctor() throw(libtest::test_exception) {
 
 	// Order = 3
 
-	permutation p3(3);
+	permutation<3> p3;
 	if(!p3.is_identity()) {
 		fail_test("permutation_test::test_ctor()", __FILE__,
 			__LINE__, "!p3.is_identity()");
@@ -68,7 +68,7 @@ void permutation_test::test_ctor() throw(libtest::test_exception) {
 			__LINE__, "New permutation is not identity (int, 3)");
 	}
 
-	permutation p3a(p3);
+	permutation<3> p3a(p3);
 	if(!p3a.is_identity()) {
 		fail_test("permutation_test::test_ctor()", __FILE__,
 			__LINE__, "!p3a.is_identity()");
@@ -92,30 +92,30 @@ void permutation_test::test_ctor() throw(libtest::test_exception) {
 
 	// Order = 4
 
-	permutation p4(4);
+	permutation<4> p4;
 	if(!p4.is_identity()) fail_test("permutation_test::test_ctor()",
 		__FILE__, __LINE__, "!p4.is_identity()");
 
-	permutation p4a(p4);
+	permutation<4> p4a;
 	if(!p4a.is_identity()) fail_test("permutation_test::test_ctor()",
 		__FILE__, __LINE__, "!p4a.is_identity()");
 	if(!p4a.equals(p4)) fail_test("permutation_test::test_ctor()",
 		__FILE__, __LINE__, "!p4a.equals(p4)");
 
-	permutation p5(5);
+	permutation<5> p5;
 	if(!p5.is_identity()) fail_test("permutation_test::test_ctor()",
 		__FILE__, __LINE__, "!p5.is_identity()");
 
-	permutation p5a(p5);
+	permutation<5> p5a;
 	if(!p5a.is_identity()) fail_test("permutation_test::test_ctor()",
 		__FILE__, __LINE__, "!p5a.is_identity()");
 	if(!p5a.equals(p5)) fail_test("permutation_test::test_ctor()",
 		__FILE__, __LINE__, "!p5a.equals(p5)");
 
-	permutation p6(6);
+	permutation<6> p6;
 	if(!p6.is_identity()) fail_test("permutation_test::test_ctor()",
 		__FILE__, __LINE__, "!p6.is_identity()");
-	permutation p6a(p6);
+	permutation<6> p6a(p6);
 	if(!p6a.is_identity()) fail_test("permutation_test::test_ctor()",
 		__FILE__, __LINE__, "!p6a.is_identity()");
 	if(!p6a.equals(p6)) fail_test("permutation_test::test_ctor()",
@@ -123,7 +123,7 @@ void permutation_test::test_ctor() throw(libtest::test_exception) {
 }
 
 void permutation_test::test_permute() throw(libtest::test_exception) {
-	permutation p2(2);
+	permutation<2> p2;
 
 	char s2[8]; strcpy(s2, "ij");
 	int i2[8]; i2[0] = 100; i2[1] = 200;
@@ -157,7 +157,7 @@ void permutation_test::test_permute() throw(libtest::test_exception) {
 			__LINE__, "[0,1] double permutation failed in int");
 	}
 
-	permutation p4(4);
+	permutation<4> p4;
 	char s4[8];
 
 	p4.permute(0,1).permute(2,3);
@@ -189,7 +189,7 @@ void permutation_test::test_invert() throw(libtest::test_exception) {
 
 void permutation_test::test_apply() throw(libtest::test_exception) {
 	bool ok = false;
-	permutation p2(2), p4(4);
+	permutation<2> p2; permutation<4> p4;
 	char s2[8], s4[8];
 	strcpy(s2, "ijkl"); strcpy(s4, "ijkl");
 

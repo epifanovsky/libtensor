@@ -23,24 +23,25 @@ namespace libtensor {
 	
 	\ingroup libtensor
 **/
+template<size_t N>
 class symmetry_i {
 public:
 	/**	\brief Checks if the block is unique
 		\param i Block index.
 	**/
-	virtual bool is_unique(const index &i) const throw(exception) = 0;
+	virtual bool is_unique(const index<N> &i) const throw(exception) = 0;
 
 	/**	\brief Returns the index of the unique block
 		\param i Block index.
 	**/
-	virtual const index &get_unique(const index &i) const 
+	virtual const index<N> &get_unique(const index<N> &i) const 
 		throw(exception) = 0;
 
 	/**	\brief Returns the %permutation that needs to be applied to
 			the unique block to obtain the replica
 		\param i Block index.
 	**/
-	virtual const permutation &get_perm(const index &i) const
+	virtual const permutation<N> &get_perm(const index<N> &i) const
 		throw(exception) = 0;
 
 	/**	\brief Returns the coefficient that needs to be applied to
@@ -48,7 +49,7 @@ public:
 			replica
 		\param i Block index.
 	**/
-	virtual double get_coeff(const index &i) const throw(exception) = 0;
+	virtual double get_coeff(const index<N> &i) const throw(exception) = 0;
 };
 
 } // namespace libtensor

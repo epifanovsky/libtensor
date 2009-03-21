@@ -18,10 +18,10 @@ namespace libtensor {
 
 	\ingroup libtensor
 **/
-template<typename T, typename Alloc>
-class block_tensor : public block_tensor_i<T> {
+template<size_t N, typename T, typename Alloc>
+class block_tensor : public block_tensor_i<N,T> {
 private:
-	tensor<T,Alloc> m_t; //<! Underlying tensor for stub implementation
+	tensor<N,T,Alloc> m_t; //<! Underlying tensor for stub implementation
 
 public:
 	//!	\name Construction and destruction
@@ -30,17 +30,17 @@ public:
 			about blocks
 		\param bi Information about blocks
 	**/
-	block_tensor(const block_info_i &bi);
+	block_tensor(const block_info_i<N> &bi);
 
 	/**	\brief Constructs a block %tensor using information about
 			blocks from another block %tensor
 		\param bt Another block %tensor
 	**/
-	block_tensor(const block_tensor_i<T> &bt);
+	block_tensor(const block_tensor_i<N,T> &bt);
 
 	/**	\brief Stub constructor, to be removed later
 	**/
-	block_tensor(const dimensions &d);
+	block_tensor(const dimensions<N> &d);
 
 	/**	\brief Virtual destructor
 	**/
@@ -49,7 +49,7 @@ public:
 
 	//!	\name Implementation of tensor_i<T>
 	//@{
-	virtual const dimensions &get_dims() const;
+	virtual const dimensions<N> &get_dims() const;
 	//@}
 
 protected:
@@ -63,62 +63,65 @@ protected:
 
 	//!	\name Implementation of block_tensor_i<T>
 	//@{
-	virtual void on_req_symmetry(const symmetry_i &sym) throw(exception);
-	virtual tensor_i<T> &on_req_unique_block(const index &idx)
+	virtual void on_req_symmetry(const symmetry_i<N> &sym) throw(exception);
+	virtual tensor_i<N,T> &on_req_unique_block(const index<N> &idx)
 		throw(exception);
 	//@}
 };
 
-template<typename T, typename Alloc>
-inline block_tensor<T,Alloc>::block_tensor(const dimensions &d) : m_t(d) {
+template<size_t N, typename T, typename Alloc>
+inline block_tensor<N,T,Alloc>::block_tensor(const dimensions<N> &d) : m_t(d) {
 }
 
-template<typename T, typename Alloc>
-block_tensor<T,Alloc>::~block_tensor() {
+template<size_t N, typename T, typename Alloc>
+block_tensor<N,T,Alloc>::~block_tensor() {
 }
 
-template<typename T, typename Alloc>
-const dimensions &block_tensor<T,Alloc>::get_dims() const {
+template<size_t N, typename T, typename Alloc>
+const dimensions<N> &block_tensor<N,T,Alloc>::get_dims() const {
 	return m_t.get_dims();
 }
 
-template<typename T, typename Alloc>
-void block_tensor<T,Alloc>::on_req_prefetch() throw(exception) {
-	throw_exc("block_tensor<T,Alloc>", "on_req_prefetch()",
+template<size_t N, typename T, typename Alloc>
+void block_tensor<N,T,Alloc>::on_req_prefetch() throw(exception) {
+	throw_exc("block_tensor<N,T,Alloc>", "on_req_prefetch()",
 		"Unhandled event");
 }
 
-template<typename T, typename Alloc>
-T *block_tensor<T,Alloc>::on_req_dataptr() throw(exception) {
-	throw_exc("block_tensor<T,Alloc>", "on_req_dataptr()",
+template<size_t N, typename T, typename Alloc>
+T *block_tensor<N,T,Alloc>::on_req_dataptr() throw(exception) {
+	throw_exc("block_tensor<N,T,Alloc>", "on_req_dataptr()",
+		"Unhandled event");
+	return NULL;
+}
+
+template<size_t N, typename T, typename Alloc>
+const T *block_tensor<N,T,Alloc>::on_req_const_dataptr() throw(exception) {
+	throw_exc("block_tensor<N,T,Alloc>", "on_req_const_dataptr()",
+		"Unhandled event");
+	return NULL;
+}
+
+template<size_t N, typename T, typename Alloc>
+void block_tensor<N,T,Alloc>::on_ret_dataptr(const T *ptr) throw(exception) {
+	throw_exc("block_tensor<N,T,Alloc>", "on_ret_dataptr(const T*)",
 		"Unhandled event");
 }
 
-template<typename T, typename Alloc>
-const T *block_tensor<T,Alloc>::on_req_const_dataptr() throw(exception) {
-	throw_exc("block_tensor<T,Alloc>", "on_req_const_dataptr()",
-		"Unhandled event");
-}
-
-template<typename T, typename Alloc>
-void block_tensor<T,Alloc>::on_ret_dataptr(const T *ptr) throw(exception) {
-	throw_exc("block_tensor<T,Alloc>", "on_ret_dataptr(const T*)",
-		"Unhandled event");
-}
-
-template<typename T, typename Alloc>
-void block_tensor<T,Alloc>::on_req_symmetry(const symmetry_i &sym)
+template<size_t N, typename T, typename Alloc>
+void block_tensor<N,T,Alloc>::on_req_symmetry(const symmetry_i<N> &sym)
 	throw(exception) {
-	throw_exc("block_tensor<T,Alloc>", "on_req_symmetry(const symmetry_i&)",
+	throw_exc("block_tensor<N,T,Alloc>",
+		"on_req_symmetry(const symmetry_i<N>&)",
 		"Unhandled event");
 }
 
-template<typename T, typename Alloc>
-tensor_i<T> &block_tensor<T,Alloc>::on_req_unique_block(const index &idx)
+template<size_t N, typename T, typename Alloc>
+tensor_i<N,T> &block_tensor<N,T,Alloc>::on_req_unique_block(const index<N> &idx)
 	throw(exception) {
 	if(m_t.get_dims().abs_index(idx) != 0) {
-		throw_exc("block_tensor<T,Alloc>",
-			"on_req_unique_block(const index&)",
+		throw_exc("block_tensor<N,T,Alloc>",
+			"on_req_unique_block(const index<N>&)",
 			"Stub implementation only returns the zeroth block");
 	}
 	return m_t;

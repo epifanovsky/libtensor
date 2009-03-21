@@ -31,7 +31,7 @@ clean:
 	rm -f libtensor_tests
 
 libtensor_tests: libtensor_tests.o $(OBJS) ../libtensor.a
-	$(LD) $(LDFLAGS) libtensor_tests $(LIBS) $^ ../../libtest/libtest.a
+	$(LD) $(LDFLAGS) -o libtensor_tests $(LIBS) $^ ../../libtest/libtest.a
 
 default_symmetry_test.C: default_symmetry_test.h
 

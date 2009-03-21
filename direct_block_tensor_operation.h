@@ -11,12 +11,12 @@ namespace libtensor {
 
 	\ingroup libtensor
 **/
-template<typename T>
+template<size_t N, typename T>
 class direct_block_tensor_operation {
 public:
 	/**	\brief Invoked to execute the operation
 	**/
-	virtual void perform(block_tensor_i<T> &bt) throw(exception) = 0;
+	virtual void perform(block_tensor_i<N,T> &bt) throw(exception) = 0;
 };
 
 } // namespace libtensor

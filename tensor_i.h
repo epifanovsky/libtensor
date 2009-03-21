@@ -7,10 +7,12 @@
 
 namespace libtensor {
 
-template<typename T> class tensor_ctrl;
+template<size_t N, typename T> class tensor_ctrl;
 
 /**	\brief Tensor interface
-	\param T Tensor element type
+
+	\param N Tensor order.
+	\param T Tensor element type.
 
 	<b>Implementing this interface</b>
 
@@ -26,14 +28,14 @@ template<typename T> class tensor_ctrl;
 
 	\ingroup libtensor
 **/
-template<typename T>
+template<size_t N, typename T>
 class tensor_i {
-	friend class tensor_ctrl<T>;
+	friend class tensor_ctrl<N,T>;
 
 public:
 	/**	\brief Returns the %dimensions of the %tensor
 	**/
-	virtual const dimensions &get_dims() const = 0;
+	virtual const dimensions<N> &get_dims() const = 0;
 
 protected:
 	//!	\name Event handling

@@ -227,16 +227,15 @@ namespace libtensor {
 
 	\ingroup libtensor
 **/
+template<size_t N>
 class permutation {
 private:
-	size_t m_order; //!< Tensor order
-	size_t m_idx[max_tensor_order]; //!< Permuted indices
+	size_t m_idx[N]; //!< Permuted indices
 
 public:
 	/**	\brief Creates a unit %permutation of a specified order
-		\param order Tensor order.
 	**/
-	permutation(const size_t order) throw(exception);
+	permutation();
 
 	/**	\brief Creates a copy or an inverted copy of a %permutation
 
@@ -244,43 +243,31 @@ public:
 		\param p Another %permutation.
 		\param b_inverse Create inverse %permutation.
 	**/
-	permutation(const permutation &p, const bool b_inverse = false);
-
-	/**	\brief Virtual destructor
-
-		Virtual destructor.
-	**/
-	virtual ~permutation();
-
-	/**	\brief Returns the order of the %permutation
-
-		Returns the order of the %permutation.
-	**/
-	unsigned int get_order() const;
+	permutation(const permutation<N> &p, const bool b_inverse = false);
 
 	/**	\brief Accumulates %permutation
 
-		Permutes this %permutation with another %permutation, which must
-		have the same order.
+		Permutes this %permutation with another %permutation.
 
 		\param p Another %permutation.
 		\return Reference to this %permutation.
-		\throw exception If the two permutations are incompatible.
 	**/
-	permutation &permute(const permutation &p) throw(exception);
+	permutation<N> &permute(const permutation<N> &p);
 
-	/**	\brief Permutes two items
+	/**	\brief Permutes two indexes
 		\param i First %index.
 		\param j Second %index.
 		\return Reference to this %permutation.
-		\throw exception If either of the indices is invalid.
+		\throw exception If either of the indices is invalid (out of
+			range).
 	**/
-	permutation &permute(const size_t i, const size_t j) throw(exception);
+	permutation<N> &permute(const size_t i, const size_t j)
+		throw(exception);
 
 	/**	\brief Inverts %permutation
 		\return Reference to this %permutation.
 	**/
-	permutation &invert();
+	permutation<N> &invert();
 
 	/**	\brief Checks if the %permutation is an identity %permutation
 
@@ -296,11 +283,11 @@ public:
 	/**	\brief Checks if two permutations are identical
 		\return true if the two permutations are equal, false otherwise.
 	**/
-	bool equals(const permutation &p) const;
+	bool equals(const permutation<N> &p) const;
 
-	bool operator==(const permutation &p) const;
-	bool operator!=(const permutation &p) const;
-	bool operator<(const permutation &p) const;
+	bool operator==(const permutation<N> &p) const;
+	bool operator!=(const permutation<N> &p) const;
+	bool operator<(const permutation<N> &p) const;
 
 	/**	\brief Permutes a given sequence of objects
 		\param n Length of the sequence, must be the same as the
@@ -321,143 +308,124 @@ public:
 	void apply(const size_t n, const T *obj_from, T *obj_to) const
 		throw(exception);
 
-private:
-	/**	\brief Throws an exception with an error message
-	**/
-	void throw_exc(const char *method, const char *msg) const
-		throw(exception);
 };
 
-inline permutation::permutation(const size_t order) throw(exception) {
-#ifdef TENSOR_DEBUG
-	if(order == 0) {
-		throw_exc("permutation(const size_t)",
-			"Invalid permutation order");
-	}
-#endif
-	m_order = order;
-	#pragma loop count(6)
-	for(register size_t i=0; i<order; i++) m_idx[i] = i;
+template<size_t N>
+inline permutation<N>::permutation() {
+	#pragma unroll(N)
+	for(register size_t i=0; i<N; i++) m_idx[i] = i;
 }
 
-inline permutation::permutation(const permutation &p, const bool b_inverse) {
-	m_order = p.m_order;
+template<size_t N>
+inline permutation<N>::permutation(const permutation<N> &p,
+	const bool b_inverse) {
 	if(b_inverse) {
-		#pragma loop count(6)
-		for(register size_t i=0; i<m_order; i++) m_idx[p.m_idx[i]] = i;
+		#pragma unroll(N)
+		for(register size_t i=0; i<N; i++) m_idx[p.m_idx[i]] = i;
 	} else {
-		#pragma loop count(6)
-		for(register size_t i=0; i<m_order; i++) m_idx[i] = p.m_idx[i];
+		#pragma unroll(N)
+		for(register size_t i=0; i<N; i++) m_idx[i] = p.m_idx[i];
 	}
 }
 
-inline permutation::~permutation() {
-}
-
-inline unsigned int permutation::get_order() const {
-	return m_order;
-}
-
-inline permutation &permutation::permute(const permutation &p) throw(exception) {
-#ifdef TENSOR_DEBUG
-	if(m_order != p.m_order) throw_exc("permute(const permutation&)",
-		"Incompatible permutation");
-#endif
-	size_t idx_cp[max_tensor_order];
-	#pragma loop count(6)
-	for(register size_t i=0; i<m_order; i++) idx_cp[i] = m_idx[i];
-	#pragma loop count(6)
-	for(register size_t i=0; i<m_order; i++) m_idx[i] = idx_cp[p.m_idx[i]];
+template<size_t N>
+inline permutation<N> &permutation<N>::permute(const permutation<N> &p) {
+	size_t idx_cp[N];
+	#pragma unroll(N)
+	for(register size_t i=0; i<N; i++) idx_cp[i] = m_idx[i];
+	#pragma unroll(N)
+	for(register size_t i=0; i<N; i++) m_idx[i] = idx_cp[p.m_idx[i]];
 	return *this;
 }
 
-inline permutation &permutation::permute(const size_t i, const size_t j)
+template<size_t N>
+inline permutation<N> &permutation<N>::permute(const size_t i, const size_t j)
 	throw(exception) {
-#ifdef TENSOR_DEBUG
-	if(i >= m_order || j >= m_order) {
-		throw_exc("permute(const uint, const uint)",
+#ifdef LIBTENSOR_DEBUG
+	if(i>=N || j>=N) {
+		throw_exc("permutation<N>",
+			"permute(const size_t, const size_t)",
 			"Index out of range");
 	}
-#endif
+#endif // LIBTENSOR_DEBUG
 	if(i == j) return *this;
 	register size_t i_cp = m_idx[i];
 	m_idx[i] = m_idx[j]; m_idx[j] = i_cp;
 	return *this;
 }
 
-inline permutation &permutation::invert() {
-	size_t idx_cp[max_tensor_order];
-	#pragma loop count(6)
-	for(register size_t i=0; i<m_order; i++) idx_cp[i] = m_idx[i];
-	#pragma loop count(6)
-	for(register size_t i=0; i<m_order; i++) m_idx[idx_cp[i]] = i;
+template<size_t N>
+inline permutation<N> &permutation<N>::invert() {
+	size_t idx_cp[N];
+	#pragma unroll(N)
+	for(register size_t i=0; i<N; i++) idx_cp[i] = m_idx[i];
+	#pragma unroll(N)
+	for(register size_t i=0; i<N; i++) m_idx[idx_cp[i]] = i;
 	return *this;
 }
 
-inline bool permutation::is_identity() const {
-	#pragma loop count(6)
-	for(register size_t i=0; i<m_order; i++)
+template<size_t N>
+inline bool permutation<N>::is_identity() const {
+	#pragma unroll(N)
+	for(register size_t i=0; i<N; i++)
 		if(m_idx[i] != i) return false;
 	return true;
 }
 
-inline bool permutation::equals(const permutation &p) const {
+template<size_t N>
+inline bool permutation<N>::equals(const permutation<N> &p) const {
 	if(&p == this) return true;
-	if(m_order != p.m_order) return false;
-	#pragma loop count(6)
-	for(register size_t i=0; i<m_order; i++)
+	#pragma unroll(N)
+	for(register size_t i=0; i<N; i++)
 		if(m_idx[i] != p.m_idx[i]) return false;
 	return true;
 }
 
-inline bool permutation::operator==(const permutation &p) const {
+template<size_t N>
+inline bool permutation<N>::operator==(const permutation<N> &p) const {
 	return equals(p);
 }
 
-inline bool permutation::operator!=(const permutation &p) const {
+template<size_t N>
+inline bool permutation<N>::operator!=(const permutation<N> &p) const {
 	return !equals(p);
 }
 
-inline bool permutation::operator<(const permutation &p) const {
-	if(m_order == p.m_order) {
-		#pragma loop count(6)
-		for(register size_t i=0; i<m_order; i++) {
-			if(m_idx[i] != p.m_idx[i]) return m_idx[i]<p.m_idx[i];
-		}
-		return false;
+template<size_t N>
+inline bool permutation<N>::operator<(const permutation<N> &p) const {
+	#pragma unroll(N)
+	for(register size_t i=0; i<m_order; i++) {
+		if(m_idx[i] != p.m_idx[i]) return m_idx[i]<p.m_idx[i];
 	}
-	return m_order<p.m_order;
+	return false;
 }
 
-template<class T>
-void permutation::apply(const size_t n, T *obj) const throw(exception) {
-#ifdef TENSOR_DEBUG
-	if(n != m_order) {
-		throw_exc("apply(const size_t, T*)",
+template<size_t N> template<class T>
+void permutation<N>::apply(const size_t n, T *obj) const throw(exception) {
+#ifdef LIBTENSOR_DEBUG
+	if(n!=N) {
+		throw_exc("permutation<N>", "apply(const size_t, T*)",
 			"Sequence has a wrong length");
 	}
-#endif
-	T buf[n]; for(size_t i=0; i<n; i++) buf[i]=obj[i];
-	for(size_t i=0; i<n; i++) obj[i]=buf[m_idx[i]];
+#endif // LIBTENSOR_DEBUG
+	T buf[N];
+	#pragma unroll(N)
+	for(register size_t i=0; i<N; i++) buf[i]=obj[i];
+	#pragma unroll(N)
+	for(register size_t i=0; i<N; i++) obj[i]=buf[m_idx[i]];
 }
 
-template<class T>
-void permutation::apply(const size_t n, const T *obj_from, T *obj_to) const
+template<size_t N> template<class T>
+void permutation<N>::apply(const size_t n, const T *obj_from, T *obj_to) const
 	throw(exception) {
-#ifdef TENSOR_DEBUG
-	if(n != m_order) {
-		throw_exc("apply(const size_t, const T*, T*)",
+#ifdef LIBTENSOR_DEBUG
+	if(n!=N) {
+		throw_exc("permutation<N>", "apply(const size_t, const T*, T*)",
 			"Sequence has a wrong length");
 	}
-#endif
-	for(size_t i=0; i<n; i++) obj_to[i] = obj_from[m_idx[i]];
-}
-
-inline void permutation::throw_exc(const char *method, const char *msg) const
-	throw(exception) {
-	char s[1024];
-	snprintf(s, 1024, "[libtensor::permutation::%s] %s.", method, msg);
-	throw exception(s);
+#endif // LIBTENSOR_DEBUG
+	#pragma unroll(N)
+	for(register size_t i=0; i<N; i++) obj_to[i] = obj_from[m_idx[i]];
 }
 
 } // namespace libtensor

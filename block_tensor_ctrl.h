@@ -13,19 +13,19 @@ namespace libtensor {
 
 	\ingroup libtensor
 **/
-template<typename T>
+template<size_t N, typename T>
 class block_tensor_ctrl {
 public:
 	//!	\name Construction and destruction
 	//@{
-	block_tensor_ctrl(block_tensor_i<T> &bt);
+	block_tensor_ctrl(block_tensor_i<N,T> &bt);
 	~block_tensor_ctrl();
 	//@}
 
 	//!	\name Event forwarding
 	//@{
-	void req_symmetry(const symmetry_i &sym) throw(exception);
-	tensor_i<T> &req_block(const index &idx) throw(exception);
+	void req_symmetry(const symmetry_i<N> &sym) throw(exception);
+	tensor_i<N,T> &req_block(const index<N> &idx) throw(exception);
 	//@}
 };
 

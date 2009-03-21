@@ -21,13 +21,14 @@ namespace libtensor {
 
 	\ingroup libtensor_tod
 **/
-class tod_contract2 : public tod_additive {
+template<size_t NC, size_t NA, size_t NB>
+class tod_contract2 : public tod_additive<NC> {
 private:
 	size_t m_ncontr; //!< Number of indexes to contract over
-	tensor_i<double> &m_t1; //!< First tensor
-	tensor_i<double> &m_t2; //!< Second tensor
-	permutation m_p1; //!< Permutation of the first tensor
-	permutation m_p2; //!< Permutation of the second tensor
+	tensor_i<NA,double> &m_t1; //!< First tensor
+	tensor_i<NB,double> &m_t2; //!< Second tensor
+	permutation<NA> m_p1; //!< Permutation of the first tensor
+	permutation<NB> m_p2; //!< Permutation of the second tensor
 
 public:
 	//!	\name Construction and destruction
@@ -35,9 +36,9 @@ public:
 
 	/**	\brief Initializes the operation
 	**/
-	tod_contract2(const size_t n, tensor_i<double> &t1,
-		const permutation &p1, tensor_i<double> &t2,
-		const permutation &p2, const permutation &pres)
+	tod_contract2(const size_t n, tensor_i<NA,double> &t1,
+		const permutation<NA> &p1, tensor_i<NB,double> &t2,
+		const permutation<NB> &p2, const permutation<NC> &pres)
 		throw(exception);
 
 	/**	\brief Virtual destructor
@@ -53,10 +54,42 @@ public:
 
 	//!	\name Implementation of tod_additive
 	//@{
-	virtual void perform(tensor_i<double> &t) throw(exception);
-	virtual void perform(tensor_i<double> &t, double c) throw(exception);
+	virtual void perform(tensor_i<NC,double> &t) throw(exception);
+	virtual void perform(tensor_i<NC,double> &t, double c) throw(exception);
 	//@}
 };
+
+template<size_t NC, size_t NA, size_t NB>
+tod_contract2<NC,NA,NB>::tod_contract2(const size_t n, tensor_i<NA,double> &t1,
+	const permutation<NA> &p1, tensor_i<NB,double> &t2,
+	const permutation<NB> &p2, const permutation<NC> &pres)
+	throw(exception) : m_ncontr(n), m_t1(t1), m_t2(t2), m_p1(p1), m_p2(p2) {
+}
+
+template<size_t NC, size_t NA, size_t NB>
+tod_contract2<NC,NA,NB>::~tod_contract2() {
+}
+
+template<size_t NC, size_t NA, size_t NB>
+void tod_contract2<NC,NA,NB>::prefetch() throw(exception) {
+	tensor_ctrl<NA,double> ctrl_t1(m_t1);
+	tensor_ctrl<NB,double> ctrl_t2(m_t2);
+	ctrl_t1.req_prefetch();
+	ctrl_t2.req_prefetch();
+}
+
+template<size_t NC, size_t NA, size_t NB>
+void tod_contract2<NC,NA,NB>::perform(tensor_i<NC,double> &t) throw(exception) {
+	dimensions<NA> dims_t1(m_t1.get_dims());
+	dimensions<NB> dims_t2(m_t2.get_dims());
+	dims_t1.permute(m_p1);
+	dims_t2.permute(m_p2);
+}
+
+template<size_t NC, size_t NA, size_t NB>
+void tod_contract2<NC,NA,NB>::perform(tensor_i<NC,double> &t, const double c)
+	throw(exception) {
+}
 
 } // namespace libtensor
 

@@ -11,18 +11,18 @@ namespace libtensor {
 
 	\ingroup libtensor
 **/
-class default_symmetry : public symmetry_i {
+template<size_t N>
+class default_symmetry : public symmetry_i<N> {
 private:
-	permutation m_perm; //!< Identity permutation
+	permutation<N> m_perm; //!< Identity permutation
 
 public:
 	//!	\name Construction and destruction
 	//@{
 	/**	\brief Initializes default symmetry for a %tensor of
 			a given order
-		\param order Tensor order.
 	**/
-	default_symmetry(const size_t order);
+	default_symmetry();
 
 	/**	\brief Virtual destructor
 	**/
@@ -31,36 +31,43 @@ public:
 
 	//!	\name Implementation of symmetry_i
 	//@{
-	virtual bool is_unique(const index &i) const throw(exception);
-	virtual const index &get_unique(const index &i) const throw(exception);
-	virtual const permutation &get_perm(const index &i) const
+	virtual bool is_unique(const index<N> &i) const throw(exception);
+	virtual const index<N> &get_unique(const index<N> &i) const
 		throw(exception);
-	virtual double get_coeff(const index &i) const throw(exception);
+	virtual const permutation<N> &get_perm(const index<N> &i) const
+		throw(exception);
+	virtual double get_coeff(const index<N> &i) const throw(exception);
 	//@}
 };
 
-inline default_symmetry::default_symmetry(const size_t order) : m_perm(order) {
+template<size_t N>
+inline default_symmetry<N>::default_symmetry() {
 }
 
-inline default_symmetry::~default_symmetry() {
+template<size_t N>
+inline default_symmetry<N>::~default_symmetry() {
 }
 
-inline bool default_symmetry::is_unique(const index &i) const
+template<size_t N>
+inline bool default_symmetry<N>::is_unique(const index<N> &i) const
 	throw(exception) {
 	return true;
 }
 
-inline const index &default_symmetry::get_unique(const index &i) const
+template<size_t N>
+inline const index<N> &default_symmetry<N>::get_unique(const index<N> &i) const
 	throw(exception) {
 	return i;
 }
 
-inline const permutation &default_symmetry::get_perm(const index &i) const
-	throw(exception) {
+template<size_t N>
+inline const permutation<N> &default_symmetry<N>::get_perm(const index<N> &i)
+	const throw(exception) {
 	return m_perm;
 }
 
-inline double default_symmetry::get_coeff(const index &i) const
+template<size_t N>
+inline double default_symmetry<N>::get_coeff(const index<N> &i) const
 	throw(exception) {
 	return 1.0;
 }

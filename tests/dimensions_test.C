@@ -8,15 +8,11 @@ void dimensions_test::perform() throw(libtest::test_exception) {
 }
 
 void dimensions_test::test_ctor() throw(libtest::test_exception) {
-	index i1a(2), i1b(2);
+	index<2> i1a, i1b;
 	i1b[0] = 1; i1b[1] = 2;
-	index_range ir1(i1a, i1b); // Indexes run from (0,0) to (1,2)
-	dimensions d1(ir1);
+	index_range<2> ir1(i1a, i1b); // Indexes run from (0,0) to (1,2)
+	dimensions<2> d1(ir1);
 
-	if(d1.get_order() != 2) {
-		fail_test("dimensions_test::test_ctor()", __FILE__, __LINE__,
-			"Incorrect number of dimensions in d1");
-	}
 	if(d1[0] != 2) {
 		fail_test("dimensions_test::test_ctor()", __FILE__, __LINE__,
 			"Incorrect number of elements along d1[0]");
@@ -30,12 +26,8 @@ void dimensions_test::test_ctor() throw(libtest::test_exception) {
 			"Incorrect total number of elements in d1");
 	}
 
-	dimensions d2(d1);
+	dimensions<2> d2(d1);
 
-	if(d2.get_order() != 2) {
-		fail_test("dimensions_test::test_ctor()", __FILE__, __LINE__,
-			"Incorrect number of dimensions in d2");
-	}
 	if(d2[0] != 2) {
 		fail_test("dimensions_test::test_ctor()", __FILE__, __LINE__,
 			"Incorrect number of elements along d2[0]");
@@ -52,10 +44,10 @@ void dimensions_test::test_ctor() throw(libtest::test_exception) {
 }
 
 void dimensions_test::test_inc_index() throw(libtest::test_exception) {
-	index i1(4), i2(4);
+	index<4> i1, i2;
 	i2[0]=1; i2[1]=1; i2[2]=1; i2[3]=1;
-	index_range ir(i1,i2);
-	dimensions d(ir);
+	index_range<4> ir(i1,i2);
+	dimensions<4> d(ir);
 
 	if(!d.inc_index(i1)) {
 		fail_test("dimensions_test::test_inc_index()", __FILE__,
@@ -104,10 +96,10 @@ void dimensions_test::test_inc_index() throw(libtest::test_exception) {
 }
 
 void dimensions_test::test_abs_index() throw(libtest::test_exception) {
-	index i1(2), i2(2);
+	index<2> i1, i2;
 	i2[0]=9; i2[1]=9;
-	index_range ir(i1,i2);
-	dimensions d(ir);
+	index_range<2> ir(i1,i2);
+	dimensions<2> d(ir);
 
 	if(d.abs_index(i1)!=0) {
 		fail_test("dimensions::test_abs_index()", __FILE__, __LINE__,

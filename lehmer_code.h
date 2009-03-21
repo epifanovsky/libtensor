@@ -44,14 +44,13 @@ namespace libtensor {
 
 	\ingroup libtensor
 **/
-class lehmer_code : public libvmm::singleton<lehmer_code> {
-	friend class libvmm::singleton<lehmer_code>;
+template<size_t N>
+class lehmer_code : public libvmm::singleton< lehmer_code<N> > {
+	friend class libvmm::singleton< lehmer_code<N> >;
 
 private:
-	size_t m_fact[max_tensor_order-1]; //!< Table of factorials
-
-	//!	Table of permutations
-	std::vector<permutation*> m_codes[max_tensor_order-1];
+	size_t m_fact[N]; //!< Table of factorials
+	permutation<N> **m_codes; //!< Table of permutations
 
 protected:
 	//!	\name Construction and destruction
@@ -69,21 +68,86 @@ public:
 
 	/**	\brief Returns the Lehmer code for a %permutation
 	**/
-	size_t perm2code(const permutation &p) throw(exception);
+	size_t perm2code(const permutation<N> &p) throw(exception);
 
 	/**	\brief Returns the %permutation for a Lehmer code
 	**/
-	const permutation &code2perm(const size_t order, const size_t code)
-		throw(exception);
+	const permutation<N> &code2perm(const size_t code) throw(exception);
 
 	//@}
 
-private:
-	/**	\brief Throws an exception
-	**/
-	void throw_exc(const char *method, const char *msg) const
-		throw(exception);
 };
+
+template<size_t N>
+lehmer_code<N>::lehmer_code() {
+	// m_fact[0] = 1!
+	// m_fact[1] = 2!
+	// m_fact[2] = 3!
+	// ...
+	// m_fact[n] = (n+1)!
+	size_t fact = 1;
+	for(register size_t i=0; i<N; i++) {
+		fact *= (i+1); m_fact[i] = fact;
+	}
+	register size_t sz = m_fact[N-1];
+	m_codes = new permutation<N>*[sz];
+	for(register size_t i=0; i<sz; i++) m_codes[i] = NULL;
+}
+
+template<size_t N>
+size_t lehmer_code<N>::perm2code(const permutation<N> &p) throw(exception) {
+	size_t seq[N];
+	size_t code = 0;
+	for(register size_t i=0; i<N; i++) seq[i]=i;
+	p.apply(N, seq);
+	for(size_t i=0; i<N-1; i++) {
+		register size_t k = seq[i];
+		for(register size_t j=i+1; j<N; j++) if(seq[j]>k) seq[j]--;
+		code += k*m_fact[N-i-2];
+	}
+	return code;
+}
+
+template<size_t N>
+const permutation<N> &lehmer_code<N>::code2perm(const size_t code)
+	throw(exception) {
+#ifdef LIBTENSOR_DEBUG
+	if(code >= m_fact[N-1]) {
+		throw_exc("lehmer_code<N>", "code2perm(const size_t)",
+			"Invalid code");
+	}
+#endif // LIBTENSOR_DEBUG
+	permutation<N> *p = m_codes[code];
+	if(p) return *p;
+
+	p = new permutation<N>;
+
+	size_t c = code;
+	size_t seq[N-1];
+	register size_t i = N-1;
+	do {
+		i--;
+		seq[i] = c/m_fact[i];
+		c = c%m_fact[i];
+	} while(i != 0);
+
+	bool done = false;
+	do {
+		i = 0;
+		while(i<N-1 && seq[i]==0) i++;
+		if(i!=N-1) {
+			p->permute(N-i-2, N-i-1);
+			if(i==0) seq[i]=0;
+			else { seq[i-1]=seq[i]-1; seq[i]=0; }
+		} else {
+			done = true;
+		}
+	} while(!done);
+	p->invert();
+
+	m_codes[code] = p;
+	return *p;
+}
 
 } // namespace libtensor
 

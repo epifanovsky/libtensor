@@ -15,10 +15,11 @@ namespace libtensor {
 
 	\ingroup libtensor
 **/
+template<size_t N>
 class dimensions {
 private:
-	index m_dims; //!< Tensor %dimensions
-	index m_incs; //!< Index increments
+	index<N> m_dims; //!< Tensor %dimensions
+	index<N> m_incs; //!< Index increments
 	size_t m_size; //!< Total size
 
 public:
@@ -28,18 +29,14 @@ public:
 	/**	\brief Creates a copy of another dimensions object
 		\param d Another dimensions object.
 	**/
-	dimensions(const dimensions &d);
+	dimensions(const dimensions<N> &d);
 
 	/**	\brief Convers a range of indexes to the dimensions object
 		\param r Index range
 	**/
-	dimensions(const index_range &r);
+	dimensions(const index_range<N> &r);
 
 	//@}
-
-	/**	\brief Returns the number of dimensions
-	**/
-	size_t get_order() const;
 
 	/**	\brief Returns the linear increment along a given dimension
 	**/
@@ -55,7 +52,7 @@ public:
 
 	/**	\brief Permutes the dimensions
 	**/
-	dimensions &permute(const permutation &p) throw(exception);
+	dimensions<N> &permute(const permutation<N> &p) throw(exception);
 
 	//!	\name Index manipulations
 	//@{
@@ -68,16 +65,16 @@ public:
 		\throw exception If the index is incompatible with the
 			dimensions object.
 	**/
-	bool inc_index(index &idx) const throw(exception);
+	bool inc_index(index<N> &idx) const throw(exception);
 
 	/**	\brief Returns the absolute %index within the %dimensions
 			(last %index is the fastest)
 	**/
-	size_t abs_index(const index &idx) const throw(exception);
+	size_t abs_index(const index<N> &idx) const throw(exception);
 
 	/**	\brief Converts an absolute %index back to a normal %index
 	**/
-	void abs_index(const size_t abs, index &idx) const throw(exception);
+	void abs_index(const size_t abs, index<N> &idx) const throw(exception);
 
 	//@}
 
@@ -86,65 +83,100 @@ private:
 	**/
 	void update_increments();
 
-	/**     \brief Throws an exception with an error message
-	**/
-	void throw_exc(const char *method, const char *msg) const
-		throw(exception);
 };
 
-inline dimensions::dimensions(const dimensions &d) :
+template<size_t N>
+inline dimensions<N>::dimensions(const dimensions<N> &d) :
 	m_dims(d.m_dims), m_incs(d.m_incs), m_size(d.m_size) {
 }
 
-inline dimensions::dimensions(const index_range &r) :
-	m_dims(r.get_end()), m_incs(m_dims.get_order()) {
-	#pragma loop count(6)
-	for(register unsigned int i=0; i<m_dims.get_order(); i++) {
+template<size_t N>
+inline dimensions<N>::dimensions(const index_range<N> &r) :
+	m_dims(r.get_end()) {
+	#pragma unroll(N)
+	for(register size_t i=0; i<N; i++) {
 		m_dims[i] -= r.get_begin()[i];
 		m_dims[i] ++;
 	}
 	update_increments();
 }
 
-inline size_t dimensions::get_increment(const size_t i) const
+template<size_t N>
+inline size_t dimensions<N>::get_increment(const size_t i) const
 	throw(exception) {
 	return m_incs[i];
 }
 
-inline size_t dimensions::operator[](const size_t i) const
+template<size_t N>
+inline size_t dimensions<N>::operator[](const size_t i) const
 	throw(exception) {
 	return m_dims[i];
 }
 
-inline size_t dimensions::get_order() const {
-	return m_dims.get_order();
-}
-
-inline size_t dimensions::get_size() const {
+template<size_t N>
+inline size_t dimensions<N>::get_size() const {
 	return m_size;
 }
 
-inline dimensions &dimensions::permute(const permutation &p) throw(exception) {
+template<size_t N>
+inline dimensions<N> &dimensions<N>::permute(const permutation<N> &p)
+	throw(exception) {
 	m_dims.permute(p);
 	update_increments();
 	return *this;
 }
 
-inline void dimensions::update_increments() {
+template<size_t N>
+bool dimensions<N>::inc_index(index<N> &idx) const throw(exception) {
+	if(m_dims.less(idx) || m_dims.equals(idx)) return false;
+	size_t n = N-1;
+	bool done = false;
+	while(!done && n!=0) {
+		if(idx[n] < m_dims[n]-1) {
+			idx[n]++;
+			for(size_t i=n+1; i<N; i++) idx[i]=0;
+			done = true;
+		} else {
+			n--;
+		}
+	}
+	return done;
+}
+
+template<size_t N>
+size_t dimensions<N>::abs_index(const index<N> &idx) const throw(exception) {
+	size_t abs = 0;
+	for(register size_t i=0; i<N; i++) {
+		if(idx[i] < m_dims[i]) {
+			abs += m_incs[i]*idx[i];
+		} else {
+			throw_exc("dimensions<N>", "abs_index(const index<N>&)",
+				"Index out of range");
+		}
+	}
+	return abs;
+}
+
+template<size_t N>
+void dimensions<N>::abs_index(const size_t abs, index<N> &idx) const
+	throw(exception) {
+	size_t a = abs;
+	register size_t imax = N-1;
+	for(register size_t i=0; i<imax; i++) {
+		idx[i] = a/m_incs[i+1];
+		a %= m_incs[i+1];
+	}
+}
+
+template<size_t N>
+inline void dimensions<N>::update_increments() {
 	register size_t sz = 1;
-	register size_t i = m_dims.get_order();
+	register size_t i = N;
 	do {
 		i--;
 		m_incs[i] = sz; sz *= m_dims[i];
 	} while(i != 0);
 	m_size = sz;
-}
-
-inline void dimensions::throw_exc(const char *method, const char *msg) const
-	throw(exception) {
-	char s[1024];
-	snprintf(s, 1024, "[libtensor::dimensions::%s] %s.", method, msg);
-	throw exception(s);
 }
 
 } // namespace libtensor
