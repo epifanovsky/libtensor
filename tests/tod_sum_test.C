@@ -24,7 +24,9 @@ void tod_sum_test::perform() throw(libtest::test_exception) {
 	const double *p = tctrl.req_const_dataptr();
 	bool ok = true;
 	size_t sz = dim.get_size();
-	for(size_t i=0; i<sz; i++) if(p[i]!=(double)i) { ok = false; break; }
+	for(size_t i=0; i<sz; i++) if(p[i]!=((double)i)+3.0) {
+		ok = false; break;
+	}
 	tctrl.ret_dataptr(p);
 
 	if(!ok) {
