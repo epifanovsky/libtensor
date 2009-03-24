@@ -9,6 +9,7 @@ OBJS += direct_tensor_test.o
 OBJS += expr_binary_test.o
 OBJS += expr_identity_test.o
 OBJS += expr_literal_test.o
+OBJS += expression_test.o
 OBJS += immutable_test.o
 OBJS += index_test.o
 OBJS += index_range_test.o

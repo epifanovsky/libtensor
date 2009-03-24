@@ -13,6 +13,7 @@
 #include "expr_binary_test.h"
 #include "expr_identity_test.h"
 #include "expr_literal_test.h"
+#include "expression_test.h"
 #include "immutable_test.h"
 #include "index_test.h"
 #include "index_range_test.h"
@@ -44,6 +45,7 @@ namespace libtensor {
 	\li libtensor::expr_binary_test
 	\li libtensor::expr_identity_test
 	\li libtensor::expr_literal_test
+	\li libtensor::expression_test
 	\li libtensor::immutable_test
 	\li libtensor::index_test
 	\li libtensor::index_range_test
@@ -69,6 +71,7 @@ private:
 	unit_test_factory<expr_binary_test> m_utf_expr_binary;
 	unit_test_factory<expr_identity_test> m_utf_expr_identity;
 	unit_test_factory<expr_literal_test> m_utf_expr_literal;
+	unit_test_factory<expression_test> m_utf_expression;
 	unit_test_factory<immutable_test> m_utf_immutable;
 	unit_test_factory<index_test> m_utf_index;
 	unit_test_factory<index_range_test> m_utf_index_range;
