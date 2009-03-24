@@ -8,7 +8,7 @@ namespace libtensor {
 	\ingroup libtensor_expressions
 **/
 template<typename T1, typename T2>
-class expr_op_mul {
+class expr_mul_functor {
 public:
 	static T1 eval(T1 &a, T2 &b);
 };
