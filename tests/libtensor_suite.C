@@ -5,6 +5,7 @@ namespace libtensor {
 
 libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("block_tensor", m_utf_block_tensor);
+	add_test("contract2_0_4i", m_utf_contract2_0_4i);
 	add_test("contract2_2_2i", m_utf_contract2_2_2i);
 	add_test("contract2_2_3i", m_utf_contract2_2_3i);
 	add_test("contract2_4_1i", m_utf_contract2_4_1i);

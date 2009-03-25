@@ -1,5 +1,6 @@
 OBJS  = libtensor_suite.o
 OBJS += block_tensor_test.o
+OBJS += contract2_0_4i_test.o
 OBJS += contract2_2_2i_test.o
 OBJS += contract2_2_3i_test.o
 OBJS += contract2_4_1i_test.o
@@ -27,7 +28,7 @@ OBJS += tod_sum_test.o
 all: libtensor_tests
 
 include ../Makefile.inc
-INCLUDE = -I.. -I../../libtest -I../../libvmm
+INCLUDE += -I.. -I../../libtest -I../../libvmm
 
 .PHONY: clean
 clean:

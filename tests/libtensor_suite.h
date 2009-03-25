@@ -4,6 +4,7 @@
 #include <libtest.h>
 #include <libtensor.h>
 #include "block_tensor_test.h"
+#include "contract2_0_4i_test.h"
 #include "contract2_2_2i_test.h"
 #include "contract2_2_3i_test.h"
 #include "contract2_4_1i_test.h"
@@ -36,6 +37,7 @@ namespace libtensor {
 
 	This suite runs the following tests:
 	\li libtensor::block_tensor_test
+	\li libtensor::contract2_0_4i_test
 	\li libtensor::contract2_2_2i_test
 	\li libtensor::contract2_2_3i_test
 	\li libtensor::contract2_4_1i_test
@@ -62,6 +64,7 @@ namespace libtensor {
 class libtensor_suite : public libtest::test_suite {
 private:
 	unit_test_factory<block_tensor_test> m_utf_block_tensor;
+	unit_test_factory<contract2_0_4i_test> m_utf_contract2_0_4i;
 	unit_test_factory<contract2_2_2i_test> m_utf_contract2_2_2i;
 	unit_test_factory<contract2_2_3i_test> m_utf_contract2_2_3i;
 	unit_test_factory<contract2_4_1i_test> m_utf_contract2_4_1i;
