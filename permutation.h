@@ -394,7 +394,7 @@ inline bool permutation<N>::operator!=(const permutation<N> &p) const {
 template<size_t N>
 inline bool permutation<N>::operator<(const permutation<N> &p) const {
 	#pragma unroll(N)
-	for(register size_t i=0; i<m_order; i++) {
+	for(register size_t i=0; i<N; i++) {
 		if(m_idx[i] != p.m_idx[i]) return m_idx[i]<p.m_idx[i];
 	}
 	return false;

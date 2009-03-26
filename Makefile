@@ -20,6 +20,7 @@ OBJS += contract2_4_1i.o
 OBJS += defs.o
 OBJS += exception.o
 OBJS += expression_builder.o
+OBJS += permutator.o
 
 libtensor.a: $(OBJS)
 	echo $?
