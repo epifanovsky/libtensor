@@ -6,7 +6,7 @@
 
 namespace libtensor {
 
-/**	\brief Tests the libtensor::tod_contract2_impl_113 class
+/**	\brief Tests the libtensor::tod_contract2_impl<1,1,3> class
 
 	\ingroup libtensor_tests
 **/
