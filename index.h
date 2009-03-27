@@ -84,6 +84,14 @@ public:
 
 };
 
+/**	\brief Specialized %index for zeroth-order tensors
+
+	\ingroup libtensor
+**/
+template<>
+class index<0> {
+};
+
 template<size_t N>
 inline index<N>::index() {
 	#pragma unroll(N)

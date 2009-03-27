@@ -10,11 +10,18 @@ namespace libtensor {
 
 /**	\brief Expression representing a complex object such as tensor
 
+	\param T Underlying class
+
+	The underlying class (or template) must define a public type
+	\c T::element_t, which is the type of individual elements. For tensors,
+	that would be the %tensor element type.
+
 	\ingroup libtensor_expressions
 **/
 template<typename T>
 class expr_identity {
 private:
+	typedef typename T::element_t element_t; //!< Individual element type
 	const T &m_expr; //!< Expression
 
 public:
@@ -37,11 +44,11 @@ public:
 };
 
 template<typename T>
-expr_identity<T>::expr_identity(const T &expr) : m_expr(expr) {
+inline expr_identity<T>::expr_identity(const T &expr) : m_expr(expr) {
 }
 
 template<typename T>
-expr_identity<T>::expr_identity(const expr_identity<T> &expr) :
+inline expr_identity<T>::expr_identity(const expr_identity<T> &expr) :
 	m_expr(expr.m_expr) {
 }
 

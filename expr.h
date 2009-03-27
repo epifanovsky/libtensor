@@ -6,6 +6,14 @@
 
 namespace libtensor {
 
+/**	\defgroup libtensor_expressions Tensor expressions
+	\ingroup libtensor
+**/
+
+/**	\brief Expression
+
+	\ingroup libtensor_expressions
+**/
 template<typename ExprT>
 class expr {
 private:

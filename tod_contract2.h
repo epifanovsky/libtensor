@@ -4,6 +4,7 @@
 #include "defs.h"
 #include "exception.h"
 #include "tod_additive.h"
+#include "tod_contract2_impl.h"
 
 namespace libtensor {
 
@@ -65,9 +66,20 @@ public:
 	//!	\name Implementation of tod_additive
 	//@{
 	virtual void perform(tensor_i<N+M,double> &t) throw(exception);
-	virtual void perform(tensor_i<N+M,double> &t, double c)
+	virtual void perform(tensor_i<N+M,double> &t, double d)
 		throw(exception);
 	//@}
+
+private:
+	/**	\brief Check if the two tensors to be contracted (a and b) have
+			compatible dimensions
+	**/
+	bool check_dims_ab();
+
+	/**	\brief Check if the resulting tensor (c) has compatible
+			dimensions
+	**/
+	bool check_dims_c(const dimensions<N+M> &dc);
 };
 
 template<size_t N, size_t M, size_t K>
@@ -76,6 +88,11 @@ tod_contract2<N,M,K>::tod_contract2(
 	tensor_i<M+K,double> &tb, const permutation<M+K> &pb,
 	const permutation<N+M> &pc) throw(exception) :
 		m_ta(ta), m_pa(pa), m_tb(tb), m_pb(pb), m_pc(pc) {
+
+	if(!check_dims_ab()) {
+		throw_exc("tod_contract2<N,M,K>", "tod_contract2()",
+			"Incompatible dimensions of tensors a and b");
+	}
 }
 
 template<size_t N, size_t M, size_t K>
@@ -92,21 +109,123 @@ void tod_contract2<N,M,K>::prefetch() throw(exception) {
 
 template<size_t N, size_t M, size_t K>
 void tod_contract2<N,M,K>::perform(tensor_i<N+M,double> &t) throw(exception) {
-	dimensions<N+K> dims_ta(m_ta.get_dims());
-	dimensions<M+K> dims_tb(m_tb.get_dims());
-	dims_ta.permute(m_pa);
-	dims_tb.permute(m_pb);
+	if(!check_dims_c(t.get_dims())) {
+		throw_exc("tod_contract2<N,M,K>",
+			"perform(tensor_i<N+M,double>&)",
+			"Incompatible dimensions of tensor c");
+	}
+
+	tensor_ctrl<N+K,double> ctrla(m_ta);
+	tensor_ctrl<M+K,double> ctrlb(m_tb);
+	tensor_ctrl<N+M,double> ctrlc(t);
+
+	const double *ptra = ctrla.req_const_dataptr();
+	const double *ptrb = ctrlb.req_const_dataptr();
+	double *ptrc = ctrlc.req_dataptr();
+
+	if(N<=M) {
+		tod_contract2_impl<N,M,K>::contract(ptrc, t.get_dims(), m_pc,
+			ptra, m_ta.get_dims(), m_pa, ptrb, m_tb.get_dims(),
+			m_pb);
+	} else {
+		tod_contract2_impl<M,N,K>::contract(ptrc, t.get_dims(), m_pc,
+			ptrb, m_tb.get_dims(), m_pb, ptra, m_ta.get_dims(),
+			m_pa);
+	}
+
+	ctrla.ret_dataptr(da);
+	ctrlb.ret_dataptr(db);
+	ctrlc.ret_dataptr(dc);
 }
 
 template<size_t N, size_t M, size_t K>
-void tod_contract2<N,M,K>::perform(tensor_i<N+M,double> &t, const double c)
+void tod_contract2<N,M,K>::perform(tensor_i<N+M,double> &t, double d)
 	throw(exception) {
-	char cls[32], meth[128];
-	snprintf(cls, 32, "tod_contract2<%lu,%lu,%lu>", N, M, K);
-	snprintf(meth, 128, "perform(tensor_i<%lu,double>&, const double)",
-		N+M);
-	throw_exc(cls, meth, "Contraction not implemented");
+
+	if(!check_dims_c(t.get_dims())) {
+		throw_exc("tod_contract2<N,M,K>",
+			"perform(tensor_i<N+M,double>&, double)",
+			"Incompatible dimensions of tensor c");
+	}
+
+	tensor_ctrl<N+K,double> ctrla(m_ta);
+	tensor_ctrl<M+K,double> ctrlb(m_tb);
+	tensor_ctrl<N+M,double> ctrlc(t);
+
+	const double *ptra = ctrla.req_const_dataptr();
+	const double *ptrb = ctrlb.req_const_dataptr();
+	double *ptrc = ctrlc.req_dataptr();
+
+	if(N<=M) {
+		tod_contract2_impl<N,M,K>::contract(ptrc, t.get_dims(), m_pc,
+			ptra, m_ta.get_dims(), m_pa, ptrb, m_tb.get_dims(),
+			m_pb, d);
+	} else {
+		tod_contract2_impl<M,N,K>::contract(ptrc, t.get_dims(), m_pc,
+			ptrb, m_tb.get_dims(), m_pb, ptra, m_ta.get_dims(),
+			m_pa, d);
+	}
+
+	ctrla.ret_dataptr(da);
+	ctrlb.ret_dataptr(db);
+	ctrlc.ret_dataptr(dc);
 }
+
+template<size_t N, size_t M, size_t K>
+bool tod_contract2<N,M,K>::check_dims_ab() {
+	dimensions<N+K> da(m_ta.get_dims()); da.permute(m_pa);
+	dimensions<M+K> db(m_tb.get_dims()); db.permute(m_pb);
+	for(size_t i=0; i<K; i++) if(da[N+i]!=db[M+i]) return false;
+	return true;
+}
+
+template<size_t N, size_t M, size_t K>
+bool tod_contract2<N,M,K>::check_dims_c(const dimensions<N+M> &dc) {
+	dimensions<N+K> da(m_ta.get_dims()); da.permute(m_pa);
+	dimensions<M+K> db(m_tb.get_dims()); db.permute(m_pb);
+	dimensions<N+M> dcc(dc); dcc.permute(permutation<N+M>(m_pc).invert());
+	register size_t i = 0;
+	for(register size_t j=0; j<N; j++,i++) if(da[j]!=dcc[i]) return false;
+	for(register size_t j=0; j<M; j++,i++) if(db[j]!=dcc[i]) return false;
+	return true;
+}
+
+/*
+template<>
+void tod_contract2<0,0,4>::perform(tensor_i<0,double> &t) throw(exception);
+
+template<>
+void tod_contract2<0,0,4>::perform(tensor_i<0,double> &t, double c)
+	throw(exception);
+
+template<>
+void tod_contract2<0,2,2>::perform(tensor_i<2,double> &t) throw(exception);
+
+template<>
+void tod_contract2<0,2,2>::perform(tensor_i<2,double> &t, double c)
+	throw(exception);
+
+template<>
+void tod_contract2<1,3,1>::perform(tensor_i<4,double> &t) throw(exception);
+
+template<>
+void tod_contract2<1,3,1>::perform(tensor_i<4,double> &t, double c)
+	throw(exception);
+
+template<>
+void tod_contract2<2,2,2>::perform(tensor_i<4,double> &t) throw(exception);
+
+template<>
+void tod_contract2<2,2,2>::perform(tensor_i<4,double> &t, double c)
+	throw(exception);
+
+template<>
+void tod_contract2<2,2,3>::perform(tensor_i<2,double> &t) throw(exception);
+
+template<>
+void tod_contract2<2,2,3>::perform(tensor_i<2,double> &t, double c)
+	throw(exception);
+*/
 
 } // namespace libtensor
 

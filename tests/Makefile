@@ -1,7 +1,6 @@
 OBJS  = libtensor_suite.o
 OBJS += block_tensor_test.o
 OBJS += contract2_0_4i_test.o
-OBJS += contract2_2_2i_test.o
 OBJS += contract2_2_3i_test.o
 OBJS += contract2_4_1i_test.o
 OBJS += default_symmetry_test.o
@@ -20,9 +19,11 @@ OBJS += permutator_test.o
 OBJS += symmetry_test.o
 OBJS += tensor_test.o
 OBJS += tod_add_test.o
+OBJS += tod_contract2_impl_022_test.o
 OBJS += tod_contract2_test.o
 OBJS += tod_set_test.o
 OBJS += tod_sum_test.o
+OBJS += tod_symcontract2_test.o
 
 .PHONY: all
 all: libtensor_tests
