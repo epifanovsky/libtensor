@@ -33,6 +33,7 @@ public:
 } // namespace libtensor
 
 #include "tod_contract2_impl_022.h"
+#include "tod_contract2_impl_113.h"
 
 #endif // LIBTENSOR_TOD_CONTRACT2_IMPL_H
 

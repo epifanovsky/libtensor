@@ -5,7 +5,6 @@
 #include <libtensor.h>
 #include "block_tensor_test.h"
 #include "contract2_0_4i_test.h"
-#include "contract2_2_3i_test.h"
 #include "contract2_4_1i_test.h"
 #include "default_symmetry_test.h"
 #include "dimensions_test.h"
@@ -24,6 +23,7 @@
 #include "tensor_test.h"
 #include "tod_add_test.h"
 #include "tod_contract2_impl_022_test.h"
+#include "tod_contract2_impl_113_test.h"
 #include "tod_contract2_test.h"
 #include "tod_set_test.h"
 #include "tod_sum_test.h"
@@ -39,7 +39,6 @@ namespace libtensor {
 	This suite runs the following tests:
 	\li libtensor::block_tensor_test
 	\li libtensor::contract2_0_4i_test
-	\li libtensor::contract2_2_3i_test
 	\li libtensor::contract2_4_1i_test
 	\li libtensor::default_symmetry_test
 	\li libtensor::dimensions_test
@@ -56,18 +55,18 @@ namespace libtensor {
 	\li libtensor::permutator_test
 	\li libtensor::symmetry_test
 	\li libtensor::tensor_test
-	\li libtensor::tod_add test
+	\li libtensor::tod_add_test
+	\li libtensor::tod_contract2_test
 	\li libtensor::tod_contract2_impl_022_test
-	\li libtensor::tod_contract2 test
+	\li libtensor::tod_contract2_impl_113_test
 	\li libtensor::tod_set_test
 	\li libtensor::tod_sum_test
-	\li libtensor::tod_symcontract2 test
+	\li libtensor::tod_symcontract2_test
 **/
 class libtensor_suite : public libtest::test_suite {
 private:
 	unit_test_factory<block_tensor_test> m_utf_block_tensor;
 	unit_test_factory<contract2_0_4i_test> m_utf_contract2_0_4i;
-	unit_test_factory<contract2_2_3i_test> m_utf_contract2_2_3i;
 	unit_test_factory<contract2_4_1i_test> m_utf_contract2_4_1i;
 	unit_test_factory<default_symmetry_test> m_utf_default_symmetry;
 	unit_test_factory<dimensions_test> m_utf_dimensions;
@@ -87,6 +86,8 @@ private:
 	unit_test_factory<tod_add_test> m_utf_tod_add;
 	unit_test_factory<tod_contract2_impl_022_test>
 		m_utf_tod_contract2_impl_022;
+	unit_test_factory<tod_contract2_impl_113_test>
+		m_utf_tod_contract2_impl_113;
 	unit_test_factory<tod_contract2_test> m_utf_tod_contract2;
 	unit_test_factory<tod_set_test> m_utf_tod_set;
 	unit_test_factory<tod_sum_test> m_utf_tod_sum;
