@@ -6,7 +6,6 @@ namespace libtensor {
 libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("block_tensor", m_utf_block_tensor);
 	add_test("contract2_0_4i", m_utf_contract2_0_4i);
-	add_test("contract2_4_1i", m_utf_contract2_4_1i);
 	add_test("default_symmetry", m_utf_default_symmetry);
 	add_test("dimensions", m_utf_dimensions);
 	add_test("expr_binary", m_utf_expr_binary);
@@ -26,6 +25,7 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("tod_contract2", m_utf_tod_contract2);
 	add_test("tod_contract2_impl_022", m_utf_tod_contract2_impl_022);
 	add_test("tod_contract2_impl_113", m_utf_tod_contract2_impl_113);
+	add_test("tod_contract2_impl_131", m_utf_tod_contract2_impl_131);
 	add_test("tod_set", m_utf_tod_set);
 	add_test("tod_sum", m_utf_tod_sum);
 	add_test("tod_symcontract2", m_utf_tod_symcontract2);

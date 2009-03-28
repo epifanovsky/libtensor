@@ -34,6 +34,7 @@ public:
 
 #include "tod_contract2_impl_022.h"
 #include "tod_contract2_impl_113.h"
+#include "tod_contract2_impl_131.h"
 
 #endif // LIBTENSOR_TOD_CONTRACT2_IMPL_H
 

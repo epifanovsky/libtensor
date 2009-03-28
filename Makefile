@@ -14,13 +14,13 @@ SVNREV := $(shell svnversion -n .)
 
 OBJS  =
 OBJS += contract2_0_4i.o
-OBJS += contract2_4_1i.o
 OBJS += defs.o
 OBJS += exception.o
 OBJS += expression_builder.o
 OBJS += permutator.o
 OBJS += tod_contract2_impl_022.o
 OBJS += tod_contract2_impl_113.o
+OBJS += tod_contract2_impl_131.o
 
 libtensor.a: $(OBJS)
 	echo $?
