@@ -190,43 +190,6 @@ bool tod_contract2<N,M,K>::check_dims_c(const dimensions<N+M> &dc) {
 	return true;
 }
 
-/*
-template<>
-void tod_contract2<0,0,4>::perform(tensor_i<0,double> &t) throw(exception);
-
-template<>
-void tod_contract2<0,0,4>::perform(tensor_i<0,double> &t, double c)
-	throw(exception);
-
-template<>
-void tod_contract2<0,2,2>::perform(tensor_i<2,double> &t) throw(exception);
-
-template<>
-void tod_contract2<0,2,2>::perform(tensor_i<2,double> &t, double c)
-	throw(exception);
-
-template<>
-void tod_contract2<1,3,1>::perform(tensor_i<4,double> &t) throw(exception);
-
-template<>
-void tod_contract2<1,3,1>::perform(tensor_i<4,double> &t, double c)
-	throw(exception);
-
-template<>
-void tod_contract2<2,2,2>::perform(tensor_i<4,double> &t) throw(exception);
-
-template<>
-void tod_contract2<2,2,2>::perform(tensor_i<4,double> &t, double c)
-	throw(exception);
-
-template<>
-void tod_contract2<2,2,3>::perform(tensor_i<2,double> &t) throw(exception);
-
-template<>
-void tod_contract2<2,2,3>::perform(tensor_i<2,double> &t, double c)
-	throw(exception);
-*/
-
 } // namespace libtensor
 
 #endif // LIBTENSOR_TOD_CONTRACT2_H
