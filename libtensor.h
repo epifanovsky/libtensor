@@ -7,6 +7,11 @@
 #include "permutation.h"
 #include "lehmer_code.h"
 
+#include "index_space.h"
+#include "index_space_product.h"
+
+#include "scalar.h"
+
 #include "tensor.h"
 #include "tensor_ctrl.h"
 #include "direct_tensor.h"

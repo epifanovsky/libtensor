@@ -26,7 +26,7 @@ extern const char *version;
 #endif
 
 #ifdef USE_MKL
-#include <mkl.h>
+#include <mkl_cblas.h>
 #undef USE_BLAS
 #endif
 #ifdef USE_BLAS

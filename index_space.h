@@ -37,7 +37,7 @@ public:
 	/**	\brief Copy constructor
 		\param is Another %index space
 	**/
-	index_space(const index_space<N,Sym> is);
+	index_space(const index_space<N,Sym> &is);
 
 	//@}
 };
@@ -47,7 +47,7 @@ inline index_space<N,Sym>::index_space(size_t d) : m_d(d) {
 }
 
 template<size_t N, typename Sym>
-inline index_space<N,Sym>::index_space(const index_space<N,Sym> is) :
+inline index_space<N,Sym>::index_space(const index_space<N,Sym> &is) :
 	m_d(is.m_d) {
 }
 
