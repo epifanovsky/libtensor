@@ -133,9 +133,9 @@ void tod_contract2<N,M,K>::perform(tensor_i<N+M,double> &t) throw(exception) {
 			m_pa);
 	}
 
-	ctrla.ret_dataptr(da);
-	ctrlb.ret_dataptr(db);
-	ctrlc.ret_dataptr(dc);
+	ctrla.ret_dataptr(ptra);
+	ctrlb.ret_dataptr(ptrb);
+	ctrlc.ret_dataptr(ptrc);
 }
 
 template<size_t N, size_t M, size_t K>
@@ -166,9 +166,9 @@ void tod_contract2<N,M,K>::perform(tensor_i<N+M,double> &t, double d)
 			m_pa, d);
 	}
 
-	ctrla.ret_dataptr(da);
-	ctrlb.ret_dataptr(db);
-	ctrlc.ret_dataptr(dc);
+	ctrla.ret_dataptr(ptra);
+	ctrlb.ret_dataptr(ptrb);
+	ctrlc.ret_dataptr(ptrc);
 }
 
 template<size_t N, size_t M, size_t K>
