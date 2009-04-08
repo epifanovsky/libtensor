@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_TOD_COMPARE_H
 #define LIBTENSOR_TOD_COMPARE_H
 
+#include <cmath>
 #include "defs.h"
 #include "exception.h"
 #include "tensor_i.h"

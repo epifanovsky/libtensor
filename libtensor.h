@@ -23,6 +23,9 @@
 #include "direct_tensor.h"
 #include "direct_tensor_operation.h"
 
+#include "tod_compare.h"
+#include "tod_copy.h"
+
 #include "block_tensor.h"
 #include "block_tensor_ctrl.h"
 #include "direct_block_tensor.h"

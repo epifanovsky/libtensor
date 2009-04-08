@@ -23,6 +23,7 @@ OBJS += tod_contract2_impl_022_test.o
 OBJS += tod_contract2_impl_113_test.o
 OBJS += tod_contract2_impl_131_test.o
 OBJS += tod_contract2_test.o
+OBJS += tod_copy_test.o
 OBJS += tod_set_test.o
 OBJS += tod_sum_test.o
 OBJS += tod_symcontract2_test.o
