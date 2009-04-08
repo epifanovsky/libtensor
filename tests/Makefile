@@ -18,6 +18,7 @@ OBJS += permutator_test.o
 OBJS += symmetry_test.o
 OBJS += tensor_test.o
 OBJS += tod_add_test.o
+OBJS += tod_compare_test.o
 OBJS += tod_contract2_impl_022_test.o
 OBJS += tod_contract2_impl_113_test.o
 OBJS += tod_contract2_impl_131_test.o
@@ -38,7 +39,7 @@ clean:
 	rm -f libtensor_tests
 
 libtensor_tests: libtensor_tests.o $(OBJS) ../libtensor.a
-	$(LD) $(LDFLAGS) -o libtensor_tests $(LIBS) $^ ../../libtest/libtest.a
+	$(LD) $(LDFLAGS) libtensor_tests $(LIBS) $^ ../../libtest/libtest.a
 
 default_symmetry_test.C: default_symmetry_test.h
 
