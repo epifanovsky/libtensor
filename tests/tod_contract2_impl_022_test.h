@@ -2,7 +2,8 @@
 #define LIBTENSOR_TOD_CONTRACT2_IMPL_022_TEST_H
 
 #include <libtest.h>
-#include "tod_contract2_impl_022.h"
+//#include "tod_contract2_impl_022.h"
+#include "tod_contract2_impl_0M2.h"
 
 namespace libtensor {
 
