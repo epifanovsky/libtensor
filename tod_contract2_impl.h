@@ -32,6 +32,7 @@ public:
 
 } // namespace libtensor
 
+#include "tod_contract2_impl_0M1.h"
 #include "tod_contract2_impl_0M2.h"
 //#include "tod_contract2_impl_022.h"
 #include "tod_contract2_impl_113.h"

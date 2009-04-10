@@ -24,6 +24,7 @@
 #include "direct_tensor_operation.h"
 
 #include "tod_compare.h"
+#include "tod_contract2.h"
 #include "tod_copy.h"
 
 #include "block_tensor.h"
