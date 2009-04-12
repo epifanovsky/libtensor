@@ -21,6 +21,7 @@ OBJS += permutator.o
 #OBJS += tod_contract2_impl_022.o
 OBJS += tod_contract2_impl_113.o
 OBJS += tod_contract2_impl_131.o
+OBJS += tod_contract2_impl_221.o
 
 libtensor.a: $(OBJS)
 	echo $?

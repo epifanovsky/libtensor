@@ -128,9 +128,11 @@ void tod_contract2<N,M,K>::perform(tensor_i<N+M,double> &t) throw(exception) {
 			ptra, m_ta.get_dims(), m_pa, ptrb, m_tb.get_dims(),
 			m_pb);
 	} else {
+/*
 		tod_contract2_impl<M,N,K>::contract(ptrc, t.get_dims(), m_pc,
 			ptrb, m_tb.get_dims(), m_pb, ptra, m_ta.get_dims(),
 			m_pa);
+*/
 	}
 
 	ctrla.ret_dataptr(ptra);
@@ -161,9 +163,11 @@ void tod_contract2<N,M,K>::perform(tensor_i<N+M,double> &t, double d)
 			ptra, m_ta.get_dims(), m_pa, ptrb, m_tb.get_dims(),
 			m_pb, d);
 	} else {
+/*
 		tod_contract2_impl<M,N,K>::contract(ptrc, t.get_dims(), m_pc,
 			ptrb, m_tb.get_dims(), m_pb, ptra, m_ta.get_dims(),
 			m_pa, d);
+*/
 	}
 
 	ctrla.ret_dataptr(ptra);
