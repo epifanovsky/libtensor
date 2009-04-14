@@ -1,3 +1,5 @@
+#include <sstream>
+#include <string>
 #include "index_test.h"
 
 namespace libtensor {
@@ -5,6 +7,7 @@ namespace libtensor {
 void index_test::perform() throw(libtest::test_exception) {
 	test_ctor();
 	test_less();
+	test_print();
 }
 
 void index_test::test_ctor() throw(libtest::test_exception) {
@@ -38,6 +41,64 @@ void index_test::test_less() throw(libtest::test_exception) {
 		fail_test("index_test::test_less()", __FILE__, __LINE__,
 			"less returns (2,2)<(2,2)");
 	}
+}
+
+void index_test::test_print() throw(libtest::test_exception) {
+	std::ostringstream ss1;
+	index<1> i1;
+	ss1 << i1;
+	if(ss1.str().compare("[0]")!=0) {
+		std::ostringstream err;
+		err << "output error: expected \'[0]\', received \'";
+		err << ss1.str() << "\'";
+		fail_test("index_test::test_print()", __FILE__, __LINE__,
+			err.str().c_str());
+	}
+
+	std::ostringstream ss2;
+	i1[0]=25;
+	ss2 << i1;
+	if(ss2.str().compare("[25]")!=0) {
+		std::ostringstream err;
+		err << "output error: expected \'[25]\', received \'";
+		err << ss2.str() << "\'";
+		fail_test("index_test::test_print()", __FILE__, __LINE__,
+			err.str().c_str());
+	}
+
+	std::ostringstream ss3;
+	index<1> i1a; i1a[0]=3;
+	ss3 << i1a << i1;
+	if(ss3.str().compare("[3][25]")!=0) {
+		std::ostringstream err;
+		err << "output error: expected \'[3][25]\', received \'";
+		err << ss3.str() << "\'";
+		fail_test("index_test::test_print()", __FILE__, __LINE__,
+			err.str().c_str());
+	}
+
+	std::ostringstream ss4;
+	index<2> i2;
+	ss4 << i2;
+	if(ss4.str().compare("[0,0]")!=0) {
+		std::ostringstream err;
+		err << "output error: expected \'[0,0]\', received \'";
+		err << ss4.str() << "\'";
+		fail_test("index_test::test_print()", __FILE__, __LINE__,
+			err.str().c_str());
+	}
+
+	std::ostringstream ss5;
+	i2[0]=3; i2[1]=4;
+	ss5 << i2;
+	if(ss5.str().compare("[3,4]")!=0) {
+		std::ostringstream err;
+		err << "output error: expected \'[3,4]\', received \'";
+		err << ss5.str() << "\'";
+		fail_test("index_test::test_print()", __FILE__, __LINE__,
+			err.str().c_str());
+	}
+
 }
 
 } // namespace libtensor

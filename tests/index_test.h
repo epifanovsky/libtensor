@@ -20,6 +20,9 @@ private:
 
 	//!	Tests the index::less() method
 	void test_less() throw(libtest::test_exception);
+
+	//!	Tests the operator<<
+	void test_print() throw(libtest::test_exception);
 };
 
 } // namespace libtensor

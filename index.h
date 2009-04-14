@@ -1,11 +1,16 @@
 #ifndef LIBTENSOR_INDEX_H
 #define LIBTENSOR_INDEX_H
 
+#include <iostream>
 #include "defs.h"
 #include "exception.h"
 #include "permutation.h"
 
 namespace libtensor {
+
+template<size_t N> class index;
+template<size_t N> std::ostream &operator<<(std::ostream &os,
+	const index<N> &i);
 
 /**	\brief Index of a single %tensor element
 
@@ -21,6 +26,8 @@ namespace libtensor {
 **/
 template<size_t N>
 class index {
+	friend std::ostream &operator<< <N>(std::ostream &os, const index<N> &i);
+
 private:
 	size_t m_idx[N]; //!< Tensor %index
 
@@ -148,6 +155,19 @@ template<size_t N>
 inline index<N> &index<N>::permute(const permutation<N> &p) throw(exception) {
 	p.apply(N, m_idx);
 	return *this;
+}
+
+/**	\brief Prints out the index to an output stream
+
+	\ingroup libtensor
+**/
+template<size_t N>
+std::ostream &operator<<(std::ostream &os, const index<N> &i) {
+	os << "[";
+	for(size_t j=0; j<N-1; j++) os << i.m_idx[j] << ",";
+	os << i.m_idx[N-1];
+	os << "]";
+	return os;
 }
 
 } // namespace libtensor
