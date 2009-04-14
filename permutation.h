@@ -2,6 +2,7 @@
 #define LIBTENSOR_PERMUTATION_H
 
 #include <cstdio>
+#include <iostream>
 
 #include "defs.h"
 #include "exception.h"
@@ -426,6 +427,21 @@ void permutation<N>::apply(const size_t n, const T *obj_from, T *obj_to) const
 #endif // LIBTENSOR_DEBUG
 	#pragma unroll(N)
 	for(register size_t i=0; i<N; i++) obj_to[i] = obj_from[m_idx[i]];
+}
+
+/**	\brief Prints out a permutation to an output stream
+
+	\ingroup libtensor
+**/
+template<size_t N>
+std::ostream &operator<<(std::ostream &os, const permutation<N> &p) {
+	static const char *alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	char seq1[N+1], seq2[N+1];
+	for(size_t i=0; i<N; i++) seq1[i]=seq2[i]=alphabet[i];
+	seq1[N]=seq2[N]='\0';
+	p.apply(N, seq1, seq2);
+	os << "[" << seq1 << "->" << seq2 << "]";
+	return os;
 }
 
 } // namespace libtensor

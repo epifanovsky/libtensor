@@ -26,6 +26,9 @@ private:
 
 	//! Tests exceptions in the apply method
 	void test_apply() throw(libtest::test_exception);
+
+	//! Tests operator<<
+	void test_print() throw(libtest::test_exception);
 };
 
 }

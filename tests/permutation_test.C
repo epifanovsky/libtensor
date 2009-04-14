@@ -1,3 +1,5 @@
+#include <sstream>
+#include <string>
 #include "permutation_test.h"
 
 namespace libtensor {
@@ -6,6 +8,7 @@ void permutation_test::perform() throw(libtest::test_exception) {
 	test_ctor();
 	test_permute();
 	test_apply();
+	test_print();
 }
 
 void permutation_test::test_ctor() throw(libtest::test_exception) {
@@ -234,6 +237,12 @@ void permutation_test::test_apply() throw(libtest::test_exception) {
 	}
 	if(!ok) fail_test("permutation_test::test_apply()",
 		__FILE__, __LINE__, "Expected an exception, it was missing");
+}
+
+void permutation_test::test_print() throw(libtest::test_exception) {
+	permutation<2> p2;
+	std::ostringstream ss;
+	ss << p2 << p2;
 }
 
 } // namespace libtensor
