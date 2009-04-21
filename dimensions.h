@@ -163,9 +163,10 @@ void dimensions<N>::abs_index(const size_t abs, index<N> &idx) const
 	size_t a = abs;
 	register size_t imax = N-1;
 	for(register size_t i=0; i<imax; i++) {
-		idx[i] = a/m_incs[i+1];
-		a %= m_incs[i+1];
+		idx[i] = a/m_incs[i];
+		a %= m_incs[i];
 	}
+	idx[N-1] = a;
 }
 
 template<size_t N>

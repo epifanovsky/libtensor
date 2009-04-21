@@ -5,6 +5,7 @@ namespace libtensor {
 void dimensions_test::perform() throw(libtest::test_exception) {
 	test_ctor();
 	test_inc_index();
+	test_abs_index();
 }
 
 void dimensions_test::test_ctor() throw(libtest::test_exception) {
@@ -114,6 +115,15 @@ void dimensions_test::test_abs_index() throw(libtest::test_exception) {
 	if(d.abs_index(i1)!=99) {
 		fail_test("dimensions::test_abs_index()", __FILE__, __LINE__,
 			"abs(9,9) in (10,10) doesn't return 99");
+	}
+
+	index<4> i4a, i4b, i4c; i4b[0]=1; i4b[1]=4; i4b[2]=1; i4b[3]=13;
+	index_range<4> ir4(i4a,i4b); dimensions<4> d4(ir4);
+	d4.abs_index(154, i4c);
+	if(i4c[0]!=1 || i4c[1]!=0 || i4c[2]!=1 || i4c[3]!=0) {
+		fail_test("dimensions::test_abs_index()", __FILE__, __LINE__,
+			"linear index 154 doesn't return (1,0,1,0) in "
+			"(2,5,2,14)");
 	}
 }
 
