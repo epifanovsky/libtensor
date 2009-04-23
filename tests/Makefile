@@ -1,5 +1,5 @@
 OBJS  = libtensor_suite.o
-OBJS += block_tensor_test.o
+OBJS += btensor_test.o
 OBJS += contract2_0_4i_test.o
 OBJS += default_symmetry_test.o
 OBJS += dimensions_test.o

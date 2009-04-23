@@ -1,5 +1,5 @@
-#ifndef LIBTENSOR_BLOCK_TENSOR_TEST_H
-#define LIBTENSOR_BLOCK_TENSOR_TEST_H
+#ifndef LIBTENSOR_BTENSOR_TEST_H
+#define LIBTENSOR_BTENSOR_TEST_H
 
 #include <libtest.h>
 #include "btensor.h"
@@ -10,7 +10,7 @@ namespace libtensor {
 
 	\ingroup libtensor_tests
 **/
-class block_tensor_test : public libtest::unit_test {
+class btensor_test : public libtest::unit_test {
 public:
 	virtual void perform() throw(libtest::test_exception);
 
@@ -18,5 +18,5 @@ public:
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_BLOCK_TENSOR_TEST_H
+#endif // LIBTENSOR_BTENSOR_TEST_H
 
