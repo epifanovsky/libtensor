@@ -4,7 +4,7 @@
 #include "defs.h"
 #include "exception.h"
 #include "block_info_i.h"
-#include "block_tensor_i.h"
+#include "btensor_i.h"
 #include "tensor.h"
 
 namespace libtensor {
@@ -61,7 +61,7 @@ protected:
 	virtual void on_ret_dataptr(const T *ptr) throw(exception);
 	//@}
 
-	//!	\name Implementation of block_tensor_i<T>
+	//!	\name Implementation of btensor_i<T>
 	//@{
 	virtual void on_req_symmetry(const symmetry_i<N> &sym) throw(exception);
 	virtual tensor_i<N,T> &on_req_unique_block(const index<N> &idx)
@@ -84,34 +84,34 @@ const dimensions<N> &btensor<N,T,Alloc>::get_dims() const {
 
 template<size_t N, typename T, typename Alloc>
 void btensor<N,T,Alloc>::on_req_prefetch() throw(exception) {
-	throw_exc("block_tensor<N,T,Alloc>", "on_req_prefetch()",
+	throw_exc("btensor<N,T,Alloc>", "on_req_prefetch()",
 		"Unhandled event");
 }
 
 template<size_t N, typename T, typename Alloc>
 T *btensor<N,T,Alloc>::on_req_dataptr() throw(exception) {
-	throw_exc("block_tensor<N,T,Alloc>", "on_req_dataptr()",
+	throw_exc("btensor<N,T,Alloc>", "on_req_dataptr()",
 		"Unhandled event");
 	return NULL;
 }
 
 template<size_t N, typename T, typename Alloc>
 const T *btensor<N,T,Alloc>::on_req_const_dataptr() throw(exception) {
-	throw_exc("block_tensor<N,T,Alloc>", "on_req_const_dataptr()",
+	throw_exc("btensor<N,T,Alloc>", "on_req_const_dataptr()",
 		"Unhandled event");
 	return NULL;
 }
 
 template<size_t N, typename T, typename Alloc>
 void btensor<N,T,Alloc>::on_ret_dataptr(const T *ptr) throw(exception) {
-	throw_exc("block_tensor<N,T,Alloc>", "on_ret_dataptr(const T*)",
+	throw_exc("btensor<N,T,Alloc>", "on_ret_dataptr(const T*)",
 		"Unhandled event");
 }
 
 template<size_t N, typename T, typename Alloc>
 void btensor<N,T,Alloc>::on_req_symmetry(const symmetry_i<N> &sym)
 	throw(exception) {
-	throw_exc("block_tensor<N,T,Alloc>",
+	throw_exc("btensor<N,T,Alloc>",
 		"on_req_symmetry(const symmetry_i<N>&)",
 		"Unhandled event");
 }
@@ -120,7 +120,7 @@ template<size_t N, typename T, typename Alloc>
 tensor_i<N,T> &btensor<N,T,Alloc>::on_req_unique_block(const index<N> &idx)
 	throw(exception) {
 	if(m_t.get_dims().abs_index(idx) != 0) {
-		throw_exc("block_tensor<N,T,Alloc>",
+		throw_exc("btensor<N,T,Alloc>",
 			"on_req_unique_block(const index<N>&)",
 			"Stub implementation only returns the zeroth block");
 	}

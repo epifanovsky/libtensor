@@ -2,11 +2,11 @@
 #define LIBTENSOR_BLOCK_TENSOR_TEST_H
 
 #include <libtest.h>
-#include "block_tensor.h"
+#include "btensor.h"
 
 namespace libtensor {
 
-/**	\brief Tests the libtensor::block_tensor class
+/**	\brief Tests the libtensor::btensor class
 
 	\ingroup libtensor_tests
 **/

@@ -3,7 +3,7 @@
 
 #include "defs.h"
 #include "exception.h"
-#include "block_tensor_i.h"
+#include "btensor_i.h"
 
 namespace libtensor {
 

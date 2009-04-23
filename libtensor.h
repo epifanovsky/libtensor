@@ -27,7 +27,7 @@
 #include "tod_contract2.h"
 #include "tod_copy.h"
 
-#include "block_tensor.h"
+#include "btensor.h"
 #include "block_tensor_ctrl.h"
 #include "direct_block_tensor.h"
 #include "direct_block_tensor_operation.h"
