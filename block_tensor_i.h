@@ -1,5 +1,5 @@
-#ifndef LIBTENSOR_BLOCK_TENSOR_I_H
-#define LIBTENSOR_BLOCK_TENSOR_I_H
+#ifndef LIBTENSOR_BTENSOR_I_H
+#define LIBTENSOR_BTENSOR_I_H
 
 #include "defs.h"
 #include "exception.h"
@@ -20,7 +20,7 @@ template<size_t N, typename T> class block_tensor_ctrl;
 	\ingroup libtensor
 **/
 template<size_t N, typename T>
-class block_tensor_i : public tensor_i<N,T> {
+class btensor_i : public tensor_i<N,T> {
 	friend class block_tensor_ctrl<N,T>;
 
 protected:
@@ -32,5 +32,5 @@ protected:
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_BLOCK_TENSOR_I_H
+#endif // LIBTENSOR_BTENSOR_I_H
 

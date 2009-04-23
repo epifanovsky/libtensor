@@ -18,7 +18,7 @@ class block_tensor_ctrl {
 public:
 	//!	\name Construction and destruction
 	//@{
-	block_tensor_ctrl(block_tensor_i<N,T> &bt);
+	block_tensor_ctrl(btensor_i<N,T> &bt);
 	~block_tensor_ctrl();
 	//@}
 

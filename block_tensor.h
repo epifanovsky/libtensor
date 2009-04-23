@@ -1,5 +1,5 @@
-#ifndef LIBTENSOR_BLOCK_TENSOR_H
-#define LIBTENSOR_BLOCK_TENSOR_H
+#ifndef LIBTENSOR_BTENSOR_H
+#define LIBTENSOR_BTENSOR_H
 
 #include "defs.h"
 #include "exception.h"
@@ -19,7 +19,7 @@ namespace libtensor {
 	\ingroup libtensor
 **/
 template<size_t N, typename T, typename Alloc>
-class block_tensor : public block_tensor_i<N,T> {
+class btensor : public btensor_i<N,T> {
 private:
 	tensor<N,T,Alloc> m_t; //<! Underlying tensor for stub implementation
 
@@ -30,21 +30,21 @@ public:
 			about blocks
 		\param bi Information about blocks
 	**/
-	block_tensor(const block_info_i<N> &bi);
+	btensor(const block_info_i<N> &bi);
 
 	/**	\brief Constructs a block %tensor using information about
 			blocks from another block %tensor
 		\param bt Another block %tensor
 	**/
-	block_tensor(const block_tensor_i<N,T> &bt);
+	btensor(const btensor_i<N,T> &bt);
 
 	/**	\brief Stub constructor, to be removed later
 	**/
-	block_tensor(const dimensions<N> &d);
+	btensor(const dimensions<N> &d);
 
 	/**	\brief Virtual destructor
 	**/
-	virtual ~block_tensor();
+	virtual ~btensor();
 	//@}
 
 	//!	\name Implementation of tensor_i<T>
@@ -70,46 +70,46 @@ protected:
 };
 
 template<size_t N, typename T, typename Alloc>
-inline block_tensor<N,T,Alloc>::block_tensor(const dimensions<N> &d) : m_t(d) {
+inline btensor<N,T,Alloc>::btensor(const dimensions<N> &d) : m_t(d) {
 }
 
 template<size_t N, typename T, typename Alloc>
-block_tensor<N,T,Alloc>::~block_tensor() {
+btensor<N,T,Alloc>::~btensor() {
 }
 
 template<size_t N, typename T, typename Alloc>
-const dimensions<N> &block_tensor<N,T,Alloc>::get_dims() const {
+const dimensions<N> &btensor<N,T,Alloc>::get_dims() const {
 	return m_t.get_dims();
 }
 
 template<size_t N, typename T, typename Alloc>
-void block_tensor<N,T,Alloc>::on_req_prefetch() throw(exception) {
+void btensor<N,T,Alloc>::on_req_prefetch() throw(exception) {
 	throw_exc("block_tensor<N,T,Alloc>", "on_req_prefetch()",
 		"Unhandled event");
 }
 
 template<size_t N, typename T, typename Alloc>
-T *block_tensor<N,T,Alloc>::on_req_dataptr() throw(exception) {
+T *btensor<N,T,Alloc>::on_req_dataptr() throw(exception) {
 	throw_exc("block_tensor<N,T,Alloc>", "on_req_dataptr()",
 		"Unhandled event");
 	return NULL;
 }
 
 template<size_t N, typename T, typename Alloc>
-const T *block_tensor<N,T,Alloc>::on_req_const_dataptr() throw(exception) {
+const T *btensor<N,T,Alloc>::on_req_const_dataptr() throw(exception) {
 	throw_exc("block_tensor<N,T,Alloc>", "on_req_const_dataptr()",
 		"Unhandled event");
 	return NULL;
 }
 
 template<size_t N, typename T, typename Alloc>
-void block_tensor<N,T,Alloc>::on_ret_dataptr(const T *ptr) throw(exception) {
+void btensor<N,T,Alloc>::on_ret_dataptr(const T *ptr) throw(exception) {
 	throw_exc("block_tensor<N,T,Alloc>", "on_ret_dataptr(const T*)",
 		"Unhandled event");
 }
 
 template<size_t N, typename T, typename Alloc>
-void block_tensor<N,T,Alloc>::on_req_symmetry(const symmetry_i<N> &sym)
+void btensor<N,T,Alloc>::on_req_symmetry(const symmetry_i<N> &sym)
 	throw(exception) {
 	throw_exc("block_tensor<N,T,Alloc>",
 		"on_req_symmetry(const symmetry_i<N>&)",
@@ -117,7 +117,7 @@ void block_tensor<N,T,Alloc>::on_req_symmetry(const symmetry_i<N> &sym)
 }
 
 template<size_t N, typename T, typename Alloc>
-tensor_i<N,T> &block_tensor<N,T,Alloc>::on_req_unique_block(const index<N> &idx)
+tensor_i<N,T> &btensor<N,T,Alloc>::on_req_unique_block(const index<N> &idx)
 	throw(exception) {
 	if(m_t.get_dims().abs_index(idx) != 0) {
 		throw_exc("block_tensor<N,T,Alloc>",
@@ -129,5 +129,5 @@ tensor_i<N,T> &block_tensor<N,T,Alloc>::on_req_unique_block(const index<N> &idx)
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_BLOCK_TENSOR_H
+#endif // LIBTENSOR_BTENSOR_H
 
