@@ -69,10 +69,7 @@ public:
 	 **/
 	template<typename ExprT>
 	labeled_btensor<N, Traits, letter_expr<N, ExprT> > operator()(
-		letter_expr<N, ExprT> expr) {
-		return labeled_btensor<N, Traits, letter_expr<N, ExprT> >(
-			*this, expr);
-	}
+		letter_expr<N, ExprT> expr);
 
 protected:
 	//!	\name Implementation of tensor_i<N,T>
