@@ -5,6 +5,7 @@
 #include "exception.h"
 #include "bispace_i.h"
 #include "bispace_expr.h"
+#include "dimensions.h"
 
 namespace libtensor {
 
@@ -39,12 +40,12 @@ public:
 	 **/
 	template<typename OrderExprT>
 	bispace(const bispace_expr<N, OrderExprT> &e_order,
-		const bispace_expr<N, SymExprT> &e_sym) throw (exception);
+		const bispace_expr<N, SymExprT> &e_sym) throw(exception);
 
 	/**	\brief Virtual destructor
 	 **/
 	virtual ~bispace();
-	
+
 	//@}
 
 private:
@@ -62,6 +63,51 @@ public:
 	//@}
 };
 
+/**	\brief Special version for one-dimensional block %index spaces
+
+	\ingroup libtensor
+ **/
+template<typename SymT>
+	class bispace < 1, SymT> {
+private:
+	dimensions < 1 > m_dims; //!< Space %dimensions
+
+public:
+	//!	\name Construction and destruction
+	//@{
+
+	/**	\brief Creates the block %index space with a given dimension
+	 **/
+	bispace(size_t dim);
+
+	/**	\brief Virtual destructor
+	 **/
+	virtual ~bispace();
+
+	//@}
+
+	//!	\name Implementation of bispace_i<1>
+	//@{
+
+	//virtual rc_ptr<bispace_i < 1 > > clone() const;
+
+	//@}
+
+	//!	\name Implementation of ispace_i<1>
+	//@{
+
+	virtual const dimensions < 1 > &dims() const;
+
+	//@}
+
+private:
+	/**	\brief Private constructor for cloning
+	 **/
+	//bispace_1d(const dimensions < 1 > &dims);
+
+	static dimensions < 1 > make_dims(size_t sz);
+};
+
 template<size_t N, typename SymExprT> template<typename OrderExprT>
 bispace<N, SymExprT>::bispace(const bispace_expr<N, OrderExprT> &e_order,
 	const bispace_expr<N, SymExprT> &e_sym) throw(exception) : m_sym_expr(e_sym) {
@@ -72,6 +118,34 @@ template<size_t N, typename SymExprT>
 rc_ptr< bispace_i<N> > bispace<N, SymExprT>::clone() const {
 	return rc_ptr< bispace_i<N> >(
 		new bispace<N, SymExprT > (m_sym_expr, m_perm));
+}
+
+template<typename SymT>
+inline bispace < 1, SymT>::bispace(size_t dim) : m_dims(make_dims(dim)) {
+}
+
+//inline bispace_1d::bispace_1d(const dimensions < 1 > &dims) : m_dims(dims) {
+//}
+
+template<typename SymT>
+inline bispace < 1, SymT>::~bispace() {
+}
+
+//inline rc_ptr<bispace_i < 1 > > bispace_1d::clone() const {
+//	return rc_ptr<bispace_i < 1 > >(new bispace_1d(m_dims));
+//}
+
+template<typename SymT>
+inline const dimensions < 1 > &bispace < 1, SymT>::dims() const {
+	return m_dims;
+}
+
+template<typename SymT>
+dimensions < 1 > bispace < 1, SymT>::make_dims(size_t sz) {
+	index < 1 > i1, i2;
+	i2[0] = sz - 1;
+	index_range < 1 > ir(i1, i2);
+	return dimensions < 1 > (ir);
 }
 
 } // namespace libtensor
