@@ -3,6 +3,7 @@
 
 #include <libtest.h>
 #include <libtensor.h>
+#include "bispace_test.h"
 #include "btensor_test.h"
 #include "contract2_0_4i_test.h"
 #include "default_symmetry_test.h"
@@ -41,6 +42,7 @@ namespace libtensor {
 	\brief Test suite for the tensor library (libtensor)
 
 	This suite runs the following tests:
+	\li libtensor::bispace_test
 	\li libtensor::btensor_test
 	\li libtensor::contract2_0_4i_test
 	\li libtensor::default_symmetry_test
@@ -73,6 +75,7 @@ namespace libtensor {
 **/
 class libtensor_suite : public libtest::test_suite {
 private:
+	unit_test_factory<bispace_test> m_utf_bispace;
 	unit_test_factory<btensor_test> m_utf_btensor;
 	unit_test_factory<contract2_0_4i_test> m_utf_contract2_0_4i;
 	unit_test_factory<default_symmetry_test> m_utf_default_symmetry;

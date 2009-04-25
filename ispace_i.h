@@ -25,7 +25,7 @@ class ispace_i {
 public:
 	/** \brief Returns the dimensions of the index space
 	 **/
-	virtual const dimensions &dims() const = 0;
+	virtual const dimensions<N> &dims() const = 0;
 };
 
 } // namespace libtensor

@@ -3,6 +3,7 @@
 
 #include "defs.h"
 #include "exception.h"
+#include "bispace_i.h"
 #include "bispace_expr.h"
 
 namespace libtensor {
@@ -62,8 +63,8 @@ public:
 };
 
 template<size_t N, typename SymExprT> template<typename OrderExprT>
-bispace<N, SymExprT>::bispace(bispace_expr<N, OrderExprT> &e_order,
-	bispace_expr<N, SymExprT> &e_sym) throw(exception) : m_sym_expr(e_sym) {
+bispace<N, SymExprT>::bispace(const bispace_expr<N, OrderExprT> &e_order,
+	const bispace_expr<N, SymExprT> &e_sym) throw(exception) : m_sym_expr(e_sym) {
 
 }
 
