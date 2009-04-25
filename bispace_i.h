@@ -10,13 +10,15 @@ namespace libtensor {
 
 /**	\brief Block %index space interface
 	\tparam N Index space order
+
+	\ingroup libtensor
  **/
 template<size_t N>
 class bispace_i : public ispace_i<N> {
 public:
 	/**	\brief Creates an identical copy of the %index space
 	 **/
-	virtual rc_ptr<bispace_i> clone() const = 0;
+	virtual rc_ptr<bispace_i<N> > clone() const = 0;
 };
 
 } // namespace libtensor
