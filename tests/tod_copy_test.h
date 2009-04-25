@@ -2,6 +2,7 @@
 #define LIBTENSOR_TOD_COPY_TEST_H
 
 #include <cmath>
+#include <cstdlib>
 #include <libtest.h>
 #include <libvmm.h>
 #include "tod_copy.h"
