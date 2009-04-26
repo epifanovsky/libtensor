@@ -4,16 +4,17 @@
 #include <libvmm.h>
 #include "defs.h"
 #include "exception.h"
-#include "block_info_i.h"
+#include "bispace_i.h"
 #include "btensor_i.h"
 #include "tensor.h"
 #include "labeled_btensor.h"
 
 namespace libtensor {
 
-struct btensor_default_traits {
-	typedef double element_t;
-	typedef libvmm::std_allocator<double> allocator_t;
+template<typename T>
+struct btensor_traits {
+	typedef T element_t;
+	typedef libvmm::std_allocator<T> allocator_t;
 };
 
 /**	\brief Block %tensor
@@ -25,13 +26,15 @@ struct btensor_default_traits {
 
 	\ingroup libtensor
  **/
-template<size_t N, typename Traits = btensor_default_traits>
-	class btensor : public btensor_i<N, typename Traits::element_t> {
+template<size_t N, typename T = double, typename Traits = btensor_traits<T> >
+	class btensor : public btensor_i<N, T> {
 private:
 	typedef typename Traits::element_t element_t;
 	typedef typename Traits::allocator_t allocator_t;
 
 private:
+	rc_ptr< bispace_i<N> > m_bispace; //!< Block index space
+
 	//! Underlying tensor for stub implementation
 	tensor<N, element_t, allocator_t> m_t;
 
@@ -42,7 +45,7 @@ public:
 			about blocks
 		\param bi Information about blocks
 	 **/
-	btensor(const block_info_i<N> &bi);
+	btensor(const bispace_i<N> &bi);
 
 	/**	\brief Constructs a block %tensor using information about
 			blocks from another block %tensor
@@ -68,90 +71,91 @@ public:
 			labeled %tensor
 	 **/
 	template<typename ExprT>
-	labeled_btensor<N, Traits, letter_expr<N, ExprT> > operator()(
+	labeled_btensor<N, T, Traits, letter_expr<N, ExprT> > operator()(
 		letter_expr<N, ExprT> expr);
 
 protected:
 	//!	\name Implementation of tensor_i<N,T>
 	//@{
-	virtual void on_req_prefetch() throw (exception);
-	virtual element_t *on_req_dataptr() throw (exception);
-	virtual const element_t *on_req_const_dataptr() throw (exception);
-	virtual void on_ret_dataptr(const element_t *ptr) throw (exception);
+	virtual void on_req_prefetch() throw(exception);
+	virtual T *on_req_dataptr() throw(exception);
+	virtual const T *on_req_const_dataptr() throw(exception);
+	virtual void on_ret_dataptr(const T *ptr) throw(exception);
 	//@}
 
 	//!	\name Implementation of btensor_i<N,T>
 	//@{
-	virtual void on_req_symmetry(const symmetry_i<N> &sym) throw (exception);
-	virtual tensor_i<N, element_t> &on_req_unique_block(const index<N> &idx)
-	throw (exception);
+	virtual void on_req_symmetry(const symmetry_i<N> &sym) throw(exception);
+	virtual tensor_i<N, T> &on_req_unique_block(const index<N> &idx)
+	throw(exception);
 	//@}
 };
 
-template<size_t N, typename Traits>
-inline btensor<N, Traits>::btensor(const dimensions<N> &d) : m_t(d) {
+template<size_t N, typename T, typename Traits>
+inline btensor<N, T, Traits>::btensor(const bispace_i<N> &bispace) :
+m_bispace(bispace.clone()), m_t(m_bispace.dims()) {
 }
 
-template<size_t N, typename Traits>
-btensor<N, Traits>::~btensor() {
+template<size_t N, typename T, typename Traits>
+inline btensor<N, T, Traits>::btensor(const dimensions<N> &d) : m_t(d) {
 }
 
-template<size_t N, typename Traits>
-const dimensions<N> &btensor<N, Traits>::get_dims() const {
+template<size_t N, typename T, typename Traits>
+btensor<N, T, Traits>::~btensor() {
+}
+
+template<size_t N, typename T, typename Traits>
+const dimensions<N> &btensor<N, T, Traits>::get_dims() const {
 	return m_t.get_dims();
 }
 
-template<size_t N, typename Traits> template<typename ExprT>
-inline labeled_btensor<N, Traits, letter_expr<N, ExprT> >
-btensor<N, Traits>::operator()(letter_expr<N, ExprT> expr) {
-	return labeled_btensor<N, Traits, letter_expr<N, ExprT> >(
+template<size_t N, typename T, typename Traits> template<typename ExprT>
+inline labeled_btensor<N, T, Traits, letter_expr<N, ExprT> >
+btensor<N, T, Traits>::operator()(letter_expr<N, ExprT> expr) {
+	return labeled_btensor<N, T, Traits, letter_expr<N, ExprT> >(
 		*this, expr);
 }
 
-template<size_t N, typename Traits>
-void btensor<N, Traits>::on_req_prefetch() throw (exception) {
-	throw_exc("btensor<N,Traits>", "on_req_prefetch()",
+template<size_t N, typename T, typename Traits>
+void btensor<N, T, Traits>::on_req_prefetch() throw(exception) {
+	throw_exc("btensor<N,T,Traits>", "on_req_prefetch()",
 		"Unhandled event");
 }
 
-template<size_t N, typename Traits>
-typename Traits::element_t *btensor<N, Traits>::on_req_dataptr()
-throw (exception) {
-	throw_exc("btensor<N,Traits>", "on_req_dataptr()",
-		"Unhandled event");
-	return NULL;
-}
-
-template<size_t N, typename Traits>
-const typename Traits::element_t *btensor<N, Traits>::on_req_const_dataptr()
-throw (exception) {
-	throw_exc("btensor<N,Traits>", "on_req_const_dataptr()",
+template<size_t N, typename T, typename Traits>
+T *btensor<N, T, Traits>::on_req_dataptr() throw(exception) {
+	throw_exc("btensor<N,T,Traits>", "on_req_dataptr()",
 		"Unhandled event");
 	return NULL;
 }
 
-template<size_t N, typename Traits>
-void btensor<N, Traits>::on_ret_dataptr(const element_t *ptr)
-throw (exception) {
-	throw_exc("btensor<N,Traits>", "on_ret_dataptr(const T*)",
+template<size_t N, typename T, typename Traits>
+const T *btensor<N, T, Traits>::on_req_const_dataptr() throw(exception) {
+	throw_exc("btensor<N,T,Traits>", "on_req_const_dataptr()",
+		"Unhandled event");
+	return NULL;
+}
+
+template<size_t N, typename T, typename Traits>
+void btensor<N, T, Traits>::on_ret_dataptr(const T *ptr) throw(exception) {
+	throw_exc("btensor<N,T,Traits>", "on_ret_dataptr(const T*)",
 		"Unhandled event");
 }
 
-template<size_t N, typename Traits>
-void btensor<N, Traits>::on_req_symmetry(const symmetry_i<N> &sym)
-throw (exception) {
-	throw_exc("btensor<N,Traits>",
+template<size_t N, typename T, typename Traits>
+void btensor<N, T, Traits>::on_req_symmetry(const symmetry_i<N> &sym)
+throw(exception) {
+	throw_exc("btensor<N,T,Traits>",
 		"on_req_symmetry(const symmetry_i<N>&)",
 		"Unhandled event");
 }
 
-template<size_t N, typename Traits>
-tensor_i<N, typename Traits::element_t>
-&btensor<N, Traits>::on_req_unique_block(const index<N> &idx)
-throw (exception) {
+template<size_t N, typename T, typename Traits>
+tensor_i<N, T> &btensor<N, T, Traits>::on_req_unique_block(const index<N> &idx)
+throw(exception) {
 
 	if(m_t.get_dims().abs_index(idx) != 0) {
-		throw_exc("btensor<N,Traits>",
+		throw_exc("btensor<N,T,Traits>",
 			"on_req_unique_block(const index<N>&)",
 			"Stub implementation only returns the zeroth block");
 	}

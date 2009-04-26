@@ -1,3 +1,4 @@
+#include "bispace.h"
 #include "btensor_test.h"
 
 namespace libtensor {
@@ -11,6 +12,10 @@ void btensor_test::perform() throw(libtest::test_exception) {
 
 	letter i,j,k,l;
 	bt(i|j|k|l);
+
+	bispace<1> i_sp(10), a_sp(20);
+	i_sp.split(5); a_sp.split(5).split(10).split(15);
+	//btensor<2> bt2(i_sp*a_sp);
 }
 
 } // namespace libtensor

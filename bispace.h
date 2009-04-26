@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_BISPACE_H
 #define	LIBTENSOR_BISPACE_H
 
+#include <list>
 #include "defs.h"
 #include "exception.h"
 #include "bispace_i.h"
@@ -15,8 +16,8 @@ namespace libtensor {
 
 	\ingroup libtensor
  **/
-template<size_t N, typename SymExprT>
-class bispace {
+template<size_t N, typename SymExprT=void>
+class bispace : public bispace_i<N> {
 	typedef SymExprT sym_expr_t; //!< Symmetry-defining expression type
 
 private:
@@ -68,7 +69,7 @@ public:
 	\ingroup libtensor
  **/
 template<typename SymT>
-	class bispace < 1, SymT> {
+class bispace < 1, SymT> : public bispace_i < 1 > {
 private:
 	dimensions < 1 > m_dims; //!< Space %dimensions
 
@@ -80,16 +81,24 @@ public:
 	 **/
 	bispace(size_t dim);
 
+	/**	\brief Copy constructor
+	 **/
+	bispace(const bispace<1,SymT> &other);
+
 	/**	\brief Virtual destructor
 	 **/
 	virtual ~bispace();
 
 	//@}
 
+	/**	\brief Splits the space at a given position
+	 **/
+	bispace<1,SymT> &split(size_t pos) throw(exception);
+
 	//!	\name Implementation of bispace_i<1>
 	//@{
 
-	//virtual rc_ptr<bispace_i < 1 > > clone() const;
+	virtual rc_ptr<bispace_i < 1 > > clone() const;
 
 	//@}
 
@@ -103,7 +112,7 @@ public:
 private:
 	/**	\brief Private constructor for cloning
 	 **/
-	//bispace_1d(const dimensions < 1 > &dims);
+	bispace(const dimensions < 1 > &dims);
 
 	static dimensions < 1 > make_dims(size_t sz);
 };
@@ -124,16 +133,29 @@ template<typename SymT>
 inline bispace < 1, SymT>::bispace(size_t dim) : m_dims(make_dims(dim)) {
 }
 
-//inline bispace_1d::bispace_1d(const dimensions < 1 > &dims) : m_dims(dims) {
-//}
+template<typename SymT>
+inline bispace<1,SymT>::bispace(const bispace<1,SymT> &other) :
+m_dims(other.m_dims) {
+
+}
+
+template<typename SymT>
+inline bispace<1,SymT>::bispace(const dimensions < 1 > &dims) : m_dims(dims) {
+}
 
 template<typename SymT>
 inline bispace < 1, SymT>::~bispace() {
 }
 
-//inline rc_ptr<bispace_i < 1 > > bispace_1d::clone() const {
-//	return rc_ptr<bispace_i < 1 > >(new bispace_1d(m_dims));
-//}
+template<typename SymT>
+bispace<1,SymT> &bispace<1,SymT>::split(size_t pos) throw(exception) {
+	return *this;
+}
+
+template<typename SymT>
+inline rc_ptr<bispace_i < 1 > > bispace<1,SymT>::clone() const {
+	return rc_ptr<bispace_i < 1 > >(new bispace<1,SymT>(m_dims));
+}
 
 template<typename SymT>
 inline const dimensions < 1 > &bispace < 1, SymT>::dims() const {
