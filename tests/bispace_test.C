@@ -9,6 +9,16 @@ void bispace_test::perform() throw(libtest::test_exception) {
 	a.split(5).split(10).split(15);
 
 	bispace<1> k(i), l(j), c(a), d(b);
+
+	i&j;
+	i&j&k;
+	i&j&k&l;
+	(i&j)&(k&l);
+
+	i*j;
+	i*j*k;
+	i*j*a;
+	(i&j)*k;
 }
 
 } // namespace libtensor
