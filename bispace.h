@@ -16,17 +16,20 @@ namespace libtensor {
 
 	\ingroup libtensor
  **/
-template<size_t N, typename SymExprT=void>
+template<size_t N>
 class bispace : public bispace_i<N> {
-	typedef SymExprT sym_expr_t; //!< Symmetry-defining expression type
-
 private:
-	sym_expr_t m_sym_expr; //!< Symmetry-defining expression
+	rc_ptr<bispace_expr_i<N> > m_sym_expr; //!< Symmetry-defining expression
 	permutation<N> m_perm; //!< Permutation of indexes
 
 public:
 	//!	\name Construction and destruction
 	//@{
+
+	/**	\brief Constructs the block %index space using an expression
+	 **/
+	template<typename SymExprT>
+	bispace(const bispace_expr<N, SymExprT> &e_sym) throw(exception);
 
 	/**	\brief Constructs the block %index space using expressions
 		\param e_order Expession defining the order of components.
@@ -39,7 +42,7 @@ public:
 		\e e_order. Both expressions must consist of identical
 		components, otherwise they are considered invalid.
 	 **/
-	template<typename OrderExprT>
+	template<typename OrderExprT, typename SymExprT>
 	bispace(const bispace_expr<N, OrderExprT> &e_order,
 		const bispace_expr<N, SymExprT> &e_sym) throw(exception);
 
@@ -54,7 +57,7 @@ private:
 		\param e_sym Expression defining the symmetry of components
 		\param perm Permutation of components
 	 **/
-	bispace(const bispace_expr<N, SymExprT> &e_sym,
+	bispace(const rc_ptr<bispace_expr_i<N> > &e_sym,
 		const permutation<N> &perm);
 
 public:
@@ -68,8 +71,8 @@ public:
 
 	\ingroup libtensor
  **/
-template<typename SymT>
-class bispace < 1, SymT> : public bispace_i < 1 > {
+template<>
+class bispace < 1 > : public bispace_i < 1 > {
 private:
 	dimensions < 1 > m_dims; //!< Space %dimensions
 
@@ -83,7 +86,7 @@ public:
 
 	/**	\brief Copy constructor
 	 **/
-	bispace(const bispace<1,SymT> &other);
+	bispace(const bispace < 1 > &other);
 
 	/**	\brief Virtual destructor
 	 **/
@@ -93,7 +96,7 @@ public:
 
 	/**	\brief Splits the space at a given position
 	 **/
-	bispace<1,SymT> &split(size_t pos) throw(exception);
+	bispace < 1 > &split(size_t pos) throw(exception);
 
 	//!	\name Implementation of bispace_i<1>
 	//@{
@@ -117,53 +120,55 @@ private:
 	static dimensions < 1 > make_dims(size_t sz);
 };
 
-template<size_t N, typename SymExprT> template<typename OrderExprT>
-bispace<N, SymExprT>::bispace(const bispace_expr<N, OrderExprT> &e_order,
-	const bispace_expr<N, SymExprT> &e_sym) throw(exception) : m_sym_expr(e_sym) {
-
+template<size_t N> template<typename SymExprT>
+bispace<N>::bispace(const bispace_expr<N, SymExprT> &e_sym) throw(exception) :
+m_sym_expr(e_sym.clone()) {
 }
 
-template<size_t N, typename SymExprT>
-rc_ptr< bispace_i<N> > bispace<N, SymExprT>::clone() const {
+template<size_t N> template<typename OrderExprT, typename SymExprT>
+bispace<N>::bispace(const bispace_expr<N, OrderExprT> &e_order,
+	const bispace_expr<N, SymExprT> &e_sym) throw(exception) :
+m_sym_expr(e_sym.clone()) {
+}
+
+template<size_t N>
+bispace<N>::bispace(const rc_ptr<bispace_expr_i<N> > &e_sym,
+	const permutation<N> &perm) : m_sym_expr(e_sym->clone()),
+m_perm(perm) {
+}
+
+template<size_t N>
+rc_ptr< bispace_i<N> > bispace<N>::clone() const {
 	return rc_ptr< bispace_i<N> >(
-		new bispace<N, SymExprT > (m_sym_expr, m_perm));
+		new bispace<N > (m_sym_expr, m_perm));
 }
 
-template<typename SymT>
-inline bispace < 1, SymT>::bispace(size_t dim) : m_dims(make_dims(dim)) {
+inline bispace < 1 >::bispace(size_t dim) : m_dims(make_dims(dim)) {
 }
 
-template<typename SymT>
-inline bispace<1,SymT>::bispace(const bispace<1,SymT> &other) :
+inline bispace < 1 >::bispace(const bispace < 1 > &other) :
 m_dims(other.m_dims) {
-
 }
 
-template<typename SymT>
-inline bispace<1,SymT>::bispace(const dimensions < 1 > &dims) : m_dims(dims) {
+inline bispace < 1 >::bispace(const dimensions < 1 > &dims) : m_dims(dims) {
 }
 
-template<typename SymT>
-inline bispace < 1, SymT>::~bispace() {
+inline bispace < 1 >::~bispace() {
 }
 
-template<typename SymT>
-bispace<1,SymT> &bispace<1,SymT>::split(size_t pos) throw(exception) {
+inline bispace < 1 > &bispace < 1 >::split(size_t pos) throw(exception) {
 	return *this;
 }
 
-template<typename SymT>
-inline rc_ptr<bispace_i < 1 > > bispace<1,SymT>::clone() const {
-	return rc_ptr<bispace_i < 1 > >(new bispace<1,SymT>(m_dims));
+inline rc_ptr<bispace_i < 1 > > bispace < 1 >::clone() const {
+	return rc_ptr<bispace_i < 1 > >(new bispace < 1 > (m_dims));
 }
 
-template<typename SymT>
-inline const dimensions < 1 > &bispace < 1, SymT>::dims() const {
+inline const dimensions < 1 > &bispace < 1 >::dims() const {
 	return m_dims;
 }
 
-template<typename SymT>
-dimensions < 1 > bispace < 1, SymT>::make_dims(size_t sz) {
+inline dimensions < 1 > bispace < 1 >::make_dims(size_t sz) {
 	index < 1 > i1, i2;
 	i2[0] = sz - 1;
 	index_range < 1 > ir(i1, i2);
