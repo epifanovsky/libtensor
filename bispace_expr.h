@@ -5,6 +5,7 @@
 #include "exception.h"
 #include "rc_ptr.h"
 #include "bispace.h"
+#include "dimensions.h"
 
 /**	\defgroup libtensor_bispace_expr Block %index space expressions
 	\ingroup libtensor
@@ -26,6 +27,7 @@ template<size_t N>
 class bispace_expr_i {
 public:
 	virtual rc_ptr<bispace_expr_i<N> > clone() const = 0;
+	virtual const dimensions<N> &dims() const = 0;
 };
 
 /**	\brief Block %index space expression
@@ -36,20 +38,29 @@ public:
  **/
 template<size_t N, typename T>
 class bispace_expr : public bispace_expr_i<N> {
+public:
+	static const size_t k_order = N;
+
 private:
 	T m_t;
+	dimensions<N> m_dims;
 
 public:
 
-	bispace_expr(const T &t) : m_t(t) {
+	bispace_expr(const T &t) : m_t(t), m_dims(t.dims()) {
 	}
 
-	bispace_expr(const bispace_expr<N, T> &e) : m_t(e.m_t) {
+	bispace_expr(const bispace_expr<N, T> &e) :
+	m_t(e.m_t), m_dims(e.m_dims) {
 	}
 
 	virtual rc_ptr<bispace_expr_i<N> > clone() const {
 		return rc_ptr<bispace_expr_i<N> >(
-			new bispace_expr<N,T>(*this));
+			new bispace_expr<N, T > (*this));
+	}
+
+	virtual const dimensions<N> &dims() const {
+		return m_dims;
 	}
 };
 
@@ -59,12 +70,19 @@ public:
  **/
 template<size_t N>
 class bispace_expr_ident {
+public:
+	static const size_t k_order = N;
+
 private:
 	bispace<N> &m_bis;
 
 public:
 
 	bispace_expr_ident(bispace<N> &bis) : m_bis(bis) {
+	}
+
+	const dimensions<N> &dims() const {
+		return m_bis.dims();
 	}
 };
 
@@ -74,13 +92,22 @@ public:
  **/
 template<typename T1, typename T2, typename Op>
 class bispace_expr_binop {
+public:
+	static const size_t k_order = T1::k_order + T2::k_order;
+
 private:
 	T1 m_t1; //!< Left expression
 	T2 m_t2; //!< Right expression
+	dimensions<k_order> m_dims;
 
 public:
 
-	bispace_expr_binop(const T1 &t1, const T2 &t2) : m_t1(t1), m_t2(t2) {
+	bispace_expr_binop(const T1 &t1, const T2 &t2) : m_t1(t1), m_t2(t2),
+		m_dims(Op::dims(t1, t2)) {
+	}
+
+	const dimensions<k_order> &dims() const {
+		return m_dims;
 	}
 };
 
@@ -90,6 +117,19 @@ public:
  **/
 template<typename T1, typename T2>
 class bispace_expr_binop_or {
+public:
+	static const size_t k_order = T1::k_order + T2::k_order;
+
+public:
+	static const dimensions<k_order> dims(const T1 &t1, const T2 &t2) {
+		dimensions<T1::k_order> dims_t1(t1.dims());
+		dimensions<T2::k_order> dims_t2(t2.dims());
+		index<k_order> i1, i2;
+		size_t i=0;
+		for(size_t j=0; j<T1::k_order; j++,i++) i2[i]=dims_t1[j]-1;
+		for(size_t j=0; j<T2::k_order; j++,i++) i2[i]=dims_t2[j]-1;
+		return dimensions<k_order>(index_range<k_order>(i1,i2));
+	}
 };
 
 /**	\brief Bitwise AND (&) binary operation
@@ -98,6 +138,19 @@ class bispace_expr_binop_or {
  **/
 template<typename T1, typename T2>
 class bispace_expr_binop_and {
+public:
+	static const size_t k_order = T1::k_order + T2::k_order;
+
+public:
+	static const dimensions<k_order> dims(const T1 &t1, const T2 &t2) {
+		dimensions<T1::k_order> dims_t1(t1.dims());
+		dimensions<T2::k_order> dims_t2(t2.dims());
+		index<k_order> i1, i2;
+		size_t i=0;
+		for(size_t j=0; j<T1::k_order; j++,i++) i2[i]=dims_t1[j]-1;
+		for(size_t j=0; j<T2::k_order; j++,i++) i2[i]=dims_t2[j]-1;
+		return dimensions<k_order>(index_range<k_order>(i1,i2));
+	}
 };
 
 /**	\brief Bitwise XOR (^) binary operation
@@ -106,6 +159,19 @@ class bispace_expr_binop_and {
  **/
 template<typename T1, typename T2>
 class bispace_expr_binop_xor {
+public:
+	static const size_t k_order = T1::k_order + T2::k_order;
+
+public:
+	static const dimensions<k_order> dims(const T1 &t1, const T2 &t2) {
+		dimensions<T1::k_order> dims_t1(t1.dims());
+		dimensions<T2::k_order> dims_t2(t2.dims());
+		index<k_order> i1, i2;
+		size_t i=0;
+		for(size_t j=0; j<T1::k_order; j++,i++) i2[i]=dims_t1[j]-1;
+		for(size_t j=0; j<T2::k_order; j++,i++) i2[i]=dims_t2[j]-1;
+		return dimensions<k_order>(index_range<k_order>(i1,i2));
+	}
 };
 
 /**	\brief Multiplication (*) binary operation
@@ -114,6 +180,19 @@ class bispace_expr_binop_xor {
  **/
 template<typename T1, typename T2>
 class bispace_expr_binop_mul {
+public:
+	static const size_t k_order = T1::k_order + T2::k_order;
+
+public:
+	static const dimensions<k_order> dims(const T1 &t1, const T2 &t2) {
+		dimensions<T1::k_order> dims_t1(t1.dims());
+		dimensions<T2::k_order> dims_t2(t2.dims());
+		index<k_order> i1, i2;
+		size_t i=0;
+		for(size_t j=0; j<T1::k_order; j++,i++) i2[i]=dims_t1[j]-1;
+		for(size_t j=0; j<T2::k_order; j++,i++) i2[i]=dims_t2[j]-1;
+		return dimensions<k_order>(index_range<k_order>(i1,i2));
+	}
 };
 
 /**	\brief Bitwise AND (&) operator for two spaces

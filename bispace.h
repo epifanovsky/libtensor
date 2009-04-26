@@ -12,7 +12,6 @@ namespace libtensor {
 
 /**	\brief Block %index space defined by an expression
 	\tparam N Order of the block %index space.
-	\tparam SymExprT Symmetry-defining expression type.
 
 	\ingroup libtensor
  **/
@@ -54,16 +53,18 @@ public:
 
 private:
 	/**	\brief Private cloning constructor
-		\param e_sym Expression defining the symmetry of components
-		\param perm Permutation of components
 	 **/
-	bispace(const rc_ptr<bispace_expr_i<N> > &e_sym,
-		const permutation<N> &perm);
+	bispace(const bispace<N> &other);
 
 public:
 	//!	\name Implementation of libtensor::bispace_i<N>
 	//@{
 	virtual rc_ptr< bispace_i<N> > clone() const;
+	//@}
+
+	//!	\name Implementation of libtensor::ispace_i<N>
+	//@{
+	virtual const dimensions<N> &dims() const;
 	//@}
 };
 
@@ -129,46 +130,54 @@ template<size_t N> template<typename OrderExprT, typename SymExprT>
 bispace<N>::bispace(const bispace_expr<N, OrderExprT> &e_order,
 	const bispace_expr<N, SymExprT> &e_sym) throw(exception) :
 m_sym_expr(e_sym.clone()) {
+	// Figure out the permutation here
 }
 
 template<size_t N>
-bispace<N>::bispace(const rc_ptr<bispace_expr_i<N> > &e_sym,
-	const permutation<N> &perm) : m_sym_expr(e_sym->clone()),
-m_perm(perm) {
+bispace<N>::bispace(const bispace<N> &other) :
+m_sym_expr(other.m_sym_expr->clone()), m_perm(other.m_perm) {
+}
+
+template<size_t N>
+bispace<N>::~bispace() {
 }
 
 template<size_t N>
 rc_ptr< bispace_i<N> > bispace<N>::clone() const {
-	return rc_ptr< bispace_i<N> >(
-		new bispace<N > (m_sym_expr, m_perm));
+	return rc_ptr< bispace_i<N> >(new bispace<N > (*this));
 }
 
-inline bispace < 1 >::bispace(size_t dim) : m_dims(make_dims(dim)) {
+template<size_t N>
+const dimensions<N> &bispace<N>::dims() const {
+	return m_sym_expr->dims();
 }
 
-inline bispace < 1 >::bispace(const bispace < 1 > &other) :
+inline bispace < 1 > ::bispace(size_t dim) : m_dims(make_dims(dim)) {
+}
+
+inline bispace < 1 > ::bispace(const bispace < 1 > &other) :
 m_dims(other.m_dims) {
 }
 
-inline bispace < 1 >::bispace(const dimensions < 1 > &dims) : m_dims(dims) {
+inline bispace < 1 > ::bispace(const dimensions < 1 > &dims) : m_dims(dims) {
 }
 
-inline bispace < 1 >::~bispace() {
+inline bispace < 1 > ::~bispace() {
 }
 
-inline bispace < 1 > &bispace < 1 >::split(size_t pos) throw(exception) {
+inline bispace < 1 > &bispace < 1 > ::split(size_t pos) throw(exception) {
 	return *this;
 }
 
-inline rc_ptr<bispace_i < 1 > > bispace < 1 >::clone() const {
+inline rc_ptr<bispace_i < 1 > > bispace < 1 > ::clone() const {
 	return rc_ptr<bispace_i < 1 > >(new bispace < 1 > (m_dims));
 }
 
-inline const dimensions < 1 > &bispace < 1 >::dims() const {
+inline const dimensions < 1 > &bispace < 1 > ::dims() const {
 	return m_dims;
 }
 
-inline dimensions < 1 > bispace < 1 >::make_dims(size_t sz) {
+inline dimensions < 1 > bispace < 1 > ::make_dims(size_t sz) {
 	index < 1 > i1, i2;
 	i2[0] = sz - 1;
 	index_range < 1 > ir(i1, i2);

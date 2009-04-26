@@ -53,10 +53,6 @@ public:
 	 **/
 	btensor(const btensor_i<N, element_t> &bt);
 
-	/**	\brief Stub constructor, to be removed later
-	 **/
-	btensor(const dimensions<N> &d);
-
 	/**	\brief Virtual destructor
 	 **/
 	virtual ~btensor();
@@ -93,11 +89,7 @@ protected:
 
 template<size_t N, typename T, typename Traits>
 inline btensor<N, T, Traits>::btensor(const bispace_i<N> &bispace) :
-m_bispace(bispace.clone()), m_t(m_bispace.dims()) {
-}
-
-template<size_t N, typename T, typename Traits>
-inline btensor<N, T, Traits>::btensor(const dimensions<N> &d) : m_t(d) {
+m_bispace(bispace.clone()), m_t(bispace.dims()) {
 }
 
 template<size_t N, typename T, typename Traits>
