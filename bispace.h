@@ -19,7 +19,9 @@ template<size_t N>
 class bispace : public bispace_i<N> {
 private:
 	rc_ptr<bispace_expr_i<N> > m_sym_expr; //!< Symmetry-defining expression
+	dimensions<N> m_dims; //!< Correctly permuted dimensions
 	permutation<N> m_perm; //!< Permutation of indexes
+	size_t m_inv_idx[N]; //!< Permuted index pointers for operator[]
 
 public:
 	//!	\name Construction and destruction
@@ -56,6 +58,8 @@ private:
 	 **/
 	bispace(const bispace<N> &other);
 
+	void make_inv_idx();
+
 public:
 	//!	\name Implementation of libtensor::bispace_i<N>
 	//@{
@@ -66,6 +70,8 @@ public:
 	//@{
 	virtual const dimensions<N> &dims() const;
 	//@}
+
+	const bispace < 1 > & operator[](size_t i) const;
 };
 
 /**	\brief Special version for one-dimensional block %index spaces
@@ -113,6 +119,8 @@ public:
 
 	//@}
 
+	const bispace < 1 > & operator[](size_t i) const;
+
 private:
 	/**	\brief Private constructor for cloning
 	 **/
@@ -123,23 +131,60 @@ private:
 
 template<size_t N> template<typename SymExprT>
 bispace<N>::bispace(const bispace_expr<N, SymExprT> &e_sym) throw(exception) :
-m_sym_expr(e_sym.clone()) {
+m_sym_expr(e_sym.clone()), m_dims(e_sym.dims()) {
+	make_inv_idx();
 }
 
 template<size_t N> template<typename OrderExprT, typename SymExprT>
 bispace<N>::bispace(const bispace_expr<N, OrderExprT> &e_order,
 	const bispace_expr<N, SymExprT> &e_sym) throw(exception) :
-m_sym_expr(e_sym.clone()) {
-	// Figure out the permutation here
+m_sym_expr(e_sym.clone()), m_dims(e_sym.dims()) {
+
+	const bispace < 1 > *seq_order[N], *seq_sym[N];
+	for(size_t i = 0; i < N; i++) {
+		seq_order[i] = &(e_order[i]);
+		seq_sym[i] = &(e_sym[i]);
+	}
+	// check uniqueness here
+	bool done = false;
+	while(!done) {
+		permutation<N> p;
+		size_t i, j;
+		done = true;
+		for(i = 0; i < N; i++) if(seq_sym[i] != seq_order[i]) break;
+		if(i < N) {
+			for(j = 0; j < N; j++) {
+				if(seq_sym[i] == seq_order[j]) break;
+			}
+			if(j == N) {
+				// exception
+			}
+			p.permute(i, j);
+			m_perm.permute(i, j);
+			p.apply(N, seq_sym);
+			done = false;
+		}
+	}
+	m_dims.permute(m_perm);
+	make_inv_idx();
+	permutation<N> inv_perm(m_perm); inv_perm.invert();
+	inv_perm.apply(N, m_inv_idx);
 }
 
 template<size_t N>
 bispace<N>::bispace(const bispace<N> &other) :
-m_sym_expr(other.m_sym_expr->clone()), m_perm(other.m_perm) {
+m_sym_expr(other.m_sym_expr->clone()), m_perm(other.m_perm),
+m_dims(other.m_dims) {
+	make_inv_idx();
 }
 
 template<size_t N>
 bispace<N>::~bispace() {
+}
+
+template<size_t N>
+void bispace<N>::make_inv_idx() {
+	for(size_t i = 0; i < N; i++) m_inv_idx[i] = i;
 }
 
 template<size_t N>
@@ -148,8 +193,13 @@ rc_ptr< bispace_i<N> > bispace<N>::clone() const {
 }
 
 template<size_t N>
-const dimensions<N> &bispace<N>::dims() const {
-	return m_sym_expr->dims();
+inline const dimensions<N> &bispace<N>::dims() const {
+	return m_dims;
+}
+
+template<size_t N>
+const bispace < 1 > &bispace<N>::operator[](size_t i) const {
+	return(*m_sym_expr)[m_inv_idx[i]];
 }
 
 inline bispace < 1 > ::bispace(size_t dim) : m_dims(make_dims(dim)) {
@@ -175,6 +225,13 @@ inline rc_ptr<bispace_i < 1 > > bispace < 1 > ::clone() const {
 
 inline const dimensions < 1 > &bispace < 1 > ::dims() const {
 	return m_dims;
+}
+
+inline const bispace < 1 > &bispace < 1 > ::operator[](size_t i) const {
+	if(i != 0) {
+		// throw exception
+	}
+	return *this;
 }
 
 inline dimensions < 1 > bispace < 1 > ::make_dims(size_t sz) {
