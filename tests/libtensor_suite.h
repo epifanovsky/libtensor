@@ -16,6 +16,7 @@
 #include "immutable_test.h"
 #include "index_test.h"
 #include "index_range_test.h"
+#include "labeled_btensor_test.h"
 #include "lehmer_code_test.h"
 #include "letter_test.h"
 #include "permutation_test.h"
@@ -55,6 +56,7 @@ namespace libtensor {
 	\li libtensor::immutable_test
 	\li libtensor::index_test
 	\li libtensor::index_range_test
+	\li libtensor::labeled_btensor_test
 	\li libtensor::lehmer_code_test
 	\li libtensor::letter_test
 	\li libtensor::permutation_test
@@ -88,6 +90,7 @@ private:
 	unit_test_factory<immutable_test> m_utf_immutable;
 	unit_test_factory<index_test> m_utf_index;
 	unit_test_factory<index_range_test> m_utf_index_range;
+	unit_test_factory<labeled_btensor_test> m_utf_labeled_btensor;
 	unit_test_factory<lehmer_code_test> m_utf_lehmer_code;
 	unit_test_factory<letter_test> m_utf_letter;
 	unit_test_factory<permutation_test> m_utf_permutation;

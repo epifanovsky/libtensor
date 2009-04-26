@@ -12,6 +12,7 @@ OBJS += expression_test.o
 OBJS += immutable_test.o
 OBJS += index_test.o
 OBJS += index_range_test.o
+OBJS += labeled_btensor_test.o
 OBJS += lehmer_code_test.o
 OBJS += letter_test.o
 OBJS += permutation_test.o
