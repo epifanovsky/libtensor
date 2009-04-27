@@ -33,6 +33,14 @@ void labeled_btensor_test::perform() throw(libtest::test_exception) {
 	t1_ijab(i|j|a|b) + 0.5*t2_ijab(i|j|a|b);
 	t1_ijab(i|j|a|b) + t2_ijab(i|j|a|b)*2.0;
 	0.5*t1_ijab(i|j|a|b) + t2_ijab(i|j|a|b)*2.0;
+	t1_ijab(i|j|a|b) + t2_ijab(i|j|a|b) + 0.5*t3_jiab(j|i|a|b);
+	0.5*t1_ijab(i|j|a|b) + (t2_ijab(i|j|a|b) + t3_jiab(j|i|a|b));
+	0.5*t1_ijab(i|j|a|b) + (t2_ijab(i|j|a|b) + 2.0*t3_jiab(j|i|a|b));
+	0.5*(t1_ijab(i|j|a|b) + t2_ijab(i|j|a|b));
+	(t1_ijab(i|j|a|b) + t2_ijab(i|j|a|b))*0.5;
+	0.5*(t1_ijab(i|j|a|b) + 2.0*t2_ijab(i|j|a|b));
+	(t1_ijab(i|j|a|b) + 2.0*t2_ijab(i|j|a|b))*0.5;
+	2.0*(t1_ijab(i|j|a|b) + 2.0*t2_ijab(i|j|a|b))*0.5;
 }
 
 } // namespace libtensor
