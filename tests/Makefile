@@ -1,6 +1,7 @@
 OBJS  = libtensor_suite.o
 OBJS += bispace_test.o
 OBJS += btensor_test.o
+OBJS += contract_test.o
 OBJS += contract2_0_4i_test.o
 OBJS += default_symmetry_test.o
 OBJS += dimensions_test.o

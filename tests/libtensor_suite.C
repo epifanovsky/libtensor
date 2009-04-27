@@ -6,6 +6,7 @@ namespace libtensor {
 libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("bispace", m_utf_bispace);
 	add_test("btensor", m_utf_btensor);
+	add_test("contract", m_utf_contract);
 	add_test("contract2_0_4i", m_utf_contract2_0_4i);
 	add_test("default_symmetry", m_utf_default_symmetry);
 	add_test("dimensions", m_utf_dimensions);
