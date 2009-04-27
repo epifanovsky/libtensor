@@ -47,6 +47,7 @@ public:
 
 private:
 	labeled_btensor_t &m_t;
+	T m_coeff;
 
 public:
 
@@ -54,7 +55,27 @@ public:
 	}
 };
 
-/**	\brief Operation expression
+/**	\brief Identity expression (specialized for double)
+
+	\ingroup libtensor_btensor_expr
+ **/
+template<size_t N, typename Traits, typename Label>
+class labeled_btensor_expr_ident<N, double, Traits, Label> {
+public:
+	typedef labeled_btensor<N, double, Traits, Label> labeled_btensor_t;
+
+private:
+	labeled_btensor_t &m_t;
+	double m_coeff;
+
+public:
+
+	labeled_btensor_expr_ident(labeled_btensor_t &t, double coeff = 1.0) :
+		m_t(t), m_coeff(coeff) {
+	}
+};
+
+/**	\brief Additive operation expression
 	\tparam NArg Number of arguments
 	\tparam Op Operation
 	\tparam ExprL LHS expression
@@ -228,6 +249,32 @@ operator+(labeled_btensor_expr<N, T, labeled_btensor_expr_op< NArgL,
 		exprl_t, exprr_t> op_t;
 	return labeled_btensor_expr<N, T, op_t > (
 		op_t(exprl_t(lhs), exprr_t(rhs)));
+}
+
+/**	\brief Multiplication of a tensor (rhs) by a scalar (lhs)
+
+	\ingroup libtensor_btensor_expr
+ **/
+template<size_t N, typename T, typename Traits, typename Label>
+labeled_btensor_expr<N, T,
+labeled_btensor_expr_ident<N, T, Traits, Label> >
+operator*(T lhs, labeled_btensor<N, T, Traits, Label> rhs) {
+	typedef labeled_btensor_expr_ident<N, T, Traits, Label> expr_id_t;
+	typedef labeled_btensor_expr<N, T, expr_id_t > expr_t;
+	return expr_t(expr_id_t(rhs, lhs));
+}
+
+/**	\brief Multiplication of a tensor (lhs) by a scalar (rhs)
+
+	\ingroup libtensor_btensor_expr
+ **/
+template<size_t N, typename T, typename Traits, typename Label>
+labeled_btensor_expr<N, T,
+labeled_btensor_expr_ident<N, T, Traits, Label> >
+operator*(labeled_btensor<N, T, Traits, Label> lhs, T rhs) {
+	typedef labeled_btensor_expr_ident<N, T, Traits, Label> expr_id_t;
+	typedef labeled_btensor_expr<N, T, expr_id_t > expr_t;
+	return expr_t(expr_id_t(lhs, rhs));
 }
 
 } // namespace libtensor
