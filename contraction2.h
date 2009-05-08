@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_CONTRACTION2_H
 #define	LIBTENSOR_CONTRACTION2_H
 
+#include <cstdio>
 #include "defs.h"
 #include "exception.h"
 #include "dimensions.h"
@@ -114,42 +115,7 @@ public:
 	 **/
 	void populate(contraction2_list<k_totidx> &list,
 		const dimensions<k_ordera> &dima,
-		const dimensions<k_orderb> &dimb) const throw(exception);
-
-	/**	\brief Returns the number of contraction loop nodes
-	 **/
-	size_t get_num_nodes() const throw (exception);
-
-	/**	\brief Returns the weight of a contraction loop node
-		\param node Node number
-		\param dima Dimensions of %tensor a
-		\param dimb Dimensions of %tensor b
-	 **/
-	size_t get_weight(size_t node, const dimensions<N + K> &dima,
-		const dimensions<M + K> &dimb) const throw (exception);
-
-	/**	\brief Returns the linear %index increment in a
-			(first argument)
-		\param dima Dimensions of %tensor a
-		\param dimb Dimensions of %tensor b
-	 **/
-	size_t get_increment_a(const dimensions<N + K> &dima,
-		const dimensions<M + K> &dimb) const throw (exception);
-
-	/**	\brief Returns the linear %index increment in b
-			(second argument)
-		\param dima Dimensions of %tensor a
-		\param dimb Dimensions of %tensor b
-	 **/
-	size_t get_increment_b(const dimensions<N + K> &dima,
-		const dimensions<M + K> &dimb) const throw (exception);
-
-	/**	\brief Returns the linear %index increment in c (result)
-		\param dima Dimensions of %tensor a
-		\param dimb Dimensions of %tensor b
-	 **/
-	size_t get_increment_c(const dimensions<N + K> &dima,
-		const dimensions<M + K> &dimb) const throw (exception);
+		const dimensions<k_orderb> &dimb) const throw (exception);
 
 	//@}
 
@@ -236,67 +202,102 @@ void contraction2<N, M, K>::contract(size_t ia, size_t ib) throw (exception) {
 }
 
 template<size_t N, size_t M, size_t K>
-inline size_t contraction2<N, M, K>::get_num_nodes() const throw (exception) {
-	if(!is_complete()) {
-		throw_exc("contraction2<N, M, K>", "get_num_nodes()",
-			"Contraction is incomplete");
-	}
-	return m_num_nodes;
-}
-
-template<size_t N, size_t M, size_t K>
-size_t contraction2<N, M, K>::get_weight(size_t node,
-	const dimensions<N + K> &dima, const dimensions<M + K> &dimb) const
-throw (exception) {
+void contraction2<N, M, K>::populate(contraction2_list<k_totidx> &list,
+	const dimensions<k_ordera> &dima,
+	const dimensions<k_orderb> &dimb) const throw (exception) {
 
 	if(!is_complete()) {
-		throw_exc("contraction2<N, M, K>", "get_weight()",
+		throw_exc("contraction2<N, M, K>", "populate()",
 			"Contraction is incomplete");
 	}
-	if(node >= m_num_nodes) {
-		throw_exc("contraction2<N, M, K>", "get_weight()",
-			"Node number is out of bounds");
+
+	size_t dimc[k_orderc];
+	for(size_t i = 0; i < k_orderc; i++) dimc[i] = 0;
+
+	for(size_t i = k_orderc; i < k_orderc + k_ordera; i++) {
+		register size_t conn = m_conn[i];
+		if(conn < k_orderc) dimc[conn] = dima[i - k_orderc];
+	}
+	for(size_t i = k_orderc + k_ordera; i < k_maxconn; i++) {
+		register size_t conn = m_conn[i];
+		if(conn < k_orderc) {
+			dimc[conn] = dimb[i - k_orderc - k_ordera];
+		} else if(dima[conn - k_orderc] != dimb[i - k_orderc - k_ordera]) {
+			char errmsg[128];
+			snprintf(errmsg, 128,
+				"Dimensions of contraction index are "
+				"incompatible: %lu (a) vs. %lu (b)",
+				dima[conn - k_orderc], dimb[i - k_orderc - k_ordera]);
+			throw_exc("contraction2<N, M, K>", "populate()",
+				errmsg);
+		}
 	}
 
-	// Here the index is from c or a
-	size_t i = m_nodes[node];
-	if(i < N + M) i = m_conn[i]; // For indexes in c get the connected idx
+	for(size_t inode = 0; inode < m_num_nodes; inode++) {
+		size_t weight = 1, inca = 0, incb = 0, incc = 0;
 
-	size_t w = 1;
+		// Here the first index from inode comes from c or a
+		// If the index comes from c, make ica->c iab->a or b
+		// If the index comes from a, make ica->a iab->b
+		register size_t ica = m_nodes[inode], iab = m_conn[ica];
 
-	// Now the index is from a or b
-	if(i < 2 * N + M + K) {
-		// The index is from a
-		for(size_t j = 0; j < m_nodesz[node]; j++)
-			w *= dima[i + j - (N + M)];
-	} else {
-		// The index is from b
-		for(size_t j = 0; j < m_nodesz[node]; j++)
-			w *= dimb[i + j - (2 * N + M + K)];
+		// Calculate node weight and increments
+		if(ica < k_orderc && iab < k_orderc + k_ordera) {
+			// The index comes from a and goes to c
+			register size_t sz = m_nodesz[inode];
+			for(register size_t j = 0; j < sz; j++)
+				weight *= dima[iab + j - k_orderc];
+			inca = dima.get_increment(iab + sz - k_orderc - 1);
+			incb = 0;
+			incc = 1;
+			for(register size_t j = k_orderc - 1; j >= ica + sz; j--)
+				incc *= dimc[j];
+		} else if(ica < k_orderc) {
+			// The index comes from b and goes to c
+			register size_t sz = m_nodesz[inode];
+			for(register size_t j = 0; j < sz; j++)
+				weight *= dimb[iab + j - k_orderc - k_ordera];
+			inca = 0;
+			incb = dimb.get_increment(
+				iab + sz - k_orderc - k_ordera - 1);
+			incc = 1;
+			for(register size_t j = k_orderc - 1; j >= ica + sz; j--)
+				incc *= dimc[j];
+		} else {
+			// The index comes from a and b and gets contracted
+			register size_t sz = m_nodesz[inode];
+			for(register size_t j = 0; j < sz; j++)
+				weight *= dima[ica + j - k_orderc];
+			inca = dima.get_increment(ica + sz - k_orderc - 1);
+			incb = dimb.get_increment(
+				iab + sz - k_orderc - k_ordera - 1);
+			incc = 0;
+		}
+
+		if(weight > 1)
+			list.append(weight, inca, incb, incc);
 	}
-
-	return w;
 }
 
 template<size_t N, size_t M, size_t K>
 void contraction2<N, M, K>::fuse() {
 	size_t i = 0;
 	// Take care of indexes in result
-	while(i < N + M) {
+	while(i < k_orderc) {
 		size_t ngrp = 1;
 		while(m_conn[i + ngrp] == m_conn[i] + ngrp &&
-			i + ngrp < N + M) ngrp++;
+			i + ngrp < k_orderc) ngrp++;
 		m_nodes[m_num_nodes] = i;
 		m_nodesz[m_num_nodes] = ngrp;
 		m_num_nodes++;
 		i += ngrp;
 	}
 	// Take care of contracted indexes
-	while(i < 2 * N + M + K) {
+	while(i < k_orderc + k_ordera) {
 		size_t ngrp = 1;
 		if(m_conn[i] > i) {
 			while(m_conn[i + ngrp] == m_conn[i] + ngrp &&
-				i + ngrp < 2 * N + M + K) ngrp++;
+				i + ngrp < k_orderc + k_ordera) ngrp++;
 			m_nodes[m_num_nodes] = i;
 			m_nodesz[m_num_nodes] = ngrp;
 			m_num_nodes++;

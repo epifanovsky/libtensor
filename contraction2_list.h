@@ -44,23 +44,27 @@ public:
 
 	/**	\brief Returns the length of the list
 	 **/
-	size_t length() const;
+	size_t get_length() const;
 
-	/**	\brief Returns the first node
+	/**	\brief Returns the first node number
 	 **/
-	size_t first() const;
+	size_t get_first() const;
 
-	/**	\brief Returns the last node
+	/**	\brief Returns the last node number
 	 **/
-	size_t last() const;
+	size_t get_last() const;
 
-	/**	\brief Returns next node
+	/**	\brief Returns next node number
 	 **/
-	size_t next(size_t node) const throw(exception);
+	size_t get_next(size_t node) const throw(exception);
 
-	/**	\brief Returns previous node
+	/**	\brief Returns previous node number
 	 **/
-	size_t prev(size_t node) const throw(exception);
+	size_t get_prev(size_t node) const throw(exception);
+
+	/**	\brief Returns the reference to a node
+	 **/
+	const contraction2_node &get_node(size_t node) const throw(exception);
 
 	/**	\brief Appends a node to the end of the list
 		\param weight Node weight.
@@ -70,6 +74,10 @@ public:
 	 **/
 	void append(size_t weight, size_t inca, size_t incb, size_t incc)
 	throw(exception);
+
+private:
+	void detach(size_t node);
+	void attach_end(size_t node);
 };
 
 template<size_t N>
@@ -82,36 +90,47 @@ m_last(k_invalid) {
 }
 
 template<size_t N>
-inline size_t contraction2_list<N>::length() const {
+inline size_t contraction2_list<N>::get_length() const {
 	return m_len;
 }
 
 template<size_t N>
-inline size_t contraction2_list<N>::first() const {
+inline size_t contraction2_list<N>::get_first() const {
 	return m_first;
 }
 
 template<size_t N>
-inline size_t contraction2_list<N>::last() const {
+inline size_t contraction2_list<N>::get_last() const {
 	return m_last;
 }
 
 template<size_t N>
-inline size_t contraction2_list<N>::next(size_t node) const throw(exception) {
+inline size_t contraction2_list<N>::get_next(size_t node) const throw(exception) {
 	if(node == k_invalid || node >= N) {
-		throw_exc("contraction2_list", "next(size_t)",
+		throw_exc("contraction2_list", "get_next(size_t)",
 			"Invalid node number");
 	}
 	return m_next[node];
 }
 
 template<size_t N>
-inline size_t contraction2_list<N>::prev(size_t node) const throw(exception) {
+inline size_t contraction2_list<N>::get_prev(size_t node) const
+throw(exception) {
 	if(node == k_invalid || node >= N) {
-		throw_exc("contraction2_list", "prev(size_t)",
+		throw_exc("contraction2_list", "get_prev(size_t)",
 			"Invalid node number");
 	}
 	return m_prev[node];
+}
+
+template<size_t N>
+inline const contraction2_node &contraction2_list<N>::get_node(size_t node)
+const throw(exception) {
+	if(node == k_invalid || node >= N) {
+		throw_exc("contraction2_list", "get_node(size_t)",
+			"Invalid node number");
+	}
+	return m_nodes[node];
 }
 
 template<size_t N>
@@ -125,13 +144,25 @@ void contraction2_list<N>::append(size_t weight, size_t inca, size_t incb,
 	m_nodes[m_len].m_inca = inca;
 	m_nodes[m_len].m_incb = incb;
 	m_nodes[m_len].m_incc = incc;
+	attach_end(m_len);
+}
+
+template<size_t N>
+void contraction2_list<N>::detach(size_t node) {
+}
+
+template<size_t N>
+void contraction2_list<N>::attach_end(size_t node) {
 	if(m_len == 0) {
-		m_first = m_len;
+		m_first = node;
+		m_next[node] = k_invalid;
+		m_prev[node] = k_invalid;
 	} else {
-		m_next[m_last] = m_len;
-		m_prev[m_len] = m_last;
+		m_next[m_last] = node;
+		m_prev[node] = m_last;
+		m_next[node] = k_invalid;
 	}
-	m_last = m_len;
+	m_last = node;
 	m_len++;
 }
 
