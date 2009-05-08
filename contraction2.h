@@ -5,6 +5,7 @@
 #include "exception.h"
 #include "dimensions.h"
 #include "permutation.h"
+#include "contraction2_list.h"
 
 namespace libtensor {
 
@@ -108,6 +109,12 @@ public:
 	//!	\name Interface for the computational party
 	//@{
 
+	/**	\brief Checks the dimensions of the arguments and populates
+			the loop node list
+	 **/
+	void populate(contraction2_list &list, const dimensions<k_ordera> &dima,
+		const dimensions<k_orderb> &dimb) const throw(exception);
+
 	/**	\brief Returns the number of contraction loop nodes
 	 **/
 	size_t get_num_nodes() const throw (exception);
@@ -192,7 +199,8 @@ void contraction2<N, M, K>::contract(size_t ia, size_t ib) throw (exception) {
 	}
 	if(ib >= k_orderb) {
 		throw_exc("contraction2<N, M, K>", "contract()",
-			"Contraction index ib is invalid");
+			"Contract"
+			"ion index ib is invalid");
 	}
 
 	size_t ja = k_orderc + ia;
