@@ -44,13 +44,19 @@ template<size_t N, size_t M, size_t K>
 class contraction2 {
 private:
 	static const size_t k_invalid = (size_t) (-1);
-	static const size_t k_maxconn = 2 * (N + M + K);
+	static const size_t k_ordera = N + K;
+	static const size_t k_orderb = M + K;
+	static const size_t k_orderc = N + M;
+	static const size_t k_totidx = N + M + K;
+	static const size_t k_maxconn = 2 * k_totidx;
 
 private:
 	permutation<N + K> m_permc; //!< Permutation of result indexes
 	size_t m_k; //!< Number of contracted indexes specified
 	size_t m_conn[k_maxconn]; //!< Index connections
 	size_t m_num_nodes; //!< Number of fused nodes
+	size_t m_nodes[k_totidx]; //!< Fused nodes
+	size_t m_nodesz[k_totidx]; //!< Fused node sizes (weights)
 
 public:
 	//!	\name Construction and destruction
@@ -81,7 +87,7 @@ public:
 		\throw exception if index numbers are invalid or this
 			contraction is complete.
 	 **/
-	void contract(size_t ia, size_t ib) throw(exception);
+	void contract(size_t ia, size_t ib) throw (exception);
 
 	/**	\brief Adjusts %index numbering when the arguments come in a
 			permuted form
@@ -94,8 +100,8 @@ public:
 		\param permb Permutation of the second %tensor argument (b).
 		\throw exception if the contraction is incomplete.
 	 **/
-	void permute(const permutation<N + K> &perma,
-		const permutation<M + K> &permb) throw(exception);
+	void permute(const permutation<k_ordera> &perma,
+		const permutation<k_orderb> &permb) throw (exception);
 
 	//@}
 
@@ -104,14 +110,15 @@ public:
 
 	/**	\brief Returns the number of contraction loop nodes
 	 **/
-	size_t get_num_nodes() const throw(exception);
+	size_t get_num_nodes() const throw (exception);
 
 	/**	\brief Returns the weight of a contraction loop node
+		\param node Node number
 		\param dima Dimensions of %tensor a
 		\param dimb Dimensions of %tensor b
 	 **/
-	size_t get_weight(const dimensions<N + K> &dima,
-		const dimensions<M + K> &dimb) const throw(exception);
+	size_t get_weight(size_t node, const dimensions<N + K> &dima,
+		const dimensions<M + K> &dimb) const throw (exception);
 
 	/**	\brief Returns the linear %index increment in a
 			(first argument)
@@ -119,7 +126,7 @@ public:
 		\param dimb Dimensions of %tensor b
 	 **/
 	size_t get_increment_a(const dimensions<N + K> &dima,
-		const dimensions<M + K> &dimb) const throw(exception);
+		const dimensions<M + K> &dimb) const throw (exception);
 
 	/**	\brief Returns the linear %index increment in b
 			(second argument)
@@ -127,33 +134,45 @@ public:
 		\param dimb Dimensions of %tensor b
 	 **/
 	size_t get_increment_b(const dimensions<N + K> &dima,
-		const dimensions<M + K> &dimb) const throw(exception);
+		const dimensions<M + K> &dimb) const throw (exception);
 
 	/**	\brief Returns the linear %index increment in c (result)
 		\param dima Dimensions of %tensor a
 		\param dimb Dimensions of %tensor b
 	 **/
 	size_t get_increment_c(const dimensions<N + K> &dima,
-		const dimensions<M + K> &dimb) const throw(exception);
+		const dimensions<M + K> &dimb) const throw (exception);
 
 	//@}
 
 private:
 	/**	\brief Fuses the indexes
 	 **/
-	void reduce();
+	void fuse();
 };
 
 template<size_t N, size_t M, size_t K>
 contraction2<N, M, K>::contraction2(const permutation<N + M> &perm) :
 m_permc(perm), m_k(0), m_num_nodes(0) {
-	for(size_t i = 0; i < k_maxconn; i++) m_conn[i] = k_invalid;
+	for(size_t i = 0; i < k_maxconn; i++) {
+		m_conn[i] = k_invalid;
+	}
+	for(size_t i = 0; i < k_totidx; i++) {
+		m_nodes[i] = 0;
+		m_nodesz[i] = 0;
+	}
 }
 
 template<size_t N, size_t M, size_t K>
 contraction2<N, M, K>::contraction2(const contraction2<N, M, K> &contr) :
 m_permc(contr.m_permc), m_k(contr.m_k), m_num_nodes(contr.m_num_nodes) {
-	for(size_t i = 0; i < k_maxconn; i++) m_conn[i] = contr.m_conn[i];
+	for(size_t i = 0; i < k_maxconn; i++) {
+		m_conn[i] = contr.m_conn[i];
+	}
+	for(size_t i = 0; i < k_totidx; i++) {
+		m_nodes[i] = contr.m_nodes[i];
+		m_nodesz[i] = contr.m_nodesz[i];
+	}
 }
 
 template<size_t N, size_t M, size_t K>
@@ -162,22 +181,22 @@ inline bool contraction2<N, M, K>::is_complete() const {
 }
 
 template<size_t N, size_t M, size_t K>
-void contraction2<N, M, K>::contract(size_t ia, size_t ib) throw(exception) {
+void contraction2<N, M, K>::contract(size_t ia, size_t ib) throw (exception) {
 	if(is_complete()) {
 		throw_exc("contraction2<N, M, K>", "contract()",
 			"Contraction is complete");
 	}
-	if(ia >= N + K) {
+	if(ia >= k_ordera) {
 		throw_exc("contraction2<N, M, K>", "contract()",
 			"Contraction index ia is invalid");
 	}
-	if(ib >= M + K) {
+	if(ib >= k_orderb) {
 		throw_exc("contraction2<N, M, K>", "contract()",
 			"Contraction index ib is invalid");
 	}
 
-	size_t ja = N + M + ia;
-	size_t jb = 2 * N + M + K + ib;
+	size_t ja = k_orderc + ia;
+	size_t jb = k_orderc + k_ordera + ib;
 
 	if(m_conn[ja] != k_invalid) {
 		throw_exc("contraction2<N, M, K>", "contract()",
@@ -194,24 +213,86 @@ void contraction2<N, M, K>::contract(size_t ia, size_t ib) throw(exception) {
 	if(++m_k == K) {
 		// Once contracted indexes are specified, collect all the
 		// remaining ones, permute them properly, and put them in place
-		size_t connc[N + M];
+		size_t connc[k_orderc];
 		size_t iconnc = 0;
-		for(size_t i = N + M; i < k_maxconn; i++)
+		for(size_t i = k_orderc; i < k_maxconn; i++)
 			if(m_conn[i] == k_invalid) connc[iconnc++] = i;
-		m_permc.apply(N + M, connc);
-		for(size_t i = 0; i < N + M; i++) {
+		m_permc.apply(k_orderc, connc);
+		for(size_t i = 0; i < k_orderc; i++) {
 			m_conn[i] = connc[i];
 			m_conn[connc[i]] = i;
 		}
-		//reduce();
+		fuse();
 	}
 }
 
 template<size_t N, size_t M, size_t K>
-void contraction2<N, M, K>::reduce() {
+inline size_t contraction2<N, M, K>::get_num_nodes() const throw (exception) {
+	if(!is_complete()) {
+		throw_exc("contraction2<N, M, K>", "get_num_nodes()",
+			"Contraction is incomplete");
+	}
+	return m_num_nodes;
+}
+
+template<size_t N, size_t M, size_t K>
+size_t contraction2<N, M, K>::get_weight(size_t node,
+	const dimensions<N + K> &dima, const dimensions<M + K> &dimb) const
+throw (exception) {
+
+	if(!is_complete()) {
+		throw_exc("contraction2<N, M, K>", "get_weight()",
+			"Contraction is incomplete");
+	}
+	if(node >= m_num_nodes) {
+		throw_exc("contraction2<N, M, K>", "get_weight()",
+			"Node number is out of bounds");
+	}
+
+	// Here the index is from c or a
+	size_t i = m_nodes[node];
+	if(i < N + M) i = m_conn[i]; // For indexes in c get the connected idx
+
+	size_t w = 1;
+
+	// Now the index is from a or b
+	if(i < 2 * N + M + K) {
+		// The index is from a
+		for(size_t j = 0; j < m_nodesz[node]; j++)
+			w *= dima[i + j - (N + M)];
+	} else {
+		// The index is from b
+		for(size_t j = 0; j < m_nodesz[node]; j++)
+			w *= dimb[i + j - (2 * N + M + K)];
+	}
+
+	return w;
+}
+
+template<size_t N, size_t M, size_t K>
+void contraction2<N, M, K>::fuse() {
 	size_t i = 0;
+	// Take care of indexes in result
 	while(i < N + M) {
-		i++;
+		size_t ngrp = 1;
+		while(m_conn[i + ngrp] == m_conn[i] + ngrp &&
+			i + ngrp < N + M) ngrp++;
+		m_nodes[m_num_nodes] = i;
+		m_nodesz[m_num_nodes] = ngrp;
+		m_num_nodes++;
+		i += ngrp;
+	}
+	// Take care of contracted indexes
+	while(i < 2 * N + M + K) {
+		size_t ngrp = 1;
+		if(m_conn[i] > i) {
+			while(m_conn[i + ngrp] == m_conn[i] + ngrp &&
+				i + ngrp < 2 * N + M + K) ngrp++;
+			m_nodes[m_num_nodes] = i;
+			m_nodesz[m_num_nodes] = ngrp;
+			m_num_nodes++;
+		}
+		i += ngrp;
 	}
 }
 
