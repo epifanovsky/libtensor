@@ -112,7 +112,8 @@ public:
 	/**	\brief Checks the dimensions of the arguments and populates
 			the loop node list
 	 **/
-	void populate(contraction2_list &list, const dimensions<k_ordera> &dima,
+	void populate(contraction2_list<k_totidx> &list,
+		const dimensions<k_ordera> &dima,
 		const dimensions<k_orderb> &dimb) const throw(exception);
 
 	/**	\brief Returns the number of contraction loop nodes

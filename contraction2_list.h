@@ -73,7 +73,7 @@ public:
 };
 
 template<size_t N>
-contraction2_list::contraction2_list() : m_len(0), m_first(k_invalid),
+contraction2_list<N>::contraction2_list() : m_len(0), m_first(k_invalid),
 m_last(k_invalid) {
 	for(size_t i = 0; i < N; i++) {
 		m_next[i] = k_invalid;
@@ -82,22 +82,22 @@ m_last(k_invalid) {
 }
 
 template<size_t N>
-inline size_t contraction2_list::length() const {
+inline size_t contraction2_list<N>::length() const {
 	return m_len;
 }
 
 template<size_t N>
-inline size_t contraction2_list::first() const {
+inline size_t contraction2_list<N>::first() const {
 	return m_first;
 }
 
 template<size_t N>
-inline size_t contraction2_list::last() const {
+inline size_t contraction2_list<N>::last() const {
 	return m_last;
 }
 
 template<size_t N>
-inline size_t contraction2_list::next(size_t node) const {
+inline size_t contraction2_list<N>::next(size_t node) const throw(exception) {
 	if(node == k_invalid || node >= N) {
 		throw_exc("contraction2_list", "next(size_t)",
 			"Invalid node number");
@@ -106,7 +106,7 @@ inline size_t contraction2_list::next(size_t node) const {
 }
 
 template<size_t N>
-inline size_t contraction2_list::prev(size_t node) const {
+inline size_t contraction2_list<N>::prev(size_t node) const throw(exception) {
 	if(node == k_invalid || node >= N) {
 		throw_exc("contraction2_list", "prev(size_t)",
 			"Invalid node number");
@@ -115,7 +115,7 @@ inline size_t contraction2_list::prev(size_t node) const {
 }
 
 template<size_t N>
-void contraction2_list::append(size_t weight, size_t inca, size_t incb,
+void contraction2_list<N>::append(size_t weight, size_t inca, size_t incb,
 	size_t incc) throw(exception) {
 
 	if(m_len == N)
