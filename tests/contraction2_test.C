@@ -37,14 +37,16 @@ void contraction2_test::test_1() throw(libtest::test_exception) {
 
 	// Dimensions i=3 j=4 k=3 l=4 p=5 q=6
 	size_t ni = 3, nj = 4, nk = 3, nl = 4, np = 5, nq = 6;
-	index<4> idxa1_1, idxa1_2, idxb1_1, idxb1_2;
+	index<4> idxa1_1, idxa1_2, idxb1_1, idxb1_2, idxc1_1, idxc1_2;
 	idxa1_2[0]=ni-1; idxa1_2[1]=nj-1; idxa1_2[2]=np-1; idxa1_2[3]=nq-1;
 	idxb1_2[0]=nk-1; idxb1_2[1]=nl-1; idxb1_2[2]=np-1; idxb1_2[3]=nq-1;
-	index_range<4> ira1(idxa1_1, idxa1_2), irb1(idxb1_1, idxb1_2);
-	dimensions<4> dima1(ira1), dimb1(irb1);
+	idxc1_2[0]=ni-1; idxc1_2[1]=nj-1; idxc1_2[2]=nk-1; idxc1_2[3]=nl-1;
+	index_range<4> ira1(idxa1_1, idxa1_2), irb1(idxb1_1, idxb1_2),
+		irc1(idxc1_1, idxc1_2);
+	dimensions<4> dima1(ira1), dimb1(irb1), dimc1(irc1);
 
 	contraction2_list<6> list;
-	c.populate(list, dima1, dimb1);
+	c.populate(list, dima1, dimb1, dimc1);
 
 	size_t nodes = list.get_length();
 	if(nodes != 3) {

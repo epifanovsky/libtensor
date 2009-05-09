@@ -68,11 +68,11 @@ public:
 		\param perm Specifies how argument indexes should be permuted
 			in the output.
 	 **/
-	contraction2(const permutation<N + M> &perm);
+	contraction2(const permutation<k_orderc> &perm);
 
 	/**	\brief Copy constructor
 	 **/
-	contraction2(const contraction2<N, M, K> &contr);
+	contraction2(const contraction2<N,M,K> &contr);
 
 	//@}
 
@@ -110,12 +110,13 @@ public:
 	//!	\name Interface for the computational party
 	//@{
 
-	/**	\brief Checks the dimensions of the arguments and populates
-			the loop node list
+	/**	\brief Checks the dimensions of the arguments and the result
+			and populates the loop node list
 	 **/
 	void populate(contraction2_list<k_totidx> &list,
 		const dimensions<k_ordera> &dima,
-		const dimensions<k_orderb> &dimb) const throw (exception);
+		const dimensions<k_orderb> &dimb,
+		const dimensions<k_orderc> &dimc) const throw (exception);
 
 	//@}
 
@@ -126,8 +127,9 @@ private:
 };
 
 template<size_t N, size_t M, size_t K>
-contraction2<N, M, K>::contraction2(const permutation<N + M> &perm) :
-m_permc(perm), m_k(0), m_num_nodes(0) {
+contraction2<N, M, K>::contraction2(const permutation<k_orderc> &perm) :
+	m_permc(perm), m_k(0), m_num_nodes(0) {
+
 	for(size_t i = 0; i < k_maxconn; i++) {
 		m_conn[i] = k_invalid;
 	}
@@ -204,30 +206,45 @@ void contraction2<N, M, K>::contract(size_t ia, size_t ib) throw (exception) {
 template<size_t N, size_t M, size_t K>
 void contraction2<N, M, K>::populate(contraction2_list<k_totidx> &list,
 	const dimensions<k_ordera> &dima,
-	const dimensions<k_orderb> &dimb) const throw (exception) {
+	const dimensions<k_orderb> &dimb,
+	const dimensions<k_orderc> &dimc) const throw (exception) {
 
 	if(!is_complete()) {
 		throw_exc("contraction2<N, M, K>", "populate()",
 			"Contraction is incomplete");
 	}
 
-	size_t dimc[k_orderc];
-	for(size_t i = 0; i < k_orderc; i++) dimc[i] = 0;
+	size_t dimc1[k_orderc];
+	for(size_t i = 0; i < k_orderc; i++) dimc1[i] = 0;
 
 	for(size_t i = k_orderc; i < k_orderc + k_ordera; i++) {
 		register size_t conn = m_conn[i];
-		if(conn < k_orderc) dimc[conn] = dima[i - k_orderc];
+		if(conn < k_orderc) dimc1[conn] = dima[i - k_orderc];
 	}
 	for(size_t i = k_orderc + k_ordera; i < k_maxconn; i++) {
 		register size_t conn = m_conn[i];
 		if(conn < k_orderc) {
-			dimc[conn] = dimb[i - k_orderc - k_ordera];
-		} else if(dima[conn - k_orderc] != dimb[i - k_orderc - k_ordera]) {
+			dimc1[conn] = dimb[i - k_orderc - k_ordera];
+		} else if(dima[conn - k_orderc] !=
+			dimb[i - k_orderc - k_ordera]) {
 			char errmsg[128];
 			snprintf(errmsg, 128,
 				"Dimensions of contraction index are "
 				"incompatible: %lu (a) vs. %lu (b)",
-				dima[conn - k_orderc], dimb[i - k_orderc - k_ordera]);
+				dima[conn - k_orderc],
+				dimb[i - k_orderc - k_ordera]);
+			throw_exc("contraction2<N, M, K>", "populate()",
+				errmsg);
+		}
+	}
+
+	for(size_t i = 0; i < k_orderc; i++) {
+		if(dimc[i] != dimc1[i]) {
+			char errmsg[128];
+			snprintf(errmsg, 128,
+				"Dimensions of result index are "
+				"incompatible: %lu (c) vs. %lu (a/b)",
+				dimc[i], dimc1[i]);
 			throw_exc("contraction2<N, M, K>", "populate()",
 				errmsg);
 		}
