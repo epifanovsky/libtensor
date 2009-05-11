@@ -6,6 +6,7 @@
 #include "bispace_test.h"
 #include "block_tensor_test.h"
 #include "btensor_test.h"
+#include "btod_contract2_test.h"
 #include "contract_test.h"
 #include "contract2_0_4i_test.h"
 #include "contraction2_test.h"
@@ -50,6 +51,7 @@ namespace libtensor {
 	\li libtensor::bispace_test
 	\li libtensor::block_tensor_test
 	\li libtensor::btensor_test
+	\li libtensor::btod_contract2_test
 	\li libtensor::contract_test
 	\li libtensor::contract2_0_4i_test
 	\li libtensor::contraction2_test
@@ -88,6 +90,7 @@ private:
 	unit_test_factory<bispace_test> m_utf_bispace;
 	unit_test_factory<block_tensor_test> m_utf_block_tensor;
 	unit_test_factory<btensor_test> m_utf_btensor;
+	unit_test_factory<btod_contract2_test> m_utf_btod_contract2;
 	unit_test_factory<contract_test> m_utf_contract;
 	unit_test_factory<contract2_0_4i_test> m_utf_contract2_0_4i;
 	unit_test_factory<contraction2_test> m_utf_contraction2;

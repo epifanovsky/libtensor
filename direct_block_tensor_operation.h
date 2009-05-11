@@ -3,7 +3,7 @@
 
 #include "defs.h"
 #include "exception.h"
-#include "btensor_i.h"
+#include "block_tensor_i.h"
 
 namespace libtensor {
 
@@ -16,7 +16,7 @@ class direct_block_tensor_operation {
 public:
 	/**	\brief Invoked to execute the operation
 	**/
-	virtual void perform(btensor_i<N,T> &bt) throw(exception) = 0;
+	virtual void perform(block_tensor_i<N,T> &bt) throw(exception) = 0;
 };
 
 } // namespace libtensor
