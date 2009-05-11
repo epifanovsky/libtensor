@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_CONTRACTION2_PROCESSOR_TEST_H
 #define LIBTENSOR_CONTRACTION2_PROCESSOR_TEST_H
 
+#include <cmath>
 #include <libtest.h>
 #include "contraction2_processor.h"
 
@@ -15,6 +16,9 @@ public:
 	virtual void perform() throw(libtest::test_exception);
 
 private:
+	//!	Compares two numbers
+	bool compare(double a, double b) const;
+
 	//!	Tests c = \sum_p a_p b_p
 	void test_0_p_p_p(size_t np) throw(libtest::test_exception);
 
@@ -40,6 +44,10 @@ private:
 	void test_kji_p_ikp_jp(size_t ni, size_t nj, size_t nk, size_t np)
 		throw(libtest::test_exception);
 };
+
+inline bool contraction2_processor_test::compare(double a, double b) const {
+	return fabs(a-b) < 1e-15*fabs(a);
+}
 
 } // namespace libtensor
 

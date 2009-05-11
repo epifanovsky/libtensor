@@ -61,15 +61,17 @@ void contraction2_processor<N>::contract() throw(exception) {
 		node = m_list.get_next(node);
 	}
 
+	size_t skip1, skip2, skip3;
 	m_num_nodes = 0;
 
 	if(lasta == lastb) {
+		skip1 = skip2 = skip3 = lasta;
+
 		// Same last index in a and b
 		m_nodes[m_num_nodes] = lasta;
 		m_funcs[m_num_nodes] = &contraction2_processor<N>::nodefn_ddot;
 		m_num_nodes++;
 
-		size_t skipc = lasta;
 		bool dgemv_a = false, dgemv_b = false;
 
 		// Find last index in c
@@ -83,13 +85,13 @@ void contraction2_processor<N>::contract() throw(exception) {
 			node = m_list.get_next(node);
 		}
 		if(dgemv_a) {
-			skipc = node;
+			skip2 = node;
 			m_nodes[m_num_nodes] = node;
 			m_funcs[m_num_nodes] = &contraction2_processor<N>::nodefn_dgemv_a;
 			m_num_nodes++;
 		}
 		if(dgemv_b) {
-			skipc = node;
+			skip2 = node;
 			m_nodes[m_num_nodes] = node;
 			m_funcs[m_num_nodes] = &contraction2_processor<N>::nodefn_dgemv_b;
 			m_num_nodes++;
@@ -107,7 +109,7 @@ void contraction2_processor<N>::contract() throw(exception) {
 
 		node = m_list.get_first();
 		for(size_t i = 0; i<m_list.get_length(); i++) {
-			if(node != lasta && node != skipc) {
+			if(node != skip1 && node != skip2 && node != skip3) {
 				m_nodes[m_num_nodes] = node;
 				m_funcs[m_num_nodes] = &contraction2_processor<N>::nodefn_loop;
 				m_num_nodes++;

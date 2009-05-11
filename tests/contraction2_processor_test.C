@@ -84,9 +84,12 @@ void contraction2_processor_test::test_0_p_p_p(size_t np)
 	delete ptrc;
 	delete [] ptra; delete [] ptrb;
 
-	if(c != c_ref) {
+	if(!compare(c_ref, c)) {
+		char msg[128];
+		snprintf(msg, 128, "Difference found: "
+			"%.5lg (act) vs. %.5lg (ref)", c, c_ref);
 		fail_test("contraction2_processor_test::test_0_p_p_p()",
-			__FILE__, __LINE__, "Failed");
+			__FILE__, __LINE__, msg);
 	}
 
 }
@@ -123,7 +126,7 @@ void contraction2_processor_test::test_i_p_ip_p(size_t ni, size_t np)
 	double fail_c, fail_cref;
 
 	for(size_t i=0; i<ni && !fail; i++) {
-		if(ptrc[i] != ptrc_ref[i]) {
+		if(!compare(ptrc_ref[i], ptrc[i])) {
 			fail = true;
 			fail_pos = i;
 			fail_c = ptrc[i];
@@ -175,7 +178,7 @@ void contraction2_processor_test::test_i_p_p_ip(size_t ni, size_t np)
 	double fail_c, fail_cref;
 
 	for(size_t i=0; i<ni && !fail; i++) {
-		if(ptrc[i] != ptrc_ref[i]) {
+		if(!compare(ptrc_ref[i], ptrc[i])) {
 			fail = true;
 			fail_pos = i;
 			fail_c = ptrc[i];
@@ -230,7 +233,7 @@ void contraction2_processor_test::test_ij_p_ip_jp(size_t ni, size_t nj,
 	double fail_c, fail_cref;
 
 	for(size_t i=0; i<ni*nj && !fail; i++) {
-		if(ptrc[i] != ptrc_ref[i]) {
+		if(!compare(ptrc_ref[i], ptrc[i])) {
 			fail = true;
 			fail_pos = i;
 			fail_c = ptrc[i];
@@ -285,7 +288,7 @@ void contraction2_processor_test::test_ji_p_ip_jp(size_t ni, size_t nj,
 	double fail_c, fail_cref;
 
 	for(size_t i=0; i<ni*nj && !fail; i++) {
-		if(ptrc[i] != ptrc_ref[i]) {
+		if(!compare(ptrc_ref[i], ptrc[i])) {
 			fail = true;
 			fail_pos = i;
 			fail_c = ptrc[i];
@@ -342,7 +345,7 @@ void contraction2_processor_test::test_kij_p_ip_jkp(size_t ni, size_t nj,
 	double fail_c, fail_cref;
 
 	for(size_t i=0; i<nk*ni*nj && !fail; i++) {
-		if(ptrc[i] != ptrc_ref[i]) {
+		if(!compare(ptrc_ref[i], ptrc[i])) {
 			fail = true;
 			fail_pos = i;
 			fail_c = ptrc[i];
@@ -402,7 +405,7 @@ void contraction2_processor_test::test_kji_p_ikp_jp(size_t ni, size_t nj,
 	double fail_c, fail_cref;
 
 	for(size_t i=0; i<szc && !fail; i++) {
-		if(ptrc[i] != ptrc_ref[i]) {
+		if(!compare(ptrc_ref[i], ptrc[i])) {
 			fail = true;
 			fail_pos = i;
 			fail_c = ptrc[i];
