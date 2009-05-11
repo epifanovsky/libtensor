@@ -180,6 +180,20 @@ inline void dimensions<N>::update_increments() {
 	m_size = sz;
 }
 
+template<size_t N>
+inline bool operator==( const dimensions<N> &da, const dimensions<N> &db ) {
+	#pragma unroll(N)
+	for(register size_t i=0; i<N; i++) {
+		if(da[i]!=db[i]) return false;
+	}
+	return true;
+}
+
+template<size_t N>
+inline bool operator!=( const dimensions<N> &da, const dimensions<N> &db ) {
+	return !(da==db);
+}
+
 } // namespace libtensor
 
 #endif // LIBTENSOR_DIMENSIONS_H
