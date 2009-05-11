@@ -27,7 +27,7 @@ template<size_t N>
 class bispace_expr_i {
 public:
 	virtual rc_ptr<bispace_expr_i<N> > clone() const = 0;
-	virtual const dimensions<N> &dims() const = 0;
+	virtual const dimensions<N> &get_dims() const = 0;
 	virtual const bispace < 1 > & operator[](size_t i) const = 0;
 };
 
@@ -48,7 +48,7 @@ private:
 
 public:
 
-	bispace_expr(const T &t) : m_t(t), m_dims(t.dims()) {
+	bispace_expr(const T &t) : m_t(t), m_dims(t.get_dims()) {
 	}
 
 	bispace_expr(const bispace_expr<N, T> &e) :
@@ -60,7 +60,7 @@ public:
 			new bispace_expr<N, T > (*this));
 	}
 
-	virtual const dimensions<N> &dims() const {
+	virtual const dimensions<N> &get_dims() const {
 		return m_dims;
 	}
 
@@ -86,8 +86,8 @@ public:
 	bispace_expr_ident(bispace<N> &bis) : m_bis(bis) {
 	}
 
-	const dimensions<N> &dims() const {
-		return m_bis.dims();
+	const dimensions<N> &get_dims() const {
+		return m_bis.get_dims();
 	}
 
 	const bispace < 1 > & operator[](size_t i) const {
@@ -112,10 +112,10 @@ private:
 public:
 
 	bispace_expr_binop(const T1 &t1, const T2 &t2) : m_t1(t1), m_t2(t2),
-	m_dims(Op::dims(t1, t2)) {
+	m_dims(Op::get_dims(t1, t2)) {
 	}
 
-	const dimensions<k_order> &dims() const {
+	const dimensions<k_order> &get_dims() const {
 		return m_dims;
 	}
 
@@ -135,9 +135,9 @@ public:
 
 public:
 
-	static const dimensions<k_order> dims(const T1 &t1, const T2 &t2) {
-		dimensions<T1::k_order> dims_t1(t1.dims());
-		dimensions<T2::k_order> dims_t2(t2.dims());
+	static const dimensions<k_order> get_dims(const T1 &t1, const T2 &t2) {
+		dimensions<T1::k_order> dims_t1(t1.get_dims());
+		dimensions<T2::k_order> dims_t2(t2.get_dims());
 		index<k_order> i1, i2;
 		size_t i = 0;
 		for(size_t j = 0; j < T1::k_order; j++, i++) i2[i] = dims_t1[j] - 1;
@@ -157,9 +157,9 @@ public:
 
 public:
 
-	static const dimensions<k_order> dims(const T1 &t1, const T2 &t2) {
-		dimensions<T1::k_order> dims_t1(t1.dims());
-		dimensions<T2::k_order> dims_t2(t2.dims());
+	static const dimensions<k_order> get_dims(const T1 &t1, const T2 &t2) {
+		dimensions<T1::k_order> dims_t1(t1.get_dims());
+		dimensions<T2::k_order> dims_t2(t2.get_dims());
 		index<k_order> i1, i2;
 		size_t i = 0;
 		for(size_t j = 0; j < T1::k_order; j++, i++) i2[i] = dims_t1[j] - 1;
@@ -179,9 +179,9 @@ public:
 
 public:
 
-	static const dimensions<k_order> dims(const T1 &t1, const T2 &t2) {
-		dimensions<T1::k_order> dims_t1(t1.dims());
-		dimensions<T2::k_order> dims_t2(t2.dims());
+	static const dimensions<k_order> get_dims(const T1 &t1, const T2 &t2) {
+		dimensions<T1::k_order> dims_t1(t1.get_dims());
+		dimensions<T2::k_order> dims_t2(t2.get_dims());
 		index<k_order> i1, i2;
 		size_t i = 0;
 		for(size_t j = 0; j < T1::k_order; j++, i++) i2[i] = dims_t1[j] - 1;
@@ -201,9 +201,9 @@ public:
 
 public:
 
-	static const dimensions<k_order> dims(const T1 &t1, const T2 &t2) {
-		dimensions<T1::k_order> dims_t1(t1.dims());
-		dimensions<T2::k_order> dims_t2(t2.dims());
+	static const dimensions<k_order> get_dims(const T1 &t1, const T2 &t2) {
+		dimensions<T1::k_order> dims_t1(t1.get_dims());
+		dimensions<T2::k_order> dims_t2(t2.get_dims());
 		index<k_order> i1, i2;
 		size_t i = 0;
 		for(size_t j = 0; j < T1::k_order; j++, i++) i2[i] = dims_t1[j] - 1;

@@ -66,9 +66,9 @@ public:
 	virtual rc_ptr< bispace_i<N> > clone() const;
 	//@}
 
-	//!	\name Implementation of libtensor::ispace_i<N>
+	//!	\name Implementation of libtensor::block_index_space_i<N>
 	//@{
-	virtual const dimensions<N> &dims() const;
+	virtual const dimensions<N> &get_dims() const;
 	//@}
 
 	const bispace < 1 > & operator[](size_t i) const;
@@ -112,10 +112,10 @@ public:
 
 	//@}
 
-	//!	\name Implementation of ispace_i<1>
+	//!	\name Implementation of block_index_space_i<1>
 	//@{
 
-	virtual const dimensions < 1 > &dims() const;
+	virtual const dimensions < 1 > &get_dims() const;
 
 	//@}
 
@@ -131,14 +131,14 @@ private:
 
 template<size_t N> template<typename SymExprT>
 bispace<N>::bispace(const bispace_expr<N, SymExprT> &e_sym) throw(exception) :
-m_sym_expr(e_sym.clone()), m_dims(e_sym.dims()) {
+m_sym_expr(e_sym.clone()), m_dims(e_sym.get_dims()) {
 	make_inv_idx();
 }
 
 template<size_t N> template<typename OrderExprT, typename SymExprT>
 bispace<N>::bispace(const bispace_expr<N, OrderExprT> &e_order,
 	const bispace_expr<N, SymExprT> &e_sym) throw(exception) :
-m_sym_expr(e_sym.clone()), m_dims(e_sym.dims()) {
+m_sym_expr(e_sym.clone()), m_dims(e_sym.get_dims()) {
 
 	const bispace < 1 > *seq_order[N], *seq_sym[N];
 	for(size_t i = 0; i < N; i++) {
@@ -193,7 +193,7 @@ rc_ptr< bispace_i<N> > bispace<N>::clone() const {
 }
 
 template<size_t N>
-inline const dimensions<N> &bispace<N>::dims() const {
+inline const dimensions<N> &bispace<N>::get_dims() const {
 	return m_dims;
 }
 
@@ -223,7 +223,7 @@ inline rc_ptr<bispace_i < 1 > > bispace < 1 > ::clone() const {
 	return rc_ptr<bispace_i < 1 > >(new bispace < 1 > (m_dims));
 }
 
-inline const dimensions < 1 > &bispace < 1 > ::dims() const {
+inline const dimensions < 1 > &bispace < 1 > ::get_dims() const {
 	return m_dims;
 }
 

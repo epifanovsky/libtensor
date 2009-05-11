@@ -89,7 +89,7 @@ protected:
 
 template<size_t N, typename T, typename Traits>
 inline btensor<N, T, Traits>::btensor(const bispace_i<N> &bispace) :
-m_bispace(bispace.clone()), m_t(bispace.dims()) {
+m_bispace(bispace.clone()), m_t(bispace.get_dims()) {
 }
 
 template<size_t N, typename T, typename Traits>

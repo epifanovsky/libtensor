@@ -3,6 +3,7 @@
 
 #include "defs.h"
 #include "exception.h"
+#include "block_index_space_i.h"
 #include "ispace_i.h"
 #include "rc_ptr.h"
 
@@ -14,7 +15,7 @@ namespace libtensor {
 	\ingroup libtensor
  **/
 template<size_t N>
-class bispace_i : public ispace_i<N> {
+class bispace_i : public block_index_space_i<N> {
 public:
 	/**	\brief Creates an identical copy of the %index space
 	 **/
