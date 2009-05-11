@@ -105,13 +105,13 @@ void tod_contract2<N,M,K>::perform(tensor_i<N+M,double> &tc) throw(exception) {
 
 	tensor_ctrl<N+K,double> ctrla(m_ta);
 	tensor_ctrl<M+K,double> ctrlb(m_tb);
-	tensor_ctrl<N+M,double> ctrlc(t);
+	tensor_ctrl<N+M,double> ctrlc(tc);
 
 	const double *ptra = ctrla.req_const_dataptr();
 	const double *ptrb = ctrlb.req_const_dataptr();
 	double *ptrc = ctrlc.req_dataptr();
 
-	contraction2_processor(list, ptrc, ptra, ptrb).contract();
+	contraction2_processor<N+M+K>(list, ptrc, ptra, ptrb).contract();
 
 	ctrla.ret_dataptr(ptra);
 	ctrlb.ret_dataptr(ptrb);

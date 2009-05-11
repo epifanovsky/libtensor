@@ -11,6 +11,7 @@
 #include "contract2_0_4i_test.h"
 #include "contraction2_test.h"
 #include "contraction2_list_test.h"
+#include "contraction2_processor_test.h"
 #include "default_symmetry_test.h"
 #include "dimensions_test.h"
 #include "direct_tensor_test.h"
@@ -56,6 +57,7 @@ namespace libtensor {
 	\li libtensor::contract2_0_4i_test
 	\li libtensor::contraction2_test
 	\li libtensor::contraction2_list_test
+	\li libtensor::contraction2_processor_test
 	\li libtensor::default_symmetry_test
 	\li libtensor::dimensions_test
 	\li libtensor::direct_tensor_test
@@ -95,6 +97,8 @@ private:
 	unit_test_factory<contract2_0_4i_test> m_utf_contract2_0_4i;
 	unit_test_factory<contraction2_test> m_utf_contraction2;
 	unit_test_factory<contraction2_list_test> m_utf_contraction2_list;
+	unit_test_factory<contraction2_processor_test>
+		m_utf_contraction2_processor;
 	unit_test_factory<default_symmetry_test> m_utf_default_symmetry;
 	unit_test_factory<dimensions_test> m_utf_dimensions;
 	unit_test_factory<direct_tensor_test> m_utf_direct_tensor;
