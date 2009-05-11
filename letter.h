@@ -17,7 +17,18 @@ namespace libtensor {
 	\ingroup libtensor
 **/
 class letter {
+public:
+	bool operator==(const letter &other) const;
+	bool operator!=(const letter &other) const;
 };
+
+inline bool letter::operator==(const letter &other) const {
+	return this == &other;
+}
+
+inline bool letter::operator!=(const letter &other) const {
+	return this != &other;
+}
 
 } // namespace libtensor
 

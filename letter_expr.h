@@ -33,12 +33,29 @@ class letter_expr_base {
 **/
 template<size_t N, typename T>
 class letter_expr : public letter_expr_base<N> {
+public:
+	static const size_t k_size = T::k_size;
+
 private:
 	T m_t;
 
 public:
 	letter_expr(const T &t) : m_t(t) { }
 	letter_expr(const letter_expr<N,T> &e) : m_t(e.m_t) { }
+
+	/**	\brief Returns whether the expression contains a %letter
+	 **/
+	bool contains(const letter &let) const { return m_t.contains(let); }
+
+	/**	\brief Returns the %index of a %letter in the expression
+		\throw exception If the expression doesn't contain the %letter.
+	 **/
+	size_t index_of(const letter &let) const throw(exception);
+
+	/**	\brief Returns the %letter at a given position
+		\throw exception If the %index is out of bounds.
+	 **/
+	const letter &letter_at(size_t i) const throw(exception);
 };
 
 /**	\brief Identity expression
@@ -46,11 +63,18 @@ public:
 	\ingroup libtensor_letter_expr
 **/
 class letter_expr_ident {
+public:
+	static const size_t k_size = 1;
+
 private:
 	letter &m_let;
 
 public:
 	letter_expr_ident(letter &l) : m_let(l) { }
+
+	bool contains(const letter &let) const { return &m_let == &let; }
+	size_t index_of(const letter &let) const throw(exception);
+	const letter &letter_at(size_t i) const throw(exception);
 };
 
 /**	\brief Binary operation expression
@@ -59,12 +83,19 @@ public:
 **/
 template<typename T1, typename T2, typename Op>
 class letter_expr_binop {
+public:
+	static const size_t k_size = T1::k_size + T2::k_size;
+
 private:
 	T1 m_t1; //!< Left expression
 	T2 m_t2; //!< Right expression
 
 public:
 	letter_expr_binop(const T1 &t1, const T2 &t2) : m_t1(t1), m_t2(t2) { }
+
+	bool contains(const letter &let) const;
+	size_t index_of(const letter &let) const throw(exception);
+	const letter &letter_at(size_t i) const throw(exception);
 };
 
 /**	\brief Bitwise OR (|) binary operation
@@ -74,6 +105,60 @@ public:
 template<typename T1, typename T2>
 class letter_expr_binop_or {
 };
+
+template<size_t N, typename T>
+inline size_t letter_expr<N, T>::index_of(const letter &let) const
+	throw(exception) {
+	return m_t.index_of(let);
+}
+
+template<size_t N, typename T>
+inline const letter &letter_expr<N, T>::letter_at(size_t i) const
+	throw(exception) {
+	if(i >= k_size) {
+		throw_exc("letter_expr<N, T>", "letter_at(size_t)",
+			"Index out of bounds");
+	}
+	return m_t.letter_at(i);
+}
+
+inline size_t letter_expr_ident::index_of(const letter &let) const
+	throw(exception) {
+
+	if(!contains(let)) {
+		throw_exc("letter_expr_ident", "index_of(const letter&)",
+			"Expression doesn't contain the requested letter");
+	}
+	return 0;
+}
+
+inline const letter &letter_expr_ident::letter_at(size_t i) const
+	throw(exception) {
+	if(i != 0) {
+		throw_exc("letter_expr_ident", "letter_at(size_t)",
+			"Index out of bounds");
+	}
+	return m_let;
+}
+
+template<typename T1, typename T2, typename Op>
+inline bool letter_expr_binop<T1, T2, Op>::contains(const letter &let) const {
+	return m_t1.contains(let)|m_t2.contains(let);
+}
+
+template<typename T1, typename T2, typename Op>
+inline size_t letter_expr_binop<T1, T2, Op>::index_of(const letter &let) const
+	throw(exception) {
+	if(m_t1.contains(let)) return m_t1.index_of(let);
+	else return T1::k_size + m_t2.index_of(let);
+}
+
+template<typename T1, typename T2, typename Op>
+inline const letter &letter_expr_binop<T1, T2, Op>::letter_at(size_t i) const
+	throw(exception) {
+	if(i < T1::k_size) return m_t1.letter_at(i);
+	else return m_t2.letter_at(i - T1::k_size);
+}
 
 /**	\brief Bitwise OR (|) operator for two letters
 
