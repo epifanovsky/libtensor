@@ -67,10 +67,10 @@ public:
 	static const size_t k_size = 1;
 
 private:
-	letter &m_let;
+	const letter &m_let;
 
 public:
-	letter_expr_ident(letter &l) : m_let(l) { }
+	letter_expr_ident(const letter &l) : m_let(l) { }
 
 	bool contains(const letter &let) const { return &m_let == &let; }
 	size_t index_of(const letter &let) const throw(exception);
@@ -170,7 +170,7 @@ inline letter_expr< 2, letter_expr_binop<
 		letter_expr<1,letter_expr_ident>,
 		letter_expr<1,letter_expr_ident>
 	> > >
-operator|(letter &l1, letter &l2) {
+operator|(const letter &l1, const letter &l2) {
 	typedef letter_expr<1,letter_expr_ident> expr_t;
 	typedef letter_expr_binop_or<expr_t,expr_t> binop_or_t;
 	typedef letter_expr_binop<expr_t,expr_t,binop_or_t> binop_t;
