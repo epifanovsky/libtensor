@@ -21,6 +21,7 @@ template<typename Label, typename Expr1, typename Expr2>
 class labeled_btensor_expr_op_contract {
 public:
 	static const size_t k_len = Expr1::k_len + Expr2::k_len;
+
 private:
 	Label m_contr; //!< Contracted indexes
 	Expr1 m_expr1; //!< First expression
@@ -30,6 +31,11 @@ public:
 	labeled_btensor_expr_op_contract(const Label &contr,
 		const Expr1 &expr1, const Expr2 &expr2) :
 		m_contr(contr), m_expr1(expr1), m_expr2(expr2) { }
+
+	bool contains(const letter &let) const {
+		return (m_expr1.contains(let) || m_expr2.contains(let)) &&
+			!m_contr.contains(let);
+	}
 };
 
 /**	\brief Contraction of two tensors over one index

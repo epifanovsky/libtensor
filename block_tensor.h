@@ -6,6 +6,7 @@
 #include "block_index_space_i.h"
 #include "block_tensor_i.h"
 #include "tensor.h"
+#include "tensor_ctrl.h"
 
 namespace libtensor {
 
@@ -20,6 +21,7 @@ template<size_t N, typename T, typename Alloc>
 class block_tensor : public block_tensor_i<N, T> {
 public:
 	tensor<N, T, Alloc> m_t;
+	tensor_ctrl<N, T> m_ctrl;
 
 public:
 	//!	\name Construction and destruction
@@ -53,17 +55,17 @@ protected:
 
 template<size_t N, typename T, typename Alloc>
 block_tensor<N, T, Alloc>::block_tensor(const block_index_space_i<N> &bis) :
-	m_t(bis.get_dims()) {
+	m_t(bis.get_dims()), m_ctrl(m_t) {
 }
 
 template<size_t N, typename T, typename Alloc>
 block_tensor<N, T, Alloc>::block_tensor(const block_tensor_i<N, T> &bt) :
-	m_t(bt.get_dims()) {
+	m_t(bt.get_dims()), m_ctrl(m_t) {
 }
 
 template<size_t N, typename T, typename Alloc>
 block_tensor<N, T, Alloc>::block_tensor(const block_tensor<N, T, Alloc> &bt) :
-	m_t(bt.get_dims()) {
+	m_t(bt.get_dims()), m_ctrl(m_t) {
 }
 
 template<size_t N, typename T, typename Alloc>
@@ -83,26 +85,22 @@ tensor_i<N, T> &block_tensor<N, T, Alloc>::on_req_block(const index<N> &idx)
 
 template<size_t N, typename T, typename Alloc>
 void block_tensor<N, T, Alloc>::on_req_prefetch() throw(exception) {
-	throw_exc("block_tensor<N, T, Alloc>", "on_req_prefetch()",
-		"Unhandled event");
+	m_ctrl.req_prefetch();
 }
 
 template<size_t N, typename T, typename Alloc>
 T *block_tensor<N, T, Alloc>::on_req_dataptr() throw(exception) {
-	throw_exc("block_tensor<N, T, Alloc>", "on_req_dataptr()",
-		"Unhandled event");
+	return m_ctrl.req_dataptr();
 }
 
 template<size_t N, typename T, typename Alloc>
 const T *block_tensor<N, T, Alloc>::on_req_const_dataptr() throw(exception) {
-	throw_exc("block_tensor<N, T, Alloc>", "on_req_const_dataptr()",
-		"Unhandled event");
+	return m_ctrl.req_const_dataptr();
 }
 
 template<size_t N, typename T, typename Alloc>
 void block_tensor<N, T, Alloc>::on_ret_dataptr(const T *p) throw(exception) {
-	throw_exc("block_tensor<N, T, Alloc>", "on_ret_dataptr(const T*)",
-		"Unhandled event");
+	m_ctrl.ret_dataptr(p);
 }
 
 } // namespace libtensor
