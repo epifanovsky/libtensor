@@ -23,6 +23,9 @@ class labeled_btensor_expr {
 public:
 	typedef Expr expression_t;
 
+public:
+	static const size_t k_len = expression_t::k_len;
+
 private:
 	Expr m_t;
 
@@ -49,6 +52,9 @@ class labeled_btensor_expr_ident {
 public:
 	typedef labeled_btensor<N, T, Assignable, Label> labeled_btensor_t;
 
+public:
+	static const size_t k_len = 1;
+
 private:
 	labeled_btensor_t &m_t;
 	T m_coeff;
@@ -68,6 +74,9 @@ class labeled_btensor_expr_ident<N, double, Assignable, Label> {
 public:
 	typedef labeled_btensor<N, double, Assignable, Label> labeled_btensor_t;
 
+public:
+	static const size_t k_len = 1;
+
 private:
 	labeled_btensor_t &m_t;
 	double m_coeff;
@@ -86,16 +95,17 @@ public:
 /**	\brief Operation expression
 	\tparam N Tensor order
 	\tparam T Tensor element type
-	\tparam NArg Number of arguments
 	\tparam Op Operation
 	\tparam ExprL LHS expression
 	\tparam ExprR RHS expression
 
 	\ingroup libtensor_btensor_expr
  **/
-template<size_t N, typename T, size_t NArg, typename Op,
-typename ExprL, typename ExprR>
+template<size_t N, typename T, typename Op, typename ExprL, typename ExprR>
 class labeled_btensor_expr_op {
+public:
+	static const size_t k_len = ExprL::k_len + ExprR::k_len;
+
 private:
 	ExprL m_exprl; //!< Left expression
 	ExprR m_exprr; //!< Right expression
@@ -111,8 +121,11 @@ public:
 
 	\ingroup libtensor_btensor_expr
  **/
-template<size_t N, size_t NArg, typename Op, typename ExprL, typename ExprR>
-class labeled_btensor_expr_op<N, double, NArg, Op, ExprL, ExprR> {
+template<size_t N, typename Op, typename ExprL, typename ExprR>
+class labeled_btensor_expr_op<N, double, Op, ExprL, ExprR> {
+public:
+	static const size_t k_len = ExprL::k_len + ExprR::k_len;
+
 private:
 	ExprL m_exprl; //!< Left expression
 	ExprR m_exprr; //!< Right expression
@@ -131,14 +144,15 @@ public:
 };
 
 /**	\brief Addition operation
-	\tparam NArg Total number of arguments
 	\tparam ExprL LHS expression
 	\tparam ExprR RHS expression
 
 	\ingroup libtensor_btensor_expr
  **/
-template<size_t NArg, typename ExprL, typename ExprR>
+template<typename ExprL, typename ExprR>
 class labeled_btensor_expr_op_add {
+public:
+	static const size_t k_len = ExprL::k_len + ExprR::k_len;
 };
 
 /**	\brief Addition of two tensors (plain + plain)
@@ -148,8 +162,8 @@ class labeled_btensor_expr_op_add {
 template<size_t N, typename T, bool AssignableL, typename LabelL,
 	bool AssignableR, typename LabelR>
 labeled_btensor_expr<N, T,
-	labeled_btensor_expr_op < N, T, 2,
-	labeled_btensor_expr_op_add < 2,
+	labeled_btensor_expr_op<N, T,
+	labeled_btensor_expr_op_add<
 		labeled_btensor_expr<N, T,
 			labeled_btensor_expr_ident<N, T, AssignableL, LabelL> >,
 		labeled_btensor_expr<N, T,
@@ -166,307 +180,87 @@ operator+(labeled_btensor<N, T, AssignableL, LabelL> lhs,
 		labeled_btensor_expr_ident<N, T, AssignableL, LabelL> > exprl_t;
 	typedef labeled_btensor_expr<N, T,
 		labeled_btensor_expr_ident<N, T, AssignableR, LabelR> > exprr_t;
-	typedef labeled_btensor_expr_op_add < 2, exprl_t, exprr_t> opadd_t;
-	typedef labeled_btensor_expr_op < N, T, 2, opadd_t, exprl_t, exprr_t>
-		op_t;
-	return labeled_btensor_expr<N, T, op_t > (
+	typedef labeled_btensor_expr_op_add<exprl_t, exprr_t> opadd_t;
+	typedef labeled_btensor_expr_op<N, T, opadd_t, exprl_t, exprr_t> op_t;
+	return labeled_btensor_expr<N, T, op_t>(
 		op_t(exprl_t(lhs), exprr_t(rhs)));
 }
 
-/**	\brief Addition of two tensors (plain + identity)
+/**	\brief Addition of two tensors (plain + expression)
 
 	\ingroup libtensor_btensor_expr
  **/
 template<size_t N, typename T, bool AssignableL, typename LabelL,
-	bool AssignableR, typename LabelR>
+	typename ExprR>
 labeled_btensor_expr<N, T,
-	labeled_btensor_expr_op< N, T, 2,
-	labeled_btensor_expr_op_add< 2,
+	labeled_btensor_expr_op<N, T,
+	labeled_btensor_expr_op_add<
 		labeled_btensor_expr<N, T,
 			labeled_btensor_expr_ident<N, T, AssignableL, LabelL> >,
-		labeled_btensor_expr<N, T,
-			labeled_btensor_expr_ident<N, T, AssignableR, LabelR> > >,
+		labeled_btensor_expr<N, T, ExprR> >,
 	labeled_btensor_expr<N, T,
 		labeled_btensor_expr_ident<N, T, AssignableL, LabelL> >,
-	labeled_btensor_expr<N, T,
-		labeled_btensor_expr_ident<N, T, AssignableR, LabelR>
-	> >
+	labeled_btensor_expr<N, T, ExprR>
+	>
 >
 operator+(labeled_btensor<N, T, AssignableL, LabelL> lhs,
-	labeled_btensor_expr<N, T,
-	labeled_btensor_expr_ident<N, T, AssignableR, LabelR> > rhs) {
+	labeled_btensor_expr<N, T, ExprR> rhs) {
 	typedef labeled_btensor_expr<N, T,
 		labeled_btensor_expr_ident<N, T, AssignableL, LabelL> > exprl_t;
-	typedef labeled_btensor_expr<N, T,
-		labeled_btensor_expr_ident<N, T, AssignableR, LabelR> > exprr_t;
-	typedef labeled_btensor_expr_op_add < 2, exprl_t, exprr_t> opadd_t;
-	typedef labeled_btensor_expr_op < N, T, 2, opadd_t, exprl_t, exprr_t>
-		op_t;
-	return labeled_btensor_expr<N, T, op_t > (
-		op_t(exprl_t(lhs), rhs));
+	typedef labeled_btensor_expr<N, T, ExprR> exprr_t;
+	typedef labeled_btensor_expr_op_add<exprl_t, exprr_t> opadd_t;
+	typedef labeled_btensor_expr_op<N, T, opadd_t, exprl_t, exprr_t> op_t;
+	return labeled_btensor_expr<N, T, op_t>(op_t(exprl_t(lhs), rhs));
 }
 
-/**	\brief Addition of two tensors (identity + plain)
+/**	\brief Addition of two tensors (expression + plain)
 
 	\ingroup libtensor_btensor_expr
  **/
-template<size_t N, typename T, bool AssignableL, typename LabelL,
-	bool AssignableR, typename LabelR>
+template<size_t N, typename T, typename ExprL, bool AssignableR,
+	typename LabelR>
 labeled_btensor_expr<N, T,
-	labeled_btensor_expr_op < N, T, 2,
-	labeled_btensor_expr_op_add < 2,
-		labeled_btensor_expr<N, T,
-			labeled_btensor_expr_ident<N, T, AssignableL, LabelL> >,
+	labeled_btensor_expr_op<N, T,
+	labeled_btensor_expr_op_add<
+		labeled_btensor_expr<N, T, ExprL>,
 		labeled_btensor_expr<N, T,
 			labeled_btensor_expr_ident<N, T, AssignableR, LabelR> > >,
-	labeled_btensor_expr<N, T,
-		labeled_btensor_expr_ident<N, T, AssignableL, LabelL> >,
+	labeled_btensor_expr<N, T, ExprL>,
 	labeled_btensor_expr<N, T,
 		labeled_btensor_expr_ident<N, T, AssignableR, LabelR>
 	> >
 >
-operator+(labeled_btensor_expr<N, T,
-	labeled_btensor_expr_ident<N, T, AssignableL, LabelL> > lhs,
+operator+(labeled_btensor_expr<N, T, ExprL> lhs,
 	labeled_btensor<N, T, AssignableR, LabelR> rhs) {
-	typedef labeled_btensor_expr<N, T,
-		labeled_btensor_expr_ident<N, T, AssignableL, LabelL> > exprl_t;
+	typedef labeled_btensor_expr<N, T, ExprL> exprl_t;
 	typedef labeled_btensor_expr<N, T,
 		labeled_btensor_expr_ident<N, T, AssignableR, LabelR> > exprr_t;
-	typedef labeled_btensor_expr_op_add < 2, exprl_t, exprr_t> opadd_t;
-	typedef labeled_btensor_expr_op < N, T, 2, opadd_t, exprl_t, exprr_t>
-		op_t;
-	return labeled_btensor_expr<N, T, op_t > (
-		op_t(lhs, exprr_t(rhs)));
+	typedef labeled_btensor_expr_op_add<exprl_t, exprr_t> opadd_t;
+	typedef labeled_btensor_expr_op<N, T, opadd_t, exprl_t, exprr_t> op_t;
+	return labeled_btensor_expr<N, T, op_t>(op_t(lhs, exprr_t(rhs)));
 }
 
-/**	\brief Addition of two tensors (identity + identity)
+/**	\brief Addition of two tensors (expression + expression)
 
 	\ingroup libtensor_btensor_expr
  **/
-template<size_t N, typename T, bool AssignableL, typename LabelL,
-	bool AssignableR, typename LabelR>
+template<size_t N, typename T, typename ExprL, typename ExprR>
 labeled_btensor_expr<N, T,
-	labeled_btensor_expr_op<N, T, 2,
-	labeled_btensor_expr_op_add<2,
-		labeled_btensor_expr<N, T,
-			labeled_btensor_expr_ident<N, T, AssignableL, LabelL> >,
-		labeled_btensor_expr<N, T,
-			labeled_btensor_expr_ident<N, T, AssignableR, LabelR> > >,
-	labeled_btensor_expr<N, T,
-		labeled_btensor_expr_ident<N, T, AssignableL, LabelL> >,
-	labeled_btensor_expr<N, T,
-		labeled_btensor_expr_ident<N, T, AssignableR, LabelR>
-	> >
+	labeled_btensor_expr_op<N, T,
+	labeled_btensor_expr_op_add<
+		labeled_btensor_expr<N, T, ExprL>,
+		labeled_btensor_expr<N, T, ExprR> >,
+	labeled_btensor_expr<N, T, ExprL>,
+	labeled_btensor_expr<N, T, ExprR>
+	>
 >
-operator+(labeled_btensor_expr<N, T,
-	labeled_btensor_expr_ident<N, T, AssignableL, LabelL> > lhs,
-	labeled_btensor_expr<N, T,
-	labeled_btensor_expr_ident<N, T, AssignableR, LabelR> > rhs) {
-	typedef labeled_btensor_expr<N, T,
-		labeled_btensor_expr_ident<N, T, AssignableL, LabelL> > exprl_t;
-	typedef labeled_btensor_expr<N, T,
-		labeled_btensor_expr_ident<N, T, AssignableR, LabelR> > exprr_t;
-	typedef labeled_btensor_expr_op_add < 2, exprl_t, exprr_t> opadd_t;
-	typedef labeled_btensor_expr_op < N, T, 2, opadd_t, exprl_t, exprr_t>
-		op_t;
-	return labeled_btensor_expr<N, T, op_t > (
-		op_t(lhs, rhs));
-}
-
-/**	\brief Addition of a sum (lhs) and a tensor (rhs, plain)
-
-	\ingroup libtensor_btensor_expr
- **/
-template<size_t N, typename T, size_t NArgL, typename Arg1L, typename Arg2L,
-	bool AssignableR, typename LabelR>
-labeled_btensor_expr<N, T, labeled_btensor_expr_op<N, T, NArgL + 1,
-labeled_btensor_expr_op_add < NArgL + 1,
-
-labeled_btensor_expr< N, T, labeled_btensor_expr_op< N, T, NArgL,
-labeled_btensor_expr_op_add< NArgL, Arg1L, Arg2L >, Arg1L, Arg2L > >,
-
-labeled_btensor_expr<N, T, labeled_btensor_expr_ident<N, T, AssignableR, LabelR> > >,
-
-labeled_btensor_expr< N, T, labeled_btensor_expr_op< N, T, NArgL,
-labeled_btensor_expr_op_add< NArgL, Arg1L, Arg2L >, Arg1L, Arg2L > >,
-
-labeled_btensor_expr<N, T, labeled_btensor_expr_ident<N, T, AssignableR, LabelR> > >
->
-operator+(labeled_btensor_expr<N, T, labeled_btensor_expr_op< N, T, NArgL,
-	labeled_btensor_expr_op_add<NArgL, Arg1L, Arg2L >, Arg1L, Arg2L > > lhs,
-	labeled_btensor<N, T, AssignableR, LabelR> rhs) {
-	typedef labeled_btensor_expr< N, T,
-		labeled_btensor_expr_op< N, T, NArgL,
-		labeled_btensor_expr_op_add< NArgL, Arg1L, Arg2L >,
-		Arg1L, Arg2L > > exprl_t;
-	typedef labeled_btensor_expr<N, T,
-		labeled_btensor_expr_ident<N, T, AssignableR, LabelR> > exprr_t;
-	typedef labeled_btensor_expr_op_add < NArgL + 1,
-		exprl_t, exprr_t> opadd_t;
-	typedef labeled_btensor_expr_op < N, T, NArgL + 1, opadd_t,
-		exprl_t, exprr_t> op_t;
-	return labeled_btensor_expr<N, T, op_t > (
-		op_t(exprl_t(lhs), exprr_t(rhs)));
-}
-
-/**	\brief Addition of a sum (lhs) and a tensor (rhs, identity)
-
-	\ingroup libtensor_btensor_expr
- **/
-template<size_t N, typename T, size_t NArgL, typename Arg1L, typename Arg2L,
-	bool AssignableR, typename LabelR>
-labeled_btensor_expr<N, T, labeled_btensor_expr_op<N, T, NArgL + 1,
-labeled_btensor_expr_op_add < NArgL + 1,
-
-labeled_btensor_expr< N, T, labeled_btensor_expr_op< N, T, NArgL,
-labeled_btensor_expr_op_add< NArgL, Arg1L, Arg2L >, Arg1L, Arg2L > >,
-
-labeled_btensor_expr<N, T, labeled_btensor_expr_ident<N, T, AssignableR, LabelR> > >,
-
-labeled_btensor_expr< N, T, labeled_btensor_expr_op< N, T, NArgL,
-labeled_btensor_expr_op_add< NArgL, Arg1L, Arg2L >, Arg1L, Arg2L > >,
-
-labeled_btensor_expr<N, T, labeled_btensor_expr_ident<N, T, AssignableR, LabelR> > >
->
-operator+(labeled_btensor_expr<N, T, labeled_btensor_expr_op< N, T, NArgL,
-	labeled_btensor_expr_op_add<NArgL, Arg1L, Arg2L >, Arg1L, Arg2L > > lhs,
-	labeled_btensor_expr<N, T,
-	labeled_btensor_expr_ident<N, T, AssignableR, LabelR> > rhs) {
-	typedef labeled_btensor_expr< N, T,
-		labeled_btensor_expr_op< N, T, NArgL,
-		labeled_btensor_expr_op_add< NArgL, Arg1L, Arg2L >,
-		Arg1L, Arg2L > > exprl_t;
-	typedef labeled_btensor_expr<N, T,
-		labeled_btensor_expr_ident<N, T, AssignableR, LabelR> > exprr_t;
-	typedef labeled_btensor_expr_op_add < NArgL + 1,
-		exprl_t, exprr_t> opadd_t;
-	typedef labeled_btensor_expr_op < N, T, NArgL + 1, opadd_t,
-		exprl_t, exprr_t> op_t;
-	return labeled_btensor_expr<N, T, op_t > (
-		op_t(exprl_t(lhs), rhs));
-}
-
-/**	\brief Addition of a tensor (lhs, plain) and a sum (rhs)
-
-	\ingroup libtensor_btensor_expr
- **/
-template<size_t N, typename T, bool AssignableL, typename LabelL,
-	size_t NArgR, typename Arg1R, typename Arg2R>
-labeled_btensor_expr<N, T, labeled_btensor_expr_op<N, T, NArgR + 1,
-labeled_btensor_expr_op_add < NArgR + 1,
-
-labeled_btensor_expr<N, T, labeled_btensor_expr_ident<N, T, AssignableL, LabelL> >,
-
-labeled_btensor_expr< N, T, labeled_btensor_expr_op< N, T, NArgR,
-labeled_btensor_expr_op_add< NArgR, Arg1R, Arg2R >, Arg1R, Arg2R > > >,
-
-labeled_btensor_expr<N, T, labeled_btensor_expr_ident<N, T, AssignableL, LabelL> >,
-
-labeled_btensor_expr< N, T, labeled_btensor_expr_op< N, T, NArgR,
-labeled_btensor_expr_op_add< NArgR, Arg1R, Arg2R >, Arg1R, Arg2R > >
-
-> >
-operator+(labeled_btensor<N, T, AssignableL, LabelL> lhs,
-	labeled_btensor_expr<N, T, labeled_btensor_expr_op< N, T, NArgR,
-	labeled_btensor_expr_op_add<NArgR, Arg1R, Arg2R >,
-	Arg1R, Arg2R > > rhs) {
-
-	typedef labeled_btensor_expr<N, T,
-		labeled_btensor_expr_ident<N, T, AssignableL, LabelL> > exprl_t;
-	typedef labeled_btensor_expr< N, T,
-		labeled_btensor_expr_op< N, T, NArgR,
-		labeled_btensor_expr_op_add< NArgR, Arg1R, Arg2R >,
-		Arg1R, Arg2R > > exprr_t;
-	typedef labeled_btensor_expr_op_add < NArgR + 1,
-		exprl_t, exprr_t> opadd_t;
-	typedef labeled_btensor_expr_op < N, T, NArgR + 1, opadd_t,
-		exprl_t, exprr_t> op_t;
-	return labeled_btensor_expr<N, T, op_t > (
-		op_t(exprl_t(lhs), exprr_t(rhs)));
-}
-
-/**	\brief Addition of a tensor (lhs, identity) and a sum (rhs)
-
-	\ingroup libtensor_btensor_expr
- **/
-template<size_t N, typename T, bool AssignableL, typename LabelL,
-size_t NArgR, typename Arg1R, typename Arg2R>
-labeled_btensor_expr<N, T, labeled_btensor_expr_op<N, T, NArgR + 1,
-labeled_btensor_expr_op_add < NArgR + 1,
-
-labeled_btensor_expr<N, T, labeled_btensor_expr_ident<N, T, AssignableL, LabelL> >,
-
-labeled_btensor_expr< N, T, labeled_btensor_expr_op< N, T, NArgR,
-labeled_btensor_expr_op_add< NArgR, Arg1R, Arg2R >, Arg1R, Arg2R > > >,
-
-labeled_btensor_expr<N, T, labeled_btensor_expr_ident<N, T, AssignableL, LabelL> >,
-
-labeled_btensor_expr< N, T, labeled_btensor_expr_op< N, T, NArgR,
-labeled_btensor_expr_op_add< NArgR, Arg1R, Arg2R >, Arg1R, Arg2R > >
-
-> >
-operator+(labeled_btensor_expr<N, T,
-	labeled_btensor_expr_ident<N, T, AssignableL, LabelL> > lhs,
-	labeled_btensor_expr<N, T, labeled_btensor_expr_op< N, T, NArgR,
-	labeled_btensor_expr_op_add<NArgR, Arg1R, Arg2R >,
-	Arg1R, Arg2R > > rhs) {
-
-	typedef labeled_btensor_expr<N, T,
-		labeled_btensor_expr_ident<N, T, AssignableL, LabelL> > exprl_t;
-	typedef labeled_btensor_expr< N, T,
-		labeled_btensor_expr_op< N, T, NArgR,
-		labeled_btensor_expr_op_add< NArgR, Arg1R, Arg2R >,
-		Arg1R, Arg2R > > exprr_t;
-	typedef labeled_btensor_expr_op_add < NArgR + 1,
-		exprl_t, exprr_t> opadd_t;
-	typedef labeled_btensor_expr_op < N, T, NArgR + 1, opadd_t,
-		exprl_t, exprr_t> op_t;
-	return labeled_btensor_expr<N, T, op_t > (
-		op_t(lhs, exprr_t(rhs)));
-}
-
-/**	\brief Addition of two sums
-
-	\ingroup libtensor_btensor_expr
- **/
-template<size_t N, typename T, size_t NArgL, typename Arg1L, typename Arg2L,
-size_t NArgR, typename Arg1R, typename Arg2R>
-labeled_btensor_expr<N, T, labeled_btensor_expr_op< N, T, NArgL + NArgR,
-labeled_btensor_expr_op_add < NArgL + NArgR,
-
-labeled_btensor_expr< N, T, labeled_btensor_expr_op< N, T, NArgL,
-labeled_btensor_expr_op_add< NArgL, Arg1L, Arg2L >, Arg1L, Arg2L > >,
-
-labeled_btensor_expr< N, T, labeled_btensor_expr_op< N, T, NArgR,
-labeled_btensor_expr_op_add< NArgR, Arg1R, Arg2R >, Arg1R, Arg2R > > >,
-
-labeled_btensor_expr< N, T, labeled_btensor_expr_op< N, T, NArgL,
-labeled_btensor_expr_op_add< NArgL, Arg1L, Arg2L >, Arg1L, Arg2L > >,
-
-labeled_btensor_expr< N, T, labeled_btensor_expr_op< N, T, NArgR,
-labeled_btensor_expr_op_add< NArgR, Arg1R, Arg2R >, Arg1R, Arg2R > >
-
-> >
-operator+(labeled_btensor_expr<N, T, labeled_btensor_expr_op< N, T, NArgL,
-	labeled_btensor_expr_op_add<NArgL, Arg1L, Arg2L >, Arg1L, Arg2L > > lhs,
-	labeled_btensor_expr<N, T, labeled_btensor_expr_op< N, T, NArgR,
-	labeled_btensor_expr_op_add<NArgR, Arg1R, Arg2R >,
-	Arg1R, Arg2R > > rhs) {
-
-	typedef labeled_btensor_expr< N, T,
-		labeled_btensor_expr_op< N, T, NArgL,
-		labeled_btensor_expr_op_add< NArgL, Arg1L, Arg2L >,
-		Arg1L, Arg2L > > exprl_t;
-	typedef labeled_btensor_expr< N, T,
-		labeled_btensor_expr_op< N, T, NArgR,
-		labeled_btensor_expr_op_add< NArgR, Arg1R, Arg2R >,
-		Arg1R, Arg2R > > exprr_t;
-	typedef labeled_btensor_expr_op_add < NArgL + NArgR,
-		exprl_t, exprr_t> opadd_t;
-	typedef labeled_btensor_expr_op < N, T, NArgL + NArgR, opadd_t,
-		exprl_t, exprr_t> op_t;
-	return labeled_btensor_expr<N, T, op_t > (
-		op_t(exprl_t(lhs), exprr_t(rhs)));
+operator+(labeled_btensor_expr<N, T, ExprL> lhs,
+	labeled_btensor_expr<N, T, ExprR> rhs) {
+	typedef labeled_btensor_expr<N, T, ExprL> exprl_t;
+	typedef labeled_btensor_expr<N, T, ExprR> exprr_t;
+	typedef labeled_btensor_expr_op_add<exprl_t, exprr_t> opadd_t;
+	typedef labeled_btensor_expr_op<N, T, opadd_t, exprl_t, exprr_t> op_t;
+	return labeled_btensor_expr<N, T, op_t>(op_t(lhs, rhs));
 }
 
 /**	\brief Multiplication of a tensor (rhs) by a scalar (lhs)
