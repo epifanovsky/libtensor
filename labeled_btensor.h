@@ -136,7 +136,11 @@ inline const letter &labeled_btensor<N, T, true, Label>::letter_at(
 template<size_t N, typename T, typename Label> template<typename Expr>
 void labeled_btensor<N, T, true, Label>::operator=(
 	const labeled_btensor_expr<N, T, Expr> &expr) throw(exception) {
-
+	for(size_t i = 0; i < N; i++) if(!expr.contains(letter_at(i))) {
+		throw_exc("labeled_btensor<N, T, true, Label>",
+			"operator=(const labeled_btensor_expr<N, T, Expr>&)",
+			"Index not found in the expression");
+	}
 }
 
 } // namespace libtensor

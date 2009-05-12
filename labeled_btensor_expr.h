@@ -38,6 +38,10 @@ public:
 		m_t(e.m_t) {
 	}
 
+	bool contains(const letter &let) const {
+		return m_t.contains(let);
+	}
+
 	void multiply(T coeff) {
 		m_t.multiply(coeff);
 	}
@@ -63,6 +67,10 @@ public:
 
 	labeled_btensor_expr_ident(labeled_btensor_t &t) : m_t(t) {
 	}
+
+	bool contains(const letter &let) const {
+		return m_t.contains(let);
+	}
 };
 
 /**	\brief Identity expression (specialized for double)
@@ -85,6 +93,10 @@ public:
 
 	labeled_btensor_expr_ident(labeled_btensor_t &t, double coeff = 1.0) :
 		m_t(t), m_coeff(coeff) {
+	}
+
+	bool contains(const letter &let) const {
+		return m_t.contains(let);
 	}
 
 	void multiply(double coeff) {
@@ -115,6 +127,10 @@ public:
 	labeled_btensor_expr_op(const ExprL &exprl, const ExprR &exprr) :
 		m_exprl(exprl), m_exprr(exprr) {
 	}
+
+	bool contains(const letter &let) const {
+		return m_exprl.contains(let) && m_exprr.contains(let);
+	}
 };
 
 /**	\brief Operation expression (specialized for double)
@@ -136,6 +152,10 @@ public:
 	labeled_btensor_expr_op(const ExprL &exprl, const ExprR &exprr,
 		double coeff = 1.0) : m_exprl(exprl), m_exprr(exprr),
 		m_coeff(coeff) {
+	}
+
+	bool contains(const letter &let) const {
+		return m_exprl.contains(let) && m_exprr.contains(let);
 	}
 
 	void multiply(double coeff) {
