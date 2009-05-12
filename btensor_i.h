@@ -3,32 +3,34 @@
 
 #include "defs.h"
 #include "exception.h"
-#include "index.h"
-#include "symmetry_i.h"
-#include "tensor_i.h"
+#include "block_tensor_i.h"
+#include "labeled_btensor.h"
 
 namespace libtensor {
 
-template<size_t N, typename T> class block_tensor_ctrl;
-
 /**	\brief Block tensor interface
-
-	\param N Block %tensor order.
-	\param T Block %tensor element type.
-
+	\tparam N Block %tensor order.
+	\tparam T Block %tensor element type.
 
 	\ingroup libtensor
 **/
 template<size_t N, typename T>
-class btensor_i : public tensor_i<N,T> {
-	friend class block_tensor_ctrl<N,T>;
-
-protected:
-	virtual void on_req_symmetry(const symmetry_i<N> &sym)
-		throw(exception) = 0;
-	virtual tensor_i<N,T> &on_req_unique_block(const index<N> &idx)
-		throw(exception) = 0;
+class btensor_i : public block_tensor_i<N, T> {
+public:
+	/**	\brief Attaches a label to this %tensor and returns it as a
+			labeled %tensor
+	 **/
+	template<typename ExprT>
+	labeled_btensor<N, T, false, letter_expr<N, ExprT> > operator()(
+		letter_expr<N, ExprT> expr);
 };
+
+template<size_t N, typename T> template<typename ExprT>
+labeled_btensor<N, T, false, letter_expr<N, ExprT> >
+btensor_i<N, T>::operator()(letter_expr<N, ExprT> expr) {
+	return labeled_btensor<N, T, false, letter_expr<N, ExprT> >(
+		*this, expr);
+}
 
 } // namespace libtensor
 

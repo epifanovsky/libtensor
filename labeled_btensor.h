@@ -8,28 +8,29 @@
 
 namespace libtensor {
 
-template<size_t N, typename T, typename Traits> class btensor;
+template<size_t N, typename T> class btensor_i;
 
 /**	\brief Block %tensor with an attached label
 	\tparam N Tensor order.
-	\tparam Traits Tensor traits.
-	\tparam LabelT Label expression.
+	\tparam T Tensor element type.
+	\tparam Assignable Whether the %tensor can be an l-value.
+	\tparam Label Label expression.
 
 	\ingroup libtensor
  **/
-template<size_t N, typename T, typename Traits, typename LabelT>
+template<size_t N, typename T, bool Assignable, typename Label>
 class labeled_btensor {
 private:
 	typedef T element_t;
-	typedef typename Traits::allocator_t allocator_t;
 
 private:
-	btensor<N, T, Traits> &m_t;
-	letter_expr<N, LabelT> m_label;
+	btensor_i<N, T> &m_bt;
+	letter_expr<N, Label> m_label;
 
 public:
-	labeled_btensor(btensor<N, T, Traits> &t,
-		const letter_expr<N, LabelT> label);
+	/**	\brief Constructs the labeled block %tensor
+	 **/
+	labeled_btensor(btensor_i<N, T> &bt, const letter_expr<N, Label> label);
 
 	/**	\brief Returns whether the label contains a %letter
 	 **/
@@ -44,26 +45,26 @@ public:
 	const letter &letter_at(size_t i) const throw(exception);
 };
 
-template<size_t N, typename T, typename Traits, typename LabelT>
-inline labeled_btensor<N, T, Traits, LabelT>::labeled_btensor(
-	btensor<N, T, Traits> &t, const letter_expr<N, LabelT> label) :
-	m_t(t), m_label(label) {
+template<size_t N, typename T, bool Assignable, typename Label>
+inline labeled_btensor<N, T, Assignable, Label>::labeled_btensor(
+	btensor_i<N, T> &bt, const letter_expr<N, Label> label) :
+	m_bt(bt), m_label(label) {
 }
 
-template<size_t N, typename T, typename Traits, typename LabelT>
-inline bool labeled_btensor<N, T, Traits, LabelT>::contains(
+template<size_t N, typename T, bool Assignable, typename Label>
+inline bool labeled_btensor<N, T, Assignable, Label>::contains(
 	const letter &let) const {
 	return m_label.contains(let);
 }
 
-template<size_t N, typename T, typename Traits, typename LabelT>
-inline size_t labeled_btensor<N, T, Traits, LabelT>::index_of(
+template<size_t N, typename T, bool Assignable, typename Label>
+inline size_t labeled_btensor<N, T, Assignable, Label>::index_of(
 	const letter &let) const throw(exception) {
 	return m_label.index_of(let);
 }
 
-template<size_t N, typename T, typename Traits, typename LabelT>
-inline const letter &labeled_btensor<N, T, Traits, LabelT>::letter_at(
+template<size_t N, typename T, bool Assignable, typename Label>
+inline const letter &labeled_btensor<N, T, Assignable, Label>::letter_at(
 	size_t i) const throw(exception) {
 	return m_label.letter_at(i);
 }

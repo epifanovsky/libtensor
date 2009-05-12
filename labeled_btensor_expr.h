@@ -44,10 +44,10 @@ public:
 
 	\ingroup libtensor_btensor_expr
  **/
-template<size_t N, typename T, typename Traits, typename Label>
+template<size_t N, typename T, bool Assignable, typename Label>
 class labeled_btensor_expr_ident {
 public:
-	typedef labeled_btensor<N, T, Traits, Label> labeled_btensor_t;
+	typedef labeled_btensor<N, T, Assignable, Label> labeled_btensor_t;
 
 private:
 	labeled_btensor_t &m_t;
@@ -63,10 +63,10 @@ public:
 
 	\ingroup libtensor_btensor_expr
  **/
-template<size_t N, typename Traits, typename Label>
-class labeled_btensor_expr_ident<N, double, Traits, Label> {
+template<size_t N, bool Assignable, typename Label>
+class labeled_btensor_expr_ident<N, double, Assignable, Label> {
 public:
-	typedef labeled_btensor<N, double, Traits, Label> labeled_btensor_t;
+	typedef labeled_btensor<N, double, Assignable, Label> labeled_btensor_t;
 
 private:
 	labeled_btensor_t &m_t;
@@ -145,21 +145,27 @@ class labeled_btensor_expr_op_add {
 
 	\ingroup libtensor_btensor_expr
  **/
-template<size_t N, typename T, typename TraitsL, typename LabelL,
-typename TraitsR, typename LabelR>
+template<size_t N, typename T, bool AssignableL, typename LabelL,
+	bool AssignableR, typename LabelR>
 labeled_btensor_expr<N, T,
-labeled_btensor_expr_op < N, T, 2, labeled_btensor_expr_op_add < 2,
-labeled_btensor_expr<N, T, labeled_btensor_expr_ident<N, T, TraitsL, LabelL> >,
-labeled_btensor_expr<N, T, labeled_btensor_expr_ident<N, T, TraitsR, LabelR> > >,
-labeled_btensor_expr<N, T, labeled_btensor_expr_ident<N, T, TraitsL, LabelL> >,
-labeled_btensor_expr<N, T, labeled_btensor_expr_ident<N, T, TraitsR, LabelR> > >
+	labeled_btensor_expr_op < N, T, 2,
+	labeled_btensor_expr_op_add < 2,
+		labeled_btensor_expr<N, T,
+			labeled_btensor_expr_ident<N, T, AssignableL, LabelL> >,
+		labeled_btensor_expr<N, T,
+			labeled_btensor_expr_ident<N, T, AssignableR, LabelR> > >,
+	labeled_btensor_expr<N, T,
+		labeled_btensor_expr_ident<N, T, AssignableL, LabelL> >,
+	labeled_btensor_expr<N, T,
+		labeled_btensor_expr_ident<N, T, AssignableR, LabelR>
+	> >
 >
-operator+(labeled_btensor<N, T, TraitsL, LabelL> lhs,
-	labeled_btensor<N, T, TraitsR, LabelR> rhs) {
+operator+(labeled_btensor<N, T, AssignableL, LabelL> lhs,
+	labeled_btensor<N, T, AssignableR, LabelR> rhs) {
 	typedef labeled_btensor_expr<N, T,
-		labeled_btensor_expr_ident<N, T, TraitsL, LabelL> > exprl_t;
+		labeled_btensor_expr_ident<N, T, AssignableL, LabelL> > exprl_t;
 	typedef labeled_btensor_expr<N, T,
-		labeled_btensor_expr_ident<N, T, TraitsR, LabelR> > exprr_t;
+		labeled_btensor_expr_ident<N, T, AssignableR, LabelR> > exprr_t;
 	typedef labeled_btensor_expr_op_add < 2, exprl_t, exprr_t> opadd_t;
 	typedef labeled_btensor_expr_op < N, T, 2, opadd_t, exprl_t, exprr_t>
 		op_t;
@@ -171,22 +177,28 @@ operator+(labeled_btensor<N, T, TraitsL, LabelL> lhs,
 
 	\ingroup libtensor_btensor_expr
  **/
-template<size_t N, typename T, typename TraitsL, typename LabelL,
-typename TraitsR, typename LabelR>
+template<size_t N, typename T, bool AssignableL, typename LabelL,
+	bool AssignableR, typename LabelR>
 labeled_btensor_expr<N, T,
-labeled_btensor_expr_op < N, T, 2, labeled_btensor_expr_op_add < 2,
-labeled_btensor_expr<N, T, labeled_btensor_expr_ident<N, T, TraitsL, LabelL> >,
-labeled_btensor_expr<N, T, labeled_btensor_expr_ident<N, T, TraitsR, LabelR> > >,
-labeled_btensor_expr<N, T, labeled_btensor_expr_ident<N, T, TraitsL, LabelL> >,
-labeled_btensor_expr<N, T, labeled_btensor_expr_ident<N, T, TraitsR, LabelR> > >
->
-operator+(labeled_btensor<N, T, TraitsL, LabelL> lhs,
+	labeled_btensor_expr_op< N, T, 2,
+	labeled_btensor_expr_op_add< 2,
+		labeled_btensor_expr<N, T,
+			labeled_btensor_expr_ident<N, T, AssignableL, LabelL> >,
+		labeled_btensor_expr<N, T,
+			labeled_btensor_expr_ident<N, T, AssignableR, LabelR> > >,
 	labeled_btensor_expr<N, T,
-	labeled_btensor_expr_ident<N, T, TraitsR, LabelR> > rhs) {
+		labeled_btensor_expr_ident<N, T, AssignableL, LabelL> >,
+	labeled_btensor_expr<N, T,
+		labeled_btensor_expr_ident<N, T, AssignableR, LabelR>
+	> >
+>
+operator+(labeled_btensor<N, T, AssignableL, LabelL> lhs,
+	labeled_btensor_expr<N, T,
+	labeled_btensor_expr_ident<N, T, AssignableR, LabelR> > rhs) {
 	typedef labeled_btensor_expr<N, T,
-		labeled_btensor_expr_ident<N, T, TraitsL, LabelL> > exprl_t;
+		labeled_btensor_expr_ident<N, T, AssignableL, LabelL> > exprl_t;
 	typedef labeled_btensor_expr<N, T,
-		labeled_btensor_expr_ident<N, T, TraitsR, LabelR> > exprr_t;
+		labeled_btensor_expr_ident<N, T, AssignableR, LabelR> > exprr_t;
 	typedef labeled_btensor_expr_op_add < 2, exprl_t, exprr_t> opadd_t;
 	typedef labeled_btensor_expr_op < N, T, 2, opadd_t, exprl_t, exprr_t>
 		op_t;
@@ -198,22 +210,28 @@ operator+(labeled_btensor<N, T, TraitsL, LabelL> lhs,
 
 	\ingroup libtensor_btensor_expr
  **/
-template<size_t N, typename T, typename TraitsL, typename LabelL,
-typename TraitsR, typename LabelR>
+template<size_t N, typename T, bool AssignableL, typename LabelL,
+	bool AssignableR, typename LabelR>
 labeled_btensor_expr<N, T,
-labeled_btensor_expr_op < N, T, 2, labeled_btensor_expr_op_add < 2,
-labeled_btensor_expr<N, T, labeled_btensor_expr_ident<N, T, TraitsL, LabelL> >,
-labeled_btensor_expr<N, T, labeled_btensor_expr_ident<N, T, TraitsR, LabelR> > >,
-labeled_btensor_expr<N, T, labeled_btensor_expr_ident<N, T, TraitsL, LabelL> >,
-labeled_btensor_expr<N, T, labeled_btensor_expr_ident<N, T, TraitsR, LabelR> > >
+	labeled_btensor_expr_op < N, T, 2,
+	labeled_btensor_expr_op_add < 2,
+		labeled_btensor_expr<N, T,
+			labeled_btensor_expr_ident<N, T, AssignableL, LabelL> >,
+		labeled_btensor_expr<N, T,
+			labeled_btensor_expr_ident<N, T, AssignableR, LabelR> > >,
+	labeled_btensor_expr<N, T,
+		labeled_btensor_expr_ident<N, T, AssignableL, LabelL> >,
+	labeled_btensor_expr<N, T,
+		labeled_btensor_expr_ident<N, T, AssignableR, LabelR>
+	> >
 >
 operator+(labeled_btensor_expr<N, T,
-	labeled_btensor_expr_ident<N, T, TraitsL, LabelL> > lhs,
-	labeled_btensor<N, T, TraitsR, LabelR> rhs) {
+	labeled_btensor_expr_ident<N, T, AssignableL, LabelL> > lhs,
+	labeled_btensor<N, T, AssignableR, LabelR> rhs) {
 	typedef labeled_btensor_expr<N, T,
-		labeled_btensor_expr_ident<N, T, TraitsL, LabelL> > exprl_t;
+		labeled_btensor_expr_ident<N, T, AssignableL, LabelL> > exprl_t;
 	typedef labeled_btensor_expr<N, T,
-		labeled_btensor_expr_ident<N, T, TraitsR, LabelR> > exprr_t;
+		labeled_btensor_expr_ident<N, T, AssignableR, LabelR> > exprr_t;
 	typedef labeled_btensor_expr_op_add < 2, exprl_t, exprr_t> opadd_t;
 	typedef labeled_btensor_expr_op < N, T, 2, opadd_t, exprl_t, exprr_t>
 		op_t;
@@ -225,23 +243,29 @@ operator+(labeled_btensor_expr<N, T,
 
 	\ingroup libtensor_btensor_expr
  **/
-template<size_t N, typename T, typename TraitsL, typename LabelL,
-typename TraitsR, typename LabelR>
+template<size_t N, typename T, bool AssignableL, typename LabelL,
+	bool AssignableR, typename LabelR>
 labeled_btensor_expr<N, T,
-labeled_btensor_expr_op < N, T, 2, labeled_btensor_expr_op_add < 2,
-labeled_btensor_expr<N, T, labeled_btensor_expr_ident<N, T, TraitsL, LabelL> >,
-labeled_btensor_expr<N, T, labeled_btensor_expr_ident<N, T, TraitsR, LabelR> > >,
-labeled_btensor_expr<N, T, labeled_btensor_expr_ident<N, T, TraitsL, LabelL> >,
-labeled_btensor_expr<N, T, labeled_btensor_expr_ident<N, T, TraitsR, LabelR> > >
+	labeled_btensor_expr_op<N, T, 2,
+	labeled_btensor_expr_op_add<2,
+		labeled_btensor_expr<N, T,
+			labeled_btensor_expr_ident<N, T, AssignableL, LabelL> >,
+		labeled_btensor_expr<N, T,
+			labeled_btensor_expr_ident<N, T, AssignableR, LabelR> > >,
+	labeled_btensor_expr<N, T,
+		labeled_btensor_expr_ident<N, T, AssignableL, LabelL> >,
+	labeled_btensor_expr<N, T,
+		labeled_btensor_expr_ident<N, T, AssignableR, LabelR>
+	> >
 >
 operator+(labeled_btensor_expr<N, T,
-	labeled_btensor_expr_ident<N, T, TraitsL, LabelL> > lhs,
+	labeled_btensor_expr_ident<N, T, AssignableL, LabelL> > lhs,
 	labeled_btensor_expr<N, T,
-	labeled_btensor_expr_ident<N, T, TraitsR, LabelR> > rhs) {
+	labeled_btensor_expr_ident<N, T, AssignableR, LabelR> > rhs) {
 	typedef labeled_btensor_expr<N, T,
-		labeled_btensor_expr_ident<N, T, TraitsL, LabelL> > exprl_t;
+		labeled_btensor_expr_ident<N, T, AssignableL, LabelL> > exprl_t;
 	typedef labeled_btensor_expr<N, T,
-		labeled_btensor_expr_ident<N, T, TraitsR, LabelR> > exprr_t;
+		labeled_btensor_expr_ident<N, T, AssignableR, LabelR> > exprr_t;
 	typedef labeled_btensor_expr_op_add < 2, exprl_t, exprr_t> opadd_t;
 	typedef labeled_btensor_expr_op < N, T, 2, opadd_t, exprl_t, exprr_t>
 		op_t;
@@ -254,29 +278,29 @@ operator+(labeled_btensor_expr<N, T,
 	\ingroup libtensor_btensor_expr
  **/
 template<size_t N, typename T, size_t NArgL, typename Arg1L, typename Arg2L,
-typename TraitsR, typename LabelR>
+	bool AssignableR, typename LabelR>
 labeled_btensor_expr<N, T, labeled_btensor_expr_op<N, T, NArgL + 1,
 labeled_btensor_expr_op_add < NArgL + 1,
 
 labeled_btensor_expr< N, T, labeled_btensor_expr_op< N, T, NArgL,
 labeled_btensor_expr_op_add< NArgL, Arg1L, Arg2L >, Arg1L, Arg2L > >,
 
-labeled_btensor_expr<N, T, labeled_btensor_expr_ident<N, T, TraitsR, LabelR> > >,
+labeled_btensor_expr<N, T, labeled_btensor_expr_ident<N, T, AssignableR, LabelR> > >,
 
 labeled_btensor_expr< N, T, labeled_btensor_expr_op< N, T, NArgL,
 labeled_btensor_expr_op_add< NArgL, Arg1L, Arg2L >, Arg1L, Arg2L > >,
 
-labeled_btensor_expr<N, T, labeled_btensor_expr_ident<N, T, TraitsR, LabelR> > >
+labeled_btensor_expr<N, T, labeled_btensor_expr_ident<N, T, AssignableR, LabelR> > >
 >
 operator+(labeled_btensor_expr<N, T, labeled_btensor_expr_op< N, T, NArgL,
 	labeled_btensor_expr_op_add<NArgL, Arg1L, Arg2L >, Arg1L, Arg2L > > lhs,
-	labeled_btensor<N, T, TraitsR, LabelR> rhs) {
+	labeled_btensor<N, T, AssignableR, LabelR> rhs) {
 	typedef labeled_btensor_expr< N, T,
 		labeled_btensor_expr_op< N, T, NArgL,
 		labeled_btensor_expr_op_add< NArgL, Arg1L, Arg2L >,
 		Arg1L, Arg2L > > exprl_t;
 	typedef labeled_btensor_expr<N, T,
-		labeled_btensor_expr_ident<N, T, TraitsR, LabelR> > exprr_t;
+		labeled_btensor_expr_ident<N, T, AssignableR, LabelR> > exprr_t;
 	typedef labeled_btensor_expr_op_add < NArgL + 1,
 		exprl_t, exprr_t> opadd_t;
 	typedef labeled_btensor_expr_op < N, T, NArgL + 1, opadd_t,
@@ -290,30 +314,30 @@ operator+(labeled_btensor_expr<N, T, labeled_btensor_expr_op< N, T, NArgL,
 	\ingroup libtensor_btensor_expr
  **/
 template<size_t N, typename T, size_t NArgL, typename Arg1L, typename Arg2L,
-typename TraitsR, typename LabelR>
+	bool AssignableR, typename LabelR>
 labeled_btensor_expr<N, T, labeled_btensor_expr_op<N, T, NArgL + 1,
 labeled_btensor_expr_op_add < NArgL + 1,
 
 labeled_btensor_expr< N, T, labeled_btensor_expr_op< N, T, NArgL,
 labeled_btensor_expr_op_add< NArgL, Arg1L, Arg2L >, Arg1L, Arg2L > >,
 
-labeled_btensor_expr<N, T, labeled_btensor_expr_ident<N, T, TraitsR, LabelR> > >,
+labeled_btensor_expr<N, T, labeled_btensor_expr_ident<N, T, AssignableR, LabelR> > >,
 
 labeled_btensor_expr< N, T, labeled_btensor_expr_op< N, T, NArgL,
 labeled_btensor_expr_op_add< NArgL, Arg1L, Arg2L >, Arg1L, Arg2L > >,
 
-labeled_btensor_expr<N, T, labeled_btensor_expr_ident<N, T, TraitsR, LabelR> > >
+labeled_btensor_expr<N, T, labeled_btensor_expr_ident<N, T, AssignableR, LabelR> > >
 >
 operator+(labeled_btensor_expr<N, T, labeled_btensor_expr_op< N, T, NArgL,
 	labeled_btensor_expr_op_add<NArgL, Arg1L, Arg2L >, Arg1L, Arg2L > > lhs,
 	labeled_btensor_expr<N, T,
-	labeled_btensor_expr_ident<N, T, TraitsR, LabelR> > rhs) {
+	labeled_btensor_expr_ident<N, T, AssignableR, LabelR> > rhs) {
 	typedef labeled_btensor_expr< N, T,
 		labeled_btensor_expr_op< N, T, NArgL,
 		labeled_btensor_expr_op_add< NArgL, Arg1L, Arg2L >,
 		Arg1L, Arg2L > > exprl_t;
 	typedef labeled_btensor_expr<N, T,
-		labeled_btensor_expr_ident<N, T, TraitsR, LabelR> > exprr_t;
+		labeled_btensor_expr_ident<N, T, AssignableR, LabelR> > exprr_t;
 	typedef labeled_btensor_expr_op_add < NArgL + 1,
 		exprl_t, exprr_t> opadd_t;
 	typedef labeled_btensor_expr_op < N, T, NArgL + 1, opadd_t,
@@ -326,29 +350,29 @@ operator+(labeled_btensor_expr<N, T, labeled_btensor_expr_op< N, T, NArgL,
 
 	\ingroup libtensor_btensor_expr
  **/
-template<size_t N, typename T, typename TraitsL, typename LabelL,
-size_t NArgR, typename Arg1R, typename Arg2R>
+template<size_t N, typename T, bool AssignableL, typename LabelL,
+	size_t NArgR, typename Arg1R, typename Arg2R>
 labeled_btensor_expr<N, T, labeled_btensor_expr_op<N, T, NArgR + 1,
 labeled_btensor_expr_op_add < NArgR + 1,
 
-labeled_btensor_expr<N, T, labeled_btensor_expr_ident<N, T, TraitsL, LabelL> >,
+labeled_btensor_expr<N, T, labeled_btensor_expr_ident<N, T, AssignableL, LabelL> >,
 
 labeled_btensor_expr< N, T, labeled_btensor_expr_op< N, T, NArgR,
 labeled_btensor_expr_op_add< NArgR, Arg1R, Arg2R >, Arg1R, Arg2R > > >,
 
-labeled_btensor_expr<N, T, labeled_btensor_expr_ident<N, T, TraitsL, LabelL> >,
+labeled_btensor_expr<N, T, labeled_btensor_expr_ident<N, T, AssignableL, LabelL> >,
 
 labeled_btensor_expr< N, T, labeled_btensor_expr_op< N, T, NArgR,
 labeled_btensor_expr_op_add< NArgR, Arg1R, Arg2R >, Arg1R, Arg2R > >
 
 > >
-operator+(labeled_btensor<N, T, TraitsL, LabelL> lhs,
+operator+(labeled_btensor<N, T, AssignableL, LabelL> lhs,
 	labeled_btensor_expr<N, T, labeled_btensor_expr_op< N, T, NArgR,
 	labeled_btensor_expr_op_add<NArgR, Arg1R, Arg2R >,
 	Arg1R, Arg2R > > rhs) {
 
 	typedef labeled_btensor_expr<N, T,
-		labeled_btensor_expr_ident<N, T, TraitsL, LabelL> > exprl_t;
+		labeled_btensor_expr_ident<N, T, AssignableL, LabelL> > exprl_t;
 	typedef labeled_btensor_expr< N, T,
 		labeled_btensor_expr_op< N, T, NArgR,
 		labeled_btensor_expr_op_add< NArgR, Arg1R, Arg2R >,
@@ -365,30 +389,30 @@ operator+(labeled_btensor<N, T, TraitsL, LabelL> lhs,
 
 	\ingroup libtensor_btensor_expr
  **/
-template<size_t N, typename T, typename TraitsL, typename LabelL,
+template<size_t N, typename T, bool AssignableL, typename LabelL,
 size_t NArgR, typename Arg1R, typename Arg2R>
 labeled_btensor_expr<N, T, labeled_btensor_expr_op<N, T, NArgR + 1,
 labeled_btensor_expr_op_add < NArgR + 1,
 
-labeled_btensor_expr<N, T, labeled_btensor_expr_ident<N, T, TraitsL, LabelL> >,
+labeled_btensor_expr<N, T, labeled_btensor_expr_ident<N, T, AssignableL, LabelL> >,
 
 labeled_btensor_expr< N, T, labeled_btensor_expr_op< N, T, NArgR,
 labeled_btensor_expr_op_add< NArgR, Arg1R, Arg2R >, Arg1R, Arg2R > > >,
 
-labeled_btensor_expr<N, T, labeled_btensor_expr_ident<N, T, TraitsL, LabelL> >,
+labeled_btensor_expr<N, T, labeled_btensor_expr_ident<N, T, AssignableL, LabelL> >,
 
 labeled_btensor_expr< N, T, labeled_btensor_expr_op< N, T, NArgR,
 labeled_btensor_expr_op_add< NArgR, Arg1R, Arg2R >, Arg1R, Arg2R > >
 
 > >
 operator+(labeled_btensor_expr<N, T,
-	labeled_btensor_expr_ident<N, T, TraitsL, LabelL> > lhs,
+	labeled_btensor_expr_ident<N, T, AssignableL, LabelL> > lhs,
 	labeled_btensor_expr<N, T, labeled_btensor_expr_op< N, T, NArgR,
 	labeled_btensor_expr_op_add<NArgR, Arg1R, Arg2R >,
 	Arg1R, Arg2R > > rhs) {
 
 	typedef labeled_btensor_expr<N, T,
-		labeled_btensor_expr_ident<N, T, TraitsL, LabelL> > exprl_t;
+		labeled_btensor_expr_ident<N, T, AssignableL, LabelL> > exprl_t;
 	typedef labeled_btensor_expr< N, T,
 		labeled_btensor_expr_op< N, T, NArgR,
 		labeled_btensor_expr_op_add< NArgR, Arg1R, Arg2R >,
@@ -449,11 +473,11 @@ operator+(labeled_btensor_expr<N, T, labeled_btensor_expr_op< N, T, NArgL,
 
 	\ingroup libtensor_btensor_expr
  **/
-template<size_t N, typename T, typename Traits, typename Label>
+template<size_t N, typename T, bool Assignable, typename Label>
 labeled_btensor_expr<N, T,
-labeled_btensor_expr_ident<N, T, Traits, Label> >
-operator*(T lhs, labeled_btensor<N, T, Traits, Label> rhs) {
-	typedef labeled_btensor_expr_ident<N, T, Traits, Label> expr_id_t;
+labeled_btensor_expr_ident<N, T, Assignable, Label> >
+operator*(T lhs, labeled_btensor<N, T, Assignable, Label> rhs) {
+	typedef labeled_btensor_expr_ident<N, T, Assignable, Label> expr_id_t;
 	typedef labeled_btensor_expr<N, T, expr_id_t > expr_t;
 	return expr_t(expr_id_t(rhs, lhs));
 }
@@ -462,11 +486,11 @@ operator*(T lhs, labeled_btensor<N, T, Traits, Label> rhs) {
 
 	\ingroup libtensor_btensor_expr
  **/
-template<size_t N, typename T, typename Traits, typename Label>
+template<size_t N, typename T, bool Assignable, typename Label>
 labeled_btensor_expr<N, T,
-labeled_btensor_expr_ident<N, T, Traits, Label> >
-operator*(labeled_btensor<N, T, Traits, Label> lhs, T rhs) {
-	typedef labeled_btensor_expr_ident<N, T, Traits, Label> expr_id_t;
+labeled_btensor_expr_ident<N, T, Assignable, Label> >
+operator*(labeled_btensor<N, T, Assignable, Label> lhs, T rhs) {
+	typedef labeled_btensor_expr_ident<N, T, Assignable, Label> expr_id_t;
 	typedef labeled_btensor_expr<N, T, expr_id_t > expr_t;
 	return expr_t(expr_id_t(lhs, rhs));
 }

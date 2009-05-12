@@ -33,31 +33,31 @@ public:
 /**	\brief Contraction of two tensors over one index
 	\tparam N Order of the first %tensor.
 	\tparam M Order of the second %tensor.
-	\tparam Traits1 Traits of the first %tensor.
+	\tparam Assignable1 Whether the first %tensor is assignable.
 	\tparam Label1 Label of the first %tensor.
-	\tparam Traits2 Traits of the second %tensor.
+	\tparam Assignable2 Whether the second %tensor is assignable.
 	\tparam Label2 Label of the second %tensor.
 
 	\ingroup libtensor_btensor_expr
  **/
-template<size_t N, size_t M, typename T, typename Traits1, typename Label1,
-	typename Traits2, typename Label2>
+template<size_t N, size_t M, typename T, bool Assignable1, typename Label1,
+	bool Assignable2, typename Label2>
 labeled_btensor_expr<N + M - 2, T,
 labeled_btensor_expr_op_contract<
 	letter_expr<1, letter_expr_ident>,
 	labeled_btensor_expr<N, T,
-		labeled_btensor_expr_ident<N, T, Traits1, Label1> >,
+		labeled_btensor_expr_ident<N, T, Assignable1, Label1> >,
 	labeled_btensor_expr<M, T,
-		labeled_btensor_expr_ident<M, T, Traits2, Label2> >
+		labeled_btensor_expr_ident<M, T, Assignable2, Label2> >
 	>
 >
-contract(const letter &let, labeled_btensor<N, T, Traits1, Label1> bta,
-	labeled_btensor<M, T, Traits2, Label2> btb) {
+contract(const letter &let, labeled_btensor<N, T,Assignable1, Label1> bta,
+	labeled_btensor<M, T, Assignable2, Label2> btb) {
 	typedef letter_expr<1, letter_expr_ident> label_t;
 	typedef labeled_btensor_expr<N, T,
-		labeled_btensor_expr_ident<N, T, Traits1, Label1> > expr1_t;
+		labeled_btensor_expr_ident<N, T, Assignable1, Label1> > expr1_t;
 	typedef labeled_btensor_expr<M, T,
-		labeled_btensor_expr_ident<M, T, Traits2, Label2> > expr2_t;
+		labeled_btensor_expr_ident<M, T, Assignable2, Label2> > expr2_t;
 	typedef labeled_btensor_expr_op_contract<label_t, expr1_t, expr2_t>
 		contract_t;
 	typedef labeled_btensor_expr<N + M - 2, T, contract_t> expr_t;
@@ -70,33 +70,33 @@ contract(const letter &let, labeled_btensor<N, T, Traits1, Label1> bta,
 	\tparam M Order of the second tensor.
 	\tparam T Tensor element type.
 	\tparam Contr Contraction letter expression.
-	\tparam Traits1 Traits of the first tensor.
-	\tparam Label1 Label of the first tensor.
-	\tparam Traits2 Traits of the second tensor.
+	\tparam Assignable1 Whether the first %tensor is assignable.
+	\tparam Label1 Label of the first %tensor.
+	\tparam Assignable2 Whether the second %tensor is assignable.
 	\tparam Label2 Label of the second tensor.
 
 	\ingroup libtensor_btensor_expr
  **/
 template<size_t K, size_t N, size_t M, typename T, typename Contr,
-	typename Traits1, typename Label1, typename Traits2, typename Label2>
+	bool Assignable1, typename Label1, bool Assignable2, typename Label2>
 labeled_btensor_expr<N + M - 2 * K, T,
 labeled_btensor_expr_op_contract<
 	letter_expr<K, Contr>,
 	labeled_btensor_expr<N, T,
-		labeled_btensor_expr_ident<N, T, Traits1, Label1> >,
+		labeled_btensor_expr_ident<N, T, Assignable1, Label1> >,
 	labeled_btensor_expr<M, T,
-		labeled_btensor_expr_ident<M, T, Traits2, Label2> >
+		labeled_btensor_expr_ident<M, T, Assignable2, Label2> >
 	>
 >
 contract(const letter_expr<K, Contr> &contr,
-	labeled_btensor<N, T, Traits1, Label1> bta,
-	labeled_btensor<M, T, Traits2, Label2> btb) {
+	labeled_btensor<N, T, Assignable1, Label1> bta,
+	labeled_btensor<M, T, Assignable2, Label2> btb) {
 
 	typedef letter_expr<K, Contr> label_t;
 	typedef labeled_btensor_expr<N, T,
-		labeled_btensor_expr_ident<N, T, Traits1, Label1> > expr1_t;
+		labeled_btensor_expr_ident<N, T, Assignable1, Label1> > expr1_t;
 	typedef labeled_btensor_expr<M, T,
-		labeled_btensor_expr_ident<M, T, Traits2, Label2> > expr2_t;
+		labeled_btensor_expr_ident<M, T, Assignable2, Label2> > expr2_t;
 	typedef labeled_btensor_expr_op_contract<label_t, expr1_t, expr2_t>
 		contract_t;
 	typedef labeled_btensor_expr<N + M - 2 * K, T, contract_t> expr_t;
@@ -104,22 +104,22 @@ contract(const letter_expr<K, Contr> &contr,
 }
 
 template<size_t K, size_t N, size_t M, typename T, typename Contr,
-	typename Expr1, typename Traits2, typename Label2>
+	typename Expr1, bool Assignable2, typename Label2>
 labeled_btensor_expr<N + M - 2 * K, T,
 labeled_btensor_expr_op_contract<
 	letter_expr<K, Contr>,
 	labeled_btensor_expr<N, T, Expr1>,
 	labeled_btensor_expr<M, T,
-		labeled_btensor_expr_ident<M, T, Traits2, Label2> >
+		labeled_btensor_expr_ident<M, T, Assignable2, Label2> >
 	>
 >
 contract(const letter_expr<K, Contr> &contr,
 	labeled_btensor_expr<N, T, Expr1> bta,
-	labeled_btensor<M, T, Traits2, Label2> btb) {
+	labeled_btensor<M, T, Assignable2, Label2> btb) {
 	typedef letter_expr<K, Contr> label_t;
 	typedef labeled_btensor_expr<N, T, Expr1> expr1_t;
 	typedef labeled_btensor_expr<M, T,
-		labeled_btensor_expr_ident<M, T, Traits2, Label2> > expr2_t;
+		labeled_btensor_expr_ident<M, T, Assignable2, Label2> > expr2_t;
 	typedef labeled_btensor_expr_op_contract<label_t, expr1_t, expr2_t>
 		contract_t;
 	typedef labeled_btensor_expr<N + M - 2 * K, T, contract_t> expr_t;
@@ -127,21 +127,21 @@ contract(const letter_expr<K, Contr> &contr,
 }
 
 template<size_t K, size_t N, size_t M, typename T, typename Contr,
-	typename Traits1, typename Label1, typename Expr2>
+	bool Assignable1, typename Label1, typename Expr2>
 labeled_btensor_expr<N + M - 2 * K, T,
 labeled_btensor_expr_op_contract<
 	letter_expr<K, Contr>,
 	labeled_btensor_expr<N, T,
-		labeled_btensor_expr_ident<N, T, Traits1, Label1> >,
+		labeled_btensor_expr_ident<N, T, Assignable1, Label1> >,
 	labeled_btensor_expr<M, T, Expr2>
 	>
 >
 contract(const letter_expr<K, Contr> &contr,
-	labeled_btensor<N, T, Traits1, Label1> bta,
+	labeled_btensor<N, T,Assignable1, Label1> bta,
 	labeled_btensor_expr<M, T, Expr2> btb) {
 	typedef letter_expr<K, Contr> label_t;
 	typedef labeled_btensor_expr<N, T,
-		labeled_btensor_expr_ident<N, T, Traits1, Label1> > expr1_t;
+		labeled_btensor_expr_ident<N, T, Assignable1, Label1> > expr1_t;
 	typedef labeled_btensor_expr<M, T, Expr2> expr2_t;
 	typedef labeled_btensor_expr_op_contract<label_t, expr1_t, expr2_t>
 		contract_t;

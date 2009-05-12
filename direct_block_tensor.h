@@ -3,6 +3,7 @@
 
 #include "defs.h"
 #include "exception.h"
+#include "block_tensor_i.h"
 
 namespace libtensor {
 
@@ -11,7 +12,7 @@ namespace libtensor {
 	\ingroup libtensor
 **/
 template<size_t N, typename T, typename Alloc>
-class direct_block_tensor : public btensor_i<N,T> {
+class direct_block_tensor : public block_tensor_i<N, T> {
 };
 
 } // namespace libtensor
