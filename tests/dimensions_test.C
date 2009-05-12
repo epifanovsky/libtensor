@@ -127,5 +127,34 @@ void dimensions_test::test_abs_index() throw(libtest::test_exception) {
 	}
 }
 
+void dimensions_test::test_comp() throw(libtest::test_exception) {
+	index<2> i1a, i1b, i2b;
+	i1b[0] = 1; i1b[1] = 2;
+	i1b[0] = 2; i1b[1] = 3;
+	index_range<2> ir1(i1a, i1b), ir2(i1a,i2b); // Indexes run from (0,0) to (1,2)
+	dimensions<2> d1(ir1), d2(d1), d3(ir2);
+
+	
+	if(!(d1==d2)) {
+		fail_test("dimensions_test::test_ctor()", __FILE__, __LINE__,
+			"Equal comparison of identical dimensions returned false");
+	}
+	if(d1==d3) {
+		fail_test("dimensions_test::test_ctor()", __FILE__, __LINE__,
+			"Equal comparison of different dimensions returned true");
+	}
+	if(d1!=d2) {
+		fail_test("dimensions_test::test_ctor()", __FILE__, __LINE__,
+			"Unequal comparison of identical dimesions returned true");
+	}
+
+	if(!(d1!=d3)) {
+		fail_test("dimensions_test::test_ctor()", __FILE__, __LINE__,
+			"Unequal comparison of different dimesions returned false");
+	}
+}
+
+
+
 } // namespace libtensor
 

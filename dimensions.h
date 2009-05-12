@@ -180,6 +180,12 @@ inline void dimensions<N>::update_increments() {
 	m_size = sz;
 }
 
+//!	\name Comparisons 
+//@{
+/**	\brief Compare for equality of two dimensions objects 
+
+	\return Return true if each of the N dimensions of the two dimensions objects are equal
+**/
 template<size_t N>
 inline bool operator==( const dimensions<N> &da, const dimensions<N> &db ) {
 	#pragma unroll(N)
@@ -189,10 +195,15 @@ inline bool operator==( const dimensions<N> &da, const dimensions<N> &db ) {
 	return true;
 }
 
+/**	\brief Compare for inequality of two dimensions objects
+
+	\return Return the opposite of operator== 
+**/
 template<size_t N>
 inline bool operator!=( const dimensions<N> &da, const dimensions<N> &db ) {
 	return !(da==db);
 }
+//@}
 
 } // namespace libtensor
 

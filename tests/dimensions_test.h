@@ -23,6 +23,10 @@ private:
 
 	//!	Tests the dimensions::abs_index() method
 	void test_abs_index() throw(libtest::test_exception);
+
+	//!	Tests the comparison operations for dimensions
+	void test_comp() throw(libtest::test_exception);
+
 };
 
 } // namespace libtensor
