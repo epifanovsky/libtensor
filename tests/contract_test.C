@@ -12,10 +12,12 @@ void contract_test::perform() throw(libtest::test_exception) {
 	btensor<4> t1_ijab(sp_ijab), t2_ijab(sp_ijab);
 	btensor<4> t3_jiab(sp_jiab), t4_jiab(sp_jiab);
 
-	letter i, j, a, b;
+	letter i, j, k, l, a, b, c, d;
 
-	contract(i, t1_ijab(i|j|a|b), t2_ijab(i|j|a|b));
-	contract(i|j, t1_ijab(i|j|a|b), t2_ijab(i|j|a|b));
+	contract(i, t1_ijab(i|j|a|b), t2_ijab(i|k|c|d));
+	contract(i|j, t1_ijab(i|j|a|b), t2_ijab(i|j|c|d));
+	contract(i|j, t1_ijab(i|j|a|b) + t3_jiab(j|i|a|b), t2_ijab(i|j|c|d));
+	contract(i|j, t1_ijab(i|j|a|b), t2_ijab(i|j|c|d) + t3_jiab(j|i|c|d));
 }
 
 } // namespace libtensor

@@ -103,6 +103,52 @@ contract(const letter_expr<K, Contr> &contr,
 	return expr_t(contract_t(contr, expr1_t(bta), expr2_t(btb)));
 }
 
+template<size_t K, size_t N, size_t M, typename T, typename Contr,
+	typename Expr1, typename Traits2, typename Label2>
+labeled_btensor_expr<N + M - 2 * K, T,
+labeled_btensor_expr_op_contract<
+	letter_expr<K, Contr>,
+	labeled_btensor_expr<N, T, Expr1>,
+	labeled_btensor_expr<M, T,
+		labeled_btensor_expr_ident<M, T, Traits2, Label2> >
+	>
+>
+contract(const letter_expr<K, Contr> &contr,
+	labeled_btensor_expr<N, T, Expr1> bta,
+	labeled_btensor<M, T, Traits2, Label2> btb) {
+	typedef letter_expr<K, Contr> label_t;
+	typedef labeled_btensor_expr<N, T, Expr1> expr1_t;
+	typedef labeled_btensor_expr<M, T,
+		labeled_btensor_expr_ident<M, T, Traits2, Label2> > expr2_t;
+	typedef labeled_btensor_expr_op_contract<label_t, expr1_t, expr2_t>
+		contract_t;
+	typedef labeled_btensor_expr<N + M - 2 * K, T, contract_t> expr_t;
+	return expr_t(contract_t(contr, bta, expr2_t(btb)));
+}
+
+template<size_t K, size_t N, size_t M, typename T, typename Contr,
+	typename Traits1, typename Label1, typename Expr2>
+labeled_btensor_expr<N + M - 2 * K, T,
+labeled_btensor_expr_op_contract<
+	letter_expr<K, Contr>,
+	labeled_btensor_expr<N, T,
+		labeled_btensor_expr_ident<N, T, Traits1, Label1> >,
+	labeled_btensor_expr<M, T, Expr2>
+	>
+>
+contract(const letter_expr<K, Contr> &contr,
+	labeled_btensor<N, T, Traits1, Label1> bta,
+	labeled_btensor_expr<M, T, Expr2> btb) {
+	typedef letter_expr<K, Contr> label_t;
+	typedef labeled_btensor_expr<N, T,
+		labeled_btensor_expr_ident<N, T, Traits1, Label1> > expr1_t;
+	typedef labeled_btensor_expr<M, T, Expr2> expr2_t;
+	typedef labeled_btensor_expr_op_contract<label_t, expr1_t, expr2_t>
+		contract_t;
+	typedef labeled_btensor_expr<N + M - 2 * K, T, contract_t> expr_t;
+	return expr_t(contract_t(contr, expr1_t(bta), btb));
+}
+
 } // namespace libtensor
 
 #endif // LIBTENSOR_CONTRACT_H
