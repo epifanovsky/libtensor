@@ -18,7 +18,7 @@ struct btensor_traits {
 	typedef libvmm::std_allocator<T> allocator_t;
 };
 
-/**	\brief Block %tensor
+/**	\brief User-friendly block %tensor
 
 	\ingroup libtensor
  **/

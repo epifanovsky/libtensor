@@ -15,6 +15,8 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("contraction2_processor", m_utf_contraction2_processor);
 	add_test("default_symmetry", m_utf_default_symmetry);
 	add_test("dimensions", m_utf_dimensions);
+	add_test("direct_btensor", m_utf_direct_btensor);
+	add_test("direct_tensor", m_utf_direct_tensor);
 	add_test("expr_binary", m_utf_expr_binary);
 	add_test("expr_identity", m_utf_expr_identity);
 	add_test("expr_literal", m_utf_expr_literal);
@@ -29,7 +31,6 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("permutator", m_utf_permutator);
 	add_test("symmetry", m_utf_symmetry);
 	add_test("tensor", m_utf_tensor);
-	add_test("direct_tensor", m_utf_direct_tensor);
 	add_test("tod_add", m_utf_tod_add);
 	add_test("tod_compare", m_utf_tod_compare);
 	add_test("tod_contract2", m_utf_tod_contract2);

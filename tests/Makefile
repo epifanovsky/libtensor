@@ -10,6 +10,7 @@ OBJS += contraction2_list_test.o
 OBJS += contraction2_processor_test.o
 OBJS += default_symmetry_test.o
 OBJS += dimensions_test.o
+OBJS += direct_btensor_test.o
 OBJS += direct_tensor_test.o
 OBJS += expr_binary_test.o
 OBJS += expr_identity_test.o
