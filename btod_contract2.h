@@ -6,6 +6,7 @@
 #include "block_tensor_i.h"
 #include "btod_additive.h"
 #include "contraction2.h"
+#include "tod_contract2.h"
 
 namespace libtensor {
 
@@ -72,14 +73,14 @@ btod_contract2<N, M, K>::~btod_contract2() {
 template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::perform(block_tensor_i<k_orderc, double> &btc,
 	double c) throw(exception) {
-	index<korder_a> idx_a;
-	index<korder_b> idx_b;
-	index<korder_c> idx_c;
+	index<k_ordera> idx_a;
+	index<k_orderb> idx_b;
+	index<k_orderc> idx_c;
 
-	block_tensor_ctrl ctrl_btc(btc);
-	block_tensor_ctrl ctrl_bta(m_bta);
-	block_tensor_ctrl ctrl_btb(m_btb);
-	
+	block_tensor_ctrl<k_orderc, double> ctrl_btc(btc);
+	block_tensor_ctrl<k_ordera, double> ctrl_bta(m_bta);
+	block_tensor_ctrl<k_orderb, double> ctrl_btb(m_btb);
+
 	tod_contract2<N,M,K> contr(m_contr,ctrl_bta.req_block(idx_a),ctrl_btb.req_block(idx_b));
 
 	contr.perform(ctrl_btc.req_block(idx_c),c);
@@ -88,14 +89,14 @@ void btod_contract2<N, M, K>::perform(block_tensor_i<k_orderc, double> &btc,
 template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::perform(block_tensor_i<k_orderc, double> &btc)
 	throw(exception) {
-	index<korder_a> idx_a;
-	index<korder_b> idx_b;
-	index<korder_c> idx_c;
+	index<k_ordera> idx_a;
+	index<k_orderb> idx_b;
+	index<k_orderc> idx_c;
 
-	block_tensor_ctrl ctrl_btc(btc);
-	block_tensor_ctrl ctrl_bta(m_bta);
-	block_tensor_ctrl ctrl_btb(m_btb);
-	
+	block_tensor_ctrl<k_orderc, double> ctrl_btc(btc);
+	block_tensor_ctrl<k_ordera, double> ctrl_bta(m_bta);
+	block_tensor_ctrl<k_orderb, double> ctrl_btb(m_btb);
+
 	tod_contract2<N,M,K> contr(m_contr,ctrl_bta.req_block(idx_a),ctrl_btb.req_block(idx_b));
 
 	contr.perform(ctrl_btc.req_block(idx_c));
