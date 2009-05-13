@@ -144,31 +144,21 @@ void btod_add<N>::perform(block_tensor_i<N, double> &bt,
 
 	block_tensor_ctrl<N,double> ctrlbt(bt);
 	
-	index<N> res_idx; 
-	// loop over all blocks here
-	// we know only one block, thus:
-	index_range<N> ir(res_idx,res_idx);
-	dimensions<N> block_dim(ir);
-	do {
-		// setup tod_add object to perform the operation on the blocks
-		tod_add<N> addition(m_pb);
+	index<N> idx; 
+	// setup tod_add object to perform the operation on the blocks
+	tod_add<N> addition(m_pb);
 
-		struct operand* node=m_head;
-		while ( node != NULL ) {
-			index<N> op_idx(res_idx);
-			op_idx.permute(node->m_p);
-			block_tensor_ctrl<N,double> ctrlbto(node->m_bt);
+	struct operand* node=m_head;
+	while ( node != NULL ) {
+		block_tensor_ctrl<N,double> ctrlbto(node->m_bt);
 
-			// do a prefetch here? probably not!
-			// ctrlbto.req_prefetch();
-			addition.add_op(ctrlbto.req_block(op_idx),node->m_p,node->m_c);
-			node=node->m_next;		
-		}
-
-		addition.prefetch();
-		addition.perform(ctrlbt.req_block(res_idx),cb);
-	}	
-	while ( block_dim.inc_index(res_idx) );
+		// do a prefetch here? probably not!
+		// ctrlbto.req_prefetch();
+		addition.add_op(ctrlbto.req_block(idx),node->m_p,node->m_c);
+		node=node->m_next;		
+	}
+	addition.prefetch();
+	addition.perform(ctrlbt.req_block(idx),cb);
 }
 
 template<size_t N>
@@ -183,32 +173,22 @@ void btod_add<N>::perform(block_tensor_i<N, double> &bt)
 
 	block_tensor_ctrl<N,double> ctrlbt(bt);
 	
-	index<N> res_idx; 
-	// loop over all blocks here
-	// we know only one block, thus:
-	index_range<N> ir(res_idx,res_idx);
-	dimensions<N> block_dim(ir);
-	do {
-		// setup tod_add object to perform the operation on the blocks
-		tod_add<N> addition(m_pb);
+	index<N> idx; 
+	// setup tod_add object to perform the operation on the blocks
+	tod_add<N> addition(m_pb);
 
-		struct operand* node=m_head;
-		while ( node != NULL ) {
-			index<N> op_idx(res_idx);
-			op_idx.permute(node->m_p);
-			block_tensor_ctrl<N,double> ctrlbto(node->m_bt);
+	struct operand* node=m_head;
+	while ( node != NULL ) {
+		block_tensor_ctrl<N,double> ctrlbto(node->m_bt);
 
-			// do a prefetch here? probably not!
-			// ctrlbto.req_prefetch();
-			addition.add_op(ctrlbto.req_block(op_idx),node->m_p,node->m_c);
-			node=node->m_next;		
-		}
+		// do a prefetch here? probably not!
+		// ctrlbto.req_prefetch();
+		addition.add_op(ctrlbto.req_block(idx),node->m_p,node->m_c);
+		node=node->m_next;		
+	}
 
-		addition.prefetch();
-		addition.perform(ctrlbt.req_block(res_idx));
-	}	
-	while ( block_dim.inc_index(res_idx) );
-
+	addition.prefetch();
+	addition.perform(ctrlbt.req_block(idx));
 }
 
 } // namespace libtensor

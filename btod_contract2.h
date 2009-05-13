@@ -72,11 +72,33 @@ btod_contract2<N, M, K>::~btod_contract2() {
 template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::perform(block_tensor_i<k_orderc, double> &btc,
 	double c) throw(exception) {
+	index<korder_a> idx_a;
+	index<korder_b> idx_b;
+	index<korder_c> idx_c;
+
+	block_tensor_ctrl ctrl_btc(btc);
+	block_tensor_ctrl ctrl_bta(m_bta);
+	block_tensor_ctrl ctrl_btb(m_btb);
+	
+	tod_contract2<N,M,K> contr(m_contr,ctrl_bta.req_block(idx_a),ctrl_btb.req_block(idx_b));
+
+	contr.perform(ctrl_btc.req_block(idx_c),c);
 }
 
 template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::perform(block_tensor_i<k_orderc, double> &btc)
 	throw(exception) {
+	index<korder_a> idx_a;
+	index<korder_b> idx_b;
+	index<korder_c> idx_c;
+
+	block_tensor_ctrl ctrl_btc(btc);
+	block_tensor_ctrl ctrl_bta(m_bta);
+	block_tensor_ctrl ctrl_btb(m_btb);
+	
+	tod_contract2<N,M,K> contr(m_contr,ctrl_bta.req_block(idx_a),ctrl_btb.req_block(idx_b));
+
+	contr.perform(ctrl_btc.req_block(idx_c));
 }
 
 } // namespace libtensor
