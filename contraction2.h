@@ -31,7 +31,7 @@ namespace libtensor {
 	contracted indexes (those that present in \em a and \em b, but don't
 	make it	to \em c). The number of nodes in the regular list equals N+M+K.
 	The fused list is optimized: its nodes represent loops over combined
-	indexes if those exist. The number of nodex is less or equal to N+M+K.
+	indexes if those exist. The number of nodes is less or equal to N+M+K.
 
 	For example, the contraction
 	\f$ c_{ijkl} = \sum_{pq} a_{ijpq} b_{klpq} \f$ can be rewritten as
@@ -53,7 +53,7 @@ private:
 	static const size_t k_maxconn = 2 * k_totidx;
 
 private:
-	permutation<N + K> m_permc; //!< Permutation of result indexes
+	permutation<k_orderc> m_permc; //!< Permutation of result indexes
 	size_t m_k; //!< Number of contracted indexes specified
 	size_t m_conn[k_maxconn]; //!< Index connections
 	size_t m_num_nodes; //!< Number of fused nodes
@@ -72,7 +72,7 @@ public:
 
 	/**	\brief Copy constructor
 	 **/
-	contraction2(const contraction2<N,M,K> &contr);
+	contraction2(const contraction2<N, M, K> &contr);
 
 	//@}
 
@@ -112,9 +112,10 @@ public:
 
 	/**	\brief Checks the dimensions of the arguments and the result
 			and populates the loop node list
+		\tparam ListT List type.
 	 **/
-	void populate(contraction2_list<k_totidx> &list,
-		const dimensions<k_ordera> &dima,
+	template<typename ListT>
+	void populate(ListT &list, const dimensions<k_ordera> &dima,
 		const dimensions<k_orderb> &dimb,
 		const dimensions<k_orderc> &dimc) const throw (exception);
 
@@ -203,8 +204,8 @@ void contraction2<N, M, K>::contract(size_t ia, size_t ib) throw (exception) {
 	}
 }
 
-template<size_t N, size_t M, size_t K>
-void contraction2<N, M, K>::populate(contraction2_list<k_totidx> &list,
+template<size_t N, size_t M, size_t K> template<typename ListT>
+void contraction2<N, M, K>::populate(ListT &list,
 	const dimensions<k_ordera> &dima,
 	const dimensions<k_orderb> &dimb,
 	const dimensions<k_orderc> &dimc) const throw (exception) {
