@@ -1,11 +1,18 @@
-CPP = g++
-LD = g++
-#CPPFLAGS = -g -DDEBUG_CHECK -DUSE_MKL
-CPPFLAGS = -g -DDEBUG_CHECK -DUSE_BLAS
-LDFLAGS = -g
+# For GNU C++ compiler + BLAS, uncomment here
+#CPP = g++
+#LD = g++
+#CPPFLAGS = -g -DDEBUG_CHECK -DUSE_BLAS
+#LDFLAGS = -g -o
+#INCLUDE =
+#LIBS = -lblas
+
+# For Intel C++ compiler + MKL, uncomment here
+CPP = icpc
+LD = icpc
+CPPFLAGS = -g -DDEBUG_CHECK -DUSE_MKL
+LDFLAGS = -g -o
 INCLUDE =
-#LIBS = -lmkl -lguide -lpthread
-LIBS = -lblas
+LIBS = -lmkl -lguide -lpthread
 
 %.o: %.C; $(CPP) $(CPPFLAGS) $(INCLUDE) -c $<
 
