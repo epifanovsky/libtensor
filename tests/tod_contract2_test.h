@@ -16,6 +16,10 @@ public:
 	virtual void perform() throw(libtest::test_exception);
 
 private:
+	// c_{ij} = \sum_{pq} a_{pq} b_{ijpq}
+	void test_ij_pq_ijpq(size_t ni, size_t nj, size_t np, size_t nq)
+		throw(libtest::test_exception);
+
 	// c_{ij} = \sum_{pqr} a_{ipqr} b_{jpqr}
 	void test_ij_ipqr_jpqr(size_t ni, size_t nj, size_t np, size_t nq,
 		size_t nr) throw(libtest::test_exception);
@@ -23,6 +27,10 @@ private:
 	// c_{ij} = \sum_{pqr} a_{pqir} b_{pqjr}
 	void test_ij_pqir_pqjr(size_t ni, size_t nj, size_t np, size_t nq,
 		size_t nr) throw(libtest::test_exception);
+
+	// c_{jikl} = \sum_{p} a_{pi} b_{jpkl}
+	void test_jikl_pi_jpkl(size_t ni, size_t nj, size_t nk, size_t nl,
+		size_t np) throw(libtest::test_exception);
 
 	// c_{ijkl} = \sum_{p} a_{ijp} b_{klp}
 	void test_ijkl_ijp_klp(size_t ni, size_t nj, size_t nk, size_t nl,
