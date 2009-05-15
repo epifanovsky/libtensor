@@ -2,7 +2,7 @@
 #define LIBTENSOR_TENSOR_TEST_H
 
 #include <libtest.h>
-#include "tensor.h"
+#include <libtensor.h>
 
 namespace libtensor {
 

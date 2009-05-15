@@ -1,3 +1,4 @@
+#include <libtensor.h>
 #include "dimensions_test.h"
 
 namespace libtensor {
@@ -134,7 +135,7 @@ void dimensions_test::test_comp() throw(libtest::test_exception) {
 	index_range<2> ir1(i1a, i1b), ir2(i1a,i2b); // Indexes run from (0,0) to (1,2)
 	dimensions<2> d1(ir1), d2(d1), d3(ir2);
 
-	
+
 	if(!(d1==d2)) {
 		fail_test("dimensions_test::test_ctor()", __FILE__, __LINE__,
 			"Equal comparison of identical dimensions returned false");

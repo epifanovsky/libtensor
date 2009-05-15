@@ -5,9 +5,7 @@
 #include <cstdlib>
 #include <libtest.h>
 #include <libvmm.h>
-#include "tod_copy.h"
-#include "tensor.h"
-#include "tensor_ctrl.h"
+#include <libtensor.h>
 
 namespace libtensor {
 

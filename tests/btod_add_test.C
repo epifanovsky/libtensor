@@ -1,7 +1,6 @@
-#include "btod_add_test.h"
 #include <libvmm.h>
-#include "block_tensor.h"
-#include "bispace.h"
+#include <libtensor.h>
+#include "btod_add_test.h"
 
 namespace libtensor {
 
@@ -9,7 +8,7 @@ typedef libvmm::std_allocator<double> allocator;
 typedef block_tensor<2,double,allocator> block_tensor2;
 
 void btod_add_test::perform() throw(libtest::test_exception) {
-	test_exc(); 
+	test_exc();
 
 	bispace<1> i_sp(2), a_sp(3);
 	bispace<2> ia(i_sp*a_sp), ai(a_sp*i_sp);
@@ -37,8 +36,8 @@ void btod_add_test::test_exc() throw(libtest::test_exception) {
 	bool ok=false;
 	try {
 		add.add_op(bt1,p2,0.5);
-		add.add_op(bt2,p2,1.0); 
-	} 
+		add.add_op(bt2,p2,1.0);
+	}
 	catch(exception e) {
 		ok=true;
 	}
@@ -48,7 +47,7 @@ void btod_add_test::test_exc() throw(libtest::test_exception) {
 			"Expected an exception due to heterogeneous operands");
 	}
 
-	ok=false;	
+	ok=false;
 	try {
 		add.add_op(bt2,p1,1.0);
 		add.perform(bt1);
@@ -56,7 +55,7 @@ void btod_add_test::test_exc() throw(libtest::test_exception) {
 	catch(exception e) {
 		ok=true;
 	}
-	
+
 	if(!ok) {
 		fail_test("btod_add_test::test_exc()", __FILE__, __LINE__,
 			"Expected an exception due to heterogeneous result tensor");

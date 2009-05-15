@@ -2,7 +2,6 @@
 #define LIBTENSOR_BTOD_SUM_TEST_H
 
 #include <libtest.h>
-#include "btod_sum.h"
 
 namespace libtensor {
 

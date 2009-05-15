@@ -2,7 +2,6 @@
 #define LIBTENSOR_TOD_ADD_TEST_H
 
 #include <libtest.h>
-#include "tod_add.h"
 
 namespace libtensor {
 
@@ -25,14 +24,14 @@ private:
 	**/
 	void test_add_to_self_pqrs(size_t, size_t, size_t, size_t)
 		throw(libtest::test_exception);
-	
+
 	/**	\brief Tests addition of two tensors (no permutation)
 
 		\f[ T_{pqrs} = T_{pqrs} + 0.1 A_{pqrs}  \f]
 	**/
 	void test_add_two_pqrs_pqrs(size_t, size_t, size_t, size_t)
 		throw(libtest::test_exception);
-	
+
 	/**	\brief Tests addition of two tensors (permutation type 1)
 
 		\f[ T_{pqrs} = T_{pqrs} + 0.1 A_{qprs}  \f]
@@ -65,7 +64,7 @@ private:
 
 		\f[ T_{pq} = T_{pq} + 0.5 \left( 2.0 A_{pq} - B_{qp} \right) \f]
 	**/
-	void test_add_two_pq_qp( size_t, size_t ) 
+	void test_add_two_pq_qp( size_t, size_t )
 		throw(libtest::test_exception);
 
 };

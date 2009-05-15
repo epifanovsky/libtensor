@@ -1,3 +1,4 @@
+#include <libtensor.h>
 #include "contraction2_list_test.h"
 
 namespace libtensor {

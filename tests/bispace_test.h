@@ -2,7 +2,6 @@
 #define	LIBTENSOR_BISPACE_TEST_H
 
 #include <libtest.h>
-#include "bispace.h"
 
 namespace libtensor {
 

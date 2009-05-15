@@ -1,6 +1,4 @@
 #include "tod_sum_test.h"
-#include "tensor.h"
-#include "tensor_ctrl.h"
 
 namespace libtensor {
 

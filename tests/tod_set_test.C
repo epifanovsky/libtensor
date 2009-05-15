@@ -1,5 +1,5 @@
+#include <libtensor.h>
 #include "tod_set_test.h"
-#include "tensor.h"
 
 namespace libtensor {
 

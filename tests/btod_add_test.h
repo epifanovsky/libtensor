@@ -2,7 +2,6 @@
 #define LIBTENSOR_BTOD_ADD_TEST_H
 
 #include <libtest.h>
-#include "btod_add.h"
 
 namespace libtensor {
 

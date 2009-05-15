@@ -2,7 +2,6 @@
 #define LIBTENSOR_TOD_SYMCONTRACT2_TEST_H
 
 #include <libtest.h>
-#include "tod_symcontract2.h"
 
 namespace libtensor {
 

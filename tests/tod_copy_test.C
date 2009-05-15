@@ -1,5 +1,4 @@
 #include "tod_copy_test.h"
-#include "tensor.h"
 
 namespace libtensor {
 

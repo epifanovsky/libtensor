@@ -4,33 +4,47 @@
 #include "defs.h"
 #include "exception.h"
 
-#include "default_symmetry.h"
-#include "dimensions.h"
 #include "index.h"
-#include "permutation.h"
-#include "lehmer_code.h"
+#include "index_range.h"
+#include "dimensions.h"
 
-#include "index_space.h"
-#include "index_space_product.h"
+#include "contraction2.h"
+#include "processor.h"
 
-#include "letter.h"
-#include "letter_expr.h"
-
-#include "scalar.h"
-
-#include "tensor.h"
+#include "tensor_i.h"
 #include "tensor_ctrl.h"
+#include "tensor.h"
 #include "direct_tensor.h"
-#include "direct_tensor_operation.h"
 
+#include "tod_add.h"
+#include "tod_additive.h"
 #include "tod_compare.h"
 #include "tod_contract2.h"
 #include "tod_copy.h"
+#include "tod_set.h"
+#include "tod_sum.h"
 
-#include "btensor.h"
+#include "block_tensor_i.h"
 #include "block_tensor_ctrl.h"
+#include "block_tensor.h"
 #include "direct_block_tensor.h"
-#include "direct_block_tensor_operation.h"
+
+#include "btod_add.h"
+#include "btod_additive.h"
+#include "btod_contract2.h"
+#include "btod_sum.h"
+
+#include "bispace_i.h"
+#include "bispace.h"
+#include "bispace_expr.h"
+#include "btensor_i.h"
+#include "btensor.h"
+#include "direct_btensor.h"
+#include "letter.h"
+#include "letter_expr.h"
+#include "labeled_btensor.h"
+#include "labeled_btensor_expr.h"
+#include "contract.h"
 
 #endif // LIBTENSOR_H
 

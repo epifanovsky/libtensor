@@ -1,9 +1,6 @@
-#include "btod_sum_test.h"
-#include "btod_add.h"
 #include <libvmm.h>
-#include "block_tensor.h"
-#include "bispace.h"
-
+#include <libtensor.h>
+#include "btod_sum_test.h"
 
 namespace libtensor {
 
@@ -23,10 +20,10 @@ void btod_sum_test::perform() throw(libtest::test_exception) {
 	add1.add_op(bt3,p1,0.1);
 	add2.add_op(bt4,p1,0.2);
 	add2.add_op(bt2,p2,2.0);
-			
+
 	btod_sum<2> sum(add1);
 	sum.add_op(add2,0.1);
-	
+
 	sum.perform(bt1);
 }
 

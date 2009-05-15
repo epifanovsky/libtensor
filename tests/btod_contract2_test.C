@@ -1,8 +1,6 @@
-#include "btod_contract2_test.h"
 #include <libvmm.h>
-#include "block_tensor.h"
-#include "bispace.h"
-#include "contraction2.h"
+#include <libtensor.h>
+#include "btod_contract2_test.h"
 
 namespace libtensor {
 
@@ -16,7 +14,7 @@ void btod_contract2_test::perform() throw(libtest::test_exception) {
 
 	block_tensor2 bt1(ia), bt2(ai), bt3(ij);
 	permutation<2> p;
-	
+
 	contraction2<1,1,1> contr(p);
 	contr.contract(1,0);
 

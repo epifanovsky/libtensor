@@ -2,7 +2,6 @@
 #define	LIBTENSOR_CONTRACT_TEST_H
 
 #include <libtest.h>
-#include "contract.h"
 
 namespace libtensor {
 

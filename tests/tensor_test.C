@@ -1,4 +1,3 @@
-#include "tensor_ctrl.h"
 #include "tensor_test.h"
 
 namespace libtensor {

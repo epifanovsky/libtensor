@@ -2,7 +2,7 @@
 #define LIBTENSOR_TOD_COMPARE_TEST_H
 
 #include <libtest.h>
-#include "tod_compare.h"
+#include <libtensor.h>
 
 namespace libtensor {
 

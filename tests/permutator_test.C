@@ -1,3 +1,4 @@
+#include <libtensor.h>
 #include "permutator_test.h"
 
 namespace libtensor {

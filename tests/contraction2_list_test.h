@@ -2,7 +2,6 @@
 #define	LIBTENSOR_CONTRACTION2_LIST_TEST_H
 
 #include <libtest.h>
-#include "contraction2_list.h"
 
 namespace libtensor {
 

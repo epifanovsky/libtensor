@@ -3,7 +3,6 @@
 
 #include <cmath>
 #include <libtest.h>
-#include "contraction2_processor.h"
 
 namespace libtensor {
 

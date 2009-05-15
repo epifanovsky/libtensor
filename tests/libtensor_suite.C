@@ -12,8 +12,6 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("contract", m_utf_contract);
 	add_test("contract2_0_4i", m_utf_contract2_0_4i);
 	add_test("contraction2", m_utf_contraction2);
-	add_test("contraction2_list", m_utf_contraction2_list);
-	add_test("contraction2_processor", m_utf_contraction2_processor);
 	add_test("default_symmetry", m_utf_default_symmetry);
 	add_test("dimensions", m_utf_dimensions);
 	add_test("direct_btensor", m_utf_direct_btensor);

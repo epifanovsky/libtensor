@@ -2,8 +2,6 @@
 #include <cstdlib>
 #include <ctime>
 #include "tod_compare_test.h"
-#include "tensor.h"
-#include "tensor_ctrl.h"
 
 namespace libtensor {
 
@@ -20,7 +18,7 @@ void tod_compare_test::perform() throw(libtest::test_exception) {
 	index_range<4> ir(i1,i2);
 	dimensions<4> dim(ir);
 	test_operation(dim, idiff);
-	
+
 }
 
 void tod_compare_test::test_exc() throw(libtest::test_exception) {

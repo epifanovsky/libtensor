@@ -1,7 +1,6 @@
 #include <cmath>
 #include <cstdlib>
 #include <ctime>
-#include <libtensor.h>
 #include <libvmm.h>
 #include "tod_contract2_test.h"
 

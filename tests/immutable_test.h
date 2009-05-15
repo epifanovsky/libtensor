@@ -2,7 +2,6 @@
 #define LIBTENSOR_IMMUTABLE_TEST_H
 
 #include <libtest.h>
-#include "immutable.h"
 
 namespace libtensor {
 

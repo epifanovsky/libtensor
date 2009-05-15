@@ -1,6 +1,4 @@
-#include "bispace.h"
-#include "btensor.h"
-#include "labeled_btensor_expr.h"
+#include <libtensor.h>
 #include "labeled_btensor_test.h"
 
 namespace libtensor {

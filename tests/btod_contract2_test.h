@@ -2,8 +2,6 @@
 #define LIBTENSOR_BTOD_CONTRACT2_TEST_H
 
 #include <libtest.h>
-#include "btod_contract2.h"
-
 
 namespace libtensor {
 

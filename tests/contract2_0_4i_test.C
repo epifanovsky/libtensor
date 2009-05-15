@@ -1,10 +1,9 @@
-
 #include <cmath>
 #include <cstdlib>
 #include <ctime>
+#include <libtensor.h>
+#include "contract2_0_4i.h"
 #include "contract2_0_4i_test.h"
-#include "tensor.h"
-#include "tensor_ctrl.h"
 
 namespace libtensor {
 

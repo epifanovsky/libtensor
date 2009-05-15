@@ -2,7 +2,7 @@
 #define LIBTENSOR_TOD_SUM_TEST_H
 
 #include <libtest.h>
-#include "tod_sum.h"
+#include <libtensor.h>
 
 namespace libtensor {
 

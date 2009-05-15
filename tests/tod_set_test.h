@@ -2,7 +2,6 @@
 #define LIBTENSOR_TOD_SET_TEST_H
 
 #include <libtest.h>
-#include "tod_set.h"
 
 namespace libtensor {
 

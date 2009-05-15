@@ -2,7 +2,6 @@
 #define LIBTENSOR_SYMMETRY_TEST_H
 
 #include <libtest.h>
-#include "symmetry.h"
 
 namespace libtensor {
 

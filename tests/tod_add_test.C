@@ -1,7 +1,6 @@
-#include "tod_add_test.h"
-#include "tensor.h"
-
 #include <cmath>
+#include <libtensor.h>
+#include "tod_add_test.h"
 
 namespace libtensor {
 
@@ -17,12 +16,12 @@ void tod_add_test::perform() throw(libtest::test_exception) {
 	test_add_two_pqrs_prsq(2,3,4,5);
 	test_add_two_pqrs_qpsr(2,3,4,5);
 	test_add_mult(3,2,5,4);
-				
+
 }
 
 void tod_add_test::test_exc() throw(libtest::test_exception) {
 	index<4> i1, i2;
-	i2[0]=2; i2[1]=3; i2[2]=5; i2[3]=4; 
+	i2[0]=2; i2[1]=3; i2[2]=5; i2[3]=4;
 	index_range<4> ir(i1, i2);
 	dimensions<4> dim(ir);
 	permutation<4> p1, p2;
@@ -35,8 +34,8 @@ void tod_add_test::test_exc() throw(libtest::test_exception) {
 	try {
 		p1.permute(2,3);
 		add.add_op(t1,p1,0.5);
-		add.add_op(t2,p2,1.0); 
-	} 
+		add.add_op(t2,p2,1.0);
+	}
 	catch(exception e) {
 		ok=true;
 	}
@@ -46,7 +45,7 @@ void tod_add_test::test_exc() throw(libtest::test_exception) {
 			"Expected an exception due to heterogeneous operands");
 	}
 
-	ok=false;	
+	ok=false;
 	try {
 		add.add_op(t2,p2,1.0);
 		add.prefetch();
@@ -55,7 +54,7 @@ void tod_add_test::test_exc() throw(libtest::test_exception) {
 	catch(exception e) {
 		ok=true;
 	}
-	
+
 	if(!ok) {
 		fail_test("tod_add_test::test_exc()", __FILE__, __LINE__,
 			"Expected an exception due to heterogeneous result tensor");
@@ -63,8 +62,8 @@ void tod_add_test::test_exc() throw(libtest::test_exception) {
 
 }
 
-void tod_add_test::test_add_to_self_pqrs( size_t p, size_t q, size_t r, size_t s ) 
-	throw(libtest::test_exception) 
+void tod_add_test::test_add_to_self_pqrs( size_t p, size_t q, size_t r, size_t s )
+	throw(libtest::test_exception)
 {
 	index<4> i1, i2;
 	i2[0]=p; i2[1]=q; i2[2]=r; i2[3]=s;
@@ -73,14 +72,14 @@ void tod_add_test::test_add_to_self_pqrs( size_t p, size_t q, size_t r, size_t s
 	tensor4_d t(dim), t1(dim);
 
 	tensor_ctrl4 ctrl1(t1);
-	
+
 	double *ptr1=ctrl1.req_dataptr();
 	for ( size_t i=0; i<dim.get_size(); i++ ) {
 		ptr1[i]=.25*i;
 	}
 	ctrl1.ret_dataptr(ptr1);
 
-	permutation<4> perm; 
+	permutation<4> perm;
 	tod_add<4> add(perm);
 	add.add_op(t1,perm,2.0);
 	add.add_op(t1,perm,0.5);
@@ -92,14 +91,14 @@ void tod_add_test::test_add_to_self_pqrs( size_t p, size_t q, size_t r, size_t s
 	for ( size_t i=0; i<dim.get_size(); i++ ) {
 		if ( fabs(ptr[i]-.625*i) > 1e-14 ) {
 			fail_test("tod_add_test::test_add_to_self_pqrs()", __FILE__, __LINE__,
-			"tod_add yielded the wrong result");	
+			"tod_add yielded the wrong result");
 		}
 	}
 	ctrl.ret_dataptr(ptr);
 }
 
-void tod_add_test::test_add_two_pqrs_pqrs( size_t p, size_t q, size_t r, size_t s ) 
-	throw(libtest::test_exception) 
+void tod_add_test::test_add_two_pqrs_pqrs( size_t p, size_t q, size_t r, size_t s )
+	throw(libtest::test_exception)
 {
 	index<4> i1, i2;
 	i2[0]=p; i2[1]=q; i2[2]=r; i2[3]=s;
@@ -108,7 +107,7 @@ void tod_add_test::test_add_two_pqrs_pqrs( size_t p, size_t q, size_t r, size_t 
 	tensor4_d t1(dim), t2(dim);
 
 	tensor_ctrl4 ctrl1(t1), ctrl2(t2);
-	
+
 	double *ptr1=ctrl1.req_dataptr();
 	double *ptr2=ctrl2.req_dataptr();
 	for ( size_t i=0; i<dim.get_size(); i++ ) {
@@ -118,7 +117,7 @@ void tod_add_test::test_add_two_pqrs_pqrs( size_t p, size_t q, size_t r, size_t 
 	ctrl1.ret_dataptr(ptr1);
 	ctrl2.ret_dataptr(ptr2);
 
-	permutation<4> perm; 
+	permutation<4> perm;
 
 	tod_add<4> add(perm);
 	add.add_op(t2,perm,2.0);
@@ -129,14 +128,14 @@ void tod_add_test::test_add_two_pqrs_pqrs( size_t p, size_t q, size_t r, size_t 
 	for ( size_t i=0; i<dim.get_size(); i++ ) {
 		if ( fabs(ptr1[i]-0.2*i) > 1e-14 ) {
 			fail_test("tod_add_test::test_add_two_pqrs_pqrs()", __FILE__, __LINE__,
-			"tod_add yielded the wrong result");	
+			"tod_add yielded the wrong result");
 		}
 	}
 	ctrl1.ret_dataptr(ptr1);
 }
 
-void tod_add_test::test_add_two_pqrs_qprs( size_t p, size_t q, size_t r, size_t s ) 
-	throw(libtest::test_exception) 
+void tod_add_test::test_add_two_pqrs_qprs( size_t p, size_t q, size_t r, size_t s )
+	throw(libtest::test_exception)
 {
 	index<4> i1, i2;
 	i2[0]=p; i2[1]=q; i2[2]=r; i2[3]=s;
@@ -149,11 +148,11 @@ void tod_add_test::test_add_two_pqrs_qprs( size_t p, size_t q, size_t r, size_t 
 	tensor4_d t1(dim1), t2(dim2);
 
 	tensor_ctrl4 ctrl1(t1), ctrl2(t2);
-	
+
 	double *ptr1=ctrl1.req_dataptr();
 	double *ptr2=ctrl2.req_dataptr();
 	size_t cnt=0;
-	for ( size_t i=0; i<dim2[0]; i++ ) for ( size_t j=0; j<dim2[1]; j++ ) 
+	for ( size_t i=0; i<dim2[0]; i++ ) for ( size_t j=0; j<dim2[1]; j++ )
 	for ( size_t k=0; k<dim2[2]; k++ ) for ( size_t l=0; l<dim2[3]; l++ ) {
 		ptr1[cnt]=0.1*cnt;
 		ptr2[cnt++]=double(i+j+k+l)/(1.+2.*l+3.*k+5.*j+7.*i);
@@ -168,19 +167,19 @@ void tod_add_test::test_add_two_pqrs_qprs( size_t p, size_t q, size_t r, size_t 
 
 	const double* ptr=ctrl1.req_const_dataptr();
 	cnt=0;
-	for ( size_t i=0; i<dim1[0]; i++ ) for ( size_t j=0; j<dim1[1]; j++ ) 
+	for ( size_t i=0; i<dim1[0]; i++ ) for ( size_t j=0; j<dim1[1]; j++ )
 	for ( size_t k=0; k<dim1[2]; k++ ) for ( size_t l=0; l<dim1[3]; l++ ) {
 		if ( fabs(ptr[cnt]-0.1*(cnt+double(i+j+k+l)/(1.+2.*l+3.*k+5.*i+7.*j))) > 1e-14 ) {
 			fail_test("tod_add_test::test_add_two_pqrs_prsq()", __FILE__, __LINE__,
-			"tod_add yielded the wrong result");	
+			"tod_add yielded the wrong result");
 		}
 		cnt++;
 	}
 	ctrl1.ret_dataptr(ptr);
 }
 
-void tod_add_test::test_add_two_pqrs_prsq( size_t p, size_t q, size_t r, size_t s ) 
-	throw(libtest::test_exception) 
+void tod_add_test::test_add_two_pqrs_prsq( size_t p, size_t q, size_t r, size_t s )
+	throw(libtest::test_exception)
 {
 	index<4> i1, i2;
 	i2[0]=p; i2[1]=q; i2[2]=r; i2[3]=s;
@@ -195,11 +194,11 @@ void tod_add_test::test_add_two_pqrs_prsq( size_t p, size_t q, size_t r, size_t 
 	tensor4_d t1(dim1), t2(dim2);
 
 	tensor_ctrl4 ctrl1(t1), ctrl2(t2);
-	
+
 	double *ptr1=ctrl1.req_dataptr();
 	double *ptr2=ctrl2.req_dataptr();
 	size_t cnt=0;
-	for ( size_t i=0; i<dim2[0]; i++ ) for ( size_t j=0; j<dim2[1]; j++ ) 
+	for ( size_t i=0; i<dim2[0]; i++ ) for ( size_t j=0; j<dim2[1]; j++ )
 	for ( size_t k=0; k<dim2[2]; k++ ) for ( size_t l=0; l<dim2[3]; l++ ) {
 		ptr1[cnt]=0.1*cnt;
 		ptr2[cnt++]=double(i+j+k+l)/(1.+2.*l+3.*k+5.*j+7.*i);
@@ -214,19 +213,19 @@ void tod_add_test::test_add_two_pqrs_prsq( size_t p, size_t q, size_t r, size_t 
 
 	const double* ptr=ctrl1.req_const_dataptr();
 	cnt=0;
-	for ( size_t i=0; i<dim1[0]; i++ ) for ( size_t j=0; j<dim1[1]; j++ ) 
+	for ( size_t i=0; i<dim1[0]; i++ ) for ( size_t j=0; j<dim1[1]; j++ )
 	for ( size_t k=0; k<dim1[2]; k++ ) for ( size_t l=0; l<dim1[3]; l++ ) {
 		if ( fabs(ptr[cnt]-0.1*(cnt+double(i+j+k+l)/(1.+2.*k+3.*j+5.*l+7.*i))) > 1e-14 ) {
 			fail_test("tod_add_test::test_add_two_pqrs_prsq()", __FILE__, __LINE__,
-			"tod_add yielded the wrong result");	
+			"tod_add yielded the wrong result");
 		}
 		cnt++;
 	}
 	ctrl1.ret_dataptr(ptr);
 }
 
-void tod_add_test::test_add_two_pqrs_qpsr( size_t p, size_t q, size_t r, size_t s ) 
-	throw(libtest::test_exception) 
+void tod_add_test::test_add_two_pqrs_qpsr( size_t p, size_t q, size_t r, size_t s )
+	throw(libtest::test_exception)
 {
 	index<4> i1, i2;
 	i2[0]=p; i2[1]=q; i2[2]=r; i2[3]=s;
@@ -240,11 +239,11 @@ void tod_add_test::test_add_two_pqrs_qpsr( size_t p, size_t q, size_t r, size_t 
 	tensor4_d t1(dim1), t2(dim2);
 
 	tensor_ctrl4 ctrl1(t1), ctrl2(t2);
-	
+
 	double *ptr1=ctrl1.req_dataptr();
 	double *ptr2=ctrl2.req_dataptr();
 	size_t cnt=0;
-	for ( size_t i=0; i<dim2[0]; i++ ) for ( size_t j=0; j<dim2[1]; j++ ) 
+	for ( size_t i=0; i<dim2[0]; i++ ) for ( size_t j=0; j<dim2[1]; j++ )
 	for ( size_t k=0; k<dim2[2]; k++ ) for ( size_t l=0; l<dim2[3]; l++ ) {
 		ptr1[cnt]=0.1*cnt;
 		ptr2[cnt++]=double(i+j+k+l)/(1.+2.*l+3.*k+5.*j+7.*i);
@@ -259,19 +258,19 @@ void tod_add_test::test_add_two_pqrs_qpsr( size_t p, size_t q, size_t r, size_t 
 
 	const double *ptr=ctrl1.req_const_dataptr();
 	cnt=0;
-	for ( size_t i=0; i<dim1[0]; i++ ) for ( size_t j=0; j<dim1[1]; j++ ) 
+	for ( size_t i=0; i<dim1[0]; i++ ) for ( size_t j=0; j<dim1[1]; j++ )
 	for ( size_t k=0; k<dim1[2]; k++ ) for ( size_t l=0; l<dim1[3]; l++ ) {
 		if ( fabs(ptr[cnt]-0.1*(cnt+double(i+j+k+l)/(1.+2.*k+3.*l+5.*i+7.*j)))>1e-14 ) {
 			fail_test("tod_add_test::test_add_two_pqrs_qpsr()", __FILE__, __LINE__,
-			"tod_add yielded the wrong result");	
+			"tod_add yielded the wrong result");
 		}
 		cnt++;
 	}
 	ctrl1.ret_dataptr(ptr);
 }
 
-void tod_add_test::test_add_mult( size_t p, size_t q, size_t r, size_t s ) 
-	throw(libtest::test_exception) 
+void tod_add_test::test_add_mult( size_t p, size_t q, size_t r, size_t s )
+	throw(libtest::test_exception)
 {
 	index<4> i1, i2;
 	i2[0]=p; i2[1]=q; i2[2]=r; i2[3]=s;
@@ -283,7 +282,7 @@ void tod_add_test::test_add_mult( size_t p, size_t q, size_t r, size_t s )
 	tensor4_d t1(dim), t2(dim), t3(dim3);
 
 	tensor_ctrl4 ctrl1(t1), ctrl2(t2), ctrl3(t3);
-	
+
 	double *ptr1=ctrl1.req_dataptr();
 	double *ptr2=ctrl2.req_dataptr();
 	double *ptr3=ctrl3.req_dataptr();
@@ -307,11 +306,11 @@ void tod_add_test::test_add_mult( size_t p, size_t q, size_t r, size_t s )
 
 	const double *ptr=ctrl1.req_const_dataptr();
 	cnt=0;
-	for ( size_t i=0; i<dim[0]; i++ ) for ( size_t j=0; j<dim[1]; j++ ) 
+	for ( size_t i=0; i<dim[0]; i++ ) for ( size_t j=0; j<dim[1]; j++ )
 	for ( size_t k=0; k<dim[2]; k++ ) for ( size_t l=0; l<dim[3]; l++ ) {
 		if ( fabs(ptr[cnt]-(cnt+.25*cnt-0.5*(((j*dim3[1]+i)*dim3[2]+k)*dim3[3]+l))) > 1e-14 ) {
 			fail_test("tod_add_test::test_add_mult()", __FILE__, __LINE__,
-			"tod_add yielded the wrong result");	
+			"tod_add yielded the wrong result");
 		}
 		cnt++;
 	}
@@ -322,11 +321,11 @@ typedef tensor<2, double, libvmm::std_allocator<double> > tensor2_d;
 typedef tensor_ctrl<2, double> tensor_ctrl2;
 
 
-void tod_add_test::test_add_two_pq_qp( size_t p, size_t q ) 
-	throw(libtest::test_exception) 
+void tod_add_test::test_add_two_pq_qp( size_t p, size_t q )
+	throw(libtest::test_exception)
 {
 	index<2> i1, i2;
-	i2[0]=p; i2[1]=q; 
+	i2[0]=p; i2[1]=q;
 	index_range<2> ir(i1, i2);
 	dimensions<2> dim(ir), dim3(ir);
 	permutation<2> perm, p3;
@@ -335,7 +334,7 @@ void tod_add_test::test_add_two_pq_qp( size_t p, size_t q )
 	tensor2_d t1(dim), t2(dim), t3(dim3);
 
 	tensor_ctrl2 ctrl1(t1), ctrl2(t2), ctrl3(t3);
-	
+
 	double *ptr1=ctrl1.req_dataptr();
 	double *ptr2=ctrl2.req_dataptr();
 	double *ptr3=ctrl3.req_dataptr();
@@ -362,7 +361,7 @@ void tod_add_test::test_add_two_pq_qp( size_t p, size_t q )
 	for ( size_t i=0; i<dim[0]; i++ ) for ( size_t j=0; j<dim[1]; j++ ) {
 		if ( fabs(ptr[cnt]-(cnt+.5*cnt*(-1.*(cnt%2))-.25*(j*dim3[1]+i))) > 1e-14 ) {
 			fail_test("tod_add_test::test_add_mult()", __FILE__, __LINE__,
-			"tod_add yielded the wrong result");	
+			"tod_add yielded the wrong result");
 		}
 		cnt++;
 	}

@@ -1,3 +1,4 @@
+#include <libtensor.h>
 #include "letter_test.h"
 
 namespace libtensor {

@@ -2,7 +2,6 @@
 #define LIBTENSOR_PERMUTATION_TEST_H
 
 #include <libtest.h>
-#include "permutation.h"
 
 namespace libtensor {
 

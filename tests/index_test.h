@@ -2,7 +2,6 @@
 #define LIBTENSOR_INDEX_TEST_H
 
 #include <libtest.h>
-#include "index.h"
 
 namespace libtensor {
 

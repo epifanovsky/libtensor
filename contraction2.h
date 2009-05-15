@@ -6,7 +6,6 @@
 #include "exception.h"
 #include "dimensions.h"
 #include "permutation.h"
-#include "contraction2_list.h"
 
 namespace libtensor {
 

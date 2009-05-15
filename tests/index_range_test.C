@@ -1,3 +1,4 @@
+#include <libtensor.h>
 #include "index_range_test.h"
 
 namespace libtensor {

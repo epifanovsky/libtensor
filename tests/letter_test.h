@@ -2,8 +2,6 @@
 #define LIBTENSOR_LETTER_TEST_H
 
 #include <libtest.h>
-#include "letter.h"
-#include "letter_expr.h"
 
 namespace libtensor {
 

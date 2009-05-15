@@ -2,7 +2,6 @@
 #define LIBTENSOR_DIMENSIONS_TEST_H
 
 #include <libtest.h>
-#include "dimensions.h"
 
 namespace libtensor {
 

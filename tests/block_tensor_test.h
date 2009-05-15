@@ -2,7 +2,6 @@
 #define LIBTENSOR_BLOCK_TENSOR_TEST_H
 
 #include <libtest.h>
-#include "block_tensor.h"
 
 namespace libtensor {
 

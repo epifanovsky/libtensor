@@ -2,7 +2,6 @@
 #define LIBTENSOR_PERMUTATOR_TEST_H
 
 #include <libtest.h>
-#include "permutator.h"
 
 namespace libtensor {
 

@@ -1,3 +1,4 @@
+#include <libtensor.h>
 #include "immutable_test.h"
 
 namespace libtensor {

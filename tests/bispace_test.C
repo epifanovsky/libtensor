@@ -1,3 +1,4 @@
+#include <libtensor.h>
 #include "bispace_test.h"
 
 namespace libtensor {

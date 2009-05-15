@@ -1,5 +1,4 @@
-#include "bispace.h"
-#include "btensor.h"
+#include <libtensor.h>
 #include "contract_test.h"
 
 namespace libtensor {

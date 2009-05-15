@@ -1,6 +1,6 @@
 #include <libvmm.h>
+#include <libtensor.h>
 #include "block_tensor_test.h"
-#include "bispace.h"
 
 namespace libtensor {
 

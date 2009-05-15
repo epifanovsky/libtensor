@@ -44,7 +44,7 @@ void contraction2_test::test_1() throw(libtest::test_exception) {
 	index_range<4> ira1(idxa1_1, idxa1_2), irb1(idxb1_1, idxb1_2),
 		irc1(idxc1_1, idxc1_2);
 	dimensions<4> dima1(ira1), dimb1(irb1), dimc1(irc1);
-
+/*
 	contraction2_list<6> list;
 	c.populate(list, dima1, dimb1, dimc1);
 
@@ -106,7 +106,7 @@ void contraction2_test::test_1() throw(libtest::test_exception) {
 			fail_test("contraction2_test::test_1()",
 				__FILE__, __LINE__, s);
 		}
-	}
+	}*/
 }
 
 } // namespace libtensor

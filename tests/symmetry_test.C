@@ -1,4 +1,6 @@
+#include <libtensor.h>
 #include "default_symmetry.h"
+#include "symmetry.h"
 #include "symmetry_test.h"
 
 namespace libtensor {

@@ -2,7 +2,6 @@
 #define	LIBTENSOR_LABELED_BTENSOR_TEST_H
 
 #include <libtest.h>
-#include "labeled_btensor.h"
 
 namespace libtensor {
 

@@ -3,7 +3,7 @@
 
 #include <sstream>
 #include <libtest.h>
-#include "tod_contract2.h"
+#include <libtensor.h>
 
 namespace libtensor {
 
