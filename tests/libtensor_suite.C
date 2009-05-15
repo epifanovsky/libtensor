@@ -18,10 +18,6 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("dimensions", m_utf_dimensions);
 	add_test("direct_btensor", m_utf_direct_btensor);
 	add_test("direct_tensor", m_utf_direct_tensor);
-	add_test("expr_binary", m_utf_expr_binary);
-	add_test("expr_identity", m_utf_expr_identity);
-	add_test("expr_literal", m_utf_expr_literal);
-	add_test("expression", m_utf_expression);
 	add_test("immutable", m_utf_immutable);
 	add_test("index", m_utf_index);
 	add_test("index_range", m_utf_index_range);

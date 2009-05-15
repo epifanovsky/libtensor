@@ -16,7 +16,6 @@ OBJS  =
 OBJS += contract2_0_4i.o
 OBJS += defs.o
 OBJS += exception.o
-OBJS += expression_builder.o
 OBJS += permutator.o
 
 DEPS = $(OBJS:.o=.d)
