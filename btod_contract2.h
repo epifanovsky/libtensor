@@ -4,6 +4,7 @@
 #include "defs.h"
 #include "exception.h"
 #include "block_tensor_i.h"
+#include "block_tensor_ctrl.h"
 #include "btod_additive.h"
 #include "contraction2.h"
 #include "tod_contract2.h"

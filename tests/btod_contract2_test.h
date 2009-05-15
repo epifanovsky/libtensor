@@ -4,6 +4,7 @@
 #include <libtest.h>
 #include "btod_contract2.h"
 
+
 namespace libtensor {
 
 /**	\brief Tests the libtensor::btod_contract2 class

@@ -20,6 +20,8 @@ void btod_add_test::perform() throw(libtest::test_exception) {
 	p.permute(0,1);
 	operation.add_op(bt2,p,0.5);
 	operation.perform(bt1,0.1);
+
+        operation.perform(bt1);
 }
 
 void btod_add_test::test_exc() throw(libtest::test_exception) {
