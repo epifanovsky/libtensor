@@ -40,6 +40,8 @@ OBJS += tod_set_test.o
 OBJS += tod_sum_test.o
 OBJS += tod_symcontract2_test.o
 
+include $(OBJS:.o=.d)
+
 .PHONY: all
 all: libtensor_tests
 

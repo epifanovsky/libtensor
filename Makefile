@@ -23,6 +23,8 @@ OBJS += tod_contract2_impl_113.o
 OBJS += tod_contract2_impl_131.o
 OBJS += tod_contract2_impl_221.o
 
+include $(OBJS:.o=.d)
+
 libtensor.a: $(OBJS)
 	echo $?
 	ar -r libtensor.a $?
