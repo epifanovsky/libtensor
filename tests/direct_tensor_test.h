@@ -29,9 +29,9 @@ private:
 	//!	Sets every tensor element to its sequential number
 	class test_op_set : public direct_tensor_operation<2,int> {
 	private:
-		int m_count;
+		static int m_count;
 	public:
-		test_op_set() : m_count(0) {}
+		test_op_set() {}
 		int get_count() const { return m_count; }
 		virtual void prefetch() throw(exception) {}
 		virtual void perform(tensor_i<2,int> &t) throw(exception);

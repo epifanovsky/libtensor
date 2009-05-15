@@ -3,7 +3,9 @@
 
 namespace libtensor {
 
-typedef direct_tensor<2, int, libvmm::std_allocator<int> > tensor2_int;
+typedef libvmm::std_allocator<int> alloc_int_t;
+
+int direct_tensor_test::test_op_set::m_count = 0;
 
 void direct_tensor_test::perform() throw(libtest::test_exception) {
 	test_ctor();
@@ -19,7 +21,7 @@ void direct_tensor_test::test_ctor() throw(libtest::test_exception) {
 	index_range<2> ir(i1,i2);
 	dimensions<2> d(ir);
 	test_op op;
-	tensor2_int dt(d, op);
+	direct_tensor<2, int, test_op, alloc_int_t> dt(d, op);
 
 	tensor_i<2,int> &dtref(dt);
 	dtref.get_dims();
@@ -53,7 +55,7 @@ void direct_tensor_test::test_buffering() throw(libtest::test_exception) {
 	test_op_set op_set;
 	test_op_chk_set op_chk_set;
 
-	tensor2_int dt(d, op_set);
+	direct_tensor<2, int, test_op_set, alloc_int_t> dt(d, op_set);
 
 	op_chk_set.perform(dt);
 	if(!op_chk_set.is_ok()) {
