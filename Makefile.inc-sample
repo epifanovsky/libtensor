@@ -11,7 +11,7 @@ CPP = icpc
 LD = icpc
 CPPFLAGS = -g -DDEBUG_CHECK -DUSE_MKL
 LDFLAGS = -g -o
-INCLUDE =
+INCLUDE = -I/opt/intel/Compiler/11.0/081/mkl/include
 LIBS = -lmkl -lguide -lpthread
 
 %.o: %.C; $(CPP) $(CPPFLAGS) $(INCLUDE) -c $<

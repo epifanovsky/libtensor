@@ -55,24 +55,3 @@ clean:
 
 libtensor_tests: libtensor_tests.o $(OBJS) ../libtensor.a
 	$(LD) $(LDFLAGS) libtensor_tests $(LIBS) $^ ../../libtest/libtest.a
-
-default_symmetry_test.C: default_symmetry_test.h
-
-dimensions_test.C: dimensions_test.h
-
-index_test.C: index_test.h
-
-index_range_test.C: index_range_test.h
-
-lehmer_code_test.C: lehmer_code_test.h
-
-permutation_test.C: permutation_test.h
-
-permutator_test.C: permutator_test.h
-
-symmetry_test.C: symmetry_test.h
-
-tensor_test.C: tensor_test.h
-
-tod_set_test.C: tod_set_test.h
-
