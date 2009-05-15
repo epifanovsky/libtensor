@@ -62,18 +62,18 @@ private:
 	public:
 		op_loop(size_t len, size_t inca, size_t incb, size_t incc) :
 			m_len(len), m_inca(inca), m_incb(incb), m_incc(incc) { }
-		virtual const char *name() { return "loop"; }
 		virtual void exec(processor_t &proc, registers &regs)
 			throw(exception);
 	};
 
 	class op_loop_mul : public processor_op_i_t {
 	private:
+		double m_d;
 		size_t m_len, m_inca, m_incb, m_incc;
 	public:
-		op_loop_mul(size_t len, size_t inca, size_t incb, size_t incc) :
-			m_len(len), m_inca(inca), m_incb(incb), m_incc(incc) { }
-		virtual const char *name() { return "loop_mul"; }
+		op_loop_mul(double d, size_t len, size_t inca, size_t incb,
+			size_t incc) : m_d(d), m_len(len), m_inca(inca),
+			m_incb(incb), m_incc(incc) { }
 		virtual void exec(processor_t &proc, registers &regs)
 			throw(exception);
 	};
@@ -81,10 +81,10 @@ private:
 	//!	c = a_i b_i
 	class op_ddot : public processor_op_i_t {
 	private:
+		double m_d;
 		size_t m_n;
 	public:
-		op_ddot(size_t n) : m_n(n) { }
-		virtual const char *name() { return "ddot"; }
+		op_ddot(double d, size_t n) : m_d(d), m_n(n) { }
 		virtual void exec(processor_t &proc, registers &regs)
 			throw(exception);
 	};
@@ -92,10 +92,10 @@ private:
 	//!	c_i = a_i b
 	class op_daxpy_a : public processor_op_i_t {
 	private:
+		double m_d;
 		size_t m_n;
 	public:
-		op_daxpy_a(size_t n) : m_n(n) { }
-		virtual const char *name() { return "daxpy_a"; }
+		op_daxpy_a(double d, size_t n) : m_d(d), m_n(n) { }
 		virtual void exec(processor_t &proc, registers &regs)
 			throw(exception);
 	};
@@ -103,10 +103,10 @@ private:
 	//!	c_i = a b_i
 	class op_daxpy_b : public processor_op_i_t {
 	private:
+		double m_d;
 		size_t m_n;
 	public:
-		op_daxpy_b(size_t n) : m_n(n) { }
-		virtual const char *name() { return "daxpy_b"; }
+		op_daxpy_b(double d, size_t n) : m_d(d), m_n(n) { }
 		virtual void exec(processor_t &proc, registers &regs)
 			throw(exception);
 	};
@@ -114,11 +114,11 @@ private:
 	//!	c_i = a_ip b_p
 	class op_dgemv_a : public processor_op_i_t {
 	private:
+		double m_d;
 		size_t m_rows, m_cols, m_lda;
 	public:
-		op_dgemv_a(size_t rows, size_t cols, size_t lda) :
-			m_rows(rows), m_cols(cols), m_lda(lda) { }
-		virtual const char *name() { return "dgemv_a"; }
+		op_dgemv_a(double d, size_t rows, size_t cols, size_t lda) :
+			m_d(d), m_rows(rows), m_cols(cols), m_lda(lda) { }
 		virtual void exec(processor_t &proc, registers &regs)
 			throw(exception);
 	};
@@ -126,11 +126,11 @@ private:
 	//!	c_i = a_p b_ip
 	class op_dgemv_b : public processor_op_i_t {
 	private:
+		double m_d;
 		size_t m_rows, m_cols, m_ldb;
 	public:
-		op_dgemv_b(size_t rows, size_t cols, size_t ldb) :
-			m_rows(rows), m_cols(cols), m_ldb(ldb) { }
-		virtual const char *name() { return "dgemv_b"; }
+		op_dgemv_b(double d, size_t rows, size_t cols, size_t ldb) :
+			m_d(d), m_rows(rows), m_cols(cols), m_ldb(ldb) { }
 		virtual void exec(processor_t &proc, registers &regs)
 			throw(exception);
 	};
@@ -189,8 +189,10 @@ public:
 	//@}
 
 private:
-	void match_level_1();
-	void match_ddot_level_2(size_t w0);
+	void do_perform(tensor_i<k_orderc, double> &tc, bool zero, double d)
+		throw(exception);
+	void match_level_1(double d);
+	void match_ddot_level_2(double d, size_t w0);
 	void match_loops();
 	void clean_list();
 };
@@ -217,6 +219,20 @@ template<size_t N, size_t M, size_t K>
 void tod_contract2<N, M, K>::perform(tensor_i<k_orderc, double> &tc)
 	throw(exception) {
 
+	do_perform(tc, true, 1.0);
+}
+
+template<size_t N, size_t M, size_t K>
+void tod_contract2<N, M, K>::perform(tensor_i<k_orderc, double> &tc, double d)
+	throw(exception) {
+
+	do_perform(tc, false, d);
+}
+
+template<size_t N, size_t M, size_t K>
+void tod_contract2<N, M, K>::do_perform(tensor_i<k_orderc, double> &tc,
+	bool zero, double d) throw(exception) {
+
 	loop_list_adapter list_adapter(m_list);
 	m_contr.populate(list_adapter, m_ta.get_dims(), m_tb.get_dims(),
 		tc.get_dims());
@@ -229,10 +245,12 @@ void tod_contract2<N, M, K>::perform(tensor_i<k_orderc, double> &tc)
 	const double *ptrb = ctrlb.req_const_dataptr();
 	double *ptrc = ctrlc.req_dataptr();
 
-	size_t szc = tc.get_dims().get_size();
-	for(size_t i=0; i<szc; i++) ptrc[i] = 0.0;
+	if(zero) {
+		size_t szc = tc.get_dims().get_size();
+		for(size_t i=0; i<szc; i++) ptrc[i] = 0.0;
+	}
 
-	match_level_1();
+	match_level_1(d);
 	match_loops();
 	try {
 		registers regs;
@@ -254,25 +272,7 @@ void tod_contract2<N, M, K>::perform(tensor_i<k_orderc, double> &tc)
 }
 
 template<size_t N, size_t M, size_t K>
-void tod_contract2<N, M, K>::perform(tensor_i<k_orderc, double> &tc, double d)
-	throw(exception) {
-
-	tensor_ctrl<N+K,double> ctrla(m_ta);
-	tensor_ctrl<M+K,double> ctrlb(m_tb);
-	tensor_ctrl<N+M,double> ctrlc(tc);
-
-	const double *ptra = ctrla.req_const_dataptr();
-	const double *ptrb = ctrlb.req_const_dataptr();
-	double *ptrc = ctrlc.req_dataptr();
-
-
-	ctrla.ret_dataptr(ptra);
-	ctrlb.ret_dataptr(ptrb);
-	ctrlc.ret_dataptr(ptrc);
-}
-
-template<size_t N, size_t M, size_t K>
-void tod_contract2<N, M, K>::match_level_1() {
+void tod_contract2<N, M, K>::match_level_1(double d) {
 	bool lastc_found = false;
 	typename loop_list_t::iterator lasta, lastb, lastc;
 
@@ -285,19 +285,19 @@ void tod_contract2<N, M, K>::match_level_1() {
 	}
 
 	if(lasta == lastb) {
-		lasta->m_op = new op_ddot(lasta->m_weight);
-		match_ddot_level_2(lasta->m_weight);
+		lasta->m_op = new op_ddot(d, lasta->m_weight);
+		match_ddot_level_2(d, lasta->m_weight);
 		m_list.splice(m_list.end(), m_list, lasta);
 	} else {
 		if(lastc_found && lasta == lastc) {
-			lasta->m_op = new op_daxpy_a(lasta->m_weight);
+			lasta->m_op = new op_daxpy_a(d, lasta->m_weight);
 			m_list.splice(m_list.end(), m_list, lasta);
 		} else
 		if(lastc_found && lastb == lastc) {
-			lastb->m_op = new op_daxpy_b(lastb->m_weight);
+			lastb->m_op = new op_daxpy_b(d, lastb->m_weight);
 			m_list.splice(m_list.end(), m_list, lastb);
 		} else {
-			lasta->m_op = new op_loop_mul(lasta->m_weight,
+			lasta->m_op = new op_loop_mul(d, lasta->m_weight,
 				lasta->m_inca, lasta->m_incb, lasta->m_incc);
 			m_list.splice(m_list.end(), m_list, lasta);
 		}
@@ -305,20 +305,20 @@ void tod_contract2<N, M, K>::match_level_1() {
 }
 
 template<size_t N, size_t M, size_t K>
-inline void tod_contract2<N, M, K>::match_ddot_level_2(size_t w0) {
+inline void tod_contract2<N, M, K>::match_ddot_level_2(double d, size_t w0) {
 	bool found_match = false;
 	for(typename loop_list_t::iterator i = m_list.begin();
 		i != m_list.end(); i++) {
 
 		if(i->m_incc == 1) {
 			if(i->m_inca != 0) {
-				i->m_op = new op_dgemv_a(i->m_weight,
+				i->m_op = new op_dgemv_a(d, i->m_weight,
 					w0, i->m_inca);
 				found_match = true;
 				m_list.splice(m_list.end(), m_list, i);
 				break;
 			} else if(i->m_incb != 0) {
-				i->m_op = new op_dgemv_b(i->m_weight,
+				i->m_op = new op_dgemv_b(d, i->m_weight,
 					w0, i->m_incb);
 				found_match = true;
 				m_list.splice(m_list.end(), m_list, i);
@@ -395,33 +395,33 @@ void tod_contract2<N, M, K>::op_loop_mul::exec(processor_t &proc,
 template<size_t N, size_t M, size_t K>
 void tod_contract2<N, M, K>::op_ddot::exec(processor_t &proc, registers &regs)
 	throw(exception) {
-	*(regs.m_ptrc) = cblas_ddot(m_n, regs.m_ptra, 1, regs.m_ptrb, 1);
+	*(regs.m_ptrc) = m_d*cblas_ddot(m_n, regs.m_ptra, 1, regs.m_ptrb, 1);
 }
 
 template<size_t N, size_t M, size_t K>
 void tod_contract2<N, M, K>::op_daxpy_a::exec(processor_t &proc,
 	registers &regs) throw(exception) {
-	cblas_daxpy(m_n, *(regs.m_ptrb), regs.m_ptra, 1, regs.m_ptrc, 1);
+	cblas_daxpy(m_n, *(regs.m_ptrb)*m_d, regs.m_ptra, 1, regs.m_ptrc, 1);
 }
 
 template<size_t N, size_t M, size_t K>
 void tod_contract2<N, M, K>::op_daxpy_b::exec(processor_t &proc,
 	registers &regs) throw(exception) {
-	cblas_daxpy(m_n, *(regs.m_ptra), regs.m_ptrb, 1, regs.m_ptrc, 1);
+	cblas_daxpy(m_n, *(regs.m_ptra)*m_d, regs.m_ptrb, 1, regs.m_ptrc, 1);
 }
 
 template<size_t N, size_t M, size_t K>
 void tod_contract2<N, M, K>::op_dgemv_a::exec(processor_t &proc,
 	registers &regs) throw(exception) {
-	cblas_dgemv(CblasRowMajor, CblasNoTrans, m_rows, m_cols, 1.0,
-		regs.m_ptra, m_lda, regs.m_ptrb, 1, 0.0, regs.m_ptrc, 1);
+	cblas_dgemv(CblasRowMajor, CblasNoTrans, m_rows, m_cols, m_d,
+		regs.m_ptra, m_lda, regs.m_ptrb, 1, 1.0, regs.m_ptrc, 1);
 }
 
 template<size_t N, size_t M, size_t K>
 void tod_contract2<N, M, K>::op_dgemv_b::exec(processor_t &proc,
 	registers &regs) throw(exception) {
-	cblas_dgemv(CblasRowMajor, CblasNoTrans, m_rows, m_cols, 1.0,
-		regs.m_ptrb, m_ldb, regs.m_ptra, 1, 0.0, regs.m_ptrc, 1);
+	cblas_dgemv(CblasRowMajor, CblasNoTrans, m_rows, m_cols, m_d,
+		regs.m_ptrb, m_ldb, regs.m_ptra, 1, 1.0, regs.m_ptrc, 1);
 }
 
 } // namespace libtensor

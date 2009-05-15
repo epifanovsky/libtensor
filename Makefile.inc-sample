@@ -1,6 +1,7 @@
 # For GNU C++ compiler + BLAS, uncomment here
 #CPP = g++
 #LD = g++
+#RM = rm -f
 #CPPFLAGS = -g -DDEBUG_CHECK -DUSE_BLAS
 #LDFLAGS = -g -o
 #INCLUDE =
@@ -9,6 +10,7 @@
 # For Intel C++ compiler + MKL, uncomment here
 CPP = icpc
 LD = icpc
+RM = rm -f
 CPPFLAGS = -g -DDEBUG_CHECK -DUSE_MKL
 LDFLAGS = -g -o
 INCLUDE = -I/opt/intel/Compiler/11.0/081/mkl/include

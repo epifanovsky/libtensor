@@ -1,3 +1,6 @@
+.PHONY: all
+all: deps libtensor_tests
+
 OBJS  = libtensor_suite.o
 OBJS += bispace_test.o
 OBJS += block_tensor_test.o
@@ -30,28 +33,30 @@ OBJS += symmetry_test.o
 OBJS += tensor_test.o
 OBJS += tod_add_test.o
 OBJS += tod_compare_test.o
-OBJS += tod_contract2_impl_022_test.o
-OBJS += tod_contract2_impl_113_test.o
-OBJS += tod_contract2_impl_131_test.o
-OBJS += tod_contract2_impl_221_test.o
 OBJS += tod_contract2_test.o
 OBJS += tod_copy_test.o
 OBJS += tod_set_test.o
 OBJS += tod_sum_test.o
 OBJS += tod_symcontract2_test.o
 
-include $(OBJS:.o=.d)
+DEPS = $(OBJS:.o=.d)
 
-.PHONY: all
-all: libtensor_tests
+ifneq ($(MAKECMDGOALS),clean)
+include $(DEPS)
+endif
 
 include ../Makefile.inc
 INCLUDE += -I.. -I../../libtest -I../../libvmm
 
-.PHONY: clean
-clean:
-	rm -f *.[ao]
-	rm -f libtensor_tests
+.PHONY: deps
+deps: $(DEPS)
 
 libtensor_tests: libtensor_tests.o $(OBJS) ../libtensor.a
 	$(LD) $(LDFLAGS) libtensor_tests $(LIBS) $^ ../../libtest/libtest.a
+
+.PHONY: clean
+clean:
+	$(RM) *.a
+	$(RM) *.o
+	$(RM) *.d
+	$(RM) libtensor_tests

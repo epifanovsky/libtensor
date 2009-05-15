@@ -1,5 +1,5 @@
 .PHONY: all
-all: Makefile.inc libtensor.a tests
+all: Makefile.inc deps libtensor.a tests
 
 Makefile.inc:
 	@echo "-----------------------------------------------"
@@ -18,12 +18,15 @@ OBJS += defs.o
 OBJS += exception.o
 OBJS += expression_builder.o
 OBJS += permutator.o
-#OBJS += tod_contract2_impl_022.o
-OBJS += tod_contract2_impl_113.o
-OBJS += tod_contract2_impl_131.o
-OBJS += tod_contract2_impl_221.o
 
-include $(OBJS:.o=.d)
+DEPS = $(OBJS:.o=.d)
+
+.PHONY: deps
+deps: $(DEPS)
+
+ifneq ($(MAKECMDGOALS),clean)
+include $(DEPS)
+endif
 
 libtensor.a: $(OBJS)
 	echo $?
@@ -33,11 +36,6 @@ libtensor.a: $(OBJS)
 tests: Makefile.inc libtensor.a
 	cd tests && $(MAKE) all
 
-.PHONY: clean
-clean:
-	rm -f *.[ao]
-	cd tests && $(MAKE) clean
- 
 .PHONY: docs
 docs:
 	doxygen
@@ -50,17 +48,10 @@ trac:
 
 defs.o: CPPFLAGS += -DLIBTENSOR_SVN_REV='"$(SVNREV)"'
 
-dimensions.C: dimensions.h
-
-dimensions.h: defs.h exception.h index.h index_range.h
-
-index.h: defs.h exception.h
-
-lehmer_code.C: lehmer_code.h
-
-tensor_i.h: defs.h exception.h dimensions.h
-
-tod_set.C: tod_set.h
-
-tod_set.h: defs.h exception.h 
-
+.PHONY: clean
+clean:
+	$(RM) *.a
+	$(RM) *.o
+	$(RM) *.d
+	cd tests && $(MAKE) clean
+ 

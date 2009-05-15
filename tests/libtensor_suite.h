@@ -33,10 +33,6 @@
 #include "tensor_test.h"
 #include "tod_add_test.h"
 #include "tod_compare_test.h"
-#include "tod_contract2_impl_022_test.h"
-#include "tod_contract2_impl_113_test.h"
-#include "tod_contract2_impl_131_test.h"
-#include "tod_contract2_impl_221_test.h"
 #include "tod_contract2_test.h"
 #include "tod_copy_test.h"
 #include "tod_set_test.h"
@@ -81,10 +77,6 @@ namespace libtensor {
 	\li libtensor::tod_add_test
 	\li libtensor::tod_compare_test
 	\li libtensor::tod_contract2_test
-	\li libtensor::tod_contract2_impl_022_test
-	\li libtensor::tod_contract2_impl_113_test
-	\li libtensor::tod_contract2_impl_131_test
-	\li libtensor::tod_contract2_impl_221_test
 	\li libtensor::tod_copy_test
 	\li libtensor::tod_set_test
 	\li libtensor::tod_sum_test
@@ -123,14 +115,6 @@ private:
 	unit_test_factory<tensor_test> m_utf_tensor;
 	unit_test_factory<tod_add_test> m_utf_tod_add;
 	unit_test_factory<tod_compare_test> m_utf_tod_compare;
-	unit_test_factory<tod_contract2_impl_022_test>
-		m_utf_tod_contract2_impl_022;
-	unit_test_factory<tod_contract2_impl_113_test>
-		m_utf_tod_contract2_impl_113;
-	unit_test_factory<tod_contract2_impl_131_test>
-		m_utf_tod_contract2_impl_131;
-	unit_test_factory<tod_contract2_impl_221_test>
-		m_utf_tod_contract2_impl_221;
 	unit_test_factory<tod_contract2_test> m_utf_tod_contract2;
 	unit_test_factory<tod_copy_test> m_utf_tod_copy;
 	unit_test_factory<tod_set_test> m_utf_tod_set;
