@@ -41,6 +41,16 @@ public:
 	void set_immutable();
 
 	//@}
+
+protected:
+	//!	\name Immutability
+	//@{
+
+	/**	\brief Invoked when the object is set immutable
+	 **/
+	virtual void on_set_immutable() = 0;
+
+	//@}
 };
 
 inline immutable::immutable() {
@@ -53,6 +63,7 @@ inline bool immutable::is_immutable() const {
 
 inline void immutable::set_immutable() {
 	m_immutable = true;
+	on_set_immutable();
 }
 
 } // namespace libtensor

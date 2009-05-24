@@ -5,6 +5,7 @@
 #include "exception.h"
 #include "block_index_space_i.h"
 #include "block_tensor_i.h"
+#include "immutable.h"
 #include "tensor.h"
 #include "tensor_ctrl.h"
 
@@ -18,7 +19,7 @@ namespace libtensor {
 	\ingroup libtensor
  **/
 template<size_t N, typename T, typename Alloc>
-class block_tensor : public block_tensor_i<N, T> {
+class block_tensor : public block_tensor_i<N, T>, public immutable {
 public:
 	tensor<N, T, Alloc> m_t;
 	tensor_ctrl<N, T> m_ctrl;
@@ -50,6 +51,11 @@ protected:
 	virtual T *on_req_dataptr() throw(exception);
 	virtual const T *on_req_const_dataptr() throw(exception);
 	virtual void on_ret_dataptr(const T *p) throw(exception);
+	//@}
+
+	//!	\name Implementation of libtensor::immutable
+	//@{
+	virtual void on_set_immutable();
 	//@}
 };
 
@@ -101,6 +107,11 @@ const T *block_tensor<N, T, Alloc>::on_req_const_dataptr() throw(exception) {
 template<size_t N, typename T, typename Alloc>
 void block_tensor<N, T, Alloc>::on_ret_dataptr(const T *p) throw(exception) {
 	m_ctrl.ret_dataptr(p);
+}
+
+template<size_t N, typename T, typename Alloc>
+void block_tensor<N, T, Alloc>::on_set_immutable() {
+	m_t.set_immutable();
 }
 
 } // namespace libtensor

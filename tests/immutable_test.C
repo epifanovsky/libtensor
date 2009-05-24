@@ -3,8 +3,19 @@
 
 namespace libtensor {
 
+namespace immutable_test_ns {
+
+class immut : public immutable {
+protected:
+	virtual void on_set_immutable() { }
+};
+
+}
+
+using namespace immutable_test_ns;
+
 void immutable_test::perform() throw(libtest::test_exception) {
-	immutable im;
+	immut im;
 	if(im.is_immutable()) {
 		fail_test("immutable_test::perform()", __FILE__, __LINE__,
 			"New object must be mutable");

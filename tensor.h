@@ -176,7 +176,7 @@ public:
 
 	//@}
 
-	//!	\name Implementation of tensor_i<T>
+	//!	\name Implementation of libtensor::tensor_i<T>
 	//@{
 
 	/**	\brief Returns the %dimensions of the %tensor
@@ -196,6 +196,11 @@ protected:
 	virtual const T *on_req_const_dataptr() throw(exception);
 	virtual void on_ret_dataptr(const T *p) throw(exception);
 
+	//@}
+
+	//!	\name Implementation of libtensor::immutable
+	//@{
+	virtual void on_set_immutable() { }
 	//@}
 
 };

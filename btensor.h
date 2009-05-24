@@ -8,6 +8,7 @@
 #include "block_tensor.h"
 #include "block_tensor_ctrl.h"
 #include "btensor_i.h"
+#include "immutable.h"
 #include "labeled_btensor.h"
 
 namespace libtensor {
@@ -23,17 +24,14 @@ struct btensor_traits {
 	\ingroup libtensor
  **/
 template<size_t N, typename T = double, typename Traits = btensor_traits<T> >
-	class btensor : public btensor_i<N, T> {
+	class btensor : public btensor_i<N, T>, public immutable {
 private:
 	typedef typename Traits::element_t element_t;
 	typedef typename Traits::allocator_t allocator_t;
 
 private:
 	block_tensor<N, element_t, allocator_t> m_bt;
-	//rc_ptr< bispace_i<N> > m_bispace; //!< Block index space
-
-	//! Underlying tensor for stub implementation
-	//tensor<N, element_t, allocator_t> m_t;
+	tensor_ctrl<N, element_t> m_tctrl;
 
 public:
 	//!	\name Construction and destruction
@@ -68,7 +66,7 @@ public:
 		letter_expr<N, ExprT> expr);
 
 protected:
-	//!	\name Implementation of tensor_i<N,T>
+	//!	\name Implementation of libtensor::tensor_i<N,T>
 	//@{
 	virtual void on_req_prefetch() throw(exception);
 	virtual T *on_req_dataptr() throw(exception);
@@ -76,16 +74,21 @@ protected:
 	virtual void on_ret_dataptr(const T *ptr) throw(exception);
 	//@}
 
-	//!	\name Implementation of block_tensor_i<N,T>
+	//!	\name Implementation of libtensor::block_tensor_i<N,T>
 	//@{
 	virtual tensor_i<N, T> &on_req_block(const index<N> &idx)
 		throw(exception);
+	//@}
+
+	//!	\name Implementation of libtensor::immutable
+	//@{
+	virtual void on_set_immutable();
 	//@}
 };
 
 template<size_t N, typename T, typename Traits>
 inline btensor<N, T, Traits>::btensor(const bispace_i<N> &bispace) :
-	m_bt(bispace) {
+	m_bt(bispace), m_tctrl(m_bt) {
 }
 
 template<size_t N, typename T, typename Traits>
@@ -112,22 +115,17 @@ void btensor<N, T, Traits>::on_req_prefetch() throw(exception) {
 
 template<size_t N, typename T, typename Traits>
 T *btensor<N, T, Traits>::on_req_dataptr() throw(exception) {
-	throw_exc("btensor<N,T,Traits>", "on_req_dataptr()",
-		"Unhandled event");
-	return NULL;
+	return m_tctrl.req_dataptr();
 }
 
 template<size_t N, typename T, typename Traits>
 const T *btensor<N, T, Traits>::on_req_const_dataptr() throw(exception) {
-	throw_exc("btensor<N,T,Traits>", "on_req_const_dataptr()",
-		"Unhandled event");
-	return NULL;
+	return m_tctrl.req_const_dataptr();
 }
 
 template<size_t N, typename T, typename Traits>
 void btensor<N, T, Traits>::on_ret_dataptr(const T *ptr) throw(exception) {
-	throw_exc("btensor<N,T,Traits>", "on_ret_dataptr(const T*)",
-		"Unhandled event");
+	m_tctrl.ret_dataptr(ptr);
 }
 
 template<size_t N, typename T, typename Traits>
@@ -135,6 +133,11 @@ tensor_i<N, T> &btensor<N, T, Traits>::on_req_block(const index<N> &idx)
 	throw(exception) {
 	block_tensor_ctrl<N, T> ctrl(m_bt);
 	return ctrl.req_block(idx);
+}
+
+template<size_t N, typename T, typename Traits>
+inline void btensor<N, T, Traits>::on_set_immutable() {
+	m_bt.set_immutable();
 }
 
 } // namespace libtensor
