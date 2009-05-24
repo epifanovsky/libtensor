@@ -46,7 +46,7 @@ INCLUDE += -I.. -I../../libtest -I../../libvmm
 deps: $(DEPS)
 
 libtensor_tests: libtensor_tests.o $(OBJS) ../libtensor.a
-	$(LD) $(LDFLAGS) libtensor_tests $(LIBS) $^ ../../libtest/libtest.a
+	$(LD) $(LDFLAGS) libtensor_tests $^ ../../libtest/libtest.a $(LIBS) 
 
 .PHONY: clean
 clean:

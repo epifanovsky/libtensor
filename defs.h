@@ -33,6 +33,12 @@ extern const char *version;
 #include <cblas.h>
 #endif
 
+#ifdef __MINGW32__
+#include <cstdlib>
+inline void srand48(long seed) { srand(seed); }
+inline double drand48() { return (double(rand())/RAND_MAX); }
+#endif
+
 /**	\defgroup libtensor Tensor library
 **/
 
