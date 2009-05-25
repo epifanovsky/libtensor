@@ -36,7 +36,7 @@ OBJS += tod_symcontract2_test.o
 DEPS = $(OBJS:.o=.d)
 
 ifneq ($(MAKECMDGOALS),clean)
-include $(DEPS)
+-include $(DEPS)
 endif
 
 include ../Makefile.inc

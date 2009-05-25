@@ -23,3 +23,9 @@ LIBS = -lmkl -lguide -lpthread
 	$(CPP) -M $(CPPFLAGS) $(INCLUDE) $< > $@.$$$$; \
 	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
 	rm -f $@.$$$$
+
+%.d: %.h
+	@set -e; rm -f $@; \
+	$(CPP) -M $(CPPFLAGS) $(INCLUDE) $< > $@.$$$$; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$

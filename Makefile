@@ -18,13 +18,14 @@ OBJS += defs.o
 OBJS += exception.o
 OBJS += permutator.o
 
-DEPS = $(OBJS:.o=.d)
+DEPS  = $(OBJS:.o=.d)
+DEPS += libtensor.d
 
 .PHONY: deps
 deps: $(DEPS)
 
 ifneq ($(MAKECMDGOALS),clean)
-include $(DEPS)
+-include $(DEPS)
 endif
 
 libtensor.a: $(OBJS)
