@@ -19,7 +19,6 @@ OBJS += exception.o
 OBJS += permutator.o
 
 DEPS  = $(OBJS:.o=.d)
-DEPS += libtensor.d
 
 .PHONY: deps
 deps: $(DEPS)
