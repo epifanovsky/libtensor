@@ -55,6 +55,7 @@ public:
 	//!	\name Implementation of
 	//		libtensor::direct_block_tensor_operation<N + M, double>
 	//@{
+	virtual const block_index_space<N+M> &get_bis() const;
 	virtual void perform(block_tensor_i<k_orderc, double> &btc)
 		throw(exception);
 	//@}
@@ -69,6 +70,12 @@ btod_contract2<N, M, K>::btod_contract2(const contraction2<N, M, K> &contr,
 
 template<size_t N, size_t M, size_t K>
 btod_contract2<N, M, K>::~btod_contract2() {
+}
+
+template<size_t N, size_t M, size_t K>
+const block_index_space<N+M> &btod_contract2<N, M, K>::get_bis() const {
+	throw_exc("btod_contract2<N, M, K>", "get_bis()",
+		"Not implemented");
 }
 
 template<size_t N, size_t M, size_t K>

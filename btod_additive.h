@@ -21,4 +21,3 @@ public:
 } // namespace libtensor
 
 #endif // LIBTENSOR_BTOD_ADDITIVE_H
-

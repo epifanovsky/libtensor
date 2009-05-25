@@ -39,8 +39,9 @@ public:
 
 	//@}
 
-	//!	\name Implementation of direct_tensor_operation<T>
+	//!	\name Implementation of libtensor::direct_tensor_operation<N>
 	//@{
+	virtual const block_index_space_i<N> &get_bis() const;
 	virtual void perform(block_tensor_i<N,double> &bt) throw(exception);
 	//@}
 
@@ -63,6 +64,11 @@ btod_sum<N>::~btod_sum() {
 		delete node; 
 		node = next;
 	}
+}
+
+template<size_t N>
+const block_index_space_i<N> &btod_sum<N>::get_bis() const {
+	throw_exc("btod_sum<N>", "get_bis()", "Not implemented");
 }
 
 template<size_t N>

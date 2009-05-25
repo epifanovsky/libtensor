@@ -25,7 +25,7 @@ template<size_t N>
 class btod_add : public btod_additive<N> {
 private:
 	struct operand {
-		block_tensor_i<N,double> &m_bt;
+		block_tensor_i<N, double> &m_bt;
 		const double m_c;
 		const permutation<N> m_p;
 		struct operand* m_next;
@@ -62,6 +62,7 @@ public:
 	//!	\name Implementation of
 	//		libtensor::direct_block_tensor_operation<N, double>
 	//@{
+	virtual const block_index_space_i<N> &get_bis() const;
 	virtual void perform(block_tensor_i<N, double> &bt)
 		throw(exception);
 	//@}
@@ -159,6 +160,11 @@ void btod_add<N>::perform(block_tensor_i<N, double> &bt,
 	}
 	addition.prefetch();
 	addition.perform(ctrlbt.req_block(idx),cb);
+}
+
+template<size_t N>
+const block_index_space_i<N> &btod_add<N>::get_bis() const {
+	throw_exc("btod_add<N>", "get_bis()", "Not implemented");
 }
 
 template<size_t N>
