@@ -11,7 +11,6 @@ OBJS += btod_sum_test.o
 OBJS += contract_test.o
 OBJS += contract2_0_4i_test.o
 OBJS += contraction2_test.o
-OBJS += default_symmetry_test.o
 OBJS += dimensions_test.o
 OBJS += direct_btensor_test.o
 OBJS += direct_tensor_test.o
