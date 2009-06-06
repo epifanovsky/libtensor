@@ -10,6 +10,7 @@
 namespace libtensor {
 
 /**	\brief Contains %tensor %dimensions
+	\tparam N Tensor order.
 
 	Stores the number of %tensor elements along each dimension.
 
@@ -28,31 +29,61 @@ public:
 
 	/**	\brief Creates a copy of another dimensions object
 		\param d Another dimensions object.
-	**/
+	 **/
 	dimensions(const dimensions<N> &d);
 
 	/**	\brief Convers a range of indexes to the dimensions object
-		\param r Index range
-	**/
+		\param r Index range.
+	 **/
 	dimensions(const index_range<N> &r);
 
 	//@}
 
-	/**	\brief Returns the linear increment along a given dimension
-	**/
-	size_t get_increment(const size_t i) const throw(exception);
 
-	/**	\brief Returns the number of elements along a given dimension
-	**/
-	size_t operator[](const size_t i) const throw(exception);
+	//!	\name Dimensions manipulations, comparison, etc.
+	//@{
 
 	/**	\brief Returns the total number of elements
-	**/
+	 **/
 	size_t get_size() const;
 
-	/**	\brief Permutes the dimensions
-	**/
+	/**	\brief Returns the number of elements along a given dimension
+	 **/
+	size_t get_dim(size_t i) const throw(exception);
+
+	/**	\brief Returns the linear increment along a given dimension
+	 **/
+	size_t get_increment(size_t i) const throw(exception);
+
+	/**	\brief Returns true if two %dimensions objects are equal
+	 **/
+	bool equals(const dimensions<N> &other) const;
+
+	/**	\brief Permutes the %dimensions
+		\return The reference to the current %dimensions object
+	 **/
 	dimensions<N> &permute(const permutation<N> &p) throw(exception);
+
+	//@}
+
+
+	//!	\name Overloaded operators
+	//@{
+
+	/**	\brief Returns the number of elements along a given dimension
+	 **/
+	size_t operator[](size_t i) const throw(exception);
+
+	/**	\brief Returns true if two %dimensions objects are equal
+	 **/
+	bool operator==(const dimensions<N> &other) const;
+
+	/**	\brief Returns true if two %dimensions objects are different
+	 **/
+	bool operator!=(const dimensions<N> &other) const;
+
+	//@}
+
 
 	//!	\name Index manipulations
 	//@{
@@ -64,58 +95,61 @@ public:
 			bounds).
 		\throw exception If the index is incompatible with the
 			dimensions object.
-	**/
+	 **/
 	bool inc_index(index<N> &idx) const throw(exception);
 
 	/**	\brief Returns the absolute %index within the %dimensions
 			(last %index is the fastest)
-	**/
+	 **/
 	size_t abs_index(const index<N> &idx) const throw(exception);
 
 	/**	\brief Converts an absolute %index back to a normal %index
-	**/
+	 **/
 	void abs_index(const size_t abs, index<N> &idx) const throw(exception);
 
 	//@}
 
 private:
 	/**	\brief Updates the linear increments for each dimension
-	**/
+	 **/
 	void update_increments();
 
 };
 
 template<size_t N>
-inline dimensions<N>::dimensions(const dimensions<N> &d) :
-	m_dims(d.m_dims), m_incs(d.m_incs), m_size(d.m_size) {
+inline dimensions<N>::dimensions(const dimensions<N> &d)
+	: m_dims(d.m_dims), m_incs(d.m_incs), m_size(d.m_size) {
 }
 
 template<size_t N>
-inline dimensions<N>::dimensions(const index_range<N> &r) :
-	m_dims(r.get_end()) {
+inline dimensions<N>::dimensions(const index_range<N> &r)
+	: m_dims(r.get_end()) {
 	#pragma unroll(N)
-	for(register size_t i=0; i<N; i++) {
+	for(register size_t i = 0; i < N; i++) {
 		m_dims[i] -= r.get_begin()[i];
-		m_dims[i] ++;
+		m_dims[i]++;
 	}
 	update_increments();
 }
 
 template<size_t N>
-inline size_t dimensions<N>::get_increment(const size_t i) const
-	throw(exception) {
-	return m_incs[i];
+inline size_t dimensions<N>::get_size() const {
+	return m_size;
 }
 
 template<size_t N>
-inline size_t dimensions<N>::operator[](const size_t i) const
-	throw(exception) {
+inline size_t dimensions<N>::get_dim(size_t i) const throw(exception) {
 	return m_dims[i];
 }
 
 template<size_t N>
-inline size_t dimensions<N>::get_size() const {
-	return m_size;
+inline size_t dimensions<N>::get_increment(size_t i) const throw(exception) {
+	return m_incs[i];
+}
+
+template<size_t N>
+inline bool dimensions<N>::equals(const dimensions<N> &other) const {
+	return m_dims.equals(other.m_dims);
 }
 
 template<size_t N>
@@ -129,7 +163,7 @@ inline dimensions<N> &dimensions<N>::permute(const permutation<N> &p)
 template<size_t N>
 bool dimensions<N>::inc_index(index<N> &idx) const throw(exception) {
 	if(m_dims.less(idx) || m_dims.equals(idx)) return false;
-	size_t n = N-1;
+	size_t n = N - 1;
 	bool done = false;
 	while(!done && n!=0) {
 		if(idx[n] < m_dims[n]-1) {
@@ -170,7 +204,7 @@ void dimensions<N>::abs_index(const size_t abs, index<N> &idx) const
 }
 
 template<size_t N>
-inline void dimensions<N>::update_increments() {
+void dimensions<N>::update_increments() {
 	register size_t sz = 1;
 	register size_t i = N;
 	do {
@@ -180,30 +214,21 @@ inline void dimensions<N>::update_increments() {
 	m_size = sz;
 }
 
-//!	\name Comparisons 
-//@{
-/**	\brief Compare for equality of two dimensions objects 
-
-	\return Return true if each of the N dimensions of the two dimensions objects are equal
-**/
 template<size_t N>
-inline bool operator==( const dimensions<N> &da, const dimensions<N> &db ) {
-	#pragma unroll(N)
-	for(register size_t i=0; i<N; i++) {
-		if(da[i]!=db[i]) return false;
-	}
-	return true;
+inline size_t dimensions<N>::operator[](const size_t i) const
+	throw(exception) {
+	return get_dim(i);
 }
 
-/**	\brief Compare for inequality of two dimensions objects
-
-	\return Return the opposite of operator== 
-**/
 template<size_t N>
-inline bool operator!=( const dimensions<N> &da, const dimensions<N> &db ) {
-	return !(da==db);
+inline bool dimensions<N>::operator==(const dimensions<N> &other) const {
+	return equals(other);
 }
-//@}
+
+template<size_t N>
+inline bool dimensions<N>::operator!=(const dimensions<N> &other) const {
+	return !equals(other);
+}
 
 } // namespace libtensor
 

@@ -95,6 +95,50 @@ void dimensions_test::test_inc_index() throw(libtest::test_exception) {
 		fail_test("dimensions_test::test_inc_index()", __FILE__,
 			__LINE__, "inc(2,2,2,2) doesn't preserve the index");
 	}
+
+	index<2> j1, j2; j2[0]=10; j2[1]=12;
+	dimensions<2> d2(index_range<2>(j1, j2));
+
+	j1[0]=0; j1[1]=12;
+	if(!d2.inc_index(j1)) {
+		fail_test("dimensions_test::test_inc_index()", __FILE__,
+			__LINE__, "inc(0,12) doesn't return true");
+	}
+	if(!(j1[0]==1 && j1[1]==0)) {
+		fail_test("dimensions_test::test_inc_index()", __FILE__,
+			__LINE__, "inc(0,12) doesn't return (1,0)");
+	}
+
+	index<1> k1, k2; k2[0]=5;
+	dimensions<1> d3(index_range<1>(k1, k2));
+
+	if(!d3.inc_index(k1)) {
+		fail_test("dimensions_test::test_inc_index()", __FILE__,
+			__LINE__, "inc(0) doesn't return true");
+	}
+	if(k1[0]!=1) {
+		fail_test("dimensions_test::test_inc_index()", __FILE__,
+			__LINE__, "inc(0) doesn't return (1)");
+	}
+	k1[0]=4;
+	if(!d3.inc_index(k1)) {
+		fail_test("dimensions_test::test_inc_index()", __FILE__,
+			__LINE__, "inc(4) doesn't return true");
+	}
+	if(k1[0]!=5) {
+		fail_test("dimensions_test::test_inc_index()", __FILE__,
+			__LINE__, "inc(4) doesn't return (5)");
+	}
+	if(d3.inc_index(k1)) {
+		fail_test("dimensions_test::test_inc_index()", __FILE__,
+			__LINE__, "inc(5) doesn't return false");
+	}
+	if(k1[0]!=5) {
+		fail_test("dimensions_test::test_inc_index()", __FILE__,
+			__LINE__, "inc(4) doesn't preserve the index");
+	}
+
+
 }
 
 void dimensions_test::test_abs_index() throw(libtest::test_exception) {
