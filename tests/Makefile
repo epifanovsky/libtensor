@@ -30,6 +30,7 @@ OBJS += tod_contract2_test.o
 OBJS += tod_copy_test.o
 OBJS += tod_set_test.o
 OBJS += tod_sum_test.o
+OBJS += tod_solve_test.o
 OBJS += tod_symcontract2_test.o
 
 DEPS = $(OBJS:.o=.d)

@@ -14,6 +14,7 @@ public:
 	virtual void perform() throw(libtest::test_exception);
 };
 
+
 } // namespace libtensor
 
 #endif // LIBTENSOR_TOD_SYMCONTRACT2_TEST_H

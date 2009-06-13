@@ -18,9 +18,9 @@ namespace libtensor {
 		\ingroup libtensor_tests
 	**/
 	class tod_solve_test : public libtest::unit_test {
-		public:
-			virtual void perform() throw(libtest::test_exception);
-};
+	public:
+		virtual void perform() throw(libtest::test_exception);
+	};
 
 } // namespace libtensor
 

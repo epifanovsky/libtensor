@@ -1,5 +1,4 @@
 #include "tod_solve_test.h"
-#include "tod_solve.h"
 
 #include "tensor.h"
 #include "index.h"

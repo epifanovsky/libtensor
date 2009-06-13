@@ -58,8 +58,8 @@ void tod_solve::perform(tensor_i<1,double> &result_vect) throw(exception) {
 //	dsgesv_(integer *, integer *, doublereal *,
 //		     integer *, integer *, doublereal *, integer *, doublereal *,
 //		    integer *, doublereal *, real *, integer *, integer *);
-	dsgesv_(&matrix_size, &nrhs, (double*)matrix, &matrix_size, ipiv, (double*)vect, &matrix_size,
-			rvect, &matrix_size, work, swork, &iter, &info);
+//	dsgesv_(&matrix_size, &nrhs, (double*)matrix, &matrix_size, ipiv, (double*)vect, &matrix_size,
+//		rvect, &matrix_size, work, swork, &iter, &info);
 
 	delete [] work;
 	delete [] ipiv;

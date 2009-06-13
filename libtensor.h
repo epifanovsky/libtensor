@@ -23,6 +23,7 @@
 #include "tod_copy.h"
 #include "tod_set.h"
 #include "tod_sum.h"
+#include "tod_solve.h"
 
 #include "block_tensor_i.h"
 #include "block_tensor_ctrl.h"
