@@ -22,8 +22,8 @@
 #include "tod_contract2.h"
 #include "tod_copy.h"
 #include "tod_set.h"
-#include "tod_sum.h"
 #include "tod_solve.h"
+#include "tod_sum.h"
 
 #include "block_tensor_i.h"
 #include "block_tensor_ctrl.h"
@@ -45,6 +45,8 @@
 #include "letter_expr.h"
 #include "labeled_btensor.h"
 #include "labeled_btensor_expr.h"
+#include "labeled_btensor_expr_operators.h"
+#include "labeled_btensor_impl.h"
 #include "contract.h"
 
 #endif // LIBTENSOR_H

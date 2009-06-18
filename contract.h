@@ -20,7 +20,8 @@ namespace libtensor {
 template<typename Label, typename Expr1, typename Expr2>
 class labeled_btensor_expr_op_contract {
 public:
-	static const size_t k_len = Expr1::k_len + Expr2::k_len;
+	static const size_t k_narg_tensor = 0;
+	static const size_t k_narg_oper = 1;
 
 private:
 	Label m_contr; //!< Contracted indexes

@@ -33,6 +33,10 @@ public:
 	 **/
 	labeled_btensor(btensor_i<N, T> &bt, const letter_expr<N, Label> label);
 
+	/**	\brief Returns the tensor interface
+	 **/
+	btensor_i<N, T> &get_btensor() const;
+
 	/**	\brief Returns whether the label contains a %letter
 	 **/
 	bool contains(const letter &let) const;
@@ -65,6 +69,10 @@ public:
 	 **/
 	labeled_btensor(btensor_i<N, T> &bt, const letter_expr<N, Label> label);
 
+	/**	\brief Returns the tensor interface
+	 **/
+	btensor_i<N, T> &get_btensor() const;
+
 	/**	\brief Returns whether the label contains a %letter
 	 **/
 	bool contains(const letter &let) const;
@@ -80,68 +88,19 @@ public:
 	/**	\brief Assigns this %tensor to an expression
 	 **/
 	template<typename Expr>
-	void operator=(const labeled_btensor_expr<N, T, Expr> &expr)
+	labeled_btensor<N, T, true, Label> operator=(
+		const labeled_btensor_expr<N, T, Expr> &rhs) throw(exception);
+
+	template<bool AssignableR, typename LabelR>
+	labeled_btensor<N, T, true, Label> operator=(
+		labeled_btensor<N, T, AssignableR, LabelR> rhs)
+		throw(exception);
+
+	labeled_btensor<N, T, true, Label> operator=(
+		labeled_btensor<N, T, true, Label> rhs)
 		throw(exception);
 
 };
-
-template<size_t N, typename T, bool Assignable, typename Label>
-inline labeled_btensor<N, T, Assignable, Label>::labeled_btensor(
-	btensor_i<N, T> &bt, const letter_expr<N, Label> label) :
-	m_bt(bt), m_label(label) {
-}
-
-template<size_t N, typename T, bool Assignable, typename Label>
-inline bool labeled_btensor<N, T, Assignable, Label>::contains(
-	const letter &let) const {
-	return m_label.contains(let);
-}
-
-template<size_t N, typename T, bool Assignable, typename Label>
-inline size_t labeled_btensor<N, T, Assignable, Label>::index_of(
-	const letter &let) const throw(exception) {
-	return m_label.index_of(let);
-}
-
-template<size_t N, typename T, bool Assignable, typename Label>
-inline const letter &labeled_btensor<N, T, Assignable, Label>::letter_at(
-	size_t i) const throw(exception) {
-	return m_label.letter_at(i);
-}
-
-template<size_t N, typename T, typename Label>
-inline labeled_btensor<N, T, true, Label>::labeled_btensor(
-	btensor_i<N, T> &bt, const letter_expr<N, Label> label) :
-	m_bt(bt), m_label(label) {
-}
-
-template<size_t N, typename T, typename Label>
-inline bool labeled_btensor<N, T, true, Label>::contains(
-	const letter &let) const {
-	return m_label.contains(let);
-}
-
-template<size_t N, typename T, typename Label>
-inline size_t labeled_btensor<N, T, true, Label>::index_of(
-	const letter &let) const throw(exception) {
-	return m_label.index_of(let);
-}
-
-template<size_t N, typename T, typename Label>
-inline const letter &labeled_btensor<N, T, true, Label>::letter_at(
-	size_t i) const throw(exception) {
-	return m_label.letter_at(i);
-}
-
-template<size_t N, typename T, typename Label> template<typename Expr>
-void labeled_btensor<N, T, true, Label>::operator=(
-	const labeled_btensor_expr<N, T, Expr> &expr) throw(exception) {
-	for(size_t i = 0; i < N; i++) if(!expr.contains(letter_at(i))) {
-		throw_exc("labeled_btensor<N, T, true, Label>",
-			"operator=(const labeled_btensor_expr<N, T, Expr>&)",
-			"Index not found in the expression");
-	}
-}
 
 } // namespace libtensor
 

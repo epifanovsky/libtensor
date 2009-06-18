@@ -4,6 +4,7 @@
 #include "defs.h"
 #include "exception.h"
 #include "labeled_btensor.h"
+#include "labeled_btensor_expr_arg.h"
 
 /**	\defgroup libtensor_btensor_expr Labeled block %tensor expressions
 	\ingroup libtensor
@@ -11,322 +12,102 @@
 
 namespace libtensor {
 
-/**	\brief Expression using labeled block tensors
+template<size_t N, typename T>
+class labeled_btensor_expr_base {
+
+};
+
+/**	\brief Expression meta-wrapper
 	\tparam N Tensor order.
 	\tparam T Tensor element type.
-	\tparam Expr Expression.
+	\tparam Core Expression core type.
+
+	Tensor expressions make extensive use of a meta-programming technique
+	call "expression templates". It allows us to store the expression
+	tree as the C++ type thus transferring a number of sanity checks to
+	the compilation level.
+
+	This template wraps around the real expression type to facilitate
+	the matching of overloaded operator templates.
 
 	\ingroup libtensor_btensor_expr
  **/
+template<size_t N, typename T, typename Core>
+class labeled_btensor_expr : public labeled_btensor_expr_base<N, T> {
+public:
+	//!	\brief Number of %tensor arguments in the expression
+	static const size_t k_narg_tensor = Core::k_narg_tensor;
+
+	//!	\brief Number of %tensor operation arguments in the expression
+	static const size_t k_narg_oper = Core::k_narg_oper;
+
+private:
+	Core m_core; //!< Expression core
+
+public:
+	//!	\name Construction
+	//@{
+
+	/**	\brief Constructs the expression using a core
+	 **/
+	labeled_btensor_expr(const Core &core);
+
+	/**	\brief Copy constructor
+	 **/
+	labeled_btensor_expr(const labeled_btensor_expr<N, T, Core> &expr);
+
+	//@}
+
+	//!	\name Evaluation
+	//@{
+
+	/**	\brief Evaluates the expression into an assignable labeled
+			%tensor
+		\tparam Label Label expression.
+	 **/
+	template<typename Label>
+	void eval(labeled_btensor<N, T, true, Label> &t) const
+		throw(exception);
+
+	/**	\brief Returns a single %tensor argument
+		\tparam Label Label expression (to figure out the %permutation)
+	 **/
+	template<typename Label>
+	labeled_btensor_expr_arg_tensor<N, T> get_arg_tensor(size_t i) const
+		throw(exception);
+
+	//@}
+};
+
+template<size_t N, typename T, typename Core>
+inline labeled_btensor_expr<N, T, Core>::labeled_btensor_expr(
+	const Core &core)
+	: m_core(core) {
+}
+
+template<size_t N, typename T, typename Core>
+inline labeled_btensor_expr<N, T, Core>::labeled_btensor_expr(
+	const labeled_btensor_expr<N, T, Core> &expr)
+	: m_core(expr.m_core) {
+}
+
 template<size_t N, typename T, typename Expr>
-class labeled_btensor_expr {
-public:
-	typedef Expr expression_t;
+template<typename Label>
+void labeled_btensor_expr<N, T, Expr>::eval(
+	labeled_btensor<N, T, true, Label> &to) const throw(exception) {
 
-public:
-	static const size_t k_len = expression_t::k_len;
-
-private:
-	Expr m_t;
-
-public:
-
-	labeled_btensor_expr(const Expr &t) : m_t(t) {
+	for(size_t i = 0; i < k_narg_tensor; i++) {
+		labeled_btensor_expr_arg_tensor<N, T> arg =
+			get_arg_tensor<Label>(i);
 	}
-
-	labeled_btensor_expr(const labeled_btensor_expr<N, T, Expr> &e) :
-		m_t(e.m_t) {
-	}
-
-	bool contains(const letter &let) const {
-		return m_t.contains(let);
-	}
-
-	void multiply(T coeff) {
-		m_t.multiply(coeff);
-	}
-};
-
-/**	\brief Identity expression
-
-	\ingroup libtensor_btensor_expr
- **/
-template<size_t N, typename T, bool Assignable, typename Label>
-class labeled_btensor_expr_ident {
-public:
-	typedef labeled_btensor<N, T, Assignable, Label> labeled_btensor_t;
-
-public:
-	static const size_t k_len = 1;
-
-private:
-	labeled_btensor_t &m_t;
-	T m_coeff;
-
-public:
-
-	labeled_btensor_expr_ident(labeled_btensor_t &t) : m_t(t) {
-	}
-
-	bool contains(const letter &let) const {
-		return m_t.contains(let);
-	}
-};
-
-/**	\brief Identity expression (specialized for double)
-
-	\ingroup libtensor_btensor_expr
- **/
-template<size_t N, bool Assignable, typename Label>
-class labeled_btensor_expr_ident<N, double, Assignable, Label> {
-public:
-	typedef labeled_btensor<N, double, Assignable, Label> labeled_btensor_t;
-
-public:
-	static const size_t k_len = 1;
-
-private:
-	labeled_btensor_t &m_t;
-	double m_coeff;
-
-public:
-
-	labeled_btensor_expr_ident(labeled_btensor_t &t, double coeff = 1.0) :
-		m_t(t), m_coeff(coeff) {
-	}
-
-	bool contains(const letter &let) const {
-		return m_t.contains(let);
-	}
-
-	void multiply(double coeff) {
-		m_coeff *= coeff;
-	}
-};
-
-/**	\brief Operation expression
-	\tparam N Tensor order
-	\tparam T Tensor element type
-	\tparam Op Operation
-	\tparam ExprL LHS expression
-	\tparam ExprR RHS expression
-
-	\ingroup libtensor_btensor_expr
- **/
-template<size_t N, typename T, typename Op, typename ExprL, typename ExprR>
-class labeled_btensor_expr_op {
-public:
-	static const size_t k_len = ExprL::k_len + ExprR::k_len;
-
-private:
-	ExprL m_exprl; //!< Left expression
-	ExprR m_exprr; //!< Right expression
-
-public:
-
-	labeled_btensor_expr_op(const ExprL &exprl, const ExprR &exprr) :
-		m_exprl(exprl), m_exprr(exprr) {
-	}
-
-	bool contains(const letter &let) const {
-		return m_exprl.contains(let) && m_exprr.contains(let);
-	}
-};
-
-/**	\brief Operation expression (specialized for double)
-
-	\ingroup libtensor_btensor_expr
- **/
-template<size_t N, typename Op, typename ExprL, typename ExprR>
-class labeled_btensor_expr_op<N, double, Op, ExprL, ExprR> {
-public:
-	static const size_t k_len = ExprL::k_len + ExprR::k_len;
-
-private:
-	ExprL m_exprl; //!< Left expression
-	ExprR m_exprr; //!< Right expression
-	double m_coeff; //!< Coefficient
-
-public:
-
-	labeled_btensor_expr_op(const ExprL &exprl, const ExprR &exprr,
-		double coeff = 1.0) : m_exprl(exprl), m_exprr(exprr),
-		m_coeff(coeff) {
-	}
-
-	bool contains(const letter &let) const {
-		return m_exprl.contains(let) && m_exprr.contains(let);
-	}
-
-	void multiply(double coeff) {
-		m_coeff *= coeff;
-	}
-};
-
-/**	\brief Addition operation
-	\tparam ExprL LHS expression
-	\tparam ExprR RHS expression
-
-	\ingroup libtensor_btensor_expr
- **/
-template<typename ExprL, typename ExprR>
-class labeled_btensor_expr_op_add {
-public:
-	static const size_t k_len = ExprL::k_len + ExprR::k_len;
-};
-
-/**	\brief Addition of two tensors (plain + plain)
-
-	\ingroup libtensor_btensor_expr
- **/
-template<size_t N, typename T, bool AssignableL, typename LabelL,
-	bool AssignableR, typename LabelR>
-labeled_btensor_expr<N, T,
-	labeled_btensor_expr_op<N, T,
-	labeled_btensor_expr_op_add<
-		labeled_btensor_expr<N, T,
-			labeled_btensor_expr_ident<N, T, AssignableL, LabelL> >,
-		labeled_btensor_expr<N, T,
-			labeled_btensor_expr_ident<N, T, AssignableR, LabelR> > >,
-	labeled_btensor_expr<N, T,
-		labeled_btensor_expr_ident<N, T, AssignableL, LabelL> >,
-	labeled_btensor_expr<N, T,
-		labeled_btensor_expr_ident<N, T, AssignableR, LabelR>
-	> >
->
-operator+(labeled_btensor<N, T, AssignableL, LabelL> lhs,
-	labeled_btensor<N, T, AssignableR, LabelR> rhs) {
-	typedef labeled_btensor_expr<N, T,
-		labeled_btensor_expr_ident<N, T, AssignableL, LabelL> > exprl_t;
-	typedef labeled_btensor_expr<N, T,
-		labeled_btensor_expr_ident<N, T, AssignableR, LabelR> > exprr_t;
-	typedef labeled_btensor_expr_op_add<exprl_t, exprr_t> opadd_t;
-	typedef labeled_btensor_expr_op<N, T, opadd_t, exprl_t, exprr_t> op_t;
-	return labeled_btensor_expr<N, T, op_t>(
-		op_t(exprl_t(lhs), exprr_t(rhs)));
 }
 
-/**	\brief Addition of two tensors (plain + expression)
-
-	\ingroup libtensor_btensor_expr
- **/
-template<size_t N, typename T, bool AssignableL, typename LabelL,
-	typename ExprR>
-labeled_btensor_expr<N, T,
-	labeled_btensor_expr_op<N, T,
-	labeled_btensor_expr_op_add<
-		labeled_btensor_expr<N, T,
-			labeled_btensor_expr_ident<N, T, AssignableL, LabelL> >,
-		labeled_btensor_expr<N, T, ExprR> >,
-	labeled_btensor_expr<N, T,
-		labeled_btensor_expr_ident<N, T, AssignableL, LabelL> >,
-	labeled_btensor_expr<N, T, ExprR>
-	>
->
-operator+(labeled_btensor<N, T, AssignableL, LabelL> lhs,
-	labeled_btensor_expr<N, T, ExprR> rhs) {
-	typedef labeled_btensor_expr<N, T,
-		labeled_btensor_expr_ident<N, T, AssignableL, LabelL> > exprl_t;
-	typedef labeled_btensor_expr<N, T, ExprR> exprr_t;
-	typedef labeled_btensor_expr_op_add<exprl_t, exprr_t> opadd_t;
-	typedef labeled_btensor_expr_op<N, T, opadd_t, exprl_t, exprr_t> op_t;
-	return labeled_btensor_expr<N, T, op_t>(op_t(exprl_t(lhs), rhs));
-}
-
-/**	\brief Addition of two tensors (expression + plain)
-
-	\ingroup libtensor_btensor_expr
- **/
-template<size_t N, typename T, typename ExprL, bool AssignableR,
-	typename LabelR>
-labeled_btensor_expr<N, T,
-	labeled_btensor_expr_op<N, T,
-	labeled_btensor_expr_op_add<
-		labeled_btensor_expr<N, T, ExprL>,
-		labeled_btensor_expr<N, T,
-			labeled_btensor_expr_ident<N, T, AssignableR, LabelR> > >,
-	labeled_btensor_expr<N, T, ExprL>,
-	labeled_btensor_expr<N, T,
-		labeled_btensor_expr_ident<N, T, AssignableR, LabelR>
-	> >
->
-operator+(labeled_btensor_expr<N, T, ExprL> lhs,
-	labeled_btensor<N, T, AssignableR, LabelR> rhs) {
-	typedef labeled_btensor_expr<N, T, ExprL> exprl_t;
-	typedef labeled_btensor_expr<N, T,
-		labeled_btensor_expr_ident<N, T, AssignableR, LabelR> > exprr_t;
-	typedef labeled_btensor_expr_op_add<exprl_t, exprr_t> opadd_t;
-	typedef labeled_btensor_expr_op<N, T, opadd_t, exprl_t, exprr_t> op_t;
-	return labeled_btensor_expr<N, T, op_t>(op_t(lhs, exprr_t(rhs)));
-}
-
-/**	\brief Addition of two tensors (expression + expression)
-
-	\ingroup libtensor_btensor_expr
- **/
-template<size_t N, typename T, typename ExprL, typename ExprR>
-labeled_btensor_expr<N, T,
-	labeled_btensor_expr_op<N, T,
-	labeled_btensor_expr_op_add<
-		labeled_btensor_expr<N, T, ExprL>,
-		labeled_btensor_expr<N, T, ExprR> >,
-	labeled_btensor_expr<N, T, ExprL>,
-	labeled_btensor_expr<N, T, ExprR>
-	>
->
-operator+(labeled_btensor_expr<N, T, ExprL> lhs,
-	labeled_btensor_expr<N, T, ExprR> rhs) {
-	typedef labeled_btensor_expr<N, T, ExprL> exprl_t;
-	typedef labeled_btensor_expr<N, T, ExprR> exprr_t;
-	typedef labeled_btensor_expr_op_add<exprl_t, exprr_t> opadd_t;
-	typedef labeled_btensor_expr_op<N, T, opadd_t, exprl_t, exprr_t> op_t;
-	return labeled_btensor_expr<N, T, op_t>(op_t(lhs, rhs));
-}
-
-/**	\brief Multiplication of a tensor (rhs) by a scalar (lhs)
-
-	\ingroup libtensor_btensor_expr
- **/
-template<size_t N, typename T, bool Assignable, typename Label>
-labeled_btensor_expr<N, T,
-labeled_btensor_expr_ident<N, T, Assignable, Label> >
-operator*(T lhs, labeled_btensor<N, T, Assignable, Label> rhs) {
-	typedef labeled_btensor_expr_ident<N, T, Assignable, Label> expr_id_t;
-	typedef labeled_btensor_expr<N, T, expr_id_t > expr_t;
-	return expr_t(expr_id_t(rhs, lhs));
-}
-
-/**	\brief Multiplication of a tensor (lhs) by a scalar (rhs)
-
-	\ingroup libtensor_btensor_expr
- **/
-template<size_t N, typename T, bool Assignable, typename Label>
-labeled_btensor_expr<N, T,
-labeled_btensor_expr_ident<N, T, Assignable, Label> >
-operator*(labeled_btensor<N, T, Assignable, Label> lhs, T rhs) {
-	typedef labeled_btensor_expr_ident<N, T, Assignable, Label> expr_id_t;
-	typedef labeled_btensor_expr<N, T, expr_id_t > expr_t;
-	return expr_t(expr_id_t(lhs, rhs));
-}
-
-/**	\brief Multiplication of an expression (rhs) by a scalar (lhs)
-
-	\ingroup libtensor_btensor_expr
- **/
-template<size_t N, typename T, typename ExprR>
-labeled_btensor_expr<N, T, ExprR>
-operator*(T lhs, labeled_btensor_expr<N, T, ExprR> rhs) {
-	rhs.multiply(lhs); return rhs;
-}
-
-/**	\brief Multiplication of an expression (lhs) by a scalar (rhs)
-
-	\ingroup libtensor_btensor_expr
- **/
-template<size_t N, typename T, typename ExprR>
-labeled_btensor_expr<N, T, ExprR>
-operator*(labeled_btensor_expr<N, T, ExprR> lhs, T rhs) {
-	lhs.multiply(rhs); return lhs;
+template<size_t N, typename T, typename Expr>
+template<typename Label>
+inline labeled_btensor_expr_arg_tensor<N, T>
+labeled_btensor_expr<N, T, Expr>::get_arg_tensor(size_t i)
+	const throw(exception) {
+	return m_core.get_arg_tensor<Label>(i);
 }
 
 } // namespace libtensor
