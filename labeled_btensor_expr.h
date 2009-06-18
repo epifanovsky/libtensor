@@ -42,6 +42,10 @@ public:
 	static const size_t k_narg_oper = Core::k_narg_oper;
 
 private:
+	template<size_t NTensor, size_t NOper>
+	struct eval_tag { };
+
+private:
 	Core m_core; //!< Expression core
 
 public:
@@ -77,6 +81,37 @@ public:
 		throw(exception);
 
 	//@}
+
+private:
+	/**	\brief Specialization T=double and tod_sum + tod_add
+	 **/
+	template<typename Label, size_t NTensor, size_t NOper>
+	void eval_case(labeled_btensor<N, T, true, Label> &t,
+		const eval_tag<NTensor, NOper> &tag) const throw(exception);
+
+	/**	\brief Specialization T=double and tod_add
+	 **/
+	template<typename Label, size_t NTensor>
+	void eval_case(labeled_btensor<N, T, true, Label> &t,
+		const eval_tag<NTensor, 0> &tag) const throw(exception);
+
+	/**	\brief Specialization T=double and tod_sum
+	 **/
+	template<typename Label, size_t NOper>
+	void eval_case(labeled_btensor<N, T, true, Label> &t,
+		const eval_tag<0, NOper> &tag) const throw(exception);
+
+	/**	\brief Specialization T=double and tod_copy
+	 **/
+	template<typename Label>
+	void eval_case(labeled_btensor<N, T, true, Label> &t,
+		const eval_tag<1, 0> &tag) const throw(exception);
+
+	/**	\brief Specialization T=double and direct evaluation
+	 **/
+	template<typename Label>
+	void eval_case(labeled_btensor<N, T, true, Label> &t,
+		const eval_tag<0, 1> &tag) const throw(exception);
 };
 
 template<size_t N, typename T, typename Core>
@@ -94,12 +129,55 @@ inline labeled_btensor_expr<N, T, Core>::labeled_btensor_expr(
 template<size_t N, typename T, typename Expr>
 template<typename Label>
 void labeled_btensor_expr<N, T, Expr>::eval(
-	labeled_btensor<N, T, true, Label> &to) const throw(exception) {
+	labeled_btensor<N, T, true, Label> &t) const throw(exception) {
+	eval_tag<k_narg_tensor, k_narg_oper> tag;
+	eval_case(t, tag);
+}
+
+template<size_t N, typename T, typename Expr>
+template<typename Label, size_t NTensor, size_t NOper>
+void labeled_btensor_expr<N, T, Expr>::eval_case(
+	labeled_btensor<N, T, true, Label> &t,
+	const eval_tag<NTensor, NOper> &tag) const throw(exception) {
+
+	// use tod_sum + tod_add
 
 	for(size_t i = 0; i < k_narg_tensor; i++) {
 		labeled_btensor_expr_arg_tensor<N, T> arg =
 			get_arg_tensor<Label>(i);
 	}
+}
+
+template<size_t N, typename T, typename Expr>
+template<typename Label, size_t NTensor>
+void labeled_btensor_expr<N, T, Expr>::eval_case(
+	labeled_btensor<N, T, true, Label> &t,
+	const eval_tag<NTensor, 0> &tag) const throw(exception) {
+	// use tod_add
+}
+
+template<size_t N, typename T, typename Expr>
+template<typename Label, size_t NOper>
+void labeled_btensor_expr<N, T, Expr>::eval_case(
+	labeled_btensor<N, T, true, Label> &t,
+	const eval_tag<0, NOper> &tag) const throw(exception) {
+	// use tod_sum
+}
+
+template<size_t N, typename T, typename Expr>
+template<typename Label>
+void labeled_btensor_expr<N, T, Expr>::eval_case(
+	labeled_btensor<N, T, true, Label> &t,
+	const eval_tag<1, 0> &tag) const throw(exception) {
+	// use tod_copy
+}
+
+template<size_t N, typename T, typename Expr>
+template<typename Label>
+void labeled_btensor_expr<N, T, Expr>::eval_case(
+	labeled_btensor<N, T, true, Label> &t,
+	const eval_tag<0, 1> &tag) const throw(exception) {
+	// use direct evaluation
 }
 
 template<size_t N, typename T, typename Expr>
