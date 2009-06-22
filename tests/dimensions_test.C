@@ -5,6 +5,7 @@ namespace libtensor {
 
 void dimensions_test::perform() throw(libtest::test_exception) {
 	test_ctor();
+	test_contains();
 	test_inc_index();
 	test_abs_index();
 }
@@ -43,6 +44,59 @@ void dimensions_test::test_ctor() throw(libtest::test_exception) {
 			"Incorrect total number of elements in d2");
 	}
 
+}
+
+void dimensions_test::test_contains() throw(libtest::test_exception) {
+	index<2> i1, i2; i2[0]=10; i2[1]=12;
+	dimensions<2> d1(index_range<2>(i1, i2));
+
+	i1[0] = 0; i1[1] = 0;
+	if(!d1.contains(i1)) {
+		fail_test("dimensions_test::test_contains()", __FILE__,
+			__LINE__, "(11,13).contains(0,0) returns false");
+	}
+
+	i1[1] = 1;
+	if(!d1.contains(i1)) {
+		fail_test("dimensions_test::test_contains()", __FILE__,
+			__LINE__, "(11,13).contains(0,1) returns false");
+	}
+
+	i1[1] = 12;
+	if(!d1.contains(i1)) {
+		fail_test("dimensions_test::test_contains()", __FILE__,
+			__LINE__, "(11,13).contains(0,12) returns false");
+	}
+
+	i1[1] = 13;
+	if(d1.contains(i1)) {
+		fail_test("dimensions_test::test_contains()", __FILE__,
+			__LINE__, "(11,13).contains(0,13) returns true");
+	}
+
+	i1[0] = 1; i1[1] = 0;
+	if(!d1.contains(i1)) {
+		fail_test("dimensions_test::test_contains()", __FILE__,
+			__LINE__, "(11,13).contains(1,0) returns false");
+	}
+
+	i1[0] = 10;
+	if(!d1.contains(i1)) {
+		fail_test("dimensions_test::test_contains()", __FILE__,
+			__LINE__, "(11,13).contains(10,0) returns false");
+	}
+
+	i1[0] = 11;
+	if(d1.contains(i1)) {
+		fail_test("dimensions_test::test_contains()", __FILE__,
+			__LINE__, "(11,13).contains(11,0) returns true");
+	}
+
+	i1[1] = 100;
+	if(d1.contains(i1)) {
+		fail_test("dimensions_test::test_contains()", __FILE__,
+			__LINE__, "(11,13).contains(11,100) returns true");
+	}
 }
 
 void dimensions_test::test_inc_index() throw(libtest::test_exception) {
@@ -99,7 +153,15 @@ void dimensions_test::test_inc_index() throw(libtest::test_exception) {
 	index<2> j1, j2; j2[0]=10; j2[1]=12;
 	dimensions<2> d2(index_range<2>(j1, j2));
 
-	j1[0]=0; j1[1]=12;
+	j1[0]=0; j1[1]=11;
+	if(!d2.inc_index(j1)) {
+		fail_test("dimensions_test::test_inc_index()", __FILE__,
+			__LINE__, "inc(0,11) doesn't return true");
+	}
+	if(!(j1[0]==0 && j1[1]==12)) {
+		fail_test("dimensions_test::test_inc_index()", __FILE__,
+			__LINE__, "inc(0,11) doesn't return (0,12)");
+	}
 	if(!d2.inc_index(j1)) {
 		fail_test("dimensions_test::test_inc_index()", __FILE__,
 			__LINE__, "inc(0,12) doesn't return true");

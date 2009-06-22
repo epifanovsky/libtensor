@@ -55,6 +55,10 @@ public:
 	 **/
 	size_t get_increment(size_t i) const throw(exception);
 
+	/**	\brief Returns true if an %index is within the %dimensions
+	 **/
+	bool contains(const index<N> &idx) const;
+
 	/**	\brief Returns true if two %dimensions objects are equal
 	 **/
 	bool equals(const dimensions<N> &other) const;
@@ -148,6 +152,15 @@ inline size_t dimensions<N>::get_increment(size_t i) const throw(exception) {
 }
 
 template<size_t N>
+inline bool dimensions<N>::contains(const index<N> &idx) const {
+	#pragma unroll(N)
+	for(register size_t i = 0; i < N; i++) {
+		if(idx[i] >= m_dims[i]) return false;
+	}
+	return true;
+}
+
+template<size_t N>
 inline bool dimensions<N>::equals(const dimensions<N> &other) const {
 	return m_dims.equals(other.m_dims);
 }
@@ -162,19 +175,20 @@ inline dimensions<N> &dimensions<N>::permute(const permutation<N> &p)
 
 template<size_t N>
 bool dimensions<N>::inc_index(index<N> &idx) const throw(exception) {
-	if(m_dims.less(idx) || m_dims.equals(idx)) return false;
+	if(!contains(idx)) return false;
 	size_t n = N - 1;
-	bool done = false;
-	while(!done && n!=0) {
+	bool done = false, ok = false;
+	do {
 		if(idx[n] < m_dims[n]-1) {
 			idx[n]++;
 			for(size_t i=n+1; i<N; i++) idx[i]=0;
-			done = true;
+			done = true; ok = true;
 		} else {
-			n--;
+			if(n == 0) done = true;
+			else n--;
 		}
-	}
-	return done;
+	} while(!done);
+	return ok;
 }
 
 template<size_t N>

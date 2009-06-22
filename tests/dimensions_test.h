@@ -17,6 +17,9 @@ private:
 	//!	Tests the constructors
 	void test_ctor() throw(libtest::test_exception);
 
+	//!	Tests the dimensions::contains() method
+	void test_contains() throw(libtest::test_exception);
+
 	//!	Tests the dimensions::inc_index() method
 	void test_inc_index() throw(libtest::test_exception);
 

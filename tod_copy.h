@@ -89,9 +89,21 @@ private:
 	class op_dcopy : public processor_op_i_t {
 	private:
 		size_t m_len, m_inca, m_incb;
+		double m_c;
 	public:
-		op_dcopy(size_t len, size_t inca, size_t incb)
-			: m_len(len), m_inca(inca), m_incb(incb) { }
+		op_dcopy(size_t len, size_t inca, size_t incb, double c)
+			: m_len(len), m_inca(inca), m_incb(incb), m_c(c) { }
+		virtual void exec(processor_t &proc, registers &regs)
+			throw(exception);
+	};
+
+	class op_daxpy : public processor_op_i_t {
+	private:
+		size_t m_len, m_inca, m_incb;
+		double m_c;
+	public:
+		op_daxpy(size_t len, size_t inca, size_t incb, double c)
+			: m_len(len), m_inca(inca), m_incb(incb), m_c(c) { }
 		virtual void exec(processor_t &proc, registers &regs)
 			throw(exception);
 	};
@@ -138,6 +150,9 @@ public:
 	virtual void perform(tensor_i<N, double> &t, double c) throw(exception);
 	//@}
 
+private:
+	template<typename CoreOp>
+	void do_perform(tensor_i<N, double> &t, double c) throw(exception);
 };
 
 template<size_t N>
@@ -162,6 +177,18 @@ inline void tod_copy<N>::prefetch() throw(exception) {
 
 template<size_t N>
 void tod_copy<N>::perform(tensor_i<N, double> &tdst) throw(exception) {
+	do_perform<op_dcopy>(tdst, 1.0);
+}
+
+template<size_t N>
+void tod_copy<N>::perform(tensor_i<N, double> &tdst, double c)
+	throw(exception) {
+	do_perform<op_daxpy>(tdst, c);
+}
+
+template<size_t N> template<typename CoreOp>
+void tod_copy<N>::do_perform(tensor_i<N, double> &tdst, double c)
+	throw(exception) {
 
 	dimensions<N> dims(m_t.get_dims()); dims.permute(m_perm);
 	if(dims != tdst.get_dims()) {
@@ -185,7 +212,8 @@ void tod_copy<N>::perform(tensor_i<N, double> &tdst) throw(exception) {
 		if(i < N-1) {
 			node.m_op = new op_loop(m_t.get_dims()[i], inca, incb);
 		} else {
-			node.m_op = new op_dcopy(m_t.get_dims()[i], inca, incb);
+			node.m_op = new CoreOp(
+				m_t.get_dims()[i], inca, incb, c*m_c);
 		}
 		lst.push_back(node);
 	}
@@ -203,12 +231,6 @@ void tod_copy<N>::perform(tensor_i<N, double> &tdst) throw(exception) {
 
 	m_tctrl.ret_dataptr(psrc);
 	tctrl_dst.ret_dataptr(pdst);
-}
-
-template<size_t N>
-void tod_copy<N>::perform(tensor_i<N, double> &tdst, double c) throw(exception) {
-	throw_exc("tod_copy<N>", "perform(tensor_i<N, double>&, double)",
-		"Not implemented");
 }
 
 template<size_t N>
@@ -231,6 +253,15 @@ template<size_t N>
 void tod_copy<N>::op_dcopy::exec(processor_t &proc, registers &regs)
 	throw(exception) {
 	cblas_dcopy(m_len, regs.m_ptra, m_inca, regs.m_ptrb, m_incb);
+	if(m_c != 1.0) {
+		cblas_dscal(m_len, m_c, regs.m_ptrb, m_incb);
+	}
+}
+
+template<size_t N>
+void tod_copy<N>::op_daxpy::exec(processor_t &proc, registers &regs)
+	throw(exception) {
+	cblas_daxpy(m_len, m_c, regs.m_ptra, m_inca, regs.m_ptrb, m_incb);
 }
 
 } // namespace libtensor

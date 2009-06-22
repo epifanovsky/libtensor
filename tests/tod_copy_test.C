@@ -13,7 +13,60 @@ void tod_copy_test::perform() throw(libtest::test_exception) {
 
 	index<2> i2a, i2b; i2b[0]=10; i2b[1]=12;
 	index_range<2> ir2(i2a, i2b); dimensions<2> dims2(ir2);
+	permutation<2> perm2, perm2t;
+	perm2t.permute(0, 1);
+
 	test_plain(dims2);
+	test_plain_additive(dims2, 1.0);
+	test_plain_additive(dims2, -1.0);
+	test_plain_additive(dims2, 2.5);
+
+	test_scaled(dims2, 1.0);
+	test_scaled(dims2, 0.5);
+	test_scaled(dims2, -3.14);
+	test_scaled_additive(dims2, 1.0, 1.0);
+	test_scaled_additive(dims2, 0.5, 1.0);
+	test_scaled_additive(dims2, -3.14, 1.0);
+	test_scaled_additive(dims2, 1.0, -1.0);
+	test_scaled_additive(dims2, 0.5, -1.0);
+	test_scaled_additive(dims2, -3.14, -1.0);
+	test_scaled_additive(dims2, 1.0, 2.5);
+	test_scaled_additive(dims2, 0.5, 2.5);
+	test_scaled_additive(dims2, -3.14, 2.5);
+
+	test_perm(dims2, perm2);
+	test_perm(dims2, perm2t);
+	test_perm_additive(dims2, perm2, 1.0);
+	test_perm_additive(dims2, perm2, -1.0);
+	test_perm_additive(dims2, perm2, 2.5);
+	test_perm_additive(dims2, perm2t, 1.0);
+	test_perm_additive(dims2, perm2t, -1.0);
+	test_perm_additive(dims2, perm2t, 2.5);
+
+	test_perm_scaled(dims2, perm2, 1.0);
+	test_perm_scaled(dims2, perm2t, 1.0);
+	test_perm_scaled(dims2, perm2, 0.5);
+	test_perm_scaled(dims2, perm2t, 0.5);
+	test_perm_scaled(dims2, perm2, -3.14);
+	test_perm_scaled(dims2, perm2t, -3.14);
+	test_perm_scaled_additive(dims2, perm2, 1.0, 1.0);
+	test_perm_scaled_additive(dims2, perm2t, 1.0, 1.0);
+	test_perm_scaled_additive(dims2, perm2, 0.5, 1.0);
+	test_perm_scaled_additive(dims2, perm2t, 0.5, 1.0);
+	test_perm_scaled_additive(dims2, perm2, -3.14, 1.0);
+	test_perm_scaled_additive(dims2, perm2t, -3.14, 1.0);
+	test_perm_scaled_additive(dims2, perm2, 1.0, -1.0);
+	test_perm_scaled_additive(dims2, perm2t, 1.0, -1.0);
+	test_perm_scaled_additive(dims2, perm2, 0.5, -1.0);
+	test_perm_scaled_additive(dims2, perm2t, 0.5, -1.0);
+	test_perm_scaled_additive(dims2, perm2, -3.14, -1.0);
+	test_perm_scaled_additive(dims2, perm2t, -3.14, -1.0);
+	test_perm_scaled_additive(dims2, perm2, 1.0, 2.5);
+	test_perm_scaled_additive(dims2, perm2t, 1.0, 2.5);
+	test_perm_scaled_additive(dims2, perm2, 0.5, 2.5);
+	test_perm_scaled_additive(dims2, perm2t, 0.5, 2.5);
+	test_perm_scaled_additive(dims2, perm2, -3.14, 2.5);
+	test_perm_scaled_additive(dims2, perm2t, -3.14, 2.5);
 }
 
 template<size_t N>
@@ -30,15 +83,12 @@ void tod_copy_test::test_plain(const dimensions<N> &dims)
 	// Fill in random data
 
 	index<N> ida;
-	size_t sz = 0;
 	do {
 		size_t i;
 		i = dims.abs_index(ida);
 		dta[i] = dtb2[i] = drand48();
 		dtb1[i] = drand48();
-		sz++;
 	} while(dims.inc_index(ida));
-	printf(" sz=%lu ", sz);
 	tca.ret_dataptr(dta); dta = NULL;
 	tcb.ret_dataptr(dtb1); dtb1 = NULL;
 	tcb_ref.ret_dataptr(dtb2); dtb2 = NULL;
@@ -51,7 +101,287 @@ void tod_copy_test::test_plain(const dimensions<N> &dims)
 
 	// Compare against the reference
 
-	compare_ref("tod_copy_test::test_plain()", tb, tb_ref, 0.0);
+	compare_ref("tod_copy_test::test_plain()", tb, tb_ref, 1e-15);
+}
+
+template<size_t N>
+void tod_copy_test::test_plain_additive(const dimensions<N> &dims, double d)
+	throw(libtest::test_exception) {
+
+	tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
+	tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
+
+	double *dta = tca.req_dataptr();
+	double *dtb1 = tcb.req_dataptr();
+	double *dtb2 = tcb_ref.req_dataptr();
+
+	// Fill in random data
+
+	index<N> ida;
+	do {
+		size_t i;
+		i = dims.abs_index(ida);
+		dta[i] = drand48();
+		dtb1[i] = drand48();
+		dtb2[i] = dtb1[i] + d * dta[i];
+	} while(dims.inc_index(ida));
+	tca.ret_dataptr(dta); dta = NULL;
+	tcb.ret_dataptr(dtb1); dtb1 = NULL;
+	tcb_ref.ret_dataptr(dtb2); dtb2 = NULL;
+	ta.set_immutable(); tb_ref.set_immutable();
+
+	// Invoke the copy operation
+
+	tod_copy<N> cp(ta);
+	cp.perform(tb, d);
+
+	// Compare against the reference
+
+	compare_ref("tod_copy_test::test_plain_additive()", tb, tb_ref, 1e-15);
+}
+
+template<size_t N>
+void tod_copy_test::test_scaled(const dimensions<N> &dims, double c)
+	throw(libtest::test_exception) {
+
+	tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
+	tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
+
+	double *dta = tca.req_dataptr();
+	double *dtb1 = tcb.req_dataptr();
+	double *dtb2 = tcb_ref.req_dataptr();
+
+	// Fill in random data
+
+	index<N> ida;
+	do {
+		size_t i;
+		i = dims.abs_index(ida);
+		dta[i] = dtb2[i] = drand48();
+		dtb2[i] *= c;
+		dtb1[i] = drand48();
+	} while(dims.inc_index(ida));
+	tca.ret_dataptr(dta); dta = NULL;
+	tcb.ret_dataptr(dtb1); dtb1 = NULL;
+	tcb_ref.ret_dataptr(dtb2); dtb2 = NULL;
+	ta.set_immutable(); tb_ref.set_immutable();
+
+	// Invoke the copy operation
+
+	tod_copy<N> cp(ta, c);
+	cp.perform(tb);
+
+	// Compare against the reference
+
+	std::ostringstream ss; ss << "tod_copy_test::test_scaled(" << c << ")";
+	compare_ref(ss.str().c_str(), tb, tb_ref, 1e-15);
+}
+
+template<size_t N>
+void tod_copy_test::test_scaled_additive(const dimensions<N> &dims, double c,
+	double d) throw(libtest::test_exception) {
+
+	tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
+	tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
+
+	double *dta = tca.req_dataptr();
+	double *dtb1 = tcb.req_dataptr();
+	double *dtb2 = tcb_ref.req_dataptr();
+
+	// Fill in random data
+
+	index<N> ida;
+	do {
+		size_t i;
+		i = dims.abs_index(ida);
+		dta[i] = drand48();
+		dtb1[i] = drand48();
+		dtb2[i] = dtb1[i] + c*d*dta[i];
+	} while(dims.inc_index(ida));
+	tca.ret_dataptr(dta); dta = NULL;
+	tcb.ret_dataptr(dtb1); dtb1 = NULL;
+	tcb_ref.ret_dataptr(dtb2); dtb2 = NULL;
+	ta.set_immutable(); tb_ref.set_immutable();
+
+	// Invoke the copy operation
+
+	tod_copy<N> cp(ta, c);
+	cp.perform(tb, d);
+
+	// Compare against the reference
+
+	std::ostringstream ss; ss << "tod_copy_test::test_scaled_additive("
+		<< c << ")";
+	compare_ref(ss.str().c_str(), tb, tb_ref, 1e-15);
+}
+
+template<size_t N>
+void tod_copy_test::test_perm(const dimensions<N> &dims,
+	const permutation<N> &perm) throw(libtest::test_exception) {
+
+	dimensions<N> dimsa(dims), dimsb(dims);
+	dimsb.permute(perm);
+
+	tensor<N, double, allocator> ta(dimsa), tb(dimsb), tb_ref(dimsb);
+	tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
+
+	double *dta = tca.req_dataptr();
+	double *dtb1 = tcb.req_dataptr();
+	double *dtb2 = tcb_ref.req_dataptr();
+
+	// Fill in random data
+
+	index<N> ida;
+	do {
+		index<N> idb(ida);
+		idb.permute(perm);
+		size_t i, j;
+		i = dimsa.abs_index(ida);
+		j = dimsb.abs_index(idb);
+		dta[i] = dtb2[j] = drand48();
+		dtb1[i] = drand48();
+	} while(dimsa.inc_index(ida));
+	tca.ret_dataptr(dta); dta = NULL;
+	tcb.ret_dataptr(dtb1); dtb1 = NULL;
+	tcb_ref.ret_dataptr(dtb2); dtb2 = NULL;
+	ta.set_immutable(); tb_ref.set_immutable();
+
+	// Invoke the copy operation
+
+	tod_copy<N> cp(ta, perm);
+	cp.perform(tb);
+
+	// Compare against the reference
+
+	compare_ref("tod_copy_test::test_perm()", tb, tb_ref, 1e-15);
+}
+
+template<size_t N>
+void tod_copy_test::test_perm_additive(const dimensions<N> &dims,
+	const permutation<N> &perm, double d) throw(libtest::test_exception) {
+
+	dimensions<N> dimsa(dims), dimsb(dims);
+	dimsb.permute(perm);
+
+	tensor<N, double, allocator> ta(dimsa), tb(dimsb), tb_ref(dimsb);
+	tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
+
+	double *dta = tca.req_dataptr();
+	double *dtb1 = tcb.req_dataptr();
+	double *dtb2 = tcb_ref.req_dataptr();
+
+	// Fill in random data
+
+	index<N> ida;
+	do {
+		index<N> idb(ida);
+		idb.permute(perm);
+		size_t i, j;
+		i = dimsa.abs_index(ida);
+		j = dimsb.abs_index(idb);
+		dta[i] = drand48();
+		dtb1[j] = drand48();
+		dtb2[j] = dtb1[j] + d*dta[i];
+	} while(dimsa.inc_index(ida));
+	tca.ret_dataptr(dta); dta = NULL;
+	tcb.ret_dataptr(dtb1); dtb1 = NULL;
+	tcb_ref.ret_dataptr(dtb2); dtb2 = NULL;
+	ta.set_immutable(); tb_ref.set_immutable();
+
+	// Invoke the copy operation
+
+	tod_copy<N> cp(ta, perm);
+	cp.perform(tb, d);
+
+	// Compare against the reference
+
+	compare_ref("tod_copy_test::test_perm_additive()", tb, tb_ref, 1e-15);
+}
+
+template<size_t N>
+void tod_copy_test::test_perm_scaled(const dimensions<N> &dims,
+	const permutation<N> &perm, double c) throw(libtest::test_exception) {
+
+	dimensions<N> dimsa(dims), dimsb(dims);
+	dimsb.permute(perm);
+
+	tensor<N, double, allocator> ta(dimsa), tb(dimsb), tb_ref(dimsb);
+	tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
+
+	double *dta = tca.req_dataptr();
+	double *dtb1 = tcb.req_dataptr();
+	double *dtb2 = tcb_ref.req_dataptr();
+
+	// Fill in random data
+
+	index<N> ida;
+	do {
+		index<N> idb(ida);
+		idb.permute(perm);
+		size_t i, j;
+		i = dimsa.abs_index(ida);
+		j = dimsb.abs_index(idb);
+		dta[i] = drand48();
+		dtb1[j] = drand48();
+		dtb2[j] = c*dta[i];
+	} while(dimsa.inc_index(ida));
+	tca.ret_dataptr(dta); dta = NULL;
+	tcb.ret_dataptr(dtb1); dtb1 = NULL;
+	tcb_ref.ret_dataptr(dtb2); dtb2 = NULL;
+	ta.set_immutable(); tb_ref.set_immutable();
+
+	// Invoke the copy operation
+
+	tod_copy<N> cp(ta, perm, c);
+	cp.perform(tb);
+
+	// Compare against the reference
+
+	compare_ref("tod_copy_test::test_perm_scaled()", tb, tb_ref, 1e-15);
+}
+
+template<size_t N>
+void tod_copy_test::test_perm_scaled_additive(const dimensions<N> &dims,
+	const permutation<N> &perm, double c, double d)
+	throw(libtest::test_exception) {
+
+	dimensions<N> dimsa(dims), dimsb(dims);
+	dimsb.permute(perm);
+
+	tensor<N, double, allocator> ta(dimsa), tb(dimsb), tb_ref(dimsb);
+	tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
+
+	double *dta = tca.req_dataptr();
+	double *dtb1 = tcb.req_dataptr();
+	double *dtb2 = tcb_ref.req_dataptr();
+
+	// Fill in random data
+
+	index<N> ida;
+	do {
+		index<N> idb(ida);
+		idb.permute(perm);
+		size_t i, j;
+		i = dimsa.abs_index(ida);
+		j = dimsb.abs_index(idb);
+		dta[i] = drand48();
+		dtb1[j] = drand48();
+		dtb2[j] = dtb1[j] + c*d*dta[i];
+	} while(dimsa.inc_index(ida));
+	tca.ret_dataptr(dta); dta = NULL;
+	tcb.ret_dataptr(dtb1); dtb1 = NULL;
+	tcb_ref.ret_dataptr(dtb2); dtb2 = NULL;
+	ta.set_immutable(); tb_ref.set_immutable();
+
+	// Invoke the copy operation
+
+	tod_copy<N> cp(ta, perm, c);
+	cp.perform(tb, d);
+
+	// Compare against the reference
+
+	compare_ref("tod_copy_test::test_perm_scaled_additive()",
+		tb, tb_ref, 1e-15);
 }
 
 void tod_copy_test::test_exc() throw(libtest::test_exception) {

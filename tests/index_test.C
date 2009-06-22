@@ -42,6 +42,19 @@ void index_test::test_less() throw(libtest::test_exception) {
 		fail_test("index_test::test_less()", __FILE__, __LINE__,
 			"less returns (2,2)<(2,2)");
 	}
+
+	i1[0] = 0; i1[1] = 10;
+	i2[0] = 10; i2[1] = 12;
+	if(!i1.less(i2)) {
+		fail_test("index_test::test_less()", __FILE__, __LINE__,
+			"less returns (10,12)<(0,10)");
+	}
+	i1[1] = 12;
+	if(!i1.less(i2)) {
+		fail_test("index_test::test_less()", __FILE__, __LINE__,
+			"less returns (10,12)<(0,12)");
+	}
+
 }
 
 void index_test::test_print() throw(libtest::test_exception) {
