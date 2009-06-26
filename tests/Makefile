@@ -7,6 +7,7 @@ OBJS += block_tensor_test.o
 OBJS += btensor_test.o
 OBJS += btod_add_test.o
 OBJS += btod_contract2_test.o
+OBJS += btod_copy_test.o
 OBJS += btod_sum_test.o
 OBJS += contract_test.o
 OBJS += contract2_0_4i_test.o
