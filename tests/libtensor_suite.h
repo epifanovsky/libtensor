@@ -20,6 +20,7 @@
 #include "index_range_test.h"
 #include "labeled_btensor_test.h"
 #include "lehmer_code_test.h"
+#include "letter_expr_test.h"
 #include "letter_test.h"
 #include "permutation_test.h"
 #include "permutator_test.h"
@@ -60,6 +61,7 @@ namespace libtensor {
 	\li libtensor::labeled_btensor_test
 	\li libtensor::lehmer_code_test
 	\li libtensor::letter_test
+	\li libtensor::letter_expr_test
 	\li libtensor::permutation_test
 	\li libtensor::permutator_test
 	\li libtensor::symmetry_test
@@ -93,6 +95,7 @@ private:
 	unit_test_factory<labeled_btensor_test> m_utf_labeled_btensor;
 	unit_test_factory<lehmer_code_test> m_utf_lehmer_code;
 	unit_test_factory<letter_test> m_utf_letter;
+	unit_test_factory<letter_expr_test> m_utf_letter_expr;
 	unit_test_factory<permutation_test> m_utf_permutation;
 	unit_test_factory<permutator_test> m_utf_permutator;
 	unit_test_factory<symmetry_test> m_utf_symmetry;

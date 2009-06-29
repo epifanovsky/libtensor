@@ -3,6 +3,7 @@
 
 #include "defs.h"
 #include "exception.h"
+#include "permutation.h"
 
 /**	\defgroup libtensor_letter_expr Letter index expressions
 	\ingroup libtensor
@@ -41,7 +42,7 @@ private:
 
 public:
 	letter_expr(const T &t) : m_t(t) { }
-	letter_expr(const letter_expr<N,T> &e) : m_t(e.m_t) { }
+	letter_expr(const letter_expr<N, T> &e) : m_t(e.m_t) { }
 
 	/**	\brief Returns whether the expression contains a %letter
 	 **/
@@ -56,6 +57,15 @@ public:
 		\throw exception If the %index is out of bounds.
 	 **/
 	const letter &letter_at(size_t i) const throw(exception);
+
+	/**	\brief Returns how letters in the second expression need to be
+			permuted to obtain the order of letters in this
+			expression
+		\param e2 Second expression.
+	 **/
+	template<typename T2>
+	permutation<N> permutation_of(const letter_expr<N, T2> &e2) const
+		throw(exception);
 };
 
 /**	\brief Identity expression
@@ -121,6 +131,35 @@ inline const letter &letter_expr<N, T>::letter_at(size_t i) const
 	}
 	return m_t.letter_at(i);
 }
+
+template<size_t N, typename T> template<typename T2>
+permutation<N> letter_expr<N, T>::permutation_of(const letter_expr<N, T2> &e2)
+	const throw(exception) {
+
+	permutation<N> perm;
+	size_t idx[N];
+	register size_t i;
+
+	for(i = 0; i < N; i++) {
+		idx[i] = m_t.index_of(e2.letter_at(i));
+	}
+
+	i = 0;
+	while(i < N) {
+		if(i > idx[i]) {
+			perm.permute(i, idx[i]);
+			register size_t j = idx[i];
+			idx[i] = idx[j];
+			idx[j] = j;
+			i = 0;
+		} else {
+			i++;
+		}
+	}
+
+	return perm;
+}
+
 
 inline size_t letter_expr_ident::index_of(const letter &let) const
 	throw(exception) {
