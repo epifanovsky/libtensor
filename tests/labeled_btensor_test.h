@@ -29,6 +29,18 @@ private:
 	//!	\brief b(i|j) = -a(i|j)
 	void test_expr_copy_4() throw(libtest::test_exception);
 
+	//!	\brief c(i|j) = a(i|j) + b(i|j)
+	void test_expr_add_1() throw(libtest::test_exception);
+
+	//!	\brief c(i|j) = -a(i|j) + 3.0*b(i|j)
+	void test_expr_add_2() throw(libtest::test_exception);
+
+	//!	\brief c(i|j) = a(i|j) - b(i|j)
+	void test_expr_add_3() throw(libtest::test_exception);
+
+	//!	\brief c(i|j) = 4.0*a(i|j) - 0.5*b(j|i)
+	void test_expr_add_4() throw(libtest::test_exception);
+
 	template<size_t N>
 	void compare_ref(const char *test, btensor_i<N, double> &bt,
 		btensor_i<N, double> &bt_ref, double thresh)

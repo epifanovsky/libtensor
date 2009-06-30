@@ -11,6 +11,10 @@ void labeled_btensor_test::perform() throw(libtest::test_exception) {
 	test_expr_copy_2();
 	test_expr_copy_3();
 	test_expr_copy_4();
+	test_expr_add_1();
+	test_expr_add_2();
+	test_expr_add_3();
+	test_expr_add_4();
 }
 
 void labeled_btensor_test::test_label() throw(libtest::test_exception) {
@@ -94,6 +98,9 @@ void labeled_btensor_test::test_expr() throw(libtest::test_exception) {
 	t3_jiab(j|i|a|b) = t1_ijab(i|j|a|b) + t2_ijab(i|j|a|b);
 	t2_ijab(i|j|a|b) = t3_jiab(j|i|a|b) + t4_jiab(j|i|a|b);
 	t1_ijab(i|j|a|b) + t3_jiab(j|i|a|b);
+	t1_ijab(i|j|a|b) - 2.0*t3_jiab(j|i|a|b);
+	2.0*t1_ijab(i|j|a|b) - t3_jiab(j|i|a|b);
+	2.0*t1_ijab(i|j|a|b) - 3.0*t3_jiab(j|i|a|b);
 	t1_ijab(i|j|a|b) + t2_ijab(i|j|a|b) + t3_jiab(j|i|a|b);
 	t1_ijab(i|j|a|b) + t2_ijab(i|j|a|b) + t3_jiab(j|i|a|b) +
 		t4_jiab(j|i|a|b);
@@ -314,6 +321,229 @@ void labeled_btensor_test::test_expr_copy_4() throw(libtest::test_exception) {
 
 	compare_ref("labeled_btensor_test::test_expr_copy_4()",
 		btb, btb_ref, 1e-15);
+}
+
+void labeled_btensor_test::test_expr_add_1() throw(libtest::test_exception) {
+	// c(i|j) = a(i|j) + b(i|j)
+
+	bispace<1> sp_i(4), sp_j(4);
+	bispace<2> sp_ij(sp_i & sp_j);
+	btensor<2> bta(sp_ij), btb(sp_ij), btc(sp_ij), btc_ref(sp_ij);
+
+	block_tensor_ctrl<2, double> btctrla(bta), btctrlb(btb),
+		btctrlc(btc), btctrlc_ref(btc_ref);
+	index<2> i0;
+	tensor_i<2, double> &ta = btctrla.req_block(i0);
+	tensor_i<2, double> &tb = btctrlb.req_block(i0);
+	tensor_i<2, double> &tc = btctrlc.req_block(i0);
+	tensor_i<2, double> &tc_ref = btctrlc_ref.req_block(i0);
+	tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
+
+	dimensions<2> dims(ta.get_dims());
+
+	double *dta = tca.req_dataptr();
+	double *dtb = tcb.req_dataptr();
+	double *dtc1 = tcc.req_dataptr();
+	double *dtc2 = tcc_ref.req_dataptr();
+
+	// Fill in random data
+
+	index<2> ida;
+	do {
+		size_t i;
+		i = dims.abs_index(ida);
+		dta[i] = drand48();
+		dtb[i] = drand48();
+		dtc1[i] = drand48();
+		dtc2[i] = dta[i] + dtb[i];
+	} while(dims.inc_index(ida));
+
+	tca.ret_dataptr(dta); dta = NULL;
+	tcb.ret_dataptr(dtb); dtb = NULL;
+	tcc.ret_dataptr(dtc1); dtc1 = NULL;
+	tcc_ref.ret_dataptr(dtc2); dtc2 = NULL;
+
+	bta.set_immutable();
+	btb.set_immutable();
+	btc_ref.set_immutable();
+
+	// Evaluate the expression
+
+	letter i, j;
+	btc(i|j) = bta(i|j) + btb(i|j);
+
+	// Compare against the reference
+
+	compare_ref("labeled_btensor_test::test_expr_add_1()",
+		btc, btc_ref, 1e-15);
+}
+
+void labeled_btensor_test::test_expr_add_2() throw(libtest::test_exception) {
+	// c(i|j) = -a(i|j) + 3.0*b(i|j)
+
+	bispace<1> sp_i(4), sp_j(4);
+	bispace<2> sp_ij(sp_i & sp_j);
+	btensor<2> bta(sp_ij), btb(sp_ij), btc(sp_ij), btc_ref(sp_ij);
+
+	block_tensor_ctrl<2, double> btctrla(bta), btctrlb(btb),
+		btctrlc(btc), btctrlc_ref(btc_ref);
+	index<2> i0;
+	tensor_i<2, double> &ta = btctrla.req_block(i0);
+	tensor_i<2, double> &tb = btctrlb.req_block(i0);
+	tensor_i<2, double> &tc = btctrlc.req_block(i0);
+	tensor_i<2, double> &tc_ref = btctrlc_ref.req_block(i0);
+	tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
+
+	dimensions<2> dims(ta.get_dims());
+
+	double *dta = tca.req_dataptr();
+	double *dtb = tcb.req_dataptr();
+	double *dtc1 = tcc.req_dataptr();
+	double *dtc2 = tcc_ref.req_dataptr();
+
+	// Fill in random data
+
+	index<2> ida;
+	do {
+		size_t i;
+		i = dims.abs_index(ida);
+		dta[i] = drand48();
+		dtb[i] = drand48();
+		dtc1[i] = drand48();
+		dtc2[i] = -dta[i] + 3.0*dtb[i];
+	} while(dims.inc_index(ida));
+
+	tca.ret_dataptr(dta); dta = NULL;
+	tcb.ret_dataptr(dtb); dtb = NULL;
+	tcc.ret_dataptr(dtc1); dtc1 = NULL;
+	tcc_ref.ret_dataptr(dtc2); dtc2 = NULL;
+
+	bta.set_immutable();
+	btb.set_immutable();
+	btc_ref.set_immutable();
+
+	// Evaluate the expression
+
+	letter i, j;
+	btc(i|j) = -bta(i|j) + 3.0*btb(i|j);
+
+	// Compare against the reference
+
+	compare_ref("labeled_btensor_test::test_expr_add_2()",
+		btc, btc_ref, 1e-15);
+}
+
+void labeled_btensor_test::test_expr_add_3() throw(libtest::test_exception) {
+	// c(i|j) = a(i|j) - b(i|j)
+
+	bispace<1> sp_i(4), sp_j(4);
+	bispace<2> sp_ij(sp_i & sp_j);
+	btensor<2> bta(sp_ij), btb(sp_ij), btc(sp_ij), btc_ref(sp_ij);
+
+	block_tensor_ctrl<2, double> btctrla(bta), btctrlb(btb),
+		btctrlc(btc), btctrlc_ref(btc_ref);
+	index<2> i0;
+	tensor_i<2, double> &ta = btctrla.req_block(i0);
+	tensor_i<2, double> &tb = btctrlb.req_block(i0);
+	tensor_i<2, double> &tc = btctrlc.req_block(i0);
+	tensor_i<2, double> &tc_ref = btctrlc_ref.req_block(i0);
+	tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
+
+	dimensions<2> dims(ta.get_dims());
+
+	double *dta = tca.req_dataptr();
+	double *dtb = tcb.req_dataptr();
+	double *dtc1 = tcc.req_dataptr();
+	double *dtc2 = tcc_ref.req_dataptr();
+
+	// Fill in random data
+
+	index<2> ida;
+	do {
+		size_t i;
+		i = dims.abs_index(ida);
+		dta[i] = drand48();
+		dtb[i] = drand48();
+		dtc1[i] = drand48();
+		dtc2[i] = dta[i] - dtb[i];
+	} while(dims.inc_index(ida));
+
+	tca.ret_dataptr(dta); dta = NULL;
+	tcb.ret_dataptr(dtb); dtb = NULL;
+	tcc.ret_dataptr(dtc1); dtc1 = NULL;
+	tcc_ref.ret_dataptr(dtc2); dtc2 = NULL;
+
+	bta.set_immutable();
+	btb.set_immutable();
+	btc_ref.set_immutable();
+
+	// Evaluate the expression
+
+	letter i, j;
+	btc(i|j) = bta(i|j) - btb(i|j);
+
+	// Compare against the reference
+
+	compare_ref("labeled_btensor_test::test_expr_add_3()",
+		btc, btc_ref, 1e-15);
+}
+
+void labeled_btensor_test::test_expr_add_4() throw(libtest::test_exception) {
+	// c(i|j) = 4.0*a(i|j) - 0.5*b(j|i)
+
+	bispace<1> sp_i(4), sp_j(4);
+	bispace<2> sp_ij(sp_i & sp_j);
+	btensor<2> bta(sp_ij), btb(sp_ij), btc(sp_ij), btc_ref(sp_ij);
+
+	block_tensor_ctrl<2, double> btctrla(bta), btctrlb(btb),
+		btctrlc(btc), btctrlc_ref(btc_ref);
+	index<2> i0;
+	tensor_i<2, double> &ta = btctrla.req_block(i0);
+	tensor_i<2, double> &tb = btctrlb.req_block(i0);
+	tensor_i<2, double> &tc = btctrlc.req_block(i0);
+	tensor_i<2, double> &tc_ref = btctrlc_ref.req_block(i0);
+	tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
+
+	dimensions<2> dims(ta.get_dims());
+
+	double *dta = tca.req_dataptr();
+	double *dtb = tcb.req_dataptr();
+	double *dtc1 = tcc.req_dataptr();
+	double *dtc2 = tcc_ref.req_dataptr();
+
+	// Fill in random data
+
+	index<2> ida;
+	permutation<2> p; p.permute(0, 1);
+	do {
+		index<2> idb(ida);
+		idb.permute(p);
+		size_t i = dims.abs_index(ida);
+		size_t j = dims.abs_index(idb);
+		dta[i] = drand48();
+		dtb[j] = drand48();
+		dtc1[i] = drand48();
+		dtc2[i] = 4.0*dta[i] - 0.5*dtb[j];
+	} while(dims.inc_index(ida));
+
+	tca.ret_dataptr(dta); dta = NULL;
+	tcb.ret_dataptr(dtb); dtb = NULL;
+	tcc.ret_dataptr(dtc1); dtc1 = NULL;
+	tcc_ref.ret_dataptr(dtc2); dtc2 = NULL;
+
+	bta.set_immutable();
+	btb.set_immutable();
+	btc_ref.set_immutable();
+
+	// Evaluate the expression
+
+	letter i, j;
+	btc(i|j) = 4.0*bta(i|j) - 0.5*btb(j|i);
+
+	// Compare against the reference
+
+	compare_ref("labeled_btensor_test::test_expr_add_4()",
+		btc, btc_ref, 1e-15);
 }
 
 template<size_t N>

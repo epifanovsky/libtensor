@@ -155,7 +155,18 @@ template<typename Label, size_t NTensor>
 void labeled_btensor_expr<N, T, Expr>::eval_case(
 	labeled_btensor<N, T, true, Label> &t,
 	const eval_tag<NTensor, 0> &tag) const throw(exception) {
-	// use tod_add
+
+	// a(i|j) = c1*b1(i|j) + c2*b2(i|j) + ...
+
+	btod_add<N> op;
+
+	for(size_t i = 0; i < NTensor; i++) {
+		labeled_btensor_expr_arg_tensor<N, T> operand =
+			get_arg_tensor(i, t.get_label());
+		op.add_op(operand.get_btensor(), operand.get_permutation(),
+			operand.get_coeff());
+	}
+	op.perform(t.get_btensor());
 }
 
 template<size_t N, typename T, typename Expr>

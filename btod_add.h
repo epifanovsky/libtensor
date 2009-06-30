@@ -17,7 +17,7 @@ namespace libtensor {
 		c_n \mathcal{P}_n A_n \right) \f]
 
 	Each operand must have the same dimensions and the same block structure as the result in order
-	for the operation to be successful. 
+	for the operation to be successful.
 
 	\ingroup libtensor
  **/
@@ -26,21 +26,26 @@ class btod_add : public btod_additive<N> {
 private:
 	struct operand {
 		block_tensor_i<N, double> &m_bt;
-		const double m_c;
-		const permutation<N> m_p;
+		double m_c;
+		permutation<N> m_p;
 		struct operand* m_next;
 		operand(block_tensor_i<N,double> &bt, const permutation<N> &p, double c)
 			: m_bt(bt), m_p(p), m_c(c), m_next(NULL) {}
 	};
 
-	struct operand* m_head;	
-	struct operand* m_tail; 
+	struct operand* m_head;
+	struct operand* m_tail;
 
 	dimensions<N>* m_dim;  //!< dimensions of the output tensor
-	const permutation<N> m_pb;
+	permutation<N> m_pb;
+
 public:
 	//!	\name Construction and destruction
 	//@{
+
+	/**	\brief Default constructor
+	 **/
+	btod_add();
 
 	/**	\brief Initializes the contraction operation
 		\param pb Permutation of result tensor.
@@ -72,18 +77,23 @@ public:
 		\param p Permutation of %tensor elements.
 		\param c Coefficient.
 	**/
-	void add_op(block_tensor_i<N,double> &bt, const permutation<N> &p,
-		const double c) throw(exception);
-	
+	void add_op(block_tensor_i<N, double> &bt, const permutation<N> &p,
+		double c) throw(exception);
+
 };
 
 template<size_t N>
-btod_add<N>::btod_add(const permutation<N> &pb) 
+btod_add<N>::btod_add() : m_dim(NULL), m_head(NULL), m_tail(NULL) {
+
+}
+
+template<size_t N>
+btod_add<N>::btod_add(const permutation<N> &pb)
 	: m_pb(pb), m_dim(NULL), m_head(NULL), m_tail(NULL)
 { }
 
 template<size_t N>
-btod_add<N>::~btod_add() 
+btod_add<N>::~btod_add()
 {
 	if ( m_dim != NULL ) delete m_dim;
 
@@ -97,7 +107,7 @@ btod_add<N>::~btod_add()
 
 template<size_t N>
 void btod_add<N>::add_op(block_tensor_i<N,double> &bt, const permutation<N> &p,
-		const double c) throw(exception)
+		double c) throw(exception)
 {
 	// do nothing if coefficient is zero
 	if ( c==0. ) return;
@@ -115,8 +125,8 @@ void btod_add<N>::add_op(block_tensor_i<N,double> &bt, const permutation<N> &p,
 	else {
 		dimensions<N> dim(bt.get_dims());
 		dim.permute(new_p);
-		if ( dim != *m_dim ) 
-			throw_exc("btod_add<N>", 
+		if ( dim != *m_dim )
+			throw_exc("btod_add<N>",
 			"add_op(block_tensor_i<N,double>&,const permutation<N>&,const double)",
 			"The block tensor operands have different dimensions");
 	}
@@ -135,17 +145,17 @@ void btod_add<N>::add_op(block_tensor_i<N,double> &bt, const permutation<N> &p,
 
 template<size_t N>
 void btod_add<N>::perform(block_tensor_i<N, double> &bt,
-	double cb) throw(exception) 
+	double cb) throw(exception)
 {
 	// first check whether the output tensor has the right dimensions
 	if ( *m_dim != bt.get_dims() )
-		throw_exc("btod_add<N>", 
+		throw_exc("btod_add<N>",
 			"perform(block_tensor_i<N,double>&)",
 			"The output tensor has incompatible dimensions");
 
 	block_tensor_ctrl<N,double> ctrlbt(bt);
-	
-	index<N> idx; 
+
+	index<N> idx;
 	// setup tod_add object to perform the operation on the blocks
 	tod_add<N> addition(m_pb);
 
@@ -156,7 +166,7 @@ void btod_add<N>::perform(block_tensor_i<N, double> &bt,
 		// do a prefetch here? probably not!
 		// ctrlbto.req_prefetch();
 		addition.add_op(ctrlbto.req_block(idx),node->m_p,node->m_c);
-		node=node->m_next;		
+		node=node->m_next;
 	}
 	addition.prefetch();
 	addition.perform(ctrlbt.req_block(idx),cb);
@@ -169,17 +179,17 @@ const block_index_space_i<N> &btod_add<N>::get_bis() const {
 
 template<size_t N>
 void btod_add<N>::perform(block_tensor_i<N, double> &bt)
-	throw(exception) 
+	throw(exception)
 {
 	// first check whether the output tensor has the right dimensions
 	if ( *m_dim != bt.get_dims() )
-		throw_exc("btod_add<N>", 
+		throw_exc("btod_add<N>",
 			"perform(block_tensor_i<N,double>&)",
 			"The output tensor has incompatible dimensions");
 
 	block_tensor_ctrl<N,double> ctrlbt(bt);
-	
-	index<N> idx; 
+
+	index<N> idx;
 	// setup tod_add object to perform the operation on the blocks
 	tod_add<N> addition(m_pb);
 
@@ -190,7 +200,7 @@ void btod_add<N>::perform(block_tensor_i<N, double> &bt)
 		// do a prefetch here? probably not!
 		// ctrlbto.req_prefetch();
 		addition.add_op(ctrlbto.req_block(idx),node->m_p,node->m_c);
-		node=node->m_next;		
+		node=node->m_next;
 	}
 
 	addition.prefetch();
