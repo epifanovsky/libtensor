@@ -45,6 +45,7 @@ public:
 	//!	\name Implementation of
 	//!		libtensor::direct_block_tensor_operation<N, double>
 	//@{
+	virtual const block_index_space_i<N> &get_bis() const;
 	virtual void perform(block_tensor_i<N, double> &bt) throw(exception);
 	//@}
 
@@ -57,24 +58,29 @@ public:
 };
 
 template<size_t N>
-btod_copy::btod_copy(block_tensor_i<N, double> &bt, double c)
+btod_copy<N>::btod_copy(block_tensor_i<N, double> &bt, double c)
 	: m_bt(bt), m_c(c) {
 
 }
 
 template<size_t N>
-btod_copy::btod_copy(block_tensor_i<N, double> &bt, const permutation<N> &p,
+btod_copy<N>::btod_copy(block_tensor_i<N, double> &bt, const permutation<N> &p,
 	double c)
 	: m_bt(bt), m_perm(p), m_c(c) {
 }
 
 template<size_t N>
-btod_copy::~btod_copy() {
+btod_copy<N>::~btod_copy() {
 }
 
 template<size_t N>
-void btod_copy::perform(block_tensor_i<N, double> &bt) throw(exception) {
-	block_tensor_ctrl<N> ctrl_src(m_bt), ctrl_dst(bt);
+const block_index_space_i<N> &btod_copy<N>::get_bis() const {
+	throw_exc("btod_copy<N>", "get_bis()", "Not implemented");
+}
+
+template<size_t N>
+void btod_copy<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
+	block_tensor_ctrl<N, double> ctrl_src(m_bt), ctrl_dst(bt);
 	index<N> i0;
 	tensor_i<N, double> &tsrc(ctrl_src.req_block(i0));
 	tensor_i<N, double> &tdst(ctrl_dst.req_block(i0));
@@ -83,9 +89,9 @@ void btod_copy::perform(block_tensor_i<N, double> &bt) throw(exception) {
 }
 
 template<size_t N>
-void btod_copy::perform(block_tensor_i<N, double> &bt, double c)
+void btod_copy<N>::perform(block_tensor_i<N, double> &bt, double c)
 	throw(exception) {
-	block_tensor_ctrl<N> ctrl_src(m_bt), ctrl_dst(bt);
+	block_tensor_ctrl<N, double> ctrl_src(m_bt), ctrl_dst(bt);
 	index<N> i0;
 	tensor_i<N, double> &tsrc(ctrl_src.req_block(i0));
 	tensor_i<N, double> &tdst(ctrl_dst.req_block(i0));

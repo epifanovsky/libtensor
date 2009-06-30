@@ -5,6 +5,7 @@
 #include "exception.h"
 #include "labeled_btensor_expr.h"
 #include "labeled_btensor_expr_arg.h"
+#include "letter_expr.h"
 
 namespace libtensor {
 
@@ -46,8 +47,9 @@ public:
 	//!	\name Evaluation
 	//@{
 
-	template<typename Label>
-	labeled_btensor_expr_arg_tensor<N, T> get_arg_tensor(size_t i) const
+	template<typename LabelLhs>
+	labeled_btensor_expr_arg_tensor<N, T> get_arg_tensor(
+		size_t i, const letter_expr<N, LabelLhs> &label_lhs) const
 		throw(exception);
 
 	//@}
@@ -60,15 +62,16 @@ inline labeled_btensor_expr_add<N, T, ExprL, ExprR>::labeled_btensor_expr_add(
 }
 
 template<size_t N, typename T, typename ExprL, typename ExprR>
-template<typename Label>
+template<typename LabelLhs>
 inline labeled_btensor_expr_arg_tensor<N, T>
-labeled_btensor_expr_add<N, T, ExprL, ExprR>::get_arg_tensor(size_t i) const
+labeled_btensor_expr_add<N, T, ExprL, ExprR>::get_arg_tensor(
+	size_t i, const letter_expr<N, LabelLhs> &label_lhs) const
 	throw(exception) {
 	if(ExprL::k_narg_tensor > 0 && ExprL::k_narg_tensor > i)
-		return m_exprl.get_arg_tensor<Label>(i);
+		return m_exprl.get_arg_tensor(i, label_lhs);
 	size_t j = i - ExprL::k_narg_tensor;
 	if(ExprR::k_narg_tensor > 0 && ExprR::k_narg_tensor > j)
-		return m_exprr.get_arg_tensor<Label>(j);
+		return m_exprr.get_arg_tensor(j, label_lhs);
 	throw_exc("labeled_btensor_expr_add<N, T, ExprL, ExprR>",
 		"get_arg_tensor(size_t)", "Inconsistent expression");
 }

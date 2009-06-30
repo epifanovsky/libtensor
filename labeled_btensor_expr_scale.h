@@ -4,6 +4,7 @@
 #include "defs.h"
 #include "exception.h"
 #include "labeled_btensor_expr_arg.h"
+#include "letter_expr.h"
 
 namespace libtensor {
 
@@ -38,8 +39,9 @@ public:
 	//!	\name Evaluation
 	//@{
 
-	template<typename Label>
-	labeled_btensor_expr_arg_tensor<N, T> get_arg_tensor(size_t i) const
+	template<typename LabelLhs>
+	labeled_btensor_expr_arg_tensor<N, T> get_arg_tensor(
+		size_t i, const letter_expr<N, LabelLhs> &label_lhs) const
 		throw(exception);
 
 	//@}
@@ -51,12 +53,13 @@ inline labeled_btensor_expr_scale<N, T, Expr>::labeled_btensor_expr_scale(
 }
 
 template<size_t N, typename T, typename Expr>
-template<typename Label>
+template<typename LabelLhs>
 inline labeled_btensor_expr_arg_tensor<N, T>
-labeled_btensor_expr_scale<N, T, Expr>::get_arg_tensor(size_t i) const
+labeled_btensor_expr_scale<N, T, Expr>::get_arg_tensor(
+	size_t i, const letter_expr<N, LabelLhs> &label_lhs) const
 	throw(exception) {
 	labeled_btensor_expr_arg_tensor<N, T> arg =
-		m_expr.get_arg_tensor<Label>(i);
+		m_expr.get_arg_tensor(i, label_lhs);
 	arg.scale(m_coeff);
 	return arg;
 }

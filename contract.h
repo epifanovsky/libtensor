@@ -37,20 +37,25 @@ public:
 		m_contr(contr), m_expr1(expr1), m_expr2(expr2) { }
 
 	/**	\brief Returns a single %tensor argument
-		\tparam Label Label expression (to figure out the %permutation)
+		\tparam LabelLhs Label expression on the left-hand side
+			(to figure out the %permutation)
 	 **/
-	template<typename Label2>
-	labeled_btensor_expr_arg_tensor<N, T> get_arg_tensor(size_t i) const
+	template<typename LabelLhs>
+	labeled_btensor_expr_arg_tensor<N, T> get_arg_tensor(
+		size_t i, const letter_expr<N, LabelLhs> &label_lhs) const
 		throw(exception);
 };
 
 template<size_t N, typename T, typename Label, typename Expr1, typename Expr2>
-template<typename Label2>
+template<typename LabelLhs>
 labeled_btensor_expr_arg_tensor<N, T>
 labeled_btensor_expr_contract<N, T, Label, Expr1, Expr2>::get_arg_tensor(
-	size_t i) const throw(exception) {
+	size_t i, const letter_expr<N, LabelLhs> &label_lhs) const
+	throw(exception) {
+
 	throw_exc("labeled_btensor_expr_contract<N, T, Label, Expr1, Expr2>",
-		"get_arg_tensor(size_t)", "Invalid method to call");
+		"get_arg_tensor(size_t, letter_expr<N, Label>&)",
+		"Invalid method to call");
 }
 
 /**	\brief Contraction of two tensors over one index

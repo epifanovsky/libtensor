@@ -32,7 +32,9 @@
 
 #include "btod_add.h"
 #include "btod_additive.h"
+#include "btod_compare.h"
 #include "btod_contract2.h"
+#include "btod_copy.h"
 #include "btod_sum.h"
 
 #include "bispace_i.h"

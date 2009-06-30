@@ -5,6 +5,7 @@
 #include "exception.h"
 #include "labeled_btensor.h"
 #include "labeled_btensor_expr_arg.h"
+#include "btod_copy.h"
 
 /**	\defgroup libtensor_btensor_expr Labeled block %tensor expressions
 	\ingroup libtensor
@@ -67,18 +68,19 @@ public:
 
 	/**	\brief Evaluates the expression into an assignable labeled
 			%tensor
-		\tparam Label Label expression.
+		\tparam LabelLhs Label expression of the left-hand side.
 	 **/
-	template<typename Label>
-	void eval(labeled_btensor<N, T, true, Label> &t) const
+	template<typename LabelLhs>
+	void eval(labeled_btensor<N, T, true, LabelLhs> &t) const
 		throw(exception);
 
 	/**	\brief Returns a single %tensor argument
-		\tparam Label Label expression (to figure out the %permutation)
+		\tparam LabelLhs Label expression of the left-hand side
+			(to figure out the %permutation)
 	 **/
-	template<typename Label>
-	labeled_btensor_expr_arg_tensor<N, T> get_arg_tensor(size_t i) const
-		throw(exception);
+	template<typename LabelLhs>
+	labeled_btensor_expr_arg_tensor<N, T> get_arg_tensor(size_t i,
+		const LabelLhs &label) const throw(exception);
 
 	//@}
 
@@ -144,7 +146,7 @@ void labeled_btensor_expr<N, T, Expr>::eval_case(
 
 	for(size_t i = 0; i < k_narg_tensor; i++) {
 		labeled_btensor_expr_arg_tensor<N, T> arg =
-			get_arg_tensor<Label>(i);
+			get_arg_tensor(i, t.get_label());
 	}
 }
 
@@ -169,7 +171,15 @@ template<typename Label>
 void labeled_btensor_expr<N, T, Expr>::eval_case(
 	labeled_btensor<N, T, true, Label> &t,
 	const eval_tag<1, 0> &tag) const throw(exception) {
-	// use tod_copy
+
+	// a(i|j) = c * b(i|j)
+
+	labeled_btensor_expr_arg_tensor<N, T> src =
+		get_arg_tensor(0, t.get_label());
+
+	btod_copy<N> op(
+		src.get_btensor(), src.get_permutation(), src.get_coeff());
+	op.perform(t.get_btensor());
 }
 
 template<size_t N, typename T, typename Expr>
@@ -181,11 +191,11 @@ void labeled_btensor_expr<N, T, Expr>::eval_case(
 }
 
 template<size_t N, typename T, typename Expr>
-template<typename Label>
+template<typename LabelLhs>
 inline labeled_btensor_expr_arg_tensor<N, T>
-labeled_btensor_expr<N, T, Expr>::get_arg_tensor(size_t i)
-	const throw(exception) {
-	return m_core.get_arg_tensor<Label>(i);
+labeled_btensor_expr<N, T, Expr>::get_arg_tensor(
+	size_t i, const LabelLhs &label) const throw(exception) {
+	return m_core.get_arg_tensor(i, label);
 }
 
 } // namespace libtensor

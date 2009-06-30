@@ -16,6 +16,17 @@ public:
 private:
 	void test_label() throw(libtest::test_exception);
 	void test_expr() throw(libtest::test_exception);
+
+	//!	\brief b(i|j) = a(i|j)
+	void test_expr_copy_1() throw(libtest::test_exception);
+
+	//!	\brief b(i|j) = a(j|i)
+	void test_expr_copy_2() throw(libtest::test_exception);
+
+	template<size_t N>
+	void compare_ref(const char *test, btensor_i<N, double> &bt,
+		btensor_i<N, double> &bt_ref, double thresh)
+		throw(libtest::test_exception);
 };
 
 } // namespace libtensor

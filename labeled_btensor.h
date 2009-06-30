@@ -23,6 +23,7 @@ template<size_t N, typename T, bool Assignable, typename Label>
 class labeled_btensor {
 private:
 	typedef T element_t;
+	typedef letter_expr<N, Label> label_t;
 
 private:
 	btensor_i<N, T> &m_bt;
@@ -36,6 +37,10 @@ public:
 	/**	\brief Returns the tensor interface
 	 **/
 	btensor_i<N, T> &get_btensor() const;
+
+	/**	\brief Returns the label
+	 **/
+	const letter_expr<N, Label> &get_label() const;
 
 	/**	\brief Returns whether the label contains a %letter
 	 **/
@@ -59,6 +64,7 @@ template<size_t N, typename T, typename Label>
 class labeled_btensor<N, T, true, Label> {
 private:
 	typedef T element_t;
+	typedef letter_expr<N, Label> label_t;
 
 private:
 	btensor_i<N, T> &m_bt;
@@ -72,6 +78,10 @@ public:
 	/**	\brief Returns the tensor interface
 	 **/
 	btensor_i<N, T> &get_btensor() const;
+
+	/**	\brief Returns the label
+	 **/
+	const letter_expr<N, Label> &get_label() const;
 
 	/**	\brief Returns whether the label contains a %letter
 	 **/

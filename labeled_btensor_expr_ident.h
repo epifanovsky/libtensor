@@ -5,6 +5,7 @@
 #include "exception.h"
 #include "labeled_btensor.h"
 #include "labeled_btensor_expr_arg.h"
+#include "letter_expr.h"
 
 namespace libtensor {
 
@@ -47,11 +48,13 @@ public:
 	//@{
 
 	/**	\brief Returns the %tensor argument
-		\tparam Label Label expression (to figure out the %permutation)
+		\tparam LabelLhs Label expression of the left-hand side
+			(to figure out the %permutation)
 		\param i Argument number (0 is the only allowed value)
 	 **/
-	template<typename Label2>
-	labeled_btensor_expr_arg_tensor<N, T> get_arg_tensor(size_t i) const
+	template<typename LabelLhs>
+	labeled_btensor_expr_arg_tensor<N, T> get_arg_tensor(
+		size_t i, const letter_expr<N, LabelLhs> &label_lhs) const
 		throw(exception);
 
 	//@}
@@ -64,11 +67,11 @@ labeled_btensor_expr_ident(labeled_btensor_t &t)
 }
 
 template<size_t N, typename T, bool Assignable, typename Label>
-template<typename Label2>
+template<typename LabelLhs>
 inline labeled_btensor_expr_arg_tensor<N, T>
-labeled_btensor_expr_ident<N, T, Assignable, Label>::get_arg_tensor(size_t i)
-	const throw(exception) {
-	permutation<N> perm;
+labeled_btensor_expr_ident<N, T, Assignable, Label>::get_arg_tensor(size_t i,
+	const letter_expr<N, LabelLhs> &label_lhs) const throw(exception) {
+	permutation<N> perm = label_lhs.permutation_of(m_t.get_label());
 	if(i == 0) {
 		return labeled_btensor_expr_arg_tensor<N, T>(
 			m_t.get_btensor(), perm, 1.0);
