@@ -45,10 +45,10 @@ template<size_t N, size_t M, size_t K>
 class contraction2 {
 private:
 	static const size_t k_invalid = (size_t) (-1);
-	static const size_t k_ordera = N + K;
-	static const size_t k_orderb = M + K;
-	static const size_t k_orderc = N + M;
-	static const size_t k_totidx = N + M + K;
+	static const size_t k_ordera = N + K; //!< Order of %tensor a
+	static const size_t k_orderb = M + K; //!< Order of %tensor b
+	static const size_t k_orderc = N + M; //!< Order of %tensor c
+	static const size_t k_totidx = N + M + K; //!< Total number of indexes
 	static const size_t k_maxconn = 2 * k_totidx;
 
 private:
@@ -62,6 +62,10 @@ private:
 public:
 	//!	\name Construction and destruction
 	//@{
+
+	/**	\brief Default constructor
+	 **/
+	contraction2();
 
 	/**	\brief Creates the contraction object
 		\param perm Specifies how argument indexes should be permuted
@@ -101,8 +105,14 @@ public:
 		\param permb Permutation of the second %tensor argument (b).
 		\throw exception if the contraction is incomplete.
 	 **/
-	void permute(const permutation<k_ordera> &perma,
+	void permute_ab(const permutation<k_ordera> &perma,
 		const permutation<k_orderb> &permb) throw (exception);
+
+	/**	\brief Adjusts %index numbering when the result comes in a
+			permuted form
+		\param permc Permutation of the result (c).
+	 **/
+	void permute_c(const permutation<k_orderc> &permc) throw(exception);
 
 	//@}
 
@@ -121,14 +131,18 @@ public:
 	//@}
 
 private:
+	/**	\brief Connects the indexes in the arguments and result
+	 **/
+	void connect();
+
 	/**	\brief Fuses the indexes
 	 **/
 	void fuse();
 };
 
 template<size_t N, size_t M, size_t K>
-contraction2<N, M, K>::contraction2(const permutation<k_orderc> &perm) :
-	m_permc(perm), m_k(0), m_num_nodes(0) {
+contraction2<N, M, K>::contraction2()
+: m_k(0), m_num_nodes(0) {
 
 	for(size_t i = 0; i < k_maxconn; i++) {
 		m_conn[i] = k_invalid;
@@ -140,8 +154,22 @@ contraction2<N, M, K>::contraction2(const permutation<k_orderc> &perm) :
 }
 
 template<size_t N, size_t M, size_t K>
-contraction2<N, M, K>::contraction2(const contraction2<N, M, K> &contr) :
-m_permc(contr.m_permc), m_k(contr.m_k), m_num_nodes(contr.m_num_nodes) {
+contraction2<N, M, K>::contraction2(const permutation<k_orderc> &perm)
+: m_permc(perm), m_k(0), m_num_nodes(0) {
+
+	for(size_t i = 0; i < k_maxconn; i++) {
+		m_conn[i] = k_invalid;
+	}
+	for(size_t i = 0; i < k_totidx; i++) {
+		m_nodes[i] = 0;
+		m_nodesz[i] = 0;
+	}
+}
+
+template<size_t N, size_t M, size_t K>
+contraction2<N, M, K>::contraction2(const contraction2<N, M, K> &contr)
+: m_permc(contr.m_permc), m_k(contr.m_k), m_num_nodes(contr.m_num_nodes) {
+
 	for(size_t i = 0; i < k_maxconn; i++) {
 		m_conn[i] = contr.m_conn[i];
 	}
@@ -153,11 +181,13 @@ m_permc(contr.m_permc), m_k(contr.m_k), m_num_nodes(contr.m_num_nodes) {
 
 template<size_t N, size_t M, size_t K>
 inline bool contraction2<N, M, K>::is_complete() const {
+
 	return m_k == K;
 }
 
 template<size_t N, size_t M, size_t K>
 void contraction2<N, M, K>::contract(size_t ia, size_t ib) throw (exception) {
+
 	if(is_complete()) {
 		throw_exc("contraction2<N, M, K>", "contract()",
 			"Contraction is complete");
@@ -168,8 +198,7 @@ void contraction2<N, M, K>::contract(size_t ia, size_t ib) throw (exception) {
 	}
 	if(ib >= k_orderb) {
 		throw_exc("contraction2<N, M, K>", "contract()",
-			"Contract"
-			"ion index ib is invalid");
+			"Contraction index ib is invalid");
 	}
 
 	size_t ja = k_orderc + ia;
@@ -190,17 +219,23 @@ void contraction2<N, M, K>::contract(size_t ia, size_t ib) throw (exception) {
 	if(++m_k == K) {
 		// Once contracted indexes are specified, collect all the
 		// remaining ones, permute them properly, and put them in place
-		size_t connc[k_orderc];
-		size_t iconnc = 0;
-		for(size_t i = k_orderc; i < k_maxconn; i++)
-			if(m_conn[i] == k_invalid) connc[iconnc++] = i;
-		m_permc.apply(k_orderc, connc);
-		for(size_t i = 0; i < k_orderc; i++) {
-			m_conn[i] = connc[i];
-			m_conn[connc[i]] = i;
-		}
+		connect();
 		fuse();
 	}
+}
+
+template<size_t N, size_t M, size_t K>
+void contraction2<N, M, K>::permute_c(const permutation<k_orderc> &permc)
+	throw(exception) {
+
+	if(!is_complete()) {
+		throw_exc("contraction2<N, M, K>", "populate()",
+			"Contraction is incomplete");
+	}
+
+	m_permc.permute(permc);
+	connect();
+	fuse();
 }
 
 template<size_t N, size_t M, size_t K> template<typename ListT>
@@ -297,7 +332,25 @@ void contraction2<N, M, K>::populate(ListT &list,
 }
 
 template<size_t N, size_t M, size_t K>
+void contraction2<N, M, K>::connect() {
+
+	size_t connc[k_orderc];
+	size_t iconnc = 0;
+	for(size_t i = k_orderc; i < k_maxconn; i++) {
+		if(m_conn[i] == k_invalid || m_conn[i] < k_orderc)
+			connc[iconnc++] = i;
+	}
+	m_permc.apply(k_orderc, connc);
+	for(size_t i = 0; i < k_orderc; i++) {
+		m_conn[i] = connc[i];
+		m_conn[connc[i]] = i;
+	}
+}
+
+template<size_t N, size_t M, size_t K>
 void contraction2<N, M, K>::fuse() {
+
+	m_num_nodes = 0;
 	size_t i = 0;
 	// Take care of indexes in result
 	while(i < k_orderc) {

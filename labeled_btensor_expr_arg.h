@@ -21,7 +21,7 @@ private:
 
 public:
 	labeled_btensor_expr_arg_tensor(btensor_i<N, T> &bt,
-		permutation<N> &perm, T coeff) :
+		const permutation<N> &perm, T coeff) :
 			m_bt(bt), m_perm(perm), m_coeff(coeff) { }
 	void scale(T c) { m_coeff *= c; }
 	btensor_i<N, T> &get_btensor();
@@ -36,6 +36,25 @@ public:
 template<size_t N, typename T>
 class labeled_btensor_expr_arg_oper {
 
+};
+
+/**	\brief Container for a %tensor operation expression argument
+		(specialized for double)
+
+	\ingroup libtensor_btensor_expr
+ **/
+template<size_t N>
+class labeled_btensor_expr_arg_oper<N, double> {
+private:
+	btod_additive<N> &m_op;
+	double m_coeff;
+
+public:
+	labeled_btensor_expr_arg_oper(btod_additive<N> &op, double coeff) :
+		m_op(op), m_coeff(coeff) { }
+	void scale(double c) { m_coeff *= c; }
+	btod_additive<N> &get_operation() { return m_op; }
+	double get_coeff() const { return m_coeff; }
 };
 
 template<size_t N, typename T>

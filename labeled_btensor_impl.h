@@ -4,6 +4,7 @@
 #include "defs.h"
 #include "exception.h"
 #include "labeled_btensor.h"
+#include "labeled_btensor_eval.h"
 #include "labeled_btensor_expr.h"
 #include "labeled_btensor_expr_ident.h"
 
@@ -86,7 +87,8 @@ labeled_btensor<N, T, true, Label>
 labeled_btensor<N, T, true, Label>::operator=(
 	const labeled_btensor_expr<N, T, Expr> &rhs) throw(exception) {
 
-	rhs.eval(*this);
+	labeled_btensor_eval<N, T, Expr, Label> eval(rhs, *this);
+	eval.evaluate();
 	return *this;
 }
 
@@ -100,7 +102,8 @@ labeled_btensor<N, T, true, Label>::operator=(
 	typedef labeled_btensor_expr<N, T, id_t> expr_t;
 	id_t id(rhs);
 	expr_t op(id);
-	op.eval(*this);
+	labeled_btensor_eval<N, T, id_t, Label> eval(op, *this);
+	eval.evaluate();
 	return *this;
 }
 
@@ -113,7 +116,8 @@ labeled_btensor<N, T, true, Label>::operator=(
 	typedef labeled_btensor_expr<N, T, id_t> expr_t;
 	id_t id(rhs);
 	expr_t op(id);
-	op.eval(*this);
+	labeled_btensor_eval<N, T, id_t, Label> eval(op, *this);
+	eval.evaluate();
 	return *this;
 }
 

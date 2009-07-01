@@ -9,29 +9,26 @@
 
 namespace libtensor {
 
+template<size_t N, typename T, typename CoreL, typename CoreR>
+class labeled_btensor_eval_add;
+
 /**	\brief Addition operation core expression
 	\tparam N Tensor order.
 	\tparam T Tensor element type.
-	\tparam ExprL LHS expression.
-	\tparam ExprR RHS expression.
+	\tparam ExprL LHS expression type (labeled_btensor_expr).
+	\tparam ExprR RHS expression type (labeled_btensor_expr).
 
 	\ingroup libtensor_btensor_expr
  **/
 template<size_t N, typename T, typename ExprL, typename ExprR>
 class labeled_btensor_expr_add {
 public:
-	typedef labeled_btensor_expr<N, T, ExprL> exprl_t;
-	typedef labeled_btensor_expr<N, T, ExprR> exprr_t;
-
-public:
-	static const size_t k_narg_tensor =
-		ExprL::k_narg_tensor + ExprR::k_narg_tensor;
-	static const size_t k_narg_oper =
-		ExprL::k_narg_oper + ExprR::k_narg_oper;
+	//!	Evaluating container type
+	typedef labeled_btensor_eval_add<N, T, ExprL, ExprR> eval_container_t;
 
 private:
-	exprl_t m_exprl; //!< Left expression
-	exprr_t m_exprr; //!< Right expression
+	ExprL m_expr_l; //!< Left expression
+	ExprR m_expr_r; //!< Right expression
 
 public:
 	//!	\name Construction
@@ -39,41 +36,116 @@ public:
 
 	/**	\brief Initializes the core with left and right expressions
 	 **/
-	labeled_btensor_expr_add(const exprl_t &exprl,
-		const exprr_t &exprr);
+	labeled_btensor_expr_add(const ExprL &expr_l, const ExprR &expr_r)
+		: m_expr_l(expr_l), m_expr_r(expr_r) { }
 
 	//@}
+
+	/**	\brief Returns the left expression
+	 **/
+	ExprL &get_expr_l() { return m_expr_l; }
+
+	/**	\brief Returns the right expression
+	 **/
+	ExprR &get_expr_r() { return m_expr_r; }
+
+};
+
+/**	\brief Evaluates the addition expression
+
+	\ingroup libtensor_btensor_expr
+ **/
+template<size_t N, typename T, typename ExprL, typename ExprR>
+class labeled_btensor_eval_add {
+public:
+	//!	Addition expression core type
+	typedef labeled_btensor_expr_add<N, T, ExprL, ExprR> core_t;
+
+	//!	Addition expression type
+	typedef labeled_btensor_expr<N, T, core_t> expression_t;
+
+	//!	Evaluating container type for the left expression
+	typedef typename ExprL::eval_container_t eval_container_l_t;
+
+	//!	Evaluating container type for the right expression
+	typedef typename ExprR::eval_container_t eval_container_r_t;
+
+	//!	Number of %tensor arguments in the expression
+	static const size_t k_narg_tensor =
+		eval_container_l_t::k_narg_tensor +
+		eval_container_r_t::k_narg_tensor;
+
+	//!	Number of %tensor operation arguments in the expression
+	static const size_t k_narg_oper =
+		eval_container_l_t::k_narg_oper +
+		eval_container_r_t::k_narg_oper;
+
+private:
+	expression_t &m_expr; //!< Addition expression
+	eval_container_l_t m_cont_l; //!< Left evaluating container
+	eval_container_r_t m_cont_r; //!< Right evaluating container
+
+public:
+	template<typename LabelLhs>
+	labeled_btensor_eval_add(expression_t &expr,
+		labeled_btensor<N, T, true, LabelLhs> &result) throw(exception);
 
 	//!	\name Evaluation
 	//@{
 
-	template<typename LabelLhs>
-	labeled_btensor_expr_arg_tensor<N, T> get_arg_tensor(
-		size_t i, const letter_expr<N, LabelLhs> &label_lhs) const
+	labeled_btensor_expr_arg_tensor<N, T> get_arg_tensor(size_t i) const
+		throw(exception);
+
+	labeled_btensor_expr_arg_oper<N, T> get_arg_oper(size_t i) const
 		throw(exception);
 
 	//@}
 };
 
 template<size_t N, typename T, typename ExprL, typename ExprR>
-inline labeled_btensor_expr_add<N, T, ExprL, ExprR>::labeled_btensor_expr_add(
-	const exprl_t &exprl, const exprr_t &exprr)
-	: m_exprl(exprl), m_exprr(exprr) {
+template<typename LabelLhs>
+labeled_btensor_eval_add<N, T, ExprL, ExprR>::labeled_btensor_eval_add(
+	expression_t &expr, labeled_btensor<N, T, true, LabelLhs> &result)
+	throw(exception)
+	: m_expr(expr), m_cont_l(expr.get_core().get_expr_l(), result),
+	m_cont_r(expr.get_core().get_expr_r(), result) {
+
 }
 
 template<size_t N, typename T, typename ExprL, typename ExprR>
-template<typename LabelLhs>
-inline labeled_btensor_expr_arg_tensor<N, T>
-labeled_btensor_expr_add<N, T, ExprL, ExprR>::get_arg_tensor(
-	size_t i, const letter_expr<N, LabelLhs> &label_lhs) const
+labeled_btensor_expr_arg_tensor<N, T>
+labeled_btensor_eval_add<N, T, ExprL, ExprR>::get_arg_tensor(size_t i) const
 	throw(exception) {
-	if(ExprL::k_narg_tensor > 0 && ExprL::k_narg_tensor > i)
-		return m_exprl.get_arg_tensor(i, label_lhs);
-	size_t j = i - ExprL::k_narg_tensor;
-	if(ExprR::k_narg_tensor > 0 && ExprR::k_narg_tensor > j)
-		return m_exprr.get_arg_tensor(j, label_lhs);
-	throw_exc("labeled_btensor_expr_add<N, T, ExprL, ExprR>",
+
+	if(eval_container_l_t::k_narg_tensor > 0 &&
+		eval_container_l_t::k_narg_tensor > i)
+		return m_cont_l.get_arg_tensor(i);
+
+	size_t j = i - eval_container_l_t::k_narg_tensor;
+	if(eval_container_r_t::k_narg_tensor > 0 &&
+		eval_container_r_t::k_narg_tensor > j)
+		return m_cont_r.get_arg_tensor(j);
+
+	throw_exc("labeled_btensor_eval_add<N, T, ExprL, ExprR>",
 		"get_arg_tensor(size_t)", "Inconsistent expression");
+}
+
+template<size_t N, typename T, typename ExprL, typename ExprR>
+labeled_btensor_expr_arg_oper<N, T>
+labeled_btensor_eval_add<N, T, ExprL, ExprR>::get_arg_oper(size_t i) const
+	throw(exception) {
+
+	if(eval_container_l_t::k_narg_oper > 0 &&
+		eval_container_l_t::k_narg_oper > i)
+		return m_cont_l.get_arg_oper(i);
+
+	size_t j = i - eval_container_l_t::k_narg_oper;
+	if(eval_container_l_t::k_narg_oper > 0 &&
+		eval_container_l_t::k_narg_oper > j)
+		return m_cont_r.get_arg_oper(j);
+
+	throw_exc("labeled_btensor_eval_add<N, T, ExprL, ExprR>",
+		"get_arg_oper(size_t)", "Inconsistent expression");
 }
 
 } // namespace libtensor

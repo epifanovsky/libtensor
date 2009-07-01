@@ -16,6 +16,8 @@ namespace libtensor {
 
 /**	\brief Unary minus (plain), effectively multiplies by -1
 
+	Creates expr< scale< -1.0, expr< ident > > >
+
 	\ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, typename T, bool Assignable, typename Label>
@@ -29,7 +31,7 @@ operator-(labeled_btensor<N, T, Assignable, Label> t) {
 	typedef labeled_btensor_expr<N, T, id_t> expr_id_t;
 	typedef labeled_btensor_expr_scale<N, T, expr_id_t> scale_expr_t;
 	typedef labeled_btensor_expr<N, T, scale_expr_t> expr_t;
-	return expr_t(scale_expr_t(-1, expr_id_t(t)));
+	return expr_t(scale_expr_t(-1, expr_id_t(id_t(t))));
 }
 
 /**	\brief Unary minus (expression), effectively multiplies by -1
