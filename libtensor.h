@@ -7,6 +7,8 @@
 #include "index.h"
 #include "index_range.h"
 #include "dimensions.h"
+#include "permutation.h"
+#include "permutation_builder.h"
 
 #include "contraction2.h"
 #include "processor.h"

@@ -19,11 +19,12 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("immutable", m_utf_immutable);
 	add_test("index", m_utf_index);
 	add_test("index_range", m_utf_index_range);
-	add_test("permutation", m_utf_permutation);
 	add_test("labeled_btensor", m_utf_labeled_btensor);
 	//add_test("lehmer_code", m_utf_lehmer_code);
 	add_test("letter", m_utf_letter);
 	add_test("letter_expr", m_utf_letter_expr);
+	add_test("permutation", m_utf_permutation);
+	add_test("permutation_builder", m_utf_permutation_builder);
 	add_test("permutator", m_utf_permutator);
 	add_test("symmetry", m_utf_symmetry);
 	add_test("tensor", m_utf_tensor);

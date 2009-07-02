@@ -49,6 +49,19 @@ public:
 	 **/
 	ExprR &get_expr_r() { return m_expr_r; }
 
+	/**	\brief Returns whether the %tensor's label contains a %letter
+	 **/
+	bool contains(const letter &let) const;
+
+	/**	\brief Returns the %index of a %letter in the %tensor's label
+	 **/
+	size_t index_of(const letter &let) const throw(exception);
+
+	/**	\brief Returns the %letter at a given position in
+			the %tensor's label
+	 **/
+	const letter &letter_at(size_t i) const throw(exception);
+
 };
 
 /**	\brief Evaluates the addition expression
@@ -101,6 +114,27 @@ public:
 
 	//@}
 };
+
+template<size_t N, typename T, typename ExprL, typename ExprR>
+inline bool labeled_btensor_expr_add<N, T, ExprL, ExprR>::contains(
+	const letter &let) const {
+
+	return m_expr_l.contains(let);
+}
+
+template<size_t N, typename T, typename ExprL, typename ExprR>
+inline size_t labeled_btensor_expr_add<N, T, ExprL, ExprR>::index_of(
+	const letter &let) const throw(exception) {
+
+	return m_expr_l.index_of(let);
+}
+
+template<size_t N, typename T, typename ExprL, typename ExprR>
+inline const letter &labeled_btensor_expr_add<N, T, ExprL, ExprR>::letter_at(
+	size_t i) const throw(exception) {
+
+	return m_expr_l.letter_at(i);
+}
 
 template<size_t N, typename T, typename ExprL, typename ExprR>
 template<typename LabelLhs>

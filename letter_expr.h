@@ -213,6 +213,10 @@ operator|(const letter &l1, const letter &l2) {
 	typedef letter_expr<1,letter_expr_ident> expr_t;
 	typedef letter_expr_binop_or<expr_t,expr_t> binop_or_t;
 	typedef letter_expr_binop<expr_t,expr_t,binop_or_t> binop_t;
+	if(&l1 == &l2) {
+		throw_exc("", "operator|(const letter&, const letter&)",
+			"Only unique letters are allowed");
+	}
 	return letter_expr<2,binop_t>(binop_t(expr_t(l1), expr_t(l2)));
 }
 
@@ -226,11 +230,15 @@ inline letter_expr< N+1, letter_expr_binop<
 	letter_expr_binop_or<
 		letter_expr<N,Expr>, letter_expr<1,letter_expr_ident>
 	> > >
-operator|(letter_expr<N,Expr> expr1, letter &l2) {
+operator|(letter_expr<N,Expr> expr1, const letter &l2) {
 	typedef letter_expr<N,Expr> expr1_t;
 	typedef letter_expr<1,letter_expr_ident> expr2_t;
 	typedef letter_expr_binop_or<expr1_t,expr2_t> binop_or_t;
 	typedef letter_expr_binop<expr1_t,expr2_t,binop_or_t> binop_t;
+	if(expr1.contains(l2)) {
+		throw_exc("", "operator|(letter_expr, const letter&)",
+			"Only unique letters are allowed");
+	}
 	return letter_expr<N+1,binop_t>(binop_t(expr1, expr2_t(l2)));
 }
 

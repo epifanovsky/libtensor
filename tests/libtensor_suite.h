@@ -23,6 +23,7 @@
 #include "letter_expr_test.h"
 #include "letter_test.h"
 #include "permutation_test.h"
+#include "permutation_builder_test.h"
 #include "permutator_test.h"
 #include "symmetry_test.h"
 #include "tensor_test.h"
@@ -63,6 +64,7 @@ namespace libtensor {
 	\li libtensor::letter_test
 	\li libtensor::letter_expr_test
 	\li libtensor::permutation_test
+	\li libtensor::permutation_builder_test
 	\li libtensor::permutator_test
 	\li libtensor::symmetry_test
 	\li libtensor::tensor_test
@@ -97,6 +99,7 @@ private:
 	unit_test_factory<letter_test> m_utf_letter;
 	unit_test_factory<letter_expr_test> m_utf_letter_expr;
 	unit_test_factory<permutation_test> m_utf_permutation;
+	unit_test_factory<permutation_builder_test> m_utf_permutation_builder;
 	unit_test_factory<permutator_test> m_utf_permutator;
 	unit_test_factory<symmetry_test> m_utf_symmetry;
 	unit_test_factory<tensor_test> m_utf_tensor;

@@ -42,6 +42,19 @@ public:
 	 **/
 	labeled_btensor_t &get_tensor() { return m_t; }
 
+	/**	\brief Returns whether the %tensor's label contains a %letter
+	 **/
+	bool contains(const letter &let) const;
+
+	/**	\brief Returns the %index of a %letter in the %tensor's label
+	 **/
+	size_t index_of(const letter &let) const throw(exception);
+
+	/**	\brief Returns the %letter at a given position in
+			the %tensor's label
+	 **/
+	const letter &letter_at(size_t i) const throw(exception);
+
 };
 
 template<size_t N, typename T, bool Assignable, typename Label>
@@ -84,6 +97,28 @@ public:
 
 	//@}
 };
+
+template<size_t N, typename T, bool Assignable, typename Label>
+inline bool labeled_btensor_expr_ident<N, T, Assignable, Label>::contains(
+	const letter &let) const {
+
+	return m_t.contains(let);
+}
+
+template<size_t N, typename T, bool Assignable, typename Label>
+inline size_t labeled_btensor_expr_ident<N, T, Assignable, Label>::index_of(
+	const letter &let) const throw(exception) {
+
+	return m_t.index_of(let);
+}
+
+template<size_t N, typename T, bool Assignable, typename Label>
+inline const letter&
+labeled_btensor_expr_ident<N, T, Assignable, Label>::letter_at(
+	size_t i) const throw(exception) {
+
+	return m_t.letter_at(i);
+}
 
 template<size_t N, typename T, bool Assignable, typename Label>
 template<typename LabelLhs>

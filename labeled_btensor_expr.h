@@ -27,7 +27,7 @@ class labeled_btensor_expr_base {
 	tree as the C++ type thus transferring a number of sanity checks to
 	the compilation level.
 
-	This template wraps around the real expression type to facilitate
+	This template wraps around the real expression type (core) to facilitate
 	the matching of overloaded operator templates.
 
 	\ingroup libtensor_btensor_expr
@@ -53,9 +53,46 @@ public:
 
 	/**	\brief Returns the core of the expression
 	 **/
-	Core &get_core() { return m_core; }
+	Core &get_core();
 
+	/**	\brief Returns whether the label contains a %letter
+	 **/
+	bool contains(const letter &let) const;
+
+	/**	\brief Returns the %index of a %letter in the label
+	 **/
+	size_t index_of(const letter &let) const throw(exception);
+
+	/**	\brief Returns the %letter at a given position in the label
+	 **/
+	const letter &letter_at(size_t i) const throw(exception);
 };
+
+template<size_t N, typename T, typename Core>
+inline Core &labeled_btensor_expr<N, T, Core>::get_core() {
+	return m_core;
+}
+
+template<size_t N, typename T, typename Core>
+inline bool labeled_btensor_expr<N, T, Core>::contains(
+	const letter &let) const {
+
+	return m_core.contains(let);
+}
+
+template<size_t N, typename T, typename Core>
+inline size_t labeled_btensor_expr<N, T, Core>::index_of(
+	const letter &let) const throw(exception) {
+
+	return m_core.index_of(let);
+}
+
+template<size_t N, typename T, typename Core>
+inline const letter &labeled_btensor_expr<N, T, Core>::letter_at(
+	size_t i) const throw(exception) {
+
+	return m_core.letter_at(i);
+}
 
 } // namespace libtensor
 

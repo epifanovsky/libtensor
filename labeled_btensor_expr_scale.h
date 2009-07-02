@@ -44,6 +44,19 @@ public:
 	 **/
 	T get_coeff() { return m_coeff; }
 
+	/**	\brief Returns whether the %tensor's label contains a %letter
+	 **/
+	bool contains(const letter &let) const;
+
+	/**	\brief Returns the %index of a %letter in the %tensor's label
+	 **/
+	size_t index_of(const letter &let) const throw(exception);
+
+	/**	\brief Returns the %letter at a given position in
+			the %tensor's label
+	 **/
+	const letter &letter_at(size_t i) const throw(exception);
+
 };
 
 /**	\brief Evaluates a scaled expression
@@ -102,6 +115,27 @@ public:
 
 	//@}
 };
+
+template<size_t N, typename T, typename Expr>
+inline bool labeled_btensor_expr_scale<N, T, Expr>::contains(
+	const letter &let) const {
+
+	return m_expr.contains(let);
+}
+
+template<size_t N, typename T, typename Expr>
+inline size_t labeled_btensor_expr_scale<N, T, Expr>::index_of(
+	const letter &let) const throw(exception) {
+
+	return m_expr.index_of(let);
+}
+
+template<size_t N, typename T, typename Expr>
+inline const letter &labeled_btensor_expr_scale<N, T, Expr>::letter_at(
+	size_t i) const throw(exception) {
+
+	return m_expr.letter_at(i);
+}
 
 template<size_t N, typename T, typename Expr> template<typename LabelLhs>
 labeled_btensor_eval_scale<N, T, Expr>::labeled_btensor_eval_scale(
