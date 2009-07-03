@@ -32,6 +32,7 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("tod_compare", m_utf_tod_compare);
 	add_test("tod_contract2", m_utf_tod_contract2);
 	add_test("tod_copy", m_utf_tod_copy);
+	add_test("tod_dotprod", m_utf_tod_dotprod);
 	add_test("tod_set", m_utf_tod_set);
 	add_test("tod_sum", m_utf_tod_sum);
 	add_test("tod_symcontract2", m_utf_tod_symcontract2);

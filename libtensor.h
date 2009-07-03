@@ -23,6 +23,7 @@
 #include "tod_compare.h"
 #include "tod_contract2.h"
 #include "tod_copy.h"
+#include "tod_dotprod.h"
 #include "tod_set.h"
 #include "tod_solve.h"
 #include "tod_sum.h"
