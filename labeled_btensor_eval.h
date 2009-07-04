@@ -64,32 +64,133 @@ public:
 
 	//@}
 
+};
+
+template<size_t N, typename T, typename Core, typename Label,
+	size_t NTensor, size_t NOper>
+class labeled_btensor_eval_functor {
+public:
+	//!	Expression type
+	typedef labeled_btensor_expr<N, T, Core> expression_t;
+
+	//!	Output labeled block %tensor type
+	typedef labeled_btensor<N, T, true, Label> result_t;
+
+	//!	Evaluating container type
+	typedef typename expression_t::eval_container_t eval_container_t;
+
 private:
-	/**	\brief Specialization T=double and tod_sum + tod_add
-	 **/
-	template<size_t NTensor, size_t NOper>
-	void evaluate_case(const eval_tag<NTensor, NOper> &tag)
-		throw(exception);
+	expression_t &m_expr;
+	result_t &m_result;
+	eval_container_t &m_eval_container;
 
-	/**	\brief Specialization T=double and tod_add
-	 **/
-	template<size_t NTensor>
-	void evaluate_case(const eval_tag<NTensor, 0> &tag) throw(exception);
+public:
+	labeled_btensor_eval_functor(expression_t &expr, result_t &res,
+		eval_container_t &cont)
+		: m_expr(expr), m_result(res), m_eval_container(cont) { }
 
-	/**	\brief Specialization T=double and tod_sum
-	 **/
-	template<size_t NOper>
-	void evaluate_case(const eval_tag<0, NOper> &tag) throw(exception);
+	void evaluate() throw(exception);
+};
 
-	/**	\brief Specialization T=double and tod_copy
-	 **/
-	//template<>
-	void evaluate_case(const eval_tag<1, 0> &tag) throw(exception);
+template<size_t N, typename T, typename Core, typename Label,
+	size_t NTensor>
+class labeled_btensor_eval_functor<N, T, Core, Label, NTensor, 0> {
+public:
+	//!	Expression type
+	typedef labeled_btensor_expr<N, T, Core> expression_t;
 
-	/**	\brief Specialization T=double and direct evaluation
-	 **/
-	//template<>
-	void evaluate_case(const eval_tag<0, 1> &tag) throw(exception);
+	//!	Output labeled block %tensor type
+	typedef labeled_btensor<N, T, true, Label> result_t;
+
+	//!	Evaluating container type
+	typedef typename expression_t::eval_container_t eval_container_t;
+
+private:
+	expression_t &m_expr;
+	result_t &m_result;
+	eval_container_t &m_eval_container;
+
+public:
+	labeled_btensor_eval_functor(expression_t &expr, result_t &res,
+		eval_container_t &cont)
+		: m_expr(expr), m_result(res), m_eval_container(cont) { }
+
+	void evaluate() throw(exception);
+};
+
+template<size_t N, typename T, typename Core, typename Label, size_t NOper>
+class labeled_btensor_eval_functor<N, T, Core, Label, 0, NOper> {
+public:
+	//!	Expression type
+	typedef labeled_btensor_expr<N, T, Core> expression_t;
+
+	//!	Output labeled block %tensor type
+	typedef labeled_btensor<N, T, true, Label> result_t;
+
+	//!	Evaluating container type
+	typedef typename expression_t::eval_container_t eval_container_t;
+
+private:
+	expression_t &m_expr;
+	result_t &m_result;
+	eval_container_t &m_eval_container;
+
+public:
+	labeled_btensor_eval_functor(expression_t &expr, result_t &res,
+		eval_container_t &cont)
+		: m_expr(expr), m_result(res), m_eval_container(cont) { }
+
+	void evaluate() throw(exception);
+};
+
+template<size_t N, typename T, typename Core, typename Label>
+class labeled_btensor_eval_functor<N, T, Core, Label, 1, 0> {
+public:
+	//!	Expression type
+	typedef labeled_btensor_expr<N, T, Core> expression_t;
+
+	//!	Output labeled block %tensor type
+	typedef labeled_btensor<N, T, true, Label> result_t;
+
+	//!	Evaluating container type
+	typedef typename expression_t::eval_container_t eval_container_t;
+
+private:
+	expression_t &m_expr;
+	result_t &m_result;
+	eval_container_t &m_eval_container;
+
+public:
+	labeled_btensor_eval_functor(expression_t &expr, result_t &res,
+		eval_container_t &cont)
+		: m_expr(expr), m_result(res), m_eval_container(cont) { }
+
+	void evaluate() throw(exception);
+};
+
+template<size_t N, typename T, typename Core, typename Label>
+class labeled_btensor_eval_functor<N, T, Core, Label, 0, 1> {
+public:
+	//!	Expression type
+	typedef labeled_btensor_expr<N, T, Core> expression_t;
+
+	//!	Output labeled block %tensor type
+	typedef labeled_btensor<N, T, true, Label> result_t;
+
+	//!	Evaluating container type
+	typedef typename expression_t::eval_container_t eval_container_t;
+
+private:
+	expression_t &m_expr;
+	result_t &m_result;
+	eval_container_t &m_eval_container;
+
+public:
+	labeled_btensor_eval_functor(expression_t &expr, result_t &res,
+		eval_container_t &cont)
+		: m_expr(expr), m_result(res), m_eval_container(cont) { }
+
+	void evaluate() throw(exception);
 };
 
 template<size_t N, typename T, typename Core, typename Label>
@@ -103,14 +204,15 @@ template<size_t N, typename T, typename Core, typename Label>
 inline void labeled_btensor_eval<N, T, Core, Label>::evaluate()
 	throw(exception) {
 
-	eval_tag<k_narg_tensor, k_narg_oper> tag;
-	evaluate_case(tag);
+	labeled_btensor_eval_functor<N, T, Core, Label,
+		k_narg_tensor, k_narg_oper>(
+		m_expr, m_result, m_eval_container).evaluate();
 }
 
-template<size_t N, typename T, typename Core, typename Label>
-template<size_t NTensor, size_t NOper>
-void labeled_btensor_eval<N, T, Core, Label>::evaluate_case(
-	const eval_tag<NTensor, NOper> &tag) throw(exception) {
+template<size_t N, typename T, typename Core, typename Label, size_t NTensor,
+	size_t NOper>
+void labeled_btensor_eval_functor<N, T, Core, Label, NTensor, NOper>::
+	evaluate() throw(exception) {
 
 	// a(i|j) = c1*b1(i|j) + c2*b2(i|j) + ... + d1*fn1() + d2*fn2() + ...
 
@@ -133,10 +235,9 @@ void labeled_btensor_eval<N, T, Core, Label>::evaluate_case(
 	op.perform(m_result.get_btensor());
 }
 
-template<size_t N, typename T, typename Core, typename Label>
-template<size_t NTensor>
-void labeled_btensor_eval<N, T, Core, Label>::evaluate_case(
-	const eval_tag<NTensor, 0> &tag) throw(exception) {
+template<size_t N, typename T, typename Core, typename Label, size_t NTensor>
+void labeled_btensor_eval_functor<N, T, Core, Label, NTensor, 0>::evaluate()
+	throw(exception) {
 
 	// a(i|j) = c1*b1(i|j) + c2*b2(i|j) + ...
 
@@ -151,10 +252,9 @@ void labeled_btensor_eval<N, T, Core, Label>::evaluate_case(
 	op.perform(m_result.get_btensor());
 }
 
-template<size_t N, typename T, typename Core, typename Label>
-template<size_t NOper>
-void labeled_btensor_eval<N, T, Core, Label>::evaluate_case(
-	const eval_tag<0, NOper> &tag) throw(exception) {
+template<size_t N, typename T, typename Core, typename Label, size_t NOper>
+void labeled_btensor_eval_functor<N, T, Core, Label, 0, NOper>::evaluate()
+	throw(exception) {
 
 	// a(i|j) = c1*fn1() + c2*fn2() + ...
 
@@ -170,8 +270,8 @@ void labeled_btensor_eval<N, T, Core, Label>::evaluate_case(
 }
 
 template<size_t N, typename T, typename Core, typename Label>
-void labeled_btensor_eval<N, T, Core, Label>::evaluate_case(
-	const eval_tag<1, 0> &tag) throw(exception) {
+void labeled_btensor_eval_functor<N, T, Core, Label, 1, 0>::evaluate()
+	throw(exception) {
 
 	// a(i|j) = c * b(i|j)
 
@@ -184,8 +284,8 @@ void labeled_btensor_eval<N, T, Core, Label>::evaluate_case(
 }
 
 template<size_t N, typename T, typename Core, typename Label>
-void labeled_btensor_eval<N, T, Core, Label>::evaluate_case(
-	const eval_tag<0, 1> &tag) throw(exception) {
+void labeled_btensor_eval_functor<N, T, Core, Label, 0, 1>::evaluate()
+	throw(exception) {
 
 	// a(i|j) = c * fn()
 

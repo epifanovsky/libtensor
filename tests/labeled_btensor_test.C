@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <sstream>
 #include <libtensor.h>
 #include "labeled_btensor_test.h"
