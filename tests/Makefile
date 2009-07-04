@@ -3,6 +3,7 @@ all: deps libtensor_tests
 
 OBJS  = libtensor_suite.o
 OBJS += bispace_test.o
+OBJS += block_index_space_test.o
 OBJS += block_tensor_test.o
 OBJS += btensor_test.o
 OBJS += btod_add_test.o

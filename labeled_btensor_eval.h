@@ -41,10 +41,6 @@ public:
 	static const size_t k_narg_oper = eval_container_t::k_narg_oper;
 
 private:
-	template<size_t NTensor, size_t NOper>
-	struct eval_tag { };
-
-private:
 	expression_t m_expr; //!< Expression
 	result_t &m_result; //!< Result
 	eval_container_t m_eval_container; //!< Container
