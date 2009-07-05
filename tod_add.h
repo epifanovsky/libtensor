@@ -7,6 +7,8 @@
 #include "tensor_ctrl.h"
 #include "tod_additive.h"
 
+#include <list>
+
 namespace libtensor {
 
 /**	\brief Adds two or more tensors
@@ -32,11 +34,56 @@ private:
 			: m_t(t), m_p(p), m_c(c), m_next(NULL) {}
 	};
 
+	struct registers {
+		double m_ca; //!< scaling factor
+		const double* m_ptra; //!< tensor to add
+		double* m_ptrb; //!< result tensor 
+	};
+
+	struct loop_list_node;
+	typedef std::list<loop_list_node> loop_list_t;
+	typedef processor<loop_list_t, registers> processor_t;
+	typedef processor_op_i<loop_list_t, registers> processor_op_i_t;
+
+	struct loop_list_node {
+		processor_op_i_t* m_op;
+		size_t m_len, m_inca, m_incb;
+
+		loop_list_node() : m_op(NULL) { }
+		loop_list_node( size_t len, size_t inca, size_t incb ) : 
+			m_len(len), m_inca(inca), m_incb(incb), m_op(NULL) { }
+		processor_op_i_t *op() const { return m_op; }
+	};
+
+	class op_loop : public processor_op_i_t {
+	private:
+		size_t m_len, m_inca, m_incb;
+	public:
+		op_loop(size_t len, size_t inca, size_t incb) :
+			m_len(len), m_inca(inca), m_incb(incb) { }
+		virtual void exec(processor_t &proc, registers &regs)
+			throw(exception);
+	};
+
+	//!	b_j += m_ca * a_{i_j}
+	class op_daxpy : public processor_op_i_t {
+	private:
+		size_t m_len, m_inca, m_incb;
+	public:
+		op_daxpy(size_t len , size_t inca, size_t incb) : 
+			m_inca(inca), m_incb(incb), m_len(len) { }
+		virtual void exec(processor_t &proc, registers &regs)
+			throw(exception);
+	};
+
+
+
 	struct operand* m_head;	
 	struct operand* m_tail; 
 
 	dimensions<N>* m_dim;  //!< dimensions of the output tensor
 	permutation<N> m_p; //!< permutation to be applied to all tensors
+
 
 public:
 	//!	\name Construction and destruction
@@ -75,21 +122,20 @@ public:
 		throw(exception);
 	//@}
 private:
-	/**	\brief Add one tensor to another 
+	
+	/**	\brief Build operations list for addition of two tensors
+		
+		The resulting operations list is appropriate to add a tensor with 
+		dimensions da and permutation pa to tensor with dimensions db 
+	**/	
+	void build_list( loop_list_t &list, const dimensions<N> &da, 
+		const permutation<N> &pa, const dimensions<N> &db );
+	//!	Delete all operations in list
+	void clean_list( loop_list_t &list );
 
-		\f[ A = A + c_B \mathcal{P}_B B \f] 
-
-		\param a tensor data of result
-		\param da dimensions of tensor A
-		\param b tensor data to add
-		\param db dimensions of tensor B
-		\param pb permutation to be applied to B before addition
-		\param cb coefficient B is multiplied with
-	**/
-	void add_to(double *a, const dimensions<N> &da, 
-		const double *b, const dimensions<N> &db, 
-		const permutation<N> &pb, double cb);
+	
 };
+
 
 template<size_t N>
 tod_add<N>::tod_add(const permutation<N> &p) throw(exception)
@@ -108,7 +154,6 @@ tod_add<N>::~tod_add()
 		node=next;
 	}
 }
-
 
 template<size_t N>
 void tod_add<N>::add_op(tensor_i<N,double> &t, const permutation<N> &p,
@@ -174,7 +219,20 @@ void tod_add<N>::perform(tensor_i<N,double> &t)
 	while ( node != NULL ) {
 		tensor_ctrl<N,double> ctrlo(node->m_t);
 		const double* optr=ctrlo.req_const_dataptr();
-		add_to( tptr, *m_dim, optr, node->m_t.get_dims(), node->m_p, node->m_c );
+		loop_list_t list;
+		build_list(list,node->m_t.get_dims(),node->m_p,t.get_dims());
+		try {
+			registers regs;
+			regs.m_ptra=optr;
+			regs.m_ca=node->m_c;
+			regs.m_ptrb=tptr;
+			processor_t(list,regs).process_next();
+		} 
+		catch ( exception e ) {
+			clean_list(list);
+			throw;
+		}
+
 		ctrlo.ret_dataptr(optr);	
 		node=node->m_next;		
 	}	
@@ -205,7 +263,21 @@ void tod_add<N>::perform(tensor_i<N,double> &t, double c) throw(exception) {
 
 		tensor_ctrl<N,double> ctrlo(node->m_t);
 		const double* optr=ctrlo.req_const_dataptr();
-		add_to( tptr, *m_dim, optr, node->m_t.get_dims(), node->m_p, c*node->m_c );
+		loop_list_t list;
+		build_list(list,node->m_t.get_dims(),node->m_p,t.get_dims());
+		try {
+			registers regs;
+			regs.m_ptra=optr;
+			regs.m_ca=c*node->m_c;
+			regs.m_ptrb=tptr;
+			processor_t(list,regs).process_next();
+		} 
+		catch ( exception e ) {
+			clean_list(list);
+			throw;
+		}
+
+		clean_list(list);
 		ctrlo.ret_dataptr(optr);			
 		node=node->m_next;		
 	}	
@@ -214,78 +286,82 @@ void tod_add<N>::perform(tensor_i<N,double> &t, double c) throw(exception) {
 }
 
 template<size_t N>
-void tod_add<N>::add_to(double *a, const dimensions<N> &da, 
-		const double *b, const dimensions<N> &db, const permutation<N> &pb, double cb)
-{
-	// simplest case: just call cblas_daxpy
-	if ( pb.is_identity() ) {
-		cblas_daxpy(da.get_size(),cb,b,1,a,1);
+void tod_add<N>::build_list( loop_list_t &list, const dimensions<N> &da, 
+	const permutation<N> &pa, const dimensions<N> &db )
+{ 
+	size_t ia[N];
+	for (size_t i=0; i<N; i++) ia[i]=i;
+	pa.apply(N,ia);
+
+	// loop over all indices and build the list
+	size_t pos=0, max_len=0;
+	while ( pos < N ) {
+		size_t len=1;
+		size_t iapos=ia[pos];
+		while (pos<N) {
+			len*=da.get_dim(iapos);
+			pos++; iapos++; 
+			if ( ia[pos]!=iapos ) break;
+		}
+		
+		size_t inca=da.get_increment(iapos-1);
+		size_t incb=db.get_increment(pos-1);
+		
+		list.push_back(loop_list_node(len,inca,incb));
+		
+		if ( (inca==1) || (incb==1) ) 
+			if ( len >= max_len ) max_len=len;
 	}
-	else {
-		// XXX this is can be reduced by sorting everything in groups
 
-		// determine common indexes
-		index<N> pbindx; // permuted index of tensor B
-		for ( size_t i=0; i<N; i++ ) pbindx[i]=i;
-		pbindx.permute(pb);
-
-		// find the last permuted index
-		size_t ia=N-1; 
-		while ( (ia>0) && (pbindx[ia]==ia) ) ia--; 
-#ifdef LIBTENSOR_DEBUG 
-		// OK, this should never happen, since this is the case that m_pb is the identity
-		if ( pbindx[ia]==ia )
-			throw_exc("tod_add_noperm<N>", 
-				"perform(tensor_i<N,double>&)",
-				"Permutation pb is not identity but no index is permuted");
-#endif // LIBTENSOR_DEBUG	
-		// XXX
-
-		size_t incb;
-		// OK, the last index is permuted
-		if ( ia == (N-1) ) {
-			// position where index ia can be found in the permuted index
-			size_t ib=pbindx[ia]; 
-			incb=db.get_increment(ib);
-
-			// do we have something like 0123 -> 0(23)1
-			while ( (ib>0) && (pbindx[ia]==ib) ) { ia--; ib--; }
-
+	// fill the list with processor_op_t
+	for (typename loop_list_t::iterator it=list.begin(); it!=list.end(); it++ ) {
+		if ( (it->m_len==max_len) && ((it->m_inca==1)||(it->m_incb==1)) ) {
+			it->m_op=new op_daxpy(it->m_len,it->m_inca,it->m_incb);
+			list.splice(list.end(),list,it);
+			break;
 		}
 		else {
-			incb=1;
-		}
-
-		size_t size=da.get_increment(ia);
-		
-
-		double *aptr=a;
-		const double *bptr=b;
-		// reset pbindx and use it as index to keep track of the steps in tensor A
-		for ( size_t i=0; i<N; i++ ) pbindx[i]=0;
-		// to convert pbindx to bindx (see below)
-		permutation<N> inv_pb(pb);
-		inv_pb.invert();
-		// loop until aptr is at the end of the array
-		while ( aptr != a+da.get_size() ) {
-			cblas_daxpy(size,cb,bptr,incb,aptr,1);
-			aptr+=size;
-								
-			// now increase bptr appropriately
-			size_t cnt=ia;
-			pbindx[ia]++;
-			while ( (cnt>0) && (pbindx[cnt]>=da[cnt]) ) {
-				pbindx[cnt--]=0;
-				pbindx[cnt]++;
-			}
-			// are we not yet at the end?
-			if ( pbindx[0] < da[0] ) {
-				index<N> bindx(pbindx);
-				bindx.permute(inv_pb);
-				bptr=b+db.abs_index(bindx);
-			}
+			it->m_op=new op_loop(it->m_len,it->m_inca,it->m_incb);
 		}
 	}
+	for (typename loop_list_t::iterator it=list.begin(); it!=list.end(); it++ ) {
+		if ( it->m_op == NULL ) {
+			it->m_op=new op_loop(it->m_len,it->m_inca,it->m_incb);
+		}
+	}	
+}
+
+template<size_t N>
+void tod_add<N>::clean_list( loop_list_t &list ) 
+{
+	for (typename loop_list_t::iterator it=list.begin(); it != list.end(); it++) {
+		delete it->m_op;
+		it->m_op=NULL;
+	}
+}
+
+template<size_t N>
+void tod_add<N>::op_loop::exec( processor_t &proc, registers &regs) 
+	throw(exception)
+{
+	const double *ptra = regs.m_ptra;
+	double *ptrb = regs.m_ptrb;
+
+	for(size_t i=0; i<m_len; i++) {
+		regs.m_ptra = ptra;
+		regs.m_ptrb = ptrb;
+		proc.process_next();
+		ptra += m_inca;
+		ptrb += m_incb;
+	}
+	
+}
+
+template<size_t N>
+void tod_add<N>::op_daxpy::exec( processor_t &proc, registers &regs) 
+	throw(exception)
+{
+	cblas_daxpy(m_len,regs.m_ca,regs.m_ptra,m_inca,regs.m_ptrb,m_incb);
 }
 
 } // namespace libtensor

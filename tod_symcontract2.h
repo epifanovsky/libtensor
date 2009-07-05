@@ -21,8 +21,8 @@ template<size_t N, size_t M, size_t K>
 class tod_symcontract2 : public tod_additive<M+N> {
 private:
 	tod_contract2<N, M, K> m_contr; //!< Contraction
-	permutation<N+M> m_perm; //! permutation to symmetrize
-	const double m_c;
+	permutation<N+M> m_perm; //!< permutation to symmetrize
+	const double m_c;  //!< prefactor 
 
 public:
 	//!	\name Construction and destruction
@@ -80,7 +80,9 @@ void tod_symcontract2<N,M,K>::prefetch() throw(exception) {
 template<size_t N, size_t M, size_t K>
 void tod_symcontract2<N,M,K>::perform(tensor_i<N+M,double> &t)
 	throw(exception) {
-	tensor<N+M,double> tmp(t); 
+	// intermediate tensor
+	tensor<N+M,double,libvmm::std_allocator<double> > tmp(t);
+
 	m_contr.perform(tmp);
 	
 	tod_copy<N+M> cp(tmp);
@@ -95,11 +97,11 @@ void tod_symcontract2<N,M,K>::perform(tensor_i<N+M,double> &t)
 template<size_t N, size_t M, size_t K>
 void tod_symcontract2<N,M,K>::perform(tensor_i<N+M,double> &t, double c)
 	throw(exception) {
-	tensor<N+M,double> tmp(t); 
+	tensor<N+M,double,libvmm::std_allocator<double> > tmp(t); 
 	m_contr.perform(tmp);
 	
 	permutation<N+M> perm;
-	tod_add add(perm);
+	tod_add<N+M> add(perm);
 	add.add_op(tmp,perm,1.0);
 	add.add_op(tmp,m_perm,m_c);
 	add.perform(t,c);

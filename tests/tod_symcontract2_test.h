@@ -12,6 +12,9 @@ namespace libtensor {
 class tod_symcontract2_test : public libtest::unit_test {
 public:
 	virtual void perform() throw(libtest::test_exception);
+private: 
+	void test_ij_ip_jp(size_t, size_t ) throw(libtest::test_exception);
+	void test_ijab_iapq_pbqj(size_t, size_t, size_t, size_t ) throw(libtest::test_exception);
 };
 
 

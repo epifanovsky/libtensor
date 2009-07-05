@@ -27,6 +27,7 @@
 #include "tod_set.h"
 #include "tod_solve.h"
 #include "tod_sum.h"
+#include "tod_symcontract2.h"
 
 #include "block_tensor_i.h"
 #include "block_tensor_ctrl.h"
