@@ -55,6 +55,7 @@
 #include "labeled_btensor_eval.h"
 #include "labeled_btensor_impl.h"
 #include "contract.h"
+#include "dot_product.h"
 
 #endif // LIBTENSOR_H
 

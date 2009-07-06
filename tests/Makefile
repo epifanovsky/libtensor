@@ -16,6 +16,7 @@ OBJS += contraction2_test.o
 OBJS += dimensions_test.o
 OBJS += direct_btensor_test.o
 OBJS += direct_tensor_test.o
+OBJS += dot_product_test.o
 OBJS += immutable_test.o
 OBJS += index_test.o
 OBJS += index_range_test.o
