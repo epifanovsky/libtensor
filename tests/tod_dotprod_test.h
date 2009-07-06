@@ -3,8 +3,8 @@
 
 #include <cmath>
 #include <cstdlib>
-#include <libtest.h>
 #include <libtensor.h>
+#include <libtest.h>
 
 namespace libtensor {
 
@@ -13,9 +13,18 @@ namespace libtensor {
 	\ingroup libtensor_tests
 **/
 class tod_dotprod_test : public libtest::unit_test {
+private:
+	static const double k_thresh = 1e-14; //!< Threshold multiplier
+
 public:
 	virtual void perform() throw(libtest::test_exception);
 
+private:
+	void test_1(size_t ni) throw(libtest::test_exception);
+	void test_2(size_t ni, size_t nj, const permutation<2> &perm)
+		throw(libtest::test_exception);
+	void test_4(size_t ni, size_t nj, size_t nk, size_t nl,
+		const permutation<4> &perm) throw(libtest::test_exception);
 };
 
 } // namespace libtensor
