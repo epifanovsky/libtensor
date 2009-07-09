@@ -5,6 +5,7 @@
 #include "defs.h"
 #include "exception.h"
 #include "bispace_i.h"
+#include "block_index_space.h"
 #include "block_tensor.h"
 #include "block_tensor_ctrl.h"
 #include "btensor_i.h"
@@ -53,9 +54,14 @@ public:
 	virtual ~btensor();
 	//@}
 
-	//!	\name Implementation of tensor_i<T>
+	//!	\name Implementation of tensor_i<N, T>
 	//@{
 	virtual const dimensions<N> &get_dims() const;
+	//@}
+
+	//!	\name Implementation of block_tensor_i<N, T>
+	//@{
+	virtual const block_index_space<N> &get_bis() const;
 	//@}
 
 	/**	\brief Attaches a label to this %tensor and returns it as a
@@ -88,7 +94,12 @@ protected:
 
 template<size_t N, typename T, typename Traits>
 inline btensor<N, T, Traits>::btensor(const bispace_i<N> &bispace) :
-	m_bt(bispace), m_tctrl(m_bt) {
+	m_bt(bispace.get_bis()), m_tctrl(m_bt) {
+}
+
+template<size_t N, typename T, typename Traits>
+inline btensor<N, T, Traits>::btensor(const btensor_i<N, element_t> &bt) :
+	m_bt(bt), m_tctrl(m_bt) {
 }
 
 template<size_t N, typename T, typename Traits>
@@ -98,6 +109,11 @@ btensor<N, T, Traits>::~btensor() {
 template<size_t N, typename T, typename Traits>
 const dimensions<N> &btensor<N, T, Traits>::get_dims() const {
 	return m_bt.get_dims();
+}
+
+template<size_t N, typename T, typename Traits>
+inline const block_index_space<N> &btensor<N, T, Traits>::get_bis() const {
+	return m_bt.get_bis();
 }
 
 template<size_t N, typename T, typename Traits> template<typename ExprT>

@@ -3,6 +3,7 @@
 
 #include "defs.h"
 #include "exception.h"
+#include "block_index_space.h"
 #include "index.h"
 #include "tensor_i.h"
 
@@ -11,7 +12,7 @@ namespace libtensor {
 template<size_t N, typename T>
 class block_tensor_ctrl;
 
-/**	\brief Block tensor interface
+/**	\brief Block %tensor interface
 	\tparam N Tensor order.
 	\tparam T Tensor element type.
 
@@ -20,6 +21,11 @@ class block_tensor_ctrl;
 template<size_t N, typename T>
 class block_tensor_i : public tensor_i<N, T> {
 	friend class block_tensor_ctrl<N, T>;
+
+public:
+	/**	\brief Returns the block %index space of the block %tensor
+	 **/
+	virtual const block_index_space<N> &get_bis() const = 0;
 
 protected:
 	//!	\name Event handling

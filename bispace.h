@@ -20,6 +20,7 @@ class bispace : public bispace_i<N> {
 private:
 	rc_ptr<bispace_expr_i<N> > m_sym_expr; //!< Symmetry-defining expression
 	dimensions<N> m_dims; //!< Correctly permuted dimensions
+	block_index_space<N> m_bis; //!< Block %index space
 	permutation<N> m_perm; //!< Permutation of indexes
 	size_t m_inv_idx[N]; //!< Permuted index pointers for operator[]
 
@@ -64,6 +65,7 @@ public:
 	//!	\name Implementation of libtensor::bispace_i<N>
 	//@{
 	virtual rc_ptr< bispace_i<N> > clone() const;
+	virtual const block_index_space<N> &get_bis() const;
 	//@}
 
 	//!	\name Implementation of libtensor::block_index_space_i<N>
@@ -74,14 +76,16 @@ public:
 	const bispace < 1 > & operator[](size_t i) const;
 };
 
-/**	\brief Special version for one-dimensional block %index spaces
+/**	\brief Specialized version for one-dimensional block %index spaces
 
 	\ingroup libtensor
  **/
 template<>
-class bispace < 1 > : public bispace_i < 1 > {
+class bispace<1> : public bispace_i<1> {
 private:
-	dimensions < 1 > m_dims; //!< Space %dimensions
+	block_index_space<1> m_bis; //!< Block %index space
+	bool m_dirty; //!< Whether split points need to be updated
+	std::list<size_t> m_splits; //!< Split points
 
 public:
 	//!	\name Construction and destruction
@@ -93,7 +97,7 @@ public:
 
 	/**	\brief Copy constructor
 	 **/
-	bispace(const bispace < 1 > &other);
+	bispace(const bispace<1> &other);
 
 	/**	\brief Virtual destructor
 	 **/
@@ -102,13 +106,15 @@ public:
 	//@}
 
 	/**	\brief Splits the space at a given position
+		\param pos Position at which the space is to be split
 	 **/
-	bispace < 1 > &split(size_t pos) throw(exception);
+	bispace<1> &split(size_t pos) throw(exception);
 
 	//!	\name Implementation of bispace_i<1>
 	//@{
 
 	virtual rc_ptr<bispace_i < 1 > > clone() const;
+	virtual const block_index_space<1> &get_bis() const;
 
 	//@}
 
@@ -131,14 +137,14 @@ private:
 
 template<size_t N> template<typename SymExprT>
 bispace<N>::bispace(const bispace_expr<N, SymExprT> &e_sym) throw(exception) :
-m_sym_expr(e_sym.clone()), m_dims(e_sym.get_dims()) {
+m_sym_expr(e_sym.clone()), m_dims(e_sym.get_dims()), m_bis(m_dims) {
 	make_inv_idx();
 }
 
 template<size_t N> template<typename OrderExprT, typename SymExprT>
 bispace<N>::bispace(const bispace_expr<N, OrderExprT> &e_order,
 	const bispace_expr<N, SymExprT> &e_sym) throw(exception) :
-m_sym_expr(e_sym.clone()), m_dims(e_sym.get_dims()) {
+m_sym_expr(e_sym.clone()), m_dims(e_sym.get_dims()), m_bis(m_dims) {
 
 	const bispace < 1 > *seq_order[N], *seq_sym[N];
 	for(size_t i = 0; i < N; i++) {
@@ -166,6 +172,7 @@ m_sym_expr(e_sym.clone()), m_dims(e_sym.get_dims()) {
 		}
 	}
 	m_dims.permute(m_perm);
+	m_bis.permute(m_perm);
 	make_inv_idx();
 	permutation<N> inv_perm(m_perm); inv_perm.invert();
 	inv_perm.apply(N, m_inv_idx);
@@ -174,7 +181,7 @@ m_sym_expr(e_sym.clone()), m_dims(e_sym.get_dims()) {
 template<size_t N>
 bispace<N>::bispace(const bispace<N> &other) :
 m_sym_expr(other.m_sym_expr->clone()), m_perm(other.m_perm),
-m_dims(other.m_dims) {
+m_dims(other.m_dims), m_bis(other.m_bis) {
 	make_inv_idx();
 }
 
@@ -198,33 +205,56 @@ inline const dimensions<N> &bispace<N>::get_dims() const {
 }
 
 template<size_t N>
+inline const block_index_space<N> &bispace<N>::get_bis() const {
+	return m_bis;
+}
+
+template<size_t N>
 const bispace < 1 > &bispace<N>::operator[](size_t i) const {
 	return(*m_sym_expr)[m_inv_idx[i]];
 }
 
-inline bispace < 1 > ::bispace(size_t dim) : m_dims(make_dims(dim)) {
+inline bispace<1>::bispace(size_t dim)
+: m_bis(make_dims(dim)), m_dirty(false) {
+
 }
 
-inline bispace < 1 > ::bispace(const bispace < 1 > &other) :
-m_dims(other.m_dims) {
+inline bispace<1>::bispace(const bispace<1> &other)
+: m_bis(other.m_bis), m_dirty(other.m_dirty), m_splits(other.m_splits) {
+
 }
 
-inline bispace < 1 > ::bispace(const dimensions < 1 > &dims) : m_dims(dims) {
+inline bispace<1>::~bispace() {
+
 }
 
-inline bispace < 1 > ::~bispace() {
-}
+inline bispace<1> &bispace<1>::split(size_t pos) throw(exception) {
 
-inline bispace < 1 > &bispace < 1 > ::split(size_t pos) throw(exception) {
+	typename std::list<size_t>::iterator i = m_splits.begin();
+	while(i != m_splits.end() && *i <= pos) i++;
+	if(i == m_splits.end()) {
+		m_splits.push_back(pos);
+		m_dirty = true;
+	} else if(*i > pos) {
+		m_splits.insert(i, pos);
+		m_dirty = true;
+	}
 	return *this;
 }
 
-inline rc_ptr<bispace_i < 1 > > bispace < 1 > ::clone() const {
-	return rc_ptr<bispace_i < 1 > >(new bispace < 1 > (m_dims));
+inline rc_ptr< bispace_i<1> > bispace<1>::clone() const {
+
+	return rc_ptr< bispace_i<1> >(new bispace<1>(*this));
 }
 
-inline const dimensions < 1 > &bispace < 1 > ::get_dims() const {
-	return m_dims;
+inline const dimensions<1> &bispace<1>::get_dims() const {
+
+	return m_bis.get_dims();
+}
+
+inline const block_index_space<1> &bispace<1>::get_bis() const {
+
+	return m_bis;
 }
 
 inline const bispace < 1 > &bispace < 1 > ::operator[](size_t i) const {
@@ -234,11 +264,10 @@ inline const bispace < 1 > &bispace < 1 > ::operator[](size_t i) const {
 	return *this;
 }
 
-inline dimensions < 1 > bispace < 1 > ::make_dims(size_t sz) {
-	index < 1 > i1, i2;
-	i2[0] = sz - 1;
-	index_range < 1 > ir(i1, i2);
-	return dimensions < 1 > (ir);
+inline dimensions<1> bispace<1>::make_dims(size_t sz) {
+
+	index<1> i1, i2; i2[0] = sz - 1;
+	return dimensions<1>(index_range<1>(i1, i2));
 }
 
 } // namespace libtensor

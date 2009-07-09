@@ -95,6 +95,10 @@ public:
 	 **/
 	void split(size_t dim, size_t pos) throw(exception);
 
+	/**	\brief Removes all split points
+	 **/
+	void reset();
+
 	/**	\brief Permutes the block %index space
 		\param perm Permutation.
 	 **/
@@ -142,6 +146,7 @@ inline void block_index_space<N>::permute(const permutation<N> &perm) {
 	typename std::list< index<N> >::iterator iter = m_splits.begin();
 	while(iter != m_splits.end()) {
 		iter->permute(perm);
+		iter++;
 	}
 }
 
@@ -189,6 +194,18 @@ void block_index_space<N>::split(size_t dim, size_t pos) throw(exception) {
 		last = *iter;
 		iter++;
 	} while(iter != m_splits.end());
+}
+
+template<size_t N>
+void block_index_space<N>::reset() {
+
+	index<N> idx;
+	for(register size_t i = 0; i < N; i++) {
+		m_block_index_max[i] = 0;
+		idx[i] = dims[i];
+	}
+	m_splits.clear();
+	m_splits.push_back(idx);
 }
 
 template<size_t N>

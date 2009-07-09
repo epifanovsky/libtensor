@@ -8,10 +8,13 @@ typedef libvmm::std_allocator<double> allocator;
 typedef block_tensor<2,double,allocator> block_tensor2;
 
 void block_tensor_test::perform() throw(libtest::test_exception) {
-	bispace<1> i_sp(10), a_sp(20);
-	i_sp.split(5); a_sp.split(5).split(10).split(15);
-	bispace<2> ia(i_sp*a_sp);
-	block_tensor2 bt(ia);
+	index<2> i1, i2; i2[0] = 9; i2[1] = 19;
+	block_index_space<2> bis(dimensions<2>(index_range<2>(i1, i2)));
+	bis.split(0, 5);
+	bis.split(1, 5);
+	bis.split(1, 10);
+	bis.split(1, 15);
+	block_tensor2 bt(bis);
 
 }
 

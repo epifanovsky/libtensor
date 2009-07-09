@@ -3,7 +3,7 @@
 
 #include "defs.h"
 #include "exception.h"
-#include "block_index_space_i.h"
+#include "block_index_space.h"
 #include "block_tensor_i.h"
 #include "immutable.h"
 #include "tensor.h"
@@ -21,13 +21,14 @@ namespace libtensor {
 template<size_t N, typename T, typename Alloc>
 class block_tensor : public block_tensor_i<N, T>, public immutable {
 public:
+	block_index_space<N> m_bis; //!< Block %index space
 	tensor<N, T, Alloc> m_t;
 	tensor_ctrl<N, T> m_ctrl;
 
 public:
 	//!	\name Construction and destruction
 	//@{
-	block_tensor(const block_index_space_i<N> &bis);
+	block_tensor(const block_index_space<N> &bis);
 	block_tensor(const block_tensor_i<N, T> &bt);
 	block_tensor(const block_tensor<N, T, Alloc> &bt);
 	virtual ~block_tensor();
@@ -36,6 +37,11 @@ public:
 	//!	\name Implementation of libtensor::tensor_i<N, T>
 	//@{
 	virtual const dimensions<N> &get_dims() const;
+	//@}
+
+	//!	\name Implementation of libtensor::block_tensor_i<N, T>
+	//@{
+	virtual const block_index_space<N> &get_bis() const;
 	//@}
 
 protected:
@@ -60,18 +66,18 @@ protected:
 };
 
 template<size_t N, typename T, typename Alloc>
-block_tensor<N, T, Alloc>::block_tensor(const block_index_space_i<N> &bis) :
-	m_t(bis.get_dims()), m_ctrl(m_t) {
+block_tensor<N, T, Alloc>::block_tensor(const block_index_space<N> &bis) :
+	m_bis(bis), m_t(m_bis.get_dims()), m_ctrl(m_t) {
 }
 
 template<size_t N, typename T, typename Alloc>
 block_tensor<N, T, Alloc>::block_tensor(const block_tensor_i<N, T> &bt) :
-	m_t(bt.get_dims()), m_ctrl(m_t) {
+	m_bis(bt.get_bis()), m_t(m_bis.get_dims()), m_ctrl(m_t) {
 }
 
 template<size_t N, typename T, typename Alloc>
 block_tensor<N, T, Alloc>::block_tensor(const block_tensor<N, T, Alloc> &bt) :
-	m_t(bt.get_dims()), m_ctrl(m_t) {
+	m_bis(bt.get_bis()), m_t(m_bis.get_dims()), m_ctrl(m_t) {
 }
 
 template<size_t N, typename T, typename Alloc>
@@ -81,6 +87,11 @@ block_tensor<N, T, Alloc>::~block_tensor() {
 template<size_t N, typename T, typename Alloc>
 const dimensions<N> &block_tensor<N, T, Alloc>::get_dims() const {
 	return m_t.get_dims();
+}
+
+template<size_t N, typename T, typename Alloc>
+const block_index_space<N> &block_tensor<N, T, Alloc>::get_bis() const {
+	return m_bis;
 }
 
 template<size_t N, typename T, typename Alloc>

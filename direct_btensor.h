@@ -58,6 +58,13 @@ public:
 
 	//@}
 
+	//!	\name Implementation of block_tensor_i<N, T>
+	//!{
+
+	const block_index_space<N> &get_bis() const;
+
+	//!}
+
 protected:
 	//!	\name Implementation of tensor_i<N, T>
 	//@{
@@ -95,6 +102,12 @@ direct_btensor<N, T, Traits>::operator()(const letter_expr<N, ExprT> expr) {
 template<size_t N, typename T, typename Traits>
 const dimensions<N> &direct_btensor<N, T, Traits>::get_dims() const {
 	throw_exc("direct_btensor<N, T, Traits>", "get_dims()",
+		"Not implemented");
+}
+
+template<size_t N, typename T, typename Traits>
+const block_index_space<N> &direct_btensor<N, T, Traits>::get_bis() const {
+	throw_exc("direct_btensor<N, T, Traits>", "get_bis()",
 		"Not implemented");
 }
 
