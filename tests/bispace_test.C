@@ -4,6 +4,8 @@
 namespace libtensor {
 
 void bispace_test::perform() throw(libtest::test_exception) {
+	test_1();
+
 	bispace<1> i(10), j(10), a(20), b(20);
 	i.split(5);
 	a.split(5).split(10).split(15);
@@ -88,6 +90,56 @@ void bispace_test::perform() throw(libtest::test_exception) {
 		fail_test("bispace_test::perform()", __FILE__, __LINE__,
 			"Incorrect single dimension b in iajb");
 	}
+}
+
+void bispace_test::test_1() throw(libtest::test_exception) {
+
+	const char *testname = "bispace_test::test_1()";
+
+	try {
+
+	index<1> i0, i1, i2;
+	i2[0] = 2;
+	dimensions<1> dim3(index_range<1>(i1, i2));
+	i2[0] = 4;
+	dimensions<1> dim5(index_range<1>(i1, i2));
+	i2[0] = 5;
+	dimensions<1> dim6(index_range<1>(i1, i2));
+	i2[0] = 8;
+	dimensions<1> dim9(index_range<1>(i1, i2));
+	i2[0] = 19;
+	dimensions<1> dim20(index_range<1>(i1, i2));
+
+	bispace<1> a(20);
+	a.split(5).split(11);
+	const block_index_space<1> &bis = a.get_bis();
+
+	if(!bis.get_dims().equals(dim20)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Total dimensions don't match reference");
+	}
+	if(!bis.get_block_index_dims().equals(dim3)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Block index dimensions don't match reference");
+	}
+	i1[0] = 1; i2[0] = 2;
+	if(!bis.get_block_dims(i0).equals(dim5)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Block [0] dimensions don't match reference");
+	}
+	if(!bis.get_block_dims(i1).equals(dim6)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Block [0] dimensions don't match reference");
+	}
+	if(!bis.get_block_dims(i2).equals(dim9)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Block [0] dimensions don't match reference");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+
 }
 
 } // namespace libtensor

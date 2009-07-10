@@ -84,7 +84,6 @@ template<>
 class bispace<1> : public bispace_i<1> {
 private:
 	block_index_space<1> m_bis; //!< Block %index space
-	bool m_dirty; //!< Whether split points need to be updated
 	std::list<size_t> m_splits; //!< Split points
 
 public:
@@ -215,12 +214,12 @@ const bispace < 1 > &bispace<N>::operator[](size_t i) const {
 }
 
 inline bispace<1>::bispace(size_t dim)
-: m_bis(make_dims(dim)), m_dirty(false) {
+: m_bis(make_dims(dim)) {
 
 }
 
 inline bispace<1>::bispace(const bispace<1> &other)
-: m_bis(other.m_bis), m_dirty(other.m_dirty), m_splits(other.m_splits) {
+: m_bis(other.m_bis), m_splits(other.m_splits) {
 
 }
 
@@ -234,10 +233,10 @@ inline bispace<1> &bispace<1>::split(size_t pos) throw(exception) {
 	while(i != m_splits.end() && *i <= pos) i++;
 	if(i == m_splits.end()) {
 		m_splits.push_back(pos);
-		m_dirty = true;
+		m_bis.split(0, pos);
 	} else if(*i > pos) {
 		m_splits.insert(i, pos);
-		m_dirty = true;
+		m_bis.split(0, pos);
 	}
 	return *this;
 }
