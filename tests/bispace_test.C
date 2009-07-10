@@ -4,7 +4,10 @@
 namespace libtensor {
 
 void bispace_test::perform() throw(libtest::test_exception) {
+
 	test_1();
+	test_2();
+	test_3();
 
 	bispace<1> i(10), j(10), a(20), b(20);
 	i.split(5);
@@ -129,11 +132,233 @@ void bispace_test::test_1() throw(libtest::test_exception) {
 	}
 	if(!bis.get_block_dims(i1).equals(dim6)) {
 		fail_test(testname, __FILE__, __LINE__,
-			"Block [0] dimensions don't match reference");
+			"Block [1] dimensions don't match reference");
 	}
 	if(!bis.get_block_dims(i2).equals(dim9)) {
 		fail_test(testname, __FILE__, __LINE__,
-			"Block [0] dimensions don't match reference");
+			"Block [2] dimensions don't match reference");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+
+}
+
+void bispace_test::test_2() throw(libtest::test_exception) {
+
+	const char *testname = "bispace_test::test_2()";
+
+	try {
+
+	index<2> i0, i1, i2;
+	i2[0] = 2; i2[1] = 2;
+	dimensions<2> dim_3_3(index_range<2>(i1, i2));
+	i2[0] = 4; i2[1] = 4;
+	dimensions<2> dim_5_5(index_range<2>(i1, i2));
+	i2[0] = 4; i2[1] = 5;
+	dimensions<2> dim_5_6(index_range<2>(i1, i2));
+	i2[0] = 4; i2[1] = 8;
+	dimensions<2> dim_5_9(index_range<2>(i1, i2));
+	i2[0] = 5; i2[1] = 4;
+	dimensions<2> dim_6_5(index_range<2>(i1, i2));
+	i2[0] = 5; i2[1] = 5;
+	dimensions<2> dim_6_6(index_range<2>(i1, i2));
+	i2[0] = 5; i2[1] = 8;
+	dimensions<2> dim_6_9(index_range<2>(i1, i2));
+	i2[0] = 8; i2[1] = 4;
+	dimensions<2> dim_9_5(index_range<2>(i1, i2));
+	i2[0] = 8; i2[1] = 5;
+	dimensions<2> dim_9_6(index_range<2>(i1, i2));
+	i2[0] = 8; i2[1] = 8;
+	dimensions<2> dim_9_9(index_range<2>(i1, i2));
+	i2[0] = 19; i2[1] = 19;
+	dimensions<2> dim_20_20(index_range<2>(i1, i2));
+
+	bispace<1> a(20), b(20);
+	a.split(5).split(11);
+	b.split(5).split(11);
+	bispace<2> ab(a&b);
+	const block_index_space<2> &bis = ab.get_bis();
+
+	if(!bis.get_dims().equals(dim_20_20)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Total dimensions don't match reference");
+	}
+	if(!bis.get_block_index_dims().equals(dim_3_3)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Block index dimensions don't match reference");
+	}
+
+	index<2> i00, i01, i02, i10, i11, i12, i20, i21, i22;
+	i01[1] = 1;
+	i02[1] = 2;
+	i10[0] = 1;
+	i11[0] = 1; i11[1] = 1;
+	i12[0] = 1; i12[1] = 2;
+	i20[0] = 2;
+	i21[0] = 2; i21[1] = 1;
+	i22[0] = 2; i22[1] = 2;
+
+	if(!bis.get_block_dims(i00).equals(dim_5_5)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Block [0,0] dimensions don't match reference");
+	}
+	if(!bis.get_block_dims(i01).equals(dim_5_6)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Block [0,1] dimensions don't match reference");
+	}
+	if(!bis.get_block_dims(i02).equals(dim_5_9)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Block [0,2] dimensions don't match reference");
+	}
+	if(!bis.get_block_dims(i10).equals(dim_6_5)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Block [1,0] dimensions don't match reference");
+	}
+	if(!bis.get_block_dims(i11).equals(dim_6_6)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Block [1,1] dimensions don't match reference");
+	}
+	if(!bis.get_block_dims(i12).equals(dim_6_9)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Block [1,2] dimensions don't match reference");
+	}
+	if(!bis.get_block_dims(i20).equals(dim_9_5)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Block [2,0] dimensions don't match reference");
+	}
+	if(!bis.get_block_dims(i21).equals(dim_9_6)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Block [2,1] dimensions don't match reference");
+	}
+	if(!bis.get_block_dims(i22).equals(dim_9_9)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Block [2,2] dimensions don't match reference");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+
+}
+
+void bispace_test::test_3() throw(libtest::test_exception) {
+
+	const char *testname = "bispace_test::test_3()";
+
+	try {
+
+	index<2> i0, i1, i2;
+	i2[0] = 1; i2[1] = 2;
+	dimensions<2> dim_2_3(index_range<2>(i1, i2));
+	i2[0] = 2; i2[1] = 1;
+	dimensions<2> dim_3_2(index_range<2>(i1, i2));
+	i2[0] = 4; i2[1] = 4;
+	dimensions<2> dim_5_5(index_range<2>(i1, i2));
+	i2[0] = 4; i2[1] = 5;
+	dimensions<2> dim_5_6(index_range<2>(i1, i2));
+	i2[0] = 4; i2[1] = 8;
+	dimensions<2> dim_5_9(index_range<2>(i1, i2));
+	i2[0] = 5; i2[1] = 4;
+	dimensions<2> dim_6_5(index_range<2>(i1, i2));
+	i2[0] = 5; i2[1] = 5;
+	dimensions<2> dim_6_6(index_range<2>(i1, i2));
+	i2[0] = 5; i2[1] = 8;
+	dimensions<2> dim_6_9(index_range<2>(i1, i2));
+	i2[0] = 8; i2[1] = 4;
+	dimensions<2> dim_9_5(index_range<2>(i1, i2));
+	i2[0] = 8; i2[1] = 5;
+	dimensions<2> dim_9_6(index_range<2>(i1, i2));
+	i2[0] = 8; i2[1] = 8;
+	dimensions<2> dim_9_9(index_range<2>(i1, i2));
+	i2[0] = 10; i2[1] = 19;
+	dimensions<2> dim_11_20(index_range<2>(i1, i2));
+	i2[0] = 19; i2[1] = 10;
+	dimensions<2> dim_20_11(index_range<2>(i1, i2));
+
+	bispace<1> a(20), b(11);
+	a.split(5).split(11);
+	b.split(5);
+	bispace<2> ab(a&b), ba(b*a, a&b);
+	const block_index_space<2> &bis_ab = ab.get_bis();
+	const block_index_space<2> &bis_ba = ba.get_bis();
+
+	if(!bis_ab.get_dims().equals(dim_20_11)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Total dimensions in ab don't match reference");
+	}
+	if(!bis_ba.get_dims().equals(dim_11_20)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Total dimensions in ba don't match reference");
+	}
+	if(!bis_ab.get_block_index_dims().equals(dim_3_2)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Block index dimensions in ab don't match reference");
+	}
+	if(!bis_ba.get_block_index_dims().equals(dim_2_3)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Block index dimensions in ab don't match reference");
+	}
+
+	index<2> i00, i01, i02, i10, i11, i12, i20, i21, i22;
+	i01[1] = 1;
+	i02[1] = 2;
+	i10[0] = 1;
+	i11[0] = 1; i11[1] = 1;
+	i12[0] = 1; i12[1] = 2;
+	i20[0] = 2;
+	i21[0] = 2; i21[1] = 1;
+	i22[0] = 2; i22[1] = 2;
+
+	if(!bis_ab.get_block_dims(i00).equals(dim_5_5)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Block ab[0,0] dimensions don't match reference");
+	}
+	if(!bis_ab.get_block_dims(i01).equals(dim_5_6)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Block ab[0,1] dimensions don't match reference");
+	}
+	if(!bis_ab.get_block_dims(i10).equals(dim_6_5)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Block ab[1,0] dimensions don't match reference");
+	}
+	if(!bis_ab.get_block_dims(i11).equals(dim_6_6)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Block ab[1,1] dimensions don't match reference");
+	}
+	if(!bis_ab.get_block_dims(i20).equals(dim_9_5)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Block ab[2,0] dimensions don't match reference");
+	}
+	if(!bis_ab.get_block_dims(i21).equals(dim_9_6)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Block ab[2,1] dimensions don't match reference");
+	}
+
+	if(!bis_ba.get_block_dims(i00).equals(dim_5_5)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Block ba[0,0] dimensions don't match reference");
+	}
+	if(!bis_ba.get_block_dims(i01).equals(dim_5_6)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Block ba[0,1] dimensions don't match reference");
+	}
+	if(!bis_ba.get_block_dims(i02).equals(dim_5_9)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Block ba[0,2] dimensions don't match reference");
+	}
+	if(!bis_ba.get_block_dims(i10).equals(dim_6_5)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Block ba[1,0] dimensions don't match reference");
+	}
+	if(!bis_ba.get_block_dims(i11).equals(dim_6_6)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Block ba[1,1] dimensions don't match reference");
+	}
+	if(!bis_ba.get_block_dims(i12).equals(dim_6_9)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Block ba[1,2] dimensions don't match reference");
 	}
 
 	} catch(exception &e) {

@@ -73,7 +73,8 @@ public:
 	virtual const dimensions<N> &get_dims() const;
 	//@}
 
-	const bispace < 1 > & operator[](size_t i) const;
+	const bispace<1> &at(size_t) const;
+	const bispace<1> &operator[](size_t i) const;
 };
 
 /**	\brief Specialized version for one-dimensional block %index spaces
@@ -109,6 +110,9 @@ public:
 	 **/
 	bispace<1> &split(size_t pos) throw(exception);
 
+	template<size_t N>
+	void transfer_splits(block_index_space<N> &bis, size_t dim) const;
+
 	//!	\name Implementation of bispace_i<1>
 	//@{
 
@@ -134,16 +138,20 @@ private:
 	static dimensions < 1 > make_dims(size_t sz);
 };
 
-template<size_t N> template<typename SymExprT>
-bispace<N>::bispace(const bispace_expr<N, SymExprT> &e_sym) throw(exception) :
-m_sym_expr(e_sym.clone()), m_dims(e_sym.get_dims()), m_bis(m_dims) {
+template<size_t N>
+template<typename SymExprT>
+bispace<N>::bispace(const bispace_expr<N, SymExprT> &e_sym) throw(exception)
+: m_sym_expr(e_sym.clone()), m_dims(e_sym.get_dims()), m_bis(m_dims) {
+
 	make_inv_idx();
+	for(size_t i = 0; i < N; i++) at(i).transfer_splits(m_bis, i);
 }
 
-template<size_t N> template<typename OrderExprT, typename SymExprT>
+template<size_t N>
+template<typename OrderExprT, typename SymExprT>
 bispace<N>::bispace(const bispace_expr<N, OrderExprT> &e_order,
-	const bispace_expr<N, SymExprT> &e_sym) throw(exception) :
-m_sym_expr(e_sym.clone()), m_dims(e_sym.get_dims()), m_bis(m_dims) {
+	const bispace_expr<N, SymExprT> &e_sym) throw(exception)
+: m_sym_expr(e_sym.clone()), m_dims(e_sym.get_dims()), m_bis(m_dims) {
 
 	const bispace < 1 > *seq_order[N], *seq_sym[N];
 	for(size_t i = 0; i < N; i++) {
@@ -175,42 +183,57 @@ m_sym_expr(e_sym.clone()), m_dims(e_sym.get_dims()), m_bis(m_dims) {
 	make_inv_idx();
 	permutation<N> inv_perm(m_perm); inv_perm.invert();
 	inv_perm.apply(N, m_inv_idx);
+	for(size_t i = 0; i < N; i++) at(i).transfer_splits(m_bis, i);
+
 }
 
 template<size_t N>
-bispace<N>::bispace(const bispace<N> &other) :
-m_sym_expr(other.m_sym_expr->clone()), m_perm(other.m_perm),
-m_dims(other.m_dims), m_bis(other.m_bis) {
+bispace<N>::bispace(const bispace<N> &other)
+: m_sym_expr(other.m_sym_expr->clone()), m_perm(other.m_perm),
+	m_dims(other.m_dims), m_bis(other.m_bis) {
+
 	make_inv_idx();
 }
 
 template<size_t N>
 bispace<N>::~bispace() {
+
 }
 
 template<size_t N>
 void bispace<N>::make_inv_idx() {
+
 	for(size_t i = 0; i < N; i++) m_inv_idx[i] = i;
 }
 
 template<size_t N>
 rc_ptr< bispace_i<N> > bispace<N>::clone() const {
+
 	return rc_ptr< bispace_i<N> >(new bispace<N > (*this));
 }
 
 template<size_t N>
 inline const dimensions<N> &bispace<N>::get_dims() const {
+
 	return m_dims;
 }
 
 template<size_t N>
 inline const block_index_space<N> &bispace<N>::get_bis() const {
+
 	return m_bis;
 }
 
 template<size_t N>
-const bispace < 1 > &bispace<N>::operator[](size_t i) const {
-	return(*m_sym_expr)[m_inv_idx[i]];
+inline const bispace<1> &bispace<N>::at(size_t i) const {
+
+	return (*m_sym_expr)[m_inv_idx[i]];
+}
+
+template<size_t N>
+inline const bispace<1> &bispace<N>::operator[](size_t i) const {
+
+	return at(i);
 }
 
 inline bispace<1>::bispace(size_t dim)
@@ -239,6 +262,17 @@ inline bispace<1> &bispace<1>::split(size_t pos) throw(exception) {
 		m_bis.split(0, pos);
 	}
 	return *this;
+}
+
+template<size_t N>
+inline void bispace<1>::transfer_splits(block_index_space<N> &bis, size_t dim)
+	const {
+
+	typename std::list<size_t>::const_iterator i = m_splits.begin();
+	while(i != m_splits.end()) {
+		bis.split(dim, *i);
+		i++;
+	}
 }
 
 inline rc_ptr< bispace_i<1> > bispace<1>::clone() const {
