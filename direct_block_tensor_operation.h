@@ -26,6 +26,11 @@ public:
 	/**	\brief Invoked to execute the operation
 	 **/
 	virtual void perform(block_tensor_i<N, T> &bt) throw(exception) = 0;
+
+	/**	\brief Invoked to calculate one block
+	 **/
+	//virtual void perform(block_tensor_i<N, T> &bt, const index<N> &i)
+	//	throw(exception) = 0;
 };
 
 } // namespace libtensor

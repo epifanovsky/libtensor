@@ -252,7 +252,7 @@ inline bispace<1>::~bispace() {
 
 inline bispace<1> &bispace<1>::split(size_t pos) throw(exception) {
 
-	typename std::list<size_t>::iterator i = m_splits.begin();
+	std::list<size_t>::iterator i = m_splits.begin();
 	while(i != m_splits.end() && *i <= pos) i++;
 	if(i == m_splits.end()) {
 		m_splits.push_back(pos);

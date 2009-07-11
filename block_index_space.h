@@ -202,7 +202,7 @@ void block_index_space<N>::reset() {
 	index<N> idx;
 	for(register size_t i = 0; i < N; i++) {
 		m_block_index_max[i] = 0;
-		idx[i] = dims[i];
+		idx[i] = m_dims[i];
 	}
 	m_splits.clear();
 	m_splits.push_back(idx);

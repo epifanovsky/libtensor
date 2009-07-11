@@ -1,3 +1,6 @@
+#include <cmath>
+#include <cstdlib>
+#include <ctime>
 #include <sstream>
 #include <libtensor.h>
 #include "dot_product_test.h"
@@ -5,6 +8,8 @@
 namespace libtensor {
 
 void dot_product_test::perform() throw(libtest::test_exception) {
+
+	srand48(time(NULL));
 
 	//test_1(10);
 	test_2_ij_ij(10, 11);
