@@ -43,6 +43,11 @@ public:
 	 **/
 	btensor(const bispace_i<N> &bi);
 
+	/**	\brief Constructs a block %tensor using a block %index space
+		\param bis Block %index space
+	 **/
+	btensor(const block_index_space<N> &bis);
+
 	/**	\brief Constructs a block %tensor using information about
 			blocks from another block %tensor
 		\param bt Another block %tensor
@@ -95,6 +100,11 @@ protected:
 template<size_t N, typename T, typename Traits>
 inline btensor<N, T, Traits>::btensor(const bispace_i<N> &bispace) :
 	m_bt(bispace.get_bis()), m_tctrl(m_bt) {
+}
+
+template<size_t N, typename T, typename Traits>
+inline btensor<N, T, Traits>::btensor(const block_index_space<N> &bis) :
+	m_bt(bis), m_tctrl(m_bt) {
 }
 
 template<size_t N, typename T, typename Traits>
