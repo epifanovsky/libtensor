@@ -79,11 +79,11 @@ public:
 	static const size_t k_order = N;
 
 private:
-	bispace<N> &m_bis;
+	const bispace<N> &m_bis;
 
 public:
 
-	bispace_expr_ident(bispace<N> &bis) : m_bis(bis) {
+	bispace_expr_ident(const bispace<N> &bis) : m_bis(bis) {
 	}
 
 	const dimensions<N> &get_dims() const {
@@ -226,7 +226,7 @@ bispace_expr_binop_and<
 bispace_expr<N, bispace_expr_ident<N> >,
 bispace_expr<M, bispace_expr_ident<M> >
 > > >
-operator&(bispace<N> &lhs, bispace<M> &rhs) {
+operator&(const bispace<N> &lhs, const bispace<M> &rhs) {
 	typedef bispace_expr<N, bispace_expr_ident<N> > expr1_t;
 	typedef bispace_expr<M, bispace_expr_ident<M> > expr2_t;
 	typedef bispace_expr_binop_and<expr1_t, expr2_t> binop_and_t;
@@ -247,7 +247,7 @@ bispace_expr < N, bispace_expr_ident<N> >,
 bispace_expr_binop_and<
 bispace_expr<M, Expr>, bispace_expr < N, bispace_expr_ident<N> >
 > > >
-operator&(bispace_expr<M, Expr> lhs, bispace<N> &rhs) {
+operator&(bispace_expr<M, Expr> lhs, const bispace<N> &rhs) {
 	typedef bispace_expr<M, Expr> expr1_t;
 	typedef bispace_expr< N, bispace_expr_ident<N> > expr2_t;
 	typedef bispace_expr_binop_and<expr1_t, expr2_t> binop_and_t;
@@ -267,7 +267,7 @@ bispace_expr<M, Expr>,
 bispace_expr_binop_and<
 bispace_expr < N, bispace_expr_ident<N> >, bispace_expr<M, Expr>
 > > >
-operator&(bispace<N> &lhs, bispace_expr<M, Expr> rhs) {
+operator&(const bispace<N> &lhs, bispace_expr<M, Expr> rhs) {
 	typedef bispace_expr< N, bispace_expr_ident<N> > expr1_t;
 	typedef bispace_expr<M, Expr> expr2_t;
 	typedef bispace_expr_binop_and<expr1_t, expr2_t> binop_and_t;
@@ -306,7 +306,7 @@ bispace_expr_binop_mul<
 bispace_expr<N, bispace_expr_ident<N> >,
 bispace_expr<M, bispace_expr_ident<M> >
 > > >
-operator*(bispace<N> &lhs, bispace<M> &rhs) {
+operator*(const bispace<N> &lhs, const bispace<M> &rhs) {
 	typedef bispace_expr<N, bispace_expr_ident<N> > expr1_t;
 	typedef bispace_expr<M, bispace_expr_ident<M> > expr2_t;
 	typedef bispace_expr_binop_mul<expr1_t, expr2_t> binop_mul_t;
@@ -327,7 +327,7 @@ bispace_expr < N, bispace_expr_ident<N> >,
 bispace_expr_binop_mul<
 bispace_expr<M, Expr>, bispace_expr < N, bispace_expr_ident<N> >
 > > >
-operator*(bispace_expr<M, Expr> lhs, bispace<N> &rhs) {
+operator*(bispace_expr<M, Expr> lhs, const bispace<N> &rhs) {
 	typedef bispace_expr<M, Expr> expr1_t;
 	typedef bispace_expr< N, bispace_expr_ident<N> > expr2_t;
 	typedef bispace_expr_binop_mul<expr1_t, expr2_t> binop_mul_t;
@@ -347,7 +347,7 @@ bispace_expr<M, Expr>,
 bispace_expr_binop_mul<
 bispace_expr < N, bispace_expr_ident<N> >, bispace_expr<M, Expr>
 > > >
-operator*(bispace<N> &lhs, bispace_expr<M, Expr> rhs) {
+operator*(const bispace<N> &lhs, bispace_expr<M, Expr> rhs) {
 	typedef bispace_expr< N, bispace_expr_ident<N> > expr1_t;
 	typedef bispace_expr<M, Expr> expr2_t;
 	typedef bispace_expr_binop_mul<expr1_t, expr2_t> binop_mul_t;
