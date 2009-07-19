@@ -80,12 +80,13 @@ private:
 	const letter &m_let;
 
 public:
-	letter_expr_ident(const letter &l) : m_let(l) { }
+	letter_expr_ident(const letter &l) : m_let(l) {}
 
 	bool contains(const letter &let) const { return &m_let == &let; }
 	size_t index_of(const letter &let) const throw(exception);
 	const letter &letter_at(size_t i) const throw(exception);
 };
+
 
 /**	\brief Binary operation expression
 
@@ -198,6 +199,18 @@ inline const letter &letter_expr_binop<T1, T2, Op>::letter_at(size_t i) const
 	if(i < T1::k_size) return m_t1.letter_at(i);
 	else return m_t2.letter_at(i - T1::k_size);
 }
+
+/**	\brief Unary + for one letter (returning a 1d letter_expr)
+
+	\ingroup libtensor_letter_expr
+**/
+inline letter_expr< 1, letter_expr_ident>
+operator+(const letter &l1 ) {
+	typedef letter_expr<1,letter_expr_ident> expr_t;
+
+	return expr_t(l1);
+}
+
 
 /**	\brief Bitwise OR (|) operator for two letters
 

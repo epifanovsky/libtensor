@@ -79,6 +79,13 @@ void labeled_btensor_test::test_label() throw(libtest::test_exception) {
 		fail_test("labeled_btensor_test::test_label()", __FILE__,
 			__LINE__, "Failed label test: t(i|j|a|b).letter_at(3)");
 	}
+
+	btensor<1> s(sp_i);
+
+	if (s(+i).index_of(i) != 0) {	
+		fail_test("labeled_btensor_test::test_label()", __FILE__,
+			__LINE__, "Failed label test: s(i).contains(i)");
+	}
 }
 
 void labeled_btensor_test::test_expr() throw(libtest::test_exception) {

@@ -11,6 +11,11 @@ void letter_expr_test::perform() throw(libtest::test_exception) {
 void letter_expr_test::test_contains() throw(libtest::test_exception) {
 	letter i, j, k, l;
 
+	if (!(+i).contains(i)) {
+		fail_test("letter_expr_test::test_contains()", __FILE__,
+			__LINE__, "Failed index location: (~i).contains(i)");
+	}
+
 	if(!(i|j|k).contains(i)) {
 		fail_test("letter_expr_test::test_contains()", __FILE__,
 			__LINE__, "Failed index location: (i|j|k).contains(i)");
