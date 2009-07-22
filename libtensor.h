@@ -29,6 +29,10 @@
 #include "tod_sum.h"
 #include "tod_symcontract2.h"
 
+#include "symmetry_i.h"
+#include "symmetry_base.h"
+#include "perm_symmetry.h"
+
 #include "block_tensor_i.h"
 #include "block_tensor_ctrl.h"
 #include "block_tensor.h"
