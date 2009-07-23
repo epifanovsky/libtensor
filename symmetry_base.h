@@ -8,6 +8,8 @@
 
 namespace libtensor {
 
+template<size_t N, typename T, typename Sym> class symmetry_base;
+
 template<size_t N, typename T, typename Sym>
 class symmetry_target {
 public:
@@ -29,9 +31,9 @@ public:
 	static bool dispatch_is_same(const Sym *sym,
 		const symmetry_i<N, T> &other) {
 
-		typedef symmetry_base<Parent> parent_t;
+		typedef symmetry_base<N, T, Parent> parent_t;
 		return static_cast<parent_t*>(sym)->
-			symmetry_base<Parent>::is_same(other);
+			symmetry_base<N, T, Parent>::is_same(other);
 	}
 };
 
