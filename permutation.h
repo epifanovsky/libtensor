@@ -20,7 +20,7 @@ namespace libtensor {
 
 	An implementation of %permutation (class) is used by the tensor class
 	and like as a template parameter. The %permutation implementation is
-	required to realize a given set of methods described in the 
+	required to realize a given set of methods described in the
 	\ref interface Interface section. The implementation is also required
 	to pass the test case described in the \ref tests Tests section.
 
@@ -97,7 +97,7 @@ namespace libtensor {
 	Returns \c true is the two %permutations are identical, that is they
 	permute a sequence in the same way; \c false otherwise. The same as
 	\c equals().
-	
+
 	\code
 	bool operator!=(const permutation_impl &p) const;
 	\endcode
@@ -120,7 +120,7 @@ namespace libtensor {
 	\endcode
 	Permutes two elements: \c i and \c j. Returns the reference to the
 	permutation.
-	
+
 	\code
 	permutation_impl &permute(const permutation_impl &p);
 	\endcode
@@ -298,6 +298,9 @@ public:
 	template<class T>
 	void apply(const size_t n, T *obj) const throw(exception);
 
+	template<typename T>
+	void apply(T (&seq)[N]) const;
+
 	/**	\brief Permutes a given sequence of objects and writes the
 			result to a different location
 		\param n Length of the sequence, must be the same as the
@@ -414,6 +417,15 @@ void permutation<N>::apply(const size_t n, T *obj) const throw(exception) {
 	for(register size_t i=0; i<N; i++) buf[i]=obj[i];
 	#pragma unroll(N)
 	for(register size_t i=0; i<N; i++) obj[i]=buf[m_idx[i]];
+}
+
+template<size_t N> template<typename T>
+void permutation<N>::apply(T (&seq)[N]) const {
+	T buf[N];
+	#pragma unroll(N)
+	for(register size_t i=0; i<N; i++) buf[i]=seq[i];
+	#pragma unroll(N)
+	for(register size_t i=0; i<N; i++) seq[i]=buf[m_idx[i]];
 }
 
 template<size_t N> template<class T>
