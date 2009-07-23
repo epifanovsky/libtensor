@@ -24,6 +24,7 @@ OBJS += labeled_btensor_test.o
 OBJS += lehmer_code_test.o
 OBJS += letter_test.o
 OBJS += letter_expr_test.o
+OBJS += orbit_iterator_test.o
 OBJS += perm_symmetry_test.o
 OBJS += permutation_test.o
 OBJS += permutation_builder_test.o

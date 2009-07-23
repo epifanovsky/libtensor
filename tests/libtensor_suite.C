@@ -25,6 +25,7 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	//add_test("lehmer_code", m_utf_lehmer_code);
 	add_test("letter", m_utf_letter);
 	add_test("letter_expr", m_utf_letter_expr);
+	add_test("orbit_iterator", m_utf_orbit_iterator);
 	add_test("perm_symmetry", m_utf_perm_symmetry);
 	add_test("permutation", m_utf_permutation);
 	add_test("permutation_builder", m_utf_permutation_builder);

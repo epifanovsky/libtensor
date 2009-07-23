@@ -13,6 +13,8 @@ class perm_symmetry_test : public libtest::unit_test {
 public:
 	virtual void perform() throw(libtest::test_exception);
 
+private:
+	void test_is_same() throw(libtest::test_exception);
 };
 
 } // namespace libtensor
