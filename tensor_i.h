@@ -10,9 +10,8 @@ namespace libtensor {
 template<size_t N, typename T> class tensor_ctrl;
 
 /**	\brief Tensor interface
-
-	\param N Tensor order.
-	\param T Tensor element type.
+	\tparam N Tensor order.
+	\tparam T Tensor element type.
 
 	<b>Implementing this interface</b>
 
@@ -30,17 +29,36 @@ template<size_t N, typename T> class tensor_ctrl;
 **/
 template<size_t N, typename T>
 class tensor_i {
-	friend class tensor_ctrl<N,T>;
+	friend class tensor_ctrl<N, T>;
 
 public:
+	//!	\name Construction and destruction
+	//@{
+
+	/**	\brief Virtual destructor
+	 **/
+	virtual ~tensor_i() { };
+
+	//@}
+
+
+	//!	\name Tensor dimensions
+	//@{
+
 	/**	\brief Returns the %dimensions of the %tensor
 	**/
 	virtual const dimensions<N> &get_dims() const = 0;
 
+	//@}
+
 protected:
 	//!	\name Event handling
 	//@{
+
+	/**	\brief Handles the prefetching of %tensor data
+	 **/
 	virtual void on_req_prefetch() throw(exception) = 0;
+
 	virtual T *on_req_dataptr() throw(exception) = 0;
 	virtual const T *on_req_const_dataptr() throw(exception) = 0;
 	virtual void on_ret_dataptr(const T *p) throw(exception) = 0;

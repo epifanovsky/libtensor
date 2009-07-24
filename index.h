@@ -119,13 +119,13 @@ public:
 	//@{
 
 	/**	\brief Returns the reference to an element at a given position
-			(r-value)
+			(l-value)
 		\param pos Position (not to exceed N, %index order).
 		\throw out_of_bounds If the position exceeds N.
 	 **/
 	size_t &at(size_t pos) throw(out_of_bounds);
 
-	/**	\brief Returns an element at a given position (l-value)
+	/**	\brief Returns an element at a given position (r-value)
 		\param pos Position (not to exceed N, %index order).
 		\throw out_of_bounds If the position exceeds N.
 	 **/
@@ -162,13 +162,13 @@ public:
 	//@{
 
 	/**	\brief Returns the reference to an element at a given position
-			(r-value)
+			(l-value)
 		\param pos Position (not to exceed N, %index order).
 		\throw out_of_bounds If the position exceeds N.
 	 **/
 	size_t &operator[](size_t pos) throw(out_of_bounds);
 
-	/**	\brief Returns an element at a given position (l-value)
+	/**	\brief Returns an element at a given position (r-value)
 		\param pos Position (not to exceed N, %index order).
 		\throw out_of_bounds If the position exceeds N.
 	 **/

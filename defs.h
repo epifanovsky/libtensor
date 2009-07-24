@@ -5,15 +5,15 @@
 
 /**	\brief Tensor library
 	\ingroup libtensor
-**/
+ **/
 namespace libtensor {
 
 /**	\brief Limits the maximum order of tensors
-**/
+ **/
 const size_t max_tensor_order = 6;
 
 /**	\brief Library version (SVN revision number)
-**/
+ **/
 extern const char *version;
 
 }
@@ -40,17 +40,21 @@ inline double drand48() { return (double(rand())/RAND_MAX); }
 #endif
 
 /**	\defgroup libtensor Tensor library
-**/
+ **/
+
+/**	\defgroup libtensor_core Core components
+	\ingroup libtensor
+ **/
 
 /**	\defgroup libtensor_tests Tests
 	\brief Unit tests of individual classes
 	\ingroup libtensor
-**/
+ **/
 
 /**	\defgroup libtensor_tod Tensor operations (double)
 	\brief Operations on tensors with real double precision elements
 	\ingroup libtensor
-**/
+ **/
 
 #endif // LIBTENSOR_DEFS_H
 

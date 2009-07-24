@@ -1,7 +1,6 @@
 #ifndef LIBTENSOR_EXCEPTION_H
 #define LIBTENSOR_EXCEPTION_H
 
-#include <cstring>
 #include <exception>
 
 namespace libtensor {
@@ -72,6 +71,32 @@ public:
 	//@}
 
 };
+
+
+/**	\brief Exception indicating an invalid argument or input parameter
+
+	\ingroup libtensor_core_exc
+ **/
+class bad_parameter : public exception {
+public:
+	//!	\name Construction and destruction
+	//@{
+
+	/**	\brief Creates an exception
+	 **/
+	bad_parameter(const char *ns, const char *clazz, const char *method,
+		const char *file, unsigned int line, const char *message)
+		throw()
+		: exception(ns, clazz, method, file, line, "bad_parameter",
+			message) { };
+
+	/**	\brief Virtual destructor
+	 **/
+	virtual ~bad_parameter() throw() { };
+
+	//@}
+};
+
 
 /**	\brief Exception indicating that an %index is out of bounds
 
