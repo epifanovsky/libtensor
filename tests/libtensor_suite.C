@@ -12,7 +12,6 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("btod_contract2", m_utf_btod_contract2);
 	add_test("btod_copy", m_utf_btod_copy);
 	add_test("contract", m_utf_contract);
-	add_test("contract2_0_4i", m_utf_contract2_0_4i);
 	add_test("contraction2", m_utf_contraction2);
 	add_test("dimensions", m_utf_dimensions);
 	add_test("direct_btensor", m_utf_direct_btensor);
@@ -22,15 +21,12 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("index", m_utf_index);
 	add_test("index_range", m_utf_index_range);
 	add_test("labeled_btensor", m_utf_labeled_btensor);
-	//add_test("lehmer_code", m_utf_lehmer_code);
 	add_test("letter", m_utf_letter);
 	add_test("letter_expr", m_utf_letter_expr);
 	add_test("orbit_iterator", m_utf_orbit_iterator);
 	add_test("perm_symmetry", m_utf_perm_symmetry);
 	add_test("permutation", m_utf_permutation);
 	add_test("permutation_builder", m_utf_permutation_builder);
-	add_test("permutator", m_utf_permutator);
-	add_test("symmetry", m_utf_symmetry);
 	add_test("tensor", m_utf_tensor);
 	add_test("tod_add", m_utf_tod_add);
 	add_test("tod_compare", m_utf_tod_compare);

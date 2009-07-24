@@ -1,10 +1,9 @@
-#include "tod_solve_test.h"
-
-#include "tensor.h"
-#include "index.h"
-#include <libtensor.h>
 #include <iostream>
 #include <cstdlib>
+#include <libtensor.h>
+
+#include "tod_solve_test.h"
+
 
 namespace libtensor {
 

@@ -16,7 +16,7 @@ LDFLAGS = -g -o
 INCLUDE = -I/opt/intel/Compiler/11.0/081/mkl/include
 LIBS = -lmkl -lguide -lpthread
 
-%.o: %.C; $(CPP) $(CPPFLAGS) $(INCLUDE) -c $<
+%.o: %.C; $(CPP) $(CPPFLAGS) $(INCLUDE) -o $@ -c $<
 
 %.d: %.C
 	@set -e; rm -f $@; \
