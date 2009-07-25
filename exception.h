@@ -98,6 +98,31 @@ public:
 };
 
 
+/**	\brief Exception indicating that a block of a %tensor does not exist
+
+	\ingroup libtensor_core_exc
+ **/
+class block_not_found : public exception {
+public:
+	//!	\name Construction and destruction
+	//@{
+
+	/**	\brief Creates an exception
+	 **/
+	block_not_found(const char *ns, const char *clazz, const char *method,
+		const char *file, unsigned int line, const char *message)
+		throw()
+		: exception(ns, clazz, method, file, line, "block_not_found",
+			message) { };
+
+	/**	\brief Virtual destructor
+	 **/
+	virtual ~block_not_found() throw() { };
+
+	//@}
+};
+
+
 /**	\brief Exception indicating that an %index is out of bounds
 
 	\ingroup libtensor_core_exc
@@ -121,6 +146,33 @@ public:
 
 	//@}
 };
+
+
+/**	\brief Exception indicating that not enough memory is available to
+		continue
+
+	\ingroup libtensor_core_exc
+ **/
+class out_of_memory : public exception {
+public:
+	//!	\name Construction and destruction
+	//@{
+
+	/**	\brief Creates an exception
+	 **/
+	out_of_memory(const char *ns, const char *clazz, const char *method,
+		const char *file, unsigned int line, const char *message)
+		throw()
+		: exception(ns, clazz, method, file, line, "out_of_memory",
+			message) { };
+
+	/**	\brief Virtual destructor
+	 **/
+	virtual ~out_of_memory() throw() { };
+
+	//@}
+};
+
 
 /**	\brief Throws an exception with a given error message
  **/

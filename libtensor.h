@@ -16,6 +16,7 @@
 #include "core/tensor.h"
 #include "core/direct_tensor.h"
 
+#include "core/block_map.h"
 #include "core/block_tensor_i.h"
 #include "core/block_tensor_ctrl.h"
 #include "core/block_tensor.h"

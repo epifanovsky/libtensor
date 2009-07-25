@@ -5,6 +5,7 @@
 #include <libtensor.h>
 #include "bispace_test.h"
 #include "block_index_space_test.h"
+#include "block_map_test.h"
 #include "block_tensor_test.h"
 #include "btensor_test.h"
 #include "btod_add_test.h"
@@ -47,6 +48,7 @@ namespace libtensor {
 	This suite runs the following tests:
 	\li libtensor::bispace_test
 	\li libtensor::block_index_space_test
+	\li libtensor::block_map_test
 	\li libtensor::block_tensor_test
 	\li libtensor::btensor_test
 	\li libtensor::btod_add_test
@@ -83,6 +85,7 @@ class libtensor_suite : public libtest::test_suite {
 private:
 	unit_test_factory<bispace_test> m_utf_bispace;
 	unit_test_factory<block_index_space_test> m_utf_block_index_space;
+	unit_test_factory<block_map_test> m_utf_block_map;
 	unit_test_factory<block_tensor_test> m_utf_block_tensor;
 	unit_test_factory<btensor_test> m_utf_btensor;
 	unit_test_factory<btod_add_test> m_utf_btod_add;
