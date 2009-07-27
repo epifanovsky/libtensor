@@ -76,8 +76,13 @@ protected:
 
 	//!	\name Implementation of block_tensor_i<N, T>
 	//@{
+	virtual const symmetry_i<N, T> &on_req_symmetry() throw(exception);
+	virtual void on_req_symmetry_operation(symmetry_operation_i<N, T> &op)
+		throw(exception);
+	virtual orbit_iterator<N, T> on_req_orbits() throw(exception);
 	virtual tensor_i<N, T> &on_req_block(const index<N> &idx)
 		throw(exception);
+	virtual void on_ret_block(const index<N> &idx) throw(exception);
 	//@}
 };
 
@@ -136,10 +141,33 @@ void direct_btensor<N, T, Traits>::on_ret_dataptr(const T *ptr) throw(exception)
 }
 
 template<size_t N, typename T, typename Traits>
+const symmetry_i<N, T> &direct_btensor<N, T, Traits>::on_req_symmetry()
+	throw(exception) {
+	throw_exc("direct_btensor<N, T, Traits>", "on_req_symmetry()", "NIY");
+}
+
+template<size_t N, typename T, typename Traits>
+void direct_btensor<N, T, Traits>::on_req_symmetry_operation(
+	symmetry_operation_i<N, T> &op) throw(exception) {
+	throw_exc("direct_btensor<N, T, Traits>", "on_req_symmetry_operation()", "NIY");
+}
+
+template<size_t N, typename T, typename Traits>
+orbit_iterator<N, T> direct_btensor<N, T, Traits>::on_req_orbits() throw(exception) {
+	throw_exc("direct_btensor<N, T, Traits>", "on_req_orbits()", "NIY");
+}
+
+template<size_t N, typename T, typename Traits>
 tensor_i<N, T> &direct_btensor<N, T, Traits>::on_req_block(const index<N> &idx)
 	throw(exception) {
 	throw_exc("direct_btensor<N, T, Traits>",
 		"on_req_block(const index<N>&)", "Unhandled event");
+}
+
+template<size_t N, typename T, typename Traits>
+void direct_btensor<N, T, Traits>::on_ret_block(const index<N> &idx)
+	throw(exception) {
+	throw_exc("direct_btensor<N, T, Traits>", "on_ret_block()", "NIY");
 }
 
 } // namespace libtensor
