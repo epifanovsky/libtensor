@@ -74,12 +74,19 @@ public:
 	 **/
 	dimensions<N> get_block_index_dims() const;
 
+	/**	\brief Returns the total %index of the first element of a block
+		\param idx Block %index.
+		\throw out_of_bounds If the block %index is out of bounds.
+	 **/
+	index<N> get_block_start(const index<N> &idx) const
+		throw(out_of_bounds);
+
 	/**	\brief Returns the dimensions of a block
 		\param idx Block index.
-		\throw exception If the index is out of bounds.
+		\throw out_of_bounds If the block %index is out of bounds.
 	 **/
 	dimensions<N> get_block_dims(const index<N> &idx) const
-		throw(exception);
+		throw(out_of_bounds);
 
 	//@}
 
@@ -139,15 +146,81 @@ inline const dimensions<N> &block_index_space<N>::get_dims() const {
 }
 
 template<size_t N>
-inline void block_index_space<N>::permute(const permutation<N> &perm) {
+dimensions<N> block_index_space<N>::get_block_index_dims() const {
 
-	m_dims.permute(perm);
-	m_block_index_max.permute(perm);
-	typename std::list< index<N> >::iterator iter = m_splits.begin();
-	while(iter != m_splits.end()) {
-		iter->permute(perm);
-		iter++;
+	index<N> i0;
+	return dimensions<N>(index_range<N>(i0, m_block_index_max));
+}
+
+template<size_t N>
+index<N> block_index_space<N>::get_block_start(const index<N> &idx) const
+	throw(out_of_bounds) {
+
+	static const char *method = "get_block_start(const index<N>&)";
+
+#ifdef LIBTENSOR_DEBUG
+	for(register size_t i = 0; i < N; i++) {
+		if(idx[i] > m_block_index_max[i]) {
+			throw out_of_bounds("libtensor", k_clazz, method,
+				__FILE__, __LINE__,
+				"Block index is out of bounds.");
+		}
 	}
+#endif // LIBTENSOR_DEBUG
+
+	index<N> i1;
+	typename std::list< index<N> >::const_iterator iter = m_splits.begin();
+	index<N> last, blk;
+	do {
+		const index<N> &cur = *iter;
+		for(size_t i = 0; i < N; i++) {
+			if(cur[i] > last[i]) {
+				if(blk[i] == idx[i]) i1[i] = last[i];
+				blk[i]++;
+			}
+		}
+		last = *iter;
+		iter++;
+	} while(iter != m_splits.end());
+
+	return i1;
+}
+
+template<size_t N>
+dimensions<N> block_index_space<N>::get_block_dims(const index<N> &idx) const
+	throw(out_of_bounds) {
+
+	static const char *method = "get_block_dims(const index<N>&)";
+
+#ifdef LIBTENSOR_DEBUG
+	for(register size_t i = 0; i < N; i++) {
+		if(idx[i] > m_block_index_max[i]) {
+			throw out_of_bounds("libtensor", k_clazz, method,
+				__FILE__, __LINE__,
+				"Block index is out of bounds.");
+		}
+	}
+#endif // LIBTENSOR_DEBUG
+
+	index<N> i1, i2;
+	typename std::list< index<N> >::const_iterator iter = m_splits.begin();
+	index<N> last, blk;
+	do {
+		const index<N> &cur = *iter;
+		for(size_t i = 0; i < N; i++) {
+			if(cur[i] > last[i]) {
+				if(blk[i] == idx[i]) {
+					i1[i] = last[i];
+					i2[i] = cur[i] - 1;
+				}
+				blk[i]++;
+			}
+		}
+		last = *iter;
+		iter++;
+	} while(iter != m_splits.end());
+
+	return dimensions<N>(index_range<N>(i1, i2));
 }
 
 template<size_t N>
@@ -209,35 +282,15 @@ void block_index_space<N>::reset() {
 }
 
 template<size_t N>
-dimensions<N> block_index_space<N>::get_block_index_dims() const {
+inline void block_index_space<N>::permute(const permutation<N> &perm) {
 
-	index<N> i0;
-	return dimensions<N>(index_range<N>(i0, m_block_index_max));
-}
-
-template<size_t N>
-dimensions<N> block_index_space<N>::get_block_dims(const index<N> &idx) const
-	throw(exception) {
-
-	index<N> i1, i2;
-	typename std::list< index<N> >::const_iterator iter = m_splits.begin();
-	index<N> last, blk;
-	do {
-		const index<N> &cur = *iter;
-		for(size_t i = 0; i < N; i++) {
-			if(cur[i] > last[i]) {
-				if(blk[i] == idx[i]) {
-					i1[i] = last[i];
-					i2[i] = cur[i] - 1;
-				}
-				blk[i]++;
-			}
-		}
-		last = *iter;
+	m_dims.permute(perm);
+	m_block_index_max.permute(perm);
+	typename std::list< index<N> >::iterator iter = m_splits.begin();
+	while(iter != m_splits.end()) {
+		iter->permute(perm);
 		iter++;
-	} while(iter != m_splits.end());
-
-	return dimensions<N>(index_range<N>(i1, i2));
+	}
 }
 
 
