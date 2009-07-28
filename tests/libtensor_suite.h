@@ -31,6 +31,7 @@
 #include "symmetry_base_test.h"
 #include "tensor_test.h"
 #include "tod_add_test.h"
+#include "tod_btconv_test.h"
 #include "tod_compare_test.h"
 #include "tod_contract2_test.h"
 #include "tod_copy_test.h"
@@ -76,6 +77,7 @@ namespace libtensor {
 	\li libtensor::symmetry_base_test
 	\li libtensor::tensor_test
 	\li libtensor::tod_add_test
+	\li libtensor::tod_btconv_test
 	\li libtensor::tod_compare_test
 	\li libtensor::tod_contract2_test
 	\li libtensor::tod_copy_test
@@ -115,6 +117,7 @@ private:
 	unit_test_factory<symmetry_base_test> m_utf_symmetry_base;
 	unit_test_factory<tensor_test> m_utf_tensor;
 	unit_test_factory<tod_add_test> m_utf_tod_add;
+	unit_test_factory<tod_btconv_test> m_utf_tod_btconv;
 	unit_test_factory<tod_compare_test> m_utf_tod_compare;
 	unit_test_factory<tod_contract2_test> m_utf_tod_contract2;
 	unit_test_factory<tod_copy_test> m_utf_tod_copy;

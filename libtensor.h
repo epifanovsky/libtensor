@@ -25,6 +25,7 @@
 #include "core/symmetry_i.h"
 #include "core/symmetry_target_i.h"
 #include "core/symmetry_operation_i.h"
+#include "core/block_iterator.h"
 #include "core/orbit_iterator.h"
 
 
@@ -33,6 +34,7 @@
 
 #include "tod/tod_add.h"
 #include "tod/tod_additive.h"
+#include "tod/tod_btconv.h"
 #include "tod/tod_compare.h"
 #include "tod/tod_contract2.h"
 #include "tod/tod_copy.h"
@@ -43,6 +45,7 @@
 #include "tod/tod_symcontract2.h"
 
 
+#include "btod/block_symop_double.h"
 #include "btod/btod_add.h"
 #include "btod/btod_additive.h"
 #include "btod/btod_compare.h"

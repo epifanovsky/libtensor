@@ -31,6 +31,7 @@ OBJS += permutation_builder_test.o
 OBJS += symmetry_base_test.o
 OBJS += tensor_test.o
 OBJS += tod_add_test.o
+OBJS += tod_btconv_test.o
 OBJS += tod_compare_test.o
 OBJS += tod_contract2_test.o
 OBJS += tod_copy_test.o
