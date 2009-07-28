@@ -27,6 +27,7 @@
 #include "perm_symmetry_test.h"
 #include "permutation_test.h"
 #include "permutation_builder_test.h"
+#include "symmetry_base_test.h"
 #include "tensor_test.h"
 #include "tod_add_test.h"
 #include "tod_compare_test.h"
@@ -70,6 +71,7 @@ namespace libtensor {
 	\li libtensor::perm_symmetry_test
 	\li libtensor::permutation_test
 	\li libtensor::permutation_builder_test
+	\li libtensor::symmetry_base_test
 	\li libtensor::tensor_test
 	\li libtensor::tod_add_test
 	\li libtensor::tod_compare_test
@@ -107,6 +109,7 @@ private:
 	unit_test_factory<perm_symmetry_test> m_utf_perm_symmetry;
 	unit_test_factory<permutation_test> m_utf_permutation;
 	unit_test_factory<permutation_builder_test> m_utf_permutation_builder;
+	unit_test_factory<symmetry_base_test> m_utf_symmetry_base;
 	unit_test_factory<tensor_test> m_utf_tensor;
 	unit_test_factory<tod_add_test> m_utf_tod_add;
 	unit_test_factory<tod_compare_test> m_utf_tod_compare;

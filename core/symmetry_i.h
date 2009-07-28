@@ -4,11 +4,10 @@
 #include "defs.h"
 #include "exception.h"
 #include "dimensions.h"
+#include "orbit_iterator.h"
+#include "symmetry_target_i.h"
 
 namespace libtensor {
-
-template<size_t N, typename T> class symmetry_operation_i;
-template<size_t N, typename T> class orbit_iterator;
 
 /**	\brief Block %tensor symmetry interface
 	\tparam N Tensor order.
@@ -39,7 +38,15 @@ template<size_t N, typename T> class orbit_iterator;
 	operations can be done without knowing the actual implementation.
 	However, since different symmetry classes have properties that are
 	specific to them, operations that go beyond iterating orbits and
-	indexes must be done through a gateway provided by invoke().
+	indexes must be done through a gateway provided by dispatch().
+
+	<b>Dispatch mechanism</b>
+
+	This interface defines, but not establishes specifically, a dispatch
+	mechanism that can be accessed through the dispatch() method. The
+	purpose is to determine the type of a symmetry object at runtime and
+	perform operations that are specific to that type. The details of the
+	mechanism are to be disclosed by implementations of this interface.
 
 	\ingroup libtensor_core
 **/
@@ -55,14 +62,9 @@ public:
 
 	//@}
 
-	//!	\name Symmetry interface
-	//@{
 
-	/**	\brief Checks if two symmetry objects belong to the same
-			class
-		\param other Second symmetry object.
-	 **/
-	virtual bool is_same(const symmetry_i<N, T> &other) const = 0;
+	//!	\name Symmetry manipulations
+	//@{
 
 	/**	\brief Disables all symmetry elements such that every block
 			becomes unique
@@ -79,15 +81,28 @@ public:
 	virtual orbit_iterator<N, T> get_orbits(
 		const dimensions<N> &dims) const = 0;
 
-	/**	\brief Invokes a symmetry operation using the double dispatch
-			mechanism
-		\param op Symmetry operation.
-		\throw exception If the symmetry operation causes an %exception
+	//@}
+
+
+	//!	\name Dispatching mechanism
+	//@{
+
+	/**	\brief Invokes the dispatch mechanism to determine the symmetry
+			type at runtime (const)
+		\param target Dispatch target.
 	 **/
-	//virtual void invoke(symmetry_operation_i<N, T> &op)
-	//	throw(exception) = 0;
+	virtual void dispatch(symmetry_target_i<N, T> &target) const
+		throw(exception) = 0;
+
+	/**	\brief Invokes the dispatch mechanism to determine the symmetry
+			type at runtime
+		\param target Dispatch target.
+	 **/
+	virtual void dispatch(symmetry_target_i<N, T> &target)
+		throw(exception) = 0;
 
 	//@}
+
 };
 
 } // namespace libtensor

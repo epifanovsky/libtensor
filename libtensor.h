@@ -23,6 +23,7 @@
 #include "core/direct_block_tensor.h"
 
 #include "core/symmetry_i.h"
+#include "core/symmetry_target_i.h"
 #include "core/symmetry_operation_i.h"
 #include "core/orbit_iterator.h"
 
@@ -50,6 +51,7 @@
 #include "btod/btod_sum.h"
 
 
+#include "symmetry/symmetry_target.h"
 #include "symmetry/symmetry_base.h"
 #include "symmetry/perm_symmetry.h"
 

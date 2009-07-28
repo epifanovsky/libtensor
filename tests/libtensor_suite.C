@@ -28,6 +28,7 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("perm_symmetry", m_utf_perm_symmetry);
 	add_test("permutation", m_utf_permutation);
 	add_test("permutation_builder", m_utf_permutation_builder);
+	add_test("symmetry_base", m_utf_symmetry_base);
 	add_test("tensor", m_utf_tensor);
 	add_test("tod_add", m_utf_tod_add);
 	add_test("tod_compare", m_utf_tod_compare);
