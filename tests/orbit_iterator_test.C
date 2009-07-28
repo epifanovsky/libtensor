@@ -40,6 +40,25 @@ public:
 	}
 };
 
+class bihandler : public block_iterator_handler_i<2, int> {
+public:
+	virtual void on_begin(index<2> &idx, block_symop<2, int> &symop,
+		const index<2> &orbit, const dimensions<2> &dims) const {
+
+		idx = orbit;
+	}
+
+	virtual bool on_end(const index<2> &idx, const index<2> &orbit,
+		const dimensions<2> &dims) const {
+
+	}
+
+	virtual void on_next(index<2> &idx, block_symop<2, int> &symop,
+		const index<2> &orbit, const dimensions<2> &dims) const {
+
+	}
+};
+
 } // namespace orbit_iterator_test_ns
 
 namespace ns = orbit_iterator_test_ns;
@@ -54,11 +73,12 @@ void orbit_iterator_test::test_1() throw(libtest::test_exception) {
 
 	const char *testname = "orbit_iterator_test::test_1()";
 
+	ns::bihandler bihandler;
 	ns::handler1 handler1;
 	index<2> i0, i1, i2;
 	i2[0] = 10; i2[1] = 20;
 	dimensions<2> dims(index_range<2>(i1, i2));
-	orbit_iterator<2, int> i(handler1, dims);
+	orbit_iterator<2, int> i(handler1, bihandler, dims);
 	bool end1 = false, end2;
 	while(!i.end()) {
 		if(!i.get_index().equals(i0)) {
@@ -84,11 +104,12 @@ void orbit_iterator_test::test_2() throw(libtest::test_exception) {
 
 	const char *testname = "orbit_iterator_test::test_2()";
 
+	ns::bihandler bihandler;
 	ns::handler2 handler2;
 	index<2> i0, i1, i2;
 	i2[0] = 10; i2[1] = 20;
 	dimensions<2> dims(index_range<2>(i1, i2));
-	orbit_iterator<2, int> i(handler2, dims);
+	orbit_iterator<2, int> i(handler2, bihandler, dims);
 	bool end1 = false, end2;
 	while(!i.end()) {
 		if(!i.get_index().equals(i0)) {

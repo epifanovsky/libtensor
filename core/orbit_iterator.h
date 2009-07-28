@@ -3,6 +3,7 @@
 
 #include "defs.h"
 #include "exception.h"
+#include "block_iterator.h"
 #include "dimensions.h"
 #include "index.h"
 
@@ -57,6 +58,7 @@ public:
 	//@}
 };
 
+
 /**	\brief Iterates over the orbits of a symmetry group action
 	\tparam N Tensor order.
 	\tparam T Tensor element type.
@@ -104,6 +106,7 @@ template<size_t N, typename T>
 class orbit_iterator {
 private:
 	const orbit_iterator_handler_i<N> &m_handler; //!< Event handler
+	const block_iterator_handler_i<N, T> &m_bihandler; //!< Block iterator
 	index<N> m_idx; //!< Current index
 	dimensions<N> m_dims; //!< Dimensions
 	bool m_end; //!< Whether the end has been reached
@@ -118,6 +121,7 @@ public:
 		\param dims Dimensions.
 	 **/
 	orbit_iterator(const orbit_iterator_handler_i<N> &handler,
+		const block_iterator_handler_i<N, T> &bihandler,
 		const dimensions<N> &dims);
 
 	//@}
@@ -140,38 +144,58 @@ public:
 	//@{
 
 	/**	\brief Returns the index of the current iterator position
-
 	 **/
-	const index<N> &get_index();
+	const index<N> &get_index() const;
+
+	/**	\brief Returns an iterator over blocks in the current orbit
+	 */
+	block_iterator<N, T> get_blocks() const;
 
 	//@}
 };
 
+
 template<size_t N, typename T>
 orbit_iterator<N, T>::orbit_iterator(const orbit_iterator_handler_i<N> &handler,
+	const block_iterator_handler_i<N, T> &bihandler,
 	const dimensions<N> &dims)
-: m_handler(handler), m_dims(dims), m_end(false) {
+: m_handler(handler), m_bihandler(bihandler), m_dims(dims) {
 
 	m_handler.on_begin(m_idx, m_dims);
+	m_end = m_handler.on_end(m_idx, m_dims);
 }
+
 
 template<size_t N, typename T>
 inline bool orbit_iterator<N, T>::end() {
+
 	return m_end;
 }
 
+
 template<size_t N, typename T>
 inline void orbit_iterator<N, T>::next() {
+
 	if(!m_end) {
 		if(!(m_end = m_handler.on_end(m_idx, m_dims)))
 			m_handler.on_next(m_idx, m_dims);
 	}
 }
 
+
 template<size_t N, typename T>
-inline const index<N> &orbit_iterator<N, T>::get_index() {
+inline const index<N> &orbit_iterator<N, T>::get_index() const {
+
 	return m_idx;
 }
+
+
+template<size_t N, typename T>
+inline block_iterator<N, T> orbit_iterator<N, T>::get_blocks() const {
+
+	return block_iterator<N, T>(m_bihandler, m_idx, m_dims);
+}
+
 
 } // namespace libtensor
 
