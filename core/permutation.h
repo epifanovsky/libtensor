@@ -113,6 +113,10 @@ public:
 	**/
 	permutation<N> &invert();
 
+	/**	\brief Resets %permutation (makes it an identity %permutation)
+	 **/
+	void reset();
+
 	/**	\brief Checks if the %permutation is an identity %permutation
 
 		Checks if the %permutation is an identity %permutation.
@@ -209,6 +213,12 @@ inline permutation<N> &permutation<N>::invert() {
 	#pragma unroll(N)
 	for(register size_t i=0; i<N; i++) m_idx[idx_cp[i]] = i;
 	return *this;
+}
+
+template<size_t N>
+inline void permutation<N>::reset() {
+	#pragma unroll(N)
+	for(register size_t i=0; i<N; i++) m_idx[i] = i;
 }
 
 template<size_t N>
