@@ -53,6 +53,7 @@
 
 #include "symmetry/symmetry_target.h"
 #include "symmetry/symmetry_base.h"
+#include "symmetry/default_symmetry.h"
 #include "symmetry/perm_symmetry.h"
 
 

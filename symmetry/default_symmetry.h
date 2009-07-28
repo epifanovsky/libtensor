@@ -18,7 +18,7 @@ namespace libtensor {
 template<size_t N, typename T>
 class default_symmetry : public symmetry_base< N, T, default_symmetry<N, T> > {
 private:
-	class handler : public orbit_iterator_handler_i<N, T> {
+	class handler : public orbit_iterator_handler_i<N> {
 	public:
 		virtual void on_begin(index<N> &idx,
 			const dimensions<N> &dims) const;
@@ -68,16 +68,19 @@ void default_symmetry<N, T>::handler::on_begin(index<N> &idx,
 }
 
 template<size_t N, typename T>
-bool default_symmetry<N, T>::handler::on_end(index<N> &idx,
+bool default_symmetry<N, T>::handler::on_end(const index<N> &idx,
 	const dimensions<N> &dims) const {
 
-	return false;
+	for(register size_t i = 0; i < N; i++)
+		if(idx[i] < dims[i] - 1) return false;
+	return true;
 }
 
 template<size_t N, typename T>
 void default_symmetry<N, T>::handler::on_next(index<N> &idx,
 	const dimensions<N> &dims) const {
 
+	dims.inc_index(idx);
 }
 
 } // namespace libtensor

@@ -174,6 +174,10 @@ public:
 	 **/
 	size_t operator[](size_t pos) const throw(out_of_bounds);
 
+	/**	\brief Compares two indexes (see less())
+	 **/
+	bool operator<(const index<N> &idx) const;
+
 	//@}
 
 };
@@ -256,6 +260,11 @@ inline size_t index<N>::operator[](size_t pos) const
 	throw(out_of_bounds) {
 
 	return at(pos);
+}
+
+template<size_t N>
+inline bool index<N>::operator<(const index<N> &idx) const {
+	return less(idx);
 }
 
 /**	\brief Prints out the index to an output stream
