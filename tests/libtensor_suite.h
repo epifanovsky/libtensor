@@ -13,6 +13,7 @@
 #include "btod_copy_test.h"
 #include "contract_test.h"
 #include "contraction2_test.h"
+#include "default_symmetry_test.h"
 #include "dimensions_test.h"
 #include "direct_btensor_test.h"
 #include "direct_tensor_test.h"
@@ -57,6 +58,7 @@ namespace libtensor {
 	\li libtensor::btod_copy_test
 	\li libtensor::contract_test
 	\li libtensor::contraction2_test
+	\li libtensor::default_symmetry_test
 	\li libtensor::dimensions_test
 	\li libtensor::direct_btensor_test
 	\li libtensor::direct_tensor_test
@@ -95,6 +97,7 @@ private:
 	unit_test_factory<btod_copy_test> m_utf_btod_copy;
 	unit_test_factory<contract_test> m_utf_contract;
 	unit_test_factory<contraction2_test> m_utf_contraction2;
+	unit_test_factory<default_symmetry_test> m_utf_default_symmetry;
 	unit_test_factory<dimensions_test> m_utf_dimensions;
 	unit_test_factory<direct_btensor_test> m_utf_direct_btensor;
 	unit_test_factory<direct_tensor_test> m_utf_direct_tensor;
