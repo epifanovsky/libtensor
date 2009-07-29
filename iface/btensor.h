@@ -8,6 +8,7 @@
 #include "core/block_tensor.h"
 #include "core/block_tensor_ctrl.h"
 #include "core/immutable.h"
+#include "symmetry/default_symmetry.h"
 #include "bispace_i.h"
 #include "btensor_i.h"
 #include "labeled_btensor.h"
@@ -29,9 +30,10 @@ template<size_t N, typename T = double, typename Traits = btensor_traits<T> >
 private:
 	typedef typename Traits::element_t element_t;
 	typedef typename Traits::allocator_t allocator_t;
+	typedef default_symmetry<N, T> symmetry_t;
 
 private:
-	block_tensor<N, element_t, allocator_t> m_bt;
+	block_tensor<N, element_t, symmetry_t, allocator_t> m_bt;
 	tensor_ctrl<N, element_t> m_tctrl;
 
 public:

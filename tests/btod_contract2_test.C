@@ -5,7 +5,8 @@
 namespace libtensor {
 
 typedef libvmm::std_allocator<double> allocator;
-typedef block_tensor<2,double,allocator> block_tensor2;
+typedef default_symmetry<2,double> symmetry2;
+typedef block_tensor<2,double,symmetry2,allocator> block_tensor2;
 
 
 void btod_contract2_test::perform() throw(libtest::test_exception) {
