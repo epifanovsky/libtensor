@@ -76,10 +76,8 @@ public:
 	virtual void enable_symmetry() = 0;
 
 	/**	\brief Returns the orbit iterator
-		\param dims Dimensions of the block %index space.
 	 **/
-	virtual orbit_iterator<N, T> get_orbits(
-		const dimensions<N> &dims) const = 0;
+	virtual orbit_iterator<N, T> get_orbits() const = 0;
 
 	//@}
 

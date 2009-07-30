@@ -20,8 +20,7 @@ public:
 		throw 0;
 	}
 
-	virtual orbit_iterator<1, int> get_orbits(
-		const dimensions<1> &dims) const {
+	virtual orbit_iterator<1, int> get_orbits() const {
 		throw 0;
 	}
 };
@@ -38,8 +37,7 @@ public:
 		throw 0;
 	}
 
-	virtual orbit_iterator<1, int> get_orbits(
-		const dimensions<1> &dims) const {
+	virtual orbit_iterator<1, int> get_orbits() const {
 		throw 0;
 	}
 };

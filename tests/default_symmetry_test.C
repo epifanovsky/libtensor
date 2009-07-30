@@ -15,8 +15,8 @@ void default_symmetry_test::test_iterator() throw(libtest::test_exception) {
 	i2[0] = 4; i2[1] = 5;
 	dimensions<2> dims(index_range<2>(i1, i2));
 
-	default_symmetry<2, int> sym;
-	orbit_iterator<2, int> iter = sym.get_orbits(dims);
+	default_symmetry<2, int> sym(dims);
+	orbit_iterator<2, int> iter = sym.get_orbits();
 
 	typedef std::set< index<2> > set_t;
 	set_t idx;

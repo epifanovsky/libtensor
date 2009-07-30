@@ -19,23 +19,25 @@ template<size_t N, typename T>
 class default_symmetry : public symmetry_base< N, T, default_symmetry<N, T> > {
 private:
 	class bihandler : public block_iterator_handler_i<N, T> {
+	private:
+		dimensions<N> m_dims;
 	public:
-		virtual void on_begin(index<N> &idx, block_symop<N, T> &symop,
-			const index<N> &orbit, const dimensions<N> &dims) const;
-		virtual bool on_end(const index<N> &idx, const index<N> &orbit,
-			const dimensions<N> &dims) const;
-		virtual void on_next(index<N> &idx, block_symop<N, T> &symop,
-			const index<N> &orbit, const dimensions<N> &dims) const;
+		bihandler(const dimensions<N> &dims) : m_dims(dims) { };
+		virtual ~bihandler() { };
+		virtual bool on_begin(index<N> &idx, block_symop<N, T> &symop,
+			const index<N> &orbit) const;
+		virtual bool on_next(index<N> &idx, block_symop<N, T> &symop,
+			const index<N> &orbit) const;
 	};
 
-	class oihandler : public orbit_iterator_handler_i<N> {
+	class oihandler : public orbit_iterator_handler_i<N, T> {
+	private:
+		dimensions<N> m_dims;
 	public:
-		virtual void on_begin(index<N> &idx,
-			const dimensions<N> &dims) const;
-		virtual bool on_end(const index<N> &idx,
-			const dimensions<N> &dims) const;
-		virtual void on_next(index<N> &idx,
-			const dimensions<N> &dims) const;
+		oihandler(const dimensions<N> &dims) : m_dims(dims) { };
+		virtual ~oihandler() { };
+		virtual bool on_begin(index<N> &idx) const;
+		virtual bool on_next(index<N> &idx) const;
 	};
 
 private:
@@ -43,78 +45,88 @@ private:
 	bihandler m_bihandler; //!< Block iterator handler
 
 public:
+	//!	\name Construction and destruction
+	//@{
+
+	/**	\brief Creates symmetry within given dimensions
+		\param dims Block %index dimensions
+	 **/
+	default_symmetry(const dimensions<N> &dims);
+
+	/**	\brief Virtual destructor
+	 **/
+	virtual ~default_symmetry() { };
+
+	//@}
+
 	//!	\name Implementation of symmetry_i<N, T>
 	//@{
 
 	virtual void disable_symmetry();
 	virtual void enable_symmetry();
-	virtual orbit_iterator<N, T> get_orbits(const dimensions<N> &dims)
-		const;
+	virtual orbit_iterator<N, T> get_orbits() const;
 
 	//@}
 
 };
+
+
+template<size_t N, typename T>
+default_symmetry<N, T>::default_symmetry(const dimensions<N> &dims)
+: m_oihandler(dims), m_bihandler(dims) {
+
+}
+
 
 template<size_t N, typename T>
 void default_symmetry<N, T>::disable_symmetry() {
 
 }
 
+
 template<size_t N, typename T>
 void default_symmetry<N, T>::enable_symmetry() {
 
 }
 
-template<size_t N, typename T>
-orbit_iterator<N, T> default_symmetry<N, T>::get_orbits(
-	const dimensions<N> &dims) const {
 
-	return orbit_iterator<N, T>(m_oihandler, m_bihandler, dims);
+template<size_t N, typename T>
+orbit_iterator<N, T> default_symmetry<N, T>::get_orbits() const {
+
+	return orbit_iterator<N, T>(m_oihandler, m_bihandler);
 }
 
+
 template<size_t N, typename T>
-void default_symmetry<N, T>::bihandler::on_begin(index<N> &idx,
-	block_symop<N, T> &symop, const index<N> &orbit,
-	const dimensions<N> &dims) const {
+bool default_symmetry<N, T>::bihandler::on_begin(index<N> &idx,
+	block_symop<N, T> &symop, const index<N> &orbit) const {
 
 	idx = orbit;
+	return true;
 }
 
+
 template<size_t N, typename T>
-bool default_symmetry<N, T>::bihandler::on_end(const index<N> &idx,
-	const index<N> &orbit, const dimensions<N> &dims) const {
+bool default_symmetry<N, T>::bihandler::on_next(index<N> &idx,
+	block_symop<N, T> &symop, const index<N> &orbit) const {
+
+	return false;
+}
+
+
+template<size_t N, typename T>
+bool default_symmetry<N, T>::oihandler::on_begin(index<N> &idx) const {
 
 	return true;
 }
 
-template<size_t N, typename T>
-void default_symmetry<N, T>::bihandler::on_next(index<N> &idx,
-	block_symop<N, T> &symop, const index<N> &orbit,
-	const dimensions<N> &dims) const {
-
-}
 
 template<size_t N, typename T>
-void default_symmetry<N, T>::oihandler::on_begin(index<N> &idx,
-	const dimensions<N> &dims) const {
+bool default_symmetry<N, T>::oihandler::on_next(index<N> &idx) const {
 
+	return m_dims.inc_index(idx);
 }
 
-template<size_t N, typename T>
-bool default_symmetry<N, T>::oihandler::on_end(const index<N> &idx,
-	const dimensions<N> &dims) const {
-
-	for(register size_t i = 0; i < N; i++)
-		if(idx[i] < dims[i] - 1) return false;
-	return true;
-}
-
-template<size_t N, typename T>
-void default_symmetry<N, T>::oihandler::on_next(index<N> &idx,
-	const dimensions<N> &dims) const {
-
-	dims.inc_index(idx);
-}
 
 } // namespace libtensor
 

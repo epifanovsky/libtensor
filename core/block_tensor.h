@@ -4,16 +4,18 @@
 #include "defs.h"
 #include "exception.h"
 #include "block_index_space.h"
+#include "block_iterator.h"
 #include "block_map.h"
 #include "block_tensor_i.h"
 #include "immutable.h"
+#include "orbit_iterator.h"
 #include "symmetry_i.h"
 #include "tensor.h"
 #include "tensor_ctrl.h"
 
 namespace libtensor {
 
-/**	\brief Block tensor implementation
+/**	\brief Block %tensor
 	\tparam N Tensor order.
 	\tparam T Tensor element type.
 	\tparam Symmetry Block %tensor symmetry.
@@ -26,9 +28,32 @@ class block_tensor : public block_tensor_i<N, T>, public immutable {
 private:
 	static const char *k_clazz; //!< Class name
 
+private:
+	class bi_handler : public block_iterator_handler_i<N, T> {
+	public:
+		virtual ~bi_handler() { };
+		virtual void on_begin(index<N> &idx, block_symop<N, T> &symop,
+			const index<N> &orbit, const dimensions<N> &dims) const;
+		virtual bool on_end(const index<N> &idx, const index<N> &orbit,
+			const dimensions<N> &dims) const = 0;
+		virtual void on_next(index<N> &idx, block_symop<N, T> &symop,
+			const index<N> &orbit, const dimensions<N> &dims) const;
+	};
+
+	class oi_handler : public orbit_iterator_handler_i<N, T> {
+	public:
+		virtual ~oi_handler() { };
+		virtual void on_begin(index<N> &idx,
+			const dimensions<N> &dims) const;
+		virtual bool on_end(const index<N> &idx,
+			const dimensions<N> &dims) const;
+		virtual void on_next(index<N> &idx,
+			const dimensions<N> &dims) const;
+	};
+
 public:
 	block_index_space<N> m_bis; //!< Block %index space
-	dimensions<N> m_bi_dims; //!< Block %index %dimensions
+	dimensions<N> m_bidims; //!< Block %index %dimensions
 	Symmetry m_symmetry; //!< Block %tensor symmetry
 	block_map<N, T, Alloc> m_map; //!< Block map
 	tensor<N, T, Alloc> m_t;
@@ -88,8 +113,8 @@ const char *block_tensor<N, T, Symmetry, Alloc>::k_clazz =
 template<size_t N, typename T, typename Symmetry, typename Alloc>
 block_tensor<N, T, Symmetry, Alloc>::block_tensor(
 	const block_index_space<N> &bis)
-: m_bis(bis), m_bi_dims(bis.get_block_index_dims()), m_t(m_bis.get_dims()),
-	m_ctrl(m_t) {
+: m_bis(bis), m_bidims(bis.get_block_index_dims()), m_symmetry(m_bidims),
+	m_t(m_bis.get_dims()), m_ctrl(m_t) {
 
 }
 /*
@@ -103,7 +128,7 @@ block_tensor<N, T, Alloc>::block_tensor(const block_tensor_i<N, T> &bt)
 template<size_t N, typename T, typename Symmetry, typename Alloc>
 block_tensor<N, T, Symmetry, Alloc>::block_tensor(
 	const block_tensor<N, T, Symmetry, Alloc> &bt)
-: m_bis(bt.get_bis()), m_bi_dims(bt.m_bi_dims), m_symmetry(bt.m_symmetry),
+: m_bis(bt.get_bis()), m_bidims(bt.m_bidims), m_symmetry(bt.m_symmetry),
 	m_t(m_bis.get_dims()), m_ctrl(m_t) {
 
 }

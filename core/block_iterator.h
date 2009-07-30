@@ -28,12 +28,10 @@ template<size_t N, typename T>
 class block_iterator_handler_i {
 public:
 	virtual ~block_iterator_handler_i() { };
-	virtual void on_begin(index<N> &idx, block_symop<N, T> &symop,
-		const index<N> &orbit, const dimensions<N> &dims) const = 0;
-	virtual bool on_end(const index<N> &idx, const index<N> &orbit,
-		const dimensions<N> &dims) const = 0;
-	virtual void on_next(index<N> &idx, block_symop<N, T> &symop,
-		const index<N> &orbit, const dimensions<N> &dims) const = 0;
+	virtual bool on_begin(index<N> &idx, block_symop<N, T> &symop,
+		const index<N> &orbit) const = 0;
+	virtual bool on_next(index<N> &idx, block_symop<N, T> &symop,
+		const index<N> &orbit) const = 0;
 };
 
 
@@ -43,13 +41,12 @@ private:
 	const block_iterator_handler_i<N, T> &m_handler;
 	index<N> m_idx;
 	index<N> m_orbit;
-	dimensions<N> m_dims;
 	block_symop<N, T> m_symop;
 	bool m_end;
 
 public:
 	block_iterator(const block_iterator_handler_i<N, T> &handler,
-		const index<N> &orbit, const dimensions<N> &dims);
+		const index<N> &orbit);
 
 	bool end();
 	void next();
@@ -60,12 +57,10 @@ public:
 
 template<size_t N, typename T>
 block_iterator<N, T>::block_iterator(
-	const block_iterator_handler_i<N, T> &handler, const index<N> &orbit,
-	const dimensions<N> &dims)
-: m_handler(handler), m_orbit(orbit), m_dims(dims) {
+	const block_iterator_handler_i<N, T> &handler, const index<N> &orbit)
+: m_handler(handler), m_orbit(orbit) {
 
-	m_handler.on_begin(m_idx, m_symop, m_orbit, m_dims);
-	m_end = m_handler.on_end(m_idx, m_orbit, m_dims);
+	m_end = !m_handler.on_begin(m_idx, m_symop, m_orbit);
 }
 
 
@@ -77,11 +72,10 @@ inline bool block_iterator<N, T>::end() {
 
 
 template<size_t N, typename T>
-void block_iterator<N, T>::next() {
+inline void block_iterator<N, T>::next() {
 
 	if(!m_end) {
-		if(!(m_end = m_handler.on_end(m_idx, m_orbit, m_dims)))
-			m_handler.on_next(m_idx, m_symop, m_orbit, m_dims);
+		m_end = !m_handler.on_next(m_idx, m_symop, m_orbit);
 	}
 }
 

@@ -25,8 +25,7 @@ public:
 
 	virtual void disable_symmetry();
 	virtual void enable_symmetry();
-	virtual orbit_iterator<N, T> get_orbits(
-		const dimensions<N> &dims) const;
+	virtual orbit_iterator<N, T> get_orbits() const;
 	//virtual void invoke(symmetry_operation_i<N, T> &op)
 	//	throw(exception);
 
@@ -50,8 +49,7 @@ void perm_symmetry<N, T>::enable_symmetry() {
 }
 
 template<size_t N, typename T>
-orbit_iterator<N, T> perm_symmetry<N, T>::get_orbits(
-	const dimensions<N> &dims) const {
+orbit_iterator<N, T> perm_symmetry<N, T>::get_orbits() const {
 
 	throw_exc("perm_symmetry<N, T>", "get_orbits()", "Not implemented");
 }

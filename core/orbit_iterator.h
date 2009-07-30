@@ -11,13 +11,14 @@ namespace libtensor {
 
 /**	\brief Interface to the orbit iterator event handler
 	\tparam N Tensor order.
+	\tparam T Tensor element type.
 
 	This event hander is used by orbit_iterator<N, T> to do the actual
 	work of iterating.
 
 	\ingroup libtensor_core
  **/
-template<size_t N>
+template<size_t N, typename T>
 class orbit_iterator_handler_i {
 public:
 	//!	\name Construction and destruction
@@ -35,25 +36,17 @@ public:
 
 	/**	\brief Invoked to loads the first %index of the sequence
 		\param idx Index (to be loaded).
-		\param dims Dimensions.
+		\return false if the %index set is empty, false otherwise.
 	 **/
-	virtual void on_begin(index<N> &idx,
-		const dimensions<N> &dims) const = 0;
-
-	/**	\brief Invoked to check if an %index is the last in the sequence
-		\param idx Index.
-		\param dims Dimensions.
-	 **/
-	virtual bool on_end(const index<N> &idx,
-		const dimensions<N> &dims) const = 0;
+	virtual bool on_begin(index<N> &idx) const = 0;
 
 	/**	\brief Invoked when the next %index from the sequence is
 			required
 		\param idx Index (current on input, next on output).
-		\param dims Dimensions.
+		\return true if there are more indexes, false if there are
+			no more elements in the set.
 	 **/
-	virtual void on_next(index<N> &idx,
-		const dimensions<N> &dims) const = 0;
+	virtual bool on_next(index<N> &idx) const = 0;
 
 	//@}
 };
@@ -105,24 +98,25 @@ public:
 template<size_t N, typename T>
 class orbit_iterator {
 private:
-	const orbit_iterator_handler_i<N> &m_handler; //!< Event handler
-	const block_iterator_handler_i<N, T> &m_bihandler; //!< Block iterator
+	//!	Orbit iterator event handler
+	const orbit_iterator_handler_i<N, T> &m_oihandler;
+
+	//!	Block iterator event handler
+	const block_iterator_handler_i<N, T> &m_bihandler;
+
 	index<N> m_idx; //!< Current index
-	dimensions<N> m_dims; //!< Dimensions
 	bool m_end; //!< Whether the end has been reached
 
 public:
 	//!	\brief Construction and destruction
 	//@{
 
-	/**	\brief Creates the iterator with given dimensions and
-			event handler
-		\param handler Event handler.
-		\param dims Dimensions.
+	/**	\brief Creates the iterator with given event handlers
+		\param oihandler Orbit iterator event handler.
+		\param bihandler Block iterator event handler.
 	 **/
-	orbit_iterator(const orbit_iterator_handler_i<N> &handler,
-		const block_iterator_handler_i<N, T> &bihandler,
-		const dimensions<N> &dims);
+	orbit_iterator(const orbit_iterator_handler_i<N, T> &oihandler,
+		const block_iterator_handler_i<N, T> &bihandler);
 
 	//@}
 
@@ -148,7 +142,7 @@ public:
 	const index<N> &get_index() const;
 
 	/**	\brief Returns an iterator over blocks in the current orbit
-	 */
+	 **/
 	block_iterator<N, T> get_blocks() const;
 
 	//@}
@@ -156,13 +150,12 @@ public:
 
 
 template<size_t N, typename T>
-orbit_iterator<N, T>::orbit_iterator(const orbit_iterator_handler_i<N> &handler,
-	const block_iterator_handler_i<N, T> &bihandler,
-	const dimensions<N> &dims)
-: m_handler(handler), m_bihandler(bihandler), m_dims(dims) {
+orbit_iterator<N, T>::orbit_iterator(
+	const orbit_iterator_handler_i<N,T > &oihandler,
+	const block_iterator_handler_i<N, T> &bihandler)
+: m_oihandler(oihandler), m_bihandler(bihandler) {
 
-	m_handler.on_begin(m_idx, m_dims);
-	m_end = m_handler.on_end(m_idx, m_dims);
+	m_end = !m_oihandler.on_begin(m_idx);
 }
 
 
@@ -177,8 +170,7 @@ template<size_t N, typename T>
 inline void orbit_iterator<N, T>::next() {
 
 	if(!m_end) {
-		if(!(m_end = m_handler.on_end(m_idx, m_dims)))
-			m_handler.on_next(m_idx, m_dims);
+		m_end = !m_oihandler.on_next(m_idx);
 	}
 }
 
@@ -193,7 +185,7 @@ inline const index<N> &orbit_iterator<N, T>::get_index() const {
 template<size_t N, typename T>
 inline block_iterator<N, T> orbit_iterator<N, T>::get_blocks() const {
 
-	return block_iterator<N, T>(m_bihandler, m_idx, m_dims);
+	return block_iterator<N, T>(m_bihandler, m_idx);
 }
 
 
