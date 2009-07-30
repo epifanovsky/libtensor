@@ -149,11 +149,14 @@ const block_index_space<N> &block_tensor<N, T, Symmetry, Alloc>::get_bis()
 	return m_bis;
 }
 
+
 template<size_t N, typename T, typename Symmetry, typename Alloc>
 const symmetry_i<N, T> &block_tensor<N, T, Symmetry, Alloc>::on_req_symmetry()
 	throw(exception) {
-	throw_exc("block_tensor<N, T, Alloc>", "on_req_symmetry()", "NIY");
+
+	return m_symmetry;
 }
+
 
 template<size_t N, typename T, typename Symmetry, typename Alloc>
 void block_tensor<N, T, Symmetry, Alloc>::on_req_symmetry_operation(
@@ -171,15 +174,21 @@ orbit_iterator<N, T> block_tensor<N, T, Symmetry, Alloc>::on_req_orbits()
 
 
 template<size_t N, typename T, typename Symmetry, typename Alloc>
-tensor_i<N, T> &block_tensor<N, T, Symmetry, Alloc>::on_req_block(const index<N> &idx)
-	throw(exception) {
-	return m_t;
+tensor_i<N, T> &block_tensor<N, T, Symmetry, Alloc>::on_req_block(
+	const index<N> &idx) throw(exception) {
+
+	size_t absidx = m_bidims.abs_index(idx);
+	if(!m_map.contains(absidx)) {
+		dimensions<N> blkdims = m_bis.get_block_dims(idx);
+		m_map.create(absidx, blkdims);
+	}
+	return m_map.get(absidx);
 }
 
 template<size_t N, typename T, typename Symmetry, typename Alloc>
 void block_tensor<N, T, Symmetry, Alloc>::on_ret_block(const index<N> &idx)
 	throw(exception) {
-	throw_exc("block_tensor<N, T, Alloc>", "on_ret_block()", "NIY");
+
 }
 
 template<size_t N, typename T, typename Symmetry, typename Alloc>

@@ -31,6 +31,7 @@ public:
 	orbit_iterator<N, T> req_orbits() throw(exception);
 	void req_prefetch() throw(exception);
 	tensor_i<N, T> &req_block(const index<N> &idx) throw(exception);
+	void ret_block(const index<N> &idx) throw(exception);
 	//@}
 };
 
@@ -59,6 +60,12 @@ template<size_t N, typename T>
 inline tensor_i<N, T> &block_tensor_ctrl<N, T>::req_block(const index<N> &idx)
 	throw(exception) {
 	return m_bt.on_req_block(idx);
+}
+
+template<size_t N, typename T>
+inline void block_tensor_ctrl<N, T>::ret_block(const index<N> &idx)
+	throw(exception) {
+	return m_bt.on_ret_block(idx);
 }
 
 } // namespace libtensor
