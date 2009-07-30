@@ -68,7 +68,7 @@ public:
 	/**	\brief Returns whether a block with a given %index exists
 		\param idx Absolute %index of the block.
 	 **/
-	bool contains(size_t idx);
+	bool contains(size_t idx) const;
 
 	/**	\brief Returns the reference to a block identified by the
 			%index
@@ -139,7 +139,7 @@ void block_map<N, T, Alloc>::remove(size_t idx) {
 
 
 template<size_t N, typename T, typename Alloc>
-inline bool block_map<N, T, Alloc>::contains(size_t idx) {
+inline bool block_map<N, T, Alloc>::contains(size_t idx) const {
 
 	return m_map.find(idx) != m_map.end();
 }

@@ -64,7 +64,8 @@ public:
 
 	virtual void disable_symmetry();
 	virtual void enable_symmetry();
-	virtual orbit_iterator<N, T> get_orbits() const;
+	virtual const orbit_iterator_handler_i<N, T> &get_oi_handler() const;
+	virtual const block_iterator_handler_i<N, T> &get_bi_handler() const;
 
 	//@}
 
@@ -91,9 +92,18 @@ void default_symmetry<N, T>::enable_symmetry() {
 
 
 template<size_t N, typename T>
-orbit_iterator<N, T> default_symmetry<N, T>::get_orbits() const {
+const orbit_iterator_handler_i<N, T> &default_symmetry<N, T>::get_oi_handler()
+	const {
 
-	return orbit_iterator<N, T>(m_oihandler, m_bihandler);
+	return m_oihandler;
+}
+
+
+template<size_t N, typename T>
+const block_iterator_handler_i<N, T> &default_symmetry<N, T>::get_bi_handler()
+	const {
+
+	return m_bihandler;
 }
 
 

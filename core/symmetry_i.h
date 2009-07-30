@@ -75,9 +75,21 @@ public:
 	 **/
 	virtual void enable_symmetry() = 0;
 
-	/**	\brief Returns the orbit iterator
+	//@}
+
+
+	//!	\name Iterator handlers
+	//@{
+
+	/**	\brief Returns the orbit iterator handler
 	 **/
-	virtual orbit_iterator<N, T> get_orbits() const = 0;
+	virtual const orbit_iterator_handler_i<N, T> &get_oi_handler()
+		const = 0;
+
+	/**	\brief Returns the block iterator handler
+	 **/
+	virtual const block_iterator_handler_i<N, T> &get_bi_handler()
+		const = 0;
 
 	//@}
 

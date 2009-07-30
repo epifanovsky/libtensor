@@ -26,6 +26,8 @@ public:
 	virtual void disable_symmetry();
 	virtual void enable_symmetry();
 	virtual orbit_iterator<N, T> get_orbits() const;
+	virtual const orbit_iterator_handler_i<N, T> &get_oi_handler() const;
+	virtual const block_iterator_handler_i<N, T> &get_bi_handler() const;
 	//virtual void invoke(symmetry_operation_i<N, T> &op)
 	//	throw(exception);
 
@@ -52,6 +54,20 @@ template<size_t N, typename T>
 orbit_iterator<N, T> perm_symmetry<N, T>::get_orbits() const {
 
 	throw_exc("perm_symmetry<N, T>", "get_orbits()", "Not implemented");
+}
+
+template<size_t N, typename T>
+const orbit_iterator_handler_i<N, T> &perm_symmetry<N, T>::get_oi_handler()
+	const {
+
+	throw_exc("perm_symmetry<N, T>", "get_oi_handler()", "Not implemented");
+}
+
+template<size_t N, typename T>
+const block_iterator_handler_i<N, T> &perm_symmetry<N, T>::get_bi_handler()
+	const {
+
+	throw_exc("perm_symmetry<N, T>", "get_bi_handler()", "Not implemented");
 }
 
 /*

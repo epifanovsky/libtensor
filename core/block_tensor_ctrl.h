@@ -28,6 +28,7 @@ public:
 
 	//!	\name Event forwarding
 	//@{
+	orbit_iterator<N, T> req_orbits() throw(exception);
 	void req_prefetch() throw(exception);
 	tensor_i<N, T> &req_block(const index<N> &idx) throw(exception);
 	//@}
@@ -40,6 +41,13 @@ inline block_tensor_ctrl<N, T>::block_tensor_ctrl(block_tensor_i<N, T> &bt) :
 
 template<size_t N, typename T>
 block_tensor_ctrl<N, T>::~block_tensor_ctrl() {
+}
+
+template<size_t N, typename T>
+inline orbit_iterator<N, T> block_tensor_ctrl<N, T>::req_orbits()
+	throw(exception) {
+
+	return m_bt.on_req_orbits();
 }
 
 template<size_t N, typename T>

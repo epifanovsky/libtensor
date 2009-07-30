@@ -23,6 +23,14 @@ public:
 	virtual orbit_iterator<1, int> get_orbits() const {
 		throw 0;
 	}
+
+	virtual const orbit_iterator_handler_i<1, int> &get_oi_handler() const {
+		throw 0;
+	}
+
+	virtual const block_iterator_handler_i<1, int> &get_bi_handler() const {
+		throw 0;
+	}
 };
 
 class sym2 : public symmetry_base<1, int, sym2> {
@@ -38,6 +46,14 @@ public:
 	}
 
 	virtual orbit_iterator<1, int> get_orbits() const {
+		throw 0;
+	}
+
+	virtual const orbit_iterator_handler_i<1, int> &get_oi_handler() const {
+		throw 0;
+	}
+
+	virtual const block_iterator_handler_i<1, int> &get_bi_handler() const {
 		throw 0;
 	}
 };

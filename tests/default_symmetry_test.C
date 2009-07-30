@@ -16,19 +16,20 @@ void default_symmetry_test::test_iterator() throw(libtest::test_exception) {
 	dimensions<2> dims(index_range<2>(i1, i2));
 
 	default_symmetry<2, int> sym(dims);
-	orbit_iterator<2, int> iter = sym.get_orbits();
+	const orbit_iterator_handler_i<2, int> &oih = sym.get_oi_handler();
 
 	typedef std::set< index<2> > set_t;
 	set_t idx;
+	index<2> ii;
+	bool end = !oih.on_begin(ii);
 
-	while(!iter.end()) {
-		index<2> i(iter.get_index());
-		if(idx.find(i) != idx.end()) {
+	while(!end) {
+		if(idx.find(ii) != idx.end()) {
 			fail_test("default_symmetry_test::test_iterator()",
 				__FILE__, __LINE__, "Repeated index detected");
 		}
-		idx.insert(i);
-		iter.next();
+		idx.insert(ii);
+		end = !oih.on_next(ii);
 	}
 
 	if(idx.size() != dims.get_size()) {
@@ -36,7 +37,7 @@ void default_symmetry_test::test_iterator() throw(libtest::test_exception) {
 			__FILE__, __LINE__, "Incorrect total number of orbits");
 	}
 
-	index<2> ii;
+	ii[0] = 0; ii[1] = 0;
 	do {
 		if(idx.find(ii) == idx.end()) {
 			fail_test("default_symmetry_test::test_iterator()",
