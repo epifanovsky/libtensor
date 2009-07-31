@@ -211,6 +211,7 @@ void block_map<N, T, Alloc>::on_set_immutable() {
 	typename map_t::iterator i = m_map.begin();
 	while(i != m_map.end()) {
 		i->second->set_immutable();
+		i++;
 	}
 }
 

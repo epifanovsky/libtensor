@@ -13,6 +13,9 @@ class block_map_test : public libtest::unit_test {
 public:
 	virtual void perform() throw(libtest::test_exception);
 
+private:
+	void test_create() throw(libtest::test_exception);
+	void test_immutable() throw(libtest::test_exception);
 };
 
 } // namespace libtensor

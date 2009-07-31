@@ -29,15 +29,17 @@ private:
 	static const char *k_clazz; //!< Class name
 
 private:
+	//!	Block iterator handler (proxy)
 	class bi_handler : public block_iterator_handler_i<N, T> {
+	private:
+		const block_iterator_handler_i<N, T> &m_bih;
 	public:
-		bi_handler() { };
-		bi_handler(const dimensions<N> &dims) { };
+		bi_handler(const block_iterator_handler_i<N, T> &bih);
 		virtual ~bi_handler() { };
 		virtual bool on_begin(index<N> &idx, block_symop<N, T> &symop,
-			const index<N> &orbit) const { };
+			const index<N> &orbit) const;
 		virtual bool on_next(index<N> &idx, block_symop<N, T> &symop,
-			const index<N> &orbit) const { };
+			const index<N> &orbit) const;
 	};
 
 	//!	Orbit iterator handler (proxy)
@@ -60,8 +62,8 @@ public:
 	dimensions<N> m_bidims; //!< Block %index %dimensions
 	Symmetry m_symmetry; //!< Block %tensor symmetry
 	block_map<N, T, Alloc> m_map; //!< Block map
-	oi_handler m_oihandler; //!< Orbit iterator handler
 	bi_handler m_bihandler; //!< Block iterator handler
+	oi_handler m_oihandler; //!< Orbit iterator handler
 	tensor<N, T, Alloc> m_t;
 	tensor_ctrl<N, T> m_ctrl;
 
@@ -118,8 +120,10 @@ const char *block_tensor<N, T, Symmetry, Alloc>::k_clazz =
 template<size_t N, typename T, typename Symmetry, typename Alloc>
 block_tensor<N, T, Symmetry, Alloc>::block_tensor(
 	const block_index_space<N> &bis)
+
 : m_bis(bis), m_bidims(bis.get_block_index_dims()), m_symmetry(m_bidims),
 	m_oihandler(m_bidims, m_symmetry.get_oi_handler(), m_map),
+	m_bihandler(m_symmetry.get_bi_handler()),
 	m_t(m_bis.get_dims()), m_ctrl(m_t) {
 
 }
@@ -127,6 +131,7 @@ block_tensor<N, T, Symmetry, Alloc>::block_tensor(
 template<size_t N, typename T, typename Symmetry, typename Alloc>
 block_tensor<N, T, Symmetry, Alloc>::block_tensor(
 	const block_tensor<N, T, Symmetry, Alloc> &bt)
+
 : m_bis(bt.get_bis()), m_bidims(bt.m_bidims), m_symmetry(bt.m_symmetry),
 	m_t(m_bis.get_dims()), m_ctrl(m_t) {
 
@@ -211,9 +216,32 @@ void block_tensor<N, T, Symmetry, Alloc>::on_ret_dataptr(const T *p) throw(excep
 	m_ctrl.ret_dataptr(p);
 }
 
+
 template<size_t N, typename T, typename Symmetry, typename Alloc>
-void block_tensor<N, T, Symmetry, Alloc>::on_set_immutable() {
-	m_t.set_immutable();
+inline void block_tensor<N, T, Symmetry, Alloc>::on_set_immutable() {
+
+	m_map.set_immutable();
+}
+
+template<size_t N, typename T, typename Symmetry, typename Alloc>
+inline block_tensor<N, T, Symmetry, Alloc>::bi_handler::bi_handler(
+	const block_iterator_handler_i<N, T> &bih) : m_bih(bih) {
+
+}
+
+
+template<size_t N, typename T, typename Symmetry, typename Alloc>
+bool block_tensor<N, T, Symmetry, Alloc>::bi_handler::on_begin(index<N> &idx,
+	block_symop<N, T> &symop, const index<N> &orbit) const {
+
+	return m_bih.on_begin(idx, symop, orbit);
+}
+
+template<size_t N, typename T, typename Symmetry, typename Alloc>
+bool block_tensor<N, T, Symmetry, Alloc>::bi_handler::on_next(index<N> &idx,
+	block_symop<N, T> &symop, const index<N> &orbit) const {
+
+	return m_bih.on_next(idx, symop, orbit);
 }
 
 
