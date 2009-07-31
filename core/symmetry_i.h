@@ -75,6 +75,10 @@ public:
 	 **/
 	virtual void enable_symmetry() = 0;
 
+	/**	\brief Returns true if a given block is canonical
+	 **/
+	virtual bool is_canonical(const index<N> &idx) const = 0;
+
 	//@}
 
 

@@ -182,6 +182,13 @@ template<size_t N, typename T, typename Symmetry, typename Alloc>
 tensor_i<N, T> &block_tensor<N, T, Symmetry, Alloc>::on_req_block(
 	const index<N> &idx) throw(exception) {
 
+	static const char *method = "on_req_block(const index<N>&)";
+
+	if(!m_symmetry.is_canonical(idx)) {
+		throw symmetry_violation("libtensor", k_clazz, method,
+			__FILE__, __LINE__,
+			"Index does not correspond to a canonical block.");
+	}
 	size_t absidx = m_bidims.abs_index(idx);
 	if(!m_map.contains(absidx)) {
 		dimensions<N> blkdims = m_bis.get_block_dims(idx);

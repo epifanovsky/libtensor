@@ -200,6 +200,31 @@ public:
 };
 
 
+/**	\brief Exception indicating that a request violates symmetry
+
+	\ingroup libtensor_core_exc
+ **/
+class symmetry_violation : public exception {
+public:
+	//!	\name Construction and destruction
+	//@{
+
+	/**	\brief Creates an exception
+	 **/
+	symmetry_violation(const char *ns, const char *clazz,
+		const char *method, const char *file, unsigned int line,
+		const char *message) throw()
+		: exception(ns, clazz, method, file, line, "symmetry_violation",
+			message) { };
+
+	/**	\brief Virtual destructor
+	 **/
+	virtual ~symmetry_violation() throw() { };
+
+	//@}
+};
+
+
 /**	\brief Throws an exception with a given error message
  **/
 void throw_exc(const char *clazz, const char *method, const char *error)

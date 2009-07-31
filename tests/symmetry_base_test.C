@@ -20,6 +20,10 @@ public:
 		throw 0;
 	}
 
+	virtual bool is_canonical(const index<1> &idx) const {
+		throw 0;
+	}
+
 	virtual orbit_iterator<1, int> get_orbits() const {
 		throw 0;
 	}
@@ -42,6 +46,10 @@ public:
 	}
 
 	virtual void enable_symmetry() {
+		throw 0;
+	}
+
+	virtual bool is_canonical(const index<1> &idx) const {
 		throw 0;
 	}
 

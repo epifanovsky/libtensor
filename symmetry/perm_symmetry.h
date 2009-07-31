@@ -25,6 +25,7 @@ public:
 
 	virtual void disable_symmetry();
 	virtual void enable_symmetry();
+	virtual bool is_canonical(const index<N> &idx) const;
 	virtual orbit_iterator<N, T> get_orbits() const;
 	virtual const orbit_iterator_handler_i<N, T> &get_oi_handler() const;
 	virtual const block_iterator_handler_i<N, T> &get_bi_handler() const;
@@ -48,6 +49,12 @@ void perm_symmetry<N, T>::disable_symmetry() {
 template<size_t N, typename T>
 void perm_symmetry<N, T>::enable_symmetry() {
 
+}
+
+template<size_t N, typename T>
+bool perm_symmetry<N, T>::is_canonical(const index<N> &idx) const {
+
+	throw_exc("perm_symmetry<N, T>", "is_canonical()", "Not implemented");
 }
 
 template<size_t N, typename T>
