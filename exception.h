@@ -123,6 +123,32 @@ public:
 };
 
 
+/**	\brief Exception indicating that access to an immutable object is
+		violated
+
+	\ingroup libtensor_core_exc
+ **/
+class immut_violation : public exception {
+public:
+	//!	\name Construction and destruction
+	//@{
+
+	/**	\brief Creates an exception
+	 **/
+	immut_violation(const char *ns, const char *clazz, const char *method,
+		const char *file, unsigned int line, const char *message)
+		throw()
+		: exception(ns, clazz, method, file, line, "immut_violation",
+			message) { };
+
+	/**	\brief Virtual destructor
+	 **/
+	virtual ~immut_violation() throw() { };
+
+	//@}
+};
+
+
 /**	\brief Exception indicating that an %index is out of bounds
 
 	\ingroup libtensor_core_exc

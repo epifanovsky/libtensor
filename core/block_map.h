@@ -5,6 +5,7 @@
 #include "defs.h"
 #include "exception.h"
 #include "dimensions.h"
+#include "immutable.h"
 #include "tensor.h"
 
 namespace libtensor {
@@ -22,7 +23,7 @@ namespace libtensor {
 	\ingroup libtensor_core
  **/
 template<size_t N, typename T, typename Alloc>
-class block_map {
+class block_map : public immutable {
 public:
 	typedef tensor<N, T, Alloc> tensor_t;
 	typedef std::pair<size_t, tensor_t*> pair_t;
@@ -55,15 +56,18 @@ public:
 			the block exists, it is removed and re-created
 		\param idx Absolute %index of the block.
 		\param dims Dimensions of the block.
+		\throw immut_violation If the object is immutable.
 		\throw out_of_memory If there is not enough memory to create
 			the block.
 	 **/
-	void create(size_t idx, const dimensions<N> &dims) throw(out_of_memory);
+	void create(size_t idx, const dimensions<N> &dims)
+		throw(immut_violation, out_of_memory);
 
 	/**	\brief Removes a block
 		\param idx Absolute %index of the block.
+		\throw immut_violation If the object is immutable.
 	 **/
-	void remove(size_t idx);
+	void remove(size_t idx) throw(immut_violation);
 
 	/**	\brief Returns whether a block with a given %index exists
 		\param idx Absolute %index of the block.
@@ -79,10 +83,24 @@ public:
 	tensor<N, T, Alloc> &get(size_t idx) throw(block_not_found);
 
 	/**	\brief Removes all blocks
+		\throw immut_violation If the object is immutable.
 	 **/
-	void clear();
+	void clear() throw(immut_violation);
 
 	//@}
+
+protected:
+	//!	\name Implementation of immutable
+	//@{
+
+	virtual void on_set_immutable();
+
+	//@}
+
+private:
+	/**	\brief Removes all blocks (without checking for immutability)
+	 **/
+	void do_clear();
 
 };
 
@@ -100,15 +118,20 @@ block_map<N, T, Alloc>::block_map() {
 template<size_t N, typename T, typename Alloc>
 block_map<N, T, Alloc>::~block_map() {
 
-	clear();
+	do_clear();
 }
 
 
 template<size_t N, typename T, typename Alloc>
 void block_map<N, T, Alloc>::create(size_t idx, const dimensions<N> &dims)
-	throw(out_of_memory) {
+	throw(out_of_memory, immut_violation) {
 
 	static const char *method = "create(size_t, const dimensions<N>&)";
+
+	if(is_immutable()) {
+		throw immut_violation("libtensor", k_clazz, method, __FILE__,
+			__LINE__, "Immutable object cannot be modified.");
+	}
 
 	try {
 		tensor_t *ptr = new tensor<N, T, Alloc>(dims);
@@ -128,7 +151,14 @@ void block_map<N, T, Alloc>::create(size_t idx, const dimensions<N> &dims)
 
 
 template<size_t N, typename T, typename Alloc>
-void block_map<N, T, Alloc>::remove(size_t idx) {
+void block_map<N, T, Alloc>::remove(size_t idx) throw(immut_violation) {
+
+	static const char *method = "remove(size_t)";
+
+	if(is_immutable()) {
+		throw immut_violation("libtensor", k_clazz, method, __FILE__,
+			__LINE__, "Immutable object cannot be modified.");
+	}
 
 	typename map_t::iterator i = m_map.find(idx);
 	if(i != m_map.end()) {
@@ -162,7 +192,31 @@ tensor<N, T, Alloc> &block_map<N, T, Alloc>::get(size_t idx)
 
 
 template<size_t N, typename T, typename Alloc>
-void block_map<N, T, Alloc>::clear() {
+void block_map<N, T, Alloc>::clear() throw(immut_violation) {
+
+	static const char *method = "clear()";
+
+	if(is_immutable()) {
+		throw immut_violation("libtensor", k_clazz, method, __FILE__,
+			__LINE__, "Immutable object cannot be modified.");
+	}
+
+	do_clear();
+}
+
+
+template<size_t N, typename T, typename Alloc>
+void block_map<N, T, Alloc>::on_set_immutable() {
+
+	typename map_t::iterator i = m_map.begin();
+	while(i != m_map.end()) {
+		i->second->set_immutable();
+	}
+}
+
+
+template<size_t N, typename T, typename Alloc>
+void block_map<N, T, Alloc>::do_clear() {
 
 	typename map_t::iterator i = m_map.begin();
 	while(i != m_map.end()) {
