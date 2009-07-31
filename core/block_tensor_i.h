@@ -50,6 +50,9 @@ template<size_t N, typename T> class block_tensor_ctrl;
 	<b>ret_block</b> Invoked to indicate that a canonical block with a
 	given %index is not required anymore.
 
+	<b>req_zero_block</b> Invoked to inform that a canonical block has all
+	its elements equal to zero.
+
 	\ingroup libtensor_core
  **/
 template<size_t N, typename T>
@@ -92,6 +95,12 @@ protected:
 		\param idx Block %index.
 	 **/
 	virtual void on_ret_block(const index<N> &idx) throw(exception) = 0;
+
+	/**	\brief Invoked to make a canonical block zero
+		\param idx Block %index.
+	 **/
+	virtual void on_req_zero_block(const index<N> &idx)
+		throw(exception) = 0;
 
 	//@}
 };

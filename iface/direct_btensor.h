@@ -83,6 +83,7 @@ protected:
 	virtual tensor_i<N, T> &on_req_block(const index<N> &idx)
 		throw(exception);
 	virtual void on_ret_block(const index<N> &idx) throw(exception);
+	virtual void on_req_zero_block(const index<N> &idx) throw(exception);
 	//@}
 };
 
@@ -168,6 +169,12 @@ template<size_t N, typename T, typename Traits>
 void direct_btensor<N, T, Traits>::on_ret_block(const index<N> &idx)
 	throw(exception) {
 	throw_exc("direct_btensor<N, T, Traits>", "on_ret_block()", "NIY");
+}
+
+template<size_t N, typename T, typename Traits>
+void direct_btensor<N, T, Traits>::on_req_zero_block(const index<N> &idx)
+	throw(exception) {
+	throw_exc("direct_btensor<N, T, Traits>", "on_req_zero_block()", "NIY");
 }
 
 } // namespace libtensor

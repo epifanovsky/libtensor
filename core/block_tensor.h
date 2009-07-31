@@ -95,6 +95,7 @@ protected:
 	virtual tensor_i<N, T> &on_req_block(const index<N> &idx)
 		throw(exception);
 	virtual void on_ret_block(const index<N> &idx) throw(exception);
+	virtual void on_req_zero_block(const index<N> &idx) throw(exception);
 	//@}
 
 	//!	\name Implementation of libtensor::tensor_i<N, T>
@@ -197,11 +198,34 @@ tensor_i<N, T> &block_tensor<N, T, Symmetry, Alloc>::on_req_block(
 	return m_map.get(absidx);
 }
 
+
 template<size_t N, typename T, typename Symmetry, typename Alloc>
 void block_tensor<N, T, Symmetry, Alloc>::on_ret_block(const index<N> &idx)
 	throw(exception) {
 
 }
+
+
+template<size_t N, typename T, typename Symmetry, typename Alloc>
+void block_tensor<N, T, Symmetry, Alloc>::on_req_zero_block(const index<N> &idx)
+	throw(exception) {
+
+	static const char *method = "on_req_zero_block(const index<N>&)";
+
+	if(is_immutable()) {
+		throw immut_violation("libtensor", k_clazz, method,
+			__FILE__, __LINE__,
+			"Immutable object cannot be modified.");
+	}
+	if(!m_symmetry.is_canonical(idx)) {
+		throw symmetry_violation("libtensor", k_clazz, method,
+			__FILE__, __LINE__,
+			"Index does not correspond to a canonical block.");
+	}
+	size_t absidx = m_bidims.abs_index(idx);
+	m_map.remove(absidx);
+}
+
 
 template<size_t N, typename T, typename Symmetry, typename Alloc>
 void block_tensor<N, T, Symmetry, Alloc>::on_req_prefetch() throw(exception) {
