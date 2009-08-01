@@ -255,11 +255,11 @@ void tod_copy<N>::op_loop::exec(processor_t &proc, registers &regs)
 
 	for(size_t i=0; i<m_len; i++) {
 #ifdef LIBTENSOR_DEBUG
-		if(ptra >= regs.m_ptra_end) {
+		if(ptra > regs.m_ptra_end) {
 			throw overflow("libtensor", clazz, method, __FILE__,
 				__LINE__, "Source buffer overflow.");
 		}
-		if(ptrb >= regs.m_ptrb_end) {
+		if(ptrb > regs.m_ptrb_end) {
 			throw overflow("libtensor", clazz, method, __FILE__,
 				__LINE__, "Destination buffer overflow.");
 		}
@@ -280,11 +280,11 @@ void tod_copy<N>::op_dcopy::exec(processor_t &proc, registers &regs)
 	static const char *method = "exec(processor_t&, registers&)";
 
 #ifdef LIBTENSOR_DEBUG
-	if(regs.m_ptra + m_len*m_inca >= regs.m_ptra_end) {
+	if(regs.m_ptra + m_len*m_inca > regs.m_ptra_end) {
 		throw overflow("libtensor", clazz, method, __FILE__, __LINE__,
 			"Source buffer overflow.");
 	}
-	if(regs.m_ptrb + m_len*m_incb >= regs.m_ptrb_end) {
+	if(regs.m_ptrb + m_len*m_incb > regs.m_ptrb_end) {
 		throw overflow("libtensor", clazz, method, __FILE__, __LINE__,
 			"Destination buffer overflow.");
 	}
@@ -304,11 +304,11 @@ void tod_copy<N>::op_daxpy::exec(processor_t &proc, registers &regs)
 	static const char *method = "exec(processor_t&, registers&)";
 
 #ifdef LIBTENSOR_DEBUG
-	if(regs.m_ptra + m_len*m_inca >= regs.m_ptra_end) {
+	if(regs.m_ptra + m_len*m_inca > regs.m_ptra_end) {
 		throw overflow("libtensor", clazz, method, __FILE__, __LINE__,
 			"Source buffer overflow.");
 	}
-	if(regs.m_ptrb + m_len*m_incb >= regs.m_ptrb_end) {
+	if(regs.m_ptrb + m_len*m_incb > regs.m_ptrb_end) {
 		throw overflow("libtensor", clazz, method, __FILE__, __LINE__,
 			"Destination buffer overflow.");
 	}
