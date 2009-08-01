@@ -67,11 +67,25 @@ void tod_copy_test::perform() throw(libtest::test_exception) {
 	test_perm_scaled_additive(dims2, perm2t, 0.5, 2.5);
 	test_perm_scaled_additive(dims2, perm2, -3.14, 2.5);
 	test_perm_scaled_additive(dims2, perm2t, -3.14, 2.5);
+
+	index<4> i4a, i4b;
+	i4b[0] = 4; i4b[1] = 5; i4b[2] = 6; i4b[3] = 7;
+	dimensions<4> dims4(index_range<4>(i4a, i4b));
+	permutation<4> perm4, perm4c;
+	perm4c.permute(0, 1).permute(1, 2).permute(2, 3);
+
+	test_perm(dims4, perm4);
+	test_perm(dims4, perm4c);
+
 }
 
 template<size_t N>
 void tod_copy_test::test_plain(const dimensions<N> &dims)
 	throw(libtest::test_exception) {
+
+	static const char *testname = "tod_copy_test::test_plain()";
+
+	try {
 
 	tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
 	tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
@@ -101,12 +115,20 @@ void tod_copy_test::test_plain(const dimensions<N> &dims)
 
 	// Compare against the reference
 
-	compare_ref("tod_copy_test::test_plain()", tb, tb_ref, 1e-15);
+	compare_ref(testname, tb, tb_ref, 1e-15);
+
+	} catch(exception &exc) {
+		fail_test(testname, __FILE__, __LINE__, exc.what());
+	}
 }
 
 template<size_t N>
 void tod_copy_test::test_plain_additive(const dimensions<N> &dims, double d)
 	throw(libtest::test_exception) {
+
+	static const char *testname = "tod_copy_test::test_plain_additive()";
+
+	try {
 
 	tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
 	tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
@@ -137,12 +159,20 @@ void tod_copy_test::test_plain_additive(const dimensions<N> &dims, double d)
 
 	// Compare against the reference
 
-	compare_ref("tod_copy_test::test_plain_additive()", tb, tb_ref, 1e-15);
+	compare_ref(testname, tb, tb_ref, 1e-15);
+
+	} catch(exception &exc) {
+		fail_test(testname, __FILE__, __LINE__, exc.what());
+	}
 }
 
 template<size_t N>
 void tod_copy_test::test_scaled(const dimensions<N> &dims, double c)
 	throw(libtest::test_exception) {
+
+	static const char *testname = "tod_copy_test::test_scaled()";
+
+	try {
 
 	tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
 	tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
@@ -175,11 +205,19 @@ void tod_copy_test::test_scaled(const dimensions<N> &dims, double c)
 
 	std::ostringstream ss; ss << "tod_copy_test::test_scaled(" << c << ")";
 	compare_ref(ss.str().c_str(), tb, tb_ref, 1e-15);
+
+	} catch(exception &exc) {
+		fail_test(testname, __FILE__, __LINE__, exc.what());
+	}
 }
 
 template<size_t N>
 void tod_copy_test::test_scaled_additive(const dimensions<N> &dims, double c,
 	double d) throw(libtest::test_exception) {
+
+	static const char *testname = "tod_copy_test::test_scaled_additive()";
+
+	try {
 
 	tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
 	tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
@@ -213,11 +251,19 @@ void tod_copy_test::test_scaled_additive(const dimensions<N> &dims, double c,
 	std::ostringstream ss; ss << "tod_copy_test::test_scaled_additive("
 		<< c << ")";
 	compare_ref(ss.str().c_str(), tb, tb_ref, 1e-15);
+
+	} catch(exception &exc) {
+		fail_test(testname, __FILE__, __LINE__, exc.what());
+	}
 }
 
 template<size_t N>
 void tod_copy_test::test_perm(const dimensions<N> &dims,
 	const permutation<N> &perm) throw(libtest::test_exception) {
+
+	static const char *testname = "tod_copy_test::test_perm()";
+
+	try {
 
 	dimensions<N> dimsa(dims), dimsb(dims);
 	dimsb.permute(perm);
@@ -253,12 +299,20 @@ void tod_copy_test::test_perm(const dimensions<N> &dims,
 
 	// Compare against the reference
 
-	compare_ref("tod_copy_test::test_perm()", tb, tb_ref, 1e-15);
+	compare_ref(testname, tb, tb_ref, 1e-15);
+
+	} catch(exception &exc) {
+		fail_test(testname, __FILE__, __LINE__, exc.what());
+	}
 }
 
 template<size_t N>
 void tod_copy_test::test_perm_additive(const dimensions<N> &dims,
 	const permutation<N> &perm, double d) throw(libtest::test_exception) {
+
+	static const char *testname = "tod_copy_test::test_perm_additive()";
+
+	try {
 
 	dimensions<N> dimsa(dims), dimsb(dims);
 	dimsb.permute(perm);
@@ -295,12 +349,20 @@ void tod_copy_test::test_perm_additive(const dimensions<N> &dims,
 
 	// Compare against the reference
 
-	compare_ref("tod_copy_test::test_perm_additive()", tb, tb_ref, 1e-15);
+	compare_ref(testname, tb, tb_ref, 1e-15);
+
+	} catch(exception &exc) {
+		fail_test(testname, __FILE__, __LINE__, exc.what());
+	}
 }
 
 template<size_t N>
 void tod_copy_test::test_perm_scaled(const dimensions<N> &dims,
 	const permutation<N> &perm, double c) throw(libtest::test_exception) {
+
+	static const char *testname = "tod_copy_test::test_perm_scaled()";
+
+	try {
 
 	dimensions<N> dimsa(dims), dimsb(dims);
 	dimsb.permute(perm);
@@ -337,13 +399,22 @@ void tod_copy_test::test_perm_scaled(const dimensions<N> &dims,
 
 	// Compare against the reference
 
-	compare_ref("tod_copy_test::test_perm_scaled()", tb, tb_ref, 1e-15);
+	compare_ref(testname, tb, tb_ref, 1e-15);
+
+	} catch(exception &exc) {
+		fail_test(testname, __FILE__, __LINE__, exc.what());
+	}
 }
 
 template<size_t N>
 void tod_copy_test::test_perm_scaled_additive(const dimensions<N> &dims,
 	const permutation<N> &perm, double c, double d)
 	throw(libtest::test_exception) {
+
+	static const char *testname =
+		"tod_copy_test::test_perm_scaled_additive()";
+
+	try {
 
 	dimensions<N> dimsa(dims), dimsb(dims);
 	dimsb.permute(perm);
@@ -380,8 +451,11 @@ void tod_copy_test::test_perm_scaled_additive(const dimensions<N> &dims,
 
 	// Compare against the reference
 
-	compare_ref("tod_copy_test::test_perm_scaled_additive()",
-		tb, tb_ref, 1e-15);
+	compare_ref(testname, tb, tb_ref, 1e-15);
+
+	} catch(exception &exc) {
+		fail_test(testname, __FILE__, __LINE__, exc.what());
+	}
 }
 
 void tod_copy_test::test_exc() throw(libtest::test_exception) {

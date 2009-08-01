@@ -19,6 +19,12 @@ void labeled_btensor_test::perform() throw(libtest::test_exception) {
 }
 
 void labeled_btensor_test::test_label() throw(libtest::test_exception) {
+
+	static const char *testname =
+		"labeled_btensor_test::test_label()";
+
+	try {
+
 	bispace<1> sp_i(10), sp_j(10), sp_a(20), sp_b(20);
 	bispace<4> sp_ijab((sp_i&sp_j)*(sp_a&sp_b));
 	btensor<4> t(sp_ijab);
@@ -26,69 +32,80 @@ void labeled_btensor_test::test_label() throw(libtest::test_exception) {
 	letter i, j, k, a, b, c;
 
 	if(!t(i|j|a|b).contains(i)) {
-		fail_test("labeled_btensor_test::test_label()", __FILE__,
-			__LINE__, "Failed label test: t(i|j|a|b).contains(i)");
+		fail_test(testname, __FILE__, __LINE__,
+			"Failed label test: t(i|j|a|b).contains(i)");
 	}
 	if(!t(i|j|a|b).contains(j)) {
-		fail_test("labeled_btensor_test::test_label()", __FILE__,
-			__LINE__, "Failed label test: t(i|j|a|b).contains(j)");
+		fail_test(testname, __FILE__, __LINE__,
+			"Failed label test: t(i|j|a|b).contains(j)");
 	}
 	if(!t(i|j|a|b).contains(a)) {
-		fail_test("labeled_btensor_test::test_label()", __FILE__,
-			__LINE__, "Failed label test: t(i|j|a|b).contains(a)");
+		fail_test(testname, __FILE__, __LINE__,
+			"Failed label test: t(i|j|a|b).contains(a)");
 	}
 	if(!t(i|j|a|b).contains(b)) {
-		fail_test("labeled_btensor_test::test_label()", __FILE__,
-			__LINE__, "Failed label test: t(i|j|a|b).contains(b)");
+		fail_test(testname, __FILE__, __LINE__,
+			"Failed label test: t(i|j|a|b).contains(b)");
 	}
 	if(t(i|j|a|b).contains(k)) {
-		fail_test("labeled_btensor_test::test_label()", __FILE__,
-			__LINE__, "Failed label test: t(i|j|a|b).contains(k)");
+		fail_test(testname, __FILE__, __LINE__,
+			"Failed label test: t(i|j|a|b).contains(k)");
 	}
 
 	if(t(i|j|a|b).index_of(i) != 0) {
-		fail_test("labeled_btensor_test::test_label()", __FILE__,
-			__LINE__, "Failed label test: t(i|j|a|b).index_of(i)");
+		fail_test(testname, __FILE__, __LINE__,
+			"Failed label test: t(i|j|a|b).index_of(i)");
 	}
 	if(t(i|j|a|b).index_of(j) != 1) {
-		fail_test("labeled_btensor_test::test_label()", __FILE__,
-			__LINE__, "Failed label test: t(i|j|a|b).index_of(j)");
+		fail_test(testname, __FILE__, __LINE__,
+			"Failed label test: t(i|j|a|b).index_of(j)");
 	}
 	if(t(i|j|a|b).index_of(a) != 2) {
-		fail_test("labeled_btensor_test::test_label()", __FILE__,
-			__LINE__, "Failed label test: t(i|j|a|b).index_of(a)");
+		fail_test(testname, __FILE__, __LINE__,
+			"Failed label test: t(i|j|a|b).index_of(a)");
 	}
 	if(t(i|j|a|b).index_of(b) != 3) {
-		fail_test("labeled_btensor_test::test_label()", __FILE__,
-			__LINE__, "Failed label test: t(i|j|a|b).index_of(b)");
+		fail_test(testname, __FILE__, __LINE__,
+			"Failed label test: t(i|j|a|b).index_of(b)");
 	}
 
 	if(t(i|j|a|b).letter_at(0) != i) {
-		fail_test("labeled_btensor_test::test_label()", __FILE__,
-			__LINE__, "Failed label test: t(i|j|a|b).letter_at(0)");
+		fail_test(testname, __FILE__, __LINE__,
+			"Failed label test: t(i|j|a|b).letter_at(0)");
 	}
 	if(t(i|j|a|b).letter_at(1) != j) {
-		fail_test("labeled_btensor_test::test_label()", __FILE__,
-			__LINE__, "Failed label test: t(i|j|a|b).letter_at(1)");
+		fail_test(testname, __FILE__, __LINE__,
+			"Failed label test: t(i|j|a|b).letter_at(1)");
 	}
 	if(t(i|j|a|b).letter_at(2) != a) {
-		fail_test("labeled_btensor_test::test_label()", __FILE__,
-			__LINE__, "Failed label test: t(i|j|a|b).letter_at(2)");
+		fail_test(testname, __FILE__, __LINE__,
+			"Failed label test: t(i|j|a|b).letter_at(2)");
 	}
 	if(t(i|j|a|b).letter_at(3) != b) {
-		fail_test("labeled_btensor_test::test_label()", __FILE__,
-			__LINE__, "Failed label test: t(i|j|a|b).letter_at(3)");
+		fail_test(testname, __FILE__, __LINE__,
+			"Failed label test: t(i|j|a|b).letter_at(3)");
 	}
 
 	btensor<1> s(sp_i);
 
-	if (s(+i).index_of(i) != 0) {	
-		fail_test("labeled_btensor_test::test_label()", __FILE__,
-			__LINE__, "Failed label test: s(i).contains(i)");
+	if (s(+i).index_of(i) != 0) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Failed label test: s(i).contains(i)");
 	}
+
+	} catch(exception &exc) {
+		fail_test(testname, __FILE__, __LINE__, exc.what());
+	}
+
 }
 
 void labeled_btensor_test::test_expr() throw(libtest::test_exception) {
+
+	static const char *testname =
+		"labeled_btensor_test::test_expr()";
+
+	try {
+
 	bispace<1> sp_i(2), sp_j(2), sp_a(3), sp_b(3);
 	bispace<2> sp_ij(sp_i&sp_j), sp_ab(sp_a&sp_b);
 	bispace<2> sp_ji(sp_j&sp_i), sp_ba(sp_b&sp_a);
@@ -131,10 +148,20 @@ void labeled_btensor_test::test_expr() throw(libtest::test_exception) {
 	0.5*(t1_ijab(i|j|a|b) + 2.0*t2_ijab(i|j|a|b));
 	t4_jiab(j|i|a|b) = (t1_ijab(i|j|a|b) + 2.0*t2_ijab(i|j|a|b))*0.5;
 	2.0*(t1_ijab(i|j|a|b) + 2.0*t2_ijab(i|j|a|b))*0.5;
+
+	} catch(exception &exc) {
+		fail_test(testname, __FILE__, __LINE__, exc.what());
+	}
 }
 
 void labeled_btensor_test::test_expr_copy_1() throw(libtest::test_exception) {
+
 	// b(i|j) = a(i|j)
+
+	static const char *testname =
+		"labeled_btensor_test::test_expr_copy_1()";
+
+	try {
 
 	bispace<1> sp_i(4), sp_j(4);
 	bispace<2> sp_ij(sp_i & sp_j);
@@ -177,12 +204,22 @@ void labeled_btensor_test::test_expr_copy_1() throw(libtest::test_exception) {
 
 	// Compare against the reference
 
-	compare_ref("labeled_btensor_test::test_expr_copy_1()",
-		btb, btb_ref, 1e-15);
+	compare_ref(testname, btb, btb_ref, 1e-15);
+
+	} catch(exception &exc) {
+		fail_test(testname, __FILE__, __LINE__, exc.what());
+	}
+
 }
 
 void labeled_btensor_test::test_expr_copy_2() throw(libtest::test_exception) {
+
 	// b(i|j) = a(j|i)
+
+	static const char *testname =
+		"labeled_btensor_test::test_expr_copy_2()";
+
+	try {
 
 	bispace<1> sp_i(4), sp_j(4);
 	bispace<2> sp_ij(sp_i & sp_j);
@@ -227,12 +264,21 @@ void labeled_btensor_test::test_expr_copy_2() throw(libtest::test_exception) {
 
 	// Compare against the reference
 
-	compare_ref("labeled_btensor_test::test_expr_copy_2()",
-		btb, btb_ref, 1e-15);
+	compare_ref(testname, btb, btb_ref, 1e-15);
+
+	} catch(exception &exc) {
+		fail_test(testname, __FILE__, __LINE__, exc.what());
+	}
 }
 
 void labeled_btensor_test::test_expr_copy_3() throw(libtest::test_exception) {
+
 	// b(i|j) = 1.5*a(j|i)
+
+	static const char *testname =
+		"labeled_btensor_test::test_expr_copy_3()";
+
+	try {
 
 	bispace<1> sp_i(4), sp_j(4);
 	bispace<2> sp_ij(sp_i & sp_j);
@@ -278,12 +324,21 @@ void labeled_btensor_test::test_expr_copy_3() throw(libtest::test_exception) {
 
 	// Compare against the reference
 
-	compare_ref("labeled_btensor_test::test_expr_copy_3()",
-		btb, btb_ref, 1e-15);
+	compare_ref(testname, btb, btb_ref, 1e-15);
+
+	} catch(exception &exc) {
+		fail_test(testname, __FILE__, __LINE__, exc.what());
+	}
 }
 
 void labeled_btensor_test::test_expr_copy_4() throw(libtest::test_exception) {
+
 	// b(i|j) = -a(i|j)
+
+	static const char *testname =
+		"labeled_btensor_test::test_expr_copy_4()";
+
+	try {
 
 	bispace<1> sp_i(4), sp_j(4);
 	bispace<2> sp_ij(sp_i & sp_j);
@@ -327,12 +382,21 @@ void labeled_btensor_test::test_expr_copy_4() throw(libtest::test_exception) {
 
 	// Compare against the reference
 
-	compare_ref("labeled_btensor_test::test_expr_copy_4()",
-		btb, btb_ref, 1e-15);
+	compare_ref(testname, btb, btb_ref, 1e-15);
+
+	} catch(exception &exc) {
+		fail_test(testname, __FILE__, __LINE__, exc.what());
+	}
 }
 
 void labeled_btensor_test::test_expr_add_1() throw(libtest::test_exception) {
+
 	// c(i|j) = a(i|j) + b(i|j)
+
+	static const char *testname =
+		"labeled_btensor_test::test_expr_add_1()";
+
+	try {
 
 	bispace<1> sp_i(4), sp_j(4);
 	bispace<2> sp_ij(sp_i & sp_j);
@@ -382,12 +446,21 @@ void labeled_btensor_test::test_expr_add_1() throw(libtest::test_exception) {
 
 	// Compare against the reference
 
-	compare_ref("labeled_btensor_test::test_expr_add_1()",
-		btc, btc_ref, 1e-15);
+	compare_ref(testname, btc, btc_ref, 1e-15);
+
+	} catch(exception &exc) {
+		fail_test(testname, __FILE__, __LINE__, exc.what());
+	}
 }
 
 void labeled_btensor_test::test_expr_add_2() throw(libtest::test_exception) {
+
 	// c(i|j) = -a(i|j) + 3.0*b(i|j)
+
+	static const char *testname =
+		"labeled_btensor_test::test_expr_add_2()";
+
+	try {
 
 	bispace<1> sp_i(4), sp_j(4);
 	bispace<2> sp_ij(sp_i & sp_j);
@@ -437,12 +510,21 @@ void labeled_btensor_test::test_expr_add_2() throw(libtest::test_exception) {
 
 	// Compare against the reference
 
-	compare_ref("labeled_btensor_test::test_expr_add_2()",
-		btc, btc_ref, 1e-15);
+	compare_ref(testname, btc, btc_ref, 1e-15);
+
+	} catch(exception &exc) {
+		fail_test(testname, __FILE__, __LINE__, exc.what());
+	}
 }
 
 void labeled_btensor_test::test_expr_add_3() throw(libtest::test_exception) {
+
 	// c(i|j) = a(i|j) - b(i|j)
+
+	static const char *testname =
+		"labeled_btensor_test::test_expr_add_3()";
+
+	try {
 
 	bispace<1> sp_i(4), sp_j(4);
 	bispace<2> sp_ij(sp_i & sp_j);
@@ -492,12 +574,21 @@ void labeled_btensor_test::test_expr_add_3() throw(libtest::test_exception) {
 
 	// Compare against the reference
 
-	compare_ref("labeled_btensor_test::test_expr_add_3()",
-		btc, btc_ref, 1e-15);
+	compare_ref(testname, btc, btc_ref, 1e-15);
+
+	} catch(exception &exc) {
+		fail_test(testname, __FILE__, __LINE__, exc.what());
+	}
 }
 
 void labeled_btensor_test::test_expr_add_4() throw(libtest::test_exception) {
+
 	// c(i|j) = 4.0*a(i|j) - 0.5*b(j|i)
+
+	static const char *testname =
+		"labeled_btensor_test::test_expr_add_4()";
+
+	try {
 
 	bispace<1> sp_i(4), sp_j(4);
 	bispace<2> sp_ij(sp_i & sp_j);
@@ -550,8 +641,11 @@ void labeled_btensor_test::test_expr_add_4() throw(libtest::test_exception) {
 
 	// Compare against the reference
 
-	compare_ref("labeled_btensor_test::test_expr_add_4()",
-		btc, btc_ref, 1e-15);
+	compare_ref(testname, btc, btc_ref, 1e-15);
+
+	} catch(exception &exc) {
+		fail_test(testname, __FILE__, __LINE__, exc.what());
+	}
 }
 
 template<size_t N>

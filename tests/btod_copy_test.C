@@ -9,6 +9,9 @@ typedef default_symmetry<2,double> symmetry2;
 typedef block_tensor<2,double,symmetry2,allocator> block_tensor2;
 
 void btod_copy_test::perform() throw(libtest::test_exception) {
+
+	try {
+
 	index<2> i1, i2; i2[0] = 1; i2[1] = 2;
 	dimensions<2> dims_ia(index_range<2>(i1, i2));
 	i2[0] = 2; i2[1] = 1;
@@ -21,6 +24,11 @@ void btod_copy_test::perform() throw(libtest::test_exception) {
 
 	btod_copy<2> cp1(bt1);
 	cp1.perform(bt3);
+
+	} catch(exception &exc) {
+		fail_test("btod_copy_test::perform()", __FILE__, __LINE__,
+			exc.what());
+	}
 }
 
 } // namespace libtensor

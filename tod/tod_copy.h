@@ -56,6 +56,10 @@ private:
 	struct registers {
 		const double *m_ptra;
 		double *m_ptrb;
+#ifdef LIBTENSOR_DEBUG
+		const double *m_ptra_end;
+		double *m_ptrb_end;
+#endif // LIBTENSOR_DEBUG
 	};
 
 	struct loop_list_node;
@@ -218,7 +222,13 @@ void tod_copy<N>::do_perform(tensor_i<N, double> &tdst, double c)
 		lst.push_back(node);
 	}
 
-	registers regs;	regs.m_ptra = psrc; regs.m_ptrb = pdst;
+	registers regs;
+	regs.m_ptra = psrc;
+	regs.m_ptrb = pdst;
+#ifdef LIBTENSOR_DEBUG
+	regs.m_ptra_end = psrc + dims.get_size();
+	regs.m_ptrb_end = pdst + dims.get_size();
+#endif // LIBTENSOR_DEBUG
 	processor_t proc(lst, regs);
 	proc.process_next();
 
@@ -237,10 +247,23 @@ template<size_t N>
 void tod_copy<N>::op_loop::exec(processor_t &proc, registers &regs)
 	throw(exception) {
 
+	static const char *clazz = "tod_copy<N>::op_loop";
+	static const char *method = "exec(processor_t&, registers&)";
+
 	const double *ptra = regs.m_ptra;
 	double *ptrb = regs.m_ptrb;
 
 	for(size_t i=0; i<m_len; i++) {
+#ifdef LIBTENSOR_DEBUG
+		if(ptra >= regs.m_ptra_end) {
+			throw overflow("libtensor", clazz, method, __FILE__,
+				__LINE__, "Source buffer overflow.");
+		}
+		if(ptrb >= regs.m_ptrb_end) {
+			throw overflow("libtensor", clazz, method, __FILE__,
+				__LINE__, "Destination buffer overflow.");
+		}
+#endif // LIBTENSOR_DEBUG
 		regs.m_ptra = ptra;
 		regs.m_ptrb = ptrb;
 		proc.process_next();
@@ -252,6 +275,21 @@ void tod_copy<N>::op_loop::exec(processor_t &proc, registers &regs)
 template<size_t N>
 void tod_copy<N>::op_dcopy::exec(processor_t &proc, registers &regs)
 	throw(exception) {
+
+	static const char *clazz = "tod_copy<N>::op_dcopy";
+	static const char *method = "exec(processor_t&, registers&)";
+
+#ifdef LIBTENSOR_DEBUG
+	if(regs.m_ptra + m_len*m_inca >= regs.m_ptra_end) {
+		throw overflow("libtensor", clazz, method, __FILE__, __LINE__,
+			"Source buffer overflow.");
+	}
+	if(regs.m_ptrb + m_len*m_incb >= regs.m_ptrb_end) {
+		throw overflow("libtensor", clazz, method, __FILE__, __LINE__,
+			"Destination buffer overflow.");
+	}
+#endif // LIBTENSOR_DEBUG
+
 	cblas_dcopy(m_len, regs.m_ptra, m_inca, regs.m_ptrb, m_incb);
 	if(m_c != 1.0) {
 		cblas_dscal(m_len, m_c, regs.m_ptrb, m_incb);
@@ -261,6 +299,21 @@ void tod_copy<N>::op_dcopy::exec(processor_t &proc, registers &regs)
 template<size_t N>
 void tod_copy<N>::op_daxpy::exec(processor_t &proc, registers &regs)
 	throw(exception) {
+
+	static const char *clazz = "tod_copy<N>::op_daxpy";
+	static const char *method = "exec(processor_t&, registers&)";
+
+#ifdef LIBTENSOR_DEBUG
+	if(regs.m_ptra + m_len*m_inca >= regs.m_ptra_end) {
+		throw overflow("libtensor", clazz, method, __FILE__, __LINE__,
+			"Source buffer overflow.");
+	}
+	if(regs.m_ptrb + m_len*m_incb >= regs.m_ptrb_end) {
+		throw overflow("libtensor", clazz, method, __FILE__, __LINE__,
+			"Destination buffer overflow.");
+	}
+#endif // LIBTENSOR_DEBUG
+
 	cblas_daxpy(m_len, m_c, regs.m_ptra, m_inca, regs.m_ptrb, m_incb);
 }
 
