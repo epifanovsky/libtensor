@@ -34,7 +34,6 @@ private:
 
 private:
 	block_tensor<N, element_t, symmetry_t, allocator_t> m_bt;
-	tensor_ctrl<N, element_t> m_tctrl;
 
 public:
 	//!	\name Construction and destruction
@@ -61,11 +60,6 @@ public:
 	virtual ~btensor();
 	//@}
 
-	//!	\name Implementation of tensor_i<N, T>
-	//@{
-	virtual const dimensions<N> &get_dims() const;
-	//@}
-
 	//!	\name Implementation of block_tensor_i<N, T>
 	//@{
 	virtual const block_index_space<N> &get_bis() const;
@@ -79,14 +73,6 @@ public:
 		letter_expr<N, ExprT> expr);
 
 protected:
-	//!	\name Implementation of libtensor::tensor_i<N,T>
-	//@{
-	virtual void on_req_prefetch() throw(exception);
-	virtual T *on_req_dataptr() throw(exception);
-	virtual const T *on_req_const_dataptr() throw(exception);
-	virtual void on_ret_dataptr(const T *ptr) throw(exception);
-	//@}
-
 	//!	\name Implementation of libtensor::block_tensor_i<N,T>
 	//@{
 	virtual const symmetry_i<N, T> &on_req_symmetry() throw(exception);
@@ -106,60 +92,40 @@ protected:
 };
 
 template<size_t N, typename T, typename Traits>
-inline btensor<N, T, Traits>::btensor(const bispace_i<N> &bispace) :
-	m_bt(bispace.get_bis()), m_tctrl(m_bt) {
+inline btensor<N, T, Traits>::btensor(const bispace_i<N> &bispace)
+: m_bt(bispace.get_bis()) {
+
 }
 
 template<size_t N, typename T, typename Traits>
-inline btensor<N, T, Traits>::btensor(const block_index_space<N> &bis) :
-	m_bt(bis), m_tctrl(m_bt) {
+inline btensor<N, T, Traits>::btensor(const block_index_space<N> &bis)
+: m_bt(bis) {
+
 }
 
 template<size_t N, typename T, typename Traits>
-inline btensor<N, T, Traits>::btensor(const btensor_i<N, element_t> &bt) :
-	m_bt(bt), m_tctrl(m_bt) {
+inline btensor<N, T, Traits>::btensor(const btensor_i<N, element_t> &bt)
+: m_bt(bt) {
+
 }
 
 template<size_t N, typename T, typename Traits>
 btensor<N, T, Traits>::~btensor() {
-}
 
-template<size_t N, typename T, typename Traits>
-const dimensions<N> &btensor<N, T, Traits>::get_dims() const {
-	return m_bt.get_dims();
 }
 
 template<size_t N, typename T, typename Traits>
 inline const block_index_space<N> &btensor<N, T, Traits>::get_bis() const {
+
 	return m_bt.get_bis();
 }
 
 template<size_t N, typename T, typename Traits> template<typename ExprT>
 inline labeled_btensor<N, T, true, letter_expr<N, ExprT> >
 btensor<N, T, Traits>::operator()(letter_expr<N, ExprT> expr) {
+
 	return labeled_btensor<N, T, true, letter_expr<N, ExprT> >(
 		*this, expr);
-}
-
-template<size_t N, typename T, typename Traits>
-void btensor<N, T, Traits>::on_req_prefetch() throw(exception) {
-	block_tensor_ctrl<N, T> ctrl(m_bt);
-	ctrl.req_prefetch();
-}
-
-template<size_t N, typename T, typename Traits>
-T *btensor<N, T, Traits>::on_req_dataptr() throw(exception) {
-	return m_tctrl.req_dataptr();
-}
-
-template<size_t N, typename T, typename Traits>
-const T *btensor<N, T, Traits>::on_req_const_dataptr() throw(exception) {
-	return m_tctrl.req_const_dataptr();
-}
-
-template<size_t N, typename T, typename Traits>
-void btensor<N, T, Traits>::on_ret_dataptr(const T *ptr) throw(exception) {
-	m_tctrl.ret_dataptr(ptr);
 }
 
 template<size_t N, typename T, typename Traits>

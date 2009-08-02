@@ -56,7 +56,7 @@ template<size_t N, typename T> class block_tensor_ctrl;
 	\ingroup libtensor_core
  **/
 template<size_t N, typename T>
-class block_tensor_i : public tensor_i<N, T> {
+class block_tensor_i {
 	friend class block_tensor_ctrl<N, T>;
 
 public:

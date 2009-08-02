@@ -64,8 +64,6 @@ public:
 	block_map<N, T, Alloc> m_map; //!< Block map
 	bi_handler m_bihandler; //!< Block iterator handler
 	oi_handler m_oihandler; //!< Orbit iterator handler
-	tensor<N, T, Alloc> m_t;
-	tensor_ctrl<N, T> m_ctrl;
 
 public:
 	//!	\name Construction and destruction
@@ -73,11 +71,6 @@ public:
 	block_tensor(const block_index_space<N> &bis);
 	block_tensor(const block_tensor<N, T, Symmetry, Alloc> &bt);
 	virtual ~block_tensor();
-	//@}
-
-	//!	\name Implementation of libtensor::tensor_i<N, T>
-	//@{
-	virtual const dimensions<N> &get_dims() const;
 	//@}
 
 	//!	\name Implementation of libtensor::block_tensor_i<N, T>
@@ -98,14 +91,6 @@ protected:
 	virtual void on_req_zero_block(const index<N> &idx) throw(exception);
 	//@}
 
-	//!	\name Implementation of libtensor::tensor_i<N, T>
-	//@{
-	virtual void on_req_prefetch() throw(exception);
-	virtual T *on_req_dataptr() throw(exception);
-	virtual const T *on_req_const_dataptr() throw(exception);
-	virtual void on_ret_dataptr(const T *p) throw(exception);
-	//@}
-
 	//!	\name Implementation of libtensor::immutable
 	//@{
 	virtual void on_set_immutable();
@@ -124,8 +109,7 @@ block_tensor<N, T, Symmetry, Alloc>::block_tensor(
 
 : m_bis(bis), m_bidims(bis.get_block_index_dims()), m_symmetry(m_bidims),
 	m_oihandler(m_bidims, m_symmetry.get_oi_handler(), m_map),
-	m_bihandler(m_symmetry.get_bi_handler()),
-	m_t(m_bis.get_dims()), m_ctrl(m_t) {
+	m_bihandler(m_symmetry.get_bi_handler()) {
 
 }
 
@@ -133,19 +117,13 @@ template<size_t N, typename T, typename Symmetry, typename Alloc>
 block_tensor<N, T, Symmetry, Alloc>::block_tensor(
 	const block_tensor<N, T, Symmetry, Alloc> &bt)
 
-: m_bis(bt.get_bis()), m_bidims(bt.m_bidims), m_symmetry(bt.m_symmetry),
-	m_t(m_bis.get_dims()), m_ctrl(m_t) {
+: m_bis(bt.get_bis()), m_bidims(bt.m_bidims), m_symmetry(bt.m_symmetry) {
 
 }
 
 template<size_t N, typename T, typename Symmetry, typename Alloc>
 block_tensor<N, T, Symmetry, Alloc>::~block_tensor() {
 
-}
-
-template<size_t N, typename T, typename Symmetry, typename Alloc>
-const dimensions<N> &block_tensor<N, T, Symmetry, Alloc>::get_dims() const {
-	return m_t.get_dims();
 }
 
 template<size_t N, typename T, typename Symmetry, typename Alloc>
@@ -224,27 +202,6 @@ void block_tensor<N, T, Symmetry, Alloc>::on_req_zero_block(const index<N> &idx)
 	}
 	size_t absidx = m_bidims.abs_index(idx);
 	m_map.remove(absidx);
-}
-
-
-template<size_t N, typename T, typename Symmetry, typename Alloc>
-void block_tensor<N, T, Symmetry, Alloc>::on_req_prefetch() throw(exception) {
-	m_ctrl.req_prefetch();
-}
-
-template<size_t N, typename T, typename Symmetry, typename Alloc>
-T *block_tensor<N, T, Symmetry, Alloc>::on_req_dataptr() throw(exception) {
-	return m_ctrl.req_dataptr();
-}
-
-template<size_t N, typename T, typename Symmetry, typename Alloc>
-const T *block_tensor<N, T, Symmetry, Alloc>::on_req_const_dataptr() throw(exception) {
-	return m_ctrl.req_const_dataptr();
-}
-
-template<size_t N, typename T, typename Symmetry, typename Alloc>
-void block_tensor<N, T, Symmetry, Alloc>::on_ret_dataptr(const T *p) throw(exception) {
-	m_ctrl.ret_dataptr(p);
 }
 
 

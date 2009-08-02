@@ -9,7 +9,7 @@ void btensor_test::perform() throw(libtest::test_exception) {
 	bispace<2> ia(i_sp*a_sp);
 	btensor<2> bt2(ia);
 
-	dimensions<2> bt2_dims(bt2.get_dims());
+	dimensions<2> bt2_dims(bt2.get_bis().get_dims());
 	if(bt2_dims[0] != 10) {
 		fail_test("btensor_test::perform()", __FILE__, __LINE__,
 			"Block tensor bt2 has the wrong dimension: i");

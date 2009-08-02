@@ -119,11 +119,11 @@ void btod_add<N>::add_op(block_tensor_i<N,double> &bt, const permutation<N> &p,
 	// first check whether the new operand tensor has the right dimensions
 	if ( m_head == NULL ) {
 		// set dimensions of the output tensor
-		m_dim=new dimensions<N>(bt.get_dims());
+		m_dim=new dimensions<N>(bt.get_bis().get_dims());
 		m_dim->permute(new_p);
 	}
 	else {
-		dimensions<N> dim(bt.get_dims());
+		dimensions<N> dim(bt.get_bis().get_dims());
 		dim.permute(new_p);
 		if ( dim != *m_dim )
 			throw_exc("btod_add<N>",
@@ -148,7 +148,7 @@ void btod_add<N>::perform(block_tensor_i<N, double> &bt,
 	double cb) throw(exception)
 {
 	// first check whether the output tensor has the right dimensions
-	if ( *m_dim != bt.get_dims() )
+	if ( *m_dim != bt.get_bis().get_dims() )
 		throw_exc("btod_add<N>",
 			"perform(block_tensor_i<N,double>&)",
 			"The output tensor has incompatible dimensions");
@@ -182,7 +182,7 @@ void btod_add<N>::perform(block_tensor_i<N, double> &bt)
 	throw(exception)
 {
 	// first check whether the output tensor has the right dimensions
-	if ( *m_dim != bt.get_dims() )
+	if ( *m_dim != bt.get_bis().get_dims() )
 		throw_exc("btod_add<N>",
 			"perform(block_tensor_i<N,double>&)",
 			"The output tensor has incompatible dimensions");
