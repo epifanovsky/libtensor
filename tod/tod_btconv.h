@@ -158,9 +158,11 @@ void tod_btconv<N>::copy_block(double *optr, const dimensions<N> &odims,
 	const index<N> &ooffs, const double *iptr, const dimensions<N> &idims,
 	const permutation<N> &iperm, double icoeff) throw(exception) {
 
+	permutation<N> inv_perm(iperm);
+	inv_perm.invert();
 	size_t ib[N];
 	for(size_t i = 0; i < N; i++) ib[i] = i;
-	iperm.apply(N, ib);
+	inv_perm.apply(ib);
 
 	loop_list_t lst;
 	for(size_t i = 0; i < N; i++) {

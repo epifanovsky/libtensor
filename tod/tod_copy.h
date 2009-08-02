@@ -52,6 +52,9 @@ namespace libtensor {
 **/
 template<size_t N>
 class tod_copy : public tod_additive<N> {
+public:
+	static const char *k_clazz; //!< Class name
+
 private:
 	struct registers {
 		const double *m_ptra;
@@ -160,6 +163,9 @@ private:
 };
 
 template<size_t N>
+const char *tod_copy<N>::k_clazz = "tod_copy<N>";
+
+template<size_t N>
 inline tod_copy<N>::tod_copy(tensor_i<N, double> &t, double c)
 	: m_t(t), m_tctrl(t), m_c(c) {
 }
@@ -194,19 +200,23 @@ template<size_t N> template<typename CoreOp>
 void tod_copy<N>::do_perform(tensor_i<N, double> &tdst, double c)
 	throw(exception) {
 
+	static const char *method = "do_perform(tensor_i<N, double>&, double)";
+
 	dimensions<N> dims(m_t.get_dims()); dims.permute(m_perm);
 	if(dims != tdst.get_dims()) {
-		throw_exc("tod_copy<N>", "perform(tensor_i<N, double>&)",
-			"The tensors have incompatible dimensions");
+		throw bad_parameter("libtensor", k_clazz, method, __FILE__,
+			__LINE__, "Incorrect dimensions of the output tensor.");
 	}
 
 	tensor_ctrl<N, double> tctrl_dst(tdst);
 	const double *psrc = m_tctrl.req_const_dataptr();
 	double *pdst = tctrl_dst.req_dataptr();
 
+	permutation<N> inv_perm(m_perm);
+	inv_perm.invert();
 	size_t ib[N];
 	for(size_t i = 0; i < N; i++) ib[i] = i;
-	m_perm.apply(N, ib);
+	inv_perm.apply(ib);
 
 	loop_list_t lst;
 	for(size_t i = 0; i < N; i++) {
@@ -229,8 +239,19 @@ void tod_copy<N>::do_perform(tensor_i<N, double> &tdst, double c)
 	regs.m_ptra_end = psrc + dims.get_size();
 	regs.m_ptrb_end = pdst + dims.get_size();
 #endif // LIBTENSOR_DEBUG
-	processor_t proc(lst, regs);
-	proc.process_next();
+
+	try {
+		processor_t proc(lst, regs);
+		proc.process_next();
+	} catch(exception &e) {
+		for(typename loop_list_t::iterator i = lst.begin();
+			i != lst.end(); i++) {
+
+			delete i->m_op;
+			i->m_op = NULL;
+		}
+		throw;
+	}
 
 	for(typename loop_list_t::iterator i = lst.begin();
 		i != lst.end(); i++) {
@@ -279,12 +300,14 @@ void tod_copy<N>::op_dcopy::exec(processor_t &proc, registers &regs)
 	static const char *clazz = "tod_copy<N>::op_dcopy";
 	static const char *method = "exec(processor_t&, registers&)";
 
+	if(m_len == 0) return;
+
 #ifdef LIBTENSOR_DEBUG
-	if(regs.m_ptra + m_len*m_inca > regs.m_ptra_end) {
+	if(regs.m_ptra + (m_len - 1)*m_inca >= regs.m_ptra_end) {
 		throw overflow("libtensor", clazz, method, __FILE__, __LINE__,
 			"Source buffer overflow.");
 	}
-	if(regs.m_ptrb + m_len*m_incb > regs.m_ptrb_end) {
+	if(regs.m_ptrb + (m_len - 1)*m_incb >= regs.m_ptrb_end) {
 		throw overflow("libtensor", clazz, method, __FILE__, __LINE__,
 			"Destination buffer overflow.");
 	}
@@ -303,12 +326,14 @@ void tod_copy<N>::op_daxpy::exec(processor_t &proc, registers &regs)
 	static const char *clazz = "tod_copy<N>::op_daxpy";
 	static const char *method = "exec(processor_t&, registers&)";
 
+	if(m_len == 0) return;
+
 #ifdef LIBTENSOR_DEBUG
-	if(regs.m_ptra + m_len*m_inca > regs.m_ptra_end) {
+	if(regs.m_ptra + (m_len - 1)*m_inca >= regs.m_ptra_end) {
 		throw overflow("libtensor", clazz, method, __FILE__, __LINE__,
 			"Source buffer overflow.");
 	}
-	if(regs.m_ptrb + m_len*m_incb > regs.m_ptrb_end) {
+	if(regs.m_ptrb + (m_len - 1)*m_incb >= regs.m_ptrb_end) {
 		throw overflow("libtensor", clazz, method, __FILE__, __LINE__,
 			"Destination buffer overflow.");
 	}

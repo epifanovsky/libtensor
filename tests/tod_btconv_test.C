@@ -13,6 +13,7 @@ void tod_btconv_test::perform() throw(libtest::test_exception) {
 	srand48(time(NULL));
 	test_1();
 	test_2();
+	test_3();
 }
 
 void tod_btconv_test::test_1() throw(libtest::test_exception) {
