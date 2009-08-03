@@ -74,10 +74,6 @@ private:
 	 **/
 	void test_exc() throw(libtest::test_exception);
 
-	template<size_t N>
-	void compare_ref(const char *test, tensor_i<N, double> &t,
-		tensor_i<N, double> &t_ref, double thresh)
-		throw(libtest::test_exception);
 };
 
 } // namespace libtensor

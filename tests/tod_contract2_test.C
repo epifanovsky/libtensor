@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <libvmm.h>
+#include "compare_ref.h"
 #include "tod_contract2_test.h"
 
 namespace libtensor {
@@ -110,7 +111,7 @@ void tod_contract2_test::test_ij_pq_ijpq(size_t ni, size_t nj, size_t np,
 	snprintf(testname, 128,
 		"tod_contract2_test::test_ij_pq_ijpq"
 		"(%lu, %lu, %lu, %lu)", ni, nj, np, nq);
-	compare_ref(testname, tc, tc_ref, cij_max*k_thresh);
+	compare_ref<2>::compare(testname, tc, tc_ref, cij_max*k_thresh);
 }
 
 void tod_contract2_test::test_ij_pq_ijpq_a(size_t ni, size_t nj, size_t np,
@@ -184,7 +185,7 @@ void tod_contract2_test::test_ij_pq_ijpq_a(size_t ni, size_t nj, size_t np,
 	snprintf(testname, 128,
 		"tod_contract2_test::test_ij_pq_ijpq_a"
 		"(%lu, %lu, %lu, %lu)", ni, nj, np, nq);
-	compare_ref(testname, tc, tc_ref, cij_max*k_thresh);
+	compare_ref<2>::compare(testname, tc, tc_ref, cij_max*k_thresh);
 }
 
 void tod_contract2_test::test_ij_ipqr_jpqr(size_t ni, size_t nj, size_t np,
@@ -261,7 +262,7 @@ void tod_contract2_test::test_ij_ipqr_jpqr(size_t ni, size_t nj, size_t np,
 	snprintf(testname, 128,
 		"tod_contract2_test::test_ij_ipqr_jpqr"
 		"(%lu, %lu, %lu, %lu, %lu)", ni, nj, np, nq, nr);
-	compare_ref(testname, tc, tc_ref, cij_max*k_thresh);
+	compare_ref<2>::compare(testname, tc, tc_ref, cij_max*k_thresh);
 }
 
 void tod_contract2_test::test_ij_ipqr_jpqr_a(size_t ni, size_t nj, size_t np,
@@ -338,7 +339,7 @@ void tod_contract2_test::test_ij_ipqr_jpqr_a(size_t ni, size_t nj, size_t np,
 	snprintf(testname, 128,
 		"tod_contract2_test::test_ij_ipqr_jpqr_a"
 		"(%lu, %lu, %lu, %lu, %lu)", ni, nj, np, nq, nr);
-	compare_ref(testname, tc, tc_ref, cij_max*k_thresh);
+	compare_ref<2>::compare(testname, tc, tc_ref, cij_max*k_thresh);
 }
 
 void tod_contract2_test::test_ij_pqir_pqjr(size_t ni, size_t nj,
@@ -415,7 +416,7 @@ void tod_contract2_test::test_ij_pqir_pqjr(size_t ni, size_t nj,
 	snprintf(testname, 128,
 		"tod_contract2_test::test_ij_pqir_pqjr"
 		"(%lu, %lu, %lu, %lu, %lu)", ni, nj, np, nq, nr);
-	compare_ref(testname, tc, tc_ref, cij_max*k_thresh);
+	compare_ref<2>::compare(testname, tc, tc_ref, cij_max*k_thresh);
 }
 
 void tod_contract2_test::test_ij_pqir_pqjr_a(size_t ni, size_t nj, size_t np,
@@ -492,7 +493,7 @@ void tod_contract2_test::test_ij_pqir_pqjr_a(size_t ni, size_t nj, size_t np,
 	snprintf(testname, 128,
 		"tod_contract2_test::test_ij_pqir_pqjr_a"
 		"(%lu, %lu, %lu, %lu, %lu)", ni, nj, np, nq, nr);
-	compare_ref(testname, tc, tc_ref, cij_max*k_thresh);
+	compare_ref<2>::compare(testname, tc, tc_ref, cij_max*k_thresh);
 }
 
 void tod_contract2_test::test_jikl_pi_jpkl(size_t ni, size_t nj,
@@ -569,7 +570,7 @@ void tod_contract2_test::test_jikl_pi_jpkl(size_t ni, size_t nj,
 	snprintf(testname, 128,
 		"tod_contract2_test::test_jikl_pi_jpkl"
 		"(%lu, %lu, %lu, %lu, %lu)", ni, nj, nk, nl, np);
-	compare_ref(testname, tc, tc_ref, cij_max*k_thresh);
+	compare_ref<4>::compare(testname, tc, tc_ref, cij_max*k_thresh);
 }
 
 void tod_contract2_test::test_jikl_pi_jpkl_a(size_t ni, size_t nj, size_t nk,
@@ -646,7 +647,7 @@ void tod_contract2_test::test_jikl_pi_jpkl_a(size_t ni, size_t nj, size_t nk,
 	snprintf(testname, 128,
 		"tod_contract2_test::test_jikl_pi_jpkl_a"
 		"(%lu, %lu, %lu, %lu, %lu)", ni, nj, nk, nl, np);
-	compare_ref(testname, tc, tc_ref, cij_max*k_thresh);
+	compare_ref<4>::compare(testname, tc, tc_ref, cij_max*k_thresh);
 }
 
 void tod_contract2_test::test_ijkl_ijp_klp(size_t ni, size_t nj,
@@ -721,7 +722,7 @@ void tod_contract2_test::test_ijkl_ijp_klp(size_t ni, size_t nj,
 	snprintf(testname, 128,
 		"tod_contract2_test::test_ijkl_ijp_klp"
 		"(%lu, %lu, %lu, %lu, %lu)", ni, nj, nk, nl, np);
-	compare_ref(testname, tc, tc_ref, cij_max*k_thresh);
+	compare_ref<4>::compare(testname, tc, tc_ref, cij_max*k_thresh);
 }
 
 void tod_contract2_test::test_ijkl_ijp_klp_a(size_t ni, size_t nj, size_t nk,
@@ -796,7 +797,7 @@ void tod_contract2_test::test_ijkl_ijp_klp_a(size_t ni, size_t nj, size_t nk,
 	snprintf(testname, 128,
 		"tod_contract2_test::test_ijkl_ijp_klp_a"
 		"(%lu, %lu, %lu, %lu, %lu)", ni, nj, nk, nl, np);
-	compare_ref(testname, tc, tc_ref, cij_max*k_thresh);
+	compare_ref<4>::compare(testname, tc, tc_ref, cij_max*k_thresh);
 }
 
 } // namespace libtensor

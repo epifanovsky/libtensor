@@ -4,6 +4,7 @@
 #include <sstream>
 #include <libtensor.h>
 #include <libvmm.h>
+#include "compare_ref.h"
 #include "tod_btconv_test.h"
 
 namespace libtensor {
@@ -66,7 +67,7 @@ void tod_btconv_test::test_1() throw(libtest::test_exception) {
 
 	//	Compare the result against the reference
 
-	compare_ref(testname, t, t_ref, 0.0);
+	compare_ref<2>::compare(testname, t, t_ref, 0.0);
 
 	} catch(exception &exc) {
 		fail_test(testname, __FILE__, __LINE__, exc.what());
@@ -138,7 +139,7 @@ void tod_btconv_test::test_2() throw(libtest::test_exception) {
 
 	//	Compare the result against the reference
 
-	compare_ref(testname, t, t_ref, 0.0);
+	compare_ref<2>::compare(testname, t, t_ref, 0.0);
 
 	} catch(exception &exc) {
 		fail_test(testname, __FILE__, __LINE__, exc.what());
@@ -211,31 +212,11 @@ void tod_btconv_test::test_3() throw(libtest::test_exception) {
 
 	//	Compare the result against the reference
 
-	compare_ref(testname, t, t_ref, 0.0);
+	compare_ref<2>::compare(testname, t, t_ref, 0.0);
 
 	} catch(exception &exc) {
 		fail_test(testname, __FILE__, __LINE__, exc.what());
 	}
-}
-
-template<size_t N>
-void tod_btconv_test::compare_ref(const char *test,
-	tensor_i<N, double> &t, tensor_i<N, double> &t_ref, double thresh)
-	throw(libtest::test_exception) {
-
-	tod_compare<N> cmp(t, t_ref, thresh);
-	if(!cmp.compare()) {
-		std::ostringstream ss1, ss2;
-		ss2 << "Result does not match reference at element "
-			<< cmp.get_diff_index() << ": "
-			<< cmp.get_diff_elem_1() << " (act) vs. "
-			<< cmp.get_diff_elem_2() << " (ref), "
-			<< cmp.get_diff_elem_1() - cmp.get_diff_elem_2()
-			<< " (diff) in " << test;
-		fail_test("tod_btconv_test::compare_ref()",
-			__FILE__, __LINE__, ss2.str().c_str());
-	}
-
 }
 
 } // namespace libtensor

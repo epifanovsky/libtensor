@@ -1,5 +1,6 @@
 #include <sstream>
 #include <libvmm.h>
+#include "compare_ref.h"
 #include "tod_copy_test.h"
 
 namespace libtensor {
@@ -115,7 +116,7 @@ void tod_copy_test::test_plain(const dimensions<N> &dims)
 
 	// Compare against the reference
 
-	compare_ref(testname, tb, tb_ref, 1e-15);
+	compare_ref<N>::compare(testname, tb, tb_ref, 1e-15);
 
 	} catch(exception &exc) {
 		fail_test(testname, __FILE__, __LINE__, exc.what());
@@ -159,7 +160,7 @@ void tod_copy_test::test_plain_additive(const dimensions<N> &dims, double d)
 
 	// Compare against the reference
 
-	compare_ref(testname, tb, tb_ref, 1e-15);
+	compare_ref<N>::compare(testname, tb, tb_ref, 1e-15);
 
 	} catch(exception &exc) {
 		fail_test(testname, __FILE__, __LINE__, exc.what());
@@ -204,7 +205,7 @@ void tod_copy_test::test_scaled(const dimensions<N> &dims, double c)
 	// Compare against the reference
 
 	std::ostringstream ss; ss << "tod_copy_test::test_scaled(" << c << ")";
-	compare_ref(ss.str().c_str(), tb, tb_ref, 1e-15);
+	compare_ref<N>::compare(ss.str().c_str(), tb, tb_ref, 1e-15);
 
 	} catch(exception &exc) {
 		fail_test(testname, __FILE__, __LINE__, exc.what());
@@ -250,7 +251,7 @@ void tod_copy_test::test_scaled_additive(const dimensions<N> &dims, double c,
 
 	std::ostringstream ss; ss << "tod_copy_test::test_scaled_additive("
 		<< c << ")";
-	compare_ref(ss.str().c_str(), tb, tb_ref, 1e-15);
+	compare_ref<N>::compare(ss.str().c_str(), tb, tb_ref, 1e-15);
 
 	} catch(exception &exc) {
 		fail_test(testname, __FILE__, __LINE__, exc.what());
@@ -299,7 +300,7 @@ void tod_copy_test::test_perm(const dimensions<N> &dims,
 
 	// Compare against the reference
 
-	compare_ref(testname, tb, tb_ref, 1e-15);
+	compare_ref<N>::compare(testname, tb, tb_ref, 1e-15);
 
 	} catch(exception &exc) {
 		fail_test(testname, __FILE__, __LINE__, exc.what());
@@ -349,7 +350,7 @@ void tod_copy_test::test_perm_additive(const dimensions<N> &dims,
 
 	// Compare against the reference
 
-	compare_ref(testname, tb, tb_ref, 1e-15);
+	compare_ref<N>::compare(testname, tb, tb_ref, 1e-15);
 
 	} catch(exception &exc) {
 		fail_test(testname, __FILE__, __LINE__, exc.what());
@@ -399,7 +400,7 @@ void tod_copy_test::test_perm_scaled(const dimensions<N> &dims,
 
 	// Compare against the reference
 
-	compare_ref(testname, tb, tb_ref, 1e-15);
+	compare_ref<N>::compare(testname, tb, tb_ref, 1e-15);
 
 	} catch(exception &exc) {
 		fail_test(testname, __FILE__, __LINE__, exc.what());
@@ -451,7 +452,7 @@ void tod_copy_test::test_perm_scaled_additive(const dimensions<N> &dims,
 
 	// Compare against the reference
 
-	compare_ref(testname, tb, tb_ref, 1e-15);
+	compare_ref<N>::compare(testname, tb, tb_ref, 1e-15);
 
 	} catch(exception &exc) {
 		fail_test(testname, __FILE__, __LINE__, exc.what());
@@ -477,26 +478,6 @@ void tod_copy_test::test_exc() throw(libtest::test_exception) {
 		fail_test("tod_copy_test::test_exc()", __FILE__, __LINE__,
 			"Expected an exception with heterogeneous arguments");
 	}
-}
-
-template<size_t N>
-void tod_copy_test::compare_ref(const char *test,
-	tensor_i<N, double> &t, tensor_i<N, double> &t_ref, double thresh)
-	throw(libtest::test_exception) {
-
-	tod_compare<N> cmp(t, t_ref, thresh);
-	if(!cmp.compare()) {
-		std::ostringstream ss1, ss2;
-		ss2 << "Result does not match reference at element "
-			<< cmp.get_diff_index() << ": "
-			<< cmp.get_diff_elem_1() << " (act) vs. "
-			<< cmp.get_diff_elem_2() << " (ref), "
-			<< cmp.get_diff_elem_1() - cmp.get_diff_elem_2()
-			<< " (diff) in " << test;
-		fail_test("tod_copy_test::compare_ref()",
-			__FILE__, __LINE__, ss2.str().c_str());
-	}
-
 }
 
 } // namespace libtensor
