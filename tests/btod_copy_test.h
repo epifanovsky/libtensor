@@ -13,6 +13,10 @@ class btod_copy_test : public libtest::unit_test {
 public:
 	virtual void perform() throw(libtest::test_exception);
 
+private:
+	void test_zero_1() throw(libtest::test_exception);
+	void test_zero_2() throw(libtest::test_exception);
+	void test_1() throw(libtest::test_exception);
 };
 
 } // namespace libtensor

@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_COMPARE_REF_H
 #define LIBTENSOR_COMPARE_REF_H
 
+#include <sstream>
 #include <libtest.h>
 #include <libtensor.h>
 
