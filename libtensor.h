@@ -59,6 +59,8 @@
 #include "symmetry/default_symmetry.h"
 #include "symmetry/perm_symmetry.h"
 
+#include "symmetry/so_copy.h"
+
 
 #include "iface/bispace_i.h"
 #include "iface/bispace.h"
