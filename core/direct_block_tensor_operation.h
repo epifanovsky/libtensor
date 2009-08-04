@@ -3,7 +3,7 @@
 
 #include "defs.h"
 #include "exception.h"
-#include "block_index_space_i.h"
+#include "block_index_space.h"
 #include "block_tensor_i.h"
 
 namespace libtensor {
@@ -21,7 +21,7 @@ class direct_block_tensor_operation {
 public:
 	/**	\brief Returns the block %index space of the result
 	 **/
-	virtual const block_index_space_i<N> &get_bis() const = 0;
+	virtual const block_index_space<N> &get_bis() const = 0;
 
 	/**	\brief Invoked to execute the operation
 	 **/

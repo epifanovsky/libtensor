@@ -47,7 +47,7 @@ public:
 	//!	\name Implementation of
 	//!		libtensor::direct_block_tensor_operation<N, double>
 	//@{
-	virtual const block_index_space_i<N> &get_bis() const;
+	virtual const block_index_space<N> &get_bis() const;
 	virtual void perform(block_tensor_i<N, double> &bt) throw(exception);
 	//@}
 
@@ -76,7 +76,7 @@ btod_copy<N>::~btod_copy() {
 }
 
 template<size_t N>
-const block_index_space_i<N> &btod_copy<N>::get_bis() const {
+const block_index_space<N> &btod_copy<N>::get_bis() const {
 	throw_exc("btod_copy<N>", "get_bis()", "Not implemented");
 }
 

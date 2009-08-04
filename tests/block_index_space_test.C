@@ -9,6 +9,7 @@ void block_index_space_test::perform() throw(libtest::test_exception) {
 	test_1();
 	test_2();
 	test_3();
+	test_equals_1();
 	test_exc_1();
 	test_exc_2();
 
@@ -311,6 +312,146 @@ void block_index_space_test::test_3() throw(libtest::test_exception) {
 			__LINE__, e.what());
 	}
 
+}
+
+
+void block_index_space_test::test_equals_1() throw(libtest::test_exception) {
+
+	static const char *testname = "block_index_space_test::test_equals_1()";
+
+	try {
+
+	index<1> i_0;
+	index<1> i_9; i_9[0] = 9;
+
+	dimensions<1> d_10(index_range<1>(i_0, i_9));
+
+	block_index_space<1> bis1(d_10), bis2(d_10);
+
+	if(!bis1.equals(bis2)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Equality test (1) failed");
+	}
+
+	bis1.split(0, 2);
+	if(bis1.equals(bis2)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Equality test (2) failed");
+	}
+
+	bis2.split(0, 2);
+	if(!bis1.equals(bis2)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Equality test (3) failed");
+	}
+
+	bis1.split(0, 8);
+	bis2.split(0, 4);
+	if(bis1.equals(bis2)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Equality test (4) failed");
+	}
+
+	bis1.split(0, 6);
+	bis2.split(0, 6);
+	if(bis1.equals(bis2)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Equality test (5) failed");
+	}
+
+	bis1.split(0, 4);
+	bis2.split(0, 8);
+	if(!bis1.equals(bis2)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Equality test (6) failed");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void block_index_space_test::test_equals_2() throw(libtest::test_exception) {
+
+	static const char *testname = "block_index_space_test::test_equals_2()";
+
+	try {
+
+	index<2> i_00;
+	index<2> i_99; i_99[0] = 9; i_99[1] = 9;
+
+	dimensions<2> dims(index_range<2>(i_00, i_99));
+
+	block_index_space<2> bis1(dims), bis2(dims), bis3(dims), bis4(dims);
+
+	if(!bis1.equals(bis2)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Equality test (1) failed");
+	}
+
+	bis1.split(0, 2);
+	bis1.split(0, 4);
+	bis1.split(0, 6);
+	bis1.split(0, 8);
+	if(bis1.equals(bis2)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Equality test (2) failed");
+	}
+
+	bis2.split(0, 8);
+	bis2.split(0, 6);
+	bis2.split(0, 4);
+	bis2.split(0, 2);
+	if(!bis1.equals(bis2)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Equality test (3) failed");
+	}
+
+	bis3.split(0, 3);
+	bis3.split(0, 7);
+	if(bis4.equals(bis3)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Equality test (4) failed");
+	}
+
+	bis4.split(1, 7);
+	bis4.split(1, 3);
+	if(bis4.equals(bis3)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Equality test (5) failed");
+	}
+
+	permutation<2> p1;
+	p1.permute(0, 1);
+	bis4.permute(p1);
+	if(!bis4.equals(bis3)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Equality test (6) failed");
+	}
+
+	bis3.split(1, 2);
+	bis3.split(1, 4);
+	bis3.split(1, 6);
+	if(bis3.equals(bis1)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Equality test (7) failed");
+	}
+
+	bis3.permute(p1);
+	bis3.split(1, 8);
+	if(!bis2.equals(bis3)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Equality test (8) failed");
+	}
+	if(!bis3.equals(bis2)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Equality test (9) failed");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
 }
 
 

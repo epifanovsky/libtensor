@@ -4,7 +4,6 @@
 #include <list>
 #include "defs.h"
 #include "exception.h"
-#include "block_index_space_i.h"
 #include "dimensions.h"
 #include "index.h"
 #include "permutation.h"
@@ -33,7 +32,7 @@ namespace libtensor {
 	\ingroup libtensor_core
  **/
 template<size_t N>
-class block_index_space : public block_index_space_i<N> {
+class block_index_space {
 private:
 	static const char *k_clazz; //!< Class name
 
@@ -87,6 +86,10 @@ public:
 	 **/
 	dimensions<N> get_block_dims(const index<N> &idx) const
 		throw(out_of_bounds);
+
+	/**	\brief Returns true if two block %index spaces are identical
+	 **/
+	bool equals(const block_index_space<N> &bis) const;
 
 	//@}
 
@@ -221,6 +224,43 @@ dimensions<N> block_index_space<N>::get_block_dims(const index<N> &idx) const
 	} while(iter != m_splits.end());
 
 	return dimensions<N>(index_range<N>(i1, i2));
+}
+
+template<size_t N>
+bool block_index_space<N>::equals(const block_index_space<N> &bis) const {
+
+	if(!m_dims.equals(bis.m_dims) ||
+		!m_block_index_max.equals(bis.m_block_index_max)) {
+		return false;
+	}
+
+	size_t s1, s2;
+	for(size_t i = 0; i < N; i++) {
+		typename std::list< index<N> >::const_iterator j1 =
+			m_splits.begin();
+		typename std::list< index<N> >::const_iterator j2 =
+			bis.m_splits.begin();
+		bool end = false;
+		while(!end) {
+			s1 = j1->at(i);
+			s2 = j2->at(i);
+			if(s1 != s2) return false;
+			bool end1 = (j1 == m_splits.end());
+			bool end2 = (j2 == bis.m_splits.end());
+			while(!end1 && s1 == j1->at(i)) {
+				j1++;
+				end1 = (j1 == m_splits.end());
+			}
+			while(!end2 && s2 == j2->at(i)) {
+				j2++;
+				end2 = (j2 == bis.m_splits.end());
+			}
+			if((end1 && !end2) || (!end1 && end2)) return false;
+			end = end1 && end2;
+		}
+	}
+
+	return true;
 }
 
 template<size_t N>
