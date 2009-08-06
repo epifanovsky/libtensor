@@ -6,6 +6,7 @@
 #include "core/symmetry_i.h"
 #include "symmetry_target.h"
 #include "default_symmetry.h"
+#include "comb_symmetry.h"
 
 namespace libtensor {
 
@@ -13,7 +14,8 @@ template<size_t N, typename T>
 class so_copy {
 private:
 	class symtgt :
-		public symmetry_const_target< N, T, default_symmetry<N, T> > {
+		public symmetry_const_target< N, T, default_symmetry<N, T> >,
+		public symmetry_const_target< N, T, comb_symmetry_base<N, T> > {
 	private:
 		symmetry_i <N, T> *m_cp;
 	public:
@@ -21,6 +23,8 @@ private:
 		~symtgt() { delete m_cp; }
 		symmetry_i<N, T> *get_symmetry() { return m_cp; }
 		virtual void accept(const default_symmetry<N, T> &sym)
+			throw(exception);
+		virtual void accept(const comb_symmetry_base<N, T> &sym)
 			throw(exception);
 	};
 
@@ -59,6 +63,15 @@ void so_copy<N, T>::symtgt::accept(const default_symmetry<N, T> &sym) {
 	if(m_cp) delete m_cp;
 	m_cp = new default_symmetry<N, T>(sym);
 }
+
+
+template<size_t N, typename T>
+void so_copy<N, T>::symtgt::accept(const comb_symmetry_base<N, T> &sym) {
+
+	if(m_cp) delete m_cp;
+	m_cp = sym.clone();
+}
+
 
 } // namespace libtensor
 
