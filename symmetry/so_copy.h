@@ -13,6 +13,7 @@ namespace libtensor {
 template<size_t N, typename T>
 class so_copy {
 private:
+	/*
 	class symtgt :
 		public symmetry_const_target< N, T, default_symmetry<N, T> >,
 		public symmetry_const_target< N, T, comb_symmetry_base<N, T> > {
@@ -27,10 +28,10 @@ private:
 		virtual void accept(const comb_symmetry_base<N, T> &sym)
 			throw(exception);
 	};
-
+	*/
 private:
 	const symmetry_i<N, T> &m_src; //!< Source symmetry object
-	symtgt m_tgt; //!< Target for symmetry dispatch
+	//symtgt m_tgt; //!< Target for symmetry dispatch
 
 public:
 	so_copy(const symmetry_i<N, T> &src);
@@ -42,21 +43,22 @@ public:
 template<size_t N, typename T>
 so_copy<N, T>::so_copy(const symmetry_i<N, T> &src) : m_src(src) {
 
-	m_src.dispatch(m_tgt);
+	//m_src.dispatch(m_tgt);
 }
 
 
 template<size_t N, typename T>
 symmetry_i<N, T> &so_copy<N, T>::get_symmetry() throw(exception) {
-
+/*
 	symmetry_i<N, T> *psym = m_tgt.get_symmetry();
 	if(psym == NULL) {
 		throw_exc("so_copy<N, T>", "get_symmetry()", "NULL pointer");
 	}
-	return *psym;
+	return *psym;*/
+	throw_exc("so_copy<N, T>", "get_symmetry()", "NIY");
 }
 
-
+/*
 template<size_t N, typename T>
 void so_copy<N, T>::symtgt::accept(const default_symmetry<N, T> &sym) {
 
@@ -71,7 +73,7 @@ void so_copy<N, T>::symtgt::accept(const comb_symmetry_base<N, T> &sym) {
 	if(m_cp) delete m_cp;
 	m_cp = sym.clone();
 }
-
+*/
 
 } // namespace libtensor
 
