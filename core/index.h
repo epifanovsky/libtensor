@@ -4,7 +4,7 @@
 #include <iostream>
 #include "defs.h"
 #include "exception.h"
-#include "permutation.h"
+#include "sequence.h"
 
 namespace libtensor {
 
@@ -93,11 +93,8 @@ template<size_t N> std::ostream &operator<<(std::ostream &os,
 	\ingroup libtensor_core
 **/
 template<size_t N>
-class index {
+class index : public sequence<N, size_t> {
 	friend std::ostream &operator<< <N>(std::ostream &os, const index<N> &i);
-
-private:
-	size_t m_idx[N]; //!< Index elements
 
 public:
 	//!	\name Construction and destruction
@@ -115,25 +112,11 @@ public:
 	//@}
 
 
-	//!	\name Access to %index elements, manipulations
+	//!	\name Access to %sequence elements, manipulations
 	//@{
 
-	/**	\brief Returns the reference to an element at a given position
-			(l-value)
-		\param pos Position (not to exceed N, %index order).
-		\throw out_of_bounds If the position exceeds N.
-	 **/
-	size_t &at(size_t pos) throw(out_of_bounds);
-
-	/**	\brief Returns an element at a given position (r-value)
-		\param pos Position (not to exceed N, %index order).
-		\throw out_of_bounds If the position exceeds N.
-	 **/
-	size_t at(size_t pos) const throw(out_of_bounds);
-
-	/**	\brief Permutes the elements of the %index
+	/**	\brief Permutes the %index
 		\param p Permutation.
-		\return Reference to this %index.
 	 **/
 	index<N> &permute(const permutation<N> &perm);
 
@@ -161,19 +144,6 @@ public:
 	//!	\name Overloaded operators
 	//@{
 
-	/**	\brief Returns the reference to an element at a given position
-			(l-value)
-		\param pos Position (not to exceed N, %index order).
-		\throw out_of_bounds If the position exceeds N.
-	 **/
-	size_t &operator[](size_t pos) throw(out_of_bounds);
-
-	/**	\brief Returns an element at a given position (r-value)
-		\param pos Position (not to exceed N, %index order).
-		\throw out_of_bounds If the position exceeds N.
-	 **/
-	size_t operator[](size_t pos) const throw(out_of_bounds);
-
 	/**	\brief Compares two indexes (see less())
 	 **/
 	bool operator<(const index<N> &idx) const;
@@ -184,86 +154,46 @@ public:
 
 
 template<size_t N>
-inline index<N>::index() {
+inline index<N>::index() : sequence<N, size_t>(0) {
 
-	#pragma unroll(N)
-	for(register size_t i = 0; i < N; i++) m_idx[i] = 0;
 }
 
 template<size_t N>
-inline index<N>::index(const index<N> &idx) {
+inline index<N>::index(const index<N> &idx) : sequence<N, size_t>(idx) {
 
-	#pragma unroll(N)
-	for(register size_t i = 0; i < N; i++) m_idx[i] = idx.m_idx[i];
-}
-
-template<size_t N>
-inline size_t &index<N>::at(size_t pos) throw(out_of_bounds) {
-
-#ifdef LIBTENSOR_DEBUG
-	if(pos >= N) {
-		throw out_of_bounds("libtensor", "index<N>", "at(size_t)",
-			__FILE__, __LINE__, "pos");
-	}
-#endif // LIBTENSOR_DEBUG
-	return m_idx[pos];
-}
-
-template<size_t N>
-inline size_t index<N>::at(size_t pos) const throw(out_of_bounds) {
-
-#ifdef LIBTENSOR_DEBUG
-	if(pos >= N) {
-		throw out_of_bounds("libtensor", "index<N>", "at(size_t) const",
-			__FILE__, __LINE__, "pos");
-	}
-#endif // LIBTENSOR_DEBUG
-	return m_idx[pos];
 }
 
 template<size_t N>
 inline index<N> &index<N>::permute(const permutation<N> &perm) {
 
-	perm.apply(m_idx);
+	sequence<N, size_t>::permute(perm);
 	return *this;
 }
-
 
 template<size_t N>
 inline bool index<N>::equals(const index<N> &idx) const {
 
-	#pragma unroll(N)
 	for(register size_t i = 0; i < N; i++)
-		if(m_idx[i] != idx.m_idx[i]) return false;
+		if(sequence<N, size_t>::at_nochk(i) !=
+			idx.sequence<N, size_t>::at_nochk(i)) return false;
 	return true;
 }
 
 template<size_t N>
 inline bool index<N>::less(const index<N> &idx) const {
 
-	#pragma unroll(N)
 	for(register size_t i = 0; i < N; i++) {
-		if(m_idx[i] < idx.m_idx[i]) return true;
-		if(m_idx[i] > idx.m_idx[i]) return false;
+		if(sequence<N, size_t>::at_nochk(i) <
+			idx.sequence<N, size_t>::at_nochk(i)) return true;
+		if(sequence<N, size_t>::at_nochk(i) >
+			idx.sequence<N, size_t>::at_nochk(i)) return false;
 	}
 	return false;
 }
 
 template<size_t N>
-inline size_t &index<N>::operator[](size_t pos) throw(out_of_bounds) {
-
-	return at(pos);
-}
-
-template<size_t N>
-inline size_t index<N>::operator[](size_t pos) const
-	throw(out_of_bounds) {
-
-	return at(pos);
-}
-
-template<size_t N>
 inline bool index<N>::operator<(const index<N> &idx) const {
+
 	return less(idx);
 }
 
@@ -274,8 +204,9 @@ inline bool index<N>::operator<(const index<N> &idx) const {
 template<size_t N>
 std::ostream &operator<<(std::ostream &os, const index<N> &i) {
 	os << "[";
-	for(size_t j=0; j<N-1; j++) os << i.m_idx[j] << ",";
-	os << i.m_idx[N-1];
+	for(size_t j=0; j<N-1; j++)
+		os << i.sequence<N, size_t>::at_nochk(j) << ",";
+	os << i.sequence<N, size_t>::at_nochk(N-1);
 	os << "]";
 	return os;
 }

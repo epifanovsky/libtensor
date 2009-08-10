@@ -5,7 +5,9 @@
 #include "exception.h"
 
 
+#include "core/sequence.h"
 #include "core/index.h"
+#include "core/mask.h"
 #include "core/index_range.h"
 #include "core/dimensions.h"
 #include "core/permutation.h"

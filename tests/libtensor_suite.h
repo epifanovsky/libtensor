@@ -24,6 +24,7 @@
 #include "labeled_btensor_test.h"
 #include "letter_expr_test.h"
 #include "letter_test.h"
+#include "mask_test.h"
 #include "orbit_iterator_test.h"
 #include "perm_symmetry_test.h"
 #include "permutation_test.h"
@@ -71,6 +72,7 @@ namespace libtensor {
 	\li libtensor::labeled_btensor_test
 	\li libtensor::letter_test
 	\li libtensor::letter_expr_test
+	\li libtensor::mask_test
 	\li libtensor::orbit_iterator_test
 	\li libtensor::perm_symmetry_test
 	\li libtensor::permutation_test
@@ -112,6 +114,7 @@ private:
 	unit_test_factory<labeled_btensor_test> m_utf_labeled_btensor;
 	unit_test_factory<letter_test> m_utf_letter;
 	unit_test_factory<letter_expr_test> m_utf_letter_expr;
+	unit_test_factory<mask_test> m_utf_mask;
 	unit_test_factory<orbit_iterator_test> m_utf_orbit_iterator;
 	unit_test_factory<perm_symmetry_test> m_utf_perm_symmetry;
 	unit_test_factory<permutation_test> m_utf_permutation;
