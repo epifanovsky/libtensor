@@ -29,6 +29,7 @@ OBJS += orbit_iterator_test.o
 OBJS += perm_symmetry_test.o
 OBJS += permutation_test.o
 OBJS += permutation_builder_test.o
+OBJS += symel_cycleperm_test.o
 OBJS += symmetry_test.o
 OBJS += symmetry_base_test.o
 OBJS += so_copy_test.o

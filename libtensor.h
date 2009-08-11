@@ -60,6 +60,9 @@
 #include "btod/btod_sum.h"
 
 
+#include "symmetry/symel_cycleperm.h"
+
+
 #include "symmetry/symmetry_target.h"
 #include "symmetry/symmetry_base.h"
 #include "symmetry/default_symmetry.h"
