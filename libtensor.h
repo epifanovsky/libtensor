@@ -29,6 +29,10 @@
 #include "core/symmetry_operation_i.h"
 #include "core/block_iterator.h"
 #include "core/orbit_iterator.h"
+#include "core/orbit.h"
+#include "core/symmetry_element_i.h"
+#include "core/symmetry.h"
+#include "core/symmetry_ctrl.h"
 
 
 #include "tod/contraction2.h"
