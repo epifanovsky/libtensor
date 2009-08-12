@@ -33,6 +33,7 @@ void btod_copy_test::test_zero_1() throw(libtest::test_exception) {
 	i2[0] = 10; i2[1] = 10;
 	dimensions<2> dims(index_range<2>(i1, i2));
 	block_index_space<2> bis(dims);
+	dimensions<2> bidims(bis.get_block_index_dims());
 	tensor_t ta(dims), tb(dims);
 	block_tensor_t bta(bis), btb(bis);
 	block_tensor_ctrl_t btb_ctrl(btb);
@@ -56,12 +57,17 @@ void btod_copy_test::test_zero_1() throw(libtest::test_exception) {
 	cp.perform(btb);
 
 	// The set of non-zero blocks in the output must be empty now
-/*
-	orbit_iterator<2, double> oi = btb_ctrl.req_orbits();
-	if(!oi.end()) {
-		fail_test(testname, __FILE__, __LINE__,
-			"The set of non-zero blocks is expected to be empty.");
-	}*/
+
+	size_t norbits = btb_ctrl.req_sym_num_orbits();
+	for(size_t iorbit = 0; iorbit < norbits; iorbit++) {
+		orbit<2, double> orb = btb_ctrl.req_sym_orbit(iorbit);
+		index<2> blkidx;
+		bidims.abs_index(orb.get_abs_index(), blkidx);
+		if(!btb_ctrl.req_is_zero_block(blkidx)) {
+			fail_test(testname, __FILE__, __LINE__,
+				"All blocks are expected to be empty.");
+		}
+	}
 
 	} catch(exception &exc) {
 		fail_test(testname, __FILE__, __LINE__, exc.what());
@@ -87,6 +93,7 @@ void btod_copy_test::test_zero_2() throw(libtest::test_exception) {
 	bis.split(0, 3);
 	bis.split(0, 6);
 	bis.split(1, 5);
+	dimensions<2> bidims(bis.get_block_index_dims());
 	tensor_t ta(dims), tb(dims);
 	block_tensor_t bta(bis), btb(bis);
 	block_tensor_ctrl_t btb_ctrl(btb);
@@ -113,12 +120,17 @@ void btod_copy_test::test_zero_2() throw(libtest::test_exception) {
 	cp.perform(btb);
 
 	// The set of non-zero blocks in the output must be empty now
-/*
-	orbit_iterator<2, double> oi = btb_ctrl.req_orbits();
-	if(!oi.end()) {
-		fail_test(testname, __FILE__, __LINE__,
-			"The set of non-zero blocks is expected to be empty.");
-	}*/
+
+	size_t norbits = btb_ctrl.req_sym_num_orbits();
+	for(size_t iorbit = 0; iorbit < norbits; iorbit++) {
+		orbit<2, double> orb = btb_ctrl.req_sym_orbit(iorbit);
+		index<2> blkidx;
+		bidims.abs_index(orb.get_abs_index(), blkidx);
+		if(!btb_ctrl.req_is_zero_block(blkidx)) {
+			fail_test(testname, __FILE__, __LINE__,
+				"All blocks are expected to be empty.");
+		}
+	}
 
 	} catch(exception &exc) {
 		fail_test(testname, __FILE__, __LINE__, exc.what());
