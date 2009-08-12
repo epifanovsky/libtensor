@@ -68,6 +68,7 @@ public:
 	//		libtensor::direct_block_tensor_operation<N, double>
 	//@{
 	virtual const block_index_space<N> &get_bis() const;
+	virtual const symmetry<N, double> &get_symmetry() const;
 	virtual void perform(block_tensor_i<N, double> &bt)
 		throw(exception);
 	//@}
@@ -175,6 +176,11 @@ void btod_add<N>::perform(block_tensor_i<N, double> &bt,
 template<size_t N>
 const block_index_space<N> &btod_add<N>::get_bis() const {
 	throw_exc("btod_add<N>", "get_bis()", "Not implemented");
+}
+
+template<size_t N>
+const symmetry<N, double> &btod_add<N>::get_symmetry() const {
+	throw_exc("btod_add<N>", "get_symmetry()", "Not implemented");
 }
 
 template<size_t N>

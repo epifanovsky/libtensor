@@ -53,6 +53,7 @@ public:
 	//!		libtensor::direct_block_tensor_operation<N, double>
 	//@{
 	virtual const block_index_space<N> &get_bis() const;
+	virtual const symmetry<N, double> &get_symmetry() const;
 	virtual void perform(block_tensor_i<N, double> &bt) throw(exception);
 	//@}
 
@@ -94,6 +95,12 @@ btod_copy<N>::~btod_copy() {
 template<size_t N>
 const block_index_space<N> &btod_copy<N>::get_bis() const {
 	throw_exc("btod_copy<N>", "get_bis()", "Not implemented");
+}
+
+
+template<size_t N>
+const symmetry<N, double> &btod_copy<N>::get_symmetry() const {
+	throw_exc("btod_copy<N>", "get_symmetry()", "Not implemented");
 }
 
 

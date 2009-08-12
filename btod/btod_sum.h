@@ -42,6 +42,7 @@ public:
 	//!	\name Implementation of libtensor::direct_tensor_operation<N>
 	//@{
 	virtual const block_index_space<N> &get_bis() const;
+	virtual const symmetry<N, double> &get_symmetry() const;
 	virtual void perform(block_tensor_i<N,double> &bt) throw(exception);
 	//@}
 
@@ -69,6 +70,11 @@ btod_sum<N>::~btod_sum() {
 template<size_t N>
 const block_index_space<N> &btod_sum<N>::get_bis() const {
 	throw_exc("btod_sum<N>", "get_bis()", "Not implemented");
+}
+
+template<size_t N>
+const symmetry<N, double> &btod_sum<N>::get_symmetry() const {
+	throw_exc("btod_sum<N>", "get_symmetry()", "Not implemented");
 }
 
 template<size_t N>

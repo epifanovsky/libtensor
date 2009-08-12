@@ -5,6 +5,7 @@
 #include "exception.h"
 #include "block_index_space.h"
 #include "block_tensor_i.h"
+#include "symmetry.h"
 
 namespace libtensor {
 
@@ -22,6 +23,10 @@ public:
 	/**	\brief Returns the block %index space of the result
 	 **/
 	virtual const block_index_space<N> &get_bis() const = 0;
+
+	/**	\brief Returns the symmetry of the result
+	 **/
+	virtual const symmetry<N, T> &get_symmetry() const = 0;
 
 	/**	\brief Invoked to execute the operation
 	 **/
