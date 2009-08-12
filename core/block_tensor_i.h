@@ -60,6 +60,48 @@ public:
 	virtual const block_index_space<N> &get_bis() const = 0;
 
 protected:
+	//!	\name Symmetry event handlers
+	//@{
+
+	/**	\brief Request to add a %symmetry element to the generating set;
+			does nothing if the element is already in the set
+	`	\param elem Symmetry element.
+	 **/
+	virtual void on_req_sym_add_element(
+		const symmetry_element_i<N, T> &elem) throw(exception) = 0;
+
+	/**	\brief Request to remove a %symmetry element from the generating
+			set; does nothing if the element is not in the set
+		\param elem Symmetry element.
+	 **/
+	virtual void on_req_sym_remove_element(
+		const symmetry_element_i<N, T> &elem) throw(exception) = 0;
+
+	/**	\brief Request whether the generating set of the %symmetry
+			contains a given element
+		\param elem Symmetry element.
+	 **/
+	virtual bool on_req_sym_contains_element(
+		const symmetry_element_i<N, T> &elem) throw(exception) = 0;
+
+	/**	\brief Request to clear all %symmetry elements
+	 **/
+	virtual void on_req_sym_clear_elements() throw(exception) = 0;
+
+	/**	\brief Request to return the number of orbits
+	 **/
+	virtual size_t on_req_sym_num_orbits() throw(exception) = 0;
+
+	/**	\brief Request to return an orbit
+		\param n Orbit number.
+		\throw out_of_bounds If the orbit number provided is larger
+			than the total number of orbits.
+	 **/
+	virtual orbit<N, T> on_req_sym_orbit(size_t n) throw(exception) = 0;
+
+	//@}
+
+
 	//!	\name Event handling
 	//@{
 
@@ -80,11 +122,21 @@ protected:
 	 **/
 	virtual void on_ret_block(const index<N> &idx) throw(exception) = 0;
 
+	/**	\brief Invoked to check whether a canonical block is zero
+		\param idx Block %index.
+	 **/
+	virtual bool on_req_is_zero_block(const index<N> &idx)
+		throw(exception) = 0;
+
 	/**	\brief Invoked to make a canonical block zero
 		\param idx Block %index.
 	 **/
 	virtual void on_req_zero_block(const index<N> &idx)
 		throw(exception) = 0;
+
+	/**	\brief Invoked to make all blocks zero
+	 **/
+	virtual void on_req_zero_all_blocks() throw(exception) = 0;
 
 	//@}
 };

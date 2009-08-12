@@ -5,6 +5,7 @@
 #include "exception.h"
 #include "index.h"
 #include "mask.h"
+#include "permutation.h"
 
 namespace libtensor {
 
@@ -37,6 +38,11 @@ public:
 	/**	\brief Returns the mask of affected indexes
 	 **/
 	virtual const mask<N> &get_mask() const = 0;
+
+	/**	\brief Adjusts the %symmetry element for a %permutation of
+			%tensor indexes
+	 **/
+	virtual void permute(const permutation<N> &perm) = 0;
 
 	/**	\brief Checks whether an %index is allowed by %symmetry
 			(does not correspond to a zero block)

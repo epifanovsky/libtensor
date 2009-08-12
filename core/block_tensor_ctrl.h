@@ -52,26 +52,26 @@ public:
 			does nothing if the element is already in the set
 	`	\param elem Symmetry element.
 	 **/
-	void req_sym_insert_elem(const symmetry_element_i<N, T> &elem)
+	void req_sym_add_element(const symmetry_element_i<N, T> &elem)
 		throw(exception);
 
 	/**	\brief Request to remove a %symmetry element from the generating
 			set; does nothing if the element is not in the set
 		\param elem Symmetry element.
 	 **/
-	void req_sym_remove_elem(const symmetry_element_i<N, T> &elem)
+	void req_sym_remove_element(const symmetry_element_i<N, T> &elem)
 		throw(exception);
 
 	/**	\brief Request whether the generating set of the %symmetry
 			contains a given element
 		\param elem Symmetry element.
 	 **/
-	bool req_sym_contains_elem(const symmetry_element_i<N, T> &elem)
+	bool req_sym_contains_element(const symmetry_element_i<N, T> &elem)
 		throw(exception);
 
 	/**	\brief Request to clear the generating set
 	 **/
-	void req_sym_clear_elem() throw(exception);
+	void req_sym_clear_elements() throw(exception);
 
 	/**	\brief Request to return the number of orbits
 	 **/
@@ -91,7 +91,9 @@ public:
 	//symmetry<N, T> &req_symmetry() throw(exception);
 	tensor_i<N, T> &req_block(const index<N> &idx) throw(exception);
 	void ret_block(const index<N> &idx) throw(exception);
+	bool req_is_zero_block(const index<N> &idx) throw(exception);
 	void req_zero_block(const index<N> &idx) throw(exception);
+	void req_zero_all_blocks() throw(exception);
 	//@}
 };
 
@@ -111,6 +113,49 @@ inline symmetry<N, T> &block_tensor_ctrl<N, T>::req_symmetry()
 	return m_bt.on_req_symmetry();
 }
 */
+
+template<size_t N, typename T>
+inline void block_tensor_ctrl<N, T>::req_sym_add_element(
+	const symmetry_element_i<N, T> &elem) throw(exception) {
+
+	m_bt.on_req_sym_add_element(elem);
+}
+
+
+template<size_t N, typename T>
+inline void block_tensor_ctrl<N, T>::req_sym_remove_element(
+	const symmetry_element_i<N, T> &elem) throw(exception) {
+
+	m_bt.on_req_sym_remove_element(elem);
+}
+
+
+template<size_t N, typename T>
+inline bool block_tensor_ctrl<N, T>::req_sym_contains_element(
+	const symmetry_element_i<N, T> &elem) throw(exception) {
+
+	return m_bt.on_req_sym_contains_element(elem);
+}
+
+template<size_t N, typename T>
+inline void block_tensor_ctrl<N, T>::req_sym_clear_elements() throw(exception) {
+
+	m_bt.on_req_sym_clear_elements();
+}
+
+template<size_t N, typename T>
+inline size_t block_tensor_ctrl<N, T>::req_sym_num_orbits() throw(exception) {
+
+	return m_bt.on_req_sym_num_orbits();
+}
+
+template<size_t N, typename T>
+inline orbit<N, T> block_tensor_ctrl<N, T>::req_sym_orbit(size_t n)
+	throw(exception) {
+
+	return m_bt.on_req_sym_orbit(n);
+}
+
 template<size_t N, typename T>
 inline tensor_i<N, T> &block_tensor_ctrl<N, T>::req_block(const index<N> &idx)
 	throw(exception) {
@@ -126,10 +171,23 @@ inline void block_tensor_ctrl<N, T>::ret_block(const index<N> &idx)
 }
 
 template<size_t N, typename T>
+inline bool block_tensor_ctrl<N, T>::req_is_zero_block(const index<N> &idx)
+	throw(exception) {
+
+	return m_bt.on_req_is_zero_block(idx);
+}
+
+template<size_t N, typename T>
 inline void block_tensor_ctrl<N, T>::req_zero_block(const index<N> &idx)
 	throw(exception) {
 
-	return m_bt.on_req_zero_block(idx);
+	m_bt.on_req_zero_block(idx);
+}
+
+template<size_t N, typename T>
+inline void block_tensor_ctrl<N, T>::req_zero_all_blocks() throw(exception) {
+
+	m_bt.on_req_zero_all_blocks();
 }
 
 } // namespace libtensor

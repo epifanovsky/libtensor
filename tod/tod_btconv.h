@@ -113,44 +113,55 @@ template<size_t N>
 void tod_btconv<N>::perform(tensor_i<N, double> &t) throw(exception) {
 
 	static const char *method = "perform(tensor_i<N, double>&)";
-/*
+
 	const block_index_space<N> &bis = m_bt.get_bis();
+	dimensions<N> bidims(bis.get_block_index_dims());
 	if(!bis.get_dims().equals(t.get_dims())) {
 		throw bad_parameter("libtensor", k_clazz, method,
 			__FILE__, __LINE__,
 			"Incorrect dimensions of the output tensor.");
 	}
 
-	block_tensor_ctrl<N, double> btctrl(m_bt);
-	tensor_ctrl<N, double> tctrl(t);
+	block_tensor_ctrl<N, double> src_ctrl(m_bt);
+	tensor_ctrl<N, double> dst_ctrl(t);
 
-	double *ptr_out = tctrl.req_dataptr();
+	double *dst_ptr = dst_ctrl.req_dataptr();
 	size_t sz = t.get_dims().get_size();
-	for(register size_t i = 0; i < sz; i++) ptr_out[i] = 0.0;
+	for(register size_t i = 0; i < sz; i++) dst_ptr[i] = 0.0;
 
-	orbit_iterator<N, double> oi = btctrl.req_orbits();
-	while(!oi.end()) {
-		tensor_i<N, double> &blk = btctrl.req_block(oi.get_index());
+	size_t norbits = src_ctrl.req_sym_num_orbits();
+	for(size_t iorbit = 0; iorbit < norbits; iorbit++) {
+
+		orbit<N, double> orb = src_ctrl.req_sym_orbit(iorbit);
+		index<N> blk_idx;
+		bidims.abs_index(orb.get_abs_index(), blk_idx);
+		if(src_ctrl.req_is_zero_block(blk_idx)) continue;
+
+		tensor_i<N, double> &blk = src_ctrl.req_block(blk_idx);
 		tensor_ctrl<N, double> blk_ctrl(blk);
-		const double *ptr_in = blk_ctrl.req_const_dataptr();
+		const double *src_ptr = blk_ctrl.req_const_dataptr();
+		permutation<N> perm;
 
-		block_iterator<N, double> bi = oi.get_blocks();
-		while(!bi.end()) {
-			const block_symop<N, double> &symop = bi.get_symop();
-			index<N> offset_out =
-				bis.get_block_start(bi.get_index());
-			copy_block(ptr_out, t.get_dims(), offset_out,
-				ptr_in, blk.get_dims(), symop.m_perm,
-				symop.m_coeff);
-			bi.next();
-		}
+		index<N> dst_offset = bis.get_block_start(blk_idx);
+		copy_block(dst_ptr, t.get_dims(), dst_offset,
+			src_ptr, blk.get_dims(), perm, 1.0);
 
-		blk_ctrl.ret_dataptr(ptr_in);
-		btctrl.ret_block(oi.get_index());
-		oi.next();
+		//block_iterator<N, double> bi = oi.get_blocks();
+		//while(!bi.end()) {
+		//	const block_symop<N, double> &symop = bi.get_symop();
+		//	index<N> offset_out =
+		//		bis.get_block_start(bi.get_index());
+		//	copy_block(dst_ptr, t.get_dims(), offset_out,
+		//		ptr_in, blk.get_dims(), symop.m_perm,
+		//		symop.m_coeff);
+		//	bi.next();
+		//}
+
+		blk_ctrl.ret_dataptr(src_ptr);
+		src_ctrl.ret_block(blk_idx);
 	}
 
-	tctrl.ret_dataptr(ptr_out);*/
+	dst_ctrl.ret_dataptr(dst_ptr);
 }
 
 template<size_t N>

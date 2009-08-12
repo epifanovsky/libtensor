@@ -60,6 +60,7 @@ public:
 	//!	\name Implementation of symmetry_element_i<N, T>
 	//@{
 	virtual const mask<N> &get_mask() const;
+	virtual void permute(const permutation<N> &perm);
 	virtual bool is_allowed(const index<N> &idx) const;
 	virtual void apply(index<N> &idx) const;
 	virtual bool equals(const symmetry_element_i<N, T> &se) const;
@@ -125,6 +126,15 @@ template<size_t N, typename T>
 const mask<N> &symel_cycleperm<N, T>::get_mask() const {
 
 	return m_msk;
+}
+
+
+template<size_t N, typename T>
+void symel_cycleperm<N, T>::permute(const permutation<N> &perm) {
+
+	m_msk.permute(perm);
+	m_dims.permute(perm);
+	m_perm.permute(perm);
 }
 
 

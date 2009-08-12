@@ -24,7 +24,9 @@ private:
 	block_tensor_i<N, double> &m_bt; //!< Source block %tensor
 	permutation<N> m_perm; //!< Permutation
 	double m_c; //!< Scaling coefficient
-	block_index_space<N> m_bis; //!< Block %index space of the output
+	block_index_space<N> m_bis; //!< Block %index space of output
+	dimensions<N> m_bidims; //!< Block %index dimensions
+	symmetry<N, double> m_symmetry; //!< Symmetry of output
 
 public:
 	//!	\name Construction and destruction
@@ -72,7 +74,8 @@ const char *btod_copy<N>::k_clazz = "btod_copy<N>";
 
 template<size_t N>
 btod_copy<N>::btod_copy(block_tensor_i<N, double> &bt, double c)
-: m_bt(bt), m_c(c), m_bis(bt.get_bis()) {
+: m_bt(bt), m_c(c), m_bis(bt.get_bis()), m_bidims(m_bis.get_block_index_dims()),
+	m_symmetry(m_bidims) {
 
 }
 
@@ -80,9 +83,12 @@ btod_copy<N>::btod_copy(block_tensor_i<N, double> &bt, double c)
 template<size_t N>
 btod_copy<N>::btod_copy(
 	block_tensor_i<N, double> &bt, const permutation<N> &p, double c)
-: m_bt(bt), m_perm(p), m_c(c), m_bis(bt.get_bis()) {
+: m_bt(bt), m_perm(p), m_c(c), m_bis(bt.get_bis()),
+	m_bidims(m_bis.get_block_index_dims()), m_symmetry(m_bidims) {
 
 	m_bis.permute(m_perm);
+	m_bidims.permute(m_perm);
+	m_symmetry.permute(m_perm);
 }
 
 
@@ -93,14 +99,16 @@ btod_copy<N>::~btod_copy() {
 
 
 template<size_t N>
-const block_index_space<N> &btod_copy<N>::get_bis() const {
-	throw_exc("btod_copy<N>", "get_bis()", "Not implemented");
+inline const block_index_space<N> &btod_copy<N>::get_bis() const {
+
+	return m_bis;
 }
 
 
 template<size_t N>
-const symmetry<N, double> &btod_copy<N>::get_symmetry() const {
-	throw_exc("btod_copy<N>", "get_symmetry()", "Not implemented");
+inline const symmetry<N, double> &btod_copy<N>::get_symmetry() const {
+
+	return m_symmetry;
 }
 
 
@@ -118,9 +126,13 @@ void btod_copy<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 	block_tensor_ctrl<N, double> ctrl_src(m_bt), ctrl_dst(bt);
 	dimensions<N> bidims = m_bis.get_block_index_dims();
 
-	// Prefetch blocks here
+	ctrl_dst.req_zero_all_blocks();
+	ctrl_dst.req_sym_clear_elements();
+	size_t n_sym_elem = m_symmetry.get_num_elements();
+	for(size_t ielem = 0; ielem < n_sym_elem; ielem++) {
+		ctrl_dst.req_sym_add_element(m_symmetry.get_element(ielem));
+	}
 
-	// Equalize the symmetries of input and output (to do)
 
 	// Create a list of all non-zero canonical blocks in input
 /*

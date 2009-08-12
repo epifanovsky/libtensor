@@ -47,11 +47,21 @@ public:
 protected:
 	//!	\name Implementation of libtensor::block_tensor_i<N, T>
 	//@{
-	//virtual symmetry<N, T> &on_req_symmetry() throw(exception);
+	virtual void on_req_sym_add_element(
+		const symmetry_element_i<N, T> &elem) throw(exception);
+	virtual void on_req_sym_remove_element(
+		const symmetry_element_i<N, T> &elem) throw(exception);
+	virtual bool on_req_sym_contains_element(
+		const symmetry_element_i<N, T> &elem) throw(exception);
+	virtual void on_req_sym_clear_elements() throw(exception);
+	virtual size_t on_req_sym_num_orbits() throw(exception);
+	virtual orbit<N, T> on_req_sym_orbit(size_t n) throw(exception);
 	virtual tensor_i<N, T> &on_req_block(const index<N> &idx)
 		throw(exception);
 	virtual void on_ret_block(const index<N> &idx) throw(exception);
+	virtual bool on_req_is_zero_block(const index<N> &idx) throw(exception);
 	virtual void on_req_zero_block(const index<N> &idx) throw(exception);
+	virtual void on_req_zero_all_blocks() throw(exception);
 	//@}
 
 	//!	\name Implementation of libtensor::immutable
@@ -101,6 +111,76 @@ symmetry<N, T> &block_tensor<N, T, Alloc>::on_req_symmetry() throw(exception) {
 */
 
 template<size_t N, typename T, typename Alloc>
+void block_tensor<N, T, Alloc>::on_req_sym_add_element(
+	const symmetry_element_i<N, T> &elem) throw(exception) {
+
+	static const char *method =
+		"on_req_sym_add_element(const symmetry_element_i<N, T>&)";
+
+	if(is_immutable()) {
+		throw immut_violation("libtensor", k_clazz, method,
+			__FILE__, __LINE__,
+			"Immutable object cannot be modified.");
+	}
+
+	m_symmetry.add_element(elem);
+}
+
+
+template<size_t N, typename T, typename Alloc>
+void block_tensor<N, T, Alloc>::on_req_sym_remove_element(
+	const symmetry_element_i<N, T> &elem) throw(exception) {
+
+	static const char *method =
+		"on_req_sym_remove_element(const symmetry_element_i<N, T>&)";
+
+	if(is_immutable()) {
+		throw immut_violation("libtensor", k_clazz, method,
+			__FILE__, __LINE__,
+			"Immutable object cannot be modified.");
+	}
+
+	m_symmetry.remove_element(elem);
+}
+
+
+template<size_t N, typename T, typename Alloc>
+bool block_tensor<N, T, Alloc>::on_req_sym_contains_element(
+	const symmetry_element_i<N, T> &elem) throw(exception) {
+
+	return m_symmetry.contains_element(elem);
+}
+
+
+template<size_t N, typename T, typename Alloc>
+void block_tensor<N, T, Alloc>::on_req_sym_clear_elements() throw(exception) {
+
+	static const char *method = "on_req_sym_clear_elements()";
+
+	if(is_immutable()) {
+		throw immut_violation("libtensor", k_clazz, method,
+			__FILE__, __LINE__,
+			"Immutable object cannot be modified.");
+	}
+
+	m_symmetry.clear_elements();
+}
+
+template<size_t N, typename T, typename Alloc>
+size_t block_tensor<N, T, Alloc>::on_req_sym_num_orbits() throw(exception) {
+
+	return m_symmetry.get_num_orbits();
+}
+
+
+template<size_t N, typename T, typename Alloc>
+orbit<N, T> block_tensor<N, T, Alloc>::on_req_sym_orbit(size_t n)
+	throw(exception) {
+
+	return m_symmetry.get_orbit(n);
+}
+
+template<size_t N, typename T, typename Alloc>
 tensor_i<N, T> &block_tensor<N, T, Alloc>::on_req_block(
 	const index<N> &idx) throw(exception) {
 
@@ -128,6 +208,22 @@ void block_tensor<N, T, Alloc>::on_ret_block(const index<N> &idx)
 
 
 template<size_t N, typename T, typename Alloc>
+bool block_tensor<N, T, Alloc>::on_req_is_zero_block(const index<N> &idx)
+	throw(exception) {
+
+	static const char *method = "on_req_is_zero_block(const index<N>&)";
+
+	if(!m_symmetry.is_canonical(idx)) {
+		throw symmetry_violation("libtensor", k_clazz, method,
+			__FILE__, __LINE__,
+			"Index does not correspond to a canonical block.");
+	}
+	size_t absidx = m_bidims.abs_index(idx);
+	return !m_map.contains(absidx);
+}
+
+
+template<size_t N, typename T, typename Alloc>
 void block_tensor<N, T, Alloc>::on_req_zero_block(const index<N> &idx)
 	throw(exception) {
 
@@ -145,6 +241,20 @@ void block_tensor<N, T, Alloc>::on_req_zero_block(const index<N> &idx)
 	}
 	size_t absidx = m_bidims.abs_index(idx);
 	m_map.remove(absidx);
+}
+
+
+template<size_t N, typename T, typename Alloc>
+void block_tensor<N, T, Alloc>::on_req_zero_all_blocks() throw(exception) {
+
+	static const char *method = "on_req_zero_all_blocks()";
+
+	if(is_immutable()) {
+		throw immut_violation("libtensor", k_clazz, method,
+			__FILE__, __LINE__,
+			"Immutable object cannot be modified.");
+	}
+	m_map.clear();
 }
 
 

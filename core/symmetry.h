@@ -2,7 +2,6 @@
 #define LIBTENSOR_SYMMETRY_H
 
 #include <algorithm>
-#include <list>
 #include <vector>
 #include "defs.h"
 #include "exception.h"
@@ -29,7 +28,7 @@ public:
 
 private:
 	dimensions<N> m_dims; //!< Block %index %dimensions
-	std::list<symmetry_element_t*> m_elements; //!< Symmetry elements
+	std::vector<symmetry_element_t*> m_elements; //!< Symmetry elements
 	mutable std::vector<size_t> m_orbits; //!< Orbits
 	mutable bool m_dirty; //!< Indicates that the orbits need to be rebuilt
 
@@ -91,6 +90,11 @@ public:
 	 **/
 	void clear_elements();
 
+	/**	\brief Adjusts all elements to reflect the %symmetry of a
+			permuted %tensor
+	 **/
+	void permute(const permutation<N> &perm);
+
 	//@}
 
 
@@ -140,7 +144,7 @@ template<size_t N, typename T>
 symmetry<N, T>::symmetry(const symmetry<N, T> &sym)
 : m_dims(sym.m_dims), m_dirty(true) {
 
-	typename std::list<symmetry_element_t*>::iterator i =
+	typename std::vector<symmetry_element_t*>::iterator i =
 		sym.m_elements.begin();
 	while(i != sym.m_elements.end()) {
 		m_elements.push_back((*i)->clone());
@@ -180,7 +184,7 @@ const symmetry_element_i<N, T> &symmetry<N, T>::get_element(size_t n) const
 template<size_t N, typename T>
 void symmetry<N, T>::add_element(const symmetry_element_i<N, T> &elem) {
 
-	typename std::list<symmetry_element_t*>::iterator i =
+	typename std::vector<symmetry_element_t*>::iterator i =
 		m_elements.begin();
 	bool found = false;
 	while(i != m_elements.end()) {
@@ -200,7 +204,7 @@ void symmetry<N, T>::add_element(const symmetry_element_i<N, T> &elem) {
 template<size_t N, typename T>
 void symmetry<N, T>::remove_element(const symmetry_element_i<N, T> &elem) {
 
-	typename std::list<symmetry_element_t*>::iterator i =
+	typename std::vector<symmetry_element_t*>::iterator i =
 		m_elements.begin();
 	while(i != m_elements.end()) {
 		if((*i)->equals(elem)) {
@@ -218,7 +222,7 @@ void symmetry<N, T>::remove_element(const symmetry_element_i<N, T> &elem) {
 template<size_t N, typename T>
 bool symmetry<N, T>::contains_element(const symmetry_element_i<N, T> &elem) {
 
-	typename std::list<symmetry_element_t*>::iterator i =
+	typename std::vector<symmetry_element_t*>::iterator i =
 		m_elements.begin();
 	while(i != m_elements.end()) {
 		if((*i)->equals(elem)) return true;
@@ -232,6 +236,19 @@ template<size_t N, typename T>
 void symmetry<N, T>::clear_elements() {
 
 	remove_all();
+}
+
+
+template<size_t N, typename T>
+void symmetry<N, T>::permute(const permutation<N> &perm) {
+
+	m_dims.permute(perm);
+	typename std::vector<symmetry_element_t*>::iterator i =
+		m_elements.begin();
+	while(i != m_elements.end()) {
+		(*i)->permute(perm);
+		i++;
+	}
 }
 
 
@@ -272,7 +289,7 @@ template<size_t N, typename T>
 void symmetry<N, T>::remove_all() {
 
 	if(m_elements.empty()) return;
-	typename std::list<symmetry_element_t*>::iterator i =
+	typename std::vector<symmetry_element_t*>::iterator i =
 		m_elements.begin();
 	while(i != m_elements.end()) {
 		symmetry_element_t *ptr = *i;
@@ -312,8 +329,8 @@ bool symmetry<N, T>::mark_orbit(
 	bool allowed = true;
 	if(!lst[absidx]) {
 		lst[absidx] = true;
-		typename std::list<symmetry_element_t*>::const_iterator ielem =
-			m_elements.begin();
+		typename std::vector<symmetry_element_t*>::const_iterator
+			ielem = m_elements.begin();
 		while(ielem != m_elements.end()) {
 			allowed = allowed && (*ielem)->is_allowed(idx);
 			index<N> idx2(idx);
