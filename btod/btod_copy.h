@@ -123,71 +123,35 @@ void btod_copy<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 			"Incorrect block index space of the output tensor.");
 	}
 
-	block_tensor_ctrl<N, double> ctrl_src(m_bt), ctrl_dst(bt);
+	block_tensor_ctrl<N, double> src_ctrl(m_bt), dst_ctrl(bt);
 	dimensions<N> bidims = m_bis.get_block_index_dims();
 
-	ctrl_dst.req_zero_all_blocks();
-	ctrl_dst.req_sym_clear_elements();
+	dst_ctrl.req_zero_all_blocks();
+	dst_ctrl.req_sym_clear_elements();
 	size_t n_sym_elem = m_symmetry.get_num_elements();
 	for(size_t ielem = 0; ielem < n_sym_elem; ielem++) {
-		ctrl_dst.req_sym_add_element(m_symmetry.get_element(ielem));
+		dst_ctrl.req_sym_add_element(m_symmetry.get_element(ielem));
 	}
 
+	size_t norbits = src_ctrl.req_sym_num_orbits();
+	for(size_t iorbit = 0; iorbit < norbits; iorbit++) {
 
-	// Create a list of all non-zero canonical blocks in input
-/*
-	std::map< index<N>, tod_copy<N>* > map_todo, map_extra;
-	orbit_iterator<N, double> oi_src = ctrl_src.req_orbits();
-	while(!oi_src.end()) {
-		index<N> idx(oi_src.get_index());
-		idx.permute(m_perm);
-		map_todo.insert(std::pair< index<N>, tod_copy<N>* >(
-			idx, NULL));
-		oi_src.next();
+		orbit<N, double> orb = src_ctrl.req_sym_orbit(iorbit);
+		index<N> src_blk_idx;
+		bidims.abs_index(orb.get_abs_index(), src_blk_idx);
+		if(src_ctrl.req_is_zero_block(src_blk_idx)) continue;
+		index<N> dst_blk_idx(src_blk_idx);
+		dst_blk_idx.permute(m_perm);
+
+		tensor_i<N, double> &src_blk = src_ctrl.req_block(src_blk_idx);
+		tensor_i<N, double> &dst_blk = dst_ctrl.req_block(dst_blk_idx);
+		tod_copy<N> cp(src_blk, m_perm, m_c);
+		cp.perform(dst_blk);
+		src_ctrl.ret_block(src_blk_idx);
+		dst_ctrl.ret_block(dst_blk_idx);
+
 	}
 
-	// Request the symmetry of input and output
-
-	const symmetry_i<N, double> &sym_src = ctrl_src.req_symmetry();
-	const symmetry_i<N, double> &sym_dst = ctrl_dst.req_symmetry();
-
-	// Reconcile canonical blocks in input and output
-
-	permutation<N> invperm(m_perm);
-	invperm.invert();
-	orbit_iterator<N, double> oi_dst(sym_dst.get_oi_handler(),
-		sym_dst.get_bi_handler());
-	while(!oi_dst.end()) {
-		size_t absidx = bidims.abs_index(oi_dst.get_index());
-		if(map_todo.find(oi_dst.get_index()) == map_todo.end()) {
-			index<N> idx(oi_dst.get_index());
-			idx.permute(invperm);
-			if(sym_src.is_canonical(idx)) {
-				ctrl_dst.req_zero_block(oi_dst.get_index());
-			} else {
-				map_extra.insert(
-					std::pair< index<N>, tod_copy<N>* >(
-						oi_dst.get_index(), NULL));
-			}
-		}
-		oi_dst.next();
-	}
-
-	// Go over the todo list
-
-	typename std::map< index<N>, tod_copy<N>* >::iterator iter =
-		map_todo.begin();
-	while(iter != map_todo.end()) {
-		index<N> idx_src(iter->first), idx_dst(iter->first);
-		idx_dst.permute(m_perm);
-		tensor_i<N, double> &blk_src = ctrl_src.req_block(idx_src);
-		tensor_i<N, double> &blk_dst = ctrl_dst.req_block(idx_dst);
-		tod_copy<N> cp(blk_src, m_perm, m_c);
-		cp.perform(blk_dst);
-		ctrl_src.ret_block(idx_src);
-		ctrl_dst.ret_block(idx_dst);
-		iter++;
-	}*/
 }
 
 
