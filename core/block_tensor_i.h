@@ -6,8 +6,7 @@
 #include "block_index_space.h"
 #include "index.h"
 #include "orbit_iterator.h"
-#include "symmetry_i.h"
-#include "symmetry_operation_i.h"
+#include "symmetry.h"
 #include "tensor_i.h"
 
 namespace libtensor {
@@ -33,12 +32,8 @@ template<size_t N, typename T> class block_tensor_ctrl;
 	<b>Block %tensor events</b>
 
 	<b>req_symmetry</b> The request for %symmetry is invoked when the client
-	requires read-only access to the %symmetry object. The handler returns
-	a const reference to %symmetry.
-
-	<b>req_symmetry_operation</b> Invoked when the client needs to modify
-	the %symmetry of the block %tensor. The handler performs the requested
-	%symmetry operation.
+	requires access to the %symmetry object. The handler returns a reference
+	to %symmetry.
 
 	<b>req_orbits</b> Invoked to obtain an iterator over all non-zero
 	orbits (%symmetry-unique blocks) in the block %tensor. The handler
@@ -71,18 +66,7 @@ protected:
 	/**	\brief Invoked when the %symmetry object is requested
 		\return The %symmetry of the block %tensor
 	 **/
-	virtual const symmetry_i<N, T> &on_req_symmetry() throw(exception) = 0;
-
-	/**	\brief Invoked to perform a %symmetry operation on the block
-			%tensor
-	 **/
-	virtual void on_req_symmetry_operation(symmetry_operation_i<N, T> &op)
-		throw(exception) = 0;
-
-	/**	\brief Invoked to obtain an iterator over all non-zero orbits
-		\return Orbit iterator.
-	 **/
-	virtual orbit_iterator<N, T> on_req_orbits() throw(exception) = 0;
+	//virtual symmetry<N, T> &on_req_symmetry() throw(exception) = 0;
 
 	/**	\brief Invoked when a canonical block is requested
 		\param idx Block %index.

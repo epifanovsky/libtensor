@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_SYMMETRY_H
 #define LIBTENSOR_SYMMETRY_H
 
+#include <algorithm>
 #include <list>
 #include <vector>
 #include "defs.h"
@@ -11,8 +12,6 @@
 
 namespace libtensor {
 
-template<size_t N, typename T> class symmetry_ctrl;
-
 /**	\brief Tensor symmetry
 	\tparam N Tensor order.
 	\tparam T Tensor element type.
@@ -21,20 +20,18 @@ template<size_t N, typename T> class symmetry_ctrl;
  **/
 template<size_t N, typename T>
 class symmetry {
-	friend class symmetry_ctrl<N, T>;
+public:
+	static const char *k_clazz; //!< Class name
 
 public:
 	//!	Symmetry element type
 	typedef symmetry_element_i<N, T> symmetry_element_t;
 
-public:
-	static const char *k_clazz; //!< Class name
-
 private:
 	dimensions<N> m_dims; //!< Block %index %dimensions
 	std::list<symmetry_element_t*> m_elements; //!< Symmetry elements
-	std::vector<size_t> m_orbits; //!< Orbits
-	bool m_dirty; //!< Indicates that the orbits need to be rebuilt
+	mutable std::vector<size_t> m_orbits; //!< Orbits
+	mutable bool m_dirty; //!< Indicates that the orbits need to be rebuilt
 
 public:
 	//!	\name Construction and destruction
@@ -56,63 +53,74 @@ public:
 
 	//@}
 
-protected:
-	//!	\name Event handlers (see symmetry_ctrl<N, T>)
+
+	//!	\name Symmetry elements
 	//@{
 
-	/**	\brief Request to return the number of %symmetry elements
+	/**	\brief Returns the number of %symmetry elements
 	 **/
-	size_t on_req_num_elem() throw(exception);
+	size_t get_num_elements() const;
 
-	/**	\brief Request to return a %symmetry element
+	/**	\brief Returns a %symmetry element
 		\param n Element number, not to exceed the total number of
 			%symmetry elements.
 		\throw out_of_bounds If the element number is out of bounds.
 	 **/
-	const symmetry_element_t &on_req_elem(size_t n) throw(exception);
+	const symmetry_element_t &get_element(size_t n) const
+		throw(out_of_bounds);
 
-	/**	\brief Request to add a %symmetry element to the generating set;
-			does nothing if the element is already in the set
+	/**	\brief Adds a %symmetry element to the generating set; does
+			nothing if the element is already in the set
 	`	\param elem Symmetry element.
 	 **/
-	void on_req_insert_elem(const symmetry_element_t &elem)
-		throw(exception);
+	void add_element(const symmetry_element_t &elem);
 
-	/**	\brief Request to remove a %symmetry element from the generating
+	/**	\brief Removes a %symmetry element from the generating
 			set; does nothing if the element is not in the set
 		\param elem Symmetry element.
 	 **/
-	void on_req_remove_elem(const symmetry_element_t &elem)
-		throw(exception);
+	void remove_element(const symmetry_element_t &elem);
 
-	/**	\brief Request whether the generating set of the %symmetry
+	/**	\brief Checks whether the generating set of the %symmetry
 			contains a given element
 		\param elem Symmetry element.
 	 **/
-	bool on_req_contains_elem(const symmetry_element_t &elem)
-		throw(exception);
+	bool contains_element(const symmetry_element_t &elem);
 
-	/**	\brief Request to clear the generating set
+	/**	\brief Removes all elements from the generating set
 	 **/
-	void on_req_clear_elem() throw(exception);
+	void clear_elements();
 
-	/**	\brief Request to return the number of orbits
+	//@}
+
+
+	//!	\name Orbits
+	//@{
+
+	/**	\brief Returns the number of orbits
 	 **/
-	size_t on_req_num_orbits() throw(exception);
+	size_t get_num_orbits() const;
 
-	/**	\brief Request to return an orbit
+	/**	\brief Return an orbit
 		\param n Orbit number.
 		\throw out_of_bounds If the orbit number provided is larger
 			than the total number of orbits.
 	 **/
-	orbit<N, T> on_req_orbit(size_t n) throw(exception);
+	orbit<N, T> get_orbit(size_t n) const throw(out_of_bounds);
+
+	/**	\brief Returns whether the element with a given %index is
+			canonical
+		\throw out_of_bounds If the %index is outside of the symmetry's
+			dimensions.
+	 **/
+	bool is_canonical(const index<N> &idx) const throw(out_of_bounds);
 
 	//@}
 
 private:
 	void remove_all();
-	void make_orbits();
-	bool mark_orbit(const index<N> &idx, std::vector<bool> &lst);
+	void make_orbits() const;
+	bool mark_orbit(const index<N> &idx, std::vector<bool> &lst) const;
 
 };
 
@@ -149,17 +157,17 @@ symmetry<N, T>::~symmetry() {
 
 
 template<size_t N, typename T>
-size_t symmetry<N, T>::on_req_num_elem() throw(exception) {
+size_t symmetry<N, T>::get_num_elements() const {
 
 	return m_elements.size();
 }
 
 
 template<size_t N, typename T>
-const symmetry_element_i<N, T> &symmetry<N, T>::on_req_elem(size_t n)
-	throw(exception) {
+const symmetry_element_i<N, T> &symmetry<N, T>::get_element(size_t n) const
+	throw(out_of_bounds) {
 
-	static const char *method = "on_req_elem(size_t)";
+	static const char *method = "get_element(size_t)";
 
 	if(n >= m_elements.size()) {
 		throw out_of_bounds("libtensor", k_clazz, method, __FILE__,
@@ -170,8 +178,7 @@ const symmetry_element_i<N, T> &symmetry<N, T>::on_req_elem(size_t n)
 
 
 template<size_t N, typename T>
-void symmetry<N, T>::on_req_insert_elem(const symmetry_element_i<N, T> &elem)
-	throw(exception) {
+void symmetry<N, T>::add_element(const symmetry_element_i<N, T> &elem) {
 
 	typename std::list<symmetry_element_t*>::iterator i =
 		m_elements.begin();
@@ -191,8 +198,7 @@ void symmetry<N, T>::on_req_insert_elem(const symmetry_element_i<N, T> &elem)
 
 
 template<size_t N, typename T>
-void symmetry<N, T>::on_req_remove_elem(const symmetry_element_i<N, T> &elem)
-	throw(exception) {
+void symmetry<N, T>::remove_element(const symmetry_element_i<N, T> &elem) {
 
 	typename std::list<symmetry_element_t*>::iterator i =
 		m_elements.begin();
@@ -210,8 +216,7 @@ void symmetry<N, T>::on_req_remove_elem(const symmetry_element_i<N, T> &elem)
 
 
 template<size_t N, typename T>
-bool symmetry<N, T>::on_req_contains_elem(const symmetry_element_i<N, T> &elem)
-	throw(exception) {
+bool symmetry<N, T>::contains_element(const symmetry_element_i<N, T> &elem) {
 
 	typename std::list<symmetry_element_t*>::iterator i =
 		m_elements.begin();
@@ -224,14 +229,14 @@ bool symmetry<N, T>::on_req_contains_elem(const symmetry_element_i<N, T> &elem)
 
 
 template<size_t N, typename T>
-void symmetry<N, T>::on_req_clear_elem() throw(exception) {
+void symmetry<N, T>::clear_elements() {
 
 	remove_all();
 }
 
 
 template<size_t N, typename T>
-size_t symmetry<N, T>::on_req_num_orbits() throw(exception) {
+size_t symmetry<N, T>::get_num_orbits() const {
 
 	if(m_dirty) make_orbits();
 	return m_orbits.size();
@@ -239,9 +244,9 @@ size_t symmetry<N, T>::on_req_num_orbits() throw(exception) {
 
 
 template<size_t N, typename T>
-orbit<N, T> symmetry<N, T>::on_req_orbit(size_t n) throw(exception) {
+orbit<N, T> symmetry<N, T>::get_orbit(size_t n) const throw(out_of_bounds) {
 
-	static const char *method = "on_req_orbit(size_t)";
+	static const char *method = "get_orbit(size_t)";
 
 	if(m_dirty) make_orbits();
 	if(n >= m_orbits.size()) {
@@ -251,6 +256,17 @@ orbit<N, T> symmetry<N, T>::on_req_orbit(size_t n) throw(exception) {
 	return orbit<N, T>(*this, m_orbits[n]);
 }
 
+
+template<size_t N, typename T>
+bool symmetry<N, T>::is_canonical(const index<N> &idx) const
+	throw(out_of_bounds) {
+
+	if(m_dirty) make_orbits();
+	size_t absidx = m_dims.abs_index(idx);
+	typename std::vector<size_t>::const_iterator i =
+		std::find(m_orbits.begin(), m_orbits.end(), absidx);
+	return i != m_orbits.end();
+}
 
 template<size_t N, typename T>
 void symmetry<N, T>::remove_all() {
@@ -270,7 +286,7 @@ void symmetry<N, T>::remove_all() {
 
 
 template<size_t N, typename T>
-void symmetry<N, T>::make_orbits() {
+void symmetry<N, T>::make_orbits() const {
 
 	m_orbits.clear();
 
@@ -289,13 +305,14 @@ void symmetry<N, T>::make_orbits() {
 
 
 template<size_t N, typename T>
-bool symmetry<N, T>::mark_orbit(const index<N> &idx, std::vector<bool> &lst) {
+bool symmetry<N, T>::mark_orbit(
+	const index<N> &idx, std::vector<bool> &lst) const {
 
 	size_t absidx = m_dims.abs_index(idx);
 	bool allowed = true;
 	if(!lst[absidx]) {
 		lst[absidx] = true;
-		typename std::list<symmetry_element_t*>::iterator ielem =
+		typename std::list<symmetry_element_t*>::const_iterator ielem =
 			m_elements.begin();
 		while(ielem != m_elements.end()) {
 			allowed = allowed && (*ielem)->is_allowed(idx);

@@ -8,7 +8,6 @@
 #include "core/block_tensor.h"
 #include "core/block_tensor_ctrl.h"
 #include "core/immutable.h"
-#include "symmetry/default_symmetry.h"
 #include "bispace_i.h"
 #include "btensor_i.h"
 #include "labeled_btensor.h"
@@ -30,10 +29,9 @@ template<size_t N, typename T = double, typename Traits = btensor_traits<T> >
 private:
 	typedef typename Traits::element_t element_t;
 	typedef typename Traits::allocator_t allocator_t;
-	typedef default_symmetry<N, T> symmetry_t;
 
 private:
-	block_tensor<N, element_t, symmetry_t, allocator_t> m_bt;
+	block_tensor<N, element_t, allocator_t> m_bt;
 
 public:
 	//!	\name Construction and destruction
@@ -75,9 +73,7 @@ public:
 protected:
 	//!	\name Implementation of libtensor::block_tensor_i<N,T>
 	//@{
-	virtual const symmetry_i<N, T> &on_req_symmetry() throw(exception);
-	virtual void on_req_symmetry_operation(symmetry_operation_i<N, T> &op)
-		throw(exception);
+	virtual const symmetry<N, T> &on_req_symmetry() throw(exception);
 	virtual orbit_iterator<N, T> on_req_orbits() throw(exception);
 	virtual tensor_i<N, T> &on_req_block(const index<N> &idx)
 		throw(exception);
@@ -129,15 +125,9 @@ btensor<N, T, Traits>::operator()(letter_expr<N, ExprT> expr) {
 }
 
 template<size_t N, typename T, typename Traits>
-const symmetry_i<N, T> &btensor<N, T, Traits>::on_req_symmetry()
+const symmetry<N, T> &btensor<N, T, Traits>::on_req_symmetry()
 	throw(exception) {
 	throw_exc("btensor<N, T, Traits>", "on_req_symmetry()", "NIY");
-}
-
-template<size_t N, typename T, typename Traits>
-void btensor<N, T, Traits>::on_req_symmetry_operation(
-	symmetry_operation_i<N, T> &op) throw(exception) {
-	throw_exc("btensor<N, T, Traits>", "on_req_symmetry_operation()", "NIY");
 }
 
 template<size_t N, typename T, typename Traits>

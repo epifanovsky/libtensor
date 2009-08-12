@@ -113,7 +113,7 @@ template<size_t N>
 void tod_btconv<N>::perform(tensor_i<N, double> &t) throw(exception) {
 
 	static const char *method = "perform(tensor_i<N, double>&)";
-
+/*
 	const block_index_space<N> &bis = m_bt.get_bis();
 	if(!bis.get_dims().equals(t.get_dims())) {
 		throw bad_parameter("libtensor", k_clazz, method,
@@ -150,7 +150,7 @@ void tod_btconv<N>::perform(tensor_i<N, double> &t) throw(exception) {
 		oi.next();
 	}
 
-	tctrl.ret_dataptr(ptr_out);
+	tctrl.ret_dataptr(ptr_out);*/
 }
 
 template<size_t N>

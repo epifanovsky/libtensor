@@ -116,7 +116,7 @@ void btod_copy<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 	// Equalize the symmetries of input and output (to do)
 
 	// Create a list of all non-zero canonical blocks in input
-
+/*
 	std::map< index<N>, tod_copy<N>* > map_todo, map_extra;
 	orbit_iterator<N, double> oi_src = ctrl_src.req_orbits();
 	while(!oi_src.end()) {
@@ -168,7 +168,7 @@ void btod_copy<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 		ctrl_src.ret_block(idx_src);
 		ctrl_dst.ret_block(idx_dst);
 		iter++;
-	}
+	}*/
 }
 
 
