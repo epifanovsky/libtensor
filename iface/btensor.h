@@ -73,6 +73,7 @@ public:
 protected:
 	//!	\name Implementation of libtensor::block_tensor_i<N,T>
 	//@{
+	virtual const symmetry<N, T> &on_req_symmetry() throw(exception);
 	virtual void on_req_sym_add_element(
 		const symmetry_element_i<N, T> &elem) throw(exception);
 	virtual void on_req_sym_remove_element(
@@ -132,6 +133,13 @@ btensor<N, T, Traits>::operator()(letter_expr<N, ExprT> expr) {
 
 	return labeled_btensor<N, T, true, letter_expr<N, ExprT> >(
 		*this, expr);
+}
+
+template<size_t N, typename T, typename Traits>
+const symmetry<N, T> &btensor<N, T, Traits>::on_req_symmetry()
+	throw(exception) {
+
+	throw_exc("btensor<N, T, Traits>", "on_req_symmetry()", "NIY");
 }
 
 template<size_t N, typename T, typename Traits>

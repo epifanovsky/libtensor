@@ -90,6 +90,16 @@ public:
 	 **/
 	void clear_elements();
 
+	/**	\brief Creates the union of two generating sets
+		\param sym Second symmetry.
+	 **/
+	void element_set_union(const symmetry<N, T> &sym);
+
+	/**	\brief Creates the overlap of two generating sets
+		\param sym Second symmetry.
+	 **/
+	void element_set_overlap(const symmetry<N, T> &sym);
+
 	/**	\brief Adjusts all elements to reflect the %symmetry of a
 			permuted %tensor
 	 **/
@@ -236,6 +246,37 @@ template<size_t N, typename T>
 void symmetry<N, T>::clear_elements() {
 
 	remove_all();
+}
+
+
+template<size_t N, typename T>
+void symmetry<N, T>::element_set_union(const symmetry<N, T> &sym) {
+
+	typename std::vector<symmetry_element_t*>::iterator i =
+		sym.m_elements.begin();
+	while(i != sym.m_elements.end()) {
+		add_element(*i);
+		i++;
+	}
+}
+
+
+template<size_t N, typename T>
+void symmetry<N, T>::element_set_overlap(const symmetry<N, T> &sym) {
+
+	typename std::vector<symmetry_element_t*>::iterator i =
+		m_elements.begin();
+	while(i != m_elements.end()) {
+		if(!sym.contains_element(*i)) {
+			symmetry_element_t *ptr = *i;
+			*i = NULL;
+			delete ptr;
+			i = m_elements.erase(i);
+			m_dirty = true;
+		} else {
+			i++;
+		}
+	}
 }
 
 

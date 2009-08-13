@@ -68,4 +68,5 @@ clean:
 	$(RM) *.a
 	$(RM) *.o
 	$(RM) *.d
+	$(RM) *.d.*
 	$(RM) libtensor_tests

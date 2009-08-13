@@ -37,6 +37,11 @@ public:
 	//!	\name Symmetry events
 	//@{
 
+	/**	\brief Request to obtain the constant reference to the %tensor's
+			%symmetry
+	 **/
+	const symmetry<N, T> &req_symmetry() throw(exception);
+
 	/**	\brief Request to return the number of %symmetry elements
 	 **/
 	size_t req_sym_num_elem() throw(exception);
@@ -88,7 +93,6 @@ public:
 
 	//!	\name Block events
 	//@{
-	//symmetry<N, T> &req_symmetry() throw(exception);
 	tensor_i<N, T> &req_block(const index<N> &idx) throw(exception);
 	void ret_block(const index<N> &idx) throw(exception);
 	bool req_is_zero_block(const index<N> &idx) throw(exception);
@@ -105,14 +109,15 @@ inline block_tensor_ctrl<N, T>::block_tensor_ctrl(block_tensor_i<N, T> &bt) :
 template<size_t N, typename T>
 block_tensor_ctrl<N, T>::~block_tensor_ctrl() {
 }
-/*
+
+
 template<size_t N, typename T>
-inline symmetry<N, T> &block_tensor_ctrl<N, T>::req_symmetry()
+inline const symmetry<N, T> &block_tensor_ctrl<N, T>::req_symmetry()
 	throw(exception) {
 
 	return m_bt.on_req_symmetry();
 }
-*/
+
 
 template<size_t N, typename T>
 inline void block_tensor_ctrl<N, T>::req_sym_add_element(

@@ -76,6 +76,7 @@ protected:
 
 	//!	\name Implementation of block_tensor_i<N, T>
 	//@{
+	virtual const symmetry<N, T> &on_req_symmetry() throw(exception);
 	virtual void on_req_sym_add_element(
 		const symmetry_element_i<N, T> &elem) throw(exception);
 	virtual void on_req_sym_remove_element(
@@ -149,6 +150,13 @@ template<size_t N, typename T, typename Traits>
 void direct_btensor<N, T, Traits>::on_ret_dataptr(const T *ptr) throw(exception) {
 	throw_exc("direct_btensor<N, T, Traits>", "on_ret_dataptr(const T*)",
 		"Unhandled event");
+}
+
+template<size_t N, typename T, typename Traits>
+const symmetry<N, T> &direct_btensor<N, T, Traits>::on_req_symmetry()
+	throw(exception) {
+
+	throw_exc("direct_btensor<N, T, Traits>", "on_req_symmetry()", "NIY");
 }
 
 template<size_t N, typename T, typename Traits>

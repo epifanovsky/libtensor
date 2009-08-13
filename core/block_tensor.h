@@ -47,6 +47,7 @@ public:
 protected:
 	//!	\name Implementation of libtensor::block_tensor_i<N, T>
 	//@{
+	virtual const symmetry<N, T> &on_req_symmetry() throw(exception);
 	virtual void on_req_sym_add_element(
 		const symmetry_element_i<N, T> &elem) throw(exception);
 	virtual void on_req_sym_remove_element(
@@ -102,13 +103,14 @@ const block_index_space<N> &block_tensor<N, T, Alloc>::get_bis()
 	return m_bis;
 }
 
-/*
+
 template<size_t N, typename T, typename Alloc>
-symmetry<N, T> &block_tensor<N, T, Alloc>::on_req_symmetry() throw(exception) {
+const symmetry<N, T> &block_tensor<N, T, Alloc>::on_req_symmetry()
+	throw(exception) {
 
 	return m_symmetry;
 }
-*/
+
 
 template<size_t N, typename T, typename Alloc>
 void block_tensor<N, T, Alloc>::on_req_sym_add_element(

@@ -2,7 +2,7 @@
 #CPP = g++
 #LD = g++
 #RM = rm -f
-#CPPFLAGS = -g -DDEBUG_CHECK -DUSE_BLAS
+#CPPFLAGS = -g -DDEBUG_CHECK -DUSE_BLAS -DPOSIX
 #LDFLAGS = -g -o
 #INCLUDE =
 #LIBS = -lblas
@@ -11,7 +11,7 @@
 CPP = icpc
 LD = icpc
 RM = rm -f
-CPPFLAGS = -g -DDEBUG_CHECK -DUSE_MKL
+CPPFLAGS = -g -DDEBUG_CHECK -DUSE_MKL -DPOSIX
 LDFLAGS = -g -o
 INCLUDE = -I/opt/intel/Compiler/11.0/081/mkl/include
 LIBS = -lmkl -lguide -lpthread

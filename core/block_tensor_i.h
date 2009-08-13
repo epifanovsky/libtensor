@@ -63,6 +63,11 @@ protected:
 	//!	\name Symmetry event handlers
 	//@{
 
+	/**	\brief Request to obtain the constant reference to the %tensor's
+			%symmetry
+	 **/
+	virtual const symmetry<N, T> &on_req_symmetry() throw(exception) = 0;
+
 	/**	\brief Request to add a %symmetry element to the generating set;
 			does nothing if the element is already in the set
 	`	\param elem Symmetry element.
