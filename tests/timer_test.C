@@ -22,12 +22,15 @@ void timer_test::perform() throw(libtest::test_exception) {
 	clock_t duration=calc(res,10000000);
 	t.stop(); 
 	res=(duration*1.0)/CLOCKS_PER_SEC;
+#ifdef POSIX
 	res-=t.duration().m_ut*times_t::clk2sec;
 	res-=t.duration().m_st*times_t::clk2sec;
+#else
+	res-=t.duration().m_rt*times_t::clk2sec;
+#endif
 	if ( fabs(res) > 0.01 ) {
 		char msg[20];
-		sprintf(msg, "Timer measurement not correct (diff: %6.4fs)", 
-				t.duration().m_rt*times_t::clk2sec-res);
+		sprintf(msg, "Timer measurement not correct (diff: %6.4fs)",res);
 		fail_test("timer_test::perform()", __FILE__, __LINE__,msg);
 	}
 	t.start(); 
