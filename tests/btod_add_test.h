@@ -14,6 +14,8 @@ public:
 	virtual void perform() throw(libtest::test_exception);
 
 private:
+	void test_1() throw(libtest::test_exception);
+
 	/**	\brief Tests if exceptions are thrown when the tensors have
 			different dimensions
 	**/

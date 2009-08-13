@@ -212,9 +212,12 @@ void labeled_btensor_eval_functor<N, T, Core, Label, NTensor, NOper>::
 
 	// a(i|j) = c1*b1(i|j) + c2*b2(i|j) + ... + d1*fn1() + d2*fn2() + ...
 
-	btod_add<N> coreop;
+	labeled_btensor_expr_arg_tensor<N, T> operand0 =
+		m_eval_container.get_arg_tensor(0);
+	btod_add<N> coreop(operand0.get_btensor(), operand0.get_permutation(),
+			operand0.get_coeff());
 
-	for(size_t i = 0; i < NTensor; i++) {
+	for(size_t i = 1; i < NTensor; i++) {
 		labeled_btensor_expr_arg_tensor<N, T> operand =
 			m_eval_container.get_arg_tensor(i);
 		coreop.add_op(operand.get_btensor(), operand.get_permutation(),
@@ -237,9 +240,12 @@ void labeled_btensor_eval_functor<N, T, Core, Label, NTensor, 0>::evaluate()
 
 	// a(i|j) = c1*b1(i|j) + c2*b2(i|j) + ...
 
-	btod_add<N> op;
+	labeled_btensor_expr_arg_tensor<N, T> operand0 =
+		m_eval_container.get_arg_tensor(0);
+	btod_add<N> op(operand0.get_btensor(), operand0.get_permutation(),
+		operand0.get_coeff());
 
-	for(size_t i = 0; i < NTensor; i++) {
+	for(size_t i = 1; i < NTensor; i++) {
 		labeled_btensor_expr_arg_tensor<N, T> operand =
 			m_eval_container.get_arg_tensor(i);
 		op.add_op(operand.get_btensor(), operand.get_permutation(),
@@ -253,7 +259,7 @@ void labeled_btensor_eval_functor<N, T, Core, Label, 0, NOper>::evaluate()
 	throw(exception) {
 
 	// a(i|j) = c1*fn1() + c2*fn2() + ...
-
+/*
 	btod_add<N> coreop;
 	btod_sum<N> op(coreop);
 
@@ -262,7 +268,7 @@ void labeled_btensor_eval_functor<N, T, Core, Label, 0, NOper>::evaluate()
 			m_eval_container.get_arg_oper(i);
 		op.add_op(operand.get_operation(), operand.get_coeff());
 	}
-	op.perform(m_result.get_btensor());
+	op.perform(m_result.get_btensor());*/
 }
 
 template<size_t N, typename T, typename Core, typename Label>
