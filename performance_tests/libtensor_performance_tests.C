@@ -1,6 +1,7 @@
 #include "libtensor_performance_suite.h"
-#include <cstdio>
-#include <cstring>
+#include "../core/global_timings.h"
+
+#include <iostream>
 
 using namespace libtensor;
 using libtest::test_exception;
@@ -14,20 +15,27 @@ public:
 	}
 
 	virtual void on_test_start(const char *test) {
-		printf("Test %s ... ", test); fflush(stdout);
+		std::cout << "Performance test " << test << " ... ";
+		std::cout.flush();
+		
 		// reset timings
+		global_timings::get_instance().reset();
+		
 	}
 
 	virtual void on_test_end_success(const char *test) {
-		printf("done.\n"); fflush(stdout);
+		std::cout << "done." << std::endl; 
 		// print timings
+		std::cout << "Timings are: " << std::endl;
+		std::cout << global_timings::get_instance() << std::endl;
+		std::cout.flush();
 	}
 
 	virtual void on_test_end_exception(const char *test,
 		const test_exception &e) {
-		printf("FAIL!\n");
-		printf("%s\n", e.what());
-		fflush(stdout);
+		std::cout << "FAIL!" << std::endl;
+		std::cout << e.what() << std::endl;
+		std::cout.flush();
 	}
 };
 

@@ -19,6 +19,7 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("direct_btensor", m_utf_direct_btensor);
 	add_test("direct_tensor", m_utf_direct_tensor);
 	add_test("dot_product", m_utf_dot_product);
+	add_test("global_timings", m_utf_global_timings);
 	add_test("immutable", m_utf_immutable);
 	add_test("index", m_utf_index);
 	add_test("index_range", m_utf_index_range);
@@ -35,6 +36,8 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("symmetry", m_utf_symmetry);
 	add_test("symmetry_base", m_utf_symmetry_base);
 	add_test("tensor", m_utf_tensor);
+	add_test("timer", m_utf_timer);
+	add_test("timings", m_utf_timings);
 	add_test("tod_add", m_utf_tod_add);
 	add_test("tod_btconv", m_utf_tod_btconv);
 	add_test("tod_compare", m_utf_tod_compare);

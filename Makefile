@@ -1,5 +1,5 @@
 .PHONY: all
-all: Makefile.inc deps libtensor.a tests
+all: Makefile.inc deps libtensor.a tests performance_tests
 
 Makefile.inc:
 	@echo "-----------------------------------------------"
@@ -15,6 +15,8 @@ SVNREV := $(shell svnversion -n .)
 OBJS  =
 OBJS += defs.o
 OBJS += exception.o
+OBJS += global_timings.o
+OBJS += timer.o
 OBJS += tod/tod_solve.o
 
 DEPS  = $(OBJS:.o=.d)
@@ -34,6 +36,10 @@ libtensor.a: $(OBJS)
 tests: Makefile.inc libtensor.a
 	cd tests && $(MAKE) all
 
+.PHONY: performance_tests
+performance_tests: Makefile.inc libtensor.a
+	cd performance_tests && $(MAKE) all
+	
 .PHONY: docs
 docs:
 	doxygen

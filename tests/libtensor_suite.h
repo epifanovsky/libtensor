@@ -18,6 +18,7 @@
 #include "direct_btensor_test.h"
 #include "direct_tensor_test.h"
 #include "dot_product_test.h"
+#include "global_timings_test.h"
 #include "immutable_test.h"
 #include "index_test.h"
 #include "index_range_test.h"
@@ -34,6 +35,8 @@
 #include "symmetry_test.h"
 #include "symmetry_base_test.h"
 #include "tensor_test.h"
+#include "timer_test.h"
+#include "timings_test.h"
 #include "tod_add_test.h"
 #include "tod_btconv_test.h"
 #include "tod_compare_test.h"
@@ -68,6 +71,7 @@ namespace libtensor {
 	\li libtensor::direct_btensor_test
 	\li libtensor::direct_tensor_test
 	\li libtensor::dot_product_test
+	\li libtensor::global_timings_test
 	\li libtensor::immutable_test
 	\li libtensor::index_test
 	\li libtensor::index_range_test
@@ -84,6 +88,8 @@ namespace libtensor {
 	\li libtensor::symmetry_test
 	\li libtensor::symmetry_base_test
 	\li libtensor::tensor_test
+	\li libtensor::timer_test
+	\li libtensor::timings_test
 	\li libtensor::tod_add_test
 	\li libtensor::tod_btconv_test
 	\li libtensor::tod_compare_test
@@ -112,6 +118,7 @@ private:
 	unit_test_factory<direct_btensor_test> m_utf_direct_btensor;
 	unit_test_factory<direct_tensor_test> m_utf_direct_tensor;
 	unit_test_factory<dot_product_test> m_utf_dot_product;
+	unit_test_factory<global_timings_test> m_utf_global_timings;
 	unit_test_factory<immutable_test> m_utf_immutable;
 	unit_test_factory<index_test> m_utf_index;
 	unit_test_factory<index_range_test> m_utf_index_range;
@@ -128,6 +135,8 @@ private:
 	unit_test_factory<symmetry_test> m_utf_symmetry;
 	unit_test_factory<symmetry_base_test> m_utf_symmetry_base;
 	unit_test_factory<tensor_test> m_utf_tensor;
+	unit_test_factory<timer_test> m_utf_timer;
+	unit_test_factory<timings_test> m_utf_timings;
 	unit_test_factory<tod_add_test> m_utf_tod_add;
 	unit_test_factory<tod_btconv_test> m_utf_tod_btconv;
 	unit_test_factory<tod_compare_test> m_utf_tod_compare;
