@@ -7,6 +7,7 @@
 #include "tod/tod_copy.h"
 #include "btod_additive.h"
 #include "btod_so_copy.h"
+#include "btod_so_equalize.h"
 
 namespace libtensor {
 
@@ -155,12 +156,41 @@ void btod_copy<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 template<size_t N>
 void btod_copy<N>::perform(block_tensor_i<N, double> &bt, double c)
 	throw(exception) {
-	block_tensor_ctrl<N, double> ctrl_src(m_bt), ctrl_dst(bt);
-	index<N> i0;
-	tensor_i<N, double> &tsrc(ctrl_src.req_block(i0));
-	tensor_i<N, double> &tdst(ctrl_dst.req_block(i0));
-	tod_copy<N> op(tsrc, m_perm, m_c);
-	op.perform(tdst, c);
+
+	static const char *method =
+		"perform(block_tensor_i<N, double>&, double)";
+
+	if(!m_bis.equals(bt.get_bis())) {
+		throw bad_parameter("libtensor", k_clazz, method,
+			__FILE__, __LINE__,
+			"Incorrect block index space of the output tensor.");
+	}
+
+	btod_so_equalize<N> symeq(m_symmetry);
+	symeq.perform(bt);
+
+	block_tensor_ctrl<N, double> src_ctrl(m_bt), dst_ctrl(bt);
+	dimensions<N> bidims = m_bis.get_block_index_dims();
+
+	size_t norbits = src_ctrl.req_sym_num_orbits();
+	for(size_t iorbit = 0; iorbit < norbits; iorbit++) {
+
+		orbit<N, double> orb = src_ctrl.req_sym_orbit(iorbit);
+		index<N> src_blk_idx;
+		bidims.abs_index(orb.get_abs_index(), src_blk_idx);
+		if(src_ctrl.req_is_zero_block(src_blk_idx)) continue;
+		index<N> dst_blk_idx(src_blk_idx);
+		dst_blk_idx.permute(m_perm);
+
+		tensor_i<N, double> &src_blk = src_ctrl.req_block(src_blk_idx);
+		tensor_i<N, double> &dst_blk = dst_ctrl.req_block(dst_blk_idx);
+		tod_copy<N> cp(src_blk, m_perm, m_c);
+		cp.perform(dst_blk);
+		src_ctrl.ret_block(src_blk_idx);
+		dst_ctrl.ret_block(dst_blk_idx);
+
+	}
+
 }
 
 

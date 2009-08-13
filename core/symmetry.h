@@ -84,7 +84,7 @@ public:
 			contains a given element
 		\param elem Symmetry element.
 	 **/
-	bool contains_element(const symmetry_element_t &elem);
+	bool contains_element(const symmetry_element_t &elem) const;
 
 	/**	\brief Removes all elements from the generating set
 	 **/
@@ -154,7 +154,7 @@ template<size_t N, typename T>
 symmetry<N, T>::symmetry(const symmetry<N, T> &sym)
 : m_dims(sym.m_dims), m_dirty(true) {
 
-	typename std::vector<symmetry_element_t*>::iterator i =
+	typename std::vector<symmetry_element_t*>::const_iterator i =
 		sym.m_elements.begin();
 	while(i != sym.m_elements.end()) {
 		m_elements.push_back((*i)->clone());
@@ -230,9 +230,10 @@ void symmetry<N, T>::remove_element(const symmetry_element_i<N, T> &elem) {
 
 
 template<size_t N, typename T>
-bool symmetry<N, T>::contains_element(const symmetry_element_i<N, T> &elem) {
+bool symmetry<N, T>::contains_element(const symmetry_element_i<N, T> &elem)
+	const {
 
-	typename std::vector<symmetry_element_t*>::iterator i =
+	typename std::vector<symmetry_element_t*>::const_iterator i =
 		m_elements.begin();
 	while(i != m_elements.end()) {
 		if((*i)->equals(elem)) return true;
@@ -267,7 +268,7 @@ void symmetry<N, T>::element_set_overlap(const symmetry<N, T> &sym) {
 	typename std::vector<symmetry_element_t*>::iterator i =
 		m_elements.begin();
 	while(i != m_elements.end()) {
-		if(!sym.contains_element(*i)) {
+		if(!sym.contains_element(**i)) {
 			symmetry_element_t *ptr = *i;
 			*i = NULL;
 			delete ptr;

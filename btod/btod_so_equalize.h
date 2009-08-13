@@ -36,13 +36,28 @@ template<size_t N>
 void btod_so_equalize<N>::perform(block_tensor_i<N, double> &bt)
 	throw(exception) {
 
+	dimensions<N> bidims(bt.get_bis().get_block_index_dims());
+
 	block_tensor_ctrl<N, double> ctrl(bt);
 	symmetry<N, double> src_sym(m_symmetry);
-	src_sym.element_set_overlap(ctrl.req_symmetry());
+	symmetry<N, double> dst_sym(ctrl.req_symmetry());
+	src_sym.element_set_overlap(dst_sym);
 
 	size_t norbits = src_sym.get_num_orbits();
 	for(size_t iorbit = 0; iorbit < norbits; iorbit++) {
 		orbit<N, double> orb = src_sym.get_orbit(iorbit);
+		index<N> blkidx;
+		bidims.abs_index(orb.get_abs_index(), blkidx);
+		if(!dst_sym.is_canonical(blkidx)) {
+			throw_exc("btod_so_equalize<N>", "perform()",
+				"Symmetry lowering is not supported yet.");
+		}
+	}
+
+	ctrl.req_sym_clear_elements();
+	size_t nelem = src_sym.get_num_elements();
+	for(size_t ielem = 0; ielem < nelem; ielem++) {
+		ctrl.req_sym_add_element(src_sym.get_element(ielem));
 	}
 }
 
