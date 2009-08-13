@@ -5,6 +5,10 @@
 
 namespace libtensor {
 
+const char* 
+expression_p_test::k_clazz="expression_p";
+
+
 void expression_p_test::perform() throw(libtest::test_exception) {
 }
 

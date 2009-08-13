@@ -11,9 +11,9 @@ namespace libtensor {
  	The timings class provides timing facilities for each class which inherit 
  	from it.
  	
- 	To obtain the timing facilities a class has to
- 	 - inherit from this class; 
- 	 - friend the template with the class as the template parameter;
+ 	To obtain the timing facilities a class T has to
+ 	 - inherit from timings with the T as the template parameter; 
+ 	 - friend class timings<T>;
  	 - have the variable const char* k_clazz defined;
  	 - add start_timer and stop_timer calls around the parts of the code that 
  	   should be timed;

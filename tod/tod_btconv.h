@@ -4,6 +4,7 @@
 #include <list>
 #include "defs.h"
 #include "exception.h"
+#include "timings.h"
 #include "core/block_tensor_i.h"
 #include "core/block_tensor_ctrl.h"
 #include "core/tensor_i.h"
@@ -19,7 +20,7 @@ namespace libtensor {
 	\ingroup libtensor_tod
  **/
 template<size_t N>
-class tod_btconv {
+class tod_btconv : public timings<tod_btconv<N> > {
 private:
 	static const char *k_clazz; //!< Class name
 
@@ -111,7 +112,8 @@ tod_btconv<N>::~tod_btconv() {
 
 template<size_t N>
 void tod_btconv<N>::perform(tensor_i<N, double> &t) throw(exception) {
-
+	tod_btconv<N>::start_timer();
+	
 	static const char *method = "perform(tensor_i<N, double>&)";
 
 	const block_index_space<N> &bis = m_bt.get_bis();
@@ -162,6 +164,8 @@ void tod_btconv<N>::perform(tensor_i<N, double> &t) throw(exception) {
 	}
 
 	dst_ctrl.ret_dataptr(dst_ptr);
+	
+	tod_btconv<N>::stop_timer();
 }
 
 template<size_t N>

@@ -1,5 +1,5 @@
 #include "libtensor_performance_suite.h"
-#include "../core/global_timings.h"
+#include "../global_timings.h"
 
 #include <iostream>
 
@@ -41,7 +41,7 @@ public:
 
 int main(int argc, char **argv) {
 	char smsg[81], sline[81];
-	snprintf(smsg, 81, "Performing performance tests for libtensor revision %s",
+	snprintf(smsg, 81, "Performance tests for libtensor revision %s",
 		libtensor::version);
 	size_t slen = strlen(smsg);
 	memset(sline, '-', 80);

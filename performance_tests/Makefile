@@ -2,6 +2,7 @@
 all: deps libtensor_performance_tests
 
 OBJS  = libtensor_performance_suite.o
+OBJS += tod_add_p_test.o
 OBJS += expression_p_test.o
 
 DEPS = $(OBJS:.o=.d)
