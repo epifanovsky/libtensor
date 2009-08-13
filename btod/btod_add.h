@@ -9,6 +9,7 @@
 #include "core/block_tensor_ctrl.h"
 #include "tod/tod_add.h"
 #include "btod_additive.h"
+#include "btod_so_copy.h"
 
 namespace libtensor {
 
@@ -222,17 +223,13 @@ void btod_add<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 			__LINE__, "Incompatible block index space.");
 	}
 
+	btod_so_copy<N> symcopy(m_symmetry);
+	symcopy.perform(bt);
+
 	block_tensor_ctrl<N, double> dst_ctrl(bt);
 	std::vector< block_tensor_ctrl<N, double>* > src_ctrl(
 		m_ops.size(), NULL);
 	dimensions<N> bidims = m_bis.get_block_index_dims();
-
-	dst_ctrl.req_zero_all_blocks();
-	dst_ctrl.req_sym_clear_elements();
-	size_t n_sym_elem = m_symmetry.get_num_elements();
-	for(size_t ielem = 0; ielem < n_sym_elem; ielem++) {
-		dst_ctrl.req_sym_add_element(m_symmetry.get_element(ielem));
-	}
 
 	for(size_t iop = 0; iop < m_ops.size(); iop++) {
 		src_ctrl[iop] =
