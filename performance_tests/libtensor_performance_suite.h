@@ -19,9 +19,9 @@ namespace libtensor {
 class libtensor_performance_suite : public libtest::test_suite {
 private:
 	unit_test_factory<expression_p_test> m_utf_expression_p;
-	unit_test_factory<tod_add_p1_test> m_utf_tod_add_p1;
-	unit_test_factory<tod_add_p2_test> m_utf_tod_add_p2;
-	unit_test_factory<tod_add_p3_test> m_utf_tod_add_p3;
+//	unit_test_factory<tod_add_p1_test> m_utf_tod_add_p1;
+//	unit_test_factory<tod_add_p2_test> m_utf_tod_add_p2;
+//	unit_test_factory<tod_add_p3_test> m_utf_tod_add_p3;
 
 public:
 	//!	Creates the suite

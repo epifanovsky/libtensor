@@ -124,7 +124,8 @@ void tod_add_p3_test::do_calculate() throw(libtest::test_exception) {
 	index_range<4> ir(i1,i2);
 	dimensions<4> dima(ir), dimb(ir); 
 	permutation<4> perma, permb;
-	permb.permute(0,3);
+	permb.permute(0,2);
+	permb.permute(1,3);
 	dimb.permute(permb);
 	
 	tensor<4, double, libvmm::std_allocator<double> > ta(dima), tb(dimb);
@@ -153,12 +154,11 @@ void tod_add_p3_test::do_calculate() throw(libtest::test_exception) {
 			for ( size_t k=0; k<dima.get_dim(2); k++ ) { 
 				for ( size_t l=0; l<dima.get_dim(3); l++ ) {				
 					ptra[cnta]+=cptrb[cntb]*2.0;
-					cntb+=dimb.get_increment(0);
+					cntb+=dimb.get_increment(1);
 				}	
-				cntb-=(dimb.get_size()-dimb.get_increment(2));				
 			}
+			cntb-=(dimb.get_size()-dimb.get_increment(3));				
 		} 
-		cntb-=(dimb.get_increment(1)-dimb.get_increment(3));
 	}
 	tca.ret_dataptr(ptra);
 	tcb.ret_dataptr(cptrb);

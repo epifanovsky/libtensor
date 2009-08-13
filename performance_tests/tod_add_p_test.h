@@ -45,7 +45,7 @@ public:
 /**	\brief Third performance test of the libtensor::tod_add class
 
  	Test performance of
- 	\f[ A_{pqrs} = A_{pqrs} + 2.0 B_{sqrp} \f]
+ 	\f[ A_{pqrs} = A_{pqrs} + 2.0 B_{rspq} \f]
 
 	\ingroup libtensor_tests
 **/

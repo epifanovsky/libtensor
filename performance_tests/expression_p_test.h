@@ -12,7 +12,7 @@ namespace libtensor {
 class expression_p_test 
 	: public libtest::unit_test, public timings<expression_p_test> 
 {
-	friend timings<tod_add_p1_test>;
+	friend timings<expression_p_test>;
 	static const char* k_clazz; 
 public:
 	virtual void perform() throw(libtest::test_exception);
