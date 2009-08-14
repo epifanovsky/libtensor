@@ -1,9 +1,9 @@
 .PHONY: all
 all: deps libtensor_performance_tests
 
-OBJS  = libtensor_performance_suite.o
-OBJS += tod_add_p_test.o
-OBJS += expression_p_test.o
+OBJS  = libtensor_pt_suite.o
+OBJS += performance_test_suite.o
+#OBJS += expression_p_test.o
 
 DEPS = $(OBJS:.o=.d)
 
@@ -13,6 +13,7 @@ endif
 
 include ../Makefile.inc
 INCLUDE += -I.. -I../../libtest -I../../libvmm
+CPPFLAGS += -DLIBTENSOR_TIMINGS
 
 .PHONY: deps
 deps: $(DEPS)

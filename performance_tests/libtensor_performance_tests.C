@@ -1,4 +1,5 @@
-#include "libtensor_performance_suite.h"
+#include "libtensor_pt_suite.h"
+
 #include "../global_timings.h"
 
 #include <iostream>
@@ -6,7 +7,9 @@
 using namespace libtensor;
 using libtest::test_exception;
 
-class performance_suite_handler : public libtest::suite_event_handler {
+class performance_suite_handler 
+	: public libtest::suite_event_handler 
+{
 public:
 	virtual void on_suite_start(const char *suite) {
 	}
@@ -19,15 +22,18 @@ public:
 		std::cout.flush();
 		
 		// reset timings
-		global_timings::get_instance().reset();
-		
+		global_timings::get_instance().reset();		
 	}
 
 	virtual void on_test_end_success(const char *test) {
 		std::cout << "done." << std::endl; 
 		// print timings
-		std::cout << "Timings are: " << std::endl;
-		std::cout << global_timings::get_instance() << std::endl;
+		if ( global_timings::get_instance().ntimings() > 0 ) {
+			std::cout << "Timings are: " << std::endl;
+			std::cout << global_timings::get_instance() << std::endl;
+		}
+		else 
+			std::cout << "No Timings" << std::endl;
 		std::cout.flush();
 	}
 
@@ -41,16 +47,16 @@ public:
 
 int main(int argc, char **argv) {
 	char smsg[81], sline[81];
-	snprintf(smsg, 81, "Performance tests for libtensor revision %s",
-		libtensor::version);
+	snprintf(smsg, 81, 
+		"Performance tests for libtensor revision %s",
+		libtensor::version );
 	size_t slen = strlen(smsg);
 	memset(sline, '-', 80);
 	sline[slen] = '\0';
 	puts(sline); puts(smsg); puts(sline);
 
 	performance_suite_handler handler;
-	libtensor_performance_suite suite;
+	libtensor_pt_suite suite;
 	suite.set_handler(&handler);
-	suite.run_all_tests();
+	return suite.run_all_tests();
 }
-

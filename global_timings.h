@@ -46,6 +46,9 @@ public:
 	 */
 	times_t get_time( const std::string& ) const;
 			
+	/** \brief get number of saved timings
+	 */
+	size_t ntimings() const;
 };
 
 inline void
@@ -72,6 +75,12 @@ global_timings::get_time( const std::string& id ) const
 		throw_exc("global_timings","get_time(const char*) const","No timer with this id");
 	
 	return it->second.m_total;
+}
+
+inline size_t
+global_timings::ntimings() const
+{
+	return m_times.size();
 }
 
 }
