@@ -6,10 +6,12 @@
 #include "defs.h"
 #include "exception.h"
 #include "dimensions.h"
-#include "orbit.h"
+//#include "orbit.h"
 #include "symmetry_element_i.h"
 
 namespace libtensor {
+
+template<size_t N, typename T> class orbit;
 
 /**	\brief Tensor symmetry
 	\tparam N Tensor order.
@@ -51,6 +53,8 @@ public:
 	~symmetry();
 
 	//@}
+
+	const dimensions<N> &get_dims() const;
 
 
 	//!	\name Symmetry elements
@@ -172,6 +176,13 @@ template<size_t N, typename T>
 symmetry<N, T>::~symmetry() {
 
 	remove_all();
+}
+
+
+template<size_t N, typename T>
+const dimensions<N> &symmetry<N, T>::get_dims() const {
+
+	return m_dims;
 }
 
 

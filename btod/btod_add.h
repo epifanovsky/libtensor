@@ -241,7 +241,7 @@ void btod_add<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 
 		orbit<N, double> orb = dst_ctrl.req_sym_orbit(iorbit);
 		index<N> dst_blk_idx;
-		bidims.abs_index(orb.get_abs_index(), dst_blk_idx);
+		bidims.abs_index(orb.get_abs_canonical_index(), dst_blk_idx);
 
 		permutation<N> perm0;
 		tod_add<N> todadd(perm0);

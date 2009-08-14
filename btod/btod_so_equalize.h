@@ -47,7 +47,7 @@ void btod_so_equalize<N>::perform(block_tensor_i<N, double> &bt)
 	for(size_t iorbit = 0; iorbit < norbits; iorbit++) {
 		orbit<N, double> orb = src_sym.get_orbit(iorbit);
 		index<N> blkidx;
-		bidims.abs_index(orb.get_abs_index(), blkidx);
+		bidims.abs_index(orb.get_abs_canonical_index(), blkidx);
 		if(!dst_sym.is_canonical(blkidx)) {
 			throw_exc("btod_so_equalize<N>", "perform()",
 				"Symmetry lowering is not supported yet.");

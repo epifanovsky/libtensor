@@ -136,7 +136,7 @@ void btod_copy<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 
 		orbit<N, double> orb = src_ctrl.req_sym_orbit(iorbit);
 		index<N> src_blk_idx;
-		bidims.abs_index(orb.get_abs_index(), src_blk_idx);
+		bidims.abs_index(orb.get_abs_canonical_index(), src_blk_idx);
 		if(src_ctrl.req_is_zero_block(src_blk_idx)) continue;
 		index<N> dst_blk_idx(src_blk_idx);
 		dst_blk_idx.permute(m_perm);
@@ -177,7 +177,7 @@ void btod_copy<N>::perform(block_tensor_i<N, double> &bt, double c)
 
 		orbit<N, double> orb = src_ctrl.req_sym_orbit(iorbit);
 		index<N> src_blk_idx;
-		bidims.abs_index(orb.get_abs_index(), src_blk_idx);
+		bidims.abs_index(orb.get_abs_canonical_index(), src_blk_idx);
 		if(src_ctrl.req_is_zero_block(src_blk_idx)) continue;
 		index<N> dst_blk_idx(src_blk_idx);
 		dst_blk_idx.permute(m_perm);

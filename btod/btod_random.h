@@ -34,7 +34,7 @@ void btod_random<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 	for(size_t i = 0; i < norbits; i++) {
 		orbit<N, double> orb = ctrl.req_orbit(i);
 		index<N> blkidx;
-		bidims.abs_index(orb.get_abs_index(), blkidx);
+		bidims.abs_index(orb.get_abs_canonical_index(), blkidx);
 		tensor_i<N, double> &blk = ctrl.req_block(blkidx);
 		tensor_ctrl<N, double> blk_ctrl(blk);
 		double *ptr = blk_ctrl.req_dataptr();

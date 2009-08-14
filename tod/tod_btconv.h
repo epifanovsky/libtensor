@@ -113,7 +113,7 @@ tod_btconv<N>::~tod_btconv() {
 template<size_t N>
 void tod_btconv<N>::perform(tensor_i<N, double> &t) throw(exception) {
 	tod_btconv<N>::start_timer();
-	
+
 	static const char *method = "perform(tensor_i<N, double>&)";
 
 	const block_index_space<N> &bis = m_bt.get_bis();
@@ -136,35 +136,28 @@ void tod_btconv<N>::perform(tensor_i<N, double> &t) throw(exception) {
 
 		orbit<N, double> orb = src_ctrl.req_sym_orbit(iorbit);
 		index<N> blk_idx;
-		bidims.abs_index(orb.get_abs_index(), blk_idx);
+		bidims.abs_index(orb.get_abs_canonical_index(), blk_idx);
 		if(src_ctrl.req_is_zero_block(blk_idx)) continue;
 
 		tensor_i<N, double> &blk = src_ctrl.req_block(blk_idx);
 		tensor_ctrl<N, double> blk_ctrl(blk);
 		const double *src_ptr = blk_ctrl.req_const_dataptr();
-		permutation<N> perm;
 
-		index<N> dst_offset = bis.get_block_start(blk_idx);
-		copy_block(dst_ptr, t.get_dims(), dst_offset,
-			src_ptr, blk.get_dims(), perm, 1.0);
-
-		//block_iterator<N, double> bi = oi.get_blocks();
-		//while(!bi.end()) {
-		//	const block_symop<N, double> &symop = bi.get_symop();
-		//	index<N> offset_out =
-		//		bis.get_block_start(bi.get_index());
-		//	copy_block(dst_ptr, t.get_dims(), offset_out,
-		//		ptr_in, blk.get_dims(), symop.m_perm,
-		//		symop.m_coeff);
-		//	bi.next();
-		//}
+		size_t orbsz = orb.get_size();
+		for(size_t i = 0; i < orbsz; i++) {
+			bidims.abs_index(orb.get_abs_index(i), blk_idx);
+			const transf<N, double> &tr = orb.get_transf(i);
+			index<N> dst_offset = bis.get_block_start(blk_idx);
+			copy_block(dst_ptr, t.get_dims(), dst_offset,
+				src_ptr, blk.get_dims(), tr.m_perm, tr.m_coeff);
+		}
 
 		blk_ctrl.ret_dataptr(src_ptr);
 		src_ctrl.ret_block(blk_idx);
 	}
 
 	dst_ctrl.ret_dataptr(dst_ptr);
-	
+
 	tod_btconv<N>::stop_timer();
 }
 
