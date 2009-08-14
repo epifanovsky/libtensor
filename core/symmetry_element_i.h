@@ -6,6 +6,7 @@
 #include "index.h"
 #include "mask.h"
 #include "permutation.h"
+#include "transf.h"
 
 namespace libtensor {
 
@@ -54,6 +55,13 @@ public:
 		\param idx Block %index.
 	 **/
 	virtual void apply(index<N> &idx) const = 0;
+
+	/**	\brief Applies the %symmetry element on an %index and
+			transformation
+		\param idx Block %index.
+		\param tr Block transformation.
+	 **/
+	virtual void apply(index<N> &idx, transf<N, T> &tr) const = 0;
 
 	/**	\brief Checks whether two %symmetry elements are equal
 			(have the same type and perform identically)

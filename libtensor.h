@@ -24,6 +24,7 @@
 #include "core/block_tensor.h"
 #include "core/direct_block_tensor.h"
 
+#include "core/transf.h"
 #include "core/symmetry_i.h"
 #include "core/symmetry_target_i.h"
 #include "core/symmetry_operation_i.h"
@@ -51,6 +52,7 @@
 #include "tod/tod_symcontract2.h"
 
 
+#include "btod/transf_double.h"
 #include "btod/block_symop_double.h"
 #include "btod/btod_add.h"
 #include "btod/btod_additive.h"

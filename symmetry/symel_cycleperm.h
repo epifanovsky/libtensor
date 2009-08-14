@@ -4,9 +4,8 @@
 #include "defs.h"
 #include "exception.h"
 #include "core/dimensions.h"
-#include "core/mask.h"
-#include "core/permutation.h"
 #include "symmetry_element_base.h"
+#include "btod/transf_double.h"
 
 namespace libtensor {
 
@@ -48,6 +47,7 @@ private:
 	mask<N> m_msk; //!< Mask of affected indexes
 	dimensions<N> m_dims; //!< Dimensions
 	permutation<N> m_perm; //!< Permutation
+	double m_c; //!< Coefficient
 
 public:
 	//!	\name Construction and destruction
@@ -63,6 +63,7 @@ public:
 	virtual void permute(const permutation<N> &perm);
 	virtual bool is_allowed(const index<N> &idx) const;
 	virtual void apply(index<N> &idx) const;
+	virtual void apply(index<N> &idx, transf<N, T> &tr) const;
 	virtual bool equals(const symmetry_element_i<N, T> &se) const;
 	virtual symmetry_element_i<N, T> *clone() const;
 	/*
@@ -86,7 +87,7 @@ const char *symel_cycleperm<N, T>::k_clazz = "symel_cycleperm<N, T>";
 template<size_t N, typename T>
 symel_cycleperm<N, T>::symel_cycleperm(
 	const mask<N> &msk, const dimensions<N> &dims)
-: m_msk(msk), m_dims(dims) {
+: m_msk(msk), m_dims(dims), m_c(1.0) {
 
 	static const char *method = "symel_cycleperm(const mask<N>&)";
 
@@ -111,7 +112,7 @@ symel_cycleperm<N, T>::symel_cycleperm(
 
 template<size_t N, typename T>
 symel_cycleperm<N, T>::symel_cycleperm(const symel_cycleperm<N, T> &el)
-: m_msk(el.m_msk), m_dims(el.m_dims), m_perm(el.m_perm) {
+: m_msk(el.m_msk), m_dims(el.m_dims), m_perm(el.m_perm), m_c(el.m_c) {
 
 }
 
@@ -150,6 +151,15 @@ template<size_t N, typename T>
 void symel_cycleperm<N, T>::apply(index<N> &idx) const {
 
 	idx.permute(m_perm);
+}
+
+
+template<size_t N, typename T>
+void symel_cycleperm<N, T>::apply(index<N> &idx, transf<N, T> &tr) const {
+
+	idx.permute(m_perm);
+	tr.permute(m_perm);
+	tr.multiply(m_c);
 }
 
 

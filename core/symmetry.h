@@ -129,12 +129,17 @@ public:
 	 **/
 	bool is_canonical(const index<N> &idx) const throw(out_of_bounds);
 
+	void get_transf(const index<N> &idx, index<N> &can, transf<N, T> &tr)
+		const throw(out_of_bounds);
+
 	//@}
 
 private:
 	void remove_all();
 	void make_orbits() const;
 	bool mark_orbit(const index<N> &idx, std::vector<bool> &lst) const;
+	bool find_canonical(const index<N> &idx, std::vector<bool> &lst,
+		index<N> &can, transf<N, T> &tr) const;
 
 };
 
@@ -327,6 +332,21 @@ bool symmetry<N, T>::is_canonical(const index<N> &idx) const
 	return i != m_orbits.end();
 }
 
+
+template<size_t N, typename T>
+void symmetry<N, T>::get_transf(const index<N> &idx, index<N> &can,
+	transf<N, T> &tr) const throw(out_of_bounds) {
+
+	tr.reset();
+	can = idx;
+	if(is_canonical(idx)) return;
+
+	std::vector<bool> chk(m_dims.get_size(), false);
+	find_canonical(idx, chk, can, tr);
+	tr.invert();
+}
+
+
 template<size_t N, typename T>
 void symmetry<N, T>::remove_all() {
 
@@ -382,6 +402,33 @@ bool symmetry<N, T>::mark_orbit(
 		}
 	}
 	return allowed;
+}
+
+
+template<size_t N, typename T>
+bool symmetry<N, T>::find_canonical(const index<N> &idx, std::vector<bool> &lst,
+	index<N> &can, transf<N, T> &tr) const {
+
+	size_t absidx = m_dims.abs_index(idx);
+	if(!lst[absidx]) {
+		lst[absidx] = true;
+		if(is_canonical(idx)) {
+			can = idx;
+			return true;
+		}
+		typename std::vector<symmetry_element_t*>::const_iterator
+			ielem = m_elements.begin();
+		while(ielem != m_elements.end()) {
+			index<N> idx2(idx);
+			transf<N, T> tr2;
+			(*ielem)->apply(idx2, tr2);
+			if(find_canonical(idx2, lst, can, tr2)) {
+				tr.transform(tr2);
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 
