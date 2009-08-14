@@ -338,9 +338,6 @@ void symmetry<N, T>::get_transf(const index<N> &idx, index<N> &can,
 	transf<N, T> &tr) const throw(out_of_bounds) {
 
 	tr.reset();
-	can = idx;
-	if(is_canonical(idx)) return;
-
 	std::vector<bool> chk(m_dims.get_size(), false);
 	find_canonical(idx, chk, can, tr);
 	tr.invert();
@@ -426,6 +423,7 @@ bool symmetry<N, T>::find_canonical(const index<N> &idx, std::vector<bool> &lst,
 				tr.transform(tr2);
 				return true;
 			}
+			ielem++;
 		}
 	}
 	return false;
