@@ -15,6 +15,8 @@ public:
 
 private:
 	void test_1() throw(libtest::test_exception);
+	void test_2(double ca1, double ca2) throw(libtest::test_exception);
+	void test_3(double ca1, double ca2) throw(libtest::test_exception);
 
 	/**	\brief Tests if exceptions are thrown when the tensors have
 			different dimensions

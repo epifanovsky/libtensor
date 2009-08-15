@@ -1,13 +1,16 @@
 #ifndef LIBTENSOR_BTOD_ADD_H
 #define LIBTENSOR_BTOD_ADD_H
 
+#include <list>
 #include <new>
 #include <vector>
+#include <utility>
 #include "defs.h"
 #include "exception.h"
 #include "core/block_tensor_i.h"
 #include "core/block_tensor_ctrl.h"
 #include "tod/tod_add.h"
+#include "tod/tod_copy.h"
 #include "btod_additive.h"
 #include "btod_so_copy.h"
 
@@ -39,6 +42,12 @@ private:
 			const permutation<N> &perm, double c)
 		: m_bt(bt), m_perm(perm), m_c(c) { };
 	} operand_t;
+
+	typedef struct {
+		block_tensor_ctrl<N, double> *m_ctrl;
+		index<N> m_idx;
+		transf<N, double> m_tr;
+	} arg_t;
 
 	block_index_space<N> m_bis; //!< Block %index space of the result
 	dimensions<N> m_bidims; //!< Block %index dimensions
@@ -243,30 +252,85 @@ void btod_add<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 		index<N> dst_blk_idx;
 		bidims.abs_index(orb.get_abs_canonical_index(), dst_blk_idx);
 
-		permutation<N> perm0;
-		tod_add<N> todadd(perm0);
-		std::vector< index<N> > src_blk_idx(m_ops.size());
+		std::list<arg_t> arglst;
 
 		for(size_t iop = 0; iop < m_ops.size(); iop++) {
+			block_tensor_ctrl<N, double> &ctrl = *(src_ctrl[iop]);
 			operand_t &op = *(m_ops[iop]);
-			permutation<N> invperm(op.m_perm);
+			permutation<N> perm(op.m_perm), invperm(op.m_perm);
 			invperm.invert();
-			src_blk_idx[iop] = dst_blk_idx;
-			src_blk_idx[iop].permute(invperm);
-			if(src_ctrl[iop]->req_is_zero_block(src_blk_idx[iop]))
-				continue;
+
+			index<N> src_blk_idx(dst_blk_idx), can_blk_idx;
+			src_blk_idx.permute(invperm);
+
+			transf<N, double> tr;
+			ctrl.req_symmetry().get_transf(
+				src_blk_idx, can_blk_idx, tr);
+			if(ctrl.req_is_zero_block(can_blk_idx)) continue;
 			tensor_i<N, double> &src_blk =
-				src_ctrl[iop]->req_block(src_blk_idx[iop]);
-			todadd.add_op(src_blk, op.m_perm, op.m_c);
+				ctrl.req_block(can_blk_idx);
+			tr.m_perm.permute(perm);
+			tr.m_coeff *= op.m_c;
+
+			if(tr.m_coeff != 0.0) {
+				arg_t arg;
+				arg.m_ctrl = &ctrl;
+				arg.m_idx = can_blk_idx;
+				arg.m_tr = tr;
+				arglst.push_back(arg);
+			}
 		}
 
-		tensor_i<N, double> &dst_blk = dst_ctrl.req_block(dst_blk_idx);
-		todadd.perform(dst_blk);
+		if(arglst.size() == 1) {
 
-		for(size_t iop = 0; iop < m_ops.size(); iop++) {
-			src_ctrl[iop]->ret_block(src_blk_idx[iop]);
+			typename std::list<arg_t>::iterator iarg =
+				arglst.begin();
+			arg_t &arg = *(iarg);
+			tensor_i<N, double> &src_blk =
+				arg.m_ctrl->req_block(arg.m_idx);
+			tod_copy<N> todcp(src_blk, arg.m_tr.m_perm,
+				arg.m_tr.m_coeff);
+
+			tensor_i<N, double> &dst_blk =
+				dst_ctrl.req_block(dst_blk_idx);
+			todcp.perform(dst_blk);
+
+			arg.m_ctrl->ret_block(arg.m_idx);
+			dst_ctrl.ret_block(dst_blk_idx);
+
+		} else if(arglst.size() > 1) {
+
+			permutation<N> perm0;
+			tod_add<N> todadd(perm0);
+
+			typename std::list<arg_t>::iterator iarg =
+				arglst.begin();
+			while(iarg != arglst.end()) {
+				arg_t &arg = *(iarg);
+				tensor_i<N, double> &src_blk =
+					arg.m_ctrl->req_block(arg.m_idx);
+				todadd.add_op(src_blk, arg.m_tr.m_perm,
+					arg.m_tr.m_coeff);
+				iarg++;
+			}
+
+			tensor_i<N, double> &dst_blk =
+				dst_ctrl.req_block(dst_blk_idx);
+			todadd.perform(dst_blk);
+
+			iarg = arglst.begin();
+			while(iarg != arglst.end()) {
+				arg_t &arg = *(iarg);
+				arg.m_ctrl->ret_block(arg.m_idx);
+				iarg++;
+			}
+			dst_ctrl.ret_block(dst_blk_idx);
+
+		} else {
+
+			dst_ctrl.req_zero_block(dst_blk_idx);
+
 		}
-		dst_ctrl.ret_block(dst_blk_idx);
 
 	}
 
