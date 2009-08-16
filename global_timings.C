@@ -12,8 +12,8 @@ operator<<(std::ostream& out, const libtensor::global_timings& timings)
 	global_timings::map_t::const_iterator it=times.begin();
 	
 	while ( it != times.end() ) {
-		out << "Execution of " << std::setw(30) << it->first << ": ";
-		out << "Calls: " << std::setw(3) << it->second.m_calls << ", ";
+		out << "Execution of " << it->first << ": " << std::endl;
+		out << "Calls: " << std::setw(8) << it->second.m_calls << ", ";
 		out << it->second.m_total << std::endl;
 		it++;
 	}

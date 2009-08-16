@@ -4,7 +4,7 @@
 #include "../libvmm/singleton.h"
 #include "timer.h"
 #include "exception.h"
-#include <ostream>
+#include <iostream>
 #include <map>
 #include <string>
 #include <utility>
@@ -18,12 +18,12 @@ class global_timings : public libvmm::singleton<global_timings> {
 	friend std::ostream& operator<<( std::ostream&, const global_timings& );
 
 	struct timing_t {
-		times_t m_total;
+		time_diff_t m_total;
 		size_t m_calls;
 		
-		timing_t(times_t time) : m_total(time), m_calls(1) 
+		timing_t(time_diff_t time) : m_total(time), m_calls(1) 
 		{}
-		timing_t& operator+=( times_t time ) 
+		timing_t& operator+=( time_diff_t time ) 
 		{ m_calls++; m_total+=time; return *this; }
 	};
 
@@ -44,7 +44,7 @@ public:
 
 	/** \brief return timing of given id
 	 */
-	times_t get_time( const std::string& ) const;
+	time_diff_t get_time( const std::string& ) const;
 			
 	/** \brief get number of saved timings
 	 */
@@ -58,7 +58,7 @@ global_timings::add_to_timer(const std::string& id, const timer& t )
 	if ( it == m_times.end() ) 
 		m_times.insert( pair_t(id,timing_t(t.duration())) );
 	else
-		it->second+=t.duration();	
+		it->second+=t.duration();
 } 
 
 inline void
@@ -67,7 +67,7 @@ global_timings::reset()
 	m_times.clear();
 } 
 
-inline times_t 
+inline time_diff_t 
 global_timings::get_time( const std::string& id ) const
 {
 	map_t::const_iterator it = m_times.find(id);

@@ -4,7 +4,11 @@
 #include <libtest.h>
 #include <libtensor.h>
 #include "performance_test_suite.h"
+
 #include "tod_add_scenario.h"
+#include "tod_copy_scenario.h"
+#include "tod_contract2_scenario.h"
+#include "tod_dotprod_scenario.h"
 
 namespace libtensor {
 
@@ -13,26 +17,56 @@ namespace libtensor {
 	\brief Performance test suite for the tensor library (libtensor)
 
 	This suite runs the following performance test scenarios:
-	\li libtensor::tod_add_test
+	\li libtensor::tod_add_scenario
+	\li libtensor::tod_contract2_scenario
+	\li libtensor::tod_copy_scenario
+	\li libtensor::tod_dotprod_scenario
 	
 **/
 class libtensor_pt_suite : public performance_test_suite {
-	template<size_t N> 
-	struct Small {
-		dimensions<N> dims();
+	template<size_t N, size_t M, size_t K> 
+	class dimensions_t {
+	protected:
+		index<N+M> ind1;
+		index<N+K> ind2;
+		index<M+K> ind3;
+	public:
+		dimensions<N+M> dimA();
+		dimensions<N+K> dimB();
+		dimensions<M+K> dimC();
 	};
-	template<size_t N> 
-	struct Medium {
-		dimensions<N> dims();
+	
+	template<size_t N, size_t M, size_t K> 
+	class small_t : public dimensions_t<N,M,K> {
+	public:
+		small_t();		
 	};
-	template<size_t N> 
-	struct Large {
-		dimensions<N> dims();
+	template<size_t N, size_t M, size_t K> 
+	class medium_t : public dimensions_t<N,M,K> {
+	public:
+		medium_t();		
+	};
+	template<size_t N, size_t M, size_t K> 
+	class large_t : public dimensions_t<N,M,K> {
+	public:
+		large_t();		
 	};
 
-	tod_add_scenario<4,Small<4> > m_tod_add_ptsc1;
-	tod_add_scenario<4,Medium<4> > m_tod_add_ptsc2;
-	tod_add_scenario<4,Large<4> > m_tod_add_ptsc3;
+	tod_add_scenario<4,small_t<2,2,2> > m_tod_add_ptsc1;
+	tod_add_scenario<4,medium_t<2,2,2> > m_tod_add_ptsc2;
+	tod_add_scenario<4,large_t<2,2,2> > m_tod_add_ptsc3;
+
+	tod_contract2_scenario<2,2,2,small_t<2,2,2> > m_tod_contract2_ptsc1;
+	tod_contract2_scenario<2,2,2,medium_t<2,2,2> > m_tod_contract2_ptsc2;
+	tod_contract2_scenario<2,2,2,large_t<2,2,2> > m_tod_contract2_ptsc3;
+
+	tod_copy_scenario<4,small_t<2,2,2> > m_tod_copy_ptsc1;
+	tod_copy_scenario<4,medium_t<2,2,2> > m_tod_copy_ptsc2;
+	tod_copy_scenario<4,large_t<2,2,2> > m_tod_copy_ptsc3;
+
+	tod_dotprod_scenario<4,small_t<2,2,2> > m_tod_dotprod_ptsc1;
+	tod_dotprod_scenario<4,medium_t<2,2,2> > m_tod_dotprod_ptsc2;
+	tod_dotprod_scenario<4,large_t<2,2,2> > m_tod_dotprod_ptsc3;
 public:
 	//!	Creates the suite
 	libtensor_pt_suite();

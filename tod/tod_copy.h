@@ -4,6 +4,7 @@
 #include <list>
 #include "defs.h"
 #include "exception.h"
+#include "timings.h"
 #include "core/tensor_i.h"
 #include "core/tensor_ctrl.h"
 #include "tod_additive.h"
@@ -51,7 +52,10 @@ namespace libtensor {
 	\ingroup libtensor_tod
 **/
 template<size_t N>
-class tod_copy : public tod_additive<N> {
+class tod_copy 
+	: public tod_additive<N>, public timings<tod_copy<N> > 
+{
+	friend timings<tod_copy<N> >;	
 public:
 	static const char *k_clazz; //!< Class name
 
@@ -93,8 +97,10 @@ private:
 			throw(exception);
 	};
 
-	class op_dcopy : public processor_op_i_t {
+	class op_dcopy : public processor_op_i_t, public timings<tod_copy<N>::op_dcopy> {
 	private:
+		friend timings<tod_copy<N>::op_dcopy>;
+		static const char* k_clazz;
 		size_t m_len, m_inca, m_incb;
 		double m_c;
 	public:
@@ -104,8 +110,10 @@ private:
 			throw(exception);
 	};
 
-	class op_daxpy : public processor_op_i_t {
+	class op_daxpy : public processor_op_i_t, public timings<tod_copy<N>::op_daxpy> {
 	private:
+		friend timings<tod_copy<N>::op_daxpy>;
+		static const char* k_clazz;
 		size_t m_len, m_inca, m_incb;
 		double m_c;
 	public:
@@ -164,6 +172,10 @@ private:
 
 template<size_t N>
 const char *tod_copy<N>::k_clazz = "tod_copy<N>";
+template<size_t N>
+const char *tod_copy<N>::op_dcopy::k_clazz = "tod_copy<N>::op_dcopy";
+template<size_t N>
+const char *tod_copy<N>::op_daxpy::k_clazz = "tod_copy<N>::op_daxpy";
 
 template<size_t N>
 inline tod_copy<N>::tod_copy(tensor_i<N, double> &t, double c)
@@ -201,6 +213,7 @@ void tod_copy<N>::do_perform(tensor_i<N, double> &tdst, double c)
 	throw(exception) {
 
 	static const char *method = "do_perform(tensor_i<N, double>&, double)";
+	tod_copy<N>::start_timer();
 
 	dimensions<N> dims(m_t.get_dims()); dims.permute(m_perm);
 	if(dims != tdst.get_dims()) {
@@ -262,6 +275,8 @@ void tod_copy<N>::do_perform(tensor_i<N, double> &tdst, double c)
 
 	m_tctrl.ret_dataptr(psrc);
 	tctrl_dst.ret_dataptr(pdst);
+
+	tod_copy<N>::stop_timer();
 }
 
 template<size_t N>
@@ -297,18 +312,19 @@ template<size_t N>
 void tod_copy<N>::op_dcopy::exec(processor_t &proc, registers &regs)
 	throw(exception) {
 
-	static const char *clazz = "tod_copy<N>::op_dcopy";
+	tod_copy<N>::op_dcopy::start_timer();
+//	static const char *clazz = "tod_copy<N>::op_dcopy";
 	static const char *method = "exec(processor_t&, registers&)";
 
 	if(m_len == 0) return;
 
 #ifdef LIBTENSOR_DEBUG
 	if(regs.m_ptra + (m_len - 1)*m_inca >= regs.m_ptra_end) {
-		throw overflow("libtensor", clazz, method, __FILE__, __LINE__,
+		throw overflow("libtensor", k_clazz, method, __FILE__, __LINE__,
 			"Source buffer overflow.");
 	}
 	if(regs.m_ptrb + (m_len - 1)*m_incb >= regs.m_ptrb_end) {
-		throw overflow("libtensor", clazz, method, __FILE__, __LINE__,
+		throw overflow("libtensor", k_clazz, method, __FILE__, __LINE__,
 			"Destination buffer overflow.");
 	}
 #endif // LIBTENSOR_DEBUG
@@ -317,29 +333,32 @@ void tod_copy<N>::op_dcopy::exec(processor_t &proc, registers &regs)
 	if(m_c != 1.0) {
 		cblas_dscal(m_len, m_c, regs.m_ptrb, m_incb);
 	}
+	tod_copy<N>::op_dcopy::stop_timer();
 }
 
 template<size_t N>
 void tod_copy<N>::op_daxpy::exec(processor_t &proc, registers &regs)
 	throw(exception) {
 
-	static const char *clazz = "tod_copy<N>::op_daxpy";
+	tod_copy<N>::op_daxpy::start_timer();
+//	static const char *clazz = "tod_copy<N>::op_daxpy";
 	static const char *method = "exec(processor_t&, registers&)";
 
 	if(m_len == 0) return;
 
 #ifdef LIBTENSOR_DEBUG
 	if(regs.m_ptra + (m_len - 1)*m_inca >= regs.m_ptra_end) {
-		throw overflow("libtensor", clazz, method, __FILE__, __LINE__,
+		throw overflow("libtensor", k_clazz, method, __FILE__, __LINE__,
 			"Source buffer overflow.");
 	}
 	if(regs.m_ptrb + (m_len - 1)*m_incb >= regs.m_ptrb_end) {
-		throw overflow("libtensor", clazz, method, __FILE__, __LINE__,
+		throw overflow("libtensor", k_clazz, method, __FILE__, __LINE__,
 			"Destination buffer overflow.");
 	}
 #endif // LIBTENSOR_DEBUG
 
 	cblas_daxpy(m_len, m_c, regs.m_ptra, m_inca, regs.m_ptrb, m_incb);
+	tod_copy<N>::op_daxpy::stop_timer();
 }
 
 } // namespace libtensor

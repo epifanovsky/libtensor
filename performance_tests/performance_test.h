@@ -17,7 +17,7 @@ protected:
 public:
 	virtual void perform() throw(libtest::test_exception)
 	{ 
-		for ( size_t i=0; i<Repeats; i++ ) do_calculate(); 
+		for ( size_t i=0; i<Repeats; i++ ) do_calculate();
 	}  	
 };
 

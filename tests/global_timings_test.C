@@ -13,7 +13,7 @@ void global_timings_test::wait( double seconds )  {
 
 void global_timings_test::perform() throw(libtest::test_exception) {
 	timer t1, t2, t3;
-	times_t r1=0, r2=0, r3=0;
+	time_diff_t r1, r2, r3;
 	global_timings& gt=global_timings::get_instance();
 	
 	t1.start(); wait( 0.1 ); t1.stop(); 
@@ -44,13 +44,13 @@ void global_timings_test::perform() throw(libtest::test_exception) {
 
 	gt.reset();
 	try {
-		if ( gt.get_time("t1") != times_t() )
+		if ( gt.get_time("t1") != time_diff_t() )
 			fail_test("global_timings_test::perform()", __FILE__, __LINE__,
 				"Timer t1 not deleted");
-		if ( gt.get_time("t2") != times_t() )
+		if ( gt.get_time("t2") != time_diff_t() )
 			fail_test("global_timings_test::perform()", __FILE__, __LINE__,
 				"Timer t2 not deleted");
-		if ( gt.get_time("t3") != times_t() )
+		if ( gt.get_time("t3") != time_diff_t() )
 			fail_test("global_timings_test::perform()", __FILE__, __LINE__,
 				"Timer t3 not deleted");
 	} catch ( exception& e ) {

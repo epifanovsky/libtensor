@@ -4,6 +4,7 @@
 #include <list>
 #include "defs.h"
 #include "exception.h"
+#include "timings.h"
 #include "core/permutation.h"
 #include "core/tensor_i.h"
 #include "core/tensor_ctrl.h"
@@ -18,8 +19,9 @@ namespace libtensor {
 	\ingroup libtensor_tod
  **/
 template<size_t N>
-class tod_dotprod {
+class tod_dotprod : public timings<tod_dotprod<N> > {
 private:
+	friend timings<tod_dotprod<N> >;
 	static const char *k_clazz; //!< Class name
 
 private:
@@ -57,8 +59,10 @@ private:
 			throw(exception);
 	};
 
-	class op_ddot : public processor_op_i_t {
+	class op_ddot : public processor_op_i_t, public timings<tod_dotprod<N>::op_ddot > {
 	private:
+		friend timings<tod_dotprod<N>::op_ddot>;
+		static const char *k_clazz;
 		size_t m_n, m_inca, m_incb;
 	public:
 		op_ddot(size_t n, size_t inca, size_t incb) :
@@ -100,6 +104,8 @@ private:
 
 template<size_t N>
 const char *tod_dotprod<N>::k_clazz = "tod_dotprod<N>";
+template<size_t N>
+const char *tod_dotprod<N>::op_ddot::k_clazz = "tod_dotprod<N>::op_ddot";
 
 template<size_t N>
 tod_dotprod<N>::tod_dotprod(tensor_i<N, double> &t1, tensor_i<N, double> &t2)
@@ -133,6 +139,7 @@ tod_dotprod<N>::tod_dotprod(
 
 template<size_t N>
 double tod_dotprod<N>::calculate() throw(exception) {
+	tod_dotprod<N>::start_timer();
 
 	permutation<N> perma(m_perm1);
 	perma.invert();
@@ -177,6 +184,8 @@ double tod_dotprod<N>::calculate() throw(exception) {
 	m_tctrl1.ret_dataptr(pa);
 	m_tctrl2.ret_dataptr(pb);
 
+	tod_dotprod<N>::stop_timer();
+
 	return result;
 }
 
@@ -219,9 +228,13 @@ void tod_dotprod<N>::op_loop::exec(processor_t &proc, registers &regs)
 template<size_t N>
 void tod_dotprod<N>::op_ddot::exec(processor_t &proc, registers &regs)
 	throw(exception) {
+	tod_dotprod<N>::op_ddot::start_timer();
 
 	*(regs.m_ptrc) += cblas_ddot(
 		m_n, regs.m_ptra, m_inca, regs.m_ptrb, m_incb);
+		
+	tod_dotprod<N>::op_ddot::stop_timer();
+	
 }
 
 } // namespace libtensor

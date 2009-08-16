@@ -100,6 +100,7 @@ void timings_test::perform() throw(libtest::test_exception) {
 
 	try {
 		tc3.wrong_function();
+		fail_test("timings_test::perform()", __FILE__, __LINE__,"No exception thrown!");
 	} catch ( exception& e ) {	}
 	
 }

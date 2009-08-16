@@ -71,8 +71,10 @@ private:
 	};
 
 	//!	b_j += m_ca * a_{i_j}
-	class op_daxpy : public processor_op_i_t {
+	class op_daxpy : public processor_op_i_t, public timings<tod_add<N>::op_daxpy> {
 	private:
+		friend timings<tod_add<N>::op_daxpy>;
+		static const char* k_clazz;
 		size_t m_len, m_inca, m_incb;
 	public:
 		op_daxpy(size_t len , size_t inca, size_t incb) :
@@ -143,6 +145,10 @@ private:
 
 template<size_t N>
 const char* tod_add<N>::k_clazz = "tod_add<N>"; 
+
+template<size_t N>
+const char* tod_add<N>::op_daxpy::k_clazz = "tod_add<N>::op_daxpy"; 
+
 
 
 template<size_t N>
@@ -378,7 +384,9 @@ template<size_t N>
 void tod_add<N>::op_daxpy::exec( processor_t &proc, registers &regs)
 	throw(exception)
 {
+	tod_add<N>::op_daxpy::start_timer();
 	cblas_daxpy(m_len,regs.m_ca,regs.m_ptra,m_inca,regs.m_ptrb,m_incb);
+	tod_add<N>::op_daxpy::stop_timer();
 }
 
 } // namespace libtensor

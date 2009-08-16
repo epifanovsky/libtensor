@@ -23,10 +23,10 @@ void timer_test::perform() throw(libtest::test_exception) {
 	t.stop(); 
 	res=(duration*1.0)/CLOCKS_PER_SEC;
 #ifdef POSIX
-	res-=t.duration().m_ut*times_t::clk2sec;
-	res-=t.duration().m_st*times_t::clk2sec;
+	res-=t.duration().user_time();
+	res-=t.duration().system_time();
 #else
-	res-=t.duration().m_rt*times_t::clk2sec;
+	res-=t.duration().m_rt;
 #endif
 	if ( fabs(res) > 0.01 ) {
 		char msg[20];
@@ -34,7 +34,7 @@ void timer_test::perform() throw(libtest::test_exception) {
 		fail_test("timer_test::perform()", __FILE__, __LINE__,msg);
 	}
 	t.start(); 
-	if(t.duration()!=times_t()) {
+	if(t.duration()!=time_diff_t()) {
 		fail_test("timer_test::perform()", __FILE__, __LINE__,
 			"Measurement not initialized");
 	}

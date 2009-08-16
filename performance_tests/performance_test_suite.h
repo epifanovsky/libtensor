@@ -22,6 +22,8 @@ protected:
 public:
 	//!	Creates the suite
 	performance_test_suite( const char* name );
+	//! virtual destructor
+	virtual ~performance_test_suite();
 };
 
 } // namespace libtensor
