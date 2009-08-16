@@ -24,11 +24,11 @@ namespace libtensor {
 	\ingroup libtensor_tod
 **/
 template<size_t N>
-class tod_add : public tod_additive<N>, public timings<tod_add<N> > 
+class tod_add : public tod_additive<N>, public timings<tod_add<N> >
 {
 private:
 	friend class timings<tod_add<N> >;
-	static const char* k_clazz; 
+	static const char* k_clazz;
 
 	struct operand {
 		tensor_i<N,double> &m_t;
@@ -71,9 +71,9 @@ private:
 	};
 
 	//!	b_j += m_ca * a_{i_j}
-	class op_daxpy : public processor_op_i_t, public timings<tod_add<N>::op_daxpy> {
+	class op_daxpy : public processor_op_i_t, public timings<op_daxpy> {
 	private:
-		friend timings<tod_add<N>::op_daxpy>;
+		friend class timings<op_daxpy>;
 		static const char* k_clazz;
 		size_t m_len, m_inca, m_incb;
 	public:
@@ -144,10 +144,10 @@ private:
 };
 
 template<size_t N>
-const char* tod_add<N>::k_clazz = "tod_add<N>"; 
+const char* tod_add<N>::k_clazz = "tod_add<N>";
 
 template<size_t N>
-const char* tod_add<N>::op_daxpy::k_clazz = "tod_add<N>::op_daxpy"; 
+const char* tod_add<N>::op_daxpy::k_clazz = "tod_add<N>::op_daxpy";
 
 
 
@@ -219,7 +219,7 @@ void tod_add<N>::perform(tensor_i<N,double> &t)
 	throw(exception)
 {
 	tod_add<N>::start_timer();
-	
+
 	// first check whether the output tensor has the right dimensions
 	if ( *m_dim != t.get_dims() )
 		throw_exc("tod_add<N>",
@@ -254,15 +254,15 @@ void tod_add<N>::perform(tensor_i<N,double> &t)
 	}
 
 	ctrlt.ret_dataptr(tptr);
-	
+
 	tod_add<N>::stop_timer();
 }
 
 template<size_t N>
-void tod_add<N>::perform(tensor_i<N,double> &t, double c) throw(exception) 
-{	
+void tod_add<N>::perform(tensor_i<N,double> &t, double c) throw(exception)
+{
 	tod_add<N>::start_timer();
-	
+
 	// first check whether the output tensor has the right dimensions
 	if ( *m_dim != t.get_dims() )
 		throw_exc("tod_add<N>",
@@ -304,7 +304,7 @@ void tod_add<N>::perform(tensor_i<N,double> &t, double c) throw(exception)
 	}
 
 	ctrlt.ret_dataptr(tptr);
-	
+
 	tod_add<N>::stop_timer();
 }
 

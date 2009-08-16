@@ -52,10 +52,10 @@ namespace libtensor {
 	\ingroup libtensor_tod
 **/
 template<size_t N>
-class tod_copy 
-	: public tod_additive<N>, public timings<tod_copy<N> > 
+class tod_copy
+	: public tod_additive<N>, public timings<tod_copy<N> >
 {
-	friend timings<tod_copy<N> >;	
+	friend class timings<tod_copy<N> >;
 public:
 	static const char *k_clazz; //!< Class name
 
@@ -97,9 +97,9 @@ private:
 			throw(exception);
 	};
 
-	class op_dcopy : public processor_op_i_t, public timings<tod_copy<N>::op_dcopy> {
+	class op_dcopy : public processor_op_i_t, public timings<op_dcopy> {
 	private:
-		friend timings<tod_copy<N>::op_dcopy>;
+		friend class timings<op_dcopy>;
 		static const char* k_clazz;
 		size_t m_len, m_inca, m_incb;
 		double m_c;
@@ -110,9 +110,9 @@ private:
 			throw(exception);
 	};
 
-	class op_daxpy : public processor_op_i_t, public timings<tod_copy<N>::op_daxpy> {
+	class op_daxpy : public processor_op_i_t, public timings<op_daxpy> {
 	private:
-		friend timings<tod_copy<N>::op_daxpy>;
+		friend class timings<op_daxpy>;
 		static const char* k_clazz;
 		size_t m_len, m_inca, m_incb;
 		double m_c;

@@ -14,12 +14,7 @@ class symmetry_element_aux {
 public:
 	template<typename ElemT>
 	static void dispatch(const ElemT *elem,
-		symmetry_element_target_i<N, T> &tgt) {
-
-		typedef symmetry_element_base<N, T, Parent> parent_t;
-		static_cast<const parent_t*>(elem)->
-			symmetry_base<N, T, Parent>::dispatch(tgt);
-	}
+		symmetry_element_target_i<N, T> &tgt);
 
 };
 
@@ -29,10 +24,7 @@ class symmetry_element_aux< N, T, symmetry_element_i<N, T> > {
 public:
 	template<typename ElemT>
 	static void dispatch(const ElemT *elem,
-		symmetry_element_target_i<N, T> &tgt) {
-
-		tgt.accept_default(*elem);
-	}
+		symmetry_element_target_i<N, T> &tgt);
 
 };
 
@@ -47,6 +39,24 @@ public:
 		throw(exception);
 
 };
+
+
+template<size_t N, typename T, typename Parent> template<typename ElemT>
+void symmetry_element_aux<N, T, Parent>::dispatch(const ElemT *elem,
+	symmetry_element_target_i<N, T> &tgt) {
+
+	typedef symmetry_element_base<N, T, Parent> parent_t;
+	static_cast<const parent_t*>(elem)->
+		symmetry_element_base<N, T, Parent>::dispatch(tgt);
+}
+
+
+template<size_t N, typename T> template<typename ElemT>
+void symmetry_element_aux< N, T, symmetry_element_i<N, T> >::dispatch(
+	const ElemT *elem, symmetry_element_target_i<N, T> &tgt) {
+
+	tgt.accept_default(*elem);
+}
 
 
 template<size_t N, typename T, typename ElemT>

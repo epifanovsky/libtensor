@@ -21,7 +21,7 @@ namespace libtensor {
 template<size_t N>
 class tod_dotprod : public timings<tod_dotprod<N> > {
 private:
-	friend timings<tod_dotprod<N> >;
+	friend class timings<tod_dotprod<N> >;
 	static const char *k_clazz; //!< Class name
 
 private:
@@ -59,9 +59,9 @@ private:
 			throw(exception);
 	};
 
-	class op_ddot : public processor_op_i_t, public timings<tod_dotprod<N>::op_ddot > {
+	class op_ddot : public processor_op_i_t, public timings<op_ddot> {
 	private:
-		friend timings<tod_dotprod<N>::op_ddot>;
+		friend class timings<op_ddot>;
 		static const char *k_clazz;
 		size_t m_n, m_inca, m_incb;
 	public:
@@ -232,9 +232,9 @@ void tod_dotprod<N>::op_ddot::exec(processor_t &proc, registers &regs)
 
 	*(regs.m_ptrc) += cblas_ddot(
 		m_n, regs.m_ptra, m_inca, regs.m_ptrb, m_incb);
-		
+
 	tod_dotprod<N>::op_ddot::stop_timer();
-	
+
 }
 
 } // namespace libtensor

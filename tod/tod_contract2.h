@@ -31,12 +31,12 @@ namespace libtensor {
 	\ingroup libtensor_tod
 **/
 template<size_t N, size_t M, size_t K>
-class tod_contract2 
-	: public tod_additive<N+M>, 
-		public timings<tod_contract2<N,M,K> > 
+class tod_contract2
+	: public tod_additive<N+M>,
+		public timings<tod_contract2<N,M,K> >
 {
 private:
-	friend timings<tod_contract2<N,M,K> >; 
+	friend class timings<tod_contract2<N,M,K> >;
 	static const char* k_clazz;
 
 	struct registers {
@@ -63,7 +63,7 @@ private:
 		processor_op_i_t *op() const { return m_op; }
 	};
 
-	class op_loop 
+	class op_loop
 		: public processor_op_i_t  {
 	private:
 		size_t m_len, m_inca, m_incb, m_incc;
@@ -74,7 +74,7 @@ private:
 			throw(exception);
 	};
 
-	class op_loop_mul 
+	class op_loop_mul
 		: public processor_op_i_t {
 	private:
 		double m_d;
@@ -88,9 +88,9 @@ private:
 	};
 
 	//!	c = a_i b_i
-	class op_ddot : public processor_op_i_t, public timings<tod_contract2<N,M,K>::op_ddot> {
+	class op_ddot : public processor_op_i_t, public timings<op_ddot> {
 	private:
-		friend timings<tod_contract2<N,M,K>::op_ddot>;
+		friend class timings<op_ddot>;
 		static const char* k_clazz;
 		double m_d;
 		size_t m_n;
@@ -101,9 +101,9 @@ private:
 	};
 
 	//!	c_i = a_i b
-	class op_daxpy_a : public processor_op_i_t, public timings<tod_contract2<N,M,K>::op_daxpy_a> {
+	class op_daxpy_a : public processor_op_i_t, public timings<op_daxpy_a> {
 	private:
-		friend timings<tod_contract2<N,M,K>::op_daxpy_a>;
+		friend class timings<op_daxpy_a>;
 		static const char* k_clazz;
 		double m_d;
 		size_t m_n;
@@ -114,9 +114,9 @@ private:
 	};
 
 	//!	c_i = a b_i
-	class op_daxpy_b : public processor_op_i_t, public timings<tod_contract2<N,M,K>::op_daxpy_b> {
+	class op_daxpy_b : public processor_op_i_t, public timings<op_daxpy_b> {
 	private:
-		friend timings<tod_contract2<N,M,K>::op_daxpy_b>;
+		friend class timings<op_daxpy_b>;
 		static const char* k_clazz;
 		double m_d;
 		size_t m_n;
@@ -127,9 +127,9 @@ private:
 	};
 
 	//!	c_i = a_ip b_p
-	class op_dgemv_a : public processor_op_i_t, public timings<tod_contract2<N,M,K>::op_dgemv_a> {
+	class op_dgemv_a : public processor_op_i_t, public timings<op_dgemv_a> {
 	private:
-		friend timings<tod_contract2<N,M,K>::op_dgemv_a>;
+		friend class timings<op_dgemv_a>;
 		static const char* k_clazz;
 		double m_d;
 		size_t m_rows, m_cols, m_lda;
@@ -141,9 +141,9 @@ private:
 	};
 
 	//!	c_i = a_p b_ip
-	class op_dgemv_b : public processor_op_i_t, public timings<tod_contract2<N,M,K>::op_dgemv_b> {
+	class op_dgemv_b : public processor_op_i_t, public timings<op_dgemv_b> {
 	private:
-		friend timings<tod_contract2<N,M,K>::op_dgemv_b>;
+		friend class timings<op_dgemv_b>;
 		static const char* k_clazz;
 		double m_d;
 		size_t m_rows, m_cols, m_ldb;
@@ -163,7 +163,7 @@ private:
 		void append(size_t weight, size_t inca, size_t incb,
 			size_t incc);
 	};
-	
+
 public:
 	static const size_t k_ordera = N + K;
 	static const size_t k_orderb = M + K;
@@ -266,8 +266,8 @@ template<size_t N, size_t M, size_t K>
 void tod_contract2<N, M, K>::do_perform(tensor_i<k_orderc, double> &tc,
 	bool zero, double d) throw(exception) {
 
-	tod_contract2<N,M,K>::start_timer(); 
-	
+	tod_contract2<N,M,K>::start_timer();
+
 	loop_list_adapter list_adapter(m_list);
 	m_contr.populate(list_adapter, m_ta.get_dims(), m_tb.get_dims(),
 		tc.get_dims());
@@ -305,7 +305,7 @@ void tod_contract2<N, M, K>::do_perform(tensor_i<k_orderc, double> &tc,
 	ctrlb.ret_dataptr(ptrb);
 	ctrlc.ret_dataptr(ptrc);
 
-	tod_contract2<N,M,K>::stop_timer(); 
+	tod_contract2<N,M,K>::stop_timer();
 }
 
 template<size_t N, size_t M, size_t K>

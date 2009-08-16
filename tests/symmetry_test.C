@@ -12,8 +12,8 @@ void symmetry_test::perform() throw(libtest::test_exception) {
 	test_orbits_4();
 	test_orbits_5();
 	test_orbits_6();
-	//test_orbits_7();
-	//test_orbits_8();
+	test_orbits_7();
+	test_orbits_8();
 }
 
 void symmetry_test::test_orbits_1() throw(libtest::test_exception) {
