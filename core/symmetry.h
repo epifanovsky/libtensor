@@ -328,7 +328,9 @@ orbit<N, T> symmetry<N, T>::get_orbit(size_t n) const throw(out_of_bounds) {
 		throw out_of_bounds("libtensor", k_clazz, method, __FILE__,
 			__LINE__, "Orbit number is out of bounds.");
 	}
-	return orbit<N, T>(*this, m_orbits[n]);
+	index<N> idx;
+	m_dims.abs_index(m_orbits[n], idx);
+	return orbit<N, T>(*this, idx);
 }
 
 

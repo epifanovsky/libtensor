@@ -134,7 +134,9 @@ void tod_btconv<N>::perform(tensor_i<N, double> &t) throw(exception) {
 	size_t norbits = src_ctrl.req_sym_num_orbits();
 	for(size_t iorbit = 0; iorbit < norbits; iorbit++) {
 
-		orbit<N, double> orb = src_ctrl.req_sym_orbit(iorbit);
+		typedef orbit<N, double> orbit_t;
+
+		orbit_t orb = src_ctrl.req_sym_orbit(iorbit);
 		index<N> blk_idx;
 		bidims.abs_index(orb.get_abs_canonical_index(), blk_idx);
 		if(src_ctrl.req_is_zero_block(blk_idx)) continue;
@@ -143,13 +145,15 @@ void tod_btconv<N>::perform(tensor_i<N, double> &t) throw(exception) {
 		tensor_ctrl<N, double> blk_ctrl(blk);
 		const double *src_ptr = blk_ctrl.req_const_dataptr();
 
-		size_t orbsz = orb.get_size();
-		for(size_t i = 0; i < orbsz; i++) {
-			bidims.abs_index(orb.get_abs_index(i), blk_idx);
-			const transf<N, double> &tr = orb.get_transf(i);
-			index<N> dst_offset = bis.get_block_start(blk_idx);
+		typename orbit_t::iterator i = orb.begin();
+		while(i != orb.end()) {
+			index<N> idx;
+			bidims.abs_index(i->first, idx);
+			const transf<N, double> &tr = i->second;
+			index<N> dst_offset = bis.get_block_start(idx);
 			copy_block(dst_ptr, t.get_dims(), dst_offset,
 				src_ptr, blk.get_dims(), tr.m_perm, tr.m_coeff);
+			i++;
 		}
 
 		blk_ctrl.ret_dataptr(src_ptr);
