@@ -131,12 +131,11 @@ void tod_btconv<N>::perform(tensor_i<N, double> &t) throw(exception) {
 	size_t sz = t.get_dims().get_size();
 	for(register size_t i = 0; i < sz; i++) dst_ptr[i] = 0.0;
 
-	size_t norbits = src_ctrl.req_sym_num_orbits();
-	for(size_t iorbit = 0; iorbit < norbits; iorbit++) {
+	orbit_list<N, double> orblst(src_ctrl.req_symmetry());
+	typename orbit_list<N, double>::iterator iorbit = orblst.begin();
+	for(; iorbit != orblst.end(); iorbit++) {
 
-		typedef orbit<N, double> orbit_t;
-
-		orbit_t orb = src_ctrl.req_sym_orbit(iorbit);
+		orbit<N, double> orb(src_ctrl.req_symmetry(), *iorbit);
 		index<N> blk_idx;
 		bidims.abs_index(orb.get_abs_canonical_index(), blk_idx);
 		if(src_ctrl.req_is_zero_block(blk_idx)) continue;
@@ -145,7 +144,7 @@ void tod_btconv<N>::perform(tensor_i<N, double> &t) throw(exception) {
 		tensor_ctrl<N, double> blk_ctrl(blk);
 		const double *src_ptr = blk_ctrl.req_const_dataptr();
 
-		typename orbit_t::iterator i = orb.begin();
+		typename orbit<N, double>::iterator i = orb.begin();
 		while(i != orb.end()) {
 			index<N> idx;
 			bidims.abs_index(i->first, idx);
@@ -158,6 +157,7 @@ void tod_btconv<N>::perform(tensor_i<N, double> &t) throw(exception) {
 
 		blk_ctrl.ret_dataptr(src_ptr);
 		src_ctrl.ret_block(blk_idx);
+
 	}
 
 	dst_ctrl.ret_dataptr(dst_ptr);

@@ -4,6 +4,7 @@
 #include <vector>
 #include "defs.h"
 #include "exception.h"
+#include "index.h"
 #include "symmetry.h"
 
 namespace libtensor {
@@ -12,10 +13,10 @@ namespace libtensor {
 template<size_t N, typename T>
 class orbit_list {
 public:
-	typedef typename std::vector<size_t>::const_iterator iterator;
+	typedef typename std::vector< index<N> >::const_iterator iterator;
 
 private:
-	std::vector<size_t> m_orb;
+	std::vector< index<N> > m_orb;
 
 public:
 	orbit_list(const symmetry<N, T> &sym);
@@ -38,7 +39,7 @@ orbit_list<N, T>::orbit_list(const symmetry<N, T> &sym) {
 	do {
 		size_t absidx = dims.abs_index(idx);
 		if(!chk[absidx]) {
-			if(mark_orbit(sym, idx, chk)) m_orb.push_back(absidx);
+			if(mark_orbit(sym, idx, chk)) m_orb.push_back(idx);
 		}
 	} while(dims.inc_index(idx));
 }

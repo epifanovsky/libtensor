@@ -9,6 +9,7 @@
 #include "exception.h"
 #include "core/block_tensor_i.h"
 #include "core/block_tensor_ctrl.h"
+#include "core/orbit_list.h"
 #include "tod/tod_add.h"
 #include "tod/tod_copy.h"
 #include "btod_additive.h"
@@ -245,10 +246,11 @@ void btod_add<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 			new block_tensor_ctrl<N, double>(m_ops[iop]->m_bt);
 	}
 
-	size_t norbits = dst_ctrl.req_sym_num_orbits();
-	for(size_t iorbit = 0; iorbit < norbits; iorbit++) {
+	orbit_list<N, double> orblst(dst_ctrl.req_symmetry());
+	typename orbit_list<N, double>::iterator iorbit = orblst.begin();
+	while(iorbit != orblst.end()) {
 
-		orbit<N, double> orb = dst_ctrl.req_sym_orbit(iorbit);
+		orbit<N, double> orb(dst_ctrl.req_symmetry(), *iorbit);
 		index<N> dst_blk_idx;
 		bidims.abs_index(orb.get_abs_canonical_index(), dst_blk_idx);
 
@@ -263,9 +265,10 @@ void btod_add<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 			index<N> src_blk_idx(dst_blk_idx), can_blk_idx;
 			src_blk_idx.permute(invperm);
 
-			transf<N, double> tr;
-			ctrl.req_symmetry().get_transf(
-				src_blk_idx, can_blk_idx, tr);
+			orbit<N, double> orb(ctrl.req_symmetry(), src_blk_idx);
+			ctrl.req_symmetry().get_dims().abs_index(
+				orb.get_abs_canonical_index(), can_blk_idx);
+			transf<N, double> tr(orb.get_transf(src_blk_idx));
 			if(ctrl.req_is_zero_block(can_blk_idx)) continue;
 			tensor_i<N, double> &src_blk =
 				ctrl.req_block(can_blk_idx);
@@ -332,6 +335,7 @@ void btod_add<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 
 		}
 
+		iorbit++;
 	}
 
 	for(size_t iop = 0; iop < m_ops.size(); iop++) {

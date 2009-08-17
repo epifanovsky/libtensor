@@ -16,6 +16,7 @@ public:
 
 public:
 	transf() : m_coeff(1.0) { }
+	transf(const transf<N, double> &tr) : m_coeff(tr.m_coeff), m_perm(tr.m_perm) { }
 	void reset() { m_coeff = 1.0; m_perm.reset(); }
 	void permute(const permutation<N> &perm) { m_perm.permute(perm); }
 	void multiply(double c) { m_coeff *= c; }
