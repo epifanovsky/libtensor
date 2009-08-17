@@ -28,6 +28,7 @@ OBJS += letter_expr_test.o
 OBJS += mask_test.o
 OBJS += orbit_test.o
 OBJS += orbit_iterator_test.o
+OBJS += orbit_list_test.o
 OBJS += perm_symmetry_test.o
 OBJS += permutation_test.o
 OBJS += permutation_builder_test.o

@@ -28,6 +28,7 @@
 #include "mask_test.h"
 #include "orbit_test.h"
 #include "orbit_iterator_test.h"
+#include "orbit_list_test.h"
 #include "perm_symmetry_test.h"
 #include "permutation_test.h"
 #include "permutation_builder_test.h"
@@ -82,6 +83,7 @@ namespace libtensor {
 	\li libtensor::mask_test
 	\li libtensor::orbit_test
 	\li libtensor::orbit_iterator_test
+	\li libtensor::orbit_list_test
 	\li libtensor::perm_symmetry_test
 	\li libtensor::permutation_test
 	\li libtensor::permutation_builder_test
@@ -130,6 +132,7 @@ private:
 	unit_test_factory<mask_test> m_utf_mask;
 	unit_test_factory<orbit_test> m_utf_orbit;
 	unit_test_factory<orbit_iterator_test> m_utf_orbit_iterator;
+	unit_test_factory<orbit_list_test> m_utf_orbit_list;
 	unit_test_factory<perm_symmetry_test> m_utf_perm_symmetry;
 	unit_test_factory<permutation_test> m_utf_permutation;
 	unit_test_factory<permutation_builder_test> m_utf_permutation_builder;
