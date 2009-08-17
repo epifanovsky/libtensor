@@ -389,16 +389,23 @@ void tod_btconv_test::test_5() throw(libtest::test_exception) {
 	dimensions<2> dims_00 = bis.get_block_dims(i_00);
 	dimensions<2> dims_11 = bis.get_block_dims(i_11);
 	double *p = NULL;
+	permutation<2> perm; perm.permute(0, 1);
 
 	tensor_i<2, double> &blk_00 = btctrl.req_block(i_00);
 	tensor_ctrl_t tctrl_00(blk_00);
 	p = tctrl_00.req_dataptr();
 	ii[0] = 0; ii[1] = 0;
 	do {
-		index<2> iii(istart_00);
-		for(size_t j = 0; j < 2; j++) iii[j] += ii[j];
-		pt_ref[dims.abs_index(iii)] = p[dims_00.abs_index(ii)] =
-			drand48();
+		if(ii[0] > ii[1]) continue;
+		index<2> ii1(ii), ii2(ii); ii2.permute(perm);
+		index<2> iii1(istart_00), iii2(istart_00);
+		for(size_t j = 0; j < 2; j++) {
+			iii1[j] += ii1[j];
+			iii2[j] += ii2[j];
+		}
+		double d = drand48();
+		pt_ref[dims.abs_index(iii1)] = pt_ref[dims.abs_index(iii2)] = d;
+		p[dims_00.abs_index(ii1)] = p[dims_00.abs_index(ii2)] = d;
 	} while(dims_00.inc_index(ii));
 	tctrl_00.ret_dataptr(p);
 	btctrl.ret_block(i_00);
@@ -408,10 +415,16 @@ void tod_btconv_test::test_5() throw(libtest::test_exception) {
 	p = tctrl_11.req_dataptr();
 	ii[0] = 0; ii[1] = 0;
 	do {
-		index<2> iii(istart_11);
-		for(size_t j = 0; j < 2; j++) iii[j] += ii[j];
-		pt_ref[dims.abs_index(iii)] = p[dims_11.abs_index(ii)] =
-			drand48();
+		if(ii[0] > ii[1]) continue;
+		index<2> ii1(ii), ii2(ii); ii2.permute(perm);
+		index<2> iii1(istart_11), iii2(istart_11);
+		for(size_t j = 0; j < 2; j++) {
+			iii1[j] += ii1[j];
+			iii2[j] += ii2[j];
+		}
+		pt_ref[dims.abs_index(iii1)] = p[dims_11.abs_index(ii1)] =
+			pt_ref[dims.abs_index(iii2)] =
+			p[dims_11.abs_index(ii2)] = drand48();
 	} while(dims_11.inc_index(ii));
 	tctrl_11.ret_dataptr(p);
 	btctrl.ret_block(i_11);
@@ -695,10 +708,16 @@ void tod_btconv_test::test_8() throw(libtest::test_exception) {
 	p = tctrl_00.req_dataptr();
 	ii[0] = 0; ii[1] = 0;
 	do {
-		index<2> iii(istart_00);
-		for(size_t j = 0; j < 2; j++) iii[j] += ii[j];
-		pt_ref[dims.abs_index(iii)] = p[dims_00.abs_index(ii)] =
-			drand48();
+		if(ii[0] > ii[1]) continue;
+		index<2> ii1(ii), ii2(ii); ii2.permute(perm);
+		index<2> iii1(istart_00), iii2(istart_00);
+		for(size_t j = 0; j < 2; j++) {
+			iii1[j] += ii1[j];
+			iii2[j] += ii2[j];
+		}
+		pt_ref[dims.abs_index(iii1)] = p[dims_00.abs_index(ii1)] =
+			pt_ref[dims.abs_index(iii2)] =
+			p[dims_00.abs_index(ii2)] = drand48();
 	} while(dims_00.inc_index(ii));
 	tctrl_00.ret_dataptr(p);
 	btctrl.ret_block(i_00);
@@ -725,10 +744,16 @@ void tod_btconv_test::test_8() throw(libtest::test_exception) {
 	p = tctrl_11.req_dataptr();
 	ii[0] = 0; ii[1] = 0;
 	do {
-		index<2> iii(istart_11);
-		for(size_t j = 0; j < 2; j++) iii[j] += ii[j];
-		pt_ref[dims.abs_index(iii)] = p[dims_11.abs_index(ii)] =
-			drand48();
+		if(ii[0] > ii[1]) continue;
+		index<2> ii1(ii), ii2(ii); ii2.permute(perm);
+		index<2> iii1(istart_11), iii2(istart_11);
+		for(size_t j = 0; j < 2; j++) {
+			iii1[j] += ii1[j];
+			iii2[j] += ii2[j];
+		}
+		pt_ref[dims.abs_index(iii1)] = p[dims_11.abs_index(ii1)] =
+			pt_ref[dims.abs_index(iii2)] =
+			p[dims_11.abs_index(ii2)] = drand48();
 	} while(dims_11.inc_index(ii));
 	tctrl_11.ret_dataptr(p);
 	btctrl.ret_block(i_11);
@@ -820,6 +845,12 @@ void tod_btconv_test::test_9() throw(libtest::test_exception) {
 	dimensions<4> dims_1000 = bis.get_block_dims(i_1000);
 	double *p = NULL;
 	permutation<4> perm; perm.permute(0, 1).permute(1, 2).permute(2, 3);
+	permutation<4> perm1, perm2, perm3, perm4, perm5;
+	perm1.permute(0, 1);
+	perm2.permute(0, 2);
+	perm3.permute(1, 2);
+	perm4.permute(0, 1).permute(1, 2);
+	perm5.permute(1, 2).permute(0 ,1);
 
 	tensor_i<4, double> &blk_0001 = btctrl.req_block(i_0001);
 	tensor_ctrl_t tctrl_0001(blk_0001);
@@ -827,16 +858,41 @@ void tod_btconv_test::test_9() throw(libtest::test_exception) {
 
 	index<4> ii;
 	do {
-		index<4> iii1(istart_0001);
-		for(size_t j = 0; j < 2; j++) iii1[j] += ii[j];
-		index<4> iii2(iii1); iii2.permute(perm);
-		index<4> iii3(iii2); iii3.permute(perm);
-		index<4> iii4(iii3); iii4.permute(perm);
-
-		pt_ref[dims.abs_index(iii1)] = pt_ref[dims.abs_index(iii2)] =
-			pt_ref[dims.abs_index(iii3)] =
-			pt_ref[dims.abs_index(iii4)] =
-			p[dims_0001.abs_index(ii)] = drand48();
+		if(ii[0] > ii[1] || ii[1] > ii[2]) continue;
+		index<4> ii1(ii), ii2(ii), ii3(ii), ii4(ii), ii5(ii);
+		ii1.permute(perm1);
+		ii2.permute(perm2);
+		ii3.permute(perm3);
+		ii4.permute(perm4);
+		ii5.permute(perm5);
+		double d = drand48();
+		index<4> iii(istart_0001);
+		index<4> iii0, iii1, iii2, iii3, iii4, iii5;
+		for(size_t k = 0; k < 4; k++) {
+			iii0[k] = iii[k] + ii[k];
+			iii1[k] = iii[k] + ii1[k];
+			iii2[k] = iii[k] + ii2[k];
+			iii3[k] = iii[k] + ii3[k];
+			iii4[k] = iii[k] + ii4[k];
+			iii5[k] = iii[k] + ii5[k];
+		}
+		for(size_t j = 0; j < 4; j++) {
+			pt_ref[dims.abs_index(iii0)] = d;
+			pt_ref[dims.abs_index(iii1)] = d;
+			pt_ref[dims.abs_index(iii2)] = d;
+			pt_ref[dims.abs_index(iii3)] = d;
+			pt_ref[dims.abs_index(iii4)] = d;
+			pt_ref[dims.abs_index(iii5)] = d;
+			iii0.permute(perm);
+			iii1.permute(perm);
+			iii2.permute(perm);
+			iii3.permute(perm);
+			iii4.permute(perm);
+			iii5.permute(perm);
+		}
+		p[dims_0001.abs_index(ii)] = p[dims_0001.abs_index(ii1)] = d;
+		p[dims_0001.abs_index(ii2)] = p[dims_0001.abs_index(ii3)] = d;
+		p[dims_0001.abs_index(ii4)] = p[dims_0001.abs_index(ii5)] = d;
 	} while(dims_0001.inc_index(ii));
 	tctrl_0001.ret_dataptr(p);
 	btctrl.ret_block(i_0001);
