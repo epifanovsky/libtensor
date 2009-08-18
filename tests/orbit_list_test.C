@@ -39,7 +39,7 @@ void orbit_list_test::test_1() throw(libtest::test_exception) {
 	index<2> io;
 	do {
 		bool can = false, can_ref = true;
-		typename orbit_list<2, double>::iterator i = orblst.begin();
+		orbit_list<2, double>::iterator i = orblst.begin();
 		while(i != orblst.end()) {
 			if(io.equals(*i)) {
 				can = true;
@@ -89,7 +89,7 @@ void orbit_list_test::test_2() throw(libtest::test_exception) {
 	do {
 		bool can_ref = io[0] <= io[1];
 		bool can = false;
-		typename orbit_list<2, double>::iterator i = orblst.begin();
+		orbit_list<2, double>::iterator i = orblst.begin();
 		while(i != orblst.end()) {
 			if(io.equals(*i)) {
 				can = true;
@@ -139,7 +139,7 @@ void orbit_list_test::test_3() throw(libtest::test_exception) {
 	do {
 		bool can_ref = io[0] <= io[1];
 		bool can = false;
-		typename orbit_list<4, double>::iterator i = orblst.begin();
+		orbit_list<4, double>::iterator i = orblst.begin();
 		while(i != orblst.end()) {
 			if(io.equals(*i)) {
 				can = true;
@@ -189,7 +189,7 @@ void orbit_list_test::test_4() throw(libtest::test_exception) {
 	do {
 		bool can_ref = io[1] <= io[2];
 		bool can = false;
-		typename orbit_list<4, double>::iterator i = orblst.begin();
+		orbit_list<4, double>::iterator i = orblst.begin();
 		while(i != orblst.end()) {
 			if(io.equals(*i)) {
 				can = true;
@@ -240,7 +240,7 @@ void orbit_list_test::test_5() throw(libtest::test_exception) {
 		bool can_ref = (io[0] == io[1] && io[0] <= io[2]) ||
 			(io[0] < io[1] && io[0] < io[2]);
 		bool can = false;
-		typename orbit_list<4, double>::iterator i = orblst.begin();
+		orbit_list<4, double>::iterator i = orblst.begin();
 		while(i != orblst.end()) {
 			if(io.equals(*i)) {
 				can = true;
@@ -295,7 +295,7 @@ void orbit_list_test::test_6() throw(libtest::test_exception) {
 	do {
 		bool can_ref = (io[0] <= io[1] && io[2] <= io[3]);
 		bool can = false;
-		typename orbit_list<4, double>::iterator i = orblst.begin();
+		orbit_list<4, double>::iterator i = orblst.begin();
 		while(i != orblst.end()) {
 			if(io.equals(*i)) {
 				can = true;
@@ -348,7 +348,7 @@ void orbit_list_test::test_7() throw(libtest::test_exception) {
 	do {
 		bool can_ref = (io[0] <= io[1] && io[1] <= io[2]);
 		bool can = false;
-		typename orbit_list<4, double>::iterator i = orblst.begin();
+		orbit_list<4, double>::iterator i = orblst.begin();
 		while(i != orblst.end()) {
 			if(io.equals(*i)) {
 				can = true;
@@ -403,7 +403,7 @@ void orbit_list_test::test_8() throw(libtest::test_exception) {
 		bool can_ref =
 			(io[0] <= io[1] && io[1] <= io[2] && io[2] <= io[3]);
 		bool can = false;
-		typename orbit_list<4, double>::iterator i = orblst.begin();
+		orbit_list<4, double>::iterator i = orblst.begin();
 		while(i != orblst.end()) {
 			if(io.equals(*i)) {
 				can = true;
