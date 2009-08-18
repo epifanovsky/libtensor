@@ -41,17 +41,18 @@ void btod_so_equalize<N>::perform(block_tensor_i<N, double> &bt)
 	block_tensor_ctrl<N, double> ctrl(bt);
 	symmetry<N, double> src_sym(m_symmetry);
 	symmetry<N, double> dst_sym(ctrl.req_symmetry());
-	src_sym.element_set_overlap(dst_sym);
+	src_sym.set_overlap(dst_sym);
 
-	size_t norbits = src_sym.get_num_orbits();
-	for(size_t iorbit = 0; iorbit < norbits; iorbit++) {
-		orbit<N, double> orb = src_sym.get_orbit(iorbit);
+	orbit_list<N, double> orblst(src_sym);
+	typename orbit_list<N, double>::iterator iorbit = orblst.begin();
+	for(; iorbit != orblst.end(); iorbit++) {
+		orbit<N, double> orb(src_sym, *iorbit);
 		index<N> blkidx;
 		bidims.abs_index(orb.get_abs_canonical_index(), blkidx);
-		if(!dst_sym.is_canonical(blkidx)) {
-			throw_exc("btod_so_equalize<N>", "perform()",
-				"Symmetry lowering is not supported yet.");
-		}
+//		if(!dst_sym.is_canonical(blkidx)) {
+//			throw_exc("btod_so_equalize<N>", "perform()",
+//				"Symmetry lowering is not supported yet.");
+//		}
 	}
 
 	ctrl.req_sym_clear_elements();

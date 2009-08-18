@@ -27,17 +27,10 @@
 #include "core/transf.h"
 #include "btod/transf_double.h"
 
-
-#include "core/symmetry_i.h"
-#include "core/symmetry_target_i.h"
-#include "core/symmetry_operation_i.h"
-#include "core/block_iterator.h"
-#include "core/orbit_iterator.h"
 #include "core/orbit.h"
 #include "core/orbit_list.h"
 #include "core/symmetry_element_i.h"
 #include "core/symmetry.h"
-#include "core/symmetry_ctrl.h"
 
 
 #include "tod/contraction2.h"
@@ -56,7 +49,6 @@
 #include "tod/tod_symcontract2.h"
 
 
-#include "btod/block_symop_double.h"
 #include "btod/btod_add.h"
 #include "btod/btod_additive.h"
 #include "btod/btod_compare.h"
@@ -66,14 +58,6 @@
 
 
 #include "symmetry/symel_cycleperm.h"
-
-
-#include "symmetry/symmetry_target.h"
-#include "symmetry/symmetry_base.h"
-#include "symmetry/default_symmetry.h"
-#include "symmetry/perm_symmetry.h"
-
-#include "symmetry/so_copy.h"
 
 
 #include "iface/bispace_i.h"

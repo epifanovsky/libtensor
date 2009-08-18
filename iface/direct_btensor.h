@@ -84,11 +84,6 @@ protected:
 	virtual bool on_req_sym_contains_element(
 		const symmetry_element_i<N, T> &elem) throw(exception);
 	virtual void on_req_sym_clear_elements() throw(exception);
-	virtual size_t on_req_sym_num_orbits() throw(exception);
-	virtual orbit<N, T> on_req_sym_orbit(size_t n) throw(exception);
-	virtual void on_req_symmetry_operation(symmetry_operation_i<N, T> &op)
-		throw(exception);
-	virtual orbit_iterator<N, T> on_req_orbits() throw(exception);
 	virtual tensor_i<N, T> &on_req_block(const index<N> &idx)
 		throw(exception);
 	virtual void on_ret_block(const index<N> &idx) throw(exception);
@@ -184,27 +179,6 @@ template<size_t N, typename T, typename Traits>
 void direct_btensor<N, T, Traits>::on_req_sym_clear_elements()
 	throw(exception) {
 	throw_exc("direct_btensor<N, T, Traits>", "on_req_sym_clear_elements()", "NIY");
-}
-
-template<size_t N, typename T, typename Traits>
-size_t direct_btensor<N, T, Traits>::on_req_sym_num_orbits() throw(exception) {
-	throw_exc("direct_btensor<N, T, Traits>", "on_req_sym_num_orbits()", "NIY");
-}
-
-template<size_t N, typename T, typename Traits>
-orbit<N, T> direct_btensor<N, T, Traits>::on_req_sym_orbit(size_t n) throw(exception) {
-	throw_exc("direct_btensor<N, T, Traits>", "on_req_sym_orbit()", "NIY");
-}
-
-template<size_t N, typename T, typename Traits>
-void direct_btensor<N, T, Traits>::on_req_symmetry_operation(
-	symmetry_operation_i<N, T> &op) throw(exception) {
-	throw_exc("direct_btensor<N, T, Traits>", "on_req_symmetry_operation()", "NIY");
-}
-
-template<size_t N, typename T, typename Traits>
-orbit_iterator<N, T> direct_btensor<N, T, Traits>::on_req_orbits() throw(exception) {
-	throw_exc("direct_btensor<N, T, Traits>", "on_req_orbits()", "NIY");
 }
 
 template<size_t N, typename T, typename Traits>

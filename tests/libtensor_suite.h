@@ -13,7 +13,6 @@
 #include "btod_copy_test.h"
 #include "contract_test.h"
 #include "contraction2_test.h"
-#include "default_symmetry_test.h"
 #include "dimensions_test.h"
 #include "direct_btensor_test.h"
 #include "direct_tensor_test.h"
@@ -27,15 +26,12 @@
 #include "letter_test.h"
 #include "mask_test.h"
 #include "orbit_test.h"
-#include "orbit_iterator_test.h"
 #include "orbit_list_test.h"
-#include "perm_symmetry_test.h"
 #include "permutation_test.h"
 #include "permutation_builder_test.h"
-#include "so_copy_test.h"
 #include "symel_cycleperm_test.h"
 #include "symmetry_test.h"
-#include "symmetry_base_test.h"
+#include "symmetry_element_base_test.h"
 #include "tensor_test.h"
 #include "timer_test.h"
 #include "timings_test.h"
@@ -68,7 +64,6 @@ namespace libtensor {
 	\li libtensor::btod_copy_test
 	\li libtensor::contract_test
 	\li libtensor::contraction2_test
-	\li libtensor::default_symmetry_test
 	\li libtensor::dimensions_test
 	\li libtensor::direct_btensor_test
 	\li libtensor::direct_tensor_test
@@ -82,15 +77,12 @@ namespace libtensor {
 	\li libtensor::letter_expr_test
 	\li libtensor::mask_test
 	\li libtensor::orbit_test
-	\li libtensor::orbit_iterator_test
 	\li libtensor::orbit_list_test
-	\li libtensor::perm_symmetry_test
 	\li libtensor::permutation_test
 	\li libtensor::permutation_builder_test
-	\li libtensor::so_copy_test
 	\li libtensor::symel_cycleperm_test
 	\li libtensor::symmetry_test
-	\li libtensor::symmetry_base_test
+	\li libtensor::symmetry_element_base_test
 	\li libtensor::tensor_test
 	\li libtensor::timer_test
 	\li libtensor::timings_test
@@ -117,7 +109,6 @@ private:
 	unit_test_factory<btod_copy_test> m_utf_btod_copy;
 	unit_test_factory<contract_test> m_utf_contract;
 	unit_test_factory<contraction2_test> m_utf_contraction2;
-	unit_test_factory<default_symmetry_test> m_utf_default_symmetry;
 	unit_test_factory<dimensions_test> m_utf_dimensions;
 	unit_test_factory<direct_btensor_test> m_utf_direct_btensor;
 	unit_test_factory<direct_tensor_test> m_utf_direct_tensor;
@@ -131,15 +122,13 @@ private:
 	unit_test_factory<letter_expr_test> m_utf_letter_expr;
 	unit_test_factory<mask_test> m_utf_mask;
 	unit_test_factory<orbit_test> m_utf_orbit;
-	unit_test_factory<orbit_iterator_test> m_utf_orbit_iterator;
 	unit_test_factory<orbit_list_test> m_utf_orbit_list;
-	unit_test_factory<perm_symmetry_test> m_utf_perm_symmetry;
 	unit_test_factory<permutation_test> m_utf_permutation;
 	unit_test_factory<permutation_builder_test> m_utf_permutation_builder;
-	unit_test_factory<so_copy_test> m_utf_so_copy;
 	unit_test_factory<symel_cycleperm_test> m_utf_symel_cycleperm;
 	unit_test_factory<symmetry_test> m_utf_symmetry;
-	unit_test_factory<symmetry_base_test> m_utf_symmetry_base;
+	unit_test_factory<symmetry_element_base_test>
+		m_utf_symmetry_element_base;
 	unit_test_factory<tensor_test> m_utf_tensor;
 	unit_test_factory<timer_test> m_utf_timer;
 	unit_test_factory<timings_test> m_utf_timings;

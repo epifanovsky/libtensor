@@ -58,4 +58,6 @@ clean:
 	$(RM) *.o
 	$(RM) *.d
 	cd tests && $(MAKE) clean
+	cd performance_tests && $(MAKE) clean
+	
  

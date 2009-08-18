@@ -5,7 +5,6 @@
 namespace libtensor {
 
 typedef libvmm::std_allocator<double> allocator;
-typedef default_symmetry<2,double> symmetry2;
 typedef block_tensor<2,double,allocator> block_tensor2;
 
 

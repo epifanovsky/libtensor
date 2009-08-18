@@ -14,7 +14,6 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("btod_copy", m_utf_btod_copy);
 	add_test("contract", m_utf_contract);
 	add_test("contraction2", m_utf_contraction2);
-	add_test("default_symmetry", m_utf_default_symmetry);
 	add_test("dimensions", m_utf_dimensions);
 	add_test("direct_btensor", m_utf_direct_btensor);
 	add_test("direct_tensor", m_utf_direct_tensor);
@@ -28,15 +27,12 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("letter_expr", m_utf_letter_expr);
 	add_test("mask", m_utf_mask);
 	add_test("orbit", m_utf_orbit);
-	add_test("orbit_iterator", m_utf_orbit_iterator);
 	add_test("orbit_list", m_utf_orbit_list);
-	add_test("perm_symmetry", m_utf_perm_symmetry);
 	add_test("permutation", m_utf_permutation);
 	add_test("permutation_builder", m_utf_permutation_builder);
-	add_test("so_copy", m_utf_so_copy);
 	add_test("symel_cycleperm", m_utf_symel_cycleperm);
 	add_test("symmetry", m_utf_symmetry);
-	add_test("symmetry_base", m_utf_symmetry_base);
+	add_test("symmetry_element_base", m_utf_symmetry_element_base);
 	add_test("tensor", m_utf_tensor);
 	add_test("timer", m_utf_timer);
 	add_test("timings", m_utf_timings);

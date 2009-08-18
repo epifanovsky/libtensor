@@ -5,7 +5,6 @@
 #include "exception.h"
 #include "block_index_space.h"
 #include "index.h"
-#include "orbit_iterator.h"
 #include "symmetry.h"
 #include "tensor_i.h"
 
@@ -93,27 +92,11 @@ protected:
 	 **/
 	virtual void on_req_sym_clear_elements() throw(exception) = 0;
 
-	/**	\brief Request to return the number of orbits
-	 **/
-	virtual size_t on_req_sym_num_orbits() throw(exception) = 0;
-
-	/**	\brief Request to return an orbit
-		\param n Orbit number.
-		\throw out_of_bounds If the orbit number provided is larger
-			than the total number of orbits.
-	 **/
-	virtual orbit<N, T> on_req_sym_orbit(size_t n) throw(exception) = 0;
-
 	//@}
 
 
 	//!	\name Event handling
 	//@{
-
-	/**	\brief Invoked when the %symmetry object is requested
-		\return The %symmetry of the block %tensor
-	 **/
-	//virtual symmetry<N, T> &on_req_symmetry() throw(exception) = 0;
 
 	/**	\brief Invoked when a canonical block is requested
 		\param idx Block %index.

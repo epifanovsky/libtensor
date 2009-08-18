@@ -78,17 +78,6 @@ public:
 	 **/
 	void req_sym_clear_elements() throw(exception);
 
-	/**	\brief Request to return the number of orbits
-	 **/
-	size_t req_sym_num_orbits() throw(exception);
-
-	/**	\brief Request to return an orbit
-		\param n Orbit number.
-		\throw out_of_bounds If the orbit number provided is larger
-			than the total number of orbits.
-	 **/
-	orbit<N, T> req_sym_orbit(size_t n) throw(exception);
-
 	//@}
 
 	//!	\name Block events
@@ -146,19 +135,6 @@ template<size_t N, typename T>
 inline void block_tensor_ctrl<N, T>::req_sym_clear_elements() throw(exception) {
 
 	m_bt.on_req_sym_clear_elements();
-}
-
-template<size_t N, typename T>
-inline size_t block_tensor_ctrl<N, T>::req_sym_num_orbits() throw(exception) {
-
-	return m_bt.on_req_sym_num_orbits();
-}
-
-template<size_t N, typename T>
-inline orbit<N, T> block_tensor_ctrl<N, T>::req_sym_orbit(size_t n)
-	throw(exception) {
-
-	return m_bt.on_req_sym_orbit(n);
 }
 
 template<size_t N, typename T>

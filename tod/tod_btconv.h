@@ -9,7 +9,6 @@
 #include "core/block_tensor_ctrl.h"
 #include "core/tensor_i.h"
 #include "core/tensor_ctrl.h"
-#include "btod/block_symop_double.h"
 #include "tod/processor.h"
 
 namespace libtensor {

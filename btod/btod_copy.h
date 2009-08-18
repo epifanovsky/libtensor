@@ -4,6 +4,7 @@
 #include <map>
 #include "defs.h"
 #include "exception.h"
+#include "core/orbit_list.h"
 #include "tod/tod_copy.h"
 #include "btod_additive.h"
 #include "btod_so_copy.h"
@@ -131,10 +132,11 @@ void btod_copy<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 	block_tensor_ctrl<N, double> src_ctrl(m_bt), dst_ctrl(bt);
 	dimensions<N> bidims = m_bis.get_block_index_dims();
 
-	size_t norbits = src_ctrl.req_sym_num_orbits();
-	for(size_t iorbit = 0; iorbit < norbits; iorbit++) {
+	orbit_list<N, double> orblst(src_ctrl.req_symmetry());
+	typename orbit_list<N, double>::iterator iorbit = orblst.begin();
+	for(; iorbit != orblst.end(); iorbit++) {
 
-		orbit<N, double> orb = src_ctrl.req_sym_orbit(iorbit);
+		orbit<N, double> orb(src_ctrl.req_symmetry(), *iorbit);
 		index<N> src_blk_idx;
 		bidims.abs_index(orb.get_abs_canonical_index(), src_blk_idx);
 		if(src_ctrl.req_is_zero_block(src_blk_idx)) continue;
@@ -172,10 +174,11 @@ void btod_copy<N>::perform(block_tensor_i<N, double> &bt, double c)
 	block_tensor_ctrl<N, double> src_ctrl(m_bt), dst_ctrl(bt);
 	dimensions<N> bidims = m_bis.get_block_index_dims();
 
-	size_t norbits = src_ctrl.req_sym_num_orbits();
-	for(size_t iorbit = 0; iorbit < norbits; iorbit++) {
+	orbit_list<N, double> orblst(src_ctrl.req_symmetry());
+	typename orbit_list<N, double>::iterator iorbit = orblst.begin();
+	for(; iorbit != orblst.end(); iorbit++) {
 
-		orbit<N, double> orb = src_ctrl.req_sym_orbit(iorbit);
+		orbit<N, double> orb(src_ctrl.req_symmetry(), *iorbit);
 		index<N> src_blk_idx;
 		bidims.abs_index(orb.get_abs_canonical_index(), src_blk_idx);
 		if(src_ctrl.req_is_zero_block(src_blk_idx)) continue;

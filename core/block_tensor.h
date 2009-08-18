@@ -4,10 +4,10 @@
 #include "defs.h"
 #include "exception.h"
 #include "block_index_space.h"
-#include "block_iterator.h"
 #include "block_map.h"
 #include "block_tensor_i.h"
 #include "immutable.h"
+#include "orbit_list.h"
 #include "tensor.h"
 #include "tensor_ctrl.h"
 
@@ -55,8 +55,6 @@ protected:
 	virtual bool on_req_sym_contains_element(
 		const symmetry_element_i<N, T> &elem) throw(exception);
 	virtual void on_req_sym_clear_elements() throw(exception);
-	virtual size_t on_req_sym_num_orbits() throw(exception);
-	virtual orbit<N, T> on_req_sym_orbit(size_t n) throw(exception);
 	virtual tensor_i<N, T> &on_req_block(const index<N> &idx)
 		throw(exception);
 	virtual void on_ret_block(const index<N> &idx) throw(exception);
@@ -169,26 +167,21 @@ void block_tensor<N, T, Alloc>::on_req_sym_clear_elements() throw(exception) {
 }
 
 template<size_t N, typename T, typename Alloc>
-size_t block_tensor<N, T, Alloc>::on_req_sym_num_orbits() throw(exception) {
-
-	return m_symmetry.get_num_orbits();
-}
-
-
-template<size_t N, typename T, typename Alloc>
-orbit<N, T> block_tensor<N, T, Alloc>::on_req_sym_orbit(size_t n)
-	throw(exception) {
-
-	return m_symmetry.get_orbit(n);
-}
-
-template<size_t N, typename T, typename Alloc>
 tensor_i<N, T> &block_tensor<N, T, Alloc>::on_req_block(
 	const index<N> &idx) throw(exception) {
 
 	static const char *method = "on_req_block(const index<N>&)";
 
-	if(!m_symmetry.is_canonical(idx)) {
+	bool canonical = false;
+	orbit_list<N, T> orblst(m_symmetry);
+	typename orbit_list<N, T>::iterator iorbit = orblst.begin();
+	for(; iorbit != orblst.end(); iorbit++) {
+		if(idx.equals(*iorbit)) {
+			canonical = true;
+			break;
+		}
+	}
+	if(!canonical) {
 		throw symmetry_violation("libtensor", k_clazz, method,
 			__FILE__, __LINE__,
 			"Index does not correspond to a canonical block.");
@@ -215,7 +208,16 @@ bool block_tensor<N, T, Alloc>::on_req_is_zero_block(const index<N> &idx)
 
 	static const char *method = "on_req_is_zero_block(const index<N>&)";
 
-	if(!m_symmetry.is_canonical(idx)) {
+	bool canonical = false;
+	orbit_list<N, T> orblst(m_symmetry);
+	typename orbit_list<N, T>::iterator iorbit = orblst.begin();
+	for(; iorbit != orblst.end(); iorbit++) {
+		if(idx.equals(*iorbit)) {
+			canonical = true;
+			break;
+		}
+	}
+	if(!canonical) {
 		throw symmetry_violation("libtensor", k_clazz, method,
 			__FILE__, __LINE__,
 			"Index does not correspond to a canonical block.");
@@ -236,7 +238,16 @@ void block_tensor<N, T, Alloc>::on_req_zero_block(const index<N> &idx)
 			__FILE__, __LINE__,
 			"Immutable object cannot be modified.");
 	}
-	if(!m_symmetry.is_canonical(idx)) {
+	bool canonical = false;
+	orbit_list<N, T> orblst(m_symmetry);
+	typename orbit_list<N, T>::iterator iorbit = orblst.begin();
+	for(; iorbit != orblst.end(); iorbit++) {
+		if(idx.equals(*iorbit)) {
+			canonical = true;
+			break;
+		}
+	}
+	if(!canonical) {
 		throw symmetry_violation("libtensor", k_clazz, method,
 			__FILE__, __LINE__,
 			"Index does not correspond to a canonical block.");
