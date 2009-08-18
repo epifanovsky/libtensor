@@ -10,6 +10,7 @@ namespace libtensor {
 	\ingroup libtensor_tests
 **/
 class tod_add_test : public libtest::unit_test {
+	static const double k_thresh = 1e-14; //!< Threshold multiplier
 public:
 	virtual void perform() throw(libtest::test_exception);
 private:

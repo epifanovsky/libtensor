@@ -218,10 +218,10 @@ void btod_add_test::test_2(double ca1, double ca2)
 	tod_btconv<2> conva2(bta2);
 	conva2.perform(ta2);
 
-	permutation<2> perm0;
-	tod_add<2> op_ref(perm0);
-	op_ref.add_op(ta1, perm0, ca1);
-	op_ref.add_op(ta2, perm0, ca2);
+//	permutation<2> perm0;
+	tod_add<2> op_ref(ta1, ca1);
+//	op_ref.add_op(ta1, perm0, ca1);
+	op_ref.add_op(ta2, ca2);
 	op_ref.perform(tb_ref);
 
 	//	Run the addition operation
@@ -364,10 +364,10 @@ void btod_add_test::test_3(double ca1, double ca2)
 	tod_btconv<4> conva2(bta2);
 	conva2.perform(ta2);
 
-	permutation<4> perm0;
-	tod_add<4> op_ref(perm0);
-	op_ref.add_op(ta1, perm0, ca1);
-	op_ref.add_op(ta2, perm0, ca2);
+//	permutation<4> perm0;
+	tod_add<4> op_ref(ta1,ca1);
+//	op_ref.add_op(ta1, perm0, ca1);
+	op_ref.add_op(ta2, ca2);
 	op_ref.perform(tb_ref);
 
 	//	Run the addition operation

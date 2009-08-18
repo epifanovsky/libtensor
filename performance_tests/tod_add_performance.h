@@ -123,8 +123,7 @@ void tod_add_p1<R,N,X>::do_calculate()
 
 	// start tod_add calculation
 	permutation<N> perm;
-	tod_add<N> add(perm);
-	add.add_op(tb,perm,2.0);
+	tod_add<N> add(tb,2.0);
 	add.prefetch();
 	add.perform(ta,1.0);
 }
@@ -134,7 +133,7 @@ void tod_add_p2<R,N,X>::do_calculate()
 {
 	X d;
 	dimensions<N> dima(d.dimA()), dimb(d.dimA());
-	permutation<N> perma, permb;
+	permutation<N> permb;
 	for ( size_t i=0; i<N/2; i++ )
 		permb.permute(i,N-(i+1));
 
@@ -151,8 +150,7 @@ void tod_add_p2<R,N,X>::do_calculate()
 	tcb.ret_dataptr(ptrb);
 
 	// start tod_add calculation
-	tod_add<N> add(perma);
-	add.add_op(tb,permb,2.0);
+	tod_add<N> add(tb,permb,2.0);
 	add.prefetch();
 	add.perform(ta,1.0);
 }
@@ -163,7 +161,7 @@ void tod_add_p3<R,N,X>::do_calculate()
 {
 	X d;
 	dimensions<N> dima(d.dimA()), dimb(d.dimA());
-	permutation<N> perma, permb;
+	permutation<N> permb;
 	for ( size_t i=0; i<N/2; i++ )
 		permb.permute(i,i+(N+1)/2);
 
@@ -180,8 +178,7 @@ void tod_add_p3<R,N,X>::do_calculate()
 	tcb.ret_dataptr(ptrb);
 
 	// start tod_add calculation
-	tod_add<N> add(perma);
-	add.add_op(tb,permb,2.0);
+	tod_add<N> add(tb,permb,2.0);
 	add.prefetch();
 	add.perform(ta,1.0);
 }

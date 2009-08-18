@@ -88,9 +88,7 @@ void tod_symcontract2<N,M,K>::perform(tensor_i<N+M,double> &t)
 	tod_copy<N+M> cp(tmp);
 	cp.perform(t);
 
-	permutation<N+M> perm;
-	tod_add<N+M> add(perm);
-	add.add_op(tmp,m_perm,m_c);
+	tod_add<N+M> add(tmp,m_perm,m_c);
 	add.perform(t,1.0);
 }
 
@@ -100,9 +98,7 @@ void tod_symcontract2<N,M,K>::perform(tensor_i<N+M,double> &t, double c)
 	tensor<N+M,double,libvmm::std_allocator<double> > tmp(t); 
 	m_contr.perform(tmp);
 	
-	permutation<N+M> perm;
-	tod_add<N+M> add(perm);
-	add.add_op(tmp,perm,1.0);
+	tod_add<N+M> add(tmp,1.0);
 	add.add_op(tmp,m_perm,m_c);
 	add.perform(t,c);
 }

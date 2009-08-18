@@ -303,11 +303,15 @@ void btod_add<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 
 		} else if(arglst.size() > 1) {
 
-			permutation<N> perm0;
-			tod_add<N> todadd(perm0);
-
+//			permutation<N> perm0;
 			typename std::list<arg_t>::iterator iarg =
 				arglst.begin();
+
+			tod_add<N> todadd(iarg->m_ctrl->req_block(iarg->m_idx),
+				iarg->m_tr.m_perm,iarg->m_tr.m_coeff);
+				
+			iarg++;
+
 			while(iarg != arglst.end()) {
 				arg_t &arg = *(iarg);
 				tensor_i<N, double> &src_blk =

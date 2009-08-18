@@ -9,13 +9,15 @@
 #include "tod_additive.h"
 
 #include <list>
+#include <map>
+#include <iostream>
 
 namespace libtensor {
 
 /**	\brief Adds two or more tensors
 
 	Tensor addition of n tensors:
-	\f[ B = c_B \mathcal{P_B} \left( c_1 \mathcal{P}_1 A_1 + c_2 \mathcal{P}_2 A_2 + \cdots +
+	\f[ B = \left( c_1 \mathcal{P}_1 A_1 + c_2 \mathcal{P}_2 A_2 + \cdots +
 		c_n \mathcal{P}_n A_n \right) \f]
 
 	Each operand must have the same dimensions as the result in order
@@ -24,24 +26,25 @@ namespace libtensor {
 	\ingroup libtensor_tod
 **/
 template<size_t N>
-class tod_add : public tod_additive<N>, public timings<tod_add<N> >
+class tod_add 
+	: public tod_additive<N>, public timings<tod_add<N> > 
 {
 private:
 	friend class timings<tod_add<N> >;
-	static const char* k_clazz;
+	static const char* k_clazz;  //! class name
 
-	struct operand {
-		tensor_i<N,double> &m_t;
-		const double m_c;
-		const permutation<N> m_p;
-		struct operand* m_next;
-		operand(tensor_i<N,double> &t, const permutation<N> &p, double c)
-			: m_t(t), m_p(p), m_c(c), m_next(NULL) {}
-	};
+	typedef struct operand {
+		tensor_i<N,double>& m_ta;
+		double m_ca;
+		operand( tensor_i<N,double>& ta, double ca ) : m_ta(ta), m_ca(ca) {}
+	} operand_t;
+		
+	typedef std::pair<permutation<N>,operand_t*> op_pair_t; 
+	typedef std::multimap<permutation<N>,operand_t*> op_map_t; 
 
-	struct registers {
-		double m_ca; //!< scaling factor
+	typedef struct registers {
 		const double* m_ptra; //!< tensor to add
+		double m_ca; //!< scaling factor to add
 		double* m_ptrb; //!< result tensor
 	};
 
@@ -74,7 +77,7 @@ private:
 	class op_daxpy : public processor_op_i_t, public timings<op_daxpy> {
 	private:
 		friend class timings<op_daxpy>;
-		static const char* k_clazz;
+		static const char* k_clazz;	
 		size_t m_len, m_inca, m_incb;
 	public:
 		op_daxpy(size_t len , size_t inca, size_t incb) :
@@ -83,30 +86,55 @@ private:
 			throw(exception);
 	};
 
+	//!	b_{ij} += m_ca * a_{ji}
+	class op_fast_add : public processor_op_i_t, public timings<op_fast_add> {
+	private:
+		friend class timings<op_fast_add>;
+		static const char* k_clazz;	
+		size_t m_leni, m_lenj, m_incaj, m_incbi;
+	public:
+		op_fast_add(size_t leni , size_t lenj, size_t incaj, size_t incbi) :
+			m_incaj(incaj), m_incbi(incbi), m_leni(leni), m_lenj(lenj) { }
+			
+		virtual void exec(processor_t &proc, registers &regs)
+			throw(exception);
+	};
 
 
-	struct operand* m_head;
-	struct operand* m_tail;
-
-	dimensions<N>* m_dim;  //!< dimensions of the output tensor
-	permutation<N> m_p; //!< permutation to be applied to all tensors
-
+	op_map_t m_operands; //!< list of all operands to add 
+	dimensions<N> m_dim;  //!< dimensions of the output tensor
 
 public:
 	//!	\name Construction and destruction
 	//@{
 
-	/**	\brief Initializes the operation
+	/**	\brief Initializes the addition operation
+		\param bt First %tensor in the series.
+		\param c Scaling coefficient.
+	 **/
+	tod_add(tensor_i<N, double> &t, double c = 1.0) 
+		throw(bad_parameter,out_of_memory);
 
-		\param pb Permutation of the resulting %tensor b
-	**/
-	tod_add(const permutation<N> &pb) throw(exception);
+	/**	\brief Initializes the addition operation
+		\param bt First %tensor in the series.
+		\param pb Permutation of the first %tensor.
+		\param c Scaling coefficient.
+	 **/
+	tod_add(tensor_i<N, double> &t, const permutation<N> &p,
+		double c = 1.0) throw(bad_parameter,out_of_memory);
 
 	/**	\brief Virtual destructor
 	**/
 	virtual ~tod_add();
 
 	//@}
+
+	/**	\brief Adds an operand
+		\param t Tensor.
+		\param c Coefficient.
+	**/
+	void add_op(tensor_i<N,double> &t, const double c) 
+		throw(bad_parameter,out_of_memory);
 
 
 	/**	\brief Adds an operand
@@ -115,7 +143,7 @@ public:
 		\param c Coefficient.
 	**/
 	void add_op(tensor_i<N,double> &t, const permutation<N> &p,
-		const double c) throw(exception);
+		const double c) throw(bad_parameter,out_of_memory);
 
 	//!	\name Implementation of direct_tensor_operation<T>
 	//@{
@@ -129,14 +157,21 @@ public:
 		throw(exception);
 	//@}
 private:
+	void add_operand( tensor_i<N,double> &t, const permutation<N>& perm, double c)
+		throw(out_of_memory); 
 
 	/**	\brief Build operations list for addition of two tensors
-
+		
+		\params list resulting list of operations
+		\params da dimensions of %tensor to add
+		\params pa permutation of %tensor to add 
+		\params db dimensions of %tensor to add to
+		
 		The resulting operations list is appropriate to add a tensor with
 		dimensions da and permutation pa to tensor with dimensions db
 	**/
 	void build_list( loop_list_t &list, const dimensions<N> &da,
-		const permutation<N> &pa, const dimensions<N> &db );
+		const permutation<N> &pa, const dimensions<N> &db ) throw(out_of_memory);
 	//!	Delete all operations in list
 	void clean_list( loop_list_t &list );
 
@@ -144,173 +179,262 @@ private:
 };
 
 template<size_t N>
-const char* tod_add<N>::k_clazz = "tod_add<N>";
+const char* tod_add<N>::k_clazz = "tod_add<N>"; 
+template<size_t N>
+const char* tod_add<N>::op_daxpy::k_clazz = "tod_add<N>::op_daxpy"; 
+template<size_t N>
+const char* tod_add<N>::op_fast_add::k_clazz = "tod_add<N>::op_fast_add"; 
+
 
 template<size_t N>
-const char* tod_add<N>::op_daxpy::k_clazz = "tod_add<N>::op_daxpy";
-
-
+tod_add<N>::tod_add(tensor_i<N, double> &ta, const permutation<N> &p, 
+	double c ) throw(bad_parameter,out_of_memory) : m_dim(ta.get_dims())
+{
+	m_dim.permute(p);
+	add_operand( ta, p, c );
+}
 
 template<size_t N>
-tod_add<N>::tod_add(const permutation<N> &p) throw(exception)
-	: m_p(p), m_dim(NULL), m_head(NULL), m_tail(NULL)
-{ }
+tod_add<N>::tod_add(tensor_i<N, double> &ta, double c ) 
+	throw(bad_parameter,out_of_memory) : m_dim(ta.get_dims())
+{ 
+	add_operand( ta, permutation<N>(), c);
+}
 
 template<size_t N>
 tod_add<N>::~tod_add()
 {
-	if ( m_dim != NULL ) delete m_dim;
-
-	struct operand* node=m_head;
-	while ( node != NULL ) {
-		struct operand* next=node->m_next;
-		delete next;
-		node=next;
+	for ( typename op_map_t::iterator it=m_operands.begin(); 
+			it!=m_operands.end(); it++ ) {
+		delete it->second;
+		it->second=NULL;
 	}
 }
 
 template<size_t N>
-void tod_add<N>::add_op(tensor_i<N,double> &t, const permutation<N> &p,
-	const double c) throw(exception)
+void tod_add<N>::add_op(tensor_i<N,double> &t, const double c) 
+	throw(bad_parameter,out_of_memory)
 {
 	// don nothing if coefficient is zero
 	if ( c==0. ) return;
 
-	// modify permutation with pb
-	permutation<N> new_p(p);
-	new_p.permute(m_p);
+	if ( t.get_dims() != m_dim ) {
+		throw bad_parameter("libtensor",k_clazz,
+			"add_op(tensor_i<N,double>&,const double)",	
+			__FILE__,__LINE__,"Invalid dimensions");
+	}
+	
+	add_operand(t, permutation<N>(), c);	
+}
 
-	// this is the first operand added
-	if ( m_head == NULL ) {
-		// set dimensions of the output tensor
-		m_dim=new dimensions<N>(t.get_dims());
-		m_dim->permute(new_p);
+template<size_t N>
+void tod_add<N>::add_op(tensor_i<N,double> &t, const permutation<N> &p,
+	const double c) throw(bad_parameter,out_of_memory)
+{
+	// don nothing if coefficient is zero
+	if ( c==0. ) return;
 
-		m_head=new struct operand(t,new_p,c);
-		m_tail=m_head;
-  	}
-	// there are already operands added
-	else {
-		// first check whether the new operand tensor has the right dimensions
-		dimensions<N> dim(t.get_dims());
-		dim.permute(new_p);
-		if ( dim != *m_dim )
-			throw_exc("tod_add<N>",
+	dimensions<N> dim(t.get_dims());
+	dim.permute(p);
+	if ( dim != m_dim ) {
+		throw bad_parameter("libtensor",k_clazz,
 			"add_op(tensor_i<N,double>&,const permutation<N>&,const double)",
-			"The tensor operands have different dimensions");
-
-		m_tail->m_next=new operand(t,new_p,c);
-		m_tail=m_tail->m_next;
+			__FILE__,__LINE__,"Invalid dimensions");
 	}
+	
+	add_operand(t, p, c);	
 }
 
 template<size_t N>
-void tod_add<N>::prefetch() throw(exception) {
-	struct operand* node=m_head;
-	while ( node != NULL ) {
-		tensor_ctrl<N,double> ctrlo(node->m_t);
-		ctrlo.req_prefetch();
-		node=node->m_next;
+void tod_add<N>::add_operand(tensor_i<N,double> &t, const permutation<N> &p,
+	const double c) throw(out_of_memory)
+{
+	try {
+		operand_t* op=new operand_t(t,c);
+		m_operands.insert(op_pair_t(p,op));
+	} catch (std::bad_alloc& e) {
+		throw out_of_memory("libtensor",k_clazz,			
+			"add_operand(tensor_i<N,double>&,const permutation<N>&,const double)",
+			__FILE__,__LINE__,e.what());
 	}
+
 }
 
 template<size_t N>
-void tod_add<N>::perform(tensor_i<N,double> &t)
-	throw(exception)
+void tod_add<N>::prefetch() throw(exception) 
+{
+	for ( typename op_map_t::iterator it=m_operands.begin(); it!=m_operands.end(); it++ ) {
+		tensor_ctrl<N,double> ctrl(it->second->m_ta);
+		ctrl.req_prefetch();
+	}	
+}
+
+template<size_t N>
+void tod_add<N>::perform(tensor_i<N,double> &t)	throw(exception)
 {
 	tod_add<N>::start_timer();
-
+	
 	// first check whether the output tensor has the right dimensions
-	if ( *m_dim != t.get_dims() )
-		throw_exc("tod_add<N>",
-			"perform(tensor_i<N,double>&)",
-			"The output tensor has incompatible dimensions");
+	if ( m_dim != t.get_dims() )
+		throw bad_parameter("libtensor",k_clazz,"perform(tensor_i<N,double>&)",
+			__FILE__,__LINE__,"Invalid dimensions of output tensor");
 
 	tensor_ctrl<N,double> ctrlt(t);
 	double* tptr=ctrlt.req_dataptr();
 	// set all elements of t to zero
-	memset(tptr,0,m_dim->get_size()*sizeof(double));
-
-	struct operand* node=m_head;
-	while ( node != NULL ) {
-		tensor_ctrl<N,double> ctrlo(node->m_t);
-		const double* optr=ctrlo.req_const_dataptr();
-		loop_list_t list;
-		build_list(list,node->m_t.get_dims(),node->m_p,t.get_dims());
-		try {
-			registers regs;
-			regs.m_ptra=optr;
-			regs.m_ca=node->m_c;
-			regs.m_ptrb=tptr;
-			processor_t(list,regs).process_next();
-		}
-		catch ( exception e ) {
+	memset(tptr,0,m_dim.get_size()*sizeof(double));
+		
+	double* ptr=NULL;
+	typename op_map_t::iterator it=m_operands.begin();	
+	while ( it != m_operands.end() ) {
+		if ( m_operands.count(it->first) == 1 ) {
+			tensor_ctrl<N,double> ctrlo(it->second->m_ta);
+			const double* optr=ctrlo.req_const_dataptr();
+			
+			loop_list_t list;
+			build_list(list,it->second->m_ta.get_dims(),it->first,m_dim);
+			try {
+				registers regs;
+				regs.m_ptra=optr;
+				regs.m_ca=it->second->m_ca;
+				regs.m_ptrb=tptr;
+				processor_t(list,regs).process_next();
+			}
+			catch ( exception& e ) {
+				clean_list(list);
+				throw;
+			}
 			clean_list(list);
-			throw;
+			it++;
 		}
+		else {
+			const permutation<N>& perm=it->first;
+			dimensions<N> dim=it->second->m_ta.get_dims();
+						
+			try {
+				if ( ptr == NULL ) ptr=new double[dim.get_size()];
+			} catch ( std::bad_alloc& e ) {
+				throw out_of_memory("libtensor",k_clazz,"perform(tensor_i<N,double> &)",
+						__FILE__,__LINE__,e.what());
+			}
+			
+			memset(ptr,0,m_dim.get_size()*sizeof(double));
+			while ( it != m_operands.upper_bound(perm) ) {
+				tensor_ctrl<N,double> ctrlo(it->second->m_ta);
+				const double* optr=ctrlo.req_const_dataptr();
+				cblas_daxpy(dim.get_size(),it->second->m_ca,optr,1,ptr,1);
+				ctrlo.ret_dataptr(optr);
+				it++;
+			}
+				
+			loop_list_t list;
+			build_list(list,dim,perm,m_dim);
 
-		ctrlo.ret_dataptr(optr);
-		node=node->m_next;
+			try {
+				registers regs;
+				regs.m_ptra=ptr;
+				regs.m_ca=1.0;
+				regs.m_ptrb=tptr;
+				processor_t(list,regs).process_next();
+			} catch ( exception& e ) {
+				delete [] ptr;
+				clean_list(list);
+				throw;
+			}
+			clean_list(list);
+		}
 	}
-
-	ctrlt.ret_dataptr(tptr);
-
+	
+	if ( ptr != NULL ) delete [] ptr;
+	
 	tod_add<N>::stop_timer();
 }
 
 template<size_t N>
-void tod_add<N>::perform(tensor_i<N,double> &t, double c) throw(exception)
-{
+void tod_add<N>::perform(tensor_i<N,double> &t, double c) throw(exception) 
+{	
 	tod_add<N>::start_timer();
-
+	
 	// first check whether the output tensor has the right dimensions
-	if ( *m_dim != t.get_dims() )
-		throw_exc("tod_add<N>",
-			"perform(tensor_i<N,double>&)",
-			"The output tensor has incompatible dimensions");
+	if ( m_dim != t.get_dims() )
+		throw bad_parameter("libtensor",k_clazz,"perform(tensor_i<N,double>&)",
+			__FILE__,__LINE__,"Invalid dimensions of output tensor");
 
 	if ( c==0. ) return;
 
 	tensor_ctrl<N,double> ctrlt(t);
 	double* tptr=ctrlt.req_dataptr();
-
-	struct operand* node=m_head;
-	while ( node != NULL ) {
-		if ( &t == &(node->m_t) ) {
-			throw_exc("tod_add<N>",
-				"perform(tensor_i<N,double>&)",
-				"Result tensor cannot be in the operand list");
-		}
-
-		tensor_ctrl<N,double> ctrlo(node->m_t);
-		const double* optr=ctrlo.req_const_dataptr();
-		loop_list_t list;
-		build_list(list,node->m_t.get_dims(),node->m_p,t.get_dims());
-		try {
-			registers regs;
-			regs.m_ptra=optr;
-			regs.m_ca=c*node->m_c;
-			regs.m_ptrb=tptr;
-			processor_t(list,regs).process_next();
-		}
-		catch ( exception e ) {
+	
+	double* ptr=NULL;
+	
+	typename op_map_t::iterator it=m_operands.begin();	
+	while ( it != m_operands.end() ) {
+		if ( m_operands.count(it->first) == 1 ) {
+			tensor_ctrl<N,double> ctrlo(it->second->m_ta);
+			const double* optr=ctrlo.req_const_dataptr();
+			
+			loop_list_t list;
+			build_list(list,it->second->m_ta.get_dims(),it->first,m_dim);
+			try {
+				registers regs;
+				regs.m_ptra=optr;
+				regs.m_ca=it->second->m_ca*c;
+				regs.m_ptrb=tptr;
+				processor_t(list,regs).process_next();
+			}
+			catch ( exception& e ) {
+				clean_list(list);
+				throw;
+			}
 			clean_list(list);
-			throw;
+			it++;
 		}
+		else {
+			const permutation<N>& perm=it->first;
+			dimensions<N> dim=it->second->m_ta.get_dims();
+						
+			try {
+				if ( ptr == NULL ) ptr=new double[dim.get_size()];
+			} catch ( std::bad_alloc& e ) {
+				throw out_of_memory("libtensor",k_clazz,"perform(tensor_i<N,double> &)",
+						__FILE__,__LINE__,e.what());
+			}
+			
+			memset(ptr,0,dim.get_size()*sizeof(double));
+			while ( it != m_operands.upper_bound(perm) ) {
+				tensor_ctrl<N,double> ctrlo(it->second->m_ta);
+				const double* optr=ctrlo.req_const_dataptr();
+				cblas_daxpy(dim.get_size(),it->second->m_ca,optr,1,ptr,1);
+				ctrlo.ret_dataptr(optr);
+				it++;
+			}
+				
+			loop_list_t list;
+			build_list(list,dim,perm,m_dim);
 
-		clean_list(list);
-		ctrlo.ret_dataptr(optr);
-		node=node->m_next;
+			try {
+				registers regs;
+				regs.m_ptra=ptr;
+				regs.m_ca=c;
+				regs.m_ptrb=tptr;
+				processor_t(list,regs).process_next();
+			} catch ( exception& e ) {
+				delete [] ptr;
+				clean_list(list);
+				throw;
+			}
+			clean_list(list);
+		}
 	}
-
-	ctrlt.ret_dataptr(tptr);
-
+	
+	if ( ptr != NULL ) delete [] ptr;
+	
 	tod_add<N>::stop_timer();
 }
 
 template<size_t N>
 void tod_add<N>::build_list( loop_list_t &list, const dimensions<N> &da,
-	const permutation<N> &pa, const dimensions<N> &db )
+	const permutation<N> &pa, const dimensions<N> &db ) throw(out_of_memory)
 {
 	size_t ia[N];
 	for (size_t i=0; i<N; i++) ia[i]=i;
@@ -318,39 +442,53 @@ void tod_add<N>::build_list( loop_list_t &list, const dimensions<N> &da,
 
 	// loop over all indices and build the list
 	size_t pos=0, max_len=0;
-	while ( pos < N ) {
-		size_t len=1;
-		size_t iapos=ia[pos];
-		while (pos<N) {
-			len*=da.get_dim(iapos);
-			pos++; iapos++;
-			if ( ia[pos]!=iapos ) break;
-		}
+	try {
+		typename loop_list_t::iterator posa=list.end(), posb=list.end();
+		while ( pos < N ) {
+			size_t len=1;
+			size_t iapos=ia[pos];
+			while (pos<N) {
+				len*=da.get_dim(iapos);
+				pos++; iapos++;
+				if ( ia[pos]!=iapos ) break;
+			}
 
-		size_t inca=da.get_increment(iapos-1);
-		size_t incb=db.get_increment(pos-1);
+			size_t inca=da.get_increment(iapos-1);
+			size_t incb=db.get_increment(pos-1);
 
-		list.push_back(loop_list_node(len,inca,incb));
+			typename loop_list_t::iterator it 
+				= list.insert(list.end(),loop_list_node(len,inca,incb));
+		
+			// we know that in the last loop incb=1 !!!
+			if (inca==1) {
+				if (inca==incb)	{
+					it->m_op=new op_daxpy(len,inca,incb);
+				}
+				else { posa=it; }
+			}
+			else {
+				if (incb==1) { posb=it; } 
+				else { it->m_op=new op_loop(len,inca,incb); }
+			}
+		}	
 
-		if ( (inca==1) || (incb==1) )
-			if ( len >= max_len ) max_len=len;
-	}
-
-	// fill the list with processor_op_t
-	for (typename loop_list_t::iterator it=list.begin(); it!=list.end(); it++ ) {
-		if ( (it->m_len==max_len) && ((it->m_inca==1)||(it->m_incb==1)) ) {
-			it->m_op=new op_daxpy(it->m_len,it->m_inca,it->m_incb);
-			list.splice(list.end(),list,it);
-			break;
+		if ( posa!=posb ) {
+//			if ( posa->m_len > posb->m_len ) {
+//				posa->m_op=new op_daxpy(posa->m_len,posa->m_inca,posa->m_incb); 
+//				posb->m_op=new op_loop(posb->m_len,posb->m_inca,posb->m_incb);
+//			}
+//			else { 
+//				posa->m_op=new op_loop(posa->m_len,posa->m_inca,posa->m_incb); 
+//				posb->m_op=new op_daxpy(posb->m_len,posb->m_inca,posb->m_incb);
+//			}
+			posb->m_op=new op_fast_add(posa->m_len,posb->m_len,posb->m_inca,posa->m_incb);
+			list.erase(posa);
 		}
-		else {
-			it->m_op=new op_loop(it->m_len,it->m_inca,it->m_incb);
-		}
-	}
-	for (typename loop_list_t::iterator it=list.begin(); it!=list.end(); it++ ) {
-		if ( it->m_op == NULL ) {
-			it->m_op=new op_loop(it->m_len,it->m_inca,it->m_incb);
-		}
+	} catch ( std::bad_alloc& e ) {
+		clean_list(list); 
+		throw out_of_memory("libtensor",k_clazz,
+			"build_list(loop_list_t&,const dimensions<N>&,const permutation<N>&,const dimensions<N>&)",
+			__FILE__,__LINE__,e.what());
 	}
 }
 
@@ -367,17 +505,16 @@ template<size_t N>
 void tod_add<N>::op_loop::exec( processor_t &proc, registers &regs)
 	throw(exception)
 {
-	const double *ptra = regs.m_ptra;
+	const double* ptra=regs.m_ptra;
 	double *ptrb = regs.m_ptrb;
 
 	for(size_t i=0; i<m_len; i++) {
-		regs.m_ptra = ptra;
+		regs.m_ptra=ptra;
 		regs.m_ptrb = ptrb;
 		proc.process_next();
-		ptra += m_inca;
+		ptra+= m_inca;
 		ptrb += m_incb;
 	}
-
 }
 
 template<size_t N>
@@ -388,6 +525,82 @@ void tod_add<N>::op_daxpy::exec( processor_t &proc, registers &regs)
 	cblas_daxpy(m_len,regs.m_ca,regs.m_ptra,m_inca,regs.m_ptrb,m_incb);
 	tod_add<N>::op_daxpy::stop_timer();
 }
+
+template<size_t N>
+void tod_add<N>::op_fast_add::exec( processor_t &proc, registers &regs)
+	throw(exception)
+{
+	tod_add<N>::op_fast_add::start_timer();
+	
+	size_t i=0, j=0;
+	for ( i=0; i<(m_leni-3); i+=4 ) {
+		register size_t ij=i*m_incbi;
+		register size_t ji=i;
+		for ( j=0; j<(m_lenj-3); j+=4 ) {
+			//register size_t ji=j*incaj+i; 
+			regs.m_ptrb[ij]+=regs.m_ca*regs.m_ptra[ji]; 
+			regs.m_ptrb[ij+1]+=regs.m_ca*regs.m_ptra[ji+m_incaj]; 
+			regs.m_ptrb[ij+2]+=regs.m_ca*regs.m_ptra[ji+2*m_incaj]; 
+			regs.m_ptrb[ij+3]+=regs.m_ca*regs.m_ptra[ji+3*m_incaj];
+			
+			//ij+=m_incbi; ji++;
+			regs.m_ptrb[ij+m_incbi]+=regs.m_ca*regs.m_ptra[ji+1]; 
+			regs.m_ptrb[ij+m_incbi+1]+=regs.m_ca*regs.m_ptra[ji+m_incaj+1]; 
+			regs.m_ptrb[ij+m_incbi+2]+=regs.m_ca*regs.m_ptra[ji+2*m_incaj+1]; 
+			regs.m_ptrb[ij+m_incbi+3]+=regs.m_ca*regs.m_ptra[ji+3*m_incaj+1];
+			
+			//ij+=m_incbi; ji++;
+			regs.m_ptrb[ij+2*m_incbi]+=regs.m_ca*regs.m_ptra[ji+2];  
+			regs.m_ptrb[ij+2*m_incbi+1]+=regs.m_ca*regs.m_ptra[ji+m_incaj+2]; 
+			regs.m_ptrb[ij+2*m_incbi+2]+=regs.m_ca*regs.m_ptra[ji+2*m_incaj+2]; 
+			regs.m_ptrb[ij+2*m_incbi+3]+=regs.m_ca*regs.m_ptra[ji+3*m_incaj+2];
+
+			//ij+=m_incbi; ji++;
+			regs.m_ptrb[ij+3*m_incbi]+=regs.m_ca*regs.m_ptra[ji+3]; 
+			regs.m_ptrb[ij+3*m_incbi+1]+=regs.m_ca*regs.m_ptra[ji+m_incaj+3]; 
+			regs.m_ptrb[ij+3*m_incbi+2]+=regs.m_ca*regs.m_ptra[ji+2*m_incaj+3]; 
+			regs.m_ptrb[ij+3*m_incbi+3]+=regs.m_ca*regs.m_ptra[ji+3*m_incaj+3];
+			
+			//ij-=3*m_incbi;
+			ij+=4;
+			//ji-=3;
+			ji+=4*m_incaj;
+		}
+
+		for ( ; j<m_lenj; j++ ) {
+			regs.m_ptrb[ij]+=regs.m_ca*regs.m_ptra[ji];
+			regs.m_ptrb[ij+m_incbi]+=regs.m_ca*regs.m_ptra[ji+1];
+			regs.m_ptrb[ij+2*m_incbi]+=regs.m_ca*regs.m_ptra[ji+2];
+			regs.m_ptrb[ij+3*m_incbi]+=regs.m_ca*regs.m_ptra[ji+3];
+			ij++;
+			ji+=m_incaj;
+		}
+	}
+	
+	for ( ; i<m_leni; i++ ) {
+		register size_t ji=i;
+		register size_t ij=i*m_incbi;
+		for ( j=0; j<(m_lenj-3); j+=4 ) {
+			//register size_t ji=j*incaj+i; 
+			regs.m_ptrb[ij]+=regs.m_ca*regs.m_ptra[ji]; 
+			regs.m_ptrb[ij+1]+=regs.m_ca*regs.m_ptra[ji+m_incaj]; 
+			regs.m_ptrb[ij+2]+=regs.m_ca*regs.m_ptra[ji+2*m_incaj]; 
+			regs.m_ptrb[ij+3]+=regs.m_ca*regs.m_ptra[ji+3*m_incaj];
+					
+			ij+=4;
+			ji+=4*m_incaj;
+		}
+
+		for ( ; j<m_lenj; j++ ) {
+			regs.m_ptrb[ij]+=regs.m_ca*regs.m_ptra[ji];
+			ij++;
+			ji+=m_incaj;
+		}
+	} 
+						 
+	tod_add<N>::op_fast_add::stop_timer();
+}		
+
 
 } // namespace libtensor
 
