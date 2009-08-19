@@ -58,6 +58,8 @@
 
 
 #include "symmetry/symel_cycleperm.h"
+#include "symmetry/so_projdown.h"
+#include "symmetry/so_projup.h"
 
 
 #include "iface/bispace_i.h"
