@@ -25,21 +25,22 @@ public:
 	iterator end() const;
 
 private:
-	bool mark_orbit(const symmetry<N, T> &sym, const index<N> &idx,
-		std::vector<bool> &lst);
+	bool mark_orbit(const symmetry<N, T> &sym, const dimensions<N> &dims,
+		const index<N> &idx, std::vector<bool> &lst);
 };
 
 
 template<size_t N, typename T>
 orbit_list<N, T>::orbit_list(const symmetry<N, T> &sym) {
 
-	const dimensions<N> &dims = sym.get_dims();
+	dimensions<N> dims(sym.get_bis().get_block_index_dims());
 	std::vector<bool> chk(dims.get_size(), false);
 	index<N> idx;
 	do {
 		size_t absidx = dims.abs_index(idx);
 		if(!chk[absidx]) {
-			if(mark_orbit(sym, idx, chk)) m_orb.push_back(idx);
+			if(mark_orbit(sym, dims, idx, chk))
+				m_orb.push_back(idx);
 		}
 	} while(dims.inc_index(idx));
 }
@@ -67,9 +68,10 @@ inline typename orbit_list<N, T>::iterator orbit_list<N, T>::end() const {
 
 template<size_t N, typename T>
 bool orbit_list<N, T>::mark_orbit(const symmetry<N, T> &sym,
-	const index<N> &idx, std::vector<bool> &lst) {
+	const dimensions<N> &dims, const index<N> &idx,
+	std::vector<bool> &lst) {
 
-	size_t absidx = sym.get_dims().abs_index(idx);
+	size_t absidx = dims.abs_index(idx);
 	bool allowed = true;
 	if(!lst[absidx]) {
 		lst[absidx] = true;
@@ -80,7 +82,7 @@ bool orbit_list<N, T>::mark_orbit(const symmetry<N, T> &sym,
 			allowed = allowed && elem.is_allowed(idx);
 			index<N> idx2(idx);
 			elem.apply(idx2);
-			allowed = allowed && mark_orbit(sym, idx2, lst);
+			allowed = allowed && mark_orbit(sym, dims, idx2, lst);
 		}
 	}
 	return allowed;

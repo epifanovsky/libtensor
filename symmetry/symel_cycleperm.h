@@ -61,6 +61,7 @@ public:
 	//@{
 	virtual const mask<N> &get_mask() const;
 	virtual void permute(const permutation<N> &perm);
+	virtual bool is_valid_bis(const block_index_space<N> &bis) const;
 	virtual bool is_allowed(const index<N> &idx) const;
 	virtual void apply(index<N> &idx) const;
 	virtual void apply(index<N> &idx, transf<N, T> &tr) const;
@@ -140,6 +141,26 @@ void symel_cycleperm<N, T>::permute(const permutation<N> &perm) {
 
 
 template<size_t N, typename T>
+bool symel_cycleperm<N, T>::is_valid_bis(
+	const block_index_space<N> &bis) const {
+
+	bool first = true;
+	size_t type;
+	for(register size_t i = 0; i < N; i++) {
+		if(m_msk[i]) {
+			if(first) {
+				type = bis.get_type(i);
+				first = false;
+			} else {
+				if(bis.get_type(i) != type) return false;
+			}
+		}
+	}
+	return true;
+}
+
+
+template<size_t N, typename T>
 bool symel_cycleperm<N, T>::is_allowed(const index<N> &idx) const {
 
 	return true;
@@ -178,54 +199,6 @@ symmetry_element_i<N, T> *symel_cycleperm<N, T>::clone() const {
 	return new symel_cycleperm<N, T>(*this);
 }
 
-/*
-template<size_t N, typename T>
-symmetry_element_i<N + 1, T> *symel_cycleperm<N, T>::project_up(
-	const mask<N + 1> &msk, const dimensions<N + 1> &dims) const
-	throw(exception) {
-
-	static const char *method = "project_up(const mask<N + 1>&,"
-		"const dimensions<N + 1>&)";
-
-	mask<N + 1> newmask;
-	size_t j = 0;
-	for(size_t i = 0; i < N + 1; i++) {
-		if(msk[i]) {
-			newmask[i] = m_msk[j];
-			j++;
-		}
-	}
-	if(j + 1 < N) {
-		throw bad_parameter("libtensor", k_clazz, method, __FILE__,
-			__LINE__, "Invalid mask.");
-	}
-	return new symel_cycleperm<N + 1, T>(newmask, dims);
-}
-
-
-template<size_t N, typename T>
-symmetry_element_i<N - 1, T> *symel_cycleperm<N, T>::project_down(
-	const mask<N> &msk, const dimensions<N - 1> &dims) const
-	throw(exception) {
-
-	static const char *method = "project_down(const mask<N>&,"
-		"const dimensions<N - 1>&)";
-
-	mask<N - 1> newmask;
-	size_t j = 0;
-	for(size_t i = 0; i < N; i++) {
-		if(msk[i]) {
-			newmask[j] = m_msk[i];
-			j++;
-		}
-	}
-	if(j + 2 < N) {
-		throw bad_parameter("libtensor", k_clazz, method, __FILE__,
-			__LINE__, "Invalid mask.");
-	}
-	return new symel_cycleperm<N - 1, T>(newmask, dims);
-}
-*/
 
 template<size_t N, typename T>
 bool symel_cycleperm<N, T>::equals(const symel_cycleperm<N, T> &elem) const {

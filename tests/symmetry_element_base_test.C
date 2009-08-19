@@ -14,6 +14,9 @@ public:
 
 	virtual const mask<1> &get_mask() const { throw 0; }
 	virtual void permute(const permutation<1> &perm) { throw 0; }
+	virtual bool is_valid_bis(const block_index_space<1> &bis) const {
+		throw 0;
+	}
 	virtual bool is_allowed(const index<1> &idx) const { throw 0; }
 	virtual void apply(index<1> &idx) const { throw 0; }
 	virtual void apply(index<1> &idx, transf<1, int> &tr) const { throw 0; }
@@ -31,6 +34,9 @@ public:
 
 	virtual const mask<1> &get_mask() const { throw 0; }
 	virtual void permute(const permutation<1> &perm) { throw 0; }
+	virtual bool is_valid_bis(const block_index_space<1> &bis) const {
+		throw 0;
+	}
 	virtual bool is_allowed(const index<1> &idx) const { throw 0; }
 	virtual void apply(index<1> &idx) const { throw 0; }
 	virtual void apply(index<1> &idx, transf<1, int> &tr) const { throw 0; }

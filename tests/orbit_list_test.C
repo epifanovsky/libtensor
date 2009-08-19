@@ -23,8 +23,13 @@ void orbit_list_test::test_1() throw(libtest::test_exception) {
 
 	index<2> i1, i2;
 	i2[0] = 2; i2[1] = 2;
+	mask<2> msk;
+	msk[0] = true; msk[1] = true;
 	dimensions<2> dims(index_range<2>(i1, i2));
-	symmetry<2, double> sym(dims);
+	block_index_space<2> bis(dims);
+	bis.split(msk, 1);
+	bis.split(msk, 2);
+	symmetry<2, double> sym(bis);
 
 	orbit_list<2, double> orblst(sym);
 	size_t norb_ref = 9;
@@ -68,8 +73,13 @@ void orbit_list_test::test_2() throw(libtest::test_exception) {
 
 	index<2> i1, i2;
 	i2[0] = 2; i2[1] = 2;
+	mask<2> msk;
+	msk[0] = true; msk[1] = true;
 	dimensions<2> dims(index_range<2>(i1, i2));
-	symmetry<2, double> sym(dims);
+	block_index_space<2> bis(dims);
+	bis.split(msk, 1);
+	bis.split(msk, 2);
+	symmetry<2, double> sym(bis);
 	mask<2> cycle_msk;
 	cycle_msk[0] = true; cycle_msk[1] = true;
 	symel_cycleperm<2, double> cycle(cycle_msk, dims);
@@ -118,8 +128,13 @@ void orbit_list_test::test_3() throw(libtest::test_exception) {
 
 	index<4> i1, i2;
 	i2[0] = 2; i2[1] = 2; i2[2] = 2; i2[3] = 2;
+	mask<4> msk;
+	msk[0] = true; msk[1] = true; msk[2] = true; msk[3] = true;
 	dimensions<4> dims(index_range<4>(i1, i2));
-	symmetry<4, double> sym(dims);
+	block_index_space<4> bis(dims);
+	bis.split(msk, 1);
+	bis.split(msk, 2);
+	symmetry<4, double> sym(bis);
 	mask<4> cycle_msk;
 	cycle_msk[0] = true; cycle_msk[1] = true;
 	symel_cycleperm<4, double> cycle(cycle_msk, dims);
@@ -168,8 +183,13 @@ void orbit_list_test::test_4() throw(libtest::test_exception) {
 
 	index<4> i1, i2;
 	i2[0] = 2; i2[1] = 2; i2[2] = 2; i2[3] = 2;
+	mask<4> msk;
+	msk[0] = true; msk[1] = true; msk[2] = true; msk[3] = true;
 	dimensions<4> dims(index_range<4>(i1, i2));
-	symmetry<4, double> sym(dims);
+	block_index_space<4> bis(dims);
+	bis.split(msk, 1);
+	bis.split(msk, 2);
+	symmetry<4, double> sym(bis);
 	mask<4> cycle_msk;
 	cycle_msk[1] = true; cycle_msk[2] = true;
 	symel_cycleperm<4, double> cycle(cycle_msk, dims);
@@ -218,8 +238,13 @@ void orbit_list_test::test_5() throw(libtest::test_exception) {
 
 	index<4> i1, i2;
 	i2[0] = 2; i2[1] = 2; i2[2] = 2; i2[3] = 2;
+	mask<4> msk;
+	msk[0] = true; msk[1] = true; msk[2] = true; msk[3] = true;
 	dimensions<4> dims(index_range<4>(i1, i2));
-	symmetry<4, double> sym(dims);
+	block_index_space<4> bis(dims);
+	bis.split(msk, 1);
+	bis.split(msk, 2);
+	symmetry<4, double> sym(bis);
 	mask<4> cycle_msk;
 	cycle_msk[0] = true; cycle_msk[1] = true; cycle_msk[2] = true;
 	symel_cycleperm<4, double> cycle(cycle_msk, dims);
@@ -269,8 +294,13 @@ void orbit_list_test::test_6() throw(libtest::test_exception) {
 
 	index<4> i1, i2;
 	i2[0] = 2; i2[1] = 2; i2[2] = 2; i2[3] = 2;
+	mask<4> msk;
+	msk[0] = true; msk[1] = true; msk[2] = true; msk[3] = true;
 	dimensions<4> dims(index_range<4>(i1, i2));
-	symmetry<4, double> sym(dims);
+	block_index_space<4> bis(dims);
+	bis.split(msk, 1);
+	bis.split(msk, 2);
+	symmetry<4, double> sym(bis);
 	mask<4> cycle_msk;
 	cycle_msk[0] = true; cycle_msk[1] = true;
 	cycle_msk[2] = false; cycle_msk[3] = false;
@@ -324,8 +354,13 @@ void orbit_list_test::test_7() throw(libtest::test_exception) {
 
 	index<4> i1, i2;
 	i2[0] = 2; i2[1] = 2; i2[2] = 2; i2[3] = 2;
+	mask<4> msk;
+	msk[0] = true; msk[1] = true; msk[2] = true; msk[3] = true;
 	dimensions<4> dims(index_range<4>(i1, i2));
-	symmetry<4, double> sym(dims);
+	block_index_space<4> bis(dims);
+	bis.split(msk, 1);
+	bis.split(msk, 2);
+	symmetry<4, double> sym(bis);
 	mask<4> cycle_msk;
 	cycle_msk[0] = true; cycle_msk[1] = true; cycle_msk[2] = true;
 	symel_cycleperm<4, double> cycle1(cycle_msk, dims);
@@ -377,8 +412,13 @@ void orbit_list_test::test_8() throw(libtest::test_exception) {
 
 	index<4> i1, i2;
 	i2[0] = 2; i2[1] = 2; i2[2] = 2; i2[3] = 2;
+	mask<4> msk;
+	msk[0] = true; msk[1] = true; msk[2] = true; msk[3] = true;
 	dimensions<4> dims(index_range<4>(i1, i2));
-	symmetry<4, double> sym(dims);
+	block_index_space<4> bis(dims);
+	bis.split(msk, 1);
+	bis.split(msk, 2);
+	symmetry<4, double> sym(bis);
 	mask<4> cycle_msk;
 	cycle_msk[0] = true; cycle_msk[1] = true;
 	cycle_msk[2] = true; cycle_msk[3] = true;

@@ -76,7 +76,7 @@ const char *block_tensor<N, T, Alloc>::k_clazz = "block_tensor<N, T, Alloc>";
 
 template<size_t N, typename T, typename Alloc>
 block_tensor<N, T, Alloc>::block_tensor(const block_index_space<N> &bis)
-: m_bis(bis), m_bidims(bis.get_block_index_dims()), m_symmetry(m_bidims) {
+: m_bis(bis), m_bidims(bis.get_block_index_dims()), m_symmetry(m_bis) {
 
 }
 

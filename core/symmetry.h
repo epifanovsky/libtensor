@@ -4,14 +4,12 @@
 #include <algorithm>
 #include <vector>
 #include "defs.h"
+#include "block_index_space.h"
 #include "exception.h"
 #include "dimensions.h"
-//#include "orbit.h"
 #include "symmetry_element_i.h"
 
 namespace libtensor {
-
-template<size_t N, typename T> class orbit;
 
 /**	\brief Tensor symmetry
 	\tparam N Tensor order.
@@ -29,7 +27,7 @@ public:
 	typedef symmetry_element_i<N, T> symmetry_element_t;
 
 private:
-	dimensions<N> m_dims; //!< Block %index %dimensions
+	block_index_space<N> m_bis; //!< Block %index space
 	std::vector<symmetry_element_t*> m_elements; //!< Symmetry elements
 
 public:
@@ -39,7 +37,7 @@ public:
 	/**	\brief Creates %symmetry using given %dimensions
 		\param dims Block %index %dimensions.
 	 **/
-	symmetry(const dimensions<N> &dims);
+	explicit symmetry(const block_index_space<N> &bis);
 
 	/**	\brief Copy constructor
 		\param sym Another %symmetry object.
@@ -52,7 +50,7 @@ public:
 
 	//@}
 
-	const dimensions<N> &get_dims() const;
+	const block_index_space<N> &get_bis() const;
 
 
 	//!	\name Symmetry elements
@@ -111,6 +109,7 @@ public:
 
 private:
 	void remove_all();
+	symmetry(const dimensions<N>&);
 
 };
 
@@ -120,15 +119,13 @@ const char *symmetry<N, T>::k_clazz = "symmetry<N, T>";
 
 
 template<size_t N, typename T>
-inline symmetry<N, T>::symmetry(const dimensions<N> &dims)
-: m_dims(dims) {
+inline symmetry<N, T>::symmetry(const block_index_space<N> &bis) : m_bis(bis) {
 
 }
 
 
 template<size_t N, typename T>
-symmetry<N, T>::symmetry(const symmetry<N, T> &sym)
-: m_dims(sym.m_dims) {
+symmetry<N, T>::symmetry(const symmetry<N, T> &sym) : m_bis(sym.m_bis) {
 
 	typename std::vector<symmetry_element_t*>::const_iterator i =
 		sym.m_elements.begin();
@@ -147,9 +144,9 @@ symmetry<N, T>::~symmetry() {
 
 
 template<size_t N, typename T>
-const dimensions<N> &symmetry<N, T>::get_dims() const {
+const block_index_space<N> &symmetry<N, T>::get_bis() const {
 
-	return m_dims;
+	return m_bis;
 }
 
 
@@ -177,6 +174,14 @@ const symmetry_element_i<N, T> &symmetry<N, T>::get_element(size_t n) const
 template<size_t N, typename T>
 void symmetry<N, T>::add_element(const symmetry_element_i<N, T> &elem) {
 
+	static const char *method =
+		"add_element(const symmetry_element_i<N, T>&)";
+
+	if(!elem.is_valid_bis(m_bis)) {
+		throw symmetry_violation(g_ns, k_clazz, method, __FILE__,
+			__LINE__, "Symmetry element is not applicable to "
+			"the block index space.");
+	}
 	typename std::vector<symmetry_element_t*>::iterator i =
 		m_elements.begin();
 	bool found = false;
@@ -262,7 +267,7 @@ void symmetry<N, T>::set_overlap(const symmetry<N, T> &sym) {
 template<size_t N, typename T>
 void symmetry<N, T>::permute(const permutation<N> &perm) {
 
-	m_dims.permute(perm);
+	m_bis.permute(perm);
 	typename std::vector<symmetry_element_t*>::iterator i =
 		m_elements.begin();
 	while(i != m_elements.end()) {

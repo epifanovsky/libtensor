@@ -3,6 +3,7 @@
 
 #include "defs.h"
 #include "exception.h"
+#include "block_index_space.h"
 #include "index.h"
 #include "mask.h"
 #include "permutation.h"
@@ -45,6 +46,12 @@ public:
 	 **/
 	virtual void permute(const permutation<N> &perm) = 0;
 
+	/**	\brief Checks whether the %symmetry element is applicable to
+			the given block %index space
+		\param bis Block %index space.
+	 **/
+	virtual bool is_valid_bis(const block_index_space<N> &bis) const = 0;
+
 	/**	\brief Checks whether an %index is allowed by %symmetry
 			(does not correspond to a zero block)
 		\param idx Block %index.
@@ -76,30 +83,6 @@ public:
 
 	virtual void dispatch(symmetry_element_target_i<N, T> &tgt) const
 		throw(exception) = 0;
-
-	/**	\brief Projects the %symmetry element to a higher-order
-			space by creating a new %symmetry element object
-			(the pointer must be deleted by the calling party)
-		\param msk Mask that indicates which dimensions are to be
-			projected.
-		\param dims Dimensions in the new space.
-		\throw exception If the projection cannot be performed.
-	 **/
-	//virtual symmetry_element_i<N + 1, T> *project_up(const mask<N + 1> &msk,
-	//	const dimensions<N + 1> &dims) const throw(exception) = 0;
-
-	/**	\brief Projects the %symmetry element to a lower-order space
-			by creating a new %symmetry element object (the pointer
-			must be deleted by the calling party)
-		\param msk Mask that indicates which dimensions are to be
-			preserved.
-		\param dims Dimensions in the new space.
-		\throw exception If the projection cannot be performed.
-	 **/
-	//virtual symmetry_element_i<N - 1, T> *project_down(
-	//	const mask<N> &msk, const dimensions<N - 1> &dims) const
-	//	throw(exception) = 0;
-	//@}
 
 };
 

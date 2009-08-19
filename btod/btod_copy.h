@@ -78,7 +78,7 @@ const char *btod_copy<N>::k_clazz = "btod_copy<N>";
 template<size_t N>
 btod_copy<N>::btod_copy(block_tensor_i<N, double> &bt, double c)
 : m_bt(bt), m_c(c), m_bis(bt.get_bis()), m_bidims(m_bis.get_block_index_dims()),
-	m_symmetry(m_bidims) {
+	m_symmetry(m_bis) {
 
 }
 
@@ -87,7 +87,7 @@ template<size_t N>
 btod_copy<N>::btod_copy(
 	block_tensor_i<N, double> &bt, const permutation<N> &p, double c)
 : m_bt(bt), m_perm(p), m_c(c), m_bis(bt.get_bis()),
-	m_bidims(m_bis.get_block_index_dims()), m_symmetry(m_bidims) {
+	m_bidims(m_bis.get_block_index_dims()), m_symmetry(m_bis) {
 
 	m_bis.permute(m_perm);
 	m_bidims.permute(m_perm);

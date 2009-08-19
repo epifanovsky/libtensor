@@ -11,6 +11,8 @@ void block_index_space_test::perform() throw(libtest::test_exception) {
 	test_2();
 	test_3();
 	test_equals_1();
+	test_equals_2();
+	test_equals_3();
 	test_exc_1();
 	test_exc_2();
 
@@ -266,6 +268,11 @@ void block_index_space_test::test_3() throw(libtest::test_exception) {
 		fail_test(testname, __FILE__, __LINE__,
 			"(1) Incorrect block index dimensions");
 	}
+	size_t typ = bis.get_type(0);
+	if(bis.get_type(1) != typ) {
+		fail_test(testname, __FILE__, __LINE__,
+			"(1) Incorrect splitting type");
+	}
 	if(!bis.get_block_start(i_00).equals(i_00)) {
 		fail_test(testname, __FILE__, __LINE__,
 			"(1) Incorrect block [0,0] start");
@@ -463,6 +470,57 @@ void block_index_space_test::test_equals_2() throw(libtest::test_exception) {
 	if(!bis4.equals(bis3)) {
 		fail_test(testname, __FILE__, __LINE__,
 			"Equality test (6) failed");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void block_index_space_test::test_equals_3() throw(libtest::test_exception) {
+
+	static const char *testname = "block_index_space_test::test_equals_3()";
+
+	try {
+
+	permutation<4> perm;
+	perm.permute(0, 2).permute(1, 3);
+	index<4> i_00;
+	index<4> i_89;
+	i_89[0] = 8; i_89[1] = 8; i_89[2] = 9; i_89[3] = 9;
+	mask<4> msk1, msk2;
+	msk1[0] = true; msk1[1] = true;
+	msk2[2] = true; msk2[3] = true;
+
+	dimensions<4> dims_89(index_range<4>(i_00, i_89));
+	dimensions<4> dims_98(dims_89); dims_98.permute(perm);
+
+	block_index_space<4> bis1(dims_89), bis2(dims_98);
+
+	if(bis1.equals(bis2)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Equality test (1) failed");
+	}
+
+	bis1.split(msk1, 5);
+	bis2.split(msk2, 5);
+	if(bis1.equals(bis2)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Equality test (2) failed");
+	}
+
+	bis1.split(msk2, 3);
+	bis2.split(msk1, 3);
+	if(bis1.equals(bis2)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Equality test (3) failed");
+	}
+
+	bis2.permute(perm);
+	if(!bis1.equals(bis2)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Equality test (4) failed");
 	}
 
 	} catch(exception &e) {

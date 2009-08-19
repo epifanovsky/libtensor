@@ -128,7 +128,7 @@ const char *btod_add<N>::k_clazz = "btod_add<N>";
 template<size_t N>
 btod_add<N>::btod_add(block_tensor_i<N, double> &bt, double c)
 : m_bis(bt.get_bis()), m_bidims(m_bis.get_block_index_dims()),
-	m_symmetry(m_bidims) {
+	m_symmetry(m_bis) {
 
 	add_operand(bt, permutation<N>(), c);
 }
@@ -138,7 +138,7 @@ template<size_t N>
 btod_add<N>::btod_add(
 	block_tensor_i<N, double> &bt, const permutation<N> &perm, double c)
 : m_bis(bt.get_bis()), m_bidims(m_bis.get_block_index_dims().permute(perm)),
-	m_symmetry(m_bidims) {
+	m_symmetry(m_bis) {
 
 	m_bis.permute(perm);
 	add_operand(bt, perm, c);
@@ -266,7 +266,9 @@ void btod_add<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 			src_blk_idx.permute(invperm);
 
 			orbit<N, double> orb(ctrl.req_symmetry(), src_blk_idx);
-			ctrl.req_symmetry().get_dims().abs_index(
+			dimensions<N> bidims(ctrl.req_symmetry().get_bis().
+				get_block_index_dims());
+			bidims.abs_index(
 				orb.get_abs_canonical_index(), can_blk_idx);
 			transf<N, double> tr(orb.get_transf(src_blk_idx));
 			if(ctrl.req_is_zero_block(can_blk_idx)) continue;
@@ -309,7 +311,7 @@ void btod_add<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 
 			tod_add<N> todadd(iarg->m_ctrl->req_block(iarg->m_idx),
 				iarg->m_tr.m_perm,iarg->m_tr.m_coeff);
-				
+
 			iarg++;
 
 			while(iarg != arglst.end()) {

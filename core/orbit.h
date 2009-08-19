@@ -65,7 +65,7 @@ private:
 
 template<size_t N, typename T>
 orbit<N, T>::orbit(const symmetry<N, T> &sym, const index<N> &idx)
-: m_dims(sym.get_dims()) {
+: m_dims(sym.get_bis().get_block_index_dims()) {
 
 	m_canidx = m_dims.abs_index(idx);
 	std::vector<bool> chk(m_dims.get_size(), false);

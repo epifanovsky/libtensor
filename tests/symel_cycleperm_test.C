@@ -23,11 +23,16 @@ void symel_cycleperm_test::test_1() throw(libtest::test_exception) {
 	index<4> i1, i2;
 	i2[0] = 2; i2[1] = 2; i2[2] = 2; i2[3] = 2;
 	dimensions<4> dims(index_range<4>(i1, i2));
+	block_index_space<4> bis(dims);
 	mask<4> msk;
 	symel_cycleperm<4, double> elem(msk, dims);
 	if(!elem.get_perm().is_identity()) {
 		fail_test(testname, __FILE__, __LINE__,
 			"Expecting an identity permutation.");
+	}
+	if(!elem.is_valid_bis(bis)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Applicability test failed.");
 	}
 
 	} catch(exception &e) {
@@ -44,6 +49,7 @@ void symel_cycleperm_test::test_2() throw(libtest::test_exception) {
 	index<4> i1, i2;
 	i2[0] = 2; i2[1] = 2; i2[2] = 2; i2[3] = 2;
 	dimensions<4> dims(index_range<4>(i1, i2));
+	block_index_space<4> bis(dims);
 	mask<4> msk;
 	msk[0] = true; msk[1] = true;
 	permutation<4> perm;
@@ -52,6 +58,10 @@ void symel_cycleperm_test::test_2() throw(libtest::test_exception) {
 	if(!elem.get_perm().equals(perm)) {
 		fail_test(testname, __FILE__, __LINE__,
 			"Unexpected permutation.");
+	}
+	if(!elem.is_valid_bis(bis)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Applicability test failed.");
 	}
 
 	} catch(exception &e) {
@@ -68,6 +78,7 @@ void symel_cycleperm_test::test_3() throw(libtest::test_exception) {
 	index<4> i1, i2;
 	i2[0] = 2; i2[1] = 2; i2[2] = 2; i2[3] = 2;
 	dimensions<4> dims(index_range<4>(i1, i2));
+	block_index_space<4> bis(dims);
 	mask<4> msk;
 	msk[0] = true; msk[1] = true; msk[2] = true; msk[3] = true;
 	permutation<4> perm;
@@ -76,6 +87,10 @@ void symel_cycleperm_test::test_3() throw(libtest::test_exception) {
 	if(!elem.get_perm().equals(perm)) {
 		fail_test(testname, __FILE__, __LINE__,
 			"Unexpected permutation.");
+	}
+	if(!elem.is_valid_bis(bis)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Applicability test failed.");
 	}
 
 	} catch(exception &e) {
