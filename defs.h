@@ -16,6 +16,10 @@ const size_t max_tensor_order = 6;
  **/
 extern const char *version;
 
+/**	\brief Namespace name
+ **/
+extern const char *g_ns;
+
 }
 
 #undef TENSOR_DEBUG

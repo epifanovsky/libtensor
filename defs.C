@@ -9,5 +9,7 @@ const char *version =
 	"unknown";
 #endif
 
+const char *g_ns = "libtensor";
+
 }
 

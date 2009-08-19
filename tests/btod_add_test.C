@@ -139,8 +139,8 @@ void btod_add_test::test_2(double ca1, double ca2)
 	i2[0] = 6; i2[1] = 6;
 	dimensions<2> dims_11(index_range<2>(i1, i2));
 	block_index_space<2> bis(dims);
-	bis.split(0, 3);
-	bis.split(1, 3);
+	mask<2> splmsk; splmsk[0] = true; splmsk[1] = true;
+	bis.split(splmsk, 3);
 	dimensions<2> bidims(bis.get_block_index_dims());
 
 	block_tensor_t bta1(bis), bta2(bis), btb(bis);
@@ -275,10 +275,9 @@ void btod_add_test::test_3(double ca1, double ca2)
 	i2[0] = 6; i2[1] = 6; i2[2] = 6; i2[3] = 6;
 	dimensions<4> dims_1111(index_range<4>(i1, i2));
 	block_index_space<4> bis(dims);
-	bis.split(0, 3);
-	bis.split(1, 3);
-	bis.split(2, 3);
-	bis.split(3, 3);
+	mask<4> splmsk;
+	splmsk[0] = true; splmsk[1] = true; splmsk[2] = true; splmsk[3] = true;
+	bis.split(splmsk, 3);
 	dimensions<4> bidims(bis.get_block_index_dims());
 
 	block_tensor_t bta1(bis), bta2(bis), btb(bis);

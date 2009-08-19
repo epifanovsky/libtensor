@@ -254,12 +254,13 @@ inline bispace<1> &bispace<1>::split(size_t pos) throw(exception) {
 
 	std::list<size_t>::iterator i = m_splits.begin();
 	while(i != m_splits.end() && *i <= pos) i++;
+	mask<1> msk; msk[0] = true;
 	if(i == m_splits.end()) {
 		m_splits.push_back(pos);
-		m_bis.split(0, pos);
+		m_bis.split(msk, pos);
 	} else if(*i > pos) {
 		m_splits.insert(i, pos);
-		m_bis.split(0, pos);
+		m_bis.split(msk, pos);
 	}
 	return *this;
 }
@@ -269,8 +270,9 @@ inline void bispace<1>::transfer_splits(block_index_space<N> &bis, size_t dim)
 	const {
 
 	typename std::list<size_t>::const_iterator i = m_splits.begin();
+	mask<N> msk; msk[dim] = true;
 	while(i != m_splits.end()) {
-		bis.split(dim, *i);
+		bis.split(msk, *i);
 		i++;
 	}
 }

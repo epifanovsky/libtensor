@@ -91,9 +91,10 @@ void btod_copy_test::test_zero_2() throw(libtest::test_exception) {
 	i2[0] = 10; i2[1] = 10;
 	dimensions<2> dims(index_range<2>(i1, i2));
 	block_index_space<2> bis(dims);
-	bis.split(0, 3);
-	bis.split(0, 6);
-	bis.split(1, 5);
+	mask<2> msk1, msk2; msk1[0] = true; msk2[1] = true;
+	bis.split(msk1, 3);
+	bis.split(msk1, 6);
+	bis.split(msk2, 5);
 	dimensions<2> bidims(bis.get_block_index_dims());
 	tensor_t ta(dims), tb(dims);
 	block_tensor_t bta(bis), btb(bis);

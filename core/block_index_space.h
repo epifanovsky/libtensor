@@ -2,13 +2,16 @@
 #define LIBTENSOR_BLOCK_INDEX_SPACE_H
 
 #include <list>
+#include <vector>
 #include "defs.h"
 #include "exception.h"
 #include "dimensions.h"
 #include "index.h"
+#include "mask.h"
 #include "permutation.h"
 
 namespace libtensor {
+
 
 /**	\brief Block %index space
 	\tparam N Tensor order.
@@ -29,6 +32,11 @@ namespace libtensor {
 	points and therefore defines only one block that spans the entire
 	%index space. Using split(), the %index space is divided into blocks.
 
+	Dimensions split identically are suitable for permutational %symmetry
+	and are said to have the same type. As the block %index space is
+	initialized, those %dimensions that have the same number of elements
+	are assigned the same type.
+
 	\ingroup libtensor_core
  **/
 template<size_t N>
@@ -37,9 +45,13 @@ private:
 	static const char *k_clazz; //!< Class name
 
 private:
+	typedef std::vector<size_t> splits_t;
+
+private:
 	dimensions<N> m_dims; //!< Total dimensions
-	index<N> m_block_index_max; //!< The last block %index
-	std::list< index<N> > m_splits; //!< Split points
+	index<N> m_nsplits; //!< Number of splits along each dimension
+	sequence<N, size_t> m_type; //!< Split type
+	sequence<N, splits_t*> m_splits; //!< Split points
 
 public:
 	//!	\name Construction and destruction
@@ -55,9 +67,9 @@ public:
 	 **/
 	block_index_space(const block_index_space<N> &bis);
 
-	/**	\brief Virtual destructor
+	/**	\brief Destructor
 	 **/
-	virtual ~block_index_space();
+	~block_index_space();
 
 	//@}
 
@@ -67,7 +79,7 @@ public:
 
 	/**	\brief Returns the total dimensions
 	 **/
-	virtual const dimensions<N> &get_dims() const;
+	const dimensions<N> &get_dims() const;
 
 	/**	\brief Returns the dimensions that limit block %index values
 	 **/
@@ -87,6 +99,12 @@ public:
 	dimensions<N> get_block_dims(const index<N> &idx) const
 		throw(out_of_bounds);
 
+	/**	\brief Returns the type (splitting pattern) of a dimension
+		\param dim Dimension number.
+		\throw out_of_bounds If the dimension number is out of bounds.
+	 **/
+	size_t get_type(size_t dim) const throw(out_of_bounds);
+
 	/**	\brief Returns true if two block %index spaces are identical
 	 **/
 	bool equals(const block_index_space<N> &bis) const;
@@ -97,13 +115,15 @@ public:
 	//!	\name Manipulations
 	//@{
 
-	/**	\brief Adds a split point for a dimension
-		\param dim Dimension number (not to exceed N).
+	/**	\brief Adds a split point for %dimension identified by a %mask
+		\param msk Dimension mask.
 		\param pos Split position (not to exceed the number of
 			elements along the given dimension).
-		\throw exception If one of the indexes is out of bounds.
+		\throw bad_parameter If the mask is incorrect.
+		\throw out_of_bounds If the position is out of bounds.
 	 **/
-	void split(size_t dim, size_t pos) throw(exception);
+	void split(const mask<N> &msk, size_t pos)
+		throw(bad_parameter, out_of_bounds);
 
 	/**	\brief Removes all split points
 	 **/
@@ -116,30 +136,40 @@ public:
 
 	//@}
 
+private:
+	void init_types();
+	void clear_splits();
 };
+
 
 template<size_t N>
 const char *block_index_space<N>::k_clazz = "block_index_space<N>";
 
+
 template<size_t N>
 block_index_space<N>::block_index_space(const dimensions<N> &dims)
-: m_dims(dims) {
+: m_dims(dims), m_type(0), m_splits(NULL) {
 
-	index<N> idx;
-	for(register size_t i = 0; i < N; i++) idx[i] = dims[i];
-	m_splits.push_back(idx);
+	init_types();
 }
+
 
 template<size_t N>
 block_index_space<N>::block_index_space(const block_index_space<N> &bis)
-: m_dims(bis.m_dims), m_block_index_max(bis.m_block_index_max),
-	m_splits(bis.m_splits) {
+: m_dims(bis.m_dims), m_nsplits(bis.m_nsplits), m_type(bis.m_type),
+	m_splits(NULL) {
 
+	for(size_t i = 0; i < N; i++) {
+		if(bis.m_splits[i])
+			m_splits[i] = new splits_t(*(bis.m_splits[i]));
+	}
 }
+
 
 template<size_t N>
 block_index_space<N>::~block_index_space() {
 
+	clear_splits();
 }
 
 template<size_t N>
@@ -148,12 +178,14 @@ inline const dimensions<N> &block_index_space<N>::get_dims() const {
 	return m_dims;
 }
 
+
 template<size_t N>
 dimensions<N> block_index_space<N>::get_block_index_dims() const {
 
 	index<N> i0;
-	return dimensions<N>(index_range<N>(i0, m_block_index_max));
+	return dimensions<N>(index_range<N>(i0, m_nsplits));
 }
+
 
 template<size_t N>
 index<N> block_index_space<N>::get_block_start(const index<N> &idx) const
@@ -163,8 +195,8 @@ index<N> block_index_space<N>::get_block_start(const index<N> &idx) const
 
 #ifdef LIBTENSOR_DEBUG
 	for(register size_t i = 0; i < N; i++) {
-		if(idx[i] > m_block_index_max[i]) {
-			throw out_of_bounds("libtensor", k_clazz, method,
+		if(idx[i] > m_nsplits[i]) {
+			throw out_of_bounds(g_ns, k_clazz, method,
 				__FILE__, __LINE__,
 				"Block index is out of bounds.");
 		}
@@ -172,22 +204,14 @@ index<N> block_index_space<N>::get_block_start(const index<N> &idx) const
 #endif // LIBTENSOR_DEBUG
 
 	index<N> i1;
-	typename std::list< index<N> >::const_iterator iter = m_splits.begin();
-	index<N> last, blk;
-	do {
-		const index<N> &cur = *iter;
-		for(size_t i = 0; i < N; i++) {
-			if(cur[i] > last[i]) {
-				if(blk[i] == idx[i]) i1[i] = last[i];
-				blk[i]++;
-			}
-		}
-		last = *iter;
-		iter++;
-	} while(iter != m_splits.end());
+	for(size_t i = 0; i < N; i++) {
+		const splits_t &spl = *m_splits[m_type[i]];
+		if(idx[i] > 0) i1[i] = spl[idx[i] - 1];
+	}
 
 	return i1;
 }
+
 
 template<size_t N>
 dimensions<N> block_index_space<N>::get_block_dims(const index<N> &idx) const
@@ -197,8 +221,8 @@ dimensions<N> block_index_space<N>::get_block_dims(const index<N> &idx) const
 
 #ifdef LIBTENSOR_DEBUG
 	for(register size_t i = 0; i < N; i++) {
-		if(idx[i] > m_block_index_max[i]) {
-			throw out_of_bounds("libtensor", k_clazz, method,
+		if(idx[i] > m_nsplits[i]) {
+			throw out_of_bounds(g_ns, k_clazz, method,
 				__FILE__, __LINE__,
 				"Block index is out of bounds.");
 		}
@@ -206,130 +230,169 @@ dimensions<N> block_index_space<N>::get_block_dims(const index<N> &idx) const
 #endif // LIBTENSOR_DEBUG
 
 	index<N> i1, i2;
-	typename std::list< index<N> >::const_iterator iter = m_splits.begin();
-	index<N> last, blk;
-	do {
-		const index<N> &cur = *iter;
-		for(size_t i = 0; i < N; i++) {
-			if(cur[i] > last[i]) {
-				if(blk[i] == idx[i]) {
-					i1[i] = last[i];
-					i2[i] = cur[i] - 1;
-				}
-				blk[i]++;
-			}
-		}
-		last = *iter;
-		iter++;
-	} while(iter != m_splits.end());
+	for(size_t i = 0; i < N; i++) {
+		const splits_t &spl = *m_splits[m_type[i]];
+		if(idx[i] > 0) i1[i] = spl[idx[i] - 1];
+		i2[i] = (idx[i] == m_nsplits[i]) ?
+			m_dims[i] - 1 : spl[idx[i]] - 1;
+	}
 
 	return dimensions<N>(index_range<N>(i1, i2));
 }
 
+
+template<size_t N>
+inline size_t block_index_space<N>::get_type(size_t dim) const
+	throw(out_of_bounds) {
+
+	return m_type[dim];
+}
+
+
 template<size_t N>
 bool block_index_space<N>::equals(const block_index_space<N> &bis) const {
 
-	if(!m_dims.equals(bis.m_dims) ||
-		!m_block_index_max.equals(bis.m_block_index_max)) {
+	if(!m_dims.equals(bis.m_dims) || !m_nsplits.equals(bis.m_nsplits)) {
 		return false;
 	}
 
-	size_t s1, s2;
+	mask<N> chk;
 	for(size_t i = 0; i < N; i++) {
-		typename std::list< index<N> >::const_iterator j1 =
-			m_splits.begin();
-		typename std::list< index<N> >::const_iterator j2 =
-			bis.m_splits.begin();
-		bool end = false;
-		while(!end) {
-			s1 = j1->at(i);
-			s2 = j2->at(i);
-			if(s1 != s2) return false;
-			bool end1 = (j1 == m_splits.end());
-			bool end2 = (j2 == bis.m_splits.end());
-			while(!end1 && s1 == j1->at(i)) {
-				j1++;
-				end1 = (j1 == m_splits.end());
+		size_t type1 = m_type[i], type2 = bis.m_type[i];
+		if(!chk[type1]) {
+			chk[type1] = true;
+			for(size_t j = i + 1; j < N; j++) {
+				if(m_type[j] == type1 && bis.m_type[j] != type2)
+					return false;
 			}
-			while(!end2 && s2 == j2->at(i)) {
-				j2++;
-				end2 = (j2 == bis.m_splits.end());
-			}
-			if((end1 && !end2) || (!end1 && end2)) return false;
-			end = end1 && end2;
+			const splits_t &splits1 = *m_splits[type1],
+				&splits2 = *bis.m_splits[type2];
+			size_t sz;
+			if((sz = splits1.size()) != splits2.size())
+				return false;
+			for(size_t j = 0; j < sz; j++)
+				if(splits1[j] != splits2[j]) return false;
 		}
 	}
 
 	return true;
 }
 
+
 template<size_t N>
-void block_index_space<N>::split(size_t dim, size_t pos) throw(exception) {
+void block_index_space<N>::split(const mask<N> &msk, size_t pos)
+	throw(bad_parameter, out_of_bounds) {
 
-	static const char *method = "split(size_t, size_t)";
+	static const char *method = "split(const mask<N>&, size_t)";
 
-	if(dim >= N)
-		throw_exc(k_clazz, method, "dim is out of bounds");
-	if(pos >= m_dims[dim])
-		throw_exc(k_clazz, method, "pos is out of bounds");
-	if(pos == 0)
-		return;
+	size_t i, type;
+	for(i = 0; i < N; i++) if(msk[i]) break;
+	if(i == N) return;
+	type = m_type[i];
+	if(pos >= m_dims[i]) {
+		throw out_of_bounds(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"Splitting position is out of bounds.");
+	}
 
-	index<N> i0;
-	typename std::list< index<N> >::iterator iter = m_splits.begin();
-	typename std::list< index<N> >::iterator ins = m_splits.end();
-	index<N> last;
-	do {
-		index<N> &cur = *iter;
+	mask<N> adjmsk;
+	bool adjmsk_neq = false;
+	for(i = 0; i < N; i++) {
+		if(msk[i]) {
+			if(m_type[i] != type) break;
+			adjmsk[i] = true;
+		} else {
+			adjmsk[i] = false;
+			if(m_type[i] == type) adjmsk_neq;
+		}
+	}
+	if(i != N) {
+		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"Invalid splitting mask.");
+	}
 
-		if(cur[dim] == pos) break;
-		if(cur[dim] == last[dim]) ins = iter;
-		if(cur[dim] > pos) {
-			if(ins == m_splits.end()) {
-				index<N> i(last);
-				i[dim] = pos;
-				m_splits.insert(iter, i);
-			} else {
-				while(ins != iter) {
-					index<N> &i1 = *ins;
-					ins++;
-					index<N> &i2 = *ins;
-					if(ins == iter)
-						i1[dim] = pos;
-					else
-						i1[dim] = i2[dim];
-				}
-			}
-			m_block_index_max[dim]++;
+	if(pos == 0) return;
+
+	splits_t *splits = NULL;
+	if(adjmsk_neq) {
+		size_t newtype = 0;
+		for(i = 0; i < N; i++)
+			if(m_type[i] > newtype) newtype = m_type[i];
+		newtype++;
+		splits = new splits_t(*(m_splits[type]));
+		m_splits[newtype] = splits;
+		for(i = 0; i < N; i++)
+			if(adjmsk[i]) m_type[i] = newtype;
+	} else {
+		splits = m_splits[type];
+	}
+
+	bool inc = false;
+	typename splits_t::iterator isp = splits->begin();
+	while(isp != splits->end()) {
+
+		size_t curpos = *isp;
+		if(curpos == pos) break;
+		if(curpos > pos) {
+			isp = splits->insert(isp, pos);
+			inc = true;
 			break;
 		}
+		isp++;
+	}
+	if(isp == splits->end()) {
+		splits->push_back(pos);
+		inc = true;
+	}
 
-		last = *iter;
-		iter++;
-	} while(iter != m_splits.end());
+	if(inc) {
+		for(i = 0; i < N; i++) if(adjmsk[i]) m_nsplits[i]++;
+	}
 }
+
 
 template<size_t N>
 void block_index_space<N>::reset() {
 
-	index<N> idx;
-	for(register size_t i = 0; i < N; i++) {
-		m_block_index_max[i] = 0;
-		idx[i] = m_dims[i];
-	}
-	m_splits.clear();
-	m_splits.push_back(idx);
+	clear_splits();
+	init_types();
 }
+
 
 template<size_t N>
 inline void block_index_space<N>::permute(const permutation<N> &perm) {
 
 	m_dims.permute(perm);
-	m_block_index_max.permute(perm);
-	typename std::list< index<N> >::iterator iter = m_splits.begin();
-	while(iter != m_splits.end()) {
-		iter->permute(perm);
-		iter++;
+	m_nsplits.permute(perm);
+	m_type.permute(perm);
+}
+
+
+template<size_t N>
+void block_index_space<N>::init_types() {
+
+	size_t lasttype = 0;
+	for(register size_t i = 0; i < N; i++) {
+		size_t type = lasttype;
+		for(register size_t j = 0; j < i; j++) {
+			if(m_dims[i] == m_dims[j]) {
+				type = m_type[j];
+				break;
+			}
+		}
+		if(type == lasttype) lasttype++;
+		if(m_splits[type] == NULL)
+			m_splits[type] = new splits_t();
+		m_type[i] = type;
+	}
+}
+
+
+template<size_t N>
+void block_index_space<N>::clear_splits() {
+
+	for(size_t i = 0; i < N; i++) {
+		delete m_splits[i];
+		m_splits[i] = NULL;
 	}
 }
 

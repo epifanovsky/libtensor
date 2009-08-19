@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_DIMENSIONS_H
 #define LIBTENSOR_DIMENSIONS_H
 
+#include <iostream>
 #include "defs.h"
 #include "exception.h"
 #include "index.h"
@@ -8,6 +9,12 @@
 #include "permutation.h"
 
 namespace libtensor {
+
+template<size_t N> class dimensions;
+
+template<size_t N>
+std::ostream &operator<<(std::ostream &os, const dimensions<N> &dims);
+
 
 /**	\brief Tensor %dimensions
 	\tparam N Tensor order.
@@ -18,6 +25,9 @@ namespace libtensor {
 **/
 template<size_t N>
 class dimensions {
+	friend std::ostream &operator<< <N>(std::ostream &os,
+		const dimensions<N> &dims);
+
 private:
 	index<N> m_dims; //!< Tensor %dimensions
 	index<N> m_incs; //!< Index increments
@@ -229,8 +239,7 @@ void dimensions<N>::update_increments() {
 }
 
 template<size_t N>
-inline size_t dimensions<N>::operator[](const size_t i) const
-	throw(exception) {
+inline size_t dimensions<N>::operator[](size_t i) const throw(exception) {
 	return get_dim(i);
 }
 
@@ -243,6 +252,13 @@ template<size_t N>
 inline bool dimensions<N>::operator!=(const dimensions<N> &other) const {
 	return !equals(other);
 }
+
+template<size_t N>
+std::ostream &operator<<(std::ostream &os, const dimensions<N> &dims) {
+	os << dims.m_dims;
+	return os;
+}
+
 
 } // namespace libtensor
 

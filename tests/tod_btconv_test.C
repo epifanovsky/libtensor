@@ -47,8 +47,9 @@ void tod_btconv_test::test_1() throw(libtest::test_exception) {
 	i2[0] = 10; i2[1] = 10;
 	dimensions<2> dims(index_range<2>(i1, i2));
 	block_index_space<2> bis(dims);
-	bis.split(0, 5);
-	bis.split(1, 5);
+	mask<2> splmsk;
+	splmsk[0] = true; splmsk[1] = true;
+	bis.split(splmsk, 5);
 
 	block_tensor_t bt(bis);
 	block_tensor_ctrl_t btctrl(bt);
@@ -108,8 +109,9 @@ void tod_btconv_test::test_2() throw(libtest::test_exception) {
 	i2[0] = 10; i2[1] = 10;
 	dimensions<2> dims(index_range<2>(i1, i2));
 	block_index_space<2> bis(dims);
-	bis.split(0, 5);
-	bis.split(1, 5);
+	mask<2> splmsk;
+	splmsk[0] = true; splmsk[1] = true;
+	bis.split(splmsk, 5);
 
 	block_tensor_t bt(bis);
 	block_tensor_ctrl_t btctrl(bt);
@@ -184,8 +186,9 @@ void tod_btconv_test::test_3() throw(libtest::test_exception) {
 	i2[0] = 10; i2[1] = 10;
 	dimensions<2> dims(index_range<2>(i1, i2));
 	block_index_space<2> bis(dims);
-	bis.split(0, 5);
-	bis.split(1, 5);
+	mask<2> splmsk;
+	splmsk[0] = true; splmsk[1] = true;
+	bis.split(splmsk, 5);
 
 	block_tensor_t bt(bis);
 	block_tensor_ctrl_t btctrl(bt);
@@ -261,8 +264,9 @@ void tod_btconv_test::test_4() throw(libtest::test_exception) {
 	i2[0] = 10; i2[1] = 10;
 	dimensions<2> dims(index_range<2>(i1, i2));
 	block_index_space<2> bis(dims);
-	bis.split(0, 3);
-	bis.split(1, 3);
+	mask<2> splmsk;
+	splmsk[0] = true; splmsk[1] = true;
+	bis.split(splmsk, 3);
 
 	block_tensor_t bt(bis);
 	block_tensor_ctrl_t btctrl(bt);
@@ -356,8 +360,9 @@ void tod_btconv_test::test_5() throw(libtest::test_exception) {
 	i2[0] = 10; i2[1] = 10;
 	dimensions<2> dims(index_range<2>(i1, i2));
 	block_index_space<2> bis(dims);
-	bis.split(0, 3);
-	bis.split(1, 3);
+	mask<2> splmsk;
+	splmsk[0] = true; splmsk[1] = true;
+	bis.split(splmsk, 3);
 	dimensions<2> bidims = bis.get_block_index_dims();
 
 	block_tensor_t bt(bis);
@@ -470,8 +475,9 @@ void tod_btconv_test::test_6() throw(libtest::test_exception) {
 	i2[0] = 10; i2[1] = 10;
 	dimensions<2> dims(index_range<2>(i1, i2));
 	block_index_space<2> bis(dims);
-	bis.split(0, 3);
-	bis.split(1, 3);
+	mask<2> splmsk;
+	splmsk[0] = true; splmsk[1] = true;
+	bis.split(splmsk, 3);
 	dimensions<2> bidims = bis.get_block_index_dims();
 
 	block_tensor_t bt(bis);
@@ -568,8 +574,9 @@ void tod_btconv_test::test_7() throw(libtest::test_exception) {
 	i2[0] = 10; i2[1] = 10;
 	dimensions<2> dims(index_range<2>(i1, i2));
 	block_index_space<2> bis(dims);
-	bis.split(0, 3);
-	bis.split(1, 3);
+	mask<2> splmsk;
+	splmsk[0] = true; splmsk[1] = true;
+	bis.split(splmsk, 3);
 	dimensions<2> bidims = bis.get_block_index_dims();
 
 	block_tensor_t bt(bis);
@@ -662,8 +669,9 @@ void tod_btconv_test::test_8() throw(libtest::test_exception) {
 	i2[0] = 10; i2[1] = 10;
 	dimensions<2> dims(index_range<2>(i1, i2));
 	block_index_space<2> bis(dims);
-	bis.split(0, 3);
-	bis.split(1, 3);
+	mask<2> splmsk;
+	splmsk[0] = true; splmsk[1] = true;
+	bis.split(splmsk, 3);
 	dimensions<2> bidims = bis.get_block_index_dims();
 
 	block_tensor_t bt(bis);
@@ -799,10 +807,9 @@ void tod_btconv_test::test_9() throw(libtest::test_exception) {
 	i2[0] = 10; i2[1] = 10; i2[2] = 10; i2[3] = 10;
 	dimensions<4> dims(index_range<4>(i1, i2));
 	block_index_space<4> bis(dims);
-	bis.split(0, 3);
-	bis.split(1, 3);
-	bis.split(2, 3);
-	bis.split(3, 3);
+	mask<4> splmsk;
+	splmsk[0] = true; splmsk[1] = true; splmsk[2] = true; splmsk[3] = true;
+	bis.split(splmsk, 3);
 	dimensions<4> bidims = bis.get_block_index_dims();
 
 	block_tensor_t bt(bis);
