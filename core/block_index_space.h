@@ -9,6 +9,7 @@
 #include "index.h"
 #include "mask.h"
 #include "permutation.h"
+#include "split_points.h"
 
 namespace libtensor {
 
@@ -45,13 +46,10 @@ private:
 	static const char *k_clazz; //!< Class name
 
 private:
-	typedef std::vector<size_t> splits_t;
-
-private:
 	dimensions<N> m_dims; //!< Total dimensions
 	index<N> m_nsplits; //!< Number of splits along each dimension
 	sequence<N, size_t> m_type; //!< Split type
-	sequence<N, splits_t*> m_splits; //!< Split points
+	sequence<N, split_points*> m_splits; //!< Split points
 
 public:
 	//!	\name Construction and destruction
@@ -104,6 +102,12 @@ public:
 		\throw out_of_bounds If the dimension number is out of bounds.
 	 **/
 	size_t get_type(size_t dim) const throw(out_of_bounds);
+
+	/**	\brief Returns splitting points
+		\param typ Dimension type (see get_type())
+		\throw out_of_bounds If the dimension type is out of bounds.
+	 **/
+	const split_points &get_splits(size_t typ) const throw(out_of_bounds);
 
 	/**	\brief Returns true if two block %index spaces are identical
 	 **/
@@ -161,7 +165,7 @@ block_index_space<N>::block_index_space(const block_index_space<N> &bis)
 
 	for(size_t i = 0; i < N; i++) {
 		if(bis.m_splits[i])
-			m_splits[i] = new splits_t(*(bis.m_splits[i]));
+			m_splits[i] = new split_points(*(bis.m_splits[i]));
 	}
 }
 
@@ -205,7 +209,7 @@ index<N> block_index_space<N>::get_block_start(const index<N> &idx) const
 
 	index<N> i1;
 	for(size_t i = 0; i < N; i++) {
-		const splits_t &spl = *m_splits[m_type[i]];
+		const split_points &spl = *m_splits[m_type[i]];
 		if(idx[i] > 0) i1[i] = spl[idx[i] - 1];
 	}
 
@@ -231,7 +235,7 @@ dimensions<N> block_index_space<N>::get_block_dims(const index<N> &idx) const
 
 	index<N> i1, i2;
 	for(size_t i = 0; i < N; i++) {
-		const splits_t &spl = *m_splits[m_type[i]];
+		const split_points &spl = *m_splits[m_type[i]];
 		if(idx[i] > 0) i1[i] = spl[idx[i] - 1];
 		i2[i] = (idx[i] == m_nsplits[i]) ?
 			m_dims[i] - 1 : spl[idx[i]] - 1;
@@ -246,6 +250,20 @@ inline size_t block_index_space<N>::get_type(size_t dim) const
 	throw(out_of_bounds) {
 
 	return m_type[dim];
+}
+
+
+template<size_t N>
+inline const split_points &block_index_space<N>::get_splits(size_t typ) const
+	throw(out_of_bounds) {
+
+	static const char *method = "get_splits(size_t)";
+
+	if(m_splits[typ] == NULL) {
+		throw out_of_bounds(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"Type number is out of bounds.");
+	}
+	return *m_splits[typ];
 }
 
 
@@ -265,13 +283,8 @@ bool block_index_space<N>::equals(const block_index_space<N> &bis) const {
 				if(m_type[j] == type1 && bis.m_type[j] != type2)
 					return false;
 			}
-			const splits_t &splits1 = *m_splits[type1],
-				&splits2 = *bis.m_splits[type2];
-			size_t sz;
-			if((sz = splits1.size()) != splits2.size())
+			if(!m_splits[type1]->equals(*bis.m_splits[type2]))
 				return false;
-			for(size_t j = 0; j < sz; j++)
-				if(splits1[j] != splits2[j]) return false;
 		}
 	}
 
@@ -312,39 +325,21 @@ void block_index_space<N>::split(const mask<N> &msk, size_t pos)
 
 	if(pos == 0) return;
 
-	splits_t *splits = NULL;
+	split_points *splits = NULL;
 	if(adjmsk_neq) {
 		size_t newtype = 0;
 		for(i = 0; i < N; i++)
 			if(m_type[i] > newtype) newtype = m_type[i];
 		newtype++;
-		splits = new splits_t(*(m_splits[type]));
-		m_splits[newtype] = splits;
+		m_splits[newtype] = splits =
+			new split_points(*(m_splits[type]));
 		for(i = 0; i < N; i++)
 			if(adjmsk[i]) m_type[i] = newtype;
 	} else {
 		splits = m_splits[type];
 	}
 
-	bool inc = false;
-	typename splits_t::iterator isp = splits->begin();
-	while(isp != splits->end()) {
-
-		size_t curpos = *isp;
-		if(curpos == pos) break;
-		if(curpos > pos) {
-			isp = splits->insert(isp, pos);
-			inc = true;
-			break;
-		}
-		isp++;
-	}
-	if(isp == splits->end()) {
-		splits->push_back(pos);
-		inc = true;
-	}
-
-	if(inc) {
+	if(splits->add(pos)) {
 		for(i = 0; i < N; i++) if(adjmsk[i]) m_nsplits[i]++;
 	}
 }
@@ -381,7 +376,7 @@ void block_index_space<N>::init_types() {
 		}
 		if(type == lasttype) lasttype++;
 		if(m_splits[type] == NULL)
-			m_splits[type] = new splits_t();
+			m_splits[type] = new split_points();
 		m_type[i] = type;
 	}
 }
