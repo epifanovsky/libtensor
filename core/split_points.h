@@ -19,6 +19,7 @@ private:
 public:
 	bool add(size_t pos);
 	bool equals(const split_points &sp) const;
+	size_t get_num_points() const;
 	size_t operator[](size_t i) const throw(out_of_bounds);
 };
 
@@ -53,6 +54,12 @@ inline bool split_points::equals(const split_points &sp) const {
 	for(register size_t i = 0; i < sz; i++)
 		if(m_points[i] != sp.m_points[i]) return false;
 	return true;
+}
+
+
+inline size_t split_points::get_num_points() const {
+
+	return m_points.size();
 }
 
 

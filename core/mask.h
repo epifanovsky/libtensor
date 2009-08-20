@@ -27,6 +27,13 @@ public:
 	bool equals(const mask<N> &msk) const;
 
 	//@}
+
+	//!	\name Operators
+	//@{
+
+	mask<N> &operator|=(const mask<N> &other);
+
+	//@}
 };
 
 
@@ -49,6 +56,18 @@ bool mask<N>::equals(const mask<N> &msk) const {
 		if(sequence<N, bool>::at_nochk(i) !=
 			msk.sequence<N, bool>::at_nochk(i)) return false;
 	return true;
+}
+
+
+template<size_t N>
+mask<N> &mask<N>::operator|=(const mask<N> &other) {
+
+	for(register size_t i = 0; i < N; i++) {
+		sequence<N, bool>::at_nochk(i) =
+			sequence<N, bool>::at_nochk(i) ||
+				other.sequence<N, bool>::at_nochk(i);
+	}
+	return *this;
 }
 
 

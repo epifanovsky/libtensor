@@ -7,6 +7,7 @@
 #include "timings.h"
 #include "tod_additive.h"
 #include "contraction2.h"
+#include "contraction2_list_builder.h"
 #include "processor.h"
 
 namespace libtensor {
@@ -269,7 +270,8 @@ void tod_contract2<N, M, K>::do_perform(tensor_i<k_orderc, double> &tc,
 	tod_contract2<N,M,K>::start_timer();
 
 	loop_list_adapter list_adapter(m_list);
-	m_contr.populate(list_adapter, m_ta.get_dims(), m_tb.get_dims(),
+	contraction2_list_builder<N, M, K, loop_list_adapter> lstbld(m_contr);
+	lstbld.populate(list_adapter, m_ta.get_dims(), m_tb.get_dims(),
 		tc.get_dims());
 
 	tensor_ctrl<N+K, double> ctrla(m_ta);

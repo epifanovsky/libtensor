@@ -13,6 +13,8 @@ class btod_contract2_test : public libtest::unit_test {
 public:
 	virtual void perform() throw(libtest::test_exception);
 
+private:
+	void test_bis_1() throw(libtest::test_exception);
 };
 
 } // namespace libtensor
