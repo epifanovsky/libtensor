@@ -8,8 +8,11 @@
 #include "tod/contraction2.h"
 #include "tod/tod_contract2.h"
 #include "btod/btod_additive.h"
+#include "symmetry/so_projdown.h"
+#include "symmetry/so_projup.h"
 
 namespace libtensor {
+
 
 /**	\brief Contraction of two block tensors
 
@@ -32,6 +35,7 @@ private:
 	block_tensor_i<k_ordera, double> &m_bta; //!< First argument (a)
 	block_tensor_i<k_orderb, double> &m_btb; //!< Second argument (b)
 	block_index_space<k_orderc> m_bis; //!< Block %index space of the result
+	symmetry<k_orderc, double> m_sym; //!< Symmetry of the result
 
 public:
 	//!	\name Construction and destruction
@@ -62,7 +66,7 @@ public:
 	//		libtensor::direct_block_tensor_operation<N + M, double>
 	//@{
 	virtual const block_index_space<N+M> &get_bis() const;
-	virtual const symmetry<N + M, double> &get_symmetry() const;
+	virtual const symmetry<k_orderc, double> &get_symmetry() const;
 	virtual void perform(block_tensor_i<k_orderc, double> &btc)
 		throw(exception);
 	//@}
@@ -72,22 +76,29 @@ private:
 		const contraction2<N, M, K> &contr,
 		block_tensor_i<k_ordera, double> &bta,
 		block_tensor_i<k_orderb, double> &btb);
+	void make_symmetry();
 };
+
 
 template<size_t N, size_t M, size_t K>
 const char *btod_contract2<N, M, K>::k_clazz = "btod_contract2<N, M, K>";
+
 
 template<size_t N, size_t M, size_t K>
 btod_contract2<N, M, K>::btod_contract2(const contraction2<N, M, K> &contr,
 	block_tensor_i<k_ordera, double> &bta,
 	block_tensor_i<k_orderb, double> &btb)
-: m_contr(contr), m_bta(bta), m_btb(btb), m_bis(make_bis(contr, bta, btb)) {
+: m_contr(contr), m_bta(bta), m_btb(btb), m_bis(make_bis(contr, bta, btb)),
+	m_sym(m_bis) {
 
+	make_symmetry();
 }
+
 
 template<size_t N, size_t M, size_t K>
 btod_contract2<N, M, K>::~btod_contract2() {
 }
+
 
 template<size_t N, size_t M, size_t K>
 inline const block_index_space<N+M> &btod_contract2<N, M, K>::get_bis() const {
@@ -95,11 +106,13 @@ inline const block_index_space<N+M> &btod_contract2<N, M, K>::get_bis() const {
 	return m_bis;
 }
 
+
 template<size_t N, size_t M, size_t K>
 const symmetry<N + M, double> &btod_contract2<N, M, K>::get_symmetry() const {
-	throw_exc("btod_contract2<N, M, K>", "get_symmetry()",
-		"Not implemented");
+
+	return m_sym;
 }
+
 
 template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::perform(block_tensor_i<k_orderc, double> &btc,
@@ -117,6 +130,7 @@ void btod_contract2<N, M, K>::perform(block_tensor_i<k_orderc, double> &btc,
 	contr.perform(ctrl_btc.req_block(idx_c),c);
 }
 
+
 template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::perform(block_tensor_i<k_orderc, double> &btc)
 	throw(exception) {
@@ -132,6 +146,7 @@ void btod_contract2<N, M, K>::perform(block_tensor_i<k_orderc, double> &btc)
 
 	contr.perform(ctrl_btc.req_block(idx_c));
 }
+
 
 template<size_t N, size_t M, size_t K>
 block_index_space<N + M> btod_contract2<N, M, K>::make_bis(
@@ -216,6 +231,66 @@ block_index_space<N + M> btod_contract2<N, M, K>::make_bis(
 
 	return bis;
 }
+
+
+template<size_t N, size_t M, size_t K>
+void btod_contract2<N, M, K>::make_symmetry() {
+
+	const sequence<k_maxconn, size_t> &conn = m_contr.get_conn();
+
+	dimensions<k_ordera> bidimsa(m_bta.get_bis().get_block_index_dims());
+	dimensions<k_orderb> bidimsb(m_btb.get_bis().get_block_index_dims());
+	dimensions<k_orderc> bidimsc(m_bis.get_block_index_dims());
+
+	index<N> ia1, ia2;
+	mask<k_ordera> projmska;
+	mask<k_orderc> projmskca;
+	size_t j = 0;
+	for(size_t i = 0; i < k_ordera; i++) {
+		size_t iconn = conn[k_orderc + i];
+		if(iconn < k_orderc) {
+			ia2[j] = bidimsa[i] - 1;
+			projmska[i] = true;
+			projmskca[iconn] = true;
+		}
+	}
+	dimensions<N> projdimsa(index_range<N>(ia1, ia2));
+	block_tensor_ctrl<k_ordera, double> ctrla(m_bta);
+	const symmetry<k_ordera, double> &syma = ctrla.req_symmetry();
+	size_t nelem = syma.get_num_elements();
+	for(size_t ielem = 0; ielem < nelem; ielem++) {
+		so_projdown<k_ordera, K, double> projdn(
+			syma.get_element(ielem), projmska, projdimsa);
+		so_projup<N, M, double> projup(
+			projdn.get_proj(), projmskca, bidimsc);
+		m_sym.add_element(projup.get_proj());
+	}
+
+	index<M> ib1, ib2;
+	mask<k_orderb> projmskb;
+	mask<k_orderc> projmskcb;
+	j = 0;
+	for(size_t i = 0; i < k_orderb; i++) {
+		size_t iconn = conn[k_orderc + k_ordera + i];
+		if(iconn < k_orderc) {
+			ib2[j] = bidimsb[i] - 1;
+			projmskb[i] = true;
+			projmskcb[iconn] = true;
+		}
+	}
+	dimensions<M> projdimsb(index_range<M>(ib1, ib2));
+	block_tensor_ctrl<k_orderb, double> ctrlb(m_btb);
+	const symmetry<k_orderb, double> &symb = ctrlb.req_symmetry();
+	nelem = symb.get_num_elements();
+	for(size_t ielem = 0; ielem < nelem; ielem++) {
+		so_projdown<k_orderb, K, double> projdn(
+			symb.get_element(ielem), projmskb, projdimsb);
+		so_projup<M, N, double> projup(
+			projdn.get_proj(), projmskcb, bidimsc);
+		m_sym.add_element(projup.get_proj());
+	}
+}
+
 
 } // namespace libtensor
 

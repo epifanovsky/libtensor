@@ -3,7 +3,10 @@
 
 #include "defs.h"
 #include "exception.h"
+#include "core/mask.h"
+#include "core/dimensions.h"
 #include "core/symmetry_element_i.h"
+#include "symel_cycleperm.h"
 #include "symmetry_element_target.h"
 
 namespace libtensor {

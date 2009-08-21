@@ -67,12 +67,6 @@ public:
 	virtual void apply(index<N> &idx, transf<N, T> &tr) const;
 	virtual bool equals(const symmetry_element_i<N, T> &se) const;
 	virtual symmetry_element_i<N, T> *clone() const;
-	/*
-	virtual symmetry_element_i<N + 1, T> *project_up(const mask<N + 1> &msk,
-		const dimensions<N + 1> &dims) const throw(exception);
-	virtual symmetry_element_i<N - 1, T> *project_down(const mask<N> &msk,
-		const dimensions<N - 1> &dims) const throw(exception);
-		*/
 	//@}
 
 	bool equals(const symel_cycleperm<N, T> &elem) const;
