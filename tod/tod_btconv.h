@@ -118,8 +118,7 @@ void tod_btconv<N>::perform(tensor_i<N, double> &t) throw(exception) {
 	const block_index_space<N> &bis = m_bt.get_bis();
 	dimensions<N> bidims(bis.get_block_index_dims());
 	if(!bis.get_dims().equals(t.get_dims())) {
-		throw bad_parameter("libtensor", k_clazz, method,
-			__FILE__, __LINE__,
+		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
 			"Incorrect dimensions of the output tensor.");
 	}
 
@@ -150,7 +149,8 @@ void tod_btconv<N>::perform(tensor_i<N, double> &t) throw(exception) {
 			const transf<N, double> &tr = i->second;
 			index<N> dst_offset = bis.get_block_start(idx);
 			copy_block(dst_ptr, t.get_dims(), dst_offset,
-				src_ptr, blk.get_dims(), tr.get_perm(), tr.get_coeff());
+				src_ptr, blk.get_dims(),
+				tr.get_perm(), tr.get_coeff());
 			i++;
 		}
 
@@ -180,10 +180,10 @@ void tod_btconv<N>::copy_block(double *optr, const dimensions<N> &odims,
 		size_t inca = idims.get_increment(i);
 		size_t incb = odims.get_increment(ib[i]);
 		loop_list_node node(idims[i], inca, incb);
-		if(i < N-1) {
-			node.m_op = new op_loop(idims[i], inca, incb);
-		} else {
+		if(i == N - 1) {
 			node.m_op = new op_dcopy(idims[i], inca, incb, icoeff);
+		} else {
+			node.m_op = new op_loop(idims[i], inca, incb);
 		}
 		lst.push_back(node);
 	}

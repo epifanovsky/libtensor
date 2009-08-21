@@ -23,6 +23,8 @@ void tod_btconv_test::perform() throw(libtest::test_exception) {
 	test_7();
 	test_8();
 	test_9();
+	test_10();
+	test_11();
 
 }
 
@@ -902,6 +904,217 @@ void tod_btconv_test::test_9() throw(libtest::test_exception) {
 	} while(dims_0001.inc_index(ii));
 	tctrl_0001.ret_dataptr(p);
 	btctrl.ret_block(i_0001);
+
+	tctrl.ret_dataptr(pt); pt = NULL;
+	tctrl_ref.ret_dataptr(pt_ref); pt_ref = NULL;
+
+	t_ref.set_immutable();
+	bt.set_immutable();
+
+	//	Invoke the operation
+
+	tod_btconv<4> op(bt);
+	op.perform(t);
+
+	//	Compare the result against the reference
+
+	compare_ref<4>::compare(testname, t, t_ref, 0.0);
+
+	} catch(exception &exc) {
+		fail_test(testname, __FILE__, __LINE__, exc.what());
+	}
+}
+
+
+void tod_btconv_test::test_10() throw(libtest::test_exception) {
+
+	//
+	//	Non-symmetric four-index tensor, one non-zero block
+	//
+
+	static const char *testname = "tod_btconv_test::test_10()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+	typedef tensor<4, double, allocator_t> tensor_t;
+	typedef tensor_ctrl<4, double> tensor_ctrl_t;
+	typedef block_tensor<4, double, allocator_t> block_tensor_t;
+	typedef block_tensor_ctrl<4, double> block_tensor_ctrl_t;
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 10; i2[1] = 10; i2[2] = 10; i2[3] = 10;
+	dimensions<4> dims(index_range<4>(i1, i2));
+	block_index_space<4> bis(dims);
+	mask<4> splmsk;
+	splmsk[0] = true; splmsk[1] = true; splmsk[2] = true; splmsk[3] = true;
+	bis.split(splmsk, 3);
+	dimensions<4> bidims = bis.get_block_index_dims();
+
+	block_tensor_t bt(bis);
+	block_tensor_ctrl_t btctrl(bt);
+
+	tensor_t t(dims), t_ref(dims);
+	tensor_ctrl_t tctrl(t), tctrl_ref(t_ref);
+
+	double *pt = tctrl.req_dataptr();
+	double *pt_ref = tctrl_ref.req_dataptr();
+
+	//	Fill in random input, generate reference
+
+	size_t sz = dims.get_size();
+	for(size_t i = 0; i < sz; i++) {
+		pt[i] = drand48();
+		pt_ref[i] = 0.0;
+	}
+
+	index<4> i_0001, i_0010, i_0100, i_1000;
+	i_0001[0] = 0; i_0001[1] = 0; i_0001[2] = 0; i_0001[3] = 1;
+	i_0010[0] = 0; i_0010[1] = 0; i_0010[2] = 1; i_0010[3] = 0;
+	i_0100[0] = 0; i_0100[1] = 1; i_0100[2] = 0; i_0100[3] = 0;
+	i_1000[0] = 1; i_1000[1] = 0; i_1000[2] = 0; i_1000[3] = 0;
+	index<4> istart_0001 = bis.get_block_start(i_0001);
+	index<4> istart_0010 = bis.get_block_start(i_0010);
+	index<4> istart_0100 = bis.get_block_start(i_0100);
+	index<4> istart_1000 = bis.get_block_start(i_1000);
+	dimensions<4> dims_0001 = bis.get_block_dims(i_0001);
+	dimensions<4> dims_0010 = bis.get_block_dims(i_0010);
+	dimensions<4> dims_0100 = bis.get_block_dims(i_0100);
+	dimensions<4> dims_1000 = bis.get_block_dims(i_1000);
+	double *p = NULL;
+	permutation<4> perm; perm.permute(0, 2);
+
+	tensor_i<4, double> &blk_0010 = btctrl.req_block(i_0010);
+	tensor_ctrl_t tctrl_0010(blk_0010);
+	p = tctrl_0010.req_dataptr();
+
+	index<4> ii;
+	do {
+		index<4> iii(istart_0010);
+		index<4> iii0;
+		for(size_t k = 0; k < 4; k++) iii0[k] = iii[k] + ii[k];
+		double d = drand48();
+		p[dims_0010.abs_index(ii)] = pt_ref[dims.abs_index(iii0)] = d;
+	} while(dims_0010.inc_index(ii));
+	tctrl_0010.ret_dataptr(p);
+	btctrl.ret_block(i_0010);
+
+	tctrl.ret_dataptr(pt); pt = NULL;
+	tctrl_ref.ret_dataptr(pt_ref); pt_ref = NULL;
+
+	t_ref.set_immutable();
+	bt.set_immutable();
+
+	//	Invoke the operation
+
+	tod_btconv<4> op(bt);
+	op.perform(t);
+
+	//	Compare the result against the reference
+
+	compare_ref<4>::compare(testname, t, t_ref, 0.0);
+
+	} catch(exception &exc) {
+		fail_test(testname, __FILE__, __LINE__, exc.what());
+	}
+}
+
+
+void tod_btconv_test::test_11() throw(libtest::test_exception) {
+
+	//
+	//	Pairwise-symmetric four-index tensor, one non-zero block
+	//
+
+	static const char *testname = "tod_btconv_test::test_11()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+	typedef tensor<4, double, allocator_t> tensor_t;
+	typedef tensor_ctrl<4, double> tensor_ctrl_t;
+	typedef block_tensor<4, double, allocator_t> block_tensor_t;
+	typedef block_tensor_ctrl<4, double> block_tensor_ctrl_t;
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 10; i2[1] = 9; i2[2] = 10; i2[3] = 9;
+	dimensions<4> dims(index_range<4>(i1, i2));
+	block_index_space<4> bis(dims);
+	mask<4> spl1, spl2;
+	spl1[0] = true; spl1[1] = false; spl1[2] = true; spl1[3] = false;
+	spl2[0] = false; spl2[1] = true; spl2[2] = false; spl2[3] = true;
+	bis.split(spl1, 3);
+	bis.split(spl2, 4);
+	dimensions<4> bidims = bis.get_block_index_dims();
+
+	block_tensor_t bt(bis);
+	block_tensor_ctrl_t btctrl(bt);
+
+	mask<4> msk;
+	msk[0] = true; msk[1] = false; msk[2] = true; msk[3] = false;
+	symel_cycleperm<4, double> cycle1(2, msk);
+	msk[0] = false; msk[1] = true; msk[2] = false; msk[3] = true;
+	symel_cycleperm<4, double> cycle2(2, msk);
+	btctrl.req_sym_add_element(cycle1);
+	btctrl.req_sym_add_element(cycle2);
+
+	tensor_t t(dims), t_ref(dims);
+	tensor_ctrl_t tctrl(t), tctrl_ref(t_ref);
+
+	double *pt = tctrl.req_dataptr();
+	double *pt_ref = tctrl_ref.req_dataptr();
+
+	//	Fill in random input, generate reference
+
+	size_t sz = dims.get_size();
+	for(size_t i = 0; i < sz; i++) {
+		pt[i] = drand48();
+		pt_ref[i] = 0.0;
+	}
+
+	index<4> i_0001, i_0010, i_0100, i_1000;
+	i_0001[0] = 0; i_0001[1] = 0; i_0001[2] = 0; i_0001[3] = 1;
+	i_0010[0] = 0; i_0010[1] = 0; i_0010[2] = 1; i_0010[3] = 0;
+	i_0100[0] = 0; i_0100[1] = 1; i_0100[2] = 0; i_0100[3] = 0;
+	i_1000[0] = 1; i_1000[1] = 0; i_1000[2] = 0; i_1000[3] = 0;
+	index<4> istart_0001 = bis.get_block_start(i_0001);
+	index<4> istart_0010 = bis.get_block_start(i_0010);
+	index<4> istart_0100 = bis.get_block_start(i_0100);
+	index<4> istart_1000 = bis.get_block_start(i_1000);
+	dimensions<4> dims_0001 = bis.get_block_dims(i_0001);
+	dimensions<4> dims_0010 = bis.get_block_dims(i_0010);
+	dimensions<4> dims_0100 = bis.get_block_dims(i_0100);
+	dimensions<4> dims_1000 = bis.get_block_dims(i_1000);
+	double *p = NULL;
+	permutation<4> perm; perm.permute(0, 2);
+	permutation<4> perm1; perm1.permute(1, 3);
+
+	tensor_i<4, double> &blk_0010 = btctrl.req_block(i_0010);
+	tensor_ctrl_t tctrl_0010(blk_0010);
+	p = tctrl_0010.req_dataptr();
+
+	index<4> ii;
+	do {
+		if(ii[1] > ii[3]) continue;
+		index<4> ii1(ii);
+		ii1.permute(perm1);
+		double d = drand48();
+		index<4> iii(istart_0010);
+		index<4> iii0, iii1;
+		for(size_t k = 0; k < 4; k++) {
+			iii0[k] = iii[k] + ii[k];
+			iii1[k] = iii[k] + ii1[k];
+		}
+		for(size_t k = 0; k < 2; k++) {
+			pt_ref[dims.abs_index(iii0)] = d;
+			pt_ref[dims.abs_index(iii1)] = d;
+			iii0.permute(perm);
+			iii1.permute(perm);
+		}
+		p[dims_0010.abs_index(ii)] = p[dims_0010.abs_index(ii1)] = d;
+	} while(dims_0010.inc_index(ii));
+	tctrl_0010.ret_dataptr(p);
+	btctrl.ret_block(i_0010);
 
 	tctrl.ret_dataptr(pt); pt = NULL;
 	tctrl_ref.ret_dataptr(pt_ref); pt_ref = NULL;
