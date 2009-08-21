@@ -261,9 +261,11 @@ void btod_contract2<N, M, K>::make_symmetry() {
 	for(size_t ielem = 0; ielem < nelem; ielem++) {
 		so_projdown<k_ordera, K, double> projdn(
 			syma.get_element(ielem), projmska, projdimsa);
-		so_projup<N, M, double> projup(
-			projdn.get_proj(), projmskca, bidimsc);
-		m_sym.add_element(projup.get_proj());
+		if(!projdn.is_identity()) {
+			so_projup<N, M, double> projup(
+				projdn.get_proj(), projmskca, bidimsc);
+			m_sym.add_element(projup.get_proj());
+		}
 	}
 
 	index<M> ib1, ib2;
@@ -285,9 +287,11 @@ void btod_contract2<N, M, K>::make_symmetry() {
 	for(size_t ielem = 0; ielem < nelem; ielem++) {
 		so_projdown<k_orderb, K, double> projdn(
 			symb.get_element(ielem), projmskb, projdimsb);
-		so_projup<M, N, double> projup(
-			projdn.get_proj(), projmskcb, bidimsc);
-		m_sym.add_element(projup.get_proj());
+		if(!projdn.is_identity()) {
+			so_projup<M, N, double> projup(
+				projdn.get_proj(), projmskcb, bidimsc);
+			m_sym.add_element(projup.get_proj());
+		}
 	}
 }
 

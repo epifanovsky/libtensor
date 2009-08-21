@@ -275,55 +275,41 @@ void btod_contract2_test::test_sym_2() throw(libtest::test_exception) {
 	bis_ref.split(msk3_2, 3);
 	bis_ref.split(msk3_2, 5);
 	bis_ref.split(msk3_3, 4);
-/*
-	block_index_space<4> bisb(bisa);
-	dimensions<4> bidimsa(bisa.get_block_index_dims()),
-		bidimsb(bisb.get_block_index_dims()),
-		bidimsc(bis_ref.get_block_index_dims());
 
-	block_tensor<4, double, allocator_t> bta(bisa), btb(bisb);
+	block_tensor<4, double, allocator_t> bta(bisa);
+	block_tensor<5, double, allocator_t> btb(bisb);
 
-	mask<4> cyclemsk4, cyclemsk2_1, cyclemsk2_2;
-	cyclemsk4[0] = true; cyclemsk4[1] = true;
-	cyclemsk4[2] = true; cyclemsk4[3] = true;
-	cyclemsk2_1[0] = true; cyclemsk2_1[1] = true;
-	cyclemsk2_2[2] = true; cyclemsk2_2[3] = true;
+	mask<4> cyclemsk4_4;
+	cyclemsk4_4[0] = true; cyclemsk4_4[1] = true;
+	cyclemsk4_4[2] = true; cyclemsk4_4[3] = true;
+	mask<5> cyclemsk5_4;
+	cyclemsk5_4[0] = true; cyclemsk5_4[1] = true;
+	cyclemsk5_4[2] = true; cyclemsk5_4[3] = true;
 
-	symel_cycleperm<4, double> cycle4a(cyclemsk4, bidimsa),
-		cycle2a(cyclemsk2_1, bidimsa);
-	block_tensor_ctrl<4, double> ctrla(bta), ctrlb(btb);
-	ctrla.req_sym_add_element(cycle4a);
-	ctrla.req_sym_add_element(cycle2a);
-	ctrlb.req_sym_add_element(cycle4a);
-	ctrlb.req_sym_add_element(cycle2a);
+	symel_cycleperm<4, double> cycle4a_1(4, cyclemsk4_4),
+		cycle4a_2(2, cyclemsk4_4);
+	symel_cycleperm<5, double> cycle4b_1(4, cyclemsk5_4),
+		cycle4b_2(2, cyclemsk5_4);
 
-	symmetry<4, double> sym_ref(bis_ref);
-	symel_cycleperm<4, double> cycle2c_1(cyclemsk2_1, bidimsc),
-		cycle2c_2(cyclemsk2_2, bidimsc);
-	sym_ref.add_element(cycle2c_1);
-	sym_ref.add_element(cycle2c_2);
+	block_tensor_ctrl<4, double> ctrla(bta);
+	block_tensor_ctrl<5, double> ctrlb(btb);
+	ctrla.req_sym_add_element(cycle4a_1);
+	ctrla.req_sym_add_element(cycle4a_2);
+	ctrlb.req_sym_add_element(cycle4b_1);
+	ctrlb.req_sym_add_element(cycle4b_2);
 
-	contraction2<2, 2, 2> contr;
-	contr.contract(0, 2);
-	contr.contract(1, 3);
+	contraction2<1, 2, 3> contr;
+	contr.contract(1, 1);
+	contr.contract(2, 2);
+	contr.contract(3, 3);
 
-	btod_contract2<2, 2, 2> op(contr, bta, btb);
+	btod_contract2<1, 2, 3> op(contr, bta, btb);
 
-	if(op.get_symmetry().get_num_elements() != sym_ref.get_num_elements()) {
+	if(op.get_symmetry().get_num_elements() != 0) {
 		fail_test(testname, __FILE__, __LINE__,
 			"Incorrect number of symmetry elements.");
 	}
 
-	size_t nelem = sym_ref.get_num_elements();
-	for(size_t ielem = 0; ielem < nelem; ielem++) {
-		if(!op.get_symmetry().contains_element(
-			sym_ref.get_element(ielem))) {
-
-			fail_test(testname, __FILE__, __LINE__,
-				"Reference symmetry element not found.");
-		}
-	}
-*/
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
 	}
