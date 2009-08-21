@@ -115,7 +115,8 @@ public:
 	 **/
 	void permute_c(const permutation<k_orderc> &permc) throw(exception);
 
-	const sequence<k_maxconn, size_t> &get_conn() const throw(exception);
+	const sequence<2 * (N + M + K), size_t> &get_conn() const
+		throw(exception);
 
 	//@}
 

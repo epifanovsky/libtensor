@@ -65,14 +65,14 @@ public:
 	//!	\name Implementation of
 	//		libtensor::direct_block_tensor_operation<N + M, double>
 	//@{
-	virtual const block_index_space<N+M> &get_bis() const;
-	virtual const symmetry<k_orderc, double> &get_symmetry() const;
+	virtual const block_index_space<N + M> &get_bis() const;
+	virtual const symmetry<N + M, double> &get_symmetry() const;
 	virtual void perform(block_tensor_i<k_orderc, double> &btc)
 		throw(exception);
 	//@}
 
 private:
-	static block_index_space<k_orderc> make_bis(
+	static block_index_space<N + M> make_bis(
 		const contraction2<N, M, K> &contr,
 		block_tensor_i<k_ordera, double> &bta,
 		block_tensor_i<k_orderb, double> &btb);

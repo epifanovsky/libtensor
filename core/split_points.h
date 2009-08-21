@@ -27,7 +27,7 @@ public:
 inline bool split_points::add(size_t pos) {
 
 	bool inc = false;
-	typename std::vector<size_t>::iterator isp = m_points.begin();
+	std::vector<size_t>::iterator isp = m_points.begin();
 	while(isp != m_points.end()) {
 
 		size_t curpos = *isp;
