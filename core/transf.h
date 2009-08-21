@@ -3,6 +3,7 @@
 
 #include "defs.h"
 #include "exception.h"
+#include "index.h"
 
 namespace libtensor {
 
@@ -20,7 +21,10 @@ namespace libtensor {
 template<size_t N, typename T>
 class transf {
 public:
-	void reset() { };
+	void reset() { }
+	void transform(const transf<N, T> &tr) { }
+	void apply(index<N> &idx) const { }
+	bool is_identity() const { return true; }
 };
 
 

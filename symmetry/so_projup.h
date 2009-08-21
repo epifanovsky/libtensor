@@ -90,7 +90,7 @@ void so_projup<N, M, T>::proj::accept(const symel_cycleperm<N, T> &elem)
 		}
 	}
 	if(m_elem) delete m_elem;
-	m_elem = new symel_cycleperm<N + M, T>(newmask, m_dims);
+	m_elem = new symel_cycleperm<N + M, T>(elem.get_order(), newmask);
 }
 
 

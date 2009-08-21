@@ -28,8 +28,8 @@ void so_projdown_test::test_1() throw(libtest::test_exception) {
 	mask<3> msk3;
 	msk3[0] = true; msk3[1] = true;
 
-	symel_cycleperm<2, double> cycle2_ref(msk2, dims2);
-	symel_cycleperm<3, double> cycle3(msk3, dims3);
+	symel_cycleperm<2, double> cycle2_ref(2, msk2);
+	symel_cycleperm<3, double> cycle3(2, msk3);
 
 	mask<3> mskproj;
 	mskproj[0] = true; mskproj[1] = true;
@@ -63,8 +63,8 @@ void so_projdown_test::test_2() throw(libtest::test_exception) {
 	mask<3> msk3;
 	msk3[0] = true; msk3[1] = true; msk3[2] = true;
 
-	symel_cycleperm<2, double> cycle2_ref(msk2, dims2);
-	symel_cycleperm<3, double> cycle3(msk3, dims3);
+	symel_cycleperm<2, double> cycle2_ref(2, msk2);
+	symel_cycleperm<3, double> cycle3(3, msk3);
 
 	mask<3> mskproj;
 	mskproj[0] = true; mskproj[1] = true;

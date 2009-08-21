@@ -44,17 +44,43 @@ private:
 	};
 
 private:
+	size_t m_ord; //!< Cycle order
 	mask<N> m_msk; //!< Mask of affected indexes
-	dimensions<N> m_dims; //!< Dimensions
-	permutation<N> m_perm; //!< Permutation
-	double m_c; //!< Coefficient
+	transf<N, T> m_tr; //!< Transformation
 
 public:
 	//!	\name Construction and destruction
 	//@{
-	symel_cycleperm(const mask<N> &msk, const dimensions<N> &dims);
-	symel_cycleperm(const symel_cycleperm<N, T> &el);
+
+	/**	\brief Creates the cyclic %permutation element
+		\param ord Cycle order (length), must be at least 2 and not
+			exceed the maximum length specified in the mask.
+		\param msk Mask of affected indexes.
+		\throw bad_parameter If the %mask is invalid.
+		\throw out_of_bounds If the cycle order is out of bounds.
+	 **/
+	symel_cycleperm(size_t ord, const mask<N> &msk);
+
+	/**	\brief Creates the cyclic %permutation element
+		\param ord Cycle order (length), must be at least 2 and not
+			exceed the maximum length specified in the mask.
+		\param msk Mask of affected indexes.
+		\param tr Transformation that specifies the sign function.
+		\throw bad_parameter If the %mask or the transformation are
+			invalid.
+		\throw out_of_bounds If the cycle order is out of bounds.
+	 **/
+	symel_cycleperm(size_t ord, const mask<N> &msk, const transf<N, T> &tr);
+
+	/**	\brief Copy constructor
+		\param elem Source cyclic %permutation object.
+	 **/
+	symel_cycleperm(const symel_cycleperm<N, T> &elem);
+
+	/**	\brief Virtual destructor
+	 **/
 	virtual ~symel_cycleperm();
+
 	//@}
 
 	//!	\name Implementation of symmetry_element_i<N, T>
@@ -70,7 +96,12 @@ public:
 	//@}
 
 	bool equals(const symel_cycleperm<N, T> &elem) const;
-	const permutation<N> &get_perm() const;
+//	const permutation<N> &get_perm() const;
+	size_t get_order() const;
+	const transf<N, T> &get_transf() const;
+
+private:
+	void build_cycle() throw(bad_parameter, out_of_bounds);
 };
 
 
@@ -80,34 +111,25 @@ const char *symel_cycleperm<N, T>::k_clazz = "symel_cycleperm<N, T>";
 
 
 template<size_t N, typename T>
-symel_cycleperm<N, T>::symel_cycleperm(
-	const mask<N> &msk, const dimensions<N> &dims)
-: m_msk(msk), m_dims(dims), m_c(1.0) {
+symel_cycleperm<N, T>::symel_cycleperm(size_t ord, const mask<N> &msk)
+: m_ord(ord), m_msk(msk) {
 
-	static const char *method = "symel_cycleperm(const mask<N>&)";
-
-	size_t i1 = 0, i2, ntrans = 0;
-	while(i1 < N && msk[i1] == false) i1++;
-	while(i1 < N) {
-		i2 = i1 + 1;
-		while(i2 < N && msk[i2] == false) i2++;
-		if(ntrans == 0 && i2 == N) {
-			throw bad_parameter("libtensor", k_clazz, method,
-				__FILE__, __LINE__,
-				"Invalid mask.");
-		}
-		if(i2 < N) {
-			m_perm.permute(i1, i2);
-			ntrans++;
-		}
-		i1 = i2;
-	}
+	build_cycle();
 }
 
 
 template<size_t N, typename T>
-symel_cycleperm<N, T>::symel_cycleperm(const symel_cycleperm<N, T> &el)
-: m_msk(el.m_msk), m_dims(el.m_dims), m_perm(el.m_perm), m_c(el.m_c) {
+symel_cycleperm<N, T>::symel_cycleperm(
+	size_t ord, const mask<N> &msk, const transf<N, T> &tr)
+: m_ord(ord), m_msk(msk), m_tr(tr) {
+
+	build_cycle();
+}
+
+
+template<size_t N, typename T>
+symel_cycleperm<N, T>::symel_cycleperm(const symel_cycleperm<N, T> &elem)
+: m_ord(elem.m_ord), m_msk(elem.m_msk), m_tr(elem.m_tr) {
 
 }
 
@@ -129,8 +151,7 @@ template<size_t N, typename T>
 void symel_cycleperm<N, T>::permute(const permutation<N> &perm) {
 
 	m_msk.permute(perm);
-	m_dims.permute(perm);
-	m_perm.permute(perm);
+	m_tr.permute(perm);
 }
 
 
@@ -165,16 +186,15 @@ bool symel_cycleperm<N, T>::is_allowed(const index<N> &idx) const {
 template<size_t N, typename T>
 void symel_cycleperm<N, T>::apply(index<N> &idx) const {
 
-	idx.permute(m_perm);
+	m_tr.apply(idx);
 }
 
 
 template<size_t N, typename T>
 void symel_cycleperm<N, T>::apply(index<N> &idx, transf<N, T> &tr) const {
 
-	idx.permute(m_perm);
-	tr.permute(m_perm);
-	tr.multiply(m_c);
+	m_tr.apply(idx);
+	tr.transform(m_tr);
 }
 
 
@@ -198,17 +218,67 @@ template<size_t N, typename T>
 bool symel_cycleperm<N, T>::equals(const symel_cycleperm<N, T> &elem) const {
 
 	if(this == &elem) return true;
-	return m_msk.equals(elem.m_msk) && m_dims.equals(elem.m_dims) &&
-		m_perm.equals(elem.m_perm);
+	return m_ord == elem.m_ord && m_msk.equals(elem.m_msk);
 }
 
 
 template<size_t N, typename T>
-inline const permutation<N> &symel_cycleperm<N, T>::get_perm() const {
+inline size_t symel_cycleperm<N, T>::get_order() const {
 
-	return m_perm;
+	return m_ord;
 }
 
+
+template<size_t N, typename T>
+inline const transf<N, T> &symel_cycleperm<N, T>::get_transf() const {
+
+	return m_tr;
+}
+
+//template<size_t N, typename T>
+//inline const permutation<N> &symel_cycleperm<N, T>::get_perm() const {
+//
+//	return m_perm;
+//}
+
+
+template<size_t N, typename T>
+void symel_cycleperm<N, T>::build_cycle() throw(bad_parameter, out_of_bounds) {
+
+	static const char *method = "build_cycle()";
+
+	size_t nset = 0;
+	for(register size_t i = 0; i < N; i++) if(m_msk[i]) nset++;
+	if(nset < 2) {
+		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"Invalid mask.");
+	}
+	if(m_ord < 2 || m_ord > nset) {
+		throw out_of_bounds(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"Cycle order is out of bounds.");
+	}
+
+	m_tr.get_perm().reset();
+
+	size_t i1 = 0, i2, len = 1;
+	while(i1 < N && m_msk[i1] == false) i1++;
+	while(i1 < N) {
+		i2 = i1 + 1;
+		while(i2 < N && m_msk[i2] == false) i2++;
+		if(i2 < N && len < m_ord) {
+			m_tr.get_perm().permute(i1, i2);
+			len++;
+		}
+		i1 = i2;
+	}
+
+	transf<N, T> tr2;
+	for(size_t i = 0; i < m_ord; i++) tr2.transform(m_tr);
+	if(!tr2.is_identity()) {
+		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"Transformation yields an inconsistent cycle.");
+	}
+}
 
 } // namespace libtensor
 

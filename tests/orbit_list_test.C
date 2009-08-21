@@ -82,7 +82,7 @@ void orbit_list_test::test_2() throw(libtest::test_exception) {
 	symmetry<2, double> sym(bis);
 	mask<2> cycle_msk;
 	cycle_msk[0] = true; cycle_msk[1] = true;
-	symel_cycleperm<2, double> cycle(cycle_msk, dims);
+	symel_cycleperm<2, double> cycle(2, cycle_msk);
 	sym.add_element(cycle);
 
 	orbit_list<2, double> orblst(sym);
@@ -137,7 +137,7 @@ void orbit_list_test::test_3() throw(libtest::test_exception) {
 	symmetry<4, double> sym(bis);
 	mask<4> cycle_msk;
 	cycle_msk[0] = true; cycle_msk[1] = true;
-	symel_cycleperm<4, double> cycle(cycle_msk, dims);
+	symel_cycleperm<4, double> cycle(2, cycle_msk);
 	sym.add_element(cycle);
 
 	orbit_list<4, double> orblst(sym);
@@ -192,7 +192,7 @@ void orbit_list_test::test_4() throw(libtest::test_exception) {
 	symmetry<4, double> sym(bis);
 	mask<4> cycle_msk;
 	cycle_msk[1] = true; cycle_msk[2] = true;
-	symel_cycleperm<4, double> cycle(cycle_msk, dims);
+	symel_cycleperm<4, double> cycle(2, cycle_msk);
 	sym.add_element(cycle);
 
 	orbit_list<4, double> orblst(sym);
@@ -247,7 +247,7 @@ void orbit_list_test::test_5() throw(libtest::test_exception) {
 	symmetry<4, double> sym(bis);
 	mask<4> cycle_msk;
 	cycle_msk[0] = true; cycle_msk[1] = true; cycle_msk[2] = true;
-	symel_cycleperm<4, double> cycle(cycle_msk, dims);
+	symel_cycleperm<4, double> cycle(3, cycle_msk);
 	sym.add_element(cycle);
 
 	orbit_list<4, double> orblst(sym);
@@ -304,10 +304,10 @@ void orbit_list_test::test_6() throw(libtest::test_exception) {
 	mask<4> cycle_msk;
 	cycle_msk[0] = true; cycle_msk[1] = true;
 	cycle_msk[2] = false; cycle_msk[3] = false;
-	symel_cycleperm<4, double> cycle1(cycle_msk, dims);
+	symel_cycleperm<4, double> cycle1(2, cycle_msk);
 	cycle_msk[0] = false; cycle_msk[1] = false;
 	cycle_msk[2] = true; cycle_msk[3] = true;
-	symel_cycleperm<4, double> cycle2(cycle_msk, dims);
+	symel_cycleperm<4, double> cycle2(2, cycle_msk);
 	sym.add_element(cycle1);
 	sym.add_element(cycle2);
 
@@ -363,9 +363,8 @@ void orbit_list_test::test_7() throw(libtest::test_exception) {
 	symmetry<4, double> sym(bis);
 	mask<4> cycle_msk;
 	cycle_msk[0] = true; cycle_msk[1] = true; cycle_msk[2] = true;
-	symel_cycleperm<4, double> cycle1(cycle_msk, dims);
-	cycle_msk[2] = false;
-	symel_cycleperm<4, double> cycle2(cycle_msk, dims);
+	symel_cycleperm<4, double> cycle1(3, cycle_msk);
+	symel_cycleperm<4, double> cycle2(2, cycle_msk);
 	sym.add_element(cycle1);
 	sym.add_element(cycle2);
 
@@ -422,9 +421,8 @@ void orbit_list_test::test_8() throw(libtest::test_exception) {
 	mask<4> cycle_msk;
 	cycle_msk[0] = true; cycle_msk[1] = true;
 	cycle_msk[2] = true; cycle_msk[3] = true;
-	symel_cycleperm<4, double> cycle1(cycle_msk, dims);
-	cycle_msk[2] = false; cycle_msk[3] = false;
-	symel_cycleperm<4, double> cycle2(cycle_msk, dims);
+	symel_cycleperm<4, double> cycle1(4, cycle_msk);
+	symel_cycleperm<4, double> cycle2(2, cycle_msk);
 	sym.add_element(cycle1);
 	sym.add_element(cycle2);
 

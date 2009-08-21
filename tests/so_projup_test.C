@@ -27,8 +27,8 @@ void so_projup_test::test_1() throw(libtest::test_exception) {
 	mask<3> msk3;
 	msk3[0] = true; msk3[1] = true;
 
-	symel_cycleperm<2, double> cycle2(msk2, dims2);
-	symel_cycleperm<3, double> cycle3_ref(msk3, dims3);
+	symel_cycleperm<2, double> cycle2(2, msk2);
+	symel_cycleperm<3, double> cycle3_ref(2, msk3);
 	so_projup<2, 1, double> projup(cycle2, msk3, dims3);
 	if(!cycle3_ref.equals(projup.get_proj())) {
 		fail_test(testname, __FILE__, __LINE__,

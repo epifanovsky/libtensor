@@ -10,6 +10,7 @@ namespace libtensor {
 
 template<size_t N>
 class transf<N, double> {
+private:
 	double m_coeff;
 	permutation<N> m_perm;
 
@@ -18,47 +19,51 @@ public:
 	transf(const transf<N, double> &tr) : m_coeff(tr.m_coeff), m_perm(tr.m_perm) { }
 	void reset() { m_coeff = 1.0; m_perm.reset(); }
 	void permute(const permutation<N> &perm) { m_perm.permute(perm); }
-	void multiply(double c) { m_coeff *= c; }
+	void scale(double c) { m_coeff *= c; }
 	void transform(const transf<N, double> &tr) {
 		m_coeff *= tr.m_coeff;
 		m_perm.permute(tr.m_perm);
+	}
+	void apply(index<N> &idx) const {
+		idx.permute(m_perm);
 	}
 	void invert() {
 		m_coeff = (m_coeff == 0.0 ? 0.0 : 1.0/m_coeff);
 		m_perm.invert();
 	}
-	
-	//! member access functions 
+	bool is_identity() { return m_coeff == 1.0 && m_perm.is_identity(); }
+
+	//! member access functions
 	//@{
-	/** \brief returns the coefficient 
+	/** \brief returns the coefficient
 	 **/
 	double& get_coeff() { return m_coeff; }
-	
-	/** \brief returns the coefficient 
+
+	/** \brief returns the coefficient
 	 **/
 	const double& get_coeff() const { return m_coeff; }
-	
-	/** \brief returns the permutation 
+
+	/** \brief returns the permutation
 	 **/
 	permutation<N>& get_perm() { return m_perm; }
-	
-	/** \brief returns the permutation 
+
+	/** \brief returns the permutation
 	 **/
 	const permutation<N>& get_perm() const { return m_perm; }
 	//@}
-	
+
 	//! Comparison operators
 	//@{
 	/** \brief equal comparison
 	 **/
-	bool operator==( const transf<N,double>& tr ) { 
+	bool operator==( const transf<N,double>& tr ) {
 		return ( (m_coeff==tr.m_coeff) && (m_perm==tr.m_perm) );
-	} 
-	
-	/** \brief unequal comparison 
-	 **/ 
+	}
+
+	/** \brief unequal comparison
+	 **/
 	bool operator!=( const transf<N,double>& tr ) {	return (!operator==(tr)); }
-	//@} 
+	//@}
 };
 
 } // namespace libtensor

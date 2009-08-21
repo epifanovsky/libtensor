@@ -186,8 +186,8 @@ void btod_contract2_test::test_sym_1() throw(libtest::test_exception) {
 	cyclemsk2_1[0] = true; cyclemsk2_1[1] = true;
 	cyclemsk2_2[2] = true; cyclemsk2_2[3] = true;
 
-	symel_cycleperm<4, double> cycle4a(cyclemsk4, bidimsa),
-		cycle2a(cyclemsk2_1, bidimsa);
+	symel_cycleperm<4, double> cycle4a(4, cyclemsk4),
+		cycle2a(2, cyclemsk2_1);
 	block_tensor_ctrl<4, double> ctrla(bta), ctrlb(btb);
 	ctrla.req_sym_add_element(cycle4a);
 	ctrla.req_sym_add_element(cycle2a);
@@ -195,8 +195,8 @@ void btod_contract2_test::test_sym_1() throw(libtest::test_exception) {
 	ctrlb.req_sym_add_element(cycle2a);
 
 	symmetry<4, double> sym_ref(bis_ref);
-	symel_cycleperm<4, double> cycle2c_1(cyclemsk2_1, bidimsc),
-		cycle2c_2(cyclemsk2_2, bidimsc);
+	symel_cycleperm<4, double> cycle2c_1(2, cyclemsk2_1),
+		cycle2c_2(2, cyclemsk2_2);
 	sym_ref.add_element(cycle2c_1);
 	sym_ref.add_element(cycle2c_2);
 

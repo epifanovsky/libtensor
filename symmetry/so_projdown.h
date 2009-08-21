@@ -30,6 +30,7 @@ private:
 		proj(const mask<N> &msk, const dimensions<N - M> &dims);
 		virtual void accept(const symel_cycleperm<N, T> &elem)
 			throw(exception);
+		bool is_identity() const;
 		const symmetry_element_i<N - M, T> &get_proj() const;
 	};
 
@@ -39,6 +40,7 @@ private:
 public:
 	so_projdown(const symmetry_element_i<N, T> &elem,
 		const mask<N> &msk, const dimensions<N - M> &dims);
+	bool is_identity() const;
 	const symmetry_element_i<N - M, T> &get_proj() const;
 };
 
@@ -53,7 +55,15 @@ so_projdown<N, M, T>::so_projdown(const symmetry_element_i<N, T> &elem,
 
 
 template<size_t N, size_t M, typename T>
-const symmetry_element_i<N - M, T> &so_projdown<N, M, T>::get_proj() const {
+inline bool so_projdown<N, M, T>::is_identity() const {
+
+	return m_proj.is_identity();
+}
+
+
+template<size_t N, size_t M, typename T>
+inline const symmetry_element_i<N - M, T> &so_projdown<N, M, T>::get_proj()
+	const {
 
 	return m_proj.get_proj();
 }
@@ -81,19 +91,33 @@ void so_projdown<N, M, T>::proj::accept(const symel_cycleperm<N, T> &elem)
 
 	const mask<N> &oldmask = elem.get_mask();
 	mask<N - M> newmask;
+	size_t neword = 0;
 	for(register size_t i = 0, j = 0; i < N; i++) {
 		if(m_msk[i]) {
+			if(oldmask[i]) neword++;
 			newmask[j] = oldmask[i];
 			j++;
 		}
 	}
+	neword = std::min(neword, elem.get_order());
 	if(m_elem) delete m_elem;
-	m_elem = new symel_cycleperm<N - M, T>(newmask, m_dims);
+	if(neword < 2) {
+		m_elem = NULL;
+	} else {
+		m_elem = new symel_cycleperm<N - M, T>(neword, newmask);
+	}
 }
 
 
 template<size_t N, size_t M, typename T>
-const symmetry_element_i<N - M, T>&so_projdown<N, M, T>::proj::get_proj()
+bool so_projdown<N, M, T>::proj::is_identity() const {
+
+	return m_elem == NULL;
+}
+
+
+template<size_t N, size_t M, typename T>
+const symmetry_element_i<N - M, T> &so_projdown<N, M, T>::proj::get_proj()
 	const {
 
 	if(m_elem == NULL) {

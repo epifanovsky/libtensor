@@ -370,7 +370,7 @@ void tod_btconv_test::test_5() throw(libtest::test_exception) {
 
 	mask<2> msk;
 	msk[0] = true; msk[1] = true;
-	symel_cycleperm<2, double> cycle(msk, bidims);
+	symel_cycleperm<2, double> cycle(2, msk);
 	btctrl.req_sym_add_element(cycle);
 
 	tensor_t t(dims), t_ref(dims);
@@ -584,7 +584,7 @@ void tod_btconv_test::test_7() throw(libtest::test_exception) {
 
 	mask<2> msk;
 	msk[0] = true; msk[1] = true;
-	symel_cycleperm<2, double> cycle(msk, bidims);
+	symel_cycleperm<2, double> cycle(2, msk);
 	btctrl.req_sym_add_element(cycle);
 
 	tensor_t t(dims), t_ref(dims);
@@ -679,7 +679,7 @@ void tod_btconv_test::test_8() throw(libtest::test_exception) {
 
 	mask<2> msk;
 	msk[0] = true; msk[1] = true;
-	symel_cycleperm<2, double> cycle(msk, bidims);
+	symel_cycleperm<2, double> cycle(2, msk);
 	btctrl.req_sym_add_element(cycle);
 
 	tensor_t t(dims), t_ref(dims);
@@ -816,10 +816,9 @@ void tod_btconv_test::test_9() throw(libtest::test_exception) {
 	block_tensor_ctrl_t btctrl(bt);
 
 	mask<4> msk;
-	msk[0] = true; msk[1] = true;
-	symel_cycleperm<4, double> cycle1(msk, bidims);
-	msk[2] = true; msk[3] = true;
-	symel_cycleperm<4, double> cycle2(msk, bidims);
+	msk[0] = true; msk[1] = true; msk[2] = true; msk[3] = true;
+	symel_cycleperm<4, double> cycle1(2, msk);
+	symel_cycleperm<4, double> cycle2(4, msk);
 	btctrl.req_sym_add_element(cycle1);
 	btctrl.req_sym_add_element(cycle2);
 

@@ -148,7 +148,7 @@ void btod_add_test::test_2(double ca1, double ca2)
 
 	mask<2> msk;
 	msk[0] = true; msk[1] = true;
-	symel_cycleperm<2, double> cycle(msk, dims);
+	symel_cycleperm<2, double> cycle(2, msk);
 	ctrl_bta1.req_sym_add_element(cycle);
 	ctrl_bta2.req_sym_add_element(cycle);
 	ctrl_btb.req_sym_add_element(cycle);
@@ -285,9 +285,8 @@ void btod_add_test::test_3(double ca1, double ca2)
 
 	mask<4> msk;
 	msk[0] = true; msk[1] = true; msk[2] = true; msk[3] = true;
-	symel_cycleperm<4, double> cycle1(msk, dims);
-	msk[2] = false; msk[3] = false;
-	symel_cycleperm<4, double> cycle2(msk, dims);
+	symel_cycleperm<4, double> cycle1(4, msk);
+	symel_cycleperm<4, double> cycle2(2, msk);
 	ctrl_bta1.req_sym_add_element(cycle1);
 	ctrl_bta1.req_sym_add_element(cycle2);
 	ctrl_bta2.req_sym_add_element(cycle1);
