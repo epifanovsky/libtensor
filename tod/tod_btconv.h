@@ -150,7 +150,7 @@ void tod_btconv<N>::perform(tensor_i<N, double> &t) throw(exception) {
 			const transf<N, double> &tr = i->second;
 			index<N> dst_offset = bis.get_block_start(idx);
 			copy_block(dst_ptr, t.get_dims(), dst_offset,
-				src_ptr, blk.get_dims(), tr.m_perm, tr.m_coeff);
+				src_ptr, blk.get_dims(), tr.get_perm(), tr.get_coeff());
 			i++;
 		}
 

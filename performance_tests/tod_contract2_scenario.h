@@ -16,23 +16,23 @@ namespace libtensor {
 
 	\ingroup libtensor_tests
 **/
-template<size_t N, size_t M, size_t K, typename X>  
+template<size_t Repeats,size_t N, size_t M, size_t K, typename X>  
 class tod_contract2_scenario
 	: public performance_test_scenario_i 
 {	
-	unit_test_factory<tod_contract2_ref<10,N,M,K,X> > m_ref;
-	unit_test_factory<tod_contract2_p1<10,N,M,K,X> > m_pt1;
-	unit_test_factory<tod_contract2_p2<10,N,M,K,X> > m_pt2;
-	unit_test_factory<tod_contract2_p3<10,N,M,K,X> > m_pt3;
-	unit_test_factory<tod_contract2_p4<10,N,M,K,X> > m_pt4;
+	unit_test_factory<tod_contract2_ref<Repeats,N,M,K,X> > m_ref;
+	unit_test_factory<tod_contract2_p1<Repeats,N,M,K,X> > m_pt1;
+	unit_test_factory<tod_contract2_p2<Repeats,N,M,K,X> > m_pt2;
+	unit_test_factory<tod_contract2_p3<Repeats,N,M,K,X> > m_pt3;
+	unit_test_factory<tod_contract2_p4<Repeats,N,M,K,X> > m_pt4;
  
 public:
 	tod_contract2_scenario();
 };
 
 
-template<size_t N, size_t M, size_t K, typename X>  
-tod_contract2_scenario<N,M,K,X>::tod_contract2_scenario()  
+template<size_t Repeats,size_t N, size_t M, size_t K, typename X>  
+tod_contract2_scenario<Repeats,N,M,K,X>::tod_contract2_scenario()  
 {
 	add_test("reference",m_ref);
 	add_test("test 1",m_pt1);

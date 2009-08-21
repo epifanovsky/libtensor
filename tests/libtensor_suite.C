@@ -12,6 +12,7 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("btod_add", m_utf_btod_add);
 	add_test("btod_contract2", m_utf_btod_contract2);
 	add_test("btod_copy", m_utf_btod_copy);
+	add_test("btod_random", m_utf_btod_random);
 	add_test("contract", m_utf_contract);
 	add_test("contraction2", m_utf_contraction2);
 	add_test("dimensions", m_utf_dimensions);
@@ -44,6 +45,7 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("tod_contract2", m_utf_tod_contract2);
 	add_test("tod_copy", m_utf_tod_copy);
 	add_test("tod_dotprod", m_utf_tod_dotprod);
+	add_test("tod_random", m_utf_tod_random);
 	add_test("tod_set", m_utf_tod_set);
 	add_test("tod_sum", m_utf_tod_sum);
 	add_test("tod_symcontract2", m_utf_tod_symcontract2);

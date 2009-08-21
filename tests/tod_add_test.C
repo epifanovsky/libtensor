@@ -1,5 +1,5 @@
 #include <cmath>
-#include <cstdlib>
+#include <sstream>
 #include <libtensor.h>
 #include "compare_ref.h"
 #include "tod_add_test.h"
@@ -93,9 +93,10 @@ void tod_add_test::test_add_to_self_pqrs( size_t p, size_t q, size_t r, size_t s
 	add.prefetch();
 	add.perform(tc);
 
-	char testname[128];
-	sprintf(testname,"tod_add_test::test_add_to_self_pqrs(%lu,%lu,%lu,%lu)",p,q,r,s);
-	compare_ref<4>::compare(testname,tc,tc_ref,ta_max*k_thresh);
+	std::ostringstream testname;
+	testname << "tod_add_test::test_add_to_self_pqrs(";
+	testname << p << "," << q <<","<<r<<","<<s<<")";
+	compare_ref<4>::compare(testname.str().c_str(),tc,tc_ref,ta_max*k_thresh);
 }
 
 void tod_add_test::test_add_two_pqrs_pqrs( size_t p, size_t q, size_t r, size_t s )
@@ -130,9 +131,10 @@ void tod_add_test::test_add_two_pqrs_pqrs( size_t p, size_t q, size_t r, size_t 
 	add.prefetch();
 	add.perform(t1,1.0);
 
-	char testname[128];
-	sprintf(testname,"tod_add_test::test_add_to_pqrs_pqrs(%lu,%lu,%lu,%lu)",p,q,r,s);
-	compare_ref<4>::compare(testname,t1,t1_ref,t2_max*k_thresh);
+	std::ostringstream testname;
+	testname << "tod_add_test::test_add_to_pqrs_pqrs(";
+	testname << p <<"," << q << "," << r << "," << s << ")";
+	compare_ref<4>::compare(testname.str().c_str(),t1,t1_ref,t2_max*k_thresh);
 
 }
 
@@ -181,9 +183,10 @@ void tod_add_test::test_add_two_pqrs_qprs( size_t p, size_t q, size_t r, size_t 
 	add.prefetch();
 	add.perform(t1,1.0);
 
-	char testname[128];
-	sprintf(testname,"tod_add_test::test_add_two_pqrs_qprs(%lu,%lu,%lu,%lu)",p,q,r,s);
-	compare_ref<4>::compare(testname,t1,t1_ref,t2_max*k_thresh);
+	std::ostringstream testname;
+	testname << "tod_add_test::test_add_two_pqrs_qprs(";
+	testname << p << "," << q << "," << r << "," << s << ")";
+	compare_ref<4>::compare(testname.str().c_str(),t1,t1_ref,t2_max*k_thresh);
 }
 
 void tod_add_test::test_add_two_pqrs_prsq( size_t p, size_t q, size_t r, size_t s )
@@ -232,9 +235,10 @@ void tod_add_test::test_add_two_pqrs_prsq( size_t p, size_t q, size_t r, size_t 
 	add.prefetch();
 	add.perform(t1,1.0);
 
-	char testname[128];
-	sprintf(testname,"tod_add_test::test_add_two_pqrs_prsq(%lu,%lu,%lu,%lu)",p,q,r,s);
-	compare_ref<4>::compare(testname,t1,t1_ref,t2_max*k_thresh);
+	std::ostringstream testname;
+	testname << "tod_add_test::test_add_two_pqrs_prsq(";
+	testname << p << "," << q << "," << r << "," << s << ")";
+	compare_ref<4>::compare(testname.str().c_str(),t1,t1_ref,t2_max*k_thresh);
 }
 
 void tod_add_test::test_add_two_pqrs_qpsr( size_t p, size_t q, size_t r, size_t s )
@@ -281,9 +285,10 @@ void tod_add_test::test_add_two_pqrs_qpsr( size_t p, size_t q, size_t r, size_t 
 	add.prefetch();
 	add.perform(t1,1.0);
 
-	char testname[128];
-	sprintf(testname,"tod_add_test::test_add_two_pqrs_qpsr(%lu,%lu,%lu,%lu)",p,q,r,s);
-	compare_ref<4>::compare(testname,t1,t1_ref,t2_max*k_thresh);
+	std::ostringstream testname;
+	testname << "tod_add_test::test_add_two_pqrs_qpsr(";
+	testname << p << "," << q << "," << r << "," << s << ")";
+	compare_ref<4>::compare(testname.str().c_str(),t1,t1_ref,t2_max*k_thresh);
 }
 
 void tod_add_test::test_add_mult( size_t p, size_t q, size_t r, size_t s )
@@ -339,9 +344,10 @@ void tod_add_test::test_add_mult( size_t p, size_t q, size_t r, size_t s )
 	add.prefetch();
 	add.perform(t1,0.5);
 
-	char testname[128];
-	sprintf(testname,"tod_add_test::test_add_mult(%lu,%lu,%lu,%lu)",p,q,r,s);
-	compare_ref<4>::compare(testname,t1,t1_ref,t_max*k_thresh);
+	std::ostringstream testname;
+	testname << "tod_add_test::test_add_mult(";
+	testname << p << "," << q << "," << r << "," << s << ")";
+	compare_ref<4>::compare(testname.str().c_str(),t1,t1_ref,t_max*k_thresh);
 }
 
 
@@ -390,9 +396,10 @@ void tod_add_test::test_add_two_pq_qp( size_t p, size_t q )
 	add.prefetch();
 	add.perform(t1,0.5);
 
-	char testname[128];
-	sprintf(testname,"tod_add_test::test_add_two_pq_qp(%lu,%lu)",p,q);
-	compare_ref<2>::compare(testname,t1,t1_ref,t_max*k_thresh);
+	std::ostringstream testname;
+	testname << "tod_add_test::test_add_two_pq_qp(";
+	testname << p << "," << q << ")";
+	compare_ref<2>::compare(testname.str().c_str(),t1,t1_ref,t_max*k_thresh);
 }
 
 

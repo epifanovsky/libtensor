@@ -274,10 +274,10 @@ void btod_add<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 			if(ctrl.req_is_zero_block(can_blk_idx)) continue;
 			tensor_i<N, double> &src_blk =
 				ctrl.req_block(can_blk_idx);
-			tr.m_perm.permute(perm);
-			tr.m_coeff *= op.m_c;
+			tr.get_perm().permute(perm);
+			tr.get_coeff() *= op.m_c;
 
-			if(tr.m_coeff != 0.0) {
+			if(tr.get_coeff() != 0.0) {
 				arg_t arg;
 				arg.m_ctrl = &ctrl;
 				arg.m_idx = can_blk_idx;
@@ -293,8 +293,8 @@ void btod_add<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 			arg_t &arg = *(iarg);
 			tensor_i<N, double> &src_blk =
 				arg.m_ctrl->req_block(arg.m_idx);
-			tod_copy<N> todcp(src_blk, arg.m_tr.m_perm,
-				arg.m_tr.m_coeff);
+			tod_copy<N> todcp(src_blk, arg.m_tr.get_perm(),
+				arg.m_tr.get_coeff());
 
 			tensor_i<N, double> &dst_blk =
 				dst_ctrl.req_block(dst_blk_idx);
@@ -310,7 +310,7 @@ void btod_add<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 				arglst.begin();
 
 			tod_add<N> todadd(iarg->m_ctrl->req_block(iarg->m_idx),
-				iarg->m_tr.m_perm,iarg->m_tr.m_coeff);
+				iarg->m_tr.get_perm(),iarg->m_tr.get_coeff());
 
 			iarg++;
 
@@ -318,8 +318,8 @@ void btod_add<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 				arg_t &arg = *(iarg);
 				tensor_i<N, double> &src_blk =
 					arg.m_ctrl->req_block(arg.m_idx);
-				todadd.add_op(src_blk, arg.m_tr.m_perm,
-					arg.m_tr.m_coeff);
+				todadd.add_op(src_blk, arg.m_tr.get_perm(),
+					arg.m_tr.get_coeff());
 				iarg++;
 			}
 

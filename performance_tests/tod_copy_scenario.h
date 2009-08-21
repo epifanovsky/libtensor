@@ -16,21 +16,21 @@ namespace libtensor {
 
 	\ingroup libtensor_tests
 **/
-template<size_t N, typename X>  
+template<size_t Repeats,size_t N, typename X>  
 class tod_copy_scenario
 	: public performance_test_scenario_i 
 {	
-	unit_test_factory<tod_copy_ref<10,X> > m_ref;
-	unit_test_factory<tod_copy_p1<10,N,X> > m_pt1;
-	unit_test_factory<tod_copy_p2<10,N,X> > m_pt2;
+	unit_test_factory<tod_copy_ref<Repeats,X> > m_ref;
+	unit_test_factory<tod_copy_p1<Repeats,N,X> > m_pt1;
+	unit_test_factory<tod_copy_p2<Repeats,N,X> > m_pt2;
 	
 public:
 	tod_copy_scenario();
 };
 
 
-template<size_t N, typename X>  
-tod_copy_scenario<N,X>::tod_copy_scenario()
+template<size_t Repeats,size_t N, typename X>  
+tod_copy_scenario<Repeats,N,X>::tod_copy_scenario()
 {  
 	add_test("reference",m_ref); 
 	add_test("test 1",m_pt1);

@@ -1,3 +1,4 @@
+#include <sstream>
 #include <libtensor.h>
 #include "timer_test.h"
 #include "../timer.h"
@@ -29,9 +30,9 @@ void timer_test::perform() throw(libtest::test_exception) {
 	res-=t.duration().m_rt;
 #endif
 	if ( fabs(res) > 0.01 ) {
-		char msg[20];
-		sprintf(msg, "Timer measurement not correct (diff: %6.4fs)",res);
-		fail_test("timer_test::perform()", __FILE__, __LINE__,msg);
+		std::ostringstream msg;
+		msg << "Timer measurement not correct (diff: " << res << "fs)";
+		fail_test("timer_test::perform()", __FILE__, __LINE__,msg.str().c_str());
 	}
 	t.start(); 
 	if(t.duration()!=time_diff_t()) {

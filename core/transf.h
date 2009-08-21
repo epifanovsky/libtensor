@@ -18,7 +18,7 @@ namespace libtensor {
 	\ingroup libtensor_core
  **/
 template<size_t N, typename T>
-struct transf {
+class transf {
 public:
 	void reset() { };
 };

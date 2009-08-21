@@ -43,6 +43,7 @@
 #include "tod/tod_contract2.h"
 #include "tod/tod_copy.h"
 #include "tod/tod_dotprod.h"
+#include "tod/tod_random.h"
 #include "tod/tod_set.h"
 #include "tod/tod_solve.h"
 #include "tod/tod_sum.h"
@@ -54,6 +55,7 @@
 #include "btod/btod_compare.h"
 #include "btod/btod_contract2.h"
 #include "btod/btod_copy.h"
+#include "btod/btod_random.h"
 #include "btod/btod_sum.h"
 
 

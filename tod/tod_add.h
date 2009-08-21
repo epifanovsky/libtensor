@@ -367,67 +367,74 @@ void tod_add<N>::perform(tensor_i<N,double> &t, double c) throw(exception)
 	
 	double* ptr=NULL;
 	
-	typename op_map_t::iterator it=m_operands.begin();	
-	while ( it != m_operands.end() ) {
-		if ( m_operands.count(it->first) == 1 ) {
-			tensor_ctrl<N,double> ctrlo(it->second->m_ta);
-			const double* optr=ctrlo.req_const_dataptr();
-			
-			loop_list_t list;
-			build_list(list,it->second->m_ta.get_dims(),it->first,m_dim);
-			try {
-				registers regs;
-				regs.m_ptra=optr;
-				regs.m_ca=it->second->m_ca*c;
-				regs.m_ptrb=tptr;
-				processor_t(list,regs).process_next();
-			}
-			catch ( exception& e ) {
-				clean_list(list);
-				throw;
-			}
-			clean_list(list);
-			it++;
-		}
-		else {
-			const permutation<N>& perm=it->first;
-			dimensions<N> dim=it->second->m_ta.get_dims();
-						
-			try {
-				if ( ptr == NULL ) ptr=new double[dim.get_size()];
-			} catch ( std::bad_alloc& e ) {
-				throw out_of_memory("libtensor",k_clazz,"perform(tensor_i<N,double> &)",
-						__FILE__,__LINE__,e.what());
-			}
-			
-			memset(ptr,0,dim.get_size()*sizeof(double));
-			while ( it != m_operands.upper_bound(perm) ) {
+	try {
+	
+		typename op_map_t::iterator it=m_operands.begin();	
+		while ( it != m_operands.end() ) {
+			if ( m_operands.count(it->first) == 1 ) {
 				tensor_ctrl<N,double> ctrlo(it->second->m_ta);
 				const double* optr=ctrlo.req_const_dataptr();
-				cblas_daxpy(dim.get_size(),it->second->m_ca,optr,1,ptr,1);
-				ctrlo.ret_dataptr(optr);
+			
+				loop_list_t list;
+				build_list(list,it->second->m_ta.get_dims(),it->first,m_dim);
+				try {
+					registers regs;
+					regs.m_ptra=optr;
+					regs.m_ca=it->second->m_ca*c;
+					regs.m_ptrb=tptr;
+					processor_t(list,regs).process_next();
+				}
+				catch ( exception& e ) {
+					clean_list(list);
+					throw;
+				}
+				clean_list(list);
 				it++;
 			}
-				
-			loop_list_t list;
-			build_list(list,dim,perm,m_dim);
-
-			try {
-				registers regs;
-				regs.m_ptra=ptr;
-				regs.m_ca=c;
-				regs.m_ptrb=tptr;
-				processor_t(list,regs).process_next();
-			} catch ( exception& e ) {
-				delete [] ptr;
-				clean_list(list);
-				throw;
-			}
-			clean_list(list);
-		}
-	}
+			else {
+				const permutation<N>& perm=it->first;
+				dimensions<N> dim=it->second->m_ta.get_dims();
 	
-	if ( ptr != NULL ) delete [] ptr;
+				try {					
+					if ( ptr == NULL ) ptr=new double[dim.get_size()];
+				} catch ( std::bad_alloc& e ) {
+					throw out_of_memory("libtensor",k_clazz,
+						"perform(tensor_i<N,double> &)",
+						__FILE__,__LINE__,e.what());
+				}
+				
+				memset(ptr,0,dim.get_size()*sizeof(double));
+	
+				while ( it != m_operands.upper_bound(perm) ) {
+					tensor_ctrl<N,double> ctrlo(it->second->m_ta);
+					const double* optr=ctrlo.req_const_dataptr();
+					cblas_daxpy(dim.get_size(),it->second->m_ca,optr,1,ptr,1);
+					ctrlo.ret_dataptr(optr);
+					it++;
+				}
+				
+				loop_list_t list;
+				build_list(list,dim,perm,m_dim);
+
+				try {
+					registers regs;
+					regs.m_ptra=ptr;
+					regs.m_ca=c;
+					regs.m_ptrb=tptr;
+					processor_t(list,regs).process_next();
+				} catch ( exception& e ) {
+					clean_list(list);
+					throw;
+				}
+				clean_list(list);
+			}
+		}
+		
+		if ( ptr != NULL ) delete [] ptr;
+	} catch ( exception& e ) {
+		if ( ptr != NULL ) delete [] ptr;
+		throw;
+	}	
 	
 	tod_add<N>::stop_timer();
 }
@@ -533,10 +540,12 @@ void tod_add<N>::op_fast_add::exec( processor_t &proc, registers &regs)
 	tod_add<N>::op_fast_add::start_timer();
 	
 	size_t i=0, j=0;
-	for ( i=0; i<(m_leni-3); i+=4 ) {
+	size_t ilen=4*(m_leni/4), jlen=4*(m_lenj/4);
+
+	for ( i=0; i<ilen; i+=4 ) {
 		register size_t ij=i*m_incbi;
 		register size_t ji=i;
-		for ( j=0; j<(m_lenj-3); j+=4 ) {
+		for ( j=0; j<jlen; j+=4 ) {
 			//register size_t ji=j*incaj+i; 
 			regs.m_ptrb[ij]+=regs.m_ca*regs.m_ptra[ji]; 
 			regs.m_ptrb[ij+1]+=regs.m_ca*regs.m_ptra[ji+m_incaj]; 
@@ -580,7 +589,7 @@ void tod_add<N>::op_fast_add::exec( processor_t &proc, registers &regs)
 	for ( ; i<m_leni; i++ ) {
 		register size_t ji=i;
 		register size_t ij=i*m_incbi;
-		for ( j=0; j<(m_lenj-3); j+=4 ) {
+		for ( j=0; j<jlen; j+=4 ) {
 			//register size_t ji=j*incaj+i; 
 			regs.m_ptrb[ij]+=regs.m_ca*regs.m_ptra[ji]; 
 			regs.m_ptrb[ij+1]+=regs.m_ca*regs.m_ptra[ji+m_incaj]; 

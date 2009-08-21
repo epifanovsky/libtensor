@@ -9,8 +9,7 @@
 namespace libtensor {
 
 template<size_t N>
-struct transf<N, double> {
-public:
+class transf<N, double> {
 	double m_coeff;
 	permutation<N> m_perm;
 
@@ -28,6 +27,38 @@ public:
 		m_coeff = (m_coeff == 0.0 ? 0.0 : 1.0/m_coeff);
 		m_perm.invert();
 	}
+	
+	//! member access functions 
+	//@{
+	/** \brief returns the coefficient 
+	 **/
+	double& get_coeff() { return m_coeff; }
+	
+	/** \brief returns the coefficient 
+	 **/
+	const double& get_coeff() const { return m_coeff; }
+	
+	/** \brief returns the permutation 
+	 **/
+	permutation<N>& get_perm() { return m_perm; }
+	
+	/** \brief returns the permutation 
+	 **/
+	const permutation<N>& get_perm() const { return m_perm; }
+	//@}
+	
+	//! Comparison operators
+	//@{
+	/** \brief equal comparison
+	 **/
+	bool operator==( const transf<N,double>& tr ) { 
+		return ( (m_coeff==tr.m_coeff) && (m_perm==tr.m_perm) );
+	} 
+	
+	/** \brief unequal comparison 
+	 **/ 
+	bool operator!=( const transf<N,double>& tr ) {	return (!operator==(tr)); }
+	//@} 
 };
 
 } // namespace libtensor

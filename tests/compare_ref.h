@@ -13,6 +13,9 @@ public:
 	static void compare(const char *test, tensor_i<N, double> &t,
 		tensor_i<N, double> &t_ref, double thresh)
 		throw(libtest::test_exception);
+//	static void compare(const char *test, block_tensor_i<N, double> &t,
+//		block_tensor_i<N, double> &t_ref, double thresh)
+//		throw(libtest::test_exception);
 };
 
 template<size_t N>
@@ -34,6 +37,27 @@ void compare_ref<N>::compare(const char *test, tensor_i<N, double> &t,
 			__FILE__, __LINE__, ss2.str().c_str());
 	}
 }
+
+//template<size_t N>
+//void compare_ref<N>::compare(const char *test, block_tensor_i<N, double> &t,
+//	block_tensor_i<N, double> &t_ref, double thresh)
+//	throw(libtest::test_exception) {
+//
+//	btod_compare<N> cmp(t, t_ref, thresh);
+//	if(!cmp.compare()) {
+//		std::ostringstream str;
+//		str << "In " << test << ": ";
+//		str << "Result does not match reference at element "
+//			<< cmp.get_diff_index() << ": "
+//			<< cmp.get_diff_elem_1() << " (act) vs. "
+//			<< cmp.get_diff_elem_2() << " (ref), "
+//			<< cmp.get_diff_elem_1() - cmp.get_diff_elem_2()
+//			<< " (diff)";
+//		throw libtest::test_exception("compare_ref::compare()",
+//			__FILE__, __LINE__, str.str().c_str());
+//	}
+//}
+
 
 } // namespace libtensor
 

@@ -11,6 +11,7 @@
 #include "btod_add_test.h"
 #include "btod_contract2_test.h"
 #include "btod_copy_test.h"
+#include "btod_random_test.h"
 #include "contract_test.h"
 #include "contraction2_test.h"
 #include "dimensions_test.h"
@@ -43,6 +44,7 @@
 #include "tod_contract2_test.h"
 #include "tod_copy_test.h"
 #include "tod_dotprod_test.h"
+#include "tod_random_test.h"
 #include "tod_set_test.h"
 #include "tod_sum_test.h"
 #include "tod_symcontract2_test.h"
@@ -64,6 +66,7 @@ namespace libtensor {
 	\li libtensor::btod_add_test
 	\li libtensor::btod_contract2_test
 	\li libtensor::btod_copy_test
+	\li libtensor::btod_random_test
 	\li libtensor::contract_test
 	\li libtensor::contraction2_test
 	\li libtensor::dimensions_test
@@ -96,6 +99,7 @@ namespace libtensor {
 	\li libtensor::tod_contract2_test
 	\li libtensor::tod_copy_test
 	\li libtensor::tod_dotprod_test
+	\li libtensor::tod_random_test
 	\li libtensor::tod_set_test
 	\li libtensor::tod_sum_test
 	\li libtensor::tod_symcontract2_test
@@ -111,6 +115,7 @@ private:
 	unit_test_factory<btod_add_test> m_utf_btod_add;
 	unit_test_factory<btod_contract2_test> m_utf_btod_contract2;
 	unit_test_factory<btod_copy_test> m_utf_btod_copy;
+	unit_test_factory<btod_random_test> m_utf_btod_random;
 	unit_test_factory<contract_test> m_utf_contract;
 	unit_test_factory<contraction2_test> m_utf_contraction2;
 	unit_test_factory<dimensions_test> m_utf_dimensions;
@@ -144,6 +149,7 @@ private:
 	unit_test_factory<tod_contract2_test> m_utf_tod_contract2;
 	unit_test_factory<tod_copy_test> m_utf_tod_copy;
 	unit_test_factory<tod_dotprod_test> m_utf_tod_dotprod;
+	unit_test_factory<tod_random_test> m_utf_tod_random;
 	unit_test_factory<tod_set_test> m_utf_tod_set;
 	unit_test_factory<tod_sum_test> m_utf_tod_sum;
 	unit_test_factory<tod_symcontract2_test> m_utf_tod_symcontract2;
