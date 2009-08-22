@@ -228,7 +228,7 @@ void contraction2<N, M, K>::connect() {
 		if(m_conn[i] == k_invalid || m_conn[i] < k_orderc)
 			connc[iconnc++] = i;
 	}
-	m_permc.apply(k_orderc, connc);
+	m_permc.apply(connc);
 	for(size_t i = 0; i < k_orderc; i++) {
 		m_conn[i] = connc[i];
 		m_conn[connc[i]] = i;

@@ -77,6 +77,11 @@ private:
 		block_tensor_i<k_ordera, double> &bta,
 		block_tensor_i<k_orderb, double> &btb);
 	void make_symmetry();
+
+	/**	\brief For an orbit in a and b, make a list of blocks in c
+	 **/
+	void make_list_2orbits(const orbit<k_ordera, double> &orba,
+		const orbit<k_orderb, double> &orbb);
 };
 
 
@@ -97,6 +102,7 @@ btod_contract2<N, M, K>::btod_contract2(const contraction2<N, M, K> &contr,
 
 template<size_t N, size_t M, size_t K>
 btod_contract2<N, M, K>::~btod_contract2() {
+
 }
 
 
@@ -117,6 +123,7 @@ const symmetry<N + M, double> &btod_contract2<N, M, K>::get_symmetry() const {
 template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::perform(block_tensor_i<k_orderc, double> &btc,
 	double c) throw(exception) {
+
 	index<k_ordera> idx_a;
 	index<k_orderb> idx_b;
 	index<k_orderc> idx_c;
@@ -128,12 +135,30 @@ void btod_contract2<N, M, K>::perform(block_tensor_i<k_orderc, double> &btc,
 	tod_contract2<N,M,K> contr(m_contr,ctrl_bta.req_block(idx_a),ctrl_btb.req_block(idx_b));
 
 	contr.perform(ctrl_btc.req_block(idx_c),c);
+
+	dimensions<k_ordera> bidimsa(m_bta.get_bis().get_block_index_dims());
+	dimensions<k_orderb> bidimsb(m_btb.get_bis().get_block_index_dims());
+
+	orbit_list<k_ordera, double> orblsta(ctrl_bta.req_symmetry());
+	orbit_list<k_orderb, double> orblstb(ctrl_btb.req_symmetry());
+	typename orbit_list<k_ordera, double>::iterator iorba = orblsta.begin();
+	for(; iorba != orblsta.end(); iorba++) {
+		orbit<k_ordera, double> orba(ctrl_bta.req_symmetry(), *iorba);
+		typename orbit_list<k_orderb, double>::iterator iorbb =
+			orblstb.begin();
+		for(; iorbb != orblstb.end(); iorbb++) {
+			orbit<k_orderb, double> orbb(
+				ctrl_btb.req_symmetry(), *iorbb);
+			make_list_2orbits(orba, orbb);
+		}
+	}
 }
 
 
 template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::perform(block_tensor_i<k_orderc, double> &btc)
 	throw(exception) {
+
 	index<k_ordera> idx_a;
 	index<k_orderb> idx_b;
 	index<k_orderc> idx_c;
@@ -293,6 +318,28 @@ void btod_contract2<N, M, K>::make_symmetry() {
 			m_sym.add_element(projup.get_proj());
 		}
 	}
+}
+
+
+template<size_t N, size_t M, size_t K>
+void btod_contract2<N, M, K>::make_list_2orbits(
+	const orbit<k_ordera, double> &orba,
+	const orbit<k_orderb, double> &orbb) {
+
+	index<k_ordera> idxa;
+	index<k_orderb> idxb;
+	index<k_orderc> idxc;
+
+	const sequence<k_maxconn, size_t> &conn = m_contr.get_conn();
+	for(size_t i = 0; i < k_ordera; i++) {
+		if(conn[k_orderc + i] < k_orderc)
+			idxc[conn[k_orderc + i]] = idxa[i];
+	}
+	for(size_t i = 0; i < k_orderb; i++) {
+		if(conn[k_orderc + k_ordera + i] < k_orderc)
+			idxc[conn[k_orderc + k_ordera + i]] = idxb[i];
+	}
+
 }
 
 
