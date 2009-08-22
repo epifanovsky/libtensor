@@ -9,9 +9,11 @@
 #include "tod_copy_scenario.h"
 #include "tod_contract2_scenario.h"
 #include "tod_dotprod_scenario.h"
+#include "expression_test_scenario.h"
+
+#include "bispace_data.h"
 
 namespace libtensor {
-
 
 /**
 	\brief Performance test suite for the tensor library (libtensor)
@@ -24,6 +26,7 @@ namespace libtensor {
 	
 **/
 class libtensor_pt_suite : public performance_test_suite {
+	
 	template<size_t N, size_t M, size_t K> 
 	class dimensions_t {
 	protected:
@@ -51,6 +54,10 @@ class libtensor_pt_suite : public performance_test_suite {
 	public:
 		large_t();		
 	};
+	
+	typedef large_blocks_data<64,64> large64_t;
+	typedef arbitrary_blocks_data<64,64,4> small64_t;
+	typedef arbitrary_blocks_data<64,64,16> normal64_t;
 
 	tod_add_scenario<20,4,small_t<2,2,2> > m_tod_add_ptsc1;
 	tod_add_scenario<10,4,medium_t<2,2,2> > m_tod_add_ptsc2;
@@ -67,6 +74,10 @@ class libtensor_pt_suite : public performance_test_suite {
 	tod_dotprod_scenario<20,4,small_t<2,2,2> > m_tod_dotprod_ptsc1;
 	tod_dotprod_scenario<10,4,medium_t<2,2,2> > m_tod_dotprod_ptsc2;
 	tod_dotprod_scenario<5,4,large_t<2,2,2> > m_tod_dotprod_ptsc3;
+
+	expression_test_scenario<1,large64_t> m_expression_tests1;	
+	expression_test_scenario<1,normal64_t> m_expression_tests2;	
+	expression_test_scenario<1,small64_t> m_expression_tests3;	
 public:
 	//!	Creates the suite
 	libtensor_pt_suite();

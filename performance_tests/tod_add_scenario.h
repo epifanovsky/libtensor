@@ -11,8 +11,9 @@ namespace libtensor {
 
 /**	\brief Performance test scenario for the libtensor::tod_add class
  
- 	\param N dimensions of the tensors to be added
- 	\param X size of the tensors 
+ 	\tparam Repeats Number of times each test is repeated
+ 	\tparam N dimensions of the tensors to be added
+ 	\tparam X size of the tensors 
 
 	\ingroup libtensor_tests
 **/

@@ -35,7 +35,7 @@ void tod_random_test::perform() throw(libtest::test_exception)
 	tensor_ctrl<3,double> ctrla(ta3);
 	const double *cptra=ctrla.req_const_dataptr();
 	for (size_t i=0; i<ta3.get_dims().get_size(); i++ ) {
-		if ( (*cptra<0.0) || (*cptra>=2.0) )
+		if ( (cptra[i]<0.0) || (cptra[i]>=3.0) )
 			fail_test("tod_random_test<N>",__FILE__,__LINE__,
 				"Random numbers outside specified interval");
 	} 	

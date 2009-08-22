@@ -85,17 +85,20 @@ libtensor_pt_suite::libtensor_pt_suite()
 	: performance_test_suite("libtensor_performance_test") 
 {
 	add_tests("tod_add (1,small)",m_tod_add_ptsc1);
-	add_tests("tod_add (2,medium)",m_tod_add_ptsc2);
-	add_tests("tod_add (3,large)",m_tod_add_ptsc3);
+//	add_tests("tod_add (2,medium)",m_tod_add_ptsc2);
+//	add_tests("tod_add (3,large)",m_tod_add_ptsc3);
 	add_tests("tod_contract2 (1,small)",m_tod_contract2_ptsc1);
-	add_tests("tod_contract2 (2,medium)",m_tod_contract2_ptsc2);
-	add_tests("tod_contract2 (3,large)",m_tod_contract2_ptsc3);
+//	add_tests("tod_contract2 (2,medium)",m_tod_contract2_ptsc2);
+//	add_tests("tod_contract2 (3,large)",m_tod_contract2_ptsc3);
 	add_tests("tod_copy (1,small)",m_tod_copy_ptsc1);
-	add_tests("tod_copy (2,medium)",m_tod_copy_ptsc2);
-	add_tests("tod_copy (3,large)",m_tod_copy_ptsc3);
+//	add_tests("tod_copy (2,medium)",m_tod_copy_ptsc2);
+//	add_tests("tod_copy (3,large)",m_tod_copy_ptsc3);
 	add_tests("tod_dotprod (1,small)",m_tod_dotprod_ptsc1);
-	add_tests("tod_dotprod (2,medium)",m_tod_dotprod_ptsc2);
-	add_tests("tod_dotprod (3,large)",m_tod_dotprod_ptsc3);
+//	add_tests("tod_dotprod (2,medium)",m_tod_dotprod_ptsc2);
+//	add_tests("tod_dotprod (3,large)",m_tod_dotprod_ptsc3);
+	add_tests("expressions (large blocks)",m_expression_tests1);
+//	add_tests("expressions (medium blocks )",m_expression_tests2);
+//	add_tests("expressions (small blocks)",m_expression_tests3);
 }
 
 }
