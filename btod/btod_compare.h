@@ -73,6 +73,10 @@ inline btod_compare<N>::btod_compare(block_tensor_i<N, double> &bt1,
 template<size_t N>
 bool btod_compare<N>::compare() {
 	block_tensor_ctrl<N, double> ctrl1(m_bt1), ctrl2(m_bt2);
+	
+	orbit_list<N,double> orblist1(ctrl1.req_symmetry()),
+		orblist2(ctrl2.req_symmetry());
+	
 	index<N> i0;
 	tensor_i<N, double> &t1 = ctrl1.req_block(i0);
 	tensor_i<N, double> &t2 = ctrl2.req_block(i0);

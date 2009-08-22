@@ -96,7 +96,7 @@ libtensor_pt_suite::libtensor_pt_suite()
 	add_tests("tod_dotprod (1,small)",m_tod_dotprod_ptsc1);
 //	add_tests("tod_dotprod (2,medium)",m_tod_dotprod_ptsc2);
 //	add_tests("tod_dotprod (3,large)",m_tod_dotprod_ptsc3);
-	add_tests("expressions (large blocks)",m_expression_tests1);
+//	add_tests("expressions (large blocks)",m_expression_tests1);
 //	add_tests("expressions (medium blocks )",m_expression_tests2);
 //	add_tests("expressions (small blocks)",m_expression_tests3);
 }

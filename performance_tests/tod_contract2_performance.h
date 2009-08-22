@@ -26,7 +26,7 @@ namespace libtensor {
 
  	Don't use with N<2
 
-	\ingroup libtensor_tests
+ 	\ingroup libtensor_performance_tests
 **/
 template<size_t Repeats, size_t N, size_t M, size_t K, typename X>
 class tod_contract2_ref
@@ -64,7 +64,7 @@ protected:
 
  	Don't use with N<2
 
-	\ingroup libtensor_tests
+ 	\ingroup libtensor_performance_tests
 **/
 template<size_t Repeats, size_t N, size_t M, size_t K, typename X>
 class tod_contract2_p2
@@ -85,7 +85,7 @@ protected:
 
  	Don't use with N<2
 
-	\ingroup libtensor_tests
+ 	\ingroup libtensor_performance_tests
 **/
 template<size_t Repeats, size_t N, size_t M, size_t K, typename X>
 class tod_contract2_p3
@@ -107,7 +107,7 @@ protected:
 
  	Don't use with N<3
 
-	\ingroup libtensor_tests
+ 	\ingroup libtensor_performance_tests
 **/
 template<size_t Repeats, size_t N, size_t M, size_t K, typename X>
 class tod_contract2_p4

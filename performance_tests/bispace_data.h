@@ -17,17 +17,18 @@ class bispace_data_i
 {
 protected:
 	bispace<1> m_one, m_two, m_three;
-public:
-	/** \brief Constructor
-	 **/
+public: 
+	//! constructor & destructor
+	//@{ 
 	bispace_data_i( size_t dim1, size_t dim2, size_t dim3 )
 		: m_one(dim1), m_two(dim2), m_three(dim3) 
 	{}
 	
-	/** \brief virtual destructor
-	 **/ 
 	virtual ~bispace_data_i() {}	
+	//@}
 	
+	//! access functions to data members
+	//@{
 	/** \brief Return the first bispace<1> 
 	 **/ 
 	const bispace<1>& one() const { return m_one; }
@@ -38,8 +39,10 @@ public:
 					
 	/** \brief Return the third bispace<1> 
 	 **/ 
-	const bispace<1>& third() const { return m_one; }				
+	const bispace<1>& third() const { return m_one; }
+	//@}				
 };	
+
 
 /** \brief Bispace data for 2 large blocks per dimension 
  	\tparam O dimensions of the first index

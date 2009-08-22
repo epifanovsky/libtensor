@@ -8,12 +8,13 @@
 #include <utility>
 
 namespace libtensor {
-/** 
- 	\brief Performance test scenario interface 
+/** \brief Performance test scenario interface 
  	
  	A performance scenario is supposed to store multiple tests which should be
  	executed one after the other.  
  	  
+ 	\ingroup libtensor_performance_tests
+ 	
  **/
 class performance_test_scenario_i {
 	typedef std::pair<std::string,libtest::unit_test_factory_i*> test_t;

@@ -20,7 +20,7 @@ namespace libtensor {
  	Tests performance of
  	\f[ A = 2.0 B \f]
 
-	\ingroup libtensor_tests
+ 	\ingroup libtensor_performance_tests
 **/
 template<size_t Repeats, typename X>
 class tod_copy_ref

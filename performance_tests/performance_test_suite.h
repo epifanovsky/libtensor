@@ -6,11 +6,9 @@
 
 namespace libtensor {
 
-/**
-	\brief Performance test suite for the tensor library (libtensor)
-
-	This suite runs the following performance interfaces:
-	\li libtensor::tod_add_test
+/**	\brief Performance test suite for the tensor library (libtensor)
+  
+ 	\ingroup libtensor_performance_tests
 **/
 class performance_test_suite : public libtest::test_suite {
 protected:

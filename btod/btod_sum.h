@@ -3,6 +3,7 @@
 
 #include "defs.h"
 #include "exception.h"
+#include "timings.h"
 #include "btod_additive.h"
 
 namespace libtensor {
@@ -12,7 +13,13 @@ namespace libtensor {
 	\ingroup libtensor_btod
 **/
 template<size_t N>
-class btod_sum : public direct_block_tensor_operation<N,double> {
+class btod_sum 
+	: public direct_block_tensor_operation<N,double>, 
+		public timings<btod_sum<N> > 
+{
+	friend class timings<btod_sum<N> >;
+	static const char* k_clazz; //!< Class name
+	
 private:
 	struct list_node {
 		btod_additive<N> &m_op;
@@ -52,6 +59,9 @@ public:
 };
 
 template<size_t N>
+const char* btod_sum<N>::k_clazz="btod_sum<N>";
+
+template<size_t N>
 inline btod_sum<N>::btod_sum(direct_block_tensor_operation<N,double> &op) :
 	m_baseop(op), m_head(NULL), m_tail(NULL) {
 }
@@ -79,12 +89,14 @@ const symmetry<N, double> &btod_sum<N>::get_symmetry() const {
 
 template<size_t N>
 void btod_sum<N>::perform(block_tensor_i<N,double> &bt) throw(exception) {
+	timings<btod_sum<N> >::start_timer();
 	m_baseop.perform(bt);
 	struct list_node *node = m_head;
 	while(node != NULL) {
 		node->m_op.perform(bt, node->m_c);
 		node = node->m_next;
 	}
+	timings<btod_sum<N> >::stop_timer();
 }
 
 template<size_t N>

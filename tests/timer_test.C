@@ -23,12 +23,12 @@ void timer_test::perform() throw(libtest::test_exception) {
 	clock_t duration=calc(res,10000000);
 	t.stop(); 
 	res=(duration*1.0)/CLOCKS_PER_SEC;
-#ifdef POSIX
-	res-=t.duration().user_time();
-	res-=t.duration().system_time();
-#else
-	res-=t.duration().m_rt;
-#endif
+//#ifdef POSIX
+//	res-=t.duration().user_time();
+//	res-=t.duration().system_time();
+//#else
+	res-=t.duration().wall_time();
+//#endif
 	if ( fabs(res) > 0.01 ) {
 		std::ostringstream msg;
 		msg << "Timer measurement not correct (diff: " << res << "fs)";

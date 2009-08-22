@@ -15,7 +15,7 @@ namespace libtensor {
  	\tparam N dimensions of the tensors to be added
  	\tparam X size of the tensors 
 
-	\ingroup libtensor_tests
+ 	\ingroup libtensor_performance_tests
 **/
 template<size_t Repeats, size_t N, typename X>  
 class tod_add_scenario

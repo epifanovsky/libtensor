@@ -37,6 +37,9 @@ public:
   	\f]
   
  	Use this as example howto implement expressions for performance tests
+
+ 	\ingroup libtensor_performance_tests
+
  **/
 class test_expression_add : public test_expression_i
 {
@@ -88,9 +91,8 @@ public:
   	\f]
   	similar to an expression occuring in ADC
   
- 	Use this as example howto implement expressions for performance tests
+ 	\ingroup libtensor_performance_tests
  **/
-
 class test_expression_adc : public test_expression_i
 {
 	typedef btensor<4,double> btensor_t;

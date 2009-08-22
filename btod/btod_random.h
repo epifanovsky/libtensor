@@ -14,7 +14,6 @@
 
 namespace libtensor {
 
-
 /**	\brief Fills a block %tensor with random data without affecting its
 		%symmetry
 
@@ -24,6 +23,8 @@ template<size_t N>
 class btod_random {
 public:
 	void perform(block_tensor_i<N, double> &bt) throw(exception);
+	void perform(block_tensor_i<N, double> &bt, const index<N> &blk ) 
+		throw(exception);
 private:
 
 	typedef std::pair< index<N>,transf<N,double> > pair_t;
@@ -86,8 +87,9 @@ void btod_random<N>::determine_transformations( list_t& reslist,
 }
 
 template<size_t N>
-void btod_random<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
-
+void btod_random<N>::perform(block_tensor_i<N, double> &bt) 
+	throw(exception) 
+{
 	dimensions<N> bidims(bt.get_bis().get_block_index_dims());
 	block_tensor_ctrl<N, double> ctrl(bt);
 
@@ -126,29 +128,56 @@ void btod_random<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 				tb=tc;
 			}
 			
-			if ( tb != &blk ) {
-				tod_copy<N> finalcopy(*tb,1.0);
+			if ( ta != &blk ) {
+				tod_copy<N> finalcopy(*ta,1.0);
 				finalcopy.perform(blk);
 			}
-//			std::cout << "Block: " << blkidx;
-//			std::cout << " (dims: " << blk.get_dims() << ")" << std::endl; 
-//			tensor_ctrl<N,double> tctrl(blk);
-//			const double* tptr=tctrl.req_const_dataptr();
-//			size_t cnt=0;
-//			size_t dim2=blk.get_dims().get_increment(N/2-1);
-//			size_t dim1=blk.get_dims().get_size()/dim2;
-//			for (size_t i=0; i<dim1; i++ ) {
-//				for (size_t j=0; j<dim2; j++ ) { 
-//					std::cout << "   " << std::fixed << tptr[cnt++];
-//				}
-//				std::cout << std::endl;
-//			}
-//			tctrl.ret_dataptr(tptr);
 		}
 	}
 }
 
-
+template<size_t N>
+void btod_random<N>::perform(block_tensor_i<N, double> &bt, 
+	const index<N> &blkidx ) throw(exception) 
+{
+	block_tensor_ctrl<N, double> ctrl(bt);
+	tod_random<N> randr;
+	
+	orbit<N, double> orb(ctrl.req_symmetry(),blkidx);
+		
+	list_t transf_list;
+	index_list_t start_list;
+	start_list.push_back( pair_t(blkidx,transf<N,double>()) );
+	determine_transformations(transf_list,start_list,ctrl.req_symmetry());
+		
+	tensor_i<N, double> &blk = ctrl.req_block(blkidx);
+		
+	if ( transf_list.empty() ) {
+		randr.perform(blk);
+	}
+	else {
+		tensor<N,double,libvmm::std_allocator<double> > tmp(blk.get_dims());
+		tensor_i<N,double> *ta, *tb, *tc;
+		ta=&tmp;
+		randr.perform(*ta);
+		tb=&blk;
+				
+		typename std::list<transf<N,double> >::iterator it=transf_list.begin();
+		for ( ; it!=transf_list.end(); it++ ) {
+			tod_add<N> doadd(*ta,0.5);
+			doadd.add_op(*ta,it->get_perm(),0.5*it->get_coeff());
+			doadd.perform(*tb);
+			tc=ta;
+			ta=tb;
+			tb=tc;
+		}
+			
+		if ( ta != &blk ) {
+			tod_copy<N> finalcopy(*ta,1.0);
+			finalcopy.perform(blk);
+		}
+	}
+}
 
 
 } // namespace libtensor

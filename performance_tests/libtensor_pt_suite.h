@@ -24,6 +24,7 @@ namespace libtensor {
 	\li libtensor::tod_copy_scenario
 	\li libtensor::tod_dotprod_scenario
 	
+	\ingroup libtensor_performance_tests	
 **/
 class libtensor_pt_suite : public performance_test_suite {
 	

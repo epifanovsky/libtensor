@@ -47,37 +47,6 @@ void btod_random_test::perform() throw(libtest::test_exception)
 	tod_btconv<4> conv(bta);
 	conv.perform(ta);
 
-//	std::cout << "Random tensor (dims: " << ta.get_dims() << ")" << std::endl;
-//	tensor_ctrl_t tctrl(ta);
-//	const double* tptr=tctrl.req_const_dataptr();
-//	size_t cnt=0;
-//	for (size_t i=0; i<4; i++ ) {
-//		for (size_t k=0; k<20; k++ ) std::cout << "---------";
-//		std::cout << std::endl;
-//		for (size_t k=0; k<20; k++ ) std::cout << "---------";
-//		std::cout << std::endl;
-//		if ( i==2 ) {
-//			for (size_t k=0; k<20; k++ ) std::cout << "---------";
-//			std::cout << std::endl;
-//		}
-//		for (size_t a=0; a<5; a++ ) {
-//			if ( a==2 ) {
-//				for (size_t k=0; k<20; k++ ) std::cout << "---------";
-//				std::cout << std::endl;
-//			}
-//			for (size_t j=0; j<4; j++ ) {
-//				std::cout << "||";
-//				if ( j==2 ) std::cout << "|";
-//				for (size_t b=0; b<5; b++ ) {
-//					if ( b==2 ) std::cout << "|";
-//					std::cout << "   " << std::fixed << tptr[cnt++];
-//				}
-//			}
-//			std::cout << std::endl;
-//		}
-//	}
-
-
 	tensor_t tb(ta), tc(ta), td(ta);
 	permutation<4> permb, permc, permd;
 	permb.permute(0,2);

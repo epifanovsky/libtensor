@@ -17,4 +17,14 @@ std::ostream& operator<<( std::ostream& out, const time_diff_t& t )
 	return out;
 }
 
+std::ostream& operator<<( std::ostream& out, const time_pt_t& t ) 
+{
+#ifdef POSIX
+	out << "User: " << std::setw(8) << t.m_ut << " ticks, ";
+	out << "System: " << std::setw(8) << t.m_st << " ticks, ";
+#endif
+	out << "Wall: " << std::setw(8) << t.m_rt << " ticks";
+	return out;
+}
+
 }

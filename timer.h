@@ -3,7 +3,7 @@
 
 #include "exception.h"
 
-#include <ostream>
+#include <iostream>
 #include <ctime>
 
 #ifdef POSIX
@@ -14,19 +14,22 @@
 namespace libtensor {
 
 class time_pt_t;
+//! comparison operator of two time differences
 bool operator<=( const time_pt_t&, const time_pt_t& );
+//! prints time point to ostream
+std::ostream& operator<<( std::ostream&, const time_pt_t& );
 
 class time_diff_t;
 //! equal comparison of time differences
 bool operator==( const time_diff_t&, const time_diff_t& );
 //! unequal comparison of time differences
 bool operator!=( const time_diff_t&, const time_diff_t& );
-
+//! prints time difference to ostream
 std::ostream& operator<<( std::ostream&, const time_diff_t& );
 //! form the time difference between two time points
 time_diff_t operator-( const time_pt_t&, const time_pt_t& );
 
-/** \brief Class to determines a point in time
+/** \brief Determine a point in time
   
 	Stores the point in time when function now() is called.    
  **/
@@ -47,7 +50,7 @@ public:
 };
 
 
-/** \brief structure to store a time difference
+/** \brief Stores a time difference
  **/
 class time_diff_t 
 {	
@@ -79,7 +82,12 @@ public:
 }; 
 
 
-/** \brief Simple timer class 
+/** \brief Simple timer class
+  
+ 	Stores the point in time when start() is called and calculates the time 
+ 	difference to this point as soon as stop() is called.
+ 	
+ 	\ingroup libtensor_core
  **/
 class timer {
 	time_pt_t m_start; //!< start time
@@ -95,9 +103,11 @@ public:
 	void stop()	{ 
 		time_pt_t end; 
 		end.now(); 
+#ifdef LIBTENSOR_DEBUG
 		if ( m_elapsed != time_diff_t() ) 
 			throw exception("libtensor","timer","stop()",__FILE__,__LINE__,
-							"","Timer not started"); 
+							"","Timer not started");
+#endif 
 		m_elapsed=(end-m_start); 
 	}
 	
@@ -111,12 +121,13 @@ public:
 inline void time_pt_t::now() 
 {
 #ifdef POSIX
-	struct tms pt;
-	m_rt=times(&pt);
+	static struct tms pt;
+	times(&pt);
+#endif 
+	m_rt=clock();
+#ifdef POSIX
 	m_ut=pt.tms_utime;
 	m_st=pt.tms_stime;
-#else		
-	m_rt=clock();
 #endif 
 }
 
@@ -190,8 +201,7 @@ inline time_diff_t operator-( const time_pt_t& end, const time_pt_t& begin )
 {
 #ifdef POSIX
 	static const double clk2sec=1./sysconf(_SC_CLK_TCK);
-#else
-	static const double clk2sec=1./CLOCKS_PER_SEC;
+	static const double CLK2SEC=1./CLOCKS_PER_SEC;
 #endif
 	
 	if ( ! (begin<=end) ) 
@@ -200,11 +210,23 @@ inline time_diff_t operator-( const time_pt_t& end, const time_pt_t& begin )
 			__FILE__,__LINE__,"Start time later than stop time"); 
 			
 	time_diff_t res; 
-	res.m_rt=(end.m_rt-begin.m_rt)*clk2sec; 
+	res.m_rt=(end.m_rt-begin.m_rt)*CLK2SEC; 
 #ifdef POSIX  
 	res.m_ut=(end.m_ut-begin.m_ut)*clk2sec; 
 	res.m_st=(end.m_st-begin.m_st)*clk2sec; 
-#endif 
+
+//	if ( res.m_ut > res.m_rt ) {
+//		std::cout << std::endl << "WARNING User time larger than wall time: ";
+//		std::cout << res << "; ";
+//		std::cout << "User: " << end.m_ut-begin.m_ut;
+//		std::cout << " (" << end.m_ut << "," << begin.m_ut;
+//		std::cout << ")";    
+//		std::cout << ", Wall: " << end.m_rt-begin.m_rt;
+//		std::cout << " (" << end.m_rt << "," << begin.m_rt;
+//		std::cout << ")" << std::endl;    
+//	}
+#endif
+
 	return res; 
 }
 
@@ -223,4 +245,4 @@ inline bool operator!=( const time_diff_t& a, const time_diff_t& b ) {
 
 }
 
-#endif /*TIMER_H_*/
+#endif // TIMER_H

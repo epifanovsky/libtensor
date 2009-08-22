@@ -7,6 +7,7 @@
 #include <utility>
 #include "defs.h"
 #include "exception.h"
+#include "timings.h"
 #include "core/block_tensor_i.h"
 #include "core/block_tensor_ctrl.h"
 #include "core/orbit_list.h"
@@ -30,10 +31,10 @@ namespace libtensor {
 	\ingroup libtensor_btod
  **/
 template<size_t N>
-class btod_add : public btod_additive<N> {
+class btod_add : public btod_additive<N>, public timings<btod_add<N> > {
 public:
 	static const char *k_clazz; //!< Class name
-
+	friend class timings<btod_add<N> >;
 private:
 	typedef struct operand {
 		block_tensor_i<N, double> &m_bt; //!< Block %tensor
@@ -228,6 +229,8 @@ void btod_add<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 
 	static const char *method = "perform(block_tensor_i<N, double>&)";
 
+	timings<btod_add<N> >::start_timer();
+	
 	if(!m_bis.equals(bt.get_bis())) {
 		throw bad_parameter("libtensor", k_clazz, method, __FILE__,
 			__LINE__, "Incompatible block index space.");
@@ -365,6 +368,8 @@ void btod_add<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 
 	addition.prefetch();
 	addition.perform(ctrlbt.req_block(idx));*/
+
+	timings<btod_add<N> >::stop_timer();
 }
 
 
@@ -372,6 +377,7 @@ template<size_t N>
 void btod_add<N>::perform(block_tensor_i<N, double> &bt,
 	double cb) throw(exception)
 {
+	timings<btod_add<N> >::start_timer();
 	/*
 	// first check whether the output tensor has the right dimensions
 	if ( *m_dim != bt.get_bis().get_dims() )
@@ -396,6 +402,8 @@ void btod_add<N>::perform(block_tensor_i<N, double> &bt,
 	}
 	addition.prefetch();
 	addition.perform(ctrlbt.req_block(idx),cb);*/
+
+	timings<btod_add<N> >::start_timer();
 }
 
 

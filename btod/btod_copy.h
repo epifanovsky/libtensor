@@ -4,6 +4,7 @@
 #include <map>
 #include "defs.h"
 #include "exception.h"
+#include "timings.h"
 #include "core/orbit_list.h"
 #include "tod/tod_copy.h"
 #include "btod_additive.h"
@@ -19,10 +20,10 @@ namespace libtensor {
 	\ingroup libtensor_btod
  **/
 template<size_t N>
-class btod_copy : public btod_additive<N> {
+class btod_copy : public btod_additive<N>, public timings<btod_copy<N> > {
 public:
 	static const char *k_clazz; //!< Class name
-
+	friend class timings<btod_copy<N> >;
 private:
 	block_tensor_i<N, double> &m_bt; //!< Source block %tensor
 	permutation<N> m_perm; //!< Permutation
@@ -119,7 +120,9 @@ template<size_t N>
 void btod_copy<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 
 	static const char *method = "perform(block_tensor_i<N, double>&)";
-
+	
+	timings<btod_copy<N> >::start_timer();
+	
 	if(!m_bis.equals(bt.get_bis())) {
 		throw bad_parameter("libtensor", k_clazz, method,
 			__FILE__, __LINE__,
@@ -152,6 +155,7 @@ void btod_copy<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 
 	}
 
+	timings<btod_copy<N> >::stop_timer();
 }
 
 
@@ -161,6 +165,8 @@ void btod_copy<N>::perform(block_tensor_i<N, double> &bt, double c)
 
 	static const char *method =
 		"perform(block_tensor_i<N, double>&, double)";
+
+	timings<btod_copy<N> >::start_timer();
 
 	if(!m_bis.equals(bt.get_bis())) {
 		throw bad_parameter("libtensor", k_clazz, method,
@@ -194,6 +200,7 @@ void btod_copy<N>::perform(block_tensor_i<N, double> &bt, double c)
 
 	}
 
+	timings<btod_copy<N> >::stop_timer();
 }
 
 
