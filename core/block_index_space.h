@@ -308,14 +308,14 @@ void block_index_space<N>::split(const mask<N> &msk, size_t pos)
 	}
 
 	mask<N> adjmsk;
-	bool adjmsk_neq = false;
+	bool adjmsk_neq = false; // Whether original mask != type-adjusted mask
 	for(i = 0; i < N; i++) {
 		if(msk[i]) {
 			if(m_type[i] != type) break;
 			adjmsk[i] = true;
 		} else {
 			adjmsk[i] = false;
-			if(m_type[i] == type) adjmsk_neq;
+			if(m_type[i] == type) adjmsk_neq = true;
 		}
 	}
 	if(i != N) {

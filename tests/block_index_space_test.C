@@ -10,6 +10,7 @@ void block_index_space_test::perform() throw(libtest::test_exception) {
 	test_1();
 	test_2();
 	test_3();
+	test_4();
 	test_equals_1();
 	test_equals_2();
 	test_equals_3();
@@ -21,6 +22,7 @@ void block_index_space_test::perform() throw(libtest::test_exception) {
 void block_index_space_test::test_1() throw(libtest::test_exception) {
 
 	static const char *testname = "block_index_space_test::test_1()";
+
 	try {
 
 	index<1> i_0;
@@ -42,8 +44,8 @@ void block_index_space_test::test_1() throw(libtest::test_exception) {
 	block_index_space<1> bis(d_10);
 
 	if(!bis.get_dims().equals(d_10)) {
-		fail_test("block_index_space_test::test_1()", __FILE__,
-			__LINE__, "(1) Incorrect total dimensions");
+		fail_test(testname, __FILE__, __LINE__,
+			"(1) Incorrect total dimensions");
 	}
 	if(!bis.get_block_index_dims().equals(d_1)) {
 		std::ostringstream ss;
@@ -53,20 +55,20 @@ void block_index_space_test::test_1() throw(libtest::test_exception) {
 		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
 	}
 	if(!bis.get_block_start(i_0).equals(i_0)) {
-		fail_test("block_index_space_test::test_1()", __FILE__,
-			__LINE__, "(1) Incorrect block [0] start");
+		fail_test(testname, __FILE__, __LINE__,
+			"(1) Incorrect block [0] start");
 	}
 	if(!bis.get_block_dims(i_0).equals(d_10)) {
-		fail_test("block_index_space_test::test_1()", __FILE__,
-			__LINE__, "(1) Incorrect block [0] dimensions");
+		fail_test(testname, __FILE__, __LINE__,
+			"(1) Incorrect block [0] dimensions");
 	}
 
 	mask<1> splmsk; splmsk[0] = true;
 	bis.split(splmsk, 2);
 
 	if(!bis.get_dims().equals(d_10)) {
-		fail_test("block_index_space_test::test_1()", __FILE__,
-			__LINE__, "(2) Incorrect total dimensions");
+		fail_test(testname, __FILE__, __LINE__,
+			"(2) Incorrect total dimensions");
 	}
 	if(!bis.get_block_index_dims().equals(d_2)) {
 		std::ostringstream ss;
@@ -107,8 +109,8 @@ void block_index_space_test::test_1() throw(libtest::test_exception) {
 	bis.split(splmsk, 5);
 
 	if(!bis.get_dims().equals(d_10)) {
-		fail_test("block_index_space_test::test_1()", __FILE__,
-			__LINE__, "(3) Incorrect total dimensions");
+		fail_test(testname, __FILE__, __LINE__,
+			"(3) Incorrect total dimensions");
 	}
 	if(!bis.get_block_index_dims().equals(d_3)) {
 		std::ostringstream ss;
@@ -118,38 +120,39 @@ void block_index_space_test::test_1() throw(libtest::test_exception) {
 		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
 	}
 	if(!bis.get_block_start(i_0).equals(i_0)) {
-		fail_test("block_index_space_test::test_1()", __FILE__,
-			__LINE__, "(3) Incorrect block [0] start");
+		fail_test(testname, __FILE__, __LINE__,
+			"(3) Incorrect block [0] start");
 	}
 	if(!bis.get_block_dims(i_0).equals(d_2)) {
-		fail_test("block_index_space_test::test_1()", __FILE__,
-			__LINE__, "(3) Incorrect block [0] dimensions");
+		fail_test(testname, __FILE__, __LINE__,
+			"(3) Incorrect block [0] dimensions");
 	}
 	if(!bis.get_block_start(i_1).equals(i_2)) {
-		fail_test("block_index_space_test::test_1()", __FILE__,
-			__LINE__, "(3) Incorrect block [1] start");
+		fail_test(testname, __FILE__, __LINE__,
+			"(3) Incorrect block [1] start");
 	}
 	if(!bis.get_block_dims(i_1).equals(d_3)) {
-		fail_test("block_index_space_test::test_1()", __FILE__,
-			__LINE__, "(3) Incorrect block [1] dimensions");
+		fail_test(testname, __FILE__, __LINE__,
+			"(3) Incorrect block [1] dimensions");
 	}
 	if(!bis.get_block_start(i_2).equals(i_5)) {
-		fail_test("block_index_space_test::test_1()", __FILE__,
-			__LINE__, "(3) Incorrect block [2] start");
+		fail_test(testname, __FILE__, __LINE__,
+			"(3) Incorrect block [2] start");
 	}
 	if(!bis.get_block_dims(i_2).equals(d_5)) {
-		fail_test("block_index_space_test::test_1()", __FILE__,
-			__LINE__, "(3) Incorrect block [2] dimensions");
+		fail_test(testname, __FILE__, __LINE__,
+			"(3) Incorrect block [2] dimensions");
 	}
 
 	} catch(exception &e) {
-		fail_test("block_index_space_test::test_1()", __FILE__,
-			__LINE__, e.what());
+		fail_test(testname, __FILE__, __LINE__, e.what());
 	}
 
 }
 
 void block_index_space_test::test_2() throw(libtest::test_exception) {
+
+	static const char *testname = "block_index_space_test::test_2()";
 
 	try {
 
@@ -165,8 +168,8 @@ void block_index_space_test::test_2() throw(libtest::test_exception) {
 	block_index_space<1> bis(d_3);
 
 	if(!bis.get_dims().equals(d_3)) {
-		fail_test("block_index_space_test::test_2()", __FILE__,
-			__LINE__, "(1) Incorrect total dimensions");
+		fail_test(testname, __FILE__, __LINE__,
+			"(1) Incorrect total dimensions");
 	}
 
 	mask<1> splmsk; splmsk[0] = true;
@@ -174,41 +177,40 @@ void block_index_space_test::test_2() throw(libtest::test_exception) {
 	bis.split(splmsk, 2);
 
 	if(!bis.get_dims().equals(d_3)) {
-		fail_test("block_index_space_test::test_2()", __FILE__,
-			__LINE__, "(2) Incorrect total dimensions");
+		fail_test(testname, __FILE__, __LINE__,
+			"(2) Incorrect total dimensions");
 	}
 	if(!bis.get_block_index_dims().equals(d_3)) {
-		fail_test("block_index_space_test::test_2()", __FILE__,
-			__LINE__, "(2) Incorrect block index dimensions");
+		fail_test(testname, __FILE__, __LINE__,
+			"(2) Incorrect block index dimensions");
 	}
 	if(!bis.get_block_start(i_0).equals(i_0)) {
-		fail_test("block_index_space_test::test_2()", __FILE__,
-			__LINE__, "(2) Incorrect block [0] start");
+		fail_test(testname, __FILE__, __LINE__,
+			"(2) Incorrect block [0] start");
 	}
 	if(!bis.get_block_dims(i_0).equals(d_1)) {
-		fail_test("block_index_space_test::test_2()", __FILE__,
-			__LINE__, "(2) Incorrect block [0] dimensions");
+		fail_test(testname, __FILE__, __LINE__,
+			"(2) Incorrect block [0] dimensions");
 	}
 	if(!bis.get_block_start(i_1).equals(i_1)) {
-		fail_test("block_index_space_test::test_2()", __FILE__,
-			__LINE__, "(2) Incorrect block [1] start");
+		fail_test(testname, __FILE__, __LINE__,
+			"(2) Incorrect block [1] start");
 	}
 	if(!bis.get_block_dims(i_1).equals(d_1)) {
-		fail_test("block_index_space_test::test_2()", __FILE__,
-			__LINE__, "(2) Incorrect block [1] dimensions");
+		fail_test(testname, __FILE__, __LINE__,
+			"(2) Incorrect block [1] dimensions");
 	}
 	if(!bis.get_block_start(i_2).equals(i_2)) {
-		fail_test("block_index_space_test::test_2()", __FILE__,
-			__LINE__, "(2) Incorrect block [2] start");
+		fail_test(testname, __FILE__, __LINE__,
+			"(2) Incorrect block [2] start");
 	}
 	if(!bis.get_block_dims(i_2).equals(d_1)) {
-		fail_test("block_index_space_test::test_2()", __FILE__,
-			__LINE__, "(2) Incorrect block [2] dimensions");
+		fail_test(testname, __FILE__, __LINE__,
+			"(2) Incorrect block [2] dimensions");
 	}
 
 	} catch(exception &e) {
-		fail_test("block_index_space_test::test_2()", __FILE__,
-			__LINE__, e.what());
+		fail_test(testname, __FILE__, __LINE__, e.what());
 	}
 
 }
@@ -344,6 +346,41 @@ void block_index_space_test::test_3() throw(libtest::test_exception) {
 	if(!bis.get_block_dims(i_22).equals(d_33)) {
 		fail_test(testname, __FILE__, __LINE__,
 			"(1) Incorrect block [2,2] dimensions");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+
+}
+
+
+void block_index_space_test::test_4() throw(libtest::test_exception) {
+
+	static const char *testname = "block_index_space_test::test_4()";
+
+	try {
+
+	index<2> i_00;
+	index<2> i_11; i_11[0] = 1; i_11[1] = 1;
+	index<2> i_55; i_55[0] = 5; i_55[1] = 5;
+	dimensions<2> d_22(index_range<2>(i_00, i_11));
+	dimensions<2> d_66(index_range<2>(i_00, i_55));
+	mask<2> msk1, msk2;
+	msk1[0] = true;
+	msk2[1] = true;
+
+	block_index_space<2> bis(d_66);
+	bis.split(msk1, 2);
+	bis.split(msk2, 2);
+
+	if(!bis.get_dims().equals(d_66)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"(1) Incorrect total dimensions");
+	}
+	if(!bis.get_block_index_dims().equals(d_22)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"(1) Incorrect block index dimensions");
 	}
 
 	} catch(exception &e) {
