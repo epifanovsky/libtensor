@@ -55,6 +55,8 @@ public:
 	//@{
 	iterator begin() const;
 	iterator end() const;
+	size_t get_abs_index(iterator &i) const;
+	const transf<N, T> &get_transf(iterator &i) const;
 	//@}
 
 private:
@@ -123,6 +125,20 @@ template<size_t N, typename T>
 inline typename orbit<N, T>::iterator orbit<N, T>::end() const {
 
 	return m_orb.end();
+}
+
+
+template<size_t N, typename T>
+inline size_t orbit<N, T>::get_abs_index(iterator &i) const {
+
+	return i->first;
+}
+
+
+template<size_t N, typename T>
+inline const transf<N, T> &orbit<N, T>::get_transf(iterator &i) const {
+
+	return i->second;
 }
 
 

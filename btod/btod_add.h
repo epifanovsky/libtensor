@@ -253,7 +253,8 @@ void btod_add<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 	typename orbit_list<N, double>::iterator iorbit = orblst.begin();
 	while(iorbit != orblst.end()) {
 
-		orbit<N, double> orb(dst_ctrl.req_symmetry(), *iorbit);
+		orbit<N, double> orb(dst_ctrl.req_symmetry(),
+			orblst.get_index(iorbit));
 		index<N> dst_blk_idx;
 		bidims.abs_index(orb.get_abs_canonical_index(), dst_blk_idx);
 

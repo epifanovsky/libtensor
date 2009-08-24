@@ -133,7 +133,8 @@ void tod_btconv<N>::perform(tensor_i<N, double> &t) throw(exception) {
 	typename orbit_list<N, double>::iterator iorbit = orblst.begin();
 	for(; iorbit != orblst.end(); iorbit++) {
 
-		orbit<N, double> orb(src_ctrl.req_symmetry(), *iorbit);
+		orbit<N, double> orb(src_ctrl.req_symmetry(),
+			orblst.get_index(iorbit));
 		index<N> blk_idx;
 		bidims.abs_index(orb.get_abs_canonical_index(), blk_idx);
 		if(src_ctrl.req_is_zero_block(blk_idx)) continue;

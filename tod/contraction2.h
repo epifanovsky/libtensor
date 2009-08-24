@@ -196,11 +196,47 @@ void contraction2<N, M, K>::contract(size_t ia, size_t ib) throw (exception) {
 }
 
 template<size_t N, size_t M, size_t K>
+void contraction2<N, M, K>::permute_ab(const permutation<k_ordera> &perma,
+	const permutation<k_orderb> &permb) throw (exception) {
+
+	if(!is_complete()) {
+		throw_exc("contraction2<N, M, K>", "permute_ab()",
+			"Contraction is incomplete");
+	}
+
+	if(perma.is_identity() && permb.is_identity()) return;
+
+	sequence<k_ordera, size_t> seqa(0);
+	sequence<k_orderb, size_t> seqb(0);
+	for(register size_t i = 0; i < k_ordera; i++)
+		seqa[i] = m_conn[k_orderc + i];
+	for(register size_t i = 0; i < k_orderb; i++)
+		seqb[i] = m_conn[k_orderc + k_ordera + i];
+	seqa.permute(perma);
+	seqb.permute(permb);
+	for(register size_t i = 0; i < k_ordera; i++) {
+		if(seqa[i] >= k_orderc) {
+			for(register size_t j = 0; j < k_orderb; j++) {
+				if(seqb[j] == k_orderc + i) {
+					m_conn[k_orderc + i] =
+						k_orderc + k_ordera + j;
+					m_conn[k_orderc + k_ordera + j] =
+						k_orderc + i;
+					break;
+				}
+			}
+		}
+	}
+
+	connect();
+}
+
+template<size_t N, size_t M, size_t K>
 void contraction2<N, M, K>::permute_c(const permutation<k_orderc> &permc)
 	throw(exception) {
 
 	if(!is_complete()) {
-		throw_exc("contraction2<N, M, K>", "populate()",
+		throw_exc("contraction2<N, M, K>", "permute_c()",
 			"Contraction is incomplete");
 	}
 

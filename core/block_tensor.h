@@ -118,8 +118,7 @@ void block_tensor<N, T, Alloc>::on_req_sym_add_element(
 		"on_req_sym_add_element(const symmetry_element_i<N, T>&)";
 
 	if(is_immutable()) {
-		throw immut_violation("libtensor", k_clazz, method,
-			__FILE__, __LINE__,
+		throw immut_violation(g_ns, k_clazz, method, __FILE__, __LINE__,
 			"Immutable object cannot be modified.");
 	}
 
@@ -135,8 +134,7 @@ void block_tensor<N, T, Alloc>::on_req_sym_remove_element(
 		"on_req_sym_remove_element(const symmetry_element_i<N, T>&)";
 
 	if(is_immutable()) {
-		throw immut_violation("libtensor", k_clazz, method,
-			__FILE__, __LINE__,
+		throw immut_violation(g_ns, k_clazz, method, __FILE__, __LINE__,
 			"Immutable object cannot be modified.");
 	}
 
@@ -158,8 +156,7 @@ void block_tensor<N, T, Alloc>::on_req_sym_clear_elements() throw(exception) {
 	static const char *method = "on_req_sym_clear_elements()";
 
 	if(is_immutable()) {
-		throw immut_violation("libtensor", k_clazz, method,
-			__FILE__, __LINE__,
+		throw immut_violation(g_ns, k_clazz, method, __FILE__, __LINE__,
 			"Immutable object cannot be modified.");
 	}
 
@@ -172,21 +169,13 @@ tensor_i<N, T> &block_tensor<N, T, Alloc>::on_req_block(
 
 	static const char *method = "on_req_block(const index<N>&)";
 
-	bool canonical = false;
+	size_t absidx = m_bidims.abs_index(idx);
 	orbit_list<N, T> orblst(m_symmetry);
-	typename orbit_list<N, T>::iterator iorbit = orblst.begin();
-	for(; iorbit != orblst.end(); iorbit++) {
-		if(idx.equals(*iorbit)) {
-			canonical = true;
-			break;
-		}
-	}
-	if(!canonical) {
-		throw symmetry_violation("libtensor", k_clazz, method,
+	if(!orblst.contains(absidx)) {
+		throw symmetry_violation(g_ns, k_clazz, method,
 			__FILE__, __LINE__,
 			"Index does not correspond to a canonical block.");
 	}
-	size_t absidx = m_bidims.abs_index(idx);
 	if(!m_map.contains(absidx)) {
 		dimensions<N> blkdims = m_bis.get_block_dims(idx);
 		m_map.create(absidx, blkdims);
@@ -208,21 +197,13 @@ bool block_tensor<N, T, Alloc>::on_req_is_zero_block(const index<N> &idx)
 
 	static const char *method = "on_req_is_zero_block(const index<N>&)";
 
-	bool canonical = false;
+	size_t absidx = m_bidims.abs_index(idx);
 	orbit_list<N, T> orblst(m_symmetry);
-	typename orbit_list<N, T>::iterator iorbit = orblst.begin();
-	for(; iorbit != orblst.end(); iorbit++) {
-		if(idx.equals(*iorbit)) {
-			canonical = true;
-			break;
-		}
-	}
-	if(!canonical) {
-		throw symmetry_violation("libtensor", k_clazz, method,
+	if(!orblst.contains(absidx)) {
+		throw symmetry_violation(g_ns, k_clazz, method,
 			__FILE__, __LINE__,
 			"Index does not correspond to a canonical block.");
 	}
-	size_t absidx = m_bidims.abs_index(idx);
 	return !m_map.contains(absidx);
 }
 
@@ -234,25 +215,16 @@ void block_tensor<N, T, Alloc>::on_req_zero_block(const index<N> &idx)
 	static const char *method = "on_req_zero_block(const index<N>&)";
 
 	if(is_immutable()) {
-		throw immut_violation("libtensor", k_clazz, method,
-			__FILE__, __LINE__,
+		throw immut_violation(g_ns, k_clazz, method, __FILE__, __LINE__,
 			"Immutable object cannot be modified.");
 	}
-	bool canonical = false;
+	size_t absidx = m_bidims.abs_index(idx);
 	orbit_list<N, T> orblst(m_symmetry);
-	typename orbit_list<N, T>::iterator iorbit = orblst.begin();
-	for(; iorbit != orblst.end(); iorbit++) {
-		if(idx.equals(*iorbit)) {
-			canonical = true;
-			break;
-		}
-	}
-	if(!canonical) {
-		throw symmetry_violation("libtensor", k_clazz, method,
+	if(!orblst.contains(absidx)) {
+		throw symmetry_violation(g_ns, k_clazz, method,
 			__FILE__, __LINE__,
 			"Index does not correspond to a canonical block.");
 	}
-	size_t absidx = m_bidims.abs_index(idx);
 	m_map.remove(absidx);
 }
 
@@ -263,8 +235,7 @@ void block_tensor<N, T, Alloc>::on_req_zero_all_blocks() throw(exception) {
 	static const char *method = "on_req_zero_all_blocks()";
 
 	if(is_immutable()) {
-		throw immut_violation("libtensor", k_clazz, method,
-			__FILE__, __LINE__,
+		throw immut_violation(g_ns, k_clazz, method, __FILE__, __LINE__,
 			"Immutable object cannot be modified.");
 	}
 	m_map.clear();

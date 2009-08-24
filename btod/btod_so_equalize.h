@@ -46,7 +46,7 @@ void btod_so_equalize<N>::perform(block_tensor_i<N, double> &bt)
 	orbit_list<N, double> orblst(src_sym);
 	typename orbit_list<N, double>::iterator iorbit = orblst.begin();
 	for(; iorbit != orblst.end(); iorbit++) {
-		orbit<N, double> orb(src_sym, *iorbit);
+		orbit<N, double> orb(src_sym, orblst.get_index(iorbit));
 		index<N> blkidx;
 		bidims.abs_index(orb.get_abs_canonical_index(), blkidx);
 //		if(!dst_sym.is_canonical(blkidx)) {

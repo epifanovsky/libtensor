@@ -61,7 +61,8 @@ void btod_copy_test::test_zero_1() throw(libtest::test_exception) {
 	orbit_list<2, double> orblst(btb_ctrl.req_symmetry());
 	orbit_list<2, double>::iterator iorbit = orblst.begin();
 	for(; iorbit != orblst.end(); iorbit++) {
-		orbit<2, double> orb(btb_ctrl.req_symmetry(), *iorbit);
+		orbit<2, double> orb(btb_ctrl.req_symmetry(),
+			orblst.get_index(iorbit));
 		index<2> blkidx;
 		bidims.abs_index(orb.get_abs_canonical_index(), blkidx);
 		if(!btb_ctrl.req_is_zero_block(blkidx)) {
@@ -126,7 +127,8 @@ void btod_copy_test::test_zero_2() throw(libtest::test_exception) {
 	orbit_list<2, double> orblst(btb_ctrl.req_symmetry());
 	orbit_list<2, double>::iterator iorbit = orblst.begin();
 	for(; iorbit != orblst.end(); iorbit++) {
-		orbit<2, double> orb(btb_ctrl.req_symmetry(), *iorbit);
+		orbit<2, double> orb(btb_ctrl.req_symmetry(),
+			orblst.get_index(iorbit));
 		index<2> blkidx;
 		bidims.abs_index(orb.get_abs_canonical_index(), blkidx);
 		if(!btb_ctrl.req_is_zero_block(blkidx)) {
