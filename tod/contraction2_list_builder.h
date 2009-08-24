@@ -86,8 +86,7 @@ void contraction2_list_builder<N, M, K, ListT>::populate(ListT &list,
 				"incompatible: %lu (a) vs. %lu (b)",
 				dima[iconn - k_orderc],
 				dimb[i - k_orderc - k_ordera]);
-			throw_exc("contraction2<N, M, K>", "populate()",
-				errmsg);
+			throw_exc(k_clazz, "populate()", errmsg);
 		}
 	}
 
@@ -98,8 +97,7 @@ void contraction2_list_builder<N, M, K, ListT>::populate(ListT &list,
 				"Dimensions of result index are "
 				"incompatible: %lu (c) vs. %lu (a/b)",
 				dimc[i], dimc1[i]);
-			throw_exc("contraction2<N, M, K>", "populate()",
-				errmsg);
+			throw_exc(k_clazz, "populate()", errmsg);
 		}
 	}
 

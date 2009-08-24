@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_BTOD_CONTRACT2_H
 #define LIBTENSOR_BTOD_CONTRACT2_H
 
+#include <iostream>
 #include <list>
 #include <map>
 #include "defs.h"
@@ -425,15 +426,25 @@ void btod_contract2<N, M, K>::make_schedule(
 			const transf<k_orderb, double> &transfb =
 				orbb.get_transf(iidxb);
 
+			bool need_contr = true;
 			for(size_t i = 0; i < k_ordera; i++) {
-				if(conn[k_orderc + i] < k_orderc) {
-					idxc[conn[k_orderc + i]] = idxa[i];
+				register size_t iconn = conn[k_orderc + i];
+				if(iconn < k_orderc) {
+					idxc[iconn] = idxa[i];
+				} else {
+					iconn -= k_orderc + k_ordera;
+					if(idxa[i] != idxb[iconn]) {
+						need_contr = false;
+						break;
+					}
 				}
 			}
+			if(!need_contr) continue;
 			for(size_t i = 0; i < k_orderb; i++) {
-				if(conn[k_orderc + k_ordera + i] < k_orderc) {
-					idxc[conn[k_orderc + k_ordera + i]] =
-						idxb[i];
+				register size_t iconn =
+					conn[k_orderc + k_ordera + i];
+				if(iconn < k_orderc) {
+					idxc[iconn] = idxb[i];
 				}
 			}
 
