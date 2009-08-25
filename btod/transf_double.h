@@ -56,13 +56,14 @@ public:
 	//@{
 	/** \brief equal comparison
 	 **/
-	bool operator==( const transf<N,double>& tr ) {
+	bool operator==( const transf<N,double>& tr ) const {
 		return ( (m_coeff==tr.m_coeff) && (m_perm==tr.m_perm) );
 	}
 
 	/** \brief unequal comparison
 	 **/
-	bool operator!=( const transf<N,double>& tr ) {	return (!operator==(tr)); }
+	bool operator!=( const transf<N,double>& tr ) const 
+	{	return (!operator==(tr)); }
 	//@}
 };
 

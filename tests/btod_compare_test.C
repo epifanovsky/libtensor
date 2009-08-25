@@ -1,0 +1,136 @@
+#include <cmath>
+#include <cstdlib>
+#include <ctime>
+#include "btod_compare_test.h"
+
+namespace libtensor {
+
+void btod_compare_test::perform() throw(libtest::test_exception) {
+	srand48(time(NULL));
+
+	test_exc();
+	test_operation();
+
+}
+
+void btod_compare_test::test_exc() throw(libtest::test_exception) {
+	typedef index<2> index_t;
+	typedef index_range<2> index_range_t;
+	typedef dimensions<2> dimensions_t;
+	typedef mask<2> mask_t;
+	typedef block_index_space<2> block_index_space_t;
+	typedef libvmm::std_allocator<double> allocator_t;
+	typedef block_tensor<2, double, allocator_t> block_tensor_t;
+
+
+	index_t i1, i2, i3;
+	i2[0]=5; i2[1]=5; 
+	i3[0]=7; i3[1]=7; 
+	index_range_t ir1(i1,i2), ir2(i1,i3);
+	dimensions_t dim1(ir1), dim2(ir2);
+	block_index_space_t bis1(dim1);
+	mask_t mask;
+	mask[0]=true; mask[1]=true;
+	bis1.split(mask,3);
+	block_tensor_t bt1(bis1);
+
+		
+	bool ok = false;
+	try {
+		block_index_space_t bis2(dim2);
+		bis2.split(mask,3);
+		block_tensor_t bt2(bis2);
+		btod_compare<2> btc(bt1, bt2, 0);
+	} catch(exception e) {
+		ok = true;
+	}
+
+	if(!ok) {
+		fail_test("tod_compare_test::test_exc()", __FILE__, __LINE__,
+			"Expected an exception with heterogeneous arguments");
+	}
+	
+	ok = false;
+	try {
+		block_index_space_t bis2(dim2);
+		mask[1]=false;
+		bis2.split(mask,4);
+		mask[0]=false; mask[1]=true;
+		bis2.split(mask,2);
+		block_tensor_t bt2(bis2);
+		
+		btod_compare<2> btc(bt1, bt2, 0);
+	} catch(exception e) {
+		ok = true;
+	}
+
+	if(!ok) {
+		fail_test("tod_compare_test::test_exc()", __FILE__, __LINE__,
+			"Expected an exception with heterogeneous arguments");
+	}
+	
+	
+}
+
+void btod_compare_test::test_operation() throw(libtest::test_exception) {
+
+	typedef index<2> index_t;
+	typedef index_range<2> index_range_t;
+	typedef dimensions<2> dimensions_t;
+	typedef mask<2> mask_t;
+	typedef block_index_space<2> block_index_space_t;
+	typedef libvmm::std_allocator<double> allocator_t;
+	typedef block_tensor<2, double, allocator_t> block_tensor_t;
+	typedef block_tensor_ctrl<2, double> block_tensor_ctrl_t;
+
+	
+	index_t i1, i2;
+	i2[0]=5; i2[1]=5; 
+	index_range_t ir(i1,i2);
+	dimensions_t dim(ir);
+	block_index_space_t bis(dim);
+	mask_t mask;
+	mask[0]=true; mask[1]=true;
+	bis.split(mask,3);
+	block_tensor_t bt1(bis), bt2(bis);
+
+	btod_random<2> randr;
+	randr.perform(bt1);
+
+	btod_copy<2> docopy(bt1);
+	docopy.perform(bt2);
+	
+	index_t block_idx, inblock_idx, idx;
+	idx[0]=4; idx[1]=1;
+	block_idx[0]=1; block_idx[1]=0;
+	inblock_idx[0]=1; inblock_idx[1]=1;
+
+	block_tensor_ctrl_t btctrl(bt2);
+	tensor_i<2,double>& t2=btctrl.req_block(block_idx);
+	tensor_ctrl<2,double> tctrl(t2);
+	double *ptr=tctrl.req_dataptr();
+	double diff1=ptr[4], diff2;
+	ptr[4]-=1.0;
+	diff2=ptr[4];
+	tctrl.ret_dataptr(ptr);
+	btctrl.ret_block(block_idx);
+	
+	btod_compare<2> op1(bt1, bt2, 1e-7);
+	if(op1.compare()) {
+		fail_test("btod_compare_test::test_operation()", __FILE__,
+			__LINE__, "btod_compare failed to find the difference");
+	}
+	if( ! idx.equals(op1.get_diff_index()) ) {
+		fail_test("btod_compare_test::test_operation()", __FILE__,
+			__LINE__, "btod_compare returned an incorrect index");
+	}
+	if(op1.get_diff_elem_1() != diff1 || op1.get_diff_elem_2() != diff2) {
+		fail_test("btod_compare_test::test_operation()", __FILE__,
+			__LINE__, "btod_compare returned an incorrect "
+			"element value");
+	}
+
+}
+
+} // namespace libtensor
+

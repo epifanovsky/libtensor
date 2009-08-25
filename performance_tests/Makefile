@@ -19,7 +19,7 @@ CPPFLAGS+= -DLIBTENSOR_TIMINGS
 deps: $(DEPS)
 
 libtensor_performance_tests: libtensor_performance_tests.o $(OBJS) ../libtensor.a
-	$(LD) $(LDOPTFLAGS) libtensor_performance_tests $^ ../../libtest/libtest.a $(LIBS) 
+	$(LD) $(LDFLAGS) libtensor_performance_tests $^ ../../libtest/libtest.a $(LIBS) 
 
 .PHONY: clean
 clean:
