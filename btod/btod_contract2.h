@@ -1,17 +1,18 @@
 #ifndef LIBTENSOR_BTOD_CONTRACT2_H
 #define LIBTENSOR_BTOD_CONTRACT2_H
 
-#include <iostream>
 #include <list>
 #include <map>
 #include "defs.h"
 #include "exception.h"
+#include "timings.h"
 #include "core/block_tensor_i.h"
 #include "core/block_tensor_ctrl.h"
 #include "symmetry/so_projdown.h"
 #include "symmetry/so_projup.h"
 #include "tod/contraction2.h"
 #include "tod/tod_contract2.h"
+#include "tod/tod_set.h"
 #include "btod_additive.h"
 #include "btod_so_copy.h"
 
@@ -23,7 +24,11 @@ namespace libtensor {
 	\ingroup libtensor_btod
  **/
 template<size_t N, size_t M, size_t K>
-class btod_contract2 : public btod_additive<N + M> {
+class btod_contract2 :
+	public btod_additive<N + M>, public timings< btod_contract2<N, M, K> > {
+
+	friend class timings< btod_contract2<N, M, K> >;
+
 public:
 	static const char *k_clazz; //!< Class name
 
@@ -197,6 +202,8 @@ void btod_contract2<N, M, K>::perform(block_tensor_i<k_orderc, double> &btc)
 			"Incorrect block index space of the output tensor.");
 	}
 
+	btod_contract2<N, M, K>::start_timer();
+
 	block_tensor_ctrl<k_orderc, double> ctrl_btc(btc);
 	block_tensor_ctrl<k_ordera, double> ctrl_bta(m_bta);
 	block_tensor_ctrl<k_orderb, double> ctrl_btb(m_btb);
@@ -245,6 +252,8 @@ void btod_contract2<N, M, K>::perform(block_tensor_i<k_orderc, double> &btc)
 		clear_schedule(sch);
 		throw;
 	}
+
+	btod_contract2<N, M, K>::stop_timer();
 }
 
 
@@ -405,6 +414,8 @@ void btod_contract2<N, M, K>::make_schedule(
 	const dimensions<k_orderc> &bidimsc,
 	const orbit_list<k_orderc, double> &orblstc) {
 
+	btod_contract2<N, M, K>::start_timer("make_schedule");
+
 	typedef std::multimap<size_t, block_contr_t> local_schedule_t;
 	local_schedule_t local_sch;
 
@@ -495,6 +506,8 @@ void btod_contract2<N, M, K>::make_schedule(
 		}
 	}
 
+	btod_contract2<N, M, K>::stop_timer("make_schedule");
+
 }
 
 
@@ -525,6 +538,9 @@ void btod_contract2<N, M, K>::contract_block(
 
 	tensor_i<k_orderc, double> &tc = ctrlc.req_block(idxc);
 
+	tod_set<k_orderc>().perform(tc);
+
+//	std::cout << idxc << ": ";
 	typename block_contr_list_t::iterator ilst = lst.begin();
 	for(; ilst != lst.end(); ilst++) {
 		bidimsa.abs_index(ilst->m_absidxa, idxa);
@@ -536,13 +552,19 @@ void btod_contract2<N, M, K>::contract_block(
 		tensor_i<k_orderb, double> &tb = ctrlb.req_block(idxb);
 
 		contraction2<N, M, K> contr(m_contr);
-		contr.permute_ab(ilst->m_perma, ilst->m_permb);
+		contr.permute_a(ilst->m_perma);
+		contr.permute_b(ilst->m_permb);
+//		contr.permute_ab(ilst->m_perma, ilst->m_permb);
+//		std::cout << "{" << ilst->m_c << " " << idxa << " "
+//			<< ilst->m_perma << " " << idxb << " "
+//			<< ilst->m_permb << "} ";
 		tod_contract2<N, M, K> controp(contr, ta, tb);
 		controp.perform(tc, ilst->m_c);
 
 		ctrla.ret_block(idxa);
 		ctrlb.ret_block(idxb);
 	}
+//	std::cout << std::endl;
 
 	ctrlc.ret_block(idxc);
 

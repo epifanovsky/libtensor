@@ -95,19 +95,19 @@ public:
 	 **/
 	void contract(size_t ia, size_t ib) throw (exception);
 
-	/**	\brief Adjusts %index numbering when the arguments come in a
+	/**	\brief Adjusts %index numbering when the argument A comes in a
 			permuted form
-
-		The contraction must be specified for unpermuted arguments
-		first. Calling this method on an incomplete contraction will
-	 `	cause an exception.
-
-		\param perma Permutation of the first %tensor argument (a).
-		\param permb Permutation of the second %tensor argument (b).
+		\param perma Permutation of the %tensor argument A.
 		\throw exception if the contraction is incomplete.
 	 **/
-	void permute_ab(const permutation<k_ordera> &perma,
-		const permutation<k_orderb> &permb) throw (exception);
+	void permute_a(const permutation<k_ordera> &perma) throw(exception);
+
+	/**	\brief Adjusts %index numbering when the argument B comes in a
+			permuted form
+		\param permb Permutation of the %tensor argument B.
+		\throw exception if the contraction is incomplete.
+	 **/
+	void permute_b(const permutation<k_orderb> &permb) throw(exception);
 
 	/**	\brief Adjusts %index numbering when the result comes in a
 			permuted form
@@ -196,39 +196,47 @@ void contraction2<N, M, K>::contract(size_t ia, size_t ib) throw (exception) {
 }
 
 template<size_t N, size_t M, size_t K>
-void contraction2<N, M, K>::permute_ab(const permutation<k_ordera> &perma,
-	const permutation<k_orderb> &permb) throw (exception) {
+void contraction2<N, M, K>::permute_a(const permutation<k_ordera> &perma)
+	throw(exception) {
+
+	static const char *method = "permute_a(const permutation<N + K>&)";
 
 	if(!is_complete()) {
-		throw_exc("contraction2<N, M, K>", "permute_ab()",
-			"Contraction is incomplete");
+		throw_exc(k_clazz, method, "Contraction is incomplete");
 	}
 
-	if(perma.is_identity() && permb.is_identity()) return;
+	if(perma.is_identity()) return;
 
 	sequence<k_ordera, size_t> seqa(0);
-	sequence<k_orderb, size_t> seqb(0);
 	for(register size_t i = 0; i < k_ordera; i++)
 		seqa[i] = m_conn[k_orderc + i];
-	for(register size_t i = 0; i < k_orderb; i++)
-		seqb[i] = m_conn[k_orderc + k_ordera + i];
 	seqa.permute(perma);
-	seqb.permute(permb);
 	for(register size_t i = 0; i < k_ordera; i++) {
-		if(seqa[i] >= k_orderc) {
-			for(register size_t j = 0; j < k_orderb; j++) {
-				if(seqb[j] == k_orderc + i) {
-					m_conn[k_orderc + i] =
-						k_orderc + k_ordera + j;
-					m_conn[k_orderc + k_ordera + j] =
-						k_orderc + i;
-					break;
-				}
-			}
-		}
+		m_conn[k_orderc + i] = seqa[i];
+		m_conn[seqa[i]] = k_orderc + i;
+	}
+}
+
+template<size_t N, size_t M, size_t K>
+void contraction2<N, M, K>::permute_b(const permutation<k_orderb> &permb)
+	throw(exception) {
+
+	static const char *method = "permute_b(const permutation<M + K>&)";
+
+	if(!is_complete()) {
+		throw_exc(k_clazz, method, "Contraction is incomplete");
 	}
 
-	connect();
+	if(permb.is_identity()) return;
+
+	sequence<k_orderb, size_t> seqb(0);
+	for(register size_t i = 0; i < k_orderb; i++)
+		seqb[i] = m_conn[k_orderc + k_ordera + i];
+	seqb.permute(permb);
+	for(register size_t i = 0; i < k_orderb; i++) {
+		m_conn[k_orderc + k_ordera + i] = seqb[i];
+		m_conn[seqb[i]] = k_orderc + k_ordera + i;
+	}
 }
 
 template<size_t N, size_t M, size_t K>
