@@ -11,6 +11,7 @@
 #include "tod_dotprod_scenario.h"
 #include "expression_test_scenario.h"
 
+#include "dimensions_data.h"
 #include "bispace_data.h"
 
 namespace libtensor {
@@ -23,65 +24,53 @@ namespace libtensor {
 	\li libtensor::tod_contract2_scenario
 	\li libtensor::tod_copy_scenario
 	\li libtensor::tod_dotprod_scenario
+	\li libtensor::expression_test_scenario
 	
 	\ingroup libtensor_performance_tests	
 **/
 class libtensor_pt_suite : public performance_test_suite {
 	
-	template<size_t N, size_t M, size_t K> 
-	class dimensions_t {
-	protected:
-		index<N+M> ind1;
-		index<N+K> ind2;
-		index<M+K> ind3;
-	public:
-		dimensions<N+M> dimA();
-		dimensions<N+K> dimB();
-		dimensions<M+K> dimC();
-	};
+	typedef dimensions_data<2,2,2,8> dim2_t;
+	typedef dimensions_data<2,2,2,8> dim4_t;
+	typedef dimensions_data<2,2,2,8> dim8_t;
+	typedef dimensions_data<2,2,2,16> dim16_t;
+	typedef dimensions_data<2,2,2,32> dim32_t;
+	typedef dimensions_data<2,2,2,32> dim64_t;
 	
-	template<size_t N, size_t M, size_t K> 
-	class small_t : public dimensions_t<N,M,K> {
-	public:
-		small_t();		
-	};
-	template<size_t N, size_t M, size_t K> 
-	class medium_t : public dimensions_t<N,M,K> {
-	public:
-		medium_t();		
-	};
-	template<size_t N, size_t M, size_t K> 
-	class large_t : public dimensions_t<N,M,K> {
-	public:
-		large_t();		
-	};
-	
-	typedef large_blocks_data<64,64> large64_t;
-	typedef arbitrary_blocks_data<64,64,4> small64_t;
-	typedef arbitrary_blocks_data<64,64,16> normal64_t;
+	typedef arbitrary_blocks_data<32,64,2> normal2_t;
+	typedef arbitrary_blocks_data<32,64,4> normal4_t;
+	typedef arbitrary_blocks_data<32,64,8> normal8_t;
+	typedef arbitrary_blocks_data<32,64,16> normal16_t;
+	typedef arbitrary_blocks_data<32,256,4> large4_t;
+	typedef arbitrary_blocks_data<32,256,16> large16_t;
+	typedef arbitrary_blocks_data<32,256,16> large32_t;
 
-	tod_add_scenario<20,4,small_t<2,2,2> > m_tod_add_ptsc1;
-	tod_add_scenario<10,4,medium_t<2,2,2> > m_tod_add_ptsc2;
-	tod_add_scenario<5,4,large_t<2,2,2> > m_tod_add_ptsc3;
+	tod_add_scenario<10000,4,dim8_t> m_tod_add_ptsc1;
+	tod_add_scenario<5000,4,dim16_t> m_tod_add_ptsc2;
+	tod_add_scenario<100,4,dim32_t> m_tod_add_ptsc3;
 
-	tod_contract2_scenario<20,2,2,2,small_t<2,2,2> > m_tod_contract2_ptsc1;
-	tod_contract2_scenario<10,2,2,2,medium_t<2,2,2> > m_tod_contract2_ptsc2;
-	tod_contract2_scenario<5,2,2,2,large_t<2,2,2> > m_tod_contract2_ptsc3;
+	tod_contract2_scenario<5000,2,2,2,dim8_t> m_tod_contract2_ptsc1;
+	tod_contract2_scenario<100,2,2,2,dim16_t> m_tod_contract2_ptsc2;
+	tod_contract2_scenario<10,2,2,2,dim32_t> m_tod_contract2_ptsc3;
 
-	tod_copy_scenario<20,4,small_t<2,2,2> > m_tod_copy_ptsc1;
-	tod_copy_scenario<10,4,medium_t<2,2,2> > m_tod_copy_ptsc2;
-	tod_copy_scenario<5,4,large_t<2,2,2> > m_tod_copy_ptsc3;
+	tod_copy_scenario<10000,4,dim8_t> m_tod_copy_ptsc1;
+	tod_copy_scenario<5000,4,dim16_t> m_tod_copy_ptsc2;
+	tod_copy_scenario<100,4,dim32_t> m_tod_copy_ptsc3;
 
-	tod_dotprod_scenario<20,4,small_t<2,2,2> > m_tod_dotprod_ptsc1;
-	tod_dotprod_scenario<10,4,medium_t<2,2,2> > m_tod_dotprod_ptsc2;
-	tod_dotprod_scenario<5,4,large_t<2,2,2> > m_tod_dotprod_ptsc3;
+	tod_dotprod_scenario<10000,4,dim8_t> m_tod_dotprod_ptsc1;
+	tod_dotprod_scenario<5000,4,dim16_t> m_tod_dotprod_ptsc2;
+	tod_dotprod_scenario<100,4,dim32_t> m_tod_dotprod_ptsc3;
 
-	expression_test_scenario<1,large64_t> m_expression_tests1;	
-	expression_test_scenario<1,normal64_t> m_expression_tests2;	
-	expression_test_scenario<1,small64_t> m_expression_tests3;	
+	expression_test_scenario<100,normal16_t> m_expression_tests_n16;	
+	expression_test_scenario<100,normal4_t> m_expression_tests_n4;	
+	expression_test_scenario<100,normal2_t> m_expression_tests_n2;	
+	expression_test_scenario<50,large32_t> m_expression_tests_l32;	
+	expression_test_scenario<50,large16_t> m_expression_tests_l16;	
+	expression_test_scenario<50,large4_t> m_expression_tests_l4;	
 public:
 	//!	Creates the suite
 	libtensor_pt_suite();
+	virtual ~libtensor_pt_suite() {}
 };
 
 } // namespace libtensor

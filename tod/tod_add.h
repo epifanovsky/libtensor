@@ -263,7 +263,8 @@ void tod_add<N>::add_operand(tensor_i<N,double> &t, const permutation<N> &p,
 template<size_t N>
 void tod_add<N>::prefetch() throw(exception)
 {
-	for ( typename op_map_t::iterator it=m_operands.begin(); it!=m_operands.end(); it++ ) {
+	for ( typename op_map_t::iterator it=m_operands.begin(); 
+		  it!=m_operands.end(); it++ ) {
 		tensor_ctrl<N,double> ctrl(it->second->m_ta);
 		ctrl.req_prefetch();
 	}

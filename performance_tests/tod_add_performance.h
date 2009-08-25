@@ -19,6 +19,7 @@ namespace libtensor {
 
  	Tests performance of
  	\f[ A = A + 2.0 B \f]
+ 	The size of A and B is determined by function dimA() of the X object.
 
 	\ingroup libtensor_performance_tests
 **/
@@ -38,6 +39,7 @@ protected:
 
  	Tests performance of
  	\f[ A = A + 2.0 B \f]
+	The size of A and B is determined by function dimA() of the X object.
 
  	\ingroup libtensor_performance_tests
 **/
@@ -54,7 +56,9 @@ protected:
  	Tests performance of
  	\f[ A = A + 2.0 \mathcal{P}_B B \f]
  	where \f$ \mathcal{P}_B \f$ refers to a permutation which inverts the
- 	sequence of the indices, e.g. (0123)->(3210)
+ 	sequence of the indices, e.g. (0123)->(3210).
+
+	The size of A and B is determined by function dimA() of the X object.
 
  	\ingroup libtensor_performance_tests
 **/
@@ -73,6 +77,8 @@ protected:
  	where \f$ \mathcal{P}_B \f$ refers to a permutation which changes the
  	sequence of groups of indices, e.g. (0123)->(2301)
 
+	The size of A and B is determined by function dimA() of the X object.
+	
  	\ingroup libtensor_performance_tests
 **/
 template<size_t Repeats, size_t N, typename X>

@@ -135,34 +135,39 @@ btensor<N, T, Traits>::operator()(letter_expr<N, ExprT> expr) {
 template<size_t N, typename T, typename Traits>
 const symmetry<N, T> &btensor<N, T, Traits>::on_req_symmetry()
 	throw(exception) {
-
-	throw_exc("btensor<N, T, Traits>", "on_req_symmetry()", "NIY");
+		
+	block_tensor_ctrl<N, T> ctrl(m_bt);
+	return ctrl.req_symmetry();
 }
 
 template<size_t N, typename T, typename Traits>
 void btensor<N, T, Traits>::on_req_sym_add_element(
 	const symmetry_element_i<N, T> &elem) throw(exception) {
 
-	throw_exc("btensor<N, T, Traits>", "on_req_sym_add_element()", "NIY");
+	block_tensor_ctrl<N, T> ctrl(m_bt);
+	ctrl.req_sym_add_element(elem);
 }
 
 template<size_t N, typename T, typename Traits>
 void btensor<N, T, Traits>::on_req_sym_remove_element(
 	const symmetry_element_i<N, T> &elem) throw(exception) {
 
-	throw_exc("btensor<N, T, Traits>", "on_req_sym_remove_element()", "NIY");
+	block_tensor_ctrl<N, T> ctrl(m_bt);
+	ctrl.req_sym_remove_element(elem);
 }
 
 template<size_t N, typename T, typename Traits>
 bool btensor<N, T, Traits>::on_req_sym_contains_element(
 	const symmetry_element_i<N, T> &elem) throw(exception) {
 
-	throw_exc("btensor<N, T, Traits>", "on_req_sym_contains_element()", "NIY");
+	block_tensor_ctrl<N, T> ctrl(m_bt);
+	return ctrl.req_sym_contains_element(elem);
 }
 
 template<size_t N, typename T, typename Traits>
 void btensor<N, T, Traits>::on_req_sym_clear_elements() throw(exception) {
-	throw_exc("btensor<N, T, Traits>", "on_req_sym_clear_elements()", "NIY");
+	block_tensor_ctrl<N, T> ctrl(m_bt);
+	ctrl.req_sym_clear_elements();
 }
 
 template<size_t N, typename T, typename Traits>
@@ -175,24 +180,28 @@ tensor_i<N, T> &btensor<N, T, Traits>::on_req_block(const index<N> &idx)
 template<size_t N, typename T, typename Traits>
 void btensor<N, T, Traits>::on_ret_block(const index<N> &idx)
 	throw(exception) {
-	throw_exc("btensor<N, T, Traits>", "on_ret_block()", "NIY");
+	block_tensor_ctrl<N, T> ctrl(m_bt);
+	ctrl.ret_block(idx);
 }
 
 template<size_t N, typename T, typename Traits>
 bool btensor<N, T, Traits>::on_req_is_zero_block(const index<N> &idx)
 	throw(exception) {
-	throw_exc("btensor<N, T, Traits>", "on_req_is_zero_block()", "NIY");
+	block_tensor_ctrl<N, T> ctrl(m_bt);
+	return ctrl.req_is_zero_block(idx);
 }
 
 template<size_t N, typename T, typename Traits>
 void btensor<N, T, Traits>::on_req_zero_block(const index<N> &idx)
 	throw(exception) {
-	throw_exc("btensor<N, T, Traits>", "on_req_zero_block()", "NIY");
+	block_tensor_ctrl<N, T> ctrl(m_bt);
+	ctrl.req_zero_block(idx);
 }
 
 template<size_t N, typename T, typename Traits>
 void btensor<N, T, Traits>::on_req_zero_all_blocks() throw(exception) {
-	throw_exc("btensor<N, T, Traits>", "on_req_zero_all_blocks()", "NIY");
+	block_tensor_ctrl<N, T> ctrl(m_bt);
+	ctrl.req_zero_all_blocks();
 }
 
 template<size_t N, typename T, typename Traits>

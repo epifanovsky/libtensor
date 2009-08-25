@@ -11,6 +11,7 @@ namespace libtensor {
  	\ingroup libtensor_performance_tests
 **/
 class performance_test_suite : public libtest::test_suite {
+	size_t m_ntests;
 protected:
 	/** \brief adds tests of a performance test scenario to the suite
 	  	\param name Name of performance test scenario
@@ -20,8 +21,7 @@ protected:
 public:
 	//!	Creates the suite
 	performance_test_suite( const char* name );
-	//! virtual destructor
-	virtual ~performance_test_suite();
+	virtual ~performance_test_suite() {}
 };
 
 } // namespace libtensor

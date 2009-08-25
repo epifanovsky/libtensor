@@ -24,7 +24,10 @@ namespace libtensor {
  	\f[ A += 0.5 B * C' \f]
  	where the \f$ i_k \f$ refer to the k-th index group
 
- 	Don't use with N<2
+ 	Don't use with N<2.
+
+	The size of A, B, and C is determined by functions dimA(), dimB(), 
+	and dimC() of the X object, respectively.
 
  	\ingroup libtensor_performance_tests
 **/
@@ -45,6 +48,8 @@ protected:
  	\f[ A_{i_1,i_2} += 0.5 \sum_{i_3} B_{i_1,i_3} C_{i_2,i_3} \f]
  	where the \f$ i_k \f$ refer to the k-th index group
 
+	The size of A, B, and C is determined by functions dimA(), dimB(), 
+	and dimC() of the X object, respectively.
 
 	\ingroup libtensor_tests
 **/
@@ -63,6 +68,9 @@ protected:
  	where the \f$ i_k \f$ refer to the k-th index group.
 
  	Don't use with N<2
+
+	The size of A, B, and C is determined by functions dimA(), dimB(), 
+	and dimC() of the X object, respectively.
 
  	\ingroup libtensor_performance_tests
 **/
@@ -85,6 +93,9 @@ protected:
 
  	Don't use with N<2
 
+	The size of A, B, and C is determined by functions dimA(), dimB(), 
+	and dimC() of the X object, respectively.
+
  	\ingroup libtensor_performance_tests
 **/
 template<size_t Repeats, size_t N, size_t M, size_t K, typename X>
@@ -106,6 +117,9 @@ protected:
  	group i_3.
 
  	Don't use with N<3
+
+	The size of A, B, and C is determined by functions dimA(), dimB(), 
+	and dimC() of the X object, respectively.
 
  	\ingroup libtensor_performance_tests
 **/

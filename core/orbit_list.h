@@ -5,6 +5,7 @@
 #include <vector>
 #include "defs.h"
 #include "exception.h"
+#include "timings.h"
 #include "dimensions.h"
 #include "index.h"
 #include "symmetry.h"
@@ -13,7 +14,9 @@ namespace libtensor {
 
 
 template<size_t N, typename T>
-class orbit_list {
+class orbit_list : public timings<orbit_list<N, T> > {
+	friend class timings<orbit_list<N, T> >;
+	static const char* k_clazz;
 public:
 	typedef typename std::map< size_t, index<N> >::const_iterator iterator;
 
@@ -36,11 +39,14 @@ private:
 		std::vector<bool> &lst);
 };
 
+template<size_t N, typename T>
+const char* orbit_list<N,T>::k_clazz="orbit_list<N,T>";
 
 template<size_t N, typename T>
 orbit_list<N, T>::orbit_list(const symmetry<N, T> &sym)
 : m_dims(sym.get_bis().get_block_index_dims()) {
-
+	orbit_list<N,T>::start_timer();
+	
 	std::vector<bool> chk(m_dims.get_size(), false);
 	index<N> idx;
 	do {
@@ -52,6 +58,8 @@ orbit_list<N, T>::orbit_list(const symmetry<N, T> &sym)
 			}
 		}
 	} while(m_dims.inc_index(idx));
+
+	orbit_list<N,T>::stop_timer();
 }
 
 

@@ -22,9 +22,6 @@ class performance_test_scenario_i {
 protected:
 	void add_test( const char* name, libtest::unit_test_factory_i& utf );
 public: 	
-	//! virtual destructor
-	virtual ~performance_test_scenario_i() {}		
-
 	//! number of tests in the scenario
 	size_t size() {	return m_sc_tests.size(); }
 	//! name of i-th test

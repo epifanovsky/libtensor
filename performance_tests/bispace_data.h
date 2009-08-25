@@ -44,45 +44,14 @@ public:
 };	
 
 
-/** \brief Bispace data for 2 large blocks per dimension 
- 	\tparam O dimensions of the first index
- 	\tparam V dimensions of the second index
- 	
- 	The third block index space will have dimension O+V  
- 	
-	\ingroup libtensor_performance_tests
- **/
-
-template<size_t O, size_t V>
-class large_blocks_data 
-	: public bispace_data_i
-{
-public:
-	/** \brief constructor
-	 **/ 
-	large_blocks_data();
-
-	/** \brief virtual destructor
-	 **/ 
-	virtual ~large_blocks_data() {}	
-	
-};	
-
-template<size_t O, size_t V>
-large_blocks_data<O,V>::large_blocks_data()
-	: bispace_data_i(O,V,O+V) 
-{
-	m_one.split(O/2);
-	m_two.split(V/2);
-	m_three.split((O+V)/2);
-}
-	
-/** \brief Bispace data for many blocks per dimension 
+/** \brief Bispace data for an arbitrary number of blocks per dimension 
  	\tparam O dimensions of the first index
  	\tparam V dimensions of the second index
  	\tparam BS average block size per dimension 
  	
- 	The third block index space will have dimension O+V  
+ 	The third block index space will have dimension O+V. The number of blocks 
+ 	per dimension will be O/BS, V/BS and (O+V)/BS for the first, second and 
+ 	third dimension, respectively.  
  	
 	\ingroup libtensor_performance_tests
  **/
@@ -107,13 +76,13 @@ arbitrary_blocks_data<O,V,BS>::arbitrary_blocks_data()
 	: bispace_data_i(O,V,O+V) 
 {
 	size_t pos=BS, nblocks=O/BS;
-	for ( size_t i=0; i<nblocks; i++ ) { m_one.split(pos); pos+=BS;	}
+	for ( size_t i=1; i<nblocks; i++ ) { m_one.split(pos); pos+=BS;	}
 	
 	pos=BS; nblocks=V/BS;
-	for ( size_t i=0; i<nblocks; i++ ) { m_two.split(pos); pos+=BS; }
+	for ( size_t i=1; i<nblocks; i++ ) { m_two.split(pos); pos+=BS; }
 	
 	pos=BS;	nblocks=(O+V)/BS;
-	for ( size_t i=0; i<nblocks; i++ ) { m_three.split(pos); pos+=BS; }
+	for ( size_t i=1; i<nblocks; i++ ) { m_three.split(pos); pos+=BS; }
 }
 
 

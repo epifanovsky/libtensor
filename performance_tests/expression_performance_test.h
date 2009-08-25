@@ -11,8 +11,8 @@ namespace libtensor {
  	\tparam BiSpaceData bispaces for various index types 
  	
  	Does the performance test of an expression given by Expr and block tensors
- 	of sizes specified in BiSpaceData. For this to work properly derive 
- 	Expr from test_expression_i and BiSpaceData from bispace_data_i.     
+ 	of sizes specified in BiSpaceData. For this to work properly derive Expr 
+ 	from test_expression_i and BiSpaceData from bispace_data_i.     
 
 	\ingroup libtensor_performance_tests
 **/

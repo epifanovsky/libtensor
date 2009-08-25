@@ -20,6 +20,8 @@ namespace libtensor {
  	Tests performance of
  	\f[ A = 2.0 B \f]
 
+	The size of A and B is determined by function dimA() of the X object.
+
  	\ingroup libtensor_performance_tests
 **/
 template<size_t Repeats, typename X>
@@ -39,6 +41,8 @@ protected:
  	Tests performance of
  	\f[ A = 2.0 B \f]
 
+	The size of A and B is determined by function dimA() of the X object.
+
 	\ingroup libtensor_tests
 **/
 template<size_t Repeats, size_t N, typename X>
@@ -53,6 +57,8 @@ protected:
 
  	Tests performance of
  	\f[ A = 2.0 \mathcal{P}_B B \f]
+
+	The size of A and B is determined by function dimA() of the X object.
 
 	\ingroup libtensor_tests
 **/
@@ -82,6 +88,9 @@ void tod_copy_ref<R,X>::do_calculate()
 	cblas_dcopy(total_size, ptrb, 1, ptra, 1);
 	cblas_dscal(total_size, 2.0, ptra,1);
 	timings<tod_copy_ref<R,X> >::stop_timer();
+	
+	delete [] ptra;
+	delete [] ptrb;
 }
 
 template<size_t R, size_t N, typename X>

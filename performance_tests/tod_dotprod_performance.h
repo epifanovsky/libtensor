@@ -17,6 +17,8 @@ namespace libtensor {
  	Tests performance of
  	\f[ d = \left<A,B\right> \f]
 
+	The size of A and B is determined by function dimA() of the X object.
+
  	\ingroup libtensor_performance_tests
 **/
 template<size_t Repeats, typename X>
@@ -36,6 +38,8 @@ protected:
  	Tests performance of
  	\f[ d = \left<A,B\right> \f]
 
+	The size of A and B is determined by function dimA() of the X object.
+
 	\ingroup libtensor_tests
 **/
 template<size_t Repeats, size_t N, typename X>
@@ -53,6 +57,8 @@ protected:
  	where \f$ \mathcal{P}_B \f$ refers to a permutation which inverts the
  	sequence of the indices, e.g. (0123)->(3210)
 
+	The size of A and B is determined by function dimA() of the X object.
+
 	\ingroup libtensor_tests
 **/
 template<size_t Repeats, size_t N, typename X>
@@ -69,6 +75,8 @@ protected:
  	\f[ d = \left<A,\mathcal{P}_B B\right> \f]
  	where \f$ \mathcal{P}_B \f$ refers to a permutation which changes the
  	sequence of groups of indices, e.g. (0123)->(2301)
+
+	The size of A and B is determined by function dimA() of the X object.
 
 	\ingroup libtensor_tests
 **/

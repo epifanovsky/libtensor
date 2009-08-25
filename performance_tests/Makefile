@@ -3,7 +3,7 @@ all: deps libtensor_performance_tests
 
 OBJS  = libtensor_pt_suite.o
 OBJS += performance_test_suite.o
-#OBJS += expression_p_test.o
+OBJS += test_expressions.o
 
 DEPS = $(OBJS:.o=.d)
 
@@ -13,13 +13,13 @@ endif
 
 include ../Makefile.inc
 INCLUDE += -I.. -I../../libtest -I../../libvmm
-CPPFLAGS += -DLIBTENSOR_TIMINGS
+CPPFLAGS+= -DLIBTENSOR_TIMINGS
 
 .PHONY: deps
 deps: $(DEPS)
 
 libtensor_performance_tests: libtensor_performance_tests.o $(OBJS) ../libtensor.a
-	$(LD) $(LDFLAGS) libtensor_performance_tests $^ ../../libtest/libtest.a $(LIBS) 
+	$(LD) $(LDOPTFLAGS) libtensor_performance_tests $^ ../../libtest/libtest.a $(LIBS) 
 
 .PHONY: clean
 clean:

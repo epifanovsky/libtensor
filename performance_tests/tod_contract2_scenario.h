@@ -14,6 +14,9 @@ namespace libtensor {
  	\param N dimensions of the tensors to be added
  	\param X size of the tensors 
 
+	All tests determine the size of the tensors A, B, and C by functions dimA(), 
+	dimB(),	and dimC() of the X object, respectively.
+
  	\ingroup libtensor_performance_tests
 **/
 template<size_t Repeats,size_t N, size_t M, size_t K, typename X>  
@@ -28,6 +31,7 @@ class tod_contract2_scenario
  
 public:
 	tod_contract2_scenario();
+	virtual ~tod_contract2_scenario() {}
 };
 
 

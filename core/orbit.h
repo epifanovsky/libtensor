@@ -6,6 +6,7 @@
 #include <vector>
 #include "defs.h"
 #include "exception.h"
+#include "timings.h"
 #include "transf.h"
 #include "symmetry.h"
 
@@ -30,7 +31,9 @@ template<size_t N, typename T> class symmetry;
 	\ingroup libtensor_core
  **/
 template<size_t N, typename T>
-class orbit {
+class orbit : public timings<orbit<N, T> > {
+	friend class timings<orbit<N, T> >;
+	static const char* k_clazz;
 public:
 	typedef typename std::map< size_t, transf<N, T> >::const_iterator
 		iterator;
@@ -64,10 +67,13 @@ private:
 		std::vector<bool> &lst, const transf<N, T> &tr);
 };
 
+template<size_t N, typename T> 
+const char* orbit<N, T>::k_clazz="orbit<N, T>";
 
 template<size_t N, typename T>
 orbit<N, T>::orbit(const symmetry<N, T> &sym, const index<N> &idx)
 : m_dims(sym.get_bis().get_block_index_dims()) {
+	orbit<N, T>::start_timer();
 
 	m_canidx = m_dims.abs_index(idx);
 	std::vector<bool> chk(m_dims.get_size(), false);
@@ -82,6 +88,7 @@ orbit<N, T>::orbit(const symmetry<N, T> &sym, const index<N> &idx)
 		i++;
 	}
 
+	orbit<N, T>::stop_timer();
 }
 
 
