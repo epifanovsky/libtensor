@@ -20,8 +20,7 @@ namespace libtensor {
  **/
 template<size_t N>
 class tod_dotprod : public timings<tod_dotprod<N> > {
-private:
-	friend class timings<tod_dotprod<N> >;
+public:
 	static const char *k_clazz; //!< Class name
 
 private:
@@ -61,14 +60,14 @@ private:
 
 	class op_ddot : public processor_op_i_t, public timings<op_ddot> {
 	private:
-		friend class timings<op_ddot>;
-		static const char *k_clazz;
 		size_t m_n, m_inca, m_incb;
 	public:
 		op_ddot(size_t n, size_t inca, size_t incb) :
 			m_n(n), m_inca(inca), m_incb(incb) { }
 		virtual void exec(processor_t &proc, registers &regs)
 			throw(exception);
+
+		static const char *k_clazz;
 	};
 
 private:
@@ -100,6 +99,8 @@ public:
 private:
 	bool verify_dims();
 	void clean_list();
+	void build_list( loop_list_t &list, const dimensions<N> &da,
+		const permutation<N> &pa, const dimensions<N> &db ) throw(out_of_memory);
 };
 
 template<size_t N>
@@ -146,27 +147,13 @@ double tod_dotprod<N>::calculate() throw(exception) {
 	permutation<N> permb(m_perm2);
 	permb.permute(perma);
 
-	size_t idxb[N];
-	for(register size_t i = 0; i < N; i++) idxb[i] = i;
-	permb.apply(N, idxb);
-
-	const double *pa = m_tctrl1.req_const_dataptr();
-	const double *pb = m_tctrl2.req_const_dataptr();
-
 	const dimensions<N> &dima(m_t1.get_dims());
 	const dimensions<N> &dimb(m_t2.get_dims());
-	for(size_t i = 0; i < N - 1; i++) {
-		loop_list_node node(dima[i], dima.get_increment(i),
-			dimb.get_increment(idxb[i]));
-		node.m_op = new op_loop(dima[i], dima.get_increment(i),
-			dimb.get_increment(idxb[i]));
-		m_list.push_back(node);
-	}
-	loop_list_node node(dima[N - 1], dima.get_increment(N - 1),
-		dimb.get_increment(idxb[N - 1]));
-	node.m_op = new op_ddot(dima[N - 1], dima.get_increment(N - 1),
-		dimb.get_increment(idxb[N - 1]));
-	m_list.push_back(node);
+	
+	build_list(m_list,dimb,permb,dima);
+
+	const double *pb = m_tctrl1.req_const_dataptr();
+	const double *pa = m_tctrl2.req_const_dataptr();
 
 	double result = 0.0;
 
@@ -181,8 +168,8 @@ double tod_dotprod<N>::calculate() throw(exception) {
 	}
 
 	clean_list();
-	m_tctrl1.ret_dataptr(pa);
-	m_tctrl2.ret_dataptr(pb);
+	m_tctrl1.ret_dataptr(pb);
+	m_tctrl2.ret_dataptr(pa);
 
 	tod_dotprod<N>::stop_timer();
 
@@ -198,6 +185,68 @@ bool tod_dotprod<N>::verify_dims() {
 	dims2.permute(m_perm2);
 	return dims1.equals(dims2);
 }
+
+template<size_t N>
+void tod_dotprod<N>::build_list( loop_list_t &list, const dimensions<N> &da,
+	const permutation<N> &pa, const dimensions<N> &db ) throw(out_of_memory)
+{
+	size_t ia[N];
+	for (size_t i=0; i<N; i++) ia[i]=i;
+	pa.apply(N,ia);
+
+	// loop over all indices and build the list
+	size_t pos=0;
+	try {
+		typename loop_list_t::iterator posa=list.end(), posb=list.end();
+		while ( pos < N ) {
+			size_t len=1;
+			size_t iapos=ia[pos];
+			while (pos<N) {
+				len*=da.get_dim(iapos);
+				pos++; iapos++;
+				if ( ia[pos]!=iapos ) break;
+			}
+
+			size_t inca=da.get_increment(iapos-1);
+			size_t incb=db.get_increment(pos-1);
+
+			typename loop_list_t::iterator it
+				= list.insert(list.end(),loop_list_node(len,inca,incb));
+
+			// we know that in the last loop incb=1 !!!
+			if (inca==1) {
+				if (inca==incb)	{
+					it->m_op=new op_ddot(len,inca,incb);
+				}
+				else { posa=it; }
+			}
+			else {
+				if (incb==1) { posb=it; }
+				else { it->m_op=new op_loop(len,inca,incb); }
+			}
+		}
+
+		if ( posa!=posb ) {
+			if ( posa->m_weight > posb->m_weight ) {
+				posa->m_op=new op_ddot(posa->m_weight,posa->m_inca,posa->m_incb);
+				posb->m_op=new op_loop(posb->m_weight,posb->m_inca,posb->m_incb);
+				list.splice(list.end(),list,posa);
+			}
+			else {
+				posa->m_op=new op_loop(posa->m_weight,posa->m_inca,posa->m_incb);
+				posb->m_op=new op_ddot(posb->m_weight,posb->m_inca,posb->m_incb);
+				list.splice(posb,list,posa);
+			}
+		}
+	} catch ( std::bad_alloc& e ) {
+		clean_list();
+		throw out_of_memory("libtensor",k_clazz,
+			"build_list(loop_list_t&,const dimensions<N>&,"
+			"const permutation<N>&,const dimensions<N>&)",
+			__FILE__,__LINE__,e.what());
+	}
+}
+
 
 template<size_t N>
 void tod_dotprod<N>::clean_list() {

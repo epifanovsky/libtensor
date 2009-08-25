@@ -100,8 +100,7 @@ void btod_compare_test::test_operation() throw(libtest::test_exception) {
 	btod_copy<2> docopy(bt1);
 	docopy.perform(bt2);
 	
-	index_t block_idx, inblock_idx, idx;
-	idx[0]=4; idx[1]=1;
+	index_t block_idx, inblock_idx;
 	block_idx[0]=1; block_idx[1]=0;
 	inblock_idx[0]=1; inblock_idx[1]=1;
 
@@ -112,19 +111,34 @@ void btod_compare_test::test_operation() throw(libtest::test_exception) {
 	double diff1=ptr[4], diff2;
 	ptr[4]-=1.0;
 	diff2=ptr[4];
+	
 	tctrl.ret_dataptr(ptr);
 	btctrl.ret_block(block_idx);
 	
 	btod_compare<2> op1(bt1, bt2, 1e-7);
 	if(op1.compare()) {
-		fail_test("btod_compare_test::test_operation()", __FILE__,
-			__LINE__, "btod_compare failed to find the difference");
+		fail_test("btod_compare_test::test_operation()", __FILE__,__LINE__, 
+			"btod_compare failed to find the difference");
 	}
-	if( ! idx.equals(op1.get_diff_index()) ) {
-		fail_test("btod_compare_test::test_operation()", __FILE__,
-			__LINE__, "btod_compare returned an incorrect index");
+	if( ! op1.get_diff().m_number_of_orbits ) {
+		fail_test("btod_compare_test::test_operation()", __FILE__, __LINE__, 
+			"btod_compare returned different number of orbits");
 	}
-	if(op1.get_diff_elem_1() != diff1 || op1.get_diff_elem_2() != diff2) {
+	if( ! op1.get_diff().m_similar_orbit ) {
+		fail_test("btod_compare_test::test_operation()", __FILE__, __LINE__, 
+			"btod_compare returned different orbit");
+	}
+	if( ! op1.get_diff().m_canonical_block_index_1
+			.equals(op1.get_diff().m_canonical_block_index_2) ) {
+		fail_test("btod_compare_test::test_operation()", __FILE__, __LINE__, 
+			"btod_compare returned different canonical blocks");
+	}
+	if( ! inblock_idx.equals(op1.get_diff().m_inblock) ) {
+		fail_test("btod_compare_test::test_operation()", __FILE__, __LINE__, 
+			"btod_compare returned an incorrect index");
+	}
+	if( op1.get_diff().m_diff_elem_1 != diff1 || 
+		op1.get_diff().m_diff_elem_2 != diff2) {
 		fail_test("btod_compare_test::test_operation()", __FILE__,
 			__LINE__, "btod_compare returned an incorrect "
 			"element value");

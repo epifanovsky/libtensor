@@ -55,7 +55,6 @@ template<size_t N>
 class tod_copy
 	: public tod_additive<N>, public timings<tod_copy<N> >
 {
-	friend class timings<tod_copy<N> >;
 public:
 	static const char *k_clazz; //!< Class name
 
@@ -99,8 +98,6 @@ private:
 
 	class op_dcopy : public processor_op_i_t, public timings<op_dcopy> {
 	private:
-		friend class timings<op_dcopy>;
-		static const char* k_clazz;
 		size_t m_len, m_inca, m_incb;
 		double m_c;
 	public:
@@ -108,12 +105,12 @@ private:
 			: m_len(len), m_inca(inca), m_incb(incb), m_c(c) { }
 		virtual void exec(processor_t &proc, registers &regs)
 			throw(exception);
+
+		static const char* k_clazz;
 	};
 
 	class op_daxpy : public processor_op_i_t, public timings<op_daxpy> {
 	private:
-		friend class timings<op_daxpy>;
-		static const char* k_clazz;
 		size_t m_len, m_inca, m_incb;
 		double m_c;
 	public:
@@ -121,6 +118,8 @@ private:
 			: m_len(len), m_inca(inca), m_incb(incb), m_c(c) { }
 		virtual void exec(processor_t &proc, registers &regs)
 			throw(exception);
+
+		static const char* k_clazz;
 	};
 
 private:
@@ -168,6 +167,12 @@ public:
 private:
 	template<typename CoreOp>
 	void do_perform(tensor_i<N, double> &t, double c) throw(exception);
+
+	template<typename CoreOp>
+	void build_list( loop_list_t &list, const dimensions<N> &dima, 
+		const permutation<N> &perma, const dimensions<N> &dimb, const double c );
+		
+	void clean_list( loop_list_t &list ); 
 };
 
 template<size_t N>
@@ -225,25 +230,14 @@ void tod_copy<N>::do_perform(tensor_i<N, double> &tdst, double c)
 	const double *psrc = m_tctrl.req_const_dataptr();
 	double *pdst = tctrl_dst.req_dataptr();
 
-	permutation<N> inv_perm(m_perm);
-	inv_perm.invert();
-	size_t ib[N];
-	for(size_t i = 0; i < N; i++) ib[i] = i;
-	inv_perm.apply(ib);
+//	permutation<N> inv_perm(m_perm);
+//	inv_perm.invert();
+//	size_t ib[N];
+//	for(size_t i = 0; i < N; i++) ib[i] = i;
+//	inv_perm.apply(ib);
 
 	loop_list_t lst;
-	for(size_t i = 0; i < N; i++) {
-		size_t inca = m_t.get_dims().get_increment(i);
-		size_t incb = tdst.get_dims().get_increment(ib[i]);
-		loop_list_node node(m_t.get_dims()[i], inca, incb);
-		if(i < N-1) {
-			node.m_op = new op_loop(m_t.get_dims()[i], inca, incb);
-		} else {
-			node.m_op = new CoreOp(
-				m_t.get_dims()[i], inca, incb, c*m_c);
-		}
-		lst.push_back(node);
-	}
+	build_list<CoreOp>( lst, m_t.get_dims(), m_perm, tdst.get_dims(), c*m_c ); 
 
 	registers regs;
 	regs.m_ptra = psrc;
@@ -257,28 +251,89 @@ void tod_copy<N>::do_perform(tensor_i<N, double> &tdst, double c)
 		processor_t proc(lst, regs);
 		proc.process_next();
 	} catch(exception &e) {
-		for(typename loop_list_t::iterator i = lst.begin();
-			i != lst.end(); i++) {
-
-			delete i->m_op;
-			i->m_op = NULL;
-		}
+		clean_list(lst);
 		throw;
 	}
 
-	for(typename loop_list_t::iterator i = lst.begin();
-		i != lst.end(); i++) {
-
-		delete i->m_op;
-		i->m_op = NULL;
-	}
-
+	clean_list(lst);
+	
 	m_tctrl.ret_dataptr(psrc);
 	tctrl_dst.ret_dataptr(pdst);
 
 	tod_copy<N>::stop_timer();
 }
 
+template<size_t N> template<typename CoreOp>
+void tod_copy<N>::build_list( loop_list_t &list, const dimensions<N> &da,
+	const permutation<N> &pa, const dimensions<N> &db, const double c ) throw(out_of_memory)
+{
+	size_t ia[N];
+	for (size_t i=0; i<N; i++) ia[i]=i;
+	pa.apply(N,ia);
+
+	// loop over all indices and build the list
+	size_t pos=0;
+	try {
+		typename loop_list_t::iterator posa=list.end(), posb=list.end();
+		while ( pos < N ) {
+			size_t len=1;
+			size_t iapos=ia[pos];
+			while (pos<N) {
+				len*=da.get_dim(iapos);
+				pos++; iapos++;
+				if ( ia[pos]!=iapos ) break;
+			}
+
+			size_t inca=da.get_increment(iapos-1);
+			size_t incb=db.get_increment(pos-1);
+
+			typename loop_list_t::iterator it
+				= list.insert(list.end(),loop_list_node(len,inca,incb));
+
+			// we know that in the last loop incb=1 !!!
+			if (inca==1) {
+				if (inca==incb)	{
+					it->m_op=new CoreOp(len,inca,incb,c);
+				}
+				else { posa=it; }
+			}
+			else {
+				if (incb==1) { posb=it; }
+				else { it->m_op=new op_loop(len,inca,incb); }
+			}
+		}
+
+		if ( posa!=posb ) {
+			if ( posa->m_weight > posb->m_weight ) {
+				posa->m_op=new CoreOp(posa->m_weight,posa->m_inca,posa->m_incb,c);
+				posb->m_op=new op_loop(posb->m_weight,posb->m_inca,posb->m_incb);
+				list.splice(list.end(),list,posa);
+			}
+			else {
+				posa->m_op=new op_loop(posa->m_weight,posa->m_inca,posa->m_incb);
+				posb->m_op=new CoreOp(posb->m_weight,posb->m_inca,posb->m_incb,c);
+				list.splice(posb,list,posa);
+			}
+		}
+	} catch ( std::bad_alloc& e ) {
+		clean_list(list);
+		throw out_of_memory("libtensor",k_clazz,
+			"build_list(loop_list_t&,const dimensions<N>&,"
+			"const permutation<N>&,const dimensions<N>&)",
+			__FILE__,__LINE__,e.what());
+	}
+}
+
+template<size_t N>
+void tod_copy<N>::clean_list( loop_list_t& lst ) {
+	for(typename loop_list_t::iterator i = lst.begin();
+		i != lst.end(); i++) {
+
+		delete i->m_op;
+		i->m_op = NULL;
+	}
+}
+	
 template<size_t N>
 void tod_copy<N>::op_loop::exec(processor_t &proc, registers &regs)
 	throw(exception) {

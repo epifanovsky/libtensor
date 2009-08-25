@@ -2,6 +2,7 @@
 #include <sstream>
 #include <libtensor.h>
 #include "labeled_btensor_test.h"
+#include "compare_ref.h"
 
 namespace libtensor {
 
@@ -204,7 +205,7 @@ void labeled_btensor_test::test_expr_copy_1() throw(libtest::test_exception) {
 
 	// Compare against the reference
 
-	compare_ref(testname, btb, btb_ref, 1e-15);
+	compare_ref<2>::compare(testname, btb, btb_ref, 1e-15);
 
 	} catch(exception &exc) {
 		fail_test(testname, __FILE__, __LINE__, exc.what());
@@ -264,7 +265,7 @@ void labeled_btensor_test::test_expr_copy_2() throw(libtest::test_exception) {
 
 	// Compare against the reference
 
-	compare_ref(testname, btb, btb_ref, 1e-15);
+	compare_ref<2>::compare(testname, btb, btb_ref, 1e-15);
 
 	} catch(exception &exc) {
 		fail_test(testname, __FILE__, __LINE__, exc.what());
@@ -324,7 +325,7 @@ void labeled_btensor_test::test_expr_copy_3() throw(libtest::test_exception) {
 
 	// Compare against the reference
 
-	compare_ref(testname, btb, btb_ref, 1e-15);
+	compare_ref<2>::compare(testname, btb, btb_ref, 1e-15);
 
 	} catch(exception &exc) {
 		fail_test(testname, __FILE__, __LINE__, exc.what());
@@ -382,7 +383,7 @@ void labeled_btensor_test::test_expr_copy_4() throw(libtest::test_exception) {
 
 	// Compare against the reference
 
-	compare_ref(testname, btb, btb_ref, 1e-15);
+	compare_ref<2>::compare(testname, btb, btb_ref, 1e-15);
 
 	} catch(exception &exc) {
 		fail_test(testname, __FILE__, __LINE__, exc.what());
@@ -446,7 +447,7 @@ void labeled_btensor_test::test_expr_add_1() throw(libtest::test_exception) {
 
 	// Compare against the reference
 
-	compare_ref(testname, btc, btc_ref, 1e-15);
+	compare_ref<2>::compare(testname, btc, btc_ref, 1e-15);
 
 	} catch(exception &exc) {
 		fail_test(testname, __FILE__, __LINE__, exc.what());
@@ -510,7 +511,7 @@ void labeled_btensor_test::test_expr_add_2() throw(libtest::test_exception) {
 
 	// Compare against the reference
 
-	compare_ref(testname, btc, btc_ref, 1e-15);
+	compare_ref<2>::compare(testname, btc, btc_ref, 1e-15);
 
 	} catch(exception &exc) {
 		fail_test(testname, __FILE__, __LINE__, exc.what());
@@ -574,7 +575,7 @@ void labeled_btensor_test::test_expr_add_3() throw(libtest::test_exception) {
 
 	// Compare against the reference
 
-	compare_ref(testname, btc, btc_ref, 1e-15);
+	compare_ref<2>::compare(testname, btc, btc_ref, 1e-15);
 
 	} catch(exception &exc) {
 		fail_test(testname, __FILE__, __LINE__, exc.what());
@@ -641,31 +642,12 @@ void labeled_btensor_test::test_expr_add_4() throw(libtest::test_exception) {
 
 	// Compare against the reference
 
-	compare_ref(testname, btc, btc_ref, 1e-15);
+	compare_ref<2>::compare(testname, btc, btc_ref, 1e-15);
 
 	} catch(exception &exc) {
 		fail_test(testname, __FILE__, __LINE__, exc.what());
 	}
 }
 
-template<size_t N>
-void labeled_btensor_test::compare_ref(const char *test,
-	btensor_i<N, double> &bt, btensor_i<N, double> &bt_ref, double thresh)
-	throw(libtest::test_exception) {
-
-	btod_compare<N> cmp(bt, bt_ref, thresh);
-	if(!cmp.compare()) {
-		std::ostringstream ss1, ss2;
-		ss2 << "Result does not match reference at element "
-			<< cmp.get_diff_index() << ": "
-			<< cmp.get_diff_elem_1() << " (act) vs. "
-			<< cmp.get_diff_elem_2() << " (ref), "
-			<< cmp.get_diff_elem_1() - cmp.get_diff_elem_2()
-			<< " (diff) in " << test;
-		fail_test("labeled_btensor_test::compare_ref()",
-			__FILE__, __LINE__, ss2.str().c_str());
-	}
-
-}
 
 } // namespace libtensor

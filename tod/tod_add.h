@@ -29,10 +29,10 @@ template<size_t N>
 class tod_add
 	: public tod_additive<N>, public timings<tod_add<N> >
 {
-private:
-	friend class timings<tod_add<N> >;
+public: 
 	static const char* k_clazz;  //! class name
 
+private:
 	typedef struct operand {
 		tensor_i<N,double>& m_ta;
 		double m_ca;
@@ -76,21 +76,19 @@ private:
 	//!	b_j += m_ca * a_{i_j}
 	class op_daxpy : public processor_op_i_t, public timings<op_daxpy> {
 	private:
-		friend class timings<op_daxpy>;
-		static const char* k_clazz;
 		size_t m_len, m_inca, m_incb;
 	public:
 		op_daxpy(size_t len , size_t inca, size_t incb) :
 			m_inca(inca), m_incb(incb), m_len(len) { }
 		virtual void exec(processor_t &proc, registers &regs)
 			throw(exception);
+
+		static const char* k_clazz;
 	};
 
 	//!	b_{ij} += m_ca * a_{ji}
 	class op_fast_add : public processor_op_i_t, public timings<op_fast_add> {
 	private:
-		friend class timings<op_fast_add>;
-		static const char* k_clazz;
 		size_t m_leni, m_lenj, m_incaj, m_incbi;
 	public:
 		op_fast_add(size_t leni , size_t lenj, size_t incaj, size_t incbi) :
@@ -98,6 +96,8 @@ private:
 
 		virtual void exec(processor_t &proc, registers &regs)
 			throw(exception);
+
+		static const char* k_clazz;
 	};
 
 
@@ -449,7 +449,7 @@ void tod_add<N>::build_list( loop_list_t &list, const dimensions<N> &da,
 	pa.apply(N,ia);
 
 	// loop over all indices and build the list
-	size_t pos=0, max_len=0;
+	size_t pos=0;
 	try {
 		typename loop_list_t::iterator posa=list.end(), posb=list.end();
 		while ( pos < N ) {
@@ -484,10 +484,12 @@ void tod_add<N>::build_list( loop_list_t &list, const dimensions<N> &da,
 //			if ( posa->m_len > posb->m_len ) {
 //				posa->m_op=new op_daxpy(posa->m_len,posa->m_inca,posa->m_incb);
 //				posb->m_op=new op_loop(posb->m_len,posb->m_inca,posb->m_incb);
+//				list.splice(list.end(),list,posa);
 //			}
 //			else {
 //				posa->m_op=new op_loop(posa->m_len,posa->m_inca,posa->m_incb);
 //				posb->m_op=new op_daxpy(posb->m_len,posb->m_inca,posb->m_incb);
+//				list.splice(posb,list,posa);
 //			}
 			posb->m_op=new op_fast_add(posa->m_len,posb->m_len,posb->m_inca,posa->m_incb);
 			list.erase(posa);

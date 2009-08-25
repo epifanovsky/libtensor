@@ -15,16 +15,29 @@ namespace libtensor {
  **/
 template<size_t N>
 class btod_compare {
+public:
+	typedef struct btod_diff {
+		bool m_number_of_orbits; //!< same number of orbits
+		bool m_similar_orbit; //!< same kind of orbit
+		//! canonical block indices of orbits in which a difference occured
+		index<N> m_canonical_block_index_1, m_canonical_block_index_2;
+		index<N> m_inblock; //!< diff index in block 
+		double m_diff_elem_1, m_diff_elem_2;
+		
+		btod_diff() : m_number_of_orbits(true),	m_similar_orbit(true), 
+			m_diff_elem_1(0.0),	m_diff_elem_2(0.0) 
+		{}
+		
+	} btod_diff_t;
 private:
 	static const char* k_clazz;
 	
 	block_tensor_i<N, double> &m_bt1;
 	block_tensor_i<N, double> &m_bt2;
 	double m_thresh;
-	index<N> m_idx_diff;
-	double m_diff_elem_1, m_diff_elem_2;
-
+	btod_diff_t m_diff_struct;
 public:
+
 	/**	\brief Initializes the operation
 		\param bt1 First %tensor.
 		\param bt2 Second %tensor.
@@ -43,19 +56,10 @@ public:
 	**/
 	bool compare();
 
-	/**	\brief Returns the index of the first non-equal element
+	/**	\brief Returns information about the difference of the two block tensors 
 	**/
-	const index<N> &get_diff_index() const;
+	const btod_diff_t &get_diff() const;
 
-	/**	\brief Returns the value of the first different element in
-			the first block %tensor
-	**/
-	double get_diff_elem_1() const;
-
-	/**	\brief Returns the value of the first different element in
-			the second block %tensor
-	**/
-	double get_diff_elem_2() const;
 };
 
 template<size_t N>
@@ -65,7 +69,6 @@ template<size_t N>
 inline btod_compare<N>::btod_compare(block_tensor_i<N, double> &bt1,
 	block_tensor_i<N, double> &bt2, double thresh) throw(exception)
 	: m_bt1(bt1), m_bt2(bt2), m_thresh(fabs(thresh)) {
-	m_diff_elem_1 = 0.0; m_diff_elem_2 = 0.0;
 
 	if ( ! m_bt1.get_bis().equals( m_bt2.get_bis() ) ) 
 		throw bad_parameter(g_ns,k_clazz,"btod_compare()",__FILE__,__LINE__,
@@ -80,8 +83,10 @@ bool btod_compare<N>::compare() {
 		orblist2(ctrl2.req_symmetry());
 	
 	// if orbit lists are different 
-	if ( orblist1.get_size() != orblist2.get_size() ) 
+	if ( orblist1.get_size() != orblist2.get_size() ) {
+		m_diff_struct.m_number_of_orbits=false; 
 		return false;
+	}
 	
 	// run over all orbits
 	for ( typename orbit_list<N,double>::iterator it=orblist1.begin(); 
@@ -89,13 +94,21 @@ bool btod_compare<N>::compare() {
 		orbit<N,double> orb1(ctrl1.req_symmetry(),it->second);
 		orbit<N,double> orb2(ctrl2.req_symmetry(),it->second);
 		
-		// if number of blocks in the orbits is different
-		if ( orb1.get_size() != orb1.get_size() ) 
-			return false;
-		
-		
 		size_t idx1=orb1.get_abs_canonical_index(), 
 			idx2=orb2.get_abs_canonical_index();
+			
+		index<N> bidx1, bidx2;
+		m_bt1.get_bis().get_block_index_dims().abs_index(idx1,bidx1);
+		m_bt2.get_bis().get_block_index_dims().abs_index(idx2,bidx2);
+		
+		// if number of blocks in the orbits is different
+		if ( orb1.get_size() != orb1.get_size() ) {
+			m_diff_struct.m_similar_orbit=false; 
+			m_diff_struct.m_canonical_block_index_1=bidx1; 
+			m_diff_struct.m_canonical_block_index_2=bidx2; 
+			return false;
+		}
+		
 		if ( idx1 != idx2 ) {
 			// tra: transfrom from canonical block of orb1 into the canonical block 
 			// of orb2 
@@ -107,13 +120,14 @@ bool btod_compare<N>::compare() {
 					itorb!=orb1.end(); itorb++ ) {
 				transf<N, double> trb(tra);
 				trb.transform(orb2.get_transf(orb1.get_abs_index(itorb)));
-				if ( trb != orb1.get_transf(itorb) ) 
+				if ( trb != orb1.get_transf(itorb) ) {
+					m_diff_struct.m_similar_orbit=false; 
+					m_diff_struct.m_canonical_block_index_1=bidx1; 
+					m_diff_struct.m_canonical_block_index_2=bidx2;
 					return false;
+				}
 			}
 
-			index<N> bidx1, bidx2;
-			m_bt1.get_bis().get_block_index_dims().abs_index(idx1,bidx1);
-			m_bt2.get_bis().get_block_index_dims().abs_index(idx2,bidx2);
 			tensor_i<N,double> &t1=ctrl1.req_block(bidx1),
 				&t2=ctrl2.req_block(bidx2);
 			
@@ -126,17 +140,11 @@ bool btod_compare<N>::compare() {
 			
 			tod_compare<N> compare(tmp,t2,m_thresh);
 			if ( ! compare.compare() ) {
-				index<N> block_idx;
-				m_bt1.get_bis().get_block_index_dims().abs_index(idx1,block_idx);
-				
-				index<N> start_idx=m_bt1.get_bis().get_block_start(block_idx);
-				index<N> inblock_idx=compare.get_diff_index();
-				
-				for ( size_t i=0; i<N; i++ ) 
-					m_idx_diff[i]=start_idx[i]+inblock_idx[i];
-					
-				m_diff_elem_1=compare.get_diff_elem_1();
-				m_diff_elem_2=compare.get_diff_elem_2();
+				m_diff_struct.m_canonical_block_index_1=bidx1; 
+				m_diff_struct.m_canonical_block_index_2=bidx2;
+				m_diff_struct.m_inblock=compare.get_diff_index();			
+				m_diff_struct.m_diff_elem_1=compare.get_diff_elem_1();
+				m_diff_struct.m_diff_elem_2=compare.get_diff_elem_2();
 
 				return false;
 			}
@@ -146,29 +154,24 @@ bool btod_compare<N>::compare() {
 			for ( typename orbit<N,double>::iterator itorb=orb1.begin(); 
 					itorb!=orb1.end(); itorb++ ) {
 				if ( orb1.get_transf(itorb) != 
-					orb2.get_transf(orb1.get_abs_index(itorb) ) ) 
+					orb2.get_transf(orb1.get_abs_index(itorb) ) ) {
+					m_diff_struct.m_similar_orbit=false; 
+					m_diff_struct.m_canonical_block_index_1=bidx1; 
+					m_diff_struct.m_canonical_block_index_2=bidx2;
 					return false;
+				}
 			}
 
-			index<N> bidx1, bidx2;
-			m_bt1.get_bis().get_block_index_dims().abs_index(idx1,bidx1);
-			m_bt2.get_bis().get_block_index_dims().abs_index(idx2,bidx2);
 			tensor_i<N,double> &t1=ctrl1.req_block(bidx1),
 				&t2=ctrl2.req_block(bidx2);
 			
 			tod_compare<N> compare(t1,t2,m_thresh);
 			if ( ! compare.compare() ) {
-				index<N> block_idx;
-				m_bt1.get_bis().get_block_index_dims().abs_index(idx1,block_idx);
-				
-				index<N> start_idx=m_bt1.get_bis().get_block_start(block_idx);
-				index<N> inblock_idx=compare.get_diff_index();
-				
-				for ( size_t i=0; i<N; i++ ) 
-					m_idx_diff[i]=start_idx[i]+inblock_idx[i];
-					
-				m_diff_elem_1=compare.get_diff_elem_1();
-				m_diff_elem_2=compare.get_diff_elem_2();
+				m_diff_struct.m_canonical_block_index_1=bidx1; 
+				m_diff_struct.m_canonical_block_index_2=bidx2;
+				m_diff_struct.m_inblock=compare.get_diff_index();			
+				m_diff_struct.m_diff_elem_1=compare.get_diff_elem_1();
+				m_diff_struct.m_diff_elem_2=compare.get_diff_elem_2();
 
 				return false;
 			}
@@ -179,19 +182,10 @@ bool btod_compare<N>::compare() {
 }
 
 template<size_t N>
-inline const index<N> &btod_compare<N>::get_diff_index() const {
-	return m_idx_diff;
+inline const btod_compare<N>::btod_diff &btod_compare<N>::get_diff() const {
+	return m_diff_struct;
 }
 
-template<size_t N>
-inline double btod_compare<N>::get_diff_elem_1() const {
-	return m_diff_elem_1;
-}
-
-template<size_t N>
-inline double btod_compare<N>::get_diff_elem_2() const {
-	return m_diff_elem_2;
-}
 
 } // namespace libtensor
 
