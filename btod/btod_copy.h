@@ -13,24 +13,28 @@
 
 namespace libtensor {
 
-/**	\brief Makes a copy of a block %tensor, applying a permutation or
+
+/**	\brief Makes a copy of a block %tensor, applying a permutation and
 		a scaling coefficient
 	\tparam N Tensor order.
 
 	\ingroup libtensor_btod
  **/
 template<size_t N>
-class btod_copy : public btod_additive<N>, public timings<btod_copy<N> > {
+class btod_copy : public btod_additive<N>, public timings< btod_copy<N> > {
 public:
 	static const char *k_clazz; //!< Class name
-	friend class timings<btod_copy<N> >;
+
+private:
+	typedef timings< btod_copy<N> > timings_base;
+
 private:
 	block_tensor_i<N, double> &m_bt; //!< Source block %tensor
 	permutation<N> m_perm; //!< Permutation
 	double m_c; //!< Scaling coefficient
 	block_index_space<N> m_bis; //!< Block %index space of output
 	dimensions<N> m_bidims; //!< Block %index dimensions
-	symmetry<N, double> m_symmetry; //!< Symmetry of output
+	symmetry<N, double> m_sym; //!< Symmetry of output
 
 public:
 	//!	\name Construction and destruction
@@ -69,6 +73,9 @@ public:
 		throw(exception);
 	//@}
 
+private:
+	void do_perform(block_tensor_i<N, double> &bt, bool zero, double c)
+		throw(exception);
 };
 
 
@@ -79,8 +86,10 @@ const char *btod_copy<N>::k_clazz = "btod_copy<N>";
 template<size_t N>
 btod_copy<N>::btod_copy(block_tensor_i<N, double> &bt, double c)
 : m_bt(bt), m_c(c), m_bis(bt.get_bis()), m_bidims(m_bis.get_block_index_dims()),
-	m_symmetry(m_bis) {
+	m_sym(m_bis) {
 
+	block_tensor_ctrl<N, double> ctrl(bt);
+	m_sym.set_union(ctrl.req_symmetry());
 }
 
 
@@ -88,11 +97,14 @@ template<size_t N>
 btod_copy<N>::btod_copy(
 	block_tensor_i<N, double> &bt, const permutation<N> &p, double c)
 : m_bt(bt), m_perm(p), m_c(c), m_bis(bt.get_bis()),
-	m_bidims(m_bis.get_block_index_dims()), m_symmetry(m_bis) {
+	m_bidims(m_bis.get_block_index_dims()), m_sym(m_bis) {
+
+	block_tensor_ctrl<N, double> ctrl(bt);
+	m_sym.set_union(ctrl.req_symmetry());
 
 	m_bis.permute(m_perm);
 	m_bidims.permute(m_perm);
-	m_symmetry.permute(m_perm);
+	m_sym.permute(m_perm);
 }
 
 
@@ -112,7 +124,7 @@ inline const block_index_space<N> &btod_copy<N>::get_bis() const {
 template<size_t N>
 inline const symmetry<N, double> &btod_copy<N>::get_symmetry() const {
 
-	return m_symmetry;
+	return m_sym;
 }
 
 
@@ -120,42 +132,20 @@ template<size_t N>
 void btod_copy<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 
 	static const char *method = "perform(block_tensor_i<N, double>&)";
-	
-	timings<btod_copy<N> >::start_timer();
-	
+
 	if(!m_bis.equals(bt.get_bis())) {
 		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
 			"Incorrect block index space of the output tensor.");
 	}
 
-	btod_so_copy<N> symcopy(m_symmetry);
+	timings_base::start_timer();
+
+	btod_so_copy<N> symcopy(m_sym);
 	symcopy.perform(bt);
 
-	block_tensor_ctrl<N, double> src_ctrl(m_bt), dst_ctrl(bt);
-	dimensions<N> bidims = m_bis.get_block_index_dims();
+	do_perform(bt, true, 1.0);
 
-	orbit_list<N, double> orblst(src_ctrl.req_symmetry());
-	typename orbit_list<N, double>::iterator iorbit = orblst.begin();
-	for(; iorbit != orblst.end(); iorbit++) {
-
-		orbit<N, double> orb(src_ctrl.req_symmetry(),
-			orblst.get_index(iorbit));
-		index<N> src_blk_idx;
-		bidims.abs_index(orb.get_abs_canonical_index(), src_blk_idx);
-		if(src_ctrl.req_is_zero_block(src_blk_idx)) continue;
-		index<N> dst_blk_idx(src_blk_idx);
-		dst_blk_idx.permute(m_perm);
-
-		tensor_i<N, double> &src_blk = src_ctrl.req_block(src_blk_idx);
-		tensor_i<N, double> &dst_blk = dst_ctrl.req_block(dst_blk_idx);
-		tod_copy<N> cp(src_blk, m_perm, m_c);
-		cp.perform(dst_blk);
-		src_ctrl.ret_block(src_blk_idx);
-		dst_ctrl.ret_block(dst_blk_idx);
-
-	}
-
-	timings<btod_copy<N> >::stop_timer();
+	timings_base::stop_timer();
 }
 
 
@@ -166,15 +156,47 @@ void btod_copy<N>::perform(block_tensor_i<N, double> &bt, double c)
 	static const char *method =
 		"perform(block_tensor_i<N, double>&, double)";
 
-	timings<btod_copy<N> >::start_timer();
+	if(fabs(c) == 0.0) return;
+
+	timings_base::start_timer();
 
 	if(!m_bis.equals(bt.get_bis())) {
 		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
 			"Incorrect block index space of the output tensor.");
 	}
 
-	btod_so_equalize<N> symeq(m_symmetry);
-	symeq.perform(bt);
+	block_tensor_ctrl<N, double> dst_ctrl(bt);
+	const symmetry<N, double> &dst_sym = dst_ctrl.req_symmetry();
+
+	symmetry<N, double> sym(m_sym);
+
+	if(sym.equals(dst_sym)) {
+		// Sym(A) = Sym(B)
+		do_perform(bt, false, c);
+	} else {
+		sym.set_intersection(dst_sym);
+		if(sym.equals(m_sym)) {
+			// Sym(A) < Sym(B)
+			throw_exc(k_clazz, method,
+				"Case S(A)<S(B) is not handled.");
+		} else if(sym.equals(dst_sym)) {
+			// Sym(B) < Sym(A)
+			throw_exc(k_clazz, method,
+				"Case S(B)<S(A) is not handled.");
+		} else {
+			// Sym(A) > Sym'(A) = Sym'(B) < Sym(B)
+			throw_exc(k_clazz, method,
+				"Case S(A)>S'(A)=S'(B)<S(B) is not handled.");
+		}
+	}
+
+	timings_base::stop_timer();
+}
+
+
+template<size_t N>
+void btod_copy<N>::do_perform(
+	block_tensor_i<N, double> &bt, bool zero, double c) throw(exception) {
 
 	block_tensor_ctrl<N, double> src_ctrl(m_bt), dst_ctrl(bt);
 	dimensions<N> bidims = m_bis.get_block_index_dims();
@@ -193,14 +215,19 @@ void btod_copy<N>::perform(block_tensor_i<N, double> &bt, double c)
 
 		tensor_i<N, double> &src_blk = src_ctrl.req_block(src_blk_idx);
 		tensor_i<N, double> &dst_blk = dst_ctrl.req_block(dst_blk_idx);
-		tod_copy<N> cp(src_blk, m_perm, m_c);
-		cp.perform(dst_blk);
+
+		if(zero) {
+			tod_copy<N> cp(src_blk, m_perm, m_c * c);
+			cp.perform(dst_blk);
+		} else {
+			tod_copy<N> cp(src_blk, m_perm, m_c);
+			cp.perform(dst_blk, c);
+		}
+
 		src_ctrl.ret_block(src_blk_idx);
 		dst_ctrl.ret_block(dst_blk_idx);
 
 	}
-
-	timings<btod_copy<N> >::stop_timer();
 }
 
 

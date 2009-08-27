@@ -243,10 +243,10 @@ void symmetry<N, T>::clear_elements() {
 template<size_t N, typename T>
 void symmetry<N, T>::set_union(const symmetry<N, T> &sym) {
 
-	typename std::vector<symmetry_element_t*>::iterator i =
+	typename std::vector<symmetry_element_t*>::const_iterator i =
 		sym.m_elements.begin();
 	while(i != sym.m_elements.end()) {
-		add_element(*i);
+		add_element(**i);
 		i++;
 	}
 }
