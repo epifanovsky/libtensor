@@ -169,10 +169,11 @@ private:
 	void do_perform(tensor_i<N, double> &t, double c) throw(exception);
 
 	template<typename CoreOp>
-	void build_list( loop_list_t &list, const dimensions<N> &dima, 
-		const permutation<N> &perma, const dimensions<N> &dimb, const double c );
-		
-	void clean_list( loop_list_t &list ); 
+	void build_list( loop_list_t &list, const dimensions<N> &dima,
+		const permutation<N> &perma, const dimensions<N> &dimb,
+		const double c) throw(out_of_memory);
+
+	void clean_list( loop_list_t &list );
 };
 
 template<size_t N>
@@ -237,7 +238,7 @@ void tod_copy<N>::do_perform(tensor_i<N, double> &tdst, double c)
 //	inv_perm.apply(ib);
 
 	loop_list_t lst;
-	build_list<CoreOp>( lst, m_t.get_dims(), m_perm, tdst.get_dims(), c*m_c ); 
+	build_list<CoreOp>( lst, m_t.get_dims(), m_perm, tdst.get_dims(), c*m_c );
 
 	registers regs;
 	regs.m_ptra = psrc;
@@ -256,7 +257,7 @@ void tod_copy<N>::do_perform(tensor_i<N, double> &tdst, double c)
 	}
 
 	clean_list(lst);
-	
+
 	m_tctrl.ret_dataptr(psrc);
 	tctrl_dst.ret_dataptr(pdst);
 
@@ -333,7 +334,7 @@ void tod_copy<N>::clean_list( loop_list_t& lst ) {
 		i->m_op = NULL;
 	}
 }
-	
+
 template<size_t N>
 void tod_copy<N>::op_loop::exec(processor_t &proc, registers &regs)
 	throw(exception) {

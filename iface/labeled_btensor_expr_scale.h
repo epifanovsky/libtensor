@@ -9,8 +9,10 @@
 
 namespace libtensor {
 
+namespace labeled_btensor_expr {
+
 template<size_t N, typename T, typename Expr>
-class labeled_btensor_eval_scale;
+class eval_scale;
 
 /**	\brief Expression core that scales an underlying expression
 	\tparam N Tensor order.
@@ -20,10 +22,10 @@ class labeled_btensor_eval_scale;
 	\ingroup libtensor_btensor_expr
  **/
 template<size_t N, typename T, typename Expr>
-class labeled_btensor_expr_scale {
+class core_scale {
 public:
 	//!	Evaluating container type
-	typedef labeled_btensor_eval_scale<N, T, Expr> eval_container_t;
+	typedef eval_scale<N, T, Expr> eval_container_t;
 
 private:
 	Expr m_expr; //!< Unscaled expression
@@ -33,8 +35,7 @@ public:
 	/**	\brief Constructs the scaling expression using a coefficient
 			and the underlying unscaled expression
 	 **/
-	labeled_btensor_expr_scale(T coeff, const Expr &expr)
-		: m_coeff(coeff), m_expr(expr) { }
+	core_scale(T coeff, const Expr &expr) : m_coeff(coeff), m_expr(expr) { }
 
 	/**	\brief Returns the unscaled expression
 	 **/
@@ -67,24 +68,23 @@ public:
 	\ingroup libtensor_btensor_expr
  **/
 template<size_t N, typename T, typename Expr>
-class labeled_btensor_eval_scale {
+class eval_scale {
 public:
 	//!	Scaling expression core type
-	typedef labeled_btensor_expr_scale<N, T, Expr> core_t;
+	typedef core_scale<N, T, Expr> core_t;
 
 	//!	Scaled expression type
-	typedef labeled_btensor_expr<N, T, core_t> expression_t;
+	typedef expr<N, T, core_t> expression_t;
 
 	//!	Unscaled expression evaluating container type
 	typedef typename Expr::eval_container_t unscaled_eval_container_t;
 
-	//!	Number of %tensor arguments in the expression
-	static const size_t k_narg_tensor =
-		unscaled_eval_container_t::k_narg_tensor;
-
-	//!	Number of %tensor operation arguments in the expression
-	static const size_t k_narg_oper =
-		unscaled_eval_container_t::k_narg_oper;
+	//!	Number of arguments in the expression
+	template<typename Tag>
+	struct narg {
+		static const size_t k_narg =
+			unscaled_eval_container_t::template narg<Tag>::k_narg;
+	};
 
 private:
 	expression_t &m_expr; //!< Scaled expression
@@ -99,7 +99,7 @@ public:
 	/**	\brief Constructs the evaluating container
 	 **/
 	template<typename LabelLhs>
-	labeled_btensor_eval_scale(expression_t &expr,
+	eval_scale(expression_t &expr,
 		labeled_btensor<N, T, true, LabelLhs> &result) throw(exception);
 
 	//@}
@@ -107,38 +107,35 @@ public:
 	//!	\name Evaluation
 	//@{
 
-	labeled_btensor_expr_arg_tensor<N, T> get_arg_tensor(size_t i) const
-		throw(exception);
-
-	labeled_btensor_expr_arg_oper<N, T> get_arg_oper(size_t i) const
-		throw(exception);
+	template<typename Tag>
+	arg<N, T, Tag> get_arg(const Tag &tag, size_t i) const throw(exception);
 
 	//@}
 };
 
 template<size_t N, typename T, typename Expr>
-inline bool labeled_btensor_expr_scale<N, T, Expr>::contains(
-	const letter &let) const {
+inline bool core_scale<N, T, Expr>::contains(const letter &let) const {
 
 	return m_expr.contains(let);
 }
 
 template<size_t N, typename T, typename Expr>
-inline size_t labeled_btensor_expr_scale<N, T, Expr>::index_of(
-	const letter &let) const throw(exception) {
+inline size_t core_scale<N, T, Expr>::index_of(const letter &let) const
+	throw(exception) {
 
 	return m_expr.index_of(let);
 }
 
 template<size_t N, typename T, typename Expr>
-inline const letter &labeled_btensor_expr_scale<N, T, Expr>::letter_at(
-	size_t i) const throw(exception) {
+inline const letter &core_scale<N, T, Expr>::letter_at(size_t i) const
+	throw(exception) {
 
 	return m_expr.letter_at(i);
 }
 
-template<size_t N, typename T, typename Expr> template<typename LabelLhs>
-labeled_btensor_eval_scale<N, T, Expr>::labeled_btensor_eval_scale(
+template<size_t N, typename T, typename Expr>
+template<typename LabelLhs>
+eval_scale<N, T, Expr>::eval_scale(
 	expression_t &expr, labeled_btensor<N, T, true, LabelLhs> &result)
 	throw(exception) : m_expr(expr),
 	m_unscaled_cont(expr.get_core().get_unscaled_expr(), result) {
@@ -146,26 +143,16 @@ labeled_btensor_eval_scale<N, T, Expr>::labeled_btensor_eval_scale(
 }
 
 template<size_t N, typename T, typename Expr>
-inline labeled_btensor_expr_arg_tensor<N, T>
-labeled_btensor_eval_scale<N, T, Expr>::get_arg_tensor(size_t i) const
-	throw(exception) {
+template<typename Tag>
+inline arg<N, T, Tag> eval_scale<N, T, Expr>::get_arg(const Tag &tag, size_t i)
+	const throw(exception) {
 
-	labeled_btensor_expr_arg_tensor<N, T> arg =
-		m_unscaled_cont.get_arg_tensor(i);
-	arg.scale(m_expr.get_core().get_coeff());
-	return arg;
+	arg<N, T, Tag> argument = m_unscaled_cont.get_arg(tag, i);
+	argument.scale(m_expr.get_core().get_coeff());
+	return argument;
 }
 
-template<size_t N, typename T, typename Expr>
-inline labeled_btensor_expr_arg_oper<N, T>
-labeled_btensor_eval_scale<N, T, Expr>::get_arg_oper(size_t i) const
-	throw(exception) {
-
-	labeled_btensor_expr_arg_oper<N, T> arg =
-		m_unscaled_cont.get_arg_oper(i);
-	arg.scale(m_expr.get_core().get_coeff());
-	return arg;
-}
+} // namespace labeled_btensor_expr
 
 } // namespace libtensor
 

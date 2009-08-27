@@ -72,6 +72,7 @@
 #include "iface/direct_btensor.h"
 #include "iface/letter.h"
 #include "iface/letter_expr.h"
+#include "iface/labeled_btensor_base.h"
 #include "iface/labeled_btensor.h"
 #include "iface/labeled_btensor_expr.h"
 #include "iface/labeled_btensor_expr_operators.h"

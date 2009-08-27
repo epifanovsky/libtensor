@@ -8,25 +8,50 @@
 
 namespace libtensor {
 
+namespace labeled_btensor_expr {
+
+struct tensor_tag { };
+struct oper_tag { };
+
+/**	\brief Generic container for an expression argument
+
+	\ingroup libtensor_btensor_expr
+ **/
+template<size_t N, typename T, typename Tag>
+class arg {
+};
+
 /**	\brief Container for a %tensor expression operand
 
 	\ingroup libtensor_btensor_expr
  **/
 template<size_t N, typename T>
-class labeled_btensor_expr_arg_tensor {
+class arg<N, T, tensor_tag> {
 private:
 	btensor_i<N, T> &m_bt;
 	permutation<N> m_perm;
 	T m_coeff;
 
 public:
-	labeled_btensor_expr_arg_tensor(btensor_i<N, T> &bt,
-		const permutation<N> &perm, T coeff) :
-			m_bt(bt), m_perm(perm), m_coeff(coeff) { }
-	void scale(T c) { m_coeff *= c; }
-	btensor_i<N, T> &get_btensor();
-	const permutation<N> &get_permutation() const;
-	T get_coeff() const;
+	arg(btensor_i<N, T> &bt, const permutation<N> &perm, T coeff)
+	: m_bt(bt), m_perm(perm), m_coeff(coeff) {
+	}
+
+	void scale(T c) {
+		m_coeff *= c;
+	}
+
+	btensor_i<N, T> &get_btensor() {
+		return m_bt;
+	}
+
+	const permutation<N> &get_perm() const {
+		return m_perm;
+	}
+
+	T get_coeff() const {
+		return m_coeff;
+	}
 };
 
 /**	\brief Container for a %tensor operation expression argument
@@ -34,8 +59,7 @@ public:
 	\ingroup libtensor_btensor_expr
  **/
 template<size_t N, typename T>
-class labeled_btensor_expr_arg_oper {
-
+class arg<N, T, oper_tag> {
 };
 
 /**	\brief Container for a %tensor operation expression argument
@@ -44,34 +68,29 @@ class labeled_btensor_expr_arg_oper {
 	\ingroup libtensor_btensor_expr
  **/
 template<size_t N>
-class labeled_btensor_expr_arg_oper<N, double> {
+class arg<N, double, oper_tag> {
 private:
 	btod_additive<N> &m_op;
 	double m_coeff;
 
 public:
-	labeled_btensor_expr_arg_oper(btod_additive<N> &op, double coeff) :
-		m_op(op), m_coeff(coeff) { }
-	void scale(double c) { m_coeff *= c; }
-	btod_additive<N> &get_operation() { return m_op; }
-	double get_coeff() const { return m_coeff; }
+	arg(btod_additive<N> &op, double coeff) : m_op(op), m_coeff(coeff) {
+	}
+
+	void scale(double c) {
+		m_coeff *= c;
+	}
+
+	btod_additive<N> &get_operation() {
+		return m_op;
+	}
+
+	double get_coeff() const {
+		return m_coeff;
+	}
 };
 
-template<size_t N, typename T>
-inline btensor_i<N, T> &labeled_btensor_expr_arg_tensor<N, T>::get_btensor() {
-	return m_bt;
-}
-
-template<size_t N, typename T>
-inline const permutation<N>&
-labeled_btensor_expr_arg_tensor<N, T>::get_permutation() const {
-	return m_perm;
-}
-
-template<size_t N, typename T>
-inline T labeled_btensor_expr_arg_tensor<N, T>::get_coeff() const {
-	return m_coeff;
-}
+} // namespace labeled_btensor_expr
 
 } // namespace libtensor
 

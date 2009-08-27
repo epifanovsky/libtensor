@@ -12,8 +12,17 @@
 
 namespace libtensor {
 
+/**	\brief Labeled block %tensor expressions
+	\ingroup libtensor_btensor_expr
+ **/
+namespace labeled_btensor_expr {
+
+/**	\brief Expression base class
+
+	\ingroup libtensor_btensor_expr
+ **/
 template<size_t N, typename T>
-class labeled_btensor_expr_base {
+class expr_base {
 
 };
 
@@ -33,7 +42,7 @@ class labeled_btensor_expr_base {
 	\ingroup libtensor_btensor_expr
  **/
 template<size_t N, typename T, typename Core>
-class labeled_btensor_expr : public labeled_btensor_expr_base<N, T> {
+class expr : public expr_base<N, T> {
 public:
 	//!	Expression evaluating container type
 	typedef typename Core::eval_container_t eval_container_t;
@@ -44,12 +53,11 @@ private:
 public:
 	/**	\brief Constructs the expression using a core
 	 **/
-	labeled_btensor_expr(const Core &core) : m_core(core) { }
+	expr(const Core &core) : m_core(core) { }
 
 	/**	\brief Copy constructor
 	 **/
-	labeled_btensor_expr(const labeled_btensor_expr<N, T, Core> &expr)
-	: m_core(expr.m_core) { }
+	expr(const expr<N, T, Core> &expr) : m_core(expr.m_core) { }
 
 	/**	\brief Returns the core of the expression
 	 **/
@@ -69,30 +77,32 @@ public:
 };
 
 template<size_t N, typename T, typename Core>
-inline Core &labeled_btensor_expr<N, T, Core>::get_core() {
+inline Core &expr<N, T, Core>::get_core() {
+
 	return m_core;
 }
 
 template<size_t N, typename T, typename Core>
-inline bool labeled_btensor_expr<N, T, Core>::contains(
-	const letter &let) const {
+inline bool expr<N, T, Core>::contains(const letter &let) const {
 
 	return m_core.contains(let);
 }
 
 template<size_t N, typename T, typename Core>
-inline size_t labeled_btensor_expr<N, T, Core>::index_of(
-	const letter &let) const throw(exception) {
+inline size_t expr<N, T, Core>::index_of(const letter &let) const
+	throw(exception) {
 
 	return m_core.index_of(let);
 }
 
 template<size_t N, typename T, typename Core>
-inline const letter &labeled_btensor_expr<N, T, Core>::letter_at(
-	size_t i) const throw(exception) {
+inline const letter &expr<N, T, Core>::letter_at(size_t i) const
+	throw(exception) {
 
 	return m_core.letter_at(i);
 }
+
+} // namespace labeled_btensor_expr
 
 } // namespace libtensor
 

@@ -35,7 +35,7 @@ public:
 	 **/
 	template<typename LetterExpr, typename Expr>
 	direct_btensor(const letter_expr<N, LetterExpr> &label,
-		const labeled_btensor_expr<N, T, Expr> &expr)
+		const labeled_btensor_expr::expr<N, T, Expr> &expr)
 		throw(exception);
 
 	/**	\brief Virtual destructor
@@ -97,7 +97,7 @@ template<size_t N, typename T, typename Traits>
 template<typename LetterExpr, typename Expr>
 direct_btensor<N, T, Traits>::direct_btensor(
 	const letter_expr<N, LetterExpr> &label,
-	const labeled_btensor_expr<N, T, Expr> &expr) throw(exception) {
+	const labeled_btensor_expr::expr<N, T, Expr> &expr) throw(exception) {
 }
 
 template<size_t N, typename T, typename Traits>

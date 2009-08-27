@@ -11,13 +11,16 @@
 
 namespace libtensor {
 
+namespace labeled_btensor_expr {
+
 /**	\brief Dot product (%tensor + %tensor)
 
 	\ingroup libtensor_btensor_expr
  **/
 template<size_t N, typename T, bool Assignable1, typename Label1,
 	bool Assignable2, typename Label2>
-double dot_product(labeled_btensor<N, T, Assignable1, Label1> bt1,
+double dot_product(
+	labeled_btensor<N, T, Assignable1, Label1> bt1,
 	labeled_btensor<N, T, Assignable2, Label2> bt2) {
 
 	size_t seq1[N], seq2[N];
@@ -38,8 +41,9 @@ double dot_product(labeled_btensor<N, T, Assignable1, Label1> bt1,
  **/
 template<size_t N, typename T, bool Assignable1, typename Label1,
 	typename Expr2>
-double dot_product(labeled_btensor<N, T, Assignable1, Label1> bt1,
-	labeled_btensor_expr<N, T, Expr2> bt2) {
+double dot_product(
+	labeled_btensor<N, T, Assignable1, Label1> bt1,
+	expr<N, T, Expr2> bt2) {
 
 	return 0.0;
 }
@@ -50,7 +54,8 @@ double dot_product(labeled_btensor<N, T, Assignable1, Label1> bt1,
  **/
 template<size_t N, typename T, typename Expr1, bool Assignable2,
 	typename Label2>
-double dot_product(labeled_btensor_expr<N, T, Expr1> bt1,
+double dot_product(
+	expr<N, T, Expr1> bt1,
 	labeled_btensor<N, T, Assignable2, Label2> bt2) {
 
 	return 0.0;
@@ -61,11 +66,16 @@ double dot_product(labeled_btensor_expr<N, T, Expr1> bt1,
 	\ingroup libtensor_btensor_expr
  **/
 template<size_t N, typename T, typename Expr1, typename Expr2>
-double dot_product(labeled_btensor_expr<N, T, Expr1> bt1,
-	labeled_btensor_expr<N, T, Expr2> bt2) {
+double dot_product(
+	expr<N, T, Expr1> bt1,
+	expr<N, T, Expr2> bt2) {
 
 	return 0.0;
 }
+
+} // namespace labeled_btensor_expr
+
+using labeled_btensor_expr::dot_product;
 
 } // namespace libtensor
 
