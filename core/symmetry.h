@@ -100,6 +100,10 @@ public:
 	 **/
 	void set_intersection(const symmetry<N, T> &sym);
 
+	/**	\brief Returns true if two symmetries consist of identical
+			generating set elements
+		\param sym Another symmetry.
+	 **/
 	bool equals(const symmetry<N, T> &sym) const;
 
 	/**	\brief Adjusts all elements to reflect the %symmetry of a
