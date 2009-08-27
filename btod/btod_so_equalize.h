@@ -41,7 +41,7 @@ void btod_so_equalize<N>::perform(block_tensor_i<N, double> &bt)
 	block_tensor_ctrl<N, double> ctrl(bt);
 	symmetry<N, double> src_sym(m_symmetry);
 	symmetry<N, double> dst_sym(ctrl.req_symmetry());
-	src_sym.set_overlap(dst_sym);
+	src_sym.set_intersection(dst_sym);
 
 	orbit_list<N, double> orblst(src_sym);
 	typename orbit_list<N, double>::iterator iorbit = orblst.begin();

@@ -113,6 +113,9 @@ private:
 		block_tensor_i<k_orderb, double> &btb);
 	void make_symmetry();
 
+	void do_perform(block_tensor_i<k_orderc, double> &btc, bool zero,
+		double c) throw(exception);
+
 	/**	\brief For an orbit in a and b, make a list of blocks in c
 	 **/
 	void make_schedule(
@@ -132,7 +135,8 @@ private:
 		block_tensor_ctrl<k_orderb, double> &ctrlb,
 		const dimensions<k_orderb> &bidimsb,
 		block_tensor_ctrl<k_orderc, double> &ctrlc,
-		const dimensions<k_orderc> &bidimsc);
+		const dimensions<k_orderc> &bidimsc,
+		bool zero, double c);
 };
 
 
@@ -176,18 +180,37 @@ template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::perform(block_tensor_i<k_orderc, double> &btc,
 	double c) throw(exception) {
 
-	index<k_ordera> idx_a;
-	index<k_orderb> idx_b;
-	index<k_orderc> idx_c;
+	static const char *method =
+		"perform(block_tensor_i<N + M, double>&, double)";
+
+	if(!m_bis.equals(btc.get_bis())) {
+		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"Incorrect block index space of the output tensor.");
+	}
+
+	btod_contract2<N, M, K>::start_timer();
 
 	block_tensor_ctrl<k_orderc, double> ctrl_btc(btc);
-	block_tensor_ctrl<k_ordera, double> ctrl_bta(m_bta);
-	block_tensor_ctrl<k_orderb, double> ctrl_btb(m_btb);
 
-	tod_contract2<N,M,K> contr(m_contr,ctrl_bta.req_block(idx_a),ctrl_btb.req_block(idx_b));
+	symmetry<k_orderc, double> sym(m_sym);
 
-	contr.perform(ctrl_btc.req_block(idx_c),c);
+	if(sym.equals(ctrl_btc.req_symmetry())) {
+		// A*B and C have the same symmetry
+		do_perform(btc, false, c);
+	} else {
+		sym.set_intersection(ctrl_btc.req_symmetry());
+		if(sym.equals(m_sym)) {
+			// C has a higher symmetry
+			throw_exc(k_clazz, method, "Case 1 not handled.");
+		} else if(sym.equals(ctrl_btc.req_symmetry())) {
+			// A*B has a higher symmetry
+			throw_exc(k_clazz, method, "Case 2 not handled.");
+		} else {
+			throw_exc(k_clazz, method, "Case 3 not handled.");
+		}
+	}
 
+	btod_contract2<N, M, K>::stop_timer();
 }
 
 
@@ -204,54 +227,10 @@ void btod_contract2<N, M, K>::perform(block_tensor_i<k_orderc, double> &btc)
 
 	btod_contract2<N, M, K>::start_timer();
 
-	block_tensor_ctrl<k_orderc, double> ctrl_btc(btc);
-	block_tensor_ctrl<k_ordera, double> ctrl_bta(m_bta);
-	block_tensor_ctrl<k_orderb, double> ctrl_btb(m_btb);
-
-	dimensions<k_ordera> bidimsa(m_bta.get_bis().get_block_index_dims());
-	dimensions<k_orderb> bidimsb(m_btb.get_bis().get_block_index_dims());
-	dimensions<k_orderc> bidimsc(btc.get_bis().get_block_index_dims());
-
-	//	Copy symmetry to C
-
 	btod_so_copy<k_orderc> symcopy(m_sym);
 	symcopy.perform(btc);
 
-	//	Go over orbits in A and B and create the schedule
-
-	schedule_t sch;
-
-	orbit_list<k_ordera, double> orblsta(ctrl_bta.req_symmetry());
-	orbit_list<k_orderb, double> orblstb(ctrl_btb.req_symmetry());
-	orbit_list<k_orderc, double> orblstc(ctrl_btc.req_symmetry());
-	typename orbit_list<k_ordera, double>::iterator iorba = orblsta.begin();
-	for(; iorba != orblsta.end(); iorba++) {
-		orbit<k_ordera, double> orba(ctrl_bta.req_symmetry(),
-			orblsta.get_index(iorba));
-		typename orbit_list<k_orderb, double>::iterator iorbb =
-			orblstb.begin();
-		for(; iorbb != orblstb.end(); iorbb++) {
-			orbit<k_orderb, double> orbb(ctrl_btb.req_symmetry(),
-				orblstb.get_index(iorbb));
-			make_schedule(sch, bidimsa, orba, bidimsb, orbb,
-				bidimsc, orblstc);
-		}
-	}
-
-	//	Invoke contractions
-
-	try {
-		index<k_orderc> idxc;
-		typename schedule_t::iterator isch = sch.begin();
-		for(; isch != sch.end(); isch++) {
-			bidimsc.abs_index(isch->first, idxc);
-			contract_block(*isch->second, idxc, ctrl_bta, bidimsa,
-				ctrl_btb, bidimsb, ctrl_btc, bidimsc);
-		}
-	} catch(...) {
-		clear_schedule(sch);
-		throw;
-	}
+	do_perform(btc, true, 1.0);
 
 	btod_contract2<N, M, K>::stop_timer();
 }
@@ -406,6 +385,57 @@ void btod_contract2<N, M, K>::make_symmetry() {
 
 
 template<size_t N, size_t M, size_t K>
+void btod_contract2<N, M, K>::do_perform(
+	block_tensor_i<k_orderc, double> &btc, bool zero, double c)
+	throw(exception) {
+
+	block_tensor_ctrl<k_orderc, double> ctrl_btc(btc);
+	block_tensor_ctrl<k_ordera, double> ctrl_bta(m_bta);
+	block_tensor_ctrl<k_orderb, double> ctrl_btb(m_btb);
+
+	dimensions<k_ordera> bidimsa(m_bta.get_bis().get_block_index_dims());
+	dimensions<k_orderb> bidimsb(m_btb.get_bis().get_block_index_dims());
+	dimensions<k_orderc> bidimsc(btc.get_bis().get_block_index_dims());
+
+	//	Go over orbits in A and B and create the schedule
+
+	schedule_t sch;
+
+	orbit_list<k_ordera, double> orblsta(ctrl_bta.req_symmetry());
+	orbit_list<k_orderb, double> orblstb(ctrl_btb.req_symmetry());
+	orbit_list<k_orderc, double> orblstc(ctrl_btc.req_symmetry());
+	typename orbit_list<k_ordera, double>::iterator iorba = orblsta.begin();
+	for(; iorba != orblsta.end(); iorba++) {
+		orbit<k_ordera, double> orba(ctrl_bta.req_symmetry(),
+			orblsta.get_index(iorba));
+		typename orbit_list<k_orderb, double>::iterator iorbb =
+			orblstb.begin();
+		for(; iorbb != orblstb.end(); iorbb++) {
+			orbit<k_orderb, double> orbb(ctrl_btb.req_symmetry(),
+				orblstb.get_index(iorbb));
+			make_schedule(sch, bidimsa, orba, bidimsb, orbb,
+				bidimsc, orblstc);
+		}
+	}
+
+	//	Invoke contractions
+
+	try {
+		index<k_orderc> idxc;
+		typename schedule_t::iterator isch = sch.begin();
+		for(; isch != sch.end(); isch++) {
+			bidimsc.abs_index(isch->first, idxc);
+			contract_block(*isch->second, idxc, ctrl_bta, bidimsa,
+				ctrl_btb, bidimsb, ctrl_btc, bidimsc, zero, c);
+		}
+	} catch(...) {
+		clear_schedule(sch);
+		throw;
+	}
+}
+
+
+template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::make_schedule(
 	schedule_t &sch, const dimensions<k_ordera> &bidimsa,
 	const orbit<k_ordera, double> &orba,
@@ -531,16 +561,16 @@ void btod_contract2<N, M, K>::contract_block(
 	block_tensor_ctrl<k_orderb, double> &ctrlb,
 	const dimensions<k_orderb> &bidimsb,
 	block_tensor_ctrl<k_orderc, double> &ctrlc,
-	const dimensions<k_orderc> &bidimsc) {
+	const dimensions<k_orderc> &bidimsc,
+	bool zero, double c) {
 
 	index<k_ordera> idxa;
 	index<k_orderb> idxb;
 
 	tensor_i<k_orderc, double> &tc = ctrlc.req_block(idxc);
 
-	tod_set<k_orderc>().perform(tc);
+	if(zero) tod_set<k_orderc>().perform(tc);
 
-//	std::cout << idxc << ": ";
 	typename block_contr_list_t::iterator ilst = lst.begin();
 	for(; ilst != lst.end(); ilst++) {
 		bidimsa.abs_index(ilst->m_absidxa, idxa);
@@ -554,20 +584,14 @@ void btod_contract2<N, M, K>::contract_block(
 		contraction2<N, M, K> contr(m_contr);
 		contr.permute_a(ilst->m_perma);
 		contr.permute_b(ilst->m_permb);
-//		contr.permute_ab(ilst->m_perma, ilst->m_permb);
-//		std::cout << "{" << ilst->m_c << " " << idxa << " "
-//			<< ilst->m_perma << " " << idxb << " "
-//			<< ilst->m_permb << "} ";
 		tod_contract2<N, M, K> controp(contr, ta, tb);
-		controp.perform(tc, ilst->m_c);
+		controp.perform(tc, c * ilst->m_c);
 
 		ctrla.ret_block(idxa);
 		ctrlb.ret_block(idxb);
 	}
-//	std::cout << std::endl;
 
 	ctrlc.ret_block(idxc);
-
 }
 
 

@@ -95,10 +95,12 @@ public:
 	 **/
 	void set_union(const symmetry<N, T> &sym);
 
-	/**	\brief Creates the overlap of two generating sets
+	/**	\brief Creates the intersection of two generating sets
 		\param sym Second symmetry.
 	 **/
-	void set_overlap(const symmetry<N, T> &sym);
+	void set_intersection(const symmetry<N, T> &sym);
+
+	bool equals(const symmetry<N, T> &sym) const;
 
 	/**	\brief Adjusts all elements to reflect the %symmetry of a
 			permuted %tensor
@@ -247,7 +249,7 @@ void symmetry<N, T>::set_union(const symmetry<N, T> &sym) {
 
 
 template<size_t N, typename T>
-void symmetry<N, T>::set_overlap(const symmetry<N, T> &sym) {
+void symmetry<N, T>::set_intersection(const symmetry<N, T> &sym) {
 
 	typename std::vector<symmetry_element_t*>::iterator i =
 		m_elements.begin();
@@ -261,6 +263,20 @@ void symmetry<N, T>::set_overlap(const symmetry<N, T> &sym) {
 			i++;
 		}
 	}
+}
+
+
+template<size_t N, typename T>
+bool symmetry<N, T>::equals(const symmetry<N, T> &sym) const {
+
+	if(get_num_elements() != sym.get_num_elements()) return false;
+	typename std::vector<symmetry_element_t*>::const_iterator i =
+		m_elements.begin();
+	while(i != m_elements.end()) {
+		if(!sym.contains_element(**i)) return false;
+		i++;
+	}
+	return true;
 }
 
 
