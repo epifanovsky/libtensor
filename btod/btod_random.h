@@ -22,11 +22,12 @@ namespace libtensor {
 	\ingroup libtensor_btod
  **/
 template<size_t N>
-class btod_random {
+class btod_random : public timings< btod_random<N> > {
 public:
 	static const char *k_clazz; //!< Class name
 
 private:
+	typedef timings< btod_random<N> > timings_base;
 	typedef std::list< transf<N, double> > transf_list_t;
 	typedef std::map<size_t, transf_list_t> transf_map_t;
 
@@ -65,6 +66,8 @@ const char *btod_random<N>::k_clazz = "btod_random<N>";
 template<size_t N>
 void btod_random<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 
+	timings_base::start_timer();
+
 	dimensions<N> bidims(bt.get_bis().get_block_index_dims());
 	block_tensor_ctrl<N, double> ctrl(bt);
 
@@ -73,15 +76,21 @@ void btod_random<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 	for(; iorbit != orblist.end(); iorbit++) {
 		make_random_blk(ctrl, bidims, orblist.get_index(iorbit));
 	}
+
+	timings_base::stop_timer();
 }
 
 template<size_t N>
 void btod_random<N>::perform(block_tensor_i<N, double> &bt, const index<N> &idx)
 	throw(exception) {
 
+	timings_base::start_timer();
+
 	dimensions<N> bidims(bt.get_bis().get_block_index_dims());
 	block_tensor_ctrl<N, double> ctrl(bt);
 	make_random_blk(ctrl, bidims, idx);
+
+	timings_base::stop_timer();
 }
 
 
@@ -149,11 +158,15 @@ void btod_random<N>::make_random_blk(block_tensor_ctrl<N, double> &ctrl,
 
 	typename transf_list_t::iterator itr = ilst->second.begin();
 	if(itr == ilst->second.end()) {
+		timings_base::start_timer("randop");
 		randop.perform(blk);
+		timings_base::stop_timer("randop");
 	} else {
 		tensor<N, double, allocator_t> rnd(blk.get_dims()),
 			symrnd(blk.get_dims());
+		timings_base::start_timer("randop");
 		randop.perform(rnd);
+		timings_base::stop_timer("randop");
 		double totcoeff = itr->get_coeff();
 		tod_add<N> symop(rnd, itr->get_perm(), totcoeff);
 
@@ -162,9 +175,11 @@ void btod_random<N>::make_random_blk(block_tensor_ctrl<N, double> &ctrl,
 			totcoeff += itr->get_coeff();
 		}
 
+		timings_base::start_timer("symop&copy");
 		symop.perform(symrnd);
 		totcoeff = (totcoeff == 0.0) ? 1.0 : 1.0/totcoeff;
 		tod_copy<N>(symrnd, totcoeff).perform(blk);
+		timings_base::stop_timer("symop&copy");
 	}
 
 	ctrl.ret_block(idx);

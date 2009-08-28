@@ -297,7 +297,7 @@ void btod_add<N>::perform(block_tensor_i<N, double> &bt, double cb)
 		}
 	}
 
-	timings_base::start_timer();
+	timings_base::stop_timer();
 }
 
 
