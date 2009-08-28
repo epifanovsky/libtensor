@@ -18,21 +18,21 @@ template<size_t N, typename T> class btensor_i;
 
 	\ingroup libtensor
  **/
-template<size_t N, typename T, bool Assignable, typename Label>
+template<size_t N, typename T, bool Assignable>
 class labeled_btensor_base {
 private:
 	typedef T element_t;
-	typedef letter_expr<N, Label> label_t;
+	typedef letter_expr<N> label_t;
 
 private:
 	btensor_i<N, T> &m_bt;
-	letter_expr<N, Label> m_label;
+	letter_expr<N> m_label;
 
 public:
 	/**	\brief Constructs the labeled block %tensor
 	 **/
-	labeled_btensor_base(btensor_i<N, T> &bt,
-		const letter_expr<N, Label> label) : m_bt(bt), m_label(label) {
+	labeled_btensor_base(btensor_i<N, T> &bt, const letter_expr<N> &label) :
+		m_bt(bt), m_label(label) {
 
 	}
 
@@ -44,7 +44,7 @@ public:
 
 	/**	\brief Returns the label
 	 **/
-	const letter_expr<N, Label> &get_label() const {
+	const letter_expr<N> &get_label() const {
 		return m_label;
 	}
 

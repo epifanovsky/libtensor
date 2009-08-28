@@ -98,9 +98,8 @@ public:
 
 	/**	\brief Constructs the evaluating container
 	 **/
-	template<typename LabelLhs>
-	eval_scale(expression_t &expr,
-		labeled_btensor<N, T, true, LabelLhs> &result) throw(exception);
+	eval_scale(expression_t &expr, labeled_btensor<N, T, true> &result)
+		throw(exception);
 
 	//@}
 
@@ -134,11 +133,10 @@ inline const letter &core_scale<N, T, Expr>::letter_at(size_t i) const
 }
 
 template<size_t N, typename T, typename Expr>
-template<typename LabelLhs>
-eval_scale<N, T, Expr>::eval_scale(
-	expression_t &expr, labeled_btensor<N, T, true, LabelLhs> &result)
-	throw(exception) : m_expr(expr),
-	m_unscaled_cont(expr.get_core().get_unscaled_expr(), result) {
+eval_scale<N, T, Expr>::eval_scale(expression_t &expr,
+	labeled_btensor<N, T, true> &result) throw(exception) :
+		m_expr(expr),
+		m_unscaled_cont(expr.get_core().get_unscaled_expr(), result) {
 
 }
 

@@ -99,9 +99,8 @@ private:
 	eval_container_r_t m_cont_r; //!< Right evaluating container
 
 public:
-	template<typename LabelLhs>
-	eval_add(expression_t &expr,
-		labeled_btensor<N, T, true, LabelLhs> &result) throw(exception);
+	eval_add(expression_t &expr, labeled_btensor<N, T, true> &result)
+		throw(exception);
 
 	//!	\name Evaluation
 	//@{
@@ -133,12 +132,11 @@ inline const letter &core_add<N, T, ExprL, ExprR>::letter_at(size_t i) const
 }
 
 template<size_t N, typename T, typename ExprL, typename ExprR>
-template<typename LabelLhs>
-eval_add<N, T, ExprL, ExprR>::eval_add(
-	expression_t &expr, labeled_btensor<N, T, true, LabelLhs> &result)
-	throw(exception)
-	: m_expr(expr), m_cont_l(expr.get_core().get_expr_l(), result),
-	m_cont_r(expr.get_core().get_expr_r(), result) {
+eval_add<N, T, ExprL, ExprR>::eval_add(expression_t &expr,
+	labeled_btensor<N, T, true> &result) throw(exception) :
+		m_expr(expr),
+		m_cont_l(expr.get_core().get_expr_l(), result),
+		m_cont_r(expr.get_core().get_expr_r(), result) {
 
 }
 

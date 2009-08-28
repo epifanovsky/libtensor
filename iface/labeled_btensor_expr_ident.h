@@ -11,25 +11,23 @@ namespace libtensor {
 
 namespace labeled_btensor_expr {
 
-template<size_t N, typename T, bool Assignable, typename Label>
-class eval_ident;
+template<size_t N, typename T, bool Assignable> class eval_ident;
 
 /**	\brief Identity expression core (references one labeled %tensor)
 	\tparam N Tensor order.
 	\tparam T Tensor element type.
 	\tparam Assignable Whether the %tensor is an l-value.
-	\tparam Label Label expression.
 
 	\ingroup libtensor_btensor_expr
  **/
-template<size_t N, typename T, bool Assignable, typename Label>
+template<size_t N, typename T, bool Assignable>
 class core_ident {
 public:
 	//!	Labeled block %tensor type
-	typedef labeled_btensor<N, T, Assignable, Label> labeled_btensor_t;
+	typedef labeled_btensor<N, T, Assignable> labeled_btensor_t;
 
 	//!	Evaluating container type
-	typedef eval_ident<N, T, Assignable, Label> eval_container_t;
+	typedef eval_ident<N, T, Assignable> eval_container_t;
 
 private:
 	labeled_btensor_t &m_t; //!< Labeled block %tensor
@@ -58,11 +56,11 @@ public:
 
 };
 
-template<size_t N, typename T, bool Assignable, typename Label>
+template<size_t N, typename T, bool Assignable>
 class eval_ident {
 public:
 	//!	Expression core type
-	typedef core_ident<N, T, Assignable, Label> core_t;
+	typedef core_ident<N, T, Assignable> core_t;
 
 	//!	Expression type
 	typedef expr<N, T, core_t> expression_t;
@@ -78,9 +76,8 @@ private:
 	permutation<N> m_perm;
 
 public:
-	template<typename LabelLhs>
-	eval_ident(expression_t &expr,
-		labeled_btensor<N, T, true, LabelLhs> &result) throw(exception);
+	eval_ident(expression_t &expr, labeled_btensor<N, T, true> &result)
+		throw(exception);
 
 	//!	\name Evaluation
 	//@{
@@ -97,54 +94,53 @@ public:
 	//@}
 };
 
-template<size_t N, typename T, bool Assignable, typename Label>
+template<size_t N, typename T, bool Assignable>
 template<int Dummy>
-struct eval_ident<N, T, Assignable, Label>::narg<tensor_tag, Dummy> {
+struct eval_ident<N, T, Assignable>::narg<tensor_tag, Dummy> {
 	static const size_t k_narg = 1;
 };
 
-template<size_t N, typename T, bool Assignable, typename Label>
-inline bool core_ident<N, T, Assignable, Label>::contains(
-	const letter &let) const {
+template<size_t N, typename T, bool Assignable>
+inline bool core_ident<N, T, Assignable>::contains(const letter &let) const {
 
 	return m_t.contains(let);
 }
 
-template<size_t N, typename T, bool Assignable, typename Label>
-inline size_t core_ident<N, T, Assignable, Label>::index_of(
-	const letter &let) const throw(exception) {
+template<size_t N, typename T, bool Assignable>
+inline size_t core_ident<N, T, Assignable>::index_of(const letter &let) const
+	throw(exception) {
 
 	return m_t.index_of(let);
 }
 
-template<size_t N, typename T, bool Assignable, typename Label>
-inline const letter&core_ident<N, T, Assignable, Label>::letter_at(
-	size_t i) const throw(exception) {
+template<size_t N, typename T, bool Assignable>
+inline const letter&core_ident<N, T, Assignable>::letter_at(size_t i) const
+	throw(exception) {
 
 	return m_t.letter_at(i);
 }
 
-template<size_t N, typename T, bool Assignable, typename Label>
-template<typename LabelLhs>
-eval_ident<N, T, Assignable, Label>::eval_ident(
-	expression_t &expr, labeled_btensor<N, T, true, LabelLhs> &result)
-	throw(exception)
-	: m_expr(expr), m_perm(result.get_label().permutation_of(expr.get_core().get_tensor().get_label())) {
+template<size_t N, typename T, bool Assignable>
+eval_ident<N, T, Assignable>::eval_ident(expression_t &expr,
+	labeled_btensor<N, T, true> &result) throw(exception) :
+		m_expr(expr),
+		m_perm(result.get_label().permutation_of(
+			expr.get_core().get_tensor().get_label())) {
 
 }
 
-template<size_t N, typename T, bool Assignable, typename Label>
+template<size_t N, typename T, bool Assignable>
 template<typename Tag>
-inline arg<N, T, Tag> eval_ident<N, T, Assignable, Label>::get_arg(
+inline arg<N, T, Tag> eval_ident<N, T, Assignable>::get_arg(
 	const Tag &tag, size_t i) const throw(exception) {
 
-	throw_exc("eval_ident<N, T, Assignable, Label>",
+	throw_exc("eval_ident<N, T, Assignable>",
 		"get_arg(const Tag &, size_t i)",
 		"Invalid method to call.");
 }
 
-template<size_t N, typename T, bool Assignable, typename Label>
-inline arg<N, T, tensor_tag> eval_ident<N, T, Assignable, Label>::get_arg(
+template<size_t N, typename T, bool Assignable>
+inline arg<N, T, tensor_tag> eval_ident<N, T, Assignable>::get_arg(
 	const tensor_tag &tag, size_t i) const throw(exception) {
 
 	if(i != 0) {

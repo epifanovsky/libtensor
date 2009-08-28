@@ -22,12 +22,12 @@ namespace labeled_btensor_expr {
 
 	\ingroup libtensor_btensor_expr_op
  **/
-template<size_t N, typename T, bool Assignable, typename Label>
-expr<N, T, core_scale<N, T, expr<N, T, core_ident<N, T, Assignable, Label> > > >
+template<size_t N, typename T, bool Assignable>
+expr<N, T, core_scale<N, T, expr<N, T, core_ident<N, T, Assignable> > > >
 inline operator-(
-	labeled_btensor<N, T, Assignable, Label> t) {
+	labeled_btensor<N, T, Assignable> t) {
 
-	typedef core_ident<N, T, Assignable, Label> id_t;
+	typedef core_ident<N, T, Assignable> id_t;
 	typedef expr<N, T, id_t> expr_id_t;
 	typedef core_scale<N, T, expr_id_t> scale_expr_t;
 	typedef expr<N, T, scale_expr_t> expr_t;
@@ -53,18 +53,17 @@ inline operator-(
 
 	\ingroup libtensor_btensor_expr_op
  **/
-template<size_t N, typename T, bool AssignableL, typename LabelL,
-	bool AssignableR, typename LabelR>
+template<size_t N, typename T, bool AssignableL, bool AssignableR>
 expr<N, T, core_add<N, T,
-	expr<N, T, core_ident<N, T, AssignableL, LabelL> >,
-	expr<N, T, core_ident<N, T, AssignableR, LabelR> >
+	expr< N, T, core_ident<N, T, AssignableL> >,
+	expr< N, T, core_ident<N, T, AssignableR> >
 > >
 inline operator+(
-	labeled_btensor<N, T, AssignableL, LabelL> lhs,
-	labeled_btensor<N, T, AssignableR, LabelR> rhs) {
+	labeled_btensor<N, T, AssignableL> lhs,
+	labeled_btensor<N, T, AssignableR> rhs) {
 
-	typedef expr<N, T, core_ident<N, T, AssignableL, LabelL> > exprl_t;
-	typedef expr<N, T, core_ident<N, T, AssignableR, LabelR> > exprr_t;
+	typedef expr< N, T, core_ident<N, T, AssignableL> > exprl_t;
+	typedef expr< N, T, core_ident<N, T, AssignableR> > exprr_t;
 	typedef core_add<N, T, exprl_t, exprr_t> add_t;
 	return expr<N, T, add_t>(add_t(exprl_t(lhs), exprr_t(rhs)));
 }
@@ -73,20 +72,19 @@ inline operator+(
 
 	\ingroup libtensor_btensor_expr_op
  **/
-template<size_t N, typename T, bool AssignableL, typename LabelL,
-	bool AssignableR, typename LabelR>
+template<size_t N, typename T, bool AssignableL, bool AssignableR>
 expr<N, T, core_add<N, T,
-	expr<N, T, core_ident<N, T, AssignableL, LabelL> >,
-	expr<N, T, core_scale<N, T,
-		expr<N, T, core_ident<N, T, AssignableR, LabelR> >
+	expr< N, T, core_ident<N, T, AssignableL> >,
+	expr< N, T, core_scale<N, T,
+		expr<N, T, core_ident< N, T, AssignableR> >
 	> >
 > >
 inline operator-(
-	labeled_btensor<N, T, AssignableL, LabelL> lhs,
-	labeled_btensor<N, T, AssignableR, LabelR> rhs) {
+	labeled_btensor<N, T, AssignableL> lhs,
+	labeled_btensor<N, T, AssignableR> rhs) {
 
-	typedef expr<N, T, core_ident<N, T, AssignableL, LabelL> > exprl_t;
-	typedef expr<N, T, core_ident<N, T, AssignableR, LabelR> > exprr_t;
+	typedef expr< N, T, core_ident<N, T, AssignableL> > exprl_t;
+	typedef expr< N, T, core_ident<N, T, AssignableR> > exprr_t;
 	typedef core_scale<N, T, exprr_t> scale_exprr_t;
 	typedef expr<N, T, scale_exprr_t> scaled_exprr_t;
 	typedef core_add<N, T, exprl_t, scaled_exprr_t> add_t;
@@ -98,17 +96,16 @@ inline operator-(
 
 	\ingroup libtensor_btensor_expr_op
  **/
-template<size_t N, typename T, bool AssignableL, typename LabelL,
-	typename ExprR>
+template<size_t N, typename T, bool AssignableL, typename ExprR>
 expr<N, T, core_add<N, T,
-	expr<N, T, core_ident<N, T, AssignableL, LabelL> >,
+	expr< N, T, core_ident<N, T, AssignableL> >,
 	expr<N, T, ExprR>
 > >
 inline operator+(
-	labeled_btensor<N, T, AssignableL, LabelL> lhs,
+	labeled_btensor<N, T, AssignableL> lhs,
 	expr<N, T, ExprR> rhs) {
 
-	typedef expr<N, T, core_ident<N, T, AssignableL, LabelL> > exprl_t;
+	typedef expr< N, T, core_ident<N, T, AssignableL> > exprl_t;
 	typedef expr<N, T, ExprR> exprr_t;
 	typedef core_add<N, T, exprl_t, exprr_t> add_t;
 	return expr<N, T, add_t>(add_t(exprl_t(lhs), rhs));
@@ -118,17 +115,16 @@ inline operator+(
 
 	\ingroup libtensor_btensor_expr_op
  **/
-template<size_t N, typename T, bool AssignableL, typename LabelL,
-	typename ExprR>
+template<size_t N, typename T, bool AssignableL, typename ExprR>
 expr<N, T, core_add<N, T,
-	expr<N, T, core_ident<N, T, AssignableL, LabelL> >,
-	expr<N, T, core_scale<N, T, expr<N, T, ExprR> > >
+	expr< N, T, core_ident<N, T, AssignableL> >,
+	expr< N, T, core_scale<N, T, expr<N, T, ExprR> > >
 > >
 inline operator-(
-	labeled_btensor<N, T, AssignableL, LabelL> lhs,
+	labeled_btensor<N, T, AssignableL> lhs,
 	expr<N, T, ExprR> rhs) {
 
-	typedef expr<N, T, core_ident<N, T, AssignableL, LabelL> > exprl_t;
+	typedef expr<N, T, core_ident< N, T, AssignableL> > exprl_t;
 	typedef expr<N, T, ExprR> exprr_t;
 	typedef core_scale<N, T, exprr_t> scale_exprr_t;
 	typedef expr<N, T, scale_exprr_t> scaled_exprr_t;
@@ -141,18 +137,17 @@ inline operator-(
 
 	\ingroup libtensor_btensor_expr_op
  **/
-template<size_t N, typename T, typename ExprL, bool AssignableR,
-	typename LabelR>
+template<size_t N, typename T, typename ExprL, bool AssignableR>
 expr<N, T, core_add<N, T,
 	expr<N, T, ExprL>,
-	expr<N, T, core_ident<N, T, AssignableR, LabelR> >
+	expr< N, T, core_ident<N, T, AssignableR> >
 > >
 inline operator+(
 	expr<N, T, ExprL> lhs,
-	labeled_btensor<N, T, AssignableR, LabelR> rhs) {
+	labeled_btensor<N, T, AssignableR> rhs) {
 
 	typedef expr<N, T, ExprL> exprl_t;
-	typedef expr<N, T, core_ident<N, T, AssignableR, LabelR> > exprr_t;
+	typedef expr< N, T, core_ident<N, T, AssignableR> > exprr_t;
 	typedef core_add<N, T, exprl_t, exprr_t> add_t;
 	return expr<N, T, add_t>(add_t(lhs, exprr_t(rhs)));
 }
@@ -161,20 +156,19 @@ inline operator+(
 
 	\ingroup libtensor_btensor_expr_op
  **/
-template<size_t N, typename T, typename ExprL, bool AssignableR,
-	typename LabelR>
+template<size_t N, typename T, typename ExprL, bool AssignableR>
 expr<N, T, core_add<N, T,
 	expr<N, T, ExprL>,
 	expr<N, T, core_scale<N, T,
-		expr<N, T, core_ident<N, T, AssignableR, LabelR> >
+		expr< N, T, core_ident<N, T, AssignableR> >
 	> >
 > >
 inline operator-(
 	expr<N, T, ExprL> lhs,
-	labeled_btensor<N, T, AssignableR, LabelR> rhs) {
+	labeled_btensor<N, T, AssignableR> rhs) {
 
 	typedef expr<N, T, ExprL> exprl_t;
-	typedef expr<N, T, core_ident<N, T, AssignableR, LabelR> > exprr_t;
+	typedef expr< N, T, core_ident<N, T, AssignableR> > exprr_t;
 	typedef core_scale<N, T, exprr_t> scale_exprr_t;
 	typedef expr<N, T, scale_exprr_t> scaled_exprr_t;
 	typedef core_add<N, T, exprl_t, scaled_exprr_t> add_t;
@@ -227,13 +221,13 @@ inline operator-(
 
 	\ingroup libtensor_btensor_expr_op
  **/
-template<size_t N, typename T, bool Assignable, typename Label>
-expr<N, T, core_scale<N, T, expr<N, T, core_ident<N, T, Assignable, Label> > > >
+template<size_t N, typename T, bool Assignable>
+expr< N, T, core_scale< N, T, expr< N, T, core_ident<N, T, Assignable> > > >
 inline operator*(
 	T lhs,
-	labeled_btensor<N, T, Assignable, Label> rhs) {
+	labeled_btensor<N, T, Assignable> rhs) {
 
-	typedef core_ident<N, T, Assignable, Label> rhs_expr_id_t;
+	typedef core_ident<N, T, Assignable> rhs_expr_id_t;
 	typedef expr<N, T, rhs_expr_id_t> rhs_expr_t;
 	typedef core_scale<N, T, rhs_expr_t> scale_expr_t;
 	typedef expr<N, T, scale_expr_t> expr_t;
@@ -244,13 +238,13 @@ inline operator*(
 
 	\ingroup libtensor_btensor_expr_op
  **/
-template<size_t N, typename T, bool Assignable, typename Label>
-expr<N, T, core_scale<N, T, expr<N, T, core_ident<N, T, Assignable, Label> > > >
+template<size_t N, typename T, bool Assignable>
+expr< N, T, core_scale< N, T, expr< N, T, core_ident< N, T, Assignable> > > >
 inline operator*(
-	labeled_btensor<N, T, Assignable, Label> lhs,
+	labeled_btensor<N, T, Assignable> lhs,
 	T rhs) {
 
-	typedef core_ident<N, T, Assignable, Label> lhs_expr_id_t;
+	typedef core_ident<N, T, Assignable> lhs_expr_id_t;
 	typedef expr<N, T, lhs_expr_id_t> lhs_expr_t;
 	typedef core_scale<N, T, lhs_expr_t> scale_expr_t;
 	typedef expr<N, T, scale_expr_t> expr_t;
@@ -262,7 +256,7 @@ inline operator*(
 	\ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, typename T, typename ExprR>
-expr<N, T, core_scale<N, T, expr<N, T, ExprR> > >
+expr< N, T, core_scale< N, T, expr<N, T, ExprR> > >
 inline operator*(
 	T lhs,
 	expr<N, T, ExprR> rhs) {
@@ -278,7 +272,7 @@ inline operator*(
 	\ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, typename T, typename ExprL>
-expr<N, T, core_scale<N, T, expr<N, T, ExprL> > >
+expr< N, T, core_scale< N, T, expr<N, T, ExprL> > >
 inline operator*(
 	expr<N, T, ExprL> lhs,
 	T rhs) {

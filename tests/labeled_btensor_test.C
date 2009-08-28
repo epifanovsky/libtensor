@@ -89,7 +89,7 @@ void labeled_btensor_test::test_label() throw(libtest::test_exception) {
 
 	btensor<1> s(sp_i);
 
-	if (s(+i).index_of(i) != 0) {
+	if (s(i).index_of(i) != 0) {
 		fail_test(testname, __FILE__, __LINE__,
 			"Failed label test: s(i).contains(i)");
 	}

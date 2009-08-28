@@ -15,45 +15,42 @@ template<size_t N, typename T, typename Expr> class expr;
 	\tparam N Tensor order.
 	\tparam T Tensor element type.
 	\tparam Assignable Whether the %tensor can be an l-value.
-	\tparam Label Label expression.
 
 	\ingroup libtensor
  **/
-template<size_t N, typename T, bool Assignable, typename Label>
-class labeled_btensor : public labeled_btensor_base<N, T, Assignable, Label> {
+template<size_t N, typename T, bool Assignable>
+class labeled_btensor : public labeled_btensor_base<N, T, Assignable> {
 public:
-	labeled_btensor(btensor_i<N, T> &bt,
-		const letter_expr<N, Label> label)
-	: labeled_btensor_base<N, T, Assignable, Label>(bt, label) { }
+	labeled_btensor(btensor_i<N, T> &bt, const letter_expr<N> &label)
+	: labeled_btensor_base<N, T, Assignable>(bt, label) { }
 };
 
 /**	\brief Partial specialization of the assignable labeled tensor
 
 	\ingroup libtensor
  **/
-template<size_t N, typename T, typename Label>
-class labeled_btensor<N, T, true, Label> :
-	public labeled_btensor_base<N, T, true, Label> {
+template<size_t N, typename T>
+class labeled_btensor<N, T, true> : public labeled_btensor_base<N, T, true> {
 
 	public:
 		labeled_btensor(btensor_i<N, T> &bt,
-			const letter_expr<N, Label> label)
-		: labeled_btensor_base<N, T, true, Label>(bt, label) { }
+			const letter_expr<N> &label)
+		: labeled_btensor_base<N, T, true>(bt, label) { }
 
 	/**	\brief Assigns this %tensor to an expression
 	 **/
 	template<typename Expr>
-	labeled_btensor<N, T, true, Label> operator=(
-		const labeled_btensor_expr::expr<N, T, Expr> &rhs)
+	labeled_btensor<N, T, true> &operator=(
+		const labeled_btensor_expr::expr<N, T, Expr> rhs)
 		throw(exception);
 
-	template<bool AssignableR, typename LabelR>
-	labeled_btensor<N, T, true, Label> operator=(
-		labeled_btensor<N, T, AssignableR, LabelR> rhs)
+	template<bool AssignableR>
+	labeled_btensor<N, T, true> &operator=(
+		labeled_btensor<N, T, AssignableR> rhs)
 		throw(exception);
 
-	labeled_btensor<N, T, true, Label> operator=(
-		labeled_btensor<N, T, true, Label> rhs)
+	labeled_btensor<N, T, true> &operator=(
+		labeled_btensor<N, T, true> rhs)
 		throw(exception);
 
 };

@@ -30,11 +30,10 @@ public:
 
 	/**	\brief Creates the direct block %tensor using a %tensor
 			expression
-		\tparam LetterExpr Letter expression type for the label.
 		\tparam Expr Tensor expression type.
 	 **/
-	template<typename LetterExpr, typename Expr>
-	direct_btensor(const letter_expr<N, LetterExpr> &label,
+	template<typename Expr>
+	direct_btensor(const letter_expr<N> &label,
 		const labeled_btensor_expr::expr<N, T, Expr> &expr)
 		throw(exception);
 
@@ -47,9 +46,7 @@ public:
 	/**	\brief Attaches a label to this %tensor and returns it as a
 			labeled %tensor
 	 **/
-	template<typename ExprT>
-	labeled_btensor<N, T, false, letter_expr<N, ExprT> > operator()(
-		const letter_expr<N, ExprT> expr);
+	labeled_btensor<N, T, false> operator()(const letter_expr<N> &expr);
 
 	//!	\name Implementation of tensor_i<N, T>
 	//@{
@@ -94,9 +91,9 @@ protected:
 };
 
 template<size_t N, typename T, typename Traits>
-template<typename LetterExpr, typename Expr>
+template<typename Expr>
 direct_btensor<N, T, Traits>::direct_btensor(
-	const letter_expr<N, LetterExpr> &label,
+	const letter_expr<N> &label,
 	const labeled_btensor_expr::expr<N, T, Expr> &expr) throw(exception) {
 }
 
@@ -104,11 +101,10 @@ template<size_t N, typename T, typename Traits>
 direct_btensor<N, T, Traits>::~direct_btensor() {
 }
 
-template<size_t N, typename T, typename Traits> template<typename ExprT>
-labeled_btensor<N, T, false, letter_expr<N, ExprT> >
-direct_btensor<N, T, Traits>::operator()(const letter_expr<N, ExprT> expr) {
-	return labeled_btensor<N, T, false, letter_expr<N, ExprT> >(
-		*this, expr);
+template<size_t N, typename T, typename Traits>
+labeled_btensor<N, T, false> direct_btensor<N, T, Traits>::operator()(
+	const letter_expr<N> &expr) {
+	return labeled_btensor<N, T, false>(*this, expr);
 }
 
 template<size_t N, typename T, typename Traits>

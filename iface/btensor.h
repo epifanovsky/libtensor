@@ -20,12 +20,8 @@ struct btensor_traits {
 	typedef libvmm::std_allocator<T> allocator_t;
 };
 
-/**	\brief User-friendly block %tensor
-
-	\ingroup libtensor_iface
- **/
-template<size_t N, typename T = double, typename Traits = btensor_traits<T> >
-	class btensor : public btensor_i<N, T>, public immutable {
+template<size_t N, typename T, typename Traits>
+class btensor_base : public btensor_i<N, T>, public immutable {
 private:
 	typedef typename Traits::element_t element_t;
 	typedef typename Traits::allocator_t allocator_t;
@@ -40,35 +36,31 @@ public:
 			about blocks
 		\param bi Information about blocks
 	 **/
-	btensor(const bispace_i<N> &bi);
+	btensor_base(const bispace_i<N> &bis) :
+		 m_bt(bis.get_bis()) { }
 
 	/**	\brief Constructs a block %tensor using a block %index space
 		\param bis Block %index space
 	 **/
-	btensor(const block_index_space<N> &bis);
+	btensor_base(const block_index_space<N> &bis) :
+		m_bt(bis) { }
 
 	/**	\brief Constructs a block %tensor using information about
 			blocks from another block %tensor
 		\param bt Another block %tensor
 	 **/
-	btensor(const btensor_i<N, element_t> &bt);
+	btensor_base(const btensor_i<N, element_t> &bt) :
+		m_bt(bt) { }
 
 	/**	\brief Virtual destructor
 	 **/
-	virtual ~btensor();
+	virtual ~btensor_base() { }
 	//@}
 
 	//!	\name Implementation of block_tensor_i<N, T>
 	//@{
 	virtual const block_index_space<N> &get_bis() const;
 	//@}
-
-	/**	\brief Attaches a label to this %tensor and returns it as a
-			labeled %tensor
-	 **/
-	template<typename ExprT>
-	labeled_btensor<N, T, true, letter_expr<N, ExprT> > operator()(
-		letter_expr<N, ExprT> expr);
 
 protected:
 	//!	\name Implementation of libtensor::block_tensor_i<N,T>
@@ -95,53 +87,69 @@ protected:
 	//@}
 };
 
+/**	\brief User-friendly block %tensor
+
+	\ingroup libtensor_iface
+ **/
+template<size_t N, typename T = double, typename Traits = btensor_traits<T> >
+class btensor : public btensor_base<N, T, Traits> {
+private:
+	typedef typename Traits::element_t element_t;
+	typedef typename Traits::allocator_t allocator_t;
+
+public:
+	btensor(const bispace_i<N> &bi) : btensor_base<N, T, Traits>(bi) { }
+	btensor(const block_index_space<N> &bis) :
+		btensor_base<N, T, Traits>(bis) { }
+	btensor(const btensor_i<N, element_t> &bt) :
+		btensor_base<N, T, Traits>(bt) { }
+	virtual ~btensor() { }
+
+	/**	\brief Attaches a label to this %tensor and returns it as a
+			labeled %tensor
+	 **/
+	labeled_btensor<N, T, true> operator()(const letter_expr<N> &expr);
+
+};
+
+
+template<typename T, typename Traits>
+class btensor<1, T, Traits> : public btensor_base<1, T, Traits> {
+private:
+	typedef typename Traits::element_t element_t;
+	typedef typename Traits::allocator_t allocator_t;
+
+public:
+	btensor(const bispace_i<1> &bi) : btensor_base<1, T, Traits>(bi) { }
+	btensor(const block_index_space<1> &bis) :
+		btensor_base<1, T, Traits>(bis) { }
+	btensor(const btensor_i<1, element_t> &bt) :
+		btensor_base<1, T, Traits>(bt) { }
+	virtual ~btensor() { }
+
+	/**	\brief Attaches a label to this %tensor and returns it as a
+			labeled %tensor
+	 **/
+	labeled_btensor<1, T, true> operator()(const letter &let);
+};
+
+
 template<size_t N, typename T, typename Traits>
-inline btensor<N, T, Traits>::btensor(const bispace_i<N> &bispace)
-: m_bt(bispace.get_bis()) {
-
-}
-
-template<size_t N, typename T, typename Traits>
-inline btensor<N, T, Traits>::btensor(const block_index_space<N> &bis)
-: m_bt(bis) {
-
-}
-
-template<size_t N, typename T, typename Traits>
-inline btensor<N, T, Traits>::btensor(const btensor_i<N, element_t> &bt)
-: m_bt(bt) {
-
-}
-
-template<size_t N, typename T, typename Traits>
-btensor<N, T, Traits>::~btensor() {
-
-}
-
-template<size_t N, typename T, typename Traits>
-inline const block_index_space<N> &btensor<N, T, Traits>::get_bis() const {
+inline const block_index_space<N> &btensor_base<N, T, Traits>::get_bis() const {
 
 	return m_bt.get_bis();
 }
 
-template<size_t N, typename T, typename Traits> template<typename ExprT>
-inline labeled_btensor<N, T, true, letter_expr<N, ExprT> >
-btensor<N, T, Traits>::operator()(letter_expr<N, ExprT> expr) {
-
-	return labeled_btensor<N, T, true, letter_expr<N, ExprT> >(
-		*this, expr);
-}
-
 template<size_t N, typename T, typename Traits>
-const symmetry<N, T> &btensor<N, T, Traits>::on_req_symmetry()
+const symmetry<N, T> &btensor_base<N, T, Traits>::on_req_symmetry()
 	throw(exception) {
-		
+
 	block_tensor_ctrl<N, T> ctrl(m_bt);
 	return ctrl.req_symmetry();
 }
 
 template<size_t N, typename T, typename Traits>
-void btensor<N, T, Traits>::on_req_sym_add_element(
+void btensor_base<N, T, Traits>::on_req_sym_add_element(
 	const symmetry_element_i<N, T> &elem) throw(exception) {
 
 	block_tensor_ctrl<N, T> ctrl(m_bt);
@@ -149,7 +157,7 @@ void btensor<N, T, Traits>::on_req_sym_add_element(
 }
 
 template<size_t N, typename T, typename Traits>
-void btensor<N, T, Traits>::on_req_sym_remove_element(
+void btensor_base<N, T, Traits>::on_req_sym_remove_element(
 	const symmetry_element_i<N, T> &elem) throw(exception) {
 
 	block_tensor_ctrl<N, T> ctrl(m_bt);
@@ -157,7 +165,7 @@ void btensor<N, T, Traits>::on_req_sym_remove_element(
 }
 
 template<size_t N, typename T, typename Traits>
-bool btensor<N, T, Traits>::on_req_sym_contains_element(
+bool btensor_base<N, T, Traits>::on_req_sym_contains_element(
 	const symmetry_element_i<N, T> &elem) throw(exception) {
 
 	block_tensor_ctrl<N, T> ctrl(m_bt);
@@ -165,48 +173,62 @@ bool btensor<N, T, Traits>::on_req_sym_contains_element(
 }
 
 template<size_t N, typename T, typename Traits>
-void btensor<N, T, Traits>::on_req_sym_clear_elements() throw(exception) {
+void btensor_base<N, T, Traits>::on_req_sym_clear_elements() throw(exception) {
 	block_tensor_ctrl<N, T> ctrl(m_bt);
 	ctrl.req_sym_clear_elements();
 }
 
 template<size_t N, typename T, typename Traits>
-tensor_i<N, T> &btensor<N, T, Traits>::on_req_block(const index<N> &idx)
+tensor_i<N, T> &btensor_base<N, T, Traits>::on_req_block(const index<N> &idx)
 	throw(exception) {
 	block_tensor_ctrl<N, T> ctrl(m_bt);
 	return ctrl.req_block(idx);
 }
 
 template<size_t N, typename T, typename Traits>
-void btensor<N, T, Traits>::on_ret_block(const index<N> &idx)
+void btensor_base<N, T, Traits>::on_ret_block(const index<N> &idx)
 	throw(exception) {
 	block_tensor_ctrl<N, T> ctrl(m_bt);
 	ctrl.ret_block(idx);
 }
 
 template<size_t N, typename T, typename Traits>
-bool btensor<N, T, Traits>::on_req_is_zero_block(const index<N> &idx)
+bool btensor_base<N, T, Traits>::on_req_is_zero_block(const index<N> &idx)
 	throw(exception) {
 	block_tensor_ctrl<N, T> ctrl(m_bt);
 	return ctrl.req_is_zero_block(idx);
 }
 
 template<size_t N, typename T, typename Traits>
-void btensor<N, T, Traits>::on_req_zero_block(const index<N> &idx)
+void btensor_base<N, T, Traits>::on_req_zero_block(const index<N> &idx)
 	throw(exception) {
 	block_tensor_ctrl<N, T> ctrl(m_bt);
 	ctrl.req_zero_block(idx);
 }
 
 template<size_t N, typename T, typename Traits>
-void btensor<N, T, Traits>::on_req_zero_all_blocks() throw(exception) {
+void btensor_base<N, T, Traits>::on_req_zero_all_blocks() throw(exception) {
 	block_tensor_ctrl<N, T> ctrl(m_bt);
 	ctrl.req_zero_all_blocks();
 }
 
 template<size_t N, typename T, typename Traits>
-inline void btensor<N, T, Traits>::on_set_immutable() {
+inline void btensor_base<N, T, Traits>::on_set_immutable() {
 	m_bt.set_immutable();
+}
+
+template<size_t N, typename T, typename Traits>
+inline labeled_btensor<N, T, true> btensor<N, T, Traits>::operator()(
+	const letter_expr<N> &expr) {
+
+	return labeled_btensor<N, T, true>(*this, expr);
+}
+
+template<typename T, typename Traits>
+inline labeled_btensor<1, T, true> btensor<1, T, Traits>::operator()(
+	const letter &let) {
+
+	return labeled_btensor<1, T, true>(*this, letter_expr<1>(let));
 }
 
 } // namespace libtensor
