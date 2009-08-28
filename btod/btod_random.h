@@ -14,169 +14,160 @@
 
 namespace libtensor {
 
+
 /**	\brief Fills a block %tensor with random data without affecting its
 		%symmetry
+	\tparam T Block %tensor order.
 
 	\ingroup libtensor_btod
  **/
 template<size_t N>
 class btod_random {
 public:
-	void perform(block_tensor_i<N, double> &bt) throw(exception);
-	void perform(block_tensor_i<N, double> &bt, const index<N> &blk )
-		throw(exception);
+	static const char *k_clazz; //!< Class name
+
 private:
+	typedef std::list< transf<N, double> > transf_list_t;
+	typedef std::map<size_t, transf_list_t> transf_map_t;
 
-	typedef std::pair< index<N>,transf<N,double> > pair_t;
-	typedef std::list< pair_t > index_list_t;
-	typedef std::list< transf<N,double> > list_t;
-	/** \brief Determines all transformation which can be applied on a block of
-  			   the given orbit
+public:
+	/**	\brief Fills a block %tensor with random values preserving
+			symmetry
+		\param bt Block %tensor.
+	 **/
+	void perform(block_tensor_i<N, double> &bt) throw(exception);
 
- 		\param reslist resulting list of transformations
- 		\param index_list list of actual indexes and transformations
- 		\param sym symmetry object to obtain symmetry elements
+	/**	\brief Fills one block of a block %tensor with random values
+			preserving symmetry
+		\param bt Block %tensor.
+		\param idx Block %index in the block %tensor.
+	 **/
+	void perform(block_tensor_i<N, double> &bt, const index<N> &idx)
+		throw(exception);
 
- 	**/
-	void determine_transformations( list_t& reslist, index_list_t& index_list,
-		const symmetry<N,double>& sym );
+private:
+	bool make_transf_map(const symmetry<N, double> &sym,
+		const dimensions<N> &bidims, const index<N> &idx,
+		const transf<N, double> &tr, transf_map_t &alltransf);
+
+	void make_random_blk(block_tensor_ctrl<N, double> &ctrl,
+		const dimensions<N> &bidims, const index<N> &idx);
+
+private:
+	btod_random<N> &operator=(const btod_random<N>&);
 };
 
-template<size_t N>
-void btod_random<N>::determine_transformations( list_t& reslist,
-			index_list_t& index_list, const symmetry<N,double>& sym )
-{
-	// for each symmetry element
-	size_t nsymels=sym.get_num_elements();
-	for ( size_t i=0; i<nsymels; i++ ) {
-		// create a new pair
-		index<N> new_idx(index_list.rbegin()->first);
-		transf<N,double> new_tr;
-		sym.get_element(i).apply(new_idx,new_tr);
-
-		typename index_list_t::iterator it=index_list.begin();
-		while ( it != index_list.end() ) {
-			if ( new_idx.equals(it->first) ) break;
-			it++;
-		}
-		if ( it != index_list.end() ) {
-			transf<N,double> tr;
-			it++;
-			while (it != index_list.end() ) {
-				tr.transform(it->second);
-				it++;
-			}
-			tr.transform(new_tr);
-
-			if ( tr != transf<N,double>() ) {
-				typename list_t::iterator list_it=reslist.begin();
-				while ( list_it != reslist.end() ) {
-					if ( tr == *list_it ) break;
-					list_it++;
-				}
-				if ( list_it == reslist.end() )
-					reslist.push_back(tr);
-			}
-		}
-		else {
-			index_list.push_back(pair_t(new_idx,new_tr));
-			determine_transformations(reslist,index_list,sym);
-			index_list.pop_back();
-		}
-	}
-}
 
 template<size_t N>
-void btod_random<N>::perform(block_tensor_i<N, double> &bt)
-	throw(exception)
-{
+const char *btod_random<N>::k_clazz = "btod_random<N>";
+
+
+template<size_t N>
+void btod_random<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
+
 	dimensions<N> bidims(bt.get_bis().get_block_index_dims());
 	block_tensor_ctrl<N, double> ctrl(bt);
 
-	tod_random<N> randr;
-
-	orbit_list<N,double> orblist(ctrl.req_symmetry());
-	for(typename orbit_list<N,double>::iterator it=orblist.begin(); it!=orblist.end(); it++) {
-		orbit<N, double> orb(ctrl.req_symmetry(),orblist.get_index(it));
-		index<N> blkidx;
-		bidims.abs_index(orb.get_abs_canonical_index(), blkidx);
-
-		list_t transf_list;
-		index_list_t start_list;
-		start_list.push_back( pair_t(blkidx,transf<N,double>()) );
-		determine_transformations(transf_list,start_list,ctrl.req_symmetry());
-
-		tensor_i<N, double> &blk = ctrl.req_block(blkidx);
-
-		if ( transf_list.empty() ) {
-			randr.perform(blk);
-		}
-		else {
-			tensor<N,double,libvmm::std_allocator<double> > tmp(blk.get_dims());
-			tensor_i<N,double> *ta, *tb, *tc;
-			ta=&tmp;
-			randr.perform(*ta);
-			tb=&blk;
-
-			typename std::list<transf<N,double> >::iterator it=transf_list.begin();
-			for ( ; it!=transf_list.end(); it++ ) {
-				tod_add<N> doadd(*ta,0.5);
-				doadd.add_op(*ta,it->get_perm(),0.5*it->get_coeff());
-				doadd.perform(*tb);
-				tc=ta;
-				ta=tb;
-				tb=tc;
-			}
-
-			if ( ta != &blk ) {
-				tod_copy<N> finalcopy(*ta,1.0);
-				finalcopy.perform(blk);
-			}
-		}
+	orbit_list<N, double> orblist(ctrl.req_symmetry());
+	typename orbit_list<N, double>::iterator iorbit = orblist.begin();
+	for(; iorbit != orblist.end(); iorbit++) {
+		make_random_blk(ctrl, bidims, orblist.get_index(iorbit));
 	}
 }
 
 template<size_t N>
-void btod_random<N>::perform(block_tensor_i<N, double> &bt,
-	const index<N> &blkidx ) throw(exception)
-{
+void btod_random<N>::perform(block_tensor_i<N, double> &bt, const index<N> &idx)
+	throw(exception) {
+
+	dimensions<N> bidims(bt.get_bis().get_block_index_dims());
 	block_tensor_ctrl<N, double> ctrl(bt);
-	tod_random<N> randr;
+	make_random_blk(ctrl, bidims, idx);
+}
 
-	orbit<N, double> orb(ctrl.req_symmetry(),blkidx);
 
-	list_t transf_list;
-	index_list_t start_list;
-	start_list.push_back( pair_t(blkidx,transf<N,double>()) );
-	determine_transformations(transf_list,start_list,ctrl.req_symmetry());
+template<size_t N>
+bool btod_random<N>::make_transf_map(const symmetry<N, double> &sym,
+	const dimensions<N> &bidims, const index<N> &idx,
+	const transf<N, double> &tr, transf_map_t &alltransf) {
 
-	tensor_i<N, double> &blk = ctrl.req_block(blkidx);
-
-	if ( transf_list.empty() ) {
-		randr.perform(blk);
+	size_t absidx = bidims.abs_index(idx);
+	typename transf_map_t::iterator ilst = alltransf.find(absidx);
+	if(ilst == alltransf.end()) {
+		ilst = alltransf.insert(std::pair<size_t, transf_list_t>(
+			absidx, transf_list_t())).first;
 	}
-	else {
-		tensor<N,double,libvmm::std_allocator<double> > tmp(blk.get_dims());
-		tensor_i<N,double> *ta, *tb, *tc;
-		ta=&tmp;
-		randr.perform(*ta);
-		tb=&blk;
-
-		typename std::list<transf<N,double> >::iterator it=transf_list.begin();
-		for ( ; it!=transf_list.end(); it++ ) {
-			tod_add<N> doadd(*ta,0.5);
-			doadd.add_op(*ta,it->get_perm(),0.5*it->get_coeff());
-			doadd.perform(*tb);
-			tc=ta;
-			ta=tb;
-			tb=tc;
-		}
-
-		if ( ta != &blk ) {
-			tod_copy<N> finalcopy(*ta,1.0);
-			finalcopy.perform(blk);
+	typename transf_list_t::iterator itr = ilst->second.begin();
+	bool done = false;
+	for(; itr != ilst->second.end(); itr++) {
+		if(*itr == tr) {
+			done = true;
+			break;
 		}
 	}
+	if(done) return true;
+	ilst->second.push_back(tr);
+
+	bool allowed = true;
+	size_t nelem = sym.get_num_elements();
+	for(size_t ielem = 0; ielem < nelem && allowed; ielem++) {
+		const symmetry_element_i<N, double> &elem =
+			sym.get_element(ielem);
+		index<N> idx2(idx);
+		transf<N, double> tr2(tr);
+		if(elem.is_allowed(idx2)) {
+			elem.apply(idx2, tr2);
+			allowed = make_transf_map(sym, bidims,
+				idx2, tr2, alltransf);
+		} else {
+			allowed = false;
+		}
+	}
+	return allowed;
+}
+
+
+template<size_t N>
+void btod_random<N>::make_random_blk(block_tensor_ctrl<N, double> &ctrl,
+	const dimensions<N> &bidims, const index<N> &idx) {
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	const symmetry<N, double> &sym = ctrl.req_symmetry();
+	size_t absidx = bidims.abs_index(idx);
+	tod_random<N> randop;
+
+	transf<N, double> tr0;
+	transf_map_t transf_map;
+	bool allowed = make_transf_map(sym, bidims, idx, tr0, transf_map);
+	typename transf_map_t::iterator ilst = transf_map.find(absidx);
+	if(!allowed || ilst == transf_map.end()) {
+		ctrl.req_zero_block(idx);
+		return;
+	}
+
+	tensor_i<N, double> &blk = ctrl.req_block(idx);
+
+	typename transf_list_t::iterator itr = ilst->second.begin();
+	if(itr == ilst->second.end()) {
+		randop.perform(blk);
+	} else {
+		tensor<N, double, allocator_t> rnd(blk.get_dims()),
+			symrnd(blk.get_dims());
+		randop.perform(rnd);
+		double totcoeff = itr->get_coeff();
+		tod_add<N> symop(rnd, itr->get_perm(), totcoeff);
+
+		for(itr++; itr != ilst->second.end(); itr++) {
+			symop.add_op(rnd, itr->get_perm(), itr->get_coeff());
+			totcoeff += itr->get_coeff();
+		}
+
+		symop.perform(symrnd);
+		totcoeff = (totcoeff == 0.0) ? 1.0 : 1.0/totcoeff;
+		tod_copy<N>(symrnd, totcoeff).perform(blk);
+	}
+
+	ctrl.ret_block(idx);
 }
 
 
