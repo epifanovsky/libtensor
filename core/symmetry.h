@@ -4,8 +4,8 @@
 #include <algorithm>
 #include <vector>
 #include "defs.h"
-#include "block_index_space.h"
 #include "exception.h"
+#include "block_index_space.h"
 #include "dimensions.h"
 #include "symmetry_element_i.h"
 
@@ -25,6 +25,10 @@ public:
 public:
 	//!	Symmetry element type
 	typedef symmetry_element_i<N, T> symmetry_element_t;
+
+	//!	Iterator
+	typedef typename std::vector<symmetry_element_t*>::const_iterator
+		iterator;
 
 private:
 	block_index_space<N> m_bis; //!< Block %index space
@@ -59,14 +63,6 @@ public:
 	/**	\brief Returns the number of %symmetry elements
 	 **/
 	size_t get_num_elements() const;
-
-	/**	\brief Returns a %symmetry element
-		\param n Element number, not to exceed the total number of
-			%symmetry elements.
-		\throw out_of_bounds If the element number is out of bounds.
-	 **/
-	const symmetry_element_t &get_element(size_t n) const
-		throw(out_of_bounds);
 
 	/**	\brief Adds a %symmetry element to the generating set; does
 			nothing if the element is already in the set
@@ -110,6 +106,25 @@ public:
 			permuted %tensor
 	 **/
 	void permute(const permutation<N> &perm);
+
+	//@}
+
+
+	//!	\name Iterators
+	//@{
+
+	iterator begin() const;
+	iterator end() const;
+//	iterator begin(const char *);
+//	iterator end(const char *);
+//	const char *get_type(iterator &i);
+
+	/**	\brief Returns a %symmetry element
+		\param iter Iterator.
+		\throw out_of_bounds If the iterator is out of bounds.
+	 **/
+	const symmetry_element_i<N, T> &get_element(iterator &i) const
+		throw(out_of_bounds);
 
 	//@}
 
@@ -163,18 +178,18 @@ size_t symmetry<N, T>::get_num_elements() const {
 }
 
 
-template<size_t N, typename T>
-const symmetry_element_i<N, T> &symmetry<N, T>::get_element(size_t n) const
-	throw(out_of_bounds) {
-
-	static const char *method = "get_element(size_t)";
-
-	if(n >= m_elements.size()) {
-		throw out_of_bounds("libtensor", k_clazz, method, __FILE__,
-			__LINE__, "Element number is out of bounds.");
-	}
-	return *(m_elements[n]);
-}
+//template<size_t N, typename T>
+//const symmetry_element_i<N, T> &symmetry<N, T>::get_element(size_t n) const
+//	throw(out_of_bounds) {
+//
+//	static const char *method = "get_element(size_t)";
+//
+//	if(n >= m_elements.size()) {
+//		throw out_of_bounds("libtensor", k_clazz, method, __FILE__,
+//			__LINE__, "Element number is out of bounds.");
+//	}
+//	return *(m_elements[n]);
+//}
 
 
 template<size_t N, typename T>
@@ -294,6 +309,33 @@ void symmetry<N, T>::permute(const permutation<N> &perm) {
 		(*i)->permute(perm);
 		i++;
 	}
+}
+
+
+template<size_t N, typename T>
+inline typename symmetry<N, T>::iterator symmetry<N, T>::begin() const {
+
+	return m_elements.begin();
+}
+
+
+template<size_t N, typename T>
+inline typename symmetry<N, T>::iterator symmetry<N, T>::end() const {
+
+	return m_elements.end();
+}
+
+
+template<size_t N, typename T>
+inline const symmetry_element_i<N, T> &symmetry<N, T>::get_element(iterator &i)
+	const throw(out_of_bounds) {
+
+	if(i == m_elements.end()) {
+		throw out_of_bounds(g_ns, k_clazz, "get_element(iterator&)",
+			__FILE__, __LINE__, "Iterator is out of bounds.");
+	}
+	//return *(i->second);
+	return **i;
 }
 
 

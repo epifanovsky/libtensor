@@ -345,10 +345,10 @@ void btod_contract2<N, M, K>::make_symmetry() {
 	dimensions<N> projdimsa(index_range<N>(ia1, ia2));
 	block_tensor_ctrl<k_ordera, double> ctrla(m_bta);
 	const symmetry<k_ordera, double> &syma = ctrla.req_symmetry();
-	size_t nelem = syma.get_num_elements();
-	for(size_t ielem = 0; ielem < nelem; ielem++) {
+	typename symmetry<k_ordera, double>::iterator ielema = syma.begin();
+	for(; ielema != syma.end(); ielema++) {
 		so_projdown<k_ordera, K, double> projdn(
-			syma.get_element(ielem), projmska, projdimsa);
+			syma.get_element(ielema), projmska, projdimsa);
 		if(!projdn.is_identity()) {
 			so_projup<N, M, double> projup(
 				projdn.get_proj(), projmskca, bidimsc);
@@ -371,10 +371,10 @@ void btod_contract2<N, M, K>::make_symmetry() {
 	dimensions<M> projdimsb(index_range<M>(ib1, ib2));
 	block_tensor_ctrl<k_orderb, double> ctrlb(m_btb);
 	const symmetry<k_orderb, double> &symb = ctrlb.req_symmetry();
-	nelem = symb.get_num_elements();
-	for(size_t ielem = 0; ielem < nelem; ielem++) {
+	typename symmetry<k_orderb, double>::iterator ielemb = symb.begin();
+	for(; ielemb != symb.end(); ielemb++) {
 		so_projdown<k_orderb, K, double> projdn(
-			symb.get_element(ielem), projmskb, projdimsb);
+			symb.get_element(ielemb), projmskb, projdimsb);
 		if(!projdn.is_identity()) {
 			so_projup<M, N, double> projup(
 				projdn.get_proj(), projmskcb, bidimsc);

@@ -42,8 +42,8 @@ void btod_so_copy<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 
 	ctrl.req_zero_all_blocks();
 	ctrl.req_sym_clear_elements();
-	size_t nelem = m_symmetry.get_num_elements();
-	for(size_t ielem = 0; ielem < nelem; ielem++) {
+	typename symmetry<N, double>::iterator ielem = m_symmetry.begin();
+	for(; ielem != m_symmetry.end(); ielem++) {
 		ctrl.req_sym_add_element(m_symmetry.get_element(ielem));
 	}
 }

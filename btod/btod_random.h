@@ -117,8 +117,8 @@ bool btod_random<N>::make_transf_map(const symmetry<N, double> &sym,
 	ilst->second.push_back(tr);
 
 	bool allowed = true;
-	size_t nelem = sym.get_num_elements();
-	for(size_t ielem = 0; ielem < nelem && allowed; ielem++) {
+	typename symmetry<N, double>::iterator ielem = sym.begin();
+	for(; ielem != sym.end(); ielem++) {
 		const symmetry_element_i<N, double> &elem =
 			sym.get_element(ielem);
 		index<N> idx2(idx);

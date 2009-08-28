@@ -12,6 +12,7 @@ class symel1 : public symmetry_element_base<1, int, symel1> {
 public:
 	virtual ~symel1() { }
 
+	virtual const char *get_type() const { throw 0; }
 	virtual const mask<1> &get_mask() const { throw 0; }
 	virtual void permute(const permutation<1> &perm) { throw 0; }
 	virtual bool is_valid_bis(const block_index_space<1> &bis) const {
@@ -32,6 +33,7 @@ class symel2 : public symmetry_element_base<1, int, symel2> {
 public:
 	virtual ~symel2() { }
 
+	virtual const char *get_type() const { throw 0; }
 	virtual const mask<1> &get_mask() const { throw 0; }
 	virtual void permute(const permutation<1> &perm) { throw 0; }
 	virtual bool is_valid_bis(const block_index_space<1> &bis) const {

@@ -67,7 +67,7 @@ private:
 		std::vector<bool> &lst, const transf<N, T> &tr);
 };
 
-template<size_t N, typename T> 
+template<size_t N, typename T>
 const char* orbit<N, T>::k_clazz="orbit<N, T>";
 
 template<size_t N, typename T>
@@ -158,8 +158,8 @@ void orbit<N, T>::mark_orbit(const symmetry<N, T> &sym, const index<N> &idx,
 	if(!lst[absidx]) {
 		lst[absidx] = true;
 		m_orb.insert(pair_t(absidx, tr));
-		size_t nelem = sym.get_num_elements();
-		for(size_t ielem = 0; ielem < nelem; ielem++) {
+		typename symmetry<N, T>::iterator ielem = sym.begin();
+		for(; ielem != sym.end(); ielem++) {
 			const symmetry_element_i<N, T> &elem =
 				sym.get_element(ielem);
 			index<N> idx2(idx);

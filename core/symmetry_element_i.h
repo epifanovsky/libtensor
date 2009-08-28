@@ -37,6 +37,10 @@ public:
 	//!	\name Interface symmetry_element_i<N, T>
 	//@{
 
+	/**	\brief Returns the type of symmetry
+	 **/
+	virtual const char *get_type() const = 0;
+
 	/**	\brief Returns the mask of affected indexes
 	 **/
 	virtual const mask<N> &get_mask() const = 0;

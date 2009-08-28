@@ -46,7 +46,7 @@ template<size_t N, typename T>
 orbit_list<N, T>::orbit_list(const symmetry<N, T> &sym)
 : m_dims(sym.get_bis().get_block_index_dims()) {
 	orbit_list<N,T>::start_timer();
-	
+
 	std::vector<bool> chk(m_dims.get_size(), false);
 	index<N> idx;
 	do {
@@ -120,8 +120,8 @@ bool orbit_list<N, T>::mark_orbit(const symmetry<N, T> &sym,
 	bool allowed = true;
 	if(!lst[absidx]) {
 		lst[absidx] = true;
-		size_t nelem = sym.get_num_elements();
-		for(size_t ielem = 0; ielem < nelem; ielem++) {
+		typename symmetry<N, T>::iterator ielem = sym.begin();
+		for(; ielem != sym.end(); ielem++) {
 			const symmetry_element_i<N, T> &elem =
 				sym.get_element(ielem);
 			allowed = allowed && elem.is_allowed(idx);

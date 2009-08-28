@@ -23,6 +23,9 @@ public:
 	static const char *k_clazz; //!< Class name
 
 private:
+	static const char *k_symtype; //!< Type of symmetry
+
+private:
 	class equals_functor :
 		public symmetry_element_target< N, T, symel_cycleperm<N, T> > {
 	private:
@@ -85,6 +88,7 @@ public:
 
 	//!	\name Implementation of symmetry_element_i<N, T>
 	//@{
+	virtual const char *get_type() const;
 	virtual const mask<N> &get_mask() const;
 	virtual void permute(const permutation<N> &perm);
 	virtual bool is_valid_bis(const block_index_space<N> &bis) const;
@@ -108,6 +112,9 @@ private:
 
 template<size_t N, typename T>
 const char *symel_cycleperm<N, T>::k_clazz = "symel_cycleperm<N, T>";
+
+template<size_t N, typename T>
+const char *symel_cycleperm<N, T>::k_symtype = "perm";
 
 
 template<size_t N, typename T>
@@ -137,6 +144,12 @@ symel_cycleperm<N, T>::symel_cycleperm(const symel_cycleperm<N, T> &elem)
 template<size_t N, typename T>
 symel_cycleperm<N, T>::~symel_cycleperm() {
 
+}
+
+
+template<size_t N, typename T>
+const char *symel_cycleperm<N, T>::get_type() const {
+	return k_symtype;
 }
 
 

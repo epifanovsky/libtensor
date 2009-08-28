@@ -192,22 +192,9 @@ void btod_contract2_test::test_sym_1() throw(libtest::test_exception) {
 
 	btod_contract2<2, 2, 2> op(contr, bta, btb);
 
-	if(op.get_symmetry().get_num_elements() != sym_ref.get_num_elements()) {
-		std::ostringstream ss;
-		ss << "Incorrect number of symmetry elements: "
-			<< op.get_symmetry().get_num_elements() << " vs. "
-			<< sym_ref.get_num_elements() << " (ref).";
-		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
-	}
-
-	size_t nelem = sym_ref.get_num_elements();
-	for(size_t ielem = 0; ielem < nelem; ielem++) {
-		if(!op.get_symmetry().contains_element(
-			sym_ref.get_element(ielem))) {
-
-			fail_test(testname, __FILE__, __LINE__,
-				"Reference symmetry element not found.");
-		}
+	if(!op.get_symmetry().equals(sym_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry does not match reference.");
 	}
 
 	} catch(exception &e) {
@@ -272,6 +259,7 @@ void btod_contract2_test::test_sym_2() throw(libtest::test_exception) {
 	cyclemsk5_4[0] = true; cyclemsk5_4[1] = true;
 	cyclemsk5_4[2] = true; cyclemsk5_4[3] = true;
 
+	symmetry<3, double> sym_ref(bis_ref);
 	symel_cycleperm<4, double> cycle4a_1(4, cyclemsk4_4),
 		cycle4a_2(2, cyclemsk4_4);
 	symel_cycleperm<5, double> cycle4b_1(4, cyclemsk5_4),
@@ -291,9 +279,9 @@ void btod_contract2_test::test_sym_2() throw(libtest::test_exception) {
 
 	btod_contract2<1, 2, 3> op(contr, bta, btb);
 
-	if(op.get_symmetry().get_num_elements() != 0) {
+	if(!op.get_symmetry().equals(sym_ref)) {
 		fail_test(testname, __FILE__, __LINE__,
-			"Incorrect number of symmetry elements.");
+			"Symmetry does not match reference.");
 	}
 
 	} catch(exception &e) {

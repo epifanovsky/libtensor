@@ -43,17 +43,6 @@ public:
 	 **/
 	const symmetry<N, T> &req_symmetry() throw(exception);
 
-	/**	\brief Request to return the number of %symmetry elements
-	 **/
-	//size_t req_sym_num_elem() throw(exception);
-
-	/**	\brief Request to return a %symmetry element
-		\param n Element number, not to exceed the total number of
-			%symmetry elements.
-		\throw out_of_bounds If the element number is out of bounds.
-	 **/
-	//const symmetry_element_i<N, T> &req_sym_elem(size_t n) throw(exception);
-
 	/**	\brief Request to add a %symmetry element to the generating set;
 			does nothing if the element is already in the set
 	`	\param elem Symmetry element.
