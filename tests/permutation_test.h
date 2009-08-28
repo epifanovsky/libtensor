@@ -14,19 +14,13 @@ public:
 	virtual void perform() throw(libtest::test_exception);
 
 private:
-	//! Tests the constructors
 	void test_ctor() throw(libtest::test_exception);
-
-	//! Tests the permute method
 	void test_permute() throw(libtest::test_exception);
-
-	//! Tests the invert method
+	void test_apply_mask_1() throw(libtest::test_exception);
+	void test_apply_mask_2() throw(libtest::test_exception);
+	void test_apply_mask_3() throw(libtest::test_exception);
 	void test_invert() throw(libtest::test_exception);
-
-	//! Tests exceptions in the apply method
 	void test_apply() throw(libtest::test_exception);
-
-	//! Tests operator<<
 	void test_print() throw(libtest::test_exception);
 };
 

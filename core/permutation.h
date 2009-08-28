@@ -9,7 +9,11 @@
 
 namespace libtensor {
 
-/**	\brief Permutation of tensor indexes
+
+template<size_t N> class mask;
+
+
+/**	\brief Permutation of a set
 
 	<b>Overview</b>
 
@@ -70,15 +74,21 @@ namespace libtensor {
 	\endcode
 
 	\ingroup libtensor_core
-**/
+ **/
 template<size_t N>
 class permutation {
+public:
+	static const char *k_clazz; //!< Class name
+
 private:
 	size_t m_idx[N]; //!< Permuted indices
 
 public:
+	//!	\name Construction and destruction
+	//@{
+
 	/**	\brief Creates a unit %permutation of a specified order
-	**/
+	 **/
 	permutation();
 
 	/**	\brief Creates a copy or an inverted copy of a %permutation
@@ -86,8 +96,14 @@ public:
 		Creates a copy or an inverted copy of a %permutation.
 		\param p Another %permutation.
 		\param b_inverse Create inverse %permutation.
-	**/
-	permutation(const permutation<N> &p, const bool b_inverse = false);
+	 **/
+	permutation(const permutation<N> &p, bool b_inverse = false);
+
+	//@}
+
+
+	//!	\name Manipulations with the %permutation
+	//@{
 
 	/**	\brief Accumulates %permutation
 
@@ -95,27 +111,39 @@ public:
 
 		\param p Another %permutation.
 		\return Reference to this %permutation.
-	**/
+	 **/
 	permutation<N> &permute(const permutation<N> &p);
 
 	/**	\brief Permutes two indexes
 		\param i First %index.
 		\param j Second %index.
 		\return Reference to this %permutation.
-		\throw exception If either of the indices is invalid (out of
-			range).
-	**/
-	permutation<N> &permute(const size_t i, const size_t j)
-		throw(exception);
+		\throw out_of_bounds If either of the indices is out of bounds.
+	 **/
+	permutation<N> &permute(size_t i, size_t j) throw(out_of_bounds);
 
-	/**	\brief Inverts %permutation
+	/**	\brief Inverts the %permutation
 		\return Reference to this %permutation.
-	**/
+	 **/
 	permutation<N> &invert();
 
 	/**	\brief Resets %permutation (makes it an identity %permutation)
 	 **/
 	void reset();
+
+	/**	\brief Applies a %mask to the permutation
+
+		The %permutation is adjusted such that the elements of a set
+		that correspond to set indexes in the mask will not change
+		their positions upon the action of this %permutation on the set.
+	 **/
+	void apply_mask(const mask<N> &msk);
+
+	//@}
+
+
+	//!	\name Special comparisons
+	//@{
 
 	/**	\brief Checks if the %permutation is an identity %permutation
 
@@ -125,26 +153,31 @@ public:
 
 		\return true if this is an identity %permutation, false
 		otherwise.
-	**/
+	 **/
 	bool is_identity() const;
 
 	/**	\brief Checks if two permutations are identical
 		\return true if the two permutations are equal, false otherwise.
-	**/
+	 **/
 	bool equals(const permutation<N> &p) const;
 
-	bool operator==(const permutation<N> &p) const;
-	bool operator!=(const permutation<N> &p) const;
-	bool operator<(const permutation<N> &p) const;
+	//@}
+
+
+	//!	\name Application of the %permutation
+	//@{
 
 	/**	\brief Permutes a given sequence of objects
 		\param n Length of the sequence, must be the same as the
 			permutation order
 		\param obj Pointer to the sequence
-	**/
+	 **/
 	template<class T>
 	void apply(const size_t n, T *obj) const throw(exception);
 
+	/**	\brief Permutes a sequence of objects
+		\param obj Pointer to the sequence
+	 **/
 	template<typename T>
 	void apply(T (&seq)[N]) const;
 
@@ -154,111 +187,139 @@ public:
 			permutation order
 		\param obj_from Pointer to the initial sequence
 		\param obj_to Pointer to the resulting sequence
-	**/
+	 **/
 	template<class T>
 	void apply(const size_t n, const T *obj_from, T *obj_to) const
 		throw(exception);
 
+	//@}
+
+
+	//!	\name Overloaded operators
+	//@{
+
+	bool operator==(const permutation<N> &p) const;
+	bool operator!=(const permutation<N> &p) const;
+	bool operator<(const permutation<N> &p) const;
+
+	//@}
+
 };
+
+
+template<size_t N>
+const char *permutation<N>::k_clazz = "permutation<N>";
+
 
 template<size_t N>
 inline permutation<N>::permutation() {
+
 	#pragma unroll(N)
-	for(register size_t i=0; i<N; i++) m_idx[i] = i;
+	for(register size_t i = 0; i < N; i++) m_idx[i] = i;
 }
 
+
 template<size_t N>
-inline permutation<N>::permutation(const permutation<N> &p,
-	const bool b_inverse) {
+inline permutation<N>::permutation(const permutation<N> &p, bool b_inverse) {
+
 	if(b_inverse) {
 		#pragma unroll(N)
-		for(register size_t i=0; i<N; i++) m_idx[p.m_idx[i]] = i;
+		for(register size_t i = 0; i < N; i++) m_idx[p.m_idx[i]] = i;
 	} else {
 		#pragma unroll(N)
-		for(register size_t i=0; i<N; i++) m_idx[i] = p.m_idx[i];
+		for(register size_t i = 0; i < N; i++) m_idx[i] = p.m_idx[i];
 	}
 }
 
+
 template<size_t N>
 inline permutation<N> &permutation<N>::permute(const permutation<N> &p) {
+
 	size_t idx_cp[N];
 	#pragma unroll(N)
-	for(register size_t i=0; i<N; i++) idx_cp[i] = m_idx[i];
+	for(register size_t i = 0; i < N; i++) idx_cp[i] = m_idx[i];
 	#pragma unroll(N)
-	for(register size_t i=0; i<N; i++) m_idx[i] = idx_cp[p.m_idx[i]];
+	for(register size_t i = 0; i < N; i++) m_idx[i] = idx_cp[p.m_idx[i]];
 	return *this;
 }
 
+
 template<size_t N>
-inline permutation<N> &permutation<N>::permute(const size_t i, const size_t j)
-	throw(exception) {
+inline permutation<N> &permutation<N>::permute(size_t i, size_t j)
+	throw(out_of_bounds) {
+
 #ifdef LIBTENSOR_DEBUG
-	if(i>=N || j>=N) {
-		throw_exc("permutation<N>",
-			"permute(const size_t, const size_t)",
-			"Index out of range");
+	if(i >= N || j >= N) {
+		throw out_of_bounds(g_ns, k_clazz, "permute(size_t, size_t)",
+			__FILE__, __LINE__, "Index out of range.");
 	}
 #endif // LIBTENSOR_DEBUG
 	if(i == j) return *this;
 	register size_t i_cp = m_idx[i];
-	m_idx[i] = m_idx[j]; m_idx[j] = i_cp;
+	m_idx[i] = m_idx[j];
+	m_idx[j] = i_cp;
 	return *this;
 }
 
+
 template<size_t N>
 inline permutation<N> &permutation<N>::invert() {
+
 	size_t idx_cp[N];
 	#pragma unroll(N)
-	for(register size_t i=0; i<N; i++) idx_cp[i] = m_idx[i];
+	for(register size_t i = 0; i < N; i++) idx_cp[i] = m_idx[i];
 	#pragma unroll(N)
-	for(register size_t i=0; i<N; i++) m_idx[idx_cp[i]] = i;
+	for(register size_t i = 0; i < N; i++) m_idx[idx_cp[i]] = i;
 	return *this;
 }
+
 
 template<size_t N>
 inline void permutation<N>::reset() {
 	#pragma unroll(N)
-	for(register size_t i=0; i<N; i++) m_idx[i] = i;
+	for(register size_t i = 0; i < N; i++) m_idx[i] = i;
 }
+
+
+template<size_t N>
+inline void permutation<N>::apply_mask(const mask<N> &msk) {
+
+	register size_t i = 0;
+	while(i < N) {
+		if(i != m_idx[i] && msk[i]) {
+			permute(i, m_idx[i]);
+			i = 0;
+		} else {
+			i++;
+		}
+	}
+}
+
 
 template<size_t N>
 inline bool permutation<N>::is_identity() const {
+
 	#pragma unroll(N)
-	for(register size_t i=0; i<N; i++)
+	for(register size_t i = 0; i < N; i++)
 		if(m_idx[i] != i) return false;
 	return true;
 }
 
+
 template<size_t N>
 inline bool permutation<N>::equals(const permutation<N> &p) const {
+
 	if(&p == this) return true;
 	#pragma unroll(N)
-	for(register size_t i=0; i<N; i++)
+	for(register size_t i = 0; i < N; i++)
 		if(m_idx[i] != p.m_idx[i]) return false;
 	return true;
 }
 
-template<size_t N>
-inline bool permutation<N>::operator==(const permutation<N> &p) const {
-	return equals(p);
-}
-
-template<size_t N>
-inline bool permutation<N>::operator!=(const permutation<N> &p) const {
-	return !equals(p);
-}
-
-template<size_t N>
-inline bool permutation<N>::operator<(const permutation<N> &p) const {
-	#pragma unroll(N)
-	for(register size_t i=0; i<N; i++) {
-		if(m_idx[i] != p.m_idx[i]) return m_idx[i]<p.m_idx[i];
-	}
-	return false;
-}
 
 template<size_t N> template<class T>
-void permutation<N>::apply(const size_t n, T *obj) const throw(exception) {
+void permutation<N>::apply(size_t n, T *obj) const throw(exception) {
+
 #ifdef LIBTENSOR_DEBUG
 	if(n!=N) {
 		throw_exc("permutation<N>", "apply(const size_t, T*)",
@@ -267,23 +328,27 @@ void permutation<N>::apply(const size_t n, T *obj) const throw(exception) {
 #endif // LIBTENSOR_DEBUG
 	T buf[N];
 	#pragma unroll(N)
-	for(register size_t i=0; i<N; i++) buf[i]=obj[i];
+	for(register size_t i = 0; i < N; i++) buf[i] = obj[i];
 	#pragma unroll(N)
-	for(register size_t i=0; i<N; i++) obj[i]=buf[m_idx[i]];
+	for(register size_t i = 0; i < N; i++) obj[i] = buf[m_idx[i]];
 }
+
 
 template<size_t N> template<typename T>
 void permutation<N>::apply(T (&seq)[N]) const {
+
 	T buf[N];
 	#pragma unroll(N)
-	for(register size_t i=0; i<N; i++) buf[i]=seq[i];
+	for(register size_t i = 0; i < N; i++) buf[i] = seq[i];
 	#pragma unroll(N)
-	for(register size_t i=0; i<N; i++) seq[i]=buf[m_idx[i]];
+	for(register size_t i = 0; i < N; i++) seq[i] = buf[m_idx[i]];
 }
+
 
 template<size_t N> template<class T>
 void permutation<N>::apply(const size_t n, const T *obj_from, T *obj_to) const
 	throw(exception) {
+
 #ifdef LIBTENSOR_DEBUG
 	if(n!=N) {
 		throw_exc("permutation<N>", "apply(const size_t, const T*, T*)",
@@ -291,8 +356,34 @@ void permutation<N>::apply(const size_t n, const T *obj_from, T *obj_to) const
 	}
 #endif // LIBTENSOR_DEBUG
 	#pragma unroll(N)
-	for(register size_t i=0; i<N; i++) obj_to[i] = obj_from[m_idx[i]];
+	for(register size_t i = 0; i < N; i++) obj_to[i] = obj_from[m_idx[i]];
 }
+
+
+template<size_t N>
+inline bool permutation<N>::operator==(const permutation<N> &p) const {
+
+	return equals(p);
+}
+
+
+template<size_t N>
+inline bool permutation<N>::operator!=(const permutation<N> &p) const {
+
+	return !equals(p);
+}
+
+
+template<size_t N>
+inline bool permutation<N>::operator<(const permutation<N> &p) const {
+
+	#pragma unroll(N)
+	for(register size_t i = 0; i < N; i++) {
+		if(m_idx[i] != p.m_idx[i]) return m_idx[i] < p.m_idx[i];
+	}
+	return false;
+}
+
 
 /**	\brief Prints out a permutation to an output stream
 
@@ -301,13 +392,14 @@ void permutation<N>::apply(const size_t n, const T *obj_from, T *obj_to) const
 template<size_t N>
 std::ostream &operator<<(std::ostream &os, const permutation<N> &p) {
 	static const char *alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	char seq1[N+1], seq2[N+1];
-	for(size_t i=0; i<N; i++) seq1[i]=seq2[i]=alphabet[i];
-	seq1[N]=seq2[N]='\0';
+	char seq1[N + 1], seq2[N + 1];
+	for(size_t i = 0; i < N; i++) seq1[i] = seq2[i] = alphabet[i];
+	seq1[N] = seq2[N] = '\0';
 	p.apply(N, seq1, seq2);
 	os << "[" << seq1 << "->" << seq2 << "]";
 	return os;
 }
+
 
 } // namespace libtensor
 

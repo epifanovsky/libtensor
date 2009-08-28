@@ -6,8 +6,12 @@
 namespace libtensor {
 
 void permutation_test::perform() throw(libtest::test_exception) {
+
 	test_ctor();
 	test_permute();
+	test_apply_mask_1();
+	test_apply_mask_2();
+	test_apply_mask_3();
 	test_apply();
 	test_print();
 }
@@ -184,6 +188,69 @@ void permutation_test::test_permute() throw(libtest::test_exception) {
 	if(!ok) {
 		fail_test("permutation_test::test_permute()", __FILE__,
 			__LINE__, "Expected an exception, it was missing");
+	}
+
+}
+
+void permutation_test::test_apply_mask_1() throw(libtest::test_exception) {
+
+	static const char *testname = "permutation_test::test_apply_mask_1()";
+
+	permutation<4> p0, p1, p2;
+	p1.permute(2, 3);
+	p2.permute(0, 1).permute(2, 3);
+	mask<4> m1, m2;
+	m1[0] = true; m1[1] = true;
+	m2[2] = true; m2[3] = true;
+
+	p2.apply_mask(m1);
+	if(!p2.equals(p1)) {
+		std::ostringstream ss;
+		ss << "Mask 1100 failed: " << p2 << " vs. " << p1 << " (ref).";
+		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+	}
+
+	p2.apply_mask(m2);
+	if(!p2.equals(p0)) {
+		std::ostringstream ss;
+		ss << "Mask 0011 failed: " << p2 << " vs. " << p0 << " (ref).";
+		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+	}
+}
+
+void permutation_test::test_apply_mask_2() throw(libtest::test_exception) {
+
+	static const char *testname = "permutation_test::test_apply_mask_2()";
+
+	permutation<4> p1, p2;
+	p1.permute(0, 1).permute(1, 2).permute(2, 3);
+	mask<4> m1;
+	m1[0] = true; m1[1] = true;
+
+	p1.apply_mask(m1);
+	if(!p1.equals(p2)) {
+		std::ostringstream ss;
+		ss << "Mask 1100 failed: " << p1 << " vs. " << p2 << " (ref).";
+		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+	}
+
+}
+
+void permutation_test::test_apply_mask_3() throw(libtest::test_exception) {
+
+	static const char *testname = "permutation_test::test_apply_mask_3()";
+
+	permutation<6> p1, p2;
+	p1.permute(0, 1).permute(1, 2).permute(2, 3).permute(4, 5);
+	p2.permute(4, 5);
+	mask<6> m1;
+	m1[0] = true; m1[1] = true;
+
+	p1.apply_mask(m1);
+	if(!p1.equals(p2)) {
+		std::ostringstream ss;
+		ss << "Mask 110000 failed: " << p1 << " vs. " << p2 << " (ref).";
+		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
 	}
 
 }
