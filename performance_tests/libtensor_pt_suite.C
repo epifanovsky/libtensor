@@ -4,8 +4,8 @@
 namespace libtensor {
 
 
-libtensor_pt_suite::libtensor_pt_suite() 
-	: performance_test_suite("libtensor_performance_test") 
+libtensor_pt_suite::libtensor_pt_suite()
+	: performance_test_suite("libtensor_performance_test")
 {
 	add_tests("tod_add (small)",m_tod_add_ptsc1);
 	add_tests("tod_add (medium)",m_tod_add_ptsc2);
@@ -20,11 +20,11 @@ libtensor_pt_suite::libtensor_pt_suite()
 	add_tests("tod_dotprod (medium)",m_tod_dotprod_ptsc2);
 	add_tests("tod_dotprod (large)",m_tod_dotprod_ptsc3);
 	add_tests("expressions (normal,bs 16)",m_expression_tests_n16);
-	add_tests("expressions (normal,bs 4)",m_expression_tests_n4);
-	add_tests("expressions (normal,bs 2)",m_expression_tests_n2);
+//	add_tests("expressions (normal,bs 4)",m_expression_tests_n4);
+//	add_tests("expressions (normal,bs 2)",m_expression_tests_n2);
 	add_tests("expressions (large,bs 32)",m_expression_tests_l32);
 	add_tests("expressions (large,bs 16)",m_expression_tests_l16);
-	add_tests("expressions (large,bs 4)",m_expression_tests_l4);
+//	add_tests("expressions (large,bs 4)",m_expression_tests_l4);
 }
 
 }

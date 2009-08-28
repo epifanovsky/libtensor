@@ -36,7 +36,7 @@ public:
 
 private:
 	bool mark_orbit(const symmetry<N, T> &sym, const index<N> &idx,
-		std::vector<bool> &lst);
+		std::vector<char> &chk);
 };
 
 template<size_t N, typename T>
@@ -47,11 +47,11 @@ orbit_list<N, T>::orbit_list(const symmetry<N, T> &sym)
 : m_dims(sym.get_bis().get_block_index_dims()) {
 	orbit_list<N,T>::start_timer();
 
-	std::vector<bool> chk(m_dims.get_size(), false);
+	std::vector<char> chk(m_dims.get_size(), 0);
 	index<N> idx;
 	do {
 		size_t absidx = m_dims.abs_index(idx);
-		if(!chk[absidx]) {
+		if(chk[absidx] == 0) {
 			if(mark_orbit(sym, idx, chk)) {
 				m_orb.insert(std::pair< size_t, index<N> >(
 					absidx, idx));
@@ -114,12 +114,12 @@ inline const index<N> &orbit_list<N, T>::get_index(iterator &i) const {
 
 template<size_t N, typename T>
 bool orbit_list<N, T>::mark_orbit(const symmetry<N, T> &sym,
-	const index<N> &idx, std::vector<bool> &lst) {
+	const index<N> &idx, std::vector<char> &chk) {
 
 	size_t absidx = m_dims.abs_index(idx);
 	bool allowed = true;
-	if(!lst[absidx]) {
-		lst[absidx] = true;
+	if(!chk[absidx]) {
+		chk[absidx] = 1;
 		typename symmetry<N, T>::iterator ielem = sym.begin();
 		for(; ielem != sym.end(); ielem++) {
 			const symmetry_element_i<N, T> &elem =
@@ -127,7 +127,7 @@ bool orbit_list<N, T>::mark_orbit(const symmetry<N, T> &sym,
 			allowed = allowed && elem.is_allowed(idx);
 			index<N> idx2(idx);
 			elem.apply(idx2);
-			allowed = allowed && mark_orbit(sym, idx2, lst);
+			allowed = allowed && mark_orbit(sym, idx2, chk);
 		}
 	}
 	return allowed;

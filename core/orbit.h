@@ -64,7 +64,7 @@ public:
 
 private:
 	void mark_orbit(const symmetry<N, T> &sym, const index<N> &idx,
-		std::vector<bool> &lst, const transf<N, T> &tr);
+		std::vector<char> &lst, const transf<N, T> &tr);
 };
 
 template<size_t N, typename T>
@@ -76,7 +76,7 @@ orbit<N, T>::orbit(const symmetry<N, T> &sym, const index<N> &idx)
 	orbit<N, T>::start_timer();
 
 	m_canidx = m_dims.abs_index(idx);
-	std::vector<bool> chk(m_dims.get_size(), false);
+	std::vector<char> chk(m_dims.get_size(), 0);
 	transf<N, T> tr;
 	mark_orbit(sym, idx, chk, tr);
 
@@ -151,12 +151,12 @@ inline const transf<N, T> &orbit<N, T>::get_transf(iterator &i) const {
 
 template<size_t N, typename T>
 void orbit<N, T>::mark_orbit(const symmetry<N, T> &sym, const index<N> &idx,
-	std::vector<bool> &lst, const transf<N, T> &tr) {
+	std::vector<char> &lst, const transf<N, T> &tr) {
 
 	size_t absidx = m_dims.abs_index(idx);
 	if(absidx < m_canidx) m_canidx = absidx;
-	if(!lst[absidx]) {
-		lst[absidx] = true;
+	if(lst[absidx] == 0) {
+		lst[absidx] = 1;
 		m_orb.insert(pair_t(absidx, tr));
 		typename symmetry<N, T>::iterator ielem = sym.begin();
 		for(; ielem != sym.end(); ielem++) {
