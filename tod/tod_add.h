@@ -3,6 +3,7 @@
 
 #include "defs.h"
 #include "exception.h"
+#include "blas.h"
 #include "timings.h"
 #include "core/tensor_i.h"
 #include "core/tensor_ctrl.h"
@@ -29,7 +30,7 @@ template<size_t N>
 class tod_add
 	: public tod_additive<N>, public timings<tod_add<N> >
 {
-public: 
+public:
 	static const char* k_clazz;  //! class name
 
 private:
@@ -87,11 +88,11 @@ private:
 	};
 
 	//!	b_{ij} += m_ca * a_{ji}
-	class op_fast_add : public processor_op_i_t, public timings<op_fast_add> {
+	class op_daxpby_trp : public processor_op_i_t, public timings<op_daxpby_trp> {
 	private:
 		size_t m_leni, m_lenj, m_incaj, m_incbi;
 	public:
-		op_fast_add(size_t leni , size_t lenj, size_t incaj, size_t incbi) :
+		op_daxpby_trp(size_t leni , size_t lenj, size_t incaj, size_t incbi) :
 			m_incaj(incaj), m_incbi(incbi), m_leni(leni), m_lenj(lenj) { }
 
 		virtual void exec(processor_t &proc, registers &regs)
@@ -183,7 +184,7 @@ const char* tod_add<N>::k_clazz = "tod_add<N>";
 template<size_t N>
 const char* tod_add<N>::op_daxpy::k_clazz = "tod_add<N>::op_daxpy";
 template<size_t N>
-const char* tod_add<N>::op_fast_add::k_clazz = "tod_add<N>::op_fast_add";
+const char* tod_add<N>::op_daxpby_trp::k_clazz = "tod_add<N>::op_daxpby_trp";
 
 
 template<size_t N>
@@ -263,7 +264,7 @@ void tod_add<N>::add_operand(tensor_i<N,double> &t, const permutation<N> &p,
 template<size_t N>
 void tod_add<N>::prefetch() throw(exception)
 {
-	for ( typename op_map_t::iterator it=m_operands.begin(); 
+	for ( typename op_map_t::iterator it=m_operands.begin();
 		  it!=m_operands.end(); it++ ) {
 		tensor_ctrl<N,double> ctrl(it->second->m_ta);
 		ctrl.req_prefetch();
@@ -491,7 +492,7 @@ void tod_add<N>::build_list( loop_list_t &list, const dimensions<N> &da,
 //				posb->m_op=new op_daxpy(posb->m_len,posb->m_inca,posb->m_incb);
 //				list.splice(posb,list,posa);
 //			}
-			posb->m_op=new op_fast_add(posa->m_len,posb->m_len,posb->m_inca,posa->m_incb);
+			posb->m_op=new op_daxpby_trp(posa->m_len,posb->m_len,posb->m_inca,posa->m_incb);
 			list.erase(posa);
 		}
 	} catch ( std::bad_alloc& e ) {
@@ -537,80 +538,13 @@ void tod_add<N>::op_daxpy::exec( processor_t &proc, registers &regs)
 }
 
 template<size_t N>
-void tod_add<N>::op_fast_add::exec( processor_t &proc, registers &regs)
+void tod_add<N>::op_daxpby_trp::exec( processor_t &proc, registers &regs)
 	throw(exception)
 {
-	tod_add<N>::op_fast_add::start_timer();
-
-	size_t i=0, j=0;
-	size_t ilen=4*(m_leni/4), jlen=4*(m_lenj/4);
-
-	for ( i=0; i<ilen; i+=4 ) {
-		register size_t ij=i*m_incbi;
-		register size_t ji=i;
-		for ( j=0; j<jlen; j+=4 ) {
-			//register size_t ji=j*incaj+i;
-			regs.m_ptrb[ij]+=regs.m_ca*regs.m_ptra[ji];
-			regs.m_ptrb[ij+1]+=regs.m_ca*regs.m_ptra[ji+m_incaj];
-			regs.m_ptrb[ij+2]+=regs.m_ca*regs.m_ptra[ji+2*m_incaj];
-			regs.m_ptrb[ij+3]+=regs.m_ca*regs.m_ptra[ji+3*m_incaj];
-
-			//ij+=m_incbi; ji++;
-			regs.m_ptrb[ij+m_incbi]+=regs.m_ca*regs.m_ptra[ji+1];
-			regs.m_ptrb[ij+m_incbi+1]+=regs.m_ca*regs.m_ptra[ji+m_incaj+1];
-			regs.m_ptrb[ij+m_incbi+2]+=regs.m_ca*regs.m_ptra[ji+2*m_incaj+1];
-			regs.m_ptrb[ij+m_incbi+3]+=regs.m_ca*regs.m_ptra[ji+3*m_incaj+1];
-
-			//ij+=m_incbi; ji++;
-			regs.m_ptrb[ij+2*m_incbi]+=regs.m_ca*regs.m_ptra[ji+2];
-			regs.m_ptrb[ij+2*m_incbi+1]+=regs.m_ca*regs.m_ptra[ji+m_incaj+2];
-			regs.m_ptrb[ij+2*m_incbi+2]+=regs.m_ca*regs.m_ptra[ji+2*m_incaj+2];
-			regs.m_ptrb[ij+2*m_incbi+3]+=regs.m_ca*regs.m_ptra[ji+3*m_incaj+2];
-
-			//ij+=m_incbi; ji++;
-			regs.m_ptrb[ij+3*m_incbi]+=regs.m_ca*regs.m_ptra[ji+3];
-			regs.m_ptrb[ij+3*m_incbi+1]+=regs.m_ca*regs.m_ptra[ji+m_incaj+3];
-			regs.m_ptrb[ij+3*m_incbi+2]+=regs.m_ca*regs.m_ptra[ji+2*m_incaj+3];
-			regs.m_ptrb[ij+3*m_incbi+3]+=regs.m_ca*regs.m_ptra[ji+3*m_incaj+3];
-
-			//ij-=3*m_incbi;
-			ij+=4;
-			//ji-=3;
-			ji+=4*m_incaj;
-		}
-
-		for ( ; j<m_lenj; j++ ) {
-			regs.m_ptrb[ij]+=regs.m_ca*regs.m_ptra[ji];
-			regs.m_ptrb[ij+m_incbi]+=regs.m_ca*regs.m_ptra[ji+1];
-			regs.m_ptrb[ij+2*m_incbi]+=regs.m_ca*regs.m_ptra[ji+2];
-			regs.m_ptrb[ij+3*m_incbi]+=regs.m_ca*regs.m_ptra[ji+3];
-			ij++;
-			ji+=m_incaj;
-		}
-	}
-
-	for ( ; i<m_leni; i++ ) {
-		register size_t ji=i;
-		register size_t ij=i*m_incbi;
-		for ( j=0; j<jlen; j+=4 ) {
-			//register size_t ji=j*incaj+i;
-			regs.m_ptrb[ij]+=regs.m_ca*regs.m_ptra[ji];
-			regs.m_ptrb[ij+1]+=regs.m_ca*regs.m_ptra[ji+m_incaj];
-			regs.m_ptrb[ij+2]+=regs.m_ca*regs.m_ptra[ji+2*m_incaj];
-			regs.m_ptrb[ij+3]+=regs.m_ca*regs.m_ptra[ji+3*m_incaj];
-
-			ij+=4;
-			ji+=4*m_incaj;
-		}
-
-		for ( ; j<m_lenj; j++ ) {
-			regs.m_ptrb[ij]+=regs.m_ca*regs.m_ptra[ji];
-			ij++;
-			ji+=m_incaj;
-		}
-	}
-
-	tod_add<N>::op_fast_add::stop_timer();
+	tod_add<N>::op_daxpby_trp::start_timer();
+	blas::daxpby_trp(regs.m_ptra, regs.m_ptrb, m_leni, m_lenj,
+		m_incaj, m_incbi, regs.m_ca, 1.0);
+	tod_add<N>::op_daxpby_trp::stop_timer();
 }
 
 
