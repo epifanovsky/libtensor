@@ -11,15 +11,15 @@ namespace libtensor {
 /**	\brief Adds results of a sequence of operations on block_tensors (double)
 
 	\ingroup libtensor_btod
-**/
+ **/
 template<size_t N>
-class btod_sum 
-	: public direct_block_tensor_operation<N,double>, 
-		public timings<btod_sum<N> > 
-{
-	friend class timings<btod_sum<N> >;
+class btod_sum :
+	public direct_block_tensor_operation<N, double>,
+	public timings< btod_sum<N> > {
+
+public:
 	static const char* k_clazz; //!< Class name
-	
+
 private:
 	struct list_node {
 		btod_additive<N> &m_op;
@@ -38,7 +38,7 @@ public:
 
 	/**	\brief Default constructor
 	**/
-	btod_sum(direct_block_tensor_operation<N,double> &op);
+	btod_sum(direct_block_tensor_operation<N, double> &op);
 
 	/**	\brief Virtual destructor
 	**/
@@ -50,19 +50,25 @@ public:
 	//@{
 	virtual const block_index_space<N> &get_bis() const;
 	virtual const symmetry<N, double> &get_symmetry() const;
-	virtual void perform(block_tensor_i<N,double> &bt) throw(exception);
+	virtual void perform(block_tensor_i<N, double> &bt) throw(exception);
+	virtual void perform(block_tensor_i<N, double> &bt, const index<N> &idx)
+		throw(exception);
 	//@}
 
 	/**	\brief Adds an operation to the sequence
 	**/
 	void add_op(btod_additive<N> &op, double c) throw(exception);
+
+private:
+	btod_sum<N> &operator=(const btod_sum<N>&);
+
 };
 
 template<size_t N>
-const char* btod_sum<N>::k_clazz="btod_sum<N>";
+const char* btod_sum<N>::k_clazz = "btod_sum<N>";
 
 template<size_t N>
-inline btod_sum<N>::btod_sum(direct_block_tensor_operation<N,double> &op) :
+inline btod_sum<N>::btod_sum(direct_block_tensor_operation<N, double> &op) :
 	m_baseop(op), m_head(NULL), m_tail(NULL) {
 }
 
@@ -88,7 +94,7 @@ const symmetry<N, double> &btod_sum<N>::get_symmetry() const {
 }
 
 template<size_t N>
-void btod_sum<N>::perform(block_tensor_i<N,double> &bt) throw(exception) {
+void btod_sum<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 	timings<btod_sum<N> >::start_timer();
 	m_baseop.perform(bt);
 	struct list_node *node = m_head;
@@ -97,6 +103,13 @@ void btod_sum<N>::perform(block_tensor_i<N,double> &bt) throw(exception) {
 		node = node->m_next;
 	}
 	timings<btod_sum<N> >::stop_timer();
+}
+
+template<size_t N>
+void btod_sum<N>::perform(block_tensor_i<N, double> &bt, const index<N> &idx)
+	throw(exception) {
+
+	throw_exc(k_clazz, "perform(const index<N>&)", "NIY");
 }
 
 template<size_t N>

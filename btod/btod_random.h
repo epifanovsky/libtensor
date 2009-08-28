@@ -56,6 +56,7 @@ private:
 
 private:
 	btod_random<N> &operator=(const btod_random<N>&);
+
 };
 
 

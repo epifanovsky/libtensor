@@ -16,10 +16,9 @@ namespace libtensor {
 	\ingroup libtensor_btod
  **/
 template<size_t N>
-class btod_dotprod : public timings<btod_dotprod<N> > {
-private:
+class btod_dotprod : public timings< btod_dotprod<N> > {
+public:
 	static const char *k_clazz; //!< Class name
-	friend class timings<btod_copy<N> >;
 
 private:
 	block_tensor_i<N, double> &m_bt1; //!< First block %tensor
@@ -34,6 +33,10 @@ public:
 		const permutation<N> &perm1, block_tensor_i<N, double> &bt2,
 		const permutation<N> &perm2);
 	double calculate() throw(exception);
+
+private:
+	btod_dotprod<N> &operator=(const btod_dotprod<N>&);
+
 };
 
 template<size_t N>

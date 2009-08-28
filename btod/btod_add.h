@@ -114,6 +114,8 @@ public:
 	virtual const symmetry<N, double> &get_symmetry() const;
 	virtual void perform(block_tensor_i<N, double> &bt)
 		throw(exception);
+	virtual void perform(block_tensor_i<N, double> &bt, const index<N> &idx)
+		throw(exception);
 	//@}
 
 	//!	\name Implementation of libtensor::btod_additive<N>
@@ -255,6 +257,14 @@ void btod_add<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 	do_perform(bt, true, 1.0);
 
 	timings_base::stop_timer();
+}
+
+
+template<size_t N>
+void btod_add<N>::perform(block_tensor_i<N, double> &bt, const index<N> &idx)
+	throw(exception) {
+
+	throw_exc(k_clazz, "perform(const index<N>&)", "NIY");
 }
 
 

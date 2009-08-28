@@ -25,9 +25,8 @@ namespace libtensor {
  **/
 template<size_t N, size_t M, size_t K>
 class btod_contract2 :
-	public btod_additive<N + M>, public timings< btod_contract2<N, M, K> > {
-
-	friend class timings< btod_contract2<N, M, K> >;
+	public btod_additive<N + M>,
+	public timings< btod_contract2<N, M, K> > {
 
 public:
 	static const char *k_clazz; //!< Class name
@@ -91,18 +90,20 @@ public:
 
 	//@}
 
-	//!	\name Implementation of libtensor::btod_additive<N + M>
-	//@{
-	virtual void perform(block_tensor_i<k_orderc, double> &btc, double c)
-		throw(exception);
-	//@}
-
 	//!	\name Implementation of
 	//		libtensor::direct_block_tensor_operation<N + M, double>
 	//@{
 	virtual const block_index_space<N + M> &get_bis() const;
 	virtual const symmetry<N + M, double> &get_symmetry() const;
 	virtual void perform(block_tensor_i<k_orderc, double> &btc)
+		throw(exception);
+	virtual void perform(block_tensor_i<k_orderc, double> &btc,
+		const index<k_orderc> &idx) throw(exception);
+	//@}
+
+	//!	\name Implementation of libtensor::btod_additive<N + M>
+	//@{
+	virtual void perform(block_tensor_i<k_orderc, double> &btc, double c)
 		throw(exception);
 	//@}
 
@@ -137,6 +138,10 @@ private:
 		block_tensor_ctrl<k_orderc, double> &ctrlc,
 		const dimensions<k_orderc> &bidimsc,
 		bool zero, double c);
+
+private:
+	btod_contract2<N, M, K> &operator=(const btod_contract2<N, M, K>&);
+
 };
 
 
@@ -211,6 +216,14 @@ void btod_contract2<N, M, K>::perform(block_tensor_i<k_orderc, double> &btc,
 	}
 
 	btod_contract2<N, M, K>::stop_timer();
+}
+
+
+template<size_t N, size_t M, size_t K>
+void btod_contract2<N, M, K>::perform(block_tensor_i<k_orderc, double> &btc,
+	const index<k_orderc> &idx) throw(exception) {
+
+	throw_exc(k_clazz, "perform(const index<N + M>&)", "NIY");
 }
 
 

@@ -60,6 +60,9 @@ public:
 	**/
 	const btod_diff_t &get_diff() const;
 
+private:
+	btod_compare<N> &operator=(const btod_compare<N>&);
+
 };
 
 template<size_t N>
