@@ -14,9 +14,12 @@ public:
 	virtual void perform() throw(libtest::test_exception);
 
 private:
-	void test_1() throw(libtest::test_exception);
-	void test_2(double ca1, double ca2) throw(libtest::test_exception);
+	void test_1(double ca1, double ca2) throw(libtest::test_exception);
+	void test_2(double ca1, double ca2, double cs)
+		throw(libtest::test_exception);
 	void test_3(double ca1, double ca2) throw(libtest::test_exception);
+	void test_4(double ca1, double ca2, double ca3, double ca4)
+		throw(libtest::test_exception);
 
 	/**	\brief Tests if exceptions are thrown when the tensors have
 			different dimensions
