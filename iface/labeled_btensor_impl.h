@@ -6,7 +6,7 @@
 #include "labeled_btensor.h"
 #include "labeled_btensor_eval.h"
 #include "labeled_btensor_expr.h"
-#include "labeled_btensor_expr_ident.h"
+#include "ident/core_ident.h"
 
 namespace libtensor {
 

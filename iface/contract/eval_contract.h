@@ -126,7 +126,7 @@ template<typename Tag>
 arg<N + M, T, Tag> eval_contract<N, M, K, T, E1, E2>::get_arg(
 	const Tag &tag, size_t i) const throw(exception) {
 
-	static const char *method = "eval_contract<N, M, K, T, E1, E2>";
+	static const char *method = "get_arg(const Tag&, size_t)";
 	throw expr_exception(g_ns, k_clazz, method, __FILE__, __LINE__,
 		"Invalid method.");
 }

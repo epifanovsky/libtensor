@@ -76,6 +76,9 @@ public:
 	/**	\brief Returns the %letter at a given position in the label
 	 **/
 	const letter &letter_at(size_t i) const throw(exception);
+
+private:
+	expr<N, T, Core> &operator=(const expr<N, T, Core>&);
 };
 
 template<size_t N, typename T, typename Core>

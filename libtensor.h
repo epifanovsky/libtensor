@@ -75,7 +75,7 @@
 #include "iface/labeled_btensor_base.h"
 #include "iface/labeled_btensor.h"
 #include "iface/labeled_btensor_expr.h"
-#include "iface/labeled_btensor_expr_operators.h"
+#include "iface/operators.h"
 #include "iface/labeled_btensor_eval.h"
 #include "iface/labeled_btensor_impl.h"
 #include "iface/contract.h"
