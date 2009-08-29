@@ -78,6 +78,8 @@ public:
 private:
 	void do_perform(block_tensor_i<N, double> &bt, bool zero, double c)
 		throw(exception);
+	void do_perform(block_tensor_i<N, double> &bt, const index<N> &dst_idx,
+		bool zero, double c) throw(exception);
 
 private:
 	btod_copy<N> &operator=(const btod_copy<N>&);
@@ -159,7 +161,21 @@ template<size_t N>
 void btod_copy<N>::perform(block_tensor_i<N, double> &bt, const index<N> &idx)
 	throw(exception) {
 
-	throw_exc(k_clazz, "perform(const index<N>&)", "NIY");
+	static const char *method =
+		"perform(block_tensor_i<N, double>&, const index<N>&)";
+
+	if(!m_bis.equals(bt.get_bis())) {
+		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"Incorrect block index space of the output tensor.");
+	}
+	if(!m_bidims.contains(idx)) {
+		throw out_of_bounds(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"Block index is out of bounds.");
+	}
+
+	timings_base::start_timer();
+	do_perform(bt, idx, true, 1.0);
+	timings_base::stop_timer();
 }
 
 
@@ -219,10 +235,7 @@ void btod_copy<N>::do_perform(
 	typename orbit_list<N, double>::iterator iorbit = orblst.begin();
 	for(; iorbit != orblst.end(); iorbit++) {
 
-		orbit<N, double> orb(src_ctrl.req_symmetry(),
-			orblst.get_index(iorbit));
-		index<N> src_blk_idx;
-		bidims.abs_index(orb.get_abs_canonical_index(), src_blk_idx);
+		index<N> src_blk_idx(orblst.get_index(iorbit));
 		if(src_ctrl.req_is_zero_block(src_blk_idx)) continue;
 		index<N> dst_blk_idx(src_blk_idx);
 		dst_blk_idx.permute(m_perm);
@@ -242,6 +255,39 @@ void btod_copy<N>::do_perform(
 		dst_ctrl.ret_block(dst_blk_idx);
 
 	}
+}
+
+
+template<size_t N>
+void btod_copy<N>::do_perform(block_tensor_i<N, double> &bt,
+	const index<N> &dst_blk_idx, bool zero, double c) throw(exception) {
+
+	block_tensor_ctrl<N, double> src_ctrl(m_bt), dst_ctrl(bt);
+
+	permutation<N> invperm(m_perm, true);
+	index<N> src_blk_idx(dst_blk_idx);
+	src_blk_idx.permute(invperm);
+
+	if(src_ctrl.req_is_zero_block(src_blk_idx)) {
+
+		if(zero) dst_ctrl.req_zero_block(dst_blk_idx);
+
+	} else {
+
+		tensor_i<N, double> &src_blk = src_ctrl.req_block(src_blk_idx);
+		tensor_i<N, double> &dst_blk = dst_ctrl.req_block(dst_blk_idx);
+
+		if(zero) {
+			tod_copy<N> cp(src_blk, m_perm, m_c * c);
+			cp.perform(dst_blk);
+		} else {
+			tod_copy<N> cp(src_blk, m_perm, m_c);
+			cp.perform(dst_blk, c);
+		}
+	}
+
+	src_ctrl.ret_block(src_blk_idx);
+	dst_ctrl.ret_block(dst_blk_idx);
 }
 
 

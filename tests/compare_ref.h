@@ -48,15 +48,19 @@ void compare_ref<N>::compare(const char *test, block_tensor_i<N, double> &t,
 		std::ostringstream str;
 		str << "In " << test << ": ";
 		str << "Result does not match reference ";
-		if ( ! cmp.get_diff().m_number_of_orbits ) 
+		if ( ! cmp.get_diff().m_number_of_orbits )
 			str << "symmetry";
 		else if ( ! cmp.get_diff().m_similar_orbit ) {
 			str << "symmetry: Orbits with canonical blocks "
 				<< cmp.get_diff().m_canonical_block_index_1 << " (act) vs. "
 				<< cmp.get_diff().m_canonical_block_index_2 << " (ref) differ.";
 		}
+		else if ( cmp.get_diff().m_zero_1 != cmp.get_diff().m_zero_2 ) {
+			str << "at zero block " << cmp.get_diff().m_canonical_block_index_1
+				<< ".";
+		}
 		else {
-			str << " in block " << cmp.get_diff().m_canonical_block_index_1 
+			str << "in block " << cmp.get_diff().m_canonical_block_index_1
 				<< " at element "
 				<< cmp.get_diff().m_inblock << ": "
 				<< cmp.get_diff().m_diff_elem_1 << " (act) vs. "

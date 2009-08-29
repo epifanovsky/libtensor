@@ -16,6 +16,10 @@ void btod_copy_test::perform() throw(libtest::test_exception) {
 	test_zero_1();
 	test_1();
 	test_2();
+	test_dir_1();
+	test_dir_2();
+	test_dir_3();
+	test_dir_4();
 }
 
 
@@ -265,6 +269,243 @@ void btod_copy_test::test_2() throw(libtest::test_exception) {
 	//	Compare against reference
 
 	compare_ref<4>::compare(testname, tb, tb_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void btod_copy_test::test_dir_1() throw(libtest::test_exception) {
+
+	static const char *testname = "btod_copy_test::test_dir_1()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+	typedef tensor<2, double, allocator_t> tensor_t;
+	typedef tensor_ctrl<2, double> tensor_ctrl_t;
+	typedef block_tensor<2, double, allocator_t> block_tensor_t;
+	typedef block_tensor_ctrl<2, double> block_tensor_ctrl_t;
+
+	try {
+
+	index<2> i1, i2;
+	i2[0] = 10; i2[1] = 10;
+	dimensions<2> dims(index_range<2>(i1, i2));
+	block_index_space<2> bis(dims);
+	tensor<2, double, allocator_t> ta(dims), tb(dims);
+	block_tensor<2, double, allocator_t> bta(bis), btb(bis), btb_ref(bis);
+	block_tensor_ctrl<2, double> bta_ctrl(bta);
+
+	//	Fill in with random data
+
+	btod_random<2>().perform(bta);
+
+	//	Make a copy
+
+	btod_copy<2> cp(bta);
+	cp.perform(btb_ref);
+	cp.perform(btb, index<2>());
+
+	//	Compare against the reference
+
+	compare_ref<2>::compare(testname, btb, btb_ref, 0.0);
+
+	} catch(exception &exc) {
+		fail_test(testname, __FILE__, __LINE__, exc.what());
+	}
+}
+
+
+void btod_copy_test::test_dir_2() throw(libtest::test_exception) {
+
+	static const char *testname = "btod_copy_test::test_dir_2()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+	typedef tensor<2, double, allocator_t> tensor_t;
+	typedef tensor_ctrl<2, double> tensor_ctrl_t;
+	typedef block_tensor<2, double, allocator_t> block_tensor_t;
+	typedef block_tensor_ctrl<2, double> block_tensor_ctrl_t;
+
+	try {
+
+	index<2> i1, i2;
+	i2[0] = 10; i2[1] = 10;
+	dimensions<2> dims(index_range<2>(i1, i2));
+	block_index_space<2> bis(dims);
+	tensor<2, double, allocator_t> ta(dims), tb(dims);
+	block_tensor<2, double, allocator_t> bta(bis), btb(bis), btb_ref(bis);
+	block_tensor_ctrl<2, double> bta_ctrl(bta), btb_ctrl(btb),
+		btb_ref_ctrl(btb);
+
+	mask<2> msk;
+	msk[0] = true; msk[1] = true;
+	symel_cycleperm<2, double> cycle(2, msk);
+	bta_ctrl.req_sym_add_element(cycle);
+	btb_ctrl.req_sym_add_element(cycle);
+	btb_ref_ctrl.req_sym_add_element(cycle);
+
+	//	Fill in with random data
+
+	btod_random<2>().perform(bta);
+
+	//	Make a copy
+
+	permutation<2> perm;
+	perm.permute(0, 1);
+	btod_copy<2> cp(bta, perm, 2.0);
+	cp.perform(btb_ref);
+	cp.perform(btb, index<2>());
+
+	//	Compare against the reference
+
+	compare_ref<2>::compare(testname, btb, btb_ref, 0.0);
+
+	} catch(exception &exc) {
+		fail_test(testname, __FILE__, __LINE__, exc.what());
+	}
+}
+
+
+void btod_copy_test::test_dir_3() throw(libtest::test_exception) {
+
+	//
+	//	b_ijkl = 2.0 * a_ijkl
+	//	Dimensions [ij]=10, [kl]=12, permutational symmetry
+	//	Sym(B) = Sym(A)
+	//
+
+	static const char *testname = "btod_copy_test::test_dir_3()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 9; i2[1] = 9; i2[2] = 11; i2[3] = 11;
+	dimensions<4> dimsa(index_range<4>(i1, i2));
+	dimensions<4> dimsb(dimsa);
+	block_index_space<4> bisa(dimsa), bisb(dimsb);
+
+	mask<4> msk1, msk2;
+	msk1[0] = true; msk1[1] = true;
+	msk2[2] = true; msk2[3] = true;
+
+	bisa.split(msk1, 3);
+	bisa.split(msk1, 5);
+	bisa.split(msk2, 4);
+
+	bisb.split(msk1, 3);
+	bisb.split(msk1, 5);
+	bisb.split(msk2, 4);
+
+	block_tensor<4, double, allocator_t> bta(bisa), btb(bisb),
+		btb_ref(bisb);
+
+	//	Set up symmetry
+
+	symel_cycleperm<4, double> cycle1(2, msk1), cycle2(2, msk2);
+	block_tensor_ctrl<4, double> ctrla(bta), ctrlb(btb), ctrlb_ref(btb_ref);
+	ctrla.req_sym_add_element(cycle1);
+	ctrla.req_sym_add_element(cycle2);
+	ctrlb.req_sym_add_element(cycle1);
+	ctrlb.req_sym_add_element(cycle2);
+	ctrlb_ref.req_sym_add_element(cycle1);
+	ctrlb_ref.req_sym_add_element(cycle2);
+
+	//	Load random data for input
+
+	btod_random<4>().perform(bta);
+	bta.set_immutable();
+
+	//	Run the operation
+
+	btod_copy<4> cp(bta, 2.0);
+	cp.perform(btb_ref);
+	orbit_list<4, double> orblst(ctrlb.req_symmetry());
+	orbit_list<4, double>::iterator iorb = orblst.begin();
+	for(; iorb != orblst.end(); iorb++) {
+		cp.perform(btb, orblst.get_index(iorb));
+	}
+
+	//	Compare against reference
+
+	compare_ref<4>::compare(testname, btb, btb_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void btod_copy_test::test_dir_4() throw(libtest::test_exception) {
+
+	//
+	//	b_ijkl = 2.0 * a_ijkl
+	//	Dimensions [ij]=10, [kl]=12, permutational symmetry
+	//	Sym(B) = Sym(A)
+	//	One non-zero block
+	//
+
+	static const char *testname = "btod_copy_test::test_dir_4()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 9; i2[1] = 9; i2[2] = 11; i2[3] = 11;
+	dimensions<4> dimsa(index_range<4>(i1, i2));
+	dimensions<4> dimsb(dimsa);
+	block_index_space<4> bisa(dimsa), bisb(dimsb);
+
+	mask<4> msk1, msk2;
+	msk1[0] = true; msk1[1] = true;
+	msk2[2] = true; msk2[3] = true;
+
+	bisa.split(msk1, 3);
+	bisa.split(msk1, 5);
+	bisa.split(msk2, 4);
+
+	bisb.split(msk1, 3);
+	bisb.split(msk1, 5);
+	bisb.split(msk2, 4);
+
+	block_tensor<4, double, allocator_t> bta(bisa), btb(bisb),
+		btb_ref(bisb);
+
+	index<4> idx;
+	idx[0] = 1; idx[1] = 2; idx[0] = 0; idx[1] = 1;
+
+	//	Set up symmetry
+
+	symel_cycleperm<4, double> cycle1(2, msk1), cycle2(2, msk2);
+	block_tensor_ctrl<4, double> ctrla(bta), ctrlb(btb), ctrlb_ref(btb_ref);
+	ctrla.req_sym_add_element(cycle1);
+	ctrla.req_sym_add_element(cycle2);
+	ctrlb.req_sym_add_element(cycle1);
+	ctrlb.req_sym_add_element(cycle2);
+	ctrlb_ref.req_sym_add_element(cycle1);
+	ctrlb_ref.req_sym_add_element(cycle2);
+
+	//	Load random data for input
+
+	btod_random<4>().perform(bta, idx);
+	btod_random<4>().perform(btb);
+	bta.set_immutable();
+
+	//	Run the operation
+
+	btod_copy<4> cp(bta, 2.0);
+	cp.perform(btb_ref);
+	orbit_list<4, double> orblst(ctrlb.req_symmetry());
+	orbit_list<4, double>::iterator iorb = orblst.begin();
+	for(; iorb != orblst.end(); iorb++) {
+		cp.perform(btb, orblst.get_index(iorb));
+	}
+
+	//	Compare against reference
+
+	compare_ref<4>::compare(testname, btb, btb_ref, 1e-15);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());

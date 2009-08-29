@@ -29,6 +29,8 @@ public:
 	block_index_space<N> m_bis; //!< Block %index space
 	dimensions<N> m_bidims; //!< Block %index %dimensions
 	symmetry<N, T> m_symmetry; //!< Block %tensor symmetry
+	orbit_list<N, T> *m_orblst; //!< Orbit list
+	bool m_orblst_dirty; //!< Whether the orbit list needs to be updated
 	block_map<N, T, Alloc> m_map; //!< Block map
 
 public:
@@ -67,6 +69,9 @@ protected:
 	//@{
 	virtual void on_set_immutable();
 	//@}
+
+private:
+	void update_orblst();
 };
 
 
@@ -75,15 +80,23 @@ const char *block_tensor<N, T, Alloc>::k_clazz = "block_tensor<N, T, Alloc>";
 
 
 template<size_t N, typename T, typename Alloc>
-block_tensor<N, T, Alloc>::block_tensor(const block_index_space<N> &bis)
-: m_bis(bis), m_bidims(bis.get_block_index_dims()), m_symmetry(m_bis) {
+block_tensor<N, T, Alloc>::block_tensor(const block_index_space<N> &bis) :
+	m_bis(bis),
+	m_bidims(bis.get_block_index_dims()),
+	m_symmetry(m_bis),
+	m_orblst(NULL),
+	m_orblst_dirty(true) {
 
 }
 
 
 template<size_t N, typename T, typename Alloc>
-block_tensor<N, T, Alloc>::block_tensor(const block_tensor<N, T, Alloc> &bt)
-: m_bis(bt.get_bis()), m_bidims(bt.m_bidims), m_symmetry(bt.m_symmetry) {
+block_tensor<N, T, Alloc>::block_tensor(const block_tensor<N, T, Alloc> &bt) :
+	m_bis(bt.get_bis()),
+	m_bidims(bt.m_bidims),
+	m_symmetry(bt.m_symmetry),
+	m_orblst(NULL),
+	m_orblst_dirty(true) {
 
 }
 
@@ -91,6 +104,7 @@ block_tensor<N, T, Alloc>::block_tensor(const block_tensor<N, T, Alloc> &bt)
 template<size_t N, typename T, typename Alloc>
 block_tensor<N, T, Alloc>::~block_tensor() {
 
+	delete m_orblst;
 }
 
 
@@ -123,6 +137,7 @@ void block_tensor<N, T, Alloc>::on_req_sym_add_element(
 	}
 
 	m_symmetry.add_element(elem);
+	m_orblst_dirty = true;
 }
 
 
@@ -139,6 +154,7 @@ void block_tensor<N, T, Alloc>::on_req_sym_remove_element(
 	}
 
 	m_symmetry.remove_element(elem);
+	m_orblst_dirty = true;
 }
 
 
@@ -161,6 +177,7 @@ void block_tensor<N, T, Alloc>::on_req_sym_clear_elements() throw(exception) {
 	}
 
 	m_symmetry.clear_elements();
+	m_orblst_dirty = true;
 }
 
 template<size_t N, typename T, typename Alloc>
@@ -169,9 +186,9 @@ tensor_i<N, T> &block_tensor<N, T, Alloc>::on_req_block(
 
 	static const char *method = "on_req_block(const index<N>&)";
 
+	update_orblst();
 	size_t absidx = m_bidims.abs_index(idx);
-	orbit_list<N, T> orblst(m_symmetry);
-	if(!orblst.contains(absidx)) {
+	if(!m_orblst->contains(absidx)) {
 		throw symmetry_violation(g_ns, k_clazz, method,
 			__FILE__, __LINE__,
 			"Index does not correspond to a canonical block.");
@@ -197,9 +214,9 @@ bool block_tensor<N, T, Alloc>::on_req_is_zero_block(const index<N> &idx)
 
 	static const char *method = "on_req_is_zero_block(const index<N>&)";
 
+	update_orblst();
 	size_t absidx = m_bidims.abs_index(idx);
-	orbit_list<N, T> orblst(m_symmetry);
-	if(!orblst.contains(absidx)) {
+	if(!m_orblst->contains(absidx)) {
 		throw symmetry_violation(g_ns, k_clazz, method,
 			__FILE__, __LINE__,
 			"Index does not correspond to a canonical block.");
@@ -218,9 +235,9 @@ void block_tensor<N, T, Alloc>::on_req_zero_block(const index<N> &idx)
 		throw immut_violation(g_ns, k_clazz, method, __FILE__, __LINE__,
 			"Immutable object cannot be modified.");
 	}
+	update_orblst();
 	size_t absidx = m_bidims.abs_index(idx);
-	orbit_list<N, T> orblst(m_symmetry);
-	if(!orblst.contains(absidx)) {
+	if(!m_orblst->contains(absidx)) {
 		throw symmetry_violation(g_ns, k_clazz, method,
 			__FILE__, __LINE__,
 			"Index does not correspond to a canonical block.");
@@ -248,6 +265,16 @@ inline void block_tensor<N, T, Alloc>::on_set_immutable() {
 	m_map.set_immutable();
 }
 
+
+template<size_t N, typename T, typename Alloc>
+void block_tensor<N, T, Alloc>::update_orblst() {
+
+	if(m_orblst == NULL || m_orblst_dirty) {
+		delete m_orblst;
+		m_orblst = new orbit_list<N, T>(m_symmetry);
+		m_orblst_dirty = false;
+	}
+}
 
 } // namespace libtensor
 

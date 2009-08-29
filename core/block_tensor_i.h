@@ -54,6 +54,10 @@ class block_tensor_i {
 	friend class block_tensor_ctrl<N, T>;
 
 public:
+	/**	\brief Virtual destructor
+	 **/
+	virtual ~block_tensor_i() { }
+
 	/**	\brief Returns the block %index space of the block %tensor
 	 **/
 	virtual const block_index_space<N> &get_bis() const = 0;

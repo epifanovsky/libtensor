@@ -19,12 +19,14 @@ public:
 	typedef struct btod_diff {
 		bool m_number_of_orbits; //!< same number of orbits
 		bool m_similar_orbit; //!< same kind of orbit
+		bool m_zero_1, m_zero_2; //!< zero blocks
 		//! canonical block indices of orbits in which a difference occured
 		index<N> m_canonical_block_index_1, m_canonical_block_index_2;
 		index<N> m_inblock; //!< diff index in block
 		double m_diff_elem_1, m_diff_elem_2;
 
 		btod_diff() : m_number_of_orbits(true),	m_similar_orbit(true),
+			m_zero_1(false), m_zero_2(false),
 			m_diff_elem_1(0.0),	m_diff_elem_2(0.0)
 		{}
 
@@ -131,25 +133,40 @@ bool btod_compare<N>::compare() {
 				}
 			}
 
-			tensor_i<N,double> &t1=ctrl1.req_block(bidx1),
-				&t2=ctrl2.req_block(bidx2);
+			bool zero_1 = ctrl1.req_is_zero_block(bidx1);
+			bool zero_2 = ctrl2.req_is_zero_block(bidx2);
 
-			dimensions<N> d1=t1.get_dims(), d2=t2.get_dims();
-			d1.permute(tra.get_perm());
-
-			tensor<N,double,libvmm::std_allocator<double> > tmp(d1);
-			tod_copy<N> docopy(t1,tra.get_perm(),tra.get_coeff());
-			docopy.perform(tmp);
-
-			tod_compare<N> compare(tmp,t2,m_thresh);
-			if ( ! compare.compare() ) {
+			if(zero_1 != zero_2) {
+				m_diff_struct.m_zero_1 = zero_1;
+				m_diff_struct.m_zero_2 = zero_2;
 				m_diff_struct.m_canonical_block_index_1=bidx1;
 				m_diff_struct.m_canonical_block_index_2=bidx2;
-				m_diff_struct.m_inblock=compare.get_diff_index();
-				m_diff_struct.m_diff_elem_1=compare.get_diff_elem_1();
-				m_diff_struct.m_diff_elem_2=compare.get_diff_elem_2();
 
 				return false;
+			}
+
+			if(!zero_1) {
+
+				tensor_i<N,double> &t1=ctrl1.req_block(bidx1),
+					&t2=ctrl2.req_block(bidx2);
+
+				dimensions<N> d1=t1.get_dims(), d2=t2.get_dims();
+				d1.permute(tra.get_perm());
+
+				tensor<N,double,libvmm::std_allocator<double> > tmp(d1);
+				tod_copy<N> docopy(t1,tra.get_perm(),tra.get_coeff());
+				docopy.perform(tmp);
+
+				tod_compare<N> compare(tmp,t2,m_thresh);
+				if ( ! compare.compare() ) {
+					m_diff_struct.m_canonical_block_index_1=bidx1;
+					m_diff_struct.m_canonical_block_index_2=bidx2;
+					m_diff_struct.m_inblock=compare.get_diff_index();
+					m_diff_struct.m_diff_elem_1=compare.get_diff_elem_1();
+					m_diff_struct.m_diff_elem_2=compare.get_diff_elem_2();
+
+					return false;
+				}
 			}
 		}
 		else {
@@ -165,18 +182,36 @@ bool btod_compare<N>::compare() {
 				}
 			}
 
-			tensor_i<N,double> &t1=ctrl1.req_block(bidx1),
-				&t2=ctrl2.req_block(bidx2);
+			bool zero_1 = ctrl1.req_is_zero_block(bidx1);
+			bool zero_2 = ctrl2.req_is_zero_block(bidx2);
 
-			tod_compare<N> compare(t1,t2,m_thresh);
-			if ( ! compare.compare() ) {
+			if(zero_1 != zero_2) {
+				m_diff_struct.m_zero_1 = zero_1;
+				m_diff_struct.m_zero_2 = zero_2;
 				m_diff_struct.m_canonical_block_index_1=bidx1;
 				m_diff_struct.m_canonical_block_index_2=bidx2;
-				m_diff_struct.m_inblock=compare.get_diff_index();
-				m_diff_struct.m_diff_elem_1=compare.get_diff_elem_1();
-				m_diff_struct.m_diff_elem_2=compare.get_diff_elem_2();
 
 				return false;
+			}
+
+			if(!zero_1) {
+
+				tensor_i<N,double> &t1=ctrl1.req_block(bidx1),
+					&t2=ctrl2.req_block(bidx2);
+
+				tod_compare<N> compare(t1,t2,m_thresh);
+				if ( ! compare.compare() ) {
+					m_diff_struct.m_canonical_block_index_1=bidx1;
+					m_diff_struct.m_canonical_block_index_2=bidx2;
+					m_diff_struct.m_inblock=compare.get_diff_index();
+					m_diff_struct.m_diff_elem_1=compare.get_diff_elem_1();
+					m_diff_struct.m_diff_elem_2=compare.get_diff_elem_2();
+
+					return false;
+				}
+
+				ctrl1.ret_block(bidx1);
+				ctrl2.ret_block(bidx2);
 			}
 		}
 	}
