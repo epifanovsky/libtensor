@@ -17,6 +17,8 @@ namespace libtensor {
  **/
 namespace labeled_btensor_expr {
 
+static const char *g_ns;
+
 /**	\brief Expression base class
 
 	\ingroup libtensor_btensor_expr

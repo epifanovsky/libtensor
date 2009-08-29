@@ -209,6 +209,7 @@ void eval_functor<N, T, Core, NTensor, NOper>::evaluate() throw(exception) {
 	tensor_tag ttag;
 	oper_tag otag;
 
+	m_eval_container.prepare();
 	tensor_arg_t operand0 = m_eval_container.get_arg(ttag, 0);
 	btod_add<N> coreop(operand0.get_btensor(), operand0.get_perm(),
 			operand0.get_coeff());
@@ -237,6 +238,7 @@ void eval_functor<N, T, Core, NTensor, 0>::evaluate() throw(exception) {
 
 	tensor_tag ttag;
 
+	m_eval_container.prepare();
 	tensor_arg_t operand0 = m_eval_container.get_arg(ttag, 0);
 	btod_add<N> op(operand0.get_btensor(), operand0.get_perm(),
 		operand0.get_coeff());
@@ -274,6 +276,7 @@ void eval_functor<N, T, Core, 1, 0>::evaluate() throw(exception) {
 
 	tensor_tag ttag;
 
+	m_eval_container.prepare();
 	tensor_arg_t operand = m_eval_container.get_arg(ttag, 0);
 
 	btod_copy<N> op(operand.get_btensor(), operand.get_perm(),
@@ -292,6 +295,7 @@ void eval_functor<N, T, Core, 0, 1>::evaluate() throw(exception) {
 
 	oper_tag otag;
 
+	m_eval_container.prepare();
 	oper_arg_t operand = m_eval_container.get_arg(otag, 0);
 	operand.get_operation().perform(m_result.get_btensor(),
 		operand.get_coeff());

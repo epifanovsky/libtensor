@@ -105,6 +105,8 @@ public:
 	//!	\name Evaluation
 	//@{
 
+	void prepare() throw(exception) { }
+
 	template<typename Tag>
 	arg<N, T, Tag> get_arg(const Tag &tag, size_t i) const throw(exception);
 
