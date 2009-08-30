@@ -38,7 +38,7 @@ public:
 	\ingroup libtensor_bispace_expr
  **/
 template<size_t N, typename T>
-class bispace_expr : public bispace_expr_i<N> {
+class bispace_exprr : public bispace_expr_i<N> {
 public:
 	static const size_t k_order = N;
 
@@ -48,16 +48,16 @@ private:
 
 public:
 
-	bispace_expr(const T &t) : m_t(t), m_dims(t.get_dims()) {
+	bispace_exprr(const T &t) : m_t(t), m_dims(t.get_dims()) {
 	}
 
-	bispace_expr(const bispace_expr<N, T> &e) :
+	bispace_exprr(const bispace_exprr<N, T> &e) :
 	m_t(e.m_t), m_dims(e.m_dims) {
 	}
 
 	virtual rc_ptr<bispace_expr_i<N> > clone() const {
 		return rc_ptr<bispace_expr_i<N> >(
-			new bispace_expr<N, T > (*this));
+			new bispace_exprr<N, T > (*this));
 	}
 
 	virtual const dimensions<N> &get_dims() const {
@@ -219,19 +219,19 @@ public:
 	\ingroup libtensor_bispace_expr
  **/
 template<size_t N, size_t M>
-inline bispace_expr< N + M, bispace_expr_binop<
-bispace_expr< N, bispace_expr_ident<N> >,
-bispace_expr<M, bispace_expr_ident<M> >,
+inline bispace_exprr< N + M, bispace_expr_binop<
+bispace_exprr< N, bispace_expr_ident<N> >,
+bispace_exprr<M, bispace_expr_ident<M> >,
 bispace_expr_binop_and<
-bispace_expr<N, bispace_expr_ident<N> >,
-bispace_expr<M, bispace_expr_ident<M> >
+bispace_exprr<N, bispace_expr_ident<N> >,
+bispace_exprr<M, bispace_expr_ident<M> >
 > > >
 operator&(const bispace<N> &lhs, const bispace<M> &rhs) {
-	typedef bispace_expr<N, bispace_expr_ident<N> > expr1_t;
-	typedef bispace_expr<M, bispace_expr_ident<M> > expr2_t;
+	typedef bispace_exprr<N, bispace_expr_ident<N> > expr1_t;
+	typedef bispace_exprr<M, bispace_expr_ident<M> > expr2_t;
 	typedef bispace_expr_binop_and<expr1_t, expr2_t> binop_and_t;
 	typedef bispace_expr_binop<expr1_t, expr2_t, binop_and_t> binop_t;
-	return bispace_expr < N + M, binop_t > (
+	return bispace_exprr < N + M, binop_t > (
 		binop_t(expr1_t(lhs), expr2_t(rhs)));
 }
 
@@ -240,57 +240,57 @@ operator&(const bispace<N> &lhs, const bispace<M> &rhs) {
 
 	\ingroup libtensor_bispace_expr
  **/
-template<size_t N, size_t M, typename Expr>
-inline bispace_expr< N + M, bispace_expr_binop<
-bispace_expr<M, Expr>,
-bispace_expr < N, bispace_expr_ident<N> >,
-bispace_expr_binop_and<
-bispace_expr<M, Expr>, bispace_expr < N, bispace_expr_ident<N> >
-> > >
-operator&(bispace_expr<M, Expr> lhs, const bispace<N> &rhs) {
-	typedef bispace_expr<M, Expr> expr1_t;
-	typedef bispace_expr< N, bispace_expr_ident<N> > expr2_t;
-	typedef bispace_expr_binop_and<expr1_t, expr2_t> binop_and_t;
-	typedef bispace_expr_binop<expr1_t, expr2_t, binop_and_t> binop_t;
-	return bispace_expr < N + M, binop_t > (binop_t(lhs, expr2_t(rhs)));
-}
+//template<size_t N, size_t M, typename Expr>
+//inline bispace_expr< N + M, bispace_expr_binop<
+//bispace_expr<M, Expr>,
+//bispace_expr < N, bispace_expr_ident<N> >,
+//bispace_expr_binop_and<
+//bispace_expr<M, Expr>, bispace_expr < N, bispace_expr_ident<N> >
+//> > >
+//operator&(bispace_expr<M, Expr> lhs, const bispace<N> &rhs) {
+//	typedef bispace_expr<M, Expr> expr1_t;
+//	typedef bispace_expr< N, bispace_expr_ident<N> > expr2_t;
+//	typedef bispace_expr_binop_and<expr1_t, expr2_t> binop_and_t;
+//	typedef bispace_expr_binop<expr1_t, expr2_t, binop_and_t> binop_t;
+//	return bispace_expr < N + M, binop_t > (binop_t(lhs, expr2_t(rhs)));
+//}
 
 /**	\brief Bitwise AND (&) operator for a space (lhs) and
 		an expression (rhs)
 
 	\ingroup libtensor_bispace_expr
  **/
-template<size_t N, size_t M, typename Expr>
-inline bispace_expr< N + M, bispace_expr_binop<
-bispace_expr < N, bispace_expr_ident<N> >,
-bispace_expr<M, Expr>,
-bispace_expr_binop_and<
-bispace_expr < N, bispace_expr_ident<N> >, bispace_expr<M, Expr>
-> > >
-operator&(const bispace<N> &lhs, bispace_expr<M, Expr> rhs) {
-	typedef bispace_expr< N, bispace_expr_ident<N> > expr1_t;
-	typedef bispace_expr<M, Expr> expr2_t;
-	typedef bispace_expr_binop_and<expr1_t, expr2_t> binop_and_t;
-	typedef bispace_expr_binop<expr1_t, expr2_t, binop_and_t> binop_t;
-	return bispace_expr < N + M, binop_t > (binop_t(expr1_t(lhs), rhs));
-}
+//template<size_t N, size_t M, typename Expr>
+//inline bispace_expr< N + M, bispace_expr_binop<
+//bispace_expr < N, bispace_expr_ident<N> >,
+//bispace_expr<M, Expr>,
+//bispace_expr_binop_and<
+//bispace_expr < N, bispace_expr_ident<N> >, bispace_expr<M, Expr>
+//> > >
+//operator&(const bispace<N> &lhs, bispace_expr<M, Expr> rhs) {
+//	typedef bispace_expr< N, bispace_expr_ident<N> > expr1_t;
+//	typedef bispace_expr<M, Expr> expr2_t;
+//	typedef bispace_expr_binop_and<expr1_t, expr2_t> binop_and_t;
+//	typedef bispace_expr_binop<expr1_t, expr2_t, binop_and_t> binop_t;
+//	return bispace_expr < N + M, binop_t > (binop_t(expr1_t(lhs), rhs));
+//}
 
 /**	\brief Bitwise AND (&) operator for two expressions
 
 	\ingroup libtensor_bispace_expr
  **/
-template<size_t N, typename ExprL, size_t M, typename ExprR>
-inline bispace_expr<N + M, bispace_expr_binop<
-bispace_expr<N, ExprL>, bispace_expr<M, ExprR>,
-bispace_expr_binop_and< bispace_expr<N, ExprL>, bispace_expr<M, ExprR>
-> > >
-operator&(bispace_expr<N, ExprL> lhs, bispace_expr<M, ExprR> rhs) {
-	typedef bispace_expr<N, ExprL> expr1_t;
-	typedef bispace_expr<M, ExprR> expr2_t;
-	typedef bispace_expr_binop_and<expr1_t, expr2_t> binop_and_t;
-	typedef bispace_expr_binop<expr1_t, expr2_t, binop_and_t> binop_t;
-	return bispace_expr < N + M, binop_t > (binop_t(lhs, rhs));
-}
+//template<size_t N, typename ExprL, size_t M, typename ExprR>
+//inline bispace_expr<N + M, bispace_expr_binop<
+//bispace_expr<N, ExprL>, bispace_expr<M, ExprR>,
+//bispace_expr_binop_and< bispace_expr<N, ExprL>, bispace_expr<M, ExprR>
+//> > >
+//operator&(bispace_expr<N, ExprL> lhs, bispace_expr<M, ExprR> rhs) {
+//	typedef bispace_expr<N, ExprL> expr1_t;
+//	typedef bispace_expr<M, ExprR> expr2_t;
+//	typedef bispace_expr_binop_and<expr1_t, expr2_t> binop_and_t;
+//	typedef bispace_expr_binop<expr1_t, expr2_t, binop_and_t> binop_t;
+//	return bispace_expr < N + M, binop_t > (binop_t(lhs, rhs));
+//}
 
 /**	\brief Multiplication (*) operator for two spaces
 
@@ -299,19 +299,19 @@ operator&(bispace_expr<N, ExprL> lhs, bispace_expr<M, ExprR> rhs) {
 	\ingroup libtensor_bispace_expr
  **/
 template<size_t N, size_t M>
-inline bispace_expr< N + M, bispace_expr_binop<
-bispace_expr< N, bispace_expr_ident<N> >,
-bispace_expr<M, bispace_expr_ident<M> >,
+inline bispace_exprr< N + M, bispace_expr_binop<
+bispace_exprr< N, bispace_expr_ident<N> >,
+bispace_exprr<M, bispace_expr_ident<M> >,
 bispace_expr_binop_mul<
-bispace_expr<N, bispace_expr_ident<N> >,
-bispace_expr<M, bispace_expr_ident<M> >
+bispace_exprr<N, bispace_expr_ident<N> >,
+bispace_exprr<M, bispace_expr_ident<M> >
 > > >
 operator*(const bispace<N> &lhs, const bispace<M> &rhs) {
-	typedef bispace_expr<N, bispace_expr_ident<N> > expr1_t;
-	typedef bispace_expr<M, bispace_expr_ident<M> > expr2_t;
+	typedef bispace_exprr<N, bispace_expr_ident<N> > expr1_t;
+	typedef bispace_exprr<M, bispace_expr_ident<M> > expr2_t;
 	typedef bispace_expr_binop_mul<expr1_t, expr2_t> binop_mul_t;
 	typedef bispace_expr_binop<expr1_t, expr2_t, binop_mul_t> binop_t;
-	return bispace_expr < N + M, binop_t > (
+	return bispace_exprr < N + M, binop_t > (
 		binop_t(expr1_t(lhs), expr2_t(rhs)));
 }
 
@@ -321,18 +321,18 @@ operator*(const bispace<N> &lhs, const bispace<M> &rhs) {
 	\ingroup libtensor_bispace_expr
  **/
 template<size_t N, size_t M, typename Expr>
-inline bispace_expr< N + M, bispace_expr_binop<
-bispace_expr<M, Expr>,
-bispace_expr < N, bispace_expr_ident<N> >,
+inline bispace_exprr< N + M, bispace_expr_binop<
+bispace_exprr<M, Expr>,
+bispace_exprr < N, bispace_expr_ident<N> >,
 bispace_expr_binop_mul<
-bispace_expr<M, Expr>, bispace_expr < N, bispace_expr_ident<N> >
+bispace_exprr<M, Expr>, bispace_exprr < N, bispace_expr_ident<N> >
 > > >
-operator*(bispace_expr<M, Expr> lhs, const bispace<N> &rhs) {
-	typedef bispace_expr<M, Expr> expr1_t;
-	typedef bispace_expr< N, bispace_expr_ident<N> > expr2_t;
+operator*(bispace_exprr<M, Expr> lhs, const bispace<N> &rhs) {
+	typedef bispace_exprr<M, Expr> expr1_t;
+	typedef bispace_exprr< N, bispace_expr_ident<N> > expr2_t;
 	typedef bispace_expr_binop_mul<expr1_t, expr2_t> binop_mul_t;
 	typedef bispace_expr_binop<expr1_t, expr2_t, binop_mul_t> binop_t;
-	return bispace_expr < N + M, binop_t > (binop_t(lhs, expr2_t(rhs)));
+	return bispace_exprr < N + M, binop_t > (binop_t(lhs, expr2_t(rhs)));
 }
 
 /**	\brief Multiplication (*) operator for a space (lhs) and
@@ -341,18 +341,18 @@ operator*(bispace_expr<M, Expr> lhs, const bispace<N> &rhs) {
 	\ingroup libtensor_bispace_expr
  **/
 template<size_t N, size_t M, typename Expr>
-inline bispace_expr< N + M, bispace_expr_binop<
-bispace_expr < N, bispace_expr_ident<N> >,
-bispace_expr<M, Expr>,
+inline bispace_exprr< N + M, bispace_expr_binop<
+bispace_exprr < N, bispace_expr_ident<N> >,
+bispace_exprr<M, Expr>,
 bispace_expr_binop_mul<
-bispace_expr < N, bispace_expr_ident<N> >, bispace_expr<M, Expr>
+bispace_exprr < N, bispace_expr_ident<N> >, bispace_exprr<M, Expr>
 > > >
-operator*(const bispace<N> &lhs, bispace_expr<M, Expr> rhs) {
-	typedef bispace_expr< N, bispace_expr_ident<N> > expr1_t;
-	typedef bispace_expr<M, Expr> expr2_t;
+operator*(const bispace<N> &lhs, bispace_exprr<M, Expr> rhs) {
+	typedef bispace_exprr< N, bispace_expr_ident<N> > expr1_t;
+	typedef bispace_exprr<M, Expr> expr2_t;
 	typedef bispace_expr_binop_mul<expr1_t, expr2_t> binop_mul_t;
 	typedef bispace_expr_binop<expr1_t, expr2_t, binop_mul_t> binop_t;
-	return bispace_expr < N + M, binop_t > (binop_t(expr1_t(lhs), rhs));
+	return bispace_exprr < N + M, binop_t > (binop_t(expr1_t(lhs), rhs));
 }
 
 /**	\brief Multiplication (*) operator for two expressions
@@ -360,19 +360,25 @@ operator*(const bispace<N> &lhs, bispace_expr<M, Expr> rhs) {
 	\ingroup libtensor_bispace_expr
  **/
 template<size_t N, typename ExprL, size_t M, typename ExprR>
-inline bispace_expr<N + M, bispace_expr_binop<
-bispace_expr<N, ExprL>, bispace_expr<M, ExprR>,
-bispace_expr_binop_mul< bispace_expr<N, ExprL>, bispace_expr<M, ExprR>
+inline bispace_exprr<N + M, bispace_expr_binop<
+bispace_exprr<N, ExprL>, bispace_exprr<M, ExprR>,
+bispace_expr_binop_mul< bispace_exprr<N, ExprL>, bispace_exprr<M, ExprR>
 > > >
-operator*(bispace_expr<N, ExprL> lhs, bispace_expr<M, ExprR> rhs) {
-	typedef bispace_expr<N, ExprL> expr1_t;
-	typedef bispace_expr<M, ExprR> expr2_t;
+operator*(bispace_exprr<N, ExprL> lhs, bispace_exprr<M, ExprR> rhs) {
+	typedef bispace_exprr<N, ExprL> expr1_t;
+	typedef bispace_exprr<M, ExprR> expr2_t;
 	typedef bispace_expr_binop_mul<expr1_t, expr2_t> binop_mul_t;
 	typedef bispace_expr_binop<expr1_t, expr2_t, binop_mul_t> binop_t;
-	return bispace_expr < N + M, binop_t > (binop_t(lhs, rhs));
+	return bispace_exprr < N + M, binop_t > (binop_t(lhs, rhs));
 }
 
 } // namespace libtensor
+
+#include "bispace_expr/expr.h"
+#include "bispace_expr/ident.h"
+#include "bispace_expr/sym.h"
+#include "bispace_expr/operator_and.h"
+#include "bispace_expr/operator_or.h"
 
 #endif // LIBTENSOR_BISPACE_EXPR_H
 

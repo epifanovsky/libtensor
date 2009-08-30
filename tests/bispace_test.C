@@ -15,17 +15,17 @@ void bispace_test::perform() throw(libtest::test_exception) {
 
 	bispace<1> k(i), l(j), c(a), d(b);
 
-	i&j;
-	i&j&k;
-	i&j&k&l;
-	(i&j)&(k&l);
+//	i&j;
+//	i&j&k;
+//	i&j&k&l;
+//	(i&j)&(k&l);
 
 	i*j;
 	i*j*k;
 	i*j*a;
-	(i&j)*k;
+//	(i&j)*k;
 
-	bispace<2> ij(i&j);
+	bispace<2> ij(i*j);
 	dimensions<2> ij_dims(ij.get_dims());
 	if(ij_dims[0]!=10) {
 		fail_test("bispace_test::perform()", __FILE__, __LINE__,
@@ -36,7 +36,7 @@ void bispace_test::perform() throw(libtest::test_exception) {
 			"Incorrect dimension 1 in ij");
 	}
 
-	bispace<4> ijab((i&j)*(a&b));
+	bispace<4> ijab((i*j)*(a*b));
 	dimensions<4> ijab_dims(ijab.get_dims());
 	if(ijab_dims[0]!=10) {
 		fail_test("bispace_test::perform()", __FILE__, __LINE__,
@@ -55,7 +55,7 @@ void bispace_test::perform() throw(libtest::test_exception) {
 			"Incorrect dimension 3 in ijab");
 	}
 
-	bispace<4> iajb(i*a*j*b, (i&j)*(a&b));
+	bispace<4> iajb(i*a*j*b, (i*j)*(a*b));
 	dimensions<4> iajb_dims(iajb.get_dims());
 	if(iajb_dims[0]!=10) {
 		fail_test("bispace_test::perform()", __FILE__, __LINE__,
@@ -178,7 +178,7 @@ void bispace_test::test_2() throw(libtest::test_exception) {
 	bispace<1> a(20), b(20);
 	a.split(5).split(11);
 	b.split(5).split(11);
-	bispace<2> ab(a&b);
+	bispace<2> ab(a*b);
 	const block_index_space<2> &bis = ab.get_bis();
 
 	if(!bis.get_dims().equals(dim_20_20)) {
@@ -280,7 +280,7 @@ void bispace_test::test_3() throw(libtest::test_exception) {
 	bispace<1> a(20), b(11);
 	a.split(5).split(11);
 	b.split(5);
-	bispace<2> ab(a&b), ba(b*a, a&b);
+	bispace<2> ab(a*b), ba(b*a, a*b);
 	const block_index_space<2> &bis_ab = ab.get_bis();
 	const block_index_space<2> &bis_ba = ba.get_bis();
 

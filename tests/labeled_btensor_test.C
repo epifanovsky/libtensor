@@ -27,7 +27,7 @@ void labeled_btensor_test::test_label() throw(libtest::test_exception) {
 	try {
 
 	bispace<1> sp_i(10), sp_j(10), sp_a(20), sp_b(20);
-	bispace<4> sp_ijab((sp_i&sp_j)*(sp_a&sp_b));
+	bispace<4> sp_ijab((sp_i*sp_j)*(sp_a*sp_b));
 	btensor<4> t(sp_ijab);
 
 	letter i, j, k, a, b, c;
@@ -108,8 +108,8 @@ void labeled_btensor_test::test_expr() throw(libtest::test_exception) {
 	try {
 
 	bispace<1> sp_i(2), sp_j(2), sp_a(3), sp_b(3);
-	bispace<2> sp_ij(sp_i&sp_j), sp_ab(sp_a&sp_b);
-	bispace<2> sp_ji(sp_j&sp_i), sp_ba(sp_b&sp_a);
+	bispace<2> sp_ij(sp_i*sp_j), sp_ab(sp_a*sp_b);
+	bispace<2> sp_ji(sp_j*sp_i), sp_ba(sp_b*sp_a);
 	bispace<4> sp_ijab(sp_ij*sp_ab), sp_jiab(sp_ji*sp_ab);
 	btensor<4> t1_ijab(sp_ijab), t2_ijab(sp_ijab);
 	btensor<4> t3_jiab(sp_jiab), t4_jiab(sp_jiab);
@@ -165,7 +165,7 @@ void labeled_btensor_test::test_expr_copy_1() throw(libtest::test_exception) {
 	try {
 
 	bispace<1> sp_i(4), sp_j(4);
-	bispace<2> sp_ij(sp_i & sp_j);
+	bispace<2> sp_ij(sp_i * sp_j);
 	btensor<2> bta(sp_ij), btb(sp_ij), btb_ref(sp_ij);
 
 	block_tensor_ctrl<2, double> btctrla(bta), btctrlb(btb),
@@ -223,7 +223,7 @@ void labeled_btensor_test::test_expr_copy_2() throw(libtest::test_exception) {
 	try {
 
 	bispace<1> sp_i(4), sp_j(4);
-	bispace<2> sp_ij(sp_i & sp_j);
+	bispace<2> sp_ij(sp_i * sp_j);
 	btensor<2> bta(sp_ij), btb(sp_ij), btb_ref(sp_ij);
 
 	block_tensor_ctrl<2, double> btctrla(bta), btctrlb(btb),
@@ -282,7 +282,7 @@ void labeled_btensor_test::test_expr_copy_3() throw(libtest::test_exception) {
 	try {
 
 	bispace<1> sp_i(4), sp_j(4);
-	bispace<2> sp_ij(sp_i & sp_j);
+	bispace<2> sp_ij(sp_i * sp_j);
 	btensor<2> bta(sp_ij), btb(sp_ij), btb_ref(sp_ij);
 
 	block_tensor_ctrl<2, double> btctrla(bta), btctrlb(btb),
@@ -342,7 +342,7 @@ void labeled_btensor_test::test_expr_copy_4() throw(libtest::test_exception) {
 	try {
 
 	bispace<1> sp_i(4), sp_j(4);
-	bispace<2> sp_ij(sp_i & sp_j);
+	bispace<2> sp_ij(sp_i * sp_j);
 	btensor<2> bta(sp_ij), btb(sp_ij), btb_ref(sp_ij);
 
 	block_tensor_ctrl<2, double> btctrla(bta), btctrlb(btb),
@@ -400,7 +400,7 @@ void labeled_btensor_test::test_expr_add_1() throw(libtest::test_exception) {
 	try {
 
 	bispace<1> sp_i(4), sp_j(4);
-	bispace<2> sp_ij(sp_i & sp_j);
+	bispace<2> sp_ij(sp_i * sp_j);
 	btensor<2> bta(sp_ij), btb(sp_ij), btc(sp_ij), btc_ref(sp_ij);
 
 	block_tensor_ctrl<2, double> btctrla(bta), btctrlb(btb),
@@ -464,7 +464,7 @@ void labeled_btensor_test::test_expr_add_2() throw(libtest::test_exception) {
 	try {
 
 	bispace<1> sp_i(4), sp_j(4);
-	bispace<2> sp_ij(sp_i & sp_j);
+	bispace<2> sp_ij(sp_i * sp_j);
 	btensor<2> bta(sp_ij), btb(sp_ij), btc(sp_ij), btc_ref(sp_ij);
 
 	block_tensor_ctrl<2, double> btctrla(bta), btctrlb(btb),
@@ -528,7 +528,7 @@ void labeled_btensor_test::test_expr_add_3() throw(libtest::test_exception) {
 	try {
 
 	bispace<1> sp_i(4), sp_j(4);
-	bispace<2> sp_ij(sp_i & sp_j);
+	bispace<2> sp_ij(sp_i * sp_j);
 	btensor<2> bta(sp_ij), btb(sp_ij), btc(sp_ij), btc_ref(sp_ij);
 
 	block_tensor_ctrl<2, double> btctrla(bta), btctrlb(btb),
@@ -592,7 +592,7 @@ void labeled_btensor_test::test_expr_add_4() throw(libtest::test_exception) {
 	try {
 
 	bispace<1> sp_i(4), sp_j(4);
-	bispace<2> sp_ij(sp_i & sp_j);
+	bispace<2> sp_ij(sp_i * sp_j);
 	btensor<2> bta(sp_ij), btb(sp_ij), btc(sp_ij), btc_ref(sp_ij);
 
 	block_tensor_ctrl<2, double> btctrla(bta), btctrlb(btb),

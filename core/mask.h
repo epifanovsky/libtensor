@@ -7,8 +7,14 @@
 
 namespace libtensor {
 
+template<size_t N> class mask;
+template<size_t N>
+std::ostream &operator<<(std::ostream &os, const mask<N> &m);
+
 template<size_t N>
 class mask : public sequence<N, bool> {
+	friend std::ostream &operator<< <N>(std::ostream &os, const mask<N> &m);
+
 public:
 	//!	\name Construction and destruction
 	//@{
@@ -68,6 +74,20 @@ mask<N> &mask<N>::operator|=(const mask<N> &other) {
 				other.sequence<N, bool>::at_nochk(i);
 	}
 	return *this;
+}
+
+
+/**	\brief Prints out the mask to an output stream
+
+	\ingroup libtensor
+**/
+template<size_t N>
+std::ostream &operator<<(std::ostream &os, const mask<N> &m) {
+	os << "[";
+	for(size_t j = 0; j < N; j++)
+		os << m.sequence<N, bool>::at_nochk(j) ? '1' : '0';
+	os << "]";
+	return os;
 }
 
 
