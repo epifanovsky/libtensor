@@ -76,9 +76,9 @@
 #include "iface/labeled_btensor.h"
 #include "iface/expr/expr.h"
 #include "iface/expr/eval.h"
+#include "iface/expr/anon_eval.h"
 #include "iface/operators.h"
 #include "iface/labeled_btensor_impl.h"
-#include "iface/contract.h"
 #include "iface/dot_product.h"
 
 #endif // LIBTENSOR_H

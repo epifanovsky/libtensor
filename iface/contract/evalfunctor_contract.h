@@ -23,8 +23,10 @@ public:
 	typedef expr<k_orderc, T, core_t> expression_t;
 
 public:
-	evalfunctor_contract(expression_t &expr,
-		labeled_btensor<k_orderc, T, true> &result) { }
+	evalfunctor_contract(
+		expression_t &expr, const letter_expr<k_orderc> &label) {
+
+	}
 
 	void evaluate() throw(exception);
 
@@ -48,8 +50,8 @@ public:
 private:
 
 public:
-	evalfunctor_contract(expression_t &expr,
-		labeled_btensor<k_orderc, T, true> &result) { }
+	evalfunctor_contract(
+		expression_t &expr, const letter_expr<k_orderc> &label) { }
 	void evaluate() throw(exception);
 
 };

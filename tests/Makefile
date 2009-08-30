@@ -2,6 +2,7 @@
 all: deps libtensor_tests
 
 OBJS  = libtensor_suite.o
+OBJS += anon_eval_test.o
 OBJS += bispace_test.o
 OBJS += block_index_space_test.o
 OBJS += block_map_test.o

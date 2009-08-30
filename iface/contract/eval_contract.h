@@ -72,8 +72,8 @@ public:
 	/**	\brief Initializes the container with given expression and
 			result recipient
 	 **/
-	eval_contract(expression_t &expr,
-		labeled_btensor<k_orderc, T, true> &result) throw(exception);
+	eval_contract(expression_t &expr, const letter_expr<k_orderc> &label)
+		throw(exception);
 
 	void prepare() throw(exception);
 
@@ -107,9 +107,9 @@ struct eval_contract<N, M, K, T, E1, E2>::narg<oper_tag, Dummy> {
 
 template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2>
 inline eval_contract<N, M, K, T, E1, E2>::eval_contract(
-	expression_t &expr, labeled_btensor<k_orderc, T, true> &result)
+	expression_t &expr, const letter_expr<k_orderc> &label)
 	throw(exception) :
-		m_func(expr, result) {
+		m_func(expr, label) {
 
 }
 

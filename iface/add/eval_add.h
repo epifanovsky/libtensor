@@ -47,7 +47,7 @@ private:
 	eval_container_r_t m_cont_r; //!< Right evaluating container
 
 public:
-	eval_add(expression_t &expr, labeled_btensor<N, T, true> &result)
+	eval_add(expression_t &expr, const letter_expr<N> &label)
 		throw(exception);
 
 	//!	\name Evaluation
@@ -68,11 +68,11 @@ const char *eval_add<N, T, ExprL, ExprR>::k_clazz =
 
 
 template<size_t N, typename T, typename ExprL, typename ExprR>
-eval_add<N, T, ExprL, ExprR>::eval_add(expression_t &expr,
-	labeled_btensor<N, T, true> &result) throw(exception) :
+eval_add<N, T, ExprL, ExprR>::eval_add(
+	expression_t &expr, const letter_expr<N> &label) throw(exception) :
 		m_expr(expr),
-		m_cont_l(expr.get_core().get_expr_l(), result),
-		m_cont_r(expr.get_core().get_expr_r(), result) {
+		m_cont_l(expr.get_core().get_expr_l(), label),
+		m_cont_r(expr.get_core().get_expr_r(), label) {
 
 }
 

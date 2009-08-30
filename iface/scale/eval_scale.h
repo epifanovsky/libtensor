@@ -48,7 +48,7 @@ public:
 
 	/**	\brief Constructs the evaluating container
 	 **/
-	eval_scale(expression_t &expr, labeled_btensor<N, T, true> &result)
+	eval_scale(expression_t &expr, const letter_expr<N> &label)
 		throw(exception);
 
 	//@}
@@ -70,10 +70,10 @@ const char *eval_scale<N, T, Expr>::k_clazz = "eval_scale<N, T, Expr>";
 
 
 template<size_t N, typename T, typename Expr>
-eval_scale<N, T, Expr>::eval_scale(expression_t &expr,
-	labeled_btensor<N, T, true> &result) throw(exception) :
+eval_scale<N, T, Expr>::eval_scale(
+	expression_t &expr, const letter_expr<N> &label) throw(exception) :
 		m_expr(expr),
-		m_unscaled_cont(expr.get_core().get_unscaled_expr(), result) {
+		m_unscaled_cont(expr.get_core().get_unscaled_expr(), label) {
 
 }
 

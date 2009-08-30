@@ -14,7 +14,6 @@ namespace labeled_btensor_expr {
 	\tparam N Tensor order.
 	\tparam T Tensor element type.
 	\tparam Core Expression core type.
-	\tparam Label Recipient label type.
 
 	Provides the facility to evaluate an expression. This class is
 	instantiated when both the expression and the recipient are known,
@@ -61,7 +60,7 @@ template<size_t N, typename T, typename Core>
 eval<N, T, Core>::eval(const expression_t &expr, result_t &result) :
 	m_expr(expr),
 	m_result(result),
-	m_eval_container(m_expr, result) {
+	m_eval_container(m_expr, result.get_label()) {
 
 }
 

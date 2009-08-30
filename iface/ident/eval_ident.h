@@ -37,7 +37,7 @@ private:
 	permutation<N> m_perm;
 
 public:
-	eval_ident(expression_t &expr, labeled_btensor<N, T, true> &result)
+	eval_ident(expression_t &expr, const letter_expr<N> &label)
 		throw(exception);
 
 	//!	\name Evaluation
@@ -71,10 +71,10 @@ struct eval_ident<N, T, Assignable>::narg<tensor_tag, Dummy> {
 
 
 template<size_t N, typename T, bool Assignable>
-eval_ident<N, T, Assignable>::eval_ident(expression_t &expr,
-	labeled_btensor<N, T, true> &result) throw(exception) :
+eval_ident<N, T, Assignable>::eval_ident(
+	expression_t &expr, const letter_expr<N> &label) throw(exception) :
 		m_expr(expr),
-		m_perm(result.get_label().permutation_of(
+		m_perm(label.permutation_of(
 			expr.get_core().get_tensor().get_label())) {
 
 }
