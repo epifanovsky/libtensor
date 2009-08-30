@@ -4,10 +4,9 @@
 #include "defs.h"
 #include "exception.h"
 #include "core/permutation.h"
-#include "btensor_i.h"
+#include "iface/btensor_i.h"
 
 namespace libtensor {
-
 namespace labeled_btensor_expr {
 
 struct tensor_tag { };
@@ -91,7 +90,6 @@ public:
 };
 
 } // namespace labeled_btensor_expr
-
 } // namespace libtensor
 
 #endif // LIBTENSOR_LABELED_BTENSOR_EXPR_ARG_H

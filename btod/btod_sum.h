@@ -14,7 +14,7 @@ namespace libtensor {
  **/
 template<size_t N>
 class btod_sum :
-	public direct_block_tensor_operation<N, double>,
+	public btod_additive<N>,
 	public timings< btod_sum<N> > {
 
 public:
@@ -39,6 +39,9 @@ public:
 	/**	\brief Default constructor
 	**/
 	btod_sum(direct_block_tensor_operation<N, double> &op);
+	btod_sum(btod_additive<N> &op, double c) : m_baseop(op) {
+		throw_exc("btod_sum", "btod_sum", "NIY");
+	}
 
 	/**	\brief Virtual destructor
 	**/
@@ -53,6 +56,14 @@ public:
 	virtual void perform(block_tensor_i<N, double> &bt) throw(exception);
 	virtual void perform(block_tensor_i<N, double> &bt, const index<N> &idx)
 		throw(exception);
+	//@}
+
+	//!	\name Implementation of libtensor::btod_additive<N>
+	//@{
+	virtual void perform(block_tensor_i<N, double> &bt, double c)
+		throw(exception) {
+		throw_exc("btod_sum", "perform", "NIY");
+	}
 	//@}
 
 	/**	\brief Adds an operation to the sequence

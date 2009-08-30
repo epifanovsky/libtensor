@@ -14,6 +14,7 @@ namespace libtensor {
 template<size_t N>
 class btod_additive : public direct_block_tensor_operation<N, double> {
 public:
+	virtual void perform(block_tensor_i<N, double> &bt) throw(exception) = 0;
 	virtual void perform(block_tensor_i<N, double> &bt, double c)
 		throw(exception) = 0;
 };

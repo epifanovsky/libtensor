@@ -4,8 +4,8 @@
 #include "defs.h"
 #include "exception.h"
 #include "labeled_btensor.h"
-#include "labeled_btensor_eval.h"
-#include "labeled_btensor_expr.h"
+#include "expr/expr.h"
+#include "expr/eval.h"
 #include "ident/core_ident.h"
 
 namespace libtensor {
