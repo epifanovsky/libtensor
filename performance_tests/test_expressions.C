@@ -23,8 +23,8 @@ void test_expression_permute_add::initialize( const bispace_data_i& bisd ) {
 	test_expression_permute_add::start_timer("initialize()");
 	bispace<1> i=bisd.one(), a=bisd.two();
 	bispace<1> j=bisd.one(), b=bisd.two();
-	bispace<4> biovov(i*a*j*b);
-	bispace<4> bioovv(i*j*a*b);
+	bispace<4> biovov(i|a|j|b);
+	bispace<4> bioovv(i|j|a|b);
 
 	btod_random<4> randr;
 	m_res_ovov.reset(new btensor_t(biovov));
@@ -54,7 +54,7 @@ void test_expression_simple_copy::initialize( const bispace_data_i& bisd ) {
 
 	bispace<1> i=bisd.one(), a=bisd.two();
 	bispace<1> j=bisd.one(), b=bisd.two();
-	bispace<4> biovov(i*a*j*b);
+	bispace<4> biovov(i|a|j|b);
 
 	btod_random<4> randr;
 	m_v_ovov.reset(new btensor_t(biovov));
@@ -81,8 +81,8 @@ void test_expression_permute_copy::initialize( const bispace_data_i& bisd ) {
 
 	bispace<1> i=bisd.one(), a=bisd.two();
 	bispace<1> j=bisd.one(), b=bisd.two();
-	bispace<4> biovov(i*a*j*b);
-	bispace<4> bioovv(i*j*a*b);
+	bispace<4> biovov(i|a|j|b);
+	bispace<4> bioovv(i|j|a|b);
 
 	btod_random<4> randr;
 	m_v_oovv.reset(new btensor_t(bioovv));
@@ -115,10 +115,10 @@ void test_expression_adc::initialize( const bispace_data_i& bisd ) {
 
 	bispace<1> i=bisd.one(), a=bisd.two(), j=bisd.one(), b=bisd.two();
 	bispace<1> k=bisd.one(), l=bisd.one(), c=bisd.two(), d=bisd.two();
-	bispace<4> biovov(i*a*j*b, (i*j)*(a*b));
-	bispace<4> bioovv(i*j*a*b, (i*j)*(a*b));
-	bispace<4> bioooo(i*j*k*l, (i*j)*(k*l));
-	bispace<4> bivvvv(a*b*c*d, (a*b)*(c*d));
+	bispace<4> biovov(i|a|j|b, (i&j)|(a&b));
+	bispace<4> bioovv(i|j|a|b, (i&j)|(a&b));
+	bispace<4> bioooo(i|j|k|l, (i&j)|(k&l));
+	bispace<4> bivvvv(a|b|c|d, (a&b)|(c&d));
 
 	btod_random<4> randr;
 	m_v_ovov.reset(new btensor_t(biovov));

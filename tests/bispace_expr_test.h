@@ -14,14 +14,24 @@ public:
 	virtual void perform() throw(libtest::test_exception);
 
 private:
-	void test_1() throw(libtest::test_exception);
-	void test_2() throw(libtest::test_exception);
-	void test_3() throw(libtest::test_exception);
-	void test_4() throw(libtest::test_exception);
-	void test_5() throw(libtest::test_exception);
-	void test_6() throw(libtest::test_exception);
-	void test_7() throw(libtest::test_exception);
-	void test_8() throw(libtest::test_exception);
+	void test_sym_1() throw(libtest::test_exception);
+	void test_sym_2() throw(libtest::test_exception);
+	void test_sym_3() throw(libtest::test_exception);
+	void test_sym_4() throw(libtest::test_exception);
+	void test_sym_5() throw(libtest::test_exception);
+	void test_sym_6() throw(libtest::test_exception);
+	void test_sym_7() throw(libtest::test_exception);
+	void test_sym_8() throw(libtest::test_exception);
+
+	void test_contains_1() throw(libtest::test_exception);
+	void test_contains_2() throw(libtest::test_exception);
+	void test_contains_3() throw(libtest::test_exception);
+	void test_contains_4() throw(libtest::test_exception);
+
+	void test_locate_1() throw(libtest::test_exception);
+	void test_locate_2() throw(libtest::test_exception);
+	void test_locate_3() throw(libtest::test_exception);
+	void test_locate_4() throw(libtest::test_exception);
 
 	void test_exc_1() throw(libtest::test_exception);
 

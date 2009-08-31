@@ -6,7 +6,7 @@ namespace libtensor {
 void btensor_test::perform() throw(libtest::test_exception) {
 	bispace<1> i_sp(10), a_sp(20);
 	i_sp.split(5); a_sp.split(5).split(10).split(15);
-	bispace<2> ia(i_sp*a_sp);
+	bispace<2> ia(i_sp|a_sp);
 	btensor<2> bt2(ia);
 
 	dimensions<2> bt2_dims(bt2.get_bis().get_dims());

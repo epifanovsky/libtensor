@@ -46,7 +46,7 @@ void anon_eval_test::test_copy_1() throw(libtest::test_exception) {
 	sj.split(3);
 	sa.split(6);
 	sb.split(6);
-	bispace<4> sijab(si*sj*sa*sb);
+	bispace<4> sijab(si|sj|sa|sb);
 
 	btensor<4> tp(sijab);
 	btod_random<4>().perform(tp);
@@ -80,7 +80,7 @@ void anon_eval_test::test_copy_2() throw(libtest::test_exception) {
 	sj.split(3);
 	sa.split(6);
 	sb.split(6);
-	bispace<4> sijab(si*sj*sa*sb), siajb(si*sa*sj*sb);
+	bispace<4> sijab(si|sj|sa|sb), siajb(si|sa|sj|sb);
 
 	btensor<4> tp(sijab);
 	btod_random<4>().perform(tp);
@@ -116,7 +116,7 @@ void anon_eval_test::test_copy_3() throw(libtest::test_exception) {
 	sj.split(3);
 	sa.split(6);
 	sb.split(6);
-	bispace<4> sijab(si*sj*sa*sb);
+	bispace<4> sijab(si|sj|sa|sb);
 
 	btensor<4> tp(sijab);
 	btod_random<4>().perform(tp);
@@ -150,7 +150,7 @@ void anon_eval_test::test_copy_4() throw(libtest::test_exception) {
 	sj.split(3);
 	sa.split(6);
 	sb.split(6);
-	bispace<4> sijab(si*sj*sa*sb), siajb(si*sa*sj*sb);
+	bispace<4> sijab(si|sj|sa|sb), siajb(si|sa|sj|sb);
 
 	btensor<4> tp(sijab);
 	btod_random<4>().perform(tp);
@@ -186,7 +186,7 @@ void anon_eval_test::test_copy_5() throw(libtest::test_exception) {
 	sj.split(3);
 	sa.split(6);
 	sb.split(6);
-	bispace<4> sijab(si*sj*sa*sb);
+	bispace<4> sijab(si|sj|sa|sb);
 
 	btensor<4> tp(sijab);
 	mask<4> msk1, msk2;
@@ -227,7 +227,7 @@ void anon_eval_test::test_copy_6() throw(libtest::test_exception) {
 	sj.split(3);
 	sa.split(6);
 	sb.split(6);
-	bispace<4> sijab(si*sj*sa*sb), siajb(si*sa*sj*sb);
+	bispace<4> sijab(si|sj|sa|sb), siajb(si|sa|sj|sb);
 
 	btensor<4> tp(sijab);
 	mask<4> msk1, msk2;

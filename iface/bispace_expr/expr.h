@@ -3,6 +3,7 @@
 
 #include "defs.h"
 #include "exception.h"
+#include "../bispace.h"
 #include "../expr_exception.h"
 
 namespace libtensor {
@@ -21,6 +22,9 @@ public:
 	//!	Expression core type
 	typedef C core_t;
 
+	//!	Number of subexpressions
+	static const size_t k_nsubexpr = core_t::k_nsubexpr;
+
 private:
 	core_t m_core;
 
@@ -34,6 +38,49 @@ public:
 
 	bool equals(const expr<N, C> &other) const {
 		return m_core.equals(other.m_core);
+	}
+
+	// Returns the number of times this expression contains a subexpression
+	template<size_t M, typename D>
+	size_t contains(const expr<M, D> &subexpr) const {
+		return m_core.contains(subexpr);
+	}
+
+	// Returns the location where the subexpression is found
+	template<size_t M, typename D>
+	size_t locate(const expr<M, D> &subexpr) const {
+		return m_core.locate(subexpr);
+	}
+
+	template<size_t M, typename D>
+	size_t locate_and_permute(const expr<M, D> &other, size_t subexpr,
+		size_t start1, size_t start2, permutation<M> &perm) {
+
+		if(subexpr == 0) {
+			size_t n = other.contains(*this);
+			if(n == 0) {
+				// not found
+			}
+			if(n > 1) {
+				// located more than once
+			}
+			size_t loc = other.locate(*this);
+			// permute here
+		} else {
+			m_core.locate_and_permute(
+				other, subexpr, start1, start2, perm);
+		}
+	}
+
+	template<typename D>
+	void build_permutation(const expr<N, D> &other, permutation<N> &perm) {
+		for(size_t i = 0; i < k_nsubexpr; i++) {
+			locate_and_permute(other, 0, 0, perm);
+		}
+	}
+
+	const bispace<1> &at(size_t i) const {
+		return m_core.at(i);
 	}
 
 	void mark_sym(size_t i, mask<N> &msk) const {

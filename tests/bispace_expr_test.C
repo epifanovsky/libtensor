@@ -7,22 +7,29 @@ namespace libtensor {
 
 void bispace_expr_test::perform() throw(libtest::test_exception) {
 
-	test_1();
-	test_2();
-	test_3();
-	test_4();
-	test_5();
-	test_6();
-	test_7();
-	test_8();
+	test_sym_1();
+	test_sym_2();
+	test_sym_3();
+	test_sym_4();
+	test_sym_5();
+	test_sym_6();
+	test_sym_7();
+	test_sym_8();
+
+	test_contains_1();
+	test_contains_2();
+	test_contains_3();
+	test_contains_4();
+
+	test_locate_1();
 
 	test_exc_1();
 }
 
 
-void bispace_expr_test::test_1() throw(libtest::test_exception) {
+void bispace_expr_test::test_sym_1() throw(libtest::test_exception) {
 
-	static const char *testname = "bispace_expr_test::test_1()";
+	static const char *testname = "bispace_expr_test::test_sym_1()";
 
 	try {
 
@@ -43,9 +50,9 @@ void bispace_expr_test::test_1() throw(libtest::test_exception) {
 }
 
 
-void bispace_expr_test::test_2() throw(libtest::test_exception) {
+void bispace_expr_test::test_sym_2() throw(libtest::test_exception) {
 
-	static const char *testname = "bispace_expr_test::test_2()";
+	static const char *testname = "bispace_expr_test::test_sym_2()";
 
 	try {
 
@@ -66,9 +73,9 @@ void bispace_expr_test::test_2() throw(libtest::test_exception) {
 }
 
 
-void bispace_expr_test::test_3() throw(libtest::test_exception) {
+void bispace_expr_test::test_sym_3() throw(libtest::test_exception) {
 
-	static const char *testname = "bispace_expr_test::test_3()";
+	static const char *testname = "bispace_expr_test::test_sym_3()";
 
 	try {
 
@@ -98,9 +105,9 @@ void bispace_expr_test::test_3() throw(libtest::test_exception) {
 }
 
 
-void bispace_expr_test::test_4() throw(libtest::test_exception) {
+void bispace_expr_test::test_sym_4() throw(libtest::test_exception) {
 
-	static const char *testname = "bispace_expr_test::test_4()";
+	static const char *testname = "bispace_expr_test::test_sym_4()";
 
 	try {
 
@@ -148,9 +155,9 @@ void bispace_expr_test::test_4() throw(libtest::test_exception) {
 }
 
 
-void bispace_expr_test::test_5() throw(libtest::test_exception) {
+void bispace_expr_test::test_sym_5() throw(libtest::test_exception) {
 
-	static const char *testname = "bispace_expr_test::test_5()";
+	static const char *testname = "bispace_expr_test::test_sym_5()";
 
 	try {
 
@@ -198,9 +205,9 @@ void bispace_expr_test::test_5() throw(libtest::test_exception) {
 }
 
 
-void bispace_expr_test::test_6() throw(libtest::test_exception) {
+void bispace_expr_test::test_sym_6() throw(libtest::test_exception) {
 
-	static const char *testname = "bispace_expr_test::test_6()";
+	static const char *testname = "bispace_expr_test::test_sym_6()";
 
 	try {
 
@@ -248,9 +255,9 @@ void bispace_expr_test::test_6() throw(libtest::test_exception) {
 }
 
 
-void bispace_expr_test::test_7() throw(libtest::test_exception) {
+void bispace_expr_test::test_sym_7() throw(libtest::test_exception) {
 
-	static const char *testname = "bispace_expr_test::test_7()";
+	static const char *testname = "bispace_expr_test::test_sym_7()";
 
 	try {
 
@@ -316,9 +323,9 @@ void bispace_expr_test::test_7() throw(libtest::test_exception) {
 }
 
 
-void bispace_expr_test::test_8() throw(libtest::test_exception) {
+void bispace_expr_test::test_sym_8() throw(libtest::test_exception) {
 
-	static const char *testname = "bispace_expr_test::test_8()";
+	static const char *testname = "bispace_expr_test::test_sym_8()";
 
 	try {
 
@@ -375,6 +382,303 @@ void bispace_expr_test::test_8() throw(libtest::test_exception) {
 		std::ostringstream ss;
 		ss << "Unexpected mask 6: " << msk6 << " vs. " << msk6_ref
 			<< " (ref).";
+		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void bispace_expr_test::test_contains_1() throw(libtest::test_exception) {
+
+	static const char *testname = "bispace_expr_test::test_contains_1()";
+
+	try {
+
+	bispace<1> a(10), b(10), c(10);
+
+	size_t conta = (a|b).contains(
+		bispace_expr::expr< 1, bispace_expr::ident<1> >(a));
+	size_t contb = (a|b).contains(
+		bispace_expr::expr< 1, bispace_expr::ident<1> >(b));
+	size_t contc = (a|b).contains(
+		bispace_expr::expr< 1, bispace_expr::ident<1> >(c));
+
+	if(conta != 1) {
+		fail_test(testname, __FILE__, __LINE__,
+			"contains(a).");
+	}
+	if(contb != 1) {
+		fail_test(testname, __FILE__, __LINE__,
+			"contains(b).");
+	}
+	if(contc != 0) {
+		fail_test(testname, __FILE__, __LINE__,
+			"contains(c).");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void bispace_expr_test::test_contains_2() throw(libtest::test_exception) {
+
+	static const char *testname = "bispace_expr_test::test_contains_2()";
+
+	try {
+
+	bispace<1> a(10), b(10), c(10);
+
+	size_t conta = (a&b).contains(
+		bispace_expr::expr< 1, bispace_expr::ident<1> >(a));
+	size_t contb = (a&b).contains(
+		bispace_expr::expr< 1, bispace_expr::ident<1> >(b));
+	size_t contc = (a&b).contains(
+		bispace_expr::expr< 1, bispace_expr::ident<1> >(c));
+
+	if(conta != 1) {
+		fail_test(testname, __FILE__, __LINE__,
+			"contains(a).");
+	}
+	if(contb != 1) {
+		fail_test(testname, __FILE__, __LINE__,
+			"contains(b).");
+	}
+	if(contc != 0) {
+		fail_test(testname, __FILE__, __LINE__,
+			"contains(c).");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void bispace_expr_test::test_contains_3() throw(libtest::test_exception) {
+
+	static const char *testname = "bispace_expr_test::test_contains_3()";
+
+	try {
+
+	bispace<1> a(10), b(10), c(10), d(10), e(10);
+
+	size_t conta = ((a&b)|(c&d)).contains(
+		bispace_expr::expr< 1, bispace_expr::ident<1> >(a));
+	size_t contb = ((a&b)|(c&d)).contains(
+		bispace_expr::expr< 1, bispace_expr::ident<1> >(b));
+	size_t contc = ((a&b)|(c&d)).contains(
+		bispace_expr::expr< 1, bispace_expr::ident<1> >(c));
+	size_t contd = ((a&b)|(c&d)).contains(
+		bispace_expr::expr< 1, bispace_expr::ident<1> >(d));
+	size_t conte = ((a&b)|(c&d)).contains(
+		bispace_expr::expr< 1, bispace_expr::ident<1> >(e));
+
+	if(conta != 1) {
+		fail_test(testname, __FILE__, __LINE__,
+			"contains(a).");
+	}
+	if(contb != 1) {
+		fail_test(testname, __FILE__, __LINE__,
+			"contains(b).");
+	}
+	if(contc != 1) {
+		fail_test(testname, __FILE__, __LINE__,
+			"contains(c).");
+	}
+	if(contd != 1) {
+		fail_test(testname, __FILE__, __LINE__,
+			"contains(d).");
+	}
+	if(conte != 0) {
+		fail_test(testname, __FILE__, __LINE__,
+			"contains(e).");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void bispace_expr_test::test_contains_4() throw(libtest::test_exception) {
+
+	static const char *testname = "bispace_expr_test::test_contains_4()";
+
+	try {
+
+	bispace<1> a(10), b(10);
+	bispace<2> ab(a&b), cd(a&b);
+
+	size_t conta = (ab|cd).contains(
+		bispace_expr::expr< 1, bispace_expr::ident<1> >(a));
+	size_t contb = (ab|cd).contains(
+		bispace_expr::expr< 1, bispace_expr::ident<1> >(b));
+	size_t contab = (ab|cd).contains(
+		bispace_expr::expr< 2, bispace_expr::ident<2> >(ab));
+	size_t contcd = (ab|cd).contains(
+		bispace_expr::expr< 2, bispace_expr::ident<2> >(cd));
+
+	if(conta != 0) {
+		fail_test(testname, __FILE__, __LINE__,
+			"contains(a).");
+	}
+	if(contb != 0) {
+		fail_test(testname, __FILE__, __LINE__,
+			"contains(b).");
+	}
+	if(contab != 1) {
+		fail_test(testname, __FILE__, __LINE__,
+			"contains(ab).");
+	}
+	if(contcd != 1) {
+		fail_test(testname, __FILE__, __LINE__,
+			"contains(cd).");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void bispace_expr_test::test_locate_1() throw(libtest::test_exception) {
+
+	static const char *testname = "bispace_expr_test::test_locate_1()";
+
+	try {
+
+	bispace<1> a(10), b(10);
+
+	size_t loca = (a|b).locate(
+		bispace_expr::expr< 1, bispace_expr::ident<1> >(a));
+	size_t locb = (a|b).locate(
+		bispace_expr::expr< 1, bispace_expr::ident<1> >(b));
+
+	if(loca != 0) {
+		std::ostringstream ss;
+		ss << "locate(a) = " << loca << " (expected 0).";
+		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+	}
+	if(locb != 1) {
+		std::ostringstream ss;
+		ss << "locate(b) = " << loca << " (expected 1).";
+		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void bispace_expr_test::test_locate_2() throw(libtest::test_exception) {
+
+	static const char *testname = "bispace_expr_test::test_locate_2()";
+
+	try {
+
+	bispace<1> a(10), b(10);
+
+	size_t loca = (a&b).locate(
+		bispace_expr::expr< 1, bispace_expr::ident<1> >(a));
+	size_t locb = (a&b).locate(
+		bispace_expr::expr< 1, bispace_expr::ident<1> >(b));
+
+	if(loca != 0) {
+		std::ostringstream ss;
+		ss << "locate(a) = " << loca << " (expected 0).";
+		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+	}
+	if(locb != 1) {
+		std::ostringstream ss;
+		ss << "locate(b) = " << loca << " (expected 1).";
+		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void bispace_expr_test::test_locate_3() throw(libtest::test_exception) {
+
+	static const char *testname = "bispace_expr_test::test_locate_3()";
+
+	try {
+
+	bispace<1> a(10), b(10), c(10), d(10), e(10);
+
+	size_t loca = (a&b|c&d|e).locate(
+		bispace_expr::expr< 1, bispace_expr::ident<1> >(a));
+	size_t locb = (a&b|c&d|e).locate(
+		bispace_expr::expr< 1, bispace_expr::ident<1> >(b));
+	size_t locc = (a&b|c&d|e).locate(
+		bispace_expr::expr< 1, bispace_expr::ident<1> >(c));
+	size_t locd = (a&b|c&d|e).locate(
+		bispace_expr::expr< 1, bispace_expr::ident<1> >(d));
+	size_t loce = (a&b|c&d|e).locate(
+		bispace_expr::expr< 1, bispace_expr::ident<1> >(e));
+
+	if(loca != 0) {
+		std::ostringstream ss;
+		ss << "locate(a) = " << loca << " (expected 0).";
+		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+	}
+	if(locb != 1) {
+		std::ostringstream ss;
+		ss << "locate(b) = " << loca << " (expected 1).";
+		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+	}
+	if(locc != 2) {
+		std::ostringstream ss;
+		ss << "locate(c) = " << locc << " (expected 2).";
+		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+	}
+	if(locd != 3) {
+		std::ostringstream ss;
+		ss << "locate(d) = " << locd << " (expected 3).";
+		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+	}
+	if(loce != 4) {
+		std::ostringstream ss;
+		ss << "locate(e) = " << loce << " (expected 4).";
+		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void bispace_expr_test::test_locate_4() throw(libtest::test_exception) {
+
+	static const char *testname = "bispace_expr_test::test_locate_4()";
+
+	try {
+
+	bispace<1> a(10), b(10);
+	bispace<2> ab(a&b), cd(a&b);
+
+	size_t locab = (ab|cd).locate(
+		bispace_expr::expr< 2, bispace_expr::ident<2> >(ab));
+	size_t loccd = (ab|cd).locate(
+		bispace_expr::expr< 2, bispace_expr::ident<2> >(cd));
+
+	if(locab != 0) {
+		std::ostringstream ss;
+		ss << "locate(ab) = " << locab << " (expected 0).";
+		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+	}
+	if(loccd != 2) {
+		std::ostringstream ss;
+		ss << "locate(cd) = " << loccd << " (expected 2).";
 		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
 	}
 

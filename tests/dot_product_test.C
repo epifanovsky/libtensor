@@ -43,7 +43,7 @@ void dot_product_test::test_2_ij_ij(size_t ni, size_t nj)
 		ni << ", " << nj << ")";
 
 	bispace<1> sp_i(ni), sp_j(nj);
-	bispace<2> sp_ij(sp_i*sp_j);
+	bispace<2> sp_ij(sp_i|sp_j);
 	btensor<2> bt1(sp_ij), bt2(sp_ij);
 	letter i, j;
 
@@ -100,7 +100,7 @@ void dot_product_test::test_2_ij_ji(size_t ni, size_t nj)
 		ni << ", " << nj << ")";
 
 	bispace<1> sp_i(ni), sp_j(nj);
-	bispace<2> sp_ij(sp_i*sp_j), sp_ji(sp_j*sp_i);
+	bispace<2> sp_ij(sp_i|sp_j), sp_ji(sp_j|sp_i);
 	btensor<2> bt1(sp_ij), bt2(sp_ji);
 	letter i, j;
 
