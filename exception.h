@@ -2,6 +2,7 @@
 #define LIBTENSOR_EXCEPTION_H
 
 #include <exception>
+#include "backtrace.h"
 
 namespace libtensor {
 
@@ -35,7 +36,8 @@ private:
 	unsigned int m_line; //!< Line number
 	char m_type[128]; //!< Exception type
 	char m_message[256]; //!< Exception message
-	char m_what[1024]; //! Composed message available via what()
+	char m_what[1024]; //!< Composed message available via what()
+	backtrace m_trace; //!< Stack backtrace
 
 public:
 	//!	\name Construction and destruction
@@ -69,6 +71,10 @@ public:
 	virtual const char *what() const throw();
 
 	//@}
+
+	const backtrace &get_backtrace() const {
+		return m_trace;
+	}
 
 };
 

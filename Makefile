@@ -13,6 +13,7 @@ INCLUDE += -I. -I../libvmm
 SVNREV := $(shell svnversion -n .)
 
 OBJS  =
+OBJS += backtrace.o
 OBJS += blas.o
 OBJS += defs.o
 OBJS += exception.o
