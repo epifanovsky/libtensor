@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_BISPACE_H
 #define	LIBTENSOR_BISPACE_H
 
+#include <list>
 #include "defs.h"
 #include "exception.h"
 #include "bispace_i.h"
@@ -36,6 +37,7 @@ private:
 
 	sequence<N, bispace<1>*> m_subspaces; //!< Subspaces
 	block_index_space<N> m_bis; //!< Block %index space
+	std::list< mask<N> > m_masks; //!< Symmetry masks
 
 public:
 	//!	\name Construction and destruction
@@ -107,6 +109,7 @@ public:
 
 	const bispace<1> &at(size_t i) const;
 	const bispace<1> &operator[](size_t i) const;
+	const mask<N> &get_sym_mask(size_t i) const;
 };
 
 /**	\brief Specialized version for one-dimensional block %index spaces
@@ -120,6 +123,7 @@ private:
 	split_points m_splits; //!< Split points
 	//std::list<size_t> m_splits; //!< Split points
 	size_t m_dim;
+	mask<1> m_msk;
 
 public:
 	//!	\name Construction and destruction
@@ -167,6 +171,8 @@ public:
 
 	const bispace<1> &at(size_t i) const;
 	const bispace<1> &operator[](size_t i) const;
+
+	const mask<1> &get_sym_mask(size_t i) const;
 
 private:
 	/**	\brief Private constructor for cloning
@@ -233,6 +239,17 @@ bispace<N>::bispace(const bispace_expr::expr<N, C> &esym) :
 	for(size_t i = 0; i < N; i++) {
 		m_subspaces[i] = new bispace<1>(esym.at(i));
 	}
+
+	mask<N> totmsk;
+	size_t i = 0;
+	while(true) {
+		while(i < N && totmsk[i]) i++;
+		if(i == N) break;
+		mask<N> msk;
+		esym.mark_sym(i, msk);
+		m_masks.push_back(msk);
+		totmsk |= msk;
+	}
 }
 
 
@@ -244,13 +261,28 @@ bispace<N>::bispace(const bispace_expr::expr<N, C1> &eord,
 	for(size_t i = 0; i < N; i++) {
 		m_subspaces[i] = new bispace<1>(esym.at(i));
 	}
-	// reorder here
+
+	mask<N> totmsk;
+	size_t i = 0;
+	while(true) {
+		while(i < N && totmsk[i]) i++;
+		if(i == N) break;
+		mask<N> msk;
+		esym.mark_sym(i, msk);
+		m_masks.push_back(msk);
+		totmsk |= msk;
+	}
+
+	permutation<N> perm;
+	esym.build_permutation(eord, perm);
+	m_subspaces.permute(perm);
+	m_bis.permute(perm);
 }
 
 
 template<size_t N>
 bispace<N>::bispace(const bispace<N> &other) :
-	m_subspaces(NULL), m_bis(other.m_bis) {
+	m_subspaces(NULL), m_bis(other.m_bis), m_masks(other.m_masks) {
 
 //	make_inv_idx();
 	for(size_t i = 0; i < N; i++) {
@@ -304,6 +336,19 @@ inline const bispace<1> &bispace<N>::operator[](size_t i) const {
 	return at(i);
 }
 
+template<size_t N>
+const mask<N> &bispace<N>::get_sym_mask(size_t i) const {
+
+	typename std::list< mask<N> >::const_iterator imsk = m_masks.begin();
+	for(; imsk != m_masks.end(); imsk++) {
+		if(imsk->at(i)) return *imsk;
+	}
+	throw expr_exception(g_ns, "bispace<N>", "get_sym_mask(size_t)",
+		__FILE__, __LINE__,
+		"Symmetry mask cannot be found.");
+}
+
+
 template<size_t N> template<typename C>
 block_index_space<N> bispace<N>::mk_bis(const bispace_expr::expr<N, C> &expr) {
 
@@ -320,6 +365,13 @@ block_index_space<N> bispace<N>::mk_bis(const bispace_expr::expr<N, C> &expr) {
 		if(i == N) break;
 		mask<N> msk;
 		expr.mark_sym(i, msk);
+#ifdef LIBTENSOR_DEBUG
+		if(!msk[i]) {
+			throw expr_exception(g_ns, "bispace<N>", "mk_bis()",
+				__FILE__, __LINE__,
+				"Incorrect symmetry mask.");
+		}
+#endif // LIBTENSOR_DEBUG
 		expr.at(i).transfer_splits(bis, msk);
 		totmsk |= msk;
 	}
@@ -329,10 +381,11 @@ block_index_space<N> bispace<N>::mk_bis(const bispace_expr::expr<N, C> &expr) {
 inline bispace<1>::bispace(size_t dim)
 : m_dim(dim), m_bis(make_dims(dim)) {
 
+	m_msk[0] = true;
 }
 
 inline bispace<1>::bispace(const bispace<1> &other)
-: m_dim(other.m_dim), m_bis(other.m_bis), m_splits(other.m_splits) {
+: m_dim(other.m_dim), m_bis(other.m_bis), m_splits(other.m_splits), m_msk(other.m_msk) {
 
 }
 
@@ -389,6 +442,15 @@ inline const bispace<1> &bispace<1>::at(size_t i) const {
 			"Dimension index is out of bounds.");
 	}
 	return *this;
+}
+
+inline const mask<1> &bispace<1>::get_sym_mask(size_t i) const {
+	if(i != 0) {
+		throw out_of_bounds(g_ns, "bispace<1>", "at(size_t)",
+			__FILE__, __LINE__,
+			"Dimension index is out of bounds.");
+	}
+	return m_msk;
 }
 
 

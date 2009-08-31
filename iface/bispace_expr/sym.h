@@ -24,44 +24,6 @@ public:
 	//!	Right expression type
 	typedef expr< N, sym<N, 1, C> > expr2_t;
 
-	//!	Number of subexpressions
-	static const size_t k_nsubexpr =
-		expr1_t::k_nsubexpr + expr2_t::k_nsubexpr;
-
-private:
-	template<size_t M, typename D, int Dummy = 0>
-	struct subexpr_functor {
-
-		static size_t contains(
-			const sym<N, K, C> &expr,
-			const expr<M, D> &subexpr) {
-
-			size_t n = 0;
-			for(size_t i = 0; i < K; i++) {
-				n += expr.get_subexpr(i).contains(subexpr);
-			}
-			return n;
-		}
-
-		static size_t locate(
-			const sym<N, K, C> &expr,
-			const expr<M, D> &subexpr) {
-
-			size_t pos = 0;
-			for(size_t i = 0; i < K; i++) {
-				if(expr.get_subexpr(i).contains(subexpr)) {
-					return pos + expr.get_subexpr(i).
-						locate(subexpr);
-				}
-				pos += N;
-			}
-			throw expr_exception("libtensor::bispace_expr",
-				"sym<N, K, C>::subexpr_functor<M, D, 0>",
-				"locate()", __FILE__, __LINE__,
-				"Subexpression cannot be located.");
-		}
-	};
-
 private:
 	expr1_t m_expr1;
 	expr2_t m_expr2;
@@ -102,12 +64,24 @@ public:
 
 	template<size_t M, typename D>
 	size_t contains(const expr<M, D> &subexpr) const {
-		return subexpr_functor<M, D>::contains(*this, subexpr);
+		return m_expr1.contains(subexpr) + m_expr2.contains(subexpr);
 	}
 
 	template<size_t M, typename D>
 	size_t locate(const expr<M, D> &subexpr) const {
-		return subexpr_functor<M, D>::locate(*this, subexpr);
+		if(m_expr1.contains(subexpr)) {
+			return m_expr1.locate(subexpr);
+		} else {
+			return N * (K - 1) + m_expr2.locate(subexpr);
+		}
+	}
+
+	template<size_t M, typename D>
+	void record_pos(const expr<M, D> &supexpr, size_t pos,
+		size_t (&perm)[M]) const {
+
+		m_expr1.record_pos(supexpr, pos, perm);
+		m_expr2.record_pos(supexpr, pos + N * (K - 1), perm);
 	}
 
 	const bispace<1> &at(size_t i) const {
@@ -132,25 +106,6 @@ class sym<N, 1, C> {
 public:
 	//!	Symmetric expression type
 	typedef expr<N, C> expr_t;
-
-private:
-	template<size_t M, typename D, int Dummy = 0>
-	struct subexpr_functor {
-
-		static size_t contains(
-			const sym<N, 1, C> &expr,
-			const expr<M, D> &subexpr) {
-
-			return expr.get_expr().contains(subexpr);
-		}
-
-		static size_t locate(
-			const sym<N, 1, C> &expr,
-			const expr<M, D> &subexpr) {
-
-			return expr.get_expr().locate(subexpr);
-		}
-	};
 
 private:
 	expr_t m_expr;
@@ -179,12 +134,19 @@ public:
 
 	template<size_t M, typename D>
 	size_t contains(const expr<M, D> &subexpr) const {
-		return subexpr_functor<M, D>::contains(*this, subexpr);
+		return m_expr.contains(subexpr);
 	}
 
 	template<size_t M, typename D>
 	size_t locate(const expr<M, D> &subexpr) const {
-		return subexpr_functor<M, D>::locate(*this, subexpr);
+		return m_expr.locate(subexpr);
+	}
+
+	template<size_t M, typename D>
+	void record_pos(const expr<M, D> &supexpr, size_t pos_here,
+		size_t (&perm)[M]) const {
+
+		m_expr.record_pos(supexpr, pos_here, perm);
 	}
 
 	const bispace<1> &at(size_t i) const {

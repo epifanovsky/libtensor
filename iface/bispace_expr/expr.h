@@ -19,68 +19,77 @@ namespace bispace_expr {
 template<size_t N, typename C>
 class expr {
 public:
-	//!	Expression core type
-	typedef C core_t;
-
-	//!	Number of subexpressions
-	static const size_t k_nsubexpr = core_t::k_nsubexpr;
+	typedef C core_t; //!< Expression core type
 
 private:
-	core_t m_core;
+	core_t m_core; //!< Expression core
 
 public:
+	/**	\brief Creates the expression using a core object
+	 **/
 	expr(const core_t &core) : m_core(core) { }
+
+	/**	\brief Copy constructor
+	 **/
 	expr(const expr<N, C> &e) : m_core(e.m_core) { }
 
+	/**	\brief Returns the core of the expression
+	 **/
 	const core_t &get_core() const {
 		return m_core;
 	}
 
+	/**	\brief Compares two expressions
+	 **/
 	bool equals(const expr<N, C> &other) const {
 		return m_core.equals(other.m_core);
 	}
 
-	// Returns the number of times this expression contains a subexpression
+	/**	\brief Returns a single-dimension subspace
+	 **/
+	const bispace<1> &at(size_t i) const {
+		return m_core.at(i);
+	}
+
+	/**	\brief Returns the number of times this expression contains
+			a subexpression
+		\tparam M Order of the subexpression.
+		\tparam D Expression core type of the subexpression.
+	 **/
 	template<size_t M, typename D>
 	size_t contains(const expr<M, D> &subexpr) const {
 		return m_core.contains(subexpr);
 	}
 
-	// Returns the location where the subexpression is found
+	/**	\brief Returns the first location where the subexpression is
+			found
+		\tparam M Order of the subexpression.
+		\tparam D Expression core type of the subexpression.
+		\throw expr_exception If the subexpression cannot be found.
+	 **/
 	template<size_t M, typename D>
 	size_t locate(const expr<M, D> &subexpr) const {
 		return m_core.locate(subexpr);
 	}
 
-	template<size_t M, typename D>
-	size_t locate_and_permute(const expr<M, D> &other, size_t subexpr,
-		size_t start1, size_t start2, permutation<M> &perm) {
-
-		if(subexpr == 0) {
-			size_t n = other.contains(*this);
-			if(n == 0) {
-				// not found
-			}
-			if(n > 1) {
-				// located more than once
-			}
-			size_t loc = other.locate(*this);
-			// permute here
-		} else {
-			m_core.locate_and_permute(
-				other, subexpr, start1, start2, perm);
-		}
-	}
-
+	/**	\brief Builds a permutation of all single-dimension subspaces
+			in another expression with respect to this one
+	 */
 	template<typename D>
-	void build_permutation(const expr<N, D> &other, permutation<N> &perm) {
-		for(size_t i = 0; i < k_nsubexpr; i++) {
-			locate_and_permute(other, 0, 0, perm);
-		}
+	void build_permutation(
+		const expr<N, D> &other, permutation<N> &perm) const {
+		size_t seq1[N], seq2[N];
+		for(size_t i = 0; i < N; i++) seq1[i] = i;
+		record_pos(other, 0, seq2);
+		permutation_builder<N> pb(seq1, seq2);
+		perm.permute(pb.get_perm());
 	}
 
-	const bispace<1> &at(size_t i) const {
-		return m_core.at(i);
+	template<size_t M, typename D>
+	void record_pos(const expr<M, D> &supexpr, size_t pos_here,
+		size_t (&perm)[M]) const {
+
+		m_core.record_pos(supexpr, pos_here, perm);
 	}
 
 	void mark_sym(size_t i, mask<N> &msk) const {

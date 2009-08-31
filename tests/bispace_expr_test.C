@@ -15,6 +15,7 @@ void bispace_expr_test::perform() throw(libtest::test_exception) {
 	test_sym_6();
 	test_sym_7();
 	test_sym_8();
+	test_sym_9();
 
 	test_contains_1();
 	test_contains_2();
@@ -22,6 +23,16 @@ void bispace_expr_test::perform() throw(libtest::test_exception) {
 	test_contains_4();
 
 	test_locate_1();
+	test_locate_2();
+	test_locate_3();
+	test_locate_4();
+
+	test_perm_1();
+	test_perm_2();
+	test_perm_3();
+	test_perm_4();
+	test_perm_5();
+	test_perm_6();
 
 	test_exc_1();
 }
@@ -391,6 +402,57 @@ void bispace_expr_test::test_sym_8() throw(libtest::test_exception) {
 }
 
 
+void bispace_expr_test::test_sym_9() throw(libtest::test_exception) {
+
+	static const char *testname = "bispace_expr_test::test_sym_9()";
+
+	try {
+
+	bispace<1> a(10), b(10);
+	bispace<2> ab(a&b), cd(a&b);
+	mask<4> msk1, msk1_ref;
+	mask<4> msk2, msk2_ref;
+	mask<4> msk3, msk3_ref;
+	mask<4> msk4, msk4_ref;
+	msk1_ref[0] = true; msk1_ref[1] = true;
+	msk2_ref[0] = true; msk2_ref[1] = true;
+	msk3_ref[2] = true; msk3_ref[3] = true;
+	msk4_ref[2] = true; msk4_ref[3] = true;
+	(ab|cd).mark_sym(0, msk1);
+	(ab|cd).mark_sym(1, msk2);
+	(ab|cd).mark_sym(2, msk3);
+	(ab|cd).mark_sym(3, msk4);
+	if(!msk1.equals(msk1_ref)) {
+		std::ostringstream ss;
+		ss << "Unexpected mask 1: " << msk1 << " vs. " << msk1_ref
+			<< " (ref).";
+		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+	}
+	if(!msk2.equals(msk2_ref)) {
+		std::ostringstream ss;
+		ss << "Unexpected mask 2: " << msk2 << " vs. " << msk2_ref
+			<< " (ref).";
+		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+	}
+	if(!msk3.equals(msk3_ref)) {
+		std::ostringstream ss;
+		ss << "Unexpected mask 3: " << msk3 << " vs. " << msk3_ref
+			<< " (ref).";
+		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+	}
+	if(!msk4.equals(msk4_ref)) {
+		std::ostringstream ss;
+		ss << "Unexpected mask 4: " << msk4 << " vs. " << msk4_ref
+			<< " (ref).";
+		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
 void bispace_expr_test::test_contains_1() throw(libtest::test_exception) {
 
 	static const char *testname = "bispace_expr_test::test_contains_1()";
@@ -679,6 +741,145 @@ void bispace_expr_test::test_locate_4() throw(libtest::test_exception) {
 	if(loccd != 2) {
 		std::ostringstream ss;
 		ss << "locate(cd) = " << loccd << " (expected 2).";
+		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void bispace_expr_test::test_perm_1() throw(libtest::test_exception) {
+
+	static const char *testname = "bispace_expr_test::test_perm_1()";
+
+	try {
+
+	bispace<1> a(10), b(10);
+	permutation<2> perm, perm_ref;
+	(a|b).build_permutation(a|b, perm);
+	if(!perm.equals(perm_ref)) {
+		std::ostringstream ss;
+		ss << "Unexpected permutation for (a|b)<-(a|b): "
+			<< perm << " vs. " << perm_ref << " (ref).";
+		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void bispace_expr_test::test_perm_2() throw(libtest::test_exception) {
+
+	static const char *testname = "bispace_expr_test::test_perm_2()";
+
+	try {
+
+	bispace<1> a(10), b(10);
+	permutation<2> perm, perm_ref;
+	perm_ref.permute(0, 1);
+	(a|b).build_permutation(b|a, perm);
+	if(!perm.equals(perm_ref)) {
+		std::ostringstream ss;
+		ss << "Unexpected permutation for (a|b)<-(b|a): "
+			<< perm << " vs. " << perm_ref << " (ref).";
+		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void bispace_expr_test::test_perm_3() throw(libtest::test_exception) {
+
+	static const char *testname = "bispace_expr_test::test_perm_3()";
+
+	try {
+
+	bispace<1> a(10), b(10), c(10), d(10);
+	permutation<4> perm, perm_ref;
+	perm_ref.permute(2, 3).permute(1, 2).permute(0, 1);
+	(a|b|c|d).build_permutation(b|c|d|a, perm);
+	if(!perm.equals(perm_ref)) {
+		std::ostringstream ss;
+		ss << "Unexpected permutation for (a|b|c|d)<-(b|c|d|a): "
+			<< perm << " vs. " << perm_ref << " (ref).";
+		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void bispace_expr_test::test_perm_4() throw(libtest::test_exception) {
+
+	static const char *testname = "bispace_expr_test::test_perm_4()";
+
+	try {
+
+	bispace<1> a(10), b(10), c(10), d(10);
+	bispace<2> ab(a&b), cd(a&b);
+	permutation<4> perm, perm_ref;
+	(ab|cd).build_permutation(ab|cd, perm);
+	if(!perm.equals(perm_ref)) {
+		std::ostringstream ss;
+		ss << "Unexpected permutation for (ab|cd)<-(ab|cd): "
+			<< perm << " vs. " << perm_ref << " (ref).";
+		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void bispace_expr_test::test_perm_5() throw(libtest::test_exception) {
+
+	static const char *testname = "bispace_expr_test::test_perm_5()";
+
+	try {
+
+	bispace<1> a(10), b(10), c(10), d(10);
+	bispace<2> ab(a&b), cd(a&b);
+	permutation<4> perm, perm_ref;
+	perm_ref.permute(0, 2).permute(1, 3);
+	(ab|cd).build_permutation(cd|ab, perm);
+	if(!perm.equals(perm_ref)) {
+		std::ostringstream ss;
+		ss << "Unexpected permutation for (ab|cd)<-(cd|ab): "
+			<< perm << " vs. " << perm_ref << " (ref).";
+		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void bispace_expr_test::test_perm_6() throw(libtest::test_exception) {
+
+	static const char *testname = "bispace_expr_test::test_perm_6()";
+
+	try {
+
+	bispace<1> a(10), b(10), c(10), d(10), e(20);
+	bispace<2> ab(a&b), cd(a&b);
+	permutation<5> perm, perm_ref;
+	perm_ref.permute(0, 1).permute(1, 2).permute(0, 3).permute(1, 4);
+	(ab|e|cd).build_permutation(e|cd&ab, perm);
+	if(!perm.equals(perm_ref)) {
+		std::ostringstream ss;
+		ss << "Unexpected permutation for (ab|e|cd)<-(e|cd&ab): "
+			<< perm << " vs. " << perm_ref << " (ref).";
 		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
 	}
 

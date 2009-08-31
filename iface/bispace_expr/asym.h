@@ -16,34 +16,6 @@ public:
 	//!	Right expression type
 	typedef expr<N2, C2> expr2_t;
 
-	//!	Number of subexpressions
-	static const size_t k_nsubexpr =
-		expr1_t::k_nsubexpr + expr2_t::k_nsubexpr;
-
-private:
-	template<size_t M, typename D, int Dummy = 0>
-	struct subexpr_functor {
-
-		static size_t contains(
-			const asym<N1, N2, C1, C2> &expr,
-			const expr<M, D> &subexpr) {
-
-			return expr.get_first().contains(subexpr) +
-				expr.get_second().contains(subexpr);
-		}
-
-		static size_t locate(
-			const asym<N1, N2, C1, C2> &expr,
-			const expr<M, D> &subexpr) {
-
-			if(expr.get_first().contains(subexpr)) {
-				return expr.get_first().locate(subexpr);
-			} else {
-				return N1 + expr.get_second().locate(subexpr);
-			}
-		}
-	};
-
 private:
 	expr1_t m_expr1;
 	expr2_t m_expr2;
@@ -54,14 +26,6 @@ public:
 	asym(const asym<N1, N2, C1, C2> &s) :
 		m_expr1(s.m_expr1), m_expr2(s.m_expr2) { }
 
-	const expr1_t &get_first() const {
-		return m_expr1;
-	}
-
-	const expr2_t &get_second() const {
-		return m_expr2;
-	}
-
 	bool equals(const asym<N1, N2, C1, C2> &other) const {
 		return m_expr1.equals(other.m_expr1) &&
 			m_expr2.equals(other.m_expr2);
@@ -69,12 +33,25 @@ public:
 
 	template<size_t M, typename D>
 	size_t contains(const expr<M, D> &subexpr) const {
-		return subexpr_functor<M, D>::contains(*this, subexpr);
+		return m_expr1.contains(subexpr) +
+			m_expr2.contains(subexpr);
 	}
 
 	template<size_t M, typename D>
 	size_t locate(const expr<M, D> &subexpr) const {
-		return subexpr_functor<M, D>::locate(*this, subexpr);
+		if(m_expr1.contains(subexpr)) {
+			return m_expr1.locate(subexpr);
+		} else {
+			return N1 + m_expr2.locate(subexpr);
+		}
+	}
+
+	template<size_t M, typename D>
+	void record_pos(const expr<M, D> &supexpr, size_t pos_here,
+		size_t (&perm)[M]) const {
+
+		m_expr1.record_pos(supexpr, pos_here, perm);
+		m_expr2.record_pos(supexpr, pos_here + N1, perm);
 	}
 
 	const bispace<1> &at(size_t i) const {

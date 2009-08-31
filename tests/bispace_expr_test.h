@@ -22,6 +22,7 @@ private:
 	void test_sym_6() throw(libtest::test_exception);
 	void test_sym_7() throw(libtest::test_exception);
 	void test_sym_8() throw(libtest::test_exception);
+	void test_sym_9() throw(libtest::test_exception);
 
 	void test_contains_1() throw(libtest::test_exception);
 	void test_contains_2() throw(libtest::test_exception);
@@ -32,6 +33,13 @@ private:
 	void test_locate_2() throw(libtest::test_exception);
 	void test_locate_3() throw(libtest::test_exception);
 	void test_locate_4() throw(libtest::test_exception);
+
+	void test_perm_1() throw(libtest::test_exception);
+	void test_perm_2() throw(libtest::test_exception);
+	void test_perm_3() throw(libtest::test_exception);
+	void test_perm_4() throw(libtest::test_exception);
+	void test_perm_5() throw(libtest::test_exception);
+	void test_perm_6() throw(libtest::test_exception);
 
 	void test_exc_1() throw(libtest::test_exception);
 
