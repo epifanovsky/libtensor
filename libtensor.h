@@ -64,9 +64,7 @@
 #include "symmetry/so_projup.h"
 
 
-#include "iface/bispace_i.h"
 #include "iface/bispace.h"
-#include "iface/bispace_expr.h"
 #include "iface/btensor_i.h"
 #include "iface/btensor.h"
 #include "iface/direct_btensor.h"

@@ -8,7 +8,7 @@
 #include "core/block_tensor.h"
 #include "core/block_tensor_ctrl.h"
 #include "core/immutable.h"
-#include "bispace_i.h"
+#include "bispace.h"
 #include "btensor_i.h"
 #include "labeled_btensor.h"
 
@@ -36,7 +36,7 @@ public:
 			about blocks
 		\param bi Information about blocks
 	 **/
-	btensor_base(const bispace_i<N> &bis) :
+	btensor_base(const bispace<N> &bis) :
 		 m_bt(bis.get_bis()) { }
 
 	/**	\brief Constructs a block %tensor using a block %index space
@@ -98,7 +98,7 @@ private:
 	typedef typename Traits::allocator_t allocator_t;
 
 public:
-	btensor(const bispace_i<N> &bi) : btensor_base<N, T, Traits>(bi) { }
+	btensor(const bispace<N> &bi) : btensor_base<N, T, Traits>(bi) { }
 	btensor(const block_index_space<N> &bis) :
 		btensor_base<N, T, Traits>(bis) { }
 	btensor(const btensor_i<N, element_t> &bt) :
@@ -120,7 +120,7 @@ private:
 	typedef typename Traits::allocator_t allocator_t;
 
 public:
-	btensor(const bispace_i<1> &bi) : btensor_base<1, T, Traits>(bi) { }
+	btensor(const bispace<1> &bi) : btensor_base<1, T, Traits>(bi) { }
 	btensor(const block_index_space<1> &bis) :
 		btensor_base<1, T, Traits>(bis) { }
 	btensor(const btensor_i<1, element_t> &bt) :

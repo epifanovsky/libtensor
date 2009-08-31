@@ -7,6 +7,11 @@
 #include "../expr_exception.h"
 
 namespace libtensor {
+
+
+template<size_t N> class bispace;
+
+
 namespace bispace_expr {
 
 

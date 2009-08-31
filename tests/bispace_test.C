@@ -8,365 +8,1007 @@ void bispace_test::perform() throw(libtest::test_exception) {
 	test_1();
 	test_2();
 	test_3();
-
-	bispace<1> i(10), a(20);
-	i.split(5);
-	a.split(5).split(10).split(15);
-	bispace<1> j(i), b(a);
-
-	bispace<1> k(i), l(j), c(a), d(b);
-
-//	i&j;
-//	i&j&k;
-//	i&j&k&l;
-//	(i&j)&(k&l);
-
-	i*j;
-	i*j*k;
-	i*j*a;
-//	(i&j)*k;
-
-	bispace<2> ij(i|j);
-	dimensions<2> ij_dims(ij.get_bis().get_dims());
-	if(ij_dims[0]!=10) {
-		fail_test("bispace_test::perform()", __FILE__, __LINE__,
-			"Incorrect dimension 0 in ij");
-	}
-	if(ij_dims[1]!=10) {
-		fail_test("bispace_test::perform()", __FILE__, __LINE__,
-			"Incorrect dimension 1 in ij");
-	}
-
-	bispace<4> ijab((i&j)|(a&b));
-	dimensions<4> ijab_dims(ijab.get_bis().get_dims());
-	if(ijab_dims[0]!=10) {
-		fail_test("bispace_test::perform()", __FILE__, __LINE__,
-			"Incorrect dimension 0 in ijab");
-	}
-	if(ijab_dims[1]!=10) {
-		fail_test("bispace_test::perform()", __FILE__, __LINE__,
-			"Incorrect dimension 1 in ijab");
-	}
-	if(ijab_dims[2]!=20) {
-		fail_test("bispace_test::perform()", __FILE__, __LINE__,
-			"Incorrect dimension 2 in ijab");
-	}
-	if(ijab_dims[3]!=20) {
-		fail_test("bispace_test::perform()", __FILE__, __LINE__,
-			"Incorrect dimension 3 in ijab");
-	}
-
-	bispace<4> iajb(i|a|j|b, (i&j)|(a&b));
-	dimensions<4> iajb_dims(iajb.get_bis().get_dims());
-	if(iajb_dims[0]!=10) {
-		fail_test("bispace_test::perform()", __FILE__, __LINE__,
-			"Incorrect dimension 0 in iajb");
-	}
-	if(iajb_dims[1]!=20) {
-		fail_test("bispace_test::perform()", __FILE__, __LINE__,
-			"Incorrect dimension 1 in iajb");
-	}
-	if(iajb_dims[2]!=10) {
-		fail_test("bispace_test::perform()", __FILE__, __LINE__,
-			"Incorrect dimension 2 in iajb");
-	}
-	if(iajb_dims[3]!=20) {
-		fail_test("bispace_test::perform()", __FILE__, __LINE__,
-			"Incorrect dimension 3 in iajb");
-	}
-	dimensions<1> iajb_dims_i(iajb[0].get_dims());
-	dimensions<1> iajb_dims_a(iajb[1].get_dims());
-	dimensions<1> iajb_dims_j(iajb[2].get_dims());
-	dimensions<1> iajb_dims_b(iajb[3].get_dims());
-	if(iajb_dims_i[0]!=10) {
-		fail_test("bispace_test::perform()", __FILE__, __LINE__,
-			"Incorrect single dimension i in iajb");
-	}
-	if(iajb_dims_a[0]!=20) {
-		fail_test("bispace_test::perform()", __FILE__, __LINE__,
-			"Incorrect single dimension a in iajb");
-	}
-	if(iajb_dims_j[0]!=10) {
-		fail_test("bispace_test::perform()", __FILE__, __LINE__,
-			"Incorrect single dimension j in iajb");
-	}
-	if(iajb_dims_b[0]!=20) {
-		fail_test("bispace_test::perform()", __FILE__, __LINE__,
-			"Incorrect single dimension b in iajb");
-	}
+	test_4();
+	test_5();
+	test_6();
+	test_7();
+	test_8();
 }
 
 void bispace_test::test_1() throw(libtest::test_exception) {
+
+	//
+	//	Simple 1-d spaces
+	//
 
 	const char *testname = "bispace_test::test_1()";
 
 	try {
 
-	index<1> i0, i1, i2;
-	i2[0] = 2;
-	dimensions<1> dim3(index_range<1>(i1, i2));
-	i2[0] = 4;
-	dimensions<1> dim5(index_range<1>(i1, i2));
-	i2[0] = 5;
-	dimensions<1> dim6(index_range<1>(i1, i2));
-	i2[0] = 8;
-	dimensions<1> dim9(index_range<1>(i1, i2));
-	i2[0] = 19;
-	dimensions<1> dim20(index_range<1>(i1, i2));
+	bispace<1> a(10), b(10);
+	b.split(4);
 
-	bispace<1> a(20);
-	a.split(5).split(11);
-	const block_index_space<1> &bis = a.get_bis();
+	//	Make references
 
-	if(!bis.get_dims().equals(dim20)) {
+	index<1> i1, i2;
+	i2[0] = 9;
+	dimensions<1> dims(index_range<1>(i1, i2));
+
+	block_index_space<1> bisa_ref(dims), bisb_ref(dims);
+	mask<1> mskb; mskb[0] = true;
+	bisb_ref.split(mskb, 4);
+
+	mask<1> sma0_ref, smb0_ref;
+	sma0_ref[0] = true;
+	smb0_ref[0] = true;
+
+	//	Run tests
+
+	if(!a.get_bis().equals(bisa_ref)) {
 		fail_test(testname, __FILE__, __LINE__,
-			"Total dimensions don't match reference");
+			"Bis test failed for a.");
 	}
-	if(!bis.get_block_index_dims().equals(dim3)) {
+	if(!a.get_sym_mask(0).equals(sma0_ref)) {
 		fail_test(testname, __FILE__, __LINE__,
-			"Block index dimensions don't match reference");
+			"Symmetry mask 0 test failed for a.");
 	}
-	i1[0] = 1; i2[0] = 2;
-	if(!bis.get_block_dims(i0).equals(dim5)) {
-		fail_test(testname, __FILE__, __LINE__,
-			"Block [0] dimensions don't match reference");
+	if(!b.get_bis().equals(bisb_ref)) {
+		fail_test(testname, __FILE__, __LINE__, ""
+			"Bis test failed for b.");
 	}
-	if(!bis.get_block_dims(i1).equals(dim6)) {
+	if(!b.get_sym_mask(0).equals(smb0_ref)) {
 		fail_test(testname, __FILE__, __LINE__,
-			"Block [1] dimensions don't match reference");
+			"Symmetry mask 0 test failed for b.");
 	}
-	if(!bis.get_block_dims(i2).equals(dim9)) {
+
+	bispace<1> ca(a), cb(b);
+
+	if(!ca.get_bis().equals(bisa_ref)) {
 		fail_test(testname, __FILE__, __LINE__,
-			"Block [2] dimensions don't match reference");
+			"Bis test failed for ca.");
+	}
+	if(!ca.get_sym_mask(0).equals(sma0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 0 test failed for ca.");
+	}
+	if(!cb.get_bis().equals(bisb_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Bis test failed for cb.");
+	}
+	if(!cb.get_sym_mask(0).equals(smb0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 0 test failed for cb.");
+	}
+
+	if(!a.equals(ca)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Equality test failed for ca.");
+	}
+	if(!b.equals(cb)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Equality test failed for cb.");
 	}
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
 	}
-
 }
 
 void bispace_test::test_2() throw(libtest::test_exception) {
+
+	//
+	//	Simple 2-d spaces
+	//
 
 	const char *testname = "bispace_test::test_2()";
 
 	try {
 
-	index<2> i0, i1, i2;
-	i2[0] = 2; i2[1] = 2;
-	dimensions<2> dim_3_3(index_range<2>(i1, i2));
-	i2[0] = 4; i2[1] = 4;
-	dimensions<2> dim_5_5(index_range<2>(i1, i2));
-	i2[0] = 4; i2[1] = 5;
-	dimensions<2> dim_5_6(index_range<2>(i1, i2));
-	i2[0] = 4; i2[1] = 8;
-	dimensions<2> dim_5_9(index_range<2>(i1, i2));
-	i2[0] = 5; i2[1] = 4;
-	dimensions<2> dim_6_5(index_range<2>(i1, i2));
-	i2[0] = 5; i2[1] = 5;
-	dimensions<2> dim_6_6(index_range<2>(i1, i2));
-	i2[0] = 5; i2[1] = 8;
-	dimensions<2> dim_6_9(index_range<2>(i1, i2));
-	i2[0] = 8; i2[1] = 4;
-	dimensions<2> dim_9_5(index_range<2>(i1, i2));
-	i2[0] = 8; i2[1] = 5;
-	dimensions<2> dim_9_6(index_range<2>(i1, i2));
-	i2[0] = 8; i2[1] = 8;
-	dimensions<2> dim_9_9(index_range<2>(i1, i2));
-	i2[0] = 19; i2[1] = 19;
-	dimensions<2> dim_20_20(index_range<2>(i1, i2));
+	bispace<1> a(10), b(10);
+	b.split(4);
+	bispace<2> aa(a|a), bb(b|b);
 
-	bispace<1> a(20), b(20);
-	a.split(5).split(11);
-	b.split(5).split(11);
-	bispace<2> ab(a&b);
-	const block_index_space<2> &bis = ab.get_bis();
+	//	Make references
 
-	if(!bis.get_dims().equals(dim_20_20)) {
+	index<2> i1, i2;
+	i2[0] = 9; i2[1] = 9;
+	dimensions<2> dims(index_range<2>(i1, i2));
+
+	block_index_space<2> bisa_ref(dims), bisb_ref(dims);
+	mask<2> mskb1, mskb2;
+	mskb1[0] = true; mskb2[1] = true;
+	bisb_ref.split(mskb1, 4);
+	bisb_ref.split(mskb2, 4);
+
+	mask<2> sma0_ref, sma1_ref, smb0_ref, smb1_ref;
+	sma0_ref[0] = true; sma1_ref[1] = true;
+	smb0_ref[0] = true; smb1_ref[1] = true;
+
+	//	Run tests
+
+	if(!aa.get_bis().equals(bisa_ref)) {
 		fail_test(testname, __FILE__, __LINE__,
-			"Total dimensions don't match reference");
+			"Bis test failed for aa.");
 	}
-	if(!bis.get_block_index_dims().equals(dim_3_3)) {
+	if(!aa.get_sym_mask(0).equals(sma0_ref)) {
 		fail_test(testname, __FILE__, __LINE__,
-			"Block index dimensions don't match reference");
+			"Symmetry mask 0 test failed for aa.");
+	}
+	if(!aa.get_sym_mask(1).equals(sma1_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 1 test failed for aa.");
+	}
+	if(!bb.get_bis().equals(bisb_ref)) {
+		fail_test(testname, __FILE__, __LINE__, ""
+			"Bis test failed for bb.");
+	}
+	if(!bb.get_sym_mask(0).equals(smb0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 0 test failed for bb.");
+	}
+	if(!bb.get_sym_mask(1).equals(smb1_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 1 test failed for bb.");
 	}
 
-	index<2> i00, i01, i02, i10, i11, i12, i20, i21, i22;
-	i01[1] = 1;
-	i02[1] = 2;
-	i10[0] = 1;
-	i11[0] = 1; i11[1] = 1;
-	i12[0] = 1; i12[1] = 2;
-	i20[0] = 2;
-	i21[0] = 2; i21[1] = 1;
-	i22[0] = 2; i22[1] = 2;
+	bispace<2> caa(aa), cbb(bb);
 
-	if(!bis.get_block_dims(i00).equals(dim_5_5)) {
+	if(!caa.get_bis().equals(bisa_ref)) {
 		fail_test(testname, __FILE__, __LINE__,
-			"Block [0,0] dimensions don't match reference");
+			"Bis test failed for caa.");
 	}
-	if(!bis.get_block_dims(i01).equals(dim_5_6)) {
+	if(!caa.get_sym_mask(0).equals(sma0_ref)) {
 		fail_test(testname, __FILE__, __LINE__,
-			"Block [0,1] dimensions don't match reference");
+			"Symmetry mask 0 test failed for caa.");
 	}
-	if(!bis.get_block_dims(i02).equals(dim_5_9)) {
+	if(!caa.get_sym_mask(1).equals(sma1_ref)) {
 		fail_test(testname, __FILE__, __LINE__,
-			"Block [0,2] dimensions don't match reference");
+			"Symmetry mask 1 test failed for caa.");
 	}
-	if(!bis.get_block_dims(i10).equals(dim_6_5)) {
+	if(!cbb.get_bis().equals(bisb_ref)) {
 		fail_test(testname, __FILE__, __LINE__,
-			"Block [1,0] dimensions don't match reference");
+			"Bis test failed for cbb.");
 	}
-	if(!bis.get_block_dims(i11).equals(dim_6_6)) {
+	if(!cbb.get_sym_mask(0).equals(smb0_ref)) {
 		fail_test(testname, __FILE__, __LINE__,
-			"Block [1,1] dimensions don't match reference");
+			"Symmetry mask 0 test failed for cbb.");
 	}
-	if(!bis.get_block_dims(i12).equals(dim_6_9)) {
+	if(!cbb.get_sym_mask(1).equals(smb1_ref)) {
 		fail_test(testname, __FILE__, __LINE__,
-			"Block [1,2] dimensions don't match reference");
+			"Symmetry mask 1 test failed for cbb.");
 	}
-	if(!bis.get_block_dims(i20).equals(dim_9_5)) {
+
+	if(!aa.equals(caa)) {
 		fail_test(testname, __FILE__, __LINE__,
-			"Block [2,0] dimensions don't match reference");
+			"Equality test failed for caa.");
 	}
-	if(!bis.get_block_dims(i21).equals(dim_9_6)) {
+	if(!bb.equals(cbb)) {
 		fail_test(testname, __FILE__, __LINE__,
-			"Block [2,1] dimensions don't match reference");
-	}
-	if(!bis.get_block_dims(i22).equals(dim_9_9)) {
-		fail_test(testname, __FILE__, __LINE__,
-			"Block [2,2] dimensions don't match reference");
+			"Equality test failed for cbb.");
 	}
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
 	}
-
 }
 
+
 void bispace_test::test_3() throw(libtest::test_exception) {
+
+	//
+	//	2-d spaces with symmetry between 1-d
+	//
 
 	const char *testname = "bispace_test::test_3()";
 
 	try {
 
-	index<2> i0, i1, i2;
-	i2[0] = 1; i2[1] = 2;
-	dimensions<2> dim_2_3(index_range<2>(i1, i2));
-	i2[0] = 2; i2[1] = 1;
-	dimensions<2> dim_3_2(index_range<2>(i1, i2));
-	i2[0] = 4; i2[1] = 4;
-	dimensions<2> dim_5_5(index_range<2>(i1, i2));
-	i2[0] = 4; i2[1] = 5;
-	dimensions<2> dim_5_6(index_range<2>(i1, i2));
-	i2[0] = 4; i2[1] = 8;
-	dimensions<2> dim_5_9(index_range<2>(i1, i2));
-	i2[0] = 5; i2[1] = 4;
-	dimensions<2> dim_6_5(index_range<2>(i1, i2));
-	i2[0] = 5; i2[1] = 5;
-	dimensions<2> dim_6_6(index_range<2>(i1, i2));
-	i2[0] = 5; i2[1] = 8;
-	dimensions<2> dim_6_9(index_range<2>(i1, i2));
-	i2[0] = 8; i2[1] = 4;
-	dimensions<2> dim_9_5(index_range<2>(i1, i2));
-	i2[0] = 8; i2[1] = 5;
-	dimensions<2> dim_9_6(index_range<2>(i1, i2));
-	i2[0] = 8; i2[1] = 8;
-	dimensions<2> dim_9_9(index_range<2>(i1, i2));
-	i2[0] = 10; i2[1] = 19;
-	dimensions<2> dim_11_20(index_range<2>(i1, i2));
-	i2[0] = 19; i2[1] = 10;
-	dimensions<2> dim_20_11(index_range<2>(i1, i2));
+	bispace<1> a(10), b(10);
+	b.split(4);
+	bispace<2> aa(a&a), bb(b&b);
 
-	bispace<1> a(20), b(11);
-	a.split(5).split(11);
-	b.split(5);
-	bispace<2> ab(a|b), ba(b|a, a|b);
-	const block_index_space<2> &bis_ab = ab.get_bis();
-	const block_index_space<2> &bis_ba = ba.get_bis();
+	//	Make references
 
-	if(!bis_ab.get_dims().equals(dim_20_11)) {
+	index<2> i1, i2;
+	i2[0] = 9; i2[1] = 9;
+	dimensions<2> dims(index_range<2>(i1, i2));
+
+	block_index_space<2> bisa_ref(dims), bisb_ref(dims);
+	mask<2> mskb;
+	mskb[0] = true; mskb[1] = true;
+	bisb_ref.split(mskb, 4);
+
+	mask<2> sma0_ref, smb0_ref;
+	sma0_ref[0] = true; sma0_ref[1] = true;
+	smb0_ref[0] = true; smb0_ref[1] = true;
+
+	//	Run tests
+
+	if(!aa.get_bis().equals(bisa_ref)) {
 		fail_test(testname, __FILE__, __LINE__,
-			"Total dimensions in ab don't match reference");
+			"Bis test failed for aa.");
 	}
-	if(!bis_ba.get_dims().equals(dim_11_20)) {
+	if(!aa.get_sym_mask(0).equals(sma0_ref)) {
 		fail_test(testname, __FILE__, __LINE__,
-			"Total dimensions in ba don't match reference");
+			"Symmetry mask 0 test failed for aa.");
 	}
-	if(!bis_ab.get_block_index_dims().equals(dim_3_2)) {
+	if(!aa.get_sym_mask(1).equals(sma0_ref)) {
 		fail_test(testname, __FILE__, __LINE__,
-			"Block index dimensions in ab don't match reference");
+			"Symmetry mask 1 test failed for aa.");
 	}
-	if(!bis_ba.get_block_index_dims().equals(dim_2_3)) {
+	if(!bb.get_bis().equals(bisb_ref)) {
+		fail_test(testname, __FILE__, __LINE__, ""
+			"Bis test failed for bb.");
+	}
+	if(!bb.get_sym_mask(0).equals(smb0_ref)) {
 		fail_test(testname, __FILE__, __LINE__,
-			"Block index dimensions in ab don't match reference");
+			"Symmetry mask 0 test failed for bb.");
+	}
+	if(!bb.get_sym_mask(1).equals(smb0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 1 test failed for bb.");
 	}
 
-	index<2> i00, i01, i02, i10, i11, i12, i20, i21, i22;
-	i01[1] = 1;
-	i02[1] = 2;
-	i10[0] = 1;
-	i11[0] = 1; i11[1] = 1;
-	i12[0] = 1; i12[1] = 2;
-	i20[0] = 2;
-	i21[0] = 2; i21[1] = 1;
-	i22[0] = 2; i22[1] = 2;
+	bispace<2> caa(aa), cbb(bb);
 
-	if(!bis_ab.get_block_dims(i00).equals(dim_5_5)) {
+	if(!caa.get_bis().equals(bisa_ref)) {
 		fail_test(testname, __FILE__, __LINE__,
-			"Block ab[0,0] dimensions don't match reference");
+			"Bis test failed for caa.");
 	}
-	if(!bis_ab.get_block_dims(i01).equals(dim_5_6)) {
+	if(!caa.get_sym_mask(0).equals(sma0_ref)) {
 		fail_test(testname, __FILE__, __LINE__,
-			"Block ab[0,1] dimensions don't match reference");
+			"Symmetry mask 0 test failed for caa.");
 	}
-	if(!bis_ab.get_block_dims(i10).equals(dim_6_5)) {
+	if(!caa.get_sym_mask(1).equals(sma0_ref)) {
 		fail_test(testname, __FILE__, __LINE__,
-			"Block ab[1,0] dimensions don't match reference");
+			"Symmetry mask 1 test failed for caa.");
 	}
-	if(!bis_ab.get_block_dims(i11).equals(dim_6_6)) {
+	if(!cbb.get_bis().equals(bisb_ref)) {
 		fail_test(testname, __FILE__, __LINE__,
-			"Block ab[1,1] dimensions don't match reference");
+			"Bis test failed for cbb.");
 	}
-	if(!bis_ab.get_block_dims(i20).equals(dim_9_5)) {
+	if(!cbb.get_sym_mask(0).equals(smb0_ref)) {
 		fail_test(testname, __FILE__, __LINE__,
-			"Block ab[2,0] dimensions don't match reference");
+			"Symmetry mask 0 test failed for cbb.");
 	}
-	if(!bis_ab.get_block_dims(i21).equals(dim_9_6)) {
+	if(!cbb.get_sym_mask(1).equals(smb0_ref)) {
 		fail_test(testname, __FILE__, __LINE__,
-			"Block ab[2,1] dimensions don't match reference");
+			"Symmetry mask 1 test failed for cbb.");
 	}
 
-	if(!bis_ba.get_block_dims(i00).equals(dim_5_5)) {
+	if(!aa.equals(caa)) {
 		fail_test(testname, __FILE__, __LINE__,
-			"Block ba[0,0] dimensions don't match reference");
+			"Equality test failed for caa.");
 	}
-	if(!bis_ba.get_block_dims(i01).equals(dim_5_6)) {
+	if(!bb.equals(cbb)) {
 		fail_test(testname, __FILE__, __LINE__,
-			"Block ba[0,1] dimensions don't match reference");
-	}
-	if(!bis_ba.get_block_dims(i02).equals(dim_5_9)) {
-		fail_test(testname, __FILE__, __LINE__,
-			"Block ba[0,2] dimensions don't match reference");
-	}
-	if(!bis_ba.get_block_dims(i10).equals(dim_6_5)) {
-		fail_test(testname, __FILE__, __LINE__,
-			"Block ba[1,0] dimensions don't match reference");
-	}
-	if(!bis_ba.get_block_dims(i11).equals(dim_6_6)) {
-		fail_test(testname, __FILE__, __LINE__,
-			"Block ba[1,1] dimensions don't match reference");
-	}
-	if(!bis_ba.get_block_dims(i12).equals(dim_6_9)) {
-		fail_test(testname, __FILE__, __LINE__,
-			"Block ba[1,2] dimensions don't match reference");
+			"Equality test failed for cbb.");
 	}
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
 	}
-
 }
+
+
+void bispace_test::test_4() throw(libtest::test_exception) {
+
+	//
+	//	4-d spaces with symmetry between symmetric 2-d
+	//
+
+	const char *testname = "bispace_test::test_4()";
+
+	try {
+
+	bispace<1> a(10), b(10);
+	b.split(4);
+	bispace<2> aa(a&a), bb(b&b);
+	bispace<4> aaaa(aa&aa), bbbb(bb&bb);
+
+	//	Make references
+
+	index<4> i1, i2;
+	i2[0] = 9; i2[1] = 9; i2[2] = 9; i2[3] = 9;
+	dimensions<4> dims(index_range<4>(i1, i2));
+
+	block_index_space<4> bisa_ref(dims), bisb_ref(dims);
+	mask<4> mskb;
+	mskb[0] = true; mskb[1] = true; mskb[2] = true; mskb[3] = true;
+	bisb_ref.split(mskb, 4);
+
+	mask<4> sma0_ref, smb0_ref;
+	sma0_ref[0] = true; sma0_ref[1] = true;
+	sma0_ref[2] = true; sma0_ref[3] = true;
+	smb0_ref[0] = true; smb0_ref[1] = true;
+	smb0_ref[2] = true; smb0_ref[3] = true;
+
+	//	Run tests
+
+	if(!aaaa.get_bis().equals(bisa_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Bis test failed for aaaa.");
+	}
+	if(!aaaa.get_sym_mask(0).equals(sma0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 0 test failed for aaaa.");
+	}
+	if(!aaaa.get_sym_mask(1).equals(sma0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 1 test failed for aaaa.");
+	}
+	if(!aaaa.get_sym_mask(2).equals(sma0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 2 test failed for aaaa.");
+	}
+	if(!aaaa.get_sym_mask(3).equals(sma0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 3 test failed for aaaa.");
+	}
+	if(!bbbb.get_bis().equals(bisb_ref)) {
+		fail_test(testname, __FILE__, __LINE__, ""
+			"Bis test failed for bbbb.");
+	}
+	if(!bbbb.get_sym_mask(0).equals(smb0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 0 test failed for bbbb.");
+	}
+	if(!bbbb.get_sym_mask(1).equals(smb0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 1 test failed for bbbb.");
+	}
+	if(!bbbb.get_sym_mask(2).equals(smb0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 2 test failed for bbbb.");
+	}
+	if(!bbbb.get_sym_mask(3).equals(smb0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 3 test failed for bbbb.");
+	}
+
+	bispace<4> caaaa(aaaa), cbbbb(bbbb);
+
+	if(!caaaa.get_bis().equals(bisa_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Bis test failed for caaaa.");
+	}
+	if(!caaaa.get_sym_mask(0).equals(sma0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 0 test failed for caaaa.");
+	}
+	if(!caaaa.get_sym_mask(1).equals(sma0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 1 test failed for caaaa.");
+	}
+	if(!caaaa.get_sym_mask(2).equals(sma0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 2 test failed for caaaa.");
+	}
+	if(!caaaa.get_sym_mask(3).equals(sma0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 3 test failed for caaaa.");
+	}
+	if(!cbbbb.get_bis().equals(bisb_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Bis test failed for cbbbb.");
+	}
+	if(!cbbbb.get_sym_mask(0).equals(smb0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 0 test failed for cbbbb.");
+	}
+	if(!cbbbb.get_sym_mask(1).equals(smb0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 1 test failed for cbbbb.");
+	}
+	if(!cbbbb.get_sym_mask(2).equals(smb0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 0 test failed for cbbbb.");
+	}
+	if(!cbbbb.get_sym_mask(3).equals(smb0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 1 test failed for cbbbb.");
+	}
+
+	if(!aaaa.equals(caaaa)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Equality test failed for caaaa.");
+	}
+	if(!bbbb.equals(cbbbb)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Equality test failed for cbbbb.");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void bispace_test::test_5() throw(libtest::test_exception) {
+
+	//
+	//	4-d spaces with symmetry made of 1-d
+	//
+
+	const char *testname = "bispace_test::test_5()";
+
+	try {
+
+	bispace<1> a(20), b(20), i(10), j(10);
+	bispace<4> ijab1(i&j|a&b);
+	a.split(10).split(15);
+	b.split(10).split(15);
+	i.split(4);
+	j.split(4);
+	bispace<4> ijab2(i&j|a&b);
+
+	//	Make references
+
+	index<4> i1, i2;
+	i2[0] = 9; i2[1] = 9; i2[2] = 19; i2[3] = 19;
+	dimensions<4> dims(index_range<4>(i1, i2));
+
+	block_index_space<4> bis1_ref(dims), bis2_ref(dims);
+	mask<4> msk2_1, msk2_2;
+	msk2_1[0] = true; msk2_1[1] = true;
+	msk2_2[2] = true; msk2_2[3] = true;
+	bis2_ref.split(msk2_1, 4);
+	bis2_ref.split(msk2_2, 10);
+	bis2_ref.split(msk2_2, 15);
+
+	mask<4> sma0_ref, smb0_ref, sma2_ref, smb2_ref;
+	sma0_ref[0] = true; sma0_ref[1] = true;
+	sma2_ref[2] = true; sma2_ref[3] = true;
+	smb0_ref[0] = true; smb0_ref[1] = true;
+	smb2_ref[2] = true; smb2_ref[3] = true;
+
+	//	Run tests
+
+	if(!ijab1.get_bis().equals(bis1_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Bis test failed for ijab1.");
+	}
+	if(!ijab1.get_sym_mask(0).equals(sma0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 0 test failed for ijab1.");
+	}
+	if(!ijab1.get_sym_mask(1).equals(sma0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 1 test failed for ijab1.");
+	}
+	if(!ijab1.get_sym_mask(2).equals(sma2_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 2 test failed for ijab1.");
+	}
+	if(!ijab1.get_sym_mask(3).equals(sma2_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 3 test failed for ijab1.");
+	}
+	if(!ijab2.get_bis().equals(bis2_ref)) {
+		fail_test(testname, __FILE__, __LINE__, ""
+			"Bis test failed for ijab2.");
+	}
+	if(!ijab2.get_sym_mask(0).equals(smb0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 0 test failed for ijab2.");
+	}
+	if(!ijab2.get_sym_mask(1).equals(smb0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 1 test failed for ijab2.");
+	}
+	if(!ijab2.get_sym_mask(2).equals(smb2_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 2 test failed for ijab2.");
+	}
+	if(!ijab2.get_sym_mask(3).equals(smb2_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 3 test failed for ijab2.");
+	}
+
+	bispace<4> cijab1(ijab1), cijab2(ijab2);
+
+	if(!cijab1.get_bis().equals(bis1_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Bis test failed for cijab1.");
+	}
+	if(!cijab1.get_sym_mask(0).equals(sma0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 0 test failed for cijab1.");
+	}
+	if(!cijab1.get_sym_mask(1).equals(sma0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 1 test failed for cijab1.");
+	}
+	if(!cijab1.get_sym_mask(2).equals(sma2_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 2 test failed for cijab1.");
+	}
+	if(!cijab1.get_sym_mask(3).equals(sma2_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 3 test failed for cijab1.");
+	}
+	if(!cijab2.get_bis().equals(bis2_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Bis test failed for cijab2.");
+	}
+	if(!ijab2.get_sym_mask(0).equals(smb0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 0 test failed for cijab2.");
+	}
+	if(!cijab2.get_sym_mask(1).equals(smb0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 1 test failed for cijab2.");
+	}
+	if(!cijab2.get_sym_mask(2).equals(smb2_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 0 test failed for cijab2.");
+	}
+	if(!cijab2.get_sym_mask(3).equals(smb2_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 1 test failed for cijab2.");
+	}
+
+	if(!ijab1.equals(cijab1)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Equality test failed for cijab1.");
+	}
+	if(!ijab2.equals(cijab2)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Equality test failed for cijab2.");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void bispace_test::test_6() throw(libtest::test_exception) {
+
+	//
+	//	4-d spaces with symmetry made of 2-d,
+	//	equivalence to the same made of 1-d
+	//
+
+	const char *testname = "bispace_test::test_6()";
+
+	try {
+
+	bispace<1> a(20), b(20), i(10), j(10);
+	bispace<2> ab1(a&b), ij1(i&j);
+	bispace<4> ijab1_ref(i&j|a&b);
+	bispace<4> ijab1(ij1|ab1);
+	a.split(10).split(15);
+	b.split(10).split(15);
+	i.split(4);
+	j.split(4);
+	bispace<2> ab2(a&b), ij2(i&j);
+	bispace<4> ijab2_ref(i&j|a&b);
+	bispace<4> ijab2(ij2|ab2);
+
+	//	Make references
+
+	index<4> i1, i2;
+	i2[0] = 9; i2[1] = 9; i2[2] = 19; i2[3] = 19;
+	dimensions<4> dims(index_range<4>(i1, i2));
+
+	block_index_space<4> bis1_ref(dims), bis2_ref(dims);
+	mask<4> msk2_1, msk2_2;
+	msk2_1[0] = true; msk2_1[1] = true;
+	msk2_2[2] = true; msk2_2[3] = true;
+	bis2_ref.split(msk2_1, 4);
+	bis2_ref.split(msk2_2, 10);
+	bis2_ref.split(msk2_2, 15);
+
+	mask<4> sma0_ref, smb0_ref, sma2_ref, smb2_ref;
+	sma0_ref[0] = true; sma0_ref[1] = true;
+	sma2_ref[2] = true; sma2_ref[3] = true;
+	smb0_ref[0] = true; smb0_ref[1] = true;
+	smb2_ref[2] = true; smb2_ref[3] = true;
+
+	//	Run tests
+
+	if(!ijab1.get_bis().equals(bis1_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Bis test failed for ijab1.");
+	}
+	if(!ijab1.get_sym_mask(0).equals(sma0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 0 test failed for ijab1.");
+	}
+	if(!ijab1.get_sym_mask(1).equals(sma0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 1 test failed for ijab1.");
+	}
+	if(!ijab1.get_sym_mask(2).equals(sma2_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 2 test failed for ijab1.");
+	}
+	if(!ijab1.get_sym_mask(3).equals(sma2_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 3 test failed for ijab1.");
+	}
+	if(!ijab2.get_bis().equals(bis2_ref)) {
+		fail_test(testname, __FILE__, __LINE__, ""
+			"Bis test failed for ijab2.");
+	}
+	if(!ijab2.get_sym_mask(0).equals(smb0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 0 test failed for ijab2.");
+	}
+	if(!ijab2.get_sym_mask(1).equals(smb0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 1 test failed for ijab2.");
+	}
+	if(!ijab2.get_sym_mask(2).equals(smb2_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 2 test failed for ijab2.");
+	}
+	if(!ijab2.get_sym_mask(3).equals(smb2_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 3 test failed for ijab2.");
+	}
+
+	bispace<4> cijab1(ijab1), cijab2(ijab2);
+
+	if(!cijab1.get_bis().equals(bis1_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Bis test failed for cijab1.");
+	}
+	if(!cijab1.get_sym_mask(0).equals(sma0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 0 test failed for cijab1.");
+	}
+	if(!cijab1.get_sym_mask(1).equals(sma0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 1 test failed for cijab1.");
+	}
+	if(!cijab1.get_sym_mask(2).equals(sma2_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 2 test failed for cijab1.");
+	}
+	if(!cijab1.get_sym_mask(3).equals(sma2_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 3 test failed for cijab1.");
+	}
+	if(!cijab2.get_bis().equals(bis2_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Bis test failed for cijab2.");
+	}
+	if(!ijab2.get_sym_mask(0).equals(smb0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 0 test failed for cijab2.");
+	}
+	if(!cijab2.get_sym_mask(1).equals(smb0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 1 test failed for cijab2.");
+	}
+	if(!cijab2.get_sym_mask(2).equals(smb2_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 0 test failed for cijab2.");
+	}
+	if(!cijab2.get_sym_mask(3).equals(smb2_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 1 test failed for cijab2.");
+	}
+
+	if(!ijab1.equals(cijab1)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Equality test failed for cijab1.");
+	}
+	if(!ijab2.equals(cijab2)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Equality test failed for cijab2.");
+	}
+
+	if(!ijab1.equals(ijab1_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Equality test failed for cijab1_ref.");
+	}
+	if(!ijab2.equals(ijab2_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Equality test failed for cijab2_ref.");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void bispace_test::test_7() throw(libtest::test_exception) {
+
+	//
+	//	4-d spaces with symmetry made of 1-d, reordered
+	//
+
+	const char *testname = "bispace_test::test_7()";
+
+	try {
+
+	bispace<1> a(20), b(20), i(10), j(10);
+	bispace<4> ijab1(i|a|j|b, i&j|a&b);
+	a.split(10).split(15);
+	b.split(10).split(15);
+	i.split(4);
+	j.split(4);
+	bispace<4> ijab2(i|a|j|b, i&j|a&b);
+
+	//	Make references
+
+	index<4> i1, i2;
+	i2[0] = 9; i2[1] = 19; i2[2] = 9; i2[3] = 19;
+	dimensions<4> dims(index_range<4>(i1, i2));
+
+	block_index_space<4> bis1_ref(dims), bis2_ref(dims);
+	mask<4> msk2_1, msk2_2;
+	msk2_1[0] = true; msk2_1[2] = true;
+	msk2_2[1] = true; msk2_2[3] = true;
+	bis2_ref.split(msk2_1, 4);
+	bis2_ref.split(msk2_2, 10);
+	bis2_ref.split(msk2_2, 15);
+
+	mask<4> sma0_ref, smb0_ref, sma2_ref, smb2_ref;
+	sma0_ref[0] = true; sma0_ref[2] = true;
+	sma2_ref[1] = true; sma2_ref[3] = true;
+	smb0_ref[0] = true; smb0_ref[2] = true;
+	smb2_ref[1] = true; smb2_ref[3] = true;
+
+	//	Run tests
+
+	if(!ijab1.get_bis().equals(bis1_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Bis test failed for ijab1.");
+	}
+	if(!ijab1.get_sym_mask(0).equals(sma0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 0 test failed for ijab1.");
+	}
+	if(!ijab1.get_sym_mask(1).equals(sma2_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 1 test failed for ijab1.");
+	}
+	if(!ijab1.get_sym_mask(2).equals(sma0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 2 test failed for ijab1.");
+	}
+	if(!ijab1.get_sym_mask(3).equals(sma2_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 3 test failed for ijab1.");
+	}
+	if(!ijab2.get_bis().equals(bis2_ref)) {
+		fail_test(testname, __FILE__, __LINE__, ""
+			"Bis test failed for ijab2.");
+	}
+	if(!ijab2.get_sym_mask(0).equals(smb0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 0 test failed for ijab2.");
+	}
+	if(!ijab2.get_sym_mask(1).equals(smb2_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 1 test failed for ijab2.");
+	}
+	if(!ijab2.get_sym_mask(2).equals(smb0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 2 test failed for ijab2.");
+	}
+	if(!ijab2.get_sym_mask(3).equals(smb2_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 3 test failed for ijab2.");
+	}
+
+	bispace<4> cijab1(ijab1), cijab2(ijab2);
+
+	if(!cijab1.get_bis().equals(bis1_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Bis test failed for cijab1.");
+	}
+	if(!cijab1.get_sym_mask(0).equals(sma0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 0 test failed for cijab1.");
+	}
+	if(!cijab1.get_sym_mask(1).equals(sma2_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 1 test failed for cijab1.");
+	}
+	if(!cijab1.get_sym_mask(2).equals(sma0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 2 test failed for cijab1.");
+	}
+	if(!cijab1.get_sym_mask(3).equals(sma2_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 3 test failed for cijab1.");
+	}
+	if(!cijab2.get_bis().equals(bis2_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Bis test failed for cijab2.");
+	}
+	if(!ijab2.get_sym_mask(0).equals(smb0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 0 test failed for cijab2.");
+	}
+	if(!cijab2.get_sym_mask(1).equals(smb2_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 1 test failed for cijab2.");
+	}
+	if(!cijab2.get_sym_mask(2).equals(smb0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 0 test failed for cijab2.");
+	}
+	if(!cijab2.get_sym_mask(3).equals(smb2_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 1 test failed for cijab2.");
+	}
+
+	if(!ijab1.equals(cijab1)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Equality test failed for cijab1.");
+	}
+	if(!ijab2.equals(cijab2)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Equality test failed for cijab2.");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void bispace_test::test_8() throw(libtest::test_exception) {
+
+	//
+	//	5-d spaces with symmetry made of mixed dims, reordered
+	//
+
+	const char *testname = "bispace_test::test_8()";
+
+	try {
+
+	bispace<1> a(20), b(20), i(10);
+	bispace<2> ab1(a&b), cd1(a&b);
+	bispace<5> abicd1(ab1|i|cd1, ab1&cd1|i);
+	a.split(10).split(15);
+	b.split(10).split(15);
+	i.split(4);
+	bispace<2> ab2(a&b), cd2(a&b);
+	bispace<5> abicd2(ab2|i|cd2, ab2&cd2|i);
+
+	//	Make references
+
+	index<5> i1, i2;
+	i2[0] = 19; i2[1] = 19; i2[2] = 9; i2[3] = 19; i2[4] = 19;
+	dimensions<5> dims(index_range<5>(i1, i2));
+
+	block_index_space<5> bis1_ref(dims), bis2_ref(dims);
+	mask<5> msk2_1, msk2_2;
+	msk2_1[0] = true; msk2_1[1] = true; msk2_1[3] = true; msk2_1[4] = true;
+	msk2_2[2] = true;
+	bis2_ref.split(msk2_1, 10);
+	bis2_ref.split(msk2_1, 15);
+	bis2_ref.split(msk2_2, 4);
+
+	mask<5> sm0_ref, sm2_ref;
+	sm0_ref[0] = true; sm0_ref[1] = true;
+	sm0_ref[3] = true; sm0_ref[4] = true;
+	sm2_ref[2] = true;
+
+	//	Run tests
+
+	if(!abicd1.get_bis().equals(bis1_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Bis test failed for abicd1.");
+	}
+	if(!abicd1.get_sym_mask(0).equals(sm0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 0 test failed for abicd1.");
+	}
+	if(!abicd1.get_sym_mask(1).equals(sm0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 1 test failed for abicd1.");
+	}
+	if(!abicd1.get_sym_mask(2).equals(sm2_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 2 test failed for abicd1.");
+	}
+	if(!abicd1.get_sym_mask(3).equals(sm0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 3 test failed for abicd1.");
+	}
+	if(!abicd1.get_sym_mask(4).equals(sm0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 4 test failed for abicd1.");
+	}
+	if(!abicd2.get_bis().equals(bis2_ref)) {
+		fail_test(testname, __FILE__, __LINE__, ""
+			"Bis test failed for abicd2.");
+	}
+	if(!abicd2.get_sym_mask(0).equals(sm0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 0 test failed for abicd2.");
+	}
+	if(!abicd2.get_sym_mask(1).equals(sm0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 1 test failed for abicd2.");
+	}
+	if(!abicd2.get_sym_mask(2).equals(sm2_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 2 test failed for abicd2.");
+	}
+	if(!abicd2.get_sym_mask(3).equals(sm0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 3 test failed for abicd2.");
+	}
+	if(!abicd2.get_sym_mask(4).equals(sm0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 4 test failed for abicd2.");
+	}
+
+	bispace<5> cabicd1(abicd1), cabicd2(abicd2);
+
+	if(!cabicd1.get_bis().equals(bis1_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Bis test failed for cabicd1.");
+	}
+	if(!cabicd1.get_sym_mask(0).equals(sm0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 0 test failed for cabicd1.");
+	}
+	if(!cabicd1.get_sym_mask(1).equals(sm0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 1 test failed for cabicd1.");
+	}
+	if(!cabicd1.get_sym_mask(2).equals(sm2_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 2 test failed for cabicd1.");
+	}
+	if(!cabicd1.get_sym_mask(3).equals(sm0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 3 test failed for cabicd1.");
+	}
+	if(!cabicd1.get_sym_mask(4).equals(sm0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 4 test failed for cabicd1.");
+	}
+	if(!cabicd2.get_bis().equals(bis2_ref)) {
+		fail_test(testname, __FILE__, __LINE__, ""
+			"Bis test failed for cabicd2.");
+	}
+	if(!cabicd2.get_sym_mask(0).equals(sm0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 0 test failed for cabicd2.");
+	}
+	if(!cabicd2.get_sym_mask(1).equals(sm0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 1 test failed for cabicd2.");
+	}
+	if(!cabicd2.get_sym_mask(2).equals(sm2_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 2 test failed for cabicd2.");
+	}
+	if(!cabicd2.get_sym_mask(3).equals(sm0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 3 test failed for cabicd2.");
+	}
+	if(!cabicd2.get_sym_mask(4).equals(sm0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 4 test failed for cabicd2.");
+	}
+
+	if(!abicd1.equals(cabicd1)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Equality test failed for cabicd1.");
+	}
+	if(!abicd2.equals(cabicd2)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Equality test failed for cabicd2.");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
 
 } // namespace libtensor
 
