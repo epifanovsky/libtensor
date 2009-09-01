@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <execinfo.h>
 #include "backtrace.h"
 
