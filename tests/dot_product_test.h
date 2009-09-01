@@ -11,7 +11,7 @@ namespace libtensor {
 **/
 class dot_product_test : public libtest::unit_test {
 private:
-	static const double k_thresh = 1e-14;
+	static const double k_thresh;
 
 public:
 	virtual void perform() throw(libtest::test_exception);

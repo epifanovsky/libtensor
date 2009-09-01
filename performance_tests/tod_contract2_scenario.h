@@ -38,11 +38,16 @@ public:
 template<size_t Repeats,size_t N, size_t M, size_t K, typename X>  
 tod_contract2_scenario<Repeats,N,M,K,X>::tod_contract2_scenario()  
 {
-	add_test("reference",m_ref);
-	add_test("test 1",m_pt1);
-	add_test("test 2",m_pt2);
-	add_test("test 3",m_pt3);
-	add_test("test 4",m_pt4);
+	add_test("reference",
+			"A_{i_1,i_2} += 0.5 \sum_{i_3} B_{i_1,i_3} C_{i_2,i_3}",m_ref);
+	add_test("test 1",
+			"A_{i_1,i_2} += 0.5 \sum_{i_3} B_{i_1,i_3} C_{i_2,i_3}",m_pt1);
+	add_test("test 2",
+			"A_{i_1,i_2} += 0.5 \sum_{i_3} B_{i_1,i_3} C_{i_3,i_2}",m_pt2);
+	add_test("test 3",
+			"A_{i} += 0.5 P_I \sum_{i_3} B_{i_1,i_3} C_{i_3,i_2}",m_pt3);
+	add_test("test 4",
+			"A_{i_1,i_2} += 0.5 \sum_{i_3} B_{i_1,i_3} P_3 C_{i_2,i_3}",m_pt4);
 }
 
 

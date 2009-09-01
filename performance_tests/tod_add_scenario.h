@@ -20,14 +20,14 @@ namespace libtensor {
 
  	\ingroup libtensor_performance_tests
 **/
-template<size_t Repeats, size_t N, typename X>  
+template<size_t Repeats, size_t N, typename DimData>
 class tod_add_scenario
 	: public performance_test_scenario_i 
 {	
-	unit_test_factory<tod_add_ref<Repeats,X> > m_ref;
-	unit_test_factory<tod_add_p1<Repeats,N,X> > m_pt1;
-	unit_test_factory<tod_add_p2<Repeats,N,X> > m_pt2;
-	unit_test_factory<tod_add_p3<Repeats,N,X> > m_pt3;
+	unit_test_factory<tod_add_ref<Repeats,DimData> > m_ref;
+	unit_test_factory<tod_add_p1<Repeats,N,DimData> > m_pt1;
+	unit_test_factory<tod_add_p2<Repeats,N,DimData> > m_pt2;
+	unit_test_factory<tod_add_p3<Repeats,N,DimData> > m_pt3;
  
 public:
 	tod_add_scenario();
@@ -35,13 +35,13 @@ public:
 };
 
 
-template<size_t Repeats,size_t N, typename X>  
-tod_add_scenario<Repeats,N,X>::tod_add_scenario()  
+template<size_t Repeats,size_t N, typename DimData>
+tod_add_scenario<Repeats,N,DimData>::tod_add_scenario()
 {
-	add_test("reference",m_ref);
-	add_test("test 1",m_pt1); 
-	add_test("test 2",m_pt2); 
-	add_test("test 3",m_pt3); 
+	add_test("reference","A = A + 2B",m_ref);
+	add_test("test 1","A = A + 2B",m_pt1);
+	add_test("test 2","A = A + 2 P_I B",m_pt2);
+	add_test("test 3","A = A + 2 B'",m_pt3);
 }
 
 

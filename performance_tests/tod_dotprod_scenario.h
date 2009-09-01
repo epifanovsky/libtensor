@@ -37,10 +37,10 @@ public:
 template<size_t Repeats, size_t N, typename X>  
 tod_dotprod_scenario<Repeats,N,X>::tod_dotprod_scenario()  
 {
-	add_test("reference",m_ref);
-	add_test("test 1",m_pt1); 
-	add_test("test 2",m_pt2); 
-	add_test("test 3",m_pt3); 
+	add_test("reference","<A,B>",m_ref);
+	add_test("test 1","<A,B>",m_pt1);
+	add_test("test 2","<A,P_I B>",m_pt2);
+	add_test("test 3","<A,B'>",m_pt3);
 }
 
 

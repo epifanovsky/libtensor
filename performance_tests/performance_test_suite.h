@@ -15,9 +15,11 @@ class performance_test_suite : public libtest::test_suite {
 protected:
 	/** \brief adds tests of a performance test scenario to the suite
 	  	\param name Name of performance test scenario
+	  	\param comment Comment to performance test scenario
 	  	\param pts  performance_test_scenario object 
 	 **/
-	void add_tests( const char* name, performance_test_scenario_i& pts ); 
+	void add_tests( const char* name, const char* comment,
+			performance_test_scenario_i& pts );
 public:
 	//!	Creates the suite
 	performance_test_suite( const char* name );

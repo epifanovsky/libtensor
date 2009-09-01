@@ -18,7 +18,7 @@ public:
 	}
 
 	virtual void on_test_start(const char *test) {
-		std::cout << "Performance test " << test << " ... ";
+		std::cout << "Performance test " << test << std::endl;
 		std::cout.flush();
 		
 		// reset timings
@@ -26,7 +26,7 @@ public:
 	}
 
 	virtual void on_test_end_success(const char *test) {
-		std::cout << "done." << std::endl; 
+		std::cout << " ... Test done." << std::endl;
 		// print timings
 		if ( global_timings::get_instance().ntimings() > 0 ) {
 			std::cout << "Timings are: " << std::endl;
@@ -39,7 +39,7 @@ public:
 
 	virtual void on_test_end_exception(const char *test,
 		const test_exception &e) {
-		std::cout << "FAIL!" << std::endl;
+		std::cout << " ... FAIL!" << std::endl;
 		std::cout << e.what() << std::endl;
 		std::cout.flush();
 	}

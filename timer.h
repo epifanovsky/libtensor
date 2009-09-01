@@ -122,12 +122,11 @@ inline void time_pt_t::now()
 {
 #ifdef POSIX
 	static struct tms pt;
-	times(&pt);
-#endif 
-	m_rt=clock();
-#ifdef POSIX
+	m_rt=times(&pt);
 	m_ut=pt.tms_utime;
 	m_st=pt.tms_stime;
+#else
+	m_rt=clock();
 #endif 
 }
 
@@ -162,7 +161,7 @@ inline time_diff_t& time_diff_t::operator+=( const time_diff_t& t )
 { 
 #ifdef POSIX  
 	m_ut+=t.m_ut; 
-	m_st+=t.m_st; 
+	m_st+=t.m_st;
 #endif 
 	m_rt+=t.m_rt;	
 	return *this; 
@@ -201,16 +200,18 @@ inline time_diff_t operator-( const time_pt_t& end, const time_pt_t& begin )
 {
 #ifdef POSIX
 	static const double clk2sec=1./sysconf(_SC_CLK_TCK);
-	static const double CLK2SEC=1./CLOCKS_PER_SEC;
+#else
+	static const double clk2sec=1./CLOCKS_PER_SEC;
 #endif
 	
-	if ( ! (begin<=end) ) 
+	if ( ! (begin<=end) ) {
 		throw bad_parameter("libtensor","",
 			"time_diff_t operator-( const time_pt_t&, const time_pt_t& )",
 			__FILE__,__LINE__,"Start time later than stop time"); 
-			
+	}
+
 	time_diff_t res; 
-	res.m_rt=(end.m_rt-begin.m_rt)*CLK2SEC; 
+	res.m_rt=(end.m_rt-begin.m_rt)*clk2sec;
 #ifdef POSIX  
 	res.m_ut=(end.m_ut-begin.m_ut)*clk2sec; 
 	res.m_st=(end.m_st-begin.m_st)*clk2sec; 

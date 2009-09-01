@@ -9,6 +9,8 @@ namespace libtensor {
 
 typedef libvmm::std_allocator<double> allocator;
 
+const double tod_contract2_test::k_thresh = 1e-14;
+
 void tod_contract2_test::perform() throw(libtest::test_exception) {
 	srand48(time(NULL));
 

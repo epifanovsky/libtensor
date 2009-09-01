@@ -14,7 +14,7 @@ namespace libtensor {
 **/
 class tod_dotprod_test : public libtest::unit_test {
 private:
-	static const double k_thresh = 1e-14; //!< Threshold multiplier
+	static const double k_thresh; //!< Threshold multiplier
 
 public:
 	virtual void perform() throw(libtest::test_exception);

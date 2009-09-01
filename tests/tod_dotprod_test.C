@@ -7,6 +7,8 @@
 
 namespace libtensor {
 
+const double tod_dotprod_test::k_thresh = 1e-14;
+
 void tod_dotprod_test::perform() throw(libtest::test_exception) {
 
 	srand48(time(NULL));

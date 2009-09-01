@@ -55,10 +55,13 @@ trac:
 defs.o: CPPFLAGS += -DLIBTENSOR_SVN_REV='"$(SVNREV)"'
 
 .PHONY: clean
-clean:
+clean: 
 	$(RM) *.a
 	$(RM) *.o
 	$(RM) *.d
+	$(RM) *.d.*
+	$(RM) tod/*.o
+	$(RM) tod/*.d
 	cd tests && $(MAKE) clean
 	cd performance_tests && $(MAKE) clean
 	

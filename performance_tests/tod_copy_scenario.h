@@ -35,9 +35,9 @@ public:
 template<size_t Repeats,size_t N, typename X>  
 tod_copy_scenario<Repeats,N,X>::tod_copy_scenario()
 {  
-	add_test("reference",m_ref); 
-	add_test("test 1",m_pt1);
-	add_test("test 2",m_pt2);
+	add_test("reference","A = 2.0 B",m_ref);
+	add_test("test 1","A = 2.0 B",m_pt1);
+	add_test("test 2","A = 2.0 P_I B",m_pt2);
 }
 
 } // namespace libtensor

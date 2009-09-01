@@ -12,7 +12,7 @@ namespace libtensor {
 /** \brief Simple add expression to evaluate in performance tests
 
   	Evaluates and computes the expression
-  	\f[	r_{iajb} = v_{iajb} + 0.5 * w_{iajb} \f]
+  	\f[	r_{iajb} = v_{iajb} + 0.5 w_{iajb} \f]
 
  	Use this as example howto implement expressions for performance tests
 
@@ -62,7 +62,7 @@ public:
 
   	Evaluates and computes the expression
   	\f[
-  	r_{iajb} = 2.0 * \left(ia|jb\right) - \left(ij|ab\right)
+  	r_{iajb} = 2.0 \left(ia|jb\right) - \left(ij|ab\right)
   	\f]
 
  	\ingroup libtensor_performance_tests
@@ -88,7 +88,7 @@ public:
 
   	Evaluates and computes the expression
   	\f[
-  	r_{iajb} = 0.5 * v_{iajb}
+  	r_{iajb} = 0.5 v_{iajb}
   	\f]
 
  	\ingroup libtensor_performance_tests
@@ -114,7 +114,7 @@ public:
 
   	Evaluates and computes the expression
   	\f[
-  	r_{iajb} = 0.5 * v_{ijab}
+  	r_{iajb} = 0.5 v_{ijab}
   	\f]
 
  	\ingroup libtensor_performance_tests

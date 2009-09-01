@@ -47,10 +47,14 @@ public:
 template<size_t Repeats, typename BiSpaceData>  
 expression_test_scenario<Repeats,BiSpaceData>::expression_test_scenario()
 {
-	add_test("simple add",m_expression_simple_add);
-//	add_test("permute add",m_expression_permute_add);
-//	add_test("simple copy",m_expression_simple_copy);
-//	add_test("permute copy",m_expression_permute_copy);
+	add_test("simple add","r_{iajb} = v_{iajb} + 0.5 w_{iajb}",
+			m_expression_simple_add);
+	add_test("permute add","r_{iajb} = 2.0 (ia|jb) - (ij|ab)",
+			m_expression_permute_add);
+	add_test("simple copy","r_{iajb} = 0.5 v_{iajb}",
+			m_expression_simple_copy);
+	add_test("permute copy","r_{iajb} = 0.5 v_{ijab}",
+			m_expression_permute_copy);
 }
 
 	

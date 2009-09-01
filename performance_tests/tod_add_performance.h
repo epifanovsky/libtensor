@@ -15,20 +15,20 @@ namespace libtensor {
 /**	\brief Reference for performance tests of libtensor::tod_add class
 
  	\param Repeats number of repeats
- 	\param X information about the size of the tensors
+ 	\param DimData information about the size of the tensors
 
  	Tests performance of
  	\f[ A = A + 2.0 B \f]
- 	The size of A and B is determined by function dimA() of the X object.
+ 	The size of A and B is determined by function dimA() of the DimData object.
 
 	\ingroup libtensor_performance_tests
 **/
-template<size_t Repeats, typename X>
+template<size_t Repeats, typename DimData>
 class tod_add_ref
 	: public performance_test<Repeats>,
-	  public timings<tod_add_ref<Repeats,X> >
+	  public timings<tod_add_ref<Repeats,DimData> >
 {
-	friend class timings<tod_add_ref<Repeats,X> >;
+	friend class timings<tod_add_ref<Repeats,DimData> >;
 	static const char* k_clazz;
 protected:
 	virtual void do_calculate();
@@ -39,11 +39,11 @@ protected:
 
  	Tests performance of
  	\f[ A = A + 2.0 B \f]
-	The size of A and B is determined by function dimA() of the X object.
+	The size of A and B is determined by function dimA() of the DimData object.
 
  	\ingroup libtensor_performance_tests
 **/
-template<size_t Repeats, size_t N, typename X>
+template<size_t Repeats, size_t N, typename DimData>
 class tod_add_p1
 	: public performance_test<Repeats>
 {
@@ -58,11 +58,11 @@ protected:
  	where \f$ \mathcal{P}_B \f$ refers to a permutation which inverts the
  	sequence of the indices, e.g. (0123)->(3210).
 
-	The size of A and B is determined by function dimA() of the X object.
+	The size of A and B is determined by function dimA() of the DimData object.
 
  	\ingroup libtensor_performance_tests
 **/
-template<size_t Repeats, size_t N, typename X>
+template<size_t Repeats, size_t N, typename DimData>
 class tod_add_p2
 	: public performance_test<Repeats>
 {
@@ -77,11 +77,11 @@ protected:
  	where \f$ \mathcal{P}_B \f$ refers to a permutation which changes the
  	sequence of groups of indices, e.g. (0123)->(2301)
 
-	The size of A and B is determined by function dimA() of the X object.
+	The size of A and B is determined by function dimA() of the DimData object.
 	
  	\ingroup libtensor_performance_tests
 **/
-template<size_t Repeats, size_t N, typename X>
+template<size_t Repeats, size_t N, typename DimData>
 class tod_add_p3
 	: public performance_test<Repeats>
 {
@@ -90,13 +90,13 @@ protected:
 };
 
 
-template<size_t R, typename X>
-const char* tod_add_ref<R,X>::k_clazz="tod_add_ref<R,X>";
+template<size_t R, typename DimData>
+const char* tod_add_ref<R,DimData>::k_clazz="tod_add_ref<R,DimData>";
 
-template<size_t R, typename X>
-void tod_add_ref<R,X>::do_calculate()
+template<size_t R, typename DimData>
+void tod_add_ref<R,DimData>::do_calculate()
 {
-	X d;
+	DimData d;
 	size_t total_size=d.dimA().get_size();
 
 	double* ptra=new double[total_size];
@@ -104,18 +104,18 @@ void tod_add_ref<R,X>::do_calculate()
 	for ( size_t i=0; i<total_size; i++ ) ptra[i]=drand48();
 	for ( size_t i=0; i<total_size; i++ ) ptrb[i]=drand48();
 
-	timings<tod_add_ref<R,X> >::start_timer();
+	timings<tod_add_ref<R,DimData> >::start_timer();
 	cblas_daxpy(total_size, 2.0,ptrb,1,ptra,1);
-	timings<tod_add_ref<R,X> >::stop_timer();
+	timings<tod_add_ref<R,DimData> >::stop_timer();
 
 	delete [] ptra;
 	delete [] ptrb;
 }
 
-template<size_t R, size_t N, typename X>
-void tod_add_p1<R,N,X>::do_calculate()
+template<size_t R, size_t N, typename DimData>
+void tod_add_p1<R,N,DimData>::do_calculate()
 {
-	X d;
+	DimData d;
 	dimensions<N> dim(d.dimA());
 	tensor<N, double, libvmm::std_allocator<double> > ta(dim), tb(dim);
 	tensor_ctrl<N,double> tca(ta), tcb(tb);
@@ -134,10 +134,10 @@ void tod_add_p1<R,N,X>::do_calculate()
 	add.perform(ta,1.0);
 }
 
-template<size_t R, size_t N, typename X>
-void tod_add_p2<R,N,X>::do_calculate()
+template<size_t R, size_t N, typename DimData>
+void tod_add_p2<R,N,DimData>::do_calculate()
 {
-	X d;
+	DimData d;
 	dimensions<N> dima(d.dimA()), dimb(d.dimA());
 	permutation<N> permb;
 	for ( size_t i=0; i<N/2; i++ )
@@ -162,10 +162,10 @@ void tod_add_p2<R,N,X>::do_calculate()
 }
 
 
-template<size_t R, size_t N, typename X>
-void tod_add_p3<R,N,X>::do_calculate()
+template<size_t R, size_t N, typename DimData>
+void tod_add_p3<R,N,DimData>::do_calculate()
 {
-	X d;
+	DimData d;
 	dimensions<N> dima(d.dimA()), dimb(d.dimA());
 	permutation<N> permb;
 	for ( size_t i=0; i<N/2; i++ )

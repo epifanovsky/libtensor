@@ -18,7 +18,7 @@ namespace libtensor {
  	\param N order of the first %tensor less contraction order
  	\param M order of the second %tensor less contraction order
  	\param K contraction order
- 	\param X information about the size of the tensors
+ 	\param DimData information about the size of the tensors
 
  	Tests performance of
  	\f[ A += 0.5 B * C' \f]
@@ -27,16 +27,16 @@ namespace libtensor {
  	Don't use with N<2.
 
 	The size of A, B, and C is determined by functions dimA(), dimB(), 
-	and dimC() of the X object, respectively.
+	and dimC() of the DimData object, respectively.
 
  	\ingroup libtensor_performance_tests
 **/
-template<size_t Repeats, size_t N, size_t M, size_t K, typename X>
+template<size_t Repeats, size_t N, size_t M, size_t K, typename DimData>
 class tod_contract2_ref
 	: public performance_test<Repeats>,
-	  public timings<tod_contract2_ref<Repeats,N,M,K,X> >
+	  public timings<tod_contract2_ref<Repeats,N,M,K,DimData> >
 {
-	friend class timings<tod_contract2_ref<Repeats,N,M,K,X> >;
+	friend class timings<tod_contract2_ref<Repeats,N,M,K,DimData> >;
 	static const char* k_clazz;
 protected:
 	virtual void do_calculate();
@@ -49,11 +49,11 @@ protected:
  	where the \f$ i_k \f$ refer to the k-th index group
 
 	The size of A, B, and C is determined by functions dimA(), dimB(), 
-	and dimC() of the X object, respectively.
+	and dimC() of the DimData object, respectively.
 
 	\ingroup libtensor_tests
 **/
-template<size_t Repeats, size_t N, size_t M, size_t K, typename X>
+template<size_t Repeats, size_t N, size_t M, size_t K, typename DimData>
 class tod_contract2_p1
 	: public performance_test<Repeats>
 {
@@ -70,11 +70,11 @@ protected:
  	Don't use with N<2
 
 	The size of A, B, and C is determined by functions dimA(), dimB(), 
-	and dimC() of the X object, respectively.
+	and dimC() of the DimData object, respectively.
 
  	\ingroup libtensor_performance_tests
 **/
-template<size_t Repeats, size_t N, size_t M, size_t K, typename X>
+template<size_t Repeats, size_t N, size_t M, size_t K, typename DimData>
 class tod_contract2_p2
 	: public performance_test<Repeats>
 {
@@ -89,16 +89,16 @@ protected:
  	A_{i_1,i_2} += 0.5 \mathcal{P}_A \sum_{i_3} B_{i_1,i_3} C_{i_2,i_3}
  	\f]
  	where the \f$ i_k \f$ refer to the k-th index group and
- 	\f$ \mathcal{P}_A \f$ to an arbitrary permutation
+ 	\f$ \mathcal{P}_A \f$ to the inverting permutation
 
  	Don't use with N<2
 
 	The size of A, B, and C is determined by functions dimA(), dimB(), 
-	and dimC() of the X object, respectively.
+	and dimC() of the DimData object, respectively.
 
  	\ingroup libtensor_performance_tests
 **/
-template<size_t Repeats, size_t N, size_t M, size_t K, typename X>
+template<size_t Repeats, size_t N, size_t M, size_t K, typename DimData>
 class tod_contract2_p3
 	: public performance_test<Repeats>
 {
@@ -119,11 +119,11 @@ protected:
  	Don't use with N<3
 
 	The size of A, B, and C is determined by functions dimA(), dimB(), 
-	and dimC() of the X object, respectively.
+	and dimC() of the DimData object, respectively.
 
  	\ingroup libtensor_performance_tests
 **/
-template<size_t Repeats, size_t N, size_t M, size_t K, typename X>
+template<size_t Repeats, size_t N, size_t M, size_t K, typename DimData>
 class tod_contract2_p4
 	: public performance_test<Repeats>
 {
@@ -132,13 +132,13 @@ protected:
 };
 
 
-template<size_t R, size_t N, size_t M, size_t K, typename X>
-const char* tod_contract2_ref<R,N,M,K,X>::k_clazz="tod_contract2_ref<R,N,M,K,X>";
+template<size_t R, size_t N, size_t M, size_t K, typename DimData>
+const char* tod_contract2_ref<R,N,M,K,DimData>::k_clazz="tod_contract2_ref<R,N,M,K,DimData>";
 
-template<size_t R, size_t N, size_t M, size_t K, typename X>
-void tod_contract2_ref<R,N,M,K,X>::do_calculate()
+template<size_t R, size_t N, size_t M, size_t K, typename DimData>
+void tod_contract2_ref<R,N,M,K,DimData>::do_calculate()
 {
-	X d;
+	DimData d;
 	dimensions<N+M> dima(d.dimA());
 	dimensions<N+K> dimb(d.dimB());
 	dimensions<M+K> dimc(d.dimC());
@@ -154,20 +154,20 @@ void tod_contract2_ref<R,N,M,K,X>::do_calculate()
 	for ( size_t i=0; i<sizeN*sizeK; i++ ) ptrb[i]=drand48();
 	for ( size_t i=0; i<sizeM*sizeK; i++ ) ptrc[i]=drand48();
 
-	timings<tod_contract2_ref<R,N,M,K,X> >::start_timer();
+	timings<tod_contract2_ref<R,N,M,K,DimData> >::start_timer();
 	cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasTrans, sizeN, sizeM, sizeK,
 				0.5, ptrb, sizeK, ptrc, sizeK, 1.0, ptra, sizeM);
-	timings<tod_contract2_ref<R,N,M,K,X> >::stop_timer();
+	timings<tod_contract2_ref<R,N,M,K,DimData> >::stop_timer();
 
 	delete [] ptra;
 	delete [] ptrb;
 	delete [] ptrc;
 }
 
-template<size_t R, size_t N, size_t M, size_t K, typename X>
-void tod_contract2_p1<R,N,M,K,X>::do_calculate()
+template<size_t R, size_t N, size_t M, size_t K, typename DimData>
+void tod_contract2_p1<R,N,M,K,DimData>::do_calculate()
 {
-	X d;
+	DimData d;
 
 	dimensions<N+M> dima(d.dimA());
 	dimensions<N+K> dimb(d.dimB());
@@ -197,10 +197,10 @@ void tod_contract2_p1<R,N,M,K,X>::do_calculate()
 	op.perform(ta,0.5);
 }
 
-template<size_t R, size_t N, size_t M, size_t K, typename X>
-void tod_contract2_p2<R,N,M,K,X>::do_calculate()
+template<size_t R, size_t N, size_t M, size_t K, typename DimData>
+void tod_contract2_p2<R,N,M,K,DimData>::do_calculate()
 {
-	X d;
+	DimData d;
 	dimensions<N+M> dima(d.dimA());
 	dimensions<N+K> dimb(d.dimB());
 	dimensions<M+K> dimc(d.dimC());
@@ -241,10 +241,10 @@ void tod_contract2_p2<R,N,M,K,X>::do_calculate()
 }
 
 
-template<size_t R, size_t N, size_t M, size_t K, typename X>
-void tod_contract2_p3<R,N,M,K,X>::do_calculate()
+template<size_t R, size_t N, size_t M, size_t K, typename DimData>
+void tod_contract2_p3<R,N,M,K,DimData>::do_calculate()
 {
-	X d;
+	DimData d;
 
 	dimensions<N+M> dima(d.dimA());
 	dimensions<N+K> dimb(d.dimB());
@@ -280,10 +280,10 @@ void tod_contract2_p3<R,N,M,K,X>::do_calculate()
 }
 
 
-template<size_t R, size_t N, size_t M, size_t K, typename X>
-void tod_contract2_p4<R,N,M,K,X>::do_calculate()
+template<size_t R, size_t N, size_t M, size_t K, typename DimData>
+void tod_contract2_p4<R,N,M,K,DimData>::do_calculate()
 {
-	X d;
+	DimData d;
 	dimensions<N+M> dima(d.dimA());
 	dimensions<N+K> dimb(d.dimB());
 	dimensions<M+K> dimc(d.dimC());

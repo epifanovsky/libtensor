@@ -30,8 +30,8 @@ namespace libtensor {
 **/
 class libtensor_pt_suite : public performance_test_suite {
 	
-	typedef dimensions_data<2,2,2,8> dim2_t;
-	typedef dimensions_data<2,2,2,8> dim4_t;
+	typedef dimensions_data<2,2,2,2> dim2_t;
+	typedef dimensions_data<2,2,2,4> dim4_t;
 	typedef dimensions_data<2,2,2,8> dim8_t;
 	typedef dimensions_data<2,2,2,16> dim16_t;
 	typedef dimensions_data<2,2,2,32> dim32_t;
