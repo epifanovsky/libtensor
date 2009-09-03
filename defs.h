@@ -41,6 +41,7 @@ extern const char *g_ns;
 #include <cstdlib>
 inline void srand48(long seed) { srand(seed); }
 inline double drand48() { return (double(rand())/RAND_MAX); }
+inline long lrand48() { return rand(); }
 #endif
 
 /**	\defgroup libtensor Tensor library

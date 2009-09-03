@@ -1,9 +1,12 @@
 #include <cstdlib>
+#ifdef POSIX
 #include <execinfo.h>
+#endif
 #include "backtrace.h"
 
 namespace libtensor {
 
+#ifdef POSIX
 backtrace::backtrace() : m_avail(true) {
 
 	const size_t nframes_max = 128;
@@ -25,5 +28,10 @@ backtrace::backtrace() : m_avail(true) {
 
 	free(lines);
 }
+#else
+backtrace::backtrace() : m_avail(false) {
+
+}
+#endif
 
 } // namespace libtensor
