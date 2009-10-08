@@ -65,8 +65,8 @@ public:
 
 private:
 //	expression_t &m_expr; //!< Contraction expression
-//	contraction2<N, M, K> m_contr; //!< Contraction
-	functor_t m_func; //!< Evaluation functor
+	functor_t m_func; //!< Sub-expression evaluation functor
+
 
 public:
 	/**	\brief Initializes the container with given expression and
@@ -81,7 +81,7 @@ public:
 	arg<N + M, T, Tag> get_arg(const Tag &tag, size_t i) const
 		throw(exception);
 
-	/**	\brief Returns a single %tensor operation argument
+	/**	\brief Returns a single argument
 	 **/
 	arg<N + M, T, oper_tag> get_arg(const oper_tag &tag, size_t i) const
 		throw(exception);
@@ -143,7 +143,7 @@ arg<N + M, T, oper_tag> eval_contract<N, M, K, T, E1, E2>::get_arg(
 			"Argument index is out of bounds.");
 	}
 
-	throw_exc(k_clazz, method, "Incomplete.");
+//	return arg<N + M, T, oper_tag>(m_func.get_bto(), 1.0);
 }
 
 

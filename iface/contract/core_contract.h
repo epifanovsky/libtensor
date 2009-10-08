@@ -63,6 +63,12 @@ public:
 		return m_expr2;
 	}
 
+	/**	\brief Returns the contracted indexes
+	 **/
+	const letter_expr<K> &get_contr() {
+		return m_contr;
+	}
+
 	/**	\brief Returns whether the result's label contains a %letter
 		\param let Letter.
 	 **/

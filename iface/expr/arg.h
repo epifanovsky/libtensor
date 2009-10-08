@@ -12,6 +12,20 @@ namespace labeled_btensor_expr {
 struct tensor_tag { };
 struct oper_tag { };
 
+template<size_t N, typename T, typename Tag>
+struct arg_traits { };
+
+template<size_t N, typename T>
+struct arg_traits<N, T, oper_tag> {
+	//!	\brief Block tensor operation type
+	typedef direct_block_tensor_operation<N, T> bto_t;
+};
+
+template<size_t N>
+struct arg_traits<N, double, oper_tag> {
+	typedef btod_additive<N> bto_t;
+};
+
 /**	\brief Generic container for an expression argument
 
 	\ingroup libtensor_btensor_expr
@@ -59,35 +73,31 @@ public:
  **/
 template<size_t N, typename T>
 class arg<N, T, oper_tag> {
-};
+public:
+	typedef arg_traits<N, T, oper_tag> traits_t;
+	typedef typename traits_t::bto_t bto_t;
 
-/**	\brief Container for a %tensor operation expression argument
-		(specialized for double)
-
-	\ingroup libtensor_btensor_expr
- **/
-template<size_t N>
-class arg<N, double, oper_tag> {
 private:
-	btod_additive<N> &m_op;
-	double m_coeff;
+	bto_t &m_op; //!< Operation reference
+	T m_coeff; //!< Coefficient
 
 public:
-	arg(btod_additive<N> &op, double coeff) : m_op(op), m_coeff(coeff) {
+	arg(bto_t &op, T coeff) : m_op(op), m_coeff(coeff) {
 	}
 
-	void scale(double c) {
+	void scale(T c) {
 		m_coeff *= c;
 	}
 
-	btod_additive<N> &get_operation() {
+	bto_t &get_operation() {
 		return m_op;
 	}
 
-	double get_coeff() const {
+	T get_coeff() const {
 		return m_coeff;
 	}
 };
+
 
 } // namespace labeled_btensor_expr
 } // namespace libtensor

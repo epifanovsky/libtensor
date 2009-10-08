@@ -38,6 +38,9 @@ class expr_base {
 template<size_t N, typename T, typename Core>
 class expr : public expr_base<N, T> {
 public:
+	//!	Expression core type
+	typedef Core core_t;
+
 	//!	Expression evaluating container type
 	typedef typename Core::eval_container_t eval_container_t;
 
