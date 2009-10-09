@@ -10,26 +10,10 @@ namespace libtensor {
 namespace bispace_expr {
 
 
+template<size_t N, size_t M, typename D> struct ident_subexpr_functor;
+
 template<size_t N>
 class ident {
-public:
-	template<size_t M, typename D, int Dummy = 0>
-	struct subexpr_functor {
-
-		static size_t contains(
-			const ident<N> &expr, const expr<M, D> &subexpr) {
-			return 0;
-		}
-
-		static size_t locate(
-			const ident<N> &expr, const expr<M, D> &subexpr) {
-			throw expr_exception("libtensor::bispace_expr",
-				"ident<N>::subexpr_functor<M, D, 0>",
-				"locate()", __FILE__, __LINE__,
-				"Subexpression cannot be located.");
-		}
-	};
-
 private:
 	const bispace<N> &m_bis;
 
@@ -47,12 +31,12 @@ public:
 
 	template<size_t M, typename D>
 	size_t contains(const expr<M, D> &subexpr) const {
-		return subexpr_functor<M, D>::contains(*this, subexpr);
+		return ident_subexpr_functor<N, M, D>::contains(*this, subexpr);
 	}
 
 	template<size_t M, typename D>
 	size_t locate(const expr<M, D> &subexpr) const {
-		return subexpr_functor<M, D>::locate(*this, subexpr);
+		return ident_subexpr_functor<N, M, D>::locate(*this, subexpr);
 	}
 
 	template<size_t M, typename D>
@@ -93,8 +77,28 @@ public:
 };
 
 
-template<size_t N> template<int Dummy>
-struct ident<N>::subexpr_functor<N, ident<N>, Dummy> {
+template<size_t N, size_t M, typename D>
+struct ident_subexpr_functor {
+
+	static size_t contains(
+		const ident<N> &expr, const expr<M, D> &subexpr) {
+
+		return 0;
+	}
+
+	static size_t locate(
+		const ident<N> &expr, const expr<M, D> &subexpr) {
+
+		throw expr_exception("libtensor::bispace_expr",
+			"ident_subexpr_functor<N, M, D>",
+			"locate()", __FILE__, __LINE__,
+			"Subexpression cannot be located.");
+	}
+};
+
+
+template<size_t N>
+struct ident_subexpr_functor< N, N, ident<N> > {
 
 	static size_t contains(
 		const ident<N> &expr, const expr< N, ident<N> > &subexpr) {
@@ -107,7 +111,7 @@ struct ident<N>::subexpr_functor<N, ident<N>, Dummy> {
 
 		if(!expr.is_same(subexpr.get_core())) {
 			throw expr_exception("libtensor::bispace_expr",
-				"ident<N>::subexpr_functor<N, ident<N>, 0>",
+				"ident_subexpr_functor< N, N, ident<N> >",
 				"locate()", __FILE__, __LINE__,
 				"Subexpression cannot be located.");
 		}
