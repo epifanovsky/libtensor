@@ -239,15 +239,25 @@ void btod_copy<N>::do_perform(
 		if(src_ctrl.req_is_zero_block(src_blk_idx)) continue;
 		index<N> dst_blk_idx(src_blk_idx);
 		dst_blk_idx.permute(m_perm);
+		orbit<N, double> dst_orb(dst_ctrl.req_symmetry(), dst_blk_idx);
+		const transf<N, double> &dst_trn =
+			dst_orb.get_transf(dst_blk_idx);
+		permutation<N> perm(m_perm);
+		perm.permute(permutation<N>(dst_trn.get_perm(), true));
+		double coeff = m_c / dst_trn.get_coeff();
 
 		tensor_i<N, double> &src_blk = src_ctrl.req_block(src_blk_idx);
-		tensor_i<N, double> &dst_blk = dst_ctrl.req_block(dst_blk_idx);
+		index<N> dst_blk_can_idx;
+		bidims.abs_index(
+			dst_orb.get_abs_canonical_index(), dst_blk_can_idx);
+		tensor_i<N, double> &dst_blk =
+			dst_ctrl.req_block(dst_blk_can_idx);
 
 		if(zero) {
-			tod_copy<N> cp(src_blk, m_perm, m_c * c);
+			tod_copy<N> cp(src_blk, m_perm, coeff * c);
 			cp.perform(dst_blk);
 		} else {
-			tod_copy<N> cp(src_blk, m_perm, m_c);
+			tod_copy<N> cp(src_blk, m_perm, coeff);
 			cp.perform(dst_blk, c);
 		}
 

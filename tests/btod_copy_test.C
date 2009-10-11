@@ -16,6 +16,7 @@ void btod_copy_test::perform() throw(libtest::test_exception) {
 	test_zero_1();
 	test_1();
 	test_2();
+	test_3();
 	test_dir_1();
 	test_dir_2();
 	test_dir_3();
@@ -265,6 +266,85 @@ void btod_copy_test::test_2() throw(libtest::test_exception) {
 	//	Compute the reference
 
 	tod_copy<4>(ta).perform(tb_ref, 2.0);
+
+	//	Compare against reference
+
+	compare_ref<4>::compare(testname, tb, tb_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void btod_copy_test::test_3() throw(libtest::test_exception) {
+
+	//
+	//	b_ikjl = a_ijkl
+	//	Dimensions [ij]=10, [kl]=12, permutational symmetry
+	//	Sym(B) = Sym(A)
+	//
+
+	static const char *testname = "btod_copy_test::test_3()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 9; i2[1] = 9; i2[2] = 11; i2[3] = 11;
+	dimensions<4> dimsa(index_range<4>(i1, i2));
+	block_index_space<4> bisa(dimsa);
+
+	mask<4> msk1, msk2, msk3, msk4;
+	msk1[0] = true; msk1[1] = true;
+	msk2[2] = true; msk2[3] = true;
+	msk3[0] = true; msk3[2] = true;
+	msk4[1] = true; msk4[3] = true;
+
+	bisa.split(msk1, 3);
+	bisa.split(msk1, 5);
+	bisa.split(msk2, 4);
+
+	permutation<4> perm; perm.permute(1, 2);
+	dimensions<4> dimsb(dimsa);
+	block_index_space<4> bisb(bisa);
+	dimsb.permute(perm);
+	bisb.permute(perm);
+
+	block_tensor<4, double, allocator_t> bta(bisa), btb(bisb);
+
+	//	Set up symmetry
+
+	symel_cycleperm<4, double> cycle1(2, msk1), cycle2(2, msk2);
+	symel_cycleperm<4, double> cycle3(2, msk3), cycle4(2, msk4);
+	block_tensor_ctrl<4, double> ctrla(bta), ctrlb(btb);
+	ctrla.req_sym_add_element(cycle1);
+	ctrla.req_sym_add_element(cycle2);
+//	ctrlb.req_sym_add_element(cycle3);
+//	ctrlb.req_sym_add_element(cycle4);
+
+	//	Load random data for input
+
+	btod_random<4> rand;
+	rand.perform(bta);
+	rand.perform(btb);
+	bta.set_immutable();
+
+	//	Convert input block tensors to regular tensors
+
+	tensor<4, double, allocator_t> ta(dimsa), tb(dimsb), tb_ref(dimsb);
+	tod_btconv<4>(bta).perform(ta);
+	tod_btconv<4>(btb).perform(tb_ref);
+
+	//	Run the operation
+
+	btod_copy<4>(bta, perm).perform(btb);
+	tod_btconv<4>(btb).perform(tb);
+
+	//	Compute the reference
+
+	tod_copy<4>(ta, perm).perform(tb_ref);
 
 	//	Compare against reference
 

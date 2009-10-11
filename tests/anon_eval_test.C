@@ -186,7 +186,7 @@ void anon_eval_test::test_copy_5() throw(libtest::test_exception) {
 	sj.split(3);
 	sa.split(6);
 	sb.split(6);
-	bispace<4> sijab(si|sj|sa|sb);
+	bispace<4> sijab(si&sj|sa&sb);
 
 	btensor<4> tp(sijab);
 	mask<4> msk1, msk2;
@@ -227,7 +227,7 @@ void anon_eval_test::test_copy_6() throw(libtest::test_exception) {
 	sj.split(3);
 	sa.split(6);
 	sb.split(6);
-	bispace<4> sijab(si|sj|sa|sb), siajb(si|sa|sj|sb);
+	bispace<4> sijab(si&sj|sa&sb), siajb(si|sa|sj|sb, si&sj|sa&sb);
 
 	btensor<4> tp(sijab);
 	mask<4> msk1, msk2;

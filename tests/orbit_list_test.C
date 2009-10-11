@@ -14,11 +14,18 @@ void orbit_list_test::perform() throw(libtest::test_exception) {
 	test_6();
 	test_7();
 	test_8();
+	test_9();
 }
 
 void orbit_list_test::test_1() throw(libtest::test_exception) {
 
+	//
+	//	dim [3,3], split [3,3]
+	//	(1)(2), 9 orbits
+	//
+
 	static const char *testname = "orbit_list_test::test_1()";
+
 	try {
 
 	index<2> i1, i2;
@@ -68,7 +75,13 @@ void orbit_list_test::test_1() throw(libtest::test_exception) {
 
 void orbit_list_test::test_2() throw(libtest::test_exception) {
 
+	//
+	//	dim [3,3], split [3,3]
+	//	(1)(1), 6 orbits
+	//
+
 	static const char *testname = "orbit_list_test::test_2()";
+
 	try {
 
 	index<2> i1, i2;
@@ -123,7 +136,13 @@ void orbit_list_test::test_2() throw(libtest::test_exception) {
 
 void orbit_list_test::test_3() throw(libtest::test_exception) {
 
+	//
+	//	dim [3,3,3,3], split [3,3,3,3]
+	//	(1)(1)(2)(3), 54 orbits
+	//
+
 	static const char *testname = "orbit_list_test::test_3()";
+
 	try {
 
 	index<4> i1, i2;
@@ -178,7 +197,13 @@ void orbit_list_test::test_3() throw(libtest::test_exception) {
 
 void orbit_list_test::test_4() throw(libtest::test_exception) {
 
+	//
+	//	dim [3,3,3,3], split [3,3,3,3]
+	//	(1)(2)(2)(3), 54 orbits
+	//
+
 	static const char *testname = "orbit_list_test::test_4()";
+
 	try {
 
 	index<4> i1, i2;
@@ -233,7 +258,13 @@ void orbit_list_test::test_4() throw(libtest::test_exception) {
 
 void orbit_list_test::test_5() throw(libtest::test_exception) {
 
+	//
+	//	dim [3,3,3,3], split [3,3,3,3]
+	//	(1)(1)(1)(2), 33 orbits
+	//
+
 	static const char *testname = "orbit_list_test::test_5()";
+
 	try {
 
 	index<4> i1, i2;
@@ -289,7 +320,13 @@ void orbit_list_test::test_5() throw(libtest::test_exception) {
 
 void orbit_list_test::test_6() throw(libtest::test_exception) {
 
+	//
+	//	dim [3,3,3,3], split [3,3,3,3]
+	//	(1)(1)(2)(2), 36 orbits
+	//
+
 	static const char *testname = "orbit_list_test::test_6()";
+
 	try {
 
 	index<4> i1, i2;
@@ -349,7 +386,13 @@ void orbit_list_test::test_6() throw(libtest::test_exception) {
 
 void orbit_list_test::test_7() throw(libtest::test_exception) {
 
+	//
+	//	dim [3,3,3,3], split [3,3,3,3]
+	//	(1)(1)(1)(2), (1) fully symmetric, 30 orbits
+	//
+
 	static const char *testname = "orbit_list_test::test_7()";
+
 	try {
 
 	index<4> i1, i2;
@@ -406,7 +449,13 @@ void orbit_list_test::test_7() throw(libtest::test_exception) {
 
 void orbit_list_test::test_8() throw(libtest::test_exception) {
 
+	//
+	//	dim [3,3,3,3], split [3,3,3,3]
+	//	(1)(1)(1)(1), (1) fully symmetric, 15 orbits
+	//
+
 	static const char *testname = "orbit_list_test::test_8()";
+
 	try {
 
 	index<4> i1, i2;
@@ -457,6 +506,71 @@ void orbit_list_test::test_8() throw(libtest::test_exception) {
 				ss.str().c_str());
 		}
 	} while(dims.inc_index(io));
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+void orbit_list_test::test_9() throw(libtest::test_exception) {
+
+	//
+	//	dim [3,6,3,6], split [2,3,2,3]
+	//	(1)(2)(1)(2), 18 orbits
+	//
+
+	static const char *testname = "orbit_list_test::test_9()";
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 2; i2[1] = 5; i2[2] = 2; i2[3] = 5;
+	mask<4> msk1, msk2;
+	msk1[0] = true; msk1[1] = false; msk1[2] = true; msk1[3] = false;
+	msk2[0] = false; msk2[1] = true; msk2[2] = false; msk2[3] = true;
+	dimensions<4> dims(index_range<4>(i1, i2));
+	i2[0] = 1; i2[1] = 2; i2[2] = 1; i2[3] = 2;
+	dimensions<4> bdims(index_range<4>(i1, i2));
+	block_index_space<4> bis(dims);
+	bis.split(msk1, 1);
+	bis.split(msk2, 2);
+	bis.split(msk2, 4);
+	symmetry<4, double> sym(bis);
+	symel_cycleperm<4, double> cycle1(2, msk1);
+	symel_cycleperm<4, double> cycle2(2, msk2);
+	sym.add_element(cycle1);
+	sym.add_element(cycle2);
+
+	orbit_list<4, double> orblst(sym);
+	size_t norb_ref = 18;
+	if(orblst.get_size() != norb_ref) {
+		std::ostringstream ss;
+		ss << "Invalid number of orbits: " << orblst.get_size()
+			<< " vs. " << norb_ref << " (ref).";
+		fail_test(testname, __FILE__, __LINE__,
+			ss.str().c_str());
+	}
+
+	index<4> io;
+	do {
+		bool can_ref = (io[0] <= io[2] && io[1] <= io[3]);
+		bool can = false;
+		orbit_list<4, double>::iterator i = orblst.begin();
+		while(i != orblst.end()) {
+			if(io.equals(orblst.get_index(i))) {
+				can = true;
+				break;
+			}
+			i++;
+		}
+		if(can != can_ref) {
+			std::ostringstream ss;
+			ss << "Failure to detect a canonical index: " << io
+				<< " (can_ref = " << can_ref << ").";
+			fail_test(testname, __FILE__, __LINE__,
+				ss.str().c_str());
+		}
+	} while(bdims.inc_index(io));
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());

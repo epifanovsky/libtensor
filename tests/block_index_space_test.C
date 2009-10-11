@@ -14,6 +14,7 @@ void block_index_space_test::perform() throw(libtest::test_exception) {
 	test_equals_1();
 	test_equals_2();
 	test_equals_3();
+	test_permute_1();
 	test_exc_1();
 	test_exc_2();
 
@@ -558,6 +559,67 @@ void block_index_space_test::test_equals_3() throw(libtest::test_exception) {
 	if(!bis1.equals(bis2)) {
 		fail_test(testname, __FILE__, __LINE__,
 			"Equality test (4) failed");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void block_index_space_test::test_permute_1() throw(libtest::test_exception) {
+
+	static const char *testname =
+		"block_index_space_test::test_permute_1()";
+
+	try {
+
+	permutation<4> perm; perm.permute(1, 2);
+	index<4> i1, i2;
+	i2[0] = 9; i2[1] = 9; i2[2] = 11; i2[3] = 11;
+	dimensions<4> dimsa(index_range<4>(i1, i2));
+	block_index_space<4> bisa(dimsa);
+	dimensions<4> dimsb_ref(dimsa); dimsb_ref.permute(perm);
+	block_index_space<4> bisb_ref(dimsb_ref);
+
+	mask<4> msk1, msk2, msk3, msk4;
+	msk1[0] = true; msk1[1] = true;
+	msk2[2] = true; msk2[3] = true;
+	msk3[0] = true; msk3[2] = true;
+	msk4[1] = true; msk4[3] = true;
+
+	bisa.split(msk1, 3);
+	bisa.split(msk1, 5);
+	bisa.split(msk2, 4);
+	bisb_ref.split(msk3, 3);
+	bisb_ref.split(msk3, 5);
+	bisb_ref.split(msk4, 4);
+
+	dimensions<4> bidimsa(bisa.get_block_index_dims());
+	dimensions<4> bidimsb_ref(bidimsa); bidimsb_ref.permute(perm);
+	block_index_space<4> bisb(bisa);
+	bisb.permute(perm);
+	dimensions<4> bidimsb(bisb.get_block_index_dims());
+
+	if(!bisb.equals(bisb_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Incorrect permuted block index space (1).");
+	}
+	if(!bidimsb.equals(bidimsb_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Incorrect block index dimensions (1).");
+	}
+
+	block_index_space<4> bisb2(bisb);
+	dimensions<4> bidimsb2(bisb2.get_block_index_dims());
+
+	if(!bisb2.equals(bisb_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Incorrect permuted block index space (2).");
+	}
+	if(!bidimsb2.equals(bidimsb_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Incorrect block index dimensions (2).");
 	}
 
 	} catch(exception &e) {

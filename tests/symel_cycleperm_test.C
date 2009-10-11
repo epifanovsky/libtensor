@@ -12,6 +12,7 @@ void symel_cycleperm_test::perform() throw(libtest::test_exception) {
 	test_equals_1();
 	test_equals_2();
 	test_equals_3();
+	test_permute_1();
 }
 
 void symel_cycleperm_test::test_1() throw(libtest::test_exception) {
@@ -149,5 +150,42 @@ void symel_cycleperm_test::test_equals_3() throw(libtest::test_exception) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
 	}
 }
+
+
+void symel_cycleperm_test::test_permute_1() throw(libtest::test_exception) {
+
+	static const char *testname = "symel_cycleperm_test::test_permute_1()";
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 2; i2[1] = 2; i2[2] = 2; i2[3] = 2;
+	dimensions<4> dims(index_range<4>(i1, i2));
+	mask<4> msk;
+	msk[0] = true; msk[1] = true; msk[2] = false; msk[3] = false;
+	symel_cycleperm<4, double> elem(2, msk);
+	permutation<4> perm; perm.permute(1, 2);
+	mask<4> msk_ref(msk); msk_ref.permute(perm);
+	permutation<4> perm_ref; perm_ref.permute(0, 2);
+	elem.permute(perm);
+
+	if(!elem.get_mask().equals(msk_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Incorrect permuted mask.");
+	}
+	if(!elem.get_transf().get_perm().equals(perm_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Incorrect permuted transformation (permutation).");
+	}
+	if(elem.get_transf().get_coeff() != 1.0) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Incorrect permuted transformation (coefficient).");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
 
 } // namespace libtensor

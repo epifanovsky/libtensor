@@ -164,7 +164,7 @@ template<size_t N, typename T>
 void symel_cycleperm<N, T>::permute(const permutation<N> &perm) {
 
 	m_msk.permute(perm);
-	m_tr.permute(perm);
+	build_cycle();
 }
 
 
@@ -247,12 +247,6 @@ inline const transf<N, T> &symel_cycleperm<N, T>::get_transf() const {
 
 	return m_tr;
 }
-
-//template<size_t N, typename T>
-//inline const permutation<N> &symel_cycleperm<N, T>::get_perm() const {
-//
-//	return m_perm;
-//}
 
 
 template<size_t N, typename T>
