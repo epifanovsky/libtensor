@@ -10,6 +10,7 @@
 #include "core/mask.h"
 #include "core/index_range.h"
 #include "core/dimensions.h"
+#include "core/abs_index.h"
 #include "core/permutation.h"
 #include "core/permutation_builder.h"
 
