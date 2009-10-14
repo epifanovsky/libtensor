@@ -1,7 +1,8 @@
 #ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_EVAL_CONTRACT_H
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_EVAL_CONTRACT_H
 
-#include "evalfunctor_contract.h"
+#include "contract_eval_functor.h"
+#include "contract_subexpr_labels.h"
 
 namespace libtensor {
 namespace labeled_btensor_expr {
@@ -52,8 +53,11 @@ public:
 	static const size_t k_narg_oper_b =
 		eval_container_b_t::template narg<oper_tag>::k_narg;
 
+	//!	Labels for sub-expressions
+	typedef contract_subexpr_labels<N, M, K, T, E1, E2> subexpr_labels_t;
+
 	//!	Evaluating functor type (specialized for A and B)
-	typedef evalfunctor_contract<N, M, K, T, E1, E2,
+	typedef contract_eval_functor<N, M, K, T, E1, E2,
 		k_narg_tensor_a, k_narg_oper_a, k_narg_tensor_b, k_narg_oper_b>
 		functor_t;
 
@@ -65,6 +69,7 @@ public:
 
 private:
 //	expression_t &m_expr; //!< Contraction expression
+	subexpr_labels_t m_sub_labels;
 	functor_t m_func; //!< Sub-expression evaluation functor
 
 
@@ -75,6 +80,8 @@ public:
 	eval_contract(expression_t &expr, const letter_expr<k_orderc> &label)
 		throw(exception);
 
+	/**	\brief Evaluates sub-expressions into temporary tensors
+	 **/
 	void prepare() throw(exception);
 
 	template<typename Tag>
@@ -109,7 +116,9 @@ template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2>
 inline eval_contract<N, M, K, T, E1, E2>::eval_contract(
 	expression_t &expr, const letter_expr<k_orderc> &label)
 	throw(exception) :
-		m_func(expr, label) {
+
+	m_sub_labels(expr, label),
+	m_func(expr, m_sub_labels, label) {
 
 }
 
@@ -143,6 +152,7 @@ arg<N + M, T, oper_tag> eval_contract<N, M, K, T, E1, E2>::get_arg(
 			"Argument index is out of bounds.");
 	}
 
+	return m_func.get_arg();
 //	return arg<N + M, T, oper_tag>(m_func.get_bto(), 1.0);
 }
 
