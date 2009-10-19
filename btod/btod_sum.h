@@ -28,7 +28,7 @@ private:
 		list_node(btod_additive<N> &op, double c);
 	};
 
-	direct_block_tensor_operation<N,double> &m_baseop; //!< Base operation
+//	direct_block_tensor_operation<N,double> &m_baseop; //!< Base operation
 	struct list_node *m_head; //!< Head of the list of additional operations
 	struct list_node *m_tail; //!< Tail of the list of additional operations
 
@@ -38,10 +38,8 @@ public:
 
 	/**	\brief Default constructor
 	**/
-	btod_sum(direct_block_tensor_operation<N, double> &op);
-	btod_sum(btod_additive<N> &op, double c) : m_baseop(op) {
-		throw_exc("btod_sum", "btod_sum", "NIY");
-	}
+//	btod_sum(direct_block_tensor_operation<N, double> &op);
+	btod_sum(btod_additive<N> &op, double c);
 
 	/**	\brief Virtual destructor
 	**/
@@ -78,9 +76,16 @@ private:
 template<size_t N>
 const char* btod_sum<N>::k_clazz = "btod_sum<N>";
 
+//template<size_t N>
+//inline btod_sum<N>::btod_sum(direct_block_tensor_operation<N, double> &op) :
+//	m_baseop(op), m_head(NULL), m_tail(NULL) {
+//}
+
 template<size_t N>
-inline btod_sum<N>::btod_sum(direct_block_tensor_operation<N, double> &op) :
-	m_baseop(op), m_head(NULL), m_tail(NULL) {
+inline btod_sum<N>::btod_sum(btod_additive<N> &op, double c) :
+m_head(NULL), m_tail(NULL) {
+
+	add_op(op, c);
 }
 
 template<size_t N>
@@ -107,7 +112,7 @@ const symmetry<N, double> &btod_sum<N>::get_symmetry() const {
 template<size_t N>
 void btod_sum<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 	timings<btod_sum<N> >::start_timer();
-	m_baseop.perform(bt);
+//	m_baseop.perform(bt);
 	struct list_node *node = m_head;
 	while(node != NULL) {
 		node->m_op.perform(bt, node->m_c);

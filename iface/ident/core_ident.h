@@ -42,6 +42,10 @@ public:
 	 **/
 	core_ident(labeled_btensor_t &t) : m_t(t) { }
 
+	/**	\brief Copy constructor
+	 **/
+	core_ident(const core_ident<N, T, Assignable> &core) : m_t(core.m_t) { }
+
 	/**	\brief Returns the labeled block %tensor
 	 **/
 	labeled_btensor_t &get_tensor() {

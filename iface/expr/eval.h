@@ -57,10 +57,18 @@ public:
 
 
 template<size_t N, typename T, typename Core>
-eval<N, T, Core>::eval(const expression_t &expr, result_t &result) :
+eval<N, T, Core>::eval(const expression_t &expr, result_t &result) try :
 	m_expr(expr),
 	m_result(result),
-	m_eval_container(m_expr, result.get_label()) {
+	m_eval_container(m_expr, m_result.get_label()) {
+} catch(...) {
+
+	std::cout << " eval[";
+	for(size_t i = 0; i < N; i++) {
+		if(i != 0) std::cout << " ";
+		std::cout << &m_expr.letter_at(i);
+	}
+	std::cout << "] ";
 
 }
 

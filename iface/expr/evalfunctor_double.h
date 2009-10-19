@@ -209,7 +209,7 @@ evalfunctor<N, double, Core, NTensor, NOper>::evalfunctor(
 		m_arg0(m_eval_container.get_arg(tensor_tag(), 0)),
 		m_op_add(m_arg0.get_btensor(), m_arg0.get_perm(),
 			m_arg0.get_coeff()),
-		m_op_sum(m_op_add) {
+		m_op_sum(m_op_add, 1.0) {
 
 	tensor_tag ttag;
 	oper_tag otag;

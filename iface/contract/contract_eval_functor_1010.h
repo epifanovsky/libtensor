@@ -69,7 +69,7 @@ contract_eval_functor<N, M, K, T, E1, E2, 1, 0, 1, 0>::contract_eval_functor(
 	expression_t &expr, const subexpr_labels_t &labels_ab,
 	const letter_expr<k_orderc> &label_c) :
 
-	m_eval_a(expr.get_core().get_expr_2(), labels_ab.get_label_a()),
+	m_eval_a(expr.get_core().get_expr_1(), labels_ab.get_label_a()),
 	m_arg_a(m_eval_a.get_arg(tensor_tag(), 0)),
 	m_eval_b(expr.get_core().get_expr_2(), labels_ab.get_label_b()),
 	m_arg_b(m_eval_b.get_arg(tensor_tag(), 0)),

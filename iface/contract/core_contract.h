@@ -51,9 +51,19 @@ public:
 	core_contract(const letter_expr<K> &contr,
 		const E1 &expr1, const E2 &expr2) throw(expr_exception);
 
+	/**	\brief Copy constructor
+	 **/
+	core_contract(const core_contract<N, M, K, T, E1, E2> &core);
+
 	/**	\brief Returns the first expression (A)
 	 **/
 	E1 &get_expr_1() {
+		return m_expr1;
+	}
+
+	/**	\brief Returns the first expression (A), const version
+	 **/
+	const E1 &get_expr_1() const {
 		return m_expr1;
 	}
 
@@ -63,9 +73,15 @@ public:
 		return m_expr2;
 	}
 
+	/**	\brief Returns the second expression (B), const version
+	 **/
+	const E2 &get_expr_2() const {
+		return m_expr2;
+	}
+
 	/**	\brief Returns the contracted indexes
 	 **/
-	const letter_expr<K> &get_contr() {
+	const letter_expr<K> &get_contr() const {
 		return m_contr;
 	}
 
@@ -117,6 +133,7 @@ core_contract<N, M, K, T, E1, E2>::core_contract(
 	}
 
 	size_t j = 0;
+	for(size_t i = 0; i < N + M; i++) m_defout[i] = NULL;
 	for(size_t i = 0; i < N + K; i++) {
 		const letter &l = expr1.letter_at(i);
 		if(!contr.contains(l)) {
@@ -141,6 +158,14 @@ core_contract<N, M, K, T, E1, E2>::core_contract(
 			}
 		}
 	}
+}
+
+
+template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2>
+core_contract<N, M, K, T, E1, E2>::core_contract(
+	const core_contract<N, M, K, T, E1, E2> &core) :
+	m_expr1(core.m_expr1), m_expr2(core.m_expr2), m_contr(core.m_contr) {
+
 }
 
 

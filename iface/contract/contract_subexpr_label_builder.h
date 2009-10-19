@@ -5,135 +5,110 @@ namespace libtensor {
 namespace labeled_btensor_expr {
 
 
-/**	\brief Label builder for sub-expressions in contract (base class)
+template<size_t N, typename T, typename Core> class expr;
+
+
+/**	\brief Label builder for sub-expressions in contract
 
 	\ingroup libtensor_iface
  **/
 template<size_t N, size_t M, size_t K>
-class contract_subexpr_label_builder_base {
+class contract_subexpr_label_builder {
+private:
+	struct letter_array {
+	private:
+		const letter *m_let[N + K];
+	public:
+		template<typename T, typename Core>
+		letter_array(const letter_expr<N + M> &label_c,
+			const letter_expr<K> &contr,
+			const expr<N + K, T, Core> &e);
+		const letter *at(size_t i) const { return m_let[i]; }
+	};
+	template<size_t L>
+	struct dummy { };
+	letter_array m_let;
+	letter_expr<N + K> m_label;
+
+public:
+	template<typename T, typename Core>
+	contract_subexpr_label_builder(const letter_expr<N + M> &label_c,
+		const letter_expr<K> &contr, const expr<N + K, T, Core> &e);
+
+	const letter_expr<N + K> &get_label() const { return m_label; }
+
 protected:
-	template<typename Expr>
-	static size_t next_i(const letter_expr<N + M> &label_c,
-		const letter_expr<K> &contr, const Expr &expr, size_t i);
-
-	static const letter &get_letter(const letter_expr<N + M> &label_c,
-		const letter_expr<K> &contr, size_t i);
-
-};
-
-
-//template<size_t N, size_t M, size_t K, size_t Cnt>
-//class contract_subexpr_label_builder;
-//
-//template<size_t N, size_t M, size_t K>
-//class contract_subexpr_label_builder<N, M, K, 1>;
-
-
-/**	\brief Builds a label with which a sub-expression should be evaluated
-
-	\ingroup libtensor_btensor_expr
- **/
-template<size_t N, size_t M, size_t K, size_t Cnt>
-class contract_subexpr_label_builder :
-	public contract_subexpr_label_builder_base<N, M, K> {
-private:
-	size_t m_i;
-	contract_subexpr_label_builder<N, M, K, Cnt - 1> m_sub_builder;
-	letter_expr<Cnt> m_label;
-
-public:
-	template<typename Expr>
-	contract_subexpr_label_builder(const letter_expr<N + M> &label_c,
-		const letter_expr<K> &contr, const Expr &expr);
-
-	size_t get_i() const {
-		return m_i;
-	}
-
-	const letter_expr<Cnt> &get_label() const {
-		return m_label;
-	}
+	template<size_t L>
+	static letter_expr<L> mk_label(
+		const dummy<L>&, const letter_array &let, size_t i);
+	static letter_expr<1> mk_label(
+		const dummy<1>&, const letter_array &let, size_t i);
 
 };
 
 
-template<size_t N, size_t M, size_t K>
-class contract_subexpr_label_builder<N, M, K, 1> :
-	public contract_subexpr_label_builder_base<N, M, K> {
-private:
-	size_t m_i;
-	letter_expr<1> m_label;
-
-public:
-	template<typename Expr>
-	contract_subexpr_label_builder(const letter_expr<N + M> &label_c,
-		const letter_expr<K> &contr, const Expr &expr);
-
-	size_t get_i() const {
-		return m_i;
-	}
-
-	const letter_expr<1> &get_label() const {
-		return m_label;
-	}
-
-};
-
-
-template<size_t N, size_t M, size_t K> template<typename Expr>
-size_t contract_subexpr_label_builder_base<N, M, K>::next_i(
+template<size_t N, size_t M, size_t K> template<typename T, typename Core>
+contract_subexpr_label_builder<N, M, K>::contract_subexpr_label_builder(
 	const letter_expr<N + M> &label_c, const letter_expr<K> &contr,
-	const Expr &expr, size_t i) {
+	const expr<N + K, T, Core> &e) :
 
-	if(i < N + M) {
-		size_t j = i;
-		for(; j < N + M; j++) {
-			if(expr.contains(label_c.letter_at(j))) return j;
-		}
-		for(j = 0; j < K; j++) {
-			if(expr.contains(contr.letter_at(j)))
-				return j + N + M;
-		}
-	} else {
-		size_t j = i - N - M;
-		for(; j < K; j++) {
-			if(expr.contains(contr.letter_at(j)))
-				return j + N + M;
+	m_let(label_c, contr, e),
+	m_label(mk_label(dummy<N + K>(), m_let, 0)) {
+
+}
+
+
+template<size_t N, size_t M, size_t K> template<typename T, typename Core>
+contract_subexpr_label_builder<N, M, K>::letter_array::letter_array(
+	const letter_expr<N + M> &label_c, const letter_expr<K> &contr,
+	const expr<N + K, T, Core> &e) {
+
+	for(size_t i = 0; i < N + K; i++) m_let[i] = NULL;
+
+	size_t j = 0;
+	for(size_t i = 0; i < N + M; i++) {
+		const letter &l = label_c.letter_at(i);
+		if(e.contains(l)) {
+			if(j == N + K) {
+				throw_exc("contract_subexpr_label_builder::letter_array",
+					"letter_array()", "Inconsistent expression");
+			}
+			m_let[j] = &l;
+			j++;
 		}
 	}
-	throw_exc("contract_subexpr_label_builder_base", "next_i()",
-		"Inconsistent expression");
+	for(size_t i = 0; i < K; i++) {
+		const letter &l = contr.letter_at(i);
+		if(e.contains(l)) {
+			if(j == N + K) {
+				throw_exc("contract_subexpr_label_builder::letter_array",
+					"letter_array()", "Inconsistent expression");
+			}
+			m_let[j] = &l;
+			j++;
+		}
+	}
+	if(j != N + K) {
+		throw_exc("contract_subexpr_label_builder::letter_array",
+			"letter_array()", "Inconsistent expression");
+	}
+}
+
+
+template<size_t N, size_t M, size_t K> template<size_t L>
+letter_expr<L> contract_subexpr_label_builder<N, M, K>::mk_label(
+	const dummy<L>&, const letter_array &let, size_t i) {
+
+	letter_expr<L - 1> sublabel = mk_label(dummy<L - 1>(), let, i + 1);
+	return letter_expr<L>(sublabel, *let.at(i));
 }
 
 
 template<size_t N, size_t M, size_t K>
-inline const letter &contract_subexpr_label_builder_base<N, M, K>::get_letter(
-	const letter_expr<N + M> &label_c, const letter_expr<K> &contr,
-	size_t i) {
+letter_expr<1> contract_subexpr_label_builder<N, M, K>::mk_label(
+	const dummy<1>&, const letter_array &let, size_t i) {
 
-	if(i < N + M) return label_c.letter_at(i);
-	else return contr.letter_at(i - N - M);
-}
-
-
-template<size_t N, size_t M, size_t K, size_t Cur> template<typename Expr>
-contract_subexpr_label_builder<N, M, K, Cur>::contract_subexpr_label_builder(
-	const letter_expr<N + M> &label_c, const letter_expr<K> &contr,
-	const Expr &expr) :
-	m_sub_builder(label_c, contr, expr),
-	m_i(next_i(label_c, contr, expr, m_sub_builder.get_i() + 1)),
-	m_label(m_sub_builder.get_label(), get_letter(label_c, contr, m_i)) {
-
-}
-
-
-template<size_t N, size_t M, size_t K> template<typename Expr>
-contract_subexpr_label_builder<N, M, K, 1>::contract_subexpr_label_builder(
-	const letter_expr<N + M> &label_c, const letter_expr<K> &contr,
-	const Expr &expr) :
-	m_i(next_i(label_c, contr, expr, 0)),
-	m_label(get_letter(label_c, contr, m_i)) {
-
+	return letter_expr<1>(*let.at(i));
 }
 
 

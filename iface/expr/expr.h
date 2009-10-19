@@ -60,6 +60,10 @@ public:
 	 **/
 	Core &get_core();
 
+	/**	\brief Returns the core of the expression (const version)
+	 **/
+	const Core &get_core() const;
+
 	/**	\brief Returns whether the label contains a %letter
 	 **/
 	bool contains(const letter &let) const;
@@ -79,6 +83,13 @@ private:
 
 template<size_t N, typename T, typename Core>
 inline Core &expr<N, T, Core>::get_core() {
+
+	return m_core;
+}
+
+
+template<size_t N, typename T, typename Core>
+inline const Core &expr<N, T, Core>::get_core() const {
 
 	return m_core;
 }

@@ -36,17 +36,17 @@ public:
 
 private:
 	//!	Label builder for the first sub-expression
-	contract_subexpr_label_builder<N, M, K, k_ordera> m_bld_a;
+	contract_subexpr_label_builder<N, M, K> m_bld_a;
 
 	//!	Label builder for the second sub-expression
-	contract_subexpr_label_builder<M, N, K, k_orderb> m_bld_b;
+	contract_subexpr_label_builder<M, N, K> m_bld_b;
 
 public:
 	/**	\brief Initializes the object using a contract expression and
 			a result label
 	 **/
 	contract_subexpr_labels(
-		expression_t &expr, const letter_expr<k_orderc> &label_c);
+		const expression_t &expr, const letter_expr<k_orderc> &label_c);
 
 	/**	\brief Returns the label for the first sub-expression
 	 **/
@@ -60,7 +60,8 @@ public:
 
 template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2>
 contract_subexpr_labels<N, M, K, T, E1, E2>::contract_subexpr_labels(
-	expression_t &expr, const letter_expr<k_orderc> &label_c) :
+	const expression_t &expr, const letter_expr<k_orderc> &label_c) :
+
 	m_bld_a(label_c, expr.get_core().get_contr(),
 		expr.get_core().get_expr_1()),
 	m_bld_b(label_c, expr.get_core().get_contr(),
