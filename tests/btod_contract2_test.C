@@ -18,7 +18,8 @@ void btod_contract2_test::perform() throw(libtest::test_exception) {
 	test_contr_3();
 	test_contr_4();
 	test_contr_5();
-	test_contr_6();
+//	test_contr_6();
+	test_contr_7();
 }
 
 
@@ -802,6 +803,84 @@ void btod_contract2_test::test_contr_6() throw(libtest::test_exception) {
 
 	tod_contract2<2, 2, 2> op_ref(contr, ta, tb);
 	op_ref.perform(tc_ref, 2.0);
+
+	//	Compare against reference
+
+	compare_ref<4>::compare(testname, tc, tc_ref, 1e-13);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void btod_contract2_test::test_contr_7() throw(libtest::test_exception) {
+
+	//
+	//	c_ijkl = a_pi b_jklp
+	//	Dimensions [ijk]=10, [p]=6, no symmetry
+	//
+
+	static const char *testname = "btod_contract2_test::test_contr_7()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<2> i21, i22;
+	i22[0] = 5; i22[1] = 9;
+	dimensions<2> dimsa(index_range<2>(i21, i22));
+	index<4> i41, i42;
+	i42[0] = 9; i42[1] = 9; i42[2] = 9; i42[3] = 5;
+	dimensions<4> dimsb(index_range<4>(i41, i42));
+	i42[0] = 9; i42[1] = 9; i42[2] = 9; i42[3] = 9;
+	dimensions<4> dimsc(index_range<4>(i41, i42));
+	block_index_space<2> bisa(dimsa);
+	block_index_space<4> bisb(dimsb), bisc(dimsc);
+
+	mask<2> mska;
+	mask<4> mskb, mskc;
+	mska[1] = true;
+	mskb[0] = true; mskb[1] = true; mskb[2] = true;
+	mskc[0] = true; mskc[1] = true; mskc[2] = true; mskc[3] = true;
+
+	bisa.split(mska, 3);
+	bisb.split(mskb, 3);
+	bisc.split(mskc, 3);
+
+	block_tensor<2, double, allocator_t> bta(bisa);
+	block_tensor<4, double, allocator_t> btb(bisb), btc(bisc);
+
+	//	Load random data for input
+
+	btod_random<2>().perform(bta);
+	btod_random<4>().perform(btb);
+	bta.set_immutable();
+	btb.set_immutable();
+
+	//	Run contraction
+
+	contraction2<1, 3, 1> contr;
+	contr.contract(0, 3);
+
+	btod_contract2<1, 3, 1> op(contr, bta, btb);
+	op.perform(btc);
+
+	//	Convert block tensors to regular tensors
+
+	tensor<2, double, allocator_t> ta(dimsa);
+	tensor<4, double, allocator_t> tb(dimsb), tc(dimsc), tc_ref(dimsc);
+	tod_btconv<2> conva(bta);
+	conva.perform(ta);
+	tod_btconv<4> convb(btb);
+	convb.perform(tb);
+	tod_btconv<4> convc(btc);
+	convc.perform(tc);
+
+	//	Compute reference tensor
+
+	tod_contract2<1, 3, 1> op_ref(contr, ta, tb);
+	op_ref.perform(tc_ref);
 
 	//	Compare against reference
 
