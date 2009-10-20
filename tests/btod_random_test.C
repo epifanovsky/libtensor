@@ -56,15 +56,15 @@ void btod_random_test::perform() throw(libtest::test_exception)
 
 	tod_copy<4> cpyb(ta,permb,1.0);
 	cpyb.perform(tb);
-	compare_ref<4>::compare("btod_random_test::test_permb",ta,tb,0.0);
+	compare_ref<4>::compare("btod_random_test::test_permb",ta,tb,1e-15);
 
 	tod_copy<4> cpyc(ta,permc,1.0);
 	cpyc.perform(tc);
-	compare_ref<4>::compare("btod_random_test::test_permb",ta,tc,0.0);
+	compare_ref<4>::compare("btod_random_test::test_permb",ta,tc,1e-15);
 
 	tod_copy<4> cpyd(ta,permd,1.0);
 	cpyd.perform(td);
-	compare_ref<4>::compare("btod_random_test::test_permb",ta,td,0.0);
+	compare_ref<4>::compare("btod_random_test::test_permb",ta,td,1e-15);
 
 	} catch(exception &exc) {
 		fail_test("btod_random_test", __FILE__, __LINE__, exc.what());
