@@ -9,15 +9,15 @@ namespace libtensor {
 
 void btod_contract2_test::perform() throw(libtest::test_exception) {
 
-	test_bis_1();
-	test_bis_2();
-	test_sym_1();
-	test_sym_2();
-	test_contr_1();
-	test_contr_2();
-	test_contr_3();
-	test_contr_4();
-	test_contr_5();
+//	test_bis_1();
+//	test_bis_2();
+//	test_sym_1();
+//	test_sym_2();
+//	test_contr_1();
+//	test_contr_2();
+//	test_contr_3();
+//	test_contr_4();
+//	test_contr_5();
 //	test_contr_6();
 	test_contr_7();
 }

@@ -10,6 +10,7 @@ void contraction2_test::perform() throw(libtest::test_exception) {
 	test_1();
 	test_2();
 	test_3();
+	test_4();
 }
 
 
@@ -152,6 +153,39 @@ void contraction2_test::test_3() throw(libtest::test_exception) {
 	if(!eq) {
 		fail_test(testname, __FILE__, __LINE__,
 			"Inconsistent contraction after permute_ab.");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void contraction2_test::test_4() throw(libtest::test_exception) {
+
+	static const char *testname = "contraction2_test::test_4()";
+
+	try {
+
+	permutation<2> perma;
+	permutation<4> permb;
+	contraction2<1, 3, 1> contr;
+	contr.contract(0, 3);
+	contraction2<1, 3, 1> contr_ref(contr);
+	contr.permute_a(perma);
+	contr.permute_b(permb);
+
+	const sequence<10, size_t> &conn = contr.get_conn();
+	const sequence<10, size_t> &conn_ref = contr_ref.get_conn();
+	for(size_t i = 0; i < 10; i++) {
+		if(conn[i] != conn_ref[i]) {
+			std::ostringstream ss;
+			ss << "Incorrect connection at position " << i << ": "
+				<< conn[i] << " vs. " << conn_ref[i]
+				<< " (ref).";
+			fail_test(testname, __FILE__, __LINE__,
+				ss.str().c_str());
+		}
 	}
 
 	} catch(exception &e) {

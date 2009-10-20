@@ -157,8 +157,15 @@ void contraction2_list_builder<N, M, K, ListT>::fuse() throw(out_of_bounds) {
 	// Take care of indexes in result
 	while(i < k_orderc) {
 		size_t ngrp = 1;
-		while(conn[i + ngrp] == conn[i] + ngrp &&
-			i + ngrp < k_orderc) ngrp++;
+		while(true) {
+			if(conn[i + ngrp] != conn[i] + ngrp) break;
+			if(i + ngrp >= k_orderc) break;
+			if(conn[i] < k_orderc + k_ordera &&
+				conn[i + ngrp] >= k_orderc + k_ordera) break;
+			if(conn[i] >= k_orderc + k_ordera &&
+				conn[i + ngrp] < k_orderc + k_ordera) break;
+			ngrp++;
+		}
 		m_nodes[m_num_nodes] = i;
 		m_nodesz[m_num_nodes] = ngrp;
 		m_num_nodes++;

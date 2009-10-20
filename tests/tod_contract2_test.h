@@ -59,6 +59,10 @@ private:
 	void test_ijkl_ijp_klp_a(size_t ni, size_t nj, size_t nk, size_t nl,
 		size_t np, double d) throw(libtest::test_exception);
 
+	// c_{ijkl} = \sum_{o} a_{pi} b_{jklp}
+	void test_ijkl_pi_jklp(size_t ni, size_t nj, size_t nk, size_t nl,
+		size_t np) throw(libtest::test_exception);
+
 };
 
 } // namespace libtensor
