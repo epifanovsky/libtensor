@@ -17,9 +17,15 @@ private:
 	void test_subexpr_labels_1() throw(libtest::test_exception);
 
 	void test_contr_bld_1() throw(libtest::test_exception);
+	void test_contr_bld_2() throw(libtest::test_exception);
 
-	void test_1() throw(libtest::test_exception);
-	void test_2() throw(libtest::test_exception);
+	void test_tt_1() throw(libtest::test_exception);
+	void test_tt_2() throw(libtest::test_exception);
+	void test_tt_3() throw(libtest::test_exception);
+	void test_te_1() throw(libtest::test_exception);
+	void test_te_2() throw(libtest::test_exception);
+	void test_et_1() throw(libtest::test_exception);
+	void test_et_2() throw(libtest::test_exception);
 
 };
 

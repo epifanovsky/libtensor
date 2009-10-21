@@ -7,6 +7,7 @@
 
 namespace libtensor {
 
+
 /**	\brief Builds a %permutation using the original and a permuted
 		sequences
 	\tparam N Permutation order.
@@ -59,8 +60,10 @@ public:
 
 };
 
+
 template<size_t N>
 const char *permutation_builder<N>::k_clazz = "permutation_builder<N>";
+
 
 template<size_t N> template<typename T>
 permutation_builder<N>::permutation_builder(
@@ -103,10 +106,13 @@ permutation_builder<N>::permutation_builder(
 
 }
 
+
 template<size_t N>
 inline const permutation<N> &permutation_builder<N>::get_perm() const {
+
 	return m_perm;
 }
+
 
 } // namespace libtensor
 

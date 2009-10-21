@@ -48,8 +48,12 @@ public:
 private:
 	eval_container_a_t m_eval_a; //!< Container for tensor A
 	arg<k_ordera, T, tensor_tag> m_arg_a; //!< Tensor argument for A
+	permutation<k_ordera> m_invperm_a;
 	anon_eval_b_t m_eval_b; //!< Anonymous evaluator for sub-expression B
+	permutation<k_orderb> m_invperm_b;
 	contract_contraction2_builder<N, M, K> m_contr_bld; //!< Contraction builder
+	btod_contract2<N, M, K> m_op; //!< Contraction operation
+	arg<k_orderc, T, oper_tag> m_arg; //!< Composed operation argument
 
 public:
 	contract_eval_functor(expression_t &expr,
@@ -58,7 +62,7 @@ public:
 
 	void evaluate();
 
-	arg<N + M, T, oper_tag> get_arg() const;
+	arg<N + M, T, oper_tag> get_arg() const { return m_arg; }
 
 };
 
@@ -75,11 +79,15 @@ contract_eval_functor<N, M, K, T, E1, E2, 1, 0, NT2, NO2>::
 contract_eval_functor(expression_t &expr, const subexpr_labels_t &labels_ab,
 	const letter_expr<k_orderc> &label_c) :
 
-	m_eval_a(expr.get_core().get_expr_2(), labels_ab.get_label_a()),
+	m_eval_a(expr.get_core().get_expr_1(), labels_ab.get_label_a()),
 	m_arg_a(m_eval_a.get_arg(tensor_tag(), 0)),
+	m_invperm_a(m_arg_a.get_perm(), true),
 	m_eval_b(expr.get_core().get_expr_2(), labels_ab.get_label_b()),
-	m_contr_bld(labels_ab.get_label_a(), labels_ab.get_label_b(),
-		label_c, expr.get_core().get_contr()) {
+	m_contr_bld(labels_ab.get_label_a(), m_invperm_a,
+		labels_ab.get_label_b(), m_invperm_b,
+		label_c, expr.get_core().get_contr()),
+	m_op(m_contr_bld.get_contr(), m_arg_a.get_btensor(), m_eval_b.get_btensor()),
+	m_arg(m_op, m_arg_a.get_coeff()) {
 
 }
 
@@ -89,15 +97,6 @@ template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2,
 void contract_eval_functor<N, M, K, T, E1, E2, 1, 0, NT2, NO2>::evaluate() {
 
 	m_eval_b.evaluate();
-}
-
-
-template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2,
-	size_t NT2, size_t NO2>
-arg<N + M, T, oper_tag> contract_eval_functor<N, M, K, T, E1, E2,
-	1, 0, NT2, NO2>::get_arg() const {
-
-	throw_exc(k_clazz, "get_arg()", "NIY");
 }
 
 

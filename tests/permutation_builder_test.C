@@ -22,6 +22,25 @@ void permutation_builder_test::perform() throw(libtest::test_exception) {
 			__LINE__, "Test (ab, ba) failed");
 	}
 
+	char seq_abcd[] = { 'a', 'b', 'c', 'd' };
+	char seq_acdb[] = { 'a', 'c', 'd', 'b' };
+	char seq_abcd_1[4];
+	permutation_builder<4> pb3(seq_abcd, seq_acdb);
+	permutation<4> p3; p3.permute(1, 2).permute(1, 3);
+	for(size_t i = 0; i < 4; i++) seq_abcd_1[i] = seq_acdb[i];
+	p3.apply(seq_abcd_1);
+	for(size_t i = 0; i < 4; i++) {
+		if(seq_abcd_1[i] != seq_abcd[i]) {
+			fail_test("permutation_builder_test::perform()",
+				__FILE__, __LINE__,
+				"Wrong reference in (abcd, acdb).");
+		}
+	}
+	if(!pb3.get_perm().equals(p3)) {
+		fail_test("permutation_builder_test::perform()", __FILE__,
+			__LINE__, "Test (abcd, acdb) failed");
+	}
+
 }
 
 } // namespace libtensor
