@@ -8,7 +8,9 @@ namespace libtensor {
 void contract_test::perform() throw(libtest::test_exception) {
 
 	test_subexpr_labels_1();
+	test_contr_bld_1();
 	test_1();
+	test_2();
 
 	bispace<1> sp_i(10), sp_j(10), sp_a(20), sp_b(20);
 	bispace<2> sp_ij(sp_i&sp_j), sp_ab(sp_a&sp_b);
@@ -80,6 +82,46 @@ void contract_test::test_subexpr_labels_1() throw(libtest::test_exception) {
 }
 
 
+void contract_test::test_contr_bld_1() throw(libtest::test_exception) {
+
+	const char *testname = "contract_test::test_contr_bld_1()";
+
+	try {
+
+	letter i, j, k, l, a;
+	letter_expr<4> label_c(i|j|k|l);
+	letter_expr<1> label_contr(a);
+	letter_expr<2> label_a(a|i);
+	letter_expr<4> label_b(j|k|l|a);
+
+	permutation<2> perm_a;
+	permutation<4> perm_b;
+
+	labeled_btensor_expr::contract_contraction2_builder<1, 3, 1> bld(
+		label_a, perm_a, label_b, perm_b, label_c, label_contr);
+	const contraction2<1, 3, 1> &contr = bld.get_contr();
+
+	permutation<4> perm_c;
+	contraction2<1, 3, 1> contr_ref(perm_c);
+	contr_ref.contract(0, 3);
+
+	for(size_t i = 0; i < 10; i++) {
+		if(contr.get_conn().at(i) != contr_ref.get_conn().at(i)) {
+			std::ostringstream ss;
+			ss << "Incorrect connection at position " << i << ": "
+				<< contr.get_conn().at(i) << " vs. "
+				<< contr_ref.get_conn().at(i) << " (ref).";
+			fail_test(testname, __FILE__, __LINE__,
+				ss.str().c_str());
+		}
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
 void contract_test::test_1() throw(libtest::test_exception) {
 
 	const char *testname = "contract_test::test_1()";
@@ -107,6 +149,43 @@ void contract_test::test_1() throw(libtest::test_exception) {
 
 	letter a, b, c, d, i;
 	t3(a|b|c|d) = contract(i, t1(i|a), t2(b|c|d|i));
+
+	compare_ref<4>::compare(testname, t3, t3_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void contract_test::test_2() throw(libtest::test_exception) {
+
+	const char *testname = "contract_test::test_2()";
+
+	try {
+
+	bispace<1> sp_i(10), sp_a(20);
+	bispace<2> sp_ia(sp_i|sp_a);
+	bispace<4> sp_bcdi(sp_a|sp_a|sp_a|sp_i);
+	bispace<4> sp_abcd(sp_a|sp_a|sp_a|sp_a);
+
+	btensor<2> t1(sp_ia);
+	btensor<4> t2(sp_bcdi);
+	btensor<4> t3(sp_abcd), t3_ref(sp_abcd);
+
+	btod_random<2>().perform(t1);
+	btod_random<4>().perform(t2);
+	t1.set_immutable();
+	t2.set_immutable();
+
+	permutation<4> perm_c; perm_c.permute(0, 1);
+	contraction2<1, 3, 1> contr(perm_c);
+	contr.contract(0, 3);
+	btod_contract2<1, 3, 1> op(contr, t1, t2);
+	op.perform(t3_ref);
+
+	letter a, b, c, d, i;
+	t3(a|b|c|d) = contract(i, t1(i|b), t2(a|c|d|i));
 
 	compare_ref<4>::compare(testname, t3, t3_ref, 1e-15);
 

@@ -16,8 +16,7 @@ class contract_eval_functor;
  **/
 template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2,
 	size_t NT2, size_t NO2>
-class contract_eval_functor<N, M, K, T, E1, E2, 1, 0, NT2, NO2> :
-	public contract_eval_functor_base<N, M, K, T, E1, E2> {
+class contract_eval_functor<N, M, K, T, E1, E2, 1, 0, NT2, NO2> {
 public:
 	static const char *k_clazz; //!< Class name
 	static const size_t k_ordera = N + K; //!< Order of the first %tensor
@@ -50,7 +49,7 @@ private:
 	eval_container_a_t m_eval_a; //!< Container for tensor A
 	arg<k_ordera, T, tensor_tag> m_arg_a; //!< Tensor argument for A
 	anon_eval_b_t m_eval_b; //!< Anonymous evaluator for sub-expression B
-	contraction2<N, M, K> m_contr; //!< Contraction
+	contract_contraction2_builder<N, M, K> m_contr_bld; //!< Contraction builder
 
 public:
 	contract_eval_functor(expression_t &expr,
@@ -79,8 +78,8 @@ contract_eval_functor(expression_t &expr, const subexpr_labels_t &labels_ab,
 	m_eval_a(expr.get_core().get_expr_2(), labels_ab.get_label_a()),
 	m_arg_a(m_eval_a.get_arg(tensor_tag(), 0)),
 	m_eval_b(expr.get_core().get_expr_2(), labels_ab.get_label_b()),
-	m_contr(mk_contr(labels_ab.get_label_a(), labels_ab.get_label_b(),
-		label_c, expr.get_core().get_contr())) {
+	m_contr_bld(labels_ab.get_label_a(), labels_ab.get_label_b(),
+		label_c, expr.get_core().get_contr()) {
 
 }
 

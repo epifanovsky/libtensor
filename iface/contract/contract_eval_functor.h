@@ -5,31 +5,15 @@
 #include "iface/expr/anon_eval.h"
 #include "core_contract.h"
 #include "contract_subexpr_labels.h"
+#include "contract_contraction2_builder.h"
 
 namespace libtensor {
 namespace labeled_btensor_expr {
 
 
-template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2>
-class contract_eval_functor_base {
-public:
-	static const size_t k_ordera = N + K; //!< Order of the first %tensor
-	static const size_t k_orderb = M + K; //!< Order of the second %tensor
-	static const size_t k_orderc = N + M; //!< Order of the result
-
-protected:
-	static contraction2<N, M, K> mk_contr(
-		const letter_expr<k_ordera> &label_a,
-		const letter_expr<k_orderb> &label_b,
-		const letter_expr<k_orderc> &label_c,
-		const letter_expr<K> &contr);
-};
-
-
 template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2,
 	size_t NT1, size_t NO1, size_t NT2, size_t NO2>
-class contract_eval_functor :
-	public contract_eval_functor_base<N, M, K, T, E1, E2> {
+class contract_eval_functor {
 public:
 	static const char *k_clazz; //!< Class name
 	static const size_t k_ordera = N + K; //!< Order of the first %tensor
@@ -99,51 +83,6 @@ void contract_eval_functor<N, M, K, T, E1, E2, NT1, NO1, NT2, NO2>::evaluate() {
 
 	m_eval_a.evaluate();
 	m_eval_b.evaluate();
-}
-
-
-template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2>
-contraction2<N, M, K> contract_eval_functor_base<N, M, K, T, E1, E2>::mk_contr(
-	const letter_expr<k_ordera> &label_a,
-	const letter_expr<k_orderb> &label_b,
-	const letter_expr<k_orderc> &label_c, const letter_expr<K> &contr) {
-
-	size_t contr_a[K], contr_b[K];
-	size_t seq1[k_orderc], seq2[k_orderc];
-
-	for(size_t i = 0; i < k_orderc; i++) seq1[i] = i;
-
-	size_t j = 0, k = 0;
-	for(size_t i = 0; i < k_ordera; i++) {
-		const letter &l = label_a.letter_at(i);
-		if(label_c.contains(l)) {
-			seq2[j] = label_c.index_of(l);
-			j++;
-		} else {
-			if(!contr.contains(l)) {
-				// throw exception
-			}
-			contr_a[k] = i;
-			contr_b[k] = label_b.index_of(l);
-			k++;
-		}
-	}
-	for(size_t i = 0; i < k_orderb; i++) {
-		const letter &l = label_b.letter_at(i);
-		if(label_c.contains(l)) {
-			seq2[j] = label_c.index_of(l);
-			j++;
-		}
-	}
-
-	permutation_builder<k_orderc> permc(seq1, seq2);
-	contraction2<N, M, K> c(permc.get_perm());
-
-	for(size_t i = 0; i < K; i++) {
-		c.contract(contr_a[i], contr_b[i]);
-	}
-
-	return c;
 }
 
 

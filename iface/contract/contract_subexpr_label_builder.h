@@ -53,7 +53,7 @@ contract_subexpr_label_builder<N, M, K>::contract_subexpr_label_builder(
 	const expr<N + K, T, Core> &e) :
 
 	m_let(label_c, contr, e),
-	m_label(mk_label(dummy<N + K>(), m_let, 0)) {
+	m_label(mk_label(dummy<N + K>(), m_let, N + K - 1)) {
 
 }
 
@@ -99,7 +99,7 @@ template<size_t N, size_t M, size_t K> template<size_t L>
 letter_expr<L> contract_subexpr_label_builder<N, M, K>::mk_label(
 	const dummy<L>&, const letter_array &let, size_t i) {
 
-	letter_expr<L - 1> sublabel = mk_label(dummy<L - 1>(), let, i + 1);
+	letter_expr<L - 1> sublabel = mk_label(dummy<L - 1>(), let, i - 1);
 	return letter_expr<L>(sublabel, *let.at(i));
 }
 
