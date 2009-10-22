@@ -26,6 +26,8 @@ private:
 	void test_te_2() throw(libtest::test_exception);
 	void test_et_1() throw(libtest::test_exception);
 	void test_et_2() throw(libtest::test_exception);
+	void test_ee_1() throw(libtest::test_exception);
+	void test_ee_2() throw(libtest::test_exception);
 
 };
 

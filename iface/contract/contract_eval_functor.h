@@ -43,7 +43,12 @@ public:
 
 private:
 	anon_eval_a_t m_eval_a; //!< Anonymous evaluator for sub-expression A
+	permutation<k_ordera> m_invperm_a;
 	anon_eval_b_t m_eval_b; //!< Anonymous evaluator for sub-expression B
+	permutation<k_orderb> m_invperm_b;
+	contract_contraction2_builder<N, M, K> m_contr_bld; //!< Contraction builder
+	btod_contract2<N, M, K> m_op; //!< Contraction operation
+	arg<k_orderc, T, oper_tag> m_arg; //!< Composed operation argument
 
 public:
 	contract_eval_functor(expression_t &expr,
@@ -52,9 +57,7 @@ public:
 
 	void evaluate();
 
-	arg<k_orderc, T, oper_tag> get_arg() const {
-		throw_exc(k_clazz, "get_arg()", "NIY");
-	}
+	arg<k_orderc, T, oper_tag> get_arg() const { return m_arg; }
 
 };
 
@@ -72,7 +75,12 @@ contract_eval_functor(expression_t &expr, const subexpr_labels_t &labels_ab,
 	const letter_expr<k_orderc> &label_c) :
 
 	m_eval_a(expr.get_core().get_expr_1(), labels_ab.get_label_a()),
-	m_eval_b(expr.get_core().get_expr_2(), labels_ab.get_label_b()) {
+	m_eval_b(expr.get_core().get_expr_2(), labels_ab.get_label_b()),
+	m_contr_bld(labels_ab.get_label_a(), m_invperm_a,
+		labels_ab.get_label_b(), m_invperm_b,
+		label_c, expr.get_core().get_contr()),
+	m_op(m_contr_bld.get_contr(), m_eval_a.get_btensor(), m_eval_b.get_btensor()),
+	m_arg(m_op, 1.0) {
 
 }
 
