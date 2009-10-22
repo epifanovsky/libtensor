@@ -103,6 +103,8 @@ permutation_builder<N>::permutation_builder(
 			i++;
 		}
 	}
+	// the loop above generates the inverse of a permutation
+	m_perm.invert();
 
 }
 

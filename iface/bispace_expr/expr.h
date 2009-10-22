@@ -86,7 +86,7 @@ public:
 		size_t seq1[N], seq2[N];
 		for(size_t i = 0; i < N; i++) seq1[i] = i;
 		record_pos(other, 0, seq2);
-		permutation_builder<N> pb(seq1, seq2);
+		permutation_builder<N> pb(seq2, seq1);
 		perm.permute(pb.get_perm());
 	}
 

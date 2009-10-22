@@ -75,8 +75,8 @@ public:
 		throw(exception) {
 
 		const letter *seq1[N], *seq2[N];
-		expr.unfold(seq1);
-		unfold(seq2);
+		unfold(seq1);
+		expr.unfold(seq2);
 		permutation_builder<N> pb(seq1, seq2);
 		return permutation<N>(pb.get_perm());
 	}

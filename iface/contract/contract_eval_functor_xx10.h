@@ -49,8 +49,8 @@ private:
 	anon_eval_a_t m_eval_a; //!< Anonymous evaluator for sub-expression A
 	permutation<k_ordera> m_invperm_a;
 	eval_container_b_t m_eval_b; //!< Container for tensor B
-	permutation<k_orderb> m_invperm_b;
 	arg<k_orderb, T, tensor_tag> m_arg_b; //!< Tensor argument for B
+	permutation<k_orderb> m_invperm_b;
 	contract_contraction2_builder<N, M, K> m_contr_bld; //!< Contraction builder
 	btod_contract2<N, M, K> m_op; //!< Contraction operation
 	arg<k_orderc, T, oper_tag> m_arg; //!< Composed operation argument
@@ -89,10 +89,6 @@ contract_eval_functor(expression_t &expr,
 		label_c, expr.get_core().get_contr()),
 	m_op(m_contr_bld.get_contr(), m_eval_a.get_btensor(), m_arg_b.get_btensor()),
 	m_arg(m_op, m_arg_b.get_coeff()) {
-
-	const sequence<2*(N+M+K), size_t> &seq = m_contr_bld.get_contr().get_conn();
-	std::cout << std::endl;
-	for(size_t i = 0; i < 2*(N+M+K); i++) std::cout << seq[i] << " ";
 
 }
 

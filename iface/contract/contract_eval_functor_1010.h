@@ -82,9 +82,6 @@ contract_eval_functor<N, M, K, T, E1, E2, 1, 0, 1, 0>::contract_eval_functor(
 	m_op(m_contr_bld.get_contr(), m_arg_a.get_btensor(), m_arg_b.get_btensor()),
 	m_arg(m_op, m_arg_a.get_coeff() * m_arg_b.get_coeff()) {
 
-	std::cout << std::endl;
-	std::cout << m_invperm_a << " " << m_invperm_b << " ";
-	for(size_t i = 0; i < 2*(N+M+K); i++) std::cout << m_contr_bld.get_contr().get_conn().at(i) << " ";
 }
 
 

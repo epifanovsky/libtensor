@@ -100,7 +100,6 @@ contraction2<N, M, K> contract_contraction2_builder<N, M, K>::mk_contr(
 	}
 
 	permutation_builder<k_orderc> permc(seq1, seq2);
-	std::cout << "permc " << permc.get_perm() << std::endl;
 	contraction2<N, M, K> c(permc.get_perm());
 
 	for(size_t i = 0; i < K; i++) {
