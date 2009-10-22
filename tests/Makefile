@@ -37,6 +37,7 @@ OBJS += permutation_test.o
 OBJS += permutation_builder_test.o
 OBJS += so_projdown_test.o
 OBJS += so_projup_test.o
+OBJS += sym_contract_test.o
 OBJS += symel_cycleperm_test.o
 OBJS += symmetry_test.o
 OBJS += symmetry_element_base_test.o
