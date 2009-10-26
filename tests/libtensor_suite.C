@@ -18,6 +18,7 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("btod_contract2", m_utf_btod_contract2);
 	add_test("btod_copy", m_utf_btod_copy);
 	add_test("btod_random", m_utf_btod_random);
+	add_test("btod_sum", m_utf_btod_sum);
 	add_test("contract", m_utf_contract);
 	add_test("contraction2", m_utf_contraction2);
 	add_test("contraction2_list_builder", m_utf_contraction2_list_builder);

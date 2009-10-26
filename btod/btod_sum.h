@@ -56,7 +56,7 @@ public:
 		\param op Operation.
 		\param c Coefficient.
 	 **/
-	btod_sum(btod_additive<N> &op, double c);
+	btod_sum(btod_additive<N> &op, double c = 1.0);
 
 	/**	\brief Virtual destructor
 	 **/
@@ -89,7 +89,7 @@ public:
 		\param op Operation.
 		\param c Coefficient.
 	 **/
-	void add_op(btod_additive<N> &op, double c);
+	void add_op(btod_additive<N> &op, double c = 1.0);
 
 	//@}
 
@@ -126,6 +126,7 @@ inline const block_index_space<N> &btod_sum<N>::get_bis() const {
 
 template<size_t N>
 const symmetry<N, double> &btod_sum<N>::get_symmetry() const {
+
 	throw_exc("btod_sum<N>", "get_symmetry()", "Not implemented");
 }
 
@@ -133,14 +134,24 @@ const symmetry<N, double> &btod_sum<N>::get_symmetry() const {
 template<size_t N>
 void btod_sum<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 
-	timings<btod_sum<N> >::start_timer();
+	static const char *method = "perform(block_tensor_i<N, double>&)";
+
+	if(!m_bis.equals(bt.get_bis())) {
+		throw bad_parameter(g_ns, k_clazz, method, __FILE__,
+			__LINE__, "Incompatible block index space.");
+	}
+
+	timings< btod_sum<N> >::start_timer();
+
+	block_tensor_ctrl<N, double> ctrl(bt);
+	ctrl.req_zero_all_blocks();
 
 	typename std::list<node_t>::iterator i = m_ops.begin();
 	for(; i != m_ops.end(); i++) {
 		i->get_op().perform(bt, i->get_coeff());
 	}
 
-	timings<btod_sum<N> >::stop_timer();
+	timings< btod_sum<N> >::stop_timer();
 }
 
 
@@ -157,8 +168,21 @@ template<size_t N>
 void btod_sum<N>::perform(block_tensor_i<N, double> &bt, double c)
 	throw(exception) {
 
-	throw_exc(k_clazz, "perform(block_tensor_i<N, double>&, double)",
-		"NIY");
+	static const char *method = "perform(block_tensor_i<N, double>&)";
+
+	if(!m_bis.equals(bt.get_bis())) {
+		throw bad_parameter(g_ns, k_clazz, method, __FILE__,
+			__LINE__, "Incompatible block index space.");
+	}
+
+	timings< btod_sum<N> >::start_timer();
+
+	typename std::list<node_t>::iterator i = m_ops.begin();
+	for(; i != m_ops.end(); i++) {
+		i->get_op().perform(bt, i->get_coeff() * c);
+	}
+
+	timings< btod_sum<N> >::stop_timer();
 }
 
 

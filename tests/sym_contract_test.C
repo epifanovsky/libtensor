@@ -58,8 +58,10 @@ void sym_contract_test::test_ee_1() throw(libtest::test_exception) {
 	op_sym.perform(t3_ref);
 
 	letter a, b, c, d, i;
-	t3(a|b|c|d) = sym_contract(
-		a|b, i, t1a(a|c|d|i) + t1b(a|c|d|i), t2a(i|b) + t2b(i|b));
+//	t3(a|b|c|d) = sym_contract(
+//		a|b, i, t1a(a|c|d|i) + t1b(a|c|d|i), t2a(i|b) + t2b(i|b));
+	t3(a|b|c|d) = contract(i, t1a(a|c|d|i) + t1b(a|c|d|i), t2a(i|b) + t2b(i|b)) +
+		contract(i, t1a(b|c|d|i) + t1b(b|c|d|i), t2a(i|a) + t2b(i|a));
 
 	compare_ref<4>::compare(testname, t3, t3_ref, 1e-14);
 

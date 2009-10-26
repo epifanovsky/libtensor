@@ -51,7 +51,8 @@ private:
 	contract_expr_t m_contract; //!< Contract expression
 	contract_eval_t m_contract_eval; //!< Evaluation of the contraction
 	permutation<k_orderc> m_perm; //!< Permutation for symmetrization
-//	btod_add<k_orderc> m_op; //!< Addition operation
+	btod_add<k_orderc> m_op; //!< Addition operation
+	arg<k_orderc, T, oper_tag> m_arg; //!< Composed operation argument
 
 public:
 	/**	\brief Initializes the container with given expression and
@@ -97,11 +98,14 @@ inline sym_contract_eval<N, M, K, T, E1, E2>::sym_contract_eval(
 	m_contract(contract_core_t(
 		expr.get_core().get_contr(), expr.get_core().get_expr_1(),
 		expr.get_core().get_expr_2())),
-	m_contract_eval(m_contract, label) {
+	m_contract_eval(m_contract, label),
+	m_op(m_contract_eval.get_btensor()),
+	m_arg(m_op, 1.0) {
 
 	size_t i1 = label.index_of(expr.get_core().get_sym().letter_at(0));
 	size_t i2 = label.index_of(expr.get_core().get_sym().letter_at(1));
 	m_perm.permute(i1, i2);
+	m_op.add_op(m_contract_eval.get_btensor(), m_perm, 1.0);
 }
 
 
@@ -134,8 +138,7 @@ arg<N + M, T, oper_tag> sym_contract_eval<N, M, K, T, E1, E2>::get_arg(
 			"Argument index is out of bounds.");
 	}
 
-	throw expr_exception(g_ns, k_clazz, method, __FILE__, __LINE__,
-		"Not implemented yet.");
+	return m_arg;
 }
 
 

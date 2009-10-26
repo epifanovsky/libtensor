@@ -8,7 +8,7 @@ namespace libtensor {
 /**	\brief Tests the libtensor::btod_add class
 
 	\ingroup libtensor_tests
-**/
+ **/
 class btod_add_test : public libtest::unit_test {
 public:
 	virtual void perform() throw(libtest::test_exception);
@@ -20,6 +20,8 @@ private:
 	void test_3(double ca1, double ca2) throw(libtest::test_exception);
 	void test_4(double ca1, double ca2, double ca3, double ca4)
 		throw(libtest::test_exception);
+	void test_5() throw(libtest::test_exception);
+	void test_6() throw(libtest::test_exception);
 
 	/**	\brief Tests if exceptions are thrown when the tensors have
 			different dimensions

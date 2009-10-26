@@ -13,24 +13,27 @@ void btod_add_test::perform() throw(libtest::test_exception) {
 
 	srand48(time(NULL));
 
-	test_1(1.0, 1.0);
-	test_1(1.0, 0.5);
-	test_1(0.5, 1.0);
-	test_1(2.5, 1.5);
+//	test_1(1.0, 1.0);
+//	test_1(1.0, 0.5);
+//	test_1(0.5, 1.0);
+//	test_1(2.5, 1.5);
+//
+//	test_2(1.0, 1.0, 1.0);
+//	test_2(1.0, 0.5, 1.0);
+//	test_2(0.5, 1.0, 1.0);
+//	test_2(2.5, 1.5, 1.0);
+//	test_2(1.0, 1.0, -1.0);
+//	test_2(1.0, 0.5, -1.0);
+//	test_2(0.5, 1.0, -1.0);
+//	test_2(2.5, 1.5, -1.0);
+//
+//	test_3(2.0, 1.0);
+//	test_3(1.0, 1.0);
+//	test_4(2.0, 1.0, 1.0, 1.0);
+//	test_4(1.0, 1.0, 1.0, 1.0);
 
-	test_2(1.0, 1.0, 1.0);
-	test_2(1.0, 0.5, 1.0);
-	test_2(0.5, 1.0, 1.0);
-	test_2(2.5, 1.5, 1.0);
-	test_2(1.0, 1.0, -1.0);
-	test_2(1.0, 0.5, -1.0);
-	test_2(0.5, 1.0, -1.0);
-	test_2(2.5, 1.5, -1.0);
-
-	test_3(2.0, 1.0);
-	test_3(1.0, 1.0);
-	test_4(2.0, 1.0, 1.0, 1.0);
-	test_4(1.0, 1.0, 1.0, 1.0);
+	test_5();
+	test_6();
 
 	test_exc();
 }
@@ -339,6 +342,79 @@ void btod_add_test::test_4(double ca1, double ca2, double ca3, double ca4)
 		fail_test(tnss.str().c_str(), __FILE__, __LINE__, e.what());
 	}
 
+}
+
+
+void btod_add_test::test_5() throw(libtest::test_exception) {
+
+	//
+	//	Tests addition to zero vs. overwrite (single arguments)
+	//
+
+	static const char *testname = "btod_add_test::test_5()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+	typedef block_tensor<2, double, allocator_t> block_tensor_t;
+
+	try {
+
+	index<2> i1, i2;
+	i2[0] = 5; i2[1] = 10;
+	dimensions<2> dims(index_range<2>(i1, i2));
+	block_index_space<2> bis(dims);
+
+	block_tensor_t bt1(bis), bt3(bis), bt3_ref(bis);
+	btod_random<2>().perform(bt1);
+	bt1.set_immutable();
+
+	btod_add<2> add(bt1);
+
+	add.perform(bt3, 1.0);
+	add.perform(bt3_ref);
+
+	compare_ref<2>::compare(testname, bt3, bt3_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void btod_add_test::test_6() throw(libtest::test_exception) {
+
+	//
+	//	Tests addition to zero vs. overwrite (multiple arguments)
+	//
+
+	static const char *testname = "btod_add_test::test_6()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+	typedef block_tensor<2, double, allocator_t> block_tensor_t;
+
+	try {
+
+	index<2> i1, i2;
+	i2[0] = 5; i2[1] = 10;
+	dimensions<2> dims(index_range<2>(i1, i2));
+	block_index_space<2> bis(dims);
+
+	block_tensor_t bt1(bis), bt2(bis), bt3(bis), bt3_ref(bis);
+	btod_random<2>().perform(bt1);
+	btod_random<2>().perform(bt2);
+	bt1.set_immutable();
+	bt2.set_immutable();
+
+	btod_add<2> add(bt1);
+	add.add_op(bt2, 2.0);
+
+	add.perform(bt3, 1.0);
+	add.perform(bt3_ref);
+
+	compare_ref<2>::compare(testname, bt3, bt3_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
 }
 
 

@@ -16,6 +16,7 @@
 #include "btod_contract2_test.h"
 #include "btod_copy_test.h"
 #include "btod_random_test.h"
+#include "btod_sum_test.h"
 #include "contract_test.h"
 #include "contraction2_test.h"
 #include "contraction2_list_builder_test.h"
@@ -77,6 +78,7 @@ namespace libtensor {
 	\li libtensor::btod_contract2_test
 	\li libtensor::btod_copy_test
 	\li libtensor::btod_random_test
+	\li libtensor::btod_sum_test
 	\li libtensor::contract_test
 	\li libtensor::contraction2_test
 	\li libtensor::contraction2_list_builder_test
@@ -132,6 +134,7 @@ private:
 	unit_test_factory<btod_contract2_test> m_utf_btod_contract2;
 	unit_test_factory<btod_copy_test> m_utf_btod_copy;
 	unit_test_factory<btod_random_test> m_utf_btod_random;
+	unit_test_factory<btod_sum_test> m_utf_btod_sum;
 	unit_test_factory<contract_test> m_utf_contract;
 	unit_test_factory<contraction2_test> m_utf_contraction2;
 	unit_test_factory<contraction2_list_builder_test>

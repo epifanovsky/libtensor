@@ -360,8 +360,8 @@ void btod_add<N>::do_perform(
 		for(size_t iop = 0; iop < m_ops.size(); iop++) {
 			block_tensor_ctrl<N, double> &ctrl = *(src_ctrl[iop]);
 			operand_t &op = *(m_ops[iop]);
-			permutation<N> perm(op.m_perm), invperm(op.m_perm);
-			invperm.invert();
+			permutation<N> perm(op.m_perm),
+				invperm(op.m_perm, true);
 
 			index<N> src_blk_idx(dst_blk_idx), can_blk_idx;
 			src_blk_idx.permute(invperm);
@@ -409,11 +409,12 @@ void btod_add<N>::process_list(block_tensor_ctrl<N, double> &dst_ctrl,
 		typename std::list<arg_t>::const_iterator iarg = lst.begin();
 		tensor_i<N, double> &src_blk =
 			iarg->m_ctrl->req_block(iarg->m_idx);
+		bool adjzero = zero || dst_ctrl.req_is_zero_block(dst_blk_idx);
 		tensor_i<N, double> &dst_blk = dst_ctrl.req_block(dst_blk_idx);
 
 		tod_copy<N> todcp(src_blk, iarg->m_tr.get_perm(),
 			iarg->m_tr.get_coeff() * c);
-		if(zero) todcp.perform(dst_blk);
+		if(adjzero) todcp.perform(dst_blk);
 		else todcp.perform(dst_blk, 1.0);
 
 		iarg->m_ctrl->ret_block(iarg->m_idx);
@@ -433,8 +434,9 @@ void btod_add<N>::process_list(block_tensor_ctrl<N, double> &dst_ctrl,
 				iarg->m_tr.get_coeff() * c);
 		}
 
+		bool adjzero = zero || dst_ctrl.req_is_zero_block(dst_blk_idx);
 		tensor_i<N, double> &dst_blk = dst_ctrl.req_block(dst_blk_idx);
-		if(zero) todadd.perform(dst_blk);
+		if(adjzero) todadd.perform(dst_blk);
 		else todadd.perform(dst_blk, 1.0);
 
 		for(iarg = lst.begin(); iarg != lst.end(); iarg++) {
