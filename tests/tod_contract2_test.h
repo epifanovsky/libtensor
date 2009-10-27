@@ -43,6 +43,14 @@ private:
 	void test_ij_pqir_pqjr_a(size_t ni, size_t nj, size_t np, size_t nq,
 		size_t nr, double d) throw(libtest::test_exception);
 
+	// c_{ijkl} = \sum_{p} a_{pi} b_{jklp}
+	void test_ijkl_pi_jklp(size_t ni, size_t nj, size_t nk, size_t nl,
+		size_t np) throw(libtest::test_exception);
+
+	// c_{ijkl} = c_{ijkl} + d \sum_{p} a_{pi} b_{jklp}
+	void test_ijkl_pi_jklp_a(size_t ni, size_t nj, size_t nk, size_t nl,
+		size_t np, double d) throw(libtest::test_exception);
+
 	// c_{jikl} = \sum_{p} a_{pi} b_{jpkl}
 	void test_jikl_pi_jpkl(size_t ni, size_t nj, size_t nk, size_t nl,
 		size_t np) throw(libtest::test_exception);
@@ -58,10 +66,6 @@ private:
 	// c_{ijkl} = c_{ijkl} + d \sum_{p} a_{ijp} b_{klp}
 	void test_ijkl_ijp_klp_a(size_t ni, size_t nj, size_t nk, size_t nl,
 		size_t np, double d) throw(libtest::test_exception);
-
-	// c_{ijkl} = \sum_{o} a_{pi} b_{jklp}
-	void test_ijkl_pi_jklp(size_t ni, size_t nj, size_t nk, size_t nl,
-		size_t np) throw(libtest::test_exception);
 
 };
 

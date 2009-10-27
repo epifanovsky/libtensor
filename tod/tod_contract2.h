@@ -420,7 +420,7 @@ void tod_contract2<N, M, K>::op_loop_mul::exec(processor_t &proc,
 	double *ptrc = regs.m_ptrc;
 
 	for(size_t i=0; i<m_len; i++) {
-		*ptrc += (*ptra)*(*ptrb);
+		*ptrc += m_d * (*ptra)*(*ptrb);
 		ptra += m_inca;
 		ptrb += m_incb;
 		ptrc += m_incc;

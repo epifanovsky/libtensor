@@ -580,9 +580,10 @@ void btod_contract2<N, M, K>::contract_block(
 	index<k_ordera> idxa;
 	index<k_orderb> idxb;
 
+	bool adjzero = zero || ctrlc.req_is_zero_block(idxc);
 	tensor_i<k_orderc, double> &tc = ctrlc.req_block(idxc);
 
-	if(zero) tod_set<k_orderc>().perform(tc);
+	if(adjzero) tod_set<k_orderc>().perform(tc);
 
 	typename block_contr_list_t::iterator ilst = lst.begin();
 	for(; ilst != lst.end(); ilst++) {
