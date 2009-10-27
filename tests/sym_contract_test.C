@@ -7,8 +7,48 @@ namespace libtensor {
 
 void sym_contract_test::perform() throw(libtest::test_exception) {
 
+	test_tt_1();
 	test_ee_1();
 
+}
+
+
+void sym_contract_test::test_tt_1() throw(libtest::test_exception) {
+
+	const char *testname = "sym_contract_test::test_tt_1()";
+
+	try {
+
+	bispace<1> sp_i(10), sp_a(20);
+	bispace<2> sp_ia(sp_i|sp_a);
+	bispace<4> sp_bcdi(sp_a|sp_a|sp_a|sp_i);
+	bispace<4> sp_abcd(sp_a|sp_a|sp_a|sp_a);
+
+	btensor<2> t1(sp_ia);
+	btensor<4> t2(sp_bcdi);
+	btensor<4> t3(sp_abcd), t3_ref(sp_abcd), t3_ref_tmp(sp_abcd);
+
+	btod_random<2>().perform(t1);
+	btod_random<4>().perform(t2);
+	t1.set_immutable();
+	t2.set_immutable();
+
+	contraction2<1, 3, 1> contr;
+	contr.contract(0, 3);
+	btod_contract2<1, 3, 1> op(contr, t1, t2);
+	op.perform(t3_ref_tmp);
+	permutation<4> perm; perm.permute(0, 1);
+	btod_copy<4>(t3_ref_tmp).perform(t3_ref);
+	btod_copy<4>(t3_ref_tmp, perm).perform(t3_ref, 1.0);
+
+	letter a, b, c, d, i;
+	t3(a|b|c|d) = sym_contract(a|b, i, t1(i|a), t2(b|c|d|i));
+
+	compare_ref<4>::compare(testname, t3, t3_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
 }
 
 

@@ -13,6 +13,13 @@ void anon_eval_test::perform() throw(libtest::test_exception) {
 	test_copy_4();
 	test_copy_5();
 	test_copy_6();
+
+	test_add_1();
+
+	test_contr_1();
+	test_contr_2();
+
+	test_mixed_1();
 }
 
 
@@ -20,12 +27,12 @@ template<size_t N, typename T, typename Core>
 void anon_eval_test::invoke_eval(
 	const char *testname,
 	const labeled_btensor_expr::expr<N, T, Core> &expr,
-	const letter_expr<N> &label, block_tensor_i<N, T> &ref)
+	const letter_expr<N> &label, block_tensor_i<N, T> &ref, double thresh)
 	throw(libtest::test_exception) {
 
 	labeled_btensor_expr::anon_eval<N, T, Core> ev(expr, label);
 	ev.evaluate();
-	compare_ref<N>::compare(testname, ev.get_btensor(), ref, 1e-15);
+	compare_ref<N>::compare(testname, ev.get_btensor(), ref, thresh);
 }
 
 
@@ -246,6 +253,167 @@ void anon_eval_test::test_copy_6() throw(libtest::test_exception) {
 
 	letter i, j, a, b;
 	invoke_eval(testname, 1.0*tp(i|j|a|b), i|a|j|b, tp_ref);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void anon_eval_test::test_add_1() throw(libtest::test_exception) {
+
+	//
+	//	Addition of two tensors, no symmetry
+	//	r(i|j|a|b) = p(i|j|a|b) + q(i|j|a|b)
+	//
+
+	static const char *testname = "anon_eval_test::test_add_1()";
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	bispace<1> si(5), sj(5), sa(10), sb(10);
+	si.split(3);
+	sj.split(3);
+	sa.split(6);
+	sb.split(6);
+	bispace<4> sijab(si|sj|sa|sb);
+
+	btensor<4> tp(sijab), tq(sijab);
+	btod_random<4>().perform(tp);
+	btod_random<4>().perform(tq);
+
+	block_tensor<4, double, allocator_t> tr_ref(sijab.get_bis());
+	btod_add<4> add(tp);
+	add.add_op(tq);
+	add.perform(tr_ref);
+
+	letter i, j, a, b;
+	invoke_eval(testname, tp(i|j|a|b) + tq(i|j|a|b), i|j|a|b, tr_ref);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void anon_eval_test::test_contr_1() throw(libtest::test_exception) {
+
+	//
+	//	Contraction of two tensors, no symmetry
+	//	r(i|j|k|l) = p(i|j|a|b) * q(k|l|a|b)
+	//
+
+	static const char *testname = "anon_eval_test::test_contr_1()";
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	bispace<1> si(5), sj(5), sa(10), sb(10);
+	si.split(3);
+	sj.split(3);
+	sa.split(6);
+	sb.split(6);
+	bispace<4> sijab(si|sj|sa|sb), sijkl(si|sj|si|sj);
+
+	btensor<4> tp(sijab), tq(sijab);
+	btod_random<4>().perform(tp);
+	btod_random<4>().perform(tq);
+
+	block_tensor<4, double, allocator_t> tr_ref(sijkl.get_bis());
+	contraction2<2, 2, 2> contr;
+	contr.contract(2, 2);
+	contr.contract(3, 3);
+	btod_contract2<2, 2, 2>(contr, tp, tq).perform(tr_ref);
+
+	letter i, j, k, l, a, b;
+	invoke_eval(testname,
+		contract(a|b, tp(i|j|a|b), tq(k|l|a|b)),
+		i|j|k|l, tr_ref);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void anon_eval_test::test_contr_2() throw(libtest::test_exception) {
+
+	//
+	//	Contraction of a tensor and a sum of two tensors, no symmetry
+	//	r(i|j|k|l) = p(i|j|a|b) * [q1(k|l|a|b) + q2(k|l|a|b)]
+	//
+
+	static const char *testname = "anon_eval_test::test_contr_2()";
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	bispace<1> si(5), sj(5), sa(10), sb(10);
+	si.split(3);
+	sj.split(3);
+	sa.split(6);
+	sb.split(6);
+	bispace<4> sijab(si|sj|sa|sb), sijkl(si|sj|si|sj);
+
+	btensor<4> tp(sijab), tq1(sijab), tq2(sijab);
+	btod_random<4>().perform(tp);
+	btod_random<4>().perform(tq1);
+	btod_random<4>().perform(tq2);
+
+	block_tensor<4, double, allocator_t> tr_ref(sijkl.get_bis());
+	contraction2<2, 2, 2> contr;
+	contr.contract(2, 2);
+	contr.contract(3, 3);
+	btod_contract2<2, 2, 2>(contr, tp, tq1).perform(tr_ref);
+	btod_contract2<2, 2, 2>(contr, tp, tq2).perform(tr_ref, 1.0);
+
+	letter i, j, k, l, a, b;
+	invoke_eval(testname,
+		contract(a|b, tp(i|j|a|b), tq1(k|l|a|b) + tq2(k|l|a|b)),
+		i|j|k|l, tr_ref, 5e-14);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void anon_eval_test::test_mixed_1() throw(libtest::test_exception) {
+
+	//
+	//	Addition + contraction of two tensors, no symmetry
+	//	s(i|j|k|l) = r(i|j|k|l) + p(i|j|a|b) * q(k|l|a|b)
+	//
+
+	static const char *testname = "anon_eval_test::test_mixed_1()";
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	bispace<1> si(5), sj(5), sa(10), sb(10);
+	si.split(3);
+	sj.split(3);
+	sa.split(6);
+	sb.split(6);
+	bispace<4> sijab(si|sj|sa|sb), sijkl(si|sj|si|sj);
+
+	btensor<4> tp(sijab), tq(sijab), tr(sijkl);
+	btod_random<4>().perform(tp);
+	btod_random<4>().perform(tq);
+	btod_random<4>().perform(tr);
+
+	block_tensor<4, double, allocator_t> ts_ref(sijkl.get_bis());
+	contraction2<2, 2, 2> contr;
+	contr.contract(2, 2);
+	contr.contract(3, 3);
+	btod_contract2<2, 2, 2>(contr, tp, tq).perform(ts_ref);
+	btod_copy<4>(tr).perform(ts_ref, 1.0);
+
+	letter i, j, k, l, a, b;
+	invoke_eval(testname,
+		tr(i|j|k|l) + contract(a|b, tp(i|j|a|b), tq(k|l|a|b)),
+		i|j|k|l, ts_ref);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());

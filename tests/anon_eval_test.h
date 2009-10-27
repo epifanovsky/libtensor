@@ -18,7 +18,8 @@ private:
 	void invoke_eval(
 		const char *testname,
 		const labeled_btensor_expr::expr<N, T, Core> &expr,
-		const letter_expr<N> &label, block_tensor_i<N, T> &ref)
+		const letter_expr<N> &label, block_tensor_i<N, T> &ref,
+		double thresh = 1e-14)
 		throw(libtest::test_exception);
 
 	void test_copy_1() throw(libtest::test_exception);
@@ -27,6 +28,13 @@ private:
 	void test_copy_4() throw(libtest::test_exception);
 	void test_copy_5() throw(libtest::test_exception);
 	void test_copy_6() throw(libtest::test_exception);
+
+	void test_add_1() throw(libtest::test_exception);
+
+	void test_contr_1() throw(libtest::test_exception);
+	void test_contr_2() throw(libtest::test_exception);
+
+	void test_mixed_1() throw(libtest::test_exception);
 
 };
 

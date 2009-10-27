@@ -87,6 +87,7 @@ anon_eval<N, T, Core>::anon_eval(
 template<size_t N, typename T, typename Core>
 void anon_eval<N, T, Core>::evaluate() throw(exception) {
 
+	m_eval_container.prepare();
 	m_functor.get_bto().perform(m_bt);
 }
 
