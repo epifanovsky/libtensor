@@ -1,6 +1,9 @@
-#include "libtensor_suite.h"
+#include <cmath>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
+#include <ctime>
+#include "libtensor_suite.h"
 
 using namespace libtensor;
 using libtest::test_exception;
@@ -30,6 +33,9 @@ public:
 };
 
 int main(int argc, char **argv) {
+
+	srand48(time(NULL));
+
 	char smsg[81], sline[81];
 	snprintf(smsg, 81, "Performing tests for libtensor revision %s",
 		libtensor::version);

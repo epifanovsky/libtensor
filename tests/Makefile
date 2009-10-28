@@ -15,6 +15,7 @@ OBJS += btod_compare_test.o
 OBJS += btod_contract2_test.o
 OBJS += btod_copy_test.o
 OBJS += btod_random_test.o
+OBJS += btod_read_test.o
 OBJS += btod_sum_test.o
 OBJS += contract_test.o
 OBJS += contraction2_test.o
