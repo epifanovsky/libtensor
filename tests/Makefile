@@ -51,6 +51,7 @@ OBJS += tod_compare_test.o
 OBJS += tod_contract2_test.o
 OBJS += tod_copy_test.o
 OBJS += tod_dotprod_test.o
+OBJS += tod_mkdelta_test.o
 OBJS += tod_random_test.o
 OBJS += tod_set_test.o
 OBJS += tod_sum_test.o

@@ -19,6 +19,7 @@ OBJS += defs.o
 OBJS += exception.o
 OBJS += global_timings.o
 OBJS += timer.o
+OBJS += tod/tod_mkdelta.o
 OBJS += tod/tod_solve.o
 
 DEPS  = $(OBJS:.o=.d)
