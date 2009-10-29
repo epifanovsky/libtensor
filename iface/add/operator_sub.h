@@ -51,7 +51,7 @@ inline operator-(
  **/
 template<size_t N, typename T, bool A1, typename E2>
 expr<N, T, core_add<N, T,
-	expr< N, T, core_ident<N, T, 1> >,
+	expr< N, T, core_ident<N, T, A1> >,
 	expr< N, T, core_scale< N, T, expr<N, T, E2> > >
 > >
 inline operator-(
