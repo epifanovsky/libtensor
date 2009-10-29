@@ -7,6 +7,7 @@
 #include "timings.h"
 #include "core/tensor_i.h"
 #include "core/tensor_ctrl.h"
+#include "processor.h"
 #include "tod_additive.h"
 
 namespace libtensor {

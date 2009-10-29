@@ -57,6 +57,7 @@
 #include "btod/btod_compare.h"
 #include "btod/btod_contract2.h"
 #include "btod/btod_copy.h"
+#include "btod/btod_mkdelta.h"
 #include "btod/btod_random.h"
 #include "btod/btod_read.h"
 #include "btod/btod_sum.h"

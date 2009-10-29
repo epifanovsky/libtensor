@@ -5,6 +5,10 @@
 
 namespace libtensor {
 
+/**	\brief Tests the libtensor::tod_mkdelta class
+
+	\ingroup libtensor_tests
+ **/
 class tod_mkdelta_test : public libtest::unit_test {
 public:
 	virtual void perform() throw(libtest::test_exception);
