@@ -166,6 +166,9 @@ core_contract<N, M, K, T, E1, E2>::core_contract(
 	const core_contract<N, M, K, T, E1, E2> &core) :
 	m_expr1(core.m_expr1), m_expr2(core.m_expr2), m_contr(core.m_contr) {
 
+	for(size_t i = 0; i < N + M; i++) {
+		m_defout[i] = core.m_defout[i];
+	}
 }
 
 

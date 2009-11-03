@@ -35,12 +35,12 @@ public:
 	typedef eval_ident<N, T, Assignable> eval_container_t;
 
 private:
-	labeled_btensor_t &m_t; //!< Labeled block %tensor
+	labeled_btensor_t m_t; //!< Labeled block %tensor
 
 public:
 	/**	\brief Initializes the operation with a %tensor reference
 	 **/
-	core_ident(labeled_btensor_t &t) : m_t(t) { }
+	core_ident(const labeled_btensor_t &t) : m_t(t) { }
 
 	/**	\brief Copy constructor
 	 **/

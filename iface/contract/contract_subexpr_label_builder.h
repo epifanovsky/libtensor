@@ -66,31 +66,25 @@ contract_subexpr_label_builder<N, M, K>::letter_array::letter_array(
 	for(size_t i = 0; i < N + K; i++) m_let[i] = NULL;
 
 	size_t j = 0;
+	// Take the first indexes from c (max N)
 	for(size_t i = 0; i < N + M; i++) {
 		const letter &l = label_c.letter_at(i);
 		if(e.contains(l)) {
-			if(j == N + K) {
+			if(j == N) {
 				throw_exc("contract_subexpr_label_builder::letter_array",
 					"letter_array()", "Inconsistent expression");
 			}
-			m_let[j] = &l;
-			j++;
+			m_let[j++] = &l;
 		}
 	}
+	// Take the last indexes from contr (max K)
 	for(size_t i = 0; i < K; i++) {
 		const letter &l = contr.letter_at(i);
-		if(e.contains(l)) {
-			if(j == N + K) {
-				throw_exc("contract_subexpr_label_builder::letter_array",
-					"letter_array()", "Inconsistent expression");
-			}
-			m_let[j] = &l;
-			j++;
+		if(!e.contains(l)) {
+			throw_exc("contract_subexpr_label_builder::letter_array",
+				"letter_array()", "Inconsistent expression");
 		}
-	}
-	if(j != N + K) {
-		throw_exc("contract_subexpr_label_builder::letter_array",
-			"letter_array()", "Inconsistent expression");
+		m_let[j++] = &l;
 	}
 }
 
