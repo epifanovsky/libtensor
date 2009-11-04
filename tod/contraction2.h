@@ -10,6 +10,7 @@
 
 namespace libtensor {
 
+
 /**	\brief Specifies how two tensors should be contracted
 	\tparam N Order of the first %tensor (a) less the contraction degree
 	\tparam M Order of the second %tensor (b) less the contraction degree
@@ -127,25 +128,28 @@ private:
 
 };
 
+
 template<size_t N, size_t M, size_t K>
 const char *contraction2<N, M, K>::k_clazz = "contraction2<N, M, K>";
 
-template<size_t N, size_t M, size_t K>
-contraction2<N, M, K>::contraction2()
-: m_k(0), m_conn(k_invalid) {
 
+template<size_t N, size_t M, size_t K>
+contraction2<N, M, K>::contraction2() :
+m_k(0), m_conn(k_invalid) {
+
+	if(K == 0) connect();
 }
 
 template<size_t N, size_t M, size_t K>
-contraction2<N, M, K>::contraction2(
-	const permutation<k_orderc> &perm)
-: m_permc(perm), m_k(0), m_conn(k_invalid) {
+contraction2<N, M, K>::contraction2(const permutation<k_orderc> &perm) :
+m_permc(perm), m_k(0), m_conn(k_invalid) {
 
+	if(K == 0) connect();
 }
 
 template<size_t N, size_t M, size_t K>
-contraction2<N, M, K>::contraction2(const contraction2<N, M, K> &contr)
-: m_permc(contr.m_permc), m_k(contr.m_k), m_conn(contr.m_conn) {
+contraction2<N, M, K>::contraction2(const contraction2<N, M, K> &contr) :
+m_permc(contr.m_permc), m_k(contr.m_k), m_conn(contr.m_conn) {
 
 }
 

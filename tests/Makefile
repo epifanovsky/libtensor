@@ -23,6 +23,7 @@ OBJS += contraction2_test.o
 OBJS += contraction2_list_builder_test.o
 OBJS += dimensions_test.o
 OBJS += direct_btensor_test.o
+OBJS += direct_product_test.o
 OBJS += direct_tensor_test.o
 OBJS += dot_product_test.o
 OBJS += global_timings_test.o

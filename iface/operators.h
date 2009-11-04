@@ -10,6 +10,7 @@
 #include "add/operator_add.h"
 #include "add/operator_sub.h"
 #include "contract/operator_contract.h"
+#include "direct_product/operator_direct_product.h"
 #include "scale/operator_mul.h"
 #include "sym_contract/sym_contract_operator.h"
 

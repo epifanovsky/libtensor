@@ -1,0 +1,171 @@
+#include <libtensor.h>
+#include "compare_ref.h"
+#include "direct_product_test.h"
+
+namespace libtensor {
+
+
+void direct_product_test::perform() throw(libtest::test_exception) {
+
+	test_tt_1();
+	test_te_1();
+	test_et_1();
+	test_ee_1();
+}
+
+
+void direct_product_test::test_tt_1() throw(libtest::test_exception) {
+
+	static const char *testname = "direct_product_test::test_tt_1()";
+
+	try {
+
+	bispace<1> sp_a(5);
+	bispace<2> sp_ab(sp_a|sp_a);
+	bispace<4> sp_abcd(sp_a|sp_a|sp_a|sp_a);
+
+	btensor<2> t1(sp_ab), t2(sp_ab);
+	btensor<4> t3(sp_abcd), t3_ref(sp_abcd);
+
+	btod_random<2>().perform(t1);
+	btod_random<2>().perform(t2);
+	t1.set_immutable();
+	t2.set_immutable();
+
+	contraction2<2, 2, 0> contr;
+	btod_contract2<2, 2, 0> op(contr, t1, t2);
+	op.perform(t3_ref);
+
+	letter a, b, c, d;
+	t3(a|b|c|d) = t1(a|b) * t2(c|d);
+
+	compare_ref<4>::compare(testname, t3, t3_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void direct_product_test::test_te_1() throw(libtest::test_exception) {
+
+	static const char *testname = "direct_product_test::test_te_1()";
+
+	try {
+
+	bispace<1> sp_a(5);
+	bispace<2> sp_ab(sp_a|sp_a);
+	bispace<4> sp_abcd(sp_a|sp_a|sp_a|sp_a);
+
+	btensor<2> t1(sp_ab), t2a(sp_ab), t2b(sp_ab), t2(sp_ab);
+	btensor<4> t3(sp_abcd), t3_ref(sp_abcd);
+
+	btod_random<2>().perform(t1);
+	btod_random<2>().perform(t2a);
+	btod_random<2>().perform(t2b);
+	t1.set_immutable();
+	t2a.set_immutable();
+	t2b.set_immutable();
+
+	btod_add<2> add2(t2a);
+	add2.add_op(t2b, -0.5);
+	add2.perform(t2);
+	contraction2<2, 2, 0> contr;
+	btod_contract2<2, 2, 0> op(contr, t1, t2);
+	op.perform(t3_ref);
+
+	letter a, b, c, d;
+	t3(a|b|c|d) = t1(a|b) * (t2a(c|d) - 0.5*t2b(c|d));
+
+	compare_ref<4>::compare(testname, t3, t3_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void direct_product_test::test_et_1() throw(libtest::test_exception) {
+
+	static const char *testname = "direct_product_test::test_et_1()";
+
+	try {
+
+	bispace<1> sp_a(5);
+	bispace<2> sp_ab(sp_a|sp_a);
+	bispace<4> sp_abcd(sp_a|sp_a|sp_a|sp_a);
+
+	btensor<2> t1a(sp_ab), t1b(sp_ab), t1(sp_ab);
+	btensor<2> t2(sp_ab);
+	btensor<4> t3(sp_abcd), t3_ref(sp_abcd);
+
+	btod_random<2>().perform(t1a);
+	btod_random<2>().perform(t1b);
+	btod_random<2>().perform(t2);
+	t1a.set_immutable();
+	t1b.set_immutable();
+	t2.set_immutable();
+
+	btod_add<2> add1(t1a);
+	add1.add_op(t1b, 2.0);
+	add1.perform(t1);
+	contraction2<2, 2, 0> contr;
+	btod_contract2<2, 2, 0> op(contr, t1, t2);
+	op.perform(t3_ref);
+
+	letter a, b, c, d;
+	t3(a|b|c|d) = (t1a(a|b) + 2.0*t1b(a|b)) * t2(c|d);
+
+	compare_ref<4>::compare(testname, t3, t3_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void direct_product_test::test_ee_1() throw(libtest::test_exception) {
+
+	static const char *testname = "direct_product_test::test_ee_1()";
+
+	try {
+
+	bispace<1> sp_a(5);
+	bispace<2> sp_ab(sp_a|sp_a);
+	bispace<4> sp_abcd(sp_a|sp_a|sp_a|sp_a);
+
+	btensor<2> t1a(sp_ab), t1b(sp_ab), t1(sp_ab);
+	btensor<2> t2a(sp_ab), t2b(sp_ab), t2(sp_ab);
+	btensor<4> t3(sp_abcd), t3_ref(sp_abcd);
+
+	btod_random<2>().perform(t1a);
+	btod_random<2>().perform(t1b);
+	btod_random<2>().perform(t2a);
+	btod_random<2>().perform(t2b);
+	t1a.set_immutable();
+	t1b.set_immutable();
+	t2a.set_immutable();
+	t2b.set_immutable();
+
+	btod_add<2> add1(t1a, 1.5);
+	add1.add_op(t1b, 2.0);
+	add1.perform(t1);
+	btod_add<2> add2(t2a);
+	add2.add_op(t2b, -0.5);
+	add2.perform(t2);
+	contraction2<2, 2, 0> contr;
+	btod_contract2<2, 2, 0> op(contr, t1, t2);
+	op.perform(t3_ref);
+
+	letter a, b, c, d;
+	t3(a|b|c|d) = (1.5*t1a(a|b) + 2.0*t1b(a|b)) * (t2a(c|d) - 0.5*t2b(c|d));
+
+	compare_ref<4>::compare(testname, t3, t3_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+} // namespace libtensor

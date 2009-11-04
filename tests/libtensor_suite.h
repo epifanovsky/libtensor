@@ -24,6 +24,7 @@
 #include "contraction2_list_builder_test.h"
 #include "dimensions_test.h"
 #include "direct_btensor_test.h"
+#include "direct_product_test.h"
 #include "direct_tensor_test.h"
 #include "dot_product_test.h"
 #include "global_timings_test.h"
@@ -89,6 +90,7 @@ namespace libtensor {
 	\li libtensor::contraction2_list_builder_test
 	\li libtensor::dimensions_test
 	\li libtensor::direct_btensor_test
+	\li libtensor::direct_product_test
 	\li libtensor::direct_tensor_test
 	\li libtensor::dot_product_test
 	\li libtensor::global_timings_test
@@ -149,6 +151,7 @@ private:
 		m_utf_contraction2_list_builder;
 	unit_test_factory<dimensions_test> m_utf_dimensions;
 	unit_test_factory<direct_btensor_test> m_utf_direct_btensor;
+	unit_test_factory<direct_product_test> m_utf_direct_product;
 	unit_test_factory<direct_tensor_test> m_utf_direct_tensor;
 	unit_test_factory<dot_product_test> m_utf_dot_product;
 	unit_test_factory<global_timings_test> m_utf_global_timings;

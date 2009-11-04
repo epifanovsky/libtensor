@@ -49,7 +49,9 @@ void tod_contract2_test::perform() throw(libtest::test_exception) {
 	test_ijkl_ijp_klp(1, 100, 1, 100, 100);
 	test_ijkl_ijp_klp_a(3, 4, 5, 6, 7, -2.0);
 
+	test_ijkl_ij_kl(3, 4, 5, 6);
 
+	test_ijkl_ij_lk(3, 4, 5, 6);
 }
 
 
@@ -1020,6 +1022,200 @@ void tod_contract2_test::test_ijkl_ijp_klp_a(size_t ni, size_t nj, size_t nk,
 		"tod_contract2_test::test_ijkl_ijp_klp_a"
 		"(%lu, %lu, %lu, %lu, %lu)", ni, nj, nk, nl, np);
 	compare_ref<4>::compare(testname, tc, tc_ref, cij_max*k_thresh);
+}
+
+
+void tod_contract2_test::test_ijkl_ij_kl(size_t ni, size_t nj,
+	size_t nk, size_t nl) throw(libtest::test_exception) {
+
+	//
+	//	c_{ijkl} = a_{ij} b_{kl}
+	//
+
+	std::ostringstream tnss;
+	tnss << "tod_contract2_test::test_ijkl_ij_kl(" << ni << ", " << nj
+		<< ", " << nk << ", " << nl << ")";
+
+	try {
+
+	index<2> ia1, ia2;
+	index<2> ib1, ib2;
+	index<4> ic1, ic2;
+	ia2[0] = ni - 1; ia2[1] = nj - 1;
+	ib2[0] = nk - 1; ib2[1] = nl - 1;
+	ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1; ic2[3] = nl - 1;
+
+	dimensions<2> dima(index_range<2>(ia1, ia2));
+	dimensions<2> dimb(index_range<2>(ib1, ib2));
+	dimensions<4> dimc(index_range<4>(ic1, ic2));
+	size_t sza = dima.get_size(), szb = dimb.get_size(),
+		szc = dimc.get_size();
+
+	tensor<2, double, allocator> ta(dima); tensor_ctrl<2, double> tca(ta);
+	tensor<2, double, allocator> tb(dimb); tensor_ctrl<2, double> tcb(tb);
+	tensor<4, double, allocator> tc(dimc); tensor_ctrl<4, double> tcc(tc);
+	tensor<4, double, allocator> tc_ref(dimc);
+	tensor_ctrl<4, double> tcc_ref(tc_ref);
+	double *dta = tca.req_dataptr();
+	double *dtb = tcb.req_dataptr();
+	double *dtc1 = tcc.req_dataptr();
+	double *dtc2 = tcc_ref.req_dataptr();
+
+	//
+	//	Fill in random input
+	//
+
+	for(size_t i = 0; i < sza; i++) dta[i] = drand48();
+	for(size_t i = 0; i < szb; i++) dtb[i] = drand48();
+	for(size_t i = 0; i < szc; i++) dtc1[i] = drand48();
+
+	//
+	//	Generate reference data
+	//
+
+	index<2> ia, ib; index<4> ic;
+	double cijkl_max = 0.0;
+	for(size_t i = 0; i < ni; i++) {
+	for(size_t j = 0; j < nj; j++) {
+	for(size_t k = 0; k < nk; k++) {
+	for(size_t l = 0; l < nl; l++) {
+
+		ic[0] = i; ic[1] = j; ic[2] = k; ic[3] = l;
+		ia[0] = i; ia[1] = j;
+		ib[0] = k; ib[1] = l;
+		abs_index<2> aia(ia, dima);
+		abs_index<2> aib(ib, dimb);
+		abs_index<4> aic(ic, dimc);
+		double cijkl = dta[aia.get_abs_index()]*
+			dtb[aib.get_abs_index()];
+		dtc2[aic.get_abs_index()] = cijkl;
+		if(fabs(cijkl) > cijkl_max) cijkl_max = fabs(cijkl);
+	}
+	}
+	}
+	}
+
+	tca.ret_dataptr(dta); dta = NULL; ta.set_immutable();
+	tcb.ret_dataptr(dtb); dtb = NULL; tb.set_immutable();
+	tcc.ret_dataptr(dtc1); dtc1 = NULL;
+	tcc_ref.ret_dataptr(dtc2); dtc2 = NULL; tc_ref.set_immutable();
+
+	//
+	//	Invoke the contraction routine
+	//
+
+	contraction2<2, 2, 0> contr;
+
+	tod_contract2<2, 2, 0>(contr, ta, tb).perform(tc);
+
+	//
+	//	Compare against the reference
+	//
+
+	compare_ref<4>::compare(tnss.str().c_str(), tc, tc_ref,
+		cijkl_max*k_thresh);
+
+	} catch(exception &e) {
+		fail_test(tnss.str().c_str(), __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void tod_contract2_test::test_ijkl_ij_lk(size_t ni, size_t nj,
+	size_t nk, size_t nl) throw(libtest::test_exception) {
+
+	//
+	//	c_{ijkl} = a_{ij} b_{lk}
+	//
+
+	std::ostringstream tnss;
+	tnss << "tod_contract2_test::test_ijkl_ij_lk(" << ni << ", " << nj
+		<< ", " << nk << ", " << nl << ")";
+
+	try {
+
+	index<2> ia1, ia2;
+	index<2> ib1, ib2;
+	index<4> ic1, ic2;
+	ia2[0] = ni - 1; ia2[1] = nj - 1;
+	ib2[0] = nl - 1; ib2[1] = nk - 1;
+	ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1; ic2[3] = nl - 1;
+
+	dimensions<2> dima(index_range<2>(ia1, ia2));
+	dimensions<2> dimb(index_range<2>(ib1, ib2));
+	dimensions<4> dimc(index_range<4>(ic1, ic2));
+	size_t sza = dima.get_size(), szb = dimb.get_size(),
+		szc = dimc.get_size();
+
+	tensor<2, double, allocator> ta(dima); tensor_ctrl<2, double> tca(ta);
+	tensor<2, double, allocator> tb(dimb); tensor_ctrl<2, double> tcb(tb);
+	tensor<4, double, allocator> tc(dimc); tensor_ctrl<4, double> tcc(tc);
+	tensor<4, double, allocator> tc_ref(dimc);
+	tensor_ctrl<4, double> tcc_ref(tc_ref);
+	double *dta = tca.req_dataptr();
+	double *dtb = tcb.req_dataptr();
+	double *dtc1 = tcc.req_dataptr();
+	double *dtc2 = tcc_ref.req_dataptr();
+
+	//
+	//	Fill in random input
+	//
+
+	for(size_t i = 0; i < sza; i++) dta[i] = drand48();
+	for(size_t i = 0; i < szb; i++) dtb[i] = drand48();
+	for(size_t i = 0; i < szc; i++) dtc1[i] = drand48();
+
+	//
+	//	Generate reference data
+	//
+
+	index<2> ia, ib; index<4> ic;
+	double cijkl_max = 0.0;
+	for(size_t i = 0; i < ni; i++) {
+	for(size_t j = 0; j < nj; j++) {
+	for(size_t k = 0; k < nk; k++) {
+	for(size_t l = 0; l < nl; l++) {
+
+		ic[0] = i; ic[1] = j; ic[2] = k; ic[3] = l;
+		ia[0] = i; ia[1] = j;
+		ib[0] = l; ib[1] = k;
+		abs_index<2> aia(ia, dima);
+		abs_index<2> aib(ib, dimb);
+		abs_index<4> aic(ic, dimc);
+		double cijkl = dta[aia.get_abs_index()]*
+			dtb[aib.get_abs_index()];
+		dtc2[aic.get_abs_index()] = cijkl;
+		if(fabs(cijkl) > cijkl_max) cijkl_max = fabs(cijkl);
+	}
+	}
+	}
+	}
+
+	tca.ret_dataptr(dta); dta = NULL; ta.set_immutable();
+	tcb.ret_dataptr(dtb); dtb = NULL; tb.set_immutable();
+	tcc.ret_dataptr(dtc1); dtc1 = NULL;
+	tcc_ref.ret_dataptr(dtc2); dtc2 = NULL; tc_ref.set_immutable();
+
+	//
+	//	Invoke the contraction routine
+	//
+
+	permutation<4> permc;
+	permc.permute(2, 3);
+	contraction2<2, 2, 0> contr(permc);
+
+	tod_contract2<2, 2, 0>(contr, ta, tb).perform(tc);
+
+	//
+	//	Compare against the reference
+	//
+
+	compare_ref<4>::compare(tnss.str().c_str(), tc, tc_ref,
+		cijkl_max*k_thresh);
+
+	} catch(exception &e) {
+		fail_test(tnss.str().c_str(), __FILE__, __LINE__, e.what());
+	}
 }
 
 

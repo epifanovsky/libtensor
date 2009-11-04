@@ -67,6 +67,14 @@ private:
 	void test_ijkl_ijp_klp_a(size_t ni, size_t nj, size_t nk, size_t nl,
 		size_t np, double d) throw(libtest::test_exception);
 
+	// c_{ijkl} = a_{ij} b_{kl}
+	void test_ijkl_ij_kl(size_t ni, size_t nj, size_t nk, size_t nl)
+		throw(libtest::test_exception);
+
+	// c_{ijkl} = a_{ij} b_{lk}
+	void test_ijkl_ij_lk(size_t ni, size_t nj, size_t nk, size_t nl)
+		throw(libtest::test_exception);
+
 };
 
 } // namespace libtensor
