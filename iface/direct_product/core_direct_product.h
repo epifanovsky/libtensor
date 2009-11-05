@@ -104,23 +104,23 @@ const char *core_direct_product<N, M, T, E1, E2>::k_clazz =
 
 template<size_t N, size_t M, typename T, typename E1, typename E2>
 core_direct_product<N, M, T, E1, E2>::core_direct_product(
-	const E1 &expr1, const E2 &expr2) throw(expr_exception):
-	m_expr1(expr1),
-	m_expr2(expr2) {
+	const E1 &expr1, const E2 &expr2) throw(expr_exception) :
+
+	m_expr1(expr1),	m_expr2(expr2) {
 
 	static const char *method =
 		"core_direct_product(const E1&, const E2&)";
 
-	size_t j = 0;
 	for(size_t i = 0; i < N + M; i++) m_defout[i] = NULL;
+
 	for(size_t i = 0; i < N; i++) {
 		const letter &l = expr1.letter_at(i);
 		if(expr2.contains(l)) {
 			throw expr_exception(g_ns, k_clazz, method,
 				__FILE__, __LINE__,
-				"Duplicate uncontracted index in A.");
+				"Duplicate letter index.");
 		} else {
-			m_defout[j++] = &l;
+			m_defout[i] = &l;
 		}
 	}
 	for(size_t i = 0; i < M; i++) {
@@ -128,9 +128,9 @@ core_direct_product<N, M, T, E1, E2>::core_direct_product(
 		if(expr1.contains(l)) {
 			throw expr_exception(g_ns, k_clazz, method,
 				__FILE__, __LINE__,
-				"Duplicate uncontracted index in B.");
+				"Duplicate letter index.");
 		} else {
-			m_defout[j++] = &l;
+			m_defout[i + N] = &l;
 		}
 	}
 }
@@ -139,8 +139,10 @@ core_direct_product<N, M, T, E1, E2>::core_direct_product(
 template<size_t N, size_t M, typename T, typename E1, typename E2>
 core_direct_product<N, M, T, E1, E2>::core_direct_product(
 	const core_direct_product<N, M, T, E1, E2> &core) :
+
 	m_expr1(core.m_expr1), m_expr2(core.m_expr2) {
 
+	for(size_t i = 0; i < N + M; i++) m_defout[i] = core.m_defout[i];
 }
 
 

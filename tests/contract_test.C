@@ -21,6 +21,7 @@ void contract_test::perform() throw(libtest::test_exception) {
 	test_te_4();
 	test_et_1();
 	test_et_2();
+	test_et_3();
 	test_ee_1();
 	test_ee_2();
 
@@ -593,6 +594,51 @@ void contract_test::test_et_2() throw(libtest::test_exception) {
 
 	letter a, b, c, d, i;
 	t3(a|b|c|d) = contract(i, t1a(a|c|d|i) + 1.5*t1b(a|c|d|i), t2(i|b));
+
+	compare_ref<4>::compare(testname, t3, t3_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void contract_test::test_et_3() throw(libtest::test_exception) {
+
+	const char *testname = "contract_test::test_et_3()";
+
+	try {
+
+	bispace<1> sp_i(10), sp_a(20);
+	bispace<2> sp_ia(sp_i|sp_a);
+	bispace<2> sp_ac(sp_a|sp_a), sp_di(sp_a|sp_i);
+	bispace<4> sp_acdi(sp_a|sp_a|sp_a|sp_i);
+	bispace<4> sp_abcd(sp_a|sp_a|sp_a|sp_a);
+
+	btensor<2> t1a(sp_ac), t1b(sp_di);
+	btensor<4> t1(sp_acdi);
+	btensor<2> t2(sp_ia);
+	btensor<4> t3(sp_abcd), t3_ref(sp_abcd);
+
+	btod_random<2>().perform(t1a);
+	btod_random<2>().perform(t1b);
+	btod_random<2>().perform(t2);
+	t1a.set_immutable();
+	t1b.set_immutable();
+	t2.set_immutable();
+
+	contraction2<2, 2, 0> contr_t1;
+	btod_contract2<2, 2, 0>(contr_t1, t1a, t1b).perform(t1);
+	t1.set_immutable();
+
+	permutation<4> perm_c; perm_c.permute(1, 2).permute(1, 3);
+	contraction2<3, 1, 1> contr(perm_c);
+	contr.contract(3, 0);
+	btod_contract2<3, 1, 1> op(contr, t1, t2);
+	op.perform(t3_ref);
+
+	letter a, b, c, d, i;
+	t3(a|b|c|d) = contract(i, t1a(a|c)*t1b(d|i), t2(i|b));
 
 	compare_ref<4>::compare(testname, t3, t3_ref, 1e-15);
 

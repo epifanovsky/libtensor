@@ -7,10 +7,45 @@ namespace libtensor {
 
 void direct_product_test::perform() throw(libtest::test_exception) {
 
+	test_label_1();
 	test_tt_1();
 	test_te_1();
 	test_et_1();
 	test_ee_1();
+}
+
+
+void direct_product_test::test_label_1() throw(libtest::test_exception) {
+
+	static const char *testname = "direct_product_test::test_label_1()";
+
+	try {
+
+	bispace<1> sp_a(5);
+	bispace<2> sp_ab(sp_a|sp_a);
+	btensor<2> t1(sp_ab), t2(sp_ab);
+	letter a, b, c, d;
+
+	if(!(t1(a|b) * t2(c|d)).contains(a)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Letter a is missing from the result label.");
+	}
+	if(!(t1(a|b) * t2(c|d)).contains(b)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Letter b is missing from the result label.");
+	}
+	if(!(t1(a|b) * t2(c|d)).contains(c)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Letter c is missing from the result label.");
+	}
+	if(!(t1(a|b) * t2(c|d)).contains(d)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Letter d is missing from the result label.");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
 }
 
 
