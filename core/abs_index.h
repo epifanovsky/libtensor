@@ -183,7 +183,7 @@ bool abs_index<N>::inc() {
 template<size_t N>
 inline bool abs_index<N>::is_last() const {
 
-	if(m_abs_idx + 1 >= m_dims.get_size()) return false;
+	return m_abs_idx + 1 >= m_dims.get_size();
 }
 
 

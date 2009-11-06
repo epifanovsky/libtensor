@@ -114,40 +114,47 @@ void btod_read<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 	}
 
 	//
-	//	Transfer data into the tensor
+	//	Transfer data into the block tensor
 	//
 
 	abs_index<N> bi(bdims);
 	do {
 		tensor_i<N, double> &blk = ctrl.req_block(bi.get_index());
-		abs_index<N> blk_start(
-			bis.get_block_start(bi.get_index()), dims);
-		const dimensions<N> &blk_dims = blk.get_dims();
 		tensor_ctrl<N, double> blk_ctrl(blk);
+		const dimensions<N> &blk_dims = blk.get_dims();
 		double *p = blk_ctrl.req_dataptr();
-		size_t nj = blk_dims.get_dim(N - 1);
-		size_t ni = blk_dims.get_size() / nj;
-		size_t buf_offs = blk_start.get_abs_index();
-		size_t blk_offs = 0;
 		bool zero = true;
-		for(size_t i = 0; i < ni; i++) {
+
+		index<N> blk_start_idx(bis.get_block_start(bi.get_index()));
+		abs_index<N> blk_offs_aidx(blk_dims);
+		size_t nj = blk_dims[N - 1];
+		do {
+			index<N> idx(blk_start_idx);
+			const index<N> &offs(blk_offs_aidx.get_index());
+			for(size_t i = 0; i < N; i++) idx[i] += offs[i];
+			abs_index<N> aidx(idx, bis.get_dims());
+			size_t blk_offs = blk_offs_aidx.get_abs_index();
+			size_t buf_offs = aidx.get_abs_index();
+#ifdef LIBTENSOR_DEBUG
+			if(buf_offs + nj > dims.get_size()) {
+				throw out_of_bounds(g_ns, k_clazz, method,
+					__FILE__, __LINE__,
+					"buf_offs");
+			}
+#endif
 			for(size_t j = 0; j < nj; j++) {
 				register double d = buf[buf_offs + j];
-				if(fabs(d) <= m_thresh) {
-					d = 0.0;
-				} else {
-					zero = false;
-				}
+				if(fabs(d) <= m_thresh) d = 0.0;
+				else zero = false;
 				p[blk_offs + j] = d;
+				blk_offs_aidx.inc();
 			}
-			blk_offs += nj;
-			buf_offs += dims.get_dim(N - 1);
-		}
+		} while(!blk_offs_aidx.is_last());
+
 		blk_ctrl.ret_dataptr(p);
 		ctrl.ret_block(bi.get_index());
-		if(zero) {
-			ctrl.req_zero_block(bi.get_index());
-		}
+		if(zero) ctrl.req_zero_block(bi.get_index());
+
 	} while(bi.inc());
 
 	delete [] buf;
