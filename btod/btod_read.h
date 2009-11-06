@@ -26,12 +26,14 @@ public:
 
 private:
 	std::istream &m_stream; //!< Input stream
+	double m_thresh; //!< Zero threshold
 
 public:
 	//!	\name Construction and destruction
 	//!{
 
-	btod_read(std::istream &stream) : m_stream(stream) { }
+	btod_read(std::istream &stream, double thresh = 0.0) :
+		m_stream(stream), m_thresh(thresh) { }
 
 	//!}
 
@@ -127,18 +129,29 @@ void btod_read<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 		size_t ni = blk_dims.get_size() / nj;
 		size_t buf_offs = blk_start.get_abs_index();
 		size_t blk_offs = 0;
+		bool zero = true;
 		for(size_t i = 0; i < ni; i++) {
 			for(size_t j = 0; j < nj; j++) {
-				p[blk_offs + j] = buf[buf_offs + j];
+				register double d = buf[buf_offs + j];
+				if(fabs(d) <= m_thresh) {
+					d = 0.0;
+				} else {
+					zero = false;
+				}
+				p[blk_offs + j] = d;
 			}
 			blk_offs += nj;
 			buf_offs += dims.get_dim(N - 1);
 		}
 		blk_ctrl.ret_dataptr(p);
 		ctrl.ret_block(bi.get_index());
+		if(zero) {
+			ctrl.req_zero_block(bi.get_index());
+		}
 	} while(bi.inc());
 
 	delete [] buf;
+
 }
 
 

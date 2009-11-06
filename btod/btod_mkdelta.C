@@ -42,6 +42,9 @@ void btod_mkdelta::perform(block_tensor_i<2, double> &bt) throw(exception) {
 	block_tensor_ctrl<2, double> ctrl_d(bt);
 	dimensions<2> bidims(m_bis.get_block_index_dims());
 	size_t ni = bidims[0], na = bidims[1];
+	// Temporary way to deal with alpha-beta; to be replaced with
+	// appropriate symmetry.
+	size_t ni_ab = ni / 2, na_ab = na / 2;
 
 	ctrl_d.req_sym_clear_elements();
 
@@ -52,6 +55,11 @@ void btod_mkdelta::perform(block_tensor_i<2, double> &bt) throw(exception) {
 			idx_i[0] = i; idx_i[1] = i;
 			idx_a[0] = a; idx_a[1] = a;
 			idx_d[0] = i; idx_d[1] = a;
+
+			if((i < ni_ab) != (a < na_ab)) {
+				ctrl_d.req_zero_block(idx_d);
+				continue;
+			}
 
 			if(ctrl_i.req_is_zero_block(idx_i)) {
 				if(ctrl_a.req_is_zero_block(idx_a)) {
