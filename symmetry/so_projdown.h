@@ -45,6 +45,18 @@ public:
 };
 
 
+template<size_t N, typename T>
+class so_projdown<N, N, T> {
+public:
+	so_projdown(const symmetry_element_i<N, T> &elem,
+		const mask<N> &msk, const dimensions<0> &dims) { }
+	bool is_identity() const { return true; }
+	const symmetry_element_i<0, T> &get_proj() const {
+		throw_exc("so_projdown<N, N, T>", "get_proj()", "Invalid method");
+	}
+};
+
+
 template<size_t N, size_t M, typename T>
 so_projdown<N, M, T>::so_projdown(const symmetry_element_i<N, T> &elem,
 	const mask<N> &msk, const dimensions<N - M> &dims)

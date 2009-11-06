@@ -334,66 +334,82 @@ block_index_space<N + M> btod_contract2<N, M, K>::make_bis(
 }
 
 
-template<size_t N, size_t M, size_t K>
-void btod_contract2<N, M, K>::make_symmetry() {
+namespace btod_contract2_ns {
 
-	const sequence<k_maxconn, size_t> &conn = m_contr.get_conn();
+template<size_t N, size_t M, size_t K, size_t L>
+class projector {
+private:
+	const sequence<2 * (N + M + K), size_t> &m_conn;
+	block_tensor_i<N + K, double> &m_bta;
+	const block_index_space<N + M> &m_bisc;
+	symmetry<N + M, double> &m_symc;
 
-	dimensions<k_ordera> bidimsa(m_bta.get_bis().get_block_index_dims());
-	dimensions<k_orderb> bidimsb(m_btb.get_bis().get_block_index_dims());
-	dimensions<k_orderc> bidimsc(m_bis.get_block_index_dims());
+public:
+	projector(const sequence<2 * (N + M + K), size_t> &conn,
+		block_tensor_i<N + K, double> &bta,
+		const block_index_space<N + M> &bisc,
+		symmetry<N + M, double> &symc) :
+		m_conn(conn), m_bta(bta), m_bisc(bisc), m_symc(symc) { }
+	void project();
+};
+
+
+template<size_t M, size_t K, size_t L>
+class projector<0, M, K, L> {
+public:
+	projector(const sequence<2 * (M + K), size_t> &conn,
+		block_tensor_i<K, double> &bta,
+		const block_index_space<M> &bisc,
+		symmetry<M, double> &symc) { }
+	void project() { }
+};
+
+
+template<size_t N, size_t M, size_t K, size_t L>
+void projector<N, M, K, L>::project() {
+
+	dimensions<N + K> bidimsa(m_bta.get_bis().get_block_index_dims());
+	dimensions<N + M> bidimsc(m_bisc.get_block_index_dims());
 
 	index<N> ia1, ia2;
-	mask<k_ordera> projmska;
-	mask<k_orderc> projmskca;
+	mask<N + K> projmska;
+	mask<N + M> projmskca;
 	size_t j = 0;
-	for(size_t i = 0; i < k_ordera; i++) {
-		size_t iconn = conn[k_orderc + i];
-		if(iconn < k_orderc) {
+	for(size_t i = 0; i < N + K; i++) {
+		size_t iconn = m_conn[N + M + L + i];
+		if(iconn < N + M) {
 			ia2[j] = bidimsa[i] - 1;
 			projmska[i] = true;
 			projmskca[iconn] = true;
 		}
 	}
 	dimensions<N> projdimsa(index_range<N>(ia1, ia2));
-	block_tensor_ctrl<k_ordera, double> ctrla(m_bta);
-	const symmetry<k_ordera, double> &syma = ctrla.req_symmetry();
-	typename symmetry<k_ordera, double>::iterator ielema = syma.begin();
+	block_tensor_ctrl<N + K, double> ctrla(m_bta);
+	const symmetry<N + K, double> &syma = ctrla.req_symmetry();
+	typename symmetry<N + K, double>::iterator ielema = syma.begin();
 	for(; ielema != syma.end(); ielema++) {
-		so_projdown<k_ordera, K, double> projdn(
+		so_projdown<N + K, K, double> projdn(
 			syma.get_element(ielema), projmska, projdimsa);
 		if(!projdn.is_identity()) {
 			so_projup<N, M, double> projup(
 				projdn.get_proj(), projmskca, bidimsc);
-			m_sym.add_element(projup.get_proj());
+			m_symc.add_element(projup.get_proj());
 		}
 	}
+}
 
-	index<M> ib1, ib2;
-	mask<k_orderb> projmskb;
-	mask<k_orderc> projmskcb;
-	j = 0;
-	for(size_t i = 0; i < k_orderb; i++) {
-		size_t iconn = conn[k_orderc + k_ordera + i];
-		if(iconn < k_orderc) {
-			ib2[j] = bidimsb[i] - 1;
-			projmskb[i] = true;
-			projmskcb[iconn] = true;
-		}
-	}
-	dimensions<M> projdimsb(index_range<M>(ib1, ib2));
-	block_tensor_ctrl<k_orderb, double> ctrlb(m_btb);
-	const symmetry<k_orderb, double> &symb = ctrlb.req_symmetry();
-	typename symmetry<k_orderb, double>::iterator ielemb = symb.begin();
-	for(; ielemb != symb.end(); ielemb++) {
-		so_projdown<k_orderb, K, double> projdn(
-			symb.get_element(ielemb), projmskb, projdimsb);
-		if(!projdn.is_identity()) {
-			so_projup<M, N, double> projup(
-				projdn.get_proj(), projmskcb, bidimsc);
-			m_sym.add_element(projup.get_proj());
-		}
-	}
+
+}
+
+
+template<size_t N, size_t M, size_t K>
+void btod_contract2<N, M, K>::make_symmetry() {
+
+	const sequence<k_maxconn, size_t> &conn = m_contr.get_conn();
+	btod_contract2_ns::projector<N, M, K, 0>(
+		conn, m_bta, m_bis, m_sym).project();
+	btod_contract2_ns::projector<M, N, K, N + K>(
+		conn, m_btb, m_bis, m_sym).project();
 }
 
 

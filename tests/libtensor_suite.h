@@ -39,6 +39,7 @@
 #include "orbit_list_test.h"
 #include "permutation_test.h"
 #include "permutation_builder_test.h"
+#include "sequence_test.h"
 #include "so_projdown_test.h"
 #include "so_projup_test.h"
 #include "sym_contract_test.h"
@@ -105,6 +106,7 @@ namespace libtensor {
 	\li libtensor::orbit_list_test
 	\li libtensor::permutation_test
 	\li libtensor::permutation_builder_test
+	\li libtensor::sequence_test
 	\li libtensor::so_projdown_test
 	\li libtensor::so_projup_test
 	\li libtensor::sym_contract_test
@@ -166,6 +168,7 @@ private:
 	unit_test_factory<orbit_list_test> m_utf_orbit_list;
 	unit_test_factory<permutation_test> m_utf_permutation;
 	unit_test_factory<permutation_builder_test> m_utf_permutation_builder;
+	unit_test_factory<sequence_test> m_utf_sequence;
 	unit_test_factory<so_projdown_test> m_utf_so_projdown;
 	unit_test_factory<so_projup_test> m_utf_so_projup;
 	unit_test_factory<sym_contract_test> m_utf_sym_contract;

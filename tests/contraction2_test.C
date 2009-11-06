@@ -12,6 +12,7 @@ void contraction2_test::perform() throw(libtest::test_exception) {
 	test_3();
 	test_4();
 	test_5();
+	test_6();
 }
 
 
@@ -207,6 +208,42 @@ void contraction2_test::test_5() throw(libtest::test_exception) {
 	conn_ref[2] = 6; conn_ref[3] = 7;
 	conn_ref[4] = 0; conn_ref[5] = 1;
 	conn_ref[6] = 2; conn_ref[7] = 3;
+
+	const sequence<8, size_t> &conn = contr.get_conn();
+	for(size_t i = 0; i < 8; i++) {
+		if(conn[i] != conn_ref[i]) {
+			std::ostringstream ss;
+			ss << "Incorrect connection at position " << i << ": "
+				<< conn[i] << " vs. " << conn_ref[i]
+				<< " (ref).";
+			fail_test(testname, __FILE__, __LINE__,
+				ss.str().c_str());
+		}
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void contraction2_test::test_6() throw(libtest::test_exception) {
+
+	static const char *testname = "contraction2_test::test_6()";
+
+	//	c_{ab} = \sum_{ic} a_{iabc} b_{ic}
+
+	try {
+
+	contraction2<2, 0, 2> contr;
+	contr.contract(0, 0);
+	contr.contract(3, 1);
+
+	sequence<8, size_t> conn_ref(0);
+	conn_ref[0] = 3; conn_ref[1] = 4;
+	conn_ref[2] = 6; conn_ref[3] = 0;
+	conn_ref[4] = 1; conn_ref[5] = 7;
+	conn_ref[6] = 2; conn_ref[7] = 5;
 
 	const sequence<8, size_t> &conn = contr.get_conn();
 	for(size_t i = 0; i < 8; i++) {

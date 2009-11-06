@@ -15,6 +15,7 @@ void contract_test::perform() throw(libtest::test_exception) {
 	test_tt_3();
 	test_tt_4();
 	test_tt_5();
+	test_tt_6();
 	test_te_1();
 	test_te_2();
 	test_te_3();
@@ -330,6 +331,41 @@ void contract_test::test_tt_5() throw(libtest::test_exception) {
 	t4(a|b|c|d) = t3(a|b|c|d) - contract(i, t1(a|c|d|i), t2(i|b));
 
 	compare_ref<4>::compare(testname, t4, t4_ref, 1e-14);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void contract_test::test_tt_6() throw(libtest::test_exception) {
+
+	const char *testname = "contract_test::test_tt_6()";
+
+	try {
+
+	bispace<1> sp_i(10), sp_a(20);
+	bispace<2> sp_ia(sp_i|sp_a), sp_ab(sp_a|sp_a);
+	bispace<4> sp_iabc(sp_i|sp_a|sp_a|sp_a);
+
+	btensor<4> t1(sp_iabc);
+	btensor<2> t2(sp_ia);
+	btensor<2> t3(sp_ab), t3_ref(sp_ab);
+
+	btod_random<4>().perform(t1);
+	btod_random<2>().perform(t2);
+	t1.set_immutable();
+	t2.set_immutable();
+
+	contraction2<2, 0, 2> contr;
+	contr.contract(0, 0);
+	contr.contract(3, 1);
+	btod_contract2<2, 0, 2>(contr, t1, t2).perform(t3_ref);
+
+	letter a, b, c, i;
+	t3(a|b) = contract(i|c, t1(i|a|b|c), t2(i|c));
+
+	compare_ref<2>::compare(testname, t3, t3_ref, 1e-14);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());

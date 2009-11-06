@@ -38,6 +38,7 @@ OBJS += orbit_test.o
 OBJS += orbit_list_test.o
 OBJS += permutation_test.o
 OBJS += permutation_builder_test.o
+OBJS += sequence_test.o
 OBJS += so_projdown_test.o
 OBJS += so_projup_test.o
 OBJS += sym_contract_test.o
