@@ -19,7 +19,9 @@ OBJS += defs.o
 OBJS += exception.o
 OBJS += global_timings.o
 OBJS += timer.o
+OBJS += btod/btod_delta_denom1.o
 OBJS += btod/btod_mkdelta.o
+OBJS += tod/tod_delta_denom1.o
 OBJS += tod/tod_mkdelta.o
 OBJS += tod/tod_solve.o
 
@@ -62,6 +64,8 @@ clean:
 	$(RM) *.o
 	$(RM) *.d
 	$(RM) *.d.*
+	$(RM) btod/*.o
+	$(RM) btod/*.d
 	$(RM) tod/*.o
 	$(RM) tod/*.d
 	cd tests && $(MAKE) clean
