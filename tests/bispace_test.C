@@ -13,6 +13,7 @@ void bispace_test::perform() throw(libtest::test_exception) {
 	test_6();
 	test_7();
 	test_8();
+	test_9();
 }
 
 void bispace_test::test_1() throw(libtest::test_exception) {
@@ -1002,6 +1003,139 @@ void bispace_test::test_8() throw(libtest::test_exception) {
 	if(!abicd2.equals(cabicd2)) {
 		fail_test(testname, __FILE__, __LINE__,
 			"Equality test failed for cabicd2.");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void bispace_test::test_9() throw(libtest::test_exception) {
+
+	//
+	//	4-d spaces with symmetry between 1-d
+	//
+
+	const char *testname = "bispace_test::test_9()";
+
+	try {
+
+	bispace<1> a(10), b(10);
+	b.split(4);
+	bispace<4> aaaa(a&a&a&a), bbbb(b&b&b&b);
+
+	//	Make references
+
+	index<4> i1, i2;
+	i2[0] = 9; i2[1] = 9; i2[2] = 9; i2[3] = 9;
+	dimensions<4> dims(index_range<4>(i1, i2));
+
+	block_index_space<4> bisa_ref(dims), bisb_ref(dims);
+	mask<4> mskb;
+	mskb[0] = true; mskb[1] = true; mskb[2] = true; mskb[3] = true;
+	bisb_ref.split(mskb, 4);
+
+	mask<4> sma0_ref, smb0_ref;
+	sma0_ref[0] = true; sma0_ref[1] = true;
+	sma0_ref[2] = true; sma0_ref[3] = true;
+
+	smb0_ref[0] = true; smb0_ref[1] = true;
+	smb0_ref[2] = true; smb0_ref[3] = true;
+
+	//	Run tests
+
+	if(!aaaa.get_bis().equals(bisa_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Bis test failed for aaaa.");
+	}
+	if(!aaaa.get_sym_mask(0).equals(sma0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 0 test failed for aaaa.");
+	}
+	if(!aaaa.get_sym_mask(1).equals(sma0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 1 test failed for aaaa.");
+	}
+	if(!aaaa.get_sym_mask(2).equals(sma0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 2 test failed for aaaa.");
+	}
+	if(!aaaa.get_sym_mask(3).equals(sma0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 3 test failed for aaaa.");
+	}
+	if(!bbbb.get_bis().equals(bisb_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Bis test failed for bbbb.");
+	}
+	if(!bbbb.get_sym_mask(0).equals(smb0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 0 test failed for bbbb.");
+	}
+	if(!bbbb.get_sym_mask(1).equals(smb0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 1 test failed for bbbb.");
+	}
+	if(!bbbb.get_sym_mask(2).equals(smb0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 2 test failed for bbbb.");
+	}
+	if(!bbbb.get_sym_mask(3).equals(smb0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 3 test failed for bbbb.");
+	}
+
+	bispace<4> caaaa(aaaa), cbbbb(bbbb);
+
+	if(!caaaa.get_bis().equals(bisa_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Bis test failed for caaaa.");
+	}
+	if(!caaaa.get_sym_mask(0).equals(sma0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 0 test failed for caaaa.");
+	}
+	if(!caaaa.get_sym_mask(1).equals(sma0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 1 test failed for caaaa.");
+	}
+	if(!caaaa.get_sym_mask(2).equals(sma0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 2 test failed for caaaa.");
+	}
+	if(!caaaa.get_sym_mask(3).equals(sma0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 3 test failed for caaaa.");
+	}
+	if(!cbbbb.get_bis().equals(bisb_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Bis test failed for cbbbb.");
+	}
+	if(!cbbbb.get_sym_mask(0).equals(smb0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 0 test failed for cbbbb.");
+	}
+	if(!cbbbb.get_sym_mask(1).equals(smb0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 1 test failed for cbbbb.");
+	}
+	if(!cbbbb.get_sym_mask(2).equals(smb0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 2 test failed for cbbbb.");
+	}
+	if(!cbbbb.get_sym_mask(3).equals(smb0_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Symmetry mask 3 test failed for cbbbb.");
+	}
+
+	if(!aaaa.equals(caaaa)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Equality test failed for caaaa.");
+	}
+	if(!bbbb.equals(cbbbb)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Equality test failed for cbbbb.");
 	}
 
 	} catch(exception &e) {

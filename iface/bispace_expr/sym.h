@@ -92,9 +92,7 @@ public:
 	template<size_t M>
 	void mark_sym(size_t i, mask<M> &msk, size_t offs) const {
 		size_t imin = i % N;
-		for(size_t j = 0; j < K - 1; j++) {
-			m_expr1.mark_sym(imin, msk, offs + j * N);
-		}
+		m_expr1.mark_sym(imin, msk, offs);
 		m_expr2.mark_sym(imin, msk, offs + (K - 1) * N);
 	}
 

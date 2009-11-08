@@ -16,6 +16,7 @@ void bispace_expr_test::perform() throw(libtest::test_exception) {
 	test_sym_7();
 	test_sym_8();
 	test_sym_9();
+	test_sym_10();
 
 	test_contains_1();
 	test_contains_2();
@@ -68,12 +69,26 @@ void bispace_expr_test::test_sym_2() throw(libtest::test_exception) {
 	try {
 
 	bispace<1> a(10), b(10), c(10);
-	mask<3> msk, msk_ref;
+	mask<3> msk1, msk2, msk3, msk_ref;
 	msk_ref[0] = true; msk_ref[1] = true; msk_ref[2] = true;
-	(a&b&c).mark_sym(1, msk);
-	if(!msk.equals(msk_ref)) {
+	(a&b&c).mark_sym(0, msk1);
+	(a&b&c).mark_sym(1, msk2);
+	(a&b&c).mark_sym(3, msk3);
+	if(!msk1.equals(msk_ref)) {
 		std::ostringstream ss;
-		ss << "Unexpected mask: " << msk << " vs. " << msk_ref
+		ss << "Unexpected mask 1: " << msk1 << " vs. " << msk_ref
+			<< " (ref).";
+		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+	}
+	if(!msk2.equals(msk_ref)) {
+		std::ostringstream ss;
+		ss << "Unexpected mask 2: " << msk2 << " vs. " << msk_ref
+			<< " (ref).";
+		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+	}
+	if(!msk3.equals(msk_ref)) {
+		std::ostringstream ss;
+		ss << "Unexpected mask 3: " << msk3 << " vs. " << msk_ref
 			<< " (ref).";
 		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
 	}
@@ -443,6 +458,51 @@ void bispace_expr_test::test_sym_9() throw(libtest::test_exception) {
 	if(!msk4.equals(msk4_ref)) {
 		std::ostringstream ss;
 		ss << "Unexpected mask 4: " << msk4 << " vs. " << msk4_ref
+			<< " (ref).";
+		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void bispace_expr_test::test_sym_10() throw(libtest::test_exception) {
+
+	static const char *testname = "bispace_expr_test::test_sym_10()";
+
+	try {
+
+	bispace<1> a(10);
+	mask<4> m1, m2, m3, m4, msk_ref;
+	msk_ref[0] = true; msk_ref[1] = true;
+	msk_ref[2] = true; msk_ref[3] = true;
+	(a&a&a&a).mark_sym(0, m1);
+	(a&a&a&a).mark_sym(1, m2);
+	(a&a&a&a).mark_sym(2, m3);
+	(a&a&a&a).mark_sym(3, m4);
+	if(!m1.equals(msk_ref)) {
+		std::ostringstream ss;
+		ss << "Unexpected mask 1: " << m1 << " vs. " << msk_ref
+			<< " (ref).";
+		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+	}
+	if(!m2.equals(msk_ref)) {
+		std::ostringstream ss;
+		ss << "Unexpected mask 2: " << m2 << " vs. " << msk_ref
+			<< " (ref).";
+		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+	}
+	if(!m3.equals(msk_ref)) {
+		std::ostringstream ss;
+		ss << "Unexpected mask 3: " << m3 << " vs. " << msk_ref
+			<< " (ref).";
+		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+	}
+	if(!m4.equals(msk_ref)) {
+		std::ostringstream ss;
+		ss << "Unexpected mask 4: " << m4 << " vs. " << msk_ref
 			<< " (ref).";
 		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
 	}

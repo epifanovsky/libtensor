@@ -23,6 +23,7 @@ private:
 	void test_sym_7() throw(libtest::test_exception);
 	void test_sym_8() throw(libtest::test_exception);
 	void test_sym_9() throw(libtest::test_exception);
+	void test_sym_10() throw(libtest::test_exception);
 
 	void test_contains_1() throw(libtest::test_exception);
 	void test_contains_2() throw(libtest::test_exception);
