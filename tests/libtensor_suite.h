@@ -5,6 +5,7 @@
 #include <libtensor.h>
 #include "abs_index_test.h"
 #include "anon_eval_test.h"
+#include "asym_contract_test.h"
 #include "bispace_test.h"
 #include "bispace_expr_test.h"
 #include "block_index_space_test.h"
@@ -73,6 +74,7 @@ namespace libtensor {
 	This suite runs the following tests:
 	\li libtensor::abs_index_test
 	\li libtensor::anon_eval_test
+	\li libtensor::asym_contract_test
 	\li libtensor::bispace_test
 	\li libtensor::bispace_expr_test
 	\li libtensor::block_index_space_test
@@ -135,6 +137,7 @@ class libtensor_suite : public libtest::test_suite {
 private:
 	unit_test_factory<abs_index_test> m_utf_abs_index;
 	unit_test_factory<anon_eval_test> m_utf_anon_eval;
+	unit_test_factory<asym_contract_test> m_utf_asym_contract;
 	unit_test_factory<bispace_test> m_utf_bispace;
 	unit_test_factory<bispace_expr_test> m_utf_bispace_expr;
 	unit_test_factory<block_index_space_test> m_utf_block_index_space;

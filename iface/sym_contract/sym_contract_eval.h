@@ -13,12 +13,14 @@ namespace labeled_btensor_expr {
 	\tparam N Order of the first %tensor (A) less contraction degree.
 	\tparam M Order of the second %tensor (B) less contraction degree.
 	\tparam K Number of indexes contracted.
+	\tparam Sym Symmetrization/antisymmetrization.
 	\tparam Expr1 First expression (A) type.
 	\tparam Expr2 Second expression (B) type.
 
 	\ingroup libtensor_btensor_expr
  **/
-template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2>
+template<size_t N, size_t M, size_t K, bool Sym, typename T,
+typename E1, typename E2>
 class sym_contract_eval {
 public:
 	static const char *k_clazz; //!< Class name
@@ -27,7 +29,7 @@ public:
 	static const size_t k_orderc = N + M; //!< Order of the result
 
 	//!	Symmetrized contraction expression core type
-	typedef sym_contract_core<N, M, K, T, E1, E2> core_t;
+	typedef sym_contract_core<N, M, K, Sym, T, E1, E2> core_t;
 
 	//!	Symmetrized contraction expression type
 	typedef expr<k_orderc, T, core_t> expression_t;
@@ -78,20 +80,23 @@ public:
 };
 
 
-template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2>
-const char *sym_contract_eval<N, M, K, T, E1, E2>::k_clazz =
-	"sym_contract_eval<N, M, K, T, E1, E2>";
+template<size_t N, size_t M, size_t K, bool Sym, typename T,
+typename E1, typename E2>
+const char *sym_contract_eval<N, M, K, Sym, T, E1, E2>::k_clazz =
+	"sym_contract_eval<N, M, K, Sym, T, E1, E2>";
 
 
-template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2>
+template<size_t N, size_t M, size_t K, bool Sym, typename T,
+typename E1, typename E2>
 template<int Dummy>
-struct sym_contract_eval<N, M, K, T, E1, E2>::narg<oper_tag, Dummy> {
+struct sym_contract_eval<N, M, K, Sym, T, E1, E2>::narg<oper_tag, Dummy> {
 	static const size_t k_narg = 1;
 };
 
 
-template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2>
-inline sym_contract_eval<N, M, K, T, E1, E2>::sym_contract_eval(
+template<size_t N, size_t M, size_t K, bool Sym, typename T,
+typename E1, typename E2>
+inline sym_contract_eval<N, M, K, Sym, T, E1, E2>::sym_contract_eval(
 	expression_t &expr, const letter_expr<k_orderc> &label)
 	throw(exception) :
 
@@ -105,20 +110,23 @@ inline sym_contract_eval<N, M, K, T, E1, E2>::sym_contract_eval(
 	size_t i1 = label.index_of(expr.get_core().get_sym().letter_at(0));
 	size_t i2 = label.index_of(expr.get_core().get_sym().letter_at(1));
 	m_perm.permute(i1, i2);
-	m_op.add_op(m_contract_eval.get_btensor(), m_perm, 1.0);
+	m_op.add_op(m_contract_eval.get_btensor(), m_perm, Sym ? 1.0 : -1.0);
 }
 
 
-template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2>
-inline void sym_contract_eval<N, M, K, T, E1, E2>::prepare() throw(exception) {
+template<size_t N, size_t M, size_t K, bool Sym, typename T,
+typename E1, typename E2>
+inline void sym_contract_eval<N, M, K, Sym, T, E1, E2>::prepare()
+	throw(exception) {
 
 	m_contract_eval.evaluate();
 }
 
 
-template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2>
+template<size_t N, size_t M, size_t K, bool Sym, typename T,
+typename E1, typename E2>
 template<typename Tag>
-arg<N + M, T, Tag> sym_contract_eval<N, M, K, T, E1, E2>::get_arg(
+arg<N + M, T, Tag> sym_contract_eval<N, M, K, Sym, T, E1, E2>::get_arg(
 	const Tag &tag, size_t i) const throw(exception) {
 
 	static const char *method = "get_arg(const Tag&, size_t)";
@@ -127,8 +135,9 @@ arg<N + M, T, Tag> sym_contract_eval<N, M, K, T, E1, E2>::get_arg(
 }
 
 
-template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2>
-arg<N + M, T, oper_tag> sym_contract_eval<N, M, K, T, E1, E2>::get_arg(
+template<size_t N, size_t M, size_t K, bool Sym, typename T,
+typename E1, typename E2>
+arg<N + M, T, oper_tag> sym_contract_eval<N, M, K, Sym, T, E1, E2>::get_arg(
 	const oper_tag &tag, size_t i) const throw(exception) {
 
 	static const char *method = "get_arg(const oper_tag&, size_t)";

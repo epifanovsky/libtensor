@@ -12,7 +12,8 @@ namespace libtensor {
 namespace labeled_btensor_expr {
 
 
-template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2>
+template<size_t N, size_t M, size_t K, bool Sym, typename T,
+typename E1, typename E2>
 class sym_contract_eval;
 
 
@@ -20,19 +21,21 @@ class sym_contract_eval;
 	\tparam N Order of the first %tensor (A) less contraction degree.
 	\tparam M Order of the second %tensor (B) less contraction degree.
 	\tparam K Number of indexes contracted.
+	\tparam Sym Symmetrization/antisymmetrization.
 	\tparam E1 First expression (A) type.
 	\tparam E2 Second expression (B) type.
 
 	\ingroup libtensor_btensor_expr
  **/
-template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2>
+template<size_t N, size_t M, size_t K, bool Sym, typename T,
+typename E1, typename E2>
 class sym_contract_core {
 public:
 	static const char *k_clazz; //!< Class name
 
 public:
 	 //!	Evaluating container type
-	typedef sym_contract_eval<N, M, K, T, E1, E2> eval_container_t;
+	typedef sym_contract_eval<N, M, K, Sym, T, E1, E2> eval_container_t;
 
 private:
 	letter_expr<2> m_sym; //!< Symmetrized indexes
@@ -55,7 +58,8 @@ public:
 
 	/**	\brief Copy constructor
 	 **/
-	sym_contract_core(const sym_contract_core<N, M, K, T, E1, E2> &core);
+	sym_contract_core(
+		const sym_contract_core<N, M, K, Sym, T, E1, E2> &core);
 
 	/**	\brief Returns the symmetrized indexes
 	 **/
@@ -115,13 +119,15 @@ public:
 };
 
 
-template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2>
-const char *sym_contract_core<N, M, K, T, E1, E2>::k_clazz =
-	"sym_contract_core<N, M, K, T, E1, E2>";
+template<size_t N, size_t M, size_t K, bool Sym, typename T,
+typename E1, typename E2>
+const char *sym_contract_core<N, M, K, Sym, T, E1, E2>::k_clazz =
+	"sym_contract_core<N, M, K, Sym, T, E1, E2>";
 
 
-template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2>
-sym_contract_core<N, M, K, T, E1, E2>::sym_contract_core(
+template<size_t N, size_t M, size_t K, bool Sym, typename T,
+typename E1, typename E2>
+sym_contract_core<N, M, K, Sym, T, E1, E2>::sym_contract_core(
 	const letter_expr<2> &sym, const letter_expr<K> &contr,
 	const E1 &expr1, const E2 &expr2) :
 
@@ -188,9 +194,10 @@ sym_contract_core<N, M, K, T, E1, E2>::sym_contract_core(
 }
 
 
-template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2>
-sym_contract_core<N, M, K, T, E1, E2>::sym_contract_core(
-	const sym_contract_core<N, M, K, T, E1, E2> &core) :
+template<size_t N, size_t M, size_t K, bool Sym, typename T,
+typename E1, typename E2>
+sym_contract_core<N, M, K, Sym, T, E1, E2>::sym_contract_core(
+	const sym_contract_core<N, M, K, Sym, T, E1, E2> &core) :
 
 	m_sym(core.m_sym), m_contr(core.m_contr),
 	m_expr1(core.m_expr1), m_expr2(core.m_expr2) {
@@ -201,8 +208,9 @@ sym_contract_core<N, M, K, T, E1, E2>::sym_contract_core(
 }
 
 
-template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2>
-inline bool sym_contract_core<N, M, K, T, E1, E2>::contains(
+template<size_t N, size_t M, size_t K, bool Sym, typename T,
+typename E1, typename E2>
+inline bool sym_contract_core<N, M, K, Sym, T, E1, E2>::contains(
 	const letter &let) const {
 
 	for(register size_t i = 0; i < N + M; i++) {
@@ -212,8 +220,9 @@ inline bool sym_contract_core<N, M, K, T, E1, E2>::contains(
 }
 
 
-template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2>
-inline size_t sym_contract_core<N, M, K, T, E1, E2>::index_of(
+template<size_t N, size_t M, size_t K, bool Sym, typename T,
+typename E1, typename E2>
+inline size_t sym_contract_core<N, M, K, Sym, T, E1, E2>::index_of(
 	const letter &let) const throw(expr_exception) {
 
 	static const char *method = "index_of(const letter&)";
@@ -227,8 +236,9 @@ inline size_t sym_contract_core<N, M, K, T, E1, E2>::index_of(
 }
 
 
-template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2>
-inline const letter &sym_contract_core<N, M, K, T, E1, E2>::letter_at(
+template<size_t N, size_t M, size_t K, bool Sym, typename T,
+typename E1, typename E2>
+inline const letter &sym_contract_core<N, M, K, Sym, T, E1, E2>::letter_at(
 	size_t i) const throw(out_of_bounds) {
 
 	static const char *method = "letter_at(size_t)";

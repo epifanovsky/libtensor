@@ -4,6 +4,7 @@ all: deps libtensor_tests
 OBJS  = libtensor_suite.o
 OBJS += abs_index_test.o
 OBJS += anon_eval_test.o
+OBJS += asym_contract_test.o
 OBJS += bispace_test.o
 OBJS += bispace_expr_test.o
 OBJS += block_index_space_test.o
