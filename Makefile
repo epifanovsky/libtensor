@@ -20,8 +20,10 @@ OBJS += exception.o
 OBJS += global_timings.o
 OBJS += timer.o
 OBJS += btod/btod_delta_denom1.o
+OBJS += btod/btod_delta_denom2.o
 OBJS += btod/btod_mkdelta.o
 OBJS += tod/tod_delta_denom1.o
+OBJS += tod/tod_delta_denom2.o
 OBJS += tod/tod_mkdelta.o
 OBJS += tod/tod_solve.o
 
