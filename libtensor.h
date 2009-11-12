@@ -65,6 +65,7 @@
 #include "btod/btod_mkdelta.h"
 #include "btod/btod_random.h"
 #include "btod/btod_read.h"
+#include "btod/btod_set_diag.h"
 #include "btod/btod_sum.h"
 
 

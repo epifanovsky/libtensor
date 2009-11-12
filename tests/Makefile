@@ -19,6 +19,7 @@ OBJS += btod_dotprod_test.o
 OBJS += btod_mkdelta_test.o
 OBJS += btod_random_test.o
 OBJS += btod_read_test.o
+OBJS += btod_set_diag_test.o
 OBJS += btod_sum_test.o
 OBJS += contract_test.o
 OBJS += contraction2_test.o

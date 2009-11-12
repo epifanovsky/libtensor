@@ -3,7 +3,6 @@
 
 #include "defs.h"
 #include "exception.h"
-#include "core/mask.h"
 #include "core/tensor_i.h"
 #include "core/tensor_ctrl.h"
 

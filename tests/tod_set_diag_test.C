@@ -27,7 +27,7 @@ void tod_set_diag_test::run_test(const dimensions<N> &dims, double d)
 	throw(libtest::test_exception) {
 
 	std::ostringstream tnss;
-	tnss << "tod_set_diag_test::run_test(" << dims << ")";
+	tnss << "tod_set_diag_test::run_test(" << dims << ", " << d << ")";
 
 	typedef libvmm::std_allocator<double> allocator_t;
 
