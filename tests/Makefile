@@ -60,6 +60,7 @@ OBJS += tod_dotprod_test.o
 OBJS += tod_mkdelta_test.o
 OBJS += tod_random_test.o
 OBJS += tod_set_test.o
+OBJS += tod_set_diag_test.o
 OBJS += tod_sum_test.o
 OBJS += tod_solve_test.o
 OBJS += tod_symcontract2_test.o
