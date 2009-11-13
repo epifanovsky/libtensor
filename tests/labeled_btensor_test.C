@@ -7,6 +7,7 @@
 namespace libtensor {
 
 void labeled_btensor_test::perform() throw(libtest::test_exception) {
+
 	test_label();
 	test_expr();
 	test_expr_copy_1();
@@ -17,7 +18,9 @@ void labeled_btensor_test::perform() throw(libtest::test_exception) {
 	test_expr_add_2();
 	test_expr_add_3();
 	test_expr_add_4();
+	test_expr_add_5();
 }
+
 
 void labeled_btensor_test::test_label() throw(libtest::test_exception) {
 
@@ -100,6 +103,7 @@ void labeled_btensor_test::test_label() throw(libtest::test_exception) {
 
 }
 
+
 void labeled_btensor_test::test_expr() throw(libtest::test_exception) {
 
 	static const char *testname =
@@ -154,6 +158,7 @@ void labeled_btensor_test::test_expr() throw(libtest::test_exception) {
 		fail_test(testname, __FILE__, __LINE__, exc.what());
 	}
 }
+
 
 void labeled_btensor_test::test_expr_copy_1() throw(libtest::test_exception) {
 
@@ -213,6 +218,7 @@ void labeled_btensor_test::test_expr_copy_1() throw(libtest::test_exception) {
 
 }
 
+
 void labeled_btensor_test::test_expr_copy_2() throw(libtest::test_exception) {
 
 	// b(i|j) = a(j|i)
@@ -271,6 +277,7 @@ void labeled_btensor_test::test_expr_copy_2() throw(libtest::test_exception) {
 		fail_test(testname, __FILE__, __LINE__, exc.what());
 	}
 }
+
 
 void labeled_btensor_test::test_expr_copy_3() throw(libtest::test_exception) {
 
@@ -332,6 +339,7 @@ void labeled_btensor_test::test_expr_copy_3() throw(libtest::test_exception) {
 	}
 }
 
+
 void labeled_btensor_test::test_expr_copy_4() throw(libtest::test_exception) {
 
 	// b(i|j) = -a(i|j)
@@ -389,6 +397,7 @@ void labeled_btensor_test::test_expr_copy_4() throw(libtest::test_exception) {
 		fail_test(testname, __FILE__, __LINE__, exc.what());
 	}
 }
+
 
 void labeled_btensor_test::test_expr_add_1() throw(libtest::test_exception) {
 
@@ -454,6 +463,7 @@ void labeled_btensor_test::test_expr_add_1() throw(libtest::test_exception) {
 	}
 }
 
+
 void labeled_btensor_test::test_expr_add_2() throw(libtest::test_exception) {
 
 	// c(i|j) = -a(i|j) + 3.0*b(i|j)
@@ -517,6 +527,7 @@ void labeled_btensor_test::test_expr_add_2() throw(libtest::test_exception) {
 		fail_test(testname, __FILE__, __LINE__, exc.what());
 	}
 }
+
 
 void labeled_btensor_test::test_expr_add_3() throw(libtest::test_exception) {
 
@@ -582,6 +593,7 @@ void labeled_btensor_test::test_expr_add_3() throw(libtest::test_exception) {
 	}
 }
 
+
 void labeled_btensor_test::test_expr_add_4() throw(libtest::test_exception) {
 
 	// c(i|j) = 4.0*a(i|j) - 0.5*b(j|i)
@@ -643,6 +655,48 @@ void labeled_btensor_test::test_expr_add_4() throw(libtest::test_exception) {
 	// Compare against the reference
 
 	compare_ref<2>::compare(testname, btc, btc_ref, 1e-15);
+
+	} catch(exception &exc) {
+		fail_test(testname, __FILE__, __LINE__, exc.what());
+	}
+}
+
+
+void labeled_btensor_test::test_expr_add_5() throw(libtest::test_exception) {
+
+	// d(i|j) = a(i|j) + b(i|j) + c(i|j)
+
+	static const char *testname =
+		"labeled_btensor_test::test_expr_add_5()";
+
+	try {
+
+	bispace<1> sp_i(4), sp_j(4);
+	bispace<2> sp_ij(sp_i&sp_j);
+	btensor<2> bta(sp_ij), btb(sp_ij), btc(sp_ij),
+		btd(sp_ij), btd_ref(sp_ij);
+
+	//	Fill in random data
+
+	btod_random<2>().perform(bta);
+	btod_random<2>().perform(btb);
+	btod_random<2>().perform(btc);
+
+	//	Compute the reference
+
+	btod_add<2> add(bta);
+	add.add_op(btb);
+	add.add_op(btc);
+	add.perform(btd_ref);
+
+	//	Evaluate the expression
+
+	letter i, j;
+	btd(i|j) = bta(i|j) + btb(i|j) + btc(i|j);
+
+	//	Compare against the reference
+
+	compare_ref<2>::compare(testname, btd, btd_ref, 1e-15);
 
 	} catch(exception &exc) {
 		fail_test(testname, __FILE__, __LINE__, exc.what());

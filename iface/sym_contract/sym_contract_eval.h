@@ -52,9 +52,10 @@ public:
 private:
 	contract_expr_t m_contract; //!< Contract expression
 	contract_eval_t m_contract_eval; //!< Evaluation of the contraction
-	permutation<k_orderc> m_perm; //!< Permutation for symmetrization
-	btod_add<k_orderc> m_op; //!< Addition operation
-	arg<k_orderc, T, oper_tag> m_arg; //!< Composed operation argument
+	permutation<k_orderc> m_perm1; //!< Permutation for argument 1
+	permutation<k_orderc> m_perm2; //!< Permutation for symmetrization
+	arg<k_orderc, T, tensor_tag> m_arg1; //!< Argument 1
+	arg<k_orderc, T, tensor_tag> m_arg2; //!< Argument 2
 
 public:
 	/**	\brief Initializes the container with given expression and
@@ -77,6 +78,14 @@ public:
 	arg<N + M, T, oper_tag> get_arg(const oper_tag &tag, size_t i) const
 		throw(exception);
 
+private:
+	static permutation<N + M> mk_perm(expression_t &expr, const letter_expr<k_orderc> &label) {
+		permutation<N + M> perm;
+		size_t i1 = label.index_of(expr.get_core().get_sym().letter_at(0));
+		size_t i2 = label.index_of(expr.get_core().get_sym().letter_at(1));
+		perm.permute(i1, i2);
+		return perm;
+	}
 };
 
 
@@ -89,8 +98,8 @@ const char *sym_contract_eval<N, M, K, Sym, T, E1, E2>::k_clazz =
 template<size_t N, size_t M, size_t K, bool Sym, typename T,
 typename E1, typename E2>
 template<int Dummy>
-struct sym_contract_eval<N, M, K, Sym, T, E1, E2>::narg<oper_tag, Dummy> {
-	static const size_t k_narg = 1;
+struct sym_contract_eval<N, M, K, Sym, T, E1, E2>::narg<tensor_tag, Dummy> {
+	static const size_t k_narg = 2;
 };
 
 
@@ -104,13 +113,10 @@ inline sym_contract_eval<N, M, K, Sym, T, E1, E2>::sym_contract_eval(
 		expr.get_core().get_contr(), expr.get_core().get_expr_1(),
 		expr.get_core().get_expr_2())),
 	m_contract_eval(m_contract, label),
-	m_op(m_contract_eval.get_btensor()),
-	m_arg(m_op, 1.0) {
+	m_perm2(mk_perm(expr, label)),
+	m_arg1(m_contract_eval.get_btensor(), m_perm1, 1.0),
+	m_arg2(m_contract_eval.get_btensor(), m_perm2, Sym ? 1.0 : -1.0) {
 
-	size_t i1 = label.index_of(expr.get_core().get_sym().letter_at(0));
-	size_t i2 = label.index_of(expr.get_core().get_sym().letter_at(1));
-	m_perm.permute(i1, i2);
-	m_op.add_op(m_contract_eval.get_btensor(), m_perm, Sym ? 1.0 : -1.0);
 }
 
 
@@ -130,8 +136,15 @@ arg<N + M, T, Tag> sym_contract_eval<N, M, K, Sym, T, E1, E2>::get_arg(
 	const Tag &tag, size_t i) const throw(exception) {
 
 	static const char *method = "get_arg(const Tag&, size_t)";
-	throw expr_exception(g_ns, k_clazz, method, __FILE__, __LINE__,
-		"Invalid method.");
+
+	if(i == 0) {
+		return m_arg1;
+	} else if(i == 1) {
+		return m_arg2;
+	} else {
+		throw out_of_bounds(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"Argument index is out of bounds.");
+	}
 }
 
 
@@ -141,13 +154,9 @@ arg<N + M, T, oper_tag> sym_contract_eval<N, M, K, Sym, T, E1, E2>::get_arg(
 	const oper_tag &tag, size_t i) const throw(exception) {
 
 	static const char *method = "get_arg(const oper_tag&, size_t)";
+	throw expr_exception(g_ns, k_clazz, method, __FILE__, __LINE__,
+		"Invalid method.");
 
-	if(i != 0) {
-		throw out_of_bounds(g_ns, k_clazz, method, __FILE__, __LINE__,
-			"Argument index is out of bounds.");
-	}
-
-	return m_arg;
 }
 
 

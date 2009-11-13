@@ -101,7 +101,7 @@ void sym_contract_test::test_ee_1() throw(libtest::test_exception) {
 	t3(a|b|c|d) = sym_contract(
 		a|b, i, t1a(a|c|d|i) + t1b(a|c|d|i), t2a(i|b) + t2b(i|b));
 
-	compare_ref<4>::compare(testname, t3, t3_ref, 1e-14);
+	compare_ref<4>::compare(testname, t3, t3_ref, 2e-14);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());

@@ -56,7 +56,7 @@ public:
 	//!	\name Evaluation
 	//@{
 
-	void prepare() throw(exception) { }
+	void prepare() throw(exception);
 
 	template<typename Tag>
 	arg<N, T, Tag> get_arg(const Tag &tag, size_t i) const throw(exception);
@@ -75,6 +75,13 @@ eval_scale<N, T, Expr>::eval_scale(
 		m_expr(expr),
 		m_unscaled_cont(expr.get_core().get_unscaled_expr(), label) {
 
+}
+
+
+template<size_t N, typename T, typename Expr>
+void eval_scale<N, T, Expr>::prepare() throw(exception) {
+
+	m_unscaled_cont.prepare();
 }
 
 

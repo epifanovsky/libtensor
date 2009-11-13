@@ -41,6 +41,9 @@ private:
 	//!	\brief c(i|j) = 4.0*a(i|j) - 0.5*b(j|i)
 	void test_expr_add_4() throw(libtest::test_exception);
 
+	//!	\brief d(i|j) = a(i|j) + b(i|j) + c(i|j)
+	void test_expr_add_5() throw(libtest::test_exception);
+
 };
 
 } // namespace libtensor
