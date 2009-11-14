@@ -21,6 +21,8 @@ private:
 	void test_equals_1() throw(libtest::test_exception);
 	void test_equals_2() throw(libtest::test_exception);
 	void test_equals_3() throw(libtest::test_exception);
+	void test_equals_4() throw(libtest::test_exception);
+	void test_equals_5() throw(libtest::test_exception);
 	void test_permute_1() throw(libtest::test_exception);
 	void test_exc_1() throw(libtest::test_exception);
 	void test_exc_2() throw(libtest::test_exception);

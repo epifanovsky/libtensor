@@ -13,6 +13,11 @@
 
 namespace libtensor {
 
+template<size_t N> class block_index_space;
+
+template<size_t N>
+std::ostream &operator<<(std::ostream &os, const block_index_space<N> &bis);
+
 
 /**	\brief Block %index space
 	\tparam N Tensor order.
@@ -110,6 +115,11 @@ public:
 	const split_points &get_splits(size_t typ) const throw(out_of_bounds);
 
 	/**	\brief Returns true if two block %index spaces are identical
+
+		Checks that both block %index spaces have the same %dimensions
+		and splitting patterns. Two splitting patterns are considered
+		identical if they have the same splitting positions. The
+		spaces must also agree on the splitting types.
 	 **/
 	bool equals(const block_index_space<N> &bis) const;
 
@@ -270,19 +280,24 @@ inline const split_points &block_index_space<N>::get_splits(size_t typ) const
 template<size_t N>
 bool block_index_space<N>::equals(const block_index_space<N> &bis) const {
 
+	//	Check overall dimensions and number of splits along
+	//	each dimension first
+
 	if(!m_dims.equals(bis.m_dims) || !m_nsplits.equals(bis.m_nsplits)) {
 		return false;
 	}
 
+	//	Examine the splits along each dimension individually
+
 	mask<N> chk;
 	for(size_t i = 0; i < N; i++) {
 		size_t type1 = m_type[i], type2 = bis.m_type[i];
+		for(size_t j = i + 1; j < N; j++) {
+			if((m_type[j] == type1) != (bis.m_type[j] == type2))
+				return false;
+		}
 		if(!chk[type1]) {
 			chk[type1] = true;
-			for(size_t j = i + 1; j < N; j++) {
-				if(m_type[j] == type1 && bis.m_type[j] != type2)
-					return false;
-			}
 			if(!m_splits[type1]->equals(*bis.m_splits[type2]))
 				return false;
 		}
@@ -389,6 +404,32 @@ void block_index_space<N>::clear_splits() {
 		delete m_splits[i];
 		m_splits[i] = NULL;
 	}
+}
+
+
+template<size_t N>
+std::ostream &operator<<(std::ostream &os, const block_index_space<N> &bis) {
+
+	size_t maxtyp = 0;
+	os << "[";
+	for(size_t i = 0; i < N; i++) {
+		if(i > 0) os << ", ";
+		size_t typ = bis.get_type(i);
+		os << bis.get_dims().get_dim(i) << "(" << typ << ")";
+		if(typ > maxtyp) maxtyp = typ;
+	}
+	os << "]";
+	for(size_t i = 0; i <= maxtyp; i++) {
+		os << " " << i << "[";
+		const split_points &spl = bis.get_splits(i);
+		size_t np = spl.get_num_points();
+		for(size_t j = 0; j < np; j++) {
+			if(j > 0) os << ", ";
+			os << spl[j];
+		}
+		os << "]";
+	}
+	return os;
 }
 
 
