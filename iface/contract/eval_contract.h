@@ -68,7 +68,6 @@ public:
 	};
 
 private:
-//	expression_t &m_expr; //!< Contraction expression
 	subexpr_labels_t m_sub_labels;
 	functor_t m_func; //!< Sub-expression evaluation functor
 
@@ -93,10 +92,6 @@ public:
 	arg<N + M, T, oper_tag> get_arg(const oper_tag &tag, size_t i) const
 		throw(exception);
 
-private:
-	static contraction2<N, M, K> mk_contr(expression_t &expr,
-		labeled_btensor<k_orderc, T, true> &result)
-		throw(exception);
 };
 
 
@@ -153,32 +148,6 @@ arg<N + M, T, oper_tag> eval_contract<N, M, K, T, E1, E2>::get_arg(
 	}
 
 	return m_func.get_arg();
-//	return arg<N + M, T, oper_tag>(m_func.get_bto(), 1.0);
-}
-
-
-template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2>
-contraction2<N, M, K> eval_contract<N, M, K, T, E1, E2>::mk_contr(
-	expression_t &expr, labeled_btensor<k_orderc, T, true> &result)
-	throw(exception) {
-
-	size_t seq1[N + M], seq2[N + M];
-	for(size_t i = 0; i < N + M; i++) {
-		seq1[i] = i;
-		seq2[i] = expr.index_of(result.letter_at(i));
-	}
-	permutation_builder<N + M> permc(seq1, seq2);
-	contraction2<N, M, K> contr(permc.get_perm());
-
-	for(size_t i = 0; i < N + K; i++) {
-		const letter &l = expr.get_core().get_expr_1().letter_at(i);
-		if(expr.get_core().get_expr_2().contains(l)) {
-			contr.contract(
-				i, expr.get_core().get_expr_2().index_of(l));
-		}
-	}
-
-	return contr;
 }
 
 

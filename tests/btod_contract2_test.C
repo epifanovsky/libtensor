@@ -11,6 +11,9 @@ void btod_contract2_test::perform() throw(libtest::test_exception) {
 
 	test_bis_1();
 	test_bis_2();
+	test_bis_3();
+	test_bis_4();
+	test_bis_5();
 	test_sym_1();
 	test_sym_2();
 	test_contr_1();
@@ -32,7 +35,13 @@ void btod_contract2_test::perform() throw(libtest::test_exception) {
 void btod_contract2_test::test_bis_1() throw(libtest::test_exception) {
 
 	//
-	//	c_ijkl = a_ijpq b_klpq
+	//	c_ijkl = a_ijkp b_lp
+	//	[ij] = 5  (no splits)
+	//	[kl] = 10 (no splits)
+	//	[p]  = 4  (no splits)
+	//
+	//	Expected block index space:
+	//	[ijkl] have correct dimensions, no splits
 	//
 
 	static const char *testname = "btod_contract2_test::test_bis_1()";
@@ -41,34 +50,31 @@ void btod_contract2_test::test_bis_1() throw(libtest::test_exception) {
 
 	try {
 
-	index<4> i1, i2;
-	i2[0] = 10; i2[1] = 10; i2[2] = 10; i2[3] = 10;
-	dimensions<4> dims(index_range<4>(i1, i2));
-	block_index_space<4> bisa(dims), bis_ref(dims);
-	mask<4> msk, msk1, msk2;
-	msk[0] = true; msk[1] = true; msk[2] = true; msk[3] = true;
-	msk1[0] = true; msk1[1] = true;
-	msk2[2] = true; msk2[3] = true;
+	index<4> ia1, ia2;
+	ia2[0] = 4; ia2[1] = 4; ia2[2] = 9; ia2[3] = 3;
+	dimensions<4> dimsa(index_range<4>(ia1, ia2));
+	block_index_space<4> bisa(dimsa);
 
-	bisa.split(msk, 3);
-	bisa.split(msk, 5);
-	bis_ref.split(msk1, 3);
-	bis_ref.split(msk1, 5);
-	bis_ref.split(msk2, 3);
-	bis_ref.split(msk2, 5);
+	index<2> ib1, ib2;
+	ib2[0] = 9; ib2[1] = 3;
+	dimensions<2> dimsb(index_range<2>(ib1, ib2));
+	block_index_space<2> bisb(dimsb);
 
-	block_index_space<4> bisb(bisa);
+	index<4> ic1, ic2;
+	ic2[0] = 4; ic2[1] = 4; ic2[2] = 9; ic2[3] = 9;
+	dimensions<4> dimsc(index_range<4>(ic1, ic2));
+	block_index_space<4> bisc_ref(dimsc);
 
-	block_tensor<4, double, allocator_t> bta(bisa), btb(bisb);
-	contraction2<2, 2, 2> contr;
-	contr.contract(0, 2);
-	contr.contract(1, 3);
+	block_tensor<4, double, allocator_t> bta(bisa);
+	block_tensor<2, double, allocator_t> btb(bisb);
+	contraction2<3, 1, 1> contr;
+	contr.contract(3, 1);
 
-	btod_contract2<2, 2, 2> op(contr, bta, btb);
+	btod_contract2<3, 1, 1> op(contr, bta, btb);
 
-	if(!op.get_bis().equals(bis_ref)) {
+	if(!op.get_bis().equals(bisc_ref)) {
 		fail_test(testname, __FILE__, __LINE__,
-			"Unexpected output block index space.");
+			"Incorrect output block index space.");
 	}
 
 	} catch(exception &e) {
@@ -80,10 +86,187 @@ void btod_contract2_test::test_bis_1() throw(libtest::test_exception) {
 void btod_contract2_test::test_bis_2() throw(libtest::test_exception) {
 
 	//
-	//	c_ijk = a_ipqr b_jpqrk
+	//	c_ijkl = a_ijkp b_lp
+	//	[ij] = 5  (no splits)
+	//	[kl] = 10 (4, 6)
+	//	[p]  = 4  (no splits)
+	//
+	//	Expected block index space:
+	//	[ijkl] have correct dimensions, [ij] have no splits,
+	//	[kl] split identically
 	//
 
 	static const char *testname = "btod_contract2_test::test_bis_2()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<4> ia1, ia2;
+	ia2[0] = 4; ia2[1] = 4; ia2[2] = 9; ia2[3] = 3;
+	dimensions<4> dimsa(index_range<4>(ia1, ia2));
+	block_index_space<4> bisa(dimsa);
+	mask<4> ma1;
+	ma1[2] = true;
+	bisa.split(ma1, 4);
+
+	index<2> ib1, ib2;
+	ib2[0] = 9; ib2[1] = 3;
+	dimensions<2> dimsb(index_range<2>(ib1, ib2));
+	block_index_space<2> bisb(dimsb);
+	mask<2> mb1;
+	mb1[0] = true;
+	bisb.split(mb1, 4);
+
+	index<4> ic1, ic2;
+	ic2[0] = 4; ic2[1] = 4; ic2[2] = 9; ic2[3] = 9;
+	dimensions<4> dimsc(index_range<4>(ic1, ic2));
+	block_index_space<4> bisc_ref(dimsc);
+	mask<4> mc1;
+	mc1[2] = true; mc1[3] = true;
+	bisc_ref.split(mc1, 4);
+
+	block_tensor<4, double, allocator_t> bta(bisa);
+	block_tensor<2, double, allocator_t> btb(bisb);
+	contraction2<3, 1, 1> contr;
+	contr.contract(3, 1);
+
+	btod_contract2<3, 1, 1> op(contr, bta, btb);
+
+	if(!op.get_bis().equals(bisc_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Incorrect output block index space.");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void btod_contract2_test::test_bis_3() throw(libtest::test_exception) {
+
+	//
+	//	c_ijkl = a_ijkp b_lp
+	//	[ij] = 5  (2, 3)
+	//	[kl] = 10 (4, 6)
+	//	[p]  = 4  (no splits)
+	//
+	//	Expected block index space:
+	//	[ijkl] have correct dimensions,
+	//	spaces in pairs [ij] and [kl] are split identically
+	//
+
+	static const char *testname = "btod_contract2_test::test_bis_3()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<4> ia1, ia2;
+	ia2[0] = 4; ia2[1] = 4; ia2[2] = 9; ia2[3] = 3;
+	dimensions<4> dimsa(index_range<4>(ia1, ia2));
+	block_index_space<4> bisa(dimsa);
+	mask<4> ma1, ma2;
+	ma1[0] = true; ma1[1] = true;
+	ma2[2] = true;
+	bisa.split(ma1, 2);
+	bisa.split(ma2, 4);
+
+	index<2> ib1, ib2;
+	ib2[0] = 9; ib2[1] = 3;
+	dimensions<2> dimsb(index_range<2>(ib1, ib2));
+	block_index_space<2> bisb(dimsb);
+	mask<2> mb1;
+	mb1[0] = true;
+	bisb.split(mb1, 4);
+
+	index<4> ic1, ic2;
+	ic2[0] = 4; ic2[1] = 4; ic2[2] = 9; ic2[3] = 9;
+	dimensions<4> dimsc(index_range<4>(ic1, ic2));
+	block_index_space<4> bisc_ref(dimsc);
+	mask<4> mc1, mc2;
+	mc1[0] = true; mc1[1] = true;
+	mc2[2] = true; mc2[3] = true;
+	bisc_ref.split(mc1, 2);
+	bisc_ref.split(mc2, 4);
+
+	block_tensor<4, double, allocator_t> bta(bisa);
+	block_tensor<2, double, allocator_t> btb(bisb);
+	contraction2<3, 1, 1> contr;
+	contr.contract(3, 1);
+
+	btod_contract2<3, 1, 1> op(contr, bta, btb);
+
+	if(!op.get_bis().equals(bisc_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Incorrect output block index space.");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void btod_contract2_test::test_bis_4() throw(libtest::test_exception) {
+
+	//
+	//	c_ijkl = a_ijpq b_klpq
+	//	[ijklpq] = 11 (3, 2, 5)
+	//
+	//	Expected block index space:
+	//	[ijkl] have correct dimensions, one splitting pattern
+	//
+
+	static const char *testname = "btod_contract2_test::test_bis_4()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<4> ia1, ia2;
+	ia2[0] = 10; ia2[1] = 10; ia2[2] = 10; ia2[3] = 10;
+	dimensions<4> dimsa(index_range<4>(ia1, ia2));
+	block_index_space<4> bisa(dimsa);
+	mask<4> ma1;
+	ma1[0] = true; ma1[1] = true; ma1[2] = true; ma1[3] = true;
+	bisa.split(ma1, 3);
+	bisa.split(ma1, 5);
+
+	block_index_space<4> bisb(bisa), bisc_ref(bisa);
+
+	block_tensor<4, double, allocator_t> bta(bisa), btb(bisb);
+	contraction2<2, 2, 2> contr;
+	contr.contract(0, 2);
+	contr.contract(1, 3);
+
+	btod_contract2<2, 2, 2> op(contr, bta, btb);
+
+	if(!op.get_bis().equals(bisc_ref)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Incorrect output block index space.");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void btod_contract2_test::test_bis_5() throw(libtest::test_exception) {
+
+	//
+	//	c_ijk = a_ipqr b_jpqrk
+	//	[ijpqr] = 11 (3, 2, 5)
+	//	[k]     = 9  (4, 5)
+	//
+	//	Expected block index space:
+	//	[ijk] have correct dimensions,
+	//	[ij] and [k] preserve the splitting pattern
+	//
+
+	static const char *testname = "btod_contract2_test::test_bis_5()";
 
 	typedef libvmm::std_allocator<double> allocator_t;
 

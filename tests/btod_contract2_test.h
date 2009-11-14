@@ -16,6 +16,9 @@ public:
 private:
 	void test_bis_1() throw(libtest::test_exception);
 	void test_bis_2() throw(libtest::test_exception);
+	void test_bis_3() throw(libtest::test_exception);
+	void test_bis_4() throw(libtest::test_exception);
+	void test_bis_5() throw(libtest::test_exception);
 	void test_sym_1() throw(libtest::test_exception);
 	void test_sym_2() throw(libtest::test_exception);
 	void test_contr_1() throw(libtest::test_exception);
