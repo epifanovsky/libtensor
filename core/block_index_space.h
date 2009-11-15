@@ -15,6 +15,11 @@ namespace libtensor {
 
 template<size_t N> class block_index_space;
 
+
+/**	\brief Prints block %index space information to an output stream
+	\tparam N Tensor order.
+	\ingroup libtensor_core
+ **/
 template<size_t N>
 std::ostream &operator<<(std::ostream &os, const block_index_space<N> &bis);
 
@@ -22,26 +27,116 @@ std::ostream &operator<<(std::ostream &os, const block_index_space<N> &bis);
 /**	\brief Block %index space
 	\tparam N Tensor order.
 
-	Block %index space maintains information about the %dimensions of
-	the %index space along each direction and how each subspace is split
-	into individual blocks.
+	Block %index space maintains information about the size of the %index
+	space along each one-dimensional subspace and how each subspace is split
+	to form individual blocks.
+
+
+	<b>Creating a block %index space</b>
 
 	A block %index space object is created using the total %dimensions
-	of the %index space.
+	of the %index space:
 
 	\code
-	dimensions<4> &dims = ...; // Total dimensions of the index space
+	// Total dimensions of the index space, initialized elsewhere
+	const dimensions<4> &dims = ...;
 	block_index_space<4> bis(dims);
 	\endcode
 
 	The newly create block %index space contains no subspace splitting
 	points and therefore defines only one block that spans the entire
-	%index space. Using split(), the %index space is divided into blocks.
+	%index space.
 
-	Dimensions split identically are suitable for permutational %symmetry
-	and are said to have the same type. As the block %index space is
-	initialized, those %dimensions that have the same number of elements
-	are assigned the same type.
+	A copy constructor is available for creating block %index spaces that
+	are identical to existing objects:
+
+	\code
+	// Block index space initialized elsewhere
+	const block_index_space<4> &bis = ...;
+	block_index_space<4> bis_copy(bis);
+	\endcode
+
+
+	<b>Splitting subspaces</b>
+
+	Each one-dimensional subspace of a block %index space maps to a
+	splitting pattern. This is a multiple-to-one mapping, which means that
+	several %dimensions may have the same set of splitting points. Subspaces
+	with the same pattern must have the same total number of elements and
+	are said to have the same <i>splitting type</i>.
+
+	Upon construction, those %dimensions that have the same number of
+	elements are matched to have the same initial type.
+
+	Using the split() method, the user adds a splitting point for a given
+	subspace. Each dimension in the subspace must have the same type for
+	the operation to be successful. Should any other dimension have the
+	same type initially, after the operation the affected and unaffected
+	subspaces will have different types.
+
+	The code below illustrates the splitting mechanism. Letters designate
+	splitting types. Lists that describe each splitting type read the number
+	of elements in each block.
+
+	\code
+	// Suppose, the dimensions are [10,10,20,20]
+	const dimensions<4> &dims = ...;
+	// Initially, the space is [10A,10A,20B,20B] A[10] B[20]
+	block_index_space<4> bis(dims);
+
+	// Create a mask to split subspace A
+	mask<4> m1; m1[0] = true; m1[1] = true;
+	// After this, the space is [10A,10A,20B,20B] A[5,5] B[20]
+	bis.split(m1, 5);
+
+	// Create a mask to split subspace B
+	mask<4> m2; m2[2] = true; m2[3] = true;
+	// After this, the space is [10A,10A,20B,20B] A[5,5] B[10,10]
+	bis.split(m2, 10);
+
+	// Split dimensions in subspace B individually
+	mask<4> m3; m3[2] = true;
+	// The space is [10A,10A,20B,20C] A[5,5] B[10,5,5] C[10,10]
+	bis.split(m3, 15);
+
+	// Split in subspace C
+	mask<4> m4; m4[3] = true;
+	// The space is [10A,10A,20B,20C] A[5,5] B[10,5,5] C[10,5,5]
+	bis.split(m4, 15);
+	\endcode
+
+	Note that even though subspaces B and C at the end have the same
+	patterns, they are assigned different types. An attempt to split them
+	simultaneously will now fail.
+
+	The match_splits() method recognizes subspaces that are split
+	identically, but are assigned different types. It tries to match
+	splitting patterns, and therefore should not be actively used for
+	performance reasons. Continuing the above example,
+
+	\code
+	// Before, the space is [10A,10A,20B,20C] A[5,5] B[10,5,5] C[10,5,5]
+
+	// After this, the space is [10A,10A,20B,20B] A[5,5] B[10,5,5]
+	bis.match_splits();
+	\endcode
+
+
+	<b>Obtaining the dimensions of blocks</b>
+
+	After all splitting points are defined, the user can obtain the
+	%dimensions of the index space and individual blocks.
+
+	get_dims() returns the total %dimensions of the %index space as
+	specified when the block %index space was initially created.
+
+	get_block_index_dims() returns by value the %dimensions of the block
+	%index space in blocks.
+
+	get_block_dims() returns by value the %dimensions of a given block.
+
+
+	\sa operator<<(std::ostream&, const block_index_space<N>&)
 
 	\ingroup libtensor_core
  **/
@@ -60,7 +155,7 @@ public:
 	//!	\name Construction and destruction
 	//@{
 
-	/**	\brief Creates the block %index space using given %dimensions
+	/**	\brief Creates the block %index space using %dimensions
 		\param dims Total %dimensions of the %index space
 	 **/
 	block_index_space(const dimensions<N> &dims);
@@ -77,14 +172,14 @@ public:
 	//@}
 
 
-	//!	\name Dimensions of the block %index space
+	//!	\name Dimensions of blocks and the %index space
 	//@{
 
-	/**	\brief Returns the total dimensions
+	/**	\brief Returns the total %dimensions
 	 **/
 	const dimensions<N> &get_dims() const;
 
-	/**	\brief Returns the dimensions that limit block %index values
+	/**	\brief Returns the %dimensions that limit block %index values
 	 **/
 	dimensions<N> get_block_index_dims() const;
 
@@ -95,12 +190,18 @@ public:
 	index<N> get_block_start(const index<N> &idx) const
 		throw(out_of_bounds);
 
-	/**	\brief Returns the dimensions of a block
+	/**	\brief Returns the %dimensions of a block
 		\param idx Block index.
 		\throw out_of_bounds If the block %index is out of bounds.
 	 **/
 	dimensions<N> get_block_dims(const index<N> &idx) const
 		throw(out_of_bounds);
+
+	//@}
+
+
+	//!	\name Splitting
+	//@{
 
 	/**	\brief Returns the type (splitting pattern) of a dimension
 		\param dim Dimension number.
@@ -114,22 +215,7 @@ public:
 	 **/
 	const split_points &get_splits(size_t typ) const throw(out_of_bounds);
 
-	/**	\brief Returns true if two block %index spaces are identical
-
-		Checks that both block %index spaces have the same %dimensions
-		and splitting patterns. Two splitting patterns are considered
-		identical if they have the same splitting positions. The
-		spaces must also agree on the splitting types.
-	 **/
-	bool equals(const block_index_space<N> &bis) const;
-
-	//@}
-
-
-	//!	\name Manipulations
-	//@{
-
-	/**	\brief Adds a split point for %dimension identified by a %mask
+	/**	\brief Adds a split point for a subspace identified by a %mask
 		\param msk Dimension mask.
 		\param pos Split position (not to exceed the number of
 			elements along the given dimension).
@@ -139,14 +225,34 @@ public:
 	void split(const mask<N> &msk, size_t pos)
 		throw(bad_parameter, out_of_bounds);
 
+	/**	\brief Attempts to match subspaces that have the same splitting
+			patterns, but are assigned different types
+	 **/
+	void match_splits();
+
 	/**	\brief Removes all split points
 	 **/
-	void reset();
+	void reset_splits();
+
+	//@}
+
+
+	//!	\name Manipulations
+	//@{
 
 	/**	\brief Permutes the block %index space
 		\param perm Permutation.
 	 **/
 	void permute(const permutation<N> &perm);
+
+	/**	\brief Returns true if two block %index spaces are identical
+
+		Checks that both block %index spaces have the same %dimensions
+		and splitting patterns. Two splitting patterns are considered
+		identical if they have the same splitting positions. The
+		spaces must also agree on the splitting types.
+	 **/
+	bool equals(const block_index_space<N> &bis) const;
 
 	//@}
 
@@ -161,16 +267,16 @@ const char *block_index_space<N>::k_clazz = "block_index_space<N>";
 
 
 template<size_t N>
-block_index_space<N>::block_index_space(const dimensions<N> &dims)
-: m_dims(dims), m_type(0), m_splits(NULL) {
+block_index_space<N>::block_index_space(const dimensions<N> &dims) :
+	m_dims(dims), m_type(0), m_splits(NULL) {
 
 	init_types();
 }
 
 
 template<size_t N>
-block_index_space<N>::block_index_space(const block_index_space<N> &bis)
-: m_dims(bis.m_dims), m_nsplits(bis.m_nsplits), m_type(bis.m_type),
+block_index_space<N>::block_index_space(const block_index_space<N> &bis) :
+	m_dims(bis.m_dims), m_nsplits(bis.m_nsplits), m_type(bis.m_type),
 	m_splits(NULL) {
 
 	for(size_t i = 0; i < N; i++) {
@@ -185,6 +291,7 @@ block_index_space<N>::~block_index_space() {
 
 	clear_splits();
 }
+
 
 template<size_t N>
 inline const dimensions<N> &block_index_space<N>::get_dims() const {
@@ -361,7 +468,53 @@ void block_index_space<N>::split(const mask<N> &msk, size_t pos)
 
 
 template<size_t N>
-void block_index_space<N>::reset() {
+void block_index_space<N>::match_splits() {
+
+	sequence<N, size_t> types(m_type);
+	sequence<N, split_points*> splits(m_splits);
+
+	for(size_t i = 0; i < N; i++) {
+		m_type[i] = 0;
+		m_splits[i] = NULL;
+	}
+
+	size_t lasttype = 0;
+	for(size_t i = 0; i < N; i++) {
+		size_t typei = types[i];
+		if(splits[typei] == NULL) continue;
+
+		m_type[i] = lasttype;
+		split_points *spi = m_splits[lasttype] = splits[typei];
+		splits[typei] = NULL;
+
+		for(size_t j = i + 1; j < N; j++) {
+			size_t typej = types[j];
+			if(typej == typei) {
+				m_type[j] = lasttype;
+				continue;
+			}
+			if(m_dims[i] != m_dims[j] ||
+				m_nsplits[i] != m_nsplits[j] ||
+				splits[typej] == NULL) continue;
+
+			if(spi->equals(*splits[typej])) {
+				for(size_t k = j; k < N; k++) {
+					if(types[k] == typej) {
+						m_type[k] = lasttype;
+					}
+				}
+				delete splits[typej];
+				splits[typej] = NULL;
+			}
+		}
+
+		lasttype++;
+	}
+}
+
+
+template<size_t N>
+void block_index_space<N>::reset_splits() {
 
 	clear_splits();
 	init_types();

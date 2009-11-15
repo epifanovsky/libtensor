@@ -7,24 +7,66 @@ namespace libtensor {
 
 void block_index_space_test::perform() throw(libtest::test_exception) {
 
-	test_1();
-	test_2();
-	test_3();
-	test_4();
+	test_ctor_1();
+
+	//	test_split_* do not use equals() for comparison
+	test_split_1();
+	test_split_2();
+	test_split_3();
+	test_split_4();
+
+	//	test_equals_* use split()
 	test_equals_1();
 	test_equals_2();
 	test_equals_3();
 	test_equals_4();
 	test_equals_5();
+
+	//	test_match_* use split() and equals()
+	test_match_1();
+	test_match_2();
+	test_match_3();
+	test_match_4();
+	test_match_5();
+
+	//	test_permute_* use split() and equals()
 	test_permute_1();
+
 	test_exc_1();
 	test_exc_2();
 
 }
 
-void block_index_space_test::test_1() throw(libtest::test_exception) {
 
-	static const char *testname = "block_index_space_test::test_1()";
+void block_index_space_test::test_ctor_1() throw(libtest::test_exception) {
+
+	static const char *testname = "block_index_space_test::test_ctor_1()";
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 8; i2[1] = 8; i2[2] = 9; i2[3] = 9;
+	dimensions<4> dims(index_range<4>(i1, i2));
+	block_index_space<4> bis(dims);
+
+	if(bis.get_type(0) != bis.get_type(1)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Invalid initial splitting type (1).");
+	}
+	if(bis.get_type(2) != bis.get_type(3)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Invalid initial splitting type (2).");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void block_index_space_test::test_split_1() throw(libtest::test_exception) {
+
+	static const char *testname = "block_index_space_test::test_split_1()";
 
 	try {
 
@@ -153,9 +195,9 @@ void block_index_space_test::test_1() throw(libtest::test_exception) {
 
 }
 
-void block_index_space_test::test_2() throw(libtest::test_exception) {
+void block_index_space_test::test_split_2() throw(libtest::test_exception) {
 
-	static const char *testname = "block_index_space_test::test_2()";
+	static const char *testname = "block_index_space_test::test_split_2()";
 
 	try {
 
@@ -218,9 +260,9 @@ void block_index_space_test::test_2() throw(libtest::test_exception) {
 
 }
 
-void block_index_space_test::test_3() throw(libtest::test_exception) {
+void block_index_space_test::test_split_3() throw(libtest::test_exception) {
 
-	static const char *testname = "block_index_space_test::test_3()";
+	static const char *testname = "block_index_space_test::test_split_3()";
 
 	try {
 
@@ -358,9 +400,9 @@ void block_index_space_test::test_3() throw(libtest::test_exception) {
 }
 
 
-void block_index_space_test::test_4() throw(libtest::test_exception) {
+void block_index_space_test::test_split_4() throw(libtest::test_exception) {
 
-	static const char *testname = "block_index_space_test::test_4()";
+	static const char *testname = "block_index_space_test::test_split_4()";
 
 	try {
 
@@ -717,6 +759,159 @@ void block_index_space_test::test_equals_5() throw(libtest::test_exception) {
 	if(bis2.equals(bis1)) {
 		fail_test(testname, __FILE__, __LINE__,
 			"Equality test (2b) failed");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void block_index_space_test::test_match_1() throw(libtest::test_exception) {
+
+	static const char *testname = "block_index_space_test::test_match_1()";
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 8; i2[1] = 8; i2[2] = 9; i2[3] = 9;
+	dimensions<4> dims(index_range<4>(i1, i2));
+	block_index_space<4> bis(dims), bis_ref(dims);
+
+	bis.match_splits();
+
+	if(!bis.equals(bis_ref)) {
+		fail_test(testname, __FILE__, __LINE__, "Invalid result.");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void block_index_space_test::test_match_2() throw(libtest::test_exception) {
+
+	static const char *testname = "block_index_space_test::test_match_2()";
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 8; i2[1] = 9; i2[2] = 10; i2[3] = 11;
+	dimensions<4> dims(index_range<4>(i1, i2));
+	block_index_space<4> bis(dims), bis_ref(dims);
+	mask<4> m1000, m0100, m0010, m0001;
+	m1000[0] = true; m0100[1] = true; m0010[2] = true; m0001[3] = true;
+
+	bis.split(m1000, 5);
+	bis_ref.split(m1000, 5);
+	bis.split(m0100, 5);
+	bis_ref.split(m0100, 5);
+	bis.split(m0010, 5);
+	bis_ref.split(m0010, 5);
+	bis.split(m0001, 5);
+	bis_ref.split(m0001, 5);
+
+	bis.match_splits();
+
+	if(!bis.equals(bis_ref)) {
+		fail_test(testname, __FILE__, __LINE__, "Invalid result.");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void block_index_space_test::test_match_3() throw(libtest::test_exception) {
+
+	static const char *testname = "block_index_space_test::test_match_3()";
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 8; i2[1] = 8; i2[2] = 9; i2[3] = 9;
+	dimensions<4> dims(index_range<4>(i1, i2));
+	block_index_space<4> bis(dims), bis_ref(dims);
+	mask<4> m1100, m0011, m0010, m0001;
+	m1100[0] = true; m1100[1] = true;
+	m0011[2] = true; m0011[3] = true;
+
+	bis.split(m1100, 5);
+	bis_ref.split(m1100, 5);
+	bis.split(m0011, 5);
+	bis_ref.split(m0011, 5);
+
+	bis.match_splits();
+
+	if(!bis.equals(bis_ref)) {
+		fail_test(testname, __FILE__, __LINE__, "Invalid result.");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void block_index_space_test::test_match_4() throw(libtest::test_exception) {
+
+	static const char *testname = "block_index_space_test::test_match_4()";
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 8; i2[1] = 8; i2[2] = 9; i2[3] = 9;
+	dimensions<4> dims(index_range<4>(i1, i2));
+	block_index_space<4> bis(dims), bis_ref(dims);
+	mask<4> m1100, m0011, m0010, m0001;
+	m1100[0] = true; m1100[1] = true;
+	m0011[2] = true; m0011[3] = true;
+	m0010[2] = true;
+	m0001[3] = true;
+
+	bis.split(m1100, 5);
+	bis.split(m0010, 5);
+	bis.split(m0001, 5);
+	bis_ref.split(m1100, 5);
+	bis_ref.split(m0011, 5);
+
+	bis.match_splits();
+
+	if(!bis.equals(bis_ref)) {
+		fail_test(testname, __FILE__, __LINE__, "Invalid result.");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void block_index_space_test::test_match_5() throw(libtest::test_exception) {
+
+	static const char *testname = "block_index_space_test::test_match_5()";
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 8; i2[1] = 8; i2[2] = 8; i2[3] = 8;
+	dimensions<4> dims(index_range<4>(i1, i2));
+	block_index_space<4> bis(dims), bis_ref(dims);
+	mask<4> m1000, m0100, m0011, m1111;
+	m1000[0] = true; m0100[1] = true; m0011[2] = true; m0011[3] = true;
+	m1111[0] = true; m1111[1] = true; m1111[2] = true; m1111[3] = true;
+
+	bis.split(m1000, 5);
+	bis.split(m0100, 5);
+	bis.split(m0011, 5);
+	bis_ref.split(m1111, 5);
+
+	bis.match_splits();
+
+	if(!bis.equals(bis_ref)) {
+		fail_test(testname, __FILE__, __LINE__, "Invalid result.");
 	}
 
 	} catch(exception &e) {

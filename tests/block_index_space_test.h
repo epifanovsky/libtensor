@@ -14,16 +14,27 @@ public:
 	virtual void perform() throw(libtest::test_exception);
 
 private:
-	void test_1() throw(libtest::test_exception);
-	void test_2() throw(libtest::test_exception);
-	void test_3() throw(libtest::test_exception);
-	void test_4() throw(libtest::test_exception);
+	void test_ctor_1() throw(libtest::test_exception);
+
+	void test_split_1() throw(libtest::test_exception);
+	void test_split_2() throw(libtest::test_exception);
+	void test_split_3() throw(libtest::test_exception);
+	void test_split_4() throw(libtest::test_exception);
+
 	void test_equals_1() throw(libtest::test_exception);
 	void test_equals_2() throw(libtest::test_exception);
 	void test_equals_3() throw(libtest::test_exception);
 	void test_equals_4() throw(libtest::test_exception);
 	void test_equals_5() throw(libtest::test_exception);
+
+	void test_match_1() throw(libtest::test_exception);
+	void test_match_2() throw(libtest::test_exception);
+	void test_match_3() throw(libtest::test_exception);
+	void test_match_4() throw(libtest::test_exception);
+	void test_match_5() throw(libtest::test_exception);
+
 	void test_permute_1() throw(libtest::test_exception);
+
 	void test_exc_1() throw(libtest::test_exception);
 	void test_exc_2() throw(libtest::test_exception);
 };
