@@ -250,10 +250,12 @@ void btod_copy<N>::do_perform(
 		index<N> dst_blk_can_idx;
 		bidims.abs_index(
 			dst_orb.get_abs_canonical_index(), dst_blk_can_idx);
+		bool adjzero = zero ||
+			dst_ctrl.req_is_zero_block(dst_blk_can_idx);
 		tensor_i<N, double> &dst_blk =
 			dst_ctrl.req_block(dst_blk_can_idx);
 
-		if(zero) {
+		if(adjzero) {
 			tod_copy<N> cp(src_blk, m_perm, coeff * c);
 			cp.perform(dst_blk);
 		} else {
@@ -284,10 +286,11 @@ void btod_copy<N>::do_perform(block_tensor_i<N, double> &bt,
 
 	} else {
 
+		bool adjzero = zero || dst_ctrl.req_is_zero_block(dst_blk_idx);
 		tensor_i<N, double> &src_blk = src_ctrl.req_block(src_blk_idx);
 		tensor_i<N, double> &dst_blk = dst_ctrl.req_block(dst_blk_idx);
 
-		if(zero) {
+		if(adjzero) {
 			tod_copy<N> cp(src_blk, m_perm, m_c * c);
 			cp.perform(dst_blk);
 		} else {

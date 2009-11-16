@@ -14,9 +14,11 @@ void btod_copy_test::perform() throw(libtest::test_exception) {
 	srand48(time(NULL));
 
 	test_zero_1();
+	test_zero_2();
 	test_1();
 	test_2();
 	test_3();
+	test_4();
 	test_dir_1();
 	test_dir_2();
 	test_dir_3();
@@ -352,6 +354,50 @@ void btod_copy_test::test_3() throw(libtest::test_exception) {
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void btod_copy_test::test_4() throw(libtest::test_exception) {
+
+	//
+	//	Copy to an empty block tensor with a coefficient
+	//
+	//	btod_copy<2> cp(A);
+	//	cp.perform(B, 2.0);
+	//
+
+	static const char *testname = "btod_copy_test::test_4()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<2> i1, i2;
+	i2[0] = 10; i2[1] = 10;
+	dimensions<2> dims(index_range<2>(i1, i2));
+	block_index_space<2> bis(dims);
+	block_tensor<2, double, allocator_t> bta(bis), btb(bis);
+	tensor<2, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
+
+	//	Fill in with random data
+
+	btod_random<2>().perform(bta);
+	bta.set_immutable();
+
+	//	Make a copy and a reference
+
+	btod_copy<2>(bta).perform(btb, 2.0);
+	tod_btconv<2>(btb).perform(tb);
+	tod_btconv<2>(bta).perform(ta);
+	tod_copy<2>(ta, 2.0).perform(tb_ref);
+
+	//	Compare against the reference
+
+	compare_ref<2>::compare(testname, tb, tb_ref, 0.0);
+
+	} catch(exception &exc) {
+		fail_test(testname, __FILE__, __LINE__, exc.what());
 	}
 }
 
