@@ -233,7 +233,9 @@ void btod_contract2<N, M, K>::perform(block_tensor_i<k_orderc, double> &btc)
 
 	static const char *method = "perform(block_tensor_i<N + M, double>&)";
 
-	if(!m_bis.equals(btc.get_bis())) {
+	block_index_space<k_orderc> bisc(btc.get_bis());
+	bisc.match_splits();
+	if(!m_bis.equals(bisc)) {
 		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
 			"Incorrect block index space of the output tensor.");
 	}
@@ -330,6 +332,7 @@ block_index_space<N + M> btod_contract2<N, M, K>::make_bis(
 		msk_done |= msk_todo;
 	}
 
+	bis.match_splits();
 	return bis;
 }
 

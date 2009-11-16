@@ -151,6 +151,7 @@ btod_add<N>::btod_add(block_tensor_i<N, double> &bt, double c) :
 	m_bidims(m_bis.get_block_index_dims()),
 	m_sym(m_bis) {
 
+	m_bis.match_splits();
 	add_operand(bt, permutation<N>(), c, false);
 	block_tensor_ctrl<N, double> ctrl(bt);
 	m_sym.set_union(ctrl.req_symmetry());
@@ -164,6 +165,7 @@ btod_add<N>::btod_add(block_tensor_i<N, double> &bt,
 		m_bidims(m_bis.get_block_index_dims().permute(perm)),
 		m_sym(m_bis) {
 
+	m_bis.match_splits();
 	add_operand(bt, perm, c, false);
 	block_tensor_ctrl<N, double> ctrl(bt);
 	m_sym.set_union(ctrl.req_symmetry());
@@ -195,7 +197,9 @@ void btod_add<N>::add_op(block_tensor_i<N, double> &bt, double c)
 
 	if(fabs(c) == 0.0) return;
 
-	if(!m_bis.equals(bt.get_bis())) {
+	block_index_space<N> bis(bt.get_bis());
+	bis.match_splits();
+	if(!m_bis.equals(bis)) {
 		throw bad_parameter("libtensor", k_clazz, method, __FILE__,
 			__LINE__, "Incompatible block index space.");
 	}
@@ -215,6 +219,7 @@ void btod_add<N>::add_op(block_tensor_i<N, double> &bt,
 	if(fabs(c) == 0.0) return;
 
 	block_index_space<N> bis(bt.get_bis());
+	bis.match_splits();
 	bis.permute(perm);
 	if(!m_bis.equals(bis)) {
 		throw bad_parameter("libtensor", k_clazz, method, __FILE__,
@@ -244,7 +249,9 @@ void btod_add<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 
 	static const char *method = "perform(block_tensor_i<N, double>&)";
 
-	if(!m_bis.equals(bt.get_bis())) {
+	block_index_space<N> bis(bt.get_bis());
+	bis.match_splits();
+	if(!m_bis.equals(bis)) {
 		throw bad_parameter("libtensor", k_clazz, method, __FILE__,
 			__LINE__, "Incompatible block index space.");
 	}
@@ -275,7 +282,9 @@ void btod_add<N>::perform(block_tensor_i<N, double> &bt, double cb)
 	static const char *method =
 		"perform(block_tensor_i<N, double>&, double)";
 
-	if(!m_bis.equals(bt.get_bis())) {
+	block_index_space<N> bis(bt.get_bis());
+	bis.match_splits();
+	if(!m_bis.equals(bis)) {
 		throw bad_parameter("libtensor", k_clazz, method, __FILE__,
 			__LINE__, "Incompatible block index space.");
 	}

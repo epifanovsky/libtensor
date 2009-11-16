@@ -29,6 +29,7 @@ void btod_contract2_test::perform() throw(libtest::test_exception) {
 	test_contr_11();
 	test_contr_12();
 	test_contr_13();
+	test_contr_14();
 }
 
 
@@ -272,38 +273,36 @@ void btod_contract2_test::test_bis_5() throw(libtest::test_exception) {
 
 	try {
 
-	index<3> i3_1, i3_2;
-	i3_2[0] = 10; i3_2[1] = 10; i3_2[2] = 8;
-	dimensions<3> dims3(index_range<3>(i3_1, i3_2));
-	index<4> i4_1, i4_2;
-	i4_2[0] = 10; i4_2[1] = 10; i4_2[2] = 10; i4_2[3] = 10;
-	dimensions<4> dims4(index_range<4>(i4_1, i4_2));
-	index<5> i5_1, i5_2;
-	i5_2[0] = 10; i5_2[1] = 10; i5_2[2] = 10; i5_2[3] = 10; i5_2[4] = 8;
-	dimensions<5> dims5(index_range<5>(i5_1, i5_2));
+	index<4> ia1, ia2;
+	ia2[0] = 10; ia2[1] = 10; ia2[2] = 10; ia2[3] = 10;
+	dimensions<4> dimsa(index_range<4>(ia1, ia2));
+	block_index_space<4> bisa(dimsa);
+	mask<4> ma1;
+	ma1[0] = true; ma1[1] = true; ma1[2] = true; ma1[3] = true;
+	bisa.split(ma1, 3);
+	bisa.split(ma1, 5);
 
-	block_index_space<4> bisa(dims4);
-	block_index_space<5> bisb(dims5);
-	block_index_space<3> bis_ref(dims3);
+	index<5> ib1, ib2;
+	ib2[0] = 10; ib2[1] = 10; ib2[2] = 10; ib2[3] = 10; ib2[4] = 8;
+	dimensions<5> dimsb(index_range<5>(ib1, ib2));
+	block_index_space<5> bisb(dimsb);
+	mask<5> mb1, mb2;
+	mb1[0] = true; mb1[1] = true; mb1[2] = true; mb1[3] = true;
+	mb2[4] = true;
+	bisb.split(mb1, 3);
+	bisb.split(mb1, 5);
+	bisb.split(mb2, 4);
 
-	mask<3> msk3_1, msk3_2, msk3_3;
-	msk3_1[0] = true; msk3_2[1] = true; msk3_3[2] = true;
-	mask<4> msk4;
-	msk4[0] = true; msk4[1] = true; msk4[2] = true; msk4[3] = true;
-	mask<5> msk5_1, msk5_2;
-	msk5_1[0] = true; msk5_1[1] = true; msk5_1[2] = true; msk5_1[3] = true;
-	msk5_2[4] = true;
-
-	bisa.split(msk4, 3);
-	bisa.split(msk4, 5);
-	bisb.split(msk5_1, 3);
-	bisb.split(msk5_1, 5);
-	bisb.split(msk5_2, 4);
-	bis_ref.split(msk3_1, 3);
-	bis_ref.split(msk3_1, 5);
-	bis_ref.split(msk3_2, 3);
-	bis_ref.split(msk3_2, 5);
-	bis_ref.split(msk3_3, 4);
+	index<3> ic1, ic2;
+	ic2[0] = 10; ic2[1] = 10; ic2[2] = 8;
+	dimensions<3> dimsc(index_range<3>(ic1, ic2));
+	block_index_space<3> bisc_ref(dimsc);
+	mask<3> mc1, mc2;
+	mc1[0] = true; mc1[1] = true;
+	mc2[2] = true;
+	bisc_ref.split(mc1, 3);
+	bisc_ref.split(mc1, 5);
+	bisc_ref.split(mc2, 4);
 
 	block_tensor<4, double, allocator_t> bta(bisa);
 	block_tensor<5, double, allocator_t> btb(bisb);
@@ -314,9 +313,9 @@ void btod_contract2_test::test_bis_5() throw(libtest::test_exception) {
 
 	btod_contract2<1, 2, 3> op(contr, bta, btb);
 
-	if(!op.get_bis().equals(bis_ref)) {
+	if(!op.get_bis().equals(bisc_ref)) {
 		fail_test(testname, __FILE__, __LINE__,
-			"Unexpected output block index space.");
+			"Invalid output block index space.");
 	}
 
 	} catch(exception &e) {
@@ -496,20 +495,13 @@ void btod_contract2_test::test_contr_1() throw(libtest::test_exception) {
 	index<4> i1, i2;
 	i2[0] = 10; i2[1] = 10; i2[2] = 10; i2[3] = 10;
 	dimensions<4> dims(index_range<4>(i1, i2));
-	block_index_space<4> bisa(dims), bisc(dims);
-	mask<4> msk, msk1, msk2;
-	msk[0] = true; msk[1] = true; msk[2] = true; msk[3] = true;
-	msk1[0] = true; msk1[1] = true;
-	msk2[2] = true; msk2[3] = true;
+	block_index_space<4> bisa(dims);
+	mask<4> m1;
+	m1[0] = true; m1[1] = true; m1[2] = true; m1[3] = true;
+	bisa.split(m1, 3);
+	bisa.split(m1, 5);
 
-	bisa.split(msk, 3);
-	bisa.split(msk, 5);
-	bisc.split(msk1, 3);
-	bisc.split(msk1, 5);
-	bisc.split(msk2, 3);
-	bisc.split(msk2, 5);
-
-	block_index_space<4> bisb(bisa);
+	block_index_space<4> bisb(bisa), bisc(bisa);
 
 	block_tensor<4, double, allocator_t> bta(bisa), btb(bisb), btc(bisc);
 
@@ -572,22 +564,13 @@ void btod_contract2_test::test_contr_2() throw(libtest::test_exception) {
 	index<4> i1, i2;
 	i2[0] = 10; i2[1] = 10; i2[2] = 10; i2[3] = 10;
 	dimensions<4> dims(index_range<4>(i1, i2));
-	block_index_space<4> bisa(dims), bisc(dims);
-	mask<4> msk, msk1, msk2, msk1c, msk2c;
-	msk[0] = true; msk[1] = true; msk[2] = true; msk[3] = true;
-	msk1[0] = true; msk1[1] = true;
-	msk2[2] = true; msk2[3] = true;
-	msk1c[0] = true; msk1c[2] = true;
-	msk2c[1] = true; msk2c[3] = true;
+	block_index_space<4> bisa(dims);
+	mask<4> m1;
+	m1[0] = true; m1[1] = true; m1[2] = true; m1[3] = true;
+	bisa.split(m1, 3);
+	bisa.split(m1, 5);
 
-	bisa.split(msk, 3);
-	bisa.split(msk, 5);
-	bisc.split(msk1c, 3);
-	bisc.split(msk1c, 5);
-	bisc.split(msk2c, 3);
-	bisc.split(msk2c, 5);
-
-	block_index_space<4> bisb(bisa);
+	block_index_space<4> bisb(bisa), bisc(bisa);
 
 	block_tensor<4, double, allocator_t> bta(bisa), btb(bisb), btc(bisc);
 
@@ -1459,6 +1442,72 @@ void btod_contract2_test::test_contr_13() throw(libtest::test_exception) {
 	//	Compare against reference
 
 	compare_ref<2>::compare(testname, tc, tc_ref, 1e-13);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void btod_contract2_test::test_contr_14() throw(libtest::test_exception) {
+
+	//
+	//	c_ijkl = a_ijmn b_klmn
+	//	Dimensions [ijlkmn] = 15 (three blocks), no symmetry
+	//	bis of the operation and the output tensor are not equal
+	//
+
+	static const char *testname = "btod_contract2_test::test_contr_14()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 14; i2[1] = 14; i2[2] = 14; i2[3] = 14;
+	dimensions<4> dims(index_range<4>(i1, i2));
+	block_index_space<4> bisa(dims);
+	mask<4> m1, m2, m3, m4;
+	m1[0] = true; m2[1] = true; m3[2] = true; m4[3] = true;
+	bisa.split(m1, 5); bisa.split(m1, 10);
+	bisa.split(m2, 5); bisa.split(m2, 10);
+	bisa.split(m3, 5); bisa.split(m3, 10);
+	bisa.split(m4, 5); bisa.split(m4, 10);
+	block_index_space<4> bisb(bisa), bisc(bisa);
+
+	block_tensor<4, double, allocator_t> bta(bisa);
+	block_tensor<4, double, allocator_t> btb(bisb);
+	block_tensor<4, double, allocator_t> btc(bisc);
+
+	//	Load random data for input
+
+	btod_random<4>().perform(bta);
+	btod_random<4>().perform(btb);
+	bta.set_immutable();
+	btb.set_immutable();
+
+	//	Convert block tensors to regular tensors
+
+	tensor<4, double, allocator_t> ta(dims);
+	tensor<4, double, allocator_t> tb(dims);
+	tensor<4, double, allocator_t> tc(dims), tc_ref(dims);
+	tod_btconv<4>(bta).perform(ta);
+	tod_btconv<4>(btb).perform(tb);
+
+	//	Run contraction and compute the reference
+
+	contraction2<2, 2, 2> contr;
+	contr.contract(2, 2);
+	contr.contract(3, 3);
+
+	btod_contract2<2, 2, 2> op(contr, bta, btb);
+	op.perform(btc);
+	tod_btconv<4>(btc).perform(tc);
+	tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc_ref);
+
+	//	Compare against reference
+
+	compare_ref<4>::compare(testname, tc, tc_ref, 2e-13);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());

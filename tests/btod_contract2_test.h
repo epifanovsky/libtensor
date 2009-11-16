@@ -34,6 +34,7 @@ private:
 	void test_contr_11() throw(libtest::test_exception);
 	void test_contr_12() throw(libtest::test_exception);
 	void test_contr_13() throw(libtest::test_exception);
+	void test_contr_14() throw(libtest::test_exception);
 };
 
 } // namespace libtensor
