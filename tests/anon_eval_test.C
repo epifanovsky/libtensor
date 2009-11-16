@@ -30,9 +30,15 @@ void anon_eval_test::invoke_eval(
 	const letter_expr<N> &label, block_tensor_i<N, T> &ref, double thresh)
 	throw(libtest::test_exception) {
 
+	try {
+
 	labeled_btensor_expr::anon_eval<N, T, Core> ev(expr, label);
 	ev.evaluate();
 	compare_ref<N>::compare(testname, ev.get_btensor(), ref, thresh);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
 }
 
 
@@ -277,8 +283,8 @@ void anon_eval_test::test_add_1() throw(libtest::test_exception) {
 	sj.split(3);
 	sa.split(6);
 	sb.split(6);
-	bispace<4> sijab(si|sj|sa|sb);
-
+//	bispace<4> sijab(si|sj|sa|sb);
+	bispace<4> sijab(si&sj|sa&sb);
 	btensor<4> tp(sijab), tq(sijab);
 	btod_random<4>().perform(tp);
 	btod_random<4>().perform(tq);
@@ -314,7 +320,8 @@ void anon_eval_test::test_contr_1() throw(libtest::test_exception) {
 	sj.split(3);
 	sa.split(6);
 	sb.split(6);
-	bispace<4> sijab(si|sj|sa|sb), sijkl(si|sj|si|sj);
+//	bispace<4> sijab(si|sj|sa|sb), sijkl(si|sj|si|sj);
+	bispace<4> sijab(si&sj|sa&sb), sijkl(si&sj&si&sj);
 
 	btensor<4> tp(sijab), tq(sijab);
 	btod_random<4>().perform(tp);
@@ -354,7 +361,8 @@ void anon_eval_test::test_contr_2() throw(libtest::test_exception) {
 	sj.split(3);
 	sa.split(6);
 	sb.split(6);
-	bispace<4> sijab(si|sj|sa|sb), sijkl(si|sj|si|sj);
+//	bispace<4> sijab(si|sj|sa|sb), sijkl(si|sj|si|sj);
+	bispace<4> sijab(si&sj|sa&sb), sijkl(si&sj&si&sj);
 
 	btensor<4> tp(sijab), tq1(sijab), tq2(sijab);
 	btod_random<4>().perform(tp);
@@ -396,7 +404,8 @@ void anon_eval_test::test_mixed_1() throw(libtest::test_exception) {
 	sj.split(3);
 	sa.split(6);
 	sb.split(6);
-	bispace<4> sijab(si|sj|sa|sb), sijkl(si|sj|si|sj);
+//	bispace<4> sijab(si|sj|sa|sb), sijkl(si|sj|si|sj);
+	bispace<4> sijab(si&sj|sa&sb), sijkl(si&sj&si&sj);
 
 	btensor<4> tp(sijab), tq(sijab), tr(sijkl);
 	btod_random<4>().perform(tp);

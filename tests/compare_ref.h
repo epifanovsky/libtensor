@@ -12,16 +12,16 @@ class compare_ref {
 public:
 	static void compare(const char *test, tensor_i<N, double> &t,
 		tensor_i<N, double> &t_ref, double thresh)
-		throw(libtest::test_exception);
+		throw(exception, libtest::test_exception);
 	static void compare(const char *test, block_tensor_i<N, double> &t,
 		block_tensor_i<N, double> &t_ref, double thresh)
-		throw(libtest::test_exception);
+		throw(exception, libtest::test_exception);
 };
 
 template<size_t N>
 void compare_ref<N>::compare(const char *test, tensor_i<N, double> &t,
 	tensor_i<N, double> &t_ref, double thresh)
-	throw(libtest::test_exception) {
+	throw(exception, libtest::test_exception) {
 
 	tod_compare<N> cmp(t, t_ref, thresh);
 	if(!cmp.compare()) {
@@ -41,7 +41,7 @@ void compare_ref<N>::compare(const char *test, tensor_i<N, double> &t,
 template<size_t N>
 void compare_ref<N>::compare(const char *test, block_tensor_i<N, double> &t,
 	block_tensor_i<N, double> &t_ref, double thresh)
-	throw(libtest::test_exception) {
+	throw(exception, libtest::test_exception) {
 
 	btod_compare<N> cmp(t, t_ref, thresh);
 	if(!cmp.compare()) {
