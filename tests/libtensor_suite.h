@@ -5,7 +5,6 @@
 #include <libtensor.h>
 #include "abs_index_test.h"
 #include "anon_eval_test.h"
-#include "asym_contract_test.h"
 #include "bispace_test.h"
 #include "bispace_expr_test.h"
 #include "block_index_space_test.h"
@@ -45,8 +44,8 @@
 #include "sequence_test.h"
 #include "so_projdown_test.h"
 #include "so_projup_test.h"
-#include "sym_contract_test.h"
 #include "symel_cycleperm_test.h"
+#include "symm_test.h"
 #include "symmetry_test.h"
 #include "symmetry_element_base_test.h"
 #include "tensor_test.h"
@@ -77,7 +76,6 @@ namespace libtensor {
 	This suite runs the following tests:
 	\li libtensor::abs_index_test
 	\li libtensor::anon_eval_test
-	\li libtensor::asym_contract_test
 	\li libtensor::bispace_test
 	\li libtensor::bispace_expr_test
 	\li libtensor::block_index_space_test
@@ -117,8 +115,8 @@ namespace libtensor {
 	\li libtensor::sequence_test
 	\li libtensor::so_projdown_test
 	\li libtensor::so_projup_test
-	\li libtensor::sym_contract_test
 	\li libtensor::symel_cycleperm_test
+	\li libtensor::symm_test
 	\li libtensor::symmetry_test
 	\li libtensor::symmetry_element_base_test
 	\li libtensor::tensor_test
@@ -143,7 +141,6 @@ class libtensor_suite : public libtest::test_suite {
 private:
 	unit_test_factory<abs_index_test> m_utf_abs_index;
 	unit_test_factory<anon_eval_test> m_utf_anon_eval;
-	unit_test_factory<asym_contract_test> m_utf_asym_contract;
 	unit_test_factory<bispace_test> m_utf_bispace;
 	unit_test_factory<bispace_expr_test> m_utf_bispace_expr;
 	unit_test_factory<block_index_space_test> m_utf_block_index_space;
@@ -184,8 +181,8 @@ private:
 	unit_test_factory<sequence_test> m_utf_sequence;
 	unit_test_factory<so_projdown_test> m_utf_so_projdown;
 	unit_test_factory<so_projup_test> m_utf_so_projup;
-	unit_test_factory<sym_contract_test> m_utf_sym_contract;
 	unit_test_factory<symel_cycleperm_test> m_utf_symel_cycleperm;
+	unit_test_factory<symm_test> m_utf_symm;
 	unit_test_factory<symmetry_test> m_utf_symmetry;
 	unit_test_factory<symmetry_element_base_test>
 		m_utf_symmetry_element_base;

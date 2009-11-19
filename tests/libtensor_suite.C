@@ -7,7 +7,6 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 
 	add_test("abs_index", m_utf_abs_index);
 	add_test("anon_eval", m_utf_anon_eval);
-	add_test("asym_contract", m_utf_asym_contract);
 	add_test("bispace", m_utf_bispace);
 	add_test("bispace_expr", m_utf_bispace_expr);
 	add_test("block_index_space", m_utf_block_index_space);
@@ -47,8 +46,8 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("sequence", m_utf_sequence);
 	add_test("so_projdown", m_utf_so_projdown);
 	add_test("so_projup", m_utf_so_projup);
-	add_test("sym_contract", m_utf_sym_contract);
 	add_test("symel_cycleperm", m_utf_symel_cycleperm);
+	add_test("symm", m_utf_symm);
 	add_test("symmetry", m_utf_symmetry);
 	add_test("symmetry_element_base", m_utf_symmetry_element_base);
 	add_test("tensor", m_utf_tensor);

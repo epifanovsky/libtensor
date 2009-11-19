@@ -4,7 +4,6 @@ all: deps libtensor_tests
 OBJS  = libtensor_suite.o
 OBJS += abs_index_test.o
 OBJS += anon_eval_test.o
-OBJS += asym_contract_test.o
 OBJS += bispace_test.o
 OBJS += bispace_expr_test.o
 OBJS += block_index_space_test.o
@@ -44,8 +43,8 @@ OBJS += permutation_builder_test.o
 OBJS += sequence_test.o
 OBJS += so_projdown_test.o
 OBJS += so_projup_test.o
-OBJS += sym_contract_test.o
 OBJS += symel_cycleperm_test.o
+OBJS += symm_test.o
 OBJS += symmetry_test.o
 OBJS += symmetry_element_base_test.o
 OBJS += tensor_test.o

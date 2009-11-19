@@ -12,8 +12,7 @@
 #include "contract/operator_contract.h"
 #include "direct_product/operator_direct_product.h"
 #include "scale/operator_mul.h"
-#include "sym_contract/sym_contract_operator.h"
-#include "sym_contract/asym_contract_operator.h"
+#include "symm/symm_operator.h"
 
 /**	\defgroup libtensor_btensor_expr_op Overloaded operators
 	\ingroup libtensor_btensor_expr
