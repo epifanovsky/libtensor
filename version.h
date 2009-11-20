@@ -27,10 +27,10 @@ private:
 	static const unsigned m_minor = 0;
 
 	//!	Version status
-	static const char* const m_status = "alpha2";
+	static const char* const m_status = "beta1-dev";
 
 	//!	Version string
-	static const char* const m_string = "2.0-alpha2";
+	static const char* const m_string = "2.0-beta1-dev";
 
 public:
 	/**	\brief Returns the major %version number
