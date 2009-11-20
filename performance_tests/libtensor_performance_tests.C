@@ -2,13 +2,15 @@
 
 #include "../global_timings.h"
 
+#include <sstream>
 #include <iostream>
 
 using namespace libtensor;
+using namespace std;
 using libtest::test_exception;
 
-class performance_suite_handler 
-	: public libtest::suite_event_handler 
+class performance_suite_handler
+	: public libtest::suite_event_handler
 {
 public:
 	virtual void on_suite_start(const char *suite) {
@@ -18,42 +20,40 @@ public:
 	}
 
 	virtual void on_test_start(const char *test) {
-		std::cout << "Performance test " << test << std::endl;
-		std::cout.flush();
-		
+		cout << "Performance test " << test << endl;
+		cout.flush();
+
 		// reset timings
-		global_timings::get_instance().reset();		
+		global_timings::get_instance().reset();
 	}
 
 	virtual void on_test_end_success(const char *test) {
-		std::cout << " ... Test done." << std::endl;
+		cout << " ... Test done." << endl;
 		// print timings
 		if ( global_timings::get_instance().ntimings() > 0 ) {
-			std::cout << "Timings are: " << std::endl;
-			std::cout << global_timings::get_instance() << std::endl;
+			cout << "Timings are: " << endl;
+			cout << global_timings::get_instance() << endl;
 		}
-		else 
-			std::cout << "No Timings" << std::endl;
-		std::cout.flush();
+		else
+			cout << "No Timings" << endl;
+		cout.flush();
 	}
 
 	virtual void on_test_end_exception(const char *test,
 		const test_exception &e) {
-		std::cout << " ... FAIL!" << std::endl;
-		std::cout << e.what() << std::endl;
-		std::cout.flush();
+		cout << " ... FAIL!" << endl;
+		cout << e.what() << endl;
+		cout.flush();
 	}
 };
 
 int main(int argc, char **argv) {
-	char smsg[81], sline[81];
-	snprintf(smsg, 81, 
-		"Performance tests for libtensor revision %s",
-		libtensor::version );
-	size_t slen = strlen(smsg);
-	memset(sline, '-', 80);
-	sline[slen] = '\0';
-	puts(sline); puts(smsg); puts(sline);
+
+	ostringstream ss;
+	ss << " Performance tests for libtensor "
+		<< version::get_string() << " ";
+	string separator(ss.str().size(), '-');
+	cout << separator << endl << ss.str() << endl << separator << endl;
 
 	performance_suite_handler handler;
 	libtensor_pt_suite suite;

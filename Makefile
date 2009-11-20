@@ -10,8 +10,6 @@ include Makefile.inc
 
 INCLUDE += -I. -I../libvmm
 
-SVNREV := $(shell svnversion -n .)
-
 OBJS  =
 OBJS += backtrace.o
 OBJS += blas.o
@@ -57,8 +55,6 @@ docs:
 trac:
 	doxygen
 	cp -R docs/html/* /var/lib/trac/libtensor/htdocs/
-
-defs.o: CPPFLAGS += -DLIBTENSOR_SVN_REV='"$(SVNREV)"'
 
 .PHONY: clean
 clean: 

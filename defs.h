@@ -8,14 +8,6 @@
  **/
 namespace libtensor {
 
-/**	\brief Limits the maximum order of tensors
- **/
-const size_t max_tensor_order = 6;
-
-/**	\brief Library version (SVN revision number)
- **/
-extern const char *version;
-
 /**	\brief Namespace name
  **/
 extern const char *g_ns;

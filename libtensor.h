@@ -3,6 +3,7 @@
 
 #include "defs.h"
 #include "exception.h"
+#include "version.h"
 
 
 #include "core/sequence.h"

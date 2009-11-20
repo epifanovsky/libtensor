@@ -64,6 +64,7 @@ OBJS += tod_set_diag_test.o
 OBJS += tod_sum_test.o
 OBJS += tod_solve_test.o
 OBJS += tod_symcontract2_test.o
+OBJS += version_test.o
 
 DEPS = $(OBJS:.o=.d)
 

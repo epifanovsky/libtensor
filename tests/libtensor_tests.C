@@ -1,11 +1,12 @@
 #include <cmath>
-#include <cstdio>
 #include <cstdlib>
-#include <cstring>
 #include <ctime>
+#include <iostream>
+#include <sstream>
 #include "libtensor_suite.h"
 
 using namespace libtensor;
+using namespace std;
 using libtest::test_exception;
 
 class suite_handler : public libtest::suite_event_handler {
@@ -17,18 +18,16 @@ public:
 	}
 
 	virtual void on_test_start(const char *test) {
-		printf("Test %s ... ", test); fflush(stdout);
+		cout << "Test " << test << " ... ";
 	}
 
 	virtual void on_test_end_success(const char *test) {
-		printf("done.\n"); fflush(stdout);
+		cout << "done." << endl;
 	}
 
 	virtual void on_test_end_exception(const char *test,
 		const test_exception &e) {
-		printf("FAIL!\n");
-		printf("%s\n", e.what());
-		fflush(stdout);
+		cout << "FAIL!" << endl << e.what() << endl;
 	}
 };
 
@@ -36,13 +35,11 @@ int main(int argc, char **argv) {
 
 	srand48(time(NULL));
 
-	char smsg[81], sline[81];
-	snprintf(smsg, 81, "Performing tests for libtensor revision %s",
-		libtensor::version);
-	size_t slen = strlen(smsg);
-	memset(sline, '-', 80);
-	sline[slen] = '\0';
-	puts(sline); puts(smsg); puts(sline);
+	ostringstream ss;
+	ss << " Unit tests for libtensor "
+		<< version::get_string() << " ";
+	string separator(ss.str().size(), '-');
+	cout << separator << endl << ss.str() << endl << separator << endl;
 
 	suite_handler handler;
 	libtensor_suite suite;
