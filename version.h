@@ -21,16 +21,16 @@ namespace libtensor {
 class version {
 private:
 	//!	Major %version number
-	static const unsigned m_major = 2;
+	static const unsigned m_major;
 
 	//!	Minor %version number
-	static const unsigned m_minor = 0;
+	static const unsigned m_minor;
 
 	//!	Version status
-	static const char* const m_status = "beta1-dev";
+	static const char *m_status;
 
 	//!	Version string
-	static const char* const m_string = "2.0-beta1-dev";
+	static const char *m_string;
 
 public:
 	/**	\brief Returns the major %version number

@@ -17,6 +17,7 @@ OBJS += defs.o
 OBJS += exception.o
 OBJS += global_timings.o
 OBJS += timer.o
+OBJS += version.o
 OBJS += btod/btod_delta_denom1.o
 OBJS += btod/btod_delta_denom2.o
 OBJS += btod/btod_mkdelta.o
