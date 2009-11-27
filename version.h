@@ -27,10 +27,10 @@ private:
 	static const unsigned m_minor = 0;
 
 	//!	Version status
-	static const char* const m_status = "alpha2";
+	static const char* const m_status;//= "alpha2";
 
 	//!	Version string
-	static const char* const m_string = "2.0-alpha2";
+	static const char* const m_string;//= "2.0-alpha2";
 
 public:
 	/**	\brief Returns the major %version number
@@ -57,7 +57,6 @@ public:
 		return m_string;
 	}
 };
-
 
 } // namespace libtensor
 
