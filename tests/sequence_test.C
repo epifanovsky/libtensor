@@ -18,7 +18,7 @@ void sequence_test::test_1() throw(libtest::test_exception) {
 
 	try {
 
-	sequence<0, int> seq(0);
+	sequence<1, int> seq(0);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
