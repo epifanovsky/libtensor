@@ -2,7 +2,6 @@
 #define LIBTENSOR_TOD_CONTRACT2_H
 
 #include <list>
-#include <cblas.h>
 #include "defs.h"
 #include "exception.h"
 #include "timings.h"
