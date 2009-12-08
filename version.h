@@ -24,13 +24,13 @@ private:
 	static const unsigned m_major = 2;
 
 	//!	Minor %version number
-	static const unsigned m_minor = 0;
+	static const unsigned m_minor = 1;
 
 	//!	Version status
-	static const char* const m_status;//= "alpha2";
+	static const char *m_status;
 
 	//!	Version string
-	static const char* const m_string;//= "2.0-alpha2";
+	static const char *m_string;
 
 public:
 	/**	\brief Returns the major %version number
