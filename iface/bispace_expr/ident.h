@@ -81,13 +81,13 @@ template<size_t N, size_t M, typename D>
 struct ident_subexpr_functor {
 
 	static size_t contains(
-		const ident<N> &expr, const expr<M, D> &subexpr) {
+		const ident<N> &e, const expr<M, D> &se) {
 
 		return 0;
 	}
 
 	static size_t locate(
-		const ident<N> &expr, const expr<M, D> &subexpr) {
+		const ident<N> &e, const expr<M, D> &se) {
 
 		throw expr_exception("libtensor::bispace_expr",
 			"ident_subexpr_functor<N, M, D>",
@@ -101,15 +101,15 @@ template<size_t N>
 struct ident_subexpr_functor< N, N, ident<N> > {
 
 	static size_t contains(
-		const ident<N> &expr, const expr< N, ident<N> > &subexpr) {
+		const ident<N> &e, const expr< N, ident<N> > &se) {
 
-		return expr.is_same(subexpr.get_core()) ? 1 : 0;
+		return e.is_same(se.get_core()) ? 1 : 0;
 	}
 
 	static size_t locate(
-		const ident<N> &expr, const expr< N, ident<N> > &subexpr) {
+		const ident<N> &e, const expr< N, ident<N> > &se) {
 
-		if(!expr.is_same(subexpr.get_core())) {
+		if(!e.is_same(se.get_core())) {
 			throw expr_exception("libtensor::bispace_expr",
 				"ident_subexpr_functor< N, N, ident<N> >",
 				"locate()", __FILE__, __LINE__,
