@@ -16,6 +16,7 @@
 #include "btod_contract2_test.h"
 #include "btod_copy_test.h"
 #include "btod_dotprod_test.h"
+#include "btod_import_raw_test.h"
 #include "btod_mkdelta_test.h"
 #include "btod_random_test.h"
 #include "btod_read_test.h"
@@ -89,6 +90,7 @@ namespace libtensor {
 	\li libtensor::btod_contract2_test
 	\li libtensor::btod_copy_test
 	\li libtensor::btod_dotprod_test
+	\li libtensor::btod_import_raw_test
 	\li libtensor::btod_mkdelta_test
 	\li libtensor::btod_random_test
 	\li libtensor::btod_read_test
@@ -156,6 +158,7 @@ private:
 	unit_test_factory<btod_contract2_test> m_utf_btod_contract2;
 	unit_test_factory<btod_copy_test> m_utf_btod_copy;
 	unit_test_factory<btod_dotprod_test> m_utf_btod_dotprod;
+	unit_test_factory<btod_import_raw_test> m_utf_btod_import_raw;
 	unit_test_factory<btod_mkdelta_test> m_utf_btod_mkdelta;
 	unit_test_factory<btod_random_test> m_utf_btod_random;
 	unit_test_factory<btod_read_test> m_utf_btod_read;
