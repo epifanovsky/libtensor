@@ -47,6 +47,7 @@
 #include "tod/tod_delta_denom1.h"
 #include "tod/tod_delta_denom2.h"
 #include "tod/tod_dotprod.h"
+#include "tod/tod_import_raw.h"
 #include "tod/tod_mkdelta.h"
 #include "tod/tod_random.h"
 #include "tod/tod_set.h"
