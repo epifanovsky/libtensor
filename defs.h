@@ -22,7 +22,7 @@ extern const char *g_ns;
 #endif
 
 #ifdef USE_MKL
-#include <mkl_cblas.h>
+#include <mkl.h>
 #undef USE_BLAS
 #endif
 #ifdef USE_BLAS

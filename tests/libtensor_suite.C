@@ -18,6 +18,7 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("btod_contract2", m_utf_btod_contract2);
 	add_test("btod_copy", m_utf_btod_copy);
 	add_test("btod_dotprod", m_utf_btod_dotprod);
+	add_test("btod_import_raw", m_utf_btod_import_raw);
 	add_test("btod_mkdelta", m_utf_btod_mkdelta);
 	add_test("btod_random", m_utf_btod_random);
 	add_test("btod_read", m_utf_btod_read);
@@ -60,6 +61,7 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("tod_copy", m_utf_tod_copy);
 	add_test("tod_delta_denom2", m_utf_tod_delta_denom2);
 	add_test("tod_dotprod", m_utf_tod_dotprod);
+	add_test("tod_import_raw", m_utf_tod_import_raw);
 	add_test("tod_mkdelta", m_utf_tod_mkdelta);
 	add_test("tod_random", m_utf_tod_random);
 	add_test("tod_set", m_utf_tod_set);

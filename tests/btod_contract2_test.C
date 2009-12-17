@@ -16,6 +16,18 @@ void btod_contract2_test::perform() throw(libtest::test_exception) {
 	test_bis_5();
 	test_sym_1();
 	test_sym_2();
+
+	//	Tests for zero block structure
+
+	test_zeroblk_1();
+	test_zeroblk_2();
+	test_zeroblk_3();
+	test_zeroblk_4();
+	test_zeroblk_5();
+	test_zeroblk_6();
+
+	//	Tests for contractions
+
 	test_contr_1();
 	test_contr_2();
 	test_contr_3();
@@ -30,6 +42,7 @@ void btod_contract2_test::perform() throw(libtest::test_exception) {
 	test_contr_12();
 	test_contr_13();
 	test_contr_14();
+
 }
 
 
@@ -471,6 +484,367 @@ void btod_contract2_test::test_sym_2() throw(libtest::test_exception) {
 	if(!op.get_symmetry().equals(sym_ref)) {
 		fail_test(testname, __FILE__, __LINE__,
 			"Symmetry does not match reference.");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\test Runs \f$ c_{ij} = \sum_p a_{ip} b_{jp} \f$.
+	Dimensions: [ijp] = 10. No splitting points. No symmetry.
+
+	The single block of a is zero, b is non-zero. Initially, c is zero.
+	The result c is expected to have a single zero block.
+ **/
+void btod_contract2_test::test_zeroblk_1() throw(libtest::test_exception) {
+
+	static const char *testname = "btod_contract2_test::test_zeroblk_1()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<2> i21, i22;
+	i22[0] = 9; i22[1] = 9;
+	dimensions<2> dimsa(index_range<2>(i21, i22));
+	dimensions<2> dimsb(index_range<2>(i21, i22));
+	dimensions<2> dimsc(index_range<2>(i21, i22));
+	block_index_space<2> bisa(dimsa), bisb(dimsb);
+	block_index_space<2> bisc(dimsc);
+
+	block_tensor<2, double, allocator_t> bta(bisa);
+	block_tensor<2, double, allocator_t> btb(bisb);
+	block_tensor<2, double, allocator_t> btc(bisc);
+
+	//	Load random data for input
+
+	index<2> i_00;
+	btod_random<2>().perform(btb, i_00);
+	bta.set_immutable();
+	btb.set_immutable();
+
+	//	Run contraction and compute the reference
+
+	contraction2<1, 1, 1> contr;
+	contr.contract(1, 1);
+	btod_contract2<1, 1, 1>(contr, bta, btb).perform(btc);
+
+	//	Check the zero block structure
+
+	block_tensor_ctrl<2, double> btcc(btc);
+	if(!btcc.req_is_zero_block(i_00)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Block [0,0] is expected to be zero.");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\test Runs \f$ c_{ij} = \sum_p a_{ip} b_{jp} \f$.
+	Dimensions: [ijp] = 10. No splitting points. No symmetry.
+
+	The single block of a is zero, b is non-zero. Initially, c is non-zero.
+	The result c is expected to have a single zero block.
+ **/
+void btod_contract2_test::test_zeroblk_2() throw(libtest::test_exception) {
+
+	static const char *testname = "btod_contract2_test::test_zeroblk_2()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<2> i21, i22;
+	i22[0] = 9; i22[1] = 9;
+	dimensions<2> dimsa(index_range<2>(i21, i22));
+	dimensions<2> dimsb(index_range<2>(i21, i22));
+	dimensions<2> dimsc(index_range<2>(i21, i22));
+	block_index_space<2> bisa(dimsa), bisb(dimsb);
+	block_index_space<2> bisc(dimsc);
+
+	block_tensor<2, double, allocator_t> bta(bisa);
+	block_tensor<2, double, allocator_t> btb(bisb);
+	block_tensor<2, double, allocator_t> btc(bisc);
+
+	//	Load random data for input
+
+	index<2> i_00;
+	btod_random<2>().perform(btb, i_00);
+	btod_random<2>().perform(btc);
+	bta.set_immutable();
+	btb.set_immutable();
+
+	//	Run contraction and compute the reference
+
+	contraction2<1, 1, 1> contr;
+	contr.contract(1, 1);
+	btod_contract2<1, 1, 1>(contr, bta, btb).perform(btc);
+
+	//	Check the zero block structure
+
+	block_tensor_ctrl<2, double> btcc(btc);
+	if(!btcc.req_is_zero_block(i_00)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Block [0,0] is expected to be zero.");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\test Runs \f$ c_{ij} = \sum_p a_{ip} b_{jp} \f$.
+	Dimensions: [ijp] = 10. No splitting points. No symmetry.
+
+	The single block of a is non-zero, b is zero. Initially, c is zero.
+	The result c is expected to have a single zero block.
+ **/
+void btod_contract2_test::test_zeroblk_3() throw(libtest::test_exception) {
+
+	static const char *testname = "btod_contract2_test::test_zeroblk_3()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<2> i21, i22;
+	i22[0] = 9; i22[1] = 9;
+	dimensions<2> dimsa(index_range<2>(i21, i22));
+	dimensions<2> dimsb(index_range<2>(i21, i22));
+	dimensions<2> dimsc(index_range<2>(i21, i22));
+	block_index_space<2> bisa(dimsa), bisb(dimsb);
+	block_index_space<2> bisc(dimsc);
+
+	block_tensor<2, double, allocator_t> bta(bisa);
+	block_tensor<2, double, allocator_t> btb(bisb);
+	block_tensor<2, double, allocator_t> btc(bisc);
+
+	//	Load random data for input
+
+	index<2> i_00;
+	btod_random<2>().perform(bta, i_00);
+	bta.set_immutable();
+	btb.set_immutable();
+
+	//	Run contraction and compute the reference
+
+	contraction2<1, 1, 1> contr;
+	contr.contract(1, 1);
+	btod_contract2<1, 1, 1>(contr, bta, btb).perform(btc);
+
+	//	Check the zero block structure
+
+	block_tensor_ctrl<2, double> btcc(btc);
+	if(!btcc.req_is_zero_block(i_00)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Block [0,0] is expected to be zero.");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\test Runs \f$ c_{ij} = \sum_p a_{ip} b_{jp} \f$.
+	Dimensions: [ijp] = 10. No splitting points. No symmetry.
+
+	The single block of a is non-zero, b is zero. Initially, c is non-zero.
+	The result c is expected to have a single zero block.
+ **/
+void btod_contract2_test::test_zeroblk_4() throw(libtest::test_exception) {
+
+	static const char *testname = "btod_contract2_test::test_zeroblk_4()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<2> i21, i22;
+	i22[0] = 9; i22[1] = 9;
+	dimensions<2> dimsa(index_range<2>(i21, i22));
+	dimensions<2> dimsb(index_range<2>(i21, i22));
+	dimensions<2> dimsc(index_range<2>(i21, i22));
+	block_index_space<2> bisa(dimsa), bisb(dimsb);
+	block_index_space<2> bisc(dimsc);
+
+	block_tensor<2, double, allocator_t> bta(bisa);
+	block_tensor<2, double, allocator_t> btb(bisb);
+	block_tensor<2, double, allocator_t> btc(bisc);
+
+	//	Load random data for input
+
+	index<2> i_00;
+	btod_random<2>().perform(bta, i_00);
+	btod_random<2>().perform(btc);
+	bta.set_immutable();
+	btb.set_immutable();
+
+	//	Run contraction and compute the reference
+
+	contraction2<1, 1, 1> contr;
+	contr.contract(1, 1);
+	btod_contract2<1, 1, 1>(contr, bta, btb).perform(btc);
+
+	//	Check the zero block structure
+
+	block_tensor_ctrl<2, double> btcc(btc);
+	if(!btcc.req_is_zero_block(i_00)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Block [0,0] is expected to be zero.");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\test Runs \f$ c_{ij} = \sum_p a_{ip} b_{jp} \f$.
+	Dimensions: [ijp] = 10. Splitting points: [ijp] = {5}. No symmetry.
+
+	Only diagonal blocks in a and b are non-zero. Initially, c is zero.
+	The result c is expected to have diagonal blocks non-zero and
+	off-diagonal blocks zero.
+ **/
+void btod_contract2_test::test_zeroblk_5() throw(libtest::test_exception) {
+
+	static const char *testname = "btod_contract2_test::test_zeroblk_5()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<2> i21, i22;
+	i22[0] = 9; i22[1] = 9;
+	dimensions<2> dimsa(index_range<2>(i21, i22));
+	dimensions<2> dimsb(index_range<2>(i21, i22));
+	dimensions<2> dimsc(index_range<2>(i21, i22));
+	block_index_space<2> bisa(dimsa);
+	mask<2> m2; m2[0] = true; m2[1] = true;
+	bisa.split(m2, 5);
+	block_index_space<2> bisb(bisa), bisc(bisa);
+
+	block_tensor<2, double, allocator_t> bta(bisa);
+	block_tensor<2, double, allocator_t> btb(bisb);
+	block_tensor<2, double, allocator_t> btc(bisc);
+
+	//	Load random data for input
+
+	index<2> i_00, i_01, i_10, i_11;
+	i_01[1] = 1; i_10[0] = 1;
+	i_11[0] = 1; i_11[1] = 1;
+	btod_random<2>().perform(bta, i_00);
+	btod_random<2>().perform(bta, i_11);
+	btod_random<2>().perform(btb, i_00);
+	btod_random<2>().perform(btb, i_11);
+	bta.set_immutable();
+	btb.set_immutable();
+
+	//	Run contraction and compute the reference
+
+	contraction2<1, 1, 1> contr;
+	contr.contract(1, 1);
+	btod_contract2<1, 1, 1>(contr, bta, btb).perform(btc);
+
+	//	Check the zero block structure
+
+	block_tensor_ctrl<2, double> btcc(btc);
+	if(btcc.req_is_zero_block(i_00)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Block [0,0] is expected to be non-zero.");
+	}
+	if(!btcc.req_is_zero_block(i_01)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Block [0,1] is expected to be zero.");
+	}
+	if(!btcc.req_is_zero_block(i_10)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Block [1,0] is expected to be zero.");
+	}
+	if(btcc.req_is_zero_block(i_11)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Block [1,1] is expected to be non-zero.");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\test Runs \f$ c_{ij} = \sum_p a_{ip} b_{jp} \f$.
+	Dimensions: [ijp] = 10. Splitting points: [ijp] = {5}. No symmetry.
+
+	Only diagonal blocks in a and b are non-zero. Initially, c is non-zero.
+	The result c is expected to have diagonal blocks non-zero and
+	off-diagonal blocks zero.
+ **/
+void btod_contract2_test::test_zeroblk_6() throw(libtest::test_exception) {
+
+	static const char *testname = "btod_contract2_test::test_zeroblk_6()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<2> i21, i22;
+	i22[0] = 9; i22[1] = 9;
+	dimensions<2> dimsa(index_range<2>(i21, i22));
+	dimensions<2> dimsb(index_range<2>(i21, i22));
+	dimensions<2> dimsc(index_range<2>(i21, i22));
+	block_index_space<2> bisa(dimsa);
+	mask<2> m2; m2[0] = true; m2[1] = true;
+	bisa.split(m2, 5);
+	block_index_space<2> bisb(bisa), bisc(bisa);
+
+	block_tensor<2, double, allocator_t> bta(bisa);
+	block_tensor<2, double, allocator_t> btb(bisb);
+	block_tensor<2, double, allocator_t> btc(bisc);
+
+	//	Load random data for input
+
+	index<2> i_00, i_01, i_10, i_11;
+	i_01[1] = 1; i_10[0] = 1;
+	i_11[0] = 1; i_11[1] = 1;
+	btod_random<2>().perform(bta, i_00);
+	btod_random<2>().perform(bta, i_11);
+	btod_random<2>().perform(btb, i_00);
+	btod_random<2>().perform(btb, i_11);
+	btod_random<2>().perform(btc);
+	bta.set_immutable();
+	btb.set_immutable();
+
+	//	Run contraction and compute the reference
+
+	contraction2<1, 1, 1> contr;
+	contr.contract(1, 1);
+	btod_contract2<1, 1, 1>(contr, bta, btb).perform(btc);
+
+	//	Check the zero block structure
+
+	block_tensor_ctrl<2, double> btcc(btc);
+	if(btcc.req_is_zero_block(i_00)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Block [0,0] is expected to be non-zero.");
+	}
+	if(!btcc.req_is_zero_block(i_01)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Block [0,1] is expected to be zero.");
+	}
+	if(!btcc.req_is_zero_block(i_10)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Block [1,0] is expected to be zero.");
+	}
+	if(btcc.req_is_zero_block(i_11)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Block [1,1] is expected to be non-zero.");
 	}
 
 	} catch(exception &e) {

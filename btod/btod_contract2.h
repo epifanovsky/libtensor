@@ -438,13 +438,25 @@ void btod_contract2<N, M, K>::do_perform(
 	orbit_list<k_orderc, double> orblstc(ctrl_btc.req_symmetry());
 	typename orbit_list<k_ordera, double>::iterator iorba = orblsta.begin();
 	for(; iorba != orblsta.end(); iorba++) {
+
+		//	Skip zero blocks in a
+		if(ctrl_bta.req_is_zero_block(orblsta.get_index(iorba)))
+			continue;
+
 		orbit<k_ordera, double> orba(ctrl_bta.req_symmetry(),
 			orblsta.get_index(iorba));
 		typename orbit_list<k_orderb, double>::iterator iorbb =
 			orblstb.begin();
 		for(; iorbb != orblstb.end(); iorbb++) {
+
+			//	Skip zero blocks in b
+			if(ctrl_btb.req_is_zero_block(orblstb.get_index(iorbb)))
+				continue;
+
 			orbit<k_orderb, double> orbb(ctrl_btb.req_symmetry(),
 				orblstb.get_index(iorbb));
+
+			//	Schedule individual contractions
 			make_schedule(sch, bidimsa, orba, bidimsb, orbb,
 				bidimsc, orblstc);
 		}
