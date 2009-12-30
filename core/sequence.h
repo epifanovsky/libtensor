@@ -3,6 +3,7 @@
 
 #include "defs.h"
 #include "exception.h"
+#include "out_of_bounds.h"
 #include "permutation.h"
 
 namespace libtensor {
