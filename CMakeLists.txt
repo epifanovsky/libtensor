@@ -1,10 +1,18 @@
 cmake_minimum_required(VERSION 2.6)
 project(LIBTENSOR)
 
-set(LIBTEST_SOURCE_DIR ${LIBTENSOR_SOURCE_DIR}/../libtest/src)
-set(LIBTEST_BINARY_DIR ${LIBTENSOR_SOURCE_DIR}/../libtest/build/src)
-set(LIBVMM_SOURCE_DIR ${LIBTENSOR_SOURCE_DIR}/../libvmm/src)
-set(LIBVMM_BINARY_DIR ${LIBTENSOR_SOURCE_DIR}/../libvmm/build/src)
+get_filename_component(LIBTEST_SOURCE_DIR
+	${LIBTENSOR_SOURCE_DIR}/../libtest/src
+	ABSOLUTE)
+get_filename_component(LIBTEST_BINARY_DIR
+	${LIBTENSOR_SOURCE_DIR}/../libtest/build/src
+	ABSOLUTE)
+get_filename_component(LIBVMM_SOURCE_DIR
+	${LIBTENSOR_SOURCE_DIR}/../libvmm/src
+	ABSOLUTE)
+get_filename_component(LIBVMM_BINARY_DIR
+	${LIBTENSOR_SOURCE_DIR}/../libvmm/build/src
+	ABSOLUTE)
 
 set(SRC
 	backtrace.C
@@ -51,30 +59,25 @@ set(CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/cmake)
 
 #	Check for Intel MKL
 find_package(MKL)
-if(MKL_FOUND)
-	set(HAVE_MKL TRUE)
-endif(MKL_FOUND)
 
 #	Check for CBLAS
 find_package(CBLAS)
-if(CBLAS_FOUND)
-	set(HAVE_CBLAS TRUE)
-endif(CBLAS_FOUND)
 
-set(HAVE_CLAPACK FALSE)
-set(HAVE_LAPACK FALSE)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH_SAVED})
 
 #	Set up compilation flags and paths
-if(HAVE_MKL)
+if(MKL_FOUND)
 	add_definitions(-DUSE_MKL)
 	include_directories(${MKL_INCLUDE_PATH})
 	set(BLAS_LIBS ${MKL_LIBRARIES})
-else(HAVE_MKL)
-if(HAVE_CBLAS)
-	add_definitions(-DUSE_CBLAS)
+else(MKL_FOUND)
+if(CBLAS_FOUND)
+	add_definitions(-DUSE_BLAS)
 	set(BLAS_LIBS ${CBLAS_LIBRARIES})
-endif(HAVE_CBLAS)
-endif(HAVE_MKL)
+else(CBLAS_FOUND)
+	message(FATAL_ERROR "Could not find a linear algebra library")
+endif(CBLAS_FOUND)
+endif(MKL_FOUND)
 
 
 set(LIBS ${BLAS_LIBS} ${SYSTEM_LIBS})
