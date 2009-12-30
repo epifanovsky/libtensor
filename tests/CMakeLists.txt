@@ -1,0 +1,83 @@
+#include_directories(${LIBVMM_SOURCE_DIR}/src)
+#link_directories(${LIBVMM_BINARY_DIR}/src)
+
+set(SRC
+	libtensor_tests.C
+	libtensor_suite.C
+	abs_index_test.C
+	anon_eval_test.C
+	bispace_test.C
+	bispace_expr_test.C
+	block_index_space_test.C
+	block_map_test.C
+	block_tensor_test.C
+	btensor_test.C
+	btod_add_test.C
+	btod_compare_test.C
+	btod_contract2_test.C
+	btod_copy_test.C
+	btod_dotprod_test.C
+	btod_import_raw_test.C
+	btod_mkdelta_test.C
+	btod_random_test.C
+	btod_read_test.C
+	btod_set_diag_test.C
+	btod_sum_test.C
+	contract_test.C
+	contraction2_test.C
+	contraction2_list_builder_test.C
+	dimensions_test.C
+	direct_btensor_test.C
+	direct_product_test.C
+	direct_tensor_test.C
+	dot_product_test.C
+	global_timings_test.C
+	immutable_test.C
+	index_test.C
+	index_range_test.C
+	labeled_btensor_test.C
+	letter_test.C
+	letter_expr_test.C
+	mask_test.C
+	orbit_test.C
+	orbit_list_test.C
+	permutation_test.C
+	permutation_builder_test.C
+	sequence_test.C
+	so_projdown_test.C
+	so_projup_test.C
+	symel_cycleperm_test.C
+	symm_test.C
+	symmetry_test.C
+	symmetry_element_base_test.C
+	tensor_test.C
+	timer_test.C
+	timings_test.C
+	tod_add_test.C
+	tod_btconv_test.C
+	tod_compare_test.C
+	tod_contract2_test.C
+	tod_copy_test.C
+	tod_delta_denom2_test.C
+	tod_dotprod_test.C
+	tod_import_raw_test.C
+	tod_mkdelta_test.C
+	tod_random_test.C
+	tod_set_test.C
+	tod_set_diag_test.C
+	tod_sum_test.C
+	tod_solve_test.C
+	tod_symcontract2_test.C
+	version_test.C
+)
+add_executable(libtensor_tests ${SRC})
+
+add_definitions(-DLIBVMM_DEBUG)
+add_definitions(-DLIBTENSOR_DEBUG)
+add_definitions(-g)
+
+target_link_libraries(libtensor_tests
+	tensor vmm test
+	${LIBS}
+)
+
