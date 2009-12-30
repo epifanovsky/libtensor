@@ -52,35 +52,46 @@ set(CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/cmake)
 #	Check for Intel MKL
 find_package(MKL)
 if(MKL_FOUND)
-	set(USE_MKL TRUE)
+	set(HAVE_MKL TRUE)
 endif(MKL_FOUND)
 
-set(USE_CBLAS FALSE)
-set(USE_CLAPACK FALSE)
-set(USE_LAPACK FALSE)
+#	Check for CBLAS
+find_package(CBLAS)
+if(CBLAS_FOUND)
+	set(HAVE_CBLAS TRUE)
+endif(CBLAS_FOUND)
+
+set(HAVE_CLAPACK FALSE)
+set(HAVE_LAPACK FALSE)
 
 #	Set up compilation flags and paths
-if(USE_MKL)
+if(HAVE_MKL)
 	add_definitions(-DUSE_MKL)
+	include_directories(${MKL_INCLUDE_PATH})
 	set(BLAS_LIBS ${MKL_LIBRARIES})
-endif(USE_MKL)
+else(HAVE_MKL)
+if(HAVE_CBLAS)
+	add_definitions(-DUSE_CBLAS)
+	set(BLAS_LIBS ${CBLAS_LIBRARIES})
+endif(HAVE_CBLAS)
+endif(HAVE_MKL)
 
 
 set(LIBS ${BLAS_LIBS} ${SYSTEM_LIBS})
 
-add_definitions(-I${LIBTEST_SOURCE_DIR})
+include_directories(${LIBTEST_SOURCE_DIR})
 add_library(test STATIC IMPORTED)
 set_target_properties(test PROPERTIES
 	IMPORTED_LOCATION ${LIBTEST_BINARY_DIR}/libtest.a
 )
 
-add_definitions(-I${LIBVMM_SOURCE_DIR})
+include_directories(${LIBVMM_SOURCE_DIR})
 add_library(vmm STATIC IMPORTED)
 set_target_properties(vmm PROPERTIES
 	IMPORTED_LOCATION ${LIBVMM_BINARY_DIR}/libvmm.a
 )
 
-add_definitions(-I${LIBTENSOR_SOURCE_DIR})
+include_directories(${LIBTENSOR_SOURCE_DIR})
 
 add_subdirectory(tests)
 #add_subdirectory(performance_tests)

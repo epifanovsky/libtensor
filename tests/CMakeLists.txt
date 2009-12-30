@@ -1,5 +1,3 @@
-#include_directories(${LIBVMM_SOURCE_DIR}/src)
-#link_directories(${LIBVMM_BINARY_DIR}/src)
 
 set(SRC
 	libtensor_tests.C
