@@ -50,6 +50,8 @@ if(CMAKE_USE_WIN32_THREADS_INIT)
 endif(CMAKE_USE_WIN32_THREADS_INIT)
 
 
+string(REGEX MATCH icpc IS_ICPC ${CMAKE_CXX_COMPILER})
+
 #
 #	Detect the linear algebra library
 #
@@ -66,18 +68,21 @@ find_package(CBLAS)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH_SAVED})
 
 #	Set up compilation flags and paths
-if(MKL_FOUND)
+if(IS_ICPC AND MKL_FOUND)
 	add_definitions(-DUSE_MKL)
 	include_directories(${MKL_INCLUDE_PATH})
 	set(BLAS_LIBS ${MKL_LIBRARIES})
-else(MKL_FOUND)
+	message(STATUS "Using MKL: " ${MKL_INCLUDE_PATH})
+else(IS_ICPC AND MKL_FOUND)
 if(CBLAS_FOUND)
 	add_definitions(-DUSE_BLAS)
+	include_directories(${CBLAS_INCLUDE_PATH})
 	set(BLAS_LIBS ${CBLAS_LIBRARIES})
+	message(STATUS "Using CBLAS: " ${CBLAS_INCLUDE_PATH})
 else(CBLAS_FOUND)
 	message(FATAL_ERROR "Could not find a linear algebra library")
 endif(CBLAS_FOUND)
-endif(MKL_FOUND)
+endif(IS_ICPC AND MKL_FOUND)
 
 
 set(LIBS ${BLAS_LIBS} ${SYSTEM_LIBS})
