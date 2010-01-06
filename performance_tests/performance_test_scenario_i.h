@@ -3,6 +3,7 @@
 
 #include <libtest.h>
 #include "exception.h"
+#include "core/out_of_bounds.h"
 #include <vector>
 #include <string>
 #include <utility>

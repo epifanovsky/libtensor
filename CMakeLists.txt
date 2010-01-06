@@ -39,5 +39,5 @@ include(CMakeEnv.txt)
 include_directories(${LIBTENSOR_SOURCE_DIR})
 
 add_subdirectory(tests)
-#add_subdirectory(performance_tests)
+add_subdirectory(performance_tests)
 
