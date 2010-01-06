@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.6)
 project(LIBTENSOR)
 
+set(LIBTENSOR_DIR ${LIBTENSOR_SOURCE_DIR})
 get_filename_component(LIBTEST_SOURCE_DIR
 	${LIBTENSOR_SOURCE_DIR}/../libtest/src
 	ABSOLUTE)
@@ -33,71 +34,7 @@ set(SRC
 
 add_library(tensor ${SRC})
 
-#	Detect whether the system is POSIX-compliant
-if(UNIX)
-	add_definitions(-DPOSIX)
-endif(UNIX)
-
-#       Detect the thread model
-find_package(Threads)
-if(CMAKE_USE_PTHREADS_INIT)
-	add_definitions(-DTHREAD=1)
-	set(SYSTEM_LIBS ${CMAKE_THREAD_LIBS_INIT})
-endif(CMAKE_USE_PTHREADS_INIT)
-if(CMAKE_USE_WIN32_THREADS_INIT)
-	add_definitions(-DTHREAD=2)
-	set(SYSTEM_LIBS ${CMAKE_THREAD_LIBS_INIT})
-endif(CMAKE_USE_WIN32_THREADS_INIT)
-
-
-string(REGEX MATCH icpc IS_ICPC ${CMAKE_CXX_COMPILER})
-
-#
-#	Detect the linear algebra library
-#
-
-set(CMAKE_MODULE_PATH_SAVED ${CMAKE_MODULE_PATH})
-set(CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/cmake)
-
-#	Check for Intel MKL
-find_package(MKL)
-
-#	Check for CBLAS
-find_package(CBLAS)
-
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH_SAVED})
-
-#	Set up compilation flags and paths
-if(IS_ICPC AND MKL_FOUND)
-	add_definitions(-DUSE_MKL)
-	include_directories(${MKL_INCLUDE_PATH})
-	set(BLAS_LIBS ${MKL_LIBRARIES})
-	message(STATUS "Using MKL: " ${MKL_INCLUDE_PATH})
-else(IS_ICPC AND MKL_FOUND)
-if(CBLAS_FOUND)
-	add_definitions(-DUSE_BLAS)
-	include_directories(${CBLAS_INCLUDE_PATH})
-	set(BLAS_LIBS ${CBLAS_LIBRARIES})
-	message(STATUS "Using CBLAS: " ${CBLAS_INCLUDE_PATH})
-else(CBLAS_FOUND)
-	message(FATAL_ERROR "Could not find a linear algebra library")
-endif(CBLAS_FOUND)
-endif(IS_ICPC AND MKL_FOUND)
-
-
-set(LIBS ${BLAS_LIBS} ${SYSTEM_LIBS})
-
-include_directories(${LIBTEST_SOURCE_DIR})
-add_library(test STATIC IMPORTED)
-set_target_properties(test PROPERTIES
-	IMPORTED_LOCATION ${LIBTEST_BINARY_DIR}/libtest.a
-)
-
-include_directories(${LIBVMM_SOURCE_DIR})
-add_library(vmm STATIC IMPORTED)
-set_target_properties(vmm PROPERTIES
-	IMPORTED_LOCATION ${LIBVMM_BINARY_DIR}/libvmm.a
-)
+include(CMakeEnv.txt)
 
 include_directories(${LIBTENSOR_SOURCE_DIR})
 
