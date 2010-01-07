@@ -131,6 +131,12 @@ public:
 			labeled %tensor
 	 **/
 	labeled_btensor<1, T, true> operator()(const letter &let);
+
+	/**	\brief Attaches a label to this %tensor and returns it as a
+			labeled %tensor
+	 **/
+	labeled_btensor<1, T, true> operator()(const letter_expr<1> &expr);
+
 };
 
 
@@ -229,6 +235,13 @@ inline labeled_btensor<1, T, true> btensor<1, T, Traits>::operator()(
 	const letter &let) {
 
 	return labeled_btensor<1, T, true>(*this, letter_expr<1>(let));
+}
+
+template<typename T, typename Traits>
+inline labeled_btensor<1, T, true> btensor<1, T, Traits>::operator()(
+	const letter_expr<1> &expr) {
+
+	return labeled_btensor<1, T, true>(*this, expr);
 }
 
 } // namespace libtensor

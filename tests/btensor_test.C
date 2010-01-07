@@ -3,7 +3,22 @@
 
 namespace libtensor {
 
+
 void btensor_test::perform() throw(libtest::test_exception) {
+
+	test_1();
+	test_2();
+}
+
+
+/**	\test Checks the dimensions of a new btensor
+ **/
+void btensor_test::test_1() throw(libtest::test_exception) {
+
+	static const char *testname = "btensor_test::test_1()";
+
+	try {
+
 	bispace<1> i_sp(10), a_sp(20);
 	i_sp.split(5); a_sp.split(5).split(10).split(15);
 	bispace<2> ia(i_sp|a_sp);
@@ -20,9 +35,40 @@ void btensor_test::perform() throw(libtest::test_exception) {
 			"Block tensor bt2 has the wrong dimension: a");
 	}
 
-//	letter i,j,k,l;
-//	bt(i|j|k|l);
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
 }
+
+
+/**	\test Checks operator() with various letter labels
+ **/
+void btensor_test::test_2() throw(libtest::test_exception) {
+
+	static const char *testname = "btensor_test::test_2()";
+
+	try {
+
+	bispace<1> s(10);
+	bispace<2> ss(s&s);
+
+	letter i, j;
+
+	btensor<1> bt1(s);
+	bt1(i);
+	letter_expr<1> le_i(i);
+	bt1(le_i);
+
+	btensor<2> bt2(ss);
+	bt2(i|j);
+	letter_expr<2> le_ij(i|j);
+	bt2(le_ij);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
 
 } // namespace libtensor
 
