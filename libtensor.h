@@ -32,6 +32,7 @@
 #include "core/orbit.h"
 #include "core/orbit_list.h"
 #include "core/symmetry_element_i.h"
+#include "core/symmetry_element_set.h"
 #include "core/symmetry.h"
 
 

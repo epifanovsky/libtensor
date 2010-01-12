@@ -48,6 +48,7 @@ set(SRC
 	symm_test.C
 	symmetry_test.C
 	symmetry_element_base_test.C
+	symmetry_element_set_test.C
 	tensor_test.C
 	timer_test.C
 	timings_test.C
