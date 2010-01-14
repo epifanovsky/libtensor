@@ -75,13 +75,13 @@ ifneq ($(MAKECMDGOALS),clean)
 endif
 
 include ../Makefile.inc
-INCLUDE += -I.. -I../../libtest -I../../libvmm
+INCLUDE += -I.. -I../../libtest/src -I../../libvmm/src
 
 .PHONY: deps
 deps: $(DEPS)
 
 libtensor_tests: libtensor_tests.o $(OBJS) ../libtensor.a
-	$(LD) $(LDFLAGS) libtensor_tests $^ ../../libtest/libtest.a $(LIBS) 
+	$(LD) $(LDFLAGS) libtensor_tests $^ ../../libtest/build/src/libtest.a $(LIBS) 
 
 .PHONY: clean
 clean:

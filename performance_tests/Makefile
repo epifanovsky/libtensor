@@ -12,14 +12,14 @@ ifneq ($(MAKECMDGOALS),clean)
 endif
 
 include ../Makefile.inc
-INCLUDE += -I.. -I../../libtest -I../../libvmm
+INCLUDE += -I.. -I../../libtest/src -I../../libvmm/src
 CPPFLAGS+= -DLIBTENSOR_TIMINGS
 
 .PHONY: deps
 deps: $(DEPS)
 
 libtensor_performance_tests: libtensor_performance_tests.o $(OBJS) ../libtensor.a
-	$(LD) $(LDFLAGS) libtensor_performance_tests $^ ../../libtest/libtest.a $(LIBS) 
+	$(LD) $(LDFLAGS) libtensor_performance_tests $^ ../../libtest/build/src/libtest.a $(LIBS) 
 
 .PHONY: clean
 clean:

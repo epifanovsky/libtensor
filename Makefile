@@ -8,7 +8,7 @@ Makefile.inc:
 
 include Makefile.inc
 
-INCLUDE += -I. -I../libvmm
+INCLUDE += -I. -I../libvmm/src
 
 OBJS  =
 OBJS += backtrace.o
