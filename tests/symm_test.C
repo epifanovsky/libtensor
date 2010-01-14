@@ -7,20 +7,29 @@ namespace libtensor {
 
 void symm_test::perform() throw(libtest::test_exception) {
 
-	test_symm_contr_tt_1();
-	test_symm_contr_ee_1();
-	test_asymm_contr_tt_1();
-	test_asymm_contr_tt_2();
-	test_asymm_contr_tt_3();
-	test_asymm_contr_tt_4();
-	test_asymm_contr_ee_1();
+	test_symm2_contr_tt_1();
+	test_symm2_contr_ee_1();
+	test_asymm2_contr_tt_1();
+	test_asymm2_contr_tt_2();
+	test_asymm2_contr_tt_3();
+	test_asymm2_contr_tt_4();
+	test_asymm2_contr_ee_1();
 
+	test_symm22_t_1();
+	test_asymm22_t_1();
+	test_symm22_t_2();
+	test_asymm22_t_2();
+
+	test_symm22_e_1();
+	test_asymm22_e_1();
+	test_symm22_e_2();
+	test_asymm22_e_2();
 }
 
 
-void symm_test::test_symm_contr_tt_1() throw(libtest::test_exception) {
+void symm_test::test_symm2_contr_tt_1() throw(libtest::test_exception) {
 
-	const char *testname = "symm_test::test_symm_contr_tt_1()";
+	const char *testname = "symm_test::test_symm2_contr_tt_1()";
 
 	try {
 
@@ -57,9 +66,9 @@ void symm_test::test_symm_contr_tt_1() throw(libtest::test_exception) {
 }
 
 
-void symm_test::test_symm_contr_ee_1() throw(libtest::test_exception) {
+void symm_test::test_symm2_contr_ee_1() throw(libtest::test_exception) {
 
-	const char *testname = "symm_test::test_symm_contr_ee_1()";
+	const char *testname = "symm_test::test_symm2_contr_ee_1()";
 
 	try {
 
@@ -114,9 +123,9 @@ void symm_test::test_symm_contr_ee_1() throw(libtest::test_exception) {
 }
 
 
-void symm_test::test_asymm_contr_tt_1() throw(libtest::test_exception) {
+void symm_test::test_asymm2_contr_tt_1() throw(libtest::test_exception) {
 
-	const char *testname = "asym_contract_test::test_asymm_contr_tt_1()";
+	const char *testname = "asym_contract_test::test_asymm2_contr_tt_1()";
 
 	try {
 
@@ -153,9 +162,9 @@ void symm_test::test_asymm_contr_tt_1() throw(libtest::test_exception) {
 }
 
 
-void symm_test::test_asymm_contr_tt_2() throw(libtest::test_exception) {
+void symm_test::test_asymm2_contr_tt_2() throw(libtest::test_exception) {
 
-	const char *testname = "symm_test::test_asymm_contr_tt_2()";
+	const char *testname = "symm_test::test_asymm2_contr_tt_2()";
 
 	try {
 
@@ -195,9 +204,9 @@ void symm_test::test_asymm_contr_tt_2() throw(libtest::test_exception) {
 }
 
 
-void symm_test::test_asymm_contr_tt_3() throw(libtest::test_exception) {
+void symm_test::test_asymm2_contr_tt_3() throw(libtest::test_exception) {
 
-	const char *testname = "symm_test::test_asymm_contr_tt_3()";
+	const char *testname = "symm_test::test_asymm2_contr_tt_3()";
 
 	try {
 
@@ -233,9 +242,9 @@ void symm_test::test_asymm_contr_tt_3() throw(libtest::test_exception) {
 }
 
 
-void symm_test::test_asymm_contr_tt_4() throw(libtest::test_exception) {
+void symm_test::test_asymm2_contr_tt_4() throw(libtest::test_exception) {
 
-	const char *testname = "symm_test::test_asymm_contr_tt_4()";
+	const char *testname = "symm_test::test_asymm2_contr_tt_4()";
 
 	try {
 
@@ -271,9 +280,9 @@ void symm_test::test_asymm_contr_tt_4() throw(libtest::test_exception) {
 }
 
 
-void symm_test::test_asymm_contr_ee_1() throw(libtest::test_exception) {
+void symm_test::test_asymm2_contr_ee_1() throw(libtest::test_exception) {
 
-	const char *testname = "symm_test::test_asymm_contr_ee_1()";
+	const char *testname = "symm_test::test_asymm2_contr_ee_1()";
 
 	try {
 
@@ -321,6 +330,336 @@ void symm_test::test_asymm_contr_ee_1() throw(libtest::test_exception) {
 		contract(i, t1a(a|c|d|i) + t1b(a|c|d|i), t2a(i|b) + t2b(i|b)));
 
 	compare_ref<4>::compare(testname, t3, t3_ref, 2e-14);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\test Tests the symmetrization over two pairs of indexes P+(ij)P+(ab)
+		in a %tensor
+ **/
+void symm_test::test_symm22_t_1() throw(libtest::test_exception) {
+
+	const char *testname = "symm_test::test_symm22_t_1()";
+
+	try {
+
+	bispace<1> sp_i(10), sp_a(20);
+	bispace<4> sp_ijab(sp_i&sp_i|sp_a&sp_a);
+
+	btensor<4> t1(sp_ijab), t2(sp_ijab), t2_ref(sp_ijab);
+
+	btod_random<4>().perform(t1);
+	btod_random<4>().perform(t2);
+	t1.set_immutable();
+
+	permutation<4> perm1; perm1.permute(0, 1); // ijab -> jiab
+	permutation<4> perm2; perm2.permute(2, 3); // ijab -> ijba
+	permutation<4> perm3(perm1); perm3.permute(perm2); // ijab -> jiba
+	btod_copy<4>(t1).perform(t2_ref);
+	btod_copy<4>(t1, perm1).perform(t2_ref, 1.0);
+	btod_copy<4>(t1, perm2).perform(t2_ref, 1.0);
+	btod_copy<4>(t1, perm3).perform(t2_ref, 1.0);
+
+	letter i, j, a, b;
+	t2(i|j|a|b) = symm(i|j, a|b, t1(i|j|a|b));
+
+	compare_ref<4>::compare(testname, t2, t2_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\test Tests the anti-symmetrization over two pairs of indexes
+		P-(ij)P-(ab) in a %tensor
+ **/
+void symm_test::test_asymm22_t_1() throw(libtest::test_exception) {
+
+	const char *testname = "symm_test::test_asymm22_t_1()";
+
+	try {
+
+	bispace<1> sp_i(10), sp_a(20);
+	bispace<4> sp_ijab(sp_i&sp_i|sp_a&sp_a);
+
+	btensor<4> t1(sp_ijab), t2(sp_ijab), t2_ref(sp_ijab);
+
+	btod_random<4>().perform(t1);
+	btod_random<4>().perform(t2);
+	t1.set_immutable();
+
+	permutation<4> perm1; perm1.permute(0, 1); // ijab -> jiab
+	permutation<4> perm2; perm2.permute(2, 3); // ijab -> ijba
+	permutation<4> perm3(perm1); perm3.permute(perm2); // ijab -> jiba
+	btod_copy<4>(t1).perform(t2_ref);
+	btod_copy<4>(t1, perm1).perform(t2_ref, -1.0);
+	btod_copy<4>(t1, perm2).perform(t2_ref, -1.0);
+	btod_copy<4>(t1, perm3).perform(t2_ref, 1.0);
+
+	letter i, j, a, b;
+	t2(i|j|a|b) = asymm(i|j, a|b, t1(i|j|a|b));
+
+	compare_ref<4>::compare(testname, t2, t2_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\test Tests the symmetrization over two pairs of indexes P+(i|jk)
+		in a %tensor
+ **/
+void symm_test::test_symm22_t_2() throw(libtest::test_exception) {
+
+	const char *testname = "symm_test::test_symm22_t_2()";
+
+	try {
+
+	bispace<1> sp_i(10), sp_a(20);
+	bispace<4> sp_ijka(sp_i&sp_i&sp_i|sp_a);
+
+	btensor<4> t1(sp_ijka), t2a(sp_ijka), t2b(sp_ijka), t2c(sp_ijka),
+		t2d(sp_ijka), t2_ref(sp_ijka);
+
+	btod_random<4>().perform(t1);
+	t1.set_immutable();
+
+	permutation<4> perm1; perm1.permute(0, 1); // ijka -> jika
+	permutation<4> perm2; perm2.permute(0, 2); // ijka -> kjia
+	btod_copy<4>(t1).perform(t2_ref);
+	btod_copy<4>(t1, perm1).perform(t2_ref, 1.0);
+	btod_copy<4>(t1, perm2).perform(t2_ref, 1.0);
+
+	letter i, j, k, a;
+	t2a(i|j|k|a) = symm(i|j, i|k, t1(i|j|k|a));
+	t2b(i|j|k|a) = symm(j|i, i|k, t1(i|j|k|a));
+	t2c(i|j|k|a) = symm(i|j, k|i, t1(i|j|k|a));
+	t2d(i|j|k|a) = symm(j|i, k|i, t1(i|j|k|a));
+
+	compare_ref<4>::compare(testname, t2a, t2_ref, 1e-15);
+	compare_ref<4>::compare(testname, t2b, t2_ref, 1e-15);
+	compare_ref<4>::compare(testname, t2c, t2_ref, 1e-15);
+	compare_ref<4>::compare(testname, t2d, t2_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\test Tests the anti-symmetrization over two pairs of indexes P-(i|jk)
+		in a %tensor
+ **/
+void symm_test::test_asymm22_t_2() throw(libtest::test_exception) {
+
+	const char *testname = "symm_test::test_asymm22_t_2()";
+
+	try {
+
+	bispace<1> sp_i(10), sp_a(20);
+	bispace<4> sp_ijka(sp_i&sp_i&sp_i|sp_a);
+
+	btensor<4> t1(sp_ijka), t2a(sp_ijka), t2b(sp_ijka), t2c(sp_ijka),
+		t2d(sp_ijka), t2_ref(sp_ijka);
+
+	btod_random<4>().perform(t1);
+	t1.set_immutable();
+
+	permutation<4> perm1; perm1.permute(0, 1); // ijka -> jika
+	permutation<4> perm2; perm2.permute(0, 2); // ijka -> kjia
+	btod_copy<4>(t1).perform(t2_ref);
+	btod_copy<4>(t1, perm1).perform(t2_ref, -1.0);
+	btod_copy<4>(t1, perm2).perform(t2_ref, -1.0);
+
+	letter i, j, k, a;
+	t2a(i|j|k|a) = asymm(i|j, i|k, t1(i|j|k|a));
+	t2b(i|j|k|a) = asymm(j|i, i|k, t1(i|j|k|a));
+	t2c(i|j|k|a) = asymm(i|j, k|i, t1(i|j|k|a));
+	t2d(i|j|k|a) = asymm(j|i, k|i, t1(i|j|k|a));
+
+	compare_ref<4>::compare(testname, t2a, t2_ref, 1e-15);
+	compare_ref<4>::compare(testname, t2b, t2_ref, 1e-15);
+	compare_ref<4>::compare(testname, t2c, t2_ref, 1e-15);
+	compare_ref<4>::compare(testname, t2d, t2_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\test Tests the symmetrization over two pairs of indexes P+(ij)P+(ab)
+		in an expression
+ **/
+void symm_test::test_symm22_e_1() throw(libtest::test_exception) {
+
+	const char *testname = "symm_test::test_symm22_e_1()";
+
+	try {
+
+	bispace<1> sp_i(10), sp_a(20);
+	bispace<4> sp_ijab(sp_i&sp_i|sp_a&sp_a);
+
+	btensor<4> t1a(sp_ijab), t1b(sp_ijab), t1(sp_ijab),
+		t2(sp_ijab), t2_ref(sp_ijab);
+
+	btod_random<4>().perform(t1a);
+	btod_random<4>().perform(t1b);
+	btod_random<4>().perform(t2);
+	t1a.set_immutable();
+	t1b.set_immutable();
+
+	permutation<4> perm1; perm1.permute(0, 1); // ijab -> jiab
+	permutation<4> perm2; perm2.permute(2, 3); // ijab -> ijba
+	permutation<4> perm3(perm1); perm3.permute(perm2); // ijab -> jiba
+	btod_copy<4>(t1a).perform(t1);
+	btod_copy<4>(t1b).perform(t1, 1.0);
+	btod_copy<4>(t1).perform(t2_ref);
+	btod_copy<4>(t1, perm1).perform(t2_ref, 1.0);
+	btod_copy<4>(t1, perm2).perform(t2_ref, 1.0);
+	btod_copy<4>(t1, perm3).perform(t2_ref, 1.0);
+
+	letter i, j, a, b;
+	t2(i|j|a|b) = symm(i|j, a|b, t1a(i|j|a|b) + t1b(i|j|a|b));
+
+	compare_ref<4>::compare(testname, t2, t2_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\test Tests the anti-symmetrization over two pairs of indexes
+		P-(ij)P-(ab) in an expression
+ **/
+void symm_test::test_asymm22_e_1() throw(libtest::test_exception) {
+
+	const char *testname = "symm_test::test_asymm22_e_1()";
+
+	try {
+
+	bispace<1> sp_i(10), sp_a(20);
+	bispace<4> sp_ijab(sp_i&sp_i|sp_a&sp_a);
+
+	btensor<4> t1a(sp_ijab), t1b(sp_ijab), t1(sp_ijab),
+		t2(sp_ijab), t2_ref(sp_ijab);
+
+	btod_random<4>().perform(t1a);
+	btod_random<4>().perform(t1b);
+	btod_random<4>().perform(t2);
+	t1a.set_immutable();
+	t1b.set_immutable();
+
+	permutation<4> perm1; perm1.permute(0, 1); // ijab -> jiab
+	permutation<4> perm2; perm2.permute(2, 3); // ijab -> ijba
+	permutation<4> perm3(perm1); perm3.permute(perm2); // ijab -> jiba
+	btod_copy<4>(t1a).perform(t1);
+	btod_copy<4>(t1b).perform(t1, 1.0);
+	btod_copy<4>(t1).perform(t2_ref);
+	btod_copy<4>(t1, perm1).perform(t2_ref, -1.0);
+	btod_copy<4>(t1, perm2).perform(t2_ref, -1.0);
+	btod_copy<4>(t1, perm3).perform(t2_ref, 1.0);
+
+	letter i, j, a, b;
+	t2(i|j|a|b) = asymm(i|j, a|b, t1a(i|j|a|b) + t1b(i|j|a|b));
+
+	compare_ref<4>::compare(testname, t2, t2_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\test Tests the symmetrization over two pairs of indexes P+(i|jk)
+		in an expression
+ **/
+void symm_test::test_symm22_e_2() throw(libtest::test_exception) {
+
+	const char *testname = "symm_test::test_symm22_e_2()";
+
+	try {
+
+	bispace<1> sp_i(10), sp_a(20);
+	bispace<4> sp_ijka(sp_i&sp_i&sp_i|sp_a);
+
+	btensor<4> t1a(sp_ijka), t1b(sp_ijka), t1(sp_ijka), t2a(sp_ijka),
+		t2b(sp_ijka), t2c(sp_ijka), t2d(sp_ijka), t2_ref(sp_ijka);
+
+	btod_random<4>().perform(t1a);
+	btod_random<4>().perform(t1b);
+	t1a.set_immutable();
+	t1b.set_immutable();
+
+	permutation<4> perm1; perm1.permute(0, 1); // ijka -> jika
+	permutation<4> perm2; perm2.permute(0, 2); // ijka -> kjia
+	btod_copy<4>(t1a).perform(t1);
+	btod_copy<4>(t1b).perform(t1, 1.0);
+	btod_copy<4>(t1).perform(t2_ref);
+	btod_copy<4>(t1, perm1).perform(t2_ref, 1.0);
+	btod_copy<4>(t1, perm2).perform(t2_ref, 1.0);
+
+	letter i, j, k, a;
+	t2a(i|j|k|a) = symm(i|j, i|k, t1a(i|j|k|a) + t1b(i|j|k|a));
+	t2b(i|j|k|a) = symm(j|i, i|k, t1a(i|j|k|a) + t1b(i|j|k|a));
+	t2c(i|j|k|a) = symm(i|j, k|i, t1a(i|j|k|a) + t1b(i|j|k|a));
+	t2d(i|j|k|a) = symm(j|i, k|i, t1a(i|j|k|a) + t1b(i|j|k|a));
+
+	compare_ref<4>::compare(testname, t2a, t2_ref, 1e-15);
+	compare_ref<4>::compare(testname, t2b, t2_ref, 1e-15);
+	compare_ref<4>::compare(testname, t2c, t2_ref, 1e-15);
+	compare_ref<4>::compare(testname, t2d, t2_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\test Tests the anti-symmetrization over two pairs of indexes P-(i|jk)
+		in an expression
+ **/
+void symm_test::test_asymm22_e_2() throw(libtest::test_exception) {
+
+	const char *testname = "symm_test::test_asymm22_e_2()";
+
+	try {
+
+	bispace<1> sp_i(10), sp_a(20);
+	bispace<4> sp_ijka(sp_i&sp_i&sp_i|sp_a);
+
+	btensor<4> t1a(sp_ijka), t1b(sp_ijka), t1(sp_ijka), t2a(sp_ijka),
+		t2b(sp_ijka), t2c(sp_ijka), t2d(sp_ijka), t2_ref(sp_ijka);
+
+	btod_random<4>().perform(t1a);
+	btod_random<4>().perform(t1b);
+	t1a.set_immutable();
+	t1b.set_immutable();
+
+	permutation<4> perm1; perm1.permute(0, 1); // ijka -> jika
+	permutation<4> perm2; perm2.permute(0, 2); // ijka -> kjia
+	btod_copy<4>(t1a).perform(t1);
+	btod_copy<4>(t1b).perform(t1, 1.0);
+	btod_copy<4>(t1).perform(t2_ref);
+	btod_copy<4>(t1, perm1).perform(t2_ref, -1.0);
+	btod_copy<4>(t1, perm2).perform(t2_ref, -1.0);
+
+	letter i, j, k, a;
+	t2a(i|j|k|a) = asymm(i|j, i|k, t1a(i|j|k|a) + t1b(i|j|k|a));
+	t2b(i|j|k|a) = asymm(j|i, i|k, t1a(i|j|k|a) + t1b(i|j|k|a));
+	t2c(i|j|k|a) = asymm(i|j, k|i, t1a(i|j|k|a) + t1b(i|j|k|a));
+	t2d(i|j|k|a) = asymm(j|i, k|i, t1a(i|j|k|a) + t1b(i|j|k|a));
+
+	compare_ref<4>::compare(testname, t2a, t2_ref, 1e-15);
+	compare_ref<4>::compare(testname, t2b, t2_ref, 1e-15);
+	compare_ref<4>::compare(testname, t2c, t2_ref, 1e-15);
+	compare_ref<4>::compare(testname, t2d, t2_ref, 1e-15);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());

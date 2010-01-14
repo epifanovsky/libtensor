@@ -3,6 +3,8 @@
 
 #include "symm2_core.h"
 #include "symm2_eval.h"
+#include "symm22_core.h"
+#include "symm22_eval.h"
 
 namespace libtensor {
 namespace labeled_btensor_expr {
@@ -84,7 +86,91 @@ asymm(
 	labeled_btensor<N, T, A> bt) {
 
 	typedef expr< N, T, core_ident<N, T, A> > sub_expr_t;
-	return symm(sym, sub_expr_t(bt));
+	return asymm(sym, sub_expr_t(bt));
+}
+
+
+/**	\brief Symmetrization of an expression over two pairs of indexes
+	\tparam N Tensor order.
+	\tparam T Tensor element type.
+	\tparam SubCore Sub-expression core.
+
+	\ingroup libtensor_btensor_expr_op
+ **/
+template<size_t N, typename T, typename SubCore>
+inline
+expr< N, T, symm22_core<N, true, T, SubCore> >
+symm(
+	const letter_expr<2> sym1,
+	const letter_expr<2> sym2,
+	expr<N, T, SubCore> subexpr) {
+
+	typedef expr<N, T, SubCore> sub_expr_t;
+	typedef symm22_core<N, true, T, SubCore> core_t;
+	typedef expr<N, T, core_t> expr_t;
+	return expr_t(core_t(sym1, sym2, subexpr));
+}
+
+
+/**	\brief Symmetrization of a %tensor over two pairs of indexes
+	\tparam N Tensor order.
+	\tparam T Tensor element type.
+	\tparam A Tensor assignable.
+
+	\ingroup libtensor_btensor_expr_op
+ **/
+template<size_t N, typename T, bool A>
+inline
+expr< N, T, symm22_core< N, true, T, core_ident<N, T, A> > >
+symm(
+	const letter_expr<2> sym1,
+	const letter_expr<2> sym2,
+	labeled_btensor<N, T, A> bt) {
+
+	typedef expr< N, T, core_ident<N, T, A> > sub_expr_t;
+	return symm(sym1, sym2, sub_expr_t(bt));
+}
+
+
+/**	\brief Anti-symmetrization of an expression over two pairs of indexes
+	\tparam N Tensor order.
+	\tparam T Tensor element type.
+	\tparam SubCore Sub-expression core.
+
+	\ingroup libtensor_btensor_expr_op
+ **/
+template<size_t N, typename T, typename SubCore>
+inline
+expr< N, T, symm22_core<N, false, T, SubCore> >
+asymm(
+	const letter_expr<2> sym1,
+	const letter_expr<2> sym2,
+	expr<N, T, SubCore> subexpr) {
+
+	typedef expr<N, T, SubCore> sub_expr_t;
+	typedef symm22_core<N, false, T, SubCore> core_t;
+	typedef expr<N, T, core_t> expr_t;
+	return expr_t(core_t(sym1, sym2, subexpr));
+}
+
+
+/**	\brief Anti-symmetrization of a %tensor over two pairs of indexes
+	\tparam N Tensor order.
+	\tparam T Tensor element type.
+	\tparam A Tensor assignable.
+
+	\ingroup libtensor_btensor_expr_op
+ **/
+template<size_t N, typename T, bool A>
+inline
+expr< N, T, symm22_core< N, false, T, core_ident<N, T, A> > >
+asymm(
+	const letter_expr<2> sym1,
+	const letter_expr<2> sym2,
+	labeled_btensor<N, T, A> bt) {
+
+	typedef expr< N, T, core_ident<N, T, A> > sub_expr_t;
+	return asymm(sym1, sym2, sub_expr_t(bt));
 }
 
 

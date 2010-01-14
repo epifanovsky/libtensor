@@ -14,14 +14,23 @@ public:
 	virtual void perform() throw(libtest::test_exception);
 
 private:
-	void test_symm_contr_tt_1() throw(libtest::test_exception);
-	void test_symm_contr_ee_1() throw(libtest::test_exception);
-	void test_asymm_contr_tt_1() throw(libtest::test_exception);
-	void test_asymm_contr_tt_2() throw(libtest::test_exception);
-	void test_asymm_contr_tt_3() throw(libtest::test_exception);
-	void test_asymm_contr_tt_4() throw(libtest::test_exception);
-	void test_asymm_contr_ee_1() throw(libtest::test_exception);
+	void test_symm2_contr_tt_1() throw(libtest::test_exception);
+	void test_symm2_contr_ee_1() throw(libtest::test_exception);
+	void test_asymm2_contr_tt_1() throw(libtest::test_exception);
+	void test_asymm2_contr_tt_2() throw(libtest::test_exception);
+	void test_asymm2_contr_tt_3() throw(libtest::test_exception);
+	void test_asymm2_contr_tt_4() throw(libtest::test_exception);
+	void test_asymm2_contr_ee_1() throw(libtest::test_exception);
 
+	void test_symm22_t_1() throw(libtest::test_exception);
+	void test_asymm22_t_1() throw(libtest::test_exception);
+	void test_symm22_t_2() throw(libtest::test_exception);
+	void test_asymm22_t_2() throw(libtest::test_exception);
+
+	void test_symm22_e_1() throw(libtest::test_exception);
+	void test_asymm22_e_1() throw(libtest::test_exception);
+	void test_symm22_e_2() throw(libtest::test_exception);
+	void test_asymm22_e_2() throw(libtest::test_exception);
 };
 
 } // namespace libtensor
