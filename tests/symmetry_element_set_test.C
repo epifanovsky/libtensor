@@ -1,3 +1,4 @@
+#include <typeinfo>
 #include <core/symmetry_element_set.h>
 #include "symmetry_element_set_test.h"
 
@@ -63,13 +64,12 @@ void symmetry_element_set_test::test_1() throw(libtest::test_exception) {
 	try {
 
 	symmetry_element_set<2, double> set("sym_elem_1");
-	typename symmetry_element_set<2, double>::iterator i1 = set.begin();
+	symmetry_element_set<2, double>::iterator i1 = set.begin();
 	if(i1 != set.end()) {
 		fail_test(testname, __FILE__, __LINE__,
 			"set.begin() != set.end() in empty set.");
 	}
-	typename symmetry_element_set<2, double>::const_iterator i2 =
-		set.begin();
+	symmetry_element_set<2, double>::const_iterator i2 = set.begin();
 	if(i2 != set.end()) {
 		fail_test(testname, __FILE__, __LINE__,
 			"set.begin() != set.end() in empty set (const).");
@@ -95,7 +95,7 @@ void symmetry_element_set_test::test_2() throw(libtest::test_exception) {
 
 	//	Test the validity of the iterator
 
-	typename symmetry_element_set<2, double>::iterator i1 = set.begin();
+	symmetry_element_set<2, double>::iterator i1 = set.begin();
 	if(i1 == set.end()) {
 		fail_test(testname, __FILE__, __LINE__,
 			"set.begin() == set.end() in non-empty set.");
@@ -163,8 +163,7 @@ void symmetry_element_set_test::test_3() throw(libtest::test_exception) {
 
 	//	Test the validity of the iterator
 
-	typename symmetry_element_set<2, double>::const_iterator i1 =
-		set.begin();
+	symmetry_element_set<2, double>::const_iterator i1 = set.begin();
 	if(i1 == set.end()) {
 		fail_test(testname, __FILE__, __LINE__,
 			"set.begin() == set.end() in non-empty set.");
