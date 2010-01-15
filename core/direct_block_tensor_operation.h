@@ -1,8 +1,8 @@
 #ifndef LIBTENSOR_DIRECT_BLOCK_TENSOR_OPERATION_H
 #define LIBTENSOR_DIRECT_BLOCK_TENSOR_OPERATION_H
 
-#include "defs.h"
-#include "exception.h"
+#include "../defs.h"
+#include "../exception.h"
 #include "block_index_space.h"
 #include "block_tensor_i.h"
 #include "symmetry.h"
