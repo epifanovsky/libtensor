@@ -41,6 +41,10 @@ void tod_sum_test::testop_set::perform(tensor_i<4,double> &t) throw(exception) {
 	tctrl.ret_dataptr(p);
 }
 
+void tod_sum_test::testop_set::perform(tensor_i<4,double> &t, double c)
+	throw(exception) {
+}
+
 void tod_sum_test::testop_add::perform(tensor_i<4,double> &t) throw(exception) {
 	size_t sz = t.get_dims().get_size();
 	tensor_ctrl<4,double> tctrl(t);
