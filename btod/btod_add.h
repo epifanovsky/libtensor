@@ -5,14 +5,15 @@
 #include <new>
 #include <vector>
 #include <utility>
-#include "defs.h"
-#include "exception.h"
-#include "timings.h"
-#include "core/block_tensor_i.h"
-#include "core/block_tensor_ctrl.h"
-#include "core/orbit_list.h"
-#include "tod/tod_add.h"
-#include "tod/tod_copy.h"
+#include "../defs.h"
+#include "../exception.h"
+#include "../timings.h"
+#include "../core/block_tensor_i.h"
+#include "../core/block_tensor_ctrl.h"
+#include "../core/orbit_list.h"
+#include "../tod/tod_add.h"
+#include "../tod/tod_copy.h"
+#include "bad_block_index_space.h"
 #include "btod_additive.h"
 #include "btod_so_copy.h"
 
@@ -91,8 +92,7 @@ public:
 			%dimensions or block structure.
 		\throw out_of_memory If memory allocation fails.
 	 **/
-	void add_op(block_tensor_i<N, double> &bt, double c = 1.0)
-		throw(bad_parameter, out_of_memory);
+	void add_op(block_tensor_i<N, double> &bt, double c = 1.0);
 
 	/**	\brief Adds an operand (block %tensor in the series)
 		\param bt Block %tensor.
@@ -103,7 +103,7 @@ public:
 		\throw out_of_memory If memory allocation fails.
 	 **/
 	void add_op(block_tensor_i<N, double> &bt, const permutation<N> &perm,
-		double c = 1.0) throw(bad_parameter, out_of_memory);
+		double c = 1.0);
 
 	//@}
 
@@ -189,8 +189,7 @@ btod_add<N>::~btod_add() {
 
 
 template<size_t N>
-void btod_add<N>::add_op(block_tensor_i<N, double> &bt, double c)
-	throw(bad_parameter, out_of_memory) {
+void btod_add<N>::add_op(block_tensor_i<N, double> &bt, double c) {
 
 	static const char *method =
 		"add_op(block_tensor_i<N, double>&, double)";
@@ -200,8 +199,8 @@ void btod_add<N>::add_op(block_tensor_i<N, double> &bt, double c)
 	block_index_space<N> bis(bt.get_bis());
 	bis.match_splits();
 	if(!m_bis.equals(bis)) {
-		throw bad_parameter("libtensor", k_clazz, method, __FILE__,
-			__LINE__, "Incompatible block index space.");
+		throw bad_block_index_space(g_ns, k_clazz, method, __FILE__,
+			__LINE__, "bt");
 	}
 
 	add_operand(bt, permutation<N>(), c, true);
@@ -210,8 +209,7 @@ void btod_add<N>::add_op(block_tensor_i<N, double> &bt, double c)
 
 template<size_t N>
 void btod_add<N>::add_op(block_tensor_i<N, double> &bt,
-	const permutation<N> &perm, double c)
-	throw(bad_parameter, out_of_memory) {
+	const permutation<N> &perm, double c) {
 
 	static const char *method = "add_op(block_tensor_i<N, double>&, "
 		"const permutation<N>&, double)";
@@ -222,8 +220,8 @@ void btod_add<N>::add_op(block_tensor_i<N, double> &bt,
 	bis.match_splits();
 	bis.permute(perm);
 	if(!m_bis.equals(bis)) {
-		throw bad_parameter("libtensor", k_clazz, method, __FILE__,
-			__LINE__, "Incompatible block index space.");
+		throw bad_block_index_space(g_ns, k_clazz, method, __FILE__,
+			__LINE__, "bt");
 	}
 
 	add_operand(bt, perm, c, true);
@@ -252,8 +250,8 @@ void btod_add<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 	block_index_space<N> bis(bt.get_bis());
 	bis.match_splits();
 	if(!m_bis.equals(bis)) {
-		throw bad_parameter("libtensor", k_clazz, method, __FILE__,
-			__LINE__, "Incompatible block index space.");
+		throw bad_block_index_space(g_ns, k_clazz, method, __FILE__,
+			__LINE__, "bt");
 	}
 
 	timings_base::start_timer();
