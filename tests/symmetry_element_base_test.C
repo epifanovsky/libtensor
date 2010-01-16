@@ -76,7 +76,7 @@ void symmetry_element_base_test::perform() throw(libtest::test_exception) {
 	ns::symel2 se2;
 	ns::tgt1 t1;
 
-	symmetry_element_i<1, int> &pse1 = se1, &pse2 = se2;
+	symmetry_element_iex<1, int> &pse1 = se1, &pse2 = se2;
 	symmetry_element_target_i<1, int> &pt1 = t1;
 
 	pse1.dispatch(pt1);

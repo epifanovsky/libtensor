@@ -44,10 +44,12 @@ public:
 
 
 template<size_t N, size_t M, typename T>
-so_projup<N, M, T>::so_projup(const symmetry_element_i<N, T> &elem,
+so_projup<N, M, T>::so_projup(const symmetry_element_i<N, T> &elem0,
 	const mask<N + M> &msk, const dimensions<N + M> &dims)
 : m_proj(msk, dims) {
 
+	const symmetry_element_iex<N, T> &elem =
+		dynamic_cast< const symmetry_element_iex<N, T>& >(elem0);
 	elem.dispatch(m_proj);
 }
 

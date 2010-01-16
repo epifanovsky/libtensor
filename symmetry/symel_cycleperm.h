@@ -212,9 +212,11 @@ void symel_cycleperm<N, T>::apply(index<N> &idx, transf<N, T> &tr) const {
 
 
 template<size_t N, typename T>
-bool symel_cycleperm<N, T>::equals(const symmetry_element_i<N, T> &se) const {
+bool symel_cycleperm<N, T>::equals(const symmetry_element_i<N, T> &se0) const {
 
 	equals_functor eq(*this);
+	const symmetry_element_iex<N, T> &se =
+		dynamic_cast< const symmetry_element_iex<N, T>& >(se0);
 	se.dispatch(eq);
 	return eq.get_equals();
 }

@@ -7,7 +7,7 @@
 #include "exception.h"
 #include "block_index_space.h"
 #include "dimensions.h"
-#include "symmetry_element_i.h"
+#include "symmetry_element_iex.h"
 
 namespace libtensor {
 
@@ -24,7 +24,7 @@ public:
 
 public:
 	//!	Symmetry element type
-	typedef symmetry_element_i<N, T> symmetry_element_t;
+	typedef symmetry_element_iex<N, T> symmetry_element_t;
 
 	//!	Iterator
 	typedef typename std::vector<symmetry_element_t*>::const_iterator
@@ -68,19 +68,19 @@ public:
 			nothing if the element is already in the set
 	`	\param elem Symmetry element.
 	 **/
-	void add_element(const symmetry_element_t &elem);
+	void add_element(const symmetry_element_i<N, T> &elem);
 
 	/**	\brief Removes a %symmetry element from the generating
 			set; does nothing if the element is not in the set
 		\param elem Symmetry element.
 	 **/
-	void remove_element(const symmetry_element_t &elem);
+	void remove_element(const symmetry_element_i<N, T> &elem);
 
 	/**	\brief Checks whether the generating set of the %symmetry
 			contains a given element
 		\param elem Symmetry element.
 	 **/
-	bool contains_element(const symmetry_element_t &elem) const;
+	bool contains_element(const symmetry_element_i<N, T> &elem) const;
 
 	/**	\brief Removes all elements from the generating set
 	 **/
@@ -151,7 +151,8 @@ symmetry<N, T>::symmetry(const symmetry<N, T> &sym) : m_bis(sym.m_bis) {
 	typename std::vector<symmetry_element_t*>::const_iterator i =
 		sym.m_elements.begin();
 	while(i != sym.m_elements.end()) {
-		m_elements.push_back((*i)->clone());
+		m_elements.push_back(dynamic_cast<symmetry_element_t*>(
+			(*i)->clone()));
 		i++;
 	}
 }
@@ -193,11 +194,13 @@ size_t symmetry<N, T>::get_num_elements() const {
 
 
 template<size_t N, typename T>
-void symmetry<N, T>::add_element(const symmetry_element_i<N, T> &elem) {
+void symmetry<N, T>::add_element(const symmetry_element_i<N, T> &elem0) {
 
 	static const char *method =
 		"add_element(const symmetry_element_i<N, T>&)";
 
+	const symmetry_element_iex<N, T> &elem =
+		dynamic_cast< const symmetry_element_iex<N, T>& >(elem0);
 	if(!elem.is_valid_bis(m_bis)) {
 		throw symmetry_violation(g_ns, k_clazz, method, __FILE__,
 			__LINE__, "Symmetry element is not applicable to "
@@ -213,7 +216,8 @@ void symmetry<N, T>::add_element(const symmetry_element_i<N, T> &elem) {
 		}
 		i++;
 	}
-	if(!found) m_elements.push_back(elem.clone());
+	if(!found) m_elements.push_back(dynamic_cast<symmetry_element_t*>(
+		elem.clone()));
 }
 
 

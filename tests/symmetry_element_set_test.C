@@ -34,15 +34,8 @@ public:
 	virtual void apply(index<N> &idx, transf<N, double> &tr) const {
 		throw 0;
 	}
-	virtual bool equals(const symmetry_element_i<N, double> &se) const {
-		throw 0;
-	}
 	virtual symmetry_element_i<N, double> *clone() const {
 		return new sym_elem_1(m_m, m_n + 1);
-	}
-	virtual void dispatch(symmetry_element_target_i<N, double> &tgt) const
-		throw(exception) {
-		throw 0;
 	}
 	size_t get_m() const { return m_m; }
 	size_t get_n() const { return m_n; }

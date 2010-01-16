@@ -3,7 +3,7 @@
 
 #include "defs.h"
 #include "exception.h"
-#include "core/symmetry_element_i.h"
+#include "core/symmetry_element_iex.h"
 #include "symmetry_element_target.h"
 
 namespace libtensor {
@@ -30,7 +30,7 @@ public:
 
 
 template<size_t N, typename T, typename ElemT>
-class symmetry_element_base : virtual public symmetry_element_i<N, T> {
+class symmetry_element_base : virtual public symmetry_element_iex<N, T> {
 public:
 	typedef symmetry_element_i<N, T> parent_t;
 
