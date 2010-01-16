@@ -43,6 +43,7 @@
 #include "permutation_test.h"
 #include "permutation_builder_test.h"
 #include "sequence_test.h"
+#include "se_perm_test.h"
 #include "so_projdown_test.h"
 #include "so_projup_test.h"
 #include "symel_cycleperm_test.h"
@@ -118,6 +119,7 @@ namespace libtensor {
 	\li libtensor::permutation_test
 	\li libtensor::permutation_builder_test
 	\li libtensor::sequence_test
+	\li libtensor::se_perm_test
 	\li libtensor::so_projdown_test
 	\li libtensor::so_projup_test
 	\li libtensor::symel_cycleperm_test
@@ -188,6 +190,7 @@ private:
 	unit_test_factory<permutation_test> m_utf_permutation;
 	unit_test_factory<permutation_builder_test> m_utf_permutation_builder;
 	unit_test_factory<sequence_test> m_utf_sequence;
+	unit_test_factory<se_perm_test> m_utf_se_perm;
 	unit_test_factory<so_projdown_test> m_utf_so_projdown;
 	unit_test_factory<so_projup_test> m_utf_so_projup;
 	unit_test_factory<symel_cycleperm_test> m_utf_symel_cycleperm;

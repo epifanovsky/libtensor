@@ -4,8 +4,9 @@
 #include <cstdio>
 #include <iostream>
 
-#include "defs.h"
-#include "exception.h"
+#include "../defs.h"
+#include "../exception.h"
+#include "out_of_bounds.h"
 
 namespace libtensor {
 

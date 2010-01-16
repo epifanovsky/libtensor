@@ -7,6 +7,7 @@
 #include "../core/sequence.h"
 #include "../core/symmetry_element_i.h"
 #include "../core/transf.h"
+#include "bad_symmetry.h"
 
 namespace libtensor {
 
@@ -32,7 +33,7 @@ namespace libtensor {
 	\ingroup libtensor_symmetry
  **/
 template<size_t N, typename T>
-class se_perm {
+class se_perm : public symmetry_element_i<N, T> {
 public:
 	static const char *k_clazz; //!< Class name
 	static const char *k_sym_type; //!< Symmetry type
@@ -64,27 +65,32 @@ public:
 	//@}
 
 
+	//!	\name Permutational %symmetry
+	//@{
+
+	const transf<N, T> &get_transf() const {
+		return m_transf;
+	}
+
+
 	//!	\name Implementation of symmetry_element_i<N, T>
 	//@{
 
 	/**	\copydoc symmetry_element_i<N, T>::get_type()
 	 **/
 	virtual const char *get_type() const {
-
 		return k_sym_type;
 	}
 
 	/**	\copydoc symmetry_element_i<N, T>::clone()
 	 **/
 	virtual symmetry_element_i<N, T> *clone() const {
-
 		return new se_perm<N, T>(*this);
 	}
 
 	/**	\copydoc symmetry_element_i<N, T>::get_mask
 	 **/
 	virtual const mask<N> &get_mask() const {
-
 		return m_mask;
 	}
 
@@ -122,7 +128,7 @@ public:
 	virtual void apply(index<N> &idx, transf<N, T> &tr) const {
 
 		idx.permute(m_transf.get_perm());
-		tr.transf(m_transf);
+		tr.transform(m_transf);
 	}
 
 	//@}
@@ -151,7 +157,7 @@ se_perm<N, T>::se_perm(const permutation<N> &perm, bool symm) {
 	permutation<N> p(perm);
 	do {
 		p.permute(perm); n++;
-	} while(!p.equals(perm));
+	} while(!p.is_identity());
 
 	if(n % 2 == 0 && !symm) {
 		throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
@@ -172,6 +178,15 @@ template<size_t N, typename T>
 se_perm<N, T>::se_perm(const se_perm<N, T> &elem) :
 	m_transf(elem.m_transf), m_mask(elem.m_mask) {
 
+}
+
+
+template<size_t N, typename T>
+bool se_perm<N, T>::is_valid_bis(const block_index_space<N> &bis) const {
+
+	block_index_space<N> bis2(bis);
+	bis2.permute(m_transf.get_perm());
+	return bis2.equals(bis);
 }
 
 

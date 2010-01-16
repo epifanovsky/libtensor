@@ -45,6 +45,7 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("permutation", m_utf_permutation);
 	add_test("permutation_builder", m_utf_permutation_builder);
 	add_test("sequence", m_utf_sequence);
+	add_test("se_perm", m_utf_se_perm);
 	add_test("so_projdown", m_utf_so_projdown);
 	add_test("so_projup", m_utf_so_projup);
 	add_test("symel_cycleperm", m_utf_symel_cycleperm);

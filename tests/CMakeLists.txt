@@ -42,6 +42,7 @@ set(SRC
 	permutation_test.C
 	permutation_builder_test.C
 	sequence_test.C
+	se_perm_test.C
 	so_projdown_test.C
 	so_projup_test.C
 	symel_cycleperm_test.C
