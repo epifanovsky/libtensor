@@ -57,6 +57,10 @@ void symmetry_element_set_test::test_1() throw(libtest::test_exception) {
 	try {
 
 	symmetry_element_set<2, double> set("sym_elem_1");
+	if(!set.is_empty()) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!set.is_empty() in empty set.");
+	}
 	symmetry_element_set<2, double>::iterator i1 = set.begin();
 	if(i1 != set.end()) {
 		fail_test(testname, __FILE__, __LINE__,
@@ -130,6 +134,10 @@ void symmetry_element_set_test::test_2() throw(libtest::test_exception) {
 
 	i1 = set.begin();
 	set.remove(i1);
+	if(!set.is_empty()) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!set.is_empty() in empty set.");
+	}
 	if(set.begin() != set.end()) {
 		fail_test(testname, __FILE__, __LINE__,
 			"set.begin() != set.end() in empty set.");

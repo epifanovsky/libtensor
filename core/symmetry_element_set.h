@@ -53,6 +53,13 @@ public:
 	}
 
 
+	/**	\brief Returns true if the set is empty
+	 **/
+	bool is_empty() const {
+		return m_set.empty();
+	}
+
+
 	/**	\brief Returns an iterator pointing at the first element in
 			the set
 	 **/
