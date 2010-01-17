@@ -29,6 +29,10 @@ public:
 	symmetry_element_set_adapter(const symmetry_element_set<N, T> &set) :
 		m_set(set) { }
 
+	bool is_empty() const {
+		return m_set.is_empty();
+	}
+
 	iterator begin() const {
 		return m_set.begin();
 	}

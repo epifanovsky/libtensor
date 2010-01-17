@@ -64,6 +64,10 @@ void symmetry_element_set_adapter_test::test_1()
 	symmetry_element_set_t set("sym_elem_1");
 	symmetry_element_set_adapter_t adapter(set);
 
+	if(!adapter.is_empty()) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!adapter.is_empty() in empty set.");
+	}
 	symmetry_element_set_adapter_t::iterator i = adapter.begin();
 	if(i != adapter.end()) {
 		fail_test(testname, __FILE__, __LINE__,
