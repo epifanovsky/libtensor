@@ -38,6 +38,9 @@ public:
 	//@{
 
 	mask<N> &operator|=(const mask<N> &other);
+	mask<N> operator|(const mask<N> &other);
+	mask<N> &operator&=(const mask<N> &other);
+	mask<N> operator&(const mask<N> &other);
 
 	//@}
 };
@@ -74,6 +77,44 @@ mask<N> &mask<N>::operator|=(const mask<N> &other) {
 				other.sequence<N, bool>::at_nochk(i);
 	}
 	return *this;
+}
+
+
+template<size_t N>
+mask<N> mask<N>::operator|(const mask<N> &other) {
+
+	mask<N> m;
+	for(register size_t i = 0; i < N; i++) {
+		m.sequence<N, bool>::at_nochk(i) =
+			sequence<N, bool>::at_nochk(i) ||
+			other.sequence<N, bool>::at_nochk(i);
+	}
+	return m;
+}
+
+
+template<size_t N>
+mask<N> &mask<N>::operator&=(const mask<N> &other) {
+
+	for(register size_t i = 0; i < N; i++) {
+		sequence<N, bool>::at_nochk(i) =
+			sequence<N, bool>::at_nochk(i) &&
+				other.sequence<N, bool>::at_nochk(i);
+	}
+	return *this;
+}
+
+
+template<size_t N>
+mask<N> mask<N>::operator&(const mask<N> &other) {
+
+	mask<N> m;
+	for(register size_t i = 0; i < N; i++) {
+		m.sequence<N, bool>::at_nochk(i) =
+			sequence<N, bool>::at_nochk(i) &&
+			other.sequence<N, bool>::at_nochk(i);
+	}
+	return m;
 }
 
 

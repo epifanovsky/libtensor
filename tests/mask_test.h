@@ -13,6 +13,12 @@ class mask_test : public libtest::unit_test {
 public:
 	virtual void perform() throw(libtest::test_exception);
 
+private:
+	void test_op_1() throw(libtest::test_exception);
+	void test_op_2() throw(libtest::test_exception);
+	void test_op_3() throw(libtest::test_exception);
+	void test_op_4() throw(libtest::test_exception);
+
 };
 
 } // namespace libtensor
