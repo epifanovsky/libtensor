@@ -60,6 +60,13 @@ public:
 	}
 
 
+	/**	\brief Removes all elements from the set
+	 **/
+	void clear() {
+		m_set.clear();
+	}
+
+
 	/**	\brief Returns an iterator pointing at the first element in
 			the set
 	 **/

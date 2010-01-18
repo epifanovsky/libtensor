@@ -202,6 +202,17 @@ void symmetry_element_set_test::test_3() throw(libtest::test_exception) {
 			"The set contains more than one element.");
 	}
 
+	//	Remove all elements and check the iterator
+	set.clear();
+	if(!set.is_empty()) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!set.is_empty() in empty set.");
+	}
+	if(set.begin() != set.end()) {
+		fail_test(testname, __FILE__, __LINE__,
+			"set.begin() != set.end() in empty set.");
+	}
+
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
 	}
