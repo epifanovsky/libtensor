@@ -28,6 +28,14 @@ void se_perm_test::test_sym_ab_ba() throw(libtest::test_exception) {
 	perm.permute(0, 1);
 	se_perm<2, double> elem(perm, true);
 
+	if(!elem.is_symm()) {
+		fail_test(testname, __FILE__, __LINE__, "!elem.is_symm()");
+	}
+	if(!elem.get_perm().equals(perm)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!elem.get_perm().equals(perm)");
+	}
+
 	const transf<2, double> &tr = elem.get_transf();
 	const mask<2> &m = elem.get_mask();
 
@@ -89,6 +97,14 @@ void se_perm_test::test_asym_ab_ba() throw(libtest::test_exception) {
 	perm.permute(0, 1);
 	se_perm<2, double> elem(perm, false);
 
+	if(elem.is_symm()) {
+		fail_test(testname, __FILE__, __LINE__, "elem.is_symm()");
+	}
+	if(!elem.get_perm().equals(perm)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!elem.get_perm().equals(perm)");
+	}
+
 	const transf<2, double> &tr = elem.get_transf();
 	const mask<2> &m = elem.get_mask();
 
@@ -149,6 +165,14 @@ void se_perm_test::test_sym_abc_bca() throw(libtest::test_exception) {
 	permutation<3> perm;
 	perm.permute(0, 1).permute(1, 2);
 	se_perm<3, double> elem(perm, true);
+
+	if(!elem.is_symm()) {
+		fail_test(testname, __FILE__, __LINE__, "!elem.is_symm()");
+	}
+	if(!elem.get_perm().equals(perm)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!elem.get_perm().equals(perm)");
+	}
 
 	const transf<3, double> &tr = elem.get_transf();
 	const mask<3> &m = elem.get_mask();
@@ -242,6 +266,14 @@ void se_perm_test::test_sym_abcd_badc() throw(libtest::test_exception) {
 	perm.permute(0, 1).permute(2, 3);
 	se_perm<4, double> elem(perm, true);
 
+	if(!elem.is_symm()) {
+		fail_test(testname, __FILE__, __LINE__, "!elem.is_symm()");
+	}
+	if(!elem.get_perm().equals(perm)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!elem.get_perm().equals(perm)");
+	}
+
 	const transf<4, double> &tr = elem.get_transf();
 	const mask<4> &m = elem.get_mask();
 	mask<4> m_ref;
@@ -313,6 +345,14 @@ void se_perm_test::test_asym_abcd_badc() throw(libtest::test_exception) {
 	permutation<4> perm;
 	perm.permute(0, 1).permute(2, 3);
 	se_perm<4, double> elem(perm, false);
+
+	if(elem.is_symm()) {
+		fail_test(testname, __FILE__, __LINE__, "elem.is_symm()");
+	}
+	if(!elem.get_perm().equals(perm)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!elem.get_perm().equals(perm)");
+	}
 
 	const transf<4, double> &tr = elem.get_transf();
 	const mask<4> &m = elem.get_mask();

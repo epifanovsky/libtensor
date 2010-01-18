@@ -39,6 +39,8 @@ public:
 	static const char *k_sym_type; //!< Symmetry type
 
 private:
+	permutation<N> m_perm; //!< Permutation
+	bool m_symm; //!< Symmetric/anti-symmetric
 	transf<N, T> m_transf; //!< Block transformation
 	mask<N> m_mask; //!< Mask of affected indexes
 
@@ -67,6 +69,14 @@ public:
 
 	//!	\name Permutational %symmetry
 	//@{
+
+	const permutation<N> &get_perm() const {
+		return m_perm;
+	}
+
+	bool is_symm() const {
+		return m_symm;
+	}
 
 	const transf<N, T> &get_transf() const {
 		return m_transf;
@@ -144,7 +154,8 @@ const char *se_perm<N, T>::k_sym_type = "perm";
 
 
 template<size_t N, typename T>
-se_perm<N, T>::se_perm(const permutation<N> &perm, bool symm) {
+se_perm<N, T>::se_perm(const permutation<N> &perm, bool symm) :
+	m_perm(perm), m_symm(symm) {
 
 	static const char *method = "se_perm(const permutation<N>&, bool)";
 
@@ -154,18 +165,18 @@ se_perm<N, T>::se_perm(const permutation<N> &perm, bool symm) {
 	}
 
 	size_t n = 0;
-	permutation<N> p(perm);
+	permutation<N> p(m_perm);
 	do {
-		p.permute(perm); n++;
+		p.permute(m_perm); n++;
 	} while(!p.is_identity());
 
-	if(n % 2 == 0 && !symm) {
+	if(n % 2 == 0 && !m_symm) {
 		throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
 			"perm");
 	}
 
-	m_transf.permute(perm);
-	if(!symm) m_transf.scale(-1);
+	m_transf.permute(m_perm);
+	if(!m_symm) m_transf.scale(-1);
 
 	size_t seq[N];
 	for(size_t i = 0; i < N; i++) seq[i] = i;
@@ -176,7 +187,8 @@ se_perm<N, T>::se_perm(const permutation<N> &perm, bool symm) {
 
 template<size_t N, typename T>
 se_perm<N, T>::se_perm(const se_perm<N, T> &elem) :
-	m_transf(elem.m_transf), m_mask(elem.m_mask) {
+	m_perm(elem.m_perm), m_symm(elem.m_symm), m_transf(elem.m_transf),
+	m_mask(elem.m_mask) {
 
 }
 
@@ -185,7 +197,7 @@ template<size_t N, typename T>
 bool se_perm<N, T>::is_valid_bis(const block_index_space<N> &bis) const {
 
 	block_index_space<N> bis2(bis);
-	bis2.permute(m_transf.get_perm());
+	bis2.permute(m_perm);
 	return bis2.equals(bis);
 }
 
