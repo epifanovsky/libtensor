@@ -18,11 +18,12 @@ namespace symmetry_element_set_test_ns {
 template<size_t N>
 class sym_elem_1 : public symmetry_element_i<N, double> {
 private:
+	static size_t m_count;
 	size_t m_m, m_n;
 
 public:
-	sym_elem_1(size_t m) : m_m(m), m_n(0) { }
-	virtual ~sym_elem_1() { }
+	sym_elem_1(size_t m) : m_m(m), m_n(0) { m_count++; }
+	virtual ~sym_elem_1() { m_count--; }
 	virtual const char *get_type() const { return "sym_elem_1"; }
 	virtual const mask<N> &get_mask() const { throw 0; }
 	virtual void permute(const permutation<N> &perm) { throw 0; }
@@ -39,10 +40,14 @@ public:
 	}
 	size_t get_m() const { return m_m; }
 	size_t get_n() const { return m_n; }
+	static size_t get_count() { return m_count; }
 
 private:
-	sym_elem_1(size_t m, size_t n) : m_m(m), m_n(n) { }
+	sym_elem_1(size_t m, size_t n) : m_m(m), m_n(n) { m_count++; }
 };
+
+template<size_t N>
+size_t sym_elem_1<N>::m_count = 0;
 
 }
 using namespace symmetry_element_set_test_ns;
@@ -89,6 +94,12 @@ void symmetry_element_set_test::test_2() throw(libtest::test_exception) {
 	sym_elem_1<2> e1(1); // This object has n=0, its clones have n!=0
 	symmetry_element_set<2, double> set("sym_elem_1");
 	set.insert(e1);
+
+	//	One instance is local (e1) + one inside set
+	if(sym_elem_1<2>::get_count() != 2) {
+		fail_test(testname, __FILE__, __LINE__,
+			"sym_elem_1<2>::get_count() != 2 (1).");
+	}
 
 	//	Test the validity of the iterator
 
@@ -143,6 +154,13 @@ void symmetry_element_set_test::test_2() throw(libtest::test_exception) {
 			"set.begin() != set.end() in empty set.");
 	}
 
+	//	Check for memory leaks. Only one local instance should exist
+
+	if(sym_elem_1<2>::get_count() != 1) {
+		fail_test(testname, __FILE__, __LINE__,
+			"sym_elem_1<2>::get_count() != 1 (1).");
+	}
+
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
 	}
@@ -161,6 +179,12 @@ void symmetry_element_set_test::test_3() throw(libtest::test_exception) {
 	sym_elem_1<2> e1(1); // This object has n=0, its clones have n!=0
 	symmetry_element_set<2, double> set("sym_elem_1");
 	set.insert(e1);
+
+	//	One instance is local (e1) + one inside set
+	if(sym_elem_1<2>::get_count() != 2) {
+		fail_test(testname, __FILE__, __LINE__,
+			"sym_elem_1<2>::get_count() != 2 (1).");
+	}
 
 	//	Test the validity of the iterator
 
@@ -211,6 +235,13 @@ void symmetry_element_set_test::test_3() throw(libtest::test_exception) {
 	if(set.begin() != set.end()) {
 		fail_test(testname, __FILE__, __LINE__,
 			"set.begin() != set.end() in empty set.");
+	}
+
+	//	Check for memory leaks. Only one local instance should exist
+
+	if(sym_elem_1<2>::get_count() != 1) {
+		fail_test(testname, __FILE__, __LINE__,
+			"sym_elem_1<2>::get_count() != 1 (1).");
 	}
 
 	} catch(exception &e) {

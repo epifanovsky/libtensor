@@ -63,7 +63,7 @@ public:
 	/**	\brief Removes all elements from the set
 	 **/
 	void clear() {
-		m_set.clear();
+		remove_all();
 	}
 
 
@@ -124,8 +124,12 @@ public:
 	/**	\brief Removes a %symmetry element from the set
 	 **/
 	void remove(iterator &i) {
+		delete *i;
 		m_set.erase(i);
 	}
+
+private:
+	void remove_all() throw();
 
 };
 
@@ -137,9 +141,17 @@ const char *symmetry_element_set<N, T>::k_clazz = "symmetry_element_set<N, T>";
 template<size_t N, typename T>
 symmetry_element_set<N, T>::~symmetry_element_set() {
 
+	remove_all();
+}
+
+
+template<size_t N, typename T>
+void symmetry_element_set<N, T>::remove_all() throw() {
+
 	for(iterator i = m_set.begin(); i != m_set.end(); i++) {
 		delete *i;
 	}
+	m_set.clear();
 }
 
 
