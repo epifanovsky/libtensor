@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_BTOD_SET_DIAG_TEST_H
 #define LIBTENSOR_BTOD_SET_DIAG_TEST_H
 
-#include <libtest.h>
+#include <libtest/unit_test.h>
 #include <libtensor.h>
 
 namespace libtensor {

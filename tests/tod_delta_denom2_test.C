@@ -1,5 +1,5 @@
 #include <libtensor.h>
-#include <libvmm.h>
+#include <libvmm/std_allocator.h>
 #include "tod_delta_denom2_test.h"
 #include "compare_ref.h"
 

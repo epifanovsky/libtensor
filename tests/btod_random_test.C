@@ -1,7 +1,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <ctime>
-#include <libvmm.h>
+#include <libvmm/std_allocator.h>
 #include <libtensor.h>
 #include "compare_ref.h"
 #include "btod_random_test.h"

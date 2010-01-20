@@ -1,5 +1,5 @@
 #include <sstream>
-#include <libvmm.h>
+#include <libvmm/std_allocator.h>
 #include <libtensor.h>
 #include "btod_contract2_test.h"
 #include "compare_ref.h"

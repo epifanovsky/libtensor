@@ -3,7 +3,7 @@
 
 #include <cmath>
 #include <cstdlib>
-#include <libtest.h>
+#include <libtest/unit_test.h>
 #include <libtensor.h>
 
 namespace libtensor {

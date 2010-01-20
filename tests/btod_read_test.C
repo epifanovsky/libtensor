@@ -1,6 +1,6 @@
 #include <sstream>
 #include <libtensor.h>
-#include <libvmm.h>
+#include <libvmm/std_allocator.h>
 #include "btod_read_test.h"
 #include "compare_ref.h"
 

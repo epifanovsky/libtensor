@@ -1,4 +1,4 @@
-#include <libvmm.h>
+#include <libvmm/std_allocator.h>
 #include "direct_tensor_test.h"
 
 namespace libtensor {

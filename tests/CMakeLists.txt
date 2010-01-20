@@ -1,4 +1,3 @@
-
 set(SRC
 	libtensor_tests.C
 	libtensor_suite.C
@@ -70,12 +69,13 @@ set(SRC
 )
 add_executable(libtensor_tests ${SRC})
 
-add_definitions(-DLIBVMM_DEBUG)
+include(${LIBTEST_DIR}/cmake/SetupLibTest.txt)
+#include(${LIBVMM_DIR}/cmake/SetupLibVmm.txt)
+#include(${LIBTENSOR_DIR}/cmake/DepsLibTensor.txt)
+
+include_directories(${LIBTENSOR_DIR})
 add_definitions(-DLIBTENSOR_DEBUG)
 add_definitions(-g)
-
 target_link_libraries(libtensor_tests
-	tensor vmm test
-	${LIBS}
-)
+	tensor ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} test)
 

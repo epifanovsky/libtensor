@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <sstream>
-#include <libvmm.h>
+#include <libvmm/std_allocator.h>
 #include "tod_dotprod_test.h"
 
 namespace libtensor {

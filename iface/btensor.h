@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_BTENSOR_H
 #define LIBTENSOR_BTENSOR_H
 
-#include <libvmm.h>
+#include <libvmm/libvmm.h>
 #include "defs.h"
 #include "exception.h"
 #include "core/block_index_space.h"

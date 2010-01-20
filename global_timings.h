@@ -1,7 +1,7 @@
-#ifndef GLOBAL_TIMINGS_H_
-#define GLOBAL_TIMINGS_H_
+#ifndef LIBTENSOR_GLOBAL_TIMINGS_H
+#define LIBTENSOR_GLOBAL_TIMINGS_H
 
-#include <singleton.h>
+#include <libvmm/singleton.h>
 #include "timer.h"
 #include "exception.h"
 #include <iostream>
@@ -85,4 +85,4 @@ global_timings::ntimings() const
 
 }
 
-#endif /*GLOBAL_TIMINGS_H_*/
+#endif // LIBTENSOR_GLOBAL_TIMINGS_H

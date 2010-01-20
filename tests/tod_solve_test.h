@@ -1,11 +1,11 @@
 #ifndef LIBTENSOR_TOD_SOLVE_TEST_H
 #define LIBTENSOR_TOD_SOLVE_TEST_H
 
-#include <libtest.h>
+#include <libtest/unit_test.h>
 
 namespace libtensor {
 
-/**	\brief Tests the libtensor::tod_add class
+/**	\brief Tests the libtensor::tod_solve class
 
 	\ingroup libtensor_tests
  **/

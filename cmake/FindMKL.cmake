@@ -97,11 +97,12 @@ if(MKL_ARCH_A_PATH)
 	if(MKL_INTEL_A_PATH)
 #		Version 10+
 		set(MKL_LIBRARIES
-			${MKL_INTEL_A_PATH} mkl_intel_thread mkl_core guide) 
+			${MKL_INTEL_A_PATH} mkl_intel_thread mkl_core
+			guide pthread) 
 	else(MKL_INTEL_A_PATH)
 #		Version pre-10
 		set(MKL_LIBRARIES
-			${MKL_ARCH_A_PATH} guide)
+			${MKL_ARCH_A_PATH} guide pthread)
 	endif(MKL_INTEL_A_PATH)
 endif(MKL_ARCH_A_PATH)
 

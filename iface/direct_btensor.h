@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_DIRECT_BTENSOR_H
 #define LIBTENSOR_DIRECT_BTENSOR_H
 
-#include <libvmm.h>
+#include <libvmm/libvmm.h>
 #include "defs.h"
 #include "exception.h"
 #include "core/direct_block_tensor.h"
