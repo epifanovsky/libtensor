@@ -4,10 +4,11 @@
 #include "defs.h"
 #include "exception.h"
 #include "timings.h"
-#include "core/block_tensor_i.h"
-#include "core/block_tensor_ctrl.h"
-#include "core/permutation.h"
-#include "tod/tod_dotprod.h"
+#include "../core/abs_index.h"
+#include "../core/block_tensor_i.h"
+#include "../core/block_tensor_ctrl.h"
+#include "../core/permutation.h"
+#include "../tod/tod_dotprod.h"
 
 namespace libtensor {
 

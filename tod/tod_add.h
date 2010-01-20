@@ -11,6 +11,7 @@
 #include "../core/tensor_i.h"
 #include "../core/tensor_ctrl.h"
 #include "tod_additive.h"
+#include "processor.h"
 #include "bad_dimensions.h"
 
 namespace libtensor {

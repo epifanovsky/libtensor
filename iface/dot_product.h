@@ -13,6 +13,7 @@ namespace libtensor {
 
 namespace labeled_btensor_expr {
 
+
 /**	\brief Dot product (%tensor + %tensor)
 
 	\ingroup libtensor_btensor_expr
@@ -34,6 +35,7 @@ double dot_product(
 	return op.calculate();
 }
 
+
 /**	\brief Dot product (%tensor + expression)
 
 	\ingroup libtensor_btensor_expr
@@ -41,10 +43,13 @@ double dot_product(
 template<size_t N, typename T, bool Assignable1, typename Expr2>
 double dot_product(
 	labeled_btensor<N, T, Assignable1> bt1,
-	expr<N, T, Expr2> bt2) {
+	expr<N, T, Expr2> expr2) {
 
-	return 0.0;
+	anon_eval<N, T, Expr2> eval2(expr2, bt1.get_label());
+	eval2.evaluate();
+	return btod_dotprod<N>(bt1.get_btensor(), eval2.get_btensor()).calculate();
 }
+
 
 /**	\brief Dot product (expression + %tensor)
 
@@ -52,11 +57,12 @@ double dot_product(
  **/
 template<size_t N, typename T, typename Expr1, bool Assignable2>
 double dot_product(
-	expr<N, T, Expr1> bt1,
+	expr<N, T, Expr1> expr1,
 	labeled_btensor<N, T, Assignable2> bt2) {
 
-	return 0.0;
+	return dot_product(bt2, expr1);
 }
+
 
 /**	\brief Dot product (expression + expression)
 
@@ -64,11 +70,12 @@ double dot_product(
  **/
 template<size_t N, typename T, typename Expr1, typename Expr2>
 double dot_product(
-	expr<N, T, Expr1> bt1,
-	expr<N, T, Expr2> bt2) {
+	expr<N, T, Expr1> expr1,
+	expr<N, T, Expr2> expr2) {
 
 	return 0.0;
 }
+
 
 } // namespace labeled_btensor_expr
 
