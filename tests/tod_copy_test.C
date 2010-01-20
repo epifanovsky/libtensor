@@ -1,5 +1,5 @@
 #include <sstream>
-#include <libvmm.h>
+#include <libvmm/std_allocator.h>
 #include "compare_ref.h"
 #include "tod_copy_test.h"
 

@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <sstream>
-#include <libvmm.h>
+#include <libvmm/std_allocator.h>
 #include <libtensor.h>
 #include "btod_add_test.h"
 #include "compare_ref.h"

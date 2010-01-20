@@ -1,5 +1,5 @@
 #include <sstream>
-#include <libvmm.h>
+#include <libvmm/std_allocator.h>
 #include <libtensor.h>
 #include "block_index_space_test.h"
 

@@ -2,7 +2,7 @@
 #define LIBTENSOR_COMPARE_REF_H
 
 #include <sstream>
-#include <libtest.h>
+#include <libtest/test_exception.h>
 #include <libtensor.h>
 
 namespace libtensor {

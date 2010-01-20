@@ -1,7 +1,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <ctime>
-#include <libvmm.h>
+#include <libvmm/std_allocator.h>
 #include "compare_ref.h"
 #include "tod_contract2_test.h"
 

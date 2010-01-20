@@ -3,7 +3,7 @@
 #include <ctime>
 #include <sstream>
 #include <libtensor.h>
-#include <libvmm.h>
+#include <libvmm/std_allocator.h>
 #include "compare_ref.h"
 #include "tod_btconv_test.h"
 

@@ -14,10 +14,7 @@ extern const char *g_ns;
 
 }
 
-#undef TENSOR_DEBUG
-#undef LIBTENSOR_DEBUG
 #ifdef DEBUG_CHECK
-#define TENSOR_DEBUG
 #define LIBTENSOR_DEBUG
 #endif
 

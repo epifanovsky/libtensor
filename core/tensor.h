@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_TENSOR_H
 #define LIBTENSOR_TENSOR_H
 
-#include <libvmm.h>
+#include <libvmm/libvmm.h>
 
 #include "defs.h"
 #include "exception.h"

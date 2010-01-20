@@ -4,7 +4,7 @@
 #include <list>
 #include <map>
 #include <utility>
-#include <libvmm.h>
+#include <libvmm/libvmm.h>
 #include "defs.h"
 #include "exception.h"
 #include "core/block_tensor_i.h"

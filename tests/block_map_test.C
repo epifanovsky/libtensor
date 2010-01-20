@@ -1,5 +1,5 @@
 #include <libtensor.h>
-#include <libvmm.h>
+#include <libvmm/std_allocator.h>
 #include "block_map_test.h"
 
 namespace libtensor {

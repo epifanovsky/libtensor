@@ -1,4 +1,4 @@
-#include <libvmm.h>
+#include <libvmm/std_allocator.h>
 #include "compare_ref.h"
 #include "tod_random_test.h"
 
