@@ -1,4 +1,4 @@
-#include <libtensor.h>
+#include <libtensor/iface/iface.h>
 #include "direct_btensor_test.h"
 
 namespace libtensor {

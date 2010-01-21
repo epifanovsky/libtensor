@@ -1,7 +1,7 @@
 #ifndef EXPRESSION_TEST_SCENARIO_H
 #define EXPRESSION_TEST_SCENARIO_H
 
-#include <libtest.h>
+#include <libtest/libtest.h>
 #include "performance_test_scenario_i.h"
 #include "expression_performance_test.h"
 #include "test_expressions.h"
@@ -9,21 +9,21 @@
 using libtest::unit_test_factory;
 
 namespace libtensor {
-	
+
 /**	\brief Performance test scenario for various expression
- 	
+
  	\tparam Repeats number of times each test is repeated
  	\tparam BiSpaceData sizes of the block tensors in the expression
 
 	This performance test scenario includes expressions
-	\li test_expression_add 
+	\li test_expression_add
 
 	\ingroup libtensor_performance_tests
 **/
-template<size_t Repeats, typename BiSpaceData>  
+template<size_t Repeats, typename BiSpaceData>
 class expression_test_scenario
-	: public performance_test_scenario_i 
-{	
+	: public performance_test_scenario_i
+{
 	typedef expression_performance_test<Repeats,
 		test_expression_simple_add,BiSpaceData> expression_test_simple_add;
 	typedef expression_performance_test<Repeats,
@@ -32,7 +32,7 @@ class expression_test_scenario
 		test_expression_simple_copy,BiSpaceData> expression_test_simple_copy;
 	typedef expression_performance_test<Repeats,
 		test_expression_permute_copy,BiSpaceData> expression_test_permute_copy;
-	 
+
 	unit_test_factory<expression_test_simple_add> m_expression_simple_add;
 	unit_test_factory<expression_test_permute_add> m_expression_permute_add;
 	unit_test_factory<expression_test_simple_copy> m_expression_simple_copy;
@@ -40,11 +40,11 @@ class expression_test_scenario
  	// add future expression here
 public:
 	expression_test_scenario();
-	
+
 	virtual ~expression_test_scenario() {}
 };
 
-template<size_t Repeats, typename BiSpaceData>  
+template<size_t Repeats, typename BiSpaceData>
 expression_test_scenario<Repeats,BiSpaceData>::expression_test_scenario()
 {
 	add_test("simple add","r_{iajb} = v_{iajb} + 0.5 w_{iajb}",
@@ -57,8 +57,8 @@ expression_test_scenario<Repeats,BiSpaceData>::expression_test_scenario()
 			m_expression_permute_copy);
 }
 
-	
-	
+
+
 } // namespace libtensor
 
 #endif // EXPRESSION_TEST_SCENARIO_H

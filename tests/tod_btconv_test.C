@@ -2,8 +2,11 @@
 #include <cstdlib>
 #include <ctime>
 #include <sstream>
-#include <libtensor.h>
 #include <libvmm/std_allocator.h>
+#include <libtensor/core/block_tensor.h>
+#include <libtensor/core/tensor.h>
+#include <libtensor/symmetry/symel_cycleperm.h>
+#include <libtensor/tod/tod_btconv.h>
 #include "compare_ref.h"
 #include "tod_btconv_test.h"
 

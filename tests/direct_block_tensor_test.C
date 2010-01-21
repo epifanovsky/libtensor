@@ -1,9 +1,8 @@
-#include <libtensor.h>
-#include <core/block_tensor.h>
-#include <core/direct_block_tensor.h>
-#include <tod/tod_btconv.h>
-#include <btod/btod_copy.h>
-#include <btod/btod_random.h>
+#include <libtensor/core/block_tensor.h>
+#include <libtensor/core/direct_block_tensor.h>
+#include <libtensor/tod/tod_btconv.h>
+#include <libtensor/btod/btod_copy.h>
+#include <libtensor/btod/btod_random.h>
 #include "direct_block_tensor_test.h"
 #include "compare_ref.h"
 
@@ -41,7 +40,7 @@ void direct_block_tensor_test::test_op_1() throw(libtest::test_exception) {
 	tod_btconv<2>(bta).perform(tc_ref);
 	tod_btconv<2>(btb).perform(tc);
 	compare_ref<2>::compare(testname, tc, tc_ref, 0.0);
-	
+
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
 	}

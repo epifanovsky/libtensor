@@ -1,4 +1,4 @@
-#include <libtensor.h>
+#include <libtensor/core/mask.h>
 #include "mask_test.h"
 
 namespace libtensor {

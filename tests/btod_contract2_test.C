@@ -1,6 +1,10 @@
 #include <sstream>
 #include <libvmm/std_allocator.h>
-#include <libtensor.h>
+#include <libtensor/core/block_tensor.h>
+#include <libtensor/btod/btod_contract2.h>
+#include <libtensor/btod/btod_copy.h>
+#include <libtensor/btod/btod_random.h>
+#include <libtensor/tod/tod_btconv.h>
 #include "btod_contract2_test.h"
 #include "compare_ref.h"
 

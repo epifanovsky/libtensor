@@ -2,7 +2,6 @@
 #define LIBTENSOR_LIBTENSOR_SUITE_H
 
 #include <libtest/test_suite.h>
-#include <libtensor.h>
 #include "abs_index_test.h"
 #include "anon_eval_test.h"
 #include "bispace_test.h"

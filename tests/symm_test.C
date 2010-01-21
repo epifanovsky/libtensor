@@ -1,4 +1,5 @@
-#include <libtensor.h>
+#include <libtensor/btod/btod_random.h>
+#include <libtensor/iface/iface.h>
 #include "compare_ref.h"
 #include "symm_test.h"
 

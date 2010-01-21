@@ -1,4 +1,4 @@
-#include <libtensor.h>
+#include <libtensor/symmetry/so_projdown.h>
 #include "so_projdown_test.h"
 
 namespace libtensor {

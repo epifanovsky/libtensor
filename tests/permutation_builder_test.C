@@ -1,4 +1,4 @@
-#include <libtensor.h>
+#include <libtensor/core/permutation_builder.h>
 #include "permutation_builder_test.h"
 
 namespace libtensor {

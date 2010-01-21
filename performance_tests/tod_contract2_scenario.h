@@ -1,7 +1,7 @@
 #ifndef TOD_CONTRACT_SCENARIO_H
 #define TOD_CONTRACT_SCENARIO_H
 
-#include <libtest.h>
+#include <libtest/libtest.h>
 #include "tod_contract2_performance.h"
 #include "performance_test_scenario_i.h"
 

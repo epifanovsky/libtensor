@@ -1,6 +1,7 @@
 #include <sstream>
 #include <string>
-#include <libtensor.h>
+#include <libtensor/core/mask.h>
+#include <libtensor/core/permutation.h>
 #include "permutation_test.h"
 
 namespace libtensor {

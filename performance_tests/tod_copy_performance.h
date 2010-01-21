@@ -2,11 +2,9 @@
 #define TOD_COPY_PERFORMANCE_H
 
 
-#include <libtest.h>
-#include <libtensor.h>
-
+#include <libtest/libtest.h>
+#include <libtensor/libtensor.h>
 #include "performance_test.h"
-#include "../timings.h"
 
 using libtest::unit_test_factory;
 
@@ -88,7 +86,7 @@ void tod_copy_ref<R,X>::do_calculate()
 	cblas_dcopy(total_size, ptrb, 1, ptra, 1);
 	cblas_dscal(total_size, 2.0, ptra,1);
 	timings<tod_copy_ref<R,X> >::stop_timer();
-	
+
 	delete [] ptra;
 	delete [] ptrb;
 }

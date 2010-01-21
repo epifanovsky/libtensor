@@ -1,4 +1,4 @@
-#include <libtensor.h>
+#include <libtensor/core/index_range.h>
 #include "index_range_test.h"
 
 namespace libtensor {

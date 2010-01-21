@@ -2,9 +2,7 @@
 #define LIBTENSOR_TOD_IMPORT_RAW_TEST_H
 
 #include <libtest/unit_test.h>
-#include "core/dimensions.h"
-#include "core/index_range.h"
-#include "tod/tod_import_raw.h"
+#include <libtensor/core/dimensions.h>
 
 namespace libtensor {
 

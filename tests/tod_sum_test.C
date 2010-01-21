@@ -1,3 +1,7 @@
+#include <libvmm/std_allocator.h>
+#include <libtensor/core/tensor.h>
+#include <libtensor/core/tensor_ctrl.h>
+#include <libtensor/tod/tod_sum.h>
 #include "tod_sum_test.h"
 
 namespace libtensor {

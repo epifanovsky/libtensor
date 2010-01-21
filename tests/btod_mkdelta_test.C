@@ -1,4 +1,9 @@
-#include <libtensor.h>
+#include <libvmm/std_allocator.h>
+#include <libtensor/core/block_tensor.h>
+#include <libtensor/btod/btod_mkdelta.h>
+#include <libtensor/btod/btod_random.h>
+#include <libtensor/tod/tod_btconv.h>
+#include <libtensor/tod/tod_mkdelta.h>
 #include "btod_mkdelta_test.h"
 #include "compare_ref.h"
 

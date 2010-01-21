@@ -1,6 +1,6 @@
 #include <sstream>
 #include <string>
-#include <libtensor.h>
+#include <libtensor/core/index.h>
 #include "index_test.h"
 
 namespace libtensor {

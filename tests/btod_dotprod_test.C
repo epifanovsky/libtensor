@@ -1,5 +1,10 @@
+#include <cmath>
 #include <sstream>
-#include <libtensor.h>
+#include <libvmm/std_allocator.h>
+#include <libtensor/core/block_tensor.h>
+#include <libtensor/btod/btod_dotprod.h>
+#include <libtensor/btod/btod_random.h>
+#include <libtensor/tod/tod_btconv.h>
 #include "btod_dotprod_test.h"
 
 namespace libtensor {

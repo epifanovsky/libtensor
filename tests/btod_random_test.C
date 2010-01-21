@@ -2,7 +2,10 @@
 #include <cstdlib>
 #include <ctime>
 #include <libvmm/std_allocator.h>
-#include <libtensor.h>
+#include <libtensor/core/block_tensor.h>
+#include <libtensor/btod/btod_random.h>
+#include <libtensor/symmetry/symel_cycleperm.h>
+#include <libtensor/tod/tod_btconv.h>
 #include "compare_ref.h"
 #include "btod_random_test.h"
 

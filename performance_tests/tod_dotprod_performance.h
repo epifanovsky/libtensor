@@ -1,11 +1,9 @@
 #ifndef TOD_DOTPROD_PERFORMANCE_H
 #define TOD_DOTPROD_PERFORMANCE_H
 
-#include <libtest.h>
-#include <libtensor.h>
-
+#include <libtest/libtest.h>
+#include <libtensor/libtensor.h>
 #include "performance_test.h"
-#include "../timings.h"
 
 namespace libtensor {
 

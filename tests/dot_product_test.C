@@ -2,14 +2,8 @@
 #include <cstdlib>
 #include <ctime>
 #include <sstream>
-//#include "../btod/btod_copy.h"
-//#include "../btod/btod_random.h"
-//#include "../btod/btod_dotprod.h"
-//#include "../iface/bispace.h"
-//#include "../iface/btensor.h"
-//#include "../iface/dot_product.h"
-//#include "../iface/letter_expr.h"
-#include <libtensor.h>
+#include <libtensor/btod/btod_random.h>
+#include <libtensor/iface/iface.h>
 #include "dot_product_test.h"
 
 namespace libtensor {

@@ -1,4 +1,6 @@
-#include <libtensor.h>
+#include <libtensor/btod/btod_random.h>
+#include <libtensor/iface/iface.h>
+#include <libtensor/iface/expr/anon_eval.h>
 #include "anon_eval_test.h"
 #include "compare_ref.h"
 

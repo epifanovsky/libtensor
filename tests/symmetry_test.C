@@ -1,5 +1,6 @@
 #include <sstream>
-#include <libtensor.h>
+#include <libtensor/core/symmetry.h>
+#include <libtensor/symmetry/symel_cycleperm.h>
 #include "symmetry_test.h"
 
 namespace libtensor {

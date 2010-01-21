@@ -3,7 +3,8 @@
 
 #include <sstream>
 #include <libtest/test_exception.h>
-#include <libtensor.h>
+#include <libtensor/tod/tod_compare.h>
+#include <libtensor/btod/btod_compare.h>
 
 namespace libtensor {
 

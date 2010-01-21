@@ -2,11 +2,9 @@
 #define TOD_ADD_PERFORMANCE_H
 
 
-#include <libtest.h>
-#include <libtensor.h>
-
+#include <libtest/libtest.h>
+#include <libtensor/libtensor.h>
 #include "performance_test.h"
-#include "../timings.h"
 
 using libtest::unit_test_factory;
 
@@ -78,7 +76,7 @@ protected:
  	sequence of groups of indices, e.g. (0123)->(2301)
 
 	The size of A and B is determined by function dimA() of the DimData object.
-	
+
  	\ingroup libtensor_performance_tests
 **/
 template<size_t Repeats, size_t N, typename DimData>

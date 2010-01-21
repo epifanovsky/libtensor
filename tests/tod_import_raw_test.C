@@ -1,6 +1,8 @@
 #include <sstream>
-#include "core/abs_index.h"
-#include "core/tensor.h"
+#include <libvmm/std_allocator.h>
+#include <libtensor/core/abs_index.h>
+#include <libtensor/core/tensor.h>
+#include <libtensor/tod/tod_import_raw.h>
 #include "tod_import_raw_test.h"
 #include "compare_ref.h"
 

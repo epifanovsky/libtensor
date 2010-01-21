@@ -1,5 +1,5 @@
 #include <memory>
-#include <libtensor.h>
+#include <libtensor/symmetry/symel_cycleperm.h>
 #include "symel_cycleperm_test.h"
 
 namespace libtensor {

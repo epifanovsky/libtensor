@@ -1,5 +1,7 @@
 #include <sstream>
-#include <libtensor.h>
+#include <libtensor/core/orbit.h>
+#include <libtensor/btod/transf_double.h>
+#include <libtensor/symmetry/symel_cycleperm.h>
 #include "orbit_test.h"
 
 namespace libtensor {
