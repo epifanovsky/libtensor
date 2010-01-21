@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_BTOD_COMPARE_H
 #define LIBTENSOR_BTOD_COMPARE_H
 
+#include <libvmm/std_allocator.h>
 #include "../defs.h"
 #include "../exception.h"
 #include "../core/block_tensor_ctrl.h"
