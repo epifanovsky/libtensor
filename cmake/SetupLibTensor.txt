@@ -15,5 +15,5 @@ add_library(tensor STATIC IMPORTED)
 set_target_properties(tensor PROPERTIES
 	IMPORTED_LOCATION ${LIBTENSOR_DIR}/build/libtensor/libtensor.a
 )
-set(LIBTENSOR_LIBS libtensor ${LIBTENSOR_DEP_LIBS})
+set(LIBTENSOR_LIBS tensor ${LIBTENSOR_DEP_LIBS})
 
