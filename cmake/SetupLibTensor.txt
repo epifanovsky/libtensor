@@ -2,7 +2,7 @@
 #	Set up libtensor as an external library
 #
 
-include(${LIBVMM_DIR}/cmake/DepsLibTensor.txt)
+include(${LIBTENSOR_DIR}/cmake/DepsLibTensor.txt)
 
 #	Debugging options
 #
@@ -13,7 +13,7 @@ add_definitions(-DLIBTENSOR_DEBUG)
 include_directories(${LIBTENSOR_DIR})
 add_library(tensor STATIC IMPORTED)
 set_target_properties(tensor PROPERTIES
-	IMPORTED_LOCATION ${LIBVMM_DIR}/build/libtensor.a
+	IMPORTED_LOCATION ${LIBTENSOR_DIR}/build/libtensor/libtensor.a
 )
 set(LIBTENSOR_LIBS libtensor ${LIBTENSOR_DEP_LIBS})
 
