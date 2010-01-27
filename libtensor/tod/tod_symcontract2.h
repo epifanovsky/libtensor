@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_TOD_SYMCONTRACT2_H
 #define LIBTENSOR_TOD_SYMCONTRACT2_H
 
+#include <libvmm/std_allocator.h>
 #include "../defs.h"
 #include "../exception.h"
 #include "tod_additive.h"

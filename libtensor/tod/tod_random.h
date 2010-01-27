@@ -1,7 +1,8 @@
 #ifndef LIBTENSOR_TOD_RANDOM_H
 #define LIBTENSOR_TOD_RANDOM_H
 
-#include <time.h>
+#include <ctime>
+#include <cstdlib>
 #include "../defs.h"
 #include "../exception.h"
 #include "tod_additive.h"
