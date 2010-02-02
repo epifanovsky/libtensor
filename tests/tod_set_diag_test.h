@@ -1,8 +1,8 @@
 #ifndef LIBTENSOR_TOD_SET_DIAG_TEST_H
 #define LIBTENSOR_TOD_SET_DIAG_TEST_H
 
-#include <libtest.h>
-#include <libtensor.h>
+#include <libtest/unit_test.h>
+#include <libtensor/core/dimensions.h>
 
 namespace libtensor {
 

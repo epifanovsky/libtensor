@@ -1,7 +1,10 @@
 #include <cmath>
 #include <cstdlib>
 #include <ctime>
-#include <libvmm.h>
+#include <libvmm/std_allocator.h>
+#include <libtensor/core/abs_index.h>
+#include <libtensor/core/tensor.h>
+#include <libtensor/tod/tod_contract2.h>
 #include "compare_ref.h"
 #include "tod_contract2_test.h"
 

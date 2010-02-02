@@ -1,4 +1,4 @@
-#include <libtensor.h>
+#include <libtensor/core/dimensions.h>
 #include "dimensions_test.h"
 
 namespace libtensor {

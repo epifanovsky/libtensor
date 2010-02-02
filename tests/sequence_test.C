@@ -1,4 +1,4 @@
-#include <libtensor.h>
+#include <libtensor/core/sequence.h>
 #include "sequence_test.h"
 
 namespace libtensor {

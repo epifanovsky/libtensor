@@ -1,8 +1,8 @@
 #ifndef LIBTENSOR_TENSOR_TEST_H
 #define LIBTENSOR_TENSOR_TEST_H
 
-#include <libtest.h>
-#include <libtensor.h>
+#include <libtest/unit_test.h>
+#include <libtensor/core/tensor.h>
 
 namespace libtensor {
 

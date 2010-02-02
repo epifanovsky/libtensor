@@ -1,9 +1,7 @@
 #ifndef LIBTENSOR_TOD_CONTRACT2_TEST_H
 #define LIBTENSOR_TOD_CONTRACT2_TEST_H
 
-#include <sstream>
-#include <libtest.h>
-#include <libtensor.h>
+#include <libtest/unit_test.h>
 
 namespace libtensor {
 

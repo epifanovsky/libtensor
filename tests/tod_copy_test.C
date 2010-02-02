@@ -1,5 +1,7 @@
 #include <sstream>
-#include <libvmm.h>
+#include <libvmm/std_allocator.h>
+#include <libtensor/core/tensor.h>
+#include <libtensor/tod/tod_copy.h>
 #include "compare_ref.h"
 #include "tod_copy_test.h"
 
@@ -297,7 +299,7 @@ void tod_copy_test::test_perm(const dimensions<N> &dims,
 
 	tod_copy<N> cp(ta, perm);
 	cp.perform(tb);
-				
+
 	// Compare against the reference
 
 	compare_ref<N>::compare(testname, tb, tb_ref, 1e-15);

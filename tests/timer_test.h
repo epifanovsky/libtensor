@@ -1,8 +1,8 @@
 #ifndef LIBTENSOR_TIMER_TEST_H
 #define LIBTENSOR_TIMER_TEST_H
 
-#include <libtest.h>
 #include <ctime>
+#include <libtest/unit_test.h>
 
 namespace libtensor {
 

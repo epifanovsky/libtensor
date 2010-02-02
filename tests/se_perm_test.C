@@ -1,5 +1,5 @@
-#include <btod/transf_double.h>
-#include <symmetry/se_perm.h>
+#include <libtensor/btod/transf_double.h>
+#include <libtensor/symmetry/se_perm.h>
 #include "se_perm_test.h"
 
 namespace libtensor {

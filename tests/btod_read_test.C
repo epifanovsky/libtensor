@@ -1,6 +1,11 @@
+#include <cmath>
 #include <sstream>
-#include <libtensor.h>
-#include <libvmm.h>
+#include <libvmm/std_allocator.h>
+#include <libtensor/core/abs_index.h>
+#include <libtensor/core/block_tensor.h>
+#include <libtensor/btod/btod_random.h>
+#include <libtensor/btod/btod_read.h>
+#include <libtensor/tod/tod_btconv.h>
 #include "btod_read_test.h"
 #include "compare_ref.h"
 

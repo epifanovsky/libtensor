@@ -2,7 +2,10 @@
 #include <cstdlib>
 #include <ctime>
 #include <sstream>
-#include <libvmm.h>
+#include <libvmm/std_allocator.h>
+#include <libtensor/core/abs_index.h>
+#include <libtensor/core/tensor.h>
+#include <libtensor/tod/tod_set_diag.h>
 #include "compare_ref.h"
 #include "tod_set_diag_test.h"
 

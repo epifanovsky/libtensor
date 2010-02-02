@@ -1,4 +1,4 @@
-#include <libtensor.h>
+#include <libtensor/symmetry/symmetry_element_base.h>
 #include "symmetry_element_base_test.h"
 
 namespace libtensor {

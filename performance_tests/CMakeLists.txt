@@ -1,4 +1,3 @@
-
 set(SRC
 	libtensor_performance_tests.C
 	libtensor_pt_suite.C
@@ -7,13 +6,8 @@ set(SRC
 )
 add_executable(libtensor_performance_tests ${SRC})
 
-add_definitions(-DLIBVMM_DEBUG)
-add_definitions(-DLIBTENSOR_DEBUG)
-add_definitions(-DLIBTENSOR_TIMINGS)
-add_definitions(-g)
+include(${LIBTEST_DIR}/cmake/SetupLibTest.txt)
 
 target_link_libraries(libtensor_performance_tests
-	tensor vmm test
-	${LIBS}
-)
+	tensor ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} test)
 

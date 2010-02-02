@@ -1,10 +1,7 @@
 #ifndef LIBTENSOR_TOD_RANDOM_TEST_H
 #define LIBTENSOR_TOD_RANDOM_TEST_H
 
-#include <cmath>
-#include <cstdlib>
-#include <libtest.h>
-#include <libtensor.h>
+#include <libtest/unit_test.h>
 
 namespace libtensor {
 

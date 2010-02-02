@@ -1,8 +1,9 @@
 #ifndef LIBTENSOR_TOD_SUM_TEST_H
 #define LIBTENSOR_TOD_SUM_TEST_H
 
-#include <libtest.h>
-#include <libtensor.h>
+#include <libtest/unit_test.h>
+#include <libtensor/core/tensor_i.h>
+#include <libtensor/tod/tod_additive.h>
 
 namespace libtensor {
 
@@ -13,10 +14,12 @@ namespace libtensor {
 class tod_sum_test : public libtest::unit_test {
 private:
 	//!	Assigns every element its number
-	class testop_set : public direct_tensor_operation<4,double> {
+	class testop_set : public tod_additive<4> {
 	public:
 		virtual void prefetch() throw(exception) { }
 		virtual void perform(tensor_i<4,double> &t) throw(exception);
+		virtual void perform(tensor_i<4,double> &t, double c)
+			throw(exception);
 	};
 
 	//!	Adds a constant to every element

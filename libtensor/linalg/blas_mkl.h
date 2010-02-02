@@ -1,0 +1,4 @@
+#ifndef LIBTENSOR_BLAS_MKL_H
+#define LIBTENSOR_BLAS_MKL_H
+
+#endif // LIBTENSOR_BLAS_MKL_H

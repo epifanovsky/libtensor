@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_BTOD_CONTRACT2_TEST_H
 #define LIBTENSOR_BTOD_CONTRACT2_TEST_H
 
-#include <libtest.h>
+#include <libtest/unit_test.h>
 
 namespace libtensor {
 

@@ -1,7 +1,9 @@
 #include <iostream>
 #include <cstdlib>
-#include <libtensor.h>
-
+#include <cmath>
+#include <libvmm/std_allocator.h>
+#include <libtensor/core/tensor.h>
+#include <libtensor/tod/tod_solve.h>
 #include "tod_solve_test.h"
 
 

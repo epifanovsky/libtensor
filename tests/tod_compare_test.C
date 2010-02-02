@@ -1,6 +1,9 @@
 #include <cmath>
 #include <cstdlib>
 #include <ctime>
+#include <libvmm/std_allocator.h>
+#include <libtensor/core/tensor.h>
+#include <libtensor/tod/tod_compare.h>
 #include "tod_compare_test.h"
 
 namespace libtensor {

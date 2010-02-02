@@ -1,7 +1,10 @@
 #ifndef LIBTENSOR_ANON_EVAL_TEST_H
 #define LIBTENSOR_ANON_EVAL_TEST_H
 
-#include <libtest.h>
+#include <libtest/unit_test.h>
+#include <libtensor/core/block_tensor_i.h>
+#include <libtensor/iface/labeled_btensor_expr.h>
+#include <libtensor/iface/letter_expr.h>
 
 namespace libtensor {
 

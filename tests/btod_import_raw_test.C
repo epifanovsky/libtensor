@@ -1,9 +1,9 @@
 #include <sstream>
-#include "core/abs_index.h"
-#include "core/block_tensor.h"
-#include "tod/tod_btconv.h"
-#include "tod/tod_copy.h"
-#include "tod/tod_random.h"
+#include <libvmm/std_allocator.h>
+#include <libtensor/core/block_tensor.h>
+#include <libtensor/btod/btod_import_raw.h>
+#include <libtensor/tod/tod_btconv.h>
+#include <libtensor/tod/tod_random.h>
 #include "btod_import_raw_test.h"
 #include "compare_ref.h"
 

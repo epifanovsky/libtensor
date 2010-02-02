@@ -1,8 +1,8 @@
 #ifndef LIBTENSOR_BTOD_SET_DIAG_TEST_H
 #define LIBTENSOR_BTOD_SET_DIAG_TEST_H
 
-#include <libtest.h>
-#include <libtensor.h>
+#include <libtest/unit_test.h>
+#include <libtensor/core/block_index_space.h>
 
 namespace libtensor {
 

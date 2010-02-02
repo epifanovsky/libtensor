@@ -1,7 +1,7 @@
+#include <cmath>
 #include <sstream>
-#include <libtensor.h>
+#include <libtensor/timer.h>
 #include "timer_test.h"
-#include "../timer.h"
 
 namespace libtensor {
 clock_t timer_test::calc( double& d, unsigned int n )  {
@@ -11,8 +11,8 @@ clock_t timer_test::calc( double& d, unsigned int n )  {
 	}
 	clock_t some_time=clock();
 	d-=some_time;
-	
-	return clock()-start; 
+
+	return clock()-start;
 }
 
 void timer_test::perform() throw(libtest::test_exception) {
@@ -21,7 +21,7 @@ void timer_test::perform() throw(libtest::test_exception) {
 
 	t.start();
 	clock_t duration=calc(res,10000000);
-	t.stop(); 
+	t.stop();
 	res=(duration*1.0)/CLOCKS_PER_SEC;
 #ifdef POSIX
 	res-=t.duration().user_time();
@@ -34,12 +34,12 @@ void timer_test::perform() throw(libtest::test_exception) {
 		msg << "Timer measurement not correct (diff: " << res << " s)";
 		fail_test("timer_test::perform()", __FILE__, __LINE__,msg.str().c_str());
 	}
-	t.start(); 
+	t.start();
 	if(t.duration()!=time_diff_t()) {
 		fail_test("timer_test::perform()", __FILE__, __LINE__,
 			"Measurement not initialized");
 	}
-	t.stop();	
+	t.stop();
 }
 
 } // namespace libtensor

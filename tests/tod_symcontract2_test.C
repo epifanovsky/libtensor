@@ -1,7 +1,12 @@
 #include <sstream>
 #include <cstdlib>
-
-#include <libtensor.h>
+#include <libvmm/std_allocator.h>
+#include <libtensor/core/tensor.h>
+#include <libtensor/core/tensor_ctrl.h>
+#include <libtensor/tod/tod_add.h>
+#include <libtensor/tod/tod_compare.h>
+#include <libtensor/tod/tod_copy.h>
+#include <libtensor/tod/tod_symcontract2.h>
 #include "tod_symcontract2_test.h"
 
 namespace libtensor {
@@ -14,14 +19,14 @@ void tod_symcontract2_test::perform() throw(libtest::test_exception) {
 	test_ijab_iapq_pbqj(5,3,8,8);
 }
 
-// test this with C_{ij}=\sum_{p} A_{ip} B_{jp} - \sum_{p} A_{jp} B_{ip} 
+// test this with C_{ij}=\sum_{p} A_{ip} B_{jp} - \sum_{p} A_{jp} B_{ip}
 void tod_symcontract2_test::test_ij_ip_jp( size_t ni, size_t np )
 	throw (libtest::test_exception)
 {
-	index<2> ic1, ic2; 
-	ic2[0]=ni-1; ic2[1]=ni-1; 
-	index<2> ia1, ia2; 
-	ia2[0]=ni-1; ia2[1]=np-1; 
+	index<2> ic1, ic2;
+	ic2[0]=ni-1; ic2[1]=ni-1;
+	index<2> ia1, ia2;
+	ia2[0]=ni-1; ia2[1]=np-1;
 	index_range<2> irc(ic1, ic2);
 	index_range<2> ira(ia1, ia2);
 	dimensions<2> dimc(irc), dima(ira);
@@ -39,18 +44,18 @@ void tod_symcontract2_test::test_ij_ip_jp( size_t ni, size_t np )
 	tcc.ret_dataptr(ptc);
 
 	// calculate reference
-	for (size_t i=0; i<ni; i++) 
+	for (size_t i=0; i<ni; i++)
 	for (size_t j=0; j<ni; j++) {
-		ic1[0]=i; ic1[1]=j; 
+		ic1[0]=i; ic1[1]=j;
 		ia1[0]=i; ia2[0]=j;
 		double res=0.0;
 		for (size_t p=0; p<np; p++) {
-			ia1[1]=p; ia2[1]=p; 
+			ia1[1]=p; ia2[1]=p;
 			res+=pta[dima.abs_index(ia1)]*ptb[dima.abs_index(ia2)];
 		}
 
 		ptc_ref[dimc.abs_index(ic1)]+=res;
-		ic1[0]=j; ic1[1]=i; 
+		ic1[0]=j; ic1[1]=i;
 		ptc_ref[dimc.abs_index(ic1)]-=res;
 	}
 
@@ -66,7 +71,7 @@ void tod_symcontract2_test::test_ij_ip_jp( size_t ni, size_t np )
 	tod_symcontract2<1,1,1> op(contr,ta,tb,pc_sym,-1.0);
 	op.perform(tc,1.0);
 
-	tod_compare<2> cmp(tc,tc_ref,1e-14); 
+	tod_compare<2> cmp(tc,tc_ref,1e-14);
 
 	if (! cmp.compare() ) {
 		std::ostringstream str;
@@ -79,21 +84,21 @@ void tod_symcontract2_test::test_ij_ip_jp( size_t ni, size_t np )
 
 		fail_test("tod_symcontract2_test::test_ijab_iapq_pbqj()",
 			__FILE__, __LINE__, str.str().c_str());
-	}	
+	}
 
 	// set ta to zero again
 }
-	
-// test this with C_{ijab}=\sum_{pq} A_{iapq} B_{pbqj} +/- \sum_{pq} A_{jbpq} B_{paqi} 
-void tod_symcontract2_test::test_ijab_iapq_pbqj( size_t na, 
+
+// test this with C_{ijab}=\sum_{pq} A_{iapq} B_{pbqj} +/- \sum_{pq} A_{jbpq} B_{paqi}
+void tod_symcontract2_test::test_ijab_iapq_pbqj( size_t na,
 	size_t ni, size_t np, size_t nq )
 	throw (libtest::test_exception)
 {
-	index<4> ic1, ic2; 
+	index<4> ic1, ic2;
 	ic2[0]=ni-1; ic2[1]=ni-1; ic2[2]=na-1; ic2[3]=na-1;
-	index<4> ia1, ia2; 
+	index<4> ia1, ia2;
 	ia2[0]=ni-1; ia2[1]=na-1; ia2[2]=np-1; ia2[3]=nq-1;
-	index<4> ib1, ib2; 
+	index<4> ib1, ib2;
 	ib2[0]=np-1; ib2[1]=na-1; ib2[2]=nq-1; ib2[3]=ni-1;
 	index_range<4> irc(ic1, ic2);
 	index_range<4> ira(ia1, ia2);
@@ -114,26 +119,26 @@ void tod_symcontract2_test::test_ijab_iapq_pbqj( size_t na,
 	tcc.ret_dataptr(ptc);
 
 	// calculate reference
-	for (size_t i=0; i<ni; i++) 
-	for (size_t j=0; j<ni; j++) 
-	for (size_t a=0; a<na; a++) 
+	for (size_t i=0; i<ni; i++)
+	for (size_t j=0; j<ni; j++)
+	for (size_t a=0; a<na; a++)
 	for (size_t b=0; b<na; b++) {
-		ic1[0]=i; ic1[1]=j; ic1[2]=a; ic1[3]=b; 
-		ia1[0]=i; ia1[1]=a; 
-		ib1[1]=b; ib1[3]=j; 
+		ic1[0]=i; ic1[1]=j; ic1[2]=a; ic1[3]=b;
+		ia1[0]=i; ia1[1]=a;
+		ib1[1]=b; ib1[3]=j;
 		double res=0.0;
-		for (size_t p=0; p<np; p++) 
+		for (size_t p=0; p<np; p++)
 		for (size_t q=0; q<nq; q++) {
-			ia1[2]=p; ia1[3]=q; 
-			ib1[0]=p; ib1[2]=q; 
+			ia1[2]=p; ia1[3]=q;
+			ib1[0]=p; ib1[2]=q;
 			res+=pta[dima.abs_index(ia1)]*ptb[dimb.abs_index(ib1)];
 		}
 
 		ptc_ref[dimc.abs_index(ic1)]+=res;
-		ic1[0]=j; ic1[1]=i; ic1[2]=b; ic1[3]=a; 
+		ic1[0]=j; ic1[1]=i; ic1[2]=b; ic1[3]=a;
 		ptc_ref[dimc.abs_index(ic1)]-=res;
 	}
-	
+
 	tcc_ref.ret_dataptr(ptc_ref);
 	tca.ret_dataptr(pta);
 	tcb.ret_dataptr(ptb);
@@ -150,7 +155,7 @@ void tod_symcontract2_test::test_ijab_iapq_pbqj( size_t na,
 	tod_symcontract2<2,2,2> op(contr,ta,tb,pc_sym,-1.0);
 	op.perform(tc,1.0);
 
-	tod_compare<4> cmp(tc,tc_ref,1e-14); 
+	tod_compare<4> cmp(tc,tc_ref,1e-14);
 
 	if (! cmp.compare() ) {
 		std::ostringstream str;
@@ -163,7 +168,7 @@ void tod_symcontract2_test::test_ijab_iapq_pbqj( size_t na,
 
 		fail_test("tod_symcontract2_test::test_ijab_iapq_pbqj()",
 			__FILE__, __LINE__, str.str().c_str());
-	}	
+	}
 
 	// set ta to zero again
 }

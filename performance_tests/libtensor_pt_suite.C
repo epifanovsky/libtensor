@@ -1,4 +1,4 @@
-#include <libtensor.h>
+#include <libtensor/libtensor.h>
 #include "libtensor_pt_suite.h"
 
 namespace libtensor {

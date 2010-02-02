@@ -1,4 +1,4 @@
-#include <symmetry/symmetry_element_set_adapter.h>
+#include <libtensor/symmetry/symmetry_element_set_adapter.h>
 #include "symmetry_element_set_adapter_test.h"
 
 namespace libtensor {

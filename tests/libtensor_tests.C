@@ -3,6 +3,7 @@
 #include <ctime>
 #include <iostream>
 #include <sstream>
+#include <libtensor/version.h>
 #include "libtensor_suite.h"
 
 using namespace libtensor;

@@ -63,7 +63,13 @@ endif(NOT MKL_FOUND AND MKL_PATH_GUESS)
 
 if(MKL_FOUND)
 
-set(MKL_INCLUDE_PATH ${MKL_PATH}/include)
+if(APPLE)
+	set(MKL_INCLUDE_PATH ${MKL_PATH}/Headers)
+	set(MKL_LIB_PATH ${MKL_PATH}/Versions/Current/lib)
+else(APPLE)
+	set(MKL_INCLUDE_PATH ${MKL_PATH}/include)
+	set(MKL_LIB_PATH ${MKL_PATH}/lib)
+endif(APPLE)
 
 #
 #	MKL version is detected by the library binaries found
@@ -74,11 +80,11 @@ set(MKL_INCLUDE_PATH ${MKL_PATH}/include)
 #	MKL 10+ x86_64:    mkl_em64t + mkl_core + mkl_intel_lp64
 #
 if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86_64")
-	set(MKL_LIBRARY_PATH ${MKL_PATH}/lib/em64t)
+	set(MKL_LIBRARY_PATH ${MKL_LIB_PATH}/em64t)
 	set(MKL_ARCH_A mkl_em64t)
 	set(MKL_INTEL_A mkl_intel_lp64)
 else(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86_64")
-	set(MKL_LIBRARY_PATH ${MKL_PATH}/lib/32)
+	set(MKL_LIBRARY_PATH ${MKL_LIB_PATH}/32)
 	set(MKL_ARCH_A mkl_ia32)
 	set(MKL_INTEL_A mkl_intel)
 endif(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86_64")
@@ -91,11 +97,12 @@ if(MKL_ARCH_A_PATH)
 	if(MKL_INTEL_A_PATH)
 #		Version 10+
 		set(MKL_LIBRARIES
-			${MKL_INTEL_A_PATH} mkl_intel_thread mkl_core guide) 
+			${MKL_INTEL_A_PATH} mkl_intel_thread mkl_core
+			guide pthread) 
 	else(MKL_INTEL_A_PATH)
 #		Version pre-10
 		set(MKL_LIBRARIES
-			${MKL_ARCH_A_PATH} guide)
+			${MKL_ARCH_A_PATH} guide pthread)
 	endif(MKL_INTEL_A_PATH)
 endif(MKL_ARCH_A_PATH)
 

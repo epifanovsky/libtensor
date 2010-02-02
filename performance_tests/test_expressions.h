@@ -3,8 +3,7 @@
 
 #include <iostream>
 #include <memory>
-#include <libtensor.h>
-#include "timings.h"
+#include <libtensor/libtensor.h>
 #include "test_expression_i.h"
 
 namespace libtensor {

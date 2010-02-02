@@ -1,6 +1,6 @@
 #include <sstream>
-#include <libvmm.h>
-#include <libtensor.h>
+#include <libvmm/std_allocator.h>
+#include <libtensor/core/block_index_space.h>
 #include "block_index_space_test.h"
 
 namespace libtensor {

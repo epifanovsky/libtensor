@@ -1,8 +1,12 @@
 #include <cmath>
 #include <cstdlib>
 #include <ctime>
-#include <libvmm.h>
-#include <libtensor.h>
+#include <libvmm/std_allocator.h>
+#include <libtensor/core/block_tensor.h>
+#include <libtensor/btod/btod_add.h>
+#include <libtensor/btod/btod_copy.h>
+#include <libtensor/btod/btod_random.h>
+#include <libtensor/btod/btod_sum.h>
 #include "btod_sum_test.h"
 #include "compare_ref.h"
 

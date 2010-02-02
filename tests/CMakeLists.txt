@@ -1,4 +1,3 @@
-
 set(SRC
 	libtensor_tests.C
 	libtensor_suite.C
@@ -25,9 +24,9 @@ set(SRC
 	contraction2_test.C
 	contraction2_list_builder_test.C
 	dimensions_test.C
+	direct_block_tensor_test.C
 	direct_btensor_test.C
 	direct_product_test.C
-	direct_tensor_test.C
 	dot_product_test.C
 	global_timings_test.C
 	immutable_test.C
@@ -75,12 +74,10 @@ set(SRC
 )
 add_executable(libtensor_tests ${SRC})
 
-add_definitions(-DLIBVMM_DEBUG)
+include(${LIBTEST_DIR}/cmake/SetupLibTest.txt)
+
 add_definitions(-DLIBTENSOR_DEBUG)
 add_definitions(-g)
-
 target_link_libraries(libtensor_tests
-	tensor vmm test
-	${LIBS}
-)
+	tensor ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} test)
 

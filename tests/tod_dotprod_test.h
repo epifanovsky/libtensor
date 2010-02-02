@@ -1,10 +1,8 @@
 #ifndef LIBTENSOR_TOD_DOTPROD_TEST_H
 #define LIBTENSOR_TOD_DOTPROD_TEST_H
 
-#include <cmath>
-#include <cstdlib>
-#include <libtensor.h>
-#include <libtest.h>
+#include <libtest/unit_test.h>
+#include <libtensor/core/permutation.h>
 
 namespace libtensor {
 

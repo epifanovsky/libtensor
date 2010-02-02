@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_TOD_MKDELTA_TEST_H
 #define LIBTENSOR_TOD_MKDELTA_TEST_H
 
-#include <libtest.h>
+#include <libtest/unit_test.h>
 
 namespace libtensor {
 

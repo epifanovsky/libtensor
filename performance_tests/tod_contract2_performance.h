@@ -2,11 +2,9 @@
 #define TOD_CONTRACT2_PERFORMANCE_H
 
 
-#include <libtest.h>
-#include <libtensor.h>
-
+#include <libtest/libtest.h>
+#include <libtensor/libtensor.h>
 #include "performance_test.h"
-#include "../timings.h"
 
 using libtest::unit_test_factory;
 
@@ -26,7 +24,7 @@ namespace libtensor {
 
  	Don't use with N<2.
 
-	The size of A, B, and C is determined by functions dimA(), dimB(), 
+	The size of A, B, and C is determined by functions dimA(), dimB(),
 	and dimC() of the DimData object, respectively.
 
  	\ingroup libtensor_performance_tests
@@ -48,7 +46,7 @@ protected:
  	\f[ A_{i_1,i_2} += 0.5 \sum_{i_3} B_{i_1,i_3} C_{i_2,i_3} \f]
  	where the \f$ i_k \f$ refer to the k-th index group
 
-	The size of A, B, and C is determined by functions dimA(), dimB(), 
+	The size of A, B, and C is determined by functions dimA(), dimB(),
 	and dimC() of the DimData object, respectively.
 
 	\ingroup libtensor_tests
@@ -69,7 +67,7 @@ protected:
 
  	Don't use with N<2
 
-	The size of A, B, and C is determined by functions dimA(), dimB(), 
+	The size of A, B, and C is determined by functions dimA(), dimB(),
 	and dimC() of the DimData object, respectively.
 
  	\ingroup libtensor_performance_tests
@@ -93,7 +91,7 @@ protected:
 
  	Don't use with N<2
 
-	The size of A, B, and C is determined by functions dimA(), dimB(), 
+	The size of A, B, and C is determined by functions dimA(), dimB(),
 	and dimC() of the DimData object, respectively.
 
  	\ingroup libtensor_performance_tests
@@ -118,7 +116,7 @@ protected:
 
  	Don't use with N<3
 
-	The size of A, B, and C is determined by functions dimA(), dimB(), 
+	The size of A, B, and C is determined by functions dimA(), dimB(),
 	and dimC() of the DimData object, respectively.
 
  	\ingroup libtensor_performance_tests

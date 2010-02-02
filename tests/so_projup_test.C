@@ -1,4 +1,4 @@
-#include <libtensor.h>
+#include <libtensor/symmetry/so_projup.h>
 #include "so_projup_test.h"
 
 namespace libtensor {

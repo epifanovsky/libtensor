@@ -1,3 +1,7 @@
+#include <libvmm/std_allocator.h>
+#include <libtensor/core/tensor.h>
+#include <libtensor/core/tensor_ctrl.h>
+#include <libtensor/tod/tod_sum.h>
 #include "tod_sum_test.h"
 
 namespace libtensor {
@@ -39,6 +43,10 @@ void tod_sum_test::testop_set::perform(tensor_i<4,double> &t) throw(exception) {
 	double *p = tctrl.req_dataptr();
 	for(size_t i=0; i<sz; i++) p[i] = (double)i;
 	tctrl.ret_dataptr(p);
+}
+
+void tod_sum_test::testop_set::perform(tensor_i<4,double> &t, double c)
+	throw(exception) {
 }
 
 void tod_sum_test::testop_add::perform(tensor_i<4,double> &t) throw(exception) {

@@ -1,5 +1,5 @@
 #include <typeinfo>
-#include <core/symmetry_element_set.h>
+#include <libtensor/core/symmetry_element_set.h>
 #include "symmetry_element_set_test.h"
 
 namespace libtensor {

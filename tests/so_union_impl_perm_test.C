@@ -1,5 +1,5 @@
-#include <symmetry/so_union_impl_perm.h>
-#include <btod/transf_double.h>
+#include <libtensor/symmetry/so_union_impl_perm.h>
+#include <libtensor/btod/transf_double.h>
 #include "so_union_impl_perm_test.h"
 
 namespace libtensor {

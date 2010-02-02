@@ -1,5 +1,5 @@
 #include <sstream>
-#include <libtensor.h>
+#include <libtensor/tod/contraction2.h>
 #include "contraction2_test.h"
 
 namespace libtensor {
