@@ -207,6 +207,14 @@ public:
 };
 
 
+template<>
+class permutation<0> {
+public:
+	permutation() { }
+	permutation(const permutation<0> &p, bool inverse = false) { }
+};
+
+
 template<size_t N>
 const char *permutation<N>::k_clazz = "permutation<N>";
 

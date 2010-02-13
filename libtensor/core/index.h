@@ -8,9 +8,15 @@
 
 namespace libtensor {
 
-template<size_t N> class index;
-template<size_t N> std::ostream &operator<<(std::ostream &os,
-	const index<N> &i);
+template<size_t N>
+class index;
+
+template<size_t N>
+std::ostream &operator<<(std::ostream &os, const index<N> &i);
+
+template<>
+std::ostream &operator<<(std::ostream &os, const index<0> &i);
+
 
 /**	\brief Index of a single %tensor element
 	\tparam N Index order.
@@ -197,19 +203,32 @@ inline bool index<N>::operator<(const index<N> &idx) const {
 	return less(idx);
 }
 
+
 /**	\brief Prints out the index to an output stream
 
 	\ingroup libtensor
-**/
+ **/
 template<size_t N>
 std::ostream &operator<<(std::ostream &os, const index<N> &i) {
 	os << "[";
-	for(size_t j=0; j<N-1; j++)
+	for(size_t j = 0; j < N - 1; j++)
 		os << i.sequence<N, size_t>::at_nochk(j) << ",";
-	os << i.sequence<N, size_t>::at_nochk(N-1);
+	os << i.sequence<N, size_t>::at_nochk(N - 1);
 	os << "]";
 	return os;
 }
+
+
+/**	\brief Prints out an index<0> to an output stream
+
+	\ingroup libtensor
+ **/
+template<>
+inline std::ostream &operator<<(std::ostream &os, const index<0> &i) {
+	os << "[*]";
+	return os;
+}
+
 
 } // namespace libtensor
 

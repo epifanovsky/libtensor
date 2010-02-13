@@ -129,6 +129,33 @@ private:
 };
 
 
+template<size_t NM, size_t K>
+class contraction2_connector {
+private:
+	static const size_t k_invalid = (size_t) (-1);
+	static const size_t k_orderc = NM;
+	static const size_t k_totidx = NM + K;
+	static const size_t k_maxconn = 2 * k_totidx;
+
+public:
+	static void connect(sequence<k_maxconn, size_t> &conn,
+		const permutation<k_orderc> &permc);
+};
+
+
+template<size_t K>
+class contraction2_connector<0, K> {
+private:
+	static const size_t k_orderc = 0;
+	static const size_t k_totidx = K;
+	static const size_t k_maxconn = 2 * k_totidx;
+
+public:
+	static void connect(sequence<k_maxconn, size_t> &conn,
+		const permutation<k_orderc> &permc);
+};
+
+
 template<size_t N, size_t M, size_t K>
 const char *contraction2<N, M, K>::k_clazz = "contraction2<N, M, K>";
 
@@ -270,18 +297,33 @@ contraction2<N, M, K>::get_conn() const throw(exception) {
 template<size_t N, size_t M, size_t K>
 void contraction2<N, M, K>::connect() {
 
+	contraction2_connector<N + M, K>::connect(m_conn, m_permc);
+}
+
+template<size_t NM, size_t K>
+void contraction2_connector<NM, K>::connect(sequence<k_maxconn, size_t> &conn,
+	const permutation<k_orderc> &permc) {
+
 	size_t connc[k_orderc];
 	size_t iconnc = 0;
 	for(size_t i = k_orderc; i < k_maxconn; i++) {
-		if(m_conn[i] == k_invalid || m_conn[i] < k_orderc)
+		if(conn[i] == k_invalid || conn[i] < k_orderc)
 			connc[iconnc++] = i;
 	}
-	m_permc.apply(connc);
+	permc.apply(connc);
 	for(size_t i = 0; i < k_orderc; i++) {
-		m_conn[i] = connc[i];
-		m_conn[connc[i]] = i;
+		conn[i] = connc[i];
+		conn[connc[i]] = i;
 	}
 }
+
+
+template<size_t K>
+void contraction2_connector<0, K>::connect(sequence<k_maxconn, size_t> &conn,
+	const permutation<k_orderc> &permc) {
+
+}
+
 
 } // namespace libtensor
 

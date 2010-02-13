@@ -362,6 +362,7 @@ void tod_contract2<N, M, K>::match_level_1(double d) {
 			lastb->m_op = new op_daxpy_b(d, lastb->m_weight);
 			m_list.splice(m_list.end(), m_list, lastb);
 		} else {
+			//~ std::cout << "plain multiplication" << std::endl;
 			lasta->m_op = new op_loop_mul(d, lasta->m_weight,
 				lasta->m_inca, lasta->m_incb, lasta->m_incc);
 			m_list.splice(m_list.end(), m_list, lasta);
@@ -377,13 +378,14 @@ inline void tod_contract2<N, M, K>::match_ddot_level_2(double d, size_t w0) {
 		i != m_list.end(); i++) {
 
 		if(i->m_incc == 1) {
-			if(i->m_inca != 0) {
+			if(i->m_inca > 1) {
 				i->m_op = new op_dgemv_a(d, i->m_weight,
 					w0, i->m_inca);
 				found_match = true;
+				// splice after match_ddot_3
 				m_list.splice(m_list.end(), m_list, i);
 				break;
-			} else if(i->m_incb != 0) {
+			} else if(i->m_incb > 1) {
 				i->m_op = new op_dgemv_b(d, i->m_weight,
 					w0, i->m_incb);
 				found_match = true;
@@ -470,7 +472,8 @@ void tod_contract2<N, M, K>::op_ddot::exec(
 	processor_t &proc, registers &regs) throw(exception) {
 
 	tod_contract2<N, M, K>::op_ddot::start_timer();
-	regs.m_ptrc[0] = m_d * cblas_ddot(m_n, regs.m_ptra, 1, regs.m_ptrb, 1);
+	regs.m_ptrc[0] +=
+		m_d * cblas_ddot(m_n, regs.m_ptra, 1, regs.m_ptrb, 1);
 	tod_contract2<N, M, K>::op_ddot::stop_timer();
 }
 

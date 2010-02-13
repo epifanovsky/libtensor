@@ -18,7 +18,24 @@ public:
 
 private:
 	// c = \sum_p a_p b_p
-	void test_0_p_p(size_t np) throw(libtest::test_exception);
+	void test_0_p_p(size_t np, double d = 0.0)
+		throw(libtest::test_exception);
+
+	// c_i = \sum_p a_p b_{pi}
+	void test_i_p_pi(size_t ni, size_t np, double d = 0.0)
+		throw(libtest::test_exception);
+
+	// c_i = \sum_p a_p b_{ip}
+	void test_i_p_ip(size_t ni, size_t np, double d = 0.0)
+		throw(libtest::test_exception);
+
+	// c_i = \sum_p a_{pi} b_p
+	void test_i_pi_p(size_t ni, size_t np, double d= 0.0)
+		throw(libtest::test_exception);
+
+	// c_i = \sum_p a_{ip} b_p
+	void test_i_ip_p(size_t ni, size_t np, double d = 0.0)
+		throw(libtest::test_exception);
 
 	// c_{ij} = \sum_{pq} a_{pq} b_{ijpq}
 	void test_ij_pq_ijpq(size_t ni, size_t nj, size_t np, size_t nq)
