@@ -17,6 +17,9 @@ public:
 	virtual void perform() throw(libtest::test_exception);
 
 private:
+	// c = \sum_p a_p b_p
+	void test_0_p_p(size_t np) throw(libtest::test_exception);
+
 	// c_{ij} = \sum_{pq} a_{pq} b_{ijpq}
 	void test_ij_pq_ijpq(size_t ni, size_t nj, size_t np, size_t nq)
 		throw(libtest::test_exception);

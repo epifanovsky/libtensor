@@ -5,6 +5,7 @@
 #include "../defs.h"
 #include "../exception.h"
 #include "../timings.h"
+#include "../linalg.h"
 #include "tod_additive.h"
 #include "contraction2.h"
 #include "contraction2_list_builder.h"
@@ -75,8 +76,10 @@ private:
 			throw(exception);
 	};
 
-	class op_loop_mul
-		: public processor_op_i_t {
+	class op_loop_mul :
+		public processor_op_i_t, public timings<op_loop_mul> {
+	public:
+		static const char *k_clazz;
 	private:
 		double m_d;
 		size_t m_len, m_inca, m_incb, m_incc;
@@ -89,10 +92,11 @@ private:
 	};
 
 	//!	c = a_i b_i
-	class op_ddot : public processor_op_i_t, public timings<op_ddot> {
+	class op_ddot :
+		public processor_op_i_t, public timings<op_ddot> {
+	public:
+		static const char *k_clazz;
 	private:
-		friend class timings<op_ddot>;
-		static const char* k_clazz;
 		double m_d;
 		size_t m_n;
 	public:
@@ -102,10 +106,11 @@ private:
 	};
 
 	//!	c_i = a_i b
-	class op_daxpy_a : public processor_op_i_t, public timings<op_daxpy_a> {
+	class op_daxpy_a :
+		public processor_op_i_t, public timings<op_daxpy_a> {
+	public:
+		static const char *k_clazz;
 	private:
-		friend class timings<op_daxpy_a>;
-		static const char* k_clazz;
 		double m_d;
 		size_t m_n;
 	public:
@@ -115,10 +120,11 @@ private:
 	};
 
 	//!	c_i = a b_i
-	class op_daxpy_b : public processor_op_i_t, public timings<op_daxpy_b> {
+	class op_daxpy_b :
+		public processor_op_i_t, public timings<op_daxpy_b> {
+	public:
+		static const char *k_clazz;
 	private:
-		friend class timings<op_daxpy_b>;
-		static const char* k_clazz;
 		double m_d;
 		size_t m_n;
 	public:
@@ -128,10 +134,11 @@ private:
 	};
 
 	//!	c_i = a_ip b_p
-	class op_dgemv_a : public processor_op_i_t, public timings<op_dgemv_a> {
+	class op_dgemv_a :
+		public processor_op_i_t, public timings<op_dgemv_a> {
+	public:
+		static const char *k_clazz;
 	private:
-		friend class timings<op_dgemv_a>;
-		static const char* k_clazz;
 		double m_d;
 		size_t m_rows, m_cols, m_lda;
 	public:
@@ -142,10 +149,11 @@ private:
 	};
 
 	//!	c_i = a_p b_ip
-	class op_dgemv_b : public processor_op_i_t, public timings<op_dgemv_b> {
+	class op_dgemv_b :
+		public processor_op_i_t, public timings<op_dgemv_b> {
+	public:
+		static const char *k_clazz;
 	private:
-		friend class timings<op_dgemv_b>;
-		static const char* k_clazz;
 		double m_d;
 		size_t m_rows, m_cols, m_ldb;
 	public:
@@ -218,18 +226,34 @@ private:
 	void clean_list();
 };
 
+
 template<size_t N, size_t M, size_t K>
-const char* tod_contract2<N,M,K>::k_clazz="tod_contract2<N,M,K>";
+const char *tod_contract2<N, M, K>::k_clazz = "tod_contract2<N, M, K>";
+
 template<size_t N, size_t M, size_t K>
-const char* tod_contract2<N,M,K>::op_ddot::k_clazz="tod_contract2<N,M,K>::op_ddot";
+const char *tod_contract2<N, M, K>::op_loop_mul::k_clazz =
+	"tod_contract2<N, M, K>::op_loop_mul";
+
 template<size_t N, size_t M, size_t K>
-const char* tod_contract2<N,M,K>::op_daxpy_a::k_clazz="tod_contract2<N,M,K>::op_daxpy_a";
+const char *tod_contract2<N, M, K>::op_ddot::k_clazz =
+	"tod_contract2<N, M, K>::op_ddot";
+
 template<size_t N, size_t M, size_t K>
-const char* tod_contract2<N,M,K>::op_daxpy_b::k_clazz="tod_contract2<N,M,K>::op_daxpy_b";
+const char *tod_contract2<N, M, K>::op_daxpy_a::k_clazz =
+	"tod_contract2<N, M, K>::op_daxpy_a";
+
 template<size_t N, size_t M, size_t K>
-const char* tod_contract2<N,M,K>::op_dgemv_a::k_clazz="tod_contract2<N,M,K>::op_dgemv_a";
+const char *tod_contract2<N, M, K>::op_daxpy_b::k_clazz =
+	"tod_contract2<N, M, K>::op_daxpy_b";
+
 template<size_t N, size_t M, size_t K>
-const char* tod_contract2<N,M,K>::op_dgemv_b::k_clazz="tod_contract2<N,M,K>::op_dgemv_b";
+const char *tod_contract2<N, M, K>::op_dgemv_a::k_clazz =
+	"tod_contract2<N, M, K>::op_dgemv_a";
+
+template<size_t N, size_t M, size_t K>
+const char *tod_contract2<N, M, K>::op_dgemv_b::k_clazz =
+	"tod_contract2<N, M, K>::op_dgemv_b";
+
 
 template<size_t N, size_t M, size_t K>
 tod_contract2<N,M,K>::tod_contract2(const contraction2<N,M,K> &contr,
@@ -250,33 +274,33 @@ void tod_contract2<N,M,K>::prefetch() throw(exception) {
 }
 
 template<size_t N, size_t M, size_t K>
-void tod_contract2<N, M, K>::perform(tensor_i<k_orderc, double> &tc)
-	throw(exception) {
+void tod_contract2<N, M, K>::perform(
+	tensor_i<k_orderc, double> &tc) throw(exception) {
 
 	do_perform(tc, true, 1.0);
 }
 
 template<size_t N, size_t M, size_t K>
-void tod_contract2<N, M, K>::perform(tensor_i<k_orderc, double> &tc, double d)
-	throw(exception) {
+void tod_contract2<N, M, K>::perform(
+	tensor_i<k_orderc, double> &tc, double d) throw(exception) {
 
 	do_perform(tc, false, d);
 }
 
 template<size_t N, size_t M, size_t K>
-void tod_contract2<N, M, K>::do_perform(tensor_i<k_orderc, double> &tc,
-	bool zero, double d) throw(exception) {
+void tod_contract2<N, M, K>::do_perform(
+	tensor_i<k_orderc, double> &tc, bool zero, double d) throw(exception) {
 
-	tod_contract2<N,M,K>::start_timer();
+	tod_contract2<N, M, K>::start_timer();
 
 	loop_list_adapter list_adapter(m_list);
 	contraction2_list_builder<N, M, K, loop_list_adapter> lstbld(m_contr);
 	lstbld.populate(list_adapter, m_ta.get_dims(), m_tb.get_dims(),
 		tc.get_dims());
 
-	tensor_ctrl<N+K, double> ctrla(m_ta);
-	tensor_ctrl<M+K, double> ctrlb(m_tb);
-	tensor_ctrl<N+M, double> ctrlc(tc);
+	tensor_ctrl<k_ordera, double> ctrla(m_ta);
+	tensor_ctrl<k_orderb, double> ctrlb(m_tb);
+	tensor_ctrl<k_orderc, double> ctrlc(tc);
 
 	const double *ptra = ctrla.req_const_dataptr();
 	const double *ptrb = ctrlb.req_const_dataptr();
@@ -284,7 +308,7 @@ void tod_contract2<N, M, K>::do_perform(tensor_i<k_orderc, double> &tc,
 
 	if(zero) {
 		size_t szc = tc.get_dims().get_size();
-		for(size_t i=0; i<szc; i++) ptrc[i] = 0.0;
+		for(size_t i = 0; i < szc; i++) ptrc[i] = 0.0;
 	}
 
 	match_level_1(d);
@@ -298,6 +322,7 @@ void tod_contract2<N, M, K>::do_perform(tensor_i<k_orderc, double> &tc,
 		processor_t(m_list, regs).process_next();
 	} catch(exception e) {
 		clean_list();
+		tod_contract2<N, M, K>::stop_timer();
 		throw;
 	}
 
@@ -307,11 +332,12 @@ void tod_contract2<N, M, K>::do_perform(tensor_i<k_orderc, double> &tc,
 	ctrlb.ret_dataptr(ptrb);
 	ctrlc.ret_dataptr(ptrc);
 
-	tod_contract2<N,M,K>::stop_timer();
+	tod_contract2<N, M, K>::stop_timer();
 }
 
 template<size_t N, size_t M, size_t K>
 void tod_contract2<N, M, K>::match_level_1(double d) {
+
 	bool lastc_found = false;
 	typename loop_list_t::iterator lasta, lastb, lastc;
 
@@ -345,6 +371,7 @@ void tod_contract2<N, M, K>::match_level_1(double d) {
 
 template<size_t N, size_t M, size_t K>
 inline void tod_contract2<N, M, K>::match_ddot_level_2(double d, size_t w0) {
+
 	bool found_match = false;
 	for(typename loop_list_t::iterator i = m_list.begin();
 		i != m_list.end(); i++) {
@@ -370,6 +397,7 @@ inline void tod_contract2<N, M, K>::match_ddot_level_2(double d, size_t w0) {
 
 template<size_t N, size_t M, size_t K>
 void tod_contract2<N, M, K>::match_loops() {
+
 	for(typename loop_list_t::iterator i = m_list.begin();
 		i != m_list.end(); i++) {
 
@@ -396,6 +424,7 @@ inline void tod_contract2<N, M, K>::loop_list_adapter::append(size_t weight,
 	m_list.push_back(loop_list_node(weight, inca, incb, incc));
 }
 
+
 template<size_t N, size_t M, size_t K>
 void tod_contract2<N, M, K>::op_loop::exec(processor_t &proc, registers &regs)
 	throw(exception) {
@@ -413,14 +442,17 @@ void tod_contract2<N, M, K>::op_loop::exec(processor_t &proc, registers &regs)
 	}
 }
 
+
 template<size_t N, size_t M, size_t K>
 void tod_contract2<N, M, K>::op_loop_mul::exec(processor_t &proc,
 	registers &regs) throw(exception) {
+
+	tod_contract2<N, M, K>::op_loop_mul::start_timer();
 	const double *ptra = regs.m_ptra, *ptrb = regs.m_ptrb;
 	double *ptrc = regs.m_ptrc;
 
-	for(size_t i=0; i<m_len; i++) {
-		*ptrc += m_d * (*ptra)*(*ptrb);
+	for(size_t i = 0; i < m_len; i++) {
+		ptrc[0] += m_d * ptra[0] * ptrb[0];
 		ptra += m_inca;
 		ptrb += m_incb;
 		ptrc += m_incc;
@@ -429,49 +461,61 @@ void tod_contract2<N, M, K>::op_loop_mul::exec(processor_t &proc,
 	regs.m_ptra = ptra;
 	regs.m_ptrb = ptrb;
 	regs.m_ptrc = ptrc;
+	tod_contract2<N, M, K>::op_loop_mul::stop_timer();
 }
 
+
 template<size_t N, size_t M, size_t K>
-void tod_contract2<N, M, K>::op_ddot::exec(processor_t &proc, registers &regs)
-	throw(exception) {
+void tod_contract2<N, M, K>::op_ddot::exec(
+	processor_t &proc, registers &regs) throw(exception) {
+
 	tod_contract2<N, M, K>::op_ddot::start_timer();
-	*(regs.m_ptrc) = m_d*cblas_ddot(m_n, regs.m_ptra, 1, regs.m_ptrb, 1);
+	regs.m_ptrc[0] = m_d * cblas_ddot(m_n, regs.m_ptra, 1, regs.m_ptrb, 1);
 	tod_contract2<N, M, K>::op_ddot::stop_timer();
 }
 
+
 template<size_t N, size_t M, size_t K>
-void tod_contract2<N, M, K>::op_daxpy_a::exec(processor_t &proc,
-	registers &regs) throw(exception) {
+void tod_contract2<N, M, K>::op_daxpy_a::exec(
+	processor_t &proc, registers &regs) throw(exception) {
+
 	tod_contract2<N, M, K>::op_daxpy_a::start_timer();
-	cblas_daxpy(m_n, *(regs.m_ptrb)*m_d, regs.m_ptra, 1, regs.m_ptrc, 1);
+	cblas_daxpy(m_n, regs.m_ptrb[0]*m_d, regs.m_ptra, 1, regs.m_ptrc, 1);
 	tod_contract2<N, M, K>::op_daxpy_a::stop_timer();
 }
 
+
 template<size_t N, size_t M, size_t K>
-void tod_contract2<N, M, K>::op_daxpy_b::exec(processor_t &proc,
-	registers &regs) throw(exception) {
+void tod_contract2<N, M, K>::op_daxpy_b::exec(
+	processor_t &proc, registers &regs) throw(exception) {
+
 	tod_contract2<N, M, K>::op_daxpy_b::start_timer();
-	cblas_daxpy(m_n, *(regs.m_ptra)*m_d, regs.m_ptrb, 1, regs.m_ptrc, 1);
+	cblas_daxpy(m_n, regs.m_ptra[0]*m_d, regs.m_ptrb, 1, regs.m_ptrc, 1);
 	tod_contract2<N, M, K>::op_daxpy_b::stop_timer();
 }
 
+
 template<size_t N, size_t M, size_t K>
-void tod_contract2<N, M, K>::op_dgemv_a::exec(processor_t &proc,
-	registers &regs) throw(exception) {
+void tod_contract2<N, M, K>::op_dgemv_a::exec(
+	processor_t &proc, registers &regs) throw(exception) {
+
 	tod_contract2<N, M, K>::op_dgemv_a::start_timer();
 	cblas_dgemv(CblasRowMajor, CblasNoTrans, m_rows, m_cols, m_d,
 		regs.m_ptra, m_lda, regs.m_ptrb, 1, 1.0, regs.m_ptrc, 1);
 	tod_contract2<N, M, K>::op_dgemv_a::stop_timer();
 }
 
+
 template<size_t N, size_t M, size_t K>
-void tod_contract2<N, M, K>::op_dgemv_b::exec(processor_t &proc,
-	registers &regs) throw(exception) {
+void tod_contract2<N, M, K>::op_dgemv_b::exec(
+	processor_t &proc, registers &regs) throw(exception) {
+
 	tod_contract2<N, M, K>::op_dgemv_b::start_timer();
 	cblas_dgemv(CblasRowMajor, CblasNoTrans, m_rows, m_cols, m_d,
 		regs.m_ptrb, m_ldb, regs.m_ptra, 1, 1.0, regs.m_ptrc, 1);
 	tod_contract2<N, M, K>::op_dgemv_b::stop_timer();
 }
+
 
 } // namespace libtensor
 
