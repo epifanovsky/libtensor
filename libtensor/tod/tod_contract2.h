@@ -203,6 +203,23 @@ private:
 			throw(exception);
 	};
 
+	//!	c_ij = a_ip b_jp
+	class op_dgemm_nt_ab :
+		public processor_op_i_t, public timings<op_dgemm_nt_ab> {
+	public:
+		static const char *k_clazz;
+	private:
+		double m_d;
+		size_t m_rowsa, m_colsb, m_colsa, m_lda, m_ldb, m_ldc;
+	public:
+		op_dgemm_nt_ab(double d, size_t rowsa, size_t colsb,
+			size_t colsa, size_t lda, size_t ldb, size_t ldc) :
+			m_d(d), m_rowsa(rowsa), m_colsb(colsb), m_colsa(colsa),
+			m_lda(lda), m_ldb(ldb), m_ldc(ldc) { }
+		virtual void exec(processor_t &proc, registers &regs)
+			throw(exception);
+	};
+
 	//!	c_ij = a_pi b_pj
 	class op_dgemm_tn_ab :
 		public processor_op_i_t, public timings<op_dgemm_tn_ab> {
@@ -216,6 +233,23 @@ private:
 			size_t colsa, size_t lda, size_t ldb, size_t ldc) :
 			m_d(d), m_rowsa(rowsa), m_colsb(colsb), m_colsa(colsa),
 			m_lda(lda), m_ldb(ldb), m_ldc(ldc) { }
+		virtual void exec(processor_t &proc, registers &regs)
+			throw(exception);
+	};
+
+	//!	c_ij = a_jp b_ip
+	class op_dgemm_nt_ba :
+		public processor_op_i_t, public timings<op_dgemm_nt_ba> {
+	public:
+		static const char *k_clazz;
+	private:
+		double m_d;
+		size_t m_rowsb, m_colsa, m_colsb, m_ldb, m_lda, m_ldc;
+	public:
+		op_dgemm_nt_ba(double d, size_t rowsb, size_t colsa,
+			size_t colsb, size_t ldb, size_t lda, size_t ldc) :
+			m_d(d), m_rowsb(rowsb), m_colsa(colsa), m_colsb(colsb),
+			m_ldb(ldb), m_lda(lda), m_ldc(ldc) { }
 		virtual void exec(processor_t &proc, registers &regs)
 			throw(exception);
 	};
@@ -298,10 +332,12 @@ private:
 	void match_ddot_l2(double d, size_t w1);
 	void match_daxpy_a_l2(double d, size_t w1, size_t k1);
 	void match_daxpy_b_l2(double d, size_t w1, size_t k1);
+	void match_dgemv_n_a_l3(double d, size_t w1, size_t w2, size_t k1w1);
+	void match_dgemv_n_b_l3(double d, size_t w1, size_t w2, size_t k1w1);
 	void match_dgemv_t_a_l3(double d, size_t w1, size_t w2,
 		size_t k2w1, size_t k3);
 	void match_dgemv_t_b_l3(double d, size_t w1, size_t w2,
-		size_t k1, size_t k2w1);
+		size_t k2w1, size_t k3);
 	void match_loops();
 	void clean_list();
 };
@@ -343,8 +379,16 @@ const char *tod_contract2<N, M, K>::op_dgemv_t_b::k_clazz =
 	"tod_contract2<N, M, K>::op_dgemv_t_b";
 
 template<size_t N, size_t M, size_t K>
+const char *tod_contract2<N, M, K>::op_dgemm_nt_ab::k_clazz =
+	"tod_contract2<N, M, K>::op_dgemm_nt_ab";
+
+template<size_t N, size_t M, size_t K>
 const char *tod_contract2<N, M, K>::op_dgemm_tn_ab::k_clazz =
 	"tod_contract2<N, M, K>::op_dgemm_tn_ab";
+
+template<size_t N, size_t M, size_t K>
+const char *tod_contract2<N, M, K>::op_dgemm_nt_ba::k_clazz =
+	"tod_contract2<N, M, K>::op_dgemm_nt_ba";
 
 template<size_t N, size_t M, size_t K>
 const char *tod_contract2<N, M, K>::op_dgemm_tn_ba::k_clazz =
@@ -538,7 +582,7 @@ void tod_contract2<N, M, K>::match_ddot_l2(double d, size_t w1) {
 	//	w   a       b  c
 	//	w1  1       1  0
 	//	w2  k1a*w1  0  1  -->  c_i = a_i$p b_p
-	//	----------------       sz(i) = w2, sz(p) = w1, sz(%p) = k1a
+	//	----------------       sz(i) = w2, sz(p) = w1, sz($) = k1a
 	//	                       [dgemv_n_a]
 	//
 	//	2. Minimize k1b:
@@ -546,9 +590,9 @@ void tod_contract2<N, M, K>::match_ddot_l2(double d, size_t w1) {
 	//	w   a  b       c
 	//	w1  1  1       0
 	//	w2  0  k1b*w1  1  -->  c_i = a_p b_i%p
-	//	----------------       sz(i) = w2, sz(p) = w1, sz(%p) = k1b
+	//	----------------       sz(i) = w2, sz(p) = w1, sz(%) = k1b
 	//	                       [dgemv_n_b]
-	//	                    
+	//
 	size_t k1a_min = 0, k1b_min = 0;
 	list_iter i1 = m_list.end(), i2 = m_list.end();
 	for(list_iter i = m_list.begin(); i != m_list.end(); i++) {
@@ -571,6 +615,7 @@ void tod_contract2<N, M, K>::match_ddot_l2(double d, size_t w1) {
 		//~ std::cout << " dgemv_n_a";
 		i1->m_op = new op_dgemv_n_a(
 			d, i1->m_weight, w1, 1, i1->m_inca);
+		match_dgemv_n_a_l3(d, w1, i1->m_weight, i1->m_inca);
 		m_list.splice(m_list.end(), m_list, i1);
 		return;
 	}
@@ -579,6 +624,7 @@ void tod_contract2<N, M, K>::match_ddot_l2(double d, size_t w1) {
 		//~ std::cout << " dgemv_n_b";
 		i2->m_op = new op_dgemv_n_b(
 			d, i2->m_weight, w1, 1, i2->m_incb);
+		match_dgemv_n_b_l3(d, w1, i2->m_weight, i2->m_incb);
 		m_list.splice(m_list.end(), m_list, i2);
 		return;
 	}
@@ -623,8 +669,8 @@ void tod_contract2<N, M, K>::match_daxpy_a_l2(
 		//~ std::cout << " dgemv_t_a";
 		i1->m_op = new op_dgemv_t_a(d, i1->m_weight, w1,
 			i1->m_incb, i1->m_inca, k1);
-		//~ if(k1 == 1) match_dgemv_t_a_l3(
-			//~ d, w1, i1->m_weight, i1->m_inca, i1->m_incb);
+		if(k1 == 1) match_dgemv_t_a_l3(
+			d, w1, i1->m_weight, i1->m_inca, i1->m_incb);
 		m_list.splice(m_list.end(), m_list, i1);
 		return;
 	}
@@ -652,23 +698,119 @@ void tod_contract2<N, M, K>::match_daxpy_b_l2(
 	//      -----------------      sz(i) = w1, sz(p) = w2
 	//	                       sz(#) = k1, sz($) = k3, sz(%) = k2
 	//	                       [dgemv_t_b]
-	size_t k2min = 0;
+	size_t k2_min = 0;
 	list_iter i1 = m_list.end();
 	for(list_iter i = m_list.begin(); i != m_list.end(); i++) {
 		if(i->m_incc != 0) continue;
 		if(i->m_incb % w1 != 0) continue;
 
 		register size_t k2 = i->m_incb / w1;
-		if(k2min == 0 || k2min > k2) {
-			k2min = k2; i1 = i;
+		if(k2_min == 0 || k2_min > k2) {
+			k2_min = k2; i1 = i;
 		}
 	}
 	if(i1 != m_list.end()) {
 		//~ std::cout << " dgemv_t_b";
 		i1->m_op = new op_dgemv_t_b(d, i1->m_weight, w1,
 			i1->m_inca, i1->m_incb, k1);
-		//~ match_dgemv_t_b_l3(
-			//~ d, w1, i1->m_weight, i1->m_inca, i1->m_incb);
+		if(k1 == 1) match_dgemv_t_b_l3(
+			d, w1, i1->m_weight, i1->m_incb, i1->m_inca);
+		m_list.splice(m_list.end(), m_list, i1);
+		return;
+	}
+}
+
+
+template<size_t N, size_t M, size_t K>
+void tod_contract2<N, M, K>::match_dgemv_n_a_l3(
+	double d, size_t w1, size_t w2, size_t k1w1) {
+
+	typedef typename loop_list_t::iterator list_iter;
+
+	//	Found pattern:
+	//	---------------
+	//	w   a      b  c
+	//	w1  1      1  0
+	//	w2  k1*w1  0  1  -->  c_i = a_i$p b_p
+	//	---------------       sz(i) = w2, sz(p) = w1, sz($) = k1
+	//	                      [dgemv_n_a]
+
+	//	1. Minimize k2:
+	//	-----------------------
+	//	w   a      b      c
+	//	w1  1      1      0
+	//	w2  k1*w1  0      1
+	//	w3  0      k2*w1  k3*w2  -->  c_j#i = a_i$p b_j%p
+	//	-----------------------       sz(i) = w2, sz(j) = w3,
+	//	                              sz(p) = w1
+	//	                              sz(#) = k3, sz($) = k1,
+	//	                              sz(%) = k2
+	//
+	size_t k2_min = 0;
+	list_iter i1 = m_list.end();
+	for(list_iter i = m_list.begin(); i != m_list.end(); i++) {
+		if(i->m_inca != 0) continue;
+		if(i->m_incc % w2 != 0) continue;
+		if(i->m_incb % w1 != 0) continue;
+
+		register size_t k2 = i->m_incb / w1;
+		if(k2_min == 0 || k2_min > k2) {
+			k2_min = k2; i1 = i;
+		}
+	}
+	if(i1 != m_list.end()) {
+		//~ std::cout << " dgemm_nt_ba";
+		i1->m_op = new op_dgemm_nt_ba(
+			d, i1->m_weight, w2, w1, i1->m_incb, k1w1, i1->m_incc);
+		m_list.splice(m_list.end(), m_list, i1);
+		return;
+	}
+}
+
+
+template<size_t N, size_t M, size_t K>
+void tod_contract2<N, M, K>::match_dgemv_n_b_l3(
+	double d, size_t w1, size_t w2, size_t k1w1) {
+
+	typedef typename loop_list_t::iterator list_iter;
+
+	//	Found pattern:
+	//	---------------
+	//	w   a  b      c
+	//	w1  1  1      0
+	//	w2  0  k1*w1  1  -->  c_i = a_p b_i%p
+	//	---------------       sz(i) = w2, sz(p) = w1, sz(%) = k1
+	//	                      [dgemv_n_b]
+	//
+
+	//	1. Minimize k2:
+	//	-----------------------
+	//	w   a      b      c
+	//	w1  1      1      0
+	//	w2  0      k1*w1  1
+	//	w3  k2*w1  0      k3*w2  -->  c_j#i = a_j$p b_i%p
+	//	-----------------------       sz(i) = w2, sz(j) = w3,
+	//	                              sz(p) = w1
+	//	                              sz(#) = k3, sz($) = k2,
+	//	                              sz(%) = k1
+	//	                              [dgemm_nt_ab]
+	//
+	size_t k2_min = 0;
+	list_iter i1 = m_list.end();
+	for(list_iter i = m_list.begin(); i != m_list.end(); i++) {
+		if(i->m_incb != 0) continue;
+		if(i->m_incc % w2 != 0) continue;
+		if(i->m_inca % w1 != 0) continue;
+
+		register size_t k2 = i->m_inca / w1;
+		if(k2_min == 0 || k2_min > k2) {
+			k2_min = k2; i1 = i;
+		}
+	}
+	if(i1 != m_list.end()) {
+		//~ std::cout << " dgemm_nt_ab";
+		i1->m_op = new op_dgemm_nt_ab(
+			d, i1->m_weight, w2, w1, i1->m_inca, k1w1, i1->m_incc);
 		m_list.splice(m_list.end(), m_list, i1);
 		return;
 	}
@@ -681,7 +823,7 @@ void tod_contract2<N, M, K>::match_dgemv_t_a_l3(
 
 	typedef typename loop_list_t::iterator list_iter;
 
-	//	Invoked when the pattern is found:
+	//	Found pattern:
 	//	---------------
 	//	w   a     b   c
 	//	w1  1     0   1
@@ -691,7 +833,7 @@ void tod_contract2<N, M, K>::match_dgemv_t_a_l3(
 	//	                      [dgemv_t_a]
 	//
 
-	//	1. Minimize k4 in:
+	//	1. Minimize k4:
 	//	------------------------
 	//	w   a      b       c
 	//	w1  1      0       1
@@ -703,7 +845,7 @@ void tod_contract2<N, M, K>::match_dgemv_t_a_l3(
 	//	                              sz(%) = k3'
 	//	                              [dgemm_tn_ba]
 	//
-	size_t k4min = 0;
+	size_t k4_min = 0;
 	list_iter i1 = m_list.end();
 	for(list_iter i = m_list.begin(); i != m_list.end(); i++) {
 		if(i->m_inca != 0 || i->m_incb != 1) continue;
@@ -711,8 +853,8 @@ void tod_contract2<N, M, K>::match_dgemv_t_a_l3(
 		if(i->m_incc % w1 != 0) continue;
 
 		register size_t k4 = i->m_incc / w1;
-		if(k4min == 0 || k4min > k4) {
-			k4min = k4; i1 = i;
+		if(k4_min == 0 || k4_min > k4) {
+			k4_min = k4; i1 = i;
 		}
 	}
 	if(i1 != m_list.end()) {
@@ -727,47 +869,48 @@ void tod_contract2<N, M, K>::match_dgemv_t_a_l3(
 
 template<size_t N, size_t M, size_t K>
 void tod_contract2<N, M, K>::match_dgemv_t_b_l3(
-	double d, size_t w1, size_t w2, size_t k1, size_t k2w1) {
+	double d, size_t w1, size_t w2, size_t k2w1, size_t k3) {
 
 	typedef typename loop_list_t::iterator list_iter;
 
-	//	Invoked when a pattern is found:
+	//	Found pattern:
 	//	----------------
 	//	w   a   b      c
-	//	w1  0   1      1  -->  daxpy_b: c_i = a b_i, sz(i) = w1
-	//	w2  k1  k2w1   0  -->  dgemv_t_b: c_i = a_p# b_p$i
-	//	                                  sz(#) = k1
-	//	                                  sz($j) = k2w1
-	//	----------------
+	//	w1  0   1      1
+	//	w2  k3  k2w1   0  -->  c_i = a_p$ b_p%i
+	//	----------------       sz(i) = w1, sz(p) = w2,
+	//	                       sz($) = k3, sz(%) = k2
+	//	                       [dgemv_t_b]
 	//
 
-	//	1. Find with the minimum k3
-	//	----------------------
-	//	w   a      b     c
-	//	w1  0      1     1
-	//	w2  k4*w3  k2w1  0
-	//	w3  1      0     k3*w1  -->  dgemm_tn: c_i%j = a_p#i b_p$j
-	//	                                        sz(#i) = k4*w3
-	//	                                        sz($j) = k2w1
-	//	                                        sz(%j) = k3*w1
-	//	----------------------
+	//	1. Minimize k4:
+	//	-----------------------
+	//	w   a       b     c
+	//	w1  0       1     1
+	//	w2  k3'*w3  k2w1  0
+	//	w3  1       0     k4*w1  -->  c_j#i = a_p$j b_p%i
+	//	-----------------------       sz(i) = w1, sz(j) = w3,
+	//	                              sz(p) = w2
+	//	                              sz(#) = k4, sz($) = k3',
+	//	                              sz(%) = k2
+	//	                              [dgemm_tn]
 	//
-	size_t k3min = 0;
+	size_t k4_min = 0;
 	list_iter i1 = m_list.end();
 	for(list_iter i = m_list.begin(); i != m_list.end(); i++) {
 		if(i->m_inca != 1 || i->m_incb != 0) continue;
-		if(k1 % i->m_weight != 0) continue;
+		if(k3 % i->m_weight != 0) continue;
 		if(i->m_incc % w1 != 0) continue;
 
-		register size_t k3 = i->m_incc / w1;
-		if(k3min == 0 || k3min > k3) {
-			k3min = k3; i1 = i;
+		register size_t k4 = i->m_incc / w1;
+		if(k4_min == 0 || k4_min > k4) {
+			k4_min = k4; i1 = i;
 		}
 	}
 	if(i1 != m_list.end()) {
 		//~ std::cout << " dgemm_tn_ab";
 		i1->m_op = new op_dgemm_tn_ab(
-			d, i1->m_weight, w1, w2, k1, k2w1, i1->m_incc);
+			d, i1->m_weight, w1, w2, k3, k2w1, i1->m_incc);
 		m_list.splice(m_list.end(), m_list, i1);
 		return;
 	}
@@ -904,10 +1047,10 @@ template<size_t N, size_t M, size_t K>
 void tod_contract2<N, M, K>::op_dgemv_n_b::exec(
 	processor_t &proc, registers &regs) throw(exception) {
 
-	timings<op_dgemv_n_b>::start_timer();
+	op_dgemv_n_b::start_timer();
 	cblas_dgemv(CblasRowMajor, CblasNoTrans, m_rows, m_cols, m_d,
 		regs.m_ptrb, m_ldb, regs.m_ptra, m_stepa, 1.0, regs.m_ptrc, 1);
-	timings<op_dgemv_n_b>::stop_timer();
+	op_dgemv_n_b::stop_timer();
 }
 
 
@@ -915,11 +1058,24 @@ template<size_t N, size_t M, size_t K>
 void tod_contract2<N, M, K>::op_dgemv_t_b::exec(
 	processor_t &proc, registers &regs) throw(exception) {
 
-	timings<op_dgemv_t_b>::start_timer();
+	op_dgemv_t_b::start_timer();
 	cblas_dgemv(CblasRowMajor, CblasTrans, m_rows, m_cols, m_d,
 		regs.m_ptrb, m_ldb, regs.m_ptra, m_stepa, 1.0,
 		regs.m_ptrc, m_stepc);
-	timings<op_dgemv_t_b>::stop_timer();
+	op_dgemv_t_b::stop_timer();
+}
+
+
+template<size_t N, size_t M, size_t K>
+void tod_contract2<N, M, K>::op_dgemm_nt_ab::exec(
+	processor_t &proc, registers &regs) throw(exception) {
+
+	op_dgemm_nt_ab::start_timer();
+	cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasTrans,
+		m_rowsa, m_colsb, m_colsa, m_d,
+		regs.m_ptra, m_lda, regs.m_ptrb, m_ldb,
+		1.0, regs.m_ptrc, m_ldc);
+	op_dgemm_nt_ab::stop_timer();
 }
 
 
@@ -927,12 +1083,25 @@ template<size_t N, size_t M, size_t K>
 void tod_contract2<N, M, K>::op_dgemm_tn_ab::exec(
 	processor_t &proc, registers &regs) throw(exception) {
 
-	timings<op_dgemm_tn_ab>::start_timer();
+	op_dgemm_tn_ab::start_timer();
 	cblas_dgemm(CblasRowMajor, CblasTrans, CblasNoTrans,
 		m_rowsa, m_colsb, m_colsa, m_d,
 		regs.m_ptra, m_lda, regs.m_ptrb, m_ldb,
 		1.0, regs.m_ptrc, m_ldc);
-	timings<op_dgemm_tn_ab>::stop_timer();
+	op_dgemm_tn_ab::stop_timer();
+}
+
+
+template<size_t N, size_t M, size_t K>
+void tod_contract2<N, M, K>::op_dgemm_nt_ba::exec(
+	processor_t &proc, registers &regs) throw(exception) {
+
+	op_dgemm_nt_ba::start_timer();
+	cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasTrans,
+		m_rowsb, m_colsa, m_colsb, m_d,
+		regs.m_ptrb, m_ldb, regs.m_ptra, m_lda,
+		1.0, regs.m_ptrc, m_ldc);
+	op_dgemm_nt_ba::stop_timer();
 }
 
 
@@ -940,12 +1109,12 @@ template<size_t N, size_t M, size_t K>
 void tod_contract2<N, M, K>::op_dgemm_tn_ba::exec(
 	processor_t &proc, registers &regs) throw(exception) {
 
-	timings<op_dgemm_tn_ba>::start_timer();
+	op_dgemm_tn_ba::start_timer();
 	cblas_dgemm(CblasRowMajor, CblasTrans, CblasNoTrans,
 		m_rowsb, m_colsa, m_colsb, m_d,
 		regs.m_ptrb, m_ldb, regs.m_ptra, m_lda,
 		1.0, regs.m_ptrc, m_ldc);
-	timings<op_dgemm_tn_ba>::stop_timer();
+	op_dgemm_tn_ba::stop_timer();
 }
 
 
