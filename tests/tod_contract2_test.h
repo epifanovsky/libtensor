@@ -53,6 +53,10 @@ private:
 	void test_ij_ip_jp(size_t ni, size_t nj, size_t np, double d = 0.0)
 		throw(libtest::test_exception);
 
+	// c_{ij} = \sum_p a_{pj} b_{pi}
+	void test_ij_pj_pi(size_t ni, size_t nj, size_t np, double d = 0.0)
+		throw(libtest::test_exception);
+
 	// c_{ij} = \sum_p a_{jp} b_{ip}
 	void test_ij_jp_ip(size_t ni, size_t nj, size_t np, double d = 0.0)
 		throw(libtest::test_exception);

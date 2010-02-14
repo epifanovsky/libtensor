@@ -447,14 +447,18 @@ void tod_contract2<N, M, K>::do_perform(
 	double *ptrc = ctrlc.req_dataptr();
 
 	if(zero) {
+		tod_contract2<N, M, K>::start_timer("zero");
 		size_t szc = tc.get_dims().get_size();
 		for(size_t i = 0; i < szc; i++) ptrc[i] = 0.0;
+		tod_contract2<N, M, K>::stop_timer("zero");
 	}
 
+	tod_contract2<N, M, K>::start_timer("match_patterns");
 	//~ std::cout << "[";
 	match_l1(d);
 	//~ std::cout << "]" << std::endl;
 	match_loops();
+	tod_contract2<N, M, K>::stop_timer("match_patterns");
 	try {
 		registers regs;
 		regs.m_ptra = ptra;
@@ -860,7 +864,7 @@ void tod_contract2<N, M, K>::match_dgemv_t_a_l3(
 	if(i1 != m_list.end()) {
 		//~ std::cout << " dgemm_tn_ba";
 		i1->m_op = new op_dgemm_tn_ba(
-			d, w2, w1, i1->m_weight, k3, k2w1, i1->m_incc);
+			d, i1->m_weight, w1, w2, k3, k2w1, i1->m_incc);
 		m_list.splice(m_list.end(), m_list, i1);
 		return;
 	}
@@ -893,7 +897,7 @@ void tod_contract2<N, M, K>::match_dgemv_t_b_l3(
 	//	                              sz(p) = w2
 	//	                              sz(#) = k4, sz($) = k3',
 	//	                              sz(%) = k2
-	//	                              [dgemm_tn]
+	//	                              [dgemm_tn_ab]
 	//
 	size_t k4_min = 0;
 	list_iter i1 = m_list.end();
