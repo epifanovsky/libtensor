@@ -5,6 +5,7 @@
 #include <sstream>
 #include "../defs.h"
 #include "../exception.h"
+#include "../timings.h"
 #include "../core/block_tensor_i.h"
 #include "../core/block_tensor_ctrl.h"
 #include "../core/tensor_i.h"
@@ -20,7 +21,7 @@ namespace libtensor {
 	\ingroup libtensor_btod
  **/
 template<size_t N>
-class btod_read {
+class btod_read : public timings< btod_read<N> > {
 public:
 	static const char *k_clazz; //!< Class name
 
@@ -55,6 +56,8 @@ template<size_t N>
 void btod_read<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 
 	static const char *method = "perform(block_tensor_i<N, double>&)";
+
+	btod_read<N>::start_timer();
 
 	//
 	//	Read the first line: order, dimensions
@@ -159,6 +162,7 @@ void btod_read<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 
 	delete [] buf;
 
+	btod_read<N>::stop_timer();
 }
 
 
