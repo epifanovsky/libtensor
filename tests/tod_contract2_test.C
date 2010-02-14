@@ -20,7 +20,7 @@ void tod_contract2_test::perform() throw(libtest::test_exception) {
 	srand48(time(NULL));
 
 	//	Test 1-index contractions
-
+/*
 	test_0_p_p(1);
 	test_0_p_p(2);
 	test_0_p_p(5);
@@ -96,7 +96,7 @@ void tod_contract2_test::perform() throw(libtest::test_exception) {
 	test_ij_pi_pj(3, 3, 3, 1.0);
 	test_ij_pi_pj(3, 5, 7, -1.2);
 	test_ij_pi_pj(16, 16, 16, 0.7);
-
+*/
 	test_ij_pi_jp(1, 1, 1);
 	test_ij_pi_jp(1, 1, 2);
 	test_ij_pi_jp(1, 2, 1);
@@ -111,7 +111,7 @@ void tod_contract2_test::perform() throw(libtest::test_exception) {
 	test_ij_pi_jp(3, 3, 3, 1.0);
 	test_ij_pi_jp(3, 5, 7, -1.2);
 	test_ij_pi_jp(16, 16, 16, 0.7);
-
+/*
 	test_ij_ip_pj(1, 1, 1);
 	test_ij_ip_pj(1, 1, 2);
 	test_ij_ip_pj(1, 2, 1);
@@ -171,8 +171,8 @@ void tod_contract2_test::perform() throw(libtest::test_exception) {
 	test_ij_jp_ip(3, 3, 3, 1.0);
 	test_ij_jp_ip(3, 5, 7, -1.2);
 	test_ij_jp_ip(16, 16, 16, 0.7);
-
-
+*/
+/*
 	//test_ij_pq_ijpq(1, 1, 1, 1);
 	test_ij_pq_ijpq(2, 2, 2, 2);
 	//test_ij_pq_ijpq_a(1, 1, 1, 1, 0.25);
@@ -209,7 +209,7 @@ void tod_contract2_test::perform() throw(libtest::test_exception) {
 	test_ijkl_ij_kl(3, 4, 5, 6);
 
 	test_ijkl_ij_lk(3, 4, 5, 6);
-
+*/
 }
 
 
