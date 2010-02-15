@@ -3,9 +3,13 @@
 
 #include <list>
 #include <map>
+#ifdef _OPENMP
+#include <omp.h>
+#endif // _OPENMP
 #include "../defs.h"
 #include "../exception.h"
 #include "../timings.h"
+#include "../core/abs_index.h"
 #include "../core/block_tensor_i.h"
 #include "../core/block_tensor_ctrl.h"
 #include "../core/orbit.h"
@@ -65,6 +69,12 @@ private:
 	} block_contr_t;
 	typedef std::list<block_contr_t> block_contr_list_t;
 	typedef std::map<size_t, block_contr_list_t*> schedule_t;
+
+#ifdef _OPENMP
+	typedef omp_lock_t lock_t; //!< Multi-processor lock type
+#else
+	typedef int lock_t;
+#endif // _OPENMP
 
 private:
 	contraction2<N, M, K> m_contr; //!< Contraction
@@ -134,12 +144,17 @@ private:
 	void contract_block(
 		block_contr_list_t &lst, const index<k_orderc> &idxc,
 		block_tensor_ctrl<k_ordera, double> &ctrla,
-		const dimensions<k_ordera> &bidimsa,
+		const dimensions<k_ordera> &bidimsa, lock_t &locka,
 		block_tensor_ctrl<k_orderb, double> &ctrlb,
-		const dimensions<k_orderb> &bidimsb,
+		const dimensions<k_orderb> &bidimsb, lock_t &lockb,
 		block_tensor_ctrl<k_orderc, double> &ctrlc,
-		const dimensions<k_orderc> &bidimsc,
+		const dimensions<k_orderc> &bidimsc, lock_t &lockc,
 		bool zero, double c);
+
+	void create_lock(lock_t &l);
+	void destroy_lock(lock_t &l);
+	void set_lock(lock_t &l);
+	void unset_lock(lock_t &l);
 
 private:
 	btod_contract2<N, M, K> &operator=(const btod_contract2<N, M, K>&);
@@ -466,18 +481,32 @@ void btod_contract2<N, M, K>::do_perform(
 
 	//	Invoke contractions
 
+	lock_t locka, lockb, lockc, locksch;
+	create_lock(locka); create_lock(lockb); create_lock(lockc);
+	create_lock(locksch);
 	try {
-		index<k_orderc> idxc;
 		typename schedule_t::iterator isch = sch.begin();
-		for(; isch != sch.end(); isch++) {
-			bidimsc.abs_index(isch->first, idxc);
-			contract_block(*isch->second, idxc, ctrl_bta, bidimsa,
-				ctrl_btb, bidimsb, ctrl_btc, bidimsc, zero, c);
+		size_t sch_sz = sch.size();
+		#pragma omp parallel for schedule(dynamic)
+		for(size_t sch_i = 0; sch_i < sch_sz; sch_i++) {
+			set_lock(locksch);
+			abs_index<k_orderc> idxc(isch->first, bidimsc);
+			block_contr_list_t &contr_lst = *isch->second;
+			isch++;
+			unset_lock(locksch);
+			contract_block(contr_lst, idxc.get_index(),
+				ctrl_bta, bidimsa, locka,
+				ctrl_btb, bidimsb, lockb,
+				ctrl_btc, bidimsc, lockc, zero, c);
 		}
 	} catch(...) {
+		destroy_lock(locka); destroy_lock(lockb); destroy_lock(lockc);
+		destroy_lock(locksch);
 		clear_schedule(sch);
 		throw;
 	}
+	destroy_lock(locka); destroy_lock(lockb); destroy_lock(lockc);
+	destroy_lock(locksch);
 }
 
 
@@ -603,18 +632,20 @@ template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::contract_block(
 	block_contr_list_t &lst, const index<k_orderc> &idxc,
 	block_tensor_ctrl<k_ordera, double> &ctrla,
-	const dimensions<k_ordera> &bidimsa,
+	const dimensions<k_ordera> &bidimsa, lock_t &locka,
 	block_tensor_ctrl<k_orderb, double> &ctrlb,
-	const dimensions<k_orderb> &bidimsb,
+	const dimensions<k_orderb> &bidimsb, lock_t &lockb,
 	block_tensor_ctrl<k_orderc, double> &ctrlc,
-	const dimensions<k_orderc> &bidimsc,
+	const dimensions<k_orderc> &bidimsc, lock_t &lockc,
 	bool zero, double c) {
 
 	index<k_ordera> idxa;
 	index<k_orderb> idxb;
 
+	set_lock(lockc);
 	bool adjzero = zero || ctrlc.req_is_zero_block(idxc);
 	tensor_i<k_orderc, double> &tc = ctrlc.req_block(idxc);
+	unset_lock(lockc);
 
 	if(adjzero) tod_set<k_orderc>().perform(tc);
 
@@ -622,11 +653,18 @@ void btod_contract2<N, M, K>::contract_block(
 	for(; ilst != lst.end(); ilst++) {
 		bidimsa.abs_index(ilst->m_absidxa, idxa);
 		bidimsb.abs_index(ilst->m_absidxb, idxb);
-		if(ctrla.req_is_zero_block(idxa) ||
-			ctrlb.req_is_zero_block(idxb)) continue;
+
+		set_lock(locka); set_lock(lockb);
+		bool zeroa = ctrla.req_is_zero_block(idxa);
+		bool zerob = ctrlb.req_is_zero_block(idxb);
+		if(zeroa || zerob) {
+			unset_lock(lockb); unset_lock(locka);
+			continue;
+		}
 
 		tensor_i<k_ordera, double> &ta = ctrla.req_block(idxa);
 		tensor_i<k_orderb, double> &tb = ctrlb.req_block(idxb);
+		unset_lock(lockb); unset_lock(locka);
 
 		contraction2<N, M, K> contr(m_contr);
 		contr.permute_a(ilst->m_perma);
@@ -634,11 +672,47 @@ void btod_contract2<N, M, K>::contract_block(
 		tod_contract2<N, M, K> controp(contr, ta, tb);
 		controp.perform(tc, c * ilst->m_c);
 
+		set_lock(locka); set_lock(lockb);
 		ctrla.ret_block(idxa);
 		ctrlb.ret_block(idxb);
+		unset_lock(lockb); unset_lock(locka);
 	}
 
+	set_lock(lockc);
 	ctrlc.ret_block(idxc);
+	unset_lock(lockc);
+}
+
+
+template<size_t N, size_t M, size_t K>
+inline void btod_contract2<N, M, K>::create_lock(lock_t &l) {
+#ifdef _OPENMP
+	omp_init_lock(&l);
+#endif //_OPENMP
+}
+
+
+template<size_t N, size_t M, size_t K>
+inline void btod_contract2<N, M, K>::destroy_lock(lock_t &l) {
+#ifdef _OPENMP
+	omp_destroy_lock(&l);
+#endif //_OPENMP
+}
+
+
+template<size_t N, size_t M, size_t K>
+inline void btod_contract2<N, M, K>::set_lock(lock_t &l) {
+#ifdef _OPENMP
+	omp_set_lock(&l);
+#endif //_OPENMP
+}
+
+
+template<size_t N, size_t M, size_t K>
+inline void btod_contract2<N, M, K>::unset_lock(lock_t &l) {
+#ifdef _OPENMP
+	omp_unset_lock(&l);
+#endif //_OPENMP
 }
 
 
