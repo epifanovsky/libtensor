@@ -73,7 +73,7 @@ include(${LIBTEST_DIR}/cmake/SetupLibTest.txt)
 
 add_definitions(-DLIBTENSOR_DEBUG)
 add_definitions(-g)
-add_definitions(-openmp)
+#add_definitions(-openmp)
 target_link_libraries(libtensor_tests
 	tensor ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} test)
 

@@ -481,32 +481,60 @@ void btod_contract2<N, M, K>::do_perform(
 
 	//	Invoke contractions
 
-	lock_t locka, lockb, lockc, locksch;
+	lock_t locka, lockb, lockc, locksch, lockexc;
 	create_lock(locka); create_lock(lockb); create_lock(lockc);
-	create_lock(locksch);
-	try {
-		typename schedule_t::iterator isch = sch.begin();
-		size_t sch_sz = sch.size();
-		#pragma omp parallel for schedule(dynamic)
-		for(size_t sch_i = 0; sch_i < sch_sz; sch_i++) {
-			set_lock(locksch);
-			abs_index<k_orderc> idxc(isch->first, bidimsc);
-			block_contr_list_t &contr_lst = *isch->second;
-			isch++;
-			unset_lock(locksch);
+	create_lock(locksch); create_lock(lockexc);
+
+	typename schedule_t::iterator isch = sch.begin();
+	int sch_sz = sch.size();
+	volatile bool exc_raised = false;
+	std::string exc_what;
+	#pragma omp parallel for schedule(dynamic)
+	for(int sch_i = 0; sch_i < sch_sz; sch_i++) {
+
+		set_lock(lockexc); set_lock(locksch);
+		if(exc_raised) {
+			if(isch != sch.end()) isch++;
+			unset_lock(lockexc); unset_lock(locksch);
+			continue;
+		}
+		if(isch == sch.end()) {
+			exc_raised = true;
+			#pragma omp flush(exc_raised)
+			exc_what = "Unexpected end of schedule.";
+			unset_lock(lockexc); unset_lock(locksch);
+			continue;
+		}
+		unset_lock(lockexc);
+		abs_index<k_orderc> idxc(isch->first, bidimsc);
+		block_contr_list_t &contr_lst = *isch->second;
+		isch++;
+		unset_lock(locksch);
+
+		try {
 			contract_block(contr_lst, idxc.get_index(),
 				ctrl_bta, bidimsa, locka,
 				ctrl_btb, bidimsb, lockb,
 				ctrl_btc, bidimsc, lockc, zero, c);
+		} catch(exception &e) {
+			//printf("%s\n", e.what()); fflush(stdout);
+			set_lock(lockexc);
+			if(!exc_raised) {
+				exc_raised = true;
+				#pragma omp flush(exc_raised)
+				exc_what = e.what();
+			}
+			unset_lock(lockexc);
 		}
-	} catch(...) {
-		destroy_lock(locka); destroy_lock(lockb); destroy_lock(lockc);
-		destroy_lock(locksch);
-		clear_schedule(sch);
-		throw;
 	}
+
 	destroy_lock(locka); destroy_lock(lockb); destroy_lock(lockc);
-	destroy_lock(locksch);
+	destroy_lock(locksch); destroy_lock(lockexc);
+	clear_schedule(sch);
+
+	if(exc_raised) {
+		throw_exc(k_clazz, "do_perform", exc_what.c_str());
+	}
 }
 
 
