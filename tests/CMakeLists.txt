@@ -60,6 +60,7 @@ set(SRC
 	tod_import_raw_test.C
 	tod_mkdelta_test.C
 	tod_random_test.C
+	tod_scale_test.C
 	tod_set_test.C
 	tod_set_diag_test.C
 	tod_sum_test.C

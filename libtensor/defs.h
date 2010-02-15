@@ -20,9 +20,9 @@ extern const char *g_ns;
 
 #ifdef USE_MKL
 #include <mkl.h>
-#undef USE_BLAS
+#undef USE_CBLAS
 #endif
-#ifdef USE_BLAS
+#ifdef USE_CBLAS
 #include <cblas.h>
 #endif
 

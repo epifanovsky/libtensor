@@ -64,6 +64,7 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("tod_import_raw", m_utf_tod_import_raw);
 	add_test("tod_mkdelta", m_utf_tod_mkdelta);
 	add_test("tod_random", m_utf_tod_random);
+	add_test("tod_scale", m_utf_tod_scale);
 	add_test("tod_set", m_utf_tod_set);
 	add_test("tod_set_diag", m_utf_tod_set_diag);
 	add_test("tod_sum", m_utf_tod_sum);
