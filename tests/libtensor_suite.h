@@ -58,6 +58,7 @@
 #include "tod_contract2_test.h"
 #include "tod_copy_test.h"
 #include "tod_delta_denom2_test.h"
+#include "tod_diag_test.h"
 #include "tod_dotprod_test.h"
 #include "tod_import_raw_test.h"
 #include "tod_mkdelta_test.h"
@@ -134,6 +135,7 @@ namespace libtensor {
 	\li libtensor::tod_contract2_test
 	\li libtensor::tod_copy_test
 	\li libtensor::tod_delta_denom2_test
+	\li libtensor::tod_diag_test
 	\li libtensor::tod_dotprod_test
 	\li libtensor::tod_import_raw_test
 	\li libtensor::tod_mkdelta_test
@@ -206,6 +208,7 @@ private:
 	unit_test_factory<tod_contract2_test> m_utf_tod_contract2;
 	unit_test_factory<tod_copy_test> m_utf_tod_copy;
 	unit_test_factory<tod_delta_denom2_test> m_utf_tod_delta_denom2;
+	unit_test_factory<tod_diag_test> m_utf_tod_diag;
 	unit_test_factory<tod_dotprod_test> m_utf_tod_dotprod;
 	unit_test_factory<tod_import_raw_test> m_utf_tod_import_raw;
 	unit_test_factory<tod_mkdelta_test> m_utf_tod_mkdelta;
