@@ -22,6 +22,7 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("btod_mkdelta", m_utf_btod_mkdelta);
 	add_test("btod_random", m_utf_btod_random);
 	add_test("btod_read", m_utf_btod_read);
+	add_test("btod_scale", m_utf_btod_scale);
 	add_test("btod_set_diag", m_utf_btod_set_diag);
 	add_test("btod_sum", m_utf_btod_sum);
 	add_test("contract", m_utf_contract);

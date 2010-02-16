@@ -19,6 +19,7 @@
 #include "btod_mkdelta_test.h"
 #include "btod_random_test.h"
 #include "btod_read_test.h"
+#include "btod_scale_test.h"
 #include "btod_set_diag_test.h"
 #include "btod_sum_test.h"
 #include "contract_test.h"
@@ -94,6 +95,7 @@ namespace libtensor {
 	\li libtensor::btod_mkdelta_test
 	\li libtensor::btod_random_test
 	\li libtensor::btod_read_test
+	\li libtensor::btod_scale_test
 	\li libtensor::btod_set_diag_test
 	\li libtensor::btod_sum_test
 	\li libtensor::contract_test
@@ -163,6 +165,7 @@ private:
 	unit_test_factory<btod_mkdelta_test> m_utf_btod_mkdelta;
 	unit_test_factory<btod_random_test> m_utf_btod_random;
 	unit_test_factory<btod_read_test> m_utf_btod_read;
+	unit_test_factory<btod_scale_test> m_utf_btod_scale;
 	unit_test_factory<btod_set_diag_test> m_utf_btod_set_diag;
 	unit_test_factory<btod_sum_test> m_utf_btod_sum;
 	unit_test_factory<contract_test> m_utf_contract;
