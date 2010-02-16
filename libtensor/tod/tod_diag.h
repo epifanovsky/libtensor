@@ -2,6 +2,7 @@
 #define LIBTENSOR_TOD_DIAG_H
 
 #include "../defs.h"
+#include "../not_implemented.h"
 #include "../core/mask.h"
 #include "../core/permutation.h"
 #include "../core/tensor_i.h"
@@ -106,12 +107,19 @@ tod_diag<N, M>::tod_diag(tensor_i<N, double> &t, const mask<N> &m,
 template<size_t N, size_t M>
 void tod_diag<N, M>::perform(tensor_i<N - M + 1, double> &t) {
 
+	static const char *method = "perform(tensor_i<N - M + 1, double> &)";
+
+	throw not_implemented(g_ns, k_clazz, method, __FILE__, __LINE__);
 }
 
 
 template<size_t N, size_t M>
 void tod_diag<N, M>::perform(tensor_i<N - M + 1, double> &t, double c) {
 
+	static const char *method =
+		"perform(tensor_i<N - M + 1, double> &, double)";
+
+	throw not_implemented(g_ns, k_clazz, method, __FILE__, __LINE__);
 }
 
 
