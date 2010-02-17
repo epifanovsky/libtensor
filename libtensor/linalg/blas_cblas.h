@@ -5,6 +5,14 @@
 
 namespace libtensor {
 
+/**	\brief BLAS function dcopy (CBLAS)
+
+	\ingroup libtensor_linalg
+ **/
+inline void blas_dcopy(
+	size_t n, const double *dx, size_t incx, double *dy, size_t incy) {
+	cblas_dcopy(n, dx, incx, dy, incy);
+}
 
 /**	\brief BLAS function dscal (CBLAS)
 
