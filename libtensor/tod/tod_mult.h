@@ -2,6 +2,7 @@
 #define TOD_MULT_H
 
 #include "../defs.h"
+#include "../timings.h"
 #include "../core/tensor_i.h"
 #include "bad_dimensions.h"
 
@@ -19,7 +20,7 @@ namespace libtensor {
 	\ingroup libtensor
  **/
 template<size_t N>
-class tod_mult {
+class tod_mult : public timings< tod_mult<N> > {
 public:
 	static const char *k_clazz; //!< Class name
 
@@ -61,10 +62,86 @@ tod_mult<N>::tod_mult(
 
 	m_ta(ta), m_tb(tb), m_recip(recip) {
 
+	static const char *method =
+		"tod_mult(tensor_i<N, double>&, tensor_i<N, double>&, bool)";
+
 	if(!ta.get_dims().equals(tb.get_dims())) {
 		throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__,
 			"ta,tb");
 	}
+
+}
+
+
+template<size_t N>
+void tod_mult<N>::perform(tensor_i<N, double> &tc) {
+
+	static const char *method = "perform(tensor_i<N, double>&)";
+
+	if(!m_ta.get_dims().equals(tc.get_dims())) {
+		throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"tc");
+	}
+
+	tod_mult<N>::start_timer();
+
+	tensor_ctrl<N, double> ca(m_ta), cb(m_tb), cc(tc);
+	const double *pa = ca.req_const_dataptr();
+	const double *pb = cb.req_const_dataptr();
+	double *pc = cc.req_dataptr();
+
+	size_t sz = tc.get_dims().get_size();
+	if(m_recip) {
+		for(size_t i = 0; i < sz; i++) {
+			pc[i] = pa[i] / pb[i];
+		}
+	} else {
+		for(size_t i = 0; i < sz; i++) {
+			pc[i] = pa[i] * pb[i];
+		}
+	}
+
+	cc.ret_dataptr(pc); pc = 0;
+	cb.ret_dataptr(pb); pb = 0;
+	ca.ret_dataptr(pa); pa = 0;
+
+	tod_mult<N>::stop_timer();
+}
+
+
+template<size_t N>
+void tod_mult<N>::perform(tensor_i<N, double> &tc, double c) {
+
+	static const char *method = "perform(tensor_i<N, double>&, double)";
+
+	if(!m_ta.get_dims().equals(tc.get_dims())) {
+		throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"tc");
+	}
+
+	tod_mult<N>::start_timer();
+
+	tensor_ctrl<N, double> ca(m_ta), cb(m_tb), cc(tc);
+	const double *pa = ca.req_const_dataptr();
+	const double *pb = cb.req_const_dataptr();
+	double *pc = cc.req_dataptr();
+
+	size_t sz = tc.get_dims().get_size();
+	if(m_recip) {
+		for(size_t i = 0; i < sz; i++) {
+			pc[i] += c * pa[i] / pb[i];
+		}
+	} else {
+		for(size_t i = 0; i < sz; i++) {
+			pc[i] += c * pa[i] * pb[i];
+		}
+	}
+
+	cc.ret_dataptr(pc); pc = 0;
+	cb.ret_dataptr(pb); pb = 0;
+	ca.ret_dataptr(pa); pa = 0;
+
+	tod_mult<N>::stop_timer();
 }
 
 
