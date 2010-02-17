@@ -67,6 +67,10 @@ public:
 	/** \brief get number of saved timings
 	 */
 	size_t ntimings() const;
+
+	/**	\brief Prints the timings in the CSV format
+	 **/
+	void print_csv(std::ostream &os);
 };
 
 inline void
