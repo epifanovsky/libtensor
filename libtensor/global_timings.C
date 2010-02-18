@@ -22,16 +22,17 @@ operator<<(std::ostream& out, const libtensor::global_timings& timings)
 }
 
 
-void global_timings::print_csv(std::ostream &os) {
+void global_timings::print_csv(std::ostream &os, char delim) {
 
+	std::string comma(1, delim);
 	map_t::const_iterator i = m_times.begin();
 	for(; i != m_times.end(); i++) {
 
-		os << i->first << "," << i->second.m_calls << ",";
+		os << i->first << comma << i->second.m_calls << comma;
 		os << std::setprecision(2) << std::showpoint << std::fixed
-			<< i->second.m_total.user_time() << ",";
+			<< i->second.m_total.user_time() << comma;
 		os << std::setprecision(2) << std::showpoint << std::fixed
-			<< i->second.m_total.system_time() << ",";
+			<< i->second.m_total.system_time() << comma;
 		os << std::setprecision(2) << std::showpoint << std::fixed
 			<< i->second.m_total.wall_time() << std::endl;
 	}

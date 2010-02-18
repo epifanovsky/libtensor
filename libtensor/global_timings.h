@@ -70,7 +70,7 @@ public:
 
 	/**	\brief Prints the timings in the CSV format
 	 **/
-	void print_csv(std::ostream &os);
+	void print_csv(std::ostream &os, char delim = ',');
 };
 
 inline void
