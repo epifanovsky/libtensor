@@ -23,7 +23,7 @@ inline int lapack_dgesv(size_t n, size_t nrhs, double *a, size_t lda,
 	int mkl_lda = lda;
 	int mkl_ldb = ldb;
 	int mkl_info = 0;
-	dgesv_(&mkl_n, &mkl_nrhs, a, &mkl_lda, ipiv, b, &mkl_ldb, &mkl_info);
+	dgesv(&mkl_n, &mkl_nrhs, a, &mkl_lda, ipiv, b, &mkl_ldb, &mkl_info);
 	return mkl_info;
 }
 
@@ -50,7 +50,7 @@ inline int lapack_dgesvd(char jobu, char jobvt, size_t m, size_t n, double *a,
 	int mkl_ldvt = ldvt;
 	int mkl_lwork = lwork;
 	int mkl_info = 0;
-	dgesvd_(&jobu, &jobvt, &mkl_m, &mkl_n, a, &mkl_lda, s, u, &mkl_ldu,
+	dgesvd(&jobu, &jobvt, &mkl_m, &mkl_n, a, &mkl_lda, s, u, &mkl_ldu,
 		vt, &mkl_ldvt, work, &mkl_lwork, &mkl_info);
 	return mkl_info;
 }
@@ -71,7 +71,7 @@ inline int lapack_dsyev(char jobz, char uplo, size_t n, double *a, size_t lda,
 	int mkl_lda = lda;
 	int mkl_lwork = lwork;
 	int mkl_info = 0;
-	dsyev_(&jobz, &uplo, &mkl_n, a, &mkl_lda, w, work, &mkl_lwork,
+	dsyev(&jobz, &uplo, &mkl_n, a, &mkl_lda, w, work, &mkl_lwork,
 		&mkl_info);
 	return mkl_info;
 }
@@ -97,7 +97,7 @@ inline int lapack_dgeev(char jobvl, char jobvr, size_t n, double *a, size_t lda,
 	int mkl_ldvr = ldvr;
 	int mkl_lwork = lwork;
 	int mkl_info = 0;
-	dgeev_(&jobvl, &jobvr, &mkl_n, a, &mkl_lda, wr, wi, vl, &mkl_ldvl,
+	dgeev(&jobvl, &jobvr, &mkl_n, a, &mkl_lda, wr, wi, vl, &mkl_ldvl,
 		vr, &mkl_ldvr, work, &mkl_lwork, &mkl_info);
 	return mkl_info;
 }
