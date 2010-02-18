@@ -32,6 +32,20 @@ inline void blas_dscal(size_t n, double da, double *dx, size_t incx) {
 }
 
 
+/**	\brief BLAS function daxpy (Intel MKL)
+
+	\ingroup libtensor_linalg
+ **/
+inline void blas_daxpy(size_t n, double da, const double *dx, size_t incx,
+	double *dy, size_t incy) {
+
+	MKL_INT mkl_n = n;
+	MKL_INT mkl_incx = incx;
+	MKL_INT mkl_incy = incy;
+	cblas_daxpy(mkl_n, da, dx, mkl_incx, dy, mkl_incy);
+}
+
+
 } // namespace libtensor
 
 #endif // LIBTENSOR_BLAS_MKL_H
