@@ -324,15 +324,19 @@ void tod_diag<N, M>::build_list(
 	//
 	try { // bad_alloc
 
-	typename loop_list_t::iterator posa = list.end(), posb = list.end();
+	typename loop_list_t::iterator poscore = list.end();
 	bool diag_done = false;
-	for(size_t pos = 0; pos < N;) {
+	size_t iboffs = 0;
+	for(size_t pos = 0; pos < N; pos++) {
 
-		size_t inca, incb, len;
+		size_t inca = 0, incb = 0, len = 0;
 
 		if(m_mask[pos]) {
 
-			if(diag_done) continue;
+			if(diag_done) {
+				iboffs++;
+				continue;
+			}
 
 			//	Compute the stride on the diagonal
 			//
@@ -348,14 +352,17 @@ void tod_diag<N, M>::build_list(
 			//	concatenating indexes if possible
 			//
 			len = 1;
-			size_t ibpos = ib[pos];
-			while(pos < N && !m_mask[pos] && ibpos == ib[pos]) {
+			size_t ibpos = ib[pos - iboffs];
+			while(pos < N && !m_mask[pos] &&
+				ibpos == ib[pos - iboffs]) {
+
 				len *= dimsa.get_dim(pos);
 				pos++;
 				ibpos++;
 			}
-			inca = dimsa.get_increment(pos - 1);
-			incb = dimsb.get_increment(ibpos - 1);
+			pos--; ibpos--;
+			inca = dimsa.get_increment(pos);
+			incb = dimsb.get_increment(ibpos);
 		}
 
 
@@ -364,36 +371,15 @@ void tod_diag<N, M>::build_list(
 
 		//	Make the loop with incb the last
 		//
-		if(inca == 1) {
-			if(incb == 1) {
-				it->m_op = new CoreOp(len, inca, incb, c);
-			} else {
-				posa = it;
-			}
+		if(incb == 1 && poscore == list.end()) {
+			it->m_op = new CoreOp(len, inca, incb, c);
+			poscore = it;
 		} else {
-			if(incb == 1) {
-				posb = it;
-			} else {
-				it->m_op = new op_loop(len, inca, incb);
-			}
+			it->m_op = new op_loop(len, inca, incb);
 		}
 	}
 
-	if(posa != posb) {
-		if(posa->m_weight > posb->m_weight) {
-			posa->m_op = new CoreOp(
-				posa->m_weight, posa->m_inca, posa->m_incb, c);
-			posb->m_op = new op_loop(
-				posb->m_weight, posb->m_inca, posb->m_incb);
-			list.splice(list.end(), list, posa);
-		} else {
-			posa->m_op = new op_loop(
-				posa->m_weight, posa->m_inca, posa->m_incb);
-			posb->m_op = new CoreOp(
-				posb->m_weight, posb->m_inca, posb->m_incb, c);
-			list.splice(posb, list, posa);
-		}
-	}
+	list.splice(list.end(), list, poscore);
 
 	} catch(std::bad_alloc &e) {
 
