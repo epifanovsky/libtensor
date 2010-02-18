@@ -21,6 +21,8 @@
 #include "../tod/tod_set.h"
 #include "btod_additive.h"
 #include "btod_so_copy.h"
+#include "../not_implemented.h"
+#include "bad_block_index_space.h"
 
 namespace libtensor {
 
@@ -205,9 +207,11 @@ void btod_contract2<N, M, K>::perform(block_tensor_i<k_orderc, double> &btc,
 	static const char *method =
 		"perform(block_tensor_i<N + M, double>&, double)";
 
-	if(!m_bis.equals(btc.get_bis())) {
-		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
-			"Incorrect block index space of the output tensor.");
+	block_index_space<k_orderc> bisc(btc.get_bis());
+	bisc.match_splits();
+	if(!m_bis.equals(bisc)) {
+		throw bad_block_index_space(
+			g_ns, k_clazz, method, __FILE__, __LINE__, "c");
 	}
 
 	btod_contract2<N, M, K>::start_timer();
@@ -223,12 +227,15 @@ void btod_contract2<N, M, K>::perform(block_tensor_i<k_orderc, double> &btc,
 		sym.set_intersection(ctrl_btc.req_symmetry());
 		if(sym.equals(m_sym)) {
 			// C has a higher symmetry
-			throw_exc(k_clazz, method, "Case 1 not handled.");
+			throw not_implemented(
+				g_ns, k_clazz, method, __FILE__, __LINE__);
 		} else if(sym.equals(ctrl_btc.req_symmetry())) {
 			// A*B has a higher symmetry
-			throw_exc(k_clazz, method, "Case 2 not handled.");
+			throw not_implemented(
+				g_ns, k_clazz, method, __FILE__, __LINE__);
 		} else {
-			throw_exc(k_clazz, method, "Case 3 not handled.");
+			throw not_implemented(
+				g_ns, k_clazz, method, __FILE__, __LINE__);
 		}
 	}
 
@@ -240,7 +247,10 @@ template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::perform(block_tensor_i<k_orderc, double> &btc,
 	const index<k_orderc> &idx) throw(exception) {
 
-	throw_exc(k_clazz, "perform(const index<N + M>&)", "NIY");
+	static const char *method =
+		"perform(block_tensor_i<N + M, double>&, const index<N + M>&)";
+
+	throw not_implemented(g_ns, k_clazz, method, __FILE__, __LINE__);
 }
 
 
@@ -253,8 +263,8 @@ void btod_contract2<N, M, K>::perform(block_tensor_i<k_orderc, double> &btc)
 	block_index_space<k_orderc> bisc(btc.get_bis());
 	bisc.match_splits();
 	if(!m_bis.equals(bisc)) {
-		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
-			"Incorrect block index space of the output tensor.");
+		throw bad_block_index_space(
+			g_ns, k_clazz, method, __FILE__, __LINE__, "c");
 	}
 
 	btod_contract2<N, M, K>::start_timer();
