@@ -30,7 +30,7 @@ void btod_delta_denom2::perform(block_tensor_i<4, double> &bt)
 
 	// Temporary way to deal with alpha-beta; to be replaced with
 	// appropriate symmetry.
-	size_t ni = bidims[0], na = bidims[1];
+	size_t ni = bidims[0], na = bidims[2];
 	size_t ni_ab = ni / 2, na_ab = na / 2;
 
 	abs_index<4> ai1(bidims);
