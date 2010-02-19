@@ -16,6 +16,7 @@ set(SRC
 	btod_dotprod_test.C
 	btod_import_raw_test.C
 	btod_mkdelta_test.C
+	btod_mult_test.C
 	btod_random_test.C
 	btod_read_test.C
 	btod_scale_test.C

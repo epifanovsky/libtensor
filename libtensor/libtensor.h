@@ -68,6 +68,7 @@
 #include "btod/btod_delta_denom2.h"
 #include "btod/btod_import_raw.h"
 #include "btod/btod_mkdelta.h"
+#include "btod/btod_mult.h"
 #include "btod/btod_random.h"
 #include "btod/btod_read.h"
 #include "btod/btod_scale.h"
