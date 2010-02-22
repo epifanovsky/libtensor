@@ -70,7 +70,6 @@
 #include "tod_set_diag_test.h"
 #include "tod_sum_test.h"
 #include "tod_symcontract2_test.h"
-#include "tod_solve_test.h"
 #include "version_test.h"
 
 using libtest::unit_test_factory;
@@ -149,7 +148,6 @@ namespace libtensor {
 	\li libtensor::tod_set_diag_test
 	\li libtensor::tod_sum_test
 	\li libtensor::tod_symcontract2_test
-	\li libtensor::tod_solve_test
 	\li libtensor::version_test
 **/
 class libtensor_suite : public libtest::test_suite {
@@ -224,7 +222,6 @@ private:
 	unit_test_factory<tod_set_diag_test> m_utf_tod_set_diag;
 	unit_test_factory<tod_sum_test> m_utf_tod_sum;
 	unit_test_factory<tod_symcontract2_test> m_utf_tod_symcontract2;
-	unit_test_factory<tod_solve_test> m_utf_tod_solve;
 	unit_test_factory<version_test> m_utf_version;
 
 public:
