@@ -12,7 +12,6 @@ set(SRC
 	tod/tod_delta_denom1.C
 	tod/tod_delta_denom2.C
 	tod/tod_mkdelta.C
-	tod/tod_solve.C
 )
 
 add_library(tensor ${SRC})

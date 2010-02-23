@@ -17,8 +17,10 @@
 #include "btod_dotprod_test.h"
 #include "btod_import_raw_test.h"
 #include "btod_mkdelta_test.h"
+#include "btod_mult_test.h"
 #include "btod_random_test.h"
 #include "btod_read_test.h"
+#include "btod_scale_test.h"
 #include "btod_set_diag_test.h"
 #include "btod_sum_test.h"
 #include "contract_test.h"
@@ -62,15 +64,17 @@
 #include "tod_contract2_test.h"
 #include "tod_copy_test.h"
 #include "tod_delta_denom2_test.h"
+#include "tod_diag_test.h"
 #include "tod_dotprod_test.h"
 #include "tod_import_raw_test.h"
 #include "tod_mkdelta_test.h"
+#include "tod_mult_test.h"
 #include "tod_random_test.h"
+#include "tod_scale_test.h"
 #include "tod_set_test.h"
 #include "tod_set_diag_test.h"
 #include "tod_sum_test.h"
 #include "tod_symcontract2_test.h"
-#include "tod_solve_test.h"
 #include "version_test.h"
 
 using libtest::unit_test_factory;
@@ -95,9 +99,11 @@ namespace libtensor {
 	\li libtensor::btod_copy_test
 	\li libtensor::btod_dotprod_test
 	\li libtensor::btod_import_raw_test
+	\li libtensor::btod_mult_test
 	\li libtensor::btod_mkdelta_test
 	\li libtensor::btod_random_test
 	\li libtensor::btod_read_test
+	\li libtensor::btod_scale_test
 	\li libtensor::btod_set_diag_test
 	\li libtensor::btod_sum_test
 	\li libtensor::contract_test
@@ -141,15 +147,17 @@ namespace libtensor {
 	\li libtensor::tod_contract2_test
 	\li libtensor::tod_copy_test
 	\li libtensor::tod_delta_denom2_test
+	\li libtensor::tod_diag_test
 	\li libtensor::tod_dotprod_test
 	\li libtensor::tod_import_raw_test
 	\li libtensor::tod_mkdelta_test
+	\li libtensor::tod_mult_test
 	\li libtensor::tod_random_test
+	\li libtensor::tod_scale_test
 	\li libtensor::tod_set_test
 	\li libtensor::tod_set_diag_test
 	\li libtensor::tod_sum_test
 	\li libtensor::tod_symcontract2_test
-	\li libtensor::tod_solve_test
 	\li libtensor::version_test
 **/
 class libtensor_suite : public libtest::test_suite {
@@ -169,8 +177,10 @@ private:
 	unit_test_factory<btod_dotprod_test> m_utf_btod_dotprod;
 	unit_test_factory<btod_import_raw_test> m_utf_btod_import_raw;
 	unit_test_factory<btod_mkdelta_test> m_utf_btod_mkdelta;
+	unit_test_factory<btod_mult_test> m_utf_btod_mult;
 	unit_test_factory<btod_random_test> m_utf_btod_random;
 	unit_test_factory<btod_read_test> m_utf_btod_read;
+	unit_test_factory<btod_scale_test> m_utf_btod_scale;
 	unit_test_factory<btod_set_diag_test> m_utf_btod_set_diag;
 	unit_test_factory<btod_sum_test> m_utf_btod_sum;
 	unit_test_factory<contract_test> m_utf_contract;
@@ -218,15 +228,17 @@ private:
 	unit_test_factory<tod_contract2_test> m_utf_tod_contract2;
 	unit_test_factory<tod_copy_test> m_utf_tod_copy;
 	unit_test_factory<tod_delta_denom2_test> m_utf_tod_delta_denom2;
+	unit_test_factory<tod_diag_test> m_utf_tod_diag;
 	unit_test_factory<tod_dotprod_test> m_utf_tod_dotprod;
 	unit_test_factory<tod_import_raw_test> m_utf_tod_import_raw;
 	unit_test_factory<tod_mkdelta_test> m_utf_tod_mkdelta;
+	unit_test_factory<tod_mult_test> m_utf_tod_mult;
 	unit_test_factory<tod_random_test> m_utf_tod_random;
+	unit_test_factory<tod_scale_test> m_utf_tod_scale;
 	unit_test_factory<tod_set_test> m_utf_tod_set;
 	unit_test_factory<tod_set_diag_test> m_utf_tod_set_diag;
 	unit_test_factory<tod_sum_test> m_utf_tod_sum;
 	unit_test_factory<tod_symcontract2_test> m_utf_tod_symcontract2;
-	unit_test_factory<tod_solve_test> m_utf_tod_solve;
 	unit_test_factory<version_test> m_utf_version;
 
 public:

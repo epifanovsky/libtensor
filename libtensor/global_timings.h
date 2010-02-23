@@ -2,6 +2,9 @@
 #define LIBTENSOR_GLOBAL_TIMINGS_H
 
 #include <libvmm/singleton.h>
+#ifdef _OPENMP
+#include <omp.h>
+#endif // _OPENMP
 #include "timer.h"
 #include "exception.h"
 #include <iostream>
@@ -31,9 +34,24 @@ class global_timings : public libvmm::singleton<global_timings> {
 	typedef std::pair<const std::string, timing_t> pair_t;
 
 	map_t m_times; //!< map containing all run times
+#ifdef _OPENMP
+	omp_lock_t m_lock; //!< Thread safety for OpenMP
+#endif // _OPENMP
+
 protected:
-	global_timings() {}
+	global_timings() {
+#ifdef _OPENMP
+		omp_init_lock(&m_lock);
+#endif // _OPENMP
+	}
+
 public:
+	~global_timings() {
+#ifdef _OPENMP
+		omp_destroy_lock(&m_lock);
+#endif // _OPENMP
+	}
+
 	/** \brief adds duration of timer to timing with given id
 	 */
 	void add_to_timer( const std::string&, const timer& );
@@ -49,22 +67,38 @@ public:
 	/** \brief get number of saved timings
 	 */
 	size_t ntimings() const;
+
+	/**	\brief Prints the timings in the CSV format
+	 **/
+	void print_csv(std::ostream &os, char delim = ',');
 };
 
 inline void
 global_timings::add_to_timer(const std::string& id, const timer& t )
 {
+#ifdef _OPENMP
+	omp_set_lock(&m_lock);
+#endif // _OPENMP
 	map_t::iterator it = m_times.find(id);
 	if ( it == m_times.end() )
 		m_times.insert( pair_t(id,timing_t(t.duration())) );
 	else
 		it->second+=t.duration();
+#ifdef _OPENMP
+	omp_unset_lock(&m_lock);
+#endif // _OPENMP
 }
 
 inline void
 global_timings::reset()
 {
+#ifdef _OPENMP
+	omp_set_lock(&m_lock);
+#endif // _OPENMP
 	m_times.clear();
+#ifdef _OPENMP
+	omp_unset_lock(&m_lock);
+#endif // _OPENMP
 }
 
 inline time_diff_t

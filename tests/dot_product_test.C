@@ -15,6 +15,7 @@ void dot_product_test::perform() throw(libtest::test_exception) {
 	test_tt_ij_ji_1();
 	test_te_ij_ij_1();
 	test_te_ij_ji_1();
+	test_et_1();
 }
 
 
@@ -118,6 +119,43 @@ void dot_product_test::test_te_ij_ji_1() throw(libtest::test_exception) {
 
 	letter i, j;
 	double c = dot_product(bt1(i|j), bt2(i|j) + 0.5 * bt3(j|i));
+	check_ref(testname, c, c_ref);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void dot_product_test::test_et_1() throw(libtest::test_exception) {
+
+	static const char *testname = "dot_product_test::test_et_1()";
+
+	try {
+
+//	bispace<1> si(58), sa(102);
+//	si.split(29);
+//	sa.split(51);
+	bispace<1> si(10), sa(20);
+	si.split(5);
+	sa.split(10);
+	bispace<2> sia(si|sa);
+	bispace<4> sijab(si&si|sa&sa);
+	btensor<2> bt1(sia), bt1a(sia);
+	btensor<4> bt2(sijab);
+
+	btod_random<2>().perform(bt1);
+	btod_random<4>().perform(bt2);
+	bt1.set_immutable();
+	bt2.set_immutable();
+
+	contraction2<2, 0, 2> contr;
+	contr.contract(1, 0); contr.contract(3, 1);
+	btod_contract2<2, 0, 2>(contr, bt2, bt1).perform(bt1a);
+	double c_ref = btod_dotprod<2>(bt1, bt1a).calculate();
+
+	letter i, j, a, b;
+	double c = dot_product(contract(j|b, bt2(i|j|a|b), bt1(j|b)), bt1(i|a));
 	check_ref(testname, c, c_ref);
 
 	} catch(exception &e) {

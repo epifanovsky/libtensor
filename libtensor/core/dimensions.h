@@ -231,10 +231,10 @@ template<size_t N>
 void dimensions<N>::update_increments() {
 	register size_t sz = 1;
 	register size_t i = N;
-	do {
+	while(i != 0) {
 		i--;
 		m_incs[i] = sz; sz *= m_dims[i];
-	} while(i != 0);
+	}
 	m_size = sz;
 }
 

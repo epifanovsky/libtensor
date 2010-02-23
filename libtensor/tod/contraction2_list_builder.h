@@ -141,7 +141,7 @@ void contraction2_list_builder<N, M, K, ListT>::populate(ListT &list,
 			incc = 0;
 		}
 
-		if(weight > 1)
+		//~ if(weight > 1)
 			list.append(weight, inca, incb, incc);
 	}
 }

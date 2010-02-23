@@ -8,6 +8,7 @@
 
 namespace libtensor {
 
+typedef libvmm::std_allocator<double> allocator;
 typedef tensor<4, double, libvmm::std_allocator<double> > tensor4;
 typedef tensor_ctrl<4,double> tensor4_ctrl;
 
@@ -21,6 +22,8 @@ void tod_compare_test::perform() throw(libtest::test_exception) {
 	index_range<4> ir(i1,i2);
 	dimensions<4> dim(ir);
 	test_operation(dim, idiff);
+
+	test_0();
 
 }
 
@@ -89,6 +92,43 @@ void tod_compare_test::test_operation(const dimensions<4> &dim,
 	}
 
 }
+
+
+/**	\test Tests tod_compare<0>
+ **/
+void tod_compare_test::test_0() throw(libtest::test_exception) {
+
+	static const char *testname = "tod_compare_test::test_0()";
+
+	try {
+
+	index<0> i1, i2;
+	dimensions<0> dims(index_range<0>(i1, i2));
+	tensor<0, double, allocator> t1(dims), t2(dims), t3(dims);
+	tensor_ctrl<0, double> tc1(t1), tc2(t2), tc3(t3);
+
+	double *p1 = tc1.req_dataptr();
+	double *p2 = tc2.req_dataptr();
+	double *p3 = tc3.req_dataptr();
+	*p1 = 1.0; *p2 = 1.0; *p3 = -2.5;
+	tc1.ret_dataptr(p1); p1 = 0;
+	tc2.ret_dataptr(p2); p2 = 0;
+	tc3.ret_dataptr(p3); p3 = 0;
+
+	tod_compare<0> comp1(t1, t2, 0.0);
+	if(!comp1.compare()) {
+		fail_test(testname, __FILE__, __LINE__, "!comp1.compare()");
+	}
+	tod_compare<0> comp2(t1, t3, 0.0);
+	if(comp2.compare()) {
+		fail_test(testname, __FILE__, __LINE__, "comp2.compare()");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
 
 } // namespace libtensor
 

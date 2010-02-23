@@ -3,9 +3,13 @@
 
 #include <list>
 #include <map>
+#ifdef _OPENMP
+#include <omp.h>
+#endif // _OPENMP
 #include "../defs.h"
 #include "../exception.h"
 #include "../timings.h"
+#include "../core/abs_index.h"
 #include "../core/block_tensor_i.h"
 #include "../core/block_tensor_ctrl.h"
 #include "../core/orbit.h"
@@ -17,6 +21,8 @@
 #include "../tod/tod_set.h"
 #include "btod_additive.h"
 #include "btod_so_copy.h"
+#include "../not_implemented.h"
+#include "bad_block_index_space.h"
 
 namespace libtensor {
 
@@ -65,6 +71,12 @@ private:
 	} block_contr_t;
 	typedef std::list<block_contr_t> block_contr_list_t;
 	typedef std::map<size_t, block_contr_list_t*> schedule_t;
+
+#ifdef _OPENMP
+	typedef omp_lock_t lock_t; //!< Multi-processor lock type
+#else
+	typedef int lock_t;
+#endif // _OPENMP
 
 private:
 	contraction2<N, M, K> m_contr; //!< Contraction
@@ -134,12 +146,17 @@ private:
 	void contract_block(
 		block_contr_list_t &lst, const index<k_orderc> &idxc,
 		block_tensor_ctrl<k_ordera, double> &ctrla,
-		const dimensions<k_ordera> &bidimsa,
+		const dimensions<k_ordera> &bidimsa, lock_t &locka,
 		block_tensor_ctrl<k_orderb, double> &ctrlb,
-		const dimensions<k_orderb> &bidimsb,
+		const dimensions<k_orderb> &bidimsb, lock_t &lockb,
 		block_tensor_ctrl<k_orderc, double> &ctrlc,
-		const dimensions<k_orderc> &bidimsc,
+		const dimensions<k_orderc> &bidimsc, lock_t &lockc,
 		bool zero, double c);
+
+	void create_lock(lock_t &l);
+	void destroy_lock(lock_t &l);
+	void set_lock(lock_t &l);
+	void unset_lock(lock_t &l);
 
 private:
 	btod_contract2<N, M, K> &operator=(const btod_contract2<N, M, K>&);
@@ -190,9 +207,11 @@ void btod_contract2<N, M, K>::perform(block_tensor_i<k_orderc, double> &btc,
 	static const char *method =
 		"perform(block_tensor_i<N + M, double>&, double)";
 
-	if(!m_bis.equals(btc.get_bis())) {
-		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
-			"Incorrect block index space of the output tensor.");
+	block_index_space<k_orderc> bisc(btc.get_bis());
+	bisc.match_splits();
+	if(!m_bis.equals(bisc)) {
+		throw bad_block_index_space(
+			g_ns, k_clazz, method, __FILE__, __LINE__, "c");
 	}
 
 	btod_contract2<N, M, K>::start_timer();
@@ -208,12 +227,15 @@ void btod_contract2<N, M, K>::perform(block_tensor_i<k_orderc, double> &btc,
 		sym.set_intersection(ctrl_btc.req_symmetry());
 		if(sym.equals(m_sym)) {
 			// C has a higher symmetry
-			throw_exc(k_clazz, method, "Case 1 not handled.");
+			throw not_implemented(
+				g_ns, k_clazz, method, __FILE__, __LINE__);
 		} else if(sym.equals(ctrl_btc.req_symmetry())) {
 			// A*B has a higher symmetry
-			throw_exc(k_clazz, method, "Case 2 not handled.");
+			throw not_implemented(
+				g_ns, k_clazz, method, __FILE__, __LINE__);
 		} else {
-			throw_exc(k_clazz, method, "Case 3 not handled.");
+			throw not_implemented(
+				g_ns, k_clazz, method, __FILE__, __LINE__);
 		}
 	}
 
@@ -225,7 +247,10 @@ template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::perform(block_tensor_i<k_orderc, double> &btc,
 	const index<k_orderc> &idx) throw(exception) {
 
-	throw_exc(k_clazz, "perform(const index<N + M>&)", "NIY");
+	static const char *method =
+		"perform(block_tensor_i<N + M, double>&, const index<N + M>&)";
+
+	throw not_implemented(g_ns, k_clazz, method, __FILE__, __LINE__);
 }
 
 
@@ -238,8 +263,8 @@ void btod_contract2<N, M, K>::perform(block_tensor_i<k_orderc, double> &btc)
 	block_index_space<k_orderc> bisc(btc.get_bis());
 	bisc.match_splits();
 	if(!m_bis.equals(bisc)) {
-		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
-			"Incorrect block index space of the output tensor.");
+		throw bad_block_index_space(
+			g_ns, k_clazz, method, __FILE__, __LINE__, "c");
 	}
 
 	btod_contract2<N, M, K>::start_timer();
@@ -466,17 +491,59 @@ void btod_contract2<N, M, K>::do_perform(
 
 	//	Invoke contractions
 
-	try {
-		index<k_orderc> idxc;
-		typename schedule_t::iterator isch = sch.begin();
-		for(; isch != sch.end(); isch++) {
-			bidimsc.abs_index(isch->first, idxc);
-			contract_block(*isch->second, idxc, ctrl_bta, bidimsa,
-				ctrl_btb, bidimsb, ctrl_btc, bidimsc, zero, c);
+	lock_t locka, lockb, lockc, locksch, lockexc;
+	create_lock(locka); create_lock(lockb); create_lock(lockc);
+	create_lock(locksch); create_lock(lockexc);
+
+	typename schedule_t::iterator isch = sch.begin();
+	int sch_sz = sch.size();
+	volatile bool exc_raised = false;
+	std::string exc_what;
+	#pragma omp parallel for schedule(dynamic)
+	for(int sch_i = 0; sch_i < sch_sz; sch_i++) {
+
+		set_lock(lockexc); set_lock(locksch);
+		if(exc_raised) {
+			if(isch != sch.end()) isch++;
+			unset_lock(lockexc); unset_lock(locksch);
+			continue;
 		}
-	} catch(...) {
-		clear_schedule(sch);
-		throw;
+		if(isch == sch.end()) {
+			exc_raised = true;
+			#pragma omp flush(exc_raised)
+			exc_what = "Unexpected end of schedule.";
+			unset_lock(lockexc); unset_lock(locksch);
+			continue;
+		}
+		unset_lock(lockexc);
+		abs_index<k_orderc> idxc(isch->first, bidimsc);
+		block_contr_list_t &contr_lst = *isch->second;
+		isch++;
+		unset_lock(locksch);
+
+		try {
+			contract_block(contr_lst, idxc.get_index(),
+				ctrl_bta, bidimsa, locka,
+				ctrl_btb, bidimsb, lockb,
+				ctrl_btc, bidimsc, lockc, zero, c);
+		} catch(exception &e) {
+			//printf("%s\n", e.what()); fflush(stdout);
+			set_lock(lockexc);
+			if(!exc_raised) {
+				exc_raised = true;
+				#pragma omp flush(exc_raised)
+				exc_what = e.what();
+			}
+			unset_lock(lockexc);
+		}
+	}
+
+	destroy_lock(locka); destroy_lock(lockb); destroy_lock(lockc);
+	destroy_lock(locksch); destroy_lock(lockexc);
+	clear_schedule(sch);
+
+	if(exc_raised) {
+		throw_exc(k_clazz, "do_perform", exc_what.c_str());
 	}
 }
 
@@ -603,18 +670,20 @@ template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::contract_block(
 	block_contr_list_t &lst, const index<k_orderc> &idxc,
 	block_tensor_ctrl<k_ordera, double> &ctrla,
-	const dimensions<k_ordera> &bidimsa,
+	const dimensions<k_ordera> &bidimsa, lock_t &locka,
 	block_tensor_ctrl<k_orderb, double> &ctrlb,
-	const dimensions<k_orderb> &bidimsb,
+	const dimensions<k_orderb> &bidimsb, lock_t &lockb,
 	block_tensor_ctrl<k_orderc, double> &ctrlc,
-	const dimensions<k_orderc> &bidimsc,
+	const dimensions<k_orderc> &bidimsc, lock_t &lockc,
 	bool zero, double c) {
 
 	index<k_ordera> idxa;
 	index<k_orderb> idxb;
 
+	set_lock(lockc);
 	bool adjzero = zero || ctrlc.req_is_zero_block(idxc);
 	tensor_i<k_orderc, double> &tc = ctrlc.req_block(idxc);
+	unset_lock(lockc);
 
 	if(adjzero) tod_set<k_orderc>().perform(tc);
 
@@ -622,11 +691,18 @@ void btod_contract2<N, M, K>::contract_block(
 	for(; ilst != lst.end(); ilst++) {
 		bidimsa.abs_index(ilst->m_absidxa, idxa);
 		bidimsb.abs_index(ilst->m_absidxb, idxb);
-		if(ctrla.req_is_zero_block(idxa) ||
-			ctrlb.req_is_zero_block(idxb)) continue;
+
+		set_lock(locka); set_lock(lockb);
+		bool zeroa = ctrla.req_is_zero_block(idxa);
+		bool zerob = ctrlb.req_is_zero_block(idxb);
+		if(zeroa || zerob) {
+			unset_lock(lockb); unset_lock(locka);
+			continue;
+		}
 
 		tensor_i<k_ordera, double> &ta = ctrla.req_block(idxa);
 		tensor_i<k_orderb, double> &tb = ctrlb.req_block(idxb);
+		unset_lock(lockb); unset_lock(locka);
 
 		contraction2<N, M, K> contr(m_contr);
 		contr.permute_a(ilst->m_perma);
@@ -634,11 +710,47 @@ void btod_contract2<N, M, K>::contract_block(
 		tod_contract2<N, M, K> controp(contr, ta, tb);
 		controp.perform(tc, c * ilst->m_c);
 
+		set_lock(locka); set_lock(lockb);
 		ctrla.ret_block(idxa);
 		ctrlb.ret_block(idxb);
+		unset_lock(lockb); unset_lock(locka);
 	}
 
+	set_lock(lockc);
 	ctrlc.ret_block(idxc);
+	unset_lock(lockc);
+}
+
+
+template<size_t N, size_t M, size_t K>
+inline void btod_contract2<N, M, K>::create_lock(lock_t &l) {
+#ifdef _OPENMP
+	omp_init_lock(&l);
+#endif //_OPENMP
+}
+
+
+template<size_t N, size_t M, size_t K>
+inline void btod_contract2<N, M, K>::destroy_lock(lock_t &l) {
+#ifdef _OPENMP
+	omp_destroy_lock(&l);
+#endif //_OPENMP
+}
+
+
+template<size_t N, size_t M, size_t K>
+inline void btod_contract2<N, M, K>::set_lock(lock_t &l) {
+#ifdef _OPENMP
+	omp_set_lock(&l);
+#endif //_OPENMP
+}
+
+
+template<size_t N, size_t M, size_t K>
+inline void btod_contract2<N, M, K>::unset_lock(lock_t &l) {
+#ifdef _OPENMP
+	omp_unset_lock(&l);
+#endif //_OPENMP
 }
 
 
