@@ -98,8 +98,8 @@ permutation_builder<N>::permutation_builder(
 
 	size_t map[N];
 	for(size_t i = 0; i < N; i++) map[i] = i;
-	permutation<N> pinv(perm, true);
-	pinv.apply(map);
+	permutation<N> permi(perm, true);
+	permi.apply(map);
 	build(seq1, seq2, map);
 }
 
