@@ -47,6 +47,7 @@ set(SRC
 	so_projdown_test.C
 	so_projup_test.C
 	so_intersection_impl_perm_test.C
+	so_proj_up_impl_perm_test.C
 	so_union_impl_perm_test.C
 	symel_cycleperm_test.C
 	symm_test.C
