@@ -42,6 +42,7 @@ set(SRC
 	orbit_list_test.C
 	permutation_test.C
 	permutation_builder_test.C
+	permutation_group_test.C
 	sequence_test.C
 	se_perm_test.C
 	so_projdown_test.C

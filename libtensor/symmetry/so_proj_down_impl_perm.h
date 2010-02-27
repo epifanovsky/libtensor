@@ -197,46 +197,63 @@ void so_proj_down_impl< se_perm<N, T> >::join_group(std::list<subgroup> &grp,
 	static const char *method = "join_group(std::list<subgroup>&, "
 		"const permutation<N>&, mask<N>&, sequence<N, size_t>&, bool)";
 
+	//	Find the overlapping element if it exists
+	//	(only one since the subgroups are pairwise disjoint)
+	//
 	mask<N> m0;
-	bool joined = false;
-	for(typename std::list<subgroup>::iterator i = grp.begin();
-		i != grp.end(); i++) {
-
-		//	Ignore those generating elements that don't overlap
-		//
-		if((i->msk & msk).equals(m0)) continue;
-
-		//	Compute cycle lengths
-		//
-		size_t clen1[N], clen2[N];
-		size_t nc1 = 0, nc2 = 0, maxclen1 = 0, maxclen2 = 0;
-		for(size_t j = 0; j < N; j++) clen2[j] = clen1[j] = 0;
-		for(size_t j = 0; j < N; j++) {
-			register size_t c1 = cycles[j], c2 = i->cycles[j];
-			if(c1 > nc1) nc1 = c1;
-			clen1[c1]++;
-			if(clen1[c1] > maxclen1) maxclen1 = clen1[c1];
-			if(c2 > nc2) nc2 = c2;
-			clen2[c2]++;
-			if(clen2[c2] > maxclen2) maxclen2 = clen2[c2];
-		}
-
-		//	Make sure that 0-cycles correspond to
-		//	0-cycles or 2-cycles
-		//
-
-		//	Make sure that n-cycles (n > 2) correspond to 2-cycles
-		//
-		throw not_implemented(g_ns, k_clazz, method, __FILE__, __LINE__);
-	}
+	typename std::list<subgroup>::iterator ig = grp.begin();
+	while(ig != grp.end() && m0.equals(ig->msk & msk)) ig++;
 
 	//	If there's no overlap with existing subgroups,
-	//	simply add on the list
+	//	simply add the current one on the list and return
 	//
-	if(!joined) {
+	if(ig == grp.end()) {
 		subgroup sgrp(perm, msk, cycles, sign, false);
 		grp.push_back(sgrp);
+		return;
 	}
+
+	//	Compute cycle lengths
+	//
+	size_t clen1[N], clen2[N];
+	size_t nc1 = 0, nc2 = 0, maxclen1 = 0, maxclen2 = 0;
+	for(size_t j = 0; j < N; j++) clen2[j] = clen1[j] = 0;
+	for(size_t j = 0; j < N; j++) {
+		register size_t c1 = cycles[j], c2 = ig->cycles[j];
+		if(c1 > nc1) nc1 = c1;
+		clen1[c1]++;
+		if(clen1[c1] > maxclen1) maxclen1 = clen1[c1];
+		if(c2 > nc2) nc2 = c2;
+		clen2[c2]++;
+		if(clen2[c2] > maxclen2) maxclen2 = clen2[c2];
+	}
+
+	//	Make sure that
+	//	 * 0-cycles correspond to 0-cycles or 2-cycles
+	//	 * 2-cycles correspond to n-cycles (n >= 2)
+	//
+	bool join = false;
+	for(size_t j = 0; j < N; j++) {
+		size_t c1 = cycles[j], c2 = ig->cycles[j];
+		if(c1 == 0 && c2 == 0) continue;
+		if(c1 == 0 && clen2[c2] == 2) continue;
+		if(c2 == 0 && clen1[c1] == 2) continue;
+		if((clen1[c1] == 2 && clen2[c2] > 2) ||
+			(clen1[c1] > 2 && clen2[c2] == 2)) {
+
+			if(ig->sign != sign) {
+				throw bad_symmetry(g_ns, k_clazz, method,
+					__FILE__, __LINE__, "sign");
+			}
+			join = true;
+		}
+		throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"cycles");
+	}
+	
+
+	throw not_implemented(g_ns, k_clazz, method, __FILE__, __LINE__);
+
 }
 
 
