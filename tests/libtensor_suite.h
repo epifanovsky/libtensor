@@ -48,6 +48,7 @@
 #include "so_projdown_test.h"
 #include "so_projup_test.h"
 #include "so_intersection_impl_perm_test.h"
+#include "so_proj_down_impl_perm_test.h"
 #include "so_proj_up_impl_perm_test.h"
 #include "so_union_impl_perm_test.h"
 #include "symel_cycleperm_test.h"
@@ -132,6 +133,7 @@ namespace libtensor {
 	\li libtensor::so_projdown_test
 	\li libtensor::so_projup_test
 	\li libtensor::so_intersection_impl_perm_test
+	\li libtensor::so_proj_down_impl_perm_test
 	\li libtensor::so_proj_up_impl_perm_test
 	\li libtensor::so_union_impl_perm_test
 	\li libtensor::symel_cycleperm_test
@@ -212,6 +214,8 @@ private:
 	unit_test_factory<so_projup_test> m_utf_so_projup;
 	unit_test_factory<so_intersection_impl_perm_test>
 		m_utf_so_intersection_impl_perm;
+	unit_test_factory<so_proj_down_impl_perm_test>
+		m_utf_so_proj_down_impl_perm;
 	unit_test_factory<so_proj_up_impl_perm_test> m_utf_so_proj_up_impl_perm;
 	unit_test_factory<so_union_impl_perm_test> m_utf_so_union_impl_perm;
 	unit_test_factory<symel_cycleperm_test> m_utf_symel_cycleperm;
