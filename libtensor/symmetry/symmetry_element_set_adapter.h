@@ -41,7 +41,7 @@ public:
 		return m_set.end();
 	}
 
-	const ElemT &get_elem(iterator &i);
+	const ElemT &get_elem(iterator &i) const;
 };
 
 
@@ -51,7 +51,8 @@ const char *symmetry_element_set_adapter<N, T, ElemT>::k_clazz =
 
 
 template<size_t N, typename T, typename ElemT>
-const ElemT &symmetry_element_set_adapter<N, T, ElemT>::get_elem(iterator &i) {
+const ElemT &symmetry_element_set_adapter<N, T, ElemT>::get_elem(
+	iterator &i) const {
 
 	static const char *method = "get_elem(iterator&)";
 
