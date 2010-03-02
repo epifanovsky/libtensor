@@ -12,6 +12,7 @@ void permutation_group_test::perform() throw(libtest::test_exception) {
 	//~ test_3();
 	test_4();
 	test_5();
+	test_6();
 }
 
 
@@ -179,26 +180,115 @@ void permutation_group_test::test_4() throw(libtest::test_exception) {
 	set1.insert(se_perm_t(perm2, true));
 	permutation_group<4, double> pg(set1);
 
-	if(!pg.is_member(perm1, true)) {
-		fail_test(testname, __FILE__, __LINE__, "!pg.is_member(perm1)");
+	if(!pg.is_member(true, perm1)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!pg.is_member(true, perm1)");
 	}
-	if(!pg.is_member(perm2, true)) {
-		fail_test(testname, __FILE__, __LINE__, "!pg.is_member(perm2)");
+	if(!pg.is_member(true, perm2)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!pg.is_member(true, perm2)");
 	}
 	
 	permutation<4> perm3; perm3.permute(0, 2).permute(1, 3);
-	if(!pg.is_member(perm3, true)) {
-		fail_test(testname, __FILE__, __LINE__, "!pg.is_member(perm3)");
+	if(!pg.is_member(true, perm3)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!pg.is_member(true, perm3)");
 	}
 
 	permutation<4> perm4; perm4.permute(1, 2);
-	if(pg.is_member(perm4, true)) {
-		fail_test(testname, __FILE__, __LINE__, "pg.is_member(perm4)");
+	if(pg.is_member(true, perm4)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"pg.is_member(true, perm4)");
 	}
 
 	permutation<4> perm5; perm5.permute(0, 2);
-	if(pg.is_member(perm5, true)) {
-		fail_test(testname, __FILE__, __LINE__, "pg.is_member(perm5)");
+	if(pg.is_member(true, perm5)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"pg.is_member(true, perm5)");
+	}
+
+
+	//~ pg.convert(set2);
+	//~ if(set2.is_empty()) {
+		//~ fail_test(testname, __FILE__, __LINE__, "set2.is_empty()");
+	//~ }
+
+	//~ typedef symmetry_element_set_adapter<2, double, se_perm_t> adapter_t;
+	//~ adapter_t adapter(set2);
+	//~ adapter_t::iterator i = adapter.begin();
+	//~ const se_perm_t &e1 = adapter.get_elem(i);
+	//~ i++;
+	//~ if(i != adapter.end()) {
+		//~ fail_test(testname, __FILE__, __LINE__,
+			//~ "Expected only one element.");
+	//~ }
+
+	//~ permutation<2> p1; p1.permute(0, 1);
+	//~ if(!e1.is_symm()) {
+		//~ fail_test(testname, __FILE__, __LINE__, "!e1.is_symm()");
+	//~ }
+	//~ if(!p1.equals(e1.get_perm())) {
+		//~ fail_test(testname, __FILE__, __LINE__, "p1 != e1.get_perm()");
+	//~ }
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\test Tests the S2(+)*S2(+) group in a 4-space
+ **/
+void permutation_group_test::test_5() throw(libtest::test_exception) {
+
+	static const char *testname = "permutation_group_test::test_5()";
+
+	typedef se_perm<4, double> se_perm_t;
+	std::cout << std::endl << "test_5" << std::endl;
+
+	try {
+
+	permutation<4> perm1; perm1.permute(0, 1).permute(2, 3);
+	permutation<4> perm2; perm2.permute(0, 1);
+
+	symmetry_element_set<4, double> set1(se_perm_t::k_sym_type),
+		set2(se_perm_t::k_sym_type);
+
+	set1.insert(se_perm_t(perm1, true));
+	set1.insert(se_perm_t(perm2, true));
+	permutation_group<4, double> pg(set1);
+
+	if(!pg.is_member(true, perm1)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!pg.is_member(true, perm1)");
+	}
+	if(!pg.is_member(true, perm2)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!pg.is_member(true, perm2)");
+	}
+	
+	permutation<4> perm3; perm3.permute(2, 3);
+	if(!pg.is_member(true, perm3)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!pg.is_member(true, perm3)");
+	}
+
+	permutation<4> perm4; perm4.permute(1, 2);
+	if(pg.is_member(true, perm4)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"pg.is_member(true, perm4)");
+	}
+
+	permutation<4> perm5; perm5.permute(0, 2);
+	if(pg.is_member(true, perm5)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"pg.is_member(true, perm5)");
+	}
+
+	permutation<4> perm6; perm6.permute(2, 3).permute(1, 2).permute(0, 1);
+	if(pg.is_member(true, perm6)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"pg.is_member(true, perm6)");
 	}
 
 
@@ -233,12 +323,12 @@ void permutation_group_test::test_4() throw(libtest::test_exception) {
 
 /**	\test Tests the S4(+) group in a 4-space
  **/
-void permutation_group_test::test_5() throw(libtest::test_exception) {
+void permutation_group_test::test_6() throw(libtest::test_exception) {
 
-	static const char *testname = "permutation_group_test::test_5()";
+	static const char *testname = "permutation_group_test::test_6()";
 
 	typedef se_perm<4, double> se_perm_t;
-	std::cout << std::endl << "test_5" << std::endl;
+	std::cout << std::endl << "test_6" << std::endl;
 
 	try {
 
@@ -252,26 +342,44 @@ void permutation_group_test::test_5() throw(libtest::test_exception) {
 	set1.insert(se_perm_t(perm2, true));
 	permutation_group<4, double> pg(set1);
 
-	if(!pg.is_member(perm1, true)) {
-		fail_test(testname, __FILE__, __LINE__, "!pg.is_member(perm1)");
+	if(!pg.is_member(true, perm1)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!pg.is_member(true, perm1)");
 	}
-	if(!pg.is_member(perm2, true)) {
-		fail_test(testname, __FILE__, __LINE__, "!pg.is_member(perm2)");
+	if(!pg.is_member(true, perm2)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!pg.is_member(true, perm2)");
 	}
 	
 	permutation<4> perm3; perm3.permute(0, 2).permute(1, 3);
-	if(!pg.is_member(perm3, true)) {
-		fail_test(testname, __FILE__, __LINE__, "!pg.is_member(perm3)");
+	if(!pg.is_member(true, perm3)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!pg.is_member(true, perm3)");
 	}
 
 	permutation<4> perm4; perm4.permute(1, 2);
-	if(!pg.is_member(perm4, true)) {
-		fail_test(testname, __FILE__, __LINE__, "!pg.is_member(perm4)");
+	if(!pg.is_member(true, perm4)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!pg.is_member(true, perm4)");
 	}
 
 	permutation<4> perm5; perm5.permute(0, 2);
-	if(!pg.is_member(perm5, true)) {
-		fail_test(testname, __FILE__, __LINE__, "!pg.is_member(perm5)");
+	if(!pg.is_member(true, perm5)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!pg.is_member(true, perm5)");
+	}
+
+	permutation<4> perm6; perm6.permute(2, 3).permute(1, 2).permute(0, 1);
+	if(!pg.is_member(true, perm6)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!pg.is_member(true, perm6)");
+	}
+
+	//	0123->3210
+	permutation<4> perm7; perm7.permute(0, 3).permute(1, 2);
+	if(!pg.is_member(true, perm7)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!pg.is_member(true, perm7)");
 	}
 
 
