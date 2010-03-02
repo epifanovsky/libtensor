@@ -194,6 +194,7 @@ template<size_t N, typename T>
 inline bool permutation_group<N, T>::is_member(
 	bool sign, const permutation<N> &perm) {
 
+	if(!sign && perm.is_identity()) return false;
 	return is_member(sign ? m_symm : m_asymm, 0, perm);
 }
 
@@ -232,10 +233,10 @@ void permutation_group<N, T>::project_down(
 			"msk");
 	}
 
-	perm_list_t gs1, gs2;
-	make_genset(m_symm, gs1);
-	perm_list_t *p1 = &gs1, *p2 = &gs2;
 	branching br;
+	perm_list_t gs1, gs2;
+	perm_list_t *p1 = &gs1, *p2 = &gs2;
+	make_genset(m_symm, gs1);
 	for(size_t i = 0; i < N; i++) {
 		if(msk[i]) continue;
 		br.reset();
@@ -270,6 +271,41 @@ void permutation_group<N, T>::project_down(
 	}
 	//~ std::cout << " >" << std::endl;
 
+	p1->clear(); p2->clear();
+	make_genset(m_asymm, gs1);
+	for(size_t i = 0; i < N; i++) {
+		if(msk[i]) continue;
+		br.reset();
+		make_branching(br, i, *p1, *p2);
+		std::swap(p1, p2);
+		p2->clear();
+	}
+	//~ std::cout << "genset1: <";
+	//~ for(typename perm_list_t::const_iterator pi = p1->begin();
+		//~ pi != p1->end(); pi++) {
+		//~ std::cout << " " << *pi;
+	//~ }
+	//~ std::cout << " >" << std::endl;
+	//~ std::cout << "genset2: <";
+	for(typename perm_list_t::const_iterator pi = p1->begin();
+		pi != p1->end(); pi++) {
+
+		size_t seq1a[N], seq2a[N];
+		size_t seq1b[M], seq2b[M];
+		for(size_t i = 0; i < N; i++) seq2a[i] = seq1a[i] = i;
+		pi->apply(seq2a);
+		size_t j = 0;
+		for(size_t i = 0; i < N; i++) {
+			if(!msk[i]) continue;
+			seq1b[j] = seq1a[i];
+			seq2b[j] = seq2a[i];
+			j++;
+		}
+		permutation_builder<M> pb(seq2b, seq1b);
+		//~ std::cout << " " << pb.get_perm();
+		g2.add_orbit(false, pb.get_perm());
+	}
+	//~ std::cout << " >" << std::endl;
 }
 
 

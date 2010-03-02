@@ -527,13 +527,55 @@ void permutation_group_test::test_project_down_2()
 
 	permutation<2> p2_1, p2_2; p2_2.permute(0, 1);
 
-	if(pg2.is_member(true, p2_1)) {
+	if(!pg2.is_member(true, p2_1)) {
 		fail_test(testname, __FILE__, __LINE__,
-			"pg2.is_member(true, p2_1)");
+			"!pg2.is_member(true, p2_1)");
 	}
 	if(pg2.is_member(true, p2_2)) {
 		fail_test(testname, __FILE__, __LINE__,
 			"pg2.is_member(true, p2_2)");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\test Tests the projection of the S4(-) group in a 4-space onto
+		a 2-space, S2(-)
+ **/
+void permutation_group_test::test_project_down_3()
+	throw(libtest::test_exception) {
+
+	static const char *testname =
+		"permutation_group_test::test_project_down_3()";
+
+	typedef se_perm<4, double> se_perm_t;
+
+	try {
+
+	permutation<4> perm1; perm1.permute(0, 1).permute(1, 2).permute(2, 3);
+	permutation<4> perm2; perm2.permute(0, 1);
+
+	symmetry_element_set<4, double> set1(se_perm_t::k_sym_type);
+	set1.insert(se_perm_t(perm1, false));
+	set1.insert(se_perm_t(perm2, false));
+	permutation_group<4, double> pg4(set1);
+
+	permutation_group<2, double> pg2;
+	mask<4> msk; msk[2] = true; msk[3] = true;
+	pg4.project_down(msk, pg2);
+
+	permutation<2> p2_1, p2_2; p2_2.permute(0, 1);
+
+	if(!pg2.is_member(false, p2_1)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!pg2.is_member(false, p2_1)");
+	}
+	if(!pg2.is_member(false, p2_2)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!pg2.is_member(false, p2_2)");
 	}
 
 	} catch(exception &e) {
