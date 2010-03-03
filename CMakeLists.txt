@@ -12,5 +12,5 @@ include_directories(${LIBTENSOR_DIR})
 
 add_subdirectory(libtensor)
 add_subdirectory(tests)
-add_subdirectory(performance_tests)
+#add_subdirectory(performance_tests)
 

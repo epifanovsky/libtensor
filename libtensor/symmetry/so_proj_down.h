@@ -2,7 +2,9 @@
 #define LIBTENSOR_SO_PROJ_DOWN_H
 
 #include "../core/mask.h"
+#include "../core/symmetry.h"
 #include "../core/symmetry_element_set.h"
+#include "symmetry_operation_dispatcher.h"
 #include "symmetry_operation_params.h"
 
 namespace libtensor {
@@ -29,7 +31,20 @@ struct symmetry_operation_params< so_proj_down<N, M, T> >;
 	\ingroup libtensor_symmetry
  **/
 template<size_t N, size_t M, typename T>
-class so_proj_down;
+class so_proj_down {
+private:
+	const symmetry<N, T> m_sym;
+	mask<N> m_msk;
+public:
+	so_proj_down(const symmetry<N, T> &sym, const mask<N> &msk) :
+		m_sym(sym), m_msk(msk) { }
+
+	void perform(symmetry<N - M, T> &sym) {
+		//~ symmetry_operation_params< so_proj_down<N, M, T> > params;
+		//~ symmetry_operation_params<
+			//~ so_proj_down<N, M, T> >::get_instance().invoke(params);
+	}
+};
 
 
 /**	\brief Generic implementation of so_proj_down<N, T>

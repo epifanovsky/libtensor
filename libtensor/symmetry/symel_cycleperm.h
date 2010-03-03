@@ -114,7 +114,7 @@ template<size_t N, typename T>
 const char *symel_cycleperm<N, T>::k_clazz = "symel_cycleperm<N, T>";
 
 template<size_t N, typename T>
-const char *symel_cycleperm<N, T>::k_symtype = "perm";
+const char *symel_cycleperm<N, T>::k_symtype = "cycleperm";
 
 
 template<size_t N, typename T>

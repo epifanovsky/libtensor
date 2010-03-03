@@ -82,7 +82,7 @@ void orbit_test::test_2() throw(libtest::test_exception) {
 	mask<2> cycle_msk;
 	cycle_msk[0] = true; cycle_msk[1] = true;
 	symel_cycleperm<2, double> cycle(2, cycle_msk);
-	sym.add_element(cycle);
+	sym.insert(cycle);
 
 	index<2> io;
 	do {
@@ -154,7 +154,7 @@ void orbit_test::test_3() throw(libtest::test_exception) {
 	mask<4> cycle_msk;
 	cycle_msk[0] = true; cycle_msk[1] = true;
 	symel_cycleperm<4, double> cycle(2, cycle_msk);
-	sym.add_element(cycle);
+	sym.insert(cycle);
 
 	index<4> io;
 	do {
@@ -226,7 +226,7 @@ void orbit_test::test_4() throw(libtest::test_exception) {
 	mask<4> cycle_msk;
 	cycle_msk[1] = true; cycle_msk[2] = true;
 	symel_cycleperm<4, double> cycle(2, cycle_msk);
-	sym.add_element(cycle);
+	sym.insert(cycle);
 
 	index<4> io;
 	do {
@@ -298,7 +298,7 @@ void orbit_test::test_5() throw(libtest::test_exception) {
 	mask<4> cycle_msk;
 	cycle_msk[0] = true; cycle_msk[1] = true; cycle_msk[2] = true;
 	symel_cycleperm<4, double> cycle(3, cycle_msk);
-	sym.add_element(cycle);
+	sym.insert(cycle);
 
 	index<4> io;
 	do {
@@ -385,8 +385,8 @@ void orbit_test::test_6() throw(libtest::test_exception) {
 	cycle_msk[0] = false; cycle_msk[1] = false;
 	cycle_msk[2] = true; cycle_msk[3] = true;
 	symel_cycleperm<4, double> cycle2(2, cycle_msk);
-	sym.add_element(cycle1);
-	sym.add_element(cycle2);
+	sym.insert(cycle1);
+	sym.insert(cycle2);
 
 	index<4> io;
 	do {
@@ -473,8 +473,8 @@ void orbit_test::test_7() throw(libtest::test_exception) {
 	cycle_msk[0] = true; cycle_msk[1] = true; cycle_msk[2] = true;
 	symel_cycleperm<4, double> cycle1(3, cycle_msk);
 	symel_cycleperm<4, double> cycle2(2, cycle_msk);
-	sym.add_element(cycle1);
-	sym.add_element(cycle2);
+	sym.insert(cycle1);
+	sym.insert(cycle2);
 
 	index<4> io;
 	do {
@@ -560,8 +560,8 @@ void orbit_test::test_8() throw(libtest::test_exception) {
 	cycle_msk[2] = true; cycle_msk[3] = true;
 	symel_cycleperm<4, double> cycle1(4, cycle_msk);
 	symel_cycleperm<4, double> cycle2(2, cycle_msk);
-	sym.add_element(cycle1);
-	sym.add_element(cycle2);
+	sym.insert(cycle1);
+	sym.insert(cycle2);
 
 	index<4> io;
 	do {

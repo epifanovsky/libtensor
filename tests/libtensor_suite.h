@@ -3,39 +3,39 @@
 
 #include <libtest/test_suite.h>
 #include "abs_index_test.h"
-#include "anon_eval_test.h"
+//~ #include "anon_eval_test.h"
 #include "bispace_test.h"
 #include "bispace_expr_test.h"
 #include "block_index_space_test.h"
 #include "block_map_test.h"
 #include "block_tensor_test.h"
-#include "btensor_test.h"
-#include "btod_add_test.h"
-#include "btod_compare_test.h"
-#include "btod_contract2_test.h"
-#include "btod_copy_test.h"
-#include "btod_dotprod_test.h"
-#include "btod_import_raw_test.h"
-#include "btod_mkdelta_test.h"
-#include "btod_mult_test.h"
-#include "btod_random_test.h"
-#include "btod_read_test.h"
-#include "btod_scale_test.h"
-#include "btod_set_diag_test.h"
-#include "btod_sum_test.h"
-#include "contract_test.h"
+//~ #include "btensor_test.h"
+//~ #include "btod_add_test.h"
+//~ #include "btod_compare_test.h"
+//~ #include "btod_contract2_test.h"
+//~ #include "btod_copy_test.h"
+//~ #include "btod_dotprod_test.h"
+//~ #include "btod_import_raw_test.h"
+//~ #include "btod_mkdelta_test.h"
+//~ #include "btod_mult_test.h"
+//~ #include "btod_random_test.h"
+//~ #include "btod_read_test.h"
+//~ #include "btod_scale_test.h"
+//~ #include "btod_set_diag_test.h"
+//~ #include "btod_sum_test.h"
+//~ #include "contract_test.h"
 #include "contraction2_test.h"
 #include "contraction2_list_builder_test.h"
 #include "dimensions_test.h"
-#include "direct_block_tensor_test.h"
-#include "direct_btensor_test.h"
-#include "direct_product_test.h"
-#include "dot_product_test.h"
+//~ #include "direct_block_tensor_test.h"
+//~ #include "direct_btensor_test.h"
+//~ #include "direct_product_test.h"
+//~ #include "dot_product_test.h"
 #include "global_timings_test.h"
 #include "immutable_test.h"
 #include "index_test.h"
 #include "index_range_test.h"
-#include "labeled_btensor_test.h"
+//~ #include "labeled_btensor_test.h"
 #include "letter_expr_test.h"
 #include "letter_test.h"
 #include "mask_test.h"
@@ -53,8 +53,8 @@
 #include "so_proj_up_impl_perm_test.h"
 #include "so_union_impl_perm_test.h"
 #include "symel_cycleperm_test.h"
-#include "symm_test.h"
-#include "symmetry_test.h"
+//~ #include "symm_test.h"
+//~ #include "symmetry_test.h"
 #include "symmetry_element_base_test.h"
 #include "symmetry_element_set_test.h"
 #include "symmetry_element_set_adapter_test.h"
@@ -62,7 +62,7 @@
 #include "timer_test.h"
 #include "timings_test.h"
 #include "tod_add_test.h"
-#include "tod_btconv_test.h"
+//~ #include "tod_btconv_test.h"
 #include "tod_compare_test.h"
 #include "tod_contract2_test.h"
 #include "tod_copy_test.h"
@@ -169,40 +169,40 @@ namespace libtensor {
 class libtensor_suite : public libtest::test_suite {
 private:
 	unit_test_factory<abs_index_test> m_utf_abs_index;
-	unit_test_factory<anon_eval_test> m_utf_anon_eval;
+	//~ unit_test_factory<anon_eval_test> m_utf_anon_eval;
 	unit_test_factory<bispace_test> m_utf_bispace;
 	unit_test_factory<bispace_expr_test> m_utf_bispace_expr;
 	unit_test_factory<block_index_space_test> m_utf_block_index_space;
 	unit_test_factory<block_map_test> m_utf_block_map;
 	unit_test_factory<block_tensor_test> m_utf_block_tensor;
-	unit_test_factory<btensor_test> m_utf_btensor;
-	unit_test_factory<btod_add_test> m_utf_btod_add;
-	unit_test_factory<btod_compare_test> m_utf_btod_compare;
-	unit_test_factory<btod_contract2_test> m_utf_btod_contract2;
-	unit_test_factory<btod_copy_test> m_utf_btod_copy;
-	unit_test_factory<btod_dotprod_test> m_utf_btod_dotprod;
-	unit_test_factory<btod_import_raw_test> m_utf_btod_import_raw;
-	unit_test_factory<btod_mkdelta_test> m_utf_btod_mkdelta;
-	unit_test_factory<btod_mult_test> m_utf_btod_mult;
-	unit_test_factory<btod_random_test> m_utf_btod_random;
-	unit_test_factory<btod_read_test> m_utf_btod_read;
-	unit_test_factory<btod_scale_test> m_utf_btod_scale;
-	unit_test_factory<btod_set_diag_test> m_utf_btod_set_diag;
-	unit_test_factory<btod_sum_test> m_utf_btod_sum;
-	unit_test_factory<contract_test> m_utf_contract;
+	//~ unit_test_factory<btensor_test> m_utf_btensor;
+	//~ unit_test_factory<btod_add_test> m_utf_btod_add;
+	//~ unit_test_factory<btod_compare_test> m_utf_btod_compare;
+	//~ unit_test_factory<btod_contract2_test> m_utf_btod_contract2;
+	//~ unit_test_factory<btod_copy_test> m_utf_btod_copy;
+	//~ unit_test_factory<btod_dotprod_test> m_utf_btod_dotprod;
+	//~ unit_test_factory<btod_import_raw_test> m_utf_btod_import_raw;
+	//~ unit_test_factory<btod_mkdelta_test> m_utf_btod_mkdelta;
+	//~ unit_test_factory<btod_mult_test> m_utf_btod_mult;
+	//~ unit_test_factory<btod_random_test> m_utf_btod_random;
+	//~ unit_test_factory<btod_read_test> m_utf_btod_read;
+	//~ unit_test_factory<btod_scale_test> m_utf_btod_scale;
+	//~ unit_test_factory<btod_set_diag_test> m_utf_btod_set_diag;
+	//~ unit_test_factory<btod_sum_test> m_utf_btod_sum;
+	//~ unit_test_factory<contract_test> m_utf_contract;
 	unit_test_factory<contraction2_test> m_utf_contraction2;
 	unit_test_factory<contraction2_list_builder_test>
 		m_utf_contraction2_list_builder;
 	unit_test_factory<dimensions_test> m_utf_dimensions;
-	unit_test_factory<direct_block_tensor_test> m_utf_direct_block_tensor;
-	unit_test_factory<direct_btensor_test> m_utf_direct_btensor;
-	unit_test_factory<direct_product_test> m_utf_direct_product;
-	unit_test_factory<dot_product_test> m_utf_dot_product;
+	//~ unit_test_factory<direct_block_tensor_test> m_utf_direct_block_tensor;
+	//~ unit_test_factory<direct_btensor_test> m_utf_direct_btensor;
+	//~ unit_test_factory<direct_product_test> m_utf_direct_product;
+	//~ unit_test_factory<dot_product_test> m_utf_dot_product;
 	unit_test_factory<global_timings_test> m_utf_global_timings;
 	unit_test_factory<immutable_test> m_utf_immutable;
 	unit_test_factory<index_test> m_utf_index;
 	unit_test_factory<index_range_test> m_utf_index_range;
-	unit_test_factory<labeled_btensor_test> m_utf_labeled_btensor;
+	//~ unit_test_factory<labeled_btensor_test> m_utf_labeled_btensor;
 	unit_test_factory<letter_test> m_utf_letter;
 	unit_test_factory<letter_expr_test> m_utf_letter_expr;
 	unit_test_factory<mask_test> m_utf_mask;
@@ -222,8 +222,8 @@ private:
 	unit_test_factory<so_proj_up_impl_perm_test> m_utf_so_proj_up_impl_perm;
 	unit_test_factory<so_union_impl_perm_test> m_utf_so_union_impl_perm;
 	unit_test_factory<symel_cycleperm_test> m_utf_symel_cycleperm;
-	unit_test_factory<symm_test> m_utf_symm;
-	unit_test_factory<symmetry_test> m_utf_symmetry;
+	//~ unit_test_factory<symm_test> m_utf_symm;
+	//~ unit_test_factory<symmetry_test> m_utf_symmetry;
 	unit_test_factory<symmetry_element_base_test>
 		m_utf_symmetry_element_base;
 	unit_test_factory<symmetry_element_set_test> m_utf_symmetry_element_set;
@@ -233,7 +233,7 @@ private:
 	unit_test_factory<timer_test> m_utf_timer;
 	unit_test_factory<timings_test> m_utf_timings;
 	unit_test_factory<tod_add_test> m_utf_tod_add;
-	unit_test_factory<tod_btconv_test> m_utf_tod_btconv;
+	//~ unit_test_factory<tod_btconv_test> m_utf_tod_btconv;
 	unit_test_factory<tod_compare_test> m_utf_tod_compare;
 	unit_test_factory<tod_contract2_test> m_utf_tod_contract2;
 	unit_test_factory<tod_copy_test> m_utf_tod_copy;

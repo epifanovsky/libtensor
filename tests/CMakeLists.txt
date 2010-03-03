@@ -2,39 +2,39 @@ set(SRC
 	libtensor_tests.C
 	libtensor_suite.C
 	abs_index_test.C
-	anon_eval_test.C
+#	anon_eval_test.C
 	bispace_test.C
 	bispace_expr_test.C
 	block_index_space_test.C
 	block_map_test.C
 	block_tensor_test.C
-	btensor_test.C
-	btod_add_test.C
-	btod_compare_test.C
-	btod_contract2_test.C
-	btod_copy_test.C
-	btod_dotprod_test.C
-	btod_import_raw_test.C
-	btod_mkdelta_test.C
-	btod_mult_test.C
-	btod_random_test.C
-	btod_read_test.C
-	btod_scale_test.C
-	btod_set_diag_test.C
-	btod_sum_test.C
-	contract_test.C
+#	btensor_test.C
+#	btod_add_test.C
+#	btod_compare_test.C
+#	btod_contract2_test.C
+#	btod_copy_test.C
+#	btod_dotprod_test.C
+#	btod_import_raw_test.C
+#	btod_mkdelta_test.C
+#	btod_mult_test.C
+#	btod_random_test.C
+#	btod_read_test.C
+#	btod_scale_test.C
+#	btod_set_diag_test.C
+#	btod_sum_test.C
+#	contract_test.C
 	contraction2_test.C
 	contraction2_list_builder_test.C
 	dimensions_test.C
-	direct_block_tensor_test.C
-	direct_btensor_test.C
-	direct_product_test.C
-	dot_product_test.C
+#	direct_block_tensor_test.C
+#	direct_btensor_test.C
+#	direct_product_test.C
+#	dot_product_test.C
 	global_timings_test.C
 	immutable_test.C
 	index_test.C
 	index_range_test.C
-	labeled_btensor_test.C
+#	labeled_btensor_test.C
 	letter_test.C
 	letter_expr_test.C
 	mask_test.C
@@ -52,8 +52,8 @@ set(SRC
 	so_proj_up_impl_perm_test.C
 	so_union_impl_perm_test.C
 	symel_cycleperm_test.C
-	symm_test.C
-	symmetry_test.C
+#	symm_test.C
+#	symmetry_test.C
 	symmetry_element_base_test.C
 	symmetry_element_set_test.C
 	symmetry_element_set_adapter_test.C
@@ -61,7 +61,7 @@ set(SRC
 	timer_test.C
 	timings_test.C
 	tod_add_test.C
-	tod_btconv_test.C
+#	tod_btconv_test.C
 	tod_compare_test.C
 	tod_contract2_test.C
 	tod_copy_test.C

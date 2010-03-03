@@ -155,13 +155,19 @@ void orbit<N, T>::mark_orbit(const symmetry<N, T> &sym, const index<N> &idx,
 
 	size_t absidx = m_dims.abs_index(idx);
 	if(absidx < m_canidx) m_canidx = absidx;
-	if(lst[absidx] == 0) {
-		lst[absidx] = 1;
-		m_orb.insert(pair_t(absidx, tr));
-		typename symmetry<N, T>::iterator ielem = sym.begin();
-		for(; ielem != sym.end(); ielem++) {
+	if(lst[absidx] != 0) return;
+
+	lst[absidx] = 1;
+	m_orb.insert(pair_t(absidx, tr));
+	for(typename symmetry<N, T>::iterator iset = sym.begin();
+		iset != sym.end(); iset++) {
+
+		const symmetry_element_set<N, T> &eset = sym.get_subset(iset);
+		for(typename symmetry_element_set<N, T>::iterator ielem =
+			eset.begin(); ielem != eset.end(); ielem++) {
+
 			const symmetry_element_i<N, T> &elem =
-				sym.get_element(ielem);
+				eset.get_elem(ielem);
 			index<N> idx2(idx);
 			transf<N, T> tr2(tr);
 			elem.apply(idx2, tr2);
