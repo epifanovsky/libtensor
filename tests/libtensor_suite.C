@@ -57,7 +57,7 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("so_union_impl_perm", m_utf_so_union_impl_perm);
 	add_test("symel_cycleperm", m_utf_symel_cycleperm);
 	//~ add_test("symm", m_utf_symm);
-	//~ add_test("symmetry", m_utf_symmetry);
+	add_test("symmetry", m_utf_symmetry);
 	add_test("symmetry_element_base", m_utf_symmetry_element_base);
 	add_test("symmetry_element_set", m_utf_symmetry_element_set);
 	add_test("symmetry_element_set_adapter",

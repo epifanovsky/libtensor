@@ -54,7 +54,7 @@
 #include "so_union_impl_perm_test.h"
 #include "symel_cycleperm_test.h"
 //~ #include "symm_test.h"
-//~ #include "symmetry_test.h"
+#include "symmetry_test.h"
 #include "symmetry_element_base_test.h"
 #include "symmetry_element_set_test.h"
 #include "symmetry_element_set_adapter_test.h"
@@ -223,7 +223,7 @@ private:
 	unit_test_factory<so_union_impl_perm_test> m_utf_so_union_impl_perm;
 	unit_test_factory<symel_cycleperm_test> m_utf_symel_cycleperm;
 	//~ unit_test_factory<symm_test> m_utf_symm;
-	//~ unit_test_factory<symmetry_test> m_utf_symmetry;
+	unit_test_factory<symmetry_test> m_utf_symmetry;
 	unit_test_factory<symmetry_element_base_test>
 		m_utf_symmetry_element_base;
 	unit_test_factory<symmetry_element_set_test> m_utf_symmetry_element_set;
