@@ -49,14 +49,8 @@ public:
 protected:
 	//!	\name Implementation of libtensor::block_tensor_i<N, T>
 	//@{
-	virtual const symmetry<N, T> &on_req_symmetry() throw(exception);
-	virtual void on_req_sym_add_element(
-		const symmetry_element_i<N, T> &elem) throw(exception);
-	virtual void on_req_sym_remove_element(
-		const symmetry_element_i<N, T> &elem) throw(exception);
-	virtual bool on_req_sym_contains_element(
-		const symmetry_element_i<N, T> &elem) throw(exception);
-	virtual void on_req_sym_clear_elements() throw(exception);
+	virtual const symmetry<N, T> &on_req_const_symmetry() throw(exception);
+	virtual symmetry<N, T> &on_req_symmetry() throw(exception);
 	virtual tensor_i<N, T> &on_req_block(const index<N> &idx)
 		throw(exception);
 	virtual void on_ret_block(const index<N> &idx) throw(exception);
@@ -117,7 +111,7 @@ const block_index_space<N> &block_tensor<N, T, Alloc>::get_bis()
 
 
 template<size_t N, typename T, typename Alloc>
-const symmetry<N, T> &block_tensor<N, T, Alloc>::on_req_symmetry()
+const symmetry<N, T> &block_tensor<N, T, Alloc>::on_req_const_symmetry()
 	throw(exception) {
 
 	return m_symmetry;
@@ -125,60 +119,75 @@ const symmetry<N, T> &block_tensor<N, T, Alloc>::on_req_symmetry()
 
 
 template<size_t N, typename T, typename Alloc>
-void block_tensor<N, T, Alloc>::on_req_sym_add_element(
-	const symmetry_element_i<N, T> &elem) throw(exception) {
+symmetry<N, T> &block_tensor<N, T, Alloc>::on_req_symmetry()
+	throw(exception) {
 
-	static const char *method =
-		"on_req_sym_add_element(const symmetry_element_i<N, T>&)";
-
-	if(is_immutable()) {
-		throw immut_violation(g_ns, k_clazz, method, __FILE__, __LINE__,
-			"Immutable object cannot be modified.");
-	}
-
-	m_symmetry.add_element(elem);
-	m_orblst_dirty = true;
-}
-
-
-template<size_t N, typename T, typename Alloc>
-void block_tensor<N, T, Alloc>::on_req_sym_remove_element(
-	const symmetry_element_i<N, T> &elem) throw(exception) {
-
-	static const char *method =
-		"on_req_sym_remove_element(const symmetry_element_i<N, T>&)";
+	static const char *method = "on_req_symmetry()";
 
 	if(is_immutable()) {
 		throw immut_violation(g_ns, k_clazz, method, __FILE__, __LINE__,
-			"Immutable object cannot be modified.");
+			"symmetry");
 	}
 
-	m_symmetry.remove_element(elem);
-	m_orblst_dirty = true;
+	return m_symmetry;
 }
 
 
-template<size_t N, typename T, typename Alloc>
-bool block_tensor<N, T, Alloc>::on_req_sym_contains_element(
-	const symmetry_element_i<N, T> &elem) throw(exception) {
+//template<size_t N, typename T, typename Alloc>
+//void block_tensor<N, T, Alloc>::on_req_sym_add_element(
+//	const symmetry_element_i<N, T> &elem) throw(exception) {
+//
+//	static const char *method =
+//		"on_req_sym_add_element(const symmetry_element_i<N, T>&)";
+//
+//	if(is_immutable()) {
+//		throw immut_violation(g_ns, k_clazz, method, __FILE__, __LINE__,
+//			"Immutable object cannot be modified.");
+//	}
+//
+//	m_symmetry.add_element(elem);
+//	m_orblst_dirty = true;
+//}
 
-	return m_symmetry.contains_element(elem);
-}
+
+//template<size_t N, typename T, typename Alloc>
+//void block_tensor<N, T, Alloc>::on_req_sym_remove_element(
+//	const symmetry_element_i<N, T> &elem) throw(exception) {
+//
+//	static const char *method =
+//		"on_req_sym_remove_element(const symmetry_element_i<N, T>&)";
+//
+//	if(is_immutable()) {
+//		throw immut_violation(g_ns, k_clazz, method, __FILE__, __LINE__,
+//			"Immutable object cannot be modified.");
+//	}
+//
+//	m_symmetry.remove_element(elem);
+//	m_orblst_dirty = true;
+//}
 
 
-template<size_t N, typename T, typename Alloc>
-void block_tensor<N, T, Alloc>::on_req_sym_clear_elements() throw(exception) {
+//template<size_t N, typename T, typename Alloc>
+//bool block_tensor<N, T, Alloc>::on_req_sym_contains_element(
+//	const symmetry_element_i<N, T> &elem) throw(exception) {
+//
+//	return m_symmetry.contains_element(elem);
+//}
 
-	static const char *method = "on_req_sym_clear_elements()";
 
-	if(is_immutable()) {
-		throw immut_violation(g_ns, k_clazz, method, __FILE__, __LINE__,
-			"Immutable object cannot be modified.");
-	}
-
-	m_symmetry.clear_elements();
-	m_orblst_dirty = true;
-}
+//template<size_t N, typename T, typename Alloc>
+//void block_tensor<N, T, Alloc>::on_req_sym_clear_elements() throw(exception) {
+//
+//	static const char *method = "on_req_sym_clear_elements()";
+//
+//	if(is_immutable()) {
+//		throw immut_violation(g_ns, k_clazz, method, __FILE__, __LINE__,
+//			"Immutable object cannot be modified.");
+//	}
+//
+//	m_symmetry.clear_elements();
+//	m_orblst_dirty = true;
+//}
 
 template<size_t N, typename T, typename Alloc>
 tensor_i<N, T> &block_tensor<N, T, Alloc>::on_req_block(

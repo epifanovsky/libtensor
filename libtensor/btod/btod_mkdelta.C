@@ -46,7 +46,7 @@ void btod_mkdelta::perform(block_tensor_i<2, double> &bt) throw(exception) {
 	// appropriate symmetry.
 	size_t ni_ab = ni / 2, na_ab = na / 2;
 
-	ctrl_d.req_sym_clear_elements();
+	ctrl_d.req_symmetry().clear();
 
 	index<2> idx_i, idx_a, idx_d;
 	for(size_t i = 0; i < ni; i++) {

@@ -62,7 +62,7 @@ set(SRC
 	timer_test.C
 	timings_test.C
 	tod_add_test.C
-#	tod_btconv_test.C
+	tod_btconv_test.C
 	tod_compare_test.C
 	tod_contract2_test.C
 	tod_copy_test.C

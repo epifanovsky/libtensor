@@ -78,6 +78,12 @@ public:
 		return **i;
 	}
 
+	/**	\brief Removes all %symmetry elements
+	 **/
+	void clear() {
+		remove_all();
+	}
+
 	//@}
 
 private:
