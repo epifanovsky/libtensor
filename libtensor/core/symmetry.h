@@ -39,11 +39,6 @@ public:
 	 **/
 	symmetry(const block_index_space<N> &bis) : m_bis(bis) { }
 
-	/**	\brief Copy constructor
-		\param sym Another %symmetry object.
-	 **/
-	//~ symmetry(const symmetry<N, T> &sym);
-
 	/**	\brief Destructor
 	 **/
 	~symmetry();
@@ -89,17 +84,15 @@ public:
 private:
 	void remove_all();
 
+private:
+	symmetry(const symmetry<N, T>&);
+	const symmetry<N, T> &operator=(const symmetry<N, T>&);
+
 };
 
 
 template<size_t N, typename T>
 const char *symmetry<N, T>::k_clazz = "symmetry<N, T>";
-
-
-//~ template<size_t N, typename T>
-//~ symmetry<N, T>::symmetry(const symmetry<N, T> &sym) : m_bis(sym.m_bis) {
-
-//~ }
 
 
 template<size_t N, typename T>
