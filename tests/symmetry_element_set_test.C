@@ -197,7 +197,7 @@ void symmetry_element_set_test::test_3() throw(libtest::test_exception) {
 	//	Check the element type
 
 	try {
-		sym_elem_1<2> &e1a = dynamic_cast< sym_elem_1<2>& >(
+		const sym_elem_1<2> &e1a = dynamic_cast< const sym_elem_1<2>& >(
 			set.get_elem(i1));
 	} catch(std::bad_cast&) {
 		fail_test(testname, __FILE__, __LINE__,
@@ -206,7 +206,8 @@ void symmetry_element_set_test::test_3() throw(libtest::test_exception) {
 
 	//	Check that the element in the set equals the original one
 
-	sym_elem_1<2> &e1a = dynamic_cast< sym_elem_1<2>& >(set.get_elem(i1));
+	const sym_elem_1<2> &e1a =
+		dynamic_cast< const sym_elem_1<2>& >(set.get_elem(i1));
 	if(e1a.get_m() != 1) {
 		fail_test(testname, __FILE__, __LINE__,
 			"Element in the set is incorrectly initialized.");

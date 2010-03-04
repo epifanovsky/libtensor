@@ -122,14 +122,8 @@ template<size_t N, typename T>
 void symmetry<N, T>::remove_all() {
 
 	if(m_subsets.empty()) return;
-	typename std::list<symmetry_element_set<N, T>*>::iterator i =
-		m_subsets.begin();
-	while(i != m_subsets.end()) {
-		symmetry_element_set<N, T> *ptr = *i;
-		*i = 0;
-		delete ptr;
-		i++;
-	}
+	for(typename std::list<symmetry_element_set<N, T>*>::iterator i =
+		m_subsets.begin(); i != m_subsets.end(); i++) delete *i;
 	m_subsets.clear();
 }
 

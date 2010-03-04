@@ -15,7 +15,7 @@ template<typename ElemT>
 class so_proj_up_impl;
 
 template<size_t N, size_t M, typename T>
-struct symmetry_operation_params< so_proj_up<N, M, T> >;
+class symmetry_operation_params< so_proj_up<N, M, T> >;
 
 
 /**	\brief Projection of a %symmetry group to a larger space
@@ -50,7 +50,7 @@ class so_proj_up_impl {
 
 
 template<size_t N, size_t M, typename T>
-struct symmetry_operation_params< so_proj_up<N, M, T> > {
+class symmetry_operation_params< so_proj_up<N, M, T> > {
 public:
 	const symmetry_element_set<N, T> &grp; //!< Symmetry group
 	mask<N + M> msk; //!< Mask

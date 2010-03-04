@@ -126,7 +126,7 @@ bool orbit_list<N, T>::mark_orbit(const symmetry<N, T> &sym,
 		iset != sym.end(); iset++) {
 
 		const symmetry_element_set<N, T> &eset = sym.get_subset(iset);
-		for(typename symmetry_element_set<N, T>::iterator ielem =
+		for(typename symmetry_element_set<N, T>::const_iterator ielem =
 			eset.begin(); ielem != eset.end(); ielem++) {
 
 			const symmetry_element_i<N, T> &elem =

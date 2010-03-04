@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_SYMMETRY_ELEMENT_SET_H
 #define LIBTENSOR_SYMMETRY_ELEMENT_SET_H
 
-#include <set>
+#include <list>
 #include <string>
 #include "symmetry_element_i.h"
 
@@ -22,7 +22,7 @@ private:
 	typedef symmetry_element_i<N, T> symmetry_element_t;
 
 	//!	Container type
-	typedef std::set<symmetry_element_t*> container_t;
+	typedef std::list<symmetry_element_t*> container_t;
 
 public:
 	//!	Collection iterator type
@@ -39,6 +39,11 @@ public:
 	/**	\brief Initializes the set with a type id
 	 **/
 	symmetry_element_set(const char *id) : m_id(id) { }
+
+
+	/**	\brief Initializes the set with a type id
+	 **/
+	symmetry_element_set(const std::string &id) : m_id(id) { }
 
 
 	/**	\brief Destroys the set
@@ -117,7 +122,7 @@ public:
 	/**	\brief Inserts a %symmetry element to the set
 	 **/
 	void insert(const symmetry_element_i<N, T> &elem) {
-		m_set.insert(elem.clone());
+		m_set.push_back(elem.clone());
 	}
 
 

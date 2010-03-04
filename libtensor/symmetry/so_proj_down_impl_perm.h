@@ -8,6 +8,8 @@
 #include "../core/permutation_builder.h"
 #include "permutation_group.h"
 #include "symmetry_element_set_adapter.h"
+#include "symmetry_operation_impl_i.h"
+#include "symmetry_operation_impl.h"
 #include "so_proj_down.h"
 #include "se_perm.h"
 
@@ -20,48 +22,65 @@ namespace libtensor {
 
 	\ingroup libtensor_symmetry
  **/
-template<size_t N, typename T>
-class so_proj_down_impl< se_perm<N, T> > {
+template<size_t N, size_t M, typename T>
+class symmetry_operation_impl< so_proj_down<N, M, T>, se_perm<N, T> > :
+	public symmetry_operation_impl_i {
+
 public:
 	static const char *k_clazz; //!< Class name
 
-private:
-	struct subgroup {
-		permutation<N> perm;
-		mask<N> msk;
-		sequence<N, size_t> cycles;
-		bool sign; // T=symmetric/F=antisymmetric
-		bool sym; // cyclic/symmetric
-		subgroup() : cycles(0), sign(false), sym(false) { }
-		subgroup(const permutation<N> &perm_, const mask<N> &msk_,
-			const sequence<N, size_t> &cycles_, bool sign_,
-			bool sym_) : perm(perm_), msk(msk_), cycles(cycles_),
-			sign(sign_), sym(sym_) { }
-	};
+public:
+	typedef so_proj_down<N, M, T> operation_t;
+	typedef se_perm<N, T> element_t;
+	typedef symmetry_operation_params<operation_t>
+		symmetry_operation_params_t;
 
 public:
-	template<size_t M>
-	void perform(
-		const symmetry_operation_params<
-			so_proj_down<N, M, T> > &params,
-		symmetry_element_set<N - M, T> &set);
+	virtual const char *get_id() const {
+		return element_t::k_sym_type;
+	}
+
+	virtual symmetry_operation_impl_i *clone() const {
+		return new symmetry_operation_impl<operation_t, element_t>;
+	}
+
+	virtual void perform(symmetry_operation_params_i &params) const;
+
+private:
+	void do_perform(symmetry_operation_params_t &params) const;
 
 };
 
 
-template<size_t N, typename T>
-const char *so_proj_down_impl< se_perm<N, T> >::k_clazz =
-	"so_proj_down_impl< se_perm<N, T> >";
+template<size_t N, size_t M, typename T>
+const char *symmetry_operation_impl<
+	so_proj_down<N, M, T>, se_perm<N, T> >::k_clazz =
+	"symmetry_operation_impl< so_proj_down<N, M, T>, se_perm<N, T> >";
 
 
-template<size_t N, typename T> template<size_t M>
-void so_proj_down_impl< se_perm<N, T> >::perform(
-	const symmetry_operation_params< so_proj_down<N, M, T> > &params,
-	symmetry_element_set<N - M, T> &set) {
+template<size_t N, size_t M, typename T>
+void symmetry_operation_impl< so_proj_down<N, M, T>, se_perm<N, T> >::perform(
+	symmetry_operation_params_i &params) const {
+
+	static const char *method = "perform(symmetry_operation_params_i&)";
+
+	try {
+		symmetry_operation_params_t &params2 =
+			dynamic_cast<symmetry_operation_params_t&>(params);
+		do_perform(params2);
+	} catch(std::bad_cast&) {
+		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"params: bad_cast");
+	}
+}
+
+
+template<size_t N, size_t M, typename T>
+void symmetry_operation_impl< so_proj_down<N, M, T>,
+	se_perm<N, T> >::do_perform(symmetry_operation_params_t &params) const {
 
 	static const char *method =
-		"perform<M>(const symmetry_operation_params< "
-		"so_proj_down<N, M, T> >&, symmetry_element_set<N - M, T>&)";
+		"do_perform(symmetry_operation_params_t&)";
 
 	//	Adapter type for the input group
 	//
@@ -77,15 +96,12 @@ void so_proj_down_impl< se_perm<N, T> >::perform(
 		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
 			"params.msk");
 	}
-	if(!params.perm.is_identity()) {
-		throw not_implemented(g_ns, k_clazz, method, __FILE__, __LINE__);
-	}
 
-	adapter_t adapter1(params.grp);
+	adapter_t adapter1(params.grp1);
 	permutation_group<N, T> group1(adapter1);
 	permutation_group<N - M, T> group2;
 	group1.project_down(params.msk, group2);
-	group2.convert(set);
+	group2.convert(params.grp2);
 }
 
 

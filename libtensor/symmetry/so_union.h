@@ -14,7 +14,7 @@ template<typename ElemT>
 class so_union_impl;
 
 template<size_t N, typename T>
-struct symmetry_operation_params< so_union<N, T> >;
+class symmetry_operation_params< so_union<N, T> >;
 
 
 /**	\brief Union of two %symmetry groups
@@ -43,7 +43,7 @@ class so_union_impl {
 
 
 template<size_t N, typename T>
-struct symmetry_operation_params< so_union<N, T> > {
+class symmetry_operation_params< so_union<N, T> > {
 public:
 	const symmetry_element_set<N, T> &g1;
 	const symmetry_element_set<N, T> &g2;

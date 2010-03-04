@@ -130,7 +130,7 @@ void symmetry_test::test_2() throw(libtest::test_exception) {
 	}
 
 	const symmetry_element_set_t &subset1 = sym.get_subset(i);
-	symmetry_element_set_t::iterator ii = subset1.begin();
+	symmetry_element_set_t::const_iterator ii = subset1.begin();
 	if(ii == subset1.end()) {
 		fail_test(testname, __FILE__, __LINE__, "ii == subset1.end()");
 	}
@@ -192,7 +192,7 @@ void symmetry_test::test_3() throw(libtest::test_exception) {
 	refset.insert(22); refset.insert(33);
 
 	const symmetry_element_set_t &subset1 = sym.get_subset(i);
-	symmetry_element_set_t::iterator ii = subset1.begin();
+	symmetry_element_set_t::const_iterator ii = subset1.begin();
 	if(ii == subset1.end()) {
 		fail_test(testname, __FILE__, __LINE__,
 			"Unexpected end of subset1 (1).");
@@ -300,7 +300,7 @@ void symmetry_test::test_4() throw(libtest::test_exception) {
 	const symmetry_element_set_t &subset1 = *subset1_ptr;
 	const symmetry_element_set_t &subset2 = *subset2_ptr;
 
-	symmetry_element_set_t::iterator ii1 = subset1.begin();
+	symmetry_element_set_t::const_iterator ii1 = subset1.begin();
 	if(ii1 == subset1.end()) {
 		fail_test(testname, __FILE__, __LINE__,
 			"Unexpected end of subset1.");
@@ -319,7 +319,7 @@ void symmetry_test::test_4() throw(libtest::test_exception) {
 		fail_test(testname, __FILE__, __LINE__, "ii1 != subset1.end()");
 	}
 
-	symmetry_element_set_t::iterator ii2 = subset2.begin();
+	symmetry_element_set_t::const_iterator ii2 = subset2.begin();
 	if(ii2 == subset2.end()) {
 		fail_test(testname, __FILE__, __LINE__,
 			"Unexpected end of subset2.");
@@ -408,7 +408,7 @@ void symmetry_test::test_5() throw(libtest::test_exception) {
 	const symmetry_element_set_t &subset1 = *subset1_ptr;
 	const symmetry_element_set_t &subset2 = *subset2_ptr;
 
-	symmetry_element_set_t::iterator ii1 = subset1.begin();
+	symmetry_element_set_t::const_iterator ii1 = subset1.begin();
 	if(ii1 == subset1.end()) {
 		fail_test(testname, __FILE__, __LINE__,
 			"Unexpected end of subset1 (1).");
@@ -447,7 +447,7 @@ void symmetry_test::test_5() throw(libtest::test_exception) {
 		fail_test(testname, __FILE__, __LINE__, "ii1 != subset1.end()");
 	}
 
-	symmetry_element_set_t::iterator ii2 = subset2.begin();
+	symmetry_element_set_t::const_iterator ii2 = subset2.begin();
 	if(ii2 == subset2.end()) {
 		fail_test(testname, __FILE__, __LINE__,
 			"Unexpected end of subset2 (1).");

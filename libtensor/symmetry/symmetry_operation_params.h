@@ -4,14 +4,19 @@
 namespace libtensor {
 
 
+class symmetry_operation_params_i {
+public:
+	virtual ~symmetry_operation_params_i() { }
+};
+
+
 /**	\brief Structure template for %symmetry operation parameters
 	\tparam OperT Symmetry operation type.
 
 	\ingroup libtensor_symmetry
  **/
 template<typename OperT>
-struct symmetry_operation_params {
-};
+class symmetry_operation_params;
 
 
 } // namespace libtensor
