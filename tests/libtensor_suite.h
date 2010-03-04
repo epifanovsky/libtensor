@@ -46,6 +46,7 @@
 #include "permutation_group_test.h"
 #include "sequence_test.h"
 #include "se_perm_test.h"
+#include "so_copy_test.h"
 #include "so_projdown_test.h"
 #include "so_projup_test.h"
 #include "so_intersection_impl_perm_test.h"
@@ -133,6 +134,7 @@ namespace libtensor {
 	\li libtensor::permutation_group_test
 	\li libtensor::sequence_test
 	\li libtensor::se_perm_test
+	\li libtensor::so_copy_test
 	\li libtensor::so_projdown_test
 	\li libtensor::so_projup_test
 	\li libtensor::so_intersection_impl_perm_test
@@ -215,6 +217,7 @@ private:
 	unit_test_factory<permutation_group_test> m_utf_permutation_group;
 	unit_test_factory<sequence_test> m_utf_sequence;
 	unit_test_factory<se_perm_test> m_utf_se_perm;
+	unit_test_factory<so_copy_test> m_utf_so_copy;
 	unit_test_factory<so_projdown_test> m_utf_so_projdown;
 	unit_test_factory<so_projup_test> m_utf_so_projup;
 	unit_test_factory<so_intersection_impl_perm_test>

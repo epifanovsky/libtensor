@@ -45,6 +45,7 @@ set(SRC
 	permutation_group_test.C
 	sequence_test.C
 	se_perm_test.C
+	so_copy_test.C
 	so_projdown_test.C
 	so_projup_test.C
 	so_intersection_impl_perm_test.C
