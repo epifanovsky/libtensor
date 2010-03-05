@@ -13,6 +13,7 @@ set(SRC
 	btod_compare_test.C
 	btod_contract2_test.C
 	btod_copy_test.C
+	btod_diag_test.C
 	btod_dotprod_test.C
 	btod_import_raw_test.C
 	btod_mkdelta_test.C
