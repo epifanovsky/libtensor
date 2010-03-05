@@ -1,5 +1,5 @@
 #ifndef LIBTENSOR_TOD_MULT_H
-#define TOD_MULT_H
+#define LIBTENSOR_TOD_MULT_H
 
 #include "../defs.h"
 #include "../timings.h"
