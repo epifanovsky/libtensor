@@ -124,18 +124,25 @@ bool btod_random<N>::make_transf_map(const symmetry<N, double> &sym,
 	ilst->second.push_back(tr);
 
 	bool allowed = true;
-	typename symmetry<N, double>::iterator ielem = sym.begin();
-	for(; ielem != sym.end(); ielem++) {
-		const symmetry_element_i<N, double> &elem =
-			sym.get_element(ielem);
-		index<N> idx2(idx);
-		transf<N, double> tr2(tr);
-		if(elem.is_allowed(idx2)) {
-			elem.apply(idx2, tr2);
-			allowed = make_transf_map(sym, bidims,
-				idx2, tr2, alltransf);
-		} else {
-			allowed = false;
+	for(typename symmetry<N, double>::iterator iset = sym.begin();
+		iset != sym.end(); iset++) {
+
+		const symmetry_element_set<N, double> &eset =
+			sym.get_subset(iset);
+		for(typename symmetry_element_set<N, double>::const_iterator
+			ielem = eset.begin(); ielem != eset.end(); ielem++) {
+
+			const symmetry_element_i<N, double> &elem =
+				eset.get_elem(ielem);
+			index<N> idx2(idx);
+			transf<N, double> tr2(tr);
+			if(elem.is_allowed(idx2)) {
+				elem.apply(idx2, tr2);
+				allowed = make_transf_map(sym, bidims,
+					idx2, tr2, alltransf);
+			} else {
+				allowed = false;
+			}
 		}
 	}
 	return allowed;

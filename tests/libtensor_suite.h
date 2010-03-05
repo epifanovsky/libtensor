@@ -18,7 +18,7 @@
 //~ #include "btod_import_raw_test.h"
 //~ #include "btod_mkdelta_test.h"
 //~ #include "btod_mult_test.h"
-//~ #include "btod_random_test.h"
+#include "btod_random_test.h"
 //~ #include "btod_read_test.h"
 //~ #include "btod_scale_test.h"
 //~ #include "btod_set_diag_test.h"
@@ -188,7 +188,7 @@ private:
 	//~ unit_test_factory<btod_import_raw_test> m_utf_btod_import_raw;
 	//~ unit_test_factory<btod_mkdelta_test> m_utf_btod_mkdelta;
 	//~ unit_test_factory<btod_mult_test> m_utf_btod_mult;
-	//~ unit_test_factory<btod_random_test> m_utf_btod_random;
+	unit_test_factory<btod_random_test> m_utf_btod_random;
 	//~ unit_test_factory<btod_read_test> m_utf_btod_read;
 	//~ unit_test_factory<btod_scale_test> m_utf_btod_scale;
 	//~ unit_test_factory<btod_set_diag_test> m_utf_btod_set_diag;
