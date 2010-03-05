@@ -8,6 +8,7 @@
 #include "../core/orbit_list.h"
 #include "../tod/tod_mult.h"
 #include "../tod/tod_set.h"
+#include "bad_block_index_space.h"
 
 namespace libtensor {
 
@@ -25,10 +26,11 @@ public:
 private:
 	block_tensor_i<N, double> &m_bta; //!< First argument
 	block_tensor_i<N, double> &m_btb; //!< Second argument
+	bool m_recip; //!< Reciprocal
 
 public:
 	btod_mult(block_tensor_i<N, double> &bta,
-		block_tensor_i<N, double> &btb);
+		block_tensor_i<N, double> &btb, bool recip = false);
 
 	void perform(block_tensor_i<N, double> &btc);
 
@@ -50,15 +52,29 @@ const char *btod_mult<N>::k_clazz = "btod_mult<N>";
 
 template<size_t N>
 btod_mult<N>::btod_mult(block_tensor_i<N, double> &bta,
-	block_tensor_i<N, double> &btb) :
+	block_tensor_i<N, double> &btb, bool recip) :
 
-	m_bta(bta), m_btb(btb) {
+	m_bta(bta), m_btb(btb), m_recip(recip) {
 
+	static const char *method = "btod_mult(block_tensor_i<N, double>&, "
+		"block_tensor_i<N, double>&, bool)";
+
+	if(!m_bta.get_bis().equals(m_btb.get_bis())) {
+		throw bad_block_index_space(g_ns, k_clazz, method,
+			__FILE__, __LINE__, "bta,btb");
+	}
 }
 
 
 template<size_t N>
 void btod_mult<N>::perform(block_tensor_i<N, double> &btc) {
+
+	static const char *method = "perform(block_tensor_i<N, double>&)";
+
+	if(!btc.get_bis().equals(m_bta.get_bis())) {
+		throw bad_block_index_space(g_ns, k_clazz, method,
+			__FILE__, __LINE__, "btc");
+	}
 
 	do_perform(btc, true, 1.0);
 }
@@ -67,6 +83,14 @@ void btod_mult<N>::perform(block_tensor_i<N, double> &btc) {
 template<size_t N>
 void btod_mult<N>::perform(block_tensor_i<N, double> &btc, double c) {
 
+	static const char *method =
+		"perform(block_tensor_i<N, double>&, double)";
+
+	if(!btc.get_bis().equals(m_bta.get_bis())) {
+		throw bad_block_index_space(g_ns, k_clazz, method,
+			__FILE__, __LINE__, "btc");
+	}
+
 	do_perform(btc, false, c);
 }
 
@@ -74,6 +98,9 @@ void btod_mult<N>::perform(block_tensor_i<N, double> &btc, double c) {
 template<size_t N>
 void btod_mult<N>::do_perform(
 	block_tensor_i<N, double> &btc, bool zero, double c) {
+
+	static const char *method =
+		"do_perform(block_tensor_i<N, double>&, bool, double)";
 
 	block_tensor_ctrl<N, double> ctrla(m_bta), ctrlb(m_btb), ctrlc(btc);
 
@@ -88,6 +115,10 @@ void btod_mult<N>::do_perform(
 
 		bool zeroa = ctrla.req_is_zero_block(idxa);
 		bool zerob = ctrlb.req_is_zero_block(idxb);
+		if(m_recip && zerob) {
+			throw bad_parameter(g_ns, k_clazz, method,
+				__FILE__, __LINE__, "zero in btb");
+		}
 		if(zero && (zeroa || zerob)) {
 			ctrlc.req_zero_block(idxc);
 			continue;
@@ -99,12 +130,12 @@ void btod_mult<N>::do_perform(
 		tensor_i<N, double> &blkc = ctrlc.req_block(idxc);
 
 		if(zero && c == 1.0) {
-			tod_mult<N>(blka, blkb).perform(blkc);
+			tod_mult<N>(blka, blkb, m_recip).perform(blkc);
 		} else if(zero) {
 			tod_set<N>().perform(blkc);
-			tod_mult<N>(blka, blkb).perform(blkc, c);
+			tod_mult<N>(blka, blkb, m_recip).perform(blkc, c);
 		} else {
-			tod_mult<N>(blka, blkb).perform(blkc, c);
+			tod_mult<N>(blka, blkb, m_recip).perform(blkc, c);
 		}
 
 		ctrla.ret_block(idxa);
