@@ -21,6 +21,7 @@ set(SRC
 	btod_random_test.C
 	btod_read_test.C
 	btod_scale_test.C
+	btod_set_test.C
 	btod_set_diag_test.C
 	btod_sum_test.C
 	contract_test.C
