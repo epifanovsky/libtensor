@@ -20,7 +20,8 @@ private:
 	void test_apply_mask_2() throw(libtest::test_exception);
 	void test_apply_mask_3() throw(libtest::test_exception);
 	void test_invert() throw(libtest::test_exception);
-	void test_apply() throw(libtest::test_exception);
+	void test_apply_1() throw(libtest::test_exception);
+	void test_apply_2() throw(libtest::test_exception);
 	void test_print() throw(libtest::test_exception);
 };
 

@@ -13,6 +13,7 @@ set(SRC
 #	btod_compare_test.C
 #	btod_contract2_test.C
 #	btod_copy_test.C
+	btod_diag_test.C
 #	btod_dotprod_test.C
 #	btod_import_raw_test.C
 #	btod_mkdelta_test.C
@@ -20,6 +21,7 @@ set(SRC
 	btod_random_test.C
 #	btod_read_test.C
 #	btod_scale_test.C
+	btod_set_test.C
 #	btod_set_diag_test.C
 #	btod_sum_test.C
 #	contract_test.C

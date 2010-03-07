@@ -1,3 +1,4 @@
+#include <typeinfo>
 #include <libtensor/symmetry/so_copy.h>
 #include <libtensor/btod/transf_double.h>
 #include "so_copy_test.h"
