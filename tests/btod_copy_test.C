@@ -6,7 +6,7 @@
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/btod/btod_copy.h>
 #include <libtensor/btod/btod_random.h>
-#include <libtensor/symmetry/symel_cycleperm.h>
+#include <libtensor/symmetry/se_perm.h>
 #include <libtensor/tod/tod_btconv.h>
 #include "compare_ref.h"
 #include "btod_copy_test.h"
@@ -245,12 +245,15 @@ void btod_copy_test::test_2() throw(libtest::test_exception) {
 
 	//	Set up symmetry
 
-	symel_cycleperm<4, double> cycle1(2, msk1), cycle2(2, msk2);
+	permutation<4> perm1, perm2;
+	perm1.permute(0, 1);
+	perm2.permute(0, 1);
+	se_perm<4, double> cycle1(perm1, true), cycle2(perm2, true);
 	block_tensor_ctrl<4, double> ctrla(bta), ctrlb(btb);
-	ctrla.req_sym_add_element(cycle1);
-	ctrla.req_sym_add_element(cycle2);
-	ctrlb.req_sym_add_element(cycle1);
-	ctrlb.req_sym_add_element(cycle2);
+	ctrla.req_symmetry().insert(cycle1);
+	ctrla.req_symmetry().insert(cycle2);
+	ctrlb.req_symmetry().insert(cycle1);
+	ctrlb.req_symmetry().insert(cycle2);
 
 	//	Load random data for input
 
@@ -323,11 +326,16 @@ void btod_copy_test::test_3() throw(libtest::test_exception) {
 
 	//	Set up symmetry
 
-	symel_cycleperm<4, double> cycle1(2, msk1), cycle2(2, msk2);
-	symel_cycleperm<4, double> cycle3(2, msk3), cycle4(2, msk4);
+	permutation<4> perm1, perm2, perm3, perm4;
+	perm1.permute(0, 1);
+	perm2.permute(2, 3);
+	perm3.permute(0, 2);
+	perm4.permute(1, 3);
+	se_perm<4, double> cycle1(perm1, true), cycle2(perm2, true);
+	se_perm<4, double> cycle3(perm3, true), cycle4(perm4, true);
 	block_tensor_ctrl<4, double> ctrla(bta), ctrlb(btb);
-	ctrla.req_sym_add_element(cycle1);
-	ctrla.req_sym_add_element(cycle2);
+	ctrla.req_symmetry().insert(cycle1);
+	ctrla.req_symmetry().insert(cycle2);
 //	ctrlb.req_sym_add_element(cycle3);
 //	ctrlb.req_sym_add_element(cycle4);
 
@@ -468,12 +476,12 @@ void btod_copy_test::test_dir_2() throw(libtest::test_exception) {
 	block_tensor_ctrl<2, double> bta_ctrl(bta), btb_ctrl(btb),
 		btb_ref_ctrl(btb);
 
-	mask<2> msk;
-	msk[0] = true; msk[1] = true;
-	symel_cycleperm<2, double> cycle(2, msk);
-	bta_ctrl.req_sym_add_element(cycle);
-	btb_ctrl.req_sym_add_element(cycle);
-	btb_ref_ctrl.req_sym_add_element(cycle);
+	permutation<2> perm1;
+	perm1.permute(0, 1);
+	se_perm<2, double> cycle(perm1, true);
+	bta_ctrl.req_symmetry().insert(cycle);
+	btb_ctrl.req_symmetry().insert(cycle);
+	btb_ref_ctrl.req_symmetry().insert(cycle);
 
 	//	Fill in with random data
 
@@ -534,14 +542,17 @@ void btod_copy_test::test_dir_3() throw(libtest::test_exception) {
 
 	//	Set up symmetry
 
-	symel_cycleperm<4, double> cycle1(2, msk1), cycle2(2, msk2);
+	permutation<4> perm1, perm2;
+	perm1.permute(0, 1);
+	perm2.permute(2, 3);
+	se_perm<4, double> cycle1(perm1, true), cycle2(perm2, true);
 	block_tensor_ctrl<4, double> ctrla(bta), ctrlb(btb), ctrlb_ref(btb_ref);
-	ctrla.req_sym_add_element(cycle1);
-	ctrla.req_sym_add_element(cycle2);
-	ctrlb.req_sym_add_element(cycle1);
-	ctrlb.req_sym_add_element(cycle2);
-	ctrlb_ref.req_sym_add_element(cycle1);
-	ctrlb_ref.req_sym_add_element(cycle2);
+	ctrla.req_symmetry().insert(cycle1);
+	ctrla.req_symmetry().insert(cycle2);
+	ctrlb.req_symmetry().insert(cycle1);
+	ctrlb.req_symmetry().insert(cycle2);
+	ctrlb_ref.req_symmetry().insert(cycle1);
+	ctrlb_ref.req_symmetry().insert(cycle2);
 
 	//	Load random data for input
 
@@ -609,14 +620,17 @@ void btod_copy_test::test_dir_4() throw(libtest::test_exception) {
 
 	//	Set up symmetry
 
-	symel_cycleperm<4, double> cycle1(2, msk1), cycle2(2, msk2);
+	permutation<4> perm1, perm2;
+	perm1.permute(0, 1);
+	perm2.permute(2, 3);
+	se_perm<4, double> cycle1(perm1, true), cycle2(perm2, true);
 	block_tensor_ctrl<4, double> ctrla(bta), ctrlb(btb), ctrlb_ref(btb_ref);
-	ctrla.req_sym_add_element(cycle1);
-	ctrla.req_sym_add_element(cycle2);
-	ctrlb.req_sym_add_element(cycle1);
-	ctrlb.req_sym_add_element(cycle2);
-	ctrlb_ref.req_sym_add_element(cycle1);
-	ctrlb_ref.req_sym_add_element(cycle2);
+	ctrla.req_symmetry().insert(cycle1);
+	ctrla.req_symmetry().insert(cycle2);
+	ctrlb.req_symmetry().insert(cycle1);
+	ctrlb.req_symmetry().insert(cycle2);
+	ctrlb_ref.req_symmetry().insert(cycle1);
+	ctrlb_ref.req_symmetry().insert(cycle2);
 
 	//	Load random data for input
 
