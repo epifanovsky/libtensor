@@ -104,6 +104,8 @@ public:
 	template<size_t M>
 	void project_down(const mask<N> &msk, permutation_group<M, T> &g2);
 
+	void permute(const permutation<N> &perm);
+
 	//@}
 
 private:
@@ -127,6 +129,8 @@ private:
 		perm_list_t &gs2);
 
 	void make_genset(const branching &br, perm_list_t &gs);
+
+	void permute_branching(branching &br, const permutation<N> &perm);
 };
 
 
@@ -306,6 +310,16 @@ void permutation_group<N, T>::project_down(
 		g2.add_orbit(false, pb.get_perm());
 	}
 	//~ std::cout << " >" << std::endl;
+}
+
+
+template<size_t N, typename T>
+void permutation_group<N, T>::permute(const permutation<N> &perm) {
+
+	if(perm.is_identity()) return;
+
+	permute_branching(m_symm, perm);
+	permute_branching(m_asymm, perm);
 }
 
 
@@ -509,6 +523,52 @@ void permutation_group<N, T>::make_genset(
 		//~ std::cout << " " << *pi;
 	//~ }
 	//~ std::cout << " >" << std::endl;
+}
+
+
+template<size_t N, typename T>
+void permutation_group<N, T>::permute_branching(
+	branching &br, const permutation<N> &perm) {
+
+	//~ std::cout << "graph(bef): {" << std::endl;
+	//~ for(size_t j = 0; j < N; j++) {
+		//~ size_t k = br.m_edges[j];
+		//~ if(k == N) continue;
+		//~ permutation<N> pinv(br.m_sigma[j], true);
+		//~ std::cout << k << "->" << j << " " << br.m_sigma[j] << " " << br.m_tau[j]
+			//~ << " " << j << "->" << k << " " << pinv << std::endl;
+	//~ }
+	//~ std::cout << "}" << std::endl;
+	//~ std::cout << "perm: " << perm << std::endl;
+
+	perm_list_t gs1, gs2, gs3;
+	make_genset(br, gs1);
+	for(typename perm_list_t::iterator i = gs1.begin();
+		i != gs1.end(); i++) {
+
+		size_t seq1[N], seq2[N];
+		for(size_t j = 0; j < N; j++) seq2[j] = seq1[j] = j;
+		i->apply(seq2);
+		permutation_builder<N> pb(seq2, seq1, perm);
+		gs2.push_back(pb.get_perm());
+	}
+	br.reset();
+	perm_list_t *p1 = &gs2, *p2 = &gs3;
+	for(size_t i = 0; i < N; i++) {
+		make_branching(br, i, *p1, *p2);
+		std::swap(p1, p2);
+		p2->clear();
+	}
+
+	//~ std::cout << "graph(aft): {" << std::endl;
+	//~ for(size_t j = 0; j < N; j++) {
+		//~ size_t k = br.m_edges[j];
+		//~ if(k == N) continue;
+		//~ permutation<N> pinv(br.m_sigma[j], true);
+		//~ std::cout << k << "->" << j << " " << br.m_sigma[j] << " " << br.m_tau[j]
+			//~ << " " << j << "->" << k << " " << pinv << std::endl;
+	//~ }
+	//~ std::cout << "}" << std::endl;
 }
 
 

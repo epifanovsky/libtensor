@@ -17,6 +17,11 @@ void permutation_group_test::perform() throw(libtest::test_exception) {
 
 	test_project_down_1();
 	test_project_down_2();
+	test_project_down_3();
+
+	test_permute_1();
+	test_permute_2();
+	test_permute_3();
 }
 
 
@@ -569,13 +574,152 @@ void permutation_group_test::test_project_down_3()
 
 	permutation<2> p2_1, p2_2; p2_2.permute(0, 1);
 
-	if(!pg2.is_member(false, p2_1)) {
+	if(!pg2.is_member(true, p2_1)) {
 		fail_test(testname, __FILE__, __LINE__,
-			"!pg2.is_member(false, p2_1)");
+			"!pg2.is_member(true, p2_1)");
 	}
 	if(!pg2.is_member(false, p2_2)) {
 		fail_test(testname, __FILE__, __LINE__,
 			"!pg2.is_member(false, p2_2)");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\test Test the identity %permutation on S2(+)*S2(+).
+ **/
+void permutation_group_test::test_permute_1() throw(libtest::test_exception) {
+
+	static const char *testname =
+		"permutation_group_test::test_permute_1()";
+
+	typedef se_perm<4, double> se_perm_t;
+
+	try {
+
+	permutation<4> perm1; perm1.permute(0, 1);
+	permutation<4> perm2; perm2.permute(2, 3);
+
+	symmetry_element_set<4, double> set1(se_perm_t::k_sym_type),
+		set2(se_perm_t::k_sym_type);
+
+	set1.insert(se_perm_t(perm1, true));
+	set1.insert(se_perm_t(perm2, true));
+	permutation_group<4, double> pg4(set1);
+
+	permutation<4> perm0;
+	pg4.permute(perm0);
+
+	if(!pg4.is_member(true, perm1)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!pg4.is_member(true, perm1)");
+	}
+	if(!pg4.is_member(true, perm2)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!pg4.is_member(true, perm2)");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\test Test a non-identity %permutation on S2(+)*S2(+).
+ **/
+void permutation_group_test::test_permute_2() throw(libtest::test_exception) {
+
+	static const char *testname =
+		"permutation_group_test::test_permute_2()";
+
+	typedef se_perm<4, double> se_perm_t;
+
+	try {
+
+	permutation<4> perm1; perm1.permute(0, 1);
+	permutation<4> perm2; perm2.permute(2, 3);
+
+	symmetry_element_set<4, double> set1(se_perm_t::k_sym_type),
+		set2(se_perm_t::k_sym_type);
+
+	set1.insert(se_perm_t(perm1, true));
+	set1.insert(se_perm_t(perm2, true));
+	permutation_group<4, double> pg4(set1);
+
+	permutation<4> perm0;
+	perm0.permute(1, 2);
+	pg4.permute(perm0);
+
+	perm1.permute(0, 1).permute(0, 2);
+	if(!pg4.is_member(true, perm1)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!pg4.is_member(true, perm1)");
+	}
+	perm2.permute(2, 3).permute(1, 3);
+	if(!pg4.is_member(true, perm2)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!pg4.is_member(true, perm2)");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\test Test a non-identity %permutation on S3(+)*C1.
+ **/
+void permutation_group_test::test_permute_3() throw(libtest::test_exception) {
+
+	static const char *testname =
+		"permutation_group_test::test_permute_3()";
+
+	typedef se_perm<4, double> se_perm_t;
+
+	try {
+
+	permutation<4> perm1; perm1.permute(0, 1).permute(1, 2);
+	permutation<4> perm2; perm2.permute(0, 1);
+
+	symmetry_element_set<4, double> set1(se_perm_t::k_sym_type),
+		set2(se_perm_t::k_sym_type);
+
+	set1.insert(se_perm_t(perm1, true));
+	set1.insert(se_perm_t(perm2, true));
+	permutation_group<4, double> pg4(set1);
+
+	permutation<4> perm0;
+	perm0.permute(3, 2).permute(2, 1).permute(1, 0);
+	pg4.permute(perm0);
+
+	perm1.reset();
+	perm1.permute(1, 2).permute(2, 3);
+	if(!pg4.is_member(true, perm1)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!pg4.is_member(true, perm1)");
+	}
+	perm2.reset();
+	perm2.permute(2, 3);
+	if(!pg4.is_member(true, perm2)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!pg4.is_member(true, perm2)");
+	}
+
+	permutation<4> perm3;
+	perm3.permute(1, 3);
+	if(!pg4.is_member(true, perm3)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!pg4.is_member(true, perm3)");
+	}
+
+	permutation<4> perm4;
+	perm4.permute(0, 3);
+	if(pg4.is_member(true, perm4)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"pg4.is_member(true, perm4)");
 	}
 
 	} catch(exception &e) {
