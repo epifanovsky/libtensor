@@ -75,6 +75,7 @@
 #include "btod/btod_scale.h"
 #include "btod/btod_set.h"
 #include "btod/btod_set_diag.h"
+#include "btod/btod_set_elem.h"
 #include "btod/btod_sum.h"
 
 

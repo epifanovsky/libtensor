@@ -23,6 +23,7 @@ set(SRC
 	btod_scale_test.C
 	btod_set_test.C
 	btod_set_diag_test.C
+	btod_set_elem_test.C
 	btod_sum_test.C
 	contract_test.C
 	contraction2_test.C
