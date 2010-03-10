@@ -69,6 +69,7 @@ set(SRC
 	tod_scale_test.C
 	tod_set_test.C
 	tod_set_diag_test.C
+	tod_set_elem_test.C
 	tod_sum_test.C
 	tod_symcontract2_test.C
 	version_test.C

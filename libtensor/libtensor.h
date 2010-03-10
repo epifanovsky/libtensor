@@ -54,6 +54,7 @@
 #include "tod/tod_scale.h"
 #include "tod/tod_set.h"
 #include "tod/tod_set_diag.h"
+#include "tod/tod_set_elem.h"
 #include "tod/tod_sum.h"
 #include "tod/tod_symcontract2.h"
 

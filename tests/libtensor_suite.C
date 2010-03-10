@@ -73,6 +73,7 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("tod_scale", m_utf_tod_scale);
 	add_test("tod_set", m_utf_tod_set);
 	add_test("tod_set_diag", m_utf_tod_set_diag);
+	add_test("tod_set_elem", m_utf_tod_set_elem);
 	add_test("tod_sum", m_utf_tod_sum);
 	add_test("tod_symcontract2", m_utf_tod_symcontract2);
 	add_test("version", m_utf_version);

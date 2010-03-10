@@ -70,6 +70,7 @@
 #include "tod_scale_test.h"
 #include "tod_set_test.h"
 #include "tod_set_diag_test.h"
+#include "tod_set_elem_test.h"
 #include "tod_sum_test.h"
 #include "tod_symcontract2_test.h"
 #include "version_test.h"
@@ -150,6 +151,7 @@ namespace libtensor {
 	\li libtensor::tod_scale_test
 	\li libtensor::tod_set_test
 	\li libtensor::tod_set_diag_test
+	\li libtensor::tod_set_elem_test
 	\li libtensor::tod_sum_test
 	\li libtensor::tod_symcontract2_test
 	\li libtensor::version_test
@@ -226,6 +228,7 @@ private:
 	unit_test_factory<tod_scale_test> m_utf_tod_scale;
 	unit_test_factory<tod_set_test> m_utf_tod_set;
 	unit_test_factory<tod_set_diag_test> m_utf_tod_set_diag;
+	unit_test_factory<tod_set_elem_test> m_utf_tod_set_elem;
 	unit_test_factory<tod_sum_test> m_utf_tod_sum;
 	unit_test_factory<tod_symcontract2_test> m_utf_tod_symcontract2;
 	unit_test_factory<version_test> m_utf_version;
