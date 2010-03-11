@@ -9,8 +9,8 @@ namespace libtensor {
 
 void se_part_test::perform() throw(libtest::test_exception) {
 
-	test_1();
-	test_2();
+	//~ test_1();
+	//~ test_2();
 	test_3();
 }
 
@@ -276,15 +276,20 @@ void se_part_test::test_3() throw(libtest::test_exception) {
 	i2[0] = 1; i2[1] = 1; i2[2] = 1; i2[3] = 1;
 	dimensions<4> pdims(index_range<4>(i1, i2));
 
-	index<4> i0000, i0011, i0033, i0110, i1001, i1100, i1111,
-		i2200, i2233;
+	index<4> i0000, i0011, i0033, i0101, i0110, i0134, i1001, i1100, i1111,
+		i2200, i2233, i2301, i2334;
 	i0011[0] = 0; i0011[1] = 0; i0011[2] = 1; i0011[3] = 1;
 	i0033[0] = 0; i0033[1] = 0; i0033[2] = 3; i0033[3] = 3;
+	i0101[0] = 0; i0101[1] = 1; i0101[2] = 0; i0101[3] = 1;
 	i0110[0] = 0; i0110[1] = 1; i0110[2] = 1; i0110[3] = 0;
+	i0134[0] = 0; i0134[1] = 1; i0134[2] = 3; i0134[3] = 4;
 	i1001[0] = 1; i1001[1] = 0; i1001[2] = 0; i1001[3] = 1;
 	i1100[0] = 1; i1100[1] = 1; i1100[2] = 0; i1100[3] = 0;
+	i1111[0] = 1; i1111[1] = 1; i1111[2] = 1; i1111[3] = 1;
 	i2200[0] = 2; i2200[1] = 2; i2200[2] = 0; i2200[3] = 0;
 	i2233[0] = 2; i2233[1] = 2; i2233[2] = 3; i2233[3] = 3;
+	i2301[0] = 2; i2301[1] = 3; i2301[2] = 0; i2301[3] = 1;
+	i2334[0] = 2; i2334[1] = 3; i2334[2] = 3; i2334[3] = 4;
 
 	se_part<4, double> elem1(bis, pdims);
 	elem1.add_map(i0000, i1111);
@@ -314,6 +319,23 @@ void se_part_test::test_3() throw(libtest::test_exception) {
 	}
 
 	//	[0101]->[0134]->[2301]->[2334]
+	orbit.insert(i0101);
+	orbit.insert(i0134);
+	orbit.insert(i2301);
+	orbit.insert(i2334);
+	index<4> i0101a(i0101);
+	while(!orbit.empty()) {
+		elem1.apply(i0101a);
+		if(orbit.find(i0101a) == orbit.end()) {
+			std::ostringstream ss;
+			ss << "Invalid or duplicate index in the orbit of "
+				<< i0101 << ": " << i0101a << ".";
+			fail_test(testname, __FILE__, __LINE__,
+				ss.str().c_str());
+		} else {
+			orbit.erase(i0101a);
+		}
+	}
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());

@@ -225,10 +225,21 @@ void se_part<N, T>::add_map(const index<N> &idx1, const index<N> &idx2) {
 
 	size_t af = m_fmap[a], bf = m_fmap[b], ar = m_rmap[a], br = m_rmap[b];
 
-	m_fmap[a] = b; m_rmap[b] = a;
-	m_fmap[ar] = bf; m_rmap[bf] = ar;
-	m_fmap[b] = af; m_rmap[af] = b;
-	m_fmap[br] = a; m_rmap[a] = br;
+	if(af == a && bf == b) {
+		m_fmap[a] = b; m_rmap[b] = a;
+		m_fmap[b] = a; m_rmap[a] = b;
+	} else if(af != a && bf == b) {
+		m_fmap[a] = b; m_rmap[b] = a;
+		m_fmap[b] = af; m_rmap[af] = b;
+	} else if(af == a && bf != b) {
+		m_fmap[a] = b; m_rmap[b] = a;
+		m_fmap[br] = a; m_rmap[a] = br;
+	} else {
+		m_fmap[a] = b; m_rmap[b] = a;
+		m_fmap[ar] = bf; m_rmap[bf] = ar;
+		m_fmap[b] = af; m_rmap[af] = b;
+		m_fmap[br] = a; m_rmap[a] = br;
+	}
 }
 
 
