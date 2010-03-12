@@ -51,9 +51,11 @@ public:
 
 	/**	\brief Initializes the %symmetry element
 		\param bis Block %index space.
-		\param pdims Partition %index space.
+		\param msk Mask of affected dimensions.
+		\param npart Number of partitions along each dimension.
 	 **/
-	se_part(const block_index_space<N> &bis, const dimensions<N> &pdims);
+	se_part(const block_index_space<N> &bis, const mask<N> &msk,
+		size_t npart);
 
 	/**	\brief Copy constructor
 	 **/
@@ -126,6 +128,9 @@ public:
 	virtual void apply(index<N> &idx, transf<N, T> &tr) const;
 
 	//@}
+
+private:
+	static dimensions<N> make_pdims(const mask<N> &msk, size_t npart);
 };
 
 
@@ -138,38 +143,37 @@ const char *se_part<N, T>::k_sym_type = "part";
 
 
 template<size_t N, typename T>
-se_part<N, T>::se_part(const block_index_space<N> &bis,
-	const dimensions<N> &pdims) :
+se_part<N, T>::se_part(const block_index_space<N> &bis, const mask<N> &msk,
+	size_t npart) :
 
-	m_bis(bis), m_bidims(m_bis.get_block_index_dims()), m_pdims(pdims),
-	m_fmap(0), m_rmap(0) {
+	m_bis(bis), m_bidims(m_bis.get_block_index_dims()),
+	m_pdims(make_pdims(msk, npart)), m_fmap(0), m_rmap(0) {
 
 	static const char *method =
-		"se_part(const block_index_space<N>&, const dimensions<N>&)";
+		"se_part(const block_index_space<N>&, const mask<N>&, size_t)";
 
 	//	Make sure the partitioning is not trivial
 	//
-	bool trivial = true;
-	for(size_t i = 0; i < N; i++) trivial = trivial && m_pdims[i] == 1;
-	if(trivial) {
-		throw bad_symmetry(g_ns, k_clazz, method,
-			__FILE__, __LINE__, "trivial");
+	size_t m = 0;
+	for(register size_t i = 0; i < N; i++) if(msk[i]) m++;
+	if(m == 0) {
+		throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"msk");
 	}
 
 	//	Make sure the splits are identical for all partitions
 	//
-	dimensions<N> bidims(m_bis.get_block_index_dims());
 	for(size_t i = 0; i < N; i++) {
 
 		size_t np = m_pdims[i];
 		if(np == 1) continue;
 
-		if(bidims[i] % np != 0) {
+		if(m_bidims[i] % np != 0) {
 			throw bad_symmetry(g_ns, k_clazz, method,
 				__FILE__, __LINE__, "bis");
 		}
 
-		size_t psz = bidims[i] / np;
+		size_t psz = m_bidims[i] / np;
 		const split_points &pts = m_bis.get_splits(m_bis.get_type(i));
 		size_t d = pts[psz - 1];
 		for(size_t j = 0; j < psz; j++) {
@@ -286,6 +290,25 @@ template<size_t N, typename T>
 void se_part<N, T>::apply(index<N> &idx, transf<N, T> &tr) const {
 
 	apply(idx);
+}
+
+
+template<size_t N, typename T>
+dimensions<N> se_part<N, T>::make_pdims(const mask<N> &msk, size_t npart) {
+
+	static const char *method = "make_pdims(const mask<N>&, size_t)";
+
+	if(npart < 2) {
+		throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"npart");
+	}
+
+	index<N> i1, i2;
+	for(register size_t i = 0; i < N; i++) {
+		if(msk[i]) i2[i] = npart - 1;
+		else i2[i] = 0;
+	}
+	return dimensions<N>(index_range<N>(i1, i2));
 }
 
 

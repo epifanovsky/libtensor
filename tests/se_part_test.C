@@ -9,8 +9,8 @@ namespace libtensor {
 
 void se_part_test::perform() throw(libtest::test_exception) {
 
-	//~ test_1();
-	//~ test_2();
+	test_1();
+	test_2();
 	test_3();
 }
 
@@ -30,15 +30,12 @@ void se_part_test::test_1() throw(libtest::test_exception) {
 	m11[0] = true; m11[1] = true;
 	bis.split(m11, 5);
 
-	i2[0] = 1; i2[1] = 1;
-	dimensions<2> pdims(index_range<2>(i1, i2));
-
 	index<2> i00, i01, i10, i11;
 	i01[0] = 0; i01[1] = 1;
 	i10[0] = 1; i10[1] = 0;
 	i11[0] = 1; i11[1] = 1;
 
-	se_part<2, double> elem1(bis, pdims);
+	se_part<2, double> elem1(bis, m11, 2);
 	elem1.add_map(i00, i11);
 
 	if(!elem1.is_allowed(i00)) {
@@ -150,9 +147,6 @@ void se_part_test::test_2() throw(libtest::test_exception) {
 	bis.split(m11, 5);
 	bis.split(m11, 7);
 
-	i2[0] = 1; i2[1] = 1;
-	dimensions<2> pdims(index_range<2>(i1, i2));
-
 	index<2> i00, i01, i02, i03, i10, i11, i12, i13, i20, i21, i22, i23,
 		i30, i31, i32, i33;
 	i01[0] = 0; i01[1] = 1;
@@ -171,7 +165,7 @@ void se_part_test::test_2() throw(libtest::test_exception) {
 	i32[0] = 3; i32[1] = 2;
 	i33[0] = 3; i33[1] = 3;
 
-	se_part<2, double> elem1(bis, pdims);
+	se_part<2, double> elem1(bis, m11, 2);
 	elem1.add_map(i00, i11);
 
 	index<2> i00a(i00), i01a(i01), i02a(i02), i03a(i03),
@@ -261,9 +255,10 @@ void se_part_test::test_3() throw(libtest::test_exception) {
 	index<4> i1, i2;
 	i2[0] = 9; i2[1] = 9; i2[2] = 19; i2[3] = 19;
 	block_index_space<4> bis(dimensions<4>(index_range<4>(i1, i2)));
-	mask<4> m1100, m0011;
+	mask<4> m1100, m0011, m1111;
 	m1100[0] = true; m1100[1] = true;
 	m0011[2] = true; m0011[3] = true;
+	m1111[0] = true; m1111[1] = true; m1111[2] = true; m1111[3] = true;
 	bis.split(m1100, 2);
 	bis.split(m1100, 5);
 	bis.split(m1100, 7);
@@ -272,9 +267,6 @@ void se_part_test::test_3() throw(libtest::test_exception) {
 	bis.split(m0011, 10);
 	bis.split(m0011, 13);
 	bis.split(m0011, 16);
-
-	i2[0] = 1; i2[1] = 1; i2[2] = 1; i2[3] = 1;
-	dimensions<4> pdims(index_range<4>(i1, i2));
 
 	index<4> i0000, i0011, i0033, i0101, i0110, i0134, i1001, i1100, i1111,
 		i2200, i2233, i2301, i2334;
@@ -291,7 +283,7 @@ void se_part_test::test_3() throw(libtest::test_exception) {
 	i2301[0] = 2; i2301[1] = 3; i2301[2] = 0; i2301[3] = 1;
 	i2334[0] = 2; i2334[1] = 3; i2334[2] = 3; i2334[3] = 4;
 
-	se_part<4, double> elem1(bis, pdims);
+	se_part<4, double> elem1(bis, m1111, 2);
 	elem1.add_map(i0000, i1111);
 	elem1.add_map(i0000, i0011);
 	elem1.add_map(i1100, i1111);
