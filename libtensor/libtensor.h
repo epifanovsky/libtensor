@@ -46,6 +46,7 @@
 #include "tod/tod_delta_denom1.h"
 #include "tod/tod_delta_denom2.h"
 #include "tod/tod_diag.h"
+#include "tod/tod_dirsum.h"
 #include "tod/tod_dotprod.h"
 #include "tod/tod_import_raw.h"
 #include "tod/tod_mkdelta.h"
