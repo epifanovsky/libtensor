@@ -69,6 +69,7 @@
 #include "btod/btod_delta_denom1.h"
 #include "btod/btod_delta_denom2.h"
 #include "btod/btod_diag.h"
+#include "btod/btod_dirsum.h"
 #include "btod/btod_import_raw.h"
 #include "btod/btod_mkdelta.h"
 #include "btod/btod_mult.h"
