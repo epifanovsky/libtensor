@@ -53,6 +53,7 @@
 #include "tod/tod_mult.h"
 #include "tod/tod_random.h"
 #include "tod/tod_scale.h"
+#include "tod/tod_scatter.h"
 #include "tod/tod_set.h"
 #include "tod/tod_set_diag.h"
 #include "tod/tod_set_elem.h"

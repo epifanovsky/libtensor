@@ -69,6 +69,7 @@ set(SRC
 	tod_mult_test.C
 	tod_random_test.C
 	tod_scale_test.C
+	tod_scatter_test.C
 	tod_set_test.C
 	tod_set_diag_test.C
 	tod_set_elem_test.C
