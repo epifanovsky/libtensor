@@ -15,10 +15,16 @@ public:
 
 private:
 	// c_{ij} = a_i + b_j
-	void test_ij_i_j_1(double d = 0.0) throw(libtest::test_exception);
+	void test_ij_i_j_1(bool rnd, double d = 0.0)
+		throw(libtest::test_exception);
+
+	// c_{ijk} = a_{ij} + b_k
+	void test_ijk_ij_k_1(bool rnd, double d = 0.0)
+		throw(libtest::test_exception);
 
 	// c_{ikjl} = a_{ij} + b_{kl}
-	void test_ikjl_ij_kl_1(double d = 0.0) throw(libtest::test_exception);
+	void test_ikjl_ij_kl_1(bool rnd, double d = 0.0)
+		throw(libtest::test_exception);
 
 };
 
