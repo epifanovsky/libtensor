@@ -11,6 +11,7 @@
 #include "add/operator_sub.h"
 #include "contract/operator_contract.h"
 #include "direct_product/operator_direct_product.h"
+#include "dirsum/operator_dirsum.h"
 #include "scale/operator_mul.h"
 #include "symm/symm_operator.h"
 #include "dot_product.h"

@@ -19,11 +19,11 @@ void btod_dirsum_test::perform() throw(libtest::test_exception) {
 
 	srand48(time(0));
 
-	//~ test_ij_i_j_1();
-	//~ test_ij_i_j_1(-0.5);
+	test_ij_i_j_1();
+	test_ij_i_j_1(-0.5);
 
 	test_ikjl_ij_kl_1();
-	//~ test_ikjl_ij_kl_1(2.0);
+	test_ikjl_ij_kl_1(2.0);
 
 }
 
@@ -72,7 +72,7 @@ void btod_dirsum_test::test_ij_i_j_1(double d) throw(libtest::test_exception) {
 	if(d == 0.0) tod_dirsum<1, 1>(ta, 1.0, tb, 1.0).perform(tc_ref);
 	else tod_dirsum<1, 1>(ta, 1.0, tb, 1.0).perform(tc_ref, d);
 
-	//	Invoke the contraction routine
+	//	Invoke the direct sum routine
 
 	if(d == 0.0) btod_dirsum<1, 1>(bta, 1.0, btb, 1.0).perform(btc);
 	else btod_dirsum<1, 1>(bta, 1.0, btb, 1.0).perform(btc, d);
@@ -141,7 +141,7 @@ void btod_dirsum_test::test_ikjl_ij_kl_1(double d)
 		tod_dirsum<2, 2>(ta, 1.5, tb, -1.0, permc).perform(tc_ref, d);
 	}
 
-	//	Invoke the contraction routine
+	//	Invoke the direct sum routine
 
 	if(d == 0.0) {
 		btod_dirsum<2, 2>(bta, 1.5, btb, -1.0, permc).perform(btc);

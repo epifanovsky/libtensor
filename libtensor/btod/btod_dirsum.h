@@ -4,6 +4,7 @@
 #include <list>
 #include "../defs.h"
 #include "../exception.h"
+#include "../not_implemented.h"
 #include "../timings.h"
 #include "../core/block_tensor_i.h"
 #include "../core/block_tensor_ctrl.h"
@@ -15,6 +16,7 @@
 #include "../tod/tod_scatter.h"
 #include "../tod/tod_set.h"
 #include "bad_block_index_space.h"
+#include "btod_additive.h"
 #include "transf_double.h"
 
 namespace libtensor {
@@ -34,7 +36,10 @@ namespace libtensor {
 	\ingroup libtensor_btod
  **/
 template<size_t N, size_t M>
-class btod_dirsum : public timings< btod_dirsum<N, M> > {
+class btod_dirsum :
+	public btod_additive<N + M>,
+	public timings< btod_dirsum<N, M> > {
+
 public:
 	static const char *k_clazz; //!< Class name
 
@@ -71,13 +76,31 @@ public:
 		m_bisc.permute(m_permc);
 	}
 
+	virtual const block_index_space<N + M> &get_bis() const {
+		return m_bisc;
+	}
+
+	virtual const symmetry<N + M, double> &get_symmetry() const {
+		throw not_implemented(g_ns, k_clazz, "get_symmetry()",
+			__FILE__, __LINE__);
+	}
+
 	/**	\brief Performs the operation
 	 **/
-	void perform(block_tensor_i<k_orderc, double> &btc);
+	virtual void perform(block_tensor_i<k_orderc, double> &btc)
+		throw(exception);
 
 	/**	\brief Performs the operation (additive)
 	 **/
-	void perform(block_tensor_i<k_orderc, double> &btc, double kc);
+	virtual void perform(block_tensor_i<k_orderc, double> &btc,
+		double kc) throw(exception);
+
+	virtual void perform(block_tensor_i<k_orderc, double> &btc,
+		const index<k_orderc> &i) throw(exception) {
+
+		throw not_implemented(g_ns, k_clazz, "perform()",
+			__FILE__, __LINE__);
+	}
 
 private:
 	static block_index_space<N + M> mk_bisc(
@@ -115,7 +138,8 @@ const char *btod_dirsum<N, M>::k_clazz = "btod_dirsum<N, M>";
 
 
 template<size_t N, size_t M>
-void btod_dirsum<N, M>::perform(block_tensor_i<k_orderc, double> &btc) {
+void btod_dirsum<N, M>::perform(block_tensor_i<k_orderc, double> &btc)
+	throw(exception) {
 
 	static const char *method = "perform(block_tensor_i<N + M, double>&)";
 
@@ -130,7 +154,7 @@ void btod_dirsum<N, M>::perform(block_tensor_i<k_orderc, double> &btc) {
 
 template<size_t N, size_t M>
 void btod_dirsum<N, M>::perform(block_tensor_i<k_orderc, double> &btc,
-	double kc) {
+	double kc) throw(exception) {
 
 	static const char *method =
 		"perform(block_tensor_i<N + M, double>&, double)";
