@@ -2,6 +2,7 @@
 #define LIBTENSOR_BTOD_DIAG_H
 
 #include "../defs.h"
+#include "../not_implemented.h"
 #include "../core/abs_index.h"
 #include "../core/block_tensor_i.h"
 #include "../core/block_tensor_ctrl.h"
@@ -11,6 +12,7 @@
 #include "../tod/tod_diag.h"
 #include "../tod/tod_set.h"
 #include "bad_block_index_space.h"
+#include "btod_additive.h"
 #include "transf_double.h"
 
 namespace libtensor {
@@ -23,7 +25,10 @@ namespace libtensor {
 	\ingroup libtensor_btod
  **/
 template<size_t N, size_t M>
-class btod_diag {
+class btod_diag :
+	public btod_additive<N - M + 1>,
+	public timings< btod_diag<N, M> > {
+
 public:
 	static const char *k_clazz; //!< Class name
 
@@ -45,9 +50,27 @@ public:
 	btod_diag(block_tensor_i<N, double> &bta, const mask<N> &m,
 		const permutation<N - M + 1> &p, double c = 1.0);
 
-	void perform(block_tensor_i<k_orderb, double> &btb);
+	virtual const block_index_space<k_orderb> &get_bis() const {
+		return m_bis;
+	}
 
-	void perform(block_tensor_i<k_orderb, double> &btb, double c);
+	virtual const symmetry<k_orderb, double> &get_symmetry() const {
+		throw not_implemented(g_ns, k_clazz, "get_symmetry()",
+			__FILE__, __LINE__);
+	}
+
+	virtual void perform(block_tensor_i<k_orderb, double> &btb)
+		throw(exception);
+
+	virtual void perform(block_tensor_i<k_orderb, double> &btb, double c)
+		throw(exception);
+
+	virtual void perform(block_tensor_i<k_orderb, double> &btb,
+		const index<k_orderb> &idx) throw(exception) {
+
+		throw not_implemented(g_ns, k_clazz, "perform()",
+			__FILE__, __LINE__);
+	}
 
 private:
 	/**	\brief Forms the block %index space of the output or throws an
@@ -91,7 +114,8 @@ btod_diag<N, M>::btod_diag(block_tensor_i<N, double> &bta, const mask<N> &m,
 
 
 template<size_t N, size_t M>
-void btod_diag<N, M>::perform(block_tensor_i<k_orderb, double> &btb) {
+void btod_diag<N, M>::perform(block_tensor_i<k_orderb, double> &btb)
+	throw(exception) {
 
 	static const char *method =
 		"perform(block_tensor_i<N - M + 1, double>&)";
@@ -106,7 +130,8 @@ void btod_diag<N, M>::perform(block_tensor_i<k_orderb, double> &btb) {
 
 
 template<size_t N, size_t M>
-void btod_diag<N, M>::perform(block_tensor_i<k_orderb, double> &btb, double c) {
+void btod_diag<N, M>::perform(block_tensor_i<k_orderb, double> &btb, double c)
+	throw(exception) {
 
 	static const char *method =
 		"perform(block_tensor_i<N - M + 1, double>&, double)";
@@ -208,6 +233,8 @@ template<size_t N, size_t M>
 void btod_diag<N, M>::do_perform(
 	block_tensor_i<k_orderb, double> &btb, bool zero, double c) {
 
+	btod_diag<N, M>::start_timer();
+
 	block_tensor_ctrl<k_ordera, double> ctrla(m_bta);
 	block_tensor_ctrl<k_orderb, double> ctrlb(btb);
 
@@ -275,6 +302,8 @@ void btod_diag<N, M>::do_perform(
 		ctrla.ret_block(idxa1.get_index());
 		ctrlb.ret_block(idxb);
 	}
+
+	btod_diag<N, M>::stop_timer();
 }
 
 

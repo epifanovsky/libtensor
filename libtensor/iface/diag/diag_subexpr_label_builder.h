@@ -19,11 +19,9 @@ private:
 	private:
 		const letter *m_let[N];
 	public:
-		template<typename T, typename Core>
 		letter_array(const letter_expr<N - M + 1> &label_b,
 			const letter &letter_diag,
-			const letter_expr<M> &label_diag,
-			const expr<N, T, Core> &e);
+			const letter_expr<M> &label_diag);
 		const letter *at(size_t i) const { return m_let[i]; }
 	};
 	template<size_t L>
@@ -32,10 +30,8 @@ private:
 	letter_expr<N> m_label;
 
 public:
-	template<typename T, typename Core>
 	diag_subexpr_label_builder(const letter_expr<N - M + 1> &label_b,
-		const letter &letter_diag, const letter_expr<M> &label_diag,
-		const expr<N, T, Core> &e);
+		const letter &letter_diag, const letter_expr<M> &label_diag);
 
 	const letter_expr<N> &get_label() const { return m_label; }
 
@@ -49,28 +45,28 @@ protected:
 };
 
 
-template<size_t N, size_t M> template<typename T, typename Core>
+template<size_t N, size_t M>
 diag_subexpr_label_builder<N, M>::diag_subexpr_label_builder(
 	const letter_expr<N - M + 1> &label_b, const letter &letter_diag,
-	const letter_expr<M> &label_diag, const expr<N, T, Core> &e) :
+	const letter_expr<M> &label_diag) :
 
-	m_let(label_b, letter_diag, label_diag, e),
+	m_let(label_b, letter_diag, label_diag),
 	m_label(mk_label(dummy<N>(), m_let, N - 1)) {
 
 }
 
 
-template<size_t N, size_t M> template<typename T, typename Core>
+template<size_t N, size_t M>
 diag_subexpr_label_builder<N, M>::letter_array::letter_array(
 	const letter_expr<N - M + 1> &label_b, const letter &letter_diag,
-	const letter_expr<M> &label_diag, const expr<N, T, Core> &e) {
+	const letter_expr<M> &label_diag) {
 
 	//	We assume here that all consistency checks have been done.
 
 	size_t j = 0;
 	for(size_t i = 0; i < N - M + 1; i++) {
 		const letter &l = label_b.letter_at(i);
-		if(l.equals(letter_diag)) {
+		if(l == letter_diag) {
 			for(size_t ii = 0; ii < M; ii++) {
 				m_let[j++] = &label_diag.letter_at(ii);
 			}

@@ -27,7 +27,7 @@ diag(
 	typedef expr<N, T, E1> sub_expr_t;
 	typedef diag_core<N, M, T, E1> core_t;
 	typedef expr<N - M + 1, T, core_t> expr_t;
-	return expr_t(core_t(sym, subexpr));
+	return expr_t(core_t(let_diag, lab_diag, subexpr));
 }
 
 

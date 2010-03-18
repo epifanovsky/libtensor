@@ -11,20 +11,20 @@ namespace labeled_btensor_expr {
 /**	\brief Evaluating container for the extraction of a diagonal
 	\tparam N Tensor order.
 	\tparam M Diagonal order.
-	\tparam SubCore Sub-expression core type.
+	\tparam E1 Sub-expression core type.
 
 	\ingroup libtensor_btensor_expr
  **/
-template<size_t N, size_t M, typename T, typename SubCore>
+template<size_t N, size_t M, typename T, typename E1>
 class diag_eval {
 public:
 	static const char *k_clazz; //!< Class name
 
 	//!	Expression core type
-	typedef diag_core<N, M, T, SubCore> core_t;
+	typedef diag_core<N, M, T, E1> core_t;
 
 	//!	Expression type
-	typedef expr<N, T, core_t> expression_t;
+	typedef expr<N - M + 1, T, core_t> expression_t;
 
 	//!	Evaluating container type of the sub-expression
 	typedef typename E1::eval_container_t eval_container_a_t;
@@ -38,20 +38,11 @@ public:
 		eval_container_a_t::template narg<oper_tag>::k_narg;
 
 	//!	Labels for sub-expressions
-	typedef diag_subexpr_label_builder<N, M, T, E1> subexpr_label_t;
+	typedef diag_subexpr_label_builder<N, M> subexpr_label_t;
 
 	//!	Evaluating functor type (specialized for the sub-expression)
 	typedef diag_eval_functor<N, M, T, E1, k_narg_tensor_a,
 		k_narg_oper_a> functor_t;
-
-	//!	Sub-expression core type
-	typedef SubCore sub_core_t;
-
-	//!	Sub-expression type
-	typedef expr<N, T, sub_core_t> sub_expr_t;
-
-	//!	Evaluation of the contraction
-	typedef anon_eval<N, T, sub_core_t> sub_eval_t;
 
 	//!	Number of arguments in the expression
 	template<typename Tag, int Dummy = 0>
@@ -60,18 +51,14 @@ public:
 	};
 
 private:
-	sub_expr_t m_sub_expr; //!< Sub-expression
-	sub_eval_t m_sub_eval; //!< Evaluation of the sub-expression
-	permutation<N> m_perm1; //!< Permutation for argument 1
-	permutation<N> m_perm2; //!< Permutation for symmetrization
-	btod_diag<N, M> m_op; //!< Extraction operation
-	arg<N - M + 1, T, oper_tag> m_arg; //!< Composed operation argument
+	subexpr_label_t m_sub_label; //!< Sub-expression label
+	functor_t m_func; //!< Specialized evaluation functor
 
 public:
 	/**	\brief Initializes the container with given expression and
 			result recipient
 	 **/
-	diag_eval(expression_t &expr, const letter_expr<N> &label)
+	diag_eval(expression_t &expr, const letter_expr<N - M + 1> &label)
 		throw(exception);
 
 	/**	\brief Evaluates sub-expressions into temporary tensors
@@ -84,58 +71,44 @@ public:
 
 	/**	\brief Returns tensor arguments
 	 **/
-	arg<N - M + 1, T, oper_tag> get_arg(const tensor_tag &tag,
+	arg<N - M + 1, T, oper_tag> get_arg(const oper_tag &tag,
 		size_t i) const throw(exception);
 
-private:
-	static permutation<N> mk_perm(
-		expression_t &expr, const letter_expr<N> &label) {
-
-		permutation<N> perm;
-		size_t i1 = label.index_of(
-			expr.get_core().get_sym().letter_at(0));
-		size_t i2 = label.index_of(
-			expr.get_core().get_sym().letter_at(1));
-		perm.permute(i1, i2);
-		return perm;
-	}
 };
 
 
-template<size_t N, size_t M, typename T, typename SubCore>
-const char *diag_eval<N, M, T, SubCore>::k_clazz =
-	"diag_eval<N, M, T, SubCore>";
+template<size_t N, size_t M, typename T, typename E1>
+const char *diag_eval<N, M, T, E1>::k_clazz = "diag_eval<N, M, T, E1>";
 
 
-template<size_t N, size_t M, typename T, typename SubCore>
+template<size_t N, size_t M, typename T, typename E1>
 template<int Dummy>
-struct diag_eval<N, M, T, SubCore>::narg<oper_tag, Dummy> {
+struct diag_eval<N, M, T, E1>::narg<oper_tag, Dummy> {
 	static const size_t k_narg = 1;
 };
 
 
-template<size_t N, size_t M, typename T, typename SubCore>
-diag_eval<N, M, T, SubCore>::diag_eval(expression_t &expr,
-	const letter_expr<N> &label) throw(exception) :
+template<size_t N, size_t M, typename T, typename E1>
+diag_eval<N, M, T, E1>::diag_eval(expression_t &expr,
+	const letter_expr<N - M + 1> &label) throw(exception) :
 
-	m_sub_expr(expr.get_core().get_sub_expr()),
-	m_sub_eval(m_sub_expr, label),
-	m_perm2(mk_perm(expr, label)),
-	m_arg(m_oper, 1.0) {
+	m_sub_label(label, expr.get_core().get_diag_letter(),
+		expr.get_core().get_diag_label()),
+	m_func(expr, m_sub_label, label) {
 
 }
 
 
-template<size_t N, size_t M, typename T, typename SubCore>
-void diag_eval<N, M, T, SubCore>::prepare() throw(exception) {
+template<size_t N, size_t M, typename T, typename E1>
+void diag_eval<N, M, T, E1>::prepare() throw(exception) {
 
-	m_sub_eval.evaluate();
+	m_func.evaluate();
 }
 
 
-template<size_t N, size_t M, typename T, typename SubCore>
+template<size_t N, size_t M, typename T, typename E1>
 template<typename Tag>
-arg<N - M + 1, T, Tag> diag_eval<N, M, T, SubCore>::get_arg(
+arg<N - M + 1, T, Tag> diag_eval<N, M, T, E1>::get_arg(
 	const Tag &tag, size_t i) const throw(exception) {
 
 	static const char *method = "get_arg(const Tag&, size_t)";
@@ -145,8 +118,8 @@ arg<N - M + 1, T, Tag> diag_eval<N, M, T, SubCore>::get_arg(
 }
 
 
-template<size_t N, size_t M, typename T, typename SubCore>
-arg<N - M + 1, T, oper_tag> diag_eval<N, M, T, SubCore>::get_arg(
+template<size_t N, size_t M, typename T, typename E1>
+arg<N - M + 1, T, oper_tag> diag_eval<N, M, T, E1>::get_arg(
 	const oper_tag &tag, size_t i) const throw(exception) {
 
 	static const char *method = "get_arg(const oper_tag&, size_t)";
@@ -156,7 +129,7 @@ arg<N - M + 1, T, oper_tag> diag_eval<N, M, T, SubCore>::get_arg(
 			"i");
 	}
 
-	return m_arg;
+	return m_func.get_arg();
 }
 
 
