@@ -29,6 +29,7 @@ set(SRC
 	contract_test.C
 	contraction2_test.C
 	contraction2_list_builder_test.C
+	diag_test.C
 	dimensions_test.C
 	direct_block_tensor_test.C
 	direct_btensor_test.C

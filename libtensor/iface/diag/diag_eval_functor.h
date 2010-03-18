@@ -4,7 +4,7 @@
 #include "../../btod/btod_diag.h"
 #include "../expr/anon_eval.h"
 #include "diag_core.h"
-#include "contract_subexpr_labels.h"
+#include "diag_subexpr_label_builder.h"
 #include "contract_contraction2_builder.h"
 
 namespace libtensor {
@@ -23,6 +23,7 @@ public:
 
 	//!	Expression type
 	typedef expr<k_orderb, T, core_t> expression_t;
+
 
 	//!	Expression core type of A
 	typedef typename E1::core_t core_a_t;

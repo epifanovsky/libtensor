@@ -1,8 +1,8 @@
 #ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_DIAG_EVAL_H
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_DIAG_EVAL_H
 
-#include "../../btod/btod_diag.h"
-#include "../expr/anon_eval.h"
+#include "diag_eval_functor.h"
+#include "diag_subexpr_label_builder.h"
 
 namespace libtensor {
 namespace labeled_btensor_expr {
@@ -25,6 +25,24 @@ public:
 
 	//!	Expression type
 	typedef expr<N, T, core_t> expression_t;
+
+	//!	Evaluating container type of the sub-expression
+	typedef typename E1::eval_container_t eval_container_a_t;
+
+	//!	Number of %tensor arguments in the sub-expression
+	static const size_t k_narg_tensor_a =
+		eval_container_a_t::template narg<tensor_tag>::k_narg;
+
+	//!	Number of operation arguments in the sub-expression
+	static const size_t k_narg_oper_a =
+		eval_container_a_t::template narg<oper_tag>::k_narg;
+
+	//!	Labels for sub-expressions
+	typedef diag_subexpr_label_builder<N, M, T, E1> subexpr_label_t;
+
+	//!	Evaluating functor type (specialized for the sub-expression)
+	typedef diag_eval_functor<N, M, T, E1, k_narg_tensor_a,
+		k_narg_oper_a> functor_t;
 
 	//!	Sub-expression core type
 	typedef SubCore sub_core_t;
