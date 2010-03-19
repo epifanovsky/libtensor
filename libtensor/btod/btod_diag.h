@@ -267,6 +267,7 @@ void btod_diag<N, M>::do_perform(
 		const transf<k_ordera, double> &tra = oa.get_transf(idxa);
 
 		bool zeroa = ctrla.req_is_zero_block(idxa1.get_index());
+		bool zerob = ctrlb.req_is_zero_block(idxb);
 
 		if(zero && zeroa) {
 			ctrlb.req_zero_block(idxb);
@@ -291,7 +292,7 @@ void btod_diag<N, M>::do_perform(
 
 		permutation<k_orderb> permb(pb.get_perm());
 		permb.permute(m_perm);
-		if(zero) {
+		if(zero || zerob) {
 			tod_diag<N, M>(blka, m_msk, permb, tra.get_coeff() * c).
 				perform(blkb);
 		} else {

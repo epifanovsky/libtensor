@@ -97,7 +97,7 @@ void diag_test::test_t_3() throw(libtest::test_exception) {
 	mask<3> msk;
 	msk[0] = true; msk[2] = true;
 	permutation<2> perm;
-	perm.permute(0, 1);
+	perm.permute(0, 1); // ia->ai
 	btod_diag<3, 2>(t1, msk, perm).perform(t2_ref);
 
 	letter i, j, a;
