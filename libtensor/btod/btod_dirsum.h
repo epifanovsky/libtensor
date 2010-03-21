@@ -196,7 +196,7 @@ block_index_space<N + M> btod_dirsum<N, M>::mk_bisc(
 	i = 0;
 	done = false;
 	while(!done) {
-		while(i < k_ordera && !mska[i]) i++;
+		while(i < k_ordera && mska[i]) i++;
 		if(i == k_ordera) {
 			done = true;
 			continue;
@@ -217,7 +217,7 @@ block_index_space<N + M> btod_dirsum<N, M>::mk_bisc(
 	i = 0;
 	done = false;
 	while(!done) {
-		while(i < k_orderb && !mskb[i]) i++;
+		while(i < k_orderb && mskb[i]) i++;
 		if(i == k_orderb) {
 			done = true;
 			continue;
@@ -256,13 +256,18 @@ void btod_dirsum<N, M>::do_perform(block_tensor_i<k_orderc, double> &btc,
 	permutation<k_orderc> permbc(m_permc);
 	permutation<k_orderc> permac;
 	{
-		size_t seq[k_orderc];
-		for(size_t i = 0; i < k_orderc; i++) seq[i] = i;
-		m_permc.apply(seq);
 		for(size_t i = 0; i < k_orderc - 1; i++)
-			perm_cycle.permute(seq[i], seq[i + 1]);
+			perm_cycle.permute(i, i + 1);
 		for(size_t i = 0; i < k_ordera; i++)
 			permac.permute(perm_cycle);
+		permac.permute(m_permc);
+//		size_t seq[k_orderc];
+//		for(size_t i = 0; i < k_orderc; i++) seq[i] = i;
+//		m_permc.apply(seq);
+//		for(size_t i = 0; i < k_orderc - 1; i++)
+//			perm_cycle.permute(seq[i], seq[i + 1]);
+//		for(size_t i = 0; i < k_ordera; i++)
+//			permac.permute(perm_cycle);
 	}
 
 	orbit_list<k_ordera, double> ola(ctrla.req_symmetry());
