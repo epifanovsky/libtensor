@@ -25,7 +25,8 @@ public:
 	typedef expr<k_orderb, T, core_t> expression_t;
 
 	//!	Expression core type of A
-	typedef typename E1::core_t core_a_t;
+//	typedef typename E1::core_t core_a_t;
+	typedef E1 core_a_t;
 
 	//!	Anonymous evaluator type of A
 	typedef anon_eval<k_ordera, T, core_a_t> anon_eval_a_t;
