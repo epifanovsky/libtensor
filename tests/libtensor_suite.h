@@ -20,6 +20,7 @@
 #include "btod_import_raw_test.h"
 #include "btod_mkdelta_test.h"
 #include "btod_mult_test.h"
+#include "btod_mult1_test.h"
 #include "btod_random_test.h"
 #include "btod_read_test.h"
 #include "btod_scale_test.h"
@@ -71,6 +72,7 @@
 #include "tod_import_raw_test.h"
 #include "tod_mkdelta_test.h"
 #include "tod_mult_test.h"
+#include "tod_mult1_test.h"
 #include "tod_random_test.h"
 #include "tod_scale_test.h"
 #include "tod_scatter_test.h"
@@ -106,6 +108,7 @@ namespace libtensor {
 	\li libtensor::btod_dotprod_test
 	\li libtensor::btod_import_raw_test
 	\li libtensor::btod_mult_test
+	\li libtensor::btod_mult1_test
 	\li libtensor::btod_mkdelta_test
 	\li libtensor::btod_random_test
 	\li libtensor::btod_read_test
@@ -158,6 +161,7 @@ namespace libtensor {
 	\li libtensor::tod_import_raw_test
 	\li libtensor::tod_mkdelta_test
 	\li libtensor::tod_mult_test
+	\li libtensor::tod_mult1_test
 	\li libtensor::tod_random_test
 	\li libtensor::tod_scale_test
 	\li libtensor::tod_scatter_test
@@ -188,6 +192,7 @@ private:
 	unit_test_factory<btod_import_raw_test> m_utf_btod_import_raw;
 	unit_test_factory<btod_mkdelta_test> m_utf_btod_mkdelta;
 	unit_test_factory<btod_mult_test> m_utf_btod_mult;
+	unit_test_factory<btod_mult1_test> m_utf_btod_mult1;
 	unit_test_factory<btod_random_test> m_utf_btod_random;
 	unit_test_factory<btod_read_test> m_utf_btod_read;
 	unit_test_factory<btod_scale_test> m_utf_btod_scale;
@@ -241,6 +246,7 @@ private:
 	unit_test_factory<tod_import_raw_test> m_utf_tod_import_raw;
 	unit_test_factory<tod_mkdelta_test> m_utf_tod_mkdelta;
 	unit_test_factory<tod_mult_test> m_utf_tod_mult;
+	unit_test_factory<tod_mult1_test> m_utf_tod_mult1;
 	unit_test_factory<tod_random_test> m_utf_tod_random;
 	unit_test_factory<tod_scale_test> m_utf_tod_scale;
 	unit_test_factory<tod_scatter_test> m_utf_tod_scatter;
