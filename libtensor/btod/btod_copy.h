@@ -6,14 +6,15 @@
 #include "../defs.h"
 #include "../exception.h"
 #include "../timings.h"
+#include "../core/abs_index.h"
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
 #include "../symmetry/so_copy.h"
+#include "../symmetry/so_permute.h"
 #include "../tod/tod_copy.h"
 #include "bad_block_index_space.h"
 #include "btod_additive.h"
 //~ #include "btod_so_copy.h"
-//~ #include "btod_so_equalize.h"
 #include "../not_implemented.h"
 
 namespace libtensor {
@@ -64,8 +65,14 @@ public:
 	//!	\name Implementation of
 	//!		libtensor::direct_block_tensor_operation<N, double>
 	//@{
-	virtual const block_index_space<N> &get_bis() const;
-	virtual const symmetry<N, double> &get_symmetry() const;
+	virtual const block_index_space<N> &get_bis() const {
+		return m_bis;
+	}
+
+	virtual const symmetry<N, double> &get_symmetry() const {
+		return m_sym;
+	}
+
 	virtual void perform(block_tensor_i<N, double> &btb) throw(exception);
 	virtual void perform(block_tensor_i<N, double> &bt, const index<N> &idx)
 		throw(exception);
@@ -78,7 +85,11 @@ public:
 	//@}
 
 private:
-	void do_perform(block_tensor_i<N, double> &btb, bool zero, double c)
+	static block_index_space<N> mk_bis(const block_index_space<N> &bis,
+		const permutation<N> &perm);
+	void do_perform(block_tensor_i<N, double> &btb, double c)
+		throw(exception);
+	void do_perform_zero(block_tensor_i<N, double> &btb, double c)
 		throw(exception);
 	void do_perform(block_tensor_i<N, double> &btb, const index<N> &dst_idx,
 		bool zero, double c) throw(exception);
@@ -109,37 +120,19 @@ template<size_t N>
 btod_copy<N>::btod_copy(block_tensor_i<N, double> &bta, const permutation<N> &p,
 	double c) :
 
-	m_bta(bta), m_perm(p), m_c(c), m_bis(m_bta.get_bis()),
+	m_bta(bta), m_perm(p), m_c(c), m_bis(mk_bis(m_bta.get_bis(), m_perm)),
 	m_bidims(m_bis.get_block_index_dims()), m_sym(m_bis) {
 
-	throw not_implemented(g_ns, k_clazz, "btod_copy()", __FILE__, __LINE__);
-
-	//~ block_tensor_ctrl<N, double> ctrl(bta);
-	//~ m_sym.set_union(ctrl.req_symmetry());
-
-	//~ m_bis.permute(m_perm);
-	//~ m_bidims.permute(m_perm);
-	//~ m_sym.permute(m_perm);
+	block_tensor_ctrl<N, double> ctrla(m_bta);
+	symmetry<N, double> sym1(m_bta.get_bis());
+	so_copy<N, double>(ctrla.req_const_symmetry()).perform(sym1);
+	so_permute<N, double>(sym1, m_perm).perform(m_sym);
 }
 
 
 template<size_t N>
 btod_copy<N>::~btod_copy() {
 
-}
-
-
-template<size_t N>
-inline const block_index_space<N> &btod_copy<N>::get_bis() const {
-
-	return m_bis;
-}
-
-
-template<size_t N>
-inline const symmetry<N, double> &btod_copy<N>::get_symmetry() const {
-
-	return m_sym;
 }
 
 
@@ -154,7 +147,7 @@ void btod_copy<N>::perform(block_tensor_i<N, double> &btb) throw(exception) {
 	}
 
 	btod_copy<N>::start_timer();
-	do_perform(btb, true, 1.0);
+	do_perform_zero(btb, 1.0);
 	btod_copy<N>::stop_timer();
 }
 
@@ -229,54 +222,113 @@ void btod_copy<N>::perform(block_tensor_i<N, double> &btb, double c)
 
 
 template<size_t N>
-void btod_copy<N>::do_perform(block_tensor_i<N, double> &btb, bool zero,
+block_index_space<N> btod_copy<N>::mk_bis(const block_index_space<N> &bis,
+	const permutation<N> &perm) {
+
+	block_index_space<N> bis1(bis);
+	bis1.permute(perm);
+	return bis1;
+}
+
+
+//~ template<size_t N>
+//~ void btod_copy<N>::do_perform(block_tensor_i<N, double> &btb,
+	//~ double c) throw(exception) {
+
+	//~ block_tensor_ctrl<N, double> ctrla(m_bta), ctrlb(btb);
+	//~ dimensions<N> bidims = m_bis.get_block_index_dims();
+
+	//~ so_intersection<N>();
+
+	//~ orbit_list<N, double> ola(ctrla.req_const_symmetry());
+	//~ for(typename orbit_list<N, double>::iterator ioa = ola.begin();
+		//~ ioa != ola.end(); ioa++) {
+
+		//~ index<N> bia(ola.get_index(ioa)), bib(bia);
+		//~ bib.permute(m_perm);
+
+		//~ bool zeroa = ctrla.req_is_zero_block(bia);
+		//~ if(zeroa) {
+			//~ continue;
+		//~ }
+
+		//~ orbit<N, double> ob(ctrlb.req_symmetry(), bib);
+		//~ const transf<N, double> &dst_trn = ob.get_transf(bib);
+		//~ permutation<N> perm(m_perm);
+		//~ perm.permute(permutation<N>(dst_trn.get_perm(), true));
+		//~ double coeff = m_c / dst_trn.get_coeff();
+
+		//~ tensor_i<N, double> &blka = ctrla.req_block(bia);
+		//~ index<N> dst_blk_can_idx;
+		//~ bidims.abs_index(ob.get_abs_canonical_index(), dst_blk_can_idx);
+
+		//~ bool adjzero = ctrlb.req_is_zero_block(dst_blk_can_idx);
+		//~ tensor_i<N, double> &blkb =
+			//~ ctrlb.req_block(dst_blk_can_idx);
+
+		//~ if(adjzero) {
+			//~ tod_copy<N>(blka, m_perm, coeff * c).perform(blkb);
+		//~ } else {
+			//~ tod_copy<N> cp(blka, m_perm, coeff).perform(blkb, c);
+		//~ }
+
+		//~ ctrla.ret_block(bia);
+		//~ ctrlb.ret_block(bib);
+	//~ }
+//~ }
+
+
+template<size_t N>
+void btod_copy<N>::do_perform_zero(block_tensor_i<N, double> &btb,
 	double c) throw(exception) {
 
 	block_tensor_ctrl<N, double> ctrla(m_bta), ctrlb(btb);
 	dimensions<N> bidims = m_bis.get_block_index_dims();
 
-	if(zero) {
-		so_copy<N, double>(ctrla.req_const_symmetry()).perform(
-			ctrlb.req_symmetry());
-	} else {
-		//~ so_intersection<N>();
-	}
+	so_copy<N, double>(ctrla.req_const_symmetry()).perform(
+		ctrlb.req_symmetry());
 
-	orbit_list<N, double> olsta(ctrla.req_const_symmetry());
-	for(typename orbit_list<N, double>::iterator ioa = olsta.begin();
-		ioa != olsta.end(); ioa++) {
+	orbit_list<N, double> ola(ctrla.req_const_symmetry());
+	for(typename orbit_list<N, double>::iterator ioa = ola.begin();
+		ioa != ola.end(); ioa++) {
 
-		index<N> src_blk_idx(olsta.get_index(ioa));
-		if(ctrla.req_is_zero_block(src_blk_idx)) continue;
+		//	Canonical index in A and corresponding index in B
+		index<N> bia(ola.get_index(ioa)), bib1(bia);
+		bib1.permute(m_perm);
 
-		index<N> dst_blk_idx(src_blk_idx);
-		dst_blk_idx.permute(m_perm);
-		orbit<N, double> dst_orb(ctrlb.req_symmetry(), dst_blk_idx);
-		const transf<N, double> &dst_trn =
-			dst_orb.get_transf(dst_blk_idx);
-		permutation<N> perm(m_perm);
-		perm.permute(permutation<N>(dst_trn.get_perm(), true));
-		double coeff = m_c / dst_trn.get_coeff();
+		//	Find the canonical index in B
+		orbit<N, double> ob(ctrlb.req_symmetry(), bib1);
+		abs_index<N> abib(ob.get_abs_canonical_index(), bidims);
+		index<N> bib(abib.get_index());
 
-		tensor_i<N, double> &src_blk = ctrla.req_block(src_blk_idx);
-		index<N> dst_blk_can_idx;
-		bidims.abs_index(
-			dst_orb.get_abs_canonical_index(), dst_blk_can_idx);
-		bool adjzero = zero ||
-			ctrlb.req_is_zero_block(dst_blk_can_idx);
-		tensor_i<N, double> &blkb =
-			ctrlb.req_block(dst_blk_can_idx);
+		//	Reverse transformation for block in B
+		const transf<N, double> &trb = ob.get_transf(bib1);
+		permutation<N> permb(m_perm);
+		permb.permute(permutation<N>(trb.get_perm(), true));
+		double cb = m_c / trb.get_coeff();
 
-		if(adjzero) {
-			tod_copy<N> cp(src_blk, m_perm, coeff * c);
-			cp.perform(blkb);
-		} else {
-			tod_copy<N> cp(src_blk, m_perm, coeff);
-			cp.perform(blkb, c);
+		//	Block A[bia] transformed with (permb, cb) will be
+		//	copied to B[bib]
+
+		bool zeroa = ctrla.req_is_zero_block(bia);
+		bool zerob = ctrlb.req_is_zero_block(bib);
+
+		if(zeroa) {
+			ctrlb.req_zero_block(bib);
+			continue;
 		}
 
-		ctrla.ret_block(src_blk_idx);
-		ctrlb.ret_block(dst_blk_idx);
+		tensor_i<N, double> &blka = ctrla.req_block(bia);
+		tensor_i<N, double> &blkb = ctrlb.req_block(bib);
+
+		if(zerob) {
+			tod_copy<N>(blka, permb, cb * c).perform(blkb);
+		} else {
+			tod_copy<N>(blka, permb, cb).perform(blkb, c);
+		}
+
+		ctrla.ret_block(bia);
+		ctrlb.ret_block(bib);
 	}
 }
 

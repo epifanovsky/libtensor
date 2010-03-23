@@ -24,6 +24,10 @@ class symmetry_operation_params< so_permute<N, T> >;
 template<size_t N, typename T>
 class so_permute : public symmetry_operation_base< so_permute<N, T> > {
 private:
+	typedef so_permute<N, T> operation_t;
+	typedef symmetry_operation_dispatcher<operation_t> dispatcher_t;
+
+private:
 	const symmetry<N, T> &m_sym1; //!< Symmetry container
 	permutation<N> m_perm; //!< Permutation
 

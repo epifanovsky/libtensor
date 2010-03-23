@@ -1,6 +1,3 @@
-#include <cmath>
-#include <cstdlib>
-#include <ctime>
 #include <libvmm/std_allocator.h>
 #include <libtensor/core/tensor.h>
 #include <libtensor/core/block_tensor.h>
@@ -16,11 +13,12 @@ namespace libtensor {
 
 void btod_copy_test::perform() throw(libtest::test_exception) {
 
-	srand48(time(NULL));
-
 	test_zero_1();
 	test_zero_2();
-	test_1();
+	test_nosym_1();
+	test_nosym_2();
+	test_nosym_3();
+	test_nosym_4();
 	test_2();
 	test_3();
 	test_4();
@@ -31,15 +29,13 @@ void btod_copy_test::perform() throw(libtest::test_exception) {
 }
 
 
+/**	\test \f$ b_{ij} = a_{ij} \f$, zero tensor
+ **/
 void btod_copy_test::test_zero_1() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_copy_test::test_zero_1()";
 
 	typedef libvmm::std_allocator<double> allocator_t;
-	typedef tensor<2, double, allocator_t> tensor_t;
-	typedef tensor_ctrl<2, double> tensor_ctrl_t;
-	typedef block_tensor<2, double, allocator_t> block_tensor_t;
-	typedef block_tensor_ctrl<2, double> block_tensor_ctrl_t;
 
 	try {
 
@@ -48,30 +44,20 @@ void btod_copy_test::test_zero_1() throw(libtest::test_exception) {
 	dimensions<2> dims(index_range<2>(i1, i2));
 	block_index_space<2> bis(dims);
 	dimensions<2> bidims(bis.get_block_index_dims());
-	tensor_t ta(dims), tb(dims);
-	block_tensor_t bta(bis), btb(bis);
-	block_tensor_ctrl_t btb_ctrl(btb);
+	tensor<2, double, allocator_t> ta(dims), tb(dims);
+	block_tensor<2, double, allocator_t> bta(bis), btb(bis);
 
-	// Fill in the output with random data
+	//	Fill the output with random data
 
-	index<2> i_00;
-	tensor_i<2, double> &blk_00 = btb_ctrl.req_block(i_00);
-	tensor_ctrl_t blk_00_ctrl(blk_00);
-	double *ptr = blk_00_ctrl.req_dataptr();
-	size_t sz = blk_00.get_dims().get_size();
-	for(size_t i = 0; i < sz; i++) {
-		ptr[i] = drand48();
-	}
-	blk_00_ctrl.ret_dataptr(ptr); ptr = NULL;
-	btb_ctrl.ret_block(i_00);
+	btod_random<2>().perform(btb);
 
-	// Make a copy
+	//	Make a copy
 
-	btod_copy<2> cp(bta);
-	cp.perform(btb);
+	btod_copy<2>(bta).perform(btb);
 
-	// The set of non-zero blocks in the output must be empty now
+	//	The set of non-zero blocks in the output must be empty now
 
+	block_tensor_ctrl<2, double> btb_ctrl(btb);
 	orbit_list<2, double> orblst(btb_ctrl.req_symmetry());
 	orbit_list<2, double>::iterator iorbit = orblst.begin();
 	for(; iorbit != orblst.end(); iorbit++) {
@@ -91,15 +77,13 @@ void btod_copy_test::test_zero_1() throw(libtest::test_exception) {
 }
 
 
+/**	\test \f$ b_{ij} = a_{ij} \f$, zero tensor
+ **/
 void btod_copy_test::test_zero_2() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_copy_test::test_zero_2()";
 
 	typedef libvmm::std_allocator<double> allocator_t;
-	typedef tensor<2, double, allocator_t> tensor_t;
-	typedef tensor_ctrl<2, double> tensor_ctrl_t;
-	typedef block_tensor<2, double, allocator_t> block_tensor_t;
-	typedef block_tensor_ctrl<2, double> block_tensor_ctrl_t;
 
 	try {
 
@@ -112,33 +96,20 @@ void btod_copy_test::test_zero_2() throw(libtest::test_exception) {
 	bis.split(msk1, 6);
 	bis.split(msk2, 5);
 	dimensions<2> bidims(bis.get_block_index_dims());
-	tensor_t ta(dims), tb(dims);
-	block_tensor_t bta(bis), btb(bis);
-	block_tensor_ctrl_t btb_ctrl(btb);
+	tensor<2, double, allocator_t> ta(dims), tb(dims);
+	block_tensor<2, double, allocator_t> bta(bis), btb(bis);
 
-	// Fill in the output with random data
+	//	Fill the output with random data
 
-	dimensions<2> blk_dims = bis.get_block_index_dims();
-	index<2> iblk;
-	do {
-		tensor_i<2, double> &blk = btb_ctrl.req_block(iblk);
-		tensor_ctrl_t blk_ctrl(blk);
-		double *ptr = blk_ctrl.req_dataptr();
-		size_t sz = blk.get_dims().get_size();
-		for(size_t i = 0; i < sz; i++) {
-			ptr[i] = drand48();
-		}
-		blk_ctrl.ret_dataptr(ptr); ptr = NULL;
-		btb_ctrl.ret_block(iblk);
-	} while(blk_dims.inc_index(iblk));
+	btod_random<2>().perform(btb);
 
-	// Make a copy
+	//	Make a copy
 
-	btod_copy<2> cp(bta);
-	cp.perform(btb);
+	btod_copy<2>(bta).perform(btb);
 
-	// The set of non-zero blocks in the output must be empty now
+	//	The set of non-zero blocks in the output must be empty now
 
+	block_tensor_ctrl<2, double> btb_ctrl(btb);
 	orbit_list<2, double> orblst(btb_ctrl.req_symmetry());
 	orbit_list<2, double>::iterator iorbit = orblst.begin();
 	for(; iorbit != orblst.end(); iorbit++) {
@@ -158,15 +129,13 @@ void btod_copy_test::test_zero_2() throw(libtest::test_exception) {
 }
 
 
-void btod_copy_test::test_1() throw(libtest::test_exception) {
+/**	\test \f$ b_{ij} = a_{ij} \f$, no symmetry, no blocks
+ **/
+void btod_copy_test::test_nosym_1() throw(libtest::test_exception) {
 
-	static const char *testname = "btod_copy_test::test_1()";
+	static const char *testname = "btod_copy_test::test_nosym_1()";
 
 	typedef libvmm::std_allocator<double> allocator_t;
-	typedef tensor<2, double, allocator_t> tensor_t;
-	typedef tensor_ctrl<2, double> tensor_ctrl_t;
-	typedef block_tensor<2, double, allocator_t> block_tensor_t;
-	typedef block_tensor_ctrl<2, double> block_tensor_ctrl_t;
 
 	try {
 
@@ -174,34 +143,155 @@ void btod_copy_test::test_1() throw(libtest::test_exception) {
 	i2[0] = 10; i2[1] = 10;
 	dimensions<2> dims(index_range<2>(i1, i2));
 	block_index_space<2> bis(dims);
-	tensor_t ta(dims), tb(dims);
-	block_tensor_t bta(bis), btb(bis);
-	block_tensor_ctrl_t bta_ctrl(bta);
+	tensor<2, double, allocator_t> ta(dims), tb(dims);
+	block_tensor<2, double, allocator_t> bta(bis), btb(bis);
 
-	// Fill in with random data
+	//	Fill the input with random data
 
-	index<2> i_00;
-	tensor_i<2, double> &blk_00 = bta_ctrl.req_block(i_00);
-	tensor_ctrl_t blk_00_ctrl(blk_00);
-	double *ptr = blk_00_ctrl.req_dataptr();
-	size_t sz = blk_00.get_dims().get_size();
-	for(size_t i = 0; i < sz; i++) {
-		ptr[i] = drand48();
-	}
-	blk_00_ctrl.ret_dataptr(ptr); ptr = NULL;
-	bta_ctrl.ret_block(i_00);
+	btod_random<2>().perform(bta);
 
-	// Make a copy
+	//	Make a copy
 
-	btod_copy<2> cp(bta);
-	cp.perform(btb);
+	btod_copy<2>(bta).perform(btb);
 
-	// Compare against the reference
+	//	Compare against the reference
 
-	tod_btconv<2> conva(bta), convb(btb);
-	conva.perform(ta);
-	convb.perform(tb);
+	tod_btconv<2>(bta).perform(ta);
+	tod_btconv<2>(btb).perform(tb);
+
 	compare_ref<2>::compare(testname, tb, ta, 0.0);
+
+	} catch(exception &exc) {
+		fail_test(testname, __FILE__, __LINE__, exc.what());
+	}
+}
+
+
+/**	\test \f$ b_{ij} = 2 a_{ji} \f$, no symmetry, no blocks
+ **/
+void btod_copy_test::test_nosym_2() throw(libtest::test_exception) {
+
+	static const char *testname = "btod_copy_test::test_nosym_2()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<2> i1, i2;
+	i2[0] = 10; i2[1] = 10;
+	dimensions<2> dims(index_range<2>(i1, i2));
+	block_index_space<2> bis(dims);
+	tensor<2, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
+	block_tensor<2, double, allocator_t> bta(bis), btb(bis);
+	permutation<2> perm10;
+	perm10.permute(0, 1);
+
+	//	Fill the input with random data
+
+	btod_random<2>().perform(bta);
+
+	//	Make a copy
+
+	btod_copy<2>(bta, perm10, 2.0).perform(btb);
+
+	//	Create the reference
+
+	tod_btconv<2>(bta).perform(ta);
+	tod_copy<2>(ta, perm10, 2.0).perform(tb_ref);
+
+	//	Compare against the reference
+
+	tod_btconv<2>(btb).perform(tb);
+	compare_ref<2>::compare(testname, tb, tb_ref, 0.0);
+
+	} catch(exception &exc) {
+		fail_test(testname, __FILE__, __LINE__, exc.what());
+	}
+}
+
+
+/**	\test \f$ b_{ij} = a_{ij} \f$, no symmetry, 3 blocks along each
+		direction
+ **/
+void btod_copy_test::test_nosym_3() throw(libtest::test_exception) {
+
+	static const char *testname = "btod_copy_test::test_nosym_3()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<2> i1, i2;
+	i2[0] = 10; i2[1] = 10;
+	dimensions<2> dims(index_range<2>(i1, i2));
+	block_index_space<2> bis(dims);
+	mask<2> m; m[0] = true; m[1] = true;
+	bis.split(m, 3);
+	bis.split(m, 7);
+	tensor<2, double, allocator_t> ta(dims), tb(dims);
+	block_tensor<2, double, allocator_t> bta(bis), btb(bis);
+
+	//	Fill the input with random data
+
+	btod_random<2>().perform(bta);
+
+	//	Make a copy
+
+	btod_copy<2>(bta).perform(btb);
+
+	//	Compare against the reference
+
+	tod_btconv<2>(bta).perform(ta);
+	tod_btconv<2>(btb).perform(tb);
+
+	compare_ref<2>::compare(testname, tb, ta, 0.0);
+
+	} catch(exception &exc) {
+		fail_test(testname, __FILE__, __LINE__, exc.what());
+	}
+}
+
+
+/**	\test \f$ b_{ij} = 2 a_{ji} \f$, no symmetry, 3 blocks along each
+		direction
+ **/
+void btod_copy_test::test_nosym_4() throw(libtest::test_exception) {
+
+	static const char *testname = "btod_copy_test::test_nosym_4()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<2> i1, i2;
+	i2[0] = 10; i2[1] = 10;
+	dimensions<2> dims(index_range<2>(i1, i2));
+	block_index_space<2> bis(dims);
+	mask<2> m; m[0] = true; m[1] = true;
+	bis.split(m, 3);
+	bis.split(m, 7);
+	tensor<2, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
+	block_tensor<2, double, allocator_t> bta(bis), btb(bis);
+	permutation<2> perm10;
+	perm10.permute(0, 1);
+
+	//	Fill the input with random data
+
+	btod_random<2>().perform(bta);
+
+	//	Make a copy
+
+	btod_copy<2>(bta, perm10, 2.0).perform(btb);
+
+	//	Create the reference
+
+	tod_btconv<2>(bta).perform(ta);
+	tod_copy<2>(ta, perm10, 2.0).perform(tb_ref);
+
+	//	Compare against the reference
+
+	tod_btconv<2>(btb).perform(tb);
+	compare_ref<2>::compare(testname, tb, tb_ref, 0.0);
 
 	} catch(exception &exc) {
 		fail_test(testname, __FILE__, __LINE__, exc.what());
