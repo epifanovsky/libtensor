@@ -52,6 +52,7 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("sequence", m_utf_sequence);
 	add_test("se_part", m_utf_se_part);
 	add_test("se_perm", m_utf_se_perm);
+	add_test("so_add", m_utf_so_add);
 	add_test("so_add_impl_perm", m_utf_so_add_impl_perm);
 	add_test("so_copy", m_utf_so_copy);
 	add_test("so_projdown", m_utf_so_projdown);
