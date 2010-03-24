@@ -68,6 +68,7 @@ set(SRC
 	tod_diag_test.C
 	tod_dirsum_test.C
 	tod_dotprod_test.C
+	tod_extract_test.C
 	tod_import_raw_test.C
 	tod_mkdelta_test.C
 	tod_mult_test.C
