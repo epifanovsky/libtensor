@@ -2,7 +2,7 @@
 #include <ctime>
 #include <libvmm/std_allocator.h>
 #include <libtensor/core/tensor.h>
-//#include <libtensor/tod/tod_extract.h>
+#include <libtensor/tod/tod_extract.h>
 #include "tod_extract_test.h"
 #include "compare_ref.h"
 
@@ -66,7 +66,7 @@ void tod_extract_test::test_1() throw(libtest::test_exception) {
 
 	mask<2> m; m[0] = true; m[1] = false;
 	index<2> idx; idx[0] = 0; idx[1] = 2;
-//	tod_extract<2, 1>(ta, m, idx).perform(tb);
+	tod_extract<2, 1>(ta, m, idx).perform(tb);
 
 	compare_ref<1>::compare(testname, tb, tb_ref, 1e-15);
 
@@ -122,7 +122,7 @@ void tod_extract_test::test_2() throw(libtest::test_exception) {
 
 	mask<3> m; m[0] = true; m[1] = false; m[2] = true;
 	index<3> idx; idx[0] = 0; idx[1] = 0; idx[2] = 0;
-//	tod_extract<3, 1>(ta, m, idx).perform(tb);
+	tod_extract<3, 1>(ta, m, idx).perform(tb);
 
 	compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
 
