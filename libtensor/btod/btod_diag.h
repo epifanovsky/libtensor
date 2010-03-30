@@ -224,6 +224,7 @@ block_index_space<N - M + 1> btod_diag<N, M>::mk_bis(
 		}
 		msk_done |= msk_typ;
 	}
+	obis.match_splits();
 
 	return obis;
 }
