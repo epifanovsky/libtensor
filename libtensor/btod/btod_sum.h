@@ -6,6 +6,8 @@
 #include "../exception.h"
 #include "../timings.h"
 #include "btod_additive.h"
+#include "../not_implemented.h"
+#include "bad_block_index_space.h"
 
 namespace libtensor {
 
@@ -47,7 +49,7 @@ private:
 private:
 	std::list<node_t> m_ops; //!< List of operations
 	block_index_space<N> m_bis; //!< Block index space
-
+	symmetry<N, double> m_sym; //!< Symmetry of operation
 public:
 	//!	\name Construction and destruction
 	//@{
@@ -105,7 +107,7 @@ const char* btod_sum<N>::k_clazz = "btod_sum<N>";
 
 template<size_t N>
 inline btod_sum<N>::btod_sum(btod_additive<N> &op, double c) :
-	m_bis(op.get_bis()) {
+	m_bis(op.get_bis()), m_sym(op.get_bis()) {
 
 	add_op(op, c);
 }
@@ -127,7 +129,7 @@ inline const block_index_space<N> &btod_sum<N>::get_bis() const {
 template<size_t N>
 const symmetry<N, double> &btod_sum<N>::get_symmetry() const {
 
-	throw_exc("btod_sum<N>", "get_symmetry()", "Not implemented");
+	return m_sym;
 }
 
 
@@ -137,7 +139,7 @@ void btod_sum<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 	static const char *method = "perform(block_tensor_i<N, double>&)";
 
 	if(!m_bis.equals(bt.get_bis())) {
-		throw bad_parameter(g_ns, k_clazz, method, __FILE__,
+		throw bad_block_index_space(g_ns, k_clazz, method, __FILE__,
 			__LINE__, "Incompatible block index space.");
 	}
 
@@ -159,8 +161,19 @@ template<size_t N>
 void btod_sum<N>::perform(block_tensor_i<N, double> &bt, const index<N> &idx)
 	throw(exception) {
 
-	throw_exc(k_clazz,
-		"perform(block_tensor_i<N, double>&, const index<N>&)", "NIY");
+	static const char *method = "perform(block_tensor_i<N, double>&, "
+			"const index<N>)";
+
+	if(!m_bis.equals(bt.get_bis())) {
+		throw bad_block_index_space(g_ns, k_clazz, method, __FILE__,
+			__LINE__, "Incompatible block index space.");
+	}
+	if(!m_bis.get_block_index_dims().contains(idx)) {
+		throw bad_parameter(g_ns, k_clazz, method, __FILE__,
+			__LINE__, "Invalid block index.");
+	}
+
+	throw not_implemented(g_ns, k_clazz, method, __FILE__, __LINE__);
 }
 
 
@@ -171,7 +184,7 @@ void btod_sum<N>::perform(block_tensor_i<N, double> &bt, double c)
 	static const char *method = "perform(block_tensor_i<N, double>&)";
 
 	if(!m_bis.equals(bt.get_bis())) {
-		throw bad_parameter(g_ns, k_clazz, method, __FILE__,
+		throw bad_block_index_space(g_ns, k_clazz, method, __FILE__,
 			__LINE__, "Incompatible block index space.");
 	}
 
@@ -192,7 +205,7 @@ void btod_sum<N>::add_op(btod_additive<N> &op, double c) {
 	static const char *method = "add_op(btod_additive<N>&, double)";
 
 	if(!op.get_bis().equals(m_bis)) {
-		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
+		throw bad_block_index_space(g_ns, k_clazz, method, __FILE__, __LINE__,
 			"Incompatible block index space.");
 	}
 

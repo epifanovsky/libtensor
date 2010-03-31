@@ -63,13 +63,6 @@ public:
 	//!}
 
 protected:
-	//!	\name Implementation of tensor_i<N, T>
-	//@{
-	virtual void on_req_prefetch() throw(exception);
-	virtual T *on_req_dataptr() throw(exception);
-	virtual const T *on_req_const_dataptr() throw(exception);
-	virtual void on_ret_dataptr(const T *ptr) throw(exception);
-	//@}
 
 	//!	\name Implementation of block_tensor_i<N, T>
 	//@{
@@ -117,30 +110,6 @@ template<size_t N, typename T, typename Traits>
 const block_index_space<N> &direct_btensor<N, T, Traits>::get_bis() const {
 	throw_exc("direct_btensor<N, T, Traits>", "get_bis()",
 		"Not implemented");
-}
-
-template<size_t N, typename T, typename Traits>
-void direct_btensor<N, T, Traits>::on_req_prefetch() throw(exception) {
-}
-
-template<size_t N, typename T, typename Traits>
-T *direct_btensor<N, T, Traits>::on_req_dataptr() throw(exception) {
-	throw_exc("direct_btensor<N, T, Traits>", "on_req_dataptr()",
-		"Unhandled event");
-	return NULL;
-}
-
-template<size_t N, typename T, typename Traits>
-const T *direct_btensor<N, T, Traits>::on_req_const_dataptr() throw(exception) {
-	throw_exc("direct_btensor<N, T, Traits>", "on_req_const_dataptr()",
-		"Unhandled event");
-	return NULL;
-}
-
-template<size_t N, typename T, typename Traits>
-void direct_btensor<N, T, Traits>::on_ret_dataptr(const T *ptr) throw(exception) {
-	throw_exc("direct_btensor<N, T, Traits>", "on_ret_dataptr(const T*)",
-		"Unhandled event");
 }
 
 template<size_t N, typename T, typename Traits>
