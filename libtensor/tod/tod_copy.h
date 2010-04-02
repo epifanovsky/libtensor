@@ -7,8 +7,10 @@
 #include "../timings.h"
 #include "../core/tensor_i.h"
 #include "../core/tensor_ctrl.h"
+#include "loop_list_copy.h"
 #include "processor.h"
 #include "tod_additive.h"
+#include "bad_dimensions.h"
 
 namespace libtensor {
 
@@ -17,6 +19,7 @@ namespace libtensor {
 	\tparam N Tensor order.
 
 	This operation makes a scaled and permuted copy of a %tensor.
+	The result can replace or be added to the output %tensor.
 
 	<b>Examples</b>
 
@@ -51,11 +54,13 @@ namespace libtensor {
 	\endcode
 
 	\ingroup libtensor_tod
-**/
+ **/
 template<size_t N>
-class tod_copy
-	: public tod_additive<N>, public timings<tod_copy<N> >
-{
+class tod_copy :
+	public tod_additive<N>,
+	public timings< tod_copy<N> >,
+	public loop_list_copy {
+
 public:
 	static const char *k_clazz; //!< Class name
 
@@ -124,10 +129,11 @@ private:
 	};
 
 private:
-	tensor_i<N, double> &m_t; //!< Source %tensor
+	tensor_i<N, double> &m_ta; //!< Source %tensor
 	tensor_ctrl<N, double> m_tctrl; //!< Source %tensor control
 	double m_c; //!< Scaling coefficient
 	permutation<N> m_perm; //!< Permutation of elements
+	dimensions<N> m_dimsb; //!< Dimensions of output %tensor
 
 public:
 	//!	\name Construction and destruction
@@ -166,8 +172,17 @@ public:
 	//@}
 
 private:
+	static dimensions<N> mk_dimsb(tensor_i<N, double> &ta,
+		const permutation<N> &perm);
+
 	template<typename CoreOp>
 	void do_perform(tensor_i<N, double> &t, double c) throw(exception);
+
+	void do_perform_copy(tensor_i<N, double> &t, double c);
+
+	template<typename List, typename Node>
+	void build_loop(List &loop, const dimensions<N> &dimsa,
+		const permutation<N> &perma, const dimensions<N> &dimsb);
 
 	template<typename CoreOp>
 	void build_list( loop_list_t &list, const dimensions<N> &dima,
@@ -175,6 +190,7 @@ private:
 		const double c) throw(out_of_memory);
 
 	void clean_list( loop_list_t &list );
+
 };
 
 template<size_t N>
@@ -186,13 +202,13 @@ const char *tod_copy<N>::op_daxpy::k_clazz = "tod_copy<N>::op_daxpy";
 
 template<size_t N>
 inline tod_copy<N>::tod_copy(tensor_i<N, double> &t, double c)
-	: m_t(t), m_tctrl(t), m_c(c) {
+	: m_ta(t), m_tctrl(t), m_c(c), m_dimsb(mk_dimsb(m_ta, m_perm)) {
 }
 
 template<size_t N>
 inline tod_copy<N>::tod_copy(tensor_i<N, double> &t,
 	const permutation<N> &perm, double c)
-	: m_t(t), m_tctrl(t), m_c(c), m_perm(perm) {
+	: m_ta(t), m_tctrl(t), m_c(c), m_perm(perm), m_dimsb(mk_dimsb(m_ta, m_perm)) {
 }
 
 template<size_t N>
@@ -205,14 +221,32 @@ inline void tod_copy<N>::prefetch() throw(exception) {
 }
 
 template<size_t N>
-void tod_copy<N>::perform(tensor_i<N, double> &tdst) throw(exception) {
-	do_perform<op_dcopy>(tdst, 1.0);
+void tod_copy<N>::perform(tensor_i<N, double> &tb) throw(exception) {
+
+	static const char *method = "perform(tensor_i<N, double>&)";
+
+	if(!tb.get_dims().equals(m_dimsb)) {
+		throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"tb");
+	}
+
+	do_perform_copy(tb, 1.0);
+//	do_perform<op_dcopy>(tdst, 1.0);
 }
 
 template<size_t N>
 void tod_copy<N>::perform(tensor_i<N, double> &tdst, double c)
 	throw(exception) {
 	do_perform<op_daxpy>(tdst, c);
+}
+
+template<size_t N>
+dimensions<N> tod_copy<N>::mk_dimsb(tensor_i<N, double> &ta,
+	const permutation<N> &perm) {
+
+	dimensions<N> dims(ta.get_dims());
+	dims.permute(perm);
+	return dims;
 }
 
 template<size_t N> template<typename CoreOp>
@@ -222,7 +256,7 @@ void tod_copy<N>::do_perform(tensor_i<N, double> &tdst, double c)
 	static const char *method = "do_perform(tensor_i<N, double>&, double)";
 	tod_copy<N>::start_timer();
 
-	dimensions<N> dims(m_t.get_dims()); dims.permute(m_perm);
+	dimensions<N> dims(m_ta.get_dims()); dims.permute(m_perm);
 	if(dims != tdst.get_dims()) {
 		throw bad_parameter("libtensor", k_clazz, method, __FILE__,
 			__LINE__, "Incorrect dimensions of the output tensor.");
@@ -239,7 +273,7 @@ void tod_copy<N>::do_perform(tensor_i<N, double> &tdst, double c)
 //	inv_perm.apply(ib);
 
 	loop_list_t lst;
-	build_list<CoreOp>( lst, m_t.get_dims(), m_perm, tdst.get_dims(), c*m_c );
+	build_list<CoreOp>( lst, m_ta.get_dims(), m_perm, tdst.get_dims(), c*m_c );
 
 	registers regs;
 	regs.m_ptra = psrc;
@@ -264,6 +298,76 @@ void tod_copy<N>::do_perform(tensor_i<N, double> &tdst, double c)
 
 	tod_copy<N>::stop_timer();
 }
+
+
+template<size_t N>
+void tod_copy<N>::do_perform_copy(tensor_i<N, double> &tb, double c) {
+
+	typedef loop_list_copy::list_t list_t;
+	typedef loop_list_copy::registers registers_t;
+	typedef loop_list_copy::node node_t;
+
+	tod_copy<N>::start_timer();
+
+	try {
+
+	tensor_ctrl<N, double> ca(m_ta), cb(tb);
+	ca.req_prefetch();
+	cb.req_prefetch();
+
+	const dimensions<N> &dimsa = m_ta.get_dims();
+	const dimensions<N> &dimsb = tb.get_dims();
+
+	const double *pa = ca.req_const_dataptr();
+	double *pb = cb.req_dataptr();
+
+	list_t loop;
+	registers_t r;
+	r.m_ptra = pa;
+	r.m_ptrb = pb;
+#ifdef LIBTENSOR_DEBUG
+	r.m_ptra_end = pa + dimsa.get_size();
+	r.m_ptrb_end = pb + dimsb.get_size();
+#endif // LIBTENSOR_DEBUG
+
+	build_loop<list_t, node_t>(loop, dimsa, m_perm, dimsb);
+	loop_list_copy::run_loop(loop, r, m_c * c);
+
+	ca.ret_dataptr(pa);
+	cb.ret_dataptr(pb);
+
+	} catch(...) {
+		tod_copy<N>::stop_timer();
+		throw;
+	}
+	tod_copy<N>::stop_timer();
+}
+
+template<size_t N> template<typename List, typename Node>
+void tod_copy<N>::build_loop(List &loop, const dimensions<N> &dimsa,
+	const permutation<N> &perma, const dimensions<N> &dimsb) {
+
+	size_t map[N];
+	for(register size_t i = 0; i < N; i++) map[i] = i;
+	perma.apply(map);
+
+	//
+	//	Go over indexes in B and connect them with indexes in A
+	//	trying to glue together consecutive indexes
+	//
+	for(size_t idxb = 0; idxb < N;) {
+		size_t len = 1;
+		size_t idxa = map[idxb];
+		do {
+			len *= dimsa.get_dim(idxa);
+			idxa++; idxb++;
+		} while(idxb < N && map[idxb] == idxa);
+
+		loop.push_back(Node(len, dimsa.get_increment(idxa - 1),
+			dimsb.get_increment(idxb - 1)));
+	}
+}
+
 
 template<size_t N> template<typename CoreOp>
 void tod_copy<N>::build_list( loop_list_t &list, const dimensions<N> &da,
