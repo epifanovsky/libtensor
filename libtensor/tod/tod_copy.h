@@ -323,11 +323,11 @@ void tod_copy<N>::do_perform_copy(tensor_i<N, double> &tb, double c) {
 
 	list_t loop;
 	registers_t r;
-	r.m_ptra = pa;
-	r.m_ptrb = pb;
+	r.m_ptra[0] = pa;
+	r.m_ptrb[0] = pb;
 #ifdef LIBTENSOR_DEBUG
-	r.m_ptra_end = pa + dimsa.get_size();
-	r.m_ptrb_end = pb + dimsb.get_size();
+	r.m_ptra_end[0] = pa + dimsa.get_size();
+	r.m_ptrb_end[0] = pb + dimsb.get_size();
 #endif // LIBTENSOR_DEBUG
 
 	build_loop<list_t, node_t>(loop, dimsa, m_perm, dimsb);
@@ -363,8 +363,9 @@ void tod_copy<N>::build_loop(List &loop, const dimensions<N> &dimsa,
 			idxa++; idxb++;
 		} while(idxb < N && map[idxb] == idxa);
 
-		loop.push_back(Node(len, dimsa.get_increment(idxa - 1),
-			dimsb.get_increment(idxb - 1)));
+		iterator_t inode = loop.insert(loop.end(), Node(len));
+		inode->stepa(0) = dimsa.get_increment(idxa - 1);
+		inode->stepb(0) = dimsb.get_increment(idxb - 1);
 	}
 }
 
