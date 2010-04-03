@@ -15,8 +15,9 @@ namespace labeled_btensor_expr {
 	\ingroup libtensor_btensor_expr
  **/
 template<size_t N, typename T>
-class expr_base {
-
+class expr_i {
+public:
+	virtual ~expr_i() { }
 };
 
 
@@ -36,7 +37,7 @@ class expr_base {
 	\ingroup libtensor_btensor_expr
  **/
 template<size_t N, typename T, typename Core>
-class expr : public expr_base<N, T> {
+class expr : public expr_i<N, T> {
 public:
 	//!	Expression core type
 	typedef Core core_t;
@@ -55,6 +56,10 @@ public:
 	/**	\brief Copy constructor
 	 **/
 	expr(const expr<N, T, Core> &expr) : m_core(expr.m_core) { }
+
+	/**	\brief Virtual destructor
+	 **/
+	virtual ~expr() { }
 
 	/**	\brief Returns the core of the expression
 	 **/

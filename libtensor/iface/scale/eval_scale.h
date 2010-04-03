@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_EVAL_SCALE_H
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_EVAL_SCALE_H
 
+#include "../expr/eval_i.h"
 #include "core_scale.h"
 
 namespace libtensor {
@@ -15,7 +16,7 @@ namespace labeled_btensor_expr {
 	\ingroup libtensor_btensor_expr
  **/
 template<size_t N, typename T, typename Expr>
-class eval_scale {
+class eval_scale : public eval_i<N, T> {
 public:
 	static const char *k_clazz; //!< Class name
 
@@ -50,6 +51,10 @@ public:
 	 **/
 	eval_scale(expression_t &expr, const letter_expr<N> &label)
 		throw(exception);
+
+	/**	\brief Virtual destructor
+	 **/
+	virtual ~eval_scale() { }
 
 	//@}
 

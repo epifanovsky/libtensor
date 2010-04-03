@@ -21,6 +21,11 @@ extern const char *g_ns;
 #ifdef USE_MKL
 #include <mkl.h>
 #undef USE_CBLAS
+#undef USE_GSL
+#endif
+#ifdef USE_GSL
+#include <gsl/gsl_cblas.h>
+#undef USE_CBLAS
 #endif
 #ifdef USE_CBLAS
 #include <cblas.h>

@@ -12,6 +12,14 @@ namespace libtensor {
 namespace labeled_btensor_expr {
 
 
+template<size_t N>
+class evalfunctor_i<N, double> {
+public:
+	virtual ~evalfunctor_i() { }
+	virtual btod_additive<N> &get_bto() = 0;
+};
+
+
 /**	\brief Evaluates an expression that contains both tensors and
 		operations (T = double)
 	\tparam N Tensor order.
@@ -26,7 +34,8 @@ namespace labeled_btensor_expr {
 	\ingroup labeled_btensor_expr
  **/
 template<size_t N, typename Core, size_t NTensor, size_t NOper>
-class evalfunctor<N, double, Core, NTensor, NOper> {
+class evalfunctor<N, double, Core, NTensor, NOper> :
+	public evalfunctor_i<N, double> {
 public:
 	//!	Expression type
 	typedef expr<N, double, Core> expression_t;
@@ -55,9 +64,13 @@ public:
 	 **/
 	evalfunctor(expression_t &expr, eval_container_t &cont);
 
+	/**	\brief Virtual destructor
+	 **/
+	virtual ~evalfunctor() { }
+
 	/**	\brief Returns the block %tensor operation
 	 **/
-	btod_additive<N> &get_bto() {
+	virtual btod_additive<N> &get_bto() {
 		return m_op_sum;
 	}
 
@@ -76,7 +89,8 @@ public:
 	\ingroup labeled_btensor_expr
  **/
 template<size_t N, typename Core, size_t NTensor>
-class evalfunctor<N, double, Core, NTensor, 0> {
+class evalfunctor<N, double, Core, NTensor, 0> :
+	public evalfunctor_i<N, double> {
 public:
 	//!	Expression type
 	typedef expr<N, double, Core> expression_t;
@@ -101,9 +115,13 @@ public:
 	 **/
 	evalfunctor(expression_t &expr, eval_container_t &cont);
 
+	/**	\brief Virtual destructor
+	 **/
+	virtual ~evalfunctor() { }
+
 	/**	\brief Returns the block %tensor operation
 	 **/
-	btod_additive<N> &get_bto() {
+	virtual btod_additive<N> &get_bto() {
 		return m_op;
 	}
 
@@ -122,7 +140,7 @@ public:
 	\ingroup labeled_btensor_expr
  **/
 template<size_t N, typename Core, size_t NOper>
-class evalfunctor<N, double, Core, 0, NOper> {
+class evalfunctor<N, double, Core, 0, NOper> : public evalfunctor_i<N, double> {
 public:
 	//!	Expression type
 	typedef expr<N, double, Core> expression_t;
@@ -147,9 +165,13 @@ public:
 	 **/
 	evalfunctor(expression_t &expr, eval_container_t &cont);
 
+	/**	\brief Virtual destructor
+	 **/
+	virtual ~evalfunctor() { }
+
 	/**	\brief Returns the block %tensor operation
 	 **/
-	btod_additive<N> &get_bto() {
+	virtual btod_additive<N> &get_bto() {
 		return m_op;
 	}
 
@@ -167,7 +189,7 @@ public:
 	\ingroup labeled_btensor_expr
  **/
 template<size_t N, typename Core>
-class evalfunctor<N, double, Core, 1, 0> {
+class evalfunctor<N, double, Core, 1, 0> : public evalfunctor_i<N, double> {
 public:
 	//!	Expression type
 	typedef expr<N, double, Core> expression_t;
@@ -192,9 +214,13 @@ public:
 	 **/
 	evalfunctor(expression_t &expr, eval_container_t &cont);
 
+	/**	\brief Virtual destructor
+	 **/
+	virtual ~evalfunctor() { }
+
 	/**	\brief Returns the block %tensor operation
 	 **/
-	btod_additive<N> &get_bto() {
+	virtual btod_additive<N> &get_bto() {
 		return m_op;
 	}
 

@@ -66,7 +66,7 @@ void btod_diag_test::test_1() throw(libtest::test_exception) {
 }
 
 
-/**	\test
+/**	\test Extract a single diagonal: \f$ b_{ia} = a_{iia} \f$
  **/
 void btod_diag_test::test_2() throw(libtest::test_exception) {
 
@@ -75,6 +75,39 @@ void btod_diag_test::test_2() throw(libtest::test_exception) {
 	typedef libvmm::std_allocator<double> allocator_t;
 
 	try {
+
+	index<2> i2a, i2b;
+	i2b[0] = 10; i2b[1] = 5;
+	index<3> i3a, i3b;
+	i3b[0] = 10; i3b[1] = 10; i3b[2] = 5;
+	dimensions<2> dims2(index_range<2>(i2a, i2b));
+	dimensions<3> dims3(index_range<3>(i3a, i3b));
+	block_index_space<2> bis2(dims2);
+	block_index_space<3> bis3(dims3);
+
+	block_tensor<3, double, allocator_t> bta(bis3);
+	block_tensor<2, double, allocator_t> btb(bis2);
+
+	tensor<3, double, allocator_t> ta(dims3);
+	tensor<2, double, allocator_t> tb(dims2), tb_ref(dims2);
+
+	mask<3> msk;
+	msk[0] = true; msk[1] = true;
+
+	//	Fill in random data
+	btod_random<3>().perform(bta);
+	bta.set_immutable();
+
+	//	Prepare the reference
+	tod_btconv<3>(bta).perform(ta);
+	tod_diag<3, 2>(ta, msk).perform(tb_ref);
+
+	//	Invoke the operation
+	btod_diag<3, 2>(bta, msk).perform(btb);
+	tod_btconv<2>(btb).perform(tb);
+
+	//	Compare against the reference
+	compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());

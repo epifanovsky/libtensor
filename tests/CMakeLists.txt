@@ -14,23 +14,28 @@ set(SRC
 #	btod_contract2_test.C
 	btod_copy_test.C
 	btod_diag_test.C
+#	btod_dirsum_test.C
 #	btod_dotprod_test.C
 #	btod_import_raw_test.C
 #	btod_mkdelta_test.C
 #	btod_mult_test.C
+	btod_mult1_test.C
 	btod_random_test.C
 #	btod_read_test.C
 #	btod_scale_test.C
 	btod_set_test.C
 #	btod_set_diag_test.C
+#	btod_set_elem_test.C
 #	btod_sum_test.C
 #	contract_test.C
 	contraction2_test.C
 	contraction2_list_builder_test.C
+	diag_test.C
 	dimensions_test.C
 #	direct_block_tensor_test.C
 #	direct_btensor_test.C
 #	direct_product_test.C
+#	dirsum_test.C
 #	dot_product_test.C
 	global_timings_test.C
 	immutable_test.C
@@ -74,14 +79,19 @@ set(SRC
 	tod_copy_test.C
 	tod_delta_denom2_test.C
 	tod_diag_test.C
+	tod_dirsum_test.C
 	tod_dotprod_test.C
+	tod_extract_test.C
 	tod_import_raw_test.C
 	tod_mkdelta_test.C
 	tod_mult_test.C
+	tod_mult1_test.C
 	tod_random_test.C
 	tod_scale_test.C
+	tod_scatter_test.C
 	tod_set_test.C
 	tod_set_diag_test.C
+	tod_set_elem_test.C
 	tod_sum_test.C
 	tod_symcontract2_test.C
 	version_test.C

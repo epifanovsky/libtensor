@@ -108,7 +108,6 @@ void tod_copy_p1<R,N,X>::do_calculate()
 
 	// start tod_add calculation
 	tod_copy<N> todcopy(tb,2.0);
-	todcopy.prefetch();
 	todcopy.perform(ta);
 }
 
@@ -135,7 +134,6 @@ void tod_copy_p2<R,N,X>::do_calculate()
 
 	// start tod_add calculation
 	tod_copy<N> todcopy(tb,permb,2.0);
-	todcopy.prefetch();
 	todcopy.perform(ta);
 }
 

@@ -65,14 +65,8 @@ public:
 protected:
 	//!	\name Implementation of libtensor::block_tensor_i<N,T>
 	//@{
-	virtual const symmetry<N, T> &on_req_symmetry() throw(exception);
-	virtual void on_req_sym_add_element(
-		const symmetry_element_i<N, T> &elem) throw(exception);
-	virtual void on_req_sym_remove_element(
-		const symmetry_element_i<N, T> &elem) throw(exception);
-	virtual bool on_req_sym_contains_element(
-		const symmetry_element_i<N, T> &elem) throw(exception);
-	virtual void on_req_sym_clear_elements() throw(exception);
+	virtual symmetry<N, T> &on_req_symmetry() throw(exception);
+	virtual const symmetry<N, T> &on_req_const_symmetry() throw(exception);
 	virtual tensor_i<N, T> &on_req_block(const index<N> &idx)
 		throw(exception);
 	virtual void on_ret_block(const index<N> &idx) throw(exception);
@@ -147,41 +141,18 @@ inline const block_index_space<N> &btensor_base<N, T, Traits>::get_bis() const {
 }
 
 template<size_t N, typename T, typename Traits>
-const symmetry<N, T> &btensor_base<N, T, Traits>::on_req_symmetry()
-	throw(exception) {
+symmetry<N, T> &btensor_base<N, T, Traits>::on_req_symmetry() throw(exception) {
 
 	block_tensor_ctrl<N, T> ctrl(m_bt);
 	return ctrl.req_symmetry();
 }
 
 template<size_t N, typename T, typename Traits>
-void btensor_base<N, T, Traits>::on_req_sym_add_element(
-	const symmetry_element_i<N, T> &elem) throw(exception) {
+const symmetry<N, T> &btensor_base<N, T, Traits>::on_req_const_symmetry()
+	throw(exception) {
 
 	block_tensor_ctrl<N, T> ctrl(m_bt);
-	ctrl.req_sym_add_element(elem);
-}
-
-template<size_t N, typename T, typename Traits>
-void btensor_base<N, T, Traits>::on_req_sym_remove_element(
-	const symmetry_element_i<N, T> &elem) throw(exception) {
-
-	block_tensor_ctrl<N, T> ctrl(m_bt);
-	ctrl.req_sym_remove_element(elem);
-}
-
-template<size_t N, typename T, typename Traits>
-bool btensor_base<N, T, Traits>::on_req_sym_contains_element(
-	const symmetry_element_i<N, T> &elem) throw(exception) {
-
-	block_tensor_ctrl<N, T> ctrl(m_bt);
-	return ctrl.req_sym_contains_element(elem);
-}
-
-template<size_t N, typename T, typename Traits>
-void btensor_base<N, T, Traits>::on_req_sym_clear_elements() throw(exception) {
-	block_tensor_ctrl<N, T> ctrl(m_bt);
-	ctrl.req_sym_clear_elements();
+	return ctrl.req_const_symmetry();
 }
 
 template<size_t N, typename T, typename Traits>

@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_EVAL_ADD_H
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_EVAL_ADD_H
 
+#include "../expr/eval_i.h"
 #include "core_add.h"
 
 namespace libtensor {
@@ -16,7 +17,7 @@ namespace labeled_btensor_expr {
 	\ingroup libtensor_btensor_expr
  **/
 template<size_t N, typename T, typename ExprL, typename ExprR>
-class eval_add {
+class eval_add : public eval_i<N, T> {
 public:
 	static const char *k_clazz; //!< Class name
 
@@ -49,6 +50,8 @@ private:
 public:
 	eval_add(expression_t &expr, const letter_expr<N> &label)
 		throw(exception);
+
+	virtual ~eval_add() { }
 
 	//!	\name Evaluation
 	//@{

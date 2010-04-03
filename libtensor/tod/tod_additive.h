@@ -23,7 +23,7 @@ class tod_additive {
 public:
 	/**	\brief Prefetches the operands
 	 **/
-	virtual void prefetch() throw(exception) = 0;
+//	virtual void prefetch() throw(exception) = 0;
 
 	/**	\brief Performs the operation and adds its result to a %tensor
 			with a coefficient

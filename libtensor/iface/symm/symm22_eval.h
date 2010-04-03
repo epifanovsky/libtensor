@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_SYMM22_EVAL_H
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_SYMM22_EVAL_H
 
+#include "../expr/eval_i.h"
 #include "../expr/anon_eval.h"
 
 namespace libtensor {
@@ -16,7 +17,7 @@ namespace labeled_btensor_expr {
 	\ingroup libtensor_btensor_expr
  **/
 template<size_t N, bool Sym, typename T, typename SubCore>
-class symm22_eval {
+class symm22_eval : public eval_i<N, T> {
 public:
 	static const char *k_clazz; //!< Class name
 
@@ -60,6 +61,10 @@ public:
 	symm22_eval(
 		expression_t &expr, const letter_expr<N> &label)
 		throw(exception);
+
+	/**	\brief Virtual destructor
+	 **/
+	virtual ~symm22_eval() { }
 
 	/**	\brief Evaluates sub-expressions into temporary tensors
 	 **/
