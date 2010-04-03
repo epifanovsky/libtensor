@@ -30,7 +30,7 @@ public:
 	static const char *k_clazz; //!< Class name
 
 public:
-	typedef so_permute<N, M, T> operation_t;
+	typedef so_permute<N, T> operation_t;
 	typedef se_perm<N, T> element_t;
 	typedef symmetry_operation_params<operation_t>
 		symmetry_operation_params_t;

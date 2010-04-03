@@ -96,4 +96,6 @@ public:
 
 } // namespace libtensor
 
+#include "so_permute_handlers.h"
+
 #endif // LIBTENSOR_SO_PERMUTE_H
