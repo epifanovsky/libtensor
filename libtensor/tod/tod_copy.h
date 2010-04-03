@@ -115,7 +115,7 @@ private:
 		const permutation<N> &perm);
 
 	template<typename Base>
-	void do_perform_copy(tensor_i<N, double> &t, double c);
+	void do_perform(tensor_i<N, double> &t, double c);
 
 	template<typename Base>
 	void build_loop(typename Base::list_t &loop, const dimensions<N> &dimsa,
@@ -152,7 +152,7 @@ void tod_copy<N>::perform(tensor_i<N, double> &tb) throw(exception) {
 			"tb");
 	}
 
-	do_perform_copy<loop_list_copy>(tb, 1.0);
+	do_perform<loop_list_copy>(tb, 1.0);
 }
 
 
@@ -167,7 +167,7 @@ void tod_copy<N>::perform(tensor_i<N, double> &tb, double c) throw(exception) {
 	}
 	if(c == 0) return;
 
-	do_perform_copy<loop_list_add>(tb, c);
+	do_perform<loop_list_add>(tb, c);
 }
 
 
@@ -182,7 +182,7 @@ dimensions<N> tod_copy<N>::mk_dimsb(tensor_i<N, double> &ta,
 
 
 template<size_t N> template<typename Base>
-void tod_copy<N>::do_perform_copy(tensor_i<N, double> &tb, double c) {
+void tod_copy<N>::do_perform(tensor_i<N, double> &tb, double c) {
 
 	typedef typename Base::list_t list_t;
 	typedef typename Base::registers registers_t;

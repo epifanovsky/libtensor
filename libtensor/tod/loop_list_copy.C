@@ -1,7 +1,7 @@
 #include "../defs.h"
-#include "../exception.h"
 #include "../linalg.h"
 #include "loop_list_copy.h"
+#include "overflow.h"
 
 namespace libtensor {
 
