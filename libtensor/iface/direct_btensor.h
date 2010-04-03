@@ -8,6 +8,9 @@
 #include "btensor_i.h"
 #include "labeled_btensor.h"
 #include "labeled_btensor_expr.h"
+#include "expr/expr.h"
+#include "expr/eval_i.h"
+#include "expr/evalfunctor.h"
 
 namespace libtensor {
 
@@ -24,6 +27,18 @@ struct direct_btensor_traits {
 template<size_t N, typename T = double,
 	typename Traits = direct_btensor_traits<T> >
 class direct_btensor : public btensor_i<N, T> {
+private:
+	typedef struct {
+		labeled_btensor_expr::expr_i<N, T> *m_pexpr;
+		labeled_btensor_expr::eval_i<N, T> *m_peval;
+		labeled_btensor_expr::evalfunctor_i<N, T> *m_pfunc;
+	} ptrs_t;
+
+private:
+	letter_expr<N> m_label;
+	ptrs_t m_ptrs;
+	direct_block_tensor<N, T, typename Traits::allocator_t> m_bt;
+
 public:
 	//!	\name Construction and destruction
 	//@{
@@ -32,10 +47,9 @@ public:
 			expression
 		\tparam Expr Tensor expression type.
 	 **/
-	template<typename Expr>
+	template<typename Core>
 	direct_btensor(const letter_expr<N> &label,
-		const labeled_btensor_expr::expr<N, T, Expr> &expr)
-		throw(exception);
+		const labeled_btensor_expr::expr<N, T, Core> &expr);
 
 	/**	\brief Virtual destructor
 	 **/
@@ -81,17 +95,53 @@ protected:
 	virtual void on_req_zero_block(const index<N> &idx) throw(exception);
 	virtual void on_req_zero_all_blocks() throw(exception);
 	//@}
+
+private:
+	template<typename Core>
+	static ptrs_t mk_func(const letter_expr<N> &label,
+		const labeled_btensor_expr::expr<N, T, Core> &expr);
 };
 
-template<size_t N, typename T, typename Traits>
-template<typename Expr>
-direct_btensor<N, T, Traits>::direct_btensor(
-	const letter_expr<N> &label,
-	const labeled_btensor_expr::expr<N, T, Expr> &expr) throw(exception) {
+
+template<size_t N, typename T, typename Traits> template<typename Core>
+direct_btensor<N, T, Traits>::direct_btensor(const letter_expr<N> &label,
+	const labeled_btensor_expr::expr<N, T, Core> &expr) :
+	m_label(label), m_ptrs(mk_func(m_label, expr)),
+	m_bt(m_ptrs.m_pfunc->get_bto()) {
+
 }
+
 
 template<size_t N, typename T, typename Traits>
 direct_btensor<N, T, Traits>::~direct_btensor() {
+	delete m_ptrs.m_pfunc;
+	delete m_ptrs.m_peval;
+	delete m_ptrs.m_pexpr;
+}
+
+template<size_t N, typename T, typename Traits> template<typename Core>
+typename direct_btensor<N, T, Traits>::ptrs_t
+direct_btensor<N, T, Traits>::mk_func(const letter_expr<N> &label,
+	const labeled_btensor_expr::expr<N, T, Core> &expr) {
+
+	typedef labeled_btensor_expr::expr<N, T, Core> expression_t;
+	typedef typename expression_t::eval_container_t eval_container_t;
+
+	const size_t narg_tensor = eval_container_t::template narg<
+		labeled_btensor_expr::tensor_tag>::k_narg;
+	const size_t narg_oper = eval_container_t::template narg<
+		labeled_btensor_expr::oper_tag>::k_narg;
+
+	expression_t *pexpr = new expression_t(expr);
+	eval_container_t *peval = new eval_container_t(*pexpr, label);
+	peval->prepare();
+
+	ptrs_t ptrs;
+	ptrs.m_pexpr = pexpr;
+	ptrs.m_peval = peval;
+	ptrs.m_pfunc = new labeled_btensor_expr::evalfunctor<N, T, Core,
+		narg_tensor, narg_oper>(*pexpr, *peval);
+	return ptrs;
 }
 
 template<size_t N, typename T, typename Traits>

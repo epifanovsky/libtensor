@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_EVAL_IDENT_H
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_EVAL_IDENT_H
 
+#include "../expr/eval_i.h"
 #include "core_ident.h"
 
 namespace libtensor {
@@ -15,7 +16,7 @@ namespace labeled_btensor_expr {
 	\ingroup libtensor_btensor_expr
  **/
 template<size_t N, typename T, bool Assignable>
-class eval_ident {
+class eval_ident : public eval_i<N, T> {
 public:
 	static const char *k_clazz; //!< Class name
 
@@ -39,6 +40,8 @@ private:
 public:
 	eval_ident(expression_t &expr, const letter_expr<N> &label)
 		throw(exception);
+
+	virtual ~eval_ident() { }
 
 	//!	\name Evaluation
 	//@{
