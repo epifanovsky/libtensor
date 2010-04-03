@@ -60,7 +60,7 @@ public:
 
 	/**	\brief Virtual destructor
 	 **/
-	virtual ~btod_copy();
+	virtual ~btod_copy() { }
 	//@}
 
 	//!	\name Implementation of
@@ -128,12 +128,6 @@ btod_copy<N>::btod_copy(block_tensor_i<N, double> &bta, const permutation<N> &p,
 	symmetry<N, double> sym1(m_bta.get_bis());
 	so_copy<N, double>(ctrla.req_const_symmetry()).perform(sym1);
 	so_permute<N, double>(sym1, m_perm).perform(m_sym);
-}
-
-
-template<size_t N>
-btod_copy<N>::~btod_copy() {
-
 }
 
 
@@ -261,11 +255,29 @@ void btod_copy<N>::do_perform_nozero(block_tensor_i<N, double> &btb,
 			tensor_i<N, double> &blkb = ctrlb.req_block(ib);
 
 			const transf<N, double> &trb = ob.get_transf(ib);
+
 			tod_copy<N>(blkb_can, trb.get_perm(), trb.get_coeff()).
 				perform(blkb);
 
 			ctrlb.ret_block(ib);
 			ctrlb.ret_block(cib.get_index());
+			continue;
+		}
+
+		if(zerob) {
+			tensor_i<N, double> &blka_can =
+				ctrla.req_block(cia.get_index());
+			tensor_i<N, double> &blkb = ctrlb.req_block(ib);
+
+			const transf<N, double> &tra = oa.get_transf(ia);
+
+			permutation<N> pa(tra.get_perm());
+			pa.permute(m_perm);
+			double ca = tra.get_coeff() * m_c;
+			tod_copy<N>(blka_can, pa, ca * c).perform(blkb);
+
+			ctrlb.ret_block(ib);
+			ctrla.ret_block(cia.get_index());
 			continue;
 		}
 
@@ -278,8 +290,11 @@ void btod_copy<N>::do_perform_nozero(block_tensor_i<N, double> &btb,
 		const transf<N, double> &tra = oa.get_transf(ia);
 		const transf<N, double> &trb = ob.get_transf(ib);
 
-		tod_add<N> oper(blkb_can, trb.get_perm(), trb.get_coeff() * c);
-		oper.add_op(blka_can, tra.get_perm(), tra.get_coeff());
+		permutation<N> pa(tra.get_perm());
+		pa.permute(m_perm);
+		double ca = tra.get_coeff() * m_c;
+		tod_add<N> oper(blkb_can, trb.get_perm(), trb.get_coeff());
+		oper.add_op(blka_can, pa, ca * c);
 		oper.perform(blkb);
 
 		ctrlb.ret_block(ib);
@@ -316,9 +331,15 @@ void btod_copy<N>::do_perform_nozero(block_tensor_i<N, double> &btb,
 		tensor_i<N, double> &blkb = ctrlb.req_block(ib);
 
 		const transf<N, double> &tra = oa.get_transf(ia);
+		permutation<N> pa(tra.get_perm());
+		pa.permute(m_perm);
 
-		tod_copy<N>(blka_can, tra.get_perm(), tra.get_coeff()).
-			perform(blkb, c);
+		double ca = tra.get_coeff() * m_c;
+		if(zerob) {
+			tod_copy<N>(blka_can, pa, ca * c).perform(blkb);
+		} else {
+			tod_copy<N>(blka_can, pa, ca).perform(blkb, c);
+		}
 
 		ctrlb.ret_block(ib);
 		ctrla.ret_block(cia.get_index());
@@ -369,11 +390,7 @@ void btod_copy<N>::do_perform_zero(block_tensor_i<N, double> &btb,
 		tensor_i<N, double> &blka = ctrla.req_block(bia);
 		tensor_i<N, double> &blkb = ctrlb.req_block(bib);
 
-		if(zerob) {
-			tod_copy<N>(blka, permb, cb * c).perform(blkb);
-		} else {
-			tod_copy<N>(blka, permb, cb).perform(blkb, c);
-		}
+		tod_copy<N>(blka, permb, cb * c).perform(blkb);
 
 		ctrla.ret_block(bia);
 		ctrlb.ret_block(bib);

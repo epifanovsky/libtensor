@@ -23,10 +23,22 @@ private:
 	void test_sym_1() throw(libtest::test_exception);
 	void test_sym_2() throw(libtest::test_exception);
 	void test_sym_3() throw(libtest::test_exception);
+	void test_sym_4() throw(libtest::test_exception);
 	void test_add_nosym_1() throw(libtest::test_exception);
-	void test_2() throw(libtest::test_exception);
-	void test_3() throw(libtest::test_exception);
-	void test_4() throw(libtest::test_exception);
+	void test_add_nosym_2() throw(libtest::test_exception);
+	void test_add_nosym_3() throw(libtest::test_exception);
+	void test_add_nosym_4() throw(libtest::test_exception);
+	void test_add_eqsym_1() throw(libtest::test_exception);
+	void test_add_eqsym_2() throw(libtest::test_exception);
+	void test_add_eqsym_3() throw(libtest::test_exception);
+	void test_add_eqsym_4() throw(libtest::test_exception);
+	void test_add_eqsym_5() throw(libtest::test_exception);
+	void test_add_nesym_1() throw(libtest::test_exception);
+	void test_add_nesym_2() throw(libtest::test_exception);
+	void test_add_nesym_3() throw(libtest::test_exception);
+	void test_add_nesym_3_sp() throw(libtest::test_exception);
+	void test_add_nesym_4() throw(libtest::test_exception);
+
 	void test_dir_1() throw(libtest::test_exception);
 	void test_dir_2() throw(libtest::test_exception);
 	void test_dir_3() throw(libtest::test_exception);
