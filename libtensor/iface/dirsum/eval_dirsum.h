@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_EVAL_DIRSUM_H
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_EVAL_DIRSUM_H
 
+#include "../expr/eval_i.h"
 #include "dirsum_eval_functor.h"
 #include "dirsum_subexpr_labels.h"
 
@@ -76,6 +77,10 @@ public:
 	 **/
 	eval_dirsum(expression_t &expr, const letter_expr<k_orderc> &label)
 		throw(exception);
+
+	/**	\brief Virtual destructor
+	 **/
+	virtual ~eval_dirsum() { }
 
 	/**	\brief Evaluates sub-expressions into temporary tensors
 	 **/

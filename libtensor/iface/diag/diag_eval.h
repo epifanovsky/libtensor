@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_DIAG_EVAL_H
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_DIAG_EVAL_H
 
+#include "../expr/eval_i.h"
 #include "diag_eval_functor.h"
 #include "diag_subexpr_label_builder.h"
 
@@ -16,7 +17,7 @@ namespace labeled_btensor_expr {
 	\ingroup libtensor_btensor_expr
  **/
 template<size_t N, size_t M, typename T, typename E1>
-class diag_eval {
+class diag_eval : public eval_i<N - M + 1, T> {
 public:
 	static const char *k_clazz; //!< Class name
 
@@ -60,6 +61,10 @@ public:
 	 **/
 	diag_eval(expression_t &expr, const letter_expr<N - M + 1> &label)
 		throw(exception);
+
+	/**	\brief Virtual destructor
+	 **/
+	virtual ~diag_eval() { }
 
 	/**	\brief Evaluates sub-expressions into temporary tensors
 	 **/

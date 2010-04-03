@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_EVAL_CONTRACT_H
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_EVAL_CONTRACT_H
 
+#include "../expr/eval_i.h"
 #include "contract_eval_functor.h"
 #include "contract_subexpr_labels.h"
 
@@ -18,7 +19,7 @@ namespace labeled_btensor_expr {
 	\ingroup libtensor_btensor_expr
  **/
 template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2>
-class eval_contract {
+class eval_contract : public eval_i<N + M, T> {
 public:
 	static const char *k_clazz; //!< Class name
 	static const size_t k_ordera = N + K; //!< Order of the first %tensor
@@ -78,6 +79,10 @@ public:
 	 **/
 	eval_contract(expression_t &expr, const letter_expr<k_orderc> &label)
 		throw(exception);
+
+	/**	\brief Virtual destructor
+	 **/
+	virtual ~eval_contract() { }
 
 	/**	\brief Evaluates sub-expressions into temporary tensors
 	 **/
