@@ -32,6 +32,7 @@ public:
 	orbit_list<N, T> *m_orblst; //!< Orbit list
 	bool m_orblst_dirty; //!< Whether the orbit list needs to be updated
 	block_map<N, T, Alloc> m_map; //!< Block map
+	block_map<N, T, Alloc> m_aux_map; //!< Auxiliary block map
 
 public:
 	//!	\name Construction and destruction
@@ -54,6 +55,9 @@ protected:
 	virtual tensor_i<N, T> &on_req_block(const index<N> &idx)
 		throw(exception);
 	virtual void on_ret_block(const index<N> &idx) throw(exception);
+	virtual tensor_i<N, T> &on_req_aux_block(const index<N> &idx)
+		throw(exception);
+	virtual void on_ret_aux_block(const index<N> &idx) throw(exception);
 	virtual bool on_req_is_zero_block(const index<N> &idx) throw(exception);
 	virtual void on_req_zero_block(const index<N> &idx) throw(exception);
 	virtual void on_req_zero_all_blocks() throw(exception);
@@ -159,6 +163,36 @@ template<size_t N, typename T, typename Alloc>
 void block_tensor<N, T, Alloc>::on_ret_block(const index<N> &idx)
 	throw(exception) {
 
+}
+
+
+template<size_t N, typename T, typename Alloc>
+tensor_i<N, T> &block_tensor<N, T, Alloc>::on_req_aux_block(
+	const index<N> &idx) throw(exception) {
+
+	static const char *method = "on_req_aux_block(const index<N>&)";
+
+	update_orblst();
+	size_t absidx = m_bidims.abs_index(idx);
+	if(!m_orblst->contains(absidx)) {
+		throw symmetry_violation(g_ns, k_clazz, method,
+			__FILE__, __LINE__,
+			"Index does not correspond to a canonical block.");
+	}
+	if(!m_aux_map.contains(absidx)) {
+		dimensions<N> blkdims = m_bis.get_block_dims(idx);
+		m_aux_map.create(absidx, blkdims);
+	}
+	return m_aux_map.get(absidx);
+}
+
+
+template<size_t N, typename T, typename Alloc>
+void block_tensor<N, T, Alloc>::on_ret_aux_block(const index<N> &idx)
+	throw(exception) {
+
+	size_t absidx = m_bidims.abs_index(idx);
+	m_map.remove(absidx);
 }
 
 

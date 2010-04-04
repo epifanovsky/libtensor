@@ -95,6 +95,18 @@ protected:
 	 **/
 	virtual void on_ret_block(const index<N> &idx) throw(exception) = 0;
 
+	/**	\brief Invoked when an auxiliary canonical block is requested
+		\param idx Block %index.
+		\return Reference to the requested block.
+	 **/
+	virtual tensor_i<N, T> &on_req_aux_block(const index<N> &idx)
+		throw(exception) = 0;
+
+	/**	\brief Invoked to return an auxiliary canonical block
+		\param idx Block %index.
+	 **/
+	virtual void on_ret_aux_block(const index<N> &idx) throw(exception) = 0;
+
 	/**	\brief Invoked to check whether a canonical block is zero
 		\param idx Block %index.
 	 **/
