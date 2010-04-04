@@ -28,6 +28,7 @@ private:
 
 private:
 	block_tensor<N, element_t, allocator_t> m_bt;
+	block_tensor_ctrl<N, element_t> m_ctrl;
 
 public:
 	//!	\name Construction and destruction
@@ -37,20 +38,20 @@ public:
 		\param bi Information about blocks
 	 **/
 	btensor_base(const bispace<N> &bis) :
-		 m_bt(bis.get_bis()) { }
+		 m_bt(bis.get_bis()), m_ctrl(m_bt) { }
 
 	/**	\brief Constructs a block %tensor using a block %index space
 		\param bis Block %index space
 	 **/
 	btensor_base(const block_index_space<N> &bis) :
-		m_bt(bis) { }
+		m_bt(bis), m_ctrl(m_bt) { }
 
 	/**	\brief Constructs a block %tensor using information about
 			blocks from another block %tensor
 		\param bt Another block %tensor
 	 **/
 	btensor_base(const btensor_i<N, element_t> &bt) :
-		m_bt(bt) { }
+		m_bt(bt), m_ctrl(m_bt) { }
 
 	/**	\brief Virtual destructor
 	 **/
@@ -76,6 +77,9 @@ protected:
 	virtual tensor_i<N, T> &on_req_block(const index<N> &idx)
 		throw(exception);
 	virtual void on_ret_block(const index<N> &idx) throw(exception);
+	virtual tensor_i<N, T> &on_req_aux_block(const index<N> &idx)
+		throw(exception);
+	virtual void on_ret_aux_block(const index<N> &idx) throw(exception);
 	virtual bool on_req_is_zero_block(const index<N> &idx) throw(exception);
 	virtual void on_req_zero_block(const index<N> &idx) throw(exception);
 	virtual void on_req_zero_all_blocks() throw(exception);
@@ -150,72 +154,82 @@ template<size_t N, typename T, typename Traits>
 const symmetry<N, T> &btensor_base<N, T, Traits>::on_req_symmetry()
 	throw(exception) {
 
-	block_tensor_ctrl<N, T> ctrl(m_bt);
-	return ctrl.req_symmetry();
+	return m_ctrl.req_symmetry();
 }
 
 template<size_t N, typename T, typename Traits>
 void btensor_base<N, T, Traits>::on_req_sym_add_element(
 	const symmetry_element_i<N, T> &elem) throw(exception) {
 
-	block_tensor_ctrl<N, T> ctrl(m_bt);
-	ctrl.req_sym_add_element(elem);
+	m_ctrl.req_sym_add_element(elem);
 }
 
 template<size_t N, typename T, typename Traits>
 void btensor_base<N, T, Traits>::on_req_sym_remove_element(
 	const symmetry_element_i<N, T> &elem) throw(exception) {
 
-	block_tensor_ctrl<N, T> ctrl(m_bt);
-	ctrl.req_sym_remove_element(elem);
+	m_ctrl.req_sym_remove_element(elem);
 }
 
 template<size_t N, typename T, typename Traits>
 bool btensor_base<N, T, Traits>::on_req_sym_contains_element(
 	const symmetry_element_i<N, T> &elem) throw(exception) {
 
-	block_tensor_ctrl<N, T> ctrl(m_bt);
-	return ctrl.req_sym_contains_element(elem);
+	return m_ctrl.req_sym_contains_element(elem);
 }
 
 template<size_t N, typename T, typename Traits>
 void btensor_base<N, T, Traits>::on_req_sym_clear_elements() throw(exception) {
-	block_tensor_ctrl<N, T> ctrl(m_bt);
-	ctrl.req_sym_clear_elements();
+
+	m_ctrl.req_sym_clear_elements();
 }
 
 template<size_t N, typename T, typename Traits>
 tensor_i<N, T> &btensor_base<N, T, Traits>::on_req_block(const index<N> &idx)
 	throw(exception) {
-	block_tensor_ctrl<N, T> ctrl(m_bt);
-	return ctrl.req_block(idx);
+
+	return m_ctrl.req_block(idx);
 }
 
 template<size_t N, typename T, typename Traits>
 void btensor_base<N, T, Traits>::on_ret_block(const index<N> &idx)
 	throw(exception) {
-	block_tensor_ctrl<N, T> ctrl(m_bt);
-	ctrl.ret_block(idx);
+
+	m_ctrl.ret_block(idx);
+}
+
+template<size_t N, typename T, typename Traits>
+tensor_i<N, T> &btensor_base<N, T, Traits>::on_req_aux_block(
+	const index<N> &idx) throw(exception) {
+
+	return m_ctrl.req_aux_block(idx);
+}
+
+template<size_t N, typename T, typename Traits>
+void btensor_base<N, T, Traits>::on_ret_aux_block(const index<N> &idx)
+	throw(exception) {
+
+	m_ctrl.ret_aux_block(idx);
 }
 
 template<size_t N, typename T, typename Traits>
 bool btensor_base<N, T, Traits>::on_req_is_zero_block(const index<N> &idx)
 	throw(exception) {
-	block_tensor_ctrl<N, T> ctrl(m_bt);
-	return ctrl.req_is_zero_block(idx);
+
+	return m_ctrl.req_is_zero_block(idx);
 }
 
 template<size_t N, typename T, typename Traits>
 void btensor_base<N, T, Traits>::on_req_zero_block(const index<N> &idx)
 	throw(exception) {
-	block_tensor_ctrl<N, T> ctrl(m_bt);
-	ctrl.req_zero_block(idx);
+
+	m_ctrl.req_zero_block(idx);
 }
 
 template<size_t N, typename T, typename Traits>
 void btensor_base<N, T, Traits>::on_req_zero_all_blocks() throw(exception) {
-	block_tensor_ctrl<N, T> ctrl(m_bt);
-	ctrl.req_zero_all_blocks();
+
+	m_ctrl.req_zero_all_blocks();
 }
 
 template<size_t N, typename T, typename Traits>

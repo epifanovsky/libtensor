@@ -56,6 +56,9 @@ protected:
 	virtual tensor_i<N, T> &on_req_block(const index<N> &idx)
 		throw(exception);
 	virtual void on_ret_block(const index<N> &idx) throw(exception);
+	virtual tensor_i<N, T> &on_req_aux_block(const index<N> &idx)
+		throw(exception);
+	virtual void on_ret_aux_block(const index<N> &idx) throw(exception);
 
 	//@}
 
@@ -136,6 +139,28 @@ void direct_block_tensor<N, T, Alloc>::on_ret_block(const index<N> &idx)
 			it->second--;
 		}
 	}
+}
+
+
+template<size_t N, typename T, typename Alloc>
+tensor_i<N, T> &direct_block_tensor<N, T, Alloc>::on_req_aux_block(
+	const index<N> &idx) throw(exception) {
+
+	static const char *method = "on_req_aux_block(const index<N>&)";
+
+	throw immut_violation(g_ns, k_clazz, method, __FILE__, __LINE__,
+		"invalid_req");
+}
+
+
+template<size_t N, typename T, typename Alloc>
+void direct_block_tensor<N, T, Alloc>::on_ret_aux_block(const index<N> &idx)
+	throw(exception) {
+
+	static const char *method = "on_ret_aux_block(const index<N>&)";
+
+	throw immut_violation(g_ns, k_clazz, method, __FILE__, __LINE__,
+		"invalid_req");
 }
 
 

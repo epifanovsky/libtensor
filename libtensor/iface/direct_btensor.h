@@ -89,6 +89,9 @@ protected:
 	virtual tensor_i<N, T> &on_req_block(const index<N> &idx)
 		throw(exception);
 	virtual void on_ret_block(const index<N> &idx) throw(exception);
+	virtual tensor_i<N, T> &on_req_aux_block(const index<N> &idx)
+		throw(exception);
+	virtual void on_ret_aux_block(const index<N> &idx) throw(exception);
 	virtual bool on_req_is_zero_block(const index<N> &idx) throw(exception);
 	virtual void on_req_zero_block(const index<N> &idx) throw(exception);
 	virtual void on_req_zero_all_blocks() throw(exception);
@@ -214,6 +217,22 @@ void direct_btensor<N, T, Traits>::on_ret_block(const index<N> &idx)
 	throw(exception) {
 
 	m_ctrl.ret_block(idx);
+}
+
+
+template<size_t N, typename T, typename Traits>
+tensor_i<N, T> &direct_btensor<N, T, Traits>::on_req_aux_block(
+	const index<N> &idx) throw(exception) {
+
+	return m_ctrl.req_aux_block(idx);
+}
+
+
+template<size_t N, typename T, typename Traits>
+void direct_btensor<N, T, Traits>::on_ret_aux_block(const index<N> &idx)
+	throw(exception) {
+
+	m_ctrl.ret_aux_block(idx);
 }
 
 
