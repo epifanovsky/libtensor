@@ -28,6 +28,7 @@
 #include "btod_set_diag_test.h"
 #include "btod_set_elem_test.h"
 #include "btod_sum_test.h"
+#include "btod_trace_test.h"
 #include "contract_test.h"
 #include "contraction2_test.h"
 #include "contraction2_list_builder_test.h"
@@ -119,6 +120,7 @@ namespace libtensor {
 	\li libtensor::btod_set_diag_test
 	\li libtensor::btod_set_elem_test
 	\li libtensor::btod_sum_test
+	\li libtensor::btod_trace_test
 	\li libtensor::contract_test
 	\li libtensor::contraction2_test
 	\li libtensor::contraction2_list_builder_test
@@ -204,6 +206,7 @@ private:
 	unit_test_factory<btod_set_diag_test> m_utf_btod_set_diag;
 	unit_test_factory<btod_set_elem_test> m_utf_btod_set_elem;
 	unit_test_factory<btod_sum_test> m_utf_btod_sum;
+	unit_test_factory<btod_trace_test> m_utf_btod_trace;
 	unit_test_factory<contract_test> m_utf_contract;
 	unit_test_factory<contraction2_test> m_utf_contraction2;
 	unit_test_factory<contraction2_list_builder_test>

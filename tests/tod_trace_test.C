@@ -36,13 +36,13 @@ void tod_trace_test::perform() throw(libtest::test_exception) {
 	test_5(1, 3, 1);
 	test_5(3, 1, 1);
 	test_5(3, 7, 5);
-	test_5(16, 16, 16);
+	test_5(8, 8, 8);
 	test_6(1, 1, 1);
 	test_6(1, 1, 3);
 	test_6(1, 3, 1);
 	test_6(3, 1, 1);
 	test_6(3, 7, 5);
-	test_6(16, 16, 16);
+	test_6(8, 8, 8);
 }
 
 
