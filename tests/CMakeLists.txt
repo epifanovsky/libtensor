@@ -23,6 +23,7 @@ set(SRC
 	btod_random_test.C
 	btod_read_test.C
 	btod_scale_test.C
+	btod_select_test.C
 	btod_set_test.C
 	btod_set_diag_test.C
 	btod_set_elem_test.C
@@ -77,6 +78,7 @@ set(SRC
 	tod_random_test.C
 	tod_scale_test.C
 	tod_scatter_test.C
+	tod_select_test.C
 	tod_set_test.C
 	tod_set_diag_test.C
 	tod_set_elem_test.C

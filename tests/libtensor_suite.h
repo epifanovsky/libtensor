@@ -24,6 +24,7 @@
 #include "btod_random_test.h"
 #include "btod_read_test.h"
 #include "btod_scale_test.h"
+#include "btod_select_test.h"
 #include "btod_set_test.h"
 #include "btod_set_diag_test.h"
 #include "btod_set_elem_test.h"
@@ -78,6 +79,7 @@
 #include "tod_random_test.h"
 #include "tod_scale_test.h"
 #include "tod_scatter_test.h"
+#include "tod_select_test.h"
 #include "tod_set_test.h"
 #include "tod_set_diag_test.h"
 #include "tod_set_elem_test.h"
@@ -117,6 +119,7 @@ namespace libtensor {
 	\li libtensor::btod_random_test
 	\li libtensor::btod_read_test
 	\li libtensor::btod_scale_test
+	\li libtensor::btod_select_test
 	\li libtensor::btod_set_test
 	\li libtensor::btod_set_diag_test
 	\li libtensor::btod_set_elem_test
@@ -171,6 +174,7 @@ namespace libtensor {
 	\li libtensor::tod_random_test
 	\li libtensor::tod_scale_test
 	\li libtensor::tod_scatter_test
+	\li libtensor::tod_select_test
 	\li libtensor::tod_set_test
 	\li libtensor::tod_set_diag_test
 	\li libtensor::tod_set_elem_test
@@ -204,6 +208,7 @@ private:
 	unit_test_factory<btod_random_test> m_utf_btod_random;
 	unit_test_factory<btod_read_test> m_utf_btod_read;
 	unit_test_factory<btod_scale_test> m_utf_btod_scale;
+	unit_test_factory<btod_select_test> m_utf_btod_select;
 	unit_test_factory<btod_set_test> m_utf_btod_set;
 	unit_test_factory<btod_set_diag_test> m_utf_btod_set_diag;
 	unit_test_factory<btod_set_elem_test> m_utf_btod_set_elem;
@@ -260,6 +265,7 @@ private:
 	unit_test_factory<tod_random_test> m_utf_tod_random;
 	unit_test_factory<tod_scale_test> m_utf_tod_scale;
 	unit_test_factory<tod_scatter_test> m_utf_tod_scatter;
+	unit_test_factory<tod_select_test> m_utf_tod_select;
 	unit_test_factory<tod_set_test> m_utf_tod_set;
 	unit_test_factory<tod_set_diag_test> m_utf_tod_set_diag;
 	unit_test_factory<tod_set_elem_test> m_utf_tod_set_elem;
