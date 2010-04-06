@@ -17,7 +17,7 @@ private:
 		const letter *m_let[2 * N];
 	public:
 		letter_array(const letter_expr<N> &label1,
-			const letter_expr<N> &label1);
+			const letter_expr<N> &label2);
 		const letter *at(size_t i) const { return m_let[i]; }
 	};
 	template<size_t L>

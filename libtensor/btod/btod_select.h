@@ -113,9 +113,15 @@ void btod_select<N,ComparePolicy>::perform(block_tensor_i<N, double> &bt,
 				if ( m_cmp(el.value,ibt->value) ) break;
 				ibt++;
 			}
-			li.insert(ibt, elem_t(blidx,el.idx,el.value));
-			if ( li.size() > n ) li.pop_back();
-			tlist.pop_front();
+			if ( li.size() == n && ibt == li.end() ) {
+				tlist.clear();
+			}
+			else {
+				ibt=li.insert(ibt, elem_t(blidx,el.idx,el.value));
+				if ( li.size() > n ) li.pop_back();
+				tlist.pop_front();
+				ibt++;
+			}
 		}
 
 		ctrl.ret_block(blidx);
@@ -125,4 +131,4 @@ void btod_select<N,ComparePolicy>::perform(block_tensor_i<N, double> &bt,
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_BTOD_SET_ELEM_H
+#endif // LIBTENSOR_BTOD_SELECT_H

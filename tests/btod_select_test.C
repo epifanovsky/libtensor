@@ -51,7 +51,7 @@ void btod_select_test::test_1() throw(libtest::test_exception) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
 	}
 
-	typename tod_select<2>::list_t::iterator it = tlist.begin();
+	tod_select<2>::list_t::iterator it = tlist.begin();
 	btod_select<2>::list_t::iterator ibt = btlist.begin();
 	while (it != tlist.end() && ibt != btlist.end()) {
 		if ( it->value != ibt->value ) {
