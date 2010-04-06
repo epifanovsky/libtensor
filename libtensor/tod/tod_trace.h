@@ -53,7 +53,7 @@ public:
 
 	/**	\brief Computes the trace
 	 **/
-	double compute();
+	double calculate();
 
 private:
 	/**	\brief Checks that the %dimensions of the input %tensor are
@@ -84,7 +84,7 @@ tod_trace<N>::tod_trace(tensor_i<k_ordera, double> &t,
 
 
 template<size_t N>
-double tod_trace<N>::compute() {
+double tod_trace<N>::calculate() {
 
 	typedef typename loop_list_add::registers registers_t;
 	typedef typename loop_list_add::node node_t;

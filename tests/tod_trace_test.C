@@ -79,7 +79,7 @@ void tod_trace_test::test_1(size_t ni) throw(libtest::test_exception) {
 
 	tca.ret_dataptr(pa); pa = 0;
 
-	double d = tod_trace<1>(ta).compute();
+	double d = tod_trace<1>(ta).calculate();
 
 	if(fabs(d - d_ref) > fabs(d_ref * 1e-15)) {
 		std::ostringstream ss;
@@ -129,7 +129,7 @@ void tod_trace_test::test_2(size_t ni) throw(libtest::test_exception) {
 	tca.ret_dataptr(pa); pa = 0;
 
 	permutation<2> perm; perm.permute(0, 1);
-	double d = tod_trace<1>(ta, perm).compute();
+	double d = tod_trace<1>(ta, perm).calculate();
 
 	if(fabs(d - d_ref) > fabs(d_ref * 1e-15)) {
 		std::ostringstream ss;
@@ -182,7 +182,7 @@ void tod_trace_test::test_3(size_t ni, size_t nj)
 
 	tca.ret_dataptr(pa); pa = 0;
 
-	double d = tod_trace<2>(ta).compute();
+	double d = tod_trace<2>(ta).calculate();
 
 	if(fabs(d - d_ref) > fabs(d_ref * 1e-14)) {
 		std::ostringstream ss;
@@ -236,7 +236,7 @@ void tod_trace_test::test_4(size_t ni, size_t nj)
 	tca.ret_dataptr(pa); pa = 0;
 
 	permutation<4> perm; perm.permute(1, 2);
-	double d = tod_trace<2>(ta, perm).compute();
+	double d = tod_trace<2>(ta, perm).calculate();
 
 	if(fabs(d - d_ref) > fabs(d_ref * 1e-14)) {
 		std::ostringstream ss;
@@ -294,7 +294,7 @@ void tod_trace_test::test_5(size_t ni, size_t nj, size_t nk)
 
 	tca.ret_dataptr(pa); pa = 0;
 
-	double d = tod_trace<3>(ta).compute();
+	double d = tod_trace<3>(ta).calculate();
 
 	if(fabs(d - d_ref) > fabs(d_ref * 1e-14)) {
 		std::ostringstream ss;
@@ -355,7 +355,7 @@ void tod_trace_test::test_6(size_t ni, size_t nj, size_t nk)
 	permutation<6> perm;
 	perm.permute(0, 5).permute(1, 2); // kkjjii -> ijkjik
 	perm.permute(3, 4); // ijkjik -> ijkijk
-	double d = tod_trace<3>(ta, perm).compute();
+	double d = tod_trace<3>(ta, perm).calculate();
 
 	if(fabs(d - d_ref) > fabs(d_ref * 1e-14)) {
 		std::ostringstream ss;

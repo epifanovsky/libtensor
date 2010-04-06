@@ -84,6 +84,7 @@
 #include "tod_sum_test.h"
 #include "tod_symcontract2_test.h"
 #include "tod_trace_test.h"
+#include "trace_test.h"
 #include "version_test.h"
 
 using libtest::unit_test_factory;
@@ -176,6 +177,7 @@ namespace libtensor {
 	\li libtensor::tod_sum_test
 	\li libtensor::tod_symcontract2_test
 	\li libtensor::tod_trace_test
+	\li libtensor::trace_test
 	\li libtensor::version_test
 **/
 class libtensor_suite : public libtest::test_suite {
@@ -264,6 +266,7 @@ private:
 	unit_test_factory<tod_sum_test> m_utf_tod_sum;
 	unit_test_factory<tod_symcontract2_test> m_utf_tod_symcontract2;
 	unit_test_factory<tod_trace_test> m_utf_tod_trace;
+	unit_test_factory<trace_test> m_utf_trace;
 	unit_test_factory<version_test> m_utf_version;
 
 public:

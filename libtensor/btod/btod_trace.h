@@ -39,7 +39,7 @@ public:
 	btod_trace(block_tensor_i<k_ordera, double> &bta,
 		const permutation<k_ordera> &perm);
 
-	double compute();
+	double calculate();
 
 private:
 	btod_trace(const btod_trace<N>&);
@@ -66,9 +66,9 @@ btod_trace<N>::btod_trace(block_tensor_i<k_ordera, double> &bta,
 
 
 template<size_t N>
-double btod_trace<N>::compute() {
+double btod_trace<N>::calculate() {
 
-	static const char *method = "compute()";
+	static const char *method = "calculate()";
 
 	double tr = 0;
 
@@ -106,7 +106,7 @@ double btod_trace<N>::compute() {
 		tra.permute(m_perm);
 
 		if(ba == 0) ba = &ca.req_block(ola.get_index(ioa));
-		double tr0 = tod_trace<N>(*ba, tra.get_perm()).compute();
+		double tr0 = tod_trace<N>(*ba, tra.get_perm()).calculate();
 		tr += tr0 * tra.get_coeff();
 	}
 

@@ -87,6 +87,7 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("tod_sum", m_utf_tod_sum);
 	add_test("tod_symcontract2", m_utf_tod_symcontract2);
 	add_test("tod_trace", m_utf_tod_trace);
+	add_test("trace", m_utf_trace);
 	add_test("version", m_utf_version);
 }
 

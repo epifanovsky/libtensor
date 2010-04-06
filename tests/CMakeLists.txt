@@ -83,6 +83,7 @@ set(SRC
 	tod_sum_test.C
 	tod_symcontract2_test.C
 	tod_trace_test.C
+	trace_test.C
 	version_test.C
 )
 add_executable(libtensor_tests ${SRC})

@@ -47,7 +47,7 @@ void btod_trace_test::test_zero_1() throw(libtest::test_exception) {
 	double d_ref = 0.0;
 
 	//	Invoke the operation
-	double d = btod_trace<1>(bta).compute();
+	double d = btod_trace<1>(bta).calculate();
 
 	//	Compare against the reference
 	if(fabs(d - d_ref) > fabs(d_ref * 1e-15)) {
@@ -92,10 +92,10 @@ void btod_trace_test::test_nosym_1() throw(libtest::test_exception) {
 	//	Prepare the reference
 	tod_btconv<2>(bta).perform(ta);
 	ta.set_immutable();
-	double d_ref = tod_trace<1>(ta).compute();
+	double d_ref = tod_trace<1>(ta).calculate();
 
 	//	Invoke the operation
-	double d = btod_trace<1>(bta).compute();
+	double d = btod_trace<1>(bta).calculate();
 
 	//	Compare against the reference
 	if(fabs(d - d_ref) > fabs(d_ref * 1e-15)) {
@@ -145,10 +145,10 @@ void btod_trace_test::test_nosym_1_sp() throw(libtest::test_exception) {
 	//	Prepare the reference
 	tod_btconv<2>(bta).perform(ta);
 	ta.set_immutable();
-	double d_ref = tod_trace<1>(ta).compute();
+	double d_ref = tod_trace<1>(ta).calculate();
 
 	//	Invoke the operation
-	double d = btod_trace<1>(bta).compute();
+	double d = btod_trace<1>(bta).calculate();
 
 	//	Compare against the reference
 	if(fabs(d - d_ref) > fabs(d_ref * 1e-15)) {
@@ -194,10 +194,10 @@ void btod_trace_test::test_nosym_2() throw(libtest::test_exception) {
 	permutation<2> perm; perm.permute(0, 1);
 	tod_btconv<2>(bta).perform(ta);
 	ta.set_immutable();
-	double d_ref = tod_trace<1>(ta, perm).compute();
+	double d_ref = tod_trace<1>(ta, perm).calculate();
 
 	//	Invoke the operation
-	double d = btod_trace<1>(bta, perm).compute();
+	double d = btod_trace<1>(bta, perm).calculate();
 
 	//	Compare against the reference
 	if(fabs(d - d_ref) > fabs(d_ref * 1e-15)) {
@@ -245,10 +245,10 @@ void btod_trace_test::test_nosym_3() throw(libtest::test_exception) {
 	//	Prepare the reference
 	tod_btconv<4>(bta).perform(ta);
 	ta.set_immutable();
-	double d_ref = tod_trace<2>(ta).compute();
+	double d_ref = tod_trace<2>(ta).calculate();
 
 	//	Invoke the operation
-	double d = btod_trace<2>(bta).compute();
+	double d = btod_trace<2>(bta).calculate();
 
 	//	Compare against the reference
 	if(fabs(d - d_ref) > fabs(d_ref * 1e-15)) {
@@ -297,10 +297,10 @@ void btod_trace_test::test_nosym_4() throw(libtest::test_exception) {
 	permutation<4> perm; perm.permute(1, 2);
 	tod_btconv<4>(bta).perform(ta);
 	ta.set_immutable();
-	double d_ref = tod_trace<2>(ta, perm).compute();
+	double d_ref = tod_trace<2>(ta, perm).calculate();
 
 	//	Invoke the operation
-	double d = btod_trace<2>(bta, perm).compute();
+	double d = btod_trace<2>(bta, perm).calculate();
 
 	//	Compare against the reference
 	if(fabs(d - d_ref) > fabs(d_ref * 1e-15)) {
