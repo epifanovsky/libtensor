@@ -3,6 +3,7 @@
 #include "../blas.h"
 #include "../linalg.h"
 #include "loop_list_add.h"
+#include "overflow.h"
 
 namespace libtensor {
 
@@ -183,12 +184,12 @@ void loop_list_add::fn_daxpby_trp(registers &r) const {
 	if(m_daxpby_trp.m_ni == 0 || m_daxpby_trp.m_nj) return;
 
 #ifdef LIBTENSOR_DEBUG
-	if(r.m_ptra[0] + (m_daxpby_trp.m_n - 1) * m_daxpby_trp.m_stepa >=
+	if(r.m_ptra[0] + (m_daxpby_trp.m_ni - 1) * m_daxpby_trp.m_stepa >=
 		r.m_ptra_end[0]) {
 		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
 			"source");
 	}
-	if(r.m_ptrb[0] + (m_daxpby_trp.m_n - 1) * m_daxpby_trp.m_stepb >=
+	if(r.m_ptrb[0] + (m_daxpby_trp.m_nj - 1) * m_daxpby_trp.m_stepb >=
 		r.m_ptrb_end[0]) {
 		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
 			"destination");
