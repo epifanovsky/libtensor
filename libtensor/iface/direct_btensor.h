@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_DIRECT_BTENSOR_H
 #define LIBTENSOR_DIRECT_BTENSOR_H
 
-#include <libvmm/libvmm.h>
+#include <libvmm/vm_allocator.h>
 #include "../defs.h"
 #include "../exception.h"
 #include "../core/block_tensor_ctrl.h"
@@ -18,7 +18,7 @@ namespace libtensor {
 template<typename T>
 struct direct_btensor_traits {
 	typedef T element_t;
-	typedef libvmm::std_allocator<T> allocator_t;
+	typedef libvmm::vm_allocator<T> allocator_t;
 };
 
 /**	\brief User-friendly direct block %tensor

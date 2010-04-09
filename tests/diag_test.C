@@ -9,9 +9,21 @@ namespace libtensor {
 
 void diag_test::perform() throw(libtest::test_exception) {
 
-	test_t_1();
-	test_t_2();
-	test_t_3();
+	libvmm::vm_allocator<double>::vmm().init(
+		16, 16777216, 16777216, 0.90, 0.05);
+
+	try {
+
+		test_t_1();
+		test_t_2();
+		test_t_3();
+
+	} catch(...) {
+		libvmm::vm_allocator<double>::vmm().shutdown();
+		throw;
+	}
+
+	libvmm::vm_allocator<double>::vmm().shutdown();
 }
 
 

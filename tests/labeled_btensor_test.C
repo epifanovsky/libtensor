@@ -9,17 +9,29 @@ namespace libtensor {
 
 void labeled_btensor_test::perform() throw(libtest::test_exception) {
 
-	test_label();
-	test_expr();
-	test_expr_copy_1();
-	test_expr_copy_2();
-	test_expr_copy_3();
-	test_expr_copy_4();
-	test_expr_add_1();
-	test_expr_add_2();
-	test_expr_add_3();
-	test_expr_add_4();
-	test_expr_add_5();
+	libvmm::vm_allocator<double>::vmm().init(
+		16, 16777216, 16777216, 0.90, 0.05);
+
+	try {
+
+		test_label();
+		test_expr();
+		test_expr_copy_1();
+		test_expr_copy_2();
+		test_expr_copy_3();
+		test_expr_copy_4();
+		test_expr_add_1();
+		test_expr_add_2();
+		test_expr_add_3();
+		test_expr_add_4();
+		test_expr_add_5();
+
+	} catch(...) {
+		libvmm::vm_allocator<double>::vmm().shutdown();
+		throw;
+	}
+
+	libvmm::vm_allocator<double>::vmm().shutdown();
 }
 
 

@@ -11,11 +11,23 @@ namespace libtensor {
 
 void dot_product_test::perform() throw(libtest::test_exception) {
 
-	test_tt_ij_ij_1();
-	test_tt_ij_ji_1();
-	test_te_ij_ij_1();
-	test_te_ij_ji_1();
-	test_et_1();
+	libvmm::vm_allocator<double>::vmm().init(
+		16, 16777216, 16777216, 0.90, 0.05);
+
+	try {
+
+		test_tt_ij_ij_1();
+		test_tt_ij_ji_1();
+		test_te_ij_ij_1();
+		test_te_ij_ji_1();
+		test_et_1();
+
+	} catch(...) {
+		libvmm::vm_allocator<double>::vmm().shutdown();
+		throw;
+	}
+
+	libvmm::vm_allocator<double>::vmm().shutdown();
 }
 
 

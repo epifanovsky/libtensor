@@ -8,13 +8,25 @@ namespace libtensor {
 
 void direct_product_test::perform() throw(libtest::test_exception) {
 
-	test_label_1();
-	test_tt_1();
-	test_tt_2();
-	test_te_1();
-	test_et_1();
-	test_ee_1();
-	test_ee_2();
+	libvmm::vm_allocator<double>::vmm().init(
+		16, 16777216, 16777216, 0.90, 0.05);
+
+	try {
+
+		test_label_1();
+		test_tt_1();
+		test_tt_2();
+		test_te_1();
+		test_et_1();
+		test_ee_1();
+		test_ee_2();
+
+	} catch(...) {
+		libvmm::vm_allocator<double>::vmm().shutdown();
+		throw;
+	}
+
+	libvmm::vm_allocator<double>::vmm().shutdown();
 }
 
 

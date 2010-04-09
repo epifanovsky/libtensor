@@ -8,23 +8,35 @@ namespace libtensor {
 
 void symm_test::perform() throw(libtest::test_exception) {
 
-	test_symm2_contr_tt_1();
-	test_symm2_contr_ee_1();
-	test_asymm2_contr_tt_1();
-	test_asymm2_contr_tt_2();
-	test_asymm2_contr_tt_3();
-	test_asymm2_contr_tt_4();
-	test_asymm2_contr_ee_1();
+	libvmm::vm_allocator<double>::vmm().init(
+		16, 16777216, 16777216, 0.90, 0.05);
 
-	test_symm22_t_1();
-	test_asymm22_t_1();
-	test_symm22_t_2();
-	test_asymm22_t_2();
+	try {
 
-	test_symm22_e_1();
-	test_asymm22_e_1();
-	test_symm22_e_2();
-	test_asymm22_e_2();
+		test_symm2_contr_tt_1();
+		test_symm2_contr_ee_1();
+		test_asymm2_contr_tt_1();
+		test_asymm2_contr_tt_2();
+		test_asymm2_contr_tt_3();
+		test_asymm2_contr_tt_4();
+		test_asymm2_contr_ee_1();
+
+		test_symm22_t_1();
+		test_asymm22_t_1();
+		test_symm22_t_2();
+		test_asymm22_t_2();
+
+		test_symm22_e_1();
+		test_asymm22_e_1();
+		test_symm22_e_2();
+		test_asymm22_e_2();
+
+	} catch(...) {
+		libvmm::vm_allocator<double>::vmm().shutdown();
+		throw;
+	}
+
+	libvmm::vm_allocator<double>::vmm().shutdown();
 }
 
 
