@@ -144,15 +144,15 @@ void btod_read<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 					__FILE__, __LINE__,
 					"buf_offs");
 			}
-#endif
+#endif // LIBTENSOR_DEBUG
 			for(size_t j = 0; j < nj; j++) {
 				register double d = buf[buf_offs + j];
 				if(fabs(d) <= m_thresh) d = 0.0;
 				else zero = false;
 				p[blk_offs + j] = d;
-				blk_offs_aidx.inc();
 			}
-		} while(!blk_offs_aidx.is_last());
+			for(size_t j = 1; j < nj; j++) blk_offs_aidx.inc();
+		} while(blk_offs_aidx.inc());
 
 		blk_ctrl.ret_dataptr(p);
 		ctrl.ret_block(bi.get_index());
