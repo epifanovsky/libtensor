@@ -18,6 +18,9 @@ void btod_trace_test::perform() throw(libtest::test_exception) {
 	test_nosym_2();
 	test_nosym_3();
 	test_nosym_4();
+	test_nosym_5();
+	test_nosym_6();
+	test_nosym_7();
 }
 
 
@@ -301,6 +304,154 @@ void btod_trace_test::test_nosym_4() throw(libtest::test_exception) {
 
 	//	Invoke the operation
 	double d = btod_trace<2>(bta, perm).calculate();
+
+	//	Compare against the reference
+	if(fabs(d - d_ref) > fabs(d_ref * 1e-15)) {
+		std::ostringstream ss;
+		ss << "Result doesn't match reference: " << d << " (result), "
+			<< d_ref << " (reference), " << d - d_ref << " (diff)";
+		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\test Computes the trace of a square matrix: \f$ d = a_{ii} \f$,
+		no symmetry, blocks with unity dimensions
+ **/
+void btod_trace_test::test_nosym_5() throw(libtest::test_exception) {
+
+	static const char *testname = "btod_trace_test::test_nosym_5()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<2> i1, i2;
+	i2[0] = 2; i2[1] = 2;
+	dimensions<2> dims(index_range<2>(i1, i2));
+	block_index_space<2> bis(dims);
+	mask<2> m; m[0] = true; m[1] = true;
+	bis.split(m, 1);
+
+	block_tensor<2, double, allocator_t> bta(bis);
+	tensor<2, double, allocator_t> ta(dims);
+
+	//	Fill in random data
+	btod_random<2>().perform(bta);
+	bta.set_immutable();
+
+	//	Prepare the reference
+	tod_btconv<2>(bta).perform(ta);
+	ta.set_immutable();
+	double d_ref = tod_trace<1>(ta).calculate();
+
+	//	Invoke the operation
+	double d = btod_trace<1>(bta).calculate();
+
+	//	Compare against the reference
+	if(fabs(d - d_ref) > fabs(d_ref * 1e-15)) {
+		std::ostringstream ss;
+		ss << "Result doesn't match reference: " << d << " (result), "
+			<< d_ref << " (reference), " << d - d_ref << " (diff)";
+		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\test Computes the trace of a matricized 4-index tensor:
+		\f$ d = a_{ijij} \f$, no symmetry, blocks with unity dimensions
+ **/
+void btod_trace_test::test_nosym_6() throw(libtest::test_exception) {
+
+	static const char *testname = "btod_trace_test::test_nosym_6()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	size_t ni = 3, nj = 2;
+
+	index<4> i1, i2;
+	i2[0] = ni - 1; i2[1] = nj - 1; i2[2] = ni - 1; i2[3] = nj - 1;
+	dimensions<4> dims(index_range<4>(i1, i2));
+	block_index_space<4> bis(dims);
+	mask<4> m1; m1[0] = true; m1[2] = true;
+	mask<4> m2; m2[1] = true; m2[3] = true;
+	bis.split(m1, 1);
+	bis.split(m2, 1);
+
+	block_tensor<4, double, allocator_t> bta(bis);
+	tensor<4, double, allocator_t> ta(dims);
+
+	//	Fill in random data
+	btod_random<4>().perform(bta);
+	bta.set_immutable();
+
+	//	Prepare the reference
+	tod_btconv<4>(bta).perform(ta);
+	ta.set_immutable();
+	double d_ref = tod_trace<2>(ta).calculate();
+
+	//	Invoke the operation
+	double d = btod_trace<2>(bta).calculate();
+
+	//	Compare against the reference
+	if(fabs(d - d_ref) > fabs(d_ref * 1e-15)) {
+		std::ostringstream ss;
+		ss << "Result doesn't match reference: " << d << " (result), "
+			<< d_ref << " (reference), " << d - d_ref << " (diff)";
+		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\test Computes the trace of a matricized 4-index tensor:
+		\f$ d = a_{ijij} \f$, no symmetry, all dimensions are equal
+ **/
+void btod_trace_test::test_nosym_7() throw(libtest::test_exception) {
+
+	static const char *testname = "btod_trace_test::test_nosym_7()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	size_t ni = 10, nj = 10;
+
+	index<4> i1, i2;
+	i2[0] = ni - 1; i2[1] = nj - 1; i2[2] = ni - 1; i2[3] = nj - 1;
+	dimensions<4> dims(index_range<4>(i1, i2));
+	block_index_space<4> bis(dims);
+	mask<4> m;
+	m[0] = true; m[1] = true; m[2] = true; m[3] = true;
+	bis.split(m, 2); bis.split(m, 5); bis.split(m, 7);
+
+	block_tensor<4, double, allocator_t> bta(bis);
+	tensor<4, double, allocator_t> ta(dims);
+
+	//	Fill in random data
+	btod_random<4>().perform(bta);
+	bta.set_immutable();
+
+	//	Prepare the reference
+	tod_btconv<4>(bta).perform(ta);
+	ta.set_immutable();
+	double d_ref = tod_trace<2>(ta).calculate();
+
+	//	Invoke the operation
+	double d = btod_trace<2>(bta).calculate();
 
 	//	Compare against the reference
 	if(fabs(d - d_ref) > fabs(d_ref * 1e-15)) {

@@ -20,6 +20,9 @@ private:
 	void test_nosym_2() throw(libtest::test_exception);
 	void test_nosym_3() throw(libtest::test_exception);
 	void test_nosym_4() throw(libtest::test_exception);
+	void test_nosym_5() throw(libtest::test_exception);
+	void test_nosym_6() throw(libtest::test_exception);
+	void test_nosym_7() throw(libtest::test_exception);
 };
 
 } // namespace libtensor
