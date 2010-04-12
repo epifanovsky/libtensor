@@ -1,5 +1,6 @@
 #include <cmath>
 #include <ctime>
+#include <cstdlib>
 #include <sstream>
 #include <libvmm/std_allocator.h>
 #include <libtensor/core/tensor.h>
