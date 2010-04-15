@@ -84,7 +84,11 @@ public:
 
 	/**	\brief Evaluates sub-expressions into temporary tensors
 	 **/
-	void prepare() throw(exception);
+	void prepare();
+
+	/**	\brief Cleans up temporary tensors
+	 **/
+	void clean();
 
 	template<typename Tag>
 	arg<N + M, T, Tag> get_arg(const Tag &tag, size_t i) const
@@ -122,9 +126,16 @@ inline eval_dirsum<N, M, T, E1, E2>::eval_dirsum(
 
 
 template<size_t N, size_t M, typename T, typename E1, typename E2>
-inline void eval_dirsum<N, M, T, E1, E2>::prepare() throw(exception) {
+inline void eval_dirsum<N, M, T, E1, E2>::prepare() {
 
 	m_func.evaluate();
+}
+
+
+template<size_t N, size_t M, typename T, typename E1, typename E2>
+inline void eval_dirsum<N, M, T, E1, E2>::clean() {
+
+	m_func.clean();
 }
 
 

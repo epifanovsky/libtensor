@@ -60,7 +60,11 @@ public:
 
 	/**	\brief Evaluates the expression
 	 **/
-	void evaluate() throw(exception);
+	void evaluate();
+
+	/**	\brief Cleans up the temporary block %tensor
+	 **/
+	void clean();
 
 	/**	\brief Returns the block %tensor
 	 **/
@@ -86,10 +90,18 @@ anon_eval<N, T, Core>::anon_eval(
 
 
 template<size_t N, typename T, typename Core>
-void anon_eval<N, T, Core>::evaluate() throw(exception) {
+void anon_eval<N, T, Core>::evaluate() {
 
 	m_eval_container.prepare();
 	m_functor.get_bto().perform(m_bt);
+	m_eval_container.clean();
+}
+
+
+template<size_t N, typename T, typename Core>
+void anon_eval<N, T, Core>::clean() {
+
+	m_functor.get_clean_bto().perform(m_bt);
 }
 
 

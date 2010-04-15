@@ -48,6 +48,7 @@ public:
 	evalfunctor(expression_t &expr, eval_container_t &cont);
 	virtual ~evalfunctor() { }
 	virtual direct_block_tensor_operation<N, T> &get_bto();
+	virtual direct_block_tensor_operation<N, T> &get_clean_bto();
 };
 
 

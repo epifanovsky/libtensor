@@ -48,6 +48,8 @@ public:
 
 	void evaluate();
 
+	void clean();
+
 	arg<N - M + 1, T, oper_tag> get_arg() const { return m_arg; }
 
 };
@@ -78,6 +80,13 @@ template<size_t N, size_t M, typename T, typename E1, size_t NT1, size_t NO1>
 void diag_eval_functor<N, M, T, E1, NT1, NO1>::evaluate() {
 
 	m_eval_a.evaluate();
+}
+
+
+template<size_t N, size_t M, typename T, typename E1, size_t NT1, size_t NO1>
+void diag_eval_functor<N, M, T, E1, NT1, NO1>::clean() {
+
+	m_eval_a.clean();
 }
 
 

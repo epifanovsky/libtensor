@@ -45,7 +45,9 @@ public:
 		const subexpr_label_t &label_a,
 		const letter_expr<k_orderb> &label_b);
 
-	void evaluate() throw(exception) { }
+	void evaluate() { }
+
+	void clean() { }
 
 	arg<N - M + 1, T, oper_tag> get_arg() const { return m_arg; }
 

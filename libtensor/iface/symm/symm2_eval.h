@@ -63,7 +63,11 @@ public:
 
 	/**	\brief Evaluates sub-expressions into temporary tensors
 	 **/
-	void prepare() throw(exception);
+	void prepare();
+
+	/**	\brief Cleans up temporary tensors
+	 **/
+	void clean();
 
 	template<typename Tag>
 	arg<N, T, Tag> get_arg(const Tag &tag, size_t i) const
@@ -116,9 +120,16 @@ symm2_eval<N, Sym, T, SubCore>::symm2_eval(
 
 
 template<size_t N, bool Sym, typename T, typename SubCore>
-void symm2_eval<N, Sym, T, SubCore>::prepare() throw(exception) {
+void symm2_eval<N, Sym, T, SubCore>::prepare() {
 
 	m_sub_eval.evaluate();
+}
+
+
+template<size_t N, bool Sym, typename T, typename SubCore>
+void symm2_eval<N, Sym, T, SubCore>::clean() {
+
+	m_sub_eval.clean();
 }
 
 
