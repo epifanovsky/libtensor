@@ -18,7 +18,6 @@ set(SRC
 	btod_dotprod_test.C
 	btod_extract_test.C
 	btod_import_raw_test.C
-	btod_mkdelta_test.C
 	btod_mult_test.C
 	btod_mult1_test.C
 	btod_random_test.C
@@ -67,13 +66,11 @@ set(SRC
 	tod_compare_test.C
 	tod_contract2_test.C
 	tod_copy_test.C
-	tod_delta_denom2_test.C
 	tod_diag_test.C
 	tod_dirsum_test.C
 	tod_dotprod_test.C
 	tod_extract_test.C
 	tod_import_raw_test.C
-	tod_mkdelta_test.C
 	tod_mult_test.C
 	tod_mult1_test.C
 	tod_random_test.C

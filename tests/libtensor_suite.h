@@ -19,7 +19,6 @@
 #include "btod_dotprod_test.h"
 #include "btod_extract_test.h"
 #include "btod_import_raw_test.h"
-#include "btod_mkdelta_test.h"
 #include "btod_mult_test.h"
 #include "btod_mult1_test.h"
 #include "btod_random_test.h"
@@ -68,13 +67,11 @@
 #include "tod_compare_test.h"
 #include "tod_contract2_test.h"
 #include "tod_copy_test.h"
-#include "tod_delta_denom2_test.h"
 #include "tod_diag_test.h"
 #include "tod_dirsum_test.h"
 #include "tod_dotprod_test.h"
 #include "tod_extract_test.h"
 #include "tod_import_raw_test.h"
-#include "tod_mkdelta_test.h"
 #include "tod_mult_test.h"
 #include "tod_mult1_test.h"
 #include "tod_random_test.h"
@@ -117,7 +114,6 @@ namespace libtensor {
 	\li libtensor::btod_import_raw_test
 	\li libtensor::btod_mult_test
 	\li libtensor::btod_mult1_test
-	\li libtensor::btod_mkdelta_test
 	\li libtensor::btod_random_test
 	\li libtensor::btod_read_test
 	\li libtensor::btod_scale_test
@@ -164,13 +160,11 @@ namespace libtensor {
 	\li libtensor::tod_compare_test
 	\li libtensor::tod_contract2_test
 	\li libtensor::tod_copy_test
-	\li libtensor::tod_delta_denom2_test
 	\li libtensor::tod_diag_test
 	\li libtensor::tod_dirsum_test
 	\li libtensor::tod_dotprod_test
 	\li libtensor::tod_extract_test
 	\li libtensor::tod_import_raw_test
-	\li libtensor::tod_mkdelta_test
 	\li libtensor::tod_mult_test
 	\li libtensor::tod_mult1_test
 	\li libtensor::tod_random_test
@@ -205,7 +199,6 @@ private:
 	unit_test_factory<btod_dotprod_test> m_utf_btod_dotprod;
 	unit_test_factory<btod_extract_test> m_utf_btod_extract;
 	unit_test_factory<btod_import_raw_test> m_utf_btod_import_raw;
-	unit_test_factory<btod_mkdelta_test> m_utf_btod_mkdelta;
 	unit_test_factory<btod_mult_test> m_utf_btod_mult;
 	unit_test_factory<btod_mult1_test> m_utf_btod_mult1;
 	unit_test_factory<btod_random_test> m_utf_btod_random;
@@ -256,13 +249,11 @@ private:
 	unit_test_factory<tod_compare_test> m_utf_tod_compare;
 	unit_test_factory<tod_contract2_test> m_utf_tod_contract2;
 	unit_test_factory<tod_copy_test> m_utf_tod_copy;
-	unit_test_factory<tod_delta_denom2_test> m_utf_tod_delta_denom2;
 	unit_test_factory<tod_diag_test> m_utf_tod_diag;
 	unit_test_factory<tod_dirsum_test> m_utf_tod_dirsum;
 	unit_test_factory<tod_dotprod_test> m_utf_tod_dotprod;
 	unit_test_factory<tod_extract_test> m_utf_tod_extract;
 	unit_test_factory<tod_import_raw_test> m_utf_tod_import_raw;
-	unit_test_factory<tod_mkdelta_test> m_utf_tod_mkdelta;
 	unit_test_factory<tod_mult_test> m_utf_tod_mult;
 	unit_test_factory<tod_mult1_test> m_utf_tod_mult1;
 	unit_test_factory<tod_random_test> m_utf_tod_random;

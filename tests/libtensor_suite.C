@@ -22,7 +22,6 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("btod_dotprod", m_utf_btod_dotprod);
 	add_test("btod_extract", m_utf_btod_extract);
 	add_test("btod_import_raw", m_utf_btod_import_raw);
-	add_test("btod_mkdelta", m_utf_btod_mkdelta);
 	add_test("btod_mult", m_utf_btod_mult);
 	add_test("btod_mult1", m_utf_btod_mult1);
 	add_test("btod_random", m_utf_btod_random);
@@ -71,13 +70,11 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("tod_compare", m_utf_tod_compare);
 	add_test("tod_contract2", m_utf_tod_contract2);
 	add_test("tod_copy", m_utf_tod_copy);
-	add_test("tod_delta_denom2", m_utf_tod_delta_denom2);
 	add_test("tod_diag", m_utf_tod_diag);
 	add_test("tod_dirsum", m_utf_tod_dirsum);
 	add_test("tod_dotprod", m_utf_tod_dotprod);
 	add_test("tod_extract", m_utf_tod_extract);
 	add_test("tod_import_raw", m_utf_tod_import_raw);
-	add_test("tod_mkdelta", m_utf_tod_mkdelta);
 	add_test("tod_mult", m_utf_tod_mult);
 	add_test("tod_mult1", m_utf_tod_mult1);
 	add_test("tod_random", m_utf_tod_random);
