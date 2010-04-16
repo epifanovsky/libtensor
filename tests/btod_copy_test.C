@@ -37,8 +37,10 @@ void btod_copy_test::perform() throw(libtest::test_exception) {
 	test_add_nesym_1();
 	test_add_nesym_2();
 	test_add_nesym_3();
-	test_add_nesym_3_sp();
 	test_add_nesym_4();
+	test_add_nesym_5();
+	test_add_nesym_5_sp();
+	test_add_nesym_6();
 
 	test_dir_1();
 	test_dir_2();
@@ -1054,7 +1056,7 @@ void btod_copy_test::test_add_eqsym_5() throw(libtest::test_exception) {
 
 
 /**	\test \f$ b_{ij} = b_{ij} + a_{ij} \f$, unequal perm symmetry,
-		3 blocks along each direction
+		Sym(A) > Sym(B) = Sym(B') = Sym(0), blocks
  **/
 void btod_copy_test::test_add_nesym_1() throw(libtest::test_exception) {
 
@@ -1104,12 +1106,63 @@ void btod_copy_test::test_add_nesym_1() throw(libtest::test_exception) {
 }
 
 
-/**	\test \f$ b_{ijkl} = b_{ijkl} + 1.5 a_{ijkl} \f$, unequal perm symmetry,
-		blocks
+/**	\test \f$ b_{ij} = b_{ij} + a_{ij} \f$, unequal perm symmetry,
+		Sym(B) > Sym(A) = Sym(B') = Sym(0), blocks
  **/
 void btod_copy_test::test_add_nesym_2() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_copy_test::test_add_nesym_2()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<2> i1, i2;
+	i2[0] = 10; i2[1] = 10;
+	dimensions<2> dims(index_range<2>(i1, i2));
+	block_index_space<2> bis(dims);
+	mask<2> m; m[0] = true; m[1] = true;
+	bis.split(m, 3);
+	bis.split(m, 7);
+	tensor<2, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
+	block_tensor<2, double, allocator_t> bta(bis), btb(bis);
+
+	//	Fill the input with random data
+
+	permutation<2> perm10;
+	perm10.permute(0, 1);
+	se_perm<2, double> cycle1(perm10, true);
+	block_tensor_ctrl<2, double> ctrla(bta), ctrlb(btb);
+	ctrlb.req_symmetry().insert(cycle1);
+	btod_random<2>().perform(bta);
+	btod_random<2>().perform(btb);
+	bta.set_immutable();
+	tod_btconv<2>(btb).perform(tb_ref);
+
+	//	Make a copy
+
+	btod_copy<2>(bta).perform(btb, 1.0);
+	tod_btconv<2>(btb).perform(tb);
+
+	//	Compare against the reference
+
+	tod_btconv<2>(bta).perform(ta);
+	tod_copy<2>(ta).perform(tb_ref, 1.0);
+
+	compare_ref<2>::compare(testname, tb, tb_ref, 0.0);
+
+	} catch(exception &exc) {
+		fail_test(testname, __FILE__, __LINE__, exc.what());
+	}
+}
+
+
+/**	\test \f$ b_{ijkl} = b_{ijkl} + 1.5 a_{ijkl} \f$, unequal perm symmetry,
+		Sym(A) > Sym(B) = Sym(B') != Sym(0), blocks
+ **/
+void btod_copy_test::test_add_nesym_3() throw(libtest::test_exception) {
+
+	static const char *testname = "btod_copy_test::test_add_nesym_3()";
 
 	typedef libvmm::std_allocator<double> allocator_t;
 
@@ -1170,11 +1223,76 @@ void btod_copy_test::test_add_nesym_2() throw(libtest::test_exception) {
 
 
 /**	\test \f$ b_{ijkl} = b_{ijkl} + 1.5 a_{ijkl} \f$, unequal perm symmetry,
+		Sym(B) > Sym(A) = Sym(B') != Sym(0), blocks
+ **/
+void btod_copy_test::test_add_nesym_4() throw(libtest::test_exception) {
+
+	static const char *testname = "btod_copy_test::test_add_nesym_4()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 11; i2[1] = 11; i2[2] = 11; i2[3] = 11;
+	dimensions<4> dima(index_range<4>(i1, i2));
+	dimensions<4> dimb(dima);
+	block_index_space<4> bisa(dima), bisb(dimb);
+	mask<4> m1;
+	m1[0] = true; m1[1] = true; m1[2] = true; m1[3] = true;
+	bisa.split(m1, 3);
+	bisa.split(m1, 5);
+	bisb.split(m1, 3);
+	bisb.split(m1, 5);
+	tensor<4, double, allocator_t> ta(dima), tb(dimb), tb_ref(dimb);
+	block_tensor<4, double, allocator_t> bta(bisa), btb(bisb);
+
+	//	Set up symmetry
+
+	permutation<4> perm1230, perm1023, perm1032;
+	perm1230.permute(0, 1).permute(1, 2).permute(2, 3);
+	perm1023.permute(0, 1);
+	perm1032.permute(0, 1).permute(2, 3);
+	se_perm<4, double> cycle1(perm1230, true), cycle2(perm1023, true),
+		cycle3(perm1032, true);
+	block_tensor_ctrl<4, double> ctrla(bta), ctrlb(btb);
+	ctrla.req_symmetry().insert(cycle3);
+	ctrlb.req_symmetry().insert(cycle1);
+	ctrlb.req_symmetry().insert(cycle2);
+
+	//	Load random data for input
+
+	btod_random<4>().perform(bta);
+	btod_random<4>().perform(btb);
+	bta.set_immutable();
+	tod_btconv<4>(bta).perform(ta);
+	tod_btconv<4>(btb).perform(tb_ref);
+
+	//	Run the operation
+
+	btod_copy<4>(bta).perform(btb, 1.5);
+	tod_btconv<4>(btb).perform(tb);
+
+	//	Compute the reference
+
+	tod_copy<4>(ta).perform(tb_ref, 1.5);
+
+	//	Compare against the reference
+
+	compare_ref<4>::compare(testname, tb, tb_ref, 0.0);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\test \f$ b_{ijkl} = b_{ijkl} + 1.5 a_{ijkl} \f$, unequal perm symmetry,
 		blocks
  **/
-void btod_copy_test::test_add_nesym_3() throw(libtest::test_exception) {
+void btod_copy_test::test_add_nesym_5() throw(libtest::test_exception) {
 
-	static const char *testname = "btod_copy_test::test_add_nesym_3()";
+	static const char *testname = "btod_copy_test::test_add_nesym_5()";
 
 	typedef libvmm::std_allocator<double> allocator_t;
 
@@ -1237,9 +1355,9 @@ void btod_copy_test::test_add_nesym_3() throw(libtest::test_exception) {
 /**	\test \f$ b_{ijkl} = b_{ijkl} + 1.5 a_{ijkl} \f$, unequal perm symmetry,
 		sparse block structure
  **/
-void btod_copy_test::test_add_nesym_3_sp() throw(libtest::test_exception) {
+void btod_copy_test::test_add_nesym_5_sp() throw(libtest::test_exception) {
 
-	static const char *testname = "btod_copy_test::test_add_nesym_3_sp()";
+	static const char *testname = "btod_copy_test::test_add_nesym_5_sp()";
 
 	typedef libvmm::std_allocator<double> allocator_t;
 
@@ -1317,9 +1435,9 @@ void btod_copy_test::test_add_nesym_3_sp() throw(libtest::test_exception) {
 /**	\test \f$ b_{lkji} = b_{lkji} - 0.1 a_{ijkl} \f$, unequal mixed perm
 		symmetry and antisymmetry, blocks
  **/
-void btod_copy_test::test_add_nesym_4() throw(libtest::test_exception) {
+void btod_copy_test::test_add_nesym_6() throw(libtest::test_exception) {
 
-	static const char *testname = "btod_copy_test::test_add_nesym_4()";
+	static const char *testname = "btod_copy_test::test_add_nesym_6()";
 
 	typedef libvmm::std_allocator<double> allocator_t;
 

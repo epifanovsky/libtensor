@@ -36,8 +36,10 @@ private:
 	void test_add_nesym_1() throw(libtest::test_exception);
 	void test_add_nesym_2() throw(libtest::test_exception);
 	void test_add_nesym_3() throw(libtest::test_exception);
-	void test_add_nesym_3_sp() throw(libtest::test_exception);
 	void test_add_nesym_4() throw(libtest::test_exception);
+	void test_add_nesym_5() throw(libtest::test_exception);
+	void test_add_nesym_5_sp() throw(libtest::test_exception);
+	void test_add_nesym_6() throw(libtest::test_exception);
 
 	void test_dir_1() throw(libtest::test_exception);
 	void test_dir_2() throw(libtest::test_exception);
