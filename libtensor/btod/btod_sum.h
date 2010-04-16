@@ -81,6 +81,8 @@ public:
 	//@{
 	virtual void perform(block_tensor_i<N, double> &bt, double c)
 		throw(exception);
+	virtual void perform(block_tensor_i<N, double> &bt, const index<N> &idx,
+		double c) throw(exception);
 	//@}
 
 
@@ -196,6 +198,17 @@ void btod_sum<N>::perform(block_tensor_i<N, double> &bt, double c)
 	}
 
 	timings< btod_sum<N> >::stop_timer();
+}
+
+
+template<size_t N>
+void btod_sum<N>::perform(block_tensor_i<N, double> &bt, const index<N> &idx,
+	double c) throw(exception) {
+
+	static const char *method =
+		"perform(block_tensor_i<N, double>&, const index<N>&, double)";
+	
+	throw not_implemented(g_ns, k_clazz, method, __FILE__, __LINE__);
 }
 
 

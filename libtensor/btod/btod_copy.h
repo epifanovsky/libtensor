@@ -77,6 +77,8 @@ public:
 	virtual void perform(block_tensor_i<N, double> &btb) throw(exception);
 	virtual void perform(block_tensor_i<N, double> &bt, const index<N> &idx)
 		throw(exception);
+	virtual void perform(block_tensor_i<N, double> &bt, const index<N> &idx,
+		double c) throw(exception);
 	//@}
 
 	//!	\name Implementation of libtensor::btod_additive<N>
@@ -166,6 +168,17 @@ void btod_copy<N>::perform(block_tensor_i<N, double> &btb, const index<N> &idx)
 	btod_copy<N>::start_timer();
 	do_perform(btb, idx, true, 1.0);
 	btod_copy<N>::stop_timer();
+}
+
+
+template<size_t N>
+void btod_copy<N>::perform(block_tensor_i<N, double> &bt, const index<N> &idx,
+	double c) throw(exception) {
+
+	static const char *method =
+		"perform(block_tensor_i<N, double>&, const index<N>&, double)";
+
+	throw not_implemented(g_ns, k_clazz, method, __FILE__, __LINE__);
 }
 
 

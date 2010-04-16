@@ -76,6 +76,13 @@ public:
 			__FILE__, __LINE__);
 	}
 
+	virtual void perform(block_tensor_i<k_orderb, double> &btb,
+		const index<k_orderb> &idx, double c) throw(exception) {
+
+		throw not_implemented(g_ns, k_clazz, "perform()",
+			__FILE__, __LINE__);
+	}
+
 private:
 	/**	\brief Forms the block %index space of the output or throws an
 			exception if the input is incorrect
