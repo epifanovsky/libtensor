@@ -53,7 +53,9 @@ public:
 		const subexpr_labels_t &labels_ab,
 		const letter_expr<k_orderc> &label_c);
 
-	void evaluate() throw(exception);
+	void evaluate() { }
+
+	void clean() { }
 
 	arg<N + M, T, oper_tag> get_arg() const { return m_arg; }
 
@@ -83,14 +85,6 @@ contract_eval_functor<N, M, K, T, E1, E2, 1, 0, 1, 0>::contract_eval_functor(
 	m_arg(m_op, m_arg_a.get_coeff() * m_arg_b.get_coeff()) {
 
 }
-
-
-template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2>
-void contract_eval_functor<N, M, K, T, E1, E2, 1, 0, 1, 0>::evaluate()
-	throw(exception) {
-
-}
-
 
 
 } // namespace labeled_btensor_expr

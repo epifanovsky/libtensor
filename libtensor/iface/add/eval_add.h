@@ -56,7 +56,9 @@ public:
 	//!	\name Evaluation
 	//@{
 
-	void prepare() throw(exception);
+	void prepare();
+
+	void clean();
 
 	template<typename Tag>
 	arg<N, T, Tag> get_arg(const Tag &tag, size_t i) const throw(exception);
@@ -81,10 +83,18 @@ eval_add<N, T, ExprL, ExprR>::eval_add(
 
 
 template<size_t N, typename T, typename ExprL, typename ExprR>
-void eval_add<N, T, ExprL, ExprR>::prepare() throw(exception) {
+void eval_add<N, T, ExprL, ExprR>::prepare() {
 
 	m_cont_l.prepare();
 	m_cont_r.prepare();
+}
+
+
+template<size_t N, typename T, typename ExprL, typename ExprR>
+void eval_add<N, T, ExprL, ExprR>::clean() {
+
+	m_cont_l.clean();
+	m_cont_r.clean();
 }
 
 

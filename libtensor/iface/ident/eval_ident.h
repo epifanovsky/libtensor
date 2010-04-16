@@ -46,7 +46,9 @@ public:
 	//!	\name Evaluation
 	//@{
 
-	void prepare() throw(exception) { }
+	void prepare() { }
+
+	void clean() { }
 
 	template<typename Tag>
 	arg<N, T, Tag> get_arg(const Tag &tag, size_t i) const throw(exception);

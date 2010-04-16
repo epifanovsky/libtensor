@@ -57,6 +57,8 @@ public:
 
 	void evaluate();
 
+	void clean();
+
 	arg<k_orderc, T, oper_tag> get_arg() const { return m_arg; }
 
 };
@@ -91,6 +93,15 @@ void contract_eval_functor<N, M, K, T, E1, E2, NT1, NO1, NT2, NO2>::evaluate() {
 
 	m_eval_a.evaluate();
 	m_eval_b.evaluate();
+}
+
+
+template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2,
+size_t NT1, size_t NO1, size_t NT2, size_t NO2>
+void contract_eval_functor<N, M, K, T, E1, E2, NT1, NO1, NT2, NO2>::clean() {
+
+	m_eval_a.clean();
+	m_eval_b.clean();
 }
 
 

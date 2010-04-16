@@ -68,7 +68,11 @@ public:
 
 	/**	\brief Evaluates sub-expressions into temporary tensors
 	 **/
-	void prepare() throw(exception);
+	void prepare();
+
+	/**	\brief Cleans up temporary tensors
+	 **/
+	void clean();
 
 	template<typename Tag>
 	arg<N - M + 1, T, Tag> get_arg(const Tag &tag, size_t i) const
@@ -105,9 +109,16 @@ diag_eval<N, M, T, E1>::diag_eval(expression_t &expr,
 
 
 template<size_t N, size_t M, typename T, typename E1>
-void diag_eval<N, M, T, E1>::prepare() throw(exception) {
+void diag_eval<N, M, T, E1>::prepare() {
 
 	m_func.evaluate();
+}
+
+
+template<size_t N, size_t M, typename T, typename E1>
+void diag_eval<N, M, T, E1>::clean() {
+
+	m_func.clean();
 }
 
 

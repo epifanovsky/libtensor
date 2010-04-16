@@ -78,6 +78,7 @@ inline void eval<N, T, Core>::evaluate() throw(exception) {
 	evalfunctor<N, T, Core, narg_tensor, narg_oper>(
 		m_expr, m_eval_container).get_bto().perform(
 			m_result.get_btensor());
+	m_eval_container.clean();
 }
 
 

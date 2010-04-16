@@ -8,9 +8,21 @@ namespace libtensor {
 
 void direct_btensor_test::perform() throw(libtest::test_exception) {
 
-	test_1();
-	test_2();
-	test_3();
+	libvmm::vm_allocator<double>::vmm().init(
+		16, 16, 16777216, 16777216, 0.90, 0.05);
+
+	try {
+
+		test_1();
+		test_2();
+		test_3();
+
+	} catch(...) {
+		libvmm::vm_allocator<double>::vmm().shutdown();
+		throw;
+	}
+
+	libvmm::vm_allocator<double>::vmm().shutdown();
 }
 
 
@@ -36,7 +48,7 @@ void direct_btensor_test::test_1() throw(libtest::test_exception) {
 	bt(i|a) = dbt(i|a);
 
 	compare_ref<2>::compare(testname, bt, bt_ref, 1e-15);
-	
+
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
 	}
@@ -68,7 +80,7 @@ void direct_btensor_test::test_2() throw(libtest::test_exception) {
 	bt(a|i) = dbt(a|i);
 
 	compare_ref<2>::compare(testname, bt, bt_ref, 1e-15);
-	
+
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
 	}
@@ -100,7 +112,7 @@ void direct_btensor_test::test_3() throw(libtest::test_exception) {
 	bt(i|a) = dbt(i|a);
 
 	compare_ref<2>::compare(testname, bt, bt_ref, 1e-15);
-	
+
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
 	}

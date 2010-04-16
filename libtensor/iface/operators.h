@@ -16,6 +16,7 @@
 #include "scale/operator_mul.h"
 #include "symm/symm_operator.h"
 #include "dot_product.h"
+#include "trace/trace_operator.h"
 
 /**	\defgroup libtensor_btensor_expr_op Overloaded operators
 	\ingroup libtensor_btensor_expr

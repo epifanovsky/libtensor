@@ -8,25 +8,36 @@ namespace libtensor {
 
 void contract_test::perform() throw(libtest::test_exception) {
 
-	test_subexpr_labels_1();
-	test_contr_bld_1();
-	test_contr_bld_2();
-	test_tt_1();
-	test_tt_2();
-	test_tt_3();
-	test_tt_4();
-	test_tt_5();
-	test_tt_6();
-	test_te_1();
-	test_te_2();
-	test_te_3();
-	test_te_4();
-	test_et_1();
-	test_et_2();
-	test_et_3();
-	test_ee_1();
-	test_ee_2();
+	libvmm::vm_allocator<double>::vmm().init(
+		16, 16, 16777216, 16777216, 0.90, 0.05);
 
+	try {
+
+		test_subexpr_labels_1();
+		test_contr_bld_1();
+		test_contr_bld_2();
+		test_tt_1();
+		test_tt_2();
+		test_tt_3();
+		test_tt_4();
+		test_tt_5();
+		test_tt_6();
+		test_te_1();
+		test_te_2();
+		test_te_3();
+		test_te_4();
+		test_et_1();
+		test_et_2();
+		test_et_3();
+		test_ee_1();
+		test_ee_2();
+
+	} catch(...) {
+		libvmm::vm_allocator<double>::vmm().shutdown();
+		throw;
+	}
+
+	libvmm::vm_allocator<double>::vmm().shutdown();
 }
 
 

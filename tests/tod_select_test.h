@@ -1,15 +1,15 @@
-#ifndef LIBTENSOR_BTOD_MKDELTA_TEST_H
-#define LIBTENSOR_BTOD_MKDELTA_TEST_H
+#ifndef LIBTENSOR_TOD_SELECT_TEST_H
+#define LIBTENSOR_TOD_SELECT_TEST_H
 
 #include <libtest/unit_test.h>
 
 namespace libtensor {
 
-/**	\brief Tests the libtensor::btod_mkdelta class
+/**	\brief Tests the libtensor::tod_select class
 
 	\ingroup libtensor_tests
- **/
-class btod_mkdelta_test : public libtest::unit_test {
+**/
+class tod_select_test : public libtest::unit_test {
 public:
 	virtual void perform() throw(libtest::test_exception);
 
@@ -19,4 +19,4 @@ private:
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_BTOD_MKDELTA_TEST_H
+#endif // LIBTENSOR_TOD_SELECT_TEST_H

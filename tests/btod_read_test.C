@@ -20,6 +20,8 @@ void btod_read_test::perform() throw(libtest::test_exception) {
 	test_4();
 	test_5();
 	test_6();
+	test_7();
+	test_8();
 }
 
 
@@ -320,6 +322,112 @@ void btod_read_test::test_6() throw(libtest::test_exception) {
 	btod_read<4>(ss).perform(bt);
 
 	compare_ref<4>::compare(testname, bt, bt_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void btod_read_test::test_7() throw(libtest::test_exception) {
+
+	//
+	//	Block tensor (2-dim), two blocks along each dimension,
+	//	the size of each block is 1x1
+	//
+
+	static const char *testname = "btod_read_test::test_7()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<2> i1, i2;
+	i2[0] = 1; i2[1] = 1;
+	dimensions<2> dims(index_range<2>(i1, i2));
+	tensor<2, double, allocator_t> t(dims), t_ref(dims);
+	tod_random<2>().perform(t_ref);
+
+	std::stringstream ss;
+	ss << "2 " << dims[0] << " " << dims[1] << std::endl;
+
+	tensor_ctrl<2, double> ctrl(t_ref);
+	const double *p = ctrl.req_const_dataptr();
+	for(size_t i = 0; i < dims[0]; i++) {
+		index<2> idx;
+		idx[0] = i;
+		for(size_t j = 0; j < dims[1]; j++) {
+			idx[1] = j;
+			abs_index<2> aidx(idx, dims);
+			ss.precision(15);
+			ss.setf(std::ios::fixed, std::ios::floatfield);
+			ss << p[aidx.get_abs_index()] << " ";
+		}
+		ss << std::endl;
+	}
+	ctrl.ret_dataptr(p); p = NULL;
+
+	block_index_space<2> bis(dims);
+	mask<2> msk1, msk2; msk1[0] = true; msk2[1] = true;
+	bis.split(msk1, 1); bis.split(msk2, 1);
+	block_tensor<2, double, allocator_t> bt(bis);
+	btod_read<2>(ss).perform(bt);
+	tod_btconv<2>(bt).perform(t);
+
+	compare_ref<2>::compare(testname, t, t_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void btod_read_test::test_8() throw(libtest::test_exception) {
+
+	//
+	//	Block tensor (2-dim), two blocks along each dimension,
+	//	the sizes of blocks are 1 and 2
+	//
+
+	static const char *testname = "btod_read_test::test_8()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<2> i1, i2;
+	i2[0] = 2; i2[1] = 2;
+	dimensions<2> dims(index_range<2>(i1, i2));
+	tensor<2, double, allocator_t> t(dims), t_ref(dims);
+	tod_random<2>().perform(t_ref);
+
+	std::stringstream ss;
+	ss << "2 " << dims[0] << " " << dims[1] << std::endl;
+
+	tensor_ctrl<2, double> ctrl(t_ref);
+	const double *p = ctrl.req_const_dataptr();
+	for(size_t i = 0; i < dims[0]; i++) {
+		index<2> idx;
+		idx[0] = i;
+		for(size_t j = 0; j < dims[1]; j++) {
+			idx[1] = j;
+			abs_index<2> aidx(idx, dims);
+			ss.precision(15);
+			ss.setf(std::ios::fixed, std::ios::floatfield);
+			ss << p[aidx.get_abs_index()] << " ";
+		}
+		ss << std::endl;
+	}
+	ctrl.ret_dataptr(p); p = NULL;
+
+	block_index_space<2> bis(dims);
+	mask<2> msk1, msk2; msk1[0] = true; msk2[1] = true;
+	bis.split(msk1, 1); bis.split(msk2, 1);
+	block_tensor<2, double, allocator_t> bt(bis);
+	btod_read<2>(ss).perform(bt);
+	tod_btconv<2>(bt).perform(t);
+
+	compare_ref<2>::compare(testname, t, t_ref, 1e-15);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());

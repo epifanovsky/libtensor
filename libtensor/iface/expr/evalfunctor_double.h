@@ -6,6 +6,7 @@
 #include "../../btod/btod_add.h"
 #include "../../btod/btod_additive.h"
 #include "../../btod/btod_copy.h"
+#include "../../btod/btod_set.h"
 #include "../../btod/btod_sum.h"
 
 namespace libtensor {
@@ -58,6 +59,7 @@ private:
 	tensor_arg_t m_arg0;
 	btod_add<N> m_op_add;
 	btod_sum<N> m_op_sum;
+	btod_set<N> m_op_set;
 
 public:
 	/**	\brief Initializes the functor
@@ -72,6 +74,10 @@ public:
 	 **/
 	virtual btod_additive<N> &get_bto() {
 		return m_op_sum;
+	}
+
+	virtual btod_set<N> &get_clean_bto() {
+		return m_op_set;
 	}
 
 };
@@ -109,6 +115,7 @@ private:
 	eval_container_t &m_eval_container;
 	tensor_arg_t m_arg0;
 	btod_add<N> m_op;
+	btod_set<N> m_op_set;
 
 public:
 	/**	\brief Initializes the functor
@@ -123,6 +130,10 @@ public:
 	 **/
 	virtual btod_additive<N> &get_bto() {
 		return m_op;
+	}
+
+	virtual btod_set<N> &get_clean_bto() {
+		return m_op_set;
 	}
 
 };
@@ -159,6 +170,7 @@ private:
 	eval_container_t &m_eval_container;
 	oper_arg_t m_arg0;
 	btod_sum<N> m_op;
+	btod_set<N> m_op_set;
 
 public:
 	/**	\brief Initializes the functor
@@ -173,6 +185,10 @@ public:
 	 **/
 	virtual btod_additive<N> &get_bto() {
 		return m_op;
+	}
+
+	virtual btod_set<N> &get_clean_bto() {
+		return m_op_set;
 	}
 
 };
@@ -208,6 +224,7 @@ private:
 	eval_container_t &m_eval_container;
 	tensor_arg_t m_arg;
 	btod_copy<N> m_op;
+	btod_set<N> m_op_set;
 
 public:
 	/**	\brief Initializes the functor
@@ -222,6 +239,10 @@ public:
 	 **/
 	virtual btod_additive<N> &get_bto() {
 		return m_op;
+	}
+
+	virtual btod_set<N> &get_clean_bto() {
+		return m_op_set;
 	}
 
 };

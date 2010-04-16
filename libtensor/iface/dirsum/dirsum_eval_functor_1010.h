@@ -53,7 +53,9 @@ public:
 		const subexpr_labels_t &labels_ab,
 		const letter_expr<k_orderc> &label_c);
 
-	void evaluate() throw(exception);
+	void evaluate() { }
+
+	void clean() { }
 
 	arg<N + M, T, oper_tag> get_arg() const { return m_arg; }
 
@@ -83,14 +85,6 @@ dirsum_eval_functor<N, M, T, E1, E2, 1, 0, 1, 0>::dirsum_eval_functor(
 	m_arg(m_op, 1.0) {
 
 }
-
-
-template<size_t N, size_t M, typename T, typename E1, typename E2>
-void dirsum_eval_functor<N, M, T, E1, E2, 1, 0, 1, 0>::evaluate()
-	throw(exception) {
-
-}
-
 
 
 } // namespace labeled_btensor_expr
