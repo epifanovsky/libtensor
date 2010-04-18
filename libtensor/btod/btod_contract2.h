@@ -18,7 +18,7 @@
 #include "../symmetry/so_projup.h"
 #include "../tod/contraction2.h"
 #include "../tod/tod_contract2.h"
-#include "../tod/tod_set.h"
+#include "../tod/tod_sum.h"
 #include "btod_additive.h"
 #include "btod_so_copy.h"
 #include "../not_implemented.h"
@@ -687,6 +687,11 @@ void btod_contract2<N, M, K>::contract_block(
 
 	if(adjzero) tod_set<k_orderc>().perform(tc);
 
+	std::list< index<k_ordera> > blksa;
+	std::list< index<k_orderb> > blksb;
+	std::list< tod_contract2<N, M, K>* > op_ptrs;
+	tod_sum<k_orderc> *op_sum = 0;
+
 	typename block_contr_list_t::iterator ilst = lst.begin();
 	for(; ilst != lst.end(); ilst++) {
 		bidimsa.abs_index(ilst->m_absidxa, idxa);
@@ -702,19 +707,38 @@ void btod_contract2<N, M, K>::contract_block(
 
 		tensor_i<k_ordera, double> &ta = ctrla.req_block(idxa);
 		tensor_i<k_orderb, double> &tb = ctrlb.req_block(idxb);
+		blksa.push_back(idxa);
+		blksb.push_back(idxb);
 		unset_lock(lockb); unset_lock(locka);
 
 		contraction2<N, M, K> contr(m_contr);
 		contr.permute_a(ilst->m_perma);
 		contr.permute_b(ilst->m_permb);
-		tod_contract2<N, M, K> controp(contr, ta, tb);
-		controp.perform(tc, c * ilst->m_c);
+		
+		tod_contract2<N, M, K> *controp =
+			new tod_contract2<N, M, K>(contr, ta, tb);
+		op_ptrs.push_back(controp);
+		if(op_sum == 0) {
+			op_sum = new tod_sum<k_orderc>(*controp, ilst->m_c);
+		} else {
+			op_sum->add_op(*controp, ilst->m_c);
+		}
 
 		set_lock(locka); set_lock(lockb);
 		ctrla.ret_block(idxa);
 		ctrlb.ret_block(idxb);
 		unset_lock(lockb); unset_lock(locka);
 	}
+
+	op_sum->prefetch();
+	op_sum->perform(tc, c);
+	delete op_sum; op_sum = 0;
+	for(typename std::list< tod_contract2<N, M, K>* >::const_iterator iptr =
+		op_ptrs.begin(); iptr != op_ptrs.end(); iptr++) {
+
+		delete *iptr;
+	}
+	op_ptrs.clear();
 
 	set_lock(lockc);
 	ctrlc.ret_block(idxc);
