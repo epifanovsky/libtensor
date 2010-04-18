@@ -3,6 +3,7 @@
 
 #include "../defs.h"
 #include "../exception.h"
+#include "../timings.h"
 #include "immutable.h"
 #include "permutation.h"
 #include "tensor_i.h"
@@ -122,7 +123,14 @@ namespace libtensor {
 	\ingroup libtensor
 **/
 template<size_t N, typename T, typename Alloc>
-class tensor : public tensor_i<N,T>, public immutable {
+class tensor :
+	public tensor_i<N, T>,
+	public immutable,
+	public timings< tensor<N, T, Alloc> > {
+
+public:
+	static const char *k_clazz; //!< Class name
+
 public:
 	typedef T element_t; //!< Tensor element type
 	typedef typename Alloc::ptr_t ptr_t; //!< Memory pointer type
@@ -203,6 +211,11 @@ protected:
 
 };
 
+
+template<size_t N, typename T, typename Alloc>
+const char *tensor<N, T, Alloc>::k_clazz = "tensor<N, T, Alloc>";
+
+
 template<size_t N, typename T, typename Alloc>
 tensor<N,T,Alloc>::tensor(const dimensions<N> &d) throw(exception) :
 	m_dims(d), m_data(Alloc::invalid_ptr), m_dataptr(NULL), m_ptrcount(0) {
@@ -273,7 +286,9 @@ T *tensor<N,T,Alloc>::on_req_dataptr() throw(exception) {
 			"Data pointer is already checked out for rw");
 	}
 
+	timings< tensor<N, T, Alloc> >::start_timer("lock");
 	m_dataptr = Alloc::lock(m_data);
+	timings< tensor<N, T, Alloc> >::stop_timer("lock");
 	return m_dataptr;
 }
 
@@ -288,7 +303,9 @@ const T *tensor<N,T,Alloc>::on_req_const_dataptr() throw(exception) {
 			"Data pointer is already checked out for rw");
 	}
 
+	timings< tensor<N, T, Alloc> >::start_timer("lock");
 	m_dataptr = Alloc::lock(m_data);
+	timings< tensor<N, T, Alloc> >::stop_timer("lock");
 	m_ptrcount = 1;
 	return m_dataptr;
 }
