@@ -99,11 +99,13 @@ public:
 	//!	\name Implementation of libtensor::tod_additive<N>
 	//@{
 
+	virtual void prefetch();
+
 	//!	\copydoc tod_additive<N>::perform(tensor_i<N, double>&)
-	virtual void perform(tensor_i<N, double> &t) throw(exception);
+	virtual void perform(tensor_i<N, double> &t);
 
 	//!	\copydoc tod_additive<N>::perform(tensor_i<N, double>&, double)
-	virtual void perform(tensor_i<N, double> &t, double c) throw(exception);
+	virtual void perform(tensor_i<N, double> &t, double c);
 
 	//@}
 
@@ -143,7 +145,14 @@ tod_copy<N>::tod_copy(tensor_i<N, double> &ta, const permutation<N> &p,
 
 
 template<size_t N>
-void tod_copy<N>::perform(tensor_i<N, double> &tb) throw(exception) {
+void tod_copy<N>::prefetch() {
+
+	tensor_ctrl<N, double>(m_ta).req_prefetch();
+}
+
+
+template<size_t N>
+void tod_copy<N>::perform(tensor_i<N, double> &tb) {
 
 	static const char *method = "perform(tensor_i<N, double>&)";
 
@@ -157,7 +166,7 @@ void tod_copy<N>::perform(tensor_i<N, double> &tb) throw(exception) {
 
 
 template<size_t N>
-void tod_copy<N>::perform(tensor_i<N, double> &tb, double c) throw(exception) {
+void tod_copy<N>::perform(tensor_i<N, double> &tb, double c) {
 
 	static const char *method = "perform(tensor_i<N, double>&, double)";
 
