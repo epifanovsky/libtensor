@@ -22,7 +22,7 @@ namespace libtensor {
  **/
 template<size_t N>
 class tod_btconv : public timings<tod_btconv<N> > {
-private:
+public:
 	static const char *k_clazz; //!< Class name
 
 private:
