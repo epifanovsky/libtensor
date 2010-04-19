@@ -60,7 +60,6 @@ void btod_import_raw_test::test_1(const block_index_space<N> &bis)
 	//	Create tensors
 
 	tensor_t ta(bis.get_dims()), tb(bis.get_dims()), tb_ref(bis.get_dims());
-	tensor_ctrl_t tca(ta);
 	block_tensor_t btb(bis);
 
 	//	Fill in random data
@@ -73,9 +72,12 @@ void btod_import_raw_test::test_1(const block_index_space<N> &bis)
 
 	//	Invoke the operation
 
-	const double *pa = tca.req_const_dataptr();
-	btod_import_raw<N>(pa, bis.get_dims()).perform(btb);
-	tca.ret_dataptr(pa); pa = NULL;
+	{
+		tensor_ctrl_t tca(ta);
+		const double *pa = tca.req_const_dataptr();
+		btod_import_raw<N>(pa, bis.get_dims()).perform(btb);
+		tca.ret_dataptr(pa); pa = 0;
+	}
 
 	//	Compare against the reference
 

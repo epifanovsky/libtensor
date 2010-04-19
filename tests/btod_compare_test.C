@@ -111,13 +111,15 @@ void btod_compare_test::test_operation() throw(libtest::test_exception) {
 
 	block_tensor_ctrl_t btctrl(bt2);
 	tensor_i<2,double>& t2=btctrl.req_block(block_idx);
-	tensor_ctrl<2,double> tctrl(t2);
-	double *ptr=tctrl.req_dataptr();
-	double diff1=ptr[4], diff2;
-	ptr[4]-=1.0;
-	diff2=ptr[4];
-
-	tctrl.ret_dataptr(ptr);
+	double diff1, diff2;
+	{
+		tensor_ctrl<2,double> tctrl(t2);
+		double *ptr=tctrl.req_dataptr();
+		diff1=ptr[4];
+		ptr[4]-=1.0;
+		diff2=ptr[4];
+		tctrl.ret_dataptr(ptr);
+	}
 	btctrl.ret_block(block_idx);
 
 	btod_compare<2> op1(bt1, bt2, 1e-7);

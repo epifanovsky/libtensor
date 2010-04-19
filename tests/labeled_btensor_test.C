@@ -192,27 +192,29 @@ void labeled_btensor_test::test_expr_copy_1() throw(libtest::test_exception) {
 	tensor_i<2, double> &ta = btctrla.req_block(i0);
 	tensor_i<2, double> &tb = btctrlb.req_block(i0);
 	tensor_i<2, double> &tb_ref = btctrlb_ref.req_block(i0);
-	tensor_ctrl<2, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
 
 	dimensions<2> dims(ta.get_dims());
 
-	double *dta = tca.req_dataptr();
-	double *dtb1 = tcb.req_dataptr();
-	double *dtb2 = tcb_ref.req_dataptr();
+	{
+		tensor_ctrl<2, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
+		double *dta = tca.req_dataptr();
+		double *dtb1 = tcb.req_dataptr();
+		double *dtb2 = tcb_ref.req_dataptr();
 
-	// Fill in random data
+		// Fill in random data
 
-	index<2> ida;
-	do {
-		size_t i;
-		i = dims.abs_index(ida);
-		dta[i] = dtb2[i] = drand48();
-		dtb1[i] = drand48();
-	} while(dims.inc_index(ida));
+		index<2> ida;
+		do {
+			size_t i;
+			i = dims.abs_index(ida);
+			dta[i] = dtb2[i] = drand48();
+			dtb1[i] = drand48();
+		} while(dims.inc_index(ida));
 
-	tca.ret_dataptr(dta); dta = NULL;
-	tcb.ret_dataptr(dtb1); dtb1 = NULL;
-	tcb_ref.ret_dataptr(dtb2); dtb2 = NULL;
+		tca.ret_dataptr(dta); dta = NULL;
+		tcb.ret_dataptr(dtb1); dtb1 = NULL;
+		tcb_ref.ret_dataptr(dtb2); dtb2 = NULL;
+	}
 
 	bta.set_immutable(); btb_ref.set_immutable();
 
@@ -251,29 +253,31 @@ void labeled_btensor_test::test_expr_copy_2() throw(libtest::test_exception) {
 	tensor_i<2, double> &ta = btctrla.req_block(i0);
 	tensor_i<2, double> &tb = btctrlb.req_block(i0);
 	tensor_i<2, double> &tb_ref = btctrlb_ref.req_block(i0);
-	tensor_ctrl<2, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
 
 	dimensions<2> dims(ta.get_dims());
 
-	double *dta = tca.req_dataptr();
-	double *dtb1 = tcb.req_dataptr();
-	double *dtb2 = tcb_ref.req_dataptr();
+	{
+		tensor_ctrl<2, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
+		double *dta = tca.req_dataptr();
+		double *dtb1 = tcb.req_dataptr();
+		double *dtb2 = tcb_ref.req_dataptr();
 
-	// Fill in random data
+		// Fill in random data
 
-	index<2> ida;
-	permutation<2> p; p.permute(0, 1);
-	do {
-		index<2> idb = ida; idb.permute(p);
-		size_t i = dims.abs_index(ida);
-		size_t j = dims.abs_index(idb);
-		dta[i] = dtb2[j] = drand48();
-		dtb1[j] = drand48();
-	} while(dims.inc_index(ida));
+		index<2> ida;
+		permutation<2> p; p.permute(0, 1);
+		do {
+			index<2> idb = ida; idb.permute(p);
+			size_t i = dims.abs_index(ida);
+			size_t j = dims.abs_index(idb);
+			dta[i] = dtb2[j] = drand48();
+			dtb1[j] = drand48();
+		} while(dims.inc_index(ida));
 
-	tca.ret_dataptr(dta); dta = NULL;
-	tcb.ret_dataptr(dtb1); dtb1 = NULL;
-	tcb_ref.ret_dataptr(dtb2); dtb2 = NULL;
+		tca.ret_dataptr(dta); dta = NULL;
+		tcb.ret_dataptr(dtb1); dtb1 = NULL;
+		tcb_ref.ret_dataptr(dtb2); dtb2 = NULL;
+	}
 
 	bta.set_immutable(); btb_ref.set_immutable();
 
@@ -311,30 +315,32 @@ void labeled_btensor_test::test_expr_copy_3() throw(libtest::test_exception) {
 	tensor_i<2, double> &ta = btctrla.req_block(i0);
 	tensor_i<2, double> &tb = btctrlb.req_block(i0);
 	tensor_i<2, double> &tb_ref = btctrlb_ref.req_block(i0);
-	tensor_ctrl<2, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
 
 	dimensions<2> dims(ta.get_dims());
 
-	double *dta = tca.req_dataptr();
-	double *dtb1 = tcb.req_dataptr();
-	double *dtb2 = tcb_ref.req_dataptr();
+	{
+		tensor_ctrl<2, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
+		double *dta = tca.req_dataptr();
+		double *dtb1 = tcb.req_dataptr();
+		double *dtb2 = tcb_ref.req_dataptr();
 
-	// Fill in random data
+		// Fill in random data
 
-	index<2> ida;
-	permutation<2> p; p.permute(0, 1);
-	do {
-		index<2> idb = ida; idb.permute(p);
-		size_t i = dims.abs_index(ida);
-		size_t j = dims.abs_index(idb);
-		dta[i] = drand48();
-		dtb2[j] = 1.5 * dta[i];
-		dtb1[j] = drand48();
-	} while(dims.inc_index(ida));
+		index<2> ida;
+		permutation<2> p; p.permute(0, 1);
+		do {
+			index<2> idb = ida; idb.permute(p);
+			size_t i = dims.abs_index(ida);
+			size_t j = dims.abs_index(idb);
+			dta[i] = drand48();
+			dtb2[j] = 1.5 * dta[i];
+			dtb1[j] = drand48();
+		} while(dims.inc_index(ida));
 
-	tca.ret_dataptr(dta); dta = NULL;
-	tcb.ret_dataptr(dtb1); dtb1 = NULL;
-	tcb_ref.ret_dataptr(dtb2); dtb2 = NULL;
+		tca.ret_dataptr(dta); dta = NULL;
+		tcb.ret_dataptr(dtb1); dtb1 = NULL;
+		tcb_ref.ret_dataptr(dtb2); dtb2 = NULL;
+	}
 
 	bta.set_immutable(); btb_ref.set_immutable();
 
@@ -372,28 +378,30 @@ void labeled_btensor_test::test_expr_copy_4() throw(libtest::test_exception) {
 	tensor_i<2, double> &ta = btctrla.req_block(i0);
 	tensor_i<2, double> &tb = btctrlb.req_block(i0);
 	tensor_i<2, double> &tb_ref = btctrlb_ref.req_block(i0);
-	tensor_ctrl<2, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
 
 	dimensions<2> dims(ta.get_dims());
 
-	double *dta = tca.req_dataptr();
-	double *dtb1 = tcb.req_dataptr();
-	double *dtb2 = tcb_ref.req_dataptr();
+	{
+		tensor_ctrl<2, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
+		double *dta = tca.req_dataptr();
+		double *dtb1 = tcb.req_dataptr();
+		double *dtb2 = tcb_ref.req_dataptr();
 
-	// Fill in random data
+		// Fill in random data
 
-	index<2> ida;
-	do {
-		size_t i;
-		i = dims.abs_index(ida);
-		dta[i] = drand48();
-		dtb2[i] = -dta[i];
-		dtb1[i] = drand48();
-	} while(dims.inc_index(ida));
+		index<2> ida;
+		do {
+			size_t i;
+			i = dims.abs_index(ida);
+			dta[i] = drand48();
+			dtb2[i] = -dta[i];
+			dtb1[i] = drand48();
+		} while(dims.inc_index(ida));
 
-	tca.ret_dataptr(dta); dta = NULL;
-	tcb.ret_dataptr(dtb1); dtb1 = NULL;
-	tcb_ref.ret_dataptr(dtb2); dtb2 = NULL;
+		tca.ret_dataptr(dta); dta = NULL;
+		tcb.ret_dataptr(dtb1); dtb1 = NULL;
+		tcb_ref.ret_dataptr(dtb2); dtb2 = NULL;
+	}
 
 	bta.set_immutable(); btb_ref.set_immutable();
 
@@ -432,31 +440,34 @@ void labeled_btensor_test::test_expr_add_1() throw(libtest::test_exception) {
 	tensor_i<2, double> &tb = btctrlb.req_block(i0);
 	tensor_i<2, double> &tc = btctrlc.req_block(i0);
 	tensor_i<2, double> &tc_ref = btctrlc_ref.req_block(i0);
-	tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
 
 	dimensions<2> dims(ta.get_dims());
 
-	double *dta = tca.req_dataptr();
-	double *dtb = tcb.req_dataptr();
-	double *dtc1 = tcc.req_dataptr();
-	double *dtc2 = tcc_ref.req_dataptr();
+	{
+		tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc),
+			tcc_ref(tc_ref);
+		double *dta = tca.req_dataptr();
+		double *dtb = tcb.req_dataptr();
+		double *dtc1 = tcc.req_dataptr();
+		double *dtc2 = tcc_ref.req_dataptr();
 
-	// Fill in random data
+		// Fill in random data
 
-	index<2> ida;
-	do {
-		size_t i;
-		i = dims.abs_index(ida);
-		dta[i] = drand48();
-		dtb[i] = drand48();
-		dtc1[i] = drand48();
-		dtc2[i] = dta[i] + dtb[i];
-	} while(dims.inc_index(ida));
+		index<2> ida;
+		do {
+			size_t i;
+			i = dims.abs_index(ida);
+			dta[i] = drand48();
+			dtb[i] = drand48();
+			dtc1[i] = drand48();
+			dtc2[i] = dta[i] + dtb[i];
+		} while(dims.inc_index(ida));
 
-	tca.ret_dataptr(dta); dta = NULL;
-	tcb.ret_dataptr(dtb); dtb = NULL;
-	tcc.ret_dataptr(dtc1); dtc1 = NULL;
-	tcc_ref.ret_dataptr(dtc2); dtc2 = NULL;
+		tca.ret_dataptr(dta); dta = NULL;
+		tcb.ret_dataptr(dtb); dtb = NULL;
+		tcc.ret_dataptr(dtc1); dtc1 = NULL;
+		tcc_ref.ret_dataptr(dtc2); dtc2 = NULL;
+	}
 
 	bta.set_immutable();
 	btb.set_immutable();
@@ -497,31 +508,34 @@ void labeled_btensor_test::test_expr_add_2() throw(libtest::test_exception) {
 	tensor_i<2, double> &tb = btctrlb.req_block(i0);
 	tensor_i<2, double> &tc = btctrlc.req_block(i0);
 	tensor_i<2, double> &tc_ref = btctrlc_ref.req_block(i0);
-	tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
 
 	dimensions<2> dims(ta.get_dims());
 
-	double *dta = tca.req_dataptr();
-	double *dtb = tcb.req_dataptr();
-	double *dtc1 = tcc.req_dataptr();
-	double *dtc2 = tcc_ref.req_dataptr();
+	{
+		tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc),
+			tcc_ref(tc_ref);
+		double *dta = tca.req_dataptr();
+		double *dtb = tcb.req_dataptr();
+		double *dtc1 = tcc.req_dataptr();
+		double *dtc2 = tcc_ref.req_dataptr();
 
-	// Fill in random data
+		// Fill in random data
 
-	index<2> ida;
-	do {
-		size_t i;
-		i = dims.abs_index(ida);
-		dta[i] = drand48();
-		dtb[i] = drand48();
-		dtc1[i] = drand48();
-		dtc2[i] = -dta[i] + 3.0*dtb[i];
-	} while(dims.inc_index(ida));
+		index<2> ida;
+		do {
+			size_t i;
+			i = dims.abs_index(ida);
+			dta[i] = drand48();
+			dtb[i] = drand48();
+			dtc1[i] = drand48();
+			dtc2[i] = -dta[i] + 3.0*dtb[i];
+		} while(dims.inc_index(ida));
 
-	tca.ret_dataptr(dta); dta = NULL;
-	tcb.ret_dataptr(dtb); dtb = NULL;
-	tcc.ret_dataptr(dtc1); dtc1 = NULL;
-	tcc_ref.ret_dataptr(dtc2); dtc2 = NULL;
+		tca.ret_dataptr(dta); dta = NULL;
+		tcb.ret_dataptr(dtb); dtb = NULL;
+		tcc.ret_dataptr(dtc1); dtc1 = NULL;
+		tcc_ref.ret_dataptr(dtc2); dtc2 = NULL;
+	}
 
 	bta.set_immutable();
 	btb.set_immutable();
@@ -562,31 +576,34 @@ void labeled_btensor_test::test_expr_add_3() throw(libtest::test_exception) {
 	tensor_i<2, double> &tb = btctrlb.req_block(i0);
 	tensor_i<2, double> &tc = btctrlc.req_block(i0);
 	tensor_i<2, double> &tc_ref = btctrlc_ref.req_block(i0);
-	tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
 
 	dimensions<2> dims(ta.get_dims());
 
-	double *dta = tca.req_dataptr();
-	double *dtb = tcb.req_dataptr();
-	double *dtc1 = tcc.req_dataptr();
-	double *dtc2 = tcc_ref.req_dataptr();
+	{
+		tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc),
+			tcc_ref(tc_ref);
+		double *dta = tca.req_dataptr();
+		double *dtb = tcb.req_dataptr();
+		double *dtc1 = tcc.req_dataptr();
+		double *dtc2 = tcc_ref.req_dataptr();
 
-	// Fill in random data
+		// Fill in random data
 
-	index<2> ida;
-	do {
-		size_t i;
-		i = dims.abs_index(ida);
-		dta[i] = drand48();
-		dtb[i] = drand48();
-		dtc1[i] = drand48();
-		dtc2[i] = dta[i] - dtb[i];
-	} while(dims.inc_index(ida));
+		index<2> ida;
+		do {
+			size_t i;
+			i = dims.abs_index(ida);
+			dta[i] = drand48();
+			dtb[i] = drand48();
+			dtc1[i] = drand48();
+			dtc2[i] = dta[i] - dtb[i];
+		} while(dims.inc_index(ida));
 
-	tca.ret_dataptr(dta); dta = NULL;
-	tcb.ret_dataptr(dtb); dtb = NULL;
-	tcc.ret_dataptr(dtc1); dtc1 = NULL;
-	tcc_ref.ret_dataptr(dtc2); dtc2 = NULL;
+		tca.ret_dataptr(dta); dta = NULL;
+		tcb.ret_dataptr(dtb); dtb = NULL;
+		tcc.ret_dataptr(dtc1); dtc1 = NULL;
+		tcc_ref.ret_dataptr(dtc2); dtc2 = NULL;
+	}
 
 	bta.set_immutable();
 	btb.set_immutable();
@@ -627,34 +644,37 @@ void labeled_btensor_test::test_expr_add_4() throw(libtest::test_exception) {
 	tensor_i<2, double> &tb = btctrlb.req_block(i0);
 	tensor_i<2, double> &tc = btctrlc.req_block(i0);
 	tensor_i<2, double> &tc_ref = btctrlc_ref.req_block(i0);
-	tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
 
 	dimensions<2> dims(ta.get_dims());
 
-	double *dta = tca.req_dataptr();
-	double *dtb = tcb.req_dataptr();
-	double *dtc1 = tcc.req_dataptr();
-	double *dtc2 = tcc_ref.req_dataptr();
+	{
+		tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc),
+			tcc_ref(tc_ref);
+		double *dta = tca.req_dataptr();
+		double *dtb = tcb.req_dataptr();
+		double *dtc1 = tcc.req_dataptr();
+		double *dtc2 = tcc_ref.req_dataptr();
 
-	// Fill in random data
+		// Fill in random data
 
-	index<2> ida;
-	permutation<2> p; p.permute(0, 1);
-	do {
-		index<2> idb(ida);
-		idb.permute(p);
-		size_t i = dims.abs_index(ida);
-		size_t j = dims.abs_index(idb);
-		dta[i] = drand48();
-		dtb[j] = drand48();
-		dtc1[i] = drand48();
-		dtc2[i] = 4.0*dta[i] - 0.5*dtb[j];
-	} while(dims.inc_index(ida));
+		index<2> ida;
+		permutation<2> p; p.permute(0, 1);
+		do {
+			index<2> idb(ida);
+			idb.permute(p);
+			size_t i = dims.abs_index(ida);
+			size_t j = dims.abs_index(idb);
+			dta[i] = drand48();
+			dtb[j] = drand48();
+			dtc1[i] = drand48();
+			dtc2[i] = 4.0*dta[i] - 0.5*dtb[j];
+		} while(dims.inc_index(ida));
 
-	tca.ret_dataptr(dta); dta = NULL;
-	tcb.ret_dataptr(dtb); dtb = NULL;
-	tcc.ret_dataptr(dtc1); dtc1 = NULL;
-	tcc_ref.ret_dataptr(dtc2); dtc2 = NULL;
+		tca.ret_dataptr(dta); dta = NULL;
+		tcb.ret_dataptr(dtb); dtb = NULL;
+		tcc.ret_dataptr(dtc1); dtc1 = NULL;
+		tcc_ref.ret_dataptr(dtc2); dtc2 = NULL;
+	}
 
 	bta.set_immutable();
 	btb.set_immutable();

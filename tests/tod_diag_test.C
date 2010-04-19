@@ -42,6 +42,8 @@ void tod_diag_test::test_1() throw(libtest::test_exception) {
 
 	tensor<2, double, allocator> ta(dims2);
 	tensor<1, double, allocator> tb(dims1), tb_ref(dims1);
+
+	{
 	tensor_ctrl<2, double> tca(ta);
 	tensor_ctrl<1, double> tcb(tb), tcb_ref(tb_ref);
 
@@ -63,6 +65,7 @@ void tod_diag_test::test_1() throw(libtest::test_exception) {
 	tca.ret_dataptr(pa); pa = 0;
 	tcb.ret_dataptr(pb); pb = 0;
 	tcb_ref.ret_dataptr(pb_ref); pb_ref = 0;
+	}
 
 	mask<2> m; m[0] = true; m[1] = true;
 	tod_diag<2, 2>(ta, m).perform(tb);
@@ -95,6 +98,8 @@ void tod_diag_test::test_2() throw(libtest::test_exception) {
 
 	tensor<3, double, allocator> ta(dims3);
 	tensor<2, double, allocator> tb(dims2), tb_ref(dims2);
+
+	{
 	tensor_ctrl<3, double> tca(ta);
 	tensor_ctrl<2, double> tcb(tb), tcb_ref(tb_ref);
 
@@ -118,6 +123,7 @@ void tod_diag_test::test_2() throw(libtest::test_exception) {
 	tca.ret_dataptr(pa); pa = 0;
 	tcb.ret_dataptr(pb); pb = 0;
 	tcb_ref.ret_dataptr(pb_ref); pb_ref = 0;
+	}
 
 	mask<3> m; m[0] = true; m[1] = true; m[2] = false;
 	tod_diag<3, 2>(ta, m).perform(tb);
@@ -150,6 +156,8 @@ void tod_diag_test::test_3() throw(libtest::test_exception) {
 
 	tensor<3, double, allocator> ta(dims3);
 	tensor<2, double, allocator> tb(dims2), tb_ref(dims2);
+
+	{
 	tensor_ctrl<3, double> tca(ta);
 	tensor_ctrl<2, double> tcb(tb), tcb_ref(tb_ref);
 
@@ -173,6 +181,7 @@ void tod_diag_test::test_3() throw(libtest::test_exception) {
 	tca.ret_dataptr(pa); pa = 0;
 	tcb.ret_dataptr(pb); pb = 0;
 	tcb_ref.ret_dataptr(pb_ref); pb_ref = 0;
+	}
 
 	mask<3> m; m[0] = true; m[1] = false; m[2] = true;
 	tod_diag<3, 2>(ta, m).perform(tb);
@@ -205,6 +214,8 @@ void tod_diag_test::test_4() throw(libtest::test_exception) {
 
 	tensor<3, double, allocator> ta(dims3);
 	tensor<2, double, allocator> tb(dims2), tb_ref(dims2);
+
+	{
 	tensor_ctrl<3, double> tca(ta);
 	tensor_ctrl<2, double> tcb(tb), tcb_ref(tb_ref);
 
@@ -228,6 +239,7 @@ void tod_diag_test::test_4() throw(libtest::test_exception) {
 	tca.ret_dataptr(pa); pa = 0;
 	tcb.ret_dataptr(pb); pb = 0;
 	tcb_ref.ret_dataptr(pb_ref); pb_ref = 0;
+	}
 
 	mask<3> m; m[0] = false; m[1] = true; m[2] = true;
 	tod_diag<3, 2>(ta, m).perform(tb);
@@ -260,6 +272,8 @@ void tod_diag_test::test_5() throw(libtest::test_exception) {
 
 	tensor<3, double, allocator> ta(dims3);
 	tensor<2, double, allocator> tb(dims2), tb_ref(dims2);
+
+	{
 	tensor_ctrl<3, double> tca(ta);
 	tensor_ctrl<2, double> tcb(tb), tcb_ref(tb_ref);
 
@@ -283,6 +297,7 @@ void tod_diag_test::test_5() throw(libtest::test_exception) {
 	tca.ret_dataptr(pa); pa = 0;
 	tcb.ret_dataptr(pb); pb = 0;
 	tcb_ref.ret_dataptr(pb_ref); pb_ref = 0;
+	}
 
 	mask<3> m; m[0] = false; m[1] = true; m[2] = true;
 	permutation<2> permb; permb.permute(0, 1);

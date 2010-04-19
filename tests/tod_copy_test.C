@@ -91,6 +91,8 @@ void tod_copy_test::test_plain(const dimensions<N> &dims)
 	try {
 
 	tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
+
+	{
 	tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
 
 	double *dta = tca.req_dataptr();
@@ -110,6 +112,7 @@ void tod_copy_test::test_plain(const dimensions<N> &dims)
 	tcb.ret_dataptr(dtb1); dtb1 = NULL;
 	tcb_ref.ret_dataptr(dtb2); dtb2 = NULL;
 	ta.set_immutable(); tb_ref.set_immutable();
+	}
 
 	// Invoke the copy operation
 
@@ -134,6 +137,8 @@ void tod_copy_test::test_plain_additive(const dimensions<N> &dims, double d)
 	try {
 
 	tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
+
+	{
 	tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
 
 	double *dta = tca.req_dataptr();
@@ -154,6 +159,7 @@ void tod_copy_test::test_plain_additive(const dimensions<N> &dims, double d)
 	tcb.ret_dataptr(dtb1); dtb1 = NULL;
 	tcb_ref.ret_dataptr(dtb2); dtb2 = NULL;
 	ta.set_immutable(); tb_ref.set_immutable();
+	}
 
 	// Invoke the copy operation
 
@@ -178,6 +184,8 @@ void tod_copy_test::test_scaled(const dimensions<N> &dims, double c)
 	try {
 
 	tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
+
+	{
 	tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
 
 	double *dta = tca.req_dataptr();
@@ -198,6 +206,7 @@ void tod_copy_test::test_scaled(const dimensions<N> &dims, double c)
 	tcb.ret_dataptr(dtb1); dtb1 = NULL;
 	tcb_ref.ret_dataptr(dtb2); dtb2 = NULL;
 	ta.set_immutable(); tb_ref.set_immutable();
+	}
 
 	// Invoke the copy operation
 
@@ -223,6 +232,8 @@ void tod_copy_test::test_scaled_additive(const dimensions<N> &dims, double c,
 	try {
 
 	tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
+
+	{
 	tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
 
 	double *dta = tca.req_dataptr();
@@ -243,6 +254,7 @@ void tod_copy_test::test_scaled_additive(const dimensions<N> &dims, double c,
 	tcb.ret_dataptr(dtb1); dtb1 = NULL;
 	tcb_ref.ret_dataptr(dtb2); dtb2 = NULL;
 	ta.set_immutable(); tb_ref.set_immutable();
+	}
 
 	// Invoke the copy operation
 
@@ -272,6 +284,8 @@ void tod_copy_test::test_perm(const dimensions<N> &dims,
 	dimsb.permute(perm);
 
 	tensor<N, double, allocator> ta(dimsa), tb(dimsb), tb_ref(dimsb);
+
+	{
 	tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
 
 	double *dta = tca.req_dataptr();
@@ -294,6 +308,7 @@ void tod_copy_test::test_perm(const dimensions<N> &dims,
 	tcb.ret_dataptr(dtb1); dtb1 = NULL;
 	tcb_ref.ret_dataptr(dtb2); dtb2 = NULL;
 	ta.set_immutable(); tb_ref.set_immutable();
+	}
 
 	// Invoke the copy operation
 
@@ -321,6 +336,8 @@ void tod_copy_test::test_perm_additive(const dimensions<N> &dims,
 	dimsb.permute(perm);
 
 	tensor<N, double, allocator> ta(dimsa), tb(dimsb), tb_ref(dimsb);
+
+	{
 	tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
 
 	double *dta = tca.req_dataptr();
@@ -344,6 +361,7 @@ void tod_copy_test::test_perm_additive(const dimensions<N> &dims,
 	tcb.ret_dataptr(dtb1); dtb1 = NULL;
 	tcb_ref.ret_dataptr(dtb2); dtb2 = NULL;
 	ta.set_immutable(); tb_ref.set_immutable();
+	}
 
 	// Invoke the copy operation
 
@@ -371,6 +389,8 @@ void tod_copy_test::test_perm_scaled(const dimensions<N> &dims,
 	dimsb.permute(perm);
 
 	tensor<N, double, allocator> ta(dimsa), tb(dimsb), tb_ref(dimsb);
+
+	{
 	tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
 
 	double *dta = tca.req_dataptr();
@@ -394,6 +414,7 @@ void tod_copy_test::test_perm_scaled(const dimensions<N> &dims,
 	tcb.ret_dataptr(dtb1); dtb1 = NULL;
 	tcb_ref.ret_dataptr(dtb2); dtb2 = NULL;
 	ta.set_immutable(); tb_ref.set_immutable();
+	}
 
 	// Invoke the copy operation
 
@@ -423,6 +444,8 @@ void tod_copy_test::test_perm_scaled_additive(const dimensions<N> &dims,
 	dimsb.permute(perm);
 
 	tensor<N, double, allocator> ta(dimsa), tb(dimsb), tb_ref(dimsb);
+
+	{
 	tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
 
 	double *dta = tca.req_dataptr();
@@ -446,6 +469,7 @@ void tod_copy_test::test_perm_scaled_additive(const dimensions<N> &dims,
 	tcb.ret_dataptr(dtb1); dtb1 = NULL;
 	tcb_ref.ret_dataptr(dtb2); dtb2 = NULL;
 	ta.set_immutable(); tb_ref.set_immutable();
+	}
 
 	// Invoke the copy operation
 

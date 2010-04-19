@@ -56,13 +56,15 @@ void btod_copy_test::test_zero_1() throw(libtest::test_exception) {
 
 	index<2> i_00;
 	tensor_i<2, double> &blk_00 = btb_ctrl.req_block(i_00);
-	tensor_ctrl_t blk_00_ctrl(blk_00);
-	double *ptr = blk_00_ctrl.req_dataptr();
-	size_t sz = blk_00.get_dims().get_size();
-	for(size_t i = 0; i < sz; i++) {
-		ptr[i] = drand48();
+	{
+		tensor_ctrl_t blk_00_ctrl(blk_00);
+		double *ptr = blk_00_ctrl.req_dataptr();
+		size_t sz = blk_00.get_dims().get_size();
+		for(size_t i = 0; i < sz; i++) {
+			ptr[i] = drand48();
+		}
+		blk_00_ctrl.ret_dataptr(ptr); ptr = 0;
 	}
-	blk_00_ctrl.ret_dataptr(ptr); ptr = NULL;
 	btb_ctrl.ret_block(i_00);
 
 	// Make a copy
@@ -122,13 +124,15 @@ void btod_copy_test::test_zero_2() throw(libtest::test_exception) {
 	index<2> iblk;
 	do {
 		tensor_i<2, double> &blk = btb_ctrl.req_block(iblk);
-		tensor_ctrl_t blk_ctrl(blk);
-		double *ptr = blk_ctrl.req_dataptr();
-		size_t sz = blk.get_dims().get_size();
-		for(size_t i = 0; i < sz; i++) {
-			ptr[i] = drand48();
+		{
+			tensor_ctrl_t blk_ctrl(blk);
+			double *ptr = blk_ctrl.req_dataptr();
+			size_t sz = blk.get_dims().get_size();
+			for(size_t i = 0; i < sz; i++) {
+				ptr[i] = drand48();
+			}
+			blk_ctrl.ret_dataptr(ptr); ptr = 0;
 		}
-		blk_ctrl.ret_dataptr(ptr); ptr = NULL;
 		btb_ctrl.ret_block(iblk);
 	} while(blk_dims.inc_index(iblk));
 
@@ -182,13 +186,15 @@ void btod_copy_test::test_1() throw(libtest::test_exception) {
 
 	index<2> i_00;
 	tensor_i<2, double> &blk_00 = bta_ctrl.req_block(i_00);
-	tensor_ctrl_t blk_00_ctrl(blk_00);
-	double *ptr = blk_00_ctrl.req_dataptr();
-	size_t sz = blk_00.get_dims().get_size();
-	for(size_t i = 0; i < sz; i++) {
-		ptr[i] = drand48();
+	{
+		tensor_ctrl_t blk_00_ctrl(blk_00);
+		double *ptr = blk_00_ctrl.req_dataptr();
+		size_t sz = blk_00.get_dims().get_size();
+		for(size_t i = 0; i < sz; i++) {
+			ptr[i] = drand48();
+		}
+		blk_00_ctrl.ret_dataptr(ptr); ptr = 0;
 	}
-	blk_00_ctrl.ret_dataptr(ptr); ptr = NULL;
 	bta_ctrl.ret_block(i_00);
 
 	// Make a copy

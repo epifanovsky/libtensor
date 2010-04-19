@@ -123,10 +123,11 @@ void btod_read<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 	abs_index<N> bi(bdims);
 	do {
 		tensor_i<N, double> &blk = ctrl.req_block(bi.get_index());
+		bool zero = true;
+		{
 		tensor_ctrl<N, double> blk_ctrl(blk);
 		const dimensions<N> &blk_dims = blk.get_dims();
 		double *p = blk_ctrl.req_dataptr();
-		bool zero = true;
 
 		index<N> blk_start_idx(bis.get_block_start(bi.get_index()));
 		abs_index<N> blk_offs_aidx(blk_dims);
@@ -155,6 +156,7 @@ void btod_read<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 		} while(blk_offs_aidx.inc());
 
 		blk_ctrl.ret_dataptr(p);
+		}
 		ctrl.ret_block(bi.get_index());
 		if(zero) ctrl.req_zero_block(bi.get_index());
 

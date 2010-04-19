@@ -46,9 +46,13 @@ void tod_scatter_test::test_ij_j(size_t ni, size_t nj, double d)
 	dimensions<2> dimc(index_range<2>(ic1, ic2));
 	size_t sza = dima.get_size(), szc = dimc.get_size();
 
-	tensor<1, double, allocator> ta(dima); tensor_ctrl<1, double> tca(ta);
-	tensor<2, double, allocator> tc(dimc); tensor_ctrl<2, double> tcc(tc);
+	tensor<1, double, allocator> ta(dima);
+	tensor<2, double, allocator> tc(dimc);
 	tensor<2, double, allocator> tc_ref(dimc);
+
+	{
+	tensor_ctrl<1, double> tca(ta);
+	tensor_ctrl<2, double> tcc(tc);
 	tensor_ctrl<2, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -78,6 +82,7 @@ void tod_scatter_test::test_ij_j(size_t ni, size_t nj, double d)
 	tca.ret_dataptr(dta); dta = 0; ta.set_immutable();
 	tcc.ret_dataptr(dtc1); dtc1 = 0;
 	tcc_ref.ret_dataptr(dtc2); dtc2 = 0; tc_ref.set_immutable();
+	}
 
 	//	Invoke the contraction routine
 

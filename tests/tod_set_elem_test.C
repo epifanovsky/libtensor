@@ -29,6 +29,8 @@ void tod_set_elem_test::test_1() throw(libtest::test_exception) {
 	i2[0] = 3; i2[1] = 4;
 	dimensions<2> dims(index_range<2>(i1, i2));
 	tensor<2, double, allocator_t> t(dims), t_ref(dims);
+
+	{
 	tensor_ctrl<2, double> tc(t), tc_ref(t_ref);
 
 	//	Fill in random data
@@ -61,6 +63,7 @@ void tod_set_elem_test::test_1() throw(libtest::test_exception) {
 	tc_ref.ret_dataptr(d_ref); d_ref = 0;
 	tod_set_elem<2>().perform(t, i32, q);
 	compare_ref<2>::compare(testname, t, t_ref, 0.0);
+	}
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());

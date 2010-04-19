@@ -99,17 +99,19 @@ void tod_sum_test::test_1() throw(libtest::test_exception) {
 	op.add_op(add2, 1.0);
 	op.perform(t);
 
-	tensor_ctrl<4, double> tctrl(t);
-	const double *p = tctrl.req_const_dataptr();
 	bool ok = true;
-	size_t sz = dims.get_size();
-	for(size_t i = 0; i < sz; i++) {
-		if(p[i] != (double)i + 3.0) {
-			ok = false;
-			break;
+	{
+		tensor_ctrl<4, double> tctrl(t);
+		const double *p = tctrl.req_const_dataptr();
+		size_t sz = dims.get_size();
+		for(size_t i = 0; i < sz; i++) {
+			if(p[i] != (double)i + 3.0) {
+				ok = false;
+				break;
+			}
 		}
+		tctrl.ret_dataptr(p);
 	}
-	tctrl.ret_dataptr(p);
 
 	if(!ok) {
 		fail_test(testname, __FILE__, __LINE__, "Set operation failed");

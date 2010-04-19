@@ -7,6 +7,7 @@
 
 namespace libtensor {
 
+
 /**	\brief Tensor control
 
 	Tensor control keeps track of pointers which have been checked out and
@@ -22,159 +23,91 @@ namespace libtensor {
 template<size_t N, typename T>
 class tensor_ctrl {
 private:
-	struct ptr_node {
-		const T* m_ptr;
-		size_t m_ptrcnt;
-		ptr_node* m_next;
+	typedef typename tensor_i<N, T>::handle_t
+		handle_t; //!< Session handle type
 
-		ptr_node() : m_ptr(NULL), m_ptrcnt(0), m_next(NULL) {}
-	};
-
-	tensor_i<N,T> &m_t; //!< Controlled tensor
-	ptr_node m_head; //!< list of data pointers
+private:
+	tensor_i<N, T> &m_t; //!< Controlled %tensor object
+	handle_t m_h; //!< Session handle
 
 public:
 	//!	\name Construction and destruction
 	//@{
-	tensor_ctrl(tensor_i<N,T> &t);
+
+	/**	\brief Initializes the control object, initiates a session
+		\param t Tensor instance.
+	 **/
+	tensor_ctrl(tensor_i<N, T> &t);
+
+	/**	\brief Destroys the control object, closes the session
+	 **/
 	~tensor_ctrl();
+
 	//@}
 
-	//!	\name Event forwarding
+
+	//!	\name Events
 	//@{
-	void req_prefetch() throw(exception);
-	T *req_dataptr() throw(exception);
-	const T *req_const_dataptr() throw(exception);
-	void ret_dataptr(const T *p) throw(exception);
+
+	void req_prefetch();
+	T *req_dataptr();
+	void ret_dataptr(const T *p);
+	const T *req_const_dataptr();
+	void ret_const_dataptr(const T *p);
+
 	//@}
 };
 
 
 template<size_t N, typename T>
-inline tensor_ctrl<N,T>::tensor_ctrl(tensor_i<N,T> &t) : m_t(t) {
+inline tensor_ctrl<N, T>::tensor_ctrl(tensor_i<N, T> &t) : m_t(t) {
+
+	m_h = m_t.on_req_open_session();
 }
+
 
 template<size_t N, typename T>
-inline tensor_ctrl<N,T>::~tensor_ctrl() {
-	if ( m_head.m_ptrcnt != 0 ) {
-		while ( m_head.m_ptrcnt != 0 ) {
-			m_t.on_ret_dataptr(m_head.m_ptr);
-			m_head.m_ptrcnt--;
-		}
+inline tensor_ctrl<N, T>::~tensor_ctrl() {
 
-		ptr_node* node=m_head.m_next, *tmp;
-		while ( node != NULL ) {
-			while ( node->m_ptrcnt != 0 ) {
-				m_t.on_ret_dataptr(node->m_ptr);
-				node->m_ptrcnt--;
-			}
-			tmp=node;
-			node=node->m_next;
-			delete tmp;
-		}
-	}
+	m_t.on_req_close_session(m_h);
 }
+
 
 template<size_t N, typename T>
-inline void tensor_ctrl<N,T>::req_prefetch() throw(exception) {
-	m_t.on_req_prefetch();
+inline void tensor_ctrl<N, T>::req_prefetch() {
+
+	m_t.on_req_prefetch(m_h);
 }
+
 
 template<size_t N, typename T>
-inline T *tensor_ctrl<N,T>::req_dataptr() throw(exception) {
-	T* ptr=m_t.on_req_dataptr();
+inline T *tensor_ctrl<N,T>::req_dataptr() {
 
-	if ( m_head.m_ptrcnt == 0 ) {
-		m_head.m_ptr=ptr;
-		m_head.m_ptrcnt++;
-	}
-	else {
-		ptr_node* node=&m_head;
-		while ( (node->m_next!=NULL) && ( node->m_ptr!=ptr ) ) node=node->m_next;
-
-		if ( node->m_ptr==ptr ) {
-			node->m_ptrcnt++;
-		}
-		else {
-			node->m_next=new ptr_node();
-			node->m_next->m_ptr=ptr;
-			node->m_next->m_ptrcnt++;
-		}
-	}
-
-	return ptr;
+	return m_t.on_req_dataptr(m_h);
 }
+
 
 template<size_t N, typename T>
-inline const T *tensor_ctrl<N,T>::req_const_dataptr() throw(exception) {
-	const T* ptr=m_t.on_req_const_dataptr();
+inline void tensor_ctrl<N, T>::ret_dataptr(const T *p) {
 
-	if ( m_head.m_ptrcnt == 0 ) {
-		m_head.m_ptr=ptr;
-		m_head.m_ptrcnt++;
-	}
-	else {
-		ptr_node* node=&m_head;
-		while ( ( node->m_next!=NULL ) && ( node->m_ptr!=ptr ) ) node=node->m_next;
-
-		if ( node->m_ptr == ptr ) {
-			node->m_ptrcnt++;
-		}
-		else {
-			node->m_next=new ptr_node();
-			node->m_next->m_ptr=ptr;
-			node->m_next->m_ptrcnt++;
-		}
-	}
-
-	return ptr;
+	m_t.on_ret_dataptr(m_h, p);
 }
+
 
 template<size_t N, typename T>
-inline void tensor_ctrl<N,T>::ret_dataptr(const T *p) throw(exception) {
-	if ( m_head.m_ptrcnt == 0 )
-		throw_exc("tensor_ctrl<N,T>", "ret_dataptr()",
-			"No pointer has been checked out.");
+inline const T *tensor_ctrl<N, T>::req_const_dataptr() {
 
-	// traverse the list if the returned pointer is not the main pointer
-	if ( m_head.m_ptr != p ) {
-		if ( m_head.m_next == NULL )
-			throw_exc("tensor_ctrl<N,T>", "ret_dataptr()",
-				"Invalid data pointer.");
-
-		ptr_node* node=m_head.m_next, *prev=&m_head;
-		while (( node->m_next!=NULL ) && ( node->m_ptr!=p )) {
-			prev=node;
-			node=node->m_next;
-		}
-
-		if ( node->m_next==NULL )
-			throw_exc("tensor_ctrl<N,T>", "ret_dataptr()",
-				"Invalid data pointer.");
-		else {
-			if ( node->m_ptrcnt == 1 ) {
-				prev->m_next=node->m_next;
-				delete node;
-			}
-			else {
-				node->m_ptrcnt--;
-			}
-		}
-	}
-	else {
-		m_head.m_ptrcnt--;
-		if ( (m_head.m_ptrcnt==0) && (m_head.m_next!=NULL) ) {
-			ptr_node* node  = m_head.m_next;
-			m_head.m_ptr    = node->m_ptr;
-			m_head.m_ptrcnt = node->m_ptrcnt;
-			m_head.m_next=node->m_next;
-			delete node;
-		}
-	}
-	m_t.on_ret_dataptr(p);
+	return m_t.on_req_const_dataptr(m_h);
 }
+
+
+template<size_t N, typename T>
+inline void tensor_ctrl<N, T>::ret_const_dataptr(const T *p) {
+
+	m_t.on_ret_const_dataptr(m_h, p);
+}
+
 
 } // namespace libtensor
 
 #endif // LIBTENSOR_TENSOR_CTRL_H
-

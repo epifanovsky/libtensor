@@ -46,21 +46,23 @@ void btod_read_test::test_1() throw(libtest::test_exception) {
 	std::stringstream ss;
 	ss << "2 " << dims[0] << " " << dims[1] << std::endl;
 
-	tensor_ctrl<2, double> ctrl(t_ref);
-	const double *p = ctrl.req_const_dataptr();
-	for(size_t i = 0; i < dims[0]; i++) {
-		index<2> idx;
-		idx[0] = i;
-		for(size_t j = 0; j < dims[1]; j++) {
-			idx[1] = j;
-			abs_index<2> aidx(idx, dims);
-			ss.precision(15);
-			ss.setf(std::ios::fixed, std::ios::floatfield);
-			ss << p[aidx.get_abs_index()] << " ";
+	{
+		tensor_ctrl<2, double> ctrl(t_ref);
+		const double *p = ctrl.req_const_dataptr();
+		for(size_t i = 0; i < dims[0]; i++) {
+			index<2> idx;
+			idx[0] = i;
+			for(size_t j = 0; j < dims[1]; j++) {
+				idx[1] = j;
+				abs_index<2> aidx(idx, dims);
+				ss.precision(15);
+				ss.setf(std::ios::fixed, std::ios::floatfield);
+				ss << p[aidx.get_abs_index()] << " ";
+			}
+			ss << std::endl;
 		}
-		ss << std::endl;
+		ctrl.ret_dataptr(p); p = 0;
 	}
-	ctrl.ret_dataptr(p); p = NULL;
 
 	block_index_space<2> bis(dims);
 	block_tensor<2, double, allocator_t> bt(bis);
@@ -96,21 +98,23 @@ void btod_read_test::test_2() throw(libtest::test_exception) {
 	std::stringstream ss;
 	ss << "2 " << dims[0] << " " << dims[1] << std::endl;
 
-	tensor_ctrl<2, double> ctrl(t_ref);
-	const double *p = ctrl.req_const_dataptr();
-	for(size_t i = 0; i < dims[0]; i++) {
-		index<2> idx;
-		idx[0] = i;
-		for(size_t j = 0; j < dims[1]; j++) {
-			idx[1] = j;
-			abs_index<2> aidx(idx, dims);
-			ss.precision(15);
-			ss.setf(std::ios::fixed, std::ios::floatfield);
-			ss << p[aidx.get_abs_index()] << " ";
+	{
+		tensor_ctrl<2, double> ctrl(t_ref);
+		const double *p = ctrl.req_const_dataptr();
+		for(size_t i = 0; i < dims[0]; i++) {
+			index<2> idx;
+			idx[0] = i;
+			for(size_t j = 0; j < dims[1]; j++) {
+				idx[1] = j;
+				abs_index<2> aidx(idx, dims);
+				ss.precision(15);
+				ss.setf(std::ios::fixed, std::ios::floatfield);
+				ss << p[aidx.get_abs_index()] << " ";
+			}
+			ss << std::endl;
 		}
-		ss << std::endl;
+		ctrl.ret_dataptr(p); p = 0;
 	}
-	ctrl.ret_dataptr(p); p = NULL;
 
 	block_index_space<2> bis(dims);
 	mask<2> msk1, msk2; msk1[0] = true; msk2[1] = true;
@@ -148,21 +152,23 @@ void btod_read_test::test_3() throw(libtest::test_exception) {
 	std::stringstream ss;
 	ss << "2 " << dims[0] << " " << dims[1] << std::endl;
 
-	tensor_ctrl<2, double> ctrl(t_ref);
-	const double *p = ctrl.req_const_dataptr();
-	for(size_t i = 0; i < dims[0]; i++) {
-		index<2> idx;
-		idx[0] = i;
-		for(size_t j = 0; j < dims[1]; j++) {
-			idx[1] = j;
-			abs_index<2> aidx(idx, dims);
-			ss.precision(15);
-			ss.setf(std::ios::fixed, std::ios::floatfield);
-			ss << p[aidx.get_abs_index()] << " ";
+	{
+		tensor_ctrl<2, double> ctrl(t_ref);
+		const double *p = ctrl.req_const_dataptr();
+		for(size_t i = 0; i < dims[0]; i++) {
+			index<2> idx;
+			idx[0] = i;
+			for(size_t j = 0; j < dims[1]; j++) {
+				idx[1] = j;
+				abs_index<2> aidx(idx, dims);
+				ss.precision(15);
+				ss.setf(std::ios::fixed, std::ios::floatfield);
+				ss << p[aidx.get_abs_index()] << " ";
+			}
+			ss << std::endl;
 		}
-		ss << std::endl;
+		ctrl.ret_dataptr(p); p = 0;
 	}
-	ctrl.ret_dataptr(p); p = NULL;
 
 	block_index_space<2> bis(dims);
 	block_tensor<2, double, allocator_t> bt(bis), bt_ref(bis);
@@ -208,21 +214,23 @@ void btod_read_test::test_4() throw(libtest::test_exception) {
 	std::stringstream ss;
 	ss << "2 " << dims[0] << " " << dims[1] << std::endl;
 
-	tensor_ctrl<2, double> ctrl(t_ref);
-	const double *p = ctrl.req_const_dataptr();
-	for(size_t i = 0; i < dims[0]; i++) {
-		index<2> idx;
-		idx[0] = i;
-		for(size_t j = 0; j < dims[1]; j++) {
-			idx[1] = j;
-			abs_index<2> aidx(idx, dims);
-			ss.precision(15);
-			ss.setf(std::ios::fixed, std::ios::floatfield);
-			ss << p[aidx.get_abs_index()] << " ";
+	{
+		tensor_ctrl<2, double> ctrl(t_ref);
+		const double *p = ctrl.req_const_dataptr();
+		for(size_t i = 0; i < dims[0]; i++) {
+			index<2> idx;
+			idx[0] = i;
+			for(size_t j = 0; j < dims[1]; j++) {
+				idx[1] = j;
+				abs_index<2> aidx(idx, dims);
+				ss.precision(15);
+				ss.setf(std::ios::fixed, std::ios::floatfield);
+				ss << p[aidx.get_abs_index()] << " ";
+			}
+			ss << std::endl;
 		}
-		ss << std::endl;
+		ctrl.ret_dataptr(p); p = 0;
 	}
-	ctrl.ret_dataptr(p); p = NULL;
 
 	btod_read<2>(ss).perform(bt);
 
@@ -256,15 +264,17 @@ void btod_read_test::test_5() throw(libtest::test_exception) {
 	ss << "4 " << dims[0] << " " << dims[1] << " " << dims[2] << " "
 		<< dims[3] << std::endl;
 
-	tensor_ctrl<4, double> ctrl(t_ref);
-	const double *p = ctrl.req_const_dataptr();
-	abs_index<4> aidx(dims);
-	do {
-		ss.precision(15);
-		ss.setf(std::ios::fixed, std::ios::floatfield);
-		ss << p[aidx.get_abs_index()] << " ";
-	} while(aidx.inc());
-	ctrl.ret_dataptr(p); p = NULL;
+	{
+		tensor_ctrl<4, double> ctrl(t_ref);
+		const double *p = ctrl.req_const_dataptr();
+		abs_index<4> aidx(dims);
+		do {
+			ss.precision(15);
+			ss.setf(std::ios::fixed, std::ios::floatfield);
+			ss << p[aidx.get_abs_index()] << " ";
+		} while(aidx.inc());
+		ctrl.ret_dataptr(p); p = 0;
+	}
 
 	block_index_space<4> bis(dims);
 	block_tensor<4, double, allocator_t> bt(bis);
@@ -309,15 +319,17 @@ void btod_read_test::test_6() throw(libtest::test_exception) {
 	ss << "4 " << dims[0] << " " << dims[1] << " " << dims[2] << " "
 		<< dims[3] << std::endl;
 
-	tensor_ctrl<4, double> ctrl(t_ref);
-	const double *p = ctrl.req_const_dataptr();
-	abs_index<4> aidx(dims);
-	do {
-		ss.precision(15);
-		ss.setf(std::ios::fixed, std::ios::floatfield);
-		ss << p[aidx.get_abs_index()] << " ";
-	} while(aidx.inc());
-	ctrl.ret_dataptr(p); p = NULL;
+	{
+		tensor_ctrl<4, double> ctrl(t_ref);
+		const double *p = ctrl.req_const_dataptr();
+		abs_index<4> aidx(dims);
+		do {
+			ss.precision(15);
+			ss.setf(std::ios::fixed, std::ios::floatfield);
+			ss << p[aidx.get_abs_index()] << " ";
+		} while(aidx.inc());
+		ctrl.ret_dataptr(p); p = 0;
+	}
 
 	btod_read<4>(ss).perform(bt);
 
@@ -351,21 +363,23 @@ void btod_read_test::test_7() throw(libtest::test_exception) {
 	std::stringstream ss;
 	ss << "2 " << dims[0] << " " << dims[1] << std::endl;
 
-	tensor_ctrl<2, double> ctrl(t_ref);
-	const double *p = ctrl.req_const_dataptr();
-	for(size_t i = 0; i < dims[0]; i++) {
-		index<2> idx;
-		idx[0] = i;
-		for(size_t j = 0; j < dims[1]; j++) {
-			idx[1] = j;
-			abs_index<2> aidx(idx, dims);
-			ss.precision(15);
-			ss.setf(std::ios::fixed, std::ios::floatfield);
-			ss << p[aidx.get_abs_index()] << " ";
+	{
+		tensor_ctrl<2, double> ctrl(t_ref);
+		const double *p = ctrl.req_const_dataptr();
+		for(size_t i = 0; i < dims[0]; i++) {
+			index<2> idx;
+			idx[0] = i;
+			for(size_t j = 0; j < dims[1]; j++) {
+				idx[1] = j;
+				abs_index<2> aidx(idx, dims);
+				ss.precision(15);
+				ss.setf(std::ios::fixed, std::ios::floatfield);
+				ss << p[aidx.get_abs_index()] << " ";
+			}
+			ss << std::endl;
 		}
-		ss << std::endl;
+		ctrl.ret_dataptr(p); p = 0;
 	}
-	ctrl.ret_dataptr(p); p = NULL;
 
 	block_index_space<2> bis(dims);
 	mask<2> msk1, msk2; msk1[0] = true; msk2[1] = true;
@@ -404,21 +418,23 @@ void btod_read_test::test_8() throw(libtest::test_exception) {
 	std::stringstream ss;
 	ss << "2 " << dims[0] << " " << dims[1] << std::endl;
 
-	tensor_ctrl<2, double> ctrl(t_ref);
-	const double *p = ctrl.req_const_dataptr();
-	for(size_t i = 0; i < dims[0]; i++) {
-		index<2> idx;
-		idx[0] = i;
-		for(size_t j = 0; j < dims[1]; j++) {
-			idx[1] = j;
-			abs_index<2> aidx(idx, dims);
-			ss.precision(15);
-			ss.setf(std::ios::fixed, std::ios::floatfield);
-			ss << p[aidx.get_abs_index()] << " ";
+	{
+		tensor_ctrl<2, double> ctrl(t_ref);
+		const double *p = ctrl.req_const_dataptr();
+		for(size_t i = 0; i < dims[0]; i++) {
+			index<2> idx;
+			idx[0] = i;
+			for(size_t j = 0; j < dims[1]; j++) {
+				idx[1] = j;
+				abs_index<2> aidx(idx, dims);
+				ss.precision(15);
+				ss.setf(std::ios::fixed, std::ios::floatfield);
+				ss << p[aidx.get_abs_index()] << " ";
+			}
+			ss << std::endl;
 		}
-		ss << std::endl;
+		ctrl.ret_dataptr(p); p = 0;
 	}
-	ctrl.ret_dataptr(p); p = NULL;
 
 	block_index_space<2> bis(dims);
 	mask<2> msk1, msk2; msk1[0] = true; msk2[1] = true;
