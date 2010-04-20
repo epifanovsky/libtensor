@@ -2,6 +2,7 @@ set(SRC
 	libtensor_tests.C
 	libtensor_suite.C
 	abs_index_test.C
+	addition_schedule_test.C
 #	anon_eval_test.C
 	bispace_test.C
 	bispace_expr_test.C

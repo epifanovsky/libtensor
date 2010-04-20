@@ -3,6 +3,7 @@
 
 #include <libtest/test_suite.h>
 #include "abs_index_test.h"
+#include "addition_schedule_test.h"
 //~ #include "anon_eval_test.h"
 #include "bispace_test.h"
 #include "bispace_expr_test.h"
@@ -109,6 +110,7 @@ namespace libtensor {
 
 	This suite runs the following tests:
 	\li libtensor::abs_index_test
+	\li libtensor::addition_schedule_test
 	\li libtensor::anon_eval_test
 	\li libtensor::bispace_test
 	\li libtensor::bispace_expr_test
@@ -209,6 +211,7 @@ namespace libtensor {
 class libtensor_suite : public libtest::test_suite {
 private:
 	unit_test_factory<abs_index_test> m_utf_abs_index;
+	unit_test_factory<addition_schedule_test> m_utf_addition_schedule;
 	//~ unit_test_factory<anon_eval_test> m_utf_anon_eval;
 	unit_test_factory<bispace_test> m_utf_bispace;
 	unit_test_factory<bispace_expr_test> m_utf_bispace_expr;

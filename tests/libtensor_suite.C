@@ -6,6 +6,7 @@ namespace libtensor {
 libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 
 	add_test("abs_index", m_utf_abs_index);
+	add_test("addition_schedule", m_utf_addition_schedule);
 	//~ add_test("anon_eval", m_utf_anon_eval);
 	add_test("bispace", m_utf_bispace);
 	add_test("bispace_expr", m_utf_bispace_expr);
