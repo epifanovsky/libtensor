@@ -4,6 +4,7 @@
 #include "../defs.h"
 #include "../core/direct_block_tensor_operation.h"
 #include "../symmetry/so_copy.h"
+#include "basic_btod.h"
 #include "assignment_schedule.h"
 #include "addition_schedule.h"
 
@@ -26,21 +27,15 @@ namespace libtensor {
 	\ingroup libtensor_btod
  **/
 template<size_t N>
-class btod_additive : public direct_block_tensor_operation<N, double> {
+class btod_additive : public basic_btod<N> {
 public:
-	using direct_block_tensor_operation<N, double>::get_bis;
-	using direct_block_tensor_operation<N, double>::get_symmetry;
-	using direct_block_tensor_operation<N, double>::compute_block;
+	using basic_btod<N>::get_bis;
+	using basic_btod<N>::get_symmetry;
+	using basic_btod<N>::perform;
 
-	virtual void perform(block_tensor_i<N, double> &bt);
-
+public:
 	//!	\name Interface of additive operations
 	//@{
-
-	/**	\brief Returns the assignment schedule -- the preferred order
-			of computing blocks
-	 **/
-	virtual const assignment_schedule<N, double> &get_schedule() = 0;
 
 	/**	\brief Invoked to execute the operation (additive)
 		\param bt Output block %tensor.
@@ -64,26 +59,6 @@ protected:
 
 
 };
-
-
-template<size_t N>
-void btod_additive<N>::perform(block_tensor_i<N, double> &bt) {
-
-	block_tensor_ctrl<N, double> ctrl(bt);
-	ctrl.req_zero_all_blocks();
-	so_copy<N, double>(get_symmetry()).perform(ctrl.req_symmetry());
-
-	dimensions<N> bidims(bt.get_bis().get_block_index_dims());
-	const assignment_schedule<N, double> &sch = get_schedule();
-	for(typename assignment_schedule<N, double>::iterator i = sch.begin();
-		i != sch.end(); i++) {
-
-		abs_index<N> ai(sch.get_abs_index(i), bidims);
-		tensor_i<N, double> &blk = ctrl.req_block(ai.get_index());
-		compute_block(blk, ai.get_index());
-		ctrl.ret_block(ai.get_index());
-	}
-}
 
 
 } // namespace libtensor
