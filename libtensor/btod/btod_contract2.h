@@ -19,7 +19,7 @@
 #include "../tod/contraction2.h"
 #include "../tod/tod_contract2.h"
 #include "../tod/tod_set.h"
-#include "btod_additive.h"
+#include "additive_btod.h"
 #include "btod_so_copy.h"
 #include "../not_implemented.h"
 #include "bad_block_index_space.h"
@@ -33,7 +33,7 @@ namespace libtensor {
  **/
 template<size_t N, size_t M, size_t K>
 class btod_contract2 :
-	public btod_additive<N + M>,
+	public additive_btod<N + M>,
 	public timings< btod_contract2<N, M, K> > {
 
 public:
@@ -115,7 +115,7 @@ public:
 		const index<k_orderc> &idx) throw(exception);
 	//@}
 
-	//!	\name Implementation of libtensor::btod_additive<N + M>
+	//!	\name Implementation of libtensor::additive_btod<N + M>
 	//@{
 	virtual void perform(block_tensor_i<k_orderc, double> &btc, double c)
 		throw(exception);

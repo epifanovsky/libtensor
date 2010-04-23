@@ -17,7 +17,7 @@
 #include "../tod/tod_diag.h"
 #include "../tod/tod_set.h"
 #include "bad_block_index_space.h"
-#include "btod_additive.h"
+#include "additive_btod.h"
 #include "transf_double.h"
 
 namespace libtensor {
@@ -31,7 +31,7 @@ namespace libtensor {
  **/
 template<size_t N, size_t M>
 class btod_diag :
-	public btod_additive<N - M + 1>,
+	public additive_btod<N - M + 1>,
 	public timings< btod_diag<N, M> > {
 
 public:

@@ -5,7 +5,7 @@
 #include "../defs.h"
 #include "../exception.h"
 #include "../timings.h"
-#include "btod_additive.h"
+#include "additive_btod.h"
 #include "../not_implemented.h"
 #include "bad_block_index_space.h"
 
@@ -18,7 +18,7 @@ namespace libtensor {
 
 	This operation runs a %sequence of block %tensor operations and
 	accumulates their results with given coefficients. All of the operations
-	in the %sequence shall derive from btod_additive<N>.
+	in the %sequence shall derive from additive_btod<N>.
 
 	The %sequence must contain at least one operation, which is called the
 	base operation.
@@ -27,7 +27,7 @@ namespace libtensor {
  **/
 template<size_t N>
 class btod_sum :
-	public btod_additive<N>,
+	public additive_btod<N>,
 	public timings< btod_sum<N> > {
 
 public:
@@ -37,12 +37,12 @@ private:
 	//!	\brief List node type
 	typedef struct node {
 	private:
-		btod_additive<N> *m_op;
+		additive_btod<N> *m_op;
 		double m_c;
 	public:
 		node() : m_op(NULL), m_c(0.0) { }
-		node(btod_additive<N> &op, double c) : m_op(&op), m_c(c) { }
-		btod_additive<N> &get_op() { return *m_op; }
+		node(additive_btod<N> &op, double c) : m_op(&op), m_c(c) { }
+		additive_btod<N> &get_op() { return *m_op; }
 		double get_coeff() const { return m_c; }
 	} node_t;
 
@@ -58,7 +58,7 @@ public:
 		\param op Operation.
 		\param c Coefficient.
 	 **/
-	btod_sum(btod_additive<N> &op, double c = 1.0);
+	btod_sum(additive_btod<N> &op, double c = 1.0);
 
 	/**	\brief Virtual destructor
 	 **/
@@ -77,7 +77,7 @@ public:
 	//@}
 
 
-	//!	\name Implementation of libtensor::btod_additive<N>
+	//!	\name Implementation of libtensor::additive_btod<N>
 	//@{
 	virtual const assignment_schedule<N, double> &get_schedule();
 	virtual void compute_block(tensor_i<N, double> &blk,
@@ -98,7 +98,7 @@ public:
 		\param op Operation.
 		\param c Coefficient.
 	 **/
-	void add_op(btod_additive<N> &op, double c = 1.0);
+	void add_op(additive_btod<N> &op, double c = 1.0);
 
 	//@}
 
@@ -113,7 +113,7 @@ const char* btod_sum<N>::k_clazz = "btod_sum<N>";
 
 
 template<size_t N>
-inline btod_sum<N>::btod_sum(btod_additive<N> &op, double c) :
+inline btod_sum<N>::btod_sum(additive_btod<N> &op, double c) :
 	m_bis(op.get_bis()), m_sym(op.get_bis()) {
 
 	add_op(op, c);
@@ -226,9 +226,9 @@ void btod_sum<N>::perform(block_tensor_i<N, double> &bt, const index<N> &idx,
 
 
 template<size_t N>
-void btod_sum<N>::add_op(btod_additive<N> &op, double c) {
+void btod_sum<N>::add_op(additive_btod<N> &op, double c) {
 
-	static const char *method = "add_op(btod_additive<N>&, double)";
+	static const char *method = "add_op(additive_btod<N>&, double)";
 
 	if(!op.get_bis().equals(m_bis)) {
 		throw bad_block_index_space(g_ns, k_clazz, method, __FILE__, __LINE__,

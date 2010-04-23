@@ -16,7 +16,7 @@
 #include "../tod/tod_add.h"
 #include "../tod/tod_copy.h"
 #include "bad_block_index_space.h"
-#include "btod_additive.h"
+#include "additive_btod.h"
 #include "btod_so_copy.h"
 
 namespace libtensor {
@@ -35,7 +35,7 @@ namespace libtensor {
  **/
 template<size_t N>
 class btod_add :
-	public btod_additive<N>,
+	public additive_btod<N>,
 	public timings< btod_add<N> > {
 
 public:
@@ -120,7 +120,7 @@ public:
 		throw(exception);
 	//@}
 
-	//!	\name Implementation of libtensor::btod_additive<N>
+	//!	\name Implementation of libtensor::additive_btod<N>
 	//@{
 	virtual void perform(block_tensor_i<N, double> &bt, double cb)
 		throw(exception);

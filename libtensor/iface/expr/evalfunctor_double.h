@@ -4,7 +4,7 @@
 #include "../../defs.h"
 #include "../../exception.h"
 #include "../../btod/btod_add.h"
-#include "../../btod/btod_additive.h"
+#include "../../btod/additive_btod.h"
 #include "../../btod/btod_copy.h"
 #include "../../btod/btod_set.h"
 #include "../../btod/btod_sum.h"
@@ -17,7 +17,7 @@ template<size_t N>
 class evalfunctor_i<N, double> {
 public:
 	virtual ~evalfunctor_i() { }
-	virtual btod_additive<N> &get_bto() = 0;
+	virtual additive_btod<N> &get_bto() = 0;
 };
 
 
@@ -72,7 +72,7 @@ public:
 
 	/**	\brief Returns the block %tensor operation
 	 **/
-	virtual btod_additive<N> &get_bto() {
+	virtual additive_btod<N> &get_bto() {
 		return m_op_sum;
 	}
 
@@ -128,7 +128,7 @@ public:
 
 	/**	\brief Returns the block %tensor operation
 	 **/
-	virtual btod_additive<N> &get_bto() {
+	virtual additive_btod<N> &get_bto() {
 		return m_op;
 	}
 
@@ -183,7 +183,7 @@ public:
 
 	/**	\brief Returns the block %tensor operation
 	 **/
-	virtual btod_additive<N> &get_bto() {
+	virtual additive_btod<N> &get_bto() {
 		return m_op;
 	}
 
@@ -237,7 +237,7 @@ public:
 
 	/**	\brief Returns the block %tensor operation
 	 **/
-	virtual btod_additive<N> &get_bto() {
+	virtual additive_btod<N> &get_bto() {
 		return m_op;
 	}
 

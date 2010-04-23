@@ -5,7 +5,7 @@
 #include "../../exception.h"
 #include "../../core/direct_block_tensor_operation.h"
 #include "../../core/permutation.h"
-#include "../../btod/btod_additive.h"
+#include "../../btod/additive_btod.h"
 #include "../btensor_i.h"
 
 namespace libtensor {
@@ -25,7 +25,7 @@ struct arg_traits<N, T, oper_tag> {
 
 template<size_t N>
 struct arg_traits<N, double, oper_tag> {
-	typedef btod_additive<N> bto_t;
+	typedef additive_btod<N> bto_t;
 };
 
 /**	\brief Generic container for an expression argument
