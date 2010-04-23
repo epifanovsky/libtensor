@@ -192,7 +192,7 @@ void block_tensor<N, T, Alloc>::on_ret_aux_block(const index<N> &idx)
 	throw(exception) {
 
 	size_t absidx = m_bidims.abs_index(idx);
-	m_map.remove(absidx);
+	m_aux_map.remove(absidx);
 }
 
 
