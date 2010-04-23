@@ -66,7 +66,7 @@ void btod_diag_test::test_1() throw(libtest::test_exception) {
 }
 
 
-/**	\test Extract a single diagonal: \f$ b_{ia} = a_{iia} \f$
+/**	\test Extract a single diagonal: \f$ b_{ija} = a_{iajb} \f$
  **/
 void btod_diag_test::test_2() throw(libtest::test_exception) {
 
@@ -76,38 +76,48 @@ void btod_diag_test::test_2() throw(libtest::test_exception) {
 
 	try {
 
-	index<2> i2a, i2b;
-	i2b[0] = 10; i2b[1] = 5;
 	index<3> i3a, i3b;
-	i3b[0] = 10; i3b[1] = 10; i3b[2] = 5;
-	dimensions<2> dims2(index_range<2>(i2a, i2b));
+	i3b[0] = 5; i3b[1] = 5; i3b[2] = 10;
+	index<4> i4a, i4b;
+	i4b[0] = 5; i4b[1] = 10; i4b[2] = 5; i4b[3] = 10;
 	dimensions<3> dims3(index_range<3>(i3a, i3b));
-	block_index_space<2> bis2(dims2);
+	dimensions<4> dims4(index_range<4>(i4a, i4b));
 	block_index_space<3> bis3(dims3);
+	block_index_space<4> bis4(dims4);
 
-	block_tensor<3, double, allocator_t> bta(bis3);
-	block_tensor<2, double, allocator_t> btb(bis2);
+	mask<3> msk3;
+	msk3[2] = true;
+	bis3.split(msk3, 6);
+	mask<4> msk4;
+	msk4[1] = true; msk4[3]=true;
+	bis4.split(msk4, 6);
 
-	tensor<3, double, allocator_t> ta(dims3);
-	tensor<2, double, allocator_t> tb(dims2), tb_ref(dims2);
+	block_tensor<4, double, allocator_t> bta(bis4);
+	block_tensor<3, double, allocator_t> btb(bis3);
 
-	mask<3> msk;
-	msk[0] = true; msk[1] = true;
+	tensor<4, double, allocator_t> ta(dims4);
+	tensor<3, double, allocator_t> tb(dims3), tb_ref(dims3);
+
+	permutation<3> pb;
+	pb.permute(1,2);
+
+	mask<4> msk;
+	msk[1] = true; msk[3] = true;
 
 	//	Fill in random data
-	btod_random<3>().perform(bta);
+	btod_random<4>().perform(bta);
 	bta.set_immutable();
 
 	//	Prepare the reference
-	tod_btconv<3>(bta).perform(ta);
-	tod_diag<3, 2>(ta, msk).perform(tb_ref);
+	tod_btconv<4>(bta).perform(ta);
+	tod_diag<4, 2>(ta, msk, pb).perform(tb_ref);
 
 	//	Invoke the operation
-	btod_diag<3, 2>(bta, msk).perform(btb);
-	tod_btconv<2>(btb).perform(tb);
+	btod_diag<4, 2>(bta, msk, pb).perform(btb);
+	tod_btconv<3>(btb).perform(tb);
 
 	//	Compare against the reference
-	compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
+	compare_ref<3>::compare(testname, tb, tb_ref, 1e-15);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());

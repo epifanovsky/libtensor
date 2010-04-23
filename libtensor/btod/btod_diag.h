@@ -259,9 +259,11 @@ void btod_diag<N, M>::do_perform(
 
 		index<k_ordera> idxa;
 		index<k_orderb> idxb(olstb.get_index(iob));
-		idxb.permute(pinv);
 
+		idxb.permute(pinv);
 		for(size_t i = 0; i < k_ordera; i++) idxa[i] = idxb[map[i]];
+		idxb.permute(m_perm);
+
 		orbit<k_ordera, double> oa(ctrla.req_symmetry(), idxa);
 		abs_index<k_ordera> idxa1(oa.get_abs_canonical_index(),
 			m_bta.get_bis().get_block_index_dims());
