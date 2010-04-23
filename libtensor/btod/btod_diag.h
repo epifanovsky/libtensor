@@ -68,7 +68,7 @@ public:
 	virtual void compute_block(tensor_i<k_orderb, double> &blk,
 		const index<k_orderb> &i) { }
 	virtual void compute_block(tensor_i<k_orderb, double> &blk,
-		const index<k_orderb> &i, double c) { }
+		const index<k_orderb> &i, const transf<k_orderb, double> &tr, double c) { }
 
 	virtual void perform(block_tensor_i<k_orderb, double> &btb)
 		throw(exception);

@@ -83,7 +83,7 @@ public:
 	virtual void compute_block(tensor_i<N, double> &blk,
 		const index<N> &i) { }
 	virtual void compute_block(tensor_i<N, double> &blk, const index<N> &i,
-		double c) { }
+		const transf<N, double> &tr, double c) { }
 	virtual void perform(block_tensor_i<N, double> &bt, double c)
 		throw(exception);
 	virtual void perform(block_tensor_i<N, double> &bt, const index<N> &idx,

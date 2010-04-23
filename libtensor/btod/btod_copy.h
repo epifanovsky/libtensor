@@ -77,10 +77,12 @@ public:
 
 //	virtual void perform(block_tensor_i<N, double> &btb) throw(exception);
 	using additive_btod<N>::perform;
+
 	virtual void perform(block_tensor_i<N, double> &bt, const index<N> &idx)
 		throw(exception);
 	virtual void perform(block_tensor_i<N, double> &bt, const index<N> &idx,
 		double c) throw(exception);
+
 	//@}
 
 	//!	\name Implementation of libtensor::btod_additive<N>
@@ -88,26 +90,29 @@ public:
 	virtual const assignment_schedule<N, double> &get_schedule() {
 		return m_sch;
 	}
+	/*
 	virtual void perform(block_tensor_i<N, double> &btb, double c)
-		throw(exception);
+		throw(exception);*/
 	//@}
 
 protected:
 	virtual void compute_block(tensor_i<N, double> &blk,
 		const index<N> &ib);
 	virtual void compute_block(tensor_i<N, double> &blk,
-		const index<N> &ib, double c);
+		const index<N> &ib, const transf<N, double> &tr, double c);
 
 private:
 	static block_index_space<N> mk_bis(const block_index_space<N> &bis,
 		const permutation<N> &perm);
 	void make_schedule();
+/*
 	void do_perform_nozero(block_tensor_i<N, double> &btb, double c)
 		throw(exception);
 	void do_perform_zero(block_tensor_i<N, double> &btb, double c)
 		throw(exception);
 	void do_perform(block_tensor_i<N, double> &btb, const index<N> &dst_idx,
 		bool zero, double c) throw(exception);
+*/
 
 private:
 	btod_copy(const btod_copy<N>&);
@@ -168,15 +173,19 @@ void btod_copy<N>::compute_block(tensor_i<N, double> &blk, const index<N> &ib) {
 	tra.permute(m_perm);
 	tra.scale(m_c);
 
-	tensor_i<N, double> &blka = ctrla.req_block(acia.get_index());
-	tod_copy<N>(blka, tra.get_perm(), tra.get_coeff()).perform(blk);
-	ctrla.ret_block(acia.get_index());
+	if(!ctrla.req_is_zero_block(acia.get_index())) {
+		tensor_i<N, double> &blka = ctrla.req_block(acia.get_index());
+		tod_copy<N>(blka, tra.get_perm(), tra.get_coeff()).perform(blk);
+		ctrla.ret_block(acia.get_index());
+	} else {
+		tod_set<N>().perform(blk);
+	}
 }
 
 
 template<size_t N>
 void btod_copy<N>::compute_block(tensor_i<N, double> &blk, const index<N> &ib,
-	double c) {
+	const transf<N, double> &tr, double c) {
 
 	block_tensor_ctrl<N, double> ctrla(m_bta);
 	dimensions<N> bidimsa = m_bta.get_bis().get_block_index_dims();
@@ -195,10 +204,13 @@ void btod_copy<N>::compute_block(tensor_i<N, double> &blk, const index<N> &ib,
 	transf<N, double> tra(oa.get_transf(ia));
 	tra.permute(m_perm);
 	tra.scale(m_c);
+	tra.transform(tr);
 
-	tensor_i<N, double> &blka = ctrla.req_block(acia.get_index());
-	tod_copy<N>(blka, tra.get_perm(), tra.get_coeff()).perform(blk, c);
-	ctrla.ret_block(acia.get_index());
+	if(!ctrla.req_is_zero_block(acia.get_index())) {
+		tensor_i<N, double> &blka = ctrla.req_block(acia.get_index());
+		tod_copy<N>(blka, tra.get_perm(), tra.get_coeff()).perform(blk, c);
+		ctrla.ret_block(acia.get_index());
+	}
 }
 
 
@@ -250,6 +262,8 @@ void btod_copy<N>::perform(block_tensor_i<N, double> &btb, const index<N> &idx)
 	static const char *method =
 		"perform(block_tensor_i<N, double>&, const index<N>&)";
 
+	throw not_implemented(g_ns, k_clazz, method, __FILE__, __LINE__);
+/*
 	if(!m_bis.equals(btb.get_bis())) {
 		throw bad_block_index_space(g_ns, k_clazz, method,
 			__FILE__, __LINE__, "btb");
@@ -262,6 +276,7 @@ void btod_copy<N>::perform(block_tensor_i<N, double> &btb, const index<N> &idx)
 	btod_copy<N>::start_timer();
 	do_perform(btb, idx, true, 1.0);
 	btod_copy<N>::stop_timer();
+*/		
 }
 
 
@@ -275,7 +290,7 @@ void btod_copy<N>::perform(block_tensor_i<N, double> &bt, const index<N> &idx,
 	throw not_implemented(g_ns, k_clazz, method, __FILE__, __LINE__);
 }
 
-
+/*
 template<size_t N>
 void btod_copy<N>::perform(block_tensor_i<N, double> &btb, double c)
 	throw(exception) {
@@ -294,7 +309,7 @@ void btod_copy<N>::perform(block_tensor_i<N, double> &btb, double c)
 	do_perform_nozero(btb, c);
 	btod_copy<N>::stop_timer();
 }
-
+*/
 
 template<size_t N>
 block_index_space<N> btod_copy<N>::mk_bis(const block_index_space<N> &bis,
@@ -305,7 +320,7 @@ block_index_space<N> btod_copy<N>::mk_bis(const block_index_space<N> &bis,
 	return bis1;
 }
 
-
+/*
 template<size_t N>
 void btod_copy<N>::do_perform_nozero(block_tensor_i<N, double> &btb,
 	double c) throw(exception) {
@@ -537,7 +552,7 @@ void btod_copy<N>::do_perform(block_tensor_i<N, double> &bt,
 	src_ctrl.ret_block(src_blk_idx);
 	dst_ctrl.ret_block(dst_blk_idx);
 }
-
+*/
 
 } // namespace libtensor
 
