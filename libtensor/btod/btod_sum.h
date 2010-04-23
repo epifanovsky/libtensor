@@ -80,6 +80,10 @@ public:
 	//!	\name Implementation of libtensor::btod_additive<N>
 	//@{
 	virtual const assignment_schedule<N, double> &get_schedule();
+	virtual void compute_block(tensor_i<N, double> &blk,
+		const index<N> &i) { }
+	virtual void compute_block(tensor_i<N, double> &blk, const index<N> &i,
+		double c) { }
 	virtual void perform(block_tensor_i<N, double> &bt, double c)
 		throw(exception);
 	virtual void perform(block_tensor_i<N, double> &bt, const index<N> &idx,

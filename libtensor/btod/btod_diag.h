@@ -65,6 +65,11 @@ public:
 
 	virtual const assignment_schedule<N - M + 1, double> &get_schedule();
 
+	virtual void compute_block(tensor_i<k_orderb, double> &blk,
+		const index<k_orderb> &i) { }
+	virtual void compute_block(tensor_i<k_orderb, double> &blk,
+		const index<k_orderb> &i, double c) { }
+
 	virtual void perform(block_tensor_i<k_orderb, double> &btb)
 		throw(exception);
 

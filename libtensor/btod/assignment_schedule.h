@@ -44,6 +44,14 @@ public:
 	 **/
 	void insert(const index<N> &idx);
 
+	/**	\brief Appends an absolute %index to the end of the list
+	 **/
+	void insert(size_t idx);
+
+	/**	\brief Appends all canonical indexes in a given %symmetry group
+	 **/
+	void insert_canonical(const symmetry<N, T> &sym);
+
 	/**	\brief Checks whether the schedule contains a particular %index
 	 **/
 	bool contains(const index<N> &idx) const;
@@ -73,9 +81,6 @@ public:
 		return *i;
 	}
 
-private:
-	void insert(size_t idx);
-
 };
 
 
@@ -83,12 +88,7 @@ template<size_t N, typename T>
 assignment_schedule<N, T>::assignment_schedule(const symmetry<N, T> &sym) :
 	m_bidims(sym.get_bis().get_block_index_dims()) {
 
-	orbit_list<N, T> ol(sym);
-	for(typename orbit_list<N, T>::iterator i = ol.begin(); i != ol.end();
-		i++) {
-
-		insert(ol.get_abs_index(i));
-	}
+	insert_canonical(sym);
 }
 
 
@@ -105,6 +105,18 @@ inline void assignment_schedule<N, T>::insert(size_t idx) {
 
 	m_sch.push_back(idx);
 	m_set.insert(idx);
+}
+
+
+template<size_t N, typename T>
+void assignment_schedule<N, T>::insert_canonical(const symmetry<N, T> &sym) {
+
+	orbit_list<N, T> ol(sym);
+	for(typename orbit_list<N, T>::iterator i = ol.begin(); i != ol.end();
+		i++) {
+
+		insert(ol.get_abs_index(i));
+	}
 }
 
 

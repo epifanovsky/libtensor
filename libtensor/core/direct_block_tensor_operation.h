@@ -30,12 +30,17 @@ public:
 
 	/**	\brief Invoked to execute the operation
 	 **/
-	virtual void perform(block_tensor_i<N, T> &bt) throw(exception) = 0;
+	virtual void perform(block_tensor_i<N, T> &bt) = 0;
 
 	/**	\brief Invoked to calculate one block
 	 **/
 	virtual void perform(block_tensor_i<N, T> &bt, const index<N> &i)
 		throw(exception) = 0;
+
+protected:
+	virtual void compute_block(tensor_i<N, double> &blk,
+		const index<N> &i) = 0;
+
 };
 
 } // namespace libtensor
