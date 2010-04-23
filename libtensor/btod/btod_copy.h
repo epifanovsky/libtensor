@@ -83,6 +83,7 @@ public:
 
 	//!	\name Implementation of libtensor::btod_additive<N>
 	//@{
+	virtual const assignment_schedule<N, double> &get_schedule();
 	virtual void perform(block_tensor_i<N, double> &btb, double c)
 		throw(exception);
 	//@}
@@ -130,6 +131,14 @@ btod_copy<N>::btod_copy(block_tensor_i<N, double> &bta, const permutation<N> &p,
 	symmetry<N, double> sym1(m_bta.get_bis());
 	so_copy<N, double>(ctrla.req_const_symmetry()).perform(sym1);
 	so_permute<N, double>(sym1, m_perm).perform(m_sym);
+}
+
+
+template<size_t N>
+const assignment_schedule<N, double> &btod_copy<N>::get_schedule() {
+
+	throw not_implemented(g_ns, k_clazz, "get_schedule()",
+		__FILE__, __LINE__);
 }
 
 

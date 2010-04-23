@@ -3,6 +3,8 @@
 
 #include "../defs.h"
 #include "../core/direct_block_tensor_operation.h"
+#include "assignment_schedule.h"
+#include "addition_schedule.h"
 
 namespace libtensor {
 
@@ -31,6 +33,11 @@ public:
 
 	//!	\name Interface of additive operations
 	//@{
+
+	/**	\brief Returns the assignment schedule -- the preferred order
+			of computing blocks
+	 **/
+	virtual const assignment_schedule<N, double> &get_schedule() = 0;
 
 	/**	\brief Invoked to execute the operation (additive)
 		\param bt Output block %tensor.

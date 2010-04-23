@@ -63,6 +63,8 @@ public:
 		return m_sym;
 	}
 
+	virtual const assignment_schedule<N - M + 1, double> &get_schedule();
+
 	virtual void perform(block_tensor_i<k_orderb, double> &btb)
 		throw(exception);
 
@@ -152,6 +154,14 @@ btod_diag<N, M>::btod_diag(block_tensor_i<N, double> &bta, const mask<N> &m,
 	so_permute<N - M + 1, double>(sym1, p).perform(m_sym);
 	m_bis.permute(p);
 
+}
+
+
+template<size_t N, size_t M>
+const assignment_schedule<N - M + 1, double> &btod_diag<N, M>::get_schedule() {
+
+	throw not_implemented(g_ns, k_clazz, "get_schedule()",
+		__FILE__, __LINE__);
 }
 
 
