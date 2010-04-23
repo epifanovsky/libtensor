@@ -150,14 +150,7 @@ void addition_schedule_test::test_1() throw(libtest::test_exception) {
 	std::list<schedule_node_t> sch_ref;
 
 	dimensions<2> bidims(bis.get_block_index_dims());
-	assignment_schedule<2, double> asch(bidims);
-	orbit_list<2, double> ola(syma);
-	for(orbit_list<2, double>::iterator ioa = ola.begin(); ioa != ola.end();
-		ioa++) {
-
-		abs_index<2> ai(ola.get_index(ioa), bidims);
-		asch.insert(ai.get_index());
-	}
+	assignment_schedule<2, double> asch(syma);
 
 	//
 	//	Sym(A) = 0, Sym(B) = 0, Sym(C) = 0
@@ -220,14 +213,7 @@ void addition_schedule_test::test_2() throw(libtest::test_exception) {
 	std::list<schedule_node_t> sch_ref;
 
 	dimensions<2> bidims(bis.get_block_index_dims());
-	assignment_schedule<2, double> asch(bidims);
-	orbit_list<2, double> ola(syma);
-	for(orbit_list<2, double>::iterator ioa = ola.begin(); ioa != ola.end();
-		ioa++) {
-
-		abs_index<2> ai(ola.get_index(ioa), bidims);
-		asch.insert(ai.get_index());
-	}
+	assignment_schedule<2, double> asch(syma);
 
 	//
 	//	Sym(A) = S(+)2, Sym(B) = 0, Sym(C) = 0
@@ -291,14 +277,7 @@ void addition_schedule_test::test_3() throw(libtest::test_exception) {
 	std::list<schedule_node_t> sch_ref;
 
 	dimensions<2> bidims(bis.get_block_index_dims());
-	assignment_schedule<2, double> asch(bidims);
-	orbit_list<2, double> ola(syma);
-	for(orbit_list<2, double>::iterator ioa = ola.begin(); ioa != ola.end();
-		ioa++) {
-
-		abs_index<2> ai(ola.get_index(ioa), bidims);
-		asch.insert(ai.get_index());
-	}
+	assignment_schedule<2, double> asch(syma);
 
 	//
 	//	Sym(A) = 0, Sym(B) = S(+)2, Sym(C) = 0
@@ -333,7 +312,7 @@ void addition_schedule_test::test_3() throw(libtest::test_exception) {
 
 
 /**	\test Tests the addition schedule for Sym(A) > Sym(C) < Sym(B),
-		Sym(A) = Perm(+, 01), Sym(B) = Perm(-, 01), Sym(C) = 0.
+		Sym(A) = S(+)2, Sym(B) = S(-)2, Sym(C) = 0.
 		Order-two block tensors with two blocks along each dimension.
  **/
 void addition_schedule_test::test_4() throw(libtest::test_exception) {
@@ -341,6 +320,8 @@ void addition_schedule_test::test_4() throw(libtest::test_exception) {
 	static const char *testname = "addition_schedule_test::test_4()";
 
 	typedef addition_schedule<2, double>::schedule_node_t schedule_node_t;
+	typedef addition_schedule<2, double>::tier4_list_t tier4_list_t;
+	typedef addition_schedule<2, double>::tier4_node_t tier4_node_t;
 
 	try {
 
@@ -363,16 +344,25 @@ void addition_schedule_test::test_4() throw(libtest::test_exception) {
 	std::list<schedule_node_t> sch_ref;
 
 	dimensions<2> bidims(bis.get_block_index_dims());
-	assignment_schedule<2, double> asch(bidims);
-	orbit_list<2, double> ola(syma);
-	for(orbit_list<2, double>::iterator ioa = ola.begin(); ioa != ola.end();
-		ioa++) {
+	assignment_schedule<2, double> asch(syma);
 
-		abs_index<2> ai(ola.get_index(ioa), bidims);
-		asch.insert(ai.get_index());
+	//
+	//	Sym(A) = S(+)2, Sym(B) = S(-)2, Sym(C) = 0
+	//
+	//	[0, 0] <- B[0, 0] + A[0, 0]
+	//	[0, 1] <- B[0, 1] + A[0, 1]
+	//	[1, 0] <- P-(10) B[0, 1] + P+(10) A[0, 1]
+	//	[1, 1] <- B[1, 1] + A[1, 1]
+	//
+	schedule_node_t n00(0), n01(1), n11(3);
+	transf<2, double> tra10; tra10.permute(perm10);
+	transf<2, double> trb10; trb10.permute(perm10); trb10.scale(-1.0);
+	n01.tier4 = new tier4_list_t;
+	n01.tier4->push_back(tier4_node_t(1, 2, tra10, trb10));
 
-		sch_ref.push_back(schedule_node_t(ai.get_abs_index()));
-	}
+	sch_ref.push_back(n00);
+	sch_ref.push_back(n01);
+	sch_ref.push_back(n11);
 
 	addition_schedule<2, double> sch(syma, symb);
 	sch.build(asch);
