@@ -90,8 +90,9 @@ add_executable(libtensor_tests ${SRC})
 
 include(${LIBTEST_DIR}/cmake/SetupLibTest.txt)
 
-set_target_properties(libtensor_tests PROPERTIES
-	COMPILE_DEFINITIONS_DEBUG LIBVMM_DEBUG
+set_property(TARGET libtensor_tests APPEND PROPERTY
+	COMPILE_DEFINITIONS_DEBUG LIBVMM_DEBUG)
+set_property(TARGET libtensor_tests APPEND PROPERTY
 	COMPILE_DEFINITIONS_DEBUG LIBTENSOR_DEBUG)
 
 target_link_libraries(libtensor_tests
