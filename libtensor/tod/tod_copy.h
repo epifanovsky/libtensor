@@ -217,10 +217,8 @@ void tod_copy<N>::do_perform(tensor_i<N, double> &tb, double c) {
 	registers_t r;
 	r.m_ptra[0] = pa;
 	r.m_ptrb[0] = pb;
-#ifdef LIBTENSOR_DEBUG
 	r.m_ptra_end[0] = pa + dimsa.get_size();
 	r.m_ptrb_end[0] = pb + dimsb.get_size();
-#endif // LIBTENSOR_DEBUG
 
 	Base::run_loop(loop, r, m_c * c);
 
