@@ -92,6 +92,10 @@ public:
 
 	//@}
 
+	/**	\brief Prefetches the arguments
+	 **/
+	void prefetch();
+
 	/**	\brief Computes the dot product
 	 **/
 	double calculate() throw(exception);
@@ -136,6 +140,13 @@ tod_dotprod<N>::tod_dotprod(
 	if(!verify_dims()) {
 		throw_exc(k_clazz, method, "Incompatible tensor dimensions");
 	}
+}
+
+template<size_t N>
+void tod_dotprod<N>::prefetch() {
+
+	m_tctrl1.req_prefetch();
+	m_tctrl2.req_prefetch();
 }
 
 template<size_t N>
