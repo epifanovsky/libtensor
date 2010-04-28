@@ -43,6 +43,7 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("direct_product", m_utf_direct_product);
 	add_test("dirsum", m_utf_dirsum);
 	add_test("dot_product", m_utf_dot_product);
+	add_test("expr", m_utf_expr);
 	add_test("global_timings", m_utf_global_timings);
 	add_test("immutable", m_utf_immutable);
 	add_test("index", m_utf_index);

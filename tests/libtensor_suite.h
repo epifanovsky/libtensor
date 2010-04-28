@@ -40,6 +40,7 @@
 #include "direct_product_test.h"
 #include "dirsum_test.h"
 #include "dot_product_test.h"
+#include "expr_test.h"
 #include "global_timings_test.h"
 #include "immutable_test.h"
 #include "index_test.h"
@@ -133,6 +134,7 @@ namespace libtensor {
 	\li libtensor::direct_product_test
 	\li libtensor::dirsum_test
 	\li libtensor::dot_product_test
+	\li libtensor::expr_test
 	\li libtensor::global_timings_test
 	\li libtensor::immutable_test
 	\li libtensor::index_test
@@ -221,6 +223,7 @@ private:
 	unit_test_factory<direct_product_test> m_utf_direct_product;
 	unit_test_factory<dirsum_test> m_utf_dirsum;
 	unit_test_factory<dot_product_test> m_utf_dot_product;
+	unit_test_factory<expr_test> m_utf_expr;
 	unit_test_factory<global_timings_test> m_utf_global_timings;
 	unit_test_factory<immutable_test> m_utf_immutable;
 	unit_test_factory<index_test> m_utf_index;

@@ -38,6 +38,7 @@ void btod_add_test::perform() throw(libtest::test_exception) {
 
 	test_5();
 	test_6();
+	test_7();
 
 	test_exc();
 }
@@ -415,6 +416,69 @@ void btod_add_test::test_6() throw(libtest::test_exception) {
 	add.perform(bt3_ref);
 
 	compare_ref<2>::compare(testname, bt3, bt3_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\brief Tests a particular block %index space that is causing a problem
+ **/
+void btod_add_test::test_7() throw(libtest::test_exception) {
+
+	static const char *testname = "btod_add_test::test_7()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	size_t ni = 13, na = 7;
+	index<4> i1, i2;
+	i2[0] = na - 1; i2[1] = na - 1; i2[2] = ni - 1; i2[3] = na - 1;
+	dimensions<4> dims_caib(index_range<4>(i1, i2));
+	block_index_space<4> bis_caib(dims_caib);
+	i2[0] = ni - 1; i2[1] = na - 1; i2[2] = na - 1; i2[3] = na - 1;
+	dimensions<4> dims_iabc(index_range<4>(i1, i2));
+	block_index_space<4> bis_iabc(dims_iabc);
+
+	mask<4> m1, m2;
+	m1[0] = true; m1[1] = true; m1[3] = true;
+	bis_caib.split(m1, 2);
+	bis_caib.split(m1, 3);
+	bis_caib.split(m1, 5);
+	m2[1] = true; m2[2] = true; m2[3] = true;
+	bis_iabc.split(m2, 2);
+	bis_iabc.split(m2, 3);
+	bis_iabc.split(m2, 5);
+
+	block_tensor<4, double, allocator_t> bt1(bis_caib), bt2(bis_caib),
+		bt3(bis_iabc);
+	tensor<4, double, allocator_t> t1(dims_caib), t2(dims_caib),
+		t3(dims_iabc), t3_ref(dims_iabc);
+
+	btod_random<4>().perform(bt1);
+	btod_random<4>().perform(bt2);
+	bt1.set_immutable();
+	bt2.set_immutable();
+
+	tod_btconv<4>(bt1).perform(t1);
+	tod_btconv<4>(bt2).perform(t2);
+
+	permutation<4> p_caib, p_baic;
+	p_caib.permute(0, 2).permute(2, 3); // caib -> iabc
+	p_baic.permute(0, 2); // baic -> iabc
+
+	btod_add<4> add(bt1, p_caib, 1.0);
+	add.add_op(bt2, p_baic, -1.0);
+	add.perform(bt3);
+	tod_btconv<4>(bt3).perform(t3);
+
+	tod_add<4> addt(t1, p_caib, 1.0);
+	addt.add_op(t2, p_baic, -1.0);
+	addt.perform(t3_ref);
+
+	compare_ref<4>::compare(testname, t3, t3_ref, 1e-15);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());

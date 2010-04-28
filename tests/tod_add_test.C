@@ -21,10 +21,11 @@ void tod_add_test::perform() throw(libtest::test_exception) {
 	test_add_to_self_pqrs(2,3,4,5);
 	test_add_two_pqrs_pqrs(2,3,4,5);
 	test_add_two_pqrs_qprs(2,3,4,5);
+	test_add_two_pqrs_prsq(3,1,1,1);
 	test_add_two_pqrs_prsq(2,3,4,5);
 	test_add_two_pqrs_qpsr(2,3,4,5);
+	test_add_two_ijkl_kjli(1, 2, 13, 2, 0.5, -1.0);
 	test_add_mult(3,2,5,4);
-
 }
 
 void tod_add_test::test_exc() throw(libtest::test_exception) {
@@ -307,6 +308,80 @@ void tod_add_test::test_add_two_pqrs_qpsr( size_t p, size_t q, size_t r, size_t 
 	testname << p << "," << q << "," << r << "," << s << ")";
 	compare_ref<4>::compare(testname.str().c_str(),t1,t1_ref,t2_max*k_thresh);
 }
+
+
+void tod_add_test::test_add_two_ijkl_kjli(size_t ni, size_t nj, size_t nk,
+	size_t nl, double c1, double c2) throw(libtest::test_exception) {
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	std::ostringstream tnss;
+	tnss << "tod_add_test::test_add_two_ijkl_kjli(" << ni << ", "
+		<< nj << ", " << nk << ", " << nl << ", " << c1 << ", " << c2
+		<< ")";
+	std::string tn = tnss.str();
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = ni - 1; i2[1] = nj - 1; i2[2] = nk - 1; i2[3] = nl - 1;
+	dimensions<4> dims_ijkl(index_range<4>(i1, i2));
+	size_t sz = dims_ijkl.get_size();
+
+	permutation<4> perm;
+	perm.permute(0, 2).permute(2, 3); // ijkl->kjli
+
+	dimensions<4> dims_kjli(dims_ijkl); dims_kjli.permute(perm);
+
+	tensor<4, double, allocator_t> t1(dims_ijkl), t2(dims_kjli),
+		t3(dims_kjli), t3_ref(dims_kjli);
+
+	tensor_ctrl<4, double> ct1(t1), ct2(t2), ct3_ref(t3_ref);
+
+	double *p1 = ct1.req_dataptr();
+	double *p2 = ct2.req_dataptr();
+	double *p3_ref = ct3_ref.req_dataptr();
+
+	//	Generate random input
+
+	for(size_t i = 0; i < sz; i++) {
+		p1[i] = drand48();
+		p2[i] = drand48();
+	}
+
+	//	Generate output reference data
+
+	double t3_max = 0.0;
+	abs_index<4> ai(dims_ijkl);
+	do {
+		index<4> i1(ai.get_index()), i2(ai.get_index()),
+			i3(ai.get_index());
+		i2.permute(perm); i3.permute(perm);
+
+		abs_index<4> ai1(i1, dims_ijkl), ai2(i2, dims_kjli),
+			ai3(i3, dims_kjli);
+		p3_ref[ai3.get_abs_index()] = c1 * p1[ai1.get_abs_index()] +
+			c2 * p2[ai2.get_abs_index()];
+		t3_max = std::max(t3_max, fabs(p3_ref[ai3.get_abs_index()]));
+	} while(ai.inc());
+
+	ct3_ref.ret_dataptr(p3_ref); p3_ref = 0;
+	ct2.ret_dataptr(p2); p2 = 0;
+	ct1.ret_dataptr(p1); p1 = 0;
+
+	//	Invoke the operation
+
+	tod_add<4> op(t1, perm, c1);
+	op.add_op(t2, c2);
+	op.perform(t3);
+
+	compare_ref<4>::compare(tn.c_str(), t3, t3_ref, t3_max * k_thresh);
+
+	} catch(exception &e) {
+		fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
+	}
+}
+
 
 void tod_add_test::test_add_mult( size_t p, size_t q, size_t r, size_t s )
 	throw(libtest::test_exception)

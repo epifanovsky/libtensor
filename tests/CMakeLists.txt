@@ -39,6 +39,7 @@ set(SRC
 	direct_product_test.C
 	dirsum_test.C
 	dot_product_test.C
+	expr_test.C
 	global_timings_test.C
 	immutable_test.C
 	index_test.C

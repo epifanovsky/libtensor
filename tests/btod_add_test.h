@@ -22,6 +22,7 @@ private:
 		throw(libtest::test_exception);
 	void test_5() throw(libtest::test_exception);
 	void test_6() throw(libtest::test_exception);
+	void test_7() throw(libtest::test_exception);
 
 	/**	\brief Tests if exceptions are thrown when the tensors have
 			different dimensions
