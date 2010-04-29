@@ -47,6 +47,22 @@ public:
 };
 
 
+/**	\brief Projection of a %symmetry group onto vacuum (specialization)
+	\tparam N Order.
+
+	\ingroup libtensor_symmetry
+ **/
+template<size_t N, typename T>
+class so_proj_down<N, N, T> {
+public:
+	so_proj_down(const symmetry<N, T> &sym1, const mask<N> &msk) { }
+
+	void perform(symmetry<0, T> &sym2) {
+		sym2.clear();
+	}
+};
+
+
 template<size_t N, size_t M, typename T>
 void so_proj_down<N, M, T>::perform(symmetry<N - M, T> &sym2) {
 

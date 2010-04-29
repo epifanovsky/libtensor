@@ -14,8 +14,9 @@
 #include "../core/block_tensor_ctrl.h"
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
-#include "../symmetry/so_projdown.h"
-#include "../symmetry/so_projup.h"
+#include "../symmetry/so_copy.h"
+#include "../symmetry/so_proj_down.h"
+#include "../symmetry/so_proj_up.h"
 #include "../tod/contraction2.h"
 #include "../tod/tod_contract2.h"
 #include "../tod/tod_set.h"
@@ -481,6 +482,28 @@ void projector<N, M, K, L>::project() {
 
 template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::make_symmetry() {
+
+	block_tensor_ctrl<k_ordera, double> ca(m_bta);
+	block_tensor_ctrl<k_orderb, double> cb(m_btb);
+
+	mask<k_ordera> ma;
+	mask<k_orderb> mb;
+
+	const sequence<k_maxconn, size_t> &conn = m_contr.get_conn();
+	for(size_t i = 0; i < k_ordera; i++) {
+		if(conn[k_orderc + i] < k_orderc) {
+			ma[i] = true;
+		}
+	}
+	for(size_t i = 0; i < k_orderb; i++) {
+		if(conn[k_orderc + k_ordera + i] < k_orderc) {
+			mb[i] = true;
+		}
+	}
+
+	so_proj_down<N + K, K, double>(ca.req_const_symmetry(), ma);
+	so_proj_down<M + K, K, double>(cb.req_const_symmetry(), mb);
+	
 /*
 	const sequence<k_maxconn, size_t> &conn = m_contr.get_conn();
 	btod_contract2_ns::projector<N, M, K, 0>(
