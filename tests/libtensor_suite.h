@@ -13,7 +13,7 @@
 //~ #include "btensor_test.h"
 //~ #include "btod_add_test.h"
 //~ #include "btod_compare_test.h"
-//~ #include "btod_contract2_test.h"
+#include "btod_contract2_test.h"
 #include "btod_copy_test.h"
 #include "btod_diag_test.h"
 //~ #include "btod_dirsum_test.h"
@@ -221,7 +221,7 @@ private:
 	//~ unit_test_factory<btensor_test> m_utf_btensor;
 	//~ unit_test_factory<btod_add_test> m_utf_btod_add;
 	//~ unit_test_factory<btod_compare_test> m_utf_btod_compare;
-	//~ unit_test_factory<btod_contract2_test> m_utf_btod_contract2;
+	unit_test_factory<btod_contract2_test> m_utf_btod_contract2;
 	unit_test_factory<btod_copy_test> m_utf_btod_copy;
 	unit_test_factory<btod_diag_test> m_utf_btod_diag;
 	//~ unit_test_factory<btod_dirsum_test> m_utf_btod_dirsum;

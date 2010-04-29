@@ -109,17 +109,28 @@ public:
 	//@{
 	virtual const block_index_space<N + M> &get_bis() const;
 	virtual const symmetry<N + M, double> &get_symmetry() const;
-	virtual void perform(block_tensor_i<k_orderc, double> &btc)
+	virtual void perform2(block_tensor_i<k_orderc, double> &btc)
 		throw(exception);
 	virtual void perform(block_tensor_i<k_orderc, double> &btc,
 		const index<k_orderc> &idx) throw(exception);
+	virtual const assignment_schedule<N + M, double> &get_schedule();
 	//@}
 
 	//!	\name Implementation of libtensor::additive_btod<N + M>
 	//@{
-	virtual void perform(block_tensor_i<k_orderc, double> &btc, double c)
+	virtual void perform2(block_tensor_i<k_orderc, double> &btc, double c)
 		throw(exception);
 	//@}
+
+	//~ using basic_btod<N + M>::perform;
+	using additive_btod<N + M>::perform;
+
+protected:
+	virtual void compute_block(tensor_i<N + M, double> &blk,
+		const index<N + M> &i);
+	virtual void compute_block(tensor_i<N + M, double> &blk,
+		const index<N + M> &i, const transf<N + M, double> &tr,
+		double c);
 
 private:
 	static block_index_space<N + M> make_bis(
@@ -201,45 +212,47 @@ const symmetry<N + M, double> &btod_contract2<N, M, K>::get_symmetry() const {
 
 
 template<size_t N, size_t M, size_t K>
-void btod_contract2<N, M, K>::perform(block_tensor_i<k_orderc, double> &btc,
+void btod_contract2<N, M, K>::perform2(block_tensor_i<k_orderc, double> &btc,
 	double c) throw(exception) {
 
 	static const char *method =
-		"perform(block_tensor_i<N + M, double>&, double)";
+		"perform2(block_tensor_i<N + M, double>&, double)";
 
-	block_index_space<k_orderc> bisc(btc.get_bis());
-	bisc.match_splits();
-	if(!m_bis.equals(bisc)) {
-		throw bad_block_index_space(
-			g_ns, k_clazz, method, __FILE__, __LINE__, "c");
-	}
+	throw not_implemented(g_ns, k_clazz, method, __FILE__, __LINE__);
 
-	btod_contract2<N, M, K>::start_timer();
+	//~ block_index_space<k_orderc> bisc(btc.get_bis());
+	//~ bisc.match_splits();
+	//~ if(!m_bis.equals(bisc)) {
+		//~ throw bad_block_index_space(
+			//~ g_ns, k_clazz, method, __FILE__, __LINE__, "c");
+	//~ }
 
-	block_tensor_ctrl<k_orderc, double> ctrl_btc(btc);
+	//~ btod_contract2<N, M, K>::start_timer();
 
-	symmetry<k_orderc, double> sym(m_sym);
+	//~ block_tensor_ctrl<k_orderc, double> ctrl_btc(btc);
 
-	if(sym.equals(ctrl_btc.req_symmetry())) {
-		// A*B and C have the same symmetry
-		do_perform(btc, false, c);
-	} else {
-		sym.set_intersection(ctrl_btc.req_symmetry());
-		if(sym.equals(m_sym)) {
-			// C has a higher symmetry
-			throw not_implemented(
-				g_ns, k_clazz, method, __FILE__, __LINE__);
-		} else if(sym.equals(ctrl_btc.req_symmetry())) {
-			// A*B has a higher symmetry
-			throw not_implemented(
-				g_ns, k_clazz, method, __FILE__, __LINE__);
-		} else {
-			throw not_implemented(
-				g_ns, k_clazz, method, __FILE__, __LINE__);
-		}
-	}
+	//~ symmetry<k_orderc, double> sym(m_sym);
 
-	btod_contract2<N, M, K>::stop_timer();
+	//~ if(sym.equals(ctrl_btc.req_symmetry())) {
+		//~ // A*B and C have the same symmetry
+		//~ do_perform(btc, false, c);
+	//~ } else {
+		//~ sym.set_intersection(ctrl_btc.req_symmetry());
+		//~ if(sym.equals(m_sym)) {
+			//~ // C has a higher symmetry
+			//~ throw not_implemented(
+				//~ g_ns, k_clazz, method, __FILE__, __LINE__);
+		//~ } else if(sym.equals(ctrl_btc.req_symmetry())) {
+			//~ // A*B has a higher symmetry
+			//~ throw not_implemented(
+				//~ g_ns, k_clazz, method, __FILE__, __LINE__);
+		//~ } else {
+			//~ throw not_implemented(
+				//~ g_ns, k_clazz, method, __FILE__, __LINE__);
+		//~ }
+	//~ }
+
+	//~ btod_contract2<N, M, K>::stop_timer();
 }
 
 
@@ -255,26 +268,60 @@ void btod_contract2<N, M, K>::perform(block_tensor_i<k_orderc, double> &btc,
 
 
 template<size_t N, size_t M, size_t K>
-void btod_contract2<N, M, K>::perform(block_tensor_i<k_orderc, double> &btc)
+void btod_contract2<N, M, K>::perform2(block_tensor_i<k_orderc, double> &btc)
 	throw(exception) {
 
-	static const char *method = "perform(block_tensor_i<N + M, double>&)";
+	static const char *method = "perform2(block_tensor_i<N + M, double>&)";
 
-	block_index_space<k_orderc> bisc(btc.get_bis());
-	bisc.match_splits();
-	if(!m_bis.equals(bisc)) {
-		throw bad_block_index_space(
-			g_ns, k_clazz, method, __FILE__, __LINE__, "c");
-	}
+	throw not_implemented(g_ns, k_clazz, method, __FILE__, __LINE__);
 
-	btod_contract2<N, M, K>::start_timer();
+	//~ block_index_space<k_orderc> bisc(btc.get_bis());
+	//~ bisc.match_splits();
+	//~ if(!m_bis.equals(bisc)) {
+		//~ throw bad_block_index_space(
+			//~ g_ns, k_clazz, method, __FILE__, __LINE__, "c");
+	//~ }
 
-	btod_so_copy<k_orderc> symcopy(m_sym);
-	symcopy.perform(btc);
+	//~ btod_contract2<N, M, K>::start_timer();
 
-	do_perform(btc, true, 1.0);
+	//~ btod_so_copy<k_orderc> symcopy(m_sym);
+	//~ symcopy.perform(btc);
 
-	btod_contract2<N, M, K>::stop_timer();
+	//~ do_perform(btc, true, 1.0);
+
+	//~ btod_contract2<N, M, K>::stop_timer();
+}
+
+
+template<size_t N, size_t M, size_t K>
+const assignment_schedule<N + M, double>&
+btod_contract2<N, M, K>::get_schedule() {
+
+	static const char *method = "get_schedule()";
+
+	throw not_implemented(g_ns, k_clazz, method, __FILE__, __LINE__);
+}
+
+
+template<size_t N, size_t M, size_t K>
+void btod_contract2<N, M, K>::compute_block(tensor_i<N + M, double> &blk,
+	const index<N + M> &i) {
+
+	static const char *method =
+		"compute_block(tensor_i<N + M, double>&, const index<N + M>&)";
+
+	throw not_implemented(g_ns, k_clazz, method, __FILE__, __LINE__);
+}
+
+
+template<size_t N, size_t M, size_t K>
+void btod_contract2<N, M, K>::compute_block(tensor_i<N + M, double> &blk,
+	const index<N + M> &i, const transf<N + M, double> &tr, double c) {
+
+	static const char *method = "compute_block(tensor_i<N + M, double>&, "
+		"const index<N + M>&, const transf<N + M, double>&, double)";
+
+	throw not_implemented(g_ns, k_clazz, method, __FILE__, __LINE__);
 }
 
 
@@ -363,7 +410,7 @@ block_index_space<N + M> btod_contract2<N, M, K>::make_bis(
 	return bis;
 }
 
-
+/*
 namespace btod_contract2_ns {
 
 template<size_t N, size_t M, size_t K, size_t L>
@@ -430,16 +477,17 @@ void projector<N, M, K, L>::project() {
 
 
 }
-
+*/
 
 template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::make_symmetry() {
-
+/*
 	const sequence<k_maxconn, size_t> &conn = m_contr.get_conn();
 	btod_contract2_ns::projector<N, M, K, 0>(
 		conn, m_bta, m_bis, m_sym).project();
 	btod_contract2_ns::projector<M, N, K, N + K>(
 		conn, m_btb, m_bis, m_sym).project();
+*/
 }
 
 
