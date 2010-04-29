@@ -271,10 +271,17 @@ void tod_contract2_test::test_0_p_p(size_t np, double d)
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<1, double, allocator> ta(dima); tensor_ctrl<1, double> tca(ta);
-	tensor<1, double, allocator> tb(dimb); tensor_ctrl<1, double> tcb(tb);
-	tensor<0, double, allocator> tc(dimc); tensor_ctrl<0, double> tcc(tc);
+	tensor<1, double, allocator> ta(dima);
+	tensor<1, double, allocator> tb(dimb);
+	tensor<0, double, allocator> tc(dimc);
 	tensor<0, double, allocator> tc_ref(dimc);
+
+	double cij_max = 0.0;
+
+	{
+	tensor_ctrl<1, double> tca(ta);
+	tensor_ctrl<1, double> tcb(tb);
+	tensor_ctrl<0, double> tcc(tc);
 	tensor_ctrl<0, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
@@ -292,7 +299,6 @@ void tod_contract2_test::test_0_p_p(size_t np, double d)
 	//	Generate reference data
 
 	index<1> ia; index<1> ib; index<0> ic;
-	double cij_max = 0.0;
 	double d1 = (d == 0.0) ? 1.0 : d;
 	for(size_t p = 0; p < np; p++) {
 		ia[0] = p;
@@ -307,6 +313,7 @@ void tod_contract2_test::test_0_p_p(size_t np, double d)
 	tcb.ret_dataptr(dtb); dtb = 0; tb.set_immutable();
 	tcc.ret_dataptr(dtc1); dtc1 = 0;
 	tcc_ref.ret_dataptr(dtc2); dtc2 = 0; tc_ref.set_immutable();
+	}
 
 	//	Invoke the contraction routine
 
@@ -346,10 +353,17 @@ void tod_contract2_test::test_i_p_pi(size_t ni, size_t np, double d)
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<1, double, allocator> ta(dima); tensor_ctrl<1, double> tca(ta);
-	tensor<2, double, allocator> tb(dimb); tensor_ctrl<2, double> tcb(tb);
-	tensor<1, double, allocator> tc(dimc); tensor_ctrl<1, double> tcc(tc);
+	tensor<1, double, allocator> ta(dima);
+	tensor<2, double, allocator> tb(dimb);
+	tensor<1, double, allocator> tc(dimc);
 	tensor<1, double, allocator> tc_ref(dimc);
+
+	double cij_max = 0.0;
+
+	{
+	tensor_ctrl<1, double> tca(ta);
+	tensor_ctrl<2, double> tcb(tb);
+	tensor_ctrl<1, double> tcc(tc);
 	tensor_ctrl<1, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
@@ -367,7 +381,6 @@ void tod_contract2_test::test_i_p_pi(size_t ni, size_t np, double d)
 	//	Generate reference data
 
 	index<1> ia; index<2> ib; index<1> ic;
-	double cij_max = 0.0;
 	double d1 = (d == 0.0) ? 1.0 : d;
 	for(size_t i = 0; i < ni; i++) {
 	for(size_t p = 0; p < np; p++) {
@@ -387,6 +400,7 @@ void tod_contract2_test::test_i_p_pi(size_t ni, size_t np, double d)
 	tcb.ret_dataptr(dtb); dtb = 0; tb.set_immutable();
 	tcc.ret_dataptr(dtc1); dtc1 = 0;
 	tcc_ref.ret_dataptr(dtc2); dtc2 = 0; tc_ref.set_immutable();
+	}
 
 	//	Invoke the contraction routine
 
@@ -426,10 +440,17 @@ void tod_contract2_test::test_i_p_ip(size_t ni, size_t np, double d)
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<1, double, allocator> ta(dima); tensor_ctrl<1, double> tca(ta);
-	tensor<2, double, allocator> tb(dimb); tensor_ctrl<2, double> tcb(tb);
-	tensor<1, double, allocator> tc(dimc); tensor_ctrl<1, double> tcc(tc);
+	tensor<1, double, allocator> ta(dima);
+	tensor<2, double, allocator> tb(dimb);
+	tensor<1, double, allocator> tc(dimc);
 	tensor<1, double, allocator> tc_ref(dimc);
+
+	double cij_max = 0.0;
+
+	{
+	tensor_ctrl<1, double> tca(ta);
+	tensor_ctrl<2, double> tcb(tb);
+	tensor_ctrl<1, double> tcc(tc);
 	tensor_ctrl<1, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
@@ -447,7 +468,6 @@ void tod_contract2_test::test_i_p_ip(size_t ni, size_t np, double d)
 	//	Generate reference data
 
 	index<1> ia; index<2> ib; index<1> ic;
-	double cij_max = 0.0;
 	double d1 = (d == 0.0) ? 1.0 : d;
 	for(size_t i = 0; i < ni; i++) {
 	for(size_t p = 0; p < np; p++) {
@@ -467,6 +487,7 @@ void tod_contract2_test::test_i_p_ip(size_t ni, size_t np, double d)
 	tcb.ret_dataptr(dtb); dtb = 0; tb.set_immutable();
 	tcc.ret_dataptr(dtc1); dtc1 = 0;
 	tcc_ref.ret_dataptr(dtc2); dtc2 = 0; tc_ref.set_immutable();
+	}
 
 	//	Invoke the contraction routine
 
@@ -506,10 +527,17 @@ void tod_contract2_test::test_i_pi_p(size_t ni, size_t np, double d)
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima); tensor_ctrl<2, double> tca(ta);
-	tensor<1, double, allocator> tb(dimb); tensor_ctrl<1, double> tcb(tb);
-	tensor<1, double, allocator> tc(dimc); tensor_ctrl<1, double> tcc(tc);
+	tensor<2, double, allocator> ta(dima);
+	tensor<1, double, allocator> tb(dimb);
+	tensor<1, double, allocator> tc(dimc);
 	tensor<1, double, allocator> tc_ref(dimc);
+
+	double cij_max = 0.0;
+
+	{
+	tensor_ctrl<2, double> tca(ta);
+	tensor_ctrl<1, double> tcb(tb);
+	tensor_ctrl<1, double> tcc(tc);
 	tensor_ctrl<1, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
@@ -527,7 +555,6 @@ void tod_contract2_test::test_i_pi_p(size_t ni, size_t np, double d)
 	//	Generate reference data
 
 	index<2> ia; index<1> ib; index<1> ic;
-	double cij_max = 0.0;
 	double d1 = (d == 0.0) ? 1.0 : d;
 	for(size_t i = 0; i < ni; i++) {
 	for(size_t p = 0; p < np; p++) {
@@ -547,6 +574,7 @@ void tod_contract2_test::test_i_pi_p(size_t ni, size_t np, double d)
 	tcb.ret_dataptr(dtb); dtb = 0; tb.set_immutable();
 	tcc.ret_dataptr(dtc1); dtc1 = 0;
 	tcc_ref.ret_dataptr(dtc2); dtc2 = 0; tc_ref.set_immutable();
+	}
 
 	//	Invoke the contraction routine
 
@@ -586,10 +614,17 @@ void tod_contract2_test::test_i_ip_p(size_t ni, size_t np, double d)
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima); tensor_ctrl<2, double> tca(ta);
-	tensor<1, double, allocator> tb(dimb); tensor_ctrl<1, double> tcb(tb);
-	tensor<1, double, allocator> tc(dimc); tensor_ctrl<1, double> tcc(tc);
+	tensor<2, double, allocator> ta(dima);
+	tensor<1, double, allocator> tb(dimb);
+	tensor<1, double, allocator> tc(dimc);
 	tensor<1, double, allocator> tc_ref(dimc);
+
+	double cij_max = 0.0;
+
+	{
+	tensor_ctrl<2, double> tca(ta);
+	tensor_ctrl<1, double> tcb(tb);
+	tensor_ctrl<1, double> tcc(tc);
 	tensor_ctrl<1, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
@@ -607,7 +642,6 @@ void tod_contract2_test::test_i_ip_p(size_t ni, size_t np, double d)
 	//	Generate reference data
 
 	index<2> ia; index<1> ib; index<1> ic;
-	double cij_max = 0.0;
 	double d1 = (d == 0.0) ? 1.0 : d;
 	for(size_t i = 0; i < ni; i++) {
 	for(size_t p = 0; p < np; p++) {
@@ -627,6 +661,7 @@ void tod_contract2_test::test_i_ip_p(size_t ni, size_t np, double d)
 	tcb.ret_dataptr(dtb); dtb = 0; tb.set_immutable();
 	tcc.ret_dataptr(dtc1); dtc1 = 0;
 	tcc_ref.ret_dataptr(dtc2); dtc2 = 0; tc_ref.set_immutable();
+	}
 
 	//	Invoke the contraction routine
 
@@ -667,10 +702,17 @@ void tod_contract2_test::test_ij_pi_pj(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima); tensor_ctrl<2, double> tca(ta);
-	tensor<2, double, allocator> tb(dimb); tensor_ctrl<2, double> tcb(tb);
-	tensor<2, double, allocator> tc(dimc); tensor_ctrl<2, double> tcc(tc);
+	tensor<2, double, allocator> ta(dima);
+	tensor<2, double, allocator> tb(dimb);
+	tensor<2, double, allocator> tc(dimc);
 	tensor<2, double, allocator> tc_ref(dimc);
+
+	double cij_max = 0.0;
+
+	{
+	tensor_ctrl<2, double> tca(ta);
+	tensor_ctrl<2, double> tcb(tb);
+	tensor_ctrl<2, double> tcc(tc);
 	tensor_ctrl<2, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
@@ -688,7 +730,6 @@ void tod_contract2_test::test_ij_pi_pj(
 	//	Generate reference data
 
 	index<2> ia; index<2> ib; index<2> ic;
-	double cij_max = 0.0;
 	double d1 = (d == 0.0) ? 1.0 : d;
 	for(size_t i = 0; i < ni; i++) {
 	for(size_t j = 0; j < nj; j++) {
@@ -709,6 +750,7 @@ void tod_contract2_test::test_ij_pi_pj(
 	tcb.ret_dataptr(dtb); dtb = 0; tb.set_immutable();
 	tcc.ret_dataptr(dtc1); dtc1 = 0;
 	tcc_ref.ret_dataptr(dtc2); dtc2 = 0; tc_ref.set_immutable();
+	}
 
 	//	Invoke the contraction routine
 
@@ -749,10 +791,17 @@ void tod_contract2_test::test_ij_pi_jp(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima); tensor_ctrl<2, double> tca(ta);
-	tensor<2, double, allocator> tb(dimb); tensor_ctrl<2, double> tcb(tb);
-	tensor<2, double, allocator> tc(dimc); tensor_ctrl<2, double> tcc(tc);
+	tensor<2, double, allocator> ta(dima);
+	tensor<2, double, allocator> tb(dimb);
+	tensor<2, double, allocator> tc(dimc);
 	tensor<2, double, allocator> tc_ref(dimc);
+
+	double cij_max = 0.0;
+
+	{
+	tensor_ctrl<2, double> tca(ta);
+	tensor_ctrl<2, double> tcb(tb);
+	tensor_ctrl<2, double> tcc(tc);
 	tensor_ctrl<2, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
@@ -770,7 +819,6 @@ void tod_contract2_test::test_ij_pi_jp(
 	//	Generate reference data
 
 	index<2> ia; index<2> ib; index<2> ic;
-	double cij_max = 0.0;
 	double d1 = (d == 0.0) ? 1.0 : d;
 	for(size_t i = 0; i < ni; i++) {
 	for(size_t j = 0; j < nj; j++) {
@@ -791,6 +839,7 @@ void tod_contract2_test::test_ij_pi_jp(
 	tcb.ret_dataptr(dtb); dtb = 0; tb.set_immutable();
 	tcc.ret_dataptr(dtc1); dtc1 = 0;
 	tcc_ref.ret_dataptr(dtc2); dtc2 = 0; tc_ref.set_immutable();
+	}
 
 	//	Invoke the contraction routine
 
@@ -831,10 +880,17 @@ void tod_contract2_test::test_ij_ip_pj(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima); tensor_ctrl<2, double> tca(ta);
-	tensor<2, double, allocator> tb(dimb); tensor_ctrl<2, double> tcb(tb);
-	tensor<2, double, allocator> tc(dimc); tensor_ctrl<2, double> tcc(tc);
+	tensor<2, double, allocator> ta(dima);
+	tensor<2, double, allocator> tb(dimb);
+	tensor<2, double, allocator> tc(dimc);
 	tensor<2, double, allocator> tc_ref(dimc);
+
+	double cij_max = 0.0;
+
+	{
+	tensor_ctrl<2, double> tca(ta);
+	tensor_ctrl<2, double> tcb(tb);
+	tensor_ctrl<2, double> tcc(tc);
 	tensor_ctrl<2, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
@@ -852,7 +908,6 @@ void tod_contract2_test::test_ij_ip_pj(
 	//	Generate reference data
 
 	index<2> ia; index<2> ib; index<2> ic;
-	double cij_max = 0.0;
 	double d1 = (d == 0.0) ? 1.0 : d;
 	for(size_t i = 0; i < ni; i++) {
 	for(size_t j = 0; j < nj; j++) {
@@ -873,6 +928,7 @@ void tod_contract2_test::test_ij_ip_pj(
 	tcb.ret_dataptr(dtb); dtb = 0; tb.set_immutable();
 	tcc.ret_dataptr(dtc1); dtc1 = 0;
 	tcc_ref.ret_dataptr(dtc2); dtc2 = 0; tc_ref.set_immutable();
+	}
 
 	//	Invoke the contraction routine
 
@@ -913,10 +969,17 @@ void tod_contract2_test::test_ij_ip_jp(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima); tensor_ctrl<2, double> tca(ta);
-	tensor<2, double, allocator> tb(dimb); tensor_ctrl<2, double> tcb(tb);
-	tensor<2, double, allocator> tc(dimc); tensor_ctrl<2, double> tcc(tc);
+	tensor<2, double, allocator> ta(dima);
+	tensor<2, double, allocator> tb(dimb);
+	tensor<2, double, allocator> tc(dimc);
 	tensor<2, double, allocator> tc_ref(dimc);
+
+	double cij_max = 0.0;
+
+	{
+	tensor_ctrl<2, double> tca(ta);
+	tensor_ctrl<2, double> tcb(tb);
+	tensor_ctrl<2, double> tcc(tc);
 	tensor_ctrl<2, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
@@ -934,7 +997,6 @@ void tod_contract2_test::test_ij_ip_jp(
 	//	Generate reference data
 
 	index<2> ia; index<2> ib; index<2> ic;
-	double cij_max = 0.0;
 	double d1 = (d == 0.0) ? 1.0 : d;
 	for(size_t i = 0; i < ni; i++) {
 	for(size_t j = 0; j < nj; j++) {
@@ -955,6 +1017,7 @@ void tod_contract2_test::test_ij_ip_jp(
 	tcb.ret_dataptr(dtb); dtb = 0; tb.set_immutable();
 	tcc.ret_dataptr(dtc1); dtc1 = 0;
 	tcc_ref.ret_dataptr(dtc2); dtc2 = 0; tc_ref.set_immutable();
+	}
 
 	//	Invoke the contraction routine
 
@@ -995,10 +1058,17 @@ void tod_contract2_test::test_ij_pj_pi(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima); tensor_ctrl<2, double> tca(ta);
-	tensor<2, double, allocator> tb(dimb); tensor_ctrl<2, double> tcb(tb);
-	tensor<2, double, allocator> tc(dimc); tensor_ctrl<2, double> tcc(tc);
+	tensor<2, double, allocator> ta(dima);
+	tensor<2, double, allocator> tb(dimb);
+	tensor<2, double, allocator> tc(dimc);
 	tensor<2, double, allocator> tc_ref(dimc);
+
+	double cij_max = 0.0;
+
+	{
+	tensor_ctrl<2, double> tca(ta);
+	tensor_ctrl<2, double> tcb(tb);
+	tensor_ctrl<2, double> tcc(tc);
 	tensor_ctrl<2, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
@@ -1016,7 +1086,6 @@ void tod_contract2_test::test_ij_pj_pi(
 	//	Generate reference data
 
 	index<2> ia; index<2> ib; index<2> ic;
-	double cij_max = 0.0;
 	double d1 = (d == 0.0) ? 1.0 : d;
 	for(size_t i = 0; i < ni; i++) {
 	for(size_t j = 0; j < nj; j++) {
@@ -1037,6 +1106,7 @@ void tod_contract2_test::test_ij_pj_pi(
 	tcb.ret_dataptr(dtb); dtb = 0; tb.set_immutable();
 	tcc.ret_dataptr(dtc1); dtc1 = 0;
 	tcc_ref.ret_dataptr(dtc2); dtc2 = 0; tc_ref.set_immutable();
+	}
 
 	//	Invoke the contraction routine
 
@@ -1078,10 +1148,17 @@ void tod_contract2_test::test_ij_pj_ip(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima); tensor_ctrl<2, double> tca(ta);
-	tensor<2, double, allocator> tb(dimb); tensor_ctrl<2, double> tcb(tb);
-	tensor<2, double, allocator> tc(dimc); tensor_ctrl<2, double> tcc(tc);
+	tensor<2, double, allocator> ta(dima);
+	tensor<2, double, allocator> tb(dimb);
+	tensor<2, double, allocator> tc(dimc);
 	tensor<2, double, allocator> tc_ref(dimc);
+
+	double cij_max = 0.0;
+
+	{
+	tensor_ctrl<2, double> tca(ta);
+	tensor_ctrl<2, double> tcb(tb);
+	tensor_ctrl<2, double> tcc(tc);
 	tensor_ctrl<2, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
@@ -1099,7 +1176,6 @@ void tod_contract2_test::test_ij_pj_ip(
 	//	Generate reference data
 
 	index<2> ia; index<2> ib; index<2> ic;
-	double cij_max = 0.0;
 	double d1 = (d == 0.0) ? 1.0 : d;
 	for(size_t i = 0; i < ni; i++) {
 	for(size_t j = 0; j < nj; j++) {
@@ -1120,6 +1196,7 @@ void tod_contract2_test::test_ij_pj_ip(
 	tcb.ret_dataptr(dtb); dtb = 0; tb.set_immutable();
 	tcc.ret_dataptr(dtc1); dtc1 = 0;
 	tcc_ref.ret_dataptr(dtc2); dtc2 = 0; tc_ref.set_immutable();
+	}
 
 	//	Invoke the contraction routine
 
@@ -1161,10 +1238,17 @@ void tod_contract2_test::test_ij_jp_ip(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima); tensor_ctrl<2, double> tca(ta);
-	tensor<2, double, allocator> tb(dimb); tensor_ctrl<2, double> tcb(tb);
-	tensor<2, double, allocator> tc(dimc); tensor_ctrl<2, double> tcc(tc);
+	tensor<2, double, allocator> ta(dima);
+	tensor<2, double, allocator> tb(dimb);
+	tensor<2, double, allocator> tc(dimc);
 	tensor<2, double, allocator> tc_ref(dimc);
+
+	double cij_max = 0.0;
+
+	{
+	tensor_ctrl<2, double> tca(ta);
+	tensor_ctrl<2, double> tcb(tb);
+	tensor_ctrl<2, double> tcc(tc);
 	tensor_ctrl<2, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
@@ -1182,7 +1266,6 @@ void tod_contract2_test::test_ij_jp_ip(
 	//	Generate reference data
 
 	index<2> ia; index<2> ib; index<2> ic;
-	double cij_max = 0.0;
 	double d1 = (d == 0.0) ? 1.0 : d;
 	for(size_t i = 0; i < ni; i++) {
 	for(size_t j = 0; j < nj; j++) {
@@ -1203,6 +1286,7 @@ void tod_contract2_test::test_ij_jp_ip(
 	tcb.ret_dataptr(dtb); dtb = 0; tb.set_immutable();
 	tcc.ret_dataptr(dtc1); dtc1 = 0;
 	tcc_ref.ret_dataptr(dtc2); dtc2 = 0; tc_ref.set_immutable();
+	}
 
 	//	Invoke the contraction routine
 
@@ -1244,10 +1328,17 @@ void tod_contract2_test::test_ij_pqi_pjq(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<3, double, allocator> ta(dima); tensor_ctrl<3, double> tca(ta);
-	tensor<3, double, allocator> tb(dimb); tensor_ctrl<3, double> tcb(tb);
-	tensor<2, double, allocator> tc(dimc); tensor_ctrl<2, double> tcc(tc);
+	tensor<3, double, allocator> ta(dima);
+	tensor<3, double, allocator> tb(dimb);
+	tensor<2, double, allocator> tc(dimc);
 	tensor<2, double, allocator> tc_ref(dimc);
+
+	double cij_max = 0.0;
+
+	{
+	tensor_ctrl<3, double> tca(ta);
+	tensor_ctrl<3, double> tcb(tb);
+	tensor_ctrl<2, double> tcc(tc);
 	tensor_ctrl<2, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
@@ -1265,7 +1356,6 @@ void tod_contract2_test::test_ij_pqi_pjq(
 	//	Generate reference data
 
 	index<3> ia; index<3> ib; index<2> ic;
-	double cij_max = 0.0;
 	double d1 = (d == 0.0) ? 1.0 : d;
 	for(size_t i = 0; i < ni; i++) {
 	for(size_t j = 0; j < nj; j++) {
@@ -1289,6 +1379,7 @@ void tod_contract2_test::test_ij_pqi_pjq(
 	tcb.ret_dataptr(dtb); dtb = 0; tb.set_immutable();
 	tcc.ret_dataptr(dtc1); dtc1 = 0;
 	tcc_ref.ret_dataptr(dtc2); dtc2 = 0; tc_ref.set_immutable();
+	}
 
 	//	Invoke the contraction routine
 
@@ -1313,6 +1404,11 @@ void tod_contract2_test::test_ij_pq_ijpq(size_t ni, size_t nj, size_t np,
 
 	// c_{ij} = \sum_{pq} a_{pq} b_{ijpq}
 
+	std::stringstream tnss;
+	tnss << "tod_contract2_test::test_ij_pq_ijpq(" << ni << ", " << nj
+		<< ", " << np << ", " << nq << ")";
+	std::string tns = tnss.str();
+
 	index<2> ia1, ia2; ia2[0]=np-1; ia2[1]=nq-1;
 	index<4> ib1, ib2; ib2[0]=ni-1; ib2[1]=nj-1; ib2[2]=np-1; ib2[3]=nq-1;
 	index<2> ic1, ic2; ic2[0]=ni-1; ic2[1]=nj-1;
@@ -1322,10 +1418,17 @@ void tod_contract2_test::test_ij_pq_ijpq(size_t ni, size_t nj, size_t np,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima); tensor_ctrl<2, double> tca(ta);
-	tensor<4, double, allocator> tb(dimb); tensor_ctrl<4, double> tcb(tb);
-	tensor<2, double, allocator> tc(dimc); tensor_ctrl<2, double> tcc(tc);
+	tensor<2, double, allocator> ta(dima);
+	tensor<4, double, allocator> tb(dimb);
+	tensor<2, double, allocator> tc(dimc);
 	tensor<2, double, allocator> tc_ref(dimc);
+
+	double cij_max = 0.0;
+
+	{
+	tensor_ctrl<2, double> tca(ta);
+	tensor_ctrl<4, double> tcb(tb);
+	tensor_ctrl<2, double> tcc(tc);
 	tensor_ctrl<2, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
@@ -1341,7 +1444,6 @@ void tod_contract2_test::test_ij_pq_ijpq(size_t ni, size_t nj, size_t np,
 	// Generate reference data
 
 	index<2> ia; index<4> ib; index<2> ic;
-	double cij_max = 0.0;
 	for(size_t i=0; i<ni; i++) {
 	for(size_t j=0; j<nj; j++) {
 		ic[0]=i; ic[1]=j;
@@ -1362,6 +1464,7 @@ void tod_contract2_test::test_ij_pq_ijpq(size_t ni, size_t nj, size_t np,
 	tcb.ret_dataptr(dtb); dtb = NULL; tb.set_immutable();
 	tcc.ret_dataptr(dtc1); dtc1 = NULL;
 	tcc_ref.ret_dataptr(dtc2); dtc2 = NULL; tc_ref.set_immutable();
+	}
 
 	// Invoke the contraction routine
 
@@ -1375,11 +1478,7 @@ void tod_contract2_test::test_ij_pq_ijpq(size_t ni, size_t nj, size_t np,
 
 	// Compare against the reference
 
-	char testname[128];
-	snprintf(testname, 128,
-		"tod_contract2_test::test_ij_pq_ijpq"
-		"(%lu, %lu, %lu, %lu)", ni, nj, np, nq);
-	compare_ref<2>::compare(testname, tc, tc_ref, cij_max*k_thresh);
+	compare_ref<2>::compare(tns.c_str(), tc, tc_ref, cij_max*k_thresh);
 }
 
 
@@ -1388,6 +1487,11 @@ void tod_contract2_test::test_ij_pq_ijpq_a(size_t ni, size_t nj, size_t np,
 
 	// c_{ij} = c_{ij} + d \sum_{pq} a_{pq} b_{ijpq}
 
+	std::stringstream tnss;
+	tnss << "tod_contract2_test::test_ij_pq_ijpq_a(" << ni << ", " << nj
+		<< ", " << np << ", " << nq << ", " << d << ")";
+	std::string tns = tnss.str();
+
 	index<2> ia1, ia2; ia2[0]=np-1; ia2[1]=nq-1;
 	index<4> ib1, ib2; ib2[0]=ni-1; ib2[1]=nj-1; ib2[2]=np-1; ib2[3]=nq-1;
 	index<2> ic1, ic2; ic2[0]=ni-1; ic2[1]=nj-1;
@@ -1397,10 +1501,17 @@ void tod_contract2_test::test_ij_pq_ijpq_a(size_t ni, size_t nj, size_t np,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima); tensor_ctrl<2, double> tca(ta);
-	tensor<4, double, allocator> tb(dimb); tensor_ctrl<4, double> tcb(tb);
-	tensor<2, double, allocator> tc(dimc); tensor_ctrl<2, double> tcc(tc);
+	tensor<2, double, allocator> ta(dima);
+	tensor<4, double, allocator> tb(dimb);
+	tensor<2, double, allocator> tc(dimc);
 	tensor<2, double, allocator> tc_ref(dimc);
+
+	double cij_max = 0.0;
+
+	{
+	tensor_ctrl<2, double> tca(ta);
+	tensor_ctrl<4, double> tcb(tb);
+	tensor_ctrl<2, double> tcc(tc);
 	tensor_ctrl<2, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
@@ -1416,7 +1527,6 @@ void tod_contract2_test::test_ij_pq_ijpq_a(size_t ni, size_t nj, size_t np,
 	// Generate reference data
 
 	index<2> ia; index<4> ib; index<2> ic;
-	double cij_max = 0.0;
 	for(size_t i=0; i<ni; i++) {
 	for(size_t j=0; j<nj; j++) {
 		ic[0]=i; ic[1]=j;
@@ -1437,6 +1547,7 @@ void tod_contract2_test::test_ij_pq_ijpq_a(size_t ni, size_t nj, size_t np,
 	tcb.ret_dataptr(dtb); dtb = NULL; tb.set_immutable();
 	tcc.ret_dataptr(dtc1); dtc1 = NULL;
 	tcc_ref.ret_dataptr(dtc2); dtc2 = NULL; tc_ref.set_immutable();
+	}
 
 	// Invoke the contraction routine
 
@@ -1450,11 +1561,7 @@ void tod_contract2_test::test_ij_pq_ijpq_a(size_t ni, size_t nj, size_t np,
 
 	// Compare against the reference
 
-	char testname[128];
-	snprintf(testname, 128,
-		"tod_contract2_test::test_ij_pq_ijpq_a"
-		"(%lu, %lu, %lu, %lu)", ni, nj, np, nq);
-	compare_ref<2>::compare(testname, tc, tc_ref, cij_max*k_thresh);
+	compare_ref<2>::compare(tns.c_str(), tc, tc_ref, cij_max*k_thresh);
 }
 
 
@@ -1463,6 +1570,11 @@ void tod_contract2_test::test_ij_ipqr_jpqr(size_t ni, size_t nj, size_t np,
 
 	// c_{ij} = \sum_{pqr} a_{ipqr} b_{jpqr}
 
+	std::stringstream tnss;
+	tnss << "tod_contract2_test::test_ij_ipqr_jpqr(" << ni << ", " << nj
+		<< ", " << np << ", " << nq << ", " << nr << ")";
+	std::string tns = tnss.str();
+
 	index<4> ia1, ia2; ia2[0]=ni-1; ia2[1]=np-1; ia2[2]=nq-1; ia2[3]=nr-1;
 	index<4> ib1, ib2; ib2[0]=nj-1; ib2[1]=np-1; ib2[2]=nq-1; ib2[3]=nr-1;
 	index<2> ic1, ic2; ic2[0]=ni-1; ic2[1]=nj-1;
@@ -1472,10 +1584,17 @@ void tod_contract2_test::test_ij_ipqr_jpqr(size_t ni, size_t nj, size_t np,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima); tensor_ctrl<4, double> tca(ta);
-	tensor<4, double, allocator> tb(dimb); tensor_ctrl<4, double> tcb(tb);
-	tensor<2, double, allocator> tc(dimc); tensor_ctrl<2, double> tcc(tc);
+	tensor<4, double, allocator> ta(dima);
+	tensor<4, double, allocator> tb(dimb);
+	tensor<2, double, allocator> tc(dimc);
 	tensor<2, double, allocator> tc_ref(dimc);
+
+	double cij_max = 0.0;
+
+	{
+	tensor_ctrl<4, double> tca(ta);
+	tensor_ctrl<4, double> tcb(tb);
+	tensor_ctrl<2, double> tcc(tc);
 	tensor_ctrl<2, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
@@ -1491,7 +1610,6 @@ void tod_contract2_test::test_ij_ipqr_jpqr(size_t ni, size_t nj, size_t np,
 	// Generate reference data
 
 	index<4> ia, ib; index<2> ic;
-	double cij_max = 0.0;
 	for(size_t i=0; i<ni; i++) {
 	for(size_t j=0; j<nj; j++) {
 		ic[0]=i; ic[1]=j;
@@ -1514,6 +1632,7 @@ void tod_contract2_test::test_ij_ipqr_jpqr(size_t ni, size_t nj, size_t np,
 	tcb.ret_dataptr(dtb); dtb = NULL; tb.set_immutable();
 	tcc.ret_dataptr(dtc1); dtc1 = NULL;
 	tcc_ref.ret_dataptr(dtc2); dtc2 = NULL; tc_ref.set_immutable();
+	}
 
 	// Invoke the contraction routine
 
@@ -1528,11 +1647,7 @@ void tod_contract2_test::test_ij_ipqr_jpqr(size_t ni, size_t nj, size_t np,
 
 	// Compare against the reference
 
-	char testname[128];
-	snprintf(testname, 128,
-		"tod_contract2_test::test_ij_ipqr_jpqr"
-		"(%lu, %lu, %lu, %lu, %lu)", ni, nj, np, nq, nr);
-	compare_ref<2>::compare(testname, tc, tc_ref, cij_max*k_thresh);
+	compare_ref<2>::compare(tns.c_str(), tc, tc_ref, cij_max*k_thresh);
 }
 
 
@@ -1541,6 +1656,11 @@ void tod_contract2_test::test_ij_ipqr_jpqr_a(size_t ni, size_t nj, size_t np,
 
 	// c_{ij} = c_{ij} + d \sum_{pqr} a_{ipqr} b_{jpqr}
 
+	std::stringstream tnss;
+	tnss << "tod_contract2_test::test_ij_ipqr_jpqr_a(" << ni << ", " << nj
+		<< ", " << np << ", " << nq << ", " << nr << ", " << d << ")";
+	std::string tns = tnss.str();
+
 	index<4> ia1, ia2; ia2[0]=ni-1; ia2[1]=np-1; ia2[2]=nq-1; ia2[3]=nr-1;
 	index<4> ib1, ib2; ib2[0]=nj-1; ib2[1]=np-1; ib2[2]=nq-1; ib2[3]=nr-1;
 	index<2> ic1, ic2; ic2[0]=ni-1; ic2[1]=nj-1;
@@ -1550,10 +1670,17 @@ void tod_contract2_test::test_ij_ipqr_jpqr_a(size_t ni, size_t nj, size_t np,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima); tensor_ctrl<4, double> tca(ta);
-	tensor<4, double, allocator> tb(dimb); tensor_ctrl<4, double> tcb(tb);
-	tensor<2, double, allocator> tc(dimc); tensor_ctrl<2, double> tcc(tc);
+	tensor<4, double, allocator> ta(dima);
+	tensor<4, double, allocator> tb(dimb);
+	tensor<2, double, allocator> tc(dimc);
 	tensor<2, double, allocator> tc_ref(dimc);
+
+	double cij_max = 0.0;
+
+	{
+	tensor_ctrl<4, double> tca(ta);
+	tensor_ctrl<4, double> tcb(tb);
+	tensor_ctrl<2, double> tcc(tc);
 	tensor_ctrl<2, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
@@ -1569,7 +1696,6 @@ void tod_contract2_test::test_ij_ipqr_jpqr_a(size_t ni, size_t nj, size_t np,
 	// Generate reference data
 
 	index<4> ia, ib; index<2> ic;
-	double cij_max = 0.0;
 	for(size_t i=0; i<ni; i++) {
 	for(size_t j=0; j<nj; j++) {
 		ic[0]=i; ic[1]=j;
@@ -1592,6 +1718,7 @@ void tod_contract2_test::test_ij_ipqr_jpqr_a(size_t ni, size_t nj, size_t np,
 	tcb.ret_dataptr(dtb); dtb = NULL; tb.set_immutable();
 	tcc.ret_dataptr(dtc1); dtc1 = NULL;
 	tcc_ref.ret_dataptr(dtc2); dtc2 = NULL; tc_ref.set_immutable();
+	}
 
 	// Invoke the contraction routine
 
@@ -1606,11 +1733,7 @@ void tod_contract2_test::test_ij_ipqr_jpqr_a(size_t ni, size_t nj, size_t np,
 
 	// Compare against the reference
 
-	char testname[128];
-	snprintf(testname, 128,
-		"tod_contract2_test::test_ij_ipqr_jpqr_a"
-		"(%lu, %lu, %lu, %lu, %lu)", ni, nj, np, nq, nr);
-	compare_ref<2>::compare(testname, tc, tc_ref, cij_max*k_thresh);
+	compare_ref<2>::compare(tns.c_str(), tc, tc_ref, cij_max*k_thresh);
 }
 
 
@@ -1618,6 +1741,11 @@ void tod_contract2_test::test_ij_pqir_pqjr(size_t ni, size_t nj,
 	size_t np, size_t nq, size_t nr) throw(libtest::test_exception) {
 
 	// c_{ij} = \sum_{pqr} a_{pqir} b_{pqjr}
+
+	std::stringstream tnss;
+	tnss << "tod_contract2_test::test_ij_pqir_pqjr(" << ni << ", " << nj
+		<< ", " << np << ", " << nq << ", " << nr << ")";
+	std::string tns = tnss.str();
 
 	index<4> ia1, ia2; ia2[0]=np-1; ia2[1]=nq-1; ia2[2]=ni-1; ia2[3]=nr-1;
 	index<4> ib1, ib2; ib2[0]=np-1; ib2[1]=nq-1; ib2[2]=nj-1; ib2[3]=nr-1;
@@ -1628,10 +1756,17 @@ void tod_contract2_test::test_ij_pqir_pqjr(size_t ni, size_t nj,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima); tensor_ctrl<4, double> tca(ta);
-	tensor<4, double, allocator> tb(dimb); tensor_ctrl<4, double> tcb(tb);
-	tensor<2, double, allocator> tc(dimc); tensor_ctrl<2, double> tcc(tc);
+	tensor<4, double, allocator> ta(dima);
+	tensor<4, double, allocator> tb(dimb);
+	tensor<2, double, allocator> tc(dimc);
 	tensor<2, double, allocator> tc_ref(dimc);
+
+	double cij_max = 0.0;
+
+	{
+	tensor_ctrl<4, double> tca(ta);
+	tensor_ctrl<4, double> tcb(tb);
+	tensor_ctrl<2, double> tcc(tc);
 	tensor_ctrl<2, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
@@ -1647,7 +1782,6 @@ void tod_contract2_test::test_ij_pqir_pqjr(size_t ni, size_t nj,
 	// Generate reference data
 
 	index<4> ia, ib; index<2> ic;
-	double cij_max = 0.0;
 	for(size_t i=0; i<ni; i++) {
 	for(size_t j=0; j<nj; j++) {
 		ic[0]=i; ic[1]=j;
@@ -1670,6 +1804,7 @@ void tod_contract2_test::test_ij_pqir_pqjr(size_t ni, size_t nj,
 	tcb.ret_dataptr(dtb); dtb = NULL; tb.set_immutable();
 	tcc.ret_dataptr(dtc1); dtc1 = NULL;
 	tcc_ref.ret_dataptr(dtc2); dtc2 = NULL; tc_ref.set_immutable();
+	}
 
 	// Invoke the contraction routine
 
@@ -1684,11 +1819,7 @@ void tod_contract2_test::test_ij_pqir_pqjr(size_t ni, size_t nj,
 
 	// Compare against the reference
 
-	char testname[128];
-	snprintf(testname, 128,
-		"tod_contract2_test::test_ij_pqir_pqjr"
-		"(%lu, %lu, %lu, %lu, %lu)", ni, nj, np, nq, nr);
-	compare_ref<2>::compare(testname, tc, tc_ref, cij_max*k_thresh);
+	compare_ref<2>::compare(tns.c_str(), tc, tc_ref, cij_max*k_thresh);
 }
 
 
@@ -1696,6 +1827,11 @@ void tod_contract2_test::test_ij_pqir_pqjr_a(size_t ni, size_t nj, size_t np,
 	size_t nq, size_t nr, double d) throw(libtest::test_exception) {
 
 	// c_{ij} = c_{ij} + d \sum_{pqr} a_{pqir} b_{pqjr}
+
+	std::stringstream tnss;
+	tnss << "tod_contract2_test::test_ij_pqir_pqjr_a(" << ni << ", " << nj
+		<< ", " << np << ", " << nq << ", " << nr << ", " << d << ")";
+	std::string tns = tnss.str();
 
 	index<4> ia1, ia2; ia2[0]=np-1; ia2[1]=nq-1; ia2[2]=ni-1; ia2[3]=nr-1;
 	index<4> ib1, ib2; ib2[0]=np-1; ib2[1]=nq-1; ib2[2]=nj-1; ib2[3]=nr-1;
@@ -1706,10 +1842,17 @@ void tod_contract2_test::test_ij_pqir_pqjr_a(size_t ni, size_t nj, size_t np,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima); tensor_ctrl<4, double> tca(ta);
-	tensor<4, double, allocator> tb(dimb); tensor_ctrl<4, double> tcb(tb);
-	tensor<2, double, allocator> tc(dimc); tensor_ctrl<2, double> tcc(tc);
+	tensor<4, double, allocator> ta(dima);
+	tensor<4, double, allocator> tb(dimb);
+	tensor<2, double, allocator> tc(dimc);
 	tensor<2, double, allocator> tc_ref(dimc);
+
+	double cij_max = 0.0;
+
+	{
+	tensor_ctrl<4, double> tca(ta);
+	tensor_ctrl<4, double> tcb(tb);
+	tensor_ctrl<2, double> tcc(tc);
 	tensor_ctrl<2, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
@@ -1725,7 +1868,6 @@ void tod_contract2_test::test_ij_pqir_pqjr_a(size_t ni, size_t nj, size_t np,
 	// Generate reference data
 
 	index<4> ia, ib; index<2> ic;
-	double cij_max = 0.0;
 	for(size_t i=0; i<ni; i++) {
 	for(size_t j=0; j<nj; j++) {
 		ic[0]=i; ic[1]=j;
@@ -1748,6 +1890,7 @@ void tod_contract2_test::test_ij_pqir_pqjr_a(size_t ni, size_t nj, size_t np,
 	tcb.ret_dataptr(dtb); dtb = NULL; tb.set_immutable();
 	tcc.ret_dataptr(dtc1); dtc1 = NULL;
 	tcc_ref.ret_dataptr(dtc2); dtc2 = NULL; tc_ref.set_immutable();
+	}
 
 	// Invoke the contraction routine
 
@@ -1762,11 +1905,7 @@ void tod_contract2_test::test_ij_pqir_pqjr_a(size_t ni, size_t nj, size_t np,
 
 	// Compare against the reference
 
-	char testname[128];
-	snprintf(testname, 128,
-		"tod_contract2_test::test_ij_pqir_pqjr_a"
-		"(%lu, %lu, %lu, %lu, %lu)", ni, nj, np, nq, nr);
-	compare_ref<2>::compare(testname, tc, tc_ref, cij_max*k_thresh);
+	compare_ref<2>::compare(tns.c_str(), tc, tc_ref, cij_max*k_thresh);
 }
 
 
@@ -1796,10 +1935,17 @@ void tod_contract2_test::test_ijkl_pi_jklp(size_t ni, size_t nj,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima); tensor_ctrl<2, double> tca(ta);
-	tensor<4, double, allocator> tb(dimb); tensor_ctrl<4, double> tcb(tb);
-	tensor<4, double, allocator> tc(dimc); tensor_ctrl<4, double> tcc(tc);
+	tensor<2, double, allocator> ta(dima);
+	tensor<4, double, allocator> tb(dimb);
+	tensor<4, double, allocator> tc(dimc);
 	tensor<4, double, allocator> tc_ref(dimc);
+
+	double cijkl_max = 0.0;
+
+	{
+	tensor_ctrl<2, double> tca(ta);
+	tensor_ctrl<4, double> tcb(tb);
+	tensor_ctrl<4, double> tcc(tc);
 	tensor_ctrl<4, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
@@ -1819,7 +1965,6 @@ void tod_contract2_test::test_ijkl_pi_jklp(size_t ni, size_t nj,
 	//
 
 	index<2> ia; index<4> ib, ic;
-	double cijkl_max = 0.0;
 	for(size_t i = 0; i < ni; i++) {
 	for(size_t j = 0; j < nj; j++) {
 	for(size_t k = 0; k < nk; k++) {
@@ -1847,6 +1992,7 @@ void tod_contract2_test::test_ijkl_pi_jklp(size_t ni, size_t nj,
 	tcb.ret_dataptr(dtb); dtb = NULL; tb.set_immutable();
 	tcc.ret_dataptr(dtc1); dtc1 = NULL;
 	tcc_ref.ret_dataptr(dtc2); dtc2 = NULL; tc_ref.set_immutable();
+	}
 
 	//
 	//	Invoke the contraction routine
@@ -1896,10 +2042,17 @@ void tod_contract2_test::test_ijkl_pi_jklp_a(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima); tensor_ctrl<2, double> tca(ta);
-	tensor<4, double, allocator> tb(dimb); tensor_ctrl<4, double> tcb(tb);
-	tensor<4, double, allocator> tc(dimc); tensor_ctrl<4, double> tcc(tc);
+	tensor<2, double, allocator> ta(dima);
+	tensor<4, double, allocator> tb(dimb);
+	tensor<4, double, allocator> tc(dimc);
 	tensor<4, double, allocator> tc_ref(dimc);
+
+	double cijkl_max = 0.0;
+
+	{
+	tensor_ctrl<2, double> tca(ta);
+	tensor_ctrl<4, double> tcb(tb);
+	tensor_ctrl<4, double> tcc(tc);
 	tensor_ctrl<4, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
@@ -1919,7 +2072,6 @@ void tod_contract2_test::test_ijkl_pi_jklp_a(size_t ni, size_t nj, size_t nk,
 	//
 
 	index<2> ia; index<4> ib, ic;
-	double cijkl_max = 0.0;
 	for(size_t i = 0; i < ni; i++) {
 	for(size_t j = 0; j < nj; j++) {
 	for(size_t k = 0; k < nk; k++) {
@@ -1947,6 +2099,7 @@ void tod_contract2_test::test_ijkl_pi_jklp_a(size_t ni, size_t nj, size_t nk,
 	tcb.ret_dataptr(dtb); dtb = NULL; tb.set_immutable();
 	tcc.ret_dataptr(dtc1); dtc1 = NULL;
 	tcc_ref.ret_dataptr(dtc2); dtc2 = NULL; tc_ref.set_immutable();
+	}
 
 	//
 	//	Invoke the contraction routine
@@ -1975,6 +2128,11 @@ void tod_contract2_test::test_jikl_pi_jpkl(size_t ni, size_t nj,
 
 	// c_{jikl} = \sum_p a_{pi} b_{jpkl}
 
+	std::ostringstream tnss;
+	tnss << "tod_contract2_test::test_jikl_pi_jpkl(" << ni << ", " << nj
+		<< ", " << nk << ", " << nl << ", " << np << ")";
+	std::string tns = tnss.str();
+
 	index<2> ia1, ia2; ia2[0]=np-1; ia2[1]=ni-1;
 	index<4> ib1, ib2; ib2[0]=nj-1; ib2[1]=np-1; ib2[2]=nk-1; ib2[3]=nl-1;
 	index<4> ic1, ic2; ic2[0]=nj-1; ic2[1]=ni-1; ic2[2]=nk-1; ic2[3]=nl-1;
@@ -1985,10 +2143,17 @@ void tod_contract2_test::test_jikl_pi_jpkl(size_t ni, size_t nj,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima); tensor_ctrl<2, double> tca(ta);
-	tensor<4, double, allocator> tb(dimb); tensor_ctrl<4, double> tcb(tb);
-	tensor<4, double, allocator> tc(dimc); tensor_ctrl<4, double> tcc(tc);
+	tensor<2, double, allocator> ta(dima);
+	tensor<4, double, allocator> tb(dimb);
+	tensor<4, double, allocator> tc(dimc);
 	tensor<4, double, allocator> tc_ref(dimc);
+
+	double cij_max = 0.0;
+
+	{
+	tensor_ctrl<2, double> tca(ta);
+	tensor_ctrl<4, double> tcb(tb);
+	tensor_ctrl<4, double> tcc(tc);
 	tensor_ctrl<4, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
@@ -2004,7 +2169,6 @@ void tod_contract2_test::test_jikl_pi_jpkl(size_t ni, size_t nj,
 	// Generate reference data
 
 	index<2> ia; index<4> ib, ic;
-	double cij_max = 0.0;
 	for(size_t j=0; j<nj; j++) {
 	for(size_t i=0; i<ni; i++) {
 	for(size_t k=0; k<nk; k++) {
@@ -2028,6 +2192,7 @@ void tod_contract2_test::test_jikl_pi_jpkl(size_t ni, size_t nj,
 	tcb.ret_dataptr(dtb); dtb = NULL; tb.set_immutable();
 	tcc.ret_dataptr(dtc1); dtc1 = NULL;
 	tcc_ref.ret_dataptr(dtc2); dtc2 = NULL; tc_ref.set_immutable();
+	}
 
 	// Invoke the contraction routine
 
@@ -2040,11 +2205,7 @@ void tod_contract2_test::test_jikl_pi_jpkl(size_t ni, size_t nj,
 
 	// Compare against the reference
 
-	char testname[128];
-	snprintf(testname, 128,
-		"tod_contract2_test::test_jikl_pi_jpkl"
-		"(%lu, %lu, %lu, %lu, %lu)", ni, nj, nk, nl, np);
-	compare_ref<4>::compare(testname, tc, tc_ref, cij_max*k_thresh);
+	compare_ref<4>::compare(tns.c_str(), tc, tc_ref, cij_max*k_thresh);
 }
 
 
@@ -2052,6 +2213,11 @@ void tod_contract2_test::test_jikl_pi_jpkl_a(size_t ni, size_t nj, size_t nk,
 	size_t nl, size_t np, double d) throw(libtest::test_exception) {
 
 	// c_{jikl} = c_{jikl} + d \sum_p a_{pi} b_{jpkl}
+
+	std::ostringstream tnss;
+	tnss << "tod_contract2_test::test_jikl_pi_jpkl_a(" << ni << ", " << nj
+		<< ", " << nk << ", " << nl << ", " << np << ", " << d << ")";
+	std::string tns = tnss.str();
 
 	index<2> ia1, ia2; ia2[0]=np-1; ia2[1]=ni-1;
 	index<4> ib1, ib2; ib2[0]=nj-1; ib2[1]=np-1; ib2[2]=nk-1; ib2[3]=nl-1;
@@ -2063,10 +2229,17 @@ void tod_contract2_test::test_jikl_pi_jpkl_a(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima); tensor_ctrl<2, double> tca(ta);
-	tensor<4, double, allocator> tb(dimb); tensor_ctrl<4, double> tcb(tb);
-	tensor<4, double, allocator> tc(dimc); tensor_ctrl<4, double> tcc(tc);
+	tensor<2, double, allocator> ta(dima);
+	tensor<4, double, allocator> tb(dimb);
+	tensor<4, double, allocator> tc(dimc);
 	tensor<4, double, allocator> tc_ref(dimc);
+
+	double cij_max = 0.0;
+
+	{
+	tensor_ctrl<2, double> tca(ta);
+	tensor_ctrl<4, double> tcb(tb);
+	tensor_ctrl<4, double> tcc(tc);
 	tensor_ctrl<4, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
@@ -2082,7 +2255,6 @@ void tod_contract2_test::test_jikl_pi_jpkl_a(size_t ni, size_t nj, size_t nk,
 	// Generate reference data
 
 	index<2> ia; index<4> ib, ic;
-	double cij_max = 0.0;
 	for(size_t j=0; j<nj; j++) {
 	for(size_t i=0; i<ni; i++) {
 	for(size_t k=0; k<nk; k++) {
@@ -2106,6 +2278,7 @@ void tod_contract2_test::test_jikl_pi_jpkl_a(size_t ni, size_t nj, size_t nk,
 	tcb.ret_dataptr(dtb); dtb = NULL; tb.set_immutable();
 	tcc.ret_dataptr(dtc1); dtc1 = NULL;
 	tcc_ref.ret_dataptr(dtc2); dtc2 = NULL; tc_ref.set_immutable();
+	}
 
 	// Invoke the contraction routine
 
@@ -2118,11 +2291,7 @@ void tod_contract2_test::test_jikl_pi_jpkl_a(size_t ni, size_t nj, size_t nk,
 
 	// Compare against the reference
 
-	char testname[128];
-	snprintf(testname, 128,
-		"tod_contract2_test::test_jikl_pi_jpkl_a"
-		"(%lu, %lu, %lu, %lu, %lu)", ni, nj, nk, nl, np);
-	compare_ref<4>::compare(testname, tc, tc_ref, cij_max*k_thresh);
+	compare_ref<4>::compare(tns.c_str(), tc, tc_ref, cij_max*k_thresh);
 }
 
 
@@ -2130,6 +2299,11 @@ void tod_contract2_test::test_ijkl_ijp_klp(size_t ni, size_t nj,
 	size_t nk, size_t nl, size_t np) throw(libtest::test_exception) {
 
 	// c_{ijkl} = \sum_{p} a_{ijp} b_{klp}
+
+	std::ostringstream tnss;
+	tnss << "tod_contract2_test::test_ijkl_ijp_klp(" << ni << ", " << nj
+		<< ", " << nk << ", " << nl << ", " << np << ")";
+	std::string tns = tnss.str();
 
 	index<3> ia1, ia2; ia2[0]=ni-1; ia2[1]=nj-1; ia2[2]=np-1;
 	index<3> ib1, ib2; ib2[0]=nk-1; ib2[1]=nl-1; ib2[2]=np-1;
@@ -2140,10 +2314,17 @@ void tod_contract2_test::test_ijkl_ijp_klp(size_t ni, size_t nj,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<3, double, allocator> ta(dima); tensor_ctrl<3, double> tca(ta);
-	tensor<3, double, allocator> tb(dimb); tensor_ctrl<3, double> tcb(tb);
-	tensor<4, double, allocator> tc(dimc); tensor_ctrl<4, double> tcc(tc);
+	tensor<3, double, allocator> ta(dima);
+	tensor<3, double, allocator> tb(dimb);
+	tensor<4, double, allocator> tc(dimc);
 	tensor<4, double, allocator> tc_ref(dimc);
+
+	double cij_max = 0.0;
+
+	{
+	tensor_ctrl<3, double> tca(ta);
+	tensor_ctrl<3, double> tcb(tb);
+	tensor_ctrl<4, double> tcc(tc);
 	tensor_ctrl<4, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
@@ -2159,7 +2340,6 @@ void tod_contract2_test::test_ijkl_ijp_klp(size_t ni, size_t nj,
 	// Generate reference data
 
 	index<3> ia, ib; index<4> ic;
-	double cij_max = 0.0;
 	for(size_t i=0; i<ni; i++) {
 	for(size_t j=0; j<nj; j++) {
 	for(size_t k=0; k<nk; k++) {
@@ -2182,6 +2362,7 @@ void tod_contract2_test::test_ijkl_ijp_klp(size_t ni, size_t nj,
 	tcb.ret_dataptr(dtb); dtb = NULL; tb.set_immutable();
 	tcc.ret_dataptr(dtc1); dtc1 = NULL;
 	tcc_ref.ret_dataptr(dtc2); dtc2 = NULL; tc_ref.set_immutable();
+	}
 
 	// Invoke the contraction routine
 
@@ -2194,11 +2375,7 @@ void tod_contract2_test::test_ijkl_ijp_klp(size_t ni, size_t nj,
 
 	// Compare against the reference
 
-	char testname[128];
-	snprintf(testname, 128,
-		"tod_contract2_test::test_ijkl_ijp_klp"
-		"(%lu, %lu, %lu, %lu, %lu)", ni, nj, nk, nl, np);
-	compare_ref<4>::compare(testname, tc, tc_ref, cij_max*k_thresh);
+	compare_ref<4>::compare(tns.c_str(), tc, tc_ref, cij_max*k_thresh);
 }
 
 
@@ -2206,6 +2383,11 @@ void tod_contract2_test::test_ijkl_ijp_klp_a(size_t ni, size_t nj, size_t nk,
 	size_t nl, size_t np, double d) throw(libtest::test_exception) {
 
 	// c_{ijkl} = c_{ijkl} + d \sum_{p} a_{ijp} b_{klp}
+
+	std::ostringstream tnss;
+	tnss << "tod_contract2_test::test_ijkl_ijp_klp_a(" << ni << ", " << nj
+		<< ", " << nk << ", " << nl << ", " << np << ", " << d << ")";
+	std::string tns = tnss.str();
 
 	index<3> ia1, ia2; ia2[0]=ni-1; ia2[1]=nj-1; ia2[2]=np-1;
 	index<3> ib1, ib2; ib2[0]=nk-1; ib2[1]=nl-1; ib2[2]=np-1;
@@ -2216,10 +2398,17 @@ void tod_contract2_test::test_ijkl_ijp_klp_a(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<3, double, allocator> ta(dima); tensor_ctrl<3, double> tca(ta);
-	tensor<3, double, allocator> tb(dimb); tensor_ctrl<3, double> tcb(tb);
-	tensor<4, double, allocator> tc(dimc); tensor_ctrl<4, double> tcc(tc);
+	tensor<3, double, allocator> ta(dima);
+	tensor<3, double, allocator> tb(dimb);
+	tensor<4, double, allocator> tc(dimc);
 	tensor<4, double, allocator> tc_ref(dimc);
+
+	double cij_max = 0.0;
+
+	{
+	tensor_ctrl<3, double> tca(ta);
+	tensor_ctrl<3, double> tcb(tb);
+	tensor_ctrl<4, double> tcc(tc);
 	tensor_ctrl<4, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
@@ -2235,7 +2424,6 @@ void tod_contract2_test::test_ijkl_ijp_klp_a(size_t ni, size_t nj, size_t nk,
 	// Generate reference data
 
 	index<3> ia, ib; index<4> ic;
-	double cij_max = 0.0;
 	for(size_t i=0; i<ni; i++) {
 	for(size_t j=0; j<nj; j++) {
 	for(size_t k=0; k<nk; k++) {
@@ -2258,6 +2446,7 @@ void tod_contract2_test::test_ijkl_ijp_klp_a(size_t ni, size_t nj, size_t nk,
 	tcb.ret_dataptr(dtb); dtb = NULL; tb.set_immutable();
 	tcc.ret_dataptr(dtc1); dtc1 = NULL;
 	tcc_ref.ret_dataptr(dtc2); dtc2 = NULL; tc_ref.set_immutable();
+	}
 
 	// Invoke the contraction routine
 
@@ -2270,11 +2459,7 @@ void tod_contract2_test::test_ijkl_ijp_klp_a(size_t ni, size_t nj, size_t nk,
 
 	// Compare against the reference
 
-	char testname[128];
-	snprintf(testname, 128,
-		"tod_contract2_test::test_ijkl_ijp_klp_a"
-		"(%lu, %lu, %lu, %lu, %lu)", ni, nj, nk, nl, np);
-	compare_ref<4>::compare(testname, tc, tc_ref, cij_max*k_thresh);
+	compare_ref<4>::compare(tns.c_str(), tc, tc_ref, cij_max*k_thresh);
 }
 
 
@@ -2304,10 +2489,17 @@ void tod_contract2_test::test_ijkl_ij_kl(size_t ni, size_t nj,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima); tensor_ctrl<2, double> tca(ta);
-	tensor<2, double, allocator> tb(dimb); tensor_ctrl<2, double> tcb(tb);
-	tensor<4, double, allocator> tc(dimc); tensor_ctrl<4, double> tcc(tc);
+	tensor<2, double, allocator> ta(dima);
+	tensor<2, double, allocator> tb(dimb);
+	tensor<4, double, allocator> tc(dimc);
 	tensor<4, double, allocator> tc_ref(dimc);
+
+	double cijkl_max = 0.0;
+
+	{
+	tensor_ctrl<2, double> tca(ta);
+	tensor_ctrl<2, double> tcb(tb);
+	tensor_ctrl<4, double> tcc(tc);
 	tensor_ctrl<4, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
@@ -2327,7 +2519,6 @@ void tod_contract2_test::test_ijkl_ij_kl(size_t ni, size_t nj,
 	//
 
 	index<2> ia, ib; index<4> ic;
-	double cijkl_max = 0.0;
 	for(size_t i = 0; i < ni; i++) {
 	for(size_t j = 0; j < nj; j++) {
 	for(size_t k = 0; k < nk; k++) {
@@ -2352,6 +2543,7 @@ void tod_contract2_test::test_ijkl_ij_kl(size_t ni, size_t nj,
 	tcb.ret_dataptr(dtb); dtb = NULL; tb.set_immutable();
 	tcc.ret_dataptr(dtc1); dtc1 = NULL;
 	tcc_ref.ret_dataptr(dtc2); dtc2 = NULL; tc_ref.set_immutable();
+	}
 
 	//
 	//	Invoke the contraction routine
@@ -2400,10 +2592,17 @@ void tod_contract2_test::test_ijkl_ij_lk(size_t ni, size_t nj,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima); tensor_ctrl<2, double> tca(ta);
-	tensor<2, double, allocator> tb(dimb); tensor_ctrl<2, double> tcb(tb);
-	tensor<4, double, allocator> tc(dimc); tensor_ctrl<4, double> tcc(tc);
+	tensor<2, double, allocator> ta(dima);
+	tensor<2, double, allocator> tb(dimb);
+	tensor<4, double, allocator> tc(dimc);
 	tensor<4, double, allocator> tc_ref(dimc);
+
+	double cijkl_max = 0.0;
+
+	{
+	tensor_ctrl<2, double> tca(ta);
+	tensor_ctrl<2, double> tcb(tb);
+	tensor_ctrl<4, double> tcc(tc);
 	tensor_ctrl<4, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
@@ -2423,7 +2622,6 @@ void tod_contract2_test::test_ijkl_ij_lk(size_t ni, size_t nj,
 	//
 
 	index<2> ia, ib; index<4> ic;
-	double cijkl_max = 0.0;
 	for(size_t i = 0; i < ni; i++) {
 	for(size_t j = 0; j < nj; j++) {
 	for(size_t k = 0; k < nk; k++) {
@@ -2448,6 +2646,7 @@ void tod_contract2_test::test_ijkl_ij_lk(size_t ni, size_t nj,
 	tcb.ret_dataptr(dtb); dtb = NULL; tb.set_immutable();
 	tcc.ret_dataptr(dtc1); dtc1 = NULL;
 	tcc_ref.ret_dataptr(dtc2); dtc2 = NULL; tc_ref.set_immutable();
+	}
 
 	//
 	//	Invoke the contraction routine

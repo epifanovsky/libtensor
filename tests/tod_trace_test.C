@@ -64,20 +64,23 @@ void tod_trace_test::test_1(size_t ni) throw(libtest::test_exception) {
 	size_t sza = dims.get_size();
 
 	tensor<2, double, allocator_t> ta(dims);
-	tensor_ctrl<2, double> tca(ta);
 
-	double *pa = tca.req_dataptr();
+	double d_ref = 0.0;
+	{
+		tensor_ctrl<2, double> tca(ta);
 
-	for(size_t i = 0; i < sza; i++) pa[i] = drand48();
+		double *pa = tca.req_dataptr();
 
-	double d_ref = 0;
-	for(size_t i = 0; i < ni; i++) {
-		index<2> ia; ia[0] = i; ia[1] = i;
-		abs_index<2> aia(ia, dims);
-		d_ref += pa[aia.get_abs_index()];
+		for(size_t i = 0; i < sza; i++) pa[i] = drand48();
+
+		for(size_t i = 0; i < ni; i++) {
+			index<2> ia; ia[0] = i; ia[1] = i;
+			abs_index<2> aia(ia, dims);
+			d_ref += pa[aia.get_abs_index()];
+		}
+
+		tca.ret_dataptr(pa); pa = 0;
 	}
-
-	tca.ret_dataptr(pa); pa = 0;
 
 	double d = tod_trace<1>(ta).calculate();
 
@@ -113,20 +116,23 @@ void tod_trace_test::test_2(size_t ni) throw(libtest::test_exception) {
 	size_t sza = dims.get_size();
 
 	tensor<2, double, allocator_t> ta(dims);
-	tensor_ctrl<2, double> tca(ta);
 
-	double *pa = tca.req_dataptr();
+	double d_ref = 0.0;
+	{
+		tensor_ctrl<2, double> tca(ta);
 
-	for(size_t i = 0; i < sza; i++) pa[i] = drand48();
+		double *pa = tca.req_dataptr();
 
-	double d_ref = 0;
-	for(size_t i = 0; i < ni; i++) {
-		index<2> ia; ia[0] = i; ia[1] = i;
-		abs_index<2> aia(ia, dims);
-		d_ref += pa[aia.get_abs_index()];
+		for(size_t i = 0; i < sza; i++) pa[i] = drand48();
+
+		for(size_t i = 0; i < ni; i++) {
+			index<2> ia; ia[0] = i; ia[1] = i;
+			abs_index<2> aia(ia, dims);
+			d_ref += pa[aia.get_abs_index()];
+		}
+
+		tca.ret_dataptr(pa); pa = 0;
 	}
-
-	tca.ret_dataptr(pa); pa = 0;
 
 	permutation<2> perm; perm.permute(0, 1);
 	double d = tod_trace<1>(ta, perm).calculate();
@@ -164,23 +170,26 @@ void tod_trace_test::test_3(size_t ni, size_t nj)
 	size_t sza = dims.get_size();
 
 	tensor<4, double, allocator_t> ta(dims);
-	tensor_ctrl<4, double> tca(ta);
 
-	double *pa = tca.req_dataptr();
+	double d_ref = 0.0;
+	{
+		tensor_ctrl<4, double> tca(ta);
 
-	for(size_t i = 0; i < sza; i++) pa[i] = drand48();
+		double *pa = tca.req_dataptr();
 
-	double d_ref = 0;
-	for(size_t i = 0; i < ni; i++) {
-	for(size_t j = 0; j < nj; j++) {
-		index<4> ia;
-		ia[0] = i; ia[1] = j; ia[2] = i; ia[3] = j;
-		abs_index<4> aia(ia, dims);
-		d_ref += pa[aia.get_abs_index()];
+		for(size_t i = 0; i < sza; i++) pa[i] = drand48();
+
+		for(size_t i = 0; i < ni; i++) {
+		for(size_t j = 0; j < nj; j++) {
+			index<4> ia;
+			ia[0] = i; ia[1] = j; ia[2] = i; ia[3] = j;
+			abs_index<4> aia(ia, dims);
+			d_ref += pa[aia.get_abs_index()];
+		}
+		}
+
+		tca.ret_dataptr(pa); pa = 0;
 	}
-	}
-
-	tca.ret_dataptr(pa); pa = 0;
 
 	double d = tod_trace<2>(ta).calculate();
 
@@ -217,23 +226,26 @@ void tod_trace_test::test_4(size_t ni, size_t nj)
 	size_t sza = dims.get_size();
 
 	tensor<4, double, allocator_t> ta(dims);
-	tensor_ctrl<4, double> tca(ta);
 
-	double *pa = tca.req_dataptr();
+	double d_ref = 0.0;
+	{
+		tensor_ctrl<4, double> tca(ta);
 
-	for(size_t i = 0; i < sza; i++) pa[i] = drand48();
+		double *pa = tca.req_dataptr();
 
-	double d_ref = 0;
-	for(size_t i = 0; i < ni; i++) {
-	for(size_t j = 0; j < nj; j++) {
-		index<4> ia;
-		ia[0] = i; ia[1] = i; ia[2] = j; ia[3] = j;
-		abs_index<4> aia(ia, dims);
-		d_ref += pa[aia.get_abs_index()];
+		for(size_t i = 0; i < sza; i++) pa[i] = drand48();
+
+		for(size_t i = 0; i < ni; i++) {
+		for(size_t j = 0; j < nj; j++) {
+			index<4> ia;
+			ia[0] = i; ia[1] = i; ia[2] = j; ia[3] = j;
+			abs_index<4> aia(ia, dims);
+			d_ref += pa[aia.get_abs_index()];
+		}
+		}
+
+		tca.ret_dataptr(pa); pa = 0;
 	}
-	}
-
-	tca.ret_dataptr(pa); pa = 0;
 
 	permutation<4> perm; perm.permute(1, 2);
 	double d = tod_trace<2>(ta, perm).calculate();
@@ -273,26 +285,29 @@ void tod_trace_test::test_5(size_t ni, size_t nj, size_t nk)
 	size_t sza = dims.get_size();
 
 	tensor<6, double, allocator_t> ta(dims);
-	tensor_ctrl<6, double> tca(ta);
 
-	double *pa = tca.req_dataptr();
+	double d_ref = 0.0;
+	{
+		tensor_ctrl<6, double> tca(ta);
 
-	for(size_t i = 0; i < sza; i++) pa[i] = drand48();
+		double *pa = tca.req_dataptr();
 
-	double d_ref = 0;
-	for(size_t i = 0; i < ni; i++) {
-	for(size_t j = 0; j < nj; j++) {
-	for(size_t k = 0; k < nk; k++) {
-		index<6> ia;
-		ia[0] = i; ia[1] = j; ia[2] = k;
-		ia[3] = i; ia[4] = j; ia[5] = k;
-		abs_index<6> aia(ia, dims);
-		d_ref += pa[aia.get_abs_index()];
+		for(size_t i = 0; i < sza; i++) pa[i] = drand48();
+
+		for(size_t i = 0; i < ni; i++) {
+		for(size_t j = 0; j < nj; j++) {
+		for(size_t k = 0; k < nk; k++) {
+			index<6> ia;
+			ia[0] = i; ia[1] = j; ia[2] = k;
+			ia[3] = i; ia[4] = j; ia[5] = k;
+			abs_index<6> aia(ia, dims);
+			d_ref += pa[aia.get_abs_index()];
+		}
+		}
+		}
+
+		tca.ret_dataptr(pa); pa = 0;
 	}
-	}
-	}
-
-	tca.ret_dataptr(pa); pa = 0;
 
 	double d = tod_trace<3>(ta).calculate();
 
@@ -331,26 +346,29 @@ void tod_trace_test::test_6(size_t ni, size_t nj, size_t nk)
 	size_t sza = dims.get_size();
 
 	tensor<6, double, allocator_t> ta(dims);
-	tensor_ctrl<6, double> tca(ta);
 
-	double *pa = tca.req_dataptr();
+	double d_ref = 0.0;
+	{
+		tensor_ctrl<6, double> tca(ta);
 
-	for(size_t i = 0; i < sza; i++) pa[i] = drand48();
+		double *pa = tca.req_dataptr();
 
-	double d_ref = 0;
-	for(size_t i = 0; i < ni; i++) {
-	for(size_t j = 0; j < nj; j++) {
-	for(size_t k = 0; k < nk; k++) {
-		index<6> ia;
-		ia[0] = k; ia[1] = k; ia[2] = j;
-		ia[3] = j; ia[4] = i; ia[5] = i;
-		abs_index<6> aia(ia, dims);
-		d_ref += pa[aia.get_abs_index()];
+		for(size_t i = 0; i < sza; i++) pa[i] = drand48();
+
+		for(size_t i = 0; i < ni; i++) {
+		for(size_t j = 0; j < nj; j++) {
+		for(size_t k = 0; k < nk; k++) {
+			index<6> ia;
+			ia[0] = k; ia[1] = k; ia[2] = j;
+			ia[3] = j; ia[4] = i; ia[5] = i;
+			abs_index<6> aia(ia, dims);
+			d_ref += pa[aia.get_abs_index()];
+		}
+		}
+		}
+
+		tca.ret_dataptr(pa); pa = 0;
 	}
-	}
-	}
-
-	tca.ret_dataptr(pa); pa = 0;
 
 	permutation<6> perm;
 	perm.permute(0, 5).permute(1, 2); // kkjjii -> ijkjik

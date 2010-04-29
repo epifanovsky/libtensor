@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_CONTRACTION2_LIST_BUILDER_H
 #define LIBTENSOR_CONTRACTION2_LIST_BUILDER_H
 
+#include <sstream>
 #include "../defs.h"
 #include "../exception.h"
 #include "contraction2.h"
@@ -80,24 +81,24 @@ void contraction2_list_builder<N, M, K, ListT>::populate(ListT &list,
 			dimc1[iconn] = dimb[i - k_orderc - k_ordera];
 		} else if(dima[iconn - k_orderc] !=
 			dimb[i - k_orderc - k_ordera]) {
-			char errmsg[128];
-			snprintf(errmsg, 128,
-				"Dimensions of contraction index are "
-				"incompatible: %lu (a) vs. %lu (b)",
-				dima[iconn - k_orderc],
-				dimb[i - k_orderc - k_ordera]);
-			throw_exc(k_clazz, "populate()", errmsg);
+
+			std::ostringstream ss;
+			ss << "Dimensions of contraction index are "
+				"incompatible: " << dima[iconn - k_orderc]
+				<< " (a) vs. " << dimb[i - k_orderc - k_ordera]
+				<< " (b)";
+			throw_exc(k_clazz, "populate()", ss.str().c_str());
 		}
 	}
 
 	for(size_t i = 0; i < k_orderc; i++) {
 		if(dimc[i] != dimc1[i]) {
-			char errmsg[128];
-			snprintf(errmsg, 128,
-				"Dimensions of result index are "
-				"incompatible: %lu (c) vs. %lu (a/b)",
-				dimc[i], dimc1[i]);
-			throw_exc(k_clazz, "populate()", errmsg);
+
+			std::ostringstream ss;
+			ss << "Dimensions of result index are incompatible: "
+				<< dimc[i] << " (c) vs. " << dimc1[i]
+				<< " (a/b)";
+			throw_exc(k_clazz, "populate()", ss.str().c_str());
 		}
 	}
 

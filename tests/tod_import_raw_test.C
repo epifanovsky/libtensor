@@ -58,6 +58,8 @@ void tod_import_raw_test::test_1(const dimensions<N> &dims,
 	size_t sz1 = dims.get_size(), sz2 = dims_wnd.get_size();
 
 	tensor_t t1(dims), t2(dims_wnd), t2_ref(dims_wnd);
+
+	{
 	tensor_ctrl_t tc1(t1), tc2(t2), tc2_ref(t2_ref);
 
 	//	Fill in random data
@@ -93,6 +95,7 @@ void tod_import_raw_test::test_1(const dimensions<N> &dims,
 	p1_ref = tc1.req_const_dataptr();
 	tod_import_raw<N>(p1_ref, dims, ir).perform(t2);
 	tc1.ret_dataptr(p1_ref);
+	}
 
 	//	Compare against the reference
 

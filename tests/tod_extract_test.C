@@ -42,6 +42,8 @@ void tod_extract_test::test_1() throw(libtest::test_exception) {
 
 	tensor<2, double, allocator> ta(dims2);
 	tensor<1, double, allocator> tb(dims1), tb_ref(dims1);
+
+	{
 	tensor_ctrl<2, double> tca(ta);
 	tensor_ctrl<1, double> tcb(tb), tcb_ref(tb_ref);
 
@@ -63,6 +65,7 @@ void tod_extract_test::test_1() throw(libtest::test_exception) {
 	tca.ret_dataptr(pa); pa = 0;
 	tcb.ret_dataptr(pb); pb = 0;
 	tcb_ref.ret_dataptr(pb_ref); pb_ref = 0;
+	}
 
 	mask<2> m; m[0] = true; m[1] = false;
 	index<2> idx; idx[0] = 0; idx[1] = 2;
@@ -96,6 +99,8 @@ void tod_extract_test::test_2() throw(libtest::test_exception) {
 
 	tensor<3, double, allocator> ta(dims3);
 	tensor<2, double, allocator> tb(dims2), tb_ref(dims2);
+
+	{
 	tensor_ctrl<3, double> tca(ta);
 	tensor_ctrl<2, double> tcb(tb), tcb_ref(tb_ref);
 
@@ -119,6 +124,7 @@ void tod_extract_test::test_2() throw(libtest::test_exception) {
 	tca.ret_dataptr(pa); pa = 0;
 	tcb.ret_dataptr(pb); pb = 0;
 	tcb_ref.ret_dataptr(pb_ref); pb_ref = 0;
+	}
 
 	mask<3> m; m[0] = true; m[1] = false; m[2] = true;
 	index<3> idx; idx[0] = 0; idx[1] = 0; idx[2] = 0;
@@ -141,51 +147,52 @@ void tod_extract_test::test_3() throw(libtest::test_exception) {
 
 	try {
 
-		size_t ni = 6, nj = 11, nk = 3;
-		index<2> i2a, i2b;
-		i2b[0] = nj - 1; i2b[1] = ni - 1;
-		index<3> i3a, i3b;
-		i3b[0] = ni - 1; i3b[1] = nk - 1; i3b[2] = nj - 1;
-		dimensions<2> dims2(index_range<2>(i2a, i2b));
-		dimensions<3> dims3(index_range<3>(i3a, i3b));
-		size_t sza = dims3.get_size(), szb = dims2.get_size();
+	size_t ni = 6, nj = 11, nk = 3;
+	index<2> i2a, i2b;
+	i2b[0] = nj - 1; i2b[1] = ni - 1;
+	index<3> i3a, i3b;
+	i3b[0] = ni - 1; i3b[1] = nk - 1; i3b[2] = nj - 1;
+	dimensions<2> dims2(index_range<2>(i2a, i2b));
+	dimensions<3> dims3(index_range<3>(i3a, i3b));
+	size_t sza = dims3.get_size(), szb = dims2.get_size();
 
-		tensor<3, double, allocator> ta(dims3);
-		tensor<2, double, allocator> tb(dims2), tb_ref(dims2);
-		tensor_ctrl<3, double> tca(ta);
-		tensor_ctrl<2, double> tcb(tb), tcb_ref(tb_ref);
+	tensor<3, double, allocator> ta(dims3);
+	tensor<2, double, allocator> tb(dims2), tb_ref(dims2);
 
-		double *pa = tca.req_dataptr();
-		double *pb = tcb.req_dataptr();
-		double *pb_ref = tcb_ref.req_dataptr();
+	{
+	tensor_ctrl<3, double> tca(ta);
+	tensor_ctrl<2, double> tcb(tb), tcb_ref(tb_ref);
 
-		for(size_t i = 0; i < sza; i++) pa[i] = drand48();
-		for(size_t i = 0; i < szb; i++) pb[i] = drand48();
+	double *pa = tca.req_dataptr();
+	double *pb = tcb.req_dataptr();
+	double *pb_ref = tcb_ref.req_dataptr();
 
-		for(size_t i = 0; i < ni; i++) {
-		for(size_t j = 0; j < nj; j++) {
-			index<3> idxa; idxa[0] = i; idxa[1] = 0; idxa[2] = j;
-			index<2> idxb; idxb[0] = j; idxb[1] = i;
-			abs_index<3> aidxa(idxa, dims3);
-			abs_index<2> aidxb(idxb, dims2);
-			pb_ref[aidxb.get_abs_index()] = pa[aidxa.get_abs_index()];
-		}
-		}
+	for(size_t i = 0; i < sza; i++) pa[i] = drand48();
+	for(size_t i = 0; i < szb; i++) pb[i] = drand48();
 
-		tca.ret_dataptr(pa); pa = 0;
-		tcb.ret_dataptr(pb); pb = 0;
-		tcb_ref.ret_dataptr(pb_ref); pb_ref = 0;
+	for(size_t i = 0; i < ni; i++) {
+	for(size_t j = 0; j < nj; j++) {
+		index<3> idxa; idxa[0] = i; idxa[1] = 0; idxa[2] = j;
+		index<2> idxb; idxb[0] = j; idxb[1] = i;
+		abs_index<3> aidxa(idxa, dims3);
+		abs_index<2> aidxb(idxb, dims2);
+		pb_ref[aidxb.get_abs_index()] = pa[aidxa.get_abs_index()];
+	}
+	}
 
-		permutation<2> perm;
-		perm.permute(0, 1);
+	tca.ret_dataptr(pa); pa = 0;
+	tcb.ret_dataptr(pb); pb = 0;
+	tcb_ref.ret_dataptr(pb_ref); pb_ref = 0;
+	}
 
-		mask<3> m; m[0] = true; m[1] = false; m[2] = true;
-		index<3> idx; idx[0] = 0; idx[1] = 0; idx[2] = 0;
-		tod_extract<3, 1>(ta, m,perm ,idx).perform(tb);
+	permutation<2> perm;
+	perm.permute(0, 1);
 
-		compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
+	mask<3> m; m[0] = true; m[1] = false; m[2] = true;
+	index<3> idx; idx[0] = 0; idx[1] = 0; idx[2] = 0;
+	tod_extract<3, 1>(ta, m,perm ,idx).perform(tb);
 
-
+	compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
@@ -193,54 +200,12 @@ void tod_extract_test::test_3() throw(libtest::test_exception) {
 }
 
 
-/**	\test Extract a single diagonal with one index intact:
-		\f$ b_{ji} = a_{jii} \f$
- **/
 void tod_extract_test::test_4() throw(libtest::test_exception) {
 
 	static const char *testname = "tod_extract_test::test_4()";
 
 	try {
 
-//	size_t ni = 6, nj = 11;
-//	index<2> i2a, i2b;
-//	i2b[0] = nj - 1; i2b[1] = ni - 1;
-//	index<3> i3a, i3b;
-//	i3b[0] = nj - 1; i3b[1] = ni - 1; i3b[2] = ni - 1;
-//	dimensions<2> dims2(index_range<2>(i2a, i2b));
-//	dimensions<3> dims3(index_range<3>(i3a, i3b));
-//	size_t sza = dims3.get_size(), szb = dims2.get_size();
-//
-//	tensor<3, double, allocator> ta(dims3);
-//	tensor<2, double, allocator> tb(dims2), tb_ref(dims2);
-//	tensor_ctrl<3, double> tca(ta);
-//	tensor_ctrl<2, double> tcb(tb), tcb_ref(tb_ref);
-//
-//	double *pa = tca.req_dataptr();
-//	double *pb = tcb.req_dataptr();
-//	double *pb_ref = tcb_ref.req_dataptr();
-//
-//	for(size_t i = 0; i < sza; i++) pa[i] = drand48();
-//	for(size_t i = 0; i < szb; i++) pb[i] = drand48();
-//
-//	for(size_t i = 0; i < ni; i++) {
-//	for(size_t j = 0; j < nj; j++) {
-//		index<3> idxa; idxa[0] = j; idxa[1] = i; idxa[2] = i;
-//		index<2> idxb; idxb[0] = j; idxb[1] = i;
-//		abs_index<3> aidxa(idxa, dims3);
-//		abs_index<2> aidxb(idxb, dims2);
-//		pb_ref[aidxb.get_abs_index()] = pa[aidxa.get_abs_index()];
-//	}
-//	}
-//
-//	tca.ret_dataptr(pa); pa = 0;
-//	tcb.ret_dataptr(pb); pb = 0;
-//	tcb_ref.ret_dataptr(pb_ref); pb_ref = 0;
-//
-//	mask<3> m; m[0] = false; m[1] = true; m[2] = true;
-//	tod_diag<3, 2>(ta, m).perform(tb);
-//
-//	compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
@@ -248,55 +213,12 @@ void tod_extract_test::test_4() throw(libtest::test_exception) {
 }
 
 
-/**	\test Extract a single diagonal with one index intact and permuted:
-		output \f$ b_{ij} = a_{jii} \f$
- **/
 void tod_extract_test::test_5() throw(libtest::test_exception) {
 
 	static const char *testname = "tod_extract_test::test_5()";
 
 	try {
 
-//	size_t ni = 6, nj = 11;
-//	index<2> i2a, i2b;
-//	i2b[0] = ni - 1; i2b[1] = nj - 1;
-//	index<3> i3a, i3b;
-//	i3b[0] = nj - 1; i3b[1] = ni - 1; i3b[2] = ni - 1;
-//	dimensions<2> dims2(index_range<2>(i2a, i2b));
-//	dimensions<3> dims3(index_range<3>(i3a, i3b));
-//	size_t sza = dims3.get_size(), szb = dims2.get_size();
-//
-//	tensor<3, double, allocator> ta(dims3);
-//	tensor<2, double, allocator> tb(dims2), tb_ref(dims2);
-//	tensor_ctrl<3, double> tca(ta);
-//	tensor_ctrl<2, double> tcb(tb), tcb_ref(tb_ref);
-//
-//	double *pa = tca.req_dataptr();
-//	double *pb = tcb.req_dataptr();
-//	double *pb_ref = tcb_ref.req_dataptr();
-//
-//	for(size_t i = 0; i < sza; i++) pa[i] = drand48();
-//	for(size_t i = 0; i < szb; i++) pb[i] = drand48();
-//
-//	for(size_t i = 0; i < ni; i++) {
-//	for(size_t j = 0; j < nj; j++) {
-//		index<3> idxa; idxa[0] = j; idxa[1] = i; idxa[2] = i;
-//		index<2> idxb; idxb[0] = i; idxb[1] = j;
-//		abs_index<3> aidxa(idxa, dims3);
-//		abs_index<2> aidxb(idxb, dims2);
-//		pb_ref[aidxb.get_abs_index()] = pa[aidxa.get_abs_index()];
-//	}
-//	}
-//
-//	tca.ret_dataptr(pa); pa = 0;
-//	tcb.ret_dataptr(pb); pb = 0;
-//	tcb_ref.ret_dataptr(pb_ref); pb_ref = 0;
-//
-//	mask<3> m; m[0] = false; m[1] = true; m[2] = true;
-//	permutation<2> permb; permb.permute(0, 1);
-//	tod_diag<3, 2>(ta, m, permb).perform(tb);
-//
-//	compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());

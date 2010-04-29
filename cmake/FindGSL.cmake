@@ -1,7 +1,6 @@
 set(GSL_FOUND FALSE)
 
 find_path(GSL_INCLUDE_PATH gsl/gsl_cblas.h PATHS "C:/Program Files/GnuWin32" PATH_SUFFIXES include)
-message(STATUS "gsl: " ${GSL_INCLUDE_PATH})
 
 if(GSL_INCLUDE_PATH)
 

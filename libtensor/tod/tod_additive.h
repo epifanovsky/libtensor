@@ -23,21 +23,21 @@ class tod_additive {
 public:
 	/**	\brief Prefetches the operands
 	 **/
-//	virtual void prefetch() throw(exception) = 0;
+	virtual void prefetch() = 0;
+
+	/**	\brief Performs the operation and writes the result to a %tensor
+		\param t Tensor.
+		\param c Coefficient.
+	 **/
+	virtual void perform(tensor_i<N, double> &t) = 0;
 
 	/**	\brief Performs the operation and adds its result to a %tensor
 			with a coefficient
 		\param t Tensor.
 		\param c Coefficient.
 	 **/
-	virtual void perform(tensor_i<N, double> &t, const double c)
-		throw(exception) = 0;
+	virtual void perform(tensor_i<N, double> &t, double c) = 0;
 
-	/**	\brief Performs the operation and writes the result to a %tensor
-		\param t Tensor.
-		\param c Coefficient.
-	 **/
-	virtual void perform(tensor_i<N, double> &t) throw(exception) = 0;
 };
 
 }

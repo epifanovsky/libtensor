@@ -1,13 +1,16 @@
 #ifndef LIBTENSOR_TENSOR_H
 #define LIBTENSOR_TENSOR_H
 
+#include <vector>
 #include "../defs.h"
 #include "../exception.h"
+#include "../timings.h"
 #include "immutable.h"
 #include "permutation.h"
 #include "tensor_i.h"
 
 namespace libtensor {
+
 
 /**	\brief Simple %tensor, which stores all its elements in memory
 
@@ -122,59 +125,56 @@ namespace libtensor {
 	\ingroup libtensor
 **/
 template<size_t N, typename T, typename Alloc>
-class tensor : public tensor_i<N,T>, public immutable {
+class tensor :
+	public tensor_i<N, T>,
+	public immutable,
+	public timings< tensor<N, T, Alloc> > {
+
+public:
+	static const char *k_clazz; //!< Class name
+
 public:
 	typedef T element_t; //!< Tensor element type
 	typedef typename Alloc::ptr_t ptr_t; //!< Memory pointer type
+	typedef typename tensor_i<N, T>::handle_t
+		handle_t; //!< Session handle type
 
 private:
 	dimensions<N> m_dims; //!< Tensor %dimensions
 	ptr_t m_data; //!< Pointer to data
 	T *m_dataptr; //!< Pointer to checked out data
 	size_t m_ptrcount; //!< Number of read-only data pointers given out
+	std::vector<char> m_sessions; //!< Sessions
 
 public:
 	//!	\name Construction and destruction
 	//@{
 
-	/**	\brief Creates a %tensor with specified %dimensions
+	/**	\brief Creates an empty %tensor
+		\param dims Non-zero %tensor dimensions.
+	 **/
+	tensor(const dimensions<N> &dims);
 
-		Creates a %tensor with specified %dimensions.
+	/**	\brief Creates an empty %tensor with the same %dimensions
+			(data are not copied)
+		\param t Another %tensor (tensor_i<N, T>).
+	 **/
+	tensor(const tensor_i<N, T> &t);
 
-		\param d Dimensions of the %tensor.
-		\throw exception If an initialization error occurs.
-	**/
-	tensor(const dimensions<N> &d) throw(exception);
-
-	/**	\brief Creates a %tensor with the %dimensions of another %tensor
-			(by tensor_i<T> interface)
-
-		Creates a %tensor with the %dimensions of another %tensor.
-		This constructor doesn't copy the data.
-
-		\param t Another %tensor.
-		\throw exception If an initialization error occurs.
-	**/
-	tensor(const tensor_i<N,T> &t) throw(exception);
-
-	/**	\brief Creates a %tensor with the %dimensions of another %tensor
-			(by tensor<T,Alloc> reference)
-
-		Creates a %tensor with the %dimensions of another %tensor.
-		This constructor doesn't copy the data.
-
-		\param t Another %tensor.
-		\throw exception If an initialization error occurs.
-	**/
-	tensor(const tensor<N,T,Alloc> &t) throw(exception);
+	/**	\brief Creates an empty %tensor with the same %dimensions
+			(data are not copied)
+		\param t Another %tensor (tensor<N, T, Alloc).
+	 **/
+	tensor(const tensor<N, T, Alloc> &t);
 
 	/**	\brief Virtual destructor
-	**/
+	 **/
 	virtual ~tensor();
 
 	//@}
 
-	//!	\name Implementation of libtensor::tensor_i<T>
+
+	//!	\name Implementation of libtensor::tensor_i<N, T>
 	//@{
 
 	/**	\brief Returns the %dimensions of the %tensor
@@ -186,13 +186,16 @@ public:
 	//@}
 
 protected:
-	//!	\name Implementation of tensor_i<T>
+	//!	\name Implementation of libtensor::tensor_i<N, T>
 	//@{
 
-	virtual void on_req_prefetch() throw(exception);
-	virtual T *on_req_dataptr() throw(exception);
-	virtual const T *on_req_const_dataptr() throw(exception);
-	virtual void on_ret_dataptr(const T *p) throw(exception);
+	virtual handle_t on_req_open_session();
+	virtual void on_req_close_session(const handle_t &h);
+	virtual void on_req_prefetch(const handle_t &h);
+	virtual T *on_req_dataptr(const handle_t &h);
+	virtual void on_ret_dataptr(const handle_t &h, const T *p);
+	virtual const T *on_req_const_dataptr(const handle_t &h);
+	virtual void on_ret_const_dataptr(const handle_t &h, const T *p);
 
 	//@}
 
@@ -201,113 +204,219 @@ protected:
 	virtual void on_set_immutable() { }
 	//@}
 
+	//!	\name Service functions
+	//@{
+
+	/**	\brief Verifies that the session identified by a handler
+			exists and is open
+		\param h Session handler.
+		\throw bad_parameter If the handler is invalid or the session
+			does not exist.
+	 **/
+	void verify_session(size_t h) throw(bad_parameter);
+
+	/**	\brief Unlocks the physical pointer, returns it to the allocator
+	 **/
+	void unlock_dataptr();
+
+	//@}
+
 };
 
+
 template<size_t N, typename T, typename Alloc>
-tensor<N,T,Alloc>::tensor(const dimensions<N> &d) throw(exception) :
-	m_dims(d), m_data(Alloc::invalid_ptr), m_dataptr(NULL), m_ptrcount(0) {
+const char *tensor<N, T, Alloc>::k_clazz = "tensor<N, T, Alloc>";
+
+
+template<size_t N, typename T, typename Alloc>
+tensor<N, T, Alloc>::tensor(const dimensions<N> &dims) :
+	m_dims(dims), m_data(Alloc::invalid_ptr), m_dataptr(0), m_ptrcount(0),
+	m_sessions(8, 0) {
+
 #ifdef LIBTENSOR_DEBUG
 	if(m_dims.get_size() == 0) {
 		throw_exc("tensor<N,T,Alloc>", "tensor(const dimensions&)",
 			"Zero tensor size is not allowed");
 	}
 #endif // LIBTENSOR_DEBUG
+
 	m_data = Alloc::allocate(m_dims.get_size());
 }
 
+
 template<size_t N, typename T, typename Alloc>
-tensor<N,T,Alloc>::tensor(const tensor_i<N,T> &t) throw(exception) :
-	m_dims(t.get_dims()), m_data(Alloc::invalid_ptr), m_dataptr(NULL),
-	m_ptrcount(0) {
-#ifdef LIBTENSOR_DEBUG
-	if(m_dims.get_size() == 0) {
-		throw_exc("tensor<N,T,Alloc>", "tensor(const tensor_i<T>&)",
-			"Zero tensor size is not allowed");
-	}
-#endif // LIBTENSOR_DEBUG
+tensor<N, T, Alloc>::tensor(const tensor_i<N, T> &t) :
+
+	m_dims(t.get_dims()), m_data(Alloc::invalid_ptr), m_dataptr(0),
+	m_ptrcount(0), m_sessions(8, 0) {
+
 	m_data = Alloc::allocate(m_dims.get_size());
 }
 
+
 template<size_t N, typename T, typename Alloc>
-tensor<N,T,Alloc>::tensor(const tensor<N,T,Alloc> &t)
-	throw(exception) : m_dims(t.m_dims), m_data(Alloc::invalid_ptr),
-	m_dataptr(NULL), m_ptrcount(0) {
-#ifdef LIBTENSOR_DEBUG
-	if(m_dims.get_size() == 0) {
-		throw_exc("tensor<N,T,Alloc>", "tensor(const tensor<T,Alloc>&)",
-			"Zero tensor size is not allowed");
-	}
-#endif // LIBTENSOR_DEBUG
+tensor<N, T, Alloc>::tensor(const tensor<N, T, Alloc> &t) :
+
+	m_dims(t.m_dims), m_data(Alloc::invalid_ptr), m_dataptr(0),
+	m_ptrcount(0), m_sessions(8, 0) {
+
 	m_data = Alloc::allocate(m_dims.get_size());
 }
 
+
 template<size_t N, typename T, typename Alloc>
-inline tensor<N,T,Alloc>::~tensor() {
-	if(m_dataptr) {
+tensor<N, T, Alloc>::~tensor() {
+
+	if(m_dataptr != 0) {
 		Alloc::unlock(m_data);
-		m_dataptr = NULL;
+		m_dataptr = 0;
 	}
 	Alloc::deallocate(m_data);
 }
 
+
 template<size_t N, typename T, typename Alloc>
-inline const dimensions<N>& tensor<N,T,Alloc>::get_dims() const {
+const dimensions<N> &tensor<N, T, Alloc>::get_dims() const {
+
 	return m_dims;
 }
 
-template<size_t N, typename T, typename Alloc>
-void tensor<N,T,Alloc>::on_req_prefetch() throw(exception) {
-	Alloc::prefetch(m_data);
-}
 
 template<size_t N, typename T, typename Alloc>
-T *tensor<N,T,Alloc>::on_req_dataptr() throw(exception) {
-	if(is_immutable()) {
-		throw_exc("tensor<N,T,Alloc>", "on_req_dataptr()",
-			"Tensor is immutable, writing operations are "
-			"prohibited");
+typename tensor<N, T, Alloc>::handle_t
+tensor<N, T, Alloc>::on_req_open_session() {
+
+	size_t sz = m_sessions.size();
+
+	for(register size_t i = 0; i < sz; i++) {
+		if(m_sessions[i] == 0) {
+			m_sessions[i] = 1;
+			return i;
+		}
 	}
 
-	if(m_dataptr) {
-		throw_exc("tensor<N,T,Alloc>", "on_req_dataptr()",
+	m_sessions.resize(2 * sz, 0);
+	m_sessions[sz] = 1;
+	return sz;
+}
+
+
+template<size_t N, typename T, typename Alloc>
+void tensor<N, T, Alloc>::on_req_close_session(const handle_t &h) {
+
+	verify_session(h);
+
+	m_sessions[h] = 0;
+	if(m_dataptr != 0) {
+		if(m_ptrcount > 0) m_ptrcount--;
+		if(m_ptrcount == 0) unlock_dataptr();
+	}
+}
+
+
+template<size_t N, typename T, typename Alloc>
+void tensor<N, T, Alloc>::on_req_prefetch(const handle_t &h) {
+
+	verify_session(h);
+
+	if(m_dataptr == 0) Alloc::prefetch(m_data);
+}
+
+
+template<size_t N, typename T, typename Alloc>
+T *tensor<N, T, Alloc>::on_req_dataptr(const handle_t &h) {
+
+	static const char *method = "on_req_dataptr(const handle_t&)";
+
+	verify_session(h);
+
+	if(is_immutable()) {
+		throw immut_violation(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"");
+	}
+
+	if(m_dataptr != 0) {
+		throw_exc(k_clazz, method,
 			"Data pointer is already checked out for rw");
 	}
 
+	timings< tensor<N, T, Alloc> >::start_timer("lock");
 	m_dataptr = Alloc::lock(m_data);
+	timings< tensor<N, T, Alloc> >::stop_timer("lock");
 	return m_dataptr;
 }
 
+
 template<size_t N, typename T, typename Alloc>
-const T *tensor<N,T,Alloc>::on_req_const_dataptr() throw(exception) {
-	if(m_dataptr) {
-		if(m_ptrcount) {
-			m_ptrcount++;
-			return m_dataptr;
-		}
-		throw_exc("tensor<N,T,Alloc>", "on_req_const_dataptr()",
-			"Data pointer is already checked out for rw");
+void tensor<N, T, Alloc>::on_ret_dataptr(const handle_t &h, const T *p) {
+
+	static const char *method = "on_ret_dataptr(const handle_t&, const T*)";
+
+	verify_session(h);
+
+	if(m_dataptr == 0 || m_dataptr != p) {
+		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"p");
 	}
 
+	if(m_ptrcount > 0) m_ptrcount--;
+	if(m_ptrcount == 0) unlock_dataptr();
+}
+
+
+template<size_t N, typename T, typename Alloc>
+const T *tensor<N,T,Alloc>::on_req_const_dataptr(const handle_t &h) {
+
+	static const char *method = "on_req_const_dataptr(const handle_t&)";
+
+	verify_session(h);
+
+	if(m_dataptr != 0) {
+
+		if(m_ptrcount == 0) {
+			throw_exc(k_clazz, method,
+				"Data pointer is already checked out for rw");
+		}
+
+		m_ptrcount++;
+		return m_dataptr;
+	}
+
+	timings< tensor<N, T, Alloc> >::start_timer("lock");
 	m_dataptr = Alloc::lock(m_data);
+	timings< tensor<N, T, Alloc> >::stop_timer("lock");
 	m_ptrcount = 1;
 	return m_dataptr;
 }
 
+
 template<size_t N, typename T, typename Alloc>
-void tensor<N,T,Alloc>::on_ret_dataptr(const element_t *p) throw(exception) {
-	if(m_dataptr != p) {
-		throw_exc("tensor<N,T,Alloc>",
-			"on_ret_dataptr(const element_t*)",
-			"Unrecognized data pointer");
-	}
-	if(m_ptrcount > 0) m_ptrcount--;
-	if(m_ptrcount == 0) {
-		Alloc::unlock(m_data);
-		m_dataptr = NULL;
+void tensor<N, T, Alloc>::on_ret_const_dataptr(const handle_t &h, const T *p) {
+
+	on_ret_dataptr(h, p);
+}
+
+
+template<size_t N, typename T, typename Alloc>
+inline void tensor<N, T, Alloc>::verify_session(size_t h) throw(bad_parameter) {
+
+	static const char *method = "verify_session(size_t)";
+
+	if(h >= m_sessions.size() || m_sessions[h] == 0) {
+		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"h");
 	}
 }
+
+
+template<size_t N, typename T, typename Alloc>
+inline void tensor<N, T, Alloc>::unlock_dataptr() {
+
+	Alloc::unlock(m_data);
+	m_dataptr = 0;
+}
+
 
 } // namespace libtensor
 
 #endif // LIBTENSOR_TENSOR_H
-

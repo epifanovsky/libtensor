@@ -423,6 +423,7 @@ void btod_add<N>::process_list(block_tensor_ctrl<N, double> &dst_ctrl,
 
 		tod_copy<N> todcp(src_blk, iarg->m_tr.get_perm(),
 			iarg->m_tr.get_coeff() * c);
+		todcp.prefetch();
 		if(adjzero) todcp.perform(dst_blk);
 		else todcp.perform(dst_blk, 1.0);
 
@@ -442,6 +443,7 @@ void btod_add<N>::process_list(block_tensor_ctrl<N, double> &dst_ctrl,
 			todadd.add_op(src_blk, iarg->m_tr.get_perm(),
 				iarg->m_tr.get_coeff() * c);
 		}
+		todadd.prefetch();
 
 		bool adjzero = zero || dst_ctrl.req_is_zero_block(dst_blk_idx);
 		tensor_i<N, double> &dst_blk = dst_ctrl.req_block(dst_blk_idx);

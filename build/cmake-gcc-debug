@@ -1,0 +1,3 @@
+#!/bin/sh
+CC=gcc CXX=g++ cmake -D CMAKE_BUILD_TYPE=DEBUG ..
+

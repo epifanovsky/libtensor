@@ -1,104 +1,123 @@
 #ifndef LIBTENSOR_TOD_SUM_H
 #define LIBTENSOR_TOD_SUM_H
 
+#include <list>
 #include "../defs.h"
 #include "../exception.h"
 #include "tod_additive.h"
+#include "tod_set.h"
 
 namespace libtensor {
 
-/**	\brief Adds results of a sequence of operations (double)
+/**	\brief Accumulates the result of a sequence of operations (double)
+	\tparam N Tensor order.
 
-	\ingroup libtensor
-**/
+	Invokes a series of additive %tensor operations to produce the sum of
+	their results in the output %tensor.
+
+	The sequence must contain at least one operation that is passed through
+	the constructor. Subsequent operations are passed using add_op().
+
+	Calling perform() will run the operations. Both additive and replacing
+	interfaces are available.
+
+	\ingroup libtensor_tod
+ **/
 template<size_t N>
-class tod_sum {
+class tod_sum : public tod_additive<N> {
 private:
-	struct list_node {
+	struct node {
 		tod_additive<N> &m_op;
 		double m_c;
-		struct list_node *m_next;
-		list_node(tod_additive<N> &op, double c);
+
+		node(tod_additive<N> &op, double c) : m_op(op), m_c(c) { }
 	};
 
-	tod_additive<N> &m_baseop; //!< Base operation
-	struct list_node *m_head; //!< Head of the list of additional operations
-	struct list_node *m_tail; //!< Tail of the list of additional operations
+private:
+	std::list<node> m_lst; //!< List of operations
 
 public:
-	//!	\name Construction and destruction
+	//!	\name Construction, destruction, initialization
 	//@{
 
-	/**	\brief Default constructor
-	**/
-	tod_sum(tod_additive<N> &op);
+	/**	\brief Initializes the operation
+	 **/
+	tod_sum(tod_additive<N> &op, double c = 1.0);
 
 	/**	\brief Virtual destructor
 	**/
 	virtual ~tod_sum();
 
+	/**	\brief Adds an operation to the end of the sequence
+	 **/
+	void add_op(tod_additive<N> &op, double c);
+
 	//@}
 
-	void prefetch() throw(exception);
-	void perform(tensor_i<N,double> &t) throw(exception);
 
-	/**	\brief Adds an operation to the sequence
-	**/
-	void add_op(tod_additive<N> &op, double c) throw(exception);
+	//!	\name Implementation of tod_additive<N>
+	//@{
+
+	virtual void prefetch();
+	virtual void perform(tensor_i<N, double> &t);
+	virtual void perform(tensor_i<N, double> &t, double c);
+
+	//@}
+
 };
 
+
 template<size_t N>
-inline tod_sum<N>::tod_sum(tod_additive<N> &op) :
-	m_baseop(op), m_head(NULL), m_tail(NULL) {
+tod_sum<N>::tod_sum(tod_additive<N> &op, double c) {
+
+	m_lst.push_back(node(op, c));
 }
+
 
 template<size_t N>
 tod_sum<N>::~tod_sum() {
-	struct list_node *node = m_head;
-	m_head = NULL; m_tail = NULL;
-	while(node != NULL) {
-		struct list_node *next = node->m_next;
-		delete node; node = next;
+
+	m_lst.clear();
+}
+
+
+template<size_t N>
+void tod_sum<N>::add_op(tod_additive<N> &op, double c) {
+
+	m_lst.push_back(node(op, c));
+}
+
+
+template<size_t N>
+void tod_sum<N>::prefetch() {
+
+	for(typename std::list<node>::iterator i = m_lst.begin();
+		i != m_lst.end(); i++) {
+
+		i->m_op.prefetch();
 	}
 }
 
+
 template<size_t N>
-void tod_sum<N>::prefetch() throw(exception) {
-	m_baseop.prefetch();
-	struct list_node *node = m_head;
-	while(node != NULL) {
-		node->m_op.prefetch();
-		node = node->m_next;
+void tod_sum<N>::perform(tensor_i<N, double> &t) {
+
+	tod_set<N>().perform(t);
+	perform(t, 1.0);
+}
+
+
+template<size_t N>
+void tod_sum<N>::perform(tensor_i<N, double> &t, double c) {
+
+	for(typename std::list<node>::iterator i = m_lst.begin();
+		i != m_lst.end(); i++) {
+
+		i->m_op.perform(t, c * i->m_c);
 	}
 }
 
-template<size_t N>
-void tod_sum<N>::perform(tensor_i<N,double> &t) throw(exception) {
-	m_baseop.perform(t);
-	struct list_node *node = m_head;
-	while(node != NULL) {
-		node->m_op.perform(t, node->m_c);
-		node = node->m_next;
-	}
-}
 
-template<size_t N>
-void tod_sum<N>::add_op(tod_additive<N> &op, double c) throw(exception) {
-	struct list_node *node = new struct list_node(op, c);
-	if(m_tail == NULL) {
-		m_head = node; m_tail = node;
-	} else {
-		m_tail->m_next = node;
-		m_tail = node;
-	}
-}
-
-template<size_t N>
-inline tod_sum<N>::list_node::list_node(tod_additive<N> &op, double c) :
-	m_op(op), m_c(c), m_next(NULL) {
-}
-
-}
+} // namespace libtensor
 
 #endif // LIBTENSOR_TOD_SUM_H
-

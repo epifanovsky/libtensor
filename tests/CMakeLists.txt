@@ -40,6 +40,7 @@ set(SRC
 #	direct_product_test.C
 #	dirsum_test.C
 #	dot_product_test.C
+#	expr_test.C
 	global_timings_test.C
 	immutable_test.C
 	index_test.C
@@ -104,9 +105,11 @@ add_executable(libtensor_tests ${SRC})
 
 include(${LIBTEST_DIR}/cmake/SetupLibTest.txt)
 
-add_definitions(-DLIBTENSOR_DEBUG)
-add_definitions(-g)
-#add_definitions(-openmp)
+set_property(TARGET libtensor_tests APPEND PROPERTY
+	COMPILE_DEFINITIONS_DEBUG LIBVMM_DEBUG)
+set_property(TARGET libtensor_tests APPEND PROPERTY
+	COMPILE_DEFINITIONS_DEBUG LIBTENSOR_DEBUG)
+
 target_link_libraries(libtensor_tests
 	tensor ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} test)
 

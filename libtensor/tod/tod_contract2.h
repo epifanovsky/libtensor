@@ -161,6 +161,7 @@ private:
 	tensor_i<k_ordera, double> &m_ta; //!< First tensor (a)
 	tensor_i<k_orderb, double> &m_tb; //!< Second tensor (b)
 	loop_list_t m_list; //!< Loop list
+	const char *m_kernelname;
 
 public:
 	//!	\name Construction and destruction
@@ -236,7 +237,7 @@ const char *tod_contract2<N, M, K>::k_clazz = "tod_contract2<N, M, K>";
 template<size_t N, size_t M, size_t K>
 tod_contract2<N,M,K>::tod_contract2(const contraction2<N,M,K> &contr,
 	tensor_i<k_ordera,double> &ta, tensor_i<k_orderb,double> &tb) :
-	m_contr(contr), m_ta(ta), m_tb(tb) {
+	m_contr(contr), m_ta(ta), m_tb(tb), m_kernelname(0) {
 }
 
 template<size_t N, size_t M, size_t K>
@@ -293,9 +294,12 @@ void tod_contract2<N, M, K>::do_perform(
 
 	tod_contract2<N, M, K>::start_timer("match_patterns");
 	//~ std::cout << "[";
+	m_kernelname = 0;
 	match_l1(d);
+	if(m_kernelname == 0) m_kernelname = "unknown";
 	//~ std::cout << "]" << std::endl;
 	tod_contract2<N, M, K>::stop_timer("match_patterns");
+	tod_contract2<N, M, K>::start_timer(m_kernelname);
 	try {
 		registers regs;
 		regs.m_ptra = ptra;
@@ -307,9 +311,11 @@ void tod_contract2<N, M, K>::do_perform(
 			exec(i, regs);
 		}
 	} catch(exception e) {
+		tod_contract2<N, M, K>::stop_timer(m_kernelname);
 		tod_contract2<N, M, K>::stop_timer();
 		throw;
 	}
+	tod_contract2<N, M, K>::stop_timer(m_kernelname);
 
 	ctrla.ret_dataptr(ptra);
 	ctrlb.ret_dataptr(ptrb);
@@ -363,6 +369,7 @@ void tod_contract2<N, M, K>::match_l1(double d) {
 	}
 	if(i1 != m_list.end()) {
 		//~ std::cout << "ddot";
+		m_kernelname = "ddot";
 		i1->m_fn = &tod_contract2<N, M, K>::fn_ddot;
 		m_ddot.m_d = d;
 		m_ddot.m_n = i1->m_weight;
@@ -372,6 +379,7 @@ void tod_contract2<N, M, K>::match_l1(double d) {
 	}
 	if(i2 != m_list.end() && k1b_min != 1) {
 		//~ std::cout << "daxpy_a";
+		m_kernelname = "daxpy_a";
 		i2->m_fn = &tod_contract2<N, M, K>::fn_daxpy_a;
 		m_daxpy_a.m_d = d;
 		m_daxpy_a.m_n = i2->m_weight;
@@ -382,6 +390,7 @@ void tod_contract2<N, M, K>::match_l1(double d) {
 	}
 	if(i3 != m_list.end()) {
 		//~ std::cout << "daxpy_b";
+		m_kernelname = "daxpy_b";
 		i3->m_fn = &tod_contract2<N, M, K>::fn_daxpy_b;
 		m_daxpy_b.m_d = d;
 		m_daxpy_b.m_n = i3->m_weight;
@@ -462,6 +471,7 @@ void tod_contract2<N, M, K>::match_ddot_l2(double d, size_t w1) {
 
 	if(i1 != m_list.end()) {
 		//~ std::cout << " dgemv_n_a";
+		m_kernelname = "dgemv_n_a";
 		i1->m_fn = &tod_contract2<N, M, K>::fn_dgemv_n_a;
 		m_dgemv_n_a.m_d = d;
 		m_dgemv_n_a.m_rows = i1->m_weight;
@@ -475,6 +485,7 @@ void tod_contract2<N, M, K>::match_ddot_l2(double d, size_t w1) {
 
 	if(i2 != m_list.end()) {
 		//~ std::cout << " dgemv_n_b";
+		m_kernelname = "dgemv_n_b";
 		i2->m_fn = &tod_contract2<N, M, K>::fn_dgemv_n_b;
 		m_dgemv_n_b.m_d = d;
 		m_dgemv_n_b.m_rows = i2->m_weight;
@@ -543,6 +554,7 @@ void tod_contract2<N, M, K>::match_daxpy_a_l2(
 	}
 	if(i1 != m_list.end() && !(k1 == 1 && i2 != m_list.end())) {
 		//~ std::cout << " dgemv_t_a1";
+		m_kernelname = "dgemv_t_a";
 		i1->m_fn = &tod_contract2<N, M, K>::fn_dgemv_t_a;
 		m_dgemv_t_a.m_d = d;
 		m_dgemv_t_a.m_rows = i1->m_weight;
@@ -556,6 +568,7 @@ void tod_contract2<N, M, K>::match_daxpy_a_l2(
 	}
 	if(i2 != m_list.end()) {
 		//~ std::cout << " dgemv_t_a2";
+		m_kernelname = "dgemv_t_a";
 		i2->m_fn = &tod_contract2<N, M, K>::fn_dgemv_t_a;
 		m_dgemv_t_a.m_d = d;
 		m_dgemv_t_a.m_rows = i2->m_weight;
@@ -605,6 +618,7 @@ void tod_contract2<N, M, K>::match_daxpy_b_l2(
 	}
 	if(i1 != m_list.end()) {
 		//~ std::cout << " dgemv_t_b";
+		m_kernelname = "dgemv_t_b";
 		i1->m_fn = &tod_contract2<N, M, K>::fn_dgemv_t_b;
 		m_dgemv_t_b.m_d = d;
 		m_dgemv_t_b.m_rows = i1->m_weight;
@@ -660,6 +674,7 @@ void tod_contract2<N, M, K>::match_dgemv_n_a_l3(
 	}
 	if(i1 != m_list.end()) {
 		//~ std::cout << " dgemm_nt_ba";
+		m_kernelname = "dgemm_nt_ba";
 		i1->m_fn = &tod_contract2<N, M, K>::fn_dgemm_nt_ba;
 		m_dgemm_nt_ba.m_d = d;
 		m_dgemm_nt_ba.m_rowsb = i1->m_weight;
@@ -715,6 +730,7 @@ void tod_contract2<N, M, K>::match_dgemv_n_b_l3(
 	}
 	if(i1 != m_list.end()) {
 		//~ std::cout << " dgemm_nt_ab";
+		m_kernelname = "dgemm_nt_ab";
 		i1->m_fn = &tod_contract2<N, M, K>::fn_dgemm_nt_ab;
 		m_dgemm_nt_ab.m_d = d;
 		m_dgemm_nt_ab.m_rowsa = i1->m_weight;
@@ -771,6 +787,7 @@ void tod_contract2<N, M, K>::match_dgemv_t_a1_l3(
 	}
 	if(i1 != m_list.end()) {
 		//~ std::cout << " dgemm_tt_ab";
+		m_kernelname = "dgemm_tt_ab";
 		i1->m_fn = &tod_contract2<N, M, K>::fn_dgemm_tt_ab;
 		m_dgemm_tt_ab.m_d = d;
 		m_dgemm_tt_ab.m_rowsa = w1;
@@ -828,6 +845,7 @@ void tod_contract2<N, M, K>::match_dgemv_t_a2_l3(
 		}
 		if(i1 != m_list.end()) {
 			//~ std::cout << " dgemm_nn_ba";
+			m_kernelname = "dgemm_nn_ba";
 			i1->m_fn = &tod_contract2<N, M, K>::fn_dgemm_nn_ba;
 			m_dgemm_nn_ba.m_d = d;
 			m_dgemm_nn_ba.m_rowsb = i1->m_weight;
@@ -867,6 +885,7 @@ void tod_contract2<N, M, K>::match_dgemv_t_a2_l3(
 	}
 	if(i2 != m_list.end()) {
 		//~ std::cout << " dgemm_tn_ba";
+		m_kernelname = "dgemm_tn_ba";
 		i2->m_fn = &tod_contract2<N, M, K>::fn_dgemm_tn_ba;
 		m_dgemm_tn_ba.m_d = d;
 		m_dgemm_tn_ba.m_rowsb = i2->m_weight;
@@ -923,6 +942,7 @@ void tod_contract2<N, M, K>::match_dgemv_t_b_l3(
 	}
 	if(i1 != m_list.end()) {
 		//~ std::cout << " dgemm_tn_ab";
+		m_kernelname = "dgemm_tn_ab";
 		i1->m_fn = &tod_contract2<N, M, K>::fn_dgemm_tn_ab;
 		m_dgemm_tn_ab.m_d = d;
 		m_dgemm_tn_ab.m_rowsa = i1->m_weight;
@@ -983,9 +1003,9 @@ void tod_contract2<N, M, K>::fn_ddot(registers &r) {
 	double d = m_ddot.m_d;
 	size_t n = m_ddot.m_n;
 
-	tod_contract2<N, M, K>::start_timer("ddot");
+//	tod_contract2<N, M, K>::start_timer("ddot");
 	r.m_ptrc[0] += d * cblas_ddot(n, r.m_ptra, 1, r.m_ptrb, 1);
-	tod_contract2<N, M, K>::stop_timer("ddot");
+//	tod_contract2<N, M, K>::stop_timer("ddot");
 }
 
 
@@ -996,9 +1016,9 @@ void tod_contract2<N, M, K>::fn_daxpy_a(registers &r) {
 	size_t n = m_daxpy_a.m_n;
 	size_t stepc = m_daxpy_a.m_stepc;
 
-	tod_contract2<N, M, K>::start_timer("daxpy_a");
+//	tod_contract2<N, M, K>::start_timer("daxpy_a");
 	cblas_daxpy(n, r.m_ptrb[0] * d, r.m_ptra, 1, r.m_ptrc, stepc);
-	tod_contract2<N, M, K>::stop_timer("daxpy_a");
+//	tod_contract2<N, M, K>::stop_timer("daxpy_a");
 }
 
 
@@ -1009,9 +1029,9 @@ void tod_contract2<N, M, K>::fn_daxpy_b(registers &r) {
 	size_t n = m_daxpy_b.m_n;
 	size_t stepc = m_daxpy_b.m_stepc;
 
-	tod_contract2<N, M, K>::start_timer("daxpy_b");
+//	tod_contract2<N, M, K>::start_timer("daxpy_b");
 	cblas_daxpy(n, r.m_ptra[0] * d, r.m_ptrb, 1, r.m_ptrc, stepc);
-	tod_contract2<N, M, K>::stop_timer("daxpy_b");
+//	tod_contract2<N, M, K>::stop_timer("daxpy_b");
 }
 
 
@@ -1024,10 +1044,10 @@ void tod_contract2<N, M, K>::fn_dgemv_n_a(registers &r) {
 	size_t lda = m_dgemv_n_a.m_lda;
 	size_t stepb = m_dgemv_n_a.m_stepb;
 
-	tod_contract2<N, M, K>::start_timer("dgemv_n_a");
+//	tod_contract2<N, M, K>::start_timer("dgemv_n_a");
 	cblas_dgemv(CblasRowMajor, CblasNoTrans, rows, cols, d, r.m_ptra, lda,
 		r.m_ptrb, stepb, 1.0, r.m_ptrc, 1);
-	tod_contract2<N, M, K>::stop_timer("dgemv_n_a");
+//	tod_contract2<N, M, K>::stop_timer("dgemv_n_a");
 }
 
 
@@ -1041,10 +1061,10 @@ void tod_contract2<N, M, K>::fn_dgemv_t_a(registers &r) {
 	size_t stepb = m_dgemv_t_a.m_stepb;
 	size_t stepc = m_dgemv_t_a.m_stepc;
 
-	tod_contract2<N, M, K>::start_timer("dgemv_t_a");
+//	tod_contract2<N, M, K>::start_timer("dgemv_t_a");
 	cblas_dgemv(CblasRowMajor, CblasTrans, rows, cols, d, r.m_ptra, lda,
 		r.m_ptrb, stepb, 1.0, r.m_ptrc, stepc);
-	tod_contract2<N, M, K>::stop_timer("dgemv_t_a");
+//	tod_contract2<N, M, K>::stop_timer("dgemv_t_a");
 }
 
 
@@ -1057,10 +1077,10 @@ void tod_contract2<N, M, K>::fn_dgemv_n_b(registers &r) {
 	size_t ldb = m_dgemv_n_b.m_ldb;
 	size_t stepa = m_dgemv_n_b.m_stepa;
 
-	tod_contract2<N, M, K>::start_timer("dgemv_n_b");
+//	tod_contract2<N, M, K>::start_timer("dgemv_n_b");
 	cblas_dgemv(CblasRowMajor, CblasNoTrans, rows, cols, d, r.m_ptrb, ldb,
 		r.m_ptra, stepa, 1.0, r.m_ptrc, 1);
-	tod_contract2<N, M, K>::stop_timer("dgemv_n_b");
+//	tod_contract2<N, M, K>::stop_timer("dgemv_n_b");
 }
 
 
@@ -1074,10 +1094,10 @@ void tod_contract2<N, M, K>::fn_dgemv_t_b(registers &r) {
 	size_t stepa = m_dgemv_t_b.m_stepa;
 	size_t stepc = m_dgemv_t_b.m_stepc;
 
-	tod_contract2<N, M, K>::start_timer("dgemv_t_b");
+//	tod_contract2<N, M, K>::start_timer("dgemv_t_b");
 	cblas_dgemv(CblasRowMajor, CblasTrans, rows, cols, d, r.m_ptrb, ldb,
 		r.m_ptra, stepa, 1.0, r.m_ptrc, stepc);
-	tod_contract2<N, M, K>::stop_timer("dgemv_t_b");
+//	tod_contract2<N, M, K>::stop_timer("dgemv_t_b");
 }
 
 
@@ -1092,11 +1112,11 @@ void tod_contract2<N, M, K>::fn_dgemm_nt_ab(registers &r) {
 	size_t ldb = m_dgemm_nt_ab.m_ldb;
 	size_t ldc = m_dgemm_nt_ab.m_ldc;
 
-	tod_contract2<N, M, K>::start_timer("dgemm_nt_ab");
+//	tod_contract2<N, M, K>::start_timer("dgemm_nt_ab");
 	cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasTrans,
 		rowsa, colsb, colsa, d, r.m_ptra, lda, r.m_ptrb, ldb,
 		1.0, r.m_ptrc, ldc);
-	tod_contract2<N, M, K>::stop_timer("dgemm_nt_ab");
+//	tod_contract2<N, M, K>::stop_timer("dgemm_nt_ab");
 }
 
 
@@ -1111,11 +1131,11 @@ void tod_contract2<N, M, K>::fn_dgemm_tn_ab(registers &r) {
 	size_t ldb = m_dgemm_tn_ab.m_ldb;
 	size_t ldc = m_dgemm_tn_ab.m_ldc;
 
-	tod_contract2<N, M, K>::start_timer("dgemm_tn_ab");
+//	tod_contract2<N, M, K>::start_timer("dgemm_tn_ab");
 	cblas_dgemm(CblasRowMajor, CblasTrans, CblasNoTrans,
 		rowsa, colsb, colsa, d, r.m_ptra, lda, r.m_ptrb, ldb,
 		1.0, r.m_ptrc, ldc);
-	tod_contract2<N, M, K>::stop_timer("dgemm_tn_ab");
+//	tod_contract2<N, M, K>::stop_timer("dgemm_tn_ab");
 }
 
 
@@ -1130,11 +1150,11 @@ void tod_contract2<N, M, K>::fn_dgemm_tt_ab(registers &r) {
 	size_t ldb = m_dgemm_tt_ab.m_ldb;
 	size_t ldc = m_dgemm_tt_ab.m_ldc;
 
-	tod_contract2<N, M, K>::start_timer("dgemm_tt_ab");
+//	tod_contract2<N, M, K>::start_timer("dgemm_tt_ab");
 	cblas_dgemm(CblasRowMajor, CblasTrans, CblasTrans,
 		rowsa, colsb, colsa, d, r.m_ptra, lda, r.m_ptrb, ldb,
 		1.0, r.m_ptrc, ldc);
-	tod_contract2<N, M, K>::stop_timer("dgemm_tt_ab");
+//	tod_contract2<N, M, K>::stop_timer("dgemm_tt_ab");
 }
 
 
@@ -1149,11 +1169,11 @@ void tod_contract2<N, M, K>::fn_dgemm_nn_ba(registers &r) {
 	size_t lda = m_dgemm_nn_ba.m_lda;
 	size_t ldc = m_dgemm_nn_ba.m_ldc;
 
-	tod_contract2<N, M, K>::start_timer("dgemm_nn_ba");
+//	tod_contract2<N, M, K>::start_timer("dgemm_nn_ba");
 	cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
 		rowsb, colsa, colsb, d, r.m_ptrb, ldb, r.m_ptra, lda,
 		1.0, r.m_ptrc, ldc);
-	tod_contract2<N, M, K>::stop_timer("dgemm_nn_ba");
+//	tod_contract2<N, M, K>::stop_timer("dgemm_nn_ba");
 }
 
 
@@ -1168,11 +1188,11 @@ void tod_contract2<N, M, K>::fn_dgemm_nt_ba(registers &r) {
 	size_t lda = m_dgemm_nt_ba.m_lda;
 	size_t ldc = m_dgemm_nt_ba.m_ldc;
 
-	tod_contract2<N, M, K>::start_timer("dgemm_nt_ba");
+//	tod_contract2<N, M, K>::start_timer("dgemm_nt_ba");
 	cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasTrans,
 		rowsb, colsa, colsb, d, r.m_ptrb, ldb, r.m_ptra, lda,
 		1.0, r.m_ptrc, ldc);
-	tod_contract2<N, M, K>::stop_timer("dgemm_nt_ba");
+//	tod_contract2<N, M, K>::stop_timer("dgemm_nt_ba");
 }
 
 
@@ -1187,11 +1207,11 @@ void tod_contract2<N, M, K>::fn_dgemm_tn_ba(registers &r) {
 	size_t lda = m_dgemm_tn_ba.m_lda;
 	size_t ldc = m_dgemm_tn_ba.m_ldc;
 
-	tod_contract2<N, M, K>::start_timer("dgemm_tn_ba");
+//	tod_contract2<N, M, K>::start_timer("dgemm_tn_ba");
 	cblas_dgemm(CblasRowMajor, CblasTrans, CblasNoTrans,
 		rowsb, colsa, colsb, d, r.m_ptrb, ldb, r.m_ptra, lda,
 		1.0, r.m_ptrc, ldc);
-	tod_contract2<N, M, K>::stop_timer("dgemm_tn_ba");
+//	tod_contract2<N, M, K>::stop_timer("dgemm_tn_ba");
 }
 
 

@@ -4,10 +4,6 @@
 
 include(${LIBTENSOR_DIR}/cmake/DepsLibTensor.txt)
 
-#	Debugging options
-#
-add_definitions(-DLIBTENSOR_DEBUG)
-
 #	Include and library paths
 #
 include_directories(${LIBTENSOR_DIR})

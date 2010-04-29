@@ -37,6 +37,8 @@ void tod_mult_test::test_1() throw(libtest::test_exception) {
 	size_t sz = dims.get_size();
 
 	tensor<2, double, allocator> ta(dims), tb(dims), tc(dims), tc_ref(dims);
+
+	{
 	tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
 
 	double *pa = tca.req_dataptr();
@@ -56,6 +58,7 @@ void tod_mult_test::test_1() throw(libtest::test_exception) {
 	tcb.ret_dataptr(pb); pb = 0;
 	tcc.ret_dataptr(pc); pc = 0;
 	tcc_ref.ret_dataptr(pc_ref); pc_ref = 0;
+	}
 
 	ta.set_immutable();
 	tb.set_immutable();
@@ -83,6 +86,8 @@ void tod_mult_test::test_2() throw(libtest::test_exception) {
 	size_t sz = dims.get_size();
 
 	tensor<2, double, allocator> ta(dims), tb(dims), tc(dims), tc_ref(dims);
+
+	{
 	tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
 
 	double *pa = tca.req_dataptr();
@@ -102,6 +107,7 @@ void tod_mult_test::test_2() throw(libtest::test_exception) {
 	tcb.ret_dataptr(pb); pb = 0;
 	tcc.ret_dataptr(pc); pc = 0;
 	tcc_ref.ret_dataptr(pc_ref); pc_ref = 0;
+	}
 
 	ta.set_immutable();
 	tb.set_immutable();
@@ -129,6 +135,8 @@ void tod_mult_test::test_3() throw(libtest::test_exception) {
 	size_t sz = dims.get_size();
 
 	tensor<2, double, allocator> ta(dims), tb(dims), tc(dims), tc_ref(dims);
+
+	{
 	tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
 
 	double *pa = tca.req_dataptr();
@@ -148,6 +156,7 @@ void tod_mult_test::test_3() throw(libtest::test_exception) {
 	tcb.ret_dataptr(pb); pb = 0;
 	tcc.ret_dataptr(pc); pc = 0;
 	tcc_ref.ret_dataptr(pc_ref); pc_ref = 0;
+	}
 
 	ta.set_immutable();
 	tb.set_immutable();
@@ -175,6 +184,8 @@ void tod_mult_test::test_4() throw(libtest::test_exception) {
 	size_t sz = dims.get_size();
 
 	tensor<2, double, allocator> ta(dims), tb(dims), tc(dims), tc_ref(dims);
+
+	{
 	tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
 
 	double *pa = tca.req_dataptr();
@@ -194,6 +205,7 @@ void tod_mult_test::test_4() throw(libtest::test_exception) {
 	tcb.ret_dataptr(pb); pb = 0;
 	tcc.ret_dataptr(pc); pc = 0;
 	tcc_ref.ret_dataptr(pc_ref); pc_ref = 0;
+	}
 
 	ta.set_immutable();
 	tb.set_immutable();
@@ -221,6 +233,8 @@ void tod_mult_test::test_5() throw(libtest::test_exception) {
 	size_t sz = dims.get_size();
 
 	tensor<2, double, allocator> ta(dims), tb(dims), tc(dims), tc_ref(dims);
+
+	{
 	tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
 
 	double *pa = tca.req_dataptr();
@@ -240,6 +254,7 @@ void tod_mult_test::test_5() throw(libtest::test_exception) {
 	tcb.ret_dataptr(pb); pb = 0;
 	tcc.ret_dataptr(pc); pc = 0;
 	tcc_ref.ret_dataptr(pc_ref); pc_ref = 0;
+	}
 
 	ta.set_immutable();
 	tb.set_immutable();
@@ -267,6 +282,8 @@ void tod_mult_test::test_6() throw(libtest::test_exception) {
 	size_t sz = dims.get_size();
 
 	tensor<2, double, allocator> ta(dims), tb(dims), tc(dims), tc_ref(dims);
+
+	{
 	tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
 
 	double *pa = tca.req_dataptr();
@@ -286,6 +303,7 @@ void tod_mult_test::test_6() throw(libtest::test_exception) {
 	tcb.ret_dataptr(pb); pb = 0;
 	tcc.ret_dataptr(pc); pc = 0;
 	tcc_ref.ret_dataptr(pc_ref); pc_ref = 0;
+	}
 
 	ta.set_immutable();
 	tb.set_immutable();

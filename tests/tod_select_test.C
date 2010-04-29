@@ -31,12 +31,15 @@ void tod_select_test::test_1() throw(libtest::test_exception) {
 	i2[0] = 3; i2[1] = 4;
 	dimensions<2> dims(index_range<2>(i1, i2));
 	tensor<2, double, allocator_t> t(dims);
+
+	size_t sz;
+	{
 	tensor_ctrl<2, double> tc(t);
 
 	//	Fill in random data
 	//
 	double *d = tc.req_dataptr();
-	size_t sz = dims.get_size();
+	sz = dims.get_size();
 	for(size_t i = 0; i < sz; i++) d[i] = drand48();
 	tc.ret_dataptr(d); d = 0;
 
@@ -74,6 +77,7 @@ void tod_select_test::test_1() throw(libtest::test_exception) {
 			}
 		}
 		it++;
+	}
 	}
 
 	} catch(exception &e) {

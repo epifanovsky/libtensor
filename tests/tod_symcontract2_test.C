@@ -31,37 +31,46 @@ void tod_symcontract2_test::test_ij_ip_jp( size_t ni, size_t np )
 	index_range<2> ira(ia1, ia2);
 	dimensions<2> dimc(irc), dima(ira);
 	tensor2_d tc(dimc), ta(dima), tb(dima), tc_ref(dimc), tc_ref2(dimc);
-	tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref), tcc_ref2(tc_ref2);
 
-	double* pta=tca.req_dataptr();
-	double* ptb=tcb.req_dataptr();
-	double* ptc=tcc.req_dataptr();
-	double* ptc_ref=tcc_ref.req_dataptr();
+	{
+		tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc),
+			tcc_ref(tc_ref), tcc_ref2(tc_ref2);
 
-	for (size_t i=0; i<dimc.get_size(); i++) ptc[i]=ptc_ref[i]=drand48();
-	for (size_t i=0; i<dima.get_size(); i++) { pta[i]=drand48(); ptb[i]=drand48(); }
+		double* pta=tca.req_dataptr();
+		double* ptb=tcb.req_dataptr();
+		double* ptc=tcc.req_dataptr();
+		double* ptc_ref=tcc_ref.req_dataptr();
 
-	tcc.ret_dataptr(ptc);
-
-	// calculate reference
-	for (size_t i=0; i<ni; i++)
-	for (size_t j=0; j<ni; j++) {
-		ic1[0]=i; ic1[1]=j;
-		ia1[0]=i; ia2[0]=j;
-		double res=0.0;
-		for (size_t p=0; p<np; p++) {
-			ia1[1]=p; ia2[1]=p;
-			res+=pta[dima.abs_index(ia1)]*ptb[dima.abs_index(ia2)];
+		for (size_t i=0; i<dimc.get_size(); i++)
+			ptc[i]=ptc_ref[i]=drand48();
+		for (size_t i=0; i<dima.get_size(); i++) {
+			pta[i]=drand48();
+			ptb[i]=drand48();
 		}
 
-		ptc_ref[dimc.abs_index(ic1)]+=res;
-		ic1[0]=j; ic1[1]=i;
-		ptc_ref[dimc.abs_index(ic1)]-=res;
-	}
+		tcc.ret_dataptr(ptc);
 
-	tcc_ref.ret_dataptr(ptc_ref);
-	tca.ret_dataptr(pta);
-	tcb.ret_dataptr(ptb);
+		// calculate reference
+		for (size_t i=0; i<ni; i++)
+		for (size_t j=0; j<ni; j++) {
+			ic1[0]=i; ic1[1]=j;
+			ia1[0]=i; ia2[0]=j;
+			double res=0.0;
+			for (size_t p=0; p<np; p++) {
+				ia1[1]=p; ia2[1]=p;
+				res += pta[dima.abs_index(ia1)] *
+					ptb[dima.abs_index(ia2)];
+			}
+
+			ptc_ref[dimc.abs_index(ic1)]+=res;
+			ic1[0]=j; ic1[1]=i;
+			ptc_ref[dimc.abs_index(ic1)]-=res;
+		}
+
+		tcc_ref.ret_dataptr(ptc_ref);
+		tca.ret_dataptr(pta);
+		tcb.ret_dataptr(ptb);
+	}
 
 	permutation<2> pc_sym, pc;
 	pc_sym.permute(0,1);
@@ -105,43 +114,51 @@ void tod_symcontract2_test::test_ijab_iapq_pbqj( size_t na,
 	index_range<4> irb(ib1, ib2);
 	dimensions<4> dimc(irc), dima(ira), dimb(irb);
 	tensor4_d tc(dimc), ta(dima), tb(dimb), tc_ref(dimc);
-	tensor_ctrl<4, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
 
-	double* pta=tca.req_dataptr();
-	double* ptb=tcb.req_dataptr();
-	double* ptc=tcc.req_dataptr();
-	double* ptc_ref=tcc_ref.req_dataptr();
+	{
+		tensor_ctrl<4, double> tca(ta), tcb(tb), tcc(tc),
+			tcc_ref(tc_ref);
 
-	for (size_t i=0; i<dimc.get_size(); i++) ptc[i]=ptc_ref[i]=drand48();
-	for (size_t i=0; i<dima.get_size(); i++) pta[i]=drand48();
-	for (size_t i=0; i<dimb.get_size(); i++) ptb[i]=drand48();
+		double* pta=tca.req_dataptr();
+		double* ptb=tcb.req_dataptr();
+		double* ptc=tcc.req_dataptr();
+		double* ptc_ref=tcc_ref.req_dataptr();
 
-	tcc.ret_dataptr(ptc);
+		for (size_t i=0; i<dimc.get_size(); i++)
+			ptc[i]=ptc_ref[i]=drand48();
+		for (size_t i=0; i<dima.get_size(); i++)
+			pta[i]=drand48();
+		for (size_t i=0; i<dimb.get_size(); i++)
+			ptb[i]=drand48();
 
-	// calculate reference
-	for (size_t i=0; i<ni; i++)
-	for (size_t j=0; j<ni; j++)
-	for (size_t a=0; a<na; a++)
-	for (size_t b=0; b<na; b++) {
-		ic1[0]=i; ic1[1]=j; ic1[2]=a; ic1[3]=b;
-		ia1[0]=i; ia1[1]=a;
-		ib1[1]=b; ib1[3]=j;
-		double res=0.0;
-		for (size_t p=0; p<np; p++)
-		for (size_t q=0; q<nq; q++) {
-			ia1[2]=p; ia1[3]=q;
-			ib1[0]=p; ib1[2]=q;
-			res+=pta[dima.abs_index(ia1)]*ptb[dimb.abs_index(ib1)];
+		tcc.ret_dataptr(ptc);
+
+		// calculate reference
+		for (size_t i=0; i<ni; i++)
+		for (size_t j=0; j<ni; j++)
+		for (size_t a=0; a<na; a++)
+		for (size_t b=0; b<na; b++) {
+			ic1[0]=i; ic1[1]=j; ic1[2]=a; ic1[3]=b;
+			ia1[0]=i; ia1[1]=a;
+			ib1[1]=b; ib1[3]=j;
+			double res=0.0;
+			for (size_t p=0; p<np; p++)
+			for (size_t q=0; q<nq; q++) {
+				ia1[2]=p; ia1[3]=q;
+				ib1[0]=p; ib1[2]=q;
+				res += pta[dima.abs_index(ia1)] *
+					ptb[dimb.abs_index(ib1)];
+			}
+
+			ptc_ref[dimc.abs_index(ic1)]+=res;
+			ic1[0]=j; ic1[1]=i; ic1[2]=b; ic1[3]=a;
+			ptc_ref[dimc.abs_index(ic1)]-=res;
 		}
 
-		ptc_ref[dimc.abs_index(ic1)]+=res;
-		ic1[0]=j; ic1[1]=i; ic1[2]=b; ic1[3]=a;
-		ptc_ref[dimc.abs_index(ic1)]-=res;
+		tcc_ref.ret_dataptr(ptc_ref);
+		tca.ret_dataptr(pta);
+		tcb.ret_dataptr(ptb);
 	}
-
-	tcc_ref.ret_dataptr(ptc_ref);
-	tca.ret_dataptr(pta);
-	tcb.ret_dataptr(ptb);
 
 	permutation<4> pc, pc_sym;
 	pc.permute(2,3);

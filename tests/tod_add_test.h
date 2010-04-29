@@ -68,6 +68,9 @@ private:
 	void test_add_two_pq_qp( size_t, size_t )
 		throw(libtest::test_exception);
 
+	void test_add_two_ijkl_kjli(size_t ni, size_t nj, size_t nk, size_t nl,
+		double c1, double c2) throw(libtest::test_exception);
+
 };
 
 } // namespace libtensor

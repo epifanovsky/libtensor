@@ -79,10 +79,15 @@ void tod_dirsum_test::test_ij_i_j(size_t ni, size_t nj, double d)
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<1, double, allocator> ta(dima); tensor_ctrl<1, double> tca(ta);
-	tensor<1, double, allocator> tb(dimb); tensor_ctrl<1, double> tcb(tb);
-	tensor<2, double, allocator> tc(dimc); tensor_ctrl<2, double> tcc(tc);
+	tensor<1, double, allocator> ta(dima);
+	tensor<1, double, allocator> tb(dimb);
+	tensor<2, double, allocator> tc(dimc);
 	tensor<2, double, allocator> tc_ref(dimc);
+
+	{
+	tensor_ctrl<1, double> tca(ta);
+	tensor_ctrl<1, double> tcb(tb);
+	tensor_ctrl<2, double> tcc(tc);
 	tensor_ctrl<2, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
@@ -117,6 +122,7 @@ void tod_dirsum_test::test_ij_i_j(size_t ni, size_t nj, double d)
 	tcb.ret_dataptr(dtb); dtb = 0; tb.set_immutable();
 	tcc.ret_dataptr(dtc1); dtc1 = 0;
 	tcc_ref.ret_dataptr(dtc2); dtc2 = 0; tc_ref.set_immutable();
+	}
 
 	//	Invoke the direct sum routine
 
@@ -156,10 +162,15 @@ void tod_dirsum_test::test_ikj_ij_k_1(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima); tensor_ctrl<2, double> tca(ta);
-	tensor<1, double, allocator> tb(dimb); tensor_ctrl<1, double> tcb(tb);
-	tensor<3, double, allocator> tc(dimc); tensor_ctrl<3, double> tcc(tc);
+	tensor<2, double, allocator> ta(dima);
+	tensor<1, double, allocator> tb(dimb);
+	tensor<3, double, allocator> tc(dimc);
 	tensor<3, double, allocator> tc_ref(dimc);
+
+	{
+	tensor_ctrl<2, double> tca(ta);
+	tensor_ctrl<1, double> tcb(tb);
+	tensor_ctrl<3, double> tcc(tc);
 	tensor_ctrl<3, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
@@ -197,6 +208,7 @@ void tod_dirsum_test::test_ikj_ij_k_1(size_t ni, size_t nj, size_t nk,
 	tcb.ret_dataptr(dtb); dtb = 0; tb.set_immutable();
 	tcc.ret_dataptr(dtc1); dtc1 = 0;
 	tcc_ref.ret_dataptr(dtc2); dtc2 = 0; tc_ref.set_immutable();
+	}
 
 	//	Invoke the direct sum routine
 
@@ -239,10 +251,15 @@ void tod_dirsum_test::test_ikjl_ij_kl_1(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima); tensor_ctrl<2, double> tca(ta);
-	tensor<2, double, allocator> tb(dimb); tensor_ctrl<2, double> tcb(tb);
-	tensor<4, double, allocator> tc(dimc); tensor_ctrl<4, double> tcc(tc);
+	tensor<2, double, allocator> ta(dima);
+	tensor<2, double, allocator> tb(dimb);
+	tensor<4, double, allocator> tc(dimc);
 	tensor<4, double, allocator> tc_ref(dimc);
+
+	{
+	tensor_ctrl<2, double> tca(ta);
+	tensor_ctrl<2, double> tcb(tb);
+	tensor_ctrl<4, double> tcc(tc);
 	tensor_ctrl<4, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
@@ -281,6 +298,7 @@ void tod_dirsum_test::test_ikjl_ij_kl_1(size_t ni, size_t nj, size_t nk,
 	tcb.ret_dataptr(dtb); dtb = 0; tb.set_immutable();
 	tcc.ret_dataptr(dtc1); dtc1 = 0;
 	tcc_ref.ret_dataptr(dtc2); dtc2 = 0; tc_ref.set_immutable();
+	}
 
 	//	Invoke the direct sum routine
 

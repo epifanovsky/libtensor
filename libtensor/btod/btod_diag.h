@@ -338,9 +338,11 @@ void btod_diag<N, M>::do_perform_nozero(
 
 		index<k_ordera> idxa;
 		index<k_orderb> idxb(olb2.get_index(iob));
-		idxb.permute(pinv);
 
+		idxb.permute(pinv);
 		for(size_t i = 0; i < k_ordera; i++) idxa[i] = idxb[map[i]];
+		idxb.permute(m_perm);
+
 		orbit<k_ordera, double> oa(ctrla.req_const_symmetry(), idxa);
 		abs_index<k_ordera> cidxa(oa.get_abs_canonical_index(), bidimsa);
 		const transf<k_ordera, double> &tra = oa.get_transf(idxa);

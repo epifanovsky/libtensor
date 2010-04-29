@@ -41,6 +41,8 @@ void tod_scale_test::test_generic(const char *testname,
 	try {
 
 	tensor<N, double, allocator_t> t(d), t_ref(d);
+
+	{
 	tensor_ctrl<N, double> tc(t), tc_ref(t_ref);
 	double *p = tc.req_dataptr(), *p_ref = tc_ref.req_dataptr();
 	size_t sz = d.get_size();
@@ -53,6 +55,7 @@ void tod_scale_test::test_generic(const char *testname,
 
 	tc.ret_dataptr(p); p = 0;
 	tc_ref.ret_dataptr(p_ref); p_ref = 0;
+	}
 
 	tod_scale<N>(t, c).perform();
 
