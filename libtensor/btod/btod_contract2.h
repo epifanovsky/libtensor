@@ -17,6 +17,7 @@
 #include "../symmetry/so_copy.h"
 #include "../symmetry/so_proj_down.h"
 #include "../symmetry/so_proj_up.h"
+#include "../symmetry/so_union.h"
 #include "../tod/contraction2.h"
 #include "../tod/tod_contract2.h"
 #include "../tod/tod_sum.h"
@@ -510,9 +511,9 @@ void btod_contract2<N, M, K>::make_symmetry() {
 	permutation<M> xpb;
 	symmetry<k_orderc, double> xsyma(m_bis);
 	symmetry<k_orderc, double> xsymb(m_bis);
-	//~ so_proj_up<N, M, double>(rsyma, xma, xpa).perform(xsyma);
-	//~ so_proj_up<M, N, double>(rsymb, xmb, xpb).perform(xsymb);
-	//~ so_union<k_orderc, double>(xsyma, xsymb).perform(m_sym);
+	so_proj_up<N, M, double>(rsyma, xpa, xma).perform(xsyma);
+	so_proj_up<M, N, double>(rsymb, xpb, xmb).perform(xsymb);
+	so_union<k_orderc, double>(xsyma, xsymb).perform(m_sym);
 }
 
 
