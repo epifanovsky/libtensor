@@ -1,6 +1,7 @@
 #include <libtensor/symmetry/so_proj_up_impl_perm.h>
 #include <libtensor/btod/transf_double.h>
 #include "so_proj_up_impl_perm_test.h"
+#include "compare_ref.h"
 
 namespace libtensor {
 
@@ -25,17 +26,31 @@ void so_proj_up_impl_perm_test::test_1() throw(libtest::test_exception) {
 	static const char *testname = "so_proj_up_impl_perm_test::test_1()";
 
 	typedef se_perm<2, double> se_t;
+	typedef so_proj_up<2, 1, double> so_proj_up_t;
+	typedef symmetry_operation_impl<so_proj_up_t, se_t>
+		so_proj_up_impl_t;
 
 	try {
 
 	symmetry_element_set<2, double> set1(se_t::k_sym_type);
 	symmetry_element_set<3, double> set2(se_t::k_sym_type);
+	symmetry_element_set<3, double> set2_ref(se_t::k_sym_type);
 
 	mask<3> msk; msk[0] = true; msk[1] = true;
-	symmetry_operation_params< so_proj_up<2, 1, double> > params(set1, msk);
+	symmetry_operation_params< so_proj_up<2, 1, double> > params(
+		set1, permutation<2>(), msk, set2);
 
-	so_proj_up_impl< se_perm<2, double> > op;
-	op.perform(params, set2);
+	so_proj_up_impl_t().perform(params);
+
+	index<3> i1, i2;
+	i2[0] = 2; i2[1] = 2; i2[2] = 2;
+	block_index_space<3> bis(dimensions<3>(index_range<3>(i1, i2)));
+	mask<3> m;
+	m[0] = true; m[1] = true; m[2] = true;
+	bis.split(m, 1);
+	bis.split(m, 2);
+
+	compare_ref<3>::compare(testname, bis, set2, set2_ref);
 
 	if(!set2.is_empty()) {
 		fail_test(testname, __FILE__, __LINE__,
@@ -58,21 +73,42 @@ void so_proj_up_impl_perm_test::test_2() throw(libtest::test_exception) {
 
 	typedef se_perm<2, double> se2_t;
 	typedef se_perm<3, double> se3_t;
+	typedef so_proj_up<2, 1, double> so_proj_up_t;
+	typedef symmetry_operation_impl<so_proj_up_t, se2_t>
+		so_proj_up_impl_t;
 
 	try {
 
-	permutation<2> p1; p1.permute(0, 1);
-	se_perm<2, double> elem1(p1, true);
+	permutation<2> p10;
+	p10.permute(0, 1);
+	se_perm<2, double> elem10(p10, true);
+
+	permutation<3> p102;
+	p102.permute(0, 1);
+	se_perm<3, double> elem102(p102, true);
 
 	symmetry_element_set<2, double> set1(se2_t::k_sym_type);
 	symmetry_element_set<3, double> set2(se3_t::k_sym_type);
+	symmetry_element_set<3, double> set2_ref(se3_t::k_sym_type);
 
-	set1.insert(elem1);
+	set1.insert(elem10);
+	set2_ref.insert(elem102);
 
 	mask<3> msk; msk[0] = true; msk[1] = true;
-	symmetry_operation_params< so_proj_up<2, 1, double> > params(set1, msk);
+	symmetry_operation_params< so_proj_up<2, 1, double> > params(
+		set1, permutation<2>(), msk, set2);
 
-	so_proj_up_impl< se_perm<2, double> >().perform(params, set2);
+	so_proj_up_impl_t().perform(params);
+
+	index<3> i1, i2;
+	i2[0] = 2; i2[1] = 2; i2[2] = 2;
+	block_index_space<3> bis(dimensions<3>(index_range<3>(i1, i2)));
+	mask<3> m;
+	m[0] = true; m[1] = true; m[2] = true;
+	bis.split(m, 1);
+	bis.split(m, 2);
+
+	compare_ref<3>::compare(testname, bis, set2, set2_ref);
 
 	if(set2.is_empty()) {
 		fail_test(testname, __FILE__, __LINE__,
@@ -112,6 +148,9 @@ void so_proj_up_impl_perm_test::test_3() throw(libtest::test_exception) {
 
 	typedef se_perm<2, double> se2_t;
 	typedef se_perm<3, double> se3_t;
+	typedef so_proj_up<2, 1, double> so_proj_up_t;
+	typedef symmetry_operation_impl<so_proj_up_t, se2_t>
+		so_proj_up_impl_t;
 
 	try {
 
@@ -120,13 +159,15 @@ void so_proj_up_impl_perm_test::test_3() throw(libtest::test_exception) {
 
 	symmetry_element_set<2, double> set1(se2_t::k_sym_type);
 	symmetry_element_set<3, double> set2(se3_t::k_sym_type);
+	symmetry_element_set<3, double> set2_ref(se3_t::k_sym_type);
 
 	set1.insert(elem1);
 
 	mask<3> msk; msk[0] = true; msk[2] = true;
-	symmetry_operation_params< so_proj_up<2, 1, double> > params(set1, msk);
+	symmetry_operation_params< so_proj_up<2, 1, double> > params(
+		set1, permutation<2>(), msk, set2);
 
-	so_proj_up_impl< se_perm<2, double> >().perform(params, set2);
+	so_proj_up_impl_t().perform(params);
 
 	if(set2.is_empty()) {
 		fail_test(testname, __FILE__, __LINE__,
@@ -166,6 +207,9 @@ void so_proj_up_impl_perm_test::test_4() throw(libtest::test_exception) {
 
 	typedef se_perm<2, double> se2_t;
 	typedef se_perm<3, double> se3_t;
+	typedef so_proj_up<2, 1, double> so_proj_up_t;
+	typedef symmetry_operation_impl<so_proj_up_t, se2_t>
+		so_proj_up_impl_t;
 
 	try {
 
@@ -174,13 +218,15 @@ void so_proj_up_impl_perm_test::test_4() throw(libtest::test_exception) {
 
 	symmetry_element_set<2, double> set1(se2_t::k_sym_type);
 	symmetry_element_set<3, double> set2(se3_t::k_sym_type);
+	symmetry_element_set<3, double> set2_ref(se3_t::k_sym_type);
 
 	set1.insert(elem1);
 
 	mask<3> msk; msk[1] = true; msk[2] = true;
-	symmetry_operation_params< so_proj_up<2, 1, double> > params(set1, msk);
+	symmetry_operation_params< so_proj_up<2, 1, double> > params(
+		set1, permutation<2>(), msk, set2);
 
-	so_proj_up_impl< se_perm<2, double> >().perform(params, set2);
+	so_proj_up_impl_t().perform(params);
 
 	if(set2.is_empty()) {
 		fail_test(testname, __FILE__, __LINE__,
@@ -221,6 +267,9 @@ void so_proj_up_impl_perm_test::test_5() throw(libtest::test_exception) {
 
 	typedef se_perm<3, double> se3_t;
 	typedef se_perm<4, double> se4_t;
+	typedef so_proj_up<3, 1, double> so_proj_up_t;
+	typedef symmetry_operation_impl<so_proj_up_t, se3_t>
+		so_proj_up_impl_t;
 
 	try {
 
@@ -229,15 +278,16 @@ void so_proj_up_impl_perm_test::test_5() throw(libtest::test_exception) {
 
 	symmetry_element_set<3, double> set1(se3_t::k_sym_type);
 	symmetry_element_set<4, double> set2(se4_t::k_sym_type);
+	symmetry_element_set<4, double> set2_ref(se4_t::k_sym_type);
 
 	set1.insert(elem1);
 
 	mask<4> msk; msk[1] = true; msk[2] = true; msk[3] = true;
 	permutation<3> perm; perm.permute(0, 2).permute(1, 2);
 	symmetry_operation_params< so_proj_up<3, 1, double> > params(
-		set1, msk, perm);
+		set1, perm, msk, set2);
 
-	so_proj_up_impl< se_perm<3, double> >().perform(params, set2);
+	so_proj_up_impl_t().perform(params);
 
 	if(set2.is_empty()) {
 		fail_test(testname, __FILE__, __LINE__,
@@ -278,6 +328,9 @@ void so_proj_up_impl_perm_test::test_6() throw(libtest::test_exception) {
 
 	typedef se_perm<3, double> se3_t;
 	typedef se_perm<4, double> se4_t;
+	typedef so_proj_up<3, 1, double> so_proj_up_t;
+	typedef symmetry_operation_impl<so_proj_up_t, se3_t>
+		so_proj_up_impl_t;
 
 	try {
 
@@ -286,15 +339,16 @@ void so_proj_up_impl_perm_test::test_6() throw(libtest::test_exception) {
 
 	symmetry_element_set<3, double> set1(se3_t::k_sym_type);
 	symmetry_element_set<4, double> set2(se4_t::k_sym_type);
+	symmetry_element_set<4, double> set2_ref(se4_t::k_sym_type);
 
 	set1.insert(elem1);
 
 	mask<4> msk; msk[0] = true; msk[2] = true; msk[3] = true;
 	permutation<3> perm; perm.permute(0, 1);
 	symmetry_operation_params< so_proj_up<3, 1, double> > params(
-		set1, msk, perm);
+		set1, perm, msk, set2);
 
-	so_proj_up_impl< se_perm<3, double> >().perform(params, set2);
+	so_proj_up_impl_t().perform(params);
 
 	if(set2.is_empty()) {
 		fail_test(testname, __FILE__, __LINE__,
@@ -334,6 +388,9 @@ void so_proj_up_impl_perm_test::test_7() throw(libtest::test_exception) {
 	static const char *testname = "so_proj_up_impl_perm_test::test_7()";
 
 	typedef se_perm<4, double> se4_t;
+	typedef so_proj_up<4, 0, double> so_proj_up_t;
+	typedef symmetry_operation_impl<so_proj_up_t, se4_t>
+		so_proj_up_impl_t;
 
 	try {
 
@@ -342,15 +399,16 @@ void so_proj_up_impl_perm_test::test_7() throw(libtest::test_exception) {
 
 	symmetry_element_set<4, double> set1(se4_t::k_sym_type);
 	symmetry_element_set<4, double> set2(se4_t::k_sym_type);
+	symmetry_element_set<4, double> set2_ref(se4_t::k_sym_type);
 
 	set1.insert(elem1);
 
 	mask<4> msk; msk[0] = true; msk[1] = true; msk[2] = true; msk[3] = true;
 	permutation<4> perm; perm.permute(1, 2).permute(2, 3);
 	symmetry_operation_params< so_proj_up<4, 0, double> > params(
-		set1, msk, perm);
+		set1, perm, msk, set2);
 
-	so_proj_up_impl< se_perm<4, double> >().perform(params, set2);
+	so_proj_up_impl_t().perform(params);
 
 	if(set2.is_empty()) {
 		fail_test(testname, __FILE__, __LINE__,

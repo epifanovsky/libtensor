@@ -2,7 +2,10 @@
 #define LIBTENSOR_SO_PROJ_UP_H
 
 #include "../core/mask.h"
+#include "../core/symmetry.h"
 #include "../core/symmetry_element_set.h"
+#include "symmetry_operation_base.h"
+#include "symmetry_operation_dispatcher.h"
 #include "symmetry_operation_params.h"
 
 namespace libtensor {
@@ -10,9 +13,6 @@ namespace libtensor {
 
 template<size_t N, size_t M, typename T>
 class so_proj_up;
-
-template<typename ElemT>
-class so_proj_up_impl;
 
 template<size_t N, size_t M, typename T>
 class symmetry_operation_params< so_proj_up<N, M, T> >;
@@ -34,44 +34,72 @@ class symmetry_operation_params< so_proj_up<N, M, T> >;
  **/
 template<size_t N, size_t M, typename T>
 class so_proj_up {
-};
+private:
+	typedef so_proj_up<N, M, T> operation_t;
+	typedef symmetry_operation_dispatcher<operation_t> dispatcher_t;
 
+private:
+	const symmetry<N, T> &m_sym1;
+	permutation<N> m_perm;
+	mask<N + M> m_msk;
 
-/**	\brief Generic implementation of so_proj_up<N, T>
+public:
+	so_proj_up(const symmetry<N, T> &sym1, const permutation<N> &perm,
+		const mask<N + M> &msk) : m_sym1(sym1), m_perm(perm), m_msk(msk)
+		{ }
 
-	This template provides the specification for the implementations of
-	the so_proj_up<N, M, T> operation.
+	so_proj_up(const symmetry<N, T> &sym1, const mask<N + M> &msk) :
+		m_sym1(sym1), m_msk(msk) { }
 
-	\ingroup libtensor_symmetry
- **/
-template<typename ElemT>
-class so_proj_up_impl {
+	void perform(symmetry<N + M, T> &sym2);
+
 };
 
 
 template<size_t N, size_t M, typename T>
-class symmetry_operation_params< so_proj_up<N, M, T> > {
+void so_proj_up<N, M, T>::perform(symmetry<N + M, T> &sym2) {
+
+	for(typename symmetry<N, T>::iterator i = m_sym1.begin();
+		i != m_sym1.end(); i++) {
+
+		const symmetry_element_set<N, T> &set1 =
+			m_sym1.get_subset(i);
+		symmetry_element_set<N + M, T> set2(set1.get_id());
+		symmetry_operation_params<operation_t> params(
+			set1, m_perm, m_msk, set2);
+		dispatcher_t::get_instance().invoke(set1.get_id(), params);
+
+		for(typename symmetry_element_set<N + M, T>::iterator j =
+			set2.begin(); j != set2.end(); j++) {
+			sym2.insert(set2.get_elem(j));
+		}
+	}
+}
+
+
+template<size_t N, size_t M, typename T>
+class symmetry_operation_params< so_proj_up<N, M, T> > :
+	public symmetry_operation_params_i {
+
 public:
-	const symmetry_element_set<N, T> &grp; //!< Symmetry group
-	mask<N + M> msk; //!< Mask
+	const symmetry_element_set<N, T> &g1; //!< Symmetry group
 	permutation<N> perm; //!< Permutation
+	mask<N + M> msk; //!< Mask
+	symmetry_element_set<N + M, T> &g2;
 
 public:
 	symmetry_operation_params(
-		const symmetry_element_set<N, T> &grp_,
-		const mask<N + M> &msk_,
-		const permutation<N> &perm_) :
+		const symmetry_element_set<N, T> &g1_,
+		const permutation<N> &perm_, const mask<N + M> &msk_,
+		symmetry_element_set<N + M, T> &g2_) :
 
-		grp(grp_), msk(msk_), perm(perm_) { }
+		g1(g1_), perm(perm_), msk(msk_), g2(g2_) { }
 
-	symmetry_operation_params(
-		const symmetry_element_set<N, T> &grp_,
-		const mask<N + M> &msk_) :
-
-		grp(grp_), msk(msk_) { }
 };
 
 
 } // namespace libtensor
+
+#include "so_proj_up_handlers.h"
 
 #endif // LIBTENSOR_SO_PROJ_UP_H
