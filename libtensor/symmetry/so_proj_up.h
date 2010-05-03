@@ -33,7 +33,7 @@ class symmetry_operation_params< so_proj_up<N, M, T> >;
 	\ingroup libtensor_symmetry
  **/
 template<size_t N, size_t M, typename T>
-class so_proj_up {
+class so_proj_up : public symmetry_operation_base< so_proj_up<N, M, T> > {
 private:
 	typedef so_proj_up<N, M, T> operation_t;
 	typedef symmetry_operation_dispatcher<operation_t> dispatcher_t;
@@ -53,6 +53,24 @@ public:
 
 	void perform(symmetry<N + M, T> &sym2);
 
+};
+
+
+/**	\brief Projection of vacuum onto a larger space (specialization)
+	\tparam M Order.
+
+	\ingroup libtensor_symmetry
+ **/
+template<size_t M, typename T>
+class so_proj_up<0, M, T> {
+public:
+	so_proj_up(const symmetry<0, T> &sym1, const mask<M> &msk) { }
+	so_proj_up(const symmetry<0, T> &sym1, const permutation<0> &perm,
+		const mask<M> &msk) { }
+
+	void perform(symmetry<M, T> &sym2) {
+		sym2.clear();
+	}
 };
 
 
