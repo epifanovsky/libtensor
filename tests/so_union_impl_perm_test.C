@@ -21,6 +21,10 @@ void so_union_impl_perm_test::test_1() throw(libtest::test_exception) {
 	static const char *testname = "so_union_impl_perm_test::test_1()";
 
 	typedef se_perm<2, double> se_t;
+	typedef symmetry_operation_params< so_union<2, double> > params_t;
+	typedef se_perm<2, double> element_t;
+	typedef so_union<2, double> operation_t;
+	typedef symmetry_operation_impl<operation_t, element_t> impl_t;
 
 	try {
 
@@ -28,10 +32,9 @@ void so_union_impl_perm_test::test_1() throw(libtest::test_exception) {
 	symmetry_element_set<2, double> set2(se_t::k_sym_type);
 	symmetry_element_set<2, double> set3(se_t::k_sym_type);
 
-	symmetry_operation_params< so_union<2, double> > params(set1, set2);
+	params_t params(set1, set2, set3);
 
-	so_union_impl< se_perm<2, double> > op;
-	op.perform(params, set3);
+	impl_t().perform(params);
 
 	if(!set3.is_empty()) {
 		fail_test(testname, __FILE__, __LINE__,
@@ -52,6 +55,10 @@ void so_union_impl_perm_test::test_2() throw(libtest::test_exception) {
 	static const char *testname = "so_union_impl_perm_test::test_2()";
 
 	typedef se_perm<2, double> se_t;
+	typedef symmetry_operation_params< so_union<2, double> > params_t;
+	typedef se_perm<2, double> element_t;
+	typedef so_union<2, double> operation_t;
+	typedef symmetry_operation_impl<operation_t, element_t> impl_t;
 
 	try {
 
@@ -64,10 +71,9 @@ void so_union_impl_perm_test::test_2() throw(libtest::test_exception) {
 
 	set1.insert(elem1);
 
-	symmetry_operation_params< so_union<2, double> > params(set1, set2);
+	params_t params(set1, set2, set3);
 
-	so_union_impl< se_perm<2, double> > op;
-	op.perform(params, set3);
+	impl_t().perform(params);
 
 	if(set3.is_empty()) {
 		fail_test(testname, __FILE__, __LINE__,
@@ -104,6 +110,10 @@ void so_union_impl_perm_test::test_3() throw(libtest::test_exception) {
 	static const char *testname = "so_union_impl_perm_test::test_3()";
 
 	typedef se_perm<4, double> se_t;
+	typedef symmetry_operation_params< so_union<4, double> > params_t;
+	typedef se_perm<4, double> element_t;
+	typedef so_union<4, double> operation_t;
+	typedef symmetry_operation_impl<operation_t, element_t> impl_t;
 
 	try {
 
@@ -119,10 +129,9 @@ void so_union_impl_perm_test::test_3() throw(libtest::test_exception) {
 	set1.insert(elem1);
 	set2.insert(elem2);
 
-	symmetry_operation_params< so_union<4, double> > params(set1, set2);
+	params_t params(set1, set2, set3);
 
-	so_union_impl< se_perm<4, double> > op;
-	op.perform(params, set3);
+	impl_t().perform(params);
 
 	if(set3.is_empty()) {
 		fail_test(testname, __FILE__, __LINE__,
@@ -180,6 +189,10 @@ void so_union_impl_perm_test::test_4() throw(libtest::test_exception) {
 	static const char *testname = "so_union_impl_perm_test::test_4()";
 
 	typedef se_perm<2, double> se_t;
+	typedef symmetry_operation_params< so_union<2, double> > params_t;
+	typedef se_perm<2, double> element_t;
+	typedef so_union<2, double> operation_t;
+	typedef symmetry_operation_impl<operation_t, element_t> impl_t;
 
 	try {
 
@@ -193,10 +206,9 @@ void so_union_impl_perm_test::test_4() throw(libtest::test_exception) {
 	set1.insert(elem1);
 	set2.insert(elem1);
 
-	symmetry_operation_params< so_union<2, double> > params(set1, set2);
+	params_t params(set1, set2, set3);
 
-	so_union_impl< se_perm<2, double> > op;
-	op.perform(params, set3);
+	impl_t().perform(params);
 
 	if(set3.is_empty()) {
 		fail_test(testname, __FILE__, __LINE__,

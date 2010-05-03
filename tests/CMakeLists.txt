@@ -66,6 +66,7 @@ set(SRC
 	so_proj_down_test.C
 	so_proj_down_impl_perm_test.C
 	so_proj_up_impl_perm_test.C
+	so_union_test.C
 	so_union_impl_perm_test.C
 	symel_cycleperm_test.C
 #	symm_test.C
