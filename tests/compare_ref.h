@@ -23,6 +23,10 @@ public:
 	static void compare(const char *test, const symmetry<N, double> &s,
 		const symmetry<N, double> &s_ref)
 		throw(exception, libtest::test_exception);
+	static void compare(const char *test, const block_index_space<N> &bis,
+		const symmetry_element_set<N, double> &s,
+		const symmetry_element_set<N, double> &s_ref)
+		throw(exception, libtest::test_exception);
 };
 
 
@@ -120,6 +124,25 @@ void compare_ref<N>::compare(const char *test, const symmetry<N, double> &s,
 				__FILE__, __LINE__, ss.str().c_str());
 		}
 	}
+}
+
+
+template<size_t N>
+void compare_ref<N>::compare(const char *test,
+	const block_index_space<N> &bis,
+	const symmetry_element_set<N, double> &s,
+	const symmetry_element_set<N, double> &s_ref)
+	throw(exception, libtest::test_exception) {
+
+	symmetry<N, double> sym(bis), sym_ref(bis);
+	for(typename symmetry_element_set<N, double>::const_iterator i =
+		s.begin(); i != s.end(); i++) sym.insert(s.get_elem(i));
+	for(typename symmetry_element_set<N, double>::const_iterator i =
+		s_ref.begin(); i != s_ref.end(); i++) {
+		sym_ref.insert(s_ref.get_elem(i));
+	}
+
+	compare(test, sym, sym_ref);
 }
 
 
