@@ -2,6 +2,7 @@
 #include <libtensor/symmetry/so_proj_down.h>
 #include <libtensor/btod/transf_double.h>
 #include "so_proj_down_test.h"
+#include "compare_ref.h"
 
 namespace libtensor {
 
@@ -34,6 +35,7 @@ void so_proj_down_test::test_1() throw(libtest::test_exception) {
 
 	symmetry<3, double> sym1(bis1);
 	symmetry<2, double> sym2(bis2);
+	symmetry<2, double> sym2_ref(bis2);
 	mask<3> msk;
 	msk[0] = true; msk[1] = true;
 	so_proj_down<3, 1, double>(sym1, msk).perform(sym2);
@@ -42,6 +44,7 @@ void so_proj_down_test::test_1() throw(libtest::test_exception) {
 	if(i != sym2.end()) {
 		fail_test(testname, __FILE__, __LINE__, "i != sym2.end()");
 	}
+	compare_ref<2>::compare(testname, sym2, sym2_ref);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
@@ -68,25 +71,26 @@ void so_proj_down_test::test_2() throw(libtest::test_exception) {
 	block_index_space<3> bis1(dims1);
 	block_index_space<2> bis2(dims2);
 
-	permutation<3> perm1, perm2;
-	perm1.permute(0, 1).permute(1, 2);
-	perm2.permute(0, 1);
-	se_perm<3, double> elem1(perm1, true);
-	se_perm<3, double> elem2(perm2, true);
-
 	symmetry<3, double> sym1(bis1);
-	sym1.insert(elem1);
-	sym1.insert(elem2);
+	sym1.insert(se_perm<3, double>(
+		permutation<3>().permute(0, 1).permute(1, 2), true));
+	sym1.insert(se_perm<3, double>(
+		permutation<3>().permute(0, 1), true));
 
 	symmetry<2, double> sym2(bis2);
+	symmetry<2, double> sym2_ref(bis2);
 	mask<3> msk;
 	msk[0] = true; msk[1] = true;
 	so_proj_down<3, 1, double>(sym1, msk).perform(sym2);
+
+	sym2_ref.insert(se_perm<2, double>(
+		permutation<2>().permute(0, 1), true));
 
 	symmetry<2, double>::iterator i = sym2.begin();
 	if(i == sym2.end()) {
 		fail_test(testname, __FILE__, __LINE__, "i == sym2.end()");
 	}
+	compare_ref<2>::compare(testname, sym2, sym2_ref);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());

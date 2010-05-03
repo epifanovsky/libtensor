@@ -3,10 +3,13 @@
 
 #include <sstream>
 #include <libtest/test_exception.h>
+#include <libtensor/core/orbit.h>
+#include <libtensor/core/orbit_list.h>
 #include <libtensor/tod/tod_compare.h>
 #include <libtensor/btod/btod_compare.h>
 
 namespace libtensor {
+
 
 template<size_t N>
 class compare_ref {
@@ -17,7 +20,11 @@ public:
 	static void compare(const char *test, block_tensor_i<N, double> &t,
 		block_tensor_i<N, double> &t_ref, double thresh)
 		throw(exception, libtest::test_exception);
+	static void compare(const char *test, const symmetry<N, double> &s,
+		const symmetry<N, double> &s_ref)
+		throw(exception, libtest::test_exception);
 };
+
 
 template<size_t N>
 void compare_ref<N>::compare(const char *test, tensor_i<N, double> &t,
@@ -38,6 +45,7 @@ void compare_ref<N>::compare(const char *test, tensor_i<N, double> &t,
 			__FILE__, __LINE__, ss2.str().c_str());
 	}
 }
+
 
 template<size_t N>
 void compare_ref<N>::compare(const char *test, block_tensor_i<N, double> &t,
@@ -71,6 +79,46 @@ void compare_ref<N>::compare(const char *test, block_tensor_i<N, double> &t,
 		}
 		throw libtest::test_exception("compare_ref::compare()",
 			__FILE__, __LINE__, str.str().c_str());
+	}
+}
+
+
+template<size_t N>
+void compare_ref<N>::compare(const char *test, const symmetry<N, double> &s,
+	const symmetry<N, double> &s_ref)
+	throw(exception, libtest::test_exception) {
+
+	if(!s_ref.get_bis().equals(s.get_bis())) {
+		std::ostringstream ss;
+		ss << "In " << test << ": Different block index spaces.";
+		throw libtest::test_exception("compare_ref::compare()",
+			__FILE__, __LINE__, ss.str().c_str());
+	}
+
+	orbit_list<N, double> ol(s), ol_ref(s_ref);
+	for(typename orbit_list<N, double>::iterator io_ref = ol_ref.begin();
+		io_ref != ol_ref.end(); io_ref++) {
+
+		if(!ol.contains(ol_ref.get_abs_index(io_ref))) {
+			std::ostringstream ss;
+			ss << "In " << test << ": Canonical index "
+				<< ol_ref.get_index(io_ref)
+				<< " is absent from result.";
+			throw libtest::test_exception("compare_ref::compare()",
+				__FILE__, __LINE__, ss.str().c_str());
+		}
+	}
+	for(typename orbit_list<N, double>::iterator io = ol.begin();
+		io != ol.end(); io++) {
+
+		if(!ol_ref.contains(ol.get_abs_index(io))) {
+			std::ostringstream ss;
+			ss << "In " << test << ": Canonical index "
+				<< ol.get_index(io)
+				<< " is absent from reference.";
+			throw libtest::test_exception("compare_ref::compare()",
+				__FILE__, __LINE__, ss.str().c_str());
+		}
 	}
 }
 

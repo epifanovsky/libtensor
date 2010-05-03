@@ -8,6 +8,7 @@
 #include "../core/block_tensor_i.h"
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
+#include "../core/tensor.h"
 #include "../tod/tod_compare.h"
 #include "../tod/tod_copy.h"
 

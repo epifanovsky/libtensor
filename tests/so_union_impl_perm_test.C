@@ -1,6 +1,7 @@
 #include <libtensor/symmetry/so_union_impl_perm.h>
 #include <libtensor/btod/transf_double.h>
 #include "so_union_impl_perm_test.h"
+#include "compare_ref.h"
 
 namespace libtensor {
 
@@ -31,11 +32,13 @@ void so_union_impl_perm_test::test_1() throw(libtest::test_exception) {
 	symmetry_element_set<2, double> set1(se_t::k_sym_type);
 	symmetry_element_set<2, double> set2(se_t::k_sym_type);
 	symmetry_element_set<2, double> set3(se_t::k_sym_type);
+	symmetry_element_set<2, double> set3_ref(se_t::k_sym_type);
 
 	params_t params(set1, set2, set3);
 
 	impl_t().perform(params);
 
+	
 	if(!set3.is_empty()) {
 		fail_test(testname, __FILE__, __LINE__,
 			"Expected an empty set.");
@@ -68,8 +71,10 @@ void so_union_impl_perm_test::test_2() throw(libtest::test_exception) {
 	symmetry_element_set<2, double> set1(se_t::k_sym_type);
 	symmetry_element_set<2, double> set2(se_t::k_sym_type);
 	symmetry_element_set<2, double> set3(se_t::k_sym_type);
+	symmetry_element_set<2, double> set3_ref(se_t::k_sym_type);
 
 	set1.insert(elem1);
+	set3_ref.insert(elem1);
 
 	params_t params(set1, set2, set3);
 
@@ -125,9 +130,12 @@ void so_union_impl_perm_test::test_3() throw(libtest::test_exception) {
 	symmetry_element_set<4, double> set1(se_t::k_sym_type);
 	symmetry_element_set<4, double> set2(se_t::k_sym_type);
 	symmetry_element_set<4, double> set3(se_t::k_sym_type);
+	symmetry_element_set<4, double> set3_ref(se_t::k_sym_type);
 
 	set1.insert(elem1);
 	set2.insert(elem2);
+	set3_ref.insert(elem1);
+	set3_ref.insert(elem2);
 
 	params_t params(set1, set2, set3);
 
@@ -202,9 +210,11 @@ void so_union_impl_perm_test::test_4() throw(libtest::test_exception) {
 	symmetry_element_set<2, double> set1(se_t::k_sym_type);
 	symmetry_element_set<2, double> set2(se_t::k_sym_type);
 	symmetry_element_set<2, double> set3(se_t::k_sym_type);
+	symmetry_element_set<2, double> set3_ref(se_t::k_sym_type);
 
 	set1.insert(elem1);
 	set2.insert(elem1);
+	set3_ref.insert(elem1);
 
 	params_t params(set1, set2, set3);
 
