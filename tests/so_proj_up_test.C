@@ -13,6 +13,7 @@ void so_proj_up_test::perform() throw(libtest::test_exception) {
 	test_2();
 	test_3();
 	test_4();
+	test_5();
 }
 
 
@@ -135,7 +136,7 @@ void so_proj_up_test::test_3() throw(libtest::test_exception) {
 	i2b[0] = 5; i2b[1] = 5;
 	dimensions<2> dims2(index_range<2>(i2a, i2b));
 	index<3> i3a, i3b;
-	i3b[0] = 5; i3b[1] = 5; i3b[2] = 10;
+	i3b[0] = 10; i3b[1] = 5; i3b[2] = 5;
 	dimensions<3> dims3(index_range<3>(i3a, i3b));
 
 	block_index_space<2> bis2(dims2);
@@ -146,7 +147,7 @@ void so_proj_up_test::test_3() throw(libtest::test_exception) {
 	bis2.split(m2, 2);
 	bis2.split(m2, 3);
 	mask<3> m3a, m3b;
-	m3a[0] = true; m3a[1] = true; m3b[2] = true;
+	m3b[0] = true; m3a[1] = true; m3a[2] = true;
 	bis3.split(m3a, 2);
 	bis3.split(m3a, 3);
 	bis3.split(m3b, 5);
@@ -237,6 +238,64 @@ void so_proj_up_test::test_4() throw(libtest::test_exception) {
 	}
 
 	compare_ref<6>::compare(testname, sym2, sym2_ref);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+
+}
+
+
+/**	\test Invokes a projection of C3 in 3-space onto 4-space with
+		a permutation. Expects C3 in 4-space.
+ **/
+void so_proj_up_test::test_5() throw(libtest::test_exception) {
+
+	static const char *testname = "so_proj_up_test::test_5()";
+
+	try {
+
+	index<3> i3a, i3b;
+	i3b[0] = 5; i3b[1] = 5; i3b[2] = 5;
+	dimensions<3> dims3(index_range<3>(i3a, i3b));
+	index<4> i4a, i4b;
+	i4b[0] = 5; i4b[1] = 5; i4b[2] = 9; i4b[3] = 5;
+	dimensions<4> dims4(index_range<4>(i4a, i4b));
+
+	block_index_space<3> bis3(dims3);
+	block_index_space<4> bis4(dims4);
+
+	mask<3> m3;
+	m3[0] = true; m3[1] = true; m3[2] = true;
+	bis3.split(m3, 2);
+	bis3.split(m3, 3);
+	mask<4> m4a, m4b;
+	m4a[0] = true; m4a[1] = true; m4b[2] = true; m4a[3] = true;
+	bis4.split(m4a, 2);
+	bis4.split(m4a, 3);
+	bis4.split(m4b, 5);
+
+	symmetry<3, double> sym1(bis3);
+	symmetry<4, double> sym2(bis4);
+	symmetry<4, double> sym2_ref(bis4);
+
+	sym1.insert(se_perm<3, double>(
+		permutation<3>().permute(0, 1).permute(1, 2), true));
+	sym2_ref.insert(se_perm<4, double>(
+		permutation<4>().permute(0, 1).permute(1, 3), true));
+
+	mask<4> msk;
+	msk[0] = true; msk[1] = true; msk[3] = true;
+	so_proj_up<3, 1, double>(sym1,
+		permutation<3>().permute(1, 2).permute(0, 1), msk).
+		perform(sym2);
+
+	symmetry<4, double>::iterator i = sym2.begin();
+	if(i == sym2.end()) {
+		fail_test(testname, __FILE__, __LINE__, "i == sym2.end()");
+	}
+
+	compare_ref<4>::compare(testname, sym2, sym2_ref);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
