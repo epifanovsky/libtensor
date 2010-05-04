@@ -4,6 +4,7 @@
 #include "../defs.h"
 #include "../exception.h"
 #include "permutation.h"
+#include "sequence.h"
 
 namespace libtensor {
 
@@ -53,6 +54,10 @@ public:
 	template<typename T>
 	permutation_builder(const T (&seq1)[N], const T (&seq2)[N]);
 
+	template<typename T>
+	permutation_builder(const sequence<N, T> &seq1,
+		const sequence<N, T> &seq2);
+
 	/**	\brief Constructs a %permutation using two sequences of
 			objects and an %index mapping law
 		\tparam T Object type (must support operator ==).
@@ -78,6 +83,25 @@ private:
 };
 
 
+template<>
+class permutation_builder<0> {
+private:
+	permutation<0> m_perm; //!< Built %permutation
+
+public:
+	template<typename T>
+	permutation_builder(const sequence<0, T> &seq1,
+		const sequence<0, T> &seq2) { }
+
+	/**	\brief Returns the %permutation
+	 **/
+	const permutation<0> &get_perm() const {
+		return m_perm;
+	}
+
+};
+
+
 template<size_t N>
 const char *permutation_builder<N>::k_clazz = "permutation_builder<N>";
 
@@ -89,6 +113,21 @@ permutation_builder<N>::permutation_builder(
 	size_t map[N];
 	for(size_t i = 0; i < N; i++) map[i] = i;
 	build(seq1, seq2, map);
+}
+
+
+template<size_t N> template<typename T>
+permutation_builder<N>::permutation_builder(const sequence<N, T> &seq1,
+	const sequence<N, T> &seq2) {
+
+	T s1[N], s2[N];
+	size_t map[N];
+	for(size_t i = 0; i < N; i++) {
+		s1[i] = seq1[i];
+		s2[i] = seq2[i];
+		map[i] = i;
+	}
+	build(s1, s2, map);
 }
 
 

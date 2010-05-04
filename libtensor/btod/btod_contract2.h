@@ -14,6 +14,7 @@
 #include "../core/block_tensor_ctrl.h"
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
+#include "../core/sequence.h"
 #include "../symmetry/so_copy.h"
 #include "../symmetry/so_proj_down.h"
 #include "../symmetry/so_proj_up.h"
@@ -507,12 +508,30 @@ void btod_contract2<N, M, K>::make_symmetry() {
 
 	mask<k_orderc> xma;
 	mask<k_orderc> xmb;
-	permutation<N> xpa;
-	permutation<M> xpb;
+	sequence<N, size_t> xseqa1(0), xseqa2(0);
+	sequence<M, size_t> xseqb1(0), xseqb2(0);
+	for(size_t i = k_orderc, j = 0; i < k_orderc + k_ordera; i++) {
+		if(conn[i] < k_orderc) xseqa1[j++] = i;
+	}
+	for(size_t i = k_orderc + k_ordera, j = 0;
+		i < k_orderc + k_ordera + k_orderb; i++) {
+		if(conn[i] < k_orderc) xseqb1[j++] = i;
+	}
+	for(size_t i = 0, ja = 0, jb = 0; i < k_orderc; i++) {
+		if(conn[i] < k_orderc + k_ordera) {
+			xma[i] = true;
+			xseqa2[ja++] = conn[i];
+		} else {
+			xmb[i] = true;
+			xseqb2[jb++] = conn[i];
+		}
+	}
+	permutation_builder<N> xpba(xseqa2, xseqa1);
+	permutation_builder<M> xpbb(xseqb2, xseqb1);
 	symmetry<k_orderc, double> xsyma(m_bis);
 	symmetry<k_orderc, double> xsymb(m_bis);
-	so_proj_up<N, M, double>(rsyma, xpa, xma).perform(xsyma);
-	so_proj_up<M, N, double>(rsymb, xpb, xmb).perform(xsymb);
+	so_proj_up<N, M, double>(rsyma, xpba.get_perm(), xma).perform(xsyma);
+	so_proj_up<M, N, double>(rsymb, xpbb.get_perm(), xmb).perform(xsymb);
 	so_union<k_orderc, double>(xsyma, xsymb).perform(m_sym);
 }
 
@@ -788,7 +807,7 @@ void btod_contract2<N, M, K>::contract_block(
 		contraction2<N, M, K> contr(m_contr);
 		contr.permute_a(ilst->m_perma);
 		contr.permute_b(ilst->m_permb);
-		
+
 		tod_contract2<N, M, K> *controp =
 			new tod_contract2<N, M, K>(contr, ta, tb);
 		op_ptrs.push_back(controp);

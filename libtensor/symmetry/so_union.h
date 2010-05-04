@@ -25,7 +25,7 @@ class symmetry_operation_params< so_union<N, T> >;
 	\ingroup libtensor_symmetry
  **/
 template<size_t N, typename T>
-class so_union {
+class so_union : public symmetry_operation_base< so_union<N, T> > {
 private:
 	typedef so_union<N, T> operation_t;
 	typedef symmetry_operation_dispatcher<operation_t> dispatcher_t;
