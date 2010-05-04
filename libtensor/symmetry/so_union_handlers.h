@@ -3,6 +3,7 @@
 
 #include "symmetry_operation_dispatcher.h"
 #include "symmetry_operation_handlers.h"
+#include "se_perm.h"
 #include "so_union_impl_perm.h"
 
 namespace libtensor {
