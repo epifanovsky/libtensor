@@ -34,7 +34,7 @@ public:
 	/**	\brief Returns the assignment schedule -- the preferred order
 			of computing blocks
 	 **/
-	virtual const assignment_schedule<N, double> &get_schedule() = 0;
+	virtual const assignment_schedule<N, double> &get_schedule() const = 0;
 
 public:
 	/**	\brief Computes the result of the operation into an output

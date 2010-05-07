@@ -118,7 +118,7 @@ public:
 	virtual void perform(block_tensor_i<k_orderc, double> &btc,
 		const index<k_orderc> &idx) throw(exception);
 
-	virtual const assignment_schedule<N + M, double> &get_schedule() {
+	virtual const assignment_schedule<N + M, double> &get_schedule() const {
 		return m_sch;
 	}
 

@@ -87,7 +87,7 @@ public:
 
 	//!	\name Implementation of libtensor::btod_additive<N>
 	//@{
-	virtual const assignment_schedule<N, double> &get_schedule() {
+	virtual const assignment_schedule<N, double> &get_schedule() const {
 		return m_sch;
 	}
 	/*
@@ -276,7 +276,7 @@ void btod_copy<N>::perform(block_tensor_i<N, double> &btb, const index<N> &idx)
 	btod_copy<N>::start_timer();
 	do_perform(btb, idx, true, 1.0);
 	btod_copy<N>::stop_timer();
-*/		
+*/
 }
 
 

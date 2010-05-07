@@ -63,7 +63,7 @@ public:
 		return m_sym;
 	}
 
-	virtual const assignment_schedule<N - M + 1, double> &get_schedule();
+	virtual const assignment_schedule<N - M + 1, double> &get_schedule() const;
 
 	virtual void compute_block(tensor_i<k_orderb, double> &blk,
 		const index<k_orderb> &i) { }
@@ -163,7 +163,7 @@ btod_diag<N, M>::btod_diag(block_tensor_i<N, double> &bta, const mask<N> &m,
 
 
 template<size_t N, size_t M>
-const assignment_schedule<N - M + 1, double> &btod_diag<N, M>::get_schedule() {
+const assignment_schedule<N - M + 1, double> &btod_diag<N, M>::get_schedule() const {
 
 	throw not_implemented(g_ns, k_clazz, "get_schedule()",
 		__FILE__, __LINE__);

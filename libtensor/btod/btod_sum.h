@@ -79,7 +79,7 @@ public:
 
 	//!	\name Implementation of libtensor::additive_btod<N>
 	//@{
-	virtual const assignment_schedule<N, double> &get_schedule();
+	virtual const assignment_schedule<N, double> &get_schedule() const;
 	virtual void compute_block(tensor_i<N, double> &blk,
 		const index<N> &i) { }
 	virtual void compute_block(tensor_i<N, double> &blk, const index<N> &i,
@@ -141,7 +141,7 @@ const symmetry<N, double> &btod_sum<N>::get_symmetry() const {
 
 
 template<size_t N>
-const assignment_schedule<N, double> &btod_sum<N>::get_schedule() {
+const assignment_schedule<N, double> &btod_sum<N>::get_schedule() const {
 
 	throw not_implemented(g_ns, k_clazz, "get_schedule()",
 		__FILE__, __LINE__);
@@ -220,7 +220,7 @@ void btod_sum<N>::perform(block_tensor_i<N, double> &bt, const index<N> &idx,
 
 	static const char *method =
 		"perform(block_tensor_i<N, double>&, const index<N>&, double)";
-	
+
 	throw not_implemented(g_ns, k_clazz, method, __FILE__, __LINE__);
 }
 
