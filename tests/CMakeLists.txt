@@ -10,7 +10,7 @@ set(SRC
 	block_map_test.C
 	block_tensor_test.C
 #	btensor_test.C
-#	btod_add_test.C
+	btod_add_test.C
 #	btod_compare_test.C
 	btod_contract2_test.C
 	btod_copy_test.C

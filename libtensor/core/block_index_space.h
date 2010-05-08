@@ -243,7 +243,7 @@ public:
 	/**	\brief Permutes the block %index space
 		\param perm Permutation.
 	 **/
-	void permute(const permutation<N> &perm);
+	const block_index_space<N> &permute(const permutation<N> &perm);
 
 	/**	\brief Returns true if two block %index spaces are identical
 
@@ -522,11 +522,13 @@ void block_index_space<N>::reset_splits() {
 
 
 template<size_t N>
-inline void block_index_space<N>::permute(const permutation<N> &perm) {
+inline const block_index_space<N> &block_index_space<N>::permute(
+	const permutation<N> &perm) {
 
 	m_dims.permute(perm);
 	m_nsplits.permute(perm);
 	m_type.permute(perm);
+	return *this;
 }
 
 
