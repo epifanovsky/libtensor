@@ -131,8 +131,8 @@ private:
 		const orbit<k_orderb, double> &ob, bool zerob,
 		const orbit_list<k_orderc, double> &olc);
 
-	void compute_block(tensor_i<k_orderc, double> &blkc,
-		const schrec &rec, const transf<k_orderc, double> &trc,
+	void compute_block(tensor_i<N + M, double> &blkc,
+		const schrec &rec, const transf<N + M, double> &trc,
 		bool zeroc, double kc);
 
 	void do_block_dirsum(block_tensor_ctrl<k_ordera, double> &ctrla,
