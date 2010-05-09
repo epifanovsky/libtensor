@@ -419,7 +419,7 @@ void btod_add<N>::compute_block(tensor_i<N, double> &blkb,
 		op = new tod_add<N>(ca[rec.iarg]->req_block(rec.idx), perm, k);
 	}
 
-	for(; iarg != ipair.second; iarg++) {
+	for(iarg++; iarg != ipair.second; iarg++) {
 		const schrec &rec = iarg->second;
 		permutation<N> perm(rec.perm); perm.permute(trb.get_perm());
 		double k = rec.k * kb * trb.get_coeff();
