@@ -4,6 +4,7 @@
 #include <libtensor/core/tensor.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/btod/btod_scale.h>
+#include <libtensor/symmetry/se_perm.h>
 #include <libtensor/tod/tod_btconv.h>
 #include "btod_scale_test.h"
 #include "compare_ref.h"
@@ -20,6 +21,8 @@ void btod_scale_test::perform() throw(libtest::test_exception) {
 	test_i(3);
 	test_i(10);
 	test_i(32);
+
+	test_1();
 }
 
 
@@ -171,9 +174,53 @@ void btod_scale_test::test_i(size_t i) throw(libtest::test_exception) {
 		fail_test(tn.c_str(), __FILE__, __LINE__,
 			"c3b.req_is_zero_block(i2)");
 	}
-	
+
 	} catch(exception &e) {
 		fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\test Tests proper scaling in block tensors with permutational
+		%symmetry and anti-symmetry.
+ **/
+void btod_scale_test::test_1() throw(libtest::test_exception) {
+
+	static const char *testname = "btod_scale_test::test_1()";
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 9; i2[1] = 9; i2[2] = 9; i2[3] = 9;
+	dimensions<4> dims(index_range<4>(i1, i2));
+	block_index_space<4> bis(dims);
+	mask<4> m;
+	m[0] = true; m[1] = true; m[2] = true; m[3] = true;
+	bis.split(m, 3); bis.split(m, 7);
+
+	block_tensor<4, double, allocator_t> bt1(bis), bt2(bis);
+
+	{
+		block_tensor_ctrl<4, double> ctrl1(bt1), ctrl2(bt2);
+		se_perm<4, double> elem1(permutation<4>().permute(1, 2), true);
+		se_perm<4, double> elem2(permutation<4>().permute(0, 1).
+			permute(1, 2).permute(2, 3), true);
+		se_perm<4, double> elem3(permutation<4>().permute(0, 1), false);
+		se_perm<4, double> elem4(permutation<4>().permute(2, 3), false);
+		ctrl1.req_symmetry().insert(elem1);
+		ctrl1.req_symmetry().insert(elem2);
+		ctrl2.req_symmetry().insert(elem3);
+		ctrl2.req_symmetry().insert(elem4);
+	}
+
+	btod_random<4>().perform(bt1);
+	btod_random<4>().perform(bt2);
+
+	test_generic(testname, bt1, 0.45);
+	test_generic(testname, bt2, -1.0);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
 	}
 }
 
