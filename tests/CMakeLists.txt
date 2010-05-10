@@ -27,7 +27,7 @@ set(SRC
 	btod_select_test.C
 	btod_set_test.C
 	btod_set_diag_test.C
-#	btod_set_elem_test.C
+	btod_set_elem_test.C
 #	btod_sum_test.C
 #	btod_trace_test.C
 #	contract_test.C
