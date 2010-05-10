@@ -27,7 +27,7 @@
 #include "btod_scale_test.h"
 #include "btod_select_test.h"
 #include "btod_set_test.h"
-//~ #include "btod_set_diag_test.h"
+#include "btod_set_diag_test.h"
 //~ #include "btod_set_elem_test.h"
 //~ #include "btod_sum_test.h"
 //~ #include "btod_trace_test.h"
@@ -237,7 +237,7 @@ private:
 	unit_test_factory<btod_scale_test> m_utf_btod_scale;
 	unit_test_factory<btod_select_test> m_utf_btod_select;
 	unit_test_factory<btod_set_test> m_utf_btod_set;
-	//~ unit_test_factory<btod_set_diag_test> m_utf_btod_set_diag;
+	unit_test_factory<btod_set_diag_test> m_utf_btod_set_diag;
 	//~ unit_test_factory<btod_set_elem_test> m_utf_btod_set_elem;
 	//~ unit_test_factory<btod_sum_test> m_utf_btod_sum;
 	//~ unit_test_factory<btod_trace_test> m_utf_btod_trace;

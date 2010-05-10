@@ -43,7 +43,7 @@ public:
 
 	/**	\brief Performs the operation
 	 **/
-	void perform(block_tensor_i<N, double> &bt) throw(exception);
+	void perform(block_tensor_i<N, double> &bt);
 
 	//@}
 };
@@ -60,7 +60,7 @@ btod_set_diag<N>::btod_set_diag(double v) : m_v(v) {
 
 
 template<size_t N>
-void btod_set_diag<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
+void btod_set_diag<N>::perform(block_tensor_i<N, double> &bt) {
 
 	static const char *method = "perform(block_tensor_i<N, double>&)";
 
