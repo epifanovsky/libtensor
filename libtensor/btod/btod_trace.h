@@ -80,7 +80,7 @@ double btod_trace<N>::calculate() {
 
 	block_tensor_ctrl<k_ordera, double> ca(m_bta);
 
-	orbit_list<k_ordera, double> ola(ca.req_symmetry());
+	orbit_list<k_ordera, double> ola(ca.req_const_symmetry());
 	for(typename orbit_list<k_ordera, double>::iterator ioa = ola.begin();
 		ioa != ola.end(); ioa++) {
 
@@ -88,7 +88,7 @@ double btod_trace<N>::calculate() {
 
 	tensor_i<k_ordera, double> *ba = 0;
 
-	orbit<k_ordera, double> oa(ca.req_symmetry(), ola.get_index(ioa));
+	orbit<k_ordera, double> oa(ca.req_const_symmetry(), ola.get_index(ioa));
 	for(typename orbit<k_ordera, double>::iterator iia = oa.begin();
 		iia != oa.end(); iia++) {
 
