@@ -16,7 +16,7 @@ set(SRC
 	btod_copy_test.C
 	btod_diag_test.C
 	btod_dirsum_test.C
-#	btod_dotprod_test.C
+	btod_dotprod_test.C
 #	btod_extract_test.C
 #	btod_import_raw_test.C
 #	btod_mult_test.C
