@@ -121,6 +121,8 @@ void btod_compare_test::test_operation() throw(libtest::test_exception) {
 		tctrl.ret_dataptr(ptr);
 	}
 	btctrl.ret_block(block_idx);
+	bt1.set_immutable();
+	bt2.set_immutable();
 
 	btod_compare<2> op1(bt1, bt2, 1e-7);
 	if(op1.compare()) {
