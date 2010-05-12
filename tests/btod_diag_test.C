@@ -17,16 +17,25 @@ void btod_diag_test::perform() throw(libtest::test_exception) {
 	test_zero_1();
 	test_zero_2();
 
-	test_nosym_1();
-	test_nosym_2();
-	test_nosym_3();
-	test_nosym_4();
+	test_nosym_1(false);
+	test_nosym_2(false);
+	test_nosym_3(false);
+	test_nosym_4(false);
 
-	test_sym_1();
-	test_sym_2();
-	test_sym_3();
-	test_sym_4();
+	test_nosym_1(true);
+	test_nosym_2(true);
+	test_nosym_3(true);
+	test_nosym_4(true);
 
+	test_sym_1(false);
+	test_sym_2(false);
+	//test_sym_3(false);
+	test_sym_4(false);
+
+	test_sym_1(true);
+	test_sym_2(true);
+	//test_sym_3(true);
+	test_sym_4(true);
 }
 
 /**	\test Extract diagonal: \f$ b_i = a_{ii} \f$, zero tensor, one block
@@ -137,9 +146,9 @@ void btod_diag_test::test_zero_2() throw(libtest::test_exception) {
 /**	\test Extract diagonal: \f$ b_i = a_{ii} \f$, non-zero tensor,
 	 single block
  **/
-void btod_diag_test::test_nosym_1() throw(libtest::test_exception) {
+void btod_diag_test::test_nosym_1(bool add) throw(libtest::test_exception) {
 
-	static const char *testname = "btod_diag_test::test_nosym_1()";
+	static const char *testname = "btod_diag_test::test_nosym_1(bool)";
 
 	typedef libvmm::std_allocator<double> allocator_t;
 
@@ -166,13 +175,28 @@ void btod_diag_test::test_nosym_1() throw(libtest::test_exception) {
 	//	Fill in random data
 	btod_random<2>().perform(bta);
 	bta.set_immutable();
-
-	//	Prepare the reference
 	tod_btconv<2>(bta).perform(ta);
-	tod_diag<2, 2>(ta, msk).perform(tb_ref);
 
-	//	Invoke the operation
-	btod_diag<2, 2>(bta, msk).perform(btb);
+	if (add) {
+		//  Fill with random data
+		btod_random<1>().perform(btb);
+
+		//	Prepare the reference
+		tod_btconv<1>(btb).perform(tb_ref);
+
+		tod_diag<2, 2>(ta, msk).perform(tb_ref, 1.0);
+
+		//	Invoke the operation
+		btod_diag<2, 2>(bta, msk).perform(btb, 1.0);
+	}
+	else {
+		//	Prepare the reference
+		tod_diag<2, 2>(ta, msk).perform(tb_ref);
+
+		//	Invoke the operation
+		btod_diag<2, 2>(bta, msk).perform(btb);
+	}
+
 	tod_btconv<1>(btb).perform(tb);
 
 	//	Compare against the reference
@@ -186,9 +210,9 @@ void btod_diag_test::test_nosym_1() throw(libtest::test_exception) {
 
 /**	\test Extract a single diagonal: \f$ b_{ija} = a_{iajb} \f$
  **/
-void btod_diag_test::test_nosym_2() throw(libtest::test_exception) {
+void btod_diag_test::test_nosym_2(bool add) throw(libtest::test_exception) {
 
-	static const char *testname = "btod_diag_test::test_nosym_2()";
+	static const char *testname = "btod_diag_test::test_nosym_2(bool)";
 
 	typedef libvmm::std_allocator<double> allocator_t;
 
@@ -228,10 +252,26 @@ void btod_diag_test::test_nosym_2() throw(libtest::test_exception) {
 
 	//	Prepare the reference
 	tod_btconv<4>(bta).perform(ta);
-	tod_diag<4, 2>(ta, msk, pb).perform(tb_ref);
 
-	//	Invoke the operation
-	btod_diag<4, 2>(bta, msk, pb).perform(btb);
+	if (add) {
+		//	Fill in random data
+		btod_random<3>().perform(btb);
+
+		//	Prepare the reference
+		tod_btconv<3>(btb).perform(tb_ref);
+
+		tod_diag<4, 2>(ta, msk, pb).perform(tb_ref, 1.0);
+
+		//	Invoke the operation
+		btod_diag<4, 2>(bta, msk, pb).perform(btb, 1.0);
+
+	} else {
+		tod_diag<4, 2>(ta, msk, pb).perform(tb_ref);
+
+		//	Invoke the operation
+		btod_diag<4, 2>(bta, msk, pb).perform(btb);
+	}
+
 	tod_btconv<3>(btb).perform(tb);
 
 	//	Compare against the reference
@@ -245,9 +285,9 @@ void btod_diag_test::test_nosym_2() throw(libtest::test_exception) {
 /**	\test Extract diagonal: \f$ b_i = a_{ii} \f$, non-zero tensor,
 	 multiple blocks
  **/
-void btod_diag_test::test_nosym_3() throw(libtest::test_exception) {
+void btod_diag_test::test_nosym_3(bool add) throw(libtest::test_exception) {
 
-	static const char *testname = "btod_diag_test::test_nosym_3()";
+	static const char *testname = "btod_diag_test::test_nosym_3(bool)";
 
 	typedef libvmm::std_allocator<double> allocator_t;
 
@@ -284,10 +324,26 @@ void btod_diag_test::test_nosym_3() throw(libtest::test_exception) {
 
 	//	Prepare the reference
 	tod_btconv<2>(bta).perform(ta);
-	tod_diag<2, 2>(ta, msk).perform(tb_ref);
 
-	//	Invoke the operation
-	btod_diag<2, 2>(bta, msk).perform(btb);
+	if (add) {
+		//	Fill in random data
+		btod_random<1>().perform(btb);
+
+		//	Prepare the reference
+		tod_btconv<1>(btb).perform(tb_ref);
+
+		tod_diag<2, 2>(ta, msk).perform(tb_ref, 1.0);
+
+		//	Invoke the operation
+		btod_diag<2, 2>(bta, msk).perform(btb, 1.0);
+	}
+	else {
+		tod_diag<2, 2>(ta, msk).perform(tb_ref);
+
+		//	Invoke the operation
+		btod_diag<2, 2>(bta, msk).perform(btb);
+	}
+
 	tod_btconv<1>(btb).perform(tb);
 
 	//	Compare against the reference
@@ -299,60 +355,77 @@ void btod_diag_test::test_nosym_3() throw(libtest::test_exception) {
 }
 
 
-/**	\test Extract diagonal: \f$ b_{ia} = a_{iia} \f$, non-zero tensor,
-	 single block
+/**	\test Extract diagonal: \f$ b_{ija} = a_{iaja} \f$, non-zero tensor,
+	 multiple blocks with permutation
  **/
-void btod_diag_test::test_nosym_4() throw(libtest::test_exception) {
+void btod_diag_test::test_nosym_4(bool add) throw(libtest::test_exception) {
 
-	static const char *testname = "btod_diag_test::test_nosym_4()";
+	static const char *testname = "btod_diag_test::test_nosym_4(bool)";
 
 	typedef libvmm::std_allocator<double> allocator_t;
 
 	try {
 
-	index<2> i2a, i2b;
-	i2b[0] = 10; i2b[1] = 5;
 	index<3> i3a, i3b;
-	i3b[0] = 10; i3b[1] = 10; i3b[2] = 5;
-	dimensions<2> dims2(index_range<2>(i2a, i2b));
+	i3b[0] = 5; i3b[1] = 5; i3b[2] = 10;
+	index<4> i4a, i4b;
+	i4b[0] = 5; i4b[1] = 10; i4b[2] = 5; i4b[3] = 10;
 	dimensions<3> dims3(index_range<3>(i3a, i3b));
-	block_index_space<2> bis2(dims2);
+	dimensions<4> dims4(index_range<4>(i4a, i4b));
 	block_index_space<3> bis3(dims3);
+	block_index_space<4> bis4(dims4);
 
-	mask<2> msk2;
-	msk2[0] = true; msk2[1] = false;
 	mask<3> msk3;
-	msk3[0] = true; msk3[1] = true; msk3[2] = false;
-	bis2.split(msk2,3); bis2.split(msk2,6);
-	bis3.split(msk3,3); bis3.split(msk3,6);
-	msk2[0] = false; msk2[1] = true;
+	msk3[0] = true; msk3[1] = true;
+	mask<4> msk4;
+	msk4[0] = true; msk4[2] = true;
+	bis3.split(msk3,2);
+	bis4.split(msk4,2);
 	msk3[0] = false; msk3[1] = false; msk3[2] = true;
-	bis2.split(msk2,5);
-	bis3.split(msk3,5);
+	msk4[0] = false; msk4[1] = true; msk4[2] = false; msk4[3] = true;
+	bis3.split(msk3,3);
+	bis4.split(msk4,3);
 
-	block_tensor<3, double, allocator_t> bta(bis3);
-	block_tensor<2, double, allocator_t> btb(bis2);
+	block_tensor<4, double, allocator_t> bta(bis4);
+	block_tensor<3, double, allocator_t> btb(bis3);
 
-	tensor<3, double, allocator_t> ta(dims3);
-	tensor<2, double, allocator_t> tb(dims2), tb_ref(dims2);
+	tensor<4, double, allocator_t> ta(dims4);
+	tensor<3, double, allocator_t> tb(dims3), tb_ref(dims3);
 
-	mask<3> msk;
-	msk[0] = true; msk[1] = true;
+	mask<4> msk;
+	msk[1] = true; msk[3] = true;
+
+	permutation<3> pb;
+	pb.permute(1,2);
 
 	//	Fill in random data
-	btod_random<3>().perform(bta);
+	btod_random<4>().perform(bta);
 	bta.set_immutable();
 
 	//	Prepare the reference
-	tod_btconv<3>(bta).perform(ta);
-	tod_diag<3, 2>(ta, msk).perform(tb_ref);
+	tod_btconv<4>(bta).perform(ta);
 
-	//	Invoke the operation
-	btod_diag<3, 2>(bta, msk).perform(btb);
-	tod_btconv<2>(btb).perform(tb);
+	if (add) {
+		btod_random<3>().perform(btb);
+
+		//	Prepare the reference
+		tod_btconv<3>(btb).perform(tb_ref);
+
+		tod_diag<4, 2>(ta, msk, pb).perform(tb_ref, 1.0);
+
+		//	Invoke the operation
+		btod_diag<4, 2>(bta, msk, pb).perform(btb, 1.0);
+	}
+	else {
+		tod_diag<4, 2>(ta, msk, pb).perform(tb_ref);
+
+		//	Invoke the operation
+		btod_diag<4, 2>(bta, msk, pb).perform(btb);
+	}
+	tod_btconv<3>(btb).perform(tb);
 
 	//	Compare against the reference
-	compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
+	compare_ref<3>::compare(testname, tb, tb_ref, 1e-15);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
@@ -362,9 +435,9 @@ void btod_diag_test::test_nosym_4() throw(libtest::test_exception) {
 /**	\test Extract diagonal: \f$ b_i = a_{ii} \f$, permutational symmetry,
 	 multiple blocks
  **/
-void btod_diag_test::test_sym_1() throw(libtest::test_exception) {
+void btod_diag_test::test_sym_1(bool add) throw(libtest::test_exception) {
 
-	static const char *testname = "btod_diag_test::test_sym_1()";
+	static const char *testname = "btod_diag_test::test_sym_1(bool)";
 
 	typedef libvmm::std_allocator<double> allocator_t;
 
@@ -407,10 +480,25 @@ void btod_diag_test::test_sym_1() throw(libtest::test_exception) {
 
 	//	Prepare the reference
 	tod_btconv<2>(bta).perform(ta);
-	tod_diag<2, 2>(ta, msk).perform(tb_ref);
 
-	//	Invoke the operation
-	btod_diag<2, 2>(bta, msk).perform(btb);
+	if (add) {
+		//	Fill in random data
+		btod_random<1>().perform(btb);
+
+		//	Prepare the reference
+		tod_btconv<1>(btb).perform(tb_ref);
+
+		tod_diag<2, 2>(ta, msk).perform(tb_ref, 1.0);
+
+		//	Invoke the operation
+		btod_diag<2, 2>(bta, msk).perform(btb, 1.0);
+	}
+	else {
+		tod_diag<2, 2>(ta, msk).perform(tb_ref);
+
+		//	Invoke the operation
+		btod_diag<2, 2>(bta, msk).perform(btb);
+	}
 	tod_btconv<1>(btb).perform(tb);
 
 	//	Compare against the reference
@@ -423,11 +511,11 @@ void btod_diag_test::test_sym_1() throw(libtest::test_exception) {
 
 
 /**	\test Extract diagonal: \f$ b_{ia} = a_{iia} \f$, permutational symmetry,
-	 multiple bloacks
+	 multiple blocks
  **/
-void btod_diag_test::test_sym_2() throw(libtest::test_exception) {
+void btod_diag_test::test_sym_2(bool add) throw(libtest::test_exception) {
 
-	static const char *testname = "btod_diag_test::test_sym_2()";
+	static const char *testname = "btod_diag_test::test_sym_2(bool)";
 
 	typedef libvmm::std_allocator<double> allocator_t;
 
@@ -474,10 +562,27 @@ void btod_diag_test::test_sym_2() throw(libtest::test_exception) {
 
 	//	Prepare the reference
 	tod_btconv<3>(bta).perform(ta);
-	tod_diag<3, 2>(ta, msk).perform(tb_ref);
 
-	//	Invoke the operation
-	btod_diag<3, 2>(bta, msk).perform(btb);
+	if (add) {
+		//	Fill in random data
+		btod_random<2>().perform(btb);
+
+		//	Prepare the reference
+		tod_btconv<2>(btb).perform(tb_ref);
+
+
+		tod_diag<3, 2>(ta, msk).perform(tb_ref, 1.0);
+
+		//	Invoke the operation
+		btod_diag<3, 2>(bta, msk).perform(btb, 1.0);
+	}
+	else {
+		tod_diag<3, 2>(ta, msk).perform(tb_ref);
+
+		//	Invoke the operation
+		btod_diag<3, 2>(bta, msk).perform(btb);
+	}
+
 	tod_btconv<2>(btb).perform(tb);
 
 	//	Compare against the reference
@@ -491,9 +596,9 @@ void btod_diag_test::test_sym_2() throw(libtest::test_exception) {
 /**	\test Extract diagonal: \f$ b_i = a_{ii} \f$, permutational anti-symmetry,
 	 multiple blocks
  **/
-void btod_diag_test::test_sym_3() throw(libtest::test_exception) {
+void btod_diag_test::test_sym_3(bool add) throw(libtest::test_exception) {
 
-	static const char *testname = "btod_diag_test::test_sym_3()";
+	static const char *testname = "btod_diag_test::test_sym_3(bool)";
 
 	typedef libvmm::std_allocator<double> allocator_t;
 
@@ -523,7 +628,7 @@ void btod_diag_test::test_sym_3() throw(libtest::test_exception) {
 
 	permutation<2> perm10;
 	perm10.permute(0, 1);
-	se_perm<2, double> cycle1(perm10, true);
+	se_perm<2, double> cycle1(perm10, false);
 	block_tensor_ctrl<2, double> ctrla(bta);
 	ctrla.req_symmetry().insert(cycle1);
 
@@ -536,10 +641,26 @@ void btod_diag_test::test_sym_3() throw(libtest::test_exception) {
 
 	//	Prepare the reference
 	tod_btconv<2>(bta).perform(ta);
-	tod_diag<2, 2>(ta, msk).perform(tb_ref);
 
-	//	Invoke the operation
-	btod_diag<2, 2>(bta, msk).perform(btb);
+	if (add) {
+		//	Fill in random data
+		btod_random<1>().perform(btb);
+
+		//	Prepare the reference
+		tod_btconv<1>(btb).perform(tb_ref);
+
+		tod_diag<2, 2>(ta, msk).perform(tb_ref, 1.0);
+
+		//	Invoke the operation
+		btod_diag<2, 2>(bta, msk).perform(btb, 1.0);
+	}
+	else {
+		tod_diag<2, 2>(ta, msk).perform(tb_ref);
+
+		//	Invoke the operation
+		btod_diag<2, 2>(bta, msk).perform(btb);
+	}
+
 	tod_btconv<1>(btb).perform(tb);
 
 	//	Compare against the reference
@@ -551,65 +672,84 @@ void btod_diag_test::test_sym_3() throw(libtest::test_exception) {
 }
 
 
-/**	\test Extract diagonal: \f$ b_{ia} = a_{iia} \f$, non-zero tensor, single block
+/**	\test Extract diagonal: \f$ b_{ija} = a_{iaja} \f$, permutational anti-symmetry,
+	 multiple blocks
  **/
-void btod_diag_test::test_sym_4() throw(libtest::test_exception) {
+void btod_diag_test::test_sym_4(bool add) throw(libtest::test_exception) {
 
-	static const char *testname = "btod_diag_test::test_sym_4()";
+	static const char *testname = "btod_diag_test::test_sym_4(bool)";
 
 	typedef libvmm::std_allocator<double> allocator_t;
 
 	try {
 
-	index<2> i2a, i2b;
-	i2b[0] = 10; i2b[1] = 5;
 	index<3> i3a, i3b;
-	i3b[0] = 10; i3b[1] = 10; i3b[2] = 5;
-	dimensions<2> dims2(index_range<2>(i2a, i2b));
+	i3b[0] = 5; i3b[1] = 5; i3b[2] = 10;
+	index<4> i4a, i4b;
+	i4b[0] = 5; i4b[1] = 10; i4b[2] = 5; i4b[3] = 10;
 	dimensions<3> dims3(index_range<3>(i3a, i3b));
-	block_index_space<2> bis2(dims2);
+	dimensions<4> dims4(index_range<4>(i4a, i4b));
 	block_index_space<3> bis3(dims3);
+	block_index_space<4> bis4(dims4);
 
-	mask<2> msk2;
-	msk2[0] = true; msk2[1] = false;
 	mask<3> msk3;
-	msk3[0] = true; msk3[1] = true; msk3[2] = false;
-	bis2.split(msk2,3); bis2.split(msk2,6);
-	bis3.split(msk3,3); bis3.split(msk3,6);
-	msk2[0] = false; msk2[1] = true;
+	msk3[0] = true; msk3[1] = true;
+	mask<4> msk4;
+	msk4[0] = true; msk4[2] = true;
+	bis3.split(msk3,2);
+	bis4.split(msk4,2);
 	msk3[0] = false; msk3[1] = false; msk3[2] = true;
-	bis2.split(msk2,5);
-	bis3.split(msk3,5);
+	msk4[0] = false; msk4[1] = true; msk4[2] = false; msk4[3] = true;
+	bis3.split(msk3,3);
+	bis4.split(msk4,3);
 
-	block_tensor<3, double, allocator_t> bta(bis3);
-	block_tensor<2, double, allocator_t> btb(bis2);
+	block_tensor<4, double, allocator_t> bta(bis4);
+	block_tensor<3, double, allocator_t> btb(bis3);
 
-	tensor<3, double, allocator_t> ta(dims3);
-	tensor<2, double, allocator_t> tb(dims2), tb_ref(dims2);
+	tensor<4, double, allocator_t> ta(dims4);
+	tensor<3, double, allocator_t> tb(dims3), tb_ref(dims3);
 
-	permutation<3> perm10;
-	perm10.permute(0, 1);
-	se_perm<3, double> cycle1(perm10, true);
-	block_tensor_ctrl<3, double> ctrla(bta);
+	permutation<4> perm20;
+	perm20.permute(0, 2);
+	se_perm<4, double> cycle1(perm20, false);
+	block_tensor_ctrl<4, double> ctrla(bta);
 	ctrla.req_symmetry().insert(cycle1);
 
-	mask<3> msk;
-	msk[0] = true; msk[1] = true;
+	mask<4> msk;
+	msk[1] = true; msk[3] = true;
+
+	permutation<3> pb;
+	pb.permute(1,2);
 
 	//	Fill in random data
-	btod_random<3>().perform(bta);
+	btod_random<4>().perform(bta);
 	bta.set_immutable();
 
 	//	Prepare the reference
-	tod_btconv<3>(bta).perform(ta);
-	tod_diag<3, 2>(ta, msk).perform(tb_ref);
+	tod_btconv<4>(bta).perform(ta);
 
-	//	Invoke the operation
-	btod_diag<3, 2>(bta, msk).perform(btb);
-	tod_btconv<2>(btb).perform(tb);
+	if (add) {
+		//	Fill in random data
+		btod_random<3>().perform(btb);
+
+		//	Prepare the reference
+		tod_btconv<3>(btb).perform(tb_ref);
+
+		tod_diag<4, 2>(ta, msk, pb).perform(tb_ref, 1.0);
+
+		//	Invoke the operation
+		btod_diag<4, 2>(bta, msk, pb).perform(btb, 1.0);
+	}
+	else {
+		tod_diag<4, 2>(ta, msk, pb).perform(tb_ref);
+
+		//	Invoke the operation
+		btod_diag<4, 2>(bta, msk, pb).perform(btb);
+	}
+	tod_btconv<3>(btb).perform(tb);
 
 	//	Compare against the reference
-	compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
+	compare_ref<3>::compare(testname, tb, tb_ref, 1e-15);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
