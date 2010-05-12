@@ -32,7 +32,7 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("btod_set", m_utf_btod_set);
 	add_test("btod_set_diag", m_utf_btod_set_diag);
 	add_test("btod_set_elem", m_utf_btod_set_elem);
-	//~ add_test("btod_sum", m_utf_btod_sum);
+	add_test("btod_sum", m_utf_btod_sum);
 	add_test("btod_trace", m_utf_btod_trace);
 	//~ add_test("contract", m_utf_contract);
 	add_test("contraction2", m_utf_contraction2);

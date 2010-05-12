@@ -57,6 +57,12 @@ protected:
 	virtual void compute_block(tensor_i<N, double> &blk, const index<N> &i,
 		const transf<N, double> &tr, double c) = 0;
 
+	/**	\brief Invokes compute_block on another additive operation;
+			allows derived classes to call other additive operations
+	 **/
+	void compute_block(additive_btod<N> &op, tensor_i<N, double> &blk,
+		const index<N> &i, const transf<N, double> &tr, double c);
+
 private:
 	typedef addition_schedule<N, double> schedule_t;
 	typedef typename schedule_t::schedule_node_t schedule_node_t;
@@ -77,6 +83,15 @@ private:
 		const tier4_list_t &tier4);
 
 };
+
+
+template<size_t N>
+inline void additive_btod<N>::compute_block(additive_btod<N> &op,
+	tensor_i<N, double> &blk, const index<N> &i,
+	const transf<N, double> &tr, double c) {
+
+	op.compute_block(blk, i, tr, c);
+}
 
 
 template<size_t N>

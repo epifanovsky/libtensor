@@ -47,9 +47,13 @@ private:
 	} node_t;
 
 private:
-	std::list<node_t> m_ops; //!< List of operations
+	mutable std::list<node_t> m_ops; //!< List of operations
 	block_index_space<N> m_bis; //!< Block index space
+	dimensions<N> m_bidims; //!< Block index dims
 	symmetry<N, double> m_sym; //!< Symmetry of operation
+	mutable bool m_dirty_sch; //!< Whether the assignment schedule is dirty
+	mutable assignment_schedule<N, double> *m_sch; //!< Assignment schedule
+
 public:
 	//!	\name Construction and destruction
 	//@{
@@ -69,9 +73,20 @@ public:
 
 	//!	\name Implementation of libtensor::direct_tensor_operation<N>
 	//@{
-	virtual const block_index_space<N> &get_bis() const;
-	virtual const symmetry<N, double> &get_symmetry() const;
-	virtual void perform(block_tensor_i<N, double> &bt) throw(exception);
+
+	virtual const block_index_space<N> &get_bis() const {
+		return m_bis;
+	}
+
+	virtual const symmetry<N, double> &get_symmetry() const {
+		return m_sym;
+	}
+
+	virtual const assignment_schedule<N, double> &get_schedule() const {
+		if(m_sch == 0 || m_dirty_sch) make_schedule();
+		return *m_sch;
+	}
+
 	virtual void perform(block_tensor_i<N, double> &bt, const index<N> &idx)
 		throw(exception);
 	//@}
@@ -79,13 +94,13 @@ public:
 
 	//!	\name Implementation of libtensor::additive_btod<N>
 	//@{
-	virtual const assignment_schedule<N, double> &get_schedule() const;
 	virtual void compute_block(tensor_i<N, double> &blk,
-		const index<N> &i) { }
+		const index<N> &i);
 	virtual void compute_block(tensor_i<N, double> &blk, const index<N> &i,
-		const transf<N, double> &tr, double c) { }
-	virtual void perform(block_tensor_i<N, double> &bt, double c)
-		throw(exception);
+		const transf<N, double> &tr, double c);
+
+	using additive_btod<N>::perform;
+
 	virtual void perform(block_tensor_i<N, double> &bt, const index<N> &idx,
 		double c) throw(exception);
 	//@}
@@ -103,6 +118,9 @@ public:
 	//@}
 
 private:
+	void make_schedule() const;
+
+private:
 	btod_sum<N> &operator=(const btod_sum<N>&);
 
 };
@@ -114,7 +132,8 @@ const char* btod_sum<N>::k_clazz = "btod_sum<N>";
 
 template<size_t N>
 inline btod_sum<N>::btod_sum(additive_btod<N> &op, double c) :
-	m_bis(op.get_bis()), m_sym(op.get_bis()) {
+	m_bis(op.get_bis()), m_bidims(m_bis.get_block_index_dims()),
+	m_sym(m_bis), m_dirty_sch(true), m_sch(0) {
 
 	add_op(op, c);
 }
@@ -123,52 +142,7 @@ inline btod_sum<N>::btod_sum(additive_btod<N> &op, double c) :
 template<size_t N>
 btod_sum<N>::~btod_sum() {
 
-}
-
-
-template<size_t N>
-inline const block_index_space<N> &btod_sum<N>::get_bis() const {
-
-	return m_bis;
-}
-
-
-template<size_t N>
-const symmetry<N, double> &btod_sum<N>::get_symmetry() const {
-
-	return m_sym;
-}
-
-
-template<size_t N>
-const assignment_schedule<N, double> &btod_sum<N>::get_schedule() const {
-
-	throw not_implemented(g_ns, k_clazz, "get_schedule()",
-		__FILE__, __LINE__);
-}
-
-
-template<size_t N>
-void btod_sum<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
-
-	static const char *method = "perform(block_tensor_i<N, double>&)";
-
-	if(!m_bis.equals(bt.get_bis())) {
-		throw bad_block_index_space(g_ns, k_clazz, method, __FILE__,
-			__LINE__, "Incompatible block index space.");
-	}
-
-	timings< btod_sum<N> >::start_timer();
-
-	block_tensor_ctrl<N, double> ctrl(bt);
-	ctrl.req_zero_all_blocks();
-
-	typename std::list<node_t>::iterator i = m_ops.begin();
-	for(; i != m_ops.end(); i++) {
-		i->get_op().perform(bt, i->get_coeff());
-	}
-
-	timings< btod_sum<N> >::stop_timer();
+	delete m_sch;
 }
 
 
@@ -193,28 +167,6 @@ void btod_sum<N>::perform(block_tensor_i<N, double> &bt, const index<N> &idx)
 
 
 template<size_t N>
-void btod_sum<N>::perform(block_tensor_i<N, double> &bt, double c)
-	throw(exception) {
-
-	static const char *method = "perform(block_tensor_i<N, double>&)";
-
-	if(!m_bis.equals(bt.get_bis())) {
-		throw bad_block_index_space(g_ns, k_clazz, method, __FILE__,
-			__LINE__, "Incompatible block index space.");
-	}
-
-	timings< btod_sum<N> >::start_timer();
-
-	typename std::list<node_t>::iterator i = m_ops.begin();
-	for(; i != m_ops.end(); i++) {
-		i->get_op().perform(bt, i->get_coeff() * c);
-	}
-
-	timings< btod_sum<N> >::stop_timer();
-}
-
-
-template<size_t N>
 void btod_sum<N>::perform(block_tensor_i<N, double> &bt, const index<N> &idx,
 	double c) throw(exception) {
 
@@ -226,16 +178,76 @@ void btod_sum<N>::perform(block_tensor_i<N, double> &bt, const index<N> &idx,
 
 
 template<size_t N>
+void btod_sum<N>::compute_block(tensor_i<N, double> &blk, const index<N> &i) {
+
+	abs_index<N> ai(i, m_bidims);
+	transf<N, double> tr0;
+
+	tod_set<N>().perform(blk);
+
+	for(typename std::list<node_t>::iterator iop = m_ops.begin();
+		iop != m_ops.end(); iop++) {
+
+		if(iop->get_op().get_schedule().contains(ai.get_abs_index())) {
+			additive_btod<N>::compute_block(iop->get_op(), blk, i,
+				tr0, iop->get_coeff());
+		}
+	}
+}
+
+
+template<size_t N>
+void btod_sum<N>::compute_block(tensor_i<N, double> &blk, const index<N> &i,
+	const transf<N, double> &tr, double c) {
+
+	abs_index<N> ai(i, m_bidims);
+
+	for(typename std::list<node_t>::iterator iop = m_ops.begin();
+		iop != m_ops.end(); iop++) {
+
+		if(iop->get_op().get_schedule().contains(ai.get_abs_index())) {
+			additive_btod<N>::compute_block(iop->get_op(), blk, i,
+				tr, c * iop->get_coeff());
+		}
+	}
+}
+
+
+template<size_t N>
 void btod_sum<N>::add_op(additive_btod<N> &op, double c) {
 
 	static const char *method = "add_op(additive_btod<N>&, double)";
 
 	if(!op.get_bis().equals(m_bis)) {
-		throw bad_block_index_space(g_ns, k_clazz, method, __FILE__, __LINE__,
-			"Incompatible block index space.");
+		throw bad_block_index_space(g_ns, k_clazz, method,
+			__FILE__, __LINE__, "op");
 	}
 
 	m_ops.push_back(node_t(op, c));
+}
+
+
+template<size_t N>
+void btod_sum<N>::make_schedule() const {
+
+	delete m_sch;
+	m_sch = new assignment_schedule<N, double>(m_bidims);
+
+	for(typename std::list<node_t>::iterator iop = m_ops.begin();
+		iop != m_ops.end(); iop++) {
+
+		const assignment_schedule<N, double> &sch =
+			iop->get_op().get_schedule();
+		for(typename assignment_schedule<N, double>::iterator j =
+			sch.begin(); j != sch.end(); j++) {
+
+			if(!m_sch->contains(sch.get_abs_index(j))) {
+				m_sch->insert(sch.get_abs_index(j));
+			}
+		}
+	}
+
+	m_dirty_sch = false;
 }
 
 
