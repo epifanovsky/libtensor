@@ -7,13 +7,13 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 
 	add_test("abs_index", m_utf_abs_index);
 	add_test("addition_schedule", m_utf_addition_schedule);
-	//~ add_test("anon_eval", m_utf_anon_eval);
+	add_test("anon_eval", m_utf_anon_eval);
 	add_test("bispace", m_utf_bispace);
 	add_test("bispace_expr", m_utf_bispace_expr);
 	add_test("block_index_space", m_utf_block_index_space);
 	add_test("block_map", m_utf_block_map);
 	add_test("block_tensor", m_utf_block_tensor);
-	//~ add_test("btensor", m_utf_btensor);
+	add_test("btensor", m_utf_btensor);
 	add_test("btod_add", m_utf_btod_add);
 	add_test("btod_compare", m_utf_btod_compare);
 	add_test("btod_contract2", m_utf_btod_contract2);
@@ -34,22 +34,22 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("btod_set_elem", m_utf_btod_set_elem);
 	add_test("btod_sum", m_utf_btod_sum);
 	add_test("btod_trace", m_utf_btod_trace);
-	//~ add_test("contract", m_utf_contract);
+	add_test("contract", m_utf_contract);
 	add_test("contraction2", m_utf_contraction2);
 	add_test("contraction2_list_builder", m_utf_contraction2_list_builder);
 	add_test("diag", m_utf_diag);
 	add_test("dimensions", m_utf_dimensions);
 	//~ add_test("direct_block_tensor", m_utf_direct_block_tensor);
 	//~ add_test("direct_btensor", m_utf_direct_btensor);
-	//~ add_test("direct_product", m_utf_direct_product);
-	//~ add_test("dirsum", m_utf_dirsum);
-	//~ add_test("dot_product", m_utf_dot_product);
-	//~ add_test("expr", m_utf_expr);
+	add_test("direct_product", m_utf_direct_product);
+	add_test("dirsum", m_utf_dirsum);
+	add_test("dot_product", m_utf_dot_product);
+	add_test("expr", m_utf_expr);
 	add_test("global_timings", m_utf_global_timings);
 	add_test("immutable", m_utf_immutable);
 	add_test("index", m_utf_index);
 	add_test("index_range", m_utf_index_range);
-	//~ add_test("labeled_btensor", m_utf_labeled_btensor);
+	add_test("labeled_btensor", m_utf_labeled_btensor);
 	add_test("letter", m_utf_letter);
 	add_test("letter_expr", m_utf_letter_expr);
 	add_test("mask", m_utf_mask);
@@ -72,7 +72,7 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("so_union", m_utf_so_union);
 	add_test("so_union_impl_perm", m_utf_so_union_impl_perm);
 	add_test("symel_cycleperm", m_utf_symel_cycleperm);
-	//~ add_test("symm", m_utf_symm);
+	add_test("symm", m_utf_symm);
 	add_test("symmetry", m_utf_symmetry);
 	add_test("symmetry_element_base", m_utf_symmetry_element_base);
 	add_test("symmetry_element_set", m_utf_symmetry_element_set);
@@ -103,7 +103,7 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("tod_sum", m_utf_tod_sum);
 	add_test("tod_symcontract2", m_utf_tod_symcontract2);
 	add_test("tod_trace", m_utf_tod_trace);
-	//~ add_test("trace", m_utf_trace);
+	add_test("trace", m_utf_trace);
 	add_test("version", m_utf_version);
 }
 

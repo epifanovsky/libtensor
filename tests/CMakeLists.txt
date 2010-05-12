@@ -3,13 +3,13 @@ set(SRC
 	libtensor_suite.C
 	abs_index_test.C
 	addition_schedule_test.C
-#	anon_eval_test.C
+	anon_eval_test.C
 	bispace_test.C
 	bispace_expr_test.C
 	block_index_space_test.C
 	block_map_test.C
 	block_tensor_test.C
-#	btensor_test.C
+	btensor_test.C
 	btod_add_test.C
 	btod_compare_test.C
 	btod_contract2_test.C
@@ -30,22 +30,22 @@ set(SRC
 	btod_set_elem_test.C
 	btod_sum_test.C
 	btod_trace_test.C
-#	contract_test.C
+	contract_test.C
 	contraction2_test.C
 	contraction2_list_builder_test.C
 	diag_test.C
 	dimensions_test.C
 #	direct_block_tensor_test.C
 #	direct_btensor_test.C
-#	direct_product_test.C
-#	dirsum_test.C
-#	dot_product_test.C
-#	expr_test.C
+	direct_product_test.C
+	dirsum_test.C
+	dot_product_test.C
+	expr_test.C
 	global_timings_test.C
 	immutable_test.C
 	index_test.C
 	index_range_test.C
-#	labeled_btensor_test.C
+	labeled_btensor_test.C
 	letter_test.C
 	letter_expr_test.C
 	mask_test.C
@@ -68,7 +68,7 @@ set(SRC
 	so_union_test.C
 	so_union_impl_perm_test.C
 	symel_cycleperm_test.C
-#	symm_test.C
+	symm_test.C
 	symmetry_test.C
 	symmetry_element_base_test.C
 	symmetry_element_set_test.C
@@ -98,7 +98,7 @@ set(SRC
 	tod_sum_test.C
 	tod_symcontract2_test.C
 	tod_trace_test.C
-#	trace_test.C
+	trace_test.C
 	version_test.C
 )
 add_executable(libtensor_tests ${SRC})

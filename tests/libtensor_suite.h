@@ -4,13 +4,13 @@
 #include <libtest/test_suite.h>
 #include "abs_index_test.h"
 #include "addition_schedule_test.h"
-//~ #include "anon_eval_test.h"
+#include "anon_eval_test.h"
 #include "bispace_test.h"
 #include "bispace_expr_test.h"
 #include "block_index_space_test.h"
 #include "block_map_test.h"
 #include "block_tensor_test.h"
-//~ #include "btensor_test.h"
+#include "btensor_test.h"
 #include "btod_add_test.h"
 #include "btod_compare_test.h"
 #include "btod_contract2_test.h"
@@ -31,22 +31,22 @@
 #include "btod_set_elem_test.h"
 #include "btod_sum_test.h"
 #include "btod_trace_test.h"
-//~ #include "contract_test.h"
+#include "contract_test.h"
 #include "contraction2_test.h"
 #include "contraction2_list_builder_test.h"
 #include "diag_test.h"
 #include "dimensions_test.h"
 //~ #include "direct_block_tensor_test.h"
 //~ #include "direct_btensor_test.h"
-//~ #include "direct_product_test.h"
-//~ #include "dirsum_test.h"
-//~ #include "dot_product_test.h"
-//~ #include "expr_test.h"
+#include "direct_product_test.h"
+#include "dirsum_test.h"
+#include "dot_product_test.h"
+#include "expr_test.h"
 #include "global_timings_test.h"
 #include "immutable_test.h"
 #include "index_test.h"
 #include "index_range_test.h"
-//~ #include "labeled_btensor_test.h"
+#include "labeled_btensor_test.h"
 #include "letter_expr_test.h"
 #include "letter_test.h"
 #include "mask_test.h"
@@ -69,7 +69,7 @@
 #include "so_union_test.h"
 #include "so_union_impl_perm_test.h"
 #include "symel_cycleperm_test.h"
-//~ #include "symm_test.h"
+#include "symm_test.h"
 #include "symmetry_test.h"
 #include "symmetry_element_base_test.h"
 #include "symmetry_element_set_test.h"
@@ -99,7 +99,7 @@
 #include "tod_sum_test.h"
 #include "tod_symcontract2_test.h"
 #include "tod_trace_test.h"
-//~ #include "trace_test.h"
+#include "trace_test.h"
 #include "version_test.h"
 
 using libtest::unit_test_factory;
@@ -214,13 +214,13 @@ class libtensor_suite : public libtest::test_suite {
 private:
 	unit_test_factory<abs_index_test> m_utf_abs_index;
 	unit_test_factory<addition_schedule_test> m_utf_addition_schedule;
-	//~ unit_test_factory<anon_eval_test> m_utf_anon_eval;
+	unit_test_factory<anon_eval_test> m_utf_anon_eval;
 	unit_test_factory<bispace_test> m_utf_bispace;
 	unit_test_factory<bispace_expr_test> m_utf_bispace_expr;
 	unit_test_factory<block_index_space_test> m_utf_block_index_space;
 	unit_test_factory<block_map_test> m_utf_block_map;
 	unit_test_factory<block_tensor_test> m_utf_block_tensor;
-	//~ unit_test_factory<btensor_test> m_utf_btensor;
+	unit_test_factory<btensor_test> m_utf_btensor;
 	unit_test_factory<btod_add_test> m_utf_btod_add;
 	unit_test_factory<btod_compare_test> m_utf_btod_compare;
 	unit_test_factory<btod_contract2_test> m_utf_btod_contract2;
@@ -241,7 +241,7 @@ private:
 	unit_test_factory<btod_set_elem_test> m_utf_btod_set_elem;
 	unit_test_factory<btod_sum_test> m_utf_btod_sum;
 	unit_test_factory<btod_trace_test> m_utf_btod_trace;
-	//~ unit_test_factory<contract_test> m_utf_contract;
+	unit_test_factory<contract_test> m_utf_contract;
 	unit_test_factory<contraction2_test> m_utf_contraction2;
 	unit_test_factory<contraction2_list_builder_test>
 		m_utf_contraction2_list_builder;
@@ -249,15 +249,15 @@ private:
 	unit_test_factory<dimensions_test> m_utf_dimensions;
 	//~ unit_test_factory<direct_block_tensor_test> m_utf_direct_block_tensor;
 	//~ unit_test_factory<direct_btensor_test> m_utf_direct_btensor;
-	//~ unit_test_factory<direct_product_test> m_utf_direct_product;
-	//~ unit_test_factory<dirsum_test> m_utf_dirsum;
-	//~ unit_test_factory<dot_product_test> m_utf_dot_product;
-	//~ unit_test_factory<expr_test> m_utf_expr;
+	unit_test_factory<direct_product_test> m_utf_direct_product;
+	unit_test_factory<dirsum_test> m_utf_dirsum;
+	unit_test_factory<dot_product_test> m_utf_dot_product;
+	unit_test_factory<expr_test> m_utf_expr;
 	unit_test_factory<global_timings_test> m_utf_global_timings;
 	unit_test_factory<immutable_test> m_utf_immutable;
 	unit_test_factory<index_test> m_utf_index;
 	unit_test_factory<index_range_test> m_utf_index_range;
-	//~ unit_test_factory<labeled_btensor_test> m_utf_labeled_btensor;
+	unit_test_factory<labeled_btensor_test> m_utf_labeled_btensor;
 	unit_test_factory<letter_test> m_utf_letter;
 	unit_test_factory<letter_expr_test> m_utf_letter_expr;
 	unit_test_factory<mask_test> m_utf_mask;
@@ -282,7 +282,7 @@ private:
 	unit_test_factory<so_union_test> m_utf_so_union;
 	unit_test_factory<so_union_impl_perm_test> m_utf_so_union_impl_perm;
 	unit_test_factory<symel_cycleperm_test> m_utf_symel_cycleperm;
-	//~ unit_test_factory<symm_test> m_utf_symm;
+	unit_test_factory<symm_test> m_utf_symm;
 	unit_test_factory<symmetry_test> m_utf_symmetry;
 	unit_test_factory<symmetry_element_base_test>
 		m_utf_symmetry_element_base;
@@ -314,7 +314,7 @@ private:
 	unit_test_factory<tod_sum_test> m_utf_tod_sum;
 	unit_test_factory<tod_symcontract2_test> m_utf_tod_symcontract2;
 	unit_test_factory<tod_trace_test> m_utf_tod_trace;
-	//~ unit_test_factory<trace_test> m_utf_trace;
+	unit_test_factory<trace_test> m_utf_trace;
 	unit_test_factory<version_test> m_utf_version;
 
 public:
