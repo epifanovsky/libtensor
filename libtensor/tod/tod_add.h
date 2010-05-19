@@ -181,7 +181,7 @@ void tod_add<N>::add_operand(tensor_i<N, double> &t, const permutation<N> &p,
 
 
 template<size_t N>
-void tod_add<N>::prefetch() throw(exception) {
+void tod_add<N>::prefetch() {
 
 	for(typename std::list<arg>::iterator i = m_args.begin();
 		i != m_args.end(); i++) {
@@ -192,7 +192,7 @@ void tod_add<N>::prefetch() throw(exception) {
 
 
 template<size_t N>
-void tod_add<N>::perform(tensor_i<N, double> &t) throw(exception) {
+void tod_add<N>::perform(tensor_i<N, double> &t) {
 
 	static const char *method = "perform(tensor_i<N, double>&)";
 
@@ -216,7 +216,7 @@ void tod_add<N>::perform(tensor_i<N, double> &t) throw(exception) {
 
 
 template<size_t N>
-void tod_add<N>::perform(tensor_i<N, double> &t, double c) throw(exception) {
+void tod_add<N>::perform(tensor_i<N, double> &t, double c) {
 
 	static const char *method = "perform(tensor_i<N, double>&, double)";
 
