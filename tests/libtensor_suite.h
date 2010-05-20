@@ -23,7 +23,7 @@
 //~ #include "btod_mult_test.h"
 #include "btod_mult1_test.h"
 #include "btod_random_test.h"
-//~ #include "btod_read_test.h"
+#include "btod_read_test.h"
 #include "btod_scale_test.h"
 #include "btod_select_test.h"
 #include "btod_set_test.h"
@@ -233,7 +233,7 @@ private:
 	//~ unit_test_factory<btod_mult_test> m_utf_btod_mult;
 	unit_test_factory<btod_mult1_test> m_utf_btod_mult1;
 	unit_test_factory<btod_random_test> m_utf_btod_random;
-	//~ unit_test_factory<btod_read_test> m_utf_btod_read;
+	unit_test_factory<btod_read_test> m_utf_btod_read;
 	unit_test_factory<btod_scale_test> m_utf_btod_scale;
 	unit_test_factory<btod_select_test> m_utf_btod_select;
 	unit_test_factory<btod_set_test> m_utf_btod_set;
