@@ -14,6 +14,7 @@ set(SRC
 	btod_contract2_test.C
 	btod_copy_test.C
 	btod_diag_test.C
+	btod_diagonalize_test.C
 	btod_dirsum_test.C
 	btod_dotprod_test.C
 	btod_extract_test.C
@@ -29,6 +30,7 @@ set(SRC
 	btod_set_elem_test.C
 	btod_sum_test.C
 	btod_trace_test.C
+	btod_tridiagonalize_test.C
 	contract_test.C
 	contraction2_test.C
 	contraction2_list_builder_test.C

@@ -18,6 +18,7 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("btod_contract2", m_utf_btod_contract2);
 	add_test("btod_copy", m_utf_btod_copy);
 	add_test("btod_diag", m_utf_btod_diag);
+	add_test("btod_diagonalize", m_utf_btod_diagonalize);
 	add_test("btod_dirsum", m_utf_btod_dirsum);
 	add_test("btod_dotprod", m_utf_btod_dotprod);
 	add_test("btod_extract", m_utf_btod_extract);
@@ -33,6 +34,7 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("btod_set_elem", m_utf_btod_set_elem);
 	add_test("btod_sum", m_utf_btod_sum);
 	add_test("btod_trace", m_utf_btod_trace);
+	add_test("btod_tridiagonalize", m_utf_btod_tridiagonalize);
 	add_test("contract", m_utf_contract);
 	add_test("contraction2", m_utf_contraction2);
 	add_test("contraction2_list_builder", m_utf_contraction2_list_builder);

@@ -15,6 +15,7 @@
 #include "btod_contract2_test.h"
 #include "btod_copy_test.h"
 #include "btod_diag_test.h"
+#include "btod_diagonalize_test.h"
 #include "btod_dirsum_test.h"
 #include "btod_dotprod_test.h"
 #include "btod_extract_test.h"
@@ -30,6 +31,7 @@
 #include "btod_set_elem_test.h"
 #include "btod_sum_test.h"
 #include "btod_trace_test.h"
+#include "btod_tridiagonalize_test.h"
 #include "contract_test.h"
 #include "contraction2_test.h"
 #include "contraction2_list_builder_test.h"
@@ -109,6 +111,7 @@ namespace libtensor {
 	\li libtensor::btod_contract2_test
 	\li libtensor::btod_copy_test
 	\li libtensor::btod_diag_test
+	\li libtensor::btod_diagonalize_test
 	\li libtensor::btod_dirsum_test
 	\li libtensor::btod_dotprod_test
 	\li libtensor::btod_extract_test
@@ -124,6 +127,7 @@ namespace libtensor {
 	\li libtensor::btod_set_elem_test
 	\li libtensor::btod_sum_test
 	\li libtensor::btod_trace_test
+	\li libtensor::btod_tridiagonalize_test
 	\li libtensor::contract_test
 	\li libtensor::contraction2_test
 	\li libtensor::contraction2_list_builder_test
@@ -197,6 +201,7 @@ private:
 	unit_test_factory<btod_contract2_test> m_utf_btod_contract2;
 	unit_test_factory<btod_copy_test> m_utf_btod_copy;
 	unit_test_factory<btod_diag_test> m_utf_btod_diag;
+	unit_test_factory<btod_diagonalize_test> m_utf_btod_diagonalize;
 	unit_test_factory<btod_dirsum_test> m_utf_btod_dirsum;
 	unit_test_factory<btod_dotprod_test> m_utf_btod_dotprod;
 	unit_test_factory<btod_extract_test> m_utf_btod_extract;
@@ -212,6 +217,7 @@ private:
 	unit_test_factory<btod_set_elem_test> m_utf_btod_set_elem;
 	unit_test_factory<btod_sum_test> m_utf_btod_sum;
 	unit_test_factory<btod_trace_test> m_utf_btod_trace;
+	unit_test_factory<btod_tridiagonalize_test> m_utf_btod_tridiagonalize;
 	unit_test_factory<contract_test> m_utf_contract;
 	unit_test_factory<contraction2_test> m_utf_contraction2;
 	unit_test_factory<contraction2_list_builder_test>
