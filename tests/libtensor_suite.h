@@ -36,7 +36,7 @@
 #include "contraction2_list_builder_test.h"
 #include "diag_test.h"
 #include "dimensions_test.h"
-//~ #include "direct_block_tensor_test.h"
+#include "direct_block_tensor_test.h"
 //~ #include "direct_btensor_test.h"
 #include "direct_product_test.h"
 #include "dirsum_test.h"
@@ -247,7 +247,7 @@ private:
 		m_utf_contraction2_list_builder;
 	unit_test_factory<diag_test> m_utf_diag;
 	unit_test_factory<dimensions_test> m_utf_dimensions;
-	//~ unit_test_factory<direct_block_tensor_test> m_utf_direct_block_tensor;
+	unit_test_factory<direct_block_tensor_test> m_utf_direct_block_tensor;
 	//~ unit_test_factory<direct_btensor_test> m_utf_direct_btensor;
 	unit_test_factory<direct_product_test> m_utf_direct_product;
 	unit_test_factory<dirsum_test> m_utf_dirsum;

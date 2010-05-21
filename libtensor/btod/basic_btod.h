@@ -29,12 +29,7 @@ class basic_btod : public direct_block_tensor_operation<N, double> {
 public:
 	using direct_block_tensor_operation<N, double>::get_bis;
 	using direct_block_tensor_operation<N, double>::get_symmetry;
-
-public:
-	/**	\brief Returns the assignment schedule -- the preferred order
-			of computing blocks
-	 **/
-	virtual const assignment_schedule<N, double> &get_schedule() const = 0;
+	using direct_block_tensor_operation<N, double>::get_schedule;
 
 public:
 	/**	\brief Computes the result of the operation into an output

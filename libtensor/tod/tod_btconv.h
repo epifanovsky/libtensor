@@ -142,6 +142,7 @@ void tod_btconv<N>::perform(tensor_i<N, double> &t) throw(exception) {
 		if(src_ctrl.req_is_zero_block(blk_idx)) continue;
 
 		tensor_i<N, double> &blk = src_ctrl.req_block(blk_idx);
+		{
 		tensor_ctrl<N, double> blk_ctrl(blk);
 		const double *src_ptr = blk_ctrl.req_const_dataptr();
 
@@ -158,6 +159,7 @@ void tod_btconv<N>::perform(tensor_i<N, double> &t) throw(exception) {
 		}
 
 		blk_ctrl.ret_dataptr(src_ptr);
+		}
 		src_ctrl.ret_block(blk_idx);
 
 	}

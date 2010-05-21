@@ -3,6 +3,7 @@
 
 #include "../defs.h"
 #include "../exception.h"
+#include "abs_index.h"
 #include "block_map.h"
 #include "direct_block_tensor_base.h"
 #include "direct_block_tensor_operation.h"
@@ -15,37 +16,33 @@ namespace libtensor {
 	\tparam Alloc Memory allocator type.
 
 	\ingroup libtensor_core
-**/
+ **/
 template<size_t N, typename T, typename Alloc>
 class direct_block_tensor : public direct_block_tensor_base<N, T> {
 public:
 	static const char *k_clazz; //!< Class name
+
 public:
 	typedef direct_block_tensor_base<N,T> base_t; //!< Base class type
 	typedef T element_t; //!< Tensor element type
 	typedef std::map<size_t,unsigned char> map_t;
 	typedef std::pair<size_t,unsigned char> pair_t;
+
 private:
-	block_tensor<N,T,Alloc> m_bt; //!< Data block tensor
-	map_t m_req_map; //!< Map of requests
+	block_map<N, T, Alloc> m_map; //!< Block map
+	std::map<size_t, size_t> m_count; //!< Block count
+	dimensions<N> m_bidims; //!< Block %index dims
 
 public:
 	//!	\name Construction and destruction
 	//@{
 
-	direct_block_tensor(direct_block_tensor_operation<N, T> &op) :
-		base_t(op), m_bt(op.get_bis()) {
-
-		block_tensor_ctrl<N,T> ctrl(m_bt);
-		for ( typename symmetry<N,T>::iterator it=op.get_symmetry().begin();
-				it!=op.get_symmetry().end(); it++ ) {
-			ctrl.req_sym_add_element(op.get_symmetry().get_element(it));
-		}
-	}
-
+	direct_block_tensor(direct_block_tensor_operation<N, T> &op);
 	virtual ~direct_block_tensor() { }
 
 	//@}
+
+	using direct_block_tensor_base<N, T>::get_bis;
 
 protected:
 	//!	\name Implementation of libtensor::block_tensor_i<N, T>
@@ -62,6 +59,8 @@ protected:
 
 	//@}
 
+	using direct_block_tensor_base<N, T>::get_op;
+
 private:
 	//! \brief Performs calculation of the given block
 	void perform(const index<N>& idx) throw(exception);
@@ -72,26 +71,22 @@ template<size_t N, typename T, typename Alloc>
 const char *direct_block_tensor<N, T, Alloc>::k_clazz =
 	"direct_block_tensor<N, T, Alloc>";
 
+
+template<size_t N, typename T, typename Alloc>
+direct_block_tensor<N, T, Alloc>::direct_block_tensor(
+	direct_block_tensor_operation<N, T> &op) :
+
+	direct_block_tensor_base<N, T>(op),
+	m_bidims(get_bis().get_block_index_dims()) {
+
+}
+
+
 template<size_t N, typename T, typename Alloc>
 bool direct_block_tensor<N, T, Alloc>::on_req_is_zero_block(const index<N> &idx)
 	throw(exception) {
 
-	static const char *method = "on_req_is_zero_block(const index<N>&)";
-
-	size_t absidx = base_t::get_bis().get_dims().abs_index(idx);
-
-	typename map_t::iterator it=m_req_map.find(absidx);
-	if ( it != m_req_map.end() )
-		return false;
-
-	base_t::m_op.perform(m_bt,idx);
-	if ( ! block_tensor_ctrl<N,T>(m_bt).req_is_zero_block(idx) ) {
-		m_req_map.insert(pair_t(absidx,1));
-		return false;
-	}
-	else
-		return true;
-
+	return !get_op().get_schedule().contains(idx);
 }
 
 
@@ -101,22 +96,29 @@ tensor_i<N, T> &direct_block_tensor<N, T, Alloc>::on_req_block(
 
 	static const char *method = "on_req_block(const index<N>&)";
 
-	size_t absidx = base_t::get_bis().get_dims().abs_index(idx);
-
-	typename map_t::iterator it=m_req_map.find(absidx);
-	if ( it != m_req_map.end() ) {
-		it->second++;
+#ifdef LIBTENSOR_DEBUG
+	if(!get_op().get_schedule().contains(idx)) {
+		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"idx");
 	}
-	else {
-		base_t::m_op.perform(m_bt,idx);
-		if ( block_tensor_ctrl<N,T>(m_bt).req_is_zero_block(idx) )
-			throw immut_violation(g_ns,k_clazz,method,
-					__FILE__,__LINE__,"Requesting zero block.");
+#endif // LIBTENSOR_DEBUG
 
-		m_req_map.insert(pair_t(absidx,1));
+	abs_index<N> aidx(idx, m_bidims);
+	typename std::map<size_t, size_t>::iterator icnt =
+		m_count.insert(std::pair<size_t, size_t>(
+			aidx.get_abs_index(), 0)).first;
+	bool newblock = icnt->second++ == 0;
+
+	if(newblock) {
+		dimensions<N> blkdims = get_op().get_bis().get_block_dims(idx);
+		m_map.create(aidx.get_abs_index(), blkdims);
 	}
-	return block_tensor_ctrl<N,T>(m_bt).req_block(idx);
 
+	tensor_i<N, T> &blk = m_map.get(aidx.get_abs_index());
+
+	if(newblock) get_op().compute_block(blk, idx);
+
+	return blk;
 }
 
 
@@ -126,18 +128,17 @@ void direct_block_tensor<N, T, Alloc>::on_ret_block(const index<N> &idx)
 
 	static const char *method = "on_ret_block(const index<N>&)";
 
-	size_t absidx = base_t::get_bis().get_dims().abs_index(idx);
+	abs_index<N> aidx(idx, m_bidims);
+	typename std::map<size_t, size_t>::iterator icnt =
+		m_count.find(aidx.get_abs_index());
+	if(icnt == m_count.end()) {
+		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"idx");
+	}
 
-
-	typename map_t::iterator it=m_req_map.find(absidx);
-	if ( it != m_req_map.end() ) {
-		if ( it->second == 1 ) {
-			block_tensor_ctrl<N,T>(m_bt).req_zero_block(idx);
-			m_req_map.erase(it);
-		}
-		else {
-			it->second--;
-		}
+	if(--icnt->second == 0) {
+		m_map.remove(aidx.get_abs_index());
+		m_count.erase(icnt);
 	}
 }
 

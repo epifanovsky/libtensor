@@ -39,7 +39,7 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("contraction2_list_builder", m_utf_contraction2_list_builder);
 	add_test("diag", m_utf_diag);
 	add_test("dimensions", m_utf_dimensions);
-	//~ add_test("direct_block_tensor", m_utf_direct_block_tensor);
+	add_test("direct_block_tensor", m_utf_direct_block_tensor);
 	//~ add_test("direct_btensor", m_utf_direct_btensor);
 	add_test("direct_product", m_utf_direct_product);
 	add_test("dirsum", m_utf_dirsum);
