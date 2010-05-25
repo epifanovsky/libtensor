@@ -2,8 +2,10 @@
 #include <libvmm/std_allocator.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/btod/btod_import_raw.h>
+#include <libtensor/tod/tod_add.h>
 #include <libtensor/tod/tod_btconv.h>
 #include <libtensor/tod/tod_random.h>
+#include <libtensor/symmetry/se_perm.h>
 #include "btod_import_raw_test.h"
 #include "compare_ref.h"
 
@@ -137,7 +139,7 @@ void btod_import_raw_test::test_2(const block_index_space<N> &bis)
 	{
 		tod_random<N>().perform(tmp);
 		tod_add<N> tadd(tmp, 1.0);
-		tadd.add_op(tmp, perm, 1.0).perform(ta);
+		tadd.add_op(tmp, p_ij, 1.0).perform(ta);
 	}
 	//	Create reference data
 
