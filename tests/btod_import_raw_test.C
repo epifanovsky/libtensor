@@ -89,5 +89,4 @@ void btod_import_raw_test::test_1(const block_index_space<N> &bis)
 	}
 }
 
-
 } // namespace libtensor

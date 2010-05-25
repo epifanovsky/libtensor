@@ -19,7 +19,7 @@
 #include "btod_dirsum_test.h"
 #include "btod_dotprod_test.h"
 //~ #include "btod_extract_test.h"
-//~ #include "btod_import_raw_test.h"
+#include "btod_import_raw_test.h"
 //~ #include "btod_mult_test.h"
 #include "btod_mult1_test.h"
 #include "btod_random_test.h"
@@ -37,7 +37,7 @@
 #include "diag_test.h"
 #include "dimensions_test.h"
 #include "direct_block_tensor_test.h"
-//~ #include "direct_btensor_test.h"
+#include "direct_btensor_test.h"
 #include "direct_product_test.h"
 #include "dirsum_test.h"
 #include "dot_product_test.h"
@@ -229,7 +229,7 @@ private:
 	unit_test_factory<btod_dirsum_test> m_utf_btod_dirsum;
 	unit_test_factory<btod_dotprod_test> m_utf_btod_dotprod;
 	//~ unit_test_factory<btod_extract_test> m_utf_btod_extract;
-	//~ unit_test_factory<btod_import_raw_test> m_utf_btod_import_raw;
+	unit_test_factory<btod_import_raw_test> m_utf_btod_import_raw;
 	//~ unit_test_factory<btod_mult_test> m_utf_btod_mult;
 	unit_test_factory<btod_mult1_test> m_utf_btod_mult1;
 	unit_test_factory<btod_random_test> m_utf_btod_random;
@@ -248,7 +248,7 @@ private:
 	unit_test_factory<diag_test> m_utf_diag;
 	unit_test_factory<dimensions_test> m_utf_dimensions;
 	unit_test_factory<direct_block_tensor_test> m_utf_direct_block_tensor;
-	//~ unit_test_factory<direct_btensor_test> m_utf_direct_btensor;
+	unit_test_factory<direct_btensor_test> m_utf_direct_btensor;
 	unit_test_factory<direct_product_test> m_utf_direct_product;
 	unit_test_factory<dirsum_test> m_utf_dirsum;
 	unit_test_factory<dot_product_test> m_utf_dot_product;

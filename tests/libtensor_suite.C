@@ -22,7 +22,7 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("btod_dirsum", m_utf_btod_dirsum);
 	add_test("btod_dotprod", m_utf_btod_dotprod);
 	//~ add_test("btod_extract", m_utf_btod_extract);
-	//~ add_test("btod_import_raw", m_utf_btod_import_raw);
+	add_test("btod_import_raw", m_utf_btod_import_raw);
 	//~ add_test("btod_mult", m_utf_btod_mult);
 	add_test("btod_mult1", m_utf_btod_mult1);
 	add_test("btod_random", m_utf_btod_random);
@@ -40,7 +40,7 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("diag", m_utf_diag);
 	add_test("dimensions", m_utf_dimensions);
 	add_test("direct_block_tensor", m_utf_direct_block_tensor);
-	//~ add_test("direct_btensor", m_utf_direct_btensor);
+	add_test("direct_btensor", m_utf_direct_btensor);
 	add_test("direct_product", m_utf_direct_product);
 	add_test("dirsum", m_utf_dirsum);
 	add_test("dot_product", m_utf_dot_product);

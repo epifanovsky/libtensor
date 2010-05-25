@@ -18,7 +18,7 @@ set(SRC
 	btod_dirsum_test.C
 	btod_dotprod_test.C
 #	btod_extract_test.C
-#	btod_import_raw_test.C
+	btod_import_raw_test.C
 #	btod_mult_test.C
 	btod_mult1_test.C
 	btod_random_test.C
@@ -36,7 +36,7 @@ set(SRC
 	diag_test.C
 	dimensions_test.C
 	direct_block_tensor_test.C
-#	direct_btensor_test.C
+	direct_btensor_test.C
 	direct_product_test.C
 	dirsum_test.C
 	dot_product_test.C

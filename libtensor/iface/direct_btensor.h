@@ -174,7 +174,7 @@ template<size_t N, typename T, typename Traits>
 const symmetry<N, T> &direct_btensor<N, T, Traits>::on_req_const_symmetry()
 	throw(exception) {
 
-	return m_ctrl.req_symmetry();
+	return m_ctrl.req_const_symmetry();
 }
 
 template<size_t N, typename T, typename Traits>
