@@ -23,6 +23,8 @@ void btod_read_test::perform() throw(libtest::test_exception) {
 	test_6();
 	test_7();
 	test_8();
+	test_9();
+	test_10();
 }
 
 
@@ -581,12 +583,12 @@ void btod_read_test::test_10() throw(libtest::test_exception) {
 		ctrl.req_symmetry().insert(sp);
 	}
 
-	bool not_failed = false;
+	bool not_failed = true;
 	try {
 	btod_read<2>(ss).perform(bt);
 	}
 	catch (exception &e) {
-		not_failed = true;
+		not_failed = false;
 	}
 
 	if (not_failed) {

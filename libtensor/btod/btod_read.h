@@ -189,19 +189,16 @@ void btod_read<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 
 		bool zero = ctrl.req_is_zero_block(acidx.get_index());
 
-		// loop over all blocks within an orbit
-		for (typename orbit<N, double>::iterator ito = orb.begin();
-				ito != orb.end(); ito++) {
+		if (zero) {
+			// loop over all blocks within an orbit
+			for (typename orbit<N, double>::iterator ito = orb.begin();
+					ito != orb.end(); ito++) {
 
-			// do nothing for the canonical block
-			if (ac == orb.get_abs_index(ito)) continue;
+				// do nothing for the canonical block
+				if (ac == orb.get_abs_index(ito)) continue;
 
-			// get block transformation and index
-			abs_index<N> aidx(orb.get_abs_index(ito), bdims);
-			const transf<N, double> &tr = orb.get_transf(ito);
+				abs_index<N> aidx(orb.get_abs_index(ito), bdims);
 
-			// check for zero blocks
-			if (zero) {
 				if (ctrl.req_is_zero_block(aidx.get_index())) continue;
 
 				std::ostringstream oss;
@@ -210,31 +207,51 @@ void btod_read<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 				throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
 						oss.str().c_str());
 			}
-
+		}
+		else {
 			// apply transformation to the canonical block
 			tensor_i<N, double> &cblk = ctrl.req_block(acidx.get_index());
 
-			typedef libvmm::std_allocator<double> allocator;
-			tensor<N, double, allocator> tmp_blk(cblk.get_dims());
-			tod_copy<N>(cblk, tr.get_perm(), tr.get_coeff()).perform(tmp_blk);
+			// loop over all blocks within an orbit
+			for (typename orbit<N, double>::iterator ito = orb.begin();
+					ito != orb.end(); ito++) {
 
-			// compare real and expected block
-			tensor_i<N, double> &blk = ctrl.req_block(aidx.get_index());
-			tod_compare<N> cmp(cblk, tmp_blk, 1e-13);
-			if (! cmp.compare()) {
-				std::ostringstream oss;
-				oss << "Read block tensor does not match symmetry in block "
-						<< aidx.get_index() << " at " << cmp.get_diff_index()
-						<< "(expected: " << cmp.get_diff_elem_1() << ", found: "
-						<< cmp.get_diff_elem_2() << ", diff: "
-						<< cmp.get_diff_elem_1()-cmp.get_diff_elem_2() << ").";
+				// do nothing for the canonical block
+				if (ac == orb.get_abs_index(ito)) continue;
 
-				throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
-						oss.str().c_str());
+				// get block transformation and index
+				abs_index<N> aidx(orb.get_abs_index(ito), bdims);
+				const transf<N, double> &tr = orb.get_transf(ito);
+
+				// compare real and expected block
+				tensor_i<N, double> &blk = ctrl.req_block(aidx.get_index());
+
+				typedef libvmm::std_allocator<double> allocator;
+				tensor<N, double, allocator> tmp_blk(blk.get_dims());
+				tod_copy<N>(cblk, tr.get_perm(), tr.get_coeff()).perform(tmp_blk);
+
+				tod_compare<N> cmp(blk, tmp_blk, 1e-13);
+				if (! cmp.compare()) {
+					ctrl.ret_block(aidx.get_index());
+					ctrl.ret_block(acidx.get_index());
+
+					std::ostringstream oss;
+					oss << "Read block tensor does not match symmetry in block "
+							<< aidx.get_index() << " at " << cmp.get_diff_index()
+							<< "(expected: " << cmp.get_diff_elem_1() << ", found: "
+							<< cmp.get_diff_elem_2() << ", diff: "
+							<< cmp.get_diff_elem_1()-cmp.get_diff_elem_2() << ").";
+
+					throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
+							oss.str().c_str());
+				}
+
+				ctrl.ret_block(aidx.get_index());
+
+				// if real and expected block match zero the non-canonical block
+				ctrl.req_zero_block(aidx.get_index());
 			}
-
-			// if real and expected block match zero the non-canonical block
-			ctrl.req_zero_block(aidx.get_index());
+			ctrl.ret_block(acidx.get_index());
 		}
 	}
 
