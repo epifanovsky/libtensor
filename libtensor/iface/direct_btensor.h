@@ -83,14 +83,8 @@ protected:
 
 	//!	\name Implementation of block_tensor_i<N, T>
 	//@{
-	virtual const symmetry<N, T> &on_req_symmetry() throw(exception);
-	virtual void on_req_sym_add_element(
-		const symmetry_element_i<N, T> &elem) throw(exception);
-	virtual void on_req_sym_remove_element(
-		const symmetry_element_i<N, T> &elem) throw(exception);
-	virtual bool on_req_sym_contains_element(
-		const symmetry_element_i<N, T> &elem) throw(exception);
-	virtual void on_req_sym_clear_elements() throw(exception);
+	virtual symmetry<N, T> &on_req_symmetry() throw(exception);
+	virtual const symmetry<N, T> &on_req_const_symmetry() throw(exception);
 	virtual tensor_i<N, T> &on_req_block(const index<N> &idx)
 		throw(exception);
 	virtual void on_ret_block(const index<N> &idx) throw(exception);
@@ -170,44 +164,18 @@ const block_index_space<N> &direct_btensor<N, T, Traits>::get_bis() const {
 
 
 template<size_t N, typename T, typename Traits>
-const symmetry<N, T> &direct_btensor<N, T, Traits>::on_req_symmetry()
+symmetry<N, T> &direct_btensor<N, T, Traits>::on_req_symmetry()
 	throw(exception) {
 
 	return m_ctrl.req_symmetry();
 }
 
-
 template<size_t N, typename T, typename Traits>
-void direct_btensor<N, T, Traits>::on_req_sym_add_element(
-	const symmetry_element_i<N, T> &elem) throw(exception) {
-
-	m_ctrl.req_sym_add_element(elem);
-}
-
-
-template<size_t N, typename T, typename Traits>
-void direct_btensor<N, T, Traits>::on_req_sym_remove_element(
-	const symmetry_element_i<N, T> &elem) throw(exception) {
-
-	m_ctrl.req_sym_remove_element(elem);
-}
-
-
-template<size_t N, typename T, typename Traits>
-bool direct_btensor<N, T, Traits>::on_req_sym_contains_element(
-	const symmetry_element_i<N, T> &elem) throw(exception) {
-
-	return m_ctrl.req_sym_contains_element(elem);
-}
-
-
-template<size_t N, typename T, typename Traits>
-void direct_btensor<N, T, Traits>::on_req_sym_clear_elements()
+const symmetry<N, T> &direct_btensor<N, T, Traits>::on_req_const_symmetry()
 	throw(exception) {
 
-	m_ctrl.req_sym_clear_elements();
+	return m_ctrl.req_symmetry();
 }
-
 
 template<size_t N, typename T, typename Traits>
 tensor_i<N, T> &direct_btensor<N, T, Traits>::on_req_block(const index<N> &idx)
