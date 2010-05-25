@@ -89,4 +89,78 @@ void btod_import_raw_test::test_1(const block_index_space<N> &bis)
 	}
 }
 
+template<size_t N>
+void btod_import_raw_test::test_2(const block_index_space<N> &bis)
+	throw(libtest::test_exception) {
+
+	std::ostringstream tnss;
+	tnss << "btod_import_raw_test::test_2(" << bis << ")";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+	typedef tensor<N, double, allocator_t> tensor_t;
+	typedef tensor_ctrl<N, double> tensor_ctrl_t;
+	typedef block_tensor<N, double, allocator_t> block_tensor_t;
+
+	try {
+
+	bool found = false;
+	size_t i = 0, j = 0;
+	while (i != N) {
+		size_t type = bis.get_type(i);
+		j = i + 1;
+		while (j != N) {
+			if (type == bis.get_type(j)) {
+				found = true;
+				break;
+			}
+			j++;
+		}
+
+		if (found) break;
+		i++;
+	}
+	if (! found) return;
+
+	permutation<N> p_ij;
+	p_ij.permute(i,j);
+	se_perm<N, double> se_ij(p_ij, true);
+
+	//	Create tensors
+
+	tensor_t tmp(bis.get_dims()), ta(bis.get_dims()),
+			tb(bis.get_dims()), tb_ref(bis.get_dims());
+	block_tensor_t btb(bis);
+	btb.req_symmetry().insert(se_ij);
+
+
+	//	Fill in random data
+	{
+		tod_random<N>().perform(tmp);
+		tod_add<N> tadd(tmp, 1.0);
+		tadd.add_op(tmp, perm, 1.0).perform(ta);
+	}
+	//	Create reference data
+
+	tod_copy<N>(ta).perform(tb_ref);
+
+	//	Invoke the operation
+
+	{
+		tensor_ctrl_t tca(ta);
+		const double *pa = tca.req_const_dataptr();
+		btod_import_raw<N>(pa, bis.get_dims()).perform(btb);
+		tca.ret_dataptr(pa); pa = 0;
+	}
+
+	//	Compare against the reference
+
+	tod_btconv<N>(btb).perform(tb);
+	compare_ref<N>::compare(tnss.str().c_str(), tb, tb_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(tnss.str().c_str(), __FILE__, __LINE__, e.what());
+	}
+}
+
+
 } // namespace libtensor
