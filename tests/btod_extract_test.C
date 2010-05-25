@@ -58,9 +58,6 @@ void btod_extract_test::test_1() throw(libtest::test_exception) {
 	index<2> idxibl;
 	idxibl[0] = idx[0]; idxibl[1] = idx[1];
 
-
-
-
 	//	Fill in random data
 	btod_random<2>().perform(bta);
 	bta.set_immutable();
@@ -197,7 +194,6 @@ void btod_extract_test::test_3() throw(libtest::test_exception) {
 /**	\test Extract a matrix from the 5rd order tensor
  * \f$ b_{jl} = a_{ijklm} \f$
  **/
-
 void btod_extract_test::test_4() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_extract_test::test_4()";
@@ -256,7 +252,6 @@ void btod_extract_test::test_4() throw(libtest::test_exception) {
 /**	\test Extract a vector from the matrix with splitting
  * \f$ b_{j} = a_{ij} \f$
  **/
-
 void btod_extract_test::test_5() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_extract_test::test_5()";
@@ -320,7 +315,6 @@ void btod_extract_test::test_5() throw(libtest::test_exception) {
 /**	\test Extract a matrix from the 3rd order tensor with splitting
  * \f$ b_{ik} = a_{ijk} \f$
  **/
-
 void btod_extract_test::test_6() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_extract_test::test_6()";
@@ -423,10 +417,6 @@ void btod_extract_test::test_7() throw(libtest::test_exception) {
 	splmsk33[3] = true;
 	bis4.split(splmsk33, 3);
 
-
-
-
-
 	block_tensor<4, double, allocator_t> bta(bis4);
 	block_tensor<2, double, allocator_t> btb(bis2);
 
@@ -467,8 +457,6 @@ void btod_extract_test::test_7() throw(libtest::test_exception) {
 /**	\test Extract a matrix from the 4rd order tensor with splitting
  * \f$ b_{il} = a_{ijkl} \f$
  **/
-
-
 void btod_extract_test::test_8() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_extract_test::test_8()";

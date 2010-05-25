@@ -39,7 +39,7 @@ protected:
 	 	
 	 	Starts the timer indicated by name. 
 	 */
-	void start_timer( const std::string& name );
+	void start_timer(const std::string& name);
 	
 	/** \brief Stop timer and submit duration to the global timings object
 	  	

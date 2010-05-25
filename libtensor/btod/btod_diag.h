@@ -85,17 +85,12 @@ public:
 		return m_sym;
 	}
 
-	virtual void perform(block_tensor_i<k_orderb, double> &btb,
-		const index<k_orderb> &idx) throw(exception);
-
-	//@}
-
-	//!	\name Implementation of libtensor::basic_btod<N - M + 1>
-	//@{
-
 	virtual const assignment_schedule<k_orderb, double> &get_schedule() const {
 		return m_sch;
 	}
+
+	virtual void perform(block_tensor_i<k_orderb, double> &btb,
+		const index<k_orderb> &idx) throw(exception);
 
 	//@}
 
@@ -196,6 +191,8 @@ template<size_t N, size_t M>
 void btod_diag<N, M>::compute_block(tensor_i<k_orderb, double> &blk,
 	const index<k_orderb> &idx) {
 
+	btod_diag<N, M>::start_timer();
+
 	block_tensor_ctrl<N, double> ctrla(m_bta);
 	dimensions<N> bidimsa = m_bta.get_bis().get_block_index_dims();
 
@@ -243,11 +240,15 @@ void btod_diag<N, M>::compute_block(tensor_i<k_orderb, double> &blk,
 
 	ctrla.ret_block(cidxa.get_index());
 
+	btod_diag<N, M>::stop_timer();
+
 }
 
 template<size_t N, size_t M>
 void btod_diag<N, M>::compute_block(tensor_i<k_orderb, double> &blk,
 	const index<k_orderb> &idx, const transf<k_orderb, double> &tr, double c) {
+
+	btod_diag<N, M>::start_timer();
 
 	block_tensor_ctrl<N, double> ctrla(m_bta);
 	dimensions<N> bidimsa = m_bta.get_bis().get_block_index_dims();
@@ -297,6 +298,8 @@ void btod_diag<N, M>::compute_block(tensor_i<k_orderb, double> &blk,
 			m_c * tra.get_coeff() * tr.get_coeff()).perform(blk, c);
 
 	ctrla.ret_block(cidxa.get_index());
+
+	btod_diag<N, M>::stop_timer();
 }
 
 

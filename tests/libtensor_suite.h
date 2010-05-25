@@ -18,7 +18,7 @@
 #include "btod_diag_test.h"
 #include "btod_dirsum_test.h"
 #include "btod_dotprod_test.h"
-//~ #include "btod_extract_test.h"
+#include "btod_extract_test.h"
 #include "btod_import_raw_test.h"
 //~ #include "btod_mult_test.h"
 #include "btod_mult1_test.h"
@@ -228,7 +228,7 @@ private:
 	unit_test_factory<btod_diag_test> m_utf_btod_diag;
 	unit_test_factory<btod_dirsum_test> m_utf_btod_dirsum;
 	unit_test_factory<btod_dotprod_test> m_utf_btod_dotprod;
-	//~ unit_test_factory<btod_extract_test> m_utf_btod_extract;
+	unit_test_factory<btod_extract_test> m_utf_btod_extract;
 	unit_test_factory<btod_import_raw_test> m_utf_btod_import_raw;
 	//~ unit_test_factory<btod_mult_test> m_utf_btod_mult;
 	unit_test_factory<btod_mult1_test> m_utf_btod_mult1;
