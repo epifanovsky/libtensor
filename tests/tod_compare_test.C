@@ -24,6 +24,7 @@ void tod_compare_test::perform() throw(libtest::test_exception) {
 	test_operation(dim, idiff);
 
 	test_0();
+	test_1();
 
 }
 
@@ -130,6 +131,48 @@ void tod_compare_test::test_0() throw(libtest::test_exception) {
 	tod_compare<0> comp2(t1, t3, 0.0);
 	if(comp2.compare()) {
 		fail_test(testname, __FILE__, __LINE__, "comp2.compare()");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\test Tests tod_compare<2>
+ **/
+void tod_compare_test::test_1() throw(libtest::test_exception) {
+
+	static const char *testname = "tod_compare_test::test_1()";
+
+	try {
+
+	index<2> i1, i2;
+	i2[0] = 5; i2[1] = 5;
+	dimensions<2> dims(index_range<2>(i1, i2));
+	size_t sz = dims.get_size();
+	tensor<2, double, allocator> t1(dims), t2(dims);
+
+	{
+		tensor_ctrl<2, double> tc1(t1), tc2(t2);
+
+		double *p1 = tc1.req_dataptr();
+		double *p2 = tc2.req_dataptr();
+
+		for(size_t i = 0; i < sz; i++) {
+			p1[i] = 100.0;
+			p2[i] = 100.0;
+			if(i % 3 == 0) p2[i] += 1e-9;
+			if(i % 3 == 1) p2[i] -= 1e-9;
+		}
+
+		tc1.ret_dataptr(p1); p1 = 0;
+		tc2.ret_dataptr(p2); p2 = 0;
+	}
+
+	tod_compare<2> comp1(t1, t2, 1e-10);
+	if(!comp1.compare()) {
+		fail_test(testname, __FILE__, __LINE__, "!comp1.compare()");
 	}
 
 	} catch(exception &e) {

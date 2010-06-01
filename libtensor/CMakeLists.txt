@@ -6,6 +6,8 @@ set(SRC
 	global_timings.C
 	timer.C
 	version.C
+	btod/btod_diagonalize.C
+	btod/btod_tridiagonalize.C
 	tod/loop_list_add.C
 	tod/loop_list_copy.C
 )

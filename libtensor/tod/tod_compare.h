@@ -125,11 +125,20 @@ bool tod_compare<N>::compare() {
 	bool equal = true;
 	abs_index<N> idx(m_t1.get_dims());
 	for(size_t i = 0; i < sz; i++) {
-		if(fabs(p1[i] - p2[i]) > m_thresh) {
-			m_diff_elem_1 = p1[i];
-			m_diff_elem_2 = p2[i];
-			equal = false;
-			break;
+		if(fabs(p1[i]) <= 1.0) {
+			if(fabs(p1[i] - p2[i]) > m_thresh) {
+				m_diff_elem_1 = p1[i];
+				m_diff_elem_2 = p2[i];
+				equal = false;
+				break;
+			}
+		} else {
+			if(p2[i]/p1[i] - 1.0 > m_thresh) {
+				m_diff_elem_1 = p1[i];
+				m_diff_elem_2 = p2[i];
+				equal = false;
+				break;
+			}
 		}
 		idx.inc();
 	}
