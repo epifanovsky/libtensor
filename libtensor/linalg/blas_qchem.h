@@ -14,7 +14,7 @@ namespace libtensor {
 inline void blas_dcopy(size_t n, const double *dx, size_t incx, double *dy,
 	size_t incy) {
 
-	CL_DCOPY(n, dx, incx, dy, incy);
+	CL_DCOPY(n, (double*)dx, incx, dy, incy);
 }
 
 
@@ -35,7 +35,7 @@ inline void blas_dscal(size_t n, double da, double *dx, size_t incx) {
 inline double blas_ddot(size_t n, const double *dx, size_t incx,
 	const double *dy, size_t incy) {
 
-	return CL_DDOT(n, dx, incx, dy, incy);
+	return CL_DDOT(n, (double*)dx, incx, (double*)dy, incy);
 }
 
 
@@ -46,7 +46,7 @@ inline double blas_ddot(size_t n, const double *dx, size_t incx,
 inline void blas_daxpy(size_t n, double da, const double *dx, size_t incx,
 	double *dy, size_t incy) {
 
-	CL_DAXPY(n, da, dx, incx, dy, incy);
+	CL_DAXPY(n, da, (double*)dx, incx, dy, incy);
 }
 
 
@@ -58,8 +58,8 @@ inline void blas_dgemv(bool trans, size_t m, size_t n, double alpha,
 	const double *da, size_t lda, const double *dx, size_t incx,
 	double beta, double *dy, size_t incy) {
 
-	CL_DGEMV(trans ? 'N' : 'T', m, n, alpha, da, lda, dx, incx, beta, dy,
-		incy);
+	CL_DGEMV(trans ? 'N' : 'T', m, n, alpha, (double*)da, lda, (double*)dx,
+		incx, beta, dy, incy);
 }
 
 
@@ -71,8 +71,8 @@ inline void blas_dgemm(bool transa, bool transb, size_t m, size_t n, size_t k,
 	double alpha, const double *da, size_t lda, const double *db,
 	size_t ldb, double beta, double *dc, size_t ldc) {
 
-	CL_DGEMM(transa ? 'N' : 'T', transb ? 'N' : 'T', m, n, k, alpha, da,
-		lda, db, ldb, beta, dc, ldc);
+	CL_DGEMM(transa ? 'N' : 'T', transb ? 'N' : 'T', m, n, k, alpha,
+		(double*)da, lda, (double*)db, ldb, beta, dc, ldc);
 }
 
 
