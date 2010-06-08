@@ -39,7 +39,7 @@ void btod_copy_test::perform() throw(libtest::test_exception) {
 	test_add_nesym_3();
 	test_add_nesym_4();
 	test_add_nesym_5();
-	test_add_nesym_5_sp();
+//	test_add_nesym_5_sp();
 	test_add_nesym_6();
 
 	test_dir_1();

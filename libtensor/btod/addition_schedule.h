@@ -29,53 +29,30 @@ namespace libtensor {
 template<size_t N, typename T>
 class addition_schedule {
 public:
-	typedef struct tier2_node_ {
-		size_t cib; //!< Canonical %index in B
-		transf<N, T> trb; //!< Transformation of B
-		tier2_node_(size_t cib_, const transf<N, T> &trb_) :
-			cib(cib_), trb(trb_) { }
-	} tier2_node_t;
+	struct schedule_node {
+		size_t cia, cib, cic;
+		transf<N, T> tra, trb;
+		schedule_node(size_t cia_, size_t cib_, size_t cic_,
+			const transf<N, T> &tra_, const transf<N, T> &trb_) :
+			cia(cia_), cib(cib_), cic(cic_), tra(tra_), trb(trb_)
+			{ }
+	};
 
-	typedef struct tier3_node_ {
-		size_t cib; //!< Canonical %index in B
-		transf<N, T> tra; //!< Transformation of A
-		tier3_node_(size_t cib_, const transf<N, T> &tra_) :
-			cib(cib_), tra(tra_) { }
-	} tier3_node_t;
+	struct schedule_group {
+		std::list<schedule_node> lst;
+	};
 
-	typedef struct tier4_node_ {
-		size_t cib; //!< Canonical %index in B
-		size_t cic; //!< Canonical %index in C
-		transf<N, T> tra; //!< Transformation of A
-		transf<N, T> trb; //!< Transformation of B
-		tier4_node_(size_t cib_, size_t cic_, const transf<N, T> &tra_,
-			const transf<N, T> &trb_) :
-			cib(cib_), cic(cic_), tra(tra_), trb(trb_) { }
-	} tier4_node_t;
-
-	typedef std::list<tier3_node_t> tier3_list_t;
-	typedef std::list<tier4_node_t> tier4_list_t;
-
-	typedef struct schedule_node_ {
-		size_t cia; //!< Canonical %index in A
-		bool tier1; //!< Tier 1 marker (for consistency check only)
-		tier2_node_t *tier2; //!< Tier 2 node
-		tier3_list_t *tier3; //!< Tier 3 list
-		tier4_list_t *tier4; //!< Tier 4 list
-
-		schedule_node_(size_t cia_) : cia(cia_), tier1(false), tier2(0),
-			tier3(0), tier4(0) { }
-	} schedule_node_t;
-
-	typedef std::list<schedule_node_t> schedule_t; //!< Schedule type
-
+	typedef std::list<schedule_group*> schedule_t; //!< Schedule type
 	typedef typename schedule_t::const_iterator iterator;
+
+	typedef std::map<size_t, schedule_group*> book_t;
 
 private:
 	const symmetry<N, T> &m_syma; //!< Symmetry of A
 	const symmetry<N, T> &m_symb; //!< Symmetry of B
 	symmetry<N, T> m_symc; //!< Largest common subgroup of A and B
 	schedule_t m_sch; // Additive schedule
+	book_t m_booka, m_bookb;
 
 public:
 	/**	\brief Initializes the algorithm
@@ -99,8 +76,8 @@ public:
 		return m_sch.end();
 	}
 
-	const schedule_node_t &get_node(const iterator &i) const {
-		return *i;
+	const schedule_group &get_node(const iterator &i) const {
+		return **i;
 	}
 
 private:
@@ -138,13 +115,13 @@ private:
 		const abs_index<N> &acia, const abs_index<N> &aia,
 		const transf<N, T> &tra,
 		std::vector<char> &oa, const std::vector<char> &ob,
-		const std::vector<char> &oc, schedule_node_t &node);
+		const std::vector<char> &oc);
 
 	void iterate_sym_elements_in_a(const dimensions<N> &bidims,
 		const abs_index<N> &acia,
 		const abs_index<N> &aia, const transf<N, T> &tra,
 		std::vector<char> &oa, const std::vector<char> &ob,
-		const std::vector<char> &oc, schedule_node_t &node);
+		const std::vector<char> &oc);
 
 private:
 	addition_schedule(const addition_schedule<N, T>&);
@@ -188,7 +165,7 @@ void addition_schedule<N, T>::build(const assignment_schedule<N, T> &asch) {
 	//	  End
 	//	End
 	//
-	
+
 	clean_schedule();
 	dimensions<N> bidims(m_syma.get_bis().get_block_index_dims());
 
@@ -203,25 +180,22 @@ void addition_schedule<N, T>::build(const assignment_schedule<N, T> &asch) {
 		abs_index<N> acia(asch.get_abs_index(i), bidims);
 		transf<N, T> tra0;
 		if(oa[acia.get_abs_index()] == 0) {
-			schedule_node_t node(acia.get_abs_index());
-			process_orbit_in_a(bidims, acia, acia, tra0, oa, ob,
-				oc, node);
-			m_sch.push_back(node);
+			process_orbit_in_a(bidims, acia, acia, tra0, oa, ob, oc);
 		}
 	}
+
+	m_booka.clear();
+	m_bookb.clear();
 }
 
 
 template<size_t N, typename T>
 void addition_schedule<N, T>::clean_schedule() throw() {
 
-	for(typename schedule_t::iterator i = m_sch.begin(); i != m_sch.end();
-		i++) {
-
-		delete i->tier2;
-		delete i->tier3;
-		delete i->tier4;
-	}
+	m_booka.clear();
+	m_bookb.clear();
+	for(typename schedule_t::iterator i = m_sch.begin();
+		i != m_sch.end(); i++) delete *i;
 	m_sch.clear();
 }
 
@@ -330,8 +304,7 @@ void addition_schedule<N, T>::process_orbit_in_a(const dimensions<N> &bidims,
 	const abs_index<N> &acia,
 	const abs_index<N> &aia, const transf<N, T> &tra,
 	std::vector<char> &oa,
-	const std::vector<char> &ob, const std::vector<char> &oc,
-	schedule_node_t &node) {
+	const std::vector<char> &ob, const std::vector<char> &oc) {
 
 	oa[aia.get_abs_index()] = 1;
 
@@ -349,93 +322,43 @@ void addition_schedule<N, T>::process_orbit_in_a(const dimensions<N> &bidims,
 		bool cana = aia.get_abs_index() == acia.get_abs_index();
 		bool canb = ob[aib.get_abs_index()] == 2;
 
-		//
-		//	Tier 1: Canonical in A, B and C
-		//
-		if(cana && canb) {
+		transf<N, T> trb;
+		abs_index<N> acib(canb ? aib.get_abs_index() :
+			find_canonical(bidims, m_symb, aib, trb, ob), bidims);
 
-			//~ std::cout << "tier 1: "
-				//~ << "C" << aib.get_index() << " <- "
-				//~ << "B" << aib.get_index() << " + "
-				//~ << "A" << aia.get_index() << std::endl;
-			node.tier1 = true;
-			if(node.tier2 != 0) {
-				// throw bad_symmetry();
-			}
+		schedule_group *grp = 0;
 
+		typename book_t::iterator igrpa = m_booka.find(acia.get_abs_index());
+		typename book_t::iterator igrpb = m_bookb.find(acib.get_abs_index());
+		bool founda = igrpa != m_booka.end(), foundb = igrpb != m_bookb.end();
+		if(founda && foundb) {
+			grp = igrpa->second;
+		} else if(founda && !foundb) {
+			grp = igrpa->second;
+			m_bookb.insert(std::pair<size_t, schedule_group*>(
+				acib.get_abs_index(), grp));
+		} else if(!founda && foundb) {
+			grp = igrpb->second;
+			m_booka.insert(std::pair<size_t, schedule_group*>(
+				acia.get_abs_index(), grp));
+		} else {
+			grp = new schedule_group;
+			m_booka.insert(std::pair<size_t, schedule_group*>(
+				acia.get_abs_index(), grp));
+			m_bookb.insert(std::pair<size_t, schedule_group*>(
+				acib.get_abs_index(), grp));
+			m_sch.push_back(grp);
 		}
+//		std::cout << grp << " " << acia.get_index() << " " << acib.get_index() << std::endl;
 
-		//
-		//	Tier 2: Canonical in A and C
-		//
-		if(cana && !canb) {
-
-			transf<N, T> trb;
-			abs_index<N> acib(find_canonical(bidims, m_symb, aib,
-				trb, ob), bidims);
-
-			//~ std::cout << "tier 2: "
-				//~ << "C" << aib.get_index() << " <- "
-				//~ << "b" << aib.get_index() << "<("
-				//~ << trb.get_perm() << ", " << trb.get_coeff()
-				//~ << ")-" << acib.get_index() << " + "
-				//~ << "A" << aia.get_index() << std::endl;
-			if(node.tier1 == true) {
-				// throw bad_symmetry
-			}
-			node.tier2 = new tier2_node_t(
-				acib.get_abs_index(), trb);
-
-		}
-
-		//
-		//	Tier 3: Canonical in B and C
-		//
-		if(!cana && canb) {
-
-			//~ std::cout << "tier 3: "
-				//~ << "C" << aib.get_index() << " <- "
-				//~ << "B" << aib.get_index() << " + "
-				//~ << "a" << aia.get_index() << "<("
-				//~ << tra.get_perm() << ", " << tra.get_coeff()
-				//~ << ")-" << acia.get_index()
-				//~ << std::endl;
-
-			if(node.tier3 == 0) node.tier3 = new tier3_list_t;
-			node.tier3->push_back(tier3_node_t(
-				aib.get_abs_index(), tra));
-		}
-
-		//
-		//	Tier 4: Canonical only in C
-		//
-		if(!cana && !canb) {
-
-			transf<N, T> trb;
-			abs_index<N> acib(find_canonical(bidims, m_symb, aib,
-				trb, ob), bidims);
-
-			//~ std::cout << "tier 4: "
-				//~ << "C" << aib.get_index() << " <- "
-				//~ << "b" << aib.get_index() << "<("
-				//~ << trb.get_perm() << ", " << trb.get_coeff()
-				//~ << ")-" << acib.get_index() << " + "
-				//~ << "a" << aia.get_index() << "<("
-				//~ << tra.get_perm() << ", " << tra.get_coeff()
-				//~ << ")-" << acia.get_index()
-				//~ << std::endl;
-
-			if(node.tier4 == 0) node.tier4 = new tier4_list_t;
-			node.tier4->push_back(tier4_node_t(acib.get_abs_index(),
-				aib.get_abs_index(), tra, trb));
-		}
-
+		grp->lst.push_back(schedule_node(acia.get_abs_index(),
+			acib.get_abs_index(), aib.get_abs_index(), tra, trb));
 	}
 
 	//
 	//	Continue exploring the orbit recursively
 	//
-	iterate_sym_elements_in_a(bidims, acia, aia, tra, oa, ob, oc, node);
+	iterate_sym_elements_in_a(bidims, acia, aia, tra, oa, ob, oc);
 }
 
 
@@ -444,8 +367,7 @@ void addition_schedule<N, T>::iterate_sym_elements_in_a(
 	const dimensions<N> &bidims,
 	const abs_index<N> &acia, const abs_index<N> &aia,
 	const transf<N, T> &tra, std::vector<char> &oa,
-	const std::vector<char> &ob, const std::vector<char> &oc,
-	schedule_node_t &node) {
+	const std::vector<char> &ob, const std::vector<char> &oc) {
 
 	for(typename symmetry<N, T>::iterator is = m_syma.begin();
 		is != m_syma.end(); is++) {
@@ -462,7 +384,7 @@ void addition_schedule<N, T>::iterate_sym_elements_in_a(
 			abs_index<N> aia1(ia1, bidims);
 			if(oa[aia1.get_abs_index()] == 0) {
 				process_orbit_in_a(bidims, acia, aia1, tra1, oa,
-					ob, oc, node);
+					ob, oc);
 			}
 		}
 	}
