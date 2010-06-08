@@ -69,8 +69,13 @@ void compare_ref<N>::compare(const char *test, block_tensor_i<N, double> &t,
 				<< cmp.get_diff().m_canonical_block_index_2 << " (ref) differ.";
 		}
 		else if ( cmp.get_diff().m_zero_1 != cmp.get_diff().m_zero_2 ) {
-			str << "at zero block " << cmp.get_diff().m_canonical_block_index_1
-				<< ".";
+			str << "at zero block "
+				<< cmp.get_diff().m_canonical_block_index_1
+				<< ": "
+				<< (cmp.get_diff().m_zero_1 ? "Z" : "NZ")
+				<< " (act) vs. "
+				<< (cmp.get_diff().m_zero_2 ? "Z" : "NZ")
+				<< " (ref).";
 		}
 		else {
 			str << "in block " << cmp.get_diff().m_canonical_block_index_1
