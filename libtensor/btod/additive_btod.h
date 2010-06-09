@@ -95,13 +95,14 @@ void additive_btod<N>::perform(block_tensor_i<N, double> &bt, double c) {
 	schedule_t sch(get_symmetry(), symcopy);
 	sch.build(get_schedule());
 
+	//~ std::cout << "additive_btod::perform" << std::endl;
 	for(typename schedule_t::iterator igrp = sch.begin();
 		igrp != sch.end(); igrp++) {
 
 		const typename schedule_t::schedule_group &grp =
 			sch.get_node(igrp);
 
-//		std::cout << "grp " << &grp << " sz = " << grp.lst.size() << std::endl;
+		//~ std::cout << "grp " << &grp << " sz = " << grp.lst.size() << std::endl;
 
 		typedef std::pair<size_t, tensor_i<N, double>*> la_pair_t;
 		std::list<la_pair_t> la;
@@ -120,7 +121,7 @@ void additive_btod<N>::perform(block_tensor_i<N, double> &bt, double c) {
 				tensor_i<N, double> &blka = ctrl.req_aux_block(aia.get_index());
 				tod_set<N>().perform(blka);
 				compute_block(blka, aia.get_index(), node.tra, c);
-//				std::cout << "compute A" << aia.get_index() << "(" << node.tra.get_perm() << ", " << node.tra.get_coeff() << ") " << c << std::endl;
+				//~ std::cout << "compute A" << aia.get_index() << "(" << node.tra.get_perm() << ", " << node.tra.get_coeff() << ") " << c << std::endl;
 				la.push_back(la_pair_t(node.cia, &blka));
 			}
 		}
@@ -141,11 +142,11 @@ void additive_btod<N>::perform(block_tensor_i<N, double> &bt, double c) {
 			tensor_i<N, double> &blkc = ctrl.req_block(aic.get_index());
 			if(zerob) {
 				abs_index<N> aia(node.cia, bidims);
-//				std::cout << "C" << aic.get_index() << " <- " << "A" << aia.get_index() << std::endl;
+				//~ std::cout << "C" << aic.get_index() << " <- " << "A" << aia.get_index() << std::endl;
 				tod_copy<N>(*ila->second, node.tra.get_perm(), node.tra.get_coeff()).perform(blkc);
 			} else {
 				abs_index<N> aia(node.cia, bidims);
-//				std::cout << "C" << aic.get_index() << " <- " << "A" << aia.get_index() << " + " << "B" << aib.get_index() << std::endl;
+				//~ std::cout << "C" << aic.get_index() << " <- " << "A" << aia.get_index() << " + " << "B" << aib.get_index() << std::endl;
 				tensor_i<N, double> &blkb = ctrl.req_block(aib.get_index());
 				tod_copy<N>(*ila->second, node.tra.get_perm(), node.tra.get_coeff()).perform(blkc);
 				tod_copy<N>(blkb, node.trb.get_perm(), node.trb.get_coeff()).perform(blkc, 1.0);
@@ -170,12 +171,15 @@ void additive_btod<N>::perform(block_tensor_i<N, double> &bt, double c) {
 			tensor_i<N, double> &blkb = ctrl.req_block(aib.get_index());
 			if(zerob) {
 				abs_index<N> aia(node.cia, bidims);
-//				std::cout << "B" << aib.get_index() << " <- " << "A" << aia.get_index() << std::endl;
+				//~ std::cout << "B" << aib.get_index() << " <- " << "A" << aia.get_index() << std::endl;
+				//~ tod_set<N>().perform(blkb);
 				tod_copy<N>(*ila->second, node.tra.get_perm(), node.tra.get_coeff()).perform(blkb);
+				//~ tod_copy<N>(*ila->second).perform(blkb);
 			} else {
 				abs_index<N> aia(node.cia, bidims);
-//				std::cout << "B" << aib.get_index() << " <- " << "A" << aia.get_index() << "(" << node.tra.get_perm() << ", " << node.tra.get_coeff()<< ")" << " + " << "B" << aib.get_index() << std::endl;
+				//~ std::cout << "B" << aib.get_index() << " <- " << "A" << aia.get_index() << "(" << node.tra.get_perm() << ", " << node.tra.get_coeff()<< ")" << " + " << "B" << aib.get_index() << std::endl;
 				tod_copy<N>(*ila->second, node.tra.get_perm(), node.tra.get_coeff()).perform(blkb, 1.0);
+				//~ tod_copy<N>(*ila->second).perform(blkb, 1.0);
 			}
 			ctrl.ret_block(aib.get_index());
 		}

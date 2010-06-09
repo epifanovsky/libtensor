@@ -52,6 +52,9 @@ void btod_contract2_test::perform() throw(libtest::test_exception) {
 	test_contr_15(0.0);
 	test_contr_15(1.0);
 	test_contr_15(-2.2);
+	test_contr_16(0.0);
+	test_contr_16(1.0);
+	test_contr_16(-2.2);
 
 }
 
@@ -1979,6 +1982,90 @@ void btod_contract2_test::test_contr_15(double c)
 	//	Compare against reference
 
 	compare_ref<4>::compare(tn.c_str(), tc, tc_ref, 2e-13);
+
+	} catch(exception &e) {
+		fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void btod_contract2_test::test_contr_16(double c)
+	throw(libtest::test_exception) {
+
+	//
+	//	c_iabc = a_kcad b_ikbd
+	//	Dimensions [ik] = 13 (three blocks), [abcd] = 7 (three blocks),
+	//	no symmetry, all blocks non-zero, empty initial result tensor
+	//
+
+	std::ostringstream ss;
+	ss << "btod_contract2_test::test_contr_16(" << c << ")";
+	std::string tn = ss.str();
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 12; i2[1] = 12; i2[2] = 6; i2[3] = 6;
+	dimensions<4> dims_iiaa(index_range<4>(i1, i2));
+	i2[0] = 12; i2[1] = 6; i2[2] = 6; i2[3] = 6;
+	dimensions<4> dims_iaaa(index_range<4>(i1, i2));
+	block_index_space<4> bis_iiaa(dims_iiaa), bis_iaaa(dims_iaaa);
+	mask<4> m1, m2, m3, m4;
+	m1[0] = true; m1[1] = true; m2[2] = true; m2[3] = true;
+	m3[0] = true; m4[1] = true; m4[2] = true; m4[3] = true;
+	bis_iiaa.split(m1, 3);
+	bis_iiaa.split(m1, 7);
+	bis_iiaa.split(m1, 10);
+	bis_iiaa.split(m2, 2);
+	bis_iiaa.split(m2, 3);
+	bis_iiaa.split(m2, 5);
+	bis_iaaa.split(m3, 3);
+	bis_iaaa.split(m3, 7);
+	bis_iaaa.split(m3, 10);
+	bis_iaaa.split(m4, 2);
+	bis_iaaa.split(m4, 3);
+	bis_iaaa.split(m4, 5);
+
+	block_tensor<4, double, allocator_t> bta(bis_iaaa);
+	block_tensor<4, double, allocator_t> btb(bis_iiaa);
+	block_tensor<4, double, allocator_t> btc(bis_iaaa);
+
+	//	Load random data for input
+
+	btod_random<4>().perform(bta);
+	btod_random<4>().perform(btb);
+	bta.set_immutable();
+	btb.set_immutable();
+
+	//	Convert block tensors to regular tensors
+
+	tensor<4, double, allocator_t> ta(dims_iaaa);
+	tensor<4, double, allocator_t> tb(dims_iiaa);
+	tensor<4, double, allocator_t> tc(dims_iaaa), tc_ref(dims_iaaa);
+	tod_btconv<4>(bta).perform(ta);
+	tod_btconv<4>(btb).perform(tb);
+	tod_set<4>().perform(tc_ref);
+
+	//	Run contraction and compute the reference
+
+	//	iabc = kcad ikbd
+	//	caib->iabc
+	contraction2<2, 2, 2> contr(permutation<4>().permute(0, 2).
+		permute(2, 3));
+	contr.contract(0, 1);
+	contr.contract(3, 3);
+
+	if(c == 0.0) btod_contract2<2, 2, 2>(contr, bta, btb).perform(btc);
+	else btod_contract2<2, 2, 2>(contr, bta, btb).perform(btc, c);
+	tod_btconv<4>(btc).perform(tc);
+	if(c == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc_ref);
+	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc_ref, c);
+
+	//	Compare against reference
+
+	compare_ref<4>::compare(tn.c_str(), tc, tc_ref, 1e-15);
 
 	} catch(exception &e) {
 		fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
