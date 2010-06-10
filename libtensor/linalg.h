@@ -15,7 +15,11 @@
 #ifdef USE_CBLAS
 #include "linalg/blas_cblas.h"
 #else // USE_CBLAS
+#ifdef USE_QCHEM
+#include "linalg/blas_qchem.h"
+#else // USE_QCHEM
 #error "No BLAS implementation specified"
+#endif // USE_QCHEM
 #endif // USE_CBLAS
 #endif // USE_GSL
 #endif // USE_MKL

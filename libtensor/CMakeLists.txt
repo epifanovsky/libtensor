@@ -10,6 +10,7 @@ set(SRC
 	btod/btod_tridiagonalize.C
 	tod/loop_list_add.C
 	tod/loop_list_copy.C
+	tod/loop_list_mul.C
 )
 add_library(tensor ${SRC})
 
