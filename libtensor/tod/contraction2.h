@@ -6,6 +6,7 @@
 #include "../exception.h"
 #include "../core/dimensions.h"
 #include "../core/permutation.h"
+#include "../core/permutation_builder.h"
 #include "../core/sequence.h"
 
 namespace libtensor {
@@ -126,6 +127,14 @@ private:
 	 **/
 	void connect();
 
+	void make_seqc(sequence<k_orderc, size_t> &seqc);
+
+	/**	\brief Adjusts the %permutation of C when the %permutation of
+			A or B is changed
+	 **/
+	void adjust_permc(sequence<k_orderc, size_t> &seqc1,
+		sequence<k_orderc, size_t> &seqc2);
+
 };
 
 
@@ -239,6 +248,8 @@ void contraction2<N, M, K>::permute_a(const permutation<k_ordera> &perma)
 	if(perma.is_identity()) return;
 
 	sequence<k_ordera, size_t> seqa(0);
+	sequence<k_orderc, size_t> seqc1(0), seqc2(0);
+	make_seqc(seqc1);
 	for(register size_t i = 0; i < k_ordera; i++)
 		seqa[i] = m_conn[k_orderc + i];
 	seqa.permute(perma);
@@ -246,6 +257,9 @@ void contraction2<N, M, K>::permute_a(const permutation<k_ordera> &perma)
 		m_conn[k_orderc + i] = seqa[i];
 		m_conn[seqa[i]] = k_orderc + i;
 	}
+	make_seqc(seqc2);
+
+	adjust_permc(seqc1, seqc2);
 }
 
 template<size_t N, size_t M, size_t K>
@@ -261,6 +275,8 @@ void contraction2<N, M, K>::permute_b(const permutation<k_orderb> &permb)
 	if(permb.is_identity()) return;
 
 	sequence<k_orderb, size_t> seqb(0);
+	sequence<k_orderc, size_t> seqc1(0), seqc2(0);
+	make_seqc(seqc1);
 	for(register size_t i = 0; i < k_orderb; i++)
 		seqb[i] = m_conn[k_orderc + k_ordera + i];
 	seqb.permute(permb);
@@ -268,6 +284,9 @@ void contraction2<N, M, K>::permute_b(const permutation<k_orderb> &permb)
 		m_conn[k_orderc + k_ordera + i] = seqb[i];
 		m_conn[seqb[i]] = k_orderc + k_ordera + i;
 	}
+	make_seqc(seqc2);
+
+	adjust_permc(seqc1, seqc2);
 }
 
 template<size_t N, size_t M, size_t K>
@@ -298,6 +317,30 @@ template<size_t N, size_t M, size_t K>
 void contraction2<N, M, K>::connect() {
 
 	contraction2_connector<N + M, K>::connect(m_conn, m_permc);
+}
+
+template<size_t N, size_t M, size_t K>
+void contraction2<N, M, K>::make_seqc(sequence<k_orderc, size_t> &seqc) {
+
+	for(register size_t i = 0, j = 0; i < k_ordera + k_orderb; i++) {
+		if(m_conn[k_orderc + i] < k_orderc) {
+			seqc[j++] = m_conn[k_orderc + i];
+		}
+	}
+}
+
+template<size_t N, size_t M, size_t K>
+void contraction2<N, M, K>::adjust_permc(sequence<k_orderc, size_t> &seqc1,
+	sequence<k_orderc, size_t> &seqc2) {
+
+	size_t seqcc1[k_orderc], seqcc2[k_orderc];
+	for(register size_t i = 0; i < k_orderc; i++) {
+		seqcc1[i] = seqc1[i];
+		seqcc2[i] = seqc2[i];
+	}
+	permutation_builder<k_orderc> pb(seqcc1, seqcc2);
+	permutation<k_orderc> permc(m_permc), permcinv(m_permc, true);
+	m_permc.permute(permcinv).permute(pb.get_perm()).permute(permc);
 }
 
 template<size_t NM, size_t K>
