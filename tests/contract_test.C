@@ -13,15 +13,15 @@ void contract_test::perform() throw(libtest::test_exception) {
 
 	try {
 
-		//~ test_subexpr_labels_1();
-		//~ test_contr_bld_1();
-		//~ test_contr_bld_2();
-		//~ test_tt_1();
-		//~ test_tt_2();
-		//~ test_tt_3();
-		//~ test_tt_4();
-		//~ test_tt_5();
-		//~ test_tt_6();
+		test_subexpr_labels_1();
+		test_contr_bld_1();
+		test_contr_bld_2();
+		test_tt_1();
+		test_tt_2();
+		test_tt_3();
+		test_tt_4();
+		test_tt_5();
+		test_tt_6();
 		test_tt_7();
 		test_te_1();
 		test_te_2();
@@ -397,7 +397,7 @@ void contract_test::test_tt_7() throw(libtest::test_exception) {
 
 	btensor<4> t1(sp_iabc);
 	btensor<4> t2(sp_ijab);
-	btensor<4> t3(sp_iabc), t3_ref(sp_iabc), t4(sp_iabc);
+	btensor<4> t3(sp_iabc), t3_ref(sp_iabc);
 
 	btod_random<4>().perform(t1);
 	btod_random<4>().perform(t2);
@@ -410,10 +410,11 @@ void contract_test::test_tt_7() throw(libtest::test_exception) {
 		permute(2, 3));
 	contr.contract(0, 1);
 	contr.contract(3, 3);
-	btod_contract2<2, 2, 2>(contr, t1, t2).perform(t3_ref);
+
+	btod_contract2<2, 2, 2>(contr, t1, t2).perform(t3_ref, 1.0);
 
 	letter i, k, a, b, c, d;
-	t3(i|a|b|c) = t4(i|a|b|c) + contract(k|d, t1(k|c|a|d), t2(i|k|b|d));
+	t3(i|a|b|c) = contract(k|d, t1(k|c|a|d), t2(i|k|b|d));
 
 	compare_ref<4>::compare(testname, t3, t3_ref, 1e-14);
 
