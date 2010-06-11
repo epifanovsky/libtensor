@@ -179,10 +179,14 @@ tensor_i<N, T> &block_tensor<N, T, Alloc>::on_req_aux_block(
 			__FILE__, __LINE__,
 			"Index does not correspond to a canonical block.");
 	}
-	if(!m_aux_map.contains(absidx)) {
-		dimensions<N> blkdims = m_bis.get_block_dims(idx);
-		m_aux_map.create(absidx, blkdims);
+	if(m_aux_map.contains(absidx)) {
+		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"Duplicate aux request.");
 	}
+
+	dimensions<N> blkdims = m_bis.get_block_dims(idx);
+	m_aux_map.create(absidx, blkdims);
+
 	return m_aux_map.get(absidx);
 }
 
