@@ -39,8 +39,11 @@ void btod_copy_test::perform() throw(libtest::test_exception) {
 	test_add_nesym_3();
 	test_add_nesym_4();
 	test_add_nesym_5();
-//	test_add_nesym_5_sp();
+	test_add_nesym_5_sp();
 	test_add_nesym_6();
+	test_add_nesym_7_sp1();
+	test_add_nesym_7_sp2();
+	test_add_nesym_7_sp3();
 
 	test_dir_1();
 	test_dir_2();
@@ -1491,6 +1494,223 @@ void btod_copy_test::test_add_nesym_6() throw(libtest::test_exception) {
 	//	Compare against the reference
 
 	compare_ref<4>::compare(testname, tb, tb_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\test \f$ b_{ijkl} = b_{ijkl} - 2.0 a_{ijkl} \f$, unequal perm symmetry,
+		sparse block structure. Sym(A)=S3*C1, Sym(B)=S2*S2,
+		Sym(A+B)=S2*C1*C1.
+		Check addition
+		C[0,1,0,2] = A[0,0,1,2] + B[0,1,0,2],
+		C[0,1,2,0] = A[0,1,2,0] + B[0,1,0,2],
+		A[0,0,1,2] = 0
+ **/
+void btod_copy_test::test_add_nesym_7_sp1() throw(libtest::test_exception) {
+
+	static const char *testname = "btod_copy_test::test_add_nesym_7_sp1()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 11; i2[1] = 11; i2[2] = 11; i2[3] = 11;
+	dimensions<4> dima(index_range<4>(i1, i2));
+	dimensions<4> dimb(dima);
+	block_index_space<4> bisa(dima), bisb(dimb);
+	mask<4> m1;
+	m1[0] = true; m1[1] = true; m1[2] = true; m1[3] = true;
+	bisa.split(m1, 3);
+	bisa.split(m1, 5);
+	bisb.split(m1, 3);
+	bisb.split(m1, 5);
+	tensor<4, double, allocator_t> ta(dima), tb(dimb), tb_ref(dimb);
+	block_tensor<4, double, allocator_t> bta(bisa), btb(bisb);
+
+	//	Set up symmetry
+
+	block_tensor_ctrl<4, double> ctrla(bta), ctrlb(btb);
+	ctrla.req_symmetry().insert(se_perm<4, double>(
+		permutation<4>().permute(0, 1).permute(1, 2), true));
+	ctrla.req_symmetry().insert(se_perm<4, double>(
+		permutation<4>().permute(0, 1), true));
+	ctrlb.req_symmetry().insert(se_perm<4, double>(
+		permutation<4>().permute(0, 1), true));
+	ctrlb.req_symmetry().insert(se_perm<4, double>(
+		permutation<4>().permute(2, 3), true));
+
+	//	Load random data for input
+
+	index<4> i0012, i0102, i0120;
+	i0012[2] = 1; i0012[3] = 2;
+	i0102[1] = 1; i0102[3] = 2;
+	i0120[1] = 1; i0120[2] = 2;
+	btod_random<4>().perform(bta, i0120);
+	btod_random<4>().perform(btb, i0102);
+	bta.set_immutable();
+	tod_btconv<4>(bta).perform(ta);
+	tod_btconv<4>(btb).perform(tb_ref);
+
+	//	Run the operation
+
+	btod_copy<4>(bta).perform(btb, -2.0);
+	tod_btconv<4>(btb).perform(tb);
+
+	//	Compute the reference
+
+	tod_copy<4>(ta).perform(tb_ref, -2.0);
+
+	//	Compare against the reference
+
+	compare_ref<4>::compare(testname, tb, tb_ref, 0.0);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\test \f$ b_{ijkl} = b_{ijkl} + a_{ijkl} \f$, unequal perm symmetry,
+		sparse block structure. Sym(A)=S3*C1, Sym(B)=S2*S2,
+		Sym(A+B)=S2*C1*C1.
+		Check addition
+		C[0,1,0,2] = B[0,1,0,2],
+		C[0,1,2,0] = B[0,1,0,2],
+ **/
+void btod_copy_test::test_add_nesym_7_sp2() throw(libtest::test_exception) {
+
+	static const char *testname = "btod_copy_test::test_add_nesym_7_sp2()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 11; i2[1] = 11; i2[2] = 11; i2[3] = 11;
+	dimensions<4> dima(index_range<4>(i1, i2));
+	dimensions<4> dimb(dima);
+	block_index_space<4> bisa(dima), bisb(dimb);
+	mask<4> m1;
+	m1[0] = true; m1[1] = true; m1[2] = true; m1[3] = true;
+	bisa.split(m1, 3);
+	bisa.split(m1, 5);
+	bisb.split(m1, 3);
+	bisb.split(m1, 5);
+	tensor<4, double, allocator_t> ta(dima), tb(dimb), tb_ref(dimb);
+	block_tensor<4, double, allocator_t> bta(bisa), btb(bisb);
+
+	//	Set up symmetry
+
+	block_tensor_ctrl<4, double> ctrla(bta), ctrlb(btb);
+	ctrla.req_symmetry().insert(se_perm<4, double>(
+		permutation<4>().permute(0, 1).permute(1, 2), true));
+	ctrla.req_symmetry().insert(se_perm<4, double>(
+		permutation<4>().permute(0, 1), true));
+	ctrlb.req_symmetry().insert(se_perm<4, double>(
+		permutation<4>().permute(0, 1), true));
+	ctrlb.req_symmetry().insert(se_perm<4, double>(
+		permutation<4>().permute(2, 3), true));
+
+	//	Load random data for input
+
+	index<4> i0012, i0102, i0120;
+	i0012[2] = 1; i0012[3] = 2;
+	i0102[1] = 1; i0102[3] = 2;
+	i0120[1] = 1; i0120[2] = 2;
+	btod_random<4>().perform(btb, i0102);
+	bta.set_immutable();
+	tod_btconv<4>(bta).perform(ta);
+	tod_btconv<4>(btb).perform(tb_ref);
+
+	//	Run the operation
+
+	btod_copy<4>(bta).perform(btb, -2.0);
+	tod_btconv<4>(btb).perform(tb);
+
+	//	Compute the reference
+
+	tod_copy<4>(ta).perform(tb_ref, -2.0);
+
+	//	Compare against the reference
+
+	compare_ref<4>::compare(testname, tb, tb_ref, 0.0);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\test \f$ b_{ijkl} = b_{ijkl} + 2.0 a_{ijkl} \f$, unequal perm symmetry,
+		sparse block structure. Sym(A)=S2*S2, Sym(B)=S3*C1,
+		Sym(A+B)=S2*C1*C1.
+		Check addition
+		C[0,1,0,2] = A[0,1,0,2] + B[0,0,1,2],
+		C[0,1,2,0] = A[0,1,0,2] + B[0,1,2,0],
+		B[0,0,1,2] = 0
+ **/
+void btod_copy_test::test_add_nesym_7_sp3() throw(libtest::test_exception) {
+
+	static const char *testname = "btod_copy_test::test_add_nesym_7_sp3()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 11; i2[1] = 11; i2[2] = 11; i2[3] = 11;
+	dimensions<4> dima(index_range<4>(i1, i2));
+	dimensions<4> dimb(dima);
+	block_index_space<4> bisa(dima), bisb(dimb);
+	mask<4> m1;
+	m1[0] = true; m1[1] = true; m1[2] = true; m1[3] = true;
+	bisa.split(m1, 3);
+	bisa.split(m1, 5);
+	bisb.split(m1, 3);
+	bisb.split(m1, 5);
+	tensor<4, double, allocator_t> ta(dima), tb(dimb), tb_ref(dimb);
+	block_tensor<4, double, allocator_t> bta(bisa), btb(bisb);
+
+	//	Set up symmetry
+
+	block_tensor_ctrl<4, double> ctrla(bta), ctrlb(btb);
+	ctrla.req_symmetry().insert(se_perm<4, double>(
+		permutation<4>().permute(0, 1), true));
+	ctrla.req_symmetry().insert(se_perm<4, double>(
+		permutation<4>().permute(2, 3), true));
+	ctrlb.req_symmetry().insert(se_perm<4, double>(
+		permutation<4>().permute(0, 1).permute(1, 2), true));
+	ctrlb.req_symmetry().insert(se_perm<4, double>(
+		permutation<4>().permute(0, 1), true));
+
+	//	Load random data for input
+
+	index<4> i0012, i0102, i0120;
+	i0012[2] = 1; i0012[3] = 2;
+	i0102[1] = 1; i0102[3] = 2;
+	i0120[1] = 1; i0120[2] = 2;
+	btod_random<4>().perform(bta, i0102);
+	btod_random<4>().perform(btb, i0120);
+	bta.set_immutable();
+	tod_btconv<4>(bta).perform(ta);
+	tod_btconv<4>(btb).perform(tb_ref);
+
+	//	Run the operation
+
+	btod_copy<4>(bta).perform(btb, 2.0);
+	tod_btconv<4>(btb).perform(tb);
+
+	//	Compute the reference
+
+	tod_copy<4>(ta).perform(tb_ref, 2.0);
+
+	//	Compare against the reference
+
+	compare_ref<4>::compare(testname, tb, tb_ref, 0.0);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());

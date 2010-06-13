@@ -93,9 +93,8 @@ void additive_btod<N>::perform(block_tensor_i<N, double> &bt, double c) {
 
 	dimensions<N> bidims(bt.get_bis().get_block_index_dims());
 	schedule_t sch(get_symmetry(), symcopy);
-	sch.build(get_schedule());
+	sch.build(get_schedule(), ctrl);
 
-	//~ std::cout << "additive_btod::perform" << std::endl;
 	for(typename schedule_t::iterator igrp = sch.begin();
 		igrp != sch.end(); igrp++) {
 
@@ -111,6 +110,8 @@ void additive_btod<N>::perform(block_tensor_i<N, double> &bt, double c) {
 			grp.lst.begin(); inode != grp.lst.end(); inode++) {
 
 			const typename schedule_t::schedule_node &node = *inode;
+
+			if(node.zeroa) continue;
 
 			typename std::list<la_pair_t>::iterator ila = la.begin();
 			for(; ila != la.end(); ila++) {
@@ -132,27 +133,44 @@ void additive_btod<N>::perform(block_tensor_i<N, double> &bt, double c) {
 			const typename schedule_t::schedule_node &node = *inode;
 			if(node.cib == node.cic) continue;
 
-			typename std::list<la_pair_t>::iterator ila = la.begin();
-			for(; ila != la.end(); ila++) {
-				if(ila->first == node.cia) break;
-			}
-
-			abs_index<N> aib(node.cib, bidims), aic(node.cic, bidims);
-			bool zerob = ctrl.req_is_zero_block(aib.get_index());
-			tensor_i<N, double> &blkc = ctrl.req_block(aic.get_index());
-			if(zerob) {
-				abs_index<N> aia(node.cia, bidims);
-				//~ std::cout << "C" << aic.get_index() << " <- " << "A" << aia.get_index() << std::endl;
-				tod_copy<N>(*ila->second, node.tra.get_perm(), node.tra.get_coeff()).perform(blkc);
+			if(node.zeroa) {
+				abs_index<N> aib(node.cib, bidims), aic(node.cic, bidims);
+				bool zerob = ctrl.req_is_zero_block(aib.get_index());
+				tensor_i<N, double> &blkc = ctrl.req_block(aic.get_index());
+				if(zerob) {
+					// this should actually never happen, but just in case
+					//~ std::cout << "C" << aic.get_index() << " <- 0" << std::endl;
+					tod_set<N>().perform(blkc);
+				} else {
+					//~ std::cout << "C" << aic.get_index() << " <- " << "B" << aib.get_index() << "(" << node.trb.get_perm() << ", " << node.trb.get_coeff() << ")" << std::endl;
+					tensor_i<N, double> &blkb = ctrl.req_block(aib.get_index());
+					tod_copy<N>(blkb, node.trb.get_perm(), node.trb.get_coeff()).perform(blkc);
+					ctrl.ret_block(aib.get_index());
+				}
+				ctrl.ret_block(aic.get_index());
 			} else {
-				abs_index<N> aia(node.cia, bidims);
-				//~ std::cout << "C" << aic.get_index() << " <- " << "A" << aia.get_index() << " + " << "B" << aib.get_index() << std::endl;
-				tensor_i<N, double> &blkb = ctrl.req_block(aib.get_index());
-				tod_copy<N>(*ila->second, node.tra.get_perm(), node.tra.get_coeff()).perform(blkc);
-				tod_copy<N>(blkb, node.trb.get_perm(), node.trb.get_coeff()).perform(blkc, 1.0);
-				ctrl.ret_block(aib.get_index());
+				typename std::list<la_pair_t>::iterator ila = la.begin();
+				for(; ila != la.end(); ila++) {
+					if(ila->first == node.cia) break;
+				}
+
+				abs_index<N> aib(node.cib, bidims), aic(node.cic, bidims);
+				bool zerob = ctrl.req_is_zero_block(aib.get_index());
+				tensor_i<N, double> &blkc = ctrl.req_block(aic.get_index());
+				if(zerob) {
+					abs_index<N> aia(node.cia, bidims);
+					//~ std::cout << "C" << aic.get_index() << " <- " << "A" << aia.get_index() << "(" << node.tra.get_perm() << ", " << node.tra.get_coeff() << ")" << std::endl;
+					tod_copy<N>(*ila->second, node.tra.get_perm(), node.tra.get_coeff()).perform(blkc);
+				} else {
+					abs_index<N> aia(node.cia, bidims);
+					//~ std::cout << "C" << aic.get_index() << " <- " << "A" << aia.get_index() << " + " << "B" << aib.get_index() << std::endl;
+					tensor_i<N, double> &blkb = ctrl.req_block(aib.get_index());
+					tod_copy<N>(*ila->second, node.tra.get_perm(), node.tra.get_coeff()).perform(blkc);
+					tod_copy<N>(blkb, node.trb.get_perm(), node.trb.get_coeff()).perform(blkc, 1.0);
+					ctrl.ret_block(aib.get_index());
+				}
+				ctrl.ret_block(aic.get_index());
 			}
-			ctrl.ret_block(aic.get_index());
 		}
 
 		for(typename std::list<typename schedule_t::schedule_node>::const_iterator inode =
@@ -160,6 +178,7 @@ void additive_btod<N>::perform(block_tensor_i<N, double> &bt, double c) {
 
 			const typename schedule_t::schedule_node &node = *inode;
 			if(node.cib != node.cic) continue;
+			if(node.zeroa) continue;
 
 			typename std::list<la_pair_t>::iterator ila = la.begin();
 			for(; ila != la.end(); ila++) {
@@ -172,14 +191,11 @@ void additive_btod<N>::perform(block_tensor_i<N, double> &bt, double c) {
 			if(zerob) {
 				abs_index<N> aia(node.cia, bidims);
 				//~ std::cout << "B" << aib.get_index() << " <- " << "A" << aia.get_index() << std::endl;
-				//~ tod_set<N>().perform(blkb);
 				tod_copy<N>(*ila->second, node.tra.get_perm(), node.tra.get_coeff()).perform(blkb);
-				//~ tod_copy<N>(*ila->second).perform(blkb);
 			} else {
 				abs_index<N> aia(node.cia, bidims);
 				//~ std::cout << "B" << aib.get_index() << " <- " << "A" << aia.get_index() << "(" << node.tra.get_perm() << ", " << node.tra.get_coeff()<< ")" << " + " << "B" << aib.get_index() << std::endl;
 				tod_copy<N>(*ila->second, node.tra.get_perm(), node.tra.get_coeff()).perform(blkb, 1.0);
-				//~ tod_copy<N>(*ila->second).perform(blkb, 1.0);
 			}
 			ctrl.ret_block(aib.get_index());
 		}
