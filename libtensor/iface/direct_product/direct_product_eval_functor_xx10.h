@@ -52,19 +52,25 @@ private:
 	arg<k_orderb, T, tensor_tag> m_arg_b; //!< Tensor argument for B
 	permutation<k_orderb> m_invperm_b;
 	direct_product_contraction2_builder<N, M> m_contr_bld; //!< Contraction builder
-	btod_contract2<N, M, 0> m_op; //!< Contraction operation
-	arg<k_orderc, T, oper_tag> m_arg; //!< Composed operation argument
+	btod_contract2<N, M, 0> *m_op; //!< Contraction operation
+	arg<k_orderc, T, oper_tag> *m_arg; //!< Composed operation argument
 
 public:
 	direct_product_eval_functor(expression_t &expr,
 		const subexpr_labels_t &labels_ab,
 		const letter_expr<k_orderc> &label_c);
 
+	~direct_product_eval_functor();
+
 	void evaluate();
 
 	void clean();
 
-	arg<N + M, T, oper_tag> get_arg() const { return m_arg; }
+	arg<N + M, T, oper_tag> get_arg() const { return *m_arg; }
+
+private:
+	void create_arg();
+	void destroy_arg();
 
 };
 
@@ -76,7 +82,7 @@ const char *direct_product_eval_functor<N, M, T, E1, E2, NT1, NO1, 1, 0>::
 
 
 template<size_t N, size_t M, typename T, typename E1, typename E2,
-size_t NT1, size_t NO1>
+	size_t NT1, size_t NO1>
 direct_product_eval_functor<N, M, T, E1, E2, NT1, NO1, 1, 0>::
 direct_product_eval_functor(expression_t &expr,
 	const subexpr_labels_t &labels_ab,
@@ -88,9 +94,17 @@ direct_product_eval_functor(expression_t &expr,
 	m_invperm_b(m_arg_b.get_perm(), true),
 	m_contr_bld(labels_ab.get_label_a(), m_invperm_a,
 		labels_ab.get_label_b(), m_invperm_b, label_c),
-	m_op(m_contr_bld.get_contr(), m_eval_a.get_btensor(), m_arg_b.get_btensor()),
-	m_arg(m_op, m_arg_b.get_coeff()) {
+	m_op(0), m_arg(0) {
 
+}
+
+
+template<size_t N, size_t M, typename T, typename E1, typename E2,
+	size_t NT1, size_t NO1>
+direct_product_eval_functor<N, M, T, E1, E2, NT1, NO1, 1, 0>::
+~direct_product_eval_functor() {
+
+	destroy_arg();
 }
 
 
@@ -99,6 +113,7 @@ template<size_t N, size_t M, typename T, typename E1, typename E2,
 void direct_product_eval_functor<N, M, T, E1, E2, NT1, NO1, 1, 0>::evaluate() {
 
 	m_eval_a.evaluate();
+	create_arg();
 }
 
 
@@ -106,7 +121,28 @@ template<size_t N, size_t M, typename T, typename E1, typename E2,
 	size_t NT1, size_t NO1>
 void direct_product_eval_functor<N, M, T, E1, E2, NT1, NO1, 1, 0>::clean() {
 
+	destroy_arg();
 	m_eval_a.clean();
+}
+
+
+template<size_t N, size_t M, typename T, typename E1, typename E2,
+	size_t NT1, size_t NO1>
+void direct_product_eval_functor<N, M, T, E1, E2, NT1, NO1, 1, 0>::create_arg() {
+
+	destroy_arg();
+	m_op = new btod_contract2<N, M, 0>(m_contr_bld.get_contr(),
+		m_eval_a.get_btensor(), m_arg_b.get_btensor());
+	m_arg = new arg<k_orderc, T, oper_tag>(*m_op, m_arg_b.get_coeff());
+}
+
+
+template<size_t N, size_t M, typename T, typename E1, typename E2,
+	size_t NT1, size_t NO1>
+void direct_product_eval_functor<N, M, T, E1, E2, NT1, NO1, 1, 0>::destroy_arg() {
+
+	delete m_arg; m_arg = 0;
+	delete m_op; m_op = 0;
 }
 
 

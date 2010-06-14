@@ -15,16 +15,16 @@ void anon_eval_test::perform() throw(libtest::test_exception) {
 
 	try {
 
-		test_copy_1();
-		test_copy_2();
-		test_copy_3();
-		test_copy_4();
-		test_copy_5();
-		test_copy_6();
+		//~ test_copy_1();
+		//~ test_copy_2();
+		//~ test_copy_3();
+		//~ test_copy_4();
+		//~ test_copy_5();
+		//~ test_copy_6();
 
-		test_add_1();
+		//~ test_add_1();
 
-		test_contr_1();
+		//~ test_contr_1();
 		test_contr_2();
 
 		test_mixed_1();

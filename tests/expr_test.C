@@ -94,10 +94,10 @@ void expr_test::test_2() throw(libtest::test_exception) {
 
 	i3_ovvv(i|a|b|c) =
 		  i_ovvv(i|a|b|c)
-//		+ asymm(b|c, contract(j,
-//			t1(j|c),
-//			i_ovov(j|b|i|a)
-//			- contract(k|d, t2(i|k|b|d), i_oovv(j|k|a|d))))
+		+ asymm(b|c, contract(j,
+			t1(j|c),
+			i_ovov(j|b|i|a)
+			- contract(k|d, t2(i|k|b|d), i_oovv(j|k|a|d))))
 		- asymm(b|c, contract(k|d, i_ovvv(k|c|a|d), t2(i|k|b|d)));
 
 	} catch(exception &e) {

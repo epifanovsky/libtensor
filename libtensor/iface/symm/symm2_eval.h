@@ -46,8 +46,8 @@ private:
 	sub_eval_t m_sub_eval; //!< Evaluation of the sub-expression
 	permutation<N> m_perm1; //!< Permutation for argument 1
 	permutation<N> m_perm2; //!< Permutation for symmetrization
-	arg<N, T, tensor_tag> m_arg1; //!< Argument 1
-	arg<N, T, tensor_tag> m_arg2; //!< Argument 2
+	arg<N, T, tensor_tag> *m_arg1; //!< Argument 1
+	arg<N, T, tensor_tag> *m_arg2; //!< Argument 2
 
 public:
 	/**	\brief Initializes the container with given expression and
@@ -59,7 +59,7 @@ public:
 
 	/**	\brief Virtual destructor
 	 **/
-	virtual ~symm2_eval() { }
+	virtual ~symm2_eval();
 
 	/**	\brief Evaluates sub-expressions into temporary tensors
 	 **/
@@ -90,6 +90,10 @@ private:
 		perm.permute(i1, i2);
 		return perm;
 	}
+
+	void create_arg();
+	void destroy_arg();
+
 };
 
 
@@ -113,9 +117,15 @@ symm2_eval<N, Sym, T, SubCore>::symm2_eval(
 	m_sub_expr(expr.get_core().get_sub_expr()),
 	m_sub_eval(m_sub_expr, label),
 	m_perm2(mk_perm(expr, label)),
-	m_arg1(m_sub_eval.get_btensor(), m_perm1, 1.0),
-	m_arg2(m_sub_eval.get_btensor(), m_perm2, Sym ? 1.0 : -1.0) {
+	m_arg1(0), m_arg2(0) {
 
+}
+
+
+template<size_t N, bool Sym, typename T, typename SubCore>
+symm2_eval<N, Sym, T, SubCore>::~symm2_eval() {
+
+	destroy_arg();
 }
 
 
@@ -123,13 +133,34 @@ template<size_t N, bool Sym, typename T, typename SubCore>
 void symm2_eval<N, Sym, T, SubCore>::prepare() {
 
 	m_sub_eval.evaluate();
+	create_arg();
 }
 
 
 template<size_t N, bool Sym, typename T, typename SubCore>
 void symm2_eval<N, Sym, T, SubCore>::clean() {
 
+	destroy_arg();
 	m_sub_eval.clean();
+}
+
+
+template<size_t N, bool Sym, typename T, typename SubCore>
+void symm2_eval<N, Sym, T, SubCore>::create_arg() {
+
+	destroy_arg();
+	m_arg1 = new arg<N, T, tensor_tag>(m_sub_eval.get_btensor(), m_perm1,
+		1.0);
+	m_arg2 = new arg<N, T, tensor_tag>(m_sub_eval.get_btensor(), m_perm2,
+		Sym ? 1.0 : -1.0);
+}
+
+
+template<size_t N, bool Sym, typename T, typename SubCore>
+void symm2_eval<N, Sym, T, SubCore>::destroy_arg() {
+
+	delete m_arg1; m_arg1 = 0;
+	delete m_arg2; m_arg2 = 0;
 }
 
 
@@ -151,9 +182,9 @@ arg<N, T, tensor_tag> symm2_eval<N, Sym, T, SubCore>::get_arg(
 
 	static const char *method = "get_arg(const tensor_tag&, size_t)";
 	if(i == 0) {
-		return m_arg1;
+		return *m_arg1;
 	} else if(i == 1) {
-		return m_arg2;
+		return *m_arg2;
 	} else {
 		throw out_of_bounds(g_ns, k_clazz, method, __FILE__, __LINE__,
 			"Argument index is out of bounds.");

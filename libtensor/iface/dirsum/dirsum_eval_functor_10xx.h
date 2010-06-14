@@ -52,19 +52,25 @@ private:
 	anon_eval_b_t m_eval_b; //!< Anonymous evaluator for sub-expression B
 	permutation<k_orderb> m_invperm_b;
 	dirsum_permutation_builder<N, M> m_perm_bld; //!< Permutation builder
-	btod_dirsum<N, M> m_op; //!< Direct sum operation
-	arg<k_orderc, T, oper_tag> m_arg; //!< Composed operation argument
+	btod_dirsum<N, M> *m_op; //!< Direct sum operation
+	arg<k_orderc, T, oper_tag> *m_arg; //!< Composed operation argument
 
 public:
 	dirsum_eval_functor(expression_t &expr,
 		const subexpr_labels_t &labels_ab,
 		const letter_expr<k_orderc> &label_c);
 
+	~dirsum_eval_functor();
+
 	void evaluate();
 
 	void clean();
 
-	arg<N + M, T, oper_tag> get_arg() const { return m_arg; }
+	arg<N + M, T, oper_tag> get_arg() const { return *m_arg; }
+
+private:
+	void create_arg();
+	void destroy_arg();
 
 };
 
@@ -87,10 +93,16 @@ dirsum_eval_functor(expression_t &expr, const subexpr_labels_t &labels_ab,
 	m_eval_b(expr.get_core().get_expr_2(), labels_ab.get_label_b()),
 	m_perm_bld(labels_ab.get_label_a(), m_invperm_a,
 		labels_ab.get_label_b(), m_invperm_b, label_c),
-	m_op(m_arg_a.get_btensor(), m_arg_a.get_coeff(),
-		m_eval_b.get_btensor(), 1.0, m_perm_bld.get_perm()),
-	m_arg(m_op, 1.0) {
+	m_op(0), m_arg(0) {
 
+}
+
+
+template<size_t N, size_t M, typename T, typename E1, typename E2,
+	size_t NT2, size_t NO2>
+dirsum_eval_functor<N, M, T, E1, E2, 1, 0, NT2, NO2>::~dirsum_eval_functor() {
+
+	destroy_arg();
 }
 
 
@@ -99,6 +111,7 @@ template<size_t N, size_t M, typename T, typename E1, typename E2,
 void dirsum_eval_functor<N, M, T, E1, E2, 1, 0, NT2, NO2>::evaluate() {
 
 	m_eval_b.evaluate();
+	create_arg();
 }
 
 
@@ -106,7 +119,28 @@ template<size_t N, size_t M, typename T, typename E1, typename E2,
 	size_t NT2, size_t NO2>
 void dirsum_eval_functor<N, M, T, E1, E2, 1, 0, NT2, NO2>::clean() {
 
+	destroy_arg();
 	m_eval_b.clean();
+}
+
+
+template<size_t N, size_t M, typename T, typename E1, typename E2,
+	size_t NT2, size_t NO2>
+void dirsum_eval_functor<N, M, T, E1, E2, 1, 0, NT2, NO2>::create_arg() {
+
+	destroy_arg();
+	m_op = new btod_dirsum<N, M>(m_arg_a.get_btensor(), m_arg_a.get_coeff(),
+		m_eval_b.get_btensor(), 1.0, m_perm_bld.get_perm());
+	m_arg = new arg<k_orderc, T, oper_tag>(*m_op, 1.0);
+}
+
+
+template<size_t N, size_t M, typename T, typename E1, typename E2,
+	size_t NT2, size_t NO2>
+void dirsum_eval_functor<N, M, T, E1, E2, 1, 0, NT2, NO2>::destroy_arg() {
+
+	delete m_arg; m_arg = 0;
+	delete m_op; m_op = 0;
 }
 
 

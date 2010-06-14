@@ -56,9 +56,8 @@ public:
 private:
 	expression_t &m_expr;
 	eval_container_t &m_eval_container;
-	tensor_arg_t m_arg0;
-	btod_add<N> m_op_add;
-	btod_sum<N> m_op_sum;
+	btod_add<N> *m_op_add;
+	btod_sum<N> *m_op_sum;
 	btod_set<N> m_op_set;
 
 public:
@@ -68,17 +67,22 @@ public:
 
 	/**	\brief Virtual destructor
 	 **/
-	virtual ~evalfunctor() { }
+	virtual ~evalfunctor();
 
 	/**	\brief Returns the block %tensor operation
 	 **/
 	virtual additive_btod<N> &get_bto() {
-		return m_op_sum;
+		if(m_op_sum == 0) make_bto();
+		return *m_op_sum;
 	}
 
 	virtual btod_set<N> &get_clean_bto() {
 		return m_op_set;
 	}
+
+private:
+	void make_bto();
+	void destroy_bto();
 
 };
 
@@ -113,8 +117,7 @@ public:
 private:
 	expression_t &m_expr;
 	eval_container_t &m_eval_container;
-	tensor_arg_t m_arg0;
-	btod_add<N> m_op;
+	btod_add<N> *m_op;
 	btod_set<N> m_op_set;
 
 public:
@@ -124,17 +127,22 @@ public:
 
 	/**	\brief Virtual destructor
 	 **/
-	virtual ~evalfunctor() { }
+	virtual ~evalfunctor();
 
 	/**	\brief Returns the block %tensor operation
 	 **/
 	virtual additive_btod<N> &get_bto() {
-		return m_op;
+		if(m_op == 0) make_bto();
+		return *m_op;
 	}
 
 	virtual btod_set<N> &get_clean_bto() {
 		return m_op_set;
 	}
+
+private:
+	void make_bto();
+	void destroy_bto();
 
 };
 
@@ -168,8 +176,7 @@ public:
 private:
 	expression_t &m_expr;
 	eval_container_t &m_eval_container;
-	oper_arg_t m_arg0;
-	btod_sum<N> m_op;
+	btod_sum<N> *m_op;
 	btod_set<N> m_op_set;
 
 public:
@@ -179,17 +186,22 @@ public:
 
 	/**	\brief Virtual destructor
 	 **/
-	virtual ~evalfunctor() { }
+	virtual ~evalfunctor();
 
 	/**	\brief Returns the block %tensor operation
 	 **/
 	virtual additive_btod<N> &get_bto() {
-		return m_op;
+		if(m_op == 0) make_bto();
+		return *m_op;
 	}
 
 	virtual btod_set<N> &get_clean_bto() {
 		return m_op_set;
 	}
+
+private:
+	void make_bto();
+	void destroy_bto();
 
 };
 
@@ -222,8 +234,7 @@ public:
 private:
 	expression_t &m_expr;
 	eval_container_t &m_eval_container;
-	tensor_arg_t m_arg;
-	btod_copy<N> m_op;
+	btod_copy<N> *m_op;
 	btod_set<N> m_op_set;
 
 public:
@@ -233,87 +244,186 @@ public:
 
 	/**	\brief Virtual destructor
 	 **/
-	virtual ~evalfunctor() { }
+	virtual ~evalfunctor();
 
 	/**	\brief Returns the block %tensor operation
 	 **/
 	virtual additive_btod<N> &get_bto() {
-		return m_op;
+		if(m_op == 0) make_bto();
+		return *m_op;
 	}
 
 	virtual btod_set<N> &get_clean_bto() {
 		return m_op_set;
 	}
 
+private:
+	void make_bto();
+	void destroy_bto();
+
 };
 
 
 template<size_t N, typename Core, size_t NTensor, size_t NOper>
-evalfunctor<N, double, Core, NTensor, NOper>::evalfunctor(
-	expression_t &expr, eval_container_t &cont) :
-		m_expr(expr),
-		m_eval_container(cont),
-		m_arg0(m_eval_container.get_arg(tensor_tag(), 0)),
-		m_op_add(m_arg0.get_btensor(), m_arg0.get_perm(),
-			m_arg0.get_coeff()),
-		m_op_sum(m_op_add, 1.0) {
+evalfunctor<N, double, Core, NTensor, NOper>::evalfunctor(expression_t &expr,
+	eval_container_t &cont) :
+
+	m_expr(expr), m_eval_container(cont), m_op_add(0), m_op_sum(0) {
+
+}
+
+
+template<size_t N, typename Core, size_t NTensor, size_t NOper>
+evalfunctor<N, double, Core, NTensor, NOper>::~evalfunctor() {
+
+	destroy_bto();
+}
+
+
+template<size_t N, typename Core, size_t NTensor, size_t NOper>
+void evalfunctor<N, double, Core, NTensor, NOper>::make_bto() {
+
+	destroy_bto();
 
 	tensor_tag ttag;
 	oper_tag otag;
+
+	tensor_arg_t arg0 = m_eval_container.get_arg(ttag, 0);
+	m_op_add = new btod_add<N>(arg0.get_btensor(), arg0.get_perm(),
+		arg0.get_coeff());
 	for(size_t i = 1; i < NTensor; i++) {
 		tensor_arg_t arg = m_eval_container.get_arg(ttag, i);
-		m_op_add.add_op(arg.get_btensor(), arg.get_perm(),
+		m_op_add->add_op(arg.get_btensor(), arg.get_perm(),
 			arg.get_coeff());
 	}
+
+	m_op_sum = new btod_sum<N>(*m_op_add, 1.0);
 	for(size_t i = 0; i < NOper; i++) {
 		oper_arg_t arg = m_eval_container.get_arg(otag, i);
-		m_op_sum.add_op(arg.get_operation(), arg.get_coeff());
+		m_op_sum->add_op(arg.get_operation(), arg.get_coeff());
+	}
+}
+
+
+template<size_t N, typename Core, size_t NTensor, size_t NOper>
+void evalfunctor<N, double, Core, NTensor, NOper>::destroy_bto() {
+
+	delete m_op_sum; m_op_sum = 0;
+	delete m_op_add; m_op_add = 0;
+}
+
+
+template<size_t N, typename Core, size_t NTensor>
+evalfunctor<N, double, Core, NTensor, 0>::evalfunctor(expression_t &expr,
+	eval_container_t &cont) :
+
+	m_expr(expr), m_eval_container(cont), m_op(0) {
+
+}
+
+
+template<size_t N, typename Core, size_t NTensor>
+evalfunctor<N, double, Core, NTensor, 0>::~evalfunctor() {
+
+	destroy_bto();
+}
+
+
+template<size_t N, typename Core, size_t NTensor>
+void evalfunctor<N, double, Core, NTensor, 0>::make_bto() {
+
+	destroy_bto();
+
+	tensor_tag ttag;
+
+	tensor_arg_t arg0 = m_eval_container.get_arg(ttag, 0);
+	m_op = new btod_add<N>(arg0.get_btensor(), arg0.get_perm(),
+		arg0.get_coeff());
+	for(size_t i = 1; i < NTensor; i++) {
+		tensor_arg_t arg = m_eval_container.get_arg(ttag, i);
+		m_op->add_op(arg.get_btensor(), arg.get_perm(),
+			arg.get_coeff());
 	}
 }
 
 
 template<size_t N, typename Core, size_t NTensor>
-evalfunctor<N, double, Core, NTensor, 0>::evalfunctor(
-	expression_t &expr, eval_container_t &cont) :
-		m_expr(expr),
-		m_eval_container(cont),
-		m_arg0(m_eval_container.get_arg(tensor_tag(), 0)),
-		m_op(m_arg0.get_btensor(), m_arg0.get_perm(),
-			m_arg0.get_coeff()) {
+void evalfunctor<N, double, Core, NTensor, 0>::destroy_bto() {
 
-	tensor_tag ttag;
-	for(size_t i = 1; i < NTensor; i++) {
-		tensor_arg_t arg = m_eval_container.get_arg(ttag, i);
-		m_op.add_op(arg.get_btensor(), arg.get_perm(),
-			arg.get_coeff());
+	delete m_op; m_op = 0;
+}
+
+
+template<size_t N, typename Core, size_t NOper>
+evalfunctor<N, double, Core, 0, NOper>::evalfunctor(expression_t &expr,
+	eval_container_t &cont) :
+
+	m_expr(expr), m_eval_container(cont), m_op(0) {
+
+}
+
+
+template<size_t N, typename Core, size_t NOper>
+evalfunctor<N, double, Core, 0, NOper>::~evalfunctor() {
+
+	destroy_bto();
+}
+
+
+template<size_t N, typename Core, size_t NOper>
+void evalfunctor<N, double, Core, 0, NOper>::make_bto() {
+
+	destroy_bto();
+
+	oper_tag otag;
+
+	oper_arg_t arg0 = m_eval_container.get_arg(otag, 0);
+	m_op = new btod_sum<N>(arg0.get_operation(), arg0.get_coeff());
+	for(size_t i = 1; i < NOper; i++) {
+		oper_arg_t arg = m_eval_container.get_arg(otag, i);
+		m_op->add_op(arg.get_operation(), arg.get_coeff());
 	}
 }
 
 
 template<size_t N, typename Core, size_t NOper>
-evalfunctor<N, double, Core, 0, NOper>::evalfunctor(
-	expression_t &expr, eval_container_t &cont) :
-		m_expr(expr),
-		m_eval_container(cont),
-		m_arg0(m_eval_container.get_arg(oper_tag(), 0)),
-		m_op(m_arg0.get_operation(), m_arg0.get_coeff()) {
+void evalfunctor<N, double, Core, 0, NOper>::destroy_bto() {
 
-	oper_tag otag;
-	for(size_t i = 1; i < NOper; i++) {
-		oper_arg_t arg = m_eval_container.get_arg(otag, i);
-		m_op.add_op(arg.get_operation(), arg.get_coeff());
-	}
+	delete m_op; m_op = 0;
 }
 
 
 template<size_t N, typename Core>
-evalfunctor<N, double, Core, 1, 0>::evalfunctor(
-	expression_t &expr, eval_container_t &cont) :
-		m_expr(expr),
-		m_eval_container(cont),
-		m_arg(m_eval_container.get_arg(tensor_tag(), 0)),
-		m_op(m_arg.get_btensor(), m_arg.get_perm(), m_arg.get_coeff()) {
+evalfunctor<N, double, Core, 1, 0>::evalfunctor(expression_t &expr,
+	eval_container_t &cont) :
 
+	m_expr(expr), m_eval_container(cont), m_op(0) {
+
+}
+
+
+template<size_t N, typename Core>
+evalfunctor<N, double, Core, 1, 0>::~evalfunctor() {
+
+	destroy_bto();
+}
+
+
+template<size_t N, typename Core>
+void evalfunctor<N, double, Core, 1, 0>::make_bto() {
+
+	destroy_bto();
+
+	tensor_arg_t arg = m_eval_container.get_arg(tensor_tag(), 0);
+	m_op = new btod_copy<N>(arg.get_btensor(), arg.get_perm(),
+		arg.get_coeff());
+}
+
+
+template<size_t N, typename Core>
+void evalfunctor<N, double, Core, 1, 0>::destroy_bto() {
+
+	delete m_op; m_op = 0;
 }
 
 

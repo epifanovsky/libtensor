@@ -38,7 +38,7 @@ void btod_contract2_test::perform() throw(libtest::test_exception) {
 	test_contr_3();
 	test_contr_4();
 	test_contr_5();
-//	test_contr_6();
+	test_contr_6();
 	test_contr_7();
 	test_contr_8();
 	test_contr_9();
