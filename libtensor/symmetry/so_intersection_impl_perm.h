@@ -2,6 +2,7 @@
 #define LIBTENSOR_SO_INTERSECTION_IMPL_PERM_H
 
 #include "symmetry_element_set_adapter.h"
+#include "symmetry_operation_impl_base.h"
 #include "so_intersection.h"
 #include "se_perm.h"
 
@@ -15,30 +16,33 @@ namespace libtensor {
 	\ingroup libtensor_symmetry
  **/
 template<size_t N, typename T>
-class so_intersection_impl< se_perm<N, T> > {
+class symmetry_operation_impl< so_intersection<N, T>, se_perm<N, T> > :
+	public symmetry_operation_impl_base< so_intersection<N, T>, se_perm<N, T> > {
 public:
 	static const char *k_clazz; //!< Class name
 
 public:
-	void perform(const symmetry_operation_params<
-		so_intersection<N, T> > &params,
-		symmetry_element_set<N, T> &set);
+	typedef so_intersection<N, T> operation_t;
+	typedef se_perm<N, T> element_t;
+	typedef symmetry_operation_params<operation_t>
+		symmetry_operation_params_t;
+
+protected:
+	virtual void do_perform(symmetry_operation_params_t &params) const;
 };
 
 
 template<size_t N, typename T>
-const char *so_intersection_impl< se_perm<N, T> >::k_clazz =
-	"so_intersection_impl< se_perm<N, T> >";
+const char *symmetry_operation_impl< so_intersection<N, T>, se_perm<N, T> >::k_clazz =
+	"symmetry_operation_impl< so_intersection<N, T>, se_perm<N, T> >";
 
 
 template<size_t N, typename T>
-void so_intersection_impl< se_perm<N, T> >::perform(
-	const symmetry_operation_params< so_intersection<N, T> > &params,
-	symmetry_element_set<N, T> &set) {
+void symmetry_operation_impl< so_intersection<N, T>, se_perm<N, T> >::do_perform(
+	symmetry_operation_params_t &params) const {
 
 	static const char *method =
-		"perform(const symmetry_operation_params< "
-		"so_intersection<N, T> >&, symmetry_element_set<N, T>&)";
+		"do_perform(symmetry_operation_params< so_intersection<N, T> >&)";
 
 	typedef symmetry_element_set_adapter< N, T, se_perm<N, T> > adapter_t;
 	adapter_t g1(params.g1);
@@ -50,7 +54,7 @@ void so_intersection_impl< se_perm<N, T> >::perform(
 	//
 	//	Empty the output set
 	//
-	set.clear();
+	params.g3.clear();
 
 	//
 	//	When G1=0 or G2=0, G1 \cap G2 = 0
@@ -87,7 +91,7 @@ void so_intersection_impl< se_perm<N, T> >::perform(
 	}
 	if(g1_eq_g2) {
 		for(i = g1.begin(); i != g1.end(); i++)
-			set.insert(g1.get_elem(i));
+			params.g3.insert(g1.get_elem(i));
 		return;
 	}
 
