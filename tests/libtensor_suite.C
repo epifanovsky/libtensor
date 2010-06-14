@@ -24,7 +24,7 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("btod_dotprod", m_utf_btod_dotprod);
 	add_test("btod_extract", m_utf_btod_extract);
 	add_test("btod_import_raw", m_utf_btod_import_raw);
-	//~ add_test("btod_mult", m_utf_btod_mult);
+	add_test("btod_mult", m_utf_btod_mult);
 	add_test("btod_mult1", m_utf_btod_mult1);
 	add_test("btod_random", m_utf_btod_random);
 	add_test("btod_read", m_utf_btod_read);
@@ -66,6 +66,7 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("so_add", m_utf_so_add);
 	add_test("so_add_impl_perm", m_utf_so_add_impl_perm);
 	add_test("so_copy", m_utf_so_copy);
+	add_test("so_intersection", m_utf_so_intersection);
 	add_test("so_intersection_impl_perm", m_utf_so_intersection_impl_perm);
 	add_test("so_proj_down", m_utf_so_proj_down);
 	add_test("so_proj_down_impl_perm", m_utf_so_proj_down_impl_perm);

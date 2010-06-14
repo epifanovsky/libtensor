@@ -21,7 +21,7 @@
 #include "btod_dotprod_test.h"
 #include "btod_extract_test.h"
 #include "btod_import_raw_test.h"
-//~ #include "btod_mult_test.h"
+#include "btod_mult_test.h"
 #include "btod_mult1_test.h"
 #include "btod_random_test.h"
 #include "btod_read_test.h"
@@ -63,6 +63,7 @@
 #include "so_add_test.h"
 #include "so_add_impl_perm_test.h"
 #include "so_copy_test.h"
+#include "so_intersection_test.h"
 #include "so_intersection_impl_perm_test.h"
 #include "so_proj_down_test.h"
 #include "so_proj_down_impl_perm_test.h"
@@ -173,6 +174,7 @@ namespace libtensor {
 	\li libtensor::so_add_test
 	\li libtensor::so_add_impl_perm_test
 	\li libtensor::so_copy_test
+	\li libtensor::so_intersection_test
 	\li libtensor::so_intersection_impl_perm_test
 	\li libtensor::so_proj_down_test
 	\li libtensor::so_proj_down_impl_perm_test
@@ -235,7 +237,7 @@ private:
 	unit_test_factory<btod_dotprod_test> m_utf_btod_dotprod;
 	unit_test_factory<btod_extract_test> m_utf_btod_extract;
 	unit_test_factory<btod_import_raw_test> m_utf_btod_import_raw;
-	//~ unit_test_factory<btod_mult_test> m_utf_btod_mult;
+	unit_test_factory<btod_mult_test> m_utf_btod_mult;
 	unit_test_factory<btod_mult1_test> m_utf_btod_mult1;
 	unit_test_factory<btod_random_test> m_utf_btod_random;
 	unit_test_factory<btod_read_test> m_utf_btod_read;
@@ -278,6 +280,8 @@ private:
 	unit_test_factory<so_add_test> m_utf_so_add;
 	unit_test_factory<so_add_impl_perm_test> m_utf_so_add_impl_perm;
 	unit_test_factory<so_copy_test> m_utf_so_copy;
+	unit_test_factory<so_intersection_test>
+		m_utf_so_intersection;
 	unit_test_factory<so_intersection_impl_perm_test>
 		m_utf_so_intersection_impl_perm;
 	unit_test_factory<so_proj_down_test> m_utf_so_proj_down;

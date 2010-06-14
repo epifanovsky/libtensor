@@ -20,7 +20,7 @@ set(SRC
 	btod_dotprod_test.C
 	btod_extract_test.C
 	btod_import_raw_test.C
-#	btod_mult_test.C
+	btod_mult_test.C
 	btod_mult1_test.C
 	btod_random_test.C
 	btod_read_test.C
@@ -62,6 +62,7 @@ set(SRC
 	so_add_test.C
 	so_add_impl_perm_test.C
 	so_copy_test.C
+	so_intersection_test.C
 	so_intersection_impl_perm_test.C
 	so_proj_down_test.C
 	so_proj_down_impl_perm_test.C
