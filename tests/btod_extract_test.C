@@ -586,4 +586,163 @@ void btod_extract_test::test_9() throw(libtest::test_exception) {
 	}
 }
 
+/**	\test Extract a matrix from the 4rd order tensor with splitting and symmetry
+ * \f$ b_{il} = a_{ijkl} \f$
+ **/
+void btod_extract_test::test_10() throw(libtest::test_exception) {
+
+	static const char *testname = "btod_extract_test::test_10()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<2> i2a, i2b;
+	i2b[0] = 12; i2b[1] = 12;
+	index<4> i4a, i4b;
+	i4b[0] = 12; i4b[1] = 12; i4b[2] = 12;i4b[3] = 12;
+	dimensions<2> dims2(index_range<2>(i2a, i2b));
+	dimensions<4> dims4(index_range<4>(i4a, i4b));
+	block_index_space<2> bis2(dims2);
+	block_index_space<4> bis4(dims4);
+
+	mask<2> splmsk2; splmsk2[0] = true; splmsk2[1] = true;
+	bis2.split(splmsk2, 3);
+	bis2.split(splmsk2, 6);
+	bis2.split(splmsk2, 9);
+	bis2.split(splmsk2, 12);
+
+	mask<4> splmsk3; splmsk3[0] = true; splmsk3[1] = true; splmsk3[2] = true;
+	splmsk3[3] = true;
+	bis4.split(splmsk3, 3);
+	bis4.split(splmsk3, 6);
+	bis4.split(splmsk3, 9);
+	bis4.split(splmsk3, 12);
+
+	block_tensor<4, double, allocator_t> bta(bis4);
+	block_tensor<2, double, allocator_t> btb(bis2);
+
+	//  Add symmetries
+
+	permutation<4> p30, p21;
+	p30.permute(0, 3);
+	p21.permute(2, 1);
+	se_perm<4, double> sp30(p30, true);
+	se_perm<4, double> ap21(p21, false);
+	block_tensor_ctrl<4, double> cbta(bta);
+	cbta.req_symmetry().insert(sp30);
+	cbta.req_symmetry().insert(ap21);
+
+	permutation<2> p10;
+	p10.permute(0, 1);
+	se_perm<2, double> sp10(p10, true);
+	block_tensor_ctrl<2, double> cbtb(btb);
+	cbtb.req_symmetry().insert(sp10);
+
+	tensor<4, double, allocator_t> ta(dims4);
+	tensor<2, double, allocator_t> tb(dims2), tb_ref(dims2);
+
+	mask<4> msk;
+	msk[0] = true; msk[1] = false; msk[2] = false; msk[3] = true;
+
+	index<4> idx;
+	idx[0] = 0; idx[1] = 5; idx[2] =11; idx[3] = 0;
+	index<4> idxbl;
+	idxbl[0] = 0; idxbl[1] = 1; idxbl[2] = 3; idxbl[3] = 0;
+	index<4> idxibl;
+	idxibl[0] = idx[0]; idxibl[1] = idx[1] -3; idxibl[2] = idx[2] - 9;
+	idxibl[3] = idx[3];
+
+	//	Fill in random data
+
+	btod_random<4>().perform(bta);
+	bta.set_immutable();
+
+	//	Prepare the reference
+
+	tod_btconv<4>(bta).perform(ta);
+	tod_extract<4, 2>(ta, msk, idx).perform(tb_ref);
+
+	//	Invoke the operation
+	btod_extract<4, 2>(bta, msk, idxbl, idxibl).perform(btb);
+	tod_btconv<2>(btb).perform(tb);
+
+	//	Compare against the reference
+	compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+
+/**	\test Extract a matrix from the 3rd order tensor with splitting,
+ * permutation, and symmetry \f$ b_{ki} = a_{ijk} \f$
+ **/
+void btod_extract_test::test_11() throw(libtest::test_exception) {
+
+	static const char *testname = "btod_extract_test::test_11()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<2> i2a, i2b;
+	i2b[0] = 5; i2b[1] = 10;
+	index<3> i3a, i3b;
+	i3b[0] = 10; i3b[1] = 10; i3b[2] = 5;
+	dimensions<2> dims2(index_range<2>(i2a, i2b));
+	dimensions<3> dims3(index_range<3>(i3a, i3b));
+	block_index_space<2> bis2(dims2);
+	block_index_space<3> bis3(dims3);
+
+	block_tensor<3, double, allocator_t> bta(bis3);
+	block_tensor<2, double, allocator_t> btb(bis2);
+
+	//  Add symmetry
+
+	permutation<3> p21;
+	p21.permute(2, 1);
+	se_perm<3, double> ap21(p21, false);
+	block_tensor_ctrl<3, double> cbta(bta);
+	cbta.req_symmetry().insert(ap21);
+
+	tensor<3, double, allocator_t> ta(dims3);
+	tensor<2, double, allocator_t> tb(dims2), tb_ref(dims2);
+
+	mask<3> msk;
+	msk[0] = true; msk[1] = false;msk[2] = true;
+
+	index<3> idx;
+	idx[0] = 0; idx [1] = 4; idx[2] =0;
+	index<3> idxbl;
+	idxbl[0] = 0; idxbl[1] = 0;idxbl[2] = 0;
+	index<3> idxibl;
+	idxibl[0] = idx[0]; idxibl[1] = idx[1];idxibl[2] = idx[2];
+
+	//	Fill in random data
+	btod_random<3>().perform(bta);
+	bta.set_immutable();
+
+	// Set the permutation
+	permutation<2> perm;
+	perm.permute(0, 1);
+
+	//	Prepare the reference
+	tod_btconv<3>(bta).perform(ta);
+	tod_extract<3, 1>(ta, msk, perm, idx).perform(tb_ref);
+
+	//	Invoke the operation
+	btod_extract<3, 1>(bta, msk,perm, idxbl, idxibl).perform(btb);
+	tod_btconv<2>(btb).perform(tb);
+
+	//	Compare against the reference
+	compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
 } // namespace libtensor
