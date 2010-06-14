@@ -6,8 +6,8 @@
 #include "../core/block_tensor_ctrl.h"
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
+#include "../symmetry/so_add.h"
 #include "../symmetry/so_permute.h"
-#include "../symmetry/so_intersection.h"
 #include "../tod/tod_mult.h"
 #include "../tod/tod_set.h"
 #include "additive_btod.h"
@@ -128,8 +128,8 @@ btod_mult<N>::btod_mult(block_tensor_i<N, double> &bta,
 	}
 
 	block_tensor_ctrl<N, double> cbta(bta), cbtb(btb);
-	so_intersection<N, double>(cbta.req_const_symmetry(),
-			cbtb.req_const_symmetry()).perform(m_sym);
+	so_add<N, double>(cbta.req_const_symmetry(), m_pa,
+			cbtb.req_const_symmetry(), m_pb).perform(m_sym);
 
 	make_schedule();
 }
@@ -155,12 +155,8 @@ btod_mult<N>::btod_mult(
 	}
 
 	block_tensor_ctrl<N, double> cbta(bta), cbtb(btb);
-	symmetry<N, double> syma(bta.get_bis());
-	so_permute<N, double>(cbta.req_const_symmetry(), m_pa).perform(syma);
-	symmetry<N, double> symb(btb.get_bis());
-	so_permute<N, double>(cbtb.req_const_symmetry(), m_pb).perform(symb);
-
-	so_intersection<N, double>(syma, symb).perform(m_sym);
+	so_add<N, double>(cbta.req_const_symmetry(), m_pa,
+			cbtb.req_const_symmetry(), m_pb).perform(m_sym);
 
 	make_schedule();
 }

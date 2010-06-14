@@ -7,8 +7,9 @@
 #include "../core/block_tensor_ctrl.h"
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
-#include "../symmetry/so_permute.h"
-#include "../symmetry/so_intersection.h"
+#include "../symmetry/so_add.h"
+#include "../symmetry/so_copy.h"
+#include "../tod/tod_copy.h"
 #include "../tod/tod_mult1.h"
 #include "../tod/tod_set.h"
 #include "bad_block_index_space.h"
@@ -119,40 +120,74 @@ void btod_mult1<N>::do_perform(
 
 	block_tensor_ctrl<N, double> ctrla(bta), ctrlb(m_btb);
 
-	// Copy symmetry from A to B
-	if (zero) {
-		ctrla.req_symmetry().clear();
+	// Copy sym(A) and permuted sym(B) and install \sym(A) \cap \sym(B) in A
 
-		so_permute<N, double>(ctrlb.req_const_symmetry(),
-				m_pb).perform(ctrla.req_symmetry());
+	permutation<N> pa;
+	symmetry<N, double> syma(bta.get_bis());
+	so_copy<N, double>(ctrla.req_const_symmetry()).perform(syma);
+	so_add<N, double>(syma, pa,
+			ctrlb.req_const_symmetry(), m_pb).perform(ctrla.req_symmetry());
+
+	// First loop over all orbits in sym(A) \cap sym(B) and copy blocks which
+	// were not canonical in sym(A)
+
+	orbit_list<N, double> ol(ctrla.req_symmetry());
+
+	for(typename orbit_list<N, double>::iterator io = ol.begin();
+		io != ol.end(); io++) {
+
+		index<N> idx(ol.get_index(io));
+
+		orbit<N, double> oa(syma, idx);
+		abs_index<N> cidxa(oa.get_abs_canonical_index(),
+				bta.get_bis().get_block_index_dims());
+
+		if (idx.equals(cidxa.get_index()))
+			continue;
+
+		if (ctrla.req_is_zero_block(cidxa.get_index()))
+			continue;
+
+		tensor_i<N, double> &blk = ctrla.req_block(idx);
+		tensor_i<N, double> &blka = ctrla.req_block(cidxa.get_index());
+
+		const transf<N, double> &tra = oa.get_transf(idx);
+
+		tod_copy<N>(blka, tra.get_perm(), tra.get_coeff()).perform(blk);
+
+		ctrla.ret_block(cidxa.get_index());
+		ctrla.ret_block(idx);
 	}
 
-	//	Assuming equal symmetry in A, B
+	// Second loop over all orbits in sym(A) \cap sym(B) and do the operation
 
-	orbit_list<N, double> olsta(ctrla.req_symmetry());
 	permutation<N> pinvb(m_pb, true);
 
-	for(typename orbit_list<N, double>::iterator ioa = olsta.begin();
-		ioa != olsta.end(); ioa++) {
+	for(typename orbit_list<N, double>::iterator ioa = ol.begin();
+		ioa != ol.end(); ioa++) {
 
-		index<N> idxa(olsta.get_index(ioa)), idxb(idxa);
+		index<N> idxa(ol.get_index(ioa)), idxb(idxa);
+
 		idxb.permute(pinvb);
-
 		orbit<N, double> ob(ctrlb.req_const_symmetry(), idxb);
 		abs_index<N> cidxb(ob.get_abs_canonical_index(),
 				m_btb.get_bis().get_block_index_dims());
 
 		bool zeroa = ctrla.req_is_zero_block(idxa);
 		bool zerob = ctrlb.req_is_zero_block(cidxb.get_index());
+
 		if(m_recip && zerob) {
 			throw bad_parameter(g_ns, k_clazz, method,
 				__FILE__, __LINE__, "zero in btb");
 		}
+
 		if(zero && (zeroa || zerob)) {
 			ctrla.req_zero_block(idxa);
 			continue;
 		}
-		if(zeroa || zerob) continue;
+
+		if (zeroa || zerob)
+			continue;
 
 		tensor_i<N, double> &blka = ctrla.req_block(idxa);
 		tensor_i<N, double> &blkb = ctrlb.req_block(cidxb.get_index());
@@ -165,8 +200,8 @@ void btod_mult1<N>::do_perform(
 		permutation<N> pb(trb.get_perm());
 		pb.permute(m_pb);
 
-		if(zero && c == 1.0) {
-			tod_mult1<N>(blkb, pb, m_recip, k).perform(blka);
+		if(zero) {
+			tod_mult1<N>(blkb, pb, m_recip, k * c).perform(blka);
 		} else {
 			tod_mult1<N>(blkb, pb, m_recip, k).perform(blka, c);
 		}
