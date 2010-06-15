@@ -25,7 +25,6 @@ public:
 	typedef expr<k_orderb, T, core_t> expression_t;
 
 	//!	Expression core type of A
-//	typedef typename E1::core_t core_a_t;
 	typedef E1 core_a_t;
 
 	//!	Anonymous evaluator type of A
@@ -38,19 +37,25 @@ private:
 	anon_eval_a_t m_eval_a; //!< Anonymous evaluator for the sub-expression
 	permutation<k_ordera> m_invperm_a;
 	diag_params_builder<N, M> m_params_bld; //!< Parameters builder
-	btod_diag<N, M> m_op; //!< Diagonal extraction operation
-	arg<k_orderb, T, oper_tag> m_arg; //!< Composed operation argument
+	btod_diag<N, M> *m_op; //!< Diagonal extraction operation
+	arg<k_orderb, T, oper_tag> *m_arg; //!< Composed operation argument
 
 public:
 	diag_eval_functor(expression_t &expr,
 		const subexpr_label_t &labels_a,
 		const letter_expr<k_orderb> &label_b);
 
+	~diag_eval_functor();
+
 	void evaluate();
 
 	void clean();
 
-	arg<N - M + 1, T, oper_tag> get_arg() const { return m_arg; }
+	arg<N - M + 1, T, oper_tag> get_arg() const { return *m_arg; }
+
+private:
+	void create_arg();
+	void destroy_arg();
 
 };
 
@@ -69,10 +74,15 @@ diag_eval_functor<N, M, T, E1, NT1, NO1>::diag_eval_functor(
 	m_params_bld(label_a.get_label(), m_invperm_a, label_b,
 		expr.get_core().get_diag_letter(),
 		expr.get_core().get_diag_label()),
-	m_op(m_eval_a.get_btensor(), m_params_bld.get_mask(),
-		m_params_bld.get_perm()),
-	m_arg(m_op, 1.0) {
+	m_op(0), m_arg(0) {
 
+}
+
+
+template<size_t N, size_t M, typename T, typename E1, size_t NT1, size_t NO1>
+diag_eval_functor<N, M, T, E1, NT1, NO1>::~diag_eval_functor() {
+
+	destroy_arg();
 }
 
 
@@ -80,13 +90,33 @@ template<size_t N, size_t M, typename T, typename E1, size_t NT1, size_t NO1>
 void diag_eval_functor<N, M, T, E1, NT1, NO1>::evaluate() {
 
 	m_eval_a.evaluate();
+	create_arg();
 }
 
 
 template<size_t N, size_t M, typename T, typename E1, size_t NT1, size_t NO1>
 void diag_eval_functor<N, M, T, E1, NT1, NO1>::clean() {
 
+	destroy_arg();
 	m_eval_a.clean();
+}
+
+
+template<size_t N, size_t M, typename T, typename E1, size_t NT1, size_t NO1>
+void diag_eval_functor<N, M, T, E1, NT1, NO1>::create_arg() {
+
+	destroy_arg();
+	m_op = new btod_diag<N, M>(m_eval_a.get_btensor(),
+		m_params_bld.get_mask(), m_params_bld.get_perm());
+	m_arg = new arg<k_orderb, T, oper_tag>(*m_op, 1.0);
+}
+
+
+template<size_t N, size_t M, typename T, typename E1, size_t NT1, size_t NO1>
+void diag_eval_functor<N, M, T, E1, NT1, NO1>::destroy_arg() {
+
+	delete m_arg; m_arg = 0;
+	delete m_op; m_op = 0;
 }
 
 

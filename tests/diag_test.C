@@ -18,6 +18,7 @@ void diag_test::perform() throw(libtest::test_exception) {
 		test_t_2();
 		test_t_3();
 		test_t_4();
+		test_e_1();
 
 	} catch(...) {
 		libvmm::vm_allocator<double>::vmm().shutdown();
@@ -146,6 +147,43 @@ void diag_test::test_t_4() throw(libtest::test_exception) {
 
 	letter i, j;
 	t2(i) = - diag(i, i|j, t1(i|j));
+
+	compare_ref<1>::compare(testname, t2, t2_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void diag_test::test_e_1() throw(libtest::test_exception) {
+
+	static const char *testname = "diag_test::test_e_1()";
+
+	try {
+
+	bispace<1> sp_i(10);
+	bispace<2> sp_ij(sp_i&sp_i);
+
+	btensor<2> t1a(sp_ij), t1b(sp_ij);
+	btensor<1> t2a(sp_i), t2b(sp_i), t2(sp_i), t2_ref(sp_i);
+
+	btod_random<2>().perform(t1a);
+	btod_random<2>().perform(t1b);
+	t1a.set_immutable();
+	t1b.set_immutable();
+
+	mask<2> msk;
+	msk[0] = true; msk[1] = true;
+	permutation<1> perm;
+	btod_diag<2, 2>(t1a, msk, perm).perform(t2a);
+	btod_diag<2, 2>(t1b, msk, perm).perform(t2b);
+	btod_add<1> add(t2a);
+	add.add_op(t2b);
+	add.perform(t2_ref);
+
+	letter i, j, k;
+	t2(k) = diag(k, i|j, t1a(j|i) + t1b(i|j));
 
 	compare_ref<1>::compare(testname, t2, t2_ref, 1e-15);
 
