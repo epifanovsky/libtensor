@@ -72,7 +72,6 @@ set(SRC
 	so_union_impl_perm_test.C
 	symm_test.C
 	symmetry_test.C
-	symmetry_element_base_test.C
 	symmetry_element_set_test.C
 	symmetry_element_set_adapter_test.C
 	tensor_test.C

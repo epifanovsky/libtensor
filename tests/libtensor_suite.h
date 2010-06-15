@@ -73,7 +73,6 @@
 #include "so_union_impl_perm_test.h"
 #include "symm_test.h"
 #include "symmetry_test.h"
-#include "symmetry_element_base_test.h"
 #include "symmetry_element_set_test.h"
 #include "symmetry_element_set_adapter_test.h"
 #include "tensor_test.h"
@@ -183,7 +182,6 @@ namespace libtensor {
 	\li libtensor::so_union_impl_perm_test
 	\li libtensor::symm_test
 	\li libtensor::symmetry_test
-	\li libtensor::symmetry_element_base_test
 	\li libtensor::symmetry_element_set_test
 	\li libtensor::symmetry_element_set_adapter_test
 	\li libtensor::tensor_test
@@ -291,8 +289,6 @@ private:
 	unit_test_factory<so_union_impl_perm_test> m_utf_so_union_impl_perm;
 	unit_test_factory<symm_test> m_utf_symm;
 	unit_test_factory<symmetry_test> m_utf_symmetry;
-	unit_test_factory<symmetry_element_base_test>
-		m_utf_symmetry_element_base;
 	unit_test_factory<symmetry_element_set_test> m_utf_symmetry_element_set;
 	unit_test_factory<symmetry_element_set_adapter_test>
 		m_utf_symmetry_element_set_adapter;
