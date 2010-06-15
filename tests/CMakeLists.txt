@@ -62,8 +62,6 @@ set(SRC
 	so_add_test.C
 	so_add_impl_perm_test.C
 	so_copy_test.C
-	so_intersection_test.C
-	so_intersection_impl_perm_test.C
 	so_proj_down_test.C
 	so_proj_down_impl_perm_test.C
 	so_proj_up_test.C

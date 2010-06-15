@@ -66,8 +66,6 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("so_add", m_utf_so_add);
 	add_test("so_add_impl_perm", m_utf_so_add_impl_perm);
 	add_test("so_copy", m_utf_so_copy);
-	add_test("so_intersection", m_utf_so_intersection);
-	add_test("so_intersection_impl_perm", m_utf_so_intersection_impl_perm);
 	add_test("so_proj_down", m_utf_so_proj_down);
 	add_test("so_proj_down_impl_perm", m_utf_so_proj_down_impl_perm);
 	add_test("so_proj_up", m_utf_so_proj_up);
