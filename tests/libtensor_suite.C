@@ -70,6 +70,7 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("so_proj_down_impl_perm", m_utf_so_proj_down_impl_perm);
 	add_test("so_proj_up", m_utf_so_proj_up);
 	add_test("so_proj_up_impl_perm", m_utf_so_proj_up_impl_perm);
+	add_test("so_symmetrize", m_utf_so_symmetrize);
 	add_test("so_union", m_utf_so_union);
 	add_test("so_union_impl_perm", m_utf_so_union_impl_perm);
 	add_test("symm", m_utf_symm);

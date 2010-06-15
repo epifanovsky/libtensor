@@ -67,6 +67,7 @@
 #include "so_proj_down_impl_perm_test.h"
 #include "so_proj_up_test.h"
 #include "so_proj_up_impl_perm_test.h"
+#include "so_symmetrize_test.h"
 #include "so_union_test.h"
 #include "so_union_impl_perm_test.h"
 #include "symm_test.h"
@@ -174,6 +175,7 @@ namespace libtensor {
 	\li libtensor::so_proj_down_impl_perm_test
 	\li libtensor::so_proj_up_test
 	\li libtensor::so_proj_up_impl_perm_test
+	\li libtensor::so_symmetrize_test
 	\li libtensor::so_union_test
 	\li libtensor::so_union_impl_perm_test
 	\li libtensor::symm_test
@@ -277,6 +279,7 @@ private:
 		m_utf_so_proj_down_impl_perm;
 	unit_test_factory<so_proj_up_test> m_utf_so_proj_up;
 	unit_test_factory<so_proj_up_impl_perm_test> m_utf_so_proj_up_impl_perm;
+	unit_test_factory<so_symmetrize_test> m_utf_so_symmetrize;
 	unit_test_factory<so_union_test> m_utf_so_union;
 	unit_test_factory<so_union_impl_perm_test> m_utf_so_union_impl_perm;
 	unit_test_factory<symm_test> m_utf_symm;
