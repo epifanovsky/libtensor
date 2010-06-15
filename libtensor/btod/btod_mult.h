@@ -31,8 +31,8 @@ public:
 private:
 	block_tensor_i<N, double> &m_bta; //!< First argument
 	block_tensor_i<N, double> &m_btb; //!< Second argument
-	const permutation<N> m_pa; //!< Permutation of bta
-	const permutation<N> m_pb; //!< Permutation of btb
+	permutation<N> m_pa; //!< Permutation of bta
+	permutation<N> m_pb; //!< Permutation of btb
 	bool m_recip; //!< Reciprocal
 	double m_c; //!< Scaling coefficient
 

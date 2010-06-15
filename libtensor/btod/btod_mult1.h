@@ -32,7 +32,7 @@ public:
 
 private:
 	block_tensor_i<N, double> &m_btb; //!< Second argument
-	const permutation<N> m_pb; //!< Permutation of second argument
+	permutation<N> m_pb; //!< Permutation of second argument
 	bool m_recip; //!< Reciprocal
 	double m_c; //!< Scaling coefficient
 
