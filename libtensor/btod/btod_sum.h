@@ -87,8 +87,6 @@ public:
 		return *m_sch;
 	}
 
-	virtual void perform(block_tensor_i<N, double> &bt, const index<N> &idx)
-		throw(exception);
 	//@}
 
 
@@ -101,8 +99,6 @@ public:
 
 	using additive_btod<N>::perform;
 
-	virtual void perform(block_tensor_i<N, double> &bt, const index<N> &idx,
-		double c) throw(exception);
 	//@}
 
 
@@ -143,37 +139,6 @@ template<size_t N>
 btod_sum<N>::~btod_sum() {
 
 	delete m_sch;
-}
-
-
-template<size_t N>
-void btod_sum<N>::perform(block_tensor_i<N, double> &bt, const index<N> &idx)
-	throw(exception) {
-
-	static const char *method = "perform(block_tensor_i<N, double>&, "
-			"const index<N>)";
-
-	if(!m_bis.equals(bt.get_bis())) {
-		throw bad_block_index_space(g_ns, k_clazz, method, __FILE__,
-			__LINE__, "Incompatible block index space.");
-	}
-	if(!m_bis.get_block_index_dims().contains(idx)) {
-		throw bad_parameter(g_ns, k_clazz, method, __FILE__,
-			__LINE__, "Invalid block index.");
-	}
-
-	throw not_implemented(g_ns, k_clazz, method, __FILE__, __LINE__);
-}
-
-
-template<size_t N>
-void btod_sum<N>::perform(block_tensor_i<N, double> &bt, const index<N> &idx,
-	double c) throw(exception) {
-
-	static const char *method =
-		"perform(block_tensor_i<N, double>&, const index<N>&, double)";
-
-	throw not_implemented(g_ns, k_clazz, method, __FILE__, __LINE__);
 }
 
 

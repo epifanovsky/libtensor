@@ -39,6 +39,8 @@ public:
 	 **/
 	virtual const assignment_schedule<N, T> &get_schedule() const = 0;
 
+	/**	\brief Computes a single block of the result
+	 **/
 	virtual void compute_block(tensor_i<N, double> &blk,
 		const index<N> &i) = 0;
 

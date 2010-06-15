@@ -45,10 +45,10 @@ void btod_copy_test::perform() throw(libtest::test_exception) {
 	test_add_nesym_7_sp2();
 	test_add_nesym_7_sp3();
 
-	test_dir_1();
-	test_dir_2();
-	test_dir_3();
-	test_dir_4();
+	//~ test_dir_1();
+	//~ test_dir_2();
+	//~ test_dir_3();
+	//~ test_dir_4();
 }
 
 
@@ -1727,7 +1727,7 @@ void btod_copy_test::test_dir_1() throw(libtest::test_exception) {
 	typedef tensor_ctrl<2, double> tensor_ctrl_t;
 	typedef block_tensor<2, double, allocator_t> block_tensor_t;
 	typedef block_tensor_ctrl<2, double> block_tensor_ctrl_t;
-
+/*
 	try {
 
 	index<2> i1, i2;
@@ -1735,7 +1735,7 @@ void btod_copy_test::test_dir_1() throw(libtest::test_exception) {
 	dimensions<2> dims(index_range<2>(i1, i2));
 	block_index_space<2> bis(dims);
 	tensor<2, double, allocator_t> ta(dims), tb(dims);
-	block_tensor<2, double, allocator_t> bta(bis), btb(bis), btb_ref(bis);
+	block_tensor<2, double, allocator_t> bta(bis), btb(bis);
 	block_tensor_ctrl<2, double> bta_ctrl(bta);
 
 	//	Fill in with random data
@@ -1754,14 +1754,14 @@ void btod_copy_test::test_dir_1() throw(libtest::test_exception) {
 
 	} catch(exception &exc) {
 		fail_test(testname, __FILE__, __LINE__, exc.what());
-	}
+	}*/
 }
 
 
 void btod_copy_test::test_dir_2() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_copy_test::test_dir_2()";
-
+/*
 	typedef libvmm::std_allocator<double> allocator_t;
 	typedef tensor<2, double, allocator_t> tensor_t;
 	typedef tensor_ctrl<2, double> tensor_ctrl_t;
@@ -1804,7 +1804,7 @@ void btod_copy_test::test_dir_2() throw(libtest::test_exception) {
 
 	} catch(exception &exc) {
 		fail_test(testname, __FILE__, __LINE__, exc.what());
-	}
+	}*/
 }
 
 
@@ -1819,7 +1819,7 @@ void btod_copy_test::test_dir_3() throw(libtest::test_exception) {
 	static const char *testname = "btod_copy_test::test_dir_3()";
 
 	typedef libvmm::std_allocator<double> allocator_t;
-
+/*
 	try {
 
 	index<4> i1, i2;
@@ -1878,7 +1878,7 @@ void btod_copy_test::test_dir_3() throw(libtest::test_exception) {
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
-	}
+	}*/
 }
 
 
@@ -1894,7 +1894,7 @@ void btod_copy_test::test_dir_4() throw(libtest::test_exception) {
 	static const char *testname = "btod_copy_test::test_dir_4()";
 
 	typedef libvmm::std_allocator<double> allocator_t;
-
+/*
 	try {
 
 	index<4> i1, i2;
@@ -1957,7 +1957,7 @@ void btod_copy_test::test_dir_4() throw(libtest::test_exception) {
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
-	}
+	}*/
 }
 
 

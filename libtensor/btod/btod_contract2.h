@@ -115,9 +115,6 @@ public:
 		return m_sym;
 	}
 
-	virtual void perform(block_tensor_i<k_orderc, double> &btc,
-		const index<k_orderc> &idx) throw(exception);
-
 	virtual const assignment_schedule<N + M, double> &get_schedule() const {
 		return m_sch;
 	}
@@ -188,17 +185,6 @@ template<size_t N, size_t M, size_t K>
 btod_contract2<N, M, K>::~btod_contract2() {
 
 	clear_schedule(m_contr_sch);
-}
-
-
-template<size_t N, size_t M, size_t K>
-void btod_contract2<N, M, K>::perform(block_tensor_i<k_orderc, double> &btc,
-	const index<k_orderc> &idx) throw(exception) {
-
-	static const char *method =
-		"perform(block_tensor_i<N + M, double>&, const index<N + M>&)";
-
-	throw not_implemented(g_ns, k_clazz, method, __FILE__, __LINE__);
 }
 
 

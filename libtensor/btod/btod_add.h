@@ -149,16 +149,6 @@ public:
 
 	using additive_btod<N>::perform;
 
-//	virtual void perform(block_tensor_i<N, double> &bt)
-//		throw(exception);
-	virtual void perform(block_tensor_i<N, double> &bt, const index<N> &idx)
-		throw(exception);
-	//@}
-
-	//!	\name Implementation of libtensor::additive_btod<N>
-	//@{
-//	virtual void perform(block_tensor_i<N, double> &bt, double cb)
-//		throw(exception);
 	//@}
 
 private:
@@ -170,12 +160,6 @@ private:
 		const permutation<N> &perm, double c);
 
 	void make_schedule() const;
-
-//	void do_perform(block_tensor_i<N, double> &bt, bool zero, double cb);
-
-//	void process_list(block_tensor_ctrl<N, double> &dst_ctrl,
-//		const index<N> &dst_blk_idx, const std::list<arg_t> &lst,
-//		bool zero, double c);
 
 private:
 	btod_add(const btod_add<N>&);
@@ -264,82 +248,6 @@ void btod_add<N>::add_op(block_tensor_i<N, double> &bt,
 
 	add_operand(bt, perm, c);
 }
-
-
-//template<size_t N>
-//void btod_add<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
-//
-//	static const char *method = "perform(block_tensor_i<N, double>&)";
-//
-//	block_index_space<N> bis(bt.get_bis());
-//	bis.match_splits();
-//	if(!m_bis.equals(bis)) {
-//		throw bad_block_index_space(g_ns, k_clazz, method, __FILE__,
-//			__LINE__, "bt");
-//	}
-//
-//	timings_base::start_timer();
-//
-//	btod_so_copy<N> symcopy(m_sym);
-//	symcopy.perform(bt);
-//
-//	do_perform(bt, true, 1.0);
-//
-//	timings_base::stop_timer();
-//}
-
-
-template<size_t N>
-void btod_add<N>::perform(block_tensor_i<N, double> &bt, const index<N> &idx)
-	throw(exception) {
-
-	throw_exc(k_clazz, "perform(const index<N>&)", "NIY");
-}
-
-
-//template<size_t N>
-//void btod_add<N>::perform(block_tensor_i<N, double> &bt, double cb)
-//	throw(exception){
-//
-//	static const char *method =
-//		"perform(block_tensor_i<N, double>&, double)";
-//
-//	block_index_space<N> bis(bt.get_bis());
-//	bis.match_splits();
-//	if(!m_bis.equals(bis)) {
-//		throw bad_parameter("libtensor", k_clazz, method, __FILE__,
-//			__LINE__, "Incompatible block index space.");
-//	}
-//
-//	timings_base::start_timer();
-//
-//	block_tensor_ctrl<N, double> dst_ctrl(bt);
-//	const symmetry<N, double> &dst_sym = dst_ctrl.req_symmetry();
-//
-//	symmetry<N, double> sym(m_sym);
-//
-//	if(sym.equals(dst_sym)) {
-//		// Sym(A) = Sym(B)
-//		do_perform(bt, false, cb);
-//	} else {
-//		sym.set_intersection(dst_sym);
-//		if(sym.equals(m_sym)) {
-//			// Sym(A) < Sym(B)
-//			throw_exc(k_clazz, method,
-//				"Case S(A)<S(B) is not handled.");
-//		} else if(sym.equals(dst_sym)) {
-//			// Sym(B) < Sym(A)
-//			throw_exc(k_clazz, method,
-//				"Case S(B)<S(A) is not handled.");
-//		} else {
-//			// Sym(A) > Sym'(A) = Sym'(B) < Sym(B)
-//			throw_exc(k_clazz, method,
-//				"Case S(A)>S'(A)=S'(B)<S(B) is not handled.");
-//		}
-//	}
-//
-//	timings_base::stop_timer();
-//}
 
 
 template<size_t N>
@@ -550,124 +458,6 @@ void btod_add<N>::make_schedule() const {
 //	btod_add<N>::stop_timer("make_schedule");
 }
 
-/*
-template<size_t N>
-void btod_add<N>::do_perform(
-	block_tensor_i<N, double> &bt, bool zero, double cb) {
-
-	block_tensor_ctrl<N, double> dst_ctrl(bt);
-	std::vector< block_tensor_ctrl<N, double>* > src_ctrl(
-		m_ops.size(), NULL);
-	dimensions<N> bidims = m_bis.get_block_index_dims();
-
-	for(size_t iop = 0; iop < m_ops.size(); iop++) {
-		src_ctrl[iop] =
-			new block_tensor_ctrl<N, double>(m_ops[iop]->m_bt);
-	}
-
-	orbit_list<N, double> orblst(m_sym);
-	typename orbit_list<N, double>::iterator iorbit = orblst.begin();
-	for(; iorbit != orblst.end(); iorbit++) {
-
-		const index<N> &dst_blk_idx = orblst.get_index(iorbit);
-		std::list<arg_t> arglst;
-
-		for(size_t iop = 0; iop < m_ops.size(); iop++) {
-			block_tensor_ctrl<N, double> &ctrl = *(src_ctrl[iop]);
-			operand_t &op = *(m_ops[iop]);
-			permutation<N> perm(op.m_perm),
-				invperm(op.m_perm, true);
-
-			index<N> src_blk_idx(dst_blk_idx), can_blk_idx;
-			src_blk_idx.permute(invperm);
-
-			orbit<N, double> orb(ctrl.req_symmetry(), src_blk_idx);
-			dimensions<N> bidims(ctrl.req_symmetry().get_bis().
-				get_block_index_dims());
-			bidims.abs_index(
-				orb.get_abs_canonical_index(), can_blk_idx);
-			transf<N, double> tr(orb.get_transf(src_blk_idx));
-			if(ctrl.req_is_zero_block(can_blk_idx)) continue;
-			tensor_i<N, double> &src_blk =
-				ctrl.req_block(can_blk_idx);
-			tr.get_perm().permute(perm);
-			tr.get_coeff() *= op.m_c;
-
-			if(tr.get_coeff() != 0.0) {
-				arg_t arg;
-				arg.m_ctrl = &ctrl;
-				arg.m_idx = can_blk_idx;
-				arg.m_tr = tr;
-				arglst.push_back(arg);
-			}
-		}
-		process_list(dst_ctrl, dst_blk_idx, arglst, zero, cb);
-
-	}
-
-	for(size_t iop = 0; iop < m_ops.size(); iop++) {
-		delete src_ctrl[iop];
-		src_ctrl[iop] = NULL;
-	}
-
-}
-
-
-template<size_t N>
-void btod_add<N>::process_list(block_tensor_ctrl<N, double> &dst_ctrl,
-	const index<N> &dst_blk_idx, const std::list<arg_t> &lst,
-	bool zero, double c) {
-
-	size_t lstsz = lst.size();
-	if(lstsz == 1) {
-
-		typename std::list<arg_t>::const_iterator iarg = lst.begin();
-		tensor_i<N, double> &src_blk =
-			iarg->m_ctrl->req_block(iarg->m_idx);
-		bool adjzero = zero || dst_ctrl.req_is_zero_block(dst_blk_idx);
-		tensor_i<N, double> &dst_blk = dst_ctrl.req_block(dst_blk_idx);
-
-		tod_copy<N> todcp(src_blk, iarg->m_tr.get_perm(),
-			iarg->m_tr.get_coeff() * c);
-		todcp.prefetch();
-		if(adjzero) todcp.perform(dst_blk);
-		else todcp.perform(dst_blk, 1.0);
-
-		iarg->m_ctrl->ret_block(iarg->m_idx);
-		dst_ctrl.ret_block(dst_blk_idx);
-
-	} else if(lstsz > 1) {
-
-		typename std::list<arg_t>::const_iterator iarg = lst.begin();
-
-		tod_add<N> todadd(iarg->m_ctrl->req_block(iarg->m_idx),
-			iarg->m_tr.get_perm(), iarg->m_tr.get_coeff() * c);
-
-		for(iarg++; iarg != lst.end(); iarg++) {
-			tensor_i<N, double> &src_blk =
-				iarg->m_ctrl->req_block(iarg->m_idx);
-			todadd.add_op(src_blk, iarg->m_tr.get_perm(),
-				iarg->m_tr.get_coeff() * c);
-		}
-		todadd.prefetch();
-
-		bool adjzero = zero || dst_ctrl.req_is_zero_block(dst_blk_idx);
-		tensor_i<N, double> &dst_blk = dst_ctrl.req_block(dst_blk_idx);
-		if(adjzero) todadd.perform(dst_blk);
-		else todadd.perform(dst_blk, 1.0);
-
-		for(iarg = lst.begin(); iarg != lst.end(); iarg++) {
-			iarg->m_ctrl->ret_block(iarg->m_idx);
-		}
-		dst_ctrl.ret_block(dst_blk_idx);
-
-	} else {
-
-		if(zero) dst_ctrl.req_zero_block(dst_blk_idx);
-
-	}
-}
-*/
 
 } // namespace libtensor
 

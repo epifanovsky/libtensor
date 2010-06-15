@@ -80,14 +80,6 @@ public:
 
 	using additive_btod<k_orderb>::perform;
 
-//	virtual void perform(block_tensor_i<k_orderb, double> &btb,
-//		const index<k_orderb> &idx) throw(exception) {
-//
-//		throw not_implemented(g_ns, k_clazz,
-//				"perform(block_tensor_i<N - M, double>&, index<N - M>&)",
-//				__FILE__, __LINE__);
-//	}
-
 protected:
 	virtual void compute_block(tensor_i<k_orderb, double> &blk,
 		const index<k_orderb> &i);
@@ -399,7 +391,6 @@ void btod_extract<N, M>::make_schedule() {
 	btod_extract<N, M>::stop_timer("make_schedule()");
 
 }
-
 
 
 } // namespace libtensor

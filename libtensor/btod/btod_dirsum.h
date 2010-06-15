@@ -113,13 +113,6 @@ public:
 
 	using additive_btod<N + M>::perform;
 
-	virtual void perform(block_tensor_i<k_orderc, double> &btc,
-		const index<k_orderc> &i) throw(exception) {
-
-		throw not_implemented(g_ns, k_clazz, "perform()",
-			__FILE__, __LINE__);
-	}
-
 private:
 	static block_index_space<N + M> make_bis(
 		block_tensor_i<k_ordera, double> &bta,

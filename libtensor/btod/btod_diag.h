@@ -89,9 +89,6 @@ public:
 		return m_sch;
 	}
 
-	virtual void perform(block_tensor_i<k_orderb, double> &btb,
-		const index<k_orderb> &idx) throw(exception);
-
 	//@}
 
 	using additive_btod<k_orderb>::perform;
@@ -175,17 +172,6 @@ btod_diag<N, M>::btod_diag(block_tensor_i<N, double> &bta, const mask<N> &m,
 	make_schedule();
 }
 
-
-template<size_t N, size_t M>
-void btod_diag<N, M>::perform(block_tensor_i<k_orderb, double> &btb,
-	const index<k_orderb> &idx) throw(exception) {
-
-	static const char *method =
-		"perform(block_tensor_i<N - M + 1, double>&, const index<N - M + 1>&)";
-
-	throw not_implemented(g_ns, k_clazz, method, __FILE__, __LINE__);
-
-}
 
 template<size_t N, size_t M>
 void btod_diag<N, M>::compute_block(tensor_i<k_orderb, double> &blk,
