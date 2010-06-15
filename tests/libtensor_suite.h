@@ -3,6 +3,7 @@
 
 #include <libtest/test_suite.h>
 #include "abs_index_test.h"
+#include "addition_schedule_test.h"
 #include "anon_eval_test.h"
 #include "bispace_test.h"
 #include "bispace_expr_test.h"
@@ -55,13 +56,23 @@
 #include "orbit_list_test.h"
 #include "permutation_test.h"
 #include "permutation_builder_test.h"
+#include "permutation_group_test.h"
 #include "sequence_test.h"
-#include "so_projdown_test.h"
-#include "so_projup_test.h"
-#include "symel_cycleperm_test.h"
+#include "se_part_test.h"
+#include "se_perm_test.h"
+#include "so_add_test.h"
+#include "so_add_impl_perm_test.h"
+#include "so_copy_test.h"
+#include "so_proj_down_test.h"
+#include "so_proj_down_impl_perm_test.h"
+#include "so_proj_up_test.h"
+#include "so_proj_up_impl_perm_test.h"
+#include "so_union_test.h"
+#include "so_union_impl_perm_test.h"
 #include "symm_test.h"
 #include "symmetry_test.h"
-#include "symmetry_element_base_test.h"
+#include "symmetry_element_set_test.h"
+#include "symmetry_element_set_adapter_test.h"
 #include "tensor_test.h"
 #include "timer_test.h"
 #include "timings_test.h"
@@ -99,6 +110,7 @@ namespace libtensor {
 
 	This suite runs the following tests:
 	\li libtensor::abs_index_test
+	\li libtensor::addition_schedule_test
 	\li libtensor::anon_eval_test
 	\li libtensor::bispace_test
 	\li libtensor::bispace_expr_test
@@ -151,13 +163,23 @@ namespace libtensor {
 	\li libtensor::orbit_list_test
 	\li libtensor::permutation_test
 	\li libtensor::permutation_builder_test
+	\li libtensor::permutation_group_test
 	\li libtensor::sequence_test
-	\li libtensor::so_projdown_test
-	\li libtensor::so_projup_test
-	\li libtensor::symel_cycleperm_test
+	\li libtensor::se_part_test
+	\li libtensor::se_perm_test
+	\li libtensor::so_add_test
+	\li libtensor::so_add_impl_perm_test
+	\li libtensor::so_copy_test
+	\li libtensor::so_proj_down_test
+	\li libtensor::so_proj_down_impl_perm_test
+	\li libtensor::so_proj_up_test
+	\li libtensor::so_proj_up_impl_perm_test
+	\li libtensor::so_union_test
+	\li libtensor::so_union_impl_perm_test
 	\li libtensor::symm_test
 	\li libtensor::symmetry_test
-	\li libtensor::symmetry_element_base_test
+	\li libtensor::symmetry_element_set_test
+	\li libtensor::symmetry_element_set_adapter_test
 	\li libtensor::tensor_test
 	\li libtensor::timer_test
 	\li libtensor::timings_test
@@ -189,6 +211,7 @@ namespace libtensor {
 class libtensor_suite : public libtest::test_suite {
 private:
 	unit_test_factory<abs_index_test> m_utf_abs_index;
+	unit_test_factory<addition_schedule_test> m_utf_addition_schedule;
 	unit_test_factory<anon_eval_test> m_utf_anon_eval;
 	unit_test_factory<bispace_test> m_utf_bispace;
 	unit_test_factory<bispace_expr_test> m_utf_bispace_expr;
@@ -242,14 +265,25 @@ private:
 	unit_test_factory<orbit_list_test> m_utf_orbit_list;
 	unit_test_factory<permutation_test> m_utf_permutation;
 	unit_test_factory<permutation_builder_test> m_utf_permutation_builder;
+	unit_test_factory<permutation_group_test> m_utf_permutation_group;
 	unit_test_factory<sequence_test> m_utf_sequence;
-	unit_test_factory<so_projdown_test> m_utf_so_projdown;
-	unit_test_factory<so_projup_test> m_utf_so_projup;
-	unit_test_factory<symel_cycleperm_test> m_utf_symel_cycleperm;
+	unit_test_factory<se_part_test> m_utf_se_part;
+	unit_test_factory<se_perm_test> m_utf_se_perm;
+	unit_test_factory<so_add_test> m_utf_so_add;
+	unit_test_factory<so_add_impl_perm_test> m_utf_so_add_impl_perm;
+	unit_test_factory<so_copy_test> m_utf_so_copy;
+	unit_test_factory<so_proj_down_test> m_utf_so_proj_down;
+	unit_test_factory<so_proj_down_impl_perm_test>
+		m_utf_so_proj_down_impl_perm;
+	unit_test_factory<so_proj_up_test> m_utf_so_proj_up;
+	unit_test_factory<so_proj_up_impl_perm_test> m_utf_so_proj_up_impl_perm;
+	unit_test_factory<so_union_test> m_utf_so_union;
+	unit_test_factory<so_union_impl_perm_test> m_utf_so_union_impl_perm;
 	unit_test_factory<symm_test> m_utf_symm;
 	unit_test_factory<symmetry_test> m_utf_symmetry;
-	unit_test_factory<symmetry_element_base_test>
-		m_utf_symmetry_element_base;
+	unit_test_factory<symmetry_element_set_test> m_utf_symmetry_element_set;
+	unit_test_factory<symmetry_element_set_adapter_test>
+		m_utf_symmetry_element_set_adapter;
 	unit_test_factory<tensor_test> m_utf_tensor;
 	unit_test_factory<timer_test> m_utf_timer;
 	unit_test_factory<timings_test> m_utf_timings;

@@ -2,12 +2,14 @@
 #define LIBTENSOR_BTOD_DIRSUM_H
 
 #include <list>
+#include <map>
 #include "../defs.h"
 #include "../exception.h"
 #include "../not_implemented.h"
 #include "../timings.h"
 #include "../core/block_tensor_i.h"
 #include "../core/block_tensor_ctrl.h"
+#include "../core/orbit.h"
 #include "../core/orbit_list.h"
 #include "../core/permutation_builder.h"
 #include "../core/mask.h"
@@ -15,8 +17,10 @@
 #include "../tod/tod_scale.h"
 #include "../tod/tod_scatter.h"
 #include "../tod/tod_set.h"
+#include "../symmetry/so_proj_up.h"
+#include "../symmetry/so_union.h"
 #include "bad_block_index_space.h"
-#include "btod_additive.h"
+#include "additive_btod.h"
 #include "transf_double.h"
 
 namespace libtensor {
@@ -37,7 +41,7 @@ namespace libtensor {
  **/
 template<size_t N, size_t M>
 class btod_dirsum :
-	public btod_additive<N + M>,
+	public additive_btod<N + M>,
 	public timings< btod_dirsum<N, M> > {
 
 public:
@@ -49,6 +53,15 @@ public:
 	static const size_t k_orderc = N + M; //!< Order of the result
 
 private:
+	struct schrec {
+		size_t absidxa, absidxb;
+		bool zeroa, zerob;
+		double ka, kb;
+		permutation<k_orderc> permc;
+	};
+	typedef std::map<size_t, schrec> schedule_t;
+
+private:
 	block_tensor_i<k_ordera, double> &m_bta; //!< First %tensor (A)
 	block_tensor_i<k_orderb, double> &m_btb; //!< Second %tensor (B)
 	double m_ka; //!< Coefficient A
@@ -56,77 +69,79 @@ private:
 	permutation<k_orderc> m_permc; //!< Permutation of the result
 	block_index_space<k_orderc>
 		m_bisc; //!< Block index space of the result
+	symmetry<k_orderc, double> m_sym; //!< Symmetry of the result
+	dimensions<k_ordera> m_bidimsa; //!< Block %index dims of A
+	dimensions<k_orderb> m_bidimsb; //!< Block %index dims of B
+	dimensions<k_orderc> m_bidimsc; //!< Block %index dims of the result
+	schedule_t m_op_sch; //!< Direct sum schedule
+	assignment_schedule<k_orderc, double> m_sch; //!< Assignment schedule
 
 public:
 	/**	\brief Initializes the operation
 	 **/
 	btod_dirsum(block_tensor_i<k_ordera, double> &bta, double ka,
-		block_tensor_i<k_orderb, double> &btb, double kb) :
-		m_bta(bta), m_btb(btb), m_ka(ka), m_kb(kb),
-		m_bisc(mk_bisc(bta, btb)) { }
+		block_tensor_i<k_orderb, double> &btb, double kb);
 
 	/**	\brief Initializes the operation
 	 **/
 	btod_dirsum(block_tensor_i<k_ordera, double> &bta, double ka,
 		block_tensor_i<k_orderb, double> &btb, double kb,
-		const permutation<k_orderc> &permc) :
-		m_bta(bta), m_btb(btb), m_ka(ka), m_kb(kb), m_permc(permc),
-		m_bisc(mk_bisc(bta, btb)) {
+		const permutation<k_orderc> &permc);
 
-		m_bisc.permute(m_permc);
-	}
+	/**	\brief Virtual destructor
+	 **/
+	virtual ~btod_dirsum() { }
 
 	virtual const block_index_space<N + M> &get_bis() const {
 		return m_bisc;
 	}
 
 	virtual const symmetry<N + M, double> &get_symmetry() const {
-		throw not_implemented(g_ns, k_clazz, "get_symmetry()",
-			__FILE__, __LINE__);
+		return m_sym;
 	}
 
-	/**	\brief Performs the operation
-	 **/
-	virtual void perform(block_tensor_i<k_orderc, double> &btc)
-		throw(exception);
-
-	/**	\brief Performs the operation (additive)
-	 **/
-	virtual void perform(block_tensor_i<k_orderc, double> &btc,
-		double kc) throw(exception);
-
-	virtual void perform(block_tensor_i<k_orderc, double> &btc,
-		const index<k_orderc> &i) throw(exception) {
-
-		throw not_implemented(g_ns, k_clazz, "perform()",
-			__FILE__, __LINE__);
+	virtual const assignment_schedule<N + M, double> &get_schedule() const {
+		return m_sch;
 	}
+
+	virtual void compute_block(tensor_i<N + M, double> &blk,
+		const index<N + M> &i);
+
+	virtual void compute_block(tensor_i<N + M, double> &blk,
+		const index<N + M> &i, const transf<N + M, double> &tr,
+		double c);
+
+	using additive_btod<N + M>::perform;
 
 private:
-	static block_index_space<N + M> mk_bisc(
+	static block_index_space<N + M> make_bis(
 		block_tensor_i<k_ordera, double> &bta,
-		block_tensor_i<k_orderb, double> &btb);
+		block_tensor_i<k_orderb, double> &btb,
+		const permutation<k_orderc> &permc);
+	void make_symmetry();
+	void make_schedule();
+	void make_schedule(const orbit<k_ordera, double> &oa, bool zeroa,
+		const orbit<k_orderb, double> &ob, bool zerob,
+		const orbit_list<k_orderc, double> &olc);
 
-	void do_perform(block_tensor_i<k_orderc, double> &btc, bool zero,
-		double kc);
+	void compute_block(tensor_i<N + M, double> &blkc,
+		const schrec &rec, const transf<N + M, double> &trc,
+		bool zeroc, double kc);
 
 	void do_block_dirsum(block_tensor_ctrl<k_ordera, double> &ctrla,
 		block_tensor_ctrl<k_orderb, double> &ctrlb,
-		block_tensor_ctrl<k_orderc, double> &ctrlc,
-		const index<k_orderc> &ic, double kc,
+		tensor_i<k_orderc, double> &blkc, double kc,
 		const index<k_ordera> &ia, double ka,
 		const index<k_orderb> &ib, double kb,
 		const permutation<k_orderc> &permc, bool zero);
 
 	void do_block_scatter_a(block_tensor_ctrl<k_ordera, double> &ctrla,
-		block_tensor_ctrl<k_orderc, double> &ctrlc,
-		const index<k_orderc> &ic, double kc,
+		tensor_i<k_orderc, double> &blkc, double kc,
 		const index<k_ordera> &ia, double ka,
 		const permutation<k_orderc> permc, bool zero);
 
 	void do_block_scatter_b(block_tensor_ctrl<k_orderb, double> &ctrlb,
-		block_tensor_ctrl<k_orderc, double> &ctrlc,
-		const index<k_orderc> &ic, double kc,
+		tensor_i<k_orderc, double> &blkc, double kc,
 		const index<k_orderb> &ib, double kb,
 		const permutation<k_orderc> permc, bool zero);
 
@@ -138,40 +153,129 @@ const char *btod_dirsum<N, M>::k_clazz = "btod_dirsum<N, M>";
 
 
 template<size_t N, size_t M>
-void btod_dirsum<N, M>::perform(block_tensor_i<k_orderc, double> &btc)
-	throw(exception) {
+btod_dirsum<N, M>::btod_dirsum(block_tensor_i<k_ordera, double> &bta, double ka,
+	block_tensor_i<k_orderb, double> &btb, double kb) :
 
-	static const char *method = "perform(block_tensor_i<N + M, double>&)";
+	m_bta(bta), m_btb(btb), m_ka(ka), m_kb(kb),
+	m_bisc(make_bis(m_bta, m_btb, m_permc)), m_sym(m_bisc),
+	m_bidimsa(m_bta.get_bis().get_block_index_dims()),
+	m_bidimsb(m_btb.get_bis().get_block_index_dims()),
+	m_bidimsc(m_bisc.get_block_index_dims()), m_sch(m_bidimsc) {
 
-	if(!m_bisc.equals(btc.get_bis())) {
-		throw bad_dimensions(g_ns, k_clazz, method,
-			__FILE__, __LINE__, "btc");
-	}
-
-	do_perform(btc, true, 1.0);
+	make_symmetry();
+	make_schedule();
 }
 
 
 template<size_t N, size_t M>
-void btod_dirsum<N, M>::perform(block_tensor_i<k_orderc, double> &btc,
-	double kc) throw(exception) {
+btod_dirsum<N, M>::btod_dirsum(block_tensor_i<k_ordera, double> &bta, double ka,
+	block_tensor_i<k_orderb, double> &btb, double kb,
+	const permutation<k_orderc> &permc) :
+
+	m_bta(bta), m_btb(btb), m_ka(ka), m_kb(kb), m_permc(permc),
+	m_bisc(make_bis(m_bta, m_btb, m_permc)), m_sym(m_bisc),
+	m_bidimsa(m_bta.get_bis().get_block_index_dims()),
+	m_bidimsb(m_btb.get_bis().get_block_index_dims()),
+	m_bidimsc(m_bisc.get_block_index_dims()), m_sch(m_bidimsc) {
+
+	make_symmetry();
+	make_schedule();
+}
+
+
+template<size_t N, size_t M>
+void btod_dirsum<N, M>::compute_block(tensor_i<N + M, double> &blkc,
+	const index<N + M> &ic) {
 
 	static const char *method =
-		"perform(block_tensor_i<N + M, double>&, double)";
+		"compute_block(tensor_i<N + M, double>&, const index<N + M>&)";
 
-	if(!m_bisc.equals(btc.get_bis())) {
-		throw bad_dimensions(g_ns, k_clazz, method,
-			__FILE__, __LINE__, "btc");
+	btod_dirsum<N, M>::start_timer();
+
+	try {
+
+		abs_index<k_orderc> aic(ic, m_bidimsc);
+		typename schedule_t::const_iterator isch =
+			m_op_sch.find(aic.get_abs_index());
+		if(isch == m_op_sch.end()) {
+			tod_set<k_orderc>().perform(blkc);
+		} else {
+			transf<k_orderc, double> trc0;
+			compute_block(blkc, isch->second, trc0, true, 1.0);
+		}
+
+	} catch(...) {
+		btod_dirsum<N, M>::stop_timer();
+		throw;
 	}
 
-	do_perform(btc, false, kc);
+	btod_dirsum<N, M>::stop_timer();
 }
 
 
 template<size_t N, size_t M>
-block_index_space<N + M> btod_dirsum<N, M>::mk_bisc(
+void btod_dirsum<N, M>::compute_block(tensor_i<N + M, double> &blkc,
+	const index<N + M> &ic, const transf<N + M, double> &trc,
+	double kc) {
+
+	static const char *method = "compute_block(tensor_i<N + M, double>&, "
+		"const index<N + M>&, const transf<N + M, double>&, double)";
+
+	btod_dirsum<N, M>::start_timer();
+
+	try {
+
+		abs_index<k_orderc> aic(ic, m_bidimsc);
+		typename schedule_t::const_iterator isch =
+			m_op_sch.find(aic.get_abs_index());
+		if(isch != m_op_sch.end()) {
+			compute_block(blkc, isch->second, trc, false, kc);
+		}
+
+	} catch(...) {
+		btod_dirsum<N, M>::stop_timer();
+		throw;
+	}
+
+	btod_dirsum<N, M>::stop_timer();
+}
+
+
+template<size_t N, size_t M>
+void btod_dirsum<N, M>::compute_block(tensor_i<N + M, double> &blkc,
+	const schrec &rec, const transf<N + M, double> &trc, bool zeroc,
+	double kc) {
+
+	block_tensor_ctrl<k_ordera, double> ca(m_bta);
+	block_tensor_ctrl<k_orderb, double> cb(m_btb);
+
+	abs_index<k_ordera> aia(rec.absidxa, m_bidimsa);
+	abs_index<k_orderb> aib(rec.absidxb, m_bidimsb);
+	double kc1 = kc * trc.get_coeff();
+	permutation<k_orderc> permc1(rec.permc); permc1.permute(trc.get_perm());
+	if(rec.zerob) {
+		permutation<k_orderc> cycc;
+		for(size_t i = 0; i < k_orderc - 1; i++) cycc.permute(i, i + 1);
+		permutation<k_orderc> permc2;
+		for(size_t i = 0; i < k_ordera; i++) permc2.permute(cycc);
+		permc2.permute(permc1);
+		do_block_scatter_a(ca, blkc, kc1, aia.get_index(), rec.ka,
+			permc2, zeroc);
+	} else if(rec.zeroa) {
+		do_block_scatter_b(cb, blkc, kc1, aib.get_index(), rec.kb,
+			permc1, zeroc);
+	} else {
+		do_block_dirsum(ca, cb, blkc, kc1, aia.get_index(), rec.ka,
+			aib.get_index(), rec.kb, permc1, zeroc);
+	}
+}
+
+
+template<size_t N, size_t M>
+block_index_space<N + M> btod_dirsum<N, M>::make_bis(
 	block_tensor_i<k_ordera, double> &bta,
-	block_tensor_i<k_orderb, double> &btb) {
+	block_tensor_i<k_orderb, double> &btb,
+	const permutation<k_orderc> &permc) {
 
 	const block_index_space<k_ordera> &bisa = bta.get_bis();
 	const dimensions<k_ordera> &dimsa = bisa.get_dims();
@@ -236,87 +340,154 @@ block_index_space<N + M> btod_dirsum<N, M>::mk_bisc(
 	}
 
 	bisc.match_splits();
+	bisc.permute(permc);
 
 	return bisc;
 }
 
 
 template<size_t N, size_t M>
-void btod_dirsum<N, M>::do_perform(block_tensor_i<k_orderc, double> &btc,
-	bool zero, double kc) {
+void btod_dirsum<N, M>::make_symmetry() {
 
-	btod_dirsum<N, M>::start_timer();
+	block_tensor_ctrl<k_ordera, double> ca(m_bta);
+	block_tensor_ctrl<k_orderb, double> cb(m_btb);
 
-	block_tensor_ctrl<k_ordera, double> ctrla(m_bta);
-	block_tensor_ctrl<k_orderb, double> ctrlb(m_btb);
-	block_tensor_ctrl<k_orderc, double> ctrlc(btc);
+	size_t seq[k_orderc];
+	for(size_t i = 0; i < k_orderc; i++) seq[i] = i;
+	m_permc.apply(seq);
 
-	//	Permutations for tod_scatter
-	permutation<k_orderc> perm_cycle;
-	permutation<k_orderc> permbc(m_permc);
-	permutation<k_orderc> permac;
-	{
-		for(size_t i = 0; i < k_orderc - 1; i++)
-			perm_cycle.permute(i, i + 1);
-		for(size_t i = 0; i < k_ordera; i++)
-			permac.permute(perm_cycle);
-		permac.permute(m_permc);
-//		size_t seq[k_orderc];
-//		for(size_t i = 0; i < k_orderc; i++) seq[i] = i;
-//		m_permc.apply(seq);
-//		for(size_t i = 0; i < k_orderc - 1; i++)
-//			perm_cycle.permute(seq[i], seq[i + 1]);
-//		for(size_t i = 0; i < k_ordera; i++)
-//			permac.permute(perm_cycle);
+	mask<k_orderc> xma, xmb;
+	sequence<N, size_t> xseqa1(0), xseqa2(0);
+	sequence<M, size_t> xseqb1(0), xseqb2(0);
+
+	for(size_t i = 0, ja = 0, jb = 0; i < k_orderc; i++) {
+		if(seq[i] < k_ordera) {
+			xma[i] = true;
+			xseqa1[ja] = ja;
+			xseqa2[ja] = seq[i];
+			ja++;
+		} else {
+			xmb[i] = true;
+			xseqb1[jb] = jb;
+			xseqb2[jb] = seq[i] - k_ordera;
+			jb++;
+		}
 	}
 
-	orbit_list<k_ordera, double> ola(ctrla.req_symmetry());
-	orbit_list<k_orderb, double> olb(ctrlb.req_symmetry());
+	permutation_builder<N> xpba(xseqa2, xseqa1);
+	permutation_builder<M> xpbb(xseqb2, xseqb1);
+	symmetry<k_orderc, double> xsyma(m_bisc);
+	symmetry<k_orderc, double> xsymb(m_bisc);
+	so_proj_up<N, M, double>(ca.req_const_symmetry(), xpba.get_perm(), xma).
+		perform(xsyma);
+	so_proj_up<M, N, double>(cb.req_const_symmetry(), xpbb.get_perm(), xmb).
+		perform(xsymb);
+	so_union<k_orderc, double>(xsyma, xsymb).perform(m_sym);
+}
+
+
+template<size_t N, size_t M>
+void btod_dirsum<N, M>::make_schedule() {
+
+	btod_dirsum<N, M>::start_timer("make_schedule");
+
+	block_tensor_ctrl<k_ordera, double> ca(m_bta);
+	block_tensor_ctrl<k_orderb, double> cb(m_btb);
+
+	orbit_list<k_ordera, double> ola(ca.req_const_symmetry());
+	orbit_list<k_orderb, double> olb(cb.req_const_symmetry());
+	orbit_list<k_orderc, double> olc(m_sym);
 
 	for(typename orbit_list<k_ordera, double>::iterator ioa = ola.begin();
 		ioa != ola.end(); ioa++) {
 
-		index<k_ordera> ia(ola.get_index(ioa));
+		bool zeroa = ca.req_is_zero_block(ola.get_index(ioa));
+
+		orbit<k_ordera, double> oa(ca.req_const_symmetry(),
+			ola.get_index(ioa));
 
 		for(typename orbit_list<k_orderb, double>::iterator iob =
 			olb.begin(); iob != olb.end(); iob++) {
 
-			index<k_orderb> ib(olb.get_index(iob));
-			index<k_orderc> ic;
+			bool zerob = cb.req_is_zero_block(olb.get_index(iob));
+			if(zeroa && zerob) continue;
 
-			for(register size_t i = 0; i < k_ordera; i++)
-				ic[i] = ia[i];
-			for(register size_t i = 0; i < k_orderb; i++)
-				ic[k_ordera + i] = ib[i];
-			ic.permute(m_permc);
+			orbit<k_orderb, double> ob(cb.req_const_symmetry(),
+				olb.get_index(iob));
 
-			bool zeroa = ctrla.req_is_zero_block(ia);
-			bool zerob = ctrlb.req_is_zero_block(ib);
-			bool zeroc = ctrlc.req_is_zero_block(ic);
-
-			if(zero && zeroa && zerob) {
-				ctrlc.req_zero_block(ic);
-				continue;
-			}
-			if(zeroa && zerob) {
-				continue;
-			}
-
-			if(zeroa) {
-				do_block_scatter_b(ctrlb, ctrlc, ic, kc, ib,
-					m_kb, permbc, zero || zeroc);
-			} else if(zerob) {
-				do_block_scatter_a(ctrla, ctrlc, ic, kc, ia,
-					m_ka, permac, zero || zeroc);
-			} else {
-				do_block_dirsum(ctrla, ctrlb, ctrlc, ic, kc,
-					ia, m_ka, ib, m_kb, m_permc,
-					zero || zeroc);
-			}
+				make_schedule(oa, zeroa, ob, zerob, olc);
 		}
 	}
 
-	btod_dirsum<N, M>::stop_timer();
+	btod_dirsum<N, M>::stop_timer("make_schedule");
+}
+
+
+template<size_t N, size_t M>
+void btod_dirsum<N, M>::make_schedule(const orbit<k_ordera, double> &oa,
+	bool zeroa, const orbit<k_orderb, double> &ob, bool zerob,
+	const orbit_list<k_orderc, double> &olc) {
+
+	size_t seqa[k_ordera];
+	size_t seqb[k_orderb];
+	size_t seqc1[k_orderc], seqc2[k_orderc];
+
+	for(size_t i = 0; i < k_orderc; i++) seqc1[i] = i;
+
+	for(typename orbit<k_ordera, double>::iterator ia = oa.begin();
+		ia != oa.end(); ia++) {
+
+	abs_index<k_ordera> aidxa(oa.get_abs_index(ia), m_bidimsa);
+	const index<k_ordera> &idxa = aidxa.get_index();
+	const transf<k_ordera, double> &tra = oa.get_transf(
+		aidxa.get_abs_index());
+
+	for(size_t i = 0; i < k_ordera; i++) seqa[i] = i;
+	tra.get_perm().apply(seqa);
+
+	for(typename orbit<k_orderb, double>::iterator ib = ob.begin();
+		ib != ob.end(); ib++) {
+
+		abs_index<k_orderb> aidxb(ob.get_abs_index(ib), m_bidimsb);
+		const index<k_orderb> &idxb = aidxb.get_index();
+		const transf<k_orderb, double> &trb = ob.get_transf(
+			aidxb.get_abs_index());
+
+		for(size_t i = 0; i < k_orderb; i++) seqb[i] = i;
+		trb.get_perm().apply(seqb);
+
+		index<k_orderc> idxc;
+		for(size_t i = 0; i < k_ordera; i++) {
+			idxc[i] = idxa[i];
+			seqc2[i] = seqa[i];
+		}
+		for(size_t i = 0; i < k_orderb; i++) {
+			idxc[k_ordera + i] = idxb[i];
+			seqc2[k_ordera + i] = k_ordera + seqb[i];
+		}
+
+		idxc.permute(m_permc);
+		m_permc.apply(seqc2);
+
+		abs_index<k_orderc> aidxc(idxc, m_bidimsc);
+		if(!olc.contains(aidxc.get_abs_index())) continue;
+
+		permutation_builder<k_orderc> pbc(seqc2, seqc1);
+		schrec rec;
+		rec.absidxa = aidxa.get_abs_index();
+		rec.absidxb = aidxb.get_abs_index();
+		rec.zeroa = zeroa;
+		rec.zerob = zerob;
+		rec.ka = m_ka * tra.get_coeff();
+		rec.kb = m_kb * trb.get_coeff();
+		rec.permc.permute(pbc.get_perm());
+		m_op_sch.insert(std::pair<size_t, schrec>(
+			aidxc.get_abs_index(), rec));
+		m_sch.insert(aidxc.get_abs_index());
+
+	} // for ib
+
+	} // for ia
 }
 
 
@@ -324,15 +495,13 @@ template<size_t N, size_t M>
 void btod_dirsum<N, M>::do_block_dirsum(
 	block_tensor_ctrl<k_ordera, double> &ctrla,
 	block_tensor_ctrl<k_orderb, double> &ctrlb,
-	block_tensor_ctrl<k_orderc, double> &ctrlc,
-	const index<k_orderc> &ic, double kc,
+	tensor_i<k_orderc, double> &blkc, double kc,
 	const index<k_ordera> &ia, double ka,
 	const index<k_orderb> &ib, double kb,
 	const permutation<k_orderc> &permc, bool zero) {
 
 	tensor_i<k_ordera, double> &blka = ctrla.req_block(ia);
 	tensor_i<k_orderb, double> &blkb = ctrlb.req_block(ib);
-	tensor_i<k_orderc, double> &blkc = ctrlc.req_block(ic);
 
 	if(zero) {
 		tod_dirsum<N, M>(blka, ka, blkb, kb, permc).perform(blkc);
@@ -345,20 +514,17 @@ void btod_dirsum<N, M>::do_block_dirsum(
 
 	ctrla.ret_block(ia);
 	ctrlb.ret_block(ib);
-	ctrlc.ret_block(ic);
 }
 
 
 template<size_t N, size_t M>
 void btod_dirsum<N, M>::do_block_scatter_a(
 	block_tensor_ctrl<k_ordera, double> &ctrla,
-	block_tensor_ctrl<k_orderc, double> &ctrlc,
-	const index<k_orderc> &ic, double kc,
+	tensor_i<k_orderc, double> &blkc, double kc,
 	const index<k_ordera> &ia, double ka,
 	const permutation<k_orderc> permc, bool zero) {
 
 	tensor_i<k_ordera, double> &blka = ctrla.req_block(ia);
-	tensor_i<k_orderc, double> &blkc = ctrlc.req_block(ic);
 
 	if(zero) {
 		tod_scatter<N, M>(blka, ka, permc).perform(blkc);
@@ -370,20 +536,17 @@ void btod_dirsum<N, M>::do_block_scatter_a(
 	}
 
 	ctrla.ret_block(ia);
-	ctrlc.ret_block(ic);
 }
 
 
 template<size_t N, size_t M>
 void btod_dirsum<N, M>::do_block_scatter_b(
 	block_tensor_ctrl<k_orderb, double> &ctrlb,
-	block_tensor_ctrl<k_orderc, double> &ctrlc,
-	const index<k_orderc> &ic, double kc,
+	tensor_i<k_orderc, double> &blkc, double kc,
 	const index<k_orderb> &ib, double kb,
 	const permutation<k_orderc> permc, bool zero) {
 
 	tensor_i<k_orderb, double> &blkb = ctrlb.req_block(ib);
-	tensor_i<k_orderc, double> &blkc = ctrlc.req_block(ic);
 
 	if(zero) {
 		tod_scatter<M, N>(blkb, kb, permc).perform(blkc);
@@ -395,7 +558,6 @@ void btod_dirsum<N, M>::do_block_scatter_b(
 	}
 
 	ctrlb.ret_block(ib);
-	ctrlc.ret_block(ic);
 }
 
 

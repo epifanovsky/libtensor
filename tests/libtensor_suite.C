@@ -6,6 +6,7 @@ namespace libtensor {
 libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 
 	add_test("abs_index", m_utf_abs_index);
+	add_test("addition_schedule", m_utf_addition_schedule);
 	add_test("anon_eval", m_utf_anon_eval);
 	add_test("bispace", m_utf_bispace);
 	add_test("bispace_expr", m_utf_bispace_expr);
@@ -58,13 +59,24 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("orbit_list", m_utf_orbit_list);
 	add_test("permutation", m_utf_permutation);
 	add_test("permutation_builder", m_utf_permutation_builder);
+	add_test("permutation_group", m_utf_permutation_group);
 	add_test("sequence", m_utf_sequence);
-	add_test("so_projdown", m_utf_so_projdown);
-	add_test("so_projup", m_utf_so_projup);
-	add_test("symel_cycleperm", m_utf_symel_cycleperm);
+	add_test("se_part", m_utf_se_part);
+	add_test("se_perm", m_utf_se_perm);
+	add_test("so_add", m_utf_so_add);
+	add_test("so_add_impl_perm", m_utf_so_add_impl_perm);
+	add_test("so_copy", m_utf_so_copy);
+	add_test("so_proj_down", m_utf_so_proj_down);
+	add_test("so_proj_down_impl_perm", m_utf_so_proj_down_impl_perm);
+	add_test("so_proj_up", m_utf_so_proj_up);
+	add_test("so_proj_up_impl_perm", m_utf_so_proj_up_impl_perm);
+	add_test("so_union", m_utf_so_union);
+	add_test("so_union_impl_perm", m_utf_so_union_impl_perm);
 	add_test("symm", m_utf_symm);
 	add_test("symmetry", m_utf_symmetry);
-	add_test("symmetry_element_base", m_utf_symmetry_element_base);
+	add_test("symmetry_element_set", m_utf_symmetry_element_set);
+	add_test("symmetry_element_set_adapter",
+		m_utf_symmetry_element_set_adapter);
 	add_test("tensor", m_utf_tensor);
 	add_test("timer", m_utf_timer);
 	add_test("timings", m_utf_timings);

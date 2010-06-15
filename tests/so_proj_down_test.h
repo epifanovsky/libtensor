@@ -1,24 +1,25 @@
-#ifndef LIBTENSOR_SO_PROJDOWN_TEST_H
-#define LIBTENSOR_SO_PROJDOWN_TEST_H
+#ifndef LIBTENSOR_SO_PROJ_DOWN_TEST_H
+#define LIBTENSOR_SO_PROJ_DOWN_TEST_H
 
 #include <libtest/unit_test.h>
 
 namespace libtensor {
 
-/**	\brief Tests the libtensor::so_projdown class
+/**	\brief Tests the libtensor::so_proj_down class
 
 	\ingroup libtensor_tests
 **/
-class so_projdown_test : public libtest::unit_test {
+class so_proj_down_test : public libtest::unit_test {
 public:
 	virtual void perform() throw(libtest::test_exception);
 
 private:
 	void test_1() throw(libtest::test_exception);
 	void test_2() throw(libtest::test_exception);
+	void test_3() throw(libtest::test_exception);
 
 };
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_SO_PROJDOWN_TEST_H
+#endif // LIBTENSOR_SO_PROJ_DOWN_TEST_H

@@ -22,6 +22,10 @@ void tod_mult_test::perform() throw(libtest::test_exception) {
 	test_4();
 	test_5();
 	test_6();
+	test_7();
+	test_8();
+	test_9();
+	test_10();
 }
 
 
@@ -310,6 +314,215 @@ void tod_mult_test::test_6() throw(libtest::test_exception) {
 	tc_ref.set_immutable();
 
 	tod_mult<2>(ta, tb, true).perform(tc, 0.5);
+
+	compare_ref<2>::compare(testname, tc, tc_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+void tod_mult_test::test_7() throw(libtest::test_exception) {
+
+	static const char *testname = "tod_mult_test::test_7()";
+
+	try {
+
+	index<2> i1, i2;
+	i2[0] = 10; i2[1] = 10;
+	dimensions<2> dims(index_range<2>(i1, i2));
+	size_t sz = dims.get_size();
+
+	tensor<2, double, allocator> ta(dims), tb(dims), tc(dims), tc_ref(dims);
+
+	{
+	tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
+
+	double *pa = tca.req_dataptr();
+	double *pb = tcb.req_dataptr();
+	double *pc = tcc.req_dataptr();
+	double *pc_ref = tcc_ref.req_dataptr();
+
+	for(size_t i = 0; i < sz; i++) pa[i] = drand48();
+	for(size_t i = 0; i < sz; i++) pb[i] = drand48();
+	for(size_t i = 0; i < sz; i++) pc[i] = drand48();
+
+	size_t dim = dims.get_dim(0);
+	for(size_t i = 0; i < dim; i++)
+	for(size_t j = 0; j < dim; j++) {
+		pc_ref[i * dim + j] = pc[i * dim + j] +
+				0.5 * pa[i * dim + j] * pb[j * dim + i];
+	}
+	tca.ret_dataptr(pa); pa = 0;
+	tcb.ret_dataptr(pb); pb = 0;
+	tcc.ret_dataptr(pc); pc = 0;
+	tcc_ref.ret_dataptr(pc_ref); pc_ref = 0;
+	}
+
+	ta.set_immutable();
+	tb.set_immutable();
+	tc_ref.set_immutable();
+
+	permutation<2> pa, pb;
+	pb.permute(0, 1);
+	tod_mult<2>(ta, pa, tb, pb, false, 0.5).perform(tc, 1.0);
+
+	compare_ref<2>::compare(testname, tc, tc_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+void tod_mult_test::test_8() throw(libtest::test_exception) {
+
+	static const char *testname = "tod_mult_test::test_8()";
+
+	try {
+
+	index<2> i1, i2;
+	i2[0] = 10; i2[1] = 10;
+	dimensions<2> dims(index_range<2>(i1, i2));
+	size_t sz = dims.get_size();
+
+	tensor<2, double, allocator> ta(dims), tb(dims), tc(dims), tc_ref(dims);
+
+	{
+	tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
+
+	double *pa = tca.req_dataptr();
+	double *pb = tcb.req_dataptr();
+	double *pc = tcc.req_dataptr();
+	double *pc_ref = tcc_ref.req_dataptr();
+
+	for(size_t i = 0; i < sz; i++) pa[i] = drand48();
+	for(size_t i = 0; i < sz; i++) pb[i] = drand48();
+	for(size_t i = 0; i < sz; i++) pc[i] = drand48();
+
+	size_t dim = dims.get_dim(0);
+	for(size_t i = 0; i < dim; i++)
+	for(size_t j = 0; j < dim; j++) {
+		pc_ref[i * dim + j] = pc[i * dim + j] +
+				0.5 * pa[i * dim + j] / pb[j * dim + i];
+	}
+	tca.ret_dataptr(pa); pa = 0;
+	tcb.ret_dataptr(pb); pb = 0;
+	tcc.ret_dataptr(pc); pc = 0;
+	tcc_ref.ret_dataptr(pc_ref); pc_ref = 0;
+	}
+
+	ta.set_immutable();
+	tb.set_immutable();
+	tc_ref.set_immutable();
+
+	permutation<2> pa, pb;
+	pb.permute(0, 1);
+	tod_mult<2>(ta, pa, tb, pb, true, 0.5).perform(tc, 1.0);
+
+	compare_ref<2>::compare(testname, tc, tc_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+void tod_mult_test::test_9() throw(libtest::test_exception) {
+
+	static const char *testname = "tod_mult_test::test_9()";
+
+	try {
+
+	index<2> i1, i2;
+	i2[0] = 10; i2[1] = 10;
+	dimensions<2> dims(index_range<2>(i1, i2));
+	size_t sz = dims.get_size();
+
+	tensor<2, double, allocator> ta(dims), tb(dims), tc(dims), tc_ref(dims);
+
+	{
+	tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
+
+	double *pa = tca.req_dataptr();
+	double *pb = tcb.req_dataptr();
+	double *pc = tcc.req_dataptr();
+	double *pc_ref = tcc_ref.req_dataptr();
+
+	for(size_t i = 0; i < sz; i++) pa[i] = drand48();
+	for(size_t i = 0; i < sz; i++) pb[i] = drand48();
+	for(size_t i = 0; i < sz; i++) pc[i] = drand48();
+
+	size_t dim = dims.get_dim(0);
+	for(size_t i = 0; i < dim; i++)
+	for(size_t j = 0; j < dim; j++) {
+		pc_ref[i * dim + j] = pc[i * dim + j] +
+				0.5 * pa[j * dim + i] * pb[i * dim + j];
+	}
+	tca.ret_dataptr(pa); pa = 0;
+	tcb.ret_dataptr(pb); pb = 0;
+	tcc.ret_dataptr(pc); pc = 0;
+	tcc_ref.ret_dataptr(pc_ref); pc_ref = 0;
+	}
+
+	ta.set_immutable();
+	tb.set_immutable();
+	tc_ref.set_immutable();
+
+	permutation<2> pa, pb;
+	pa.permute(0, 1);
+	tod_mult<2>(ta, pa, tb, pb, false, 0.5).perform(tc, 1.0);
+
+	compare_ref<2>::compare(testname, tc, tc_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+void tod_mult_test::test_10() throw(libtest::test_exception) {
+
+	static const char *testname = "tod_mult_test::test_10()";
+
+	try {
+
+	index<2> i1, i2;
+	i2[0] = 10; i2[1] = 10;
+	dimensions<2> dims(index_range<2>(i1, i2));
+	size_t sz = dims.get_size();
+
+	tensor<2, double, allocator> ta(dims), tb(dims), tc(dims), tc_ref(dims);
+
+	{
+	tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
+
+	double *pa = tca.req_dataptr();
+	double *pb = tcb.req_dataptr();
+	double *pc = tcc.req_dataptr();
+	double *pc_ref = tcc_ref.req_dataptr();
+
+	for(size_t i = 0; i < sz; i++) pa[i] = drand48();
+	for(size_t i = 0; i < sz; i++) pb[i] = drand48();
+	for(size_t i = 0; i < sz; i++) pc[i] = drand48();
+
+	size_t dim = dims.get_dim(0);
+	for(size_t i = 0; i < dim; i++)
+	for(size_t j = 0; j < dim; j++) {
+		pc_ref[i * dim + j] = pc[i * dim + j] +
+				0.5 * pa[j * dim + i] / pb[j * dim + i];
+	}
+	tca.ret_dataptr(pa); pa = 0;
+	tcb.ret_dataptr(pb); pb = 0;
+	tcc.ret_dataptr(pc); pc = 0;
+	tcc_ref.ret_dataptr(pc_ref); pc_ref = 0;
+	}
+
+	ta.set_immutable();
+	tb.set_immutable();
+	tc_ref.set_immutable();
+
+	permutation<2> pa, pb;
+	pa.permute(0, 1);
+	pb.permute(0, 1);
+	tod_mult<2>(ta, pa, tb, pb, true, 0.5).perform(tc, 1.0);
 
 	compare_ref<2>::compare(testname, tc, tc_ref, 1e-15);
 

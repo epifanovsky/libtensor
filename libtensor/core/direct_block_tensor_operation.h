@@ -6,8 +6,10 @@
 #include "block_index_space.h"
 #include "block_tensor_i.h"
 #include "symmetry.h"
+#include "../btod/assignment_schedule.h"
 
 namespace libtensor {
+
 
 /**	\brief Underlying operation for direct block tensors
 
@@ -30,13 +32,20 @@ public:
 
 	/**	\brief Invoked to execute the operation
 	 **/
-	virtual void perform(block_tensor_i<N, T> &bt) throw(exception) = 0;
+	virtual void perform(block_tensor_i<N, T> &bt) = 0;
 
-	/**	\brief Invoked to calculate one block
+	/**	\brief Returns the assignment schedule -- the preferred order
+			of computing blocks
 	 **/
-	virtual void perform(block_tensor_i<N, T> &bt, const index<N> &i)
-		throw(exception) = 0;
+	virtual const assignment_schedule<N, T> &get_schedule() const = 0;
+
+	/**	\brief Computes a single block of the result
+	 **/
+	virtual void compute_block(tensor_i<N, double> &blk,
+		const index<N> &i) = 0;
+
 };
+
 
 } // namespace libtensor
 

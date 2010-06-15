@@ -6,10 +6,16 @@
 #include "../defs.h"
 #include "../exception.h"
 #include "../timings.h"
+#include "../btod/transf_double.h"
 #include "../core/block_tensor_i.h"
 #include "../core/block_tensor_ctrl.h"
+#include "../core/orbit.h"
+#include "../core/orbit_list.h"
 #include "../core/tensor_i.h"
 #include "../core/tensor_ctrl.h"
+#include "../symmetry/so_copy.h"
+#include "../symmetry/bad_symmetry.h"
+#include "../tod/tod_compare.h"
 #include "../tod/tod_set.h"
 
 namespace libtensor {
@@ -100,7 +106,9 @@ void btod_read<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 	//
 
 	block_tensor_ctrl<N, double> ctrl(bt);
-	ctrl.req_sym_clear_elements();
+	symmetry<N, double> sym(bis);
+	so_copy<N, double>(ctrl.req_const_symmetry()).perform(sym);
+	ctrl.req_symmetry().clear();
 	ctrl.req_zero_all_blocks();
 
 	//
@@ -163,6 +171,92 @@ void btod_read<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 	} while(bi.inc());
 
 	delete [] buf;
+
+	//
+	// Check block tensor for its symmetry
+	//
+
+	orbit_list<N, double>  ol(sym);
+	// loop over all orbits
+	for (typename orbit_list<N, double>::iterator it = ol.begin();
+			it != ol.end(); it++) {
+
+		orbit<N, double> orb(sym, ol.get_index(it));
+
+		// get canonical block
+		size_t ac = orb.get_abs_canonical_index();
+		abs_index<N> acidx(ac, bdims);
+
+		bool zero = ctrl.req_is_zero_block(acidx.get_index());
+
+		if (zero) {
+			// loop over all blocks within an orbit
+			for (typename orbit<N, double>::iterator ito = orb.begin();
+					ito != orb.end(); ito++) {
+
+				// do nothing for the canonical block
+				if (ac == orb.get_abs_index(ito)) continue;
+
+				abs_index<N> aidx(orb.get_abs_index(ito), bdims);
+
+				if (ctrl.req_is_zero_block(aidx.get_index())) continue;
+
+				std::ostringstream oss;
+				oss << "Read block tensor does not match symmetry in block "
+						<< aidx.get_index() << "(non-zero block).";
+				throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
+						oss.str().c_str());
+			}
+		}
+		else {
+			// apply transformation to the canonical block
+			tensor_i<N, double> &cblk = ctrl.req_block(acidx.get_index());
+
+			// loop over all blocks within an orbit
+			for (typename orbit<N, double>::iterator ito = orb.begin();
+					ito != orb.end(); ito++) {
+
+				// do nothing for the canonical block
+				if (ac == orb.get_abs_index(ito)) continue;
+
+				// get block transformation and index
+				abs_index<N> aidx(orb.get_abs_index(ito), bdims);
+				const transf<N, double> &tr = orb.get_transf(ito);
+
+				// compare real and expected block
+				tensor_i<N, double> &blk = ctrl.req_block(aidx.get_index());
+
+				typedef libvmm::std_allocator<double> allocator;
+				tensor<N, double, allocator> tmp_blk(blk.get_dims());
+				tod_copy<N>(cblk, tr.get_perm(), tr.get_coeff()).perform(tmp_blk);
+
+				tod_compare<N> cmp(blk, tmp_blk, 1e-13);
+				if (! cmp.compare()) {
+					ctrl.ret_block(aidx.get_index());
+					ctrl.ret_block(acidx.get_index());
+
+					std::ostringstream oss;
+					oss << "Read block tensor does not match symmetry in block "
+							<< aidx.get_index() << " at " << cmp.get_diff_index()
+							<< "(expected: " << cmp.get_diff_elem_1() << ", found: "
+							<< cmp.get_diff_elem_2() << ", diff: "
+							<< cmp.get_diff_elem_1()-cmp.get_diff_elem_2() << ").";
+
+					throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
+							oss.str().c_str());
+				}
+
+				ctrl.ret_block(aidx.get_index());
+
+				// if real and expected block match zero the non-canonical block
+				ctrl.req_zero_block(aidx.get_index());
+			}
+			ctrl.ret_block(acidx.get_index());
+		}
+	}
+
+	// copy symmetry back to block tensor
+	so_copy<N, double>(sym).perform(ctrl.req_symmetry());
 
 	btod_read<N>::stop_timer();
 }

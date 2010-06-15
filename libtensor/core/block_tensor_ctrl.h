@@ -38,35 +38,19 @@ public:
 	//!	\name Symmetry events
 	//@{
 
-	/**	\brief Request to obtain the constant reference to the %tensor's
+	/**	\brief Request to obtain the constant reference to the block
+			%tensor's %symmetry
+	 **/
+	const symmetry<N, T> &req_const_symmetry() throw(exception) {
+		return m_bt.on_req_const_symmetry();
+	}
+
+	/**	\brief Request to obtain the reference to the block %tensor's
 			%symmetry
 	 **/
-	const symmetry<N, T> &req_symmetry() throw(exception);
-
-	/**	\brief Request to add a %symmetry element to the generating set;
-			does nothing if the element is already in the set
-	`	\param elem Symmetry element.
-	 **/
-	void req_sym_add_element(const symmetry_element_i<N, T> &elem)
-		throw(exception);
-
-	/**	\brief Request to remove a %symmetry element from the generating
-			set; does nothing if the element is not in the set
-		\param elem Symmetry element.
-	 **/
-	void req_sym_remove_element(const symmetry_element_i<N, T> &elem)
-		throw(exception);
-
-	/**	\brief Request whether the generating set of the %symmetry
-			contains a given element
-		\param elem Symmetry element.
-	 **/
-	bool req_sym_contains_element(const symmetry_element_i<N, T> &elem)
-		throw(exception);
-
-	/**	\brief Request to clear the generating set
-	 **/
-	void req_sym_clear_elements() throw(exception);
+	symmetry<N, T> &req_symmetry() throw(exception) {
+		return m_bt.on_req_symmetry();
+	}
 
 	//@}
 
@@ -91,43 +75,6 @@ template<size_t N, typename T>
 block_tensor_ctrl<N, T>::~block_tensor_ctrl() {
 }
 
-
-template<size_t N, typename T>
-inline const symmetry<N, T> &block_tensor_ctrl<N, T>::req_symmetry()
-	throw(exception) {
-
-	return m_bt.on_req_symmetry();
-}
-
-
-template<size_t N, typename T>
-inline void block_tensor_ctrl<N, T>::req_sym_add_element(
-	const symmetry_element_i<N, T> &elem) throw(exception) {
-
-	m_bt.on_req_sym_add_element(elem);
-}
-
-
-template<size_t N, typename T>
-inline void block_tensor_ctrl<N, T>::req_sym_remove_element(
-	const symmetry_element_i<N, T> &elem) throw(exception) {
-
-	m_bt.on_req_sym_remove_element(elem);
-}
-
-
-template<size_t N, typename T>
-inline bool block_tensor_ctrl<N, T>::req_sym_contains_element(
-	const symmetry_element_i<N, T> &elem) throw(exception) {
-
-	return m_bt.on_req_sym_contains_element(elem);
-}
-
-template<size_t N, typename T>
-inline void block_tensor_ctrl<N, T>::req_sym_clear_elements() throw(exception) {
-
-	m_bt.on_req_sym_clear_elements();
-}
 
 template<size_t N, typename T>
 inline tensor_i<N, T> &block_tensor_ctrl<N, T>::req_block(const index<N> &idx)

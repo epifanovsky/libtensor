@@ -14,10 +14,10 @@ public:
 	virtual void perform() throw(libtest::test_exception);
 
 private:
-	void test_1() throw(libtest::test_exception);
-	void test_2() throw(libtest::test_exception);
-	void test_3() throw(libtest::test_exception);
-	void test_4() throw(libtest::test_exception);
+	void test_1(bool recip, bool doadd) throw(libtest::test_exception);
+	void test_2(bool recip, bool doadd) throw(libtest::test_exception);
+	void test_3(bool recip, bool doadd) throw(libtest::test_exception);
+	void test_4(bool recip, bool doadd) throw(libtest::test_exception);
 };
 
 } // namespace libtensor

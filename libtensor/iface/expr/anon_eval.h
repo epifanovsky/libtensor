@@ -24,9 +24,6 @@ public:
 	//!	Expression type
 	typedef expr<N, T, Core> expression_t;
 
-	//!	Output labeled block %tensor type
-	typedef labeled_btensor<N, T, true> result_t;
-
 	//!	Evaluating container type
 	typedef typename expression_t::eval_container_t eval_container_t;
 
@@ -46,13 +43,18 @@ private:
 	expression_t m_expr; //!< Expression
 	eval_container_t m_eval_container; //!< Container
 	evalfunctor_t m_functor; //!< Evaluation functor
-	btensor<N, T> m_bt; //!< Block %tensor
-	result_t m_result; //!< Result
+	btensor<N, T> *m_bt; //!< Block %tensor
 
 public:
 	//!	\name Construction and destruction
 	//@{
+
 	anon_eval(const expression_t &expr, const letter_expr<N> &label);
+
+	~anon_eval() {
+		delete m_bt;
+	}
+
 	//@}
 
 	//!	\name Evaluation
@@ -69,7 +71,7 @@ public:
 	/**	\brief Returns the block %tensor
 	 **/
 	btensor_i<N, T> &get_btensor() {
-		return m_bt;
+		return *m_bt;
 	}
 
 	//@}
@@ -80,11 +82,9 @@ public:
 template<size_t N, typename T, typename Core>
 anon_eval<N, T, Core>::anon_eval(
 	const expression_t &expr, const letter_expr<N> &label) :
-		m_expr(expr),
-		m_eval_container(m_expr, label),
-		m_functor(m_expr, m_eval_container),
-		m_bt(m_functor.get_bto().get_bis()),
-		m_result(m_bt(label)) {
+
+	m_expr(expr), m_eval_container(m_expr, label),
+	m_functor(m_expr, m_eval_container), m_bt(0) {
 
 }
 
@@ -92,8 +92,11 @@ anon_eval<N, T, Core>::anon_eval(
 template<size_t N, typename T, typename Core>
 void anon_eval<N, T, Core>::evaluate() {
 
+	delete m_bt;
+
 	m_eval_container.prepare();
-	m_functor.get_bto().perform(m_bt);
+	m_bt = new btensor<N, T>(m_functor.get_bto().get_bis());
+	m_functor.get_bto().perform(*m_bt);
 	m_eval_container.clean();
 }
 
@@ -101,7 +104,7 @@ void anon_eval<N, T, Core>::evaluate() {
 template<size_t N, typename T, typename Core>
 void anon_eval<N, T, Core>::clean() {
 
-	m_functor.get_clean_bto().perform(m_bt);
+	delete m_bt; m_bt = 0;
 }
 
 

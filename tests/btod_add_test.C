@@ -6,7 +6,7 @@
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/btod/btod_add.h>
 #include <libtensor/btod/btod_random.h>
-#include <libtensor/symmetry/symel_cycleperm.h>
+#include <libtensor/symmetry/se_perm.h>
 #include <libtensor/tod/tod_btconv.h>
 #include "btod_add_test.h"
 #include "compare_ref.h"
@@ -198,12 +198,10 @@ void btod_add_test::test_3(double ca1, double ca2)
 	block_tensor_ctrl<2, double> ctrl_bta1(bta1), ctrl_bta2(bta2),
 		ctrl_btb(btb);
 
-	mask<2> msk;
-	msk[0] = true; msk[1] = true;
-	symel_cycleperm<2, double> cycle(2, msk);
-	ctrl_bta1.req_sym_add_element(cycle);
-	ctrl_bta2.req_sym_add_element(cycle);
-	ctrl_btb.req_sym_add_element(cycle);
+	se_perm<2, double> cycle(permutation<2>().permute(0, 1), true);
+	ctrl_bta1.req_symmetry().insert(cycle);
+	ctrl_bta2.req_symmetry().insert(cycle);
+	ctrl_btb.req_symmetry().insert(cycle);
 
 	index<2> i_00, i_01, i_11;
 	i_01[0] = 0; i_01[1] = 1;
@@ -278,20 +276,19 @@ void btod_add_test::test_4(double ca1, double ca2, double ca3, double ca4)
 	block_tensor_ctrl<4, double> ctrl_bta1(bta1), ctrl_bta2(bta2),
 		ctrl_bta3(bta3), ctrl_bta4(bta4), ctrl_btb(btb);
 
-	mask<4> msk;
-	msk[0] = true; msk[1] = true; msk[2] = true; msk[3] = true;
-	symel_cycleperm<4, double> cycle1(4, msk);
-	symel_cycleperm<4, double> cycle2(2, msk);
-	ctrl_bta1.req_sym_add_element(cycle1);
-	ctrl_bta1.req_sym_add_element(cycle2);
-	ctrl_bta2.req_sym_add_element(cycle1);
-	ctrl_bta2.req_sym_add_element(cycle2);
-	ctrl_bta3.req_sym_add_element(cycle1);
-	ctrl_bta3.req_sym_add_element(cycle2);
-	ctrl_bta4.req_sym_add_element(cycle1);
-	ctrl_bta4.req_sym_add_element(cycle2);
-	ctrl_btb.req_sym_add_element(cycle1);
-	ctrl_btb.req_sym_add_element(cycle2);
+	se_perm<4, double> cycle1(permutation<4>().permute(0, 1).permute(1, 2).
+		permute(2, 3), true);
+	se_perm<4, double> cycle2(permutation<4>().permute(0, 1), true);
+	ctrl_bta1.req_symmetry().insert(cycle1);
+	ctrl_bta1.req_symmetry().insert(cycle2);
+	ctrl_bta2.req_symmetry().insert(cycle1);
+	ctrl_bta2.req_symmetry().insert(cycle2);
+	ctrl_bta3.req_symmetry().insert(cycle1);
+	ctrl_bta3.req_symmetry().insert(cycle2);
+	ctrl_bta4.req_symmetry().insert(cycle1);
+	ctrl_bta4.req_symmetry().insert(cycle2);
+	ctrl_btb.req_symmetry().insert(cycle1);
+	ctrl_btb.req_symmetry().insert(cycle2);
 
 	index<4> i_0000, i_0001, i_0011, i_0111, i_1111;
 	i_0001[0] = 0; i_0001[1] = 0; i_0001[2] = 0; i_0001[3] = 1;

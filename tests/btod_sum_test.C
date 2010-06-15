@@ -1,9 +1,7 @@
-#include <cmath>
-#include <cstdlib>
-#include <ctime>
 #include <libvmm/std_allocator.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/btod/btod_add.h>
+#include <libtensor/btod/btod_contract2.h>
 #include <libtensor/btod/btod_copy.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/btod/btod_sum.h>
@@ -15,11 +13,11 @@ namespace libtensor {
 
 void btod_sum_test::perform() throw(libtest::test_exception) {
 
-	srand48(time(NULL));
-
 	test_1();
 	test_2();
 	test_3();
+	test_4();
+	test_5();
 }
 
 
@@ -191,16 +189,15 @@ void btod_sum_test::test_4() throw(libtest::test_exception) {
 	block_tensor_t bt1(bis), bt2(bis), bt3(bis), bt4(bis), bt4_ref(bis);
 	btod_random<4>().perform(bt1);
 	btod_random<4>().perform(bt2);
-	btod_random<4>().perform(bt3);
 	bt1.set_immutable();
 	bt2.set_immutable();
-	bt3.set_immutable();
 
 	permutation<4> perm;
 	perm.permute(1, 3);
 	btod_add<4> add1(bt1), add2(bt2), add_ref(bt1);
 	add2.add_op(bt2, perm, -1.0);
 	btod_copy<4>(bt2, perm, -1.0).perform(bt3);
+	bt3.set_immutable();
 	add_ref.add_op(bt2);
 	add_ref.add_op(bt3);
 
@@ -210,6 +207,75 @@ void btod_sum_test::test_4() throw(libtest::test_exception) {
 	add_ref.perform(bt4_ref);
 
 	compare_ref<4>::compare(testname, bt4, bt4_ref, 1e-14);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void btod_sum_test::test_5() throw(libtest::test_exception) {
+
+	//
+	//	Single operand A * B
+	//
+
+	static const char *testname = "btod_sum_test::test_5()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+	typedef block_tensor<2, double, allocator_t> block_tensor_t;
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 12; i2[1] = 12; i2[2] = 6; i2[3] = 6;
+	dimensions<4> dims_iiaa(index_range<4>(i1, i2));
+	i2[0] = 12; i2[1] = 6; i2[2] = 6; i2[3] = 6;
+	dimensions<4> dims_iaaa(index_range<4>(i1, i2));
+	block_index_space<4> bis_iiaa(dims_iiaa), bis_iaaa(dims_iaaa);
+	mask<4> m1, m2, m3, m4;
+	m1[0] = true; m1[1] = true; m2[2] = true; m2[3] = true;
+	m3[0] = true; m4[1] = true; m4[2] = true; m4[3] = true;
+	bis_iiaa.split(m1, 3);
+	bis_iiaa.split(m1, 7);
+	bis_iiaa.split(m1, 10);
+	bis_iiaa.split(m2, 2);
+	bis_iiaa.split(m2, 3);
+	bis_iiaa.split(m2, 5);
+	bis_iaaa.split(m3, 3);
+	bis_iaaa.split(m3, 7);
+	bis_iaaa.split(m3, 10);
+	bis_iaaa.split(m4, 2);
+	bis_iaaa.split(m4, 3);
+	bis_iaaa.split(m4, 5);
+
+	block_tensor<4, double, allocator_t> bta(bis_iaaa);
+	block_tensor<4, double, allocator_t> btb(bis_iiaa);
+	block_tensor<4, double, allocator_t> btc(bis_iaaa), btc_ref(bis_iaaa);
+
+	//	Load random data for input
+
+	btod_random<4>().perform(bta);
+	btod_random<4>().perform(btb);
+	bta.set_immutable();
+	btb.set_immutable();
+
+	//	Run contraction and compute the reference
+
+	//	iabc = kcad ikbd
+	//	caib->iabc
+	contraction2<2, 2, 2> contr(permutation<4>().permute(0, 2).
+		permute(2, 3));
+	contr.contract(0, 1);
+	contr.contract(3, 3);
+
+	btod_contract2<2, 2, 2> op(contr, bta, btb);
+	op.perform(btc_ref);
+
+	btod_sum<4> sum(op);
+	sum.perform(btc);
+
+	compare_ref<4>::compare(testname, btc, btc_ref, 1e-14);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());

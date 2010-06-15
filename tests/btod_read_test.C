@@ -5,6 +5,7 @@
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/btod/btod_read.h>
+#include <libtensor/symmetry/se_perm.h>
 #include <libtensor/tod/tod_btconv.h>
 #include "btod_read_test.h"
 #include "compare_ref.h"
@@ -22,6 +23,8 @@ void btod_read_test::perform() throw(libtest::test_exception) {
 	test_6();
 	test_7();
 	test_8();
+	test_9();
+	test_10();
 }
 
 
@@ -450,5 +453,152 @@ void btod_read_test::test_8() throw(libtest::test_exception) {
 	}
 }
 
+void btod_read_test::test_9() throw(libtest::test_exception) {
+
+	//
+	//	Block tensor (2-dim), two blocks along each dimension,
+	//	the sizes of blocks are 1 and 2, permutational symmetry
+	//
+
+	static const char *testname = "btod_read_test::test_9()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<2> i1, i2;
+	i2[0] = 2; i2[1] = 2;
+	dimensions<2> dims(index_range<2>(i1, i2));
+	tensor<2, double, allocator_t> t(dims), t_ref(dims);
+	tod_random<2>().perform(t_ref);
+
+	std::stringstream ss;
+	ss << "2 " << dims[0] << " " << dims[1] << std::endl;
+
+	{
+		// modify t_ref to have permutational symmetry
+		tensor_ctrl<2, double> ctrl(t_ref);
+
+		double *ptr = ctrl.req_dataptr();
+		for(size_t i = 0; i < dims[0]; i++) {
+			index<2> idx1, idx2;
+			idx1[0] = idx2[1] = i;
+			for(size_t j = i+1; j < dims[1]; j++) {
+				idx1[1] = idx2[0] = j;
+				abs_index<2> aidx1(idx1, dims), aidx2(idx2, dims);
+				ptr[aidx2.get_abs_index()] = ptr[aidx1.get_abs_index()];
+			}
+		}
+		ctrl.ret_dataptr(ptr);
+
+		// write t_ref to file
+		const double *p = ctrl.req_const_dataptr();
+		for(size_t i = 0; i < dims[0]; i++) {
+			index<2> idx;
+			idx[0] = i;
+			for(size_t j = 0; j < dims[1]; j++) {
+				idx[1] = j;
+				abs_index<2> aidx(idx, dims);
+				ss.precision(15);
+				ss.setf(std::ios::fixed, std::ios::floatfield);
+				ss << p[aidx.get_abs_index()] << " ";
+			}
+			ss << std::endl;
+		}
+		ctrl.ret_dataptr(p); p = 0;
+	}
+
+	block_index_space<2> bis(dims);
+	mask<2> msk1, msk2; msk1[0] = true; msk2[1] = true;
+	bis.split(msk1, 1); bis.split(msk2, 1);
+	block_tensor<2, double, allocator_t> bt(bis);
+	{
+		block_tensor_ctrl<2, double> ctrl(bt);
+		permutation<2> perm;
+		perm.permute(0,1);
+		se_perm<2, double> sp(perm, true);
+		ctrl.req_symmetry().insert(sp);
+	}
+
+	btod_read<2>(ss).perform(bt);
+	tod_btconv<2>(bt).perform(t);
+
+	compare_ref<2>::compare(testname, t, t_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+void btod_read_test::test_10() throw(libtest::test_exception) {
+
+	//
+	//	Block tensor (2-dim), two blocks along each dimension,
+	//	the sizes of blocks are 1 and 2, permutational symmetry (but not the reference!)
+	//
+
+	static const char *testname = "btod_read_test::test_10()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<2> i1, i2;
+	i2[0] = 2; i2[1] = 2;
+	dimensions<2> dims(index_range<2>(i1, i2));
+	tensor<2, double, allocator_t> t(dims), t_ref(dims);
+	tod_random<2>().perform(t_ref);
+
+	std::stringstream ss;
+	ss << "2 " << dims[0] << " " << dims[1] << std::endl;
+
+	{
+		tensor_ctrl<2, double> ctrl(t_ref);
+
+		const double *p = ctrl.req_const_dataptr();
+		for(size_t i = 0; i < dims[0]; i++) {
+			index<2> idx;
+			idx[0] = i;
+			for(size_t j = 0; j < dims[1]; j++) {
+				idx[1] = j;
+				abs_index<2> aidx(idx, dims);
+				ss.precision(15);
+				ss.setf(std::ios::fixed, std::ios::floatfield);
+				ss << p[aidx.get_abs_index()] << " ";
+			}
+			ss << std::endl;
+		}
+		ctrl.ret_dataptr(p); p = 0;
+	}
+
+	block_index_space<2> bis(dims);
+	mask<2> msk1, msk2; msk1[0] = true; msk2[1] = true;
+	bis.split(msk1, 1); bis.split(msk2, 1);
+	block_tensor<2, double, allocator_t> bt(bis);
+	{
+		block_tensor_ctrl<2, double> ctrl(bt);
+		permutation<2> perm;
+		perm.permute(0,1);
+		se_perm<2, double> sp(perm, true);
+		ctrl.req_symmetry().insert(sp);
+	}
+
+	bool not_failed = true;
+	try {
+	btod_read<2>(ss).perform(bt);
+	}
+	catch (exception &e) {
+		not_failed = false;
+	}
+
+	if (not_failed) {
+		fail_test(testname, __FILE__, __LINE__,
+				"Missing symmetry not detected.");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
 
 } // namespace libtensor

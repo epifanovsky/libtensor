@@ -4,6 +4,7 @@
 #include "../defs.h"
 #include "../exception.h"
 #include "permutation.h"
+#include "sequence.h"
 
 namespace libtensor {
 
@@ -51,12 +52,52 @@ public:
 		\param seq2 Second sequence.
 	 **/
 	template<typename T>
-	permutation_builder(const T (&seq1)[N], const T (&seq2)[N])
-		throw(exception);
+	permutation_builder(const T (&seq1)[N], const T (&seq2)[N]);
+
+	template<typename T>
+	permutation_builder(const sequence<N, T> &seq1,
+		const sequence<N, T> &seq2);
+
+	/**	\brief Constructs a %permutation using two sequences of
+			objects and an %index mapping law
+		\tparam T Object type (must support operator ==).
+		\param seq1 First (reference) sequence.
+		\param seq2 Second sequence.
+		\param perm Index mapping.
+	 **/
+	template<typename T>
+	permutation_builder(const T (&seq1)[N], const T (&seq2)[N],
+		const permutation<N> &perm);
 
 	/**	\brief Returns the %permutation
 	 **/
-	const permutation<N> &get_perm() const;
+	const permutation<N> &get_perm() const {
+		return m_perm;
+	}
+
+private:
+	template<typename T>
+	void build(const T (&seq1)[N], const T (&seq2)[N],
+		const size_t (&map)[N]);
+
+};
+
+
+template<>
+class permutation_builder<0> {
+private:
+	permutation<0> m_perm; //!< Built %permutation
+
+public:
+	template<typename T>
+	permutation_builder(const sequence<0, T> &seq1,
+		const sequence<0, T> &seq2) { }
+
+	/**	\brief Returns the %permutation
+	 **/
+	const permutation<0> &get_perm() const {
+		return m_perm;
+	}
 
 };
 
@@ -67,10 +108,47 @@ const char *permutation_builder<N>::k_clazz = "permutation_builder<N>";
 
 template<size_t N> template<typename T>
 permutation_builder<N>::permutation_builder(
-	const T (&seq1)[N], const T (&seq2)[N]) throw(exception) {
+	const T (&seq1)[N], const T (&seq2)[N]) {
 
-	static const char *method = "permutation_builder("
-		"const T(&)[N], const T(&)[N])";
+	size_t map[N];
+	for(size_t i = 0; i < N; i++) map[i] = i;
+	build(seq1, seq2, map);
+}
+
+
+template<size_t N> template<typename T>
+permutation_builder<N>::permutation_builder(const sequence<N, T> &seq1,
+	const sequence<N, T> &seq2) {
+
+	T s1[N], s2[N];
+	size_t map[N];
+	for(size_t i = 0; i < N; i++) {
+		s1[i] = seq1[i];
+		s2[i] = seq2[i];
+		map[i] = i;
+	}
+	build(s1, s2, map);
+}
+
+
+template<size_t N> template<typename T>
+permutation_builder<N>::permutation_builder(
+	const T (&seq1)[N], const T (&seq2)[N], const permutation<N> &perm) {
+
+	size_t map[N];
+	for(size_t i = 0; i < N; i++) map[i] = i;
+	permutation<N> permi(perm, true);
+	permi.apply(map);
+	build(seq1, seq2, map);
+}
+
+
+template<size_t N> template<typename T>
+void permutation_builder<N>::build(const T (&seq1)[N], const T (&seq2)[N],
+	const size_t (&map)[N]) {
+
+	static const char *method =
+		"build(const T (&)[N], const T (&)[N], const size_t (&)[N])";
 
 	size_t i, j, idx[N];
 
@@ -78,8 +156,9 @@ permutation_builder<N>::permutation_builder(
 
 		for(j = i + 1; j < N; j++) {
 			if(seq1[i] == seq1[j]) {
-				throw_exc(k_clazz, method,
-					"Duplicate objects in sequence 1");
+				//	Duplicate object
+				throw bad_parameter(g_ns, k_clazz, method,
+					__FILE__, __LINE__, "seq1");
 			}
 		}
 		for(j = 0; j < N; j++) {
@@ -88,13 +167,17 @@ permutation_builder<N>::permutation_builder(
 				break;
 			}
 		}
-		if(j == N) throw_exc(k_clazz, method, "Object sets differ");
+		if(j == N) {
+			//	Object sets differ
+			throw bad_parameter(g_ns, k_clazz, method,
+				__FILE__, __LINE__, "seq2");
+		}
 	}
 
 	i = 0;
 	while(i < N) {
 		if(i > idx[i]) {
-			m_perm.permute(i, idx[i]);
+			m_perm.permute(map[i], map[idx[i]]);
 			j = idx[i];
 			idx[i] = idx[j];
 			idx[j] = j;
@@ -103,16 +186,8 @@ permutation_builder<N>::permutation_builder(
 			i++;
 		}
 	}
-	// the loop above generates the inverse of a permutation
+	//	The loop above generates the inverse of the permutation
 	m_perm.invert();
-
-}
-
-
-template<size_t N>
-inline const permutation<N> &permutation_builder<N>::get_perm() const {
-
-	return m_perm;
 }
 
 

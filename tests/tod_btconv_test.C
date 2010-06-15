@@ -5,7 +5,7 @@
 #include <libvmm/std_allocator.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/core/tensor.h>
-#include <libtensor/symmetry/symel_cycleperm.h>
+#include <libtensor/symmetry/se_perm.h>
 #include <libtensor/tod/tod_btconv.h>
 #include "compare_ref.h"
 #include "tod_btconv_test.h"
@@ -392,10 +392,9 @@ void tod_btconv_test::test_5() throw(libtest::test_exception) {
 	block_tensor_t bt(bis);
 	block_tensor_ctrl_t btctrl(bt);
 
-	mask<2> msk;
-	msk[0] = true; msk[1] = true;
-	symel_cycleperm<2, double> cycle(2, msk);
-	btctrl.req_sym_add_element(cycle);
+	permutation<2> perm1; perm1.permute(0, 1);
+	se_perm<2, double> cycle(perm1, true);
+	btctrl.req_symmetry().insert(cycle);
 
 	tensor_t t(dims), t_ref(dims);
 
@@ -623,10 +622,9 @@ void tod_btconv_test::test_7() throw(libtest::test_exception) {
 	block_tensor_t bt(bis);
 	block_tensor_ctrl_t btctrl(bt);
 
-	mask<2> msk;
-	msk[0] = true; msk[1] = true;
-	symel_cycleperm<2, double> cycle(2, msk);
-	btctrl.req_sym_add_element(cycle);
+	permutation<2> perm1; perm1.permute(0, 1);
+	se_perm<2, double> cycle(perm1, true);
+	btctrl.req_symmetry().insert(cycle);
 
 	tensor_t t(dims), t_ref(dims);
 
@@ -724,10 +722,9 @@ void tod_btconv_test::test_8() throw(libtest::test_exception) {
 	block_tensor_t bt(bis);
 	block_tensor_ctrl_t btctrl(bt);
 
-	mask<2> msk;
-	msk[0] = true; msk[1] = true;
-	symel_cycleperm<2, double> cycle(2, msk);
-	btctrl.req_sym_add_element(cycle);
+	permutation<2> perm1; perm1.permute(0, 1);
+	se_perm<2, double> cycle(perm1, true);
+	btctrl.req_symmetry().insert(cycle);
 
 	tensor_t t(dims), t_ref(dims);
 
@@ -874,12 +871,13 @@ void tod_btconv_test::test_9() throw(libtest::test_exception) {
 	block_tensor_t bt(bis);
 	block_tensor_ctrl_t btctrl(bt);
 
-	mask<4> msk;
-	msk[0] = true; msk[1] = true; msk[2] = true; msk[3] = true;
-	symel_cycleperm<4, double> cycle1(2, msk);
-	symel_cycleperm<4, double> cycle2(4, msk);
-	btctrl.req_sym_add_element(cycle1);
-	btctrl.req_sym_add_element(cycle2);
+	permutation<4> cperm1, cperm2;
+	cperm1.permute(0, 1).permute(1, 2).permute(2, 3);
+	cperm2.permute(0, 1);
+	se_perm<4, double> cycle1(cperm1, true);
+	se_perm<4, double> cycle2(cperm2, true);
+	btctrl.req_symmetry().insert(cycle1);
+	btctrl.req_symmetry().insert(cycle2);
 
 	tensor_t t(dims), t_ref(dims);
 
@@ -1121,13 +1119,13 @@ void tod_btconv_test::test_11() throw(libtest::test_exception) {
 	block_tensor_t bt(bis);
 	block_tensor_ctrl_t btctrl(bt);
 
-	mask<4> msk;
-	msk[0] = true; msk[1] = false; msk[2] = true; msk[3] = false;
-	symel_cycleperm<4, double> cycle1(2, msk);
-	msk[0] = false; msk[1] = true; msk[2] = false; msk[3] = true;
-	symel_cycleperm<4, double> cycle2(2, msk);
-	btctrl.req_sym_add_element(cycle1);
-	btctrl.req_sym_add_element(cycle2);
+	permutation<4> cperm1, cperm2;
+	cperm1.permute(0, 2);
+	cperm2.permute(1, 3);
+	se_perm<4, double> cycle1(cperm1, true);
+	se_perm<4, double> cycle2(cperm2, true);
+	btctrl.req_symmetry().insert(cycle1);
+	btctrl.req_symmetry().insert(cycle2);
 
 	tensor_t t(dims), t_ref(dims);
 

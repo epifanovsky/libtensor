@@ -11,6 +11,8 @@ set(SRC
 	tod/loop_list_add.C
 	tod/loop_list_copy.C
 	tod/loop_list_mul.C
+	tod/loop_list_elem.C
+	tod/loop_list_elem1.C
 )
 add_library(tensor ${SRC})
 

@@ -66,35 +66,16 @@ protected:
 	//!	\name Symmetry event handlers
 	//@{
 
-	/**	\brief Request to obtain the constant reference to the %tensor's
+	/**	\brief Request to obtain the constant reference to the block
+			%tensor's %symmetry
+	 **/
+	virtual const symmetry<N, T> &on_req_const_symmetry()
+		throw(exception) = 0;
+
+	/**	\brief Request to obtain the reference to the block %tensor's
 			%symmetry
 	 **/
-	virtual const symmetry<N, T> &on_req_symmetry() throw(exception) = 0;
-
-	/**	\brief Request to add a %symmetry element to the generating set;
-			does nothing if the element is already in the set
-	`	\param elem Symmetry element.
-	 **/
-	virtual void on_req_sym_add_element(
-		const symmetry_element_i<N, T> &elem) throw(exception) = 0;
-
-	/**	\brief Request to remove a %symmetry element from the generating
-			set; does nothing if the element is not in the set
-		\param elem Symmetry element.
-	 **/
-	virtual void on_req_sym_remove_element(
-		const symmetry_element_i<N, T> &elem) throw(exception) = 0;
-
-	/**	\brief Request whether the generating set of the %symmetry
-			contains a given element
-		\param elem Symmetry element.
-	 **/
-	virtual bool on_req_sym_contains_element(
-		const symmetry_element_i<N, T> &elem) throw(exception) = 0;
-
-	/**	\brief Request to clear all %symmetry elements
-	 **/
-	virtual void on_req_sym_clear_elements() throw(exception) = 0;
+	virtual symmetry<N, T> &on_req_symmetry() throw(exception) = 0;
 
 	//@}
 

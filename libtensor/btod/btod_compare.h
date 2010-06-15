@@ -8,6 +8,7 @@
 #include "../core/block_tensor_i.h"
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
+#include "../core/tensor.h"
 #include "../tod/tod_compare.h"
 #include "../tod/tod_copy.h"
 
@@ -88,8 +89,8 @@ template<size_t N>
 bool btod_compare<N>::compare() {
 	block_tensor_ctrl<N, double> ctrl1(m_bt1), ctrl2(m_bt2);
 
-	orbit_list<N,double> orblist1(ctrl1.req_symmetry()),
-		orblist2(ctrl2.req_symmetry());
+	orbit_list<N,double> orblist1(ctrl1.req_const_symmetry()),
+		orblist2(ctrl2.req_const_symmetry());
 
 	// if orbit lists are different
 	if ( orblist1.get_size() != orblist2.get_size() ) {
@@ -100,8 +101,8 @@ bool btod_compare<N>::compare() {
 	// run over all orbits
 	for ( typename orbit_list<N,double>::iterator it=orblist1.begin();
 		  it!=orblist1.end(); it++ ) {
-		orbit<N,double> orb1(ctrl1.req_symmetry(),it->second);
-		orbit<N,double> orb2(ctrl2.req_symmetry(),it->second);
+		orbit<N,double> orb1(ctrl1.req_const_symmetry(),it->second);
+		orbit<N,double> orb2(ctrl2.req_const_symmetry(),it->second);
 
 		size_t idx1=orb1.get_abs_canonical_index(),
 			idx2=orb2.get_abs_canonical_index();

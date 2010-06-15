@@ -2,6 +2,7 @@ set(SRC
 	libtensor_tests.C
 	libtensor_suite.C
 	abs_index_test.C
+	addition_schedule_test.C
 	anon_eval_test.C
 	bispace_test.C
 	bispace_expr_test.C
@@ -54,13 +55,23 @@ set(SRC
 	orbit_list_test.C
 	permutation_test.C
 	permutation_builder_test.C
+	permutation_group_test.C
 	sequence_test.C
-	so_projdown_test.C
-	so_projup_test.C
-	symel_cycleperm_test.C
+	se_part_test.C
+	se_perm_test.C
+	so_add_test.C
+	so_add_impl_perm_test.C
+	so_copy_test.C
+	so_proj_down_test.C
+	so_proj_down_impl_perm_test.C
+	so_proj_up_test.C
+	so_proj_up_impl_perm_test.C
+	so_union_test.C
+	so_union_impl_perm_test.C
 	symm_test.C
 	symmetry_test.C
-	symmetry_element_base_test.C
+	symmetry_element_set_test.C
+	symmetry_element_set_adapter_test.C
 	tensor_test.C
 	timer_test.C
 	timings_test.C

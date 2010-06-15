@@ -117,13 +117,20 @@ bool orbit_list<N, T>::mark_orbit(const symmetry<N, T> &sym,
 	const index<N> &idx, std::vector<char> &chk) {
 
 	size_t absidx = m_dims.abs_index(idx);
+	if(chk[absidx]) return true;
+
 	bool allowed = true;
-	if(!chk[absidx]) {
-		chk[absidx] = 1;
-		typename symmetry<N, T>::iterator ielem = sym.begin();
-		for(; ielem != sym.end(); ielem++) {
+	chk[absidx] = 1;
+
+	for(typename symmetry<N, T>::iterator iset = sym.begin();
+		iset != sym.end(); iset++) {
+
+		const symmetry_element_set<N, T> &eset = sym.get_subset(iset);
+		for(typename symmetry_element_set<N, T>::const_iterator ielem =
+			eset.begin(); ielem != eset.end(); ielem++) {
+
 			const symmetry_element_i<N, T> &elem =
-				sym.get_element(ielem);
+				eset.get_elem(ielem);
 			allowed = allowed && elem.is_allowed(idx);
 			index<N> idx2(idx);
 			elem.apply(idx2);

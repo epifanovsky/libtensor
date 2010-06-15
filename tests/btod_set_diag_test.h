@@ -3,6 +3,7 @@
 
 #include <libtest/unit_test.h>
 #include <libtensor/core/block_index_space.h>
+#include <libtensor/core/symmetry.h>
 
 namespace libtensor {
 
@@ -15,8 +16,14 @@ public:
 	virtual void perform() throw(libtest::test_exception);
 
 private:
+	void test_1() throw(libtest::test_exception);
+	void test_2() throw(libtest::test_exception);
+	void test_3() throw(libtest::test_exception);
+	void test_4() throw(libtest::test_exception);
+
 	template<size_t N>
-	void run_test(const block_index_space<N> &bis, double d)
+	void test_generic(const char *testname, const block_index_space<N> &bis,
+		const symmetry<N, double> &sym, double d)
 		throw(libtest::test_exception);
 
 };

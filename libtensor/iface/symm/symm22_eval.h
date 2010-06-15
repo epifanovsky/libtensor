@@ -49,10 +49,10 @@ private:
 	permutation<N> m_perm2; //!< Permutation for symmetrized argument 2
 	permutation<N> m_perm3; //!< Permutation for symmetrized argument 3
 	permutation<N> m_perm4; //!< Permutation for symmetrized argument 4
-	arg<N, T, tensor_tag> m_arg1; //!< Argument 1
-	arg<N, T, tensor_tag> m_arg2; //!< Argument 2
-	arg<N, T, tensor_tag> m_arg3; //!< Argument 3
-	arg<N, T, tensor_tag> m_arg4; //!< Argument 4
+	arg<N, T, tensor_tag> *m_arg1; //!< Argument 1
+	arg<N, T, tensor_tag> *m_arg2; //!< Argument 2
+	arg<N, T, tensor_tag> *m_arg3; //!< Argument 3
+	arg<N, T, tensor_tag> *m_arg4; //!< Argument 4
 
 public:
 	/**	\brief Initializes the container with given expression and
@@ -64,7 +64,7 @@ public:
 
 	/**	\brief Virtual destructor
 	 **/
-	virtual ~symm22_eval() { }
+	virtual ~symm22_eval();
 
 	/**	\brief Evaluates sub-expressions into temporary tensors
 	 **/
@@ -124,6 +124,10 @@ private:
 			perm.permute(i1, i2).permute(j1, j2);
 		return perm;
 	}
+
+	void create_arg();
+	void destroy_arg();
+
 };
 
 
@@ -149,12 +153,15 @@ symm22_eval<N, Sym, T, SubCore>::symm22_eval(
 	m_perm2(mk_perm1(expr, label)),
 	m_perm3(mk_perm2(expr, label)),
 	m_perm4(mk_perm3(expr, label)),
-	m_arg1(m_sub_eval.get_btensor(), m_perm1, 1.0),
-	m_arg2(m_sub_eval.get_btensor(), m_perm2, Sym ? 1.0 : -1.0),
-	m_arg3(m_sub_eval.get_btensor(), m_perm3, Sym ? 1.0 : -1.0),
-	m_arg4(m_sub_eval.get_btensor(), m_perm4,
-		m_perm4.is_identity() ? 0.0 : 1.0) {
+	m_arg1(0), m_arg2(0), m_arg3(0), m_arg4(0) {
 
+}
+
+
+template<size_t N, bool Sym, typename T, typename SubCore>
+symm22_eval<N, Sym, T, SubCore>::~symm22_eval() {
+
+	destroy_arg();
 }
 
 
@@ -162,13 +169,40 @@ template<size_t N, bool Sym, typename T, typename SubCore>
 void symm22_eval<N, Sym, T, SubCore>::prepare() {
 
 	m_sub_eval.evaluate();
+	create_arg();
 }
 
 
 template<size_t N, bool Sym, typename T, typename SubCore>
 void symm22_eval<N, Sym, T, SubCore>::clean() {
 
+	destroy_arg();
 	m_sub_eval.clean();
+}
+
+
+template<size_t N, bool Sym, typename T, typename SubCore>
+void symm22_eval<N, Sym, T, SubCore>::create_arg() {
+
+	destroy_arg();
+	m_arg1 = new arg<N, T, tensor_tag>(m_sub_eval.get_btensor(), m_perm1,
+		1.0);
+	m_arg2 = new arg<N, T, tensor_tag>(m_sub_eval.get_btensor(), m_perm2,
+		Sym ? 1.0 : -1.0);
+	m_arg3 = new arg<N, T, tensor_tag>(m_sub_eval.get_btensor(), m_perm3,
+		Sym ? 1.0 : -1.0);
+	m_arg4 = new arg<N, T, tensor_tag>(m_sub_eval.get_btensor(), m_perm4,
+		m_perm4.is_identity() ? 0.0 : 1.0);
+}
+
+
+template<size_t N, bool Sym, typename T, typename SubCore>
+void symm22_eval<N, Sym, T, SubCore>::destroy_arg() {
+
+	delete m_arg1; m_arg1 = 0;
+	delete m_arg2; m_arg2 = 0;
+	delete m_arg3; m_arg3 = 0;
+	delete m_arg4; m_arg4 = 0;
 }
 
 
@@ -191,16 +225,16 @@ arg<N, T, tensor_tag> symm22_eval<N, Sym, T, SubCore>::get_arg(
 	static const char *method = "get_arg(const tensor_tag&, size_t)";
 	switch(i) {
 	case 0:
-		return m_arg1;
+		return *m_arg1;
 		break;
 	case 1:
-		return m_arg2;
+		return *m_arg2;
 		break;
 	case 2:
-		return m_arg3;
+		return *m_arg3;
 		break;
 	case 3:
-		return m_arg4;
+		return *m_arg4;
 		break;
 	default:
 		throw out_of_bounds(g_ns, k_clazz, method, __FILE__, __LINE__,

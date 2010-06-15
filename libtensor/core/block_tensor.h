@@ -50,14 +50,8 @@ public:
 protected:
 	//!	\name Implementation of libtensor::block_tensor_i<N, T>
 	//@{
-	virtual const symmetry<N, T> &on_req_symmetry() throw(exception);
-	virtual void on_req_sym_add_element(
-		const symmetry_element_i<N, T> &elem) throw(exception);
-	virtual void on_req_sym_remove_element(
-		const symmetry_element_i<N, T> &elem) throw(exception);
-	virtual bool on_req_sym_contains_element(
-		const symmetry_element_i<N, T> &elem) throw(exception);
-	virtual void on_req_sym_clear_elements() throw(exception);
+	virtual const symmetry<N, T> &on_req_const_symmetry() throw(exception);
+	virtual symmetry<N, T> &on_req_symmetry() throw(exception);
 	virtual tensor_i<N, T> &on_req_block(const index<N> &idx)
 		throw(exception);
 	virtual void on_ret_block(const index<N> &idx) throw(exception);
@@ -121,7 +115,7 @@ const block_index_space<N> &block_tensor<N, T, Alloc>::get_bis()
 
 
 template<size_t N, typename T, typename Alloc>
-const symmetry<N, T> &block_tensor<N, T, Alloc>::on_req_symmetry()
+const symmetry<N, T> &block_tensor<N, T, Alloc>::on_req_const_symmetry()
 	throw(exception) {
 
 	return m_symmetry;
@@ -129,60 +123,20 @@ const symmetry<N, T> &block_tensor<N, T, Alloc>::on_req_symmetry()
 
 
 template<size_t N, typename T, typename Alloc>
-void block_tensor<N, T, Alloc>::on_req_sym_add_element(
-	const symmetry_element_i<N, T> &elem) throw(exception) {
+symmetry<N, T> &block_tensor<N, T, Alloc>::on_req_symmetry()
+	throw(exception) {
 
-	static const char *method =
-		"on_req_sym_add_element(const symmetry_element_i<N, T>&)";
-
-	if(is_immutable()) {
-		throw immut_violation(g_ns, k_clazz, method, __FILE__, __LINE__,
-			"Immutable object cannot be modified.");
-	}
-
-	m_symmetry.add_element(elem);
-	m_orblst_dirty = true;
-}
-
-
-template<size_t N, typename T, typename Alloc>
-void block_tensor<N, T, Alloc>::on_req_sym_remove_element(
-	const symmetry_element_i<N, T> &elem) throw(exception) {
-
-	static const char *method =
-		"on_req_sym_remove_element(const symmetry_element_i<N, T>&)";
+	static const char *method = "on_req_symmetry()";
 
 	if(is_immutable()) {
 		throw immut_violation(g_ns, k_clazz, method, __FILE__, __LINE__,
-			"Immutable object cannot be modified.");
+			"symmetry");
 	}
-
-	m_symmetry.remove_element(elem);
 	m_orblst_dirty = true;
+
+	return m_symmetry;
 }
 
-
-template<size_t N, typename T, typename Alloc>
-bool block_tensor<N, T, Alloc>::on_req_sym_contains_element(
-	const symmetry_element_i<N, T> &elem) throw(exception) {
-
-	return m_symmetry.contains_element(elem);
-}
-
-
-template<size_t N, typename T, typename Alloc>
-void block_tensor<N, T, Alloc>::on_req_sym_clear_elements() throw(exception) {
-
-	static const char *method = "on_req_sym_clear_elements()";
-
-	if(is_immutable()) {
-		throw immut_violation(g_ns, k_clazz, method, __FILE__, __LINE__,
-			"Immutable object cannot be modified.");
-	}
-
-	m_symmetry.clear_elements();
-	m_orblst_dirty = true;
-}
 
 template<size_t N, typename T, typename Alloc>
 tensor_i<N, T> &block_tensor<N, T, Alloc>::on_req_block(
@@ -225,10 +179,14 @@ tensor_i<N, T> &block_tensor<N, T, Alloc>::on_req_aux_block(
 			__FILE__, __LINE__,
 			"Index does not correspond to a canonical block.");
 	}
-	if(!m_aux_map.contains(absidx)) {
-		dimensions<N> blkdims = m_bis.get_block_dims(idx);
-		m_aux_map.create(absidx, blkdims);
+	if(m_aux_map.contains(absidx)) {
+		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"Duplicate aux request.");
 	}
+
+	dimensions<N> blkdims = m_bis.get_block_dims(idx);
+	m_aux_map.create(absidx, blkdims);
+
 	return m_aux_map.get(absidx);
 }
 
@@ -238,7 +196,7 @@ void block_tensor<N, T, Alloc>::on_ret_aux_block(const index<N> &idx)
 	throw(exception) {
 
 	size_t absidx = m_bidims.abs_index(idx);
-	m_map.remove(absidx);
+	m_aux_map.remove(absidx);
 }
 
 

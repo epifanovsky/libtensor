@@ -1,9 +1,2 @@
-build/CMakeCache.txt
-build/CMakeFiles
-build/Makefile
-build/cmake_install.cmake
-build/libtensor
-build/performance_tests
-build/tests
-tests/libtensor_tests
+build
 
