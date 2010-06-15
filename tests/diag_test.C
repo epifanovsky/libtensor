@@ -17,6 +17,7 @@ void diag_test::perform() throw(libtest::test_exception) {
 		test_t_1();
 		test_t_2();
 		test_t_3();
+		test_t_4();
 
 	} catch(...) {
 		libvmm::vm_allocator<double>::vmm().shutdown();
@@ -116,6 +117,37 @@ void diag_test::test_t_3() throw(libtest::test_exception) {
 	t2(a|i) = diag(i, i|j, t1(i|a|j));
 
 	compare_ref<2>::compare(testname, t2, t2_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void diag_test::test_t_4() throw(libtest::test_exception) {
+
+	static const char *testname = "diag_test::test_t_4()";
+
+	try {
+
+	bispace<1> sp_i(10);
+	bispace<2> sp_ij(sp_i&sp_i);
+
+	btensor<2> t1(sp_ij);
+	btensor<1> t2(sp_i), t2_ref(sp_i);
+
+	btod_random<2>().perform(t1);
+	t1.set_immutable();
+
+	mask<2> msk;
+	msk[0] = true; msk[1] = true;
+	permutation<1> perm;
+	btod_diag<2, 2>(t1, msk, perm, -1.0).perform(t2_ref);
+
+	letter i, j;
+	t2(i) = - diag(i, i|j, t1(i|j));
+
+	compare_ref<1>::compare(testname, t2, t2_ref, 1e-15);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
