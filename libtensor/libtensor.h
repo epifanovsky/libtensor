@@ -81,7 +81,7 @@
 #include "btod/btod_sum.h"
 
 
-#include "symmetry/symel_cycleperm.h"
+#include "symmetry/se_perm.h"
 
 
 #include "iface/bispace.h"
