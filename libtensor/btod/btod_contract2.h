@@ -20,7 +20,6 @@
 #include "../tod/tod_contract2.h"
 #include "../tod/tod_sum.h"
 #include "additive_btod.h"
-#include "btod_so_copy.h"
 #include "../not_implemented.h"
 #include "bad_block_index_space.h"
 

@@ -20,7 +20,6 @@
 #include "../tod/tod_copy.h"
 #include "bad_block_index_space.h"
 #include "additive_btod.h"
-#include "btod_so_copy.h"
 
 namespace libtensor {
 
