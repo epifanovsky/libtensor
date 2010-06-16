@@ -1,8 +1,9 @@
 #ifndef LIBTENSOR_VERSION_H
 #define LIBTENSOR_VERSION_H
 
-#include "defs.h"
-#include "exception.h"
+#include <list>
+#include <string>
+#include <libvmm/singleton.h>
 
 namespace libtensor {
 
@@ -18,44 +19,66 @@ namespace libtensor {
 
 	\ingroup libtensor
  **/
-class version {
+class version : public libvmm::singleton<version> {
+	friend class libvmm::singleton<version>;
+
 private:
-	//!	Major %version number
-	static const unsigned m_major = 2;
+	static const unsigned k_major = 2; //!< Major %version number
+	static const unsigned k_minor = 0; //!< Minor %version number
+	static const char *k_status; //!< Version status
+	static const char *k_authors[]; //!< List of authors
 
-	//!	Minor %version number
-	static const unsigned m_minor = 1;
+private:
+	std::string m_status; //!< Version status
+	std::string m_string; //!< Version string
+	std::list<std::string> m_authors; //!< List of authors
 
-	//!	Version status
-	static const char *m_status;
+protected:
+	version();
 
-	//!	Version string
-	static const char *m_string;
+	const std::string &get_status_impl() const {
+		return m_status;
+	}
+
+	const std::string &get_string_impl() const {
+		return m_string;
+	}
+
+	const std::list<std::string> &get_authors_impl() const {
+		return m_authors;
+	}
 
 public:
 	/**	\brief Returns the major %version number
 	 **/
 	static unsigned get_major() {
-		return m_major;
+		return k_major;
 	}
 
 	/**	\brief Returns the minor %version number
 	 **/
 	static unsigned get_minor() {
-		return m_minor;
+		return k_minor;
 	}
 
 	/**	\brief Returns the %version status
 	 **/
-	static const char *get_status() {
-		return m_status;
+	static const std::string &get_status() {
+		return version::get_instance().get_status_impl();
 	}
 
 	/**	\brief Returns the string that corresponds to the %version
 	 **/
-	static const char *get_string() {
-		return m_string;
+	static const std::string &get_string() {
+		return version::get_instance().get_string_impl();
 	}
+
+	/**	\brief Returns the list of authors
+	 **/
+	static const std::list<std::string> &get_authors() {
+		return version::get_instance().get_authors_impl();
+	}
+
 };
 
 } // namespace libtensor
