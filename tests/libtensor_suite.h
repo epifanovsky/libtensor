@@ -63,6 +63,8 @@
 #include "so_add_test.h"
 #include "so_add_impl_perm_test.h"
 #include "so_copy_test.h"
+#include "so_mult_test.h"
+#include "so_mult_impl_perm_test.h"
 #include "so_proj_down_test.h"
 #include "so_proj_down_impl_perm_test.h"
 #include "so_proj_up_test.h"
@@ -171,6 +173,8 @@ namespace libtensor {
 	\li libtensor::so_add_test
 	\li libtensor::so_add_impl_perm_test
 	\li libtensor::so_copy_test
+	\li libtensor::so_mult_test
+	\li libtensor::so_mult_impl_perm_test
 	\li libtensor::so_proj_down_test
 	\li libtensor::so_proj_down_impl_perm_test
 	\li libtensor::so_proj_up_test
@@ -274,6 +278,8 @@ private:
 	unit_test_factory<so_add_test> m_utf_so_add;
 	unit_test_factory<so_add_impl_perm_test> m_utf_so_add_impl_perm;
 	unit_test_factory<so_copy_test> m_utf_so_copy;
+	unit_test_factory<so_mult_test> m_utf_so_mult;
+	unit_test_factory<so_mult_impl_perm_test> m_utf_so_mult_impl_perm;
 	unit_test_factory<so_proj_down_test> m_utf_so_proj_down;
 	unit_test_factory<so_proj_down_impl_perm_test>
 		m_utf_so_proj_down_impl_perm;
