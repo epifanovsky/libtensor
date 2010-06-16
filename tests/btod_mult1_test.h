@@ -18,6 +18,7 @@ private:
 	void test_2(bool, bool) throw(libtest::test_exception);
 	void test_3(bool, bool) throw(libtest::test_exception);
 	void test_4(bool, bool) throw(libtest::test_exception);
+	void test_5(bool, bool) throw(libtest::test_exception);
 };
 
 } // namespace libtensor

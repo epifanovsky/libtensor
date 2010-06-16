@@ -6,7 +6,7 @@
 #include "../core/block_tensor_ctrl.h"
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
-#include "../symmetry/so_add.h"
+#include "../symmetry/so_mult.h"
 #include "../symmetry/so_permute.h"
 #include "../tod/tod_mult.h"
 #include "../tod/tod_set.h"
@@ -128,7 +128,7 @@ btod_mult<N>::btod_mult(block_tensor_i<N, double> &bta,
 	}
 
 	block_tensor_ctrl<N, double> cbta(bta), cbtb(btb);
-	so_add<N, double>(cbta.req_const_symmetry(), m_pa,
+	so_mult<N, double>(cbta.req_const_symmetry(), m_pa,
 			cbtb.req_const_symmetry(), m_pb).perform(m_sym);
 
 	make_schedule();
@@ -155,7 +155,7 @@ btod_mult<N>::btod_mult(
 	}
 
 	block_tensor_ctrl<N, double> cbta(bta), cbtb(btb);
-	so_add<N, double>(cbta.req_const_symmetry(), m_pa,
+	so_mult<N, double>(cbta.req_const_symmetry(), m_pa,
 			cbtb.req_const_symmetry(), m_pb).perform(m_sym);
 
 	make_schedule();

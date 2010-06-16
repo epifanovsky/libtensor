@@ -7,7 +7,7 @@
 #include "../core/block_tensor_ctrl.h"
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
-#include "../symmetry/so_add.h"
+#include "../symmetry/so_mult.h"
 #include "../symmetry/so_copy.h"
 #include "../tod/tod_copy.h"
 #include "../tod/tod_mult1.h"
@@ -125,7 +125,7 @@ void btod_mult1<N>::do_perform(
 	permutation<N> pa;
 	symmetry<N, double> syma(bta.get_bis());
 	so_copy<N, double>(ctrla.req_const_symmetry()).perform(syma);
-	so_add<N, double>(syma, pa,
+	so_mult<N, double>(syma, pa,
 			ctrlb.req_const_symmetry(), m_pb).perform(ctrla.req_symmetry());
 
 	// First loop over all orbits in sym(A) \cap sym(B) and copy blocks which
