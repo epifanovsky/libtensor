@@ -381,7 +381,7 @@ void btod_mult_test::test_5(bool symm1, bool symm2) throw(libtest::test_exceptio
 	const symmetry<2, double> &sym = op.get_symmetry();
 
 	bool found = false;
-	for (typename symmetry<2, double>::iterator is = sym.begin();
+	for (symmetry<2, double>::iterator is = sym.begin();
 			is != sym.end(); is++) {
 
 		const symmetry_element_set<2, double> &set = sym.get_subset(is);
@@ -395,7 +395,7 @@ void btod_mult_test::test_5(bool symm1, bool symm2) throw(libtest::test_exceptio
 
 		index<2> idx;
 		transf<2, double> tr;
-		for (typename symmetry_element_set<2, double>::const_iterator iss =
+		for (symmetry_element_set<2, double>::const_iterator iss =
 				set.begin(); iss != set.end(); iss++) {
 
 			const symmetry_element_i<2, double> &elem = set.get_elem(iss);
@@ -485,7 +485,7 @@ void btod_mult_test::test_6(bool symm1, bool symm2) throw(libtest::test_exceptio
 	const symmetry<4, double> &sym = op.get_symmetry();
 
 	bool found = false;
-	for (typename symmetry<4, double>::iterator is = sym.begin();
+	for (symmetry<4, double>::iterator is = sym.begin();
 			is != sym.end(); is++) {
 
 		const symmetry_element_set<4, double> &set = sym.get_subset(is);
@@ -499,7 +499,7 @@ void btod_mult_test::test_6(bool symm1, bool symm2) throw(libtest::test_exceptio
 
 		index<4> idx;
 		transf<4, double> tr;
-		for (typename symmetry_element_set<4, double>::const_iterator iss =
+		for (symmetry_element_set<4, double>::const_iterator iss =
 				set.begin(); iss != set.end(); iss++) {
 
 			const symmetry_element_i<4, double> &elem = set.get_elem(iss);
