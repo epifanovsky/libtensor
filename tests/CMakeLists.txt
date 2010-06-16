@@ -30,6 +30,7 @@ set(SRC
 	btod_set_diag_test.C
 	btod_set_elem_test.C
 	btod_sum_test.C
+	btod_symmetrize_test.C
 	btod_trace_test.C
 	btod_tridiagonalize_test.C
 	contract_test.C

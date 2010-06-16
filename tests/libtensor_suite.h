@@ -31,6 +31,7 @@
 #include "btod_set_diag_test.h"
 #include "btod_set_elem_test.h"
 #include "btod_sum_test.h"
+#include "btod_symmetrize_test.h"
 #include "btod_trace_test.h"
 #include "btod_tridiagonalize_test.h"
 #include "contract_test.h"
@@ -141,6 +142,7 @@ namespace libtensor {
 	\li libtensor::btod_set_diag_test
 	\li libtensor::btod_set_elem_test
 	\li libtensor::btod_sum_test
+	\li libtensor::btod_symmetrize_test
 	\li libtensor::btod_trace_test
 	\li libtensor::btod_tridiagonalize_test
 	\li libtensor::contract_test
@@ -245,6 +247,7 @@ private:
 	unit_test_factory<btod_set_diag_test> m_utf_btod_set_diag;
 	unit_test_factory<btod_set_elem_test> m_utf_btod_set_elem;
 	unit_test_factory<btod_sum_test> m_utf_btod_sum;
+	unit_test_factory<btod_symmetrize_test> m_utf_btod_symmetrize;
 	unit_test_factory<btod_trace_test> m_utf_btod_trace;
 	unit_test_factory<btod_tridiagonalize_test> m_utf_btod_tridiagonalize;
 	unit_test_factory<contract_test> m_utf_contract;
