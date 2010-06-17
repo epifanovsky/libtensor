@@ -3,6 +3,7 @@
 #include <libtensor/symmetry/so_add.h>
 #include <libtensor/btod/transf_double.h>
 #include "so_add_test.h"
+#include "compare_ref.h"
 
 namespace libtensor {
 
@@ -14,6 +15,7 @@ void so_add_test::perform() throw(libtest::test_exception) {
 	test_3();
 	test_4();
 	test_5();
+	test_6();
 }
 
 
@@ -212,6 +214,40 @@ void so_add_test::test_5() throw(libtest::test_exception) {
 		fail_test(testname, __FILE__, __LINE__,
 			"Expected only one subset in sym3.");
 	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+
+}
+
+
+/**	\test S2*S2 + permuted S2*S2 in 4-space. Expected result --
+		identity group.
+ **/
+void so_add_test::test_6() throw(libtest::test_exception) {
+
+	static const char *testname = "so_add_test::test_6()";
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 5; i2[1] = 5; i2[2] = 5; i2[3] = 5;
+	block_index_space<4> bis(dimensions<4>(index_range<4>(i1, i2)));
+	mask<4> m;
+	m[0] = true; m[1] = true; m[2] = true; m[3] = true;
+	bis.split(m, 2);
+	bis.split(m, 3);
+
+	symmetry<4, double> sym1(bis), sym2(bis), sym2_ref(bis);
+
+	sym1.insert(se_perm<4, double>(permutation<4>().permute(0, 1), true));
+	sym1.insert(se_perm<4, double>(permutation<4>().permute(2, 3), true));
+
+	so_add<4, double>(sym1, permutation<4>(), sym1,
+		permutation<4>().permute(0, 2)).perform(sym2);
+
+	compare_ref<4>::compare(testname, sym2, sym2_ref);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
