@@ -92,7 +92,7 @@ template<size_t N, typename T, typename Alloc>
 block_tensor<N, T, Alloc>::block_tensor(const block_tensor<N, T, Alloc> &bt) :
 	m_bis(bt.get_bis()),
 	m_bidims(bt.m_bidims),
-	m_symmetry(bt.m_symmetry),
+	m_symmetry(bt.get_bis()),
 	m_orblst(NULL),
 	m_orblst_dirty(true) {
 
