@@ -3,6 +3,9 @@
 
 #include <map>
 #include "../timings.h"
+#include "../core/orbit.h"
+#include "../core/orbit_list.h"
+#include "../symmetry/so_add.h"
 #include "../symmetry/so_symmetrize.h"
 #include "../tod/tod_set.h"
 #include "additive_btod.h"
@@ -48,13 +51,13 @@ public:
 	//!	\name Construction and destruction
 	//@{
 
-	/**	\brief Initializes the operation
+	/**	\brief Initializes the operation to symmetrize two indexes
 		\param op Symmetrized operation.
-		\param perm Permutation to be added to the %symmetry group.
+		\param i1 First %tensor %index.
+		\param i2 Second %tensor %index.
 		\param symm True for symmetric, false for anti-symmetric.
 	 **/
-	btod_symmetrize(additive_btod<N> &op, const permutation <N> &perm,
-		bool symm);
+	btod_symmetrize(additive_btod<N> &op, size_t i1, size_t i2, bool symm);
 
 	/**	\brief Virtual destructor
 	 **/
@@ -112,12 +115,20 @@ const char *btod_symmetrize<N>::k_clazz = "btod_symmetrize<N>";
 
 
 template<size_t N>
-btod_symmetrize<N>::btod_symmetrize(additive_btod<N> &op,
-	const permutation<N> &perm, bool symm) :
+btod_symmetrize<N>::btod_symmetrize(additive_btod<N> &op, size_t i1, size_t i2,
+	bool symm) :
 
-	m_op(op), m_perm(perm), m_symm(symm), m_bis(op.get_bis()), m_sym(m_bis),
+	m_op(op), m_symm(symm), m_bis(op.get_bis()), m_sym(m_bis),
 	m_sch(m_bis.get_block_index_dims()) {
 
+	static const char *method =
+		"btod_symmetrize(additive_btod<N>&, size_t, size_t , bool)";
+
+	if(i1 == i2) {
+		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"i1 == i2");
+	}
+	m_perm.permute(i1, i2);
 	make_symmetry();
 	make_schedule();
 }
@@ -170,8 +181,13 @@ void btod_symmetrize<N>::compute_block(tensor_i<N, double> &blk,
 template<size_t N>
 void btod_symmetrize<N>::make_symmetry() {
 
-	so_symmetrize<N, double>(m_op.get_symmetry(), m_perm, m_symm).
-		perform(m_sym);
+	symmetry<N, double> sym1(m_bis), sym2(m_bis);
+	permutation<N> perm0;
+	// Using so_permute to work around a bug in so_add
+	so_permute<N, double>(m_op.get_symmetry(), m_perm).perform(sym1);
+	so_add<N, double>(m_op.get_symmetry(), perm0, sym1, perm0).
+		perform(sym2);
+	so_symmetrize<N, double>(sym2, m_perm, m_symm).perform(m_sym);
 }
 
 
@@ -181,31 +197,42 @@ void btod_symmetrize<N>::make_schedule() {
 	btod_symmetrize<N>::start_timer("make_schedule");
 
 	dimensions<N> bidims(m_bis.get_block_index_dims());
+	orbit_list<N, double> ol(m_sym);
 
 	const assignment_schedule<N, double> &sch0 = m_op.get_schedule();
 	for(typename assignment_schedule<N, double>::iterator i = sch0.begin();
 		i != sch0.end(); i++) {
 
 		abs_index<N> ai0(sch0.get_abs_index(i), bidims);
-		orbit<N, double> o(m_sym, ai0.get_index());
-		size_t aci = o.get_abs_canonical_index();
-		if(!m_sch.contains(aci)) {
-			m_sch.insert(aci);
-		}
-		transf<N, double> tr0(o.get_transf(ai0.get_abs_index()));
-		tr0.invert();
-		m_sym_sch.insert(sym_schedule_pair_t(aci,
-			schrec(ai0.get_abs_index(), tr0)));
+		orbit<N, double> o(m_op.get_symmetry(), ai0.get_index());
 
-		index<N> i1(ai0.get_index());
-		i1.permute(m_perm);
-		if(ai0.get_index().equals(i1)) {
-			transf<N, double> tr1;
-			tr1.permute(m_perm);
-			tr1.scale(m_symm ? 1.0 : -1.0);
-			tr1.transform(tr0);
-			m_sym_sch.insert(sym_schedule_pair_t(aci,
-				schrec(ai0.get_abs_index(), tr1)));
+		for(typename orbit<N, double>::iterator j = o.begin();
+			j != o.end(); j++) {
+
+			abs_index<N> aj1(o.get_abs_index(j), bidims);
+			index<N> j2(aj1.get_index()); j2.permute(m_perm);
+			abs_index<N> aj2(j2, bidims);
+
+			if(ol.contains(aj1.get_abs_index())) {
+				if(!m_sch.contains(aj1.get_abs_index())) {
+					m_sch.insert(aj1.get_abs_index());
+				}
+				transf<N, double> tr1(o.get_transf(j));
+				m_sym_sch.insert(sym_schedule_pair_t(
+					aj1.get_abs_index(),
+					schrec(ai0.get_abs_index(), tr1)));
+			}
+			if(ol.contains(aj2.get_abs_index())) {
+				if(!m_sch.contains(aj2.get_abs_index())) {
+					m_sch.insert(aj2.get_abs_index());
+				}
+				transf<N, double> tr2(o.get_transf(j));
+				tr2.permute(m_perm);
+				tr2.scale(m_symm ? 1.0 : -1.0);
+				m_sym_sch.insert(sym_schedule_pair_t(
+					aj2.get_abs_index(),
+					schrec(ai0.get_abs_index(), tr2)));
+			}
 		}
 	}
 

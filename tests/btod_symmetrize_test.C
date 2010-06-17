@@ -60,8 +60,7 @@ void btod_symmetrize_test::test_1() throw(libtest::test_exception) {
 	//	Run the symmetrization operation
 
 	btod_copy<2> op_copy(bta);
-	btod_symmetrize<2>(op_copy, permutation<2>().permute(0, 1), true).
-		perform(btb);
+	btod_symmetrize<2>(op_copy, 0, 1, true).perform(btb);
 
 	tod_btconv<2>(btb).perform(tb);
 
@@ -123,8 +122,7 @@ void btod_symmetrize_test::test_2() throw(libtest::test_exception) {
 	//	Run the symmetrization operation
 
 	btod_copy<2> op_copy(bta);
-	btod_symmetrize<2>(op_copy, permutation<2>().permute(0, 1), false).
-		perform(btb);
+	btod_symmetrize<2>(op_copy, 0, 1, false).perform(btb);
 
 	tod_btconv<2>(btb).perform(tb);
 
@@ -194,8 +192,7 @@ void btod_symmetrize_test::test_3() throw(libtest::test_exception) {
 	//	Run the symmetrization operation
 
 	btod_copy<4> op_copy(bta);
-	btod_symmetrize<4>(op_copy, permutation<4>().permute(1, 3), false).
-		perform(btb);
+	btod_symmetrize<4>(op_copy, 1, 3, false).perform(btb);
 
 	tod_btconv<4>(btb).perform(tb);
 
@@ -260,14 +257,13 @@ void btod_symmetrize_test::test_4() throw(libtest::test_exception) {
 	tensor<4, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
 	tod_btconv<4>(bta).perform(ta);
 	tod_add<4> refop(ta);
-	refop.add_op(ta, permutation<4>().permute(0, 1), 1.0);
+	refop.add_op(ta, permutation<4>().permute(0, 2), 1.0);
 	refop.perform(tb_ref);
 
 	//	Run the symmetrization operation
 
 	btod_copy<4> op_copy(bta);
-	btod_symmetrize<4>(op_copy, permutation<4>().permute(0, 2), true).
-		perform(btb);
+	btod_symmetrize<4>(op_copy, 0, 2, true).perform(btb);
 
 	tod_btconv<4>(btb).perform(tb);
 
@@ -278,10 +274,8 @@ void btod_symmetrize_test::test_4() throw(libtest::test_exception) {
 		block_tensor_ctrl<4, double> ctrlb(btb);
 		so_copy<4, double>(ctrlb.req_const_symmetry()).perform(symb);
 	}
-	symb_ref.insert(se_perm<4, double>(permutation<4>().permute(0, 1).
-		permute(1, 2).permute(2, 3), true));
 	symb_ref.insert(se_perm<4, double>(
-		permutation<4>().permute(0, 1), true));
+		permutation<4>().permute(0, 2), true));
 
 	compare_ref<4>::compare(testname, symb, symb_ref);
 
