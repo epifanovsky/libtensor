@@ -52,8 +52,15 @@ void symmetry_operation_impl< so_add<N, T>, se_perm<N, T> >::do_perform(
 	adapter_t adapter1(params.grp1);
 	adapter_t adapter2(params.grp2);
 
+	//	G3 = (P1 G1) U (P2 G2)
+	//	P2* G3 = (P2* P1 G1) U G2
+
+	permutation<N> perm12(params.perm1), pinv2(params.perm2, true);
+	perm12.permute(pinv2);
+
 	permutation_group<N, T> grp1(adapter1);
 	permutation_group<N, T> grp3;
+	grp1.permute(perm12);
 	for(typename adapter_t::iterator i = adapter2.begin();
 		i != adapter2.end(); i++) {
 
@@ -64,6 +71,7 @@ void symmetry_operation_impl< so_add<N, T>, se_perm<N, T> >::do_perform(
 	}
 
 	params.grp3.clear();
+	grp3.permute(params.perm2);
 	grp3.convert(params.grp3);
 }
 
