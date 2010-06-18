@@ -40,6 +40,7 @@ public:
 
 private:
 	permutation<N> m_perm; //!< Permutation
+	bool m_even; //!< Even/odd %permutation
 	bool m_symm; //!< Symmetric/anti-symmetric
 	transf<N, T> m_transf; //!< Block transformation
 	mask<N> m_mask; //!< Mask of affected indexes
@@ -170,13 +171,9 @@ se_perm<N, T>::se_perm(const permutation<N> &perm, bool symm) :
 		p.permute(m_perm); n++;
 	} while(!p.is_identity());
 
-	if(n % 2 == 0 && !m_symm) {
-		throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
-			"perm");
-	}
-
+	m_even = n % 2 == 0;
 	m_transf.permute(m_perm);
-	if(!m_symm) m_transf.scale(-1);
+	if(!m_even && !m_symm) m_transf.scale(-1);
 
 	size_t seq[N];
 	for(size_t i = 0; i < N; i++) seq[i] = i;

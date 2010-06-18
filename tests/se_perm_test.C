@@ -225,9 +225,7 @@ void se_perm_test::test_sym_abc_bca() throw(libtest::test_exception) {
 }
 
 
-/**	\test Tests the abc->bca permutational anti-symmetry element. Such
-		anti-symmetry doesn't exist, a bad_symmetry exception is
-		expected.
+/**	\test Tests the abc->bca permutational anti-symmetry element.
  **/
 void se_perm_test::test_asym_abc_bca() throw(libtest::test_exception) {
 
@@ -237,15 +235,59 @@ void se_perm_test::test_asym_abc_bca() throw(libtest::test_exception) {
 
 	permutation<3> perm;
 	perm.permute(0, 1).permute(1, 2);
-	bool ok = false;
-	try {
-		se_perm<3, double> elem(perm, false);
-	} catch(bad_symmetry&) {
-		ok = true;
+	se_perm<3, double> elem(perm, false);
+
+	if(elem.is_symm()) {
+		fail_test(testname, __FILE__, __LINE__, "elem.is_symm()");
 	}
-	if(!ok) {
+	if(!elem.get_perm().equals(perm)) {
 		fail_test(testname, __FILE__, __LINE__,
-			"bad_symmetry expected.");
+			"!elem.get_perm().equals(perm)");
+	}
+
+	const transf<3, double> &tr = elem.get_transf();
+	const mask<3> &m = elem.get_mask();
+	mask<3> m_ref;
+	m_ref[0] = true; m_ref[1] = true; m_ref[2] = true;
+
+	if(!tr.get_perm().equals(perm)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!tr.get_perm().equals(perm)");
+	}
+	if(tr.get_coeff() != 1.0) {
+		fail_test(testname, __FILE__, __LINE__,
+			"tr.get_coeff() != 1.0");
+	}
+	if(!m.equals(m_ref)) {
+		fail_test(testname, __FILE__, __LINE__, "!m.equals(m_ref)");
+	}
+
+	index<3> i1, i2;
+	i2[0] = 5; i2[1] = 5; i2[2] = 5;
+	dimensions<3> dims1(index_range<3>(i1, i2));
+	block_index_space<3> bis1(dims1);
+
+	if(!elem.is_valid_bis(bis1)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!elem.is_valid_bis(bis1)");
+	}
+
+	mask<3> m1; m1[0] = true; m1[1] = true; m1[2] = true;
+	block_index_space<3> bis2(bis1);
+	bis2.split(m1, 2);
+
+	if(!elem.is_valid_bis(bis2)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!elem.is_valid_bis(bis2)");
+	}
+
+	i2[0] = 5; i2[1] = 6; i2[2] = 5;
+	dimensions<3> dims3(index_range<3>(i1, i2));
+	block_index_space<3> bis3(dims3);
+
+	if(elem.is_valid_bis(bis3)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"elem.is_valid_bis(bis3)");
 	}
 
 	} catch(exception &e) {
