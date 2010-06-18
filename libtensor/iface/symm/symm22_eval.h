@@ -1,8 +1,9 @@
 #ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_SYMM22_EVAL_H
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_SYMM22_EVAL_H
 
+#include "../../btod/btod_symmetrize.h"
 #include "../expr/eval_i.h"
-#include "../expr/anon_eval.h"
+#include "../expr/evalfunctor.h"
 
 namespace libtensor {
 namespace labeled_btensor_expr {
@@ -33,8 +34,20 @@ public:
 	//!	Sub-expression type
 	typedef expr<N, T, sub_core_t> sub_expr_t;
 
-	//!	Evaluation of the contraction
-	typedef anon_eval<N, T, sub_core_t> sub_eval_t;
+	//!	Evaluating container type
+	typedef typename sub_expr_t::eval_container_t sub_eval_container_t;
+
+	//!	Number of tensor arguments
+	static const size_t k_sub_narg_tensor =
+		sub_eval_container_t::template narg<tensor_tag>::k_narg;
+
+	//!	Number of operation arguments
+	static const size_t k_sub_narg_oper =
+		sub_eval_container_t::template narg<oper_tag>::k_narg;
+
+	//!	Evaluation functor type
+	typedef evalfunctor<N, T, sub_core_t, k_sub_narg_tensor,
+		k_sub_narg_oper> sub_evalfunctor_t;
 
 	//!	Number of arguments in the expression
 	template<typename Tag, int Dummy = 0>
@@ -44,23 +57,22 @@ public:
 
 private:
 	sub_expr_t m_sub_expr; //!< Sub-expression
-	sub_eval_t m_sub_eval; //!< Evaluation of the sub-expression
-	permutation<N> m_perm1; //!< Permutation for argument 1
-	permutation<N> m_perm2; //!< Permutation for symmetrized argument 2
-	permutation<N> m_perm3; //!< Permutation for symmetrized argument 3
-	permutation<N> m_perm4; //!< Permutation for symmetrized argument 4
-	arg<N, T, tensor_tag> *m_arg1; //!< Argument 1
-	arg<N, T, tensor_tag> *m_arg2; //!< Argument 2
-	arg<N, T, tensor_tag> *m_arg3; //!< Argument 3
-	arg<N, T, tensor_tag> *m_arg4; //!< Argument 4
+	sub_eval_container_t m_sub_eval_cont; //!< Evaluation of the sub-expression
+	sub_evalfunctor_t m_sub_eval; //!< Evaluation functor
+	size_t m_i1; //!< First %index for symmetrization
+	size_t m_i2; //!< Second %index for symmetrization
+	size_t m_i3; //!< Third %index for symmetrization
+	size_t m_i4; //!< Fourth %index for symmetrization
+	bool m_threeidx; //!< Three- or four-%index symmetrization
+	btod_symmetrize<N> *m_op1; //!< First symmetrization operation
+	btod_symmetrize<N> *m_op2; //!< Second symmetrization operation
+	arg<N, T, oper_tag> *m_arg; //!< Argument
 
 public:
 	/**	\brief Initializes the container with given expression and
 			result recipient
 	 **/
-	symm22_eval(
-		expression_t &expr, const letter_expr<N> &label)
-		throw(exception);
+	symm22_eval(expression_t &expr, const letter_expr<N> &label);
 
 	/**	\brief Virtual destructor
 	 **/
@@ -75,56 +87,13 @@ public:
 	void clean();
 
 	template<typename Tag>
-	arg<N, T, Tag> get_arg(const Tag &tag, size_t i) const
-		throw(exception);
+	arg<N, T, Tag> get_arg(const Tag &tag, size_t i) const;
 
 	/**	\brief Returns tensor arguments
 	 **/
-	arg<N, T, tensor_tag> get_arg(const tensor_tag &tag, size_t i) const
-		throw(exception);
+	arg<N, T, oper_tag> get_arg(const oper_tag &tag, size_t i) const;
 
 private:
-	static permutation<N> mk_perm1(
-		expression_t &expr, const letter_expr<N> &label) {
-
-		permutation<N> perm;
-		size_t i1 = label.index_of(
-			expr.get_core().get_sym1().letter_at(0));
-		size_t i2 = label.index_of(
-			expr.get_core().get_sym1().letter_at(1));
-		perm.permute(i1, i2);
-		return perm;
-	}
-
-	static permutation<N> mk_perm2(
-		expression_t &expr, const letter_expr<N> &label) {
-
-		permutation<N> perm;
-		size_t i1 = label.index_of(
-			expr.get_core().get_sym2().letter_at(0));
-		size_t i2 = label.index_of(
-			expr.get_core().get_sym2().letter_at(1));
-		perm.permute(i1, i2);
-		return perm;
-	}
-
-	static permutation<N> mk_perm3(
-		expression_t &expr, const letter_expr<N> &label) {
-
-		permutation<N> perm;
-		size_t i1 = label.index_of(
-			expr.get_core().get_sym1().letter_at(0));
-		size_t i2 = label.index_of(
-			expr.get_core().get_sym1().letter_at(1));
-		size_t j1 = label.index_of(
-			expr.get_core().get_sym2().letter_at(0));
-		size_t j2 = label.index_of(
-			expr.get_core().get_sym2().letter_at(1));
-		if(!(i1 == j1 || i1 == j2 || i2 == j1 || i2 == j2))
-			perm.permute(i1, i2).permute(j1, j2);
-		return perm;
-	}
-
 	void create_arg();
 	void destroy_arg();
 
@@ -138,23 +107,39 @@ const char *symm22_eval<N, Sym, T, SubCore>::k_clazz =
 
 template<size_t N, bool Sym, typename T, typename SubCore>
 template<int Dummy>
-struct symm22_eval<N, Sym, T, SubCore>::narg<tensor_tag, Dummy> {
-	static const size_t k_narg = 4;
+struct symm22_eval<N, Sym, T, SubCore>::narg<oper_tag, Dummy> {
+	static const size_t k_narg = 1;
 };
 
 
 template<size_t N, bool Sym, typename T, typename SubCore>
-symm22_eval<N, Sym, T, SubCore>::symm22_eval(
-	expression_t &expr, const letter_expr<N> &label)
-	throw(exception) :
+symm22_eval<N, Sym, T, SubCore>::symm22_eval(expression_t &expr,
+	const letter_expr<N> &label) :
 
 	m_sub_expr(expr.get_core().get_sub_expr()),
-	m_sub_eval(m_sub_expr, label),
-	m_perm2(mk_perm1(expr, label)),
-	m_perm3(mk_perm2(expr, label)),
-	m_perm4(mk_perm3(expr, label)),
-	m_arg1(0), m_arg2(0), m_arg3(0), m_arg4(0) {
+	m_sub_eval_cont(m_sub_expr, label),
+	m_sub_eval(m_sub_expr, m_sub_eval_cont),
+	m_op1(0), m_op2(0), m_arg(0) {
 
+	m_i1 = label.index_of(expr.get_core().get_sym1().letter_at(0));
+	m_i2 = label.index_of(expr.get_core().get_sym1().letter_at(1));
+	m_i3 = label.index_of(expr.get_core().get_sym2().letter_at(0));
+	m_i4 = label.index_of(expr.get_core().get_sym2().letter_at(1));
+	if(m_i1 == m_i4) {
+		m_threeidx = true;
+	} else if(m_i1 == m_i3) {
+		std::swap(m_i3, m_i4);
+		m_threeidx = true;
+	} else if(m_i2 == m_i4) {
+		std::swap(m_i1, m_i2);
+		m_threeidx = true;
+	} else if(m_i2 == m_i3) {
+		std::swap(m_i1, m_i2);
+		std::swap(m_i3, m_i4);
+		m_threeidx = true;
+	} else {
+		m_threeidx = false;
+	}
 }
 
 
@@ -168,7 +153,7 @@ symm22_eval<N, Sym, T, SubCore>::~symm22_eval() {
 template<size_t N, bool Sym, typename T, typename SubCore>
 void symm22_eval<N, Sym, T, SubCore>::prepare() {
 
-	m_sub_eval.evaluate();
+	m_sub_eval_cont.prepare();
 	create_arg();
 }
 
@@ -177,7 +162,7 @@ template<size_t N, bool Sym, typename T, typename SubCore>
 void symm22_eval<N, Sym, T, SubCore>::clean() {
 
 	destroy_arg();
-	m_sub_eval.clean();
+	m_sub_eval_cont.clean();
 }
 
 
@@ -185,31 +170,31 @@ template<size_t N, bool Sym, typename T, typename SubCore>
 void symm22_eval<N, Sym, T, SubCore>::create_arg() {
 
 	destroy_arg();
-	m_arg1 = new arg<N, T, tensor_tag>(m_sub_eval.get_btensor(), m_perm1,
-		1.0);
-	m_arg2 = new arg<N, T, tensor_tag>(m_sub_eval.get_btensor(), m_perm2,
-		Sym ? 1.0 : -1.0);
-	m_arg3 = new arg<N, T, tensor_tag>(m_sub_eval.get_btensor(), m_perm3,
-		Sym ? 1.0 : -1.0);
-	m_arg4 = new arg<N, T, tensor_tag>(m_sub_eval.get_btensor(), m_perm4,
-		m_perm4.is_identity() ? 0.0 : 1.0);
+	if(m_threeidx) {
+		m_op1 = new btod_symmetrize<N>(
+			m_sub_eval.get_bto(), m_i1, m_i2, m_i3, Sym);
+	} else {
+		m_op2 = new btod_symmetrize<N>(
+			m_sub_eval.get_bto(), m_i1, m_i2, Sym);
+		m_op1 = new btod_symmetrize<N>(*m_op2, m_i3, m_i4, Sym);
+	}
+	m_arg = new arg<N, T, oper_tag>(*m_op1, 1.0);
 }
 
 
 template<size_t N, bool Sym, typename T, typename SubCore>
 void symm22_eval<N, Sym, T, SubCore>::destroy_arg() {
 
-	delete m_arg1; m_arg1 = 0;
-	delete m_arg2; m_arg2 = 0;
-	delete m_arg3; m_arg3 = 0;
-	delete m_arg4; m_arg4 = 0;
+	delete m_arg; m_arg = 0;
+	delete m_op1; m_op1 = 0;
+	delete m_op2; m_op2 = 0;
 }
 
 
 template<size_t N, bool Sym, typename T, typename SubCore>
 template<typename Tag>
-arg<N, T, Tag> symm22_eval<N, Sym, T, SubCore>::get_arg(
-	const Tag &tag, size_t i) const throw(exception) {
+arg<N, T, Tag> symm22_eval<N, Sym, T, SubCore>::get_arg(const Tag &tag,
+	size_t i) const {
 
 	static const char *method = "get_arg(const Tag&, size_t)";
 
@@ -219,24 +204,13 @@ arg<N, T, Tag> symm22_eval<N, Sym, T, SubCore>::get_arg(
 
 
 template<size_t N, bool Sym, typename T, typename SubCore>
-arg<N, T, tensor_tag> symm22_eval<N, Sym, T, SubCore>::get_arg(
-	const tensor_tag &tag, size_t i) const throw(exception) {
+arg<N, T, oper_tag> symm22_eval<N, Sym, T, SubCore>::get_arg(
+	const oper_tag &tag, size_t i) const {
 
-	static const char *method = "get_arg(const tensor_tag&, size_t)";
-	switch(i) {
-	case 0:
-		return *m_arg1;
-		break;
-	case 1:
-		return *m_arg2;
-		break;
-	case 2:
-		return *m_arg3;
-		break;
-	case 3:
-		return *m_arg4;
-		break;
-	default:
+	static const char *method = "get_arg(const oper_tag&, size_t)";
+	if(i == 0) {
+		return *m_arg;
+	} else {
 		throw out_of_bounds(g_ns, k_clazz, method, __FILE__, __LINE__,
 			"Argument index is out of bounds.");
 	}

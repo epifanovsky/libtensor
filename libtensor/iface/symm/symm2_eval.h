@@ -1,8 +1,9 @@
 #ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_SYMM2_EVAL_H
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_SYMM2_EVAL_H
 
+#include "../../btod/btod_symmetrize.h"
 #include "../expr/eval_i.h"
-#include "../expr/anon_eval.h"
+#include "../expr/evalfunctor.h"
 
 namespace libtensor {
 namespace labeled_btensor_expr {
@@ -32,8 +33,20 @@ public:
 	//!	Sub-expression type
 	typedef expr<N, T, sub_core_t> sub_expr_t;
 
-	//!	Evaluation of the contraction
-	typedef anon_eval<N, T, sub_core_t> sub_eval_t;
+	//!	Evaluating container type
+	typedef typename sub_expr_t::eval_container_t sub_eval_container_t;
+
+	//!	Number of tensor arguments
+	static const size_t k_sub_narg_tensor =
+		sub_eval_container_t::template narg<tensor_tag>::k_narg;
+
+	//!	Number of operation arguments
+	static const size_t k_sub_narg_oper =
+		sub_eval_container_t::template narg<oper_tag>::k_narg;
+
+	//!	Evaluation functor type
+	typedef evalfunctor<N, T, sub_core_t, k_sub_narg_tensor,
+		k_sub_narg_oper> sub_evalfunctor_t;
 
 	//!	Number of arguments in the expression
 	template<typename Tag, int Dummy = 0>
@@ -43,19 +56,18 @@ public:
 
 private:
 	sub_expr_t m_sub_expr; //!< Sub-expression
-	sub_eval_t m_sub_eval; //!< Evaluation of the sub-expression
-	permutation<N> m_perm1; //!< Permutation for argument 1
-	permutation<N> m_perm2; //!< Permutation for symmetrization
-	arg<N, T, tensor_tag> *m_arg1; //!< Argument 1
-	arg<N, T, tensor_tag> *m_arg2; //!< Argument 2
+	sub_eval_container_t m_sub_eval_cont; //!< Evaluation of the sub-expression
+	sub_evalfunctor_t m_sub_eval; //!< Evaluation functor
+	size_t m_i1; //!< First %index for symmetrization
+	size_t m_i2; //!< Second %index for symmetrization
+	btod_symmetrize<N> *m_op; //!< Symmetrization operation
+	arg<N, T, oper_tag> *m_arg; //!< Argument
 
 public:
 	/**	\brief Initializes the container with given expression and
 			result recipient
 	 **/
-	symm2_eval(
-		expression_t &expr, const letter_expr<N> &label)
-		throw(exception);
+	symm2_eval(expression_t &expr, const letter_expr<N> &label);
 
 	/**	\brief Virtual destructor
 	 **/
@@ -70,27 +82,13 @@ public:
 	void clean();
 
 	template<typename Tag>
-	arg<N, T, Tag> get_arg(const Tag &tag, size_t i) const
-		throw(exception);
+	arg<N, T, Tag> get_arg(const Tag &tag, size_t i) const;
 
-	/**	\brief Returns tensor arguments
+	/**	\brief Returns the operation argument
 	 **/
-	arg<N, T, tensor_tag> get_arg(const tensor_tag &tag, size_t i) const
-		throw(exception);
+	arg<N, T, oper_tag> get_arg(const oper_tag &tag, size_t i) const;
 
 private:
-	static permutation<N> mk_perm(
-		expression_t &expr, const letter_expr<N> &label) {
-
-		permutation<N> perm;
-		size_t i1 = label.index_of(
-			expr.get_core().get_sym().letter_at(0));
-		size_t i2 = label.index_of(
-			expr.get_core().get_sym().letter_at(1));
-		perm.permute(i1, i2);
-		return perm;
-	}
-
 	void create_arg();
 	void destroy_arg();
 
@@ -104,21 +102,22 @@ const char *symm2_eval<N, Sym, T, SubCore>::k_clazz =
 
 template<size_t N, bool Sym, typename T, typename SubCore>
 template<int Dummy>
-struct symm2_eval<N, Sym, T, SubCore>::narg<tensor_tag, Dummy> {
-	static const size_t k_narg = 2;
+struct symm2_eval<N, Sym, T, SubCore>::narg<oper_tag, Dummy> {
+	static const size_t k_narg = 1;
 };
 
 
 template<size_t N, bool Sym, typename T, typename SubCore>
-symm2_eval<N, Sym, T, SubCore>::symm2_eval(
-	expression_t &expr, const letter_expr<N> &label)
-	throw(exception) :
+symm2_eval<N, Sym, T, SubCore>::symm2_eval(expression_t &expr,
+	const letter_expr<N> &label) :
 
 	m_sub_expr(expr.get_core().get_sub_expr()),
-	m_sub_eval(m_sub_expr, label),
-	m_perm2(mk_perm(expr, label)),
-	m_arg1(0), m_arg2(0) {
+	m_sub_eval_cont(m_sub_expr, label),
+	m_sub_eval(m_sub_expr, m_sub_eval_cont),
+	m_op(0), m_arg(0) {
 
+	m_i1 = label.index_of(expr.get_core().get_sym().letter_at(0));
+	m_i2 = label.index_of(expr.get_core().get_sym().letter_at(1));
 }
 
 
@@ -132,7 +131,7 @@ symm2_eval<N, Sym, T, SubCore>::~symm2_eval() {
 template<size_t N, bool Sym, typename T, typename SubCore>
 void symm2_eval<N, Sym, T, SubCore>::prepare() {
 
-	m_sub_eval.evaluate();
+	m_sub_eval_cont.prepare();
 	create_arg();
 }
 
@@ -141,7 +140,7 @@ template<size_t N, bool Sym, typename T, typename SubCore>
 void symm2_eval<N, Sym, T, SubCore>::clean() {
 
 	destroy_arg();
-	m_sub_eval.clean();
+	m_sub_eval_cont.clean();
 }
 
 
@@ -149,25 +148,23 @@ template<size_t N, bool Sym, typename T, typename SubCore>
 void symm2_eval<N, Sym, T, SubCore>::create_arg() {
 
 	destroy_arg();
-	m_arg1 = new arg<N, T, tensor_tag>(m_sub_eval.get_btensor(), m_perm1,
-		1.0);
-	m_arg2 = new arg<N, T, tensor_tag>(m_sub_eval.get_btensor(), m_perm2,
-		Sym ? 1.0 : -1.0);
+	m_op = new btod_symmetrize<N>(m_sub_eval.get_bto(), m_i1, m_i2, Sym);
+	m_arg = new arg<N, T, oper_tag>(*m_op, 1.0);
 }
 
 
 template<size_t N, bool Sym, typename T, typename SubCore>
 void symm2_eval<N, Sym, T, SubCore>::destroy_arg() {
 
-	delete m_arg1; m_arg1 = 0;
-	delete m_arg2; m_arg2 = 0;
+	delete m_arg; m_arg = 0;
+	delete m_op; m_op = 0;
 }
 
 
 template<size_t N, bool Sym, typename T, typename SubCore>
 template<typename Tag>
-arg<N, T, Tag> symm2_eval<N, Sym, T, SubCore>::get_arg(
-	const Tag &tag, size_t i) const throw(exception) {
+arg<N, T, Tag> symm2_eval<N, Sym, T, SubCore>::get_arg(const Tag &tag,
+	size_t i) const {
 
 	static const char *method = "get_arg(const Tag&, size_t)";
 
@@ -177,14 +174,12 @@ arg<N, T, Tag> symm2_eval<N, Sym, T, SubCore>::get_arg(
 
 
 template<size_t N, bool Sym, typename T, typename SubCore>
-arg<N, T, tensor_tag> symm2_eval<N, Sym, T, SubCore>::get_arg(
-	const tensor_tag &tag, size_t i) const throw(exception) {
+arg<N, T, oper_tag> symm2_eval<N, Sym, T, SubCore>::get_arg(const oper_tag &tag,
+	size_t i) const {
 
-	static const char *method = "get_arg(const tensor_tag&, size_t)";
+	static const char *method = "get_arg(const oper_tag&, size_t)";
 	if(i == 0) {
-		return *m_arg1;
-	} else if(i == 1) {
-		return *m_arg2;
+		return *m_arg;
 	} else {
 		throw out_of_bounds(g_ns, k_clazz, method, __FILE__, __LINE__,
 			"Argument index is out of bounds.");
