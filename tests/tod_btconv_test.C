@@ -6,7 +6,9 @@
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/core/tensor.h>
 #include <libtensor/symmetry/se_perm.h>
+#include <libtensor/tod/tod_add.h>
 #include <libtensor/tod/tod_btconv.h>
+#include <libtensor/tod/tod_random.h>
 #include "compare_ref.h"
 #include "tod_btconv_test.h"
 
@@ -14,8 +16,6 @@ namespace libtensor {
 
 
 void tod_btconv_test::perform() throw(libtest::test_exception) {
-
-	srand48(time(NULL));
 
 	test_1();
 	test_2();
@@ -28,6 +28,7 @@ void tod_btconv_test::perform() throw(libtest::test_exception) {
 	test_9();
 	test_10();
 	test_11();
+	test_12();
 
 }
 
@@ -1205,6 +1206,129 @@ void tod_btconv_test::test_11() throw(libtest::test_exception) {
 	//	Compare the result against the reference
 
 	compare_ref<4>::compare(testname, t, t_ref, 0.0);
+
+	} catch(exception &exc) {
+		fail_test(testname, __FILE__, __LINE__, exc.what());
+	}
+}
+
+
+void tod_btconv_test::test_12() throw(libtest::test_exception) {
+
+	//
+	//	Anti-symmetric three-index tensor. Three non-zero blocks:
+	//	[0,1,2], [0,2,2], [1,1,1]
+	//
+
+	static const char *testname = "tod_btconv_test::test_12()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<3> i1, i2;
+	i2[0] = 10; i2[1] = 10; i2[2] = 10;
+	dimensions<3> dims(index_range<3>(i1, i2));
+	block_index_space<3> bis(dims);
+	mask<3> m;
+	m[0] = true; m[1] = true; m[2] = true;
+	bis.split(m, 3);
+	bis.split(m, 8);
+
+	block_tensor<3, double, allocator_t> bta(bis), btb(bis);
+	block_tensor_ctrl<3, double> ctrla(bta), ctrlb(btb);
+
+	index<3> i012, i021, i022, i102, i111, i120, i201, i202, i210, i220;
+	i012[0] = 0; i012[1] = 1; i012[2] = 2;
+	i021[0] = 0; i021[1] = 2; i021[2] = 1;
+	i022[0] = 0; i022[1] = 2; i022[2] = 2;
+	i102[0] = 1; i102[1] = 0; i102[2] = 2;
+	i111[0] = 1; i111[1] = 1; i111[2] = 1;
+	i120[0] = 1; i120[1] = 2; i120[2] = 0;
+	i201[0] = 2; i201[1] = 0; i201[2] = 1;
+	i202[0] = 2; i202[1] = 0; i202[2] = 2;
+	i210[0] = 2; i210[1] = 1; i210[2] = 0;
+	i220[0] = 2; i220[1] = 2; i220[2] = 0;
+
+	//	Install symmetry in bta
+	//
+	ctrla.req_symmetry().insert(se_perm<3, double>(
+		permutation<3>().permute(0, 1), false));
+	ctrla.req_symmetry().insert(se_perm<3, double>(
+		permutation<3>().permute(1, 2), false));
+
+	//	Prepare symmetrized blocks
+	//
+	dimensions<3> d012 = bis.get_block_dims(i012),
+		d111 = bis.get_block_dims(i111),
+		d022 = bis.get_block_dims(i022);
+	tensor<3, double, allocator_t> t012(d012), t111(d111), t111a(d111),
+		t022(d022), t022a(d022);
+	tod_random<3>().perform(t012);
+	tod_random<3>().perform(t111a);
+	tod_random<3>().perform(t022a);
+	tod_add<3> sym111(t111a);
+	sym111.add_op(t111a, permutation<3>().permute(0, 1), -1.0);
+	sym111.add_op(t111a, permutation<3>().permute(0, 2), -1.0);
+	sym111.perform(t111);
+	tod_add<3> sym022(t022a);
+	sym022.add_op(t022a, permutation<3>().permute(1, 2), -1.0);
+	sym022.perform(t022);
+
+	//	Copy [0,1,2]
+	//
+	tod_copy<3>(t012).perform(ctrla.req_block(i012));
+	ctrla.ret_block(i012);
+	tod_copy<3>(t012).perform(ctrlb.req_block(i012));
+	ctrlb.ret_block(i012);
+	tod_copy<3>(t012, permutation<3>().permute(1, 2), -1.0).
+		perform(ctrlb.req_block(i021));
+	ctrlb.ret_block(i021);
+	tod_copy<3>(t012, permutation<3>().permute(0, 1), -1.0).
+		perform(ctrlb.req_block(i102));
+	ctrlb.ret_block(i102);
+	tod_copy<3>(t012, permutation<3>().permute(0, 1).permute(1, 2), 1.0).
+		perform(ctrlb.req_block(i120));
+	ctrlb.ret_block(i120);
+	tod_copy<3>(t012, permutation<3>().permute(0, 2), -1.0).
+		perform(ctrlb.req_block(i210));
+	ctrlb.ret_block(i210);
+	tod_copy<3>(t012, permutation<3>().permute(1, 2).permute(0, 1), 1.0).
+		perform(ctrlb.req_block(i201));
+	ctrlb.ret_block(i201);
+
+	//	Copy [0,2,2]
+	//
+	tod_copy<3>(t022).perform(ctrla.req_block(i022));
+	ctrla.ret_block(i022);
+	tod_copy<3>(t022).perform(ctrlb.req_block(i022));
+	ctrlb.ret_block(i022);
+	tod_copy<3>(t022, permutation<3>().permute(0, 1), -1.0).
+		perform(ctrlb.req_block(i202));
+	ctrlb.ret_block(i202);
+	tod_copy<3>(t022, permutation<3>().permute(0, 1).permute(1, 2), 1.0).
+		perform(ctrlb.req_block(i220));
+	ctrlb.ret_block(i220);
+
+	//	Copy [1,1,1]
+	//
+	tod_copy<3>(t111).perform(ctrla.req_block(i111));
+	ctrla.ret_block(i111);
+	tod_copy<3>(t111).perform(ctrlb.req_block(i111));
+	ctrlb.ret_block(i111);
+
+	bta.set_immutable();
+	btb.set_immutable();
+
+	//	Convert to simple tensors
+	//
+	tensor<3, double, allocator_t> ta(dims), ta_ref(dims);
+	tod_btconv<3>(bta).perform(ta);
+	tod_btconv<3>(btb).perform(ta_ref);
+
+	//	Compare the result against the reference
+	//
+	compare_ref<3>::compare(testname, ta, ta_ref, 0.0);
 
 	} catch(exception &exc) {
 		fail_test(testname, __FILE__, __LINE__, exc.what());
