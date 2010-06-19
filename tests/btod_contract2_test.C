@@ -21,6 +21,7 @@ void btod_contract2_test::perform() throw(libtest::test_exception) {
 	test_bis_5();
 	test_sym_1();
 	test_sym_2();
+	test_sym_3();
 
 	//	Tests for zero block structure
 
@@ -499,6 +500,74 @@ void btod_contract2_test::test_sym_2() throw(libtest::test_exception) {
 	}
 }
 
+void btod_contract2_test::test_sym_3() throw(libtest::test_exception) {
+
+	//
+	//	c_ijpq = a_ijpr b_qr
+	//	Permutational symmetry in (i-j) (p-r) (q-r)
+	//
+
+	static const char *testname = "btod_contract2_test::test_sym_3()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<2> i2_1, i2_2;
+	i2_2[0] = 10; i2_2[1] = 10;
+	dimensions<2> dims2(index_range<2>(i2_1, i2_2));
+	index<4> i4_1, i4_2;
+	i4_2[0] = 8; i4_2[1] = 8; i4_2[2] = 10; i4_2[3] = 10;
+	dimensions<4> dims4(index_range<4>(i4_1, i4_2));
+
+	block_index_space<4> bisa(dims4);
+	block_index_space<2> bisb(dims2);
+
+	mask<2> msk2;
+	msk2[0] = true; msk2[1] = true;
+	mask<4> msk4_1, msk4_2;
+	msk4_1[0] = true; msk4_1[1] = true; msk4_2[2] = true; msk4_2[3] = true;
+
+	bisa.split(msk4_1, 3);
+	bisa.split(msk4_1, 5);
+	bisa.split(msk4_2, 4);
+	bisb.split(msk2, 4);
+
+	block_tensor<4, double, allocator_t> bta(bisa);
+	block_tensor<2, double, allocator_t> btb(bisb);
+
+	permutation<4> p0132, p1023;
+	p0132.permute(2, 3);
+	p1023.permute(0, 1);
+
+	permutation<2> p10;
+	p10.permute(0, 1);
+
+	se_perm<2, double> cycle2(p10, true);
+	se_perm<4, double> cycle4a(p1023, false), cycle4b(p0132, false);
+
+	symmetry<4, double> sym_ref(bisa);
+	sym_ref.insert(cycle4a);
+	block_tensor_ctrl<4, double> ctrla(bta);
+	block_tensor_ctrl<2, double> ctrlb(btb);
+	ctrla.req_symmetry().insert(cycle4a);
+	ctrla.req_symmetry().insert(cycle4b);
+	ctrlb.req_symmetry().insert(cycle2);
+
+	contraction2<3, 1, 1> contr;
+	contr.contract(3, 1);
+	btod_contract2<3, 1, 1> op(contr, bta, btb);
+
+	const symmetry<4, double> &sym = op.get_symmetry();
+	//~ if(!op.get_symmetry().equals(sym_ref)) {
+		//~ fail_test(testname, __FILE__, __LINE__,
+			//~ "Symmetry does not match reference.");
+	//~ }
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
 
 /**	\test Runs \f$ c_{ij} = \sum_p a_{ip} b_{jp} \f$.
 	Dimensions: [ijp] = 10. No splitting points. No symmetry.

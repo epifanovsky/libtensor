@@ -276,6 +276,7 @@ void permutation_group<N, T>::project_down(
 	//~ std::cout << " >" << std::endl;
 
 	p1->clear(); p2->clear();
+	p1 = &gs1; p2 = &gs2;
 	make_genset(m_asymm, gs1);
 	for(size_t i = 0; i < N; i++) {
 		if(msk[i]) continue;

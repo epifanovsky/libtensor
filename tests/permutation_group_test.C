@@ -18,6 +18,7 @@ void permutation_group_test::perform() throw(libtest::test_exception) {
 	test_project_down_1();
 	test_project_down_2();
 	test_project_down_3();
+	test_project_down_4();
 
 	test_permute_1();
 	test_permute_2();
@@ -588,6 +589,41 @@ void permutation_group_test::test_project_down_3()
 	}
 }
 
+/**	\test Tests the projection of the S2(-) group in a 2-space onto
+		a 1-space
+ **/
+void permutation_group_test::test_project_down_4()
+	throw(libtest::test_exception) {
+
+	static const char *testname =
+		"permutation_group_test::test_project_down_4()";
+
+	typedef se_perm<2, double> se_perm_t;
+
+	try {
+
+	bool symm = false;
+	permutation<2> perm1; perm1.permute(0, 1);
+
+	symmetry_element_set<2, double> set1(se_perm_t::k_sym_type);
+	set1.insert(se_perm_t(perm1, symm));
+	permutation_group<2, double> pg2(set1);
+
+	permutation_group<1, double> pg1;
+	mask<2> msk; msk[0] = true;
+	pg2.project_down(msk, pg1);
+
+	permutation<1> p1;
+
+	if(!pg1.is_member(true, p1)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!pg1.is_member(true, p1)");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
 
 /**	\test Test the identity %permutation on S2(+)*S2(+).
  **/
