@@ -131,6 +131,7 @@ inline btod_sum<N>::btod_sum(additive_btod<N> &op, double c) :
 	m_bis(op.get_bis()), m_bidims(m_bis.get_block_index_dims()),
 	m_sym(m_bis), m_dirty_sch(true), m_sch(0) {
 
+	so_copy<N, double>(op.get_symmetry()).perform(m_sym);
 	add_op(op, c);
 }
 
@@ -187,6 +188,12 @@ void btod_sum<N>::add_op(additive_btod<N> &op, double c) {
 		throw bad_block_index_space(g_ns, k_clazz, method,
 			__FILE__, __LINE__, "op");
 	}
+
+	symmetry<N, double> sym(m_bis);
+	so_copy<N, double>(m_sym).perform(sym);
+	m_sym.clear();
+	permutation<N> p0;
+	so_add<N, double>(sym, p0, op.get_symmetry(), p0).perform(m_sym);
 
 	m_ops.push_back(node_t(op, c));
 }

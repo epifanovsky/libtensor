@@ -18,6 +18,7 @@ void btod_sum_test::perform() throw(libtest::test_exception) {
 	test_3();
 	test_4();
 	test_5();
+	test_6();
 }
 
 
@@ -273,6 +274,82 @@ void btod_sum_test::test_5() throw(libtest::test_exception) {
 	op.perform(btc_ref);
 
 	btod_sum<4> sum(op);
+	sum.perform(btc);
+
+	compare_ref<4>::compare(testname, btc, btc_ref, 1e-14);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+void btod_sum_test::test_6() throw(libtest::test_exception) {
+
+	//
+	//	Single operand A + B and C + D, symmetry
+	//
+
+	static const char *testname = "btod_sum_test::test_6()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+	typedef block_tensor<2, double, allocator_t> block_tensor_t;
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 12; i2[1] = 12; i2[2] = 6; i2[3] = 6;
+	dimensions<4> dims_iiaa(index_range<4>(i1, i2));
+	i2[0] = 12; i2[1] = 6; i2[2] = 6; i2[3] = 6;
+	block_index_space<4> bis_iiaa(dims_iiaa);
+	mask<4> m1, m2;
+	m1[0] = true; m1[1] = true; m2[2] = true; m2[3] = true;
+	bis_iiaa.split(m1, 3);
+	bis_iiaa.split(m1, 7);
+	bis_iiaa.split(m1, 10);
+	bis_iiaa.split(m2, 2);
+	bis_iiaa.split(m2, 3);
+	bis_iiaa.split(m2, 5);
+
+	block_tensor<4, double, allocator_t> bta1(bis_iiaa), bta2(bis_iiaa);
+	block_tensor<4, double, allocator_t> btb1(bis_iiaa), btb2(bis_iiaa);
+	block_tensor<4, double, allocator_t> btc(bis_iiaa), btc_ref(bis_iiaa);
+
+	{
+	block_tensor_ctrl<4, double> ctrl_a1(bta1), ctrl_a2(bta2);
+	block_tensor_ctrl<4, double> ctrl_b1(btb1), ctrl_b2(btb2);
+	permutation<4> p1023, p0132;
+	p1023.permute(0, 1);
+	p0132.permute(2, 3);
+	se_perm<4, double> sp1023(p1023, true), sp0132(p0132, false);
+	ctrl_a1.req_symmetry().insert(sp1023);
+	ctrl_a1.req_symmetry().insert(sp0132);
+	ctrl_b1.req_symmetry().insert(sp1023);
+	ctrl_b1.req_symmetry().insert(sp0132);
+	ctrl_a2.req_symmetry().insert(sp1023);
+	ctrl_b2.req_symmetry().insert(sp1023);
+	}
+
+	//	Load random data for input
+
+	btod_random<4>().perform(bta1);
+	btod_random<4>().perform(btb1);
+	btod_random<4>().perform(bta2);
+	btod_random<4>().perform(btb2);
+	bta1.set_immutable();
+	btb1.set_immutable();
+	bta2.set_immutable();
+	btb2.set_immutable();
+
+	//	Run contraction and compute the reference
+
+	btod_add<4> op1(bta1), op2(bta2);
+	op1.add_op(btb1);
+	op2.add_op(btb2);
+	op1.perform(btc_ref);
+	op2.perform(btc_ref, 1.0);
+
+	btod_sum<4> sum(op1);
+	sum.add_op(op2);
 	sum.perform(btc);
 
 	compare_ref<4>::compare(testname, btc, btc_ref, 1e-14);

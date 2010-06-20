@@ -20,6 +20,7 @@ void symm_test::perform() throw(libtest::test_exception) {
 		test_asymm2_contr_tt_3();
 		test_asymm2_contr_tt_4();
 		test_asymm2_contr_ee_1();
+		test_asymm2_contr_ee_2();
 
 		test_symm22_t_1();
 		test_asymm22_t_1();
@@ -343,6 +344,44 @@ void symm_test::test_asymm2_contr_ee_1() throw(libtest::test_exception) {
 		contract(i, t1a(a|c|d|i) + t1b(a|c|d|i), t2a(i|b) + t2b(i|b)));
 
 	compare_ref<4>::compare(testname, t3, t3_ref, 2e-14);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+void symm_test::test_asymm2_contr_ee_2() throw(libtest::test_exception) {
+
+	const char *testname = "symm_test::test_asymm2_contr_ee_2()";
+
+	try {
+
+	bispace<1> sp_i(10), sp_a(20);
+	sp_i.split(5);
+	sp_a.split(8); sp_a.split(16);
+	bispace<2> sp_ij(sp_i|sp_i), sp_ia(sp_i|sp_a);
+
+	btensor<2> bta(sp_ia), btb(sp_ia), btc(sp_ij), btc_ref(sp_ij);
+
+	permutation<2> p10;
+	p10.permute(0, 1);
+	se_perm<2, double> sp10(p10, true);
+
+	btod_random<2>().perform(bta);
+	btod_random<2>().perform(btb);
+	bta.set_immutable();
+	btb.set_immutable();
+
+	contraction2<1, 1, 1> contr;
+	contr.contract(1, 1);
+	btod_contract2<1, 1, 1> op(contr, bta, btb);
+	btod_symmetrize<2> op_sym(op, 0, 1, false);
+	op_sym.perform(btc_ref);
+
+	letter a, i, j;
+	btc(i|j) = asymm(i|j, contract(a, bta(i|a), btb(j|a)));
+
+	compare_ref<2>::compare(testname, btc, btc_ref, 2e-14);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());

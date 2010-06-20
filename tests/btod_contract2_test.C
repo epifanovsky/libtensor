@@ -546,8 +546,6 @@ void btod_contract2_test::test_sym_3() throw(libtest::test_exception) {
 	se_perm<2, double> cycle2(p10, true);
 	se_perm<4, double> cycle4a(p1023, false), cycle4b(p0132, false);
 
-	symmetry<4, double> sym_ref(bisa);
-	sym_ref.insert(cycle4a);
 	block_tensor_ctrl<4, double> ctrla(bta);
 	block_tensor_ctrl<2, double> ctrlb(btb);
 	ctrla.req_symmetry().insert(cycle4a);
@@ -559,6 +557,19 @@ void btod_contract2_test::test_sym_3() throw(libtest::test_exception) {
 	btod_contract2<3, 1, 1> op(contr, bta, btb);
 
 	const symmetry<4, double> &sym = op.get_symmetry();
+	symmetry<4, double>::iterator is = sym.begin();
+	const symmetry_element_set<4, double> &set = sym.get_subset(is);
+	symmetry_element_set_adapter<4, double, se_perm<4, double> > adapter(set);
+	permutation_group<4, double> grp(set);
+	if (! grp.is_member(false, p1023)) {
+		fail_test(testname, __FILE__, __LINE__,
+				"Permutational anti-symmetry (0-1) missing.");
+	}
+	if (grp.is_member(false, p0132)) {
+		fail_test(testname, __FILE__, __LINE__,
+				"Bad permutational anti-symmetry (2-3).");
+	}
+
 	//~ if(!op.get_symmetry().equals(sym_ref)) {
 		//~ fail_test(testname, __FILE__, __LINE__,
 			//~ "Symmetry does not match reference.");
