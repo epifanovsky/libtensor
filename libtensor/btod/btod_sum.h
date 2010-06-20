@@ -5,6 +5,8 @@
 #include "../defs.h"
 #include "../exception.h"
 #include "../timings.h"
+#include "../symmetry/so_add.h"
+#include "../symmetry/so_copy.h"
 #include "additive_btod.h"
 #include "../not_implemented.h"
 #include "bad_block_index_space.h"
@@ -212,13 +214,17 @@ void btod_sum<N>::add_op(additive_btod<N> &op, double c) {
 		throw bad_block_index_space(g_ns, k_clazz, method,
 			__FILE__, __LINE__, "op");
 	}
+	if(c == 0.0) return;
 
-	symmetry<N, double> sym(m_bis);
-	so_copy<N, double>(m_sym).perform(sym);
-	m_sym.clear();
-	permutation<N> p0;
-	so_add<N, double>(sym, p0, op.get_symmetry(), p0).perform(m_sym);
-
+	if(m_ops.empty()) {
+		so_copy<N, double>(op.get_symmetry()).perform(m_sym);
+	} else {
+		symmetry<N, double> sym1(m_bis);
+		permutation<N> perm0;
+		so_add<N, double>(m_sym, perm0, op.get_symmetry(), perm0).
+			perform(sym1);
+		so_copy<N, double>(sym1).perform(m_sym);
+	}
 	m_ops.push_back(node_t(op, c));
 }
 

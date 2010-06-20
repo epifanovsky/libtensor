@@ -5,6 +5,8 @@
 #include <libtensor/btod/btod_copy.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/btod/btod_sum.h>
+#include <libtensor/symmetry/se_perm.h>
+#include <libtensor/symmetry/so_copy.h>
 #include "btod_sum_test.h"
 #include "compare_ref.h"
 
@@ -20,6 +22,8 @@ void btod_sum_test::perform() throw(libtest::test_exception) {
 	test_5();
 	test_6(true);
 	test_6(false);
+	test_7();
+	test_8();
 }
 
 
@@ -287,7 +291,7 @@ void btod_sum_test::test_5() throw(libtest::test_exception) {
 void btod_sum_test::test_6(bool do_add) throw(libtest::test_exception) {
 
 	//
-	//	Single operand A + B and C + D, symmetry
+	//	Two operands A + B and C + D, symmetry
 	//
 
 	static const char *testname = "btod_sum_test::test_6()";
@@ -368,6 +372,120 @@ void btod_sum_test::test_6(bool do_add) throw(libtest::test_exception) {
 	else sum.perform(btc);
 
 	compare_ref<4>::compare(testname, btc, btc_ref, 1e-14);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void btod_sum_test::test_7() throw(libtest::test_exception) {
+
+	//
+	//	Single operand A + B, permutational symmetry
+	//
+
+	static const char *testname = "btod_sum_test::test_7()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<2> i1, i2;
+	i2[0] = 10; i2[1] = 10;
+	dimensions<2> dims(index_range<2>(i1, i2));
+	block_index_space<2> bis(dims);
+	mask<2> m;
+	m[0] = true; m[1] = true;
+	bis.split(m, 4);
+
+	block_tensor<2, double, allocator_t> bt1(bis), bt2(bis), bt3(bis),
+		bt3_ref(bis);
+	{
+		block_tensor_ctrl<2, double> ctrl1(bt1), ctrl2(bt2);
+		ctrl1.req_symmetry().insert(se_perm<2, double>(
+			permutation<2>().permute(0, 1), true));
+		ctrl2.req_symmetry().insert(se_perm<2, double>(
+			permutation<2>().permute(0, 1), true));
+	}
+	btod_random<2>().perform(bt1);
+	btod_random<2>().perform(bt2);
+	bt1.set_immutable();
+	bt2.set_immutable();
+
+	btod_add<2> add(bt1);
+	add.add_op(bt2, 2.0);
+
+	btod_sum<2> sum(add);
+	sum.perform(bt3);
+	add.perform(bt3_ref);
+
+	symmetry<2, double> sym3(bis), sym3_ref(bis);
+	{
+		block_tensor_ctrl<2, double> ctrl3(bt3);
+		so_copy<2, double>(ctrl3.req_const_symmetry()).perform(sym3);
+		sym3_ref.insert(se_perm<2, double>(
+			permutation<2>().permute(0, 1), true));
+	}
+
+	compare_ref<2>::compare(testname, sym3, sym3_ref);
+	compare_ref<2>::compare(testname, bt3, bt3_ref, 1e-14);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void btod_sum_test::test_8() throw(libtest::test_exception) {
+
+	//
+	//	Two operands with different permutational symmetry
+	//
+
+	static const char *testname = "btod_sum_test::test_8()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<2> i1, i2;
+	i2[0] = 10; i2[1] = 10;
+	dimensions<2> dims(index_range<2>(i1, i2));
+	block_index_space<2> bis(dims);
+	mask<2> m;
+	m[0] = true; m[1] = true;
+	bis.split(m, 4);
+
+	block_tensor<2, double, allocator_t> bt1(bis), bt2(bis), bt3(bis),
+		bt3_ref(bis);
+	{
+		block_tensor_ctrl<2, double> ctrl1(bt1), ctrl2(bt2);
+		ctrl1.req_symmetry().insert(se_perm<2, double>(
+			permutation<2>().permute(0, 1), true));
+	}
+	btod_random<2>().perform(bt1);
+	btod_random<2>().perform(bt2);
+	bt1.set_immutable();
+	bt2.set_immutable();
+
+	btod_copy<2> cp1(bt1);
+	btod_copy<2> cp2(bt2);
+	cp1.perform(bt3_ref);
+	cp2.perform(bt3_ref, 1.0);
+
+	btod_sum<2> sum(cp1);
+	sum.add_op(cp2);
+	sum.perform(bt3);
+
+	symmetry<2, double> sym3(bis), sym3_ref(bis);
+	{
+		block_tensor_ctrl<2, double> ctrl3(bt3);
+		so_copy<2, double>(ctrl3.req_const_symmetry()).perform(sym3);
+	}
+
+	compare_ref<2>::compare(testname, sym3, sym3_ref);
+	compare_ref<2>::compare(testname, bt3, bt3_ref, 1e-14);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
