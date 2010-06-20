@@ -4,7 +4,6 @@
 #include "defs.h"
 #include "exception.h"
 #include "timings.h"
-#include "core/direct_tensor_operation.h"
 #include "core/tensor_i.h"
 #include "core/tensor_ctrl.h"
 
@@ -34,9 +33,7 @@ namespace libtensor {
 
 	\ingroup libtensor
  **/
-class tod_mkdelta :
-	public direct_tensor_operation<2, double>,
-	public timings<tod_mkdelta> {
+class tod_mkdelta : public timings<tod_mkdelta> {
 
 public:
 	static const char *k_clazz; //!< Class name
@@ -57,19 +54,13 @@ public:
 
 	/**	\brief Virtual destructor
 	 **/
-	virtual ~tod_mkdelta();
+	~tod_mkdelta();
 
 	//@}
 
 
-	//!	\name Implementation of
-	//!		libtensor::direct_tensor_operation<2, double>
-	//@{
-
-	virtual void prefetch() throw(exception);
-	virtual void perform(tensor_i<2, double> &delta) throw(exception);
-
-	//@}
+	void prefetch() throw(exception);
+	void perform(tensor_i<2, double> &delta) throw(exception);
 };
 
 } // namespace libtensor

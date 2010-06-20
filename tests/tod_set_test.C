@@ -1,4 +1,6 @@
-#include <libtensor.h>
+#include <libvmm/std_allocator.h>
+#include <libtensor/core/tensor.h>
+#include <libtensor/tod/tod_set.h>
 #include "tod_set_test.h"
 
 namespace libtensor {

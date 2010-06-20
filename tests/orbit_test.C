@@ -1,5 +1,7 @@
 #include <sstream>
-#include <libtensor.h>
+#include <libtensor/core/orbit.h>
+#include <libtensor/btod/transf_double.h>
+#include <libtensor/symmetry/se_perm.h>
 #include "orbit_test.h"
 
 namespace libtensor {
@@ -77,10 +79,9 @@ void orbit_test::test_2() throw(libtest::test_exception) {
 	bis.split(msk, 1);
 	bis.split(msk, 2);
 	symmetry<2, double> sym(bis);
-	mask<2> cycle_msk;
-	cycle_msk[0] = true; cycle_msk[1] = true;
-	symel_cycleperm<2, double> cycle(2, cycle_msk);
-	sym.add_element(cycle);
+	permutation<2> perm; perm.permute(0, 1);
+	se_perm<2, double> cycle(perm, true);
+	sym.insert(cycle);
 
 	index<2> io;
 	do {
@@ -149,10 +150,9 @@ void orbit_test::test_3() throw(libtest::test_exception) {
 	bis.split(msk, 1);
 	bis.split(msk, 2);
 	symmetry<4, double> sym(bis);
-	mask<4> cycle_msk;
-	cycle_msk[0] = true; cycle_msk[1] = true;
-	symel_cycleperm<4, double> cycle(2, cycle_msk);
-	sym.add_element(cycle);
+	permutation<4> perm; perm.permute(0, 1);
+	se_perm<4, double> cycle(perm, true);
+	sym.insert(cycle);
 
 	index<4> io;
 	do {
@@ -221,10 +221,10 @@ void orbit_test::test_4() throw(libtest::test_exception) {
 	bis.split(msk, 1);
 	bis.split(msk, 2);
 	symmetry<4, double> sym(bis);
-	mask<4> cycle_msk;
-	cycle_msk[1] = true; cycle_msk[2] = true;
-	symel_cycleperm<4, double> cycle(2, cycle_msk);
-	sym.add_element(cycle);
+	permutation<4> perm;
+	perm.permute(1, 2);
+	se_perm<4, double> cycle(perm, true);
+	sym.insert(cycle);
 
 	index<4> io;
 	do {
@@ -293,10 +293,10 @@ void orbit_test::test_5() throw(libtest::test_exception) {
 	bis.split(msk, 1);
 	bis.split(msk, 2);
 	symmetry<4, double> sym(bis);
-	mask<4> cycle_msk;
-	cycle_msk[0] = true; cycle_msk[1] = true; cycle_msk[2] = true;
-	symel_cycleperm<4, double> cycle(3, cycle_msk);
-	sym.add_element(cycle);
+	permutation<4> perm;
+	perm.permute(0, 1).permute(1, 2);
+	se_perm<4, double> cycle(perm, true);
+	sym.insert(cycle);
 
 	index<4> io;
 	do {
@@ -376,15 +376,13 @@ void orbit_test::test_6() throw(libtest::test_exception) {
 	bis.split(msk, 1);
 	bis.split(msk, 2);
 	symmetry<4, double> sym(bis);
-	mask<4> cycle_msk;
-	cycle_msk[0] = true; cycle_msk[1] = true;
-	cycle_msk[2] = false; cycle_msk[3] = false;
-	symel_cycleperm<4, double> cycle1(2, cycle_msk);
-	cycle_msk[0] = false; cycle_msk[1] = false;
-	cycle_msk[2] = true; cycle_msk[3] = true;
-	symel_cycleperm<4, double> cycle2(2, cycle_msk);
-	sym.add_element(cycle1);
-	sym.add_element(cycle2);
+	permutation<4> perm1, perm2;
+	perm1.permute(0, 1);
+	perm2.permute(2, 3);	
+	se_perm<4, double> cycle1(perm1, true);
+	se_perm<4, double> cycle2(perm2, true);
+	sym.insert(cycle1);
+	sym.insert(cycle2);
 
 	index<4> io;
 	do {
@@ -467,12 +465,13 @@ void orbit_test::test_7() throw(libtest::test_exception) {
 	bis.split(msk, 1);
 	bis.split(msk, 2);
 	symmetry<4, double> sym(bis);
-	mask<4> cycle_msk;
-	cycle_msk[0] = true; cycle_msk[1] = true; cycle_msk[2] = true;
-	symel_cycleperm<4, double> cycle1(3, cycle_msk);
-	symel_cycleperm<4, double> cycle2(2, cycle_msk);
-	sym.add_element(cycle1);
-	sym.add_element(cycle2);
+	permutation<4> perm1, perm2;
+	perm1.permute(0, 1).permute(1, 2);
+	perm2.permute(0, 1);
+	se_perm<4, double> cycle1(perm1, true);
+	se_perm<4, double> cycle2(perm2, true);
+	sym.insert(cycle1);
+	sym.insert(cycle2);
 
 	index<4> io;
 	do {
@@ -553,13 +552,13 @@ void orbit_test::test_8() throw(libtest::test_exception) {
 	bis.split(msk, 1);
 	bis.split(msk, 2);
 	symmetry<4, double> sym(bis);
-	mask<4> cycle_msk;
-	cycle_msk[0] = true; cycle_msk[1] = true;
-	cycle_msk[2] = true; cycle_msk[3] = true;
-	symel_cycleperm<4, double> cycle1(4, cycle_msk);
-	symel_cycleperm<4, double> cycle2(2, cycle_msk);
-	sym.add_element(cycle1);
-	sym.add_element(cycle2);
+	permutation<4> perm1, perm2;
+	perm1.permute(0, 1).permute(1, 2).permute(2, 3);
+	perm2.permute(0, 1);
+	se_perm<4, double> cycle1(perm1, true);
+	se_perm<4, double> cycle2(perm2, true);
+	sym.insert(cycle1);
+	sym.insert(cycle2);
 
 	index<4> io;
 	do {

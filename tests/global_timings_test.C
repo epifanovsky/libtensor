@@ -1,7 +1,6 @@
-#include <libtensor.h>
+#include <libtensor/timer.h>
+#include <libtensor/global_timings.h>
 #include "global_timings_test.h"
-#include "../timer.h"
-#include "../global_timings.h"
 
 namespace libtensor {
 
@@ -15,15 +14,15 @@ void global_timings_test::perform() throw(libtest::test_exception) {
 	timer t1, t2, t3;
 	time_diff_t r1, r2, r3;
 	global_timings& gt=global_timings::get_instance();
-	
-	t1.start(); wait( 0.1 ); t1.stop(); 
+
+	t1.start(); wait( 0.1 ); t1.stop();
 	r1=t1.duration(); gt.add_to_timer("t1",t1);
-	
+
 	t2.start(); wait(0.2); t2.stop();
 	r2=t2.duration(); gt.add_to_timer("t2",t2);
-	
+
 	r1+=t2.duration(); gt.add_to_timer("t1",t2);
-	
+
 	t3.start(); wait(0.3); t3.stop();
 	r3=t3.duration(); gt.add_to_timer("t3",t3);
 

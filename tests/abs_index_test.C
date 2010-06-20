@@ -1,4 +1,4 @@
-#include <libtensor.h>
+#include <libtensor/core/abs_index.h>
 #include "abs_index_test.h"
 
 namespace libtensor {

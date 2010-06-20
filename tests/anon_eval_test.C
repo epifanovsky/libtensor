@@ -1,4 +1,7 @@
-#include <libtensor.h>
+#include <libtensor/btod/btod_random.h>
+#include <libtensor/symmetry/se_perm.h>
+#include <libtensor/iface/iface.h>
+#include <libtensor/iface/expr/anon_eval.h>
 #include "anon_eval_test.h"
 #include "compare_ref.h"
 
@@ -7,19 +10,31 @@ namespace libtensor {
 
 void anon_eval_test::perform() throw(libtest::test_exception) {
 
-	test_copy_1();
-	test_copy_2();
-	test_copy_3();
-	test_copy_4();
-	test_copy_5();
-	test_copy_6();
+	libvmm::vm_allocator<double>::vmm().init(
+		16, 16, 16777216, 16777216, 0.90, 0.05);
 
-	test_add_1();
+	try {
 
-	test_contr_1();
-	test_contr_2();
+		//~ test_copy_1();
+		//~ test_copy_2();
+		//~ test_copy_3();
+		//~ test_copy_4();
+		//~ test_copy_5();
+		//~ test_copy_6();
 
-	test_mixed_1();
+		//~ test_add_1();
+
+		//~ test_contr_1();
+		test_contr_2();
+
+		test_mixed_1();
+
+	} catch(...) {
+		libvmm::vm_allocator<double>::vmm().shutdown();
+		throw;
+	}
+
+	libvmm::vm_allocator<double>::vmm().shutdown();
 }
 
 
@@ -202,13 +217,11 @@ void anon_eval_test::test_copy_5() throw(libtest::test_exception) {
 	bispace<4> sijab(si&sj|sa&sb);
 
 	btensor<4> tp(sijab);
-	mask<4> msk1, msk2;
-	msk1[0] = true; msk1[1] = true;
-	msk2[2] = true; msk2[3] = true;
-	symel_cycleperm<4, double> cycle1(2, msk1), cycle2(2, msk2);
+	se_perm<4, double> cycle1(permutation<4>().permute(0, 1), true);
+	se_perm<4, double> cycle2(permutation<4>().permute(2, 3), true);
 	block_tensor_ctrl<4, double> ctrl(tp);
-	ctrl.req_sym_add_element(cycle1);
-	ctrl.req_sym_add_element(cycle2);
+	ctrl.req_symmetry().insert(cycle1);
+	ctrl.req_symmetry().insert(cycle2);
 	btod_random<4>().perform(tp);
 
 	block_tensor<4, double, allocator_t> tp_ref(sijab.get_bis());
@@ -243,13 +256,11 @@ void anon_eval_test::test_copy_6() throw(libtest::test_exception) {
 	bispace<4> sijab(si&sj|sa&sb), siajb(si|sa|sj|sb, si&sj|sa&sb);
 
 	btensor<4> tp(sijab);
-	mask<4> msk1, msk2;
-	msk1[0] = true; msk1[1] = true;
-	msk2[2] = true; msk2[3] = true;
-	symel_cycleperm<4, double> cycle1(2, msk1), cycle2(2, msk2);
+	se_perm<4, double> cycle1(permutation<4>().permute(0, 1), true);
+	se_perm<4, double> cycle2(permutation<4>().permute(2, 3), true);
 	block_tensor_ctrl<4, double> ctrl(tp);
-	ctrl.req_sym_add_element(cycle1);
-	ctrl.req_sym_add_element(cycle2);
+	ctrl.req_symmetry().insert(cycle1);
+	ctrl.req_symmetry().insert(cycle2);
 	btod_random<4>().perform(tp);
 
 	block_tensor<4, double, allocator_t> tp_ref(siajb.get_bis());
@@ -283,7 +294,6 @@ void anon_eval_test::test_add_1() throw(libtest::test_exception) {
 	sj.split(3);
 	sa.split(6);
 	sb.split(6);
-//	bispace<4> sijab(si|sj|sa|sb);
 	bispace<4> sijab(si&sj|sa&sb);
 	btensor<4> tp(sijab), tq(sijab);
 	btod_random<4>().perform(tp);
@@ -320,7 +330,6 @@ void anon_eval_test::test_contr_1() throw(libtest::test_exception) {
 	sj.split(3);
 	sa.split(6);
 	sb.split(6);
-//	bispace<4> sijab(si|sj|sa|sb), sijkl(si|sj|si|sj);
 	bispace<4> sijab(si&sj|sa&sb), sijkl(si&sj&si&sj);
 
 	btensor<4> tp(sijab), tq(sijab);
@@ -361,7 +370,6 @@ void anon_eval_test::test_contr_2() throw(libtest::test_exception) {
 	sj.split(3);
 	sa.split(6);
 	sb.split(6);
-//	bispace<4> sijab(si|sj|sa|sb), sijkl(si|sj|si|sj);
 	bispace<4> sijab(si&sj|sa&sb), sijkl(si&sj&si&sj);
 
 	btensor<4> tp(sijab), tq1(sijab), tq2(sijab);
@@ -404,7 +412,6 @@ void anon_eval_test::test_mixed_1() throw(libtest::test_exception) {
 	sj.split(3);
 	sa.split(6);
 	sb.split(6);
-//	bispace<4> sijab(si|sj|sa|sb), sijkl(si|sj|si|sj);
 	bispace<4> sijab(si&sj|sa&sb), sijkl(si&sj&si&sj);
 
 	btensor<4> tp(sijab), tq(sijab), tr(sijkl);

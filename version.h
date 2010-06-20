@@ -21,10 +21,10 @@ namespace libtensor {
 class version {
 private:
 	//!	Major %version number
-	static const unsigned m_major;
+	static const unsigned m_major = 2;
 
 	//!	Minor %version number
-	static const unsigned m_minor;
+	static const unsigned m_minor = 1;
 
 	//!	Version status
 	static const char *m_status;
@@ -57,7 +57,6 @@ public:
 		return m_string;
 	}
 };
-
 
 } // namespace libtensor
 

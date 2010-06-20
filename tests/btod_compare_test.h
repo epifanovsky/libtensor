@@ -2,7 +2,6 @@
 #define LIBTENSOR_BTOD_COMPARE_TEST_H
 
 #include <libtest/unit_test.h>
-#include <libtensor.h>
 
 namespace libtensor {
 

@@ -4,7 +4,6 @@
 #include "defs.h"
 #include "exception.h"
 #include "core/tensor_ctrl.h"
-#include "core/direct_tensor_operation.h"
 
 namespace libtensor {
 
@@ -13,7 +12,7 @@ namespace libtensor {
 	\ingroup libtensor_tod
 **/
 template<size_t N>
-class tod_set : public direct_tensor_operation<N,double> {
+class tod_set {
 private:
 	double m_val; //!< Value
 
@@ -40,7 +39,7 @@ public:
 	**/
 	void perform(tensor_i<N,double> &t) throw(exception);
 
-	virtual void prefetch() throw(exception);
+	void prefetch() throw(exception);
 
 	//@}
 };

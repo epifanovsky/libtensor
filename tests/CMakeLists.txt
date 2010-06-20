@@ -2,6 +2,7 @@ set(SRC
 	libtensor_tests.C
 	libtensor_suite.C
 	abs_index_test.C
+	addition_schedule_test.C
 	anon_eval_test.C
 	bispace_test.C
 	bispace_expr_test.C
@@ -13,21 +14,36 @@ set(SRC
 	btod_compare_test.C
 	btod_contract2_test.C
 	btod_copy_test.C
+	btod_diag_test.C
+	btod_diagonalize_test.C
+	btod_dirsum_test.C
 	btod_dotprod_test.C
+	btod_extract_test.C
 	btod_import_raw_test.C
-	btod_mkdelta_test.C
+	btod_mult_test.C
+	btod_mult1_test.C
 	btod_random_test.C
 	btod_read_test.C
+	btod_scale_test.C
+	btod_select_test.C
+	btod_set_test.C
 	btod_set_diag_test.C
+	btod_set_elem_test.C
 	btod_sum_test.C
+	btod_symmetrize_test.C
+	btod_trace_test.C
+	btod_tridiagonalize_test.C
 	contract_test.C
 	contraction2_test.C
 	contraction2_list_builder_test.C
+	diag_test.C
 	dimensions_test.C
+	direct_block_tensor_test.C
 	direct_btensor_test.C
 	direct_product_test.C
-	direct_tensor_test.C
+	dirsum_test.C
 	dot_product_test.C
+	expr_test.C
 	global_timings_test.C
 	immutable_test.C
 	index_test.C
@@ -40,13 +56,26 @@ set(SRC
 	orbit_list_test.C
 	permutation_test.C
 	permutation_builder_test.C
+	permutation_group_test.C
 	sequence_test.C
-	so_projdown_test.C
-	so_projup_test.C
-	symel_cycleperm_test.C
+	se_part_test.C
+	se_perm_test.C
+	so_add_test.C
+	so_add_impl_perm_test.C
+	so_copy_test.C
+	so_mult_test.C
+	so_mult_impl_perm_test.C
+	so_proj_down_test.C
+	so_proj_down_impl_perm_test.C
+	so_proj_up_test.C
+	so_proj_up_impl_perm_test.C
+	so_symmetrize_test.C
+	so_union_test.C
+	so_union_impl_perm_test.C
 	symm_test.C
 	symmetry_test.C
-	symmetry_element_base_test.C
+	symmetry_element_set_test.C
+	symmetry_element_set_adapter_test.C
 	tensor_test.C
 	timer_test.C
 	timings_test.C
@@ -55,27 +84,35 @@ set(SRC
 	tod_compare_test.C
 	tod_contract2_test.C
 	tod_copy_test.C
-	tod_delta_denom2_test.C
+	tod_diag_test.C
+	tod_dirsum_test.C
 	tod_dotprod_test.C
+	tod_extract_test.C
 	tod_import_raw_test.C
-	tod_mkdelta_test.C
+	tod_mult_test.C
+	tod_mult1_test.C
 	tod_random_test.C
+	tod_scale_test.C
+	tod_scatter_test.C
+	tod_select_test.C
 	tod_set_test.C
 	tod_set_diag_test.C
+	tod_set_elem_test.C
 	tod_sum_test.C
-	tod_solve_test.C
 	tod_symcontract2_test.C
+	tod_trace_test.C
+	trace_test.C
 	version_test.C
 )
 add_executable(libtensor_tests ${SRC})
 
 include(${LIBTEST_DIR}/cmake/SetupLibTest.txt)
-#include(${LIBVMM_DIR}/cmake/SetupLibVmm.txt)
-#include(${LIBTENSOR_DIR}/cmake/DepsLibTensor.txt)
 
-include_directories(${LIBTENSOR_DIR})
-add_definitions(-DLIBTENSOR_DEBUG)
-add_definitions(-g)
+set_property(TARGET libtensor_tests APPEND PROPERTY
+	COMPILE_DEFINITIONS_DEBUG LIBVMM_DEBUG)
+set_property(TARGET libtensor_tests APPEND PROPERTY
+	COMPILE_DEFINITIONS_DEBUG LIBTENSOR_DEBUG)
+
 target_link_libraries(libtensor_tests
 	tensor ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} test)
 

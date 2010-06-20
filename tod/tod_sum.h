@@ -12,7 +12,7 @@ namespace libtensor {
 	\ingroup libtensor
 **/
 template<size_t N>
-class tod_sum : public direct_tensor_operation<N,double> {
+class tod_sum {
 private:
 	struct list_node {
 		tod_additive<N> &m_op;
@@ -21,7 +21,7 @@ private:
 		list_node(tod_additive<N> &op, double c);
 	};
 
-	direct_tensor_operation<N,double> &m_baseop; //!< Base operation
+	tod_additive<N> &m_baseop; //!< Base operation
 	struct list_node *m_head; //!< Head of the list of additional operations
 	struct list_node *m_tail; //!< Tail of the list of additional operations
 
@@ -31,7 +31,7 @@ public:
 
 	/**	\brief Default constructor
 	**/
-	tod_sum(direct_tensor_operation<N,double> &op);
+	tod_sum(tod_additive<N> &op);
 
 	/**	\brief Virtual destructor
 	**/
@@ -39,11 +39,8 @@ public:
 
 	//@}
 
-	//!	\name Implementation of direct_tensor_operation<T>
-	//@{
-	virtual void prefetch() throw(exception);
-	virtual void perform(tensor_i<N,double> &t) throw(exception);
-	//@}
+	void prefetch() throw(exception);
+	void perform(tensor_i<N,double> &t) throw(exception);
 
 	/**	\brief Adds an operation to the sequence
 	**/
@@ -51,7 +48,7 @@ public:
 };
 
 template<size_t N>
-inline tod_sum<N>::tod_sum(direct_tensor_operation<N,double> &op) :
+inline tod_sum<N>::tod_sum(tod_additive<N> &op) :
 	m_baseop(op), m_head(NULL), m_tail(NULL) {
 }
 

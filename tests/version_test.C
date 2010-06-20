@@ -1,5 +1,5 @@
 #include <sstream>
-#include <libtensor.h>
+#include <libtensor/version.h>
 #include "version_test.h"
 
 namespace libtensor {

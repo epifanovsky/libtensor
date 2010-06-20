@@ -20,7 +20,9 @@ private:
 	void test_asymm2_contr_tt_2() throw(libtest::test_exception);
 	void test_asymm2_contr_tt_3() throw(libtest::test_exception);
 	void test_asymm2_contr_tt_4() throw(libtest::test_exception);
+	void test_asymm2_contr_tt_5() throw(libtest::test_exception);
 	void test_asymm2_contr_ee_1() throw(libtest::test_exception);
+	void test_asymm2_contr_ee_2() throw(libtest::test_exception);
 
 	void test_symm22_t_1() throw(libtest::test_exception);
 	void test_asymm22_t_1() throw(libtest::test_exception);

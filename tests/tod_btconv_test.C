@@ -2,8 +2,13 @@
 #include <cstdlib>
 #include <ctime>
 #include <sstream>
-#include <libtensor.h>
 #include <libvmm/std_allocator.h>
+#include <libtensor/core/block_tensor.h>
+#include <libtensor/core/tensor.h>
+#include <libtensor/symmetry/se_perm.h>
+#include <libtensor/tod/tod_add.h>
+#include <libtensor/tod/tod_btconv.h>
+#include <libtensor/tod/tod_random.h>
 #include "compare_ref.h"
 #include "tod_btconv_test.h"
 
@@ -11,8 +16,6 @@ namespace libtensor {
 
 
 void tod_btconv_test::perform() throw(libtest::test_exception) {
-
-	srand48(time(NULL));
 
 	test_1();
 	test_2();
@@ -25,6 +28,7 @@ void tod_btconv_test::perform() throw(libtest::test_exception) {
 	test_9();
 	test_10();
 	test_11();
+	test_12();
 
 }
 
@@ -57,21 +61,24 @@ void tod_btconv_test::test_1() throw(libtest::test_exception) {
 	block_tensor_ctrl_t btctrl(bt);
 
 	tensor_t t(dims), t_ref(dims);
-	tensor_ctrl_t tctrl(t), tctrl_ref(t_ref);
 
-	double *pt = tctrl.req_dataptr();
-	double *pt_ref = tctrl_ref.req_dataptr();
+	{
+		tensor_ctrl_t tctrl(t), tctrl_ref(t_ref);
 
-	//	Fill in random input, generate reference
+		double *pt = tctrl.req_dataptr();
+		double *pt_ref = tctrl_ref.req_dataptr();
 
-	size_t sz = dims.get_size();
-	for(size_t i = 0; i < sz; i++) {
-		pt[i] = drand48();
-		pt_ref[i] = 0.0;
+		//	Fill in random input, generate reference
+
+		size_t sz = dims.get_size();
+		for(size_t i = 0; i < sz; i++) {
+			pt[i] = drand48();
+			pt_ref[i] = 0.0;
+		}
+
+		tctrl.ret_dataptr(pt); pt = NULL;
+		tctrl_ref.ret_dataptr(pt_ref); pt_ref = NULL;
 	}
-
-	tctrl.ret_dataptr(pt); pt = NULL;
-	tctrl_ref.ret_dataptr(pt_ref); pt_ref = NULL;
 
 	t_ref.set_immutable();
 	bt.set_immutable();
@@ -119,8 +126,9 @@ void tod_btconv_test::test_2() throw(libtest::test_exception) {
 	block_tensor_ctrl_t btctrl(bt);
 
 	tensor_t t(dims), t_ref(dims);
-	tensor_ctrl_t tctrl(t), tctrl_ref(t_ref);
 
+	{
+	tensor_ctrl_t tctrl(t), tctrl_ref(t_ref);
 	double *pt = tctrl.req_dataptr();
 	double *pt_ref = tctrl_ref.req_dataptr();
 
@@ -136,19 +144,22 @@ void tod_btconv_test::test_2() throw(libtest::test_exception) {
 	index<2> istart = bis.get_block_start(i_00);
 	dimensions<2> dims_00 = bis.get_block_dims(i_00);
 	tensor_i<2, double> &blk_00 = btctrl.req_block(i_00);
-	tensor_ctrl_t tctrl_00(blk_00);
-	double *p_00 = tctrl_00.req_dataptr();
-	do {
-		index<2> iii(istart);
-		for(size_t j = 0; j < 2; j++) iii[j] += ii[j];
-		pt_ref[dims.abs_index(iii)] = p_00[dims_00.abs_index(ii)] =
-			drand48();
-	} while(dims_00.inc_index(ii));
-	tctrl_00.ret_dataptr(p_00);
+	{
+		tensor_ctrl_t tctrl_00(blk_00);
+		double *p_00 = tctrl_00.req_dataptr();
+		do {
+			index<2> iii(istart);
+			for(size_t j = 0; j < 2; j++) iii[j] += ii[j];
+			pt_ref[dims.abs_index(iii)] =
+				p_00[dims_00.abs_index(ii)] = drand48();
+		} while(dims_00.inc_index(ii));
+		tctrl_00.ret_dataptr(p_00);
+	}
 	btctrl.ret_block(i_00);
 
 	tctrl.ret_dataptr(pt); pt = NULL;
 	tctrl_ref.ret_dataptr(pt_ref); pt_ref = NULL;
+	}
 
 	t_ref.set_immutable();
 	bt.set_immutable();
@@ -196,6 +207,8 @@ void tod_btconv_test::test_3() throw(libtest::test_exception) {
 	block_tensor_ctrl_t btctrl(bt);
 
 	tensor_t t(dims), t_ref(dims);
+
+	{
 	tensor_ctrl_t tctrl(t), tctrl_ref(t_ref);
 
 	double *pt = tctrl.req_dataptr();
@@ -214,19 +227,22 @@ void tod_btconv_test::test_3() throw(libtest::test_exception) {
 	index<2> istart = bis.get_block_start(i_11);
 	dimensions<2> dims_11 = bis.get_block_dims(i_11);
 	tensor_i<2, double> &blk_11 = btctrl.req_block(i_11);
-	tensor_ctrl_t tctrl_11(blk_11);
-	double *p_11 = tctrl_11.req_dataptr();
-	do {
-		index<2> iii(istart);
-		for(size_t j = 0; j < 2; j++) iii[j] += ii[j];
-		pt_ref[dims.abs_index(iii)] = p_11[dims_11.abs_index(ii)] =
-			drand48();
-	} while(dims_11.inc_index(ii));
-	tctrl_11.ret_dataptr(p_11);
+	{
+		tensor_ctrl_t tctrl_11(blk_11);
+		double *p_11 = tctrl_11.req_dataptr();
+		do {
+			index<2> iii(istart);
+			for(size_t j = 0; j < 2; j++) iii[j] += ii[j];
+			pt_ref[dims.abs_index(iii)] =
+				p_11[dims_11.abs_index(ii)] = drand48();
+		} while(dims_11.inc_index(ii));
+		tctrl_11.ret_dataptr(p_11);
+	}
 	btctrl.ret_block(i_11);
 
 	tctrl.ret_dataptr(pt); pt = NULL;
 	tctrl_ref.ret_dataptr(pt_ref); pt_ref = NULL;
+	}
 
 	t_ref.set_immutable();
 	bt.set_immutable();
@@ -274,6 +290,8 @@ void tod_btconv_test::test_4() throw(libtest::test_exception) {
 	block_tensor_ctrl_t btctrl(bt);
 
 	tensor_t t(dims), t_ref(dims);
+
+	{
 	tensor_ctrl_t tctrl(t), tctrl_ref(t_ref);
 
 	double *pt = tctrl.req_dataptr();
@@ -296,33 +314,38 @@ void tod_btconv_test::test_4() throw(libtest::test_exception) {
 	double *p = NULL;
 
 	tensor_i<2, double> &blk_00 = btctrl.req_block(i_00);
-	tensor_ctrl_t tctrl_00(blk_00);
-	p = tctrl_00.req_dataptr();
-	ii[0] = 0; ii[1] = 0;
-	do {
-		index<2> iii(istart_00);
-		for(size_t j = 0; j < 2; j++) iii[j] += ii[j];
-		pt_ref[dims.abs_index(iii)] = p[dims_00.abs_index(ii)] =
-			drand48();
-	} while(dims_00.inc_index(ii));
-	tctrl_00.ret_dataptr(p);
+	{
+		tensor_ctrl_t tctrl_00(blk_00);
+		p = tctrl_00.req_dataptr();
+		ii[0] = 0; ii[1] = 0;
+		do {
+			index<2> iii(istart_00);
+			for(size_t j = 0; j < 2; j++) iii[j] += ii[j];
+			pt_ref[dims.abs_index(iii)] = p[dims_00.abs_index(ii)] =
+				drand48();
+		} while(dims_00.inc_index(ii));
+		tctrl_00.ret_dataptr(p);
+	}
 	btctrl.ret_block(i_00);
 
 	tensor_i<2, double> &blk_11 = btctrl.req_block(i_11);
-	tensor_ctrl_t tctrl_11(blk_11);
-	p = tctrl_11.req_dataptr();
-	ii[0] = 0; ii[1] = 0;
-	do {
-		index<2> iii(istart_11);
-		for(size_t j = 0; j < 2; j++) iii[j] += ii[j];
-		pt_ref[dims.abs_index(iii)] = p[dims_11.abs_index(ii)] =
-			drand48();
-	} while(dims_11.inc_index(ii));
-	tctrl_11.ret_dataptr(p);
+	{
+		tensor_ctrl_t tctrl_11(blk_11);
+		p = tctrl_11.req_dataptr();
+		ii[0] = 0; ii[1] = 0;
+		do {
+			index<2> iii(istart_11);
+			for(size_t j = 0; j < 2; j++) iii[j] += ii[j];
+			pt_ref[dims.abs_index(iii)] = p[dims_11.abs_index(ii)] =
+				drand48();
+		} while(dims_11.inc_index(ii));
+		tctrl_11.ret_dataptr(p);
+	}
 	btctrl.ret_block(i_11);
 
 	tctrl.ret_dataptr(pt); pt = NULL;
 	tctrl_ref.ret_dataptr(pt_ref); pt_ref = NULL;
+	}
 
 	t_ref.set_immutable();
 	bt.set_immutable();
@@ -370,12 +393,13 @@ void tod_btconv_test::test_5() throw(libtest::test_exception) {
 	block_tensor_t bt(bis);
 	block_tensor_ctrl_t btctrl(bt);
 
-	mask<2> msk;
-	msk[0] = true; msk[1] = true;
-	symel_cycleperm<2, double> cycle(2, msk);
-	btctrl.req_sym_add_element(cycle);
+	permutation<2> perm1; perm1.permute(0, 1);
+	se_perm<2, double> cycle(perm1, true);
+	btctrl.req_symmetry().insert(cycle);
 
 	tensor_t t(dims), t_ref(dims);
+
+	{
 	tensor_ctrl_t tctrl(t), tctrl_ref(t_ref);
 
 	double *pt = tctrl.req_dataptr();
@@ -399,45 +423,53 @@ void tod_btconv_test::test_5() throw(libtest::test_exception) {
 	permutation<2> perm; perm.permute(0, 1);
 
 	tensor_i<2, double> &blk_00 = btctrl.req_block(i_00);
-	tensor_ctrl_t tctrl_00(blk_00);
-	p = tctrl_00.req_dataptr();
-	ii[0] = 0; ii[1] = 0;
-	do {
-		if(ii[0] > ii[1]) continue;
-		index<2> ii1(ii), ii2(ii); ii2.permute(perm);
-		index<2> iii1(istart_00), iii2(istart_00);
-		for(size_t j = 0; j < 2; j++) {
-			iii1[j] += ii1[j];
-			iii2[j] += ii2[j];
-		}
-		double d = drand48();
-		pt_ref[dims.abs_index(iii1)] = pt_ref[dims.abs_index(iii2)] = d;
-		p[dims_00.abs_index(ii1)] = p[dims_00.abs_index(ii2)] = d;
-	} while(dims_00.inc_index(ii));
-	tctrl_00.ret_dataptr(p);
+	{
+		tensor_ctrl_t tctrl_00(blk_00);
+		p = tctrl_00.req_dataptr();
+		ii[0] = 0; ii[1] = 0;
+		do {
+			if(ii[0] > ii[1]) continue;
+			index<2> ii1(ii), ii2(ii); ii2.permute(perm);
+			index<2> iii1(istart_00), iii2(istart_00);
+			for(size_t j = 0; j < 2; j++) {
+				iii1[j] += ii1[j];
+				iii2[j] += ii2[j];
+			}
+			double d = drand48();
+			pt_ref[dims.abs_index(iii1)] =
+				pt_ref[dims.abs_index(iii2)] = d;
+			p[dims_00.abs_index(ii1)] =
+				p[dims_00.abs_index(ii2)] = d;
+		} while(dims_00.inc_index(ii));
+		tctrl_00.ret_dataptr(p);
+	}
 	btctrl.ret_block(i_00);
 
 	tensor_i<2, double> &blk_11 = btctrl.req_block(i_11);
-	tensor_ctrl_t tctrl_11(blk_11);
-	p = tctrl_11.req_dataptr();
-	ii[0] = 0; ii[1] = 0;
-	do {
-		if(ii[0] > ii[1]) continue;
-		index<2> ii1(ii), ii2(ii); ii2.permute(perm);
-		index<2> iii1(istart_11), iii2(istart_11);
-		for(size_t j = 0; j < 2; j++) {
-			iii1[j] += ii1[j];
-			iii2[j] += ii2[j];
-		}
-		pt_ref[dims.abs_index(iii1)] = p[dims_11.abs_index(ii1)] =
-			pt_ref[dims.abs_index(iii2)] =
-			p[dims_11.abs_index(ii2)] = drand48();
-	} while(dims_11.inc_index(ii));
-	tctrl_11.ret_dataptr(p);
+	{
+		tensor_ctrl_t tctrl_11(blk_11);
+		p = tctrl_11.req_dataptr();
+		ii[0] = 0; ii[1] = 0;
+		do {
+			if(ii[0] > ii[1]) continue;
+			index<2> ii1(ii), ii2(ii); ii2.permute(perm);
+			index<2> iii1(istart_11), iii2(istart_11);
+			for(size_t j = 0; j < 2; j++) {
+				iii1[j] += ii1[j];
+				iii2[j] += ii2[j];
+			}
+			pt_ref[dims.abs_index(iii1)] =
+				p[dims_11.abs_index(ii1)] =
+				pt_ref[dims.abs_index(iii2)] =
+				p[dims_11.abs_index(ii2)] = drand48();
+		} while(dims_11.inc_index(ii));
+		tctrl_11.ret_dataptr(p);
+	}
 	btctrl.ret_block(i_11);
 
 	tctrl.ret_dataptr(pt); pt = NULL;
 	tctrl_ref.ret_dataptr(pt_ref); pt_ref = NULL;
+	}
 
 	t_ref.set_immutable();
 	bt.set_immutable();
@@ -486,6 +518,8 @@ void tod_btconv_test::test_6() throw(libtest::test_exception) {
 	block_tensor_ctrl_t btctrl(bt);
 
 	tensor_t t(dims), t_ref(dims);
+
+	{
 	tensor_ctrl_t tctrl(t), tctrl_ref(t_ref);
 
 	double *pt = tctrl.req_dataptr();
@@ -510,33 +544,38 @@ void tod_btconv_test::test_6() throw(libtest::test_exception) {
 	permutation<2> perm; perm.permute(0, 1);
 
 	tensor_i<2, double> &blk_01 = btctrl.req_block(i_01);
-	tensor_ctrl_t tctrl_01(blk_01);
-	p = tctrl_01.req_dataptr();
-	ii[0] = 0; ii[1] = 0;
-	do {
-		index<2> iii(istart_01);
-		for(size_t j = 0; j < 2; j++) iii[j] += ii[j];
-		pt_ref[dims.abs_index(iii)] = p[dims_01.abs_index(ii)] =
-			drand48();
-	} while(dims_01.inc_index(ii));
-	tctrl_01.ret_dataptr(p);
+	{
+		tensor_ctrl_t tctrl_01(blk_01);
+		p = tctrl_01.req_dataptr();
+		ii[0] = 0; ii[1] = 0;
+		do {
+			index<2> iii(istart_01);
+			for(size_t j = 0; j < 2; j++) iii[j] += ii[j];
+			pt_ref[dims.abs_index(iii)] = p[dims_01.abs_index(ii)] =
+				drand48();
+		} while(dims_01.inc_index(ii));
+		tctrl_01.ret_dataptr(p);
+	}
 	btctrl.ret_block(i_01);
 
 	tensor_i<2, double> &blk_10 = btctrl.req_block(i_10);
-	tensor_ctrl_t tctrl_10(blk_10);
-	p = tctrl_10.req_dataptr();
-	ii[0] = 0; ii[1] = 0;
-	do {
-		index<2> iii(istart_10);
-		for(size_t j = 0; j < 2; j++) iii[j] += ii[j];
-		pt_ref[dims.abs_index(iii)] = p[dims_10.abs_index(ii)] =
-			drand48();
-	} while(dims_10.inc_index(ii));
-	tctrl_10.ret_dataptr(p);
+	{
+		tensor_ctrl_t tctrl_10(blk_10);
+		p = tctrl_10.req_dataptr();
+		ii[0] = 0; ii[1] = 0;
+		do {
+			index<2> iii(istart_10);
+			for(size_t j = 0; j < 2; j++) iii[j] += ii[j];
+			pt_ref[dims.abs_index(iii)] = p[dims_10.abs_index(ii)] =
+				drand48();
+		} while(dims_10.inc_index(ii));
+		tctrl_10.ret_dataptr(p);
+	}
 	btctrl.ret_block(i_10);
 
 	tctrl.ret_dataptr(pt); pt = NULL;
 	tctrl_ref.ret_dataptr(pt_ref); pt_ref = NULL;
+	}
 
 	t_ref.set_immutable();
 	bt.set_immutable();
@@ -584,12 +623,13 @@ void tod_btconv_test::test_7() throw(libtest::test_exception) {
 	block_tensor_t bt(bis);
 	block_tensor_ctrl_t btctrl(bt);
 
-	mask<2> msk;
-	msk[0] = true; msk[1] = true;
-	symel_cycleperm<2, double> cycle(2, msk);
-	btctrl.req_sym_add_element(cycle);
+	permutation<2> perm1; perm1.permute(0, 1);
+	se_perm<2, double> cycle(perm1, true);
+	btctrl.req_symmetry().insert(cycle);
 
 	tensor_t t(dims), t_ref(dims);
+
+	{
 	tensor_ctrl_t tctrl(t), tctrl_ref(t_ref);
 
 	double *pt = tctrl.req_dataptr();
@@ -614,24 +654,28 @@ void tod_btconv_test::test_7() throw(libtest::test_exception) {
 	permutation<2> perm; perm.permute(0, 1);
 
 	tensor_i<2, double> &blk_01 = btctrl.req_block(i_01);
-	tensor_ctrl_t tctrl_01(blk_01);
-	p = tctrl_01.req_dataptr();
-	ii[0] = 0; ii[1] = 0;
-	do {
-		index<2> iii1(istart_01), iii2(istart_10);
-		index<2> ii2(ii); ii2.permute(perm);
-		for(size_t j = 0; j < 2; j++) {
-			iii1[j] += ii[j];
-			iii2[j] += ii2[j];
-		}
-		pt_ref[dims.abs_index(iii1)] = pt_ref[dims.abs_index(iii2)] =
-			p[dims_01.abs_index(ii)] = drand48();
-	} while(dims_01.inc_index(ii));
-	tctrl_01.ret_dataptr(p);
+	{
+		tensor_ctrl_t tctrl_01(blk_01);
+		p = tctrl_01.req_dataptr();
+		ii[0] = 0; ii[1] = 0;
+		do {
+			index<2> iii1(istart_01), iii2(istart_10);
+			index<2> ii2(ii); ii2.permute(perm);
+			for(size_t j = 0; j < 2; j++) {
+				iii1[j] += ii[j];
+				iii2[j] += ii2[j];
+			}
+			pt_ref[dims.abs_index(iii1)] =
+				pt_ref[dims.abs_index(iii2)] =
+				p[dims_01.abs_index(ii)] = drand48();
+		} while(dims_01.inc_index(ii));
+		tctrl_01.ret_dataptr(p);
+	}
 	btctrl.ret_block(i_01);
 
 	tctrl.ret_dataptr(pt); pt = NULL;
 	tctrl_ref.ret_dataptr(pt_ref); pt_ref = NULL;
+	}
 
 	t_ref.set_immutable();
 	bt.set_immutable();
@@ -679,12 +723,13 @@ void tod_btconv_test::test_8() throw(libtest::test_exception) {
 	block_tensor_t bt(bis);
 	block_tensor_ctrl_t btctrl(bt);
 
-	mask<2> msk;
-	msk[0] = true; msk[1] = true;
-	symel_cycleperm<2, double> cycle(2, msk);
-	btctrl.req_sym_add_element(cycle);
+	permutation<2> perm1; perm1.permute(0, 1);
+	se_perm<2, double> cycle(perm1, true);
+	btctrl.req_symmetry().insert(cycle);
 
 	tensor_t t(dims), t_ref(dims);
+
+	{
 	tensor_ctrl_t tctrl(t), tctrl_ref(t_ref);
 
 	double *pt = tctrl.req_dataptr();
@@ -714,62 +759,72 @@ void tod_btconv_test::test_8() throw(libtest::test_exception) {
 	permutation<2> perm; perm.permute(0, 1);
 
 	tensor_i<2, double> &blk_00 = btctrl.req_block(i_00);
-	tensor_ctrl_t tctrl_00(blk_00);
-	p = tctrl_00.req_dataptr();
-	ii[0] = 0; ii[1] = 0;
-	do {
-		if(ii[0] > ii[1]) continue;
-		index<2> ii1(ii), ii2(ii); ii2.permute(perm);
-		index<2> iii1(istart_00), iii2(istart_00);
-		for(size_t j = 0; j < 2; j++) {
-			iii1[j] += ii1[j];
-			iii2[j] += ii2[j];
-		}
-		pt_ref[dims.abs_index(iii1)] = p[dims_00.abs_index(ii1)] =
-			pt_ref[dims.abs_index(iii2)] =
-			p[dims_00.abs_index(ii2)] = drand48();
-	} while(dims_00.inc_index(ii));
-	tctrl_00.ret_dataptr(p);
+	{
+		tensor_ctrl_t tctrl_00(blk_00);
+		p = tctrl_00.req_dataptr();
+		ii[0] = 0; ii[1] = 0;
+		do {
+			if(ii[0] > ii[1]) continue;
+			index<2> ii1(ii), ii2(ii); ii2.permute(perm);
+			index<2> iii1(istart_00), iii2(istart_00);
+			for(size_t j = 0; j < 2; j++) {
+				iii1[j] += ii1[j];
+				iii2[j] += ii2[j];
+			}
+			pt_ref[dims.abs_index(iii1)] =
+				p[dims_00.abs_index(ii1)] =
+				pt_ref[dims.abs_index(iii2)] =
+				p[dims_00.abs_index(ii2)] = drand48();
+		} while(dims_00.inc_index(ii));
+		tctrl_00.ret_dataptr(p);
+	}
 	btctrl.ret_block(i_00);
 
 	tensor_i<2, double> &blk_01 = btctrl.req_block(i_01);
-	tensor_ctrl_t tctrl_01(blk_01);
-	p = tctrl_01.req_dataptr();
-	ii[0] = 0; ii[1] = 0;
-	do {
-		index<2> iii1(istart_01), iii2(istart_10);
-		index<2> ii2(ii); ii2.permute(perm);
-		for(size_t j = 0; j < 2; j++) {
-			iii1[j] += ii[j];
-			iii2[j] += ii2[j];
-		}
-		pt_ref[dims.abs_index(iii1)] = pt_ref[dims.abs_index(iii2)] =
-			p[dims_01.abs_index(ii)] = drand48();
-	} while(dims_01.inc_index(ii));
-	tctrl_01.ret_dataptr(p);
+	{
+		tensor_ctrl_t tctrl_01(blk_01);
+		p = tctrl_01.req_dataptr();
+		ii[0] = 0; ii[1] = 0;
+		do {
+			index<2> iii1(istart_01), iii2(istart_10);
+			index<2> ii2(ii); ii2.permute(perm);
+			for(size_t j = 0; j < 2; j++) {
+				iii1[j] += ii[j];
+				iii2[j] += ii2[j];
+			}
+			pt_ref[dims.abs_index(iii1)] =
+				pt_ref[dims.abs_index(iii2)] =
+				p[dims_01.abs_index(ii)] = drand48();
+		} while(dims_01.inc_index(ii));
+		tctrl_01.ret_dataptr(p);
+	}
 	btctrl.ret_block(i_01);
 
 	tensor_i<2, double> &blk_11 = btctrl.req_block(i_11);
-	tensor_ctrl_t tctrl_11(blk_11);
-	p = tctrl_11.req_dataptr();
-	ii[0] = 0; ii[1] = 0;
-	do {
-		if(ii[0] > ii[1]) continue;
-		index<2> ii1(ii), ii2(ii); ii2.permute(perm);
-		index<2> iii1(istart_11), iii2(istart_11);
-		for(size_t j = 0; j < 2; j++) {
-			iii1[j] += ii1[j];
-			iii2[j] += ii2[j];
-		}
-		pt_ref[dims.abs_index(iii1)] = p[dims_11.abs_index(ii1)] =
-			pt_ref[dims.abs_index(iii2)] =
-			p[dims_11.abs_index(ii2)] = drand48();
-	} while(dims_11.inc_index(ii));
-	tctrl_11.ret_dataptr(p);
+	{
+		tensor_ctrl_t tctrl_11(blk_11);
+		p = tctrl_11.req_dataptr();
+		ii[0] = 0; ii[1] = 0;
+		do {
+			if(ii[0] > ii[1]) continue;
+			index<2> ii1(ii), ii2(ii); ii2.permute(perm);
+			index<2> iii1(istart_11), iii2(istart_11);
+			for(size_t j = 0; j < 2; j++) {
+				iii1[j] += ii1[j];
+				iii2[j] += ii2[j];
+			}
+			pt_ref[dims.abs_index(iii1)] =
+				p[dims_11.abs_index(ii1)] =
+				pt_ref[dims.abs_index(iii2)] =
+				p[dims_11.abs_index(ii2)] = drand48();
+		} while(dims_11.inc_index(ii));
+		tctrl_11.ret_dataptr(p);
+	}
 	btctrl.ret_block(i_11);
 
 	tctrl.ret_dataptr(pt); pt = NULL;
 	tctrl_ref.ret_dataptr(pt_ref); pt_ref = NULL;
+	}
 
 	t_ref.set_immutable();
 	bt.set_immutable();
@@ -817,14 +872,17 @@ void tod_btconv_test::test_9() throw(libtest::test_exception) {
 	block_tensor_t bt(bis);
 	block_tensor_ctrl_t btctrl(bt);
 
-	mask<4> msk;
-	msk[0] = true; msk[1] = true; msk[2] = true; msk[3] = true;
-	symel_cycleperm<4, double> cycle1(2, msk);
-	symel_cycleperm<4, double> cycle2(4, msk);
-	btctrl.req_sym_add_element(cycle1);
-	btctrl.req_sym_add_element(cycle2);
+	permutation<4> cperm1, cperm2;
+	cperm1.permute(0, 1).permute(1, 2).permute(2, 3);
+	cperm2.permute(0, 1);
+	se_perm<4, double> cycle1(cperm1, true);
+	se_perm<4, double> cycle2(cperm2, true);
+	btctrl.req_symmetry().insert(cycle1);
+	btctrl.req_symmetry().insert(cycle2);
 
 	tensor_t t(dims), t_ref(dims);
+
+	{
 	tensor_ctrl_t tctrl(t), tctrl_ref(t_ref);
 
 	double *pt = tctrl.req_dataptr();
@@ -861,52 +919,58 @@ void tod_btconv_test::test_9() throw(libtest::test_exception) {
 	perm5.permute(1, 2).permute(0 ,1);
 
 	tensor_i<4, double> &blk_0001 = btctrl.req_block(i_0001);
-	tensor_ctrl_t tctrl_0001(blk_0001);
-	p = tctrl_0001.req_dataptr();
+	{
+		tensor_ctrl_t tctrl_0001(blk_0001);
+		p = tctrl_0001.req_dataptr();
 
-	index<4> ii;
-	do {
-		if(ii[0] > ii[1] || ii[1] > ii[2]) continue;
-		index<4> ii1(ii), ii2(ii), ii3(ii), ii4(ii), ii5(ii);
-		ii1.permute(perm1);
-		ii2.permute(perm2);
-		ii3.permute(perm3);
-		ii4.permute(perm4);
-		ii5.permute(perm5);
-		double d = drand48();
-		index<4> iii(istart_0001);
-		index<4> iii0, iii1, iii2, iii3, iii4, iii5;
-		for(size_t k = 0; k < 4; k++) {
-			iii0[k] = iii[k] + ii[k];
-			iii1[k] = iii[k] + ii1[k];
-			iii2[k] = iii[k] + ii2[k];
-			iii3[k] = iii[k] + ii3[k];
-			iii4[k] = iii[k] + ii4[k];
-			iii5[k] = iii[k] + ii5[k];
-		}
-		for(size_t j = 0; j < 4; j++) {
-			pt_ref[dims.abs_index(iii0)] = d;
-			pt_ref[dims.abs_index(iii1)] = d;
-			pt_ref[dims.abs_index(iii2)] = d;
-			pt_ref[dims.abs_index(iii3)] = d;
-			pt_ref[dims.abs_index(iii4)] = d;
-			pt_ref[dims.abs_index(iii5)] = d;
-			iii0.permute(perm);
-			iii1.permute(perm);
-			iii2.permute(perm);
-			iii3.permute(perm);
-			iii4.permute(perm);
-			iii5.permute(perm);
-		}
-		p[dims_0001.abs_index(ii)] = p[dims_0001.abs_index(ii1)] = d;
-		p[dims_0001.abs_index(ii2)] = p[dims_0001.abs_index(ii3)] = d;
-		p[dims_0001.abs_index(ii4)] = p[dims_0001.abs_index(ii5)] = d;
-	} while(dims_0001.inc_index(ii));
-	tctrl_0001.ret_dataptr(p);
+		index<4> ii;
+		do {
+			if(ii[0] > ii[1] || ii[1] > ii[2]) continue;
+			index<4> ii1(ii), ii2(ii), ii3(ii), ii4(ii), ii5(ii);
+			ii1.permute(perm1);
+			ii2.permute(perm2);
+			ii3.permute(perm3);
+			ii4.permute(perm4);
+			ii5.permute(perm5);
+			double d = drand48();
+			index<4> iii(istart_0001);
+			index<4> iii0, iii1, iii2, iii3, iii4, iii5;
+			for(size_t k = 0; k < 4; k++) {
+				iii0[k] = iii[k] + ii[k];
+				iii1[k] = iii[k] + ii1[k];
+				iii2[k] = iii[k] + ii2[k];
+				iii3[k] = iii[k] + ii3[k];
+				iii4[k] = iii[k] + ii4[k];
+				iii5[k] = iii[k] + ii5[k];
+			}
+			for(size_t j = 0; j < 4; j++) {
+				pt_ref[dims.abs_index(iii0)] = d;
+				pt_ref[dims.abs_index(iii1)] = d;
+				pt_ref[dims.abs_index(iii2)] = d;
+				pt_ref[dims.abs_index(iii3)] = d;
+				pt_ref[dims.abs_index(iii4)] = d;
+				pt_ref[dims.abs_index(iii5)] = d;
+				iii0.permute(perm);
+				iii1.permute(perm);
+				iii2.permute(perm);
+				iii3.permute(perm);
+				iii4.permute(perm);
+				iii5.permute(perm);
+			}
+			p[dims_0001.abs_index(ii)] =
+				p[dims_0001.abs_index(ii1)] =
+				p[dims_0001.abs_index(ii2)] =
+				p[dims_0001.abs_index(ii3)] =
+				p[dims_0001.abs_index(ii4)] =
+				p[dims_0001.abs_index(ii5)] = d;
+		} while(dims_0001.inc_index(ii));
+		tctrl_0001.ret_dataptr(p);
+	}
 	btctrl.ret_block(i_0001);
 
 	tctrl.ret_dataptr(pt); pt = NULL;
 	tctrl_ref.ret_dataptr(pt_ref); pt_ref = NULL;
+	}
 
 	t_ref.set_immutable();
 	bt.set_immutable();
@@ -955,6 +1019,8 @@ void tod_btconv_test::test_10() throw(libtest::test_exception) {
 	block_tensor_ctrl_t btctrl(bt);
 
 	tensor_t t(dims), t_ref(dims);
+
+	{
 	tensor_ctrl_t tctrl(t), tctrl_ref(t_ref);
 
 	double *pt = tctrl.req_dataptr();
@@ -985,22 +1051,26 @@ void tod_btconv_test::test_10() throw(libtest::test_exception) {
 	permutation<4> perm; perm.permute(0, 2);
 
 	tensor_i<4, double> &blk_0010 = btctrl.req_block(i_0010);
-	tensor_ctrl_t tctrl_0010(blk_0010);
-	p = tctrl_0010.req_dataptr();
+	{
+		tensor_ctrl_t tctrl_0010(blk_0010);
+		p = tctrl_0010.req_dataptr();
 
-	index<4> ii;
-	do {
-		index<4> iii(istart_0010);
-		index<4> iii0;
-		for(size_t k = 0; k < 4; k++) iii0[k] = iii[k] + ii[k];
-		double d = drand48();
-		p[dims_0010.abs_index(ii)] = pt_ref[dims.abs_index(iii0)] = d;
-	} while(dims_0010.inc_index(ii));
-	tctrl_0010.ret_dataptr(p);
+		index<4> ii;
+		do {
+			index<4> iii(istart_0010);
+			index<4> iii0;
+			for(size_t k = 0; k < 4; k++) iii0[k] = iii[k] + ii[k];
+			double d = drand48();
+			p[dims_0010.abs_index(ii)] =
+				pt_ref[dims.abs_index(iii0)] = d;
+		} while(dims_0010.inc_index(ii));
+		tctrl_0010.ret_dataptr(p);
+	}
 	btctrl.ret_block(i_0010);
 
 	tctrl.ret_dataptr(pt); pt = NULL;
 	tctrl_ref.ret_dataptr(pt_ref); pt_ref = NULL;
+	}
 
 	t_ref.set_immutable();
 	bt.set_immutable();
@@ -1050,15 +1120,17 @@ void tod_btconv_test::test_11() throw(libtest::test_exception) {
 	block_tensor_t bt(bis);
 	block_tensor_ctrl_t btctrl(bt);
 
-	mask<4> msk;
-	msk[0] = true; msk[1] = false; msk[2] = true; msk[3] = false;
-	symel_cycleperm<4, double> cycle1(2, msk);
-	msk[0] = false; msk[1] = true; msk[2] = false; msk[3] = true;
-	symel_cycleperm<4, double> cycle2(2, msk);
-	btctrl.req_sym_add_element(cycle1);
-	btctrl.req_sym_add_element(cycle2);
+	permutation<4> cperm1, cperm2;
+	cperm1.permute(0, 2);
+	cperm2.permute(1, 3);
+	se_perm<4, double> cycle1(cperm1, true);
+	se_perm<4, double> cycle2(cperm2, true);
+	btctrl.req_symmetry().insert(cycle1);
+	btctrl.req_symmetry().insert(cycle2);
 
 	tensor_t t(dims), t_ref(dims);
+
+	{
 	tensor_ctrl_t tctrl(t), tctrl_ref(t_ref);
 
 	double *pt = tctrl.req_dataptr();
@@ -1090,34 +1162,38 @@ void tod_btconv_test::test_11() throw(libtest::test_exception) {
 	permutation<4> perm1; perm1.permute(1, 3);
 
 	tensor_i<4, double> &blk_0010 = btctrl.req_block(i_0010);
-	tensor_ctrl_t tctrl_0010(blk_0010);
-	p = tctrl_0010.req_dataptr();
+	{
+		tensor_ctrl_t tctrl_0010(blk_0010);
+		p = tctrl_0010.req_dataptr();
 
-	index<4> ii;
-	do {
-		if(ii[1] > ii[3]) continue;
-		index<4> ii1(ii);
-		ii1.permute(perm1);
-		double d = drand48();
-		index<4> iii(istart_0010);
-		index<4> iii0, iii1;
-		for(size_t k = 0; k < 4; k++) {
-			iii0[k] = iii[k] + ii[k];
-			iii1[k] = iii[k] + ii1[k];
-		}
-		for(size_t k = 0; k < 2; k++) {
-			pt_ref[dims.abs_index(iii0)] = d;
-			pt_ref[dims.abs_index(iii1)] = d;
-			iii0.permute(perm);
-			iii1.permute(perm);
-		}
-		p[dims_0010.abs_index(ii)] = p[dims_0010.abs_index(ii1)] = d;
-	} while(dims_0010.inc_index(ii));
-	tctrl_0010.ret_dataptr(p);
+		index<4> ii;
+		do {
+			if(ii[1] > ii[3]) continue;
+			index<4> ii1(ii);
+			ii1.permute(perm1);
+			double d = drand48();
+			index<4> iii(istart_0010);
+			index<4> iii0, iii1;
+			for(size_t k = 0; k < 4; k++) {
+				iii0[k] = iii[k] + ii[k];
+				iii1[k] = iii[k] + ii1[k];
+			}
+			for(size_t k = 0; k < 2; k++) {
+				pt_ref[dims.abs_index(iii0)] = d;
+				pt_ref[dims.abs_index(iii1)] = d;
+				iii0.permute(perm);
+				iii1.permute(perm);
+			}
+			p[dims_0010.abs_index(ii)] =
+				p[dims_0010.abs_index(ii1)] = d;
+		} while(dims_0010.inc_index(ii));
+		tctrl_0010.ret_dataptr(p);
+	}
 	btctrl.ret_block(i_0010);
 
 	tctrl.ret_dataptr(pt); pt = NULL;
 	tctrl_ref.ret_dataptr(pt_ref); pt_ref = NULL;
+	}
 
 	t_ref.set_immutable();
 	bt.set_immutable();
@@ -1130,6 +1206,129 @@ void tod_btconv_test::test_11() throw(libtest::test_exception) {
 	//	Compare the result against the reference
 
 	compare_ref<4>::compare(testname, t, t_ref, 0.0);
+
+	} catch(exception &exc) {
+		fail_test(testname, __FILE__, __LINE__, exc.what());
+	}
+}
+
+
+void tod_btconv_test::test_12() throw(libtest::test_exception) {
+
+	//
+	//	Anti-symmetric three-index tensor. Three non-zero blocks:
+	//	[0,1,2], [0,2,2], [1,1,1]
+	//
+
+	static const char *testname = "tod_btconv_test::test_12()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<3> i1, i2;
+	i2[0] = 10; i2[1] = 10; i2[2] = 10;
+	dimensions<3> dims(index_range<3>(i1, i2));
+	block_index_space<3> bis(dims);
+	mask<3> m;
+	m[0] = true; m[1] = true; m[2] = true;
+	bis.split(m, 3);
+	bis.split(m, 8);
+
+	block_tensor<3, double, allocator_t> bta(bis), btb(bis);
+	block_tensor_ctrl<3, double> ctrla(bta), ctrlb(btb);
+
+	index<3> i012, i021, i022, i102, i111, i120, i201, i202, i210, i220;
+	i012[0] = 0; i012[1] = 1; i012[2] = 2;
+	i021[0] = 0; i021[1] = 2; i021[2] = 1;
+	i022[0] = 0; i022[1] = 2; i022[2] = 2;
+	i102[0] = 1; i102[1] = 0; i102[2] = 2;
+	i111[0] = 1; i111[1] = 1; i111[2] = 1;
+	i120[0] = 1; i120[1] = 2; i120[2] = 0;
+	i201[0] = 2; i201[1] = 0; i201[2] = 1;
+	i202[0] = 2; i202[1] = 0; i202[2] = 2;
+	i210[0] = 2; i210[1] = 1; i210[2] = 0;
+	i220[0] = 2; i220[1] = 2; i220[2] = 0;
+
+	//	Install symmetry in bta
+	//
+	ctrla.req_symmetry().insert(se_perm<3, double>(
+		permutation<3>().permute(0, 1), false));
+	ctrla.req_symmetry().insert(se_perm<3, double>(
+		permutation<3>().permute(1, 2), false));
+
+	//	Prepare symmetrized blocks
+	//
+	dimensions<3> d012 = bis.get_block_dims(i012),
+		d111 = bis.get_block_dims(i111),
+		d022 = bis.get_block_dims(i022);
+	tensor<3, double, allocator_t> t012(d012), t111(d111), t111a(d111),
+		t022(d022), t022a(d022);
+	tod_random<3>().perform(t012);
+	tod_random<3>().perform(t111a);
+	tod_random<3>().perform(t022a);
+	tod_add<3> sym111(t111a);
+	sym111.add_op(t111a, permutation<3>().permute(0, 1), -1.0);
+	sym111.add_op(t111a, permutation<3>().permute(0, 2), -1.0);
+	sym111.perform(t111);
+	tod_add<3> sym022(t022a);
+	sym022.add_op(t022a, permutation<3>().permute(1, 2), -1.0);
+	sym022.perform(t022);
+
+	//	Copy [0,1,2]
+	//
+	tod_copy<3>(t012).perform(ctrla.req_block(i012));
+	ctrla.ret_block(i012);
+	tod_copy<3>(t012).perform(ctrlb.req_block(i012));
+	ctrlb.ret_block(i012);
+	tod_copy<3>(t012, permutation<3>().permute(1, 2), -1.0).
+		perform(ctrlb.req_block(i021));
+	ctrlb.ret_block(i021);
+	tod_copy<3>(t012, permutation<3>().permute(0, 1), -1.0).
+		perform(ctrlb.req_block(i102));
+	ctrlb.ret_block(i102);
+	tod_copy<3>(t012, permutation<3>().permute(0, 1).permute(1, 2), 1.0).
+		perform(ctrlb.req_block(i120));
+	ctrlb.ret_block(i120);
+	tod_copy<3>(t012, permutation<3>().permute(0, 2), -1.0).
+		perform(ctrlb.req_block(i210));
+	ctrlb.ret_block(i210);
+	tod_copy<3>(t012, permutation<3>().permute(1, 2).permute(0, 1), 1.0).
+		perform(ctrlb.req_block(i201));
+	ctrlb.ret_block(i201);
+
+	//	Copy [0,2,2]
+	//
+	tod_copy<3>(t022).perform(ctrla.req_block(i022));
+	ctrla.ret_block(i022);
+	tod_copy<3>(t022).perform(ctrlb.req_block(i022));
+	ctrlb.ret_block(i022);
+	tod_copy<3>(t022, permutation<3>().permute(0, 1), -1.0).
+		perform(ctrlb.req_block(i202));
+	ctrlb.ret_block(i202);
+	tod_copy<3>(t022, permutation<3>().permute(0, 1).permute(1, 2), 1.0).
+		perform(ctrlb.req_block(i220));
+	ctrlb.ret_block(i220);
+
+	//	Copy [1,1,1]
+	//
+	tod_copy<3>(t111).perform(ctrla.req_block(i111));
+	ctrla.ret_block(i111);
+	tod_copy<3>(t111).perform(ctrlb.req_block(i111));
+	ctrlb.ret_block(i111);
+
+	bta.set_immutable();
+	btb.set_immutable();
+
+	//	Convert to simple tensors
+	//
+	tensor<3, double, allocator_t> ta(dims), ta_ref(dims);
+	tod_btconv<3>(bta).perform(ta);
+	tod_btconv<3>(btb).perform(ta_ref);
+
+	//	Compare the result against the reference
+	//
+	compare_ref<3>::compare(testname, ta, ta_ref, 0.0);
 
 	} catch(exception &exc) {
 		fail_test(testname, __FILE__, __LINE__, exc.what());

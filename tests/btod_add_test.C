@@ -3,7 +3,11 @@
 #include <ctime>
 #include <sstream>
 #include <libvmm/std_allocator.h>
-#include <libtensor.h>
+#include <libtensor/core/block_tensor.h>
+#include <libtensor/btod/btod_add.h>
+#include <libtensor/btod/btod_random.h>
+#include <libtensor/symmetry/se_perm.h>
+#include <libtensor/tod/tod_btconv.h>
 #include "btod_add_test.h"
 #include "compare_ref.h"
 
@@ -34,6 +38,7 @@ void btod_add_test::perform() throw(libtest::test_exception) {
 
 	test_5();
 	test_6();
+	test_7();
 
 	test_exc();
 }
@@ -193,12 +198,10 @@ void btod_add_test::test_3(double ca1, double ca2)
 	block_tensor_ctrl<2, double> ctrl_bta1(bta1), ctrl_bta2(bta2),
 		ctrl_btb(btb);
 
-	mask<2> msk;
-	msk[0] = true; msk[1] = true;
-	symel_cycleperm<2, double> cycle(2, msk);
-	ctrl_bta1.req_sym_add_element(cycle);
-	ctrl_bta2.req_sym_add_element(cycle);
-	ctrl_btb.req_sym_add_element(cycle);
+	se_perm<2, double> cycle(permutation<2>().permute(0, 1), true);
+	ctrl_bta1.req_symmetry().insert(cycle);
+	ctrl_bta2.req_symmetry().insert(cycle);
+	ctrl_btb.req_symmetry().insert(cycle);
 
 	index<2> i_00, i_01, i_11;
 	i_01[0] = 0; i_01[1] = 1;
@@ -273,20 +276,19 @@ void btod_add_test::test_4(double ca1, double ca2, double ca3, double ca4)
 	block_tensor_ctrl<4, double> ctrl_bta1(bta1), ctrl_bta2(bta2),
 		ctrl_bta3(bta3), ctrl_bta4(bta4), ctrl_btb(btb);
 
-	mask<4> msk;
-	msk[0] = true; msk[1] = true; msk[2] = true; msk[3] = true;
-	symel_cycleperm<4, double> cycle1(4, msk);
-	symel_cycleperm<4, double> cycle2(2, msk);
-	ctrl_bta1.req_sym_add_element(cycle1);
-	ctrl_bta1.req_sym_add_element(cycle2);
-	ctrl_bta2.req_sym_add_element(cycle1);
-	ctrl_bta2.req_sym_add_element(cycle2);
-	ctrl_bta3.req_sym_add_element(cycle1);
-	ctrl_bta3.req_sym_add_element(cycle2);
-	ctrl_bta4.req_sym_add_element(cycle1);
-	ctrl_bta4.req_sym_add_element(cycle2);
-	ctrl_btb.req_sym_add_element(cycle1);
-	ctrl_btb.req_sym_add_element(cycle2);
+	se_perm<4, double> cycle1(permutation<4>().permute(0, 1).permute(1, 2).
+		permute(2, 3), true);
+	se_perm<4, double> cycle2(permutation<4>().permute(0, 1), true);
+	ctrl_bta1.req_symmetry().insert(cycle1);
+	ctrl_bta1.req_symmetry().insert(cycle2);
+	ctrl_bta2.req_symmetry().insert(cycle1);
+	ctrl_bta2.req_symmetry().insert(cycle2);
+	ctrl_bta3.req_symmetry().insert(cycle1);
+	ctrl_bta3.req_symmetry().insert(cycle2);
+	ctrl_bta4.req_symmetry().insert(cycle1);
+	ctrl_bta4.req_symmetry().insert(cycle2);
+	ctrl_btb.req_symmetry().insert(cycle1);
+	ctrl_btb.req_symmetry().insert(cycle2);
 
 	index<4> i_0000, i_0001, i_0011, i_0111, i_1111;
 	i_0001[0] = 0; i_0001[1] = 0; i_0001[2] = 0; i_0001[3] = 1;
@@ -411,6 +413,69 @@ void btod_add_test::test_6() throw(libtest::test_exception) {
 	add.perform(bt3_ref);
 
 	compare_ref<2>::compare(testname, bt3, bt3_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\brief Tests a particular block %index space that is causing a problem
+ **/
+void btod_add_test::test_7() throw(libtest::test_exception) {
+
+	static const char *testname = "btod_add_test::test_7()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	size_t ni = 13, na = 7;
+	index<4> i1, i2;
+	i2[0] = na - 1; i2[1] = na - 1; i2[2] = ni - 1; i2[3] = na - 1;
+	dimensions<4> dims_caib(index_range<4>(i1, i2));
+	block_index_space<4> bis_caib(dims_caib);
+	i2[0] = ni - 1; i2[1] = na - 1; i2[2] = na - 1; i2[3] = na - 1;
+	dimensions<4> dims_iabc(index_range<4>(i1, i2));
+	block_index_space<4> bis_iabc(dims_iabc);
+
+	mask<4> m1, m2;
+	m1[0] = true; m1[1] = true; m1[3] = true;
+	bis_caib.split(m1, 2);
+	bis_caib.split(m1, 3);
+	bis_caib.split(m1, 5);
+	m2[1] = true; m2[2] = true; m2[3] = true;
+	bis_iabc.split(m2, 2);
+	bis_iabc.split(m2, 3);
+	bis_iabc.split(m2, 5);
+
+	block_tensor<4, double, allocator_t> bt1(bis_caib), bt2(bis_caib),
+		bt3(bis_iabc);
+	tensor<4, double, allocator_t> t1(dims_caib), t2(dims_caib),
+		t3(dims_iabc), t3_ref(dims_iabc);
+
+	btod_random<4>().perform(bt1);
+	btod_random<4>().perform(bt2);
+	bt1.set_immutable();
+	bt2.set_immutable();
+
+	tod_btconv<4>(bt1).perform(t1);
+	tod_btconv<4>(bt2).perform(t2);
+
+	permutation<4> p_caib, p_baic;
+	p_caib.permute(0, 2).permute(2, 3); // caib -> iabc
+	p_baic.permute(0, 2); // baic -> iabc
+
+	btod_add<4> add(bt1, p_caib, 1.0);
+	add.add_op(bt2, p_baic, -1.0);
+	add.perform(bt3);
+	tod_btconv<4>(bt3).perform(t3);
+
+	tod_add<4> addt(t1, p_caib, 1.0);
+	addt.add_op(t2, p_baic, -1.0);
+	addt.perform(t3_ref);
+
+	compare_ref<4>::compare(testname, t3, t3_ref, 1e-15);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());

@@ -2,7 +2,7 @@
 #define LIBTENSOR_TOD_COMPARE_TEST_H
 
 #include <libtest/unit_test.h>
-#include <libtensor.h>
+#include <libtensor/core/dimensions.h>
 
 namespace libtensor {
 
@@ -24,6 +24,9 @@ private:
 	**/
 	void test_operation(const dimensions<4> &dim, const index<4> &idx)
 		throw(libtest::test_exception);
+
+	void test_0() throw(libtest::test_exception);
+	void test_1() throw(libtest::test_exception);
 };
 
 } // namespace libtensor

@@ -1,4 +1,5 @@
-#include <libtensor.h>
+#include <libtensor/btod/btod_random.h>
+#include <libtensor/iface/iface.h>
 #include "compare_ref.h"
 #include "symm_test.h"
 
@@ -7,23 +8,36 @@ namespace libtensor {
 
 void symm_test::perform() throw(libtest::test_exception) {
 
-	test_symm2_contr_tt_1();
-	test_symm2_contr_ee_1();
-	test_asymm2_contr_tt_1();
-	test_asymm2_contr_tt_2();
-	test_asymm2_contr_tt_3();
-	test_asymm2_contr_tt_4();
-	test_asymm2_contr_ee_1();
+	libvmm::vm_allocator<double>::vmm().init(
+		16, 16, 16777216, 16777216, 0.90, 0.05);
 
-	test_symm22_t_1();
-	test_asymm22_t_1();
-	test_symm22_t_2();
-	test_asymm22_t_2();
+	try {
 
-	test_symm22_e_1();
-	test_asymm22_e_1();
-	test_symm22_e_2();
-	test_asymm22_e_2();
+		//~ test_symm2_contr_tt_1();
+		//~ test_symm2_contr_ee_1();
+		//~ test_asymm2_contr_tt_1();
+		//~ test_asymm2_contr_tt_2();
+		//~ test_asymm2_contr_tt_3();
+		//~ test_asymm2_contr_tt_4();
+		test_asymm2_contr_tt_5();
+		test_asymm2_contr_ee_1();
+
+		test_symm22_t_1();
+		test_asymm22_t_1();
+		test_symm22_t_2();
+		test_asymm22_t_2();
+
+		test_symm22_e_1();
+		test_asymm22_e_1();
+		test_symm22_e_2();
+		test_asymm22_e_2();
+
+	} catch(...) {
+		libvmm::vm_allocator<double>::vmm().shutdown();
+		throw;
+	}
+
+	libvmm::vm_allocator<double>::vmm().shutdown();
 }
 
 
@@ -273,6 +287,58 @@ void symm_test::test_asymm2_contr_tt_4() throw(libtest::test_exception) {
 	t3(i|j|a|b) = 1.5 * asymm(a|b, contract(c, t1(i|j|a|c), t2(b|c))) * 2.0;
 
 	compare_ref<4>::compare(testname, t3, t3_ref, 2e-14);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void symm_test::test_asymm2_contr_tt_5() throw(libtest::test_exception) {
+
+	const char *testname = "symm_test::test_asymm2_contr_tt_5()";
+
+	try {
+
+	bispace<1> sp_i(10), sp_a(20), sp_k(11);
+	sp_i.split(3).split(5);
+	sp_a.split(6).split(13);
+	bispace<4> sp_ijka(sp_i&sp_i|sp_k|sp_a), sp_kija(sp_k|sp_i&sp_i|sp_a);
+	bispace<4> sp_ijab(sp_i&sp_i|sp_a&sp_a);
+
+	btensor<4> t1(sp_ijka), t2(sp_kija), t3(sp_ijab), t4(sp_ijka),
+		t4_ref(sp_ijka), tt1(sp_ijka);
+
+	btod_random<4>().perform(t1);
+	btod_random<4>().perform(t2);
+	btod_random<4>().perform(t3);
+	t1.set_immutable();
+	t2.set_immutable();
+	t3.set_immutable();
+
+	contraction2<2, 2, 2> contr(permutation<4>().permute(0, 2));
+	contr.contract(1, 1);
+	contr.contract(3, 3);
+	btod_contract2<2, 2, 2> op_contr(contr, t2, t3);
+	btod_symmetrize<4> op_symm(op_contr, 0, 1, false);
+	op_symm.perform(tt1);
+	btod_copy<4>(t1).perform(t4_ref);
+	btod_copy<4>(tt1).perform(t4_ref, -1.0);
+
+	letter i, j, k, l, a, b, c;
+	t4(i|j|k|a) = t1(i|j|k|a) - asymm(i|j, contract(l|c,
+		t2(k|l|j|c), t3(i|l|a|c)));
+
+	{
+		block_tensor_ctrl<4, double> c4(t4), c4_ref(t4_ref);
+		symmetry<4, double> sym4(sp_ijka.get_bis()),
+			sym4_ref(sp_ijka.get_bis());
+		so_copy<4, double>(c4.req_const_symmetry()).perform(sym4);
+		so_copy<4, double>(c4_ref.req_const_symmetry()).perform(sym4_ref);
+		compare_ref<4>::compare(testname, sym4, sym4_ref);
+	}
+
+	compare_ref<4>::compare(testname, t4, t4_ref, 5e-14);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());

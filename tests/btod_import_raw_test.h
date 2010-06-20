@@ -1,10 +1,8 @@
 #ifndef LIBTENSOR_BTOD_IMPORT_RAW_TEST_H
 #define LIBTENSOR_BTOD_IMPORT_RAW_TEST_H
 
-#include <libtest/unit_test.h>
-#include "core/dimensions.h"
-#include "core/index_range.h"
-#include "btod/btod_import_raw.h"
+#include <libtest/libtest.h>
+#include <libtensor/core/block_index_space.h>
 
 namespace libtensor {
 
@@ -19,6 +17,10 @@ public:
 private:
 	template<size_t N>
 	void test_1(const block_index_space<N> &bis)
+	throw(libtest::test_exception);
+
+	template<size_t N>
+	void test_2(const block_index_space<N> &bis)
 		throw(libtest::test_exception);
 };
 

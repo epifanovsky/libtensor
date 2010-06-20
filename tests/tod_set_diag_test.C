@@ -3,6 +3,9 @@
 #include <ctime>
 #include <sstream>
 #include <libvmm/std_allocator.h>
+#include <libtensor/core/abs_index.h>
+#include <libtensor/core/tensor.h>
+#include <libtensor/tod/tod_set_diag.h>
 #include "compare_ref.h"
 #include "tod_set_diag_test.h"
 
@@ -34,6 +37,8 @@ void tod_set_diag_test::run_test(const dimensions<N> &dims, double d)
 	try {
 
 	tensor<N, double, allocator_t> t(dims), t_ref(dims);
+
+	{
 	tensor_ctrl<N, double> ctrl(t), ctrl_ref(t_ref);
 
 	double *p = ctrl.req_dataptr();
@@ -63,6 +68,7 @@ void tod_set_diag_test::run_test(const dimensions<N> &dims, double d)
 	ctrl.ret_dataptr(p); p = NULL;
 	ctrl_ref.ret_dataptr(p_ref); p_ref = NULL;
 	t_ref.set_immutable();
+	}
 
 	//	Run the operation
 

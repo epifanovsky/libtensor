@@ -21,6 +21,7 @@ private:
 	void test_bis_5() throw(libtest::test_exception);
 	void test_sym_1() throw(libtest::test_exception);
 	void test_sym_2() throw(libtest::test_exception);
+	void test_sym_3() throw(libtest::test_exception);
 
 	void test_zeroblk_1() throw(libtest::test_exception);
 	void test_zeroblk_2() throw(libtest::test_exception);
@@ -42,7 +43,10 @@ private:
 	void test_contr_11() throw(libtest::test_exception);
 	void test_contr_12() throw(libtest::test_exception);
 	void test_contr_13() throw(libtest::test_exception);
-	void test_contr_14() throw(libtest::test_exception);
+	void test_contr_14(double c) throw(libtest::test_exception);
+	void test_contr_15(double c) throw(libtest::test_exception);
+	void test_contr_16(double c) throw(libtest::test_exception);
+
 };
 
 } // namespace libtensor

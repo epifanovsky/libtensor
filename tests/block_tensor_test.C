@@ -1,16 +1,63 @@
-#include <map>
 #include <libvmm/std_allocator.h>
-#include <libtensor.h>
+#include <libtensor/core/block_tensor.h>
+#include <libtensor/core/block_tensor_ctrl.h>
+#include <libtensor/tod/tod_random.h>
 #include "block_tensor_test.h"
 
 namespace libtensor {
 
 void block_tensor_test::perform() throw(libtest::test_exception) {
 
+	test_req_aux_block_1();
 	test_orbits_1();
 	test_orbits_2();
 	test_orbits_3();
 }
+
+
+void block_tensor_test::test_req_aux_block_1() throw(libtest::test_exception) {
+
+	static const char *testname =
+		"block_tensor_test::test_req_aux_block_1()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<2> i1, i2;
+	i2[0] = 4; i2[1] = 4;
+	dimensions<2> dims(index_range<2>(i1, i2));
+	block_index_space<2> bis(dims);
+	mask<2> m; m[0] = true; m[1] = true;
+	bis.split(m, 2);
+
+	block_tensor<2, double, allocator_t> bt(bis);
+	block_tensor_ctrl<2, double> ctrl(bt);
+
+	index<2> i00, i01, i10, i11;
+	i10[0] = 1; i01[1] = 1;
+	i11[0] = 1; i11[1] = 1;
+
+	tensor_i<2, double> &b00 = ctrl.req_aux_block(i00);
+	tensor_i<2, double> &b01 = ctrl.req_aux_block(i01);
+	tensor_i<2, double> &b10 = ctrl.req_aux_block(i10);
+	tensor_i<2, double> &b11 = ctrl.req_aux_block(i11);
+
+	tod_random<2>().perform(b00);
+	tod_random<2>().perform(b01);
+	tod_random<2>().perform(b10);
+	tod_random<2>().perform(b11);
+
+	ctrl.ret_aux_block(i00);
+	ctrl.ret_aux_block(i01);
+	ctrl.ret_aux_block(i10);
+	ctrl.ret_aux_block(i11);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
 
 void block_tensor_test::test_orbits_1() throw(libtest::test_exception) {
 /*

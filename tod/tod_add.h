@@ -1,37 +1,36 @@
 #ifndef LIBTENSOR_TOD_ADD_H
 #define LIBTENSOR_TOD_ADD_H
 
-#include "defs.h"
-#include "exception.h"
-#include "blas.h"
-#include "timings.h"
-#include "core/tensor_i.h"
-#include "core/tensor_ctrl.h"
-#include "tod_additive.h"
-
 #include <list>
 #include <map>
-#include <iostream>
+
+#include "../defs.h"
+#include "../exception.h"
+#include "../blas.h"
+#include "../timings.h"
+#include "../core/tensor_i.h"
+#include "../core/tensor_ctrl.h"
+#include "tod_additive.h"
+#include "bad_dimensions.h"
 
 namespace libtensor {
 
-/**	\brief Adds two or more tensors
+/**	\brief Adds a series of tensors
 
 	Tensor addition of n tensors:
-	\f[ B = \left( c_1 \mathcal{P}_1 A_1 + c_2 \mathcal{P}_2 A_2 + \cdots +
+	\f[
+		B = \left( c_1 \mathcal{P}_1 A_1 + c_2 \mathcal{P}_2 A_2 + \cdots +
 		c_n \mathcal{P}_n A_n \right) \f]
 
 	Each operand must have the same dimensions as the result in order
 	for the operation to be successful.
 
 	\ingroup libtensor_tod
-**/
+ **/
 template<size_t N>
-class tod_add
-	: public tod_additive<N>, public timings<tod_add<N> >
-{
+class tod_add : public tod_additive<N>, public timings< tod_add<N> > {
 public:
-	static const char* k_clazz;  //! class name
+	static const char* k_clazz; //!< Class name
 
 private:
 	typedef struct operand {
@@ -102,64 +101,69 @@ private:
 	};
 
 
-	op_map_t m_operands; //!< list of all operands to add
-	dimensions<N> m_dim;  //!< dimensions of the output tensor
+	op_map_t m_operands; //!< List of all operands to add
+	dimensions<N> m_dims;  //!< Dimensions of the output tensor
 
 public:
 	//!	\name Construction and destruction
 	//@{
 
 	/**	\brief Initializes the addition operation
-		\param bt First %tensor in the series.
+		\param t First %tensor in the series.
 		\param c Scaling coefficient.
 	 **/
-	tod_add(tensor_i<N, double> &t, double c = 1.0)
-		throw(bad_parameter,out_of_memory);
+	tod_add(tensor_i<N, double> &t, double c = 1.0);
 
 	/**	\brief Initializes the addition operation
-		\param bt First %tensor in the series.
-		\param pb Permutation of the first %tensor.
+		\param t First %tensor in the series.
+		\param p Permutation of the first %tensor.
 		\param c Scaling coefficient.
 	 **/
 	tod_add(tensor_i<N, double> &t, const permutation<N> &p,
-		double c = 1.0) throw(bad_parameter,out_of_memory);
+		double c = 1.0);
 
 	/**	\brief Virtual destructor
-	**/
+	 **/
 	virtual ~tod_add();
 
 	//@}
 
+
+	//!	\name Operation
+	//@{
+
 	/**	\brief Adds an operand
 		\param t Tensor.
 		\param c Coefficient.
-	**/
-	void add_op(tensor_i<N,double> &t, const double c)
-		throw(bad_parameter,out_of_memory);
-
+	 **/
+	void add_op(tensor_i<N, double> &t, double c);
 
 	/**	\brief Adds an operand
 		\param t Tensor.
 		\param p Permutation of %tensor elements.
 		\param c Coefficient.
-	**/
-	void add_op(tensor_i<N,double> &t, const permutation<N> &p,
-		const double c) throw(bad_parameter,out_of_memory);
+	 **/
+	void add_op(tensor_i<N, double> &t, const permutation<N> &p, double c);
 
-	//!	\name Implementation of direct_tensor_operation<T>
-	//@{
+	/**	\copydoc tod_additive<N>::prefetch()
+	 **/
 	virtual void prefetch() throw(exception);
+
+	/**	\copydoc tod_additive<N>::perform(tensor_i<N, double>&)
+	 **/
+	virtual void perform(tensor_i<N,double> &t) throw(exception);
+
+	/**	\copydoc tod_additive<N>::perform(tensor_i<N, double>&, double)
+	 **/
+	virtual void perform(tensor_i<N,double> &t, double c) throw(exception);
+
 	//@}
 
-	//!	\name Implementation of tod_additive
-	//@{
-	virtual void perform(tensor_i<N,double> &t) throw(exception);
-	virtual void perform(tensor_i<N,double> &t, double c)
-		throw(exception);
-	//@}
 private:
-	void add_operand( tensor_i<N,double> &t, const permutation<N>& perm, double c)
-		throw(out_of_memory);
+	/**	\brief Adds an operand (implementation)
+	 **/
+	void add_operand(
+		tensor_i<N, double> &t, const permutation<N> &perm, double c);
 
 	/**	\brief Build operations list for addition of two tensors
 
@@ -179,112 +183,122 @@ private:
 
 };
 
+
 template<size_t N>
 const char* tod_add<N>::k_clazz = "tod_add<N>";
-template<size_t N>
-const char* tod_add<N>::op_daxpy::k_clazz = "tod_add<N>::op_daxpy";
-template<size_t N>
-const char* tod_add<N>::op_daxpby_trp::k_clazz = "tod_add<N>::op_daxpby_trp";
 
 
 template<size_t N>
-tod_add<N>::tod_add(tensor_i<N, double> &ta, const permutation<N> &p,
-	double c ) throw(bad_parameter,out_of_memory) : m_dim(ta.get_dims())
-{
-	m_dim.permute(p);
-	add_operand( ta, p, c );
+tod_add<N>::tod_add(tensor_i<N, double> &t, double c) : m_dims(t.get_dims()) {
+
+	static const char *method = "tod_add(tensor_i<N, double>&, double)";
+
+	add_operand(t, permutation<N>(), c);
 }
 
-template<size_t N>
-tod_add<N>::tod_add(tensor_i<N, double> &ta, double c )
-	throw(bad_parameter,out_of_memory) : m_dim(ta.get_dims())
-{
-	add_operand( ta, permutation<N>(), c);
-}
 
 template<size_t N>
-tod_add<N>::~tod_add()
-{
-	for ( typename op_map_t::iterator it=m_operands.begin();
-			it!=m_operands.end(); it++ ) {
-		delete it->second;
-		it->second=NULL;
+tod_add<N>::tod_add(tensor_i<N, double> &t, const permutation<N> &p, double c) :
+	m_dims(t.get_dims()) {
+
+	static const char *method =
+		"tod_add(tensor_i<N, double>&, const permutation<N>&, double)";
+
+	m_dims.permute(p);
+	add_operand(t, p, c);
+}
+
+
+template<size_t N>
+tod_add<N>::~tod_add() {
+
+	typename op_map_t::iterator i = m_operands.begin();
+	for(; i != m_operands.end(); i++) {
+		delete i->second;
 	}
 }
 
-template<size_t N>
-void tod_add<N>::add_op(tensor_i<N,double> &t, const double c)
-	throw(bad_parameter,out_of_memory)
-{
-	// don nothing if coefficient is zero
-	if ( c==0. ) return;
 
-	if ( t.get_dims() != m_dim ) {
-		throw bad_parameter("libtensor",k_clazz,
-			"add_op(tensor_i<N,double>&,const double)",
-			__FILE__,__LINE__,"Invalid dimensions");
+template<size_t N>
+void tod_add<N>::add_op(tensor_i<N, double> &t, double c) {
+
+	static const char *method = "add_op(tensor_i<N, double>&, double)";
+
+	if(c == 0.0) return;
+
+	if(!t.get_dims().equals(m_dims)) {
+		throw bad_dimensions(
+			g_ns, k_clazz, method, __FILE__, __LINE__, "t");
 	}
 
 	add_operand(t, permutation<N>(), c);
 }
 
-template<size_t N>
-void tod_add<N>::add_op(tensor_i<N,double> &t, const permutation<N> &p,
-	const double c) throw(bad_parameter,out_of_memory)
-{
-	// don nothing if coefficient is zero
-	if ( c==0. ) return;
 
-	dimensions<N> dim(t.get_dims());
-	dim.permute(p);
-	if ( dim != m_dim ) {
-		throw bad_parameter("libtensor",k_clazz,
-			"add_op(tensor_i<N,double>&,const permutation<N>&,const double)",
-			__FILE__,__LINE__,"Invalid dimensions");
+template<size_t N>
+void tod_add<N>::add_op(
+	tensor_i<N, double> &t, const permutation<N> &p, double c) {
+
+	static const char *method =
+		"add_op(tensor_i<N, double>&, const permutation<N>&, double)";
+
+	if(c == 0.0) return;
+
+	dimensions<N> dims(t.get_dims());
+	dims.permute(p);
+	if(!dims.equals(m_dims)) {
+		throw bad_dimensions(
+			g_ns, k_clazz, method, __FILE__, __LINE__, "t");
 	}
 
 	add_operand(t, p, c);
 }
 
+
 template<size_t N>
-void tod_add<N>::add_operand(tensor_i<N,double> &t, const permutation<N> &p,
-	const double c) throw(out_of_memory)
-{
+void tod_add<N>::add_operand(
+	tensor_i<N, double> &t, const permutation<N> &p, double c) {
+
+	static const char *method = "add_operand(tensor_i<N, double>&, "
+		"const permutation<N>&, double)";
+
 	try {
-		operand_t* op=new operand_t(t,c);
-		m_operands.insert(op_pair_t(p,op));
-	} catch (std::bad_alloc& e) {
-		throw out_of_memory("libtensor",k_clazz,
-			"add_operand(tensor_i<N,double>&,const permutation<N>&,const double)",
-			__FILE__,__LINE__,e.what());
-	}
-
-}
-
-template<size_t N>
-void tod_add<N>::prefetch() throw(exception)
-{
-	for ( typename op_map_t::iterator it=m_operands.begin();
-		  it!=m_operands.end(); it++ ) {
-		tensor_ctrl<N,double> ctrl(it->second->m_ta);
-		ctrl.req_prefetch();
+		operand_t *op = new operand_t(t, c);
+		m_operands.insert(op_pair_t(p, op));
+	} catch(std::bad_alloc& e) {
+		throw out_of_memory(
+			g_ns, k_clazz, method, __FILE__,__LINE__, e.what());
 	}
 }
 
+
 template<size_t N>
-void tod_add<N>::perform(tensor_i<N,double> &t)	throw(exception)
-{
+void tod_add<N>::prefetch() throw(exception) {
+
+	typename op_map_t::iterator i = m_operands.begin();
+	for(; i != m_operands.end(); i++) {
+		tensor_ctrl<N, double>(i->second->m_ta).req_prefetch();
+	}
+}
+
+
+template<size_t N>
+void tod_add<N>::perform(tensor_i<N, double> &t) throw(exception) {
+
+	static const char *method = "perform(tensor_i<N, double>&)";
+
+	//	Check the dimensions of the output tensor
+	if(!t.get_dims().equals(m_dims)) {
+		throw bad_dimensions(
+			g_ns, k_clazz, method, __FILE__, __LINE__, "t");
+	}
+
 	tod_add<N>::start_timer();
-
-	// first check whether the output tensor has the right dimensions
-	if ( m_dim != t.get_dims() )
-		throw bad_parameter("libtensor",k_clazz,"perform(tensor_i<N,double>&)",
-			__FILE__,__LINE__,"Invalid dimensions of output tensor");
 
 	tensor_ctrl<N,double> ctrlt(t);
 	double* tptr=ctrlt.req_dataptr();
 	// set all elements of t to zero
-	memset(tptr,0,m_dim.get_size()*sizeof(double));
+	memset(tptr,0,m_dims.get_size()*sizeof(double));
 
 	double* ptr=NULL;
 	typename op_map_t::iterator it=m_operands.begin();
@@ -294,7 +308,7 @@ void tod_add<N>::perform(tensor_i<N,double> &t)	throw(exception)
 			const double* optr=ctrlo.req_const_dataptr();
 
 			loop_list_t list;
-			build_list(list,it->second->m_ta.get_dims(),it->first,m_dim);
+			build_list(list,it->second->m_ta.get_dims(),it->first,m_dims);
 			try {
 				registers regs;
 				regs.m_ptra=optr;
@@ -320,7 +334,7 @@ void tod_add<N>::perform(tensor_i<N,double> &t)	throw(exception)
 						__FILE__,__LINE__,e.what());
 			}
 
-			memset(ptr,0,m_dim.get_size()*sizeof(double));
+			memset(ptr,0,m_dims.get_size()*sizeof(double));
 			while ( it != m_operands.upper_bound(perm) ) {
 				tensor_ctrl<N,double> ctrlo(it->second->m_ta);
 				const double* optr=ctrlo.req_const_dataptr();
@@ -330,7 +344,7 @@ void tod_add<N>::perform(tensor_i<N,double> &t)	throw(exception)
 			}
 
 			loop_list_t list;
-			build_list(list,dim,perm,m_dim);
+			build_list(list,dim,perm,m_dims);
 
 			try {
 				registers regs;
@@ -353,16 +367,19 @@ void tod_add<N>::perform(tensor_i<N,double> &t)	throw(exception)
 }
 
 template<size_t N>
-void tod_add<N>::perform(tensor_i<N,double> &t, double c) throw(exception)
-{
+void tod_add<N>::perform(tensor_i<N, double> &t, double c) throw(exception) {
+
+	static const char *method = "perform(tensor_i<N, double>&, double)";
+
+	//	Check the dimensions of the output tensor
+	if(!t.get_dims().equals(m_dims)) {
+		throw bad_dimensions(
+			g_ns, k_clazz, method, __FILE__, __LINE__, "t");
+	}
+
+	if(c == 0.0) return;
+
 	tod_add<N>::start_timer();
-
-	// first check whether the output tensor has the right dimensions
-	if ( m_dim != t.get_dims() )
-		throw bad_parameter("libtensor",k_clazz,"perform(tensor_i<N,double>&)",
-			__FILE__,__LINE__,"Invalid dimensions of output tensor");
-
-	if ( c==0. ) return;
 
 	tensor_ctrl<N,double> ctrlt(t);
 	double* tptr=ctrlt.req_dataptr();
@@ -378,7 +395,7 @@ void tod_add<N>::perform(tensor_i<N,double> &t, double c) throw(exception)
 				const double* optr=ctrlo.req_const_dataptr();
 
 				loop_list_t list;
-				build_list(list,it->second->m_ta.get_dims(),it->first,m_dim);
+				build_list(list,it->second->m_ta.get_dims(),it->first,m_dims);
 				try {
 					registers regs;
 					regs.m_ptra=optr;
@@ -416,7 +433,7 @@ void tod_add<N>::perform(tensor_i<N,double> &t, double c) throw(exception)
 				}
 
 				loop_list_t list;
-				build_list(list,dim,perm,m_dim);
+				build_list(list,dim,perm,m_dims);
 
 				try {
 					registers regs;
@@ -528,6 +545,11 @@ void tod_add<N>::op_loop::exec( processor_t &proc, registers &regs)
 	}
 }
 
+
+template<size_t N>
+const char* tod_add<N>::op_daxpy::k_clazz = "tod_add<N>::op_daxpy";
+
+
 template<size_t N>
 void tod_add<N>::op_daxpy::exec( processor_t &proc, registers &regs)
 	throw(exception)
@@ -536,6 +558,11 @@ void tod_add<N>::op_daxpy::exec( processor_t &proc, registers &regs)
 	cblas_daxpy(m_len,regs.m_ca,regs.m_ptra,m_inca,regs.m_ptrb,m_incb);
 	tod_add<N>::op_daxpy::stop_timer();
 }
+
+
+template<size_t N>
+const char* tod_add<N>::op_daxpby_trp::k_clazz = "tod_add<N>::op_daxpby_trp";
+
 
 template<size_t N>
 void tod_add<N>::op_daxpby_trp::exec( processor_t &proc, registers &regs)

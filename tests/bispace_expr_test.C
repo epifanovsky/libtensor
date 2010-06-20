@@ -1,5 +1,5 @@
 #include <sstream>
-#include <libtensor.h>
+#include <libtensor/iface/bispace.h>
 #include "bispace_expr_test.h"
 
 namespace libtensor {

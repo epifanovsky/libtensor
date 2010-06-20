@@ -1,3 +1,5 @@
+#include <libvmm/std_allocator.h>
+#include <libtensor/core/tensor_ctrl.h>
 #include "tensor_test.h"
 
 namespace libtensor {

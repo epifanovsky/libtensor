@@ -5,7 +5,6 @@
 #include "exception.h"
 #include "core/tensor_i.h"
 #include "core/tensor_ctrl.h"
-#include "core/direct_tensor_operation.h"
 #include "core/dimensions.h"
 
 namespace libtensor {

@@ -3,7 +3,6 @@
 
 #include "defs.h"
 #include "exception.h"
-#include "core/direct_tensor_operation.h"
 
 namespace libtensor {
 
@@ -19,17 +18,25 @@ namespace libtensor {
 	\ingroup libtensor
 **/
 template<size_t N>
-class tod_additive : public direct_tensor_operation<N,double> {
+class tod_additive {
 public:
-	/**	\brief Performs the operation and adds its result to a tensor
+	/**	\brief Prefetches the operands
+	 **/
+	virtual void prefetch() throw(exception) = 0;
+
+	/**	\brief Performs the operation and adds its result to a %tensor
 			with a coefficient
 		\param t Tensor.
 		\param c Coefficient.
-	**/
-	virtual void perform(tensor_i<N,double> &t, const double c)
+	 **/
+	virtual void perform(tensor_i<N, double> &t, const double c)
 		throw(exception) = 0;
 
-	virtual void perform(tensor_i<N,double> &t) throw(exception) = 0;
+	/**	\brief Performs the operation and writes the result to a %tensor
+		\param t Tensor.
+		\param c Coefficient.
+	 **/
+	virtual void perform(tensor_i<N, double> &t) throw(exception) = 0;
 };
 
 }

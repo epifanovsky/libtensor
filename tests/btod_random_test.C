@@ -2,7 +2,10 @@
 #include <cstdlib>
 #include <ctime>
 #include <libvmm/std_allocator.h>
-#include <libtensor.h>
+#include <libtensor/core/block_tensor.h>
+#include <libtensor/btod/btod_random.h>
+#include <libtensor/symmetry/se_perm.h>
+#include <libtensor/tod/tod_btconv.h>
 #include "compare_ref.h"
 #include "btod_random_test.h"
 
@@ -33,12 +36,14 @@ void btod_random_test::perform() throw(libtest::test_exception)
 	block_tensor_t bta(bis);
 	block_tensor_ctrl_t btactrl(bta);
 
-	symel_cycleperm<4, double> cycle1(2, msk);
-	msk[0]=true; msk[1]=false; msk[2]=true; msk[3]=false;
-	symel_cycleperm<4, double> cycle2(2, msk);
+	permutation<4> perm1, perm2;
+	perm1.permute(1, 3);
+	perm2.permute(0, 2);
+	se_perm<4, double> cycle1(perm1, true);
+	se_perm<4, double> cycle2(perm2, true);
 
-	btactrl.req_sym_add_element(cycle1);
-	btactrl.req_sym_add_element(cycle2);
+	btactrl.req_symmetry().insert(cycle1);
+	btactrl.req_symmetry().insert(cycle2);
 
 	btod_random<4> randr;
 	randr.perform(bta);

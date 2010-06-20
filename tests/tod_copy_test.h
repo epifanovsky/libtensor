@@ -1,10 +1,8 @@
 #ifndef LIBTENSOR_TOD_COPY_TEST_H
 #define LIBTENSOR_TOD_COPY_TEST_H
 
-#include <cmath>
-#include <cstdlib>
 #include <libtest/unit_test.h>
-#include <libtensor.h>
+#include <libtensor/core/dimensions.h>
 
 namespace libtensor {
 

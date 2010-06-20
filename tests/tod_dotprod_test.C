@@ -3,6 +3,8 @@
 #include <ctime>
 #include <sstream>
 #include <libvmm/std_allocator.h>
+#include <libtensor/core/tensor.h>
+#include <libtensor/tod/tod_dotprod.h>
 #include "tod_dotprod_test.h"
 
 namespace libtensor {
@@ -40,8 +42,13 @@ void tod_dotprod_test::test_1(size_t ni) throw(libtest::test_exception) {
 	dimensions<1> dimb(index_range<1>(ib1, ib2));
 	size_t sza = dima.get_size(), szb = dimb.get_size();
 
-	tensor<1, double, allocator> ta(dima); tensor_ctrl<1, double> tca(ta);
-	tensor<1, double, allocator> tb(dimb); tensor_ctrl<1, double> tcb(tb);
+	tensor<1, double, allocator> ta(dima);
+	tensor<1, double, allocator> tb(dimb);
+
+	double c_ref = 0.0;
+	{
+	tensor_ctrl<1, double> tca(ta);
+	tensor_ctrl<1, double> tcb(tb);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 
@@ -52,10 +59,10 @@ void tod_dotprod_test::test_1(size_t ni) throw(libtest::test_exception) {
 
 	// Generate reference data
 
-	double c_ref = 0.0;
 	for(size_t i = 0; i < sza; i++) c_ref += dta[i] * dtb[i];
 	tca.ret_dataptr(dta); dta = NULL; ta.set_immutable();
 	tcb.ret_dataptr(dtb); dtb = NULL; tb.set_immutable();
+	}
 
 	// Invoke the operation
 
@@ -95,8 +102,13 @@ void tod_dotprod_test::test_2(size_t ni, size_t nj, const permutation<2> &perm)
 	dimb.permute(perm);
 	size_t sza = dima.get_size(), szb = dimb.get_size();
 
-	tensor<2, double, allocator> ta(dima); tensor_ctrl<2, double> tca(ta);
-	tensor<2, double, allocator> tb(dimb); tensor_ctrl<2, double> tcb(tb);
+	tensor<2, double, allocator> ta(dima);
+	tensor<2, double, allocator> tb(dimb);
+
+	double c_ref = 0.0;
+	{
+	tensor_ctrl<2, double> tca(ta);
+	tensor_ctrl<2, double> tcb(tb);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 
@@ -107,7 +119,6 @@ void tod_dotprod_test::test_2(size_t ni, size_t nj, const permutation<2> &perm)
 
 	// Generate reference data
 
-	double c_ref = 0.0;
 	index<2> ia;
 	do {
 		index<2> ib(ia); ib.permute(perm);
@@ -117,6 +128,7 @@ void tod_dotprod_test::test_2(size_t ni, size_t nj, const permutation<2> &perm)
 	} while(dima.inc_index(ia));
 	tca.ret_dataptr(dta); dta = NULL; ta.set_immutable();
 	tcb.ret_dataptr(dtb); dtb = NULL; tb.set_immutable();
+	}
 
 	// Invoke the operation
 

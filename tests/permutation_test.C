@@ -1,9 +1,12 @@
 #include <sstream>
 #include <string>
-#include <libtensor.h>
+#include <cstring>
+#include <libtensor/core/mask.h>
+#include <libtensor/core/permutation.h>
 #include "permutation_test.h"
 
 namespace libtensor {
+
 
 void permutation_test::perform() throw(libtest::test_exception) {
 
@@ -12,9 +15,11 @@ void permutation_test::perform() throw(libtest::test_exception) {
 	test_apply_mask_1();
 	test_apply_mask_2();
 	test_apply_mask_3();
-	test_apply();
+	test_apply_1();
+	test_apply_2();
 	test_print();
 }
+
 
 void permutation_test::test_ctor() throw(libtest::test_exception) {
 	char sc[8];
@@ -130,6 +135,7 @@ void permutation_test::test_ctor() throw(libtest::test_exception) {
 		__FILE__, __LINE__, "!p6a.equals(p6)");
 }
 
+
 void permutation_test::test_permute() throw(libtest::test_exception) {
 	permutation<2> p2;
 
@@ -192,6 +198,7 @@ void permutation_test::test_permute() throw(libtest::test_exception) {
 
 }
 
+
 void permutation_test::test_apply_mask_1() throw(libtest::test_exception) {
 
 	static const char *testname = "permutation_test::test_apply_mask_1()";
@@ -218,6 +225,7 @@ void permutation_test::test_apply_mask_1() throw(libtest::test_exception) {
 	}
 }
 
+
 void permutation_test::test_apply_mask_2() throw(libtest::test_exception) {
 
 	static const char *testname = "permutation_test::test_apply_mask_2()";
@@ -235,6 +243,7 @@ void permutation_test::test_apply_mask_2() throw(libtest::test_exception) {
 	}
 
 }
+
 
 void permutation_test::test_apply_mask_3() throw(libtest::test_exception) {
 
@@ -255,10 +264,15 @@ void permutation_test::test_apply_mask_3() throw(libtest::test_exception) {
 
 }
 
+
 void permutation_test::test_invert() throw(libtest::test_exception) {
 }
 
-void permutation_test::test_apply() throw(libtest::test_exception) {
+
+void permutation_test::test_apply_1() throw(libtest::test_exception) {
+
+	static const char *testname = "permutation_test::test_apply_1()";
+
 	bool ok = false;
 	permutation<2> p2; permutation<4> p4;
 	char s2[8], s4[8];
@@ -270,8 +284,9 @@ void permutation_test::test_apply() throw(libtest::test_exception) {
 		ok = true;
 	} catch(...) {
 	}
-	if(!ok) fail_test("permutation_test::test_apply()",
-		__FILE__, __LINE__, "Unexpected exception");
+	if(!ok) {
+		fail_test(testname, __FILE__, __LINE__, "Unexpected exception");
+	}
 
 	ok = false;
 	try {
@@ -279,11 +294,13 @@ void permutation_test::test_apply() throw(libtest::test_exception) {
 	} catch(exception e) {
 		ok = true;
 	} catch(...) {
-		fail_test("permutation_test::test_apply()",
-			__FILE__, __LINE__, "Incorrect exception type");
+		fail_test(testname, __FILE__, __LINE__,
+			"Incorrect exception type");
 	}
-	if(!ok) fail_test("permutation_test::test_apply()",
-		__FILE__, __LINE__, "Expected an exception, it was missing");
+	if(!ok) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Expected an exception, it was missing");
+	}
 
 	ok = false;
 	try {
@@ -291,8 +308,10 @@ void permutation_test::test_apply() throw(libtest::test_exception) {
 		ok = true;
 	} catch(...) {
 	}
-	if(!ok) fail_test("permutation_test::test_apply()",
-		__FILE__, __LINE__, "Unexpected exception");
+	if(!ok) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Unexpected exception");
+	}
 
 	ok = false;
 	try {
@@ -300,12 +319,52 @@ void permutation_test::test_apply() throw(libtest::test_exception) {
 	} catch(exception e) {
 		ok = true;
 	} catch(...) {
-		fail_test("permutation_test::test_apply()",
-			__FILE__, __LINE__, "Incorrect exception type");
+		fail_test(testname, __FILE__, __LINE__,
+			"Incorrect exception type");
 	}
-	if(!ok) fail_test("permutation_test::test_apply()",
-		__FILE__, __LINE__, "Expected an exception, it was missing");
+	if(!ok) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Expected an exception, it was missing");
+	}
 }
+
+
+void permutation_test::test_apply_2() throw(libtest::test_exception) {
+
+	static const char *testname = "permutation_test::test_apply_2()";
+
+	try {
+
+	char seq2a[] = { 'a', 'b' }, seq2b[] = { 'b', 'a' };
+	char seq4a[] = { 'a', 'b', 'c', 'd' }, seq4b[] = { 'b', 'c', 'd', 'a' };
+
+	permutation<2> p2; p2.permute(0, 1);
+	permutation<4> p4; p4.permute(0, 1).permute(1, 2).permute(2, 3);
+
+	p2.apply(seq2a);
+	p4.apply(seq4a);
+
+	std::string s2a(seq2a, 2), s2b(seq2b, 2);
+	if(s2a.compare(s2b) != 0) {
+		std::ostringstream ss;
+		ss << "Test (ab->ba) failed: [" << seq2a << "] vs [" << seq2b
+			<< "] (expected).";
+		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+	}
+
+	std::string s4a(seq4a, 4), s4b(seq4b, 4);
+	if(s4a.compare(s4b) != 0) {
+		std::ostringstream ss;
+		ss << "Test (abcd->bcda) failed: [" << seq4a << "] vs ["
+			<< seq4b << "] (expected).";
+		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
 
 void permutation_test::test_print() throw(libtest::test_exception) {
 	permutation<2> p2;
@@ -313,5 +372,5 @@ void permutation_test::test_print() throw(libtest::test_exception) {
 	ss << p2 << p2;
 }
 
-} // namespace libtensor
 
+} // namespace libtensor

@@ -1,8 +1,8 @@
 #ifndef LIBTENSOR_PT_SUITE_H
 #define LIBTENSOR_PT_SUITE_H
 
-#include <libtest.h>
-#include <libtensor.h>
+#include <libtest/libtest.h>
+#include <libtensor/libtensor.h>
 #include "performance_test_suite.h"
 
 #include "tod_add_scenario.h"
@@ -25,18 +25,18 @@ namespace libtensor {
 	\li libtensor::tod_copy_scenario
 	\li libtensor::tod_dotprod_scenario
 	\li libtensor::expression_test_scenario
-	
-	\ingroup libtensor_performance_tests	
+
+	\ingroup libtensor_performance_tests
 **/
 class libtensor_pt_suite : public performance_test_suite {
-	
+
 	typedef dimensions_data<2,2,2,2> dim2_t;
 	typedef dimensions_data<2,2,2,4> dim4_t;
 	typedef dimensions_data<2,2,2,8> dim8_t;
 	typedef dimensions_data<2,2,2,16> dim16_t;
 	typedef dimensions_data<2,2,2,32> dim32_t;
 	typedef dimensions_data<2,2,2,32> dim64_t;
-	
+
 	typedef arbitrary_blocks_data<32,64,2> normal2_t;
 	typedef arbitrary_blocks_data<32,64,4> normal4_t;
 	typedef arbitrary_blocks_data<32,64,8> normal8_t;
@@ -64,7 +64,7 @@ class libtensor_pt_suite : public performance_test_suite {
 
 	expression_test_scenario<400,normal16_t> m_expression_tests_n16;
 	expression_test_scenario<200,normal8_t> m_expression_tests_n8;
-	expression_test_scenario<100,normal4_t> m_expression_tests_n4;	
+	expression_test_scenario<100,normal4_t> m_expression_tests_n4;
 	expression_test_scenario<800,large32_t> m_expression_tests_l32;
 	expression_test_scenario<400,large16_t> m_expression_tests_l16;
 	expression_test_scenario<200,large8_t> m_expression_tests_l8;

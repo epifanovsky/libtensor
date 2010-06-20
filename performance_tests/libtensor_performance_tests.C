@@ -1,9 +1,6 @@
-#include "libtensor_pt_suite.h"
-
-#include "../global_timings.h"
-
 #include <sstream>
 #include <iostream>
+#include "libtensor_pt_suite.h"
 
 using namespace libtensor;
 using namespace std;
