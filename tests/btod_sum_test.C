@@ -18,7 +18,8 @@ void btod_sum_test::perform() throw(libtest::test_exception) {
 	test_3();
 	test_4();
 	test_5();
-	test_6();
+	test_6(true);
+	test_6(false);
 }
 
 
@@ -283,7 +284,7 @@ void btod_sum_test::test_5() throw(libtest::test_exception) {
 	}
 }
 
-void btod_sum_test::test_6() throw(libtest::test_exception) {
+void btod_sum_test::test_6(bool do_add) throw(libtest::test_exception) {
 
 	//
 	//	Single operand A + B and C + D, symmetry
@@ -317,6 +318,7 @@ void btod_sum_test::test_6() throw(libtest::test_exception) {
 	{
 	block_tensor_ctrl<4, double> ctrl_a1(bta1), ctrl_a2(bta2);
 	block_tensor_ctrl<4, double> ctrl_b1(btb1), ctrl_b2(btb2);
+	block_tensor_ctrl<4, double> ctrl_c(btc), ctrl_c_ref(btc_ref);
 	permutation<4> p1023, p0132;
 	p1023.permute(0, 1);
 	p0132.permute(2, 3);
@@ -327,6 +329,10 @@ void btod_sum_test::test_6() throw(libtest::test_exception) {
 	ctrl_b1.req_symmetry().insert(sp0132);
 	ctrl_a2.req_symmetry().insert(sp1023);
 	ctrl_b2.req_symmetry().insert(sp1023);
+	ctrl_c.req_symmetry().insert(sp1023);
+	ctrl_c.req_symmetry().insert(sp0132);
+	ctrl_c_ref.req_symmetry().insert(sp1023);
+	ctrl_c_ref.req_symmetry().insert(sp0132);
 	}
 
 	//	Load random data for input
@@ -340,17 +346,26 @@ void btod_sum_test::test_6() throw(libtest::test_exception) {
 	bta2.set_immutable();
 	btb2.set_immutable();
 
+	// Prepare reference
+
+	if (do_add) {
+		btod_random<4>().perform(btc);
+		btod_copy<4>(btc).perform(btc_ref);
+	}
+
 	//	Run contraction and compute the reference
 
 	btod_add<4> op1(bta1), op2(bta2);
 	op1.add_op(btb1);
 	op2.add_op(btb2);
-	op1.perform(btc_ref);
+	if (do_add) op1.perform(btc_ref, 1.0);
+	else op1.perform(btc_ref);
 	op2.perform(btc_ref, 1.0);
 
 	btod_sum<4> sum(op1);
 	sum.add_op(op2);
-	sum.perform(btc);
+	if (do_add) sum.perform(btc, 1.0);
+	else sum.perform(btc);
 
 	compare_ref<4>::compare(testname, btc, btc_ref, 1e-14);
 

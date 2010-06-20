@@ -158,6 +158,17 @@ void btod_sum<N>::compute_block(tensor_i<N, double> &blk, const index<N> &i) {
 			additive_btod<N>::compute_block(iop->get_op(), blk, i,
 				tr0, iop->get_coeff());
 		}
+		else {
+			const symmetry<N, double> &sym = iop->get_op().get_symmetry();
+			orbit<N, double> orb(sym, i);
+			abs_index<N> ci(orb.get_abs_canonical_index(), m_bidims);
+
+			if(iop->get_op().get_schedule().contains(ci.get_abs_index())) {
+				const transf<N, double> &tr = orb.get_transf(i);
+				additive_btod<N>::compute_block(iop->get_op(), blk, ci.get_index(),
+					tr, iop->get_coeff());
+			}
+		}
 	}
 }
 
@@ -174,6 +185,19 @@ void btod_sum<N>::compute_block(tensor_i<N, double> &blk, const index<N> &i,
 		if(iop->get_op().get_schedule().contains(ai.get_abs_index())) {
 			additive_btod<N>::compute_block(iop->get_op(), blk, i,
 				tr, c * iop->get_coeff());
+		}
+		else {
+			const symmetry<N, double> &sym = iop->get_op().get_symmetry();
+			orbit<N, double> orb(sym, i);
+			abs_index<N> ci(orb.get_abs_canonical_index(), m_bidims);
+
+			if(iop->get_op().get_schedule().contains(ci.get_abs_index())) {
+				transf<N, double> tra(orb.get_transf(i));
+				tra.transform(tr);
+
+				additive_btod<N>::compute_block(iop->get_op(), blk, ci.get_index(),
+					tra, c * iop->get_coeff());
+			}
 		}
 	}
 }
