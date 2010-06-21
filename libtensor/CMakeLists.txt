@@ -14,10 +14,23 @@ set(SRC
 	tod/loop_list_elem.C
 	tod/loop_list_elem1.C
 )
-add_library(tensor ${SRC})
 
+set(SRC_INST
+	tod/tod_add.C
+	tod/tod_contract2.C
+	btod/additive_btod.C
+	btod/basic_btod.C
+	btod/btod_add.C
+	btod/btod_contract2.C
+	btod/btod_copy.C
+	btod/btod_sum.C
+)
+
+add_library(tensor ${SRC} ${SRC_INST})
+
+set_property(TARGET tensor APPEND PROPERTY
+	COMPILE_DEFINITIONS LIBTENSOR_INSTANTIATE_TEMPLATES)
 set_property(TARGET tensor APPEND PROPERTY
 	COMPILE_DEFINITIONS_DEBUG LIBVMM_DEBUG)
 set_property(TARGET tensor APPEND PROPERTY
 	COMPILE_DEFINITIONS_DEBUG LIBTENSOR_DEBUG)
-

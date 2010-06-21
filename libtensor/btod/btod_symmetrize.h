@@ -6,6 +6,7 @@
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
 #include "../symmetry/so_add.h"
+#include "../symmetry/so_permute.h"
 #include "../symmetry/so_symmetrize.h"
 #include "../tod/tod_set.h"
 #include "additive_btod.h"
