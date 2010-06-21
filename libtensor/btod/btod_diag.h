@@ -212,8 +212,16 @@ void btod_diag<N, M>::compute_block(tensor_i<k_orderb, double> &blk,
 		seqa2[i] = seqa1[i] = i;
 	tra.get_perm().apply(seqa2);
 	for(register size_t i = 0; i < k_ordera; i++) {
-		seqb1[map[i]] = seqa1[i];
-		seqb2[map[i]] = seqa2[i];
+		if (! m_msk[i]) {
+			seqb1[map[i]] = seqa1[i];
+			seqb2[map[i]] = seqa2[i];
+		}
+	}
+	for(register size_t i = 0; i < k_ordera; i++) {
+		if (m_msk[i]) {
+			seqb1[map[i]] = seqb2[map[i]] = seqa1[i];
+			break;
+		}
 	}
 	permutation_builder<k_orderb> pb(seqb2, seqb1);
 
@@ -261,6 +269,7 @@ void btod_diag<N, M>::compute_block(tensor_i<k_orderb, double> &blk,
 	abs_index<k_ordera> cidxa(oa.get_abs_canonical_index(), bidimsa);
 	const transf<k_ordera, double> &tra = oa.get_transf(idxa);
 
+	//
 	// Extract diagonal of block of bta into block of btb
 	//
 	size_t seqa1[k_ordera], seqa2[k_ordera];
@@ -269,8 +278,16 @@ void btod_diag<N, M>::compute_block(tensor_i<k_orderb, double> &blk,
 		seqa2[i] = seqa1[i] = i;
 	tra.get_perm().apply(seqa2);
 	for(register size_t i = 0; i < k_ordera; i++) {
-		seqb1[map[i]] = seqa1[i];
-		seqb2[map[i]] = seqa2[i];
+		if (! m_msk[i]) {
+			seqb1[map[i]] = seqa1[i];
+			seqb2[map[i]] = seqa2[i];
+		}
+	}
+	for(register size_t i = 0; i < k_ordera; i++) {
+		if (m_msk[i]) {
+			seqb1[map[i]] = seqb2[map[i]] = seqa1[i];
+			break;
+		}
 	}
 	permutation_builder<k_orderb> pb(seqb2, seqb1);
 
