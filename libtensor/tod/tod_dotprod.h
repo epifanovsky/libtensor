@@ -99,7 +99,7 @@ public:
 
 	/**	\brief Computes the dot product
 	 **/
-	double calculate() throw(exception);
+	double calculate();
 
 private:
 	bool verify_dims();
@@ -151,7 +151,7 @@ void tod_dotprod<N>::prefetch() {
 }
 
 template<size_t N>
-double tod_dotprod<N>::calculate() throw(exception) {
+double tod_dotprod<N>::calculate() {
 	tod_dotprod<N>::start_timer();
 
 	permutation<N> perma(m_perm1);
