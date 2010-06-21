@@ -21,7 +21,12 @@ set(SRC_INST
 	btod/additive_btod.C
 	btod/basic_btod.C
 	btod/btod_add.C
-	btod/btod_contract2.C
+	btod/btod_contract2_1.C
+	btod/btod_contract2_2.C
+	btod/btod_contract2_3.C
+	btod/btod_contract2_4.C
+	btod/btod_contract2_5.C
+	btod/btod_contract2_6.C
 	btod/btod_copy.C
 	btod/btod_sum.C
 )
