@@ -12,7 +12,7 @@
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
 #include "../core/permutation.h"
-#include "../symmetry/so_add.h"
+#include "../symmetry/so_mult.h"
 #include "../tod/tod_dotprod.h"
 #include "bad_block_index_space.h"
 
@@ -212,7 +212,7 @@ void btod_dotprod<N>::calculate(std::vector<double> &v) {
 		ctrl2[i] = new block_tensor_ctrl<N, double>(j->bt2);
 		sym[i] = new symmetry<N, double>(block_index_space<N>(
 			j->bt1.get_bis()).permute(j->perm1));
-		so_add<N, double>(ctrl1[i]->req_const_symmetry(), j->perm1,
+		so_mult<N, double>(ctrl1[i]->req_const_symmetry(), j->perm1,
 			ctrl2[i]->req_const_symmetry(), j->perm2).
 			perform(*sym[i]);
 	}

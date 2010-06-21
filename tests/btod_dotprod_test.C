@@ -22,6 +22,7 @@ void btod_dotprod_test::perform() throw(libtest::test_exception) {
 	test_6();
 	test_7();
 	test_8();
+	test_9();
 }
 
 
@@ -562,5 +563,71 @@ void btod_dotprod_test::test_8() throw(libtest::test_exception) {
 	}
 }
 
+void btod_dotprod_test::test_9() throw(libtest::test_exception) {
+
+	//
+	//	Three blocks in each dimension, multiple non-zero arguments,
+	//	permutational anti-symmetry
+	//
+
+	static const char *testname = "btod_dotprod_test::test_9()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<2> i1, i2;
+	i2[0] = 9; i2[1] = 9;
+	dimensions<2> dims(index_range<2>(i1, i2));
+	block_index_space<2> bis(dims);
+	mask<2> m;
+	m[0] = true; m[1] = true;
+	bis.split(m, 2);
+	bis.split(m, 5);
+	bis.split(m, 7);
+	block_tensor<2, double, allocator_t> bt1(bis), bt2(bis);
+
+	//	Set up symmetry
+
+	{
+		block_tensor_ctrl<2, double> ctrl1(bt1), ctrl2(bt2);
+
+		se_perm<2, double> elem1(permutation<2>().permute(0, 1), false);
+
+		ctrl1.req_symmetry().insert(elem1);
+		ctrl2.req_symmetry().insert(elem1);
+	}
+
+	//	Fill in random data
+
+	btod_random<2>().perform(bt1);
+	btod_random<2>().perform(bt2);
+	bt1.set_immutable();
+	bt2.set_immutable();
+
+	//	Compute the dot product
+
+	double d = btod_dotprod<2>(bt1, bt2).calculate();
+
+	//	Compute the reference
+
+	tensor<2, double, allocator_t> t1(dims), t2(dims);
+	tod_btconv<2>(bt1).perform(t1);
+	tod_btconv<2>(bt2).perform(t2);
+	double d_ref = tod_dotprod<2>(t1, t2).calculate();
+
+	//	Compare
+
+	if(fabs(d - d_ref) > fabs(d_ref) * 1e-14) {
+		std::ostringstream ss;
+		ss << "Result does not match reference: " << d << " vs. "
+			<< d_ref << " (ref), " << d - d_ref << " (diff).";
+		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
 
 } // namespace libtensor

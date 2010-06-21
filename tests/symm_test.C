@@ -402,6 +402,50 @@ void symm_test::test_asymm2_contr_ee_1() throw(libtest::test_exception) {
 	}
 }
 
+void symm_test::test_asymm2_contr_ee_2() throw(libtest::test_exception) {
+
+	const char *testname = "symm_test::test_asymm2_contr_ee_2()";
+
+	try {
+
+	bispace<1> sp_i(10), sp_a(20);
+	sp_i.split(5);
+	sp_a.split(8); sp_a.split(16);
+	bispace<2> sp_ij(sp_i|sp_i);
+	bispace<4> sp_ijab(sp_i|sp_i|sp_a|sp_a);
+
+	btensor<2> bta(sp_ij);
+	btensor<4> btb(sp_ijab), btc(sp_ijab), btc_ref(sp_ijab);
+
+	permutation<2> p10;
+	p10.permute(0, 1);
+	se_perm<2, double> sp10(p10, true);
+	permutation<4> p1023, p0132;
+	p1023.permute(0, 1); p0132.permute(2, 3);
+	se_perm<4, double> sp1023(p1023, false), sp0132(p0132, false);
+
+	btod_random<2>().perform(bta);
+	btod_random<4>().perform(btb);
+	bta.set_immutable();
+	btb.set_immutable();
+
+	contraction2<1, 3, 1> contr;
+	contr.contract(1, 1);
+	btod_contract2<1, 3, 1> op(contr, bta, btb);
+	btod_symmetrize<4> op_sym(op, 0, 1, false);
+	op_sym.perform(btc_ref);
+
+	letter a, b, i, j, k;
+	btc(i|j|a|b) = asymm(i|j, contract(k, bta(i|k), btb(j|k|a|b)));
+
+	compare_ref<4>::compare(testname, btc, btc_ref, 2e-14);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
 
 /**	\test Tests the symmetrization over two pairs of indexes P+(ij)P+(ab)
 		in a %tensor
