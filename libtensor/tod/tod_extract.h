@@ -246,7 +246,6 @@ dimensions<N - M> tod_extract<N, M>::mk_dims(const dimensions<N> &dims,
 	index<k_orderb> i1, i2;
 
 	size_t m = 0, j = 0;
-	size_t d = 0;
 	bool bad_dims = false;
 	for(size_t i = 0; i < N; i++) {
 		if(msk[i]){

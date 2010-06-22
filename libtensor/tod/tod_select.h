@@ -112,7 +112,7 @@ void tod_select<N,ComparePolicy>::perform(tensor_i<N, double> &t,
 
 	tensor_ctrl<N, double> ctrl(t);
 	const dimensions<N> &d = t.get_dims();
-	double *p = ctrl.req_dataptr();
+	const double *p = ctrl.req_const_dataptr();
 
 	size_t i = 0;
 	while (p[i] == 0.0) i++;
@@ -139,12 +139,14 @@ void tod_select<N,ComparePolicy>::perform(tensor_i<N, double> &t,
 			if (li.size() == n) li.pop_back();
 
 			typename list_t::iterator it=li.begin();
-			while (it != li.end() && ! m_cmp(p[i],it->value)) it++;
+			while (it != li.end() && ! m_cmp(p[i], it->value)) it++;
 			index<N> idx;
 			d.abs_index(i,idx);
 			li.insert(it, elem_t(idx,p[i]));
 		}
 	}
+
+	ctrl.ret_dataptr(p);
 }
 
 
