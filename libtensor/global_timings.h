@@ -16,18 +16,24 @@ namespace libtensor {
 
 /** \brief global timings object
  */
-class global_timings : public libvmm::singleton<global_timings> {
+class global_timings :
+	public libvmm::singleton<global_timings> {
+
 	friend class libvmm::singleton<global_timings>;
-	friend std::ostream& operator<<( std::ostream&, const global_timings& );
+	friend std::ostream& operator<<(std::ostream&, const global_timings&);
 
 	struct timing_t {
 		time_diff_t m_total;
 		size_t m_calls;
 
-		timing_t(time_diff_t time) : m_total(time), m_calls(1)
-		{}
-		timing_t& operator+=( time_diff_t time )
-		{ m_calls++; m_total+=time; return *this; }
+		timing_t(time_diff_t time) :
+			m_total(time), m_calls(1) { }
+
+		timing_t& operator+=( time_diff_t time ) {
+			m_calls++;
+			m_total += time;
+			return *this;
+		}
 	};
 
 	typedef std::map<const std::string, timing_t> map_t;

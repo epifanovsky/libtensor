@@ -54,7 +54,7 @@ protected:
 	  	Stops the timer indicated by name. The duration is submitted to 
 	  	the global timings object.	  	
 	 */
-	void stop_timer( const std::string& name );
+	void stop_timer(const std::string& name);
 };
 
 template<typename T>
@@ -85,7 +85,7 @@ inline void timings<T>::stop_timer()
 	// add thread number if doing parallel calculation
 #ifdef LIBTENSOR_TIMINGS
 	m_timer.stop();
-	global_timings::get_instance().add_to_timer(T::k_clazz,m_timer);
+	global_timings::get_instance().add_to_timer(T::k_clazz, m_timer);
 #endif		
 }
 

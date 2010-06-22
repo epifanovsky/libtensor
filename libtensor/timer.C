@@ -4,7 +4,7 @@
 namespace libtensor {
 	
 
-std::ostream& operator<<( std::ostream& out, const time_diff_t& t ) 
+std::ostream& operator<<(std::ostream& out, const time_diff_t& t)
 {
 #ifdef POSIX
 	out << "User: " << std::setw(8) << std::setprecision(2);
@@ -17,7 +17,7 @@ std::ostream& operator<<( std::ostream& out, const time_diff_t& t )
 	return out;
 }
 
-std::ostream& operator<<( std::ostream& out, const time_pt_t& t ) 
+std::ostream& operator<<(std::ostream& out, const time_pt_t& t)
 {
 #ifdef POSIX
 	out << "User: " << std::setw(8) << t.m_ut << " ticks, ";
