@@ -21,6 +21,7 @@ void symm_test::perform() throw(libtest::test_exception) {
 		//~ test_asymm2_contr_tt_4();
 		test_asymm2_contr_tt_5();
 		test_asymm2_contr_ee_1();
+		test_asymm2_contr_ee_2();
 
 		test_symm22_t_1();
 		test_asymm22_t_1();

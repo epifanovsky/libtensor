@@ -334,12 +334,12 @@ block_index_space<N - M> btod_extract<N, M>::mk_bis(
 		size_t typ = bis.get_type(map[i]);
 		const split_points &splits = bis.get_splits(typ);
 		mask<k_orderb> msk_typ;
-		for(size_t j = 0; j < k_orderb; j++) {
-			if(bis.get_type(map[j]) == typ) msk_typ[j] = true;
+		for(size_t k = 0; k < k_orderb; k++) {
+			if(bis.get_type(map[k]) == typ) msk_typ[k] = true;
 		}
 		size_t npts = splits.get_num_points();
-		for(register size_t j = 0; j < npts; j++) {
-			obis.split(msk_typ, splits[j]);
+		for(register size_t k = 0; k < npts; k++) {
+			obis.split(msk_typ, splits[k]);
 		}
 		msk_done |= msk_typ;
 	}
