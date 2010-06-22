@@ -3,6 +3,7 @@
 
 #include "../symmetry/so_add.h"
 #include "../symmetry/so_copy.h"
+#include "../symmetry/so_permute.h"
 #include "../tod/tod_add.h"
 #include "../tod/tod_copy.h"
 
@@ -207,7 +208,7 @@ void btod_add<N>::add_operand(block_tensor_i<N, double> &bt,
 
 	block_tensor_ctrl<N, double> ca(bt);
 	if(first) {
-		so_copy<N, double>(ca.req_const_symmetry()).perform(m_sym);
+		so_permute<N, double>(ca.req_const_symmetry(), perm).perform(m_sym);
 	} else {
 		symmetry<N, double> symcopy(m_bis);
 		so_copy<N, double>(m_sym).perform(symcopy);

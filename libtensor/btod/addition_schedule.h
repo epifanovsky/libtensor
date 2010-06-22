@@ -57,7 +57,7 @@ private:
 	const symmetry<N, T> &m_syma; //!< Symmetry of A
 	const symmetry<N, T> &m_symb; //!< Symmetry of B
 	symmetry<N, T> m_symc; //!< Largest common subgroup of A and B
-	schedule_t m_sch; // Additive schedule
+	schedule_t m_sch; //!< Additive schedule
 	book_t m_booka, m_posta;
 
 public:
