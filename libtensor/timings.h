@@ -21,7 +21,7 @@ namespace libtensor {
  */
 template<typename T>
 class timings {
-	
+private:
 #ifdef LIBTENSOR_TIMINGS
 	typedef std::map<const std::string, timer> map_t; 
 	typedef std::pair<const std::string, timer> pair_t;
@@ -29,6 +29,9 @@ class timings {
 	timer m_timer; //!< main timer object 
 	map_t m_more_timers; //!< additional timers 
 #endif			
+
+public:
+	virtual ~timings() { }
 
 protected:	
 	/** \brief Start default timer 

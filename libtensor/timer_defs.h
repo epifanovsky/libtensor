@@ -6,14 +6,20 @@ namespace libtensor {
 class time_pt_t;
 class time_diff_t;
 
-//! comparison operator of two time points
+//! Smaller equal comparison operator of two time points
 bool operator<=(const time_pt_t& p1, const time_pt_t& p2);
 
-//! prints time point to ostream
+//! Equal comparison operator of two time points
+bool operator==(const time_pt_t& p1, const time_pt_t& p2);
+
+//! Prints time point to ostream
 std::ostream& operator<<(std::ostream& out, const time_pt_t& pt);
 
-//! equal comparison of time differences
+//! Smaller equal comparison of time differences
 bool operator<=(const time_diff_t& d1, const time_diff_t& d2);
+
+//! Equal comparison of time differences
+bool operator==(const time_diff_t& d1, const time_diff_t& d2);
 
 //! prints time difference to ostream
 std::ostream& operator<<(std::ostream& out, const time_diff_t& d);
@@ -26,6 +32,7 @@ class time_pt_t {
 
 	friend class time_diff_t;
 	friend bool operator<=(const time_pt_t&, const time_pt_t&);
+	friend bool operator==(const time_diff_t&, const time_diff_t&);
 	friend std::ostream& operator<<(std::ostream&, const time_pt_t&);
 
 private:
@@ -42,6 +49,7 @@ public:
 class time_diff_t {
 
 	friend bool operator<=(const time_diff_t&, const time_diff_t&);
+	friend bool operator==(const time_diff_t&, const time_diff_t&);
 	friend std::ostream& operator<<(std::ostream&, const time_diff_t&);
 
 private:
@@ -97,6 +105,9 @@ public:
 inline bool operator<=(const time_pt_t& p1, const time_pt_t& p2) {
 	return (p1.m_rt <= p2.m_rt);
 }
+inline bool operator==(const time_pt_t& p1, const time_pt_t& p2) {
+	return (p1.m_rt == p2.m_rt);
+}
 
 inline time_diff_t operator-(const time_pt_t& end, const time_pt_t& begin) {
 	return time_diff_t(begin, end);
@@ -104,6 +115,10 @@ inline time_diff_t operator-(const time_pt_t& end, const time_pt_t& begin) {
 
 inline bool operator<=(const time_diff_t& d1, const time_diff_t& d2) {
 	return (d1.m_rt <= d2.m_rt);
+}
+
+inline bool operator==(const time_diff_t& d1, const time_diff_t& d2) {
+	return (d1.m_rt == d2.m_rt);
 }
 
 } // namespace libtensor
