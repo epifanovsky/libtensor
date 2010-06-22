@@ -208,7 +208,8 @@ void btod_add<N>::add_operand(block_tensor_i<N, double> &bt,
 
 	block_tensor_ctrl<N, double> ca(bt);
 	if(first) {
-		so_permute<N, double>(ca.req_const_symmetry(), perm).perform(m_sym);
+		so_permute<N, double>(ca.req_const_symmetry(),
+			perm).perform(m_sym);
 	} else {
 		symmetry<N, double> symcopy(m_bis);
 		so_copy<N, double>(m_sym).perform(symcopy);
@@ -267,8 +268,8 @@ void btod_add<N>::make_schedule() const {
 				rec.iarg = i;
 				rec.idx = acia.get_index();
 				rec.k = m_ops[i]->m_c * tra.get_coeff();
-				rec.perm.permute(m_ops[i]->m_perm).
-					permute(tra.get_perm());
+				rec.perm.permute(tra.get_perm()).
+					permute(m_ops[i]->m_perm);
 				m_op_sch.insert(std::pair<size_t, schrec>(
 					olb.get_abs_index(iob), rec));
 				nrec++;

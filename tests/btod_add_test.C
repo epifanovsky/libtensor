@@ -35,6 +35,7 @@ void btod_add_test::perform() throw(libtest::test_exception) {
 	test_6();
 	test_7();
 	test_8();
+	test_9();
 
 	test_exc();
 }
@@ -510,6 +511,7 @@ void btod_add_test::test_8() throw(libtest::test_exception) {
 	block_tensor<4, double, allocator_t> bta(bis_ijab), btb(bis_iajb);
 	tensor<4, double, allocator_t> ta(dims_ijab), tb(dims_iajb),
 		tb_ref(dims_iajb);
+	symmetry<4, double> syma_ref(bis_iajb);
 
 	{
 		block_tensor_ctrl<4, double> ca(bta);
@@ -527,8 +529,80 @@ void btod_add_test::test_8() throw(libtest::test_exception) {
 	tod_btconv<4>(btb).perform(tb_ref);
 	tod_copy<4>(ta, permutation<4>().permute(1, 2), 1.0).
 		perform(tb_ref, 1.0);
+	syma_ref.insert(se_perm<4, double>(permutation<4>().
+		permute(0, 2), false));
+	syma_ref.insert(se_perm<4, double>(permutation<4>().
+		permute(1, 3), false));
 
 	btod_add<4> add(bta, permutation<4>().permute(1, 2), 1.0);
+
+	compare_ref<4>::compare(testname, add.get_symmetry(), syma_ref);
+
+	add.perform(btb, 1.0);
+	tod_btconv<4>(btb).perform(tb);
+
+	compare_ref<4>::compare(testname, tb, tb_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\brief Tests \f$ B_{jkab} = B_{jkab} + A_{kajb} qquad
+		A \in S^{-}_2 \times S^{-}_2 \f$
+ **/
+void btod_add_test::test_9() throw(libtest::test_exception) {
+
+	static const char *testname = "btod_add_test::test_9()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	size_t ni = 10, na = 4;
+	index<4> i1, i2;
+	i2[0] = ni - 1; i2[1] = na - 1; i2[2] = ni - 1; i2[3] = na - 1;
+	dimensions<4> dims_iajb(index_range<4>(i1, i2));
+	block_index_space<4> bis_iajb(dims_iajb);
+	i2[0] = ni - 1; i2[1] = ni - 1; i2[2] = na - 1; i2[3] = na - 1;
+	dimensions<4> dims_ijab(index_range<4>(i1, i2));
+	block_index_space<4> bis_ijab(dims_ijab);
+
+	mask<4> m1, m2, m3, m4;
+	m1[0] = true; m2[1] = true; m1[2] = true; m2[3] = true;
+	m3[0] = true; m3[1] = true; m4[2] = true; m4[3] = true;
+	bis_iajb.split(m1, 5);
+	bis_iajb.split(m2, 2);
+	bis_ijab.split(m3, 5);
+	bis_ijab.split(m4, 2);
+
+	block_tensor<4, double, allocator_t> bta(bis_iajb), btb(bis_ijab);
+	tensor<4, double, allocator_t> ta(dims_iajb), tb(dims_ijab),
+		tb_ref(dims_ijab);
+	symmetry<4, double> syma_ref(bis_ijab);
+
+	{
+		block_tensor_ctrl<4, double> ca(bta);
+		ca.req_symmetry().insert(se_perm<4, double>(permutation<4>().
+			permute(0, 2).permute(1, 3), true));
+	}
+
+	btod_random<4>().perform(bta);
+	btod_random<4>().perform(btb);
+	bta.set_immutable();
+
+	tod_btconv<4>(bta).perform(ta);
+	tod_btconv<4>(btb).perform(tb_ref);
+	tod_copy<4>(ta, permutation<4>().permute(2, 1).permute(1, 0), 1.0).
+		perform(tb_ref, 1.0);
+	syma_ref.insert(se_perm<4, double>(permutation<4>().
+		permute(0, 1).permute(2, 3), true));
+
+	btod_add<4> add(bta, permutation<4>().permute(2, 1).permute(1, 0), 1.0);
+
+	compare_ref<4>::compare(testname, add.get_symmetry(), syma_ref);
+
 	add.perform(btb, 1.0);
 	tod_btconv<4>(btb).perform(tb);
 
