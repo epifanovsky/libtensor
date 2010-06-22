@@ -15,6 +15,7 @@ void expr_test::perform() throw(libtest::test_exception) {
 
 		test_1();
 		test_2();
+		test_3();
 
 	} catch(...) {
 		libvmm::vm_allocator<double>::vmm().shutdown();
@@ -99,6 +100,50 @@ void expr_test::test_2() throw(libtest::test_exception) {
 			i_ovov(j|b|i|a)
 			- contract(k|d, t2(i|k|b|d), i_oovv(j|k|a|d))))
 		- asymm(b|c, contract(k|d, i_ovvv(k|c|a|d), t2(i|k|b|d)));
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void expr_test::test_3() throw(libtest::test_exception) {
+
+	static const char *testname = "expr_test::test_3()";
+
+	try {
+
+	bispace<1> so(10); so.split(5);
+	bispace<1> sv(4); sv.split(2);
+
+	bispace<2> sov(so|sv);
+	bispace<4> sooov(so&so&so|sv), soovv(so&so|sv&sv), sovvv(so|sv&sv&sv),
+		svvvv(sv&sv&sv&sv);
+
+	bispace<1> so1(so), so2(so), sv1(sv), sv2(sv);
+	bispace<4> sovov(so1|sv1|so2|sv2, so1&so2|sv1&sv2);
+
+	btensor<2> t1(sov);
+	btensor<4> t2(soovv);
+	btensor<4> i1_ovov(sovov);
+
+	{
+		block_tensor_ctrl<4, double> c_t2(t2);
+		symmetry<4, double> sym_t2(t2.get_bis());
+		sym_t2.insert(se_perm<4, double>(permutation<4>().
+			permute(0, 1), false));
+		sym_t2.insert(se_perm<4, double>(permutation<4>().
+			permute(2, 3), false));
+		so_copy<4, double>(sym_t2).perform(c_t2.req_symmetry());
+	}
+
+	btod_random<2>().perform(t1);
+	btod_random<4>().perform(t2);
+	btod_random<4>().perform(i1_ovov);
+
+	letter i, j, k, l, a, b, c, d;
+
+	i1_ovov(i|b|k|c) = t2(i|k|b|c) - t1(i|c) * t1(k|b);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
