@@ -120,3 +120,4 @@ public:
 #include "so_add_handlers.h"
 
 #endif // LIBTENSOR_SO_ADD_H
+

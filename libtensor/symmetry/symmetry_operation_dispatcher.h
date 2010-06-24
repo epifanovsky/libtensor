@@ -79,3 +79,4 @@ void symmetry_operation_dispatcher<OperT>::invoke(const std::string &id,
 } // namespace libtensor
 
 #endif // LIBTENSOR_SYMMETRY_OPERATION_DISPATCHER_H
+

@@ -19,3 +19,4 @@ public:
 } // namespace libtensor
 
 #endif // LIBTENSOR_SYMMETRY_OPERATION_BASE_H
+

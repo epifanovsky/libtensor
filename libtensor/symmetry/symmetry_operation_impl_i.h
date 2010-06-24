@@ -28,3 +28,4 @@ public:
 } // namespace libtensor
 
 #endif // LIBTENSOR_SYMMETRY_OPERATION_IMPL_I_H
+

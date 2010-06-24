@@ -148,7 +148,7 @@ void btod_contract2<N, M, K>::make_schedule(const orbit<k_ordera, double> &oa,
 	const orbit<k_orderb, double> &ob,
 	const orbit_list<k_orderc, double> &olc) {
 
-	size_t ka[K], kb[K];
+	sequence<K, size_t> ka(0), kb(0);
 	const sequence<k_maxconn, size_t> &conn = m_contr.get_conn();
 	for(size_t i = 0, j = 0; i < k_ordera; i++) {
 		if(conn[k_orderc + i] >= k_orderc + k_ordera) {

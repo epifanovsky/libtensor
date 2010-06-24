@@ -26,3 +26,4 @@ private:
 } // namespace libtensor
 
 #endif // LIBTENSOR_SO_ADD_IMPL_PERM_TEST_H
+

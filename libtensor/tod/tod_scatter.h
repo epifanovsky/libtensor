@@ -270,3 +270,4 @@ void tod_scatter<N, M>::fn_scatter(registers &r) {
 } // namespace libtensor
 
 #endif // LIBTENOSR_TOD_SCATTER_H
+

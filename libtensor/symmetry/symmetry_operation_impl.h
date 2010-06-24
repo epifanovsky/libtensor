@@ -9,3 +9,4 @@ class symmetry_operation_impl;
 } // namespace libtensor
 
 #endif // LIBTENSOR_SYMMETRY_OPERATION_IMPL_H
+

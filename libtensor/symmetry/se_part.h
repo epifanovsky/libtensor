@@ -315,3 +315,4 @@ dimensions<N> se_part<N, T>::make_pdims(const mask<N> &msk, size_t npart) {
 } // namespace libtensor
 
 #endif // LIBTENSOR_SE_PART_H
+

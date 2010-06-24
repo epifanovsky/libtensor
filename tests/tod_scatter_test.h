@@ -23,3 +23,4 @@ private:
 } // namespace libtensor
 
 #endif // LIBTENSOR_TOD_SCATTER_TEST_H
+

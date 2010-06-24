@@ -31,3 +31,4 @@ private:
 } // namespace libtensor
 
 #endif // LIBTENSOR_TOD_DIRSUM_TEST_H
+
