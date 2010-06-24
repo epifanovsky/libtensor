@@ -2,6 +2,7 @@
 #define LIBTENSOR_BTOD_CONTRACT2_IMPL_H
 
 #include "../symmetry/so_copy.h"
+#include "../symmetry/so_permute.h"
 #include "../symmetry/so_proj_down.h"
 #include "../symmetry/so_proj_up.h"
 #include "../symmetry/so_union.h"
@@ -21,12 +22,12 @@ btod_contract2<N, M, K>::btod_contract2(const contraction2<N, M, K> &contr,
 	block_tensor_i<k_orderb, double> &btb) :
 
 	m_contr(contr), m_bta(bta), m_btb(btb),
-	m_bis(make_bis(contr, bta, btb)), m_sym(m_bis),
+	m_sym_bld(m_contr, m_bta, m_btb),
 	m_bidimsa(m_bta.get_bis().get_block_index_dims()),
 	m_bidimsb(m_btb.get_bis().get_block_index_dims()),
-	m_bidimsc(m_bis.get_block_index_dims()), m_sch(m_bidimsc) {
+	m_bidimsc(m_sym_bld.get_bis().get_block_index_dims()),
+	m_sch(m_bidimsc) {
 
-	make_symmetry();
 	make_schedule();
 }
 
@@ -107,211 +108,6 @@ void btod_contract2<N, M, K>::compute_block(tensor_i<N + M, double> &blk,
 
 
 template<size_t N, size_t M, size_t K>
-block_index_space<N + M> btod_contract2<N, M, K>::make_bis(
-	const contraction2<N, M, K> &contr,
-	block_tensor_i<k_ordera, double> &bta,
-	block_tensor_i<k_orderb, double> &btb) {
-
-	static const char *method = "make_bis()";
-
-	const block_index_space<k_ordera> &bisa = bta.get_bis();
-	const block_index_space<k_orderb> &bisb = btb.get_bis();
-
-	//	Check if contracted indexes are compatible
-
-	const sequence<k_maxconn, size_t> &conn = contr.get_conn();
-	for(size_t idima = 0; idima < k_ordera; idima++) {
-		size_t iconn = conn[k_orderc + idima];
-		if(iconn >= k_orderc + k_ordera) {
-			size_t idimb = conn[k_orderc + idima] -
-				k_orderc - k_ordera;
-			size_t itypa = bisa.get_type(idima);
-			size_t itypb = bisb.get_type(idimb);
-			if(!bisa.get_splits(itypa).equals(
-				bisb.get_splits(itypb))) {
-				throw bad_parameter(g_ns, k_clazz, method,
-					__FILE__, __LINE__,
-					"Block tensor dimensions are unsuitable"
-					" for contraction.");
-			}
-		}
-	}
-
-	//	Build the result block index space
-
-	index<k_orderc> i0, i1;
-	for(size_t idimc = 0; idimc < k_orderc; idimc++) {
-		size_t iconn = conn[idimc];
-		if(iconn >= k_orderc + k_ordera) {
-			const dimensions<k_orderb> &dims = bisb.get_dims();
-			i1[idimc] = dims[iconn - k_orderc - k_ordera] - 1;
-		} else {
-			const dimensions<k_ordera> &dims = bisa.get_dims();
-			i1[idimc] = dims[iconn - k_orderc] - 1;
-		}
-	}
-	block_index_space<k_orderc> bis(dimensions<k_orderc>(
-		index_range<k_orderc>(i0, i1)));
-	mask<k_orderc> msk_done;
-	for(size_t idimc = 0; idimc < k_orderc; idimc++) {
-		if(msk_done[idimc]) continue;
-		mask<k_orderc> msk_todo;
-		if(conn[idimc] >= k_orderc + k_ordera) {
-			size_t type = bisb.get_type(
-				conn[idimc] - k_orderc - k_ordera);
-			for(size_t idimb = 0; idimb < k_orderb; idimb++) {
-				size_t iconn = k_orderc + k_ordera + idimb;
-				if(bisb.get_type(idimb) == type &&
-					conn[iconn] < k_orderc) {
-					msk_todo[conn[iconn]] = true;
-				}
-			}
-			const split_points &pts = bisb.get_splits(type);
-			size_t npts = pts.get_num_points();
-			for(size_t ipt = 0; ipt < npts; ipt++)
-				bis.split(msk_todo, pts[ipt]);
-		} else {
-			size_t type = bisa.get_type(conn[idimc] - k_orderc);
-			for(size_t idima = 0; idima < k_ordera; idima++) {
-				size_t iconn = k_orderc + idima;
-				if(bisa.get_type(idima) == type &&
-					conn[iconn] < k_orderc) {
-					msk_todo[conn[iconn]] = true;
-				}
-			}
-			const split_points &pts = bisa.get_splits(type);
-			size_t npts = pts.get_num_points();
-			for(size_t ipt = 0; ipt < npts; ipt++)
-				bis.split(msk_todo, pts[ipt]);
-		}
-		msk_done |= msk_todo;
-	}
-
-	bis.match_splits();
-	return bis;
-}
-
-
-template<size_t N, size_t M, size_t K>
-void btod_contract2<N, M, K>::make_symmetry() {
-
-	block_tensor_ctrl<k_ordera, double> ca(m_bta);
-	block_tensor_ctrl<k_orderb, double> cb(m_btb);
-
-	const block_index_space<k_ordera> &bisa = m_bta.get_bis();
-	const block_index_space<k_orderb> &bisb = m_btb.get_bis();
-
-	sequence<N, size_t> mapa(0);
-	sequence<M, size_t> mapb(0);
-
-	mask<k_ordera> ma;
-	mask<k_orderb> mb;
-
-	const sequence<k_maxconn, size_t> &conn = m_contr.get_conn();
-	for(size_t i = 0, j = 0; i < k_ordera; i++) {
-		if(conn[k_orderc + i] < k_orderc) {
-			ma[i] = true;
-			mapa[j++] = i;
-		}
-	}
-	for(size_t i = 0, j = 0; i < k_orderb; i++) {
-		if(conn[k_orderc + k_ordera + i] < k_orderc) {
-			mb[i] = true;
-			mapb[j++] = i;
-		}
-	}
-
-	//
-	//	Build projected block index spaces
-	//
-	index<N> i1a, i2a;
-	index<M> i1b, i2b;
-	for(size_t i = 0; i < N; i++) {
-		i2a[i] = bisa.get_dims().get_dim(mapa[i]) - 1;
-	}
-	for(size_t i = 0; i < M; i++) {
-		i2b[i] = bisb.get_dims().get_dim(mapb[i]) - 1;
-	}
-	dimensions<N> rdimsa(index_range<N>(i1a, i2a));
-	dimensions<M> rdimsb(index_range<M>(i1b, i2b));
-	block_index_space<N> rbisa(rdimsa);
-	block_index_space<M> rbisb(rdimsb);
-
-	//
-	//	Transfer splits
-	//
-	mask<N> rma_todo;
-	mask<M> rmb_todo;
-	while(true) {
-		size_t i = 0;
-		while(i < N && rma_todo[i] == true) i++;
-		if(i == N) break;
-		size_t typ = bisa.get_type(mapa[i]);
-		mask<N> split_mask;
-		for(size_t j = i; j < N; j++) {
-			split_mask[j] = bisa.get_type(mapa[j]) == typ;
-		}
-		const split_points &pts = bisa.get_splits(typ);
-		size_t npts = pts.get_num_points();
-		for(size_t ipt = 0; ipt < npts; ipt++)
-			rbisa.split(split_mask, pts[ipt]);
-		rma_todo |= split_mask;
-	}
-	while(true) {
-		size_t i = 0;
-		while(i < M && rmb_todo[i] == true) i++;
-		if(i == M) break;
-		size_t typ = bisb.get_type(mapb[i]);
-		mask<M> split_mask;
-		for(size_t j = i; j < M; j++) {
-			split_mask[j] = bisb.get_type(mapb[j]) == typ;
-		}
-		const split_points &pts = bisb.get_splits(typ);
-		size_t npts = pts.get_num_points();
-		for(size_t ipt = 0; ipt < npts; ipt++)
-			rbisb.split(split_mask, pts[ipt]);
-		rmb_todo |= split_mask;
-	}
-
-	symmetry<N, double> rsyma(rbisa);
-	symmetry<M, double> rsymb(rbisb);
-
-	so_proj_down<N + K, K, double>(ca.req_const_symmetry(), ma).
-		perform(rsyma);
-	so_proj_down<M + K, K, double>(cb.req_const_symmetry(), mb).
-		perform(rsymb);
-
-	mask<k_orderc> xma;
-	mask<k_orderc> xmb;
-	sequence<N, size_t> xseqa1(0), xseqa2(0);
-	sequence<M, size_t> xseqb1(0), xseqb2(0);
-	for(size_t i = k_orderc, j = 0; i < k_orderc + k_ordera; i++) {
-		if(conn[i] < k_orderc) xseqa1[j++] = i;
-	}
-	for(size_t i = k_orderc + k_ordera, j = 0;
-		i < k_orderc + k_ordera + k_orderb; i++) {
-		if(conn[i] < k_orderc) xseqb1[j++] = i;
-	}
-	for(size_t i = 0, ja = 0, jb = 0; i < k_orderc; i++) {
-		if(conn[i] < k_orderc + k_ordera) {
-			xma[i] = true;
-			xseqa2[ja++] = conn[i];
-		} else {
-			xmb[i] = true;
-			xseqb2[jb++] = conn[i];
-		}
-	}
-	permutation_builder<N> xpba(xseqa2, xseqa1);
-	permutation_builder<M> xpbb(xseqb2, xseqb1);
-	symmetry<k_orderc, double> xsyma(m_bis);
-	symmetry<k_orderc, double> xsymb(m_bis);
-	so_proj_up<N, M, double>(rsyma, xpba.get_perm(), xma).perform(xsyma);
-	so_proj_up<M, N, double>(rsymb, xpbb.get_perm(), xmb).perform(xsymb);
-	so_union<k_orderc, double>(xsyma, xsymb).perform(m_sym);
-}
-
-
-template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::make_schedule() {
 
 	btod_contract2<N, M, K>::start_timer("make_schedule");
@@ -321,7 +117,7 @@ void btod_contract2<N, M, K>::make_schedule() {
 
 	orbit_list<k_ordera, double> ola(ca.req_const_symmetry());
 	orbit_list<k_orderb, double> olb(cb.req_const_symmetry());
-	orbit_list<k_orderc, double> olc(m_sym);
+	orbit_list<k_orderc, double> olc(get_symmetry());
 
 	for(typename orbit_list<k_ordera, double>::iterator ioa = ola.begin();
 		ioa != ola.end(); ioa++) {
@@ -455,7 +251,7 @@ void btod_contract2<N, M, K>::clear_schedule(schedule_t &sch) {
 	typename schedule_t::iterator isch = sch.begin();
 	for(; isch != sch.end(); isch++) {
 		delete isch->second;
-		isch->second = NULL;
+		isch->second = 0;
 	}
 	sch.clear();
 }
@@ -522,6 +318,274 @@ void btod_contract2<N, M, K>::contract_block(
 		blksa.begin(); i != blksa.end(); i++) ca.ret_block(*i);
 	for(typename std::list< index<k_orderb> >::const_iterator i =
 		blksb.begin(); i != blksb.end(); i++) cb.ret_block(*i);
+}
+
+
+template<size_t N, size_t M, size_t K>
+btod_contract2_symmetry_builder<N, M, K>::btod_contract2_symmetry_builder(
+	const contraction2<N, M, K> &contr,
+	block_tensor_i<N + K, double> &bta,
+	block_tensor_i<M + K, double> &btb) :
+
+	btod_contract2_symmetry_builder_base<N, M, K>(
+		contr, make_xbis(bta.get_bis(), btb.get_bis())) {
+
+	make_symmetry(contr, bta, btb);
+}
+
+
+template<size_t N, size_t K>
+btod_contract2_symmetry_builder<N, N, K>::btod_contract2_symmetry_builder(
+	const contraction2<N, N, K> &contr,
+	block_tensor_i<N + K, double> &bta,
+	block_tensor_i<N + K, double> &btb) :
+
+	btod_contract2_symmetry_builder_base<N, N, K>(contr,
+		&bta == &btb ? make_xbis(bta.get_bis()) :
+			btod_contract2_symmetry_builder_base<N, N, K>::
+				make_xbis(bta.get_bis(), btb.get_bis())) {
+
+	if(&bta == &btb) make_symmetry(contr, bta);
+	else btod_contract2_symmetry_builder_base<N, N, K>::make_symmetry(
+		contr, bta, btb);
+}
+
+
+template<size_t N, size_t K>
+block_index_space<2 * (N + K)>
+btod_contract2_symmetry_builder<N, N, K>::make_xbis(
+	const block_index_space<N + K> &bisa) {
+
+	const dimensions<N + K> &dimsa = bisa.get_dims();
+
+	index<2 * (N + K)> xi1, xi2;
+	for(size_t i = 0; i < N + K; i++) {
+		xi2[N + K + i] = xi2[i] = dimsa[i] - 1;
+	}
+	dimensions<2 * (N + K)> xdimsab(index_range<2 * (N + K)>(xi1, xi2));
+	block_index_space<2 * (N + K)> xbisab(xdimsab);
+
+	mask<N + K> ma;
+
+	size_t ia = 0;
+	while(true) {
+		while(ia < N + K && ma[ia]) ia++;
+		if(ia == N + K) break;
+		size_t typ = bisa.get_type(ia);
+
+		mask<N + K> ma_split;
+		mask<2 * (N + K)> mab_split;
+		for(size_t i = ia; i < N + K; i++) {
+			mab_split[N + K + i] = mab_split[i] = ma_split[i] =
+				bisa.get_type(i) == typ;
+		}
+
+		const split_points &pts = bisa.get_splits(typ);
+		size_t npts = pts.get_num_points();
+		for(size_t ipt = 0; ipt < npts; ipt++)
+			xbisab.split(mab_split, pts[ipt]);
+
+		ma |= ma_split;
+	}
+
+	return xbisab;
+}
+
+
+template<size_t N, size_t K>
+void btod_contract2_symmetry_builder<N, N, K>::make_symmetry(
+	const contraction2<N, N, K> &contr,
+	block_tensor_i<N + K, double> &bta) {
+
+	block_tensor_ctrl<N + K, double> ca(bta);
+	const sequence<2 * (2 * N + K), size_t> &conn = contr.get_conn();
+	const block_index_space<2 * (N + K)> &xbis =
+		btod_contract2_symmetry_builder_base<N, N, K>::get_xbis();
+	const block_index_space<2 * N> &bis =
+		btod_contract2_symmetry_builder_base<N, N, K>::get_bis();
+
+	symmetry<2 * (N + K), double> xsyma(xbis), xsymb(xbis), xsymab(xbis);
+	mask<2 * (N + K)> xma, xmb;
+	permutation<N + K> perma0;
+	for(size_t i = 0; i < N + K; i++) {
+		xma[i] = true;
+		xmb[N + K + i] = true;
+	}
+
+	so_proj_up<N + K, N + K, double>(ca.req_const_symmetry(), perma0, xma).
+		perform(xsyma);
+	so_proj_up<N + K, N + K, double>(ca.req_const_symmetry(), perma0, xmb).
+		perform(xsymb);
+	so_union<2 * (N + K), double>(xsyma, xsymb).perform(xsymab);
+
+	//	When a tensor is contracted with itself, there is an additional
+	//	perm symmetry element
+
+	permutation<2 * (N + K)> perm_self;
+	for(size_t i = 0; i < N + K; i++) perm_self.permute(i, N + K + i);
+	xsymab.insert(se_perm<2 * (N + K), double>(perm_self, true));
+
+	mask<2 * (N + K)> rmab;
+	sequence<2 * N, size_t> seq1(0), seq2(0);
+	for(size_t i = 0, j = 0; i < 2 * (N + K); i++) {
+		if(conn[2 * N + i] < 2 * N) {
+			rmab[i] = true;
+			seq1[j] = conn[j];
+			seq2[j] = 2 * N + i;
+			j++;
+		}
+	}
+
+	permutation_builder<2 * N> rperm_bld(seq1, seq2);
+	symmetry<2 * N, double> sym(bis);
+	so_proj_down<2 * (N + K), 2 * K, double>(xsymab, rmab).
+		perform(sym);
+	so_permute<2 * N, double>(sym, rperm_bld.get_perm()).perform(
+		btod_contract2_symmetry_builder_base<N, N, K>::get_symmetry());
+}
+
+
+template<size_t N, size_t M, size_t K>
+block_index_space<N + M + 2 * K>
+btod_contract2_symmetry_builder_base<N, M, K>::make_xbis(
+	const block_index_space<N + K> &bisa,
+	const block_index_space<M + K> &bisb) {
+
+	const dimensions<N + K> &dimsa = bisa.get_dims();
+	const dimensions<M + K> &dimsb = bisb.get_dims();
+
+	index<N + M + 2 * K> xi1, xi2;
+	for(size_t i = 0; i < N + K; i++) xi2[i] = dimsa[i] - 1;
+	for(size_t i = 0; i < M + K; i++) xi2[N + K + i] = dimsb[i] - 1;
+	dimensions<N + M + 2 * K> xdimsab(index_range<N + M + 2 * K>(xi1, xi2));
+	block_index_space<N + M + 2 * K> xbisab(xdimsab);
+
+	mask<N + K> ma;
+	mask<M + K> mb;
+
+	size_t ia = 0, ib = 0;
+	while(true) {
+		while(ia < N + K && ma[ia]) ia++;
+		if(ia == N + K) break;
+		size_t typ = bisa.get_type(ia);
+
+		mask<N + K> ma_split;
+		mask<N + M + 2 * K> mab_split;
+		for(size_t i = ia; i < N + K; i++) {
+			mab_split[i] = ma_split[i] = bisa.get_type(i) == typ;
+		}
+
+		const split_points &pts = bisa.get_splits(typ);
+		size_t npts = pts.get_num_points();
+		for(size_t ipt = 0; ipt < npts; ipt++)
+			xbisab.split(mab_split, pts[ipt]);
+
+		ma |= ma_split;
+	}
+	while(true) {
+		while(ib < M + K && mb[ib]) ib++;
+		if(ib == M + K) break;
+		size_t typ = bisb.get_type(ib);
+
+		mask<M + K> mb_split;
+		mask<N + M + 2 * K> mab_split;
+		for(size_t i = ib; i < M + K; i++) {
+			mab_split[N + K + i] = mb_split[i] =
+				bisb.get_type(i) == typ;
+		}
+
+		const split_points &pts = bisb.get_splits(typ);
+		size_t npts = pts.get_num_points();
+		for(size_t ipt = 0; ipt < npts; ipt++)
+			xbisab.split(mab_split, pts[ipt]);
+
+		mb |= mb_split;
+	}
+
+	return xbisab;
+}
+
+
+template<size_t N, size_t M, size_t K>
+block_index_space<N + M>
+btod_contract2_symmetry_builder_base<N, M, K>::make_bis(
+	const contraction2<N, M, K> &contr,
+	const block_index_space<N + M + 2 * K> &xbis) {
+
+	const dimensions<N + M + 2 * K> &xdims = xbis.get_dims();
+	const sequence<2 * (N + M + K), size_t> &conn = contr.get_conn();
+
+	index<N + M> i1, i2;
+	for(size_t i = 0; i < N + M; i++) i2[i] = xdims[conn[i] - N - M] - 1;
+	dimensions<N + M> dims(index_range<N + M>(i1, i2));
+	block_index_space<N + M> bis(dims);
+
+	mask<N + M> mc;
+
+	size_t ic = 0;
+	while(true) {
+		while(ic < N + M && mc[ic]) ic++;
+		if(ic == N + M) break;
+		size_t typ = xbis.get_type(conn[ic] - N - M);
+
+		mask<N + M> mc_split;
+		for(size_t i = ic; i < N + M; i++) {
+			mc_split[i] = xbis.get_type(conn[i] - N - M) == typ;
+		}
+
+		const split_points &pts = xbis.get_splits(typ);
+		size_t npts = pts.get_num_points();
+		for(size_t ipt = 0; ipt < npts; ipt++)
+			bis.split(mc_split, pts[ipt]);
+
+		mc |= mc_split;
+	}
+
+	bis.match_splits();
+	return bis;
+}
+
+
+template<size_t N, size_t M, size_t K>
+void btod_contract2_symmetry_builder_base<N, M, K>::make_symmetry(
+	const contraction2<N, M, K> &contr,
+	block_tensor_i<N + K, double> &bta,
+	block_tensor_i<M + K, double> &btb) {
+
+	block_tensor_ctrl<N + K, double> ca(bta);
+	block_tensor_ctrl<M + K, double> cb(btb);
+	const sequence<2 * (N + M + K), size_t> &conn = contr.get_conn();
+
+	symmetry<N + M + 2 * K, double> xsyma(m_xbis), xsymb(m_xbis),
+		xsymab(m_xbis);
+	mask<N + M + 2 * K> xma, xmb;
+	permutation<N + K> perma0;
+	permutation<M + K> permb0;
+	for(size_t i = 0; i < N + K; i++) xma[i] = true;
+	for(size_t i = 0; i < M + K; i++) xmb[N + K + i] = true;
+
+	so_proj_up<N + K, M + K, double>(ca.req_const_symmetry(), perma0, xma).
+		perform(xsyma);
+	so_proj_up<M + K, N + K, double>(cb.req_const_symmetry(), permb0, xmb).
+		perform(xsymb);
+	so_union<N + M + 2 * K, double>(xsyma, xsymb).perform(xsymab);
+
+	mask<N + M + 2 * K> rmab;
+	sequence<N + M, size_t> seq1(0), seq2(0);
+	for(size_t i = 0, j = 0; i < N + M + 2 * K; i++) {
+		if(conn[N + M + i] < N + M) {
+			rmab[i] = true;
+			seq1[j] = conn[j];
+			seq2[j] = N + M + i;
+			j++;
+		}
+	}
+
+	permutation_builder<N + M> rperm_bld(seq1, seq2);
+	symmetry<N + M, double> sym(m_bis);
+	so_proj_down<N + M + 2 * K, 2 * K, double>(xsymab, rmab).
+		perform(sym);
+	so_permute<N + M, double>(sym, rperm_bld.get_perm()).perform(m_sym);
 }
 
 

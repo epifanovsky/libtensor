@@ -19,6 +19,13 @@
 
 namespace libtensor {
 
+template<size_t N, size_t M, size_t K>
+class btod_contract2_symmetry_builder_base;
+
+template<size_t N, size_t M, size_t K> class btod_contract2_symmetry_builder;
+
+template<size_t N, size_t K> class btod_contract2_symmetry_builder<N, N, K>;
+
 
 /**	\brief Contraction of two block tensors
 
@@ -69,8 +76,7 @@ private:
 	contraction2<N, M, K> m_contr; //!< Contraction
 	block_tensor_i<k_ordera, double> &m_bta; //!< First argument (A)
 	block_tensor_i<k_orderb, double> &m_btb; //!< Second argument (B)
-	block_index_space<k_orderc> m_bis; //!< Block %index space of the result
-	symmetry<k_orderc, double> m_sym; //!< Symmetry of the result
+	btod_contract2_symmetry_builder<N, M, K> m_sym_bld;
 	dimensions<k_ordera> m_bidimsa; //!< Block %index dims of A
 	dimensions<k_orderb> m_bidimsb; //!< Block %index dims of B
 	dimensions<k_orderc> m_bidimsc; //!< Block %index dims of the result
@@ -101,11 +107,11 @@ public:
 	//@{
 
 	virtual const block_index_space<N + M> &get_bis() const {
-		return m_bis;
+		return m_sym_bld.get_bis();
 	}
 
 	virtual const symmetry<N + M, double> &get_symmetry() const {
-		return m_sym;
+		return m_sym_bld.get_symmetry();
 	}
 
 	virtual const assignment_schedule<N + M, double> &get_schedule() const {
@@ -124,11 +130,6 @@ protected:
 		double c);
 
 private:
-	static block_index_space<N + M> make_bis(
-		const contraction2<N, M, K> &contr,
-		block_tensor_i<k_ordera, double> &bta,
-		block_tensor_i<k_orderb, double> &btb);
-	void make_symmetry();
 	void make_schedule();
 
 	/**	\brief For an orbit in a and b, make a list of blocks in c
@@ -150,6 +151,95 @@ private:
 private:
 	btod_contract2(const btod_contract2<N, M, K>&);
 	btod_contract2<N, M, K> &operator=(const btod_contract2<N, M, K>&);
+
+};
+
+
+template<size_t N, size_t M, size_t K>
+class btod_contract2_symmetry_builder_base {
+private:
+	block_index_space<N + M + 2 * K> m_xbis;
+	block_index_space<N + M> m_bis;
+	symmetry<N + M, double> m_sym;
+
+public:
+	btod_contract2_symmetry_builder_base(
+		const contraction2<N, M, K> &contr,
+		const block_index_space<N + M + 2 * K> &xbis) :
+		m_xbis(xbis), m_bis(make_bis(contr, m_xbis)), m_sym(m_bis) { }
+
+	const block_index_space<N + M> &get_bis() const {
+		return m_bis;
+	}
+
+	const symmetry<N + M, double> &get_symmetry() const {
+		return m_sym;
+	}
+
+protected:
+	const block_index_space<N + M + 2 * K> &get_xbis() const {
+		return m_xbis;
+	}
+
+	symmetry<N + M, double> &get_symmetry() {
+		return m_sym;
+	}
+
+	void make_symmetry(const contraction2<N, M, K> &contr,
+		block_tensor_i<N + K, double> &bta,
+		block_tensor_i<M + K, double> &btb);
+
+	static block_index_space<N + M + 2 * K> make_xbis(
+		const block_index_space<N + K> &bisa,
+		const block_index_space<M + K> &bisb);
+
+	static block_index_space<N + M> make_bis(
+		const contraction2<N, M, K> &contr,
+		const block_index_space<N + M + 2 * K> &xbis);
+
+};
+
+
+/**	\brief Builds the %symmetry and block %index space for btod_contract2
+
+	\sa btod_contract2<N, M, K>
+
+	\ingroup libtensor_btod
+ **/
+template<size_t N, size_t M, size_t K>
+class btod_contract2_symmetry_builder :
+	public btod_contract2_symmetry_builder_base<N, M, K> {
+
+public:
+	btod_contract2_symmetry_builder(const contraction2<N, M, K> &contr,
+		block_tensor_i<N + K, double> &bta,
+		block_tensor_i<M + K, double> &btb);
+
+};
+
+
+/**	\brief Builds the %symmetry and block %index space for btod_contract2
+		(specialized for same-order A and B)
+
+	\sa btod_contract2<N, M, K>
+
+	\ingroup libtensor_btod
+ **/
+template<size_t N, size_t K>
+class btod_contract2_symmetry_builder<N, N, K> :
+	public btod_contract2_symmetry_builder_base<N, N, K> {
+
+public:
+	btod_contract2_symmetry_builder(const contraction2<N, N, K> &contr,
+		block_tensor_i<N + K, double> &bta,
+		block_tensor_i<N + K, double> &btb);
+
+private:
+	static block_index_space<2 * (N + K)> make_xbis(
+		const block_index_space<N + K> &bisa);
+
+	void make_symmetry(const contraction2<N, N, K> &contr,
+		block_tensor_i<N + K, double> &bta);
 
 };
 
