@@ -36,9 +36,10 @@ btod_copy<N>::btod_copy(block_tensor_i<N, double> &bta, const permutation<N> &p,
 	m_bidims(m_bis.get_block_index_dims()), m_sym(m_bis), m_sch(m_bidims) {
 
 	block_tensor_ctrl<N, double> ctrla(m_bta);
-	symmetry<N, double> sym1(m_bta.get_bis());
-	so_copy<N, double>(ctrla.req_const_symmetry()).perform(sym1);
-	so_permute<N, double>(sym1, m_perm).perform(m_sym);
+//	symmetry<N, double> sym1(m_bta.get_bis());
+//	so_copy<N, double>(ctrla.req_const_symmetry()).perform(sym1);
+//	so_permute<N, double>(sym1, m_perm).perform(m_sym);
+	so_permute<N, double>(ctrla.req_const_symmetry(), m_perm).perform(m_sym);
 	make_schedule();
 }
 

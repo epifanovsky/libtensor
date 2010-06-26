@@ -49,9 +49,27 @@ private:
 
 public:
 	orbit(const symmetry<N, T> &sym, const index<N> &idx);
+
+	/** \brief Obtain canonical index of this orbit
+		@return Absolute index number of canonical block
+	 **/
 	size_t get_abs_canonical_index() const;
+
+	/** \brief Obtain number of indices in orbit
+		@return Number of indices in orbit
+	 **/
 	size_t get_size() const;
+
+	/** \brief Obtain transformation of canonical block to yield block at idx.
+		@param idx Block index
+		@return Transformation to obtain the block at idx from the canonical block
+	 **/
 	const transf<N, T> &get_transf(const index<N> &idx) const;
+
+	/** \brief Obtain transformation of canonical block to yield block at absidx.
+		@param absidx Absolute block index
+		@return Transformation to yield block at absidx
+	 **/
 	const transf<N, T> &get_transf(size_t absidx) const;
 
 	//!	\name STL-like iterator

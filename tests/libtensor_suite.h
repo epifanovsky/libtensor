@@ -23,6 +23,7 @@
 #include "btod_import_raw_test.h"
 #include "btod_mult_test.h"
 #include "btod_mult1_test.h"
+#include "btod_print_test.h"
 #include "btod_random_test.h"
 #include "btod_read_test.h"
 #include "btod_scale_test.h"
@@ -134,6 +135,7 @@ namespace libtensor {
 	\li libtensor::btod_import_raw_test
 	\li libtensor::btod_mult_test
 	\li libtensor::btod_mult1_test
+	\li libtensor::btod_print_test
 	\li libtensor::btod_random_test
 	\li libtensor::btod_read_test
 	\li libtensor::btod_scale_test
@@ -239,6 +241,7 @@ private:
 	unit_test_factory<btod_import_raw_test> m_utf_btod_import_raw;
 	unit_test_factory<btod_mult_test> m_utf_btod_mult;
 	unit_test_factory<btod_mult1_test> m_utf_btod_mult1;
+	unit_test_factory<btod_print_test> m_utf_btod_print;
 	unit_test_factory<btod_random_test> m_utf_btod_random;
 	unit_test_factory<btod_read_test> m_utf_btod_read;
 	unit_test_factory<btod_scale_test> m_utf_btod_scale;
