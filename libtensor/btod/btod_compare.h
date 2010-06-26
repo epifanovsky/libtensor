@@ -42,19 +42,23 @@ private:
 	block_tensor_i<N, double> &m_bt1;
 	block_tensor_i<N, double> &m_bt2;
 	double m_thresh;
+	bool m_strict;
 	btod_diff_t m_diff_struct;
+
 public:
 
 	/**	\brief Initializes the operation
 		\param bt1 First %tensor.
 		\param bt2 Second %tensor.
 		\param thresh Threshold.
+		\param strict Strict check of zero blocks.
 
 		The two block tensors must have compatible block index spaces,
 		otherwise an exception will be thrown.
 	**/
 	btod_compare(block_tensor_i<N, double> &bt1,
-		block_tensor_i<N, double> &bt2, double thresh) throw(exception);
+		block_tensor_i<N, double> &bt2, double thresh,
+		bool strict = true);
 
 	/**	\brief Performs the comparison
 		\return \c true if all the elements equal within the threshold,
@@ -68,6 +72,9 @@ public:
 	const btod_diff_t &get_diff() const;
 
 private:
+	bool check_zero(tensor_i<N, double> &t) const;
+
+private:
 	btod_compare<N> &operator=(const btod_compare<N>&);
 
 };
@@ -77,8 +84,8 @@ const char* btod_compare<N>::k_clazz="btod_compare<N>";
 
 template<size_t N>
 inline btod_compare<N>::btod_compare(block_tensor_i<N, double> &bt1,
-	block_tensor_i<N, double> &bt2, double thresh) throw(exception)
-	: m_bt1(bt1), m_bt2(bt2), m_thresh(fabs(thresh)) {
+	block_tensor_i<N, double> &bt2, double thresh, bool strict)
+	: m_bt1(bt1), m_bt2(bt2), m_thresh(fabs(thresh)), m_strict(strict) {
 
 	if ( ! m_bt1.get_bis().equals( m_bt2.get_bis() ) )
 		throw bad_parameter(g_ns,k_clazz,"btod_compare()",__FILE__,__LINE__,
@@ -142,12 +149,21 @@ bool btod_compare<N>::compare() {
 			bool zero_2 = ctrl2.req_is_zero_block(bidx2);
 
 			if(zero_1 != zero_2) {
+
 				m_diff_struct.m_zero_1 = zero_1;
 				m_diff_struct.m_zero_2 = zero_2;
-				m_diff_struct.m_canonical_block_index_1=bidx1;
-				m_diff_struct.m_canonical_block_index_2=bidx2;
+				m_diff_struct.m_canonical_block_index_1 = bidx1;
+				m_diff_struct.m_canonical_block_index_2 = bidx2;
 
-				return false;
+				if(m_strict) return false;
+
+				tensor_i<N, double> &t = zero_2 ?
+					ctrl1.req_block(bidx1) :
+					ctrl2.req_block(bidx2);
+				bool z = check_zero(t);
+				if(zero_2) ctrl1.ret_block(bidx1);
+				else ctrl2.ret_block(bidx2);
+				if(!z) return false;
 			}
 
 			if(!zero_1) {
@@ -164,6 +180,8 @@ bool btod_compare<N>::compare() {
 
 				tod_compare<N> compare(tmp,t2,m_thresh);
 				if ( ! compare.compare() ) {
+					m_diff_struct.m_zero_1 = false;
+					m_diff_struct.m_zero_2 = false;
 					m_diff_struct.m_canonical_block_index_1=bidx1;
 					m_diff_struct.m_canonical_block_index_2=bidx2;
 					m_diff_struct.m_inblock=compare.get_diff_index();
@@ -193,10 +211,18 @@ bool btod_compare<N>::compare() {
 			if(zero_1 != zero_2) {
 				m_diff_struct.m_zero_1 = zero_1;
 				m_diff_struct.m_zero_2 = zero_2;
-				m_diff_struct.m_canonical_block_index_1=bidx1;
-				m_diff_struct.m_canonical_block_index_2=bidx2;
+				m_diff_struct.m_canonical_block_index_1 = bidx1;
+				m_diff_struct.m_canonical_block_index_2 = bidx2;
 
-				return false;
+				if(m_strict) return false;
+
+				tensor_i<N, double> &t = zero_2 ?
+					ctrl1.req_block(bidx1) :
+					ctrl2.req_block(bidx2);
+				bool z = check_zero(t);
+				if(zero_2) ctrl1.ret_block(bidx1);
+				else ctrl2.ret_block(bidx2);
+				if(!z) return false;
 			}
 
 			if(!zero_1) {
@@ -206,6 +232,8 @@ bool btod_compare<N>::compare() {
 
 				tod_compare<N> compare(t1,t2,m_thresh);
 				if ( ! compare.compare() ) {
+					m_diff_struct.m_zero_1 = false;
+					m_diff_struct.m_zero_2 = false;
 					m_diff_struct.m_canonical_block_index_1=bidx1;
 					m_diff_struct.m_canonical_block_index_2=bidx2;
 					m_diff_struct.m_inblock=compare.get_diff_index();
@@ -229,6 +257,24 @@ inline const typename btod_compare<N>::btod_diff_t &btod_compare<N>::get_diff()
 	const {
 
 	return m_diff_struct;
+}
+
+
+template<size_t N>
+bool btod_compare<N>::check_zero(tensor_i<N, double> &t) const {
+
+	tensor_ctrl<N, double> c(t);
+	const double *p = c.req_const_dataptr();
+	size_t sz = t.get_dims().get_size();
+	bool ok = true;
+	for(size_t i = 0; i < sz; i++) {
+		if(fabs(p[i]) > m_thresh) {
+			ok = false;
+			break;
+		}
+	}
+	c.ret_const_dataptr(p);
+	return ok;
 }
 
 
