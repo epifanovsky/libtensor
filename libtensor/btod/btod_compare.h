@@ -164,9 +164,7 @@ bool btod_compare<N>::compare() {
 				if(zero_2) ctrl1.ret_block(bidx1);
 				else ctrl2.ret_block(bidx2);
 				if(!z) return false;
-			}
-
-			if(!zero_1) {
+			} else if(!zero_1) {
 
 				tensor_i<N,double> &t1=ctrl1.req_block(bidx1),
 					&t2=ctrl2.req_block(bidx2);
@@ -223,9 +221,7 @@ bool btod_compare<N>::compare() {
 				if(zero_2) ctrl1.ret_block(bidx1);
 				else ctrl2.ret_block(bidx2);
 				if(!z) return false;
-			}
-
-			if(!zero_1) {
+			} else if(!zero_1) {
 
 				tensor_i<N,double> &t1=ctrl1.req_block(bidx1),
 					&t2=ctrl2.req_block(bidx2);
