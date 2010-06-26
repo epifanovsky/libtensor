@@ -418,12 +418,24 @@ void btod_contract2_symmetry_builder<N, N, K>::make_symmetry(
 		perform(xsymb);
 	so_union<2 * (N + K), double>(xsyma, xsymb).perform(xsymab);
 
-	//	When a tensor is contracted with itself, there is an additional
-	//	perm symmetry element
+	//	When a tensor is contracted with itself, there is additional
+	//	perm symmetry
 
-	permutation<2 * (N + K)> perm_self;
-	for(size_t i = 0; i < N + K; i++) perm_self.permute(i, N + K + i);
-	xsymab.insert(se_perm<2 * (N + K), double>(perm_self, true));
+	permutation<2 * (N + K)> permab;
+	for(size_t i = 0; i < N + K; i++) {
+		permab.permute(i, N + K + i);
+	}
+	if(!permab.is_identity()) {
+		xsymab.insert(se_perm<2 * (N + K), double>(permab, true));
+	}
+	//~ for(size_t i = 0; i < N + K; i++) {
+		//~ if(conn[2 * N + i] > 3 * N + K) {
+			//~ permutation<2 * (N + K)> permab2;
+			//~ permab2.permute(i, conn[2 * N + i] - 2 * N);
+			//~ xsymab.insert(se_perm<2 * (N + K), double>(
+				//~ permab2, true));
+		//~ }
+	//~ }
 
 	mask<2 * (N + K)> rmab;
 	sequence<2 * N, size_t> seq1(0), seq2(0);

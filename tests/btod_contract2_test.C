@@ -2311,7 +2311,7 @@ void btod_contract2_test::test_self_2() throw(libtest::test_exception) {
 
 /**	\test Tests \f$ c_{ijab} = \sum_c a_{iac} a_{jcb} \f$,
 		initial perm symmetry \f$ a_{iac} = a_{ica} \f$,
-		expected perm symmetry \f$ c_{ijab} = c_{jiba} \f$.
+		expected perm symmetry \f$ c_{ijab} = c_{jiab} = c_{ijba} \f$.
  **/
 void btod_contract2_test::test_self_3() throw(libtest::test_exception) {
 
@@ -2375,7 +2375,9 @@ void btod_contract2_test::test_self_3() throw(libtest::test_exception) {
 
 	symmetry<4, double> symc(bis_ijab), symc_ref(bis_ijab);
 	symc_ref.insert(se_perm<4, double>(permutation<4>().
-		permute(0, 1).permute(2, 3), true));
+		permute(0, 1), true));
+	symc_ref.insert(se_perm<4, double>(permutation<4>().
+		permute(2, 3), true));
 	{
 		block_tensor_ctrl<4, double> cc(btc);
 		so_copy<4, double>(cc.req_const_symmetry()).perform(symc);
