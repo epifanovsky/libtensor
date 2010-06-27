@@ -95,6 +95,18 @@ void loop_list_mul::match_l1(list_t &loop, double d) {
 		loop.splice(loop.end(), loop, i3);
 		return;
 	}
+
+	iterator_t i0 = loop.begin();
+	if(i0 == loop.end()) return;
+
+	m_kernelname = "generic";
+	i0->fn() = &loop_list_mul::fn_generic;
+	m_generic.m_d = d;
+	m_generic.m_n = i0->weight();
+	m_generic.m_stepa = i0->stepa(0);
+	m_generic.m_stepb = i0->stepa(1);
+	m_generic.m_stepc = i0->stepb(0);
+	loop.splice(loop.end(), loop, i0);
 }
 
 
@@ -610,6 +622,16 @@ void loop_list_mul::match_dgemv_t_b_l3(list_t &loop, double d, size_t w1,
 		m_dgemm_tn_ab.m_ldc = i1->stepb(0);
 		loop.splice(loop.end(), loop, i1);
 		return;
+	}
+}
+
+
+void loop_list_mul::fn_generic(registers &r) const {
+	for(size_t i = 0; i < m_generic.m_n; i++) {
+		r.m_ptrb[0][i * m_generic.m_stepc] +=
+			r.m_ptra[0][i * m_generic.m_stepa] *
+			r.m_ptra[1][i * m_generic.m_stepb] *
+			m_generic.m_d;
 	}
 }
 

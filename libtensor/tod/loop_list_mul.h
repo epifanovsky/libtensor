@@ -17,6 +17,12 @@ public:
 	static const char *k_clazz; //!< Class name
 
 private:
+	struct {
+		double m_d;
+		size_t m_n;
+		size_t m_stepa, m_stepb, m_stepc;
+	} m_generic;
+
 	//!	c = a_i b_i
 	struct {
 		double m_d;
@@ -115,6 +121,7 @@ private:
 		size_t k2w1, size_t k3);
 	void match_dgemv_t_b_l3(list_t &loop, double d, size_t w1, size_t w2,
 		size_t k2w1, size_t k3);
+	void fn_generic(registers &r) const;
 	void fn_ddot(registers &r) const;
 	void fn_daxpy_a(registers &r) const;
 	void fn_daxpy_b(registers &r) const;
