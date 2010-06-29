@@ -10,13 +10,13 @@
 
 namespace libtensor {
 
+
 void btod_compare_test::perform() throw(libtest::test_exception) {
-	srand48(time(NULL));
 
 	test_exc();
 	test_operation();
-
 }
+
 
 void btod_compare_test::test_exc() throw(libtest::test_exception) {
 	typedef index<2> index_t;
@@ -77,7 +77,10 @@ void btod_compare_test::test_exc() throw(libtest::test_exception) {
 
 }
 
+
 void btod_compare_test::test_operation() throw(libtest::test_exception) {
+
+	static const char *testname = "btod_compare_test::test_operation()";
 
 	typedef index<2> index_t;
 	typedef index_range<2> index_range_t;
@@ -124,36 +127,38 @@ void btod_compare_test::test_operation() throw(libtest::test_exception) {
 	bt1.set_immutable();
 	bt2.set_immutable();
 
-	btod_compare<2> op1(bt1, bt2, 1e-7);
-	if(op1.compare()) {
-		fail_test("btod_compare_test::test_operation()", __FILE__,__LINE__,
-			"btod_compare failed to find the difference");
+	btod_compare<2> cmp(bt1, bt2, 1e-7);
+
+	if(cmp.compare()) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Operation failed to find the difference.");
 	}
-	if( ! op1.get_diff().m_number_of_orbits ) {
-		fail_test("btod_compare_test::test_operation()", __FILE__, __LINE__,
-			"btod_compare returned different number of orbits");
-	}
-	if( ! op1.get_diff().m_similar_orbit ) {
-		fail_test("btod_compare_test::test_operation()", __FILE__, __LINE__,
-			"btod_compare returned different orbit");
-	}
-	if( ! op1.get_diff().m_canonical_block_index_1
-			.equals(op1.get_diff().m_canonical_block_index_2) ) {
-		fail_test("btod_compare_test::test_operation()", __FILE__, __LINE__,
-			"btod_compare returned different canonical blocks");
-	}
-	if( ! inblock_idx.equals(op1.get_diff().m_inblock) ) {
-		fail_test("btod_compare_test::test_operation()", __FILE__, __LINE__,
-			"btod_compare returned an incorrect index");
-	}
-	if( op1.get_diff().m_diff_elem_1 != diff1 ||
-		op1.get_diff().m_diff_elem_2 != diff2) {
-		fail_test("btod_compare_test::test_operation()", __FILE__,
-			__LINE__, "btod_compare returned an incorrect "
-			"element value");
-	}
+
+//	if( ! op1.get_diff().m_number_of_orbits ) {
+//		fail_test(testname, __FILE__, __LINE__,
+//			"btod_compare returned different number of orbits");
+//	}
+//	if( ! op1.get_diff().m_similar_orbit ) {
+//		fail_test(testname, __FILE__, __LINE__,
+//			"btod_compare returned different orbit");
+//	}
+//	if( ! op1.get_diff().m_canonical_block_index_1
+//			.equals(op1.get_diff().m_canonical_block_index_2) ) {
+//		fail_test(testname, __FILE__, __LINE__,
+//			"btod_compare returned different canonical blocks");
+//	}
+//	if( ! inblock_idx.equals(op1.get_diff().m_inblock) ) {
+//		fail_test(testname, __FILE__, __LINE__,
+//			"btod_compare returned an incorrect index");
+//	}
+//	if( op1.get_diff().m_diff_elem_1 != diff1 ||
+//		op1.get_diff().m_diff_elem_2 != diff2) {
+//		fail_test(testname, __FILE__,
+//			__LINE__, "btod_compare returned an incorrect "
+//			"element value");
+//	}
 
 }
 
-} // namespace libtensor
 
+} // namespace libtensor
