@@ -1,8 +1,10 @@
-#include <cmath>
-#include <cstdlib>
-#include <ctime>
 #include <libvmm/std_allocator.h>
+#include <libtensor/core/abs_index.h>
 #include <libtensor/core/block_tensor.h>
+#include <libtensor/core/block_tensor_ctrl.h>
+#include <libtensor/core/orbit.h>
+#include <libtensor/symmetry/se_perm.h>
+#include <libtensor/symmetry/so_copy.h>
 #include <libtensor/btod/btod_compare.h>
 #include <libtensor/btod/btod_copy.h>
 #include <libtensor/btod/btod_random.h>
@@ -13,8 +15,485 @@ namespace libtensor {
 
 void btod_compare_test::perform() throw(libtest::test_exception) {
 
+	test_1();
+	test_2a();
+	test_2b();
+	test_3a();
+	test_3b();
+	test_4a();
+	test_4b();
+	test_5a();
+	test_5b();
 	test_exc();
 	test_operation();
+}
+
+
+/**	\test Comparison of a block %tensor with itself
+ **/
+void btod_compare_test::test_1() throw(libtest::test_exception) {
+
+	static const char *testname = "btod_compare_test::test_1()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 9; i2[1] = 9; i2[2] = 5; i2[3] = 5;
+	dimensions<4> dims(index_range<4>(i1, i2));
+	block_index_space<4> bis(dims);
+	mask<4> m1, m2;
+	m1[0] = true; m1[1] = true; m2[2] = true; m2[3] = true;
+	bis.split(m1, 5);
+	bis.split(m2, 2);
+
+	block_tensor<4, double, allocator_t> bt1(bis);
+
+	btod_compare<4> cmp(bt1, bt1);
+	if(!cmp.compare()) {
+		fail_test(testname, __FILE__, __LINE__, "!cmp.compare()");
+	}
+	if(cmp.get_diff().kind != btod_compare<4>::diff::DIFF_NODIFF) {
+		fail_test(testname, __FILE__, __LINE__,
+			"kind != diff::DIFF_NODIFF");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\test Comparison of two block %tensors with different number of orbits
+ **/
+void btod_compare_test::test_2a() throw(libtest::test_exception) {
+
+	static const char *testname = "btod_compare_test::test_2a()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 9; i2[1] = 9; i2[2] = 5; i2[3] = 5;
+	dimensions<4> dims(index_range<4>(i1, i2));
+	block_index_space<4> bis(dims);
+	mask<4> m1, m2;
+	m1[0] = true; m1[1] = true; m2[2] = true; m2[3] = true;
+	bis.split(m1, 5);
+	bis.split(m2, 2);
+
+	block_tensor<4, double, allocator_t> bt1(bis), bt2(bis);
+
+	{
+		block_tensor_ctrl<4, double> ctrl1(bt1);
+		ctrl1.req_symmetry().insert(se_perm<4, double>(
+			permutation<4>().permute(0, 1), true));
+	}
+
+	btod_compare<4> cmp(bt1, bt2);
+	if(cmp.compare()) {
+		fail_test(testname, __FILE__, __LINE__, "cmp.compare()");
+	}
+	if(cmp.get_diff().kind != btod_compare<4>::diff::DIFF_ORBLSTSZ) {
+		fail_test(testname, __FILE__, __LINE__,
+			"kind != diff::DIFF_ORBLSTSZ");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\test Comparison of two block %tensors with different number of orbits
+ **/
+void btod_compare_test::test_2b() throw(libtest::test_exception) {
+
+	static const char *testname = "btod_compare_test::test_2b()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 9; i2[1] = 9; i2[2] = 5; i2[3] = 5;
+	dimensions<4> dims(index_range<4>(i1, i2));
+	block_index_space<4> bis(dims);
+	mask<4> m1, m2;
+	m1[0] = true; m1[1] = true; m2[2] = true; m2[3] = true;
+	bis.split(m1, 5);
+	bis.split(m2, 2);
+
+	block_tensor<4, double, allocator_t> bt1(bis), bt2(bis);
+
+	{
+		block_tensor_ctrl<4, double> ctrl2(bt2);
+		ctrl2.req_symmetry().insert(se_perm<4, double>(
+			permutation<4>().permute(0, 1), true));
+	}
+
+	btod_compare<4> cmp(bt1, bt2);
+	if(cmp.compare()) {
+		fail_test(testname, __FILE__, __LINE__, "cmp.compare()");
+	}
+	if(cmp.get_diff().kind != btod_compare<4>::diff::DIFF_ORBLSTSZ) {
+		fail_test(testname, __FILE__, __LINE__,
+			"kind != diff::DIFF_ORBLSTSZ");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\test Comparison of two block %tensors with the same number of orbits,
+		but different set of canonical indexes
+ **/
+void btod_compare_test::test_3a() throw(libtest::test_exception) {
+
+	static const char *testname = "btod_compare_test::test_3a()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 9; i2[1] = 9; i2[2] = 5; i2[3] = 5;
+	dimensions<4> dims(index_range<4>(i1, i2));
+	block_index_space<4> bis(dims);
+	mask<4> m1, m2;
+	m1[0] = true; m1[1] = true; m2[2] = true; m2[3] = true;
+	bis.split(m1, 5);
+	bis.split(m2, 2);
+
+	block_tensor<4, double, allocator_t> bt1(bis), bt2(bis);
+
+	{
+		block_tensor_ctrl<4, double> ctrl1(bt1), ctrl2(bt2);
+		ctrl1.req_symmetry().insert(se_perm<4, double>(
+			permutation<4>().permute(0, 1), true));
+		ctrl2.req_symmetry().insert(se_perm<4, double>(
+			permutation<4>().permute(2, 3), true));
+	}
+
+	btod_compare<4> cmp(bt1, bt2);
+	if(cmp.compare()) {
+		fail_test(testname, __FILE__, __LINE__, "cmp.compare()");
+	}
+	if(cmp.get_diff().kind != btod_compare<4>::diff::DIFF_ORBIT) {
+		fail_test(testname, __FILE__, __LINE__,
+			"kind != diff::DIFF_ORBIT");
+	}
+	index<4> bidx_ref;
+	bidx_ref[0] = 0; bidx_ref[1] = 0; bidx_ref[2] = 1; bidx_ref[3] = 0;
+	if(!cmp.get_diff().bidx.equals(bidx_ref)) {
+		fail_test(testname, __FILE__, __LINE__, "bidx != bidx_ref");
+	}
+	if(!cmp.get_diff().can1) {
+		fail_test(testname, __FILE__, __LINE__, "can1 != true");
+	}
+	if(cmp.get_diff().can2) {
+		fail_test(testname, __FILE__, __LINE__, "can2 != false");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\test Comparison of two block %tensors with the same number of orbits,
+		but different set of canonical indexes
+ **/
+void btod_compare_test::test_3b() throw(libtest::test_exception) {
+
+	static const char *testname = "btod_compare_test::test_3b()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 9; i2[1] = 9; i2[2] = 5; i2[3] = 5;
+	dimensions<4> dims(index_range<4>(i1, i2));
+	block_index_space<4> bis(dims);
+	mask<4> m1, m2;
+	m1[0] = true; m1[1] = true; m2[2] = true; m2[3] = true;
+	bis.split(m1, 5);
+	bis.split(m2, 2);
+
+	block_tensor<4, double, allocator_t> bt1(bis), bt2(bis);
+
+	{
+		block_tensor_ctrl<4, double> ctrl1(bt1), ctrl2(bt2);
+		ctrl1.req_symmetry().insert(se_perm<4, double>(
+			permutation<4>().permute(0, 1), true));
+		ctrl2.req_symmetry().insert(se_perm<4, double>(
+			permutation<4>().permute(2, 3), true));
+	}
+
+	btod_compare<4> cmp(bt2, bt1);
+	if(cmp.compare()) {
+		fail_test(testname, __FILE__, __LINE__, "cmp.compare()");
+	}
+	if(cmp.get_diff().kind != btod_compare<4>::diff::DIFF_ORBIT) {
+		fail_test(testname, __FILE__, __LINE__,
+			"kind != diff::DIFF_ORBIT");
+	}
+	index<4> bidx_ref;
+	bidx_ref[0] = 1; bidx_ref[1] = 0; bidx_ref[2] = 0; bidx_ref[3] = 0;
+	if(!cmp.get_diff().bidx.equals(bidx_ref)) {
+		fail_test(testname, __FILE__, __LINE__, "bidx != bidx_ref");
+	}
+	if(!cmp.get_diff().can1) {
+		fail_test(testname, __FILE__, __LINE__, "can1 != true");
+	}
+	if(cmp.get_diff().can2) {
+		fail_test(testname, __FILE__, __LINE__, "can2 != false");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\test Comparison of two block %tensors with the same number of orbits,
+		but different set of canonical indexes
+ **/
+void btod_compare_test::test_4a() throw(libtest::test_exception) {
+
+	static const char *testname = "btod_compare_test::test_4a()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 9; i2[1] = 9; i2[2] = 9; i2[3] = 9;
+	dimensions<4> dims(index_range<4>(i1, i2));
+	block_index_space<4> bis(dims);
+	mask<4> m1;
+	m1[0] = true; m1[1] = true; m1[2] = true; m1[3] = true;
+	bis.split(m1, 5);
+	bis.split(m1, 7);
+	dimensions<4> bidims = bis.get_block_index_dims();
+
+	block_tensor<4, double, allocator_t> bt1(bis), bt2(bis);
+	symmetry<4, double> sym1(bis), sym2(bis);
+
+	sym1.insert(se_perm<4, double>(permutation<4>().permute(0, 1), true));
+	sym1.insert(se_perm<4, double>(permutation<4>().permute(2, 3), true));
+	sym2.insert(se_perm<4, double>(permutation<4>().permute(0, 2), true));
+	sym2.insert(se_perm<4, double>(permutation<4>().permute(1, 3), true));
+
+	{
+		block_tensor_ctrl<4, double> ctrl1(bt1), ctrl2(bt2);
+		so_copy<4, double>(sym1).perform(ctrl1.req_symmetry());
+		so_copy<4, double>(sym2).perform(ctrl2.req_symmetry());
+	}
+
+	btod_compare<4> cmp(bt1, bt2);
+	if(cmp.compare()) {
+		fail_test(testname, __FILE__, __LINE__, "cmp.compare()");
+	}
+	if(cmp.get_diff().kind != btod_compare<4>::diff::DIFF_ORBIT) {
+		fail_test(testname, __FILE__, __LINE__,
+			"kind != diff::DIFF_ORBIT");
+	}
+	abs_index<4> ai(cmp.get_diff().bidx, bidims);
+	orbit<4, double> o1(sym1, ai.get_index()), o2(sym2, ai.get_index());
+	if((o1.get_abs_canonical_index() == ai.get_abs_index()) !=
+		cmp.get_diff().can1) {
+		fail_test(testname, __FILE__, __LINE__, "bad can1");
+	}
+	if((o2.get_abs_canonical_index() == ai.get_abs_index()) !=
+		cmp.get_diff().can2) {
+		fail_test(testname, __FILE__, __LINE__, "bad can2");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\test Comparison of two block %tensors with the same number of orbits,
+		but different set of canonical indexes
+ **/
+void btod_compare_test::test_4b() throw(libtest::test_exception) {
+
+	static const char *testname = "btod_compare_test::test_4b()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 9; i2[1] = 9; i2[2] = 9; i2[3] = 9;
+	dimensions<4> dims(index_range<4>(i1, i2));
+	block_index_space<4> bis(dims);
+	mask<4> m1;
+	m1[0] = true; m1[1] = true; m1[2] = true; m1[3] = true;
+	bis.split(m1, 5);
+	bis.split(m1, 7);
+	dimensions<4> bidims = bis.get_block_index_dims();
+
+	block_tensor<4, double, allocator_t> bt1(bis), bt2(bis);
+	symmetry<4, double> sym1(bis), sym2(bis);
+
+	sym1.insert(se_perm<4, double>(permutation<4>().permute(0, 1), true));
+	sym1.insert(se_perm<4, double>(permutation<4>().permute(2, 3), true));
+	sym2.insert(se_perm<4, double>(permutation<4>().permute(0, 2), true));
+	sym2.insert(se_perm<4, double>(permutation<4>().permute(1, 3), true));
+
+	{
+		block_tensor_ctrl<4, double> ctrl1(bt1), ctrl2(bt2);
+		so_copy<4, double>(sym1).perform(ctrl1.req_symmetry());
+		so_copy<4, double>(sym2).perform(ctrl2.req_symmetry());
+	}
+
+	btod_compare<4> cmp(bt2, bt1);
+	if(cmp.compare()) {
+		fail_test(testname, __FILE__, __LINE__, "cmp.compare()");
+	}
+	if(cmp.get_diff().kind != btod_compare<4>::diff::DIFF_ORBIT) {
+		fail_test(testname, __FILE__, __LINE__,
+			"kind != diff::DIFF_ORBIT");
+	}
+	abs_index<4> ai(cmp.get_diff().bidx, bidims);
+	orbit<4, double> o1(sym1, ai.get_index()), o2(sym2, ai.get_index());
+	if((o1.get_abs_canonical_index() == ai.get_abs_index()) !=
+		cmp.get_diff().can2) {
+		fail_test(testname, __FILE__, __LINE__, "bad can2");
+	}
+	if((o2.get_abs_canonical_index() == ai.get_abs_index()) !=
+		cmp.get_diff().can1) {
+		fail_test(testname, __FILE__, __LINE__, "bad can1");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\test Comparison of two block %tensors with the same number of orbits,
+		same canonical indexes, but different block transformations
+ **/
+void btod_compare_test::test_5a() throw(libtest::test_exception) {
+
+	static const char *testname = "btod_compare_test::test_5a()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 9; i2[1] = 9; i2[2] = 9; i2[3] = 9;
+	dimensions<4> dims(index_range<4>(i1, i2));
+	block_index_space<4> bis(dims);
+	mask<4> m1;
+	m1[0] = true; m1[1] = true; m1[2] = true; m1[3] = true;
+	bis.split(m1, 5);
+	bis.split(m1, 7);
+	dimensions<4> bidims = bis.get_block_index_dims();
+
+	block_tensor<4, double, allocator_t> bt1(bis), bt2(bis);
+	symmetry<4, double> sym1(bis), sym2(bis);
+
+	sym1.insert(se_perm<4, double>(permutation<4>().permute(0, 1), true));
+	sym2.insert(se_perm<4, double>(permutation<4>().permute(0, 1), false));
+
+	{
+		block_tensor_ctrl<4, double> ctrl1(bt1), ctrl2(bt2);
+		so_copy<4, double>(sym1).perform(ctrl1.req_symmetry());
+		so_copy<4, double>(sym2).perform(ctrl2.req_symmetry());
+	}
+
+	btod_compare<4> cmp(bt1, bt2);
+	if(cmp.compare()) {
+		fail_test(testname, __FILE__, __LINE__, "cmp.compare()");
+	}
+	if(cmp.get_diff().kind != btod_compare<4>::diff::DIFF_TRANSF) {
+		fail_test(testname, __FILE__, __LINE__,
+			"kind != diff::DIFF_TRANSF");
+	}
+	abs_index<4> ai(cmp.get_diff().bidx, bidims);
+	orbit<4, double> o1(sym1, ai.get_index()), o2(sym2, ai.get_index());
+	if((o1.get_abs_canonical_index() == ai.get_abs_index()) !=
+		cmp.get_diff().can1) {
+		fail_test(testname, __FILE__, __LINE__, "bad can1");
+	}
+	if((o2.get_abs_canonical_index() == ai.get_abs_index()) !=
+		cmp.get_diff().can2) {
+		fail_test(testname, __FILE__, __LINE__, "bad can2");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\test Comparison of two block %tensors with the same number of orbits,
+		same canonical indexes, but different block transformations
+ **/
+void btod_compare_test::test_5b() throw(libtest::test_exception) {
+
+	static const char *testname = "btod_compare_test::test_5b()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 9; i2[1] = 9; i2[2] = 9; i2[3] = 9;
+	dimensions<4> dims(index_range<4>(i1, i2));
+	block_index_space<4> bis(dims);
+	mask<4> m1;
+	m1[0] = true; m1[1] = true; m1[2] = true; m1[3] = true;
+	bis.split(m1, 5);
+	bis.split(m1, 7);
+	dimensions<4> bidims = bis.get_block_index_dims();
+
+	block_tensor<4, double, allocator_t> bt1(bis), bt2(bis);
+	symmetry<4, double> sym1(bis), sym2(bis);
+
+	sym1.insert(se_perm<4, double>(permutation<4>().permute(0, 1), true));
+	sym2.insert(se_perm<4, double>(permutation<4>().permute(0, 1), false));
+
+	{
+		block_tensor_ctrl<4, double> ctrl1(bt1), ctrl2(bt2);
+		so_copy<4, double>(sym1).perform(ctrl1.req_symmetry());
+		so_copy<4, double>(sym2).perform(ctrl2.req_symmetry());
+	}
+
+	btod_compare<4> cmp(bt2, bt1);
+	if(cmp.compare()) {
+		fail_test(testname, __FILE__, __LINE__, "cmp.compare()");
+	}
+	if(cmp.get_diff().kind != btod_compare<4>::diff::DIFF_TRANSF) {
+		fail_test(testname, __FILE__, __LINE__,
+			"kind != diff::DIFF_TRANSF");
+	}
+	abs_index<4> ai(cmp.get_diff().bidx, bidims);
+	orbit<4, double> o1(sym1, ai.get_index()), o2(sym2, ai.get_index());
+	if((o1.get_abs_canonical_index() == ai.get_abs_index()) !=
+		cmp.get_diff().can2) {
+		fail_test(testname, __FILE__, __LINE__, "bad can2");
+	}
+	if((o2.get_abs_canonical_index() == ai.get_abs_index()) !=
+		cmp.get_diff().can1) {
+		fail_test(testname, __FILE__, __LINE__, "bad can1");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
 }
 
 

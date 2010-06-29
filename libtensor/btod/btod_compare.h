@@ -45,19 +45,20 @@ namespace libtensor {
 
 	The main element of the difference structure is the kind of difference.
 	Possible values are:
-	 - DIFF_NODIFF - No differences found. Other elements of the structure
-		are meaningless.
-	 - DIFF_ORBLSTSZ - Orbit lists have different sizes. No further info
-		provided.
-	 - DIFF_ORBLST - Difference found in orbit lists. \c bidx1 and \c bidx2
-		contain block indexes, and \c can1 and \c can2 contain whether
-		the respective blocks are canonical.
-	 - DIFF_ORBIT - Difference found in an orbit. \c bidx1 and \c bidx2
-		contain block indexes for which the transformation is different.
-	 - DIFF_DATA - Difference found in the canonical block data. \c bidx1
-		and \c bidx2 identify the block (bidx1 = bidx2), \c idx reads
-		the position at which the difference is found. \c data1 and
-		\c data2 give the values that are different.
+	 - diff::DIFF_NODIFF - No differences found. Other elements of the
+		structure have default values and are meaningless.
+	 - diff::DIFF_ORBLSTSZ - Orbit lists have different sizes. Further
+		comparison is not performed, other members of the structure are
+		meaningless.
+	 - diff::DIFF_ORBIT - Difference found in orbit lists. \c bidx
+		identifies the block %index where the difference was found, and
+		\c can1 and \c can2 contain whether the block is canonical.
+	 - diff::DIFF_DATA - Difference found in the canonical block data.
+		\c bidx identifies the block, \c idx reads the position at which
+		the difference is found. \c zero1 and \c zero2 specify whether
+		the block is zero in the two tensors. \c data1 and \c data2 give
+		the values that are different (only when \c zero1=false and
+		\c zero2=false).
 
 	Two special static methods tostr() will output the difference structure
 	to a stream or a string in a human-readable format.
@@ -72,12 +73,11 @@ public:
 public:
 	struct diff {
 		enum {
-			DIFF_NODIFF,
-			DIFF_ORBLSTSZ,
-			DIFF_ORBLST,
-			DIFF_ORBIT,
-			DIFF_TRANSF,
-			DIFF_DATA
+			DIFF_NODIFF, //!< No differences found
+			DIFF_ORBLSTSZ, //!< Different orbit list sizes
+			DIFF_ORBIT, //!< Different orbits
+			DIFF_TRANSF, //!< Different transformation within orbit
+			DIFF_DATA //!< Difference in data
 		};
 
 		unsigned kind;
@@ -123,7 +123,14 @@ public:
 		return m_diff;
 	}
 
+	/**	\brief Prints the contents of the difference structure to
+			a stream in a human-readable form
+	 **/
 	void tostr(std::ostream &s);
+
+	/**	\brief Appends the contents of the difference structure in
+			a human-readable form to the end of the string
+	 **/
 	void tostr(std::string &s);
 
 private:
@@ -215,10 +222,10 @@ bool btod_compare<N>::compare() {
 
 		if(!ol2.contains(ol1.get_abs_index(io1))) {
 
-			m_diff.kind = diff::DIFF_ORBLST;
+			m_diff.kind = diff::DIFF_ORBIT;
 			m_diff.bidx = ol1.get_index(io1);
 			m_diff.can1 = true;
-			m_diff.can2 = true;
+			m_diff.can2 = false;
 			return false;
 		}
 	}
@@ -394,11 +401,6 @@ void btod_compare<N>::tostr(std::ostream &s) {
 		return;
 	}
 
-	if(m_diff.kind == diff::DIFF_ORBLST) {
-		s << "Different orbit lists at block " << m_diff.bidx << ".";
-		return;
-	}
-
 	if(m_diff.kind == diff::DIFF_ORBIT) {
 		s << "Different orbits at block " << m_diff.bidx << " "
 			<< (m_diff.can1 ? "canonical" : "not canonical")
@@ -446,7 +448,6 @@ void btod_compare<N>::tostr(std::string &s) {
 	tostr(ss);
 	s += ss.str();
 }
-
 
 
 } // namespace libtensor
