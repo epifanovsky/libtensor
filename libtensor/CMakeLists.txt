@@ -8,6 +8,8 @@ set(SRC
 	version.C
 	btod/btod_diagonalize.C
 	btod/btod_tridiagonalize.C
+	symmetry/point_group_table.C
+	symmetry/product_table_container.C
 	tod/loop_list_add.C
 	tod/loop_list_copy.C
 	tod/loop_list_mul.C

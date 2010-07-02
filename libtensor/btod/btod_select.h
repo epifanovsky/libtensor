@@ -74,8 +74,8 @@ public:
 	void perform(block_tensor_i<N, double> &bt, list_t &li, size_t n);
 
 private:
-	btod_select(const btod_select<N,ComparePolicy> &);
-	const btod_select<N> &operator=(const btod_select<N,ComparePolicy> &);
+	btod_select(const btod_select<N, ComparePolicy> &);
+	const btod_select<N> &operator=(const btod_select<N, ComparePolicy> &);
 
 };
 

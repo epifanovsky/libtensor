@@ -2,7 +2,8 @@
 #define LIBTENSOR_PRODUCT_TABLE_CONTAINER_H
 
 #include <libvmm/libvmm.h>
-#include "product_table.h"
+#include "../exception.h"
+#include "product_table_i.h"
 
 namespace libtensor {
 
@@ -17,34 +18,40 @@ class product_table_container :
 	friend class libvmm::singleton<product_table_container>;
 
 public:
-	typedef product_table::label_t label_t;
-	typedef std::string id_t;
-
-	static const id_t k_point_group; //!< Product table id for point groups
+	typedef product_table_i::label_t label_t;
 
 private:
 	struct container {
-		product_table m_table;
-		size_t m_checked_out;
-		size_t m_checked_out_r;
+		product_table_i* m_pt; //!< Product table
+		size_t m_checked_out; //!< Checked out references of m_pt
+		bool m_rw; //!< Checked out for reading and writing.
 
-		container(size_t nlabels) :
-			m_table(nlabels), m_checked_out(0), m_checked_out_r(0) { }
+		container() : m_pt(0), m_checked_out(0), m_rw(false) { }
 	};
 
-	std::map<id_t, container> m_tables; //!< List of product tables
+	typedef std::map<std::string, container> list_t;
+	typedef std::pair<std::string, container> pair_t;
 
 public:
+	static const char *k_clazz; //!< Class name
+
+private:
+	list_t m_tables; //!< List of product tables
+
+public:
+	/** \brief Destructor
+	 **/
+	~product_table_container();
+
 	//! \name Manipulators
 	//@{
 	/** \brief Create a new product table
 
 		\param id Table id
-		\param nlabels Number of labels in the new product table
-		\return Newly created product table
+		\param pt Product table to add
 		\throw bad_parameter If table with id already exists
 	 **/
-	void create(id_t id, size_t nlabels) throw(bad_parameter);
+	void add(const std::string &id, const product_table_i &pt) throw(bad_parameter);
 
 	/** \brief Remove product table (if it exists)
 
@@ -52,9 +59,7 @@ public:
 		\throw bad_parameter If table does not exists.
 		\throw exception If table has been checked out for reading or writing.
 	 **/
-	void erase(id_t id) throw(bad_parameter, exception);
-
-	//@}
+	void erase(const std::string &id) throw(bad_parameter, exception);
 
 	/** \brief Request product table for writing
 
@@ -63,7 +68,10 @@ public:
 		\throw bad_parameter If table does not exists.
 		\throw exception If table has been checked out for reading or writing.
 	 **/
-	product_table &req_table(id_t id) throw(bad_parameter, exception);
+	product_table_i &req_table(
+			const std::string &id) throw(bad_parameter, exception);
+
+	//@}
 
 
 	/** \brief Request product table for reading
@@ -73,15 +81,15 @@ public:
 		\throw bad_parameter If table does not exists.
 		\throw exception If table has been checked out for writing.
 	 **/
-	const product_table &req_const_table(id_t id) throw (bad_parameter,
-			exception);
+	const product_table_i &req_const_table(
+			const std::string &id) throw (bad_parameter, exception);
 
 	/** \brief Return checked out product table
 
 		\param id Table id.
 		\throw bad_parameter If table does not exists.
 	 **/
-	void ret_table(id_t id) throw(bad_parameter);
+	void ret_table(const std::string &id) throw(bad_parameter);
 
 
 protected:
