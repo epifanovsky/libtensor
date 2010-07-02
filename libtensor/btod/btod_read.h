@@ -3,63 +3,122 @@
 
 #include <istream>
 #include <sstream>
+#include <libvmm/std_allocator.h>
 #include "../defs.h"
 #include "../exception.h"
 #include "../timings.h"
-#include "../btod/transf_double.h"
 #include "../core/block_tensor_i.h"
 #include "../core/block_tensor_ctrl.h"
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
 #include "../core/tensor_i.h"
 #include "../core/tensor_ctrl.h"
-#include "../symmetry/so_copy.h"
-#include "../symmetry/bad_symmetry.h"
 #include "../tod/tod_compare.h"
 #include "../tod/tod_set.h"
+#include "../symmetry/so_copy.h"
+#include "../symmetry/bad_symmetry.h"
+#include "../btod/transf_double.h"
 
 namespace libtensor {
 
 
-/**	\brief Reads a block %tensor from a stream
+/**	\brief Reads block %tensors from an input stream
 	\tparam N Tensor order.
+	\tparam Allocator Allocator for temporary tensors.
+
+	The operation fills a block %tensor with data read from a formatted
+	text input stream. Items in the stream are separated by whitespace
+	characters. The format does not treat the new line character in any
+	special way, it is another whitespace character.
+
+	The first item in the stream is an integer specifying the order of
+	the %tensor followed by a series of integers that specify the number of
+	elements along each dimension of the %tensor. Then follow the actual
+	data, each %tensor element is a double precision floating point number.
+
+	After reading the data from the stream, the operation looks for zero
+	blocks by checking that all elements are zero within a threshold
+	(default 0.0 meaning that the elements must be exactly zero).
+
+	The %symmetry of the block %tensor is guessed from the initial %symmetry
+	set by the user before calling the operation. It is verified that
+	the data actually have the specified %symmetry, otherwise an exception
+	is raised. The comparison is done using a %symmetry threshold, within
+	which two related elements are considered equal. The default value
+	for the threshold is 0.0 meaning that the elements must be equal
+	exactly.
+
+	Format of the input stream:
+	\code
+	N D1 D2 ... Dn
+	A1 A2 A3 ...
+	\endcode
+	N -- number of dimensions (integer); D1, D2, ..., Dn -- size of the
+	%tensor along each dimension (N integers); A1, A2, A3, ... --
+	%tensor elements (doubles).
+
+	Example of a 3 by 3 antisymmetric matrix:
+	\code
+	2 3 3
+	0.1 0.0 2.0
+	0.0 1.3 -0.1
+	-2.0 0.1 5.1
+	\endcode
 
 	\ingroup libtensor_btod
  **/
-template<size_t N>
-class btod_read : public timings< btod_read<N> > {
+template<size_t N, typename Allocator = libvmm::std_allocator<double> >
+class btod_read : public timings< btod_read<N, Allocator> > {
 public:
 	static const char *k_clazz; //!< Class name
 
 private:
 	std::istream &m_stream; //!< Input stream
-	double m_thresh; //!< Zero threshold
+	double m_zero_thresh; //!< Zero threshold
+	double m_sym_thresh; //!< Symmetry threshold
 
 public:
 	//!	\name Construction and destruction
-	//!{
+	//@{
+
+	btod_read(std::istream &stream, double zero_thresh, double sym_thresh) :
+		m_stream(stream), m_zero_thresh(zero_thresh),
+		m_sym_thresh(sym_thresh) { }
 
 	btod_read(std::istream &stream, double thresh = 0.0) :
-		m_stream(stream), m_thresh(thresh) { }
+		m_stream(stream), m_zero_thresh(thresh), m_sym_thresh(thresh)
+		{ }
 
-	//!}
+	//@}
 
 	//!	\name Operation
-	//!{
+	//@{
 
-	void perform(block_tensor_i<N, double> &bt) throw(exception);
+	void perform(block_tensor_i<N, double> &bt);
 
-	//!}
+	//@}
+
+private:
+	void verify_zero_orbit(block_tensor_ctrl<N, double> &ctrl,
+		const dimensions<N> &bidims, orbit<N, double> &o);
+
+	void verify_nonzero_orbit(block_tensor_ctrl<N, double> &ctrl,
+		const dimensions<N> &bidims, orbit<N, double> &o);
+
+private:
+	btod_read(const btod_read<N, Allocator>&);
+	const btod_read<N, Allocator> &operator=(
+		const btod_read<N, Allocator>&);
 
 };
 
 
-template<size_t N>
-const char *btod_read<N>::k_clazz = "btod_read<N>";
+template<size_t N, typename Allocator>
+const char *btod_read<N, Allocator>::k_clazz = "btod_read<N, Allocator>";
 
 
-template<size_t N>
-void btod_read<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
+template<size_t N, typename Allocator>
+void btod_read<N, Allocator>::perform(block_tensor_i<N, double> &bt) {
 
 	static const char *method = "perform(block_tensor_i<N, double>&)";
 
@@ -70,7 +129,8 @@ void btod_read<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 	//
 
 	if(!m_stream.good()) {
-		throw_exc(k_clazz, method, "Input stream is empty.");
+		throw bad_parameter(g_ns, k_clazz, method,
+			__FILE__, __LINE__, "stream");
 	}
 
 	int order;
@@ -96,7 +156,7 @@ void btod_read<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 
 	const block_index_space<N> &bis = bt.get_bis();
 	dimensions<N> dims(index_range<N>(i1, i2));
-	dimensions<N> bdims(bis.get_block_index_dims());
+	dimensions<N> bidims(bis.get_block_index_dims());
 	if(!dims.equals(bis.get_dims())) {
 		throw_exc(k_clazz, method, "Incompatible tensor dimensions.");
 	}
@@ -128,7 +188,7 @@ void btod_read<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 	//	Transfer data into the block tensor
 	//
 
-	abs_index<N> bi(bdims);
+	abs_index<N> bi(bidims);
 	do {
 		tensor_i<N, double> &blk = ctrl.req_block(bi.get_index());
 		bool zero = true;
@@ -156,7 +216,7 @@ void btod_read<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 #endif // LIBTENSOR_DEBUG
 			for(size_t j = 0; j < nj; j++) {
 				register double d = buf[buf_offs + j];
-				if(fabs(d) <= m_thresh) d = 0.0;
+				if(fabs(d) <= m_zero_thresh) d = 0.0;
 				else zero = false;
 				p[blk_offs + j] = d;
 			}
@@ -173,92 +233,115 @@ void btod_read<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 	delete [] buf;
 
 	//
-	// Check block tensor for its symmetry
+	//	Verify the symmetry of the block tensor
 	//
-
 	orbit_list<N, double>  ol(sym);
-	// loop over all orbits
-	for (typename orbit_list<N, double>::iterator it = ol.begin();
-			it != ol.end(); it++) {
+	for(typename orbit_list<N, double>::iterator io = ol.begin();
+		io != ol.end(); io++) {
 
-		orbit<N, double> orb(sym, ol.get_index(it));
+		orbit<N, double> o(sym, ol.get_index(io));
+		abs_index<N> aci(o.get_abs_canonical_index(), bidims);
 
-		// get canonical block
-		size_t ac = orb.get_abs_canonical_index();
-		abs_index<N> acidx(ac, bdims);
-
-		bool zero = ctrl.req_is_zero_block(acidx.get_index());
-
-		if (zero) {
-			// loop over all blocks within an orbit
-			for (typename orbit<N, double>::iterator ito = orb.begin();
-					ito != orb.end(); ito++) {
-
-				// do nothing for the canonical block
-				if (ac == orb.get_abs_index(ito)) continue;
-
-				abs_index<N> aidx(orb.get_abs_index(ito), bdims);
-
-				if (ctrl.req_is_zero_block(aidx.get_index())) continue;
-
-				std::ostringstream oss;
-				oss << "Read block tensor does not match symmetry in block "
-						<< aidx.get_index() << "(non-zero block).";
-				throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
-						oss.str().c_str());
-			}
-		}
-		else {
-			// apply transformation to the canonical block
-			tensor_i<N, double> &cblk = ctrl.req_block(acidx.get_index());
-
-			// loop over all blocks within an orbit
-			for (typename orbit<N, double>::iterator ito = orb.begin();
-					ito != orb.end(); ito++) {
-
-				// do nothing for the canonical block
-				if (ac == orb.get_abs_index(ito)) continue;
-
-				// get block transformation and index
-				abs_index<N> aidx(orb.get_abs_index(ito), bdims);
-				const transf<N, double> &tr = orb.get_transf(ito);
-
-				// compare real and expected block
-				tensor_i<N, double> &blk = ctrl.req_block(aidx.get_index());
-
-				typedef libvmm::std_allocator<double> allocator;
-				tensor<N, double, allocator> tmp_blk(blk.get_dims());
-				tod_copy<N>(cblk, tr.get_perm(), tr.get_coeff()).perform(tmp_blk);
-
-				tod_compare<N> cmp(blk, tmp_blk, 1e-13);
-				if (! cmp.compare()) {
-					ctrl.ret_block(aidx.get_index());
-					ctrl.ret_block(acidx.get_index());
-
-					std::ostringstream oss;
-					oss << "Read block tensor does not match symmetry in block "
-							<< aidx.get_index() << " at " << cmp.get_diff_index()
-							<< "(expected: " << cmp.get_diff_elem_1() << ", found: "
-							<< cmp.get_diff_elem_2() << ", diff: "
-							<< cmp.get_diff_elem_1()-cmp.get_diff_elem_2() << ").";
-
-					throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
-							oss.str().c_str());
-				}
-
-				ctrl.ret_block(aidx.get_index());
-
-				// if real and expected block match zero the non-canonical block
-				ctrl.req_zero_block(aidx.get_index());
-			}
-			ctrl.ret_block(acidx.get_index());
+		if(ctrl.req_is_zero_block(aci.get_index())) {
+			verify_zero_orbit(ctrl, bidims, o);
+		} else {
+			verify_nonzero_orbit(ctrl, bidims, o);
 		}
 	}
 
-	// copy symmetry back to block tensor
+	//
+	//	Re-install the symmetry of the block tensor
+	//
 	so_copy<N, double>(sym).perform(ctrl.req_symmetry());
 
 	btod_read<N>::stop_timer();
+}
+
+
+template<size_t N, typename Allocator>
+void btod_read<N, Allocator>::verify_zero_orbit(
+	block_tensor_ctrl<N, double> &ctrl, const dimensions<N> &bidims,
+	orbit<N, double> &o) {
+
+	static const char *method =
+		"verify_zero_orbit(block_tensor_ctrl<N, double>&, "
+		"const dimensions<N>&, orbit<N, double>&)";
+
+	typedef typename orbit<N, double>::iterator iterator_t;
+
+	for(iterator_t i = o.begin(); i != o.end(); i++) {
+
+		//	Skip the canonical block
+		if(o.get_abs_index(i) == o.get_abs_canonical_index()) continue;
+
+		//	Make sure the block is strictly zero
+		abs_index<N> ai(o.get_abs_index(i), bidims);
+		if(!ctrl.req_is_zero_block(ai.get_index())) {
+			abs_index<N> aci(o.get_abs_canonical_index(), bidims);
+			std::ostringstream ss;
+			ss << "Asymmetry in zero block " << aci.get_index()
+				<< "->" << ai.get_index() << ".";
+			throw bad_symmetry(g_ns, k_clazz, method,
+				__FILE__, __LINE__, ss.str().c_str());
+		}
+	}
+}
+
+
+template<size_t N, typename Allocator>
+void btod_read<N, Allocator>::verify_nonzero_orbit(
+	block_tensor_ctrl<N, double> &ctrl, const dimensions<N> &bidims,
+	orbit<N, double> &o) {
+
+	static const char *method =
+		"verify_nonzero_orbit(block_tensor_ctrl<N, double>&, "
+		"const dimensions<N>&, orbit<N, double>&)";
+
+	typedef typename orbit<N, double>::iterator iterator_t;
+
+	//	Get the canonical block
+	abs_index<N> aci(o.get_abs_canonical_index(), bidims);
+	tensor_i<N, double> &cblk = ctrl.req_block(aci.get_index());
+
+	for(iterator_t i = o.begin(); i != o.end(); i++) {
+
+		//	Skip the canonical block
+		if(o.get_abs_index(i) == o.get_abs_canonical_index()) continue;
+
+		//	Current index and transformation
+		abs_index<N> ai(o.get_abs_index(i), bidims);
+		const transf<N, double> &tr = o.get_transf(i);
+
+		//	Compare with the transformed canonical block
+		tensor_i<N, double> &blk = ctrl.req_block(ai.get_index());
+		tensor<N, double, Allocator> tblk(blk.get_dims());
+		tod_copy<N>(cblk, tr.get_perm(), tr.get_coeff()).perform(tblk);
+
+		tod_compare<N> cmp(blk, tblk, m_sym_thresh);
+		if(!cmp.compare()) {
+
+			ctrl.ret_block(ai.get_index());
+			ctrl.ret_block(aci.get_index());
+
+			std::ostringstream ss;
+			ss << "Asymmetry in block " << aci.get_index() << "->"
+				<< ai.get_index() << " at element "
+				<< cmp.get_diff_index() << ": "
+				<< cmp.get_diff_elem_2() << " (expected), "
+				<< cmp.get_diff_elem_1() << " (found), "
+				<< cmp.get_diff_elem_1() - cmp.get_diff_elem_2()
+				<< " (diff).";
+			throw bad_symmetry(g_ns, k_clazz, method,
+				__FILE__, __LINE__, ss.str().c_str());
+		}
+
+		ctrl.ret_block(ai.get_index());
+
+		//	Zero out the block with proper symmetry
+		ctrl.req_zero_block(ai.get_index());
+	}
+
+	ctrl.ret_block(aci.get_index());
 }
 
 
