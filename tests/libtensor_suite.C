@@ -62,7 +62,10 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("permutation", m_utf_permutation);
 	add_test("permutation_builder", m_utf_permutation_builder);
 	add_test("permutation_group", m_utf_permutation_group);
+	add_test("point_group_table", m_utf_point_group_table);
+	add_test("product_table_container", m_utf_product_table_container);
 	add_test("sequence", m_utf_sequence);
+	add_test("se_label", m_utf_se_label);
 	add_test("se_part", m_utf_se_part);
 	add_test("se_perm", m_utf_se_perm);
 	add_test("so_add", m_utf_so_add);

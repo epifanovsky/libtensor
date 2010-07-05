@@ -8,8 +8,7 @@ namespace libtensor {
 
 /** \brief Interface for general product tables
 
-	Stores a product table for a group of labels. The group is expected to be
-	commutative. This is intended to be used in combination with se_label and
+	This is intended to be used in combination with se_label and
 	product_table_container.
  **/
 class product_table_i {
@@ -23,7 +22,7 @@ public:
 
 	/** \brief Virtual destructor
 	 **/
-	virtual ~product_table_i() = 0;
+	virtual ~product_table_i() { }
 
 	/** \brief Creates an identical copy of the product table.
 	 **/

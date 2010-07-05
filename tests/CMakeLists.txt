@@ -58,7 +58,10 @@ set(SRC
 	permutation_test.C
 	permutation_builder_test.C
 	permutation_group_test.C
+	point_group_table_test.C
+	product_table_container_test.C
 	sequence_test.C
+	se_label_test.C
 	se_part_test.C
 	se_perm_test.C
 	so_add_test.C

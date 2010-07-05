@@ -1,12 +1,16 @@
 #include "point_group_table.h"
 
+#include <iostream>
+#include <iomanip>
+
 namespace libtensor {
 
 const char *point_group_table::k_clazz = "point_group_table";
+const char *point_group_table::k_id = "point_group";
 
 point_group_table::point_group_table(size_t nirreps) :
 	m_nirreps(nirreps),
-	m_table(nirreps * (nirreps + 1) / 2)
+	m_table(nirreps * (nirreps + 1) / 2, std::vector<label_t>(1, invalid()))
 { }
 
 point_group_table::point_group_table(const point_group_table &pt) :
@@ -62,9 +66,9 @@ void point_group_table::set_product(
 				__FILE__, __LINE__, "Label not allowed.");
 
 	size_t idx = abs_index(l1, l2);
-	if (i >= m_table[idx].size()) {
+
+	if (i >= m_table[idx].size())
 		m_table[idx].resize(i+1, invalid());
-	}
 
 	m_table[idx][i] = lr;
 }
@@ -79,7 +83,6 @@ void point_group_table::check() throw(exception) {
 				throw_exc(k_clazz, method,
 						"Invalid label found in product table.");
 		}
-
 	}
 }
 

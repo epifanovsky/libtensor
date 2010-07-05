@@ -23,10 +23,10 @@ public:
 private:
 	struct container {
 		product_table_i* m_pt; //!< Product table
-		size_t m_checked_out; //!< Checked out references of m_pt
+		size_t m_co; //!< Checked out references of m_pt
 		bool m_rw; //!< Checked out for reading and writing.
 
-		container() : m_pt(0), m_checked_out(0), m_rw(false) { }
+		container() : m_pt(0), m_co(0), m_rw(false) { }
 	};
 
 	typedef std::map<std::string, container> list_t;
@@ -51,7 +51,7 @@ public:
 		\param pt Product table to add
 		\throw bad_parameter If table with id already exists
 	 **/
-	void add(const std::string &id, const product_table_i &pt) throw(bad_parameter);
+	void add(const product_table_i &pt) throw(bad_parameter);
 
 	/** \brief Remove product table (if it exists)
 

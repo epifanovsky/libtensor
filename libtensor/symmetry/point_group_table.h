@@ -65,7 +65,8 @@ public:
 	virtual size_t nlabels() const {
 		return m_nirreps;
 	}
-	/** \copydoc product_table_i::is_valid
+
+	/** \copydoc product_table_i::invalid
 	 **/
 	virtual label_t invalid() const {
 		return m_nirreps;
@@ -87,7 +88,8 @@ public:
 		\param lr Result label
 		\throw out_of_bounds If l1 or l2 are not valid irreps.
 	 **/
-	void set_product(label_t l1, label_t l2, size_t i, label_t lr) throw (out_of_bounds);
+	void set_product(
+			label_t l1, label_t l2, size_t i, label_t lr) throw (out_of_bounds);
 
 	/** \brief Does a consistency check on the table.
 		\throw exception If product table is not set up properly.
@@ -99,9 +101,9 @@ public:
 private:
 	size_t abs_index(label_t l1, label_t l2) const {
 		if (l1 > l2)
-			return l2 * m_nirreps + l1;
+			return l1 * (l1 + 1) / 2 + l2;
 		else
-			return l1 * m_nirreps + l2;
+			return l2 * (l2 + 1) / 2 + l1;
 	}
 };
 

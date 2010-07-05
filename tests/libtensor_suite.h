@@ -59,7 +59,10 @@
 #include "permutation_test.h"
 #include "permutation_builder_test.h"
 #include "permutation_group_test.h"
+#include "point_group_table_test.h"
+#include "product_table_container_test.h"
 #include "sequence_test.h"
+#include "se_label_test.h"
 #include "se_part_test.h"
 #include "se_perm_test.h"
 #include "so_add_test.h"
@@ -171,7 +174,10 @@ namespace libtensor {
 	\li libtensor::permutation_test
 	\li libtensor::permutation_builder_test
 	\li libtensor::permutation_group_test
+	\li libtensor::point_group_table_test
+	\li libtensor::product_table_container_test
 	\li libtensor::sequence_test
+	\li libtensor::se_label_test
 	\li libtensor::se_part_test
 	\li libtensor::se_perm_test
 	\li libtensor::so_add_test
@@ -278,7 +284,11 @@ private:
 	unit_test_factory<permutation_test> m_utf_permutation;
 	unit_test_factory<permutation_builder_test> m_utf_permutation_builder;
 	unit_test_factory<permutation_group_test> m_utf_permutation_group;
+	unit_test_factory<point_group_table_test> m_utf_point_group_table;
+	unit_test_factory<product_table_container_test>
+		m_utf_product_table_container;
 	unit_test_factory<sequence_test> m_utf_sequence;
+	unit_test_factory<se_label_test> m_utf_se_label;
 	unit_test_factory<se_part_test> m_utf_se_part;
 	unit_test_factory<se_perm_test> m_utf_se_perm;
 	unit_test_factory<so_add_test> m_utf_so_add;
