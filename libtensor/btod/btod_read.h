@@ -2,22 +2,13 @@
 #define LIBTENSOR_BTOD_READ_H
 
 #include <istream>
-#include <sstream>
 #include <libvmm/std_allocator.h>
 #include "../defs.h"
 #include "../exception.h"
 #include "../timings.h"
 #include "../core/block_tensor_i.h"
-#include "../core/block_tensor_ctrl.h"
-#include "../core/orbit.h"
-#include "../core/orbit_list.h"
-#include "../core/tensor_i.h"
-#include "../core/tensor_ctrl.h"
-#include "../tod/tod_compare.h"
-#include "../tod/tod_set.h"
-#include "../symmetry/so_copy.h"
-#include "../symmetry/bad_symmetry.h"
-#include "../btod/transf_double.h"
+#include "../tod/bad_dimensions.h"
+#include "btod_import_raw.h"
 
 namespace libtensor {
 
@@ -65,10 +56,12 @@ namespace libtensor {
 	-2.0 0.1 5.1
 	\endcode
 
+	\sa btod_import_raw<N, Alloc>
+
 	\ingroup libtensor_btod
  **/
-template<size_t N, typename Allocator = libvmm::std_allocator<double> >
-class btod_read : public timings< btod_read<N, Allocator> > {
+template<size_t N, typename Alloc = libvmm::std_allocator<double> >
+class btod_read : public timings< btod_read<N, Alloc> > {
 public:
 	static const char *k_clazz; //!< Class name
 
@@ -99,33 +92,25 @@ public:
 	//@}
 
 private:
-	void verify_zero_orbit(block_tensor_ctrl<N, double> &ctrl,
-		const dimensions<N> &bidims, orbit<N, double> &o);
-
-	void verify_nonzero_orbit(block_tensor_ctrl<N, double> &ctrl,
-		const dimensions<N> &bidims, orbit<N, double> &o);
-
-private:
-	btod_read(const btod_read<N, Allocator>&);
-	const btod_read<N, Allocator> &operator=(
-		const btod_read<N, Allocator>&);
+	btod_read(const btod_read<N, Alloc>&);
+	const btod_read<N, Alloc> &operator=(const btod_read<N, Alloc>&);
 
 };
 
 
-template<size_t N, typename Allocator>
-const char *btod_read<N, Allocator>::k_clazz = "btod_read<N, Allocator>";
+template<size_t N, typename Alloc>
+const char *btod_read<N, Alloc>::k_clazz = "btod_read<N, Alloc>";
 
 
-template<size_t N, typename Allocator>
-void btod_read<N, Allocator>::perform(block_tensor_i<N, double> &bt) {
+template<size_t N, typename Alloc>
+void btod_read<N, Alloc>::perform(block_tensor_i<N, double> &bt) {
 
 	static const char *method = "perform(block_tensor_i<N, double>&)";
 
 	btod_read<N>::start_timer();
 
 	//
-	//	Read the first line: order, dimensions
+	//	Read the formatted data
 	//
 
 	if(!m_stream.good()) {
@@ -158,24 +143,16 @@ void btod_read<N, Allocator>::perform(block_tensor_i<N, double> &bt) {
 	dimensions<N> dims(index_range<N>(i1, i2));
 	dimensions<N> bidims(bis.get_block_index_dims());
 	if(!dims.equals(bis.get_dims())) {
-		throw_exc(k_clazz, method, "Incompatible tensor dimensions.");
+		throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"stream");
 	}
 
 	//
-	//	Set up the tensor
+	//	Read tensor elements from file into a buffer
 	//
 
-	block_tensor_ctrl<N, double> ctrl(bt);
-	symmetry<N, double> sym(bis);
-	so_copy<N, double>(ctrl.req_const_symmetry()).perform(sym);
-	ctrl.req_symmetry().clear();
-	ctrl.req_zero_all_blocks();
-
-	//
-	//	Read tensor elements from file into buffer
-	//
-
-	double *buf = new double[dims.get_size()];
+	typename Alloc::ptr_t buf_ptr = Alloc::allocate(dims.get_size());
+	double *buf = Alloc::lock(buf_ptr);
 
 	for(size_t i = 0; i < dims.get_size(); i++) {
 		if(!m_stream.good()) {
@@ -185,163 +162,16 @@ void btod_read<N, Allocator>::perform(block_tensor_i<N, double> &bt) {
 	}
 
 	//
-	//	Transfer data into the block tensor
+	//	Import from the buffer to the block tensor
 	//
 
-	abs_index<N> bi(bidims);
-	do {
-		tensor_i<N, double> &blk = ctrl.req_block(bi.get_index());
-		bool zero = true;
-		{
-		tensor_ctrl<N, double> blk_ctrl(blk);
-		const dimensions<N> &blk_dims = blk.get_dims();
-		double *p = blk_ctrl.req_dataptr();
+	btod_import_raw<N, Alloc>(buf, dims, m_zero_thresh, m_sym_thresh).
+		perform(bt);
 
-		index<N> blk_start_idx(bis.get_block_start(bi.get_index()));
-		abs_index<N> blk_offs_aidx(blk_dims);
-		size_t nj = blk_dims[N - 1];
-		do {
-			index<N> idx(blk_start_idx);
-			const index<N> &offs(blk_offs_aidx.get_index());
-			for(size_t i = 0; i < N; i++) idx[i] += offs[i];
-			abs_index<N> aidx(idx, bis.get_dims());
-			size_t blk_offs = blk_offs_aidx.get_abs_index();
-			size_t buf_offs = aidx.get_abs_index();
-#ifdef LIBTENSOR_DEBUG
-			if(buf_offs + nj > dims.get_size()) {
-				throw out_of_bounds(g_ns, k_clazz, method,
-					__FILE__, __LINE__,
-					"buf_offs");
-			}
-#endif // LIBTENSOR_DEBUG
-			for(size_t j = 0; j < nj; j++) {
-				register double d = buf[buf_offs + j];
-				if(fabs(d) <= m_zero_thresh) d = 0.0;
-				else zero = false;
-				p[blk_offs + j] = d;
-			}
-			for(size_t j = 1; j < nj; j++) blk_offs_aidx.inc();
-		} while(blk_offs_aidx.inc());
-
-		blk_ctrl.ret_dataptr(p);
-		}
-		ctrl.ret_block(bi.get_index());
-		if(zero) ctrl.req_zero_block(bi.get_index());
-
-	} while(bi.inc());
-
-	delete [] buf;
-
-	//
-	//	Verify the symmetry of the block tensor
-	//
-	orbit_list<N, double>  ol(sym);
-	for(typename orbit_list<N, double>::iterator io = ol.begin();
-		io != ol.end(); io++) {
-
-		orbit<N, double> o(sym, ol.get_index(io));
-		abs_index<N> aci(o.get_abs_canonical_index(), bidims);
-
-		if(ctrl.req_is_zero_block(aci.get_index())) {
-			verify_zero_orbit(ctrl, bidims, o);
-		} else {
-			verify_nonzero_orbit(ctrl, bidims, o);
-		}
-	}
-
-	//
-	//	Re-install the symmetry of the block tensor
-	//
-	so_copy<N, double>(sym).perform(ctrl.req_symmetry());
+	Alloc::unlock(buf_ptr); buf = 0;
+	Alloc::deallocate(buf_ptr);
 
 	btod_read<N>::stop_timer();
-}
-
-
-template<size_t N, typename Allocator>
-void btod_read<N, Allocator>::verify_zero_orbit(
-	block_tensor_ctrl<N, double> &ctrl, const dimensions<N> &bidims,
-	orbit<N, double> &o) {
-
-	static const char *method =
-		"verify_zero_orbit(block_tensor_ctrl<N, double>&, "
-		"const dimensions<N>&, orbit<N, double>&)";
-
-	typedef typename orbit<N, double>::iterator iterator_t;
-
-	for(iterator_t i = o.begin(); i != o.end(); i++) {
-
-		//	Skip the canonical block
-		if(o.get_abs_index(i) == o.get_abs_canonical_index()) continue;
-
-		//	Make sure the block is strictly zero
-		abs_index<N> ai(o.get_abs_index(i), bidims);
-		if(!ctrl.req_is_zero_block(ai.get_index())) {
-			abs_index<N> aci(o.get_abs_canonical_index(), bidims);
-			std::ostringstream ss;
-			ss << "Asymmetry in zero block " << aci.get_index()
-				<< "->" << ai.get_index() << ".";
-			throw bad_symmetry(g_ns, k_clazz, method,
-				__FILE__, __LINE__, ss.str().c_str());
-		}
-	}
-}
-
-
-template<size_t N, typename Allocator>
-void btod_read<N, Allocator>::verify_nonzero_orbit(
-	block_tensor_ctrl<N, double> &ctrl, const dimensions<N> &bidims,
-	orbit<N, double> &o) {
-
-	static const char *method =
-		"verify_nonzero_orbit(block_tensor_ctrl<N, double>&, "
-		"const dimensions<N>&, orbit<N, double>&)";
-
-	typedef typename orbit<N, double>::iterator iterator_t;
-
-	//	Get the canonical block
-	abs_index<N> aci(o.get_abs_canonical_index(), bidims);
-	tensor_i<N, double> &cblk = ctrl.req_block(aci.get_index());
-
-	for(iterator_t i = o.begin(); i != o.end(); i++) {
-
-		//	Skip the canonical block
-		if(o.get_abs_index(i) == o.get_abs_canonical_index()) continue;
-
-		//	Current index and transformation
-		abs_index<N> ai(o.get_abs_index(i), bidims);
-		const transf<N, double> &tr = o.get_transf(i);
-
-		//	Compare with the transformed canonical block
-		tensor_i<N, double> &blk = ctrl.req_block(ai.get_index());
-		tensor<N, double, Allocator> tblk(blk.get_dims());
-		tod_copy<N>(cblk, tr.get_perm(), tr.get_coeff()).perform(tblk);
-
-		tod_compare<N> cmp(blk, tblk, m_sym_thresh);
-		if(!cmp.compare()) {
-
-			ctrl.ret_block(ai.get_index());
-			ctrl.ret_block(aci.get_index());
-
-			std::ostringstream ss;
-			ss << "Asymmetry in block " << aci.get_index() << "->"
-				<< ai.get_index() << " at element "
-				<< cmp.get_diff_index() << ": "
-				<< cmp.get_diff_elem_2() << " (expected), "
-				<< cmp.get_diff_elem_1() << " (found), "
-				<< cmp.get_diff_elem_1() - cmp.get_diff_elem_2()
-				<< " (diff).";
-			throw bad_symmetry(g_ns, k_clazz, method,
-				__FILE__, __LINE__, ss.str().c_str());
-		}
-
-		ctrl.ret_block(ai.get_index());
-
-		//	Zero out the block with proper symmetry
-		ctrl.req_zero_block(ai.get_index());
-	}
-
-	ctrl.ret_block(aci.get_index());
 }
 
 

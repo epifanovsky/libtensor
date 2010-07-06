@@ -1,32 +1,45 @@
 #ifndef LIBTENSOR_BTOD_IMPORT_RAW_H
 #define LIBTENSOR_BTOD_IMPORT_RAW_H
 
+#include <sstream>
+#include <libvmm/std_allocator.h>
 #include "../defs.h"
 #include "../exception.h"
 #include "../core/abs_index.h"
 #include "../core/dimensions.h"
 #include "../core/block_tensor_i.h"
+#include "../core/block_tensor_ctrl.h"
 #include "../core/orbit.h"
-#include "../symmetry/bad_symmetry.h"
-#include "../symmetry/so_copy.h"
+#include "../core/orbit_list.h"
+#include "../core/tensor_i.h"
+#include "../core/tensor_ctrl.h"
 #include "../tod/tod_compare.h"
 #include "../tod/tod_copy.h"
 #include "../tod/tod_import_raw.h"
+#include "../tod/tod_set.h"
+#include "../symmetry/bad_symmetry.h"
+#include "../symmetry/so_copy.h"
+#include "transf_double.h"
 
 namespace libtensor {
 
 
 /**	\brief Imports block %tensor elements from memory
 	\tparam N Tensor order.
+	\tparam Alloc Allocator for temporary buffers.
 
 	This operation reads %tensor elements from a memory block in which
 	they are arranged in the regular %tensor format.
 
-	\sa tod_import_raw<N>
+	The %symmetry of the block %tensor is guessed from the initial %symmetry
+	and verified. If the actual data do not have the %symmetry, an exception
+	is raised.
+
+	\sa tod_import_raw<N>, btod_read<N, Alloc>
 
 	\ingroup libtensor_btod
  **/
-template<size_t N>
+template<size_t N, typename Alloc = libvmm::std_allocator<double> >
 class btod_import_raw {
 public:
 	static const char *k_clazz; //!< Class name
@@ -34,34 +47,67 @@ public:
 private:
 	const double *m_ptr; //!< Pointer to data in memory
 	dimensions<N> m_dims; //!< Dimensions of the memory block
+	double m_zero_thresh; //!< Zero threshold
+	double m_sym_thresh; //!< Symmetry threshold
 
 public:
 	/**	\brief Initializes the operation
 		\param ptr Memory pointer.
 		\param dims Dimensions of the input.
+		\param thresh Threshold for zeros and symmetry detection
 	 **/
-	btod_import_raw(const double *ptr, const dimensions<N> &dims) :
-		m_ptr(ptr), m_dims(dims) { }
+	btod_import_raw(const double *ptr, const dimensions<N> &dims,
+		double thresh = 0.0) : m_ptr(ptr), m_dims(dims),
+		m_zero_thresh(thresh), m_sym_thresh(thresh) { }
+
+	/**	\brief Initializes the operation
+		\param ptr Memory pointer.
+		\param dims Dimensions of the input.
+		\param zero_thresh Threshold for zeros
+		\param sym_thresh Threshold for %symmetry
+	 **/
+	btod_import_raw(const double *ptr, const dimensions<N> &dims,
+		double zero_thresh, double sym_thresh) :
+		m_ptr(ptr), m_dims(dims), m_zero_thresh(zero_thresh),
+		m_sym_thresh(sym_thresh) { }
 
 	/**	\brief Performs the operation
 		\param bt Output block %tensor.
 	 **/
 	void perform(block_tensor_i<N, double> &bt);
+
+private:
+	bool check_zero(tensor_i<N, double> &t);
+
+	void verify_zero_orbit(block_tensor_ctrl<N, double> &ctrl,
+		const dimensions<N> &bidims, orbit<N, double> &o);
+
+	void verify_nonzero_orbit(block_tensor_ctrl<N, double> &ctrl,
+		const dimensions<N> &bidims, orbit<N, double> &o);
+
+private:
+	btod_import_raw(const btod_import_raw<N, Alloc>&);
+	const btod_import_raw<N, Alloc> &operator=(
+		const btod_import_raw<N, Alloc>&);
+
 };
 
 
-template<size_t N>
-const char *btod_import_raw<N>::k_clazz = "btod_import_raw<N>";
+template<size_t N, typename Alloc>
+const char *btod_import_raw<N, Alloc>::k_clazz = "btod_import_raw<N, Alloc>";
 
 
-template<size_t N>
-void btod_import_raw<N>::perform(block_tensor_i<N, double> &bt) {
+template<size_t N, typename Alloc>
+void btod_import_raw<N, Alloc>::perform(block_tensor_i<N, double> &bt) {
 
 	static const char *method = "perform(block_tensor_i<N>&)";
 
+	//
 	//	Check the block tensor's dimensions
+	//
 
 	const block_index_space<N> &bis = bt.get_bis();
+	dimensions<N> bidims(bis.get_block_index_dims());
 	if(!bis.get_dims().equals(m_dims)) {
 		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
 			"Incorrect block tensor dimensions.");
@@ -91,92 +137,27 @@ void btod_import_raw<N>::perform(block_tensor_i<N, double> &bt) {
 		index_range<N> ir(blk_start, blk_end);
 
 		tod_import_raw<N>(m_ptr, m_dims, ir).perform(blk);
+		bool zero = check_zero(blk);
 
 		ctrl.ret_block(bi.get_index());
+		if(zero) ctrl.req_zero_block(bi.get_index());
 
 	} while(bi.inc());
 
-
 	//
-	// Check block tensor for its symmetry
+	//	Verify the symmetry of the block tensor
 	//
-
 	orbit_list<N, double>  ol(sym);
-	// loop over all orbits
-	for (typename orbit_list<N, double>::iterator it = ol.begin();
-			it != ol.end(); it++) {
+	for(typename orbit_list<N, double>::iterator io = ol.begin();
+		io != ol.end(); io++) {
 
-		orbit<N, double> orb(sym, ol.get_index(it));
+		orbit<N, double> o(sym, ol.get_index(io));
+		abs_index<N> aci(o.get_abs_canonical_index(), bidims);
 
-		// get canonical block
-		size_t ac = orb.get_abs_canonical_index();
-		abs_index<N> acidx(ac, bdims);
-
-		bool zero = ctrl.req_is_zero_block(acidx.get_index());
-
-		if (zero) {
-			// loop over all blocks within an orbit
-			for (typename orbit<N, double>::iterator ito = orb.begin();
-					ito != orb.end(); ito++) {
-
-				// do nothing for the canonical block
-				if (ac == orb.get_abs_index(ito)) continue;
-
-				abs_index<N> aidx(orb.get_abs_index(ito), bdims);
-
-				if (ctrl.req_is_zero_block(aidx.get_index())) continue;
-
-				std::ostringstream oss;
-				oss << "Read block tensor does not match symmetry in block "
-						<< aidx.get_index() << "(non-zero block).";
-				throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
-						oss.str().c_str());
-			}
-		}
-		else {
-			// apply transformation to the canonical block
-			tensor_i<N, double> &cblk = ctrl.req_block(acidx.get_index());
-
-			// loop over all blocks within an orbit
-			for (typename orbit<N, double>::iterator ito = orb.begin();
-					ito != orb.end(); ito++) {
-
-				// do nothing for the canonical block
-				if (ac == orb.get_abs_index(ito)) continue;
-
-				// get block transformation and index
-				abs_index<N> aidx(orb.get_abs_index(ito), bdims);
-				const transf<N, double> &tr = orb.get_transf(ito);
-
-				// compare real and expected block
-				tensor_i<N, double> &blk = ctrl.req_block(aidx.get_index());
-
-				typedef libvmm::std_allocator<double> allocator;
-				tensor<N, double, allocator> tmp_blk(cblk.get_dims());
-				tod_copy<N>(cblk, tr.get_perm(), tr.get_coeff()).perform(tmp_blk);
-
-				tod_compare<N> cmp(cblk, tmp_blk, 1e-13);
-				if (! cmp.compare()) {
-					ctrl.ret_block(aidx.get_index());
-					ctrl.ret_block(acidx.get_index());
-
-					std::ostringstream oss;
-					oss << "Read block tensor does not match symmetry in block "
-							<< aidx.get_index() << " at " << cmp.get_diff_index()
-							<< "(expected: " << cmp.get_diff_elem_1() << ", found: "
-							<< cmp.get_diff_elem_2() << ", diff: "
-							<< cmp.get_diff_elem_1()-cmp.get_diff_elem_2() << ").";
-
-					throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
-							oss.str().c_str());
-				}
-
-				ctrl.ret_block(aidx.get_index());
-				// if real and expected block match zero the non-canonical block
-				ctrl.req_zero_block(aidx.get_index());
-			}
-			ctrl.ret_block(acidx.get_index());
-
+		if(ctrl.req_is_zero_block(aci.get_index())) {
+			verify_zero_orbit(ctrl, bidims, o);
+		} else {
+			verify_nonzero_orbit(ctrl, bidims, o);
 		}
 	}
 
@@ -184,6 +165,112 @@ void btod_import_raw<N>::perform(block_tensor_i<N, double> &bt) {
 	so_copy<N, double>(sym).perform(ctrl.req_symmetry());
 
 }
+
+
+template<size_t N, typename Alloc>
+void btod_import_raw<N, Alloc>::verify_zero_orbit(
+	block_tensor_ctrl<N, double> &ctrl, const dimensions<N> &bidims,
+	orbit<N, double> &o) {
+
+	static const char *method =
+		"verify_zero_orbit(block_tensor_ctrl<N, double>&, "
+		"const dimensions<N>&, orbit<N, double>&)";
+
+	typedef typename orbit<N, double>::iterator iterator_t;
+
+	for(iterator_t i = o.begin(); i != o.end(); i++) {
+
+		//	Skip the canonical block
+		if(o.get_abs_index(i) == o.get_abs_canonical_index()) continue;
+
+		//	Make sure the block is strictly zero
+		abs_index<N> ai(o.get_abs_index(i), bidims);
+		if(!ctrl.req_is_zero_block(ai.get_index())) {
+			abs_index<N> aci(o.get_abs_canonical_index(), bidims);
+			std::ostringstream ss;
+			ss << "Asymmetry in zero block " << aci.get_index()
+				<< "->" << ai.get_index() << ".";
+			throw bad_symmetry(g_ns, k_clazz, method,
+				__FILE__, __LINE__, ss.str().c_str());
+		}
+	}
+}
+
+
+template<size_t N, typename Alloc>
+void btod_import_raw<N, Alloc>::verify_nonzero_orbit(
+	block_tensor_ctrl<N, double> &ctrl, const dimensions<N> &bidims,
+	orbit<N, double> &o) {
+
+	static const char *method =
+		"verify_nonzero_orbit(block_tensor_ctrl<N, double>&, "
+		"const dimensions<N>&, orbit<N, double>&)";
+
+	typedef typename orbit<N, double>::iterator iterator_t;
+
+	//	Get the canonical block
+	abs_index<N> aci(o.get_abs_canonical_index(), bidims);
+	tensor_i<N, double> &cblk = ctrl.req_block(aci.get_index());
+
+	for(iterator_t i = o.begin(); i != o.end(); i++) {
+
+		//	Skip the canonical block
+		if(o.get_abs_index(i) == o.get_abs_canonical_index()) continue;
+
+		//	Current index and transformation
+		abs_index<N> ai(o.get_abs_index(i), bidims);
+		const transf<N, double> &tr = o.get_transf(i);
+
+		//	Compare with the transformed canonical block
+		tensor_i<N, double> &blk = ctrl.req_block(ai.get_index());
+		tensor<N, double, Alloc> tblk(blk.get_dims());
+		tod_copy<N>(cblk, tr.get_perm(), tr.get_coeff()).perform(tblk);
+
+		tod_compare<N> cmp(blk, tblk, m_sym_thresh);
+		if(!cmp.compare()) {
+
+			ctrl.ret_block(ai.get_index());
+			ctrl.ret_block(aci.get_index());
+
+			std::ostringstream ss;
+			ss << "Asymmetry in block " << aci.get_index() << "->"
+				<< ai.get_index() << " at element "
+				<< cmp.get_diff_index() << ": "
+				<< cmp.get_diff_elem_2() << " (expected), "
+				<< cmp.get_diff_elem_1() << " (found), "
+				<< cmp.get_diff_elem_1() - cmp.get_diff_elem_2()
+				<< " (diff).";
+			throw bad_symmetry(g_ns, k_clazz, method,
+				__FILE__, __LINE__, ss.str().c_str());
+		}
+
+		ctrl.ret_block(ai.get_index());
+
+		//	Zero out the block with proper symmetry
+		ctrl.req_zero_block(ai.get_index());
+	}
+
+	ctrl.ret_block(aci.get_index());
+}
+
+
+template<size_t N, typename Alloc>
+bool btod_import_raw<N, Alloc>::check_zero(tensor_i<N, double> &t) {
+
+	tensor_ctrl<N, double> c(t);
+	const double *p = c.req_const_dataptr();
+	size_t sz = t.get_dims().get_size();
+	bool ok = true;
+	for(size_t i = 0; i < sz; i++) {
+		if(fabs(p[i]) > m_zero_thresh) {
+			ok = false;
+			break;
+		}
+	}
+	c.ret_const_dataptr(p);
+	return ok;
+}
+
 
 } // namespace libtensor
 
