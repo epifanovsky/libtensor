@@ -58,7 +58,7 @@ inline void blas_dgemv(bool trans, size_t m, size_t n, double alpha,
 	const double *da, size_t lda, const double *dx, size_t incx,
 	double beta, double *dy, size_t incy) {
 
-	CL_DGEMV(trans ? 'N' : 'T', m, n, alpha, (double*)da, lda, (double*)dx,
+	CL_DGEMV(trans ? 'N' : 'T', n, m, alpha, (double*)da, lda, (double*)dx,
 		incx, beta, dy, incy);
 }
 
@@ -71,8 +71,8 @@ inline void blas_dgemm(bool transa, bool transb, size_t m, size_t n, size_t k,
 	double alpha, const double *da, size_t lda, const double *db,
 	size_t ldb, double beta, double *dc, size_t ldc) {
 
-	CL_DGEMM(transa ? 'N' : 'T', transb ? 'N' : 'T', m, n, k, alpha,
-		(double*)da, lda, (double*)db, ldb, beta, dc, ldc);
+	CL_DGEMM(transb ? 'T' : 'N', transa ? 'T' : 'N', n, m, k, alpha,
+		(double*)db, ldb, (double*)da, lda, beta, dc, ldc);
 }
 
 
