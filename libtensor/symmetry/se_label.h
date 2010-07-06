@@ -48,6 +48,7 @@ private:
 	sequence<N, size_t> m_type; //!< Label type
 	sequence<N, label_list_t*> m_labels; //!< Block labels
 	label_t m_label; //!< Target label
+	dimensions<N> m_bidims; //!< Block %index %dimensions
 
 	const std::string m_id; //!< Product table id
 	const product_table_i &m_pt; //!< Product table
@@ -207,14 +208,14 @@ const char *se_label<N, T>::k_sym_type = "se_label";
 template<size_t N, typename T>
 se_label<N, T>::se_label(const block_index_space<N> &bis, const char *id) :
 	m_id(id), m_type(0), m_labels(0), m_label(0),
-	m_pt(product_table_container::get_instance().req_const_table(id)) {
+	m_pt(product_table_container::get_instance().req_const_table(id)),
+	m_bidims(bis.get_block_index_dims()) {
 
-	dimensions<N> bidims(bis.get_block_index_dims());
 	for (size_t i = 0; i < N; i++) {
 		size_t itype = m_type[i] = bis.get_type(i);
 
 		if (m_labels[itype] == 0)
-			m_labels[itype] = new label_list_t(bidims[i], m_pt.invalid());
+			m_labels[itype] = new label_list_t(m_bidims[i], m_pt.invalid());
 	}
 
 	m_label = m_pt.invalid();
@@ -223,7 +224,8 @@ se_label<N, T>::se_label(const block_index_space<N> &bis, const char *id) :
 template<size_t N, typename T>
 se_label<N, T>::se_label(const se_label<N, T> &elem) :
 	m_id(elem.m_id), m_type(elem.m_type), m_labels(0), m_label(elem.m_label),
-	m_pt(product_table_container::get_instance().req_const_table(elem.m_id)) {
+	m_pt(product_table_container::get_instance().req_const_table(elem.m_id)),
+	m_bidims(elem.m_bidims) {
 
 	for (size_t itype = 0; itype < N; itype++) {
 		if (elem.m_labels[itype] == 0) break;
@@ -356,7 +358,7 @@ void se_label<N, T>::clear() {
 }
 
 template<size_t N, typename T>
-void se_label<N, T>::set_target(label_t target) {
+void se_label<N, T>::set_target(label_t target) throw(bad_parameter) {
 
 	if (! m_pt.is_valid(target))
 		throw bad_parameter(g_ns, k_clazz,
@@ -398,7 +400,7 @@ size_t se_label<N, T>::get_dim(size_t type) const throw(bad_parameter) {
 }
 
 template<size_t N, typename T>
-se_label<N, T>::label_t se_label<N, T>::get_label(
+typename se_label<N, T>::label_t se_label<N, T>::get_label(
 		size_t type, size_t pos) const throw(out_of_bounds) {
 
 	static const char *method = "get_dim(size_t)";
