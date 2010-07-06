@@ -55,7 +55,7 @@ void tod_contract2<N, M, K>::do_perform(tensor_i<k_orderc, double> &tc,
 	typedef typename loop_list_mul::registers registers_t;
 	typedef typename loop_list_mul::node node_t;
 
-	tod_contract2<N, M, K>::start_timer();
+	timings< tod_contract2<N, M, K> >::start_timer();
 
 	try {
 
@@ -81,10 +81,10 @@ void tod_contract2<N, M, K>::do_perform(tensor_i<k_orderc, double> &tc,
 	double *pc = cc.req_dataptr();
 
 	if(zero) {
-		tod_contract2<N, M, K>::start_timer("zero");
+		timings< tod_contract2<N, M, K> >::start_timer("zero");
 		size_t szc = tc.get_dims().get_size();
 		for(size_t i = 0; i < szc; i++) pc[i] = 0.0;
-		tod_contract2<N, M, K>::stop_timer("zero");
+		timings< tod_contract2<N, M, K> >::stop_timer("zero");
 	}
 
 	registers_t r;
@@ -104,11 +104,11 @@ void tod_contract2<N, M, K>::do_perform(tensor_i<k_orderc, double> &tc,
 	cc.ret_dataptr(pc);
 
 	} catch(...) {
-		tod_contract2<N, M, K>::stop_timer();
+		timings< tod_contract2<N, M, K> >::stop_timer();
 		throw;
 	}
 
-	tod_contract2<N, M, K>::stop_timer();
+	timings< tod_contract2<N, M, K> >::stop_timer();
 }
 
 

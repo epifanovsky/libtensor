@@ -15,11 +15,15 @@ void loop_list_mul::run_loop(list_t &loop, registers &r, double c) {
 
 	match_l1(loop, c);
 
+	timings<loop_list_mul>::start_timer(m_kernelname);
+
 	iterator_t begin = loop.begin(), end = loop.end();
 	if(begin != end) {
 		loop_list_base<2, 1, loop_list_mul>::exec(
 			*this, begin, end, r);
 	}
+
+	timings<loop_list_mul>::stop_timer(m_kernelname);
 }
 
 

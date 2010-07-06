@@ -2,6 +2,7 @@
 #define LIBTENSOR_LOOP_LIST_MUL_H
 
 #include <list>
+#include "../timings.h"
 #include "loop_list_base.h"
 
 namespace libtensor {
@@ -12,7 +13,10 @@ namespace libtensor {
 
 	\ingroup libtensor_tod
  **/
-class loop_list_mul : public loop_list_base<2, 1, loop_list_mul> {
+class loop_list_mul :
+	public loop_list_base<2, 1, loop_list_mul>,
+	public timings<loop_list_mul> {
+
 public:
 	static const char *k_clazz; //!< Class name
 
