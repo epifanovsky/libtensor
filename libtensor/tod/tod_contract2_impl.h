@@ -55,7 +55,7 @@ void tod_contract2<N, M, K>::do_perform(tensor_i<k_orderc, double> &tc,
 	typedef typename loop_list_mul::registers registers_t;
 	typedef typename loop_list_mul::node node_t;
 
-	timings< tod_contract2<N, M, K> >::start_timer();
+	tod_contract2<N, M, K>::start_timer(k_clazz);
 
 	try {
 
@@ -81,10 +81,10 @@ void tod_contract2<N, M, K>::do_perform(tensor_i<k_orderc, double> &tc,
 	double *pc = cc.req_dataptr();
 
 	if(zero) {
-		timings< tod_contract2<N, M, K> >::start_timer("zero");
+		tod_contract2<N, M, K>::start_timer("zero");
 		size_t szc = tc.get_dims().get_size();
 		for(size_t i = 0; i < szc; i++) pc[i] = 0.0;
-		timings< tod_contract2<N, M, K> >::stop_timer("zero");
+		tod_contract2<N, M, K>::stop_timer("zero");
 	}
 
 	registers_t r;
@@ -95,20 +95,18 @@ void tod_contract2<N, M, K>::do_perform(tensor_i<k_orderc, double> &tc,
 	r.m_ptra_end[1] = pb + dimsb.get_size();
 	r.m_ptrb_end[0] = pc + dimsc.get_size();
 
-//	std::cout << "[";
 	loop_list_mul::run_loop(loop, r, d);
-//	std::cout << "]" << std::endl;
 
 	ca.ret_const_dataptr(pa);
 	cb.ret_const_dataptr(pb);
 	cc.ret_dataptr(pc);
 
 	} catch(...) {
-		timings< tod_contract2<N, M, K> >::stop_timer();
+		tod_contract2<N, M, K>::stop_timer(k_clazz);
 		throw;
 	}
 
-	timings< tod_contract2<N, M, K> >::stop_timer();
+	tod_contract2<N, M, K>::stop_timer(k_clazz);
 }
 
 

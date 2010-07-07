@@ -65,8 +65,16 @@ private:
 	void test_ij_jp_ip(size_t ni, size_t nj, size_t np, double d = 0.0)
 		throw(libtest::test_exception);
 
+	// c_{ij} = \sum_p a_{jp} b_{pi}
+	void test_ij_jp_pi(size_t ni, size_t nj, size_t np, double d = 0.0)
+		throw(libtest::test_exception);
+
 	// c_{ij} = \sum_{pq} a_{pqi} b_{pjq}
 	void test_ij_pqi_pjq(size_t ni, size_t nj, size_t np, size_t nq,
+		double d = 0.0) throw(libtest::test_exception);
+
+	// c_{ij} = \sum_{pq} a_{ipq} b_{jqp}
+	void test_ij_ipq_jqp(size_t ni, size_t nj, size_t np, size_t nq,
 		double d = 0.0) throw(libtest::test_exception);
 
 	// c_{ij} = \sum_{pq} a_{pq} b_{ijpq}

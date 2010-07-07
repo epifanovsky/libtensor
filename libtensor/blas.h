@@ -8,6 +8,11 @@ namespace libtensor {
 
 class blas {
 public:
+	/**	\brief \f$ \sum_{i=1}^{n_i} \sum_{j=1}^{n_j} a_{ij} b_{ji} \f$
+	 **/
+	static double ddot_trp(const double *a, const double *b, size_t ni,
+		size_t nj, size_t lda, size_t ldb);
+
 	/**	\brief B = ca*A' + cb*B
 	 **/
 	static void daxpby_trp(const double *a, double *b, size_t ni, size_t nj,

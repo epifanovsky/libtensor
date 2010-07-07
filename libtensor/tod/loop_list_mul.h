@@ -30,8 +30,14 @@ private:
 	//!	c = a_i b_i
 	struct {
 		double m_d;
-		size_t m_n;
+		size_t m_n, m_stepa, m_stepb;
 	} m_ddot;
+
+	//!	c = a_ij b_ji
+	struct {
+		double m_d;
+		size_t m_ni, m_nj, m_lda, m_ldb;
+	} m_ddot_trp;
 
 	//!	c_i = a_i b
 	struct {
@@ -69,6 +75,12 @@ private:
 		size_t m_rows, m_cols, m_stepa, m_ldb, m_stepc;
 	} m_dgemv_t_b;
 
+	//!	c_ij = a_ip b_pj
+	struct {
+		double m_d;
+		size_t m_rowsa, m_colsb, m_colsa, m_lda, m_ldb, m_ldc;
+	} m_dgemm_nn_ab;
+
 	//!	c_ij = a_ip b_jp
 	struct {
 		double m_d;
@@ -105,6 +117,12 @@ private:
 		size_t m_rowsb, m_colsa, m_colsb, m_ldb, m_lda, m_ldc;
 	} m_dgemm_tn_ba;
 
+	//!	c_ij = a_pj b_ip
+	struct {
+		double m_d;
+		size_t m_rowsb, m_colsa, m_colsb, m_ldb, m_lda, m_ldc;
+	} m_dgemm_tt_ba;
+
 	const char *m_kernelname;
 
 protected:
@@ -112,7 +130,7 @@ protected:
 
 private:
 	void match_l1(list_t &loop, double d);
-	void match_ddot_l2(list_t &loop, double d, size_t w1);
+	void match_ddot_l2(list_t &loop, double d, size_t w1, size_t k1);
 	void match_daxpy_a_l2(list_t &loop, double d, size_t w1, size_t k1);
 	void match_daxpy_b_l2(list_t &loop, double d, size_t w1, size_t k1);
 	void match_dgemv_n_a_l3(list_t &loop, double d, size_t w1, size_t w2,
@@ -123,22 +141,27 @@ private:
 		size_t k1, size_t k2w1);
 	void match_dgemv_t_a2_l3(list_t &loop, double d, size_t w1, size_t w2,
 		size_t k2w1, size_t k3);
-	void match_dgemv_t_b_l3(list_t &loop, double d, size_t w1, size_t w2,
+	void match_dgemv_t_b1_l3(list_t &loop, double d, size_t w1, size_t w2,
+		size_t k1, size_t k2w1);
+	void match_dgemv_t_b2_l3(list_t &loop, double d, size_t w1, size_t w2,
 		size_t k2w1, size_t k3);
 	void fn_generic(registers &r) const;
 	void fn_ddot(registers &r) const;
+	void fn_ddot_trp(registers &r) const;
 	void fn_daxpy_a(registers &r) const;
 	void fn_daxpy_b(registers &r) const;
 	void fn_dgemv_n_a(registers &r) const;
 	void fn_dgemv_t_a(registers &r) const;
 	void fn_dgemv_n_b(registers &r) const;
 	void fn_dgemv_t_b(registers &r) const;
+	void fn_dgemm_nn_ab(registers &r) const;
 	void fn_dgemm_nt_ab(registers &r) const;
 	void fn_dgemm_tn_ab(registers &r) const;
 	void fn_dgemm_tt_ab(registers &r) const;
 	void fn_dgemm_nn_ba(registers &r) const;
 	void fn_dgemm_nt_ba(registers &r) const;
 	void fn_dgemm_tn_ba(registers &r) const;
+	void fn_dgemm_tt_ba(registers &r) const;
 
 };
 

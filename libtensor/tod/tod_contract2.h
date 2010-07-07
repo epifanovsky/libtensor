@@ -34,10 +34,7 @@ namespace libtensor {
 	\ingroup libtensor_tod
 **/
 template<size_t N, size_t M, size_t K>
-class tod_contract2 :
-	public loop_list_mul,
-	public tod_additive<N + M>,
-	public timings< tod_contract2<N, M, K> > {
+class tod_contract2 : public loop_list_mul, public tod_additive<N + M> {
 
 public:
 	static const char *k_clazz;
@@ -67,7 +64,6 @@ public:
 	static const size_t k_orderc = N + M;
 
 private:
-
 	contraction2<N, M, K> m_contr; //!< Contraction
 	tensor_i<k_ordera, double> &m_ta; //!< First tensor (a)
 	tensor_i<k_orderb, double> &m_tb; //!< Second tensor (b)

@@ -2,6 +2,22 @@
 
 namespace libtensor {
 
+
+double blas::ddot_trp(const double *a, const double *b, size_t ni, size_t nj,
+	size_t lda, size_t ldb) {
+
+	double d = 0.0;
+
+	for(size_t i = 0; i < ni; i++) {
+		for(size_t j = 0; j < nj; j++) {
+			d += a[i * lda + j] * b[j * ldb + i];
+		}
+	}
+
+	return d;
+}
+
+
 void blas::daxpby_trp(const double *a, double *b, size_t ni, size_t nj,
 	size_t si, size_t sj, double ca, double cb) {
 
