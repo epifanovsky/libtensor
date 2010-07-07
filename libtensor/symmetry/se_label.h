@@ -48,9 +48,7 @@ private:
 	sequence<N, size_t> m_type; //!< Label type
 	sequence<N, label_list_t*> m_labels; //!< Block labels
 	label_t m_label; //!< Target label
-	dimensions<N> m_bidims; //!< Block %index %dimensions
 
-	const std::string m_id; //!< Product table id
 	const product_table_i &m_pt; //!< Product table
 public:
 	//!	\name Construction and destruction
@@ -129,12 +127,6 @@ public:
 	 **/
 	size_t get_dim(size_t type) const throw(bad_parameter);
 
-	/**	\brief Returns the block dimensions.
-	 **/
-	const dimensions<N> &get_dims() const {
-		return m_bidims;
-	}
-
 	/**	\brief Returns the label of a block of a dimension type.
 		\param type Dimension type.
 		\param pos Block position.
@@ -148,6 +140,9 @@ public:
 		return m_label;
 	}
 
+	const char *get_table_id() const {
+		return m_pt.get_id();
+	}
 	//@}
 
 	//!	\name Implementation of symmetry_element_i<N, T>
@@ -207,15 +202,15 @@ const char *se_label<N, T>::k_sym_type = "se_label";
 
 template<size_t N, typename T>
 se_label<N, T>::se_label(const block_index_space<N> &bis, const char *id) :
-	m_id(id), m_type(0), m_labels(0), m_label(0),
-	m_pt(product_table_container::get_instance().req_const_table(id)),
-	m_bidims(bis.get_block_index_dims()) {
+	m_type(0), m_labels(0), m_label(0),
+	m_pt(product_table_container::get_instance().req_const_table(id)) {
 
+	dimensions<N> bidims = bis.get_block_index_dims();
 	for (size_t i = 0; i < N; i++) {
 		size_t itype = m_type[i] = bis.get_type(i);
 
 		if (m_labels[itype] == 0)
-			m_labels[itype] = new label_list_t(m_bidims[i], m_pt.invalid());
+			m_labels[itype] = new label_list_t(bidims[i], m_pt.invalid());
 	}
 
 	m_label = m_pt.invalid();
@@ -223,9 +218,8 @@ se_label<N, T>::se_label(const block_index_space<N> &bis, const char *id) :
 
 template<size_t N, typename T>
 se_label<N, T>::se_label(const se_label<N, T> &elem) :
-	m_id(elem.m_id), m_type(elem.m_type), m_labels(0), m_label(elem.m_label),
-	m_pt(product_table_container::get_instance().req_const_table(elem.m_id)),
-	m_bidims(elem.m_bidims) {
+	m_type(elem.m_type), m_labels(0), m_label(elem.m_label),
+	m_pt(product_table_container::get_instance().req_const_table(elem.m_pt.get_id())) {
 
 	for (size_t itype = 0; itype < N; itype++) {
 		if (elem.m_labels[itype] == 0) break;
@@ -244,7 +238,7 @@ se_label<N, T>::~se_label() {
 		m_labels[i] = 0;
 	}
 
-	product_table_container::get_instance().ret_table(m_id);
+	product_table_container::get_instance().ret_table(m_pt.get_id());
 }
 
 template<size_t N, typename T>
