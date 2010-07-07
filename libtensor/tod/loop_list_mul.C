@@ -71,9 +71,9 @@ void loop_list_mul::match_l1(list_t &loop, double d) {
 			}
 		}
 	}
-	if(i1 != loop.end()) {
-		//~ std::cout << "ddot";
-		m_kernelname = "ddot";
+	if(i1 != loop.end() && k1_min == 1) {
+		//~ std::cout << "ddot1";
+		m_kernelname = "ddot1";
 		i1->fn() = &loop_list_mul::fn_ddot;
 		m_ddot.m_d = d;
 		m_ddot.m_n = i1->weight();
@@ -103,6 +103,18 @@ void loop_list_mul::match_l1(list_t &loop, double d) {
 		m_daxpy_b.m_stepc = i3->stepb(0);
 		match_daxpy_b_l2(loop, d, i3->weight(), i3->stepb(0));
 		loop.splice(loop.end(), loop, i3);
+		return;
+	}
+	if(i1 != loop.end()) {
+		//~ std::cout << "ddot2";
+		m_kernelname = "ddot2";
+		i1->fn() = &loop_list_mul::fn_ddot;
+		m_ddot.m_d = d;
+		m_ddot.m_n = i1->weight();
+		m_ddot.m_stepa = i1->stepa(0);
+		m_ddot.m_stepb = 1;
+		match_ddot_l2(loop, d, i1->weight(), i1->stepa(0));
+		loop.splice(loop.end(), loop, i1);
 		return;
 	}
 
