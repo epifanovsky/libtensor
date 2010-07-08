@@ -13,12 +13,12 @@ void symm_test::perform() throw(libtest::test_exception) {
 
 	try {
 
-		//~ test_symm2_contr_tt_1();
-		//~ test_symm2_contr_ee_1();
-		//~ test_asymm2_contr_tt_1();
-		//~ test_asymm2_contr_tt_2();
-		//~ test_asymm2_contr_tt_3();
-		//~ test_asymm2_contr_tt_4();
+		test_symm2_contr_tt_1();
+		test_symm2_contr_ee_1();
+		test_asymm2_contr_tt_1();
+		test_asymm2_contr_tt_2();
+		test_asymm2_contr_tt_3();
+		test_asymm2_contr_tt_4();
 		test_asymm2_contr_tt_5();
 		test_asymm2_contr_ee_1();
 		test_asymm2_contr_ee_2();
@@ -339,7 +339,7 @@ void symm_test::test_asymm2_contr_tt_5() throw(libtest::test_exception) {
 		compare_ref<4>::compare(testname, sym4, sym4_ref);
 	}
 
-	compare_ref<4>::compare(testname, t4, t4_ref, 5e-14);
+	compare_ref<4>::compare(testname, t4, t4_ref, 6e-14);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
