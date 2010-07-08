@@ -24,6 +24,8 @@ void btod_sum_test::perform() throw(libtest::test_exception) {
 	test_6(false);
 	test_7();
 	test_8();
+	test_9a();
+	test_9b();
 }
 
 
@@ -486,6 +488,148 @@ void btod_sum_test::test_8() throw(libtest::test_exception) {
 
 	compare_ref<2>::compare(testname, sym3, sym3_ref);
 	compare_ref<2>::compare(testname, bt3, bt3_ref, 1e-14);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void btod_sum_test::test_9a() throw(libtest::test_exception) {
+
+	//
+	//	tt_oovv(i|j|a|b) = t2(i|j|a|b) - t1(j|a)*t1(i|b);
+	//
+
+	static const char *testname = "btod_sum_test::test_9a()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<2> i2a, i2b;
+	i2b[0] = 5; i2b[1] = 10;
+	dimensions<2> dims_ia(index_range<2>(i2a, i2b));
+	index<4> i4a, i4b;
+	i4b[0] = 5; i4b[1] = 5; i4b[2] = 10; i4b[3] = 10;
+	dimensions<4> dims_ijab(index_range<4>(i4a, i4b));
+
+	block_index_space<2> bis_ia(dims_ia);
+	block_index_space<4> bis_ijab(dims_ijab);
+	mask<2> m2a, m2b;
+	m2a[0] = true; m2b[1] = true;
+	bis_ia.split(m2a, 2);
+	bis_ia.split(m2b, 6);
+	mask<4> m4a, m4b;
+	m4a[0] = true; m4a[1] = true; m4b[2] = true; m4b[3] = true;
+	bis_ijab.split(m4a, 2);
+	bis_ijab.split(m4b, 6);
+
+	block_tensor<2, double, allocator_t> bt1(bis_ia);
+	block_tensor<4, double, allocator_t> bt2(bis_ijab), bt3(bis_ijab),
+		bt3_ref(bis_ijab);
+	{
+		block_tensor_ctrl<4, double> ctrl2(bt2);
+		ctrl2.req_symmetry().insert(se_perm<4, double>(
+			permutation<4>().permute(0, 1), false));
+		ctrl2.req_symmetry().insert(se_perm<4, double>(
+			permutation<4>().permute(2, 3), false));
+	}
+	btod_random<2>().perform(bt1);
+	btod_random<4>().perform(bt2);
+	bt1.set_immutable();
+	bt2.set_immutable();
+
+	btod_copy<4> op1(bt2);
+	contraction2<2, 2, 0> contr1(permutation<4>().
+		permute(1, 2).permute(0, 1));
+	btod_contract2<2, 2, 0> op2(contr1, bt1, bt1);
+
+	op1.perform(bt3_ref);
+	op2.perform(bt3_ref, -1.0);
+
+	btod_sum<4> sum(op1);
+	sum.add_op(op2, -1.0);
+	sum.perform(bt3);
+
+	compare_ref<4>::compare(testname, bt3, bt3_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void btod_sum_test::test_9b() throw(libtest::test_exception) {
+
+	//
+	//	tt_oovv(i|j|a|b) = t2(i|j|a|b) - t1(j|a)*t1(i|b);
+	//	performed blockwise
+	//
+
+	static const char *testname = "btod_sum_test::test_9b()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<2> i2a, i2b;
+	i2b[0] = 5; i2b[1] = 10;
+	dimensions<2> dims_ia(index_range<2>(i2a, i2b));
+	index<4> i4a, i4b;
+	i4b[0] = 5; i4b[1] = 5; i4b[2] = 10; i4b[3] = 10;
+	dimensions<4> dims_ijab(index_range<4>(i4a, i4b));
+
+	block_index_space<2> bis_ia(dims_ia);
+	block_index_space<4> bis_ijab(dims_ijab);
+	mask<2> m2a, m2b;
+	m2a[0] = true; m2b[1] = true;
+	bis_ia.split(m2a, 2);
+	bis_ia.split(m2b, 6);
+	mask<4> m4a, m4b;
+	m4a[0] = true; m4a[1] = true; m4b[2] = true; m4b[3] = true;
+	bis_ijab.split(m4a, 2);
+	bis_ijab.split(m4b, 6);
+
+	block_tensor<2, double, allocator_t> bt1(bis_ia);
+	block_tensor<4, double, allocator_t> bt2(bis_ijab), bt3(bis_ijab),
+		bt3_ref(bis_ijab);
+	{
+		block_tensor_ctrl<4, double> ctrl2(bt2);
+		ctrl2.req_symmetry().insert(se_perm<4, double>(
+			permutation<4>().permute(0, 1), false));
+		ctrl2.req_symmetry().insert(se_perm<4, double>(
+			permutation<4>().permute(2, 3), false));
+	}
+	btod_random<2>().perform(bt1);
+	btod_random<4>().perform(bt2);
+	bt1.set_immutable();
+	bt2.set_immutable();
+
+	btod_copy<4> op1(bt2);
+	contraction2<2, 2, 0> contr1(permutation<4>().
+		permute(1, 2).permute(0, 1));
+	btod_contract2<2, 2, 0> op2(contr1, bt1, bt1);
+
+	op1.perform(bt3_ref);
+	op2.perform(bt3_ref, -1.0);
+
+	btod_sum<4> sum(op1);
+	sum.add_op(op2, -1.0);
+
+	const assignment_schedule<4, double> &sch = sum.get_schedule();
+	block_tensor_ctrl<4, double> c3(bt3);
+	for(assignment_schedule<4, double>::iterator i = sch.begin();
+		i != sch.end(); i++) {
+
+		abs_index<4> ijab(sch.get_abs_index(i),
+			bis_ijab.get_block_index_dims());
+		tensor_i<4, double> &blk = c3.req_block(ijab.get_index());
+		sum.compute_block(blk, ijab.get_index());
+		c3.ret_block(ijab.get_index());
+	}
+
+	compare_ref<4>::compare(testname, bt3, bt3_ref, 1e-15);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());

@@ -92,12 +92,13 @@ public:
 
 	//!	\name Implementation of libtensor::additive_btod<N>
 	//@{
+
 	virtual void compute_block(tensor_i<N, double> &blk,
 		const index<N> &i);
 	virtual void compute_block(tensor_i<N, double> &blk, const index<N> &i,
 		const transf<N, double> &tr, double c);
-
-	using additive_btod<N>::perform;
+	virtual void perform(block_tensor_i<N, double> &bt);
+	virtual void perform(block_tensor_i<N, double> &bt, double c);
 
 	//@}
 

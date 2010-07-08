@@ -4,6 +4,7 @@
 #include "../core/orbit.h"
 #include "../symmetry/so_add.h"
 #include "../symmetry/so_copy.h"
+#include "btod_scale.h"
 
 namespace libtensor {
 
@@ -90,6 +91,37 @@ void btod_sum<N>::compute_block(tensor_i<N, double> &blk, const index<N> &i,
 
 
 template<size_t N>
+void btod_sum<N>::perform(block_tensor_i<N, double> &bt) {
+
+	bool first = true;
+	for(typename std::list<node_t>::iterator iop = m_ops.begin();
+		iop != m_ops.end(); iop++) {
+
+		if(first) {
+			iop->get_op().perform(bt);
+			if(iop->get_coeff() != 1.0) {
+				btod_scale<N>(bt, iop->get_coeff()).perform();
+			}
+			first = false;
+		} else {
+			iop->get_op().perform(bt, iop->get_coeff());
+		}
+	}
+}
+
+
+template<size_t N>
+void btod_sum<N>::perform(block_tensor_i<N, double> &bt, double c) {
+
+	for(typename std::list<node_t>::iterator iop = m_ops.begin();
+		iop != m_ops.end(); iop++) {
+
+		iop->get_op().perform(bt, c * iop->get_coeff());
+	}
+}
+
+
+template<size_t N>
 void btod_sum<N>::add_op(additive_btod<N> &op, double c) {
 
 	static const char *method = "add_op(additive_btod<N>&, double)";
@@ -110,6 +142,7 @@ void btod_sum<N>::add_op(additive_btod<N> &op, double c) {
 		so_copy<N, double>(sym1).perform(m_sym);
 	}
 	m_ops.push_back(node_t(op, c));
+	m_dirty_sch = true;
 }
 
 
@@ -119,19 +152,44 @@ void btod_sum<N>::make_schedule() const {
 	delete m_sch;
 	m_sch = new assignment_schedule<N, double>(m_bidims);
 
+	orbit_list<N, double> ol(m_sym);
+	std::list< orbit_list<N, double>* > op_ol;
 	for(typename std::list<node_t>::iterator iop = m_ops.begin();
 		iop != m_ops.end(); iop++) {
-
-		const assignment_schedule<N, double> &sch =
-			iop->get_op().get_schedule();
-		for(typename assignment_schedule<N, double>::iterator j =
-			sch.begin(); j != sch.end(); j++) {
-
-			if(!m_sch->contains(sch.get_abs_index(j))) {
-				m_sch->insert(sch.get_abs_index(j));
-			}
-		}
+		op_ol.push_back(new orbit_list<N, double>(
+			iop->get_op().get_symmetry()));
 	}
+
+	for(typename orbit_list<N, double>::iterator io = ol.begin();
+		io != ol.end(); io++) {
+
+		bool zero = true;
+		typename std::list< orbit_list<N, double>* >::iterator iol =
+			op_ol.begin();
+		for(typename std::list<node_t>::iterator iop = m_ops.begin();
+			zero && iop != m_ops.end(); iop++) {
+
+			if(!(*iol)->contains(ol.get_abs_index(io))) {
+				orbit<N, double> o(iop->get_op().get_symmetry(),
+					ol.get_index(io));
+				if(iop->get_op().get_schedule().contains(
+					o.get_abs_canonical_index())) {
+					zero = false;
+				}
+			} else {
+				if(iop->get_op().get_schedule().contains(
+					ol.get_abs_index(io))) {
+					zero = false;
+				}
+			}
+			iol++;
+		}
+
+		if(!zero) m_sch->insert(ol.get_abs_index(io));
+	}
+
+	for(typename std::list< orbit_list<N, double>* >::iterator i =
+		op_ol.begin(); i != op_ol.end(); i++) delete *i;
 
 	m_dirty_sch = false;
 }

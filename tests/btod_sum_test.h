@@ -22,6 +22,8 @@ private:
 	void test_6(bool do_add) throw(libtest::test_exception);
 	void test_7() throw(libtest::test_exception);
 	void test_8() throw(libtest::test_exception);
+	void test_9a() throw(libtest::test_exception);
+	void test_9b() throw(libtest::test_exception);
 };
 
 } // namespace libtensor
