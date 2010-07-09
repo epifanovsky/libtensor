@@ -6,6 +6,7 @@
 
 namespace libtensor {
 
+
 void orbit_test::perform() throw(libtest::test_exception) {
 
 	test_1();
@@ -17,6 +18,7 @@ void orbit_test::perform() throw(libtest::test_exception) {
 	test_7();
 	test_8();
 }
+
 
 void orbit_test::test_1() throw(libtest::test_exception) {
 
@@ -36,6 +38,12 @@ void orbit_test::test_1() throw(libtest::test_exception) {
 	index<2> io;
 	do {
 		orbit<2, double> orb(sym, io);
+		if(!orb.is_allowed()) {
+			std::ostringstream ss;
+			ss << "Orbit not allowed: " << io << ".";
+			fail_test(testname, __FILE__, __LINE__,
+				ss.str().c_str());
+		}
 		if(orb.get_abs_canonical_index() != dims.abs_index(io)) {
 			std::ostringstream ss;
 			ss << "Failure to detect a canonical index: " << io
@@ -65,6 +73,7 @@ void orbit_test::test_1() throw(libtest::test_exception) {
 	}
 }
 
+
 void orbit_test::test_2() throw(libtest::test_exception) {
 
 	static const char *testname = "orbit_test::test_2()";
@@ -86,6 +95,12 @@ void orbit_test::test_2() throw(libtest::test_exception) {
 	index<2> io;
 	do {
 		orbit<2, double> orb(sym, io);
+		if(!orb.is_allowed()) {
+			std::ostringstream ss;
+			ss << "Orbit not allowed: " << io << ".";
+			fail_test(testname, __FILE__, __LINE__,
+				ss.str().c_str());
+		}
 		bool can = io[0] <= io[1];
 		size_t abscanidx = orb.get_abs_canonical_index();
 		if((can && abscanidx != dims.abs_index(io)) ||
@@ -157,6 +172,12 @@ void orbit_test::test_3() throw(libtest::test_exception) {
 	index<4> io;
 	do {
 		orbit<4, double> orb(sym, io);
+		if(!orb.is_allowed()) {
+			std::ostringstream ss;
+			ss << "Orbit not allowed: " << io << ".";
+			fail_test(testname, __FILE__, __LINE__,
+				ss.str().c_str());
+		}
 		bool can = io[0] <= io[1];
 		size_t abscanidx = orb.get_abs_canonical_index();
 		if((can && abscanidx != dims.abs_index(io)) ||
@@ -229,6 +250,12 @@ void orbit_test::test_4() throw(libtest::test_exception) {
 	index<4> io;
 	do {
 		orbit<4, double> orb(sym, io);
+		if(!orb.is_allowed()) {
+			std::ostringstream ss;
+			ss << "Orbit not allowed: " << io << ".";
+			fail_test(testname, __FILE__, __LINE__,
+				ss.str().c_str());
+		}
 		bool can = io[1] <= io[2];
 		size_t abscanidx = orb.get_abs_canonical_index();
 		if((can && abscanidx != dims.abs_index(io)) ||
@@ -301,6 +328,12 @@ void orbit_test::test_5() throw(libtest::test_exception) {
 	index<4> io;
 	do {
 		orbit<4, double> orb(sym, io);
+		if(!orb.is_allowed()) {
+			std::ostringstream ss;
+			ss << "Orbit not allowed: " << io << ".";
+			fail_test(testname, __FILE__, __LINE__,
+				ss.str().c_str());
+		}
 		bool can = (io[0] == io[1] && io[0] <= io[2]) ||
 			(io[0] < io[1] && io[0] < io[2]);
 		size_t abscanidx = orb.get_abs_canonical_index();
@@ -387,6 +420,12 @@ void orbit_test::test_6() throw(libtest::test_exception) {
 	index<4> io;
 	do {
 		orbit<4, double> orb(sym, io);
+		if(!orb.is_allowed()) {
+			std::ostringstream ss;
+			ss << "Orbit not allowed: " << io << ".";
+			fail_test(testname, __FILE__, __LINE__,
+				ss.str().c_str());
+		}
 		bool can = (io[0] <= io[1] && io[2] <= io[3]);
 		size_t abscanidx = orb.get_abs_canonical_index();
 		if((can && abscanidx != dims.abs_index(io)) ||
@@ -476,6 +515,12 @@ void orbit_test::test_7() throw(libtest::test_exception) {
 	index<4> io;
 	do {
 		orbit<4, double> orb(sym, io);
+		if(!orb.is_allowed()) {
+			std::ostringstream ss;
+			ss << "Orbit not allowed: " << io << ".";
+			fail_test(testname, __FILE__, __LINE__,
+				ss.str().c_str());
+		}
 		bool can = (io[0] <= io[1] && io[1] <= io[2]);
 		size_t abscanidx = orb.get_abs_canonical_index();
 		index<4> canidx;
@@ -563,6 +608,12 @@ void orbit_test::test_8() throw(libtest::test_exception) {
 	index<4> io;
 	do {
 		orbit<4, double> orb(sym, io);
+		if(!orb.is_allowed()) {
+			std::ostringstream ss;
+			ss << "Orbit not allowed: " << io << ".";
+			fail_test(testname, __FILE__, __LINE__,
+				ss.str().c_str());
+		}
 		bool can = (io[0] <= io[1] && io[1] <= io[2] && io[2] <= io[3]);
 		size_t abscanidx = orb.get_abs_canonical_index();
 		index<4> canidx;

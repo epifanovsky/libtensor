@@ -7,12 +7,11 @@
 #include "../defs.h"
 #include "../exception.h"
 #include "../timings.h"
+#include "abs_index.h"
 #include "transf.h"
 #include "symmetry.h"
 
 namespace libtensor {
-
-template<size_t N, typename T> class symmetry;
 
 
 /**	\brief Symmetry-equivalent blocks of a block %tensor
@@ -32,33 +31,49 @@ template<size_t N, typename T> class symmetry;
  **/
 template<size_t N, typename T>
 class orbit : public timings<orbit<N, T> > {
-	friend class timings<orbit<N, T> >;
-	static const char* k_clazz;
+public:
+	static const char *k_clazz; //!< Class name
+
 public:
 	typedef typename std::map< size_t, transf<N, T> >::const_iterator
-		iterator;
+		iterator; //!< Orbit iterator
 
 private:
 	typedef std::pair< size_t, transf<N, T> > pair_t;
 	typedef std::map< size_t, transf<N, T> > orbit_map_t;
 
 private:
-	dimensions<N> m_dims;
-	orbit_map_t m_orb; //!< Orbit indexes
+	dimensions<N> m_bidims; //!< Block %index %dimensions
+	orbit_map_t m_orb; //!< Map of %orbit indexes to transformations
 	size_t m_canidx; //!< Absolute %index of the canonical element
+	bool m_allowed; //!< Whether the orbit is allowed by %symmetry
 
 public:
+	/**	\brief Constructs the %orbit using a %symmetry group and
+			any %index in the %orbit
+	 **/
 	orbit(const symmetry<N, T> &sym, const index<N> &idx);
 
-	/** \brief Obtain canonical index of this orbit
-		@return Absolute index number of canonical block
+	/**	\brief Returns whether the %orbit is allowed by %symmetry
 	 **/
-	size_t get_abs_canonical_index() const;
+	bool is_allowed() const {
 
-	/** \brief Obtain number of indices in orbit
-		@return Number of indices in orbit
+		return m_allowed;
+	}
+
+	/**	\brief Returns the canonical %index of this %orbit
 	 **/
-	size_t get_size() const;
+	size_t get_abs_canonical_index() const {
+
+		return m_canidx;
+	}
+
+	/**	\brief Returns the number of indexes in the orbit
+	 **/
+	size_t get_size() const {
+
+		return m_orb.size();
+	}
 
 	/** \brief Obtain transformation of canonical block to yield block at idx.
 		@param idx Block index
@@ -72,12 +87,23 @@ public:
 	 **/
 	const transf<N, T> &get_transf(size_t absidx) const;
 
-	//!	\name STL-like iterator
+	//!	\name STL-like %orbit iterator
 	//@{
-	iterator begin() const;
-	iterator end() const;
+
+	iterator begin() const {
+
+		return m_orb.begin();
+	}
+
+	iterator end() const {
+
+		return m_orb.end();
+	}
+
 	size_t get_abs_index(iterator &i) const;
+
 	const transf<N, T> &get_transf(iterator &i) const;
+
 	//@}
 
 private:
@@ -85,16 +111,22 @@ private:
 		std::vector<char> &lst, const transf<N, T> &tr);
 };
 
-template<size_t N, typename T>
-const char* orbit<N, T>::k_clazz="orbit<N, T>";
 
 template<size_t N, typename T>
-orbit<N, T>::orbit(const symmetry<N, T> &sym, const index<N> &idx)
-: m_dims(sym.get_bis().get_block_index_dims()) {
+const char *orbit<N, T>::k_clazz = "orbit<N, T>";
+
+
+template<size_t N, typename T>
+orbit<N, T>::orbit(const symmetry<N, T> &sym, const index<N> &idx) :
+
+	m_bidims(sym.get_bis().get_block_index_dims()) {
+
 	orbit<N, T>::start_timer();
 
-	m_canidx = m_dims.abs_index(idx);
-	std::vector<char> chk(m_dims.get_size(), 0);
+	m_canidx = abs_index<N>(idx, m_bidims).get_abs_index();
+	m_allowed = true;
+
+	std::vector<char> chk(m_bidims.get_size(), 0);
 	transf<N, T> tr;
 	mark_orbit(sym, idx, chk, tr);
 
@@ -111,50 +143,31 @@ orbit<N, T>::orbit(const symmetry<N, T> &sym, const index<N> &idx)
 
 
 template<size_t N, typename T>
-inline size_t orbit<N, T>::get_abs_canonical_index() const {
-
-	return m_canidx;
-}
-
-
-template<size_t N, typename T>
-inline size_t orbit<N, T>::get_size() const {
-
-	return m_orb.size();
-}
-
-
-template<size_t N, typename T>
 inline const transf<N, T> &orbit<N, T>::get_transf(const index<N> &idx) const {
 
-	return get_transf(m_dims.abs_index(idx));
+	return get_transf(abs_index<N>(idx, m_bidims).get_abs_index());
 }
 
 
 template<size_t N, typename T>
 inline const transf<N, T> &orbit<N, T>::get_transf(size_t absidx) const {
 
-	typename orbit_map_t::const_iterator i = m_orb.find(absidx);
-	return i->second;
-}
-
-
-template<size_t N, typename T>
-inline typename orbit<N, T>::iterator orbit<N, T>::begin() const {
-
-	return m_orb.begin();
-}
-
-
-template<size_t N, typename T>
-inline typename orbit<N, T>::iterator orbit<N, T>::end() const {
-
-	return m_orb.end();
+	iterator i = m_orb.find(absidx);
+	return get_transf(i);
 }
 
 
 template<size_t N, typename T>
 inline size_t orbit<N, T>::get_abs_index(iterator &i) const {
+
+	static const char *method = "get_abs_index(iterator&)";
+
+#ifdef LIBTENSOR_DEBUG
+	if(i == m_orb.end()) {
+		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"i");
+	}
+#endif // LIBTENSOR_DEBUG
 
 	return i->first;
 }
@@ -162,6 +175,15 @@ inline size_t orbit<N, T>::get_abs_index(iterator &i) const {
 
 template<size_t N, typename T>
 inline const transf<N, T> &orbit<N, T>::get_transf(iterator &i) const {
+
+	static const char *method = "get_transf(iterator&)";
+
+#ifdef LIBTENSOR_DEBUG
+	if(i == m_orb.end()) {
+		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"i");
+	}
+#endif // LIBTENSOR_DEBUG
 
 	return i->second;
 }
@@ -171,7 +193,7 @@ template<size_t N, typename T>
 void orbit<N, T>::mark_orbit(const symmetry<N, T> &sym, const index<N> &idx,
 	std::vector<char> &lst, const transf<N, T> &tr) {
 
-	size_t absidx = m_dims.abs_index(idx);
+	size_t absidx = abs_index<N>(idx, m_bidims).get_abs_index();
 	if(absidx < m_canidx) m_canidx = absidx;
 	if(lst[absidx] != 0) return;
 
@@ -186,6 +208,7 @@ void orbit<N, T>::mark_orbit(const symmetry<N, T> &sym, const index<N> &idx,
 
 			const symmetry_element_i<N, T> &elem =
 				eset.get_elem(ielem);
+			m_allowed = m_allowed && elem.is_allowed(idx);
 			index<N> idx2(idx);
 			transf<N, T> tr2(tr);
 			elem.apply(idx2, tr2);
