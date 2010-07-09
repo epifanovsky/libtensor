@@ -48,6 +48,7 @@ void btod_sum<N>::compute_block(tensor_i<N, double> &blk, const index<N> &i) {
 		else {
 			const symmetry<N, double> &sym = iop->get_op().get_symmetry();
 			orbit<N, double> orb(sym, i);
+			if(!orb.is_allowed()) continue;
 			abs_index<N> ci(orb.get_abs_canonical_index(), m_bidims);
 
 			if(iop->get_op().get_schedule().contains(ci.get_abs_index())) {
@@ -76,6 +77,7 @@ void btod_sum<N>::compute_block(tensor_i<N, double> &blk, const index<N> &i,
 		else {
 			const symmetry<N, double> &sym = iop->get_op().get_symmetry();
 			orbit<N, double> orb(sym, i);
+			if(!orb.is_allowed()) continue;
 			abs_index<N> ci(orb.get_abs_canonical_index(), m_bidims);
 
 			if(iop->get_op().get_schedule().contains(ci.get_abs_index())) {
@@ -172,6 +174,7 @@ void btod_sum<N>::make_schedule() const {
 			if(!(*iol)->contains(ol.get_abs_index(io))) {
 				orbit<N, double> o(iop->get_op().get_symmetry(),
 					ol.get_index(io));
+				if(!o.is_allowed()) continue;
 				if(iop->get_op().get_schedule().contains(
 					o.get_abs_canonical_index())) {
 					zero = false;

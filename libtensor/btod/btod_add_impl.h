@@ -255,6 +255,7 @@ void btod_add<N>::make_schedule() const {
 
 				orbit<N, double> oa(ca[i]->req_const_symmetry(),
 					ia);
+				if(!oa.is_allowed()) continue;
 				abs_index<N> acia(oa.get_abs_canonical_index(),
 					bidimsa);
 
