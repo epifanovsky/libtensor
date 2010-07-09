@@ -279,7 +279,7 @@ void btod_mult<N>::make_schedule() {
 		bool zeroa = ctrla.req_is_zero_block(cidxa.get_index());
 
 		orbit<N, double> ob(ctrlb.req_const_symmetry(), idxb);
-		if (! ob.is_allowed) {
+		if (! ob.is_allowed()) {
 			if (m_recip)
 				throw bad_parameter(g_ns, k_clazz, method,
 						__FILE__, __LINE__, "Block not allowed in btb.");
