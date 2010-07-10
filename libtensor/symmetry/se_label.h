@@ -45,6 +45,7 @@ public:
 private:
 	typedef std::vector<label_t> label_list_t;
 
+	dimensions<N> m_bidims; //!< Block index dimensions
 	sequence<N, size_t> m_type; //!< Label type
 	sequence<N, label_list_t*> m_labels; //!< Block labels
 	label_t m_label; //!< Target label
@@ -55,10 +56,10 @@ public:
 	//@{
 
 	/**	\brief Initializes the %symmetry element
-		\param bis Block %index space.
+		\param bidims Block %index dimensions.
 		\param id Id of product table.
 	 **/
-	se_label(const block_index_space<N> &bis, const char *id);
+	se_label(const dimensions<N> &bidims, const char *id);
 
 	/**	\brief Copy constructor
 	 **/
@@ -101,6 +102,10 @@ public:
 	 **/
 	void clear();
 
+	/** \brief Match labels
+	 **/
+	void match_labels();
+
 	/** \brief Sets the target label to a valid label
 		\throw bad_parameter If target is invalid.
 	 **/
@@ -114,6 +119,12 @@ public:
 
 	//! \name Data access
 	//@{
+
+	/**	\brief Returns the block index dimensions of assigned to the se_label
+	 **/
+	const dimensions<N> &get_block_index_dims() const {
+		return m_bidims;
+	}
 
 	/**	\brief Returns the type (labeling pattern) of a dimension
 		\param dim Dimension number.
@@ -201,24 +212,34 @@ const char *se_label<N, T>::k_sym_type = "se_label";
 
 
 template<size_t N, typename T>
-se_label<N, T>::se_label(const block_index_space<N> &bis, const char *id) :
-	m_type(0), m_labels(0), m_label(0),
+se_label<N, T>::se_label(const dimensions<N> &bidims, const char *id) :
+	m_bidims(bidims), m_type(0), m_labels(0), m_label(0),
 	m_pt(product_table_container::get_instance().req_const_table(id)) {
 
-	dimensions<N> bidims = bis.get_block_index_dims();
+	mask<N> done;
+	size_t curr_type = 0;
 	for (size_t i = 0; i < N; i++) {
-		size_t itype = m_type[i] = bis.get_type(i);
+		if (done[i]) continue;
 
-		if (m_labels[itype] == 0)
-			m_labels[itype] = new label_list_t(bidims[i], m_pt.invalid());
+		done[i] = true;
+		m_type[i] = curr_type;
+		m_labels[curr_type] = new label_list_t(m_bidims[i], m_pt.invalid());
+
+		for (size_t j = i + 1; j < N; j++) {
+			if (m_bidims[i] == m_bidims[j]) {
+				m_type[j] = curr_type;
+				done[j] = true;
+			}
+		}
+		curr_type++;
 	}
-
 	m_label = m_pt.invalid();
 }
 
 template<size_t N, typename T>
 se_label<N, T>::se_label(const se_label<N, T> &elem) :
-	m_type(elem.m_type), m_labels(0), m_label(elem.m_label),
+	m_bidims(elem.m_bidims), m_type(elem.m_type),
+	m_labels(0), m_label(elem.m_label),
 	m_pt(product_table_container::get_instance().req_const_table(elem.m_pt.get_id())) {
 
 	for (size_t itype = 0; itype < N; itype++) {
@@ -237,7 +258,6 @@ se_label<N, T>::~se_label() {
 		delete m_labels[i];
 		m_labels[i] = 0;
 	}
-
 	product_table_container::get_instance().ret_table(m_pt.get_id());
 }
 
@@ -304,7 +324,6 @@ void se_label<N, T>::remove(const mask<N> &msk, size_t pos) throw(bad_parameter,
 	if (i == N) return; // mask has no true component
 	type = m_type[i];
 
-
 	if (pos >= m_labels[type]->size()) {
 		throw out_of_bounds(g_ns, k_clazz, method, __FILE__,
 				__LINE__, "Position is out of bounds.");
@@ -349,6 +368,12 @@ void se_label<N, T>::clear() {
 		for (size_t j = 0; j < m_labels[i]->size(); j++)
 			m_labels[i]->at(j) = m_pt.invalid();
 	}
+}
+
+template<size_t N, typename T>
+void se_label<N, T>::match_labels() {
+
+	throw not_implemented(g_ns, k_clazz, "match_labels()", __FILE__, __LINE__);
 }
 
 template<size_t N, typename T>
@@ -416,14 +441,9 @@ bool se_label<N, T>::is_valid_bis(const block_index_space<N> &bis) const {
 
 	const dimensions<N> &bidims = bis.get_block_index_dims();
 
-	for (size_t i = 0; i < N; i++) {
-		if (m_labels[m_type[i]]->size() != bidims[i]) return false;
-
-		for (size_t j = i + 1; j < N; j++) {
-			if (m_type[i] == m_type[j] && bis.get_type(i) != bis.get_type(j))
-				return false;
-		}
-	}
+	for (size_t i = 0; i < N; i++)
+		if (m_labels[m_type[i]]->size() != bidims[i])
+			return false;
 
 	return true;
 }

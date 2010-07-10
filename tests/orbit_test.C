@@ -713,7 +713,8 @@ void orbit_test::test_9() throw(libtest::test_exception) {
 	product_table_container::get_instance().add(cs);
 
 	mask<2> m; m[0] = true; m[1] = true;
-	se_label<2, double> elem1(bis, point_group_table::k_id);
+	se_label<2, double> elem1(bis.get_block_index_dims(),
+			point_group_table::k_id);
 	elem1.assign(m, 0, ap);
 	elem1.assign(m, 1, app);
 	elem1.set_target(ap);
@@ -843,9 +844,17 @@ void orbit_test::test_9() throw(libtest::test_exception) {
 			"Incorrect block transformation (coeff).");
 	}
 
+	product_table_container::get_instance().erase(point_group_table::k_id);
+
 	} catch(exception &e) {
+		product_table_container::get_instance().erase(point_group_table::k_id);
 		fail_test(testname, __FILE__, __LINE__, e.what());
+	} catch(libtest::test_exception) {
+		product_table_container::get_instance().erase(point_group_table::k_id);
+		throw;
 	}
+
+
 }
 
 
@@ -877,7 +886,8 @@ void orbit_test::test_10() throw(libtest::test_exception) {
 //	product_table_container::get_instance().add(cs);
 
 	mask<2> m; m[0] = true; m[1] = true;
-	se_label<2, double> elem1(bis, point_group_table::k_id);
+	se_label<2, double> elem1(bis.get_block_index_dims(),
+			point_group_table::k_id);
 	elem1.assign(m, 0, ap);
 	elem1.assign(m, 1, app);
 	elem1.set_target(ap);
