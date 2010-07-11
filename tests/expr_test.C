@@ -102,11 +102,11 @@ void expr_test::test_2() throw(libtest::test_exception) {
 
 	i3_ovvv(i|a|b|c) =
 		  i_ovvv(i|a|b|c)
-		+ asymm(b|c, contract(j,
+		+ asymm(b, c, contract(j,
 			t1(j|c),
 			i_ovov(j|b|i|a)
 			- contract(k|d, t2(i|k|b|d), i_oovv(j|k|a|d))))
-		- asymm(b|c, contract(k|d, i_ovvv(k|c|a|d), t2(i|k|b|d)));
+		- asymm(b, c, contract(k|d, i_ovvv(k|c|a|d), t2(i|k|b|d)));
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
@@ -308,7 +308,7 @@ void expr_test::test_6() throw(libtest::test_exception) {
 	i4_oooo(i|j|k|l) =
 		  i_oooo(i|j|k|l)
 		+ 0.5 * contract(a|b, i_oovv(k|l|a|b), t2(i|j|a|b))
-		+ asymm(i|j, contract(a, i_ooov(k|l|i|a), t1(j|a)))
+		+ asymm(i, j, contract(a, i_ooov(k|l|i|a), t1(j|a)))
 		+ contract(a|b, i_oovv(k|l|a|b), t1(i|a)*t1(j|b));
 
 	btod_copy<4> op1(i_oooo);

@@ -1,5 +1,5 @@
-#ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_SYMM2_EVAL_H
-#define LIBTENSOR_LABELED_BTENSOR_EXPR_SYMM2_EVAL_H
+#ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_SYMM1_EVAL_H
+#define LIBTENSOR_LABELED_BTENSOR_EXPR_SYMM1_EVAL_H
 
 #include "../../btod/btod_symmetrize.h"
 #include "../expr/eval_i.h"
@@ -9,8 +9,8 @@ namespace libtensor {
 namespace labeled_btensor_expr {
 
 
-/**	\brief Evaluating container for the symmetrization over two sets of
-		indexes
+/**	\brief Evaluating container for the symmetrization of one %index
+		against a set of indexes
 	\tparam N Tensor order.
 	\tparam M Number of indexes in the set.
 	\tparam Sym Symmetrization/antisymmetrization.
@@ -19,12 +19,12 @@ namespace labeled_btensor_expr {
 	\ingroup libtensor_btensor_expr
  **/
 template<size_t N, size_t M, bool Sym, typename T, typename SubCore>
-class symm2_eval : public eval_i<N, T> {
+class symm1_eval : public eval_i<N, T> {
 public:
 	static const char *k_clazz; //!< Class name
 
 	//!	Expression core type
-	typedef symm2_core<N, M, Sym, T, SubCore> core_t;
+	typedef symm1_core<N, M, Sym, T, SubCore> core_t;
 
 	//!	Expression type
 	typedef expr<N, T, core_t> expression_t;
@@ -60,7 +60,8 @@ private:
 	sub_expr_t m_sub_expr; //!< Sub-expression
 	sub_eval_container_t m_sub_eval_cont; //!< Evaluation of the sub-expression
 	sub_evalfunctor_t m_sub_eval; //!< Evaluation functor
-	permutation<N> m_perm; //!< Permutation for symmetrization
+	size_t m_i1; //!< Symmetrized %index
+	mask<N> m_i2; //!< Mask of target indexes
 	btod_symmetrize<N> *m_op; //!< Symmetrization operation
 	arg<N, T, oper_tag> *m_arg; //!< Argument
 
@@ -68,11 +69,11 @@ public:
 	/**	\brief Initializes the container with given expression and
 			result recipient
 	 **/
-	symm2_eval(expression_t &expr, const letter_expr<N> &label);
+	symm1_eval(expression_t &expr, const letter_expr<N> &label);
 
 	/**	\brief Virtual destructor
 	 **/
-	virtual ~symm2_eval();
+	virtual ~symm1_eval();
 
 	/**	\brief Evaluates sub-expressions into temporary tensors
 	 **/
@@ -97,19 +98,19 @@ private:
 
 
 template<size_t N, size_t M, bool Sym, typename T, typename SubCore>
-const char *symm2_eval<N, M, Sym, T, SubCore>::k_clazz =
-	"symm2_eval<N, M, Sym, T, SubCore>";
+const char *symm1_eval<N, M, Sym, T, SubCore>::k_clazz =
+	"symm1_eval<N, M, Sym, T, SubCore>";
 
 
 template<size_t N, size_t M, bool Sym, typename T, typename SubCore>
 template<int Dummy>
-struct symm2_eval<N, M, Sym, T, SubCore>::narg<oper_tag, Dummy> {
+struct symm1_eval<N, M, Sym, T, SubCore>::narg<oper_tag, Dummy> {
 	static const size_t k_narg = 1;
 };
 
 
 template<size_t N, size_t M, bool Sym, typename T, typename SubCore>
-symm2_eval<N, M, Sym, T, SubCore>::symm2_eval(expression_t &expr,
+symm1_eval<N, M, Sym, T, SubCore>::symm1_eval(expression_t &expr,
 	const letter_expr<N> &label) :
 
 	m_sub_expr(expr.get_core().get_sub_expr()),
@@ -117,25 +118,23 @@ symm2_eval<N, M, Sym, T, SubCore>::symm2_eval(expression_t &expr,
 	m_sub_eval(m_sub_expr, m_sub_eval_cont),
 	m_op(0), m_arg(0) {
 
+	m_i1 = label.index_of(expr.get_core().get_l1());
 	for(size_t i = 0; i < M; i++) {
-		size_t i1 = label.index_of(
-			expr.get_core().get_sym1().letter_at(i));
-		size_t i2 = label.index_of(
-			expr.get_core().get_sym2().letter_at(i));
-		m_perm.permute(i1, i2);
+		m_i2[label.index_of(expr.get_core().get_sym2().letter_at(i))] =
+			true;
 	}
 }
 
 
 template<size_t N, size_t M, bool Sym, typename T, typename SubCore>
-symm2_eval<N, M, Sym, T, SubCore>::~symm2_eval() {
+symm1_eval<N, M, Sym, T, SubCore>::~symm1_eval() {
 
 	destroy_arg();
 }
 
 
 template<size_t N, size_t M, bool Sym, typename T, typename SubCore>
-void symm2_eval<N, M, Sym, T, SubCore>::prepare() {
+void symm1_eval<N, M, Sym, T, SubCore>::prepare() {
 
 	m_sub_eval_cont.prepare();
 	create_arg();
@@ -143,7 +142,7 @@ void symm2_eval<N, M, Sym, T, SubCore>::prepare() {
 
 
 template<size_t N, size_t M, bool Sym, typename T, typename SubCore>
-void symm2_eval<N, M, Sym, T, SubCore>::clean() {
+void symm1_eval<N, M, Sym, T, SubCore>::clean() {
 
 	destroy_arg();
 	m_sub_eval_cont.clean();
@@ -151,16 +150,31 @@ void symm2_eval<N, M, Sym, T, SubCore>::clean() {
 
 
 template<size_t N, size_t M, bool Sym, typename T, typename SubCore>
-void symm2_eval<N, M, Sym, T, SubCore>::create_arg() {
+void symm1_eval<N, M, Sym, T, SubCore>::create_arg() {
 
 	destroy_arg();
-	m_op = new btod_symmetrize<N>(m_sub_eval.get_bto(), m_perm, Sym);
+	if(M == 1) {
+		size_t i2 = 0;
+		while(i2 < N && !m_i2[i2]) i2++;
+		m_op = new btod_symmetrize<N>(m_sub_eval.get_bto(),
+			m_i1, i2, Sym);
+	} else if(M == 2) {
+		size_t i2 = 0, i3 = 0;
+		while(i2 < N && !m_i2[i2]) i2++;
+		i3 = i2 + 1;
+		while(i3 < N && !m_i2[i3]) i3++;
+		m_op = new btod_symmetrize<N>(m_sub_eval.get_bto(),
+			m_i1, i2, i3, Sym);
+	} else {
+		throw expr_exception(g_ns, k_clazz, "create_arg()",
+			__FILE__, __LINE__, "Unhandled case.");
+	}
 	m_arg = new arg<N, T, oper_tag>(*m_op, 1.0);
 }
 
 
 template<size_t N, size_t M, bool Sym, typename T, typename SubCore>
-void symm2_eval<N, M, Sym, T, SubCore>::destroy_arg() {
+void symm1_eval<N, M, Sym, T, SubCore>::destroy_arg() {
 
 	delete m_arg; m_arg = 0;
 	delete m_op; m_op = 0;
@@ -169,7 +183,7 @@ void symm2_eval<N, M, Sym, T, SubCore>::destroy_arg() {
 
 template<size_t N, size_t M, bool Sym, typename T, typename SubCore>
 template<typename Tag>
-arg<N, T, Tag> symm2_eval<N, M, Sym, T, SubCore>::get_arg(const Tag &tag,
+arg<N, T, Tag> symm1_eval<N, M, Sym, T, SubCore>::get_arg(const Tag &tag,
 	size_t i) const {
 
 	static const char *method = "get_arg(const Tag&, size_t)";
@@ -180,7 +194,7 @@ arg<N, T, Tag> symm2_eval<N, M, Sym, T, SubCore>::get_arg(const Tag &tag,
 
 
 template<size_t N, size_t M, bool Sym, typename T, typename SubCore>
-arg<N, T, oper_tag> symm2_eval<N, M, Sym, T, SubCore>::get_arg(
+arg<N, T, oper_tag> symm1_eval<N, M, Sym, T, SubCore>::get_arg(
 	const oper_tag &tag, size_t i) const {
 
 	static const char *method = "get_arg(const oper_tag&, size_t)";
@@ -196,4 +210,4 @@ arg<N, T, oper_tag> symm2_eval<N, M, Sym, T, SubCore>::get_arg(
 } // namespace labeled_btensor_expr
 } // namespace libtensor
 
-#endif // LIBTENSOR_LABELED_BTENSOR_EXPR_SYMM2_EVAL_H
+#endif // LIBTENSOR_LABELED_BTENSOR_EXPR_SYMM1_EVAL_H

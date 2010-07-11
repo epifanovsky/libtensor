@@ -71,7 +71,7 @@ void symm_test::test_symm2_contr_tt_1() throw(libtest::test_exception) {
 	btod_copy<4>(t3_ref_tmp, perm).perform(t3_ref, 1.0);
 
 	letter a, b, c, d, i;
-	t3(a|b|c|d) = symm(a|b, contract(i, t1(i|a), t2(b|c|d|i)));
+	t3(a|b|c|d) = symm(a, b, contract(i, t1(i|a), t2(b|c|d|i)));
 
 	compare_ref<4>::compare(testname, t3, t3_ref, 1e-15);
 
@@ -127,7 +127,7 @@ void symm_test::test_symm2_contr_ee_1() throw(libtest::test_exception) {
 	op_sym.perform(t3_ref);
 
 	letter a, b, c, d, i;
-	t3(a|b|c|d) = symm(a|b,
+	t3(a|b|c|d) = symm(a, b,
 		contract(i, t1a(a|c|d|i) + t1b(a|c|d|i), t2a(i|b) + t2b(i|b)));
 
 	compare_ref<4>::compare(testname, t3, t3_ref, 2e-14);
@@ -167,7 +167,7 @@ void symm_test::test_asymm2_contr_tt_1() throw(libtest::test_exception) {
 	btod_copy<4>(t3_ref_tmp, perm).perform(t3_ref, -1.0);
 
 	letter a, b, c, d, i;
-	t3(a|b|c|d) = asymm(a|b, contract(i, t1(i|a), t2(b|c|d|i)));
+	t3(a|b|c|d) = asymm(a, b, contract(i, t1(i|a), t2(b|c|d|i)));
 
 	compare_ref<4>::compare(testname, t3, t3_ref, 1e-15);
 
@@ -209,7 +209,8 @@ void symm_test::test_asymm2_contr_tt_2() throw(libtest::test_exception) {
 	btod_copy<4>(t3_ref_tmp, perm).perform(t3_ref, -1.0);
 
 	letter i, j, a, b, c;
-	t3(i|j|a|b) = t0(i|j|a|b) + asymm(a|b, contract(c, t1(i|j|a|c), t2(b|c)));
+	t3(i|j|a|b) = t0(i|j|a|b) +
+		asymm(a, b, contract(c, t1(i|j|a|c), t2(b|c)));
 
 	compare_ref<4>::compare(testname, t3, t3_ref, 2e-14);
 
@@ -247,7 +248,7 @@ void symm_test::test_asymm2_contr_tt_3() throw(libtest::test_exception) {
 	btod_copy<4>(t3_ref_tmp, perm).perform(t3_ref, -1.5);
 
 	letter i, j, a, b, c;
-	t3(i|j|a|b) = 1.5 * asymm(a|b, contract(c, t1(i|j|a|c), t2(b|c)));
+	t3(i|j|a|b) = 1.5 * asymm(a, b, contract(c, t1(i|j|a|c), t2(b|c)));
 
 	compare_ref<4>::compare(testname, t3, t3_ref, 2e-14);
 
@@ -285,7 +286,8 @@ void symm_test::test_asymm2_contr_tt_4() throw(libtest::test_exception) {
 	btod_copy<4>(t3_ref_tmp, perm).perform(t3_ref, -3.0);
 
 	letter i, j, a, b, c;
-	t3(i|j|a|b) = 1.5 * asymm(a|b, contract(c, t1(i|j|a|c), t2(b|c))) * 2.0;
+	t3(i|j|a|b) = 1.5 * asymm(a, b,
+		contract(c, t1(i|j|a|c), t2(b|c))) * 2.0;
 
 	compare_ref<4>::compare(testname, t3, t3_ref, 2e-14);
 
@@ -327,7 +329,7 @@ void symm_test::test_asymm2_contr_tt_5() throw(libtest::test_exception) {
 	btod_copy<4>(tt1).perform(t4_ref, -1.0);
 
 	letter i, j, k, l, a, b, c;
-	t4(i|j|k|a) = t1(i|j|k|a) - asymm(i|j, contract(l|c,
+	t4(i|j|k|a) = t1(i|j|k|a) - asymm(i, j, contract(l|c,
 		t2(k|l|j|c), t3(i|l|a|c)));
 
 	{
@@ -393,7 +395,7 @@ void symm_test::test_asymm2_contr_ee_1() throw(libtest::test_exception) {
 	op_sym.perform(t3_ref);
 
 	letter a, b, c, d, i;
-	t3(a|b|c|d) = asymm(a|b,
+	t3(a|b|c|d) = asymm(a, b,
 		contract(i, t1a(a|c|d|i) + t1b(a|c|d|i), t2a(i|b) + t2b(i|b)));
 
 	compare_ref<4>::compare(testname, t3, t3_ref, 2e-14);
@@ -437,7 +439,7 @@ void symm_test::test_asymm2_contr_ee_2() throw(libtest::test_exception) {
 	op_sym.perform(btc_ref);
 
 	letter a, b, i, j, k;
-	btc(i|j|a|b) = asymm(i|j, contract(k, bta(i|k), btb(j|k|a|b)));
+	btc(i|j|a|b) = asymm(i, j, contract(k, bta(i|k), btb(j|k|a|b)));
 
 	compare_ref<4>::compare(testname, btc, btc_ref, 2e-14);
 
@@ -475,7 +477,7 @@ void symm_test::test_symm22_t_1() throw(libtest::test_exception) {
 	btod_copy<4>(t1, perm3).perform(t2_ref, 1.0);
 
 	letter i, j, a, b;
-	t2(i|j|a|b) = symm(i|j, a|b, t1(i|j|a|b));
+	t2(i|j|a|b) = symm(i, j, symm(a, b, t1(i|j|a|b)));
 
 	compare_ref<4>::compare(testname, t2, t2_ref, 1e-15);
 
@@ -512,7 +514,7 @@ void symm_test::test_asymm22_t_1() throw(libtest::test_exception) {
 	btod_copy<4>(t1, perm3).perform(t2_ref, 1.0);
 
 	letter i, j, a, b;
-	t2(i|j|a|b) = asymm(i|j, a|b, t1(i|j|a|b));
+	t2(i|j|a|b) = asymm(i, j, asymm(a, b, t1(i|j|a|b)));
 
 	compare_ref<4>::compare(testname, t2, t2_ref, 1e-15);
 
@@ -534,8 +536,7 @@ void symm_test::test_symm22_t_2() throw(libtest::test_exception) {
 	bispace<1> sp_i(10), sp_a(20);
 	bispace<4> sp_ijka(sp_i&sp_i&sp_i|sp_a);
 
-	btensor<4> t1(sp_ijka), t2a(sp_ijka), t2b(sp_ijka), t2c(sp_ijka),
-		t2d(sp_ijka), t2_ref(sp_ijka);
+	btensor<4> t1(sp_ijka), t2a(sp_ijka), t2b(sp_ijka), t2_ref(sp_ijka);
 
 	btod_random<4>().perform(t1);
 	t1.set_immutable();
@@ -547,15 +548,11 @@ void symm_test::test_symm22_t_2() throw(libtest::test_exception) {
 	btod_copy<4>(t1, perm2).perform(t2_ref, 1.0);
 
 	letter i, j, k, a;
-	t2a(i|j|k|a) = symm(i|j, i|k, t1(i|j|k|a));
-	t2b(i|j|k|a) = symm(j|i, i|k, t1(i|j|k|a));
-	t2c(i|j|k|a) = symm(i|j, k|i, t1(i|j|k|a));
-	t2d(i|j|k|a) = symm(j|i, k|i, t1(i|j|k|a));
+	t2a(i|j|k|a) = symm(i, j|k, t1(i|j|k|a));
+	t2b(i|j|k|a) = symm(i, k|j, t1(i|j|k|a));
 
 	compare_ref<4>::compare(testname, t2a, t2_ref, 1e-15);
 	compare_ref<4>::compare(testname, t2b, t2_ref, 1e-15);
-	compare_ref<4>::compare(testname, t2c, t2_ref, 1e-15);
-	compare_ref<4>::compare(testname, t2d, t2_ref, 1e-15);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
@@ -575,8 +572,7 @@ void symm_test::test_asymm22_t_2() throw(libtest::test_exception) {
 	bispace<1> sp_i(10), sp_a(20);
 	bispace<4> sp_ijka(sp_i&sp_i&sp_i|sp_a);
 
-	btensor<4> t1(sp_ijka), t2a(sp_ijka), t2b(sp_ijka), t2c(sp_ijka),
-		t2d(sp_ijka), t2_ref(sp_ijka);
+	btensor<4> t1(sp_ijka), t2a(sp_ijka), t2b(sp_ijka), t2_ref(sp_ijka);
 
 	btod_random<4>().perform(t1);
 	t1.set_immutable();
@@ -588,15 +584,11 @@ void symm_test::test_asymm22_t_2() throw(libtest::test_exception) {
 	btod_copy<4>(t1, perm2).perform(t2_ref, -1.0);
 
 	letter i, j, k, a;
-	t2a(i|j|k|a) = asymm(i|j, i|k, t1(i|j|k|a));
-	t2b(i|j|k|a) = asymm(j|i, i|k, t1(i|j|k|a));
-	t2c(i|j|k|a) = asymm(i|j, k|i, t1(i|j|k|a));
-	t2d(i|j|k|a) = asymm(j|i, k|i, t1(i|j|k|a));
+	t2a(i|j|k|a) = asymm(i, j|k, t1(i|j|k|a));
+	t2b(i|j|k|a) = asymm(i, k|j, t1(i|j|k|a));
 
 	compare_ref<4>::compare(testname, t2a, t2_ref, 1e-15);
 	compare_ref<4>::compare(testname, t2b, t2_ref, 1e-15);
-	compare_ref<4>::compare(testname, t2c, t2_ref, 1e-15);
-	compare_ref<4>::compare(testname, t2d, t2_ref, 1e-15);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
@@ -636,7 +628,7 @@ void symm_test::test_symm22_e_1() throw(libtest::test_exception) {
 	btod_copy<4>(t1, perm3).perform(t2_ref, 1.0);
 
 	letter i, j, a, b;
-	t2(i|j|a|b) = symm(i|j, a|b, t1a(i|j|a|b) + t1b(i|j|a|b));
+	t2(i|j|a|b) = symm(i, j, symm(a, b, t1a(i|j|a|b) + t1b(i|j|a|b)));
 
 	compare_ref<4>::compare(testname, t2, t2_ref, 1e-15);
 
@@ -678,7 +670,7 @@ void symm_test::test_asymm22_e_1() throw(libtest::test_exception) {
 	btod_copy<4>(t1, perm3).perform(t2_ref, 1.0);
 
 	letter i, j, a, b;
-	t2(i|j|a|b) = asymm(i|j, a|b, t1a(i|j|a|b) + t1b(i|j|a|b));
+	t2(i|j|a|b) = asymm(i, j, asymm(a, b, t1a(i|j|a|b) + t1b(i|j|a|b)));
 
 	compare_ref<4>::compare(testname, t2, t2_ref, 1e-15);
 
@@ -701,7 +693,7 @@ void symm_test::test_symm22_e_2() throw(libtest::test_exception) {
 	bispace<4> sp_ijka(sp_i&sp_i&sp_i|sp_a);
 
 	btensor<4> t1a(sp_ijka), t1b(sp_ijka), t1(sp_ijka), t2a(sp_ijka),
-		t2b(sp_ijka), t2c(sp_ijka), t2d(sp_ijka), t2_ref(sp_ijka);
+		t2b(sp_ijka), t2_ref(sp_ijka);
 
 	btod_random<4>().perform(t1a);
 	btod_random<4>().perform(t1b);
@@ -717,15 +709,11 @@ void symm_test::test_symm22_e_2() throw(libtest::test_exception) {
 	btod_copy<4>(t1, perm2).perform(t2_ref, 1.0);
 
 	letter i, j, k, a;
-	t2a(i|j|k|a) = symm(i|j, i|k, t1a(i|j|k|a) + t1b(i|j|k|a));
-	t2b(i|j|k|a) = symm(j|i, i|k, t1a(i|j|k|a) + t1b(i|j|k|a));
-	t2c(i|j|k|a) = symm(i|j, k|i, t1a(i|j|k|a) + t1b(i|j|k|a));
-	t2d(i|j|k|a) = symm(j|i, k|i, t1a(i|j|k|a) + t1b(i|j|k|a));
+	t2a(i|j|k|a) = symm(i, j|k, t1a(i|j|k|a) + t1b(i|j|k|a));
+	t2b(i|j|k|a) = symm(i, k|j, t1a(i|j|k|a) + t1b(i|j|k|a));
 
 	compare_ref<4>::compare(testname, t2a, t2_ref, 1e-15);
 	compare_ref<4>::compare(testname, t2b, t2_ref, 1e-15);
-	compare_ref<4>::compare(testname, t2c, t2_ref, 1e-15);
-	compare_ref<4>::compare(testname, t2d, t2_ref, 1e-15);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
@@ -746,7 +734,7 @@ void symm_test::test_asymm22_e_2() throw(libtest::test_exception) {
 	bispace<4> sp_ijka(sp_i&sp_i&sp_i|sp_a);
 
 	btensor<4> t1a(sp_ijka), t1b(sp_ijka), t1(sp_ijka), t2a(sp_ijka),
-		t2b(sp_ijka), t2c(sp_ijka), t2d(sp_ijka), t2_ref(sp_ijka);
+		t2b(sp_ijka), t2_ref(sp_ijka);
 
 	btod_random<4>().perform(t1a);
 	btod_random<4>().perform(t1b);
@@ -762,15 +750,11 @@ void symm_test::test_asymm22_e_2() throw(libtest::test_exception) {
 	btod_copy<4>(t1, perm2).perform(t2_ref, -1.0);
 
 	letter i, j, k, a;
-	t2a(i|j|k|a) = asymm(i|j, i|k, t1a(i|j|k|a) + t1b(i|j|k|a));
-	t2b(i|j|k|a) = asymm(j|i, i|k, t1a(i|j|k|a) + t1b(i|j|k|a));
-	t2c(i|j|k|a) = asymm(i|j, k|i, t1a(i|j|k|a) + t1b(i|j|k|a));
-	t2d(i|j|k|a) = asymm(j|i, k|i, t1a(i|j|k|a) + t1b(i|j|k|a));
+	t2a(i|j|k|a) = asymm(i, j|k, t1a(i|j|k|a) + t1b(i|j|k|a));
+	t2b(i|j|k|a) = asymm(i, k|j, t1a(i|j|k|a) + t1b(i|j|k|a));
 
 	compare_ref<4>::compare(testname, t2a, t2_ref, 1e-15);
 	compare_ref<4>::compare(testname, t2b, t2_ref, 1e-15);
-	compare_ref<4>::compare(testname, t2c, t2_ref, 1e-15);
-	compare_ref<4>::compare(testname, t2d, t2_ref, 1e-15);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
