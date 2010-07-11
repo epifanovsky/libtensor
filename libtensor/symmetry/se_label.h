@@ -5,6 +5,7 @@
 #include "../core/block_index_space.h"
 #include "../core/mask.h"
 #include "../core/symmetry_element_i.h"
+#include "../not_implemented.h"
 #include "product_table_container.h"
 
 namespace libtensor {
