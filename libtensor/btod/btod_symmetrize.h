@@ -72,6 +72,15 @@ public:
 	btod_symmetrize(additive_btod<N> &op, size_t i1, size_t i2, size_t i3,
 		bool symm);
 
+	/**	\brief Initializes the operation using a unitary %permutation
+			(P = P^-1)
+		\param op Symmetrized operation.
+		\param perm Unitary %permutation.
+		\param symm True for symmetric, false for anti-symmetric.
+	 **/
+	btod_symmetrize(additive_btod<N> &op, const permutation<N> &perm,
+		bool symm);
+
 	/**	\brief Virtual destructor
 	 **/
 	virtual ~btod_symmetrize() { }
@@ -163,6 +172,26 @@ btod_symmetrize<N>::btod_symmetrize(additive_btod<N> &op, size_t i1, size_t i2,
 	}
 	m_perm1.permute(i1, i2);
 	m_perm2.permute(i1, i3);
+	make_symmetry();
+	make_schedule();
+}
+
+
+template<size_t N>
+btod_symmetrize<N>::btod_symmetrize(additive_btod<N> &op,
+	const permutation<N> &perm, bool symm) :
+
+	m_op(op), m_nsym(2), m_symm(symm), m_perm1(perm), m_bis(op.get_bis()),
+	m_sym(m_bis), m_sch(m_bis.get_block_index_dims()) {
+
+	static const char *method = "btod_symmetrize(additive_btod<N>&, "
+		"const permutation<N>&, bool)";
+
+	permutation<N> p1(perm); p1.permute(perm);
+	if(perm.is_identity() || !p1.is_identity()) {
+		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"perm");
+	}
 	make_symmetry();
 	make_schedule();
 }

@@ -21,6 +21,9 @@ void btod_symmetrize_test::perform() throw(libtest::test_exception) {
 	test_3();
 	test_4();
 	test_5();
+	test_6();
+	test_7();
+	test_8();
 }
 
 
@@ -289,12 +292,142 @@ void btod_symmetrize_test::test_4() throw(libtest::test_exception) {
 }
 
 
-/**	\test Anti-symmetrization of a non-symmetric 3-index block %tensor
-		over three indexes
+/**	\test Symmetrization of two pairs of indexes in a non-symmetric
+		4-index block %tensor
  **/
 void btod_symmetrize_test::test_5() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_symmetrize_test::test_5()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 20; i2[1] = 20; i2[2] = 20; i2[3] = 20;
+	dimensions<4> dims(index_range<4>(i1, i2));
+	block_index_space<4> bis(dims);
+	mask<4> m;
+	m[0] = true; m[1] = true; m[2] = true; m[3] = true;
+	bis.split(m, 5);
+	bis.split(m, 10);
+	bis.split(m, 15);
+
+	block_tensor<4, double, allocator_t> bta(bis), btb(bis), btb_ref(bis);
+
+	//	Fill in random input
+
+	btod_random<4>().perform(bta);
+	bta.set_immutable();
+
+	//	Prepare reference data
+
+	tensor<4, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
+	tod_btconv<4>(bta).perform(ta);
+	tod_add<4> refop(ta);
+	refop.add_op(ta, permutation<4>().permute(0, 2).permute(1, 3), 1.0);
+	refop.perform(tb_ref);
+
+	//	Run the symmetrization operation
+
+	btod_copy<4> op_copy(bta);
+	btod_symmetrize<4>(op_copy, permutation<4>().permute(0, 2).
+		permute(1, 3), true).perform(btb);
+
+	tod_btconv<4>(btb).perform(tb);
+
+	//	Compare against the reference: symmetry and data
+
+	symmetry<4, double> symb(bis), symb_ref(bis);
+	{
+		block_tensor_ctrl<4, double> ctrlb(btb);
+		so_copy<4, double>(ctrlb.req_const_symmetry()).perform(symb);
+	}
+	symb_ref.insert(se_perm<4, double>(
+		permutation<4>().permute(0, 2).permute(1, 3), true));
+
+	compare_ref<4>::compare(testname, symb, symb_ref);
+
+	compare_ref<4>::compare(testname, tb, tb_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+
+}
+
+
+/**	\test Anti-symmetrization of two pairs of indexes in a non-symmetric
+		4-index block %tensor
+ **/
+void btod_symmetrize_test::test_6() throw(libtest::test_exception) {
+
+	static const char *testname = "btod_symmetrize_test::test_6()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 20; i2[1] = 20; i2[2] = 20; i2[3] = 20;
+	dimensions<4> dims(index_range<4>(i1, i2));
+	block_index_space<4> bis(dims);
+	mask<4> m;
+	m[0] = true; m[1] = true; m[2] = true; m[3] = true;
+	bis.split(m, 5);
+	bis.split(m, 10);
+	bis.split(m, 15);
+
+	block_tensor<4, double, allocator_t> bta(bis), btb(bis), btb_ref(bis);
+
+	//	Fill in random input
+
+	btod_random<4>().perform(bta);
+	bta.set_immutable();
+
+	//	Prepare reference data
+
+	tensor<4, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
+	tod_btconv<4>(bta).perform(ta);
+	tod_add<4> refop(ta);
+	refop.add_op(ta, permutation<4>().permute(0, 1).permute(2, 3), -1.0);
+	refop.perform(tb_ref);
+
+	//	Run the symmetrization operation
+
+	btod_copy<4> op_copy(bta);
+	btod_symmetrize<4>(op_copy, permutation<4>().permute(0, 1).
+		permute(2, 3), false).perform(btb);
+
+	tod_btconv<4>(btb).perform(tb);
+
+	//	Compare against the reference: symmetry and data
+
+	symmetry<4, double> symb(bis), symb_ref(bis);
+	{
+		block_tensor_ctrl<4, double> ctrlb(btb);
+		so_copy<4, double>(ctrlb.req_const_symmetry()).perform(symb);
+	}
+	symb_ref.insert(se_perm<4, double>(
+		permutation<4>().permute(0, 1).permute(2, 3), false));
+
+	compare_ref<4>::compare(testname, symb, symb_ref);
+
+	compare_ref<4>::compare(testname, tb, tb_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+
+}
+
+
+/**	\test Anti-symmetrization of a non-symmetric 3-index block %tensor
+		over three indexes
+ **/
+void btod_symmetrize_test::test_7() throw(libtest::test_exception) {
+
+	static const char *testname = "btod_symmetrize_test::test_7()";
 
 	typedef libvmm::std_allocator<double> allocator_t;
 
@@ -358,9 +491,9 @@ void btod_symmetrize_test::test_5() throw(libtest::test_exception) {
 /**	\test Symmetrization of a 3-index block %tensor with S(+)2*C1
 		over three indexes
  **/
-void btod_symmetrize_test::test_6() throw(libtest::test_exception) {
+void btod_symmetrize_test::test_8() throw(libtest::test_exception) {
 
-	static const char *testname = "btod_symmetrize_test::test_6()";
+	static const char *testname = "btod_symmetrize_test::test_8()";
 
 	typedef libvmm::std_allocator<double> allocator_t;
 
