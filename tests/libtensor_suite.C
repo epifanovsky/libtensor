@@ -45,6 +45,7 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("dimensions", m_utf_dimensions);
 	add_test("direct_block_tensor", m_utf_direct_block_tensor);
 	add_test("direct_btensor", m_utf_direct_btensor);
+	add_test("direct_eval", m_utf_direct_eval);
 	add_test("direct_product", m_utf_direct_product);
 	add_test("dirsum", m_utf_dirsum);
 	add_test("dot_product", m_utf_dot_product);

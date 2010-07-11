@@ -1,14 +1,14 @@
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/iface/iface.h>
-#include <libtensor/iface/expr/anon_eval.h>
-#include "anon_eval_test.h"
+#include <libtensor/iface/expr/direct_eval.h>
+#include "direct_eval_test.h"
 #include "compare_ref.h"
 
 namespace libtensor {
 
 
-void anon_eval_test::perform() throw(libtest::test_exception) {
+void direct_eval_test::perform() throw(libtest::test_exception) {
 
 	libvmm::vm_allocator<double>::vmm().init(
 		16, 16, 16777216, 16777216, 0.90, 0.05);
@@ -39,7 +39,7 @@ void anon_eval_test::perform() throw(libtest::test_exception) {
 
 
 template<size_t N, typename T, typename Core>
-void anon_eval_test::invoke_eval(
+void direct_eval_test::invoke_eval(
 	const char *testname,
 	const labeled_btensor_expr::expr<N, T, Core> &expr,
 	const letter_expr<N> &label, block_tensor_i<N, T> &ref, double thresh)
@@ -47,9 +47,10 @@ void anon_eval_test::invoke_eval(
 
 	try {
 
-	labeled_btensor_expr::anon_eval<N, T, Core> ev(expr, label);
-	ev.evaluate();
-	compare_ref<N>::compare(testname, ev.get_btensor(), ref, thresh);
+	labeled_btensor_expr::direct_eval<N, T, Core> ev(expr, label);
+	btensor<N, T> bt(ev.get_btensor().get_bis());
+	btod_copy<N>(ev.get_btensor()).perform(bt);
+	compare_ref<N>::compare(testname, bt, ref, thresh);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
@@ -57,14 +58,14 @@ void anon_eval_test::invoke_eval(
 }
 
 
-void anon_eval_test::test_copy_1() throw(libtest::test_exception) {
+void direct_eval_test::test_copy_1() throw(libtest::test_exception) {
 
 	//
 	//	Simple copy, no symmetry
 	//	q(i|j|a|b) = p(i|j|a|b)
 	//
 
-	static const char *testname = "anon_eval_test::test_copy_1()";
+	static const char *testname = "direct_eval_test::test_copy_1()";
 	typedef libvmm::std_allocator<double> allocator_t;
 
 	try {
@@ -91,14 +92,14 @@ void anon_eval_test::test_copy_1() throw(libtest::test_exception) {
 }
 
 
-void anon_eval_test::test_copy_2() throw(libtest::test_exception) {
+void direct_eval_test::test_copy_2() throw(libtest::test_exception) {
 
 	//
 	//	Permuted copy, no symmetry
 	//	q(i|a|j|b) = p(i|j|a|b)
 	//
 
-	static const char *testname = "anon_eval_test::test_copy_2()";
+	static const char *testname = "direct_eval_test::test_copy_2()";
 	typedef libvmm::std_allocator<double> allocator_t;
 
 	try {
@@ -127,14 +128,14 @@ void anon_eval_test::test_copy_2() throw(libtest::test_exception) {
 }
 
 
-void anon_eval_test::test_copy_3() throw(libtest::test_exception) {
+void direct_eval_test::test_copy_3() throw(libtest::test_exception) {
 
 	//
 	//	Scaled copy, no symmetry
 	//	q(i|j|a|b) = p(i|j|a|b)*1.5
 	//
 
-	static const char *testname = "anon_eval_test::test_copy_3()";
+	static const char *testname = "direct_eval_test::test_copy_3()";
 	typedef libvmm::std_allocator<double> allocator_t;
 
 	try {
@@ -161,14 +162,14 @@ void anon_eval_test::test_copy_3() throw(libtest::test_exception) {
 }
 
 
-void anon_eval_test::test_copy_4() throw(libtest::test_exception) {
+void direct_eval_test::test_copy_4() throw(libtest::test_exception) {
 
 	//
 	//	Scaled permuted copy, no symmetry
 	//	q(i|a|j|b) = -1.5*p(i|j|a|b)
 	//
 
-	static const char *testname = "anon_eval_test::test_copy_4()";
+	static const char *testname = "direct_eval_test::test_copy_4()";
 	typedef libvmm::std_allocator<double> allocator_t;
 
 	try {
@@ -197,14 +198,14 @@ void anon_eval_test::test_copy_4() throw(libtest::test_exception) {
 }
 
 
-void anon_eval_test::test_copy_5() throw(libtest::test_exception) {
+void direct_eval_test::test_copy_5() throw(libtest::test_exception) {
 
 	//
 	//	Simple copy, permutational symmetry
 	//	q(i|j|a|b) = p(i|j|a|b)
 	//
 
-	static const char *testname = "anon_eval_test::test_copy_5()";
+	static const char *testname = "direct_eval_test::test_copy_5()";
 	typedef libvmm::std_allocator<double> allocator_t;
 
 	try {
@@ -236,14 +237,14 @@ void anon_eval_test::test_copy_5() throw(libtest::test_exception) {
 }
 
 
-void anon_eval_test::test_copy_6() throw(libtest::test_exception) {
+void direct_eval_test::test_copy_6() throw(libtest::test_exception) {
 
 	//
 	//	Permuted copy, permutational symmetry
 	//	q(i|a|j|b) = p(i|j|a|b)
 	//
 
-	static const char *testname = "anon_eval_test::test_copy_6()";
+	static const char *testname = "direct_eval_test::test_copy_6()";
 	typedef libvmm::std_allocator<double> allocator_t;
 
 	try {
@@ -277,14 +278,14 @@ void anon_eval_test::test_copy_6() throw(libtest::test_exception) {
 }
 
 
-void anon_eval_test::test_add_1() throw(libtest::test_exception) {
+void direct_eval_test::test_add_1() throw(libtest::test_exception) {
 
 	//
 	//	Addition of two tensors, no symmetry
 	//	r(i|j|a|b) = p(i|j|a|b) + q(i|j|a|b)
 	//
 
-	static const char *testname = "anon_eval_test::test_add_1()";
+	static const char *testname = "direct_eval_test::test_add_1()";
 	typedef libvmm::std_allocator<double> allocator_t;
 
 	try {
@@ -313,14 +314,14 @@ void anon_eval_test::test_add_1() throw(libtest::test_exception) {
 }
 
 
-void anon_eval_test::test_contr_1() throw(libtest::test_exception) {
+void direct_eval_test::test_contr_1() throw(libtest::test_exception) {
 
 	//
 	//	Contraction of two tensors, no symmetry
 	//	r(i|j|k|l) = p(i|j|a|b) * q(k|l|a|b)
 	//
 
-	static const char *testname = "anon_eval_test::test_contr_1()";
+	static const char *testname = "direct_eval_test::test_contr_1()";
 	typedef libvmm::std_allocator<double> allocator_t;
 
 	try {
@@ -353,14 +354,14 @@ void anon_eval_test::test_contr_1() throw(libtest::test_exception) {
 }
 
 
-void anon_eval_test::test_contr_2() throw(libtest::test_exception) {
+void direct_eval_test::test_contr_2() throw(libtest::test_exception) {
 
 	//
 	//	Contraction of a tensor and a sum of two tensors, no symmetry
 	//	r(i|j|k|l) = p(i|j|a|b) * [q1(k|l|a|b) + q2(k|l|a|b)]
 	//
 
-	static const char *testname = "anon_eval_test::test_contr_2()";
+	static const char *testname = "direct_eval_test::test_contr_2()";
 	typedef libvmm::std_allocator<double> allocator_t;
 
 	try {
@@ -395,14 +396,14 @@ void anon_eval_test::test_contr_2() throw(libtest::test_exception) {
 }
 
 
-void anon_eval_test::test_mixed_1() throw(libtest::test_exception) {
+void direct_eval_test::test_mixed_1() throw(libtest::test_exception) {
 
 	//
 	//	Addition + contraction of two tensors, no symmetry
 	//	s(i|j|k|l) = r(i|j|k|l) + p(i|j|a|b) * q(k|l|a|b)
 	//
 
-	static const char *testname = "anon_eval_test::test_mixed_1()";
+	static const char *testname = "direct_eval_test::test_mixed_1()";
 	typedef libvmm::std_allocator<double> allocator_t;
 
 	try {
