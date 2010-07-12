@@ -151,7 +151,7 @@ btod_diag<N, M>::btod_diag(block_tensor_i<N, double> &bta, const mask<N> &m,
 	const permutation<N - M + 1> &p, double c) :
 
 	m_bta(bta), m_msk(m), m_perm(p), m_c(c),
-	m_bis(mk_bis(bta.get_bis(), m_msk)),
+	m_bis(mk_bis(bta.get_bis(), m_msk).permute(p)),
 	m_sym(m_bis), m_sch(m_bis.get_block_index_dims())  {
 
 	mask<N> msk;
@@ -163,11 +163,13 @@ btod_diag<N, M>::btod_diag(block_tensor_i<N, double> &bta, const mask<N> &m,
 			not_done = false;
 		}
 	}
-	symmetry<N - M + 1, double> sym1(m_bis);
+	permutation<k_orderb> pinv(p, true);
+	block_index_space<k_orderb> bis(m_bis);
+	bis.permute(pinv);
+	symmetry<k_orderb, double> sym1(bis);
 	block_tensor_ctrl<N, double> ctrla(bta);
 	so_proj_down<N, M - 1, double>(ctrla.req_const_symmetry(), msk).perform(sym1);
-	so_permute<N - M + 1, double>(sym1, p).perform(m_sym);
-	m_bis.permute(p);
+	so_permute<k_orderb, double>(sym1, p).perform(m_sym);
 
 	make_schedule();
 }
@@ -415,6 +417,7 @@ void btod_diag<N, M>::make_schedule() {
 
 		index<k_ordera> idxa;
 		index<k_orderb> idxb(olb.get_index(iob));
+		idxb.permute(pinv);
 
 		for(size_t i = 0; i < k_ordera; i++) idxa[i] = idxb[map[i]];
 

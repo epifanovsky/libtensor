@@ -318,7 +318,8 @@ void tod_diag<N, M>::build_list(
 	//
 	size_t ib[k_orderb];
 	for(size_t i = 0; i < k_orderb; i++) ib[i] = i;
-	m_perm.apply(ib);
+	permutation<k_orderb> pinv(m_perm, true);
+	pinv.apply(ib);
 
 	//	Loop over the indexes and build the list
 	//
@@ -353,8 +354,7 @@ void tod_diag<N, M>::build_list(
 			//
 			len = 1;
 			size_t ibpos = ib[pos - iboffs];
-			while(pos < N && !m_mask[pos] &&
-				ibpos == ib[pos - iboffs]) {
+			while(pos < N && !m_mask[pos] && ibpos == ib[pos - iboffs]) {
 
 				len *= dimsa.get_dim(pos);
 				pos++;
