@@ -237,12 +237,14 @@ void direct_btensor<N, T, Traits>::on_req_zero_all_blocks() throw(exception) {
 template<size_t N, typename T, typename Traits>
 void direct_btensor<N, T, Traits>::on_req_sync_on() throw(exception) {
 
+	m_ctrl.req_sync_on();
 }
 
 
 template<size_t N, typename T, typename Traits>
 void direct_btensor<N, T, Traits>::on_req_sync_off() throw(exception) {
 
+	m_ctrl.req_sync_off();
 }
 
 
