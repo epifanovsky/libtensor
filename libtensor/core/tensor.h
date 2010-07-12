@@ -393,7 +393,7 @@ const T *tensor<N,T,Alloc>::on_req_const_dataptr(const handle_t &h) {
 template<size_t N, typename T, typename Alloc>
 void tensor<N, T, Alloc>::on_ret_const_dataptr(const handle_t &h, const T *p) {
 
-	on_ret_dataptr(h, p);
+	tensor<N, T, Alloc>::on_ret_dataptr(h, p);
 }
 
 
