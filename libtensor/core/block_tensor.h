@@ -3,6 +3,7 @@
 
 #include "../defs.h"
 #include "../exception.h"
+#include "../mp/default_sync_policy.h"
 #include "block_index_space.h"
 #include "block_map.h"
 #include "block_tensor_i.h"
@@ -17,10 +18,12 @@ namespace libtensor {
 	\tparam N Tensor order.
 	\tparam T Tensor element type.
 	\tparam Alloc Memory allocator.
+	\tparam Sync Synchronization policy.
 
 	\ingroup libtensor_core
  **/
-template<size_t N, typename T, typename Alloc>
+template<size_t N, typename T, typename Alloc,
+	typename Sync = default_sync_policy>
 class block_tensor : public block_tensor_i<N, T>, public immutable {
 public:
 	static const char *k_clazz; //!< Class name
@@ -61,6 +64,8 @@ protected:
 	virtual bool on_req_is_zero_block(const index<N> &idx) throw(exception);
 	virtual void on_req_zero_block(const index<N> &idx) throw(exception);
 	virtual void on_req_zero_all_blocks() throw(exception);
+	virtual void on_req_sync_on() throw(exception);
+	virtual void on_req_sync_off() throw(exception);
 	//@}
 
 	//!	\name Implementation of libtensor::immutable
@@ -73,12 +78,13 @@ private:
 };
 
 
-template<size_t N, typename T, typename Alloc>
-const char *block_tensor<N, T, Alloc>::k_clazz = "block_tensor<N, T, Alloc>";
+template<size_t N, typename T, typename Alloc, typename Sync>
+const char *block_tensor<N, T, Alloc, Sync>::k_clazz =
+	"block_tensor<N, T, Alloc, Sync>";
 
 
-template<size_t N, typename T, typename Alloc>
-block_tensor<N, T, Alloc>::block_tensor(const block_index_space<N> &bis) :
+template<size_t N, typename T, typename Alloc, typename Sync>
+block_tensor<N, T, Alloc, Sync>::block_tensor(const block_index_space<N> &bis) :
 	m_bis(bis),
 	m_bidims(bis.get_block_index_dims()),
 	m_symmetry(m_bis),
@@ -88,8 +94,10 @@ block_tensor<N, T, Alloc>::block_tensor(const block_index_space<N> &bis) :
 }
 
 
-template<size_t N, typename T, typename Alloc>
-block_tensor<N, T, Alloc>::block_tensor(const block_tensor<N, T, Alloc> &bt) :
+template<size_t N, typename T, typename Alloc, typename Sync>
+block_tensor<N, T, Alloc, Sync>::block_tensor(
+	const block_tensor<N, T, Alloc> &bt) :
+
 	m_bis(bt.get_bis()),
 	m_bidims(bt.m_bidims),
 	m_symmetry(bt.get_bis()),
@@ -99,31 +107,31 @@ block_tensor<N, T, Alloc>::block_tensor(const block_tensor<N, T, Alloc> &bt) :
 }
 
 
-template<size_t N, typename T, typename Alloc>
-block_tensor<N, T, Alloc>::~block_tensor() {
+template<size_t N, typename T, typename Alloc, typename Sync>
+block_tensor<N, T, Alloc, Sync>::~block_tensor() {
 
 	delete m_orblst;
 }
 
 
-template<size_t N, typename T, typename Alloc>
-const block_index_space<N> &block_tensor<N, T, Alloc>::get_bis()
+template<size_t N, typename T, typename Alloc, typename Sync>
+const block_index_space<N> &block_tensor<N, T, Alloc, Sync>::get_bis()
 	const {
 
 	return m_bis;
 }
 
 
-template<size_t N, typename T, typename Alloc>
-const symmetry<N, T> &block_tensor<N, T, Alloc>::on_req_const_symmetry()
+template<size_t N, typename T, typename Alloc, typename Sync>
+const symmetry<N, T> &block_tensor<N, T, Alloc, Sync>::on_req_const_symmetry()
 	throw(exception) {
 
 	return m_symmetry;
 }
 
 
-template<size_t N, typename T, typename Alloc>
-symmetry<N, T> &block_tensor<N, T, Alloc>::on_req_symmetry()
+template<size_t N, typename T, typename Alloc, typename Sync>
+symmetry<N, T> &block_tensor<N, T, Alloc, Sync>::on_req_symmetry()
 	throw(exception) {
 
 	static const char *method = "on_req_symmetry()";
@@ -138,8 +146,8 @@ symmetry<N, T> &block_tensor<N, T, Alloc>::on_req_symmetry()
 }
 
 
-template<size_t N, typename T, typename Alloc>
-tensor_i<N, T> &block_tensor<N, T, Alloc>::on_req_block(
+template<size_t N, typename T, typename Alloc, typename Sync>
+tensor_i<N, T> &block_tensor<N, T, Alloc, Sync>::on_req_block(
 	const index<N> &idx) throw(exception) {
 
 	static const char *method = "on_req_block(const index<N>&)";
@@ -159,15 +167,15 @@ tensor_i<N, T> &block_tensor<N, T, Alloc>::on_req_block(
 }
 
 
-template<size_t N, typename T, typename Alloc>
-void block_tensor<N, T, Alloc>::on_ret_block(const index<N> &idx)
+template<size_t N, typename T, typename Alloc, typename Sync>
+void block_tensor<N, T, Alloc, Sync>::on_ret_block(const index<N> &idx)
 	throw(exception) {
 
 }
 
 
-template<size_t N, typename T, typename Alloc>
-tensor_i<N, T> &block_tensor<N, T, Alloc>::on_req_aux_block(
+template<size_t N, typename T, typename Alloc, typename Sync>
+tensor_i<N, T> &block_tensor<N, T, Alloc, Sync>::on_req_aux_block(
 	const index<N> &idx) throw(exception) {
 
 	static const char *method = "on_req_aux_block(const index<N>&)";
@@ -191,8 +199,8 @@ tensor_i<N, T> &block_tensor<N, T, Alloc>::on_req_aux_block(
 }
 
 
-template<size_t N, typename T, typename Alloc>
-void block_tensor<N, T, Alloc>::on_ret_aux_block(const index<N> &idx)
+template<size_t N, typename T, typename Alloc, typename Sync>
+void block_tensor<N, T, Alloc, Sync>::on_ret_aux_block(const index<N> &idx)
 	throw(exception) {
 
 	size_t absidx = m_bidims.abs_index(idx);
@@ -200,8 +208,8 @@ void block_tensor<N, T, Alloc>::on_ret_aux_block(const index<N> &idx)
 }
 
 
-template<size_t N, typename T, typename Alloc>
-bool block_tensor<N, T, Alloc>::on_req_is_zero_block(const index<N> &idx)
+template<size_t N, typename T, typename Alloc, typename Sync>
+bool block_tensor<N, T, Alloc, Sync>::on_req_is_zero_block(const index<N> &idx)
 	throw(exception) {
 
 	static const char *method = "on_req_is_zero_block(const index<N>&)";
@@ -217,8 +225,8 @@ bool block_tensor<N, T, Alloc>::on_req_is_zero_block(const index<N> &idx)
 }
 
 
-template<size_t N, typename T, typename Alloc>
-void block_tensor<N, T, Alloc>::on_req_zero_block(const index<N> &idx)
+template<size_t N, typename T, typename Alloc, typename Sync>
+void block_tensor<N, T, Alloc, Sync>::on_req_zero_block(const index<N> &idx)
 	throw(exception) {
 
 	static const char *method = "on_req_zero_block(const index<N>&)";
@@ -238,8 +246,9 @@ void block_tensor<N, T, Alloc>::on_req_zero_block(const index<N> &idx)
 }
 
 
-template<size_t N, typename T, typename Alloc>
-void block_tensor<N, T, Alloc>::on_req_zero_all_blocks() throw(exception) {
+template<size_t N, typename T, typename Alloc, typename Sync>
+void block_tensor<N, T, Alloc, Sync>::on_req_zero_all_blocks()
+	throw(exception) {
 
 	static const char *method = "on_req_zero_all_blocks()";
 
@@ -251,15 +260,27 @@ void block_tensor<N, T, Alloc>::on_req_zero_all_blocks() throw(exception) {
 }
 
 
-template<size_t N, typename T, typename Alloc>
-inline void block_tensor<N, T, Alloc>::on_set_immutable() {
+template<size_t N, typename T, typename Alloc, typename Sync>
+void block_tensor<N, T, Alloc, Sync>::on_req_sync_on() throw(exception) {
+
+}
+
+
+template<size_t N, typename T, typename Alloc, typename Sync>
+void block_tensor<N, T, Alloc, Sync>::on_req_sync_off() throw(exception) {
+
+}
+
+
+template<size_t N, typename T, typename Alloc, typename Sync>
+inline void block_tensor<N, T, Alloc, Sync>::on_set_immutable() {
 
 	m_map.set_immutable();
 }
 
 
-template<size_t N, typename T, typename Alloc>
-void block_tensor<N, T, Alloc>::update_orblst() {
+template<size_t N, typename T, typename Alloc, typename Sync>
+void block_tensor<N, T, Alloc, Sync>::update_orblst() {
 
 	if(m_orblst == NULL || m_orblst_dirty) {
 		delete m_orblst;
@@ -267,6 +288,7 @@ void block_tensor<N, T, Alloc>::update_orblst() {
 		m_orblst_dirty = false;
 	}
 }
+
 
 } // namespace libtensor
 
