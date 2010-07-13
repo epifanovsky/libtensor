@@ -5,6 +5,7 @@
 #include <libtensor/btod/btod_copy.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/symmetry/se_perm.h>
+#include <libtensor/symmetry/so_copy.h>
 #include <libtensor/tod/tod_btconv.h>
 #include <libtensor/tod/tod_contract2.h>
 #include "btod_contract2_test.h"

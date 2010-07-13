@@ -23,7 +23,7 @@ void point_group_table_test::test_1() throw(libtest::test_exception) {
 	typedef point_group_table::label_t label_t;
 	typedef point_group_table::label_group label_group;
 
-	point_group_table pg(4);
+	point_group_table pg(testname, 4);
 	label_t ag = 0, bg = 1, au = 2, bu = 3;
 	pg.set_product(ag, ag, 0, ag);
 	pg.set_product(ag, bg, 0, bg);
@@ -38,7 +38,7 @@ void point_group_table_test::test_1() throw(libtest::test_exception) {
 	pg.check();
 
 	std::string id(pg.get_id());
-	if (id.compare(point_group_table::k_id) != 0)
+	if (id.compare(testname) != 0)
 		fail_test(testname, __FILE__, __LINE__, "Wrong id.");
 
 	if (pg.nlabels() != 4)
@@ -77,7 +77,7 @@ void point_group_table_test::test_2() throw(libtest::test_exception) {
 	typedef point_group_table::label_t label_t;
 	typedef point_group_table::label_group label_group;
 
-	point_group_table pg(2);
+	point_group_table pg(testname, 2);
 	label_t g = 0, u = 1;
 
 	bool failed = false;
@@ -123,7 +123,7 @@ void point_group_table_test::test_3() throw(libtest::test_exception) {
 	typedef point_group_table::label_t label_t;
 	typedef point_group_table::label_group label_group;
 
-	point_group_table pg(4);
+	point_group_table pg(testname, 4);
 	label_t ag = 0, bg = 1, au = 2, bu = 3;
 	pg.set_product(ag, ag, 0, ag);
 	pg.set_product(ag, bg, 0, bg);

@@ -27,7 +27,7 @@ void product_table_container_test::test_1() throw(libtest::test_exception) {
 	product_table_container &ptc = product_table_container::get_instance();
 
 
-	point_group_table pg1(4), pg2(2);
+	point_group_table pg1(testname, 4), pg2(testname, 2);
 	label_t ag = 0, bg = 1, au = 2, bu = 3, g = 0, u = 1;
 	pg1.set_product(ag, ag, 0, ag);
 	pg1.set_product(ag, bg, 0, bg);
@@ -61,7 +61,7 @@ void product_table_container_test::test_1() throw(libtest::test_exception) {
 				"Adding twice the same type of product table.");
 	}
 
-	ptc.erase(point_group_table::k_id);
+	ptc.erase(testname);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
@@ -83,7 +83,7 @@ void product_table_container_test::test_2() throw(libtest::test_exception) {
 	product_table_container &ptc = product_table_container::get_instance();
 
 	{ // Setup point group table
-	point_group_table pg(2);
+	point_group_table pg(testname, 2);
 	label_t g = 0, u = 1;
 	pg.set_product(g, g, 0, g);
 	pg.set_product(g, u, 0, u);
@@ -93,12 +93,12 @@ void product_table_container_test::test_2() throw(libtest::test_exception) {
 	ptc.add(pg);
 	}
 
-	product_table_i &pt1 = ptc.req_table(point_group_table::k_id);
+	product_table_i &pt1 = ptc.req_table(testname);
 
 	bool failed = false;
 	try {
 
-	product_table_i &pt2 = ptc.req_table(point_group_table::k_id);
+	product_table_i &pt2 = ptc.req_table(testname);
 
 	} catch(exception &e) {
 		failed = true;
@@ -111,7 +111,7 @@ void product_table_container_test::test_2() throw(libtest::test_exception) {
 	failed = false;
 	try {
 
-	const product_table_i &pt2 = ptc.req_const_table(point_group_table::k_id);
+	const product_table_i &pt2 = ptc.req_const_table(testname);
 
 	} catch(exception &e) {
 		failed = true;
@@ -121,12 +121,12 @@ void product_table_container_test::test_2() throw(libtest::test_exception) {
 				"Table requested for reading, while already checked out for writing.");
 	}
 
-	ptc.ret_table(point_group_table::k_id);
+	ptc.ret_table(testname);
 
 	failed = false;
 	try {
 
-	ptc.ret_table(point_group_table::k_id);
+	ptc.ret_table(testname);
 
 	} catch(exception &e) {
 		failed = true;
@@ -135,10 +135,10 @@ void product_table_container_test::test_2() throw(libtest::test_exception) {
 		fail_test(testname, __FILE__, __LINE__, "Table returned twice.");
 	}
 
-	const product_table_i &pt_r1 = ptc.req_const_table(point_group_table::k_id);
-	const product_table_i &pt_r2 = ptc.req_const_table(point_group_table::k_id);
-	ptc.ret_table(point_group_table::k_id);
-	ptc.ret_table(point_group_table::k_id);
+	const product_table_i &pt_r1 = ptc.req_const_table(testname);
+	const product_table_i &pt_r2 = ptc.req_const_table(testname);
+	ptc.ret_table(testname);
+	ptc.ret_table(testname);
 
 	failed = false;
 	try {
@@ -164,7 +164,7 @@ void product_table_container_test::test_2() throw(libtest::test_exception) {
 		fail_test(testname, __FILE__, __LINE__, "Unknown table returned.");
 	}
 
-	ptc.erase(point_group_table::k_id);
+	ptc.erase(testname);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
@@ -186,7 +186,7 @@ void product_table_container_test::test_3() throw(libtest::test_exception) {
 	product_table_container &ptc = product_table_container::get_instance();
 
 	{ // Setup point group table
-	point_group_table pg(2);
+	point_group_table pg(testname, 2);
 	label_t g = 0, u = 1;
 	pg.set_product(g, g, 0, g);
 	pg.set_product(g, u, 0, u);
@@ -196,12 +196,12 @@ void product_table_container_test::test_3() throw(libtest::test_exception) {
 	ptc.add(pg);
 	}
 
-	product_table_i &pt1 = ptc.req_table(point_group_table::k_id);
+	product_table_i &pt1 = ptc.req_table(testname);
 
 	bool failed = false;
 	try {
 
-	ptc.erase(point_group_table::k_id);
+	ptc.erase(testname);
 
 	} catch(exception &e) {
 		failed = true;
@@ -210,14 +210,14 @@ void product_table_container_test::test_3() throw(libtest::test_exception) {
 		fail_test(testname, __FILE__, __LINE__, "Checked out table deleted.");
 	}
 
-	ptc.ret_table(point_group_table::k_id);
+	ptc.ret_table(testname);
 
-	const product_table_i &pt2 = ptc.req_const_table(point_group_table::k_id);
+	const product_table_i &pt2 = ptc.req_const_table(testname);
 
 	failed = false;
 	try {
 
-	ptc.erase(point_group_table::k_id);
+	ptc.erase(testname);
 
 	} catch(exception &e) {
 		failed = true;
@@ -226,14 +226,14 @@ void product_table_container_test::test_3() throw(libtest::test_exception) {
 		fail_test(testname, __FILE__, __LINE__, "Checked out table deleted.");
 	}
 
-	ptc.ret_table(point_group_table::k_id);
+	ptc.ret_table(testname);
 
-	ptc.erase(point_group_table::k_id);
+	ptc.erase(testname);
 
 	failed = false;
 	try {
 
-	ptc.erase(point_group_table::k_id);
+	ptc.erase(testname);
 
 	} catch(exception &e) {
 		failed = true;

@@ -703,7 +703,7 @@ void orbit_test::test_9() throw(libtest::test_exception) {
 	bis.split(msk, 2);
 	dimensions<2> bidims = bis.get_block_index_dims();
 
-	point_group_table cs(2);
+	point_group_table cs(testname, 2);
 	label_t ap = 0, app = 1;
 	cs.set_product(ap, ap, 0, ap);
 	cs.set_product(ap, app, 0, app);
@@ -713,8 +713,7 @@ void orbit_test::test_9() throw(libtest::test_exception) {
 	product_table_container::get_instance().add(cs);
 
 	mask<2> m; m[0] = true; m[1] = true;
-	se_label<2, double> elem1(bis.get_block_index_dims(),
-			point_group_table::k_id);
+	se_label<2, double> elem1(bis.get_block_index_dims(), testname);
 	elem1.assign(m, 0, ap);
 	elem1.assign(m, 1, app);
 	elem1.set_target(ap);
@@ -844,13 +843,13 @@ void orbit_test::test_9() throw(libtest::test_exception) {
 			"Incorrect block transformation (coeff).");
 	}
 
-	product_table_container::get_instance().erase(point_group_table::k_id);
+	product_table_container::get_instance().erase(testname);
 
 	} catch(exception &e) {
-		product_table_container::get_instance().erase(point_group_table::k_id);
+		product_table_container::get_instance().erase(testname);
 		fail_test(testname, __FILE__, __LINE__, e.what());
 	} catch(libtest::test_exception) {
-		product_table_container::get_instance().erase(point_group_table::k_id);
+		product_table_container::get_instance().erase(testname);
 		throw;
 	}
 
@@ -876,18 +875,17 @@ void orbit_test::test_10() throw(libtest::test_exception) {
 	bis.split(msk, 2);
 	dimensions<2> bidims = bis.get_block_index_dims();
 
-	point_group_table cs(2);
+	point_group_table cs(testname, 2);
 	label_t ap = 0, app = 1;
 	cs.set_product(ap, ap, 0, ap);
 	cs.set_product(ap, app, 0, app);
 	cs.set_product(app, ap, 0, app);
 	cs.set_product(app, app, 0, ap);
 	cs.check();
-//	product_table_container::get_instance().add(cs);
+	product_table_container::get_instance().add(cs);
 
 	mask<2> m; m[0] = true; m[1] = true;
-	se_label<2, double> elem1(bis.get_block_index_dims(),
-			point_group_table::k_id);
+	se_label<2, double> elem1(bis.get_block_index_dims(), testname);
 	elem1.assign(m, 0, ap);
 	elem1.assign(m, 1, app);
 	elem1.set_target(ap);

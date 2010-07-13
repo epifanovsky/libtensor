@@ -5,6 +5,7 @@
 
 namespace libtensor {
 
+const char *se_label_test::table_id = "point_group";
 
 void se_label_test::perform() throw(libtest::test_exception) {
 
@@ -12,7 +13,7 @@ void se_label_test::perform() throw(libtest::test_exception) {
 
 	try {
 
-	point_group_table s6(4);
+	point_group_table s6(table_id, 4);
 	point_group_table::label_t ag = 0, eg = 1, au = 2, eu = 3;
 	s6.set_product(ag, ag, 0, ag);
 	s6.set_product(eg, ag, 0, eg);
@@ -42,10 +43,10 @@ void se_label_test::perform() throw(libtest::test_exception) {
 	test_3();
 	test_4();
 
-	product_table_container::get_instance().erase(point_group_table::k_id);
+	product_table_container::get_instance().erase(table_id);
 
 	} catch (libtest::test_exception) {
-		product_table_container::get_instance().erase(point_group_table::k_id);
+		product_table_container::get_instance().erase(table_id);
 		throw;
 	}
 }
@@ -66,8 +67,7 @@ void se_label_test::test_1() throw(libtest::test_exception) {
 	m11[0] = true; m11[1] = true;
 	bis.split(m11, 5);
 
-	se_label<2, double> elem1(bis.get_block_index_dims(),
-			point_group_table::k_id);
+	se_label<2, double> elem1(bis.get_block_index_dims(), table_id);
 	elem1.assign(m11, 0, 0); // ag
 	elem1.assign(m11, 1, 2); // au
 	elem1.set_target(0);
@@ -175,8 +175,7 @@ void se_label_test::test_2() throw(libtest::test_exception) {
 	bis.split(m10, 6);
 	bis.split(m10, 9);
 
-	se_label<2, double> elem1(bis.get_block_index_dims(),
-			point_group_table::k_id);
+	se_label<2, double> elem1(bis.get_block_index_dims(), table_id);
 	for (size_t i = 0; i < 4; i++) elem1.assign(m10, i, i);
 	elem1.assign(m01, 0, 0); // ag
 	elem1.assign(m01, 1, 2); // au
@@ -289,8 +288,7 @@ void se_label_test::test_3() throw(libtest::test_exception) {
 	bis.split(m2, 8);
 	bis.split(m2, 12);
 
-	se_label<4, double> elem1(bis.get_block_index_dims(),
-			point_group_table::k_id);
+	se_label<4, double> elem1(bis.get_block_index_dims(), table_id);
 	for (size_t i = 0; i < 4; i++) elem1.assign(m2, i, i);
 	elem1.assign(m1, 1, 1); // au
 	elem1.assign(m1, 2, 2); // eg
@@ -330,8 +328,7 @@ void se_label_test::test_4() throw(libtest::test_exception) {
 	bis.split(m10, 9);
 	bis.split(m01, 10);
 
-	se_label<2, double> elem1(bis.get_block_index_dims(),
-			point_group_table::k_id);
+	se_label<2, double> elem1(bis.get_block_index_dims(), table_id);
 	for (size_t i = 0; i < 4; i++) elem1.assign(m10, i, i);
 	elem1.set_target(0);
 
