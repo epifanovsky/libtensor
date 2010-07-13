@@ -100,5 +100,11 @@ void product_table_container::ret_table(
 	it->second.m_co--;
 }
 
+bool product_table_container::table_exists(const std::string &id) {
+
+	list_t::iterator it = m_tables.find(id);
+	return (it != m_tables.end());
+}
+
 } // namespace libtensor
 

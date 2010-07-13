@@ -6,15 +6,14 @@
 namespace libtensor {
 
 const char *point_group_table::k_clazz = "point_group_table";
-const char *point_group_table::k_id = "point_group";
 
-point_group_table::point_group_table(size_t nirreps) :
-	m_nirreps(nirreps),
+point_group_table::point_group_table(const std::string &id, size_t nirreps) :
+	m_nirreps(nirreps), m_id(id),
 	m_table(nirreps * (nirreps + 1) / 2, std::vector<label_t>(1, invalid()))
 { }
 
 point_group_table::point_group_table(const point_group_table &pt) :
-	m_nirreps(pt.m_nirreps), m_table(pt.m_table) {
+	m_id(pt.m_id), m_nirreps(pt.m_nirreps), m_table(pt.m_table) {
 
 }
 

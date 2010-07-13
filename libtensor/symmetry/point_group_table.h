@@ -13,12 +13,12 @@ namespace libtensor {
 class point_group_table : public product_table_i {
 public:
 	static const char *k_clazz; //!< Class name.
-	static const char *k_id; //!< Id of the product table
 
 private:
+	const std::string m_id; //!< Table id
+
 	size_t m_nirreps; //!< Number of irreducible representations
 	std::vector< std::vector<label_t> > m_table; //!< The product table
-
 public:
 	//! \name Construction and destruction
 	//@{
@@ -26,7 +26,7 @@ public:
 	/** \brief Constructor
 		@param nirreps Number of irreducible representations
 	 **/
-	point_group_table(size_t nirreps);
+	point_group_table(const std::string &id, size_t nirreps);
 
 	/** \brief Copy constructor
 		@param pt Other point group table
@@ -50,8 +50,8 @@ public:
 
 	/** \copydoc product_table_i::get_id
 	 **/
-	virtual const char *get_id() const {
-		return k_id;
+	virtual const std::string &get_id() const {
+		return m_id;
 	}
 
 	/** \copydoc product_table_i::is_valid

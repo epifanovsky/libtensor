@@ -4,7 +4,6 @@
 #include "../core/abs_index.h"
 #include "../core/block_tensor_ctrl.h"
 #include "../core/direct_block_tensor_operation.h"
-#include "../symmetry/so_copy.h"
 #include "assignment_schedule.h"
 
 namespace libtensor {

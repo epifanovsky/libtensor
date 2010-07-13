@@ -91,6 +91,7 @@ public:
 	 **/
 	void ret_table(const std::string &id) throw(bad_parameter);
 
+	bool table_exists(const std::string &id);
 
 protected:
 	product_table_container() { }

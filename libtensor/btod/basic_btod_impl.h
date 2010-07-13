@@ -1,6 +1,8 @@
 #ifndef LIBTENSOR_BASIC_BTOD_IMPL_H
 #define LIBTENSOR_BASIC_BTOD_IMPL_H
 
+#include "../symmetry/so_copy.h"
+
 namespace libtensor {
 
 

@@ -32,7 +32,7 @@ public:
 
 	/** \brief Returns the id identifying the product table.
 	 **/
-	virtual const char *get_id() const = 0;
+	virtual const std::string &get_id() const = 0;
 
 	/** \brief Checks whether a label is valid.
 	 **/
