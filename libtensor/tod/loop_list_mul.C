@@ -882,6 +882,30 @@ void loop_list_mul::fn_dgemv_t_b(registers &r) const {
 
 void loop_list_mul::fn_dgemm_nn_ab(registers &r) const {
 
+	static const char *method = "fn_dgemm_nn_ab(registers&)";
+
+#ifdef LIBTENSOR_DEBUG
+	register size_t sz;
+	sz = (m_dgemm_nn_ab.m_rowsa - 1) * m_dgemm_nn_ab.m_lda +
+		m_dgemm_nn_ab.m_colsa;
+	if(r.m_ptra[0] + sz > r.m_ptra_end[0]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"source-1");
+	}
+	sz = (m_dgemm_nn_ab.m_colsa - 1) * m_dgemm_nn_ab.m_ldb +
+		m_dgemm_nn_ab.m_colsb;
+	if(r.m_ptra[1] + sz > r.m_ptra_end[1]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"source-2");
+	}
+	sz = (m_dgemm_nn_ab.m_rowsa - 1) * m_dgemm_nn_ab.m_ldc +
+		m_dgemm_nn_ab.m_colsb;
+	if(r.m_ptrb[0] + sz > r.m_ptrb_end[0]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"destination");
+	}
+#endif // LIBTENSOR_DEBUG
+
 	blas_dgemm(false, false, m_dgemm_nn_ab.m_rowsa, m_dgemm_nn_ab.m_colsb,
 		m_dgemm_nn_ab.m_colsa, m_dgemm_nn_ab.m_d, r.m_ptra[0],
 		m_dgemm_nn_ab.m_lda, r.m_ptra[1], m_dgemm_nn_ab.m_ldb, 1.0,
@@ -890,6 +914,30 @@ void loop_list_mul::fn_dgemm_nn_ab(registers &r) const {
 
 
 void loop_list_mul::fn_dgemm_nt_ab(registers &r) const {
+
+	static const char *method = "fn_dgemm_nt_ab(registers&)";
+
+#ifdef LIBTENSOR_DEBUG
+	register size_t sz;
+	sz = (m_dgemm_nt_ab.m_rowsa - 1) * m_dgemm_nt_ab.m_lda +
+		m_dgemm_nt_ab.m_colsa;
+	if(r.m_ptra[0] + sz > r.m_ptra_end[0]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"source-1");
+	}
+	sz = (m_dgemm_nt_ab.m_colsb - 1) * m_dgemm_nt_ab.m_ldb +
+		m_dgemm_nt_ab.m_colsa;
+	if(r.m_ptra[1] + sz > r.m_ptra_end[1]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"source-2");
+	}
+	sz = (m_dgemm_nt_ab.m_rowsa - 1) * m_dgemm_nt_ab.m_ldc +
+		m_dgemm_nt_ab.m_colsb;
+	if(r.m_ptrb[0] + sz > r.m_ptrb_end[0]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"destination");
+	}
+#endif // LIBTENSOR_DEBUG
 
 	blas_dgemm(false, true, m_dgemm_nt_ab.m_rowsa, m_dgemm_nt_ab.m_colsb,
 		m_dgemm_nt_ab.m_colsa, m_dgemm_nt_ab.m_d, r.m_ptra[0],
@@ -900,6 +948,30 @@ void loop_list_mul::fn_dgemm_nt_ab(registers &r) const {
 
 void loop_list_mul::fn_dgemm_tn_ab(registers &r) const {
 
+	static const char *method = "fn_dgemm_tn_ab(registers&)";
+
+#ifdef LIBTENSOR_DEBUG
+	register size_t sz;
+	sz = (m_dgemm_tn_ab.m_colsa - 1) * m_dgemm_tn_ab.m_lda +
+		m_dgemm_tn_ab.m_rowsa;
+	if(r.m_ptra[0] + sz > r.m_ptra_end[0]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"source-1");
+	}
+	sz = (m_dgemm_tn_ab.m_colsa - 1) * m_dgemm_tn_ab.m_ldb +
+		m_dgemm_tn_ab.m_colsb;
+	if(r.m_ptra[1] + sz > r.m_ptra_end[1]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"source-2");
+	}
+	sz = (m_dgemm_tn_ab.m_rowsa - 1) * m_dgemm_tn_ab.m_ldc +
+		m_dgemm_tn_ab.m_colsb;
+	if(r.m_ptrb[0] + sz > r.m_ptrb_end[0]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"destination");
+	}
+#endif // LIBTENSOR_DEBUG
+
 	blas_dgemm(true, false, m_dgemm_tn_ab.m_rowsa, m_dgemm_tn_ab.m_colsb,
 		m_dgemm_tn_ab.m_colsa, m_dgemm_tn_ab.m_d, r.m_ptra[0],
 		m_dgemm_tn_ab.m_lda, r.m_ptra[1], m_dgemm_tn_ab.m_ldb, 1.0,
@@ -908,6 +980,30 @@ void loop_list_mul::fn_dgemm_tn_ab(registers &r) const {
 
 
 void loop_list_mul::fn_dgemm_tt_ab(registers &r) const {
+
+	static const char *method = "fn_dgemm_tt_ab(registers&)";
+
+#ifdef LIBTENSOR_DEBUG
+	register size_t sz;
+	sz = (m_dgemm_tt_ab.m_colsa - 1) * m_dgemm_tt_ab.m_lda +
+		m_dgemm_tt_ab.m_rowsa;
+	if(r.m_ptra[0] + sz > r.m_ptra_end[0]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"source-1");
+	}
+	sz = (m_dgemm_tt_ab.m_colsb - 1) * m_dgemm_tt_ab.m_ldb +
+		m_dgemm_tt_ab.m_colsa;
+	if(r.m_ptra[1] + sz > r.m_ptra_end[1]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"source-2");
+	}
+	sz = (m_dgemm_tt_ab.m_rowsa - 1) * m_dgemm_tt_ab.m_ldc +
+		m_dgemm_tt_ab.m_colsb;
+	if(r.m_ptrb[0] + sz > r.m_ptrb_end[0]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"destination");
+	}
+#endif // LIBTENSOR_DEBUG
 
 	blas_dgemm(true, true, m_dgemm_tt_ab.m_rowsa, m_dgemm_tt_ab.m_colsb,
 		m_dgemm_tt_ab.m_colsa, m_dgemm_tt_ab.m_d, r.m_ptra[0],
@@ -918,6 +1014,30 @@ void loop_list_mul::fn_dgemm_tt_ab(registers &r) const {
 
 void loop_list_mul::fn_dgemm_nn_ba(registers &r) const {
 
+	static const char *method = "fn_dgemm_nn_ba(registers&)";
+
+#ifdef LIBTENSOR_DEBUG
+	register size_t sz;
+	sz = (m_dgemm_nn_ba.m_rowsb - 1) * m_dgemm_nn_ba.m_ldb +
+		m_dgemm_nn_ba.m_colsb;
+	if(r.m_ptra[1] + sz > r.m_ptra_end[1]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"source-1");
+	}
+	sz = (m_dgemm_nn_ba.m_colsb - 1) * m_dgemm_nn_ba.m_lda +
+		m_dgemm_nn_ba.m_colsa;
+	if(r.m_ptra[0] + sz > r.m_ptra_end[0]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"source-2");
+	}
+	sz = (m_dgemm_nn_ba.m_rowsb - 1) * m_dgemm_nn_ba.m_ldc +
+		m_dgemm_nn_ba.m_colsa;
+	if(r.m_ptrb[0] + sz > r.m_ptrb_end[0]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"destination");
+	}
+#endif // LIBTENSOR_DEBUG
+
 	blas_dgemm(false, false, m_dgemm_nn_ba.m_rowsb, m_dgemm_nn_ba.m_colsa,
 		m_dgemm_nn_ba.m_colsb, m_dgemm_nn_ba.m_d, r.m_ptra[1],
 		m_dgemm_nn_ba.m_ldb, r.m_ptra[0], m_dgemm_nn_ba.m_lda, 1.0,
@@ -926,6 +1046,30 @@ void loop_list_mul::fn_dgemm_nn_ba(registers &r) const {
 
 
 void loop_list_mul::fn_dgemm_nt_ba(registers &r) const {
+
+	static const char *method = "fn_dgemm_nt_ba(registers&)";
+
+#ifdef LIBTENSOR_DEBUG
+	register size_t sz;
+	sz = (m_dgemm_nt_ba.m_rowsb - 1) * m_dgemm_nt_ba.m_ldb +
+		m_dgemm_nt_ba.m_colsb;
+	if(r.m_ptra[1] + sz > r.m_ptra_end[1]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"source-1");
+	}
+	sz = (m_dgemm_nt_ba.m_colsa - 1) * m_dgemm_nt_ba.m_lda +
+		m_dgemm_nt_ba.m_colsb;
+	if(r.m_ptra[0] + sz > r.m_ptra_end[0]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"source-2");
+	}
+	sz = (m_dgemm_nt_ba.m_rowsb - 1) * m_dgemm_nt_ba.m_ldc +
+		m_dgemm_nt_ba.m_colsa;
+	if(r.m_ptrb[0] + sz > r.m_ptrb_end[0]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"destination");
+	}
+#endif // LIBTENSOR_DEBUG
 
 	blas_dgemm(false, true, m_dgemm_nt_ba.m_rowsb, m_dgemm_nt_ba.m_colsa,
 		m_dgemm_nt_ba.m_colsb, m_dgemm_nt_ba.m_d, r.m_ptra[1],
@@ -936,6 +1080,30 @@ void loop_list_mul::fn_dgemm_nt_ba(registers &r) const {
 
 void loop_list_mul::fn_dgemm_tn_ba(registers &r) const {
 
+	static const char *method = "fn_dgemm_tn_ba(registers&)";
+
+#ifdef LIBTENSOR_DEBUG
+	register size_t sz;
+	sz = (m_dgemm_tn_ba.m_colsb - 1) * m_dgemm_tn_ba.m_ldb +
+		m_dgemm_tn_ba.m_rowsb;
+	if(r.m_ptra[1] + sz > r.m_ptra_end[1]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"source-1");
+	}
+	sz = (m_dgemm_tn_ba.m_colsb - 1) * m_dgemm_tn_ba.m_lda +
+		m_dgemm_tn_ba.m_colsa;
+	if(r.m_ptra[0] + sz > r.m_ptra_end[0]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"source-2");
+	}
+	sz = (m_dgemm_tn_ba.m_rowsb - 1) * m_dgemm_tn_ba.m_ldc +
+		m_dgemm_tn_ba.m_colsa;
+	if(r.m_ptrb[0] + sz > r.m_ptrb_end[0]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"destination");
+	}
+#endif // LIBTENSOR_DEBUG
+
 	blas_dgemm(true, false, m_dgemm_tn_ba.m_rowsb, m_dgemm_tn_ba.m_colsa,
 		m_dgemm_tn_ba.m_colsb, m_dgemm_tn_ba.m_d, r.m_ptra[1],
 		m_dgemm_tn_ba.m_ldb, r.m_ptra[0], m_dgemm_tn_ba.m_lda, 1.0,
@@ -944,6 +1112,30 @@ void loop_list_mul::fn_dgemm_tn_ba(registers &r) const {
 
 
 void loop_list_mul::fn_dgemm_tt_ba(registers &r) const {
+
+	static const char *method = "fn_dgemm_tt_ba(registers&)";
+
+#ifdef LIBTENSOR_DEBUG
+	register size_t sz;
+	sz = (m_dgemm_tt_ba.m_colsb - 1) * m_dgemm_tt_ba.m_ldb +
+		m_dgemm_tt_ba.m_rowsb;
+	if(r.m_ptra[1] + sz > r.m_ptra_end[1]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"source-1");
+	}
+	sz = (m_dgemm_tt_ba.m_colsa - 1) * m_dgemm_tt_ba.m_lda +
+		m_dgemm_tt_ba.m_colsb;
+	if(r.m_ptra[0] + sz > r.m_ptra_end[0]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"source-2");
+	}
+	sz = (m_dgemm_tt_ba.m_rowsb - 1) * m_dgemm_tt_ba.m_ldc +
+		m_dgemm_tt_ba.m_colsa;
+	if(r.m_ptrb[0] + sz > r.m_ptrb_end[0]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"destination");
+	}
+#endif // LIBTENSOR_DEBUG
 
 	blas_dgemm(true, true, m_dgemm_tt_ba.m_rowsb, m_dgemm_tt_ba.m_colsa,
 		m_dgemm_tt_ba.m_colsb, m_dgemm_tt_ba.m_d, r.m_ptra[1],
