@@ -156,6 +156,9 @@ void btod_read<N, Alloc>::perform(block_tensor_i<N, double> &bt) {
 
 	for(size_t i = 0; i < dims.get_size(); i++) {
 		if(!m_stream.good()) {
+			Alloc::unlock(buf_ptr); buf = 0;
+			Alloc::deallocate(buf_ptr);
+
 			throw_exc(k_clazz, method, "Unexpected end of stream.");
 		}
 		m_stream >> buf[i];

@@ -24,6 +24,8 @@ private:
 	std::map<std::string, symmetry_operation_impl_i*> m_map;
 
 public:
+	virtual ~symmetry_operation_dispatcher();
+
 	void register_impl(const symmetry_operation_impl_i &impl);
 
 	void invoke(const std::string &id,
@@ -34,11 +36,19 @@ protected:
 
 };
 
-
 template<typename OperT>
 const char *symmetry_operation_dispatcher<OperT>::k_clazz =
 	"symmetry_operation_dispatcher<OperT>";
 
+template<typename OperT>
+symmetry_operation_dispatcher<OperT>::~symmetry_operation_dispatcher() {
+
+	for(std::map<std::string, symmetry_operation_impl_i*>::iterator it 
+		= m_map.begin(); it != m_map.end(); it++) {
+		delete it->second;
+		it->second = 0;
+	}
+}
 
 template<typename OperT>
 void symmetry_operation_dispatcher<OperT>::register_impl(
