@@ -3,7 +3,14 @@
 
 namespace libtensor {
 
+
+#ifdef LIBTENSOR_MP
+const char *version::k_status = "dev-mp(mp)";
+#else
 const char *version::k_status = "dev-mp";
+#endif // LIBTENSOR_MP
+
+
 const char *version::k_authors[] = {
 	"Evgeny Epifanovsky",
 	"Michael Wormit",
