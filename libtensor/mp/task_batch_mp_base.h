@@ -28,6 +28,7 @@ public:
 	}
 
 	void wait() {
+		task_dispatcher::get_instance().wait_on_queue(m_q);
 	}
 };
 

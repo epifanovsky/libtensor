@@ -82,6 +82,7 @@ set(SRC
 	symmetry_test.C
 	symmetry_element_set_test.C
 	symmetry_element_set_adapter_test.C
+	task_batch_test.C
 	tensor_test.C
 	timer_test.C
 	timings_test.C
@@ -118,6 +119,8 @@ set_property(TARGET libtensor_tests APPEND PROPERTY
 	COMPILE_DEFINITIONS LIBTENSOR_INSTANTIATE_TEMPLATES)
 set_property(TARGET libtensor_tests APPEND PROPERTY
 	COMPILE_DEFINITIONS LIBTENSOR_TIMINGS)
+set_property(TARGET libtensor_tests APPEND PROPERTY
+	COMPILE_DEFINITIONS LIBTENSOR_MP)
 set_property(TARGET libtensor_tests APPEND PROPERTY
 	COMPILE_DEFINITIONS_DEBUG LIBVMM_DEBUG)
 set_property(TARGET libtensor_tests APPEND PROPERTY

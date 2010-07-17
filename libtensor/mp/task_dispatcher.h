@@ -17,14 +17,16 @@ namespace libtensor {
 class task_dispatcher : public libvmm::singleton<task_dispatcher> {
 	friend class libvmm::singleton<task_dispatcher>;
 
+public:
+	static const char *k_clazz; //!< Class name
+
 private:
 	struct queue {
-		task_queue q;
-		libvmm::cond sig;
-		size_t running;
-		bool waiting;
-		bool destroyed;
-		queue() : running(0), waiting(false), destroyed(false) { }
+		task_queue q; //!< Queue
+		size_t nrunning; //!< Number of running tasks
+		bool finalized; //!< Finalized queue
+		bool destroyed; //!< Destroyed queue
+		queue() : nrunning(0), finalized(false), destroyed(false) { }
 	};
 
 public:
@@ -35,9 +37,10 @@ private:
 	libvmm::cond m_alarm; //!< Alarm for the processing pool
 	std::list<queue*> m_stack; //!< Stack of queues
 	volatile size_t m_ntasks; //!< Number of scheduled tasks
+	volatile size_t m_nwaiting; //!< Number of threads waiting on alarm
 
 protected:
-	task_dispatcher() : m_ntasks(0) { }
+	task_dispatcher() : m_ntasks(0), m_nwaiting(0) { }
 
 public:
 	//!	\name Interface to task batches
@@ -67,6 +70,10 @@ public:
 
 	//!	\name Interface to the worker pool
 	//@{
+
+	/**	\brief Wakes up all the threads waiting on the alarm
+	 **/
+	void set_off_alarm();
 
 	/**	\brief Waits until there is at least one task scheduled
 	 **/

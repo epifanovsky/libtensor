@@ -87,6 +87,7 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("symmetry_element_set", m_utf_symmetry_element_set);
 	add_test("symmetry_element_set_adapter",
 		m_utf_symmetry_element_set_adapter);
+	add_test("task_batch", m_utf_task_batch);
 	add_test("tensor", m_utf_tensor);
 	add_test("timer", m_utf_timer);
 	add_test("timings", m_utf_timings);

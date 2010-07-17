@@ -33,12 +33,20 @@ set(SRC_INST
 	btod/btod_sum.C
 )
 
-add_library(tensor ${SRC} ${SRC_INST})
+set(SRC_MP
+	mp/task_dispatcher.C
+	mp/worker.C
+	mp/worker_pool.C
+)
+
+add_library(tensor ${SRC} ${SRC_INST} ${SRC_MP})
 
 set_property(TARGET tensor APPEND PROPERTY
 	COMPILE_DEFINITIONS LIBTENSOR_INSTANTIATE_TEMPLATES)
 set_property(TARGET tensor APPEND PROPERTY
 	COMPILE_DEFINITIONS LIBTENSOR_TIMINGS)
+set_property(TARGET tensor APPEND PROPERTY
+	COMPILE_DEFINITIONS LIBTENSOR_MP)
 set_property(TARGET tensor APPEND PROPERTY
 	COMPILE_DEFINITIONS_DEBUG LIBVMM_DEBUG)
 set_property(TARGET tensor APPEND PROPERTY
