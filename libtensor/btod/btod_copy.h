@@ -70,6 +70,9 @@ public:
 
 	using additive_btod<N>::perform;
 
+	virtual void sync_on();
+	virtual void sync_off();
+
 	//@}
 
 	//!	\name Implementation of libtensor::btod_additive<N>

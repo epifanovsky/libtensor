@@ -118,6 +118,9 @@ public:
 		return m_sch;
 	}
 
+	virtual void sync_on();
+	virtual void sync_off();
+
 	//@}
 
 	using additive_btod<N + M>::perform;

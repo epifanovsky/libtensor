@@ -31,6 +31,22 @@ btod_sum<N>::~btod_sum() {
 
 
 template<size_t N>
+void btod_sum<N>::sync_on() {
+
+	for(typename std::list<node_t>::iterator iop = m_ops.begin();
+		iop != m_ops.end(); iop++) iop->get_op().sync_on();
+}
+
+
+template<size_t N>
+void btod_sum<N>::sync_off() {
+
+	for(typename std::list<node_t>::iterator iop = m_ops.begin();
+		iop != m_ops.end(); iop++) iop->get_op().sync_off();
+}
+
+
+template<size_t N>
 void btod_sum<N>::compute_block(tensor_i<N, double> &blk, const index<N> &i) {
 
 	abs_index<N> ai(i, m_bidims);

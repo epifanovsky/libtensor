@@ -103,6 +103,9 @@ public:
 		return m_sch;
 	}
 
+	virtual void sync_on();
+	virtual void sync_off();
+
 	//@}
 
 protected:
@@ -194,6 +197,20 @@ btod_symmetrize<N>::btod_symmetrize(additive_btod<N> &op,
 	}
 	make_symmetry();
 	make_schedule();
+}
+
+
+template<size_t N>
+void btod_symmetrize<N>::sync_on() {
+
+	m_op.sync_on();
+}
+
+
+template<size_t N>
+void btod_symmetrize<N>::sync_off() {
+
+	m_op.sync_off();
 }
 
 

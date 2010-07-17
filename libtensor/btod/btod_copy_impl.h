@@ -45,6 +45,22 @@ btod_copy<N>::btod_copy(block_tensor_i<N, double> &bta, const permutation<N> &p,
 
 
 template<size_t N>
+void btod_copy<N>::sync_on() {
+
+	block_tensor_ctrl<N, double> ctrla(m_bta);
+	ctrla.req_sync_on();
+}
+
+
+template<size_t N>
+void btod_copy<N>::sync_off() {
+
+	block_tensor_ctrl<N, double> ctrla(m_bta);
+	ctrla.req_sync_off();
+}
+
+
+template<size_t N>
 void btod_copy<N>::compute_block(tensor_i<N, double> &blk, const index<N> &ib) {
 
 	block_tensor_ctrl<N, double> ctrla(m_bta);

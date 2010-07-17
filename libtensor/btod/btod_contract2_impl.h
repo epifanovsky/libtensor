@@ -40,6 +40,26 @@ btod_contract2<N, M, K>::~btod_contract2() {
 
 
 template<size_t N, size_t M, size_t K>
+void btod_contract2<N, M, K>::sync_on() {
+
+	block_tensor_ctrl<k_ordera, double> ctrla(m_bta);
+	block_tensor_ctrl<k_orderb, double> ctrlb(m_btb);
+	ctrla.req_sync_on();
+	ctrlb.req_sync_on();
+}
+
+
+template<size_t N, size_t M, size_t K>
+void btod_contract2<N, M, K>::sync_off() {
+
+	block_tensor_ctrl<k_ordera, double> ctrla(m_bta);
+	block_tensor_ctrl<k_orderb, double> ctrlb(m_btb);
+	ctrla.req_sync_off();
+	ctrlb.req_sync_off();
+}
+
+
+template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::compute_block(tensor_i<N + M, double> &blk,
 	const index<N + M> &i) {
 

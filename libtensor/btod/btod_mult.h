@@ -90,6 +90,9 @@ public:
 		return m_sch;
 	}
 
+	virtual void sync_on();
+	virtual void sync_off();
+
 	//@}
 
 	using additive_btod<N>::perform;
@@ -165,6 +168,25 @@ template<size_t N>
 btod_mult<N>::~btod_mult() {
 
 }
+
+
+template<size_t N>
+void btod_mult<N>::sync_on() {
+
+	block_tensor_ctrl<N, double> ctrla(m_bta), ctrlb(m_btb);
+	ctrla.req_sync_on();
+	ctrlb.req_sync_on();
+}
+
+
+template<size_t N>
+void btod_mult<N>::sync_off() {
+
+	block_tensor_ctrl<N, double> ctrla(m_bta), ctrlb(m_btb);
+	ctrla.req_sync_off();
+	ctrlb.req_sync_off();
+}
+
 
 template<size_t N>
 void btod_mult<N>::compute_block(
