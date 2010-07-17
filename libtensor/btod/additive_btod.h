@@ -29,10 +29,34 @@ namespace libtensor {
  **/
 template<size_t N>
 class additive_btod : public basic_btod<N> {
+private:
+	class task : public task_i {
+	private:
+		additive_btod<N> &m_btod;
+		block_tensor_i<N, double> &m_bt;
+		const dimensions<N> &m_bidims;
+		const addition_schedule<N, double> &m_sch;
+		typename addition_schedule<N, double>::iterator m_i;
+		double m_c;
+
+	public:
+		task(additive_btod<N> &btod, block_tensor_i<N, double> &bt,
+			const dimensions<N> &bidims,
+			const addition_schedule<N, double> &sch,
+			typename addition_schedule<N, double>::iterator &i,
+			double c) :
+			m_btod(btod), m_bt(bt), m_bidims(bidims), m_sch(sch),
+			m_i(i), m_c(c) { }
+		virtual ~task() { }
+		virtual void perform() throw(exception);
+	};
+
 public:
 	using basic_btod<N>::get_bis;
 	using basic_btod<N>::get_symmetry;
 	using basic_btod<N>::get_schedule;
+	using basic_btod<N>::sync_on;
+	using basic_btod<N>::sync_off;
 	using basic_btod<N>::perform;
 
 public:
