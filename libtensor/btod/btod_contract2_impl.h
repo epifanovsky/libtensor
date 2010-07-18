@@ -1,11 +1,8 @@
 #ifndef LIBTENSOR_BTOD_CONTRACT2_IMPL_H
 #define LIBTENSOR_BTOD_CONTRACT2_IMPL_H
 
-#include "../symmetry/so_copy.h"
-#include "../symmetry/so_permute.h"
+#include "../symmetry/so_concat.h"
 #include "../symmetry/so_proj_down.h"
-#include "../symmetry/so_proj_up.h"
-#include "../symmetry/so_union.h"
 #include "../tod/tod_contract2.h"
 #include "../tod/tod_sum.h"
 
@@ -399,32 +396,41 @@ void btod_contract2_symmetry_builder<N, N, K>::make_symmetry(
 
 	block_tensor_ctrl<N + K, double> ca(bta);
 	const sequence<2 * (2 * N + K), size_t> &conn = contr.get_conn();
-	const block_index_space<2 * (N + K)> &xbis =
-		btod_contract2_symmetry_builder_base<N, N, K>::get_xbis();
+	block_index_space<2 * (N + K)> xbis(
+		btod_contract2_symmetry_builder_base<N, N, K>::get_xbis());
 	const block_index_space<2 * N> &bis =
 		btod_contract2_symmetry_builder_base<N, N, K>::get_bis();
 
-	symmetry<2 * (N + K), double> xsyma(xbis), xsymb(xbis), xsymab(xbis);
-	mask<2 * (N + K)> xma, xmb;
-	permutation<N + K> perma0;
-	for(size_t i = 0; i < N + K; i++) {
-		xma[i] = true;
-		xmb[N + K + i] = true;
+	sequence<2 * (N + K), size_t> seq1(0), seq2(0);
+	mask<2 * (N + K)> rmab;
+	for (size_t i = 0, j = 0; i < 2 * (N + K); i++) {
+		seq1[i] = i;
+		if (conn[i + 2 * N] < 2 * N) {
+			seq2[conn[i + 2 * N]] = i;
+			rmab[conn[i + 2 * N]] = true;
+		}
+		else {
+			seq2[2 * N + j] = i;
+			j++;
+		}
 	}
 
-	so_proj_up<N + K, N + K, double>(ca.req_const_symmetry(), perma0, xma).
-		perform(xsyma);
-	so_proj_up<N + K, N + K, double>(ca.req_const_symmetry(), perma0, xmb).
-		perform(xsymb);
-	so_union<2 * (N + K), double>(xsyma, xsymb).perform(xsymab);
+	permutation_builder<2 * (N + K)> pb(seq2, seq1);
+	xbis.permute(pb.get_perm());
+	symmetry<2 * (N + K), double> xsymab(xbis);
+
+
+	so_concat<N + K, N + K, double>(ca.req_const_symmetry(),
+			ca.req_const_symmetry(), pb.get_perm()).perform(xsymab);
 
 	//	When a tensor is contracted with itself, there is additional
 	//	perm symmetry
 
-	permutation<2 * (N + K)> permab;
+	permutation<2 * (N + K)> permab(pb.get_perm(), true);
 	for(size_t i = 0; i < N + K; i++) {
 		permab.permute(i, N + K + i);
 	}
+	permab.permute(pb.get_perm());
 	if(!permab.is_identity()) {
 		xsymab.insert(se_perm<2 * (N + K), double>(permab, true));
 	}
@@ -437,23 +443,9 @@ void btod_contract2_symmetry_builder<N, N, K>::make_symmetry(
 		//~ }
 	//~ }
 
-	mask<2 * (N + K)> rmab;
-	sequence<2 * N, size_t> seq1(0), seq2(0);
-	for(size_t i = 0, j = 0; i < 2 * (N + K); i++) {
-		if(conn[2 * N + i] < 2 * N) {
-			rmab[i] = true;
-			seq1[j] = conn[j];
-			seq2[j] = 2 * N + i;
-			j++;
-		}
-	}
 
-	permutation_builder<2 * N> rperm_bld(seq1, seq2);
-	symmetry<2 * N, double> sym(bis);
-	so_proj_down<2 * (N + K), 2 * K, double>(xsymab, rmab).
-		perform(sym);
-	so_permute<2 * N, double>(sym, rperm_bld.get_perm()).perform(
-		btod_contract2_symmetry_builder_base<N, N, K>::get_symmetry());
+	so_proj_down<2 * (N + K), 2 * K, double>(xsymab, rmab).perform(
+			btod_contract2_symmetry_builder_base<N, N, K>::get_symmetry());
 }
 
 
@@ -568,36 +560,30 @@ void btod_contract2_symmetry_builder_base<N, M, K>::make_symmetry(
 	block_tensor_ctrl<M + K, double> cb(btb);
 	const sequence<2 * (N + M + K), size_t> &conn = contr.get_conn();
 
-	symmetry<N + M + 2 * K, double> xsyma(m_xbis), xsymb(m_xbis),
-		xsymab(m_xbis);
-	mask<N + M + 2 * K> xma, xmb;
-	permutation<N + K> perma0;
-	permutation<M + K> permb0;
-	for(size_t i = 0; i < N + K; i++) xma[i] = true;
-	for(size_t i = 0; i < M + K; i++) xmb[N + K + i] = true;
+	symmetry<N + M + 2 * K, double> xsymab(m_xbis);
 
-	so_proj_up<N + K, M + K, double>(ca.req_const_symmetry(), perma0, xma).
-		perform(xsyma);
-	so_proj_up<M + K, N + K, double>(cb.req_const_symmetry(), permb0, xmb).
-		perform(xsymb);
-	so_union<N + M + 2 * K, double>(xsyma, xsymb).perform(xsymab);
-
+	sequence<N + M + 2 * K, size_t> seq1(0), seq2(0);
 	mask<N + M + 2 * K> rmab;
-	sequence<N + M, size_t> seq1(0), seq2(0);
-	for(size_t i = 0, j = 0; i < N + M + 2 * K; i++) {
-		if(conn[N + M + i] < N + M) {
-			rmab[i] = true;
-			seq1[j] = conn[j];
-			seq2[j] = N + M + i;
+	for (size_t i = 0, j = 0; i < N + M + 2 * K; i++) {
+		seq1[i] = i;
+		if (conn[i + N + M] < N + M) {
+			seq2[conn[i + N + M]] = i;
+			rmab[conn[i + N + M]] = true;
+		}
+		else {
+			seq2[N + M + j] = i;
 			j++;
 		}
 	}
+	permutation_builder<N + M + 2 * K> pb(seq2, seq1);
 
-	permutation_builder<N + M> rperm_bld(seq1, seq2);
-	symmetry<N + M, double> sym(m_bis);
-	so_proj_down<N + M + 2 * K, 2 * K, double>(xsymab, rmab).
-		perform(sym);
-	so_permute<N + M, double>(sym, rperm_bld.get_perm()).perform(m_sym);
+	so_concat<N + K, M + K, double>(ca.req_const_symmetry(),
+			cb.req_const_symmetry(), pb.get_perm()).perform(xsymab);
+
+	so_proj_down<N + M + 2 * K, 2 * K, double>(xsymab, rmab).perform(
+			btod_contract2_symmetry_builder_base<N, M, K>::get_symmetry());
+
+
 }
 
 
