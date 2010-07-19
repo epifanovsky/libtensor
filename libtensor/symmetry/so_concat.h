@@ -5,6 +5,7 @@
 #include "../core/symmetry.h"
 #include "../core/symmetry_element_set.h"
 #include "so_permute.h"
+#include "so_proj_up.h"
 #include "symmetry_operation_base.h"
 #include "symmetry_operation_dispatcher.h"
 #include "symmetry_operation_params.h"
@@ -52,6 +53,13 @@ public:
 		m_sym1(sym1), m_sym2(sym2) { }
 
 	void perform(symmetry<N + M, T> &sym3);
+
+private:
+	template<size_t X>
+	void copy_subset(const symmetry_element_set<X, T> &set1,
+		symmetry<X, T> &sym2);
+	void proj_up_sym1(const symmetry<N, T> &sym1, symmetry<N + M, T> &sym2);
+	void proj_up_sym2(const symmetry<M, T> &sym1, symmetry<N + M, T> &sym2);
 
 };
 
@@ -108,32 +116,116 @@ public:
 template<size_t N, size_t M, typename T>
 void so_concat<N, M, T>::perform(symmetry<N + M, T> &sym3) {
 
-	for(typename symmetry<N, T>::iterator i1 = m_sym1.begin();
-		i1 != m_sym1.end(); i1++) {
+	sym3.clear();
 
-		const symmetry_element_set<N, T> &set1 =
-			m_sym1.get_subset(i1);
+	symmetry<N, T> sym1(m_sym1.get_bis());
 
-		typename symmetry<M, T>::iterator i2 = m_sym2.begin();
-		for(; i2 != m_sym2.end(); i2++) {
-			if(m_sym2.get_subset(i2).get_id().
-				compare(set1.get_id()) == 0) break;
+	for(typename symmetry<N, T>::iterator i = m_sym1.begin();
+		i != m_sym1.end(); i++) {
+
+		const symmetry_element_set<N, T> &set1 = m_sym1.get_subset(i);
+
+		typename symmetry<M, T>::iterator j;
+		for(j = m_sym2.begin(); j != m_sym2.end(); j++) {
+			if(set1.get_id() == m_sym2.get_subset(j).get_id()) break;
 		}
 
-		if(i2 == m_sym2.end()) continue;
-
-		const symmetry_element_set<M, T> &set2 =
-			m_sym2.get_subset(i2);
-		symmetry_element_set<N + M, T> set3(set1.get_id());
-		symmetry_operation_params<operation_t> params(
-			set1, set2, m_perm, set3);
-		dispatcher_t::get_instance().invoke(set1.get_id(), params);
-
-		for(typename symmetry_element_set<N + M, T>::iterator j =
-			set3.begin(); j != set3.end(); j++) {
-			sym3.insert(set3.get_elem(j));
+		if(j == m_sym2.end()) {
+			copy_subset(set1, sym1);
+		} else {
+			symmetry_element_set<N + M, T> set3(set1.get_id());
+			const symmetry_element_set<M, T> &set2 = m_sym2.get_subset(j);
+			symmetry_operation_params<operation_t> params(
+					set1, set2, m_perm, sym3.get_bis(), set3);
+			dispatcher_t::get_instance().invoke(set1.get_id(), params);
+			copy_subset(set3, sym3);
 		}
 	}
+
+	if (sym1.begin() != sym1.end())
+		proj_up_sym1(sym1, sym3);
+
+	symmetry<M, T> sym2(m_sym2.get_bis());
+
+	for(typename symmetry<M, T>::iterator i = m_sym2.begin();
+		i != m_sym2.end(); i++) {
+
+		const symmetry_element_set<M, T> &set2 = m_sym2.get_subset(i);
+
+		typename symmetry<N, T>::iterator j;
+		for(j = m_sym1.begin(); j != m_sym1.end(); j++) {
+
+			if(set2.get_id() == m_sym1.get_subset(j).get_id()) break;
+		}
+
+		if (j == m_sym1.end())
+			copy_subset(set2, sym2);
+
+	}
+
+	if (sym2.begin() != sym2.end())
+		proj_up_sym2(sym2, sym3);
+}
+
+
+
+
+template<size_t N, size_t M, typename T>
+template<size_t X>
+void so_concat<N, M, T>::copy_subset(const symmetry_element_set<X, T> &set1,
+	symmetry<X, T> &sym2) {
+
+	for(typename symmetry_element_set<X, T>::const_iterator i =
+		set1.begin(); i != set1.end(); i++) {
+
+		sym2.insert(set1.get_elem(i));
+	}
+}
+
+template<size_t N, size_t M, typename T>
+void so_concat<N, M, T>::proj_up_sym1(const symmetry<N, T> &sym1,
+	symmetry<N + M, T> &sym2) {
+
+	size_t map[N + M];
+	for (size_t i = 0; i < N + M; i++) map[i] = i;
+	m_perm.apply(map);
+
+	mask<N + M> msk;
+	size_t a1[N], a2[N], j = 0;
+	for (size_t i = 0; i < N + M; i++) {
+		if (map[i] < N) {
+			a1[j] = j;
+			a2[j] = map[i];
+			msk[i] = true;
+			j++;
+		}
+	}
+	permutation_builder<N> pb(a2, a1);
+
+	so_proj_up<N, M, T>(sym1, pb.get_perm(), msk).perform(sym2);
+}
+
+template<size_t N, size_t M, typename T>
+void so_concat<N, M, T>::proj_up_sym2(const symmetry<M, T> &sym1,
+	symmetry<N + M, T> &sym2) {
+
+	size_t map[N + M];
+	for (size_t i = 0; i < N + M; i++) map[i] = i;
+	m_perm.apply(map);
+
+	mask<N + M> msk;
+	size_t a1[M], a2[M], j = 0;
+	for (size_t i = 0; i < N + M; i++) {
+		if (map[i] >= N) {
+			a1[j] = j;
+			a2[j] = map[i] - N;
+			msk[i] = true;
+			j++;
+		}
+	}
+	permutation_builder<M> pb(a2, a1);
+
+	so_proj_up<M, N, T>(sym1, pb.get_perm(), msk).perform(sym2);
 }
 
 
@@ -145,6 +237,7 @@ public:
 	const symmetry_element_set<N, T> &g1; //!< Symmetry group
 	const symmetry_element_set<M, T> &g2; //!< Symmetry group
 	permutation<N + M> perm; //!< Permutation
+	const block_index_space<N + M> &bis; //!< Block index space of result
 	symmetry_element_set<N + M, T> &g3;
 
 public:
@@ -152,9 +245,10 @@ public:
 		const symmetry_element_set<N, T> &g1_,
 		const symmetry_element_set<M, T> &g2_,
 		const permutation<N + M> &perm_,
+		const block_index_space<N + M> &bis_,
 		symmetry_element_set<N + M, T> &g3_) :
 
-		g1(g1_), g2(g2_), perm(perm_), g3(g3_)  { }
+		g1(g1_), g2(g2_), perm(perm_), bis(bis_), g3(g3_)  { }
 
 };
 

@@ -32,16 +32,6 @@ void so_proj_up_impl_perm_test::test_1() throw(libtest::test_exception) {
 
 	try {
 
-	symmetry_element_set<2, double> set1(se_t::k_sym_type);
-	symmetry_element_set<3, double> set2(se_t::k_sym_type);
-	symmetry_element_set<3, double> set2_ref(se_t::k_sym_type);
-
-	mask<3> msk; msk[0] = true; msk[1] = true;
-	symmetry_operation_params< so_proj_up<2, 1, double> > params(
-		set1, permutation<2>(), msk, set2);
-
-	so_proj_up_impl_t().perform(params);
-
 	index<3> i1, i2;
 	i2[0] = 2; i2[1] = 2; i2[2] = 2;
 	block_index_space<3> bis(dimensions<3>(index_range<3>(i1, i2)));
@@ -49,6 +39,16 @@ void so_proj_up_impl_perm_test::test_1() throw(libtest::test_exception) {
 	m[0] = true; m[1] = true; m[2] = true;
 	bis.split(m, 1);
 	bis.split(m, 2);
+
+	symmetry_element_set<2, double> set1(se_t::k_sym_type);
+	symmetry_element_set<3, double> set2(se_t::k_sym_type);
+	symmetry_element_set<3, double> set2_ref(se_t::k_sym_type);
+
+	mask<3> msk; msk[0] = true; msk[1] = true;
+	symmetry_operation_params< so_proj_up<2, 1, double> > params(
+		set1, permutation<2>(), msk, bis, set2);
+
+	so_proj_up_impl_t().perform(params);
 
 	compare_ref<3>::compare(testname, bis, set2, set2_ref);
 
@@ -79,6 +79,14 @@ void so_proj_up_impl_perm_test::test_2() throw(libtest::test_exception) {
 
 	try {
 
+	index<3> i1, i2;
+	i2[0] = 2; i2[1] = 2; i2[2] = 2;
+	block_index_space<3> bis(dimensions<3>(index_range<3>(i1, i2)));
+	mask<3> m;
+	m[0] = true; m[1] = true; m[2] = true;
+	bis.split(m, 1);
+	bis.split(m, 2);
+
 	permutation<2> p10;
 	p10.permute(0, 1);
 	se_perm<2, double> elem10(p10, true);
@@ -96,17 +104,10 @@ void so_proj_up_impl_perm_test::test_2() throw(libtest::test_exception) {
 
 	mask<3> msk; msk[0] = true; msk[1] = true;
 	symmetry_operation_params< so_proj_up<2, 1, double> > params(
-		set1, permutation<2>(), msk, set2);
+		set1, permutation<2>(), msk, bis, set2);
 
 	so_proj_up_impl_t().perform(params);
 
-	index<3> i1, i2;
-	i2[0] = 2; i2[1] = 2; i2[2] = 2;
-	block_index_space<3> bis(dimensions<3>(index_range<3>(i1, i2)));
-	mask<3> m;
-	m[0] = true; m[1] = true; m[2] = true;
-	bis.split(m, 1);
-	bis.split(m, 2);
 
 	compare_ref<3>::compare(testname, bis, set2, set2_ref);
 
@@ -154,6 +155,14 @@ void so_proj_up_impl_perm_test::test_3() throw(libtest::test_exception) {
 
 	try {
 
+	index<3> i1, i2;
+	i2[0] = 2; i2[1] = 2; i2[2] = 2;
+	block_index_space<3> bis(dimensions<3>(index_range<3>(i1, i2)));
+	mask<3> m;
+	m[0] = true; m[1] = true; m[2] = true;
+	bis.split(m, 1);
+	bis.split(m, 2);
+
 	permutation<2> p1; p1.permute(0, 1);
 	se_perm<2, double> elem1(p1, true);
 
@@ -165,7 +174,7 @@ void so_proj_up_impl_perm_test::test_3() throw(libtest::test_exception) {
 
 	mask<3> msk; msk[0] = true; msk[2] = true;
 	symmetry_operation_params< so_proj_up<2, 1, double> > params(
-		set1, permutation<2>(), msk, set2);
+		set1, permutation<2>(), msk, bis, set2);
 
 	so_proj_up_impl_t().perform(params);
 
@@ -213,6 +222,14 @@ void so_proj_up_impl_perm_test::test_4() throw(libtest::test_exception) {
 
 	try {
 
+	index<3> i1, i2;
+	i2[0] = 2; i2[1] = 2; i2[2] = 2;
+	block_index_space<3> bis(dimensions<3>(index_range<3>(i1, i2)));
+	mask<3> m;
+	m[0] = true; m[1] = true; m[2] = true;
+	bis.split(m, 1);
+	bis.split(m, 2);
+
 	permutation<2> p1; p1.permute(0, 1);
 	se_perm<2, double> elem1(p1, false);
 
@@ -224,7 +241,7 @@ void so_proj_up_impl_perm_test::test_4() throw(libtest::test_exception) {
 
 	mask<3> msk; msk[1] = true; msk[2] = true;
 	symmetry_operation_params< so_proj_up<2, 1, double> > params(
-		set1, permutation<2>(), msk, set2);
+		set1, permutation<2>(), msk, bis, set2);
 
 	so_proj_up_impl_t().perform(params);
 
@@ -273,6 +290,14 @@ void so_proj_up_impl_perm_test::test_5() throw(libtest::test_exception) {
 
 	try {
 
+	index<4> i1, i2;
+	i2[0] = 2; i2[1] = 2; i2[2] = 2; i2[3] = 2;
+	block_index_space<4> bis(dimensions<4>(index_range<4>(i1, i2)));
+	mask<4> m;
+	m[0] = true; m[1] = true; m[2] = true; m[3] = true;
+	bis.split(m, 1);
+	bis.split(m, 2);
+
 	permutation<3> p1; p1.permute(0, 1);
 	se_perm<3, double> elem1(p1, true);
 
@@ -285,7 +310,7 @@ void so_proj_up_impl_perm_test::test_5() throw(libtest::test_exception) {
 	mask<4> msk; msk[1] = true; msk[2] = true; msk[3] = true;
 	permutation<3> perm; perm.permute(0, 2).permute(1, 2);
 	symmetry_operation_params< so_proj_up<3, 1, double> > params(
-		set1, perm, msk, set2);
+		set1, perm, msk, bis, set2);
 
 	so_proj_up_impl_t().perform(params);
 
@@ -334,6 +359,14 @@ void so_proj_up_impl_perm_test::test_6() throw(libtest::test_exception) {
 
 	try {
 
+	index<4> i1, i2;
+	i2[0] = 2; i2[1] = 2; i2[2] = 2; i2[3] = 2;
+	block_index_space<4> bis(dimensions<4>(index_range<4>(i1, i2)));
+	mask<4> m;
+	m[0] = true; m[1] = true; m[2] = true; m[3] = true;
+	bis.split(m, 1);
+	bis.split(m, 2);
+
 	permutation<3> p1; p1.permute(0, 1);
 	se_perm<3, double> elem1(p1, false);
 
@@ -346,7 +379,7 @@ void so_proj_up_impl_perm_test::test_6() throw(libtest::test_exception) {
 	mask<4> msk; msk[0] = true; msk[2] = true; msk[3] = true;
 	permutation<3> perm; perm.permute(0, 1);
 	symmetry_operation_params< so_proj_up<3, 1, double> > params(
-		set1, perm, msk, set2);
+		set1, perm, msk, bis, set2);
 
 	so_proj_up_impl_t().perform(params);
 
@@ -394,6 +427,14 @@ void so_proj_up_impl_perm_test::test_7() throw(libtest::test_exception) {
 
 	try {
 
+	index<4> i1, i2;
+	i2[0] = 2; i2[1] = 2; i2[2] = 2; i2[3] = 2;
+	block_index_space<4> bis(dimensions<4>(index_range<4>(i1, i2)));
+	mask<4> m;
+	m[0] = true; m[1] = true; m[2] = true; m[3] = true;
+	bis.split(m, 1);
+	bis.split(m, 2);
+
 	permutation<4> p1; p1.permute(0, 1).permute(1, 2).permute(2, 3);
 	se4_t elem1(p1, true);
 
@@ -406,7 +447,7 @@ void so_proj_up_impl_perm_test::test_7() throw(libtest::test_exception) {
 	mask<4> msk; msk[0] = true; msk[1] = true; msk[2] = true; msk[3] = true;
 	permutation<4> perm; perm.permute(1, 2).permute(2, 3);
 	symmetry_operation_params< so_proj_up<4, 0, double> > params(
-		set1, perm, msk, set2);
+		set1, perm, msk, bis, set2);
 
 	so_proj_up_impl_t().perform(params);
 
