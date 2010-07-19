@@ -11,6 +11,7 @@ void tensor_test::perform() throw(libtest::test_exception) {
 	test_ctor();
 	test_immutable();
 	test_operation();
+	test_1();
 }
 
 void tensor_test::test_ctor() throw(libtest::test_exception) {
@@ -209,6 +210,38 @@ void tensor_test::test_operation() throw(libtest::test_exception) {
 	}
 
 }
+
+
+void tensor_test::test_1() throw(libtest::test_exception) {
+
+	static const char *testname = "tensor_test::test_1()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<2> i1, i2;
+	i2[0] = 5; i2[1] = 5;
+	dimensions<2> dims(index_range<2>(i1, i2));
+
+	tensor<2, double, allocator_t> t(dims);
+
+	tensor_ctrl<2, double> c1(t);
+	const double *p1 = c1.req_const_dataptr();
+
+	{
+		tensor_ctrl<2, double> c2(t);
+		const double *p2 = c2.req_const_dataptr();
+		c2.ret_const_dataptr(p2); p2 = 0;
+	}
+
+	c1.ret_const_dataptr(p1); p1 = 0;
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
 
 } // namespace libtensor
 

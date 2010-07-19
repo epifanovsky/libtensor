@@ -64,6 +64,8 @@ private:
 
 	//!	Tests operations
 	void test_operation() throw(libtest::test_exception);
+
+	void test_1() throw(libtest::test_exception);
 };
 
 } // namespace libtensor
