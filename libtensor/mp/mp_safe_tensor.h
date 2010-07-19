@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_MP_SAFE_TENSOR_H
 #define LIBTENSOR_MP_SAFE_TENSOR_H
 
+#include <libvmm/auto_lock.h>
 #include "../core/tensor.h"
 #include "default_sync_policy.h"
 #include "mp_safe_tensor_lock.h"
@@ -24,11 +25,8 @@ public:
 		handle_t; //!< Session handle type
 
 private:
-	typedef typename Sync::mutex_t mutex_t; //!< Mutex type
-
-private:
 	size_t m_count; //!< Session count
-	mutex_t *m_mtx; //!< Mutex lock
+	libvmm::mutex *m_mtx; //!< Mutex lock
 
 public:
 	mp_safe_tensor(const dimensions<N> &dims) :
@@ -46,37 +44,22 @@ protected:
 
 		mp_safe_tensor_lock::get_instance().lock();
 		m_count++;
-		if(m_mtx == 0) m_mtx = new mutex_t;
+		if(m_mtx == 0) m_mtx = new libvmm::mutex;
 		mp_safe_tensor_lock::get_instance().unlock();
 
-		m_mtx->lock();
-		try {
-			handle_t h = tensor<N, T, Alloc>::on_req_open_session();
-			m_mtx->unlock();
-			return h;
-		} catch(...) {
-			m_mtx->unlock();
-			throw;
-		}
+		libvmm::auto_lock lock(*m_mtx);
+		return tensor<N, T, Alloc>::on_req_open_session();
 	}
 
 	virtual void on_req_close_session(const handle_t &h) {
 
-		mp_safe_tensor_lock::get_instance().lock();
-		if(m_count > 0) m_count--;
-		mp_safe_tensor_lock::get_instance().unlock();
-
-		m_mtx->lock();
-		try {
+		{
+			libvmm::auto_lock lock(*m_mtx);
 			tensor<N, T, Alloc>::on_req_close_session(h);
-		} catch(...) {
-			m_mtx->unlock();
-			throw;
 		}
-		m_mtx->unlock();
 
 		mp_safe_tensor_lock::get_instance().lock();
-		if(m_count == 0) {
+		if(--m_count == 0) {
 			delete m_mtx; m_mtx = 0;
 		}
 		mp_safe_tensor_lock::get_instance().unlock();
@@ -84,39 +67,32 @@ protected:
 
 	virtual void on_req_prefetch(const handle_t &h) {
 
-		m_mtx->lock();
+		libvmm::auto_lock lock(*m_mtx);
 		tensor<N, T, Alloc>::on_req_prefetch(h);
-		m_mtx->unlock();
 	}
 
 	virtual T *on_req_dataptr(const handle_t &h) {
 
-		m_mtx->lock();
-		T *p = tensor<N, T, Alloc>::on_req_dataptr(h);
-		m_mtx->unlock();
-		return p;
+		libvmm::auto_lock lock(*m_mtx);
+		return tensor<N, T, Alloc>::on_req_dataptr(h);
 	}
 
 	virtual void on_ret_dataptr(const handle_t &h, const T *p) {
 
-		m_mtx->lock();
+		libvmm::auto_lock lock(*m_mtx);
 		tensor<N, T, Alloc>::on_ret_dataptr(h, p);
-		m_mtx->unlock();
 	}
 
 	virtual const T *on_req_const_dataptr(const handle_t &h) {
 
-		m_mtx->lock();
-		const T *p = tensor<N, T, Alloc>::on_req_const_dataptr(h);
-		m_mtx->unlock();
-		return p;
+		libvmm::auto_lock lock(*m_mtx);
+		return tensor<N, T, Alloc>::on_req_const_dataptr(h);
 	}
 
 	virtual void on_ret_const_dataptr(const handle_t &h, const T *p) {
 
-		m_mtx->lock();
+		libvmm::auto_lock lock(*m_mtx);
 		tensor<N, T, Alloc>::on_ret_const_dataptr(h, p);
-		m_mtx->unlock();
 	}
 
 };

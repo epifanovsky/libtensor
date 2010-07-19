@@ -8,25 +8,6 @@ namespace libtensor {
 
 void task_batch_test::perform() throw(libtest::test_exception) {
 
-	run_all_tests();
-
-	worker_pool::get_instance().init(1);
-	run_all_tests();
-	worker_pool::get_instance().shutdown();
-
-	worker_pool::get_instance().init(2);
-	run_all_tests();
-	worker_pool::get_instance().shutdown();
-
-	worker_pool::get_instance().init(4);
-	run_all_tests();
-	worker_pool::get_instance().shutdown();
-
-}
-
-
-void task_batch_test::run_all_tests() throw(libtest::test_exception) {
-
 	test_1();
 	test_2();
 	test_3();

@@ -4,6 +4,7 @@
 #include <iostream>
 #include <sstream>
 #include <libtensor/version.h>
+#include <libtensor/mp/worker_pool.h>
 #include "libtensor_suite.h"
 
 using namespace libtensor;
@@ -34,22 +35,43 @@ public:
 
 int main(int argc, char **argv) {
 
-	srand48(time(NULL));
+	srand48(time(0));
 
-	ostringstream ss;
-	ss << " Unit tests for libtensor "
-		<< version::get_string() << " ";
-	string separator(ss.str().size(), '-');
-	cout << separator << endl << ss.str() << endl << separator << endl;
+	unsigned nthreads[4] = { 0, 1, 2, 5 };
 
-	suite_handler handler;
-	libtensor_suite suite;
-	suite.set_handler(&handler);
+	for(size_t ithr = 0; ithr < 4; ithr++) {
 
-	if(argc == 1) {
-		suite.run_all_tests();
-	} else {
-		for(int i = 1; i < argc; i++) suite.run_test(argv[i]);
+		ostringstream ss;
+		ss << " Unit tests for libtensor "
+			<< version::get_string() << " ";
+		if(nthreads[ithr] == 0) {
+			ss << "(single-threaded) ";
+		} else {
+			ss << "(multi-threaded, "
+				<< nthreads[ithr] + 1 << " threads) ";
+		}
+		string separator(ss.str().size(), '-');
+		cout << separator << endl << ss.str() << endl
+			<< separator << endl;
+
+		if(nthreads[ithr] > 0) {
+			libtensor::worker_pool::get_instance().
+				init(nthreads[ithr]);
+		}
+
+		suite_handler handler;
+		libtensor_suite suite;
+		suite.set_handler(&handler);
+
+		if(argc == 1) {
+			suite.run_all_tests();
+		} else {
+			for(int i = 1; i < argc; i++) suite.run_test(argv[i]);
+		}
+
+		if(nthreads[ithr] > 0) {
+			libtensor::worker_pool::get_instance().shutdown();
+		}
 	}
 }
 
