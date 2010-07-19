@@ -42,6 +42,8 @@ void se_label_test::perform() throw(libtest::test_exception) {
 	test_2();
 	test_3();
 	test_4();
+	test_5();
+	test_6();
 
 	product_table_container::get_instance().erase(table_id);
 
@@ -436,6 +438,146 @@ void se_label_test::test_4() throw(libtest::test_exception) {
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
 	}
+}
+
+/**	\test Adding removing labels, matching splits
+ **/
+void se_label_test::test_5() throw(libtest::test_exception) {
+
+	static const char *testname = "se_label_test::test_5()";
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 12; i2[1] = 12; i2[2] = 20; i2[3] = 20;
+	block_index_space<4> bis(dimensions<4>(index_range<4>(i1, i2)));
+	mask<4> m0001, m0011, m1100, m1111;
+	m0001[3] = true;
+	m0011[2] = true; m0011[3] = true;
+	m1100[0] = true; m1100[1] = true;
+	m1111[0] = true; m1111[1] = true; m1111[2] = true; m1111[3] = true;
+	bis.split(m1100, 3);
+	bis.split(m1100, 6);
+	bis.split(m1100, 9);
+	bis.split(m0011, 5);
+	bis.split(m0011, 10);
+	bis.split(m0011, 15);
+
+	se_label<4, double> elem1(bis.get_block_index_dims(), table_id);
+
+	// assign labels
+	for (size_t i = 0; i < 4; i++) elem1.assign(m1111, i, i);
+
+	// assign different labels (two label types)
+
+	elem1.assign(m1100, 0, 1);
+	elem1.assign(m1100, 1, 0);
+
+	if (elem1.get_dim_type(0) == elem1.get_dim_type(2))
+		fail_test(testname, __FILE__, __LINE__,
+			"elem1.get_dim_type(0)==elem1.get_dim_type(2)");
+
+
+	// remove previously assigned labels
+
+	elem1.remove(m0001, 0);
+
+	if (elem1.get_dim_type(0) == elem1.get_dim_type(2))
+		fail_test(testname, __FILE__, __LINE__,
+			"elem1.get_dim_type(0)==elem1.get_dim_type(2)");
+	if (elem1.get_dim_type(2) == elem1.get_dim_type(3))
+		fail_test(testname, __FILE__, __LINE__,
+			"elem1.get_dim_type(2)==elem1.get_dim_type(3)");
+	if (elem1.get_dim_type(0) == elem1.get_dim_type(3))
+		fail_test(testname, __FILE__, __LINE__,
+			"elem1.get_dim_type(0)==elem1.get_dim_type(3)");
+
+	// reassign removed label
+
+	elem1.assign(m0001, 0, 0);
+
+	// match labels
+
+	elem1.match_labels();
+
+	if (elem1.get_dim_type(2) != elem1.get_dim_type(3))
+		fail_test(testname, __FILE__, __LINE__,
+			"elem1.get_dim_type(2)!=elem1.get_dim_type(3)");
+
+	// assign labels so that all dimensions re equal again.
+
+	elem1.assign(m1100, 0, 0);
+	elem1.assign(m1100, 1, 1);
+
+	elem1.match_labels();
+
+	if (elem1.get_dim_type(0) != elem1.get_dim_type(2))
+		fail_test(testname, __FILE__, __LINE__,
+			"elem1.get_dim_type(0)!=elem1.get_dim_type(2)");
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+
+}
+/**	\test Exception tests
+ **/
+void se_label_test::test_6() throw(libtest::test_exception) {
+
+	static const char *testname = "se_label_test::test_6()";
+
+	index<4> i1, i2;
+	i2[0] = 12; i2[1] = 12; i2[2] = 20; i2[3] = 20;
+	block_index_space<4> bis(dimensions<4>(index_range<4>(i1, i2)));
+	mask<4> m0001, m0011, m1100, m1111;
+	m0001[3] = true;
+	m0011[2] = true; m0011[3] = true;
+	m1100[0] = true; m1100[1] = true;
+	m1111[0] = true; m1111[1] = true; m1111[2] = true; m1111[3] = true;
+	bis.split(m1100, 3);
+	bis.split(m1100, 6);
+	bis.split(m1100, 9);
+	bis.split(m0011, 5);
+	bis.split(m0011, 10);
+	bis.split(m0011, 15);
+
+	se_label<4, double> elem1(bis.get_block_index_dims(), table_id);
+
+	// assign labels
+	for (size_t i = 0; i < 4; i++) elem1.assign(m1111, i, i);
+
+	// assign different labels (two label types)
+
+	elem1.assign(m1100, 0, 1);
+	elem1.assign(m1100, 1, 0);
+
+	// test invalid mask exception for remove()
+	bool failed = false;
+	try {
+
+	elem1.remove(m1111, 2);
+
+	} catch (bad_parameter &e) {
+		failed = true;
+	}
+
+	if (! failed)
+		fail_test(testname, __FILE__, __LINE__,
+			"Invalid mask in remove(mask<N>, size_t) not recognized.");
+
+	failed = false;
+	try {
+
+	elem1.assign(m1111, 0, 0);
+
+	} catch (bad_parameter &e) {
+		failed = true;
+	}
+
+	if (! failed)
+		fail_test(testname, __FILE__, __LINE__,
+			"Invalid mask in assign(mask<N>, size_t, label_t) not recognized.");
+
 }
 
 } // namespace libtensor

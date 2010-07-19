@@ -112,7 +112,7 @@ public:
 	 **/
 	void add_target(label_t target) throw(bad_parameter);
 
-	/** \brief Sets the target label to any label
+	/** \brief Deletes all target labels set previously.
 	 **/
 	void delete_target();
 
@@ -388,7 +388,46 @@ void se_label<N, T>::clear() {
 template<size_t N, typename T>
 void se_label<N, T>::match_labels() {
 
-	throw not_implemented(g_ns, k_clazz, "match_labels()", __FILE__, __LINE__);
+	sequence<N, size_t> types(m_type);
+	sequence<N, label_list_t*> labels(m_labels);
+
+	for (size_t i = 0; i < N; i++) {
+		m_type[i] = 0;
+		m_labels[i] = 0;
+	}
+
+	size_t curr_type = 0;
+	for (size_t i = 0; i < N; i++) {
+		size_t itype = types[i];
+		if (labels[itype] == 0) continue;
+
+		m_type[i] = curr_type;
+		label_list_t *lli = m_labels[curr_type] = labels[itype];
+		labels[itype] = 0;
+
+		for (size_t j = i + 1; j < N; j++) {
+			size_t jtype = types[j];
+			if (itype == jtype) {
+				m_type[j] = curr_type;
+				continue;
+			}
+
+			if (labels[jtype] == 0) continue;
+			if (lli->size() != labels[jtype]->size()) continue;
+
+			size_t k = 0;
+			for (; k < lli->size(); k++) {
+				if (lli->at(k) != labels[jtype]->at(k)) break;
+			}
+			if (k != lli->size()) continue;
+
+			delete labels[jtype];
+			labels[jtype] = 0;
+			m_type[j] = curr_type;
+		}
+
+		curr_type++;
+	}
 }
 
 template<size_t N, typename T>
