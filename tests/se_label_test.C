@@ -70,12 +70,15 @@ void se_label_test::test_1() throw(libtest::test_exception) {
 	se_label<2, double> elem1(bis.get_block_index_dims(), table_id);
 	elem1.assign(m11, 0, 0); // ag
 	elem1.assign(m11, 1, 2); // au
-	elem1.set_target(0);
+	elem1.add_target(0);
 
 	se_label<2, double> elem2(elem1), elem3(elem1), elem4(elem1);
-	elem2.set_target(2);
-	elem3.set_target(1);
-	elem4.set_target(3);
+	elem2.delete_target();
+	elem2.add_target(2);
+	elem3.delete_target();
+	elem3.add_target(1);
+	elem4.delete_target();
+	elem4.add_target(3);
 
 	index<2> i00, i01, i10, i11;
 	i01[0] = 0; i01[1] = 1;
@@ -181,81 +184,101 @@ void se_label_test::test_2() throw(libtest::test_exception) {
 	elem1.assign(m01, 1, 2); // au
 	elem1.assign(m01, 2, 1); // eg
 	elem1.assign(m01, 3, 3); // eu
-	elem1.set_target(0);
+	elem1.add_target(0);
 
 	se_label<2, double> elem2(elem1), elem3(elem1), elem4(elem1);
-	elem2.set_target(1);
-	elem3.set_target(2);
-	elem4.set_target(3);
+	elem2.add_target(1);
+	elem3.delete_target();
+	elem3.add_target(2);
+	elem4.delete_target();
+	elem4.add_target(3);
 
-	index<2> i12, i13, i32, i33;
+	index<2> i02, i12, i13, i21, i32, i33;
+	i02[0] = 0; i02[1] = 2;
 	i12[0] = 1; i12[1] = 2;
 	i13[0] = 1; i13[1] = 3;
+	i21[0] = 2; i21[1] = 1;
 	i32[0] = 3; i32[1] = 2;
 	i33[0] = 3; i33[1] = 3;
 
+	if(elem1.is_allowed(i02)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"elem1.is_allowed(i02)");
+	}
 	if(! elem1.is_allowed(i12)) {
 		fail_test(testname, __FILE__, __LINE__,
-			"!elem1.is_allowed(i12)");
+			"! elem1.is_allowed(i12)");
+	}
+	if(elem1.is_allowed(i13)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"elem1.is_allowed(i13)");
+	}
+	if(! elem1.is_allowed(i21)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"! elem1.is_allowed(i21)");
+	}
+	if(elem1.is_allowed(i32)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"elem1.is_allowed(i32)");
+	}
+	if(! elem1.is_allowed(i33)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!elem1.is_allowed(i33)");
+	}
+
+	if(! elem2.is_allowed(i02)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"! elem2.is_allowed(i02)");
 	}
 	if(! elem2.is_allowed(i12)) {
 		fail_test(testname, __FILE__, __LINE__,
 			"!elem2.is_allowed(i12)");
 	}
-	if(elem3.is_allowed(i12)) {
-		fail_test(testname, __FILE__, __LINE__,
-			"elem3.is_allowed(i12)");
-	}
-	if(elem4.is_allowed(i12)) {
-		fail_test(testname, __FILE__, __LINE__,
-			"elem4.is_allowed(i12)");
-	}
-
-	if(elem1.is_allowed(i13)) {
-		fail_test(testname, __FILE__, __LINE__,
-			"elem1.is_allowed(i13)");
-	}
 	if(elem2.is_allowed(i13)) {
 		fail_test(testname, __FILE__, __LINE__,
 			"elem2.is_allowed(i13)");
 	}
-	if(! elem3.is_allowed(i13)) {
+	if(! elem2.is_allowed(i21)) {
 		fail_test(testname, __FILE__, __LINE__,
-			"!elem3.is_allowed(i13)");
-	}
-	if(! elem4.is_allowed(i13)) {
-		fail_test(testname, __FILE__, __LINE__,
-			"!elem4.is_allowed(i13)");
-	}
-
-	if(elem1.is_allowed(i32)) {
-		fail_test(testname, __FILE__, __LINE__,
-			"elem1.is_allowed(i32)");
+			"! elem1.is_allowed(i21)");
 	}
 	if(elem2.is_allowed(i32)) {
 		fail_test(testname, __FILE__, __LINE__,
 			"elem2.is_allowed(i32)");
 	}
-	if(! elem3.is_allowed(i32)) {
-		fail_test(testname, __FILE__, __LINE__,
-			"!elem3.is_allowed(i32)");
-	}
-	if(! elem4.is_allowed(i32)) {
-		fail_test(testname, __FILE__, __LINE__,
-			"!elem4.is_allowed(i32)");
-	}
-
-	if(! elem1.is_allowed(i33)) {
-		fail_test(testname, __FILE__, __LINE__,
-			"!elem1.is_allowed(i33)");
-	}
 	if(! elem2.is_allowed(i33)) {
 		fail_test(testname, __FILE__, __LINE__,
 			"!elem2.is_allowed(i33)");
 	}
+
+	if(elem3.is_allowed(i12)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"elem3.is_allowed(i12)");
+	}
+	if(! elem3.is_allowed(i13)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!elem3.is_allowed(i13)");
+	}
+	if(! elem3.is_allowed(i32)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!elem3.is_allowed(i32)");
+	}
 	if(elem3.is_allowed(i33)) {
 		fail_test(testname, __FILE__, __LINE__,
 			"elem3.is_allowed(i33)");
+	}
+
+	if(elem4.is_allowed(i12)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"elem4.is_allowed(i12)");
+	}
+	if(! elem4.is_allowed(i13)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!elem4.is_allowed(i13)");
+	}
+	if(! elem4.is_allowed(i32)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!elem4.is_allowed(i32)");
 	}
 	if(elem4.is_allowed(i33)) {
 		fail_test(testname, __FILE__, __LINE__,
@@ -292,7 +315,7 @@ void se_label_test::test_3() throw(libtest::test_exception) {
 	for (size_t i = 0; i < 4; i++) elem1.assign(m2, i, i);
 	elem1.assign(m1, 1, 1); // au
 	elem1.assign(m1, 2, 2); // eg
-	elem1.set_target(0);
+	elem1.add_target(0);
 
 	permutation<4> p12;
 	p12.permute(1, 2);
@@ -330,12 +353,12 @@ void se_label_test::test_4() throw(libtest::test_exception) {
 
 	se_label<2, double> elem1(bis.get_block_index_dims(), table_id);
 	for (size_t i = 0; i < 4; i++) elem1.assign(m10, i, i);
-	elem1.set_target(0);
+	elem1.add_target(0);
 
 	se_label<2, double> elem2(elem1), elem3(elem1), elem4(elem1);
-	elem2.set_target(1);
-	elem3.set_target(2);
-	elem4.set_target(3);
+	elem2.add_target(1);
+	elem3.add_target(2);
+	elem4.add_target(3);
 
 	index<2> i00, i10, i21, i31;
 	i10[0] = 1;

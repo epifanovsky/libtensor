@@ -49,7 +49,7 @@ private:
 	dimensions<N> m_bidims; //!< Block index dimensions
 	sequence<N, size_t> m_type; //!< Label type
 	sequence<N, label_list_t*> m_labels; //!< Block labels
-	label_t m_label; //!< Target label
+	label_list_t m_target; //!< Target label
 
 	const product_table_i &m_pt; //!< Product table
 public:
@@ -107,14 +107,14 @@ public:
 	 **/
 	void match_labels();
 
-	/** \brief Sets the target label to a valid label
+	/** \brief Adds a target label.
 		\throw bad_parameter If target is invalid.
 	 **/
-	void set_target(label_t target) throw(bad_parameter);
+	void add_target(label_t target) throw(bad_parameter);
 
 	/** \brief Sets the target label to any label
 	 **/
-	void unset_target();
+	void delete_target();
 
 	//@}
 
@@ -146,10 +146,24 @@ public:
 	 **/
 	label_t get_label(size_t type, size_t pos) const throw(out_of_bounds);
 
-	/** \brief Returns the target label
+	/** \brief Returns the number of target labels
 	 **/
-	label_t get_target() const {
-		return m_label;
+	size_t get_n_targets() const {
+		return m_target.size();
+	}
+
+	/** \brief Returns the i-th target label
+	 	\param i Number of target label (default i = 0)
+	 	\throw out_of_bounds If i is out of bounds
+	 **/
+	label_t get_target(size_t i = 0) const throw(out_of_bounds) {
+#ifdef LIBTENSOR_DEBUG
+		if (i >= m_target.size())
+			throw out_of_bounds(g_ns, k_clazz, "get_target(size_t)",
+					__FILE__, __LINE__, "Unknown target label.");
+#endif
+
+		return m_target[i];
 	}
 
 	const char *get_table_id() const {
@@ -214,8 +228,9 @@ const char *se_label<N, T>::k_sym_type = "se_label";
 
 template<size_t N, typename T>
 se_label<N, T>::se_label(const dimensions<N> &bidims, const char *id) :
-	m_bidims(bidims), m_type(0), m_labels(0), m_label(0),
-	m_pt(product_table_container::get_instance().req_const_table(id)) {
+	m_bidims(bidims), m_type(0), m_labels(0),
+	m_pt(product_table_container::get_instance().req_const_table(id)),
+	m_target(0) {
 
 	mask<N> done;
 	size_t curr_type = 0;
@@ -234,19 +249,18 @@ se_label<N, T>::se_label(const dimensions<N> &bidims, const char *id) :
 		}
 		curr_type++;
 	}
-	m_label = m_pt.invalid();
 }
 
 template<size_t N, typename T>
-se_label<N, T>::se_label(const se_label<N, T> &elem) :
-	m_bidims(elem.m_bidims), m_type(elem.m_type),
-	m_labels(0), m_label(elem.m_label),
-	m_pt(product_table_container::get_instance().req_const_table(elem.m_pt.get_id())) {
+se_label<N, T>::se_label(const se_label<N, T> &el) :
+	m_bidims(el.m_bidims), m_type(el.m_type), m_labels(0),
+	m_pt(product_table_container::get_instance().req_const_table(
+			el.m_pt.get_id())), m_target(el.m_target) {
 
 	for (size_t itype = 0; itype < N; itype++) {
-		if (elem.m_labels[itype] == 0) break;
+		if (el.m_labels[itype] == 0) break;
 
-		m_labels[itype] = new label_list_t(*(elem.m_labels[itype]));
+		m_labels[itype] = new label_list_t(*(el.m_labels[itype]));
 	}
 }
 
@@ -378,20 +392,27 @@ void se_label<N, T>::match_labels() {
 }
 
 template<size_t N, typename T>
-void se_label<N, T>::set_target(label_t target) throw(bad_parameter) {
+void se_label<N, T>::add_target(label_t target) throw(bad_parameter) {
 
 	if (! m_pt.is_valid(target))
 		throw bad_parameter(g_ns, k_clazz,
 				"set_label(label_t)", __FILE__, __LINE__, "Invalid label.");
 
-	m_label = target;
+	size_t i = 0;
+	for (; i < m_target.size(); i++) {
+		if (m_target[i] == target) return;
+	}
+
+	m_target.resize(i + 1);
+	m_target[i] = target;
 }
 
 template<size_t N, typename T>
-void se_label<N, T>::unset_target() {
+void se_label<N, T>::delete_target() {
 
-	m_label = m_pt.invalid();
+	m_target.resize(0);
 }
+
 
 template<size_t N, typename T>
 size_t se_label<N, T>::get_dim_type(size_t dim) const  {
@@ -454,8 +475,7 @@ bool se_label<N, T>::is_allowed(const index<N> &idx) const {
 
 	static const char *method = "is_allowed(const index<N> &)";
 
-	if (! m_pt.is_valid(m_label))
-		return true;
+	if (m_target.size() == 0) return true;
 
 	label_group lg(N, m_pt.invalid());
 	for (size_t i = 0; i < N; i++) {
@@ -468,7 +488,10 @@ bool se_label<N, T>::is_allowed(const index<N> &idx) const {
 			return true;
 	}
 
-	return m_pt.is_in_product(lg, m_label);
+	for (size_t i = 0; i < m_target.size(); i++)
+		if (m_pt.is_in_product(lg, m_target[i])) return true;
+
+	return false;
 }
 
 

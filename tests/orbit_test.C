@@ -716,7 +716,7 @@ void orbit_test::test_9() throw(libtest::test_exception) {
 	se_label<2, double> elem1(bis.get_block_index_dims(), testname);
 	elem1.assign(m, 0, ap);
 	elem1.assign(m, 1, app);
-	elem1.set_target(ap);
+	elem1.add_target(ap);
 
 	symmetry<2, double> sym(bis);
 	sym.insert(elem1);
@@ -888,7 +888,7 @@ void orbit_test::test_10() throw(libtest::test_exception) {
 	se_label<2, double> elem1(bis.get_block_index_dims(), testname);
 	elem1.assign(m, 0, ap);
 	elem1.assign(m, 1, app);
-	elem1.set_target(ap);
+	elem1.add_target(ap);
 
 	se_perm<2, double> elem2(permutation<2>().permute(0, 1), true);
 
