@@ -63,10 +63,18 @@ private:
 			m_permb(permb)
 		{ }
 		bool is_same_perm(const transf<k_ordera, double> &tra,
-			const transf<k_orderb, double> &trb) {
+			const transf<k_orderb, double> &trb,
+			const index<k_ordera> &ia, const index<k_orderb> &ib) {
 
-			return m_perma.equals(tra.get_perm()) &&
-				m_permb.equals(trb.get_perm());
+			index<k_ordera> ia1(ia), ia2(ia);
+			ia1.permute(tra.get_perm());
+			ia2.permute(m_perma);
+			index<k_orderb> ib1(ib), ib2(ib);
+			ib1.permute(trb.get_perm());
+			ib2.permute(m_permb);
+			return ia1.equals(ia2) && ib1.equals(ib2);
+			//return m_perma.equals(tra.get_perm()) &&
+			//	m_permb.equals(trb.get_perm());
 		}
 	} block_contr_t;
 	typedef std::list<block_contr_t> block_contr_list_t;

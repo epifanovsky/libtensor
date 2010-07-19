@@ -223,7 +223,7 @@ void btod_contract2<N, M, K>::make_schedule(const orbit<k_ordera, double> &oa,
 			isch != itpair.second; isch++) {
 
 			block_contr_t &bc = isch->second;
-			if(bc.is_same_perm(tra, trb)) {
+			if(bc.is_same_perm(tra, trb, idxa, idxb)) {
 				bc.m_c += tra.get_coeff() * trb.get_coeff();
 				done = true;
 				break;

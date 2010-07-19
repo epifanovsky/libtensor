@@ -119,6 +119,7 @@ inline void timings<T>::stop_timer(const std::string &name) {
 		id += name;
 	}
 	global_timings::get_instance().add_to_timer(id, i->second);
+	m_timers.erase(i);
 #endif // LIBTENSOR_TIMINGS
 }
 
