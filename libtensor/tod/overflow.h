@@ -9,7 +9,7 @@ namespace libtensor {
 
 	\ingroup libtensor_core_exc
  **/
-class overflow : public exception {
+class overflow : public exception_base<overflow> {
 public:
 	//!	\name Construction and destruction
 	//@{
@@ -19,8 +19,8 @@ public:
 	overflow(const char *ns, const char *clazz, const char *method,
 		const char *file, unsigned int line, const char *message)
 		throw()
-		: exception(ns, clazz, method, file, line, "overflow",
-			message) { };
+		: exception_base<overflow>(ns, clazz, method, file, line,
+			"overflow", message) { };
 
 	/**	\brief Virtual destructor
 	 **/

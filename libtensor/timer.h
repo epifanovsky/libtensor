@@ -46,8 +46,8 @@ public:
 
 #ifdef LIBTENSOR_DEBUG
 		if (! (m_start <= m_end))
-			throw exception("libtensor","timer","stop()",__FILE__,__LINE__,
-							"","Timer not started");
+			throw generic_exception("libtensor","timer","stop()",__FILE__,__LINE__,
+						"Timer not started");
 #endif
 	}
 

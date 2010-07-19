@@ -10,7 +10,7 @@ namespace libtensor {
 
 	\ingroup libtensor
  **/
-class not_implemented : public exception {
+class not_implemented : public exception_base<not_implemented> {
 public:
 	//!	\name Construction and destruction
 	//@{
@@ -19,8 +19,8 @@ public:
 	 **/
 	not_implemented(const char *ns, const char *clazz, const char *method,
 		const char *file, unsigned int line) throw() :
-		exception(ns, clazz, method, file, line, "not_implemented",
-			"NIY") { };
+		exception_base<not_implemented>(ns, clazz, method, file, line,
+			"not_implemented", "NIY") { };
 
 	/**	\brief Virtual destructor
 	 **/

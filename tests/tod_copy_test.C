@@ -496,7 +496,7 @@ void tod_copy_test::test_exc() throw(libtest::test_exception) {
 	bool ok = false;
 	try {
 		tod_copy<4> tc(t1); tc.perform(t2);
-	} catch(exception e) {
+	} catch(exception &e) {
 		ok = true;
 	}
 

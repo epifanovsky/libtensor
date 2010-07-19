@@ -77,7 +77,7 @@ void tensor_test::test_op_chk_imm::perform(tensor_i<2,int> &t)
 	tensor_ctrl<2,int> tctrl(t);
 	try {
 		ptr = tctrl.req_dataptr();
-	} catch(exception e) {
+	} catch(exception &e) {
 		m_ok = true;
 	}
 	if(ptr) {
@@ -147,12 +147,12 @@ void tensor_test::test_op_chk_dblreq::perform(tensor_i<2,int> &t)
 	try {
 		int *ptr2 = tctrl.req_dataptr();
 		m_ok = false;
-	} catch(exception e) {
+	} catch(exception &e) {
 	}
 	try {
 		const int *ptr2 = tctrl.req_const_dataptr();
 		m_ok = false;
-	} catch(exception e) {
+	} catch(exception &e) {
 	}
 	tctrl.ret_dataptr(ptr);
 
@@ -161,14 +161,14 @@ void tensor_test::test_op_chk_dblreq::perform(tensor_i<2,int> &t)
 	try {
 		int *ptr2 = tctrl.req_dataptr();
 		m_ok = false;
-	} catch(exception e) {
+	} catch(exception &e) {
 	}
 
 	// Multiple ro-checkouts are allowed
 	try {
 		const int *ptr2 = tctrl.req_const_dataptr();
 		tctrl.ret_dataptr(ptr2);
-	} catch(exception e) {
+	} catch(exception &e) {
 		m_ok = false;
 	}
 	tctrl.ret_dataptr(const_ptr);
@@ -200,7 +200,7 @@ void tensor_test::test_operation() throw(libtest::test_exception) {
 	test_op_chk_dblreq op_dblreq;
 	try {
 		op_dblreq.perform(t1);
-	} catch(exception e) {
+	} catch(exception &e) {
 		fail_test("tensor_test::test_operation()", __FILE__, __LINE__,
 			e.what());
 	}

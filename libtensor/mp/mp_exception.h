@@ -10,7 +10,7 @@ namespace libtensor {
 
 	\ingroup libtensor_mp
  **/
-class mp_exception : public exception {
+class mp_exception : public exception_base<mp_exception> {
 public:
 	//!	\name Construction and destruction
 	//@{
@@ -20,7 +20,7 @@ public:
 	mp_exception(const char *ns, const char *clazz,
 		const char *method, const char *file, unsigned int line,
 		const char *message) throw() :
-		exception(ns, clazz, method, file, line,
+		exception_base<mp_exception>(ns, clazz, method, file, line,
 			"mp_exception", message) { };
 
 	/**	\brief Virtual destructor
