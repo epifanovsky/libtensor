@@ -19,12 +19,12 @@ namespace libtensor {
 template<typename T>
 struct btensor_traits {
 	typedef T element_t;
-//#ifdef LIBTENSOR_DEBUG
-//	typedef libvmm::ec_allocator< T, libvmm::vm_allocator<T>,
-//		libvmm::std_allocator<T> > allocator_t;
-//#else // LIBTENSOR_DEBUG
+#ifdef LIBTENSOR_DEBUG
+	typedef libvmm::ec_allocator< T, libvmm::vm_allocator<T>,
+		libvmm::std_allocator<T> > allocator_t;
+#else // LIBTENSOR_DEBUG
 	typedef libvmm::vm_allocator<T> allocator_t;
-//#endif // LIBTENSOR_DEBUG
+#endif // LIBTENSOR_DEBUG
 };
 
 template<size_t N, typename T, typename Traits>
