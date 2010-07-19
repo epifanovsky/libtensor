@@ -1,5 +1,5 @@
-#ifndef LIBTENSOR_SO_PROJ_UP_H
-#define LIBTENSOR_SO_PROJ_UP_H
+#ifndef LIBTENSOR_SO_CONCAT_H
+#define LIBTENSOR_SO_CONCAT_H
 
 #include "../core/mask.h"
 #include "../core/symmetry.h"
@@ -163,4 +163,4 @@ public:
 
 #include "so_concat_handlers.h"
 
-#endif // LIBTENSOR_SO_PROJ_UP_H
+#endif // LIBTENSOR_SO_CONCAT_H

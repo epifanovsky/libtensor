@@ -1,5 +1,5 @@
-#ifndef LIBTENSOR_SO_PROJ_UP_HANDLERS_H
-#define LIBTENSOR_SO_PROJ_UP_HANDLERS_H
+#ifndef LIBTENSOR_SO_CONCAT_HANDLERS_H
+#define LIBTENSOR_SO_CONCAT_HANDLERS_H
 
 #include "symmetry_operation_dispatcher.h"
 #include "symmetry_operation_handlers.h"
@@ -34,4 +34,4 @@ public:
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_SO_PROJ_UP_HANDLERS_H
+#endif // LIBTENSOR_SO_CONCAT_HANDLERS_H

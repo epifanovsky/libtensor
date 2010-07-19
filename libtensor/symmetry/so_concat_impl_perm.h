@@ -1,5 +1,5 @@
-#ifndef LIBTENSOR_SO_PROJ_UP_IMPL_PERM_H
-#define LIBTENSOR_SO_PROJ_UP_IMPL_PERM_H
+#ifndef LIBTENSOR_SO_CONCAT_IMPL_PERM_H
+#define LIBTENSOR_SO_CONCAT_IMPL_PERM_H
 
 #include "../defs.h"
 #include "../exception.h"
@@ -118,4 +118,4 @@ void symmetry_operation_impl< so_concat<N, M, T>,
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_SO_PROJ_UP_IMPL_PERM_H
+#endif // LIBTENSOR_SO_CONCAT_IMPL_PERM_H
