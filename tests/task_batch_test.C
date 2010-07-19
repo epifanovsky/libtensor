@@ -11,6 +11,7 @@ void task_batch_test::perform() throw(libtest::test_exception) {
 	test_1();
 	test_2();
 	test_3();
+	test_exc_1();
 }
 
 
@@ -64,6 +65,15 @@ public:
 	}
 	bool get_ok() {
 		return m_ok;
+	}
+};
+
+class task_3 : public task_i {
+public:
+	virtual ~task_3() { }
+	virtual void perform() throw(exception) {
+		throw bad_parameter("task_batch_test_ns", "task_3", "perform()",
+			__FILE__, __LINE__, "a");
 	}
 };
 
@@ -160,6 +170,47 @@ void task_batch_test::test_3() throw(libtest::test_exception) {
 	}
 	if(!t4.get_ok()) {
 		fail_test(testname, __FILE__, __LINE__, "Task 3 failed.");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+
+}
+
+
+void task_batch_test::test_exc_1() throw(libtest::test_exception) {
+
+	static const char *testname = "task_batch_test::test_exc_1()";
+
+	try {
+
+	task_batch_test_ns::task_1 t1(10, 20), t2(100, 200), t3(1000, 2000);
+	task_batch_test_ns::task_3 t1err;
+	task_batch b;
+	b.push(t1);
+	b.push(t2);
+	b.push(t3);
+	b.push(t1err);
+
+	try {
+		b.wait();
+	} catch(bad_parameter &e) {
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, "Bad exception type.");
+	} catch(...) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Unknown exception type.");
+	}
+
+	if(t3.get_val() != 2000) {
+		fail_test(testname, __FILE__, __LINE__, "Task 3 failed.");
+	}
+	if(t2.get_val() != 200) {
+		fail_test(testname, __FILE__, __LINE__, "Task 2 failed.");
+	}
+	if(t1.get_val() != 20) {
+		fail_test(testname, __FILE__, __LINE__, "Task 1 failed.");
 	}
 
 	} catch(exception &e) {

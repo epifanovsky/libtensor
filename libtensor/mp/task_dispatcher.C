@@ -80,6 +80,20 @@ void task_dispatcher::wait_on_queue(queue_id_t &qid) {
 		if(done) break;
 		invoke_next();
 	}
+
+	{
+		libvmm::auto_lock lock(m_lock);
+
+		queue &q = **qid;
+		if(q.exc != 0) {
+			try {
+				q.exc->rethrow();
+			} catch(exception &e) {
+				delete q.exc; q.exc = 0;
+				throw;
+			}
+		}
+	}
 }
 
 
@@ -125,11 +139,21 @@ void task_dispatcher::invoke_next() {
 		m_ntasks--;
 	}
 
-	task->perform();
+	exception *exc = 0;
+	try {
+		task->perform();
+	} catch(exception &e) {
+		exc = e.clone();
+	} catch(...) {
+	}
 
 	{
 		libvmm::auto_lock lock(m_lock);
 		q->nrunning--;
+		if(exc) {
+			if(q->exc == 0) q->exc = exc;
+			else delete exc;
+		}
 	}
 }
 

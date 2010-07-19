@@ -26,7 +26,9 @@ private:
 		size_t nrunning; //!< Number of running tasks
 		bool finalized; //!< Finalized queue
 		bool destroyed; //!< Destroyed queue
-		queue() : nrunning(0), finalized(false), destroyed(false) { }
+		exception *exc; //!< Exception
+		queue() : nrunning(0), finalized(false), destroyed(false),
+			exc(0) { }
 	};
 
 public:
