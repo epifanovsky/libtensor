@@ -1,15 +1,18 @@
-#ifndef TIMINGS_H_
-#define TIMINGS_H_
+#ifndef LIBTENSOR_TIMINGS_H
+#define LIBTENSOR_TIMINGS_H
 
+#include <map>
+#include <libvmm/auto_lock.h>
 #include "timer.h"
 #include "global_timings.h"
 
 namespace libtensor {
 
-/** \brief Timings base class
+
+/**	\brief Timings base class
  
- 	The timings class provides timing facilities for each class which inherit 
- 	from it.
+ 	The timings class provides timing facilities for each class which
+	inherit from it.
  	
  	To obtain the timing facilities a class T has to
  	 - inherit from timings with the T as the template parameter; 
@@ -17,99 +20,109 @@ namespace libtensor {
  	 - have the variable const char* k_clazz defined;
  	 - add start_timer and stop_timer calls around the parts of the code that 
  	   should be timed;
- 	 
- */
+
+	\ingroup libtensor
+ **/
 template<typename T>
 class timings {
 private:
-#ifdef LIBTENSOR_TIMINGS
-	typedef std::map<const std::string, timer> map_t; 
-	typedef std::pair<const std::string, timer> pair_t;
+	typedef std::multimap<std::string, timer> map_t; 
+	typedef std::pair<std::string, timer> pair_t;
 
-	timer m_timer; //!< main timer object 
-	map_t m_more_timers; //!< additional timers 
-#endif			
+private:
+#ifdef LIBTENSOR_TIMINGS
+	map_t m_timers; //!< Timers
+	static libvmm::mutex m_lock; //!< Thread safety lock
+#endif // LIBTENSOR_TIMINGS
 
 public:
+	/**	\brief Virtual destructor
+	 **/
 	virtual ~timings() { }
 
 protected:	
-	/** \brief Start default timer 
-	 */
+	/**	\brief Starts the default timer 
+	 **/
 	void start_timer();
-	/** \brief Start timer 
-	 	\param name special name of the timer 
-	 	
-	 	Starts the timer indicated by name. 
-	 */
-	void start_timer(const std::string& name);
-	
-	/** \brief Stop timer and submit duration to the global timings object
-	  	
-	  	Stops the default timer. The duration is submitted to the global 
-	  	timings object.	  	
-	 */
+
+	/**	\brief Stops the default timer and submits its duration to
+			the global timings object
+	 **/
 	void stop_timer();
+
+	/**	\brief Starts a custom timer 
+	 	\param name Timer name.
+	 **/
+	void start_timer(const std::string &name);
 	
-	/** \brief Stop timer and submit duration to the global timings object
-	   	\param name special name of the timer
-	  	
-	  	Stops the timer indicated by name. The duration is submitted to 
-	  	the global timings object.	  	
-	 */
-	void stop_timer(const std::string& name);
+	/**	\brief Stops a custom timer and submits its duration to
+			the global timings object
+	   	\param name Timer name
+	 **/
+	void stop_timer(const std::string &name);
+
 };
 
-template<typename T>
-inline void timings<T>::start_timer() 
-{
+
 #ifdef LIBTENSOR_TIMINGS
-	m_timer.start();
-#endif		
+template<typename T>
+libvmm::mutex timings<T>::m_lock;
+#endif // LIBTENSOR_TIMINGS
+
+
+template<typename T>
+inline void timings<T>::start_timer() {
+
+#ifdef LIBTENSOR_TIMINGS
+	start_timer("");
+#endif // LIBTENSOR_TIMINGS		
 }	
 
+
 template<typename T>
-inline void timings<T>::start_timer( const std::string& name ) 
-{
+inline void timings<T>::start_timer(const std::string &name) {
+
 #ifdef LIBTENSOR_TIMINGS
-	map_t::iterator it=m_more_timers.find(name);
-	if ( it != m_more_timers.end() ) 
-		it->second.start();
-	else {
-		std::pair<map_t::iterator,bool> pos=m_more_timers.insert(pair_t(name,timer()));
-		pos.first->second.start();
-	}
-#endif		
+	libvmm::auto_lock lock(m_lock);
+
+	typename map_t::iterator i = m_timers.insert(pair_t(name, timer()));
+	i->second.start();
+#endif // LIBTENSOR_TIMINGS
 }	
-		
-template<typename T>
-inline void timings<T>::stop_timer() 
-{
-	// add thread number if doing parallel calculation
-#ifdef LIBTENSOR_TIMINGS
-	m_timer.stop();
-	global_timings::get_instance().add_to_timer(T::k_clazz, m_timer);
-#endif		
-}
+
 
 template<typename T>
-inline void timings<T>::stop_timer( const std::string& name ) 
-{
-	// add thread number if doing parallel calculation
+inline void timings<T>::stop_timer() {
+
 #ifdef LIBTENSOR_TIMINGS
-	map_t::iterator it=m_more_timers.find(name);
-	if ( it != m_more_timers.end() ) { 
-		it->second.stop();
-		std::string id(T::k_clazz);
-		id+="::";
-		id+=name;
-		global_timings::get_instance().add_to_timer(id,it->second);
+	stop_timer("");
+#endif // LIBTENSOR_TIMINGS
+}
+
+
+template<typename T>
+inline void timings<T>::stop_timer(const std::string &name) {
+
+#ifdef LIBTENSOR_TIMINGS
+	libvmm::auto_lock lock(m_lock);
+
+	typename map_t::iterator i = m_timers.find(name);
+	if(i == m_timers.end()) {
+		throw_exc("timings<T>", "stop_timer(const std::string&)",
+			"No timer with this id.");		
 	}
-	else
-		throw_exc("timings<T>","stop_timer(const char*)","No timer with this id.");		
-#endif		
-}
-	
+
+	i->second.stop();
+	std::string id(T::k_clazz);
+	if(!name.empty()) {
+		id += "::";
+		id += name;
+	}
+	global_timings::get_instance().add_to_timer(id, i->second);
+#endif // LIBTENSOR_TIMINGS
 }
 
-#endif /*TIMINGS_H_*/
+
+} // namespace libtensor
+
+#endif // LIBTENSOR_TIMINGS_H
