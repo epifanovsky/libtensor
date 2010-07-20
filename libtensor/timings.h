@@ -3,6 +3,7 @@
 
 #include <map>
 #include <libvmm/auto_lock.h>
+#include <libvmm/tls.h>
 #include "timer.h"
 #include "global_timings.h"
 
@@ -26,12 +27,12 @@ namespace libtensor {
 template<typename T>
 class timings {
 private:
-	typedef std::multimap<std::string, timer> map_t; 
+	//~ typedef std::multimap<std::string, timer> map_t; 
+	typedef std::map<std::string, timer> map_t; 
 	typedef std::pair<std::string, timer> pair_t;
 
 private:
 #ifdef LIBTENSOR_TIMINGS
-	map_t m_timers; //!< Timers
 	static libvmm::mutex m_lock; //!< Thread safety lock
 #endif // LIBTENSOR_TIMINGS
 
@@ -61,6 +62,9 @@ protected:
 	 **/
 	void stop_timer(const std::string &name);
 
+private:
+	void make_id(std::string &id, const std::string &name);
+
 };
 
 
@@ -85,8 +89,15 @@ inline void timings<T>::start_timer(const std::string &name) {
 #ifdef LIBTENSOR_TIMINGS
 	libvmm::auto_lock lock(m_lock);
 
-	typename map_t::iterator i = m_timers.insert(pair_t(name, timer()));
-	i->second.start();
+	std::string id;
+	make_id(id, name);
+
+	map_t &timers = libvmm::tls<map_t>::get_instance().get();
+	//~ typename map_t::iterator i = timers.insert(pair_t(id, timer()));
+	//~ i->second.start();
+	std::pair<typename map_t::iterator, bool> i =
+		timers.insert(pair_t(id, timer()));
+	i.first->second.start();
 #endif // LIBTENSOR_TIMINGS
 }	
 
@@ -106,21 +117,31 @@ inline void timings<T>::stop_timer(const std::string &name) {
 #ifdef LIBTENSOR_TIMINGS
 	libvmm::auto_lock lock(m_lock);
 
-	typename map_t::iterator i = m_timers.find(name);
-	if(i == m_timers.end()) {
+	std::string id;
+	make_id(id, name);
+
+	map_t &timers = libvmm::tls<map_t>::get_instance().get();
+	typename map_t::iterator i = timers.find(id);
+	if(i == timers.end()) {
 		throw_exc("timings<T>", "stop_timer(const std::string&)",
 			"No timer with this id.");		
 	}
 
 	i->second.stop();
-	std::string id(T::k_clazz);
+	global_timings::get_instance().add_to_timer(id, i->second);
+	timers.erase(i);
+#endif // LIBTENSOR_TIMINGS
+}
+
+
+template<typename T>
+void timings<T>::make_id(std::string &id, const std::string &name) {
+
+	id = T::k_clazz;
 	if(!name.empty()) {
 		id += "::";
 		id += name;
 	}
-	global_timings::get_instance().add_to_timer(id, i->second);
-	m_timers.erase(i);
-#endif // LIBTENSOR_TIMINGS
 }
 
 
