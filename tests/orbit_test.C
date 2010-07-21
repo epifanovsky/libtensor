@@ -690,6 +690,21 @@ void orbit_test::test_9() throw(libtest::test_exception) {
 	static const char *testname = "orbit_test::test_9()";
 
 	typedef point_group_table::label_t label_t;
+	label_t ap = 0, app = 1;
+
+	try {
+
+	point_group_table cs(testname, 2);
+	cs.set_product(ap, ap, 0, ap);
+	cs.set_product(ap, app, 0, app);
+	cs.set_product(app, ap, 0, app);
+	cs.set_product(app, app, 0, ap);
+	cs.check();
+	product_table_container::get_instance().add(cs);
+
+	} catch (exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
 
 	try {
 
@@ -702,15 +717,6 @@ void orbit_test::test_9() throw(libtest::test_exception) {
 	bis.split(msk, 1);
 	bis.split(msk, 2);
 	dimensions<2> bidims = bis.get_block_index_dims();
-
-	point_group_table cs(testname, 2);
-	label_t ap = 0, app = 1;
-	cs.set_product(ap, ap, 0, ap);
-	cs.set_product(ap, app, 0, app);
-	cs.set_product(app, ap, 0, app);
-	cs.set_product(app, app, 0, ap);
-	cs.check();
-	product_table_container::get_instance().add(cs);
 
 	mask<2> m; m[0] = true; m[1] = true;
 	se_label<2, double> elem1(bis.get_block_index_dims(), testname);
@@ -843,8 +849,6 @@ void orbit_test::test_9() throw(libtest::test_exception) {
 			"Incorrect block transformation (coeff).");
 	}
 
-	product_table_container::get_instance().erase(testname);
-
 	} catch(exception &e) {
 		product_table_container::get_instance().erase(testname);
 		fail_test(testname, __FILE__, __LINE__, e.what());
@@ -852,6 +856,9 @@ void orbit_test::test_9() throw(libtest::test_exception) {
 		product_table_container::get_instance().erase(testname);
 		throw;
 	}
+
+	product_table_container::get_instance().erase(testname);
+
 
 
 }
@@ -862,6 +869,21 @@ void orbit_test::test_10() throw(libtest::test_exception) {
 	static const char *testname = "orbit_test::test_10()";
 
 	typedef point_group_table::label_t label_t;
+	label_t ap = 0, app = 1;
+
+	try {
+
+	point_group_table cs(testname, 2);
+	cs.set_product(ap, ap, 0, ap);
+	cs.set_product(ap, app, 0, app);
+	cs.set_product(app, ap, 0, app);
+	cs.set_product(app, app, 0, ap);
+	cs.check();
+	product_table_container::get_instance().add(cs);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
 
 	try {
 
@@ -875,14 +897,6 @@ void orbit_test::test_10() throw(libtest::test_exception) {
 	bis.split(msk, 2);
 	dimensions<2> bidims = bis.get_block_index_dims();
 
-	point_group_table cs(testname, 2);
-	label_t ap = 0, app = 1;
-	cs.set_product(ap, ap, 0, ap);
-	cs.set_product(ap, app, 0, app);
-	cs.set_product(app, ap, 0, app);
-	cs.set_product(app, app, 0, ap);
-	cs.check();
-	product_table_container::get_instance().add(cs);
 
 	mask<2> m; m[0] = true; m[1] = true;
 	se_label<2, double> elem1(bis.get_block_index_dims(), testname);
@@ -1020,8 +1034,14 @@ void orbit_test::test_10() throw(libtest::test_exception) {
 	}
 
 	} catch(exception &e) {
+		product_table_container::get_instance().erase(testname);
 		fail_test(testname, __FILE__, __LINE__, e.what());
+	} catch(libtest::test_exception) {
+		product_table_container::get_instance().erase(testname);
+		throw;
 	}
+
+	product_table_container::get_instance().erase(testname);
 }
 
 

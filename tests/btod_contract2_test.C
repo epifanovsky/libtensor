@@ -24,6 +24,7 @@ void btod_contract2_test::perform() throw(libtest::test_exception) {
 	test_sym_1();
 	test_sym_2();
 	test_sym_3();
+	test_sym_4();
 
 	//	Tests for zero block structure
 
@@ -589,6 +590,77 @@ void btod_contract2_test::test_sym_3() throw(libtest::test_exception) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
 	}
 }
+
+void btod_contract2_test::test_sym_4() throw(libtest::test_exception) {
+
+	//
+	//	c_ijkl = a_klab b_klab
+	//	Permutational symmetry in (i-j) (a-b) (k-l)
+	//
+
+	static const char *testname = "btod_contract2_test::test_sym_4()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<4> i4_1, i4_2;
+	i4_2[0] = 8; i4_2[1] = 8; i4_2[2] = 10; i4_2[3] = 10;
+	dimensions<4> dims4(index_range<4>(i4_1, i4_2));
+
+	block_index_space<4> bis(dims4);
+
+	mask<4> msk4_1, msk4_2;
+	msk4_1[0] = true; msk4_1[1] = true; msk4_2[2] = true; msk4_2[3] = true;
+
+	bis.split(msk4_1, 4);
+	bis.split(msk4_2, 3);
+	bis.split(msk4_2, 5);
+
+	block_tensor<4, double, allocator_t> bta(bis), btb(bis);
+
+	permutation<4> p0132, p1023, p2301;
+	p0132.permute(2, 3);
+	p1023.permute(0, 1);
+	p2301.permute(0, 2).permute(1, 3);
+
+	se_perm<4, double> cycle4a(p1023, false), cycle4b(p0132, false);
+
+	block_tensor_ctrl<4, double> ctrla(bta), ctrlb(btb);
+	ctrla.req_symmetry().insert(cycle4a);
+	ctrla.req_symmetry().insert(cycle4b);
+	ctrlb.req_symmetry().insert(cycle4a);
+	ctrlb.req_symmetry().insert(cycle4b);
+
+	contraction2<2, 2, 2> contr(p2301);
+	contr.contract(2, 2);
+	contr.contract(3, 3);
+	btod_contract2<2, 2, 2> op(contr, bta, btb);
+
+	const symmetry<4, double> &sym = op.get_symmetry();
+	symmetry<4, double>::iterator is = sym.begin();
+	const symmetry_element_set<4, double> &set = sym.get_subset(is);
+	symmetry_element_set_adapter<4, double, se_perm<4, double> > adapter(set);
+	permutation_group<4, double> grp(set);
+	if (! grp.is_member(false, p1023)) {
+		fail_test(testname, __FILE__, __LINE__,
+				"Permutational anti-symmetry (0-1) missing.");
+	}
+	if (! grp.is_member(false, p0132)) {
+		fail_test(testname, __FILE__, __LINE__,
+				"Permutational anti-symmetry (2-3) missing.");
+	}
+
+	//~ if(!op.get_symmetry().equals(sym_ref)) {
+		//~ fail_test(testname, __FILE__, __LINE__,
+			//~ "Symmetry does not match reference.");
+	//~ }
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
 
 /**	\test Runs \f$ c_{ij} = \sum_p a_{ip} b_{jp} \f$.
 	Dimensions: [ijp] = 10. No splitting points. No symmetry.
