@@ -51,7 +51,8 @@ void task_dispatcher::push_task(queue_id_t &qid, task_i &task) {
 	}
 
 	q.q.push(task);
-	if(m_ntasks++ == 0) m_alarm.signal();
+	m_ntasks++;
+	m_alarm.signal();
 }
 
 
