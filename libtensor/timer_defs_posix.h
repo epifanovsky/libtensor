@@ -50,7 +50,7 @@ private:
 public:
 	//! saves point in time
 	void now() {
-		static struct tms pt;
+		struct tms pt;
 		m_rt = times(&pt);
 		m_ut = pt.tms_utime;
 		m_st = pt.tms_stime;

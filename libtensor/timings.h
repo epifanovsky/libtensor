@@ -28,8 +28,8 @@ template<typename T>
 class timings {
 private:
 	//~ typedef std::multimap<std::string, timer> map_t; 
-	typedef std::map<std::string, timer> map_t; 
-	typedef std::pair<std::string, timer> pair_t;
+	typedef std::map<std::string, timer*> map_t; 
+	typedef std::pair<std::string, timer*> pair_t;
 
 private:
 #ifdef LIBTENSOR_TIMINGS
@@ -95,9 +95,15 @@ inline void timings<T>::start_timer(const std::string &name) {
 	map_t &timers = libvmm::tls<map_t>::get_instance().get();
 	//~ typename map_t::iterator i = timers.insert(pair_t(id, timer()));
 	//~ i->second.start();
+	timer *t = new timer;
 	std::pair<typename map_t::iterator, bool> i =
-		timers.insert(pair_t(id, timer()));
-	i.first->second.start();
+		timers.insert(pair_t(id, t));
+	if(i.second == false) {
+		delete t;
+		throw_exc("timings<T>", "start_timer(const std::string&)",
+			"Duplicate timer.");		
+	}
+	t->start();
 #endif // LIBTENSOR_TIMINGS
 }	
 
@@ -127,9 +133,11 @@ inline void timings<T>::stop_timer(const std::string &name) {
 			"No timer with this id.");		
 	}
 
-	i->second.stop();
-	global_timings::get_instance().add_to_timer(id, i->second);
+	timer *t = i->second;
+	t->stop();
 	timers.erase(i);
+	global_timings::get_instance().add_to_timer(id, *t);
+	delete t;
 #endif // LIBTENSOR_TIMINGS
 }
 
