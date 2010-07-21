@@ -59,6 +59,8 @@ void btod_contract2_test::perform() throw(libtest::test_exception) {
 	test_contr_16(-2.2);
 	test_contr_17(0.0);
 	test_contr_17(1.5);
+	test_contr_18(0.0);
+	test_contr_18(-1.5);
 
 	//	Tests for the contraction of a block tensor with itself
 
@@ -2237,6 +2239,96 @@ void btod_contract2_test::test_contr_17(double c)
 	contraction2<1, 1, 3> contr(permutation<2>().permute(0, 1));
 	contr.contract(1, 1);
 	contr.contract(2, 2);
+	contr.contract(3, 3);
+
+	if(c == 0.0) btod_contract2<1, 1, 3>(contr, bta, btb).perform(btc);
+	else btod_contract2<1, 1, 3>(contr, bta, btb).perform(btc, c);
+	tod_btconv<2>(btc).perform(tc);
+	if(c == 0.0) tod_contract2<1, 1, 3>(contr, ta, tb).perform(tc_ref);
+	else tod_contract2<1, 1, 3>(contr, ta, tb).perform(tc_ref, c);
+
+	//	Compare against reference
+
+	compare_ref<2>::compare(tn.c_str(), tc, tc_ref, 5e-15);
+
+	} catch(exception &e) {
+		fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void btod_contract2_test::test_contr_18(double c)
+	throw(libtest::test_exception) {
+
+	//
+	//	c_ij = a_jkab b_iakb
+	//	Dimensions [ijk] = 13 (two blocks), [ab] = 7 (three blocks),
+	//	no symmetry,
+	//	all blocks non-zero
+	//
+
+	std::ostringstream ss;
+	ss << "btod_contract2_test::test_contr_18(" << c << ")";
+	std::string tn = ss.str();
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 12; i2[1] = 12; i2[2] = 6; i2[3] = 6;
+	dimensions<4> dims_iiaa(index_range<4>(i1, i2));
+	i2[0] = 12; i2[1] = 6; i2[2] = 12; i2[3] = 6;
+	dimensions<4> dims_iaia(index_range<4>(i1, i2));
+	index<2> i3, i4;
+	i4[0] = 12; i4[1] = 12;
+	dimensions<2> dims_ii(index_range<2>(i3, i4));
+	block_index_space<4> bis_iiaa(dims_iiaa), bis_iaia(dims_iaia);
+	block_index_space<2> bis_ii(dims_ii);
+	mask<4> m1, m2, m3, m4;
+	mask<2> m5;
+	m1[0] = true; m1[1] = true; m2[2] = true; m2[3] = true;
+	m3[0] = true; m4[1] = true; m3[2] = true; m4[3] = true;
+	m5[0] = true; m5[1] = true;
+	bis_iiaa.split(m1, 3);
+	bis_iiaa.split(m1, 7);
+	bis_iiaa.split(m2, 2);
+	bis_iiaa.split(m2, 3);
+	bis_iiaa.split(m2, 5);
+	bis_iaia.split(m3, 3);
+	bis_iaia.split(m3, 7);
+	bis_iaia.split(m4, 2);
+	bis_iaia.split(m4, 3);
+	bis_iaia.split(m4, 5);
+	bis_ii.split(m5, 3);
+	bis_ii.split(m5, 7);
+
+	block_tensor<4, double, allocator_t> bta(bis_iiaa);
+	block_tensor<4, double, allocator_t> btb(bis_iaia);
+	block_tensor<2, double, allocator_t> btc(bis_ii);
+
+	//	Load random data for input
+
+	btod_random<4>().perform(bta);
+	btod_random<4>().perform(btb);
+	if(c != 0.0) btod_random<2>().perform(btc);
+	bta.set_immutable();
+	btb.set_immutable();
+
+	//	Convert block tensors to regular tensors
+
+	tensor<4, double, allocator_t> ta(dims_iiaa);
+	tensor<4, double, allocator_t> tb(dims_iaia);
+	tensor<2, double, allocator_t> tc(dims_ii), tc_ref(dims_ii);
+	tod_btconv<4>(bta).perform(ta);
+	tod_btconv<4>(btb).perform(tb);
+	tod_btconv<2>(btc).perform(tc_ref);
+
+	//	Run contraction and compute the reference
+
+	contraction2<1, 1, 3> contr(permutation<2>().permute(0, 1));
+	contr.contract(1, 2);
+	contr.contract(2, 1);
 	contr.contract(3, 3);
 
 	if(c == 0.0) btod_contract2<1, 1, 3>(contr, bta, btb).perform(btc);

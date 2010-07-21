@@ -135,27 +135,27 @@ void btod_contract2<N, M, K>::make_schedule() {
 	block_tensor_ctrl<k_ordera, double> ca(m_bta);
 	block_tensor_ctrl<k_orderb, double> cb(m_btb);
 
+	dimensions<k_ordera> bidimsa(m_bta.get_bis().get_block_index_dims());
+	dimensions<k_orderb> bidimsb(m_btb.get_bis().get_block_index_dims());
+
 	orbit_list<k_ordera, double> ola(ca.req_const_symmetry());
-	orbit_list<k_orderb, double> olb(cb.req_const_symmetry());
 	orbit_list<k_orderc, double> olc(get_symmetry());
 
 	for(typename orbit_list<k_ordera, double>::iterator ioa = ola.begin();
 		ioa != ola.end(); ioa++) {
 
-		if(ca.req_is_zero_block(ola.get_index(ioa))) continue;
-
 		orbit<k_ordera, double> oa(ca.req_const_symmetry(),
 			ola.get_index(ioa));
+		if(!oa.is_allowed()) continue;
+		if(ca.req_is_zero_block(ola.get_index(ioa))) continue;
 
-		for(typename orbit_list<k_orderb, double>::iterator iob =
-			olb.begin(); iob != olb.end(); iob++) {
+		abs_index<k_ordera> acia(ola.get_index(ioa), bidimsa);
+		for(typename orbit<k_ordera, double>::iterator ia = oa.begin();
+			ia != oa.end(); ia++) {
 
-			if(cb.req_is_zero_block(olb.get_index(iob))) continue;
-
-			orbit<k_orderb, double> ob(cb.req_const_symmetry(),
-				olb.get_index(iob));
-
-				make_schedule(oa, ob, olc);
+			abs_index<k_ordera> aia(oa.get_abs_index(ia), bidimsa);
+			make_schedule_a(cb, bidimsb, olc, m_bidimsc, aia, acia,
+				oa.get_transf(ia));
 		}
 	}
 
@@ -164,104 +164,123 @@ void btod_contract2<N, M, K>::make_schedule() {
 
 
 template<size_t N, size_t M, size_t K>
-void btod_contract2<N, M, K>::make_schedule(const orbit<k_ordera, double> &oa,
-	const orbit<k_orderb, double> &ob,
-	const orbit_list<k_orderc, double> &olc) {
+void btod_contract2<N, M, K>::make_schedule_a(
+	block_tensor_ctrl<k_orderb, double> &cb,
+	const dimensions<k_orderb> &bidimsb,
+	const orbit_list<k_orderc, double> &olc,
+	const dimensions<k_orderc> &bidimsc, const abs_index<k_ordera> &aia,
+	const abs_index<k_ordera> &acia, const transf<k_ordera, double> &tra) {
 
-	sequence<K, size_t> ka(0), kb(0);
 	const sequence<k_maxconn, size_t> &conn = m_contr.get_conn();
-	for(size_t i = 0, j = 0; i < k_ordera; i++) {
-		if(conn[k_orderc + i] >= k_orderc + k_ordera) {
-			ka[j] = i;
-			kb[j] = conn[k_orderc + i] - k_orderc - k_ordera;
+	const index<k_ordera> &ia = aia.get_index();
+
+	sequence<M, size_t> useqb(0), useqc(0); // Maps uncontracted indexes
+	index<M> iu1, iu2;
+	for(size_t i = 0, j = 0; i < k_orderc; i++) {
+		if(conn[i] >= k_orderc + k_ordera) {
+			useqb[j] = conn[i] - k_orderc - k_ordera;
+			useqc[j] = i;
 			j++;
 		}
 	}
+	for(size_t i = 0; i < M; i++) iu2[i] = bidimsb[useqb[i]] - 1;
+	// Uncontracted indexes from B
+	dimensions<M> bidimsu(index_range<M>(iu1, iu2));
+	abs_index<M> aiu(bidimsu);
+	do {
+		const index<M> &iu = aiu.get_index();
 
-	typedef std::multimap<size_t, block_contr_t> local_schedule_t;
-	local_schedule_t local_sch;
-
-	for(typename orbit<k_ordera, double>::iterator ia = oa.begin();
-		ia != oa.end(); ia++) {
-
-	abs_index<k_ordera> aidxa(oa.get_abs_index(ia), m_bidimsa);
-	const index<k_ordera> &idxa = aidxa.get_index();
-	const transf<k_ordera, double> &tra = oa.get_transf(
-		aidxa.get_abs_index());
-
-	for(typename orbit<k_orderb, double>::iterator ib = ob.begin();
-		ib != ob.end(); ib++) {
-
-		abs_index<k_orderb> aidxb(ob.get_abs_index(ib), m_bidimsb);
-		const index<k_orderb> &idxb = aidxb.get_index();
-		const transf<k_orderb, double> &trb = ob.get_transf(
-			aidxb.get_abs_index());
-
-		bool need_contr = true;
-		for(size_t i = 0; i < K; i++) {
-			if(idxa[ka[i]] != idxb[kb[i]]) {
-				need_contr = false;
-				break;
+		// Construct the index in C
+		index<k_orderc> ic;
+		for(size_t i = 0, j = 0; i < k_orderc; i++) {
+			if(conn[i] < k_orderc + k_ordera) {
+				ic[i] = ia[conn[i] - k_orderc];
+			} else {
+				ic[i] = iu[j++];
 			}
 		}
-		if(!need_contr) continue;
 
-		index<k_orderc> idxc;
-		for(size_t i = 0; i < k_orderc; i++) {
-			register size_t j = conn[i] - k_orderc;
-			idxc[i] = j < k_ordera ? idxa[j] : idxb[j - k_ordera];
+		// Skip non-canonical indexes in C
+		abs_index<k_orderc> aic(ic, bidimsc);
+		if(!olc.contains(aic.get_abs_index())) continue;
+
+		// Construct the index in B
+		index<k_orderb> ib;
+		for(size_t i = 0; i < k_orderb; i++) {
+			register size_t k = conn[k_orderc + k_ordera + i];
+			if(k < k_orderc) ib[i] = ic[k];
+			else ib[i] = ia[k - k_orderc];
 		}
-		abs_index<k_orderc> aidxc(idxc, m_bidimsc);
+		make_schedule_b(cb, bidimsb, acia, tra, ib, aic);
+	} while(aiu.inc());
+}
 
-		if(!olc.contains(aidxc.get_abs_index())) continue;
 
-		std::pair<typename local_schedule_t::iterator,
-			typename local_schedule_t::iterator> itpair =
-				local_sch.equal_range(aidxc.get_abs_index());
-		bool done = false;
-		for(typename local_schedule_t::iterator isch = itpair.first;
-			isch != itpair.second; isch++) {
+template<size_t N, size_t M, size_t K>
+void btod_contract2<N, M, K>::make_schedule_b(
+	block_tensor_ctrl<k_orderb, double> &cb,
+	const dimensions<k_orderb> &bidimsb, const abs_index<k_ordera> &acia,
+	const transf<k_ordera, double> &tra, const index<k_orderb> &ib,
+	const abs_index<k_orderc> &acic) {
 
-			block_contr_t &bc = isch->second;
-			if(bc.is_same_perm(tra, trb)) {
-				bc.m_c += tra.get_coeff() * trb.get_coeff();
-				done = true;
-				break;
+	orbit<k_orderb, double> ob(cb.req_const_symmetry(), ib);
+	if(!ob.is_allowed()) return;
+
+	abs_index<k_orderb> acib(ob.get_abs_canonical_index(), bidimsb);
+	if(cb.req_is_zero_block(acib.get_index())) return;
+
+	const transf<k_orderb, double> &trb = ob.get_transf(ib);
+	block_contr_t bc(acia.get_abs_index(), acib.get_abs_index(),
+		tra.get_coeff() * trb.get_coeff(), tra.get_perm(),
+		trb.get_perm());
+	schedule_block_contraction(acic, bc);
+}
+
+
+template<size_t N, size_t M, size_t K>
+void btod_contract2<N, M, K>::schedule_block_contraction(
+	const abs_index<k_orderc> &acic, const block_contr_t &bc) {
+
+	// Check whether this is the first contraction for this block in C
+	typename schedule_t::iterator isch =
+		m_contr_sch.find(acic.get_abs_index());
+	if(isch == m_contr_sch.end()) {
+		m_sch.insert(acic.get_abs_index());
+		block_contr_list_t *lst = new block_contr_list_t;
+		lst->push_back(bc);
+		m_contr_sch.insert(std::pair<size_t, block_contr_list_t*>(
+			acic.get_abs_index(), lst));
+		return;
+	}
+
+	block_contr_list_t &lst = *isch->second;
+
+	// Find similar contractions already on the list
+	typename block_contr_list_t::iterator ilst = lst.begin();
+	while(ilst != lst.end() && ilst->m_absidxa < bc.m_absidxa) ilst++;
+	while(ilst != lst.end() && ilst->m_absidxa == bc.m_absidxa &&
+		ilst->m_absidxb < bc.m_absidxb) ilst++;
+
+	// If similar contractions are found, try to combine with them
+	bool done = false;
+	while(!done && ilst != lst.end() && ilst->m_absidxa == bc.m_absidxa &&
+		ilst->m_absidxb == bc.m_absidxb) {
+
+		if(ilst->m_perma.equals(bc.m_perma) &&
+			ilst->m_permb.equals(bc.m_permb)) {
+			ilst->m_c += bc.m_c;
+			if(ilst->m_c == 0.0) {
+				lst.erase(ilst);
+				ilst = lst.end();
 			}
-		}
-		if(!done) {
-			block_contr_t bc(oa.get_abs_canonical_index(),
-				ob.get_abs_canonical_index(),
-				tra.get_coeff() * trb.get_coeff(),
-				tra.get_perm(), trb.get_perm());
-			local_sch.insert(std::pair<size_t, block_contr_t>(
-				aidxc.get_abs_index(), bc));
-		}
-
-	} // for ib
-
-	} // for ia
-
-	typename local_schedule_t::iterator ilocsch = local_sch.begin();
-	for(; ilocsch != local_sch.end(); ilocsch++) {
-
-		block_contr_t &bc = ilocsch->second;
-		if(bc.m_c == 0.0) continue;
-		typename schedule_t::iterator isch =
-			m_contr_sch.find(ilocsch->first);
-		if(isch == m_contr_sch.end()) {
-			block_contr_list_t *lst = new block_contr_list_t;
-			lst->push_back(bc);
-			m_contr_sch.insert(std::pair<size_t, block_contr_list_t*>(
-				ilocsch->first, lst));
+			done = true;
 		} else {
-			isch->second->push_back(bc);
-		}
-		if(!m_sch.contains(ilocsch->first)) {
-			m_sch.insert(ilocsch->first);
+			ilst++;
 		}
 	}
 
+	// If similar contractions are not found, simply add bc
+	if(!done) lst.insert(ilst, bc);
 }
 
 
