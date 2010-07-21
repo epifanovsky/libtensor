@@ -699,8 +699,8 @@ void btod_diag_test::test_sym_4(bool add) throw(libtest::test_exception) {
 	msk3[0] = true; msk3[1] = true;
 	mask<4> msk4;
 	msk4[0] = true; msk4[2] = true;
-	bis3.split(msk3,2);
-	bis4.split(msk4,2);
+	bis3.split(msk3, 2);
+	bis4.split(msk4, 2);
 	msk3[0] = false; msk3[1] = false; msk3[2] = true;
 	msk4[0] = false; msk4[1] = true; msk4[2] = false; msk4[3] = true;
 	bis3.split(msk3,3);
@@ -771,24 +771,24 @@ void btod_diag_test::test_sym_5(bool add) throw(libtest::test_exception) {
 	try {
 
 	index<3> i3a, i3b;
-	i3b[0] = 5; i3b[1] = 10; i3b[2] = 5;
+	i3b[0] = 7; i3b[1] = 7; i3b[2] = 10;
 	index<4> i4a, i4b;
-	i4b[0] = 5; i4b[1] = 10; i4b[2] = 5; i4b[3] = 10;
+	i4b[0] = 7; i4b[1] = 10; i4b[2] = 7; i4b[3] = 10;
 	dimensions<3> dims3(index_range<3>(i3a, i3b));
 	dimensions<4> dims4(index_range<4>(i4a, i4b));
 	block_index_space<3> bis3(dims3);
 	block_index_space<4> bis4(dims4);
 
 	mask<3> msk3;
-	msk3[0] = true; msk3[2] = true;
+	msk3[0] = true; msk3[1] = true;
 	mask<4> msk4;
 	msk4[0] = true; msk4[2] = true;
-	bis3.split(msk3,2);
-	bis4.split(msk4,2);
-	msk3[0] = false; msk3[1] = true; msk3[2] = false;
+	bis3.split(msk3,2); bis3.split(msk3, 5);
+	bis4.split(msk4,2); bis4.split(msk4, 5);
+	msk3[0] = false; msk3[1] = false; msk3[2] = true;
 	msk4[0] = false; msk4[1] = true; msk4[2] = false; msk4[3] = true;
-	bis3.split(msk3,3);
-	bis4.split(msk4,3);
+	bis3.split(msk3, 5);
+	bis4.split(msk4, 5);
 
 	block_tensor<4, double, allocator_t> bta(bis4);
 	block_tensor<3, double, allocator_t> btb(bis3);
@@ -804,6 +804,8 @@ void btod_diag_test::test_sym_5(bool add) throw(libtest::test_exception) {
 
 	mask<4> msk;
 	msk[1] = true; msk[3] = true;
+	permutation<3> perm;
+	perm.permute(1, 2);
 
 	//	Fill in random data
 	btod_random<4>().perform(bta);
@@ -819,16 +821,16 @@ void btod_diag_test::test_sym_5(bool add) throw(libtest::test_exception) {
 		//	Prepare the reference
 		tod_btconv<3>(btb).perform(tb_ref);
 
-		tod_diag<4, 2>(ta, msk).perform(tb_ref, 1.0);
+		tod_diag<4, 2>(ta, msk, perm).perform(tb_ref, 1.0);
 
 		//	Invoke the operation
-		btod_diag<4, 2>(bta, msk).perform(btb, 1.0);
+		btod_diag<4, 2>(bta, msk, perm).perform(btb, 1.0);
 	}
 	else {
-		tod_diag<4, 2>(ta, msk).perform(tb_ref);
+		tod_diag<4, 2>(ta, msk, perm).perform(tb_ref);
 
 		//	Invoke the operation
-		btod_diag<4, 2>(bta, msk).perform(btb);
+		btod_diag<4, 2>(bta, msk, perm).perform(btb);
 	}
 	tod_btconv<3>(btb).perform(tb);
 

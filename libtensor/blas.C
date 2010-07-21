@@ -8,10 +8,24 @@ double blas::ddot_trp(const double *a, const double *b, size_t ni, size_t nj,
 
 	double d = 0.0;
 
+	size_t mj = 4 * (nj / 4);
+
+	register size_t pq = 0;
 	for(size_t i = 0; i < ni; i++) {
-		for(size_t j = 0; j < nj; j++) {
-			d += a[i * lda + j] * b[j * ldb + i];
+		register size_t j = 0;
+		register size_t qp = 0;
+		for(; j < mj; j += 4) {
+			d += a[pq + j    ] * b[qp           + i];
+			d += a[pq + j + 1] * b[qp +     ldb + i];
+			d += a[pq + j + 2] * b[qp + 2 * ldb + i];
+			d += a[pq + j + 3] * b[qp + 3 * ldb + i];
+			qp += 4 * ldb;
 		}
+		for(; j < nj; j++) {
+			d += a[pq + j] * b[qp + i];
+			qp += ldb;
+		}
+		pq += lda;
 	}
 
 	return d;

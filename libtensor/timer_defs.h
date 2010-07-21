@@ -39,6 +39,8 @@ private:
 	clock_t m_rt; //!< real or wall time
 
 public:
+	time_pt_t() : m_rt(0) { }
+
 	//! saves point in time
 	void now() { m_rt = clock(); }
 };

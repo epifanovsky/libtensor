@@ -19,6 +19,7 @@ void diag_test::perform() throw(libtest::test_exception) {
 		test_t_3();
 		test_t_4();
 		test_e_1();
+		test_x_1();
 
 	} catch(...) {
 		libvmm::vm_allocator<double>::vmm().shutdown();
@@ -192,5 +193,48 @@ void diag_test::test_e_1() throw(libtest::test_exception) {
 	}
 }
 
+void diag_test::test_x_1() throw(libtest::test_exception) {
+
+	static const char *testname = "diag_test::test_x_1()";
+
+	try {
+
+	bispace<1> sp_i(10), sp_a(16);
+	sp_i.split(5);
+	sp_a.split(8);
+	bispace<1> sp_j(sp_i);
+	bispace<2> sp_ia(sp_i|sp_a), sp_jb(sp_i|sp_a);
+	bispace<3> sp_iaj(sp_i|sp_a|sp_j, (sp_i&sp_j)|sp_a);
+	bispace<4> sp_iajb(sp_ia&sp_jb);
+
+	btensor<2> t1(sp_ia), t3(sp_ia), t3_ref(sp_ia);
+	btensor<4> t2(sp_iajb);
+	btensor<3> tx(sp_iaj);
+
+	btod_random<2>().perform(t1);
+	t1.set_immutable();
+	btod_random<4>().perform(t2);
+	t2.set_immutable();
+
+	btod_copy<2>(t1).perform(t3_ref);
+	mask<4> msk1;
+	msk1[1] = true; msk1[3] = true;
+	permutation<3> perm1;
+	btod_diag<4, 2>(t2, msk1, perm1, 1.0).perform(tx);
+	mask<3> msk2;
+	msk2[0] = true; msk2[2] = true;
+	permutation<2> perm2;
+	//perm2.permute(0, 1);
+	btod_diag<3, 2>(tx, msk2, perm2, -1.0).perform(t3_ref, 1.0);
+
+	letter i, j, a, b;
+	t3(i|a) = t1(i|a) - diag(i, i|j, diag(a, a|b, t2(i|a|j|b)));
+
+	compare_ref<2>::compare(testname, t3, t3_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
 
 } // namespace libtensor

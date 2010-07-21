@@ -21,6 +21,7 @@ void tod_diag_test::perform() throw(libtest::test_exception) {
 	test_3();
 	test_4();
 	test_5();
+	test_6();
 }
 
 
@@ -310,5 +311,64 @@ void tod_diag_test::test_5() throw(libtest::test_exception) {
 	}
 }
 
+/**	\test Extract a single diagonal with one index intact and permuted:
+		output \f$ b_{jik} = a_{ikjk} \f$
+ **/
+void tod_diag_test::test_6() throw(libtest::test_exception) {
+
+	static const char *testname = "tod_diag_test::test_6()";
+
+	try {
+
+	size_t ni = 2, nj = 3, nk = 5;
+	index<3> i3a, i3b;
+	i3b[0] = nj - 1; i3b[1] = ni - 1; i3b[2] = nk - 1;
+	index<4> i4a, i4b;
+	i4b[0] = ni - 1; i4b[1] = nk - 1; i4b[2] = nj - 1; i4b[3] = nk - 1;
+	dimensions<3> dims3(index_range<3>(i3a, i3b));
+	dimensions<4> dims4(index_range<4>(i4a, i4b));
+	size_t sza = dims4.get_size(), szb = dims3.get_size();
+
+	tensor<4, double, allocator> ta(dims4);
+	tensor<3, double, allocator> tb(dims3), tb_ref(dims3);
+
+	{
+	tensor_ctrl<4, double> tca(ta);
+	tensor_ctrl<3, double> tcb(tb), tcb_ref(tb_ref);
+
+	double *pa = tca.req_dataptr();
+	double *pb = tcb.req_dataptr();
+	double *pb_ref = tcb_ref.req_dataptr();
+
+	for(size_t i = 0; i < sza; i++) pa[i] = drand48();
+	for(size_t i = 0; i < szb; i++) pb[i] = drand48();
+
+	for(size_t i = 0; i < ni; i++) {
+	for(size_t j = 0; j < nj; j++) {
+	for(size_t k = 0; k < nk; k++) {
+		index<4> idxa; idxa[0] = i; idxa[1] = k; idxa[2] = j; idxa[3] = k;
+		index<3> idxb; idxb[0] = j; idxb[1] = i; idxb[2] = k;
+		abs_index<4> aidxa(idxa, dims4);
+		abs_index<3> aidxb(idxb, dims3);
+		pb_ref[aidxb.get_abs_index()] = pa[aidxa.get_abs_index()];
+	}
+	}
+	}
+
+	tca.ret_dataptr(pa); pa = 0;
+	tcb.ret_dataptr(pb); pb = 0;
+	tcb_ref.ret_dataptr(pb_ref); pb_ref = 0;
+	}
+
+	mask<4> m; m[0] = false; m[1] = true; m[2] = false; m[3] = true;
+	permutation<3> permb; permb.permute(0, 1).permute(0, 2);
+	tod_diag<4, 2>(ta, m, permb).perform(tb);
+
+	compare_ref<3>::compare(testname, tb, tb_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
 
 } // namespace libtensor

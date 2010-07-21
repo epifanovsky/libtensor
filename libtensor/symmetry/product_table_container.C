@@ -22,6 +22,15 @@ void product_table_container::add(
 		throw bad_parameter(g_ns, k_clazz, method,
 				__FILE__, __LINE__, "Table already exists.");
 
+	try {
+
+	pt.check();
+
+	} catch (exception &e) {
+		throw bad_parameter(g_ns, k_clazz, method,
+				__FILE__, __LINE__, e.what());
+	}
+
 	it = m_tables.insert(m_tables.begin(), pair_t(pt.get_id(), container()));
 
 	it->second.m_pt = pt.clone();
@@ -98,6 +107,12 @@ void product_table_container::ret_table(
 				"Returning table which has not been requested.");
 
 	it->second.m_co--;
+}
+
+bool product_table_container::table_exists(const std::string &id) {
+
+	list_t::iterator it = m_tables.find(id);
+	return (it != m_tables.end());
 }
 
 } // namespace libtensor

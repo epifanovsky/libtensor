@@ -1,8 +1,9 @@
 #ifndef LIBTENSOR_ADDITIVE_BTOD_IMPL_H
 #define LIBTENSOR_ADDITIVE_BTOD_IMPL_H
 
-namespace libtensor {
+#include "../symmetry/so_copy.h"
 
+namespace libtensor {
 
 template<size_t N>
 void additive_btod<N>::compute_block(additive_btod<N> &op,

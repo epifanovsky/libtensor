@@ -17,6 +17,7 @@
 #include "../tod/tod_scale.h"
 #include "../tod/tod_scatter.h"
 #include "../tod/tod_set.h"
+#include "../symmetry/so_concat.h"
 #include "../symmetry/so_proj_up.h"
 #include "../symmetry/so_union.h"
 #include "bad_block_index_space.h"
@@ -375,37 +376,40 @@ void btod_dirsum<N, M>::make_symmetry() {
 	block_tensor_ctrl<k_ordera, double> ca(m_bta);
 	block_tensor_ctrl<k_orderb, double> cb(m_btb);
 
-	size_t seq[k_orderc];
-	for(size_t i = 0; i < k_orderc; i++) seq[i] = i;
-	m_permc.apply(seq);
+//	size_t seq[k_orderc];
+//	for(size_t i = 0; i < k_orderc; i++) seq[i] = i;
+//	m_permc.apply(seq);
+//
+//	mask<k_orderc> xma, xmb;
+//	sequence<N, size_t> xseqa1(0), xseqa2(0);
+//	sequence<M, size_t> xseqb1(0), xseqb2(0);
+//
+//	for(size_t i = 0, ja = 0, jb = 0; i < k_orderc; i++) {
+//		if(seq[i] < k_ordera) {
+//			xma[i] = true;
+//			xseqa1[ja] = ja;
+//			xseqa2[ja] = seq[i];
+//			ja++;
+//		} else {
+//			xmb[i] = true;
+//			xseqb1[jb] = jb;
+//			xseqb2[jb] = seq[i] - k_ordera;
+//			jb++;
+//		}
+//	}
+//
+//	permutation_builder<N> xpba(xseqa2, xseqa1);
+//	permutation_builder<M> xpbb(xseqb2, xseqb1);
+//	symmetry<k_orderc, double> xsyma(m_bisc);
+//	symmetry<k_orderc, double> xsymb(m_bisc);
+//	so_proj_up<N, M, double>(ca.req_const_symmetry(), xpba.get_perm(), xma).
+//		perform(xsyma);
+//	so_proj_up<M, N, double>(cb.req_const_symmetry(), xpbb.get_perm(), xmb).
+//		perform(xsymb);
+//	so_union<k_orderc, double>(xsyma, xsymb).perform(m_sym);
 
-	mask<k_orderc> xma, xmb;
-	sequence<N, size_t> xseqa1(0), xseqa2(0);
-	sequence<M, size_t> xseqb1(0), xseqb2(0);
-
-	for(size_t i = 0, ja = 0, jb = 0; i < k_orderc; i++) {
-		if(seq[i] < k_ordera) {
-			xma[i] = true;
-			xseqa1[ja] = ja;
-			xseqa2[ja] = seq[i];
-			ja++;
-		} else {
-			xmb[i] = true;
-			xseqb1[jb] = jb;
-			xseqb2[jb] = seq[i] - k_ordera;
-			jb++;
-		}
-	}
-
-	permutation_builder<N> xpba(xseqa2, xseqa1);
-	permutation_builder<M> xpbb(xseqb2, xseqb1);
-	symmetry<k_orderc, double> xsyma(m_bisc);
-	symmetry<k_orderc, double> xsymb(m_bisc);
-	so_proj_up<N, M, double>(ca.req_const_symmetry(), xpba.get_perm(), xma).
-		perform(xsyma);
-	so_proj_up<M, N, double>(cb.req_const_symmetry(), xpbb.get_perm(), xmb).
-		perform(xsymb);
-	so_union<k_orderc, double>(xsyma, xsymb).perform(m_sym);
+	so_concat<N, M, double>(ca.req_const_symmetry(), cb.req_const_symmetry(),
+			m_permc).perform(m_sym);
 }
 
 

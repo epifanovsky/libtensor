@@ -56,7 +56,7 @@ void symmetry_operation_impl< so_permute<N, T>, se_label<N, T> >::do_perform(
 			it1 != adapter1.end(); it1++) {
 
 		se_label<N, T> se2(adapter1.get_elem(it1));
-		se2.permute(params.perm1);
+		se2.permute(params.perm);
 
 		params.grp2.insert(se2);
 

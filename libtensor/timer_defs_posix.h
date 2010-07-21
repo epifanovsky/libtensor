@@ -48,6 +48,8 @@ private:
 	clock_t m_st; //!< system time
 
 public:
+	time_pt_t() : m_rt(0), m_ut(0), m_st(0) { }
+
 	//! saves point in time
 	void now() {
 		struct tms pt;
