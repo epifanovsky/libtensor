@@ -695,10 +695,10 @@ void orbit_test::test_9() throw(libtest::test_exception) {
 	try {
 
 	point_group_table cs(testname, 2);
-	cs.set_product(ap, ap, 0, ap);
-	cs.set_product(ap, app, 0, app);
-	cs.set_product(app, ap, 0, app);
-	cs.set_product(app, app, 0, ap);
+	cs.add_product(ap, ap, ap);
+	cs.add_product(ap, app, app);
+	cs.add_product(app, ap, app);
+	cs.add_product(app, app, ap);
 	cs.check();
 	product_table_container::get_instance().add(cs);
 
@@ -874,10 +874,10 @@ void orbit_test::test_10() throw(libtest::test_exception) {
 	try {
 
 	point_group_table cs(testname, 2);
-	cs.set_product(ap, ap, 0, ap);
-	cs.set_product(ap, app, 0, app);
-	cs.set_product(app, ap, 0, app);
-	cs.set_product(app, app, 0, ap);
+	cs.add_product(ap, ap, ap);
+	cs.add_product(ap, app, app);
+	cs.add_product(app, ap, app);
+	cs.add_product(app, app, ap);
 	cs.check();
 	product_table_container::get_instance().add(cs);
 

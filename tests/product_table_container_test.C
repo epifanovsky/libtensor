@@ -29,21 +29,28 @@ void product_table_container_test::test_1() throw(libtest::test_exception) {
 
 	point_group_table pg1(testname, 4), pg2(testname, 2);
 	label_t ag = 0, bg = 1, au = 2, bu = 3, g = 0, u = 1;
-	pg1.set_product(ag, ag, 0, ag);
-	pg1.set_product(ag, bg, 0, bg);
-	pg1.set_product(ag, au, 0, au);
-	pg1.set_product(ag, bu, 0, bu);
-	pg1.set_product(bg, bg, 0, ag);
-	pg1.set_product(bg, au, 0, bu);
-	pg1.set_product(bg, bu, 0, au);
-	pg1.set_product(au, au, 0, ag);
-	pg1.set_product(au, bu, 0, bg);
-	pg1.set_product(bu, bu, 0, ag);
+	pg1.add_product(ag, ag, ag);
+	pg1.add_product(ag, bg, bg);
+	pg1.add_product(ag, au, au);
+	pg1.add_product(ag, bu, bu);
+	pg1.add_product(bg, ag, bg);
+	pg1.add_product(bg, bg, ag);
+	pg1.add_product(bg, au, bu);
+	pg1.add_product(bg, bu, au);
+	pg1.add_product(au, ag, au);
+	pg1.add_product(au, bg, bu);
+	pg1.add_product(au, au, ag);
+	pg1.add_product(au, bu, bg);
+	pg1.add_product(bu, ag, bu);
+	pg1.add_product(bu, bg, au);
+	pg1.add_product(bu, au, bg);
+	pg1.add_product(bu, bu, ag);
 	pg1.check();
 
-	pg2.set_product(g, g, 0, g);
-	pg2.set_product(g, u, 0, u);
-	pg2.set_product(u, u, 0, g);
+	pg2.add_product(g, g, g);
+	pg2.add_product(g, u, u);
+	pg2.add_product(u, g, u);
+	pg2.add_product(u, u, g);
 	pg2.check();
 
 	ptc.add(pg1);
@@ -62,6 +69,24 @@ void product_table_container_test::test_1() throw(libtest::test_exception) {
 	}
 
 	ptc.erase(testname);
+
+	// adding incomplete table
+	pg2.delete_product(u, g);
+
+	failed = false;
+	try {
+
+	ptc.add(pg2);
+
+	} catch(exception &e) {
+		failed = true;
+	}
+
+	if (! failed) {
+		fail_test(testname, __FILE__, __LINE__,
+				"Adding incomplete product table.");
+	}
+
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
@@ -85,9 +110,10 @@ void product_table_container_test::test_2() throw(libtest::test_exception) {
 	{ // Setup point group table
 	point_group_table pg(testname, 2);
 	label_t g = 0, u = 1;
-	pg.set_product(g, g, 0, g);
-	pg.set_product(g, u, 0, u);
-	pg.set_product(u, u, 0, g);
+	pg.add_product(g, g, g);
+	pg.add_product(g, u, u);
+	pg.add_product(u, g, u);
+	pg.add_product(u, u, g);
 	pg.check();
 
 	ptc.add(pg);
@@ -188,9 +214,10 @@ void product_table_container_test::test_3() throw(libtest::test_exception) {
 	{ // Setup point group table
 	point_group_table pg(testname, 2);
 	label_t g = 0, u = 1;
-	pg.set_product(g, g, 0, g);
-	pg.set_product(g, u, 0, u);
-	pg.set_product(u, u, 0, g);
+	pg.add_product(g, g, g);
+	pg.add_product(g, u, u);
+	pg.add_product(u, g, u);
+	pg.add_product(u, u, g);
 	pg.check();
 
 	ptc.add(pg);

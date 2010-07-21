@@ -22,6 +22,15 @@ void product_table_container::add(
 		throw bad_parameter(g_ns, k_clazz, method,
 				__FILE__, __LINE__, "Table already exists.");
 
+	try {
+
+	pt.check();
+
+	} catch (exception &e) {
+		throw bad_parameter(g_ns, k_clazz, method,
+				__FILE__, __LINE__, e.what());
+	}
+
 	it = m_tables.insert(m_tables.begin(), pair_t(pt.get_id(), container()));
 
 	it->second.m_pt = pt.clone();
