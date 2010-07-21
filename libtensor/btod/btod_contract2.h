@@ -132,11 +132,21 @@ protected:
 private:
 	void make_schedule();
 
-	/**	\brief For an orbit in a and b, make a list of blocks in c
-	 **/
-	void make_schedule(const orbit<k_ordera, double> &oa,
-		const orbit<k_orderb, double> &ob,
-		const orbit_list<k_orderc, double> &olc);
+	void make_schedule_a(block_tensor_ctrl<k_orderb, double> &cb,
+		const dimensions<k_orderb> &bidimsb,
+		const orbit_list<k_orderc, double> &olc,
+		const dimensions<k_orderc> &bidimsc, 
+		const abs_index<k_ordera> &aia, const abs_index<k_ordera> &acia,
+		const transf<k_ordera, double> &tra);
+
+	void make_schedule_b(block_tensor_ctrl<k_orderb, double> &cb,
+		const dimensions<k_orderb> &bidimsb,
+		const abs_index<k_ordera> &acia,
+		const transf<k_ordera, double> &tra, const index<k_orderb> &ib,
+		const abs_index<k_orderc> &acic);
+
+	void schedule_block_contraction(const abs_index<k_orderc> &acic,
+		const block_contr_t &bc);
 
 	void clear_schedule(schedule_t &sch);
 
