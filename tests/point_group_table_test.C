@@ -101,7 +101,6 @@ void point_group_table_test::test_2() throw(libtest::test_exception) {
 	}
 
 	pg.add_product(g, g, g);
-	pg.add_product(g, u, u);
 	pg.add_product(u, u, g);
 
 	failed = false;
@@ -114,7 +113,7 @@ void point_group_table_test::test_2() throw(libtest::test_exception) {
 	}
 	if (! failed) {
 		fail_test(testname, __FILE__, __LINE__,
-				"Consistency check did not failed.");
+				"Consistency check did not fail.");
 	}
 
 	pg.add_product(u, g, u);
@@ -132,7 +131,7 @@ void point_group_table_test::test_2() throw(libtest::test_exception) {
 	}
 	if (! failed) {
 		fail_test(testname, __FILE__, __LINE__,
-				"Consistency check did not failed.");
+				"Consistency check did not fail.");
 	}
 
 	} catch(exception &e) {
@@ -181,7 +180,7 @@ void point_group_table_test::test_3() throw(libtest::test_exception) {
 	}
 }
 
-/**	\test Product evalutation for non-symmetric product table
+/**	\test Product evaluation for product table
  **/
 void point_group_table_test::test_4() throw(libtest::test_exception) {
 
@@ -198,57 +197,30 @@ void point_group_table_test::test_4() throw(libtest::test_exception) {
 	pg.add_product(ag, eg, eg);
 	pg.add_product(ag, au, au);
 	pg.add_product(ag, eu, eu);
-	pg.add_product(eg, ag, eg);
 	pg.add_product(eg, eg, ag);
 	pg.add_product(eg, eg, eg);
-	pg.add_product(eg, au, au);
+	pg.add_product(eg, au, eu);
 	pg.add_product(eg, eu, au);
 	pg.add_product(eg, eu, eu);
-	pg.add_product(au, ag, au);
-	pg.add_product(au, eg, eu);
 	pg.add_product(au, au, ag);
 	pg.add_product(au, eu, eg);
-	pg.add_product(eu, ag, au);
-	pg.add_product(eu, eg, au);
-	pg.add_product(eu, eg, eu);
-	pg.add_product(eu, au, ag);
 	pg.add_product(eu, eu, ag);
 	pg.add_product(eu, eu, eg);
 	pg.check();
 
-	// test ag x eu = eu and eu x ag = au
-	label_group lg1(2, ag), lg2(2, ag);
-	lg1[1] = eu;
-	lg2[0] = eu;
+	// test ag x eu = eu and eu x eg = au + eu
+	label_group lg1(2, eu), lg2(2, eu);
+	lg1[0] = ag;
+	lg2[1] = eg;
 	if (! pg.is_in_product(lg1, eu))
 		fail_test(testname, __FILE__, __LINE__,
 				"Eu is not in product Ag x Eu.");
-	if (pg.is_in_product(lg1, au))
+	if (! pg.is_in_product(lg2, eu))
 		fail_test(testname, __FILE__, __LINE__,
-				"Au is in product Ag x Eu.");
-	if (pg.is_in_product(lg2, eu))
-		fail_test(testname, __FILE__, __LINE__,
-				"Eu is in product Eu x Ag.");
+				"Eu is not in product Eu x Eg.");
 	if (! pg.is_in_product(lg2, au))
 		fail_test(testname, __FILE__, __LINE__,
-				"Au is not in product Eu x Ag.");
-
-	// test eg x ag x eu = au + eu and eu x ag x eg = au + eu
-	label_group lg3(3, ag), lg4(3, ag);
-	lg3[0] = eg; lg3[2] = eu;
-	lg4[0] = eu; lg4[2] = eg;
-	if (! pg.is_in_product(lg3, au))
-		fail_test(testname, __FILE__, __LINE__,
-				"Au is not in product Eg x Ag x Eu.");
-	if (! pg.is_in_product(lg3, eu))
-		fail_test(testname, __FILE__, __LINE__,
-				"Eu is not in product Eg x Ag x Eu.");
-	if (! pg.is_in_product(lg4, au))
-		fail_test(testname, __FILE__, __LINE__,
-				"Au is not in product Eu x Ag x Eg.");
-	if (! pg.is_in_product(lg4, eu))
-		fail_test(testname, __FILE__, __LINE__,
-				"Eu is not in product Eu x Ag x Eg.");
+				"Au is not in product Eu x Eg.");
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());

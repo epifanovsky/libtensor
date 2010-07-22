@@ -10,7 +10,7 @@ const product_table_i::label_t point_group_table::k_invalid = (label_t) -1;
 
 point_group_table::point_group_table(const std::string &id, size_t nirreps) :
 	m_nirreps(nirreps), m_id(id),
-	m_table(nirreps * nirreps, label_group(1, k_invalid))
+	m_table(nirreps * (nirreps + 1) / 2)
 { }
 
 point_group_table::point_group_table(const point_group_table &pt) :
@@ -42,12 +42,12 @@ bool point_group_table::is_in_product(const label_group &lg, label_t l) const {
 			const label_group &lr = m_table[abs_index(*it1, *it2)];
 
 #ifdef LIBTENSOR_DEBUG
-			if (! is_valid(lr[0]))
+			if (lr.empty())
 				throw_exc(k_clazz, method, "Table is not setup correctly.");
 #endif
 
-			for (size_t j = 0; j < lr.size(); j++)
-				ptr2->push_back(lr[j]);
+			for (label_group::const_iterator j = lr.begin(); j != lr.end(); j++)
+				ptr2->push_back(*j);
 		}
 		ptr1->clear();
 
@@ -70,15 +70,14 @@ void point_group_table::add_product(
 		throw out_of_bounds(g_ns, k_clazz, method,
 				__FILE__, __LINE__, "Invalid irrep.");
 
-	size_t idx = abs_index(l1, l2);
+	label_group &lg = m_table[abs_index(l1, l2)];
 
-	size_t i = 0;
-	if (is_valid(m_table[idx][i])) {
-		i = m_table[idx].size();
-		m_table[idx].resize(i + 1, k_invalid);
-	}
+	label_group::iterator i = lg.begin();
+	while (i != lg.end() && *i < lr) i++;
 
-	m_table[idx][i] = lr;
+	if (i != lg.end() && *i == lr) return;
+
+	lg.insert(i, lr);
 }
 
 void point_group_table::delete_product(
@@ -90,20 +89,21 @@ void point_group_table::delete_product(
 		throw out_of_bounds(g_ns, k_clazz, method,
 				__FILE__, __LINE__, "Invalid irrep.");
 
-	size_t idx = abs_index(l1, l2);
-
-	m_table[idx].resize(1);
-	m_table[idx][0] = k_invalid;
-
+	m_table[abs_index(l1, l2)].clear();
 }
 
 void point_group_table::check() const throw(exception) {
 
 	const char *method = "check()";
 
-	for (size_t i = 0; i < m_table.size(); i++) {
-		for (size_t j = 0; j < m_table[i].size(); j++) {
-			if (! is_valid(m_table[i][j]))
+	typedef std::vector<label_group> table;
+
+	for (table::const_iterator i = m_table.begin(); i != m_table.end(); i++) {
+		if (i->empty())
+			throw_exc(k_clazz, method, "Product table is not setup correctly.");
+
+		for (label_group::const_iterator j = i->begin(); j != i->end(); j++) {
+			if (! is_valid(*j))
 				throw_exc(k_clazz, method,
 						"Invalid irrep found in product table.");
 		}

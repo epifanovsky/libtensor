@@ -44,12 +44,11 @@ public:
 	typedef product_table_i::label_group label_group;
 
 private:
-	typedef std::vector<label_t> label_list_t;
 
 	dimensions<N> m_bidims; //!< Block index dimensions
 	sequence<N, size_t> m_type; //!< Label type
-	sequence<N, label_list_t*> m_labels; //!< Block labels
-	label_list_t m_target; //!< Target label
+	sequence<N, label_group*> m_labels; //!< Block labels
+	label_group m_target; //!< Target label
 
 	const product_table_i &m_pt; //!< Product table
 public:
@@ -60,7 +59,7 @@ public:
 		\param bidims Block %index dimensions.
 		\param id Id of product table.
 	 **/
-	se_label(const dimensions<N> &bidims, const char *id);
+	se_label(const dimensions<N> &bidims, const std::string &id);
 
 	/**	\brief Copy constructor
 	 **/
@@ -166,7 +165,7 @@ public:
 		return m_target[i];
 	}
 
-	const char *get_table_id() const {
+	const std::string &get_table_id() const {
 		return m_pt.get_id();
 	}
 	//@}
@@ -227,10 +226,9 @@ const char *se_label<N, T>::k_sym_type = "se_label";
 
 
 template<size_t N, typename T>
-se_label<N, T>::se_label(const dimensions<N> &bidims, const char *id) :
+se_label<N, T>::se_label(const dimensions<N> &bidims, const std::string &id) :
 	m_bidims(bidims), m_type(0), m_labels(0),
-	m_pt(product_table_container::get_instance().req_const_table(id)),
-	m_target(0) {
+	m_pt(product_table_container::get_instance().req_const_table(id)) {
 
 	mask<N> done;
 	size_t curr_type = 0;
@@ -239,7 +237,7 @@ se_label<N, T>::se_label(const dimensions<N> &bidims, const char *id) :
 
 		done[i] = true;
 		m_type[i] = curr_type;
-		m_labels[curr_type] = new label_list_t(m_bidims[i], m_pt.invalid());
+		m_labels[curr_type] = new label_group(m_bidims[i], m_pt.invalid());
 
 		for (size_t j = i + 1; j < N; j++) {
 			if (m_bidims[i] == m_bidims[j]) {
@@ -260,7 +258,7 @@ se_label<N, T>::se_label(const se_label<N, T> &el) :
 	for (size_t itype = 0; itype < N; itype++) {
 		if (el.m_labels[itype] == 0) break;
 
-		m_labels[itype] = new label_list_t(*(el.m_labels[itype]));
+		m_labels[itype] = new label_group(*(el.m_labels[itype]));
 	}
 }
 
@@ -309,14 +307,14 @@ void se_label<N, T>::assign(const mask<N> &msk, size_t pos,
 			"Invalid labeling mask.");
 	}
 
-	label_list_t *labels = 0;
+	label_group *labels = 0;
 	if (adjust) {
 		size_t new_type = 0;
 		for (i = 0; i < N; i++)
 			new_type = std::max(new_type, m_type[i]);
 		new_type++;
 
-		m_labels[new_type] = labels = new label_list_t(*(m_labels[type]));
+		m_labels[new_type] = labels = new label_group(*(m_labels[type]));
 		for (i = 0; i < N; i++)
 			if (msk[i]) m_type[i] = new_type;
 	}
@@ -357,14 +355,14 @@ void se_label<N, T>::remove(const mask<N> &msk, size_t pos) throw(bad_parameter,
 			"Invalid labeling mask.");
 	}
 
-	label_list_t *labels = 0;
+	label_group *labels = 0;
 	if (new_type) {
 		size_t max_type = 0;
 		for (i = 0; i < N; i++)
 			max_type = std::max(max_type, m_type[i]);
 		max_type++;
 
-		m_labels[max_type] = labels = new label_list_t(*(m_labels[type]));
+		m_labels[max_type] = labels = new label_group(*(m_labels[type]));
 		for (i = 0; i < N; i++)
 			if (msk[i]) m_type[i] = max_type;
 	}
@@ -389,7 +387,7 @@ template<size_t N, typename T>
 void se_label<N, T>::match_labels() {
 
 	sequence<N, size_t> types(m_type);
-	sequence<N, label_list_t*> labels(m_labels);
+	sequence<N, label_group*> labels(m_labels);
 
 	for (size_t i = 0; i < N; i++) {
 		m_type[i] = 0;
@@ -402,7 +400,7 @@ void se_label<N, T>::match_labels() {
 		if (labels[itype] == 0) continue;
 
 		m_type[i] = curr_type;
-		label_list_t *lli = m_labels[curr_type] = labels[itype];
+		label_group *lli = m_labels[curr_type] = labels[itype];
 		labels[itype] = 0;
 
 		for (size_t j = i + 1; j < N; j++) {
@@ -437,19 +435,21 @@ void se_label<N, T>::add_target(label_t target) throw(bad_parameter) {
 		throw bad_parameter(g_ns, k_clazz,
 				"set_label(label_t)", __FILE__, __LINE__, "Invalid label.");
 
-	size_t i = 0;
-	for (; i < m_target.size(); i++) {
-		if (m_target[i] == target) return;
+	label_group::iterator i = m_target.begin();
+	while (i != m_target.end()) {
+		if (*i == target) return;
+		if (*i > target) break;
+
+		i++;
 	}
 
-	m_target.resize(i + 1);
-	m_target[i] = target;
+	m_target.insert(i, target);
 }
 
 template<size_t N, typename T>
 void se_label<N, T>::delete_target() {
 
-	m_target.resize(0);
+	m_target.clear();
 }
 
 
@@ -527,8 +527,11 @@ bool se_label<N, T>::is_allowed(const index<N> &idx) const {
 			return true;
 	}
 
-	for (size_t i = 0; i < m_target.size(); i++)
-		if (m_pt.is_in_product(lg, m_target[i])) return true;
+	for (label_group::const_iterator i = m_target.begin();
+			i != m_target.end(); i++) {
+		if (m_pt.is_in_product(lg, *i))
+			return true;
+	}
 
 	return false;
 }
