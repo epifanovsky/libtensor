@@ -1,15 +1,15 @@
 #include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/symmetry/product_table_container.h>
-#include <libtensor/symmetry/so_add_impl_label.h>
+#include <libtensor/symmetry/so_mult_impl_label.h>
 #include <libtensor/btod/transf_double.h>
-#include "so_add_impl_label_test.h"
+#include "so_mult_impl_label_test.h"
 #include "compare_ref.h"
 
 namespace libtensor {
 
-const char *so_add_impl_label_test::table_id = "point_group";
+const char *so_mult_impl_label_test::table_id = "point_group";
 
-void so_add_impl_label_test::perform() throw(libtest::test_exception) {
+void so_mult_impl_label_test::perform() throw(libtest::test_exception) {
 
 	try {
 
@@ -32,7 +32,7 @@ void so_add_impl_label_test::perform() throw(libtest::test_exception) {
 	product_table_container::get_instance().add(s6);
 
 	} catch (exception &e) {
-		fail_test("so_add_impl_perm_test::perform()", __FILE__, __LINE__,
+		fail_test("so_mult_impl_perm_test::perform()", __FILE__, __LINE__,
 				e.what());
 	}
 
@@ -59,17 +59,17 @@ void so_add_impl_label_test::perform() throw(libtest::test_exception) {
 }
 
 
-/**	\test Tests that the addition of two empty groups yields also an
+/**	\test Tests that the multiplication of two empty groups yields also an
 		empty group
 
  **/
-void so_add_impl_label_test::test_1() throw(libtest::test_exception) {
+void so_mult_impl_label_test::test_1() throw(libtest::test_exception) {
 
-	static const char *testname = "so_add_impl_label_test::test_1()";
+	static const char *testname = "so_mult_impl_label_test::test_1()";
 
 	typedef se_label<2, double> se2_t;
-	typedef so_add<2, double> so_add_t;
-	typedef symmetry_operation_impl<so_add_t, se2_t> so_add_impl_t;
+	typedef so_mult<2, double> so_mult_t;
+	typedef symmetry_operation_impl<so_mult_t, se2_t> so_mult_impl_t;
 
 	try {
 
@@ -85,10 +85,10 @@ void so_add_impl_label_test::test_1() throw(libtest::test_exception) {
 	symmetry_element_set<2, double> set3(se2_t::k_sym_type);
 	symmetry_element_set<2, double> set3_ref(se2_t::k_sym_type);
 
-	symmetry_operation_params< so_add_t > params(
+	symmetry_operation_params< so_mult_t > params(
 			set1, permutation<2>(), set2, permutation<2>(), set3);
 
-	so_add_impl_t().perform(params);
+	so_mult_impl_t().perform(params);
 
 	compare_ref<2>::compare(testname, bis, set3, set3_ref);
 
@@ -103,16 +103,16 @@ void so_add_impl_label_test::test_1() throw(libtest::test_exception) {
 }
 
 
-/**	\test Addition a group with one element of Au symmetry and an empty
- 	 	group (2-space). The result is expected to contain no elements.
+/**	\test Multiplication of a group with one element of Au symmetry and an
+		empty group (2-space). The result is expected to contain no elements.
  **/
-void so_add_impl_label_test::test_2a() throw(libtest::test_exception) {
+void so_mult_impl_label_test::test_2a() throw(libtest::test_exception) {
 
-	static const char *testname = "so_add_impl_label_test::test_2a(bool)";
+	static const char *testname = "so_mult_impl_label_test::test_2a(bool)";
 
 	typedef se_label<2, double> se2_t;
-	typedef so_add<2, double> so_add_t;
-	typedef symmetry_operation_impl<so_add_t, se2_t> so_add_impl_t;
+	typedef so_mult<2, double> so_mult_t;
+	typedef symmetry_operation_impl<so_mult_t, se2_t> so_mult_impl_t;
 
 	try {
 
@@ -137,10 +137,10 @@ void so_add_impl_label_test::test_2a() throw(libtest::test_exception) {
 
 	set1.insert(elem2);
 
-	symmetry_operation_params<so_add_t> params(
+	symmetry_operation_params<so_mult_t> params(
 		set1, permutation<2>(), set2, permutation<2>(), set3);
 
-	so_add_impl_t().perform(params);
+	so_mult_impl_t().perform(params);
 
 	compare_ref<2>::compare(testname, bis2, set3, set3_ref);
 
@@ -153,16 +153,16 @@ void so_add_impl_label_test::test_2a() throw(libtest::test_exception) {
 	}
 }
 
-/**	\test Addition an empty group and a group with one element of Au symmetry
-		(2-space). The result is expected to contain no elements.
+/**	\test Multiplication of an empty group and a group with one element of
+		Au symmetry (2-space). The result is expected to contain no elements.
  **/
-void so_add_impl_label_test::test_2b() throw(libtest::test_exception) {
+void so_mult_impl_label_test::test_2b() throw(libtest::test_exception) {
 
-	static const char *testname = "so_add_impl_label_test::test_2b(bool)";
+	static const char *testname = "so_mult_impl_label_test::test_2b(bool)";
 
 	typedef se_label<2, double> se2_t;
-	typedef so_add<2, double> so_add_t;
-	typedef symmetry_operation_impl<so_add_t, se2_t> so_add_impl_t;
+	typedef so_mult<2, double> so_mult_t;
+	typedef symmetry_operation_impl<so_mult_t, se2_t> so_mult_impl_t;
 
 	try {
 
@@ -187,10 +187,10 @@ void so_add_impl_label_test::test_2b() throw(libtest::test_exception) {
 
 	set2.insert(elem2);
 
-	symmetry_operation_params<so_add_t> params(
+	symmetry_operation_params<so_mult_t> params(
 		set1, permutation<2>(), set2, permutation<2>(), set3);
 
-	so_add_impl_t().perform(params);
+	so_mult_impl_t().perform(params);
 
 	compare_ref<2>::compare(testname, bis2, set3, set3_ref);
 
@@ -204,16 +204,16 @@ void so_add_impl_label_test::test_2b() throw(libtest::test_exception) {
 }
 
 
-/**	\test Addition of two groups with one element of Au symmetry each
-		(2-space). The result is expected to contain an element of Au symmetry.
+/**	\test Multiplication of two groups with one element of Au symmetry each
+		(2-space). The result is expected to contain an element of Ag symmetry.
  **/
-void so_add_impl_label_test::test_3a() throw(libtest::test_exception) {
+void so_mult_impl_label_test::test_3a() throw(libtest::test_exception) {
 
-	static const char *testname = "so_add_impl_label_test::test_3a()";
+	static const char *testname = "so_mult_impl_label_test::test_3a()";
 
 	typedef se_label<2, double> se2_t;
-	typedef so_add<2, double> so_add_t;
-	typedef symmetry_operation_impl<so_add_t, se2_t> so_add_impl_t;
+	typedef so_mult<2, double> so_mult_t;
+	typedef symmetry_operation_impl<so_mult_t, se2_t> so_mult_impl_t;
 
 	try {
 
@@ -229,7 +229,10 @@ void so_add_impl_label_test::test_3a() throw(libtest::test_exception) {
 	se2_t elem2(bis2.get_block_index_dims(), table_id);
 
 	for (unsigned int i = 0; i < 4; i++) elem2.assign(m2, i, i);
+
+	se2_t elem2_ref(elem2);
 	elem2.add_target(2);
+	elem2_ref.add_target(0);
 
 	symmetry_element_set<2, double> set1(se2_t::k_sym_type);
 	symmetry_element_set<2, double> set2(se2_t::k_sym_type);
@@ -238,12 +241,12 @@ void so_add_impl_label_test::test_3a() throw(libtest::test_exception) {
 
 	set1.insert(elem2);
 	set2.insert(elem2);
-	set3_ref.insert(elem2);
+	set3_ref.insert(elem2_ref);
 
-	symmetry_operation_params<so_add_t> params(
+	symmetry_operation_params<so_mult_t> params(
 		set1, permutation<2>(), set2, permutation<2>(), set3);
 
-	so_add_impl_t().perform(params);
+	so_mult_impl_t().perform(params);
 
 	compare_ref<2>::compare(testname, bis2, set3, set3_ref);
 
@@ -264,9 +267,9 @@ void so_add_impl_label_test::test_3a() throw(libtest::test_exception) {
 		fail_test(testname, __FILE__, __LINE__,
 				"elem.get_n_targets() != 1");
 	}
-	if(elem.get_target(0) != 2) {
+	if(elem.get_target(0) != 0) {
 		fail_test(testname, __FILE__, __LINE__,
-				"elem.get_target(0) != Au");
+				"elem.get_target(0) != Ag");
 	}
 	if(elem.get_dim_type(0) != elem.get_dim_type(1)) {
 		fail_test(testname, __FILE__, __LINE__,
@@ -282,17 +285,17 @@ void so_add_impl_label_test::test_3a() throw(libtest::test_exception) {
 	}
 }
 
-/**	\test Addition of a group with one element of Au symmetry and a group with
-		one element of Eg symmetry (2-space). The result is expected to contain
-		an element of Au + Eg symmetry.
+/**	\test Multiplication of a group with one element of Au symmetry and a group
+		with one element of Eg symmetry (2-space). The result is expected to
+		contain an element of Eu symmetry.
  **/
-void so_add_impl_label_test::test_3b() throw(libtest::test_exception) {
+void so_mult_impl_label_test::test_3b() throw(libtest::test_exception) {
 
-	static const char *testname = "so_add_impl_label_test::test_3b()";
+	static const char *testname = "so_mult_impl_label_test::test_3b()";
 
 	typedef se_label<2, double> se2_t;
-	typedef so_add<2, double> so_add_t;
-	typedef symmetry_operation_impl<so_add_t, se2_t> so_add_impl_t;
+	typedef so_mult<2, double> so_mult_t;
+	typedef symmetry_operation_impl<so_mult_t, se2_t> so_mult_impl_t;
 
 	try {
 
@@ -310,8 +313,7 @@ void so_add_impl_label_test::test_3b() throw(libtest::test_exception) {
 	se2_t elem2_2(elem2_1), elem2_ref(elem2_1);
 	elem2_1.add_target(2);
 	elem2_2.add_target(1);
-	elem2_ref.add_target(2);
-	elem2_ref.add_target(1);
+	elem2_ref.add_target(3);
 
 	symmetry_element_set<2, double> set1(se2_t::k_sym_type);
 	symmetry_element_set<2, double> set2(se2_t::k_sym_type);
@@ -322,10 +324,10 @@ void so_add_impl_label_test::test_3b() throw(libtest::test_exception) {
 	set2.insert(elem2_2);
 	set3_ref.insert(elem2_ref);
 
-	symmetry_operation_params<so_add_t> params(
+	symmetry_operation_params<so_mult_t> params(
 		set1, permutation<2>(), set2, permutation<2>(), set3);
 
-	so_add_impl_t().perform(params);
+	so_mult_impl_t().perform(params);
 
 	compare_ref<2>::compare(testname, bis2, set3, set3_ref);
 
@@ -342,17 +344,13 @@ void so_add_impl_label_test::test_3b() throw(libtest::test_exception) {
 		fail_test(testname, __FILE__, __LINE__,
 			"Expected only one element.");
 	}
-	if(elem2_3.get_n_targets() != 2) {
+	if(elem2_3.get_n_targets() != 1) {
 		fail_test(testname, __FILE__, __LINE__,
-				"elem.get_n_targets() != 2");
+				"elem.get_n_targets() != 1");
 	}
-	if(elem2_3.get_target(0) != 1) {
+	if(elem2_3.get_target(0) != 3) {
 		fail_test(testname, __FILE__, __LINE__,
-				"elem.get_target(0) != Eg");
-	}
-	if(elem2_3.get_target(1) != 2) {
-		fail_test(testname, __FILE__, __LINE__,
-				"elem.get_target(1) != Au");
+				"elem.get_target(0) != Eu");
 	}
 	if(elem2_3.get_dim_type(0) != elem2_3.get_dim_type(1)) {
 		fail_test(testname, __FILE__, __LINE__,
@@ -368,17 +366,17 @@ void so_add_impl_label_test::test_3b() throw(libtest::test_exception) {
 	}
 }
 
-/**	\test Addition of a group with one element of Eg symmetry and a group with
-		one element of Eu symmetry (2-space). The result is expected to contain
-		an element of Eg + Eu symmetry.
+/**	\test Multiplication of a group with one element of Eg symmetry and a group
+		with one element of Eu symmetry (2-space). The result is expected to
+		contain an element of Au + Eu symmetry.
  **/
-void so_add_impl_label_test::test_3c() throw(libtest::test_exception) {
+void so_mult_impl_label_test::test_3c() throw(libtest::test_exception) {
 
-	static const char *testname = "so_add_impl_label_test::test_3c()";
+	static const char *testname = "so_mult_impl_label_test::test_3c()";
 
 	typedef se_label<2, double> se2_t;
-	typedef so_add<2, double> so_add_t;
-	typedef symmetry_operation_impl<so_add_t, se2_t> so_add_impl_t;
+	typedef so_mult<2, double> so_mult_t;
+	typedef symmetry_operation_impl<so_mult_t, se2_t> so_mult_impl_t;
 
 	try {
 
@@ -397,7 +395,7 @@ void so_add_impl_label_test::test_3c() throw(libtest::test_exception) {
 	se2_t elem2_2(elem2_1), elem2_ref(elem2_1);
 	elem2_1.add_target(1);
 	elem2_2.add_target(3);
-	elem2_ref.add_target(1);
+	elem2_ref.add_target(2);
 	elem2_ref.add_target(3);
 
 	symmetry_element_set<2, double> set1(se2_t::k_sym_type);
@@ -409,10 +407,10 @@ void so_add_impl_label_test::test_3c() throw(libtest::test_exception) {
 	set2.insert(elem2_2);
 	set3_ref.insert(elem2_ref);
 
-	symmetry_operation_params<so_add_t> params(
+	symmetry_operation_params<so_mult_t> params(
 		set1, permutation<2>(), set2, permutation<2>(), set3);
 
-	so_add_impl_t().perform(params);
+	so_mult_impl_t().perform(params);
 
 	compare_ref<2>::compare(testname, bis2, set3, set3_ref);
 
@@ -433,9 +431,9 @@ void so_add_impl_label_test::test_3c() throw(libtest::test_exception) {
 		fail_test(testname, __FILE__, __LINE__,
 				"elem.get_n_targets() != 2");
 	}
-	if(elem2_3.get_target(0) != 1) {
+	if(elem2_3.get_target(0) != 2) {
 		fail_test(testname, __FILE__, __LINE__,
-				"elem.get_target(0) != Eg");
+				"elem.get_target(0) != Au");
 	}
 	if(elem2_3.get_target(1) != 3) {
 		fail_test(testname, __FILE__, __LINE__,
@@ -455,16 +453,16 @@ void so_add_impl_label_test::test_3c() throw(libtest::test_exception) {
 	}
 }
 
-/**	\test Addition of two groups with one element each (2-space). The labeling
-		does not match.
+/**	\test Multiplication of two groups with one element each (2-space). The
+		labeling does not match.
  **/
-void so_add_impl_label_test::test_4() throw(libtest::test_exception) {
+void so_mult_impl_label_test::test_4() throw(libtest::test_exception) {
 
-	static const char *testname = "so_add_impl_label_test::test_4()";
+	static const char *testname = "so_mult_impl_label_test::test_4()";
 
 	typedef se_label<2, double> se2_t;
-	typedef so_add<2, double> so_add_t;
-	typedef symmetry_operation_impl<so_add_t, se2_t> so_add_impl_t;
+	typedef so_mult<2, double> so_mult_t;
+	typedef symmetry_operation_impl<so_mult_t, se2_t> so_mult_impl_t;
 
 	index<2> i2a, i2b;
 	i2b[0] = 8; i2b[1] = 8;
@@ -491,7 +489,6 @@ void so_add_impl_label_test::test_4() throw(libtest::test_exception) {
 	se2_t elem2_ref(elem2_1);
 	elem2_1.add_target(0);
 	elem2_2.add_target(1);
-	elem2_ref.add_target(0);
 	elem2_ref.add_target(1);
 
 	symmetry_element_set<2, double> set1(se2_t::k_sym_type);
@@ -506,10 +503,10 @@ void so_add_impl_label_test::test_4() throw(libtest::test_exception) {
 	bool failed = false;
 	try {
 
-	symmetry_operation_params<so_add_t> params(
+	symmetry_operation_params<so_mult_t> params(
 		set1, permutation<2>(), set2, permutation<2>(), set3);
 
-	so_add_impl_t().perform(params);
+	so_mult_impl_t().perform(params);
 
 	} catch (exception &e) {
 		failed = true;
@@ -521,10 +518,10 @@ void so_add_impl_label_test::test_4() throw(libtest::test_exception) {
 
 	try {
 
-	symmetry_operation_params<so_add_t> params(
+	symmetry_operation_params<so_mult_t> params(
 		set1, permutation<2>(), set2, permutation<2>().permute(0, 1), set3);
 
-	so_add_impl_t().perform(params);
+	so_mult_impl_t().perform(params);
 
 	compare_ref<2>::compare(testname, bis2, set3, set3_ref);
 
@@ -541,17 +538,13 @@ void so_add_impl_label_test::test_4() throw(libtest::test_exception) {
 		fail_test(testname, __FILE__, __LINE__,
 			"Expected only one element.");
 	}
-	if(elem2_3.get_n_targets() != 2) {
+	if(elem2_3.get_n_targets() != 1) {
 		fail_test(testname, __FILE__, __LINE__,
-				"elem.get_n_targets() != 2");
+				"elem.get_n_targets() != 1");
 	}
-	if(elem2_3.get_target(0) != 0) {
+	if(elem2_3.get_target(0) != 1) {
 		fail_test(testname, __FILE__, __LINE__,
-				"elem.get_target(0) != Ag");
-	}
-	if(elem2_3.get_target(1) != 1) {
-		fail_test(testname, __FILE__, __LINE__,
-				"elem.get_target(1) != Eg");
+				"elem.get_target(0) != Eg");
 	}
 	if(elem2_3.get_dim_type(0) == elem2_3.get_dim_type(1)) {
 		fail_test(testname, __FILE__, __LINE__,
@@ -571,18 +564,18 @@ void so_add_impl_label_test::test_4() throw(libtest::test_exception) {
 	}
 }
 
-/**	\test Addition of a group with one element of Ag + Eg symmetry and a group
-		with one element of Eu symmetry (3-space), first group permuted via
-		[012->201]. The result is expected to contain an element of
-		Ag + Eg + Eu symmetry.
+/**	\test Multiplication of a group with one element of Ag + Eg symmetry and
+		a group with one element of Eu symmetry (3-space), first group permuted
+		via [012->201]. The result is expected to contain an element of
+		Au + Eu symmetry.
  **/
-void so_add_impl_label_test::test_5a() throw(libtest::test_exception) {
+void so_mult_impl_label_test::test_5a() throw(libtest::test_exception) {
 
-	static const char *testname = "so_add_impl_label_test::test_5a()";
+	static const char *testname = "so_mult_impl_label_test::test_5a()";
 
 	typedef se_label<3, double> se3_t;
-	typedef so_add<3, double> so_add_t;
-	typedef symmetry_operation_impl<so_add_t, se3_t> so_add_impl_t;
+	typedef so_mult<3, double> so_mult_t;
+	typedef symmetry_operation_impl<so_mult_t, se3_t> so_mult_impl_t;
 
 	try {
 
@@ -615,8 +608,7 @@ void so_add_impl_label_test::test_5a() throw(libtest::test_exception) {
 	elem3_1.add_target(0);
 	elem3_1.add_target(1);
 	elem3_2.add_target(3);
-	elem3_ref.add_target(0);
-	elem3_ref.add_target(1);
+	elem3_ref.add_target(2);
 	elem3_ref.add_target(3);
 
 	symmetry_element_set<3, double> set1(se3_t::k_sym_type);
@@ -628,11 +620,11 @@ void so_add_impl_label_test::test_5a() throw(libtest::test_exception) {
 	set2.insert(elem3_2);
 	set3_ref.insert(elem3_ref);
 
-	symmetry_operation_params<so_add_t> params(
+	symmetry_operation_params<so_mult_t> params(
 			set1, permutation<3>().permute(1, 2).permute(0, 1),
 			set2, permutation<3>(), set3);
 
-	so_add_impl_t().perform(params);
+	so_mult_impl_t().perform(params);
 
 	compare_ref<3>::compare(testname, bis3, set3, set3_ref);
 
@@ -649,21 +641,17 @@ void so_add_impl_label_test::test_5a() throw(libtest::test_exception) {
 		fail_test(testname, __FILE__, __LINE__,
 			"Expected only one element.");
 	}
-	if(elem3_3.get_n_targets() != 3) {
+	if(elem3_3.get_n_targets() != 2) {
 		fail_test(testname, __FILE__, __LINE__,
-				"elem.get_n_targets() != 3");
+				"elem.get_n_targets() != 2");
 	}
-	if(elem3_3.get_target(0) != 0) {
+	if(elem3_3.get_target(0) != 2) {
 		fail_test(testname, __FILE__, __LINE__,
-				"elem.get_target(0) != Ag");
+				"elem.get_target(0) != Au");
 	}
-	if(elem3_3.get_target(1) != 1) {
+	if(elem3_3.get_target(1) != 3) {
 		fail_test(testname, __FILE__, __LINE__,
-				"elem.get_target(1) != Eg");
-	}
-	if(elem3_3.get_target(2) != 3) {
-		fail_test(testname, __FILE__, __LINE__,
-				"elem.get_target(2) != Eu");
+				"elem.get_target(1) != Eu");
 	}
 	if(elem3_3.get_dim_type(0) == elem3_3.get_dim_type(1)) {
 		fail_test(testname, __FILE__, __LINE__,
@@ -695,18 +683,18 @@ void so_add_impl_label_test::test_5a() throw(libtest::test_exception) {
 	}
 }
 
-/**	\test Addition of a group with one element of Ag + Eg symmetry and a group
-		with one element of Eu symmetry (3-space), second group permuted via
-		[012->120]. The result is expected to contain an element of Ag + Eg + Eu
-		symmetry.
+/**	\test Multiplication of a group with one element of Ag + Eg symmetry and
+		a group with one element of Eu symmetry (3-space), second group
+		permuted via [012->120]. The result is expected to contain an element
+		of Au + Eu symmetry.
  **/
-void so_add_impl_label_test::test_5b() throw(libtest::test_exception) {
+void so_mult_impl_label_test::test_5b() throw(libtest::test_exception) {
 
-	static const char *testname = "so_add_impl_label_test::test_5b()";
+	static const char *testname = "so_mult_impl_label_test::test_5b()";
 
 	typedef se_label<3, double> se3_t;
-	typedef so_add<3, double> so_add_t;
-	typedef symmetry_operation_impl<so_add_t, se3_t> so_add_impl_t;
+	typedef so_mult<3, double> so_mult_t;
+	typedef symmetry_operation_impl<so_mult_t, se3_t> so_mult_impl_t;
 
 	try {
 
@@ -739,8 +727,7 @@ void so_add_impl_label_test::test_5b() throw(libtest::test_exception) {
 	elem3_1.add_target(0);
 	elem3_1.add_target(1);
 	elem3_2.add_target(3);
-	elem3_ref.add_target(0);
-	elem3_ref.add_target(1);
+	elem3_ref.add_target(2);
 	elem3_ref.add_target(3);
 
 	symmetry_element_set<3, double> set1(se3_t::k_sym_type);
@@ -752,11 +739,11 @@ void so_add_impl_label_test::test_5b() throw(libtest::test_exception) {
 	set2.insert(elem3_2);
 	set3_ref.insert(elem3_ref);
 
-	symmetry_operation_params<so_add_t> params(
+	symmetry_operation_params<so_mult_t> params(
 			set1, permutation<3>(),
 			set2, permutation<3>().permute(0, 1).permute(1, 2), set3);
 
-	so_add_impl_t().perform(params);
+	so_mult_impl_t().perform(params);
 
 	compare_ref<3>::compare(testname, bis3, set3, set3_ref);
 
@@ -773,21 +760,17 @@ void so_add_impl_label_test::test_5b() throw(libtest::test_exception) {
 		fail_test(testname, __FILE__, __LINE__,
 			"Expected only one element.");
 	}
-	if(elem3_3.get_n_targets() != 3) {
+	if(elem3_3.get_n_targets() != 2) {
 		fail_test(testname, __FILE__, __LINE__,
 				"elem.get_n_targets() != 3");
 	}
-	if(elem3_3.get_target(0) != 0) {
+	if(elem3_3.get_target(0) != 2) {
 		fail_test(testname, __FILE__, __LINE__,
-				"elem.get_target(0) != Ag");
+				"elem.get_target(0) != Au");
 	}
-	if(elem3_3.get_target(1) != 1) {
+	if(elem3_3.get_target(1) != 3) {
 		fail_test(testname, __FILE__, __LINE__,
-				"elem.get_target(1) != Eg");
-	}
-	if(elem3_3.get_target(2) != 3) {
-		fail_test(testname, __FILE__, __LINE__,
-				"elem.get_target(2) != Eu");
+				"elem.get_target(1) != Eu");
 	}
 	if(elem3_3.get_dim_type(0) == elem3_3.get_dim_type(1)) {
 		fail_test(testname, __FILE__, __LINE__,
@@ -819,18 +802,18 @@ void so_add_impl_label_test::test_5b() throw(libtest::test_exception) {
 	}
 }
 
-/**	\test Addition of a group with one element of Ag + Eg symmetry and a group
-		with one element of Eu symmetry (3-space), first group permuted via
-		[012->201], second via [012->120]. The result is expected to contain an
-		element of Au + Eu symmetry.
+/**	\test Multiplication of a group with one element of Ag + Eg symmetry and
+		a group with one element of Eu symmetry (3-space), first group
+		permuted via [012->201], second via [012->120]. The result is expected
+		to contain an element of Au + Eu symmetry.
  **/
-void so_add_impl_label_test::test_5c() throw(libtest::test_exception) {
+void so_mult_impl_label_test::test_5c() throw(libtest::test_exception) {
 
-	static const char *testname = "so_add_impl_label_test::test_5c()";
+	static const char *testname = "so_mult_impl_label_test::test_5c()";
 
 	typedef se_label<3, double> se3_t;
-	typedef so_add<3, double> so_add_t;
-	typedef symmetry_operation_impl<so_add_t, se3_t> so_add_impl_t;
+	typedef so_mult<3, double> so_mult_t;
+	typedef symmetry_operation_impl<so_mult_t, se3_t> so_mult_impl_t;
 
 	try {
 
@@ -866,8 +849,7 @@ void so_add_impl_label_test::test_5c() throw(libtest::test_exception) {
 	elem3_1.add_target(0);
 	elem3_1.add_target(1);
 	elem3_2.add_target(3);
-	elem3_ref.add_target(0);
-	elem3_ref.add_target(1);
+	elem3_ref.add_target(2);
 	elem3_ref.add_target(3);
 
 	symmetry_element_set<3, double> set1(se3_t::k_sym_type);
@@ -879,11 +861,11 @@ void so_add_impl_label_test::test_5c() throw(libtest::test_exception) {
 	set2.insert(elem3_2);
 	set3_ref.insert(elem3_ref);
 
-	symmetry_operation_params<so_add_t> params(
+	symmetry_operation_params<so_mult_t> params(
 			set1, permutation<3>().permute(1, 2).permute(0, 1),
 			set2, permutation<3>().permute(0, 1).permute(1, 2), set3);
 
-	so_add_impl_t().perform(params);
+	so_mult_impl_t().perform(params);
 
 	compare_ref<3>::compare(testname, bis3, set3, set3_ref);
 
@@ -900,21 +882,17 @@ void so_add_impl_label_test::test_5c() throw(libtest::test_exception) {
 		fail_test(testname, __FILE__, __LINE__,
 			"Expected only one element.");
 	}
-	if(elem3_3.get_n_targets() != 3) {
+	if(elem3_3.get_n_targets() != 2) {
 		fail_test(testname, __FILE__, __LINE__,
 				"elem.get_n_targets() != 2");
 	}
-	if(elem3_3.get_target(0) != 0) {
+	if(elem3_3.get_target(0) != 2) {
 		fail_test(testname, __FILE__, __LINE__,
-				"elem.get_target(0) != Ag");
+				"elem.get_target(0) != Au");
 	}
-	if(elem3_3.get_target(1) != 1) {
+	if(elem3_3.get_target(1) != 3) {
 		fail_test(testname, __FILE__, __LINE__,
-				"elem.get_target(1) != Eg");
-	}
-	if(elem3_3.get_target(2) != 3) {
-		fail_test(testname, __FILE__, __LINE__,
-				"elem.get_target(2) != Eu");
+				"elem.get_target(1) != Eu");
 	}
 	if(elem3_3.get_dim_type(0) == elem3_3.get_dim_type(1)) {
 		fail_test(testname, __FILE__, __LINE__,

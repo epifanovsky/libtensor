@@ -1,16 +1,16 @@
-#ifndef LIBTENSOR_SO_ADD_IMPL_LABEL_TEST_H
-#define LIBTENSOR_SO_ADD_IMPL_LABEL_TEST_H
+#ifndef LIBTENSOR_SO_MULT_IMPL_LABEL_TEST_H
+#define LIBTENSOR_SO_MULT_IMPL_LABEL_TEST_H
 
 #include <libtest/unit_test.h>
 
 namespace libtensor {
 
 
-/**	\brief Tests the libtensor::so_add_impl_label class
+/**	\brief Tests the libtensor::so_mult_impl_label class
 
 	\ingroup libtensor_tests
  **/
-class so_add_impl_label_test : public libtest::unit_test {
+class so_mult_impl_label_test : public libtest::unit_test {
 public:
 	virtual void perform() throw(libtest::test_exception);
 
@@ -33,5 +33,5 @@ private:
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_SO_ADD_IMPL_LABEL_TEST_H
+#endif // LIBTENSOR_SO_MULT_IMPL_LABEL_TEST_H
 

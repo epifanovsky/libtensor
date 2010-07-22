@@ -22,6 +22,7 @@ private:
 	void test_4() throw(libtest::test_exception);
 	void test_5() throw(libtest::test_exception);
 	void test_6() throw(libtest::test_exception);
+	void test_7() throw(libtest::test_exception);
 };
 
 } // namespace libtensor

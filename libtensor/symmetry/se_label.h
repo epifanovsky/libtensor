@@ -26,6 +26,9 @@ namespace libtensor {
 	match) or discarded. Unassigned labels are treated as if they represent any
 	label, i.e. the respective %tensor blocks are always accepted.
 
+	The target label can comprise any number of labels. If no target label is
+	set or the target label comprises all valid labels, all blocks are accepted.
+
 	The product table (given by the table_id in the constructor) is obtained
 	from the product table container object at time of construction of an
 	se_label object and returned after destruction. Thus, a product table has
@@ -137,6 +140,12 @@ public:
 		\throw bad_parameter If the dimension type is invalid.
 	 **/
 	size_t get_dim(size_t type) const throw(bad_parameter);
+
+	/** \brief Returns the number of valid labels.
+	 **/
+	size_t get_n_labels() const {
+		return m_pt.nlabels();
+	}
 
 	/**	\brief Returns the label of a block of a dimension type.
 		\param type Dimension type.
@@ -510,7 +519,8 @@ bool se_label<N, T>::is_allowed(const index<N> &idx) const {
 
 	static const char *method = "is_allowed(const index<N> &)";
 
-	if (m_target.size() == 0) return true;
+	if (m_target.size() == 0 || m_target.size() == m_pt.nlabels())
+		return true;
 
 	label_group lg(N, m_pt.invalid());
 	for (size_t i = 0; i < N; i++) {

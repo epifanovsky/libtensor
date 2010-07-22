@@ -73,6 +73,7 @@ set(SRC
 	so_concat_impl_perm_test.C
 	so_copy_test.C
 	so_mult_test.C
+	so_mult_impl_label_test.C
 	so_mult_impl_perm_test.C
 	so_permute_impl_label_test.C
 	so_proj_down_test.C

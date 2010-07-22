@@ -1,11 +1,11 @@
-#ifndef LIBTENSOR_SO_ADD_IMPL_LABEL_H
-#define LIBTENSOR_SO_ADD_IMPL_LABEL_H
+#ifndef LIBTENSOR_SO_MULT_IMPL_LABEL_H
+#define LIBTENSOR_SO_MULT_IMPL_LABEL_H
 
 #include "../defs.h"
 #include "../exception.h"
 #include "symmetry_element_set_adapter.h"
 #include "symmetry_operation_impl_base.h"
-#include "so_add.h"
+#include "so_mult.h"
 #include "se_label.h"
 
 namespace libtensor {
@@ -18,14 +18,14 @@ namespace libtensor {
 	\ingroup libtensor_symmetry
  **/
 template<size_t N, typename T>
-class symmetry_operation_impl< so_add<N, T>, se_label<N, T> > :
-	public symmetry_operation_impl_base< so_add<N, T>, se_label<N, T> > {
+class symmetry_operation_impl< so_mult<N, T>, se_label<N, T> > :
+	public symmetry_operation_impl_base< so_mult<N, T>, se_label<N, T> > {
 
 public:
 	static const char *k_clazz; //!< Class name
 
 public:
-	typedef so_add<N, T> operation_t;
+	typedef so_mult<N, T> operation_t;
 	typedef se_label<N, T> element_t;
 	typedef symmetry_operation_params<operation_t>
 		symmetry_operation_params_t;
@@ -36,12 +36,12 @@ protected:
 
 
 template<size_t N, typename T>
-const char *symmetry_operation_impl< so_add<N, T>, se_label<N, T> >::k_clazz =
-	"symmetry_operation_impl< so_add<N, T>, se_label<N, T> >";
+const char *symmetry_operation_impl< so_mult<N, T>, se_label<N, T> >::k_clazz =
+	"symmetry_operation_impl< so_mult<N, T>, se_label<N, T> >";
 
 
 template<size_t N, typename T>
-void symmetry_operation_impl< so_add<N, T>, se_label<N, T> >::do_perform(
+void symmetry_operation_impl< so_mult<N, T>, se_label<N, T> >::do_perform(
 	symmetry_operation_params_t &params) const {
 
 	static const char *method =
@@ -68,7 +68,8 @@ void symmetry_operation_impl< so_add<N, T>, se_label<N, T> >::do_perform(
 				break;
 		}
 
-		if (it2 == g2.end()) continue;
+		if (it2 == g2.end())
+			continue;
 
 		const se_label<N, T> &e2 = g2.get_elem(it2);
 
@@ -76,7 +77,6 @@ void symmetry_operation_impl< so_add<N, T>, se_label<N, T> >::do_perform(
 		se_label<N, T> e3(e2);
 		e3.permute(params.perm2);
 
-		// check if the labeling of e1 and e2 matches
 		for (size_t i = 0; i < N; i++) {
 			size_t type1 = e1.get_dim_type(map[i]);
 			size_t type = e3.get_dim_type(i);
@@ -94,16 +94,27 @@ void symmetry_operation_impl< so_add<N, T>, se_label<N, T> >::do_perform(
 		e3.delete_target();
 
 		size_t nlabels = e3.get_n_labels();
+
 		// if no or all target labels are given every irrep is valid
-		if (e1.get_n_targets() != 0 && e2.get_n_targets() != 0 &&
-				e1.get_n_targets() != nlabels &&
-				e2.get_n_targets() != nlabels) {
+		if (e1.get_n_targets() != 0 && e2.get_n_targets() != 0
+				&& e1.get_n_targets() != nlabels
+				&& e2.get_n_targets() != nlabels) {
 
-			for (size_t i = 0; i < e1.get_n_targets(); i++)
-				e3.add_target(e1.get_target(i));
+			// set target labels
+			const product_table_i &pt =
+					product_table_container::get_instance().req_const_table(e1.get_table_id());
 
-			for (size_t i = 0; i < e2.get_n_targets(); i++)
-				e3.add_target(e2.get_target(i));
+			product_table_i::label_group lg(2);
+			for (size_t k = 0; k < e1.get_n_targets(); k++) {
+				for (size_t l = 0; l < e2.get_n_targets(); l++) {
+					lg[0] = e1.get_target(k);
+					lg[1] = e2.get_target(l);
+					for (product_table_i::label_t m = 0; m < nlabels; m++)
+						if (pt.is_in_product(lg, m)) e3.add_target(m);
+				}
+			}
+
+			product_table_container::get_instance().ret_table(e1.get_table_id());
 		}
 
 		params.grp3.insert(e3);
@@ -113,4 +124,4 @@ void symmetry_operation_impl< so_add<N, T>, se_label<N, T> >::do_perform(
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_SO_ADD_IMPL_LABEL_H
+#endif // LIBTENSOR_SO_MULT_IMPL_LABEL_H
