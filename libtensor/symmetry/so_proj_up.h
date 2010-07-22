@@ -103,7 +103,7 @@ public:
 	const symmetry_element_set<N, T> &g1; //!< Symmetry group
 	permutation<N> perm; //!< Permutation
 	mask<N + M> msk; //!< Mask
-	const block_index_space<N + M> &bis; //!< Block index space of result
+	block_index_space<N + M> bis; //!< Block index space of result
 	symmetry_element_set<N + M, T> &g2;
 
 public:

@@ -468,14 +468,11 @@ size_t se_label<N, T>::get_dim_type(size_t dim) const  {
 template<size_t N, typename T>
 size_t se_label<N, T>::get_dim(size_t type) const throw(bad_parameter) {
 
-	size_t i = 0;
-	for (; i < N; i++) if (type == m_type[i]) break;
-
-	if (i == N)
-		throw bad_parameter(g_ns, k_clazz, "get_dim(size_t)",
+	if (type > N || m_labels[type] == 0)
+		throw out_of_bounds(g_ns, k_clazz, "get_dim(size_t)",
 				__FILE__, __LINE__, "Invalid type.");
 
-	return m_labels[i]->size();
+	return m_labels[type]->size();
 
 }
 
@@ -483,10 +480,9 @@ template<size_t N, typename T>
 typename se_label<N, T>::label_t se_label<N, T>::get_label(
 		size_t type, size_t pos) const throw(out_of_bounds) {
 
-	static const char *method = "get_dim(size_t)";
-	size_t i = 0;
-	for (; i < N; i++) if (type == m_type[i]) break;
-	if (i == N)
+	static const char *method = "get_label(size_t, size_t)";
+
+	if (type > N || m_labels[type] == 0)
 		throw out_of_bounds(g_ns, k_clazz,
 				method, __FILE__, __LINE__, "Invalid type.");
 

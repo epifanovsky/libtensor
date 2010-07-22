@@ -237,7 +237,7 @@ public:
 	const symmetry_element_set<N, T> &g1; //!< Symmetry group
 	const symmetry_element_set<M, T> &g2; //!< Symmetry group
 	permutation<N + M> perm; //!< Permutation
-	const block_index_space<N + M> &bis; //!< Block index space of result
+	block_index_space<N + M> bis; //!< Block index space of result
 	symmetry_element_set<N + M, T> &g3;
 
 public:
