@@ -55,14 +55,15 @@ void symmetry_operation_impl< so_concat<N, M, T>,
 	typedef symmetry_element_set_adapter< N, T, se_label<N, T> > adapter1_t;
 	typedef symmetry_element_set_adapter< M, T, se_label<M, T> > adapter2_t;
 
+	adapter1_t g1(params.g1);
+	adapter2_t g2(params.g2);
+	params.g3.clear();
+
 	// map  result index -> input index
 	size_t map[N + M];
 	for (size_t j = 0; j < N + M; j++) map[j] = j;
 	permutation<N + M> pinv(params.perm, true);
 	pinv.apply(map);
-
-	adapter1_t g1(params.g1);
-	adapter2_t g2(params.g2);
 
 	//	Go over each element in the first source group
 	for(typename adapter1_t::iterator i = g1.begin(); i != g1.end(); i++) {

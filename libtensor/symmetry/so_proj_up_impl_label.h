@@ -54,6 +54,9 @@ void symmetry_operation_impl< so_proj_up<N, M, T>,
 	// Adapter type for the input group
 	typedef symmetry_element_set_adapter< N, T, se_label<N, T> > adapter_t;
 
+	adapter_t g1(params.g1);
+	params.g2.clear();
+
 	//	Verify that the mask is valid
 	const mask<N + M> &m = params.msk;
 	size_t nm = 0;
@@ -67,8 +70,6 @@ void symmetry_operation_impl< so_proj_up<N, M, T>,
 	size_t map[N];
 	for (size_t j = 0; j < N; j++) map[j] = j;
 	params.perm.apply(map);
-
-	adapter_t g1(params.g1);
 
 	//	Go over each element in the first source group
 	for(typename adapter_t::iterator i = g1.begin(); i != g1.end(); i++) {

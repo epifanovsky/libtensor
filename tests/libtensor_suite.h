@@ -67,6 +67,7 @@
 #include "se_part_test.h"
 #include "se_perm_test.h"
 #include "so_add_test.h"
+#include "so_add_impl_label_test.h"
 #include "so_add_impl_perm_test.h"
 #include "so_concat_test.h"
 #include "so_concat_impl_label_test.h"
@@ -188,6 +189,7 @@ namespace libtensor {
 	\li libtensor::se_part_test
 	\li libtensor::se_perm_test
 	\li libtensor::so_add_test
+	\li libtensor::so_add_impl_label_test
 	\li libtensor::so_add_impl_perm_test
 	\li libtensor::so_copy_test
 	\li libtensor::so_concat_test
@@ -305,6 +307,7 @@ private:
 	unit_test_factory<se_part_test> m_utf_se_part;
 	unit_test_factory<se_perm_test> m_utf_se_perm;
 	unit_test_factory<so_add_test> m_utf_so_add;
+	unit_test_factory<so_add_impl_label_test> m_utf_so_add_impl_label;
 	unit_test_factory<so_add_impl_perm_test> m_utf_so_add_impl_perm;
 	unit_test_factory<so_concat_test> m_utf_so_concat;
 	unit_test_factory<so_concat_impl_label_test> m_utf_so_concat_impl_label;
