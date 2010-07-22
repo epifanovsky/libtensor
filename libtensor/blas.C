@@ -1,3 +1,4 @@
+#include <xmmintrin.h>
 #include "blas.h"
 
 namespace libtensor {
@@ -8,6 +9,7 @@ double blas::ddot_trp(const double *a, const double *b, size_t ni, size_t nj,
 
 	double d = 0.0;
 
+/*
 	size_t mj = 4 * (nj / 4);
 
 	register size_t pq = 0;
@@ -29,6 +31,59 @@ double blas::ddot_trp(const double *a, const double *b, size_t ni, size_t nj,
 	}
 
 	return d;
+*/
+
+	size_t mi = 2 * (ni / 2);
+	size_t mj = 2 * (nj / 2);
+
+	__m128d r0;
+	r0 = _mm_setzero_pd();
+
+	register size_t pq = 0;
+	register size_t i = 0;
+	for(; i < mi; i += 2) {
+
+		register size_t j = 0;
+		register size_t qp = 0;
+
+		for(; j < mj; j += 2) {
+
+			__m128d r1, r2, r3, r4, r5, r6;
+
+			register const double *ptr = a + pq + j;
+			r1 = _mm_loadu_pd(ptr);
+			r2 = _mm_loadu_pd(ptr + lda);
+			ptr = b + qp + i;
+			r3 = _mm_loadu_pd(ptr);
+			r4 = _mm_loadu_pd(ptr + ldb);
+			r5 = _mm_shuffle_pd(r3, r4, _MM_SHUFFLE2(0, 0));
+			r6 = _mm_shuffle_pd(r3, r4, _MM_SHUFFLE2(1, 1));
+			r5 = _mm_mul_pd(r1, r5);
+			r6 = _mm_mul_pd(r2, r6);
+			r0 = _mm_add_pd(r0, r5);
+			r0 = _mm_add_pd(r0, r6);
+
+			qp += 2 * ldb;
+		}
+		for(; j < nj; j++) {
+			d += a[pq +       j] * b[qp + i    ];
+			d += a[pq + lda + j] * b[qp + i + 1];
+			qp += ldb;
+		}
+		pq += 2 * lda;
+	}
+	for(; i < ni; i++) {
+		register size_t qp = 0;
+		for(register size_t j = 0; j < nj; j++) {
+			d += a[pq + j] * b[j * ldb + i];
+		}
+		pq += lda;
+	}
+
+	double dd[] = { 0.0, 0.0 };
+	_mm_storeu_pd(dd, r0);
+
+	return d + dd[0] + dd[1];
 }
 
 
