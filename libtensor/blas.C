@@ -9,8 +9,8 @@ double blas::ddot_trp(const double *a, const double *b, size_t ni, size_t nj,
 
 	double d = 0.0;
 
-	bool aligneda = ((size_t)a & 0xF == 0 && lda % 2 == 0);
-	bool alignedb = ((size_t)b & 0xF == 0 && ldb % 2 == 0);
+	bool aligneda = (((size_t)a & 0xF) == 0 && lda % 2 == 0);
+	bool alignedb = (((size_t)b & 0xF) == 0 && ldb % 2 == 0);
 
 	if(aligneda && alignedb) {
 
