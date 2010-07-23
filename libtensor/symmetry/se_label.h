@@ -27,7 +27,8 @@ namespace libtensor {
 	label, i.e. the respective %tensor blocks are always accepted.
 
 	The target label can comprise any number of labels. If no target label is
-	set or the target label comprises all valid labels, all blocks are accepted.
+	set, all blocks are discarded. If the target label comprises all valid
+	labels, all blocks are accepted.
 
 	The product table (given by the table_id in the constructor) is obtained
 	from the product table container object at time of construction of an
@@ -519,8 +520,8 @@ bool se_label<N, T>::is_allowed(const index<N> &idx) const {
 
 	static const char *method = "is_allowed(const index<N> &)";
 
-	if (m_target.size() == 0 || m_target.size() == m_pt.nlabels())
-		return true;
+	if (m_target.size() == 0) return false;
+	if (m_target.size() == m_pt.nlabels()) return true;
 
 	label_group lg(N, m_pt.invalid());
 	for (size_t i = 0; i < N; i++) {

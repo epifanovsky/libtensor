@@ -94,10 +94,8 @@ void symmetry_operation_impl< so_add<N, T>, se_label<N, T> >::do_perform(
 		e3.delete_target();
 
 		size_t nlabels = e3.get_n_labels();
-		// if no or all target labels are given every irrep is valid
-		if (e1.get_n_targets() != 0 && e2.get_n_targets() != 0 &&
-				e1.get_n_targets() != nlabels &&
-				e2.get_n_targets() != nlabels) {
+		// if no target labels are given every block is discarded
+		if (e1.get_n_targets() != 0 && e2.get_n_targets() != 0) {
 
 			for (size_t i = 0; i < e1.get_n_targets(); i++)
 				e3.add_target(e1.get_target(i));

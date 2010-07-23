@@ -54,12 +54,15 @@ void symmetry_operation_impl< so_mult<N, T>, se_label<N, T> >::do_perform(
 
 	size_t map[N];
 	for (size_t i = 0; i < N; i++) map[i] = i;
-	params.perm1.apply(map);
+	params.perm2.apply(map);
 
 	for (typename adapter_t::iterator it1 = g1.begin();
 			it1 != g1.end(); it1++) {
 
 		const se_label<N, T> &e1 = g1.get_elem(it1);
+
+		se_label<N, T> e3(e1);
+		e3.permute(params.perm1);
 
 		typename adapter_t::iterator it2 = g2.begin();
 		for(; it2 != g2.end(); it2++) {
@@ -68,56 +71,66 @@ void symmetry_operation_impl< so_mult<N, T>, se_label<N, T> >::do_perform(
 				break;
 		}
 
-		if (it2 == g2.end())
-			continue;
+		if (it2 != g2.end()) {
 
-		const se_label<N, T> &e2 = g2.get_elem(it2);
+			const se_label<N, T> &e2 = g2.get_elem(it2);
 
-		// create new se_label element by copying e2 and permuting
-		se_label<N, T> e3(e2);
-		e3.permute(params.perm2);
-
-		for (size_t i = 0; i < N; i++) {
-			size_t type1 = e1.get_dim_type(map[i]);
-			size_t type = e3.get_dim_type(i);
-			if (e1.get_dim(type1) != e3.get_dim(type))
-				throw bad_symmetry(g_ns, k_clazz, method,
-						__FILE__, __LINE__, "Incompatible dimensions.");
-
-			for (size_t j = 0; j < e3.get_dim(type); j++) {
-				if (e1.get_label(type1, j) != e3.get_label(type, j))
+			for (size_t i = 0; i < N; i++) {
+				size_t type = e3.get_dim_type(i);
+				size_t type2 = e2.get_dim_type(map[i]);
+				if (e3.get_dim(type) != e2.get_dim(type2))
 					throw bad_symmetry(g_ns, k_clazz, method,
-							__FILE__, __LINE__, "Incompatible labeling.");
-			}
-		}
+							__FILE__, __LINE__, "Incompatible dimensions.");
 
-		e3.delete_target();
-
-		size_t nlabels = e3.get_n_labels();
-
-		// if no or all target labels are given every irrep is valid
-		if (e1.get_n_targets() != 0 && e2.get_n_targets() != 0
-				&& e1.get_n_targets() != nlabels
-				&& e2.get_n_targets() != nlabels) {
-
-			// set target labels
-			const product_table_i &pt =
-					product_table_container::get_instance().req_const_table(e1.get_table_id());
-
-			product_table_i::label_group lg(2);
-			for (size_t k = 0; k < e1.get_n_targets(); k++) {
-				for (size_t l = 0; l < e2.get_n_targets(); l++) {
-					lg[0] = e1.get_target(k);
-					lg[1] = e2.get_target(l);
-					for (product_table_i::label_t m = 0; m < nlabels; m++)
-						if (pt.is_in_product(lg, m)) e3.add_target(m);
+				for (size_t j = 0; j < e3.get_dim(type); j++) {
+					if (e3.get_label(type, j) != e2.get_label(type2, j))
+						throw bad_symmetry(g_ns, k_clazz, method,
+								__FILE__, __LINE__, "Incompatible labeling.");
 				}
 			}
 
-			product_table_container::get_instance().ret_table(e1.get_table_id());
+			e3.delete_target();
+
+			size_t nlabels = e3.get_n_labels();
+
+			if (e1.get_n_targets() != 0 && e2.get_n_targets() != 0) {
+
+				for (size_t k = 0; k < e1.get_n_targets(); k++) {
+					typename se_label<N, T>::label_t target = e1.get_target(k);
+
+					size_t l = 0;
+					while (l < e2.get_n_targets() &&
+							e2.get_target(l) != target) l++;
+
+					if (l != e2.get_n_targets())
+						e3.add_target(target);
+
+				}
+			}
+
 		}
 
 		params.grp3.insert(e3);
+	}
+
+	for (typename adapter_t::iterator it2 = g2.begin();
+			it2 != g2.end(); it2++) {
+
+		const se_label<N, T> &e2 = g2.get_elem(it2);
+
+		se_label<N, T> e3(e2);
+		e3.permute(params.perm2);
+
+		typename adapter_t::iterator it1 = g1.begin();
+		for(; it1 != g1.end(); it1++) {
+
+			if (e2.get_table_id() == g1.get_elem(it1).get_table_id())
+				break;
+		}
+
+		if (it1 == g1.end()) {
+			params.grp3.insert(e3);
+		}
 	}
 }
 
