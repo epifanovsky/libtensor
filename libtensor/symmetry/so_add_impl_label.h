@@ -48,55 +48,67 @@ void symmetry_operation_impl< so_add<N, T>, se_label<N, T> >::do_perform(
 		"do_perform(const symmetry_operation_params_t&)";
 
 	typedef symmetry_element_set_adapter< N, T, se_label<N, T> > adapter_t;
-	adapter_t adapter1(params.grp1);
-	adapter_t adapter2(params.grp2);
+	adapter_t g1(params.grp1);
+	adapter_t g2(params.grp2);
 	params.grp3.clear();
 
-	for (typename adapter_t::iterator it1 = adapter1.begin();
-			it1 != adapter1.end(); it1++) {
+	size_t map[N];
+	for (size_t i = 0; i < N; i++) map[i] = i;
+	params.perm1.apply(map);
 
-		std::string id1(adapter1.get_elem(it1).get_table_id());
+	for (typename adapter_t::iterator it1 = g1.begin();
+			it1 != g1.end(); it1++) {
 
-		typename adapter_t::iterator it2 = adapter2.begin();
-		for(; it2 != adapter2.end(); it2++) {
+		const se_label<N, T> &e1 = g1.get_elem(it1);
 
-			if (id1.compare(adapter2.get_elem(it2).get_table_id()) == 0)
+		typename adapter_t::iterator it2 = g2.begin();
+		for(; it2 != g2.end(); it2++) {
+
+			if (e1.get_table_id() == g2.get_elem(it2).get_table_id())
 				break;
 		}
 
-		if (it2 == adapter2.end()) continue;
+		if (it2 == g2.end()) continue;
 
-		// if targets are different we don't need an se_label element
-		// in the result
-		if (adapter1.get_elem(it1).get_target()
-				!= adapter2.get_elem(it2).get_target()) continue;
+		const se_label<N, T> &e2 = g2.get_elem(it2);
 
+		// create new se_label element by copying e2 and permuting
+		se_label<N, T> e3(e2);
+		e3.permute(params.perm2);
 
-#ifdef LIBTENSOR_DEBUG
-		se_label<N, T> se1(adapter1.get_elem(it1)),
-				se2(adapter2.get_elem(it2));
-		se1.permute(params.perm1);
-		se2.permute(params.perm2);
-
+		// check if the labeling of e1 and e2 matches
 		for (size_t i = 0; i < N; i++) {
-			size_t dim = se1.get_dim(i);
-			for (size_t j = 0; j < dim; j++) {
-				if (se1.get_label(i, j) != se2.get_label(i, j))
+			size_t type1 = e1.get_dim_type(map[i]);
+			size_t type = e3.get_dim_type(i);
+			if (e1.get_dim(type1) != e3.get_dim(type))
+				throw bad_symmetry(g_ns, k_clazz, method,
+						__FILE__, __LINE__, "Incompatible dimensions.");
+
+			for (size_t j = 0; j < e3.get_dim(type); j++) {
+				if (e1.get_label(type1, j) != e3.get_label(type, j))
 					throw bad_symmetry(g_ns, k_clazz, method,
 							__FILE__, __LINE__, "Incompatible labeling.");
 			}
 		}
-#endif
 
-		// create new se_label element
-		se_label<N, T> se3(adapter1.get_elem(it1));
-		se3.permute(params.perm1);
+		e3.delete_target();
 
-		params.grp3.insert(se3);
+		size_t nlabels = e3.get_n_labels();
+		// if no target labels are given every block is discarded
+		if (e1.get_n_targets() != 0 && e2.get_n_targets() != 0) {
+
+			for (size_t i = 0; i < e1.get_n_targets(); i++)
+				e3.add_target(e1.get_target(i));
+
+			for (size_t i = 0; i < e2.get_n_targets(); i++)
+				e3.add_target(e2.get_target(i));
+		}
+
+		params.grp3.insert(e3);
 	}
 }
 
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_SO_ADD_IMPL_PERM_H
+#endif // LIBTENSOR_SO_ADD_IMPL_LABEL_H

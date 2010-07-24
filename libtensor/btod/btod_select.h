@@ -62,7 +62,7 @@ public:
 	/** \brief Default constuctor
 		\param cmp Compare policy object (default: compare4absmin)
 	 **/
-	btod_select( compare_t cmp=compare4absmin() ) : m_cmp(cmp) {}
+	btod_select( compare_t cmp=compare_t() ) : m_cmp(cmp) {}
 
 	//@}
 

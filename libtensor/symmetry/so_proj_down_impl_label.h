@@ -15,6 +15,9 @@ namespace libtensor {
 	\tparam N Tensor order.
 	\tparam T Tensor element type.
 
+	The current implementation does not change the target label when projecting
+	down. That's fine for now, since proj_down is only used in
+
 	\ingroup libtensor_symmetry
  **/
 template<size_t N, typename T>

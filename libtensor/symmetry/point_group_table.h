@@ -19,9 +19,8 @@ namespace libtensor {
 
 	The function is_in_product checks whether the label given as second
 	parameter is in the product of the sequence of labels given as first
-	parameter. In case of non symmetric product tables the first element in the
-	sequence is expected to be the left most in the product. For more than two
-	labels in the sequence the products are evaluated from the right.
+	parameter. For more than two labels in the sequence the products are
+	evaluated from the right.
 
  **/
 class point_group_table : public product_table_i {
@@ -122,7 +121,10 @@ public:
 
 private:
 	size_t abs_index(label_t l1, label_t l2) const {
-		return l1 * m_nirreps + l2;
+		if (l1 > l2)
+			return l1 * (l1 + 1) / 2 + l2;
+		else
+			return l2 * (l2 + 1) / 2 + l1;
 	}
 };
 

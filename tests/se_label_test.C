@@ -19,20 +19,13 @@ void se_label_test::perform() throw(libtest::test_exception) {
 	s6.add_product(ag, eg, eg);
 	s6.add_product(ag, au, au);
 	s6.add_product(ag, eu, eu);
-	s6.add_product(eg, ag, eg);
 	s6.add_product(eg, eg, ag);
 	s6.add_product(eg, eg, eg);
-	s6.add_product(eg, au, au);
+	s6.add_product(eg, au, eu);
 	s6.add_product(eg, eu, au);
 	s6.add_product(eg, eu, eu);
-	s6.add_product(au, ag, au);
-	s6.add_product(au, eg, eu);
 	s6.add_product(au, au, ag);
 	s6.add_product(au, eu, eg);
-	s6.add_product(eu, ag, au);
-	s6.add_product(eu, eg, au);
-	s6.add_product(eu, eg, eu);
-	s6.add_product(eu, au, eg);
 	s6.add_product(eu, eu, ag);
 	s6.add_product(eu, eu, eg);
 	s6.check();
@@ -586,5 +579,52 @@ void se_label_test::test_6() throw(libtest::test_exception) {
 			"Invalid mask in assign(mask<N>, size_t, label_t) not recognized.");
 
 }
+
+/**	\test Four blocks, all labeled, no target / full target (2-dim)
+ **/
+void se_label_test::test_7() throw(libtest::test_exception) {
+
+	static const char *testname = "se_label_test::test_7()";
+
+	try {
+
+	index<2> i1, i2;
+	i2[0] = 9; i2[1] = 9;
+	block_index_space<2> bis(dimensions<2>(index_range<2>(i1, i2)));
+	mask<2> m11;
+	m11[0] = true; m11[1] = true;
+	bis.split(m11, 2);
+	bis.split(m11, 5);
+	bis.split(m11, 7);
+
+	se_label<2, double> elem1(bis.get_block_index_dims(), table_id);
+	for (size_t i = 0; i < 4; i++) elem1.assign(m11, i, i);
+
+	se_label<2, double> elem2(elem1);
+	for (size_t i = 0; i < 4; i++) elem2.add_target(i);
+
+	index<2> idx;
+	for (size_t i = 0; i < 4; i++)
+	for (size_t j = 0; j < 4; j++) {
+
+		idx[0] = i; idx[1] = j;
+
+		if(! elem1.is_allowed(idx)) {
+			std::ostringstream oss;
+			oss << "! elem1.is_allowed(i" << i << j << ")";
+			fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
+		}
+		if(! elem2.is_allowed(idx)) {
+			std::ostringstream oss;
+			oss << "! elem2.is_allowed(i" << i << j << ")";
+			fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
+		}
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
 
 } // namespace libtensor

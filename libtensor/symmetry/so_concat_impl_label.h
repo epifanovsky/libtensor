@@ -51,84 +51,117 @@ void symmetry_operation_impl< so_concat<N, M, T>,
 
 	static const char *method = "do_perform(symmetry_operation_params_t&)";
 
-	//	Adapter type for the input group
+	// Adapter type for the input groups
 	typedef symmetry_element_set_adapter< N, T, se_label<N, T> > adapter1_t;
 	typedef symmetry_element_set_adapter< M, T, se_label<M, T> > adapter2_t;
 
+	adapter1_t g1(params.g1);
+	adapter2_t g2(params.g2);
+	params.g3.clear();
+
+	// map  result index -> input index
 	size_t map[N + M];
 	for (size_t j = 0; j < N + M; j++) map[j] = j;
 	permutation<N + M> pinv(params.perm, true);
 	pinv.apply(map);
 
-	adapter1_t g1(params.g1);
-	adapter2_t g2(params.g2);
-
-	//	Go over each element in the first source group and project up
+	//	Go over each element in the first source group
 	for(typename adapter1_t::iterator i = g1.begin(); i != g1.end(); i++) {
 
 		const se_label<N, T> &e1 = g1.get_elem(i);
-		std::string id(e1.get_table_id());
 
-		// create result se_label
-		se_label<N + M, T> e3(params.bis.get_block_index_dims(), id);
+		// Create result se_label
+		se_label<N + M, T> e3(params.bis.get_block_index_dims(),
+				e1.get_table_id());
 
-		typename adapter2_t::iterator j = g2.begin();
-		for(; j != g2.end(); j++)
-			if (id.compare(g2.get_elem().get_table_id()) == 0) break;
-
-
-
+		// Assign labels to the dimensions stemming from sym1
 		for (size_t k = 0; k < N; k++) {
 			mask<N + M> msk;
 			msk[map[k]] = true;
 
-			size_t ktype = e1.get_dim_type(map[k]);
+			size_t ktype = e1.get_dim_type(k);
 			for (size_t l = 0; l < e1.get_dim(ktype); l++)
 				e3.assign(msk, l, e1.get_label(ktype, l));
 		}
 
-
-		//	Project the combined permutation onto the larger
-		//	space and form a symmetry element
-		size_t a1[N];
-		size_t a2a[N + M], a2b[N + M];
-		for (size_t j = 0; j < N; j++) a1[j] = j;
-		e1.get_perm().apply(a1);
-
-		size_t k = 0;
-		for(; k < N; k++) {
-			a2a[map[k]] = k; a2b[map[k]] = a1[k];
+		// check whether there is an se_label in set2 with the same
+		// product table
+		typename adapter2_t::iterator j = g2.begin();
+		for(; j != g2.end(); j++) {
+			if (e1.get_table_id() == g2.get_elem(j).get_table_id())
+				break;
 		}
-		for(; k < N + M; k++) {
-			a2a[map[k]] = a2b[map[k]] = k;
+		if (j == g2.end()) {
+			e3.match_labels();
+
+			// set target labels
+			for (size_t k = 0; k < e1.get_n_targets(); k++)
+				e3.add_target(e1.get_target(k));
+		}
+		else {
+			// assign labels to the remaining dimensions
+			const se_label<M, T> &e2 = g2.get_elem(j);
+
+			for (size_t k = 0; k < M; k++) {
+				mask<N + M> msk;
+				msk[map[N + k]] = true;
+
+				size_t ktype = e2.get_dim_type(k);
+				for (size_t l = 0; l < e2.get_dim(ktype); l++)
+					e3.assign(msk, l, e2.get_label(ktype, l));
+			}
+
+			e3.match_labels();
+
+			// set target labels
+			const product_table_i &pt =
+					product_table_container::get_instance().req_const_table(e1.get_table_id());
+
+			product_table_i::label_group lg(2);
+			for (size_t k = 0; k < e1.get_n_targets(); k++) {
+				for (size_t l = 0; l < e2.get_n_targets(); l++) {
+					lg[0] = e1.get_target(k);
+					lg[1] = e2.get_target(l);
+					for (product_table_i::label_t m = 0; m < pt.nlabels(); m++)
+						if (pt.is_in_product(lg, m)) e3.add_target(m);
+				}
+			}
+
+			product_table_container::get_instance().ret_table(e1.get_table_id());
+
 		}
 
-		permutation_builder<N + M> pb(a2b, a2a);
-		se_perm<N + M, T> e3(pb.get_perm(), e1.is_symm());
 		params.g3.insert(e3);
 	}
 
+	//	Go over each element in the second source group
+	for(typename adapter2_t::iterator i = g2.begin(); i != g2.end(); i++) {
 
+		const se_label<M, T> &e2 = g2.get_elem(i);
 
-		const se_perm<M, T> &e2 = g2.get_elem(i);
-
-		//	Project the combined permutation onto the larger
-		//	space and form a symmetry element
-		size_t a1[M];
-		size_t a2a[N + M], a2b[N + M];
-		for (size_t j = 0; j < M; j++) a1[j] = N + j;
-		e2.get_perm().apply(a1);
-
-		size_t k = 0;
-		for(; k < N; k++) {
-			a2a[map[k]] = a2b[map[k]] = k;
+		typename adapter1_t::iterator j = g1.begin();
+		for(; j != g1.end(); j++) {
+			if (e2.get_table_id() == g1.get_elem(j).get_table_id()) break;
 		}
-		for(; k < N + M; k++) {
-			a2a[map[k]] = k; a2b[map[k]] = a1[k - N];
+		if (j != g1.end()) continue;
+
+		// Create result se_label
+		se_label<N + M, T> e3(params.bis.get_block_index_dims(),
+				e2.get_table_id());
+
+		for (size_t k = 0; k < M; k++) {
+			mask<N + M> msk;
+			msk[map[N + k]] = true;
+
+			size_t ktype = e2.get_dim_type(k);
+			for (size_t l = 0; l < e2.get_dim(ktype); l++)
+				e3.assign(msk, l, e2.get_label(ktype, l));
 		}
 
-		permutation_builder<N + M> pb(a2b, a2a);
-		se_perm<N + M, T> e3(pb.get_perm(), e2.is_symm());
+		e3.match_labels();
+		for (size_t k = 0; k < e2.get_n_targets(); k++)
+			e3.add_target(e2.get_target(k));
+
 		params.g3.insert(e3);
 	}
 }
