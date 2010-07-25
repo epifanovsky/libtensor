@@ -177,64 +177,69 @@ btod_diag<N, M>::btod_diag(block_tensor_i<N, double> &bta, const mask<N> &m,
 
 template<size_t N, size_t M>
 void btod_diag<N, M>::compute_block(tensor_i<k_orderb, double> &blk,
-	const index<k_orderb> &idx) {
+	const index<k_orderb> &ib) {
 
 	btod_diag<N, M>::start_timer();
 
 	block_tensor_ctrl<N, double> ctrla(m_bta);
 	dimensions<N> bidimsa = m_bta.get_bis().get_block_index_dims();
 
-	permutation<k_orderb> pinv(m_perm, true);
-	size_t map[k_ordera];
-	size_t j = 0, jd;
+	//	Build ia from ib
+	//
+	sequence<k_ordera, size_t> map(0);
+	size_t j = 0, jd; // Current index, index on diagonal
 	bool b = false;
 	for(size_t i = 0; i < k_ordera; i++) {
 		if(m_msk[i]) {
-			if(b) map[i] = jd;
-			else { map[i] = jd = j++; b = true; }
+			if(!b) { map[i] = jd = j++; b = true; }
+			else { map[i] = jd; }
 		} else {
 			map[i] = j++;
 		}
 	}
+	index<k_ordera> ia;
+	index<k_orderb> ib2(ib);
+	permutation<k_orderb> pinvb(m_perm, true);
+	ib2.permute(pinvb);
+	for(size_t i = 0; i < k_ordera; i++) ia[i] = ib2[map[i]];
 
-	index<k_ordera> idxa;
-	index<k_orderb> idxb(idx);
-	idxb.permute(pinv);
-	for(size_t i = 0; i < k_ordera; i++) idxa[i] = idxb[map[i]];
-
-	orbit<k_ordera, double> oa(ctrla.req_const_symmetry(), idxa);
-	abs_index<k_ordera> cidxa(oa.get_abs_canonical_index(), bidimsa);
-	const transf<k_ordera, double> &tra = oa.get_transf(idxa);
-
-	// Extract diagonal of block of bta into block of btb
+	//	Find canonical index cia, transformation cia->ia
 	//
-	size_t seqa1[k_ordera], seqa2[k_ordera];
-	size_t seqb1[k_orderb], seqb2[k_orderb];
-	for(register size_t i = 0; i < k_ordera; i++)
-		seqa2[i] = seqa1[i] = i;
-	tra.get_perm().apply(seqa2);
-	for(register size_t i = 0; i < k_ordera; i++) {
-		if (! m_msk[i]) {
-			seqb1[map[i]] = seqa1[i];
-			seqb2[map[i]] = seqa2[i];
-		}
-	}
-	for(register size_t i = 0; i < k_ordera; i++) {
-		if (m_msk[i]) {
-			seqb1[map[i]] = seqb2[map[i]] = seqa1[i];
-			break;
-		}
-	}
-	permutation_builder<k_orderb> pb(seqb2, seqb1);
+	orbit<k_ordera, double> oa(ctrla.req_const_symmetry(), ia);
+	abs_index<k_ordera> acia(oa.get_abs_canonical_index(), bidimsa);
+	const transf<k_ordera, double> &tra = oa.get_transf(ia);
+	permutation<k_ordera> pinva(tra.get_perm(), true);
 
-	tensor_i<k_ordera, double> &blka = ctrla.req_block(cidxa.get_index());
+	//	Build new diagonal mask and permutation in b
+	//
+	mask<k_ordera> m1(m_msk), m2(m_msk);
+	sequence<k_ordera, size_t> map1(map), map2(map);
+	m2.permute(pinva);
+	map2.permute(pinva);
+
+	sequence<N - M, size_t> seq1(0), seq2(0);
+	sequence<k_orderb, size_t> seqb1(0), seqb2(0);
+	for(register size_t i = 0, j1 = 0, j2 = 0; i < k_ordera; i++) {
+		if(!m1[i]) seq1[j1++] = map1[i];
+		if(!m2[i]) seq2[j2++] = map2[i];
+	}
+	bool b1 = false, b2 = false;
+	for(register size_t i = 0, j1 = 0, j2 = 0; i < k_orderb; i++) {
+		if(m1[i] && !b1) { seqb1[i] = k_orderb; b1 = true; }
+		else { seqb1[i] = seq1[j1++]; }
+		if(m2[i] && !b2) { seqb2[i] = k_orderb; b2 = true; }
+		else { seqb2[i] = seq2[j2++]; }
+	}
+
+	permutation_builder<k_orderb> pb(seqb2, seqb1);
+	tensor_i<k_ordera, double> &blka = ctrla.req_block(acia.get_index());
 
 	permutation<k_orderb> permb(pb.get_perm());
 	permb.permute(m_perm);
 
-	tod_diag<N, M>(blka, m_msk, permb, m_c * tra.get_coeff()).perform(blk);
+	tod_diag<N, M>(blka, m2, permb, m_c / tra.get_coeff()).perform(blk);
 
-	ctrla.ret_block(cidxa.get_index());
+	ctrla.ret_block(acia.get_index());
 
 	btod_diag<N, M>::stop_timer();
 
