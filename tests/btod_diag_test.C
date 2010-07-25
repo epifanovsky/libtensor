@@ -28,20 +28,22 @@ void btod_diag_test::perform() throw(libtest::test_exception) {
 	test_nosym_4(true);
 
 	test_sym_1(false);
-	test_sym_2(false);
-	//test_sym_3(false);
-	test_sym_4(false);
-
 	test_sym_1(true);
+
+	test_sym_2(false);
 	test_sym_2(true);
-	//test_sym_3(true);
+
+	test_sym_3(false);
+	test_sym_3(true);
+
+	test_sym_4(false);
 	test_sym_4(true);
 
 	test_sym_5(false);
 	test_sym_5(true);
 
 	test_sym_6(false);
-	//~ test_sym_6(true);
+	test_sym_6(true);
 }
 
 /**	\test Extract diagonal: \f$ b_i = a_{ii} \f$, zero tensor, one block
