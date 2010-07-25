@@ -62,8 +62,8 @@ double blas::ddot_trp(const double *a, const double *b, size_t ni, size_t nj,
 			pq += lda;
 		}
 
-		__declspec(align(16)) double dd[] = { 0.0, 0.0 };
-		_mm_store_pd(dd, r0);
+		double dd[] = { 0.0, 0.0 };
+		_mm_storeu_pd(dd, r0);
 
 		return d + dd[0] + dd[1];
 

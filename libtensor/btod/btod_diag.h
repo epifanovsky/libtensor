@@ -4,12 +4,14 @@
 #include "../defs.h"
 #include "../not_implemented.h"
 #include "../core/abs_index.h"
+#include "../core/block_index_subspace_builder.h"
 #include "../core/block_tensor_i.h"
 #include "../core/block_tensor_ctrl.h"
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
 #include "../core/permutation_builder.h"
 #include "../symmetry/so_copy.h"
+#include "../symmetry/so_concat.h"
 #include "../symmetry/so_add.h"
 #include "../symmetry/so_permute.h"
 #include "../symmetry/so_proj_down.h"
@@ -98,10 +100,11 @@ public:
 
 protected:
 	virtual void compute_block(tensor_i<k_orderb, double> &blk,
-		const index<k_orderb> &i);
+		const index<k_orderb> &ib);
 
 	virtual void compute_block(tensor_i<k_orderb, double> &blk,
-		const index<k_orderb> &i, const transf<k_orderb, double> &tr, double c);
+		const index<k_orderb> &ib, const transf<k_orderb, double> &trb,
+		double c);
 
 private:
 	/**	\brief Forms the block %index space of the output or throws an
@@ -110,9 +113,17 @@ private:
 	static block_index_space<N - M + 1> mk_bis(
 		const block_index_space<N> &bis, const mask<N> &msk);
 
+	/**	\brief Sets up the symmetry of the operation result
+	 **/
+	void make_symmetry();
+
 	/**	\brief Sets up the assignment schedule for the operation.
 	 **/
 	void make_schedule();
+
+	void compute_block(tensor_i<k_orderb, double> &blk,
+		const index<k_orderb> &ib, const transf<k_orderb, double> &trb,
+		bool zero, double c);
 
 private:
 	btod_diag(const btod_diag<N, M>&);
@@ -133,18 +144,7 @@ btod_diag<N, M>::btod_diag(block_tensor_i<N, double> &bta, const mask<N> &m,
 	m_bis(mk_bis(bta.get_bis(), m_msk)),
 	m_sym(m_bis), m_sch(m_bis.get_block_index_dims()) {
 
-	mask<N> msk;
-	bool not_done = true;
-	for (size_t i = 0; i < N; i++) {
-		if (! m[i] ) msk[i] = true;
-		else if ( not_done ) {
-			msk[i] = true;
-			not_done = false;
-		}
-	}
-	block_tensor_ctrl<N, double> ctrla(bta);
-	so_proj_down<N, M - 1, double>(ctrla.req_const_symmetry(), msk).perform(m_sym);
-
+	make_symmetry();
 	make_schedule();
 }
 
@@ -157,23 +157,7 @@ btod_diag<N, M>::btod_diag(block_tensor_i<N, double> &bta, const mask<N> &m,
 	m_bis(mk_bis(bta.get_bis(), m_msk).permute(p)),
 	m_sym(m_bis), m_sch(m_bis.get_block_index_dims())  {
 
-	mask<N> msk;
-	bool not_done = true;
-	for (size_t i = 0; i < N; i++) {
-		if (! m[i] ) msk[i] = true;
-		else if ( not_done ) {
-			msk[i] = true;
-			not_done = false;
-		}
-	}
-	permutation<k_orderb> pinv(p, true);
-	block_index_space<k_orderb> bis(m_bis);
-	bis.permute(pinv);
-	symmetry<k_orderb, double> sym1(bis);
-	block_tensor_ctrl<N, double> ctrla(bta);
-	so_proj_down<N, M - 1, double>(ctrla.req_const_symmetry(), msk).perform(sym1);
-	so_permute<k_orderb, double>(sym1, p).perform(m_sym);
-
+	make_symmetry();
 	make_schedule();
 }
 
@@ -196,134 +180,94 @@ void btod_diag<N, M>::sync_off() {
 
 template<size_t N, size_t M>
 void btod_diag<N, M>::compute_block(tensor_i<k_orderb, double> &blk,
-	const index<k_orderb> &idx) {
+	const index<k_orderb> &ib) {
 
-	btod_diag<N, M>::start_timer();
-
-	block_tensor_ctrl<N, double> ctrla(m_bta);
-	dimensions<N> bidimsa = m_bta.get_bis().get_block_index_dims();
-
-	permutation<k_orderb> pinv(m_perm, true);
-	size_t map[k_ordera];
-	size_t j = 0, jd;
-	bool b = false;
-	for(size_t i = 0; i < k_ordera; i++) {
-		if(m_msk[i]) {
-			if(b) map[i] = jd;
-			else { map[i] = jd = j++; b = true; }
-		} else {
-			map[i] = j++;
-		}
-	}
-
-	index<k_ordera> idxa;
-	index<k_orderb> idxb(idx);
-	idxb.permute(pinv);
-	for(size_t i = 0; i < k_ordera; i++) idxa[i] = idxb[map[i]];
-
-	orbit<k_ordera, double> oa(ctrla.req_const_symmetry(), idxa);
-	abs_index<k_ordera> cidxa(oa.get_abs_canonical_index(), bidimsa);
-	const transf<k_ordera, double> &tra = oa.get_transf(idxa);
-
-	// Extract diagonal of block of bta into block of btb
-	//
-	size_t seqa1[k_ordera], seqa2[k_ordera];
-	size_t seqb1[k_orderb], seqb2[k_orderb];
-	for(register size_t i = 0; i < k_ordera; i++)
-		seqa2[i] = seqa1[i] = i;
-	tra.get_perm().apply(seqa2);
-	for(register size_t i = 0; i < k_ordera; i++) {
-		if (! m_msk[i]) {
-			seqb1[map[i]] = seqa1[i];
-			seqb2[map[i]] = seqa2[i];
-		}
-	}
-	for(register size_t i = 0; i < k_ordera; i++) {
-		if (m_msk[i]) {
-			seqb1[map[i]] = seqb2[map[i]] = seqa1[i];
-			break;
-		}
-	}
-	permutation_builder<k_orderb> pb(seqb2, seqb1);
-
-	tensor_i<k_ordera, double> &blka = ctrla.req_block(cidxa.get_index());
-
-	permutation<k_orderb> permb(pb.get_perm());
-	permb.permute(m_perm);
-
-	tod_diag<N, M>(blka, m_msk, permb, m_c * tra.get_coeff()).perform(blk);
-
-	ctrla.ret_block(cidxa.get_index());
-
-	btod_diag<N, M>::stop_timer();
-
+	transf<k_orderb, double> trb0;
+	compute_block(blk, ib, trb0, true, 1.0);
 }
+
 
 template<size_t N, size_t M>
 void btod_diag<N, M>::compute_block(tensor_i<k_orderb, double> &blk,
-	const index<k_orderb> &idx, const transf<k_orderb, double> &tr, double c) {
+	const index<k_orderb> &ib, const transf<k_orderb, double> &trb,
+	double c) {
+
+	compute_block(blk, ib, trb, false, c);
+}
+
+
+template<size_t N, size_t M>
+void btod_diag<N, M>::compute_block(tensor_i<k_orderb, double> &blk,
+	const index<k_orderb> &ib, const transf<k_orderb, double> &trb,
+	bool zero, double c) {
 
 	btod_diag<N, M>::start_timer();
 
 	block_tensor_ctrl<N, double> ctrla(m_bta);
 	dimensions<N> bidimsa = m_bta.get_bis().get_block_index_dims();
 
-	permutation<k_orderb> pinv(m_perm, true);
-	size_t map[k_ordera];
-	size_t j = 0, jd;
+	//	Build ia from ib
+	//
+	sequence<k_ordera, size_t> map(0);
+	size_t j = 0, jd; // Current index, index on diagonal
 	bool b = false;
 	for(size_t i = 0; i < k_ordera; i++) {
 		if(m_msk[i]) {
-			if(b) map[i] = jd;
-			else { map[i] = jd = j++; b = true; }
+			if(!b) { map[i] = jd = j++; b = true; }
+			else { map[i] = jd; }
 		} else {
 			map[i] = j++;
 		}
 	}
+	index<k_ordera> ia;
+	index<k_orderb> ib2(ib);
+	permutation<k_orderb> pinvb(m_perm, true);
+	ib2.permute(pinvb);
+	for(size_t i = 0; i < k_ordera; i++) ia[i] = ib2[map[i]];
 
-	index<k_ordera> idxa;
-	index<k_orderb> idxb(idx);
-	idxb.permute(pinv);
-	for(size_t i = 0; i < k_ordera; i++) idxa[i] = idxb[map[i]];
-
-	orbit<k_ordera, double> oa(ctrla.req_const_symmetry(), idxa);
-	abs_index<k_ordera> cidxa(oa.get_abs_canonical_index(), bidimsa);
-	const transf<k_ordera, double> &tra = oa.get_transf(idxa);
-
+	//	Find canonical index cia, transformation cia->ia
 	//
-	// Extract diagonal of block of bta into block of btb
+	orbit<k_ordera, double> oa(ctrla.req_const_symmetry(), ia);
+	abs_index<k_ordera> acia(oa.get_abs_canonical_index(), bidimsa);
+	const transf<k_ordera, double> &tra = oa.get_transf(ia);
+	permutation<k_ordera> pinva(tra.get_perm(), true);
+
+	//	Build new diagonal mask and permutation in b
 	//
-	size_t seqa1[k_ordera], seqa2[k_ordera];
-	size_t seqb1[k_orderb], seqb2[k_orderb];
-	for(register size_t i = 0; i < k_ordera; i++)
-		seqa2[i] = seqa1[i] = i;
-	tra.get_perm().apply(seqa2);
-	for(register size_t i = 0; i < k_ordera; i++) {
-		if (! m_msk[i]) {
-			seqb1[map[i]] = seqa1[i];
-			seqb2[map[i]] = seqa2[i];
-		}
+	mask<k_ordera> m1(m_msk), m2(m_msk);
+	sequence<k_ordera, size_t> map1(map), map2(map);
+	m2.permute(pinva);
+	map2.permute(pinva);
+
+	sequence<N - M, size_t> seq1(0), seq2(0);
+	sequence<k_orderb, size_t> seqb1(0), seqb2(0);
+	for(register size_t i = 0, j1 = 0, j2 = 0; i < k_ordera; i++) {
+		if(!m1[i]) seq1[j1++] = map1[i];
+		if(!m2[i]) seq2[j2++] = map2[i];
 	}
-	for(register size_t i = 0; i < k_ordera; i++) {
-		if (m_msk[i]) {
-			seqb1[map[i]] = seqb2[map[i]] = seqa1[i];
-			break;
-		}
+	bool b1 = false, b2 = false;
+	for(register size_t i = 0, j1 = 0, j2 = 0; i < k_orderb; i++) {
+		if(m1[i] && !b1) { seqb1[i] = k_orderb; b1 = true; }
+		else { seqb1[i] = seq1[j1++]; }
+		if(m2[i] && !b2) { seqb2[i] = k_orderb; b2 = true; }
+		else { seqb2[i] = seq2[j2++]; }
 	}
+
 	permutation_builder<k_orderb> pb(seqb2, seqb1);
-
-	tensor_i<k_ordera, double> &blka = ctrla.req_block(cidxa.get_index());
-
 	permutation<k_orderb> permb(pb.get_perm());
 	permb.permute(m_perm);
-	permb.permute(tr.get_perm());
+	permb.permute(trb.get_perm());
 
-	tod_diag<N, M>(blka, m_msk, permb,
-			m_c * tra.get_coeff() * tr.get_coeff()).perform(blk, c);
-
-	ctrla.ret_block(cidxa.get_index());
+	//	Invoke the tensor operation
+	//
+	tensor_i<k_ordera, double> &blka = ctrla.req_block(acia.get_index());
+	double k = m_c * c * trb.get_coeff() / tra.get_coeff();
+	if(zero) tod_diag<N, M>(blka, m2, permb, k).perform(blk);
+	else tod_diag<N, M>(blka, m2, permb, k).perform(blk, 1.0);
+	ctrla.ret_block(acia.get_index());
 
 	btod_diag<N, M>::stop_timer();
+
 }
 
 
@@ -334,82 +278,61 @@ block_index_space<N - M + 1> btod_diag<N, M>::mk_bis(
 	static const char *method =
 		"mk_bis(const block_index_space<N>&, const mask<N>&)";
 
-	//	Verify identical types on the block index space diagonal
+	//	Create the mask for the subspace builder
 	//
-	size_t typ;
-	bool typ_defined = false;
-	for(size_t i = 0; i < N; i++) {
-		if(!msk[i]) continue;
-		if(!typ_defined) {
-			typ = bis.get_type(i);
-			typ_defined = true;
-		} else {
-			if(bis.get_type(i) != typ) {
-				throw bad_block_index_space(g_ns, k_clazz,
-					method, __FILE__, __LINE__, "bt");
-			}
-		}
-	}
-
-	//	Input dimensions
-	dimensions<N> idims(bis.get_dims());
-
-	//	Compute output dimensions
-	//
-	index<k_orderb> i1, i2;
-
-	size_t m = 0, j = 0;
-	size_t d = 0;
-	size_t map[k_orderb];
+	mask<N> m;
+	bool b = false;
 	for(size_t i = 0; i < N; i++) {
 		if(msk[i]) {
-			m++;
-			if(d == 0) {
-				d = idims[i];
-				i2[j] = d - 1;
-				map[j] = i;
-				j++;
-			}
+			if(!b) { m[i] = true; b = true; }
 		} else {
-			i2[j] = idims[i] - 1;
-			map[j] = i;
-			j++;
+			m[i] = true;
 		}
-	}
-	if(m != M) {
-		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
-			"m");
 	}
 
-	//	Output block index space
-	block_index_space<k_orderb> obis(dimensions<k_orderb>(
-		index_range<k_orderb>(i1, i2)));
-
-	mask<k_orderb> msk_done;
-	bool done = false;
-	while(!done) {
-		size_t i = 0;
-		while(i < k_orderb && msk_done[i]) i++;
-		if(i == k_orderb) {
-			done = true;
-			continue;
-		}
-		size_t typ = bis.get_type(map[i]);
-		const split_points &splits = bis.get_splits(typ);
-		mask<k_orderb> msk_typ;
-		for(size_t j = 0; j < k_orderb; j++) {
-			if(bis.get_type(map[j]) == typ) msk_typ[j] = true;
-		}
-		size_t npts = splits.get_num_points();
-		for(register size_t j = 0; j < npts; j++) {
-			obis.split(msk_typ, splits[j]);
-		}
-		msk_done |= msk_typ;
-	}
+	//	Build the output block index space
+	//
+	block_index_subspace_builder<N - M + 1, M - 1> bb(bis, m);
+	block_index_space<k_orderb> obis(bb.get_bis());
 	obis.match_splits();
 
 	return obis;
 }
+
+
+template<size_t N, size_t M>
+void btod_diag<N, M>::make_symmetry() {
+
+	block_tensor_ctrl<N, double> ca(m_bta);
+
+	//	Build two reduced block index spaces:
+	//	(1) all dimensions except the one coming from the diagonal,
+	//	(2) the dimension coming from the diagonal
+	//
+	mask<N> rmsk1, rmsk2;
+	size_t jd = N;
+	for(size_t i = 0; i < N; i++) rmsk1[i] = !m_msk[i];
+	for(size_t i = 0; i < N; i++) if(m_msk[i]) { jd = i; break; }
+	rmsk2[jd] = true;
+	block_index_subspace_builder<N - M, M> rbb1(m_bta.get_bis(), rmsk1);
+	block_index_subspace_builder<1, N - 1> rbb2(m_bta.get_bis(), rmsk2);
+
+	//	Build the reduced symmetry in the subspaces
+	//
+	symmetry<N - M, double> rsym1(rbb1.get_bis());
+	symmetry<1, double> rsym2(rbb2.get_bis());
+	so_proj_down<N, M, double>(ca.req_const_symmetry(), rmsk1).
+		perform(rsym1);
+	so_proj_down<N, N - 1, double>(ca.req_const_symmetry(), rmsk2).
+		perform(rsym2);
+
+	//	Concatenate the symmetries to create the symmetry of the result
+	//
+	permutation<N - M + 1> perm;
+	perm.permute(jd, N - M).permute(m_perm);
+	so_concat<N - M, 1, double>(rsym1, rsym2, perm).perform(m_sym);
+}
+
 
 template<size_t N, size_t M>
 void btod_diag<N, M>::make_schedule() {

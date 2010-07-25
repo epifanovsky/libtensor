@@ -7,6 +7,7 @@ set(SRC
 	bispace_test.C
 	bispace_expr_test.C
 	block_index_space_test.C
+	block_index_subspace_builder_test.C
 	block_map_test.C
 	block_tensor_test.C
 	btensor_test.C

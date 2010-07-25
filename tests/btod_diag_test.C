@@ -28,17 +28,22 @@ void btod_diag_test::perform() throw(libtest::test_exception) {
 	test_nosym_4(true);
 
 	test_sym_1(false);
-	test_sym_2(false);
-	//test_sym_3(false);
-	test_sym_4(false);
-
 	test_sym_1(true);
+
+	test_sym_2(false);
 	test_sym_2(true);
-	//test_sym_3(true);
+
+	test_sym_3(false);
+	test_sym_3(true);
+
+	test_sym_4(false);
 	test_sym_4(true);
 
 	test_sym_5(false);
 	test_sym_5(true);
+
+	test_sym_6(false);
+	test_sym_6(true);
 }
 
 /**	\test Extract diagonal: \f$ b_i = a_{ii} \f$, zero tensor, one block
@@ -434,6 +439,7 @@ void btod_diag_test::test_nosym_4(bool add) throw(libtest::test_exception) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
 	}
 }
+
 
 /**	\test Extract diagonal: \f$ b_i = a_{ii} \f$, permutational symmetry,
 	 multiple blocks
@@ -841,5 +847,81 @@ void btod_diag_test::test_sym_5(bool add) throw(libtest::test_exception) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
 	}
 }
+
+
+/**	\test Extract diagonal: \f$ b_{ijk} = a_{ikjk} \f$,
+		permutational anti-symmetry, multiple blocks
+ **/
+void btod_diag_test::test_sym_6(bool add) throw(libtest::test_exception) {
+
+	static const char *testname = "btod_diag_test::test_sym_6(bool)";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<3> i3a, i3b;
+	i3b[0] = 10; i3b[1] = 10; i3b[2] = 10;
+	index<4> i4a, i4b;
+	i4b[0] = 10; i4b[1] = 10; i4b[2] = 10; i4b[3] = 10;
+	dimensions<3> dims3(index_range<3>(i3a, i3b));
+	dimensions<4> dims4(index_range<4>(i4a, i4b));
+	block_index_space<3> bis3(dims3);
+	block_index_space<4> bis4(dims4);
+
+	mask<3> msk3;
+	msk3[0] = true; msk3[1] = true; msk3[2] = true;
+	mask<4> msk4;
+	msk4[0] = true; msk4[1] = true; msk4[2] = true; msk4[3] = true;
+	bis3.split(msk3, 2);
+	bis3.split(msk3, 4);
+	bis3.split(msk3, 8);
+	bis4.split(msk4, 2);
+	bis4.split(msk4, 4);
+	bis4.split(msk4, 8);
+
+	block_tensor<4, double, allocator_t> bta(bis4);
+	block_tensor<3, double, allocator_t> btb(bis3);
+
+	tensor<4, double, allocator_t> ta(dims4);
+	tensor<3, double, allocator_t> tb(dims3), tb_ref(dims3);
+
+	block_tensor_ctrl<4, double> ctrla(bta);
+
+	ctrla.req_symmetry().insert(se_perm<4, double>(permutation<4>().
+		permute(0, 1), true));
+	ctrla.req_symmetry().insert(se_perm<4, double>(permutation<4>().
+		permute(2, 3), true));
+
+	mask<4> msk;
+	msk[1] = true; msk[3] = true;
+
+	//	Fill in random data
+	btod_random<4>().perform(bta);
+	btod_random<3>().perform(btb);
+	bta.set_immutable();
+
+	//	Prepare the reference
+	tod_btconv<4>(bta).perform(ta);
+	tod_btconv<3>(btb).perform(tb_ref);
+
+	//	Invoke the operation
+	if(add) {
+		btod_diag<4, 2>(bta, msk).perform(btb, 1.0);
+		tod_diag<4, 2>(ta, msk).perform(tb_ref, 1.0);
+	} else {
+		btod_diag<4, 2>(bta, msk).perform(btb);
+		tod_diag<4, 2>(ta, msk).perform(tb_ref);
+	}
+	tod_btconv<3>(btb).perform(tb);
+
+	//	Compare against the reference
+	compare_ref<3>::compare(testname, tb, tb_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
 
 } // namespace libtensor
