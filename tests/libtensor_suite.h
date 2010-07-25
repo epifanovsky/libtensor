@@ -8,6 +8,7 @@
 #include "bispace_test.h"
 #include "bispace_expr_test.h"
 #include "block_index_space_test.h"
+#include "block_index_subspace_builder_test.h"
 #include "block_map_test.h"
 #include "block_tensor_test.h"
 #include "btensor_test.h"
@@ -131,6 +132,7 @@ namespace libtensor {
 	\li libtensor::bispace_test
 	\li libtensor::bispace_expr_test
 	\li libtensor::block_index_space_test
+	\li libtensor::block_index_subspace_builder_test
 	\li libtensor::block_map_test
 	\li libtensor::block_tensor_test
 	\li libtensor::btensor_test
@@ -248,6 +250,8 @@ private:
 	unit_test_factory<bispace_test> m_utf_bispace;
 	unit_test_factory<bispace_expr_test> m_utf_bispace_expr;
 	unit_test_factory<block_index_space_test> m_utf_block_index_space;
+	unit_test_factory<block_index_subspace_builder_test>
+		m_utf_block_index_subspace_builder;
 	unit_test_factory<block_map_test> m_utf_block_map;
 	unit_test_factory<block_tensor_test> m_utf_block_tensor;
 	unit_test_factory<btensor_test> m_utf_btensor;
