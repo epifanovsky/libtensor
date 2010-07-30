@@ -27,6 +27,17 @@ void permutation_group_test::perform() throw(libtest::test_exception) {
 	test_project_down_8a();
 	test_project_down_8b();
 
+	test_stabilize_1();
+	test_stabilize_2();
+	test_stabilize_3();
+	test_stabilize_4();
+	test_stabilize_5();
+	test_stabilize_6();
+//	test_stabilize_7();
+
+	test_stabilize2_1();
+	test_stabilize2_2();
+
 	test_permute_1();
 	test_permute_2();
 	test_permute_3();
@@ -572,6 +583,360 @@ void permutation_group_test::test_project_down_8b()
 	}
 }
 
+/**	\test Stabilize element set {1, 3} in group S6 returning S4.
+ **/
+void permutation_group_test::test_stabilize_1()
+	throw(libtest::test_exception) {
+
+	static const char *testname =
+		"permutation_group_test::test_stabilize_1()";
+
+	typedef se_perm<6, double> se_perm_t;
+
+	try {
+
+	bool symm = true;
+
+	permutation<6> p1, p2;
+	p1.permute(0, 1).permute(1, 2).permute(2, 3).permute(3, 4).permute(4, 5);
+	p2.permute(0, 1);
+	symmetry_element_set<6, double> set1(se_perm_t::k_sym_type);
+	set1.insert(se_perm_t(p1, symm));
+	set1.insert(se_perm_t(p2, symm));
+
+	permutation_group<6, double> pg6(set1);
+
+	permutation_group<4, double> pg4;
+	mask<6> msk; msk[1] = true; msk[3] = true;
+	pg6.stabilize<2>(msk, pg4);
+
+	permutation<4> p1b, p2b, p3b;
+	p1b.permute(0, 1).permute(1, 2).permute(2, 3);
+	p2b.permute(0, 1);
+	p3b.permute(1, 2).permute(2, 3);
+
+	if(!pg4.is_member(true, p1b)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!pg4.is_member(true, p1)");
+	}
+	if(!pg4.is_member(true, p2b)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!pg4.is_member(true, p2)");
+	}
+	if(!pg4.is_member(true, p3b)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!pg4.is_member(true, p3)");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+/**	\test Stabilize element set {1,3} in group [ijkl] = [[klij]
+ **/
+void permutation_group_test::test_stabilize_2()
+	throw(libtest::test_exception) {
+
+	static const char *testname =
+		"permutation_group_test::test_stabilize_2()";
+
+	typedef se_perm<4, double> se_perm_t;
+
+	try {
+
+	bool symm = true;
+
+	symmetry_element_set<4, double> set1(se_perm_t::k_sym_type);
+	set1.insert(se_perm_t(permutation<4>().permute(0, 2).permute(1, 3), symm));
+	permutation_group<4, double> pg4(set1);
+
+	permutation_group<2, double> pg2;
+	mask<4> msk; msk[1] = true; msk[3] = true;
+	pg4.stabilize<2>(msk, pg2);
+
+	permutation<2> p1;
+	p1.permute(0, 1);
+
+	if(!pg2.is_member(true, p1)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!pg2.is_member(true, p1)");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+/**	\test Stabilize element set {1,2} in group S2 x S2 with
+ 	 	 pairwise permutation
+ **/
+void permutation_group_test::test_stabilize_3()
+	throw(libtest::test_exception) {
+
+	static const char *testname =
+		"permutation_group_test::test_stabilize_3()";
+
+	typedef se_perm<4, double> se_perm_t;
+
+	try {
+
+	bool symm = true;
+
+	symmetry_element_set<4, double> set1(se_perm_t::k_sym_type);
+	set1.insert(se_perm_t(permutation<4>().permute(0, 1), symm));
+	set1.insert(se_perm_t(permutation<4>().permute(2, 3), symm));
+	set1.insert(se_perm_t(permutation<4>().permute(0, 2).permute(1, 3), symm));
+	permutation_group<4, double> pg4(set1);
+
+	permutation_group<2, double> pg2;
+	mask<4> msk; msk[1] = true; msk[2] = true;
+	pg4.stabilize<2>(msk, pg2);
+
+	permutation<2> p1;
+	p1.permute(0, 1);
+
+	if(!pg2.is_member(true, p1)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!pg2.is_member(true, p1)");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+/**	\test Stabilize element set {0,2} in group A2 x A2 with
+ 	 	 pairwise permutation
+ **/
+void permutation_group_test::test_stabilize_4()
+	throw(libtest::test_exception) {
+
+	static const char *testname =
+		"permutation_group_test::test_stabilize_4()";
+
+	typedef se_perm<4, double> se_perm_t;
+
+	try {
+
+	symmetry_element_set<4, double> set1(se_perm_t::k_sym_type);
+	set1.insert(se_perm_t(permutation<4>().permute(0, 1), false));
+	set1.insert(se_perm_t(permutation<4>().permute(2, 3), false));
+	set1.insert(se_perm_t(permutation<4>().permute(0, 2).permute(1, 3), true));
+	permutation_group<4, double> pg4(set1);
+
+	permutation_group<2, double> pg2;
+	mask<4> msk; msk[0] = true; msk[2] = true;
+	pg4.stabilize<2>(msk, pg2);
+
+	permutation<2> p1;
+	p1.permute(0, 1);
+
+	if(!pg2.is_member(true, p1)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!pg2.is_member(true, p1)");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+/**	\test Stabilize element set {0,1} in group A2 x A2 with
+ 	 	 pairwise permutation
+ **/
+void permutation_group_test::test_stabilize_5()
+	throw(libtest::test_exception) {
+
+	static const char *testname =
+		"permutation_group_test::test_stabilize_5()";
+
+	typedef se_perm<4, double> se_perm_t;
+
+	symmetry_element_set<4, double> set1(se_perm_t::k_sym_type);
+	set1.insert(se_perm_t(permutation<4>().permute(0, 1), false));
+	set1.insert(se_perm_t(permutation<4>().permute(2, 3), false));
+	set1.insert(se_perm_t(permutation<4>().permute(0, 2).permute(1, 3), true));
+	permutation_group<4, double> pg4(set1);
+
+	permutation_group<2, double> pg2;
+	mask<4> msk; msk[0] = true; msk[1] = true;
+
+	bool failed = false;
+	try {
+
+	pg4.stabilize<2>(msk, pg2);
+
+	}
+	catch (exception & e) {
+		failed = true;
+	}
+
+	if(!failed) {
+		fail_test(testname, __FILE__, __LINE__,
+			"Stabilized two anti-symmetrized indexes.");
+	}
+
+}
+
+/**	\test Stabilize element set {2, 3, 4} in group S5
+ **/
+void permutation_group_test::test_stabilize_6()
+	throw(libtest::test_exception) {
+
+	static const char *testname =
+		"permutation_group_test::test_stabilize_6()";
+
+	typedef se_perm<5, double> se_perm_t;
+
+	try {
+
+	symmetry_element_set<5, double> set1(se_perm_t::k_sym_type);
+	set1.insert(se_perm_t(permutation<5>().permute(0, 1).permute(1, 2)
+			.permute(2, 3).permute(3, 4), true));
+	set1.insert(se_perm_t(permutation<5>().permute(3, 4), true));
+	permutation_group<5, double> pg5(set1);
+
+	permutation_group<2, double> pg2;
+	mask<5> msk; msk[2] = true; msk[3] = true; msk[4] = true;
+	pg5.stabilize<3>(msk, pg2);
+
+	permutation<2> p1;
+	p1.permute(0, 1);
+
+	if(!pg2.is_member(true, p1)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!pg2.is_member(true, p1)");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+/**	\test Stabilize element set {0,3} in group A2 x A2 with
+ 	 	 pairwise permutation
+ **/
+void permutation_group_test::test_stabilize_7()
+	throw(libtest::test_exception) {
+
+	static const char *testname =
+		"permutation_group_test::test_stabilize_7()";
+
+	typedef se_perm<4, double> se_perm_t;
+
+	try {
+
+	symmetry_element_set<4, double> set1(se_perm_t::k_sym_type);
+	set1.insert(se_perm_t(permutation<4>().permute(0, 1), false));
+	set1.insert(se_perm_t(permutation<4>().permute(2, 3), false));
+	set1.insert(se_perm_t(permutation<4>().permute(0, 2).permute(1, 3), true));
+	permutation_group<4, double> pg4(set1);
+
+	permutation_group<2, double> pg2;
+	mask<4> msk; msk[0] = true; msk[3] = true;
+	pg4.stabilize<2>(msk, pg2);
+
+	permutation<2> p1;
+	p1.permute(0, 1);
+
+	if(!pg2.is_member(true, p1)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!pg2.is_member(true, p1)");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+void permutation_group_test::test_stabilize2_1()
+	throw(libtest::test_exception) {
+
+	static const char *testname =
+		"permutation_group_test::test_stabilize2_1()";
+
+	typedef se_perm<6, double> se_perm_t;
+
+	try {
+
+	symmetry_element_set<6, double> set1(se_perm_t::k_sym_type);
+	set1.insert(se_perm_t(permutation<6>().permute(0, 1), true));
+	set1.insert(se_perm_t(permutation<6>().permute(1, 2), true));
+	set1.insert(se_perm_t(permutation<6>().permute(3, 4), true));
+	set1.insert(se_perm_t(permutation<6>().permute(4, 5), true));
+	set1.insert(se_perm_t(permutation<6>().permute(0, 3).
+			permute(1, 4).permute(2, 5), true));
+	permutation_group<6, double> pg6(set1);
+
+	permutation_group<2, double> pg2;
+	mask<6> msk[2];
+	msk[0][2] = true; msk[0][5] = true;
+	msk[1][1] = true; msk[1][4] = true;
+	pg6.stabilize<4, 2>(msk, pg2);
+
+	permutation<2> p1;
+	p1.permute(0, 1);
+
+	if(!pg2.is_member(true, p1)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!pg2.is_member(true, p1)");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+void permutation_group_test::test_stabilize2_2()
+	throw(libtest::test_exception) {
+
+	static const char *testname =
+		"permutation_group_test::test_stabilize2_2()";
+
+	typedef se_perm<8, double> se_perm_t;
+
+	try {
+
+	symmetry_element_set<8, double> set1(se_perm_t::k_sym_type);
+	set1.insert(se_perm_t(permutation<8>().permute(0, 1), false));
+	set1.insert(se_perm_t(permutation<8>().permute(2, 3), false));
+	set1.insert(se_perm_t(permutation<8>().permute(0, 2).permute(1, 3), true));
+	set1.insert(se_perm_t(permutation<8>().permute(4, 5), false));
+	set1.insert(se_perm_t(permutation<8>().permute(6, 7), false));
+	set1.insert(se_perm_t(permutation<8>().permute(4, 6).permute(5, 7), true));
+	set1.insert(se_perm_t(permutation<8>().permute(0, 4).
+			permute(1, 5).permute(2, 6).permute(3, 7), true));
+	permutation_group<8, double> pg8(set1);
+
+	permutation_group<4, double> pg4;
+	mask<8> msk[2];
+	msk[0][2] = true; msk[0][6] = true;
+	msk[1][3] = true; msk[1][7] = true;
+	pg8.stabilize<4, 2>(msk, pg4);
+
+	permutation<4> p1, p2, p3;
+	p1.permute(0, 1);
+	p2.permute(2, 3);
+	p3.permute(0, 2).permute(1, 3);
+
+	if(!pg4.is_member(false, p1)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!pg4.is_member(false, p1)");
+	}
+	if(!pg4.is_member(false, p2)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!pg4.is_member(false, p2)");
+	}
+	if(!pg4.is_member(true, p3)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!pg4.is_member(true, p3)");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
 
 /**	\test Test the identity %permutation on S2(+)*S2(+).
  **/
