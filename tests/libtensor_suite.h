@@ -79,10 +79,14 @@
 #include "so_mult_impl_perm_test.h"
 #include "so_permute_impl_label_test.h"
 #include "so_proj_down_test.h"
+#include "so_proj_down_impl_label_test.h"
 #include "so_proj_down_impl_perm_test.h"
 #include "so_proj_up_test.h"
 #include "so_proj_up_impl_label_test.h"
 #include "so_proj_up_impl_perm_test.h"
+#include "so_stabilize_test.h"
+#include "so_stabilize_impl_label_test.h"
+#include "so_stabilize_impl_perm_test.h"
 #include "so_symmetrize_test.h"
 #include "so_union_test.h"
 #include "so_union_impl_perm_test.h"
@@ -203,10 +207,14 @@ namespace libtensor {
 	\li libtensor::so_mult_impl_perm_test
 	\li libtensor::so_permute_impl_label_test
 	\li libtensor::so_proj_down_test
+	\li libtensor::so_proj_down_impl_label_test
 	\li libtensor::so_proj_down_impl_perm_test
 	\li libtensor::so_proj_up_test
 	\li libtensor::so_proj_up_impl_label_test
 	\li libtensor::so_proj_up_impl_perm_test
+	\li libtensor::so_stabilize_test
+	\li libtensor::so_stabilize_impl_label_test
+	\li libtensor::so_stabilize_impl_perm_test
 	\li libtensor::so_symmetrize_test
 	\li libtensor::so_union_test
 	\li libtensor::so_union_impl_perm_test
@@ -324,11 +332,16 @@ private:
 	unit_test_factory<so_mult_impl_perm_test> m_utf_so_mult_impl_perm;
 	unit_test_factory<so_permute_impl_label_test> m_utf_so_permute_impl_label;
 	unit_test_factory<so_proj_down_test> m_utf_so_proj_down;
+	unit_test_factory<so_proj_down_impl_label_test>
+		m_utf_so_proj_down_impl_label;
 	unit_test_factory<so_proj_down_impl_perm_test>
 		m_utf_so_proj_down_impl_perm;
 	unit_test_factory<so_proj_up_test> m_utf_so_proj_up;
 	unit_test_factory<so_proj_up_impl_label_test> m_utf_so_proj_up_impl_label;
 	unit_test_factory<so_proj_up_impl_perm_test> m_utf_so_proj_up_impl_perm;
+	unit_test_factory<so_stabilize_test> m_utf_so_stabilize;
+	unit_test_factory<so_stabilize_impl_label_test> m_utf_so_stabilize_impl_label;
+	unit_test_factory<so_stabilize_impl_perm_test> m_utf_so_stabilize_impl_perm;
 	unit_test_factory<so_symmetrize_test> m_utf_so_symmetrize;
 	unit_test_factory<so_union_test> m_utf_so_union;
 	unit_test_factory<so_union_impl_perm_test> m_utf_so_union_impl_perm;
