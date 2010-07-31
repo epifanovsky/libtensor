@@ -608,7 +608,7 @@ void permutation_group_test::test_stabilize_1()
 
 	permutation_group<4, double> pg4;
 	mask<6> msk; msk[1] = true; msk[3] = true;
-	pg6.stabilize<2>(msk, pg4);
+	pg6.stabilize(msk, pg4);
 
 	permutation<4> p1b, p2b, p3b;
 	p1b.permute(0, 1).permute(1, 2).permute(2, 3);
@@ -653,7 +653,7 @@ void permutation_group_test::test_stabilize_2()
 
 	permutation_group<2, double> pg2;
 	mask<4> msk; msk[1] = true; msk[3] = true;
-	pg4.stabilize<2>(msk, pg2);
+	pg4.stabilize(msk, pg2);
 
 	permutation<2> p1;
 	p1.permute(0, 1);
@@ -691,7 +691,7 @@ void permutation_group_test::test_stabilize_3()
 
 	permutation_group<2, double> pg2;
 	mask<4> msk; msk[1] = true; msk[2] = true;
-	pg4.stabilize<2>(msk, pg2);
+	pg4.stabilize(msk, pg2);
 
 	permutation<2> p1;
 	p1.permute(0, 1);
@@ -727,7 +727,7 @@ void permutation_group_test::test_stabilize_4()
 
 	permutation_group<2, double> pg2;
 	mask<4> msk; msk[0] = true; msk[2] = true;
-	pg4.stabilize<2>(msk, pg2);
+	pg4.stabilize(msk, pg2);
 
 	permutation<2> p1;
 	p1.permute(0, 1);
@@ -765,7 +765,7 @@ void permutation_group_test::test_stabilize_5()
 	bool failed = false;
 	try {
 
-	pg4.stabilize<2>(msk, pg2);
+	pg4.stabilize(msk, pg2);
 
 	}
 	catch (exception & e) {
@@ -799,7 +799,7 @@ void permutation_group_test::test_stabilize_6()
 
 	permutation_group<2, double> pg2;
 	mask<5> msk; msk[2] = true; msk[3] = true; msk[4] = true;
-	pg5.stabilize<3>(msk, pg2);
+	pg5.stabilize(msk, pg2);
 
 	permutation<2> p1;
 	p1.permute(0, 1);
@@ -835,7 +835,7 @@ void permutation_group_test::test_stabilize_7()
 
 	permutation_group<2, double> pg2;
 	mask<4> msk; msk[0] = true; msk[3] = true;
-	pg4.stabilize<2>(msk, pg2);
+	pg4.stabilize(msk, pg2);
 
 	permutation<2> p1;
 	p1.permute(0, 1);
@@ -873,7 +873,7 @@ void permutation_group_test::test_stabilize2_1()
 	mask<6> msk[2];
 	msk[0][2] = true; msk[0][5] = true;
 	msk[1][1] = true; msk[1][4] = true;
-	pg6.stabilize<4, 2>(msk, pg2);
+	pg6.stabilize(msk, pg2);
 
 	permutation<2> p1;
 	p1.permute(0, 1);
@@ -913,7 +913,7 @@ void permutation_group_test::test_stabilize2_2()
 	mask<8> msk[2];
 	msk[0][2] = true; msk[0][6] = true;
 	msk[1][3] = true; msk[1][7] = true;
-	pg8.stabilize<4, 2>(msk, pg4);
+	pg8.stabilize(msk, pg4);
 
 	permutation<4> p1, p2, p3;
 	p1.permute(0, 1);

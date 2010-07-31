@@ -110,22 +110,22 @@ public:
 	void project_down(const mask<N> &msk, permutation_group<M, T> &g2);
 
 	/** \brief Generates a subgroup of all permutations that stabilize
-			the set of M masked elements the %mask must have.
-	 	\param msk Masks the elements to be stabilized
+			the set of N - M masked elements the %mask must have.
+	 	\param msk Masks the elements to be stabilized (N - M times true)
 		\param g2 Resulting subgroup
 	 **/
 	template<size_t M>
-	void stabilize(const mask<N> &msk, permutation_group<N - M, T> &g2);
+	void stabilize(const mask<N> &msk, permutation_group<M, T> &g2);
 
 	/** \brief Generates a subgroup of all permutations that setwise stabilize
 			the given K sets of masked elements. Each %mask must have different
 			elements masked than any other. The total number of masked elements
-			must be M.
+			must be N - M.
 	 	\param msk K masks of elements to be stabilized
 		\param g2 Resulting subgroup
 	 **/
 	template<size_t M, size_t K>
-	void stabilize(const mask<N> (&msk)[K], permutation_group<N - M, T> &g2);
+	void stabilize(const mask<N> (&msk)[K], permutation_group<M, T> &g2);
 
 	void permute(const permutation<N> &perm);
 
@@ -364,14 +364,14 @@ void permutation_group<N, T>::project_down(
 
 template<size_t N, typename T> template<size_t M>
 void permutation_group<N, T>::stabilize(
-	const mask<N> &msk, permutation_group<N - M, T> &g2) {
+	const mask<N> &msk, permutation_group<M, T> &g2) {
 
 	static const char *method =
-		"stabilize<M>(const mask<N>&, permutation_group<N - M, T>&)";
+		"stabilize<M>(const mask<N>&, permutation_group<M, T>&)";
 
-	register size_t m = 0;
-	for(register size_t i = 0; i < N; i++) if(msk[i]) m++;
-	if(m != M) {
+	register size_t nm = 0;
+	for(register size_t i = 0; i < N; i++) if(msk[i]) nm++;
+	if(nm != N - M) {
 		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
 			"msk");
 	}
@@ -384,7 +384,7 @@ void permutation_group<N, T>::stabilize(
 			pi != gs.end(); pi++) {
 
 		size_t seq1a[N], seq2a[N];
-		size_t seq1b[N - M], seq2b[N - M];
+		size_t seq1b[M], seq2b[M];
 		for (size_t i = 0; i < N; i++) seq1a[i] = seq2a[i] = i;
 		pi->apply(seq2a);
 		for (size_t i = 0, j = 0; i < N; i++) {
@@ -393,7 +393,7 @@ void permutation_group<N, T>::stabilize(
 			seq2b[j] = seq2a[i];
 			j++;
 		}
-		permutation_builder<N - M> pb(seq2b, seq1b);
+		permutation_builder<M> pb(seq2b, seq1b);
 		// if the resulting permutation is the identity just skip.
 		if (pb.get_perm().is_identity()) continue;
 
@@ -407,7 +407,7 @@ void permutation_group<N, T>::stabilize(
 			pi != gs.end(); pi++) {
 
 		size_t seq1a[N], seq2a[N];
-		size_t seq1b[N - M], seq2b[N - M];
+		size_t seq1b[M], seq2b[M];
 		for (size_t i = 0; i < N; i++) seq1a[i] = seq2a[i] = i;
 		pi->apply(seq2a);
 		for (size_t i = 0, j = 0; i < N; i++) {
@@ -416,7 +416,7 @@ void permutation_group<N, T>::stabilize(
 			seq2b[j] = seq2a[i];
 			j++;
 		}
-		permutation_builder<N - M> pb(seq2b, seq1b);
+		permutation_builder<M> pb(seq2b, seq1b);
 		// if the resulting permutation is the identity the result is not
 		// defined!!!
 		if (pb.get_perm().is_identity())
@@ -429,30 +429,27 @@ void permutation_group<N, T>::stabilize(
 
 template<size_t N, typename T> template<size_t M, size_t K>
 void permutation_group<N, T>::stabilize(
-	const mask<N> (&msk)[K], permutation_group<N - M, T> &g2) {
+	const mask<N> (&msk)[K], permutation_group<M, T> &g2) {
 
 	static const char *method =
 		"stabilize<M>(const mask<N>&, permutation_group<N - M, T>&)";
 
 	mask<N> tm;
+	register size_t nm = 0;
 	for(register size_t k = 0; k < K; k++) {
-		register size_t i = 0;
 		const mask<N> &msk2 = msk[k];
-		for (; i < N; i++) {
-			if (msk2[i] && tm[i]) break;
-			if (msk2[i]) tm[i] = true;
-		}
-		if (i != N)
-			throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
-				"Index masked twice.");
-	}
+		for (register size_t i = 0; i < N; i++) {
+			if (! msk2[i]) continue;
+			if (tm[i])
+				throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
+					"Index masked twice.");
 
-	register size_t m = 0;
-	for(register size_t i = 0; i < N; i++) if(tm[i]) m++;
-	if(m != M) {
-		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
-			"msk");
+			tm[i] = true;
+			nm++;
+		}
 	}
+	if(nm != N - M)
+		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__, "msk");
 
 	// generating set of G(P)
 	branching br;
@@ -475,7 +472,7 @@ void permutation_group<N, T>::stabilize(
 			pi != p1->end(); pi++) {
 
 		size_t seq1a[N], seq2a[N];
-		size_t seq1b[N - M], seq2b[N - M];
+		size_t seq1b[M], seq2b[M];
 		for (size_t i = 0; i < N; i++) seq1a[i] = seq2a[i] = i;
 		pi->apply(seq2a);
 		for (size_t i = 0, j = 0; i < N; i++) {
@@ -484,7 +481,7 @@ void permutation_group<N, T>::stabilize(
 			seq2b[j] = seq2a[i];
 			j++;
 		}
-		permutation_builder<N - M> pb(seq2b, seq1b);
+		permutation_builder<M> pb(seq2b, seq1b);
 		// if the resulting permutation is the identity just skip.
 		if (pb.get_perm().is_identity()) continue;
 
@@ -510,7 +507,7 @@ void permutation_group<N, T>::stabilize(
 			pi != p1->end(); pi++) {
 
 		size_t seq1a[N], seq2a[N];
-		size_t seq1b[N - M], seq2b[N - M];
+		size_t seq1b[M], seq2b[M];
 		for (size_t i = 0; i < N; i++) seq1a[i] = seq2a[i] = i;
 		pi->apply(seq2a);
 		for (size_t i = 0, j = 0; i < N; i++) {
@@ -519,7 +516,7 @@ void permutation_group<N, T>::stabilize(
 			seq2b[j] = seq2a[i];
 			j++;
 		}
-		permutation_builder<N - M> pb(seq2b, seq1b);
+		permutation_builder<M> pb(seq2b, seq1b);
 		// if the resulting permutation is the identity the result is not
 		// defined!!!
 		if (pb.get_perm().is_identity())
@@ -919,8 +916,6 @@ void permutation_group<N, T>::make_setstabilizer(
 				if (msk[l] && ! msk[seq[l]]) break;
 
 			if (l == N)	gs.push_back(g);
-
-			std::cout << std::endl;
 		}
 	}
 }
