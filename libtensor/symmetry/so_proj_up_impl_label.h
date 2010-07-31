@@ -87,8 +87,11 @@ void symmetry_operation_impl< so_proj_up<N, M, T>,
 				mask<N + M> msk;
 				msk[k] = true;
 				size_t ktype = e1.get_dim_type(map[j]);
-				for (size_t l = 0; l < e1.get_dim(ktype); l++)
+				for (size_t l = 0; l < e1.get_dim(ktype); l++) {
+					if (! e1.is_valid(e1.get_label(ktype, l))) continue;
+
 					e2.assign(msk, l, e1.get_label(ktype, l));
+				}
 				j++;
 			}
 		}

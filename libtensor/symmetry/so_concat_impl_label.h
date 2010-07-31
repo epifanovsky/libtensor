@@ -59,11 +59,12 @@ void symmetry_operation_impl< so_concat<N, M, T>,
 	adapter2_t g2(params.g2);
 	params.g3.clear();
 
-	// map  result index -> input index
+	// map result index to input index
 	size_t map[N + M];
 	for (size_t j = 0; j < N + M; j++) map[j] = j;
 	permutation<N + M> pinv(params.perm, true);
 	pinv.apply(map);
+
 
 	//	Go over each element in the first source group
 	for(typename adapter1_t::iterator i = g1.begin(); i != g1.end(); i++) {
@@ -80,16 +81,18 @@ void symmetry_operation_impl< so_concat<N, M, T>,
 			msk[map[k]] = true;
 
 			size_t ktype = e1.get_dim_type(k);
-			for (size_t l = 0; l < e1.get_dim(ktype); l++)
+			for (size_t l = 0; l < e1.get_dim(ktype); l++) {
+				if (! e1.is_valid(e1.get_label(ktype, l))) continue;
+
 				e3.assign(msk, l, e1.get_label(ktype, l));
+			}
 		}
 
 		// check whether there is an se_label in set2 with the same
 		// product table
 		typename adapter2_t::iterator j = g2.begin();
 		for(; j != g2.end(); j++) {
-			if (e1.get_table_id() == g2.get_elem(j).get_table_id())
-				break;
+			if (e1.get_table_id() == g2.get_elem(j).get_table_id()) break;
 		}
 		if (j == g2.end()) {
 			e3.match_labels();
@@ -107,16 +110,20 @@ void symmetry_operation_impl< so_concat<N, M, T>,
 				msk[map[N + k]] = true;
 
 				size_t ktype = e2.get_dim_type(k);
-				for (size_t l = 0; l < e2.get_dim(ktype); l++)
+				for (size_t l = 0; l < e2.get_dim(ktype); l++) {
+					if (! e2.is_valid(e2.get_label(ktype, l))) continue;
+
 					e3.assign(msk, l, e2.get_label(ktype, l));
+				}
 			}
 
 			e3.match_labels();
 
-			// set target labels
-			const product_table_i &pt =
-					product_table_container::get_instance().req_const_table(e1.get_table_id());
+			// obtain product_table
+			const product_table_i &pt = product_table_container::get_instance()
+				.req_const_table(e1.get_table_id());
 
+			// set target labels
 			product_table_i::label_group lg(2);
 			for (size_t k = 0; k < e1.get_n_targets(); k++) {
 				for (size_t l = 0; l < e2.get_n_targets(); l++) {
@@ -126,12 +133,11 @@ void symmetry_operation_impl< so_concat<N, M, T>,
 						if (pt.is_in_product(lg, m)) e3.add_target(m);
 				}
 			}
-
 			product_table_container::get_instance().ret_table(e1.get_table_id());
-
 		}
 
 		params.g3.insert(e3);
+
 	}
 
 	//	Go over each element in the second source group
@@ -154,8 +160,11 @@ void symmetry_operation_impl< so_concat<N, M, T>,
 			msk[map[N + k]] = true;
 
 			size_t ktype = e2.get_dim_type(k);
-			for (size_t l = 0; l < e2.get_dim(ktype); l++)
+			for (size_t l = 0; l < e2.get_dim(ktype); l++) {
+				if (! e2.is_valid(e2.get_label(ktype, l))) continue;
+
 				e3.assign(msk, l, e2.get_label(ktype, l));
+			}
 		}
 
 		e3.match_labels();
@@ -163,7 +172,10 @@ void symmetry_operation_impl< so_concat<N, M, T>,
 			e3.add_target(e2.get_target(k));
 
 		params.g3.insert(e3);
+
 	}
+
+
 }
 
 

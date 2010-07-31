@@ -148,6 +148,13 @@ public:
 		return m_pt.nlabels();
 	}
 
+	/** \brief Checks whether a label is valid.
+	 **/
+	bool is_valid(label_t l) const {
+		return m_pt.is_valid(l);
+	}
+
+
 	/**	\brief Returns the label of a block of a dimension type.
 		\param type Dimension type.
 		\param pos Block position.
