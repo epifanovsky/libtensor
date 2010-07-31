@@ -3,7 +3,9 @@
 
 #include "symmetry_operation_dispatcher.h"
 #include "symmetry_operation_handlers.h"
+#include "se_label.h"
 #include "se_perm.h"
+#include "so_proj_down_impl_label.h"
 #include "so_proj_down_impl_perm.h"
 
 namespace libtensor {
@@ -22,8 +24,12 @@ public:
 		if(installed) return;
 
 		typedef se_perm<N, T> se_perm_t;
+		typedef se_label<N, T> se_label_t;
+
 		dispatcher_t::get_instance().register_impl(
 			symmetry_operation_impl<operation_t, se_perm_t>());
+		dispatcher_t::get_instance().register_impl(
+			symmetry_operation_impl<operation_t, se_label_t>());
 
 		symmetry_operation_handlers_ex<operation_t>::install_handlers();
 
