@@ -15,6 +15,7 @@
 #include "../symmetry/so_add.h"
 #include "../symmetry/so_permute.h"
 #include "../symmetry/so_proj_down.h"
+#include "../symmetry/so_stabilize.h"
 #include "../tod/tod_copy.h"
 #include "../tod/tod_diag.h"
 #include "../tod/tod_set.h"
@@ -302,8 +303,9 @@ void btod_diag<N, M>::make_symmetry() {
 	//
 	symmetry<N - M, double> rsym1(rbb1.get_bis());
 	symmetry<1, double> rsym2(rbb2.get_bis());
-	so_proj_down<N, M, double>(ca.req_const_symmetry(), rmsk1).
-		perform(rsym1);
+	so_stabilize<N, M, 1, double> so_stab(ca.req_const_symmetry());
+	so_stab.add_mask(m_msk);
+	so_stab.perform(rsym1);
 	so_proj_down<N, N - 1, double>(ca.req_const_symmetry(), rmsk2).
 		perform(rsym2);
 
