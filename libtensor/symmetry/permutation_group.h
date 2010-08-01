@@ -156,12 +156,12 @@ private:
 	void permute_branching(branching &br, const permutation<N> &perm);
 
 	/**	\brief Computes a generating set for the subgroup that stabilizes
-			the set given by mask
+			one or more sets given by msk
 		\param br Branching representing the group
-		\param m Mask specifying the set to stabilize (true if element is stabilized)
+		\param msk Sequence specifying the sets to stabilize
 		\param gs Generating set for the subgroup
 	 **/
-	void make_setstabilizer(const branching &br, const mask<N> &msk,
+	void make_setstabilizer(const branching &br, const sequence<N, size_t> &msk,
 			perm_list_t &gs);
 
 };
@@ -369,16 +369,39 @@ void permutation_group<N, T>::stabilize(
 	static const char *method =
 		"stabilize<M>(const mask<N>&, permutation_group<M, T>&)";
 
+	mask<N> msks[1];
+	msks[0] = msk;
+
+	stabilize(msks, g2);
+}
+
+template<size_t N, typename T> template<size_t M, size_t K>
+void permutation_group<N, T>::stabilize(
+	const mask<N> (&msk)[K], permutation_group<M, T> &g2) {
+
+	static const char *method =
+		"stabilize<M>(const mask<N>&, permutation_group<N - M, T>&)";
+
+	sequence<N, size_t> tm(0);
 	register size_t nm = 0;
-	for(register size_t i = 0; i < N; i++) if(msk[i]) nm++;
-	if(nm != N - M) {
-		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
-			"msk");
+	for(register size_t k = 0; k < K; k++) {
+		const mask<N> &msk_k = msk[k];
+		for (register size_t i = 0; i < N; i++) {
+			if (! msk_k[i]) continue;
+			if (tm[i] != 0)
+				throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
+					"Index masked twice.");
+
+			tm[i] = k + 1;
+			nm++;
+		}
 	}
+	if(nm != N - M)
+		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__, "msk");
 
 	// generating set of G(P)
 	perm_list_t gs;
-	make_setstabilizer(m_symm, msk, gs);
+	make_setstabilizer(m_symm, tm, gs);
 
 	for (typename perm_list_t::const_iterator pi = gs.begin();
 			pi != gs.end(); pi++) {
@@ -388,7 +411,7 @@ void permutation_group<N, T>::stabilize(
 		for (size_t i = 0; i < N; i++) seq1a[i] = seq2a[i] = i;
 		pi->apply(seq2a);
 		for (size_t i = 0, j = 0; i < N; i++) {
-			if (msk[i]) continue;
+			if (tm[i] != 0) continue;
 			seq1b[j] = seq1a[i];
 			seq2b[j] = seq2a[i];
 			j++;
@@ -402,7 +425,7 @@ void permutation_group<N, T>::stabilize(
 	}
 
 	gs.clear();
-	make_setstabilizer(m_asymm, msk, gs);
+	make_setstabilizer(m_asymm, tm, gs);
 	for (typename perm_list_t::const_iterator pi = gs.begin();
 			pi != gs.end(); pi++) {
 
@@ -411,107 +434,7 @@ void permutation_group<N, T>::stabilize(
 		for (size_t i = 0; i < N; i++) seq1a[i] = seq2a[i] = i;
 		pi->apply(seq2a);
 		for (size_t i = 0, j = 0; i < N; i++) {
-			if (msk[i]) continue;
-			seq1b[j] = seq1a[i];
-			seq2b[j] = seq2a[i];
-			j++;
-		}
-		permutation_builder<M> pb(seq2b, seq1b);
-		// if the resulting permutation is the identity the result is not
-		// defined!!!
-		if (pb.get_perm().is_identity())
-			throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
-					"Illegal result permutation group.");
-
-		g2.add_orbit(false, pb.get_perm());
-	}
-}
-
-template<size_t N, typename T> template<size_t M, size_t K>
-void permutation_group<N, T>::stabilize(
-	const mask<N> (&msk)[K], permutation_group<M, T> &g2) {
-
-	static const char *method =
-		"stabilize<M>(const mask<N>&, permutation_group<N - M, T>&)";
-
-	mask<N> tm;
-	register size_t nm = 0;
-	for(register size_t k = 0; k < K; k++) {
-		const mask<N> &msk2 = msk[k];
-		for (register size_t i = 0; i < N; i++) {
-			if (! msk2[i]) continue;
-			if (tm[i])
-				throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
-					"Index masked twice.");
-
-			tm[i] = true;
-			nm++;
-		}
-	}
-	if(nm != N - M)
-		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__, "msk");
-
-	// generating set of G(P)
-	branching br;
-	perm_list_t gs, gs2;
-	perm_list_t *p1 = &gs, *p2 = &gs2;
-	make_setstabilizer(m_symm, msk[0], gs);
-	for (register size_t k = 1; k < K; k++) {
-
-		for(size_t i = 0; i < N; i++) {
-			make_branching(br, i, *p1, *p2);
-			std::swap(p1, p2);
-			p2->clear();
-		}
-
-		make_setstabilizer(br, msk[k], *p1);
-		br.reset();
-	}
-
-	for (typename perm_list_t::const_iterator pi = p1->begin();
-			pi != p1->end(); pi++) {
-
-		size_t seq1a[N], seq2a[N];
-		size_t seq1b[M], seq2b[M];
-		for (size_t i = 0; i < N; i++) seq1a[i] = seq2a[i] = i;
-		pi->apply(seq2a);
-		for (size_t i = 0, j = 0; i < N; i++) {
-			if (tm[i]) continue;
-			seq1b[j] = seq1a[i];
-			seq2b[j] = seq2a[i];
-			j++;
-		}
-		permutation_builder<M> pb(seq2b, seq1b);
-		// if the resulting permutation is the identity just skip.
-		if (pb.get_perm().is_identity()) continue;
-
-		g2.add_orbit(true, pb.get_perm());
-	}
-
-	gs.clear(); gs2.clear(); br.reset();
-	p1 = &gs; p2 = &gs2;
-	make_setstabilizer(m_asymm, msk[0], gs);
-	for (register size_t k = 1; k < K; k++) {
-
-		for(size_t i = 0; i < N; i++) {
-			make_branching(br, i, *p1, *p2);
-			std::swap(p1, p2);
-			p2->clear();
-		}
-
-		make_setstabilizer(br, msk[k], *p1);
-		br.reset();
-	}
-
-	for (typename perm_list_t::const_iterator pi = p1->begin();
-			pi != p1->end(); pi++) {
-
-		size_t seq1a[N], seq2a[N];
-		size_t seq1b[M], seq2b[M];
-		for (size_t i = 0; i < N; i++) seq1a[i] = seq2a[i] = i;
-		pi->apply(seq2a);
-		for (size_t i = 0, j = 0; i < N; i++) {
-			if (tm[i]) continue;
+			if (tm[i] != 0) continue;
 			seq1b[j] = seq1a[i];
 			seq2b[j] = seq2a[i];
 			j++;
@@ -789,13 +712,13 @@ void permutation_group<N, T>::permute_branching(
 
 template<size_t N, typename T>
 void permutation_group<N, T>::make_setstabilizer(
-	const branching &br, const mask<N> &msk, perm_list_t &gs) {
+	const branching &br, const sequence<N, size_t> &msk, perm_list_t &gs) {
 
 	static const char *method =
 		"make_set_stabilizer(const branching &, const mask<N>&, perm_list_t&)";
 
 	register size_t m = 0;
-	for(register size_t i = 0; i < N; i++) if(msk[i]) m++;
+	for(register size_t i = 0; i < N; i++) if(msk[i] != 0) m++;
 	if(m == 0) {
 		make_genset(br, gs);
 		return;
@@ -855,7 +778,7 @@ void permutation_group<N, T>::make_setstabilizer(
 			g.apply(seq);
 			size_t l = 0;
 			for (; l < N; l++)
-				if (msk[l] && ! msk[seq[l]]) break;
+				if (msk[l] != msk[seq[l]]) break;
 
 			// if g is in G(P), we add it to the list of permutations,
 			// skip this level ii and go to the next level
