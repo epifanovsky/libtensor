@@ -141,7 +141,10 @@ public:
 		const mask<N> (&msk_)[K],
 		symmetry_element_set<N - M, T> &grp2_) :
 
-		grp1(grp1_), msk(msk_), grp2(grp2_) { }
+		grp1(grp1_), grp2(grp2_) {
+
+			for(size_t i = 0; i < K; i++) msk[i] = msk_[i];
+		}
 
 	virtual ~symmetry_operation_params() { }
 };
