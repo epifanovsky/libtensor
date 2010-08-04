@@ -36,6 +36,17 @@ private:
 	void test_project_down_8a() throw(libtest::test_exception);
 	void test_project_down_8b() throw(libtest::test_exception);
 
+	void test_stabilize_1() throw(libtest::test_exception);
+	void test_stabilize_2() throw(libtest::test_exception);
+	void test_stabilize_3() throw(libtest::test_exception);
+	void test_stabilize_4() throw(libtest::test_exception);
+	void test_stabilize_5() throw(libtest::test_exception);
+	void test_stabilize_6() throw(libtest::test_exception);
+	void test_stabilize_7() throw(libtest::test_exception);
+
+	void test_stabilize2_1() throw(libtest::test_exception);
+	void test_stabilize2_2() throw(libtest::test_exception);
+
 	void test_permute_1() throw(libtest::test_exception);
 	void test_permute_2() throw(libtest::test_exception);
 	void test_permute_3() throw(libtest::test_exception);

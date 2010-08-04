@@ -2322,7 +2322,7 @@ void btod_contract2_test::test_contr_17(double c)
 
 	//	Compare against reference
 
-	compare_ref<2>::compare(tn.c_str(), tc, tc_ref, 5e-15);
+	compare_ref<2>::compare(tn.c_str(), tc, tc_ref, 1e-14);
 
 	} catch(exception &e) {
 		fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
@@ -2412,7 +2412,7 @@ void btod_contract2_test::test_contr_18(double c)
 
 	//	Compare against reference
 
-	compare_ref<2>::compare(tn.c_str(), tc, tc_ref, 5e-15);
+	compare_ref<2>::compare(tn.c_str(), tc, tc_ref, 1e-14);
 
 	} catch(exception &e) {
 		fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
@@ -2571,7 +2571,7 @@ void btod_contract2_test::test_self_2() throw(libtest::test_exception) {
 
 /**	\test Tests \f$ c_{ijab} = \sum_c a_{iac} a_{jcb} \f$,
 		initial perm symmetry \f$ a_{iac} = a_{ica} \f$,
-		expected perm symmetry \f$ c_{ijab} = c_{jiab} = c_{ijba} \f$.
+		expected perm symmetry \f$ c_{ijab} = c_{jiba} \f$.
  **/
 void btod_contract2_test::test_self_3() throw(libtest::test_exception) {
 
@@ -2635,9 +2635,7 @@ void btod_contract2_test::test_self_3() throw(libtest::test_exception) {
 
 	symmetry<4, double> symc(bis_ijab), symc_ref(bis_ijab);
 	symc_ref.insert(se_perm<4, double>(permutation<4>().
-		permute(0, 1), true));
-	symc_ref.insert(se_perm<4, double>(permutation<4>().
-		permute(2, 3), true));
+		permute(0, 1).permute(2, 3), true));
 	{
 		block_tensor_ctrl<4, double> cc(btc);
 		so_copy<4, double>(cc.req_const_symmetry()).perform(symc);

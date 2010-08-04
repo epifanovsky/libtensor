@@ -1,33 +1,33 @@
-#ifndef LIBTENSOR_SO_PROJ_DOWN_IMPL_LABEL_H
-#define LIBTENSOR_SO_PROJ_DOWN_IMPL_LABEL_H
+#ifndef LIBTENSOR_SO_STABILIZE_IMPL_LABEL_H
+#define LIBTENSOR_SO_STABILIZE_IMPL_LABEL_H
 
 #include "../defs.h"
 #include "../exception.h"
 #include "symmetry_element_set_adapter.h"
 #include "symmetry_operation_impl_base.h"
-#include "so_proj_down.h"
+#include "so_stabilize.h"
 #include "se_label.h"
 
 namespace libtensor {
 
 
-/**	\brief Implementation of so_proj_down<N, T> for se_label<N, T>
+/**	\brief Implementation of so_stabilize<N, T> for se_label<N, T>
 	\tparam N Tensor order.
 	\tparam T Tensor element type.
 
-	This implementation sets the target label to all labels.
+	The implementation leaves the target labels untouched.
 
 	\ingroup libtensor_symmetry
  **/
-template<size_t N, size_t M, typename T>
-class symmetry_operation_impl< so_proj_down<N, M, T>, se_label<N, T> > :
-	public symmetry_operation_impl_base< so_proj_down<N, M, T>, se_label<N, T> > {
+template<size_t N, size_t M, size_t K, typename T>
+class symmetry_operation_impl< so_stabilize<N, M, K, T>, se_label<N, T> > :
+	public symmetry_operation_impl_base< so_stabilize<N, M, K, T>, se_label<N, T> > {
 
 public:
 	static const char *k_clazz; //!< Class name
 
 public:
-	typedef so_proj_down<N, M, T> operation_t;
+	typedef so_stabilize<N, M, K, T> operation_t;
 	typedef se_label<N, T> element_t;
 	typedef symmetry_operation_params<operation_t>
 		symmetry_operation_params_t;
@@ -37,13 +37,12 @@ protected:
 };
 
 
-template<size_t N, size_t M, typename T>
-const char *symmetry_operation_impl< so_proj_down<N, M, T>, se_label<N, T> >::k_clazz =
-	"symmetry_operation_impl< so_proj_down<N, M, T>, se_label<N, T> >";
+template<size_t N, size_t M, size_t K, typename T>
+const char *symmetry_operation_impl< so_stabilize<N, M, K, T>, se_label<N, T> >::k_clazz =
+	"symmetry_operation_impl< so_stabilize<N, M, K, T>, se_label<N, T> >";
 
-
-template<size_t N, size_t M, typename T>
-void symmetry_operation_impl< so_proj_down<N, M, T>, se_label<N, T> >::do_perform(
+template<size_t N, size_t M, size_t K, typename T>
+void symmetry_operation_impl< so_stabilize<N, M, K, T>, se_label<N, T> >::do_perform(
 	symmetry_operation_params_t &params) const {
 
 	static const char *method =
@@ -53,11 +52,21 @@ void symmetry_operation_impl< so_proj_down<N, M, T>, se_label<N, T> >::do_perfor
 
 	//	Verify that the projection mask is correct
 	//
-	const mask<N> &m = params.msk;
-	size_t map[N];
-	size_t nm = 0;
-	for(size_t i = 0; i < N; i++) if(m[i]) nm++;
-	if(nm != N - M) {
+	mask<N> tm;
+	size_t m = 0;
+	for (size_t k = 0; k < K; k++) {
+		const mask<N> &msk = params.msk[k];
+		for(size_t i = 0; i < N; i++) {
+			if(!msk[i]) continue;
+			if(tm[i])
+				throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
+					"params.msk[k]");
+
+			tm[i] = true;
+			m++;
+		}
+	}
+	if(m != M) {
 		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
 			"params.msk");
 	}
@@ -75,9 +84,9 @@ void symmetry_operation_impl< so_proj_down<N, M, T>, se_label<N, T> >::do_perfor
 			adapter1.get_elem(it1).get_block_index_dims();
 
 	index<N - M> idx1, idx2;
-	for (size_t i = 0, j = 0; i < N; i++)
-		if (m[i]) idx2[j++] = bidims1[i] - 1;
-
+	for (size_t i = 0, pos = 0; i < N; i++) {
+		if (! tm[i]) idx2[pos++] = bidims1[i] - 1;
+	}
 	dimensions<N - M> bidims2(index_range<N - M>(idx1, idx2));
 
 	for (; it1 != adapter1.end(); it1++) {
@@ -92,9 +101,9 @@ void symmetry_operation_impl< so_proj_down<N, M, T>, se_label<N, T> >::do_perfor
 		const se_label<N, T> &se1 = adapter1.get_elem(it1);
 
 		se_label<N - M, T> se2(bidims2, se1.get_table_id());
-		for (size_t i = 0, j = 0; i < N; i++) {
-			if (! m[i]) continue;
 
+		for (size_t i = 0, j = 0; i < N; i++) {
+			if (tm[i]) continue;
 			mask<N - M> msk;
 			msk[j] = true;
 			size_t itype = se1.get_dim_type(i);
@@ -105,8 +114,8 @@ void symmetry_operation_impl< so_proj_down<N, M, T>, se_label<N, T> >::do_perfor
 		}
 		se2.match_labels();
 
-		for (size_t i = 0; i < se1.get_n_labels(); i++)
-			se2.add_target(i);
+		for (size_t i = 0; i < se1.get_n_targets(); i++)
+			se2.add_target(se1.get_target(i));
 
 		params.grp2.insert(se2);
 	}
@@ -115,4 +124,4 @@ void symmetry_operation_impl< so_proj_down<N, M, T>, se_label<N, T> >::do_perfor
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_SO_PROJ_DOWN_IMPL_PERM_H
+#endif // LIBTENSOR_SO_STABILIZE_IMPL_PERM_H

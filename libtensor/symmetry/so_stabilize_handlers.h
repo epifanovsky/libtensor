@@ -1,20 +1,20 @@
-#ifndef LIBTENSOR_SO_PROJ_DOWN_HANDLERS_H
-#define LIBTENSOR_SO_PROJ_DOWN_HANDLERS_H
+#ifndef LIBTENSOR_SO_STABILIZE_HANDLERS_H
+#define LIBTENSOR_SO_STABILIZE_HANDLERS_H
 
 #include "symmetry_operation_dispatcher.h"
 #include "symmetry_operation_handlers.h"
 #include "se_label.h"
 #include "se_perm.h"
-#include "so_proj_down_impl_label.h"
-#include "so_proj_down_impl_perm.h"
+#include "so_stabilize_impl_perm.h"
+#include "so_stabilize_impl_label.h"
 
 namespace libtensor {
 
 
-template<size_t N, size_t M, typename T>
-class symmetry_operation_handlers< so_proj_down<N, M, T> > {
+template<size_t N, size_t M, size_t K, typename T>
+class symmetry_operation_handlers< so_stabilize<N, M, K, T> > {
 public:
-	typedef so_proj_down<N, M, T> operation_t;
+	typedef so_stabilize<N, M, K, T> operation_t;
 	typedef symmetry_operation_dispatcher<operation_t> dispatcher_t;
 
 public:
@@ -40,4 +40,4 @@ public:
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_SO_PROJ_DOWN_HANDLERS_H
+#endif // LIBTENSOR_SO_STABILIZE_HANDLERS_H

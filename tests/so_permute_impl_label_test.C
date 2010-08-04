@@ -7,13 +7,13 @@
 
 namespace libtensor {
 
-const char *so_permute_impl_label_test::table_id = "point_group";
+const char *so_permute_impl_label_test::k_table_id = "point_group";
 
 void so_permute_impl_label_test::perform() throw(libtest::test_exception) {
 
 	try {
 
-	point_group_table s6(table_id, 4);
+	point_group_table s6(k_table_id, 4);
 	point_group_table::label_t ag = 0, eg = 1, au = 2, eu = 3;
 	s6.add_product(ag, ag, ag);
 	s6.add_product(ag, eg, eg);
@@ -41,11 +41,11 @@ void so_permute_impl_label_test::perform() throw(libtest::test_exception) {
 	test_1();
 
 	} catch (libtest::test_exception) {
-		product_table_container::get_instance().erase(table_id);
+		product_table_container::get_instance().erase(k_table_id);
 		throw;
 	}
 
-	product_table_container::get_instance().erase(table_id);
+	product_table_container::get_instance().erase(k_table_id);
 
 }
 
@@ -74,13 +74,13 @@ void so_permute_impl_label_test::test_1() throw(libtest::test_exception) {
 	m4c[0] = true; m4d[1] = true; m4c[2] = true; m4d[3] = true;
 	bis4.split(m4, 2); bis4.split(m4, 4); bis4.split(m4, 6);
 
-	se4_t elem4a(bis4.get_block_index_dims(), table_id);
+	se4_t elem4a(bis4.get_block_index_dims(), k_table_id);
 
 	permutation<4> perm;
 	perm.permute(0, 1).permute(1, 2);
 	bis4.permute(perm);
 
-	se4_t elem4_ref(bis4.get_block_index_dims(), table_id);
+	se4_t elem4_ref(bis4.get_block_index_dims(), k_table_id);
 
 	for (unsigned int i = 0; i < 4; i++) {
 		elem4a.assign(m4a, i, i);

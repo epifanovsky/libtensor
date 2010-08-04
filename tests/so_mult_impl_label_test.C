@@ -7,13 +7,13 @@
 
 namespace libtensor {
 
-const char *so_mult_impl_label_test::table_id = "point_group";
+const char *so_mult_impl_label_test::k_table_id = "point_group";
 
 void so_mult_impl_label_test::perform() throw(libtest::test_exception) {
 
 	try {
 
-	point_group_table s6(table_id, 4);
+	point_group_table s6(k_table_id, 4);
 	point_group_table::label_t ag = 0, eg = 1, au = 2, eu = 3;
 	s6.add_product(ag, ag, ag);
 	s6.add_product(ag, eg, eg);
@@ -49,11 +49,11 @@ void so_mult_impl_label_test::perform() throw(libtest::test_exception) {
 	test_5c();
 
 	} catch (libtest::test_exception) {
-		product_table_container::get_instance().erase(table_id);
+		product_table_container::get_instance().erase(k_table_id);
 		throw;
 	}
 
-	product_table_container::get_instance().erase(table_id);
+	product_table_container::get_instance().erase(k_table_id);
 
 }
 
@@ -125,7 +125,7 @@ void so_mult_impl_label_test::test_2a() throw(libtest::test_exception) {
  	m2[0] = true; m2[1] = true;
 	bis2.split(m2, 2); bis2.split(m2, 4); bis2.split(m2, 6);
 
-	se2_t elem2(bis2.get_block_index_dims(), table_id);
+	se2_t elem2(bis2.get_block_index_dims(), k_table_id);
 
 	for (unsigned int i = 0; i < 4; i++) elem2.assign(m2, i, i);
 	elem2.add_target(2);
@@ -176,7 +176,7 @@ void so_mult_impl_label_test::test_2b() throw(libtest::test_exception) {
  	m2[0] = true; m2[1] = true;
 	bis2.split(m2, 2); bis2.split(m2, 4); bis2.split(m2, 6);
 
-	se2_t elem2(bis2.get_block_index_dims(), table_id);
+	se2_t elem2(bis2.get_block_index_dims(), k_table_id);
 
 	for (unsigned int i = 0; i < 4; i++) elem2.assign(m2, i, i);
 	elem2.add_target(2);
@@ -228,7 +228,7 @@ void so_mult_impl_label_test::test_3a() throw(libtest::test_exception) {
  	m2[0] = true; m2[1] = true;
 	bis2.split(m2, 2); bis2.split(m2, 4); bis2.split(m2, 6);
 
-	se2_t elem2(bis2.get_block_index_dims(), table_id);
+	se2_t elem2(bis2.get_block_index_dims(), k_table_id);
 
 	for (unsigned int i = 0; i < 4; i++) elem2.assign(m2, i, i);
 
@@ -308,7 +308,7 @@ void so_mult_impl_label_test::test_3b() throw(libtest::test_exception) {
  	m2[0] = true; m2[1] = true;
 	bis2.split(m2, 2); bis2.split(m2, 4); bis2.split(m2, 6);
 
-	se2_t elem2_1(bis2.get_block_index_dims(), table_id);
+	se2_t elem2_1(bis2.get_block_index_dims(), k_table_id);
 	for (unsigned int i = 0; i < 4; i++) elem2_1.assign(m2, i, i);
 	se2_t elem2_2(elem2_1), elem2_ref(elem2_1);
 	elem2_1.add_target(2);
@@ -383,8 +383,8 @@ void so_mult_impl_label_test::test_4() throw(libtest::test_exception) {
  	m2a[0] = true; m2b[1] = true;
 	bis2.split(m2, 2); bis2.split(m2, 4); bis2.split(m2, 6);
 
-	se2_t elem2_1(bis2.get_block_index_dims(), table_id);
-	se2_t elem2_2(bis2.get_block_index_dims(), table_id);
+	se2_t elem2_1(bis2.get_block_index_dims(), k_table_id);
+	se2_t elem2_2(bis2.get_block_index_dims(), k_table_id);
 
 	size_t map[4];
 	map[0] = 1; map[1] = 3; map[2] = 2; map[3] = 0;
@@ -498,8 +498,8 @@ void so_mult_impl_label_test::test_5a() throw(libtest::test_exception) {
  	m3a[0] = true; m3b[1] = true; m3c[2] = true;
 	bis3.split(m3, 2); bis3.split(m3, 4); bis3.split(m3, 6);
 
-	se3_t elem3_1(bis3.get_block_index_dims(), table_id);
-	se3_t elem3_2(bis3.get_block_index_dims(), table_id);
+	se3_t elem3_1(bis3.get_block_index_dims(), k_table_id);
+	se3_t elem3_2(bis3.get_block_index_dims(), k_table_id);
 
 	size_t mapb[4], mapc[4];
 	mapb[0] = 1; mapb[1] = 3; mapb[2] = 2; mapb[3] = 0;
@@ -612,8 +612,8 @@ void so_mult_impl_label_test::test_5b() throw(libtest::test_exception) {
  	m3a[0] = true; m3b[1] = true; m3c[2] = true;
 	bis3.split(m3, 2); bis3.split(m3, 4); bis3.split(m3, 6);
 
-	se3_t elem3_1(bis3.get_block_index_dims(), table_id);
-	se3_t elem3_2(bis3.get_block_index_dims(), table_id);
+	se3_t elem3_1(bis3.get_block_index_dims(), k_table_id);
+	se3_t elem3_2(bis3.get_block_index_dims(), k_table_id);
 
 	size_t mapb[4], mapc[4];
 	mapb[0] = 1; mapb[1] = 3; mapb[2] = 2; mapb[3] = 0;
@@ -726,9 +726,9 @@ void so_mult_impl_label_test::test_5c() throw(libtest::test_exception) {
  	m3a[0] = true; m3b[1] = true; m3c[2] = true;
 	bis3.split(m3, 2); bis3.split(m3, 4); bis3.split(m3, 6);
 
-	se3_t elem3_1(bis3.get_block_index_dims(), table_id);
-	se3_t elem3_2(bis3.get_block_index_dims(), table_id);
-	se3_t elem3_ref(bis3.get_block_index_dims(), table_id);
+	se3_t elem3_1(bis3.get_block_index_dims(), k_table_id);
+	se3_t elem3_2(bis3.get_block_index_dims(), k_table_id);
+	se3_t elem3_ref(bis3.get_block_index_dims(), k_table_id);
 
 	size_t mapb[4], mapc[4];
 	mapb[0] = 1; mapb[1] = 3; mapb[2] = 2; mapb[3] = 0;

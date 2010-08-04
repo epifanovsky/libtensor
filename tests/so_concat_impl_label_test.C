@@ -7,13 +7,13 @@
 
 namespace libtensor {
 
-const char *so_concat_impl_label_test::table_id = "point_group";
+const char *so_concat_impl_label_test::k_table_id = "point_group";
 
 void so_concat_impl_label_test::perform() throw(libtest::test_exception) {
 
 	try {
 
-	point_group_table s6(table_id, 4);
+	point_group_table s6(k_table_id, 4);
 	point_group_table::label_t ag = 0, eg = 1, au = 2, eu = 3;
 	s6.add_product(ag, ag, ag);
 	s6.add_product(ag, eg, eg);
@@ -46,11 +46,11 @@ void so_concat_impl_label_test::perform() throw(libtest::test_exception) {
 	test_6();
 
 	} catch (libtest::test_exception) {
-		product_table_container::get_instance().erase(table_id);
+		product_table_container::get_instance().erase(k_table_id);
 		throw;
 	}
 
-	product_table_container::get_instance().erase(table_id);
+	product_table_container::get_instance().erase(k_table_id);
 
 }
 
@@ -134,8 +134,8 @@ void so_concat_impl_label_test::test_2() throw(libtest::test_exception) {
 	bis2.split(m2, 2); bis2.split(m2, 4); bis2.split(m2, 6);
 	bis4.split(m4, 2); bis4.split(m4, 4); bis4.split(m4, 6);
 
-	se2_t elem2(bis2.get_block_index_dims(), table_id);
-	se4_t elem4_ref(bis4.get_block_index_dims(), table_id);
+	se2_t elem2(bis2.get_block_index_dims(), k_table_id);
+	se4_t elem4_ref(bis4.get_block_index_dims(), k_table_id);
 
 	for (unsigned int i = 0; i < 4; i++) elem2.assign(m2, i, i);
 	for (unsigned int i = 0; i < 4; i++) elem4_ref.assign(m, i, i);
@@ -239,8 +239,8 @@ void so_concat_impl_label_test::test_3() throw(libtest::test_exception) {
 	bis2.split(m2, 2); bis2.split(m2, 4); bis2.split(m2, 6);
 	bis4.split(m4, 2); bis4.split(m4, 4); bis4.split(m4, 6);
 
-	se2_t elem2(bis2.get_block_index_dims(), table_id);
-	se4_t elem4_ref(bis4.get_block_index_dims(), table_id);
+	se2_t elem2(bis2.get_block_index_dims(), k_table_id);
+	se4_t elem4_ref(bis4.get_block_index_dims(), k_table_id);
 
 	for (unsigned int i = 0; i < 4; i++) elem2.assign(m2, i, i);
 	for (unsigned int i = 0; i < 4; i++) elem4_ref.assign(m, i, i);
@@ -346,8 +346,8 @@ void so_concat_impl_label_test::test_4() throw(libtest::test_exception) {
 	bis2.split(m2, 2); bis2.split(m2, 4); bis2.split(m2, 6);
 	bis4.split(m4, 2); bis4.split(m4, 4); bis4.split(m4, 6);
 
-	se2_t elem2(bis2.get_block_index_dims(), table_id);
-	se4_t elem4_ref(bis4.get_block_index_dims(), table_id);
+	se2_t elem2(bis2.get_block_index_dims(), k_table_id);
+	se4_t elem4_ref(bis4.get_block_index_dims(), k_table_id);
 
 	for (unsigned int i = 0; i < 4; i++) elem2.assign(m2, i, i);
 	for (unsigned int i = 0; i < 4; i++) elem4_ref.assign(m, i, i);
@@ -453,13 +453,13 @@ void so_concat_impl_label_test::test_5() throw(libtest::test_exception) {
 	bis2.split(m2, 2); bis2.split(m2, 4); bis2.split(m2, 6);
 	bis4.split(m4, 2); bis4.split(m4, 4); bis4.split(m4, 6);
 
-	se2_t elem2a(bis2.get_block_index_dims(), table_id);
+	se2_t elem2a(bis2.get_block_index_dims(), k_table_id);
 	for (unsigned int i = 0; i < 4; i++) elem2a.assign(m2, i, i);
 	se2_t elem2b(elem2a);
 	elem2a.add_target(2);
 	elem2b.add_target(1);
 
-	se4_t elem4_ref(bis4.get_block_index_dims(), table_id);
+	se4_t elem4_ref(bis4.get_block_index_dims(), k_table_id);
 	for (unsigned int i = 0; i < 4; i++) elem4_ref.assign(m4, i, i);
 	elem4_ref.add_target(3);
 
@@ -555,8 +555,8 @@ void so_concat_impl_label_test::test_6() throw(libtest::test_exception) {
 	bis2.split(m2, 2); bis2.split(m2, 4); bis2.split(m2, 6);
 	bis4.split(m4, 2); bis4.split(m4, 4); bis4.split(m4, 6);
 
-	se2_t elem2a(bis2.get_block_index_dims(), table_id);
-	se2_t elem2b(bis2.get_block_index_dims(), table_id);
+	se2_t elem2a(bis2.get_block_index_dims(), k_table_id);
+	se2_t elem2b(bis2.get_block_index_dims(), k_table_id);
 	for (unsigned int i = 0; i < 4; i++) elem2a.assign(m2, i, i);
 	elem2b.assign(m2, 0, 1);
 	elem2b.assign(m2, 1, 3);
@@ -567,7 +567,7 @@ void so_concat_impl_label_test::test_6() throw(libtest::test_exception) {
 	elem2a.add_target(3);
 	elem2b.add_target(1);
 
-	se4_t elem4_ref(bis4.get_block_index_dims(), table_id);
+	se4_t elem4_ref(bis4.get_block_index_dims(), k_table_id);
 	mask<4> m4a, m4b;
 	m4a[0] = true; m4a[2] = true; m4b[1] = true; m4b[3] = true;
 	for (unsigned int i = 0; i < 4; i++) elem4_ref.assign(m4a, i, i);

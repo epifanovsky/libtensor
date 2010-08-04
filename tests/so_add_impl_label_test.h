@@ -15,7 +15,7 @@ public:
 	virtual void perform() throw(libtest::test_exception);
 
 private:
-	static const char *table_id;
+	static const char *k_table_id;
 
 	void test_1() throw(libtest::test_exception);
 	void test_2a() throw(libtest::test_exception);

@@ -79,10 +79,14 @@ set(SRC
 	so_mult_impl_perm_test.C
 	so_permute_impl_label_test.C
 	so_proj_down_test.C
+	so_proj_down_impl_label_test.C
 	so_proj_down_impl_perm_test.C
 	so_proj_up_test.C
 	so_proj_up_impl_perm_test.C
 	so_proj_up_impl_label_test.C
+	so_stabilize_test.C
+	so_stabilize_impl_label_test.C
+	so_stabilize_impl_perm_test.C
 	so_symmetrize_test.C
 	so_union_test.C
 	so_union_impl_perm_test.C

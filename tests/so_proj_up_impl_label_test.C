@@ -7,13 +7,13 @@
 
 namespace libtensor {
 
-const char *so_proj_up_impl_label_test::table_id = "point_group";
+const char *so_proj_up_impl_label_test::k_table_id = "point_group";
 
 void so_proj_up_impl_label_test::perform() throw(libtest::test_exception) {
 
 	try {
 
-	point_group_table s6(table_id, 4);
+	point_group_table s6(k_table_id, 4);
 	point_group_table::label_t ag = 0, eg = 1, au = 2, eu = 3;
 	s6.add_product(ag, ag, ag);
 	s6.add_product(ag, eg, eg);
@@ -45,11 +45,11 @@ void so_proj_up_impl_label_test::perform() throw(libtest::test_exception) {
 	test_5();
 
 	} catch (libtest::test_exception) {
-		product_table_container::get_instance().erase(table_id);
+		product_table_container::get_instance().erase(k_table_id);
 		throw;
 	}
 
-	product_table_container::get_instance().erase(table_id);
+	product_table_container::get_instance().erase(k_table_id);
 
 }
 
@@ -130,8 +130,8 @@ void so_proj_up_impl_label_test::test_2() throw(libtest::test_exception) {
 	bis2.split(m2, 2); bis2.split(m2, 4); bis2.split(m2, 6);
 	bis3.split(m3, 2); bis3.split(m3, 4); bis3.split(m3, 6);
 
-	se2_t elem2(bis2.get_block_index_dims(), table_id);
-	se3_t elem3_ref(bis3.get_block_index_dims(), table_id);
+	se2_t elem2(bis2.get_block_index_dims(), k_table_id);
+	se3_t elem3_ref(bis3.get_block_index_dims(), k_table_id);
 
 	for (unsigned int i = 0; i < 4; i++) elem2.assign(m2, i, i);
 	for (unsigned int i = 0; i < 4; i++) elem3_ref.assign(m, i, i);
@@ -225,8 +225,8 @@ void so_proj_up_impl_label_test::test_3() throw(libtest::test_exception) {
 	bis2.split(m2, 2); bis2.split(m2, 4); bis2.split(m2, 6);
 	bis3.split(m3, 2); bis3.split(m3, 4); bis3.split(m3, 6);
 
-	se2_t elem2(bis2.get_block_index_dims(), table_id);
-	se3_t elem3_ref(bis3.get_block_index_dims(), table_id);
+	se2_t elem2(bis2.get_block_index_dims(), k_table_id);
+	se3_t elem3_ref(bis3.get_block_index_dims(), k_table_id);
 
 	for (unsigned int i = 0; i < 4; i++) elem2.assign(m2, i, i);
 	for (unsigned int i = 0; i < 4; i++) elem3_ref.assign(m, i, i);
@@ -320,8 +320,8 @@ void so_proj_up_impl_label_test::test_4() throw(libtest::test_exception) {
 	bis2.split(m2, 2); bis2.split(m2, 4); bis2.split(m2, 6);
 	bis3.split(m3, 2); bis3.split(m3, 4); bis3.split(m3, 6);
 
-	se2_t elem2(bis2.get_block_index_dims(), table_id);
-	se3_t elem3_ref(bis3.get_block_index_dims(), table_id);
+	se2_t elem2(bis2.get_block_index_dims(), k_table_id);
+	se3_t elem3_ref(bis3.get_block_index_dims(), k_table_id);
 
 	for (unsigned int i = 0; i < 4; i++) elem2.assign(m2, i, i);
 	for (unsigned int i = 0; i < 4; i++) elem3_ref.assign(m, i, i);
@@ -419,8 +419,8 @@ void so_proj_up_impl_label_test::test_5() throw(libtest::test_exception) {
 	bis3.split(m3, 2); bis3.split(m3, 4); bis3.split(m3, 6);
 	bis4.split(m4, 2); bis4.split(m4, 4); bis4.split(m4, 6);
 
-	se3_t elem3(bis3.get_block_index_dims(), table_id);
-	se4_t elem4_ref(bis4.get_block_index_dims(), table_id);
+	se3_t elem3(bis3.get_block_index_dims(), k_table_id);
+	se4_t elem4_ref(bis4.get_block_index_dims(), k_table_id);
 
 	unsigned int map[4];
 	map[0] = 1; map[1] = 3; map[2] = 0; map[3] = 2;

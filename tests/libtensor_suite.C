@@ -84,10 +84,14 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("so_mult_impl_perm", m_utf_so_mult_impl_perm);
 	add_test("so_permute_impl_label", m_utf_so_permute_impl_label);
 	add_test("so_proj_down", m_utf_so_proj_down);
+	add_test("so_proj_down_impl_label", m_utf_so_proj_down_impl_label);
 	add_test("so_proj_down_impl_perm", m_utf_so_proj_down_impl_perm);
 	add_test("so_proj_up", m_utf_so_proj_up);
 	add_test("so_proj_up_impl_label", m_utf_so_proj_up_impl_label);
 	add_test("so_proj_up_impl_perm", m_utf_so_proj_up_impl_perm);
+	add_test("so_stabilize", m_utf_so_stabilize);
+	add_test("so_stabilize_impl_label", m_utf_so_stabilize_impl_label);
+	add_test("so_stabilize_impl_perm", m_utf_so_stabilize_impl_perm);
 	add_test("so_symmetrize", m_utf_so_symmetrize);
 	add_test("so_union", m_utf_so_union);
 	add_test("so_union_impl_perm", m_utf_so_union_impl_perm);

@@ -19,6 +19,8 @@ namespace libtensor {
 	\tparam N Tensor order.
 	\tparam T Tensor element type.
 
+	The implementation stabilizes unmasked dimensions pointwise.
+
 	\ingroup libtensor_symmetry
  **/
 template<size_t N, size_t M, typename T>
