@@ -37,26 +37,28 @@ int main(int argc, char **argv) {
 
 	srand48(time(0));
 
-	unsigned nthreads[4] = { 0, 1, 2, 5 };
+	unsigned ngroups[4] = { 0, 1, 2, 5 };
 
-	for(size_t ithr = 0; ithr < 4; ithr++) {
+	for(size_t igrp = 0; igrp < 4; igrp++) {
+	for(size_t nthr = 1; nthr <= 2; nthr++) {
 
 		ostringstream ss;
 		ss << " Unit tests for libtensor "
 			<< version::get_string() << " ";
-		if(nthreads[ithr] == 0) {
+		if(ngroups[igrp] == 0) {
 			ss << "(single-threaded) ";
 		} else {
 			ss << "(multi-threaded, "
-				<< nthreads[ithr] + 1 << " threads) ";
+				<< ngroups[igrp] + 1 << "/" << nthr
+				<< " threads) ";
 		}
 		string separator(ss.str().size(), '-');
 		cout << separator << endl << ss.str() << endl
 			<< separator << endl;
 
-		if(nthreads[ithr] > 0) {
+		if(ngroups[igrp] > 0) {
 			libtensor::worker_pool::get_instance().
-				init(nthreads[ithr]);
+				init(ngroups[igrp], nthr);
 		}
 
 		suite_handler handler;
@@ -69,9 +71,10 @@ int main(int argc, char **argv) {
 			for(int i = 1; i < argc; i++) suite.run_test(argv[i]);
 		}
 
-		if(nthreads[ithr] > 0) {
+		if(ngroups[igrp] > 0) {
 			libtensor::worker_pool::get_instance().shutdown();
 		}
 	}
+}
 }
 

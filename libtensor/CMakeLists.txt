@@ -36,6 +36,7 @@ set(SRC_INST
 set(SRC_MP
 	mp/task_dispatcher.C
 	mp/worker.C
+	mp/worker_group.C
 	mp/worker_pool.C
 )
 

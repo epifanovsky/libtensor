@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <libvmm/singleton.h>
-#include "worker.h"
+#include "worker_group.h"
 
 namespace libtensor {
 
@@ -20,15 +20,16 @@ public:
 
 private:
 	bool m_init; //!< The pool is active (true) or inactive (false)
-	std::vector<worker*> m_workers; //!< Worker threads
+	std::vector<worker_group*> m_groups; //!< Groups of worker threads
 
 protected:
 	worker_pool() : m_init(false) { }
 
 public:
-	/**	\brief Initializes the pool with a given number of threads
+	/**	\brief Initializes the pool with a given number of groups with
+			a given number of threads in each group
 	 **/
-	void init(unsigned nthreads);
+	void init(unsigned ngroups, unsigned nthreads);
 
 	/**	\brief Shuts down the pool and terminates all the threads
 	 **/

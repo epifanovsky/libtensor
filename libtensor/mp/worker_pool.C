@@ -9,9 +9,9 @@ namespace libtensor {
 const char *worker_pool::k_clazz = "worker_pool";
 
 
-void worker_pool::init(unsigned nthreads) {
+void worker_pool::init(unsigned ngroups, unsigned nthreads) {
 
-	static const char *method = "init(unsigned)";
+	static const char *method = "init(unsigned, ngroups)";
 
 	if(nthreads == 0) {
 		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
@@ -22,15 +22,15 @@ void worker_pool::init(unsigned nthreads) {
 			"running");
 	}
 
-	std::vector<libvmm::cond*> sig(nthreads, 0);
-	for(unsigned i = 0; i < nthreads; i++) {
+	std::vector<libvmm::cond*> sig(ngroups, 0);
+	for(unsigned i = 0; i < ngroups; i++) {
 		sig[i] = new libvmm::cond;
-		m_workers.push_back(new worker(*sig[i]));
+		m_groups.push_back(new worker_group(nthreads, *sig[i]));
 	}
-	for(unsigned i = 0; i < nthreads; i++) {
-		m_workers[i]->start();
+	for(unsigned i = 0; i < ngroups; i++) {
+		m_groups[i]->start();
 	}
-	for(unsigned i = 0; i < nthreads; i++) {
+	for(unsigned i = 0; i < ngroups; i++) {
 		sig[i]->wait();
 	}
 
@@ -47,18 +47,18 @@ void worker_pool::shutdown() {
 			"not_running");
 	}
 
-	unsigned nthreads = m_workers.size();
-	for(unsigned i = 0; i < nthreads; i++) {
-		m_workers[i]->terminate();
+	unsigned ngroups = m_groups.size();
+	for(unsigned i = 0; i < ngroups; i++) {
+		m_groups[i]->terminate();
 	}
 	task_dispatcher::get_instance().set_off_alarm();
-	for(unsigned i = 0; i < nthreads; i++) {
-		m_workers[i]->join();
+	for(unsigned i = 0; i < ngroups; i++) {
+		m_groups[i]->join();
 	}
-	for(unsigned i = 0; i < nthreads; i++) {
-		delete m_workers[i];
+	for(unsigned i = 0; i < ngroups; i++) {
+		delete m_groups[i];
 	}
-	m_workers.clear();
+	m_groups.clear();
 
 	m_init = false;
 }

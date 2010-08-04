@@ -14,12 +14,13 @@ namespace libtensor {
 class worker : public libvmm::thread {
 private:
 	libvmm::cond &m_started; //!< Start signal
+	libvmm::mutex &m_cpu_lock; //!< CPU mutex
 	volatile bool m_term; //!< Signal to terminate
 
 public:
 	/**	\brief Default constructor
 	 **/
-	worker(libvmm::cond &started);
+	worker(libvmm::cond &started, libvmm::mutex &cpu_lock);
 
 	/**	\brief Virtual destructor
 	 **/
