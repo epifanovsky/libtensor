@@ -1,5 +1,6 @@
 #include <libvmm/std_allocator.h>
 #include <libtensor/btod/btod_random.h>
+#include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/tod/tod_btconv.h>
 #include <libtensor/tod/tod_contract2.h>
 #include <libtensor/iface/iface.h>
@@ -23,6 +24,7 @@ void expr_test::perform() throw(libtest::test_exception) {
 		test_5();
 		test_6();
 		test_7();
+		test_8();
 
 	} catch(...) {
 		libvmm::vm_allocator<double>::vmm().shutdown();
@@ -481,6 +483,79 @@ void expr_test::test_7() throw(libtest::test_exception) {
 	compare_ref<4>::compare(testname, ti1_ovov, ti1_ovov_ref, 5e-15);
 
 	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void expr_test::test_8() throw(libtest::test_exception) {
+
+	static const char *testname = "expr_test::test_8()";
+
+	bool need_erase = true;
+	const char *pgtid = "point_group_cs";
+
+	try {
+
+	bispace<1> so(10); so.split(2).split(5).split(7);
+	bispace<1> sv(8); sv.split(2).split(4).split(6);
+
+	bispace<2> soo(so&so);
+	bispace<4> soovv(so&so|sv&sv);
+
+	btensor<4> i_oovv(soovv), t2(soovv);
+	btensor<2> f2_oo(soo);
+
+	point_group_table::label_t ap = 0, app = 1;
+
+	point_group_table cs(pgtid, 2);
+	cs.add_product(ap, ap, ap);
+	cs.add_product(ap, app, app);
+	cs.add_product(app, ap, app);
+	cs.add_product(app, app, ap);
+	cs.check();
+	product_table_container::get_instance().add(cs);
+
+	mask<4> m0011, m1100;
+	m1100[0] = true; m1100[1] = true; m0011[2] = true; m0011[3] = true;
+	se_label<4, double> l_oovv(soovv.get_bis().get_block_index_dims(),
+		pgtid);
+	l_oovv.assign(m1100, 0, ap);
+	l_oovv.assign(m1100, 1, app);
+	l_oovv.assign(m1100, 2, ap);
+	l_oovv.assign(m1100, 3, app);
+	l_oovv.assign(m0011, 0, ap);
+	l_oovv.assign(m0011, 1, app);
+	l_oovv.assign(m0011, 2, ap);
+	l_oovv.assign(m0011, 3, app);
+	l_oovv.add_target(ap);
+
+	{
+		block_tensor_ctrl<4, double> c_i_oovv(i_oovv), c_t2(t2);
+		symmetry<4, double> sym_t2(t2.get_bis());
+		sym_t2.insert(se_perm<4, double>(permutation<4>().
+			permute(0, 1), false));
+		sym_t2.insert(se_perm<4, double>(permutation<4>().
+			permute(2, 3), false));
+//		sym_t2.insert(l_oovv);
+		so_copy<4, double>(sym_t2).perform(c_t2.req_symmetry());
+		so_copy<4, double>(sym_t2).perform(c_i_oovv.req_symmetry());
+	}
+
+	btod_random<4>().perform(i_oovv);
+	btod_random<4>().perform(t2);
+
+	letter i, j, k, l, a, b, c, d;
+
+//	f2_oo(i|j) = contract(k|a|b, i_oovv(j|k|a|b), t2(i|k|a|b));
+
+	need_erase = false;
+	product_table_container::get_instance().erase(pgtid);
+
+	} catch(exception &e) {
+//		if(need_erase) {
+//			product_table_container::get_instance().erase(pgtid);
+//		}
 		fail_test(testname, __FILE__, __LINE__, e.what());
 	}
 }
