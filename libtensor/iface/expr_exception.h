@@ -10,7 +10,7 @@ namespace libtensor {
 
 	\ingroup libtensor_core_exc
  **/
-class expr_exception : public exception {
+class expr_exception : public exception_base<expr_exception> {
 public:
 	//!	\name Construction and destruction
 	//@{
@@ -19,9 +19,9 @@ public:
 	 **/
 	expr_exception(const char *ns, const char *clazz, const char *method,
 		const char *file, unsigned int line, const char *message)
-		throw()
-		: exception(ns, clazz, method, file, line, "expr_exception",
-			message) { };
+		throw() :
+		exception_base<expr_exception>(ns, clazz, method, file, line,
+			"expr_exception", message) { };
 
 	/**	\brief Virtual destructor
 	 **/

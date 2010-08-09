@@ -105,6 +105,9 @@ public:
 		return m_sch;
 	}
 
+	virtual void sync_on();
+	virtual void sync_off();
+
 	virtual void compute_block(tensor_i<N + M, double> &blk,
 		const index<N + M> &i);
 
@@ -181,6 +184,26 @@ btod_dirsum<N, M>::btod_dirsum(block_tensor_i<k_ordera, double> &bta, double ka,
 
 	make_symmetry();
 	make_schedule();
+}
+
+
+template<size_t N, size_t M>
+void btod_dirsum<N, M>::sync_on() {
+
+	block_tensor_ctrl<k_ordera, double> ctrla(m_bta);
+	block_tensor_ctrl<k_orderb, double> ctrlb(m_btb);
+	ctrla.req_sync_on();
+	ctrlb.req_sync_on();
+}
+
+
+template<size_t N, size_t M>
+void btod_dirsum<N, M>::sync_off() {
+
+	block_tensor_ctrl<k_ordera, double> ctrla(m_bta);
+	block_tensor_ctrl<k_orderb, double> ctrlb(m_btb);
+	ctrla.req_sync_off();
+	ctrlb.req_sync_off();
 }
 
 

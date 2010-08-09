@@ -93,6 +93,28 @@ void btod_add<N>::add_op(block_tensor_i<N, double> &bt,
 
 
 template<size_t N>
+void btod_add<N>::sync_on() {
+
+	size_t narg = m_ops.size();
+	for(size_t i = 0; i < narg; i++) {
+		block_tensor_ctrl<N, double> ctrl(m_ops[i]->m_bt);
+		ctrl.req_sync_on();
+	}
+}
+
+
+template<size_t N>
+void btod_add<N>::sync_off() {
+
+	size_t narg = m_ops.size();
+	for(size_t i = 0; i < narg; i++) {
+		block_tensor_ctrl<N, double> ctrl(m_ops[i]->m_bt);
+		ctrl.req_sync_off();
+	}
+}
+
+
+template<size_t N>
 void btod_add<N>::compute_block(tensor_i<N, double> &blkb, const index<N> &ib) {
 
 	static const char *method =

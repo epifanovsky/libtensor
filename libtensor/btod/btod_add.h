@@ -137,6 +137,9 @@ public:
 		return *m_sch;
 	}
 
+	virtual void sync_on();
+	virtual void sync_off();
+
 	virtual void compute_block(tensor_i<N, double> &blk, const index<N> &i);
 
 	virtual void compute_block(tensor_i<N, double> &blk, const index<N> &i,

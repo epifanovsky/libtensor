@@ -185,7 +185,7 @@ void permutation_test::test_permute() throw(libtest::test_exception) {
 	bool ok = false;
 	try {
 		p4.permute(1,5);
-	} catch(exception e) {
+	} catch(exception &e) {
 		ok = true;
 	} catch(...) {
 		fail_test("permutation_test::test_permute()",
@@ -291,7 +291,7 @@ void permutation_test::test_apply_1() throw(libtest::test_exception) {
 	ok = false;
 	try {
 		p2.apply(4, s2);
-	} catch(exception e) {
+	} catch(exception &e) {
 		ok = true;
 	} catch(...) {
 		fail_test(testname, __FILE__, __LINE__,
@@ -316,7 +316,7 @@ void permutation_test::test_apply_1() throw(libtest::test_exception) {
 	ok = false;
 	try {
 		p4.apply(2, s4);
-	} catch(exception e) {
+	} catch(exception &e) {
 		ok = true;
 	} catch(...) {
 		fail_test(testname, __FILE__, __LINE__,

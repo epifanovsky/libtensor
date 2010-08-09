@@ -39,7 +39,7 @@ void tod_compare_test::test_exc() throw(libtest::test_exception) {
 	bool ok = false;
 	try {
 		tod_compare<4> tc(t1, t2, 0);
-	} catch(exception e) {
+	} catch(exception &e) {
 		ok = true;
 	}
 

@@ -92,6 +92,9 @@ public:
 		return m_sch;
 	}
 
+	virtual void sync_on();
+	virtual void sync_off();
+
 	//@}
 
 	using additive_btod<k_orderb>::perform;
@@ -157,6 +160,22 @@ btod_diag<N, M>::btod_diag(block_tensor_i<N, double> &bta, const mask<N> &m,
 
 	make_symmetry();
 	make_schedule();
+}
+
+
+template<size_t N, size_t M>
+void btod_diag<N, M>::sync_on() {
+
+	block_tensor_ctrl<N, double> ctrla(m_bta);
+	ctrla.req_sync_on();
+}
+
+
+template<size_t N, size_t M>
+void btod_diag<N, M>::sync_off() {
+
+	block_tensor_ctrl<N, double> ctrla(m_bta);
+	ctrla.req_sync_off();
 }
 
 

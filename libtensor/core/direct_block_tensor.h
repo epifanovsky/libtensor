@@ -3,6 +3,7 @@
 
 #include "../defs.h"
 #include "../exception.h"
+#include "../mp/default_sync_policy.h"
 #include "abs_index.h"
 #include "block_map.h"
 #include "direct_block_tensor_base.h"
@@ -14,13 +15,47 @@ namespace libtensor {
 	\tparam N Tensor order.
 	\tparam T Tensor element type.
 	\tparam Alloc Memory allocator type.
+	\tparam Sync Synchronization policy
 
 	\ingroup libtensor_core
  **/
-template<size_t N, typename T, typename Alloc>
+template<size_t N, typename T, typename Alloc,
+	typename Sync = default_sync_policy>
 class direct_block_tensor : public direct_block_tensor_base<N, T> {
 public:
 	static const char *k_clazz; //!< Class name
+
+private:
+	typedef typename Sync::mutex_t mutex_t; //!< Mutex type
+
+	class auto_lock {
+	private:
+		mutex_t *m_lock;
+		bool m_locked;
+
+	public:
+		auto_lock(mutex_t *l) : m_lock(l), m_locked(false) {
+			lock();
+		}
+
+		~auto_lock() {
+			unlock();
+		}
+
+		void lock() {
+			if(m_lock && !m_locked) {
+				m_lock->lock();
+				m_locked = true;
+			}
+		}
+
+		void unlock() {
+			if(m_lock && m_locked) {
+				m_locked = false;
+				m_lock->unlock();
+			}
+		}
+	};
 
 public:
 	typedef direct_block_tensor_base<N,T> base_t; //!< Base class type
@@ -32,6 +67,7 @@ private:
 	block_map<N, T, Alloc> m_map; //!< Block map
 	std::map<size_t, size_t> m_count; //!< Block count
 	dimensions<N> m_bidims; //!< Block %index dims
+	mutex_t *m_lock; //!< Mutex lock
 
 public:
 	//!	\name Construction and destruction
@@ -56,6 +92,8 @@ protected:
 	virtual tensor_i<N, T> &on_req_aux_block(const index<N> &idx)
 		throw(exception);
 	virtual void on_ret_aux_block(const index<N> &idx) throw(exception);
+	virtual void on_req_sync_on() throw(exception);
+	virtual void on_req_sync_off() throw(exception);
 
 	//@}
 
@@ -67,34 +105,39 @@ private:
 };
 
 
-template<size_t N, typename T, typename Alloc>
-const char *direct_block_tensor<N, T, Alloc>::k_clazz =
-	"direct_block_tensor<N, T, Alloc>";
+template<size_t N, typename T, typename Alloc, typename Sync>
+const char *direct_block_tensor<N, T, Alloc, Sync>::k_clazz =
+	"direct_block_tensor<N, T, Alloc, Sync>";
 
 
-template<size_t N, typename T, typename Alloc>
-direct_block_tensor<N, T, Alloc>::direct_block_tensor(
+template<size_t N, typename T, typename Alloc, typename Sync>
+direct_block_tensor<N, T, Alloc, Sync>::direct_block_tensor(
 	direct_block_tensor_operation<N, T> &op) :
 
 	direct_block_tensor_base<N, T>(op),
-	m_bidims(get_bis().get_block_index_dims()) {
+	m_bidims(get_bis().get_block_index_dims()),
+	m_lock(0) {
 
 }
 
 
-template<size_t N, typename T, typename Alloc>
-bool direct_block_tensor<N, T, Alloc>::on_req_is_zero_block(const index<N> &idx)
-	throw(exception) {
+template<size_t N, typename T, typename Alloc, typename Sync>
+bool direct_block_tensor<N, T, Alloc, Sync>::on_req_is_zero_block(
+	const index<N> &idx) throw(exception) {
+
+	auto_lock lock(m_lock);
 
 	return !get_op().get_schedule().contains(idx);
 }
 
 
-template<size_t N, typename T, typename Alloc>
-tensor_i<N, T> &direct_block_tensor<N, T, Alloc>::on_req_block(
+template<size_t N, typename T, typename Alloc, typename Sync>
+tensor_i<N, T> &direct_block_tensor<N, T, Alloc, Sync>::on_req_block(
 	const index<N> &idx) throw(exception) {
 
 	static const char *method = "on_req_block(const index<N>&)";
+
+	auto_lock lock(m_lock);
 
 #ifdef LIBTENSOR_DEBUG
 	if(!get_op().get_schedule().contains(idx)) {
@@ -116,17 +159,23 @@ tensor_i<N, T> &direct_block_tensor<N, T, Alloc>::on_req_block(
 
 	tensor_i<N, T> &blk = m_map.get(aidx.get_abs_index());
 
-	if(newblock) get_op().compute_block(blk, idx);
+	if(newblock) {
+		lock.unlock();
+		get_op().compute_block(blk, idx);
+		lock.lock();
+	}
 
 	return blk;
 }
 
 
-template<size_t N, typename T, typename Alloc>
-void direct_block_tensor<N, T, Alloc>::on_ret_block(const index<N> &idx)
+template<size_t N, typename T, typename Alloc, typename Sync>
+void direct_block_tensor<N, T, Alloc, Sync>::on_ret_block(const index<N> &idx)
 	throw(exception) {
 
 	static const char *method = "on_ret_block(const index<N>&)";
+
+	auto_lock lock(m_lock);
 
 	abs_index<N> aidx(idx, m_bidims);
 	typename std::map<size_t, size_t>::iterator icnt =
@@ -143,8 +192,8 @@ void direct_block_tensor<N, T, Alloc>::on_ret_block(const index<N> &idx)
 }
 
 
-template<size_t N, typename T, typename Alloc>
-tensor_i<N, T> &direct_block_tensor<N, T, Alloc>::on_req_aux_block(
+template<size_t N, typename T, typename Alloc, typename Sync>
+tensor_i<N, T> &direct_block_tensor<N, T, Alloc, Sync>::on_req_aux_block(
 	const index<N> &idx) throw(exception) {
 
 	static const char *method = "on_req_aux_block(const index<N>&)";
@@ -154,14 +203,29 @@ tensor_i<N, T> &direct_block_tensor<N, T, Alloc>::on_req_aux_block(
 }
 
 
-template<size_t N, typename T, typename Alloc>
-void direct_block_tensor<N, T, Alloc>::on_ret_aux_block(const index<N> &idx)
-	throw(exception) {
+template<size_t N, typename T, typename Alloc, typename Sync>
+void direct_block_tensor<N, T, Alloc, Sync>::on_ret_aux_block(
+	const index<N> &idx) throw(exception) {
 
 	static const char *method = "on_ret_aux_block(const index<N>&)";
 
 	throw immut_violation(g_ns, k_clazz, method, __FILE__, __LINE__,
 		"invalid_req");
+}
+
+
+template<size_t N, typename T, typename Alloc, typename Sync>
+void direct_block_tensor<N, T, Alloc, Sync>::on_req_sync_on() throw(exception) {
+
+	if(m_lock == 0) m_lock = new mutex_t;
+}
+
+
+template<size_t N, typename T, typename Alloc, typename Sync>
+void direct_block_tensor<N, T, Alloc, Sync>::on_req_sync_off()
+	throw(exception) {
+
+	delete m_lock; m_lock = 0;
 }
 
 

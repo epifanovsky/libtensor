@@ -56,6 +56,7 @@
 #include "letter_expr_test.h"
 #include "letter_test.h"
 #include "mask_test.h"
+#include "mp_safe_tensor_test.h"
 #include "orbit_test.h"
 #include "orbit_list_test.h"
 #include "permutation_test.h"
@@ -94,6 +95,7 @@
 #include "symmetry_test.h"
 #include "symmetry_element_set_test.h"
 #include "symmetry_element_set_adapter_test.h"
+#include "task_batch_test.h"
 #include "tensor_test.h"
 #include "timer_test.h"
 #include "timings_test.h"
@@ -184,6 +186,7 @@ namespace libtensor {
 	\li libtensor::letter_test
 	\li libtensor::letter_expr_test
 	\li libtensor::mask_test
+	\li libtensor::mp_safe_tensor_test
 	\li libtensor::orbit_test
 	\li libtensor::orbit_list_test
 	\li libtensor::permutation_test
@@ -222,6 +225,7 @@ namespace libtensor {
 	\li libtensor::symmetry_test
 	\li libtensor::symmetry_element_set_test
 	\li libtensor::symmetry_element_set_adapter_test
+	\li libtensor::task_batch_test
 	\li libtensor::tensor_test
 	\li libtensor::timer_test
 	\li libtensor::timings_test
@@ -308,6 +312,7 @@ private:
 	unit_test_factory<letter_test> m_utf_letter;
 	unit_test_factory<letter_expr_test> m_utf_letter_expr;
 	unit_test_factory<mask_test> m_utf_mask;
+	unit_test_factory<mp_safe_tensor_test> m_utf_mp_safe_tensor;
 	unit_test_factory<orbit_test> m_utf_orbit;
 	unit_test_factory<orbit_list_test> m_utf_orbit_list;
 	unit_test_factory<permutation_test> m_utf_permutation;
@@ -350,6 +355,7 @@ private:
 	unit_test_factory<symmetry_element_set_test> m_utf_symmetry_element_set;
 	unit_test_factory<symmetry_element_set_adapter_test>
 		m_utf_symmetry_element_set_adapter;
+	unit_test_factory<task_batch_test> m_utf_task_batch;
 	unit_test_factory<tensor_test> m_utf_tensor;
 	unit_test_factory<timer_test> m_utf_timer;
 	unit_test_factory<timings_test> m_utf_timings;

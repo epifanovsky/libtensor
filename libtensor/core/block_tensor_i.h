@@ -123,6 +123,14 @@ protected:
 	 **/
 	virtual void on_req_zero_all_blocks() throw(exception) = 0;
 
+	/**	\brief Enables multi-processor synchronization
+	 **/
+	virtual void on_req_sync_on() throw(exception) = 0;
+
+	/**	\brief Disables multi-processor synchronization
+	 **/
+	virtual void on_req_sync_off() throw(exception) = 0;
+
 	//@}
 };
 

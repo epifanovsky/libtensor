@@ -72,9 +72,64 @@ public:
 
 	//@}
 
+	/**	\brief Clones the exception
+	 **/
+	virtual exception *clone() const throw() = 0;
+
+	/**	\brief Throws itself
+	 **/
+	virtual void rethrow() = 0;
+
 	const backtrace &get_backtrace() const {
 		return m_trace;
 	}
+
+};
+
+
+template<typename T>
+class exception_base : public exception {
+public:
+	exception_base(const char *ns, const char *clazz, const char *method,
+		const char *file, unsigned int line, const char *type,
+		const char *message) throw() : exception(ns, clazz, method,
+		file, line, type, message) { }
+
+	virtual ~exception_base() throw() { }
+
+	virtual exception *clone() const throw() {
+		return new T(dynamic_cast<const T&>(*this));
+	}
+
+	virtual void rethrow() {
+		throw T(dynamic_cast<const T&>(*this));
+	}
+
+};
+
+
+/**	\brief Generic exception class
+
+	\ingroup libtensor_core_exc
+ **/
+class generic_exception : public exception_base<generic_exception> {
+public:
+	//!	\name Construction and destruction
+	//@{
+
+	/**	\brief Creates an exception
+	 **/
+	generic_exception(const char *ns, const char *clazz, const char *method,
+		const char *file, unsigned int line, const char *message)
+		throw()
+		: exception_base<generic_exception>(ns, clazz, method,
+			file, line, "generic_exception", message) { };
+
+	/**	\brief Virtual destructor
+	 **/
+	virtual ~generic_exception() throw() { };
+
+	//@}
 
 };
 
@@ -83,7 +138,7 @@ public:
 
 	\ingroup libtensor_core_exc
  **/
-class bad_parameter : public exception {
+class bad_parameter : public exception_base<bad_parameter> {
 public:
 	//!	\name Construction and destruction
 	//@{
@@ -93,14 +148,15 @@ public:
 	bad_parameter(const char *ns, const char *clazz, const char *method,
 		const char *file, unsigned int line, const char *message)
 		throw()
-		: exception(ns, clazz, method, file, line, "bad_parameter",
-			message) { };
+		: exception_base<bad_parameter>(ns, clazz, method, file, line,
+			"bad_parameter", message) { };
 
 	/**	\brief Virtual destructor
 	 **/
 	virtual ~bad_parameter() throw() { };
 
 	//@}
+
 };
 
 
@@ -108,7 +164,7 @@ public:
 
 	\ingroup libtensor_core_exc
  **/
-class block_not_found : public exception {
+class block_not_found : public exception_base<block_not_found> {
 public:
 	//!	\name Construction and destruction
 	//@{
@@ -118,14 +174,15 @@ public:
 	block_not_found(const char *ns, const char *clazz, const char *method,
 		const char *file, unsigned int line, const char *message)
 		throw()
-		: exception(ns, clazz, method, file, line, "block_not_found",
-			message) { };
+		: exception_base<block_not_found>(ns, clazz, method, file, line,
+			"block_not_found", message) { };
 
 	/**	\brief Virtual destructor
 	 **/
 	virtual ~block_not_found() throw() { };
 
 	//@}
+
 };
 
 
@@ -134,7 +191,7 @@ public:
 
 	\ingroup libtensor_core_exc
  **/
-class immut_violation : public exception {
+class immut_violation : public exception_base<immut_violation> {
 public:
 	//!	\name Construction and destruction
 	//@{
@@ -144,8 +201,8 @@ public:
 	immut_violation(const char *ns, const char *clazz, const char *method,
 		const char *file, unsigned int line, const char *message)
 		throw()
-		: exception(ns, clazz, method, file, line, "immut_violation",
-			message) { };
+		: exception_base<immut_violation>(ns, clazz, method, file, line,
+			"immut_violation", message) { };
 
 	/**	\brief Virtual destructor
 	 **/
@@ -160,7 +217,7 @@ public:
 
 	\ingroup libtensor_core_exc
  **/
-class out_of_memory : public exception {
+class out_of_memory : public exception_base<out_of_memory> {
 public:
 	//!	\name Construction and destruction
 	//@{
@@ -170,8 +227,8 @@ public:
 	out_of_memory(const char *ns, const char *clazz, const char *method,
 		const char *file, unsigned int line, const char *message)
 		throw()
-		: exception(ns, clazz, method, file, line, "out_of_memory",
-			message) { };
+		: exception_base<out_of_memory>(ns, clazz, method, file, line,
+			"out_of_memory", message) { };
 
 	/**	\brief Virtual destructor
 	 **/
@@ -185,7 +242,7 @@ public:
 
 	\ingroup libtensor_core_exc
  **/
-class symmetry_violation : public exception {
+class symmetry_violation : public exception_base<symmetry_violation> {
 public:
 	//!	\name Construction and destruction
 	//@{
@@ -195,8 +252,8 @@ public:
 	symmetry_violation(const char *ns, const char *clazz,
 		const char *method, const char *file, unsigned int line,
 		const char *message) throw()
-		: exception(ns, clazz, method, file, line, "symmetry_violation",
-			message) { };
+		: exception_base<symmetry_violation>(ns, clazz, method,
+			file, line, "symmetry_violation", message) { };
 
 	/**	\brief Virtual destructor
 	 **/

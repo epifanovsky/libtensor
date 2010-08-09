@@ -11,7 +11,7 @@ namespace libtensor {
 
 	\ingroup libtensor_tod
  **/
-class bad_dimensions : public exception {
+class bad_dimensions : public exception_base<bad_dimensions> {
 public:
 	//!	\name Construction and destruction
 	//@{
@@ -21,8 +21,8 @@ public:
 	bad_dimensions(const char *ns, const char *clazz, const char *method,
 		const char *file, unsigned int line, const char *message)
 		throw() :
-		exception(ns, clazz, method, file, line, "bad_dimensions",
-			message) { };
+		exception_base<bad_dimensions>(ns, clazz, method, file, line,
+			"bad_dimensions", message) { };
 
 	/**	\brief Virtual destructor
 	 **/

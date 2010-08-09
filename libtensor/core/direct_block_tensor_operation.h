@@ -46,6 +46,14 @@ public:
 	virtual void compute_block(tensor_i<N, double> &blk,
 		const index<N> &i) = 0;
 
+	/**	\brief Enables the synchronization of arguments
+	 **/
+	virtual void sync_on() = 0;
+
+	/**	\brief Disables the synchronization of arguments
+	 **/
+	virtual void sync_off() = 0;
+
 };
 
 

@@ -60,6 +60,7 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("letter", m_utf_letter);
 	add_test("letter_expr", m_utf_letter_expr);
 	add_test("mask", m_utf_mask);
+	add_test("mp_safe_tensor", m_utf_mp_safe_tensor);
 	add_test("orbit", m_utf_orbit);
 	add_test("orbit_list", m_utf_orbit_list);
 	add_test("permutation", m_utf_permutation);
@@ -99,6 +100,7 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("symmetry_element_set", m_utf_symmetry_element_set);
 	add_test("symmetry_element_set_adapter",
 		m_utf_symmetry_element_set_adapter);
+	add_test("task_batch", m_utf_task_batch);
 	add_test("tensor", m_utf_tensor);
 	add_test("timer", m_utf_timer);
 	add_test("timings", m_utf_timings);

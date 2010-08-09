@@ -80,6 +80,9 @@ public:
 
 	using additive_btod<k_orderb>::perform;
 
+	virtual void sync_on();
+	virtual void sync_off();
+
 protected:
 	virtual void compute_block(tensor_i<k_orderb, double> &blk,
 		const index<k_orderb> &i);
@@ -141,6 +144,22 @@ btod_extract<N, M>::btod_extract(block_tensor_i<N, double> &bta,
 	so_permute<k_orderb, double>(sym, p).perform(m_sym);
 
 	make_schedule();
+}
+
+
+template<size_t N, size_t M>
+void btod_extract<N, M>::sync_on() {
+
+	block_tensor_ctrl<N, double> ctrla(m_bta);
+	ctrla.req_sync_on();
+}
+
+
+template<size_t N, size_t M>
+void btod_extract<N, M>::sync_off() {
+
+	block_tensor_ctrl<N, double> ctrla(m_bta);
+	ctrla.req_sync_off();
 }
 
 

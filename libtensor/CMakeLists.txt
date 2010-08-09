@@ -33,7 +33,14 @@ set(SRC_INST
 	btod/btod_sum.C
 )
 
-add_library(tensor ${SRC} ${SRC_INST})
+set(SRC_MP
+	mp/task_dispatcher.C
+	mp/worker.C
+	mp/worker_group.C
+	mp/worker_pool.C
+)
+
+add_library(tensor ${SRC} ${SRC_INST} ${SRC_MP})
 
 IF(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
 set_property(SOURCE blas.C APPEND PROPERTY

@@ -55,6 +55,7 @@ set(SRC
 	letter_test.C
 	letter_expr_test.C
 	mask_test.C
+	mp_safe_tensor_test.C
 	orbit_test.C
 	orbit_list_test.C
 	permutation_test.C
@@ -93,6 +94,7 @@ set(SRC
 	symmetry_test.C
 	symmetry_element_set_test.C
 	symmetry_element_set_adapter_test.C
+	task_batch_test.C
 	tensor_test.C
 	timer_test.C
 	timings_test.C

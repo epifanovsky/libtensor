@@ -525,7 +525,7 @@ void btod_compare_test::test_exc() throw(libtest::test_exception) {
 		bis2.split(mask,3);
 		block_tensor_t bt2(bis2);
 		btod_compare<2> btc(bt1, bt2, 0);
-	} catch(exception e) {
+	} catch(exception &e) {
 		ok = true;
 	}
 
@@ -544,7 +544,7 @@ void btod_compare_test::test_exc() throw(libtest::test_exception) {
 		block_tensor_t bt2(bis2);
 
 		btod_compare<2> btc(bt1, bt2, 0);
-	} catch(exception e) {
+	} catch(exception &e) {
 		ok = true;
 	}
 
