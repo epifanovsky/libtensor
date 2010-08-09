@@ -3,7 +3,9 @@
 #include <libtensor/core/mask.h>
 #include <libtensor/btod/btod_diag.h>
 #include <libtensor/btod/btod_random.h>
+#include <libtensor/symmetry/se_label.h>
 #include <libtensor/symmetry/se_perm.h>
+#include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/tod/tod_btconv.h>
 #include <libtensor/tod/tod_diag.h>
 #include "btod_diag_test.h"
@@ -44,6 +46,9 @@ void btod_diag_test::perform() throw(libtest::test_exception) {
 
 	test_sym_6(false);
 	test_sym_6(true);
+
+	test_sym_7(false);
+	test_sym_7(true);
 }
 
 /**	\test Extract diagonal: \f$ b_i = a_{ii} \f$, zero tensor, one block
@@ -919,6 +924,113 @@ void btod_diag_test::test_sym_6(bool add) throw(libtest::test_exception) {
 	compare_ref<3>::compare(testname, tb, tb_ref, 1e-15);
 
 	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\test Extract diagonal: \f$ b_i = a_{ii} \f$, non-zero tensor,
+		multiple blocks, label symmetry
+ **/
+void btod_diag_test::test_sym_7(bool add) throw(libtest::test_exception) {
+
+	static const char *testname = "btod_diag_test::test_sym_7(bool)";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	bool need_erase = true;
+	const char *pgtid = "point_group_cs";
+
+	try {
+
+	point_group_table::label_t ap = 0, app = 1;
+
+	point_group_table cs(pgtid, 2);
+	cs.add_product(ap, ap, ap);
+	cs.add_product(ap, app, app);
+	cs.add_product(app, ap, app);
+	cs.add_product(app, app, ap);
+	cs.check();
+	product_table_container::get_instance().add(cs);
+
+	{
+
+	index<1> i1a, i1b;
+	i1b[0] = 10;
+	index<2> i2a, i2b;
+	i2b[0] = 10; i2b[1] = 10;
+	dimensions<1> dims1(index_range<1>(i1a, i1b));
+	dimensions<2> dims2(index_range<2>(i2a, i2b));
+	block_index_space<1> bis1(dims1);
+	block_index_space<2> bis2(dims2);
+
+	mask<1> msk1;
+	msk1[0] = true;
+	mask<2> msk2;
+	msk2[0] = true; msk2[1] = true;
+	bis1.split(msk1, 3); bis1.split(msk1, 6);
+	bis2.split(msk2, 3); bis2.split(msk2, 6);
+
+	se_label<2, double> elem1(bis2.get_block_index_dims(), pgtid);
+	elem1.assign(msk2, 0, ap);
+	elem1.assign(msk2, 1, ap);
+	elem1.assign(msk2, 2, app);
+	elem1.add_target(ap);
+
+	block_tensor<2, double, allocator_t> bta(bis2);
+	block_tensor<1, double, allocator_t> btb(bis1);
+
+	{
+		block_tensor_ctrl<2, double> ca(bta);
+		ca.req_symmetry().insert(elem1);
+	}
+
+	tensor<2, double, allocator_t> ta(dims2);
+	tensor<1, double, allocator_t> tb(dims1), tb_ref(dims1);
+
+	mask<2> msk;
+	msk[0] = true; msk[1] = true;
+
+	//	Fill in random data
+	btod_random<2>().perform(bta);
+	bta.set_immutable();
+
+	//	Prepare the reference
+	tod_btconv<2>(bta).perform(ta);
+
+	if (add) {
+		//	Fill in random data
+		btod_random<1>().perform(btb);
+
+		//	Prepare the reference
+		tod_btconv<1>(btb).perform(tb_ref);
+
+		tod_diag<2, 2>(ta, msk).perform(tb_ref, 1.0);
+
+		//	Invoke the operation
+		btod_diag<2, 2>(bta, msk).perform(btb, 1.0);
+	}
+	else {
+		tod_diag<2, 2>(ta, msk).perform(tb_ref);
+
+		//	Invoke the operation
+		btod_diag<2, 2>(bta, msk).perform(btb);
+	}
+
+	tod_btconv<1>(btb).perform(tb);
+
+	//	Compare against the reference
+	compare_ref<1>::compare(testname, tb, tb_ref, 1e-15);
+
+	}
+
+	need_erase = false;
+	product_table_container::get_instance().erase(pgtid);
+
+	} catch(exception &e) {
+		if(need_erase) {
+			product_table_container::get_instance().erase(pgtid);
+		}
 		fail_test(testname, __FILE__, __LINE__, e.what());
 	}
 }
