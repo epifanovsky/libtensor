@@ -21,7 +21,7 @@ int main() {
 	check_cxx_source_compiles("
 #include <mkl.h>
 int main() {
-	double *ptr = mkl_alloc(64, 32); mkl_free(ptr);
+	double *ptr = (double*)mkl_malloc(64, 32); mkl_free(ptr);
 	return 0;
 }
 " HAVE_MKL_MALLOC)
@@ -31,6 +31,7 @@ int main() {
 
 	check_cxx_source_compiles("
 #include <mkl.h>
+#include <mkl_trans.h>
 int main() {
 	double a[9], b[9];
 	mkl_domatcopy('C', 'N', 3, 3, 1.0, a, 3, b, 3);

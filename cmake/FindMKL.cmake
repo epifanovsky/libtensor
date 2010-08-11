@@ -83,15 +83,18 @@ if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86_64")
 	set(MKL_LIBRARY_PATH ${MKL_LIB_PATH}/em64t)
 	set(MKL_ARCH_A mkl_em64t)
 	set(MKL_INTEL_A mkl_intel_lp64)
+	set(MKL_SOLVER_A mkl_solver_lp64)
 else(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86_64")
 	set(MKL_LIBRARY_PATH ${MKL_LIB_PATH}/32)
 	set(MKL_ARCH_A mkl_ia32)
 	set(MKL_INTEL_A mkl_intel)
+	set(MKL_SOLVER_A mkl_solver)
 endif(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86_64")
 
 find_library(MKL_CORE_A_PATH mkl_core PATHS ${MKL_LIBRARY_PATH})
 find_library(MKL_ARCH_A_PATH ${MKL_ARCH_A} PATHS ${MKL_LIBRARY_PATH})
 find_library(MKL_INTEL_A_PATH ${MKL_INTEL_A} PATHS ${MKL_LIBRARY_PATH})
+find_library(MKL_SOLVER_A_PATH ${MKL_SOLVER_A} PATHS ${MKL_LIBRARY_PATH})
 
 if(MKL_ARCH_A_PATH)
 	if(MKL_INTEL_A_PATH)
@@ -105,6 +108,14 @@ if(MKL_ARCH_A_PATH)
 			${MKL_ARCH_A_PATH} guide pthread)
 	endif(MKL_INTEL_A_PATH)
 endif(MKL_ARCH_A_PATH)
+
+#	MKL 10.2
+if(MKL_SOLVER_A_PATH AND (NOT MKL_ARCH_A_PATH))
+	set(MKL_LIBRARIES
+		-L${MKL_LIBRARY_PATH}
+		${MKL_SOLVER_A} ${MKL_INTEL_A} mkl_intel_thread mkl_core
+		guide pthread)
+endif(MKL_SOLVER_A_PATH AND (NOT MKL_ARCH_A_PATH))
 
 if(NOT MKL_FIND_QUIETLY)
 	message(STATUS "Found Intel MKL: " ${MKL_PATH})
