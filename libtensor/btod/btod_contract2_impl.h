@@ -12,7 +12,12 @@ namespace libtensor {
 
 
 template<size_t N, size_t M, size_t K>
-const char *btod_contract2<N, M, K>::k_clazz = "btod_contract2<N, M, K>";
+const char *btod_contract2_clazz<N, M, K>::k_clazz = "btod_contract2<N, M, K>";
+
+
+template<size_t N, size_t M, size_t K>
+const char *btod_contract2<N, M, K>::k_clazz =
+	btod_contract2_clazz<N, M, K>::k_clazz;
 
 
 template<size_t N, size_t M, size_t K>
