@@ -6,45 +6,59 @@
 namespace libtensor {
 
 
+template<>
 struct btod_contract2_clazz<0, 2, 1> {
 	static const char *k_clazz;
 };
+template<>
 struct btod_contract2_clazz<0, 2, 2> {
 	static const char *k_clazz;
 };
+template<>
 struct btod_contract2_clazz<0, 2, 3> {
 	static const char *k_clazz;
 };
+template<>
 struct btod_contract2_clazz<0, 2, 4> {
 	static const char *k_clazz;
 };
+template<>
 struct btod_contract2_clazz<1, 1, 0> {
 	static const char *k_clazz;
 };
+template<>
 struct btod_contract2_clazz<1, 1, 1> {
 	static const char *k_clazz;
 };
+template<>
 struct btod_contract2_clazz<1, 1, 2> {
 	static const char *k_clazz;
 };
+template<>
 struct btod_contract2_clazz<1, 1, 3> {
 	static const char *k_clazz;
 };
+template<>
 struct btod_contract2_clazz<1, 1, 4> {
 	static const char *k_clazz;
 };
+template<>
 struct btod_contract2_clazz<1, 1, 5> {
 	static const char *k_clazz;
 };
+template<>
 struct btod_contract2_clazz<2, 0, 1> {
 	static const char *k_clazz;
 };
+template<>
 struct btod_contract2_clazz<2, 0, 2> {
 	static const char *k_clazz;
 };
+template<>
 struct btod_contract2_clazz<2, 0, 3> {
 	static const char *k_clazz;
 };
+template<>
 struct btod_contract2_clazz<2, 0, 4> {
 	static const char *k_clazz;
 };
