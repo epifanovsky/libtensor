@@ -17,6 +17,12 @@ set(SRC
 	tod/loop_list_elem1.C
 )
 
+set(SRC_LINALG
+	linalg/linalg_impl_generic.C
+	linalg/linalg_impl_cblas.C
+	linalg/linalg_impl_mkl.C
+)
+
 set(SRC_INST
 	tod/tod_add.C
 	tod/tod_contract2.C
@@ -40,7 +46,7 @@ set(SRC_MP
 	mp/worker_pool.C
 )
 
-add_library(tensor ${SRC} ${SRC_INST} ${SRC_MP})
+add_library(tensor ${SRC} ${SRC_LINALG} ${SRC_INST} ${SRC_MP})
 
 IF(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
 set_property(SOURCE blas.C APPEND PROPERTY

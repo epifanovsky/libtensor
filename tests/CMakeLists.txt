@@ -54,6 +54,7 @@ set(SRC
 	labeled_btensor_test.C
 	letter_test.C
 	letter_expr_test.C
+	linalg_test.C
 	mask_test.C
 	mp_safe_tensor_test.C
 	orbit_test.C
