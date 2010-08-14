@@ -1,5 +1,5 @@
-#ifndef LIBTENSOR_LINALG_H
-#define LIBTENSOR_LINALG_H
+#ifndef LIBTENSOR_LINALG1_H
+#define LIBTENSOR_LINALG1_H
 
 /**	\defgroup libtensor_linalg Wrappers for linear algebra primitives
 	\ingroup libtensor
@@ -30,4 +30,4 @@
 #include "linalg/lapack_generic.h"
 #endif // USE_MKL
 
-#endif // LIBTENSOR_LINALG_H
+#endif // LIBTENSOR_LINALG1_H
