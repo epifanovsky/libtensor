@@ -127,4 +127,26 @@ double linalg_impl_generic::x_pq_qp(const double *a, const double *b,
 }
 
 
+void linalg_impl_generic::i_ipq_qp(const double *a, const double *b, double *c,
+	double d, size_t ni, size_t np, size_t nq, size_t sia, size_t sic,
+	size_t spa, size_t sqb) {
+
+	for(size_t i = 0; i < ni; i++) {
+		c[i * sic] += d * x_pq_qp(a + i * sia, b, np, nq, spa, sqb);
+	}
+}
+
+
+void linalg_impl_generic::ij_ipq_jqp(const double *a, const double *b,
+	double *c, double d, size_t ni, size_t nj, size_t np, size_t nq,
+	size_t sia, size_t sic, size_t sjb, size_t spa, size_t sqb) {
+
+	for(size_t i = 0; i < ni; i++)
+	for(size_t j = 0; j < nj; j++) {
+		c[i * sic + j] += d * x_pq_qp(a + i * sia, b + j * sjb, np, nq,
+			spa, sqb);
+	}
+}
+
+
 } // namespace libtensor

@@ -48,6 +48,14 @@ private:
 	void test_x_pq_qp(size_t np, size_t nq, size_t spa, size_t sqb)
 		throw(libtest::test_exception);
 
+	void test_i_ipq_qp(size_t ni, size_t np, size_t nq, size_t sia,
+		size_t sic, size_t spa, size_t sqb)
+		throw(libtest::test_exception);
+
+	void test_ij_ipq_jqp(size_t ni, size_t nj, size_t np, size_t nq,
+		size_t sia, size_t sic, size_t sjb, size_t spa, size_t sqb)
+		throw(libtest::test_exception);
+
 	bool cmp(double diff, double ref);
 
 };
