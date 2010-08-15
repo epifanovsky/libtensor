@@ -1,6 +1,10 @@
+#include "../exception.h"
 #include "linalg_impl_generic.h"
 
 namespace libtensor {
+
+
+const char *linalg_impl_generic::k_clazz = "linalg_impl_generic";
 
 
 double linalg_impl_generic::x_p_p(const double *a, const double *b,
@@ -140,6 +144,47 @@ void linalg_impl_generic::i_ipq_qp(const double *a, const double *b, double *c,
 void linalg_impl_generic::ij_ipq_jqp(const double *a, const double *b,
 	double *c, double d, size_t ni, size_t nj, size_t np, size_t nq,
 	size_t sia, size_t sic, size_t sjb, size_t spa, size_t sqb) {
+
+	static const char *method = "ij_ipq_jqp()";
+
+#ifdef LIBTENSOR_DEBUG
+	if(ni == 0) {
+		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"ni");
+	}
+	if(nj == 0) {
+		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"nj");
+	}
+	if(np == 0) {
+		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"np");
+	}
+	if(nq == 0) {
+		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"nq");
+	}
+	if(sia < spa * np) {
+		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"sia");
+	}
+	if(sic < nj) {
+		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"sic");
+	}
+	if(sjb < sqb * nq) {
+		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"sjb");
+	}
+	if(spa < nq) {
+		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"spa");
+	}
+	if(sqb < np) {
+		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"sqb");
+	}
+#endif // LIBTENSOR_DEBUG
 
 	for(size_t i = 0; i < ni; i++)
 	for(size_t j = 0; j < nj; j++) {

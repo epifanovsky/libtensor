@@ -18,6 +18,9 @@ namespace libtensor {
  **/
 class linalg_impl_generic {
 public:
+	static const char *k_clazz; //!< Class name
+
+public:
 	//!	\name Vector operations
 	//@{
 
