@@ -207,7 +207,7 @@ void btod_mult1<N>::do_perform(
 		}
 
 		ctrla.ret_block(idxa);
-		ctrlb.ret_block(idxb);
+		ctrlb.ret_block(cidxb.get_index());
 	}
 
 	btod_mult1::stop_timer();
