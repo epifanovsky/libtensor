@@ -24,11 +24,11 @@ void linalg_impl_generic::i_i_x(const double *a, double b, double *c,
 
 
 void linalg_impl_generic::ij_ji_x(const double *a, double b, double *c,
-	size_t ni, size_t nj, size_t szia, size_t szjc) {
+	size_t ni, size_t nj, size_t sic, size_t sja) {
 
 	for(size_t i = 0; i < ni; i++)
 	for(size_t j = 0; j < nj; j++) {
-		c[i * szjc + j] = b * a[j * szia + i];
+		c[i * sic + j] = b * a[j * sja + i];
 	}
 }
 

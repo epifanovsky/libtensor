@@ -27,6 +27,15 @@ void linalg_impl_cblas::i_i_x(const double *a, double b, double *c,
 }
 
 
+void linalg_impl_cblas::ij_ij_x(const double *a, double b, double *c,
+	size_t ni, size_t nj, size_t sia, size_t sic) {
+
+	for(size_t i = 0; i < ni; i++) {
+		cblas_dcopy(nj, a + i * sia, 1, c + i * sic, 1);
+	}
+}
+
+
 void linalg_impl_cblas::i_ip_p(const double *a, const double *b, double *c,
 	double d, size_t ni, size_t np, size_t sia, size_t sic, size_t spb) {
 

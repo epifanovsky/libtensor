@@ -21,7 +21,7 @@ int main() {
 	check_cxx_source_compiles("
 #include <mkl.h>
 int main() {
-	double *ptr = (double*)mkl_malloc(64, 32); mkl_free(ptr);
+	double *ptr = (double*)MKL_malloc(64, 32); MKL_free(ptr);
 	return 0;
 }
 " HAVE_MKL_MALLOC)

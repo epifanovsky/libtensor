@@ -56,7 +56,7 @@ public:
 			\f$ c_{ij} = a_{ji} b \f$
 	 **/
 	static void ij_ji_x(const double *a, double b, double *c,
-		size_t ni, size_t nj, size_t szia, size_t szjc);
+		size_t ni, size_t nj, size_t sic, size_t sja);
 
 	//@}
 

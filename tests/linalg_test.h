@@ -12,7 +12,7 @@ namespace libtensor {
  **/
 class linalg_test : public libtest::unit_test {
 private:
-	static const double k_thresh = 5e-15;
+	static const double k_thresh = 5e-14;
 
 public:
 	virtual void perform() throw(libtest::test_exception);

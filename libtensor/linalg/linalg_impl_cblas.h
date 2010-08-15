@@ -26,6 +26,15 @@ public:
 	//@}
 
 
+	//!	\name Single matrix operations
+	//@{
+
+	static void ij_ij_x(const double *a, double b, double *c,
+		size_t ni, size_t nj, size_t sia, size_t sic);
+
+	//@}
+
+
 	//!	\name Matrix-vector operations
 	//@{
 
