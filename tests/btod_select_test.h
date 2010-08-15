@@ -5,7 +5,7 @@
 
 namespace libtensor {
 
-/**	\brief Tests the libtensor::btod_set_elem class
+/**	\brief Tests the libtensor::btod_select class
 
 	\ingroup libtensor_tests
 **/

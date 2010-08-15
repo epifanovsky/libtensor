@@ -45,10 +45,10 @@ void tod_select_test::test_1() throw(libtest::test_exception) {
 
 	// compare4absmin
 	compare4absmin cmp;
-	tod_select<2> tsel(cmp);
+	tod_select<2> tsel(t, cmp);
 	typedef tod_select<2>::list_t list_t;
 	list_t li_am;
-	tsel.perform(t,li_am,4);
+	tsel.perform(li_am, 4);
 
 	list_t::iterator it=li_am.begin();
 	const double *cd = tc.req_const_dataptr();
