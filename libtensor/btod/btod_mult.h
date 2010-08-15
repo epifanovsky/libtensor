@@ -225,8 +225,8 @@ void btod_mult<N>::compute_block(
 
 	tod_mult<N>(blka, pa, blkb, pb, m_recip, k).perform(blk);
 
-	ctrla.ret_block(idxa);
-	ctrlb.ret_block(idxb);
+	ctrla.ret_block(cidxa.get_index());
+	ctrlb.ret_block(cidxb.get_index());
 }
 
 
@@ -271,8 +271,8 @@ void btod_mult<N>::compute_block(
 
 	tod_mult<N>(blka, pa, blkb, pb, m_recip, k).perform(blk, c);
 
-	ctrla.ret_block(idx);
-	ctrlb.ret_block(idx);
+	ctrla.ret_block(cidxa.get_index());
+	ctrlb.ret_block(cidxb.get_index());
 }
 
 template<size_t N>
