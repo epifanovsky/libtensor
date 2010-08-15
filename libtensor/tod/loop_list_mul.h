@@ -139,6 +139,34 @@ private:
 		size_t sic, sja, spb;
 	} m_ij_jp_pi;
 
+	//!	c_i = a_ipq b_qp
+	struct args_i_ipq_qp {
+		double d;
+		size_t ni, np, nq;
+		size_t sia, sic, spa, sqb;
+	} m_i_ipq_qp;
+
+	//!	c_i = a_pq b_iqp
+	struct args_i_pq_iqp {
+		double d;
+		size_t ni, np, nq;
+		size_t sib, sic, spa, sqb;
+	} m_i_pq_iqp;
+
+	//!	c_ij = a_ipq b_jqp
+	struct args_ij_ipq_jqp {
+		double d;
+		size_t ni, nj, np, nq;
+		size_t sia, sic, sjb, spa, sqb;
+	} m_ij_ipq_jqp;
+
+	//!	c_ij = a_jpq b_iqp
+	struct args_ij_jpq_iqp {
+		double d;
+		size_t ni, nj, np, nq;
+		size_t sib, sic, sja, spa, sqb;
+	} m_ij_jpq_iqp;
+
 	const char *m_kernelname;
 
 protected:
@@ -161,6 +189,12 @@ private:
 		size_t k1, size_t k2w1);
 	void match_dgemv_t_b2_l3(list_t &loop, double d, size_t w1, size_t w2,
 		size_t k2w1, size_t k3);
+	void match_x_pq_qp(list_t &loop, double d, size_t np, size_t nq,
+		size_t spa, size_t sqb);
+	void match_i_ipq_qp(list_t &loop, double d, size_t ni, size_t np,
+		size_t nq, size_t sia, size_t spa, size_t sqb);
+	void match_i_pq_iqp(list_t &loop, double d, size_t ni, size_t np,
+		size_t nq, size_t sib, size_t spa, size_t sqb);
 
 	void fn_generic(registers &r) const;
 	void fn_x_p_p(registers &r) const;
@@ -179,6 +213,10 @@ private:
 	void fn_ij_jp_ip(registers &r) const;
 	void fn_ij_pj_pi(registers &r) const;
 	void fn_ij_jp_pi(registers &r) const;
+	void fn_i_ipq_qp(registers &r) const;
+	void fn_i_pq_iqp(registers &r) const;
+	void fn_ij_ipq_jqp(registers &r) const;
+	void fn_ij_jpq_iqp(registers &r) const;
 
 };
 

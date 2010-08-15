@@ -170,9 +170,9 @@ void loop_list_mul::match_x_p_p(list_t &loop, double d, size_t np, size_t spa) {
 	//	3. Minimize k2c:
 	//	---------------------
 	//	w   a       b       c
-	//	np  k1'*w2  1       0
-	//	w2  1       k2c*np  0  -->  c = a_p$q b_q%p
-	//	---------------------       sz(p) = np, sz(q) = w2, sz($) = k1',
+	//	np  k1'*nq  1       0
+	//	nq  1       k2c*np  0  -->  c = a_p$q b_q%p
+	//	---------------------       sz(p) = np, sz(q) = nq, sz($) = k1',
 	//	                            sz(%) = k2c
 	//	                            [x_pq_qp]
 	//
@@ -245,6 +245,7 @@ void loop_list_mul::match_x_p_p(list_t &loop, double d, size_t np, size_t spa) {
 		args.nq = i3->weight();
 		args.spa = spa;
 		args.sqb = i3->stepa(1);
+		match_x_pq_qp(loop, d, np, i3->weight(), spa, i3->stepa(1));
 		loop.splice(loop.end(), loop, i3);
 		return;
 	}
@@ -847,6 +848,212 @@ void loop_list_mul::match_dgemv_t_b2_l3(list_t &loop, double d, size_t w1,
 }
 
 
+void loop_list_mul::match_x_pq_qp(list_t &loop, double d, size_t np, size_t nq,
+	size_t spa, size_t sqb) {
+
+	if(loop.size() < 3) return;
+
+	//	Found pattern:
+	//	---------------
+	//	w   a    b    c
+	//	np  spa  1    0
+	//	nq  1    sqb  0  -->  c = a_p$q b_q%p
+	//	---------------       sz(p) = np, sz(q) = nq, sz($q) = spa,
+	//	                      sz(%p) = sqb
+	//	                      [x_pq_qp]
+	//
+
+	//	1. Minimize k1a:
+	//	-------------------
+	//	w   a        b    c
+	//	np  spa      1    0
+	//	nq  1        sqb  0
+	//	ni  k1a*spa  0    1  -->  c_i = a_i@p$q b_q%p
+	//	-------------------       [i_ipq_qp]
+	//
+	//	2. Minimize k1b:
+	//	-------------------
+	//	w   a    b        c
+	//	np  spa  1        0
+	//	nq  1    sqb      0
+	//	ni  0    k1b*sqb  1  -->  c_i = a_p$q b_i#q%p
+	//	-------------------       [i_pq_iqp]
+
+	iterator_t i1 = loop.end(), i2 = loop.end();
+	size_t k1a_min = 0, k1b_min = 0;
+	for(iterator_t i = loop.begin(); i != loop.end(); i++) {
+		if(i->stepa(0) > 0 && i->stepa(0) % spa == 0
+			&& i->stepa(1) == 0 && i->stepb(0) == 1) {
+
+			register size_t k1a = i->stepa(0) / spa;
+			if(k1a_min == 0 || k1a_min > k1a) {
+				i1 = i; k1a_min = k1a;
+			}
+		}
+		if(i->stepa(0) == 0 && i->stepa(1) > 0 && i->stepa(1) % sqb == 0
+			&& i->stepb(0) == 1) {
+
+			register size_t k1b = i->stepa(1) / sqb;
+			if(k1b_min == 0 || k1b_min > k1b) {
+				i2 = i; k1b_min = k1b;
+			}
+		}
+	}
+
+	if(i1 != loop.end()) {
+		m_kernelname = "i_ipq_qp";
+		//~ std::cout << m_kernelname << ";";
+		i1->fn() = &loop_list_mul::fn_i_ipq_qp;
+		args_i_ipq_qp &args = m_i_ipq_qp;
+		args.d = d;
+		args.ni = i1->weight();
+		args.np = np;
+		args.nq = nq;
+		args.sia = i1->stepa(0);
+		args.sic = 1;
+		args.spa = spa;
+		args.sqb = sqb;
+		match_i_ipq_qp(loop, d, i1->weight(), np, nq, i1->stepa(0),
+			spa, sqb);
+		loop.splice(loop.end(), loop, i1);
+		return;
+	}
+
+	if(i2 != loop.end()) {
+		m_kernelname = "i_pq_iqp";
+		//~ std::cout << m_kernelname << ";";
+		i2->fn() = &loop_list_mul::fn_i_pq_iqp;
+		args_i_pq_iqp &args = m_i_pq_iqp;
+		args.d = d;
+		args.ni = i2->weight();
+		args.np = np;
+		args.nq = nq;
+		args.sib = i2->stepa(1);
+		args.sic = 1;
+		args.spa = spa;
+		args.sqb = sqb;
+		match_i_pq_iqp(loop, d, i2->weight(), np, nq, i2->stepa(1),
+			spa, sqb);
+		loop.splice(loop.end(), loop, i2);
+		return;
+	}
+}
+
+
+void loop_list_mul::match_i_ipq_qp(list_t &loop, double d, size_t nj, size_t np,
+	size_t nq, size_t sja, size_t spa, size_t sqb) {
+
+	if(loop.size() < 4) return;
+
+	//	Found pattern:
+	//	-------------------
+	//	w   a        b    c
+	//	np  spa      1    0
+	//	nq  1        sqb  0
+	//	nj  k1a*spa  0    1  -->  c_j = a_j@p$q b_q%p
+	//	-------------------       [i_ipq_qp]
+
+	//	1. Minimize x1:
+	//	----------------------
+	//	w   a    b       c
+	//	np  spa  1       0
+	//	nq  1    sqb     0
+	//	nj  sja  0       1
+	//	ni  0    x1*sqb  x2*nj  -->  c_i&j = a_j@p$q b_i#q%p
+	//	----------------------       [ij_jpq_iqp]
+
+	iterator_t i1 = loop.end();
+	size_t x1_min = 0;
+	for(iterator_t i = loop.begin(); i != loop.end(); i++) {
+
+		if(i->stepa(0) != 0) continue;
+		if(i->stepa(1) == 0 || i->stepa(1) % sqb != 0) continue;
+		if(i->stepb(0) == 0 || i->stepb(0) % nj != 0) continue;
+
+		register size_t x1 = i->stepa(1) / sqb;
+		if(x1_min == 0 || x1_min > x1) {
+			i1 = i; x1_min = x1;
+		}
+	}
+
+	if(i1 != loop.end()) {
+		m_kernelname = "ij_jpq_iqp";
+		//~ std::cout << m_kernelname;
+		i1->fn() = &loop_list_mul::fn_ij_jpq_iqp;
+		args_ij_jpq_iqp &args = m_ij_jpq_iqp;
+		args.d = d;
+		args.ni = i1->weight();
+		args.nj = nj;
+		args.np = np;
+		args.nq = nq;
+		args.sib = i1->stepa(1);
+		args.sic = i1->stepb(0);
+		args.sja = sja;
+		args.spa = spa;
+		args.sqb = sqb;
+		loop.splice(loop.end(), loop, i1);
+		return;
+	}
+}
+
+
+void loop_list_mul::match_i_pq_iqp(list_t &loop, double d, size_t ni, size_t np,
+	size_t nq, size_t sib, size_t spa, size_t sqb) {
+
+	if(loop.size() < 4) return;
+
+	//	Found pattern:
+	//	---------------
+	//	w   a    b    c
+	//	np  spa  1    0
+	//	nq  1    sqb  0
+	//	ni  0    sib  1  -->  c_i = a_p$q b_i#q%p
+	//	---------------       [i_pq_iqp]
+
+	//	1. Minimize x1:
+	//	----------------------
+	//	w   a       b    c
+	//	np  spa     1    0
+	//	nq  1       sqb  0
+	//	ni  0       sib  1
+	//	nj  x1*spa  0    x2*ni  -->  c_j&i = a_j@p$q b_i#q%p
+	//	----------------------       [ij_ipq_jqp]
+
+	iterator_t i1 = loop.end();
+	size_t x1_min = 0;
+	for(iterator_t i = loop.begin(); i != loop.end(); i++) {
+
+		if(i->stepa(0) == 0 || i->stepa(0) % spa != 0) continue;
+		if(i->stepa(1) != 0) continue;
+		if(i->stepb(0) == 0 || i->stepb(0) % ni != 0) continue;
+
+		register size_t x1 = i->stepa(0) / spa;
+		if(x1_min == 0 || x1_min > x1) {
+			i1 = i; x1_min = x1;
+		}
+	}
+
+	if(i1 != loop.end()) {
+		m_kernelname = "ij_ipq_jqp";
+		//~ std::cout << m_kernelname;
+		i1->fn() = &loop_list_mul::fn_ij_ipq_jqp;
+		args_ij_ipq_jqp &args = m_ij_ipq_jqp;
+		args.d = d;
+		args.ni = i1->weight();
+		args.nj = ni;
+		args.np = np;
+		args.nq = nq;
+		args.sia = i1->stepa(0);
+		args.sic = i1->stepb(0);
+		args.sjb = sib;
+		args.spa = spa;
+		args.sqb = sqb;
+		loop.splice(loop.end(), loop, i1);
+		return;
+	}
+}
+
+
 void loop_list_mul::fn_generic(registers &r) const {
 	for(size_t i = 0; i < m_generic.m_n; i++) {
 		r.m_ptrb[0][i * m_generic.m_stepc] +=
@@ -1330,6 +1537,135 @@ void loop_list_mul::fn_ij_jp_pi(registers &r) const {
 
 	linalg::ij_pi_jp(r.m_ptra[1], r.m_ptra[0], r.m_ptrb[0], args.d,
 		args.ni, args.nj, args.np, args.sic, args.sja, args.spb);
+}
+
+
+void loop_list_mul::fn_i_ipq_qp(registers &r) const {
+
+	static const char *method = "fn_i_ipq_qp(registers&)";
+
+	const args_i_ipq_qp &args = m_i_ipq_qp;
+
+#ifdef LIBTENSOR_DEBUG
+	register size_t sz;
+	sz = (args.ni - 1) * args.sia + (args.np - 1) * args.spa + args.nq;
+	if(r.m_ptra[0] + sz > r.m_ptra_end[0]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"source-1");
+	}
+	sz = (args.nq - 1) * args.sqb + args.np;
+	if(r.m_ptra[1] + sz > r.m_ptra_end[1]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"source-2");
+	}
+	sz = (args.ni - 1) * args.sic + 1;
+	if(r.m_ptrb[0] + sz > r.m_ptrb_end[0]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"destination");
+	}
+#endif // LIBTENSOR_DEBUG
+
+	linalg::i_ipq_qp(r.m_ptra[0], r.m_ptra[1], r.m_ptrb[0], args.d,
+		args.ni, args.np, args.nq, args.sia, args.sic, args.spa,
+		args.sqb);
+}
+
+
+void loop_list_mul::fn_i_pq_iqp(registers &r) const {
+
+	static const char *method = "fn_i_pq_iqp(registers&)";
+
+	const args_i_pq_iqp &args = m_i_pq_iqp;
+
+#ifdef LIBTENSOR_DEBUG
+	register size_t sz;
+	sz = (args.np - 1) * args.spa + args.nq;
+	if(r.m_ptra[0] + sz > r.m_ptra_end[0]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"source-1");
+	}
+	sz = (args.ni - 1) * args.sib + (args.nq - 1) * args.sqb + args.np;
+	if(r.m_ptra[1] + sz > r.m_ptra_end[1]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"source-2");
+	}
+	sz = (args.ni - 1) * args.sic + 1;
+	if(r.m_ptrb[0] + sz > r.m_ptrb_end[0]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"destination");
+	}
+#endif // LIBTENSOR_DEBUG
+
+	linalg::i_ipq_qp(r.m_ptra[1], r.m_ptra[0], r.m_ptrb[0], args.d,
+		args.ni, args.nq, args.np, args.sib, args.sic, args.sqb,
+		args.spa);
+}
+
+
+void loop_list_mul::fn_ij_ipq_jqp(registers &r) const {
+
+	static const char *method = "fn_ij_ipq_jqp(registers&)";
+
+	const args_ij_ipq_jqp &args = m_ij_ipq_jqp;
+
+#ifdef LIBTENSOR_DEBUG
+	register size_t sz;
+	sz = (args.ni - 1) * args.sia + (args.np - 1) * args.spa + args.nq;
+	if(r.m_ptra[0] + sz > r.m_ptra_end[0]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"source-1");
+	}
+	sz = (args.nj - 1) * args.sjb + (args.nq - 1) * args.sqb + args.np;
+	if(r.m_ptra[1] + sz > r.m_ptra_end[1]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"source-2");
+	}
+	sz = (args.ni - 1) * args.sic + args.nj;
+	if(r.m_ptrb[0] + sz > r.m_ptrb_end[0]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"destination");
+	}
+#endif // LIBTENSOR_DEBUG
+
+	linalg::ij_ipq_jqp(r.m_ptra[0], r.m_ptra[1], r.m_ptrb[0], args.d,
+		args.ni, args.nj, args.np, args.nq, args.sia, args.sic,
+		args.sjb, args.spa, args.sqb);
+}
+
+
+void loop_list_mul::fn_ij_jpq_iqp(registers &r) const {
+
+	static const char *method = "fn_ij_jpq_iqp(registers&)";
+
+	const args_ij_jpq_iqp &args = m_ij_jpq_iqp;
+
+#ifdef LIBTENSOR_DEBUG
+	register size_t sz;
+	sz = (args.nj - 1) * args.sja + (args.np - 1) * args.spa + args.nq;
+	if(r.m_ptra[0] + sz > r.m_ptra_end[0]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"source-1");
+	}
+	sz = (args.ni - 1) * args.sib + (args.nq - 1) * args.sqb + args.np;
+	if(r.m_ptra[1] + sz > r.m_ptra_end[1]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"source-2");
+	}
+	sz = (args.ni - 1) * args.sic + args.nj;
+	if(r.m_ptrb[0] + sz > r.m_ptrb_end[0]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"destination");
+	}
+#endif // LIBTENSOR_DEBUG
+
+	// switch a<->b: c_ij = b_iqp a_jpq
+	// rename p<->q: c_ij = b_ipq a_jqp
+	// therefore: ni := ni, nj := nj
+	//            sia := sib, sic := sic, sjb = sja,
+	//            spa := sqb, sqb := spa
+	linalg::ij_ipq_jqp(r.m_ptra[1], r.m_ptra[0], r.m_ptrb[0], args.d,
+		args.ni, args.nj, args.nq, args.np, args.sib, args.sic,
+		args.sja, args.sqb, args.spa);
 }
 
 

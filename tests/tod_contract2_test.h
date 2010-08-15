@@ -77,6 +77,10 @@ private:
 	void test_ij_ipq_jqp(size_t ni, size_t nj, size_t np, size_t nq,
 		double d = 0.0) throw(libtest::test_exception);
 
+	// c_{ij} = \sum_{pq} a_{jpq} b_{iqp}
+	void test_ij_jpq_iqp(size_t ni, size_t nj, size_t np, size_t nq,
+		double d = 0.0) throw(libtest::test_exception);
+
 	// c_{ij} = \sum_{pq} a_{pq} b_{ijpq}
 	void test_ij_pq_ijpq(size_t ni, size_t nj, size_t np, size_t nq)
 		throw(libtest::test_exception);
