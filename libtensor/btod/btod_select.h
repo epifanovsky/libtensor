@@ -133,6 +133,8 @@ btod_select<N, ComparePolicy>::btod_select(block_tensor_i<N, double> &bt,
 template<size_t N, typename ComparePolicy>
 void btod_select<N, ComparePolicy>::perform(list_t &li, size_t n) {
 
+	static const char *method = "perform(list_t &, size_t)";
+
 	if (n == 0) return;
 
 	block_tensor_ctrl<N, double> ctrl(m_bt);
@@ -140,7 +142,7 @@ void btod_select<N, ComparePolicy>::perform(list_t &li, size_t n) {
 	const symmetry<N, double> &sym = ctrl.req_const_symmetry();
 
 	orbit_list<N, double> ol(m_sym);
-
+	// loop over all orbits
 	for (typename orbit_list<N, double>::iterator iorb = ol.begin();
 			iorb != ol.end(); iorb++) {
 
