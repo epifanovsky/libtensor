@@ -87,6 +87,18 @@ public:
 	 **/
 	const transf<N, T> &get_transf(size_t absidx) const;
 
+	/** \brief Checks if orbit contains block at idx.
+		@param idx Block index
+		@return True if orbit contains the block
+	 **/
+	bool contains(const index<N> &idx) const;
+
+	/** \brief Checks if orbit contains block at absidx.
+		@param absidx Absolute block index
+		@return True if orbit contains the block
+	 **/
+	bool contains(size_t absidx) const;
+
 	//!	\name STL-like %orbit iterator
 	//@{
 
@@ -156,6 +168,18 @@ inline const transf<N, T> &orbit<N, T>::get_transf(size_t absidx) const {
 	return get_transf(i);
 }
 
+template<size_t N, typename T>
+inline bool orbit<N, T>::contains(const index<N> &idx) const {
+
+	return contains(abs_index<N>(idx, m_bidims).get_abs_index());
+}
+
+
+template<size_t N, typename T>
+inline bool orbit<N, T>::contains(size_t absidx) const {
+
+	return m_orb.find(absidx) != m_orb.end();
+}
 
 template<size_t N, typename T>
 inline size_t orbit<N, T>::get_abs_index(iterator &i) const {
