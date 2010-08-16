@@ -22,7 +22,7 @@ void linalg_impl_mkl::deallocate(double *p) {
 #ifdef HAVE_MKL_MALLOC
 	MKL_free(p);
 #else
-	deleta [] p;
+	delete [] p;
 #endif // HAVE_MKL_MALLOC
 }
 
