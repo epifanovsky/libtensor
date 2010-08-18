@@ -2,6 +2,7 @@
 #define LIBTENSOR_LINALG_IMPL_GENERIC_H
 
 #include <cstdlib>
+#include "../exception.h"
 
 namespace libtensor {
 
@@ -241,7 +242,32 @@ public:
 		double d, size_t ni, size_t nj, size_t np, size_t nq,
 		size_t sia, size_t sic, size_t sjb, size_t spa, size_t sqb);
 
+	/**	\brief Contraction: \f$ c_{ij} = d \sum_{pq} a_{piq} b_{pjq} \f$
+		\param a Pointer to a.
+		\param b Pointer to b.
+		\param[in,out] c Pointer to c.
+		\param d Value of d.
+		\param ni Number of elements i.
+		\param nj Number of elements j.
+		\param np Number of elements p.
+		\param nq Number of elements q.
+		\param sia Step of i in a (sib >= nq).
+		\param sic Step of i in c (sic >= nj).
+		\param sjb Step of j in b (sjb >= nq).
+		\param spa Step of p in a (spa >= nj * sja).
+		\param spb Step of p in b (spb >= ni * sib).
+	 **/
+	static void ij_piq_pjq(const double *a, const double *b, double *c,
+		double d, size_t ni, size_t nj, size_t np, size_t nq,
+		size_t sia, size_t sic, size_t sjb, size_t spa, size_t spb);
+
 	//@}
+
+protected:
+	static void chkarg_ij_ipq_jqp(const double *a, const double *b,
+		double *c, double d, size_t ni, size_t nj, size_t np, size_t nq,
+		size_t sia, size_t sic, size_t sjb, size_t spa, size_t sqb)
+		throw(bad_parameter);
 
 };
 

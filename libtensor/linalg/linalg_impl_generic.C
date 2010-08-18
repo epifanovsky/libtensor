@@ -1,4 +1,3 @@
-#include "../exception.h"
 #include "linalg_impl_generic.h"
 
 namespace libtensor {
@@ -141,13 +140,26 @@ void linalg_impl_generic::i_ipq_qp(const double *a, const double *b, double *c,
 }
 
 
-void linalg_impl_generic::ij_ipq_jqp(const double *a, const double *b,
+void linalg_impl_generic::chkarg_ij_ipq_jqp(const double *a, const double *b,
 	double *c, double d, size_t ni, size_t nj, size_t np, size_t nq,
-	size_t sia, size_t sic, size_t sjb, size_t spa, size_t sqb) {
+	size_t sia, size_t sic, size_t sjb, size_t spa, size_t sqb)
+	throw(bad_parameter) {
 
-	static const char *method = "ij_ipq_jqp()";
+	static const char *method = "chkarg_ij_ipq_jqp()";
 
 #ifdef LIBTENSOR_DEBUG
+	if(a == 0) {
+		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"a");
+	}
+	if(b == 0) {
+		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"b");
+	}
+	if(c == 0) {
+		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"c");
+	}
 	if(ni == 0) {
 		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
 			"ni");
@@ -185,11 +197,34 @@ void linalg_impl_generic::ij_ipq_jqp(const double *a, const double *b,
 			"sqb");
 	}
 #endif // LIBTENSOR_DEBUG
+}
+
+
+void linalg_impl_generic::ij_ipq_jqp(const double *a, const double *b,
+	double *c, double d, size_t ni, size_t nj, size_t np, size_t nq,
+	size_t sia, size_t sic, size_t sjb, size_t spa, size_t sqb) {
+
+#ifdef LIBTENSOR_DEBUG
+	chkarg_ij_ipq_jqp(a, b, c, d, ni, nj, np, nq, sia, sic, sjb, spa, sqb);
+#endif // LIBTENSOR_DEBUG
+
+	if(d == 0.0) return;
 
 	for(size_t i = 0; i < ni; i++)
 	for(size_t j = 0; j < nj; j++) {
 		c[i * sic + j] += d * x_pq_qp(a + i * sia, b + j * sjb, np, nq,
 			spa, sqb);
+	}
+}
+
+
+void linalg_impl_generic::ij_piq_pjq(const double *a, const double *b,
+	double *c, double d, size_t ni, size_t nj, size_t np, size_t nq,
+	size_t sia, size_t sic, size_t sjb, size_t spa, size_t spb) {
+
+	for(size_t p = 0; p < np; p++) {
+		ij_ip_jp(a + p * spa, b + p * spb, c, d, ni, nj, nq,
+			sia, sic, sjb);
 	}
 }
 
