@@ -11,9 +11,6 @@ namespace libtensor {
 	\ingroup libtensor_tests
  **/
 class linalg_test : public libtest::unit_test {
-private:
-	static const double k_thresh = 5e-14;
-
 public:
 	virtual void perform() throw(libtest::test_exception);
 
@@ -55,6 +52,12 @@ private:
 	void test_ij_ipq_jqp(size_t ni, size_t nj, size_t np, size_t nq,
 		size_t sia, size_t sic, size_t sjb, size_t spa, size_t sqb)
 		throw(libtest::test_exception);
+
+	void test_ijkl_iplq_pkjq(size_t ni, size_t nj, size_t nk, size_t nl,
+		size_t np, size_t nq) throw(libtest::test_exception);
+
+	void test_ijkl_iplq_pkqj(size_t ni, size_t nj, size_t nk, size_t nl,
+		size_t np, size_t nq) throw(libtest::test_exception);
 
 	bool cmp(double diff, double ref);
 
