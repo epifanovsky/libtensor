@@ -167,6 +167,12 @@ private:
 		size_t sib, sic, sja, spa, sqb;
 	} m_ij_jpq_iqp;
 
+	//!	c_ijkl = a_iplq b_pkqj
+	struct args_ijkl_iplq_pkqj {
+		double d;
+		size_t ni, nj, nk, nl, np, nq;
+	} m_ijkl_iplq_pkqj;
+
 	const char *m_kernelname;
 
 protected:
@@ -195,6 +201,7 @@ private:
 		size_t nq, size_t sia, size_t spa, size_t sqb);
 	void match_i_pq_iqp(list_t &loop, double d, size_t ni, size_t np,
 		size_t nq, size_t sib, size_t spa, size_t sqb);
+	void match_ij_jp_pi(list_t &loop);
 
 	void fn_generic(registers &r) const;
 	void fn_x_p_p(registers &r) const;
@@ -217,6 +224,7 @@ private:
 	void fn_i_pq_iqp(registers &r) const;
 	void fn_ij_ipq_jqp(registers &r) const;
 	void fn_ij_jpq_iqp(registers &r) const;
+	void fn_ijkl_iplq_pkqj(registers &r) const;
 
 };
 

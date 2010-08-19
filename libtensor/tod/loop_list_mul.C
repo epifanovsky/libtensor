@@ -14,9 +14,9 @@ const char *loop_list_mul::k_clazz = "loop_list_mul";
 
 void loop_list_mul::run_loop(list_t &loop, registers &r, double c) {
 
-	//~ std::cout << "[";
+//	std::cout << "[";
 	match_l1(loop, c);
-	//~ std::cout << "]" << std::endl;
+//	std::cout << "]" << std::endl;
 
 	loop_list_mul::start_timer(m_kernelname);
 
@@ -735,7 +735,7 @@ void loop_list_mul::match_dgemv_t_b1_l3(list_t &loop, double d, size_t w1,
 	}
 	if(i1 != loop.end()) {
 		m_kernelname = "ij_jp_pi";
-		//~ std::cout << m_kernelname;
+//		std::cout << m_kernelname << ";";
 		i1->fn() = &loop_list_mul::fn_ij_jp_pi;
 		args_ij_jp_pi &args = m_ij_jp_pi;
 		args.d = d;
@@ -745,6 +745,7 @@ void loop_list_mul::match_dgemv_t_b1_l3(list_t &loop, double d, size_t w1,
 		args.sic = k1;
 		args.sja = i1->stepa(0);
 		args.spb = k2w1;
+		match_ij_jp_pi(loop);
 		loop.splice(loop.end(), loop, i1);
 		return;
 	}
@@ -1051,6 +1052,83 @@ void loop_list_mul::match_i_pq_iqp(list_t &loop, double d, size_t ni, size_t np,
 		loop.splice(loop.end(), loop, i1);
 		return;
 	}
+}
+
+
+void loop_list_mul::match_ij_jp_pi(list_t &loop) {
+
+	if(loop.size() < 6) return;
+
+	//	Found pattern:
+	//	------------------
+	//	w   a    b    c
+	//	i   0    1    sic
+	//	p   1    spb  0
+	//	j   sja  0    1       -->  c_i#j = a_j%p b_p$i
+	//	------------------         sz(i) = w1, sz(j) = w3,
+	//	                           sz(p) = w2
+	//	                           sz(#) = k1', sz($) = k2,
+	//	                           sz(%) = k4
+	//	                           [ij_jp_pi]
+
+	//	Match:
+	//	-----------------
+	//	w   a    b    c
+	//	i   0    1    sic
+	//	p   1    spb  0
+	//	j   sja  0    1
+	//	k   0    skb  skc    skb = spb * np;  skc = nj;  sic = skc * nk
+	//	q   sqa  sqb  0      sqa = sja * nj;  sqb = skb * nk
+	//	l   sla  0    slc    sla = sqa * nq;  slc = sic * ni
+	//	-----------------
+	//	[ijkl_iplq_pkqj]
+	//
+	//
+
+	args_ij_jp_pi &args0 = m_ij_jp_pi;
+
+	iterator_t ik = loop.end(), iq = loop.end(), il = loop.end();
+	for(iterator_t i = loop.begin(); i != loop.end(); i++) {
+		if(i->stepa(0) != 0) continue;
+		if(i->stepa(1) != args0.spb * args0.np) continue;
+		if(i->stepb(0) != args0.nj) continue;
+		if(i->stepb(0) * i->weight() != args0.sic) continue;
+		ik = i; break;
+	}
+	if(ik == loop.end()) return;
+	for(iterator_t i = loop.begin(); i != loop.end(); i++) {
+		if(i->stepb(0) != 0) continue;
+		if(i->stepa(0) != args0.sja * args0.nj) continue;
+		if(i->stepa(1) != ik->stepa(1) * ik->weight()) continue;
+		iq = i; break;
+	}
+	if(iq == loop.end()) return;
+	for(iterator_t i = loop.begin(); i != loop.end(); i++) {
+		if(i->stepa(1) != 0) continue;
+		if(i->stepa(0) != iq->stepa(0) * iq->weight()) continue;
+		if(i->stepb(0) != args0.sic * args0.ni) continue;
+		il = i; break;
+	}
+	if(il == loop.end()) return;
+
+	m_kernelname = "ijkl_iplq_pkqj";
+//	std::cout << m_kernelname << ";";
+	ik->fn() = &loop_list_mul::fn_ijkl_iplq_pkqj;
+	iq->fn() = &loop_list_mul::fn_ijkl_iplq_pkqj;
+	il->fn() = &loop_list_mul::fn_ijkl_iplq_pkqj;
+	args_ijkl_iplq_pkqj &args = m_ijkl_iplq_pkqj;
+	args.d = args0.d;
+	// rename indexes:
+	// i<-l j<-i k<-k l<-j p<-q q<-p
+	args.ni = il->weight();
+	args.nj = args0.ni;
+	args.nk = ik->weight();
+	args.nl = args0.nj;
+	args.np = iq->weight();
+	args.nq = args0.np;
+	loop.splice(loop.end(), loop, il);
+	loop.splice(loop.end(), loop, iq);
+	loop.splice(loop.end(), loop, ik);
 }
 
 
@@ -1666,6 +1744,39 @@ void loop_list_mul::fn_ij_jpq_iqp(registers &r) const {
 	linalg::ij_ipq_jqp(r.m_ptra[1], r.m_ptra[0], r.m_ptrb[0], args.d,
 		args.ni, args.nj, args.nq, args.np, args.sib, args.sic,
 		args.sja, args.sqb, args.spa);
+}
+
+
+void loop_list_mul::fn_ijkl_iplq_pkqj(registers &r) const {
+
+	static const char *method = "fn_ijkl_iplq_pkqj(registers&)";
+
+	const args_ijkl_iplq_pkqj &args = m_ijkl_iplq_pkqj;
+
+#ifdef LIBTENSOR_DEBUG
+	register size_t sz;
+	sz = (((args.ni - 1) * args.np + (args.np - 1)) * args.nl +
+		args.nl) * args.nq;
+	if(r.m_ptra[0] + sz > r.m_ptra_end[0]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"source-1");
+	}
+	sz = (((args.np - 1) * args.nk + (args.nk - 1)) * args.nq +
+		args.nq) * args.nj;
+	if(r.m_ptra[1] + sz > r.m_ptra_end[1]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"source-2");
+	}
+	sz = (((args.ni - 1) * args.nj + (args.nj - 1)) * args.nk +
+		args.nk) * args.nl;
+	if(r.m_ptrb[0] + sz > r.m_ptrb_end[0]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"destination");
+	}
+#endif // LIBTENSOR_DEBUG
+
+	linalg::ijkl_iplq_pkqj(r.m_ptra[0], r.m_ptra[1], r.m_ptrb[0], args.d,
+		args.ni, args.nj, args.nk, args.nl, args.np, args.nq);
 }
 
 
