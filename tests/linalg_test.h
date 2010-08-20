@@ -62,6 +62,9 @@ private:
 	void test_ijkl_iplq_pkqj(size_t ni, size_t nj, size_t nk, size_t nl,
 		size_t np, size_t nq) throw(libtest::test_exception);
 
+	void test_ijkl_pilq_kpjq(size_t ni, size_t nj, size_t nk, size_t nl,
+		size_t np, size_t nq) throw(libtest::test_exception);
+
 	void test_ijkl_pilq_pkjq(size_t ni, size_t nj, size_t nk, size_t nl,
 		size_t np, size_t nq) throw(libtest::test_exception);
 

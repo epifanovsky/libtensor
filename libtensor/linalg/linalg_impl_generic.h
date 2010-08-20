@@ -289,6 +289,13 @@ public:
 		size_t nq);
 
 	/**	\brief Contraction:
+			\f$ c_{ijkl} = d \sum_{pq} a_{pilq} b_{kpjq} \f$
+	 **/
+	static void ijkl_pilq_kpjq(const double *a, const double *b, double *c,
+		double d, size_t ni, size_t nj, size_t nk, size_t nl, size_t np,
+		size_t nq);
+
+	/**	\brief Contraction:
 			\f$ c_{ijkl} = d \sum_{pq} a_{pilq} b_{pkjq} \f$
 	 **/
 	static void ijkl_pilq_pkjq(const double *a, const double *b, double *c,

@@ -133,6 +133,15 @@ void linalg_impl_cblas::ijkl_iplq_pkqj(const double *a, const double *b,
 }
 
 
+void linalg_impl_cblas::ijkl_pilq_kpjq(const double *a, const double *b,
+	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
+	size_t np, size_t nq) {
+
+	algo_ijkl_pilq_kpjq<linalg_impl_cblas>(a, b, c, d,
+		ni, nj, nk, nl, np, nq);
+}
+
+
 void linalg_impl_cblas::ijkl_pilq_pkjq(const double *a, const double *b,
 	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
 	size_t np, size_t nq) {
