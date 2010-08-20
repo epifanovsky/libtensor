@@ -229,6 +229,34 @@ void linalg_impl_generic::ij_piq_pjq(const double *a, const double *b,
 }
 
 
+void linalg_impl_generic::ijkl_iplq_kpjq(const double *a, const double *b,
+	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
+	size_t np, size_t nq) {
+
+	for(size_t i = 0; i < ni; i++) {
+	for(size_t k = 0; k < nk; k++) {
+	for(size_t p = 0; p < np; p++) {
+
+		const double *a1 = a + (i * np + p) * nl * nq;
+		const double *b1 = b + (k * np + p) * nj * nq;
+
+		for(size_t j = 0; j < nj; j++) {
+		for(size_t l = 0; l < nl; l++) {
+
+			size_t ijk = ((i * nj + j) * nk + k) * nl;
+			for(size_t q = 0; q < nq; q++) {
+				size_t lq = l * nq + q;
+				size_t jq = j * nq + q;
+				c[ijk + l] += d * a1[lq] * b1[jq];
+			}
+		}
+		}
+	}
+	}
+	}
+}
+
+
 void linalg_impl_generic::ijkl_iplq_pkjq(const double *a, const double *b,
 	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
 	size_t np, size_t nq) {
@@ -238,7 +266,7 @@ void linalg_impl_generic::ijkl_iplq_pkjq(const double *a, const double *b,
 	for(size_t p = 0; p < np; p++) {
 
 		const double *a1 = a + (i * np + p) * nl * nq;
-		const double *b1 = b + (p * nk + k) * nq * nj;
+		const double *b1 = b + (p * nk + k) * nj * nq;
 
 		for(size_t j = 0; j < nj; j++) {
 		for(size_t l = 0; l < nl; l++) {
@@ -276,6 +304,34 @@ void linalg_impl_generic::ijkl_iplq_pkqj(const double *a, const double *b,
 				size_t lq = l * nq + q;
 				size_t qj = q * nj + j;
 				c[ijk + l] += d * a1[lq] * b1[qj];
+			}
+		}
+		}
+	}
+	}
+	}
+}
+
+
+void linalg_impl_generic::ijkl_pilq_pkjq(const double *a, const double *b,
+	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
+	size_t np, size_t nq) {
+
+	for(size_t p = 0; p < np; p++) {
+	for(size_t i = 0; i < ni; i++) {
+	for(size_t k = 0; k < nk; k++) {
+
+		const double *a1 = a + (p * ni + i) * nl * nq;
+		const double *b1 = b + (p * nk + k) * nj * nq;
+
+		for(size_t j = 0; j < nj; j++) {
+		for(size_t l = 0; l < nl; l++) {
+
+			size_t ijk = ((i * nj + j) * nk + k) * nl;
+			for(size_t q = 0; q < nq; q++) {
+				size_t lq = l * nq + q;
+				size_t jq = j * nq + q;
+				c[ijk + l] += d * a1[lq] * b1[jq];
 			}
 		}
 		}
