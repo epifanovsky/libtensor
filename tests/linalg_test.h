@@ -53,6 +53,9 @@ private:
 		size_t sia, size_t sic, size_t sjb, size_t spa, size_t sqb)
 		throw(libtest::test_exception);
 
+	void test_ijkl_ipl_kpj(size_t ni, size_t nj, size_t nk, size_t nl,
+		size_t np) throw(libtest::test_exception);
+
 	void test_ijkl_iplq_kpjq(size_t ni, size_t nj, size_t nk, size_t nl,
 		size_t np, size_t nq) throw(libtest::test_exception);
 
@@ -62,10 +65,19 @@ private:
 	void test_ijkl_iplq_pkqj(size_t ni, size_t nj, size_t nk, size_t nl,
 		size_t np, size_t nq) throw(libtest::test_exception);
 
+	void test_ijkl_ipql_pkqj(size_t ni, size_t nj, size_t nk, size_t nl,
+		size_t np, size_t nq) throw(libtest::test_exception);
+
 	void test_ijkl_pilq_kpjq(size_t ni, size_t nj, size_t nk, size_t nl,
 		size_t np, size_t nq) throw(libtest::test_exception);
 
 	void test_ijkl_pilq_pkjq(size_t ni, size_t nj, size_t nk, size_t nl,
+		size_t np, size_t nq) throw(libtest::test_exception);
+
+	void test_ijkl_piql_kpqj(size_t ni, size_t nj, size_t nk, size_t nl,
+		size_t np, size_t nq) throw(libtest::test_exception);
+
+	void test_ijkl_piql_pkqj(size_t ni, size_t nj, size_t nk, size_t nl,
 		size_t np, size_t nq) throw(libtest::test_exception);
 
 	bool cmp(double diff, double ref);

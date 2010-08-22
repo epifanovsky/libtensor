@@ -9,6 +9,15 @@
 #endif
 
 #include "linalg_impl_cblas.h"
+#include "algo_ijkl_ipl_kpj.h"
+#include "algo_ijkl_iplq_kpjq.h"
+#include "algo_ijkl_iplq_pkjq.h"
+#include "algo_ijkl_iplq_pkqj.h"
+#include "algo_ijkl_ipql_pkqj.h"
+#include "algo_ijkl_pilq_kpjq.h"
+#include "algo_ijkl_pilq_pkjq.h"
+#include "algo_ijkl_piql_kpqj.h"
+#include "algo_ijkl_piql_pkqj.h"
 
 namespace libtensor {
 
@@ -106,6 +115,14 @@ double linalg_impl_cblas::x_pq_qp(const double *a, const double *b,
 }
 
 
+void linalg_impl_cblas::ijkl_ipl_kpj(const double *a, const double *b,
+	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
+	size_t np) {
+
+	algo_ijkl_ipl_kpj<linalg_impl_cblas>(a, b, c, d, ni, nj, nk, nl, np);
+}
+
+
 void linalg_impl_cblas::ijkl_iplq_kpjq(const double *a, const double *b,
 	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
 	size_t np, size_t nq) {
@@ -133,6 +150,15 @@ void linalg_impl_cblas::ijkl_iplq_pkqj(const double *a, const double *b,
 }
 
 
+void linalg_impl_cblas::ijkl_ipql_pkqj(const double *a, const double *b,
+	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
+	size_t np, size_t nq) {
+
+	algo_ijkl_ipql_pkqj<linalg_impl_cblas>(a, b, c, d,
+		ni, nj, nk, nl, np, nq);
+}
+
+
 void linalg_impl_cblas::ijkl_pilq_kpjq(const double *a, const double *b,
 	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
 	size_t np, size_t nq) {
@@ -147,6 +173,24 @@ void linalg_impl_cblas::ijkl_pilq_pkjq(const double *a, const double *b,
 	size_t np, size_t nq) {
 
 	algo_ijkl_pilq_pkjq<linalg_impl_cblas>(a, b, c, d,
+		ni, nj, nk, nl, np, nq);
+}
+
+
+void linalg_impl_cblas::ijkl_piql_kpqj(const double *a, const double *b,
+	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
+	size_t np, size_t nq) {
+
+	algo_ijkl_piql_kpqj<linalg_impl_cblas>(a, b, c, d,
+		ni, nj, nk, nl, np, nq);
+}
+
+
+void linalg_impl_cblas::ijkl_piql_pkqj(const double *a, const double *b,
+	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
+	size_t np, size_t nq) {
+
+	algo_ijkl_piql_pkqj<linalg_impl_cblas>(a, b, c, d,
 		ni, nj, nk, nl, np, nq);
 }
 

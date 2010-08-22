@@ -2,11 +2,6 @@
 #define LIBTENSOR_LINALG_IMPL_CBLAS_H
 
 #include "linalg_impl_generic.h"
-#include "algo_ijkl_iplq_kpjq.h"
-#include "algo_ijkl_iplq_pkjq.h"
-#include "algo_ijkl_iplq_pkqj.h"
-#include "algo_ijkl_pilq_kpjq.h"
-#include "algo_ijkl_pilq_pkjq.h"
 
 namespace libtensor {
 
@@ -18,23 +13,6 @@ namespace libtensor {
 	\ingroup libtensor_linalg
  **/
 class linalg_impl_cblas : public linalg_impl_generic {
-
-	friend void algo_ijkl_iplq_kpjq<linalg_impl_cblas>(const double*,
-		const double*, double*, double, size_t, size_t, size_t, size_t,
-		size_t, size_t);
-	friend void algo_ijkl_iplq_pkjq<linalg_impl_cblas>(const double*,
-		const double*, double*, double, size_t, size_t, size_t, size_t,
-		size_t, size_t);
-	friend void algo_ijkl_iplq_pkqj<linalg_impl_cblas>(const double*,
-		const double*, double*, double, size_t, size_t, size_t, size_t,
-		size_t, size_t);
-	friend void algo_ijkl_pilq_kpjq<linalg_impl_cblas>(const double*,
-		const double*, double*, double, size_t, size_t, size_t, size_t,
-		size_t, size_t);
-	friend void algo_ijkl_pilq_pkjq<linalg_impl_cblas>(const double*,
-		const double*, double*, double, size_t, size_t, size_t, size_t,
-		size_t, size_t);
-
 public:
 	//!	\name Vector operations
 	//@{
@@ -100,6 +78,19 @@ public:
 	//@}
 
 
+	//!	\name Five-index tensor-tensor contractions
+	//@{
+
+	/**	\brief Contraction:
+			\f$ c_{ijkl} = d \sum_p a_{ipl} b_{kpj} \f$
+	 **/
+	static void ijkl_ipl_kpj(const double *a, const double *b, double *c,
+		double d, size_t ni, size_t nj, size_t nk, size_t nl,
+		size_t np);
+
+	//@}
+
+
 	//!	\name Six-index tensor-tensor contractions
 	//@{
 
@@ -125,6 +116,13 @@ public:
 		size_t nq);
 
 	/**	\brief Contraction:
+			\f$ c_{ijkl} = d \sum_{pq} a_{ipql} b_{pkqj} \f$
+	 **/
+	static void ijkl_ipql_pkqj(const double *a, const double *b, double *c,
+		double d, size_t ni, size_t nj, size_t nk, size_t nl, size_t np,
+		size_t nq);
+
+	/**	\brief Contraction:
 			\f$ c_{ijkl} = d \sum_{pq} a_{pilq} b_{kpjq} \f$
 	 **/
 	static void ijkl_pilq_kpjq(const double *a, const double *b, double *c,
@@ -138,9 +136,23 @@ public:
 		double d, size_t ni, size_t nj, size_t nk, size_t nl, size_t np,
 		size_t nq);
 
+	/**	\brief Contraction:
+			\f$ c_{ijkl} = d \sum_{pq} a_{piql} b_{kpqj} \f$
+	 **/
+	static void ijkl_piql_kpqj(const double *a, const double *b, double *c,
+		double d, size_t ni, size_t nj, size_t nk, size_t nl, size_t np,
+		size_t nq);
+
+	/**	\brief Contraction:
+			\f$ c_{ijkl} = d \sum_{pq} a_{piql} b_{pkqj} \f$
+	 **/
+	static void ijkl_piql_pkqj(const double *a, const double *b, double *c,
+		double d, size_t ni, size_t nj, size_t nk, size_t nl, size_t np,
+		size_t nq);
+
 	//@}
 
-private:
+
 	//!	\name Memory operations
 	//@{
 

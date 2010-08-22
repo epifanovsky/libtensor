@@ -229,6 +229,33 @@ void linalg_impl_generic::ij_piq_pjq(const double *a, const double *b,
 }
 
 
+void linalg_impl_generic::ijkl_ipl_kpj(const double *a, const double *b,
+	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
+	size_t np) {
+
+	for(size_t i = 0; i < ni; i++) {
+	for(size_t k = 0; k < nk; k++) {
+
+		const double *a1 = a + i * np * nl;
+		const double *b1 = b + k * np * nj;
+
+		for(size_t p = 0; p < np; p++) {
+		for(size_t j = 0; j < nj; j++) {
+
+			size_t ijk = ((i * nj + j) * nk + k) * nl;
+			size_t pj = p * nj + j;
+			size_t pl0 = p * nl;
+
+			for(size_t l = 0; l < nl; l++) {
+				c[ijk + l] += d * a1[pl0 + l] * b1[pj];
+			}
+		}
+		}
+	}
+	}
+}
+
+
 void linalg_impl_generic::ijkl_iplq_kpjq(const double *a, const double *b,
 	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
 	size_t np, size_t nq) {
@@ -313,6 +340,35 @@ void linalg_impl_generic::ijkl_iplq_pkqj(const double *a, const double *b,
 }
 
 
+void linalg_impl_generic::ijkl_ipql_pkqj(const double *a, const double *b,
+	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
+	size_t np, size_t nq) {
+
+	for(size_t i = 0; i < ni; i++) {
+	for(size_t k = 0; k < nk; k++) {
+	for(size_t p = 0; p < np; p++) {
+
+		const double *a1 = a + (i * np + p) * nq * nl;
+		const double *b1 = b + (p * nk + k) * nq * nj;
+
+		for(size_t q = 0; q < nq; q++) {
+		for(size_t j = 0; j < nj; j++) {
+
+			size_t ijk = ((i * nj + j) * nk + k) * nl;
+			size_t qj = q * nj + j;
+			size_t ql0 = q * nl;
+
+			for(size_t l = 0; l < nl; l++) {
+				c[ijk + l] += d * a1[ql0 + l] * b1[qj];
+			}
+		}
+		}
+	}
+	}
+	}
+}
+
+
 void linalg_impl_generic::ijkl_pilq_kpjq(const double *a, const double *b,
 	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
 	size_t np, size_t nq) {
@@ -360,6 +416,64 @@ void linalg_impl_generic::ijkl_pilq_pkjq(const double *a, const double *b,
 				size_t lq = l * nq + q;
 				size_t jq = j * nq + q;
 				c[ijk + l] += d * a1[lq] * b1[jq];
+			}
+		}
+		}
+	}
+	}
+	}
+}
+
+
+void linalg_impl_generic::ijkl_piql_kpqj(const double *a, const double *b,
+	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
+	size_t np, size_t nq) {
+
+	for(size_t p = 0; p < np; p++) {
+	for(size_t i = 0; i < ni; i++) {
+	for(size_t k = 0; k < nk; k++) {
+
+		const double *a1 = a + (p * ni + i) * nq * nl;
+		const double *b1 = b + (k * np + p) * nq * nj;
+
+		for(size_t q = 0; q < nq; q++) {
+		for(size_t j = 0; j < nj; j++) {
+
+			size_t ijk = ((i * nj + j) * nk + k) * nl;
+			size_t qj = q * nj + j;
+			size_t ql0 = q * nl;
+
+			for(size_t l = 0; l < nl; l++) {
+				c[ijk + l] += d * a1[ql0 + l] * b1[qj];
+			}
+		}
+		}
+	}
+	}
+	}
+}
+
+
+void linalg_impl_generic::ijkl_piql_pkqj(const double *a, const double *b,
+	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
+	size_t np, size_t nq) {
+
+	for(size_t p = 0; p < np; p++) {
+	for(size_t i = 0; i < ni; i++) {
+	for(size_t k = 0; k < nk; k++) {
+
+		const double *a1 = a + (p * ni + i) * nq * nl;
+		const double *b1 = b + (p * nk + k) * nq * nj;
+
+		for(size_t q = 0; q < nq; q++) {
+		for(size_t j = 0; j < nj; j++) {
+
+			size_t ijk = ((i * nj + j) * nk + k) * nl;
+			size_t qj = q * nj + j;
+			size_t ql0 = q * nl;
+
+			for(size_t l = 0; l < nl; l++) {
+				c[ijk + l] += d * a1[ql0 + l] * b1[qj];
 			}
 		}
 		}
