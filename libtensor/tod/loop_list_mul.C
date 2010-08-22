@@ -679,7 +679,7 @@ void loop_list_mul::match_dgemv_t_a2_l3(list_t &loop, double d, size_t w1,
 	}
 	if(i2 != loop.end()) {
 		m_kernelname = "ij_pj_pi";
-		//~ std::cout << m_kernelname;
+//		std::cout << m_kernelname << ";";
 		i2->fn() = &loop_list_mul::fn_ij_pj_pi;
 		args_ij_pj_pi &args = m_ij_pj_pi;
 		args.d = d;
@@ -689,6 +689,7 @@ void loop_list_mul::match_dgemv_t_a2_l3(list_t &loop, double d, size_t w1,
 		args.sic = i2->stepb(0);
 		args.spa = k2w1;
 		args.spb = k3;
+		match_ij_pj_pi(loop);
 		loop.splice(loop.end(), loop, i2);
 		return;
 	}
@@ -1333,6 +1334,222 @@ void loop_list_mul::match_ij_jp_pi(list_t &loop) {
 	loop.splice(loop.end(), loop, il);
 	loop.splice(loop.end(), loop, iq);
 	loop.splice(loop.end(), loop, ik);
+}
+
+
+void loop_list_mul::match_ij_pj_pi(list_t &loop) {
+
+	if(loop.size() < 6) return;
+
+	//	Found pattern:
+	//	-----------------
+	//	w   a    b    c
+	//	j   1    0    1
+	//	p   spa  spb  0
+	//	i   0    1    sic  -->  [ij_pj_pi]
+	//	-----------------
+	//
+	//	Match q, k, l:
+	//	-----------------
+	//	w   a    b    c
+	//	j   1    0    1
+	//	p   spa  spb  0      spa = nj;  spb = ni
+	//	i   0    1    sic
+	//	-----------------
+	//	q   sqa  sqb  0     sqa = spa * np * k1a;  sqb = spb * np * k1b
+	//	k   0    skb  skc   skb = spb * np * k2;  skc = nj;  sic = skc * nk
+	//	l   sla  0    slc   sla = spa * np * k3;  slc = sic * ni
+	//	-----------------
+	//
+	//	1.
+	//	 likj_lqpj_kqpi     k1a = 1;  k1b = 1;  k2 = nq;  k3 = nq
+	//	[ijkl_ipql_kpqj]
+	//
+	//	2.
+	//	 likj_lqpj_qkpi     k1a = 1;  k1b > 1;  k2 = 1;  k3 = nq
+	//	[ijkl_ipql_pkqj]
+	//
+	//	3.
+	//	 likj_qlpj_kqpi     k1a > 1;  k1b = 1;  k2 = nq;  k3 = 1
+	//	[ijkl_piql_kpqj]
+	//
+	//	4.
+	//	 likj_qlpj_qkpi     k1a > 1;  k1b > 1;  k2 = 1;  k3 = 1
+	//	[ijkl_piql_pkqj]
+	//
+
+	args_ij_pj_pi &args0 = m_ij_pj_pi;
+	if(args0.spa != args0.nj || args0.spb != args0.ni) return;
+
+	iterator_t iq1 = loop.end(), iq2 = loop.end(), iq3 = loop.end(),
+		iq4 = loop.end();
+	size_t k1ak1b_min = 0;
+	bool foundq = false;
+	for(iterator_t i = loop.begin(); i != loop.end(); i++) {
+		if(i->stepb(0) != 0) continue;
+		if(i->stepa(0) % (args0.spa * args0.np) != 0) continue;
+		if(i->stepa(1) % (args0.spb * args0.np) != 0) continue;
+		register size_t k1a = i->stepa(0) / (args0.spa * args0.np);
+		register size_t k1b = i->stepa(1) / (args0.spb * args0.np);
+		if(k1a == 1) {
+			if(k1b == 1) iq1 = i;
+			else iq2 = i;
+		} else {
+			if(k1b == 1) {
+				iq3 = i;
+			} else {
+				if(k1ak1b_min == 0 || k1ak1b_min > k1a * k1b) {
+					k1ak1b_min = k1a * k1b;
+					iq4 = i;
+				}
+			}
+		}
+		foundq = true;
+	}
+	if(!foundq) return;
+
+	iterator_t ik1 = loop.end(), ik2 = loop.end(), ik3 = loop.end(),
+		ik4 = loop.end();
+	size_t k2_min = 0;
+	bool foundk = false;
+	for(iterator_t i = loop.begin(); i != loop.end(); i++) {
+		if(i->stepa(0) != 0) continue;
+		if(i->stepb(0) != args0.nj ||
+			i->stepb(0) * i->weight() != args0.sic) continue;
+		if(i->stepa(1) % (args0.spb * args0.np) != 0) continue;
+		register size_t k2 = i->stepa(1) / (args0.spb * args0.np);
+		if(k2 == 1) {
+			if(iq2 != loop.end()) { ik2 = i; foundk = true; }
+			if(iq4 != loop.end()) { ik4 = i; foundk = true; }
+		} else {
+			if(k2_min == 0 || k2_min > k2) {
+				k2_min = k2;
+				if(iq1 != loop.end()) { ik1 = i; foundk = true; }
+				if(iq3 != loop.end()) { ik3 = i; foundk = true; }
+			}
+		}
+	}
+	if(!foundk) return;
+
+	iterator_t il1 = loop.end(), il2 = loop.end(), il3 = loop.end(),
+		il4 = loop.end();
+	size_t k3_min = 0;
+	bool foundl = false;
+	for(iterator_t i = loop.begin(); i != loop.end(); i++) {
+		if(i->stepa(1) != 0) continue;
+		if(i->stepb(0) != args0.sic * args0.ni) continue;
+		if(i->stepa(0) % (args0.spa * args0.np) != 0) continue;
+		register size_t k3 = i->stepa(0) / (args0.spa * args0.np);
+		if(k3 == 1) {
+			if(ik3 != loop.end()) { il3 = i; foundl = true; }
+			if(ik4 != loop.end()) { il4 = i; foundl = true; }
+		} else {
+			if(k3_min == 0 || k3_min > k3) {
+				if(ik1 != loop.end()) { il1 = i; foundl = true; }
+				if(ik2 != loop.end()) { il2 = i; foundl = true; }
+			}
+		}
+	}
+	if(!foundl) return;
+
+	//	1.
+	//	 likj_lqpj_kqpi     k1a = 1;  k1b = 1;  k2 = nq;  k3 = nq
+	//	[ijkl_ipql_kpqj]
+/*
+	if(il1 != loop.end()) {
+		m_kernelname = "ijkl_ipql_kpqj";
+		std::cout << m_kernelname << ";";
+		iq1->fn() = &loop_list_mul::fn_ijkl_ipql_kpqj;
+		ik1->fn() = &loop_list_mul::fn_ijkl_ipql_kpqj;
+		il1->fn() = &loop_list_mul::fn_ijkl_ipql_kpqj;
+		args_ijkl_ipql_kpqj &args = m_ijkl_ipql_kpqj;
+		args.d = args0.d;
+		// rename indexes:
+		// i<-l j<-i k<-k l<-j p<-q q<-p
+		args.ni = il1->weight();
+		args.nj = args0.ni;
+		args.nk = ik1->weight();
+		args.nl = args0.nj;
+		args.np = iq1->weight();
+		args.nq = args0.np;
+		loop.splice(loop.end(), loop, il1);
+		loop.splice(loop.end(), loop, ik1);
+		loop.splice(loop.end(), loop, iq1);
+		return;
+	}
+*/
+	//	2.
+	//	 likj_lqpj_qkpi     k1a = 1;  k1b > 1;  k2 = 1;  k3 = nq
+	//	[ijkl_ipql_pkqj]
+	if(il2 != loop.end()) {
+		m_kernelname = "ijkl_ipql_pkqj";
+//		std::cout << m_kernelname << ";";
+		iq2->fn() = &loop_list_mul::fn_ijkl_ipql_pkqj;
+		ik2->fn() = &loop_list_mul::fn_ijkl_ipql_pkqj;
+		il2->fn() = &loop_list_mul::fn_ijkl_ipql_pkqj;
+		args_ijkl_ipql_pkqj &args = m_ijkl_ipql_pkqj;
+		args.d = args0.d;
+		// rename indexes:
+		// i<-l j<-i k<-k l<-j p<-q q<-p
+		args.ni = il2->weight();
+		args.nj = args0.ni;
+		args.nk = ik2->weight();
+		args.nl = args0.nj;
+		args.np = iq2->weight();
+		args.nq = args0.np;
+		loop.splice(loop.end(), loop, il2);
+		loop.splice(loop.end(), loop, ik2);
+		loop.splice(loop.end(), loop, iq2);
+		return;
+	}
+	//	3.
+	//	 likj_qlpj_kqpi     k1a > 1;  k1b = 1;  k2 = nq;  k3 = 1
+	//	[ijkl_piql_kpqj]
+	if(il3 != loop.end()) {
+		m_kernelname = "ijkl_piql_kpqj";
+//		std::cout << m_kernelname << ";";
+		iq3->fn() = &loop_list_mul::fn_ijkl_piql_kpqj;
+		ik3->fn() = &loop_list_mul::fn_ijkl_piql_kpqj;
+		il3->fn() = &loop_list_mul::fn_ijkl_piql_kpqj;
+		args_ijkl_piql_kpqj &args = m_ijkl_piql_kpqj;
+		args.d = args0.d;
+		// rename indexes:
+		// i<-l j<-i k<-k l<-j p<-q q<-p
+		args.ni = il3->weight();
+		args.nj = args0.ni;
+		args.nk = ik3->weight();
+		args.nl = args0.nj;
+		args.np = iq3->weight();
+		args.nq = args0.np;
+		loop.splice(loop.end(), loop, il3);
+		loop.splice(loop.end(), loop, ik3);
+		loop.splice(loop.end(), loop, iq3);
+		return;
+	}
+	//	4.
+	//	 likj_qlpj_qkpi     k1a > 1;  k1b > 1;  k2 = 1;  k3 = 1
+	//	[ijkl_piql_pkqj]
+	if(il4 != loop.end()) {
+		m_kernelname = "ijkl_piql_pkqj";
+//		std::cout << m_kernelname << ";";
+		iq4->fn() = &loop_list_mul::fn_ijkl_piql_pkqj;
+		ik4->fn() = &loop_list_mul::fn_ijkl_piql_pkqj;
+		il4->fn() = &loop_list_mul::fn_ijkl_piql_pkqj;
+		args_ijkl_piql_pkqj &args = m_ijkl_piql_pkqj;
+		args.d = args0.d;
+		// rename indexes:
+		// i<-l j<-i k<-k l<-j p<-q q<-p
+		args.ni = il4->weight();
+		args.nj = args0.ni;
+		args.nk = ik4->weight();
+		args.nl = args0.nj;
+		args.np = iq4->weight();
+		args.nq = args0.np;
+		loop.splice(loop.end(), loop, il4);
+		loop.splice(loop.end(), loop, ik4);
+		loop.splice(loop.end(), loop, iq4);
+		return;
+	}
 }
 
 
@@ -2041,6 +2258,36 @@ void loop_list_mul::fn_ijkl_iplq_pkqj(registers &r) const {
 }
 
 
+void loop_list_mul::fn_ijkl_ipql_pkqj(registers &r) const {
+
+	static const char *method = "fn_ijkl_ipql_pkqj(registers&)";
+
+	const args_ijkl_ipql_pkqj &args = m_ijkl_ipql_pkqj;
+
+#ifdef LIBTENSOR_DEBUG
+	register size_t sz;
+	sz = args.ni * args.np * args.nq * args.nl;
+	if(r.m_ptra[0] + sz > r.m_ptra_end[0]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"source-1");
+	}
+	sz = args.np * args.nk * args.nq * args.nj;
+	if(r.m_ptra[1] + sz > r.m_ptra_end[1]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"source-2");
+	}
+	sz = args.ni * args.nj * args.nk * args.nl;
+	if(r.m_ptrb[0] + sz > r.m_ptrb_end[0]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"destination");
+	}
+#endif // LIBTENSOR_DEBUG
+
+	linalg::ijkl_ipql_pkqj(r.m_ptra[0], r.m_ptra[1], r.m_ptrb[0], args.d,
+		args.ni, args.nj, args.nk, args.nl, args.np, args.nq);
+}
+
+
 void loop_list_mul::fn_ijkl_pilq_kpjq(registers &r) const {
 
 	static const char *method = "fn_ijkl_pilq_kpjq(registers&)";
@@ -2097,6 +2344,66 @@ void loop_list_mul::fn_ijkl_pilq_pkjq(registers &r) const {
 #endif // LIBTENSOR_DEBUG
 
 	linalg::ijkl_pilq_pkjq(r.m_ptra[0], r.m_ptra[1], r.m_ptrb[0], args.d,
+		args.ni, args.nj, args.nk, args.nl, args.np, args.nq);
+}
+
+
+void loop_list_mul::fn_ijkl_piql_kpqj(registers &r) const {
+
+	static const char *method = "fn_ijkl_piql_kpqj(registers&)";
+
+	const args_ijkl_piql_kpqj &args = m_ijkl_piql_kpqj;
+
+#ifdef LIBTENSOR_DEBUG
+	register size_t sz;
+	sz = args.np * args.ni * args.nq * args.nl;
+	if(r.m_ptra[0] + sz > r.m_ptra_end[0]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"source-1");
+	}
+	sz = args.nk * args.np * args.nq * args.nj;
+	if(r.m_ptra[1] + sz > r.m_ptra_end[1]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"source-2");
+	}
+	sz = args.ni * args.nj * args.nk * args.nl;
+	if(r.m_ptrb[0] + sz > r.m_ptrb_end[0]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"destination");
+	}
+#endif // LIBTENSOR_DEBUG
+
+	linalg::ijkl_piql_kpqj(r.m_ptra[0], r.m_ptra[1], r.m_ptrb[0], args.d,
+		args.ni, args.nj, args.nk, args.nl, args.np, args.nq);
+}
+
+
+void loop_list_mul::fn_ijkl_piql_pkqj(registers &r) const {
+
+	static const char *method = "fn_ijkl_piql_pkqj(registers&)";
+
+	const args_ijkl_piql_pkqj &args = m_ijkl_piql_pkqj;
+
+#ifdef LIBTENSOR_DEBUG
+	register size_t sz;
+	sz = args.np * args.ni * args.nq * args.nl;
+	if(r.m_ptra[0] + sz > r.m_ptra_end[0]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"source-1");
+	}
+	sz = args.np * args.nk * args.nq * args.nj;
+	if(r.m_ptra[1] + sz > r.m_ptra_end[1]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"source-2");
+	}
+	sz = args.ni * args.nj * args.nk * args.nl;
+	if(r.m_ptrb[0] + sz > r.m_ptrb_end[0]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"destination");
+	}
+#endif // LIBTENSOR_DEBUG
+
+	linalg::ijkl_piql_pkqj(r.m_ptra[0], r.m_ptra[1], r.m_ptrb[0], args.d,
 		args.ni, args.nj, args.nk, args.nl, args.np, args.nq);
 }
 

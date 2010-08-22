@@ -104,6 +104,16 @@ private:
 		size_t np, size_t nq, double d = 0.0)
 		throw(libtest::test_exception);
 
+	// c_{ijkl} = c_{ijkl} + d \sum_{pq} a_{ipql} b_{kpqj}
+	void test_ijkl_ipql_kpqj(size_t ni, size_t nj, size_t nk, size_t nl,
+		size_t np, size_t nq, double d = 0.0)
+		throw(libtest::test_exception);
+
+	// c_{ijkl} = c_{ijkl} + d \sum_{pq} a_{ipql} b_{pkqj}
+	void test_ijkl_ipql_pkqj(size_t ni, size_t nj, size_t nk, size_t nl,
+		size_t np, size_t nq, double d = 0.0)
+		throw(libtest::test_exception);
+
 	// c_{ijkl} = c_{ijkl} + d \sum_{pq} a_{pilq} b_{kpjq}
 	void test_ijkl_pilq_kpjq(size_t ni, size_t nj, size_t nk, size_t nl,
 		size_t np, size_t nq, double d = 0.0)
@@ -111,6 +121,16 @@ private:
 
 	// c_{ijkl} = c_{ijkl} + d \sum_{pq} a_{pilq} b_{pkjq}
 	void test_ijkl_pilq_pkjq(size_t ni, size_t nj, size_t nk, size_t nl,
+		size_t np, size_t nq, double d = 0.0)
+		throw(libtest::test_exception);
+
+	// c_{ijkl} = c_{ijkl} + d \sum_{pq} a_{piql} b_{kpqj}
+	void test_ijkl_piql_kpqj(size_t ni, size_t nj, size_t nk, size_t nl,
+		size_t np, size_t nq, double d = 0.0)
+		throw(libtest::test_exception);
+
+	// c_{ijkl} = c_{ijkl} + d \sum_{pq} a_{piql} b_{pkqj}
+	void test_ijkl_piql_pkqj(size_t ni, size_t nj, size_t nk, size_t nl,
 		size_t np, size_t nq, double d = 0.0)
 		throw(libtest::test_exception);
 
