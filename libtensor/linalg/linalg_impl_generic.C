@@ -483,4 +483,120 @@ void linalg_impl_generic::ijkl_piql_pkqj(const double *a, const double *b,
 }
 
 
+void linalg_impl_generic::ijkl_pkiq_jplq(const double *a, const double *b,
+	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
+	size_t np, size_t nq) {
+
+	for(size_t p = 0; p < np; p++) {
+	for(size_t j = 0; j < nj; j++) {
+	for(size_t k = 0; k < nk; k++) {
+
+		const double *a1 = a + (p * nk + k) * ni * nq;
+		const double *b1 = b + (j * np + p) * nl * nq;
+
+		for(size_t i = 0; i < ni; i++) {
+		for(size_t l = 0; l < nl; l++) {
+
+			size_t ijk = ((i * nj + j) * nk + k) * nl;
+			size_t iq0 = i * nq;
+			size_t lq0 = l * nq;
+
+			for(size_t q = 0; q < nq; q++) {
+				c[ijk + l] += d * a1[iq0 + q] * b1[lq0 + q];
+			}
+		}
+		}
+	}
+	}
+	}
+}
+
+
+void linalg_impl_generic::ijkl_pkiq_jpql(const double *a, const double *b,
+	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
+	size_t np, size_t nq) {
+
+	for(size_t p = 0; p < np; p++) {
+	for(size_t j = 0; j < nj; j++) {
+	for(size_t k = 0; k < nk; k++) {
+
+		const double *a1 = a + (p * nk + k) * ni * nq;
+		const double *b1 = b + (j * np + p) * nq * nl;
+
+		for(size_t i = 0; i < ni; i++) {
+		for(size_t q = 0; q < nq; q++) {
+
+			size_t ijk = ((i * nj + j) * nk + k) * nl;
+			size_t iq0 = i * nq;
+			size_t ql0 = q * nl;
+
+			for(size_t l = 0; l < nl; l++) {
+				c[ijk + l] += d * a1[iq0 + q] * b1[ql0 + l];
+			}
+		}
+		}
+	}
+	}
+	}
+}
+
+
+void linalg_impl_generic::ijkl_pkiq_pjlq(const double *a, const double *b,
+	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
+	size_t np, size_t nq) {
+
+	for(size_t p = 0; p < np; p++) {
+	for(size_t j = 0; j < nj; j++) {
+	for(size_t k = 0; k < nk; k++) {
+
+		const double *a1 = a + (p * nk + k) * ni * nq;
+		const double *b1 = b + (p * nj + j) * nl * nq;
+
+		for(size_t i = 0; i < ni; i++) {
+		for(size_t l = 0; l < nl; l++) {
+
+			size_t ijk = ((i * nj + j) * nk + k) * nl;
+			size_t iq0 = i * nq;
+			size_t lq0 = l * nq;
+
+			for(size_t q = 0; q < nq; q++) {
+				c[ijk + l] += d * a1[iq0 + q] * b1[lq0 + q];
+			}
+		}
+		}
+	}
+	}
+	}
+}
+
+
+void linalg_impl_generic::ijkl_pkiq_pjql(const double *a, const double *b,
+	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
+	size_t np, size_t nq) {
+
+	for(size_t p = 0; p < np; p++) {
+	for(size_t j = 0; j < nj; j++) {
+	for(size_t k = 0; k < nk; k++) {
+
+		const double *a1 = a + (p * nk + k) * ni * nq;
+		const double *b1 = b + (p * nj + j) * nl * nq;
+
+		for(size_t i = 0; i < ni; i++) {
+		for(size_t q = 0; q < nq; q++) {
+
+			size_t ijk = ((i * nj + j) * nk + k) * nl;
+			size_t iq0 = i * nq;
+			size_t ql0 = q * nl;
+
+			for(size_t l = 0; l < nl; l++) {
+				c[ijk + l] += d * a1[iq0 + q] * b1[ql0 + l];
+			}
+		}
+		}
+	}
+	}
+	}
+}
+
+
 } // namespace libtensor

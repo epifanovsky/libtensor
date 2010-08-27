@@ -336,6 +336,34 @@ public:
 		double d, size_t ni, size_t nj, size_t nk, size_t nl, size_t np,
 		size_t nq);
 
+	/**	\brief Contraction:
+			\f$ c_{ijkl} = d \sum_{pq} a_{pkiq} b_{jplq} \f$
+	 **/
+	static void ijkl_pkiq_jplq(const double *a, const double *b, double *c,
+		double d, size_t ni, size_t nj, size_t nk, size_t nl, size_t np,
+		size_t nq);
+
+	/**	\brief Contraction:
+			\f$ c_{ijkl} = d \sum_{pq} a_{pkiq} b_{jpql} \f$
+	 **/
+	static void ijkl_pkiq_jpql(const double *a, const double *b, double *c,
+		double d, size_t ni, size_t nj, size_t nk, size_t nl, size_t np,
+		size_t nq);
+
+	/**	\brief Contraction:
+			\f$ c_{ijkl} = d \sum_{pq} a_{pkiq} b_{pjlq} \f$
+	 **/
+	static void ijkl_pkiq_pjlq(const double *a, const double *b, double *c,
+		double d, size_t ni, size_t nj, size_t nk, size_t nl, size_t np,
+		size_t nq);
+
+	/**	\brief Contraction:
+			\f$ c_{ijkl} = d \sum_{pq} a_{pkiq} b_{pjql} \f$
+	 **/
+	static void ijkl_pkiq_pjql(const double *a, const double *b, double *c,
+		double d, size_t ni, size_t nj, size_t nk, size_t nl, size_t np,
+		size_t nq);
+
 	//@}
 
 protected:

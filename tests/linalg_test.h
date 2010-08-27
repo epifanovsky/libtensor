@@ -80,6 +80,18 @@ private:
 	void test_ijkl_piql_pkqj(size_t ni, size_t nj, size_t nk, size_t nl,
 		size_t np, size_t nq) throw(libtest::test_exception);
 
+	void test_ijkl_pkiq_jplq(size_t ni, size_t nj, size_t nk, size_t nl,
+		size_t np, size_t nq) throw(libtest::test_exception);
+
+	void test_ijkl_pkiq_jpql(size_t ni, size_t nj, size_t nk, size_t nl,
+		size_t np, size_t nq) throw(libtest::test_exception);
+
+	void test_ijkl_pkiq_pjlq(size_t ni, size_t nj, size_t nk, size_t nl,
+		size_t np, size_t nq) throw(libtest::test_exception);
+
+	void test_ijkl_pkiq_pjql(size_t ni, size_t nj, size_t nk, size_t nl,
+		size_t np, size_t nq) throw(libtest::test_exception);
+
 	bool cmp(double diff, double ref);
 
 };
