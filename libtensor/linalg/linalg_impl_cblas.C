@@ -22,6 +22,9 @@
 #include "algo_ijkl_pkiq_jpql.h"
 #include "algo_ijkl_pkiq_pjlq.h"
 #include "algo_ijkl_pkiq_pjql.h"
+#include "algo_ijkl_pliq_jpkq.h"
+#include "algo_ijkl_pliq_jpqk.h"
+#include "algo_ijkl_pliq_pjqk.h"
 
 namespace libtensor {
 
@@ -231,6 +234,33 @@ void linalg_impl_cblas::ijkl_pkiq_pjql(const double *a, const double *b,
 	size_t np, size_t nq) {
 
 	algo_ijkl_pkiq_pjql<linalg_impl_cblas>(a, b, c, d,
+		ni, nj, nk, nl, np, nq);
+}
+
+
+void linalg_impl_cblas::ijkl_pliq_jpkq(const double *a, const double *b,
+	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
+	size_t np, size_t nq) {
+
+	algo_ijkl_pliq_jpkq<linalg_impl_cblas>(a, b, c, d,
+		ni, nj, nk, nl, np, nq);
+}
+
+
+void linalg_impl_cblas::ijkl_pliq_jpqk(const double *a, const double *b,
+	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
+	size_t np, size_t nq) {
+
+	algo_ijkl_pliq_jpqk<linalg_impl_cblas>(a, b, c, d,
+		ni, nj, nk, nl, np, nq);
+}
+
+
+void linalg_impl_cblas::ijkl_pliq_pjqk(const double *a, const double *b,
+	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
+	size_t np, size_t nq) {
+
+	algo_ijkl_pliq_pjqk<linalg_impl_cblas>(a, b, c, d,
 		ni, nj, nk, nl, np, nq);
 }
 

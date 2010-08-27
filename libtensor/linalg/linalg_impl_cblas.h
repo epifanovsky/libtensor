@@ -178,6 +178,27 @@ public:
 		double d, size_t ni, size_t nj, size_t nk, size_t nl, size_t np,
 		size_t nq);
 
+	/**	\brief Contraction:
+			\f$ c_{ijkl} = d \sum_{pq} a_{pliq} b_{jpkq} \f$
+	 **/
+	static void ijkl_pliq_jpkq(const double *a, const double *b, double *c,
+		double d, size_t ni, size_t nj, size_t nk, size_t nl, size_t np,
+		size_t nq);
+
+	/**	\brief Contraction:
+			\f$ c_{ijkl} = d \sum_{pq} a_{pliq} b_{jpqk} \f$
+	 **/
+	static void ijkl_pliq_jpqk(const double *a, const double *b, double *c,
+		double d, size_t ni, size_t nj, size_t nk, size_t nl, size_t np,
+		size_t nq);
+
+	/**	\brief Contraction:
+			\f$ c_{ijkl} = d \sum_{pq} a_{pliq} b_{pjqk} \f$
+	 **/
+	static void ijkl_pliq_pjqk(const double *a, const double *b, double *c,
+		double d, size_t ni, size_t nj, size_t nk, size_t nl, size_t np,
+		size_t nq);
+
 	//@}
 
 

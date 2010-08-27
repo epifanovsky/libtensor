@@ -599,4 +599,93 @@ void linalg_impl_generic::ijkl_pkiq_pjql(const double *a, const double *b,
 }
 
 
+void linalg_impl_generic::ijkl_pliq_jpkq(const double *a, const double *b,
+	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
+	size_t np, size_t nq) {
+
+	for(size_t p = 0; p < np; p++) {
+	for(size_t j = 0; j < nj; j++) {
+	for(size_t l = 0; l < nl; l++) {
+
+		const double *a1 = a + (p * nl + l) * ni * nq;
+		const double *b1 = b + (j * np + p) * nk * nq;
+
+		for(size_t i = 0; i < ni; i++) {
+		for(size_t k = 0; k < nk; k++) {
+
+			size_t ijk = ((i * nj + j) * nk + k) * nl;
+			size_t iq0 = i * nq;
+			size_t kq0 = k * nq;
+
+			for(size_t q = 0; q < nq; q++) {
+				c[ijk + l] += d * a1[iq0 + q] * b1[kq0 + q];
+			}
+		}
+		}
+	}
+	}
+	}
+}
+
+
+void linalg_impl_generic::ijkl_pliq_jpqk(const double *a, const double *b,
+	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
+	size_t np, size_t nq) {
+
+	for(size_t p = 0; p < np; p++) {
+	for(size_t j = 0; j < nj; j++) {
+	for(size_t l = 0; l < nl; l++) {
+
+		const double *a1 = a + (p * nl + l) * ni * nq;
+		const double *b1 = b + (j * np + p) * nk * nq;
+
+		for(size_t i = 0; i < ni; i++) {
+		for(size_t q = 0; q < nq; q++) {
+
+			size_t ijk0 = (i * nj + j) * nk * nl;
+			size_t iq0 = i * nq;
+			size_t qk0 = q * nk;
+
+			for(size_t k = 0; k < nk; k++) {
+				c[ijk0 + k * nl + l] +=
+					d * a1[iq0 + q] * b1[qk0 + k];
+			}
+		}
+		}
+	}
+	}
+	}
+}
+
+
+void linalg_impl_generic::ijkl_pliq_pjqk(const double *a, const double *b,
+	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
+	size_t np, size_t nq) {
+
+	for(size_t p = 0; p < np; p++) {
+	for(size_t j = 0; j < nj; j++) {
+	for(size_t l = 0; l < nl; l++) {
+
+		const double *a1 = a + (p * nl + l) * ni * nq;
+		const double *b1 = b + (p * nj + j) * nk * nq;
+
+		for(size_t i = 0; i < ni; i++) {
+		for(size_t q = 0; q < nq; q++) {
+
+			size_t ijk0 = (i * nj + j) * nk * nl;
+			size_t iq0 = i * nq;
+			size_t qk0 = q * nk;
+
+			for(size_t k = 0; k < nk; k++) {
+				c[ijk0 + k * nl + l] +=
+					d * a1[iq0 + q] * b1[qk0 + k];
+			}
+		}
+		}
+	}
+	}
+	}
+}
+
+
 } // namespace libtensor

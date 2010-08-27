@@ -1,5 +1,5 @@
-#ifndef LIBTENSOR_ALGO_IJKL_PLIQ_JPKQ_H
-#define LIBTENSOR_ALGO_IJKL_PLIQ_JPKQ_H
+#ifndef LIBTENSOR_ALGO_IJKL_PLIQ_JPQK_H
+#define LIBTENSOR_ALGO_IJKL_PLIQ_JPQK_H
 
 #include <cstring>
 
@@ -7,7 +7,7 @@ namespace libtensor {
 
 
 template<typename Impl>
-void algo_ijkl_pliq_jpkq(const double *a, const double *b, double *c, double d,
+void algo_ijkl_pliq_jpqk(const double *a, const double *b, double *c, double d,
 	size_t ni, size_t nj, size_t nk, size_t nl, size_t np, size_t nq) {
 
 	size_t npq = np * nq;
@@ -19,7 +19,7 @@ void algo_ijkl_pliq_jpkq(const double *a, const double *b, double *c, double d,
 	size_t njk1 = (njk % 4 == 0) ? njk : njk + 4 - njk % 4;
 
 	double *a1 = Impl::allocate(nil * npq1);
-	double *b1 = Impl::allocate(njk * npq1);
+	double *b1 = Impl::allocate(npq * njk1);
 	double *c1 = Impl::allocate(njk * nil1);
 
 	//	a_pliq -> a_ilpq
@@ -34,14 +34,14 @@ void algo_ijkl_pliq_jpkq(const double *a, const double *b, double *c, double d,
 	}
 	}
 
-	//	b_jpkq -> b_jkpq
+	//	b_jpqk -> b_pqjk
 
 	const double *bb = b;
 	for(size_t j = 0; j < nj; j++) {
 	for(size_t p = 0; p < np; p++) {
-	for(size_t k = 0; k < nk; k++, bb += nq) {
-		memcpy(b1 + (j * nk + k) * npq1 + p * nq, bb,
-			sizeof(double) * nq);
+	for(size_t q = 0; q < nq; q++, bb += nk) {
+		memcpy(b1 + (p * nq + q) * njk1 + j * nk, bb,
+			sizeof(double) * nk);
 	}
 	}
 	}
@@ -58,9 +58,9 @@ void algo_ijkl_pliq_jpkq(const double *a, const double *b, double *c, double d,
 	}
 	}
 
-	//	c_jkil += d * b_jkpq a_ilpq
+	//	c_jkil += d * b_pqjk a_ilpq
 
-	Impl::ij_ip_jp(b1, a1, c1, d, njk, nil, npq, npq1, nil1, npq1);
+	Impl::ij_pi_jp(b1, a1, c1, d, njk, nil, npq, nil1, npq1, njk1);
 
 	//	c_jkil -> c_ijkl
 
@@ -82,4 +82,4 @@ void algo_ijkl_pliq_jpkq(const double *a, const double *b, double *c, double d,
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_ALGO_IJKL_PLIQ_JPKQ_H
+#endif // LIBTENSOR_ALGO_IJKL_PLIQ_JPQK_H

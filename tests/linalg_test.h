@@ -92,6 +92,15 @@ private:
 	void test_ijkl_pkiq_pjql(size_t ni, size_t nj, size_t nk, size_t nl,
 		size_t np, size_t nq) throw(libtest::test_exception);
 
+	void test_ijkl_pliq_jpkq(size_t ni, size_t nj, size_t nk, size_t nl,
+		size_t np, size_t nq) throw(libtest::test_exception);
+
+	void test_ijkl_pliq_jpqk(size_t ni, size_t nj, size_t nk, size_t nl,
+		size_t np, size_t nq) throw(libtest::test_exception);
+
+	void test_ijkl_pliq_pjqk(size_t ni, size_t nj, size_t nk, size_t nl,
+		size_t np, size_t nq) throw(libtest::test_exception);
+
 	bool cmp(double diff, double ref);
 
 };
