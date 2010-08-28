@@ -136,7 +136,7 @@ void linalg_impl_mkl::ij_ipq_jqp(const double *a, const double *b, double *c,
 }
 
 
-void linalg_impl_cblas::ijkl_ipl_kpj(const double *a, const double *b,
+void linalg_impl_mkl::ijkl_ipl_kpj(const double *a, const double *b,
 	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
 	size_t np) {
 
@@ -144,7 +144,7 @@ void linalg_impl_cblas::ijkl_ipl_kpj(const double *a, const double *b,
 }
 
 
-void linalg_impl_cblas::ijkl_iplq_kpjq(const double *a, const double *b,
+void linalg_impl_mkl::ijkl_iplq_kpjq(const double *a, const double *b,
 	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
 	size_t np, size_t nq) {
 
@@ -153,7 +153,7 @@ void linalg_impl_cblas::ijkl_iplq_kpjq(const double *a, const double *b,
 }
 
 
-void linalg_impl_cblas::ijkl_iplq_pkjq(const double *a, const double *b,
+void linalg_impl_mkl::ijkl_iplq_pkjq(const double *a, const double *b,
 	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
 	size_t np, size_t nq) {
 
@@ -162,7 +162,7 @@ void linalg_impl_cblas::ijkl_iplq_pkjq(const double *a, const double *b,
 }
 
 
-void linalg_impl_cblas::ijkl_iplq_pkqj(const double *a, const double *b,
+void linalg_impl_mkl::ijkl_iplq_pkqj(const double *a, const double *b,
 	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
 	size_t np, size_t nq) {
 
@@ -171,7 +171,7 @@ void linalg_impl_cblas::ijkl_iplq_pkqj(const double *a, const double *b,
 }
 
 
-void linalg_impl_cblas::ijkl_ipql_pkqj(const double *a, const double *b,
+void linalg_impl_mkl::ijkl_ipql_pkqj(const double *a, const double *b,
 	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
 	size_t np, size_t nq) {
 
@@ -180,7 +180,7 @@ void linalg_impl_cblas::ijkl_ipql_pkqj(const double *a, const double *b,
 }
 
 
-void linalg_impl_cblas::ijkl_pilq_kpjq(const double *a, const double *b,
+void linalg_impl_mkl::ijkl_pilq_kpjq(const double *a, const double *b,
 	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
 	size_t np, size_t nq) {
 
@@ -189,7 +189,7 @@ void linalg_impl_cblas::ijkl_pilq_kpjq(const double *a, const double *b,
 }
 
 
-void linalg_impl_cblas::ijkl_pilq_pkjq(const double *a, const double *b,
+void linalg_impl_mkl::ijkl_pilq_pkjq(const double *a, const double *b,
 	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
 	size_t np, size_t nq) {
 
@@ -198,7 +198,7 @@ void linalg_impl_cblas::ijkl_pilq_pkjq(const double *a, const double *b,
 }
 
 
-void linalg_impl_cblas::ijkl_piql_kpqj(const double *a, const double *b,
+void linalg_impl_mkl::ijkl_piql_kpqj(const double *a, const double *b,
 	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
 	size_t np, size_t nq) {
 
@@ -207,7 +207,7 @@ void linalg_impl_cblas::ijkl_piql_kpqj(const double *a, const double *b,
 }
 
 
-void linalg_impl_cblas::ijkl_piql_pkqj(const double *a, const double *b,
+void linalg_impl_mkl::ijkl_piql_pkqj(const double *a, const double *b,
 	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
 	size_t np, size_t nq) {
 
@@ -216,7 +216,7 @@ void linalg_impl_cblas::ijkl_piql_pkqj(const double *a, const double *b,
 }
 
 
-void linalg_impl_cblas::ijkl_pkiq_jplq(const double *a, const double *b,
+void linalg_impl_mkl::ijkl_pkiq_jplq(const double *a, const double *b,
 	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
 	size_t np, size_t nq) {
 
@@ -225,7 +225,7 @@ void linalg_impl_cblas::ijkl_pkiq_jplq(const double *a, const double *b,
 }
 
 
-void linalg_impl_cblas::ijkl_pkiq_jpql(const double *a, const double *b,
+void linalg_impl_mkl::ijkl_pkiq_jpql(const double *a, const double *b,
 	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
 	size_t np, size_t nq) {
 
@@ -234,7 +234,7 @@ void linalg_impl_cblas::ijkl_pkiq_jpql(const double *a, const double *b,
 }
 
 
-void linalg_impl_cblas::ijkl_pkiq_pjlq(const double *a, const double *b,
+void linalg_impl_mkl::ijkl_pkiq_pjlq(const double *a, const double *b,
 	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
 	size_t np, size_t nq) {
 
@@ -243,7 +243,7 @@ void linalg_impl_cblas::ijkl_pkiq_pjlq(const double *a, const double *b,
 }
 
 
-void linalg_impl_cblas::ijkl_pkiq_pjql(const double *a, const double *b,
+void linalg_impl_mkl::ijkl_pkiq_pjql(const double *a, const double *b,
 	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
 	size_t np, size_t nq) {
 
@@ -252,7 +252,7 @@ void linalg_impl_cblas::ijkl_pkiq_pjql(const double *a, const double *b,
 }
 
 
-void linalg_impl_cblas::ijkl_pliq_jpkq(const double *a, const double *b,
+void linalg_impl_mkl::ijkl_pliq_jpkq(const double *a, const double *b,
 	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
 	size_t np, size_t nq) {
 
@@ -261,7 +261,7 @@ void linalg_impl_cblas::ijkl_pliq_jpkq(const double *a, const double *b,
 }
 
 
-void linalg_impl_cblas::ijkl_pliq_jpqk(const double *a, const double *b,
+void linalg_impl_mkl::ijkl_pliq_jpqk(const double *a, const double *b,
 	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
 	size_t np, size_t nq) {
 
@@ -270,7 +270,7 @@ void linalg_impl_cblas::ijkl_pliq_jpqk(const double *a, const double *b,
 }
 
 
-void linalg_impl_cblas::ijkl_pliq_pjqk(const double *a, const double *b,
+void linalg_impl_mkl::ijkl_pliq_pjqk(const double *a, const double *b,
 	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
 	size_t np, size_t nq) {
 
