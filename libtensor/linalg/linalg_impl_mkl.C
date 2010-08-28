@@ -5,26 +5,24 @@
 #include <mkl_trans.h>
 #endif // HAVE_MKL_DOMATCOPY
 #include "linalg_impl_mkl.h"
+#include "algo_ijkl_ipl_kpj.h"
+#include "algo_ijkl_iplq_kpjq.h"
+#include "algo_ijkl_iplq_pkjq.h"
+#include "algo_ijkl_iplq_pkqj.h"
+#include "algo_ijkl_ipql_pkqj.h"
+#include "algo_ijkl_pilq_kpjq.h"
+#include "algo_ijkl_pilq_pkjq.h"
+#include "algo_ijkl_piql_kpqj.h"
+#include "algo_ijkl_piql_pkqj.h"
+#include "algo_ijkl_pkiq_jplq.h"
+#include "algo_ijkl_pkiq_jpql.h"
+#include "algo_ijkl_pkiq_pjlq.h"
+#include "algo_ijkl_pkiq_pjql.h"
+#include "algo_ijkl_pliq_jpkq.h"
+#include "algo_ijkl_pliq_jpqk.h"
+#include "algo_ijkl_pliq_pjqk.h"
 
 namespace libtensor {
-
-
-double *linalg_impl_mkl::allocate(size_t n) {
-#ifdef HAVE_MKL_MALLOC
-	return (double*)MKL_malloc(n * sizeof(double), 4 * sizeof(double));
-#else
-	return new double[n];
-#endif // HAVE_MKL_MALLOC
-}
-
-
-void linalg_impl_mkl::deallocate(double *p) {
-#ifdef HAVE_MKL_MALLOC
-	MKL_free(p);
-#else
-	delete [] p;
-#endif // HAVE_MKL_MALLOC
-}
 
 
 void linalg_impl_mkl::ij_ij_x(const double *a, double b, double *c, size_t ni,
@@ -135,6 +133,167 @@ void linalg_impl_mkl::ij_ipq_jqp(const double *a, const double *b, double *c,
 
 	if(a1 != 0) deallocate(a1);
 	if(b1 != 0) deallocate(b1);
+}
+
+
+void linalg_impl_cblas::ijkl_ipl_kpj(const double *a, const double *b,
+	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
+	size_t np) {
+
+	algo_ijkl_ipl_kpj<linalg_impl_mkl>(a, b, c, d, ni, nj, nk, nl, np);
+}
+
+
+void linalg_impl_cblas::ijkl_iplq_kpjq(const double *a, const double *b,
+	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
+	size_t np, size_t nq) {
+
+	algo_ijkl_iplq_kpjq<linalg_impl_mkl>(a, b, c, d,
+		ni, nj, nk, nl, np, nq);
+}
+
+
+void linalg_impl_cblas::ijkl_iplq_pkjq(const double *a, const double *b,
+	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
+	size_t np, size_t nq) {
+
+	algo_ijkl_iplq_pkjq<linalg_impl_mkl>(a, b, c, d,
+		ni, nj, nk, nl, np, nq);
+}
+
+
+void linalg_impl_cblas::ijkl_iplq_pkqj(const double *a, const double *b,
+	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
+	size_t np, size_t nq) {
+
+	algo_ijkl_iplq_pkqj<linalg_impl_mkl>(a, b, c, d,
+		ni, nj, nk, nl, np, nq);
+}
+
+
+void linalg_impl_cblas::ijkl_ipql_pkqj(const double *a, const double *b,
+	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
+	size_t np, size_t nq) {
+
+	algo_ijkl_ipql_pkqj<linalg_impl_mkl>(a, b, c, d,
+		ni, nj, nk, nl, np, nq);
+}
+
+
+void linalg_impl_cblas::ijkl_pilq_kpjq(const double *a, const double *b,
+	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
+	size_t np, size_t nq) {
+
+	algo_ijkl_pilq_kpjq<linalg_impl_mkl>(a, b, c, d,
+		ni, nj, nk, nl, np, nq);
+}
+
+
+void linalg_impl_cblas::ijkl_pilq_pkjq(const double *a, const double *b,
+	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
+	size_t np, size_t nq) {
+
+	algo_ijkl_pilq_pkjq<linalg_impl_mkl>(a, b, c, d,
+		ni, nj, nk, nl, np, nq);
+}
+
+
+void linalg_impl_cblas::ijkl_piql_kpqj(const double *a, const double *b,
+	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
+	size_t np, size_t nq) {
+
+	algo_ijkl_piql_kpqj<linalg_impl_mkl>(a, b, c, d,
+		ni, nj, nk, nl, np, nq);
+}
+
+
+void linalg_impl_cblas::ijkl_piql_pkqj(const double *a, const double *b,
+	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
+	size_t np, size_t nq) {
+
+	algo_ijkl_piql_pkqj<linalg_impl_mkl>(a, b, c, d,
+		ni, nj, nk, nl, np, nq);
+}
+
+
+void linalg_impl_cblas::ijkl_pkiq_jplq(const double *a, const double *b,
+	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
+	size_t np, size_t nq) {
+
+	algo_ijkl_pkiq_jplq<linalg_impl_mkl>(a, b, c, d,
+		ni, nj, nk, nl, np, nq);
+}
+
+
+void linalg_impl_cblas::ijkl_pkiq_jpql(const double *a, const double *b,
+	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
+	size_t np, size_t nq) {
+
+	algo_ijkl_pkiq_jpql<linalg_impl_mkl>(a, b, c, d,
+		ni, nj, nk, nl, np, nq);
+}
+
+
+void linalg_impl_cblas::ijkl_pkiq_pjlq(const double *a, const double *b,
+	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
+	size_t np, size_t nq) {
+
+	algo_ijkl_pkiq_pjlq<linalg_impl_mkl>(a, b, c, d,
+		ni, nj, nk, nl, np, nq);
+}
+
+
+void linalg_impl_cblas::ijkl_pkiq_pjql(const double *a, const double *b,
+	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
+	size_t np, size_t nq) {
+
+	algo_ijkl_pkiq_pjql<linalg_impl_mkl>(a, b, c, d,
+		ni, nj, nk, nl, np, nq);
+}
+
+
+void linalg_impl_cblas::ijkl_pliq_jpkq(const double *a, const double *b,
+	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
+	size_t np, size_t nq) {
+
+	algo_ijkl_pliq_jpkq<linalg_impl_mkl>(a, b, c, d,
+		ni, nj, nk, nl, np, nq);
+}
+
+
+void linalg_impl_cblas::ijkl_pliq_jpqk(const double *a, const double *b,
+	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
+	size_t np, size_t nq) {
+
+	algo_ijkl_pliq_jpqk<linalg_impl_mkl>(a, b, c, d,
+		ni, nj, nk, nl, np, nq);
+}
+
+
+void linalg_impl_cblas::ijkl_pliq_pjqk(const double *a, const double *b,
+	double *c, double d, size_t ni, size_t nj, size_t nk, size_t nl,
+	size_t np, size_t nq) {
+
+	algo_ijkl_pliq_pjqk<linalg_impl_mkl>(a, b, c, d,
+		ni, nj, nk, nl, np, nq);
+}
+
+
+double *linalg_impl_mkl::allocate(size_t n) {
+#ifdef HAVE_MKL_MALLOC
+	return (double*)MKL_malloc(n * sizeof(double), 4 * sizeof(double));
+#else
+	return new double[n];
+#endif // HAVE_MKL_MALLOC
+}
+
+
+void linalg_impl_mkl::deallocate(double *p) {
+#ifdef HAVE_MKL_MALLOC
+	MKL_free(p);
+#else
+	delete [] p;
+#endif // HAVE_MKL_MALLOC
 }
 
 
