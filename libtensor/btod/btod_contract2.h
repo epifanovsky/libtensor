@@ -3,6 +3,8 @@
 
 #include <list>
 #include <map>
+#include <vector>
+#include <libvmm/auto_lock.h>
 #include "../defs.h"
 #include "../exception.h"
 #include "../timings.h"
@@ -16,6 +18,7 @@
 #include "additive_btod.h"
 #include "../not_implemented.h"
 #include "bad_block_index_space.h"
+#include "../mp/task_i.h"
 
 namespace libtensor {
 
@@ -76,6 +79,46 @@ private:
 	} block_contr_t;
 	typedef std::list<block_contr_t> block_contr_list_t;
 	typedef std::map<size_t, block_contr_list_t*> schedule_t;
+
+	class make_schedule_task : public task_i {
+	private:
+		contraction2<N, M, K> m_contr;
+		block_tensor_ctrl<k_ordera, double> m_ca;
+		block_tensor_ctrl<k_orderb, double> m_cb;
+		const symmetry<k_orderc, double> &m_symc;
+		dimensions<k_ordera> m_bidimsa;
+		dimensions<k_orderb> m_bidimsb;
+		dimensions<k_orderc> m_bidimsc;
+		std::vector< index<k_ordera> > m_vecia;
+		schedule_t &m_contr_sch;
+		assignment_schedule<k_orderc, double> &m_sch;
+		libvmm::mutex &m_sch_lock;
+
+	public:
+		make_schedule_task(const contraction2<N, M, K> &contr,
+			block_tensor_i<k_ordera, double> &bta,
+			block_tensor_i<k_orderb, double> &btb,
+			const symmetry<k_orderc, double> &symc,
+			const dimensions<k_orderc> &bidimsc,
+			const std::vector< index<k_ordera> > &vecia,
+			schedule_t &contr_sch,
+			assignment_schedule<k_orderc, double> &sch,
+			libvmm::mutex &sch_lock);
+		virtual ~make_schedule_task() { }
+		virtual void perform() throw(exception);
+
+	private:
+		void make_schedule_a(const orbit_list<k_orderc, double> &olc,
+			const abs_index<k_ordera> &aia,
+			const abs_index<k_ordera> &acia,
+			const transf<k_ordera, double> &tra);
+		void make_schedule_b(const abs_index<k_ordera> &acia,
+			const transf<k_ordera, double> &tra,
+			const index<k_orderb> &ib,
+			const abs_index<k_orderc> &acic);
+		void schedule_block_contraction(const abs_index<k_orderc> &acic,
+			const block_contr_t &bc);
+	};
 
 private:
 	contraction2<N, M, K> m_contr; //!< Contraction
@@ -139,22 +182,6 @@ protected:
 
 private:
 	void make_schedule();
-
-	void make_schedule_a(block_tensor_ctrl<k_orderb, double> &cb,
-		const dimensions<k_orderb> &bidimsb,
-		const orbit_list<k_orderc, double> &olc,
-		const dimensions<k_orderc> &bidimsc, 
-		const abs_index<k_ordera> &aia, const abs_index<k_ordera> &acia,
-		const transf<k_ordera, double> &tra);
-
-	void make_schedule_b(block_tensor_ctrl<k_orderb, double> &cb,
-		const dimensions<k_orderb> &bidimsb,
-		const abs_index<k_ordera> &acia,
-		const transf<k_ordera, double> &tra, const index<k_orderb> &ib,
-		const abs_index<k_orderc> &acic);
-
-	void schedule_block_contraction(const abs_index<k_orderc> &acic,
-		const block_contr_t &bc);
 
 	void clear_schedule(schedule_t &sch);
 

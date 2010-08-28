@@ -139,41 +139,115 @@ void btod_contract2<N, M, K>::make_schedule() {
 	block_tensor_ctrl<k_ordera, double> ca(m_bta);
 	block_tensor_ctrl<k_orderb, double> cb(m_btb);
 
-	dimensions<k_ordera> bidimsa(m_bta.get_bis().get_block_index_dims());
-	dimensions<k_orderb> bidimsb(m_btb.get_bis().get_block_index_dims());
+	ca.req_sync_on();
+	cb.req_sync_on();
 
 	orbit_list<k_ordera, double> ola(ca.req_const_symmetry());
-	orbit_list<k_orderc, double> olc(get_symmetry());
+
+	std::vector< index<k_ordera> > vecia;
+	std::vector<make_schedule_task*> tasklist;
+	task_batch tb;
+	libvmm::mutex sch_lock;
 
 	for(typename orbit_list<k_ordera, double>::iterator ioa = ola.begin();
 		ioa != ola.end(); ioa++) {
 
-		orbit<k_ordera, double> oa(ca.req_const_symmetry(),
-			ola.get_index(ioa));
-		if(!oa.is_allowed()) continue;
-		if(ca.req_is_zero_block(ola.get_index(ioa))) continue;
-
-		abs_index<k_ordera> acia(ola.get_index(ioa), bidimsa);
-		for(typename orbit<k_ordera, double>::iterator ia = oa.begin();
-			ia != oa.end(); ia++) {
-
-			abs_index<k_ordera> aia(oa.get_abs_index(ia), bidimsa);
-			make_schedule_a(cb, bidimsb, olc, m_bidimsc, aia, acia,
-				oa.get_transf(ia));
+		vecia.push_back(ola.get_index(ioa));
+		if(vecia.size() == 16) {
+			make_schedule_task *t = new make_schedule_task(m_contr,
+				m_bta, m_btb, get_symmetry(), m_bidimsc, vecia,
+				m_contr_sch, m_sch, sch_lock);
+			tasklist.push_back(t);
+			tb.push(*t);
+			vecia.clear();
 		}
 	}
+	if(!vecia.empty()) {
+		make_schedule_task *t = new make_schedule_task(m_contr, m_bta,
+			m_btb, get_symmetry(), m_bidimsc, vecia, m_contr_sch,
+			m_sch, sch_lock);
+		tasklist.push_back(t);
+		tb.push(*t);
+	}
+
+	try {
+		tb.wait();
+	} catch(...) {
+		for(size_t i = 0; i < tasklist.size(); i++) delete tasklist[i];
+		btod_contract2<N, M, K>::stop_timer("make_schedule");
+		throw;
+	}
+
+	for(size_t i = 0; i < tasklist.size(); i++) delete tasklist[i];
+
+	ca.req_sync_off();
+	cb.req_sync_off();
 
 	btod_contract2<N, M, K>::stop_timer("make_schedule");
 }
 
 
 template<size_t N, size_t M, size_t K>
-void btod_contract2<N, M, K>::make_schedule_a(
-	block_tensor_ctrl<k_orderb, double> &cb,
-	const dimensions<k_orderb> &bidimsb,
+void btod_contract2<N, M, K>::clear_schedule(schedule_t &sch) {
+
+	typename schedule_t::iterator isch = sch.begin();
+	for(; isch != sch.end(); isch++) {
+		delete isch->second;
+		isch->second = 0;
+	}
+	sch.clear();
+}
+
+
+template<size_t N, size_t M, size_t K>
+btod_contract2<N, M, K>::make_schedule_task::make_schedule_task(
+	const contraction2<N, M, K> &contr,
+	block_tensor_i<k_ordera, double> &bta,
+	block_tensor_i<k_orderb, double> &btb,
+	const symmetry<k_orderc, double> &symc,
+	const dimensions<k_orderc> &bidimsc,
+	const std::vector< index<k_ordera> > &vecia,
+	schedule_t &contr_sch, assignment_schedule<k_orderc, double> &sch,
+	libvmm::mutex &sch_lock) :
+
+	m_contr(contr),
+	m_ca(bta), m_bidimsa(bta.get_bis().get_block_index_dims()),
+	m_cb(btb), m_bidimsb(btb.get_bis().get_block_index_dims()),
+	m_symc(symc), m_bidimsc(bidimsc), m_vecia(vecia),
+	m_contr_sch(contr_sch), m_sch(sch), m_sch_lock(sch_lock) {
+
+}
+
+
+template<size_t N, size_t M, size_t K>
+void btod_contract2<N, M, K>::make_schedule_task::perform() throw(exception) {
+
+	orbit_list<k_orderc, double> olc(m_symc);
+
+	for(typename std::vector< index<k_ordera> >::iterator i =
+		m_vecia.begin(); i != m_vecia.end(); i++) {
+
+		orbit<k_ordera, double> oa(m_ca.req_const_symmetry(), *i);
+		if(!oa.is_allowed()) continue;
+		if(m_ca.req_is_zero_block(*i)) continue;
+
+		abs_index<k_ordera> acia(*i, m_bidimsa);
+		for(typename orbit<k_ordera, double>::iterator ia = oa.begin();
+			ia != oa.end(); ia++) {
+
+			abs_index<k_ordera> aia(oa.get_abs_index(ia),
+				m_bidimsa);
+			make_schedule_a(olc, aia, acia, oa.get_transf(ia));
+		}
+	}
+}
+
+
+template<size_t N, size_t M, size_t K>
+void btod_contract2<N, M, K>::make_schedule_task::make_schedule_a(
 	const orbit_list<k_orderc, double> &olc,
-	const dimensions<k_orderc> &bidimsc, const abs_index<k_ordera> &aia,
-	const abs_index<k_ordera> &acia, const transf<k_ordera, double> &tra) {
+	const abs_index<k_ordera> &aia, const abs_index<k_ordera> &acia,
+	const transf<k_ordera, double> &tra) {
 
 	const sequence<k_maxconn, size_t> &conn = m_contr.get_conn();
 	const index<k_ordera> &ia = aia.get_index();
@@ -187,7 +261,7 @@ void btod_contract2<N, M, K>::make_schedule_a(
 			j++;
 		}
 	}
-	for(size_t i = 0; i < M; i++) iu2[i] = bidimsb[useqb[i]] - 1;
+	for(size_t i = 0; i < M; i++) iu2[i] = m_bidimsb[useqb[i]] - 1;
 	// Uncontracted indexes from B
 	dimensions<M> bidimsu(index_range<M>(iu1, iu2));
 	abs_index<M> aiu(bidimsu);
@@ -205,7 +279,7 @@ void btod_contract2<N, M, K>::make_schedule_a(
 		}
 
 		// Skip non-canonical indexes in C
-		abs_index<k_orderc> aic(ic, bidimsc);
+		abs_index<k_orderc> aic(ic, m_bidimsc);
 		if(!olc.contains(aic.get_abs_index())) continue;
 
 		// Construct the index in B
@@ -215,23 +289,21 @@ void btod_contract2<N, M, K>::make_schedule_a(
 			if(k < k_orderc) ib[i] = ic[k];
 			else ib[i] = ia[k - k_orderc];
 		}
-		make_schedule_b(cb, bidimsb, acia, tra, ib, aic);
+		make_schedule_b(acia, tra, ib, aic);
 	} while(aiu.inc());
 }
 
 
 template<size_t N, size_t M, size_t K>
-void btod_contract2<N, M, K>::make_schedule_b(
-	block_tensor_ctrl<k_orderb, double> &cb,
-	const dimensions<k_orderb> &bidimsb, const abs_index<k_ordera> &acia,
-	const transf<k_ordera, double> &tra, const index<k_orderb> &ib,
-	const abs_index<k_orderc> &acic) {
+void btod_contract2<N, M, K>::make_schedule_task::make_schedule_b(
+	const abs_index<k_ordera> &acia, const transf<k_ordera, double> &tra,
+	const index<k_orderb> &ib, const abs_index<k_orderc> &acic) {
 
-	orbit<k_orderb, double> ob(cb.req_const_symmetry(), ib);
+	orbit<k_orderb, double> ob(m_cb.req_const_symmetry(), ib);
 	if(!ob.is_allowed()) return;
 
-	abs_index<k_orderb> acib(ob.get_abs_canonical_index(), bidimsb);
-	if(cb.req_is_zero_block(acib.get_index())) return;
+	abs_index<k_orderb> acib(ob.get_abs_canonical_index(), m_bidimsb);
+	if(m_cb.req_is_zero_block(acib.get_index())) return;
 
 	const transf<k_orderb, double> &trb = ob.get_transf(ib);
 	block_contr_t bc(acia.get_abs_index(), acib.get_abs_index(),
@@ -242,8 +314,10 @@ void btod_contract2<N, M, K>::make_schedule_b(
 
 
 template<size_t N, size_t M, size_t K>
-void btod_contract2<N, M, K>::schedule_block_contraction(
+void btod_contract2<N, M, K>::make_schedule_task::schedule_block_contraction(
 	const abs_index<k_orderc> &acic, const block_contr_t &bc) {
+
+	libvmm::auto_lock lock(m_sch_lock);
 
 	// Check whether this is the first contraction for this block in C
 	typename schedule_t::iterator isch =
@@ -285,18 +359,6 @@ void btod_contract2<N, M, K>::schedule_block_contraction(
 
 	// If similar contractions are not found, simply add bc
 	if(!done) lst.insert(ilst, bc);
-}
-
-
-template<size_t N, size_t M, size_t K>
-void btod_contract2<N, M, K>::clear_schedule(schedule_t &sch) {
-
-	typename schedule_t::iterator isch = sch.begin();
-	for(; isch != sch.end(); isch++) {
-		delete isch->second;
-		isch->second = 0;
-	}
-	sch.clear();
 }
 
 
