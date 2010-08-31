@@ -51,6 +51,19 @@ public:
 	//@}
 
 
+	//!	\name Five-index tensor-tensor contractions
+	//@{
+
+	/**	\brief Contraction:
+			\f$ c_{ijkl} = d \sum_p a_{ipl} b_{kpj} \f$
+	 **/
+	static void ijkl_ipl_kpj(const double *a, const double *b, double *c,
+		double d, size_t ni, size_t nj, size_t nk, size_t nl,
+		size_t np);
+
+	//@}
+
+
 	//!	\name Six-index tensor-tensor contractions
 	//@{
 
