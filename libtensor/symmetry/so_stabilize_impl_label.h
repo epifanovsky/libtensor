@@ -108,9 +108,13 @@ void symmetry_operation_impl< so_stabilize<N, M, K, T>, se_label<N, T> >::do_per
 			msk[j] = true;
 			size_t itype = se1.get_dim_type(i);
 			size_t jtype = se2.get_dim_type(j);
-			for (size_t k = 0; k < se2.get_dim(jtype); k++)
-				se2.assign(msk, k, se1.get_label(itype, k));
 			j++;
+
+			for (size_t k = 0; k < se2.get_dim(jtype); k++) {
+				typename se_label<N, T>::label_t l = se1.get_label(itype, k);
+				if (! se1.is_valid(l)) continue;
+				se2.assign(msk, k, l);
+			}
 		}
 		se2.match_labels();
 
