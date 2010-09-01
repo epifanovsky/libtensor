@@ -78,9 +78,17 @@ private:
 		}
 	} block_contr_t;
 	typedef std::list<block_contr_t> block_contr_list_t;
-	typedef std::map<size_t, block_contr_list_t*> schedule_t;
+	typedef std::pair<block_contr_list_t, volatile bool>
+		block_contr_list_pair_t;
+	typedef std::map<size_t, block_contr_list_pair_t*> schedule_t;
 
-	class make_schedule_task : public task_i {
+	class make_schedule_task :
+		public task_i,
+		public timings<make_schedule_task> {
+
+	public:
+		static const char *k_clazz;
+
 	private:
 		contraction2<N, M, K> m_contr;
 		block_tensor_ctrl<k_ordera, double> m_ca;
@@ -89,7 +97,9 @@ private:
 		dimensions<k_ordera> m_bidimsa;
 		dimensions<k_orderb> m_bidimsb;
 		dimensions<k_orderc> m_bidimsc;
-		std::vector< index<k_ordera> > m_vecia;
+		const orbit_list<k_ordera, double> &m_ola;
+		typename orbit_list<k_ordera, double>::iterator m_ioa1;
+		typename orbit_list<k_ordera, double>::iterator m_ioa2;
 		schedule_t &m_contr_sch;
 		assignment_schedule<k_orderc, double> &m_sch;
 		libvmm::mutex &m_sch_lock;
@@ -100,7 +110,11 @@ private:
 			block_tensor_i<k_orderb, double> &btb,
 			const symmetry<k_orderc, double> &symc,
 			const dimensions<k_orderc> &bidimsc,
-			const std::vector< index<k_ordera> > &vecia,
+			const orbit_list<k_ordera, double> &ola,
+			const typename orbit_list<k_ordera,
+				double>::iterator &ioa1,
+			const typename orbit_list<k_ordera,
+				double>::iterator &ioa2,
 			schedule_t &contr_sch,
 			assignment_schedule<k_orderc, double> &sch,
 			libvmm::mutex &sch_lock);

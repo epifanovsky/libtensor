@@ -86,7 +86,7 @@ void btod_contract2<N, M, K>::compute_block(tensor_i<N + M, double> &blk,
 		}
 
 		transf<k_orderc, double> trc0;
-		contract_block(*isch->second, aic.get_index(), ca, cb,
+		contract_block(isch->second->first, aic.get_index(), ca, cb,
 			blk, trc0, true, 1.0);
 
 	} catch(...) {
@@ -120,7 +120,7 @@ void btod_contract2<N, M, K>::compute_block(tensor_i<N + M, double> &blk,
 				__FILE__, __LINE__, "i");
 		}
 
-		contract_block(*isch->second, aic.get_index(), ca, cb,
+		contract_block(isch->second->first, aic.get_index(), ca, cb,
 			blk, tr, false, c);
 	} catch(...) {
 		btod_contract2<N, M, K>::stop_timer();
@@ -135,6 +135,7 @@ template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::make_schedule() {
 
 	btod_contract2<N, M, K>::start_timer("make_schedule");
+	btod_contract2<N, M, K>::start_timer("prepare_sch");
 
 	block_tensor_ctrl<k_ordera, double> ca(m_bta);
 	block_tensor_ctrl<k_orderb, double> cb(m_btb);
@@ -144,31 +145,35 @@ void btod_contract2<N, M, K>::make_schedule() {
 
 	orbit_list<k_ordera, double> ola(ca.req_const_symmetry());
 
-	std::vector< index<k_ordera> > vecia;
 	std::vector<make_schedule_task*> tasklist;
 	task_batch tb;
 	libvmm::mutex sch_lock;
 
-	for(typename orbit_list<k_ordera, double>::iterator ioa = ola.begin();
-		ioa != ola.end(); ioa++) {
+	typename orbit_list<k_ordera, double>::iterator ioa1 = ola.begin(),
+		ioa2 = ola.begin();
+	size_t n = 0, nmax = ola.get_size() / 64;
+	if(nmax < 1024) nmax = 1024;
+	for(; ioa2 != ola.end(); ioa2++, n++) {
 
-		vecia.push_back(ola.get_index(ioa));
-		if(vecia.size() == 16) {
+		if(n == nmax) {
 			make_schedule_task *t = new make_schedule_task(m_contr,
-				m_bta, m_btb, get_symmetry(), m_bidimsc, vecia,
-				m_contr_sch, m_sch, sch_lock);
+				m_bta, m_btb, get_symmetry(), m_bidimsc, ola,
+				ioa1, ioa2, m_contr_sch, m_sch, sch_lock);
 			tasklist.push_back(t);
 			tb.push(*t);
-			vecia.clear();
+			n = 0;
+			ioa1 = ioa2;
 		}
 	}
-	if(!vecia.empty()) {
+	if(ioa1 != ola.end()) {
 		make_schedule_task *t = new make_schedule_task(m_contr, m_bta,
-			m_btb, get_symmetry(), m_bidimsc, vecia, m_contr_sch,
-			m_sch, sch_lock);
+			m_btb, get_symmetry(), m_bidimsc, ola, ioa1, ioa2,
+			m_contr_sch, m_sch, sch_lock);
 		tasklist.push_back(t);
 		tb.push(*t);
 	}
+
+	btod_contract2<N, M, K>::stop_timer("prepare_sch");
 
 	try {
 		tb.wait();
@@ -177,6 +182,11 @@ void btod_contract2<N, M, K>::make_schedule() {
 		btod_contract2<N, M, K>::stop_timer("make_schedule");
 		throw;
 	}
+/*
+	for(size_t i = 0; i < tasklist.size(); i++) {
+		tasklist[i]->perform();
+	}
+*/
 
 	for(size_t i = 0; i < tasklist.size(); i++) delete tasklist[i];
 
@@ -206,32 +216,43 @@ btod_contract2<N, M, K>::make_schedule_task::make_schedule_task(
 	block_tensor_i<k_orderb, double> &btb,
 	const symmetry<k_orderc, double> &symc,
 	const dimensions<k_orderc> &bidimsc,
-	const std::vector< index<k_ordera> > &vecia,
+	const orbit_list<k_ordera, double> &ola,
+	const typename orbit_list<k_ordera, double>::iterator &ioa1,
+	const typename orbit_list<k_ordera, double>::iterator &ioa2,
 	schedule_t &contr_sch, assignment_schedule<k_orderc, double> &sch,
 	libvmm::mutex &sch_lock) :
 
 	m_contr(contr),
 	m_ca(bta), m_bidimsa(bta.get_bis().get_block_index_dims()),
 	m_cb(btb), m_bidimsb(btb.get_bis().get_block_index_dims()),
-	m_symc(symc), m_bidimsc(bidimsc), m_vecia(vecia),
+	m_symc(symc), m_bidimsc(bidimsc),
+	m_ola(ola), m_ioa1(ioa1), m_ioa2(ioa2),
 	m_contr_sch(contr_sch), m_sch(sch), m_sch_lock(sch_lock) {
 
 }
 
 
 template<size_t N, size_t M, size_t K>
+const char *btod_contract2<N, M, K>::make_schedule_task::k_clazz =
+	"btod_contract2<N, M, K>::make_schedule_task";
+
+
+template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::make_schedule_task::perform() throw(exception) {
+
+	make_schedule_task::start_timer();
 
 	orbit_list<k_orderc, double> olc(m_symc);
 
-	for(typename std::vector< index<k_ordera> >::iterator i =
-		m_vecia.begin(); i != m_vecia.end(); i++) {
+	for(typename orbit_list<k_ordera, double>::iterator ioa = m_ioa1;
+		ioa != m_ioa2; ioa++) {
 
-		orbit<k_ordera, double> oa(m_ca.req_const_symmetry(), *i);
+		orbit<k_ordera, double> oa(m_ca.req_const_symmetry(),
+			m_ola.get_index(ioa));
 		if(!oa.is_allowed()) continue;
-		if(m_ca.req_is_zero_block(*i)) continue;
+		if(m_ca.req_is_zero_block(m_ola.get_index(ioa))) continue;
 
-		abs_index<k_ordera> acia(*i, m_bidimsa);
+		abs_index<k_ordera> acia(m_ola.get_index(ioa), m_bidimsa);
 		for(typename orbit<k_ordera, double>::iterator ia = oa.begin();
 			ia != oa.end(); ia++) {
 
@@ -240,6 +261,8 @@ void btod_contract2<N, M, K>::make_schedule_task::perform() throw(exception) {
 			make_schedule_a(olc, aia, acia, oa.get_transf(ia));
 		}
 	}
+
+	make_schedule_task::stop_timer();
 }
 
 
@@ -317,21 +340,39 @@ template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::make_schedule_task::schedule_block_contraction(
 	const abs_index<k_orderc> &acic, const block_contr_t &bc) {
 
+	typename schedule_t::iterator isch;
+	block_contr_list_pair_t *lstpair = 0;
+
+	{
+
 	libvmm::auto_lock lock(m_sch_lock);
 
+	std::pair<typename schedule_t::iterator, bool> r =
+		m_contr_sch.insert(std::pair<size_t, block_contr_list_pair_t*>(
+			acic.get_abs_index(), lstpair));
 	// Check whether this is the first contraction for this block in C
-	typename schedule_t::iterator isch =
-		m_contr_sch.find(acic.get_abs_index());
-	if(isch == m_contr_sch.end()) {
+	if(r.second) {
 		m_sch.insert(acic.get_abs_index());
-		block_contr_list_t *lst = new block_contr_list_t;
-		lst->push_back(bc);
-		m_contr_sch.insert(std::pair<size_t, block_contr_list_t*>(
-			acic.get_abs_index(), lst));
+		lstpair = new block_contr_list_pair_t;
+		lstpair->first.push_back(bc);
+		lstpair->second = false;
+		r.first->second = lstpair;
 		return;
+	} else {
+		isch = r.first;
 	}
 
-	block_contr_list_t &lst = *isch->second;
+	}
+
+	while(lstpair == 0) {
+		libvmm::auto_lock lock(m_sch_lock);
+		if(isch->second->second == false) {
+			isch->second->second = true;
+			lstpair = isch->second;
+		}
+	}
+
+	block_contr_list_t &lst = lstpair->first;
 
 	// Find similar contractions already on the list
 	typename block_contr_list_t::iterator ilst = lst.begin();
@@ -359,6 +400,12 @@ void btod_contract2<N, M, K>::make_schedule_task::schedule_block_contraction(
 
 	// If similar contractions are not found, simply add bc
 	if(!done) lst.insert(ilst, bc);
+
+	{
+		libvmm::auto_lock lock(m_sch_lock);
+		isch->second->second = false;
+		lstpair = 0;
+	}
 }
 
 
