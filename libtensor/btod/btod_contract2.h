@@ -101,6 +101,7 @@ private:
 		typename orbit_list<k_ordera, double>::iterator m_ioa1;
 		typename orbit_list<k_ordera, double>::iterator m_ioa2;
 		schedule_t &m_contr_sch;
+		schedule_t m_contr_sch_local;
 		assignment_schedule<k_orderc, double> &m_sch;
 		libvmm::mutex &m_sch_lock;
 
@@ -132,6 +133,12 @@ private:
 			const abs_index<k_orderc> &acic);
 		void schedule_block_contraction(const abs_index<k_orderc> &acic,
 			const block_contr_t &bc);
+		void merge_schedule();
+		void merge_lists(const block_contr_list_t &src,
+			block_contr_list_t &dst);
+		typename block_contr_list_t::iterator merge_node(
+			const block_contr_t &bc, block_contr_list_t &lst,
+			const typename block_contr_list_t::iterator &begin);
 	};
 
 private:

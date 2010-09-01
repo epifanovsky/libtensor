@@ -182,16 +182,16 @@ void btod_contract2<N, M, K>::make_schedule() {
 		btod_contract2<N, M, K>::stop_timer("make_schedule");
 		throw;
 	}
-/*
-	for(size_t i = 0; i < tasklist.size(); i++) {
-		tasklist[i]->perform();
-	}
-*/
 
 	for(size_t i = 0; i < tasklist.size(); i++) delete tasklist[i];
 
 	ca.req_sync_off();
 	cb.req_sync_off();
+
+	for(typename schedule_t::iterator i = m_contr_sch.begin();
+		i != m_contr_sch.end(); i++) {
+		m_sch.insert(i->first);
+	}
 
 	btod_contract2<N, M, K>::stop_timer("make_schedule");
 }
@@ -240,7 +240,7 @@ const char *btod_contract2<N, M, K>::make_schedule_task::k_clazz =
 template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::make_schedule_task::perform() throw(exception) {
 
-	make_schedule_task::start_timer();
+	make_schedule_task::start_timer("local");
 
 	orbit_list<k_orderc, double> olc(m_symc);
 
@@ -262,7 +262,11 @@ void btod_contract2<N, M, K>::make_schedule_task::perform() throw(exception) {
 		}
 	}
 
-	make_schedule_task::stop_timer();
+	make_schedule_task::stop_timer("local");
+
+	make_schedule_task::start_timer("merge");
+	merge_schedule();
+	make_schedule_task::stop_timer("merge");
 }
 
 
@@ -343,16 +347,12 @@ void btod_contract2<N, M, K>::make_schedule_task::schedule_block_contraction(
 	typename schedule_t::iterator isch;
 	block_contr_list_pair_t *lstpair = 0;
 
-	{
-
-	libvmm::auto_lock lock(m_sch_lock);
-
 	std::pair<typename schedule_t::iterator, bool> r =
-		m_contr_sch.insert(std::pair<size_t, block_contr_list_pair_t*>(
+		m_contr_sch_local.insert(
+			std::pair<size_t, block_contr_list_pair_t*>(
 			acic.get_abs_index(), lstpair));
 	// Check whether this is the first contraction for this block in C
 	if(r.second) {
-		m_sch.insert(acic.get_abs_index());
 		lstpair = new block_contr_list_pair_t;
 		lstpair->first.push_back(bc);
 		lstpair->second = false;
@@ -362,20 +362,52 @@ void btod_contract2<N, M, K>::make_schedule_task::schedule_block_contraction(
 		isch = r.first;
 	}
 
-	}
+	lstpair = isch->second;
+	merge_node(bc, lstpair->first, lstpair->first.begin());
+}
 
-	while(lstpair == 0) {
-		libvmm::auto_lock lock(m_sch_lock);
-		if(isch->second->second == false) {
-			isch->second->second = true;
-			lstpair = isch->second;
+
+template<size_t N, size_t M, size_t K>
+void btod_contract2<N, M, K>::make_schedule_task::merge_schedule() {
+
+	libvmm::auto_lock lock(m_sch_lock);
+
+	for(typename schedule_t::iterator isrc = m_contr_sch_local.begin();
+		isrc != m_contr_sch_local.end(); isrc++) {
+
+		std::pair<typename schedule_t::iterator, bool> rdst =
+			m_contr_sch.insert(*isrc);
+		if(!rdst.second) {
+			typename schedule_t::iterator idst = rdst.first;
+			merge_lists(isrc->second->first, idst->second->first);
+			delete isrc->second;
 		}
+		isrc->second = 0;
 	}
+	m_contr_sch_local.clear();
+}
 
-	block_contr_list_t &lst = lstpair->first;
 
-	// Find similar contractions already on the list
-	typename block_contr_list_t::iterator ilst = lst.begin();
+template<size_t N, size_t M, size_t K>
+void btod_contract2<N, M, K>::make_schedule_task::merge_lists(
+	const block_contr_list_t &src, block_contr_list_t &dst) {
+
+	typename block_contr_list_t::const_iterator isrc = src.begin();
+	typename block_contr_list_t::iterator idst = dst.begin();
+	for(; isrc != src.end(); isrc++) {
+		idst = merge_node(*isrc, dst, idst);
+	}
+}
+
+
+template<size_t N, size_t M, size_t K>
+typename btod_contract2<N, M, K>::block_contr_list_t::iterator
+btod_contract2<N, M, K>::make_schedule_task::merge_node(
+	const block_contr_t &bc, block_contr_list_t &lst,
+	const typename block_contr_list_t::iterator &begin) {
+
+	typename block_contr_list_t::iterator ilst = begin;
+
 	while(ilst != lst.end() && ilst->m_absidxa < bc.m_absidxa) ilst++;
 	while(ilst != lst.end() && ilst->m_absidxa == bc.m_absidxa &&
 		ilst->m_absidxb < bc.m_absidxb) ilst++;
@@ -401,11 +433,7 @@ void btod_contract2<N, M, K>::make_schedule_task::schedule_block_contraction(
 	// If similar contractions are not found, simply add bc
 	if(!done) lst.insert(ilst, bc);
 
-	{
-		libvmm::auto_lock lock(m_sch_lock);
-		isch->second->second = false;
-		lstpair = 0;
-	}
+	return ilst;
 }
 
 
