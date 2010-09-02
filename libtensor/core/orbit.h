@@ -45,7 +45,6 @@ private:
 private:
 	dimensions<N> m_bidims; //!< Block %index %dimensions
 	orbit_map_t m_orb; //!< Map of %orbit indexes to transformations
-	size_t m_canidx; //!< Absolute %index of the canonical element
 	bool m_allowed; //!< Whether the orbit is allowed by %symmetry
 
 public:
@@ -65,7 +64,7 @@ public:
 	 **/
 	size_t get_abs_canonical_index() const {
 
-		return m_canidx;
+		return m_orb.begin()->first;
 	}
 
 	/**	\brief Returns the number of indexes in the orbit
@@ -119,8 +118,8 @@ public:
 	//@}
 
 private:
-	void mark_orbit(const symmetry<N, T> &sym, const index<N> &idx,
-		std::vector<char> &lst, const transf<N, T> &tr);
+	void build_orbit(const symmetry<N, T> &sym, const index<N> &idx);
+
 };
 
 
@@ -135,20 +134,8 @@ orbit<N, T>::orbit(const symmetry<N, T> &sym, const index<N> &idx) :
 
 	orbit<N, T>::start_timer();
 
-	m_canidx = abs_index<N>(idx, m_bidims).get_abs_index();
 	m_allowed = true;
-
-	std::vector<char> chk(m_bidims.get_size(), 0);
-	transf<N, T> tr;
-	mark_orbit(sym, idx, chk, tr);
-
-	transf<N, T> tr_can(get_transf(m_canidx));
-	tr_can.invert();
-	typename orbit_map_t::iterator i = m_orb.begin();
-	while(i != m_orb.end()) {
-		i->second.transform(tr_can);
-		i++;
-	}
+	build_orbit(sym, idx);
 
 	orbit<N, T>::stop_timer();
 }
@@ -214,30 +201,65 @@ inline const transf<N, T> &orbit<N, T>::get_transf(iterator &i) const {
 
 
 template<size_t N, typename T>
-void orbit<N, T>::mark_orbit(const symmetry<N, T> &sym, const index<N> &idx,
-	std::vector<char> &lst, const transf<N, T> &tr) {
+void orbit<N, T>::build_orbit(const symmetry<N, T> &sym, const index<N> &idx) {
 
-	size_t absidx = abs_index<N>(idx, m_bidims).get_abs_index();
-	if(absidx < m_canidx) m_canidx = absidx;
-	if(lst[absidx] != 0) return;
+	std::vector< index<N> > qi;
+	std::vector< transf<N, T> > qt;
+	std::vector< index<N> > ti;
+	std::vector< transf<N, T> > tt;
 
-	lst[absidx] = 1;
-	m_orb.insert(pair_t(absidx, tr));
-	for(typename symmetry<N, T>::iterator iset = sym.begin();
-		iset != sym.end(); iset++) {
+	qi.reserve(32);
+	qt.reserve(32);
+	ti.reserve(32);
+	tt.reserve(32);
 
-		const symmetry_element_set<N, T> &eset = sym.get_subset(iset);
-		for(typename symmetry_element_set<N, T>::const_iterator ielem =
-			eset.begin(); ielem != eset.end(); ielem++) {
+	abs_index<N> aidx0(idx, m_bidims);
+	m_orb.insert(pair_t(aidx0.get_abs_index(), transf<N, T>()));
 
-			const symmetry_element_i<N, T> &elem =
-				eset.get_elem(ielem);
-			m_allowed = m_allowed && elem.is_allowed(idx);
-			index<N> idx2(idx);
-			transf<N, T> tr2(tr);
-			elem.apply(idx2, tr2);
-			mark_orbit(sym, idx2, lst, tr2);
+	qi.push_back(idx);
+	qt.push_back(transf<N, T>());
+
+	while(!qi.empty()) {
+
+		index<N> idx1(qi.back());
+		transf<N, T> tr1(qt.back());
+		qi.pop_back();
+		qt.pop_back();
+
+		for(typename symmetry<N, T>::iterator iset = sym.begin();
+			iset != sym.end(); iset++) {
+
+			const symmetry_element_set<N, T> &eset =
+				sym.get_subset(iset);
+			for(typename symmetry_element_set<N, T>::const_iterator
+				ielem = eset.begin(); ielem != eset.end();
+				ielem++) {
+
+				const symmetry_element_i<N, T> &elem =
+					eset.get_elem(ielem);
+				m_allowed = m_allowed && elem.is_allowed(idx1);
+				ti.push_back(idx1);
+				tt.push_back(tr1);
+				elem.apply(ti.back(), tt.back());
+			}
 		}
+		for(size_t i = 0; i < ti.size(); i++) {
+			abs_index<N> aidx(ti[i], m_bidims);
+			if(m_orb.insert(pair_t(aidx.get_abs_index(),
+				tt[i])).second) {
+				qi.push_back(ti[i]);
+				qt.push_back(tt[i]);
+			}
+		}
+		ti.clear();
+		tt.clear();
+	}
+
+	transf<N, T> tr0(m_orb.begin()->second);
+	tr0.invert();
+	for(typename orbit_map_t::iterator i = m_orb.begin();
+		i != m_orb.end(); i++) {
+		i->second.transform(tr0);
 	}
 }
 
