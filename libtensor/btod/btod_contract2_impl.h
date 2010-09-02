@@ -723,9 +723,9 @@ void btod_contract2_symmetry_builder_base<N, M, K>::make_symmetry(
 
 	block_tensor_ctrl<N + K, double> ca(bta);
 	block_tensor_ctrl<M + K, double> cb(btb);
-	const sequence<2 * (N + M + K), size_t> &conn = contr.get_conn();
+	block_index_space<N + M + 2 * K> xbis(m_xbis);
 
-	symmetry<N + M + 2 * K, double> xsymab(m_xbis);
+	const sequence<2 * (N + M + K), size_t> &conn = contr.get_conn();
 
 	sequence<N + M + 2 * K, size_t> seq1(0), seq2(0);
 	mask<N + M + 2 * K> msks[K];
@@ -745,6 +745,8 @@ void btod_contract2_symmetry_builder_base<N, M, K>::make_symmetry(
 		}
 	}
 	permutation_builder<N + M + 2 * K> pb(seq2, seq1);
+	xbis.permute(pb.get_perm());
+	symmetry<N + M + 2 * K, double> xsymab(xbis);
 
 	so_concat<N + K, M + K, double>(ca.req_const_symmetry(),
 			cb.req_const_symmetry(), pb.get_perm()).perform(xsymab);
