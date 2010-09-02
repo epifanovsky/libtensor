@@ -27,14 +27,8 @@ namespace libtensor {
 template<typename T>
 class timings {
 private:
-	//~ typedef std::multimap<std::string, timer> map_t; 
 	typedef std::map<std::string, timer*> map_t; 
 	typedef std::pair<std::string, timer*> pair_t;
-
-private:
-#ifdef LIBTENSOR_TIMINGS
-	static libvmm::mutex m_lock; //!< Thread safety lock
-#endif // LIBTENSOR_TIMINGS
 
 public:
 	/**	\brief Virtual destructor
@@ -68,12 +62,6 @@ private:
 };
 
 
-#ifdef LIBTENSOR_TIMINGS
-template<typename T>
-libvmm::mutex timings<T>::m_lock;
-#endif // LIBTENSOR_TIMINGS
-
-
 template<typename T>
 inline void timings<T>::start_timer() {
 
@@ -84,26 +72,24 @@ inline void timings<T>::start_timer() {
 
 
 template<typename T>
-inline void timings<T>::start_timer(const std::string &name) {
+void timings<T>::start_timer(const std::string &name) {
 
 #ifdef LIBTENSOR_TIMINGS
-	libvmm::auto_lock lock(m_lock);
 
 	std::string id;
 	make_id(id, name);
 
 	map_t &timers = libvmm::tls<map_t>::get_instance().get();
-	//~ typename map_t::iterator i = timers.insert(pair_t(id, timer()));
-	//~ i->second.start();
 	timer *t = new timer;
-	std::pair<typename map_t::iterator, bool> i =
+	std::pair<typename map_t::iterator, bool> r =
 		timers.insert(pair_t(id, t));
-	if(i.second == false) {
+	if(!r.second) {
 		delete t;
 		throw_exc("timings<T>", "start_timer(const std::string&)",
 			"Duplicate timer.");		
 	}
 	t->start();
+
 #endif // LIBTENSOR_TIMINGS
 }	
 
@@ -118,10 +104,9 @@ inline void timings<T>::stop_timer() {
 
 
 template<typename T>
-inline void timings<T>::stop_timer(const std::string &name) {
+void timings<T>::stop_timer(const std::string &name) {
 
 #ifdef LIBTENSOR_TIMINGS
-	libvmm::auto_lock lock(m_lock);
 
 	std::string id;
 	make_id(id, name);
@@ -138,6 +123,7 @@ inline void timings<T>::stop_timer(const std::string &name) {
 	timers.erase(i);
 	global_timings::get_instance().add_to_timer(id, *t);
 	delete t;
+
 #endif // LIBTENSOR_TIMINGS
 }
 
