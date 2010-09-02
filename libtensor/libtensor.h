@@ -82,6 +82,9 @@
 #include "btod/btod_sum.h"
 
 
+#include "symmetry/point_group_table.h"
+#include "symmetry/product_table_container.h"
+#include "symmetry/se_label.h"
 #include "symmetry/se_perm.h"
 
 
