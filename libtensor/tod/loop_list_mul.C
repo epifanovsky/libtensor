@@ -14,9 +14,9 @@ const char *loop_list_mul::k_clazz = "loop_list_mul";
 
 void loop_list_mul::run_loop(list_t &loop, registers &r, double c) {
 
-//	std::cout << "[";
+	std::cout << "[";
 	match_l1(loop, c);
-//	std::cout << "]" << std::endl;
+	std::cout << "]" << std::endl;
 
 	loop_list_mul::start_timer(m_kernelname);
 
@@ -523,7 +523,7 @@ void loop_list_mul::match_dgemv_n_b_l3(list_t &loop, double d, size_t w1,
 	}
 	if(i1 != loop.end()) {
 		m_kernelname = "ij_ip_jp";
-		//~ std::cout << m_kernelname;
+		std::cout << m_kernelname << ";";
 		i1->fn() = &loop_list_mul::fn_ij_ip_jp;
 		args_ij_ip_jp &args = m_ij_ip_jp;
 		args.d = d;
@@ -533,6 +533,7 @@ void loop_list_mul::match_dgemv_n_b_l3(list_t &loop, double d, size_t w1,
 		args.sia = i1->stepa(0);
 		args.sic = i1->stepb(0);
 		args.sjb = k1w1;
+		match_ij_ip_jp(loop);
 		loop.splice(loop.end(), loop, i1);
 		return;
 	}
@@ -1054,6 +1055,113 @@ void loop_list_mul::match_i_pq_iqp(list_t &loop, double d, size_t ni, size_t np,
 		loop.splice(loop.end(), loop, i1);
 		return;
 	}
+}
+
+
+void loop_list_mul::match_ij_ip_jp(list_t &loop) {
+/*
+	if(loop.size() < 6) return;
+
+	//	Found pattern:
+	//	-----------------
+	//	w   a    b    c
+	//	p   1    1    0
+	//	j   0    sjb  1
+	//	i   sia  0    sic  -->  [ij_ip_jp]
+	//	-----------------
+
+	//	Match q, k, l:
+	//	-----------------
+	//	w   a    b    c
+	//	p   1    1    0
+	//	j   0    sjb  1     sjb = np
+	//	i   sia  0    sic   sia = np
+	//	-----------------
+	//	q   sqa  sqb  0     sqa = sia * k1a;  sqb = sjb * k1b
+	//	k   0    skb  skc   skb = sjb * nj * k2b;  skc = nj * k2c;  sic = skc * nk
+	//	l   sla  0    slc   sla = sqa * nq;  slc = nj
+	//	-----------------
+	//
+	//	1.
+	//	 iklj_qlip_kqjp     k1a > 1;  k1b = 1;  k2b > 1;  k2c = nl
+	//	[ijkl_pkiq_jplq]
+	//
+	//	2.
+	//	 iklj_qlip_qkjp     k1a > 1;  k1b > 1;  k2b = 1;  k2c = nl
+	//	[ijkl_pkiq_pjlq]
+	//
+
+	args_ij_ip_jp &args0 = m_ij_ip_jp;
+	if(args0.sia != args0.np || args0.sjb != args0.np) return;
+
+	iterator_t iq1 = loop.end(), iq2 = loop.end();
+	size_t k1ak1b_min = 0;
+	bool foundq = false;
+	for(iterator_t i = loop.begin(); i != loop.end(); i++) {
+		if(i->stepb(0) != 0) continue;
+		if(i->stepa(0) % args0.sia != 0) continue;
+		if(i->stepa(1) % args0.sjb != 0) continue;
+		register size_t k1a = i->stepa(0) / args0.sia;
+		register size_t k1b = i->stepa(1) / args0.sjb;
+		if(k1a > 1) {
+			if(k1b == 1) {
+				iq1 = i;
+			} else {
+				if(k1ak1b_min == 0 || k1ak1b_min > k1a * k1b) {
+					k1ak1b_min = k1a * k1b;
+					iq2 = i;
+				}
+			}
+		}
+		foundq = true;
+	}
+	if(!foundq) return;
+
+	iterator_t ik1 = loop.end(), ik2 = loop.end();
+	size_t k2b_min = 0, k2c_min = 0;
+	bool foundk = false;
+	for(iterator_t i = loop.begin(); i != loop.end(); i++) {
+		if(i->stepa(0) != 0) continue;
+		if(i->stepb(0) * i->weight() != args0.sic) continue;
+		if(i->stepa(1) % (args0.sjb * args0.nj) != 0) continue;
+		if(i->stepb(0) % args0.nj != 0) continue;
+		register size_t k2b = i->stepa(1) / (args0.sjb * args0.nj);
+		register size_t k2c = i->stepb(0) / args0.nj;
+		if(k2b == 1) {
+			if(iq2 != loop.end()) {
+				ik2 = i; k2c_min = k2c; foundk = true;
+			}
+		} else {
+			if(k2b_min == 0 || k2b_min > k2b) {
+				k2b_min = k2b;
+				if(iq1 != loop.end()) {
+					ik1 = i; k2c_min = k2c; foundk = true;
+				}
+			}
+		}
+	}
+	if(!foundk) return;
+
+	//	l   sla  0    slc   sla = sqa * nq;  slc = nj
+	iterator_t il1 = loop.end(), il2 = loop.end();
+	bool foundl = false;
+	for(iterator_t i = loop.begin(); i != loop.end(); i++) {
+		if(i->stepa(1) != 0) continue;
+		if(i->stepb(0) != args0.nj) continue;
+		if(iq1 != loop.end())
+		if(i->stepa(0) % (args0.sja * args0.nj) != 0) continue;
+		register size_t k3 = i->stepa(0) / (args0.sja * args0.nj);
+		if(k3 == 1) {
+			if(ik3 != loop.end()) { il3 = i; foundl = true; }
+			if(ik4 != loop.end()) { il4 = i; foundl = true; }
+		} else {
+			if(k3_min == 0 || k3_min > k3) {
+				if(ik1 != loop.end()) { il1 = i; foundl = true; }
+				if(ik2 != loop.end()) { il2 = i; foundl = true; }
+			}
+		}
+	}
+	if(!foundl) return;*/
 }
 
 
@@ -2404,6 +2512,66 @@ void loop_list_mul::fn_ijkl_piql_pkqj(registers &r) const {
 #endif // LIBTENSOR_DEBUG
 
 	linalg::ijkl_piql_pkqj(r.m_ptra[0], r.m_ptra[1], r.m_ptrb[0], args.d,
+		args.ni, args.nj, args.nk, args.nl, args.np, args.nq);
+}
+
+
+void loop_list_mul::fn_ijkl_pkiq_jplq(registers &r) const {
+
+	static const char *method = "fn_ijkl_pkiq_jplq(registers&)";
+
+	const args_ijkl_pkiq_jplq &args = m_ijkl_pkiq_jplq;
+
+#ifdef LIBTENSOR_DEBUG
+	register size_t sz;
+	sz = args.np * args.nk * args.ni * args.nq;
+	if(r.m_ptra[0] + sz > r.m_ptra_end[0]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"source-1");
+	}
+	sz = args.nj * args.np * args.nl * args.nq;
+	if(r.m_ptra[1] + sz > r.m_ptra_end[1]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"source-2");
+	}
+	sz = args.ni * args.nj * args.nk * args.nl;
+	if(r.m_ptrb[0] + sz > r.m_ptrb_end[0]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"destination");
+	}
+#endif // LIBTENSOR_DEBUG
+
+	linalg::ijkl_pkiq_jplq(r.m_ptra[0], r.m_ptra[1], r.m_ptrb[0], args.d,
+		args.ni, args.nj, args.nk, args.nl, args.np, args.nq);
+}
+
+
+void loop_list_mul::fn_ijkl_pkiq_pjlq(registers &r) const {
+
+	static const char *method = "fn_ijkl_pkiq_pjlq(registers&)";
+
+	const args_ijkl_pkiq_pjlq &args = m_ijkl_pkiq_pjlq;
+
+#ifdef LIBTENSOR_DEBUG
+	register size_t sz;
+	sz = args.np * args.nk * args.ni * args.nq;
+	if(r.m_ptra[0] + sz > r.m_ptra_end[0]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"source-1");
+	}
+	sz = args.np * args.nj * args.nl * args.nq;
+	if(r.m_ptra[1] + sz > r.m_ptra_end[1]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"source-2");
+	}
+	sz = args.ni * args.nj * args.nk * args.nl;
+	if(r.m_ptrb[0] + sz > r.m_ptrb_end[0]) {
+		throw overflow(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"destination");
+	}
+#endif // LIBTENSOR_DEBUG
+
+	linalg::ijkl_pkiq_pjlq(r.m_ptra[0], r.m_ptra[1], r.m_ptrb[0], args.d,
 		args.ni, args.nj, args.nk, args.nl, args.np, args.nq);
 }
 
