@@ -334,8 +334,9 @@ void btod_contract2<N, M, K>::make_schedule_task::make_schedule_b(
 
 	const transf<k_orderb, double> &trb = ob.get_transf(ib);
 	block_contr_t bc(acia.get_abs_index(), acib.get_abs_index(),
-		tra.get_coeff() * trb.get_coeff(), tra.get_perm(),
-		trb.get_perm());
+		tra.get_coeff() * trb.get_coeff(),
+		permutation<N + K>(tra.get_perm(), true),
+		permutation<M + K>(trb.get_perm(), true));
 	schedule_block_contraction(acic, bc);
 }
 

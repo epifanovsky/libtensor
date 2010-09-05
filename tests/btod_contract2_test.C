@@ -2473,29 +2473,29 @@ void btod_contract2_test::test_contr_19()
 	se_perm<4, double> sp0132(permutation<4>().permute(2, 3), false);
 	se_perm<4, double> sp2301(permutation<4>().permute(0, 2).permute(1, 3), true);
 
-//	se_label<4, double> sla(bis_iiii.get_block_index_dims(), ss.str());
-//	sla.assign(m1, 0, 0);
-//	sla.assign(m1, 1, 1);
-//	sla.assign(m1, 2, 1);
-//	sla.add_target(0);
-//	se_label<4, double> slb(bis_iiaa.get_block_index_dims(), ss.str());
-//	slb.assign(m2, 0, 0);
-//	slb.assign(m2, 1, 1);
-//	slb.assign(m2, 2, 1);
-//	slb.assign(m3, 0, 0);
-//	slb.assign(m3, 1, 0);
-//	slb.assign(m3, 2, 1);
-//	slb.assign(m3, 3, 1);
-//	slb.add_target(0);
+	se_label<4, double> sla(bis_iiii.get_block_index_dims(), ss.str());
+	sla.assign(m1, 0, 0);
+	sla.assign(m1, 1, 1);
+	sla.assign(m1, 2, 1);
+	sla.add_target(0);
+	se_label<4, double> slb(bis_iiaa.get_block_index_dims(), ss.str());
+	slb.assign(m2, 0, 0);
+	slb.assign(m2, 1, 1);
+	slb.assign(m2, 2, 1);
+	slb.assign(m3, 0, 0);
+	slb.assign(m3, 1, 0);
+	slb.assign(m3, 2, 1);
+	slb.assign(m3, 3, 1);
+	slb.add_target(0);
 
 	block_tensor_ctrl<4, double> ca(bta), cb(btb), cc(btc);
 	ca.req_symmetry().insert(sp1023);
 	ca.req_symmetry().insert(sp0132);
 	ca.req_symmetry().insert(sp2301);
-//	ca.req_symmetry().insert(sla);
+	ca.req_symmetry().insert(sla);
 	cb.req_symmetry().insert(sp1023);
 	cb.req_symmetry().insert(sp0132);
-//	cb.req_symmetry().insert(slb);
+	cb.req_symmetry().insert(slb);
 	}
 
 	//	Load random data for input
@@ -2528,11 +2528,11 @@ void btod_contract2_test::test_contr_19()
 	compare_ref<4>::compare(tn.c_str(), tc, tc_ref, 1e-14);
 
 	} catch(exception &e) {
-		product_table_container::get_instance().erase(ss.str());
+//		product_table_container::get_instance().erase(ss.str());
 		fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
 	}
 
-	product_table_container::get_instance().erase(ss.str());
+//	product_table_container::get_instance().erase(ss.str());
 
 }
 
