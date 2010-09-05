@@ -4,6 +4,9 @@
 #include <libtensor/btod/btod_contract2.h>
 #include <libtensor/btod/btod_copy.h>
 #include <libtensor/btod/btod_random.h>
+#include <libtensor/symmetry/point_group_table.h>
+#include <libtensor/symmetry/product_table_container.h>
+#include <libtensor/symmetry/se_label.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/symmetry/so_copy.h>
 #include <libtensor/tod/tod_btconv.h>
@@ -12,7 +15,6 @@
 #include "compare_ref.h"
 
 namespace libtensor {
-
 
 void btod_contract2_test::perform() throw(libtest::test_exception) {
 
@@ -61,8 +63,9 @@ void btod_contract2_test::perform() throw(libtest::test_exception) {
 	test_contr_16(-2.2);
 	test_contr_17(0.0);
 	test_contr_17(1.5);
-	test_contr_18(0.0);
-	test_contr_18(-1.5);
+//	test_contr_18(0.0);
+//	test_contr_18(-1.5);
+	test_contr_19();
 
 	//	Tests for the contraction of a block tensor with itself
 
@@ -2419,6 +2422,119 @@ void btod_contract2_test::test_contr_18(double c)
 	}
 }
 
+void btod_contract2_test::test_contr_19()
+	throw(libtest::test_exception) {
+
+	//
+	//	c_ijab = a_ijkl b_klab
+	//	Dimensions [ijkl] = 10 (four blocks), [ab] = 16 (six blocks),
+	//	perm and label symmetry
+	//
+
+	std::ostringstream ss;
+	ss << "btod_contract2_test::test_contr_19()";
+	std::string tn = ss.str();
+
+	point_group_table pg(ss.str(), 2);
+	pg.add_product(0, 0, 0);
+	pg.add_product(0, 1, 1);
+	pg.add_product(1, 1, 0);
+
+	product_table_container::get_instance().add(pg);
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<4> i1a, i2a, i1b, i2b;
+	i2a[0] = 9; i2a[1] = 9; i2a[2] = 9; i2a[3] = 9;
+	i2b[0] = 9; i2b[1] = 9; i2b[2] = 15; i2b[3] = 15;
+	dimensions<4> dims_iiii(index_range<4>(i1a, i2a));
+	dimensions<4> dims_iiaa(index_range<4>(i1b, i2b));
+
+	block_index_space<4> bis_iiaa(dims_iiaa), bis_iiii(dims_iiii);
+	mask<4> m1, m2, m3;
+	m1[0] = true; m1[1] = true; m1[2] = true; m1[3] = true;
+	m2[0] = true; m2[1] = true; m3[2] = true; m3[3] = true;
+	bis_iiii.split(m1, 4);
+	bis_iiii.split(m1, 7);
+	bis_iiaa.split(m2, 4);
+	bis_iiaa.split(m2, 7);
+	bis_iiaa.split(m3, 5);
+	bis_iiaa.split(m3, 9);
+	bis_iiaa.split(m3, 15);
+
+	block_tensor<4, double, allocator_t> bta(bis_iiii);
+	block_tensor<4, double, allocator_t> btb(bis_iiaa);
+	block_tensor<4, double, allocator_t> btc(bis_iiaa);
+
+	{ // set symmetry
+	se_perm<4, double> sp1023(permutation<4>().permute(0, 1), false);
+	se_perm<4, double> sp0132(permutation<4>().permute(2, 3), false);
+	se_perm<4, double> sp2301(permutation<4>().permute(0, 2).permute(1, 3), true);
+
+//	se_label<4, double> sla(bis_iiii.get_block_index_dims(), ss.str());
+//	sla.assign(m1, 0, 0);
+//	sla.assign(m1, 1, 1);
+//	sla.assign(m1, 2, 1);
+//	sla.add_target(0);
+//	se_label<4, double> slb(bis_iiaa.get_block_index_dims(), ss.str());
+//	slb.assign(m2, 0, 0);
+//	slb.assign(m2, 1, 1);
+//	slb.assign(m2, 2, 1);
+//	slb.assign(m3, 0, 0);
+//	slb.assign(m3, 1, 0);
+//	slb.assign(m3, 2, 1);
+//	slb.assign(m3, 3, 1);
+//	slb.add_target(0);
+
+	block_tensor_ctrl<4, double> ca(bta), cb(btb), cc(btc);
+	ca.req_symmetry().insert(sp1023);
+	ca.req_symmetry().insert(sp0132);
+	ca.req_symmetry().insert(sp2301);
+//	ca.req_symmetry().insert(sla);
+	cb.req_symmetry().insert(sp1023);
+	cb.req_symmetry().insert(sp0132);
+//	cb.req_symmetry().insert(slb);
+	}
+
+	//	Load random data for input
+
+	btod_random<4>().perform(bta);
+	btod_random<4>().perform(btb);
+	bta.set_immutable();
+	btb.set_immutable();
+
+	//	Convert block tensors to regular tensors
+
+	tensor<4, double, allocator_t> ta(dims_iiii);
+	tensor<4, double, allocator_t> tb(dims_iiaa);
+	tensor<4, double, allocator_t> tc(dims_iiaa), tc_ref(dims_iiaa);
+	tod_btconv<4>(bta).perform(ta);
+	tod_btconv<4>(btb).perform(tb);
+	tod_btconv<4>(btc).perform(tc_ref);
+
+	//	Run contraction and compute the reference
+
+	contraction2<2, 2, 2> contr;
+	contr.contract(2, 0);
+	contr.contract(3, 1);
+	btod_contract2<2, 2, 2>(contr, bta, btb).perform(btc);
+	tod_btconv<4>(btc).perform(tc);
+	tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc_ref);
+
+	//	Compare against reference
+
+	compare_ref<4>::compare(tn.c_str(), tc, tc_ref, 1e-14);
+
+	} catch(exception &e) {
+		product_table_container::get_instance().erase(ss.str());
+		fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
+	}
+
+	product_table_container::get_instance().erase(ss.str());
+
+}
 
 /**	\test Tests \f$ c_{ijab} = a_{ia} a_{jb} \f$, expected perm symmetry
 		\f$ c_{ijab} = c_{jiba} \f$.
