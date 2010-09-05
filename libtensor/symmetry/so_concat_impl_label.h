@@ -82,9 +82,10 @@ void symmetry_operation_impl< so_concat<N, M, T>,
 
 			size_t ktype = e1.get_dim_type(k);
 			for (size_t l = 0; l < e1.get_dim(ktype); l++) {
-				if (! e1.is_valid(e1.get_label(ktype, l))) continue;
+				typename se_label<N, T>::label_t label = e1.get_label(ktype, l);
+				if (! e1.is_valid(label)) continue;
 
-				e3.assign(msk, l, e1.get_label(ktype, l));
+				e3.assign(msk, l, label);
 			}
 		}
 
@@ -111,9 +112,11 @@ void symmetry_operation_impl< so_concat<N, M, T>,
 
 				size_t ktype = e2.get_dim_type(k);
 				for (size_t l = 0; l < e2.get_dim(ktype); l++) {
-					if (! e2.is_valid(e2.get_label(ktype, l))) continue;
+					typename se_label<M, T>::label_t label =
+							e2.get_label(ktype, l);
+					if (! e2.is_valid(label)) continue;
 
-					e3.assign(msk, l, e2.get_label(ktype, l));
+					e3.assign(msk, l, label);
 				}
 			}
 
@@ -129,7 +132,7 @@ void symmetry_operation_impl< so_concat<N, M, T>,
 				for (size_t l = 0; l < e2.get_n_targets(); l++) {
 					lg[0] = e1.get_target(k);
 					lg[1] = e2.get_target(l);
-					for (product_table_i::label_t m = 0; m < pt.nlabels(); m++)
+					for (typename se_label<N + M,T>::label_t m = 0; m < pt.nlabels(); m++)
 						if (pt.is_in_product(lg, m)) e3.add_target(m);
 				}
 			}
@@ -161,9 +164,10 @@ void symmetry_operation_impl< so_concat<N, M, T>,
 
 			size_t ktype = e2.get_dim_type(k);
 			for (size_t l = 0; l < e2.get_dim(ktype); l++) {
-				if (! e2.is_valid(e2.get_label(ktype, l))) continue;
+				typename se_label<M, T>::label_t label = e2.get_label(ktype, l);
+				if (! e2.is_valid(label)) continue;
 
-				e3.assign(msk, l, e2.get_label(ktype, l));
+				e3.assign(msk, l, label);
 			}
 		}
 
