@@ -355,6 +355,7 @@ void btod_diag<N, M>::make_schedule() {
 		}
 	}
 
+	orbit_list<k_ordera, double> ola(ctrla.req_const_symmetry());
 	orbit_list<k_orderb, double> olb(m_sym);
 	for (typename orbit_list<k_orderb, double>::iterator iob = olb.begin();
 			iob != olb.end(); iob++) {
@@ -366,6 +367,8 @@ void btod_diag<N, M>::make_schedule() {
 		for(size_t i = 0; i < k_ordera; i++) idxa[i] = idxb[map[i]];
 
 		orbit<k_ordera, double> oa(ctrla.req_const_symmetry(), idxa);
+		if(! ola.contains(oa.get_abs_canonical_index())) continue;
+
 		abs_index<k_ordera> cidxa(oa.get_abs_canonical_index(), bidimsa);
 
 		if(ctrla.req_is_zero_block(cidxa.get_index())) continue;
