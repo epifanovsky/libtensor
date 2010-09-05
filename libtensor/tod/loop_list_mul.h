@@ -215,18 +215,6 @@ private:
 		size_t ni, nj, nk, nl, np, nq;
 	} m_ijkl_piql_pkqj;
 
-	//!	c_ijkl = a_pkiq b_jplq
-	struct args_ijkl_pkiq_jplq {
-		double d;
-		size_t ni, nj, nk, nl, np, nq;
-	} m_ijkl_pkiq_jplq;
-
-	//!	c_ijkl = a_pkiq b_pjlq
-	struct args_ijkl_pkiq_pjlq {
-		double d;
-		size_t ni, nj, nk, nl, np, nq;
-	} m_ijkl_pkiq_pjlq;
-
 	const char *m_kernelname;
 
 protected:
@@ -255,7 +243,6 @@ private:
 		size_t nq, size_t sia, size_t spa, size_t sqb);
 	void match_i_pq_iqp(list_t &loop, double d, size_t ni, size_t np,
 		size_t nq, size_t sib, size_t spa, size_t sqb);
-	void match_ij_ip_jp(list_t &loop);
 	void match_ij_jp_ip(list_t &loop);
 	void match_ij_jp_pi(list_t &loop);
 	void match_ij_pj_pi(list_t &loop);
@@ -289,8 +276,6 @@ private:
 	void fn_ijkl_pilq_pkjq(registers &r) const;
 	void fn_ijkl_piql_kpqj(registers &r) const;
 	void fn_ijkl_piql_pkqj(registers &r) const;
-	void fn_ijkl_pkiq_jplq(registers &r) const;
-	void fn_ijkl_pkiq_pjlq(registers &r) const;
 
 };
 
