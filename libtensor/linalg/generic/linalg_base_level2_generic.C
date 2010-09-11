@@ -1,0 +1,60 @@
+#include "linalg_base_level2_generic.h"
+
+namespace libtensor {
+
+
+void linalg_base_level2_generic::i_ip_p_x(
+	size_t ni, size_t np,
+	const double *a, size_t sia,
+	const double *b, size_t spb,
+	double *c, size_t sic,
+	double d) {
+
+	for(size_t i = 0; i < ni; i++) {
+		double ci = 0.0;
+		for(size_t p = 0; p < np; p++) {
+			ci += a[i * sia + p] * b[p * spb];
+		}
+		c[i * sic] += d * ci;
+	}
+}
+
+
+void linalg_base_level2_generic::i_pi_p_x(
+	size_t ni, size_t np,
+	const double *a, size_t spa,
+	const double *b, size_t spb,
+	double *c, size_t sic,
+	double d) {
+
+	for(size_t p = 0; p < np; p++)
+	for(size_t i = 0; i < ni; i++) {
+		c[i * sic] += d * a[p * spa + i] * b[p * spb];
+	}
+}
+
+
+void linalg_base_level2_generic::ij_i_j_x(
+	size_t ni, size_t nj,
+	const double *a, size_t sia,
+	const double *b, size_t sjb,
+	double *c, size_t sic,
+	double d) {
+
+	for(size_t i = 0; i < ni; i++)
+	for(size_t j = 0; j < nj; j++) {
+		c[i * sic + j] += d * a[i * sia] * b[j * sjb];
+	}
+}
+
+
+void linalg_base_level2_generic::ij_ji_x(
+	size_t ni, size_t nj,
+	const double *a, size_t sja,
+	double b,
+	double *c, size_t sic) {
+
+}
+
+
+} // namespace libtensor
