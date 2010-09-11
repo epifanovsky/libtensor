@@ -26,19 +26,19 @@ void linalg_base_level6_adaptive<M, L1, L2, L3>::ijkl_pliq_jpqk_x(
 	double *c1 = M::allocate(njk * nil1);
 
 	//	a1_ilpq <- a_pliq
-	trp_ijkl_kjil(ni, nl, np, nq, a, ni * nq, a1, npq1);
+	trp_ijkl_kjil::transpose(ni, nl, np, nq, a, ni * nq, a1, npq1);
 
 	//	b1_pqjk <- b_jpqk
-	trp_ijkl_kijl(np, nq, nj, nk, b, nq * nk, b1, njk1);
+	trp_ijkl_kijl::transpose(np, nq, nj, nk, b, nq * nk, b1, njk1);
 
 	//	c1_jkil <- c_ijkl
-	trp_ijkl_kijl(nj, nk, ni, nl, c, nk * nl, c1, nil1);
+	trp_ijkl_kijl::transpose(nj, nk, ni, nl, c, nk * nl, c1, nil1);
 
 	//	c1_jkil += d * b1_pqjk a1_ilpq
 	L3::ij_pi_jp_x(njk, nil, npq, b1, njk1, a1, npq1, c1, nil1, d);
 
 	//	c_ijkl <- c1_jkil
-	trp_ijkl_jkil(ni, nj, nk, nl, c1, nil1, c, nk * nl);
+	trp_ijkl_jkil::transpose(ni, nj, nk, nl, c1, nil1, c, nk * nl);
 
 	M::deallocate(c1);
 	M::deallocate(b1);

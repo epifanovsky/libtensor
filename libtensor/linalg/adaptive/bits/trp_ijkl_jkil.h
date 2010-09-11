@@ -21,7 +21,7 @@ struct trp_ijkl_jkil {
 		for(size_t j = 0; j < nj; j++) {
 		for(size_t k = 0; k < nk; k++, aa += ska) {
 		for(size_t i = 0; i < ni; i++) {
-			memcpy(b + (i * nj + j) * sjb + k * nl, aa + j * nl,
+			memcpy(b + (i * nj + j) * sjb + k * nl, aa + i * nl,
 				sizeof(double) * nl);
 		}
 		}

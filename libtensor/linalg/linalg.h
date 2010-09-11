@@ -32,6 +32,8 @@ class linalg :
 } // namespace libtensor
 
 
+#include "generic/linalg_base_generic.h"
+
 #if defined(USE_MKL)
 #include "mkl/linalg_base_mkl.h"
 namespace libtensor {
@@ -63,7 +65,6 @@ typedef linalg_base_qchem linalg_base;
 } // namespace libtensor
 
 #else
-#include "generic/linalg_base_generic.h"
 namespace libtensor {
 typedef linalg_base_generic linalg_base;
 } // namespace libtensor

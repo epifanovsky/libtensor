@@ -56,49 +56,49 @@ private:
 	void test_ijkl_ipl_kpj(size_t ni, size_t nj, size_t nk, size_t nl,
 		size_t np) throw(libtest::test_exception);
 
-	void test_ijkl_iplq_kpjq(size_t ni, size_t nj, size_t nk, size_t nl,
+	void test_ijkl_iplq_kpjq_x(size_t ni, size_t nj, size_t nk, size_t nl,
 		size_t np, size_t nq) throw(libtest::test_exception);
 
-	void test_ijkl_iplq_pkjq(size_t ni, size_t nj, size_t nk, size_t nl,
+	void test_ijkl_iplq_pkjq_x(size_t ni, size_t nj, size_t nk, size_t nl,
 		size_t np, size_t nq) throw(libtest::test_exception);
 
-	void test_ijkl_iplq_pkqj(size_t ni, size_t nj, size_t nk, size_t nl,
+	void test_ijkl_iplq_pkqj_x(size_t ni, size_t nj, size_t nk, size_t nl,
 		size_t np, size_t nq) throw(libtest::test_exception);
 
-	void test_ijkl_ipql_pkqj(size_t ni, size_t nj, size_t nk, size_t nl,
+	void test_ijkl_ipql_pkqj_x(size_t ni, size_t nj, size_t nk, size_t nl,
 		size_t np, size_t nq) throw(libtest::test_exception);
 
-	void test_ijkl_pilq_kpjq(size_t ni, size_t nj, size_t nk, size_t nl,
+	void test_ijkl_pilq_kpjq_x(size_t ni, size_t nj, size_t nk, size_t nl,
 		size_t np, size_t nq) throw(libtest::test_exception);
 
-	void test_ijkl_pilq_pkjq(size_t ni, size_t nj, size_t nk, size_t nl,
+	void test_ijkl_pilq_pkjq_x(size_t ni, size_t nj, size_t nk, size_t nl,
 		size_t np, size_t nq) throw(libtest::test_exception);
 
-	void test_ijkl_piql_kpqj(size_t ni, size_t nj, size_t nk, size_t nl,
+	void test_ijkl_piql_kpqj_x(size_t ni, size_t nj, size_t nk, size_t nl,
 		size_t np, size_t nq) throw(libtest::test_exception);
 
-	void test_ijkl_piql_pkqj(size_t ni, size_t nj, size_t nk, size_t nl,
+	void test_ijkl_piql_pkqj_x(size_t ni, size_t nj, size_t nk, size_t nl,
 		size_t np, size_t nq) throw(libtest::test_exception);
 
-	void test_ijkl_pkiq_jplq(size_t ni, size_t nj, size_t nk, size_t nl,
+	void test_ijkl_pkiq_jplq_x(size_t ni, size_t nj, size_t nk, size_t nl,
 		size_t np, size_t nq) throw(libtest::test_exception);
 
-	void test_ijkl_pkiq_jpql(size_t ni, size_t nj, size_t nk, size_t nl,
+	void test_ijkl_pkiq_jpql_x(size_t ni, size_t nj, size_t nk, size_t nl,
 		size_t np, size_t nq) throw(libtest::test_exception);
 
-	void test_ijkl_pkiq_pjlq(size_t ni, size_t nj, size_t nk, size_t nl,
+	void test_ijkl_pkiq_pjlq_x(size_t ni, size_t nj, size_t nk, size_t nl,
 		size_t np, size_t nq) throw(libtest::test_exception);
 
-	void test_ijkl_pkiq_pjql(size_t ni, size_t nj, size_t nk, size_t nl,
+	void test_ijkl_pkiq_pjql_x(size_t ni, size_t nj, size_t nk, size_t nl,
 		size_t np, size_t nq) throw(libtest::test_exception);
 
-	void test_ijkl_pliq_jpkq(size_t ni, size_t nj, size_t nk, size_t nl,
+	void test_ijkl_pliq_jpkq_x(size_t ni, size_t nj, size_t nk, size_t nl,
 		size_t np, size_t nq) throw(libtest::test_exception);
 
-	void test_ijkl_pliq_jpqk(size_t ni, size_t nj, size_t nk, size_t nl,
+	void test_ijkl_pliq_jpqk_x(size_t ni, size_t nj, size_t nk, size_t nl,
 		size_t np, size_t nq) throw(libtest::test_exception);
 
-	void test_ijkl_pliq_pjqk(size_t ni, size_t nj, size_t nk, size_t nl,
+	void test_ijkl_pliq_pjqk_x(size_t ni, size_t nj, size_t nk, size_t nl,
 		size_t np, size_t nq) throw(libtest::test_exception);
 
 	bool cmp(double diff, double ref);

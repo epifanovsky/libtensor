@@ -119,185 +119,185 @@ void linalg_test::perform() throw(libtest::test_exception) {
 	test_ijkl_ipl_kpj(16, 16, 16, 16, 16);
 	test_ijkl_ipl_kpj(17, 16, 17, 16, 17);
 
-	test_ijkl_iplq_kpjq(1, 1, 1, 1, 1, 1);
-	test_ijkl_iplq_kpjq(2, 1, 1, 1, 1, 1);
-	test_ijkl_iplq_kpjq(1, 2, 1, 1, 1, 1);
-	test_ijkl_iplq_kpjq(1, 1, 2, 1, 1, 1);
-	test_ijkl_iplq_kpjq(1, 1, 1, 2, 1, 1);
-	test_ijkl_iplq_kpjq(1, 1, 1, 1, 2, 1);
-	test_ijkl_iplq_kpjq(1, 1, 1, 1, 1, 2);
-	test_ijkl_iplq_kpjq(2, 3, 2, 3, 2, 3);
-	test_ijkl_iplq_kpjq(3, 5, 1, 7, 13, 11);
-	test_ijkl_iplq_kpjq(16, 16, 16, 16, 16, 16);
-	test_ijkl_iplq_kpjq(17, 16, 17, 16, 17, 16);
+	test_ijkl_iplq_kpjq_x(1, 1, 1, 1, 1, 1);
+	test_ijkl_iplq_kpjq_x(2, 1, 1, 1, 1, 1);
+	test_ijkl_iplq_kpjq_x(1, 2, 1, 1, 1, 1);
+	test_ijkl_iplq_kpjq_x(1, 1, 2, 1, 1, 1);
+	test_ijkl_iplq_kpjq_x(1, 1, 1, 2, 1, 1);
+	test_ijkl_iplq_kpjq_x(1, 1, 1, 1, 2, 1);
+	test_ijkl_iplq_kpjq_x(1, 1, 1, 1, 1, 2);
+	test_ijkl_iplq_kpjq_x(2, 3, 2, 3, 2, 3);
+	test_ijkl_iplq_kpjq_x(3, 5, 1, 7, 13, 11);
+	test_ijkl_iplq_kpjq_x(16, 16, 16, 16, 16, 16);
+	test_ijkl_iplq_kpjq_x(17, 16, 17, 16, 17, 16);
 
-	test_ijkl_iplq_pkjq(1, 1, 1, 1, 1, 1);
-	test_ijkl_iplq_pkjq(2, 1, 1, 1, 1, 1);
-	test_ijkl_iplq_pkjq(1, 2, 1, 1, 1, 1);
-	test_ijkl_iplq_pkjq(1, 1, 2, 1, 1, 1);
-	test_ijkl_iplq_pkjq(1, 1, 1, 2, 1, 1);
-	test_ijkl_iplq_pkjq(1, 1, 1, 1, 2, 1);
-	test_ijkl_iplq_pkjq(1, 1, 1, 1, 1, 2);
-	test_ijkl_iplq_pkjq(2, 3, 2, 3, 2, 3);
-	test_ijkl_iplq_pkjq(3, 5, 1, 7, 13, 11);
-	test_ijkl_iplq_pkjq(16, 16, 16, 16, 16, 16);
-	test_ijkl_iplq_pkjq(17, 16, 17, 16, 17, 16);
+	test_ijkl_iplq_pkjq_x(1, 1, 1, 1, 1, 1);
+	test_ijkl_iplq_pkjq_x(2, 1, 1, 1, 1, 1);
+	test_ijkl_iplq_pkjq_x(1, 2, 1, 1, 1, 1);
+	test_ijkl_iplq_pkjq_x(1, 1, 2, 1, 1, 1);
+	test_ijkl_iplq_pkjq_x(1, 1, 1, 2, 1, 1);
+	test_ijkl_iplq_pkjq_x(1, 1, 1, 1, 2, 1);
+	test_ijkl_iplq_pkjq_x(1, 1, 1, 1, 1, 2);
+	test_ijkl_iplq_pkjq_x(2, 3, 2, 3, 2, 3);
+	test_ijkl_iplq_pkjq_x(3, 5, 1, 7, 13, 11);
+	test_ijkl_iplq_pkjq_x(16, 16, 16, 16, 16, 16);
+	test_ijkl_iplq_pkjq_x(17, 16, 17, 16, 17, 16);
 
-	test_ijkl_iplq_pkqj(1, 1, 1, 1, 1, 1);
-	test_ijkl_iplq_pkqj(2, 1, 1, 1, 1, 1);
-	test_ijkl_iplq_pkqj(1, 2, 1, 1, 1, 1);
-	test_ijkl_iplq_pkqj(1, 1, 2, 1, 1, 1);
-	test_ijkl_iplq_pkqj(1, 1, 1, 2, 1, 1);
-	test_ijkl_iplq_pkqj(1, 1, 1, 1, 2, 1);
-	test_ijkl_iplq_pkqj(1, 1, 1, 1, 1, 2);
-	test_ijkl_iplq_pkqj(2, 3, 2, 3, 2, 3);
-	test_ijkl_iplq_pkqj(3, 5, 1, 7, 13, 11);
-	test_ijkl_iplq_pkqj(16, 16, 16, 16, 16, 16);
-	test_ijkl_iplq_pkqj(17, 16, 17, 16, 17, 16);
+	test_ijkl_iplq_pkqj_x(1, 1, 1, 1, 1, 1);
+	test_ijkl_iplq_pkqj_x(2, 1, 1, 1, 1, 1);
+	test_ijkl_iplq_pkqj_x(1, 2, 1, 1, 1, 1);
+	test_ijkl_iplq_pkqj_x(1, 1, 2, 1, 1, 1);
+	test_ijkl_iplq_pkqj_x(1, 1, 1, 2, 1, 1);
+	test_ijkl_iplq_pkqj_x(1, 1, 1, 1, 2, 1);
+	test_ijkl_iplq_pkqj_x(1, 1, 1, 1, 1, 2);
+	test_ijkl_iplq_pkqj_x(2, 3, 2, 3, 2, 3);
+	test_ijkl_iplq_pkqj_x(3, 5, 1, 7, 13, 11);
+	test_ijkl_iplq_pkqj_x(16, 16, 16, 16, 16, 16);
+	test_ijkl_iplq_pkqj_x(17, 16, 17, 16, 17, 16);
 
-	test_ijkl_ipql_pkqj(1, 1, 1, 1, 1, 1);
-	test_ijkl_ipql_pkqj(2, 1, 1, 1, 1, 1);
-	test_ijkl_ipql_pkqj(1, 2, 1, 1, 1, 1);
-	test_ijkl_ipql_pkqj(1, 1, 2, 1, 1, 1);
-	test_ijkl_ipql_pkqj(1, 1, 1, 2, 1, 1);
-	test_ijkl_ipql_pkqj(1, 1, 1, 1, 2, 1);
-	test_ijkl_ipql_pkqj(1, 1, 1, 1, 1, 2);
-	test_ijkl_ipql_pkqj(2, 3, 2, 3, 2, 3);
-	test_ijkl_ipql_pkqj(3, 5, 1, 7, 13, 11);
-	test_ijkl_ipql_pkqj(16, 16, 16, 16, 16, 16);
-	test_ijkl_ipql_pkqj(17, 16, 17, 16, 17, 16);
+	test_ijkl_ipql_pkqj_x(1, 1, 1, 1, 1, 1);
+	test_ijkl_ipql_pkqj_x(2, 1, 1, 1, 1, 1);
+	test_ijkl_ipql_pkqj_x(1, 2, 1, 1, 1, 1);
+	test_ijkl_ipql_pkqj_x(1, 1, 2, 1, 1, 1);
+	test_ijkl_ipql_pkqj_x(1, 1, 1, 2, 1, 1);
+	test_ijkl_ipql_pkqj_x(1, 1, 1, 1, 2, 1);
+	test_ijkl_ipql_pkqj_x(1, 1, 1, 1, 1, 2);
+	test_ijkl_ipql_pkqj_x(2, 3, 2, 3, 2, 3);
+	test_ijkl_ipql_pkqj_x(3, 5, 1, 7, 13, 11);
+	test_ijkl_ipql_pkqj_x(16, 16, 16, 16, 16, 16);
+	test_ijkl_ipql_pkqj_x(17, 16, 17, 16, 17, 16);
 
-	test_ijkl_pilq_kpjq(1, 1, 1, 1, 1, 1);
-	test_ijkl_pilq_kpjq(2, 1, 1, 1, 1, 1);
-	test_ijkl_pilq_kpjq(1, 2, 1, 1, 1, 1);
-	test_ijkl_pilq_kpjq(1, 1, 2, 1, 1, 1);
-	test_ijkl_pilq_kpjq(1, 1, 1, 2, 1, 1);
-	test_ijkl_pilq_kpjq(1, 1, 1, 1, 2, 1);
-	test_ijkl_pilq_kpjq(1, 1, 1, 1, 1, 2);
-	test_ijkl_pilq_kpjq(2, 3, 2, 3, 2, 3);
-	test_ijkl_pilq_kpjq(3, 5, 1, 7, 13, 11);
-	test_ijkl_pilq_kpjq(16, 16, 16, 16, 16, 16);
-	test_ijkl_pilq_kpjq(17, 16, 17, 16, 17, 16);
+	test_ijkl_pilq_kpjq_x(1, 1, 1, 1, 1, 1);
+	test_ijkl_pilq_kpjq_x(2, 1, 1, 1, 1, 1);
+	test_ijkl_pilq_kpjq_x(1, 2, 1, 1, 1, 1);
+	test_ijkl_pilq_kpjq_x(1, 1, 2, 1, 1, 1);
+	test_ijkl_pilq_kpjq_x(1, 1, 1, 2, 1, 1);
+	test_ijkl_pilq_kpjq_x(1, 1, 1, 1, 2, 1);
+	test_ijkl_pilq_kpjq_x(1, 1, 1, 1, 1, 2);
+	test_ijkl_pilq_kpjq_x(2, 3, 2, 3, 2, 3);
+	test_ijkl_pilq_kpjq_x(3, 5, 1, 7, 13, 11);
+	test_ijkl_pilq_kpjq_x(16, 16, 16, 16, 16, 16);
+	test_ijkl_pilq_kpjq_x(17, 16, 17, 16, 17, 16);
 
-	test_ijkl_pilq_pkjq(1, 1, 1, 1, 1, 1);
-	test_ijkl_pilq_pkjq(2, 1, 1, 1, 1, 1);
-	test_ijkl_pilq_pkjq(1, 2, 1, 1, 1, 1);
-	test_ijkl_pilq_pkjq(1, 1, 2, 1, 1, 1);
-	test_ijkl_pilq_pkjq(1, 1, 1, 2, 1, 1);
-	test_ijkl_pilq_pkjq(1, 1, 1, 1, 2, 1);
-	test_ijkl_pilq_pkjq(1, 1, 1, 1, 1, 2);
-	test_ijkl_pilq_pkjq(2, 3, 2, 3, 2, 3);
-	test_ijkl_pilq_pkjq(3, 5, 1, 7, 13, 11);
-	test_ijkl_pilq_pkjq(16, 16, 16, 16, 16, 16);
-	test_ijkl_pilq_pkjq(17, 16, 17, 16, 17, 16);
+	test_ijkl_pilq_pkjq_x(1, 1, 1, 1, 1, 1);
+	test_ijkl_pilq_pkjq_x(2, 1, 1, 1, 1, 1);
+	test_ijkl_pilq_pkjq_x(1, 2, 1, 1, 1, 1);
+	test_ijkl_pilq_pkjq_x(1, 1, 2, 1, 1, 1);
+	test_ijkl_pilq_pkjq_x(1, 1, 1, 2, 1, 1);
+	test_ijkl_pilq_pkjq_x(1, 1, 1, 1, 2, 1);
+	test_ijkl_pilq_pkjq_x(1, 1, 1, 1, 1, 2);
+	test_ijkl_pilq_pkjq_x(2, 3, 2, 3, 2, 3);
+	test_ijkl_pilq_pkjq_x(3, 5, 1, 7, 13, 11);
+	test_ijkl_pilq_pkjq_x(16, 16, 16, 16, 16, 16);
+	test_ijkl_pilq_pkjq_x(17, 16, 17, 16, 17, 16);
 
-	test_ijkl_piql_kpqj(1, 1, 1, 1, 1, 1);
-	test_ijkl_piql_kpqj(2, 1, 1, 1, 1, 1);
-	test_ijkl_piql_kpqj(1, 2, 1, 1, 1, 1);
-	test_ijkl_piql_kpqj(1, 1, 2, 1, 1, 1);
-	test_ijkl_piql_kpqj(1, 1, 1, 2, 1, 1);
-	test_ijkl_piql_kpqj(1, 1, 1, 1, 2, 1);
-	test_ijkl_piql_kpqj(1, 1, 1, 1, 1, 2);
-	test_ijkl_piql_kpqj(2, 3, 2, 3, 2, 3);
-	test_ijkl_piql_kpqj(3, 5, 1, 7, 13, 11);
-	test_ijkl_piql_kpqj(16, 16, 16, 16, 16, 16);
-	test_ijkl_piql_kpqj(17, 16, 17, 16, 17, 16);
+	test_ijkl_piql_kpqj_x(1, 1, 1, 1, 1, 1);
+	test_ijkl_piql_kpqj_x(2, 1, 1, 1, 1, 1);
+	test_ijkl_piql_kpqj_x(1, 2, 1, 1, 1, 1);
+	test_ijkl_piql_kpqj_x(1, 1, 2, 1, 1, 1);
+	test_ijkl_piql_kpqj_x(1, 1, 1, 2, 1, 1);
+	test_ijkl_piql_kpqj_x(1, 1, 1, 1, 2, 1);
+	test_ijkl_piql_kpqj_x(1, 1, 1, 1, 1, 2);
+	test_ijkl_piql_kpqj_x(2, 3, 2, 3, 2, 3);
+	test_ijkl_piql_kpqj_x(3, 5, 1, 7, 13, 11);
+	test_ijkl_piql_kpqj_x(16, 16, 16, 16, 16, 16);
+	test_ijkl_piql_kpqj_x(17, 16, 17, 16, 17, 16);
 
-	test_ijkl_piql_pkqj(1, 1, 1, 1, 1, 1);
-	test_ijkl_piql_pkqj(2, 1, 1, 1, 1, 1);
-	test_ijkl_piql_pkqj(1, 2, 1, 1, 1, 1);
-	test_ijkl_piql_pkqj(1, 1, 2, 1, 1, 1);
-	test_ijkl_piql_pkqj(1, 1, 1, 2, 1, 1);
-	test_ijkl_piql_pkqj(1, 1, 1, 1, 2, 1);
-	test_ijkl_piql_pkqj(1, 1, 1, 1, 1, 2);
-	test_ijkl_piql_pkqj(2, 3, 2, 3, 2, 3);
-	test_ijkl_piql_pkqj(3, 5, 1, 7, 13, 11);
-	test_ijkl_piql_pkqj(16, 16, 16, 16, 16, 16);
-	test_ijkl_piql_pkqj(17, 16, 17, 16, 17, 16);
+	test_ijkl_piql_pkqj_x(1, 1, 1, 1, 1, 1);
+	test_ijkl_piql_pkqj_x(2, 1, 1, 1, 1, 1);
+	test_ijkl_piql_pkqj_x(1, 2, 1, 1, 1, 1);
+	test_ijkl_piql_pkqj_x(1, 1, 2, 1, 1, 1);
+	test_ijkl_piql_pkqj_x(1, 1, 1, 2, 1, 1);
+	test_ijkl_piql_pkqj_x(1, 1, 1, 1, 2, 1);
+	test_ijkl_piql_pkqj_x(1, 1, 1, 1, 1, 2);
+	test_ijkl_piql_pkqj_x(2, 3, 2, 3, 2, 3);
+	test_ijkl_piql_pkqj_x(3, 5, 1, 7, 13, 11);
+	test_ijkl_piql_pkqj_x(16, 16, 16, 16, 16, 16);
+	test_ijkl_piql_pkqj_x(17, 16, 17, 16, 17, 16);
 
-	test_ijkl_pkiq_jplq(1, 1, 1, 1, 1, 1);
-	test_ijkl_pkiq_jplq(2, 1, 1, 1, 1, 1);
-	test_ijkl_pkiq_jplq(1, 2, 1, 1, 1, 1);
-	test_ijkl_pkiq_jplq(1, 1, 2, 1, 1, 1);
-	test_ijkl_pkiq_jplq(1, 1, 1, 2, 1, 1);
-	test_ijkl_pkiq_jplq(1, 1, 1, 1, 2, 1);
-	test_ijkl_pkiq_jplq(1, 1, 1, 1, 1, 2);
-	test_ijkl_pkiq_jplq(2, 3, 2, 3, 2, 3);
-	test_ijkl_pkiq_jplq(3, 5, 1, 7, 13, 11);
-	test_ijkl_pkiq_jplq(16, 16, 16, 16, 16, 16);
-	test_ijkl_pkiq_jplq(17, 16, 17, 16, 17, 16);
+	test_ijkl_pkiq_jplq_x(1, 1, 1, 1, 1, 1);
+	test_ijkl_pkiq_jplq_x(2, 1, 1, 1, 1, 1);
+	test_ijkl_pkiq_jplq_x(1, 2, 1, 1, 1, 1);
+	test_ijkl_pkiq_jplq_x(1, 1, 2, 1, 1, 1);
+	test_ijkl_pkiq_jplq_x(1, 1, 1, 2, 1, 1);
+	test_ijkl_pkiq_jplq_x(1, 1, 1, 1, 2, 1);
+	test_ijkl_pkiq_jplq_x(1, 1, 1, 1, 1, 2);
+	test_ijkl_pkiq_jplq_x(2, 3, 2, 3, 2, 3);
+	test_ijkl_pkiq_jplq_x(3, 5, 1, 7, 13, 11);
+	test_ijkl_pkiq_jplq_x(16, 16, 16, 16, 16, 16);
+	test_ijkl_pkiq_jplq_x(17, 16, 17, 16, 17, 16);
 
-	test_ijkl_pkiq_jpql(1, 1, 1, 1, 1, 1);
-	test_ijkl_pkiq_jpql(2, 1, 1, 1, 1, 1);
-	test_ijkl_pkiq_jpql(1, 2, 1, 1, 1, 1);
-	test_ijkl_pkiq_jpql(1, 1, 2, 1, 1, 1);
-	test_ijkl_pkiq_jpql(1, 1, 1, 2, 1, 1);
-	test_ijkl_pkiq_jpql(1, 1, 1, 1, 2, 1);
-	test_ijkl_pkiq_jpql(1, 1, 1, 1, 1, 2);
-	test_ijkl_pkiq_jpql(2, 3, 2, 3, 2, 3);
-	test_ijkl_pkiq_jpql(3, 5, 1, 7, 13, 11);
-	test_ijkl_pkiq_jpql(16, 16, 16, 16, 16, 16);
-	test_ijkl_pkiq_jpql(17, 16, 17, 16, 17, 16);
+	test_ijkl_pkiq_jpql_x(1, 1, 1, 1, 1, 1);
+	test_ijkl_pkiq_jpql_x(2, 1, 1, 1, 1, 1);
+	test_ijkl_pkiq_jpql_x(1, 2, 1, 1, 1, 1);
+	test_ijkl_pkiq_jpql_x(1, 1, 2, 1, 1, 1);
+	test_ijkl_pkiq_jpql_x(1, 1, 1, 2, 1, 1);
+	test_ijkl_pkiq_jpql_x(1, 1, 1, 1, 2, 1);
+	test_ijkl_pkiq_jpql_x(1, 1, 1, 1, 1, 2);
+	test_ijkl_pkiq_jpql_x(2, 3, 2, 3, 2, 3);
+	test_ijkl_pkiq_jpql_x(3, 5, 1, 7, 13, 11);
+	test_ijkl_pkiq_jpql_x(16, 16, 16, 16, 16, 16);
+	test_ijkl_pkiq_jpql_x(17, 16, 17, 16, 17, 16);
 
-	test_ijkl_pkiq_pjlq(1, 1, 1, 1, 1, 1);
-	test_ijkl_pkiq_pjlq(2, 1, 1, 1, 1, 1);
-	test_ijkl_pkiq_pjlq(1, 2, 1, 1, 1, 1);
-	test_ijkl_pkiq_pjlq(1, 1, 2, 1, 1, 1);
-	test_ijkl_pkiq_pjlq(1, 1, 1, 2, 1, 1);
-	test_ijkl_pkiq_pjlq(1, 1, 1, 1, 2, 1);
-	test_ijkl_pkiq_pjlq(1, 1, 1, 1, 1, 2);
-	test_ijkl_pkiq_pjlq(2, 3, 2, 3, 2, 3);
-	test_ijkl_pkiq_pjlq(3, 5, 1, 7, 13, 11);
-	test_ijkl_pkiq_pjlq(16, 16, 16, 16, 16, 16);
-	test_ijkl_pkiq_pjlq(17, 16, 17, 16, 17, 16);
+	test_ijkl_pkiq_pjlq_x(1, 1, 1, 1, 1, 1);
+	test_ijkl_pkiq_pjlq_x(2, 1, 1, 1, 1, 1);
+	test_ijkl_pkiq_pjlq_x(1, 2, 1, 1, 1, 1);
+	test_ijkl_pkiq_pjlq_x(1, 1, 2, 1, 1, 1);
+	test_ijkl_pkiq_pjlq_x(1, 1, 1, 2, 1, 1);
+	test_ijkl_pkiq_pjlq_x(1, 1, 1, 1, 2, 1);
+	test_ijkl_pkiq_pjlq_x(1, 1, 1, 1, 1, 2);
+	test_ijkl_pkiq_pjlq_x(2, 3, 2, 3, 2, 3);
+	test_ijkl_pkiq_pjlq_x(3, 5, 1, 7, 13, 11);
+	test_ijkl_pkiq_pjlq_x(16, 16, 16, 16, 16, 16);
+	test_ijkl_pkiq_pjlq_x(17, 16, 17, 16, 17, 16);
 
-	test_ijkl_pkiq_pjql(1, 1, 1, 1, 1, 1);
-	test_ijkl_pkiq_pjql(2, 1, 1, 1, 1, 1);
-	test_ijkl_pkiq_pjql(1, 2, 1, 1, 1, 1);
-	test_ijkl_pkiq_pjql(1, 1, 2, 1, 1, 1);
-	test_ijkl_pkiq_pjql(1, 1, 1, 2, 1, 1);
-	test_ijkl_pkiq_pjql(1, 1, 1, 1, 2, 1);
-	test_ijkl_pkiq_pjql(1, 1, 1, 1, 1, 2);
-	test_ijkl_pkiq_pjql(2, 3, 2, 3, 2, 3);
-	test_ijkl_pkiq_pjql(3, 5, 1, 7, 13, 11);
-	test_ijkl_pkiq_pjql(16, 16, 16, 16, 16, 16);
-	test_ijkl_pkiq_pjql(17, 16, 17, 16, 17, 16);
+	test_ijkl_pkiq_pjql_x(1, 1, 1, 1, 1, 1);
+	test_ijkl_pkiq_pjql_x(2, 1, 1, 1, 1, 1);
+	test_ijkl_pkiq_pjql_x(1, 2, 1, 1, 1, 1);
+	test_ijkl_pkiq_pjql_x(1, 1, 2, 1, 1, 1);
+	test_ijkl_pkiq_pjql_x(1, 1, 1, 2, 1, 1);
+	test_ijkl_pkiq_pjql_x(1, 1, 1, 1, 2, 1);
+	test_ijkl_pkiq_pjql_x(1, 1, 1, 1, 1, 2);
+	test_ijkl_pkiq_pjql_x(2, 3, 2, 3, 2, 3);
+	test_ijkl_pkiq_pjql_x(3, 5, 1, 7, 13, 11);
+	test_ijkl_pkiq_pjql_x(16, 16, 16, 16, 16, 16);
+	test_ijkl_pkiq_pjql_x(17, 16, 17, 16, 17, 16);
 
-	test_ijkl_pliq_jpkq(1, 1, 1, 1, 1, 1);
-	test_ijkl_pliq_jpkq(2, 1, 1, 1, 1, 1);
-	test_ijkl_pliq_jpkq(1, 2, 1, 1, 1, 1);
-	test_ijkl_pliq_jpkq(1, 1, 2, 1, 1, 1);
-	test_ijkl_pliq_jpkq(1, 1, 1, 2, 1, 1);
-	test_ijkl_pliq_jpkq(1, 1, 1, 1, 2, 1);
-	test_ijkl_pliq_jpkq(1, 1, 1, 1, 1, 2);
-	test_ijkl_pliq_jpkq(2, 3, 2, 3, 2, 3);
-	test_ijkl_pliq_jpkq(3, 5, 1, 7, 13, 11);
-	test_ijkl_pliq_jpkq(16, 16, 16, 16, 16, 16);
-	test_ijkl_pliq_jpkq(17, 16, 17, 16, 17, 16);
+	test_ijkl_pliq_jpkq_x(1, 1, 1, 1, 1, 1);
+	test_ijkl_pliq_jpkq_x(2, 1, 1, 1, 1, 1);
+	test_ijkl_pliq_jpkq_x(1, 2, 1, 1, 1, 1);
+	test_ijkl_pliq_jpkq_x(1, 1, 2, 1, 1, 1);
+	test_ijkl_pliq_jpkq_x(1, 1, 1, 2, 1, 1);
+	test_ijkl_pliq_jpkq_x(1, 1, 1, 1, 2, 1);
+	test_ijkl_pliq_jpkq_x(1, 1, 1, 1, 1, 2);
+	test_ijkl_pliq_jpkq_x(2, 3, 2, 3, 2, 3);
+	test_ijkl_pliq_jpkq_x(3, 5, 1, 7, 13, 11);
+	test_ijkl_pliq_jpkq_x(16, 16, 16, 16, 16, 16);
+	test_ijkl_pliq_jpkq_x(17, 16, 17, 16, 17, 16);
 
-	test_ijkl_pliq_jpqk(1, 1, 1, 1, 1, 1);
-	test_ijkl_pliq_jpqk(2, 1, 1, 1, 1, 1);
-	test_ijkl_pliq_jpqk(1, 2, 1, 1, 1, 1);
-	test_ijkl_pliq_jpqk(1, 1, 2, 1, 1, 1);
-	test_ijkl_pliq_jpqk(1, 1, 1, 2, 1, 1);
-	test_ijkl_pliq_jpqk(1, 1, 1, 1, 2, 1);
-	test_ijkl_pliq_jpqk(1, 1, 1, 1, 1, 2);
-	test_ijkl_pliq_jpqk(2, 3, 2, 3, 2, 3);
-	test_ijkl_pliq_jpqk(3, 5, 1, 7, 13, 11);
-	test_ijkl_pliq_jpqk(16, 16, 16, 16, 16, 16);
-	test_ijkl_pliq_jpqk(17, 16, 17, 16, 17, 16);
+	test_ijkl_pliq_jpqk_x(1, 1, 1, 1, 1, 1);
+	test_ijkl_pliq_jpqk_x(2, 1, 1, 1, 1, 1);
+	test_ijkl_pliq_jpqk_x(1, 2, 1, 1, 1, 1);
+	test_ijkl_pliq_jpqk_x(1, 1, 2, 1, 1, 1);
+	test_ijkl_pliq_jpqk_x(1, 1, 1, 2, 1, 1);
+	test_ijkl_pliq_jpqk_x(1, 1, 1, 1, 2, 1);
+	test_ijkl_pliq_jpqk_x(1, 1, 1, 1, 1, 2);
+	test_ijkl_pliq_jpqk_x(2, 3, 2, 3, 2, 3);
+	test_ijkl_pliq_jpqk_x(3, 5, 1, 7, 13, 11);
+	test_ijkl_pliq_jpqk_x(16, 16, 16, 16, 16, 16);
+	test_ijkl_pliq_jpqk_x(17, 16, 17, 16, 17, 16);
 
-	test_ijkl_pliq_pjqk(1, 1, 1, 1, 1, 1);
-	test_ijkl_pliq_pjqk(2, 1, 1, 1, 1, 1);
-	test_ijkl_pliq_pjqk(1, 2, 1, 1, 1, 1);
-	test_ijkl_pliq_pjqk(1, 1, 2, 1, 1, 1);
-	test_ijkl_pliq_pjqk(1, 1, 1, 2, 1, 1);
-	test_ijkl_pliq_pjqk(1, 1, 1, 1, 2, 1);
-	test_ijkl_pliq_pjqk(1, 1, 1, 1, 1, 2);
-	test_ijkl_pliq_pjqk(2, 3, 2, 3, 2, 3);
-	test_ijkl_pliq_pjqk(3, 5, 1, 7, 13, 11);
-	test_ijkl_pliq_pjqk(16, 16, 16, 16, 16, 16);
-	test_ijkl_pliq_pjqk(17, 16, 17, 16, 17, 16);
+	test_ijkl_pliq_pjqk_x(1, 1, 1, 1, 1, 1);
+	test_ijkl_pliq_pjqk_x(2, 1, 1, 1, 1, 1);
+	test_ijkl_pliq_pjqk_x(1, 2, 1, 1, 1, 1);
+	test_ijkl_pliq_pjqk_x(1, 1, 2, 1, 1, 1);
+	test_ijkl_pliq_pjqk_x(1, 1, 1, 2, 1, 1);
+	test_ijkl_pliq_pjqk_x(1, 1, 1, 1, 2, 1);
+	test_ijkl_pliq_pjqk_x(1, 1, 1, 1, 1, 2);
+	test_ijkl_pliq_pjqk_x(2, 3, 2, 3, 2, 3);
+	test_ijkl_pliq_pjqk_x(3, 5, 1, 7, 13, 11);
+	test_ijkl_pliq_pjqk_x(16, 16, 16, 16, 16, 16);
+	test_ijkl_pliq_pjqk_x(17, 16, 17, 16, 17, 16);
 
 }
 
@@ -1426,15 +1426,16 @@ void linalg_test::test_ijkl_ipl_kpj(size_t ni, size_t nj, size_t nk,
 }
 
 
-void linalg_test::test_ijkl_iplq_kpjq(size_t ni, size_t nj, size_t nk,
+void linalg_test::test_ijkl_iplq_kpjq_x(size_t ni, size_t nj, size_t nk,
 	size_t nl, size_t np, size_t nq) throw(libtest::test_exception) {
 
 	std::ostringstream ss;
-	ss << "linalg_test::test_ijkl_iplq_kpjq(" << ni << ", " << nj << ", "
+	ss << "linalg_test::test_ijkl_iplq_kpjq_x(" << ni << ", " << nj << ", "
 		<< nk << ", " << nl << ", " << np << ", " << nq << ")";
 	std::string tnss = ss.str();
 
 	double *a = 0, *b = 0, *c = 0, *c_ref = 0;
+	double d = 0.0;
 
 	try {
 
@@ -1450,9 +1451,10 @@ void linalg_test::test_ijkl_iplq_kpjq(size_t ni, size_t nj, size_t nk,
 	for(size_t i = 0; i < szb; i++) b[i] = drand48();
 	for(size_t i = 0; i < szc; i++) c[i] = c_ref[i] = drand48();
 
-	linalg::ijkl_iplq_kpjq(a, b, c, 0.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_iplq_kpjq(a, b, c_ref, 0.0, ni, nj, nk, nl,
-		np, nq);
+	d = 0.0;
+	linalg2::ijkl_iplq_kpjq_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_iplq_kpjq_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -1461,9 +1463,10 @@ void linalg_test::test_ijkl_iplq_kpjq(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_iplq_kpjq(a, b, c, 1.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_iplq_kpjq(a, b, c_ref, 1.0, ni, nj, nk, nl,
-		np, nq);
+	d = 1.0;
+	linalg2::ijkl_iplq_kpjq_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_iplq_kpjq_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -1472,9 +1475,10 @@ void linalg_test::test_ijkl_iplq_kpjq(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_iplq_kpjq(a, b, c, -1.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_iplq_kpjq(a, b, c_ref, -1.0, ni, nj, nk, nl,
-		np, nq);
+	d = -1.0;
+	linalg2::ijkl_iplq_kpjq_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_iplq_kpjq_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -1483,10 +1487,10 @@ void linalg_test::test_ijkl_iplq_kpjq(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	double d = drand48();
-	linalg::ijkl_iplq_kpjq(a, b, c, d, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_iplq_kpjq(a, b, c_ref, d, ni, nj, nk, nl,
-		np, nq);
+	d = drand48();
+	linalg2::ijkl_iplq_kpjq_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_iplq_kpjq_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -1495,9 +1499,10 @@ void linalg_test::test_ijkl_iplq_kpjq(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_iplq_kpjq(a, b, c, -d, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_iplq_kpjq(a, b, c_ref, -d, ni, nj, nk, nl,
-		np, nq);
+	d = -drand48();
+	linalg2::ijkl_iplq_kpjq_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_iplq_kpjq_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -1527,15 +1532,16 @@ void linalg_test::test_ijkl_iplq_kpjq(size_t ni, size_t nj, size_t nk,
 }
 
 
-void linalg_test::test_ijkl_iplq_pkjq(size_t ni, size_t nj, size_t nk,
+void linalg_test::test_ijkl_iplq_pkjq_x(size_t ni, size_t nj, size_t nk,
 	size_t nl, size_t np, size_t nq) throw(libtest::test_exception) {
 
 	std::ostringstream ss;
-	ss << "linalg_test::test_ijkl_iplq_pkjq(" << ni << ", " << nj << ", "
+	ss << "linalg_test::test_ijkl_iplq_pkjq_x(" << ni << ", " << nj << ", "
 		<< nk << ", " << nl << ", " << np << ", " << nq << ")";
 	std::string tnss = ss.str();
 
 	double *a = 0, *b = 0, *c = 0, *c_ref = 0;
+	double d = 0.0;
 
 	try {
 
@@ -1551,9 +1557,10 @@ void linalg_test::test_ijkl_iplq_pkjq(size_t ni, size_t nj, size_t nk,
 	for(size_t i = 0; i < szb; i++) b[i] = drand48();
 	for(size_t i = 0; i < szc; i++) c[i] = c_ref[i] = drand48();
 
-	linalg::ijkl_iplq_pkjq(a, b, c, 0.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_iplq_pkjq(a, b, c_ref, 0.0, ni, nj, nk, nl,
-		np, nq);
+	d = 0.0;
+	linalg2::ijkl_iplq_pkjq_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_iplq_pkjq_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -1562,9 +1569,10 @@ void linalg_test::test_ijkl_iplq_pkjq(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_iplq_pkjq(a, b, c, 1.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_iplq_pkjq(a, b, c_ref, 1.0, ni, nj, nk, nl,
-		np, nq);
+	d = 1.0;
+	linalg2::ijkl_iplq_pkjq_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_iplq_pkjq_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -1573,9 +1581,10 @@ void linalg_test::test_ijkl_iplq_pkjq(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_iplq_pkjq(a, b, c, -1.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_iplq_pkjq(a, b, c_ref, -1.0, ni, nj, nk, nl,
-		np, nq);
+	d = -1.0;
+	linalg2::ijkl_iplq_pkjq_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_iplq_pkjq_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -1584,10 +1593,10 @@ void linalg_test::test_ijkl_iplq_pkjq(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	double d = drand48();
-	linalg::ijkl_iplq_pkjq(a, b, c, d, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_iplq_pkjq(a, b, c_ref, d, ni, nj, nk, nl,
-		np, nq);
+	d = drand48();
+	linalg2::ijkl_iplq_pkjq_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_iplq_pkjq_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -1596,9 +1605,10 @@ void linalg_test::test_ijkl_iplq_pkjq(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_iplq_pkjq(a, b, c, -d, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_iplq_pkjq(a, b, c_ref, -d, ni, nj, nk, nl,
-		np, nq);
+	d = -drand48();
+	linalg2::ijkl_iplq_pkjq_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_iplq_pkjq_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -1628,15 +1638,16 @@ void linalg_test::test_ijkl_iplq_pkjq(size_t ni, size_t nj, size_t nk,
 }
 
 
-void linalg_test::test_ijkl_iplq_pkqj(size_t ni, size_t nj, size_t nk,
+void linalg_test::test_ijkl_iplq_pkqj_x(size_t ni, size_t nj, size_t nk,
 	size_t nl, size_t np, size_t nq) throw(libtest::test_exception) {
 
 	std::ostringstream ss;
-	ss << "linalg_test::test_ijkl_iplq_pkqj(" << ni << ", " << nj << ", "
+	ss << "linalg_test::test_ijkl_iplq_pkqj_x(" << ni << ", " << nj << ", "
 		<< nk << ", " << nl << ", " << np << ", " << nq << ")";
 	std::string tnss = ss.str();
 
 	double *a = 0, *b = 0, *c = 0, *c_ref = 0;
+	double d = 0.0;
 
 	try {
 
@@ -1652,9 +1663,10 @@ void linalg_test::test_ijkl_iplq_pkqj(size_t ni, size_t nj, size_t nk,
 	for(size_t i = 0; i < szb; i++) b[i] = drand48();
 	for(size_t i = 0; i < szc; i++) c[i] = c_ref[i] = drand48();
 
-	linalg::ijkl_iplq_pkqj(a, b, c, 0.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_iplq_pkqj(a, b, c_ref, 0.0, ni, nj, nk, nl,
-		np, nq);
+	d = 0.0;
+	linalg2::ijkl_iplq_pkqj_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_iplq_pkqj_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -1663,9 +1675,10 @@ void linalg_test::test_ijkl_iplq_pkqj(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_iplq_pkqj(a, b, c, 1.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_iplq_pkqj(a, b, c_ref, 1.0, ni, nj, nk, nl,
-		np, nq);
+	d = 1.0;
+	linalg2::ijkl_iplq_pkqj_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_iplq_pkqj_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -1674,9 +1687,10 @@ void linalg_test::test_ijkl_iplq_pkqj(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_iplq_pkqj(a, b, c, -1.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_iplq_pkqj(a, b, c_ref, -1.0, ni, nj, nk, nl,
-		np, nq);
+	d = -1.0;
+	linalg2::ijkl_iplq_pkqj_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_iplq_pkqj_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -1685,10 +1699,10 @@ void linalg_test::test_ijkl_iplq_pkqj(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	double d = drand48();
-	linalg::ijkl_iplq_pkqj(a, b, c, d, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_iplq_pkqj(a, b, c_ref, d, ni, nj, nk, nl,
-		np, nq);
+	d = drand48();
+	linalg2::ijkl_iplq_pkqj_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_iplq_pkqj_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -1697,9 +1711,10 @@ void linalg_test::test_ijkl_iplq_pkqj(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_iplq_pkqj(a, b, c, -d, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_iplq_pkqj(a, b, c_ref, -d, ni, nj, nk, nl,
-		np, nq);
+	d = -drand48();
+	linalg2::ijkl_iplq_pkqj_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_iplq_pkqj_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -1729,15 +1744,16 @@ void linalg_test::test_ijkl_iplq_pkqj(size_t ni, size_t nj, size_t nk,
 }
 
 
-void linalg_test::test_ijkl_ipql_pkqj(size_t ni, size_t nj, size_t nk,
+void linalg_test::test_ijkl_ipql_pkqj_x(size_t ni, size_t nj, size_t nk,
 	size_t nl, size_t np, size_t nq) throw(libtest::test_exception) {
 
 	std::ostringstream ss;
-	ss << "linalg_test::test_ijkl_ipql_pkqj(" << ni << ", " << nj << ", "
+	ss << "linalg_test::test_ijkl_ipql_pkqj_x(" << ni << ", " << nj << ", "
 		<< nk << ", " << nl << ", " << np << ", " << nq << ")";
 	std::string tnss = ss.str();
 
 	double *a = 0, *b = 0, *c = 0, *c_ref = 0;
+	double d = 0.0;
 
 	try {
 
@@ -1753,9 +1769,10 @@ void linalg_test::test_ijkl_ipql_pkqj(size_t ni, size_t nj, size_t nk,
 	for(size_t i = 0; i < szb; i++) b[i] = drand48();
 	for(size_t i = 0; i < szc; i++) c[i] = c_ref[i] = drand48();
 
-	linalg::ijkl_ipql_pkqj(a, b, c, 0.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_ipql_pkqj(a, b, c_ref, 0.0, ni, nj, nk, nl,
-		np, nq);
+	d = 0.0;
+	linalg2::ijkl_ipql_pkqj_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_ipql_pkqj_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -1764,9 +1781,10 @@ void linalg_test::test_ijkl_ipql_pkqj(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_ipql_pkqj(a, b, c, 1.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_ipql_pkqj(a, b, c_ref, 1.0, ni, nj, nk, nl,
-		np, nq);
+	d = 1.0;
+	linalg2::ijkl_ipql_pkqj_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_ipql_pkqj_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -1775,9 +1793,10 @@ void linalg_test::test_ijkl_ipql_pkqj(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_ipql_pkqj(a, b, c, -1.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_ipql_pkqj(a, b, c_ref, -1.0, ni, nj, nk, nl,
-		np, nq);
+	d = -0.0;
+	linalg2::ijkl_ipql_pkqj_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_ipql_pkqj_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -1786,10 +1805,10 @@ void linalg_test::test_ijkl_ipql_pkqj(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	double d = drand48();
-	linalg::ijkl_ipql_pkqj(a, b, c, d, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_ipql_pkqj(a, b, c_ref, d, ni, nj, nk, nl,
-		np, nq);
+	d = drand48();
+	linalg2::ijkl_ipql_pkqj_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_ipql_pkqj_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -1798,9 +1817,10 @@ void linalg_test::test_ijkl_ipql_pkqj(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_ipql_pkqj(a, b, c, -d, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_ipql_pkqj(a, b, c_ref, -d, ni, nj, nk, nl,
-		np, nq);
+	d = -drand48();
+	linalg2::ijkl_ipql_pkqj_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_ipql_pkqj_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -1830,15 +1850,16 @@ void linalg_test::test_ijkl_ipql_pkqj(size_t ni, size_t nj, size_t nk,
 }
 
 
-void linalg_test::test_ijkl_pilq_kpjq(size_t ni, size_t nj, size_t nk,
+void linalg_test::test_ijkl_pilq_kpjq_x(size_t ni, size_t nj, size_t nk,
 	size_t nl, size_t np, size_t nq) throw(libtest::test_exception) {
 
 	std::ostringstream ss;
-	ss << "linalg_test::test_ijkl_pilq_kpjq(" << ni << ", " << nj << ", "
+	ss << "linalg_test::test_ijkl_pilq_kpjq_x(" << ni << ", " << nj << ", "
 		<< nk << ", " << nl << ", " << np << ", " << nq << ")";
 	std::string tnss = ss.str();
 
 	double *a = 0, *b = 0, *c = 0, *c_ref = 0;
+	double d = 0.0;
 
 	try {
 
@@ -1854,9 +1875,10 @@ void linalg_test::test_ijkl_pilq_kpjq(size_t ni, size_t nj, size_t nk,
 	for(size_t i = 0; i < szb; i++) b[i] = drand48();
 	for(size_t i = 0; i < szc; i++) c[i] = c_ref[i] = drand48();
 
-	linalg::ijkl_pilq_kpjq(a, b, c, 0.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pilq_kpjq(a, b, c_ref, 0.0, ni, nj, nk, nl,
-		np, nq);
+	d = 0.0;
+	linalg2::ijkl_pilq_kpjq_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pilq_kpjq_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -1865,9 +1887,10 @@ void linalg_test::test_ijkl_pilq_kpjq(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_pilq_kpjq(a, b, c, 1.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pilq_kpjq(a, b, c_ref, 1.0, ni, nj, nk, nl,
-		np, nq);
+	d = 1.0;
+	linalg2::ijkl_pilq_kpjq_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pilq_kpjq_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -1876,9 +1899,10 @@ void linalg_test::test_ijkl_pilq_kpjq(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_pilq_kpjq(a, b, c, -1.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pilq_kpjq(a, b, c_ref, -1.0, ni, nj, nk, nl,
-		np, nq);
+	d = -1.0;
+	linalg2::ijkl_pilq_kpjq_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pilq_kpjq_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -1887,10 +1911,10 @@ void linalg_test::test_ijkl_pilq_kpjq(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	double d = drand48();
-	linalg::ijkl_pilq_kpjq(a, b, c, d, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pilq_kpjq(a, b, c_ref, d, ni, nj, nk, nl,
-		np, nq);
+	d = drand48();
+	linalg2::ijkl_pilq_kpjq_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pilq_kpjq_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -1899,9 +1923,10 @@ void linalg_test::test_ijkl_pilq_kpjq(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_pilq_kpjq(a, b, c, -d, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pilq_kpjq(a, b, c_ref, -d, ni, nj, nk, nl,
-		np, nq);
+	d = -drand48();
+	linalg2::ijkl_pilq_kpjq_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pilq_kpjq_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -1931,15 +1956,16 @@ void linalg_test::test_ijkl_pilq_kpjq(size_t ni, size_t nj, size_t nk,
 }
 
 
-void linalg_test::test_ijkl_pilq_pkjq(size_t ni, size_t nj, size_t nk,
+void linalg_test::test_ijkl_pilq_pkjq_x(size_t ni, size_t nj, size_t nk,
 	size_t nl, size_t np, size_t nq) throw(libtest::test_exception) {
 
 	std::ostringstream ss;
-	ss << "linalg_test::test_ijkl_pilq_pkjq(" << ni << ", " << nj << ", "
+	ss << "linalg_test::test_ijkl_pilq_pkjq_x(" << ni << ", " << nj << ", "
 		<< nk << ", " << nl << ", " << np << ", " << nq << ")";
 	std::string tnss = ss.str();
 
 	double *a = 0, *b = 0, *c = 0, *c_ref = 0;
+	double d = 0.0;
 
 	try {
 
@@ -1955,9 +1981,10 @@ void linalg_test::test_ijkl_pilq_pkjq(size_t ni, size_t nj, size_t nk,
 	for(size_t i = 0; i < szb; i++) b[i] = drand48();
 	for(size_t i = 0; i < szc; i++) c[i] = c_ref[i] = drand48();
 
-	linalg::ijkl_pilq_pkjq(a, b, c, 0.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pilq_pkjq(a, b, c_ref, 0.0, ni, nj, nk, nl,
-		np, nq);
+	d = 0.0;
+	linalg2::ijkl_pilq_pkjq_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pilq_pkjq_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -1966,9 +1993,10 @@ void linalg_test::test_ijkl_pilq_pkjq(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_pilq_pkjq(a, b, c, 1.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pilq_pkjq(a, b, c_ref, 1.0, ni, nj, nk, nl,
-		np, nq);
+	d = 1.0;
+	linalg2::ijkl_pilq_pkjq_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pilq_pkjq_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -1977,9 +2005,10 @@ void linalg_test::test_ijkl_pilq_pkjq(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_pilq_pkjq(a, b, c, -1.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pilq_pkjq(a, b, c_ref, -1.0, ni, nj, nk, nl,
-		np, nq);
+	d = -1.0;
+	linalg2::ijkl_pilq_pkjq_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pilq_pkjq_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -1988,10 +2017,10 @@ void linalg_test::test_ijkl_pilq_pkjq(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	double d = drand48();
-	linalg::ijkl_pilq_pkjq(a, b, c, d, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pilq_pkjq(a, b, c_ref, d, ni, nj, nk, nl,
-		np, nq);
+	d = drand48();
+	linalg2::ijkl_pilq_pkjq_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pilq_pkjq_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2000,9 +2029,10 @@ void linalg_test::test_ijkl_pilq_pkjq(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_pilq_pkjq(a, b, c, -d, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pilq_pkjq(a, b, c_ref, -d, ni, nj, nk, nl,
-		np, nq);
+	d = -drand48();
+	linalg2::ijkl_pilq_pkjq_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pilq_pkjq_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2032,15 +2062,16 @@ void linalg_test::test_ijkl_pilq_pkjq(size_t ni, size_t nj, size_t nk,
 }
 
 
-void linalg_test::test_ijkl_piql_kpqj(size_t ni, size_t nj, size_t nk,
+void linalg_test::test_ijkl_piql_kpqj_x(size_t ni, size_t nj, size_t nk,
 	size_t nl, size_t np, size_t nq) throw(libtest::test_exception) {
 
 	std::ostringstream ss;
-	ss << "linalg_test::test_ijkl_piql_kpqj(" << ni << ", " << nj << ", "
+	ss << "linalg_test::test_ijkl_piql_kpqj_x(" << ni << ", " << nj << ", "
 		<< nk << ", " << nl << ", " << np << ", " << nq << ")";
 	std::string tnss = ss.str();
 
 	double *a = 0, *b = 0, *c = 0, *c_ref = 0;
+	double d = 0.0;
 
 	try {
 
@@ -2056,9 +2087,10 @@ void linalg_test::test_ijkl_piql_kpqj(size_t ni, size_t nj, size_t nk,
 	for(size_t i = 0; i < szb; i++) b[i] = drand48();
 	for(size_t i = 0; i < szc; i++) c[i] = c_ref[i] = drand48();
 
-	linalg::ijkl_piql_kpqj(a, b, c, 0.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_piql_kpqj(a, b, c_ref, 0.0, ni, nj, nk, nl,
-		np, nq);
+	d = 0.0;
+	linalg2::ijkl_piql_kpqj_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_piql_kpqj_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2067,9 +2099,10 @@ void linalg_test::test_ijkl_piql_kpqj(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_piql_kpqj(a, b, c, 1.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_piql_kpqj(a, b, c_ref, 1.0, ni, nj, nk, nl,
-		np, nq);
+	d = 1.0;
+	linalg2::ijkl_piql_kpqj_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_piql_kpqj_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2078,9 +2111,10 @@ void linalg_test::test_ijkl_piql_kpqj(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_piql_kpqj(a, b, c, -1.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_piql_kpqj(a, b, c_ref, -1.0, ni, nj, nk, nl,
-		np, nq);
+	d = -1.0;
+	linalg2::ijkl_piql_kpqj_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_piql_kpqj_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2089,10 +2123,10 @@ void linalg_test::test_ijkl_piql_kpqj(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	double d = drand48();
-	linalg::ijkl_piql_kpqj(a, b, c, d, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_piql_kpqj(a, b, c_ref, d, ni, nj, nk, nl,
-		np, nq);
+	d = drand48();
+	linalg2::ijkl_piql_kpqj_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_piql_kpqj_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2101,9 +2135,10 @@ void linalg_test::test_ijkl_piql_kpqj(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_piql_kpqj(a, b, c, -d, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_piql_kpqj(a, b, c_ref, -d, ni, nj, nk, nl,
-		np, nq);
+	d = -drand48();
+	linalg2::ijkl_piql_kpqj_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_piql_kpqj_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2133,15 +2168,16 @@ void linalg_test::test_ijkl_piql_kpqj(size_t ni, size_t nj, size_t nk,
 }
 
 
-void linalg_test::test_ijkl_piql_pkqj(size_t ni, size_t nj, size_t nk,
+void linalg_test::test_ijkl_piql_pkqj_x(size_t ni, size_t nj, size_t nk,
 	size_t nl, size_t np, size_t nq) throw(libtest::test_exception) {
 
 	std::ostringstream ss;
-	ss << "linalg_test::test_ijkl_piql_pkqj(" << ni << ", " << nj << ", "
+	ss << "linalg_test::test_ijkl_piql_pkqj_x(" << ni << ", " << nj << ", "
 		<< nk << ", " << nl << ", " << np << ", " << nq << ")";
 	std::string tnss = ss.str();
 
 	double *a = 0, *b = 0, *c = 0, *c_ref = 0;
+	double d = 0.0;
 
 	try {
 
@@ -2157,9 +2193,10 @@ void linalg_test::test_ijkl_piql_pkqj(size_t ni, size_t nj, size_t nk,
 	for(size_t i = 0; i < szb; i++) b[i] = drand48();
 	for(size_t i = 0; i < szc; i++) c[i] = c_ref[i] = drand48();
 
-	linalg::ijkl_piql_pkqj(a, b, c, 0.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_piql_pkqj(a, b, c_ref, 0.0, ni, nj, nk, nl,
-		np, nq);
+	d = 0.0;
+	linalg2::ijkl_piql_pkqj_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_piql_pkqj_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2168,9 +2205,10 @@ void linalg_test::test_ijkl_piql_pkqj(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_piql_pkqj(a, b, c, 1.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_piql_pkqj(a, b, c_ref, 1.0, ni, nj, nk, nl,
-		np, nq);
+	d = 1.0;
+	linalg2::ijkl_piql_pkqj_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_piql_pkqj_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2179,9 +2217,10 @@ void linalg_test::test_ijkl_piql_pkqj(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_piql_pkqj(a, b, c, -1.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_piql_pkqj(a, b, c_ref, -1.0, ni, nj, nk, nl,
-		np, nq);
+	d = -1.0;
+	linalg2::ijkl_piql_pkqj_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_piql_pkqj_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2190,10 +2229,10 @@ void linalg_test::test_ijkl_piql_pkqj(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	double d = drand48();
-	linalg::ijkl_piql_pkqj(a, b, c, d, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_piql_pkqj(a, b, c_ref, d, ni, nj, nk, nl,
-		np, nq);
+	d = drand48();
+	linalg2::ijkl_piql_pkqj_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_piql_pkqj_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2202,9 +2241,10 @@ void linalg_test::test_ijkl_piql_pkqj(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_piql_pkqj(a, b, c, -d, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_piql_pkqj(a, b, c_ref, -d, ni, nj, nk, nl,
-		np, nq);
+	d = -drand48();
+	linalg2::ijkl_piql_pkqj_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_piql_pkqj_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2234,15 +2274,16 @@ void linalg_test::test_ijkl_piql_pkqj(size_t ni, size_t nj, size_t nk,
 }
 
 
-void linalg_test::test_ijkl_pkiq_jplq(size_t ni, size_t nj, size_t nk,
+void linalg_test::test_ijkl_pkiq_jplq_x(size_t ni, size_t nj, size_t nk,
 	size_t nl, size_t np, size_t nq) throw(libtest::test_exception) {
 
 	std::ostringstream ss;
-	ss << "linalg_test::test_ijkl_pkiq_jplq(" << ni << ", " << nj << ", "
+	ss << "linalg_test::test_ijkl_pkiq_jplq_x(" << ni << ", " << nj << ", "
 		<< nk << ", " << nl << ", " << np << ", " << nq << ")";
 	std::string tnss = ss.str();
 
 	double *a = 0, *b = 0, *c = 0, *c_ref = 0;
+	double d = 0.0;
 
 	try {
 
@@ -2258,9 +2299,10 @@ void linalg_test::test_ijkl_pkiq_jplq(size_t ni, size_t nj, size_t nk,
 	for(size_t i = 0; i < szb; i++) b[i] = drand48();
 	for(size_t i = 0; i < szc; i++) c[i] = c_ref[i] = drand48();
 
-	linalg::ijkl_pkiq_jplq(a, b, c, 0.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pkiq_jplq(a, b, c_ref, 0.0, ni, nj, nk, nl,
-		np, nq);
+	d = 0.0;
+	linalg2::ijkl_pkiq_jplq_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pkiq_jplq_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2269,9 +2311,10 @@ void linalg_test::test_ijkl_pkiq_jplq(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_pkiq_jplq(a, b, c, 1.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pkiq_jplq(a, b, c_ref, 1.0, ni, nj, nk, nl,
-		np, nq);
+	d = 1.0;
+	linalg2::ijkl_pkiq_jplq_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pkiq_jplq_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2280,9 +2323,10 @@ void linalg_test::test_ijkl_pkiq_jplq(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_pkiq_jplq(a, b, c, -1.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pkiq_jplq(a, b, c_ref, -1.0, ni, nj, nk, nl,
-		np, nq);
+	d = -1.0;
+	linalg2::ijkl_pkiq_jplq_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pkiq_jplq_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2291,10 +2335,10 @@ void linalg_test::test_ijkl_pkiq_jplq(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	double d = drand48();
-	linalg::ijkl_pkiq_jplq(a, b, c, d, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pkiq_jplq(a, b, c_ref, d, ni, nj, nk, nl,
-		np, nq);
+	d = drand48();
+	linalg2::ijkl_pkiq_jplq_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pkiq_jplq_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2303,9 +2347,10 @@ void linalg_test::test_ijkl_pkiq_jplq(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_pkiq_jplq(a, b, c, -d, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pkiq_jplq(a, b, c_ref, -d, ni, nj, nk, nl,
-		np, nq);
+	d = -drand48();
+	linalg2::ijkl_pkiq_jplq_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pkiq_jplq_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2335,15 +2380,16 @@ void linalg_test::test_ijkl_pkiq_jplq(size_t ni, size_t nj, size_t nk,
 }
 
 
-void linalg_test::test_ijkl_pkiq_jpql(size_t ni, size_t nj, size_t nk,
+void linalg_test::test_ijkl_pkiq_jpql_x(size_t ni, size_t nj, size_t nk,
 	size_t nl, size_t np, size_t nq) throw(libtest::test_exception) {
 
 	std::ostringstream ss;
-	ss << "linalg_test::test_ijkl_pkiq_jpql(" << ni << ", " << nj << ", "
+	ss << "linalg_test::test_ijkl_pkiq_jpql_x(" << ni << ", " << nj << ", "
 		<< nk << ", " << nl << ", " << np << ", " << nq << ")";
 	std::string tnss = ss.str();
 
 	double *a = 0, *b = 0, *c = 0, *c_ref = 0;
+	double d = 0.0;
 
 	try {
 
@@ -2359,9 +2405,10 @@ void linalg_test::test_ijkl_pkiq_jpql(size_t ni, size_t nj, size_t nk,
 	for(size_t i = 0; i < szb; i++) b[i] = drand48();
 	for(size_t i = 0; i < szc; i++) c[i] = c_ref[i] = drand48();
 
-	linalg::ijkl_pkiq_jpql(a, b, c, 0.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pkiq_jpql(a, b, c_ref, 0.0, ni, nj, nk, nl,
-		np, nq);
+	d = 0.0;
+	linalg2::ijkl_pkiq_jpql_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pkiq_jpql_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2370,9 +2417,10 @@ void linalg_test::test_ijkl_pkiq_jpql(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_pkiq_jpql(a, b, c, 1.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pkiq_jpql(a, b, c_ref, 1.0, ni, nj, nk, nl,
-		np, nq);
+	d = 1.0;
+	linalg2::ijkl_pkiq_jpql_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pkiq_jpql_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2381,9 +2429,10 @@ void linalg_test::test_ijkl_pkiq_jpql(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_pkiq_jpql(a, b, c, -1.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pkiq_jpql(a, b, c_ref, -1.0, ni, nj, nk, nl,
-		np, nq);
+	d = -1.0;
+	linalg2::ijkl_pkiq_jpql_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pkiq_jpql_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2392,10 +2441,10 @@ void linalg_test::test_ijkl_pkiq_jpql(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	double d = drand48();
-	linalg::ijkl_pkiq_jpql(a, b, c, d, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pkiq_jpql(a, b, c_ref, d, ni, nj, nk, nl,
-		np, nq);
+	d = drand48();
+	linalg2::ijkl_pkiq_jpql_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pkiq_jpql_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2404,9 +2453,10 @@ void linalg_test::test_ijkl_pkiq_jpql(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_pkiq_jpql(a, b, c, -d, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pkiq_jpql(a, b, c_ref, -d, ni, nj, nk, nl,
-		np, nq);
+	d = -drand48();
+	linalg2::ijkl_pkiq_jpql_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pkiq_jpql_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2436,15 +2486,16 @@ void linalg_test::test_ijkl_pkiq_jpql(size_t ni, size_t nj, size_t nk,
 }
 
 
-void linalg_test::test_ijkl_pkiq_pjlq(size_t ni, size_t nj, size_t nk,
+void linalg_test::test_ijkl_pkiq_pjlq_x(size_t ni, size_t nj, size_t nk,
 	size_t nl, size_t np, size_t nq) throw(libtest::test_exception) {
 
 	std::ostringstream ss;
-	ss << "linalg_test::test_ijkl_pkiq_pjlq(" << ni << ", " << nj << ", "
+	ss << "linalg_test::test_ijkl_pkiq_pjlq_x(" << ni << ", " << nj << ", "
 		<< nk << ", " << nl << ", " << np << ", " << nq << ")";
 	std::string tnss = ss.str();
 
 	double *a = 0, *b = 0, *c = 0, *c_ref = 0;
+	double d = 0.0;
 
 	try {
 
@@ -2460,9 +2511,10 @@ void linalg_test::test_ijkl_pkiq_pjlq(size_t ni, size_t nj, size_t nk,
 	for(size_t i = 0; i < szb; i++) b[i] = drand48();
 	for(size_t i = 0; i < szc; i++) c[i] = c_ref[i] = drand48();
 
-	linalg::ijkl_pkiq_pjlq(a, b, c, 0.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pkiq_pjlq(a, b, c_ref, 0.0, ni, nj, nk, nl,
-		np, nq);
+	d = 0.0;
+	linalg2::ijkl_pkiq_pjlq_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pkiq_pjlq_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2471,9 +2523,10 @@ void linalg_test::test_ijkl_pkiq_pjlq(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_pkiq_pjlq(a, b, c, 1.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pkiq_pjlq(a, b, c_ref, 1.0, ni, nj, nk, nl,
-		np, nq);
+	d = 1.0;
+	linalg2::ijkl_pkiq_pjlq_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pkiq_pjlq_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2482,9 +2535,10 @@ void linalg_test::test_ijkl_pkiq_pjlq(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_pkiq_pjlq(a, b, c, -1.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pkiq_pjlq(a, b, c_ref, -1.0, ni, nj, nk, nl,
-		np, nq);
+	d = -1.0;
+	linalg2::ijkl_pkiq_pjlq_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pkiq_pjlq_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2493,10 +2547,10 @@ void linalg_test::test_ijkl_pkiq_pjlq(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	double d = drand48();
-	linalg::ijkl_pkiq_pjlq(a, b, c, d, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pkiq_pjlq(a, b, c_ref, d, ni, nj, nk, nl,
-		np, nq);
+	d = drand48();
+	linalg2::ijkl_pkiq_pjlq_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pkiq_pjlq_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2505,9 +2559,10 @@ void linalg_test::test_ijkl_pkiq_pjlq(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_pkiq_pjlq(a, b, c, -d, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pkiq_pjlq(a, b, c_ref, -d, ni, nj, nk, nl,
-		np, nq);
+	d = -drand48();
+	linalg2::ijkl_pkiq_pjlq_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pkiq_pjlq_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2537,15 +2592,16 @@ void linalg_test::test_ijkl_pkiq_pjlq(size_t ni, size_t nj, size_t nk,
 }
 
 
-void linalg_test::test_ijkl_pkiq_pjql(size_t ni, size_t nj, size_t nk,
+void linalg_test::test_ijkl_pkiq_pjql_x(size_t ni, size_t nj, size_t nk,
 	size_t nl, size_t np, size_t nq) throw(libtest::test_exception) {
 
 	std::ostringstream ss;
-	ss << "linalg_test::test_ijkl_pkiq_pjql(" << ni << ", " << nj << ", "
+	ss << "linalg_test::test_ijkl_pkiq_pjql_x(" << ni << ", " << nj << ", "
 		<< nk << ", " << nl << ", " << np << ", " << nq << ")";
 	std::string tnss = ss.str();
 
 	double *a = 0, *b = 0, *c = 0, *c_ref = 0;
+	double d = 0.0;
 
 	try {
 
@@ -2561,9 +2617,10 @@ void linalg_test::test_ijkl_pkiq_pjql(size_t ni, size_t nj, size_t nk,
 	for(size_t i = 0; i < szb; i++) b[i] = drand48();
 	for(size_t i = 0; i < szc; i++) c[i] = c_ref[i] = drand48();
 
-	linalg::ijkl_pkiq_pjql(a, b, c, 0.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pkiq_pjql(a, b, c_ref, 0.0, ni, nj, nk, nl,
-		np, nq);
+	d = 0.0;
+	linalg2::ijkl_pkiq_pjql_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pkiq_pjql_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2572,9 +2629,10 @@ void linalg_test::test_ijkl_pkiq_pjql(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_pkiq_pjql(a, b, c, 1.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pkiq_pjql(a, b, c_ref, 1.0, ni, nj, nk, nl,
-		np, nq);
+	d = 1.0;
+	linalg2::ijkl_pkiq_pjql_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pkiq_pjql_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2583,9 +2641,10 @@ void linalg_test::test_ijkl_pkiq_pjql(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_pkiq_pjql(a, b, c, -1.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pkiq_pjql(a, b, c_ref, -1.0, ni, nj, nk, nl,
-		np, nq);
+	d = -1.0;
+	linalg2::ijkl_pkiq_pjql_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pkiq_pjql_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2594,10 +2653,10 @@ void linalg_test::test_ijkl_pkiq_pjql(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	double d = drand48();
-	linalg::ijkl_pkiq_pjql(a, b, c, d, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pkiq_pjql(a, b, c_ref, d, ni, nj, nk, nl,
-		np, nq);
+	d = drand48();
+	linalg2::ijkl_pkiq_pjql_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pkiq_pjql_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2606,9 +2665,10 @@ void linalg_test::test_ijkl_pkiq_pjql(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_pkiq_pjql(a, b, c, -d, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pkiq_pjql(a, b, c_ref, -d, ni, nj, nk, nl,
-		np, nq);
+	d = -drand48();
+	linalg2::ijkl_pkiq_pjql_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pkiq_pjql_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2638,15 +2698,16 @@ void linalg_test::test_ijkl_pkiq_pjql(size_t ni, size_t nj, size_t nk,
 }
 
 
-void linalg_test::test_ijkl_pliq_jpkq(size_t ni, size_t nj, size_t nk,
+void linalg_test::test_ijkl_pliq_jpkq_x(size_t ni, size_t nj, size_t nk,
 	size_t nl, size_t np, size_t nq) throw(libtest::test_exception) {
 
 	std::ostringstream ss;
-	ss << "linalg_test::test_ijkl_pliq_jpkq(" << ni << ", " << nj << ", "
+	ss << "linalg_test::test_ijkl_pliq_jpkq_x(" << ni << ", " << nj << ", "
 		<< nk << ", " << nl << ", " << np << ", " << nq << ")";
 	std::string tnss = ss.str();
 
 	double *a = 0, *b = 0, *c = 0, *c_ref = 0;
+	double d = 0.0;
 
 	try {
 
@@ -2662,9 +2723,10 @@ void linalg_test::test_ijkl_pliq_jpkq(size_t ni, size_t nj, size_t nk,
 	for(size_t i = 0; i < szb; i++) b[i] = drand48();
 	for(size_t i = 0; i < szc; i++) c[i] = c_ref[i] = drand48();
 
-	linalg::ijkl_pliq_jpkq(a, b, c, 0.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pliq_jpkq(a, b, c_ref, 0.0, ni, nj, nk, nl,
-		np, nq);
+	d = 0.0;
+	linalg2::ijkl_pliq_jpkq_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pliq_jpkq_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2673,9 +2735,10 @@ void linalg_test::test_ijkl_pliq_jpkq(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_pliq_jpkq(a, b, c, 1.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pliq_jpkq(a, b, c_ref, 1.0, ni, nj, nk, nl,
-		np, nq);
+	d = 1.0;
+	linalg2::ijkl_pliq_jpkq_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pliq_jpkq_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2684,9 +2747,10 @@ void linalg_test::test_ijkl_pliq_jpkq(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_pliq_jpkq(a, b, c, -1.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pliq_jpkq(a, b, c_ref, -1.0, ni, nj, nk, nl,
-		np, nq);
+	d = -1.0;
+	linalg2::ijkl_pliq_jpkq_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pliq_jpkq_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2695,10 +2759,10 @@ void linalg_test::test_ijkl_pliq_jpkq(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	double d = drand48();
-	linalg::ijkl_pliq_jpkq(a, b, c, d, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pliq_jpkq(a, b, c_ref, d, ni, nj, nk, nl,
-		np, nq);
+	d = drand48();
+	linalg2::ijkl_pliq_jpkq_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pliq_jpkq_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2707,9 +2771,10 @@ void linalg_test::test_ijkl_pliq_jpkq(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_pliq_jpkq(a, b, c, -d, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pliq_jpkq(a, b, c_ref, -d, ni, nj, nk, nl,
-		np, nq);
+	d = -drand48();
+	linalg2::ijkl_pliq_jpkq_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pliq_jpkq_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2739,15 +2804,16 @@ void linalg_test::test_ijkl_pliq_jpkq(size_t ni, size_t nj, size_t nk,
 }
 
 
-void linalg_test::test_ijkl_pliq_jpqk(size_t ni, size_t nj, size_t nk,
+void linalg_test::test_ijkl_pliq_jpqk_x(size_t ni, size_t nj, size_t nk,
 	size_t nl, size_t np, size_t nq) throw(libtest::test_exception) {
 
 	std::ostringstream ss;
-	ss << "linalg_test::test_ijkl_pliq_jpqk(" << ni << ", " << nj << ", "
+	ss << "linalg_test::test_ijkl_pliq_jpqk_x(" << ni << ", " << nj << ", "
 		<< nk << ", " << nl << ", " << np << ", " << nq << ")";
 	std::string tnss = ss.str();
 
 	double *a = 0, *b = 0, *c = 0, *c_ref = 0;
+	double d = 0.0;
 
 	try {
 
@@ -2763,9 +2829,10 @@ void linalg_test::test_ijkl_pliq_jpqk(size_t ni, size_t nj, size_t nk,
 	for(size_t i = 0; i < szb; i++) b[i] = drand48();
 	for(size_t i = 0; i < szc; i++) c[i] = c_ref[i] = drand48();
 
-	linalg::ijkl_pliq_jpqk(a, b, c, 0.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pliq_jpqk(a, b, c_ref, 0.0, ni, nj, nk, nl,
-		np, nq);
+	d = 0.0;
+	linalg2::ijkl_pliq_jpqk_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pliq_jpqk_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2774,9 +2841,10 @@ void linalg_test::test_ijkl_pliq_jpqk(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_pliq_jpqk(a, b, c, 1.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pliq_jpqk(a, b, c_ref, 1.0, ni, nj, nk, nl,
-		np, nq);
+	d = 1.0;
+	linalg2::ijkl_pliq_jpqk_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pliq_jpqk_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2785,9 +2853,10 @@ void linalg_test::test_ijkl_pliq_jpqk(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_pliq_jpqk(a, b, c, -1.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pliq_jpqk(a, b, c_ref, -1.0, ni, nj, nk, nl,
-		np, nq);
+	d = -1.0;
+	linalg2::ijkl_pliq_jpqk_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pliq_jpqk_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2796,10 +2865,10 @@ void linalg_test::test_ijkl_pliq_jpqk(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	double d = drand48();
-	linalg::ijkl_pliq_jpqk(a, b, c, d, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pliq_jpqk(a, b, c_ref, d, ni, nj, nk, nl,
-		np, nq);
+	d = drand48();
+	linalg2::ijkl_pliq_jpqk_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pliq_jpqk_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2808,9 +2877,10 @@ void linalg_test::test_ijkl_pliq_jpqk(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_pliq_jpqk(a, b, c, -d, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pliq_jpqk(a, b, c_ref, -d, ni, nj, nk, nl,
-		np, nq);
+	d = -drand48();
+	linalg2::ijkl_pliq_jpqk_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pliq_jpqk_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2840,15 +2910,16 @@ void linalg_test::test_ijkl_pliq_jpqk(size_t ni, size_t nj, size_t nk,
 }
 
 
-void linalg_test::test_ijkl_pliq_pjqk(size_t ni, size_t nj, size_t nk,
+void linalg_test::test_ijkl_pliq_pjqk_x(size_t ni, size_t nj, size_t nk,
 	size_t nl, size_t np, size_t nq) throw(libtest::test_exception) {
 
 	std::ostringstream ss;
-	ss << "linalg_test::test_ijkl_pliq_pjqk(" << ni << ", " << nj << ", "
+	ss << "linalg_test::test_ijkl_pliq_pjqk_x(" << ni << ", " << nj << ", "
 		<< nk << ", " << nl << ", " << np << ", " << nq << ")";
 	std::string tnss = ss.str();
 
 	double *a = 0, *b = 0, *c = 0, *c_ref = 0;
+	double d = 0.0;
 
 	try {
 
@@ -2864,9 +2935,10 @@ void linalg_test::test_ijkl_pliq_pjqk(size_t ni, size_t nj, size_t nk,
 	for(size_t i = 0; i < szb; i++) b[i] = drand48();
 	for(size_t i = 0; i < szc; i++) c[i] = c_ref[i] = drand48();
 
-	linalg::ijkl_pliq_pjqk(a, b, c, 0.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pliq_pjqk(a, b, c_ref, 0.0, ni, nj, nk, nl,
-		np, nq);
+	d = 0.0;
+	linalg2::ijkl_pliq_pjqk_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pliq_pjqk_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2875,9 +2947,10 @@ void linalg_test::test_ijkl_pliq_pjqk(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_pliq_pjqk(a, b, c, 1.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pliq_pjqk(a, b, c_ref, 1.0, ni, nj, nk, nl,
-		np, nq);
+	d = 1.0;
+	linalg2::ijkl_pliq_pjqk_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pliq_pjqk_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2886,9 +2959,10 @@ void linalg_test::test_ijkl_pliq_pjqk(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_pliq_pjqk(a, b, c, -1.0, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pliq_pjqk(a, b, c_ref, -1.0, ni, nj, nk, nl,
-		np, nq);
+	d = -1.0;
+	linalg2::ijkl_pliq_pjqk_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pliq_pjqk_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2897,10 +2971,10 @@ void linalg_test::test_ijkl_pliq_pjqk(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	double d = drand48();
-	linalg::ijkl_pliq_pjqk(a, b, c, d, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pliq_pjqk(a, b, c_ref, d, ni, nj, nk, nl,
-		np, nq);
+	d = drand48();
+	linalg2::ijkl_pliq_pjqk_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pliq_pjqk_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -2909,9 +2983,10 @@ void linalg_test::test_ijkl_pliq_pjqk(size_t ni, size_t nj, size_t nk,
 		}
 	}
 
-	linalg::ijkl_pliq_pjqk(a, b, c, -d, ni, nj, nk, nl, np, nq);
-	linalg_impl_generic::ijkl_pliq_pjqk(a, b, c_ref, -d, ni, nj, nk, nl,
-		np, nq);
+	d = -drand48();
+	linalg2::ijkl_pliq_pjqk_x(ni, nj, nk, nl, np, nq, a, b, c, d);
+	linalg_base_generic::ijkl_pliq_pjqk_x(ni, nj, nk, nl, np, nq,
+		a, b, c_ref, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
