@@ -26,6 +26,7 @@ set(SRC_LINALG
 	linalg/generic/linalg_base_level1_generic.C
 	linalg/generic/linalg_base_level2_generic.C
 	linalg/generic/linalg_base_level3_generic.C
+	linalg/generic/linalg_base_level6_generic.C
 )
 
 set(SRC_INST
