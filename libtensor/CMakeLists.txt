@@ -20,6 +20,7 @@ set(SRC
 set(SRC_LINALG
 	linalg/linalg_impl_generic.C
 	linalg/linalg_impl_cblas.C
+	linalg/linalg_impl_acml.C
 	linalg/linalg_impl_mkl.C
 )
 

@@ -3,6 +3,7 @@
 
 #include "linalg_impl_generic.h"
 #include "linalg_impl_cblas.h"
+#include "linalg_impl_acml.h"
 #include "linalg_impl_mkl.h"
 
 namespace libtensor {
@@ -17,6 +18,8 @@ namespace libtensor {
 class linalg :
 #if defined(USE_MKL)
 	public linalg_impl_mkl
+#elif defined(USE_ACML)
+	public linalg_impl_acml
 #elif defined(USE_CBLAS) || defined(USE_GSL)
 	public linalg_impl_cblas
 #elif defined(USE_QCHEM)
