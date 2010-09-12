@@ -57,4 +57,18 @@ void linalg_base_level2_generic::ij_ji_x(
 }
 
 
+double linalg_base_level2_generic::x_pq_qp(
+	size_t np, size_t nq,
+	const double *a, size_t spa,
+	const double *b, size_t sqb) {
+
+	double c = 0.0;
+	for(size_t p = 0; p < np; p++)
+	for(size_t q = 0; q < nq; q++) {
+		c += a[p * spa + q] * b[q * sqb + p];
+	}
+	return c;
+}
+
+
 } // namespace libtensor

@@ -1,6 +1,21 @@
+#include "linalg_base_level2_generic.h"
 #include "linalg_base_level3_generic.h"
 
 namespace libtensor {
+
+
+void linalg_base_level3_generic::i_ipq_qp_x(
+	size_t ni, size_t np, size_t nq,
+	const double *a, size_t spa, size_t sia,
+	const double *b, size_t sqb,
+	double *c, size_t sic,
+	double d) {
+
+	for(size_t i = 0; i < ni; i++) {
+		c[i * sic] += d * linalg_base_level2_generic::x_pq_qp(
+			np, nq, a + i * sia, spa, b, sqb);
+	}
+}
 
 
 void linalg_base_level3_generic::ij_ip_jp_x(

@@ -85,6 +85,21 @@ struct linalg_base_level2_generic {
 		double b,
 		double *c, size_t sic);
 
+
+	/**	\brief \f$ c = \sum_{pq} a_{pq} b_{qp} \f$
+		\param np Number of elements p.
+		\param nq Number of elements q.
+		\param a Pointer to a.
+		\param spa Step of p in a (spa >= nq).
+		\param b Pointer to b.
+		\param sqb Step of q in b (sqb >= np).
+		\return c.
+	 **/
+	static double x_pq_qp(
+		size_t np, size_t nq,
+		const double *a, size_t spa,
+		const double *b, size_t sqb);
+
 };
 
 

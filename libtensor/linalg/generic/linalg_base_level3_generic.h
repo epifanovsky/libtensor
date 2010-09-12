@@ -13,6 +13,27 @@ namespace libtensor {
 struct linalg_base_level3_generic {
 
 
+	/**	\brief \f$ c_i = \sum_{pq} a_{ipq} b_{qp} d \f$
+		\param a Pointer to a.
+		\param b Pointer to b.
+		\param c Pointer to c.
+		\param d Value of d.
+		\param ni Number of elements i.
+		\param np Number of elements p.
+		\param nq Number of elements q.
+		\param sia Step of i in a (sia >= np * spa).
+		\param sic Step of i in c (sic >= ni).
+		\param spa Step of p in a (spa >= nq).
+		\param sqb Step of q in b (sqb >= np).
+	 **/
+	static void i_ipq_qp_x(
+		size_t ni, size_t np, size_t nq,
+		const double *a, size_t spa, size_t sia,
+		const double *b, size_t sqb,
+		double *c, size_t sic,
+		double d);
+
+
 	/**	\brief \f$ c_{ij} = c_{ij} + \sum_p a_{ip} b_{jp} d \f$
 		\param ni Number of elements i.
 		\param nj Number of elements j.

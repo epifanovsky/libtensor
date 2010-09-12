@@ -1616,8 +1616,9 @@ void loop_list_mul::fn_x_pq_qp(registers &r) const {
 	}
 #endif // LIBTENSOR_DEBUG
 
-	*r.m_ptrb[0] += args.d * linalg::x_pq_qp(r.m_ptra[0], r.m_ptra[1],
-		args.np, args.nq, args.spa, args.sqb);
+	*r.m_ptrb[0] += args.d * linalg2::x_pq_qp(
+		args.np, args.nq,
+		r.m_ptra[0], args.spa, r.m_ptra[1], args.sqb);
 }
 
 
@@ -2088,9 +2089,11 @@ void loop_list_mul::fn_i_ipq_qp(registers &r) const {
 	}
 #endif // LIBTENSOR_DEBUG
 
-	linalg::i_ipq_qp(r.m_ptra[0], r.m_ptra[1], r.m_ptrb[0], args.d,
-		args.ni, args.np, args.nq, args.sia, args.sic, args.spa,
-		args.sqb);
+	linalg2::i_ipq_qp_x(
+		args.ni, args.np, args.nq,
+		r.m_ptra[0], args.spa, args.sia,
+		r.m_ptra[1], args.sqb,
+		r.m_ptrb[0], args.sic, args.d);
 }
 
 
@@ -2119,9 +2122,11 @@ void loop_list_mul::fn_i_pq_iqp(registers &r) const {
 	}
 #endif // LIBTENSOR_DEBUG
 
-	linalg::i_ipq_qp(r.m_ptra[1], r.m_ptra[0], r.m_ptrb[0], args.d,
-		args.ni, args.nq, args.np, args.sib, args.sic, args.sqb,
-		args.spa);
+	linalg2::i_ipq_qp_x(
+		args.ni, args.nq, args.np,
+		r.m_ptra[1], args.sqb, args.sib,
+		r.m_ptra[0], args.spa,
+		r.m_ptrb[0], args.sic, args.d);
 }
 
 
@@ -2150,9 +2155,11 @@ void loop_list_mul::fn_ij_ipq_jqp(registers &r) const {
 	}
 #endif // LIBTENSOR_DEBUG
 
-	linalg::ij_ipq_jqp(r.m_ptra[0], r.m_ptra[1], r.m_ptrb[0], args.d,
-		args.ni, args.nj, args.np, args.nq, args.sia, args.sic,
-		args.sjb, args.spa, args.sqb);
+	linalg2::ij_ipq_jqp_x(
+		args.ni, args.nj, args.np, args.nq,
+		r.m_ptra[0], args.spa, args.sia,
+		r.m_ptra[1], args.sqb, args.sjb,
+		r.m_ptrb[0], args.sic, args.d);
 }
 
 
@@ -2186,9 +2193,11 @@ void loop_list_mul::fn_ij_jpq_iqp(registers &r) const {
 	// therefore: ni := ni, nj := nj
 	//            sia := sib, sic := sic, sjb = sja,
 	//            spa := sqb, sqb := spa
-	linalg::ij_ipq_jqp(r.m_ptra[1], r.m_ptra[0], r.m_ptrb[0], args.d,
-		args.ni, args.nj, args.nq, args.np, args.sib, args.sic,
-		args.sja, args.sqb, args.spa);
+	linalg2::ij_ipq_jqp_x(
+		args.ni, args.nj, args.nq, args.np,
+		r.m_ptra[1], args.sqb, args.sib,
+		r.m_ptra[0], args.spa, args.sja,
+		r.m_ptrb[0], args.sic, args.d);
 }
 
 
