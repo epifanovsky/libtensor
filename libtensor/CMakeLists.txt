@@ -18,15 +18,11 @@ set(SRC
 )
 
 set(SRC_LINALG
-	linalg/linalg_impl_generic.C
-	linalg/linalg_impl_cblas.C
-	linalg/linalg_impl_acml.C
-	linalg/linalg_impl_mkl.C
-
 	linalg/generic/linalg_base_level1_generic.C
 	linalg/generic/linalg_base_level2_generic.C
 	linalg/generic/linalg_base_level3_generic.C
 	linalg/generic/linalg_base_level4_generic.C
+	linalg/generic/linalg_base_level5_generic.C
 	linalg/generic/linalg_base_level6_generic.C
 )
 

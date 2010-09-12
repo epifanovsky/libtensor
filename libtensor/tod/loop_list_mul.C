@@ -1587,7 +1587,7 @@ void loop_list_mul::fn_x_p_p(registers &r) const {
 	}
 #endif // LIBTENSOR_DEBUG
 
-	*r.m_ptrb[0] += args.d * linalg2::x_p_p(
+	*r.m_ptrb[0] += args.d * linalg::x_p_p(
 		args.np, r.m_ptra[0], args.spa, r.m_ptra[1], args.spb);
 }
 
@@ -1616,7 +1616,7 @@ void loop_list_mul::fn_x_pq_qp(registers &r) const {
 	}
 #endif // LIBTENSOR_DEBUG
 
-	*r.m_ptrb[0] += args.d * linalg2::x_pq_qp(
+	*r.m_ptrb[0] += args.d * linalg::x_pq_qp(
 		args.np, args.nq,
 		r.m_ptra[0], args.spa, r.m_ptra[1], args.sqb);
 }
@@ -1646,7 +1646,7 @@ void loop_list_mul::fn_i_i_x(registers &r) const {
 	}
 #endif // LIBTENSOR_DEBUG
 
-	linalg2::i_i_x(args.ni, r.m_ptra[0], 1, *r.m_ptra[1] * args.d,
+	linalg::i_i_x(args.ni, r.m_ptra[0], 1, *r.m_ptra[1] * args.d,
 		r.m_ptrb[0], args.sic);
 }
 
@@ -1675,7 +1675,7 @@ void loop_list_mul::fn_i_x_i(registers &r) const {
 	}
 #endif // LIBTENSOR_DEBUG
 
-	linalg2::i_i_x(args.ni, r.m_ptra[1], 1, *r.m_ptra[0] * args.d,
+	linalg::i_i_x(args.ni, r.m_ptra[1], 1, *r.m_ptra[0] * args.d,
 		r.m_ptrb[0], args.sic);
 }
 
@@ -1705,7 +1705,7 @@ void loop_list_mul::fn_i_ip_p(registers &r) const {
 	}
 #endif // LIBTENSOR_DEBUG
 
-	linalg2::i_ip_p_x(
+	linalg::i_ip_p_x(
 		args.ni, args.np,
 		r.m_ptra[0], args.sia, r.m_ptra[1], args.spb,
 		r.m_ptrb[0], args.sic, args.d);
@@ -1737,7 +1737,7 @@ void loop_list_mul::fn_i_pi_p(registers &r) const {
 	}
 #endif // LIBTENSOR_DEBUG
 
-	linalg2::i_pi_p_x(
+	linalg::i_pi_p_x(
 		args.ni, args.np,
 		r.m_ptra[0], args.spa, r.m_ptra[1], args.spb,
 		r.m_ptrb[0], args.sic, args.d);
@@ -1769,7 +1769,7 @@ void loop_list_mul::fn_i_p_ip(registers &r) const {
 	}
 #endif // LIBTENSOR_DEBUG
 
-	linalg2::i_ip_p_x(
+	linalg::i_ip_p_x(
 		args.ni, args.np,
 		r.m_ptra[1], args.sib, r.m_ptra[0], args.spa,
 		r.m_ptrb[0], args.sic, args.d);
@@ -1801,7 +1801,7 @@ void loop_list_mul::fn_i_p_pi(registers &r) const {
 	}
 #endif // LIBTENSOR_DEBUG
 
-	linalg2::i_pi_p_x(
+	linalg::i_pi_p_x(
 		args.ni, args.np,
 		r.m_ptra[1], args.spb, r.m_ptra[0], args.spa,
 		r.m_ptrb[0], args.sic, args.d);
@@ -1833,7 +1833,7 @@ void loop_list_mul::fn_ij_ip_pj(registers &r) const {
 	}
 #endif // LIBTENSOR_DEBUG
 
-	linalg2::ij_ip_pj_x(
+	linalg::ij_ip_pj_x(
 		args.ni, args.nj, args.np,
 		r.m_ptra[0], args.sia, r.m_ptra[1], args.spb,
 		r.m_ptrb[0], args.sic, args.d);
@@ -1865,7 +1865,7 @@ void loop_list_mul::fn_ij_ip_jp(registers &r) const {
 	}
 #endif // LIBTENSOR_DEBUG
 
-	linalg2::ij_ip_jp_x(
+	linalg::ij_ip_jp_x(
 		args.ni, args.nj, args.np,
 		r.m_ptra[0], args.sia, r.m_ptra[1], args.sjb,
 		r.m_ptrb[0], args.sic, args.d);
@@ -1897,7 +1897,7 @@ void loop_list_mul::fn_ij_pi_pj(registers &r) const {
 	}
 #endif // LIBTENSOR_DEBUG
 
-	linalg2::ij_pi_pj_x(
+	linalg::ij_pi_pj_x(
 		args.ni, args.nj, args.np,
 		r.m_ptra[0], args.spa, r.m_ptra[1], args.spb,
 		r.m_ptrb[0], args.sic, args.d);
@@ -1929,7 +1929,7 @@ void loop_list_mul::fn_ij_pi_jp(registers &r) const {
 	}
 #endif // LIBTENSOR_DEBUG
 
-	linalg2::ij_pi_jp_x(
+	linalg::ij_pi_jp_x(
 		args.ni, args.nj, args.np,
 		r.m_ptra[0], args.spa, r.m_ptra[1], args.sjb,
 		r.m_ptrb[0], args.sic, args.d);
@@ -1961,7 +1961,7 @@ void loop_list_mul::fn_ij_pj_ip(registers &r) const {
 	}
 #endif // LIBTENSOR_DEBUG
 
-	linalg2::ij_ip_pj_x(
+	linalg::ij_ip_pj_x(
 		args.ni, args.nj, args.np,
 		r.m_ptra[1], args.sib, r.m_ptra[0], args.spa,
 		r.m_ptrb[0], args.sic, args.d);
@@ -1993,7 +1993,7 @@ void loop_list_mul::fn_ij_jp_ip(registers &r) const {
 	}
 #endif // LIBTENSOR_DEBUG
 
-	linalg2::ij_ip_jp_x(
+	linalg::ij_ip_jp_x(
 		args.ni, args.nj, args.np,
 		r.m_ptra[1], args.sib, r.m_ptra[0], args.sja,
 		r.m_ptrb[0], args.sic, args.d);
@@ -2025,7 +2025,7 @@ void loop_list_mul::fn_ij_pj_pi(registers &r) const {
 	}
 #endif // LIBTENSOR_DEBUG
 
-	linalg2::ij_pi_pj_x(
+	linalg::ij_pi_pj_x(
 		args.ni, args.nj, args.np,
 		r.m_ptra[1], args.spb, r.m_ptra[0], args.spa,
 		r.m_ptrb[0], args.sic, args.d);
@@ -2057,7 +2057,7 @@ void loop_list_mul::fn_ij_jp_pi(registers &r) const {
 	}
 #endif // LIBTENSOR_DEBUG
 
-	linalg2::ij_pi_jp_x(
+	linalg::ij_pi_jp_x(
 		args.ni, args.nj, args.np,
 		r.m_ptra[1], args.spb, r.m_ptra[0], args.sja,
 		r.m_ptrb[0], args.sic, args.d);
@@ -2089,7 +2089,7 @@ void loop_list_mul::fn_i_ipq_qp(registers &r) const {
 	}
 #endif // LIBTENSOR_DEBUG
 
-	linalg2::i_ipq_qp_x(
+	linalg::i_ipq_qp_x(
 		args.ni, args.np, args.nq,
 		r.m_ptra[0], args.spa, args.sia,
 		r.m_ptra[1], args.sqb,
@@ -2122,7 +2122,7 @@ void loop_list_mul::fn_i_pq_iqp(registers &r) const {
 	}
 #endif // LIBTENSOR_DEBUG
 
-	linalg2::i_ipq_qp_x(
+	linalg::i_ipq_qp_x(
 		args.ni, args.nq, args.np,
 		r.m_ptra[1], args.sqb, args.sib,
 		r.m_ptra[0], args.spa,
@@ -2155,7 +2155,7 @@ void loop_list_mul::fn_ij_ipq_jqp(registers &r) const {
 	}
 #endif // LIBTENSOR_DEBUG
 
-	linalg2::ij_ipq_jqp_x(
+	linalg::ij_ipq_jqp_x(
 		args.ni, args.nj, args.np, args.nq,
 		r.m_ptra[0], args.spa, args.sia,
 		r.m_ptra[1], args.sqb, args.sjb,
@@ -2193,7 +2193,7 @@ void loop_list_mul::fn_ij_jpq_iqp(registers &r) const {
 	// therefore: ni := ni, nj := nj
 	//            sia := sib, sic := sic, sjb = sja,
 	//            spa := sqb, sqb := spa
-	linalg2::ij_ipq_jqp_x(
+	linalg::ij_ipq_jqp_x(
 		args.ni, args.nj, args.nq, args.np,
 		r.m_ptra[1], args.sqb, args.sib,
 		r.m_ptra[0], args.spa, args.sja,
@@ -2226,7 +2226,7 @@ void loop_list_mul::fn_ijkl_iplq_kpjq(registers &r) const {
 	}
 #endif // LIBTENSOR_DEBUG
 
-	linalg2::ijkl_iplq_kpjq_x(
+	linalg::ijkl_iplq_kpjq_x(
 		args.ni, args.nj, args.nk, args.nl, args.np, args.nq,
 		r.m_ptra[0], r.m_ptra[1], r.m_ptrb[0], args.d);
 }
@@ -2257,7 +2257,7 @@ void loop_list_mul::fn_ijkl_iplq_pkjq(registers &r) const {
 	}
 #endif // LIBTENSOR_DEBUG
 
-	linalg2::ijkl_iplq_pkjq_x(
+	linalg::ijkl_iplq_pkjq_x(
 		args.ni, args.nj, args.nk, args.nl, args.np, args.nq,
 		r.m_ptra[0], r.m_ptra[1], r.m_ptrb[0], args.d);
 }
@@ -2288,7 +2288,7 @@ void loop_list_mul::fn_ijkl_iplq_pkqj(registers &r) const {
 	}
 #endif // LIBTENSOR_DEBUG
 
-	linalg2::ijkl_iplq_pkqj_x(
+	linalg::ijkl_iplq_pkqj_x(
 		args.ni, args.nj, args.nk, args.nl, args.np, args.nq,
 		r.m_ptra[0], r.m_ptra[1], r.m_ptrb[0], args.d);
 }
@@ -2319,7 +2319,7 @@ void loop_list_mul::fn_ijkl_ipql_pkqj(registers &r) const {
 	}
 #endif // LIBTENSOR_DEBUG
 
-	linalg2::ijkl_ipql_pkqj_x(
+	linalg::ijkl_ipql_pkqj_x(
 		args.ni, args.nj, args.nk, args.nl, args.np, args.nq,
 		r.m_ptra[0], r.m_ptra[1], r.m_ptrb[0], args.d);
 }
@@ -2350,7 +2350,7 @@ void loop_list_mul::fn_ijkl_pilq_kpjq(registers &r) const {
 	}
 #endif // LIBTENSOR_DEBUG
 
-	linalg2::ijkl_pilq_kpjq_x(
+	linalg::ijkl_pilq_kpjq_x(
 		args.ni, args.nj, args.nk, args.nl, args.np, args.nq,
 		r.m_ptra[0], r.m_ptra[1], r.m_ptrb[0], args.d);
 }
@@ -2381,7 +2381,7 @@ void loop_list_mul::fn_ijkl_pilq_pkjq(registers &r) const {
 	}
 #endif // LIBTENSOR_DEBUG
 
-	linalg2::ijkl_pilq_pkjq_x(
+	linalg::ijkl_pilq_pkjq_x(
 		args.ni, args.nj, args.nk, args.nl, args.np, args.nq,
 		r.m_ptra[0], r.m_ptra[1], r.m_ptrb[0], args.d);
 }
@@ -2412,7 +2412,7 @@ void loop_list_mul::fn_ijkl_piql_kpqj(registers &r) const {
 	}
 #endif // LIBTENSOR_DEBUG
 
-	linalg2::ijkl_piql_kpqj_x(
+	linalg::ijkl_piql_kpqj_x(
 		args.ni, args.nj, args.nk, args.nl, args.np, args.nq,
 		r.m_ptra[0], r.m_ptra[1], r.m_ptrb[0], args.d);
 }
@@ -2443,7 +2443,7 @@ void loop_list_mul::fn_ijkl_piql_pkqj(registers &r) const {
 	}
 #endif // LIBTENSOR_DEBUG
 
-	linalg2::ijkl_piql_pkqj_x(
+	linalg::ijkl_piql_pkqj_x(
 		args.ni, args.nj, args.nk, args.nl, args.np, args.nq,
 		r.m_ptra[0], r.m_ptra[1], r.m_ptrb[0], args.d);
 }
