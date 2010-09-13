@@ -4,6 +4,7 @@
 
 #include <libtest/libtest.h>
 #include <libtensor/libtensor.h>
+#include <libtensor/linalg/linalg.h>
 #include "performance_test.h"
 
 using libtest::unit_test_factory;
@@ -103,7 +104,7 @@ void tod_add_ref<R,DimData>::do_calculate()
 	for ( size_t i=0; i<total_size; i++ ) ptrb[i]=drand48();
 
 	timings<tod_add_ref<R,DimData> >::start_timer();
-	cblas_daxpy(total_size, 2.0,ptrb,1,ptra,1);
+	linalg::i_i_x(total_size, ptrb, 1, 2.0, ptra, 1);
 	timings<tod_add_ref<R,DimData> >::stop_timer();
 
 	delete [] ptra;
