@@ -27,7 +27,7 @@ struct linalg_base_level1_cblas : public linalg_base_level1_generic {
 		const double *a, size_t spa,
 		const double *b, size_t spb) {
 
-		return ddot(np, a, spa, b, spb);
+		return cblas_ddot(np, a, spa, b, spb);
 	}
 
 
@@ -37,7 +37,7 @@ struct linalg_base_level1_cblas : public linalg_base_level1_generic {
 		double b,
 		double *c, size_t sic) {
 
-		daxpy(ni, b, a, sia, c, sic);
+		cblas_daxpy(ni, b, a, sia, c, sic);
 	}
 
 };
