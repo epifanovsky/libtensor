@@ -3,6 +3,15 @@
 namespace libtensor {
 
 
+void linalg_base_level1_generic::i_i(
+	size_t ni,
+	const double *a, size_t sia,
+	double *c, size_t sic) {
+
+	for(size_t i = 0; i < ni; i++) c[i * sic] = a[i * sia];
+}
+
+
 void linalg_base_level1_generic::i_x(
 	size_t ni,
 	double a,

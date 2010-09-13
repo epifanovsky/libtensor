@@ -2,7 +2,7 @@
 #define LIBTENSOR_TOD_DIAG_H
 
 #include "../defs.h"
-#include "../linalg.h"
+#include "../linalg/linalg.h"
 #include "../not_implemented.h"
 #include "../timings.h"
 #include "../core/mask.h"
@@ -425,8 +425,8 @@ void tod_diag<N, M>::op_dcopy::exec(processor_t &proc, registers &regs)
 	if(m_len == 0) return;
 
 	op_dcopy::start_timer();
-	blas_dcopy(m_len, regs.m_ptra, m_inca, regs.m_ptrb, m_incb);
-	if(m_c != 1.0) blas_dscal(m_len, m_c, regs.m_ptrb, m_incb);
+	linalg::i_i(m_len, regs.m_ptra, m_inca, regs.m_ptrb, m_incb);
+	if(m_c != 1.0) linalg::i_x(m_len, m_c, regs.m_ptrb, m_incb);
 	op_dcopy::stop_timer();
 }
 
@@ -438,7 +438,7 @@ void tod_diag<N, M>::op_daxpy::exec(processor_t &proc, registers &regs)
 	if(m_len == 0) return;
 
 	op_daxpy::start_timer();
-	blas_daxpy(m_len, m_c, regs.m_ptra, m_inca, regs.m_ptrb, m_incb);
+	linalg::i_i_x(m_len, regs.m_ptra, m_inca, m_c, regs.m_ptrb, m_incb);
 	op_daxpy::stop_timer();
 }
 

@@ -12,6 +12,18 @@ namespace libtensor {
  **/
 struct linalg_base_level1_generic {
 
+	/**	\brief \f$ c_i = a_i \f$
+		\param ni Number of elements i.
+		\param a Scalar a.
+		\param sia Step of i in a.
+		\param c Pointer to c.
+		\param sic Step of i in c.
+	 **/
+	static void i_i(
+		size_t ni,
+		const double *a, size_t sia,
+		double *c, size_t sic);
+
 	/**	\brief \f$ c_i = c_i a \f$
 		\param ni Number of elements i.
 		\param a Scalar a.

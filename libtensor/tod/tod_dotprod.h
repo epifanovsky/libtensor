@@ -5,7 +5,7 @@
 #include "../defs.h"
 #include "../exception.h"
 #include "../timings.h"
-#include "../linalg.h"
+#include "../linalg/linalg.h"
 #include "../core/permutation.h"
 #include "../core/tensor_i.h"
 #include "../core/tensor_ctrl.h"
@@ -291,8 +291,8 @@ void tod_dotprod<N>::op_ddot::exec(processor_t &proc, registers &regs)
 	throw(exception) {
 	tod_dotprod<N>::op_ddot::start_timer();
 
-	*(regs.m_ptrc) += blas_ddot(
-		m_n, regs.m_ptra, m_inca, regs.m_ptrb, m_incb);
+	*(regs.m_ptrc) += linalg::x_p_p(m_n, regs.m_ptra, m_inca,
+		regs.m_ptrb, m_incb);
 
 	tod_dotprod<N>::op_ddot::stop_timer();
 

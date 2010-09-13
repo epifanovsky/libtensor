@@ -1,7 +1,6 @@
 #include "../defs.h"
 #include "../exception.h"
-#include "../blas.h"
-#include "../linalg.h"
+#include "../linalg/linalg.h"
 #include "loop_list_add.h"
 #include "overflow.h"
 
@@ -172,7 +171,7 @@ void loop_list_add::fn_daxpy(registers &r) const {
 	}
 #endif // LIBTENSOR_DEBUG
 
-	blas_daxpy(m_daxpy.m_n, m_daxpy.m_k, r.m_ptra[0], m_daxpy.m_stepa,
+	linalg::i_i_x(m_daxpy.m_n, r.m_ptra[0], m_daxpy.m_stepa, m_daxpy.m_k,
 		r.m_ptrb[0], m_daxpy.m_stepb);
 }
 
@@ -196,9 +195,9 @@ void loop_list_add::fn_daxpby_trp(registers &r) const {
 	}
 #endif // LIBTENSOR_DEBUG
 
-	blas::daxpby_trp(r.m_ptra[0], r.m_ptrb[0], m_daxpby_trp.m_ni,
-		m_daxpby_trp.m_nj, m_daxpby_trp.m_stepa, m_daxpby_trp.m_stepb,
-		m_daxpby_trp.m_k, 1.0);
+//	blas::daxpby_trp(r.m_ptra[0], r.m_ptrb[0], m_daxpby_trp.m_ni,
+//		m_daxpby_trp.m_nj, m_daxpby_trp.m_stepa, m_daxpby_trp.m_stepb,
+//		m_daxpby_trp.m_k, 1.0);
 }
 
 

@@ -5,7 +5,7 @@
 #include "../defs.h"
 #include "../exception.h"
 #include "../timings.h"
-#include "../linalg.h"
+#include "../linalg/linalg.h"
 #include "../core/block_tensor_i.h"
 #include "../core/block_tensor_ctrl.h"
 #include "../core/orbit.h"
@@ -228,10 +228,8 @@ void tod_btconv<N>::op_loop::exec(processor_t &proc, registers &regs)
 template<size_t N>
 void tod_btconv<N>::op_dcopy::exec(processor_t &proc, registers &regs)
 	throw(exception) {
-	blas_dcopy(m_len, regs.m_ptra, m_inca, regs.m_ptrb, m_incb);
-	if(m_c != 1.0) {
-		blas_dscal(m_len, m_c, regs.m_ptrb, m_incb);
-	}
+	linalg::i_i(m_len, regs.m_ptra, m_inca, regs.m_ptrb, m_incb);
+	if(m_c != 1.0) linalg::i_x(m_len, m_c, regs.m_ptrb, m_incb);
 }
 
 } // namespace libtensor
