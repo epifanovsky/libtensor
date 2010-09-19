@@ -54,7 +54,6 @@ set(SRC
 	labeled_btensor_test.C
 	letter_test.C
 	letter_expr_test.C
-	linalg_test.C
 	mask_test.C
 	mp_safe_tensor_test.C
 	orbit_test.C
@@ -124,17 +123,45 @@ set(SRC
 	trace_test.C
 	version_test.C
 )
+
+set(SRC_LINALG
+	linalg/libtensor_linalg_tests.C
+	linalg/libtensor_linalg_suite.C
+	linalg/linalg_test.C
+	linalg/linalg_x_p_p_test.C
+	linalg/linalg_i_i_x_test.C
+	linalg/linalg_x_pq_qp_test.C
+	linalg/linalg_i_ip_p_x_test.C
+	linalg/linalg_i_pi_p_x_test.C
+	linalg/linalg_ij_i_j_x_test.C
+	linalg/linalg_i_ipq_qp_x_test.C
+	linalg/linalg_ij_ip_jp_x_test.C
+	linalg/linalg_ij_ip_pj_x_test.C
+	linalg/linalg_ij_pi_jp_x_test.C
+	linalg/linalg_ij_pi_pj_x_test.C
+	linalg/linalg_ij_ipq_jqp_x_test.C
+	linalg/linalg_ijkl_ipl_kpj_x_test.C
+)
+
+set(TARGETS
+	libtensor_tests
+	libtensor_linalg_tests
+)
+
 add_executable(libtensor_tests ${SRC})
+add_executable(libtensor_linalg_tests ${SRC_LINALG})
 
 include(${LIBTEST_DIR}/cmake/SetupLibTest.txt)
 
-set_property(TARGET libtensor_tests APPEND PROPERTY
+set_property(TARGET ${TARGETS} APPEND PROPERTY
 	COMPILE_DEFINITIONS LIBTENSOR_INSTANTIATE_TEMPLATES)
-set_property(TARGET libtensor_tests APPEND PROPERTY
+set_property(TARGET ${TARGETS} APPEND PROPERTY
 	COMPILE_DEFINITIONS_DEBUG LIBVMM_DEBUG)
-set_property(TARGET libtensor_tests APPEND PROPERTY
+set_property(TARGET ${TARGETS} APPEND PROPERTY
 	COMPILE_DEFINITIONS_DEBUG LIBTENSOR_DEBUG)
 
-target_link_libraries(libtensor_tests
+foreach(TARGET ${TARGETS})
+target_link_libraries(${TARGET}
 	tensor ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} test)
+endforeach(TARGET)
 

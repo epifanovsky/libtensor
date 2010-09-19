@@ -55,7 +55,6 @@
 #include "labeled_btensor_test.h"
 #include "letter_expr_test.h"
 #include "letter_test.h"
-#include "linalg_test.h"
 #include "mask_test.h"
 #include "mp_safe_tensor_test.h"
 #include "orbit_test.h"
@@ -186,7 +185,6 @@ namespace libtensor {
 	\li libtensor::labeled_btensor_test
 	\li libtensor::letter_test
 	\li libtensor::letter_expr_test
-	\li libtensor::linalg_test
 	\li libtensor::mask_test
 	\li libtensor::mp_safe_tensor_test
 	\li libtensor::orbit_test
@@ -313,7 +311,6 @@ private:
 	unit_test_factory<labeled_btensor_test> m_utf_labeled_btensor;
 	unit_test_factory<letter_test> m_utf_letter;
 	unit_test_factory<letter_expr_test> m_utf_letter_expr;
-	unit_test_factory<linalg_test> m_utf_linalg;
 	unit_test_factory<mask_test> m_utf_mask;
 	unit_test_factory<mp_safe_tensor_test> m_utf_mp_safe_tensor;
 	unit_test_factory<orbit_test> m_utf_orbit;

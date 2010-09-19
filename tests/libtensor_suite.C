@@ -59,7 +59,6 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("labeled_btensor", m_utf_labeled_btensor);
 	add_test("letter", m_utf_letter);
 	add_test("letter_expr", m_utf_letter_expr);
-	add_test("linalg", m_utf_linalg);
 	add_test("mask", m_utf_mask);
 	add_test("mp_safe_tensor", m_utf_mp_safe_tensor);
 	add_test("orbit", m_utf_orbit);
