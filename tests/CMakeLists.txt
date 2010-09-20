@@ -127,7 +127,6 @@ set(SRC
 set(SRC_LINALG
 	linalg/libtensor_linalg_tests.C
 	linalg/libtensor_linalg_suite.C
-	linalg/linalg_test.C
 	linalg/linalg_x_p_p_test.C
 	linalg/linalg_i_i_x_test.C
 	linalg/linalg_x_pq_qp_test.C
@@ -141,6 +140,21 @@ set(SRC_LINALG
 	linalg/linalg_ij_pi_pj_x_test.C
 	linalg/linalg_ij_ipq_jqp_x_test.C
 	linalg/linalg_ijkl_ipl_kpj_x_test.C
+	linalg/linalg_ijkl_iplq_kpjq_x_test.C
+	linalg/linalg_ijkl_iplq_pkjq_x_test.C
+	linalg/linalg_ijkl_iplq_pkqj_x_test.C
+	linalg/linalg_ijkl_ipql_pkqj_x_test.C
+	linalg/linalg_ijkl_pilq_kpjq_x_test.C
+	linalg/linalg_ijkl_pilq_pkjq_x_test.C
+	linalg/linalg_ijkl_piql_kpqj_x_test.C
+	linalg/linalg_ijkl_piql_pkqj_x_test.C
+	linalg/linalg_ijkl_pkiq_jplq_x_test.C
+	linalg/linalg_ijkl_pkiq_jpql_x_test.C
+	linalg/linalg_ijkl_pkiq_pjlq_x_test.C
+	linalg/linalg_ijkl_pkiq_pjql_x_test.C
+	linalg/linalg_ijkl_pliq_jpkq_x_test.C
+	linalg/linalg_ijkl_pliq_jpqk_x_test.C
+	linalg/linalg_ijkl_pliq_pjqk_x_test.C
 )
 
 set(TARGETS
