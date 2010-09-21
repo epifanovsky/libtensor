@@ -58,6 +58,7 @@ set(SRC
 	mp_safe_tensor_test.C
 	orbit_test.C
 	orbit_list_test.C
+	partition_set_test.C
 	permutation_test.C
 	permutation_builder_test.C
 	permutation_group_test.C
@@ -68,24 +69,32 @@ set(SRC
 	se_part_test.C
 	se_perm_test.C
 	so_add_test.C
-	so_add_impl_perm_test.C
 	so_add_impl_label_test.C
+	so_add_impl_part_test.C
+	so_add_impl_perm_test.C
 	so_concat_test.C
 	so_concat_impl_label_test.C
+	so_concat_impl_part_test.C
 	so_concat_impl_perm_test.C
 	so_copy_test.C
 	so_mult_test.C
 	so_mult_impl_label_test.C
+	so_mult_impl_part_test.C
 	so_mult_impl_perm_test.C
 	so_permute_impl_label_test.C
+	so_permute_impl_part_test.C
+	so_permute_impl_perm_test.C
 	so_proj_down_test.C
 	so_proj_down_impl_label_test.C
+	so_proj_down_impl_part_test.C
 	so_proj_down_impl_perm_test.C
 	so_proj_up_test.C
-	so_proj_up_impl_perm_test.C
 	so_proj_up_impl_label_test.C
+	so_proj_up_impl_part_test.C
+	so_proj_up_impl_perm_test.C
 	so_stabilize_test.C
 	so_stabilize_impl_label_test.C
+	so_stabilize_impl_part_test.C
 	so_stabilize_impl_perm_test.C
 	so_symmetrize_test.C
 	so_union_test.C

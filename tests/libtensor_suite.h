@@ -59,6 +59,7 @@
 #include "mp_safe_tensor_test.h"
 #include "orbit_test.h"
 #include "orbit_list_test.h"
+#include "partition_set_test.h"
 #include "permutation_test.h"
 #include "permutation_builder_test.h"
 #include "permutation_group_test.h"
@@ -70,23 +71,35 @@
 #include "se_perm_test.h"
 #include "so_add_test.h"
 #include "so_add_impl_label_test.h"
+#include "so_add_impl_part_test.h"
 #include "so_add_impl_perm_test.h"
 #include "so_concat_test.h"
 #include "so_concat_impl_label_test.h"
+#include "so_concat_impl_part_test.h"
 #include "so_concat_impl_perm_test.h"
 #include "so_copy_test.h"
+//#include "so_merge_test.h"
+//#include "so_merge_impl_label_test.h"
+//#include "so_merge_impl_part_test.h"
+//#include "so_merge_impl_perm_test.h"
 #include "so_mult_test.h"
 #include "so_mult_impl_label_test.h"
+#include "so_mult_impl_part_test.h"
 #include "so_mult_impl_perm_test.h"
 #include "so_permute_impl_label_test.h"
+#include "so_permute_impl_part_test.h"
+#include "so_permute_impl_perm_test.h"
 #include "so_proj_down_test.h"
 #include "so_proj_down_impl_label_test.h"
+#include "so_proj_down_impl_part_test.h"
 #include "so_proj_down_impl_perm_test.h"
 #include "so_proj_up_test.h"
 #include "so_proj_up_impl_label_test.h"
+#include "so_proj_up_impl_part_test.h"
 #include "so_proj_up_impl_perm_test.h"
 #include "so_stabilize_test.h"
 #include "so_stabilize_impl_label_test.h"
+#include "so_stabilize_impl_part_test.h"
 #include "so_stabilize_impl_perm_test.h"
 #include "so_symmetrize_test.h"
 #include "so_union_test.h"
@@ -189,6 +202,7 @@ namespace libtensor {
 	\li libtensor::mp_safe_tensor_test
 	\li libtensor::orbit_test
 	\li libtensor::orbit_list_test
+	\li libtensor::partition_set_test
 	\li libtensor::permutation_test
 	\li libtensor::permutation_builder_test
 	\li libtensor::permutation_group_test
@@ -200,23 +214,35 @@ namespace libtensor {
 	\li libtensor::se_perm_test
 	\li libtensor::so_add_test
 	\li libtensor::so_add_impl_label_test
+	\li libtensor::so_add_impl_part_test
 	\li libtensor::so_add_impl_perm_test
 	\li libtensor::so_copy_test
 	\li libtensor::so_concat_test
 	\li libtensor::so_concat_impl_label_test
+	\li libtensor::so_concat_impl_part_test
 	\li libtensor::so_concat_impl_perm_test
+	\li libtensor::so_merge_test
+	\li libtensor::so_merge_impl_label_test
+	\li libtensor::so_merge_impl_part_test
+	\li libtensor::so_merge_impl_perm_test
 	\li libtensor::so_mult_test
 	\li libtensor::so_mult_impl_label_test
+	\li libtensor::so_mult_impl_part_test
 	\li libtensor::so_mult_impl_perm_test
 	\li libtensor::so_permute_impl_label_test
+	\li libtensor::so_permute_impl_part_test
+	\li libtensor::so_permute_impl_perm_test
 	\li libtensor::so_proj_down_test
 	\li libtensor::so_proj_down_impl_label_test
+	\li libtensor::so_proj_down_impl_part_test
 	\li libtensor::so_proj_down_impl_perm_test
 	\li libtensor::so_proj_up_test
 	\li libtensor::so_proj_up_impl_label_test
+	\li libtensor::so_proj_up_impl_part_test
 	\li libtensor::so_proj_up_impl_perm_test
 	\li libtensor::so_stabilize_test
 	\li libtensor::so_stabilize_impl_label_test
+	\li libtensor::so_stabilize_impl_part_test
 	\li libtensor::so_stabilize_impl_perm_test
 	\li libtensor::so_symmetrize_test
 	\li libtensor::so_union_test
@@ -315,6 +341,7 @@ private:
 	unit_test_factory<mp_safe_tensor_test> m_utf_mp_safe_tensor;
 	unit_test_factory<orbit_test> m_utf_orbit;
 	unit_test_factory<orbit_list_test> m_utf_orbit_list;
+	unit_test_factory<partition_set_test> m_utf_partition_set;
 	unit_test_factory<permutation_test> m_utf_permutation;
 	unit_test_factory<permutation_builder_test> m_utf_permutation_builder;
 	unit_test_factory<permutation_group_test> m_utf_permutation_group;
@@ -327,25 +354,38 @@ private:
 	unit_test_factory<se_perm_test> m_utf_se_perm;
 	unit_test_factory<so_add_test> m_utf_so_add;
 	unit_test_factory<so_add_impl_label_test> m_utf_so_add_impl_label;
+	unit_test_factory<so_add_impl_part_test> m_utf_so_add_impl_part;
 	unit_test_factory<so_add_impl_perm_test> m_utf_so_add_impl_perm;
 	unit_test_factory<so_concat_test> m_utf_so_concat;
 	unit_test_factory<so_concat_impl_label_test> m_utf_so_concat_impl_label;
+	unit_test_factory<so_concat_impl_part_test> m_utf_so_concat_impl_part;
 	unit_test_factory<so_concat_impl_perm_test> m_utf_so_concat_impl_perm;
 	unit_test_factory<so_copy_test> m_utf_so_copy;
+//	unit_test_factory<so_merge_test> m_utf_so_merge;
+//	unit_test_factory<so_merge_impl_label_test> m_utf_so_merge_impl_label;
+//	unit_test_factory<so_merge_impl_part_test> m_utf_so_merge_impl_part;
+//	unit_test_factory<so_merge_impl_perm_test> m_utf_so_merge_impl_perm;
 	unit_test_factory<so_mult_test> m_utf_so_mult;
 	unit_test_factory<so_mult_impl_label_test> m_utf_so_mult_impl_label;
+	unit_test_factory<so_mult_impl_part_test> m_utf_so_mult_impl_part;
 	unit_test_factory<so_mult_impl_perm_test> m_utf_so_mult_impl_perm;
 	unit_test_factory<so_permute_impl_label_test> m_utf_so_permute_impl_label;
+	unit_test_factory<so_permute_impl_label_test> m_utf_so_permute_impl_part;
+	unit_test_factory<so_permute_impl_label_test> m_utf_so_permute_impl_perm;
 	unit_test_factory<so_proj_down_test> m_utf_so_proj_down;
 	unit_test_factory<so_proj_down_impl_label_test>
 		m_utf_so_proj_down_impl_label;
+	unit_test_factory<so_proj_down_impl_part_test>
+		m_utf_so_proj_down_impl_part;
 	unit_test_factory<so_proj_down_impl_perm_test>
 		m_utf_so_proj_down_impl_perm;
 	unit_test_factory<so_proj_up_test> m_utf_so_proj_up;
 	unit_test_factory<so_proj_up_impl_label_test> m_utf_so_proj_up_impl_label;
+	unit_test_factory<so_proj_up_impl_part_test> m_utf_so_proj_up_impl_part;
 	unit_test_factory<so_proj_up_impl_perm_test> m_utf_so_proj_up_impl_perm;
 	unit_test_factory<so_stabilize_test> m_utf_so_stabilize;
 	unit_test_factory<so_stabilize_impl_label_test> m_utf_so_stabilize_impl_label;
+	unit_test_factory<so_stabilize_impl_part_test> m_utf_so_stabilize_impl_part;
 	unit_test_factory<so_stabilize_impl_perm_test> m_utf_so_stabilize_impl_perm;
 	unit_test_factory<so_symmetrize_test> m_utf_so_symmetrize;
 	unit_test_factory<so_union_test> m_utf_so_union;

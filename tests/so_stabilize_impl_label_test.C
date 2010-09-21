@@ -1,7 +1,6 @@
 #include <libtensor/symmetry/point_group_table.h>
-#include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/symmetry/so_stabilize_impl_label.h>
-#include <libtensor/btod/transf_double.h>
+//#include <libtensor/btod/transf_double.h>
 #include "so_stabilize_impl_label_test.h"
 
 namespace libtensor {

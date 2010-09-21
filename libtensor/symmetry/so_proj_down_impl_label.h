@@ -54,7 +54,6 @@ void symmetry_operation_impl< so_proj_down<N, M, T>, se_label<N, T> >::do_perfor
 	//	Verify that the projection mask is correct
 	//
 	const mask<N> &m = params.msk;
-	size_t map[N];
 	size_t nm = 0;
 	for(size_t i = 0; i < N; i++) if(m[i]) nm++;
 	if(nm != N - M) {

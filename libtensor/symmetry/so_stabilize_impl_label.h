@@ -48,7 +48,7 @@ void symmetry_operation_impl< so_stabilize<N, M, K, T>, se_label<N, T> >::do_per
 	static const char *method =
 		"do_perform(const symmetry_operation_params_t&)";
 
-	typedef symmetry_element_set_adapter< N, T, se_label<N, T> > adapter_t;
+	typedef symmetry_element_set_adapter<N, T, element_t> adapter_t;
 
 	//	Verify that the projection mask is correct
 	//
@@ -128,4 +128,4 @@ void symmetry_operation_impl< so_stabilize<N, M, K, T>, se_label<N, T> >::do_per
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_SO_STABILIZE_IMPL_PERM_H
+#endif // LIBTENSOR_SO_STABILIZE_IMPL_LABEL_H
