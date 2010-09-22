@@ -78,10 +78,10 @@
 #include "so_concat_impl_part_test.h"
 #include "so_concat_impl_perm_test.h"
 #include "so_copy_test.h"
-//#include "so_merge_test.h"
-//#include "so_merge_impl_label_test.h"
-//#include "so_merge_impl_part_test.h"
-//#include "so_merge_impl_perm_test.h"
+#include "so_merge_test.h"
+#include "so_merge_impl_label_test.h"
+#include "so_merge_impl_part_test.h"
+#include "so_merge_impl_perm_test.h"
 #include "so_mult_test.h"
 #include "so_mult_impl_label_test.h"
 #include "so_mult_impl_part_test.h"
@@ -361,10 +361,10 @@ private:
 	unit_test_factory<so_concat_impl_part_test> m_utf_so_concat_impl_part;
 	unit_test_factory<so_concat_impl_perm_test> m_utf_so_concat_impl_perm;
 	unit_test_factory<so_copy_test> m_utf_so_copy;
-//	unit_test_factory<so_merge_test> m_utf_so_merge;
-//	unit_test_factory<so_merge_impl_label_test> m_utf_so_merge_impl_label;
-//	unit_test_factory<so_merge_impl_part_test> m_utf_so_merge_impl_part;
-//	unit_test_factory<so_merge_impl_perm_test> m_utf_so_merge_impl_perm;
+	unit_test_factory<so_merge_test> m_utf_so_merge;
+	unit_test_factory<so_merge_impl_label_test> m_utf_so_merge_impl_label;
+	unit_test_factory<so_merge_impl_part_test> m_utf_so_merge_impl_part;
+	unit_test_factory<so_merge_impl_perm_test> m_utf_so_merge_impl_perm;
 	unit_test_factory<so_mult_test> m_utf_so_mult;
 	unit_test_factory<so_mult_impl_label_test> m_utf_so_mult_impl_label;
 	unit_test_factory<so_mult_impl_part_test> m_utf_so_mult_impl_part;

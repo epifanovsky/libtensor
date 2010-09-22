@@ -368,7 +368,7 @@ void partition_set_test::test_5(bool sign) throw(libtest::test_exception) {
 	symmetry_element_set<1, double> set_ref(se_part<1, double>::k_sym_type);
 	set_ref.insert(sp1);
 
-	pset1.merge<2>(m11, pset2);
+	pset1.merge(m11, pset2);
 	pset2.convert(set);
 
 	compare_ref<1>::compare(testname, bisa, set, set_ref);

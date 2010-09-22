@@ -82,10 +82,10 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("so_concat_impl_part", m_utf_so_concat_impl_part);
 	add_test("so_concat_impl_perm", m_utf_so_concat_impl_perm);
 	add_test("so_copy", m_utf_so_copy);
-//	add_test("so_merge", m_utf_so_merge);
-//	add_test("so_merge_impl_label", m_utf_so_merge_impl_label);
-//	add_test("so_merge_impl_part", m_utf_so_merge_impl_part);
-//	add_test("so_merge_impl_perm", m_utf_so_merge_impl_perm);
+	add_test("so_merge", m_utf_so_merge);
+	add_test("so_merge_impl_label", m_utf_so_merge_impl_label);
+	add_test("so_merge_impl_part", m_utf_so_merge_impl_part);
+	add_test("so_merge_impl_perm", m_utf_so_merge_impl_perm);
 	add_test("so_mult", m_utf_so_mult);
 	add_test("so_mult_impl_label", m_utf_so_mult_impl_label);
 	add_test("so_mult_impl_part", m_utf_so_mult_impl_part);

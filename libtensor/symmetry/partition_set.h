@@ -105,12 +105,12 @@ public:
 	 **/
 	void intersect(const partition_set<N, T> &set);
 
-	/** \brief Merges M dimensions given by mask into one.
+	/** \brief Merges N - M + 1 dimensions given by mask into one.
 		\param msk Mask.
 	 	\param set Result partition set.
 	 **/
 	template<size_t M>
-	void merge(const mask<N> &msk, partition_set<N - M + 1, T> &set) const;
+	void merge(const mask<N> &msk, partition_set<M, T> &set) const;
 
 	/** \brief Stabilizes N - M dimensions given by the masks and removes them.
 		\param msk Masks.
@@ -537,7 +537,7 @@ void partition_set<N, T>::stabilize(
 
 template<size_t N, typename T> template<size_t M>
 void partition_set<N, T>::merge(
-		const mask<N> &msk, partition_set<N - M + 1, T> &set) const {
+		const mask<N> &msk, partition_set<M, T> &set) const {
 
 	static const char *method =
 			"stabilize<K>(const mask<N> &[K], partition_set<M, T> &)";
@@ -545,22 +545,22 @@ void partition_set<N, T>::merge(
 	// Check masks
 	size_t m = 0;
 	for (size_t i = 0; i < N; i++) if (msk[i]) m++;
-	if (m != M)
+	if (m != N - M + 1)
 		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__, "msk.");
 
 	sequence<N, size_t> map(0); // Map
 	m = 0;
-	for (size_t i = 0; i < N; i++, m++) {
+	for (size_t i = 0, j = 0; i < N; i++, m++) {
 		map[i] = i;
 		if (msk[i]) break;
 	}
-	for (size_t i = m + 1; i < N; i++) {
+	for (size_t i = m + 1, j = m + 1; i < N; i++) {
 		if (msk[i]) map[i] = m;
-		else map[i] = i;
+		else map[i] = j++;
 	}
 
 	set.clear();
-	permutation<N - M + 1> perm;
+	permutation<M> perm;
 
 	// loop over all se_parts
 	for (typename map_t::const_iterator it1 = m_map.begin();
@@ -576,7 +576,7 @@ void partition_set<N, T>::merge(
 		if (i != N) continue;
 
 		// determine mask for result
-		mask<N - M + 1> mm;
+		mask<M> mm;
 		bool done = false;
 		for (size_t i = 0, j = 0; i < N; i++) {
 			if (msk[i] && done) continue;
@@ -585,20 +585,20 @@ void partition_set<N, T>::merge(
 		}
 
 		// loop over all possible result mappings
-		se_part<N - M + 1, T> pb(set.get_bis(), mm, npart);
+		se_part<M, T> pb(set.get_bis(), mm, npart);
 		bool empty = true;
-		abs_index<N - M + 1> ai1(pb.get_pdims());
+		abs_index<M> ai1(pb.get_pdims());
 		do {
-			const index<N - M + 1> &idxb1 = ai1.get_index();
+			const index<M> &idxb1 = ai1.get_index();
 
 			// determine input index
 			index<N> idxa1;
 			for (size_t i = 0; i < N; i++) idxa1[i] = idxb1[map[i]];
 
-			abs_index<N - M + 1> ai2(idxb1, pb.get_pdims());
+			abs_index<M> ai2(idxb1, pb.get_pdims());
 			ai2.inc();
 			do {
-				const index<N - M + 1> &idxb2 = ai2.get_index();
+				const index<M> &idxb2 = ai2.get_index();
 
 				// determine input index
 				index<N> idxa2;

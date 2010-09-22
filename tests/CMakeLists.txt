@@ -77,6 +77,10 @@ set(SRC
 	so_concat_impl_part_test.C
 	so_concat_impl_perm_test.C
 	so_copy_test.C
+	so_merge_test.C
+	so_merge_impl_label_test.C
+	so_merge_impl_part_test.C
+	so_merge_impl_perm_test.C
 	so_mult_test.C
 	so_mult_impl_label_test.C
 	so_mult_impl_part_test.C
