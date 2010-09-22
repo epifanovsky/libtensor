@@ -101,8 +101,6 @@ set(SRC
 	so_stabilize_impl_part_test.C
 	so_stabilize_impl_perm_test.C
 	so_symmetrize_test.C
-	so_union_test.C
-	so_union_impl_perm_test.C
 	symm_test.C
 	symmetry_test.C
 	symmetry_element_set_test.C
