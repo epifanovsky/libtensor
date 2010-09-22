@@ -2528,11 +2528,11 @@ void btod_contract2_test::test_contr_19()
 	compare_ref<4>::compare(tn.c_str(), tc, tc_ref, 1e-14);
 
 	} catch(exception &e) {
-//		product_table_container::get_instance().erase(ss.str());
+		product_table_container::get_instance().erase(ss.str());
 		fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
 	}
 
-//	product_table_container::get_instance().erase(ss.str());
+	product_table_container::get_instance().erase(ss.str());
 
 }
 
