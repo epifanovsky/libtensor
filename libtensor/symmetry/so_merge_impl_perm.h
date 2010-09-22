@@ -100,6 +100,7 @@ void symmetry_operation_impl< so_merge<N, M, T>,
 					a2a[k] = N - M;
 					a2b[k] = N - M;
 					k++;
+					done = true;
 				}
 				continue;
 			}
