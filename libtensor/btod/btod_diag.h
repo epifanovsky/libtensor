@@ -10,12 +10,8 @@
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
 #include "../core/permutation_builder.h"
-#include "../symmetry/so_copy.h"
-#include "../symmetry/so_concat.h"
-#include "../symmetry/so_add.h"
+#include "../symmetry/so_merge.h"
 #include "../symmetry/so_permute.h"
-#include "../symmetry/so_proj_down.h"
-#include "../symmetry/so_stabilize.h"
 #include "../tod/tod_copy.h"
 #include "../tod/tod_diag.h"
 #include "../tod/tod_set.h"
@@ -304,35 +300,15 @@ block_index_space<N - M + 1> btod_diag<N, M>::mk_bis(
 template<size_t N, size_t M>
 void btod_diag<N, M>::make_symmetry() {
 
-	block_tensor_ctrl<N, double> ca(m_bta);
+	block_tensor_ctrl<k_ordera, double> ca(m_bta);
 
-	//	Build two reduced block index spaces:
-	//	(1) all dimensions except the one coming from the diagonal,
-	//	(2) the dimension coming from the diagonal
-	//
-	mask<N> rmsk1, rmsk2;
-	size_t jd = N;
-	for(size_t i = 0; i < N; i++) rmsk1[i] = !m_msk[i];
-	for(size_t i = 0; i < N; i++) if(m_msk[i]) { jd = i; break; }
-	rmsk2[jd] = true;
-	block_index_subspace_builder<N - M, M> rbb1(m_bta.get_bis(), rmsk1);
-	block_index_subspace_builder<1, N - 1> rbb2(m_bta.get_bis(), rmsk2);
+	block_index_space<k_orderb> bis(m_bis);
+	permutation<k_orderb> pinv(m_perm, true);
+	bis.permute(pinv);
+	symmetry<k_orderb, double> symx(bis);
+	so_merge<N, M, double>(ca.req_const_symmetry(), m_msk).perform(symx);
+	so_permute<k_orderb, double>(symx, m_perm).perform(m_sym);
 
-	//	Build the reduced symmetry in the subspaces
-	//
-	symmetry<N - M, double> rsym1(rbb1.get_bis());
-	symmetry<1, double> rsym2(rbb2.get_bis());
-	so_stabilize<N, M, 1, double> so_stab(ca.req_const_symmetry());
-	so_stab.add_mask(m_msk);
-	so_stab.perform(rsym1);
-	so_proj_down<N, N - 1, double>(ca.req_const_symmetry(), rmsk2).
-		perform(rsym2);
-
-	//	Concatenate the symmetries to create the symmetry of the result
-	//
-	permutation<N - M + 1> perm;
-	perm.permute(jd, N - M).permute(m_perm);
-	so_concat<N - M, 1, double>(rsym1, rsym2, perm).perform(m_sym);
 }
 
 

@@ -2,7 +2,6 @@
 #define LIBTENSOR_ADDITIVE_BTOD_H
 
 #include <cmath>
-#include "../symmetry/so_add.h"
 #include "../tod/tod_add.h"
 #include "../tod/tod_copy.h"
 #include "../tod/tod_set.h"

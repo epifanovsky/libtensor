@@ -3,7 +3,6 @@
 
 #include "../core/block_index_subspace_builder.h"
 #include "../symmetry/so_concat.h"
-#include "../symmetry/so_proj_down.h"
 #include "../symmetry/so_stabilize.h"
 #include "../tod/tod_contract2.h"
 #include "../tod/tod_sum.h"

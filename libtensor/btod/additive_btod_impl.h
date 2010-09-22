@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_ADDITIVE_BTOD_IMPL_H
 #define LIBTENSOR_ADDITIVE_BTOD_IMPL_H
 
+#include "../symmetry/so_add.h"
 #include "../symmetry/so_copy.h"
 
 namespace libtensor {
