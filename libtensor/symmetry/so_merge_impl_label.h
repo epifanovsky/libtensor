@@ -66,9 +66,8 @@ void symmetry_operation_impl< so_merge<N, M, T>, se_label<N, T> >::do_perform(
 	bool done = false;
 	for (size_t i = 0; i < N; i++) {
 		if (m[i] && done) continue;
-		if (m[i] && !done) {
-			m1[i] = true; done = true;
-		}
+		if (m[i] && !done) done = true;
+
 		m1[i] = true;
 	}
 

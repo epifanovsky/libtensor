@@ -44,6 +44,8 @@ void se_label_test::perform() throw(libtest::test_exception) {
 	test_4();
 	test_5();
 	test_6();
+	test_7();
+	test_8();
 
 	product_table_container::get_instance().erase(table_id);
 
@@ -609,9 +611,9 @@ void se_label_test::test_7() throw(libtest::test_exception) {
 
 		idx[0] = i; idx[1] = j;
 
-		if(! elem1.is_allowed(idx)) {
+		if(elem1.is_allowed(idx)) {
 			std::ostringstream oss;
-			oss << "! elem1.is_allowed(i" << i << j << ")";
+			oss << "elem1.is_allowed(i" << i << j << ")";
 			fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
 		}
 		if(! elem2.is_allowed(idx)) {
@@ -626,5 +628,52 @@ void se_label_test::test_7() throw(libtest::test_exception) {
 	}
 }
 
+/**	\test Four blocks, all labeled, single target, varying dimensions, permute.
+ **/
+void se_label_test::test_8() throw(libtest::test_exception) {
+
+	static const char *testname = "se_label_test::test_8()";
+
+	try {
+
+	index<3> i1, i2;
+	i2[0] = 3; i2[1] = 5; i2[2] = 2;
+	dimensions<3> dim(index_range<3>(i1, i2));
+	mask<3> m100, m010, m001;
+	m100[0] = true; m010[1] = true; m001[2] = true;
+
+	se_label<3, double> elem1(dim, table_id);
+	size_t mapa[6], mapb[3];
+	mapa[0] = 1; mapa[1] = 0; mapa[2] = 0;
+	mapa[3] = 1; mapa[4] = 2; mapa[5] = 3;
+	mapb[0] = 2; mapb[1] = 2; mapb[2] = 3;
+
+	for (size_t i = 0; i < 4; i++) elem1.assign(m100, i, i);
+	for (size_t i = 0; i < 6; i++) elem1.assign(m010, i, mapa[i]);
+	for (size_t i = 0; i < 3; i++) elem1.assign(m001, i, mapb[i]);
+
+	permutation<3> perm; perm.permute(0, 1).permute(1, 2);
+
+	dim.permute(perm);
+	elem1.permute(perm);
+
+
+	if(! dim.equals(elem1.get_block_index_dims())) {
+		fail_test(testname, __FILE__, __LINE__, "Wrong dim.");
+	}
+	if(elem1.get_label(elem1.get_dim_type(0), 0) != 1) {
+		fail_test(testname, __FILE__, __LINE__, "Wrong label.");
+	}
+	if(elem1.get_label(elem1.get_dim_type(1), 0) != 2) {
+		fail_test(testname, __FILE__, __LINE__, "Wrong label.");
+	}
+	if(elem1.get_label(elem1.get_dim_type(2), 0) != 0) {
+		fail_test(testname, __FILE__, __LINE__, "Wrong label.");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
 
 } // namespace libtensor
