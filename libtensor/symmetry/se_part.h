@@ -380,13 +380,11 @@ void se_part<N, T>::permute(const permutation<N> &perm) {
 	seq.permute(perm);
 	bool affects_map = false;
 	for (size_t i = 0; i < N; i++) {
-		if (m_mask[i] && seq[i] != i) {
-			affects_map = true;
-			break;
-		}
+		if (m_mask[i] && seq[i] != i) { affects_map = true; break; }
 	}
 
 	if (affects_map) {
+		m_mask.permute(perm);
 
 		size_t mapsz = m_pdims.get_size();
 		size_t *fmap = new size_t[mapsz];
