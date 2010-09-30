@@ -16,6 +16,9 @@ public:
 
 private:
 	void test_1() throw(libtest::test_exception);
+	void test_2a() throw(libtest::test_exception);
+	void test_2b() throw(libtest::test_exception);
+	void test_3() throw(libtest::test_exception);
 
 };
 

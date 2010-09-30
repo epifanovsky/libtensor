@@ -67,7 +67,7 @@ void so_proj_up_impl_part_test::test_1() throw(libtest::test_exception) {
 }
 
 
-/**	\test Projects a group with one partition from a 2-space to
+/**	\test Projects a set with one partition from a 2-space to
 		a 3-space with a mask [110].
  **/
 void so_proj_up_impl_part_test::test_2(bool sign)

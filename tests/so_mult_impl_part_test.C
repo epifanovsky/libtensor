@@ -16,7 +16,7 @@ void so_mult_impl_part_test::perform() throw(libtest::test_exception) {
 }
 
 
-/**	\test Tests that the intersection of two empty sets yields an empty set
+/**	\test Tests that the multiplication of two empty sets yields an empty set
  **/
 void so_mult_impl_part_test::test_1() throw(libtest::test_exception) {
 
@@ -68,7 +68,7 @@ void so_mult_impl_part_test::test_1() throw(libtest::test_exception) {
 }
 
 
-/**	\test Tests that the intersection of an empty set and a non-empty set
+/**	\test Tests that the multiplication of an empty set and a non-empty set
 		yields an empty set
  **/
 void so_mult_impl_part_test::test_2() throw(libtest::test_exception) {
@@ -123,7 +123,7 @@ void so_mult_impl_part_test::test_2() throw(libtest::test_exception) {
 }
 
 
-/**	\test Tests that the intersection of two non-overlapping non-empty sets
+/**	\test Tests that the multiplication of two non-overlapping non-empty sets
 		yields an empty set
  **/
 void so_mult_impl_part_test::test_3() throw(libtest::test_exception) {
@@ -184,7 +184,7 @@ void so_mult_impl_part_test::test_3() throw(libtest::test_exception) {
 }
 
 
-/**	\test Tests the intersection of two identical non-empty sets
+/**	\test Tests the multiplication of two identical non-empty sets
  **/
 void so_mult_impl_part_test::test_4(bool sign) throw(libtest::test_exception) {
 

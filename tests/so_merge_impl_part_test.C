@@ -13,11 +13,13 @@ void so_merge_impl_part_test::perform() throw(libtest::test_exception) {
 	test_2(false);
 	test_3(true);
 	test_3(false);
+	test_4(true);
+	test_4(false);
 }
 
 
-/**	\test Tests that a merge of 2 dim of an empty group yields an empty group
-		of a lower order
+/**	\test Tests that a merge of 2 dim of an empty partition set yields an
+		empty partition set of lower order
  **/
 void so_merge_impl_part_test::test_1() throw(libtest::test_exception) {
 
@@ -113,8 +115,7 @@ void so_merge_impl_part_test::test_2(bool sign)
 	}
 }
 
-
-/**	\test Merges of 2 dim of a 4-space onto a 3-space.
+/**	\test Merge of 2 dim of a 4-space onto a 3-space.
  **/
 void so_merge_impl_part_test::test_3(bool sign)
 		throw(libtest::test_exception) {
@@ -210,6 +211,97 @@ void so_merge_impl_part_test::test_3(bool sign)
 	}
 }
 
+/**	\test Merge of 3 dim of a 4-space onto a 2-space.
+ **/
+void so_merge_impl_part_test::test_4(bool sign)
+		throw(libtest::test_exception) {
+
+	static const char *testname = "so_merge_impl_part_test::test_3()";
+
+	typedef se_part<2, double> se2_t;
+	typedef se_part<4, double> se4_t;
+	typedef so_merge<4, 3, double> so_merge_t;
+	typedef symmetry_operation_impl<so_merge_t, se4_t>
+		so_merge_impl_t;
+
+	try {
+
+	index<2> i2a, i2b;
+	i2b[0] = 5; i2b[1] = 9;
+	block_index_space<2> bisa(dimensions<2>(index_range<2>(i2a, i2b)));
+	mask<2> m01, m10, m11;
+	m10[0] = true; m01[1] = true; m01[2] = true;
+	m11[0] = true; m11[1] = true; m11[2] = true;
+	bisa.split(m01, 2);
+	bisa.split(m01, 3);
+	bisa.split(m01, 5);
+	bisa.split(m01, 7);
+	bisa.split(m01, 8);
+	bisa.split(m10, 2);
+	bisa.split(m10, 3);
+	bisa.split(m10, 5);
+
+	index<4> i4a, i4b;
+	i4b[0] = 5; i4b[1] = 5; i4b[2] = 9; i4b[3] = 5;
+ 	block_index_space<4> bisb(dimensions<4>(index_range<4>(i4a, i4b)));
+	mask<4> m0010, m1101, m1111;
+	m1101[0] = true; m1101[1] = true; m0010[2] = true; m1101[3] = true;
+	m1111[0] = true; m1111[1] = true; m1111[2] = true; m1111[3] = true;
+	bisb.split(m0010, 2);
+	bisb.split(m0010, 3);
+	bisb.split(m0010, 5);
+	bisb.split(m0010, 7);
+	bisb.split(m0010, 8);
+	bisb.split(m1101, 2);
+	bisb.split(m1101, 3);
+	bisb.split(m1101, 5);
+
+	se4_t elem1(bisb, m1111, 2);
+	index<4> i0000, i0001, i0010, i0100, i1000,
+		i0011, i0101, i0110, i1001, i1010, i1100,
+		i0111, i1011, i1101, i1110, i1111;
+	i1000[0] = 1; i0100[1] = 1; i0010[2] = 1; i0001[3] = 1;
+	i0011[2] = 1; i0011[3] = 1; i0101[1] = 1; i0101[3] = 1;
+	i0110[1] = 1; i0110[2] = 1; i1001[0] = 1; i1001[3] = 1;
+	i1010[0] = 1; i1010[2] = 1; i1100[0] = 1; i1100[1] = 1;
+	i0111[1] = 1; i0111[2] = 1; i0111[3] = 1;
+	i1011[0] = 1; i1011[2] = 1; i1011[3] = 1;
+	i1101[0] = 1; i1101[1] = 1; i1101[3] = 1;
+	i1110[0] = 1; i1110[1] = 1; i1110[2] = 1;
+	i1111[0] = 1; i1111[1] = 1; i1111[2] = 1; i1111[3] = 1;
+	elem1.add_map(i0000, i1111, sign);
+	elem1.add_map(i0011, i1100, sign);
+	elem1.add_map(i0001, i1110, sign);
+	elem1.add_map(i0010, i1101, sign);
+
+	se2_t elem2(bisa, m11, 2);
+	index<2> i00, i01, i10, i11;
+	i10[0] = 1; i01[1] = 1;
+	i11[0] = 1; i11[1] = 1;
+	elem2.add_map(i00, i11, sign);
+	elem2.add_map(i01, i10, sign);
+
+	symmetry_element_set<4, double> set1(se4_t::k_sym_type);
+	symmetry_element_set<2, double> set2(se2_t::k_sym_type);
+	symmetry_element_set<2, double> set2_ref(se2_t::k_sym_type);
+
+	set1.insert(elem1);
+	set2_ref.insert(elem2);
+
+	symmetry_operation_params<so_merge_t> params(set1, m1101, set2);
+
+	so_merge_impl_t().perform(params);
+
+	if(set2.is_empty()) {
+		fail_test(testname, __FILE__, __LINE__, "Expected a non-empty set.");
+	}
+
+	compare_ref<2>::compare(testname, bisa, set2, set2_ref);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
 
 
 } // namespace libtensor

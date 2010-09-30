@@ -146,7 +146,7 @@ void so_concat_impl_part_test::test_2(bool sign)
 }
 
 
-/**	\test Concatenates a set with one partition and an empty group
+/**	\test Concatenates a set with one partition and an empty partition set
  	 	(2-space) forming a 4-space with a permutation.
  **/
 void so_concat_impl_part_test::test_3(bool sign)
