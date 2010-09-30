@@ -318,7 +318,7 @@ void partition_set<N, T>::permute(const permutation<N> &perm) {
 
 	for (typename map_t::iterator it = m_map.begin(); it != m_map.end(); it++) {
 
-		it->second.permute(perm);
+		it->second->permute(perm);
 	}
 }
 
@@ -428,7 +428,7 @@ void partition_set<N, T>::stabilize(
 	}
 
 	set.clear();
-	permutation<N - M> perm;
+	permutation<M> perm;
 
 	// loop over all se_parts
 	for (typename map_t::const_iterator it = m_map.begin();
