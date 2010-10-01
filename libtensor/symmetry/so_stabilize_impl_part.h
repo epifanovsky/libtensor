@@ -82,7 +82,7 @@ void symmetry_operation_impl< so_stabilize<N, M, K, T>, se_part<N, T> >::do_perf
 	block_index_subspace_builder<N - M, M> bb(g1.get_elem(it).get_bis(), rm);
 
 	partition_set<N, T> ps1(g1);
-	partition_set<M, T> ps2(bb.get_bis());
+	partition_set<N - M, T> ps2(bb.get_bis());
 	ps1.stabilize(params.msk, ps2);
 
 	ps2.convert(params.grp2);

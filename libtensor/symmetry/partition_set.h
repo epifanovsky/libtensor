@@ -438,17 +438,45 @@ void partition_set<N, T>::stabilize(
 		se_part<N, T> &pa = *(it->second);
 		const mask<N> &ma = pa.get_mask();
 
-		// check if all masked dimensions are part of the mapping
+		// check if a dimensions which is part of the mapping is not stabilized
 		size_t i = 0;
-		for (; i < N; i++) if (tm[i] && ! ma[i]) break;
-		if (i != N) continue;
+		for (; i < N; i++) if (ma[i] && ! tm[i]) break;
+		if (i == N) {
+#ifdef LIBTENSOR_DEBUG
+			// check if the projection masks agree with the partition mask
+			for (size_t k = 0; k < K; k++) {
+				size_t j = 0;
+				for (; j < N; j++) if (msk[k][j]) break;
+				bool masked = ma[j++];
+
+				for (; j < N; j++) {
+					if (msk[k][j] && (ma[j] != masked))
+						throw bad_parameter(g_ns, k_clazz, method,
+								__FILE__, __LINE__, "msk.");
+				}
+			}
+#endif
+			continue;
+		}
 
 		// determine mask for result
 		mask<M> mm;
 		for (size_t i = 0; i < N; i++) if (! tm[i]) mm[map[i]] = ma[i];
 
 		index<K> i1, i2;
-		for (size_t k = 0; k < K; k++) i2[k] = npart - 1;
+		for (size_t k = 0; k < K; k++) {
+			size_t j = 0;
+			for (; j < N; j++) if (msk[k][j]) break;
+			if (ma[j]) i2[k] = npart - 1;
+#ifdef LIBTENSOR_DEBUG
+			j++;
+			for (; j < N; j++) {
+				if (msk[k][j] && (ma[j] != (i2[k] == npart - 1)))
+					throw bad_parameter(g_ns, k_clazz, method,
+							__FILE__, __LINE__, "msk.");
+			}
+#endif
+		}
 		dimensions<K> mdims(index_range<K>(i1, i2));
 
 		// loop over all possible result mappings

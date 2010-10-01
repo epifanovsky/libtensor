@@ -20,6 +20,10 @@ private:
 	void test_2(bool sign) throw(libtest::test_exception);
 	void test_3() throw(libtest::test_exception);
 	void test_4() throw(libtest::test_exception);
+	void test_5a(bool sign) throw(libtest::test_exception);
+	void test_5b(bool sign) throw(libtest::test_exception);
+	void test_5c(bool sign) throw(libtest::test_exception);
+	void test_5d(bool sign) throw(libtest::test_exception);
 
 };
 
