@@ -53,16 +53,12 @@ void symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::do_perform(
 	typedef symmetry_element_set_adapter< N, T, se_part<N, T> > adapter_t;
 
 	adapter_t g1(params.grp1);
-	for (adapter_t::iterator it = g1.begin(); it != g1.end(); it++) {
-		params.grp2.insert(it);
-	}
-//
-//	partition_set<N, T> set1(g1), set2(g1);
-//	set2.permute(params.perm);
-//	set1.intersect(set2);
-//
-//	params.grp2.clear();
-//	set1.convert(params.grp2);
+	partition_set<N, T> p1(g1), p2(g1);
+	p2.permute(params.perm);
+	p1.intersect(p2);
+
+	params.grp2.clear();
+	p1.convert(params.grp2);
 }
 
 
