@@ -382,22 +382,24 @@ void partition_set<N, T>::intersect(const partition_set<N, T> &set, bool mult) {
 			do {
 				const index<N> &i1 = ai.get_index();
 				index<N> i2 = x1->get_direct_map(i1);
-				if (i2.equals(i1)) continue;
+				while (! i2.equals(i1)) {
+					if (x2->map_exists(i1, i2)) {
+						bool sign1 = x1->get_sign(i1, i2);
+						bool sign2 = x2->get_sign(i1, i2);
 
-				if (x2->map_exists(i1, i2)) {
-					bool sign1 = x1->get_sign(i1, i2);
-					bool sign2 = x2->get_sign(i1, i2);
-
-					if (mult) {
-						new_part->add_map(i1, i2, sign1 == sign2);
-						empty = false;
-					}
-					else {
-						if (sign1 == sign2) {
-							new_part->add_map(i1, i2, sign1);
+						if (mult) {
+							new_part->add_map(i1, i2, sign1 == sign2);
 							empty = false;
 						}
+						else {
+							if (sign1 == sign2) {
+								new_part->add_map(i1, i2, sign1);
+								empty = false;
+							}
+						}
+						break;
 					}
+					i2 = x1->get_direct_map(i2);
 				}
 
 			} while (ai.inc());

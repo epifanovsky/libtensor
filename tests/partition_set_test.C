@@ -58,6 +58,12 @@ void partition_set_test::perform() throw(libtest::test_exception) {
 	test_intersect_6a(false);
 	test_intersect_6b(true);
 	test_intersect_6b(false);
+	test_intersect_7a(true);
+	test_intersect_7a(false);
+	test_intersect_7b(true);
+	test_intersect_7b(false);
+	test_intersect_7c(true);
+	test_intersect_7c(false);
 
 	test_stabilize_1();
 	test_stabilize_2(true);
@@ -1344,7 +1350,7 @@ void partition_set_test::test_intersect_6a(bool sign)
 void partition_set_test::test_intersect_6b(bool sign)
 		throw(libtest::test_exception) {
 
-	static const char *testname = "partition_set_test::test_intersect_6b()";
+	static const char *testname = "partition_set_test::test_intersect_6b(bool)";
 
 	try {
 
@@ -1380,6 +1386,174 @@ void partition_set_test::test_intersect_6b(bool sign)
 	set_ref.insert(sp_ref);
 
 	pset2.intersect(pset1, true);
+	pset2.convert(set);
+
+	compare_ref<3>::compare(testname, bis, set, set_ref);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+/**	\test Intersection of two non-empty, overlapping partition sets. Overlap
+		is not accessible by direct map in first partition set
+ **/
+void partition_set_test::test_intersect_7a(bool sign)
+		throw(libtest::test_exception) {
+
+	static const char *testname = "partition_set_test::test_intersect_7a(bool)";
+
+	try {
+
+	index<3> i1, i2;
+	i2[0] = 9; i2[1] = 9; i2[2] = 9;
+	block_index_space<3> bis(dimensions<3>(index_range<3>(i1, i2)));
+	mask<3> m111;
+	m111[0] = true; m111[1] = true; m111[2] = true;
+	bis.split(m111, 2);
+	bis.split(m111, 5);
+	bis.split(m111, 7);
+
+	index<3> i000, i111, i001, i110, i010, i101, i011, i100;
+	i110[0] = 1; i110[1] = 1; i001[2] = 1;
+	i101[0] = 1; i010[1] = 1; i101[2] = 1;
+	i100[0] = 1; i011[1] = 1; i011[2] = 1;
+	i111[0] = 1; i111[1] = 1; i111[2] = 1;
+
+	se_part<3, double> sp1(bis, m111, 2), sp2(bis, m111, 2),
+			sp_ref(bis, m111, 2);
+	sp1.add_map(i000, i001, sign);
+	sp1.add_map(i001, i010, sign);
+	sp1.add_map(i010, i011, sign);
+	sp1.add_map(i011, i100, sign);
+	sp1.add_map(i100, i101, sign);
+	sp1.add_map(i101, i110, sign);
+	sp1.add_map(i110, i111, sign);
+	sp2.add_map(i001, i110, sign);
+	sp_ref.add_map(i001, i110, sign);
+
+	partition_set<3, double> pset1(bis), pset2(bis);
+	permutation<3> p0;
+	pset1.add_partition(sp1, p0);
+	pset2.add_partition(sp2, p0);
+
+	symmetry_element_set<3, double> set(se_part<3, double>::k_sym_type);
+	symmetry_element_set<3, double> set_ref(se_part<3, double>::k_sym_type);
+	set_ref.insert(sp_ref);
+
+	pset2.intersect(pset1);
+	pset2.convert(set);
+
+	compare_ref<3>::compare(testname, bis, set, set_ref);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+/**	\test Intersection of two non-empty, overlapping partition sets. Overlap
+		is not accessible by direct map in second partition set
+ **/
+void partition_set_test::test_intersect_7b(bool sign)
+		throw(libtest::test_exception) {
+
+	static const char *testname = "partition_set_test::test_intersect_7b(bool)";
+
+	try {
+
+	index<3> i1, i2;
+	i2[0] = 9; i2[1] = 9; i2[2] = 9;
+	block_index_space<3> bis(dimensions<3>(index_range<3>(i1, i2)));
+	mask<3> m111;
+	m111[0] = true; m111[1] = true; m111[2] = true;
+	bis.split(m111, 2);
+	bis.split(m111, 5);
+	bis.split(m111, 7);
+
+	index<3> i000, i111, i001, i110, i010, i101, i011, i100;
+	i110[0] = 1; i110[1] = 1; i001[2] = 1;
+	i101[0] = 1; i010[1] = 1; i101[2] = 1;
+	i100[0] = 1; i011[1] = 1; i011[2] = 1;
+	i111[0] = 1; i111[1] = 1; i111[2] = 1;
+
+	se_part<3, double> sp1(bis, m111, 2), sp2(bis, m111, 2),
+			sp_ref(bis, m111, 2);
+	sp1.add_map(i001, i110, sign);
+	sp2.add_map(i000, i001, sign);
+	sp2.add_map(i001, i010, sign);
+	sp2.add_map(i010, i011, sign);
+	sp2.add_map(i011, i100, sign);
+	sp2.add_map(i100, i101, sign);
+	sp2.add_map(i101, i110, sign);
+	sp2.add_map(i110, i111, sign);
+	sp_ref.add_map(i001, i110, sign);
+
+	partition_set<3, double> pset1(bis), pset2(bis);
+	permutation<3> p0;
+	pset1.add_partition(sp1, p0);
+	pset2.add_partition(sp2, p0);
+
+	symmetry_element_set<3, double> set(se_part<3, double>::k_sym_type);
+	symmetry_element_set<3, double> set_ref(se_part<3, double>::k_sym_type);
+	set_ref.insert(sp_ref);
+
+	pset2.intersect(pset1);
+	pset2.convert(set);
+
+	compare_ref<3>::compare(testname, bis, set, set_ref);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+/**	\test Intersection of two non-empty, overlapping partition sets. Overlap
+		is not accessible by direct maps
+ **/
+void partition_set_test::test_intersect_7c(bool sign)
+		throw(libtest::test_exception) {
+
+	static const char *testname = "partition_set_test::test_intersect_7c(bool)";
+
+	try {
+
+	index<3> i1, i2;
+	i2[0] = 9; i2[1] = 9; i2[2] = 9;
+	block_index_space<3> bis(dimensions<3>(index_range<3>(i1, i2)));
+	mask<3> m111;
+	m111[0] = true; m111[1] = true; m111[2] = true;
+	bis.split(m111, 2);
+	bis.split(m111, 5);
+	bis.split(m111, 7);
+
+	index<3> i000, i111, i001, i110, i010, i101, i011, i100;
+	i110[0] = 1; i110[1] = 1; i001[2] = 1;
+	i101[0] = 1; i010[1] = 1; i101[2] = 1;
+	i100[0] = 1; i011[1] = 1; i011[2] = 1;
+	i111[0] = 1; i111[1] = 1; i111[2] = 1;
+
+	se_part<3, double> sp1(bis, m111, 2), sp2(bis, m111, 2),
+			sp_ref(bis, m111, 2);
+	sp1.add_map(i001, i100, sign);
+	sp1.add_map(i100, i101, sign);
+	sp1.add_map(i101, i110, sign);
+	sp1.add_map(i110, i111, sign);
+	sp2.add_map(i000, i001, sign);
+	sp2.add_map(i001, i010, sign);
+	sp2.add_map(i010, i011, sign);
+	sp2.add_map(i011, i110, sign);
+	sp_ref.add_map(i001, i110, sign);
+
+	partition_set<3, double> pset1(bis), pset2(bis);
+	permutation<3> p0;
+	pset1.add_partition(sp1, p0);
+	pset2.add_partition(sp2, p0);
+
+	symmetry_element_set<3, double> set(se_part<3, double>::k_sym_type);
+	symmetry_element_set<3, double> set_ref(se_part<3, double>::k_sym_type);
+	set_ref.insert(sp_ref);
+
+	pset2.intersect(pset1);
 	pset2.convert(set);
 
 	compare_ref<3>::compare(testname, bis, set, set_ref);
