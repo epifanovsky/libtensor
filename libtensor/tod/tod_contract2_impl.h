@@ -2,6 +2,8 @@
 #define LIBTENSOR_TOD_CONTRACT2_IMPL_H
 
 #include "../core/tensor_ctrl.h"
+#include "kernels/loop_list_runner.h"
+#include "kernels/kern_mul_generic.h"
 
 namespace libtensor {
 
@@ -51,11 +53,7 @@ template<size_t N, size_t M, size_t K>
 void tod_contract2<N, M, K>::do_perform(tensor_i<k_orderc, double> &tc,
 	bool zero, double d) {
 
-	typedef typename loop_list_mul::list_t list_t;
-	typedef typename loop_list_mul::registers registers_t;
-	typedef typename loop_list_mul::node node_t;
-
-	tod_contract2<N, M, K>::start_timer(k_clazz);
+	tod_contract2<N, M, K>::start_timer();
 
 	try {
 
@@ -71,10 +69,10 @@ void tod_contract2<N, M, K>::do_perform(tensor_i<k_orderc, double> &tc,
 	const dimensions<k_orderb> &dimsb = m_tb.get_dims();
 	const dimensions<k_orderc> &dimsc = tc.get_dims();
 
-	list_t loop;
-	loop_list_adapter list_adapter(loop);
-	contraction2_list_builder<N, M, K, loop_list_adapter> lstbld(m_contr);
-	lstbld.populate(list_adapter, dimsa, dimsb, dimsc);
+	std::list< loop_list_node<2, 1> > loop_in, loop_out;
+	loop_list_adapter list_adapter(loop_in);
+	contraction2_list_builder<N, M, K, loop_list_adapter>(m_contr).
+		populate(list_adapter, dimsa, dimsb, dimsc);
 
 	const double *pa = ca.req_const_dataptr();
 	const double *pb = cb.req_const_dataptr();
@@ -87,7 +85,7 @@ void tod_contract2<N, M, K>::do_perform(tensor_i<k_orderc, double> &tc,
 		tod_contract2<N, M, K>::stop_timer("zero");
 	}
 
-	registers_t r;
+	loop_registers<2, 1> r;
 	r.m_ptra[0] = pa;
 	r.m_ptra[1] = pb;
 	r.m_ptrb[0] = pc;
@@ -95,18 +93,22 @@ void tod_contract2<N, M, K>::do_perform(tensor_i<k_orderc, double> &tc,
 	r.m_ptra_end[1] = pb + dimsb.get_size();
 	r.m_ptrb_end[0] = pc + dimsc.get_size();
 
-	loop_list_mul::run_loop(loop, r, d);
+	kernel_base<2, 1> *kern = kern_mul_generic::match(d, loop_in, loop_out);
+	tod_contract2<N, M, K>::start_timer(kern->get_name());
+	loop_list_runner<2, 1>(loop_in).run(r, *kern);
+	tod_contract2<N, M, K>::stop_timer(kern->get_name());
+	delete kern; kern = 0;
 
 	ca.ret_const_dataptr(pa);
 	cb.ret_const_dataptr(pb);
 	cc.ret_dataptr(pc);
 
 	} catch(...) {
-		tod_contract2<N, M, K>::stop_timer(k_clazz);
+		tod_contract2<N, M, K>::stop_timer();
 		throw;
 	}
 
-	tod_contract2<N, M, K>::stop_timer(k_clazz);
+	tod_contract2<N, M, K>::stop_timer();
 }
 
 

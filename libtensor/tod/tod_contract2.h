@@ -9,7 +9,7 @@
 #include "tod_additive.h"
 #include "contraction2.h"
 #include "contraction2_list_builder.h"
-#include "loop_list_mul.h"
+#include "kernels/loop_list_node.h"
 
 
 namespace libtensor {
@@ -34,7 +34,9 @@ namespace libtensor {
 	\ingroup libtensor_tod
 **/
 template<size_t N, size_t M, size_t K>
-class tod_contract2 : public loop_list_mul, public tod_additive<N + M> {
+class tod_contract2 :
+	public tod_additive<N + M>,
+	public timings< tod_contract2<N, M, K> > {
 
 public:
 	static const char *k_clazz;
@@ -42,15 +44,15 @@ public:
 private:
 	class loop_list_adapter {
 	private:
-		typename loop_list_mul::list_t &m_list;
+		typedef std::list< loop_list_node<2, 1> > list_t;
+		list_t &m_list;
 
 	public:
-		loop_list_adapter(typename loop_list_mul::list_t &list) :
-			m_list(list) { }
+		loop_list_adapter(list_t &list) : m_list(list) { }
 		void append(size_t weight, size_t inca, size_t incb,
 			size_t incc) {
-			typedef typename loop_list_mul::iterator_t iterator_t;
-			typedef typename loop_list_mul::node node_t;
+			typedef typename list_t::iterator iterator_t;
+			typedef loop_list_node<2, 1> node_t;
 			iterator_t inode = m_list.insert(m_list.end(), node_t(weight));
 			inode->stepa(0) = inca;
 			inode->stepa(1) = incb;

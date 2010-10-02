@@ -15,6 +15,7 @@ set(SRC
 	tod/loop_list_mul.C
 	tod/loop_list_elem.C
 	tod/loop_list_elem1.C
+	tod/kernels/kern_mul_generic.C
 )
 
 set(SRC_LINALG
