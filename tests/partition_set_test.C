@@ -50,9 +50,14 @@ void partition_set_test::perform() throw(libtest::test_exception) {
 	test_intersect_3(false);
 	test_intersect_4(true);
 	test_intersect_4(false);
-	test_intersect_5(true);
-	test_intersect_5(false);
-	test_intersect_6();
+	test_intersect_5a(true);
+	test_intersect_5a(false);
+	test_intersect_5b(true);
+	test_intersect_5b(false);
+	test_intersect_6a(true);
+	test_intersect_6a(false);
+	test_intersect_6b(true);
+	test_intersect_6b(false);
 
 	test_stabilize_1();
 	test_stabilize_2(true);
@@ -1184,12 +1189,12 @@ void partition_set_test::test_intersect_4(bool sign)
 	}
 }
 
-/**	\test Intersection of two non-empty and overlapping partition sets
+/**	\test Intersection of two non-empty and overlapping partition sets (! mult)
  **/
-void partition_set_test::test_intersect_5(bool sign)
+void partition_set_test::test_intersect_5a(bool sign)
 		throw(libtest::test_exception) {
 
-	static const char *testname = "partition_set_test::test_intersect_5(bool)";
+	static const char *testname = "partition_set_test::test_intersect_5a(bool)";
 
 	try {
 
@@ -1224,7 +1229,57 @@ void partition_set_test::test_intersect_5(bool sign)
 	symmetry_element_set<3, double> set_ref(se_part<3, double>::k_sym_type);
 	set_ref.insert(sp_ref);
 
-	pset2.intersect(pset1);
+	pset2.intersect(pset1, false);
+	pset2.convert(set);
+
+	compare_ref<3>::compare(testname, bis, set, set_ref);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+/**	\test Intersection of two non-empty and overlapping partition sets (mult)
+ **/
+void partition_set_test::test_intersect_5b(bool sign)
+		throw(libtest::test_exception) {
+
+	static const char *testname = "partition_set_test::test_intersect_5b(bool)";
+
+	try {
+
+	index<3> i1, i2;
+	i2[0] = 9; i2[1] = 9; i2[2] = 9;
+	block_index_space<3> bis(dimensions<3>(index_range<3>(i1, i2)));
+	mask<3> m111;
+	m111[0] = true; m111[1] = true; m111[2] = true;
+	bis.split(m111, 2);
+	bis.split(m111, 5);
+	bis.split(m111, 7);
+
+	index<3> i000, i001, i110, i010, i101, i111;
+	i110[0] = 1; i110[1] = 1; i001[2] = 1;
+	i101[0] = 1; i010[1] = 1; i101[2] = 1;
+	i111[0] = 1; i111[1] = 1; i111[2] = 1;
+
+	se_part<3, double> sp1(bis, m111, 2), sp2(bis, m111, 2),
+			sp_ref(bis, m111, 2);
+	sp1.add_map(i000, i111, sign);
+	sp1.add_map(i001, i110, sign);
+	sp2.add_map(i000, i111, sign);
+	sp2.add_map(i010, i101, sign);
+	sp_ref.add_map(i000, i111, true);
+
+	partition_set<3, double> pset1(bis), pset2(bis);
+	permutation<3> p0;
+	pset1.add_partition(sp1, p0);
+	pset2.add_partition(sp2, p0);
+
+	symmetry_element_set<3, double> set(se_part<3, double>::k_sym_type);
+	symmetry_element_set<3, double> set_ref(se_part<3, double>::k_sym_type);
+	set_ref.insert(sp_ref);
+
+	pset2.intersect(pset1, true);
 	pset2.convert(set);
 
 	compare_ref<3>::compare(testname, bis, set, set_ref);
@@ -1235,11 +1290,12 @@ void partition_set_test::test_intersect_5(bool sign)
 }
 
 /**	\test Intersection of two non-empty, overlapping partition sets
-		(opposite sign)
+		(opposite sign, ! mult)
  **/
-void partition_set_test::test_intersect_6() throw(libtest::test_exception) {
+void partition_set_test::test_intersect_6a(bool sign)
+		throw(libtest::test_exception) {
 
-	static const char *testname = "partition_set_test::test_intersect_6()";
+	static const char *testname = "partition_set_test::test_intersect_6a()";
 
 	try {
 
@@ -1258,10 +1314,10 @@ void partition_set_test::test_intersect_6() throw(libtest::test_exception) {
 	i111[0] = 1; i111[1] = 1; i111[2] = 1;
 
 	se_part<3, double> sp1(bis, m111, 2), sp2(bis, m111, 2);
-	sp1.add_map(i000, i111, true);
-	sp1.add_map(i001, i110, true);
-	sp2.add_map(i000, i111, false);
-	sp2.add_map(i010, i101, false);
+	sp1.add_map(i000, i111, sign);
+	sp1.add_map(i001, i110, sign);
+	sp2.add_map(i000, i111, ! sign);
+	sp2.add_map(i010, i101, ! sign);
 
 	partition_set<3, double> pset1(bis), pset2(bis);
 	permutation<3> p0;
@@ -1270,12 +1326,63 @@ void partition_set_test::test_intersect_6() throw(libtest::test_exception) {
 
 	symmetry_element_set<3, double> set(se_part<3, double>::k_sym_type);
 
-	pset2.intersect(pset1);
+	pset2.intersect(pset1, false);
 	pset2.convert(set);
 
 	if (! set.is_empty()) {
 		fail_test(testname, __FILE__, __LINE__, "Non-empty set.");
 	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+/**	\test Intersection of two non-empty, overlapping partition sets
+		(opposite sign, mult)
+ **/
+void partition_set_test::test_intersect_6b(bool sign)
+		throw(libtest::test_exception) {
+
+	static const char *testname = "partition_set_test::test_intersect_6b()";
+
+	try {
+
+	index<3> i1, i2;
+	i2[0] = 9; i2[1] = 9; i2[2] = 9;
+	block_index_space<3> bis(dimensions<3>(index_range<3>(i1, i2)));
+	mask<3> m111;
+	m111[0] = true; m111[1] = true; m111[2] = true;
+	bis.split(m111, 2);
+	bis.split(m111, 5);
+	bis.split(m111, 7);
+
+	index<3> i000, i001, i110, i010, i101, i111;
+	i110[0] = 1; i110[1] = 1; i001[2] = 1;
+	i101[0] = 1; i010[1] = 1; i101[2] = 1;
+	i111[0] = 1; i111[1] = 1; i111[2] = 1;
+
+	se_part<3, double> sp1(bis, m111, 2), sp2(bis, m111, 2),
+			sp_ref(bis, m111, 2);
+	sp1.add_map(i000, i111, sign);
+	sp1.add_map(i001, i110, sign);
+	sp2.add_map(i000, i111, ! sign);
+	sp2.add_map(i010, i101, ! sign);
+	sp_ref.add_map(i000, i111, false);
+
+	partition_set<3, double> pset1(bis), pset2(bis);
+	permutation<3> p0;
+	pset1.add_partition(sp1, p0);
+	pset2.add_partition(sp2, p0);
+
+	symmetry_element_set<3, double> set(se_part<3, double>::k_sym_type);
+	symmetry_element_set<3, double> set_ref(se_part<3, double>::k_sym_type);
+	set_ref.insert(sp_ref);
+
+	pset2.intersect(pset1, true);
+	pset2.convert(set);
+
+	compare_ref<3>::compare(testname, bis, set, set_ref);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());

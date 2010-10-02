@@ -42,8 +42,10 @@ private:
 	void test_intersect_2(bool first_empty) throw(libtest::test_exception);
 	void test_intersect_3(bool sign) throw(libtest::test_exception);
 	void test_intersect_4(bool sign) throw(libtest::test_exception);
-	void test_intersect_5(bool sign) throw(libtest::test_exception);
-	void test_intersect_6() throw(libtest::test_exception);
+	void test_intersect_5a(bool sign) throw(libtest::test_exception);
+	void test_intersect_5b(bool sign) throw(libtest::test_exception);
+	void test_intersect_6a(bool sign) throw(libtest::test_exception);
+	void test_intersect_6b(bool sign) throw(libtest::test_exception);
 
 	// Stabilizing dimensions
 	void test_stabilize_1() throw(libtest::test_exception);

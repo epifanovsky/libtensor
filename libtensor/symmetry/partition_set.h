@@ -102,8 +102,22 @@ public:
 
 	/** \brief Computes the intersection with another partition_set.
 	 	\param set Partition set.
+	 	\param mult Indicates multiplication (see below).
+
+	 	The current partition set is modified so that only those partitions
+	 	remain that are also present in the other set. Within the remaining
+	 	partitions only those mappings are kept that are present in the
+	 	respective partition of the other set. However, the exact handling of
+	 	mappings that are present in both sets depends on the mult flag passed
+	 	to this function. If mult = false, two mappings are considered
+	 	identical only if both indexes and signs are identical. The result
+	 	mapping then has the sign of both mappings. If mult = true, only the
+	 	indexes of the mappings have to be identical. The sign of the result
+	 	mapping is then determined by both signs of the mappings, i.e. if both
+	 	signs are identical, the resulting sign is positive (true), or if the
+	 	signs are opposite, the resuling sign is negative (false).
 	 **/
-	void intersect(const partition_set<N, T> &set);
+	void intersect(const partition_set<N, T> &set, bool mult = false);
 
 	/** \brief Merges N - M + 1 dimensions given by mask into one.
 		\param msk Mask.
@@ -323,7 +337,7 @@ void partition_set<N, T>::permute(const permutation<N> &perm) {
 }
 
 template<size_t N, typename T>
-void partition_set<N, T>::intersect(const partition_set<N, T> &set) {
+void partition_set<N, T>::intersect(const partition_set<N, T> &set, bool mult) {
 
 	if (! m_bis.equals(set.m_bis)) {
 		throw bad_symmetry(g_ns, k_clazz,
@@ -371,10 +385,18 @@ void partition_set<N, T>::intersect(const partition_set<N, T> &set) {
 				if (i2.equals(i1)) continue;
 
 				if (x2->map_exists(i1, i2)) {
-					bool sign = x1->get_sign(i1, i2);
-					if (sign == x2->get_sign(i1, i2)) {
-						new_part->add_map(i1, i2, sign);
+					bool sign1 = x1->get_sign(i1, i2);
+					bool sign2 = x2->get_sign(i1, i2);
+
+					if (mult) {
+						new_part->add_map(i1, i2, sign1 == sign2);
 						empty = false;
+					}
+					else {
+						if (sign1 == sign2) {
+							new_part->add_map(i1, i2, sign1);
+							empty = false;
+						}
 					}
 				}
 

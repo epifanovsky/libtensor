@@ -58,7 +58,7 @@ void symmetry_operation_impl< so_add<N, T>, se_part<N, T> >::do_perform(
 	partition_set<N, T> p1(g1, params.perm1);
 	partition_set<N, T> p2(g2, params.perm2);
 
-	p1.intersect(p2);
+	p1.intersect(p2, false);
 	p1.convert(params.grp3);
 }
 
