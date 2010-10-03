@@ -2,136 +2,29 @@ set(SRC
 	libtensor_tests.C
 	libtensor_suite.C
 	abs_index_test.C
-	addition_schedule_test.C
-	anon_eval_test.C
-	bispace_test.C
-	bispace_expr_test.C
 	block_index_space_test.C
 	block_index_subspace_builder_test.C
 	block_map_test.C
 	block_tensor_test.C
-	btensor_test.C
-	btod_add_test.C
-	btod_compare_test.C
-	btod_contract2_test.C
-	btod_copy_test.C
-	btod_diag_test.C
-	btod_diagonalize_test.C
-	btod_dirsum_test.C
-	btod_dotprod_test.C
-	btod_extract_test.C
-	btod_import_raw_test.C
-	btod_mult_test.C
-	btod_mult1_test.C
-	btod_print_test.C
-	btod_random_test.C
-	btod_read_test.C
-	btod_scale_test.C
-	btod_select_test.C
-	btod_set_test.C
-	btod_set_diag_test.C
-	btod_set_elem_test.C
-	btod_sum_test.C
-	btod_symmetrize_test.C
-	btod_trace_test.C
-	btod_tridiagonalize_test.C
-	contract_test.C
-	contraction2_test.C
-	contraction2_list_builder_test.C
-	diag_test.C
 	dimensions_test.C
 	direct_block_tensor_test.C
-	direct_btensor_test.C
-	direct_eval_test.C
-	direct_product_test.C
-	dirsum_test.C
-	dot_product_test.C
-	expr_test.C
 	global_timings_test.C
 	immutable_test.C
 	index_test.C
 	index_range_test.C
-	labeled_btensor_test.C
-	letter_test.C
-	letter_expr_test.C
 	mask_test.C
 	mp_safe_tensor_test.C
 	orbit_test.C
 	orbit_list_test.C
-	partition_set_test.C
 	permutation_test.C
 	permutation_builder_test.C
-	permutation_group_test.C
-	point_group_table_test.C
-	product_table_container_test.C
 	sequence_test.C
-	se_label_test.C
-	se_part_test.C
-	se_perm_test.C
-	so_add_test.C
-	so_add_impl_label_test.C
-	so_add_impl_part_test.C
-	so_add_impl_perm_test.C
-	so_concat_test.C
-	so_concat_impl_label_test.C
-	so_concat_impl_part_test.C
-	so_concat_impl_perm_test.C
-	so_copy_test.C
-	so_merge_test.C
-	so_merge_impl_label_test.C
-	so_merge_impl_part_test.C
-	so_merge_impl_perm_test.C
-	so_mult_test.C
-	so_mult_impl_label_test.C
-	so_mult_impl_part_test.C
-	so_mult_impl_perm_test.C
-	so_permute_impl_label_test.C
-	so_permute_impl_part_test.C
-	so_permute_impl_perm_test.C
-	so_proj_down_test.C
-	so_proj_down_impl_label_test.C
-	so_proj_down_impl_part_test.C
-	so_proj_down_impl_perm_test.C
-	so_proj_up_test.C
-	so_proj_up_impl_label_test.C
-	so_proj_up_impl_part_test.C
-	so_proj_up_impl_perm_test.C
-	so_stabilize_test.C
-	so_stabilize_impl_label_test.C
-	so_stabilize_impl_part_test.C
-	so_stabilize_impl_perm_test.C
-	so_symmetrize_test.C
-	symm_test.C
 	symmetry_test.C
 	symmetry_element_set_test.C
-	symmetry_element_set_adapter_test.C
 	task_batch_test.C
 	tensor_test.C
 	timer_test.C
 	timings_test.C
-	tod_add_test.C
-	tod_btconv_test.C
-	tod_compare_test.C
-	tod_contract2_test.C
-	tod_copy_test.C
-	tod_diag_test.C
-	tod_dirsum_test.C
-	tod_dotprod_test.C
-	tod_extract_test.C
-	tod_import_raw_test.C
-	tod_mult_test.C
-	tod_mult1_test.C
-	tod_random_test.C
-	tod_scale_test.C
-	tod_scatter_test.C
-	tod_select_test.C
-	tod_set_test.C
-	tod_set_diag_test.C
-	tod_set_elem_test.C
-	tod_sum_test.C
-	tod_symcontract2_test.C
-	tod_trace_test.C
-	trace_test.C
 	version_test.C
 )
 
@@ -168,13 +61,31 @@ set(SRC_LINALG
 	linalg/linalg_ijkl_pliq_pjqk_x_test.C
 )
 
+file(GLOB SRC_BTOD_HEADERS btod/*.h)
+file(GLOB SRC_BTOD btod/*.C)
+file(GLOB SRC_IFACE_HEADERS iface/*.h)
+file(GLOB SRC_IFACE iface/*.C)
+file(GLOB SRC_SYMMETRY_HEADERS symmetry/*.h)
+file(GLOB SRC_SYMMETRY symmetry/*.C)
+file(GLOB SRC_TOD_HEADERS tod/*.h)
+file(GLOB SRC_TOD tod/*.C)
+
 set(TARGETS
 	libtensor_tests
+	libtensor_btod_tests
+	libtensor_iface_tests
 	libtensor_linalg_tests
+	libtensor_symmetry_tests
+	libtensor_tod_tests
 )
 
+
 add_executable(libtensor_tests ${SRC})
+add_executable(libtensor_btod_tests ${SRC_BTOD} ${SRC_BTOD_HEADERS})
+add_executable(libtensor_iface_tests ${SRC_IFACE} ${SRC_IFACE_HEADERS})
 add_executable(libtensor_linalg_tests ${SRC_LINALG})
+add_executable(libtensor_symmetry_tests ${SRC_SYMMETRY} ${SRC_SYMMETRY_HEADERS})
+add_executable(libtensor_tod_tests ${SRC_TOD} ${SRC_TOD_HEADERS})
 
 include(${LIBTEST_DIR}/cmake/SetupLibTest.txt)
 
