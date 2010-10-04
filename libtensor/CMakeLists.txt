@@ -17,6 +17,10 @@ set(SRC
 	tod/loop_list_elem1.C
 	tod/kernels/kern_mul_generic.C
 	tod/kernels/kern_mul_i_i_x.C
+	tod/kernels/kern_mul_i_ip_p.C
+	tod/kernels/kern_mul_i_p_ip.C
+	tod/kernels/kern_mul_i_p_pi.C
+	tod/kernels/kern_mul_i_pi_p.C
 	tod/kernels/kern_mul_i_x_i.C
 	tod/kernels/kern_mul_x_p_p.C
 )

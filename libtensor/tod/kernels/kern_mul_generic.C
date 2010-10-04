@@ -23,9 +23,9 @@ kernel_base<2, 1> *kern_mul_generic::match(double d, list_t &in, list_t &out) {
 	kern_mul_generic zz;
 	zz.m_d = d;
 
-	if((kern = kern_mul_i_i_x::match(zz, in, out)) != 0) return kern;
-	if((kern = kern_mul_i_x_i::match(zz, in, out)) != 0) return kern;
-	if((kern = kern_mul_x_p_p::match(zz, in, out)) != 0) return kern;
+	if(kern = kern_mul_i_i_x::match(zz, in, out)) return kern;
+	if(kern = kern_mul_i_x_i::match(zz, in, out)) return kern;
+	if(kern = kern_mul_x_p_p::match(zz, in, out)) return kern;
 
 	return new kern_mul_generic(zz);
 }
