@@ -16,6 +16,7 @@ template<size_t N, size_t M>
 class kernel_base {
 public:
 	typedef std::list< loop_list_node<N, M> > list_t;
+	typedef typename list_t::iterator iterator_t;
 
 public:
 	/**	\brief Virtual destructor
