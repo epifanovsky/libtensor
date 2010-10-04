@@ -1,5 +1,8 @@
 #include "../../linalg/linalg.h"
 #include "kern_mul_i_pi_p.h"
+#include "kern_mul_ij_pi_jp.h"
+#include "kern_mul_ij_pj_ip.h"
+#include "kern_mul_ij_pj_pi.h"
 
 namespace libtensor {
 
@@ -20,13 +23,13 @@ kernel_base<2, 1> *kern_mul_i_pi_p::match(const kern_mul_i_i_x &z,
 	if(in.empty()) return 0;
 
 	//	1. Minimize spa > 0, spb > 0:
-	//	------------------
+	//	-------------------
 	//	w   a    b     c
-	//	ni  1    0     k1
-	//	np  spa  spb   0   -->  c_i# = a_p$i b_p
-	//	------------------       sz(i) = ni, sz(p) = w2
-	//	                         sz(#) = k1, sz($) = k2a
-	//	                         [i_pi_p]
+	//	ni  1    0     sic
+	//	np  spa  spb   0     -->  c_i# = a_p$i b_p
+	//	-------------------       sz(i) = ni, sz(p) = w2
+	//	                          sz(#) = k1, sz($) = k2a
+	//	                          [i_pi_p]
 
 	iterator_t ip, ip1 = in.end(), ip2 = in.end();
 	size_t spa_min = 0, spb_min = 0;
@@ -55,6 +58,10 @@ kernel_base<2, 1> *kern_mul_i_pi_p::match(const kern_mul_i_i_x &z,
 	in.splice(out.begin(), out, ip);
 
 	kernel_base<2, 1> *kern = 0;
+
+	if(kern = kern_mul_ij_pi_jp::match(zz, in, out)) return kern;
+	if(kern = kern_mul_ij_pj_ip::match(zz, in, out)) return kern;
+	if(kern = kern_mul_ij_pj_pi::match(zz, in, out)) return kern;
 
 	return new kern_mul_i_pi_p(zz);
 }

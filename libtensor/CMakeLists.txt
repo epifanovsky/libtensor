@@ -22,6 +22,14 @@ set(SRC
 	tod/kernels/kern_mul_i_p_pi.C
 	tod/kernels/kern_mul_i_pi_p.C
 	tod/kernels/kern_mul_i_x_i.C
+	tod/kernels/kern_mul_ij_ip_jp.C
+	tod/kernels/kern_mul_ij_ip_pj.C
+	tod/kernels/kern_mul_ij_jp_ip.C
+	tod/kernels/kern_mul_ij_jp_pi.C
+	tod/kernels/kern_mul_ij_pi_jp.C
+	tod/kernels/kern_mul_ij_pi_pj.C
+	tod/kernels/kern_mul_ij_pj_ip.C
+	tod/kernels/kern_mul_ij_pj_pi.C
 	tod/kernels/kern_mul_x_p_p.C
 )
 

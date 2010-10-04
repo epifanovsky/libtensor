@@ -7,6 +7,10 @@ namespace libtensor {
 
 
 class kern_mul_i_pi_p : public kernel_base<2, 1> {
+	friend class kern_mul_ij_pi_jp;
+	friend class kern_mul_ij_pj_ip;
+	friend class kern_mul_ij_pj_pi;
+
 public:
 	static const char *k_clazz; //!< Kernel name
 
