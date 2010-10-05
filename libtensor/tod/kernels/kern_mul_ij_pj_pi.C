@@ -1,5 +1,6 @@
 #include "../../linalg/linalg.h"
 #include "kern_mul_ij_pj_pi.h"
+#include "kern_mul_ijk_ipk_pj.h"
 
 namespace libtensor {
 
@@ -58,6 +59,8 @@ kernel_base<2, 1> *kern_mul_ij_pj_pi::match(const kern_mul_i_pi_p &z,
 	in.splice(out.begin(), out, ii);
 
 	kernel_base<2, 1> *kern = 0;
+
+	if(kern = kern_mul_ijk_ipk_pj::match(zz, in, out)) return kern;
 
 	return new kern_mul_ij_pj_pi(zz);
 }
