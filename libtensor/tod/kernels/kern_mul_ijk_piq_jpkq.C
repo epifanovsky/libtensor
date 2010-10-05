@@ -1,43 +1,47 @@
 #include "../../linalg/linalg.h"
-#include "kern_mul_ijk_ip_jpk.h"
-#include "kern_mul_ijk_piq_jpqk.h"
-#include "kern_mul_ijk_piq_pjqk.h"
+#include "kern_mul_ijk_piq_jpkq.h"
 
 namespace libtensor {
 
 
-const char *kern_mul_ijk_ip_jpk::k_clazz = "kern_mul_ijk_ip_jpk";
+const char *kern_mul_ijk_piq_jpkq::k_clazz = "kern_mul_ijk_piq_jpkq";
 
 
-void kern_mul_ijk_ip_jpk::run(const loop_registers<2, 1> &r) {
+void kern_mul_ijk_piq_jpkq::run(const loop_registers<2, 1> &r) {
 
-	const double *pb = r.m_ptra[1];
+	const double *pa = r.m_ptra[0], *pb = r.m_ptra[1];
 	double *pc = r.m_ptrb[0];
 
 	for(size_t j = 0; j < m_nj; j++) {
-		linalg::ij_ip_pj_x(m_ni, m_nk, m_np, r.m_ptra[0], m_sia,
-			pb, m_spb, pc, m_sic, m_d);
+		const double *pa1 = pa, *pb1 = pb;
+		for(size_t p = 0; p < m_np; p++) {
+			linalg::ij_ip_jp_x(m_ni, m_nk, m_nq, pa1, m_sia,
+				pb1, m_skb, pc, m_sic, m_d);
+			pa1 += m_spa;
+			pb1 += m_spb;
+		}
 		pb += m_sjb;
 		pc += m_sjc;
 	}
 }
 
 
-kernel_base<2, 1> *kern_mul_ijk_ip_jpk::match(const kern_mul_ij_ip_pj &z,
+kernel_base<2, 1> *kern_mul_ijk_piq_jpkq::match(const kern_mul_ij_piq_pjq &z,
 	list_t &in, list_t &out) {
 
 	if(in.empty()) return 0;
 
-	//	Rename j -> k
+	//	Rename j -> k.
 
-	//	Minimize sjc > 0.
+	//	Minimize sjc > 0:
 	//	-----------------
 	//	w   a    b    c
-	//	nk  0    1    1
-	//	np  1    spb  0
+	//	nq  1    1    0
+	//	nk  0    skb  1
 	//	ni  sia  0    sic
-	//	nj  0    sjb  sjc  --> c_i#j#k = a_i#p b_j#p#k
-	//	-----------------      [ijk_ip_jpk]
+	//	np  spa  spb  0
+	//	nj  0    sjb  sjc  -->  c_i#j#k = a_p#i#q b_j#p#k#q
+	//	-----------------       [ijk_piq_jpkq]
 	//
 
 	iterator_t ij = in.end();
@@ -54,25 +58,25 @@ kernel_base<2, 1> *kern_mul_ijk_ip_jpk::match(const kern_mul_ij_ip_pj &z,
 	}
 	if(ij == in.end()) return 0;
 
-	kern_mul_ijk_ip_jpk zz;
+	kern_mul_ijk_piq_jpkq zz;
 	zz.m_d = z.m_d;
 	zz.m_ni = z.m_ni;
 	zz.m_nj = ij->weight();
 	zz.m_nk = z.m_nj;
 	zz.m_np = z.m_np;
+	zz.m_nq = z.m_nq;
+	zz.m_spa = z.m_spa;
 	zz.m_sia = z.m_sia;
 	zz.m_sjb = ij->stepa(1);
 	zz.m_spb = z.m_spb;
+	zz.m_skb = z.m_sjb;
 	zz.m_sic = z.m_sic;
 	zz.m_sjc = ij->stepb(0);
 	in.splice(out.begin(), out, ij);
 
 	kernel_base<2, 1> *kern = 0;
 
-	if(kern = kern_mul_ijk_piq_jpqk::match(zz, in, out)) return kern;
-	if(kern = kern_mul_ijk_piq_pjqk::match(zz, in, out)) return kern;
-
-	return new kern_mul_ijk_ip_jpk(zz);
+	return new kern_mul_ijk_piq_jpkq(zz);
 }
 
 
