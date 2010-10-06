@@ -22,30 +22,24 @@ kernel_base<2, 1> *kern_mul_i_p_pi::match(const kern_mul_i_x_i &z,
 
 	if(in.empty()) return 0;
 
-	//	1. Minimize spb > 0, spa > 0:
+	//	Minimize spa > 0:
 	//	-----------------
-	//	w   a  b       c
-	//	ni  0  1       k1
-	//	np  1  k2a*w1  0   -->  c_i# = a_p b_p%i
-	//	-----------------       sz(i) = ni, sz(p) = w2
-	//	                        sz(#) = k1, sz(%) = k2a
-	//	                        [i_p_pi]
+	//	w   a    b    c
+	//	ni  0    1    sic
+	//	np  spa  spb  0    -->  c_i# = a_p# b_p#i
+	//	-----------------       [i_p_pi]
+	//
 
-	iterator_t ip, ip1 = in.end(), ip2 = in.end();
-	size_t spa_min = 0, spb_min = 0;
+	iterator_t ip = in.end();
+	size_t spa_min = 0;
 	for(iterator_t i = in.begin(); i != in.end(); i++) {
 		if(i->stepa(0) > 0 && i->stepa(1) > 0 && i->stepb(0) == 0) {
 			if(i->stepa(1) % z.m_ni) continue;
 			if(spa_min == 0 || spa_min > i->stepa(0)) {
-				ip1 = i; spa_min = i->stepa(0);
-			}
-			if(spb_min == 0 || spb_min > i->stepa(1)) {
-				ip2 = i; spb_min = i->stepa(1);
+				ip = i; spa_min = i->stepa(0);
 			}
 		}
 	}
-	if(spa_min == 1) ip = ip2;
-	else ip = ip1;
 	if(ip == in.end()) return 0;
 
 	kern_mul_i_p_pi zz;

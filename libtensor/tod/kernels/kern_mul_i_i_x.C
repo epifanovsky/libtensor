@@ -20,12 +20,12 @@ kernel_base<2, 1> *kern_mul_i_i_x::match(const kern_mul_generic &z,
 
 	if(in.empty()) return 0;
 
-	//	2. Minimize sic > 0:
+	//	Minimize sic > 0:
 	//	-------------
 	//	w   a  b  c
 	//	ni  1  0  sic  -->  c_i# = a_i b
-	//	-------------       sz(i) = ni, sz(#) = k1a
-	//	                    [i_i_x]
+	//	-------------       [i_i_x]
+	//
 
 	iterator_t ii = in.end();
 	size_t sic_min = 0;

@@ -27,12 +27,9 @@ kernel_base<2, 1> *kern_mul_ij_pi_pj::match(const kern_mul_i_p_pi &z,
 	//	w   a    b    c
 	//	nj  0    1    1
 	//	np  spa  spb  0
-	//	ni  1    0    sic  -->  c_j#i = a_p$j b_p%i
-	//	-----------------       sz(i) = w1, sz(j) = w3,
-	//	                        sz(p) = w2
-	//	                        sz(#) = k4, sz($) = k3',
-	//	                        sz(%) = k2
-	//	                        [ij_pi_pj]
+	//	ni  1    0    sic  -->  c_i#j = a_p#i b_p#j
+	//	-----------------       [ij_pi_pj]
+	//
 
 	iterator_t ii = in.end();
 	size_t sic_min = 0;
@@ -56,6 +53,46 @@ kernel_base<2, 1> *kern_mul_ij_pi_pj::match(const kern_mul_i_p_pi &z,
 	zz.m_spb = z.m_spb;
 	zz.m_sic = ii->stepb(0);
 	in.splice(out.begin(), out, ii);
+
+	kernel_base<2, 1> *kern = 0;
+
+	return new kern_mul_ij_pi_pj(zz);
+}
+
+
+kernel_base<2, 1> *kern_mul_ij_pi_pj::match(const kern_mul_i_pi_p &z,
+	list_t &in, list_t &out) {
+
+	if(in.empty()) return 0;
+
+	//	Minimize sjb > 0:
+	//	------------------
+	//	w   a    b     c
+	//	ni  1    0     sic
+	//	np  spa  spb   0
+	//	nj  0    1     1    -->  c_i#j = a_p#i b_p#j
+	//	------------------       [ij_pi_pj]
+	//
+
+	iterator_t ij = in.end();
+	size_t sjb_min = 0;
+	for(iterator_t i = in.begin(); i != in.end(); i++) {
+		if(i->stepa(0) == 0 && i->stepa(1) == 1 && i->stepb(0) == 1) {
+			if(z.m_sic % i->weight()) continue;
+			ij = i; break;
+		}
+	}
+	if(ij == in.end()) return 0;
+
+	kern_mul_ij_pi_pj zz;
+	zz.m_d = z.m_d;
+	zz.m_ni = z.m_ni;
+	zz.m_nj = ij->weight();
+	zz.m_np = z.m_np;
+	zz.m_spa = z.m_spa;
+	zz.m_spb = z.m_spb;
+	zz.m_sic = z.m_sic;
+	in.splice(out.begin(), out, ij);
 
 	kernel_base<2, 1> *kern = 0;
 

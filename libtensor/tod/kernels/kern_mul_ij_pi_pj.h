@@ -2,6 +2,7 @@
 #define LIBTENSOR_KERN_MUL_IJ_PI_PJ_H
 
 #include "kern_mul_i_p_pi.h"
+#include "kern_mul_i_pi_p.h"
 
 namespace libtensor {
 
@@ -25,6 +26,8 @@ public:
 	virtual void run(const loop_registers<2, 1> &r);
 
 	static kernel_base<2, 1> *match(const kern_mul_i_p_pi &z,
+		list_t &in, list_t &out);
+	static kernel_base<2, 1> *match(const kern_mul_i_pi_p &z,
 		list_t &in, list_t &out);
 
 };
