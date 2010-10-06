@@ -6,7 +6,7 @@
 #include "../adaptive/linalg_base_highlevel.h"
 #include "../generic/linalg_base_memory_generic.h"
 #include "../cblas/linalg_base_level1_cblas.h"
-#include "../cblas/linalg_base_level2_cblas.h"
+#include "linalg_base_level2_mkl.h"
 #include "../cblas/linalg_base_level3_cblas.h"
 
 namespace libtensor {
@@ -21,12 +21,12 @@ struct linalg_base_mkl :
 	public linalg_base_lowlevel<
 		linalg_base_memory_generic,
 		linalg_base_level1_cblas,
-		linalg_base_level2_cblas,
+		linalg_base_level2_mkl,
 		linalg_base_level3_cblas>,
 	public linalg_base_highlevel<
 		linalg_base_memory_generic,
 		linalg_base_level1_cblas,
-		linalg_base_level2_cblas,
+		linalg_base_level2_mkl,
 		linalg_base_level3_cblas>
 { };
 

@@ -37,6 +37,7 @@ set(SRC_LINALG
 	linalg/linalg_i_ip_p_x_test.C
 	linalg/linalg_i_pi_p_x_test.C
 	linalg/linalg_ij_i_j_x_test.C
+	linalg/linalg_ij_ji_test.C
 	linalg/linalg_i_ipq_qp_x_test.C
 	linalg/linalg_ij_ip_jp_x_test.C
 	linalg/linalg_ij_ip_pj_x_test.C

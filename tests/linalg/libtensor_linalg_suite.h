@@ -8,6 +8,7 @@
 #include "linalg_i_ip_p_x_test.h"
 #include "linalg_i_pi_p_x_test.h"
 #include "linalg_ij_i_j_x_test.h"
+#include "linalg_ij_ji_test.h"
 #include "linalg_i_ipq_qp_x_test.h"
 #include "linalg_ij_ip_jp_x_test.h"
 #include "linalg_ij_ip_pj_x_test.h"
@@ -45,6 +46,7 @@ namespace libtensor {
 	 - libtensor::linalg_i_ip_p_x_test
 	 - libtensor::linalg_i_pi_p_x_test
 	 - libtensor::linalg_ij_i_j_x_test
+	 - libtensor::linalg_ij_ji_test
 	 - libtensor::linalg_i_ipq_qp_x_test
 	 - libtensor::linalg_ij_ip_jp_x_test
 	 - libtensor::linalg_ij_ip_pj_x_test
@@ -78,6 +80,7 @@ private:
 	unit_test_factory<linalg_i_ip_p_x_test> m_utf_linalg_i_ip_p_x;
 	unit_test_factory<linalg_i_pi_p_x_test> m_utf_linalg_i_pi_p_x;
 	unit_test_factory<linalg_ij_i_j_x_test> m_utf_linalg_ij_i_j_x;
+	unit_test_factory<linalg_ij_ji_test> m_utf_linalg_ij_ji;
 	unit_test_factory<linalg_i_ipq_qp_x_test> m_utf_linalg_i_ipq_qp_x;
 	unit_test_factory<linalg_ij_ip_jp_x_test> m_utf_linalg_ij_ip_jp_x;
 	unit_test_factory<linalg_ij_ip_pj_x_test> m_utf_linalg_ij_ip_pj_x;

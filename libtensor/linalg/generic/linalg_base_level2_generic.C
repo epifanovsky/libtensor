@@ -48,12 +48,15 @@ void linalg_base_level2_generic::ij_i_j_x(
 }
 
 
-void linalg_base_level2_generic::ij_ji_x(
+void linalg_base_level2_generic::ij_ji(
 	size_t ni, size_t nj,
 	const double *a, size_t sja,
-	double b,
 	double *c, size_t sic) {
 
+	for(size_t j = 0; j < nj; j++)
+	for(size_t i = 0; i < ni; i++) {
+		c[i * sic + j] = a[j * sja + i];
+	}
 }
 
 

@@ -17,9 +17,22 @@ namespace libtensor {
 template<typename M, typename L1, typename L2, typename L3>
 struct linalg_base_level4_adaptive : public linalg_base_level4_generic {
 
+
+	static void ij_ipq_jqp_x(
+		size_t ni, size_t nj, size_t np, size_t nq,
+		const double *a, size_t spa, size_t sia,
+		const double *b, size_t sqb, size_t sjb,
+		double *c, size_t sic,
+		double d);
+
+
 };
 
 
 } // namespace libtensor
+
+
+#include "bits/ij_ipq_jqp_x.h"
+
 
 #endif // LIBTENSOR_LINALG_BASE_LEVEL4_ADAPTIVE_H

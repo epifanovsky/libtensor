@@ -48,6 +48,25 @@ struct linalg_base_level2_acml : public linalg_base_level2_generic {
 	}
 
 
+	static void ij_ji(
+		size_t ni, size_t nj,
+		const double *a, size_t sja,
+		double *c, size_t sic) {
+
+		if(ni < nj) {
+			double *c1 = c;
+			for(size_t i = 0; i < ni; i++, c1 += sic) {
+				dcopy(nj, (double*)a + i, sja, c1, 1);
+			}
+		} else {
+			const double *a1 = a;
+			for(size_t j = 0; j < nj; j++, a1 += sja) {
+				dcopy(ni, (double*)a1, 1, c + j, sic);
+			}
+		}
+	}
+
+
 };
 
 

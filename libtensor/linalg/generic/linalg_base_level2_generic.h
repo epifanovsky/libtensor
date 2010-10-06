@@ -70,6 +70,20 @@ struct linalg_base_level2_generic {
 		double d);
 
 
+	/**	\brief \f$ c_{ij} = a_{ji} \f$
+		\param ni Number of elements i.
+		\param nj Number of elements j.
+		\param a Pointer to a.
+		\param sja Step of j in a.
+		\param c Pointer to c.
+		\param sic Step of i in c.
+	 **/
+	static void ij_ji(
+		size_t ni, size_t nj,
+		const double *a, size_t sja,
+		double *c, size_t sic);
+
+
 	/**	\brief \f$ c_{ij} = c_{ij} + a_{ji} b \f$
 		\param ni Number of elements i.
 		\param nj Number of elements j.
