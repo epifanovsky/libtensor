@@ -18,6 +18,7 @@ set(SRC
 	tod/kernels/kern_mul_generic.C
 	tod/kernels/kern_mul_i_i_x.C
 	tod/kernels/kern_mul_i_ip_p.C
+	tod/kernels/kern_mul_i_ipq_qp.C
 	tod/kernels/kern_mul_i_p_ip.C
 	tod/kernels/kern_mul_i_p_pi.C
 	tod/kernels/kern_mul_i_pi_p.C
@@ -26,6 +27,7 @@ set(SRC
 	tod/kernels/kern_mul_ij_ip_pj.C
 	tod/kernels/kern_mul_ij_jp_ip.C
 	tod/kernels/kern_mul_ij_jp_pi.C
+	tod/kernels/kern_mul_ij_jpq_iqp.C
 	tod/kernels/kern_mul_ij_pi_jp.C
 	tod/kernels/kern_mul_ij_pi_pj.C
 	tod/kernels/kern_mul_ij_piq_pjq.C
@@ -41,6 +43,7 @@ set(SRC
 	tod/kernels/kern_mul_ijk_piq_pjqk.C
 	tod/kernels/kern_mul_ijk_pkiq_pjq.C
 	tod/kernels/kern_mul_x_p_p.C
+	tod/kernels/kern_mul_x_pq_qp.C
 )
 
 set(SRC_LINALG
