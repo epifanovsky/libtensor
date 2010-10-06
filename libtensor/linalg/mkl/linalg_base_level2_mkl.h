@@ -1,5 +1,9 @@
-#ifndef LIBTENSOR_LINALG_BASE_LEVEL2_CBLAS_H
-#define LIBTENSOR_LINALG_BASE_LEVEL2_CBLAS_H
+#ifndef LIBTENSOR_LINALG_BASE_LEVEL2_MKL_H
+#define LIBTENSOR_LINALG_BASE_LEVEL2_MKL_H
+
+#if defined(HAVE_MKL_DOMATCOPY)
+#include <mkl_trans.h>
+#endif
 
 #include "../cblas/linalg_base_level2_cblas.h"
 
@@ -19,7 +23,7 @@ struct linalg_base_level2_mkl : public linalg_base_level2_cblas {
 		double *c, size_t sic) {
 
 #if defined(HAVE_MKL_DOMATCOPY)
-		mkl_domatcopy('R', 'T', ni, nj, 1.0, a, sja, c, sic);
+		mkl_domatcopy('R', 'T', nj, ni, 1.0, a, sja, c, sic);
 #else
 		linalg_base_level2_cblas::ij_ji(ni, nj, a, sja, c, sic);
 #endif
@@ -31,4 +35,4 @@ struct linalg_base_level2_mkl : public linalg_base_level2_cblas {
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_LINALG_BASE_LEVEL2_CBLAS_H
+#endif // LIBTENSOR_LINALG_BASE_LEVEL2_MKL_H
