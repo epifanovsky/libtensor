@@ -48,9 +48,11 @@ kernel_base<2, 1> *kern_mul_ijk_piq_pjkq::match(const kern_mul_ij_piq_pjq &z,
 	size_t sjc_min = 0;
 	for(iterator_t i = in.begin(); i != in.end(); i++) {
 		if(i->stepa(0) == 0 && i->stepa(1) > 0 && i->stepb(0) > 0) {
-			if(i->stepa(1) % z.m_sjb || z.m_spb % i->weight())
+			if(i->stepa(1) % (z.m_sjb * z.m_nj) ||
+				z.m_spb % (i->weight() * i->stepa(1)))
 				continue;
-			if(i->stepb(0) % z.m_nj || z.m_sic % i->weight())
+			if(i->stepb(0) % z.m_nj ||
+				z.m_sic % (i->weight() * i->stepb(0)))
 				continue;
 			if(sjc_min == 0 || sjc_min > i->stepb(0)) {
 				ij = i; sjc_min = i->stepb(0);
