@@ -411,6 +411,45 @@ void btod_dirsum<N, M>::make_schedule() {
 		}
 	}
 
+	// check if there are orbits in olc which have not been added to schedule
+	permutation<k_orderc> pinvc(m_permc, true);
+	for (typename orbit_list<k_orderc, double>::iterator ioc = olc.begin();
+			ioc != olc.end(); ioc++) {
+
+		if (m_sch.contains(olc.get_abs_index(ioc))) continue;
+
+		// identify index of A and index of B
+		index<k_orderc> idxc(olc.get_index(ioc));
+		idxc.permute(pinvc);
+		index<k_ordera> idxa;
+		for (size_t i = 0; i < k_ordera; i++) idxa[i] = idxc[i];
+		index<k_orderb> idxb;
+		for (size_t i = 0; i < k_orderb; i++) idxb[i] = idxc[i + k_ordera];
+
+		orbit<k_ordera, double> oa(ca.req_const_symmetry(), idxa);
+		orbit<k_orderb, double> ob(cb.req_const_symmetry(), idxb);
+
+		bool zeroa = ! oa.is_allowed();
+		bool zerob = ! ob.is_allowed();
+
+		if (zeroa == zerob) continue;
+
+		if (! zeroa) {
+			abs_index<k_ordera> ai(oa.get_abs_canonical_index(),
+					m_bta.get_bis().get_block_index_dims());
+			zeroa = ca.req_is_zero_block(ai.get_index());
+		}
+
+
+		if (! zerob) {
+			abs_index<k_orderb> bi(ob.get_abs_canonical_index(),
+					m_btb.get_bis().get_block_index_dims());
+			zerob = cb.req_is_zero_block(bi.get_index());
+		}
+
+		make_schedule(oa, zeroa, ob, zerob, olc);
+	}
+
 	btod_dirsum<N, M>::stop_timer("make_schedule");
 }
 
@@ -429,55 +468,55 @@ void btod_dirsum<N, M>::make_schedule(const orbit<k_ordera, double> &oa,
 	for(typename orbit<k_ordera, double>::iterator ia = oa.begin();
 		ia != oa.end(); ia++) {
 
-	abs_index<k_ordera> aidxa(oa.get_abs_index(ia), m_bidimsa);
-	const index<k_ordera> &idxa = aidxa.get_index();
-	const transf<k_ordera, double> &tra = oa.get_transf(
-		aidxa.get_abs_index());
+		abs_index<k_ordera> aidxa(oa.get_abs_index(ia), m_bidimsa);
+		const index<k_ordera> &idxa = aidxa.get_index();
+		const transf<k_ordera, double> &tra = oa.get_transf(
+				aidxa.get_abs_index());
 
-	for(size_t i = 0; i < k_ordera; i++) seqa[i] = i;
-	tra.get_perm().apply(seqa);
+		for(size_t i = 0; i < k_ordera; i++) seqa[i] = i;
+		tra.get_perm().apply(seqa);
 
-	for(typename orbit<k_orderb, double>::iterator ib = ob.begin();
-		ib != ob.end(); ib++) {
+		for(typename orbit<k_orderb, double>::iterator ib = ob.begin();
+				ib != ob.end(); ib++) {
 
-		abs_index<k_orderb> aidxb(ob.get_abs_index(ib), m_bidimsb);
-		const index<k_orderb> &idxb = aidxb.get_index();
-		const transf<k_orderb, double> &trb = ob.get_transf(
-			aidxb.get_abs_index());
+			abs_index<k_orderb> aidxb(ob.get_abs_index(ib), m_bidimsb);
+			const index<k_orderb> &idxb = aidxb.get_index();
+			const transf<k_orderb, double> &trb = ob.get_transf(
+					aidxb.get_abs_index());
 
-		for(size_t i = 0; i < k_orderb; i++) seqb[i] = i;
-		trb.get_perm().apply(seqb);
+			for(size_t i = 0; i < k_orderb; i++) seqb[i] = i;
+			trb.get_perm().apply(seqb);
 
-		index<k_orderc> idxc;
-		for(size_t i = 0; i < k_ordera; i++) {
-			idxc[i] = idxa[i];
-			seqc2[i] = seqa[i];
-		}
-		for(size_t i = 0; i < k_orderb; i++) {
-			idxc[k_ordera + i] = idxb[i];
-			seqc2[k_ordera + i] = k_ordera + seqb[i];
-		}
+			index<k_orderc> idxc;
+			for(size_t i = 0; i < k_ordera; i++) {
+				idxc[i] = idxa[i];
+				seqc2[i] = seqa[i];
+			}
+			for(size_t i = 0; i < k_orderb; i++) {
+				idxc[k_ordera + i] = idxb[i];
+				seqc2[k_ordera + i] = k_ordera + seqb[i];
+			}
 
-		idxc.permute(m_permc);
-		m_permc.apply(seqc2);
+			idxc.permute(m_permc);
+			m_permc.apply(seqc2);
 
-		abs_index<k_orderc> aidxc(idxc, m_bidimsc);
-		if(!olc.contains(aidxc.get_abs_index())) continue;
+			abs_index<k_orderc> aidxc(idxc, m_bidimsc);
+			if(!olc.contains(aidxc.get_abs_index())) continue;
 
-		permutation_builder<k_orderc> pbc(seqc2, seqc1);
-		schrec rec;
-		rec.absidxa = aidxa.get_abs_index();
-		rec.absidxb = aidxb.get_abs_index();
-		rec.zeroa = zeroa;
-		rec.zerob = zerob;
-		rec.ka = m_ka * tra.get_coeff();
-		rec.kb = m_kb * trb.get_coeff();
-		rec.permc.permute(pbc.get_perm());
-		m_op_sch.insert(std::pair<size_t, schrec>(
-			aidxc.get_abs_index(), rec));
-		m_sch.insert(aidxc.get_abs_index());
+			permutation_builder<k_orderc> pbc(seqc2, seqc1);
+			schrec rec;
+			rec.absidxa = aidxa.get_abs_index();
+			rec.absidxb = aidxb.get_abs_index();
+			rec.zeroa = zeroa;
+			rec.zerob = zerob;
+			rec.ka = m_ka * tra.get_coeff();
+			rec.kb = m_kb * trb.get_coeff();
+			rec.permc.permute(pbc.get_perm());
+			m_op_sch.insert(std::pair<size_t, schrec>(
+					aidxc.get_abs_index(), rec));
+			m_sch.insert(aidxc.get_abs_index());
 
-	} // for ib
+		} // for ib
 
 	} // for ia
 }
