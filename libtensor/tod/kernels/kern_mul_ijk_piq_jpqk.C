@@ -49,8 +49,9 @@ kernel_base<2, 1> *kern_mul_ijk_piq_jpqk::match(const kern_mul_ijk_ip_jpk &z,
 	size_t spa_min = 0;
 	for(iterator_t i = in.begin(); i != in.end(); i++) {
 		if(i->stepa(0) > 0 && i->stepa(1) > 0 && i->stepb(0) == 0) {
-			if(i->stepa(0) % z.m_sia) continue;
-			if(i->stepa(1) % z.m_spb || z.m_sjb % i->weight())
+			if(i->stepa(0) % (z.m_sia * z.m_ni)) continue;
+			if(i->stepa(1) % (z.m_spb * z.m_np) ||
+				z.m_sjb % (i->weight() * i->stepa(1)))
 				continue;
 			if(spa_min == 0 || spa_min > i->stepa(0)) {
 				ip = i; spa_min = i->stepa(0);

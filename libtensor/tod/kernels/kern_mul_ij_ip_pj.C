@@ -22,17 +22,16 @@ kernel_base<2, 1> *kern_mul_ij_ip_pj::match(const kern_mul_i_p_pi &z,
 	if(in.empty()) return 0;
 	if(z.m_spa != 1 || z.m_sic != 1) return 0;
 
-	//	Rename i->j
+	//	Rename i -> j.
 
 	//	1. Minimize sia > 0.
 	//	-----------------
 	//	w   a    b    c
 	//	nj  0    1    1
 	//	np  1    spb  0
-	//	ni  sia  0    sic  --> c_j#i = a_j$p b_p%i
-	//	-----------------      sz(i) = w1, sz(j) = w3, sz(p) = w2
-	//	                       sz(#) = k6, sz($) = k5, sz(%) = k2
-	//	                       [ij_ip_pj]
+	//	ni  sia  0    sic  --> c_j#i = a_j#p b_p#i
+	//	-----------------      [ij_ip_pj]
+	//
 
 	iterator_t ii = in.end();
 	size_t sia_min = 0;

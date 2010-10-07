@@ -44,8 +44,8 @@ kernel_base<2, 1> *kern_mul_ijk_jp_ipk::match(const kern_mul_ij_ip_pj &z,
 	size_t sib_min = 0;
 	for(iterator_t i = in.begin(); i != in.end(); i++) {
 		if(i->stepa(0) == 0 && i->stepa(1) > 0 && i->stepb(0) > 0) {
-			if(i->stepa(1) % z.m_spb) continue;
-			if(i->stepb(0) % z.m_sic) continue;
+			if(i->stepa(1) % (z.m_spb * z.m_np)) continue;
+			if(i->stepb(0) % (z.m_sic * z.m_ni)) continue;
 			if(sib_min == 0 || sib_min > i->stepa(1)) {
 				ii = i; sib_min = i->stepa(1);
 			}
