@@ -1,5 +1,6 @@
 #include "../../linalg/linalg.h"
 #include "kern_mul_ij_jp_pi.h"
+#include "kern_mul_ijk_kp_ipj.h"
 #include "kern_mul_ijk_kp_jpi.h"
 
 namespace libtensor {
@@ -19,21 +20,16 @@ kernel_base<2, 1> *kern_mul_ij_jp_pi::match(const kern_mul_i_p_pi &z,
 	list_t &in, list_t &out) {
 
 	if(in.empty()) return 0;
-	if(z.m_spb != 1 || z.m_sic != 1) return 0;
+	if(z.m_spa != 1) return 0;
 
-	//	Rename i->j
-
-	//	1. Minimize sja > 0:
+	//	Minimize sja > 0:
 	//	-----------------
 	//	w   a    b    c
 	//	ni  0    1    sic
 	//	np  1    spb  0
-	//	nj  sja  0    1     -->  c_i#j = a_j%p b_p$i
-	//	------------------       sz(i) = w1, sz(j) = w3,
-	//	                         sz(p) = w2
-	//	                         sz(#) = k1', sz($) = k2,
-	//	                         sz(%) = k4
-	//	                         [ij_jp_pi]
+	//	nj  sja  0    1     -->  c_i#j = a_j#p b_p#i
+	//	------------------       [ij_jp_pi]
+	//
 
 	iterator_t ij = in.end();
 	size_t sja_min = 0;
@@ -60,6 +56,7 @@ kernel_base<2, 1> *kern_mul_ij_jp_pi::match(const kern_mul_i_p_pi &z,
 
 	kernel_base<2, 1> *kern = 0;
 
+	if(kern = kern_mul_ijk_kp_ipj::match(zz, in, out)) return kern;
 	if(kern = kern_mul_ijk_kp_jpi::match(zz, in, out)) return kern;
 
 	return new kern_mul_ij_jp_pi(zz);
