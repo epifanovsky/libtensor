@@ -43,10 +43,11 @@ private:
 	const symmetry<N, T> &m_sym1;
 	const symmetry<M, T> &m_sym2;
 	permutation<N + M> m_perm;
+	bool m_dirsum; //!< Are we using this for direct sums
 
 public:
 	so_concat(const symmetry<N, T> &sym1, const symmetry<M, T> &sym2,
-			const permutation<N + M> &perm) :
+			const permutation<N + M> &perm, bool dirsum = false) :
 				m_sym1(sym1), m_sym2(sym2), m_perm(perm) { }
 
 	so_concat(const symmetry<N, T> &sym1, const symmetry<M, T> &sym2) :
@@ -136,7 +137,7 @@ void so_concat<N, M, T>::perform(symmetry<N + M, T> &sym3) {
 			symmetry_element_set<N + M, T> set3(set1.get_id());
 			const symmetry_element_set<M, T> &set2 = m_sym2.get_subset(j);
 			symmetry_operation_params<operation_t> params(
-					set1, set2, m_perm, sym3.get_bis(), set3);
+					set1, set2, m_perm, m_dirsum, sym3.get_bis(), set3);
 			dispatcher_t::get_instance().invoke(set1.get_id(), params);
 			copy_subset(set3, sym3);
 		}
@@ -237,6 +238,7 @@ public:
 	const symmetry_element_set<N, T> &g1; //!< Symmetry group
 	const symmetry_element_set<M, T> &g2; //!< Symmetry group
 	permutation<N + M> perm; //!< Permutation
+	bool dirsum; //!< Function for dirsum
 	block_index_space<N + M> bis; //!< Block index space of result
 	symmetry_element_set<N + M, T> &g3;
 
@@ -245,10 +247,11 @@ public:
 		const symmetry_element_set<N, T> &g1_,
 		const symmetry_element_set<M, T> &g2_,
 		const permutation<N + M> &perm_,
+		bool dirsum_,
 		const block_index_space<N + M> &bis_,
 		symmetry_element_set<N + M, T> &g3_) :
 
-		g1(g1_), g2(g2_), perm(perm_), bis(bis_), g3(g3_)  { }
+		g1(g1_), g2(g2_), perm(perm_), dirsum(dirsum_), bis(bis_), g3(g3_)  { }
 
 };
 

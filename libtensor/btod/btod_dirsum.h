@@ -375,9 +375,8 @@ void btod_dirsum<N, M>::make_symmetry() {
 	block_tensor_ctrl<k_orderb, double> cb(m_btb);
 
 	so_concat<N, M, double>(ca.req_const_symmetry(), cb.req_const_symmetry(),
-			m_permc).perform(m_sym);
+			m_permc, true).perform(m_sym);
 }
-
 
 template<size_t N, size_t M>
 void btod_dirsum<N, M>::make_schedule() {

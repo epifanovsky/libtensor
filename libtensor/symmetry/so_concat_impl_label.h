@@ -122,25 +122,41 @@ void symmetry_operation_impl< so_concat<N, M, T>,
 
 			e3.match_labels();
 
-			// obtain product_table
-			const product_table_i &pt = product_table_container::get_instance()
-				.req_const_table(e1.get_table_id());
-
 			// set target labels
-			product_table_i::label_group lg(2);
-			for (size_t k = 0; k < e1.get_n_targets(); k++) {
-				for (size_t l = 0; l < e2.get_n_targets(); l++) {
-					lg[0] = e1.get_target(k);
-					lg[1] = e2.get_target(l);
-					for (typename se_label<N + M,T>::label_t m = 0; m < pt.nlabels(); m++)
-						if (pt.is_in_product(lg, m)) e3.add_target(m);
+			if (params.dirsum) {
+				for (size_t k = 0; k < e1.get_n_labels(); k++)
+					e3.add_target(k);
+			}
+			else {
+				// obtain product_table
+				const product_table_i &pt =
+						product_table_container::get_instance()
+								.req_const_table(e1.get_table_id());
+
+				try {
+
+				product_table_i::label_group lg(2);
+				for (size_t k = 0; k < e1.get_n_targets(); k++) {
+					for (size_t l = 0; l < e2.get_n_targets(); l++) {
+						lg[0] = e1.get_target(k);
+						lg[1] = e2.get_target(l);
+						for (typename se_label<N + M,T>::label_t m = 0;
+								m < pt.nlabels(); m++) {
+							if (pt.is_in_product(lg, m)) e3.add_target(m);
+						}
+					}
+				}
+				product_table_container::get_instance().ret_table(e1.get_table_id());
+
+				} catch (...) {
+					product_table_container::get_instance().ret_table(e1.get_table_id());
+					throw;
 				}
 			}
-			product_table_container::get_instance().ret_table(e1.get_table_id());
+
 		}
-
+		
 		params.g3.insert(e3);
-
 	}
 
 	//	Go over each element in the second source group

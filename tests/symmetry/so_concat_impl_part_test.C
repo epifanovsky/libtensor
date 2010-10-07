@@ -52,7 +52,7 @@ void so_concat_impl_part_test::test_1() throw(libtest::test_exception) {
 	symmetry_element_set<5, double> set3_ref(se2_t::k_sym_type);
 
 	symmetry_operation_params<so_concat_t> params(
-		set1, set2, permutation<5>(), bis5, set3);
+		set1, set2, permutation<5>(), false, bis5, set3);
 
 	so_concat_impl_t().perform(params);
 
@@ -128,7 +128,7 @@ void so_concat_impl_part_test::test_2(bool sign)
 	set3_ref.insert(elem2);
 
 	symmetry_operation_params<so_concat_t> params(
-		set1, set2, permutation<4>(), bis4, set3);
+		set1, set2, permutation<4>(), false, bis4, set3);
 
 	so_concat_impl_t().perform(params);
 
@@ -203,8 +203,8 @@ void so_concat_impl_part_test::test_3(bool sign)
 	set1.insert(elem1);
 	set3_ref.insert(elem2);
 
-	symmetry_operation_params<so_concat_t> params(
-		set1, set2, permutation<4>().permute(0, 1).permute(1, 2), bis4, set3);
+	symmetry_operation_params<so_concat_t> params(set1, set2,
+			permutation<4>().permute(0, 1).permute(1, 2), false, bis4, set3);
 
 	so_concat_impl_t().perform(params);
 
@@ -278,8 +278,8 @@ void so_concat_impl_part_test::test_4(bool sign) throw(libtest::test_exception) 
 	set2.insert(elem1);
 	set3_ref.insert(elem2);
 
-	symmetry_operation_params< so_concat<2, 2, double> > params(
-		set1, set2, permutation<4>().permute(1, 3).permute(1, 2), bis4, set3);
+	symmetry_operation_params< so_concat<2, 2, double> > params(set1, set2,
+			permutation<4>().permute(1, 3).permute(1, 2), false, bis4, set3);
 
 	so_concat_impl_t().perform(params);
 
@@ -382,7 +382,7 @@ void so_concat_impl_part_test::test_5(bool sign) throw(libtest::test_exception) 
 	permutation<4> perm;
 	perm.permute(2, 3).permute(0, 2);
 	symmetry_operation_params<so_concat_t> params(
-		set1, set2, perm, bisb, set3);
+		set1, set2, perm, false, bisb, set3);
 
 	so_concat_impl_t().perform(params);
 
@@ -510,7 +510,7 @@ void so_concat_impl_part_test::test_6() throw(libtest::test_exception) {
 
 	permutation<4> perm; perm.permute(2, 3).permute(0, 2);
 	symmetry_operation_params<so_concat_t> params(
-		set1, set2, perm, bisc, set3);
+		set1, set2, perm, false, bisc, set3);
 
 	so_concat_impl_t().perform(params);
 
@@ -637,7 +637,7 @@ void so_concat_impl_part_test::test_7() throw(libtest::test_exception) {
 
 	permutation<4> perm; perm.permute(2, 3).permute(0, 2);
 	symmetry_operation_params<so_concat_t> params(
-		set2, set1, perm, bisc, set3);
+		set2, set1, perm, false, bisc, set3);
 
 	so_concat_impl_t().perform(params);
 

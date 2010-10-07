@@ -20,6 +20,8 @@ private:
 	void test_4(bool recip, bool doadd) throw(libtest::test_exception);
 	void test_5(bool symm1, bool symm2) throw(libtest::test_exception);
 	void test_6(bool symm1, bool symm2) throw(libtest::test_exception);
+	void test_7(bool label, bool part, bool samesym,
+			bool recip, bool add) throw(libtest::test_exception);
 };
 
 } // namespace libtensor
