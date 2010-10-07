@@ -25,6 +25,7 @@ libtensor_linalg_suite::libtensor_linalg_suite() :
 
 	add_test("linalg_ijkl_ipl_kpj_x", m_utf_linalg_ijkl_ipl_kpj_x);
 
+	add_test("linalg_ijkl_ipkq_pljq_x", m_utf_linalg_ijkl_ipkq_pljq_x);
 	add_test("linalg_ijkl_iplq_kpjq_x", m_utf_linalg_ijkl_iplq_kpjq_x);
 	add_test("linalg_ijkl_iplq_pkjq_x", m_utf_linalg_ijkl_iplq_pkjq_x);
 	add_test("linalg_ijkl_iplq_pkqj_x", m_utf_linalg_ijkl_iplq_pkqj_x);
