@@ -63,8 +63,8 @@ kernel_base<2, 1> *kern_mul_ijkl_pljq_ipkq::match(
 	size_t sic_min = 0;
 	for(iterator_t i = in.begin(); i != in.end(); i++) {
 		if(i->stepa(0) == 0 && i->stepa(1) > 0 && i->stepb(0) > 0) {
-			if(i->stepa(1) % z.m_spb) continue;
-			if(i->stepb(0) % z.m_sic) continue;
+			if(i->stepa(1) % (z.m_spb * z.m_np)) continue;
+			if(i->stepb(0) % (z.m_sic * z.m_ni)) continue;
 			if(sic_min == 0 || sic_min > i->stepb(0)) {
 				ii = i; sic_min = i->stepb(0);
 			}

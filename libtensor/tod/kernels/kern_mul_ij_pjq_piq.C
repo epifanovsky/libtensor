@@ -40,8 +40,8 @@ kernel_base<2, 1> *kern_mul_ij_pjq_piq::match(const kern_mul_ij_jp_ip &z,
 	size_t spa_min = 0;
 	for(iterator_t i = in.begin(); i != in.end(); i++) {
 		if(i->stepa(0) > 0 && i->stepa(1) > 0 && i->stepb(0) == 0) {
-			if(i->stepa(0) % z.m_sja) continue;
-			if(i->stepa(1) % z.m_sib) continue;
+			if(i->stepa(0) % (z.m_sja * z.m_nj)) continue;
+			if(i->stepa(1) % (z.m_sib * z.m_ni)) continue;
 			if(spa_min == 0 || spa_min > i->stepa(0)) {
 				ip = i; spa_min = i->stepa(0);
 			}
