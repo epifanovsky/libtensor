@@ -119,6 +119,36 @@ void linalg_base_level6_generic::ijkl_iplq_pkqj_x(
 }
 
 
+void linalg_base_level6_generic::ijkl_ipql_pkjq_x(
+	size_t ni, size_t nj, size_t nk,
+	size_t nl, size_t np, size_t nq,
+	const double *a, const double *b, double *c, double d) {
+
+	for(size_t i = 0; i < ni; i++) {
+	for(size_t k = 0; k < nk; k++) {
+	for(size_t p = 0; p < np; p++) {
+
+		const double *a1 = a + (i * np + p) * nq * nl;
+		const double *b1 = b + (p * nk + k) * nj * nq;
+
+		for(size_t j = 0; j < nj; j++) {
+		for(size_t q = 0; q < nq; q++) {
+
+			size_t ijk = ((i * nj + j) * nk + k) * nl;
+			size_t jq = j * nq + q;
+			size_t ql0 = q * nl;
+
+			for(size_t l = 0; l < nl; l++) {
+				c[ijk + l] += d * a1[ql0 + l] * b1[jq];
+			}
+		}
+		}
+	}
+	}
+	}
+}
+
+
 void linalg_base_level6_generic::ijkl_ipql_pkqj_x(
 	size_t ni, size_t nj, size_t nk,
 	size_t nl, size_t np, size_t nq,
