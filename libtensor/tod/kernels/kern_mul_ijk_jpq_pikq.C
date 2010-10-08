@@ -9,6 +9,15 @@ const char *kern_mul_ijk_jpq_pikq::k_clazz = "kern_mul_ijk_jpq_pikq";
 
 void kern_mul_ijk_jpq_pikq::run(const loop_registers<2, 1> &r) {
 
+	if(m_spa == m_nq && m_sja == m_spa * m_np && m_skb == m_nq &&
+		m_sib == m_skb * m_nk && m_spb == m_sib * m_ni &&
+		m_sjc == m_nk && m_sic == m_sjc * m_nj) {
+
+		linalg::ijk_pikq_jpq_x(m_ni, m_nj, m_nk, m_np, m_nq,
+			r.m_ptra[1], r.m_ptra[0], r.m_ptrb[0], m_d);
+		return;
+	}
+
 	const double *pb = r.m_ptra[1];
 	double *pc = r.m_ptrb[0];
 
