@@ -1,5 +1,7 @@
 #include "../../linalg/linalg.h"
 #include "kern_mul_ijk_pjq_piqk.h"
+#include "kern_mul_ijkl_pkjq_piql.h"
+
 
 namespace libtensor {
 
@@ -75,6 +77,8 @@ kernel_base<2, 1> *kern_mul_ijk_pjq_piqk::match(const kern_mul_ijk_jp_ipk &z,
 	in.splice(out.begin(), out, ip);
 
 	kernel_base<2, 1> *kern = 0;
+
+	if(kern = kern_mul_ijkl_pkjq_piql::match(zz, in, out)) return kern;
 
 	return new kern_mul_ijk_pjq_piqk(zz);
 }
