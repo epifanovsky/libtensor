@@ -7,6 +7,7 @@ namespace libtensor {
 
 
 class kern_mul_ijk_pkq_ipqj : public kernel_base<2, 1> {
+	friend class kern_mul_ijkl_pliq_jpqk;
 	friend class kern_mul_ijkl_pljq_ipqk;
 
 public:

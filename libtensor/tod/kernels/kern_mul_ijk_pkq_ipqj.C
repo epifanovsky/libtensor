@@ -1,5 +1,6 @@
 #include "../../linalg/linalg.h"
 #include "kern_mul_ijk_pkq_ipqj.h"
+#include "kern_mul_ijkl_pliq_jpqk.h"
 #include "kern_mul_ijkl_pljq_ipqk.h"
 
 
@@ -82,6 +83,7 @@ kernel_base<2, 1> *kern_mul_ijk_pkq_ipqj::match(const kern_mul_ijk_kp_ipj &z,
 
 	kernel_base<2, 1> *kern = 0;
 
+	if(kern = kern_mul_ijkl_pliq_jpqk::match(zz, in, out)) return kern;
 	if(kern = kern_mul_ijkl_pljq_ipqk::match(zz, in, out)) return kern;
 
 	return new kern_mul_ijk_pkq_ipqj(zz);
