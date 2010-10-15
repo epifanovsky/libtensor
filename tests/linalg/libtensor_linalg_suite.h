@@ -22,11 +22,15 @@
 #include "linalg_ijkl_iplq_kpjq_x_test.h"
 #include "linalg_ijkl_iplq_pkjq_x_test.h"
 #include "linalg_ijkl_iplq_pkqj_x_test.h"
+#include "linalg_ijkl_ipqk_pljq_x_test.h"
 #include "linalg_ijkl_ipql_pkjq_x_test.h"
 #include "linalg_ijkl_ipql_pkqj_x_test.h"
+#include "linalg_ijkl_pikq_pljq_x_test.h"
 #include "linalg_ijkl_pilq_kpjq_x_test.h"
 #include "linalg_ijkl_pilq_pkjq_x_test.h"
+#include "linalg_ijkl_piqk_pljq_x_test.h"
 #include "linalg_ijkl_piql_kpqj_x_test.h"
+#include "linalg_ijkl_piql_pkjq_x_test.h"
 #include "linalg_ijkl_piql_pkqj_x_test.h"
 #include "linalg_ijkl_pkiq_jplq_x_test.h"
 #include "linalg_ijkl_pkiq_jpql_x_test.h"
@@ -64,11 +68,15 @@ namespace libtensor {
 	 - libtensor::linalg_ijkl_iplq_kpjq_x_test
 	 - libtensor::linalg_ijkl_iplq_pkjq_x_test
 	 - libtensor::linalg_ijkl_iplq_pkqj_x_test
+	 - libtensor::linalg_ijkl_ipqk_pljq_x_test
 	 - libtensor::linalg_ijkl_ipql_pkjq_x_test
 	 - libtensor::linalg_ijkl_ipql_pkqj_x_test
+	 - libtensor::linalg_ijkl_pikq_pljq_x_test
 	 - libtensor::linalg_ijkl_pilq_kpjq_x_test
 	 - libtensor::linalg_ijkl_pilq_pkjq_x_test
+	 - libtensor::linalg_ijkl_piqk_pljq_x_test
 	 - libtensor::linalg_ijkl_piql_kpqj_x_test
+	 - libtensor::linalg_ijkl_piql_pkjq_x_test
 	 - libtensor::linalg_ijkl_piql_pkqj_x_test
 	 - libtensor::linalg_ijkl_pkiq_jplq_x_test
 	 - libtensor::linalg_ijkl_pkiq_jpql_x_test
@@ -109,16 +117,24 @@ private:
 		m_utf_linalg_ijkl_iplq_pkjq_x;
 	unit_test_factory<linalg_ijkl_iplq_pkqj_x_test>
 		m_utf_linalg_ijkl_iplq_pkqj_x;
+	unit_test_factory<linalg_ijkl_ipqk_pljq_x_test>
+		m_utf_linalg_ijkl_ipqk_pljq_x;
 	unit_test_factory<linalg_ijkl_ipql_pkjq_x_test>
 		m_utf_linalg_ijkl_ipql_pkjq_x;
 	unit_test_factory<linalg_ijkl_ipql_pkqj_x_test>
 		m_utf_linalg_ijkl_ipql_pkqj_x;
+	unit_test_factory<linalg_ijkl_pikq_pljq_x_test>
+		m_utf_linalg_ijkl_pikq_pljq_x;
 	unit_test_factory<linalg_ijkl_pilq_kpjq_x_test>
 		m_utf_linalg_ijkl_pilq_kpjq_x;
+	unit_test_factory<linalg_ijkl_piqk_pljq_x_test>
+		m_utf_linalg_ijkl_piqk_pljq_x;
 	unit_test_factory<linalg_ijkl_pilq_pkjq_x_test>
 		m_utf_linalg_ijkl_pilq_pkjq_x;
 	unit_test_factory<linalg_ijkl_piql_kpqj_x_test>
 		m_utf_linalg_ijkl_piql_kpqj_x;
+	unit_test_factory<linalg_ijkl_piql_pkjq_x_test>
+		m_utf_linalg_ijkl_piql_pkjq_x;
 	unit_test_factory<linalg_ijkl_piql_pkqj_x_test>
 		m_utf_linalg_ijkl_piql_pkqj_x;
 	unit_test_factory<linalg_ijkl_pkiq_jplq_x_test>

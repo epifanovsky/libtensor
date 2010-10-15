@@ -50,6 +50,15 @@ struct linalg_base_level6_generic {
 
 
 	/**	\brief \f$ c_{ijkl} = c_{ijkl} +
+			\sum_{pq} a_{ipqk} b_{pljq} d \f$
+	 **/
+	static void ijkl_ipqk_pljq_x(
+		size_t ni, size_t nj, size_t nk,
+		size_t nl, size_t np, size_t nq,
+		const double *a, const double *b, double *c, double d);
+
+
+	/**	\brief \f$ c_{ijkl} = c_{ijkl} +
 			\sum_{pq} a_{ipql} b_{pkjq} d \f$
 	 **/
 	static void ijkl_ipql_pkjq_x(
@@ -86,9 +95,36 @@ struct linalg_base_level6_generic {
 
 
 	/**	\brief \f$ c_{ijkl} = c_{ijkl} +
+			\sum_{pq} a_{pikq} b_{pljq} d \f$
+	 **/
+	static void ijkl_pikq_pljq_x(
+		size_t ni, size_t nj, size_t nk,
+		size_t nl, size_t np, size_t nq,
+		const double *a, const double *b, double *c, double d);
+
+
+	/**	\brief \f$ c_{ijkl} = c_{ijkl} +
+			\sum_{pq} a_{piqk} b_{pljq} d \f$
+	 **/
+	static void ijkl_piqk_pljq_x(
+		size_t ni, size_t nj, size_t nk,
+		size_t nl, size_t np, size_t nq,
+		const double *a, const double *b, double *c, double d);
+
+
+	/**	\brief \f$ c_{ijkl} = c_{ijkl} +
 			\sum_{pq} a_{piql} b_{kpqj} d \f$
 	 **/
 	static void ijkl_piql_kpqj_x(
+		size_t ni, size_t nj, size_t nk,
+		size_t nl, size_t np, size_t nq,
+		const double *a, const double *b, double *c, double d);
+
+
+	/**	\brief \f$ c_{ijkl} = c_{ijkl} +
+			\sum_{pq} a_{piql} b_{pkjq} d \f$
+	 **/
+	static void ijkl_piql_pkjq_x(
 		size_t ni, size_t nj, size_t nk,
 		size_t nl, size_t np, size_t nq,
 		const double *a, const double *b, double *c, double d);

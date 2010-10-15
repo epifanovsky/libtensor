@@ -51,11 +51,15 @@ set(SRC_LINALG
 	linalg/linalg_ijkl_iplq_kpjq_x_test.C
 	linalg/linalg_ijkl_iplq_pkjq_x_test.C
 	linalg/linalg_ijkl_iplq_pkqj_x_test.C
+	linalg/linalg_ijkl_ipqk_pljq_x_test.C
 	linalg/linalg_ijkl_ipql_pkjq_x_test.C
 	linalg/linalg_ijkl_ipql_pkqj_x_test.C
 	linalg/linalg_ijkl_pilq_kpjq_x_test.C
 	linalg/linalg_ijkl_pilq_pkjq_x_test.C
+	linalg/linalg_ijkl_pikq_pljq_x_test.C
+	linalg/linalg_ijkl_piqk_pljq_x_test.C
 	linalg/linalg_ijkl_piql_kpqj_x_test.C
+	linalg/linalg_ijkl_piql_pkjq_x_test.C
 	linalg/linalg_ijkl_piql_pkqj_x_test.C
 	linalg/linalg_ijkl_pkiq_jplq_x_test.C
 	linalg/linalg_ijkl_pkiq_jpql_x_test.C
