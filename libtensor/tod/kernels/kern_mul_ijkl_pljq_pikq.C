@@ -14,6 +14,9 @@ void kern_mul_ijkl_pljq_pikq::run(const loop_registers<2, 1> &r) {
 		m_sjc == m_skc * m_nk && m_spa == m_sla * m_nl &&
 		m_spb == m_sib * m_ni && m_sic == m_sjc * m_nj) {
 
+		linalg::ijkl_pikq_pljq_x(m_ni, m_nj, m_nk, m_nl, m_np, m_nq,
+			r.m_ptra[1], r.m_ptra[0], r.m_ptrb[0], m_d);
+		return;
 	}
 
 	const double *pa = r.m_ptra[0], *pb = r.m_ptra[1];
