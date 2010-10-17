@@ -14,16 +14,21 @@ public:
 	virtual void perform() throw(libtest::test_exception);
 
 private:
-	void test_1() throw(libtest::test_exception);
-	void test_2() throw(libtest::test_exception);
-	void test_3() throw(libtest::test_exception);
-	void test_4() throw(libtest::test_exception);
-	void test_5() throw(libtest::test_exception);
-	void test_6() throw(libtest::test_exception);
-	void test_7() throw(libtest::test_exception);
-	void test_8() throw(libtest::test_exception);
-	void test_9() throw(libtest::test_exception);
-	void test_10() throw(libtest::test_exception);
+	void test_pq_pq_1(size_t ni, size_t nj,
+			bool recip) throw(libtest::test_exception);
+	void test_pq_pq_2(size_t ni, size_t nj,
+			bool recip, double coeff) throw(libtest::test_exception);
+	void test_pq_qp(bool recip, double coeff) throw(libtest::test_exception);
+	void test_qp_pq(bool recip, double coeff) throw(libtest::test_exception);
+	void test_qp_qp(bool recip, double coeff) throw(libtest::test_exception);
+	void test_pqrs_qprs(size_t ni, size_t nj, size_t nk, size_t nl,
+			bool recip, double coeff) throw(libtest::test_exception);
+	void test_pqrs_qrps(size_t ni, size_t nj, size_t nk, size_t nl,
+			bool recip, double coeff) throw(libtest::test_exception);
+	void test_pqsr_pqrs(size_t ni, size_t nj, size_t nk, size_t nl,
+			bool recip, double coeff) throw(libtest::test_exception);
+	void test_prsq_qrps(size_t ni, size_t nj, size_t nk, size_t nl,
+			bool recip, double coeff) throw(libtest::test_exception);
 };
 
 } // namespace libtensor

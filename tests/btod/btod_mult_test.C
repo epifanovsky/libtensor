@@ -1,10 +1,15 @@
 #include <libvmm/std_allocator.h>
 #include <libtensor/core/block_tensor.h>
+#include <libtensor/core/direct_block_tensor.h>
+#include <libtensor/btod/btod_dirsum.h>
 #include <libtensor/btod/btod_mult.h>
 #include <libtensor/btod/btod_random.h>
+#include <libtensor/btod/btod_symmetrize.h>
 #include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/tod/tod_btconv.h>
+#include <libtensor/tod/tod_dirsum.h>
 #include <libtensor/tod/tod_mult.h>
+#include <iomanip>
 #include <sstream>
 #include "btod_mult_test.h"
 #include "../compare_ref.h"
@@ -26,38 +31,46 @@ void btod_mult_test::perform() throw(libtest::test_exception) {
 	test_5(true, false);  test_5(true, true);
 	test_6(false, false); test_6(false, true);
 	test_6(true, false);  test_6(true, true);
-	test_7(false, false, false, false, false);
-	test_7(false, false, false, false, true);
-	test_7(false, false, false, true, false);
-	test_7(false, false, false, true, true);
-	test_7(false, false, true, false, false);
-	test_7(false, false, true, false, true);
-	test_7(false, false, true, true, false);
-	test_7(false, false, true, true, true);
-	test_7(false, true, false, false, false);
-	test_7(false, true, false, false, true);
-	test_7(false, true, false, true, false);
-	test_7(false, true, false, true, true);
-	test_7(false, true, true, false, false);
-	test_7(false, true, true, false, true);
-	test_7(false, true, true, true, false);
-	test_7(false, true, true, true, true);
-	test_7(true, false, false, false, false);
-	test_7(true, false, false, false, true);
-	test_7(true, false, false, true, false);
-	test_7(true, false, false, true, true);
-	test_7(true, false, true, false, false);
-	test_7(true, false, true, false, true);
-	test_7(true, false, true, true, false);
-	test_7(true, false, true, true, true);
-	test_7(true, true, false, false, false);
-	test_7(true, true, false, false, true);
-	test_7(true, true, false, true, false);
-	test_7(true, true, false, true, true);
-	test_7(true, true, true, false, false);
-	test_7(true, true, true, false, true);
-	test_7(true, true, true, true, false);
-	test_7(true, true, true, true, true);
+//	test_7(false, false, false, false, false);
+//	test_7(false, false, false, false, true);
+//	test_7(false, false, false, true, false);
+//	test_7(false, false, false, true, true);
+//	test_7(false, false, true, false, false);
+//	test_7(false, false, true, false, true);
+//	test_7(false, false, true, true, false);
+//	test_7(false, false, true, true, true);
+//	test_7(false, true, false, false, false);
+//	test_7(false, true, false, false, true);
+//	test_7(false, true, false, true, false);
+//	test_7(false, true, false, true, true);
+//	test_7(false, true, true, false, false);
+//	test_7(false, true, true, false, true);
+//	test_7(false, true, true, true, false);
+//	test_7(false, true, true, true, true);
+//	test_7(true, false, false, false, false);
+//	test_7(true, false, false, false, true);
+//	test_7(true, false, false, true, false);
+//	test_7(true, false, false, true, true);
+//	test_7(true, false, true, false, false);
+//	test_7(true, false, true, false, true);
+//	test_7(true, false, true, true, false);
+//	test_7(true, false, true, true, true);
+//	test_7(true, true, false, false, false);
+//	test_7(true, true, false, false, true);
+//	test_7(true, true, false, true, false);
+//	test_7(true, true, false, true, true);
+//	test_7(true, true, true, false, false);
+//	test_7(true, true, true, false, true);
+//	test_7(true, true, true, true, false);
+//	test_7(true, true, true, true, true);
+	test_8a(false, false);
+	test_8a(false, true);
+	test_8a(true, false);
+	test_8a(true, true);
+	test_8b(false, false);
+	test_8b(false, true);
+	test_8b(true, false);
+	test_8b(true, true);
 }
 
 
@@ -658,7 +671,7 @@ void btod_mult_test::test_7(bool label, bool part,
 	}
 
 	if (part) {
-		se_part<4, double> sp(bis, msk, 2);
+		se_part<4, double> sp1(bis, msk, 2), sp2(bis, msk, 2);
 		index<4> i0000, i1111, i0001, i1110, i0010, i1101, i0011, i1100,
 			i0100, i1011, i0101, i1010, i0110, i1001, i0111, i1000;
 		i1110[0] = 1; i1110[1] = 1; i1110[2] = 1; i0001[3] = 1;
@@ -670,20 +683,36 @@ void btod_mult_test::test_7(bool label, bool part,
 		i1000[0] = 1; i0111[1] = 1; i0111[2] = 1; i0111[3] = 1;
 		i1111[0] = 1; i1111[1] = 1; i1111[2] = 1; i1111[3] = 1;
 
-		sp.add_map(i0000, i1111);
-		sp.add_map(i0101, i1010);
-		sp.add_map(i0110, i1001);
-		sp.add_map(i0011, i1100);
+		sp1.add_map(i0000, i1111);
+		sp1.add_map(i0001, i1110);
+		sp1.add_map(i0010, i1101);
+		sp1.add_map(i0011, i1100);
+		sp1.add_map(i0100, i1011);
+		sp1.add_map(i0101, i1010);
+		sp1.add_map(i0110, i1001);
+		sp1.add_map(i0111, i1000);
 
-		ca.req_symmetry().insert(sp);
-		cc.req_symmetry().insert(sp);
-		sym_ref.insert(sp);
+		ca.req_symmetry().insert(sp1);
+		cc.req_symmetry().insert(sp1);
+		sym_ref.insert(sp1);
 
-		sp.add_map(i0001, i1110);
-		sp.add_map(i0010, i1101);
-		sp.add_map(i0100, i1011);
-		sp.add_map(i0111, i1000);
-		cb.req_symmetry().insert(sp);
+		sp2.add_map(i0000, i0001);
+		sp2.add_map(i0001, i0010);
+		sp2.add_map(i0010, i0011);
+		sp2.add_map(i0011, i0100);
+		sp2.add_map(i0100, i0101);
+		sp2.add_map(i0101, i0110);
+		sp2.add_map(i0110, i0111);
+		sp2.add_map(i0111, i1000);
+		sp2.add_map(i1000, i1001);
+		sp2.add_map(i1001, i1010);
+		sp2.add_map(i1010, i1011);
+		sp2.add_map(i1011, i1100);
+		sp2.add_map(i1100, i1101);
+		sp2.add_map(i1101, i1110);
+		sp2.add_map(i1110, i1111);
+
+		cb.req_symmetry().insert(sp2);
 	}
 
 	}
@@ -731,6 +760,271 @@ void btod_mult_test::test_7(bool label, bool part,
 
 	if (label) product_table_container::get_instance().erase(tns);
 }
+
+/**	\test Reproduce error in adcman
+ **/
+void btod_mult_test::test_8a(bool label, bool part)
+		throw(libtest::test_exception) {
+
+	std::ostringstream tnss;
+	tnss << "btod_mult_test::test_8a(" << label << ", " << part << ")";
+
+	std::string tns = tnss.str();
+
+
+	if (label) {
+		point_group_table pg(tns, 2);
+		pg.add_product(0, 0, 0);
+		pg.add_product(0, 1, 1);
+		pg.add_product(1, 1, 0);
+
+		product_table_container::get_instance().add(pg);
+	}
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<2> i1, i2;
+	i2[0] = 9; i2[1] = 9;
+	dimensions<2> dims(index_range<2>(i1, i2));
+	block_index_space<2> bis(dims);
+	mask<2> m;
+	m[0] = true; m[1] = true;
+	bis.split(m, 4); bis.split(m, 5); bis.split(m, 9);
+
+	block_tensor<2, double, allocator_t> bta(bis), btb(bis), btc(bis);
+	symmetry<2, double> sym_ref(bis);
+
+	// set up symmetries
+	{
+	block_tensor_ctrl<2, double> ca(bta), cb(btb);
+
+	se_perm<2, double> sp(permutation<2>().permute(0, 1), true);
+	se_perm<2, double> ap(permutation<2>().permute(0, 1), false);
+
+	ca.req_symmetry().insert(ap);
+	cb.req_symmetry().insert(sp);
+	sym_ref.insert(ap);
+
+	if (label) {
+		se_label<2, double> sl(bis.get_block_index_dims(), tns);
+		sl.assign(m, 0, 0); sl.assign(m, 1, 1);
+		sl.assign(m, 2, 0); sl.assign(m, 3, 1);
+		sl.add_target(0);
+
+		ca.req_symmetry().insert(sl);
+		sym_ref.insert(sl);
+
+		sl.add_target(1);
+		cb.req_symmetry().insert(sl);
+	}
+
+	if (part) {
+		se_part<2, double> spa(bis, m, 2), spb(bis, m, 2);
+		index<2> i00, i11, i01, i10;
+		i10[0] = 1; i01[1] = 1;
+		i11[0] = 1; i11[1] = 1;
+
+		spa.add_map(i00, i11, true);
+		spa.add_map(i01, i10, true);
+
+		ca.req_symmetry().insert(spa);
+		sym_ref.insert(spa);
+
+		spb.add_map(i00, i01, true);
+		spb.add_map(i01, i10, true);
+		spb.add_map(i10, i11, true);
+
+		cb.req_symmetry().insert(spb);
+	}
+	}
+
+	//	Fill in random data
+	btod_random<2>().perform(bta);
+	btod_random<2>().perform(btb);
+	bta.set_immutable();
+	btb.set_immutable();
+
+	// Setup reference
+	tensor<2, double, allocator_t> ta(dims), tb(dims), tc(dims), tc_ref(dims);
+
+	tod_btconv<2>(bta).perform(ta);
+	tod_btconv<2>(btb).perform(tb);
+
+	tod_mult<2>(ta, tb, true, 4.0).perform(tc_ref);
+	btod_mult<2> mult(bta, btb, true, 4.0);
+	compare_ref<2>::compare(tns.c_str(), mult.get_symmetry(), sym_ref);
+
+	mult.perform(btc);
+
+	tod_btconv<2>(btc).perform(tc);
+	block_tensor_ctrl<2, double> cc(btc);
+	compare_ref<2>::compare(tns.c_str(), cc.req_const_symmetry(), sym_ref);
+	compare_ref<2>::compare(tns.c_str(), tc, tc_ref, 1e-15);
+
+	} catch(exception &e) {
+		if (label) product_table_container::get_instance().erase(tns);
+
+		fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+	} catch (...) {
+		if (label) product_table_container::get_instance().erase(tns);
+		throw;
+	}
+
+	if (label) product_table_container::get_instance().erase(tns);
+}
+
+
+
+/**	\test Reproduce error in adcman
+ **/
+void btod_mult_test::test_8b(bool label, bool part)
+		throw(libtest::test_exception) {
+
+	std::ostringstream tnss;
+	tnss << "btod_mult_test::test_8b(" << label << ", " << part << ")";
+
+	std::string tns = tnss.str();
+
+
+	if (label) {
+		point_group_table pg(tns, 2);
+		pg.add_product(0, 0, 0);
+		pg.add_product(0, 1, 1);
+		pg.add_product(1, 1, 0);
+
+		product_table_container::get_instance().add(pg);
+	}
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 5; i2[1] = 5; i2[2] = 7; i2[3] = 7;
+	dimensions<4> dims(index_range<4>(i1, i2));
+	block_index_space<4> bis(dims);
+	mask<4> m1, m2, m;
+	m1[0] = true; m1[1] = true;
+	m2[2] = true; m2[3] = true;
+	m[0] = true; m[1] = true; m[2] = true; m[3] = true;
+	bis.split(m1, 2); bis.split(m1, 3); bis.split(m1, 5);
+	bis.split(m2, 3); bis.split(m2, 4); bis.split(m2, 7);
+
+	block_tensor<4, double, allocator_t> bta(bis), btb(bis), btc(bis);
+	symmetry<4, double> sym_ref(bis);
+
+	// set up symmetries
+	{
+	block_tensor_ctrl<4, double> ca(bta), cb(btb);
+
+	se_perm<4, double> ap10(permutation<4>().permute(0, 1), false);
+	se_perm<4, double> ap32(permutation<4>().permute(2, 3), false);
+	se_perm<4, double> sp10(permutation<4>().permute(0, 1), true);
+	se_perm<4, double> sp32(permutation<4>().permute(2, 3), true);
+
+	ca.req_symmetry().insert(ap10);
+	ca.req_symmetry().insert(ap32);
+	cb.req_symmetry().insert(sp10);
+	cb.req_symmetry().insert(sp32);
+	sym_ref.insert(ap10);
+	sym_ref.insert(ap32);
+
+	if (label) {
+		se_label<4, double> sl(bis.get_block_index_dims(), tns);
+		sl.assign(m, 0, 0); sl.assign(m, 1, 1);
+		sl.assign(m, 2, 0); sl.assign(m, 3, 1);
+		sl.add_target(0);
+
+		ca.req_symmetry().insert(sl);
+		sym_ref.insert(sl);
+
+		sl.add_target(1);
+		cb.req_symmetry().insert(sl);
+	}
+
+	if (part) {
+		se_part<4, double> spa(bis, m, 2), spb(bis, m, 2);
+		index<4> i0000, i1111, i0001, i1110, i0010, i1101, i0011, i1100,
+			i0100, i1011, i0101, i1010, i0110, i1001, i0111, i1000;
+		i1110[0] = 1; i1110[1] = 1; i1110[2] = 1; i0001[3] = 1;
+		i1101[0] = 1; i1101[1] = 1; i0010[2] = 1; i1101[3] = 1;
+		i1100[0] = 1; i1100[1] = 1; i0011[2] = 1; i0011[3] = 1;
+		i1011[0] = 1; i0100[1] = 1; i1011[2] = 1; i1011[3] = 1;
+		i1010[0] = 1; i0101[1] = 1; i1010[2] = 1; i0101[3] = 1;
+		i1001[0] = 1; i0110[1] = 1; i0110[2] = 1; i1001[3] = 1;
+		i1000[0] = 1; i0111[1] = 1; i0111[2] = 1; i0111[3] = 1;
+		i1111[0] = 1; i1111[1] = 1; i1111[2] = 1; i1111[3] = 1;
+
+		spa.add_map(i0000, i1111, true);
+		spa.add_map(i0001, i1110, true);
+		spa.add_map(i0010, i1101, true);
+		spa.add_map(i0011, i1100, true);
+		spa.add_map(i0100, i1011, true);
+		spa.add_map(i0101, i1010, true);
+		spa.add_map(i0110, i1001, true);
+		spa.add_map(i0111, i1000, true);
+
+		ca.req_symmetry().insert(spa);
+		sym_ref.insert(spa);
+
+		spb.add_map(i0000, i0001, true);
+		spb.add_map(i0001, i0010, true);
+		spb.add_map(i0010, i0011, true);
+		spb.add_map(i0011, i0100, true);
+		spb.add_map(i0100, i0101, true);
+		spb.add_map(i0101, i0110, true);
+		spb.add_map(i0110, i0111, true);
+		spb.add_map(i0111, i1000, true);
+		spb.add_map(i1000, i1001, true);
+		spb.add_map(i1001, i1010, true);
+		spb.add_map(i1010, i1011, true);
+		spb.add_map(i1011, i1100, true);
+		spb.add_map(i1100, i1101, true);
+		spb.add_map(i1101, i1110, true);
+		spb.add_map(i1110, i1111, true);
+
+		cb.req_symmetry().insert(spb);
+	}
+	}
+
+	//	Fill in random data
+	btod_random<4>().perform(bta);
+	btod_random<4>().perform(btb);
+	bta.set_immutable();
+	btb.set_immutable();
+
+	// Setup reference
+	tensor<4, double, allocator_t> ta(dims), tb(dims), tc(dims), tc_ref(dims);
+
+	tod_btconv<4>(bta).perform(ta);
+	tod_btconv<4>(btb).perform(tb);
+
+	tod_mult<4>(ta, tb, true, 4.0).perform(tc_ref);
+	btod_mult<4> mult(bta, btb, true, 4.0);
+	compare_ref<4>::compare(tns.c_str(), mult.get_symmetry(), sym_ref);
+
+	mult.perform(btc);
+
+	tod_btconv<4>(btc).perform(tc);
+
+	block_tensor_ctrl<4, double> cc(btc);
+	compare_ref<4>::compare(tns.c_str(), cc.req_const_symmetry(), sym_ref);
+	compare_ref<4>::compare(tns.c_str(), tc, tc_ref, 1e-15);
+
+	} catch(exception &e) {
+		if (label) product_table_container::get_instance().erase(tns);
+
+		fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+	} catch (...) {
+		if (label) product_table_container::get_instance().erase(tns);
+		throw;
+	}
+
+	if (label) product_table_container::get_instance().erase(tns);
+}
+
 
 
 

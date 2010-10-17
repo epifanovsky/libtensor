@@ -22,26 +22,33 @@ void btod_symmetrize_test::perform() throw(libtest::test_exception) {
 	test_4();
 	test_5(false);
 	test_5(true);
-	test_6(false, false, false, false);
-	test_6(false, false, false, true);
-	test_6(false, false, true, false);
-	test_6(false, false, true, true);
-	test_6(false, true, false, false);
-	test_6(false, true, false, true);
-	test_6(false, true, true, false);
-	test_6(false, true, true, true);
-	test_6(true, false, false, false);
-	test_6(true, false, false, true);
-	test_6(true, false, true, false);
-	test_6(true, false, true, true);
-	test_6(true, true, false, false);
-	test_6(true, true, false, true);
-	test_6(true, true, true, false);
-	test_6(true, true, true, true);
+	test_6a(false, false, false, false);
+	test_6a(false, false, false, true);
+	test_6a(false, false, true, false);
+	test_6a(false, false, true, true);
+	test_6a(false, true, false, false);
+	test_6a(false, true, false, true);
+	test_6a(false, true, true, false);
+	test_6a(false, true, true, true);
+	test_6a(true, false, false, false);
+	test_6a(true, false, false, true);
+	test_6a(true, false, true, false);
+	test_6a(true, false, true, true);
+	test_6a(true, true, false, false);
+	test_6a(true, true, false, true);
+	test_6a(true, true, true, false);
+	test_6a(true, true, true, true);
+	test_6b(false, false, false);
+	test_6b(false, false, true);
+	test_6b(false, true, false);
+	test_6b(false, true, true);
+	test_6b(true, false, false);
+	test_6b(true, false, true);
+	test_6b(true, true, false);
+	test_6b(true, true, true);
 	test_7();
 	test_8();
 }
-
 
 /**	\test Symmetrization of a non-symmetric 2-index block %tensor
  **/
@@ -104,7 +111,6 @@ void btod_symmetrize_test::test_1() throw(libtest::test_exception) {
 
 }
 
-
 /**	\test Anti-symmetrization of a non-symmetric 2-index block %tensor
  **/
 void btod_symmetrize_test::test_2() throw(libtest::test_exception) {
@@ -165,7 +171,6 @@ void btod_symmetrize_test::test_2() throw(libtest::test_exception) {
 	}
 
 }
-
 
 /**	\test Anti-symmetrization of S(-)2*C1*C1 to S(-)2*S(-)2
 		in a 4-index block %tensor
@@ -238,7 +243,6 @@ void btod_symmetrize_test::test_3() throw(libtest::test_exception) {
 
 }
 
-
 /**	\test Symmetrization of S2*S2 to S2*C1*C1 in a 4-index block %tensor
  **/
 void btod_symmetrize_test::test_4() throw(libtest::test_exception) {
@@ -307,7 +311,6 @@ void btod_symmetrize_test::test_4() throw(libtest::test_exception) {
 
 }
 
-
 /**	\test Symmetrization of two pairs of indexes in a non-symmetric
 		4-index block %tensor
  **/
@@ -373,15 +376,14 @@ void btod_symmetrize_test::test_5(bool symm) throw(libtest::test_exception) {
 
 }
 
-
 /**	\test (Anti-)Symmetrization of two indexes in a non-symmetric
 		2-dim block %tensor with se_label, se_part
  **/
-void btod_symmetrize_test::test_6(bool symm, bool label,
+void btod_symmetrize_test::test_6a(bool symm, bool label,
 		bool part, bool doadd) throw(libtest::test_exception) {
 
 	std::ostringstream tnss;
-	tnss << "btod_symmetrize_test::test_6(" << symm << ", "
+	tnss << "btod_symmetrize_test::test_6a(" << symm << ", "
 			<< label << ", " << part << ", " << doadd << ")";
 	std::string tns = tnss.str();
 
@@ -439,7 +441,9 @@ void btod_symmetrize_test::test_6(bool symm, bool label,
 		index<2> i00, i01, i10, i11;
 		i10[0] = 1; i01[1] = 1;
 		i11[0] = 1; i11[1] = 1;
-		sp.add_map(i00, i11);
+		sp.add_map(i00, i01);
+		sp.add_map(i01, i10);
+		sp.add_map(i10, i11);
 		ca.req_symmetry().insert(sp);
 		cb.req_symmetry().insert(sp);
 		sym_ref.insert(sp);
@@ -479,6 +483,145 @@ void btod_symmetrize_test::test_6(bool symm, bool label,
 	compare_ref<2>::compare(tns.c_str(), ctrlb.req_const_symmetry(), sym_ref);
 
 	compare_ref<2>::compare(tns.c_str(), tb, tb_ref, 1e-15);
+
+	} catch(exception &e) {
+		if (label) product_table_container::get_instance().erase(tns);
+
+		fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+	} catch(...) {
+		if (label) product_table_container::get_instance().erase(tns);
+
+		throw;
+	}
+	if (label) product_table_container::get_instance().erase(tns);
+
+}
+
+/**	\test Double (anti-)symmetrization of two indexes in a non-symmetric
+		4-dim block %tensor with se_label, se_part
+ **/
+void btod_symmetrize_test::test_6b(bool symm, bool label,
+		bool part) throw(libtest::test_exception) {
+
+	std::ostringstream tnss;
+	tnss << "btod_symmetrize_test::test_6b(" << symm << ", "
+			<< label << ", " << part << ", " << ")";
+	std::string tns = tnss.str();
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	if (label) {
+		point_group_table pg(tns, 2);
+		pg.add_product(0, 0, 0);
+		pg.add_product(0, 1, 1);
+		pg.add_product(1, 1, 0);
+
+		product_table_container::get_instance().add(pg);
+	}
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 9; i2[1] = 9; i2[2] = 11; i2[3] = 11;
+	dimensions<4> dims(index_range<4>(i1, i2));
+	block_index_space<4> bis(dims);
+	mask<4> m, m1, m2;
+	m1[0] = true; m1[1] = true;
+	m2[2] = true; m2[3] = true;
+	m[0] = true; m[1] = true; m[2] = true; m[3] = true;
+	bis.split(m1, 4); bis.split(m1, 5); bis.split(m1, 9);
+	bis.split(m2, 1); bis.split(m2, 6); bis.split(m2, 7);
+
+	permutation<4> p1, p2;
+	p1.permute(0, 1);
+	p2.permute(2, 3);
+
+	block_tensor<4, double, allocator_t> bta(bis), btb(bis);
+	symmetry<4, double> sym_ref(bis);
+
+	// setup symmetry
+	{
+	block_tensor_ctrl<4, double> ca(bta);
+
+	se_perm<4, double> se1(p1, symm);
+	se_perm<4, double> se2(p2, symm);
+	sym_ref.insert(se1);
+	sym_ref.insert(se2);
+
+	if (label) {
+		se_label<4, double> sl(bis.get_block_index_dims(), tns);
+		sl.assign(m, 0, 0);
+		sl.assign(m, 1, 1);
+		sl.assign(m, 2, 0);
+		sl.assign(m, 3, 1);
+		sl.add_target(0);
+		sl.add_target(1);
+		ca.req_symmetry().insert(sl);
+		sym_ref.insert(sl);
+	}
+
+	if (part) {
+		se_part<4, double> sp(bis, m, 2);
+		index<4> i0000, i0001, i0010, i0011, i0100, i0101, i0110, i0111,
+			i1000, i1001, i1010, i1011, i1100, i1101, i1110, i1111;
+		i1110[0] = 1; i1110[1] = 1; i1110[2] = 1; i0001[3] = 1;
+		i1101[0] = 1; i1101[1] = 1; i0010[2] = 1; i1101[3] = 1;
+		i1100[0] = 1; i1100[1] = 1; i0011[2] = 1; i0011[3] = 1;
+		i1011[0] = 1; i0100[1] = 1; i1011[2] = 1; i1011[3] = 1;
+		i1010[0] = 1; i0101[1] = 1; i1010[2] = 1; i0101[3] = 1;
+		i1001[0] = 1; i0110[1] = 1; i0110[2] = 1; i1001[3] = 1;
+		i1000[0] = 1; i0111[1] = 1; i0111[2] = 1; i0111[3] = 1;
+		i1111[0] = 1; i1111[1] = 1; i1111[2] = 1; i1111[3] = 1;
+		sp.add_map(i0000, i0001);
+		sp.add_map(i0001, i0010);
+		sp.add_map(i0010, i0011);
+		sp.add_map(i0011, i0100);
+		sp.add_map(i0100, i0101);
+		sp.add_map(i0101, i0110);
+		sp.add_map(i0110, i0111);
+		sp.add_map(i0111, i1000);
+		sp.add_map(i1000, i1001);
+		sp.add_map(i1001, i1010);
+		sp.add_map(i1010, i1011);
+		sp.add_map(i1011, i1100);
+		sp.add_map(i1100, i1101);
+		sp.add_map(i1101, i1110);
+		sp.add_map(i1110, i1111);
+		ca.req_symmetry().insert(sp);
+		sym_ref.insert(sp);
+	}
+	}
+	//	Fill in random input
+
+	btod_random<4>().perform(bta);
+	bta.set_immutable();
+
+	//	Prepare reference data
+
+	tensor<4, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
+	tod_btconv<4>(bta).perform(ta);
+	tod_add<4> refop(ta);
+	refop.add_op(ta, p1, (symm ? 1.0 : -1.0));
+	refop.add_op(ta, p2, (symm ? 1.0 : -1.0));
+	refop.add_op(ta, permutation<4>().permute(p1).permute(p2), 1.0);
+	refop.perform(tb_ref);
+
+	//	Run the symmetrization operation
+
+	btod_copy<4> op_copy(bta);
+	btod_symmetrize<4> sym1(op_copy, p1, symm);
+	btod_symmetrize<4> sym2(sym1, p2, symm);
+	sym2.perform(btb);
+
+	tod_btconv<4>(btb).perform(tb);
+
+	//	Compare against the reference: symmetry and data
+	block_tensor_ctrl<4, double> ctrlb(btb);
+
+	compare_ref<4>::compare(tns.c_str(), sym2.get_symmetry(), sym_ref);
+	compare_ref<4>::compare(tns.c_str(), ctrlb.req_const_symmetry(), sym_ref);
+
+	compare_ref<4>::compare(tns.c_str(), tb, tb_ref, 1e-15);
 
 	} catch(exception &e) {
 		if (label) product_table_container::get_instance().erase(tns);
@@ -558,7 +701,6 @@ void btod_symmetrize_test::test_7() throw(libtest::test_exception) {
 
 }
 
-
 /**	\test Symmetrization of a 3-index block %tensor with S(+)2*C1
 		over three indexes
  **/
@@ -628,7 +770,6 @@ void btod_symmetrize_test::test_8() throw(libtest::test_exception) {
 	}
 
 }
-
 
 } // namespace libtensor
 

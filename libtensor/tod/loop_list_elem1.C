@@ -13,32 +13,29 @@ const char *loop_list_elem1::k_clazz = "loop_list_elem1";
 void loop_list_elem1::run_loop(list_t &loop, registers &r, double c,
 		bool doadd, bool recip) {
 
+	iterator_t op;
 	for (iterator_t i = loop.begin(); i != loop.end(); i++) {
 
-		if (i->stepb(0) == 1) {
-			if (doadd && recip)
-				i->fn() = &loop_list_elem1::fn_div_add;
-			else if (recip)
-				i->fn() = &loop_list_elem1::fn_div_put;
-			else if (doadd)
-				i->fn() = &loop_list_elem1::fn_mult_add;
-			else
-				i->fn() = &loop_list_elem1::fn_mult_put;
-
-			m_op.m_k = c;
-			m_op.m_n = i->weight();
-			m_op.m_stepb = i->stepa(0);
-		}
-		else {
-			i->fn() = 0;
-		}
+		i->fn() = 0;
+		if (i->stepb(0) == 1) op = i;
 	}
 
+	if (doadd && recip)
+		op->fn() = &loop_list_elem1::fn_div_add;
+	else if (recip)
+		op->fn() = &loop_list_elem1::fn_div_put;
+	else if (doadd)
+		op->fn() = &loop_list_elem1::fn_mult_add;
+	else
+		op->fn() = &loop_list_elem1::fn_mult_put;
+
+	m_op.m_k = c;
+	m_op.m_n = op->weight();
+	m_op.m_stepb = op->stepa(0);
 
 	iterator_t begin = loop.begin(), end = loop.end();
 	if(begin != end) {
-		loop_list_base<1, 1, loop_list_elem1>::exec(
-			*this, begin, end, r);
+		loop_list_base<1, 1, loop_list_elem1>::exec(*this, begin, end, r);
 	}
 }
 

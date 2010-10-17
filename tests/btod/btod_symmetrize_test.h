@@ -19,8 +19,10 @@ private:
 	void test_3() throw(libtest::test_exception);
 	void test_4() throw(libtest::test_exception);
 	void test_5(bool symm) throw(libtest::test_exception);
-	void test_6(bool symm, bool label,
+	void test_6a(bool symm, bool label,
 			bool part, bool doadd) throw(libtest::test_exception);
+	void test_6b(bool symm, bool label,
+			bool part) throw(libtest::test_exception);
 	void test_7() throw(libtest::test_exception);
 	void test_8() throw(libtest::test_exception);
 
