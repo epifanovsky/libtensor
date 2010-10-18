@@ -32,7 +32,7 @@ class time_pt_t {
 
 	friend class time_diff_t;
 	friend bool operator<=(const time_pt_t&, const time_pt_t&);
-	friend bool operator==(const time_diff_t&, const time_diff_t&);
+	friend bool operator==(const time_pt_t&, const time_pt_t&);
 	friend std::ostream& operator<<(std::ostream&, const time_pt_t&);
 
 private:
