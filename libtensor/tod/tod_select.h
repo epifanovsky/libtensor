@@ -116,7 +116,12 @@ void tod_select<N,ComparePolicy>::perform(list_t &li, size_t n) {
 	const double *p = ctrl.req_const_dataptr();
 
 	size_t i = 0;
-	while (p[i] == 0.0) i++;
+	while (i < d.get_size() && p[i] == 0.0) i++;
+
+	if (i == d.get_size()) {
+		ctrl.ret_dataptr(p);
+		return;	
+	}
 
 	if (li.empty()) {
 		index<N> idx;

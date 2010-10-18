@@ -25,7 +25,7 @@ namespace libtensor {
 	resulting list of elements is ordered according to the compare policy.
 
 	TODO: The operation does not take proper care of blocks in an orbit whose
-	transformation coefficient is -1.0, if the compare policy does not compare
+	transformation coefficients are -1.0, if the compare policy does not compare
 	the absolute values. For the moment we do not need such select routine.
 	Still this should be fixed in future.
 
