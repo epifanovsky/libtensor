@@ -8,6 +8,8 @@ namespace libtensor {
 
 
 class kern_mul_ij_pi_pj : public kernel_base<2, 1> {
+	friend class kern_mul_ijk_pji_pk;
+
 public:
 	static const char *k_clazz; //!< Kernel name
 
