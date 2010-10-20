@@ -108,6 +108,12 @@ struct linalg_base_level6_adaptive : public linalg_base_level6_generic {
 		const double *a, const double *b, double *c, double d);
 
 
+	static void ijkl_piql_qkpj_x(
+		size_t ni, size_t nj, size_t nk,
+		size_t nl, size_t np, size_t nq,
+		const double *a, const double *b, double *c, double d);
+
+
 	static void ijkl_pkiq_jplq_x(
 		size_t ni, size_t nj, size_t nk,
 		size_t nl, size_t np, size_t nq,
@@ -170,6 +176,7 @@ struct linalg_base_level6_adaptive : public linalg_base_level6_generic {
 #include "bits/ijkl_piql_kpqj_x.h"
 #include "bits/ijkl_piql_pkjq_x.h"
 #include "bits/ijkl_piql_pkqj_x.h"
+#include "bits/ijkl_piql_qkpj_x.h"
 #include "bits/ijkl_pkiq_jplq_x.h"
 #include "bits/ijkl_pkiq_jpql_x.h"
 #include "bits/ijkl_pkiq_pjlq_x.h"
