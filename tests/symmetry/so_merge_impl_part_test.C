@@ -216,7 +216,7 @@ void so_merge_impl_part_test::test_3(bool sign)
 void so_merge_impl_part_test::test_4(bool sign)
 		throw(libtest::test_exception) {
 
-	static const char *testname = "so_merge_impl_part_test::test_3()";
+	static const char *testname = "so_merge_impl_part_test::test_4()";
 
 	typedef se_part<2, double> se2_t;
 	typedef se_part<4, double> se4_t;
@@ -230,8 +230,8 @@ void so_merge_impl_part_test::test_4(bool sign)
 	i2b[0] = 5; i2b[1] = 9;
 	block_index_space<2> bisa(dimensions<2>(index_range<2>(i2a, i2b)));
 	mask<2> m01, m10, m11;
-	m10[0] = true; m01[1] = true; m01[2] = true;
-	m11[0] = true; m11[1] = true; m11[2] = true;
+	m10[0] = true; m01[1] = true; 
+	m11[0] = true; m11[1] = true; 
 	bisa.split(m01, 2);
 	bisa.split(m01, 3);
 	bisa.split(m01, 5);
