@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_LINALG_BASE_ACML_H
 #define LIBTENSOR_LINALG_BASE_ACML_H
 
-#include <acml.h>
+#include "acml_h.h"
 #include "../generic/linalg_base_lowlevel.h"
 #include "../adaptive/linalg_base_highlevel.h"
 #include "../generic/linalg_base_memory_generic.h"

@@ -1,12 +1,12 @@
 #ifndef LIBTENSOR_LAPACK_ACML_H
 #define LIBTENSOR_LAPACK_ACML_H
 
-#include <acml.h>
+#include "acml/acml_h.h"
 
 namespace libtensor {
 
 
-/**	\brief LAPACK function dgesv (Intel MKL)
+/**	\brief LAPACK function dgesv (ACML)
 
 	\ingroup libtensor_linalg
  **/
@@ -19,7 +19,7 @@ inline int lapack_dgesv(size_t n, size_t nrhs, double *a, size_t lda,
 }
 
 
-/**	\brief LAPACK function dgesvd (Intel MKL)
+/**	\brief LAPACK function dgesvd (ACML)
 
 	\ingroup libtensor_linalg
  **/
@@ -32,13 +32,15 @@ inline int lapack_dgesvd(char jobu, char jobvt, size_t m, size_t n, double *a,
 	return info;
 }
 
-/**     \brief LAPACK function zgesvd (Intel MKL)
+
+/**     \brief LAPACK function zgesvd (ACML)
 
         \ingroup libtensor_linalg
  **/
-inline int lapack_zgesvd(char jobu, char jobvt, size_t m, size_t n, std::complex <double> *a,
-        size_t lda, double *s, std::complex <double> *u, size_t ldu, std::complex <double> *vt,
-        size_t ldvt, std::complex <double> *work, size_t lwork, double *rwork) {
+inline int lapack_zgesvd(char jobu, char jobvt, size_t m, size_t n,
+	std::complex<double> *a, size_t lda, double *s,
+	std::complex<double> *u, size_t ldu, std::complex<double> *vt,
+	size_t ldvt, std::complex<double> *work, size_t lwork, double *rwork) {
 
         int info = 0;
         zgesvd(jobu, jobvt, m, n, a, lda, s, u, ldu, vt, ldvt, &info);
@@ -46,7 +48,7 @@ inline int lapack_zgesvd(char jobu, char jobvt, size_t m, size_t n, std::complex
 }
 
 
-/**	\brief LAPACK function dsyev (Intel MKL)
+/**	\brief LAPACK function dsyev (ACML)
 
 	\ingroup libtensor_linalg
  **/
@@ -59,7 +61,7 @@ inline int lapack_dsyev(char jobz, char uplo, size_t n, double *a, size_t lda,
 }
 
 
-/**	\brief LAPACK function dgeev (Intel MKL)
+/**	\brief LAPACK function dgeev (ACML)
 
 	\ingroup libtensor_linalg
  **/
@@ -72,7 +74,7 @@ inline int lapack_dgeev(char jobvl, char jobvr, size_t n, double *a, size_t lda,
 	return info;
 }
 
-/**     \brief LAPACK function zgeev (Intel MKL)
+/**     \brief LAPACK function zgeev (ACML)
 
         \ingroup libtensor_linalg
  **/
