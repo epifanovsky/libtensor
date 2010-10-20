@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_LAPACK_GENERIC_H
 #define LIBTENSOR_LAPACK_GENERIC_H
 
+#include <complex>
 
 extern "C" {
 	int dgesv_(int*, int*, double*, int*, int*, double*, int*, int*);
