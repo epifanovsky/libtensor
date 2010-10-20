@@ -32,6 +32,7 @@ kernel_base<2, 1> *kern_mul_x_pq_qp::match(const kern_mul_x_p_p &z,
 	size_t spb_min = 0;
 	for(iterator_t i = in.begin(); i != in.end(); i++) {
 		if(i->stepa(0) == 1 && i->stepa(1) > 0 && i->stepb(0) == 0) {
+			if(i->stepa(1) % z.m_np) continue;
 			if(spb_min == 0 || spb_min > i->stepa(1)) {
 				iq = i; spb_min = i->stepa(1);
 			}

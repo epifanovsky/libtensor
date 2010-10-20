@@ -28,15 +28,16 @@ kernel_base<2, 1> *kern_mul_ij_jpq_iqp::match(const kern_mul_i_ipq_qp &z,
 	//	np  spa  1    0
 	//	nq  1    spb  0
 	//	nj  sja  0    sjc
-	//	ni  0    sib  sic  -->  c_i# = a_i#p#q b_q#p
-	//	-----------------       [i_ipq_qp]
+	//	ni  0    sib  sic  -->  c_i#j = a_j#p#q b_i#q#p
+	//	-----------------       [ij_jpq_iqp]
 	//
 
 	iterator_t ii = in.end();
 	size_t sib_min = 0;
 	for(iterator_t i = in.begin(); i != in.end(); i++) {
 		if(i->stepa(0) == 0 && i->stepa(1) > 0 && i->stepb(0) > 0) {
-			if(i->stepa(0) % z.m_spa) continue;
+			if(i->stepa(1) % (z.m_sqb * z.m_nq)) continue;
+			if(i->stepb(0) % z.m_ni) continue;
 			if(sib_min == 0 || sib_min > i->stepa(0)) {
 				ii = i; sib_min = i->stepa(0);
 			}
@@ -54,8 +55,7 @@ kernel_base<2, 1> *kern_mul_ij_jpq_iqp::match(const kern_mul_i_ipq_qp &z,
 	zz.m_spa = z.m_spa;
 	zz.m_sib = ii->stepa(1);
 	zz.m_sqb = z.m_sqb;
-//	zz.m_sic = ii->stepb(0);
-	zz.m_sic = z.m_ni;
+	zz.m_sic = ii->stepb(0);
 	in.splice(out.begin(), out, ii);
 
 	kernel_base<2, 1> *kern = 0;
