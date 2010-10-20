@@ -9,6 +9,16 @@ const char *kern_mul_ijkl_pkqj_iqpl::k_clazz = "kern_mul_ijkl_pkqj_iqpl";
 
 void kern_mul_ijkl_pkqj_iqpl::run(const loop_registers<2, 1> &r) {
 
+	if(m_sqa == m_nj && m_spb == m_nl && m_skc == m_nl &&
+		m_ska == m_sqa * m_nq && m_sqb == m_spb * m_np &&
+		m_sjc == m_skc * m_nk && m_spa == m_ska * m_nk &&
+		m_sib == m_sqb * m_nq && m_sic == m_sjc * m_nj) {
+
+		linalg::ijkl_ipql_qkpj_x(m_ni, m_nj, m_nk, m_nl, m_nq, m_np,
+			r.m_ptra[1], r.m_ptra[0], r.m_ptrb[0], m_d);
+		return;
+	}
+
 	const double *pa = r.m_ptra[0], *pb = r.m_ptra[1];
 	double *pc = r.m_ptrb[0];
 
