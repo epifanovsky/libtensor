@@ -54,7 +54,8 @@ kernel_base<2, 1> *kern_mul_ij_jpq_iqp::match(const kern_mul_i_ipq_qp &z,
 	zz.m_spa = z.m_spa;
 	zz.m_sib = ii->stepa(1);
 	zz.m_sqb = z.m_sqb;
-	zz.m_sic = ii->stepb(0);
+//	zz.m_sic = ii->stepb(0);
+	zz.m_sic = z.m_ni;
 	in.splice(out.begin(), out, ii);
 
 	kernel_base<2, 1> *kern = 0;
