@@ -32,6 +32,19 @@ inline int lapack_dgesvd(char jobu, char jobvt, size_t m, size_t n, double *a,
 	return info;
 }
 
+/**     \brief LAPACK function zgesvd (Intel MKL)
+
+        \ingroup libtensor_linalg
+ **/
+inline int lapack_zgesvd(char jobu, char jobvt, size_t m, size_t n, std::complex <double> *a,
+        size_t lda, double *s, std::complex <double> *u, size_t ldu, std::complex <double> *vt,
+        size_t ldvt, std::complex <double> *work, size_t lwork, double *rwork) {
+
+        int info = 0;
+        zgesvd(jobu, jobvt, m, n, a, lda, s, u, ldu, vt, ldvt, &info);
+        return info;
+}
+
 
 /**	\brief LAPACK function dsyev (Intel MKL)
 
@@ -57,6 +70,19 @@ inline int lapack_dgeev(char jobvl, char jobvr, size_t n, double *a, size_t lda,
 	int info = 0;
 	dgeev(jobvl, jobvr, n, a, lda, wr, wi, vl, ldvl, vr, ldvr, &info);
 	return info;
+}
+
+/**     \brief LAPACK function zgeev (Intel MKL)
+
+        \ingroup libtensor_linalg
+ **/
+inline int lapack_zgeev(char jobvl, char jobvr, size_t n, std::complex <double> *a, size_t lda,
+        std::complex <double> *w, std::complex <double> *vl, size_t ldvl, std::complex <double> *vr,
+        size_t ldvr, std::complex <double> *work, size_t lwork, double *rwork) {
+
+        int info = 0;
+        zgeev(jobvl, jobvr, n, a, lda, w, vl, ldvl, vr, ldvr, &info);
+        return info;
 }
 
 
