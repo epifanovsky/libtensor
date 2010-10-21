@@ -77,7 +77,7 @@ inline int lapack_zgesvd(char jobu, char jobvt, size_t m, size_t n, std::complex
         int gen_lwork = lwork;
         int gen_info = 0;
 
-        zgesvd_(&jobu, &jobvt, &gen_m, &gen_n, a, &gen_lda, s, u, &gen_ldu, vt, &gen_ldvt, work, &gen_lwork, rwork, &info);
+        zgesvd_(&jobu, &jobvt, &gen_m, &gen_n, a, &gen_lda, s, u, &gen_ldu, vt, &gen_ldvt, work, &gen_lwork, rwork, &gen_info);
         return gen_info;
 }
 
