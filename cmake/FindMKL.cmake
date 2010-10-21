@@ -95,6 +95,7 @@ find_library(MKL_CORE_A_PATH mkl_core PATHS ${MKL_LIBRARY_PATH})
 find_library(MKL_ARCH_A_PATH ${MKL_ARCH_A} PATHS ${MKL_LIBRARY_PATH})
 find_library(MKL_INTEL_A_PATH ${MKL_INTEL_A} PATHS ${MKL_LIBRARY_PATH})
 find_library(MKL_SOLVER_A_PATH ${MKL_SOLVER_A} PATHS ${MKL_LIBRARY_PATH})
+find_library(MKL_LAPACK_A_PATH mkl_lapack PATHS ${MKL_LIBRARY_PATH})
 
 if(MKL_ARCH_A_PATH)
 	if(MKL_INTEL_A_PATH)
@@ -105,7 +106,7 @@ if(MKL_ARCH_A_PATH)
 	else(MKL_INTEL_A_PATH)
 #		Version pre-10
 		set(MKL_LIBRARIES
-			${MKL_ARCH_A_PATH} guide pthread)
+			${MKL_LAPACK_A_PATH} ${MKL_ARCH_A_PATH} guide pthread)
 	endif(MKL_INTEL_A_PATH)
 endif(MKL_ARCH_A_PATH)
 
