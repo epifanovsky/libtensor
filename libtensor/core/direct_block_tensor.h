@@ -160,9 +160,9 @@ tensor_i<N, T> &direct_block_tensor<N, T, Alloc, Sync>::on_req_block(
 	tensor_i<N, T> &blk = m_map.get(aidx.get_abs_index());
 
 	if(newblock) {
-		lock.unlock();
-		get_op().compute_block(blk, idx);
 		lock.lock();
+		get_op().compute_block(blk, idx);
+		lock.unlock();
 	}
 
 	return blk;
