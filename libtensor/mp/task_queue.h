@@ -2,6 +2,7 @@
 #define LIBTENSOR_TASK_QUEUE_H
 
 #include <deque>
+#include <libvmm/auto_lock.h>
 #include "task_i.h"
 
 namespace libtensor {

@@ -2,7 +2,7 @@
 #define LIBTENSOR_TASK_DISPATCHER_H
 
 #include <list>
-#include <libvmm/auto_lock.h>
+#include <libvmm/auto_spinlock.h>
 #include <libvmm/cond.h>
 #include <libvmm/singleton.h>
 #include "task_queue.h"
@@ -35,7 +35,7 @@ public:
 	typedef std::list<queue*>::iterator queue_id_t; //!< Queue ID type
 
 private:
-	libvmm::mutex m_lock; //!< Mutex lock
+	libvmm::spinlock m_lock; //!< Lock
 	libvmm::cond m_alarm; //!< Alarm for the processing pool
 	std::list<queue*> m_stack; //!< Stack of queues
 	volatile size_t m_ntasks; //!< Number of scheduled tasks
