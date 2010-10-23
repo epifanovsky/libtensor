@@ -3,6 +3,7 @@
 
 #include <libvmm/cond.h>
 #include <libvmm/thread.h>
+#include "../timings.h"
 
 namespace libtensor {
 
@@ -11,7 +12,10 @@ namespace libtensor {
 
 	\ingroup libtensor_mp
  **/
-class worker : public libvmm::thread {
+class worker : public libvmm::thread, public timings<worker> {
+public:
+	static const char *k_clazz; //!< Class name
+
 private:
 	libvmm::cond &m_started; //!< Start signal
 	libvmm::mutex &m_cpu_lock; //!< CPU mutex
