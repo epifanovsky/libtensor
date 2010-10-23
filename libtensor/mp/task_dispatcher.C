@@ -52,7 +52,7 @@ void task_dispatcher::push_task(queue_id_t &qid, task_i &task) {
 
 	q.q.push(task);
 	m_ntasks++;
-	m_alarm.signal();
+	m_alarm.broadcast();
 }
 
 
@@ -101,7 +101,7 @@ void task_dispatcher::wait_on_queue(queue_id_t &qid) {
 void task_dispatcher::set_off_alarm() {
 
 	while(m_nwaiting > 0) {
-		m_alarm.signal();
+		m_alarm.broadcast();
 	}
 }
 
