@@ -7,6 +7,7 @@
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/tod/tod_btconv.h>
+#include <libtensor/tod/tod_dotprod.h>
 #include "btod_dotprod_test.h"
 
 namespace libtensor {
