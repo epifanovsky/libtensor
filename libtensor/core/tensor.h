@@ -299,6 +299,7 @@ tensor<N, T, Alloc>::on_req_open_session() {
 	}
 
 	m_sessions.resize(2 * sz, 0);
+	m_session_ptrcount.resize(2 * sz, 0);
 	m_sessions[sz] = 1;
 	m_session_ptrcount[sz] = 0;
 	return sz;

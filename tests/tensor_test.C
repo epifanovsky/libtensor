@@ -12,6 +12,7 @@ void tensor_test::perform() throw(libtest::test_exception) {
 	test_immutable();
 	test_operation();
 	test_1();
+	test_2();
 }
 
 void tensor_test::test_ctor() throw(libtest::test_exception) {
@@ -236,6 +237,107 @@ void tensor_test::test_1() throw(libtest::test_exception) {
 	}
 
 	c1.ret_const_dataptr(p1); p1 = 0;
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\test Opens and closes 33 sessions with a tensor
+ **/
+void tensor_test::test_2() throw(libtest::test_exception) {
+
+	static const char *testname = "tensor_test::test_2()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<2> i1, i2;
+	i2[0] = 5; i2[1] = 5;
+	dimensions<2> dims(index_range<2>(i1, i2));
+
+	tensor<2, double, allocator_t> t(dims);
+
+	tensor_ctrl<2, double> c00(t), c01(t), c02(t), c03(t), c04(t), c05(t),
+		c06(t), c07(t), c08(t), c09(t), c10(t), c11(t), c12(t), c13(t),
+		c14(t), c15(t), c16(t), c17(t), c18(t), c19(t), c20(t), c21(t),
+		c22(t), c23(t), c24(t), c25(t), c26(t), c27(t), c28(t), c29(t),
+		c30(t), c31(t), c32(t);
+
+	const double *p00, *p01, *p02, *p03, *p04, *p05, *p06, *p07, *p08, *p09,
+		*p10, *p11, *p12, *p13, *p14, *p15, *p16, *p17, *p18, *p19,
+		*p20, *p21, *p22, *p23, *p24, *p25, *p26, *p27, *p28, *p29,
+		*p30, *p31, *p32;
+
+	p00 = c00.req_const_dataptr();
+	p01 = c01.req_const_dataptr();
+	p02 = c02.req_const_dataptr();
+	p03 = c03.req_const_dataptr();
+	p04 = c04.req_const_dataptr();
+	p05 = c05.req_const_dataptr();
+	p06 = c06.req_const_dataptr();
+	p07 = c07.req_const_dataptr();
+	p08 = c08.req_const_dataptr();
+	p09 = c09.req_const_dataptr();
+	p10 = c10.req_const_dataptr();
+	p11 = c11.req_const_dataptr();
+	p12 = c12.req_const_dataptr();
+	p13 = c13.req_const_dataptr();
+	p14 = c14.req_const_dataptr();
+	p15 = c15.req_const_dataptr();
+	p16 = c16.req_const_dataptr();
+	p17 = c17.req_const_dataptr();
+	p18 = c18.req_const_dataptr();
+	p19 = c19.req_const_dataptr();
+	p20 = c20.req_const_dataptr();
+	p21 = c21.req_const_dataptr();
+	p22 = c22.req_const_dataptr();
+	p23 = c23.req_const_dataptr();
+	p24 = c24.req_const_dataptr();
+	p25 = c25.req_const_dataptr();
+	p26 = c26.req_const_dataptr();
+	p27 = c27.req_const_dataptr();
+	p28 = c28.req_const_dataptr();
+	p29 = c29.req_const_dataptr();
+	p30 = c30.req_const_dataptr();
+	p31 = c31.req_const_dataptr();
+	p32 = c32.req_const_dataptr();
+
+	c00.ret_const_dataptr(p00);
+	c01.ret_const_dataptr(p01);
+	c02.ret_const_dataptr(p02);
+	c03.ret_const_dataptr(p03);
+	c04.ret_const_dataptr(p04);
+	c05.ret_const_dataptr(p05);
+	c06.ret_const_dataptr(p06);
+	c07.ret_const_dataptr(p07);
+	c08.ret_const_dataptr(p08);
+	c09.ret_const_dataptr(p09);
+	c10.ret_const_dataptr(p10);
+	c11.ret_const_dataptr(p11);
+	c12.ret_const_dataptr(p12);
+	c13.ret_const_dataptr(p13);
+	c14.ret_const_dataptr(p14);
+	c15.ret_const_dataptr(p15);
+	c16.ret_const_dataptr(p16);
+	c17.ret_const_dataptr(p17);
+	c18.ret_const_dataptr(p18);
+	c19.ret_const_dataptr(p19);
+	c20.ret_const_dataptr(p20);
+	c21.ret_const_dataptr(p21);
+	c22.ret_const_dataptr(p22);
+	c23.ret_const_dataptr(p23);
+	c24.ret_const_dataptr(p24);
+	c25.ret_const_dataptr(p25);
+	c26.ret_const_dataptr(p26);
+	c27.ret_const_dataptr(p27);
+	c28.ret_const_dataptr(p28);
+	c29.ret_const_dataptr(p29);
+	c30.ret_const_dataptr(p30);
+	c31.ret_const_dataptr(p31);
+	c32.ret_const_dataptr(p32);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
