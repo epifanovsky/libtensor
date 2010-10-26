@@ -47,11 +47,11 @@ private:
 
 public:
 	so_concat(const symmetry<N, T> &sym1, const symmetry<M, T> &sym2,
-			const permutation<N + M> &perm, bool dirsum = false) :
-				m_sym1(sym1), m_sym2(sym2), m_perm(perm) { }
+		const permutation<N + M> &perm, bool dirsum = false) :
+		m_sym1(sym1), m_sym2(sym2), m_perm(perm), m_dirsum(dirsum) { }
 
 	so_concat(const symmetry<N, T> &sym1, const symmetry<M, T> &sym2) :
-		m_sym1(sym1), m_sym2(sym2) { }
+		m_sym1(sym1), m_sym2(sym2), m_dirsum(false) { }
 
 	void perform(symmetry<N + M, T> &sym3);
 
