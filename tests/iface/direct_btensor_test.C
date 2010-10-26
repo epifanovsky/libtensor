@@ -16,6 +16,7 @@ void direct_btensor_test::perform() throw(libtest::test_exception) {
 		test_1();
 		test_2();
 		test_3();
+		test_4();
 
 	} catch(...) {
 		libvmm::vm_allocator<double>::vmm().shutdown();
@@ -112,6 +113,39 @@ void direct_btensor_test::test_3() throw(libtest::test_exception) {
 	bt(i|a) = dbt(i|a);
 
 	compare_ref<2>::compare(testname, bt, bt_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void direct_btensor_test::test_4() throw(libtest::test_exception) {
+
+	static const char *testname = "direct_btensor_test::test_4()";
+
+	try {
+
+	bispace<1> si(5), sa(6);
+	si.split(2); sa.split(3);
+	bispace<2> sia(si|sa), sai(sa|si);
+	bispace<4> sijab(si&si|sa&sa);
+
+	btensor<2> bt1(sia), bt2(sia);
+	btod_random<2>().perform(bt1);
+	btod_random<2>().perform(bt2);
+
+	letter i, j, a, b;
+	direct_btensor<4> dbt(i|j|a|b, dirsum(bt1(i|a), bt2(j|b)));
+
+	btensor<4> bt(sijab), bt_ref(sijab);
+
+	btod_dirsum<2, 2>(bt1, 1.0, bt2, 1.0, permutation<4>().permute(1, 2)).
+		perform(bt_ref);
+
+	bt(i|j|a|b) = dbt(i|j|a|b);
+
+	compare_ref<4>::compare(testname, bt, bt_ref, 1e-15);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
