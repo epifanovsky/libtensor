@@ -68,6 +68,7 @@ void btod_contract2_test::perform() throw(libtest::test_exception) {
 	test_contr_18(-1.5);
 	test_contr_19();
 	test_contr_20();
+	test_contr_21();
 
 	//	Tests for the contraction of a block tensor with itself
 
@@ -2538,6 +2539,7 @@ void btod_contract2_test::test_contr_19()
 
 }
 
+
 void btod_contract2_test::test_contr_20()
 	throw(libtest::test_exception) {
 
@@ -2618,6 +2620,95 @@ void btod_contract2_test::test_contr_20()
 	}
 
 }
+
+
+/**	\test Tests contraction \f$ c_{ij} = a_{ip} b_{jp} \f$.
+		Dimensions [ij] = 10 (two blocks), [p] = 12 (two blocks).
+		No symmetry in A, partition symmetry in B.
+		Zero non-diagonal blocks.
+ **/
+void btod_contract2_test::test_contr_21() throw(libtest::test_exception) {
+
+	std::ostringstream ss;
+	ss << "btod_contract2_test::test_contr_21()";
+	std::string tn = ss.str();
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<2> i1a, i2a, i1c, i2c;
+	i2a[0] = 9; i2a[1] = 11;
+	i2c[0] = 9; i2c[1] = 9;
+	index<2> i00, i01, i10, i11;
+	i10[0] = 1; i01[1] = 1;
+	i11[0] = 1; i11[1] = 1;
+
+	block_index_space<2> bisa(dimensions<2>(index_range<2>(i1a, i2a)));
+	block_index_space<2> bisc(dimensions<2>(index_range<2>(i1c, i2c)));
+
+	mask<2> m01, m10, m11;
+	m10[0] = true; m01[1] = true;
+	m11[0] = true; m11[1] = true;
+	bisa.split(m10, 5);
+	bisa.split(m01, 6);
+	bisc.split(m11, 5);
+
+	block_tensor<2, double, allocator_t> bta(bisa);
+	block_tensor<2, double, allocator_t> btb(bisa);
+	block_tensor<2, double, allocator_t> btc(bisc);
+
+	{ // set symmetry
+		se_part<2, double> spa(bisa, m11, 2);
+		spa.add_map(i00, i11, true);
+		spa.add_map(i01, i10, true);
+
+		block_tensor_ctrl<2, double> ca(bta), cb(btb);
+//		ca.req_symmetry().insert(spa);
+		cb.req_symmetry().insert(spa);
+	}
+
+	//	Load random data for input
+
+	btod_random<2>().perform(bta);
+	btod_random<2>().perform(btb);
+
+	{ // zero out non-diagonal blocks
+		block_tensor_ctrl<2, double> ca(bta), cb(btb);
+		ca.req_zero_block(i01);
+		ca.req_zero_block(i10);
+		cb.req_zero_block(i01);
+	}
+	bta.set_immutable();
+	btb.set_immutable();
+
+	//	Convert block tensors to regular tensors
+
+	tensor<2, double, allocator_t> ta(bisa.get_dims());
+	tensor<2, double, allocator_t> tb(bisa.get_dims());
+	tensor<2, double, allocator_t> tc(bisc.get_dims()),
+		tc_ref(bisc.get_dims());
+	tod_btconv<2>(bta).perform(ta);
+	tod_btconv<2>(btb).perform(tb);
+
+	//	Run contraction and compute the reference
+
+	contraction2<1, 1, 1> contr;
+	contr.contract(1, 1);
+	btod_contract2<1, 1, 1>(contr, bta, btb).perform(btc);
+	tod_btconv<2>(btc).perform(tc);
+	tod_contract2<1, 1, 1>(contr, ta, tb).perform(tc_ref);
+
+	//	Compare against reference
+
+	compare_ref<2>::compare(tn.c_str(), tc, tc_ref, 1e-14);
+
+	} catch(exception &e) {
+		fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
+	}
+
+}
+
 
 /**	\test Tests \f$ c_{ijab} = a_{ia} a_{jb} \f$, expected perm symmetry
 		\f$ c_{ijab} = c_{jiba} \f$.

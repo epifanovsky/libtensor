@@ -51,6 +51,7 @@ private:
 	void test_contr_18(double c) throw(libtest::test_exception);
 	void test_contr_19() throw(libtest::test_exception);
 	void test_contr_20() throw(libtest::test_exception);
+	void test_contr_21() throw(libtest::test_exception);
 
 	void test_self_1() throw(libtest::test_exception);
 	void test_self_2() throw(libtest::test_exception);
