@@ -1613,7 +1613,7 @@ void partition_set_test::test_stabilize_1()
 	}
 }
 
-/**	\test Stabilize a partition set with a single partition, one partition step
+/**	\test Stabilize a partition set with a single partition, one stabilizing step
  **/
 void partition_set_test::test_stabilize_2(bool sign)
 		throw(libtest::test_exception) {

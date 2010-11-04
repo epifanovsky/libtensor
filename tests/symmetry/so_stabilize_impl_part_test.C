@@ -517,11 +517,13 @@ void so_stabilize_impl_part_test::test_5c(bool sign)
 	typedef symmetry_operation_impl<so_stabilize_t, se4_t>
 		so_stabilize_impl_t;
 
+	try {
+
 	index<2> i2a, i2b;
 	i2b[0] = 5; i2b[1] = 5;
 	block_index_space<2> bis2(dimensions<2>(index_range<2>(i2a, i2b)));
-	mask<2> m11;
-	m11[0] = true; m11[1] = true;
+	mask<2> m11, m01;
+	m11[0] = true; m11[1] = true; m01[1] = true;
 	bis2.split(m11, 2);
 	bis2.split(m11, 3);
 	bis2.split(m11, 5);
@@ -529,9 +531,9 @@ void so_stabilize_impl_part_test::test_5c(bool sign)
 	index<4> i4a, i4b;
 	i4b[0] = 5; i4b[1] = 5; i4b[2] = 9; i4b[3] = 9;
  	block_index_space<4> bis4(dimensions<4>(index_range<4>(i4a, i4b)));
-	mask<4> m0011, m1100, m0001;
+	mask<4> m0011, m1100, m0101;
 	m1100[0] = true; m1100[1] = true; m0011[2] = true; m0011[3] = true;
-	m0001[3] = true;
+	m0101[1] = true; m0101[3] = true;
 	bis4.split(m0011, 2);
 	bis4.split(m0011, 3);
 	bis4.split(m0011, 5);
@@ -541,29 +543,35 @@ void so_stabilize_impl_part_test::test_5c(bool sign)
 	bis4.split(m1100, 3);
 	bis4.split(m1100, 5);
 
-	se4_t elem1(bis4, m0001, 2);
-	index<4> i0000, i0001; i0001[3] = 1;
+	se4_t elem1(bis4, m0101, 2);
+	index<4> i0000, i0001, i0100, i0101;
+	i0100[1] = 1; i0001[3] = 1;
+	i0101[1] = 1; i0101[3] = 1;
 	elem1.add_map(i0000, i0001, sign);
+	elem1.add_map(i0001, i0100, sign);
+	elem1.add_map(i0100, i0101, sign);
+
+	se2_t elem2(bis2, m01, 2);
+	index<2> i00, i01;
+	i01[1] = 1;
+	elem2.add_map(i00, i01, sign);
 
 	symmetry_element_set<4, double> set1(se4_t::k_sym_type);
 	symmetry_element_set<2, double> set2(se2_t::k_sym_type);
+	symmetry_element_set<2, double> set2_ref(se2_t::k_sym_type);
 	set1.insert(elem1);
+	set2_ref.insert(elem2);
 
 	mask<4> msk[1];
 	msk[0][2] = true; msk[0][3] = true;
 	symmetry_operation_params<so_stabilize_t> params(set1, msk, set2);
 
-	bool found = false;
-	try {
-
 	so_stabilize_impl_t().perform(params);
 
-	} catch(exception &e) {
-		found = true;
-	}
+	compare_ref<2>::compare(testname, bis2, set2, set2_ref);
 
-	if (! found) {
-		fail_test(testname, __FILE__, __LINE__, "No exception.");
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
 	}
 }
 

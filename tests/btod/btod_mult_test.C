@@ -31,38 +31,38 @@ void btod_mult_test::perform() throw(libtest::test_exception) {
 	test_5(true, false);  test_5(true, true);
 	test_6(false, false); test_6(false, true);
 	test_6(true, false);  test_6(true, true);
-//	test_7(false, false, false, false, false);
-//	test_7(false, false, false, false, true);
-//	test_7(false, false, false, true, false);
-//	test_7(false, false, false, true, true);
-//	test_7(false, false, true, false, false);
-//	test_7(false, false, true, false, true);
-//	test_7(false, false, true, true, false);
-//	test_7(false, false, true, true, true);
-//	test_7(false, true, false, false, false);
-//	test_7(false, true, false, false, true);
-//	test_7(false, true, false, true, false);
-//	test_7(false, true, false, true, true);
-//	test_7(false, true, true, false, false);
-//	test_7(false, true, true, false, true);
-//	test_7(false, true, true, true, false);
-//	test_7(false, true, true, true, true);
-//	test_7(true, false, false, false, false);
-//	test_7(true, false, false, false, true);
-//	test_7(true, false, false, true, false);
-//	test_7(true, false, false, true, true);
-//	test_7(true, false, true, false, false);
-//	test_7(true, false, true, false, true);
-//	test_7(true, false, true, true, false);
-//	test_7(true, false, true, true, true);
-//	test_7(true, true, false, false, false);
-//	test_7(true, true, false, false, true);
-//	test_7(true, true, false, true, false);
-//	test_7(true, true, false, true, true);
-//	test_7(true, true, true, false, false);
-//	test_7(true, true, true, false, true);
-//	test_7(true, true, true, true, false);
-//	test_7(true, true, true, true, true);
+	test_7(false, false, false, false, false);
+	test_7(false, false, false, false, true);
+	test_7(false, false, false, true, false);
+	test_7(false, false, false, true, true);
+	test_7(false, false, true, false, false);
+	test_7(false, false, true, false, true);
+	test_7(false, false, true, true, false);
+	test_7(false, false, true, true, true);
+	test_7(false, true, false, false, false);
+	test_7(false, true, false, false, true);
+	test_7(false, true, false, true, false);
+	test_7(false, true, false, true, true);
+	test_7(false, true, true, false, false);
+	test_7(false, true, true, false, true);
+	test_7(false, true, true, true, false);
+	test_7(false, true, true, true, true);
+	test_7(true, false, false, false, false);
+	test_7(true, false, false, false, true);
+	test_7(true, false, false, true, false);
+	test_7(true, false, false, true, true);
+	test_7(true, false, true, false, false);
+	test_7(true, false, true, false, true);
+	test_7(true, false, true, true, false);
+	test_7(true, false, true, true, true);
+	test_7(true, true, false, false, false);
+	test_7(true, true, false, false, true);
+	test_7(true, true, false, true, false);
+	test_7(true, true, false, true, true);
+	test_7(true, true, true, false, false);
+	test_7(true, true, true, false, true);
+	test_7(true, true, true, true, false);
+	test_7(true, true, true, true, true);
 	test_8a(false, false);
 	test_8a(false, true);
 	test_8a(true, false);
@@ -582,7 +582,7 @@ void btod_mult_test::test_6(bool symm1, bool symm2) throw(libtest::test_exceptio
 }
 
 /**	\test Elementwise multiplaction/division of two order-4 tensors
-		with permutational symmetry and anti-symmetry and se_part / se_labe.
+		with permutational symmetry and anti-symmetry and se_part / se_label.
  **/
 void btod_mult_test::test_7(bool label, bool part,
 		bool samesym, bool recip, bool doadd) throw(libtest::test_exception) {
@@ -761,7 +761,7 @@ void btod_mult_test::test_7(bool label, bool part,
 	if (label) product_table_container::get_instance().erase(tns);
 }
 
-/**	\test Reproduce error in adcman
+/**	\test Elementwise division of two 2-order tensors having 1 element blocks.
  **/
 void btod_mult_test::test_8a(bool label, bool part)
 		throw(libtest::test_exception) {
@@ -877,7 +877,7 @@ void btod_mult_test::test_8a(bool label, bool part)
 
 
 
-/**	\test Reproduce error in adcman
+/**	\test Elementwise division of two 4-order tensors having 1 element blocks.
  **/
 void btod_mult_test::test_8b(bool label, bool part)
 		throw(libtest::test_exception) {

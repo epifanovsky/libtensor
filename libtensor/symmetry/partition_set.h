@@ -149,7 +149,8 @@ private:
 	static void transfer_mappings(const se_part<N, T> &from,
 			const permutation<N> &perm, se_part<N, T> &to);
 
-	/** \brief Transfers mappings from one se_part object with smaller to another
+	/** \brief Transfers mappings from a se_part object with less dimensions to
+	   	   one with more.
 		\param from Source of mappings
 	 	\param perm Permutation of the source mappings.
 	 	\param msk Mask of affected dimension
@@ -459,49 +460,41 @@ void partition_set<N, T>::stabilize(
 			it != m_map.end(); it++) {
 
 		size_t npart = it->first;
-		se_part<N, T> &pa = *(it->second);
-		const mask<N> &ma = pa.get_mask();
+		se_part<N, T> &pa1 = *(it->second);
+		const mask<N> &ma1 = pa1.get_mask();
 
 		// check if a dimensions which is part of the mapping is not stabilized
 		size_t i = 0;
-		for (; i < N; i++) if (ma[i] && ! tm[i]) break;
-		if (i == N) {
-#ifdef LIBTENSOR_DEBUG
-			// check if the projection masks agree with the partition mask
-			for (size_t k = 0; k < K; k++) {
-				size_t j = 0;
-				for (; j < N; j++) if (msk[k][j]) break;
-				bool masked = ma[j++];
+		for (; i < N; i++) if (ma1[i] && ! tm[i]) break;
+		if (i == N) continue;
 
-				for (; j < N; j++) {
-					if (msk[k][j] && (ma[j] != masked))
-						throw bad_parameter(g_ns, k_clazz, method,
-								__FILE__, __LINE__, "msk.");
-				}
+		// if necessary, extend the partition such that dimensions stabilized
+		// together have the same partitioning
+		index<K> i1, i2;
+		mask<N> ma2(ma1);
+		for (size_t k = 0; k < K; k++) {
+			size_t j = 0;
+			for (; j < N; j++) if (msk[k][j] && ma1[j]) break;
+			if (j != N) {
+				i2[k] = npart - 1;
+				for (j = 0; j < N; j++) if (msk[k][j]) ma2[j] = true;
 			}
-#endif
-			continue;
 		}
+
+		se_part<N, T> *pa = 0;
+		if (ma2.equals(ma1)) {
+			pa = &pa1;
+		}
+		else {
+			pa = new se_part<N, T>(pa1.get_bis(), ma2, npart);
+			transfer_mappings(pa1, permutation<N>(), *pa);
+		}
+
+		dimensions<K> mdims(index_range<K>(i1, i2));
 
 		// determine mask for result
 		mask<M> mm;
-		for (size_t i = 0; i < N; i++) if (! tm[i]) mm[map[i]] = ma[i];
-
-		index<K> i1, i2;
-		for (size_t k = 0; k < K; k++) {
-			size_t j = 0;
-			for (; j < N; j++) if (msk[k][j]) break;
-			if (ma[j]) i2[k] = npart - 1;
-#ifdef LIBTENSOR_DEBUG
-			j++;
-			for (; j < N; j++) {
-				if (msk[k][j] && (ma[j] != (i2[k] == npart - 1)))
-					throw bad_parameter(g_ns, k_clazz, method,
-							__FILE__, __LINE__, "msk.");
-			}
-#endif
-		}
-		dimensions<K> mdims(index_range<K>(i1, i2));
+		for (size_t i = 0; i < N; i++) if (! tm[i]) mm[map[i]] = ma1[i];
 
 		// loop over all possible result mappings
 		se_part<M, T> pb(set.get_bis(), mm, npart);
@@ -564,12 +557,12 @@ void partition_set<N, T>::stabilize(
 
 					typename list_t::iterator it2 = l2.begin();
 					for ( ; it2 != l2.end(); it2++) {
-						if (pa.map_exists(*it1, *it2)) break;
+						if (pa->map_exists(*it1, *it2)) break;
 					}
 
 					if (it2 == l2.end()) break;
 
-					bool s = pa.get_sign(*it1, *it2);
+					bool s = pa->get_sign(*it1, *it2);
 					if (found && sign != s) break;
 
 					sign = s;
@@ -584,6 +577,9 @@ void partition_set<N, T>::stabilize(
 		} while (ai1.inc());
 
 		if (! empty) set.add_partition(pb, perm);
+
+		if (! ma1.equals(ma2)) delete pa;
+		pa = 0;
 	}
 }
 
@@ -768,7 +764,7 @@ void partition_set<N, T>::transfer_mappings(const se_part<M, T> &from,
 
 
 	static const char *method = "transfer_mappings(const se_part<N, T>&, "
-			"const permutation<N> &, se_part<N, T>&)";
+			"const permutation<N> &, const mask<N> &msk, se_part<N, T>&)";
 
 #ifdef LIBTENSOR_DEBUG
 	if (from.get_npart() != to.get_npart()) {
