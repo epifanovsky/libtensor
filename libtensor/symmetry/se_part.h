@@ -40,12 +40,26 @@ public:
 	static const char *k_sym_type; //!< Symmetry type
 
 private:
+	struct mapping {
+		size_t fidx;
+		size_t ridx;
+		bool sign;
+		permutation<N> perm;
+
+		mapping(size_t idx) : fidx(idx), ridx(idx), sign(true) { }
+
+		mapping(size_t fidx_, size_t ridx_, const permutation<N> &p, bool s) :
+			fidx(fidx_), ridx(ridx_), perm(p), sign(s)
+		{ }
+	};
+
 	block_index_space<N> m_bis; //!< Block %index space
 	dimensions<N> m_bidims; //!< Block %index space dimensions
 	dimensions<N> m_pdims; //!< Partition %index dimensions
-	size_t *m_fmap; //!< Forward mapping
-	size_t *m_rmap; //!< Reverse mapping
-	bool *m_fsign; //!< Sign of the mappings
+	std::vector<mapping> m_map;
+//	size_t *m_fmap; //!< Forward mapping
+//	size_t *m_rmap; //!< Reverse mapping
+//	bool *m_fsign; //!< Sign of the mappings
 	mask<N> m_mask; //!< Mask of affected indexes
 
 public:
@@ -79,7 +93,19 @@ public:
 		\param idx2 Second partition %index.
 		\param sign Sign of the mapping (true positive, false negative)
 	 **/
-	void add_map(const index<N> &idx1, const index<N> &idx2, bool sign = true);
+	void add_map(const index<N> &idx1, const index<N> &idx2, bool sign = true) {
+		permutation<N> p;
+		add_map(idx1, idx2, p, sign);
+	}
+
+	/**	\brief Adds a mapping between two partitions
+		\param idx1 First partition %index.
+		\param idx2 Second partition %index.
+		\param perm Permutation assigned to mapping
+		\param sign Sign of the mapping (true positive, false negative)
+	 **/
+	void add_map(const index<N> &idx1, const index<N> &idx2,
+			const permutation<N> &perm, bool sign = true);
 
 	//@}
 
@@ -111,6 +137,11 @@ public:
 	/** \brief Returns the sign of the map between the two indexes.
 	 **/
 	bool get_sign(const index<N> &from, const index<N> &to) const;
+
+	/** \brief Returns the sign of the map between the two indexes.
+	 **/
+	permutation<N> get_perm(
+			const index<N> &from, const index<N> &to) const;
 
 	/** \brief Check if there exists a map between two indexes
 	 **/
@@ -168,7 +199,7 @@ public:
 private:
 	static dimensions<N> make_pdims(const mask<N> &msk, size_t npart);
 
-	void add_to_loop(size_t a, size_t b, bool sign);
+	void add_to_loop(size_t a, size_t b, const permutation<N> & p, bool sign);
 };
 
 
@@ -185,8 +216,7 @@ se_part<N, T>::se_part(const block_index_space<N> &bis, const mask<N> &msk,
 	size_t npart) :
 
 	m_bis(bis), m_bidims(m_bis.get_block_index_dims()),
-	m_pdims(make_pdims(msk, npart)), m_mask(msk),
-	m_fmap(0), m_rmap(0), m_fsign(0) {
+	m_pdims(make_pdims(msk, npart)), m_mask(msk) {
 
 	static const char *method =
 		"se_part(const block_index_space<N>&, const mask<N>&, size_t)";
@@ -228,12 +258,9 @@ se_part<N, T>::se_part(const block_index_space<N> &bis, const mask<N> &msk,
 	}
 
 	size_t mapsz = m_pdims.get_size();
-	m_fmap = new size_t[mapsz];
-	m_rmap = new size_t[mapsz];
-	m_fsign = new bool[mapsz];
+	m_map.reserve(mapsz);
 	for (size_t i = 0; i < mapsz; i++) {
-		m_fmap[i] = m_rmap[i] = i;
-		m_fsign[i] = true;
+		m_map.push_back(mapping(i));
 	}
 }
 
@@ -242,30 +269,30 @@ template<size_t N, typename T>
 se_part<N, T>::se_part(const se_part<N, T> &elem) :
 
 	m_bis(elem.m_bis), m_bidims(elem.m_bidims), m_pdims(elem.m_pdims),
-	m_mask(elem.m_mask), m_fmap(0), m_fsign(0) {
+	m_mask(elem.m_mask), m_map(elem.m_map) {
 
-	size_t mapsz = m_pdims.get_size();
-	m_fmap = new size_t[mapsz];
-	m_rmap = new size_t[mapsz];
-	m_fsign = new bool[mapsz];
-	for (size_t i = 0; i < mapsz; i++) {
-		m_fmap[i] = elem.m_fmap[i];
-		m_rmap[i] = elem.m_rmap[i];
-		m_fsign[i] = elem.m_fsign[i];
-	}
+//	size_t mapsz = m_pdims.get_size();
+//	m_fmap = new size_t[mapsz];
+//	m_rmap = new size_t[mapsz];
+//	m_fsign = new bool[mapsz];
+//	for (size_t i = 0; i < mapsz; i++) {
+//		m_fmap[i] = elem.m_fmap[i];
+//		m_rmap[i] = elem.m_rmap[i];
+//		m_fsign[i] = elem.m_fsign[i];
+//	}
 }
 
 template<size_t N, typename T>
 se_part<N, T>::~se_part() {
 
-	delete [] m_fmap; m_fmap = 0;
-	delete [] m_rmap; m_rmap = 0;
-	delete [] m_fsign; m_fsign = 0;
+//	delete [] m_fmap; m_fmap = 0;
+//	delete [] m_rmap; m_rmap = 0;
+//	delete [] m_fsign; m_fsign = 0;
 }
 
 template<size_t N, typename T>
-void se_part<N, T>::add_map(
-		const index<N> &idx1, const index<N> &idx2, bool sign) {
+void se_part<N, T>::add_map(const index<N> &idx1, const index<N> &idx2,
+		const permutation<N> &perm, bool sign) {
 
 	static const char *method =
 		"add_map(const index<N>&, const index<N>&, bool)";
@@ -273,41 +300,48 @@ void se_part<N, T>::add_map(
 	abs_index<N> aidx1(idx1, m_pdims), aidx2(idx2, m_pdims);
 	size_t a = aidx1.get_abs_index(), b = aidx2.get_abs_index();
 
+	bool inv = false;
 	if(a == b) return;
-	if(a > b) std::swap(a, b);
+	if(a > b) { std::swap(a, b); inv = true; }
 
 	// check if b is in the same loop as a
-	size_t ax = a, axf = m_fmap[ax];
-	bool cx = true;
+	size_t ax = a, axf = m_map[ax].fidx;
+	bool sx = true;
+	permutation<N> px;
 	while (ax < axf && ax < b) {
-		cx = (cx == m_fsign[ax]);
-		ax = axf; axf = m_fmap[ax];
+		sx = (sx == m_map[ax].sign);
+		px.permute(m_map[ax].perm);
+		ax = axf; axf = m_map[ax].fidx;
 	}
 	if (ax == b) {
-		if (cx == sign) return;
+		if (sx == sign && px.equals(perm)) return;
 
 		throw bad_parameter(g_ns, k_clazz, method,
 				__FILE__, __LINE__, "Mapping exists with different sign.");
 	}
 
-	size_t br = m_rmap[b], bf = m_fmap[b];
-	bool cab = sign; // cur a -> cur b
+	size_t br = m_map[b].ridx, bf = m_map[b].fidx;
+	bool sab(sign); // cur a -> cur b
+	permutation<N> pab(perm, inv);
 	while (b != bf) {
 		// remove b from its loop
-		bool cx = m_fsign[b];
-		m_fmap[br] = bf; m_rmap[bf] = br;
-		m_fsign[br] = (m_fsign[br] == cx);
+		sx = m_map[b].sign;
+		px.reset(); px.permute(m_map[b].perm);
+		m_map[br].fidx = bf; m_map[bf].ridx = br;
+		m_map[br].sign = (m_map[br].sign == sx);
+		m_map[br].perm.permute(px);
 
 		// add it to the loop of a
-		add_to_loop(a, b, cab);
+		add_to_loop(a, b, pab, sab);
 
 		// go to next b
-		a = b; b = bf; bf = m_fmap[b];
-		cab = cx;
+		a = b; b = bf; bf = m_map[b].fidx;
+		sab = sx;
+		pab.reset(); pab.permute(px);
 	}
 
 	// add last b to loop
-	add_to_loop(a, b, cab);
+	add_to_loop(a, b, pab, sab);
 }
 
 template<size_t N, typename T>
@@ -321,7 +355,7 @@ template<size_t N, typename T>
 index<N> se_part<N, T>::get_direct_map(const index<N> &idx) const {
 
 	abs_index<N> ai(idx, m_pdims);
-	abs_index<N> aif(m_fmap[ai.get_abs_index()], m_pdims);
+	abs_index<N> aif(m_map[ai.get_abs_index()].fidx, m_pdims);
 	return aif.get_index();
 }
 
@@ -333,11 +367,11 @@ bool se_part<N, T>::get_sign(const index<N> &from, const index<N> &to) const {
 	size_t b = abs_index<N>(to, m_pdims).get_abs_index();
 
 	if (a > b) std::swap(a, b);
-	size_t x = m_fmap[a];
-	bool sign = m_fsign[a];
+	size_t x = m_map[a].fidx;
+	bool sign = m_map[a].sign;
 	while (x != b && a < x) {
-		sign = (sign == m_fsign[x]);
-		x = m_fmap[x];
+		sign = (sign == m_map[x].sign);
+		x = m_map[x].fidx;
 
 	}
 	if (x <= a)
@@ -345,6 +379,31 @@ bool se_part<N, T>::get_sign(const index<N> &from, const index<N> &to) const {
 				__FILE__, __LINE__, "No mapping.");
 
 	return sign;
+}
+
+template<size_t N, typename T>
+permutation<N> se_part<N, T>::get_perm(
+		const index<N> &from, const index<N> &to) const {
+
+	static const char *method = "get_perm(const index<N> &, const index<N> &)";
+	size_t a = abs_index<N>(from, m_pdims).get_abs_index();
+	size_t b = abs_index<N>(to, m_pdims).get_abs_index();
+
+	bool inv = false;
+	if (a > b) { std::swap(a, b); inv = true; }
+	size_t x = m_map[a].fidx;
+	permutation<N> perm(m_map[a].perm);
+	while (x != b && a < x) {
+		perm.permute(m_map[x].perm);
+		x = m_map[x].fidx;
+
+	}
+	if (x <= a)
+		throw bad_symmetry(g_ns, k_clazz, method,
+				__FILE__, __LINE__, "No mapping.");
+
+	if (inv) perm.invert();
+	return perm;
 }
 
 template<size_t N, typename T>
@@ -356,9 +415,9 @@ bool se_part<N, T>::map_exists(
 
 	if (a > b) std::swap(a, b);
 
-	size_t x = m_fmap[a];
+	size_t x = m_map[a].fidx;
 	while (x != b && a < x) {
-		x = m_fmap[x];
+		x = m_map[x].fidx;
 	}
 	return (x == b);
 }
@@ -389,34 +448,30 @@ void se_part<N, T>::permute(const permutation<N> &perm) {
 		m_mask.permute(perm);
 
 		size_t mapsz = m_pdims.get_size();
-		size_t *fmap = m_fmap; m_fmap = new size_t[mapsz];
-		size_t *rmap = m_rmap; m_rmap = new size_t[mapsz];
-		bool *fsign = m_fsign; m_fsign = new bool[mapsz];
+		std::vector<mapping> map(m_map);
+		m_map.clear();
+		m_map.reserve(mapsz);
 		for (size_t i = 0; i < mapsz; i++) {
-			m_fmap[i] = m_rmap[i] = i;
-			m_fsign[i] = true;
+			m_map.push_back(mapping(i));
 		}
 
 		for (size_t i = 0; i < mapsz; i++) {
 
-			if (fmap[i] <= i) continue;
+			if (map[i].fidx <= i) continue;
 
 			abs_index<N> aia(i, pdims);
 			index<N> ia(aia.get_index());
 			ia.permute(perm);
 			abs_index<N> naia(ia, m_pdims);
 
-			abs_index<N> aib(fmap[i], pdims);
+			abs_index<N> aib(map[i].fidx, pdims);
 			index<N> ib(aib.get_index());
 			ib.permute(perm);
 			abs_index<N> naib(ib, m_pdims);
 
-			add_map(naia.get_index(), naib.get_index(), fsign[i]);
+			add_map(naia.get_index(), naib.get_index(),
+					map[i].perm, map[i].sign);
 		}
-
-		delete [] fmap; fmap = 0;
-		delete [] rmap;	rmap = 0;
-		delete [] fsign; fsign = 0;
 	}
 }
 
@@ -448,7 +503,7 @@ void se_part<N, T>::apply(index<N> &idx, transf<N, T> &tr) const {
 	//	Map the partition index
 	//
 	abs_index<N> apidx(pidx, m_pdims);
-	abs_index<N> apidx_mapped(m_fmap[apidx.get_abs_index()], m_pdims);
+	abs_index<N> apidx_mapped(m_map[apidx.get_abs_index()].fidx, m_pdims);
 	pidx = apidx_mapped.get_index();
 
 	//	Construct a mapped block index
@@ -458,7 +513,8 @@ void se_part<N, T>::apply(index<N> &idx, transf<N, T> &tr) const {
 		idx[i] = pidx[i] * n + poff[i];
 	}
 
-	if (! m_fsign[apidx.get_abs_index()]) tr.scale(-1.0);
+	tr.permute(m_map[apidx.get_abs_index()].perm);
+	if (! m_map[apidx.get_abs_index()].sign) tr.scale(-1.0);
 }
 
 
@@ -481,29 +537,52 @@ dimensions<N> se_part<N, T>::make_pdims(const mask<N> &msk, size_t npart) {
 }
 
 template<size_t N, typename T>
-void se_part<N, T>::add_to_loop(size_t a, size_t b, bool sign) {
+void se_part<N, T>::add_to_loop(
+		size_t a, size_t b, const permutation<N> &p, bool s) {
 
+	permutation<N> perm;
+	bool sign = true;
 	if (a < b) {
-		size_t af = m_fmap[a];
+		size_t af = m_map[a].fidx;
 		while (af < b && a < af) {
-			sign = (sign == m_fsign[a]);
-			a = af; af = m_fmap[a];
+			sign = (sign == m_map[a].sign);
+			perm.permute(m_map[a].perm);
+			a = af; af = m_map[a].fidx;
 		}
-		m_fmap[a] = b; m_rmap[b] = a;
-		m_fmap[b] = af; m_rmap[af] = b;
-		m_fsign[b] = (sign == m_fsign[a]);
-		m_fsign[a] = sign;
+		m_map[a].fidx = b; m_map[b].ridx = a;
+		m_map[b].fidx = af; m_map[af].ridx = b;
+
+		permutation<N> pa(perm, true); pa.permute(p);
+		bool sa = (s == sign);
+		permutation<N> pb(pa, true); pb.permute(m_map[a].perm);
+		bool sb = (sa == m_map[a].sign);
+
+		m_map[a].perm.reset();
+		m_map[a].perm.permute(pa);
+		m_map[a].sign = sa;
+
+		m_map[b].perm.reset();
+		m_map[b].perm.permute(pb);
+		m_map[b].sign = sb;
 	}
 	else {
-		size_t ar = m_rmap[a];
+		size_t ar = m_map[a].ridx;
 		while (ar > b && ar < a) {
-			sign = (m_fsign[ar] == sign);
-			a = ar; ar = m_rmap[a];
+			sign = (m_map[ar].sign == sign);
+			perm.permute(permutation<N>(m_map[ar].perm, true));
+			a = ar; ar = m_map[a].ridx;
 		}
-		m_fmap[ar] = b; m_rmap[b] = ar;
-		m_fmap[b] = a; m_rmap[a] = b;
-		m_fsign[ar] = (sign == m_fsign[a]);
-		m_fsign[b] = sign;
+		m_map[ar].fidx = b; m_map[b].ridx = ar;
+		m_map[b].fidx = a; m_map[a].ridx = b;
+
+		permutation<N> pb(p, true); pb.permute(perm);
+		bool sb = (s == sign);
+		m_map[b].perm.reset(); m_map[b].perm.permute(pb);
+		m_map[b].sign = sb;
+
+		pb.invert();
+		m_map[ar].perm.permute(pb);
+		m_map[ar].sign = (sb == m_map[ar].sign);
 	}
 }
 

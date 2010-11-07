@@ -702,12 +702,23 @@ void partition_set<N, T>::transfer_mappings(const se_part<N, T> &from,
 
 			if (idx1.equals(idx2)) continue;
 
-			bool sign = from.get_sign(idx1, idx2);
+			bool sx = from.get_sign(idx1, idx2);
+			permutation<N> px(from.get_perm(idx1, idx2));
 
 			idx1.permute(perm);
 			idx2.permute(perm);
 
-			to.add_map(idx1, idx2, sign);
+			if (! perm.is_identity()) {
+				sequence<N, size_t> seq1a(0), seq2a(0);
+				for (size_t i = 0; i < N; i++) seq1a[i] = seq2a[i] = i;
+				seq1a.permute(perm);
+				seq2a.permute(px); seq2a.permute(perm);
+				permutation_builder<N> pb(seq2a, seq1a);
+				px.reset();
+				px.permute(pb.get_perm());
+			}
+
+			to.add_map(idx1, idx2, px, sx);
 
 		} while (ai.inc());
 
@@ -732,14 +743,25 @@ void partition_set<N, T>::transfer_mappings(const se_part<N, T> &from,
 			if (abs_index<N>(idx2, from.get_pdims()).get_abs_index()
 					<= ai.get_abs_index()) continue;
 
-			bool sign = from.get_sign(idx1, idx2);
+			bool sx = from.get_sign(idx1, idx2);
+			permutation<N> px(from.get_perm(idx1, idx2));
 
 			idx1.permute(perm);
 			idx2.permute(perm);
 
+			if (! perm.is_identity()) {
+				sequence<N, size_t> seq1a(0), seq2a(0);
+				for (size_t i = 0; i < N; i++) seq1a[i] = seq2a[i] = i;
+				seq1a.permute(perm);
+				seq2a.permute(px); seq2a.permute(perm);
+				permutation_builder<N> pb(seq2a, seq1a);
+				px.reset();
+				px.permute(pb.get_perm());
+			}
+
 			bool done = false;
 			while (! done) {
-				to.add_map(idx1, idx2, sign);
+				to.add_map(idx1, idx2, px, sx);
 
 				// determine next index
 				done = true;
@@ -755,7 +777,6 @@ void partition_set<N, T>::transfer_mappings(const se_part<N, T> &from,
 			} // end while (!done)
 		} while (ai.inc());
 	}
-
 }
 
 template<size_t N, typename T> template<size_t M>
@@ -786,22 +807,32 @@ void partition_set<N, T>::transfer_mappings(const se_part<M, T> &from,
 		if (abs_index<M>(idx2a, from.get_pdims()).get_abs_index()
 				<= ai.get_abs_index()) continue;
 
-		bool sign = from.get_sign(idx1a, idx2a);
+		bool sx = from.get_sign(idx1a, idx2a);
+		permutation<M> px(from.get_perm(idx1a, idx2a));
 
 		idx1a.permute(perm);
 		idx2a.permute(perm);
 
+		sequence<M, size_t> seq1a(0), seq2a(0);
+		for (size_t i = 0; i < M; i++) seq1a[i] = seq2a[i] = i;
+		seq1a.permute(perm);
+		seq2a.permute(px); seq2a.permute(perm);
+
 		index<N> idx1b, idx2b;
+		sequence<N, size_t> seq1b(0), seq2b(0);
 		for (size_t i = 0, j = 0; i < N; i++) {
+			seq1b[i] = seq2b[i] = i;
 			if (msk[i]) {
-				idx1b[i] = idx1a[j];
-				idx2b[i] = idx2a[j++];
+				idx1b[i] = idx1a[j]; idx2b[i] = idx2a[j];
+				seq1b[i] = N + j; seq2b[i] = N + seq2a[j];
+				j++;
 			}
 		}
+		permutation_builder<N> pb(seq2b, seq1b);
 
 		bool done = false;
 		while (! done) {
-			to.add_map(idx1b, idx2b, sign);
+			to.add_map(idx1b, idx2b, pb.get_perm(), sx);
 
 			// determine next index
 			done = true;
