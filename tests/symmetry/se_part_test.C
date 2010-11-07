@@ -15,6 +15,7 @@ void se_part_test::perform() throw(libtest::test_exception) {
 	test_perm_1();
 	test_perm_2();
 	test_perm_3();
+	test_perm_4();
 }
 
 
@@ -530,5 +531,71 @@ void se_part_test::test_perm_3() throw(libtest::test_exception) {
 	}
 }
 
+/**	\test Permutation of se_part: two partitions, two or three blocks in
+		each partition (4-dim), block sizes vary for different dimensions
+ **/
+void se_part_test::test_perm_4() throw(libtest::test_exception) {
+
+	static const char *testname = "se_part_test::test_perm_4()";
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 9; i2[1] = 9; i2[2] = 19; i2[3] = 19;
+	block_index_space<4> bis(dimensions<4>(index_range<4>(i1, i2)));
+	mask<4> m1100, m0011, m1111;
+	m1100[0] = true; m1100[1] = true;
+	m0011[2] = true; m0011[3] = true;
+	m1111[0] = true; m1111[1] = true; m1111[2] = true; m1111[3] = true;
+	bis.split(m1100, 2);
+	bis.split(m1100, 5);
+	bis.split(m1100, 7);
+	bis.split(m0011, 3);
+	bis.split(m0011, 6);
+	bis.split(m0011, 10);
+	bis.split(m0011, 13);
+	bis.split(m0011, 16);
+
+	index<4> i0000, i0110, i1001, i0101, i1010, i1111;
+	i1001[0] = 1; i0110[1] = 1; i0110[2] = 1; i1001[3] = 1;
+	i1010[0] = 1; i0101[1] = 1; i1010[2] = 1; i0101[3] = 1;
+	i1111[0] = 1; i1111[1] = 1; i1111[2] = 1; i1111[3] = 1;
+
+	se_part<4, double> elem(bis, m1111, 2);
+	elem.add_map(i0000, i1001, true);
+	elem.add_map(i1001, i0110, true);
+	elem.add_map(i0110, i1111, true);
+
+
+	permutation<4> perm; perm.permute(0, 1);
+
+	bis.permute(perm);
+	index<4> i1b, i2b;
+	i2b[0] = 1; i2b[1] = 1; i2b[2] = 1; i2b[3] = 1;
+	dimensions<4> pdims(index_range<4>(i1b, i2b));
+
+	elem.permute(perm);
+
+	if (! bis.equals(elem.get_bis())) {
+		fail_test(testname, __FILE__, __LINE__, "Wrong bis.");
+	}
+	if (! pdims.equals(elem.get_pdims())) {
+		fail_test(testname, __FILE__, __LINE__, "Wrong pdims.");
+	}
+	if (! m1111.equals(elem.get_mask())) {
+		fail_test(testname, __FILE__, __LINE__, "Wrong mask.");
+	}
+	if (! elem.map_exists(i0000, i1111)) {
+		fail_test(testname, __FILE__, __LINE__, "Missing map: 0000->1111.");
+	}
+	if (! elem.map_exists(i0101, i1010)) {
+		fail_test(testname, __FILE__, __LINE__, "Missing map: 0101->1010.");
+	}
+
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
 
 } // namespace libtensor

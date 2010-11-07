@@ -384,47 +384,39 @@ void se_part<N, T>::permute(const permutation<N> &perm) {
 	}
 
 	if (affects_map) {
+		dimensions<N> pdims(m_pdims);
+		m_pdims.permute(perm);
 		m_mask.permute(perm);
 
 		size_t mapsz = m_pdims.get_size();
-		size_t *fmap = new size_t[mapsz];
-		size_t *rmap = new size_t[mapsz];
-		bool *fsign = new bool[mapsz];
-
-		dimensions<N> old_pdims(m_pdims);
-		m_pdims.permute(perm);
+		size_t *fmap = m_fmap; m_fmap = new size_t[mapsz];
+		size_t *rmap = m_rmap; m_rmap = new size_t[mapsz];
+		bool *fsign = m_fsign; m_fsign = new bool[mapsz];
 		for (size_t i = 0; i < mapsz; i++) {
-
-			abs_index<N> ai(i, old_pdims);
-			index<N> ia(ai.get_index());
-			ia.permute(perm);
-			abs_index<N> nai(ia, m_pdims);
-
-			abs_index<N> aif(m_fmap[i], old_pdims);
-			index<N> iaf(aif.get_index());
-			iaf.permute(perm);
-			abs_index<N> naif(iaf, m_pdims);
-
-			abs_index<N> air(m_rmap[i], old_pdims);
-			index<N> iar(air.get_index());
-			iar.permute(perm);
-			abs_index<N> nair(iar, m_pdims);
-
-			fmap[nai.get_abs_index()] = naif.get_abs_index();
-			rmap[nai.get_abs_index()] = nair.get_abs_index();
-			fsign[nai.get_abs_index()] = m_fsign[ai.get_abs_index()];
+			m_fmap[i] = m_rmap[i] = i;
+			m_fsign[i] = true;
 		}
 
-		std::swap(fmap, m_fmap);
-		std::swap(rmap, m_rmap);
-		std::swap(fsign, m_fsign);
+		for (size_t i = 0; i < mapsz; i++) {
+
+			if (fmap[i] <= i) continue;
+
+			abs_index<N> aia(i, pdims);
+			index<N> ia(aia.get_index());
+			ia.permute(perm);
+			abs_index<N> naia(ia, m_pdims);
+
+			abs_index<N> aib(fmap[i], pdims);
+			index<N> ib(aib.get_index());
+			ib.permute(perm);
+			abs_index<N> naib(ib, m_pdims);
+
+			add_map(naia.get_index(), naib.get_index(), fsign[i]);
+		}
 
 		delete [] fmap; fmap = 0;
 		delete [] rmap;	rmap = 0;
 		delete [] fsign; fsign = 0;
-	}
-	else {
-		m_pdims.permute(perm);
 	}
 }
 

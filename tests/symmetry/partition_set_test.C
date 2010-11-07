@@ -42,6 +42,8 @@ void partition_set_test::perform() throw(libtest::test_exception) {
 	test_permute_2(false);
 	test_permute_3(true);
 	test_permute_3(false);
+	test_permute_4(true);
+	test_permute_4(false);
 
 	test_intersect_1();
 	test_intersect_2(true);
@@ -64,6 +66,8 @@ void partition_set_test::perform() throw(libtest::test_exception) {
 	test_intersect_7b(false);
 	test_intersect_7c(true);
 	test_intersect_7c(false);
+	test_intersect_8(true);
+	test_intersect_8(false);
 
 	test_stabilize_1();
 	test_stabilize_2(true);
@@ -1027,6 +1031,84 @@ void partition_set_test::test_permute_3(bool sign)
 	}
 }
 
+/**	\test Permuting a partition set with a full partition.
+ **/
+void partition_set_test::test_permute_4(bool sign)
+		throw(libtest::test_exception) {
+
+	static const char *testname = "partition_set_test::test_permute_4(bool)";
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 9; i2[1] = 9; i2[2] = 9; i2[3] = 9;
+	block_index_space<4> bis(dimensions<4>(index_range<4>(i1, i2)));
+	mask<4> m1111;
+	m1111[0] = true; m1111[1] = true; m1111[2] = true; m1111[3] = true;
+	bis.split(m1111, 2);
+	bis.split(m1111, 5);
+	bis.split(m1111, 7);
+
+	index<4> i0000, i1111, i0001, i1110, i0010, i1101, i0011, i1100,
+		i0100, i1011, i0101, i1010, i0110, i1001, i0111, i1000;
+	i1110[0] = 1; i1110[1] = 1; i1110[2] = 1; i0001[3] = 1;
+	i1101[0] = 1; i1101[1] = 1; i0010[2] = 1; i1101[3] = 1;
+	i1100[0] = 1; i1100[1] = 1; i0011[2] = 1; i0011[3] = 1;
+	i1011[0] = 1; i0100[1] = 1; i1011[2] = 1; i1011[3] = 1;
+	i1010[0] = 1; i0101[1] = 1; i1010[2] = 1; i0101[3] = 1;
+	i1001[0] = 1; i0110[1] = 1; i0110[2] = 1; i1001[3] = 1;
+	i1000[0] = 1; i0111[1] = 1; i0111[2] = 1; i0111[3] = 1;
+	i1111[0] = 1; i1111[1] = 1; i1111[2] = 1; i1111[3] = 1;
+
+	se_part<4, double> sp(bis, m1111, 2), sp_ref(bis, m1111, 2);
+	sp.add_map(i0000, i0101, sign);
+	sp.add_map(i0101, i1010, sign);
+	sp.add_map(i1010, i1111, sign);
+	sp.add_map(i0010, i0111, sign);
+	sp.add_map(i0111, i1000, sign);
+	sp.add_map(i1000, i1101, sign);
+	sp.add_map(i0011, i0110, sign);
+	sp.add_map(i0110, i1001, sign);
+	sp.add_map(i1001, i1100, sign);
+	sp.add_map(i0001, i0100, sign);
+	sp.add_map(i0100, i1011, sign);
+	sp.add_map(i1011, i1110, sign);
+
+	sp_ref.add_map(i0000, i0110, sign);
+	sp_ref.add_map(i0110, i1001, sign);
+	sp_ref.add_map(i1001, i1111, sign);
+	sp_ref.add_map(i0010, i1011, sign);
+	sp_ref.add_map(i1011, i0100, sign);
+	sp_ref.add_map(i0100, i1101, sign);
+	sp_ref.add_map(i0011, i1010, sign);
+	sp_ref.add_map(i1010, i0101, sign);
+	sp_ref.add_map(i0101, i1100, sign);
+	sp_ref.add_map(i0001, i1000, sign);
+	sp_ref.add_map(i1000, i0111, sign);
+	sp_ref.add_map(i0111, i1110, sign);
+
+	permutation<4> p0;
+	partition_set<4, double> pset(bis);
+	pset.add_partition(sp, p0);
+
+	permutation<4> perm;
+	perm.permute(0, 1);
+	pset.permute(perm);
+
+	symmetry_element_set<4, double> set(se_part<4, double>::k_sym_type);
+	symmetry_element_set<4, double> set_ref(se_part<4, double>::k_sym_type);
+
+	pset.convert(set);
+
+	set_ref.insert(sp_ref);
+
+	compare_ref<4>::compare(testname, bis, set, set_ref);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
 /**	\test Intersection of two empty partition sets
  **/
 void partition_set_test::test_intersect_1() throw(libtest::test_exception) {
@@ -1557,6 +1639,92 @@ void partition_set_test::test_intersect_7c(bool sign)
 	pset2.convert(set);
 
 	compare_ref<3>::compare(testname, bis, set, set_ref);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+/**	\test Intersection of two non-empty, overlapping partition sets. Overlap
+		is not accessible by direct maps
+ **/
+void partition_set_test::test_intersect_8(bool sign)
+		throw(libtest::test_exception) {
+
+	static const char *testname = "partition_set_test::test_intersect_8(bool)";
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 9; i2[1] = 9; i2[2] = 9; i2[3] = 9;
+	block_index_space<4> bis(dimensions<4>(index_range<4>(i1, i2)));
+	mask<4> m1111;
+	m1111[0] = true; m1111[1] = true; m1111[2] = true; m1111[3] = true;
+	bis.split(m1111, 2);
+	bis.split(m1111, 5);
+	bis.split(m1111, 7);
+
+	index<4> i0000, i1111, i0001, i1110, i0010, i1101, i0011, i1100,
+		i0100, i1011, i0101, i1010, i0110, i1001, i0111, i1000;
+	i1110[0] = 1; i1110[1] = 1; i1110[2] = 1; i0001[3] = 1;
+	i1101[0] = 1; i1101[1] = 1; i0010[2] = 1; i1101[3] = 1;
+	i1100[0] = 1; i1100[1] = 1; i0011[2] = 1; i0011[3] = 1;
+	i1011[0] = 1; i0100[1] = 1; i1011[2] = 1; i1011[3] = 1;
+	i1010[0] = 1; i0101[1] = 1; i1010[2] = 1; i0101[3] = 1;
+	i1001[0] = 1; i0110[1] = 1; i0110[2] = 1; i1001[3] = 1;
+	i1000[0] = 1; i0111[1] = 1; i0111[2] = 1; i0111[3] = 1;
+	i1111[0] = 1; i1111[1] = 1; i1111[2] = 1; i1111[3] = 1;
+
+	se_part<4, double> sp1(bis, m1111, 2), sp2(bis, m1111, 2),
+			sp_ref(bis, m1111, 2);
+	sp1.add_map(i0000, i0101, sign);
+	sp1.add_map(i0101, i1010, sign);
+	sp1.add_map(i1010, i1111, sign);
+	sp1.add_map(i0010, i0111, sign);
+	sp1.add_map(i0111, i1000, sign);
+	sp1.add_map(i1000, i1101, sign);
+	sp1.add_map(i0011, i0110, sign);
+	sp1.add_map(i0110, i1001, sign);
+	sp1.add_map(i1001, i1100, sign);
+	sp1.add_map(i0001, i0100, sign);
+	sp1.add_map(i0100, i1011, sign);
+	sp1.add_map(i1011, i1110, sign);
+
+	sp2.add_map(i0000, i0110, sign);
+	sp2.add_map(i0110, i1001, sign);
+	sp2.add_map(i1001, i1111, sign);
+	sp2.add_map(i0010, i1011, sign);
+	sp2.add_map(i1011, i0100, sign);
+	sp2.add_map(i0100, i1101, sign);
+	sp2.add_map(i0011, i1010, sign);
+	sp2.add_map(i1010, i0101, sign);
+	sp2.add_map(i0101, i1100, sign);
+	sp2.add_map(i0001, i1000, sign);
+	sp2.add_map(i1000, i0111, sign);
+	sp2.add_map(i0111, i1110, sign);
+
+	sp_ref.add_map(i0000, i1111, sign);
+	sp_ref.add_map(i0101, i1010, sign);
+	sp_ref.add_map(i0010, i1101, sign);
+	sp_ref.add_map(i0111, i1000, sign);
+	sp_ref.add_map(i0011, i1100, sign);
+	sp_ref.add_map(i0110, i1001, sign);
+	sp_ref.add_map(i0001, i1110, sign);
+	sp_ref.add_map(i0100, i1011, sign);
+
+	partition_set<4, double> pset1(bis), pset2(bis);
+	permutation<4> p0;
+	pset1.add_partition(sp1, p0);
+	pset2.add_partition(sp2, p0);
+
+	symmetry_element_set<4, double> set(se_part<4, double>::k_sym_type);
+	symmetry_element_set<4, double> set_ref(se_part<4, double>::k_sym_type);
+	set_ref.insert(sp_ref);
+
+	pset2.intersect(pset1);
+	pset2.convert(set);
+
+	compare_ref<4>::compare(testname, bis, set, set_ref);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());

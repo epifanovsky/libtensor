@@ -20,6 +20,7 @@ private:
 	void test_perm_1() throw(libtest::test_exception);
 	void test_perm_2() throw(libtest::test_exception);
 	void test_perm_3() throw(libtest::test_exception);
+	void test_perm_4() throw(libtest::test_exception);
 };
 
 } // namespace libtensor
