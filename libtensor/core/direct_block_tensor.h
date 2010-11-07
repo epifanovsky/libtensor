@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_DIRECT_BLOCK_TENSOR_H
 #define LIBTENSOR_DIRECT_BLOCK_TENSOR_H
 
+#include <libvmm/cond_map.h>
 #include "../defs.h"
 #include "../exception.h"
 #include "../mp/default_sync_policy.h"
@@ -64,10 +65,12 @@ public:
 	typedef std::pair<size_t,unsigned char> pair_t;
 
 private:
-	block_map<N, T, Alloc> m_map; //!< Block map
-	std::map<size_t, size_t> m_count; //!< Block count
 	dimensions<N> m_bidims; //!< Block %index dims
 	mutex_t *m_lock; //!< Mutex lock
+	block_map<N, T, Alloc> m_map; //!< Block map
+	std::map<size_t, size_t> m_count; //!< Block count
+	std::set<size_t> m_inprogress; //!< Computations in progress
+	libvmm::cond_map<size_t, size_t> m_cond; //!< Conditionals
 
 public:
 	//!	\name Construction and destruction
@@ -151,6 +154,7 @@ tensor_i<N, T> &direct_block_tensor<N, T, Alloc, Sync>::on_req_block(
 		m_count.insert(std::pair<size_t, size_t>(
 			aidx.get_abs_index(), 0)).first;
 	bool newblock = icnt->second++ == 0;
+	bool inprogress = m_inprogress.count(aidx.get_abs_index()) > 0;
 
 	if(newblock) {
 		dimensions<N> blkdims = get_op().get_bis().get_block_dims(idx);
@@ -160,9 +164,23 @@ tensor_i<N, T> &direct_block_tensor<N, T, Alloc, Sync>::on_req_block(
 	tensor_i<N, T> &blk = m_map.get(aidx.get_abs_index());
 
 	if(newblock) {
-		lock.lock();
-		get_op().compute_block(blk, idx);
+
+		std::set<size_t>::iterator i =
+			m_inprogress.insert(aidx.get_abs_index()).first;
 		lock.unlock();
+		get_op().compute_block(blk, idx);
+		lock.lock();
+		m_inprogress.erase(i);
+		m_cond.signal(aidx.get_abs_index());
+
+	} else if(inprogress) {
+
+		libvmm::loaded_cond<size_t> cond(0);
+		m_cond.insert(aidx.get_abs_index(), &cond);
+		lock.unlock();
+		cond.wait();
+		lock.lock();
+		m_cond.erase(aidx.get_abs_index(), &cond);
 	}
 
 	return blk;
