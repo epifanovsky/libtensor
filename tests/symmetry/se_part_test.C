@@ -9,21 +9,25 @@ namespace libtensor {
 
 void se_part_test::perform() throw(libtest::test_exception) {
 
-	test_1();
+	test_1a();
+	test_1b();
 	test_2();
-	test_3();
+	test_3a();
+	test_3b();
+	test_4();
 	test_perm_1();
 	test_perm_2();
 	test_perm_3();
-	test_perm_4();
+	test_perm_4a();
+	test_perm_4b();
 }
 
 
 /**	\test Two partitions, one block in each partition (2-dim)
  **/
-void se_part_test::test_1() throw(libtest::test_exception) {
+void se_part_test::test_1a() throw(libtest::test_exception) {
 
-	static const char *testname = "se_part_test::test_1()";
+	static const char *testname = "se_part_test::test_1a()";
 
 	try {
 
@@ -133,6 +137,119 @@ void se_part_test::test_1() throw(libtest::test_exception) {
 	}
 }
 
+/**	\test Two partitions, one block in each partition (2-dim)
+ **/
+void se_part_test::test_1b() throw(libtest::test_exception) {
+
+	static const char *testname = "se_part_test::test_1b()";
+
+	try {
+
+	index<2> i1, i2;
+	i2[0] = 9; i2[1] = 9;
+	block_index_space<2> bis(dimensions<2>(index_range<2>(i1, i2)));
+	mask<2> m11;
+	m11[0] = true; m11[1] = true;
+	bis.split(m11, 5);
+
+	index<2> i00, i01, i10, i11;
+	i01[0] = 0; i01[1] = 1;
+	i10[0] = 1; i10[1] = 0;
+	i11[0] = 1; i11[1] = 1;
+
+	se_part<2, double> elem1(bis, m11, 2);
+	elem1.add_map(i00, i11, permutation<2>().permute(0, 1), false);
+
+	if(!elem1.is_allowed(i00)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!elem1.is_allowed(i00)");
+	}
+	if(!elem1.is_allowed(i01)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!elem1.is_allowed(i01)");
+	}
+	if(!elem1.is_allowed(i10)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!elem1.is_allowed(i10)");
+	}
+	if(!elem1.is_allowed(i11)) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!elem1.is_allowed(i11)");
+	}
+
+	index<2> i00a(i00), i01a(i01), i10a(i10), i11a(i11);
+	elem1.apply(i00a);
+	if(!i00a.equals(i11)) {
+		fail_test(testname, __FILE__, __LINE__, "!i00a.equals(i11)");
+	}
+	elem1.apply(i01a);
+	if(!i01a.equals(i01)) {
+		fail_test(testname, __FILE__, __LINE__, "!i01a.equals(i01)");
+	}
+	elem1.apply(i10a);
+	if(!i10a.equals(i10)) {
+		fail_test(testname, __FILE__, __LINE__, "!i10a.equals(i10)");
+	}
+	elem1.apply(i11a);
+	if(!i11a.equals(i00)) {
+		fail_test(testname, __FILE__, __LINE__, "!i11a.equals(i00)");
+	}
+
+	index<2> i00b(i00), i01b(i01), i10b(i10), i11b(i11);
+	transf<2, double> tr00, tr01, tr10, tr11;
+	elem1.apply(i00b, tr00);
+	elem1.apply(i01b, tr01);
+	elem1.apply(i10b, tr10);
+	elem1.apply(i11b, tr11);
+	if(!i00b.equals(i11)) {
+		fail_test(testname, __FILE__, __LINE__, "!i00b.equals(i11)");
+	}
+	if(tr00.get_coeff() != -1.0) {
+		fail_test(testname, __FILE__, __LINE__,
+			"tr00.get_coeff() != -1.0");
+	}
+	if(!tr00.get_perm().equals(permutation<2>().permute(0, 1))) {
+		fail_test(testname, __FILE__, __LINE__,
+			"tr00.get_perm() != (1 0)");
+	}
+	if(!i01b.equals(i01)) {
+		fail_test(testname, __FILE__, __LINE__, "!i01b.equals(i01)");
+	}
+	if(tr01.get_coeff() != 1.0) {
+		fail_test(testname, __FILE__, __LINE__,
+			"tr01.get_coeff() != 1.0");
+	}
+	if(!tr01.get_perm().is_identity()) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!tr01.get_perm().is_identity()");
+	}
+	if(!i10b.equals(i10)) {
+		fail_test(testname, __FILE__, __LINE__, "!i10b.equals(i10)");
+	}
+	if(tr10.get_coeff() != 1.0) {
+		fail_test(testname, __FILE__, __LINE__,
+			"tr10.get_coeff() != 1.0");
+	}
+	if(!tr10.get_perm().is_identity()) {
+		fail_test(testname, __FILE__, __LINE__,
+			"!tr10.get_perm().is_identity()");
+	}
+	if(!i11b.equals(i00)) {
+		fail_test(testname, __FILE__, __LINE__, "!i11b.equals(i00)");
+	}
+	if(tr11.get_coeff() != -1.0) {
+		fail_test(testname, __FILE__, __LINE__,
+			"tr11.get_coeff() != -1.0");
+	}
+	if(!tr11.get_perm().equals(permutation<2>().permute(0, 1))) {
+		fail_test(testname, __FILE__, __LINE__,
+			"tr11.get_perm() != (1 0)");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
 
 /**	\test Two partitions, two blocks in each partition (2-dim)
  **/
@@ -250,9 +367,9 @@ void se_part_test::test_2() throw(libtest::test_exception) {
 /**	\test Two partitions, two or three blocks in each partition (4-dim),
 		block sizes vary for different dimensions
  **/
-void se_part_test::test_3() throw(libtest::test_exception) {
+void se_part_test::test_3a() throw(libtest::test_exception) {
 
-	static const char *testname = "se_part_test::test_3()";
+	static const char *testname = "se_part_test::test_3a()";
 
 	try {
 
@@ -338,6 +455,184 @@ void se_part_test::test_3() throw(libtest::test_exception) {
 	}
 }
 
+/**	\test Two partitions, two or three blocks in each partition (4-dim),
+		block sizes vary for different dimensions, mappings with permutation
+ **/
+void se_part_test::test_3b() throw(libtest::test_exception) {
+
+	static const char *testname = "se_part_test::test_3b()";
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 9; i2[1] = 9; i2[2] = 19; i2[3] = 19;
+	block_index_space<4> bis(dimensions<4>(index_range<4>(i1, i2)));
+	mask<4> m1100, m0011, m1111;
+	m1100[0] = true; m1100[1] = true;
+	m0011[2] = true; m0011[3] = true;
+	m1111[0] = true; m1111[1] = true; m1111[2] = true; m1111[3] = true;
+	bis.split(m1100, 2);
+	bis.split(m1100, 5);
+	bis.split(m1100, 7);
+	bis.split(m0011, 3);
+	bis.split(m0011, 6);
+	bis.split(m0011, 10);
+	bis.split(m0011, 13);
+	bis.split(m0011, 16);
+
+	index<4> i0000, i0011, i0033, i0101, i0110, i0134, i1001, i1100, i1111,
+		i2200, i2233, i2301, i2334;
+	i0011[0] = 0; i0011[1] = 0; i0011[2] = 1; i0011[3] = 1;
+	i0033[0] = 0; i0033[1] = 0; i0033[2] = 3; i0033[3] = 3;
+	i0101[0] = 0; i0101[1] = 1; i0101[2] = 0; i0101[3] = 1;
+	i0110[0] = 0; i0110[1] = 1; i0110[2] = 1; i0110[3] = 0;
+	i0134[0] = 0; i0134[1] = 1; i0134[2] = 3; i0134[3] = 4;
+	i1001[0] = 1; i1001[1] = 0; i1001[2] = 0; i1001[3] = 1;
+	i1100[0] = 1; i1100[1] = 1; i1100[2] = 0; i1100[3] = 0;
+	i1111[0] = 1; i1111[1] = 1; i1111[2] = 1; i1111[3] = 1;
+	i2200[0] = 2; i2200[1] = 2; i2200[2] = 0; i2200[3] = 0;
+	i2233[0] = 2; i2233[1] = 2; i2233[2] = 3; i2233[3] = 3;
+	i2301[0] = 2; i2301[1] = 3; i2301[2] = 0; i2301[3] = 1;
+	i2334[0] = 2; i2334[1] = 3; i2334[2] = 3; i2334[3] = 4;
+
+	se_part<4, double> elem1(bis, m1111, 2);
+	elem1.add_map(i0000, i1111);
+	elem1.add_map(i0000, i0011,
+			permutation<4>().permute(0, 1).permute(1, 2), false);
+	elem1.add_map(i1100, i1111,
+			permutation<4>().permute(1, 2).permute(0, 1), false);
+	elem1.add_map(i0110, i1001);
+
+	std::set< index<4> > orbit;
+
+	//	[0000]->[2200]->[0033]->[2233]
+	orbit.insert(i0000);
+	orbit.insert(i2200);
+	orbit.insert(i0033);
+	orbit.insert(i2233);
+	index<4> i0000a(i0000);
+	while(!orbit.empty()) {
+		elem1.apply(i0000a);
+		if(orbit.find(i0000a) == orbit.end()) {
+			std::ostringstream ss;
+			ss << "Invalid or duplicate index in the orbit of "
+				<< i0000 << ": " << i0000a << ".";
+			fail_test(testname, __FILE__, __LINE__,
+				ss.str().c_str());
+		} else {
+			orbit.erase(i0000a);
+		}
+	}
+
+	//	[0101]->[0134]->[2301]->[2334]
+	orbit.insert(i0101);
+	orbit.insert(i0134);
+	orbit.insert(i2301);
+	orbit.insert(i2334);
+	index<4> i0101a(i0101);
+	while(!orbit.empty()) {
+		elem1.apply(i0101a);
+		if(orbit.find(i0101a) == orbit.end()) {
+			std::ostringstream ss;
+			ss << "Invalid or duplicate index in the orbit of "
+				<< i0101 << ": " << i0101a << ".";
+			fail_test(testname, __FILE__, __LINE__,
+				ss.str().c_str());
+		} else {
+			orbit.erase(i0101a);
+		}
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+/**	\test Two partitions, two or three blocks in each partition (4-dim),
+		block sizes vary for different dimensions, mappings with permutation
+ **/
+void se_part_test::test_4() throw(libtest::test_exception) {
+
+	static const char *testname = "se_part_test::test_4()";
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 9; i2[1] = 9; i2[2] = 19; i2[3] = 19;
+	block_index_space<4> bis(dimensions<4>(index_range<4>(i1, i2)));
+	mask<4> m1100, m0011, m1111;
+	m1100[0] = true; m1100[1] = true;
+	m0011[2] = true; m0011[3] = true;
+	m1111[0] = true; m1111[1] = true; m1111[2] = true; m1111[3] = true;
+	bis.split(m1100, 2);
+	bis.split(m1100, 5);
+	bis.split(m1100, 7);
+	bis.split(m0011, 3);
+	bis.split(m0011, 6);
+	bis.split(m0011, 10);
+	bis.split(m0011, 13);
+	bis.split(m0011, 16);
+
+	index<4> i0000, i0011, i0033, i0101, i0110, i0134, i1001, i1100, i1111,
+		i2200, i2233, i2301, i2334;
+	i0011[0] = 0; i0011[1] = 0; i0011[2] = 1; i0011[3] = 1;
+	i0033[0] = 0; i0033[1] = 0; i0033[2] = 3; i0033[3] = 3;
+	i0101[0] = 0; i0101[1] = 1; i0101[2] = 0; i0101[3] = 1;
+	i0110[0] = 0; i0110[1] = 1; i0110[2] = 1; i0110[3] = 0;
+	i0134[0] = 0; i0134[1] = 1; i0134[2] = 3; i0134[3] = 4;
+	i1001[0] = 1; i1001[1] = 0; i1001[2] = 0; i1001[3] = 1;
+	i1100[0] = 1; i1100[1] = 1; i1100[2] = 0; i1100[3] = 0;
+	i1111[0] = 1; i1111[1] = 1; i1111[2] = 1; i1111[3] = 1;
+	i2200[0] = 2; i2200[1] = 2; i2200[2] = 0; i2200[3] = 0;
+	i2233[0] = 2; i2233[1] = 2; i2233[2] = 3; i2233[3] = 3;
+	i2301[0] = 2; i2301[1] = 3; i2301[2] = 0; i2301[3] = 1;
+	i2334[0] = 2; i2334[1] = 3; i2334[2] = 3; i2334[3] = 4;
+
+	se_part<4, double> elem(bis, m1111, 2);
+	elem.add_map(i0000, i0011,
+			permutation<4>().permute(0, 1).permute(1, 2), false);
+	elem.add_map(i1100, i1111,
+			permutation<4>().permute(1, 2).permute(2, 3), false);
+	elem.add_map(i0011, i1100);
+
+	std::set< index<4> > orbit;
+
+	if (! elem.map_exists(i0000, i1100)) {
+		fail_test(testname, __FILE__, __LINE__, "Missing map: 0000->1100.");
+	}
+	if (elem.get_sign(i0000, i1100) != false) {
+		fail_test(testname, __FILE__, __LINE__, "Wrong sign: 0000->1100.");
+	}
+	if (! elem.get_perm(i0000, i1100).equals(
+			permutation<4>().permute(0, 1).permute(1, 2))) {
+		fail_test(testname, __FILE__, __LINE__, "Wrong perm: 0000->1100.");
+	}
+	if (! elem.map_exists(i0000, i1111)) {
+		fail_test(testname, __FILE__, __LINE__, "Missing map: 0000->1111.");
+	}
+	if (elem.get_sign(i0000, i1111) != true) {
+		fail_test(testname, __FILE__, __LINE__, "Wrong sign: 0000->1100.");
+	}
+	if (! elem.get_perm(i0000, i1111).equals(
+			permutation<4>().permute(0, 1).permute(2, 3))) {
+		fail_test(testname, __FILE__, __LINE__, "Wrong perm: 0000->1100.");
+	}
+	if (! elem.map_exists(i0011, i1111)) {
+		fail_test(testname, __FILE__, __LINE__, "Missing map: 0011->1111.");
+	}
+	if (elem.get_sign(i0011, i1111) != false) {
+		fail_test(testname, __FILE__, __LINE__, "Wrong sign: 0000->1100.");
+	}
+	if (! elem.get_perm(i0011, i1111).equals(
+			permutation<4>().permute(1, 2).permute(2, 3))) {
+		fail_test(testname, __FILE__, __LINE__, "Wrong perm: 0000->1100.");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
 /**	\test Permutation of se_part: two partitions, two or three blocks in
 		each partition (4-dim), block sizes vary for different dimensions
  **/
@@ -369,7 +664,6 @@ void se_part_test::test_perm_1() throw(libtest::test_exception) {
 	se_part<4, double> elem(bis, m0011, 2);
 	elem.add_map(i0000, i0011, true);
 	elem.add_map(i0001, i0010, true);
-
 
 	permutation<4> perm; perm.permute(0, 1); // leaves mask unaffected
 
@@ -534,9 +828,9 @@ void se_part_test::test_perm_3() throw(libtest::test_exception) {
 /**	\test Permutation of se_part: two partitions, two or three blocks in
 		each partition (4-dim), block sizes vary for different dimensions
  **/
-void se_part_test::test_perm_4() throw(libtest::test_exception) {
+void se_part_test::test_perm_4a() throw(libtest::test_exception) {
 
-	static const char *testname = "se_part_test::test_perm_4()";
+	static const char *testname = "se_part_test::test_perm_4a()";
 
 	try {
 
@@ -597,5 +891,77 @@ void se_part_test::test_perm_4() throw(libtest::test_exception) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
 	}
 }
+
+/**	\test Permutation of se_part: two partitions, two or three blocks in
+		each partition (4-dim), block sizes vary for different dimensions
+ **/
+void se_part_test::test_perm_4b() throw(libtest::test_exception) {
+
+	static const char *testname = "se_part_test::test_perm_4b()";
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 9; i2[1] = 9; i2[2] = 19; i2[3] = 19;
+	block_index_space<4> bis(dimensions<4>(index_range<4>(i1, i2)));
+	mask<4> m1100, m0011, m1111;
+	m1100[0] = true; m1100[1] = true;
+	m0011[2] = true; m0011[3] = true;
+	m1111[0] = true; m1111[1] = true; m1111[2] = true; m1111[3] = true;
+	bis.split(m1100, 2);
+	bis.split(m1100, 5);
+	bis.split(m1100, 7);
+	bis.split(m0011, 3);
+	bis.split(m0011, 6);
+	bis.split(m0011, 10);
+	bis.split(m0011, 13);
+	bis.split(m0011, 16);
+
+	index<4> i0000, i0110, i1001, i0101, i1010, i1111;
+	i1001[0] = 1; i0110[1] = 1; i0110[2] = 1; i1001[3] = 1;
+	i1010[0] = 1; i0101[1] = 1; i1010[2] = 1; i0101[3] = 1;
+	i1111[0] = 1; i1111[1] = 1; i1111[2] = 1; i1111[3] = 1;
+
+	se_part<4, double> elem(bis, m1111, 2);
+	elem.add_map(i0000, i1001, permutation<4>().permute(0, 1).permute(1, 2), true);
+	elem.add_map(i1001, i0110, true);
+	elem.add_map(i0110, i1111, true);
+
+
+	permutation<4> perm; perm.permute(2, 3);
+
+	bis.permute(perm);
+	index<4> i1b, i2b;
+	i2b[0] = 1; i2b[1] = 1; i2b[2] = 1; i2b[3] = 1;
+	dimensions<4> pdims(index_range<4>(i1b, i2b));
+
+	elem.permute(perm);
+
+	if (! bis.equals(elem.get_bis())) {
+		fail_test(testname, __FILE__, __LINE__, "Wrong bis.");
+	}
+	if (! pdims.equals(elem.get_pdims())) {
+		fail_test(testname, __FILE__, __LINE__, "Wrong pdims.");
+	}
+	if (! m1111.equals(elem.get_mask())) {
+		fail_test(testname, __FILE__, __LINE__, "Wrong mask.");
+	}
+	if (! elem.map_exists(i0000, i1111)) {
+		fail_test(testname, __FILE__, __LINE__, "Missing map: 0000->1111.");
+	}
+	if (! elem.map_exists(i0101, i1010)) {
+		fail_test(testname, __FILE__, __LINE__, "Missing map: 0101->1010.");
+	}
+	if (elem.get_perm(i0000, i1111).equals(
+			permutation<4>().permute(0, 1).permute(1, 3))) {
+		fail_test(testname, __FILE__, __LINE__,
+				"Map 0000->1111 has wrong permutation.");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
 
 } // namespace libtensor

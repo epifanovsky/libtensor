@@ -314,10 +314,15 @@ void se_part<N, T>::add_map(const index<N> &idx1, const index<N> &idx2,
 		ax = axf; axf = m_map[ax].fidx;
 	}
 	if (ax == b) {
-		if (sx == sign && px.equals(perm)) return;
+		if (sx != sign)
+			throw bad_parameter(g_ns, k_clazz, method,
+					__FILE__, __LINE__, "Mapping exists with different sign.");
 
-		throw bad_parameter(g_ns, k_clazz, method,
-				__FILE__, __LINE__, "Mapping exists with different sign.");
+		permutation<N> p(perm, inv);
+		if (! px.equals(p))
+			throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
+					"Mapping exists with different perm.");
+		return;
 	}
 
 	size_t br = m_map[b].ridx, bf = m_map[b].fidx;
