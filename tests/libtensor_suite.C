@@ -30,6 +30,7 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("tensor", m_utf_tensor);
 	add_test("timer", m_utf_timer);
 	add_test("timings", m_utf_timings);
+	add_test("transf_list", m_utf_transf_list);
 	add_test("version", m_utf_version);
 }
 

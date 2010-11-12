@@ -26,6 +26,7 @@
 #include "tensor_test.h"
 #include "timer_test.h"
 #include "timings_test.h"
+#include "transf_list_test.h"
 #include "version_test.h"
 
 using libtest::unit_test_factory;
@@ -60,6 +61,7 @@ namespace libtensor {
 	\li libtensor::tensor_test
 	\li libtensor::timer_test
 	\li libtensor::timings_test
+	\li libtensor::transf_list_test
 	\li libtensor::version_test
 **/
 class libtensor_suite : public libtest::test_suite {
@@ -89,6 +91,7 @@ private:
 	unit_test_factory<tensor_test> m_utf_tensor;
 	unit_test_factory<timer_test> m_utf_timer;
 	unit_test_factory<timings_test> m_utf_timings;
+	unit_test_factory<transf_list_test> m_utf_transf_list;
 	unit_test_factory<version_test> m_utf_version;
 
 public:

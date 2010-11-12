@@ -25,6 +25,7 @@ set(SRC
 	tensor_test.C
 	timer_test.C
 	timings_test.C
+	transf_list_test.C
 	version_test.C
 )
 
