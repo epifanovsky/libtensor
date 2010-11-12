@@ -7,6 +7,7 @@
 #include "../core/block_tensor_i.h"
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
+#include "../core/transf_list.h"
 #include "../core/tensor.h"
 #include "../tod/tod_compare.h"
 #include "bad_block_index_space.h"
@@ -142,8 +143,9 @@ private:
 	/**	\brief Checks that the same transformation corresponds to a
 			given %index
 	 **/
-	bool compare_orbits(const abs_index<N> &aidx, orbit<N, double> &o1,
-		orbit<N, double> &o2);
+	bool compare_transf(const abs_index<N> &aidx, orbit<N, double> &o1,
+		transf_list<N, double> &trl1, orbit<N, double> &o2,
+		transf_list<N, double> &trl2);
 
 	/**	\brief Compares two canonical blocks identified by an %index
 	 **/
@@ -245,9 +247,14 @@ bool btod_compare<N>::compare() {
 			abs_index<N> ai1(o1.get_abs_index(i1), bidims);
 			orbit<N, double> o2(ctrl2.req_const_symmetry(),
 				ai1.get_index());
-			abs_index<N> ai(o1.get_abs_index(i1), bidims);
-			if(!compare_canonical(ai, o1, o2)) return false;
-			if(!compare_orbits(ai, o1, o2)) return false;
+			transf_list<N, double> trl1(ctrl1.req_const_symmetry(),
+				ai1.get_index());
+			transf_list<N, double> trl2(ctrl2.req_const_symmetry(),
+				ai1.get_index());
+
+			if(!compare_canonical(ai1, o1, o2)) return false;
+			if(!compare_transf(ai1, o1, trl1, o2, trl2))
+				return false;
 		}
 	}
 
@@ -283,13 +290,21 @@ bool btod_compare<N>::compare_canonical(const abs_index<N> &acidx1,
 
 
 template<size_t N>
-bool btod_compare<N>::compare_orbits(const abs_index<N> &aidx,
-	orbit<N, double> &o1, orbit<N, double> &o2) {
+bool btod_compare<N>::compare_transf(const abs_index<N> &aidx,
+	orbit<N, double> &o1, transf_list<N, double> &trl1,
+	orbit<N, double> &o2, transf_list<N, double> &trl2) {
 
-	const transf<N, double> &tr1 = o1.get_transf(aidx.get_abs_index());
-	const transf<N, double> &tr2 = o2.get_transf(aidx.get_abs_index());
+	bool diff = false;
+	for(typename transf_list<N, double>::iterator i = trl1.begin();
+		!diff && i != trl1.end(); i++) {
+		diff = !trl2.is_found(trl1.get_transf(i));
+	}
+	for(typename transf_list<N, double>::iterator i = trl2.begin();
+		!diff && i != trl2.end(); i++) {
+		diff = !trl1.is_found(trl2.get_transf(i));
+	}
 
-	if(tr1 != tr2) {
+	if(diff) {
 
 		m_diff.kind = diff::DIFF_TRANSF;
 		m_diff.bidx = aidx.get_index();
