@@ -2,7 +2,7 @@
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_DIAG_EVAL_FUNCTOR_H
 
 #include "../../btod/btod_diag.h"
-#include "../expr/anon_eval.h"
+#include "../expr/direct_eval.h"
 #include "diag_core.h"
 #include "diag_subexpr_label_builder.h"
 #include "diag_params_builder.h"
@@ -27,14 +27,14 @@ public:
 	//!	Expression core type of A
 	typedef E1 core_a_t;
 
-	//!	Anonymous evaluator type of A
-	typedef anon_eval<k_ordera, T, core_a_t> anon_eval_a_t;
+	//!	Direct evaluator type of A
+	typedef direct_eval<k_ordera, T, core_a_t> eval_a_t;
 
 	//!	Sub-expression labels
 	typedef diag_subexpr_label_builder<N, M> subexpr_label_t;
 
 private:
-	anon_eval_a_t m_eval_a; //!< Anonymous evaluator for the sub-expression
+	eval_a_t m_eval_a; //!< Direct evaluator for the sub-expression
 	permutation<k_ordera> m_invperm_a;
 	diag_params_builder<N, M> m_params_bld; //!< Parameters builder
 	btod_diag<N, M> *m_op; //!< Diagonal extraction operation

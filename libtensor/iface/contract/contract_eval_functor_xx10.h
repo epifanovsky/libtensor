@@ -35,8 +35,8 @@ public:
 	//!	Expression core type of B
 	typedef typename E2::core_t core_b_t;
 
-	//!	Anonymous evaluator type of A
-	typedef anon_eval<k_ordera, T, core_a_t> anon_eval_a_t;
+	//!	Direct evaluator type of A
+	typedef direct_eval<k_ordera, T, core_a_t> eval_a_t;
 
 	//!	Evaluating container type of B
 	typedef typename expr<k_orderb, T, core_b_t>::eval_container_t
@@ -46,7 +46,7 @@ public:
 	typedef contract_subexpr_labels<N, M, K, T, E1, E2> subexpr_labels_t;
 
 private:
-	anon_eval_a_t m_eval_a; //!< Anonymous evaluator for sub-expression A
+	eval_a_t m_eval_a; //!< Anonymous evaluator for sub-expression A
 	permutation<k_ordera> m_invperm_a;
 	eval_container_b_t m_eval_b; //!< Container for tensor B
 	arg<k_orderb, T, tensor_tag> m_arg_b; //!< Tensor argument for B
