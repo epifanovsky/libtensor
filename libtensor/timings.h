@@ -27,7 +27,7 @@ namespace libtensor {
 template<typename T>
 class timings {
 private:
-	typedef std::map<std::string, timer*> map_t; 
+	typedef std::multimap<std::string, timer*> map_t; 
 	typedef std::pair<std::string, timer*> pair_t;
 
 public:
@@ -81,13 +81,7 @@ void timings<T>::start_timer(const std::string &name) {
 
 	map_t &timers = libvmm::tls<map_t>::get_instance().get();
 	timer *t = new timer;
-	std::pair<typename map_t::iterator, bool> r =
-		timers.insert(pair_t(id, t));
-	if(!r.second) {
-		delete t;
-		throw_exc("timings<T>", "start_timer(const std::string&)",
-			"Duplicate timer.");		
-	}
+	timers.insert(pair_t(id, t));
 	t->start();
 
 #endif // LIBTENSOR_TIMINGS
@@ -98,7 +92,9 @@ template<typename T>
 inline void timings<T>::stop_timer() {
 
 #ifdef LIBTENSOR_TIMINGS
+
 	stop_timer("");
+
 #endif // LIBTENSOR_TIMINGS
 }
 
