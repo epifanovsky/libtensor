@@ -200,68 +200,76 @@ void btod_diag<N, M>::compute_block(tensor_i<k_orderb, double> &blk,
 
 	btod_diag<N, M>::start_timer();
 
-	block_tensor_ctrl<N, double> ctrla(m_bta);
-	dimensions<N> bidimsa = m_bta.get_bis().get_block_index_dims();
+	try {
 
-	//	Build ia from ib
-	//
-	sequence<k_ordera, size_t> map(0);
-	size_t j = 0, jd; // Current index, index on diagonal
-	bool b = false;
-	for(size_t i = 0; i < k_ordera; i++) {
-		if(m_msk[i]) {
-			if(!b) { map[i] = jd = j++; b = true; }
-			else { map[i] = jd; }
-		} else {
-			map[i] = j++;
+		block_tensor_ctrl<N, double> ctrla(m_bta);
+		dimensions<N> bidimsa = m_bta.get_bis().get_block_index_dims();
+
+		//	Build ia from ib
+		//
+		sequence<k_ordera, size_t> map(0);
+		size_t j = 0, jd; // Current index, index on diagonal
+		bool b = false;
+		for(size_t i = 0; i < k_ordera; i++) {
+			if(m_msk[i]) {
+				if(!b) { map[i] = jd = j++; b = true; }
+				else { map[i] = jd; }
+			} else {
+				map[i] = j++;
+			}
 		}
+		index<k_ordera> ia;
+		index<k_orderb> ib2(ib);
+		permutation<k_orderb> pinvb(m_perm, true);
+		ib2.permute(pinvb);
+		for(size_t i = 0; i < k_ordera; i++) ia[i] = ib2[map[i]];
+
+		//	Find canonical index cia, transformation cia->ia
+		//
+		orbit<k_ordera, double> oa(ctrla.req_const_symmetry(), ia);
+		abs_index<k_ordera> acia(oa.get_abs_canonical_index(), bidimsa);
+		const transf<k_ordera, double> &tra = oa.get_transf(ia);
+		permutation<k_ordera> pinva(tra.get_perm(), true);
+
+		//	Build new diagonal mask and permutation in b
+		//
+		mask<k_ordera> m1(m_msk), m2(m_msk);
+		sequence<k_ordera, size_t> map1(map), map2(map);
+		m2.permute(pinva);
+		map2.permute(pinva);
+
+		sequence<N - M, size_t> seq1(0), seq2(0);
+		sequence<k_orderb, size_t> seqb1(0), seqb2(0);
+		for(register size_t i = 0, j1 = 0, j2 = 0; i < k_ordera; i++) {
+			if(!m1[i]) seq1[j1++] = map1[i];
+			if(!m2[i]) seq2[j2++] = map2[i];
+		}
+		bool b1 = false, b2 = false;
+		for(register size_t i = 0, j1 = 0, j2 = 0; i < k_orderb; i++) {
+			if(m1[i] && !b1) { seqb1[i] = k_orderb; b1 = true; }
+			else { seqb1[i] = seq1[j1++]; }
+			if(m2[i] && !b2) { seqb2[i] = k_orderb; b2 = true; }
+			else { seqb2[i] = seq2[j2++]; }
+		}
+
+		permutation_builder<k_orderb> pb(seqb2, seqb1);
+		permutation<k_orderb> permb(pb.get_perm());
+		permb.permute(m_perm);
+		permb.permute(trb.get_perm());
+
+		//	Invoke the tensor operation
+		//
+		tensor_i<k_ordera, double> &blka = ctrla.req_block(acia.get_index());
+		double k = m_c * c * trb.get_coeff() / tra.get_coeff();
+		if(zero) tod_diag<N, M>(blka, m2, permb, k).perform(blk);
+		else tod_diag<N, M>(blka, m2, permb, k).perform(blk, 1.0);
+		ctrla.ret_block(acia.get_index());
+
 	}
-	index<k_ordera> ia;
-	index<k_orderb> ib2(ib);
-	permutation<k_orderb> pinvb(m_perm, true);
-	ib2.permute(pinvb);
-	for(size_t i = 0; i < k_ordera; i++) ia[i] = ib2[map[i]];
-
-	//	Find canonical index cia, transformation cia->ia
-	//
-	orbit<k_ordera, double> oa(ctrla.req_const_symmetry(), ia);
-	abs_index<k_ordera> acia(oa.get_abs_canonical_index(), bidimsa);
-	const transf<k_ordera, double> &tra = oa.get_transf(ia);
-	permutation<k_ordera> pinva(tra.get_perm(), true);
-
-	//	Build new diagonal mask and permutation in b
-	//
-	mask<k_ordera> m1(m_msk), m2(m_msk);
-	sequence<k_ordera, size_t> map1(map), map2(map);
-	m2.permute(pinva);
-	map2.permute(pinva);
-
-	sequence<N - M, size_t> seq1(0), seq2(0);
-	sequence<k_orderb, size_t> seqb1(0), seqb2(0);
-	for(register size_t i = 0, j1 = 0, j2 = 0; i < k_ordera; i++) {
-		if(!m1[i]) seq1[j1++] = map1[i];
-		if(!m2[i]) seq2[j2++] = map2[i];
+	catch (...) {
+		btod_diag<N, M>::stop_timer();
+		throw;
 	}
-	bool b1 = false, b2 = false;
-	for(register size_t i = 0, j1 = 0, j2 = 0; i < k_orderb; i++) {
-		if(m1[i] && !b1) { seqb1[i] = k_orderb; b1 = true; }
-		else { seqb1[i] = seq1[j1++]; }
-		if(m2[i] && !b2) { seqb2[i] = k_orderb; b2 = true; }
-		else { seqb2[i] = seq2[j2++]; }
-	}
-
-	permutation_builder<k_orderb> pb(seqb2, seqb1);
-	permutation<k_orderb> permb(pb.get_perm());
-	permb.permute(m_perm);
-	permb.permute(trb.get_perm());
-
-	//	Invoke the tensor operation
-	//
-	tensor_i<k_ordera, double> &blka = ctrla.req_block(acia.get_index());
-	double k = m_c * c * trb.get_coeff() / tra.get_coeff();
-	if(zero) tod_diag<N, M>(blka, m2, permb, k).perform(blk);
-	else tod_diag<N, M>(blka, m2, permb, k).perform(blk, 1.0);
-	ctrla.ret_block(acia.get_index());
 
 	btod_diag<N, M>::stop_timer();
 
