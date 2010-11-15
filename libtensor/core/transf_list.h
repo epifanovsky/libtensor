@@ -66,8 +66,8 @@ public:
 	//@}
 
 private:
-	void make_list(const symmetry<N, T> &sym, const index<N> &idx,
-		const transf<N, T> &tr);
+	void make_list(const index<N> &idx0, const symmetry<N, T> &sym,
+		const index<N> &idx, const transf<N, T> &tr);
 
 };
 
@@ -80,7 +80,7 @@ template<size_t N, typename T>
 transf_list<N, T>::transf_list(const symmetry<N, T> &sym, const index<N> &idx) {
 
 	transf<N, T> tr0;
-	make_list(sym, idx, tr0);
+	make_list(idx, sym, idx, tr0);
 }
 
 
@@ -93,12 +93,15 @@ bool transf_list<N, T>::is_found(const transf<N, T> &tr) const {
 
 
 template<size_t N, typename T>
-void transf_list<N, T>::make_list(const symmetry<N, T> &sym,
-	const index<N> &idx, const transf<N, T> &tr) {
+void transf_list<N, T>::make_list(const index<N> &idx0,
+	const symmetry<N, T> &sym, const index<N> &idx,
+	const transf<N, T> &tr) {
 
-	if(is_found(tr)) return;
+	if(idx0.equals(idx)) {
 
-	m_trlist.push_back(tr);
+		if(is_found(tr)) return;
+		m_trlist.push_back(tr);
+	}
 
 	for(typename symmetry<N, T>::iterator iset = sym.begin();
 		iset != sym.end(); iset++) {
@@ -112,7 +115,7 @@ void transf_list<N, T>::make_list(const symmetry<N, T> &sym,
 			index<N> idx2(idx);
 			transf<N, T> tr2(tr);
 			elem.apply(idx2, tr2);
-			if(idx2.equals(idx)) make_list(sym, idx2, tr2);
+			make_list(idx0, sym, idx2, tr2);
 		}
 	}
 }

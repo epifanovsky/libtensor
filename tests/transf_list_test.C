@@ -1,6 +1,7 @@
 #include <sstream>
 #include <libtensor/core/transf_list.h>
 #include <libtensor/btod/transf_double.h>
+#include <libtensor/symmetry/se_part.h>
 #include <libtensor/symmetry/se_perm.h>
 #include "transf_list_test.h"
 
@@ -11,6 +12,7 @@ void transf_list_test::perform() throw(libtest::test_exception) {
 
 	test_1();
 	test_2();
+	test_3();
 }
 
 
@@ -168,6 +170,71 @@ void transf_list_test::test_2() throw(libtest::test_exception) {
 	index<2> i00, i01, i10, i11;
 	i10[0] = 1; i01[1] = 1;
 	i11[0] = 1; i11[1] = 1;
+	transf_list<2, double> trl00(sym, i00), trl01(sym, i01),
+		trl10(sym, i10), trl11(sym, i11);
+
+	//	Check against the reference
+
+	std::string s;
+	s = trlist_compare(testname, i00, trl00, trlist00_ref);
+	if(!s.empty()) fail_test(testname, __FILE__, __LINE__, s.c_str());
+	s = trlist_compare(testname, i01, trl01, trlist01_ref);
+	if(!s.empty()) fail_test(testname, __FILE__, __LINE__, s.c_str());
+	s = trlist_compare(testname, i10, trl10, trlist01_ref);
+	if(!s.empty()) fail_test(testname, __FILE__, __LINE__, s.c_str());
+	s = trlist_compare(testname, i11, trl11, trlist00_ref);
+	if(!s.empty()) fail_test(testname, __FILE__, __LINE__, s.c_str());
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\brief Tests transformation lists for diagonal and non-diagonal blocks
+		of a two-index tensor with partition symmetry.
+ **/
+void transf_list_test::test_3() throw(libtest::test_exception) {
+
+	static const char *testname = "transf_list_test::test_3()";
+
+	try {
+
+	index<2> i1, i2;
+	i2[0] = 2; i2[1] = 2;
+	mask<2> msk;
+	msk[0] = true; msk[1] = true;
+	dimensions<2> dims(index_range<2>(i1, i2));
+	block_index_space<2> bis(dims);
+	bis.split(msk, 1);
+	symmetry<2, double> sym(bis);
+
+	index<2> i00, i01, i10, i11;
+	i10[0] = 1; i01[1] = 1;
+	i11[0] = 1; i11[1] = 1;
+
+	se_part<2, double> se1(bis, msk, 2);
+	se1.add_map(i00, i01, true);
+	se1.add_map(i01, i10, permutation<2>().permute(0, 1), true);
+	se1.add_map(i10, i11, true);
+	sym.insert(se1);
+
+	//	Reference lists
+
+	transf<2, double> trref;
+	std::list< transf<2, double> > trlist00_ref, trlist01_ref;
+
+	trref.reset();
+	trlist00_ref.push_back(trref);
+	trref.reset();
+	trref.permute(permutation<2>().permute(0, 1));
+	trlist00_ref.push_back(trref);
+
+	trref.reset();
+	trlist01_ref.push_back(trref);
+
+	//	Make transformation lists
+
 	transf_list<2, double> trl00(sym, i00), trl01(sym, i01),
 		trl10(sym, i10), trl11(sym, i11);
 
