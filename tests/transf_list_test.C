@@ -13,6 +13,7 @@ void transf_list_test::perform() throw(libtest::test_exception) {
 	test_1();
 	test_2();
 	test_3();
+//	test_4();
 }
 
 
@@ -191,12 +192,85 @@ void transf_list_test::test_2() throw(libtest::test_exception) {
 }
 
 
-/**	\brief Tests transformation lists for diagonal and non-diagonal blocks
-		of a two-index tensor with partition symmetry.
+/**	\brief Tests transformation lists for a diagonal block of a three-index
+		tensor with S3(+) symmetry (indirect relation to self).
  **/
 void transf_list_test::test_3() throw(libtest::test_exception) {
 
 	static const char *testname = "transf_list_test::test_3()";
+
+	try {
+
+	index<3> i1, i2;
+	i2[0] = 2; i2[1] = 2; i2[2] = 2;
+	mask<3> msk;
+	msk[0] = true; msk[1] = true; msk[2] = true;
+	dimensions<3> dims(index_range<3>(i1, i2));
+	block_index_space<3> bis(dims);
+	bis.split(msk, 1);
+	symmetry<3, double> sym(bis);
+
+	se_perm<3, double> se1(permutation<3>().permute(0, 1).permute(1, 2),
+		true);
+	se_perm<3, double> se2(permutation<3>().permute(1, 2), true);
+	sym.insert(se1);
+	sym.insert(se2);
+
+	//	Reference lists
+
+	transf<3, double> trref;
+	std::list< transf<3, double> > trlist000_ref, trlist010_ref;
+
+	trref.reset();
+	trlist000_ref.push_back(trref);
+	trref.reset();
+	trref.permute(permutation<3>().permute(0, 1));
+	trlist000_ref.push_back(trref);
+	trref.reset();
+	trref.permute(permutation<3>().permute(0, 2));
+	trlist000_ref.push_back(trref);
+	trref.reset();
+	trref.permute(permutation<3>().permute(1, 2));
+	trlist000_ref.push_back(trref);
+	trref.reset();
+	trref.permute(permutation<3>().permute(0, 1).permute(1, 2));
+	trlist000_ref.push_back(trref);
+	trref.reset();
+	trref.permute(permutation<3>().permute(1, 2).permute(0, 1));
+	trlist000_ref.push_back(trref);
+
+	trref.reset();
+	trlist010_ref.push_back(trref);
+	trref.reset();
+	trref.permute(permutation<3>().permute(0, 2));
+	trlist010_ref.push_back(trref);
+
+	//	Make transformation lists
+
+	index<3> i000, i010;
+	i010[1] = 1;
+	transf_list<3, double> trl000(sym, i000), trl010(sym, i010);
+
+	//	Check against the reference
+
+	std::string s;
+	s = trlist_compare(testname, i000, trl000, trlist000_ref);
+	if(!s.empty()) fail_test(testname, __FILE__, __LINE__, s.c_str());
+	s = trlist_compare(testname, i010, trl010, trlist010_ref);
+	if(!s.empty()) fail_test(testname, __FILE__, __LINE__, s.c_str());
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\brief Tests transformation lists for diagonal and non-diagonal blocks
+		of a two-index tensor with partition symmetry.
+ **/
+void transf_list_test::test_4() throw(libtest::test_exception) {
+
+	static const char *testname = "transf_list_test::test_4()";
 
 	try {
 
@@ -214,9 +288,9 @@ void transf_list_test::test_3() throw(libtest::test_exception) {
 	i11[0] = 1; i11[1] = 1;
 
 	se_part<2, double> se1(bis, msk, 2);
-	se1.add_map(i00, i01, true);
+	se1.add_map(i00, i11, true);
 	se1.add_map(i01, i10, permutation<2>().permute(0, 1), true);
-	se1.add_map(i10, i11, true);
+	se1.add_map(i00, i01, true);
 	sym.insert(se1);
 
 	//	Reference lists

@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <list>
+#include <vector>
 #include "abs_index.h"
 #include "symmetry.h"
 #include "transf.h"
@@ -67,7 +68,8 @@ public:
 
 private:
 	void make_list(const index<N> &idx0, const symmetry<N, T> &sym,
-		const index<N> &idx, const transf<N, T> &tr);
+		const dimensions<N> &bidims, const index<N> &idx,
+		const transf<N, T> &tr, std::vector<char> &chk);
 
 };
 
@@ -79,8 +81,10 @@ const char *transf_list<N, T>::k_clazz = "transf_list<N, T>";
 template<size_t N, typename T>
 transf_list<N, T>::transf_list(const symmetry<N, T> &sym, const index<N> &idx) {
 
+	dimensions<N> bidims = sym.get_bis().get_block_index_dims();
 	transf<N, T> tr0;
-	make_list(idx, sym, idx, tr0);
+	std::vector<char> chk(bidims.get_size(), 0);
+	make_list(idx, sym, bidims, idx, tr0, chk);
 }
 
 
@@ -94,14 +98,20 @@ bool transf_list<N, T>::is_found(const transf<N, T> &tr) const {
 
 template<size_t N, typename T>
 void transf_list<N, T>::make_list(const index<N> &idx0,
-	const symmetry<N, T> &sym, const index<N> &idx,
-	const transf<N, T> &tr) {
+	const symmetry<N, T> &sym, const dimensions<N> &bidims,
+	const index<N> &idx, const transf<N, T> &tr, std::vector<char> &chk) {
+
+	abs_index<N> aidx(idx, bidims);
 
 	if(idx0.equals(idx)) {
 
 		if(is_found(tr)) return;
 		m_trlist.push_back(tr);
+	} else {
+		if(chk[aidx.get_abs_index()]) return;
 	}
+
+	chk[aidx.get_abs_index()] = 1;
 
 	for(typename symmetry<N, T>::iterator iset = sym.begin();
 		iset != sym.end(); iset++) {
@@ -115,7 +125,7 @@ void transf_list<N, T>::make_list(const index<N> &idx0,
 			index<N> idx2(idx);
 			transf<N, T> tr2(tr);
 			elem.apply(idx2, tr2);
-			make_list(idx0, sym, idx2, tr2);
+			make_list(idx0, sym, bidims, idx2, tr2, chk);
 		}
 	}
 }
