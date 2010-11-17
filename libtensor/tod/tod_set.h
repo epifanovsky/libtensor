@@ -58,7 +58,6 @@ void tod_set<N>::perform(tensor_i<N,double> &t) throw(exception) {
 	tensor_ctrl<N,double> tctrl(t);
 	double *d = tctrl.req_dataptr();
 	size_t sz = t.get_dims().get_size();
-	#pragma unroll(8)
 	for(size_t i=0; i<sz; i++) d[i] = m_val;
 	tctrl.ret_dataptr(d);
 }

@@ -222,7 +222,6 @@ const char *permutation<N>::k_clazz = "permutation<N>";
 template<size_t N>
 inline permutation<N>::permutation() {
 
-	#pragma unroll(N)
 	for(register size_t i = 0; i < N; i++) m_idx[i] = i;
 }
 
@@ -231,10 +230,8 @@ template<size_t N>
 inline permutation<N>::permutation(const permutation<N> &p, bool b_inverse) {
 
 	if(b_inverse) {
-		#pragma unroll(N)
 		for(register size_t i = 0; i < N; i++) m_idx[p.m_idx[i]] = i;
 	} else {
-		#pragma unroll(N)
 		for(register size_t i = 0; i < N; i++) m_idx[i] = p.m_idx[i];
 	}
 }
@@ -244,9 +241,7 @@ template<size_t N>
 inline permutation<N> &permutation<N>::permute(const permutation<N> &p) {
 
 	size_t idx_cp[N];
-	#pragma unroll(N)
 	for(register size_t i = 0; i < N; i++) idx_cp[i] = m_idx[i];
-	#pragma unroll(N)
 	for(register size_t i = 0; i < N; i++) m_idx[i] = idx_cp[p.m_idx[i]];
 	return *this;
 }
@@ -274,9 +269,7 @@ template<size_t N>
 inline permutation<N> &permutation<N>::invert() {
 
 	size_t idx_cp[N];
-	#pragma unroll(N)
 	for(register size_t i = 0; i < N; i++) idx_cp[i] = m_idx[i];
-	#pragma unroll(N)
 	for(register size_t i = 0; i < N; i++) m_idx[idx_cp[i]] = i;
 	return *this;
 }
@@ -284,7 +277,7 @@ inline permutation<N> &permutation<N>::invert() {
 
 template<size_t N>
 inline void permutation<N>::reset() {
-	#pragma unroll(N)
+
 	for(register size_t i = 0; i < N; i++) m_idx[i] = i;
 }
 
@@ -307,7 +300,6 @@ inline void permutation<N>::apply_mask(const mask<N> &msk) {
 template<size_t N>
 inline bool permutation<N>::is_identity() const {
 
-	#pragma unroll(N)
 	for(register size_t i = 0; i < N; i++)
 		if(m_idx[i] != i) return false;
 	return true;
@@ -318,7 +310,6 @@ template<size_t N>
 inline bool permutation<N>::equals(const permutation<N> &p) const {
 
 	if(&p == this) return true;
-	#pragma unroll(N)
 	for(register size_t i = 0; i < N; i++)
 		if(m_idx[i] != p.m_idx[i]) return false;
 	return true;
@@ -335,9 +326,7 @@ void permutation<N>::apply(size_t n, T *obj) const throw(exception) {
 	}
 #endif // LIBTENSOR_DEBUG
 	T buf[N];
-	#pragma unroll(N)
 	for(register size_t i = 0; i < N; i++) buf[i] = obj[i];
-	#pragma unroll(N)
 	for(register size_t i = 0; i < N; i++) obj[i] = buf[m_idx[i]];
 }
 
@@ -346,9 +335,7 @@ template<size_t N> template<typename T>
 void permutation<N>::apply(T (&seq)[N]) const {
 
 	T buf[N];
-	#pragma unroll(N)
 	for(register size_t i = 0; i < N; i++) buf[i] = seq[i];
-	#pragma unroll(N)
 	for(register size_t i = 0; i < N; i++) seq[i] = buf[m_idx[i]];
 }
 
@@ -363,7 +350,7 @@ void permutation<N>::apply(const size_t n, const T *obj_from, T *obj_to) const
 			"Sequence has a wrong length");
 	}
 #endif // LIBTENSOR_DEBUG
-	#pragma unroll(N)
+
 	for(register size_t i = 0; i < N; i++) obj_to[i] = obj_from[m_idx[i]];
 }
 
@@ -385,7 +372,6 @@ inline bool permutation<N>::operator!=(const permutation<N> &p) const {
 template<size_t N>
 inline bool permutation<N>::operator<(const permutation<N> &p) const {
 
-	#pragma unroll(N)
 	for(register size_t i = 0; i < N; i++) {
 		if(m_idx[i] != p.m_idx[i]) return m_idx[i] < p.m_idx[i];
 	}
