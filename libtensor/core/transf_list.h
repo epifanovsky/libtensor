@@ -85,6 +85,17 @@ transf_list<N, T>::transf_list(const symmetry<N, T> &sym, const index<N> &idx) {
 	transf<N, T> tr0;
 	std::vector<char> chk(bidims.get_size(), 0);
 	make_list(idx, sym, bidims, idx, tr0, chk);
+
+	//	Augment the list to a transformation group
+	//	(insert missing transformations)
+	//
+	for(iterator i = m_trlist.begin(); i != m_trlist.end(); i++)
+	for(iterator j = m_trlist.begin(); j != m_trlist.end(); j++) {
+		transf<N, T> tr1(*i), tr2(*j);
+		tr1.transform(tr2);
+		if(is_found(tr1)) continue;
+		m_trlist.push_back(tr1);
+	}
 }
 
 
