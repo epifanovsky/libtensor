@@ -14,6 +14,8 @@ void transf_list_test::perform() throw(libtest::test_exception) {
 	test_2();
 	test_3();
 //	test_4();
+	test_5a();
+	test_5b();
 }
 
 
@@ -329,5 +331,124 @@ void transf_list_test::test_4() throw(libtest::test_exception) {
 	}
 }
 
+/**	\brief Tests transformation lists for non-diagonal blocks
+		of a two-index tensor with S2 (+) and partition symmetry.
+ **/
+void transf_list_test::test_5a() throw(libtest::test_exception) {
+
+	static const char *testname = "transf_list_test::test_5a()";
+
+	try {
+
+	index<2> i1, i2;
+	i2[0] = 2; i2[1] = 2;
+	mask<2> msk;
+	msk[0] = true; msk[1] = true;
+	dimensions<2> dims(index_range<2>(i1, i2));
+	block_index_space<2> bis(dims);
+	bis.split(msk, 1);
+
+	se_perm<2, double> se(permutation<2>().permute(0, 1), true);
+
+	index<2> i00, i01, i10, i11;
+	i10[0] = 1; i01[1] = 1;
+	i11[0] = 1; i11[1] = 1;
+
+	se_part<2, double> sp(bis, msk, 2);
+	sp.add_map(i00, i01, true);
+	sp.add_map(i01, i10, true);
+	sp.add_map(i10, i11, true);
+
+	symmetry<2, double> sym1(bis), sym2(bis);
+	sym1.insert(se); sym1.insert(sp);
+	sym2.insert(sp); sym2.insert(se);
+
+	transf_list<2, double> trl1(sym1, i01), trl2(sym2, i01);
+	for (transf_list<2, double>::iterator it = trl1.begin();
+			it != trl1.end(); it++) {
+
+		const transf<2, double> &tr = trl1.get_transf(it);
+		if (! trl2.is_found(tr)) {
+			std::ostringstream oss;
+			oss << "Transformation {" << tr.get_perm() << ", "
+					<< tr.get_coeff()  << "}";
+			fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
+		}
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+/**	\brief Tests transformation lists for non-diagonal blocks
+		of a four-index tensor with S2 x S2 (+) and partition symmetry.
+ **/
+void transf_list_test::test_5b() throw(libtest::test_exception) {
+
+	static const char *testname = "transf_list_test::test_5b()";
+
+	try {
+
+	index<4> i1, i2;
+	i2[0] = 2; i2[1] = 2; i2[2] = 2; i2[3] = 2;
+	mask<4> msk;
+	msk[0] = true; msk[1] = true; msk[2] = true; msk[3] = true;
+	dimensions<4> dims(index_range<4>(i1, i2));
+	block_index_space<4> bis(dims);
+	bis.split(msk, 1);
+
+	se_perm<4, double> se1(permutation<4>().permute(0, 1), true);
+	se_perm<4, double> se2(permutation<4>().permute(2, 3), true);
+
+	index<4> i0000, i0001, i0010, i0011, i0100, i0101, i0110, i0111,
+		i1000, i1001, i1010, i1011, i1100, i1101, i1110, i1111;
+	i1110[0] = 1; i1110[1] = 1; i1110[2] = 1; i0001[3] = 1;
+	i1101[0] = 1; i1101[1] = 1; i0010[2] = 1; i1101[3] = 1;
+	i1100[0] = 1; i1100[1] = 1; i0011[2] = 1; i0011[3] = 1;
+	i1011[0] = 1; i0100[1] = 1; i1011[2] = 1; i1011[3] = 1;
+	i1010[0] = 1; i0101[1] = 1; i1010[2] = 1; i0101[3] = 1;
+	i1001[0] = 1; i0110[1] = 1; i0110[2] = 1; i1001[3] = 1;
+	i1000[0] = 1; i0111[1] = 1; i0111[2] = 1; i0111[3] = 1;
+	i1111[0] = 1; i1111[1] = 1; i1111[2] = 1; i1111[3] = 1;
+
+	se_part<4, double> sp(bis, msk, 2);
+	sp.add_map(i0000, i0001, true);
+	sp.add_map(i0001, i0010, true);
+	sp.add_map(i0010, i0011, true);
+	sp.add_map(i0011, i0100, true);
+	sp.add_map(i0100, i0101, true);
+	sp.add_map(i0101, i0110, true);
+	sp.add_map(i0110, i0111, true);
+	sp.add_map(i0111, i1000, true);
+	sp.add_map(i1000, i1001, true);
+	sp.add_map(i1001, i1010, true);
+	sp.add_map(i1010, i1011, true);
+	sp.add_map(i1011, i1100, true);
+	sp.add_map(i1100, i1101, true);
+	sp.add_map(i1101, i1110, true);
+	sp.add_map(i1110, i1111, true);
+
+	symmetry<4, double> sym1(bis), sym2(bis);
+	sym1.insert(se1); sym1.insert(se2); sym1.insert(sp);
+	sym2.insert(sp); sym2.insert(se1); sym2.insert(se2);
+
+	transf_list<4, double> trl1(sym1, i0101), trl2(sym2, i0101);
+	for (transf_list<4, double>::iterator it = trl1.begin();
+			it != trl1.end(); it++) {
+
+		const transf<4, double> &tr = trl1.get_transf(it);
+		if (! trl2.is_found(tr)) {
+			std::ostringstream oss;
+			oss << "Transformation {" << tr.get_perm() << ", "
+					<< tr.get_coeff()  << "}";
+			fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
+		}
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
 
 } // namespace libtensor
