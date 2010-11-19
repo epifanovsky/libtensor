@@ -86,17 +86,6 @@ transf_list<N, T>::transf_list(const symmetry<N, T> &sym, const index<N> &idx) {
 	std::vector<char> chk(bidims.get_size(), 0);
 
 	make_list(idx, sym, bidims, idx, tr0, chk);
-
-	//	Augment the list to a transformation group
-	//	(insert missing transformations)
-	//
-//	for(iterator i = m_trlist.begin(); i != m_trlist.end(); i++)
-//	for(iterator j = m_trlist.begin(); j != m_trlist.end(); j++) {
-//		transf<N, T> tr1(*i), tr2(*j);
-//		tr1.transform(tr2);
-//		if(is_found(tr1)) continue;
-//		m_trlist.push_back(tr1);
-//	}
 }
 
 
@@ -116,10 +105,10 @@ void transf_list<N, T>::make_list(const index<N> &idx0,
 	abs_index<N> aidx(idx, bidims);
 	if(idx0.equals(idx)) {
 
-		if(is_found(tr)) { return; }
+		if(is_found(tr)) return;
 		m_trlist.push_back(tr);
 	} else {
-		if(chk[aidx.get_abs_index()]) { return; }
+		if(chk[aidx.get_abs_index()]) return;
 	}
 
 	chk[aidx.get_abs_index()] = 1;
@@ -139,6 +128,7 @@ void transf_list<N, T>::make_list(const index<N> &idx0,
 			make_list(idx0, sym, bidims, idx2, tr2, chk);
 		}
 	}
+
 	chk[aidx.get_abs_index()] = 0;
 }
 
