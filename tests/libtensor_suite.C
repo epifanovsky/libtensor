@@ -18,6 +18,7 @@ libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
 	add_test("immutable", m_utf_immutable);
 	add_test("index", m_utf_index);
 	add_test("index_range", m_utf_index_range);
+	add_test("mapped_block_tensor", m_utf_mapped_block_tensor);
 	add_test("mask", m_utf_mask);
 	add_test("mp_safe_tensor", m_utf_mp_safe_tensor);
 	add_test("orbit", m_utf_orbit);

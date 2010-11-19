@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include "../defs.h"
 #include "../exception.h"
+#include "../core/tensor_ctrl.h"
 #include "tod_additive.h"
 
 namespace libtensor {

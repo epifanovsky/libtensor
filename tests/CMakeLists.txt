@@ -13,6 +13,7 @@ set(SRC
 	immutable_test.C
 	index_test.C
 	index_range_test.C
+	mapped_block_tensor_test.C
 	mask_test.C
 	mp_safe_tensor_test.C
 	orbit_test.C
