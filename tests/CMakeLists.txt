@@ -2,6 +2,7 @@ set(SRC
 	libtensor_tests.C
 	libtensor_suite.C
 	abs_index_test.C
+	block_index_map_test.C
 	block_index_space_test.C
 	block_index_subspace_builder_test.C
 	block_map_test.C

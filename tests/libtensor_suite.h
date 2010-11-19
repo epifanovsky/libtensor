@@ -3,6 +3,7 @@
 
 #include <libtest/test_suite.h>
 #include "abs_index_test.h"
+#include "block_index_map_test.h"
 #include "block_index_space_test.h"
 #include "block_index_subspace_builder_test.h"
 #include "block_map_test.h"
@@ -38,6 +39,7 @@ namespace libtensor {
 
 	This suite runs the following tests:
 	\li libtensor::abs_index_test
+	\li libtensor::block_index_map_test
 	\li libtensor::block_index_space_test
 	\li libtensor::block_index_subspace_builder_test
 	\li libtensor::block_map_test
@@ -67,6 +69,7 @@ namespace libtensor {
 class libtensor_suite : public libtest::test_suite {
 private:
 	unit_test_factory<abs_index_test> m_utf_abs_index;
+	unit_test_factory<block_index_map_test> m_utf_block_index_map;
 	unit_test_factory<block_index_space_test> m_utf_block_index_space;
 	unit_test_factory<block_index_subspace_builder_test>
 		m_utf_block_index_subspace_builder;
