@@ -84,6 +84,7 @@ transf_list<N, T>::transf_list(const symmetry<N, T> &sym, const index<N> &idx) {
 	dimensions<N> bidims = sym.get_bis().get_block_index_dims();
 	transf<N, T> tr0;
 	std::vector<char> chk(bidims.get_size(), 0);
+
 	make_list(idx, sym, bidims, idx, tr0, chk);
 
 	//	Augment the list to a transformation group
@@ -113,7 +114,6 @@ void transf_list<N, T>::make_list(const index<N> &idx0,
 	const index<N> &idx, const transf<N, T> &tr, std::vector<char> &chk) {
 
 	abs_index<N> aidx(idx, bidims);
-
 	if(idx0.equals(idx)) {
 
 		if(is_found(tr)) return;

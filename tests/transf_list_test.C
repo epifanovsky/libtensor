@@ -375,6 +375,17 @@ void transf_list_test::test_5a() throw(libtest::test_exception) {
 			fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
 		}
 	}
+	for (transf_list<2, double>::iterator it = trl2.begin();
+			it != trl2.end(); it++) {
+
+		const transf<2, double> &tr = trl2.get_transf(it);
+		if (! trl1.is_found(tr)) {
+			std::ostringstream oss;
+			oss << "Transformation {" << tr.get_perm() << ", "
+					<< tr.get_coeff()  << "}";
+			fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
+		}
+	}
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
@@ -434,11 +445,38 @@ void transf_list_test::test_5b() throw(libtest::test_exception) {
 	sym2.insert(sp); sym2.insert(se1); sym2.insert(se2);
 
 	transf_list<4, double> trl1(sym1, i0101), trl2(sym2, i0101);
+
+//	std::cout << "Transformation list 1:";
+//	for (transf_list<4, double>::iterator it = trl1.begin();
+//			it != trl1.end(); it++) {
+//		const transf<4, double> &tr = trl1.get_transf(it);
+//		std::cout << " {" << tr.get_perm() << ", " << tr.get_coeff() << "}";
+//	}
+//	std::cout << std::endl;
+//	std::cout << "Transformation list 2:";
+//	for (transf_list<4, double>::iterator it = trl2.begin();
+//			it != trl2.end(); it++) {
+//		const transf<4, double> &tr = trl2.get_transf(it);
+//		std::cout << " {" << tr.get_perm() << ", " << tr.get_coeff() << "}";
+//	}
+//	std::cout << std::endl;
+
 	for (transf_list<4, double>::iterator it = trl1.begin();
 			it != trl1.end(); it++) {
 
 		const transf<4, double> &tr = trl1.get_transf(it);
 		if (! trl2.is_found(tr)) {
+			std::ostringstream oss;
+			oss << "Transformation {" << tr.get_perm() << ", "
+					<< tr.get_coeff()  << "}";
+			fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
+		}
+	}
+	for (transf_list<4, double>::iterator it = trl2.begin();
+			it != trl2.end(); it++) {
+
+		const transf<4, double> &tr = trl2.get_transf(it);
+		if (! trl1.is_found(tr)) {
 			std::ostringstream oss;
 			oss << "Transformation {" << tr.get_perm() << ", "
 					<< tr.get_coeff()  << "}";
