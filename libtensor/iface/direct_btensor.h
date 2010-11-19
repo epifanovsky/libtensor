@@ -7,6 +7,7 @@
 #include "../core/block_tensor_ctrl.h"
 #include "../core/direct_block_tensor.h"
 #include "btensor_i.h"
+#include "btensor_traits.h"
 #include "labeled_btensor.h"
 #include "labeled_btensor_expr.h"
 #include "expr/expr.h"
@@ -15,23 +16,12 @@
 
 namespace libtensor {
 
-template<typename T>
-struct direct_btensor_traits {
-	typedef T element_t;
-#ifdef LIBTENSOR_DEBUG
-	typedef libvmm::ec_allocator< T, libvmm::vm_allocator<T>,
-		libvmm::std_allocator<T> > allocator_t;
-#else // LIBTENSOR_DEBUG
-	typedef libvmm::vm_allocator<T> allocator_t;
-#endif // LIBTENSOR_DEBUG
-};
 
 /**	\brief User-friendly direct block %tensor
 
 	\ingroup libtensor_iface
  **/
-template<size_t N, typename T = double,
-	typename Traits = direct_btensor_traits<T> >
+template<size_t N, typename T = double, typename Traits = btensor_traits<T> >
 class direct_btensor : public btensor_i<N, T> {
 private:
 	typedef struct {

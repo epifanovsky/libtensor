@@ -12,20 +12,11 @@
 #include "../core/immutable.h"
 #include "bispace.h"
 #include "btensor_i.h"
+#include "btensor_traits.h"
 #include "labeled_btensor.h"
 
 namespace libtensor {
 
-template<typename T>
-struct btensor_traits {
-	typedef T element_t;
-#ifdef LIBTENSOR_DEBUG
-	typedef libvmm::ec_allocator< T, libvmm::vm_allocator<T>,
-		libvmm::std_allocator<T> > allocator_t;
-#else // LIBTENSOR_DEBUG
-	typedef libvmm::vm_allocator<T> allocator_t;
-#endif // LIBTENSOR_DEBUG
-};
 
 template<size_t N, typename T, typename Traits>
 class btensor_base : public btensor_i<N, T>, public immutable {

@@ -76,13 +76,29 @@ set(SRC_LINALG
 	linalg/linalg_ijkl_pliq_pjqk_x_test.C
 )
 
-file(GLOB SRC_BTOD_HEADERS btod/*.h)
+set(SRC_IFACE
+	iface/anon_eval_test.C
+	iface/bispace_expr_test.C
+	iface/bispace_test.C
+	iface/btensor_test.C
+	iface/contract_test.C
+	iface/diag_test.C
+	iface/direct_btensor_test.C
+	iface/direct_eval_test.C
+	iface/direct_product_test.C
+	iface/dirsum_test.C
+	iface/dot_product_test.C
+	iface/expr_test.C
+	iface/labeled_btensor_test.C
+	iface/letter_expr_test.C
+	iface/letter_test.C
+	iface/mapped_btensor_test.C
+	iface/symm_test.C
+	iface/trace_test.C
+)
+
 file(GLOB SRC_BTOD btod/*.C)
-file(GLOB SRC_IFACE_HEADERS iface/*.h)
-file(GLOB SRC_IFACE iface/*.C)
-file(GLOB SRC_SYMMETRY_HEADERS symmetry/*.h)
 file(GLOB SRC_SYMMETRY symmetry/*.C)
-file(GLOB SRC_TOD_HEADERS tod/*.h)
 file(GLOB SRC_TOD tod/*.C)
 
 set(TARGETS
@@ -96,11 +112,11 @@ set(TARGETS
 
 
 add_executable(libtensor_tests ${SRC})
-add_executable(libtensor_btod_tests ${SRC_BTOD} ${SRC_BTOD_HEADERS})
-add_executable(libtensor_iface_tests ${SRC_IFACE} ${SRC_IFACE_HEADERS})
+add_executable(libtensor_btod_tests ${SRC_BTOD})
+add_executable(libtensor_iface_tests ${SRC_IFACE})
 add_executable(libtensor_linalg_tests ${SRC_LINALG})
-add_executable(libtensor_symmetry_tests ${SRC_SYMMETRY} ${SRC_SYMMETRY_HEADERS})
-add_executable(libtensor_tod_tests ${SRC_TOD} ${SRC_TOD_HEADERS})
+add_executable(libtensor_symmetry_tests ${SRC_SYMMETRY})
+add_executable(libtensor_tod_tests ${SRC_TOD})
 
 include(${LIBTEST_DIR}/cmake/SetupLibTest.txt)
 
