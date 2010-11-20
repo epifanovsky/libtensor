@@ -5,7 +5,7 @@
 #include <sstream>
 #include <libtensor/version.h>
 #include <libtensor/mp/worker_pool.h>
-#include "libtensor_suite.h"
+#include "libtensor_core_suite.h"
 
 using namespace libtensor;
 using namespace std;
@@ -62,7 +62,7 @@ int main(int argc, char **argv) {
 		}
 
 		suite_handler handler;
-		libtensor_suite suite;
+		libtensor_core_suite suite;
 		suite.set_handler(&handler);
 
 		if(argc == 1) {

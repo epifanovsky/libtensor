@@ -6,8 +6,8 @@
 #include <libtensor/btod/btod_copy.h>
 #include <libtensor/btod/btod_contract2.h>
 #include <libtensor/btod/btod_random.h>
+#include "../compare_ref.h"
 #include "direct_block_tensor_test.h"
-#include "compare_ref.h"
 
 namespace libtensor {
 

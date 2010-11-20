@@ -1,34 +1,34 @@
-set(SRC
-	libtensor_tests.C
-	libtensor_suite.C
-	abs_index_test.C
-	block_index_map_test.C
-	block_index_space_test.C
-	block_index_subspace_builder_test.C
-	block_map_test.C
-	block_tensor_test.C
-	dimensions_test.C
-	direct_block_tensor_test.C
-	global_timings_test.C
-	immutable_test.C
-	index_test.C
-	index_range_test.C
-	mapped_block_tensor_test.C
-	mask_test.C
-	mp_safe_tensor_test.C
-	orbit_test.C
-	orbit_list_test.C
-	permutation_test.C
-	permutation_builder_test.C
-	sequence_test.C
-	symmetry_test.C
-	symmetry_element_set_test.C
-	task_batch_test.C
-	tensor_test.C
-	timer_test.C
-	timings_test.C
-	transf_list_test.C
-	version_test.C
+set(SRC_CORE
+	core/libtensor_core_tests.C
+	core/libtensor_core_suite.C
+	core/abs_index_test.C
+	core/block_index_map_test.C
+	core/block_index_space_test.C
+	core/block_index_subspace_builder_test.C
+	core/block_map_test.C
+	core/block_tensor_test.C
+	core/dimensions_test.C
+	core/direct_block_tensor_test.C
+	core/global_timings_test.C
+	core/immutable_test.C
+	core/index_test.C
+	core/index_range_test.C
+	core/mapped_block_tensor_test.C
+	core/mask_test.C
+	core/mp_safe_tensor_test.C
+	core/orbit_test.C
+	core/orbit_list_test.C
+	core/permutation_test.C
+	core/permutation_builder_test.C
+	core/sequence_test.C
+	core/symmetry_test.C
+	core/symmetry_element_set_test.C
+	core/task_batch_test.C
+	core/tensor_test.C
+	core/timer_test.C
+	core/timings_test.C
+	core/transf_list_test.C
+	core/version_test.C
 )
 
 set(SRC_LINALG
@@ -104,7 +104,7 @@ file(GLOB SRC_SYMMETRY symmetry/*.C)
 file(GLOB SRC_TOD tod/*.C)
 
 set(TARGETS
-	libtensor_tests
+	libtensor_core_tests
 	libtensor_btod_tests
 	libtensor_iface_tests
 	libtensor_linalg_tests
@@ -113,7 +113,7 @@ set(TARGETS
 )
 
 
-add_executable(libtensor_tests ${SRC})
+add_executable(libtensor_core_tests ${SRC_CORE})
 add_executable(libtensor_btod_tests ${SRC_BTOD})
 add_executable(libtensor_iface_tests ${SRC_IFACE})
 add_executable(libtensor_linalg_tests ${SRC_LINALG})

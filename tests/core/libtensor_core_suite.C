@@ -1,9 +1,10 @@
 #include <libtensor/libtensor.h>
-#include "libtensor_suite.h"
+#include "libtensor_core_suite.h"
 
 namespace libtensor {
 
-libtensor_suite::libtensor_suite() : libtest::test_suite("libtensor") {
+libtensor_core_suite::libtensor_core_suite() :
+	libtest::test_suite("libtensor_core") {
 
 	add_test("abs_index", m_utf_abs_index);
 	add_test("block_index_map", m_utf_block_index_map);

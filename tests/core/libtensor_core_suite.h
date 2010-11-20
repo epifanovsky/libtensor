@@ -1,5 +1,5 @@
-#ifndef LIBTENSOR_LIBTENSOR_SUITE_H
-#define LIBTENSOR_LIBTENSOR_SUITE_H
+#ifndef LIBTENSOR_LIBTENSOR_CORE_SUITE_H
+#define LIBTENSOR_LIBTENSOR_CORE_SUITE_H
 
 #include <libtest/test_suite.h>
 #include "abs_index_test.h"
@@ -68,7 +68,7 @@ namespace libtensor {
 	\li libtensor::transf_list_test
 	\li libtensor::version_test
 **/
-class libtensor_suite : public libtest::test_suite {
+class libtensor_core_suite : public libtest::test_suite {
 private:
 	unit_test_factory<abs_index_test> m_utf_abs_index;
 	unit_test_factory<block_index_map_test> m_utf_block_index_map;
@@ -102,10 +102,10 @@ private:
 
 public:
 	//!	Creates the suite
-	libtensor_suite();
+	libtensor_core_suite();
 };
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_LIBTENSOR_SUITE_H
+#endif // LIBTENSOR_LIBTENSOR_CORE_SUITE_H
 
