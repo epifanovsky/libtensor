@@ -77,6 +77,8 @@ set(SRC_LINALG
 )
 
 set(SRC_IFACE
+	iface/libtensor_iface_tests.C
+	iface/libtensor_iface_suite.C
 	iface/anon_eval_test.C
 	iface/bispace_expr_test.C
 	iface/bispace_test.C

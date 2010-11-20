@@ -130,30 +130,30 @@ void mapped_btensor_test::test_2() throw(libtest::test_exception) {
 
 	try {
 
-	bispace<1> si(5), sa(6);
-	si.split(2); sa.split(3).split(4);
-	bispace<2> sia(si|sa), sai(sa|si);
+	bispace<1> si(6);
+	si.split(2).split(4);
+	bispace<2> sij(si|si), sji(sij);
 
 	permutation<2> perm;
 	perm.permute(0, 1);
 
-	btensor<2> bt1(sia), bt2(sai);
+	btensor<2> bt1(sij), bt2(sji);
 	btod_random<2>().perform(bt1);
 
-	letter i, a;
+	letter i, j;
 
-	block_index_map_perm<2> bimap1(sia.get_bis(), perm);
-	block_index_map_perm<2> bimap2(sai.get_bis(), perm);
-	symmetry<2, double> sym1(sai.get_bis());
-	symmetry<2, double> sym2(sia.get_bis());
+	block_index_map_perm<2> bimap1(sji.get_bis(), perm);
+	block_index_map_perm<2> bimap2(sij.get_bis(), perm);
+	symmetry<2, double> sym1(sji.get_bis());
+	symmetry<2, double> sym2(sij.get_bis());
 	mapped_btensor<2> mbt1(bt1, bimap1, sym1);
-	bt2(a|i) = mbt1(a|i);
+	bt2(j|i) = mbt1(j|i);
 	mapped_btensor<2> mbt2(bt2, bimap2, sym2);
 
-	btensor<2> bt(sia), bt_ref(sia);
+	btensor<2> bt(sij), bt_ref(sij);
 	btod_copy<2>(bt1).perform(bt_ref);
 
-	bt(i|a) = mbt2(i|a);
+	bt(i|j) = mbt2(i|j);
 
 	compare_ref<2>::compare(testname, bt, bt_ref, 1e-15);
 
