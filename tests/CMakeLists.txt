@@ -31,6 +31,37 @@ set(SRC_CORE
 	core/version_test.C
 )
 
+set(SRC_BTOD
+	btod/libtensor_btod_tests.C
+	btod/libtensor_btod_suite.C
+	btod/addition_schedule_test.C
+	btod/btod_add_test.C
+	btod/btod_compare_test.C
+	btod/btod_contract2_test.C
+	btod/btod_copy_test.C
+	btod/btod_diag_test.C
+	btod/btod_diagonalize_test.C
+	btod/btod_dirsum_test.C
+	btod/btod_dotprod_test.C
+	btod/btod_extract_test.C
+	btod/btod_import_raw_test.C
+	btod/btod_mult_test.C
+	btod/btod_mult1_test.C
+	btod/btod_print_test.C
+	btod/btod_random_test.C
+	btod/btod_read_test.C
+	btod/btod_scale_test.C
+	btod/btod_select_test.C
+	btod/btod_set_diag_test.C
+	btod/btod_set_elem_test.C
+	btod/btod_set_test.C
+	btod/btod_sum_test.C
+	btod/btod_symmetrize_test.C
+	btod/btod_symmetrize3_test.C
+	btod/btod_trace_test.C
+	btod/btod_tridiagonalize_test.C
+)
+
 set(SRC_LINALG
 	linalg/libtensor_linalg_tests.C
 	linalg/libtensor_linalg_suite.C
@@ -99,7 +130,6 @@ set(SRC_IFACE
 	iface/trace_test.C
 )
 
-file(GLOB SRC_BTOD btod/*.C)
 file(GLOB SRC_SYMMETRY symmetry/*.C)
 file(GLOB SRC_TOD tod/*.C)
 
