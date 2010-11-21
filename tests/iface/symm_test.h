@@ -33,6 +33,8 @@ private:
 	void test_asymm22_e_1() throw(libtest::test_exception);
 	void test_symm22_e_2() throw(libtest::test_exception);
 	void test_asymm22_e_2() throw(libtest::test_exception);
+
+	void test_symm3_t_1() throw(libtest::test_exception);
 };
 
 } // namespace libtensor

@@ -1,3 +1,4 @@
+#include <libtensor/tod/tod_btconv.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/iface/iface.h>
 #include <libtensor/symmetry/so_copy.h>
@@ -33,6 +34,8 @@ void symm_test::perform() throw(libtest::test_exception) {
 		test_asymm22_e_1();
 		test_symm22_e_2();
 		test_asymm22_e_2();
+
+		test_symm3_t_1();
 
 	} catch(...) {
 		libvmm::vm_allocator<double>::vmm().shutdown();
@@ -756,6 +759,49 @@ void symm_test::test_asymm22_e_2() throw(libtest::test_exception) {
 
 	compare_ref<4>::compare(testname, t2a, t2_ref, 1e-15);
 	compare_ref<4>::compare(testname, t2b, t2_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\test Tests the symmetrization over three indexes in a %tensor
+ **/
+void symm_test::test_symm3_t_1() throw(libtest::test_exception) {
+
+	const char *testname = "symm_test::test_symm3_t_1()";
+
+	try {
+
+	bispace<1> sp_i(10);
+	bispace<3> sp_ijk(sp_i&sp_i&sp_i);
+
+	btensor<3> t1(sp_ijk), t2(sp_ijk), t2_ref(sp_ijk);
+
+	btod_random<3>().perform(t1);
+	btod_random<3>().perform(t2);
+	t1.set_immutable();
+
+	btod_copy<3>(t1).perform(t2_ref);
+	btod_copy<3>(t1, permutation<3>().permute(0, 1)).perform(t2_ref, 1.0);
+	btod_copy<3>(t1, permutation<3>().permute(0, 2)).perform(t2_ref, 1.0);
+	btod_copy<3>(t1, permutation<3>().permute(1, 2)).perform(t2_ref, 1.0);
+	btod_copy<3>(t1, permutation<3>().permute(0, 1).permute(0, 2)).
+		perform(t2_ref, 1.0);
+	btod_copy<3>(t1, permutation<3>().permute(0, 1).permute(1, 2)).
+		perform(t2_ref, 1.0);
+
+	letter i, j, k;
+	t2(i|j|k) = symm(i, j, k, t1(i|j|k));
+
+	typedef libvmm::std_allocator<double> allocator_t;
+	tensor<3, double, allocator_t> tt2(sp_ijk.get_bis().get_dims()),
+		tt2_ref(sp_ijk.get_bis().get_dims());
+	tod_btconv<3>(t2).perform(tt2);
+	tod_btconv<3>(t2_ref).perform(tt2_ref);
+
+	compare_ref<3>::compare(testname, tt2, tt2_ref, 1e-15);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
