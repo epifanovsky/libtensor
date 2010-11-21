@@ -67,9 +67,10 @@ public:
 	//@}
 
 private:
-	void make_list(const index<N> &idx0, const symmetry<N, T> &sym,
-		const dimensions<N> &bidims, const index<N> &idx,
-		const transf<N, T> &tr, std::vector<char> &chk);
+	void make_list(bool first, const index<N> &idx0,
+		const symmetry<N, T> &sym, const dimensions<N> &bidims,
+		const index<N> &idx, const transf<N, T> &tr,
+		std::vector<char> &chk);
 
 };
 
@@ -85,7 +86,15 @@ transf_list<N, T>::transf_list(const symmetry<N, T> &sym, const index<N> &idx) {
 	transf<N, T> tr0;
 	std::vector<char> chk(bidims.get_size(), 0);
 
-	make_list(idx, sym, bidims, idx, tr0, chk);
+	make_list(true, idx, sym, bidims, idx, tr0, chk);
+
+        for(iterator i = m_trlist.begin(); i != m_trlist.end(); i++)
+       	for(iterator j = m_trlist.begin(); j != m_trlist.end(); j++) {
+       		transf<N, T> tr1(*i), tr2(*j);
+       		tr1.transform(tr2);
+       		if(is_found(tr1)) continue;
+       		m_trlist.push_back(tr1);
+       	}
 }
 
 
@@ -98,15 +107,15 @@ bool transf_list<N, T>::is_found(const transf<N, T> &tr) const {
 
 
 template<size_t N, typename T>
-void transf_list<N, T>::make_list(const index<N> &idx0,
+void transf_list<N, T>::make_list(bool first, const index<N> &idx0,
 	const symmetry<N, T> &sym, const dimensions<N> &bidims,
 	const index<N> &idx, const transf<N, T> &tr, std::vector<char> &chk) {
 
 	abs_index<N> aidx(idx, bidims);
 	if(idx0.equals(idx)) {
 
-		if(is_found(tr)) return;
-		m_trlist.push_back(tr);
+		if(!is_found(tr)) m_trlist.push_back(tr);
+		if(!first) return;
 	} else {
 		if(chk[aidx.get_abs_index()]) return;
 	}
@@ -125,7 +134,7 @@ void transf_list<N, T>::make_list(const index<N> &idx0,
 			index<N> idx2(idx);
 			transf<N, T> tr2(tr);
 			elem.apply(idx2, tr2);
-			make_list(idx0, sym, bidims, idx2, tr2, chk);
+			make_list(false, idx0, sym, bidims, idx2, tr2, chk);
 		}
 	}
 
