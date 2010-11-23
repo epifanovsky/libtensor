@@ -236,6 +236,7 @@ template<size_t N, typename T, typename Alloc, typename Sync>
 void direct_block_tensor<N, T, Alloc, Sync>::on_req_sync_on() throw(exception) {
 
 	if(m_lock == 0) m_lock = new mutex_t;
+	get_op().sync_on();
 }
 
 
@@ -244,6 +245,7 @@ void direct_block_tensor<N, T, Alloc, Sync>::on_req_sync_off()
 	throw(exception) {
 
 	delete m_lock; m_lock = 0;
+	get_op().sync_off();
 }
 
 
