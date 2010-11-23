@@ -13,7 +13,7 @@ void transf_list_test::perform() throw(libtest::test_exception) {
 	test_1();
 	test_2();
 	test_3();
-//	test_4();
+	test_4();
 	test_5a();
 	test_5b();
 }
