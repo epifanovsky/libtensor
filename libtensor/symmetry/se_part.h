@@ -193,9 +193,25 @@ public:
 	//@}
 
 private:
-	static dimensions<N> make_pdims(const mask<N> &msk, size_t npart);
+	/**	\brief Builds the partition %dimensions, throws an exception
+			if the arguments are invalid
+	 **/
+	static dimensions<N> make_pdims(const block_index_space<N> &bis,
+		const mask<N> &msk, size_t npart);
 
 	void add_to_loop(size_t a, size_t b, const permutation<N> & p, bool sign);
+
+	/**	\brief Returns true if the %index is a valid partition %index,
+			false otherwise
+	 **/
+	bool is_valid_pidx(const index<N> &idx);
+
+	/**	\brief Returns true if the map is valid, false otherwise.
+			The indexes on the input must be valid
+	 **/
+	bool is_valid_map(const index<N> &idx1, const index<N> &idx2,
+		const permutation<N> &perm);
+
 };
 
 
@@ -212,46 +228,10 @@ se_part<N, T>::se_part(const block_index_space<N> &bis, const mask<N> &msk,
 	size_t npart) :
 
 	m_bis(bis), m_bidims(m_bis.get_block_index_dims()),
-	m_pdims(make_pdims(msk, npart)), m_mask(msk) {
+	m_pdims(make_pdims(bis, msk, npart)), m_mask(msk) {
 
 	static const char *method =
 		"se_part(const block_index_space<N>&, const mask<N>&, size_t)";
-
-	//	Make sure the partitioning is not trivial
-	//
-	size_t m = 0;
-	for(register size_t i = 0; i < N; i++) if(msk[i]) m++;
-	if(m == 0) {
-		throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
-			"msk");
-	}
-
-	//	Make sure the splits are identical for all partitions
-	//
-	for(size_t i = 0; i < N; i++) {
-
-		size_t np = m_pdims[i];
-		if(np == 1) continue;
-
-		if(m_bidims[i] % np != 0) {
-			throw bad_symmetry(g_ns, k_clazz, method,
-				__FILE__, __LINE__, "bis");
-		}
-
-		size_t psz = m_bidims[i] / np;
-		const split_points &pts = m_bis.get_splits(m_bis.get_type(i));
-		size_t d = pts[psz - 1];
-		for(size_t j = 0; j < psz; j++) {
-			size_t pt0 = j == 0 ? 0 : pts[j - 1];
-			for(size_t k = 1; k < np; k++) {
-				if(pts[k * psz + j - 1] != pt0 + k * d) {
-					throw bad_symmetry(g_ns, k_clazz,
-						method, __FILE__, __LINE__,
-						"bis");
-				}
-			}
-		}
-	}
 
 	size_t mapsz = m_pdims.get_size();
 	m_map.reserve(mapsz);
@@ -286,12 +266,28 @@ se_part<N, T>::~se_part() {
 //	delete [] m_fsign; m_fsign = 0;
 }
 
+
 template<size_t N, typename T>
 void se_part<N, T>::add_map(const index<N> &idx1, const index<N> &idx2,
-		const permutation<N> &perm, bool sign) {
+	const permutation<N> &perm, bool sign) {
 
 	static const char *method =
 		"add_map(const index<N>&, const index<N>&, bool)";
+
+#ifdef LIBTENSOR_DEBUG
+	if(!is_valid_pidx(idx1)) {
+		throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"idx1");
+	}
+	if(!is_valid_pidx(idx2)) {
+		throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"idx2");
+	}
+	if(!is_valid_map(idx1, idx2, perm)) {
+		throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"map");
+	}
+#endif // LIBTENSOR_DEBUG
 
 	abs_index<N> aidx1(idx1, m_pdims), aidx2(idx2, m_pdims);
 	size_t a = aidx1.get_abs_index(), b = aidx2.get_abs_index();
@@ -520,9 +516,11 @@ void se_part<N, T>::apply(index<N> &idx, transf<N, T> &tr) const {
 
 
 template<size_t N, typename T>
-dimensions<N> se_part<N, T>::make_pdims(const mask<N> &msk, size_t npart) {
+dimensions<N> se_part<N, T>::make_pdims(const block_index_space<N> &bis,
+	const mask<N> &msk, size_t npart) {
 
-	static const char *method = "make_pdims(const mask<N>&, size_t)";
+	static const char *method = "make_pdims(const block_index_space<N>&, "
+		"const mask<N>&, size_t)";
 
 	if(npart < 2) {
 		throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
@@ -530,12 +528,56 @@ dimensions<N> se_part<N, T>::make_pdims(const mask<N> &msk, size_t npart) {
 	}
 
 	index<N> i1, i2;
+	size_t m = 0;
 	for(register size_t i = 0; i < N; i++) {
-		if(msk[i]) i2[i] = npart - 1;
-		else i2[i] = 0;
+		if(msk[i]) {
+			i2[i] = npart - 1;
+			m++;
+		} else {
+			i2[i] = 0;
+		}
 	}
-	return dimensions<N>(index_range<N>(i1, i2));
+
+	//	Make sure the partitioning is not trivial
+	//
+	if(m == 0) {
+		throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
+			"msk");
+	}
+
+	dimensions<N> pdims(index_range<N>(i1, i2));
+	dimensions<N> bidims = bis.get_block_index_dims();
+
+	//	Make sure the splits are identical for all partitions
+	//
+	for(size_t i = 0; i < N; i++) {
+
+		size_t np = pdims[i];
+		if(np == 1) continue;
+
+		if(bidims[i] % np != 0) {
+			throw bad_symmetry(g_ns, k_clazz, method,
+				__FILE__, __LINE__, "bis");
+		}
+
+		size_t psz = bidims[i] / np;
+		const split_points &pts = bis.get_splits(bis.get_type(i));
+		size_t d = pts[psz - 1];
+		for(size_t j = 0; j < psz; j++) {
+			size_t pt0 = j == 0 ? 0 : pts[j - 1];
+			for(size_t k = 1; k < np; k++) {
+				if(pts[k * psz + j - 1] != pt0 + k * d) {
+					throw bad_symmetry(g_ns, k_clazz,
+						method, __FILE__, __LINE__,
+						"bis");
+				}
+			}
+		}
+	}
+
+	return pdims;
 }
+
 
 template<size_t N, typename T>
 void se_part<N, T>::add_to_loop(
@@ -585,6 +627,29 @@ void se_part<N, T>::add_to_loop(
 		m_map[ar].perm.permute(pb);
 		m_map[ar].sign = (sb == m_map[ar].sign);
 	}
+}
+
+
+template<size_t N, typename T>
+bool se_part<N, T>::is_valid_pidx(const index<N> &idx) {
+
+	for(register size_t i = 0; i < N; i++)
+		if(idx[i] >= m_pdims[i]) return false;
+	return true;
+}
+
+
+template<size_t N, typename T>
+bool se_part<N, T>::is_valid_map(const index<N> &idx1, const index<N> &idx2,
+	const permutation<N> &perm) {
+
+	sequence<N, size_t> seq(0);
+	for(register size_t i = 0; i < N; i++) seq[i] = i;
+	seq.permute(perm);
+	for(size_t i = 0; i < N; i++) {
+		if(m_bis.get_type(i) != m_bis.get_type(seq[i])) return false;
+	}
+	return true;
 }
 
 

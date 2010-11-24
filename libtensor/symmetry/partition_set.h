@@ -864,4 +864,4 @@ block_index_space<N> partition_set<N, T>::make_bis(const adapter_t &set) {
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_PERMUTATION_GROUP_H
+#endif // LIBTENSOR_PARTITION_SET_H
