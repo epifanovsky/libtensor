@@ -202,15 +202,9 @@ public:
 		return new se_label<N, T>(*this);
 	}
 
-	/**	\copydoc symmetry_element_i<N, T>::get_mask
-	 **/
-	virtual const mask<N> &get_mask() const {
-		throw 1;
-	}
-
 	/**	\copydoc symmetry_element_i<N, T>::permute
 	 **/
-	virtual void permute(const permutation<N> &perm) {
+	void permute(const permutation<N> &perm) {
 		m_bidims.permute(perm);
 		m_type.permute(perm);
 	}

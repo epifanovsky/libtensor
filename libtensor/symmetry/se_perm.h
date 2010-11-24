@@ -43,7 +43,6 @@ private:
 	bool m_even; //!< Even/odd %permutation
 	bool m_symm; //!< Symmetric/anti-symmetric
 	transf<N, T> m_transf; //!< Block transformation
-	mask<N> m_mask; //!< Mask of affected indexes
 
 public:
 	//!	\name Construction and destruction
@@ -97,22 +96,6 @@ public:
 	 **/
 	virtual symmetry_element_i<N, T> *clone() const {
 		return new se_perm<N, T>(*this);
-	}
-
-	/**	\copydoc symmetry_element_i<N, T>::get_mask
-	 **/
-	virtual const mask<N> &get_mask() const {
-		return m_mask;
-	}
-
-	/**	\copydoc symmetry_element_i<N, T>::permute
-	 **/
-	virtual void permute(const permutation<N> &perm) {
-
-/*
-		m_transf.permute(perm);
-		m_mask.permute(perm);
-*/
 	}
 
 	/**	\copydoc symmetry_element_i<N, T>::is_valid_bis
@@ -174,18 +157,12 @@ se_perm<N, T>::se_perm(const permutation<N> &perm, bool symm) :
 	m_even = n % 2 == 0;
 	m_transf.permute(m_perm);
 	if(!m_even && !m_symm) m_transf.scale(-1);
-
-	size_t seq[N];
-	for(size_t i = 0; i < N; i++) seq[i] = i;
-	perm.apply(seq);
-	for(size_t i = 0; i < N; i++) if(seq[i] != i) m_mask[i] = true;
 }
 
 
 template<size_t N, typename T>
 se_perm<N, T>::se_perm(const se_perm<N, T> &elem) :
-	m_perm(elem.m_perm), m_symm(elem.m_symm), m_transf(elem.m_transf),
-	m_mask(elem.m_mask) {
+	m_perm(elem.m_perm), m_symm(elem.m_symm), m_transf(elem.m_transf) {
 
 }
 

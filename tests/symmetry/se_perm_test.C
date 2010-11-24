@@ -37,7 +37,6 @@ void se_perm_test::test_sym_ab_ba() throw(libtest::test_exception) {
 	}
 
 	const transf<2, double> &tr = elem.get_transf();
-	const mask<2> &m = elem.get_mask();
 
 	if(!tr.get_perm().equals(perm)) {
 		fail_test(testname, __FILE__, __LINE__,
@@ -46,9 +45,6 @@ void se_perm_test::test_sym_ab_ba() throw(libtest::test_exception) {
 	if(tr.get_coeff() != 1.0) {
 		fail_test(testname, __FILE__, __LINE__,
 			"Incorrect transformation coefficient.");
-	}
-	if(m[0] != true || m[1] != true) {
-		fail_test(testname, __FILE__, __LINE__, "Incorrect mask.");
 	}
 
 	index<2> i1, i2;
@@ -106,7 +102,6 @@ void se_perm_test::test_asym_ab_ba() throw(libtest::test_exception) {
 	}
 
 	const transf<2, double> &tr = elem.get_transf();
-	const mask<2> &m = elem.get_mask();
 
 	if(!tr.get_perm().equals(perm)) {
 		fail_test(testname, __FILE__, __LINE__,
@@ -115,9 +110,6 @@ void se_perm_test::test_asym_ab_ba() throw(libtest::test_exception) {
 	if(tr.get_coeff() != -1.0) {
 		fail_test(testname, __FILE__, __LINE__,
 			"Incorrect transformation coefficient.");
-	}
-	if(m[0] != true || m[1] != true) {
-		fail_test(testname, __FILE__, __LINE__, "Incorrect mask.");
 	}
 
 	index<2> i1, i2;
@@ -175,9 +167,6 @@ void se_perm_test::test_sym_abc_bca() throw(libtest::test_exception) {
 	}
 
 	const transf<3, double> &tr = elem.get_transf();
-	const mask<3> &m = elem.get_mask();
-	mask<3> m_ref;
-	m_ref[0] = true; m_ref[1] = true; m_ref[2] = true;
 
 	if(!tr.get_perm().equals(perm)) {
 		fail_test(testname, __FILE__, __LINE__,
@@ -186,9 +175,6 @@ void se_perm_test::test_sym_abc_bca() throw(libtest::test_exception) {
 	if(tr.get_coeff() != 1.0) {
 		fail_test(testname, __FILE__, __LINE__,
 			"tr.get_coeff() != 1.0");
-	}
-	if(!m.equals(m_ref)) {
-		fail_test(testname, __FILE__, __LINE__, "!m.equals(m_ref)");
 	}
 
 	index<3> i1, i2;
@@ -246,9 +232,6 @@ void se_perm_test::test_asym_abc_bca() throw(libtest::test_exception) {
 	}
 
 	const transf<3, double> &tr = elem.get_transf();
-	const mask<3> &m = elem.get_mask();
-	mask<3> m_ref;
-	m_ref[0] = true; m_ref[1] = true; m_ref[2] = true;
 
 	if(!tr.get_perm().equals(perm)) {
 		fail_test(testname, __FILE__, __LINE__,
@@ -257,9 +240,6 @@ void se_perm_test::test_asym_abc_bca() throw(libtest::test_exception) {
 	if(tr.get_coeff() != 1.0) {
 		fail_test(testname, __FILE__, __LINE__,
 			"tr.get_coeff() != 1.0");
-	}
-	if(!m.equals(m_ref)) {
-		fail_test(testname, __FILE__, __LINE__, "!m.equals(m_ref)");
 	}
 
 	index<3> i1, i2;
@@ -317,9 +297,6 @@ void se_perm_test::test_sym_abcd_badc() throw(libtest::test_exception) {
 	}
 
 	const transf<4, double> &tr = elem.get_transf();
-	const mask<4> &m = elem.get_mask();
-	mask<4> m_ref;
-	m_ref[0] = true; m_ref[1] = true; m_ref[2] = true; m_ref[3] = true;
 
 	if(!tr.get_perm().equals(perm)) {
 		fail_test(testname, __FILE__, __LINE__,
@@ -328,9 +305,6 @@ void se_perm_test::test_sym_abcd_badc() throw(libtest::test_exception) {
 	if(tr.get_coeff() != 1.0) {
 		fail_test(testname, __FILE__, __LINE__,
 			"tr.get_coeff() != 1.0");
-	}
-	if(!m.equals(m_ref)) {
-		fail_test(testname, __FILE__, __LINE__, "!m.equals(m_ref)");
 	}
 
 	index<4> i1, i2;
@@ -397,9 +371,6 @@ void se_perm_test::test_asym_abcd_badc() throw(libtest::test_exception) {
 	}
 
 	const transf<4, double> &tr = elem.get_transf();
-	const mask<4> &m = elem.get_mask();
-	mask<4> m_ref;
-	m_ref[0] = true; m_ref[1] = true; m_ref[2] = true; m_ref[3] = true;
 
 	if(!tr.get_perm().equals(perm)) {
 		fail_test(testname, __FILE__, __LINE__,
@@ -408,9 +379,6 @@ void se_perm_test::test_asym_abcd_badc() throw(libtest::test_exception) {
 	if(tr.get_coeff() != -1.0) {
 		fail_test(testname, __FILE__, __LINE__,
 			"tr.get_coeff() != -1.0");
-	}
-	if(!m.equals(m_ref)) {
-		fail_test(testname, __FILE__, __LINE__, "!m.equals(m_ref)");
 	}
 
 	index<4> i1, i2;

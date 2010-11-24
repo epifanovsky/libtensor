@@ -147,6 +147,12 @@ public:
 	 **/
 	bool map_exists(const index<N> &from, const index<N> &to) const;
 
+	void permute(const permutation<N> &perm);
+
+	const mask<N> &get_mask() const {
+		return m_mask;
+	}
+
 	//@}
 
 	//!	\name Implementation of symmetry_element_i<N, T>
@@ -163,16 +169,6 @@ public:
 	virtual symmetry_element_i<N, T> *clone() const {
 		return new se_part<N, T>(*this);
 	}
-
-	/**	\copydoc symmetry_element_i<N, T>::get_mask
-	 **/
-	virtual const mask<N> &get_mask() const {
-		return m_mask;
-	}
-
-	/**	\copydoc symmetry_element_i<N, T>::permute
-	 **/
-	virtual void permute(const permutation<N> &perm);
 
 	/**	\copydoc symmetry_element_i<N, T>::is_valid_bis
 	 **/
