@@ -465,35 +465,34 @@ void se_part_test::test_3b() throw(libtest::test_exception) {
 	try {
 
 	index<4> i1, i2;
-	i2[0] = 9; i2[1] = 9; i2[2] = 19; i2[3] = 19;
+	i2[0] = 9; i2[1] = 9; i2[2] = 9; i2[3] = 19;
 	block_index_space<4> bis(dimensions<4>(index_range<4>(i1, i2)));
-	mask<4> m1100, m0011, m1111;
-	m1100[0] = true; m1100[1] = true;
-	m0011[2] = true; m0011[3] = true;
+	mask<4> m1110, m0001, m1111;
+	m1110[0] = true; m1110[1] = true; m1110[2] = true; m0001[3] = true;
 	m1111[0] = true; m1111[1] = true; m1111[2] = true; m1111[3] = true;
-	bis.split(m1100, 2);
-	bis.split(m1100, 5);
-	bis.split(m1100, 7);
-	bis.split(m0011, 3);
-	bis.split(m0011, 6);
-	bis.split(m0011, 10);
-	bis.split(m0011, 13);
-	bis.split(m0011, 16);
+	bis.split(m1110, 2);
+	bis.split(m1110, 5);
+	bis.split(m1110, 7);
+	bis.split(m0001, 3);
+	bis.split(m0001, 6);
+	bis.split(m0001, 10);
+	bis.split(m0001, 13);
+	bis.split(m0001, 16);
 
-	index<4> i0000, i0011, i0033, i0101, i0110, i0134, i1001, i1100, i1111,
-		i2200, i2233, i2301, i2334;
+	index<4> i0000, i0011, i0023, i0101, i0110, i0124, i1001, i1100, i1111,
+		i2200, i2223, i2301, i2324;
 	i0011[0] = 0; i0011[1] = 0; i0011[2] = 1; i0011[3] = 1;
-	i0033[0] = 0; i0033[1] = 0; i0033[2] = 3; i0033[3] = 3;
+	i0023[0] = 0; i0023[1] = 0; i0023[2] = 2; i0023[3] = 3;
 	i0101[0] = 0; i0101[1] = 1; i0101[2] = 0; i0101[3] = 1;
 	i0110[0] = 0; i0110[1] = 1; i0110[2] = 1; i0110[3] = 0;
-	i0134[0] = 0; i0134[1] = 1; i0134[2] = 3; i0134[3] = 4;
+	i0124[0] = 0; i0124[1] = 1; i0124[2] = 2; i0124[3] = 4;
 	i1001[0] = 1; i1001[1] = 0; i1001[2] = 0; i1001[3] = 1;
 	i1100[0] = 1; i1100[1] = 1; i1100[2] = 0; i1100[3] = 0;
 	i1111[0] = 1; i1111[1] = 1; i1111[2] = 1; i1111[3] = 1;
 	i2200[0] = 2; i2200[1] = 2; i2200[2] = 0; i2200[3] = 0;
-	i2233[0] = 2; i2233[1] = 2; i2233[2] = 3; i2233[3] = 3;
+	i2223[0] = 2; i2223[1] = 2; i2223[2] = 2; i2223[3] = 3;
 	i2301[0] = 2; i2301[1] = 3; i2301[2] = 0; i2301[3] = 1;
-	i2334[0] = 2; i2334[1] = 3; i2334[2] = 3; i2334[3] = 4;
+	i2324[0] = 2; i2324[1] = 3; i2324[2] = 2; i2324[3] = 4;
 
 	se_part<4, double> elem1(bis, m1111, 2);
 	elem1.add_map(i0000, i1111);
@@ -508,8 +507,8 @@ void se_part_test::test_3b() throw(libtest::test_exception) {
 	//	[0000]->[2200]->[0033]->[2233]
 	orbit.insert(i0000);
 	orbit.insert(i2200);
-	orbit.insert(i0033);
-	orbit.insert(i2233);
+	orbit.insert(i0023);
+	orbit.insert(i2223);
 	index<4> i0000a(i0000);
 	while(!orbit.empty()) {
 		elem1.apply(i0000a);
@@ -524,11 +523,11 @@ void se_part_test::test_3b() throw(libtest::test_exception) {
 		}
 	}
 
-	//	[0101]->[0134]->[2301]->[2334]
+	//	[0101]->[0124]->[2301]->[2324]
 	orbit.insert(i0101);
-	orbit.insert(i0134);
+	orbit.insert(i0124);
 	orbit.insert(i2301);
-	orbit.insert(i2334);
+	orbit.insert(i2324);
 	index<4> i0101a(i0101);
 	while(!orbit.empty()) {
 		elem1.apply(i0101a);
@@ -558,35 +557,21 @@ void se_part_test::test_4() throw(libtest::test_exception) {
 	try {
 
 	index<4> i1, i2;
-	i2[0] = 9; i2[1] = 9; i2[2] = 19; i2[3] = 19;
+	i2[0] = 9; i2[1] = 9; i2[2] = 9; i2[3] = 9;
 	block_index_space<4> bis(dimensions<4>(index_range<4>(i1, i2)));
-	mask<4> m1100, m0011, m1111;
-	m1100[0] = true; m1100[1] = true;
-	m0011[2] = true; m0011[3] = true;
+	mask<4> m1111;
 	m1111[0] = true; m1111[1] = true; m1111[2] = true; m1111[3] = true;
-	bis.split(m1100, 2);
-	bis.split(m1100, 5);
-	bis.split(m1100, 7);
-	bis.split(m0011, 3);
-	bis.split(m0011, 6);
-	bis.split(m0011, 10);
-	bis.split(m0011, 13);
-	bis.split(m0011, 16);
+	bis.split(m1111, 2);
+	bis.split(m1111, 5);
+	bis.split(m1111, 7);
 
-	index<4> i0000, i0011, i0033, i0101, i0110, i0134, i1001, i1100, i1111,
-		i2200, i2233, i2301, i2334;
+	index<4> i0000, i0011, i0101, i0110, i1001, i1100, i1111;
 	i0011[0] = 0; i0011[1] = 0; i0011[2] = 1; i0011[3] = 1;
-	i0033[0] = 0; i0033[1] = 0; i0033[2] = 3; i0033[3] = 3;
 	i0101[0] = 0; i0101[1] = 1; i0101[2] = 0; i0101[3] = 1;
 	i0110[0] = 0; i0110[1] = 1; i0110[2] = 1; i0110[3] = 0;
-	i0134[0] = 0; i0134[1] = 1; i0134[2] = 3; i0134[3] = 4;
 	i1001[0] = 1; i1001[1] = 0; i1001[2] = 0; i1001[3] = 1;
 	i1100[0] = 1; i1100[1] = 1; i1100[2] = 0; i1100[3] = 0;
 	i1111[0] = 1; i1111[1] = 1; i1111[2] = 1; i1111[3] = 1;
-	i2200[0] = 2; i2200[1] = 2; i2200[2] = 0; i2200[3] = 0;
-	i2233[0] = 2; i2233[1] = 2; i2233[2] = 3; i2233[3] = 3;
-	i2301[0] = 2; i2301[1] = 3; i2301[2] = 0; i2301[3] = 1;
-	i2334[0] = 2; i2334[1] = 3; i2334[2] = 3; i2334[3] = 4;
 
 	se_part<4, double> elem(bis, m1111, 2);
 	elem.add_map(i0000, i0011,
@@ -594,8 +579,6 @@ void se_part_test::test_4() throw(libtest::test_exception) {
 	elem.add_map(i1100, i1111,
 			permutation<4>().permute(1, 2).permute(2, 3), false);
 	elem.add_map(i0011, i1100);
-
-	std::set< index<4> > orbit;
 
 	if (! elem.map_exists(i0000, i1100)) {
 		fail_test(testname, __FILE__, __LINE__, "Missing map: 0000->1100.");
@@ -902,20 +885,19 @@ void se_part_test::test_perm_4b() throw(libtest::test_exception) {
 	try {
 
 	index<4> i1, i2;
-	i2[0] = 9; i2[1] = 9; i2[2] = 19; i2[3] = 19;
+	i2[0] = 9; i2[1] = 9; i2[2] = 9; i2[3] = 19;
 	block_index_space<4> bis(dimensions<4>(index_range<4>(i1, i2)));
-	mask<4> m1100, m0011, m1111;
-	m1100[0] = true; m1100[1] = true;
-	m0011[2] = true; m0011[3] = true;
+	mask<4> m1110, m0001, m1111;
+	m1110[0] = true; m1110[1] = true; m1110[2] = true; m0001[3] = true;
 	m1111[0] = true; m1111[1] = true; m1111[2] = true; m1111[3] = true;
-	bis.split(m1100, 2);
-	bis.split(m1100, 5);
-	bis.split(m1100, 7);
-	bis.split(m0011, 3);
-	bis.split(m0011, 6);
-	bis.split(m0011, 10);
-	bis.split(m0011, 13);
-	bis.split(m0011, 16);
+	bis.split(m1110, 2);
+	bis.split(m1110, 5);
+	bis.split(m1110, 7);
+	bis.split(m0001, 3);
+	bis.split(m0001, 6);
+	bis.split(m0001, 10);
+	bis.split(m0001, 13);
+	bis.split(m0001, 16);
 
 	index<4> i0000, i0110, i1001, i0101, i1010, i1111;
 	i1001[0] = 1; i0110[1] = 1; i0110[2] = 1; i1001[3] = 1;
@@ -923,10 +905,10 @@ void se_part_test::test_perm_4b() throw(libtest::test_exception) {
 	i1111[0] = 1; i1111[1] = 1; i1111[2] = 1; i1111[3] = 1;
 
 	se_part<4, double> elem(bis, m1111, 2);
-	elem.add_map(i0000, i1001, permutation<4>().permute(0, 1).permute(1, 2), true);
+	elem.add_map(i0000, i1001,
+			permutation<4>().permute(0, 1).permute(1, 2), true);
 	elem.add_map(i1001, i0110, true);
 	elem.add_map(i0110, i1111, true);
-
 
 	permutation<4> perm; perm.permute(2, 3);
 
@@ -952,7 +934,7 @@ void se_part_test::test_perm_4b() throw(libtest::test_exception) {
 	if (! elem.map_exists(i0101, i1010)) {
 		fail_test(testname, __FILE__, __LINE__, "Missing map: 0101->1010.");
 	}
-	if (elem.get_perm(i0000, i1111).equals(
+	if (! elem.get_perm(i0000, i1111).equals(
 			permutation<4>().permute(0, 1).permute(1, 3))) {
 		fail_test(testname, __FILE__, __LINE__,
 				"Map 0000->1111 has wrong permutation.");

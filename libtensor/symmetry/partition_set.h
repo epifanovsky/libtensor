@@ -824,7 +824,7 @@ void partition_set<N, T>::transfer_mappings(const se_part<M, T> &from,
 			seq1b[i] = seq2b[i] = i;
 			if (msk[i]) {
 				idx1b[i] = idx1a[j]; idx2b[i] = idx2a[j];
-				seq1b[i] = N + j; seq2b[i] = N + seq2a[j];
+				seq1b[i] = N + seq1a[j]; seq2b[i] = N + seq2a[j];
 				j++;
 			}
 		}

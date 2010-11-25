@@ -6,6 +6,7 @@
 #include "../core/abs_index.h"
 #include "../core/block_index_space.h"
 #include "../core/mask.h"
+#include "../core/permutation_builder.h"
 #include "../core/symmetry_element_i.h"
 #include "../core/transf.h"
 #include "bad_symmetry.h"
@@ -428,6 +429,8 @@ bool se_part<N, T>::is_valid_bis(const block_index_space<N> &bis) const {
 template<size_t N, typename T>
 void se_part<N, T>::permute(const permutation<N> &perm) {
 
+	if (perm.is_identity()) return;
+
 	m_bis.permute(perm);
 	m_bidims.permute(perm);
 
@@ -466,8 +469,20 @@ void se_part<N, T>::permute(const permutation<N> &perm) {
 			ib.permute(perm);
 			abs_index<N> naib(ib, m_pdims);
 
-			add_map(naia.get_index(), naib.get_index(),
-					map[i].perm, map[i].sign);
+			if (map[i].perm.is_identity()) {
+				add_map(naia.get_index(), naib.get_index(), map[i].sign);
+			}
+			else {
+				sequence<N, size_t> seq1(0), seq2(0);
+				for (size_t j = 0; j < N; j++) seq1[j] = seq2[j] = j;
+				seq1.permute(perm);
+				seq2.permute(map[i].perm);
+				seq2.permute(perm);
+				permutation_builder<N> pb(seq2, seq1);
+
+				add_map(naia.get_index(), naib.get_index(),
+						pb.get_perm(), map[i].sign);
+			}
 		}
 	}
 }
