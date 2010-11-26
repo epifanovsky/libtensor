@@ -58,9 +58,6 @@ private:
 	dimensions<N> m_bidims; //!< Block %index space dimensions
 	dimensions<N> m_pdims; //!< Partition %index dimensions
 	std::vector<mapping> m_map;
-//	size_t *m_fmap; //!< Forward mapping
-//	size_t *m_rmap; //!< Reverse mapping
-//	bool *m_fsign; //!< Sign of the mappings
 	mask<N> m_mask; //!< Mask of affected indexes
 
 public:
@@ -248,23 +245,11 @@ se_part<N, T>::se_part(const se_part<N, T> &elem) :
 	m_bis(elem.m_bis), m_bidims(elem.m_bidims), m_pdims(elem.m_pdims),
 	m_mask(elem.m_mask), m_map(elem.m_map) {
 
-//	size_t mapsz = m_pdims.get_size();
-//	m_fmap = new size_t[mapsz];
-//	m_rmap = new size_t[mapsz];
-//	m_fsign = new bool[mapsz];
-//	for (size_t i = 0; i < mapsz; i++) {
-//		m_fmap[i] = elem.m_fmap[i];
-//		m_rmap[i] = elem.m_rmap[i];
-//		m_fsign[i] = elem.m_fsign[i];
-//	}
 }
 
 template<size_t N, typename T>
 se_part<N, T>::~se_part() {
 
-//	delete [] m_fmap; m_fmap = 0;
-//	delete [] m_rmap; m_rmap = 0;
-//	delete [] m_fsign; m_fsign = 0;
 }
 
 
