@@ -12,6 +12,7 @@ void se_part_test::perform() throw(libtest::test_exception) {
 	test_1a();
 	test_1b();
 	test_2();
+	test_2a();
 	test_3a();
 	test_3b();
 	test_4();
@@ -363,6 +364,83 @@ void se_part_test::test_2() throw(libtest::test_exception) {
 	}
 }
 
+/**	\test Two partitions, two blocks in each partition (2-dim)
+		Test concerning ticket #61.
+ **/
+void se_part_test::test_2a() throw(libtest::test_exception) {
+
+	static const char *testname = "se_part_test::test_2a()";
+
+	try {
+
+	index<2> i1, i2;
+	i2[0] = 9; i2[1] = 9;
+	block_index_space<2> bis(dimensions<2>(index_range<2>(i1, i2)));
+	mask<2> m11;
+	m11[0] = true; m11[1] = true;
+	bis.split(m11, 2);
+	bis.split(m11, 5);
+	bis.split(m11, 7);
+
+	index<2> i00, i01, i02, i03, i10, i11, i12, i13, i20, i21, i22, i23,
+		i30, i31, i32, i33;
+	i01[0] = 0; i01[1] = 1;
+	i02[0] = 0; i02[1] = 2;
+	i03[0] = 0; i03[1] = 3;
+	i10[0] = 1; i10[1] = 0;
+	i11[0] = 1; i11[1] = 1;
+	i12[0] = 1; i12[1] = 2;
+	i13[0] = 1; i13[1] = 3;
+	i20[0] = 2; i20[1] = 0;
+	i21[0] = 2; i21[1] = 1;
+	i22[0] = 2; i22[1] = 2;
+	i23[0] = 2; i23[1] = 3;
+	i30[0] = 3; i30[1] = 0;
+	i31[0] = 3; i31[1] = 1;
+	i32[0] = 3; i32[1] = 2;
+	i33[0] = 3; i33[1] = 3;
+
+	se_part<2, double> elem1(bis, m11, 2);
+	elem1.add_map(i00, i01);
+	elem1.add_map(i01, i10, permutation<2>().permute(0, 1));
+	elem1.add_map(i10, i11);
+
+	index<2> i00a(i00), i20a(i20);
+	transf<2, double> tr00a, tr20a;
+
+	elem1.apply(i00a, tr00a);
+	if(!i00a.equals(i02)) {
+		fail_test(testname, __FILE__, __LINE__, "!i00a.equals(i02)");
+	}
+	if(!tr00a.get_perm().equals(permutation<2>())) {
+		fail_test(testname, __FILE__, __LINE__, "Wrong permutation in tr00a.");
+	}
+	elem1.apply(i00a, tr00a);
+	if(!i00a.equals(i20)) {
+		fail_test(testname, __FILE__, __LINE__, "!i00a.equals(i20)");
+	}
+	if(!tr00a.get_perm().equals(permutation<2>().permute(0, 1))) {
+		fail_test(testname, __FILE__, __LINE__, "Wrong permutation in tr00a.");
+	}
+	elem1.apply(i00a, tr00a);
+	if(!i00a.equals(i22)) {
+		fail_test(testname, __FILE__, __LINE__, "!i00a.equals(i22)");
+	}
+	if(!tr00a.get_perm().equals(permutation<2>().permute(0, 1))) {
+		fail_test(testname, __FILE__, __LINE__, "Wrong permutation in tr00a.");
+	}
+	elem1.apply(i20a, tr20a);
+	if(!i20a.equals(i22)) {
+		fail_test(testname, __FILE__, __LINE__, "!i20a.equals(i22)");
+	}
+	if(!tr20a.get_perm().equals(permutation<2>())) {
+		fail_test(testname, __FILE__, __LINE__, "Wrong permutation in tr20a.");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
 
 /**	\test Two partitions, two or three blocks in each partition (4-dim),
 		block sizes vary for different dimensions
