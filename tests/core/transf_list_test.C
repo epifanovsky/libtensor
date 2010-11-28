@@ -294,7 +294,7 @@ void transf_list_test::test_4() throw(libtest::test_exception) {
 
 	se_part<2, double> se1(bis, msk, 2);
 	se1.add_map(i00, i11, true);
-	se1.add_map(i01, i10, permutation<2>().permute(0, 1), true);
+	se1.add_map(i01, i10, true);
 	se1.add_map(i00, i01, true);
 	sym.insert(se1);
 

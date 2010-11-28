@@ -22,14 +22,10 @@ private:
 	void test_5() throw(libtest::test_exception);
 
 	// Adding partitions
-	void test_add_1a(bool sign) throw(libtest::test_exception);
-	void test_add_1b(bool sign) throw(libtest::test_exception);
-	void test_add_2a(bool sign) throw(libtest::test_exception);
-	void test_add_2b(bool sign) throw(libtest::test_exception);
-	void test_add_3a1(bool sign) throw(libtest::test_exception);
-	void test_add_3a2(bool sign) throw(libtest::test_exception);
-	void test_add_3b1(bool sign) throw(libtest::test_exception);
-	void test_add_3b2(bool sign) throw(libtest::test_exception);
+	void test_add_1(bool sign) throw(libtest::test_exception);
+	void test_add_2(bool sign) throw(libtest::test_exception);
+	void test_add_3a(bool sign) throw(libtest::test_exception);
+	void test_add_3b(bool sign) throw(libtest::test_exception);
 	void test_add_4(bool sign) throw(libtest::test_exception);
 	void test_add_5() throw(libtest::test_exception);
 	void test_add_6(bool sign) throw(libtest::test_exception);

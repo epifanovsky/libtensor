@@ -19,22 +19,14 @@ void partition_set_test::perform() throw(libtest::test_exception) {
 	test_4(false);
 	test_5();
 
-	test_add_1a(true);
-	test_add_1a(false);
-	test_add_1b(true);
-	test_add_1b(false);
-	test_add_2a(true);
-	test_add_2a(false);
-	test_add_2b(true);
-	test_add_2b(false);
-	test_add_3a1(true);
-	test_add_3a1(false);
-	test_add_3a2(true);
-	test_add_3a2(false);
-	test_add_3b1(true);
-	test_add_3b1(false);
-	test_add_3b2(true);
-	test_add_3b2(false);
+	test_add_1(true);
+	test_add_1(false);
+	test_add_2(true);
+	test_add_2(false);
+	test_add_3a(true);
+	test_add_3a(false);
+	test_add_3b(true);
+	test_add_3b(false);
 	test_add_4(true);
 	test_add_4(false);
 	test_add_5();
@@ -321,9 +313,9 @@ void partition_set_test::test_5() throw(libtest::test_exception) {
 
 /**	\test Adding one partition to an empty partition set
  **/
-void partition_set_test::test_add_1a(bool sign) throw(libtest::test_exception) {
+void partition_set_test::test_add_1(bool sign) throw(libtest::test_exception) {
 
-	static const char *testname = "partition_set_test::test_add_1a(bool)";
+	static const char *testname = "partition_set_test::test_add_1(bool)";
 
 	try {
 
@@ -360,52 +352,11 @@ void partition_set_test::test_add_1a(bool sign) throw(libtest::test_exception) {
 	}
 }
 
-/**	\test Adding one partition with permutation to an empty partition set
- **/
-void partition_set_test::test_add_1b(bool sign) throw(libtest::test_exception) {
-
-	static const char *testname = "partition_set_test::test_add_1b(bool)";
-
-	try {
-
-	index<2> i1, i2;
-	i2[0] = 9; i2[1] = 9;
-	block_index_space<2> bis(dimensions<2>(index_range<2>(i1, i2)));
-	mask<2> m11;
-	m11[0] = true; m11[1] = true;
-	bis.split(m11, 2);
-	bis.split(m11, 5);
-	bis.split(m11, 7);
-
-	index<2> i00, i01, i10, i11;
-	i01[1] = 1; i10[0] = 1;
-	i11[0] = 1; i11[1] = 1;
-
-	se_part<2, double> sp(bis, m11, 2);
-	sp.add_map(i00, i11, sign);
-	sp.add_map(i01, i10, permutation<2>().permute(0, 1), sign);
-
-	symmetry_element_set<2, double> set(se_part<2, double>::k_sym_type);
-	symmetry_element_set<2, double> set_ref(se_part<2, double>::k_sym_type);
-	set_ref.insert(sp);
-
-	permutation<2> perm;
-	partition_set<2, double> pset(bis);
-	pset.add_partition(sp, perm);
-	pset.convert(set);
-
-	compare_ref<2>::compare(testname, bis, set, set_ref);
-
-	} catch(exception &e) {
-		fail_test(testname, __FILE__, __LINE__, e.what());
-	}
-}
-
 /**	\test Adding one partition to an empty partition set with permutation
  **/
-void partition_set_test::test_add_2a(bool sign) throw(libtest::test_exception) {
+void partition_set_test::test_add_2(bool sign) throw(libtest::test_exception) {
 
-	static const char *testname = "partition_set_test::test_add_2a(bool)";
+	static const char *testname = "partition_set_test::test_add_2(bool)";
 
 	try {
 
@@ -446,59 +397,12 @@ void partition_set_test::test_add_2a(bool sign) throw(libtest::test_exception) {
 	}
 }
 
-/**	\test Adding one partition to an empty partition set with permutation
- **/
-void partition_set_test::test_add_2b(bool sign) throw(libtest::test_exception) {
-
-	static const char *testname = "partition_set_test::test_add_2b(bool)";
-
-	try {
-
-	index<4> i1, i2;
-	i2[0] = 9; i2[1] = 9; i2[2] = 9; i2[3] = 9;
-	block_index_space<4> bis(dimensions<4>(index_range<4>(i1, i2)));
-	mask<4> m1111;
-	m1111[0] = true; m1111[1] = true; m1111[2] = true; m1111[3] = true;
-	bis.split(m1111, 2);
-	bis.split(m1111, 5);
-	bis.split(m1111, 7);
-
-	index<4> i0000, i0101, i1010, i0110, i1001, i1111;
-	i1010[0] = 1; i0101[1] = 1; i1010[2] = 1; i0101[3] = 1;
-	i1001[0] = 1; i0110[1] = 1; i0110[2] = 1; i1001[3] = 1;
-	i1111[0] = 1; i1111[1] = 1; i1111[2] = 1; i1111[3] = 1;
-
-	se_part<4, double> sp1(bis, m1111, 2), sp2(bis, m1111, 2);
-	sp1.add_map(i0000, i1111, sign);
-	sp1.add_map(i0101, i1010,
-			permutation<4>().permute(1, 2).permute(2, 3), sign);
-	sp2.add_map(i0000, i1111, sign);
-	sp2.add_map(i0110, i1001,
-			permutation<4>().permute(0, 1).permute(1, 3), sign);
-
-	symmetry_element_set<4, double> set(se_part<4, double>::k_sym_type);
-	symmetry_element_set<4, double> set_ref(se_part<4, double>::k_sym_type);
-	set_ref.insert(sp2);
-
-	permutation<4> perm;
-	perm.permute(0, 1).permute(1, 2);
-	partition_set<4, double> pset(bis);
-	pset.add_partition(sp1, perm);
-	pset.convert(set);
-
-	compare_ref<4>::compare(testname, bis, set, set_ref);
-
-	} catch(exception &e) {
-		fail_test(testname, __FILE__, __LINE__, e.what());
-	}
-}
-
 /**	\test Adding a partition to a non-empty partition set with permutation
 		(all dimensions partitioned)
  **/
-void partition_set_test::test_add_3a1(bool sign) throw(libtest::test_exception) {
+void partition_set_test::test_add_3a(bool sign) throw(libtest::test_exception) {
 
-	static const char *testname = "partition_set_test::test_add_3a1(bool)";
+	static const char *testname = "partition_set_test::test_add_3a(bool)";
 
 	try {
 
@@ -553,72 +457,11 @@ void partition_set_test::test_add_3a1(bool sign) throw(libtest::test_exception) 
 }
 
 /**	\test Adding a partition to a non-empty partition set with permutation
-		(all dimensions partitioned)
- **/
-void partition_set_test::test_add_3a2(bool sign) throw(libtest::test_exception) {
-
-	static const char *testname = "partition_set_test::test_add_3a2(bool)";
-
-	try {
-
-	index<4> i1, i2;
-	i2[0] = 9; i2[1] = 9; i2[2] = 9; i2[3] = 9;
-	block_index_space<4> bis(dimensions<4>(index_range<4>(i1, i2)));
-	mask<4> m1111;
-	m1111[0] = true; m1111[1] = true; m1111[2] = true; m1111[3] = true;
-	bis.split(m1111, 2);
-	bis.split(m1111, 5);
-	bis.split(m1111, 7);
-
-	index<4> i0000, i1111, i0001, i1110, i0010, i1101, i0011, i1100,
-		i0100, i1011, i0101, i1010, i0110, i1001, i0111, i1000;
-	i1110[0] = 1; i1110[1] = 1; i1110[2] = 1; i0001[3] = 1;
-	i1101[0] = 1; i1101[1] = 1; i0010[2] = 1; i1101[3] = 1;
-	i1100[0] = 1; i1100[1] = 1; i0011[2] = 1; i0011[3] = 1;
-	i1011[0] = 1; i0100[1] = 1; i1011[2] = 1; i1011[3] = 1;
-	i1010[0] = 1; i0101[1] = 1; i1010[2] = 1; i0101[3] = 1;
-	i1001[0] = 1; i0110[1] = 1; i0110[2] = 1; i1001[3] = 1;
-	i1000[0] = 1; i0111[1] = 1; i0111[2] = 1; i0111[3] = 1;
-	i1111[0] = 1; i1111[1] = 1; i1111[2] = 1; i1111[3] = 1;
-
-	se_part<4, double> sp1(bis, m1111, 2), sp2(bis, m1111, 2);
-	sp1.add_map(i0000, i1111, sign);
-	sp1.add_map(i0101, i1010,
-			permutation<4>().permute(0, 1).permute(1, 3), sign);
-	sp2.add_map(i0011, i1100,
-			permutation<4>().permute(0, 1).permute(1, 2), sign);
-	sp2.add_map(i0110, i1001, permutation<4>().permute(1, 2), sign);
-
-	se_part<4, double> sp_ref(bis, m1111, 2);
-	sp_ref.add_map(i0000, i1111, sign);
-	sp_ref.add_map(i0101, i1010, sign);
-	sp_ref.add_map(i0011, i1100, sign);
-
-	symmetry_element_set<4, double> set1(se_part<4, double>::k_sym_type);
-	symmetry_element_set<4, double> set2(se_part<4, double>::k_sym_type);
-	symmetry_element_set<4, double> set2_ref(se_part<4, double>::k_sym_type);
-	set1.insert(sp1);
-	set2_ref.insert(sp_ref);
-
-	permutation<4> perm;
-	perm.permute(0, 2).permute(2, 3);
-	partition_set<4, double> pset(set1);
-	pset.add_partition(sp2, perm);
-	pset.convert(set2);
-
-	compare_ref<4>::compare(testname, bis, set2, set2_ref);
-
-	} catch(exception &e) {
-		fail_test(testname, __FILE__, __LINE__, e.what());
-	}
-}
-
-/**	\test Adding a partition to a non-empty partition set with permutation
 		(all dimensions partitioned). Wrong sign!
  **/
-void partition_set_test::test_add_3b1(bool sign) throw(libtest::test_exception) {
+void partition_set_test::test_add_3b(bool sign) throw(libtest::test_exception) {
 
-	static const char *testname = "partition_set_test::test_add_3b1(bool)";
+	static const char *testname = "partition_set_test::test_add_3b(bool)";
 
 	index<4> i1, i2;
 	i2[0] = 9; i2[1] = 9; i2[2] = 9; i2[3] = 9;
@@ -645,63 +488,6 @@ void partition_set_test::test_add_3b1(bool sign) throw(libtest::test_exception) 
 	sp1.add_map(i0101, i1010, sign);
 	sp2.add_map(i0011, i1100, !sign);
 	sp2.add_map(i0110, i1001, !sign);
-
-	symmetry_element_set<4, double> set1(se_part<4, double>::k_sym_type);
-	set1.insert(sp1);
-
-	permutation<4> perm;
-	perm.permute(0, 1).permute(1, 2);
-
-	bool found = false;
-	try {
-
-	partition_set<4, double> pset(set1);
-	pset.add_partition(sp2, perm);
-
-	} catch (exception &e) {
-		found = true;
-	}
-
-	if (! found) {
-		fail_test(testname, __FILE__, __LINE__, "No exception.");
-	}
-}
-
-
-/**	\test Adding a partition to a non-empty partition set with permutation
-		(all dimensions partitioned). Wrong permutation!
- **/
-void partition_set_test::test_add_3b2(bool sign) throw(libtest::test_exception) {
-
-	static const char *testname = "partition_set_test::test_add_3b2(bool)";
-
-	index<4> i1, i2;
-	i2[0] = 9; i2[1] = 9; i2[2] = 9; i2[3] = 9;
-	block_index_space<4> bis(dimensions<4>(index_range<4>(i1, i2)));
-	mask<4> m1111;
-	m1111[0] = true; m1111[1] = true; m1111[2] = true; m1111[3] = true;
-	bis.split(m1111, 2);
-	bis.split(m1111, 5);
-	bis.split(m1111, 7);
-
-	index<4> i0000, i1111, i0001, i1110, i0010, i1101, i0011, i1100,
-		i0100, i1011, i0101, i1010, i0110, i1001, i0111, i1000;
-	i1110[0] = 1; i1110[1] = 1; i1110[2] = 1; i0001[3] = 1;
-	i1101[0] = 1; i1101[1] = 1; i0010[2] = 1; i1101[3] = 1;
-	i1100[0] = 1; i1100[1] = 1; i0011[2] = 1; i0011[3] = 1;
-	i1011[0] = 1; i0100[1] = 1; i1011[2] = 1; i1011[3] = 1;
-	i1010[0] = 1; i0101[1] = 1; i1010[2] = 1; i0101[3] = 1;
-	i1001[0] = 1; i0110[1] = 1; i0110[2] = 1; i1001[3] = 1;
-	i1000[0] = 1; i0111[1] = 1; i0111[2] = 1; i0111[3] = 1;
-	i1111[0] = 1; i1111[1] = 1; i1111[2] = 1; i1111[3] = 1;
-
-	se_part<4, double> sp1(bis, m1111, 2), sp2(bis, m1111, 2);
-	sp1.add_map(i0000, i1111, sign);
-	sp1.add_map(i0101, i1010,
-			permutation<4>().permute(1, 2).permute(2, 3), sign);
-	sp2.add_map(i0011, i1100, permutation<4>().permute(2, 3), sign);
-	sp2.add_map(i0110, i1001,
-			permutation<4>().permute(0, 1).permute(1, 3), sign);
 
 	symmetry_element_set<4, double> set1(se_part<4, double>::k_sym_type);
 	set1.insert(sp1);
