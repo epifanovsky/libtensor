@@ -23,6 +23,7 @@ private:
 	void test_7() throw(libtest::test_exception);
 	void test_8() throw(libtest::test_exception);
 	void test_9() throw(libtest::test_exception);
+	void test_10() throw(libtest::test_exception);
 
 };
 
