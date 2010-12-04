@@ -20,6 +20,8 @@ void btod_mult1_test::perform() throw(libtest::test_exception) {
 	test_3(true, false);  test_3(true, true);
 	test_4(false, false); test_4(false, true);
 	test_4(true, false);  test_4(true, true);
+	test_5(false, false); test_5(false, true);
+	test_5(true, false);  test_5(true, true);
 }
 
 
@@ -283,6 +285,90 @@ void btod_mult1_test::test_4(
 	//	Compare against the reference
 
 	compare_ref<4>::compare(oss.str().c_str(), ta, ta_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(oss.str().c_str(), __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\test Elementwise operation of two order-2 tensors with partition
+		symmetry no zero blocks.
+ **/
+void btod_mult1_test::test_5(bool recip, bool doadd)
+	throw(libtest::test_exception) {
+
+	std::ostringstream oss;
+	oss << "btod_mult1_test::test_5("
+			<< (recip ? "true" : "false") << ", "
+			<< (doadd ? "true" : "false") << ")";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<2> i1, i2;
+	i2[0] = 9; i2[1] = 9;
+	mask<2> m11;
+	m11[0] = true; m11[1] = true;
+	dimensions<2> dims(index_range<2>(i1, i2));
+	block_index_space<2> bis(dims);
+	bis.split(m11, 2);
+	bis.split(m11, 5);
+	bis.split(m11, 7);
+	dimensions<2> bidims(bis.get_block_index_dims());
+
+	block_tensor<2, double, allocator_t> bta(bis), btb(bis);
+	symmetry<2, double> syma(bis), syma_ref(bis);
+	tensor<2, double, allocator_t> ta(dims), tb(dims), ta_ref(dims);
+
+	//	Install symmetry
+
+	index<2> i00, i01, i10, i11;
+	i10[0] = 1; i01[1] = 1; i11[0] = 1; i11[1] = 1;
+	se_part<2, double> separta(bis, m11, 2), separtb(bis, m11, 2);
+	separta.add_map(i00, i11, false);
+	separta.add_map(i01, i10, true);
+	separtb.add_map(i00, i01, true);
+	separtb.add_map(i01, i10, true);
+	separtb.add_map(i10, i11, true);
+	syma_ref.insert(separta);
+	{
+		block_tensor_ctrl<2, double> ctrla(bta), ctrlb(btb);
+		ctrla.req_symmetry().insert(separta);
+		ctrlb.req_symmetry().insert(separtb);
+	}
+
+	//	Fill in random data
+
+	btod_random<2>().perform(bta);
+	btod_random<2>().perform(btb);
+	btb.set_immutable();
+
+	//	Prepare the reference
+
+	tod_btconv<2>(bta).perform(ta_ref);
+	tod_btconv<2>(btb).perform(tb);
+
+	//	Invoke the operation
+
+	if(doadd) {
+		tod_mult1<2>(tb, recip).perform(ta_ref, -1.2);
+		btod_mult1<2>(btb, recip).perform(bta, -1.2);
+	} else {
+		tod_mult1<2>(tb, recip).perform(ta_ref);
+		btod_mult1<2>(btb, recip).perform(bta);
+	}
+	tod_btconv<2>(bta).perform(ta);
+
+	//	Compare against the reference
+
+	{
+		block_tensor_ctrl<2, double> ctrla(bta);
+		so_copy<2, double>(ctrla.req_const_symmetry()).perform(syma);
+	}
+	compare_ref<2>::compare(oss.str().c_str(), syma, syma_ref);
+	compare_ref<2>::compare(oss.str().c_str(), ta, ta_ref, 1e-15);
 
 	} catch(exception &e) {
 		fail_test(oss.str().c_str(), __FILE__, __LINE__, e.what());
