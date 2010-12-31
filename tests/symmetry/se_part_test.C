@@ -18,6 +18,7 @@ void se_part_test::perform() throw(libtest::test_exception) {
 	test_perm_2();
 	test_perm_3();
 	test_perm_4();
+	test_exc();
 }
 
 
@@ -742,6 +743,71 @@ void se_part_test::test_perm_4() throw(libtest::test_exception) {
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
 	}
+}
+
+/**	\test Two partitions, blocks with unequal size in each partition (2-dim)
+ **/
+void se_part_test::test_exc() throw(libtest::test_exception) {
+
+	static const char *testname = "se_part_test::test_exc()";
+
+	index<2> i1, i2;
+	i2[0] = 9; i2[1] = 9;
+	block_index_space<2> bisa(dimensions<2>(index_range<2>(i1, i2)));
+	block_index_space<2> bisb(dimensions<2>(index_range<2>(i1, i2)));
+	block_index_space<2> bisc(dimensions<2>(index_range<2>(i1, i2)));
+	mask<2> m01, m10, m11;
+	m10[0] = true; m01[1] = true;
+	m11[0] = true; m11[1] = true;
+	bisa.split(m11, 3);
+	bisa.split(m11, 5);
+	bisa.split(m11, 7);
+
+	bisb.split(m01, 5);
+	bisb.split(m10, 2);
+	bisb.split(m10, 4);
+	bisb.split(m10, 5);
+	bisb.split(m10, 7);
+
+	bisb.split(m01, 2);
+	bisb.split(m01, 4);
+	bisb.split(m01, 5);
+	bisb.split(m01, 6);
+	bisb.split(m01, 7);
+	bisb.split(m10, 5);
+
+	bool failed = false;
+	try {
+		se_part<2, double> elem1(bisa, m11, 2);
+	} catch(exception &e) {
+		failed = true;
+	}
+
+	if (! failed)
+		fail_test(testname, __FILE__, __LINE__,
+				"Illegal se_part created without exception (elem1.");
+
+	failed = false;
+	try {
+		se_part<2, double> elem2(bisb, m11, 2);
+	} catch(exception &e) {
+		failed = true;
+	}
+
+	if (! failed)
+		fail_test(testname, __FILE__, __LINE__,
+				"Illegal se_part created without exception (elem2.");
+
+	failed = false;
+	try {
+		se_part<2, double> elem3(bisc, m11, 2);
+	} catch(exception &e) {
+		failed = true;
+	}
+
+	if (! failed)
+		fail_test(testname, __FILE__, __LINE__,
+				"Illegal se_part created without exception (elem3.");
 }
 
 } // namespace libtensor
