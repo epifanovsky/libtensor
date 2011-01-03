@@ -173,13 +173,15 @@ private:
 
 
 template<size_t N, size_t M>
-const char *tod_extract<N, M>::k_clazz = "tod_diag<N, M>";
+const char *tod_extract<N, M>::k_clazz = "tod_extract<N, M>";
 
 template<size_t N, size_t M>
-const char *tod_extract<N, M>::op_dcopy::k_clazz = "tod_diag<N, M>::op_dcopy";
+const char *tod_extract<N, M>::op_dcopy::k_clazz =
+	"tod_extract<N, M>::op_dcopy";
 
 template<size_t N, size_t M>
-const char *tod_extract<N, M>::op_daxpy::k_clazz = "tod_diag<N, M>::op_daxpy";
+const char *tod_extract<N, M>::op_daxpy::k_clazz =
+	"tod_extract<N, M>::op_daxpy";
 
 
 template<size_t N, size_t M>
@@ -208,7 +210,7 @@ tod_extract<N, M>::tod_extract(tensor_i<N, double> &t, const mask<N> &m,
 template<size_t N, size_t M>
 void tod_extract<N, M>::perform(tensor_i<k_orderb, double> &tb) {
 
-	static const char *method = "perform(tensor_i<N - M, double> &)";
+	static const char *method = "perform(tensor_i<N - M, double>&)";
 
 	if(!tb.get_dims().equals(m_dims)) {
 		throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__,
@@ -223,7 +225,7 @@ template<size_t N, size_t M>
 void tod_extract<N, M>::perform(tensor_i<k_orderb, double> &tb, double c) {
 
 	static const char *method =
-		"perform(tensor_i<N - M, double> &, double)";
+		"perform(tensor_i<N - M, double>&, double)";
 
 	if(!tb.get_dims().equals(m_dims)) {
 		throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__,
