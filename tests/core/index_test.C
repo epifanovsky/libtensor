@@ -9,6 +9,7 @@ void index_test::perform() throw(libtest::test_exception) {
 	test_ctor();
 	test_less();
 	test_print();
+	test_op();
 }
 
 void index_test::test_ctor() throw(libtest::test_exception) {
@@ -113,6 +114,79 @@ void index_test::test_print() throw(libtest::test_exception) {
 			err.str().c_str());
 	}
 
+}
+
+void index_test::test_op() throw(libtest::test_exception) {
+
+	index<2> i1, i2, i3, i4;
+	i1[0] = 3; i1[1] = 5;
+	i2[0] = 3; i2[1] = 5;
+	i3[0] = 0; i3[1] = 0;
+	i4[0] = 3; i4[1] = 6;
+
+	if (! (i1 == i2))
+		fail_test("index_test::test_op()",
+				__FILE__, __LINE__, "operator==(i1, i2)");
+
+	if (i1 != i2)
+		fail_test("index_test::test_op()",
+				__FILE__, __LINE__, "operator!=(i1, i2)");
+
+	if (i1 == i3)
+		fail_test("index_test::test_op()",
+				__FILE__, __LINE__, "operator==(i1, i3)");
+
+	if (! (i1 != i3))
+		fail_test("index_test::test_op()",
+				__FILE__, __LINE__, "operator!=(i1, i3)");
+
+	if (i1 < i2)
+		fail_test("index_test::test_op()",
+				__FILE__, __LINE__, "operator<(i1, i2)");
+
+	if (i1 < i3)
+		fail_test("index_test::test_op()",
+				__FILE__, __LINE__, "operator<(i1, i3)");
+
+	if (! (i1 < i4))
+		fail_test("index_test::test_op()",
+				__FILE__, __LINE__, "operator<(i1, i4)");
+
+	if (! (i1 <= i2))
+		fail_test("index_test::test_op()",
+				__FILE__, __LINE__, "operator<=(i1, i2)");
+
+	if (i1 <= i3)
+		fail_test("index_test::test_op()",
+				__FILE__, __LINE__, "operator<=(i1, i3)");
+
+	if (! (i1 <= i4))
+		fail_test("index_test::test_op()",
+				__FILE__, __LINE__, "operator<=(i1, i4)");
+
+	if (i1 > i2)
+		fail_test("index_test::test_op()",
+				__FILE__, __LINE__, "operator>(i1, i2)");
+
+	if (! (i1 > i3))
+		fail_test("index_test::test_op()",
+				__FILE__, __LINE__, "operator>(i1, i3)");
+
+	if (i1 > i4)
+		fail_test("index_test::test_op()",
+				__FILE__, __LINE__, "operator>(i1, i4)");
+
+	if (! (i1 >= i2))
+		fail_test("index_test::test_op()",
+				__FILE__, __LINE__, "operator>=(i1, i2)");
+
+	if (! (i1 >= i3))
+		fail_test("index_test::test_op()",
+				__FILE__, __LINE__, "operator>=(i1, i3)");
+
+	if (i1 > i4)
+		fail_test("index_test::test_op()",
+				__FILE__, __LINE__, "operator>=(i1, i4)");
 }
 
 } // namespace libtensor

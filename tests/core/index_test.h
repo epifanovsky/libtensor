@@ -22,6 +22,9 @@ private:
 
 	//!	Tests the operator<<
 	void test_print() throw(libtest::test_exception);
+
+	//!	Tests comparison operators
+	void test_op() throw(libtest::test_exception);
 };
 
 } // namespace libtensor

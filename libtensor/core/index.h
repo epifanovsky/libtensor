@@ -229,6 +229,31 @@ inline std::ostream &operator<<(std::ostream &os, const index<0> &i) {
 	return os;
 }
 
+template<size_t N>
+inline bool operator==(const index<N> &i1, const index<N> &i2) {
+	 return i1.equals(i2);
+}
+
+template<size_t N>
+inline bool operator!=(const index<N> &i1, const index<N> &i2) {
+	return ! i1.equals(i2);
+}
+
+template<size_t N>
+inline bool operator>=(const index<N> &i1, const index<N> &i2) {
+	return ! i1.less(i2);
+}
+
+template<size_t N>
+inline bool operator>(const index<N> &i1, const index<N> &i2) {
+	return i2.less(i1);
+}
+
+template<size_t N>
+inline bool operator<=(const index<N> &i1, const index<N> &i2) {
+	return ! i2.less(i1);
+}
+
 
 } // namespace libtensor
 
