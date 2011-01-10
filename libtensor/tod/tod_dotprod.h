@@ -10,6 +10,7 @@
 #include "../core/tensor_i.h"
 #include "../core/tensor_ctrl.h"
 #include "contraction2.h"
+#include "bad_dimensions.h"
 #include "processor.h"
 
 namespace libtensor {
@@ -122,7 +123,7 @@ tod_dotprod<N>::tod_dotprod(tensor_i<N, double> &t1, tensor_i<N, double> &t2)
 		"tensor_i<N, double>&)";
 
 	if(!verify_dims()) {
-		throw_exc(k_clazz, method, "Incompatible tensor dimensions");
+		bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "t1, t2.");
 	}
 }
 
@@ -139,7 +140,7 @@ tod_dotprod<N>::tod_dotprod(
 		"const permutation<N>&)";
 
 	if(!verify_dims()) {
-		throw_exc(k_clazz, method, "Incompatible tensor dimensions");
+		bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "t1, t2.");
 	}
 }
 

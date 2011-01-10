@@ -12,6 +12,7 @@
 #include "../core/orbit_list.h"
 #include "../core/tensor_i.h"
 #include "../core/tensor_ctrl.h"
+#include "../tod/bad_dimensions.h"
 #include "../tod/processor.h"
 #include "../btod/transf_double.h"
 
@@ -122,8 +123,7 @@ void tod_btconv<N>::perform(tensor_i<N, double> &t) throw(exception) {
 	const block_index_space<N> &bis = m_bt.get_bis();
 	dimensions<N> bidims(bis.get_block_index_dims());
 	if(!bis.get_dims().equals(t.get_dims())) {
-		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
-			"Incorrect dimensions of the output tensor.");
+		throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "t");
 	}
 
 	block_tensor_ctrl<N, double> src_ctrl(m_bt);
