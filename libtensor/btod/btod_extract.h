@@ -358,6 +358,7 @@ void btod_extract<N, M>::make_schedule() {
 		orbit<k_ordera, double> oa(ctrla.req_const_symmetry(), idxa);
 		abs_index<k_ordera> cidxa(oa.get_abs_canonical_index(), bidimsa);
 
+		if(!oa.is_allowed()) continue;
 		if(ctrla.req_is_zero_block(cidxa.get_index())) continue;
 
 		m_sch.insert(olb.get_abs_index(iob));
