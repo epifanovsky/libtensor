@@ -239,15 +239,22 @@ void btod_extract<N, M>::do_compute_block(tensor_i<k_orderb, double> &blk,
 	index<k_ordera> idxibl2(m_idxibl);
 	idxibl2.permute(tra.get_perm());
 
-	tensor_i<k_ordera, double> &blka = ctrla.req_block(cidxa.get_index());
-	if(zero) {
-		tod_extract<N, M>(blka, msk2, permb, idxibl2,
-			tra.get_coeff() * m_c * c).perform(blk);
+	if(oa.is_allowed()) {
+
+		tensor_i<k_ordera, double> &blka = ctrla.req_block(
+			cidxa.get_index());
+		if(zero) {
+			tod_extract<N, M>(blka, msk2, permb, idxibl2,
+				tra.get_coeff() * m_c * c).perform(blk);
+		} else {
+			tod_extract<N, M>(blka, msk2, permb, idxibl2,
+				tra.get_coeff() * m_c).perform(blk, c);
+		}
+		ctrla.ret_block(cidxa.get_index());
 	} else {
-		tod_extract<N, M>(blka, msk2, permb, idxibl2,
-			tra.get_coeff() * m_c).perform(blk, c);
+
+		if(zero) tod_set<N - M>().perform(blk);
 	}
-	ctrla.ret_block(cidxa.get_index());
 
 	btod_extract<N, M>::stop_timer();
 }
