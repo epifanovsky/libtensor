@@ -239,7 +239,10 @@ void btod_extract<N, M>::do_compute_block(tensor_i<k_orderb, double> &blk,
 	index<k_ordera> idxibl2(m_idxibl);
 	idxibl2.permute(tra.get_perm());
 
-	if(oa.is_allowed()) {
+	bool zeroa = !oa.is_allowed();
+	if(!zeroa) zeroa = ctrla.req_is_zero_block(cidxa.get_index());
+
+	if(!zeroa) {
 
 		tensor_i<k_ordera, double> &blka = ctrla.req_block(
 			cidxa.get_index());
@@ -325,7 +328,7 @@ block_index_space<N - M> btod_extract<N, M>::mk_bis(
 template<size_t N, size_t M>
 void btod_extract<N, M>::make_schedule() {
 
-	btod_extract<N, M>::start_timer("make_schedule()");
+	btod_extract<N, M>::start_timer("make_schedule");
 
 	block_tensor_ctrl<N, double> ctrla(m_bta);
 	dimensions<N> bidimsa = m_bta.get_bis().get_block_index_dims();
@@ -364,7 +367,7 @@ void btod_extract<N, M>::make_schedule() {
 		m_sch.insert(olb.get_abs_index(iob));
 	}
 
-	btod_extract<N, M>::stop_timer("make_schedule()");
+	btod_extract<N, M>::stop_timer("make_schedule");
 
 }
 
