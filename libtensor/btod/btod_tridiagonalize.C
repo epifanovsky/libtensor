@@ -1,10 +1,17 @@
 #include <iostream>
-#include <libtensor/libtensor.h>
 #include <libvmm/libvmm.h>
 #include "../core/block_tensor_ctrl.h"
+#include "../core/block_tensor.h"
+#include "btod_add.h"
+#include "btod_contract2.h"
+#include "btod_copy.h"
+#include "btod_diag.h"
 #include "btod_extract.h"
+#include "btod_scale.h"
+#include "btod_set_diag.h"
+#include "btod_set_elem.h"
+#include "btod_set.h"
 #include "btod_tridiagonalize.h"
-
 
 namespace libtensor
 {
