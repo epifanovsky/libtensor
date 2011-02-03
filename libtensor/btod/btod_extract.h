@@ -334,13 +334,6 @@ void btod_extract<N, M>::make_schedule() {
 	dimensions<N> bidimsa = m_bta.get_bis().get_block_index_dims();
 
 	permutation<k_orderb> pinv(m_perm, true);
-	size_t map[k_ordera];
-	size_t j = 0;
-	for(size_t i = 0; i < k_ordera; i++) {
-		if(m_msk[i]) {
-			map[i] = j++;
-		}
-	}
 
 	orbit_list<k_orderb, double> olb(m_sym);
 	for (typename orbit_list<k_orderb, double>::iterator iob = olb.begin();
@@ -349,17 +342,17 @@ void btod_extract<N, M>::make_schedule() {
 		index<k_ordera> idxa;
 		index<k_orderb> idxb(olb.get_index(iob));
 
-		for(size_t i = 0; i < k_ordera; i++) {
-			if (m_msk[i]) {
-				idxa[i] = idxb[map[i]];
-			}
-			else {
-				idxa[i] = m_idxbl[i];
-			}
+		idxb.permute(pinv);
+
+		for(size_t i = 0, j = 0; i < k_ordera; i++) {
+			if(m_msk[i]) idxa[i] = idxb[j++];
+			else idxa[i] = m_idxbl[i];
 		}
 
 		orbit<k_ordera, double> oa(ctrla.req_const_symmetry(), idxa);
-		abs_index<k_ordera> cidxa(oa.get_abs_canonical_index(), bidimsa);
+
+		abs_index<k_ordera> cidxa(oa.get_abs_canonical_index(),
+				m_bta.get_bis().get_block_index_dims());
 
 		if(!oa.is_allowed()) continue;
 		if(ctrla.req_is_zero_block(cidxa.get_index())) continue;
