@@ -26,6 +26,7 @@ void btod_extract_test::perform() throw(libtest::test_exception) {
 	test_12a();
 	test_12b();
 	test_12c();
+	test_13a();
 }
 
 
@@ -1005,6 +1006,91 @@ void btod_extract_test::test_12c() throw(libtest::test_exception) {
 	//	Invoke the operation
 
 	btod_extract<4, 2>(bta, msk, idxbl, idxibl).perform(btb, -2.3);
+	tod_btconv<2>(btb).perform(tb);
+
+	//	Compare against the reference
+
+	compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+/**	\test Extract a matrix from a fourth-order tensor with splitting
+		and perm symmetry
+ 	 	\f$ b_{ak} = a_{ijka} \qquad a_{ijka} = -a_{jika} \f$
+ **/
+void btod_extract_test::test_13a() throw(libtest::test_exception) {
+
+	static const char *testname = "btod_extract_test::test_13a()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<2> i2a, i2b;
+	i2b[0] = 11; i2b[1] = 7;
+	index<4> i4a, i4b;
+	i4b[0] = 7; i4b[1] = 7; i4b[2] = 7; i4b[3] = 11;
+	dimensions<2> dims2(index_range<2>(i2a, i2b));
+	dimensions<4> dims4(index_range<4>(i4a, i4b));
+	block_index_space<2> bis2(dims2);
+	block_index_space<4> bis4(dims4);
+
+	mask<2> m2a, m2b;
+	m2a[0] = true; m2b[1] = true;
+	bis2.split(m2a, 3);
+	bis2.split(m2a, 6);
+	bis2.split(m2a, 9);
+	bis2.split(m2b, 4);
+
+	mask<4> m4a, m4b;
+	m4b[0] = true; m4b[1] = true; m4b[2] = true; m4a[3] = true;
+	bis4.split(m4a, 3);
+	bis4.split(m4a, 6);
+	bis4.split(m4a, 9);
+	bis4.split(m4b, 4);
+
+	block_tensor<4, double, allocator_t> bta(bis4);
+	block_tensor<2, double, allocator_t> btb(bis2);
+
+	//	Add perm symmetry
+
+	block_tensor_ctrl<4, double> cbta(bta);
+	cbta.req_symmetry().insert(se_perm<4, double>(
+		permutation<4>().permute(0, 1), false));
+
+	tensor<4, double, allocator_t> ta(dims4);
+	tensor<2, double, allocator_t> tb(dims2), tb_ref(dims2);
+
+	mask<4> msk;
+	msk[0] = false; msk[1] = true; msk[2] = false; msk[3] = true;
+	permutation<2> perm;
+	perm.permute(0, 1);
+
+	index<4> idx;
+	idx[0] = 4; idx[1] = 0; idx[2] = 3; idx[3] = 0;
+	index<4> idxbl;
+	idxbl[0] = 1; idxbl[1] = 0; idxbl[2] = 0; idxbl[3] = 0;
+	index<4> idxibl;
+	idxibl[0] = idx[0] - 4; idxibl[1] = idx[1]; idxibl[2] = idx[2];
+	idxibl[3] = idx[3];
+
+	//	Fill in random data
+
+	btod_random<4>().perform(bta);
+	bta.set_immutable();
+
+	//	Prepare the reference
+
+	tod_btconv<4>(bta).perform(ta);
+	tod_extract<4, 2>(ta, msk, perm, idx).perform(tb_ref);
+
+	//	Invoke the operation
+
+	btod_extract<4, 2>(bta, msk, perm, idxbl, idxibl).perform(btb);
 	tod_btconv<2>(btb).perform(tb);
 
 	//	Compare against the reference
