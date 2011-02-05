@@ -11,6 +11,7 @@
 #include <libtensor/symmetry/se_label.h>
 #include <libtensor/symmetry/se_part.h>
 #include <libtensor/tod/tod_btconv.h>
+#include <libtensor/tod/tod_dirsum.h>
 #include "../compare_ref.h"
 #include "btod_dirsum_test.h"
 #include <libtensor/btod/btod_print.h>
@@ -27,6 +28,11 @@ void btod_dirsum_test::perform() throw(libtest::test_exception) {
 	test_ij_i_j_1(true, -0.5);
 	test_ij_i_j_1(false);
 	test_ij_i_j_1(false, 0.5);
+
+	test_ij_i_j_2(true);
+	test_ij_i_j_2(true, -0.8);
+	test_ij_i_j_2(false);
+	test_ij_i_j_2(false, 0.8);
 
 	test_ijk_ij_k_1(true);
 	test_ijk_ij_k_1(true, 1.2);
@@ -59,6 +65,12 @@ void btod_dirsum_test::perform() throw(libtest::test_exception) {
 	test_ikjl_ij_kl_3(false, true, false, -2.0);
 	test_ikjl_ij_kl_3(true, false, false, -2.0);
 	test_ikjl_ij_kl_3(true, true, false, -2.0);
+
+	test_iklj_ij_kl_1(true);
+	test_iklj_ij_kl_1(true, 1.25);
+	test_iklj_ij_kl_1(false);
+	test_iklj_ij_kl_1(false, -1.25);
+
 }
 
 void btod_dirsum_test::test_ij_i_j_1(bool rnd, double d)
@@ -115,6 +127,86 @@ void btod_dirsum_test::test_ij_i_j_1(bool rnd, double d)
 	//	Compare against the reference
 
 	compare_ref<2>::compare(tns.c_str(), tc, tc_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+	}
+}
+
+void btod_dirsum_test::test_ij_i_j_2(bool rnd, double d)
+	throw(libtest::test_exception) {
+
+	//	c_{ij} = a_i + a_j
+
+	std::stringstream tnss;
+	tnss << "btod_dirsum_test::test_ij_i_j_2(" << rnd << ", " << d << ")";
+	std::string tns = tnss.str();
+
+	try {
+
+	size_t ni = 9;
+
+	index<1> ia1, ia2; ia2[0] = ni - 1;
+	index<2> ic1, ic2; ic2[0] = ni - 1; ic2[1] = ni - 1;
+	dimensions<1> dima(index_range<1>(ia1, ia2));
+	dimensions<2> dimc(index_range<2>(ic1, ic2));
+	block_index_space<1> bisa(dima);
+	block_index_space<2> bisc(dimc);
+
+	mask<1> ma; ma[0] = true;
+	bisa.split(ma, 3);
+	mask<2> mc; mc[0] = true; mc[1] = true;
+	bisc.split(mc, 3);
+
+	block_tensor<1, double, allocator> bta(bisa);
+	block_tensor<2, double, allocator> btc(bisc);
+
+	tensor<1, double, allocator> ta(dima);
+	tensor<2, double, allocator> tc(dimc);
+	tensor<2, double, allocator> tc_ref(dimc);
+
+	//	Fill in random input
+
+	btod_random<1>().perform(bta);
+	if(rnd) btod_random<2>().perform(btc);
+
+	bta.set_immutable();
+
+	tod_btconv<1>(bta).perform(ta);
+	if(d != 0.0) tod_btconv<2>(btc).perform(tc_ref);
+
+	//	Generate reference data
+
+	if(d == 0.0) tod_dirsum<1, 1>(ta, 1.0, ta, 1.0).perform(tc_ref);
+	else tod_dirsum<1, 1>(ta, 1.0, ta, 1.0).perform(tc_ref, d);
+
+	// Check the symmetry of the result
+
+	btod_dirsum<1, 1> op(bta, 1.0, bta, 1.0);
+	{
+		permutation<2> p01;
+		p01.permute(0, 1);
+		const symmetry<2, double> &sym = op.get_symmetry();
+		symmetry<2, double>::iterator is = sym.begin();
+		const symmetry_element_set<2, double> &set = sym.get_subset(is);
+		symmetry_element_set_adapter<2, double, se_perm<2, double> > adapter(set);
+		permutation_group<2, double> grp(set);
+		if (! grp.is_member(true, p01)) {
+			fail_test(tns.c_str(), __FILE__, __LINE__,
+					"Permutational symmetry (0-1) missing.");
+		}
+	}
+
+	//	Invoke the direct sum routine
+
+	if(d == 0.0) op.perform(btc);
+	else op.perform(btc, d);
+	tod_btconv<2>(btc).perform(tc);
+
+	//	Compare against the reference
+
+	compare_ref<2>::compare(tns.c_str(), tc, tc_ref, 1e-15);
+
 
 	} catch(exception &e) {
 		fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
@@ -541,5 +633,135 @@ void btod_dirsum_test::test_ikjl_ij_kl_3(bool part, bool label,
 
 	if (label) product_table_container::get_instance().erase(tns);
 }
+
+void btod_dirsum_test::test_iklj_ij_kl_1(bool rnd, double d)
+	throw(libtest::test_exception) {
+
+	//	c_{iklj} = a_{ij} + a_{kl}
+	// with splits and symmetry
+
+	std::stringstream tnss;
+	tnss << "btod_dirsum_test::test_ikjl_ij_kl_1(" << rnd << ", " << d
+		<< ")";
+	std::string tns = tnss.str();
+
+	try {
+
+	size_t ni = 10, nj = 12;
+
+	index<2> ia1, ia2;
+	ia2[0] = ni - 1; ia2[1] = nj - 1;
+	index<4> ic1, ic2;
+	ic2[0] = ni - 1; ic2[1] = ni - 1; ic2[2] = nj - 1; ic2[3] = nj - 1;
+	dimensions<2> dima(index_range<2>(ia1, ia2));
+	dimensions<4> dimc(index_range<4>(ic1, ic2));
+	block_index_space<2> bisa(dima);
+	block_index_space<4> bisc(dimc);
+	// split dimensions
+	mask<2> mska;
+	mask<4> mskc;
+
+	mska[0] = true;
+	bisa.split(mska, ni / 2);
+	mska[0] = false; mska[1] = true;
+	bisa.split(mska, nj / 2);
+	mskc[0] = true;  mskc[1] = true;
+	bisc.split(mskc, ni / 2);
+	mskc[0] = false; mskc[1] = false;
+	mskc[2] = true;  mskc[3] = true;
+	bisc.split(mskc, nj / 2);
+	bisc.match_splits();
+
+	block_tensor<2, double, allocator> bta(bisa);
+	block_tensor<4, double, allocator> btc(bisc);
+
+	tensor<2, double, allocator> ta(dima);
+	tensor<4, double, allocator> tc(dimc);
+	tensor<4, double, allocator> tc_ref(dimc);
+
+	// Set symmetry
+	{
+		mska[0] = true;
+		se_part<2, double> sp(bisa, mska, 2);
+		index<2> i00, i01, i10, i11;
+		i10[0] = 1; i01[1] = 1;
+		i11[0] = 1; i11[1] = 1;
+		sp.add_map(i00, i11);
+		sp.add_map(i01, i10);
+
+		block_tensor_ctrl<2, double> cbta(bta);
+		cbta.req_symmetry().insert(sp);
+	}
+	//	Fill in random input
+
+	btod_random<2>().perform(bta);
+
+	// set zero blocks
+	{
+		index<2> idxa;
+		idxa[1] = 1;
+		block_tensor_ctrl<2, double> bctrla(bta);
+		bctrla.req_zero_block(idxa);
+	}
+
+	if(rnd) btod_random<4>().perform(btc);
+	tod_btconv<2>(bta).perform(ta);
+	if(d != 0.0) tod_btconv<4>(btc).perform(tc_ref);
+
+	//	Generate reference data
+
+	permutation<4> permc;
+	permc.permute(1, 2);
+	if(d == 0.0) {
+		tod_dirsum<2, 2>(ta, -1.0, ta, -1.0, permc).perform(tc_ref);
+	} else {
+		tod_dirsum<2, 2>(ta, -1.0, ta, -1.0, permc).perform(tc_ref, d);
+	}
+
+	// Check symmetry
+
+	btod_dirsum<2, 2> op(bta, -1.0, bta, -1.0, permc);
+
+	{
+		permutation<4> p1032;
+		p1032.permute(0, 1).permute(2, 3);
+		const symmetry<4, double> &sym = op.get_symmetry();
+		symmetry<4, double>::iterator is = sym.begin();
+		for (; is != sym.end(); is++)
+			if (sym.get_subset(is).get_id()
+					.compare(se_perm<4, double>::k_sym_type) == 0)
+				break;
+
+		if (is == sym.end())
+			fail_test(tns.c_str(), __FILE__, __LINE__,
+					"Permutational symmetry missing.");
+
+		const symmetry_element_set<4, double> &set = sym.get_subset(is);
+		symmetry_element_set_adapter<4, double, se_perm<4, double> > adapter(set);
+		permutation_group<4, double> grp(set);
+		if (! grp.is_member(true, p1032)) {
+			fail_test(tns.c_str(), __FILE__, __LINE__,
+					"Permutational symmetry () missing.");
+		}
+	}
+
+	//	Invoke the direct sum routine
+
+	if(d == 0.0) {
+		op.perform(btc);
+	} else {
+		op.perform(btc, d);
+	}
+	tod_btconv<4>(btc).perform(tc);
+
+	//	Compare against the reference
+
+	compare_ref<4>::compare(tns.c_str(), tc, tc_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+	}
+}
+
 
 } // namespace libtensor
