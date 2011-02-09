@@ -96,6 +96,7 @@ set(SRC_INST
 	btod/btod_contract2_5.C
 	btod/btod_contract2_6.C
 	btod/btod_copy.C
+	btod/btod_dirsum.C
 	btod/btod_dotprod.C
 	btod/btod_sum.C
 )

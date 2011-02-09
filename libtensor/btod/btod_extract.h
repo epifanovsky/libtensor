@@ -54,10 +54,10 @@ private:
 
 public:
 	btod_extract(block_tensor_i<N, double> &bta, const mask<N> &m,
-			const index<N> &idxbl, const index<N> &idxibl, double c = 1.0);
+		const index<N> &idxbl, const index<N> &idxibl, double c = 1.0);
 
 	btod_extract(block_tensor_i<N, double> &bta, const mask<N> &m,
-		const permutation<N - M> &p,const index<N> &idxbl,
+		const permutation<N - M> &perm, const index<N> &idxbl,
 		const index<N> &idxibl, double c = 1.0);
 
 	//!	\name Implementation of
@@ -95,8 +95,8 @@ private:
 	/**	\brief Forms the block %index space of the output or throws an
 			exception if the input is incorrect
 	 **/
-	static block_index_space<N - M> mk_bis(
-		const block_index_space<N> &bis, const mask<N> &msk);
+	static block_index_space<N - M> mk_bis(const block_index_space<N> &bis,
+		const mask<N> &msk, const permutation<N - M> &perm);
 
 	/**	\brief Sets up the assignment schedule for the operation.
 	 **/
@@ -123,7 +123,7 @@ btod_extract<N, M>::btod_extract(block_tensor_i<N, double> &bta,
 	double c) :
 
 	m_bta(bta), m_msk(m), m_idxbl(idxbl), m_idxibl(idxibl), m_c(c),
-	m_bis(mk_bis(bta.get_bis(), m_msk)), m_sym(m_bis),
+	m_bis(mk_bis(bta.get_bis(), m_msk, permutation<N - M>())), m_sym(m_bis),
 	m_sch(m_bis.get_block_index_dims()) {
 
 	block_tensor_ctrl<N, double> ctrla(bta);
@@ -136,20 +136,22 @@ btod_extract<N, M>::btod_extract(block_tensor_i<N, double> &bta,
 
 template<size_t N, size_t M>
 btod_extract<N, M>::btod_extract(block_tensor_i<N, double> &bta,
-	const mask<N> &m, const permutation<N - M > &p,
+	const mask<N> &m, const permutation<N - M> &perm,
 	const index<N> &idxbl, const index<N> &idxibl, double c) :
 
-	m_bta(bta), m_msk(m), m_perm(p), m_idxbl(idxbl), m_idxibl(idxibl), m_c(c),
-	m_bis(mk_bis(bta.get_bis(), m_msk)), m_sym(m_bis),
+	m_bta(bta), m_msk(m), m_perm(perm), m_idxbl(idxbl), m_idxibl(idxibl),
+	m_c(c), m_bis(mk_bis(bta.get_bis(), m_msk, perm)), m_sym(m_bis),
 	m_sch(m_bis.get_block_index_dims()) {
 
-	m_bis.permute(p);
+	permutation<N - M> pinv(perm, true);
+	block_index_space<N - M> bisinv(m_bis);
+	bisinv.permute(pinv);
 
 	block_tensor_ctrl<N, double> ctrla(bta);
-	symmetry<k_orderb, double> sym(m_bis);
+	symmetry<k_orderb, double> sym(bisinv);
 	so_proj_down<N, M, double>(ctrla.req_const_symmetry(), m_msk).
 		perform(sym);
-	so_permute<k_orderb, double>(sym, p).perform(m_sym);
+	so_permute<k_orderb, double>(sym, perm).perform(m_sym);
 
 	make_schedule();
 }
@@ -265,10 +267,11 @@ void btod_extract<N, M>::do_compute_block(tensor_i<k_orderb, double> &blk,
 
 template<size_t N, size_t M>
 block_index_space<N - M> btod_extract<N, M>::mk_bis(
-	const block_index_space<N> &bis, const mask<N> &msk) {
+	const block_index_space<N> &bis, const mask<N> &msk,
+	const permutation<N - M> &perm) {
 
-	static const char *method =
-		"mk_bis(const block_index_space<N>&, const mask<N>&)";
+	static const char *method = "mk_bis(const block_index_space<N>&, "
+		"const mask<N>&, const permutation<N - M>&)";
 
 	dimensions<N> idims(bis.get_dims());
 
@@ -281,11 +284,11 @@ block_index_space<N - M> btod_extract<N, M>::mk_bis(
 	size_t map[k_orderb];//map between B and A
 
 	for(size_t i = 0; i < N; i++) {
-		if(msk[i]){
+		if(msk[i]) {
 			i2[j] = idims[i] - 1;
 			map[j] = i;
 			j++;
-		}else{
+		} else {
 			m++;
 		}
 	}
@@ -322,8 +325,10 @@ block_index_space<N - M> btod_extract<N, M>::mk_bis(
 		msk_done |= msk_typ;
 	}
 
+	obis.permute(perm);
 	return obis;
 }
+
 
 template<size_t N, size_t M>
 void btod_extract<N, M>::make_schedule() {
@@ -334,13 +339,6 @@ void btod_extract<N, M>::make_schedule() {
 	dimensions<N> bidimsa = m_bta.get_bis().get_block_index_dims();
 
 	permutation<k_orderb> pinv(m_perm, true);
-	size_t map[k_ordera];
-	size_t j = 0;
-	for(size_t i = 0; i < k_ordera; i++) {
-		if(m_msk[i]) {
-			map[i] = j++;
-		}
-	}
 
 	orbit_list<k_orderb, double> olb(m_sym);
 	for (typename orbit_list<k_orderb, double>::iterator iob = olb.begin();
@@ -349,17 +347,17 @@ void btod_extract<N, M>::make_schedule() {
 		index<k_ordera> idxa;
 		index<k_orderb> idxb(olb.get_index(iob));
 
-		for(size_t i = 0; i < k_ordera; i++) {
-			if (m_msk[i]) {
-				idxa[i] = idxb[map[i]];
-			}
-			else {
-				idxa[i] = m_idxbl[i];
-			}
+		idxb.permute(pinv);
+
+		for(size_t i = 0, j = 0; i < k_ordera; i++) {
+			if(m_msk[i]) idxa[i] = idxb[j++];
+			else idxa[i] = m_idxbl[i];
 		}
 
 		orbit<k_ordera, double> oa(ctrla.req_const_symmetry(), idxa);
-		abs_index<k_ordera> cidxa(oa.get_abs_canonical_index(), bidimsa);
+
+		abs_index<k_ordera> cidxa(oa.get_abs_canonical_index(),
+				m_bta.get_bis().get_block_index_dims());
 
 		if(!oa.is_allowed()) continue;
 		if(ctrla.req_is_zero_block(cidxa.get_index())) continue;

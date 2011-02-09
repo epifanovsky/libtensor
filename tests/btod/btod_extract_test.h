@@ -28,6 +28,7 @@ private:
 	void test_12a() throw(libtest::test_exception);
 	void test_12b() throw(libtest::test_exception);
 	void test_12c() throw(libtest::test_exception);
+	void test_13a() throw(libtest::test_exception);
 };
 
 } // namespace libtensor
