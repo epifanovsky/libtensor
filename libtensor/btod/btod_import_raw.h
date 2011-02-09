@@ -13,6 +13,7 @@
 #include "../core/orbit_list.h"
 #include "../core/tensor_i.h"
 #include "../core/tensor_ctrl.h"
+#include "../core/tensor.h"
 #include "../tod/tod_compare.h"
 #include "../tod/tod_copy.h"
 #include "../tod/tod_import_raw.h"

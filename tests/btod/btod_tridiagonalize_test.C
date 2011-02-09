@@ -1,6 +1,8 @@
-#include <libtensor/libtensor.h>
 #include <libvmm/std_allocator.h>
+#include <libtensor/btod/btod_copy.h>
+#include <libtensor/btod/btod_import_raw.h>
 #include <libtensor/btod/btod_tridiagonalize.h>
+#include <libtensor/core/block_tensor.h>
 #include "btod_tridiagonalize_test.h"
 #include "../compare_ref.h"
 

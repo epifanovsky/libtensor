@@ -126,6 +126,7 @@ set(SRC_IFACE
 	iface/letter_expr_test.C
 	iface/letter_test.C
 	iface/mapped_btensor_test.C
+	iface/mult_test.C
 	iface/symm_test.C
 	iface/trace_test.C
 )
