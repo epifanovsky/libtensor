@@ -14,7 +14,8 @@ void permutation_group_test::perform() throw(libtest::test_exception) {
 	test_2b();
 	test_3();
 	test_4();
-	test_5();
+	test_5a();
+	test_5b();
 	test_6a();
 	test_6b();
 	test_7();
@@ -196,9 +197,9 @@ void permutation_group_test::test_4() throw(libtest::test_exception) {
 
 /**	\test Tests the S2(+)*S2(+) group in a 4-space
  **/
-void permutation_group_test::test_5() throw(libtest::test_exception) {
+void permutation_group_test::test_5a() throw(libtest::test_exception) {
 
-	static const char *testname = "permutation_group_test::test_5()";
+	static const char *testname = "permutation_group_test::test_5a()";
 
 	try {
 
@@ -221,6 +222,32 @@ void permutation_group_test::test_5() throw(libtest::test_exception) {
 	}
 }
 
+/**	\test Tests the S2(-)*S2(-) group in a 4-space
+ **/
+void permutation_group_test::test_5b() throw(libtest::test_exception) {
+
+	static const char *testname = "permutation_group_test::test_5b()";
+
+	try {
+
+	symmetry_element_set<4, double> set(se_perm<4, double>::k_sym_type);
+	set.insert(se_perm<4, double>(permutation<4>().
+		permute(0, 1).permute(2, 3), true));
+	set.insert(se_perm<4, double>(permutation<4>().permute(0, 1), false));
+	permutation_group<4, double> pg(set);
+
+	std::list< permutation<4> > lst_ref_symm, lst_ref_asymm;
+	lst_ref_symm.push_back(permutation<4>());
+	lst_ref_asymm.push_back(permutation<4>().permute(0, 1));
+	lst_ref_asymm.push_back(permutation<4>().permute(2, 3));
+	lst_ref_symm.push_back(permutation<4>().permute(0, 1).permute(2, 3));
+	verify_members(testname, pg, lst_ref_symm, lst_ref_asymm);
+	verify_genset(testname, pg, lst_ref_symm, lst_ref_asymm);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
 
 /**	\test Tests the S4(+) group in a 4-space
  **/
