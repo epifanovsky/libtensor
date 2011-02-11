@@ -12,6 +12,7 @@ void so_mult_impl_perm_test::perform() throw(libtest::test_exception) {
 	test_3();
 	test_4();
 	test_5();
+	test_6();
 }
 
 
@@ -260,4 +261,61 @@ void so_mult_impl_perm_test::test_5() throw(libtest::test_exception) {
 	}
 }
 
+/**	\test Tests the multiplication of two non-empty sets
+ **/
+void so_mult_impl_perm_test::test_6() throw(libtest::test_exception) {
+
+	static const char *testname = "so_mult_impl_perm_test::test_6()";
+
+	typedef se_perm<4, double> se_t;
+	typedef so_mult<4, double> so_t;
+	typedef symmetry_operation_params<so_t> params_t;
+	typedef symmetry_operation_impl<so_t, se_t> so_mult_impl_perm_t;
+
+	try {
+
+	permutation<4> p1023, p0132, p1032;
+	p1023.permute(0, 1);
+	p0132.permute(2, 3);
+	p1032.permute(0, 1).permute(2, 3);
+
+	se_t elem1a(p1032, true), elem1b(p0132, true),
+			elem2a(p1023, false), elem2b(p0132, false);
+
+	symmetry_element_set<4, double> set1(se_t::k_sym_type);
+	symmetry_element_set<4, double> set2(se_t::k_sym_type);
+	symmetry_element_set<4, double> set3(se_t::k_sym_type);
+
+	set1.insert(elem1a);
+	set1.insert(elem1b);
+	set2.insert(elem2a);
+	set2.insert(elem2b);
+
+	permutation<4> p0;
+	params_t params(set1, p0, set2, p0, set3);
+
+	so_mult_impl_perm_t op;
+	op.perform(params);
+	if(set3.is_empty()) {
+		fail_test(testname, __FILE__, __LINE__, "set3.is_empty()");
+	}
+
+	permutation_group<4, double> pg(set3);
+	if (! pg.is_member(false, p0132)) {
+		fail_test(testname, __FILE__, __LINE__,
+				"p0132(-) not in permutation group.");
+	}
+	if (! pg.is_member(false, p1023)) {
+		fail_test(testname, __FILE__, __LINE__,
+				"p1023(-) not in permutation group.");
+	}
+	if (pg.is_member(false, p1032)) {
+		fail_test(testname, __FILE__, __LINE__,
+				"p1032(-) in permutation group.");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
 } // namespace libtensor

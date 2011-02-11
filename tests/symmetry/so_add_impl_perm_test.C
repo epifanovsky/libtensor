@@ -11,6 +11,7 @@ void so_add_impl_perm_test::perform() throw(libtest::test_exception) {
 	test_2();
 	test_3();
 	test_4();
+	test_5();
 }
 
 
@@ -206,5 +207,58 @@ void so_add_impl_perm_test::test_4() throw(libtest::test_exception) {
 	}
 }
 
+/**	\test Tests the intersection of two non-identical non-empty sets
+ **/
+void so_add_impl_perm_test::test_5() throw(libtest::test_exception) {
+
+	static const char *testname = "so_add_impl_perm_test::test_5()";
+
+	typedef se_perm<4, double> se_t;
+	typedef so_add<4, double> so_t;
+	typedef symmetry_operation_params<so_t> params_t;
+	typedef symmetry_operation_impl<so_t, se_t> so_add_impl_perm_t;
+
+	try {
+
+	se_t el1(permutation<4>().permute(0, 1), false);
+	se_t el2(permutation<4>().permute(2, 3), false);
+	se_t el3(permutation<4>().permute(0, 1).permute(2, 3), true);
+
+	symmetry_element_set<4, double> set1(se_t::k_sym_type);
+	symmetry_element_set<4, double> set2(se_t::k_sym_type);
+	symmetry_element_set<4, double> set3a(se_t::k_sym_type);
+	symmetry_element_set<4, double> set3b(se_t::k_sym_type);
+
+	set1.insert(el1);
+	set1.insert(el2);
+	set2.insert(el3);
+
+	permutation<4> p0;
+	params_t paramsa(set1, p0, set2, p0, set3a);
+	params_t paramsb(set2, p0, set1, p0, set3b);
+
+	so_add_impl_perm_t op;
+	op.perform(paramsa);
+	op.perform(paramsb);
+
+	if(set3a.is_empty()) {
+		fail_test(testname, __FILE__, __LINE__, "set3a.is_empty()");
+	}
+	if(set3b.is_empty()) {
+		fail_test(testname, __FILE__, __LINE__, "set3b.is_empty()");
+	}
+
+	permutation_group<4, double> pga(set3a), pgb(set3b);
+	if (! pga.is_member(el3.is_symm(), el3.get_perm()))
+		fail_test(testname, __FILE__, __LINE__,
+				"[0123->1032](+) missing in set3a");
+	if (! pgb.is_member(el3.is_symm(), el3.get_perm()))
+		fail_test(testname, __FILE__, __LINE__,
+				"[0123->1032](+) missing in set3b");
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
 
 } // namespace libtensor

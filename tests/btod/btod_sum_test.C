@@ -12,6 +12,32 @@
 
 namespace libtensor {
 
+template<size_t N>
+void print_perm_sym(std::ostream &out, const symmetry<N, double> &sym) {
+
+	typedef se_perm<N, double> se_perm_t;
+	typedef symmetry_element_set_adapter<N, double, se_perm_t> adapter_t;
+
+	bool found = false;
+	for (typename symmetry<N, double>::iterator it = sym.begin();
+			it != sym.end(); it++) {
+
+		const symmetry_element_set<N, double> &set = sym.get_subset(it);
+		if (set.get_id().compare(se_perm_t::k_sym_type) != 0) continue;
+
+		adapter_t ad(set);
+		for (typename adapter_t::iterator it2 = ad.begin();
+				it2 != ad.end(); it2++) {
+
+			const se_perm_t &sp = ad.get_elem(it2);
+			out << " " << sp.get_perm() << "("
+					<< (sp.is_symm() ? '+' : '-') << ")";
+		}
+		found = true;
+	}
+
+	if (! found) std::cout << " - NONE - ";
+}
 
 void btod_sum_test::perform() throw(libtest::test_exception) {
 
@@ -611,11 +637,34 @@ void btod_sum_test::test_9b() throw(libtest::test_exception) {
 		permute(1, 2).permute(0, 1));
 	btod_contract2<2, 2, 0> op2(contr1, bt1, bt1);
 
+	std::cout << "sym(op1): ";
+	print_perm_sym<4>(std::cout, op1.get_symmetry());
+	std::cout << std::endl;
+	std::cout << "sym(op2): ";
+	print_perm_sym<4>(std::cout, op2.get_symmetry());
+	std::cout << std::endl;
+
 	op1.perform(bt3_ref);
+	{
+	block_tensor_ctrl<4, double> ctrl3(bt3_ref);
+	std::cout << "sym(bt3_ref)*: ";
+	print_perm_sym<4>(std::cout, ctrl3.req_const_symmetry());
+	std::cout << std::endl;
+	}
+
 	op2.perform(bt3_ref, -1.0);
+	{
+	block_tensor_ctrl<4, double> ctrl3(bt3_ref);
+	std::cout << "sym(bt3_ref): ";
+	print_perm_sym<4>(std::cout, ctrl3.req_const_symmetry());
+	std::cout << std::endl;
+	}
 
 	btod_sum<4> sum(op1);
 	sum.add_op(op2, -1.0);
+	std::cout << "sym(sum): ";
+	print_perm_sym<4>(std::cout, sum.get_symmetry());
+	std::cout << std::endl;
 
 	const assignment_schedule<4, double> &sch = sum.get_schedule();
 	block_tensor_ctrl<4, double> c3(bt3);

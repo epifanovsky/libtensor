@@ -28,19 +28,25 @@ public:
 	static const char *k_clazz; //!< Class name
 
 private:
+	typedef permutation<N> perm_t;
+	typedef std::pair<perm_t, bool> signed_perm_t;
+
 	//!	Stores one labeled branching
 	struct branching {
-		permutation<N> m_sigma[N]; //!< Edge labels
-		permutation<N> m_tau[N]; //!< Vertex labels
+		signed_perm_t m_sigma[N]; //!< Edge labels (permutation + sign)
+		signed_perm_t m_tau[N]; //!< Vertex labels (permutation + sign)
 		size_t m_edges[N]; //!< Edge sources
 		branching() {
-			for(register size_t i = 0; i < N; i++) m_edges[i] = N;
+			for(register size_t i = 0; i < N; i++) {
+				m_edges[i] = N; m_sigma[i].second = m_tau[i].second = true;
+			}
 		}
 		void reset() {
 			for(register size_t i = 0; i < N; i++) {
 				m_edges[i] = N;
-				m_sigma[i].reset();
-				m_tau[i].reset();
+				m_sigma[i].first.reset();
+				m_tau[i].first.reset();
+				m_sigma[i].second = m_tau[i].second = true;
 			}
 		}
 	};
@@ -48,13 +54,11 @@ private:
 private:
 	typedef se_perm<N, T> se_perm_t;
 
-	typedef permutation<N> permutation_t;
-	typedef std::list<permutation_t> perm_list_t;
-	typedef std::vector<permutation_t> perm_vec_t;
+	typedef std::list<signed_perm_t> perm_list_t;
+	typedef std::vector<signed_perm_t> perm_vec_t;
 
 private:
-	branching m_symm; //!< Branching of the symmetric part
-	branching m_asymm; //!< Branching of the anti-symmetric part
+	branching m_br; //!< Branching
 
 public:
 	//!	\name Construction and destruction
@@ -143,7 +147,7 @@ private:
 			(or G for i==0)
 	 **/
 	bool is_member(const branching &br, size_t i,
-		const permutation<N> &perm) const;
+		bool sign, const permutation<N> &perm) const;
 
 	/**	\brief Computes a branching using a generating set; returns
 			the generating set of G_{i-1}
@@ -175,7 +179,7 @@ template<size_t N, typename T>
 permutation_group<N, T>::permutation_group(
 	const symmetry_element_set_adapter<N, T, se_perm_t> &set) {
 
-	perm_list_t symm_gs1, symm_gs2, asymm_gs1, asymm_gs2;
+	perm_list_t gs1, gs2;
 
 	typedef symmetry_element_set_adapter<N, T, se_perm_t> adapter_t;
 //	std::cout << "ctor" << std::endl;
@@ -183,13 +187,12 @@ permutation_group<N, T>::permutation_group(
 
 		const se_perm_t &e = set.get_elem(i);
 //		std::cout << (e.is_symm() ? "symm" : "asymm") << " " << e.get_perm << std::endl;
-		if(e.is_symm()) symm_gs1.push_back(e.get_perm());
-		else asymm_gs1.push_back(e.get_perm());
+		gs1.push_back(signed_perm_t(e.get_perm(), e.is_symm()));
 	}
 
-	perm_list_t *p1 = &symm_gs1, *p2 = &symm_gs2;
+	perm_list_t *p1 = &gs1, *p2 = &gs2;
 	for(size_t i = 0; i < N; i++) {
-		make_branching(m_symm, i, *p1, *p2);
+		make_branching(m_br, i, *p1, *p2);
 		std::swap(p1, p2);
 		p2->clear();
 	}
@@ -199,12 +202,6 @@ permutation_group<N, T>::permutation_group(
 //		std::cout << m_symm.m_sigma[i] << ", " << m_symm.m_tau[i] << std::endl;
 //	}
 
-	p1 = &asymm_gs1; p2 = &asymm_gs2;
-	for(size_t i = 0; i < N; i++) {
-		make_branching(m_asymm, i, *p1, *p2);
-		std::swap(p1, p2);
-		p2->clear();
-	}
 //	std::cout << "ctor end" << std::endl;
 }
 
@@ -220,15 +217,14 @@ void permutation_group<N, T>::add_orbit(bool sign, const permutation<N> &perm) {
 	}
 	if(is_member(sign, perm)) return;
 
-	branching &br = sign ? m_symm : m_asymm;
 	perm_list_t gs1, gs2;
-	make_genset(br, gs1);
-	gs1.push_back(perm);
-	br.reset();
+	make_genset(m_br, gs1);
+	gs1.push_back(signed_perm_t(perm, sign));
+	m_br.reset();
 
 	perm_list_t *p1 = &gs1, *p2 = &gs2;
 	for(size_t i = 0; i < N; i++) {
-		make_branching(br, i, *p1, *p2);
+		make_branching(m_br, i, *p1, *p2);
 		std::swap(p1, p2);
 		p2->clear();
 	}
@@ -240,7 +236,7 @@ inline bool permutation_group<N, T>::is_member(
 	bool sign, const permutation<N> &perm) const {
 
 	if(!sign && perm.is_identity()) return false;
-	return is_member(sign ? m_symm : m_asymm, 0, perm);
+	return is_member(m_br, 0, sign, perm);
 }
 
 
@@ -251,14 +247,9 @@ void permutation_group<N, T>::convert(symmetry_element_set<N, T> &set) const {
 
 	perm_list_t gs;
 
-	make_genset(m_symm, gs);
+	make_genset(m_br, gs);
 	for(typename perm_list_t::iterator i = gs.begin(); i != gs.end(); i++) {
-		set.insert(se_perm_t(*i, true));
-	}
-	gs.clear();
-	make_genset(m_asymm, gs);
-	for(typename perm_list_t::iterator i = gs.begin(); i != gs.end(); i++) {
-		set.insert(se_perm_t(*i, false));
+		set.insert(se_perm_t(i->first, i->second));
 	}
 	gs.clear();
 }
@@ -281,7 +272,7 @@ void permutation_group<N, T>::project_down(
 	branching br;
 	perm_list_t gs1, gs2;
 	perm_list_t *p1 = &gs1, *p2 = &gs2;
-	make_genset(m_symm, gs1);
+	make_genset(m_br, gs1);
 
 	for(size_t i = 0; i < N; i++) {
 		if(msk[i]) continue;
@@ -308,7 +299,7 @@ void permutation_group<N, T>::project_down(
 		size_t seq1a[N], seq2a[N];
 		size_t seq1b[M], seq2b[M];
 		for(size_t i = 0; i < N; i++) seq2a[i] = seq1a[i] = i;
-		pi->apply(seq2a);
+		pi->first.apply(seq2a);
 		size_t j = 0;
 		for(size_t i = 0; i < N; i++) {
 			if(!msk[i]) continue;
@@ -318,47 +309,10 @@ void permutation_group<N, T>::project_down(
 		}
 		permutation_builder<M> pb(seq2b, seq1b);
 //		std::cout << " " << pb.get_perm();
-		g2.add_orbit(true, pb.get_perm());
+		g2.add_orbit(pi->second, pb.get_perm());
 	}
 //	std::cout << " >" << std::endl;
 
-	p1->clear(); p2->clear();
-	p1 = &gs1; p2 = &gs2;
-	make_genset(m_asymm, gs1);
-	for(size_t i = 0; i < N; i++) {
-		if(msk[i]) continue;
-		br.reset();
-		make_branching(br, i, *p1, *p2);
-		std::swap(p1, p2);
-		p2->clear();
-	}
-
-//	std::cout << "genset1: <";
-//	for(typename perm_list_t::const_iterator pi = p1->begin();
-//		pi != p1->end(); pi++) {
-//		std::cout << " " << *pi;
-//	}
-//	std::cout << " >" << std::endl;
-//	std::cout << "genset2: <";
-	for(typename perm_list_t::const_iterator pi = p1->begin();
-		pi != p1->end(); pi++) {
-
-		size_t seq1a[N], seq2a[N];
-		size_t seq1b[M], seq2b[M];
-		for(size_t i = 0; i < N; i++) seq2a[i] = seq1a[i] = i;
-		pi->apply(seq2a);
-		size_t j = 0;
-		for(size_t i = 0; i < N; i++) {
-			if(!msk[i]) continue;
-			seq1b[j] = seq1a[i];
-			seq2b[j] = seq2a[i];
-			j++;
-		}
-		permutation_builder<M> pb(seq2b, seq1b);
-//		std::cout << " " << pb.get_perm();
-		g2.add_orbit(false, pb.get_perm());
-	}
-//	std::cout << " >" << std::endl;
 }
 
 
@@ -401,7 +355,7 @@ void permutation_group<N, T>::stabilize(
 
 	// generating set of G(P)
 	perm_list_t gs;
-	make_setstabilizer(m_symm, tm, gs);
+	make_setstabilizer(m_br, tm, gs);
 
 	for (typename perm_list_t::const_iterator pi = gs.begin();
 			pi != gs.end(); pi++) {
@@ -409,7 +363,7 @@ void permutation_group<N, T>::stabilize(
 		size_t seq1a[N], seq2a[N];
 		size_t seq1b[M], seq2b[M];
 		for (size_t i = 0; i < N; i++) seq1a[i] = seq2a[i] = i;
-		pi->apply(seq2a);
+		pi->first.apply(seq2a);
 		for (size_t i = 0, j = 0; i < N; i++) {
 			if (tm[i] != 0) continue;
 			seq1b[j] = seq1a[i];
@@ -418,37 +372,15 @@ void permutation_group<N, T>::stabilize(
 		}
 		permutation_builder<M> pb(seq2b, seq1b);
 		// if the resulting permutation is the identity just skip.
-		if (pb.get_perm().is_identity()) continue;
-
-		g2.add_orbit(true, pb.get_perm());
-
-	}
-
-	gs.clear();
-	make_setstabilizer(m_asymm, tm, gs);
-	for (typename perm_list_t::const_iterator pi = gs.begin();
-			pi != gs.end(); pi++) {
-
-		size_t seq1a[N], seq2a[N];
-		size_t seq1b[M], seq2b[M];
-		for (size_t i = 0; i < N; i++) seq1a[i] = seq2a[i] = i;
-		pi->apply(seq2a);
-		for (size_t i = 0, j = 0; i < N; i++) {
-			if (tm[i] != 0) continue;
-			seq1b[j] = seq1a[i];
-			seq2b[j] = seq2a[i];
-			j++;
-		}
-		permutation_builder<M> pb(seq2b, seq1b);
-		// if the resulting permutation is the identity the result is not
-		// defined!!!
 		if (pb.get_perm().is_identity())
-			throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
-					"Illegal result permutation group.");
+			if (pi->second) continue;
+			else throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
+						"Illegal result permutation group.");
 
-		g2.add_orbit(false, pb.get_perm());
+		g2.add_orbit(pi->second, pb.get_perm());
+
 	}
-
+	gs.clear();
 }
 
 template<size_t N, typename T>
@@ -456,8 +388,7 @@ void permutation_group<N, T>::permute(const permutation<N> &perm) {
 
 	if(perm.is_identity()) return;
 
-	permute_branching(m_symm, perm);
-	permute_branching(m_asymm, perm);
+	permute_branching(m_br, perm);
 }
 
 
@@ -484,14 +415,14 @@ size_t permutation_group<N, T>::get_path(
 
 
 template<size_t N, typename T>
-bool permutation_group<N, T>::is_member(
-	const branching &br, size_t i, const permutation<N> &perm) const {
+bool permutation_group<N, T>::is_member(const branching &br,
+		size_t i, bool sign, const permutation<N> &perm) const {
 
 	//~ std::cout << "is_member(" << i << ", " << perm << ")" << std::endl;
 
 	size_t seq[N];
 
-	if(perm.is_identity()) return true;
+	if(perm.is_identity()) return sign;
 	if(i >= N - 1) return false;
 
 	//	Find the element pi1 of the right coset representative Ui
@@ -502,7 +433,7 @@ bool permutation_group<N, T>::is_member(
 	for(size_t k = 0; k < N; k++) seq[k] = k;
 	perm.apply(seq);
 	if(seq[i] == i) {
-		return is_member(br, i + 1, perm);
+		return is_member(br, i + 1, sign, perm);
 	}
 
 	//	Go over non-identity members of Ui
@@ -513,20 +444,22 @@ bool permutation_group<N, T>::is_member(
 		size_t pathlen = get_path(br, i, j, path);
 		if(pathlen == 0) continue;
 
-		permutation<N> sigmaij(br.m_tau[j]), tauiinv(br.m_tau[i], true);
+		perm_t sigmaij(br.m_tau[j].first), tauiinv(br.m_tau[i].first, true);
 		sigmaij.permute(tauiinv);
-
-		permutation<N> rho, pi1inv(sigmaij, true);
+		
+		perm_t rho, pi1inv(sigmaij, true);
+		bool rho_sign;
 		//~ std::cout << "path " << i << "->" << j << " (len = " <<
 			//~ pathlen << "): sigmaij=" << sigmaij << " pi1inv=" << pi1inv;
 		rho.permute(pi1inv);
 		rho.permute(perm);
+		rho_sign = ((br.m_tau[i].second == br.m_tau[j].second) ? sign : ! sign);
 		//~ std::cout << " rho=" << rho << std::endl;
 
 		for(size_t k = 0; k < N; k++) seq[k] = k;
 		rho.apply(seq);
 		if(seq[i] == i) {
-			return is_member(br, i + 1, rho);
+			return is_member(br, i + 1, rho_sign, rho);
 		}
 	}
 	return false;
@@ -556,9 +489,10 @@ void permutation_group<N, T>::make_branching(branching &br, size_t i,
 	std::list<size_t> s;
 	s.push_back(i);
 
-	transv[i].reset();
+	transv[i].first.reset();
+	transv[i].second = true;
 
-	while(!s.empty()) {
+	while(! s.empty()) {
 
 		size_t j = s.front();
 		s.pop_front();
@@ -568,16 +502,18 @@ void permutation_group<N, T>::make_branching(branching &br, size_t i,
 
 			size_t seq[N];
 			for(size_t ii = 0; ii < N; ii++) seq[ii] = ii;
-			pi->apply(seq);
+			pi->first.apply(seq);
 
 			size_t k = seq[j];
 			typename std::vector<size_t>::iterator dd = delta.begin();
 			while(dd != delta.end() && *dd != k) dd++;
 			if(dd == delta.end()) {
-				permutation_t p(*pi);
-				p.permute(transv[j]);
-				transv[k].reset();
-				transv[k].permute(p);
+				signed_perm_t p(*pi);
+				p.first.permute(transv[j].first);
+				p.second = (transv[j].second ? p.second : ! p.second);
+				transv[k].first.reset();
+				transv[k].first.permute(p.first);
+				transv[k].second = p.second;
 				delta.push_back(k);
 				s.push_back(k);
 			}
@@ -596,11 +532,14 @@ void permutation_group<N, T>::make_branching(branching &br, size_t i,
 
 		// add a new edge (remove an existing edge if necessary)
 		br.m_edges[j] = i;
-		br.m_sigma[j].reset();
-		br.m_sigma[j].permute(transv[j]);
-		br.m_tau[j].reset();
-		br.m_tau[j].permute(br.m_sigma[j]);
-		br.m_tau[j].permute(br.m_tau[i]);
+		br.m_sigma[j].first.reset();
+		br.m_sigma[j].first.permute(transv[j].first);
+		br.m_sigma[j].second = transv[j].second;
+		br.m_tau[j].first.reset();
+		br.m_tau[j].first.permute(br.m_sigma[j].first);
+		br.m_tau[j].first.permute(br.m_tau[i].first);
+		br.m_tau[j].second = (br.m_sigma[j].second ?
+				br.m_tau[i].second : ! br.m_tau[i].second);
 	}
 
 //	std::cout << "graph: {" << std::endl;
@@ -618,19 +557,28 @@ void permutation_group<N, T>::make_branching(branching &br, size_t i,
 
 		size_t seq[N];
 		for(size_t ii = 0; ii < N; ii++) seq[ii] = ii;
-		pi->apply(seq);
+		pi->first.apply(seq);
 
 		for(typename std::vector<size_t>::iterator dd = delta.begin();
 			dd != delta.end(); dd++) {
 
 			size_t j = *dd, k = seq[j];
-			permutation<N> p(transv[k], true);
-			p.permute(*pi).permute(transv[j]);
-			if(!p.is_identity()) {
+			signed_perm_t p(perm_t(transv[k].first, true), transv[k].second);
+			p.first.permute(pi->first).permute(transv[j].first);
+			p.second =
+					((pi->second == transv[j].second) ? p.second : ! p.second);
+			if(! p.first.is_identity()) {
 				typename perm_list_t::const_iterator rho =
 					gs2.begin();
-				while(rho != gs2.end() && !rho->equals(p)) rho++;
+				while(rho != gs2.end() && ! rho->first.equals(p.first)) rho++;
 				if(rho == gs2.end()) gs2.push_back(p);
+			}
+			else if (! p.second) {
+				throw generic_exception(g_ns, k_clazz,
+						"make_branching(branching, size_t, "
+						"const perm_list_t &, perm_list_t&)",
+						__FILE__, __LINE__,
+						"Illegal permutation.");
 			}
 		}
 	}
@@ -651,7 +599,7 @@ void permutation_group<N, T>::make_genset(
 	const branching &br, perm_list_t &gs) const {
 
 	for(register size_t i = 0; i < N; i++) {
-		if(br.m_edges[i] != N && !br.m_sigma[i].is_identity()) {
+		if(br.m_edges[i] != N && ! br.m_sigma[i].first.is_identity()) {
 			gs.push_back(br.m_sigma[i]);
 		}
 	}
@@ -687,9 +635,9 @@ void permutation_group<N, T>::permute_branching(
 
 		size_t seq1[N], seq2[N];
 		for(size_t j = 0; j < N; j++) seq2[j] = seq1[j] = j;
-		i->apply(seq2);
+		i->first.apply(seq2);
 		permutation_builder<N> pb(seq2, seq1, perm);
-		gs2.push_back(pb.get_perm());
+		gs2.push_back(signed_perm_t(pb.get_perm(), i->second));
 	}
 	br.reset();
 	perm_list_t *p1 = &gs2, *p2 = &gs3;
@@ -755,27 +703,31 @@ void permutation_group<N, T>::make_setstabilizer(
 
 			if (k == N) continue;
 
-			pu[0].reset();
-			pu[0].permute(br.m_tau[ui[0]]);
-			pu[0].permute(permutation<N>(br.m_tau[k], true));
+			pu[0].first.reset();
+			pu[0].first.permute(br.m_tau[ui[0]].first);
+			pu[0].first.permute(perm_t(br.m_tau[k].first, true));
+			pu[0].second = (br.m_tau[ui[0]].second == br.m_tau[k].second);
 			break;
 		}
 
 		// loop over all possible sequences u_{N-1} ... u_{ii}
 		while (ui[0] != N) {
 
-			permutation<N> g;
+			signed_perm_t g;
+			g.second = true;
+
 			// build the permutation g = u_{N-1} ... u_{ii}
 			for (size_t k = 0; k < ui.size(); k++) {
 				if (ui[k] == k + ii) continue;
 
-				g.permute(pu[k]);
+				g.first.permute(pu[k].first);
+				g.second = (pu[k].second ? g.second : ! g.second);
 			}
 
 			// check whether g is in G(P)
 			size_t seq[N];
 			for (size_t k = 0; k < N; k++) seq[k] = k;
-			g.apply(seq);
+			g.first.apply(seq);
 			size_t l = 0;
 			for (; l < N; l++)
 				if (msk[l] != msk[seq[l]]) break;
@@ -797,16 +749,19 @@ void permutation_group<N, T>::make_setstabilizer(
 
 					if (m == N) continue;
 
-					pu[k1].reset();
-					pu[k1].permute(br.m_tau[ui[k1]]);
-					pu[k1].permute(permutation<N>(br.m_tau[m], true));
+					pu[k1].first.reset();
+					pu[k1].first.permute(br.m_tau[ui[k1]].first);
+					pu[k1].first.permute(perm_t(br.m_tau[m].first, true));
+					pu[k1].second =
+							(br.m_tau[ui[k1]].second == br.m_tau[m].second);
 					break;
 				}
 
 				if (ui[k1] != N || k1 == 0) break;
 
 				ui[k1] = ii + k1;
-				pu[k1].reset();
+				pu[k1].first.reset();
+				pu[k1].second = true;
 			}
 		}
 
@@ -821,19 +776,21 @@ void permutation_group<N, T>::make_setstabilizer(
 
 				if (k == N) continue;
 
-				pu[0].reset();
-				pu[0].permute(br.m_tau[ui[0]]);
-				pu[0].permute(permutation<N>(br.m_tau[k], true));
+				pu[0].first.reset();
+				pu[0].first.permute(br.m_tau[ui[0]].first);
+				pu[0].first.permute(perm_t(br.m_tau[k].first, true));
+				pu[0].second =
+						(br.m_tau[ui[0]].second == br.m_tau[k].second);
 				break;
 			}
 			if (ui[0] == N) break;
 
 			// here g = u_i
-			permutation<N> &g = pu[0];
+			signed_perm_t &g = pu[0];
 			// check whether g is in G(P)
 			size_t seq[N];
 			for (size_t k = 0; k < N; k++) seq[k] = k;
-			g.apply(seq);
+			g.first.apply(seq);
 			size_t l = 0;
 			for (; l < N; l++)
 				if (msk[l] && ! msk[seq[l]]) break;

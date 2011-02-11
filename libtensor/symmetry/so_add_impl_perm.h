@@ -61,13 +61,53 @@ void symmetry_operation_impl< so_add<N, T>, se_perm<N, T> >::do_perform(
 	permutation_group<N, T> grp1(adapter1);
 	permutation_group<N, T> grp3;
 	grp1.permute(perm12);
-	for(typename adapter_t::iterator i = adapter2.begin();
-		i != adapter2.end(); i++) {
 
+	/*
+	 * THIS IS A QUICK WORK-AROUND FOR FINDING THE CORRECT INTERSECTION OF TWO
+	 * PERMUTATION GROUPS! A PROPER ALGORITHM SHOULD BE IMPLEMENTED LATER IN
+	 * CLASS PERMUTATION_GROUP.
+	 */
+	// Generate a list of all permutations in group 2
+	typedef std::pair<permutation<N>, bool> signed_perm_t;
+	typedef std::list<signed_perm_t> perm_list_t;
+
+	perm_list_t lst;
+	for(typename adapter_t::iterator i = adapter2.begin();
+			i != adapter2.end(); i++) {
 		const se_perm<N, T> &e = adapter2.get_elem(i);
-		if(grp1.is_member(e.is_symm(), e.get_perm())) {
-			grp3.add_orbit(e.is_symm(), e.get_perm());
+		lst.push_back(signed_perm_t(e.get_perm(), e.is_symm()));
+	}
+
+	bool not_done;
+	do {
+		not_done = false;
+		for(typename adapter_t::iterator i = adapter2.begin();
+				i != adapter2.end(); i++) {
+
+			const se_perm<N, T> &e = adapter2.get_elem(i);
+			for (typename perm_list_t::iterator j = lst.begin();
+					j != lst.end(); j++) {
+
+				permutation<N> p(j->first);
+				p.permute(e.get_perm());
+
+				typename perm_list_t::const_iterator k = lst.begin();
+				for (; k != lst.end(); k++)
+					if (p.equals(k->first)) break;
+
+				if (k == lst.end()) {
+					lst.push_back(signed_perm_t(p, j->second == e.is_symm()));
+					not_done = true;
+				}
+			}
 		}
+	} while (not_done);
+
+	for (typename perm_list_t::const_iterator i = lst.begin();
+			i != lst.end(); i++) {
+
+		if (grp1.is_member(i->second, i->first))
+			grp3.add_orbit(i->second, i->first);
 	}
 
 	params.grp3.clear();
