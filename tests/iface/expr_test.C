@@ -1,5 +1,6 @@
 #include <libvmm/std_allocator.h>
 #include <libtensor/btod/btod_random.h>
+#include <libtensor/btod/btod_set_diag.h>
 #include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/symmetry/so_copy.h>
 #include <libtensor/tod/tod_btconv.h>
@@ -18,14 +19,15 @@ void expr_test::perform() throw(libtest::test_exception) {
 
 	try {
 
-		test_1();
-		test_2();
-		test_3();
-		test_4();
-		test_5();
-		test_6();
-		test_7();
-		test_8();
+//		test_1();
+//		test_2();
+//		test_3();
+//		test_4();
+//		test_5();
+//		test_6();
+//		test_7();
+//		test_8();
+		test_9();
 
 	} catch(...) {
 		libvmm::vm_allocator<double>::vmm().shutdown();
@@ -568,6 +570,74 @@ void expr_test::test_8() throw(libtest::test_exception) {
 	letter i, j, k, l, a, b, c, d;
 
 	f2_oo(i|j) = f_oo(i|j) + contract(k|a|b, i_oovv(j|k|a|b), t2(i|k|a|b));
+
+	}
+
+	need_erase = false;
+	product_table_container::get_instance().erase(pgtid);
+
+	} catch(exception &e) {
+		if(need_erase) {
+			product_table_container::get_instance().erase(pgtid);
+		}
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void expr_test::test_9() throw(libtest::test_exception) {
+
+	static const char *testname = "expr_test::test_9()";
+
+	bool need_erase = true;
+	const char *pgtid = "point_group_cs";
+
+	try {
+
+	point_group_table::label_t ap = 0, app = 1;
+
+	point_group_table cs(pgtid, 2);
+	cs.add_product(ap, ap, ap);
+	cs.add_product(ap, app, app);
+	cs.add_product(app, ap, app);
+	cs.add_product(app, app, ap);
+	cs.check();
+	product_table_container::get_instance().add(cs);
+
+	{
+
+	bispace<1> so(10); so.split(2).split(5).split(7);
+	bispace<2> soo(so&so);
+
+	btensor<2> f_oo(soo), d1_oo(soo), d2_oo(soo);
+
+	mask<2> m11;
+	m11[0] = true; m11[1] = true;
+
+	se_label<2, double> l_oo(soo.get_bis().get_block_index_dims(), pgtid);
+	l_oo.assign(m11, 0, ap);
+	l_oo.assign(m11, 1, app);
+	l_oo.assign(m11, 2, ap);
+	l_oo.assign(m11, 3, app);
+	l_oo.add_target(ap);
+
+	{
+		block_tensor_ctrl<2, double> c_f_oo(f_oo);
+		symmetry<2, double> sym_f_oo(f_oo.get_bis());
+		sym_f_oo.insert(se_perm<2, double>(permutation<2>().
+			permute(0, 1), true));
+		sym_f_oo.insert(l_oo);
+		so_copy<2, double>(sym_f_oo).perform(c_f_oo.req_symmetry());
+	}
+
+	btod_copy<2>(f_oo).perform(d1_oo);
+	btod_set_diag<2>(1.0).perform(d1_oo);
+	btod_random<2>().perform(f_oo);
+
+	letter i, j, k, l, a, b, c, d;
+
+        d2_oo(i|j) = dirsum(diag(i, i|j, f_oo(i|j)), -diag(j, i|j, f_oo(i|j)))
+        	+ d1_oo(i|j);
 
 	}
 
