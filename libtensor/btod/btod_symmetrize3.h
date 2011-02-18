@@ -9,7 +9,7 @@
 #include "../symmetry/so_concat.h"
 #include "../symmetry/so_copy.h"
 #include "../symmetry/so_proj_down.h"
-#include "../symmetry/so_symmetrize.h"
+#include "../symmetry/so_symmetrize3.h"
 #include "additive_btod.h"
 
 namespace libtensor {
@@ -217,37 +217,24 @@ void btod_symmetrize3<N>::make_symmetry() {
 	//	2. Add perm symmetry to the symmetrized dimensions.
 	//	3. Concatenate back into the full space.
 
-	mask<N> m1, m2;
-	for(size_t i = 0; i < N; i++) m1[i] = true;
-	m1[m_i1] = false; m1[m_i2] = false; m1[m_i3] = false;
-	m2[m_i1] = true; m2[m_i2] = true; m2[m_i3] = true;
+	permutation<N> p0, p1, p2, p3, p4, p5;
+	p1.permute(m_i1, m_i2).permute(m_i2, m_i3);
+	p2.permute(p1).permute(p1);
+	p3.permute(m_i1, m_i2);
+	p4.permute(p3).permute(p1);
+	p5.permute(p3).permute(p2);
 
-	block_index_subspace_builder<N - 3, 3> bisbldr1(m_op.get_bis(), m1);
-	block_index_subspace_builder<3, N - 3> bisbldr2(m_op.get_bis(), m2);
+	symmetry<N, double> s0(m_op.get_bis()), s1(m_op.get_bis()),
+		s2(m_op.get_bis());
 
-	symmetry<N - 3, double> sym1(bisbldr1.get_bis());
-	symmetry<3, double> sym2(bisbldr2.get_bis()),
-		sym2tmp(bisbldr2.get_bis());
+	so_copy<N, double>(m_op.get_symmetry()).perform(s0);
+	so_add<N, double>(s0, p0, s0, p1).perform(s1);
+	so_add<N, double>(s1, p0, s0, p2).perform(s2);
+	so_add<N, double>(s2, p0, s0, p3).perform(s1);
+	so_add<N, double>(s1, p0, s0, p4).perform(s2);
+	so_add<N, double>(s2, p0, s0, p5).perform(s1);
 
-	so_proj_down<N, 3, double>(m_op.get_symmetry(), m1).perform(sym1);
-	so_proj_down<N, N - 3, double>(m_op.get_symmetry(), m2).perform(sym2);
-
-	so_symmetrize<3, double>(sym2, permutation<3>().permute(0, 1), m_symm).
-		perform(sym2tmp);
-	so_symmetrize<3, double>(sym2tmp, permutation<3>().permute(0, 2),
-		m_symm).perform(sym2);
-
-	sequence<N, size_t> seq1(0), seq2(0);
-	for(size_t i = 0; i < N; i++) seq1[i] = i;
-	for(size_t i = 0, j = 0; i < N; i++) {
-		if(i == m_i1) seq2[i] = N - 3;
-		else if(i == m_i2) seq2[i] = N - 2;
-		else if(i == m_i3) seq2[i] = N - 1;
-		else seq2[i] = j++;
-	}
-	permutation_builder<N> pb(seq2, seq1);
-
-	so_concat<N - 3, 3, double>(sym1, sym2, pb.get_perm()).perform(m_sym);
+	so_symmetrize3<N, double>(s1, p1, p3, m_symm).perform(m_sym);
 }
 
 

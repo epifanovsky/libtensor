@@ -100,52 +100,6 @@ asymm(
 }
 
 
-/**	\brief Symmetrization of an expression, one %index is symmetrized
-		against a set of indexes
-	\tparam N Tensor order.
-	\tparam M Number of indexes in the set.
-	\tparam T Tensor element type.
-	\tparam SubCore Sub-expression core.
-
-	\ingroup libtensor_btensor_expr_op
- **/
-template<size_t N, size_t M, typename T, typename SubCore>
-inline
-expr< N, T, symm1_core<N, M, true, T, SubCore> >
-symm(
-	const letter &l1,
-	const letter_expr<M> sym2,
-	expr<N, T, SubCore> subexpr) {
-
-	typedef symm1_core<N, M, true, T, SubCore> core_t;
-	typedef expr<N, T, core_t> expr_t;
-	return expr_t(core_t(l1, sym2, subexpr));
-}
-
-
-/**	\brief Anti-symmetrization of an expression, one %index is symmetrized
-		against a set of indexes
-	\tparam N Tensor order.
-	\tparam M Number of indexes in the set.
-	\tparam T Tensor element type.
-	\tparam SubCore Sub-expression core.
-
-	\ingroup libtensor_btensor_expr_op
- **/
-template<size_t N, size_t M, typename T, typename SubCore>
-inline
-expr< N, T, symm1_core<N, M, false, T, SubCore> >
-asymm(
-	const letter &l1,
-	const letter_expr<M> sym2,
-	expr<N, T, SubCore> subexpr) {
-
-	typedef symm1_core<N, M, false, T, SubCore> core_t;
-	typedef expr<N, T, core_t> expr_t;
-	return expr_t(core_t(l1, sym2, subexpr));
-}
-
-
 /**	\brief Symmetrization of an expression over two indexes
 	\tparam N Tensor order.
 	\tparam T Tensor element type.
@@ -223,50 +177,6 @@ asymm(
 
 	typedef expr< N, T, core_ident<N, T, A> > sub_expr_t;
 	return asymm(sym1, sym2, sub_expr_t(bt));
-}
-
-
-/**	\brief Symmetrization of an %tensor, one %index is symmetrized
-		against a set of indexes
-	\tparam N Tensor order.
-	\tparam M Number of indexes in the set.
-	\tparam T Tensor element type.
-	\tparam SubCore Sub-expression core.
-
-	\ingroup libtensor_btensor_expr_op
- **/
-template<size_t N, size_t M, typename T, bool A>
-inline
-expr< N, T, symm1_core< N, M, true, T, core_ident<N, T, A> > >
-symm(
-	const letter &l1,
-	const letter_expr<M> sym2,
-	labeled_btensor<N, T, A> bt) {
-
-	typedef expr< N, T, core_ident<N, T, A> > sub_expr_t;
-	return symm(l1, sym2, sub_expr_t(bt));
-}
-
-
-/**	\brief Anti-symmetrization of an %tensor, one %index is symmetrized
-		against a set of indexes
-	\tparam N Tensor order.
-	\tparam M Number of indexes in the set.
-	\tparam T Tensor element type.
-	\tparam SubCore Sub-expression core.
-
-	\ingroup libtensor_btensor_expr_op
- **/
-template<size_t N, size_t M, typename T, bool A>
-inline
-expr< N, T, symm1_core< N, M, false, T, core_ident<N, T, A> > >
-asymm(
-	const letter &l1,
-	const letter_expr<M> sym2,
-	labeled_btensor<N, T, A> bt) {
-
-	typedef expr< N, T, core_ident<N, T, A> > sub_expr_t;
-	return asymm(l1, sym2, sub_expr_t(bt));
 }
 
 

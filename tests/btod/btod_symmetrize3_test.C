@@ -19,6 +19,7 @@ void btod_symmetrize3_test::perform() throw(libtest::test_exception) {
 	test_2();
 	test_3();
 	test_4();
+	test_5();
 }
 
 
@@ -302,6 +303,107 @@ void btod_symmetrize3_test::test_4() throw(libtest::test_exception) {
 	compare_ref<4>::compare(testname, symb, symb_ref);
 
 	compare_ref<4>::compare(testname, tb, tb_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+
+}
+
+
+/**	\test Symmetrization of a 3-index block %tensor with partitions
+		over three indexes
+ **/
+void btod_symmetrize3_test::test_5() throw(libtest::test_exception) {
+
+	static const char *testname = "btod_symmetrize3_test::test_5()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<3> i1, i2;
+	i2[0] = 9; i2[1] = 9; i2[2] = 9;
+	dimensions<3> dims(index_range<3>(i1, i2));
+	block_index_space<3> bis(dims);
+	mask<3> m;
+	m[0] = true; m[1] = true; m[2] = true;
+	bis.split(m, 2);
+	bis.split(m, 5);
+	bis.split(m, 7);
+
+	block_tensor<3, double, allocator_t> bta(bis), btb(bis), btb_ref(bis);
+
+	//	Set up initial symmetry and fill in random input
+
+	{
+		index<3> i000, i001, i010, i011, i100, i101, i110, i111;
+		i110[0] = 1; i110[1] = 1; i001[2] = 1;
+		i101[0] = 1; i010[1] = 1; i101[2] = 1;
+		i100[0] = 1; i011[1] = 1; i011[2] = 1;
+		i111[0] = 1; i111[1] = 1; i111[2] = 1;
+		block_tensor_ctrl<3, double> ctrla(bta);
+		se_part<3, double> p(bis, m, 2);
+		p.add_map(i000, i111, true);
+		p.add_map(i001, i110, true);
+		p.add_map(i010, i101, true);
+		p.add_map(i011, i100, true);
+		ctrla.req_symmetry().insert(p);
+	}
+	btod_random<3>().perform(bta);
+	bta.set_immutable();
+
+	//	Prepare reference data
+
+	tensor<3, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
+	tod_btconv<3>(bta).perform(ta);
+	tod_add<3> refop(ta);
+	refop.add_op(ta, permutation<3>().permute(0, 1), 1.0);
+	refop.add_op(ta, permutation<3>().permute(0, 2), 1.0);
+	refop.add_op(ta, permutation<3>().permute(1, 2), 1.0);
+	refop.add_op(ta, permutation<3>().permute(0, 1).permute(0, 2), 1.0);
+	refop.add_op(ta, permutation<3>().permute(0, 1).permute(1, 2), 1.0);
+	refop.perform(tb_ref);
+
+	symmetry<3, double> symb(bis), symb_ref(bis);
+	symb_ref.insert(se_perm<3, double>(
+		permutation<3>().permute(0, 1), true));
+	symb_ref.insert(se_perm<3, double>(
+		permutation<3>().permute(0, 2), true));
+	{
+		index<3> i000, i001, i010, i011, i100, i101, i110, i111;
+		i110[0] = 1; i110[1] = 1; i001[2] = 1;
+		i101[0] = 1; i010[1] = 1; i101[2] = 1;
+		i100[0] = 1; i011[1] = 1; i011[2] = 1;
+		i111[0] = 1; i111[1] = 1; i111[2] = 1;
+		block_tensor_ctrl<3, double> ctrla(bta);
+		se_part<3, double> p(bis, m, 2);
+		p.add_map(i000, i111, true);
+		p.add_map(i001, i110, true);
+		p.add_map(i010, i101, true);
+		p.add_map(i011, i100, true);
+		symb_ref.insert(p);
+	}
+
+	//	Run the symmetrization operation
+
+	btod_copy<3> op_copy(bta);
+	btod_symmetrize3<3> op_sym(op_copy, 0, 1, 2, true);
+
+	compare_ref<3>::compare(testname, op_sym.get_symmetry(), symb_ref);
+
+	op_sym.perform(btb);
+	tod_btconv<3>(btb).perform(tb);
+
+	//	Compare against the reference: symmetry and data
+
+	{
+		block_tensor_ctrl<3, double> ctrlb(btb);
+		so_copy<3, double>(ctrlb.req_const_symmetry()).perform(symb);
+	}
+
+	compare_ref<3>::compare(testname, symb, symb_ref);
+	compare_ref<3>::compare(testname, tb, tb_ref, 1e-15);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());

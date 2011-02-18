@@ -23,8 +23,6 @@ private:
 			bool part, bool doadd) throw(libtest::test_exception);
 	void test_6b(bool symm, bool label,
 			bool part) throw(libtest::test_exception);
-	void test_7() throw(libtest::test_exception);
-	void test_8() throw(libtest::test_exception);
 
 };
 
