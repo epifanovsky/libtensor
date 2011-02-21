@@ -232,7 +232,6 @@ void addition_schedule<N, T>::build(const assignment_schedule<N, T> &asch,
 	//~ std::cout << "addition schedule done" << std::endl;
 }
 
-
 template<size_t N, typename T>
 void addition_schedule<N, T>::clean_schedule() throw() {
 
@@ -331,14 +330,14 @@ size_t addition_schedule<N, T>::find_canonical_iterate(
 			transf<N, T> tr1;
 			e.apply(i1, tr1);
 			abs_index<N> ai1(i1, bidims);
-			if(o[ai1.get_abs_index()] == 2) {
+			if(o[ai1.get_abs_index()] == 2 || o[ai1.get_abs_index()] == 4) {
 				tr.transform(tr1);
 				return ai1.get_abs_index();
 			}
 			if(o2[ai1.get_abs_index()] == 0) {
 				size_t ii = find_canonical_iterate(bidims,
 					sym, ai1, tr1, o, o2);
-				if(o[ii] == 2) {
+				if(o[ii] == 2 || o[ii] == 4) {
 					tr.transform(tr1);
 					return ii;
 				}
