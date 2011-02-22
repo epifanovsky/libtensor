@@ -22,6 +22,7 @@ class btod_dirsum_symmetry_builder<N, N>;
 
 template<size_t N, size_t M>
 class btod_dirsum_clazz {
+public:
 	static const char *k_clazz;
 };
 
