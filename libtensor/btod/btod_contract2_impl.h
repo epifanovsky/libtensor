@@ -2,6 +2,7 @@
 #define LIBTENSOR_BTOD_CONTRACT2_IMPL_H
 
 #include "../core/block_index_subspace_builder.h"
+#include "../core/mask.h"
 #include "../symmetry/so_concat.h"
 #include "../symmetry/so_stabilize.h"
 #include "../tod/tod_contract2.h"
