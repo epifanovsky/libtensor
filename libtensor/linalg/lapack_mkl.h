@@ -4,7 +4,7 @@
 #include <complex>
 #include <mkl_types.h>
 #define MKL_Complex16 std::complex<double>
-#include <mkl.h>
+#include <mkl_lapack.h>
 
 namespace libtensor {
 
