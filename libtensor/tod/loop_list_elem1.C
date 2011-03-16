@@ -1,6 +1,5 @@
 #include "../defs.h"
 #include "../exception.h"
-#include "../blas.h"
 #include "../linalg.h"
 #include "loop_list_elem1.h"
 #include "overflow.h"

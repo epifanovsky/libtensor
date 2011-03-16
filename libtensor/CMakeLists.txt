@@ -1,6 +1,5 @@
 set(SRC
 	backtrace.C
-	blas.C
 	defs.C
 	exception.C
 	global_timings.C
