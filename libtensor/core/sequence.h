@@ -26,7 +26,7 @@ public:
 	//!	\name Construction and destruction
 	//@{
 
-	sequence(const T t);
+	sequence(const T &t = T());
 	sequence(const sequence<N, T> &seq);
 
 	//@}
@@ -45,7 +45,7 @@ public:
 		\param pos Position (not to exceed N).
 		\throw out_of_bounds If the position exceeds N.
 	 **/
-	T at(size_t pos) const throw(out_of_bounds);
+	const T &at(size_t pos) const throw(out_of_bounds);
 
 	/**	\brief Permutes the sequence
 		\param perm Permutation.
@@ -68,7 +68,7 @@ public:
 		\param pos Position (not to exceed N, %index order).
 		\throw out_of_bounds If the position exceeds N.
 	 **/
-	T operator[](size_t pos) const throw(out_of_bounds);
+	const T &operator[](size_t pos) const throw(out_of_bounds);
 
 	//@}
 
@@ -86,7 +86,7 @@ protected:
 			checks done
 		\param pos Position (not to exceed N).
 	 **/
-	T at_nochk(size_t pos) const;
+	const T &at_nochk(size_t pos) const;
 
 	//@}
 
@@ -113,7 +113,7 @@ public:
 	//!	\name Construction and destruction
 	//@{
 
-	sequence(const T t);
+	sequence(const T &t = T());
 	sequence(const sequence<0, T> &seq);
 
 	//@}
@@ -127,7 +127,7 @@ public:
 
 	/**	\brief Always throws an exception
 	 **/
-	T at(size_t pos) const throw(out_of_bounds);
+	const T &at(size_t pos) const throw(out_of_bounds);
 
 	/**	\brief Does nothing
 	 **/
@@ -144,7 +144,7 @@ public:
 
 	/**	\brief Always throws an exception
 	 **/
-	T operator[](size_t pos) const throw(out_of_bounds);
+	const T &operator[](size_t pos) const throw(out_of_bounds);
 
 	//@}
 
@@ -158,7 +158,7 @@ protected:
 
 	/**	\brief Always throws an exception
 	 **/
-	T at_nochk(size_t pos) const;
+	const T &at_nochk(size_t pos) const;
 
 	//@}
 
@@ -174,7 +174,7 @@ const char *sequence<0, T>::k_clazz = "sequence<0, T>";
 
 
 template<size_t N, typename T>
-inline sequence<N, T>::sequence(const T t) {
+inline sequence<N, T>::sequence(const T &t) {
 
 	for(register size_t i = 0; i < N; i++) m_seq[i] = t;
 }
@@ -201,7 +201,7 @@ inline T &sequence<N, T>::at(size_t pos) throw(out_of_bounds) {
 
 
 template<size_t N, typename T>
-inline T sequence<N, T>::at(size_t pos) const throw(out_of_bounds) {
+inline const T &sequence<N, T>::at(size_t pos) const throw(out_of_bounds) {
 
 #ifdef LIBTENSOR_DEBUG
 	if(pos >= N) {
@@ -228,7 +228,8 @@ inline T &sequence<N, T>::operator[](size_t pos) throw(out_of_bounds) {
 
 
 template<size_t N, typename T>
-inline T sequence<N, T>::operator[](size_t pos) const throw(out_of_bounds) {
+inline const T &sequence<N, T>::operator[](size_t pos) const
+	throw(out_of_bounds) {
 
 	return at(pos);
 }
@@ -242,14 +243,14 @@ inline T &sequence<N, T>::at_nochk(size_t pos) {
 
 
 template<size_t N, typename T>
-inline T sequence<N, T>::at_nochk(size_t pos) const {
+inline const T &sequence<N, T>::at_nochk(size_t pos) const {
 
 	return m_seq[pos];
 }
 
 
 template<typename T>
-inline sequence<0, T>::sequence(const T t) {
+inline sequence<0, T>::sequence(const T &t) {
 
 }
 
@@ -269,7 +270,7 @@ inline T &sequence<0, T>::at(size_t pos) throw(out_of_bounds) {
 
 
 template<typename T>
-inline T sequence<0, T>::at(size_t pos) const throw(out_of_bounds) {
+inline const T &sequence<0, T>::at(size_t pos) const throw(out_of_bounds) {
 
 	throw out_of_bounds("libtensor", k_clazz, "at(size_t) const",
 		__FILE__, __LINE__, "pos");
@@ -290,7 +291,8 @@ inline T &sequence<0, T>::operator[](size_t pos) throw(out_of_bounds) {
 
 
 template<typename T>
-inline T sequence<0, T>::operator[](size_t pos) const throw(out_of_bounds) {
+inline const T &sequence<0, T>::operator[](size_t pos) const
+	throw(out_of_bounds) {
 
 	return at(pos);
 }
@@ -305,7 +307,7 @@ inline T &sequence<0, T>::at_nochk(size_t pos) {
 
 
 template<typename T>
-inline T sequence<0, T>::at_nochk(size_t pos) const {
+inline const T &sequence<0, T>::at_nochk(size_t pos) const {
 
 	throw out_of_bounds("libtensor", k_clazz, "at_nochk(size_t) const",
 		__FILE__, __LINE__, "pos");

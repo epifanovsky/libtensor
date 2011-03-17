@@ -50,7 +50,7 @@ public:
 	static const char *k_clazz; //!< Class name
 
 private:
-	static const size_t k_invalid = (size_t) (-1);
+	static const size_t k_invalid;
 	static const size_t k_ordera = N + K; //!< Order of %tensor a
 	static const size_t k_orderb = M + K; //!< Order of %tensor b
 	static const size_t k_orderc = N + M; //!< Order of %tensor c
@@ -167,6 +167,10 @@ public:
 
 template<size_t N, size_t M, size_t K>
 const char *contraction2<N, M, K>::k_clazz = "contraction2<N, M, K>";
+
+
+template<size_t N, size_t M, size_t K>
+const size_t contraction2<N, M, K>::k_invalid = (size_t)(-1);
 
 
 template<size_t N, size_t M, size_t K>

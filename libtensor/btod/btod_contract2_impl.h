@@ -729,7 +729,7 @@ void btod_contract2_symmetry_builder_base<N, M, K>::make_symmetry(
 	const sequence<2 * (N + M + K), size_t> &conn = contr.get_conn();
 
 	sequence<N + M + 2 * K, size_t> seq1(0), seq2(0);
-	mask<N + M + 2 * K> msks[K];
+	sequence< K, mask<N + M + 2 * K> > msks;
 	for (size_t i = 0, k = 0; i < N + M + 2 * K; i++) {
 		seq1[i] = i;
 		if (conn[i + N + M] < N + M) { // remaining indexes
@@ -754,8 +754,8 @@ void btod_contract2_symmetry_builder_base<N, M, K>::make_symmetry(
 
 	so_stabilize<N + M + 2 * K, 2 * K, K, double> so_stab(xsymab);
 	for (size_t k = 0; k < K; k++) so_stab.add_mask(msks[k]);
-	so_stab.perform(
-			btod_contract2_symmetry_builder_base<N, M, K>::get_symmetry());
+	so_stab.perform(btod_contract2_symmetry_builder_base<N, M, K>::
+		get_symmetry());
 
 }
 
