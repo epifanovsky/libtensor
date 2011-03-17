@@ -63,7 +63,7 @@ void symmetry_operation_impl< so_concat<N, M, T>,
 	// map result index to input index
 	sequence<N + M, size_t> map(0);
 	for (size_t i = 0; i < N + M; i++) map[i] = i;
-	map.permute(params.perm);
+	params.perm.apply(map);
 
 	mask<N + M> msk1, msk2;
 	sequence<N, size_t> seq1a(0), seq1b(0);

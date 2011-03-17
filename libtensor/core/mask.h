@@ -3,6 +3,7 @@
 
 #include "../defs.h"
 #include "../exception.h"
+#include "permutation.h"
 #include "sequence.h"
 
 namespace libtensor {
@@ -31,6 +32,16 @@ public:
 	/**	\brief Checks if two masks are equal
 	 **/
 	bool equals(const mask<N> &msk) const;
+
+	//@}
+
+
+	//!	\name Manipulations
+	//@{
+
+	/**	\brief Permutes the mask
+	 **/
+	mask<N> &permute(const permutation<N> &perm);
 
 	//@}
 
@@ -65,6 +76,14 @@ bool mask<N>::equals(const mask<N> &msk) const {
 		if(sequence<N, bool>::at_nochk(i) !=
 			msk.sequence<N, bool>::at_nochk(i)) return false;
 	return true;
+}
+
+
+template<size_t N>
+mask<N> &mask<N>::permute(const permutation<N> &perm) {
+
+	perm.apply(*this);
+	return *this;
 }
 
 

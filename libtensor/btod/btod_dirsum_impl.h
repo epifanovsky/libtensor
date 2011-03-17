@@ -506,8 +506,8 @@ void btod_dirsum_symmetry_builder<N, N>::make_symmetry(
 		sequence<N + N, size_t> seq1(0), seq2(0);
 		for (size_t i = 0; i < N; i++) seq1[i] = seq2[i + N] = i;
 		for (size_t i = 0; i < N; i++) seq1[i + N] = seq2[i] = i + N;
-		seq1.permute(permc);
-		seq2.permute(permc);
+		permc.apply(seq1);
+		permc.apply(seq2);
 
 		permutation_builder<N + N> pb(seq2, seq1);
 

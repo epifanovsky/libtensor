@@ -256,7 +256,7 @@ void contraction2<N, M, K>::permute_a(const permutation<k_ordera> &perma)
 	make_seqc(seqc1);
 	for(register size_t i = 0; i < k_ordera; i++)
 		seqa[i] = m_conn[k_orderc + i];
-	seqa.permute(perma);
+	perma.apply(seqa);
 	for(register size_t i = 0; i < k_ordera; i++) {
 		m_conn[k_orderc + i] = seqa[i];
 		m_conn[seqa[i]] = k_orderc + i;
@@ -283,7 +283,7 @@ void contraction2<N, M, K>::permute_b(const permutation<k_orderb> &permb)
 	make_seqc(seqc1);
 	for(register size_t i = 0; i < k_orderb; i++)
 		seqb[i] = m_conn[k_orderc + k_ordera + i];
-	seqb.permute(permb);
+	permb.apply(seqb);
 	for(register size_t i = 0; i < k_orderb; i++) {
 		m_conn[k_orderc + k_ordera + i] = seqb[i];
 		m_conn[seqb[i]] = k_orderc + k_ordera + i;

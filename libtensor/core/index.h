@@ -4,6 +4,7 @@
 #include <iostream>
 #include "../defs.h"
 #include "../exception.h"
+#include "permutation.h"
 #include "sequence.h"
 
 namespace libtensor {
@@ -172,7 +173,7 @@ inline index<N>::index(const index<N> &idx) : sequence<N, size_t>(idx) {
 template<size_t N>
 inline index<N> &index<N>::permute(const permutation<N> &perm) {
 
-	sequence<N, size_t>::permute(perm);
+	perm.apply(*this);
 	return *this;
 }
 

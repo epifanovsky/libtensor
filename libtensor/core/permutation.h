@@ -5,6 +5,7 @@
 #include <iostream>
 #include "../defs.h"
 #include "../exception.h"
+#include "sequence.h"
 #include "out_of_bounds.h"
 
 namespace libtensor {
@@ -181,6 +182,12 @@ public:
 	template<typename T>
 	void apply(T (&seq)[N]) const;
 
+	/**	\brief Permutes a sequence of objects
+		\param seq Sequence of objects.
+	 **/
+	template<typename T>
+	void apply(sequence<N, T> &seq) const;
+
 	/**	\brief Permutes a given sequence of objects and writes the
 			result to a different location
 		\param n Length of the sequence, must be the same as the
@@ -336,6 +343,14 @@ void permutation<N>::apply(T (&seq)[N]) const {
 
 	T buf[N];
 	for(register size_t i = 0; i < N; i++) buf[i] = seq[i];
+	for(register size_t i = 0; i < N; i++) seq[i] = buf[m_idx[i]];
+}
+
+
+template<size_t N> template<typename T>
+void permutation<N>::apply(sequence<N, T> &seq) const {
+
+	sequence<N, T> buf(seq);
 	for(register size_t i = 0; i < N; i++) seq[i] = buf[m_idx[i]];
 }
 

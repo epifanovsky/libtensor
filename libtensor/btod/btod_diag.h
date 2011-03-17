@@ -236,7 +236,7 @@ void btod_diag<N, M>::compute_block(tensor_i<k_orderb, double> &blk,
 		mask<k_ordera> m1(m_msk), m2(m_msk);
 		sequence<k_ordera, size_t> map1(map), map2(map);
 		m2.permute(pinva);
-		map2.permute(pinva);
+		pinva.apply(map2);
 
 		sequence<N - M, size_t> seq1(0), seq2(0);
 		sequence<k_orderb, size_t> seqb1(0), seqb2(0);

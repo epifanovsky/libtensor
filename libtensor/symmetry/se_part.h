@@ -365,7 +365,7 @@ void se_part<N, T>::permute(const permutation<N> &perm) {
 
 	sequence<N, size_t> seq(0);
 	for (size_t i = 0; i < N; i++) seq[i] = i;
-	seq.permute(perm);
+	perm.apply(seq);
 	bool affects_map = false;
 	for (size_t i = 0; i < N; i++) {
 		if (m_mask[i] && seq[i] != i) { affects_map = true; break; }

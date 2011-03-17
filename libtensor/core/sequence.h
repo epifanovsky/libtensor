@@ -4,7 +4,6 @@
 #include "../defs.h"
 #include "../exception.h"
 #include "out_of_bounds.h"
-#include "permutation.h"
 
 namespace libtensor {
 
@@ -46,11 +45,6 @@ public:
 		\throw out_of_bounds If the position exceeds N.
 	 **/
 	const T &at(size_t pos) const throw(out_of_bounds);
-
-	/**	\brief Permutes the sequence
-		\param perm Permutation.
-	 **/
-	void permute(const permutation<N> &perm);
 
 	//@}
 
@@ -128,10 +122,6 @@ public:
 	/**	\brief Always throws an exception
 	 **/
 	const T &at(size_t pos) const throw(out_of_bounds);
-
-	/**	\brief Does nothing
-	 **/
-	void permute(const permutation<0> &perm);
 
 	//@}
 
@@ -214,13 +204,6 @@ inline const T &sequence<N, T>::at(size_t pos) const throw(out_of_bounds) {
 
 
 template<size_t N, typename T>
-inline void sequence<N, T>::permute(const permutation<N> &perm) {
-
-	perm.apply(m_seq);
-}
-
-
-template<size_t N, typename T>
 inline T &sequence<N, T>::operator[](size_t pos) throw(out_of_bounds) {
 
 	return at(pos);
@@ -274,12 +257,6 @@ inline const T &sequence<0, T>::at(size_t pos) const throw(out_of_bounds) {
 
 	throw out_of_bounds("libtensor", k_clazz, "at(size_t) const",
 		__FILE__, __LINE__, "pos");
-}
-
-
-template<typename T>
-inline void sequence<0, T>::permute(const permutation<0> &perm) {
-
 }
 
 

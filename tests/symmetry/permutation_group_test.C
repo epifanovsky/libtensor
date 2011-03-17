@@ -1299,7 +1299,7 @@ void permutation_group_test::all_permutations(
 
 		sequence<N - 1, size_t> seq2a(0), seq2b(0);
 		for(size_t j = 0; j < N - 1; j++) seq2a[j] = seq2b[j] = j;
-		seq2b.permute(i2->first);
+		i2->first.apply(seq2b);
 
 		for(size_t i = 0; i < N; i++) {
 

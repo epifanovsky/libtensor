@@ -206,7 +206,7 @@ public:
 	 **/
 	void permute(const permutation<N> &perm) {
 		m_bidims.permute(perm);
-		m_type.permute(perm);
+		perm.apply(m_type);
 	}
 
 	/**	\copydoc symmetry_element_i<N, T>::is_valid_bis

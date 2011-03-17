@@ -56,8 +56,8 @@ void symmetry_operation_impl< so_symmetrize3<N, T>, se_label<N, T> >::do_perform
 
 	sequence<N, size_t> cmap(0), pmap(0);
 	for (size_t j = 0; j < N; j++) cmap[j] = pmap[j] = j;
-	cmap.permute(params.cperm);
-	pmap.permute(params.pperm);
+	params.cperm.apply(cmap);
+	params.pperm.apply(pmap);
 
 
 	for(typename adapter_t::iterator i = g1.begin(); i != g1.end(); i++) {

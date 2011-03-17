@@ -227,7 +227,7 @@ void btod_extract<N, M>::do_compute_block(tensor_i<k_orderb, double> &blk,
 	sequence<k_ordera, size_t> seqa1(0), seqa2(0);
 	sequence<k_orderb, size_t> seqb1(0), seqb2(0);
 	for(register size_t i = 0; i < k_ordera; i++) seqa2[i] = seqa1[i] = i;
-	seqa2.permute(tra.get_perm());
+	tra.get_perm().apply(seqa2);
 	for(register size_t i = 0, j1 = 0, j2 = 0; i < k_ordera; i++) {
 		if(msk1[i]) seqb1[j1++] = seqa1[i];
 		if(msk2[i]) seqb2[j2++] = seqa2[i];
