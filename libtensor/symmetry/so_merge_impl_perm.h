@@ -88,8 +88,8 @@ void symmetry_operation_impl< so_merge<N, M, T>,
 
 		//	Projects the permutations onto a larger
 		//	space and form a symmetry element
-		size_t a1[N - M];
-		size_t a2a[N - M + 1], a2b[N - M + 1];
+		sequence<N - M, size_t> a1(0);
+		sequence<N - M + 1, size_t> a2a(0), a2b(0);
 		for (size_t j = 0; j < N - M; j++) a1[j] = j;
 		ex.get_perm().apply(a1);
 

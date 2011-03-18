@@ -55,7 +55,7 @@ void symmetry_operation_impl< so_concat<N, M, T>,
 	typedef symmetry_element_set_adapter< N, T, se_perm<N, T> > adapter1_t;
 	typedef symmetry_element_set_adapter< M, T, se_perm<M, T> > adapter2_t;
 
-	size_t map[N + M];
+	sequence<N + M, size_t> map(0);
 	for (size_t j = 0; j < N + M; j++) map[j] = j;
 	permutation<N + M> pinv(params.perm, true);
 	pinv.apply(map);
@@ -69,8 +69,8 @@ void symmetry_operation_impl< so_concat<N, M, T>,
 
 		//	Project the combined permutation onto the larger
 		//	space and form a symmetry element
-		size_t a1[N];
-		size_t a2a[N + M], a2b[N + M];
+		sequence<N, size_t> a1(0);
+		sequence<N + M, size_t> a2a(0), a2b(0);
 		for (size_t j = 0; j < N; j++) a1[j] = j;
 		e1.get_perm().apply(a1);
 
@@ -96,8 +96,8 @@ void symmetry_operation_impl< so_concat<N, M, T>,
 
 		//	Project the combined permutation onto the larger
 		//	space and form a symmetry element
-		size_t a1[M];
-		size_t a2a[N + M], a2b[N + M];
+		sequence<M, size_t> a1(0);
+		sequence<N + M, size_t> a2a(0), a2b(0);
 		for (size_t j = 0; j < M; j++) a1[j] = N + j;
 		e2.get_perm().apply(a1);
 

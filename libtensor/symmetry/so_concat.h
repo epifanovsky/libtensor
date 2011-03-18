@@ -187,7 +187,7 @@ template<size_t N, size_t M, typename T>
 void so_concat<N, M, T>::proj_up_sym1(const symmetry<N, T> &sym1,
 	symmetry<N + M, T> &sym2) {
 
-	size_t map[N + M];
+	sequence<N + M, size_t> map(0);
 	for (size_t i = 0; i < N + M; i++) map[i] = i;
 	m_perm.apply(map);
 
@@ -210,7 +210,7 @@ template<size_t N, size_t M, typename T>
 void so_concat<N, M, T>::proj_up_sym2(const symmetry<M, T> &sym1,
 	symmetry<N + M, T> &sym2) {
 
-	size_t map[N + M];
+	sequence<N + M, size_t> map(0);
 	for (size_t i = 0; i < N + M; i++) map[i] = i;
 	m_perm.apply(map);
 

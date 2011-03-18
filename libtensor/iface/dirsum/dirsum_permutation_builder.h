@@ -67,8 +67,9 @@ permutation<N + M> dirsum_permutation_builder<N, M>::mk_perm(
 	const permutation<k_orderb> &permb,
 	const letter_expr<k_orderc> &label_c) {
 
-	size_t seq2a[k_ordera], seq2b[k_orderb];
-	size_t seq1[k_orderc], seq2[k_orderc];
+	sequence<k_ordera, size_t> seq2a(0);
+	sequence<k_orderb, size_t> seq2b(0);
+	sequence<k_orderc, size_t> seq1(0), seq2(0);
 
 	for(size_t i = 0; i < k_orderc; i++) seq1[i] = i;
 

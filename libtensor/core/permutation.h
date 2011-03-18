@@ -3,6 +3,7 @@
 
 #include <cstdio>
 #include <iostream>
+#include <string>
 #include "../defs.h"
 #include "../exception.h"
 #include "sequence.h"
@@ -168,36 +169,11 @@ public:
 	//!	\name Application of the %permutation
 	//@{
 
-	/**	\brief Permutes a given sequence of objects
-		\param n Length of the sequence, must be the same as the
-			permutation order
-		\param obj Pointer to the sequence
-	 **/
-	template<class T>
-	void apply(const size_t n, T *obj) const throw(exception);
-
-	/**	\brief Permutes a sequence of objects
-		\param obj Pointer to the sequence
-	 **/
-	template<typename T>
-	void apply(T (&seq)[N]) const;
-
 	/**	\brief Permutes a sequence of objects
 		\param seq Sequence of objects.
 	 **/
 	template<typename T>
 	void apply(sequence<N, T> &seq) const;
-
-	/**	\brief Permutes a given sequence of objects and writes the
-			result to a different location
-		\param n Length of the sequence, must be the same as the
-			permutation order
-		\param obj_from Pointer to the initial sequence
-		\param obj_to Pointer to the resulting sequence
-	 **/
-	template<class T>
-	void apply(const size_t n, const T *obj_from, T *obj_to) const
-		throw(exception);
 
 	//@}
 
@@ -323,50 +299,11 @@ inline bool permutation<N>::equals(const permutation<N> &p) const {
 }
 
 
-template<size_t N> template<class T>
-void permutation<N>::apply(size_t n, T *obj) const throw(exception) {
-
-#ifdef LIBTENSOR_DEBUG
-	if(n!=N) {
-		throw_exc("permutation<N>", "apply(const size_t, T*)",
-			"Sequence has a wrong length");
-	}
-#endif // LIBTENSOR_DEBUG
-	T buf[N];
-	for(register size_t i = 0; i < N; i++) buf[i] = obj[i];
-	for(register size_t i = 0; i < N; i++) obj[i] = buf[m_idx[i]];
-}
-
-
-template<size_t N> template<typename T>
-void permutation<N>::apply(T (&seq)[N]) const {
-
-	T buf[N];
-	for(register size_t i = 0; i < N; i++) buf[i] = seq[i];
-	for(register size_t i = 0; i < N; i++) seq[i] = buf[m_idx[i]];
-}
-
-
 template<size_t N> template<typename T>
 void permutation<N>::apply(sequence<N, T> &seq) const {
 
 	sequence<N, T> buf(seq);
 	for(register size_t i = 0; i < N; i++) seq[i] = buf[m_idx[i]];
-}
-
-
-template<size_t N> template<class T>
-void permutation<N>::apply(const size_t n, const T *obj_from, T *obj_to) const
-	throw(exception) {
-
-#ifdef LIBTENSOR_DEBUG
-	if(n!=N) {
-		throw_exc("permutation<N>", "apply(const size_t, const T*, T*)",
-			"Sequence has a wrong length");
-	}
-#endif // LIBTENSOR_DEBUG
-
-	for(register size_t i = 0; i < N; i++) obj_to[i] = obj_from[m_idx[i]];
 }
 
 
@@ -400,12 +337,17 @@ inline bool permutation<N>::operator<(const permutation<N> &p) const {
 **/
 template<size_t N>
 std::ostream &operator<<(std::ostream &os, const permutation<N> &p) {
+
 	static const char *alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	char seq1[N + 1], seq2[N + 1];
+	sequence<N, char> seq1('\0'), seq2('\0');
 	for(size_t i = 0; i < N; i++) seq1[i] = seq2[i] = alphabet[i];
-	seq1[N] = seq2[N] = '\0';
-	p.apply(N, seq1, seq2);
-	os << "[" << seq1 << "->" << seq2 << "]";
+	p.apply(seq2);
+	std::string s1(N, ' '), s2(N, ' ');
+	for(size_t i = 0; i < N; i++) {
+		s1[i] = seq1[i];
+		s2[i] = seq2[i];
+	}
+	os << "[" << s1 << "->" << s2 << "]";
 	return os;
 }
 

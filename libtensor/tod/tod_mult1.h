@@ -180,7 +180,7 @@ void tod_mult1<N>::build_loop(typename loop_list_elem1::list_t &loop,
 	typedef typename loop_list_elem1::iterator_t iterator_t;
 	typedef typename loop_list_elem1::node node_t;
 
-	size_t mapb[N];
+	sequence<N, size_t> mapb(0);
 	for(register size_t i = 0; i < N; i++) mapb[i] = i;
 	permb.apply(mapb);
 

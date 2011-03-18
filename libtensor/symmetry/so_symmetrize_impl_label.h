@@ -54,7 +54,7 @@ void symmetry_operation_impl< so_symmetrize<N, T>, se_label<N, T> >::do_perform(
 	adapter_t g1(params.grp1);
 	params.grp2.clear();
 
-	size_t map[N];
+	sequence<N, size_t> map(0);
 	for (size_t j = 0; j < N; j++) map[j] = j;
 	params.perm.apply(map);
 

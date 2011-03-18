@@ -50,7 +50,7 @@ void permutation_builder_test::test_2() throw(libtest::test_exception) {
 
 	char seq_abcd[] = { 'a', 'b', 'c', 'd' };
 	char seq_acdb[] = { 'a', 'c', 'd', 'b' };
-	char seq_abcd_1[4];
+	sequence<4, char> seq_abcd_1('\0');
 	permutation_builder<4> pb3(seq_abcd, seq_acdb);
 	permutation<4> p3; p3.permute(1, 2).permute(1, 3);
 	for(size_t i = 0; i < 4; i++) seq_abcd_1[i] = seq_acdb[i];

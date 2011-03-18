@@ -351,7 +351,7 @@ template<size_t NM, size_t K>
 void contraction2_connector<NM, K>::connect(sequence<k_maxconn, size_t> &conn,
 	const permutation<k_orderc> &permc) {
 
-	size_t connc[k_orderc];
+	sequence<k_orderc, size_t> connc(0);
 	size_t iconnc = 0;
 	for(size_t i = k_orderc; i < k_maxconn; i++) {
 		if(conn[i] == k_invalid || conn[i] < k_orderc)

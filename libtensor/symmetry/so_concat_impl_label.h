@@ -60,7 +60,7 @@ void symmetry_operation_impl< so_concat<N, M, T>,
 	params.g3.clear();
 
 	// map result index to input index
-	size_t map[N + M];
+	sequence<N + M, size_t> map(0);
 	for (size_t j = 0; j < N + M; j++) map[j] = j;
 	permutation<N + M> pinv(params.perm, true);
 	pinv.apply(map);

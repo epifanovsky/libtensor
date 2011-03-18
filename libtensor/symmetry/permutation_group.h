@@ -296,8 +296,8 @@ void permutation_group<N, T>::project_down(
 	for(typename perm_list_t::const_iterator pi = p1->begin();
 		pi != p1->end(); pi++) {
 
-		size_t seq1a[N], seq2a[N];
-		size_t seq1b[M], seq2b[M];
+		sequence<N, size_t> seq1a(0), seq2a(0);
+		sequence<M, size_t> seq1b(0), seq2b(0);
 		for(size_t i = 0; i < N; i++) seq2a[i] = seq1a[i] = i;
 		pi->first.apply(seq2a);
 		size_t j = 0;
@@ -360,8 +360,8 @@ void permutation_group<N, T>::stabilize(
 	for (typename perm_list_t::const_iterator pi = gs.begin();
 			pi != gs.end(); pi++) {
 
-		size_t seq1a[N], seq2a[N];
-		size_t seq1b[M], seq2b[M];
+		sequence<N, size_t> seq1a(0), seq2a(0);
+		sequence<M, size_t> seq1b(0), seq2b(0);
 		for (size_t i = 0; i < N; i++) seq1a[i] = seq2a[i] = i;
 		pi->first.apply(seq2a);
 		for (size_t i = 0, j = 0; i < N; i++) {
@@ -420,7 +420,7 @@ bool permutation_group<N, T>::is_member(const branching &br,
 
 	//~ std::cout << "is_member(" << i << ", " << perm << ")" << std::endl;
 
-	size_t seq[N];
+	sequence<N, size_t> seq(0);
 
 	if(perm.is_identity()) return sign;
 	if(i >= N - 1) return false;
@@ -500,7 +500,7 @@ void permutation_group<N, T>::make_branching(branching &br, size_t i,
 		for(typename perm_list_t::const_iterator pi = gs.begin();
 			pi != gs.end(); pi++) {
 
-			size_t seq[N];
+			sequence<N, size_t> seq(0);
 			for(size_t ii = 0; ii < N; ii++) seq[ii] = ii;
 			pi->first.apply(seq);
 
@@ -555,7 +555,7 @@ void permutation_group<N, T>::make_branching(branching &br, size_t i,
 	for(typename perm_list_t::const_iterator pi = gs.begin();
 		pi != gs.end(); pi++) {
 
-		size_t seq[N];
+		sequence<N, size_t> seq(0);
 		for(size_t ii = 0; ii < N; ii++) seq[ii] = ii;
 		pi->first.apply(seq);
 
@@ -633,7 +633,7 @@ void permutation_group<N, T>::permute_branching(
 	for(typename perm_list_t::iterator i = gs1.begin();
 		i != gs1.end(); i++) {
 
-		size_t seq1[N], seq2[N];
+		sequence<N, size_t> seq1(0), seq2(0);
 		for(size_t j = 0; j < N; j++) seq2[j] = seq1[j] = j;
 		i->first.apply(seq2);
 		permutation_builder<N> pb(seq2, seq1, perm);
@@ -725,7 +725,7 @@ void permutation_group<N, T>::make_setstabilizer(
 			}
 
 			// check whether g is in G(P)
-			size_t seq[N];
+			sequence<N, size_t> seq(0);
 			for (size_t k = 0; k < N; k++) seq[k] = k;
 			g.first.apply(seq);
 			size_t l = 0;
@@ -788,7 +788,7 @@ void permutation_group<N, T>::make_setstabilizer(
 			// here g = u_i
 			signed_perm_t &g = pu[0];
 			// check whether g is in G(P)
-			size_t seq[N];
+			sequence<N, size_t> seq(0);
 			for (size_t k = 0; k < N; k++) seq[k] = k;
 			g.first.apply(seq);
 			size_t l = 0;

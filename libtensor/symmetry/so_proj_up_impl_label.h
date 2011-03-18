@@ -67,7 +67,7 @@ void symmetry_operation_impl< so_proj_up<N, M, T>,
 	}
 
 	// map  result index -> input index
-	size_t map[N];
+	sequence<N, size_t> map(0);
 	for (size_t j = 0; j < N; j++) map[j] = j;
 	params.perm.apply(map);
 

@@ -248,9 +248,9 @@ void btod_dirsum<N, M>::make_schedule(const orbit<k_ordera, double> &oa,
 	bool zeroa, const orbit<k_orderb, double> &ob, bool zerob,
 	const orbit_list<k_orderc, double> &olc) {
 
-	size_t seqa[k_ordera];
-	size_t seqb[k_orderb];
-	size_t seqc1[k_orderc], seqc2[k_orderc];
+	sequence<k_ordera, size_t> seqa(0);
+	sequence<k_orderb, size_t> seqb(0);
+	sequence<k_orderc, size_t> seqc1(0), seqc2(0);
 
 	for(size_t i = 0; i < k_orderc; i++) seqc1[i] = i;
 

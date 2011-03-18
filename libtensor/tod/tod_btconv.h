@@ -178,7 +178,7 @@ void tod_btconv<N>::copy_block(double *optr, const dimensions<N> &odims,
 
 	permutation<N> inv_perm(iperm);
 	inv_perm.invert();
-	size_t ib[N];
+	sequence<N, size_t> ib(0);
 	for(size_t i = 0; i < N; i++) ib[i] = i;
 	inv_perm.apply(ib);
 

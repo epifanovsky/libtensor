@@ -241,7 +241,7 @@ void tod_copy<N>::build_loop(typename Base::list_t &loop,
 	typedef typename Base::iterator_t iterator_t;
 	typedef typename Base::node node_t;
 
-	size_t map[N];
+	sequence<N, size_t> map(0);
 	for(register size_t i = 0; i < N; i++) map[i] = i;
 	perma.apply(map);
 

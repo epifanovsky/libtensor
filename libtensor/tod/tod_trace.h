@@ -100,7 +100,7 @@ double tod_trace<N>::calculate() {
 	tensor_ctrl<k_ordera, double> ca(m_t);
 	ca.req_prefetch();
 
-	size_t map[k_ordera];
+	sequence<k_ordera, size_t> map(0);
 	for(register size_t i = 0; i < k_ordera; i++) map[i] = i;
 	permutation<k_ordera> pinv(m_perm, true);
 	pinv.apply(map);
@@ -147,7 +147,7 @@ void tod_trace<N>::check_dims() {
 
 	static const char *method = "check_dims()";
 
-	size_t map[k_ordera];
+	sequence<k_ordera, size_t> map(0);
 	for(register size_t i = 0; i < k_ordera; i++) map[i] = i;
 	permutation<k_ordera> pinv(m_perm, true);
 	pinv.apply(map);

@@ -101,8 +101,8 @@ void symmetry_operation_impl< so_proj_up<N, M, T>,
 
 		//	Project the combined permutation onto the larger
 		//	space and form a symmetry element
-		size_t a1[N], a2a[N + M], a2b[N + M];
-		size_t b1[N], b2a[N + M], b2b[N + M];
+		sequence<N, size_t> a1(0), b1(0);
+		sequence<N + M, size_t> a2a(0), a2b(0), b2a(0), b2b(0);
 		size_t k = 0;
 		for(size_t j = 0; j < N; j++) a1[j] = b1[j] = j;
 		e1.get_perm().apply(a1);

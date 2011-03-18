@@ -232,7 +232,7 @@ void tod_mult<N>::build_loop(typename loop_list_elem::list_t &loop,
 	typedef typename loop_list_elem::iterator_t iterator_t;
 	typedef typename loop_list_elem::node node_t;
 
-	size_t mapa[N], mapb[N];
+	sequence<N, size_t> mapa(0), mapb(0);
 	for(register size_t i = 0; i < N; i++) mapa[i] = mapb[i] = i;
 	perma.apply(mapa);
 	permb.apply(mapb);

@@ -52,7 +52,7 @@ void symmetry_operation_impl< so_mult<N, T>, se_label<N, T> >::do_perform(
 	adapter_t g2(params.grp2);
 	params.grp3.clear();
 
-	size_t map[N];
+	sequence<N, size_t> map(0);
 	for (size_t i = 0; i < N; i++) map[i] = i;
 	params.perm2.apply(map);
 

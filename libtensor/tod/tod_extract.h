@@ -329,7 +329,7 @@ void tod_extract<N, M>::build_list(
 
 	//	Mapping of unpermuted indexes in b to permuted ones
 	//
-	size_t ib[k_orderb];
+	sequence<k_orderb, size_t> ib(0);
 	for(size_t i = 0; i < k_orderb; i++) ib[i] = i;
 	m_perm.apply(ib);
 
