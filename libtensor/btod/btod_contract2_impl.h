@@ -586,7 +586,7 @@ void btod_contract2_symmetry_builder<N, N, K>::make_symmetry(
 		btod_contract2_symmetry_builder_base<N, N, K>::get_bis();
 
 	sequence<2 * (N + K), size_t> seq1(0), seq2(0);
-	mask<2 * (N + K)> msks[K];
+	sequence< K, mask<2 * (N + K)> > msks;
 	for (size_t i = 0, k = 0; i < 2 * (N + K); i++) {
 		seq1[i] = i;
 		if (conn[i + 2 * N] < 2 * N) { // remaining indexes
