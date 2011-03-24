@@ -300,7 +300,7 @@ template<size_t N, typename T>
 size_t se_part<N, T>::get_npart() const {
 
 	for (size_t i = 0; i < N; i++) if (m_mask[i]) return m_pdims[i];
-
+	return 0;
 }
 
 template<size_t N, typename T>
