@@ -2,7 +2,7 @@
 #define LIBTENSOR_TOD_SCALE_H
 
 #include "../defs.h"
-#include "../linalg.h"
+#include "../linalg/linalg.h"
 #include "../timings.h"
 #include "../core/tensor_i.h"
 #include "../core/tensor_ctrl.h"
@@ -52,7 +52,7 @@ void tod_scale<N>::perform() {
 
 	tensor_ctrl<N, double> ctrl(m_t);
 	double *p = ctrl.req_dataptr();
-	blas_dscal(m_t.get_dims().get_size(), m_c, p, 1);
+	linalg::i_x(m_t.get_dims().get_size(), m_c, p, 1);
 	ctrl.ret_dataptr(p); p = 0;
 
 	tod_scale<N>::stop_timer();

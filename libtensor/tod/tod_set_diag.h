@@ -5,6 +5,7 @@
 #include "../exception.h"
 #include "../core/tensor_i.h"
 #include "../core/tensor_ctrl.h"
+#include "bad_dimensions.h"
 
 namespace libtensor {
 
@@ -67,8 +68,8 @@ void tod_set_diag<N>::perform(tensor_i<N, double> &t) throw(exception) {
 	size_t n = dims[0];
 	for(size_t i = 1; i < N; i++) {
 		if(dims[i] != n) {
-			throw bad_parameter(g_ns, k_clazz, method, __FILE__,
-				__LINE__, "Invalid tensor dimension.");
+			throw bad_dimensions(g_ns, k_clazz, method, __FILE__,
+				__LINE__, "t.");
 		}
 	}
 

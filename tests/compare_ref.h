@@ -60,6 +60,8 @@ void compare_ref<N>::compare(const char *test, block_tensor_i<N, double> &t,
 	if(!cmp.compare()) {
 		std::ostringstream str;
 		str << "In " << test << ": ";
+		cmp.tostr(str);
+		/*
 		str << "Result does not match reference ";
 		if ( ! cmp.get_diff().m_number_of_orbits )
 			str << "symmetry";
@@ -85,7 +87,7 @@ void compare_ref<N>::compare(const char *test, block_tensor_i<N, double> &t,
 				<< cmp.get_diff().m_diff_elem_2 << " (ref), "
 				<< cmp.get_diff().m_diff_elem_1 - cmp.get_diff().m_diff_elem_2
 				<< " (diff)";
-		}
+		}*/
 		throw libtest::test_exception("compare_ref::compare()",
 			__FILE__, __LINE__, str.str().c_str());
 	}

@@ -1,0 +1,44 @@
+macro(SetupMKL)
+	add_definitions(-DUSE_MKL)
+	include_directories(${MKL_INCLUDE_PATH})
+	set(BLAS_LIBS ${MKL_LIBRARIES})
+	message(STATUS "Using MKL: " ${MKL_INCLUDE_PATH})
+
+	set(CMAKE_REQUIRED_INCLUDES ${MKL_INCLUDE_PATH})
+	set(CMAKE_REQUIRED_LIBRARIES ${MKL_LIBRARIES})
+
+	check_cxx_source_compiles("
+#include <mkl.h>
+int main() {
+	double a[10], b[20], c[10]; vdAdd(10, a, b, c);
+	return 0;
+}
+" HAVE_MKL_VDADD)
+	if(HAVE_MKL_VDADD)
+	add_definitions(-DHAVE_MKL_VDADD)
+	endif(HAVE_MKL_VDADD)
+
+	check_cxx_source_compiles("
+#include <mkl.h>
+int main() {
+	double *ptr = (double*)MKL_malloc(64, 32); MKL_free(ptr);
+	return 0;
+}
+" HAVE_MKL_MALLOC)
+	if(HAVE_MKL_MALLOC)
+	add_definitions(-DHAVE_MKL_MALLOC)
+	endif(HAVE_MKL_MALLOC)
+
+	check_cxx_source_compiles("
+#include <mkl.h>
+#include <mkl_trans.h>
+int main() {
+	double a[9], b[9];
+	mkl_domatcopy('C', 'N', 3, 3, 1.0, a, 3, b, 3);
+	return 0;
+}
+" HAVE_MKL_DOMATCOPY)
+	if(HAVE_MKL_DOMATCOPY)
+	add_definitions(-DHAVE_MKL_DOMATCOPY)
+	endif(HAVE_MKL_DOMATCOPY)
+endmacro(SetupMKL)

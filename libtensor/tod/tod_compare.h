@@ -133,7 +133,7 @@ bool tod_compare<N>::compare() {
 				break;
 			}
 		} else {
-			if(p2[i]/p1[i] - 1.0 > m_thresh) {
+			if(fabs(p2[i]/p1[i] - 1.0) > m_thresh) {
 				m_diff_elem_1 = p1[i];
 				m_diff_elem_2 = p2[i];
 				equal = false;

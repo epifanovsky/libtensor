@@ -10,7 +10,7 @@ namespace libtensor {
 
 	\ingroup libtensor_core_exc
  **/
-class out_of_bounds : public exception {
+class out_of_bounds : public exception_base<out_of_bounds> {
 public:
 	//!	\name Construction and destruction
 	//@{
@@ -20,8 +20,8 @@ public:
 	out_of_bounds(const char *ns, const char *clazz, const char *method,
 		const char *file, unsigned int line, const char *message)
 		throw()
-		: exception(ns, clazz, method, file, line, "out_of_bounds",
-			message) { };
+		: exception_base<out_of_bounds>(ns, clazz, method, file, line,
+			"out_of_bounds", message) { };
 
 	/**	\brief Virtual destructor
 	 **/

@@ -50,7 +50,7 @@ public:
 	static const char *k_clazz; //!< Class name
 
 private:
-	static const size_t k_invalid = (size_t) (-1);
+	static const size_t k_invalid;
 	static const size_t k_ordera = N + K; //!< Order of %tensor a
 	static const size_t k_orderb = M + K; //!< Order of %tensor b
 	static const size_t k_orderc = N + M; //!< Order of %tensor c
@@ -170,6 +170,10 @@ const char *contraction2<N, M, K>::k_clazz = "contraction2<N, M, K>";
 
 
 template<size_t N, size_t M, size_t K>
+const size_t contraction2<N, M, K>::k_invalid = (size_t)(-1);
+
+
+template<size_t N, size_t M, size_t K>
 contraction2<N, M, K>::contraction2() :
 m_k(0), m_conn(k_invalid) {
 
@@ -252,7 +256,7 @@ void contraction2<N, M, K>::permute_a(const permutation<k_ordera> &perma)
 	make_seqc(seqc1);
 	for(register size_t i = 0; i < k_ordera; i++)
 		seqa[i] = m_conn[k_orderc + i];
-	seqa.permute(perma);
+	perma.apply(seqa);
 	for(register size_t i = 0; i < k_ordera; i++) {
 		m_conn[k_orderc + i] = seqa[i];
 		m_conn[seqa[i]] = k_orderc + i;
@@ -279,7 +283,7 @@ void contraction2<N, M, K>::permute_b(const permutation<k_orderb> &permb)
 	make_seqc(seqc1);
 	for(register size_t i = 0; i < k_orderb; i++)
 		seqb[i] = m_conn[k_orderc + k_ordera + i];
-	seqb.permute(permb);
+	permb.apply(seqb);
 	for(register size_t i = 0; i < k_orderb; i++) {
 		m_conn[k_orderc + k_ordera + i] = seqb[i];
 		m_conn[seqb[i]] = k_orderc + k_ordera + i;
@@ -347,7 +351,7 @@ template<size_t NM, size_t K>
 void contraction2_connector<NM, K>::connect(sequence<k_maxconn, size_t> &conn,
 	const permutation<k_orderc> &permc) {
 
-	size_t connc[k_orderc];
+	sequence<k_orderc, size_t> connc(0);
 	size_t iconnc = 0;
 	for(size_t i = k_orderc; i < k_maxconn; i++) {
 		if(conn[i] == k_invalid || conn[i] < k_orderc)

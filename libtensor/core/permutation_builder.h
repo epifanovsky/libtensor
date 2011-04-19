@@ -69,6 +69,10 @@ public:
 	permutation_builder(const T (&seq1)[N], const T (&seq2)[N],
 		const permutation<N> &perm);
 
+	template<typename T>
+	permutation_builder(const sequence<N, T> &seq1,
+		const sequence<N, T> &seq2, const permutation<N> &perm);
+
 	/**	\brief Returns the %permutation
 	 **/
 	const permutation<N> &get_perm() const {
@@ -78,7 +82,7 @@ public:
 private:
 	template<typename T>
 	void build(const T (&seq1)[N], const T (&seq2)[N],
-		const size_t (&map)[N]);
+		const sequence<N, size_t> &map);
 
 };
 
@@ -110,7 +114,7 @@ template<size_t N> template<typename T>
 permutation_builder<N>::permutation_builder(
 	const T (&seq1)[N], const T (&seq2)[N]) {
 
-	size_t map[N];
+	sequence<N, size_t> map(0);
 	for(size_t i = 0; i < N; i++) map[i] = i;
 	build(seq1, seq2, map);
 }
@@ -121,7 +125,7 @@ permutation_builder<N>::permutation_builder(const sequence<N, T> &seq1,
 	const sequence<N, T> &seq2) {
 
 	T s1[N], s2[N];
-	size_t map[N];
+	sequence<N, size_t> map(0);
 	for(size_t i = 0; i < N; i++) {
 		s1[i] = seq1[i];
 		s2[i] = seq2[i];
@@ -135,7 +139,7 @@ template<size_t N> template<typename T>
 permutation_builder<N>::permutation_builder(
 	const T (&seq1)[N], const T (&seq2)[N], const permutation<N> &perm) {
 
-	size_t map[N];
+	sequence<N, size_t> map(0);
 	for(size_t i = 0; i < N; i++) map[i] = i;
 	permutation<N> permi(perm, true);
 	permi.apply(map);
@@ -144,11 +148,28 @@ permutation_builder<N>::permutation_builder(
 
 
 template<size_t N> template<typename T>
-void permutation_builder<N>::build(const T (&seq1)[N], const T (&seq2)[N],
-	const size_t (&map)[N]) {
+permutation_builder<N>::permutation_builder(const sequence<N, T> &seq1,
+	const sequence<N, T> &seq2, const permutation<N> &perm) {
 
-	static const char *method =
-		"build(const T (&)[N], const T (&)[N], const size_t (&)[N])";
+	T s1[N], s2[N];
+	sequence<N, size_t> map(0);
+	for(size_t i = 0; i < N; i++) {
+		s1[i] = seq1[i];
+		s2[i] = seq2[i];
+		map[i] = i;
+	}
+	permutation<N> permi(perm, true);
+	permi.apply(map);
+	build(s1, s2, map);
+}
+
+
+template<size_t N> template<typename T>
+void permutation_builder<N>::build(const T (&seq1)[N], const T (&seq2)[N],
+	const sequence<N, size_t> &map) {
+
+	static const char *method = "build(const T (&)[N], const T (&)[N], "
+		"const sequence<N, size_t>&)";
 
 	size_t i, j, idx[N];
 

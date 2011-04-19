@@ -301,3 +301,4 @@ void tod_dirsum<N, M>::fn_add_a(registers &r) {
 } // namespace libtensor
 
 #endif // LIBTENOSR_TOD_DIRSUM_H
+

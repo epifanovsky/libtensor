@@ -1,10 +1,17 @@
 #include <iostream>
-#include <libtensor/libtensor.h>
 #include <libvmm/libvmm.h>
 #include "../core/block_tensor_ctrl.h"
+#include "../core/block_tensor.h"
+#include "btod_add.h"
+#include "btod_contract2.h"
+#include "btod_copy.h"
+#include "btod_diag.h"
 #include "btod_extract.h"
+#include "btod_scale.h"
+#include "btod_set_diag.h"
+#include "btod_set_elem.h"
+#include "btod_set.h"
 #include "btod_tridiagonalize.h"
-
 
 namespace libtensor
 {
@@ -165,11 +172,7 @@ void btod_tridiagonalize::perform(block_tensor_i<2, double> &btb,
 		pa=0;
 		cab.ret_block(idx);
 
-		if(a==0)
-		{
-			alpha = - sqrt(sum);
-		}
-		else if(a>0)
+		if(a>=0.0)
 		{
 			alpha = - sqrt(sum);
 		}
@@ -201,17 +204,17 @@ void btod_tridiagonalize::perform(block_tensor_i<2, double> &btb,
 			}
 		}
 
-		index<1> idxibl;
+		index<1> idxibl1;
 
 		for(size_t i = 0;i < pos;i++)
 		{
-			idxibl[0]=i;
-			btod_set_elem<1>().perform(v,idx,idxibl,0);
+			idxibl1[0]=i;
+			btod_set_elem<1>().perform(v,idx,idxibl1,0);
 		}
 
-		idxibl[0] = pos;
+		idxibl1[0] = pos;
 
-		btod_set_elem<1>().perform(v,idx,idxibl,a - alpha);
+		btod_set_elem<1>().perform(v,idx,idxibl1,a - alpha);
 
 			pos++;
 
@@ -230,14 +233,14 @@ void btod_tridiagonalize::perform(block_tensor_i<2, double> &btb,
 			}
 			else
 			{
-				tensor_i<1 ,double> &tcol = cab.req_block(idx);
-				tensor_ctrl<1, double> ca(tcol);
-				const double *pa = ca.req_const_dataptr();
-				idxibl[0]=pos;
-				btod_set_elem<1>().perform(v,idx,idxibl,*(pa + pos));
-			ca.ret_dataptr(pa);
-			pa=0;
-			cab.ret_block(idx);
+				tensor_i<1 ,double> &tcol1 = cab.req_block(idx);
+				tensor_ctrl<1, double> ca1(tcol1);
+				const double *pa1 = ca1.req_const_dataptr();
+				idxibl1[0]=pos;
+				btod_set_elem<1>().perform(v,idx,idxibl1,*(pa1 + pos));
+				ca1.ret_dataptr(pa1);
+				pa1=0;
+				cab.ret_block(idx);
 			}
 
 			pos++;
@@ -290,7 +293,7 @@ void btod_tridiagonalize::print(block_tensor_i<2, double> &btb)
 		idxi[1] = 0;
 		int posh = 0;
 
-		for(size_t i =0;i < size;i++)
+		for(size_t j =0;j < size;j++)
 		{
 			if(m_bta.get_bis().get_block_dims(idxi).get_dim(1) - 1 < posh)
 			{
@@ -339,7 +342,7 @@ void btod_tridiagonalize::print(block_tensor_i<2, double> &btb)
 		idxi[1] = 0;
 		int posh = 0;
 
-		for(size_t i =0;i < size;i++)
+		for(size_t j =0;j < size;j++)
 		{
 			if(btb.get_bis().get_block_dims(idxi).get_dim(1) - 1 < posh)
 			{

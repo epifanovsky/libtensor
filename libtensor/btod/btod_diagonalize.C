@@ -1,11 +1,17 @@
 #include <iostream>
-#include <libtensor/libtensor.h>
 #include <libvmm/libvmm.h>
 #include "../core/block_tensor_ctrl.h"
-#include "btod_extract.h"
+#include "../core/block_tensor.h"
+#include "btod_add.h"
+#include "btod_contract2.h"
+#include "btod_copy.h"
+#include "btod_diag.h"
 #include "btod_diagonalize.h"
-#include "btod_tridiagonalize.h"
-
+#include "btod_extract.h"
+#include "btod_scale.h"
+#include "btod_set_diag.h"
+#include "btod_set_elem.h"
+#include "btod_set.h"
 
 namespace libtensor
 {
@@ -440,7 +446,7 @@ block_tensor_i <2, double> &eigvector,block_tensor_i <1, double> &eigvalue)
 		idxi[1] = 0;
 		int pos1 = 0;
 
-		for(size_t i =0;i < size;i++)
+		for(size_t j = 0; j < size; j++)
 		{
 			if(btb.get_bis().get_block_dims(idxi).get_dim(1) - 1 < pos1)
 			{
@@ -451,13 +457,13 @@ block_tensor_i <2, double> &eigvector,block_tensor_i <1, double> &eigvalue)
 			if(ctrlb.req_is_zero_block(idxi)==false)
 			{
 				{
-			tensor_ctrl<2, double> catrl(ctrlb.req_block(idxi));
-			const double *pa = catrl.req_const_dataptr();
-			std::cout<<*(pa + pos0 * btb.get_bis().get_block_dims(idxi).
-					get_dim(1) + pos1)<<" ";
-			catrl.ret_dataptr(pa);
+					tensor_ctrl<2, double> catrl(ctrlb.req_block(idxi));
+					const double *pa = catrl.req_const_dataptr();
+					std::cout<<*(pa + pos0 * btb.get_bis().get_block_dims(idxi).
+							get_dim(1) + pos1)<<" ";
+					catrl.ret_dataptr(pa);
 				}
-			ctrlb.ret_block(idxi);
+				ctrlb.ret_block(idxi);
 			}
 			else
 			{
@@ -489,7 +495,7 @@ block_tensor_i <2, double> &eigvector,block_tensor_i <1, double> &eigvalue)
 		idxi[1] = 0;
 		int pos1 = 0;
 
-		for(size_t i =0;i < size;i++)
+		for(size_t j =0;j < size;j++)
 		{
 			if(eigvector.get_bis().get_block_dims(idxi).get_dim(1) - 1 < pos1)
 			{
@@ -555,7 +561,7 @@ void btod_diagonalize::check(block_tensor_i <2, double> &bta ,
 		block_tensor_i <2, double> &eigvector,
 		block_tensor_i <1, double> &eigvalue,double tol)
 {
-	if(tol==0)
+	if(tol==0.0)
 	{
 		tol = m_tol;
 	}

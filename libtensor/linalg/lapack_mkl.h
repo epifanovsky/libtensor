@@ -1,7 +1,10 @@
 #ifndef LIBTENSOR_LAPACK_MKL_H
 #define LIBTENSOR_LAPACK_MKL_H
 
-#include <mkl.h>
+#include <complex>
+#include <mkl_types.h>
+#define MKL_Complex16 std::complex<double>
+#include <mkl_lapack.h>
 
 namespace libtensor {
 
@@ -55,6 +58,28 @@ inline int lapack_dgesvd(char jobu, char jobvt, size_t m, size_t n, double *a,
 	return mkl_info;
 }
 
+/**     \brief LAPACK function zgesvd (Intel MKL)  
+
+        \ingroup libtensor_linalg
+ **/
+inline int lapack_zgesvd(char jobu, char jobvt, size_t m, size_t n, 
+	std::complex <double> *a,
+        size_t lda, double *s, std::complex <double> *u, size_t ldu, std::complex <double> *vt,
+        size_t ldvt, std::complex <double> *work, size_t lwork, double *rwork) {
+
+        int mkl_m = m;        
+        int mkl_n = n;
+        int mkl_lda = lda;
+        int mkl_ldu = ldu;
+        int mkl_ldvt = ldvt;
+        int mkl_lwork = lwork;
+        int mkl_info = 0;
+
+        zgesvd(&jobu, &jobvt, &mkl_m, &mkl_n, a, &mkl_lda, s, u, &mkl_ldu, vt, &mkl_ldvt, work, &mkl_lwork, rwork, &mkl_info);
+        return mkl_info;
+}
+
+
 
 /**	\brief LAPACK function dsyev (Intel MKL)
 
@@ -101,6 +126,26 @@ inline int lapack_dgeev(char jobvl, char jobvr, size_t n, double *a, size_t lda,
 		vr, &mkl_ldvr, work, &mkl_lwork, &mkl_info);
 	return mkl_info;
 }
+
+
+/**     \brief LAPACK function zgeev (Intel MKL)
+
+        \ingroup libtensor_linalg
+ **/
+inline int lapack_zgeev(char jobvl, char jobvr, size_t n, std::complex <double> *a, size_t lda,
+        std::complex <double> *w, std::complex <double> *vl, size_t ldvl, std::complex <double> *vr,
+        size_t ldvr, std::complex <double> *work, size_t lwork, double *rwork) {
+
+        int mkl_n = n;
+        int mkl_lda = lda;
+        int mkl_ldvl = ldvl;
+        int mkl_ldvr = ldvr;
+        int mkl_lwork = lwork;
+        int mkl_info = 0;
+        zgeev(&jobvl, &jobvr, &mkl_n, a, &mkl_lda, w, vl, &mkl_ldvl, vr, &mkl_ldvr, work, &mkl_lwork, rwork, &mkl_info);
+        return mkl_info;
+}
+
 
 
 } // namespace libtensor

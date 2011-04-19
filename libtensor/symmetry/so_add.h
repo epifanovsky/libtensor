@@ -72,13 +72,47 @@ void so_add<N, T>::perform(symmetry<N, T> &sym3) {
 				compare(set1.get_id()) == 0) break;
 		}
 
-		if(i2 == m_sym2.end()) continue;
+		symmetry_element_set<N, T> set3(set1.get_id());
+
+		if(i2 == m_sym2.end()) {
+			symmetry_element_set<N, T> set2(set1.get_id());
+			symmetry_operation_params<operation_t> params(
+					set1, m_perm1, set2, m_perm2, set3);
+			dispatcher_t::get_instance().invoke(set1.get_id(), params);
+		}
+		else {
+			const symmetry_element_set<N, T> &set2 =
+					m_sym2.get_subset(i2);
+			symmetry_operation_params<operation_t> params(
+					set1, m_perm1, set2, m_perm2, set3);
+			dispatcher_t::get_instance().invoke(set1.get_id(), params);
+		}
+
+		for(typename symmetry_element_set<N, T>::iterator j =
+			set3.begin(); j != set3.end(); j++) {
+			sym3.insert(set3.get_elem(j));
+		}
+	}
+
+	for(typename symmetry<N, T>::iterator i2 = m_sym2.begin();
+			i2 != m_sym2.end(); i2++) {
 
 		const symmetry_element_set<N, T> &set2 =
 			m_sym2.get_subset(i2);
-		symmetry_element_set<N, T> set3(set1.get_id());
+
+		typename symmetry<N, T>::iterator i1 = m_sym1.begin();
+		for(; i1 != m_sym1.end(); i1++) {
+
+			if(m_sym1.get_subset(i1).get_id().
+				compare(set2.get_id()) == 0) break;
+		}
+
+		if (i1 != m_sym1.end()) continue;
+
+		symmetry_element_set<N, T> set1(set2.get_id());
+		symmetry_element_set<N, T> set3(set2.get_id());
 		symmetry_operation_params<operation_t> params(
-			set1, m_perm1, set2, m_perm2, set3);
+				set1, m_perm1, set2, m_perm2, set3);
 		dispatcher_t::get_instance().invoke(set1.get_id(), params);
 
 		for(typename symmetry_element_set<N, T>::iterator j =
@@ -120,3 +154,4 @@ public:
 #include "so_add_handlers.h"
 
 #endif // LIBTENSOR_SO_ADD_H
+

@@ -18,7 +18,7 @@ namespace labeled_btensor_expr {
 	\ingroup libtensor_btensor_expr
  **/
 template<size_t N, size_t M, typename T, typename E1, typename E2>
-class eval_dirsum {
+class eval_dirsum : public eval_i<N + M, T> {
 public:
 	static const char *k_clazz; //!< Class name
 	static const size_t k_ordera = N; //!< Order of the first %tensor

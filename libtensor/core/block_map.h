@@ -6,7 +6,7 @@
 #include "../exception.h"
 #include "dimensions.h"
 #include "immutable.h"
-#include "tensor.h"
+#include "../mp/mp_safe_tensor.h"
 
 namespace libtensor {
 
@@ -25,7 +25,7 @@ namespace libtensor {
 template<size_t N, typename T, typename Alloc>
 class block_map : public immutable {
 public:
-	typedef tensor<N, T, Alloc> tensor_t;
+	typedef mp_safe_tensor<N, T, Alloc> tensor_t;
 	typedef std::pair<size_t, tensor_t*> pair_t;
 	typedef std::map<size_t, tensor_t*> map_t;
 
@@ -134,7 +134,7 @@ void block_map<N, T, Alloc>::create(size_t idx, const dimensions<N> &dims)
 	}
 
 	try {
-		tensor_t *ptr = new tensor<N, T, Alloc>(dims);
+		tensor_t *ptr = new mp_safe_tensor<N, T, Alloc>(dims);
 
 		typename map_t::iterator i = m_map.find(idx);
 		if(i == m_map.end()) {

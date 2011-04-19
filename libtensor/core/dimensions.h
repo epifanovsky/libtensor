@@ -138,7 +138,7 @@ inline dimensions<N>::dimensions(const dimensions<N> &d)
 template<size_t N>
 inline dimensions<N>::dimensions(const index_range<N> &r)
 	: m_dims(r.get_end()) {
-	#pragma unroll(N)
+
 	for(register size_t i = 0; i < N; i++) {
 		m_dims[i] -= r.get_begin()[i];
 		m_dims[i]++;
@@ -163,7 +163,7 @@ inline size_t dimensions<N>::get_increment(size_t i) const throw(exception) {
 
 template<size_t N>
 inline bool dimensions<N>::contains(const index<N> &idx) const {
-	#pragma unroll(N)
+
 	for(register size_t i = 0; i < N; i++) {
 		if(idx[i] >= m_dims[i]) return false;
 	}

@@ -295,7 +295,7 @@ bispace<N>::bispace(const bispace_expr::expr<N, C1> &eord,
 
 	permutation<N> perm;
 	eord.build_permutation(esym, perm);
-	m_subspaces.permute(perm);
+	perm.apply(m_subspaces);
 	m_bis.permute(perm);
 	typename std::list< mask<N> >::iterator imsk = m_masks.begin();
 	for(; imsk != m_masks.end(); imsk++) imsk->permute(perm);

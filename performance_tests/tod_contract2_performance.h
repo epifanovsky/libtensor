@@ -4,6 +4,7 @@
 
 #include <libtest/libtest.h>
 #include <libtensor/libtensor.h>
+#include <libtensor/linalg/linalg.h>
 #include "performance_test.h"
 
 using libtest::unit_test_factory;
@@ -153,8 +154,8 @@ void tod_contract2_ref<R,N,M,K,DimData>::do_calculate()
 	for ( size_t i=0; i<sizeM*sizeK; i++ ) ptrc[i]=drand48();
 
 	timings<tod_contract2_ref<R,N,M,K,DimData> >::start_timer();
-	cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasTrans, sizeN, sizeM, sizeK,
-				0.5, ptrb, sizeK, ptrc, sizeK, 1.0, ptra, sizeM);
+	linalg::ij_ip_jp_x(sizeN, sizeM, sizeK, ptrb, sizeK, ptrc, sizeK,
+		ptra, sizeM, 0.5);
 	timings<tod_contract2_ref<R,N,M,K,DimData> >::stop_timer();
 
 	delete [] ptra;

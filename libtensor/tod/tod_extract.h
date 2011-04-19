@@ -2,7 +2,7 @@
 #define LIBTENSOR_TOD_EXTRACT_H
 
 #include "../defs.h"
-#include "../linalg.h"
+#include "../linalg/linalg.h"
 #include "../not_implemented.h"
 #include "../timings.h"
 #include "../core/index.h"
@@ -173,13 +173,15 @@ private:
 
 
 template<size_t N, size_t M>
-const char *tod_extract<N, M>::k_clazz = "tod_diag<N, M>";
+const char *tod_extract<N, M>::k_clazz = "tod_extract<N, M>";
 
 template<size_t N, size_t M>
-const char *tod_extract<N, M>::op_dcopy::k_clazz = "tod_diag<N, M>::op_dcopy";
+const char *tod_extract<N, M>::op_dcopy::k_clazz =
+	"tod_extract<N, M>::op_dcopy";
 
 template<size_t N, size_t M>
-const char *tod_extract<N, M>::op_daxpy::k_clazz = "tod_diag<N, M>::op_daxpy";
+const char *tod_extract<N, M>::op_daxpy::k_clazz =
+	"tod_extract<N, M>::op_daxpy";
 
 
 template<size_t N, size_t M>
@@ -208,7 +210,7 @@ tod_extract<N, M>::tod_extract(tensor_i<N, double> &t, const mask<N> &m,
 template<size_t N, size_t M>
 void tod_extract<N, M>::perform(tensor_i<k_orderb, double> &tb) {
 
-	static const char *method = "perform(tensor_i<N - M, double> &)";
+	static const char *method = "perform(tensor_i<N - M, double>&)";
 
 	if(!tb.get_dims().equals(m_dims)) {
 		throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__,
@@ -223,7 +225,7 @@ template<size_t N, size_t M>
 void tod_extract<N, M>::perform(tensor_i<k_orderb, double> &tb, double c) {
 
 	static const char *method =
-		"perform(tensor_i<N - M, double> &, double)";
+		"perform(tensor_i<N - M, double>&, double)";
 
 	if(!tb.get_dims().equals(m_dims)) {
 		throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__,
@@ -246,7 +248,6 @@ dimensions<N - M> tod_extract<N, M>::mk_dims(const dimensions<N> &dims,
 	index<k_orderb> i1, i2;
 
 	size_t m = 0, j = 0;
-	size_t d = 0;
 	bool bad_dims = false;
 	for(size_t i = 0; i < N; i++) {
 		if(msk[i]){
@@ -328,7 +329,7 @@ void tod_extract<N, M>::build_list(
 
 	//	Mapping of unpermuted indexes in b to permuted ones
 	//
-	size_t ib[k_orderb];
+	sequence<k_orderb, size_t> ib(0);
 	for(size_t i = 0; i < k_orderb; i++) ib[i] = i;
 	m_perm.apply(ib);
 
@@ -421,8 +422,8 @@ void tod_extract<N, M>::op_dcopy::exec(processor_t &proc, registers &regs)
 	if(m_len == 0) return;
 
 	op_dcopy::start_timer();
-	blas_dcopy(m_len, regs.m_ptra, m_inca, regs.m_ptrb, m_incb);
-	if(m_c != 1.0) blas_dscal(m_len, m_c, regs.m_ptrb, m_incb);
+	linalg::i_i(m_len, regs.m_ptra, m_inca, regs.m_ptrb, m_incb);
+	if(m_c != 1.0) linalg::i_x(m_len, m_c, regs.m_ptrb, m_incb);
 	op_dcopy::stop_timer();
 }
 
@@ -434,7 +435,7 @@ void tod_extract<N, M>::op_daxpy::exec(processor_t &proc, registers &regs)
 	if(m_len == 0) return;
 
 	op_daxpy::start_timer();
-	blas_daxpy(m_len, m_c, regs.m_ptra, m_inca, regs.m_ptrb, m_incb);
+	linalg::i_i_x(m_len, regs.m_ptra, m_inca, m_c, regs.m_ptrb, m_incb);
 	op_daxpy::stop_timer();
 }
 

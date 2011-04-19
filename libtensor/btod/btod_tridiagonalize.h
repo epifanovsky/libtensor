@@ -13,7 +13,7 @@ class btod_tridiagonalize {
 public:
 	btod_tridiagonalize(block_tensor_i<2, double> &bta);
 	//!< bta - input symmetric matrix
-	virtual void perform(block_tensor_i<2, double> &btb,block_tensor_i<2, double> &S);
+	virtual void perform(block_tensor_i<2, double> &btb, block_tensor_i<2, double> &S);
 	//!< btb - output tridiag matrix,S - matrix of transformation
 	virtual void print(block_tensor_i<2, double> &btb);
 	//!< (Optional) prints the matrix

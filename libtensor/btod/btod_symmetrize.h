@@ -6,6 +6,7 @@
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
 #include "../symmetry/so_add.h"
+#include "../symmetry/so_permute.h"
 #include "../symmetry/so_symmetrize.h"
 #include "../tod/tod_set.h"
 #include "additive_btod.h"
@@ -40,9 +41,7 @@ private:
 
 private:
 	additive_btod<N> &m_op; //!< Symmetrized operation
-	size_t m_nsym; //!< Number of symmetrized indexes
 	permutation<N> m_perm1; //!< First symmetrization permutation
-	permutation<N> m_perm2; //!< Second symmetrization permutation
 	bool m_symm; //!< Symmetrization sign
 	block_index_space<N> m_bis; //!< Block %index space of the result
 	symmetry<N, double> m_sym; //!< Symmetry of the result
@@ -61,14 +60,13 @@ public:
 	 **/
 	btod_symmetrize(additive_btod<N> &op, size_t i1, size_t i2, bool symm);
 
-	/**	\brief Initializes the operation to symmetrize three indexes
+	/**	\brief Initializes the operation using a unitary %permutation
+			(P = P^-1)
 		\param op Symmetrized operation.
-		\param i1 First %tensor %index.
-		\param i2 Second %tensor %index.
-		\param i3 Third %tensor %index.
+		\param perm Unitary %permutation.
 		\param symm True for symmetric, false for anti-symmetric.
 	 **/
-	btod_symmetrize(additive_btod<N> &op, size_t i1, size_t i2, size_t i3,
+	btod_symmetrize(additive_btod<N> &op, const permutation<N> &perm,
 		bool symm);
 
 	/**	\brief Virtual destructor
@@ -92,6 +90,9 @@ public:
 	virtual const assignment_schedule<N, double> &get_schedule() const {
 		return m_sch;
 	}
+
+	virtual void sync_on();
+	virtual void sync_off();
 
 	//@}
 
@@ -130,7 +131,7 @@ template<size_t N>
 btod_symmetrize<N>::btod_symmetrize(additive_btod<N> &op, size_t i1, size_t i2,
 	bool symm) :
 
-	m_op(op), m_nsym(2), m_symm(symm), m_bis(op.get_bis()), m_sym(m_bis),
+	m_op(op), m_symm(symm), m_bis(op.get_bis()), m_sym(m_bis),
 	m_sch(m_bis.get_block_index_dims()) {
 
 	static const char *method =
@@ -147,23 +148,36 @@ btod_symmetrize<N>::btod_symmetrize(additive_btod<N> &op, size_t i1, size_t i2,
 
 
 template<size_t N>
-btod_symmetrize<N>::btod_symmetrize(additive_btod<N> &op, size_t i1, size_t i2,
-	size_t i3, bool symm) :
+btod_symmetrize<N>::btod_symmetrize(additive_btod<N> &op,
+	const permutation<N> &perm, bool symm) :
 
-	m_op(op), m_nsym(3), m_symm(symm), m_bis(op.get_bis()), m_sym(m_bis),
-	m_sch(m_bis.get_block_index_dims()) {
+	m_op(op), m_symm(symm), m_perm1(perm), m_bis(op.get_bis()),
+	m_sym(m_bis), m_sch(m_bis.get_block_index_dims()) {
 
 	static const char *method = "btod_symmetrize(additive_btod<N>&, "
-		"size_t, size_t, size_t, bool)";
+		"const permutation<N>&, bool)";
 
-	if(i1 == i2 || i1 == i3 || i2 == i3) {
+	permutation<N> p1(perm); p1.permute(perm);
+	if(perm.is_identity() || !p1.is_identity()) {
 		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
-			"i");
+			"perm");
 	}
-	m_perm1.permute(i1, i2);
-	m_perm2.permute(i1, i3);
 	make_symmetry();
 	make_schedule();
+}
+
+
+template<size_t N>
+void btod_symmetrize<N>::sync_on() {
+
+	m_op.sync_on();
+}
+
+
+template<size_t N>
+void btod_symmetrize<N>::sync_off() {
+
+	m_op.sync_off();
 }
 
 
@@ -217,22 +231,10 @@ void btod_symmetrize<N>::make_symmetry() {
 
 	permutation<N> perm0;
 
-	// Using so_permute to work around a bug in so_add
-
-	if(m_nsym == 2) {
-		symmetry<N, double> sym1(m_bis), sym2(m_bis);
-		so_permute<N, double>(m_op.get_symmetry(), m_perm1).perform(sym1);
-		so_add<N, double>(m_op.get_symmetry(), perm0, sym1, perm0).perform(sym2);
-		so_symmetrize<N, double>(sym2, m_perm1, m_symm).perform(m_sym);
-	} else if(m_nsym == 3) {
-		symmetry<N, double> sym1(m_bis), sym2(m_bis), sym3(m_bis), sym4(m_bis);
-		so_permute<N, double>(m_op.get_symmetry(), m_perm1).perform(sym1);
-		so_permute<N, double>(m_op.get_symmetry(), m_perm2).perform(sym2);
-		so_add<N, double>(sym1, perm0, sym2, perm0).perform(sym3);
-		so_add<N, double>(m_op.get_symmetry(), perm0, sym3, perm0).perform(sym4);
-		so_symmetrize<N, double>(sym4, m_perm1, m_symm).perform(sym1);
-		so_symmetrize<N, double>(sym1, m_perm2, m_symm).perform(m_sym);
-	}
+	symmetry<N, double> sym1(m_bis), sym2(m_bis);
+	so_permute<N, double>(m_op.get_symmetry(), m_perm1).perform(sym1);
+	so_add<N, double>(m_op.get_symmetry(), perm0, sym1, perm0).perform(sym2);
+	so_symmetrize<N, double>(sym2, m_perm1, m_symm).perform(m_sym);
 }
 
 
@@ -277,21 +279,6 @@ void btod_symmetrize<N>::make_schedule() {
 				m_sym_sch.insert(sym_schedule_pair_t(
 					aj2.get_abs_index(),
 					schrec(ai0.get_abs_index(), tr2)));
-			}
-
-			if(m_nsym == 2) continue;
-			index<N> j3(aj1.get_index()); j3.permute(m_perm2);
-			abs_index<N> aj3(j3, bidims);
-			if(ol.contains(aj3.get_abs_index())) {
-				if(!m_sch.contains(aj3.get_abs_index())) {
-					m_sch.insert(aj3.get_abs_index());
-				}
-				transf<N, double> tr3(o.get_transf(j));
-				tr3.permute(m_perm2);
-				tr3.scale(m_symm ? 1.0 : -1.0);
-				m_sym_sch.insert(sym_schedule_pair_t(
-					aj3.get_abs_index(),
-					schrec(ai0.get_abs_index(), tr3)));
 			}
 		}
 	}

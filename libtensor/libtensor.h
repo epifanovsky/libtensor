@@ -71,6 +71,7 @@
 #include "btod/btod_import_raw.h"
 #include "btod/btod_mult.h"
 #include "btod/btod_mult1.h"
+#include "btod/btod_print.h"
 #include "btod/btod_random.h"
 #include "btod/btod_read.h"
 #include "btod/btod_scale.h"
@@ -81,6 +82,10 @@
 #include "btod/btod_sum.h"
 
 
+#include "symmetry/point_group_table.h"
+#include "symmetry/product_table_container.h"
+#include "symmetry/se_label.h"
+#include "symmetry/se_part.h"
 #include "symmetry/se_perm.h"
 
 

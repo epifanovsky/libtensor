@@ -31,7 +31,7 @@ public:
 		m_coeff = (m_coeff == 0.0 ? 0.0 : 1.0/m_coeff);
 		m_perm.invert();
 	}
-	bool is_identity() { return m_coeff == 1.0 && m_perm.is_identity(); }
+	bool is_identity() const { return m_coeff == 1.0 && m_perm.is_identity(); }
 
 	//! member access functions
 	//@{

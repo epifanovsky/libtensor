@@ -47,14 +47,14 @@ diag_params_builder<N, M>::diag_params_builder(
 	const letter_expr<k_orderb> &label_b,
 	const letter &letter_diag, const letter_expr<M> &label_diag) {
 
-	size_t mapa[k_ordera];
+	sequence<k_ordera, size_t> mapa(0);
 	for(register size_t i = 0; i < k_ordera; i++) mapa[i] = i;
 	perm_a.apply(mapa);
 
 	for(size_t i = 0; i < M; i++)
 		m_msk[mapa[label_a.index_of(label_diag.letter_at(i))]] = true;
 
-	size_t seq1[k_orderb], seq2[k_orderb];
+	sequence<k_orderb, size_t> seq1(0), seq2(0);
 	bool first = true;
 	size_t j = 0;
 	for(size_t i = 0; i < k_ordera; i++) {

@@ -64,6 +64,12 @@ public:
 	void req_zero_block(const index<N> &idx) throw(exception);
 	void req_zero_all_blocks() throw(exception);
 	//@}
+
+	//!	\name Synchronization events
+	//@{
+	void req_sync_on() throw(exception);
+	void req_sync_off() throw(exception);
+	//@}
 };
 
 template<size_t N, typename T>
@@ -122,6 +128,18 @@ template<size_t N, typename T>
 inline void block_tensor_ctrl<N, T>::req_zero_all_blocks() throw(exception) {
 
 	m_bt.on_req_zero_all_blocks();
+}
+
+template<size_t N, typename T>
+inline void block_tensor_ctrl<N, T>::req_sync_on() throw(exception) {
+
+	m_bt.on_req_sync_on();
+}
+
+template<size_t N, typename T>
+inline void block_tensor_ctrl<N, T>::req_sync_off() throw(exception) {
+
+	m_bt.on_req_sync_off();
 }
 
 } // namespace libtensor

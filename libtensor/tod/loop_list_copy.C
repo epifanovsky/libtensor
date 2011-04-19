@@ -1,5 +1,5 @@
 #include "../defs.h"
-#include "../linalg.h"
+#include "../linalg/linalg.h"
 #include "loop_list_copy.h"
 #include "overflow.h"
 
@@ -86,10 +86,10 @@ void loop_list_copy::fn_copy(registers &r) const {
 	}
 #endif // LIBTENSOR_DEBUG
 
-	blas_dcopy(m_copy.m_n, r.m_ptra[0], m_copy.m_stepa,
+	linalg::i_i(m_copy.m_n, r.m_ptra[0], m_copy.m_stepa,
 		r.m_ptrb[0], m_copy.m_stepb);
 	if(m_copy.m_k != 1.0) {
-		blas_dscal(m_copy.m_n, m_copy.m_k, r.m_ptrb[0], m_copy.m_stepb);
+		linalg::i_x(m_copy.m_n, m_copy.m_k, r.m_ptrb[0], m_copy.m_stepb);
 	}
 }
 

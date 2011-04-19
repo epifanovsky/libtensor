@@ -44,15 +44,6 @@ public:
 	 **/
 	virtual symmetry_element_i<N, T> *clone() const = 0;
 
-	/**	\brief Returns the mask of affected indexes
-	 **/
-	virtual const mask<N> &get_mask() const = 0;
-
-	/**	\brief Adjusts the %symmetry element for a %permutation of
-			%tensor indexes
-	 **/
-	virtual void permute(const permutation<N> &perm) = 0;
-
 	/**	\brief Checks whether the %symmetry element is applicable to
 			the given block %index space
 		\param bis Block %index space.

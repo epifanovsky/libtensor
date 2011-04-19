@@ -2,7 +2,7 @@
 #define LIBTENSOR_TOD_DIAG_H
 
 #include "../defs.h"
-#include "../linalg.h"
+#include "../linalg/linalg.h"
 #include "../not_implemented.h"
 #include "../timings.h"
 #include "../core/mask.h"
@@ -316,9 +316,10 @@ void tod_diag<N, M>::build_list(
 
 	//	Mapping of unpermuted indexes in b to permuted ones
 	//
-	size_t ib[k_orderb];
+	sequence<k_orderb, size_t> ib(0);
 	for(size_t i = 0; i < k_orderb; i++) ib[i] = i;
-	m_perm.apply(ib);
+	permutation<k_orderb> pinv(m_perm, true);
+	pinv.apply(ib);
 
 	//	Loop over the indexes and build the list
 	//
@@ -353,8 +354,7 @@ void tod_diag<N, M>::build_list(
 			//
 			len = 1;
 			size_t ibpos = ib[pos - iboffs];
-			while(pos < N && !m_mask[pos] &&
-				ibpos == ib[pos - iboffs]) {
+			while(pos < N && !m_mask[pos] && ibpos == ib[pos - iboffs]) {
 
 				len *= dimsa.get_dim(pos);
 				pos++;
@@ -425,8 +425,8 @@ void tod_diag<N, M>::op_dcopy::exec(processor_t &proc, registers &regs)
 	if(m_len == 0) return;
 
 	op_dcopy::start_timer();
-	blas_dcopy(m_len, regs.m_ptra, m_inca, regs.m_ptrb, m_incb);
-	if(m_c != 1.0) blas_dscal(m_len, m_c, regs.m_ptrb, m_incb);
+	linalg::i_i(m_len, regs.m_ptra, m_inca, regs.m_ptrb, m_incb);
+	if(m_c != 1.0) linalg::i_x(m_len, m_c, regs.m_ptrb, m_incb);
 	op_dcopy::stop_timer();
 }
 
@@ -438,7 +438,7 @@ void tod_diag<N, M>::op_daxpy::exec(processor_t &proc, registers &regs)
 	if(m_len == 0) return;
 
 	op_daxpy::start_timer();
-	blas_daxpy(m_len, m_c, regs.m_ptra, m_inca, regs.m_ptrb, m_incb);
+	linalg::i_i_x(m_len, regs.m_ptra, m_inca, m_c, regs.m_ptrb, m_incb);
 	op_daxpy::stop_timer();
 }
 

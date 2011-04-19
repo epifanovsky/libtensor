@@ -21,6 +21,8 @@ namespace libtensor {
 template<size_t N>
 class tod_additive {
 public:
+	virtual ~tod_additive() { }
+
 	/**	\brief Prefetches the operands
 	 **/
 	virtual void prefetch() = 0;

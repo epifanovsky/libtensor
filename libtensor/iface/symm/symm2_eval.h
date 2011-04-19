@@ -9,20 +9,22 @@ namespace libtensor {
 namespace labeled_btensor_expr {
 
 
-/**	\brief Evaluating container for the symmetrization of a pair of indexes
+/**	\brief Evaluating container for the symmetrization over two sets of
+		indexes
 	\tparam N Tensor order.
+	\tparam M Number of indexes in the set.
 	\tparam Sym Symmetrization/antisymmetrization.
 	\tparam SubCore Sub-expression core type.
 
 	\ingroup libtensor_btensor_expr
  **/
-template<size_t N, bool Sym, typename T, typename SubCore>
+template<size_t N, size_t M, bool Sym, typename T, typename SubCore>
 class symm2_eval : public eval_i<N, T> {
 public:
 	static const char *k_clazz; //!< Class name
 
 	//!	Expression core type
-	typedef symm2_core<N, Sym, T, SubCore> core_t;
+	typedef symm2_core<N, M, Sym, T, SubCore> core_t;
 
 	//!	Expression type
 	typedef expr<N, T, core_t> expression_t;
@@ -58,8 +60,7 @@ private:
 	sub_expr_t m_sub_expr; //!< Sub-expression
 	sub_eval_container_t m_sub_eval_cont; //!< Evaluation of the sub-expression
 	sub_evalfunctor_t m_sub_eval; //!< Evaluation functor
-	size_t m_i1; //!< First %index for symmetrization
-	size_t m_i2; //!< Second %index for symmetrization
+	permutation<N> m_perm; //!< Permutation for symmetrization
 	btod_symmetrize<N> *m_op; //!< Symmetrization operation
 	arg<N, T, oper_tag> *m_arg; //!< Argument
 
@@ -95,20 +96,20 @@ private:
 };
 
 
-template<size_t N, bool Sym, typename T, typename SubCore>
-const char *symm2_eval<N, Sym, T, SubCore>::k_clazz =
-	"symm2_eval<N, Sym, T, SubCore>";
+template<size_t N, size_t M, bool Sym, typename T, typename SubCore>
+const char *symm2_eval<N, M, Sym, T, SubCore>::k_clazz =
+	"symm2_eval<N, M, Sym, T, SubCore>";
 
 
-template<size_t N, bool Sym, typename T, typename SubCore>
+template<size_t N, size_t M, bool Sym, typename T, typename SubCore>
 template<int Dummy>
-struct symm2_eval<N, Sym, T, SubCore>::narg<oper_tag, Dummy> {
+struct symm2_eval<N, M, Sym, T, SubCore>::narg<oper_tag, Dummy> {
 	static const size_t k_narg = 1;
 };
 
 
-template<size_t N, bool Sym, typename T, typename SubCore>
-symm2_eval<N, Sym, T, SubCore>::symm2_eval(expression_t &expr,
+template<size_t N, size_t M, bool Sym, typename T, typename SubCore>
+symm2_eval<N, M, Sym, T, SubCore>::symm2_eval(expression_t &expr,
 	const letter_expr<N> &label) :
 
 	m_sub_expr(expr.get_core().get_sub_expr()),
@@ -116,54 +117,59 @@ symm2_eval<N, Sym, T, SubCore>::symm2_eval(expression_t &expr,
 	m_sub_eval(m_sub_expr, m_sub_eval_cont),
 	m_op(0), m_arg(0) {
 
-	m_i1 = label.index_of(expr.get_core().get_sym().letter_at(0));
-	m_i2 = label.index_of(expr.get_core().get_sym().letter_at(1));
+	for(size_t i = 0; i < M; i++) {
+		size_t i1 = label.index_of(
+			expr.get_core().get_sym1().letter_at(i));
+		size_t i2 = label.index_of(
+			expr.get_core().get_sym2().letter_at(i));
+		m_perm.permute(i1, i2);
+	}
 }
 
 
-template<size_t N, bool Sym, typename T, typename SubCore>
-symm2_eval<N, Sym, T, SubCore>::~symm2_eval() {
+template<size_t N, size_t M, bool Sym, typename T, typename SubCore>
+symm2_eval<N, M, Sym, T, SubCore>::~symm2_eval() {
 
 	destroy_arg();
 }
 
 
-template<size_t N, bool Sym, typename T, typename SubCore>
-void symm2_eval<N, Sym, T, SubCore>::prepare() {
+template<size_t N, size_t M, bool Sym, typename T, typename SubCore>
+void symm2_eval<N, M, Sym, T, SubCore>::prepare() {
 
 	m_sub_eval_cont.prepare();
 	create_arg();
 }
 
 
-template<size_t N, bool Sym, typename T, typename SubCore>
-void symm2_eval<N, Sym, T, SubCore>::clean() {
+template<size_t N, size_t M, bool Sym, typename T, typename SubCore>
+void symm2_eval<N, M, Sym, T, SubCore>::clean() {
 
 	destroy_arg();
 	m_sub_eval_cont.clean();
 }
 
 
-template<size_t N, bool Sym, typename T, typename SubCore>
-void symm2_eval<N, Sym, T, SubCore>::create_arg() {
+template<size_t N, size_t M, bool Sym, typename T, typename SubCore>
+void symm2_eval<N, M, Sym, T, SubCore>::create_arg() {
 
 	destroy_arg();
-	m_op = new btod_symmetrize<N>(m_sub_eval.get_bto(), m_i1, m_i2, Sym);
+	m_op = new btod_symmetrize<N>(m_sub_eval.get_bto(), m_perm, Sym);
 	m_arg = new arg<N, T, oper_tag>(*m_op, 1.0);
 }
 
 
-template<size_t N, bool Sym, typename T, typename SubCore>
-void symm2_eval<N, Sym, T, SubCore>::destroy_arg() {
+template<size_t N, size_t M, bool Sym, typename T, typename SubCore>
+void symm2_eval<N, M, Sym, T, SubCore>::destroy_arg() {
 
 	delete m_arg; m_arg = 0;
 	delete m_op; m_op = 0;
 }
 
 
-template<size_t N, bool Sym, typename T, typename SubCore>
+template<size_t N, size_t M, bool Sym, typename T, typename SubCore>
 template<typename Tag>
-arg<N, T, Tag> symm2_eval<N, Sym, T, SubCore>::get_arg(const Tag &tag,
+arg<N, T, Tag> symm2_eval<N, M, Sym, T, SubCore>::get_arg(const Tag &tag,
 	size_t i) const {
 
 	static const char *method = "get_arg(const Tag&, size_t)";
@@ -173,9 +179,9 @@ arg<N, T, Tag> symm2_eval<N, Sym, T, SubCore>::get_arg(const Tag &tag,
 }
 
 
-template<size_t N, bool Sym, typename T, typename SubCore>
-arg<N, T, oper_tag> symm2_eval<N, Sym, T, SubCore>::get_arg(const oper_tag &tag,
-	size_t i) const {
+template<size_t N, size_t M, bool Sym, typename T, typename SubCore>
+arg<N, T, oper_tag> symm2_eval<N, M, Sym, T, SubCore>::get_arg(
+	const oper_tag &tag, size_t i) const {
 
 	static const char *method = "get_arg(const oper_tag&, size_t)";
 	if(i == 0) {

@@ -5,12 +5,14 @@
 #include "../defs.h"
 #include "../exception.h"
 #include "../timings.h"
-#include "../linalg.h"
+#include "../linalg/linalg.h"
 #include "../core/block_tensor_i.h"
 #include "../core/block_tensor_ctrl.h"
 #include "../core/orbit.h"
+#include "../core/orbit_list.h"
 #include "../core/tensor_i.h"
 #include "../core/tensor_ctrl.h"
+#include "../tod/bad_dimensions.h"
 #include "../tod/processor.h"
 #include "../btod/transf_double.h"
 
@@ -121,8 +123,7 @@ void tod_btconv<N>::perform(tensor_i<N, double> &t) throw(exception) {
 	const block_index_space<N> &bis = m_bt.get_bis();
 	dimensions<N> bidims(bis.get_block_index_dims());
 	if(!bis.get_dims().equals(t.get_dims())) {
-		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
-			"Incorrect dimensions of the output tensor.");
+		throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "t");
 	}
 
 	block_tensor_ctrl<N, double> src_ctrl(m_bt);
@@ -177,7 +178,7 @@ void tod_btconv<N>::copy_block(double *optr, const dimensions<N> &odims,
 
 	permutation<N> inv_perm(iperm);
 	inv_perm.invert();
-	size_t ib[N];
+	sequence<N, size_t> ib(0);
 	for(size_t i = 0; i < N; i++) ib[i] = i;
 	inv_perm.apply(ib);
 
@@ -227,10 +228,8 @@ void tod_btconv<N>::op_loop::exec(processor_t &proc, registers &regs)
 template<size_t N>
 void tod_btconv<N>::op_dcopy::exec(processor_t &proc, registers &regs)
 	throw(exception) {
-	blas_dcopy(m_len, regs.m_ptra, m_inca, regs.m_ptrb, m_incb);
-	if(m_c != 1.0) {
-		blas_dscal(m_len, m_c, regs.m_ptrb, m_incb);
-	}
+	linalg::i_i(m_len, regs.m_ptra, m_inca, regs.m_ptrb, m_incb);
+	if(m_c != 1.0) linalg::i_x(m_len, m_c, regs.m_ptrb, m_incb);
 }
 
 } // namespace libtensor

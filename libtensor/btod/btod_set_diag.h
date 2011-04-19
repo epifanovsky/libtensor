@@ -5,6 +5,7 @@
 #include "../exception.h"
 #include "../core/block_tensor_i.h"
 #include "../core/block_tensor_ctrl.h"
+#include "../core/orbit.h"
 #include "../tod/tod_set.h"
 #include "../tod/tod_set_diag.h"
 
@@ -80,6 +81,14 @@ void btod_set_diag<N>::perform(block_tensor_i<N, double> &bt) {
 	index<N> idx;
 	for(size_t i = 0; i < n; i++) {
 
+		for(size_t j = 0; j < N; j++) idx[j] = i;
+
+		abs_index<N> aidx(idx, dims);
+		orbit<N, double> o(ctrl.req_const_symmetry(), idx);
+		if(!o.is_allowed()) continue;
+		if(o.get_abs_canonical_index() != aidx.get_abs_index())
+			continue;
+
 		if(ctrl.req_is_zero_block(idx)) {
 			if(m_v != 0.0) {
 				tensor_i<N, double> &blk = ctrl.req_block(idx);
@@ -92,8 +101,6 @@ void btod_set_diag<N>::perform(block_tensor_i<N, double> &bt) {
 			tod_set_diag<N>(m_v).perform(blk);
 			ctrl.ret_block(idx);
 		}
-
-		for(size_t j = 0; j < N; j++) idx[j]++;
 	}
 }
 

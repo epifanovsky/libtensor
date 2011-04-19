@@ -527,7 +527,7 @@ inline const block_index_space<N> &block_index_space<N>::permute(
 
 	m_dims.permute(perm);
 	m_nsplits.permute(perm);
-	m_type.permute(perm);
+	perm.apply(m_type);
 	return *this;
 }
 

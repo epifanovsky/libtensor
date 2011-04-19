@@ -77,6 +77,7 @@ public:
 	typedef std::list<elem_t> list_t; //!< List type for index-value pairs
 
 private:
+	tensor_i<N, double> &m_t; //!< Tensor
 	compare_t m_cmp; //!< Compare policy object to select entries
 
 public:
@@ -84,9 +85,11 @@ public:
 	//@{
 
 	/** \brief Constuctor
+		\param t Tensor.
 		\param cmp Compare policy object
 	 **/
-	tod_select( compare_t cmp=compare4absmin() ) : m_cmp(cmp) {}
+	tod_select(tensor_i<N, double> &t, compare_t cmp=compare4absmin() ) :
+		m_t(t), m_cmp(cmp) { }
 
 	//@}
 
@@ -94,28 +97,31 @@ public:
 	//@{
 
 	/**	\brief Selects the index-value pairs from the tensor
-		\param t Tensor.
 		\param li List of index-value pairs.
 		\param n Maximum size of the list.
 	 **/
-	void perform(tensor_i<N, double> &t, list_t &li, size_t n);
+	void perform(list_t &li, size_t n);
 
 	//@}
 };
 
 
 template<size_t N, typename ComparePolicy>
-void tod_select<N,ComparePolicy>::perform(tensor_i<N, double> &t,
-		list_t &li, size_t n) {
+void tod_select<N,ComparePolicy>::perform(list_t &li, size_t n) {
 
 	if (n == 0) return;
 
-	tensor_ctrl<N, double> ctrl(t);
-	const dimensions<N> &d = t.get_dims();
-	double *p = ctrl.req_dataptr();
+	tensor_ctrl<N, double> ctrl(m_t);
+	const dimensions<N> &d = m_t.get_dims();
+	const double *p = ctrl.req_const_dataptr();
 
 	size_t i = 0;
-	while (p[i] == 0.0) i++;
+	while (i < d.get_size() && p[i] == 0.0) i++;
+
+	if (i == d.get_size()) {
+		ctrl.ret_dataptr(p);
+		return;	
+	}
 
 	if (li.empty()) {
 		index<N> idx;
@@ -139,12 +145,14 @@ void tod_select<N,ComparePolicy>::perform(tensor_i<N, double> &t,
 			if (li.size() == n) li.pop_back();
 
 			typename list_t::iterator it=li.begin();
-			while (it != li.end() && ! m_cmp(p[i],it->value)) it++;
+			while (it != li.end() && ! m_cmp(p[i], it->value)) it++;
 			index<N> idx;
 			d.abs_index(i,idx);
 			li.insert(it, elem_t(idx,p[i]));
 		}
 	}
+
+	ctrl.ret_dataptr(p);
 }
 
 

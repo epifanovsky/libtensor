@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_TENSOR_H
 #define LIBTENSOR_TENSOR_H
 
+#include <sstream>
 #include <vector>
 #include "../defs.h"
 #include "../exception.h"
@@ -145,6 +146,7 @@ private:
 	T *m_dataptr; //!< Pointer to checked out data
 	size_t m_ptrcount; //!< Number of read-only data pointers given out
 	std::vector<char> m_sessions; //!< Sessions
+	std::vector<size_t> m_session_ptrcount; //!< Per-session data pointer counts
 
 public:
 	//!	\name Construction and destruction
@@ -231,7 +233,7 @@ const char *tensor<N, T, Alloc>::k_clazz = "tensor<N, T, Alloc>";
 template<size_t N, typename T, typename Alloc>
 tensor<N, T, Alloc>::tensor(const dimensions<N> &dims) :
 	m_dims(dims), m_data(Alloc::invalid_ptr), m_dataptr(0), m_ptrcount(0),
-	m_sessions(8, 0) {
+	m_sessions(8, 0), m_session_ptrcount(8, 0) {
 
 #ifdef LIBTENSOR_DEBUG
 	if(m_dims.get_size() == 0) {
@@ -248,7 +250,7 @@ template<size_t N, typename T, typename Alloc>
 tensor<N, T, Alloc>::tensor(const tensor_i<N, T> &t) :
 
 	m_dims(t.get_dims()), m_data(Alloc::invalid_ptr), m_dataptr(0),
-	m_ptrcount(0), m_sessions(8, 0) {
+	m_ptrcount(0), m_sessions(8, 0), m_session_ptrcount(8, 0) {
 
 	m_data = Alloc::allocate(m_dims.get_size());
 }
@@ -258,7 +260,7 @@ template<size_t N, typename T, typename Alloc>
 tensor<N, T, Alloc>::tensor(const tensor<N, T, Alloc> &t) :
 
 	m_dims(t.m_dims), m_data(Alloc::invalid_ptr), m_dataptr(0),
-	m_ptrcount(0), m_sessions(8, 0) {
+	m_ptrcount(0), m_sessions(8, 0), m_session_ptrcount(8, 0) {
 
 	m_data = Alloc::allocate(m_dims.get_size());
 }
@@ -291,12 +293,15 @@ tensor<N, T, Alloc>::on_req_open_session() {
 	for(register size_t i = 0; i < sz; i++) {
 		if(m_sessions[i] == 0) {
 			m_sessions[i] = 1;
+			m_session_ptrcount[i] = 0;
 			return i;
 		}
 	}
 
 	m_sessions.resize(2 * sz, 0);
+	m_session_ptrcount.resize(2 * sz, 0);
 	m_sessions[sz] = 1;
+	m_session_ptrcount[sz] = 0;
 	return sz;
 }
 
@@ -308,7 +313,8 @@ void tensor<N, T, Alloc>::on_req_close_session(const handle_t &h) {
 
 	m_sessions[h] = 0;
 	if(m_dataptr != 0) {
-		if(m_ptrcount > 0) m_ptrcount--;
+		m_ptrcount -= m_session_ptrcount[h];
+		m_session_ptrcount[h] = 0;
 		if(m_ptrcount == 0) unlock_dataptr();
 	}
 }
@@ -355,11 +361,16 @@ void tensor<N, T, Alloc>::on_ret_dataptr(const handle_t &h, const T *p) {
 	verify_session(h);
 
 	if(m_dataptr == 0 || m_dataptr != p) {
+		std::ostringstream ss;
+		ss << "p[m_dataptr=" << m_dataptr << ",p=" << p << ",m_ptrcount=" << m_ptrcount << "]";
 		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
-			"p");
+			ss.str().c_str());
 	}
 
-	if(m_ptrcount > 0) m_ptrcount--;
+	if(m_session_ptrcount[h] > 0) {
+		m_session_ptrcount[h]--;
+		m_ptrcount--;
+	}
 	if(m_ptrcount == 0) unlock_dataptr();
 }
 
@@ -378,6 +389,7 @@ const T *tensor<N,T,Alloc>::on_req_const_dataptr(const handle_t &h) {
 				"Data pointer is already checked out for rw");
 		}
 
+		m_session_ptrcount[h]++;
 		m_ptrcount++;
 		return m_dataptr;
 	}
@@ -385,6 +397,7 @@ const T *tensor<N,T,Alloc>::on_req_const_dataptr(const handle_t &h) {
 	timings< tensor<N, T, Alloc> >::start_timer("lock");
 	m_dataptr = Alloc::lock(m_data);
 	timings< tensor<N, T, Alloc> >::stop_timer("lock");
+	m_session_ptrcount[h] = 1;
 	m_ptrcount = 1;
 	return m_dataptr;
 }
@@ -393,7 +406,7 @@ const T *tensor<N,T,Alloc>::on_req_const_dataptr(const handle_t &h) {
 template<size_t N, typename T, typename Alloc>
 void tensor<N, T, Alloc>::on_ret_const_dataptr(const handle_t &h, const T *p) {
 
-	on_ret_dataptr(h, p);
+	tensor<N, T, Alloc>::on_ret_dataptr(h, p);
 }
 
 

@@ -90,6 +90,9 @@ public:
 		return m_sch;
 	}
 
+	virtual void sync_on();
+	virtual void sync_off();
+
 	//@}
 
 	using additive_btod<N>::perform;
@@ -166,6 +169,25 @@ btod_mult<N>::~btod_mult() {
 
 }
 
+
+template<size_t N>
+void btod_mult<N>::sync_on() {
+
+	block_tensor_ctrl<N, double> ctrla(m_bta), ctrlb(m_btb);
+	ctrla.req_sync_on();
+	ctrlb.req_sync_on();
+}
+
+
+template<size_t N>
+void btod_mult<N>::sync_off() {
+
+	block_tensor_ctrl<N, double> ctrla(m_bta), ctrlb(m_btb);
+	ctrla.req_sync_off();
+	ctrlb.req_sync_off();
+}
+
+
 template<size_t N>
 void btod_mult<N>::compute_block(
 		tensor_i<N, double> &blk, const index<N> &idx) {
@@ -203,8 +225,8 @@ void btod_mult<N>::compute_block(
 
 	tod_mult<N>(blka, pa, blkb, pb, m_recip, k).perform(blk);
 
-	ctrla.ret_block(idxa);
-	ctrlb.ret_block(idxb);
+	ctrla.ret_block(cidxa.get_index());
+	ctrlb.ret_block(cidxb.get_index());
 }
 
 
@@ -249,8 +271,8 @@ void btod_mult<N>::compute_block(
 
 	tod_mult<N>(blka, pa, blkb, pb, m_recip, k).perform(blk, c);
 
-	ctrla.ret_block(idx);
-	ctrlb.ret_block(idx);
+	ctrla.ret_block(cidxa.get_index());
+	ctrlb.ret_block(cidxb.get_index());
 }
 
 template<size_t N>
@@ -272,11 +294,21 @@ void btod_mult<N>::make_schedule() {
 		idxb.permute(pinvb);
 
 		orbit<N, double> oa(ctrla.req_const_symmetry(), idxa);
+		if (! oa.is_allowed())
+			continue;
 		abs_index<N> cidxa(oa.get_abs_canonical_index(),
 				m_bta.get_bis().get_block_index_dims());
 		bool zeroa = ctrla.req_is_zero_block(cidxa.get_index());
 
 		orbit<N, double> ob(ctrlb.req_const_symmetry(), idxb);
+		if (! ob.is_allowed()) {
+			if (m_recip)
+				throw bad_parameter(g_ns, k_clazz, method,
+						__FILE__, __LINE__, "Block not allowed in btb.");
+
+			continue;
+		}
+
 		abs_index<N> cidxb(ob.get_abs_canonical_index(),
 				m_btb.get_bis().get_block_index_dims());
 		bool zerob = ctrlb.req_is_zero_block(cidxb.get_index());

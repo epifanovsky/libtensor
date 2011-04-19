@@ -154,7 +154,7 @@ void tod_scatter<N, M>::do_perform(tensor_i<k_orderc, double> &tc, bool zero,
 
 	tod_scatter<N, M>::start_timer();
 
-	size_t seq[k_orderc];
+	sequence<k_orderc, size_t> seq(0);
 	for(size_t i = 0; i < k_orderc - k_ordera; i++) seq[i] = k_ordera;
 	for(size_t i = 0; i < k_ordera; i++)
 		seq[k_orderc - k_ordera + i] = i;
@@ -270,3 +270,4 @@ void tod_scatter<N, M>::fn_scatter(registers &r) {
 } // namespace libtensor
 
 #endif // LIBTENOSR_TOD_SCATTER_H
+

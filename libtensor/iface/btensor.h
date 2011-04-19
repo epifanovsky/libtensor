@@ -12,20 +12,11 @@
 #include "../core/immutable.h"
 #include "bispace.h"
 #include "btensor_i.h"
+#include "btensor_traits.h"
 #include "labeled_btensor.h"
 
 namespace libtensor {
 
-template<typename T>
-struct btensor_traits {
-	typedef T element_t;
-#ifdef LIBTENSOR_DEBUG
-	typedef libvmm::ec_allocator< T, libvmm::vm_allocator<T>,
-		libvmm::std_allocator<T> > allocator_t;
-#else // LIBTENSOR_DEBUG
-	typedef libvmm::vm_allocator<T> allocator_t;
-#endif // LIBTENSOR_DEBUG
-};
 
 template<size_t N, typename T, typename Traits>
 class btensor_base : public btensor_i<N, T>, public immutable {
@@ -84,6 +75,8 @@ protected:
 	virtual bool on_req_is_zero_block(const index<N> &idx) throw(exception);
 	virtual void on_req_zero_block(const index<N> &idx) throw(exception);
 	virtual void on_req_zero_all_blocks() throw(exception);
+	virtual void on_req_sync_on() throw(exception);
+	virtual void on_req_sync_off() throw(exception);
 	//@}
 
 	//!	\name Implementation of libtensor::immutable
@@ -210,6 +203,18 @@ template<size_t N, typename T, typename Traits>
 void btensor_base<N, T, Traits>::on_req_zero_all_blocks() throw(exception) {
 
 	m_ctrl.req_zero_all_blocks();
+}
+
+template<size_t N, typename T, typename Traits>
+void btensor_base<N, T, Traits>::on_req_sync_on() throw(exception) {
+
+	m_ctrl.req_sync_on();
+}
+
+template<size_t N, typename T, typename Traits>
+void btensor_base<N, T, Traits>::on_req_sync_off() throw(exception) {
+
+	m_ctrl.req_sync_off();
 }
 
 template<size_t N, typename T, typename Traits>

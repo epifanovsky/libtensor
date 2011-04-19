@@ -1,15 +1,23 @@
 #ifndef LIBTENSOR_LAPACK_GENERIC_H
 #define LIBTENSOR_LAPACK_GENERIC_H
 
+#include <complex>
 
 extern "C" {
 	int dgesv_(int*, int*, double*, int*, int*, double*, int*, int*);
 	int dgesvd_(char*, char*, int*, int*, double*, int*, double*, double*,
 		int*, double*, int*, double*, int*, int*);
+	int zgesvd_(char*, char*, int*, int*, std::complex <double> *, int*, double*, std::complex <double> *,
+                int*, std::complex <double> *, int*, std::complex <double> *, int*, double*, int*);
+
 	int dsyev_(char*, char*, int*, double*, int*, double*, double*, int*,
 		int*);
 	int dgeev_(char*, char*, int*, double*, int*, double*, double*, double*,
 		int*, double*, int*, double*, int*, int*);
+        int zgeev_(char*, char*, int*, std::complex <double> *, int*, std::complex <double> *, 
+	std::complex <double> *, int*, std::complex <double> *, int*, std::complex <double> *, 
+	int*, double*, int*);
+
 }
 
 
@@ -53,6 +61,27 @@ inline int lapack_dgesvd(char jobu, char jobvt, size_t m, size_t n, double *a,
 	return gen_info;
 }
 
+/**     \brief LAPACK function zgesvd (generic)
+
+        \ingroup libtensor_linalg
+ **/
+inline int lapack_zgesvd(char jobu, char jobvt, size_t m, size_t n, std::complex <double> *a,
+        size_t lda, double *s, std::complex <double> *u, size_t ldu, std::complex <double> *vt,
+        size_t ldvt, std::complex <double> *work, size_t lwork, double *rwork) {
+	
+	int gen_m = m;
+        int gen_n = n;
+        int gen_lda = lda;
+        int gen_ldu = ldu;
+        int gen_ldvt = ldvt;
+        int gen_lwork = lwork;
+        int gen_info = 0;
+
+        zgesvd_(&jobu, &jobvt, &gen_m, &gen_n, a, &gen_lda, s, u, &gen_ldu, vt, &gen_ldvt, work, &gen_lwork, rwork, &gen_info);
+        return gen_info;
+}
+
+
 
 /**	\brief LAPACK function dsyev (generic)
 
@@ -90,6 +119,23 @@ inline int lapack_dgeev(char jobvl, char jobvr, size_t n, double *a, size_t lda,
 	return gen_info;
 }
 
+/**     \brief LAPACK function zgeev (generic)
+
+        \ingroup libtensor_linalg
+ **/
+inline int lapack_zgeev(char jobvl, char jobvr, size_t n, std::complex <double> *a, size_t lda,
+        std::complex <double> *w, std::complex <double> *vl, size_t ldvl, std::complex <double> *vr,                         
+        size_t ldvr, std::complex <double> *work, size_t lwork, double *rwork) {   
+
+        int gen_n = n;
+        int gen_lda = lda;
+        int gen_ldvl = ldvl;
+        int gen_ldvr = ldvr;
+        int gen_lwork = lwork;
+        int gen_info = 0;
+        zgeev_(&jobvl, &jobvr, &gen_n, a, &gen_lda, w, vl, &gen_ldvl, vr, &gen_ldvr, work, &gen_lwork, rwork, &gen_info);     
+        return gen_info;
+}
 
 } // namespace libtensor
 

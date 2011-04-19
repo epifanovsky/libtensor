@@ -1,0 +1,3 @@
+#!/bin/sh
+CC=opencc CXX=openCC cmake -D CMAKE_BUILD_TYPE=DEBUG ..
+

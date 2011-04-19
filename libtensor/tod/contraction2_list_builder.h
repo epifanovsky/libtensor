@@ -68,8 +68,7 @@ void contraction2_list_builder<N, M, K, ListT>::populate(ListT &list,
 	const dimensions<k_orderc> &dimc) const throw (exception) {
 
 	const sequence<k_maxconn, size_t> &conn = m_contr.get_conn();
-	size_t dimc1[k_orderc];
-	for(size_t i = 0; i < k_orderc; i++) dimc1[i] = 0;
+	sequence<k_orderc, size_t> dimc1(0);
 
 	for(size_t i = k_orderc; i < k_orderc + k_ordera; i++) {
 		register size_t iconn = conn[i];

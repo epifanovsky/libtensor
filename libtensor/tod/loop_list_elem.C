@@ -1,6 +1,5 @@
 #include "../defs.h"
 #include "../exception.h"
-#include "../blas.h"
 #include "../linalg.h"
 #include "loop_list_elem.h"
 #include "overflow.h"
@@ -14,33 +13,30 @@ const char *loop_list_elem::k_clazz = "loop_list_elem";
 void loop_list_elem::run_loop(list_t &loop, registers &r, double c,
 		bool doadd, bool recip) {
 
+	iterator_t op;
 	for (iterator_t i = loop.begin(); i != loop.end(); i++) {
 
-		if (i->stepb(0) == 1) {
-			if (doadd && recip)
-				i->fn() = &loop_list_elem::fn_div_add;
-			else if (recip)
-				i->fn() = &loop_list_elem::fn_div_put;
-			else if (doadd)
-				i->fn() = &loop_list_elem::fn_mult_add;
-			else
-				i->fn() = &loop_list_elem::fn_mult_put;
-
-			m_op.m_k = c;
-			m_op.m_n = i->weight();
-			m_op.m_stepa = i->stepa(0);
-			m_op.m_stepb = i->stepa(1);
-		}
-		else {
-			i->fn() = 0;
-		}
+		i->fn() = 0;
+		if (i->stepb(0) == 1) op = i;
 	}
 
+	if (doadd && recip)
+		op->fn() = &loop_list_elem::fn_div_add;
+	else if (recip)
+		op->fn() = &loop_list_elem::fn_div_put;
+	else if (doadd)
+		op->fn() = &loop_list_elem::fn_mult_add;
+	else
+		op->fn() = &loop_list_elem::fn_mult_put;
+
+	m_op.m_k = c;
+	m_op.m_n = op->weight();
+	m_op.m_stepa = op->stepa(0);
+	m_op.m_stepb = op->stepa(1);
 
 	iterator_t begin = loop.begin(), end = loop.end();
 	if(begin != end) {
-		loop_list_base<2, 1, loop_list_elem>::exec(
-			*this, begin, end, r);
+		loop_list_base<2, 1, loop_list_elem>::exec(*this, begin, end, r);
 	}
 }
 

@@ -3,6 +3,7 @@
 
 #include "../../btod/btod_contract2.h"
 #include "../expr/anon_eval.h"
+#include "../expr/direct_eval.h"
 #include "core_contract.h"
 #include "contract_subexpr_labels.h"
 #include "contract_contraction2_builder.h"
@@ -33,7 +34,7 @@ public:
 	typedef typename E2::core_t core_b_t;
 
 	//!	Anonymous evaluator type of A
-	typedef anon_eval<k_ordera, T, core_a_t> anon_eval_a_t;
+	typedef direct_eval<k_ordera, T, core_a_t> anon_eval_a_t;
 
 	//!	Anonymous evaluator type of B
 	typedef anon_eval<k_orderb, T, core_b_t> anon_eval_b_t;

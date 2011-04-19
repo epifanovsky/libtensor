@@ -4,6 +4,7 @@
 #include <iostream>
 #include "../defs.h"
 #include "../exception.h"
+#include "permutation.h"
 #include "sequence.h"
 
 namespace libtensor {
@@ -172,7 +173,7 @@ inline index<N>::index(const index<N> &idx) : sequence<N, size_t>(idx) {
 template<size_t N>
 inline index<N> &index<N>::permute(const permutation<N> &perm) {
 
-	sequence<N, size_t>::permute(perm);
+	perm.apply(*this);
 	return *this;
 }
 
@@ -227,6 +228,31 @@ template<>
 inline std::ostream &operator<<(std::ostream &os, const index<0> &i) {
 	os << "[*]";
 	return os;
+}
+
+template<size_t N>
+inline bool operator==(const index<N> &i1, const index<N> &i2) {
+	 return i1.equals(i2);
+}
+
+template<size_t N>
+inline bool operator!=(const index<N> &i1, const index<N> &i2) {
+	return ! i1.equals(i2);
+}
+
+template<size_t N>
+inline bool operator>=(const index<N> &i1, const index<N> &i2) {
+	return ! i1.less(i2);
+}
+
+template<size_t N>
+inline bool operator>(const index<N> &i1, const index<N> &i2) {
+	return i2.less(i1);
+}
+
+template<size_t N>
+inline bool operator<=(const index<N> &i1, const index<N> &i2) {
+	return ! i2.less(i1);
 }
 
 

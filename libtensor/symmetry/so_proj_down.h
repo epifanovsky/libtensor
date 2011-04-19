@@ -110,3 +110,4 @@ public:
 #include "so_proj_down_handlers.h"
 
 #endif // LIBTENSOR_SO_PROJ_DOWN_H
+

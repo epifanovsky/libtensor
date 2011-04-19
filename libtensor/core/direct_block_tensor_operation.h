@@ -22,6 +22,8 @@ namespace libtensor {
 template<size_t N, typename T>
 class direct_block_tensor_operation {
 public:
+	virtual ~direct_block_tensor_operation() { }
+
 	/**	\brief Returns the block %index space of the result
 	 **/
 	virtual const block_index_space<N> &get_bis() const = 0;
@@ -43,6 +45,14 @@ public:
 	 **/
 	virtual void compute_block(tensor_i<N, double> &blk,
 		const index<N> &i) = 0;
+
+	/**	\brief Enables the synchronization of arguments
+	 **/
+	virtual void sync_on() = 0;
+
+	/**	\brief Disables the synchronization of arguments
+	 **/
+	virtual void sync_off() = 0;
 
 };
 

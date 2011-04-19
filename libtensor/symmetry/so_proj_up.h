@@ -84,7 +84,7 @@ void so_proj_up<N, M, T>::perform(symmetry<N + M, T> &sym2) {
 			m_sym1.get_subset(i);
 		symmetry_element_set<N + M, T> set2(set1.get_id());
 		symmetry_operation_params<operation_t> params(
-			set1, m_perm, m_msk, set2);
+			set1, m_perm, m_msk, sym2.get_bis(), set2);
 		dispatcher_t::get_instance().invoke(set1.get_id(), params);
 
 		for(typename symmetry_element_set<N + M, T>::iterator j =
@@ -103,15 +103,17 @@ public:
 	const symmetry_element_set<N, T> &g1; //!< Symmetry group
 	permutation<N> perm; //!< Permutation
 	mask<N + M> msk; //!< Mask
+	block_index_space<N + M> bis; //!< Block index space of result
 	symmetry_element_set<N + M, T> &g2;
 
 public:
 	symmetry_operation_params(
 		const symmetry_element_set<N, T> &g1_,
 		const permutation<N> &perm_, const mask<N + M> &msk_,
+		const block_index_space<N + M> &bis_,
 		symmetry_element_set<N + M, T> &g2_) :
 
-		g1(g1_), perm(perm_), msk(msk_), g2(g2_) { }
+		g1(g1_), perm(perm_), msk(msk_), bis(bis_), g2(g2_) { }
 
 };
 

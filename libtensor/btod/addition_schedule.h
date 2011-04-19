@@ -57,7 +57,7 @@ private:
 	const symmetry<N, T> &m_syma; //!< Symmetry of A
 	const symmetry<N, T> &m_symb; //!< Symmetry of B
 	symmetry<N, T> m_symc; //!< Largest common subgroup of A and B
-	schedule_t m_sch; // Additive schedule
+	schedule_t m_sch; //!< Additive schedule
 	book_t m_booka, m_posta;
 
 public:
@@ -99,7 +99,7 @@ private:
 
 	/**	\brief Recursive part of mark_orbits()
 	 **/
-	void mark_orbit(const symmetry<N, T> &sym, const abs_index<N> &aci,
+	bool mark_orbit(const symmetry<N, T> &sym, const abs_index<N> &aci,
 		std::vector<char> &o);
 
 	/**	\brief Returns the canonical %index and a transformation
@@ -232,7 +232,6 @@ void addition_schedule<N, T>::build(const assignment_schedule<N, T> &asch,
 	//~ std::cout << "addition schedule done" << std::endl;
 }
 
-
 template<size_t N, typename T>
 void addition_schedule<N, T>::clean_schedule() throw() {
 
@@ -253,16 +252,19 @@ void addition_schedule<N, T>::mark_orbits(const symmetry<N, T> &sym,
 	do {
 		if(o[aci.get_abs_index()] == 0) {
 			o[aci.get_abs_index()] = 2;
-			mark_orbit(sym, aci, o);
+			if(!mark_orbit(sym, aci, o)) {
+				o[aci.get_abs_index()] = 4;
+			}
 		}
 	} while(aci.inc());
 }
 
 
 template<size_t N, typename T>
-void addition_schedule<N, T>::mark_orbit(const symmetry<N, T> &sym,
+bool addition_schedule<N, T>::mark_orbit(const symmetry<N, T> &sym,
 	const abs_index<N> &ai, std::vector<char> &o) {
 
+	bool allowed = true;
 	for(typename symmetry<N, T>::iterator is = sym.begin();
 		is != sym.end(); is++) {
 
@@ -273,14 +275,19 @@ void addition_schedule<N, T>::mark_orbit(const symmetry<N, T> &sym,
 
 			const symmetry_element_i<N, T> &e = es.get_elem(ie);
 			index<N> i1(ai.get_index());
+			allowed = allowed && e.is_allowed(i1);
 			e.apply(i1);
 			abs_index<N> ai1(i1, ai.get_dims());
 			if(o[ai1.get_abs_index()] == 0) {
-				o[ai1.get_abs_index()] = 1;
-				mark_orbit(sym, ai1, o);
+				o[ai1.get_abs_index()] = allowed ? 1 : 3;
+				if(!mark_orbit(sym, ai1, o)) {
+					allowed = false;
+					o[ai1.get_abs_index()] = 3;
+				}
 			}
 		}
 	}
+	return allowed;
 }
 
 
@@ -323,14 +330,14 @@ size_t addition_schedule<N, T>::find_canonical_iterate(
 			transf<N, T> tr1;
 			e.apply(i1, tr1);
 			abs_index<N> ai1(i1, bidims);
-			if(o[ai1.get_abs_index()] == 2) {
+			if(o[ai1.get_abs_index()] == 2 || o[ai1.get_abs_index()] == 4) {
 				tr.transform(tr1);
 				return ai1.get_abs_index();
 			}
 			if(o2[ai1.get_abs_index()] == 0) {
 				size_t ii = find_canonical_iterate(bidims,
 					sym, ai1, tr1, o, o2);
-				if(o[ii] == 2) {
+				if(o[ii] == 2 || o[ii] == 4) {
 					tr.transform(tr1);
 					return ii;
 				}
@@ -363,21 +370,25 @@ void addition_schedule<N, T>::process_orbit_in_a(const dimensions<N> &bidims,
 	abs_index<N> aib(ib, bidims);
 
 	//
-	//	Skip all non-canonical blocks in C
+	//	Skip all unallowed and non-canonical blocks in C
 	//
 	if(omc[aib.get_abs_index()] == 2) {
 
 		bool cana = oa[aia.get_abs_index()] == 2;
-		bool canb = omb[aib.get_abs_index()] == 2;
+		bool canb = omb[aib.get_abs_index()] == 2 ||
+			omb[aib.get_abs_index()] == 4;
 
 		transf<N, T> trb;
 		abs_index<N> acib(canb ? aib.get_abs_index() :
 			find_canonical(bidims, m_symb, aib, trb, omb), bidims);
+		bool allowedb = omb[acib.get_abs_index()] == 2;
+		bool zerob = true;
+		if(allowedb) zerob = ctrlb.req_is_zero_block(acib.get_index());
 
 		//~ std::cout << "(a) " << &grp << " C" << aib.get_index() << " - A" << acia.get_index() << (zeroa ? "=0 " : "   ") << "B" << acib.get_index();
 
 		if(zeroa) {
-			if(!ctrlb.req_is_zero_block(acib.get_index())) {
+			if(!zerob) {
 				grp.lst.push_back(schedule_node(acib.get_abs_index(),
 					aib.get_abs_index(), trb));
 				//~ std::cout << " - inserted in " << &grp << std::endl;
@@ -391,8 +402,10 @@ void addition_schedule<N, T>::process_orbit_in_a(const dimensions<N> &bidims,
 			//~ std::cout << " - inserted in " << &grp << std::endl;
 		}
 
-		iterate_sym_elements_in_b(bidims, zeroa, acib, aib, trb, oa, ob,
-			omb, omc, grp);
+		if(allowedb) {
+			iterate_sym_elements_in_b(bidims, zeroa, acib, aib, trb,
+				oa, ob, omb, omc, grp);
+		}
 	}
 
 	//

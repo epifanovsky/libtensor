@@ -3,6 +3,7 @@
 
 #include <libtest/libtest.h>
 #include <libtensor/libtensor.h>
+#include <libtensor/linalg/linalg.h>
 #include "performance_test.h"
 
 namespace libtensor {
@@ -102,7 +103,7 @@ void tod_dotprod_ref<R,X>::do_calculate()
 	for ( size_t i=0; i<total_size; i++ ) ptrb[i]=drand48();
 
 	timings<tod_dotprod_ref<R,X> >::start_timer();
-	cblas_ddot(total_size,ptra,1,ptrb,1);
+	linalg::x_p_p(total_size, ptra, 1, ptrb, 1);
 	timings<tod_dotprod_ref<R,X> >::stop_timer();
 
 	delete [] ptra;

@@ -4,6 +4,7 @@
 
 namespace libtensor {
 
+
 exception::exception(const char *ns, const char *clazz, const char *method,
 	const char *file, unsigned int line, const char *type,
 	const char *message) throw() {
@@ -100,14 +101,19 @@ exception::exception(const char *ns, const char *clazz, const char *method,
 
 }
 
+
 const char *exception::what() const throw() {
+
 	return m_what;
 }
 
+
 void throw_exc(const char *clazz, const char *method, const char *error)
 	throw(exception) {
-	throw exception("libtensor", clazz, method, NULL, 0, NULL, error);
+
+	throw generic_exception("libtensor", clazz, method, 0, 0, error);
 }
+
 
 } // namespace libtensor
 
