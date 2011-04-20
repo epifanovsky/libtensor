@@ -29,6 +29,7 @@ void btod_dotprod_test::perform() throw(libtest::test_exception) {
 	test_9();
 	test_10();
 	test_11();
+	test_12();
 }
 
 
@@ -764,6 +765,64 @@ void btod_dotprod_test::test_11() throw(libtest::test_exception) {
 	tod_btconv<2>(bt1).perform(t1);
 	tod_btconv<2>(bt2).perform(t2);
 	double d_ref = tod_dotprod<2>(t1, t2).calculate();
+
+	//	Compare
+
+	if(fabs(d - d_ref) > 1e-13) {
+		std::ostringstream ss;
+		ss << "Result does not match reference: " << d << " vs. "
+			<< d_ref << " (ref), " << d - d_ref << " (diff).";
+		fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void btod_dotprod_test::test_12() throw(libtest::test_exception) {
+
+	//
+	//	Two blocks in each dimension, subtle splitting differences
+	//	producing same, but not identical block index spaces
+	//
+
+	static const char *testname = "btod_dotprod_test::test_12()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	index<2> i1, i2;
+	i2[0] = 9; i2[1] = 9;
+	dimensions<2> dims(index_range<2>(i1, i2));
+	block_index_space<2> bis1(dims), bis2(dims);
+	mask<2> m01, m10, m11;
+	m10[0] = true; m01[1] = true;
+	m11[0] = true; m11[1] = true;
+	bis1.split(m01, 5);
+	bis1.split(m10, 5);
+	bis2.split(m11, 5);
+	block_tensor<2, double, allocator_t> bt1(bis1), bt2(bis2);
+
+	//	Fill in random data
+
+	btod_random<2>().perform(bt1);
+	btod_random<2>().perform(bt2);
+
+	//	Compute the dot product
+
+	permutation<2> p01, p10;
+	p10.permute(0, 1);
+	double d = btod_dotprod<2>(bt1, p10, bt2, p01).calculate();
+
+	//	Compute the reference
+
+	tensor<2, double, allocator_t> t1(dims), t2(dims);
+	tod_btconv<2>(bt1).perform(t1);
+	tod_btconv<2>(bt2).perform(t2);
+	double d_ref = tod_dotprod<2>(t1, p10, t2, p01).calculate();
 
 	//	Compare
 

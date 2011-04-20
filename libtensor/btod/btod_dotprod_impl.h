@@ -65,8 +65,9 @@ void btod_dotprod<N>::add_arg(block_tensor_i<N, double> &bt1,
 		"const permutation<N>&, block_tensor_i<N, double>&, "
 		"const permutation<N>&)";
 
-	block_index_space<N> bis1(bt1.get_bis());
-	block_index_space<N> bis2(bt2.get_bis());
+	block_index_space<N> bis1(bt1.get_bis()), bis2(bt2.get_bis());
+	bis1.match_splits();
+	bis2.match_splits();
 	bis1.permute(perm1);
 	bis2.permute(perm2);
 	if(!m_bis.equals(bis1)) {
