@@ -144,7 +144,10 @@ void btod_sum<N>::add_op(additive_btod<N> &op, double c) {
 
 	static const char *method = "add_op(additive_btod<N>&, double)";
 
-	if(!op.get_bis().equals(m_bis)) {
+	block_index_space<N> bis(m_bis), bis1(op.get_bis());
+	bis.match_splits();
+	bis1.match_splits();
+	if(!bis.equals(bis1)) {
 		throw bad_block_index_space(g_ns, k_clazz, method,
 			__FILE__, __LINE__, "op");
 	}
