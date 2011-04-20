@@ -25,6 +25,8 @@ void btod_sum_test::perform() throw(libtest::test_exception) {
 	test_8();
 	test_9a();
 	test_9b();
+	test_10a();
+	test_10b();
 }
 
 
@@ -630,6 +632,102 @@ void btod_sum_test::test_9b() throw(libtest::test_exception) {
 	}
 
 	compare_ref<4>::compare(testname, bt3, bt3_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void btod_sum_test::test_10a() throw(libtest::test_exception) {
+
+	//
+	//	Two operands: A and B, uneven block index space splits
+	//
+
+	static const char *testname = "btod_sum_test::test_10a()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+	typedef block_tensor<2, double, allocator_t> block_tensor_t;
+
+	try {
+
+	index<2> i1, i2;
+	i2[0] = 9; i2[1] = 9;
+	dimensions<2> dims(index_range<2>(i1, i2));
+	block_index_space<2> bis1(dims), bis2(dims);
+	mask<2> m01, m10, m11;
+	m10[0] = true; m01[1] = true;
+	m11[0] = true; m11[1] = true;
+	bis1.split(m01, 5);
+	bis1.split(m10, 5);
+	bis2.split(m11, 5);
+
+	block_tensor_t bt1(bis1), bt2(bis2), bt3(bis2), bt3_ref(bis2);
+	btod_random<2>().perform(bt1);
+	btod_random<2>().perform(bt2);
+	bt1.set_immutable();
+	bt2.set_immutable();
+
+	btod_copy<2> cp1(bt1), cp2(bt2);
+
+	btod_sum<2> sum(cp1);
+	sum.add_op(cp2);
+	sum.perform(bt3);
+
+	btod_copy<2>(bt1).perform(bt3_ref);
+	btod_copy<2>(bt2).perform(bt3_ref, 1.0);
+
+	compare_ref<2>::compare(testname, bt3, bt3_ref, 1e-14);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void btod_sum_test::test_10b() throw(libtest::test_exception) {
+
+	//
+	//	Two operands: A and B, uneven block index space splits
+	//
+
+	static const char *testname = "btod_sum_test::test_10b()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+	typedef block_tensor<2, double, allocator_t> block_tensor_t;
+
+	try {
+
+	index<2> i1, i2;
+	i2[0] = 9; i2[1] = 9;
+	dimensions<2> dims(index_range<2>(i1, i2));
+	block_index_space<2> bis1(dims), bis2(dims);
+	mask<2> m01, m10, m11;
+	m10[0] = true; m01[1] = true;
+	m11[0] = true; m11[1] = true;
+	bis1.split(m01, 5);
+	bis1.split(m10, 5);
+	bis2.split(m11, 5);
+
+	block_tensor_t bt1(bis1), bt2(bis2), bt3(bis2), bt3_ref(bis2);
+	btod_random<2>().perform(bt1);
+	btod_random<2>().perform(bt2);
+	bt1.set_immutable();
+	bt2.set_immutable();
+
+	permutation<2> p10; p10.permute(0, 1);
+
+	btod_copy<2> cp1(bt1), cp2(bt2, p10);
+
+	btod_sum<2> sum(cp1);
+	sum.add_op(cp2);
+	sum.perform(bt3);
+
+	btod_copy<2>(bt1).perform(bt3_ref);
+	btod_copy<2>(bt2, p10).perform(bt3_ref, 1.0);
+
+	compare_ref<2>::compare(testname, bt3, bt3_ref, 1e-14);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());

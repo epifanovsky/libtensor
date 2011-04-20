@@ -17,6 +17,7 @@ template<size_t N>
 btod_dotprod<N>::btod_dotprod(block_tensor_i<N, double> &bt1,
 	block_tensor_i<N, double> &bt2) : m_bis(bt1.get_bis()) {
 
+	m_bis.match_splits();
 	add_arg(bt1, bt2);
 }
 
@@ -26,6 +27,7 @@ btod_dotprod<N>::btod_dotprod(block_tensor_i<N, double> &bt1,
 	const permutation<N> &perm1, block_tensor_i<N, double> &bt2,
 	const permutation<N> &perm2) : m_bis(bt1.get_bis()) {
 
+	m_bis.match_splits();
 	m_bis.permute(perm1);
 	add_arg(bt1, perm1, bt2, perm2);
 }
@@ -38,11 +40,14 @@ void btod_dotprod<N>::add_arg(block_tensor_i<N, double> &bt1,
 	static const char *method = "add_arg(block_tensor_i<N, double>&, "
 		"block_tensor_i<N, double>&)";
 
-	if(!m_bis.equals(bt1.get_bis())) {
+	block_index_space<N> bis1(bt1.get_bis()), bis2(bt2.get_bis());
+	bis1.match_splits();
+	bis2.match_splits();
+	if(!m_bis.equals(bis1)) {
 		throw bad_block_index_space(g_ns, k_clazz, method,
 			__FILE__, __LINE__, "bt1");
 	}
-	if(!m_bis.equals(bt2.get_bis())) {
+	if(!m_bis.equals(bis2)) {
 		throw bad_block_index_space(g_ns, k_clazz, method,
 			__FILE__, __LINE__, "bt2");
 	}
@@ -60,8 +65,9 @@ void btod_dotprod<N>::add_arg(block_tensor_i<N, double> &bt1,
 		"const permutation<N>&, block_tensor_i<N, double>&, "
 		"const permutation<N>&)";
 
-	block_index_space<N> bis1(bt1.get_bis());
-	block_index_space<N> bis2(bt2.get_bis());
+	block_index_space<N> bis1(bt1.get_bis()), bis2(bt2.get_bis());
+	bis1.match_splits();
+	bis2.match_splits();
 	bis1.permute(perm1);
 	bis2.permute(perm2);
 	if(!m_bis.equals(bis1)) {
