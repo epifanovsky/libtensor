@@ -15,6 +15,7 @@ libtensor_tod_suite::libtensor_tod_suite() : libtest::test_suite("libtensor") {
 	add_test("tod_diag", m_utf_tod_diag);
 	add_test("tod_dirsum", m_utf_tod_dirsum);
 	add_test("tod_dotprod", m_utf_tod_dotprod);
+	add_test("tod_ewmult2", m_utf_tod_ewmult2);
 	add_test("tod_extract", m_utf_tod_extract);
 	add_test("tod_import_raw", m_utf_tod_import_raw);
 	add_test("tod_mult", m_utf_tod_mult);

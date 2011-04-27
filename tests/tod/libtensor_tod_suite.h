@@ -12,6 +12,7 @@
 #include "tod_diag_test.h"
 #include "tod_dirsum_test.h"
 #include "tod_dotprod_test.h"
+#include "tod_ewmult2_test.h"
 #include "tod_extract_test.h"
 #include "tod_import_raw_test.h"
 #include "tod_mult_test.h"
@@ -45,6 +46,7 @@ namespace libtensor {
 	\li libtensor::tod_diag_test
 	\li libtensor::tod_dirsum_test
 	\li libtensor::tod_dotprod_test
+	\li libtensor::tod_ewmult2_test
 	\li libtensor::tod_extract_test
 	\li libtensor::tod_import_raw_test
 	\li libtensor::tod_mult_test
@@ -73,6 +75,7 @@ private:
 	unit_test_factory<tod_diag_test> m_utf_tod_diag;
 	unit_test_factory<tod_dirsum_test> m_utf_tod_dirsum;
 	unit_test_factory<tod_dotprod_test> m_utf_tod_dotprod;
+	unit_test_factory<tod_ewmult2_test> m_utf_tod_ewmult2;
 	unit_test_factory<tod_extract_test> m_utf_tod_extract;
 	unit_test_factory<tod_import_raw_test> m_utf_tod_import_raw;
 	unit_test_factory<tod_mult_test> m_utf_tod_mult;

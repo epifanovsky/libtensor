@@ -85,6 +85,7 @@ set(SRC_LINALG
 set(SRC_INST
 	tod/tod_add.C
 	tod/tod_contract2.C
+	tod/tod_ewmult2.C
 	btod/additive_btod.C
 	btod/basic_btod.C
 	btod/btod_add.C

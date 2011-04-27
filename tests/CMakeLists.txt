@@ -31,6 +31,36 @@ set(SRC_CORE
 	core/version_test.C
 )
 
+set(SRC_TOD
+	tod/libtensor_tod_tests.C
+	tod/libtensor_tod_suite.C
+	tod/contraction2_list_builder_test.C
+	tod/contraction2_test.C
+	tod/tod_add_test.C
+	tod/tod_btconv_test.C
+	tod/tod_compare_test.C
+	tod/tod_contract2_test.C
+	tod/tod_copy_test.C
+	tod/tod_diag_test.C
+	tod/tod_dirsum_test.C
+	tod/tod_dotprod_test.C
+	tod/tod_ewmult2_test.C
+	tod/tod_extract_test.C
+	tod/tod_import_raw_test.C
+	tod/tod_mult_test.C
+	tod/tod_mult1_test.C
+	tod/tod_random_test.C
+	tod/tod_scale_test.C
+	tod/tod_scatter_test.C
+	tod/tod_select_test.C
+	tod/tod_set_diag_test.C
+	tod/tod_set_elem_test.C
+	tod/tod_set_test.C
+	tod/tod_sum_test.C
+	tod/tod_symcontract2_test.C
+	tod/tod_trace_test.C
+)
+
 set(SRC_BTOD
 	btod/libtensor_btod_tests.C
 	btod/libtensor_btod_suite.C
@@ -132,15 +162,14 @@ set(SRC_IFACE
 )
 
 file(GLOB SRC_SYMMETRY symmetry/*.C)
-file(GLOB SRC_TOD tod/*.C)
 
 set(TARGETS
 	libtensor_core_tests
+	libtensor_tod_tests
 	libtensor_btod_tests
 	libtensor_iface_tests
 	libtensor_linalg_tests
 	libtensor_symmetry_tests
-	libtensor_tod_tests
 )
 
 
