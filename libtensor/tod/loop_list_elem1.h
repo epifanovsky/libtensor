@@ -6,7 +6,7 @@
 namespace libtensor {
 
 
-/**	\brief Operates nested loops on two arrays with elementwise multiplication
+/**	\brief Operates nested loops on two arrays with element-wise multiplication
 		or division as the kernel.
 
 	\ingroup libtensor_tod

@@ -182,9 +182,12 @@ public:
 		return m_target[i];
 	}
 
+	/** \brief Returns the id of the product table
+	 **/
 	const std::string &get_table_id() const {
 		return m_pt.get_id();
 	}
+
 	//@}
 
 	//!	\name Implementation of symmetry_element_i<N, T>

@@ -13,7 +13,7 @@
 
 namespace libtensor {
 
-template<size_t N>
+template<size_t N, typename Alloc = libvmm::std_allocator<double> >
 class btod_print {
 public:
 	static const char *k_clazz; //!< Class name
@@ -30,12 +30,13 @@ public:
 	void perform(block_tensor_i<N,double> &bt) throw(exception);
 };
 
-template<size_t N>
-const char *btod_print<N>::k_clazz = "btod_print<N>";
+template<size_t N, typename Alloc>
+const char *btod_print<N, Alloc>::k_clazz = "btod_print<N, Alloc>";
 
 
-template<size_t N>
-void btod_print<N>::perform(block_tensor_i<N,double> &bt) throw(exception)
+template<size_t N, typename Alloc>
+void btod_print<N, Alloc>::perform(
+		block_tensor_i<N, double> &bt) throw(exception)
 {
 	static const char *method = "perform(block_tensor_i<N, double>&)";
 
@@ -51,7 +52,7 @@ void btod_print<N>::perform(block_tensor_i<N,double> &bt) throw(exception)
 	m_stream << std::endl;
 
 	typedef libvmm::std_allocator<double> allocator_t;
-	tensor<N, double, allocator_t> ta(dims);
+	tensor<N, double, Alloc> ta(dims);
 	tod_btconv<N>(bt).perform(ta);
 
 	tensor_ctrl<N, double> ctrla(ta);
