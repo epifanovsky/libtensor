@@ -39,6 +39,7 @@
 
 #include "tod/tod_add.h"
 #include "tod/tod_additive.h"
+#include "tod/tod_apply.h"
 #include "tod/tod_btconv.h"
 #include "tod/tod_compare.h"
 #include "tod/tod_contract2.h"

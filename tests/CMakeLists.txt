@@ -37,6 +37,7 @@ set(SRC_TOD
 	tod/contraction2_list_builder_test.C
 	tod/contraction2_test.C
 	tod/tod_add_test.C
+	tod/tod_apply_test.C
 	tod/tod_btconv_test.C
 	tod/tod_compare_test.C
 	tod/tod_contract2_test.C
@@ -66,6 +67,7 @@ set(SRC_BTOD
 	btod/libtensor_btod_suite.C
 	btod/addition_schedule_test.C
 	btod/btod_add_test.C
+	btod/btod_apply_test.C
 	btod/btod_compare_test.C
 	btod/btod_contract2_test.C
 	btod/btod_copy_test.C

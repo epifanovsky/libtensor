@@ -8,6 +8,7 @@ libtensor_tod_suite::libtensor_tod_suite() : libtest::test_suite("libtensor") {
 	add_test("contraction2", m_utf_contraction2);
 	add_test("contraction2_list_builder", m_utf_contraction2_list_builder);
 	add_test("tod_add", m_utf_tod_add);
+	add_test("tod_apply", m_utf_tod_apply);
 	add_test("tod_btconv", m_utf_tod_btconv);
 	add_test("tod_compare", m_utf_tod_compare);
 	add_test("tod_contract2", m_utf_tod_contract2);

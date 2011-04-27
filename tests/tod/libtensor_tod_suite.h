@@ -5,6 +5,7 @@
 #include "contraction2_test.h"
 #include "contraction2_list_builder_test.h"
 #include "tod_add_test.h"
+#include "tod_apply_test.h"
 #include "tod_btconv_test.h"
 #include "tod_compare_test.h"
 #include "tod_contract2_test.h"
@@ -39,6 +40,7 @@ namespace libtensor {
 	\li libtensor::contraction2_test
 	\li libtensor::contraction2_list_builder_test
 	\li libtensor::tod_add_test
+	\li libtensor::tod_apply_test
 	\li libtensor::tod_btconv_test
 	\li libtensor::tod_compare_test
 	\li libtensor::tod_contract2_test
@@ -68,6 +70,7 @@ private:
 	unit_test_factory<contraction2_list_builder_test>
 		m_utf_contraction2_list_builder;
 	unit_test_factory<tod_add_test> m_utf_tod_add;
+	unit_test_factory<tod_apply_test> m_utf_tod_apply;
 	unit_test_factory<tod_btconv_test> m_utf_tod_btconv;
 	unit_test_factory<tod_compare_test> m_utf_tod_compare;
 	unit_test_factory<tod_contract2_test> m_utf_tod_contract2;
