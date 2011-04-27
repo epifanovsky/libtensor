@@ -4,6 +4,7 @@
 #include <libtest/test_suite.h>
 #include "addition_schedule_test.h"
 #include "btod_add_test.h"
+#include "btod_apply_test.h"
 #include "btod_compare_test.h"
 #include "btod_contract2_test.h"
 #include "btod_copy_test.h"
@@ -39,6 +40,7 @@ namespace libtensor {
 	This suite runs the following tests:
 	\li libtensor::addition_schedule_test
 	\li libtensor::btod_add_test
+	\li libtensor::btod_apply_test
 	\li libtensor::btod_compare_test
 	\li libtensor::btod_contract2_test
 	\li libtensor::btod_copy_test
@@ -68,6 +70,7 @@ class libtensor_btod_suite : public libtest::test_suite {
 private:
 	unit_test_factory<addition_schedule_test> m_utf_addition_schedule;
 	unit_test_factory<btod_add_test> m_utf_btod_add;
+	unit_test_factory<btod_apply_test> m_utf_btod_apply;
 	unit_test_factory<btod_compare_test> m_utf_btod_compare;
 	unit_test_factory<btod_contract2_test> m_utf_btod_contract2;
 	unit_test_factory<btod_copy_test> m_utf_btod_copy;

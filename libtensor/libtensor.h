@@ -64,6 +64,7 @@
 #include "btod/basic_btod.h"
 #include "btod/additive_btod.h"
 #include "btod/btod_add.h"
+#include "btod/btod_apply.h"
 #include "btod/btod_compare.h"
 #include "btod/btod_contract2.h"
 #include "btod/btod_copy.h"
