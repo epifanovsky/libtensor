@@ -22,6 +22,10 @@ private:
 	void test_ij_i_j_2(bool rnd, double d = 0.0)
 		throw(libtest::test_exception);
 
+	// c_{ij} = a_i - a_j (with more than 1 block, checking for symmetry)
+	void test_ij_i_j_3(bool rnd, double d = 0.0)
+		throw(libtest::test_exception);
+
 	// c_{ijk} = a_{ij} + b_k
 	void test_ijk_ij_k_1(bool rnd, double d = 0.0)
 		throw(libtest::test_exception);

@@ -19,6 +19,7 @@ void dirsum_test::perform() throw(libtest::test_exception) {
 		test_tt_3();
 		test_tt_4();
 		test_tt_5();
+		test_tt_6();
 		test_te_1();
 		test_et_1();
 		test_ee_1();
@@ -195,6 +196,36 @@ void dirsum_test::test_tt_5() throw(libtest::test_exception) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
 	}
 }
+
+
+void dirsum_test::test_tt_6() throw(libtest::test_exception) {
+
+	static const char *testname = "dirsum_test::test_tt_6()";
+
+	try {
+
+	bispace<1> sp_i(10);
+	sp_i.split(5);
+	bispace<2> sp_ij(sp_i&sp_i);
+
+	btensor<1> t1(sp_i);
+	btensor<2> t2(sp_ij), t2_ref(sp_ij);
+
+	btod_random<1>().perform(t1);
+	t1.set_immutable();
+
+	btod_dirsum<1, 1>(t1, 2.0, t1, -2.0).perform(t2_ref);
+
+	letter i, j;
+	t2(i|j) = dirsum(2.0 * t1(i), -2.0 * t1(j));
+
+	compare_ref<2>::compare(testname, t2, t2_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
 
 
 void dirsum_test::test_te_1() throw(libtest::test_exception) {

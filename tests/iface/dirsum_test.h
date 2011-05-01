@@ -19,6 +19,7 @@ private:
 	void test_tt_3() throw(libtest::test_exception);
 	void test_tt_4() throw(libtest::test_exception);
 	void test_tt_5() throw(libtest::test_exception);
+	void test_tt_6() throw(libtest::test_exception);
 	void test_te_1() throw(libtest::test_exception);
 	void test_et_1() throw(libtest::test_exception);
 	void test_ee_1() throw(libtest::test_exception);

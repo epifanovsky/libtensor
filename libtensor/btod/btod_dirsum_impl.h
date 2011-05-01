@@ -499,7 +499,7 @@ void btod_dirsum_symmetry_builder<N, N>::make_symmetry(
 
 	btod_dirsum_symmetry_builder_base<N, N>::make_symmetry(bta, btb, permc);
 
-	if ((&bta == &btb) && (ka == kb)) {
+	if ((&bta == &btb) && (ka == kb || ka == -1. * kb)) {
 		permutation<N + N> perm;
 		for (size_t i = 0; i < N; i++) perm.permute(i, i + N);
 
@@ -511,7 +511,7 @@ void btod_dirsum_symmetry_builder<N, N>::make_symmetry(
 
 		permutation_builder<N + N> pb(seq2, seq1);
 
-		se_perm<N + N, double> sp(pb.get_perm(), true);
+		se_perm<N + N, double> sp(pb.get_perm(), ka == kb);
 
 		btod_dirsum_symmetry_builder_base<N, N>::get_sym().insert(sp);
 	}
