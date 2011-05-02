@@ -16,6 +16,7 @@ libtensor_btod_suite::libtensor_btod_suite() :
 	add_test("btod_diagonalize", m_utf_btod_diagonalize);
 	add_test("btod_dirsum", m_utf_btod_dirsum);
 	add_test("btod_dotprod", m_utf_btod_dotprod);
+	add_test("btod_ewmult2", m_utf_btod_ewmult2);
 	add_test("btod_extract", m_utf_btod_extract);
 	add_test("btod_import_raw", m_utf_btod_import_raw);
 	add_test("btod_mult", m_utf_btod_mult);

@@ -98,6 +98,7 @@ set(SRC_INST
 	btod/btod_copy.C
 	btod/btod_dirsum.C
 	btod/btod_dotprod.C
+	btod/btod_ewmult2.C
 	btod/btod_sum.C
 )
 

@@ -12,6 +12,7 @@
 #include "btod_diagonalize_test.h"
 #include "btod_dirsum_test.h"
 #include "btod_dotprod_test.h"
+#include "btod_ewmult2_test.h"
 #include "btod_extract_test.h"
 #include "btod_import_raw_test.h"
 #include "btod_mult_test.h"
@@ -48,6 +49,7 @@ namespace libtensor {
 	\li libtensor::btod_diagonalize_test
 	\li libtensor::btod_dirsum_test
 	\li libtensor::btod_dotprod_test
+	\li libtensor::btod_ewmult2_test
 	\li libtensor::btod_extract_test
 	\li libtensor::btod_import_raw_test
 	\li libtensor::btod_mult_test
@@ -78,6 +80,7 @@ private:
 	unit_test_factory<btod_diagonalize_test> m_utf_btod_diagonalize;
 	unit_test_factory<btod_dirsum_test> m_utf_btod_dirsum;
 	unit_test_factory<btod_dotprod_test> m_utf_btod_dotprod;
+	unit_test_factory<btod_ewmult2_test> m_utf_btod_ewmult2;
 	unit_test_factory<btod_extract_test> m_utf_btod_extract;
 	unit_test_factory<btod_import_raw_test> m_utf_btod_import_raw;
 	unit_test_factory<btod_mult_test> m_utf_btod_mult;

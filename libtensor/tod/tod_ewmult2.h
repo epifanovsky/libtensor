@@ -11,14 +11,14 @@
 namespace libtensor {
 
 
-/**	\brief General element-wise multiplication and division of two tensors
+/**	\brief General element-wise multiplication of two tensors
 	\tparam N First argument's %tensor order less the number of shared
 		indexes.
 	\tparam M Second argument's %tensor order less the number of shared
 		indexes.
 	\tparam K Number of shared indexes.
 
-	This operation computes the generalized elementwise (Hadamard) product
+	This operation computes the generalized element-wise (Hadamard) product
 	of two tensors. It takes two arguments and performs the following
 	$$ c_{ij\cdots mn\cdots pq\cdots} =
 		a_{ij\cdots pq\cdots} b_{mn\cdots pq\cdots} $$
@@ -73,7 +73,6 @@ public:
 	/**	\brief Initializes the operation
 		\param ta First argument (A).
 		\param tb Second argument (B).
-		\param recip Reciprocal flag.
 		\param d Scaling coefficient.
 	 **/
 	tod_ewmult2(tensor_i<k_ordera, double> &ta,
@@ -85,7 +84,6 @@ public:
 		\param tb Second argument (B).
 		\param permb Permutation of B.
 		\param permc Permutation of result (C).
-		\param recip Reciprocal flag.
 		\param d Scaling coefficient.
 	 **/
 	tod_ewmult2(tensor_i<k_ordera, double> &ta,

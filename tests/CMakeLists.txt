@@ -75,6 +75,7 @@ set(SRC_BTOD
 	btod/btod_diagonalize_test.C
 	btod/btod_dirsum_test.C
 	btod/btod_dotprod_test.C
+	btod/btod_ewmult2_test.C
 	btod/btod_extract_test.C
 	btod/btod_import_raw_test.C
 	btod/btod_mult_test.C
