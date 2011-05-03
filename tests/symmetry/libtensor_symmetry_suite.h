@@ -13,6 +13,10 @@
 #include "so_add_impl_label_test.h"
 #include "so_add_impl_part_test.h"
 #include "so_add_impl_perm_test.h"
+#include "so_apply_test.h"
+#include "so_apply_impl_label_test.h"
+#include "so_apply_impl_part_test.h"
+#include "so_apply_impl_perm_test.h"
 #include "so_concat_test.h"
 #include "so_concat_impl_label_test.h"
 #include "so_concat_impl_part_test.h"
@@ -63,6 +67,10 @@ namespace libtensor {
 	\li libtensor::so_add_impl_label_test
 	\li libtensor::so_add_impl_part_test
 	\li libtensor::so_add_impl_perm_test
+	\li libtensor::so_apply_test
+	\li libtensor::so_apply_impl_label_test
+	\li libtensor::so_apply_impl_part_test
+	\li libtensor::so_apply_impl_perm_test
 	\li libtensor::so_copy_test
 	\li libtensor::so_concat_test
 	\li libtensor::so_concat_impl_label_test
@@ -108,6 +116,10 @@ private:
 	unit_test_factory<so_add_impl_label_test> m_utf_so_add_impl_label;
 	unit_test_factory<so_add_impl_part_test> m_utf_so_add_impl_part;
 	unit_test_factory<so_add_impl_perm_test> m_utf_so_add_impl_perm;
+	unit_test_factory<so_apply_test> m_utf_so_apply;
+	unit_test_factory<so_apply_impl_label_test> m_utf_so_apply_impl_label;
+	unit_test_factory<so_apply_impl_part_test> m_utf_so_apply_impl_part;
+	unit_test_factory<so_apply_impl_perm_test> m_utf_so_apply_impl_perm;
 	unit_test_factory<so_concat_test> m_utf_so_concat;
 	unit_test_factory<so_concat_impl_label_test> m_utf_so_concat_impl_label;
 	unit_test_factory<so_concat_impl_part_test> m_utf_so_concat_impl_part;

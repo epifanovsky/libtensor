@@ -17,6 +17,10 @@ libtensor_symmetry_suite::libtensor_symmetry_suite() :
 	add_test("so_add_impl_label", m_utf_so_add_impl_label);
 	add_test("so_add_impl_part", m_utf_so_add_impl_part);
 	add_test("so_add_impl_perm", m_utf_so_add_impl_perm);
+	add_test("so_apply", m_utf_so_apply);
+	add_test("so_apply_impl_label", m_utf_so_apply_impl_label);
+	add_test("so_apply_impl_part", m_utf_so_apply_impl_part);
+	add_test("so_apply_impl_perm", m_utf_so_apply_impl_perm);
 	add_test("so_concat", m_utf_so_concat);
 	add_test("so_concat_impl_label", m_utf_so_concat_impl_label);
 	add_test("so_concat_impl_part", m_utf_so_concat_impl_part);

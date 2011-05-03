@@ -106,19 +106,32 @@ public:
 
 	/** \brief Returns the index to which idx is mapped directly
 			(refers to forward mapping)
+		\param idx Start index of map.
+		\return End index of the direct map.
 	 **/
 	index<N> get_direct_map(const index<N> &idx) const;
 
 	/** \brief Returns the sign of the map between the two indexes.
+		\param from First index.
+		\param to Second index.
+		\return True for even map, false for odd (-1) map.
 	 **/
 	bool get_sign(const index<N> &from, const index<N> &to) const;
 
 	/** \brief Check if there exists a map between two indexes
+		\param from First index.
+		\param to Second index.
+		\return True, if map exists.
 	 **/
 	bool map_exists(const index<N> &from, const index<N> &to) const;
 
+	/** \brief Permute the dimensions of the symmetry element
+	 	\param perm Permutation
+	 **/
 	void permute(const permutation<N> &perm);
 
+	/** \brief Mask indicating the dimensions the partition symmetry acts on.
+	 **/
 	const mask<N> &get_mask() const {
 		return m_mask;
 	}
