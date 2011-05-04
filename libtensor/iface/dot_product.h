@@ -16,7 +16,7 @@ namespace labeled_btensor_expr {
 
 /**	\brief Dot product (%tensor + %tensor)
 
-	\ingroup libtensor_btensor_expr
+	\ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, typename T, bool Assignable1, bool Assignable2>
 double dot_product(
@@ -38,7 +38,7 @@ double dot_product(
 
 /**	\brief Dot product (%tensor + expression)
 
-	\ingroup libtensor_btensor_expr
+	\ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, typename T, bool Assignable1, typename Expr2>
 double dot_product(
@@ -53,7 +53,7 @@ double dot_product(
 
 /**	\brief Dot product (expression + %tensor)
 
-	\ingroup libtensor_btensor_expr
+	\ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, typename T, typename Expr1, bool Assignable2>
 double dot_product(
@@ -66,7 +66,7 @@ double dot_product(
 
 /**	\brief Dot product (expression + expression)
 
-	\ingroup libtensor_btensor_expr
+	\ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, typename T, typename Expr1, typename Expr2>
 double dot_product(

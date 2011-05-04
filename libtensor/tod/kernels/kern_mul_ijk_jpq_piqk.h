@@ -6,6 +6,9 @@
 namespace libtensor {
 
 
+/**
+	\ingroup libtensor_tod_kernel
+ **/
 class kern_mul_ijk_jpq_piqk : public kernel_base<2, 1> {
 public:
 	static const char *k_clazz; //!< Kernel name

@@ -7,7 +7,7 @@ namespace libtensor {
 
 /**	\brief Tests various problematic expressions
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_iface
  **/
 class expr_test : public libtest::unit_test {
 public:

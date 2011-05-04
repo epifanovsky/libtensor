@@ -7,7 +7,7 @@ namespace libtensor {
 
 /**	\brief Tests the libtensor::so_proj_up class
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_sym
 **/
 class so_proj_up_test : public libtest::unit_test {
 public:

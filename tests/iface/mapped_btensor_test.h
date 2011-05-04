@@ -7,7 +7,7 @@ namespace libtensor {
 
 /**	\brief Tests the libtensor::mapped_btensor class
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_iface
 **/
 class mapped_btensor_test : public libtest::unit_test {
 public:

@@ -8,7 +8,7 @@ namespace libtensor {
 
 /**	\brief Tests the libtensor::so_concat_impl_part class
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_sym
  **/
 class so_concat_impl_part_test : public libtest::unit_test {
 public:

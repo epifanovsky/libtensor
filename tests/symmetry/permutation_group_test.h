@@ -11,7 +11,7 @@ namespace libtensor {
 
 /**	\brief Tests the libtensor::permutation_group class
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_sym
  **/
 class permutation_group_test : public libtest::unit_test {
 public:

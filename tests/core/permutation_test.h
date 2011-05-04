@@ -7,7 +7,7 @@ namespace libtensor {
 
 /**	\brief Tests the libtensor::permutation class
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_core
 **/
 class permutation_test : public libtest::unit_test {
 public:

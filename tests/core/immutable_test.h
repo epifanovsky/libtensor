@@ -7,7 +7,7 @@ namespace libtensor {
 
 /**	\brief Tests the libtensor::immutable class
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_core
 **/
 class immutable_test : public libtest::unit_test {
 public:

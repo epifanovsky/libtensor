@@ -5,7 +5,10 @@
 
 namespace libtensor {
 
+/** \brief Generic kernel for multiplications
 
+ 	\ingroup libtensor_tod_kernel
+ **/
 class kern_mul_generic : public kernel_base<2, 1> {
 	friend class kern_mul_i_i_x;
 	friend class kern_mul_i_x_i;

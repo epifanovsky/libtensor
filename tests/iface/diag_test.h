@@ -7,7 +7,7 @@ namespace libtensor {
 
 /**	\brief Tests the libtensor::diag function
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_iface
  **/
 class diag_test : public libtest::unit_test {
 public:

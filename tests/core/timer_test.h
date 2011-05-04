@@ -8,7 +8,7 @@ namespace libtensor {
 
 /**	\brief Tests the libtensor::timer class
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_core
 **/
 class timer_test : public libtest::unit_test {
 	clock_t calc( double&, unsigned int ); 

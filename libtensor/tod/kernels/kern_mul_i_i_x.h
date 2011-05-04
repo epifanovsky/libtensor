@@ -6,6 +6,10 @@
 namespace libtensor {
 
 
+/** \brief Kernel for \f$ c_i = c_i + a_i b \f$
+
+ 	\ingroup libtensor_tod_kernel
+ **/
 class kern_mul_i_i_x : public kernel_base<2, 1> {
 	friend class kern_mul_i_pi_p;
 

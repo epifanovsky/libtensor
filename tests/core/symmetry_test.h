@@ -7,7 +7,7 @@ namespace libtensor {
 
 /**	\brief Tests the libtensor::symmetry class
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_core
 **/
 class symmetry_test : public libtest::unit_test {
 public:

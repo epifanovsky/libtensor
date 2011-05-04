@@ -10,7 +10,7 @@ class mult_eval_functor;
 
 /** \brief Function for evaluating element-wise multiplication (tensor * tensor)
 
- 	\ingroup libtensor_iface
+ 	\ingroup libtensor_btensor_expr
  **/
 template<size_t N, typename T, typename E1, typename E2, bool Recip>
 class mult_eval_functor<N, T, E1, E2, Recip, 1, 0, 1, 0> {

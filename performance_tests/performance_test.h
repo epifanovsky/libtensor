@@ -5,9 +5,11 @@
 
 namespace libtensor {
 
-/** \brief performance tests base class
 
- 	\param Repeats number of times a performance test is repeated to get a meaningful result
+
+/** \brief Performance tests base class
+ 	\tparam Repeats Number of times a performance test is repeated to get
+ 		a meaningful result
 
  	\ingroup libtensor_performance_tests
  **/

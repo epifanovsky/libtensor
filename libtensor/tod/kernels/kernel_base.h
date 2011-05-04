@@ -7,10 +7,14 @@
 
 namespace libtensor {
 
+/** \defgroup libtensor_tod_kernel Tensor operation kernels (double)
+	\brief Kernels of tensor operations in double precision
+	\ingroup libtensor_tod
+ **/
 
 /**	\brief Base class for kernels
 
-	\ingroup libtensor_tod
+	\ingroup libtensor_tod_kernel
  **/
 template<size_t N, size_t M>
 class kernel_base {

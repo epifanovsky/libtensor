@@ -28,13 +28,23 @@ inline long lrand48() { return rand(); }
 	\ingroup libtensor
  **/
 
-/**	\defgroup libtensor_tests Tests
-	\brief Unit tests of individual classes
+/**	\defgroup libtensor_mp Parallel processing components
+ 	\brief Basic components for parallel processing in libtensor.
 	\ingroup libtensor
  **/
 
 /**	\defgroup libtensor_tod Tensor operations (double)
 	\brief Operations on tensors with real double precision elements
+	\ingroup libtensor
+ **/
+
+/**	\defgroup libtensor_btod Block %tensor operations (double)
+	\brief Operations on block tensors with real double precision elements
+	\ingroup libtensor
+ **/
+
+/**	\defgroup libtensor_iface Block tensor interface
+	\brief Easy to use interface to implement equations with block tensors.
 	\ingroup libtensor
  **/
 

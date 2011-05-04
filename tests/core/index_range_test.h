@@ -7,7 +7,7 @@ namespace libtensor {
 
 /**	\brief Tests the libtensor::index_range class
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_core
 **/
 class index_range_test : public libtest::unit_test {
 public:

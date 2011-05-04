@@ -10,7 +10,7 @@ template<size_t N, typename T, typename Core> class expr;
 
 /**	\brief Label builder for sub-expressions in diag
 
-	\ingroup libtensor_iface
+	\ingroup libtensor_btensor_expr
  **/
 template<size_t N, size_t M>
 class diag_subexpr_label_builder {

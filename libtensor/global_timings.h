@@ -12,12 +12,16 @@
 
 namespace libtensor {
 
+/** \defgroup libtensor_core_time Timing components
+	\brief Basic components to collect run-times of libtensor components
+	\ingroup \libtensor_core
+ **/
 
 /**	\brief Accumulates and stores all timings
 
 	\sa timings
 
-	\ingroup libtensor
+	\ingroup libtensor_core_time
  **/
 class global_timings : public libvmm::singleton<global_timings> {
 

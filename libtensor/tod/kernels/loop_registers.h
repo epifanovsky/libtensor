@@ -6,6 +6,9 @@
 namespace libtensor {
 
 
+/**
+	\ingroup libtensor_tod_kernel
+ **/
 template<size_t N, size_t M>
 struct loop_registers {
 	const double *m_ptra[N]; //!< Position in argument arrays

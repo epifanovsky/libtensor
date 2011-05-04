@@ -7,7 +7,7 @@ namespace libtensor {
 
 /**	\brief Tests the libtensor::symm function
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_iface
 **/
 class symm_test : public libtest::unit_test {
 public:

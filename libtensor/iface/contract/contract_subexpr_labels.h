@@ -19,7 +19,7 @@ namespace labeled_btensor_expr {
 	the result labels for the evaluation of the sub-expressions such that
 	the overall computation time is minimized.
 
-	\ingroup libtensor_iface
+	\ingroup libtensor_btensor_expr
  **/
 template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2>
 class contract_subexpr_labels {

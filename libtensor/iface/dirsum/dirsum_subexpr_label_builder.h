@@ -10,7 +10,7 @@ template<size_t N, typename T, typename Core> class expr;
 
 /**	\brief Label builder for sub-expressions in dirsum
 
-	\ingroup libtensor_iface
+	\ingroup libtensor_btensor_expr
  **/
 template<size_t N, size_t M>
 class dirsum_subexpr_label_builder {

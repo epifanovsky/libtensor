@@ -10,7 +10,7 @@ template<typename List, typename Registers> class processor;
 
 /**	\brief Processor operation interface
 
-	\ingroup libtensor
+	\ingroup libtensor_tod
  **/
 template<typename List, typename Registers>
 class processor_op_i {
@@ -25,7 +25,7 @@ public:
 
 /**	\brief Processes a recursive sequence of operations
 
-	\ingroup libtensor
+	\ingroup libtensor_tod
  **/
 template<typename List, typename Registers>
 class processor {

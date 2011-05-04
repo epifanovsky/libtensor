@@ -8,7 +8,7 @@ namespace libtensor {
 
 /**	\brief Tests the libtensor::task_batch class
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_core
 **/
 class task_batch_test : public libtest::unit_test {
 public:

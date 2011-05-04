@@ -7,7 +7,7 @@ namespace libtensor {
 
 /**	\brief Tests the libtensor::tod_extract class
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_tod
 **/
 class tod_extract_test : public libtest::unit_test {
 public:

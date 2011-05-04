@@ -7,7 +7,7 @@ namespace libtensor {
 
 /**	\brief Tests the libtensor::direct_btensor class
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_iface
 **/
 class direct_btensor_test : public libtest::unit_test {
 public:

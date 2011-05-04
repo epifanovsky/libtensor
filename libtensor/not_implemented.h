@@ -8,7 +8,7 @@ namespace libtensor {
 
 /**	\brief Indicates that a requested method is not yet implemented
 
-	\ingroup libtensor
+	\ingroup libtensor_core_exc
  **/
 class not_implemented : public exception_base<not_implemented> {
 public:

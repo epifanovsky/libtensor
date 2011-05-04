@@ -8,7 +8,7 @@ namespace libtensor {
 
 /**	\brief Tests the libtensor::linalg class (x_p_p)
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_linalg
  **/
 class linalg_x_p_p_test : public linalg_test_base {
 public:

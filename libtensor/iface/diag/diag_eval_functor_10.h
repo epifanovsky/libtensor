@@ -11,7 +11,7 @@ class diag_eval_functor;
 
 /**	\brief Functor for evaluating the diagonal (tensor)
 
-	\ingroup libtensor_iface
+	\ingroup libtensor_btensor_expr
  **/
 template<size_t N, size_t M, typename T, typename E1>
 class diag_eval_functor<N, M, T, E1, 1, 0> {

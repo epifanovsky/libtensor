@@ -7,7 +7,7 @@ namespace libtensor {
 
 /**	\brief Tests the libtensor::tod_add class
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_tod
 **/
 class tod_add_test : public libtest::unit_test {
 	static const double k_thresh; //!< Threshold multiplier

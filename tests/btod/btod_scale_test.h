@@ -8,7 +8,7 @@ namespace libtensor {
 
 /**	\brief Tests the libtensor::btod_scale class
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_btod
 **/
 class btod_scale_test : public libtest::unit_test {
 public:

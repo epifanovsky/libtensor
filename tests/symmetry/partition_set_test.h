@@ -7,7 +7,7 @@ namespace libtensor {
 
 /**	\brief Tests the libtensor::partition_set class
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_sym
  **/
 class partition_set_test : public libtest::unit_test {
 public:

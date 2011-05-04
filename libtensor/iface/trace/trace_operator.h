@@ -17,7 +17,7 @@ namespace labeled_btensor_expr {
 
 /**	\brief Trace of a matrix
 
-	\ingroup libtensor_btensor_expr
+	\ingroup libtensor_btensor_expr_op
  **/
 template<typename T, bool A>
 double trace(
@@ -38,7 +38,7 @@ double trace(
 
 /**	\brief Trace of a %tensor
 
-	\ingroup libtensor_btensor_expr
+	\ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, typename T, bool A>
 double trace(
@@ -61,7 +61,7 @@ double trace(
 
 /**	\brief Trace of a matrix expression
 
-	\ingroup libtensor_btensor_expr
+	\ingroup libtensor_btensor_expr_op
  **/
 template<typename T, typename E>
 double trace(
@@ -78,7 +78,7 @@ double trace(
 
 /**	\brief Trace of a %tensor expression
 
-	\ingroup libtensor_btensor_expr
+	\ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, typename T, typename E>
 double trace(

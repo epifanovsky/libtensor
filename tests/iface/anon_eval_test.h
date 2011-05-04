@@ -10,7 +10,7 @@ namespace libtensor {
 
 /**	\brief Tests the libtensor::labeled_btensor_expr::anon_eval class
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_iface
  **/
 class anon_eval_test : public libtest::unit_test {
 public:

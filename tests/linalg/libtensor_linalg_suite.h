@@ -47,8 +47,15 @@ using libtest::unit_test_factory;
 
 namespace libtensor {
 
+/** \defgroup libtensor_tests_linalg Tests of linear algebra components
+ 	\brief Unit tests of the linear algebra components of libtensor
+ 	\ingroup libtensor_tests
+ **/
+
 
 /**	\brief Test suite for the linear algebra in the tensor library
+	\ingroup libtensor_tests
+
 
 	This suite runs the following tests:
 	 - libtensor::linalg_x_p_p_test
@@ -92,7 +99,6 @@ namespace libtensor {
 	 - libtensor::linalg_ijkl_pliq_jpqk_x_test
 	 - libtensor::linalg_ijkl_pliq_pjqk_x_test
 
-	\ingroup libtensor_tests
  **/
 class libtensor_linalg_suite : public libtest::test_suite {
 private:

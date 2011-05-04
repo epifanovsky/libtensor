@@ -7,7 +7,7 @@ namespace libtensor {
 
 /**	\brief Tests the libtensor::index class
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_core
 **/
 class index_test : public libtest::unit_test {
 public:

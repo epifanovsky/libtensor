@@ -1,5 +1,5 @@
-#ifndef LIBTENSOR_SO_ADD_IMPL_PART_H
-#define LIBTENSOR_SO_ADD_IMPL_PART_H
+#ifndef LIBTENSOR_SO_APPLY_IMPL_PART_H
+#define LIBTENSOR_SO_APPLY_IMPL_PART_H
 
 #include "../defs.h"
 #include "../exception.h"
@@ -88,4 +88,4 @@ void symmetry_operation_impl< so_apply<N, T>, se_part<N, T> >::do_perform(
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_SO_APPLY_IMPL_LABEL_H
+#endif // LIBTENSOR_SO_APPLY_IMPL_PART_H

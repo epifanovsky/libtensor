@@ -7,7 +7,7 @@ namespace libtensor {
 
 /**	\brief Tests the libtensor::contraction2 class
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_tod
 **/
 class contraction2_test : public libtest::unit_test {
 public:

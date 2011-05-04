@@ -8,7 +8,7 @@ namespace libtensor {
 
 /**	\brief Tests the libtensor::linalg class (ijk_pikq_jpq_x)
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_linalg
  **/
 class linalg_ijk_pikq_jpq_x_test : public linalg_test_base {
 public:

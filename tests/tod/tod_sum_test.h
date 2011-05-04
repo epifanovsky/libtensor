@@ -8,7 +8,7 @@ namespace libtensor {
 
 /**	\brief Tests the libtensor::tod_sum class
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_tod
  **/
 class tod_sum_test : public libtest::unit_test {
 public:

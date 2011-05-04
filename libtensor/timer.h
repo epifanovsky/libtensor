@@ -19,7 +19,7 @@ namespace libtensor {
  	Stores the point in time when start() is called and calculates the time
  	difference to this point as soon as stop() is called.
 
- 	\ingroup libtensor_core
+ 	\ingroup libtensor_core_time
  **/
 class timer {
 private:

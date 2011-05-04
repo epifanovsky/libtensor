@@ -8,6 +8,11 @@ template<size_t N, typename T, typename E1, typename E2, bool Recip,
 	size_t NT1, size_t NO1, size_t NT2, size_t NO2>
 class mult_eval_functor;
 
+/** \brief Function for evaluating element-wise multiplication
+		(expression * tensor)
+
+ 	\ingroup libtensor_btensor_expr
+ **/
 template<size_t N, typename T, typename E1, typename E2, bool Recip,
 	size_t NT1, size_t NO1>
 class mult_eval_functor<N, T, E1, E2, Recip, NT1, NO1, 1, 0> {

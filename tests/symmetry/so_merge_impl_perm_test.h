@@ -8,7 +8,7 @@ namespace libtensor {
 
 /**	\brief Tests the libtensor::so_merge_impl_perm class
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_sym
  **/
 class so_merge_impl_perm_test : public libtest::unit_test {
 public:

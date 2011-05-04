@@ -7,7 +7,7 @@ namespace libtensor {
 
 /**	\brief Tests the libtensor::letter class
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_iface
 **/
 class letter_test : public libtest::unit_test {
 public:

@@ -7,7 +7,7 @@ namespace libtensor {
 
 /**	\brief Tests the libtensor::dot_product function
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_iface
 **/
 class dot_product_test : public libtest::unit_test {
 public:

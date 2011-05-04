@@ -16,7 +16,7 @@ template<size_t N, typename T, typename Expr> class expr;
 	\tparam T Tensor element type.
 	\tparam Assignable Whether the %tensor can be an l-value.
 
-	\ingroup libtensor
+	\ingroup libtensor_iface
  **/
 template<size_t N, typename T, bool Assignable>
 class labeled_btensor : public labeled_btensor_base<N, T, Assignable> {
@@ -27,7 +27,7 @@ public:
 
 /**	\brief Partial specialization of the assignable labeled tensor
 
-	\ingroup libtensor
+	\ingroup libtensor_iface
  **/
 template<size_t N, typename T>
 class labeled_btensor<N, T, true> : public labeled_btensor_base<N, T, true> {

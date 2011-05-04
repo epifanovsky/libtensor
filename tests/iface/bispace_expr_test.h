@@ -7,7 +7,7 @@ namespace libtensor {
 
 /**	\brief Tests the libtensor::bispace_expr::expr class
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_iface
  **/
 class bispace_expr_test : public libtest::unit_test {
 public:

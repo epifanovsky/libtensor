@@ -9,7 +9,7 @@ namespace libtensor {
 /**	\brief Exception indicating that a %tensor passed to a %tensor operation
 		has incorrect %dimensions
 
-	\ingroup libtensor_tod
+	\ingroup libtensor_core_exc libtensor_tod
  **/
 class bad_dimensions : public exception_base<bad_dimensions> {
 public:

@@ -12,7 +12,7 @@ class direct_product_eval_functor;
 
 /**	\brief Functor for evaluating direct products (tensor + tensor)
 
-	\ingroup libtensor_iface
+	\ingroup libtensor_btensor_expr
  **/
 template<size_t N, size_t M, typename T, typename E1, typename E2>
 class direct_product_eval_functor<N, M, T, E1, E2, 1, 0, 1, 0> {

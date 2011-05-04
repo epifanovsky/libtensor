@@ -16,7 +16,7 @@ namespace libtensor {
 	The two perform() methods must render the same operation, with the
 	only difference that one of them adds the result to a %tensor.
 
-	\ingroup libtensor
+	\ingroup libtensor_tod
 **/
 template<size_t N>
 class tod_additive {

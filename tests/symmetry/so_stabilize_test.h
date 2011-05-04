@@ -7,7 +7,7 @@ namespace libtensor {
 
 /**	\brief Tests the libtensor::so_stabilize class
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_sym
 **/
 class so_stabilize_test : public libtest::unit_test {
 public:

@@ -8,7 +8,7 @@ namespace libtensor {
 
 /**	\brief Tests the libtensor::block_index_map class
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_core
  **/
 class block_index_map_test : public libtest::unit_test {
 public:

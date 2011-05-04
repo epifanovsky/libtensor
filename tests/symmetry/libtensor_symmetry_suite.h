@@ -52,8 +52,14 @@ using libtest::unit_test_factory;
 
 namespace libtensor {
 
+/** \defgroup libtensor_tests_sym Tests of symmetry components
+ 	\brief Unit tests of the symmetry components in libtensor
+ 	\ingroup libtensor_tests
+ **/
+
 /**
 	\brief Test suite for the symmetry in the tensor library (libtensor)
+	\ingroup libtensor_tests
 
 	This suite runs the following tests:
 	\li libtensor::partition_set_test

@@ -11,7 +11,10 @@
 namespace libtensor {
 namespace labeled_btensor_expr {
 
+/** \brief Functor for evaluating contractions
 
+	\ingroup libtensor_btensor_expr
+ **/
 template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2,
 	size_t NT1, size_t NO1, size_t NT2, size_t NO2>
 class contract_eval_functor {

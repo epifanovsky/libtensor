@@ -7,7 +7,7 @@ namespace libtensor {
 
 /**	\brief Tests the libtensor::dirsum function
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_iface
 **/
 class dirsum_test : public libtest::unit_test {
 public:

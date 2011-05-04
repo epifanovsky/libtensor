@@ -35,8 +35,19 @@ using libtest::unit_test_factory;
 
 namespace libtensor {
 
+/**	\defgroup libtensor_tests Tests
+	\brief Unit tests of individual classes
+	\ingroup libtensor
+ **/
+
+/** \defgroup libtensor_tests_core Tests of core components
+ 	\brief Unit tests of the core components of libtensor
+ 	\ingroup libtensor_tests
+ **/
+
 /**
-	\brief Test suite for the tensor library (libtensor)
+	\brief Test suite for the core components of the tensor library (libtensor)
+	\ingroup libtensor_tests
 
 	This suite runs the following tests:
 	\li libtensor::abs_index_test

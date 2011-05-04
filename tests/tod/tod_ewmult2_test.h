@@ -8,7 +8,7 @@ namespace libtensor {
 
 /**	\brief Tests the libtensor::tod_ewmult2 class
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_tod
  **/
 class tod_ewmult2_test : public libtest::unit_test {
 private:

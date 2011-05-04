@@ -4,6 +4,9 @@
 namespace libtensor {
 
 
+/**
+	\ingroup libtensor_tod_kernel
+ **/
 template<size_t N, size_t M>
 struct loop_list_node {
 private:

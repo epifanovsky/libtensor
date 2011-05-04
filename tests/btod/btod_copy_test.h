@@ -7,7 +7,7 @@ namespace libtensor {
 
 /**	\brief Tests the libtensor::btod_copy class
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_btod
  **/
 class btod_copy_test : public libtest::unit_test {
 public:

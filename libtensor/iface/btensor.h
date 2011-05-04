@@ -17,7 +17,9 @@
 
 namespace libtensor {
 
-
+/** \brief Base class for btensor
+ 	 \ingroup libtensor_iface
+ **/
 template<size_t N, typename T, typename Traits>
 class btensor_base : public btensor_i<N, T>, public immutable {
 private:

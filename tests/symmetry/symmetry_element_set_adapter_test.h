@@ -7,7 +7,7 @@ namespace libtensor {
 
 /**	\brief Tests the libtensor::symmetry_element_set_adapter class
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_sym
  **/
 class symmetry_element_set_adapter_test : public libtest::unit_test {
 public:

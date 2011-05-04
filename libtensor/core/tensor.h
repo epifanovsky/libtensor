@@ -123,7 +123,7 @@ namespace libtensor {
 	fails for any reason. If an %exception is thrown, the state of
 	the %tensor object is undefined.
 
-	\ingroup libtensor
+	\ingroup libtensor_core
 **/
 template<size_t N, typename T, typename Alloc>
 class tensor :

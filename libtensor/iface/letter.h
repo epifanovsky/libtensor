@@ -6,7 +6,7 @@
 
 namespace libtensor {
 
-/**	/brief Identifies a letter %tensor %index
+/**	\brief Identifies a letter %tensor %index
 
 	This is an empty class that serves the purpose of identifying
 	%letter indexes of a %tensor in %tensor expressions.

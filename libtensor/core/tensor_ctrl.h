@@ -18,7 +18,7 @@ namespace libtensor {
 	\param N Tensor order.
 	\param T Tensor element type.
 
-	\ingroup libtensor
+	\ingroup libtensor_core
 **/
 template<size_t N, typename T>
 class tensor_ctrl {

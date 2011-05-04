@@ -23,7 +23,7 @@ namespace libtensor {
 	the division is requested, no checks are performed to ensure that
 	the denominator is non-zero.
 
-	\ingroup libtensor
+	\ingroup libtensor_tod
  **/
 template<size_t N>
 class tod_mult1 :

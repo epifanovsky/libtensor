@@ -22,7 +22,7 @@ namespace libtensor {
  	 - add start_timer and stop_timer calls around the parts of the code that 
  	   should be timed;
 
-	\ingroup libtensor
+	\ingroup libtensor_core_time
  **/
 template<typename T>
 class timings {

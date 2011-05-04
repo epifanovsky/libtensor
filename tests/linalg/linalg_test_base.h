@@ -9,7 +9,7 @@ namespace libtensor {
 
 /**	\brief Base test class for linalg tests
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_linalg
  **/
 class linalg_test_base : public libtest::unit_test {
 protected:

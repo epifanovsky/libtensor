@@ -7,7 +7,7 @@ namespace libtensor {
 
 /**	\brief Tests the libtensor::trace function
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_iface
  **/
 class trace_test : public libtest::unit_test {
 public:

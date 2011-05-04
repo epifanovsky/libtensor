@@ -10,7 +10,7 @@ template<size_t N, typename T, typename Core> class expr;
 
 /**	\brief Label builder for sub-expressions in contract
 
-	\ingroup libtensor_iface
+	\ingroup libtensor_btensor_expr
  **/
 template<size_t N, size_t M, size_t K>
 class contract_subexpr_label_builder {

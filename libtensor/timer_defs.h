@@ -6,27 +6,41 @@ namespace libtensor {
 class time_pt_t;
 class time_diff_t;
 
-//! Smaller equal comparison operator of two time points
+/** \brief Smaller equal comparison operator of two time points
+	\ingroup libtensor_core_time
+ **/
 bool operator<=(const time_pt_t& p1, const time_pt_t& p2);
 
-//! Equal comparison operator of two time points
+/** \brief Equal comparison operator of two time points
+	\ingroup libtensor_core_time
+ **/
 bool operator==(const time_pt_t& p1, const time_pt_t& p2);
 
-//! Prints time point to ostream
+/** \brief Prints time point to output stream
+	\ingroup libtensor_core_time
+ **/
 std::ostream& operator<<(std::ostream& out, const time_pt_t& pt);
 
-//! Smaller equal comparison of time differences
+/** \brief Smaller equal comparison of time differences
+	\ingroup libtensor_core_time
+ **/
 bool operator<=(const time_diff_t& d1, const time_diff_t& d2);
 
-//! Equal comparison of time differences
+/** \brief Equal comparison of time differences
+	\ingroup libtensor_core_time
+ **/
 bool operator==(const time_diff_t& d1, const time_diff_t& d2);
 
-//! prints time difference to ostream
+/** \brief Prints time difference to output stream
+	\ingroup libtensor_core_time
+ **/
 std::ostream& operator<<(std::ostream& out, const time_diff_t& d);
 
 /** \brief Determine a point in time
 
 	Stores the point in time when function now() is called.
+
+	\ingroup libtensor_core_time
  **/
 class time_pt_t {
 
@@ -41,12 +55,14 @@ private:
 public:
 	time_pt_t() : m_rt(0) { }
 
-	//! saves point in time
+	//! Stores current point in time
 	void now() { m_rt = clock(); }
 };
 
 
 /** \brief Stores a time difference
+
+	\ingroup libtensor_core_time
  **/
 class time_diff_t {
 

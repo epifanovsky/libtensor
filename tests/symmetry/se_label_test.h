@@ -7,7 +7,7 @@ namespace libtensor {
 
 /**	\brief Tests the libtensor::se_label class
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_sym
  **/
 class se_label_test : public libtest::unit_test {
 public:

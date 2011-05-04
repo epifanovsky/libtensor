@@ -33,8 +33,15 @@ using libtest::unit_test_factory;
 
 namespace libtensor {
 
+/** \defgroup libtensor_tests_tod Tests of tensor operations
+ 	\brief Unit tests of the %tensor operations in libtensor
+ 	\ingroup libtensor_tests
+ **/
+
+
 /**
-	\brief Test suite for the tensor library (libtensor)
+	\brief Test suite for the tensor operations in libtensor
+	\ingroup libtensor_tests
 
 	This suite runs the following tests:
 	\li libtensor::contraction2_test

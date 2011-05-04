@@ -8,7 +8,7 @@ namespace libtensor {
 
 /**	\brief Tests the libtensor::btensor class
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_iface
 **/
 class btensor_test : public libtest::unit_test {
 public:

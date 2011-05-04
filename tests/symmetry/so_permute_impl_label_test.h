@@ -8,7 +8,7 @@ namespace libtensor {
 
 /**	\brief Tests the libtensor::so_permute_impl_label class
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_sym
  **/
 class so_permute_impl_label_test : public libtest::unit_test {
 public:

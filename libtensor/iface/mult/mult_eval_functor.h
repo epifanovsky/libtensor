@@ -9,6 +9,10 @@
 namespace libtensor {
 namespace labeled_btensor_expr {
 
+/** \brief Function for evaluating element-wise multiplication
+
+ 	\ingroup libtensor_btensor_expr
+ **/
 template<size_t N, typename T, typename E1, typename E2, bool Recip,
 	size_t NT1, size_t NO1, size_t NT2, size_t NO2>
 class mult_eval_functor {

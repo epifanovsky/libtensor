@@ -10,7 +10,7 @@ namespace labeled_btensor_expr {
 
 /**	\brief Labels for sub-expressions in dirsum
 
-	\ingroup libtensor_iface
+	\ingroup libtensor_btensor_expr
  **/
 template<size_t N, size_t M, typename T, typename E1, typename E2>
 class dirsum_subexpr_labels {

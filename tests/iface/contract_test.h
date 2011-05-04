@@ -7,7 +7,7 @@ namespace libtensor {
 
 /**	\brief Tests the libtensor::contract function
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_iface
 **/
 class contract_test : public libtest::unit_test {
 public:

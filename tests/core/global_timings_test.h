@@ -7,7 +7,7 @@ namespace libtensor {
 
 /**	\brief Tests the libtensor::timer class
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_core
 **/
 class global_timings_test : public libtest::unit_test {
 	void wait( double ); 

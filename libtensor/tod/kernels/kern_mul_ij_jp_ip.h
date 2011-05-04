@@ -6,6 +6,9 @@
 namespace libtensor {
 
 
+/**
+	\ingroup libtensor_tod_kernel
+ **/
 class kern_mul_ij_jp_ip : public kernel_base<2, 1> {
 	friend class kern_mul_ij_pjq_piq;
 

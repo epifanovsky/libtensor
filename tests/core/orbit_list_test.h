@@ -7,7 +7,7 @@ namespace libtensor {
 
 /**	\brief Tests the libtensor::orbit_list class
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_core
 **/
 class orbit_list_test : public libtest::unit_test {
 public:

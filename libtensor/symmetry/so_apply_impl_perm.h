@@ -1,5 +1,5 @@
-#ifndef LIBTENSOR_SO_ADD_IMPL_PERM_H
-#define LIBTENSOR_SO_ADD_IMPL_PERM_H
+#ifndef LIBTENSOR_SO_APPLY_IMPL_PERM_H
+#define LIBTENSOR_SO_APPLY_IMPL_PERM_H
 
 #include "../defs.h"
 #include "../exception.h"

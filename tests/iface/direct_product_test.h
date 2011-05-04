@@ -7,7 +7,7 @@ namespace libtensor {
 
 /**	\brief Tests the direct product expression
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_iface
 **/
 class direct_product_test : public libtest::unit_test {
 public:

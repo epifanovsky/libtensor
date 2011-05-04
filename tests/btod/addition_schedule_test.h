@@ -7,7 +7,7 @@ namespace libtensor {
 
 /**	\brief Tests the libtensor::addition_schedule class
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_btod
  **/
 class addition_schedule_test : public libtest::unit_test {
 public:

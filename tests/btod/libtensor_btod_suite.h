@@ -35,8 +35,15 @@ using libtest::unit_test_factory;
 
 namespace libtensor {
 
+/** \defgroup libtensor_tests_btod Tests of block tensor operations
+ 	\brief Unit tests of block %tensor operations.
+ 	\ingroup libtensor_tests
+ **/
+
+
 /**
-	\brief Test suite for the tensor library (libtensor)
+	\brief Test suite for the block %tensor operations in libtensor
+	\ingroup libtensor_tests
 
 	This suite runs the following tests:
 	\li libtensor::addition_schedule_test

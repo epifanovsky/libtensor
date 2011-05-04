@@ -6,6 +6,9 @@
 namespace libtensor {
 
 
+/**
+	\ingroup libtensor_tod_kernel
+ **/
 template<size_t N, size_t M>
 class loop_list_runner {
 public:

@@ -16,7 +16,7 @@ template<size_t N, typename T> class btensor_i;
 	\tparam Assignable Whether the %tensor can be an l-value.
 	\tparam Label Label expression.
 
-	\ingroup libtensor
+	\ingroup libtensor_iface
  **/
 template<size_t N, typename T, bool Assignable>
 class labeled_btensor_base {

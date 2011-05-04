@@ -7,7 +7,7 @@ namespace libtensor {
 
 /**	\brief Tests the libtensor::btod_tridiagonalize class
 
-	\ingroup libtensor_tests
+	\ingroup libtensor_tests_btod
 **/
 class btod_tridiagonalize_test : public libtest::unit_test {
 public:

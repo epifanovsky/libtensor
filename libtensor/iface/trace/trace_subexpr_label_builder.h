@@ -7,7 +7,7 @@ namespace labeled_btensor_expr {
 
 /**	\brief Label builder for the sub-expression in trace
 
-	\ingroup libtensor_iface
+	\ingroup libtensor_btensor_expr
  **/
 template<size_t N>
 class trace_subexpr_label_builder {
