@@ -9,8 +9,7 @@
 #include "../core/abs_index.h"
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
-#include "../symmetry/so_copy.h"
-#include "../symmetry/so_permute.h"
+#include "../symmetry/so_apply.h"
 #include "../tod/tod_apply.h"
 #include "../tod/tod_copy.h"
 #include "../tod/tod_set.h"
@@ -25,8 +24,7 @@ namespace libtensor {
 	\tparam N Tensor order.
 
 	The operation scales and permutes the input %tensor and then applies
-	the functor to each element.
-	The functor class needs to have
+	the functor to each element. The functor class needs to have
 	1. a proper copy constructor
 	  \code
 		  Functor(const Functor &f);
@@ -35,18 +33,24 @@ namespace libtensor {
 	  \code
 		  double Functor::operator()(const double &a);
 	  \endcode
-	3. and an implementation of
+	3. and implementations of
 	  \code
-		  template<size_t N>
-		  void Functor::update_sym(symmetry<N, double> &sym);
+		  bool Functor::is_asym();
+		  bool Functor::sign();
 	  \endcode
 
-	The latter function is meant to update the symmetry of the result tensor
-	with regard to changes the functor will imposed on the %tensor. E.g. if
-	the functor is unsymmetric, any permutational antisymmetry should be
-	removed from the result symmetry. The parameter sym can be expected to
-	be the symmetry of the result %tensor, as if the operation would be a
-	simple copy.
+	The latter two function should yield information about the symmetry of
+	the functor:
+	- is_asym() -- should return false, if the functor is symmetric or
+		anti-symmetric w.r.t. the origin, and true otherwise.
+	- sign() -- should return true, if the functor is symmetric w.r.t. the
+		origin, and false, if it is anti-symmetric. If it is neither the
+		the return value is arbitrary.
+
+	The symmetry of the result tensor is determined by the symmetry operation
+	so_apply. The use of this symmetry operation can result in the need to
+	construct %tensor blocks from forbidden input %tensor blocks. Forbidden
+	%tensor blocks are then treated as if they where zero.
 
 	\ingroup libtensor_btod
  **/
@@ -148,8 +152,8 @@ btod_apply<N, Functor, Alloc>::btod_apply(
 	m_bidims(m_bis.get_block_index_dims()), m_sym(m_bis), m_sch(m_bidims) {
 
 	block_tensor_ctrl<N, double> ctrla(m_bta);
-	so_copy<N, double>(ctrla.req_const_symmetry()).perform(m_sym);
-	m_fn.update_sym(m_sym);
+	so_apply<N, double>(ctrla.req_const_symmetry(),
+			m_perm, m_fn.is_asym(), m_fn.sign()).perform(m_sym);
 	make_schedule();
 }
 
@@ -163,8 +167,8 @@ btod_apply<N, Functor, Alloc>::btod_apply(block_tensor_i<N, double> &bta,
 		m_bidims(m_bis.get_block_index_dims()), m_sym(m_bis), m_sch(m_bidims) {
 
 	block_tensor_ctrl<N, double> ctrla(m_bta);
-	so_permute<N, double>(ctrla.req_const_symmetry(), m_perm).perform(m_sym);
-	m_fn.update_sym(m_sym);
+	so_apply<N, double>(ctrla.req_const_symmetry(),
+			m_perm, m_fn.is_asym(), m_fn.sign()).perform(m_sym);
 	make_schedule();
 }
 
@@ -198,8 +202,14 @@ void btod_apply<N, Functor, Alloc>::compute_block(
 	index<N> ia(ib);
 	ia.permute(pinv);
 
-	//	Find the canonical index in A
+	// Find the orbit the index belongs to
 	orbit<N, double> oa(ctrla.req_const_symmetry(), ia);
+	// If the orbit of A is not allowed, we assume it all elements are 0.0
+	if (! oa.is_allowed()) {
+		tod_set<N>(m_fn(0.0)).perform(blk);
+		return;
+	}
+	//	Find the canonical index in A
 	abs_index<N> acia(oa.get_abs_canonical_index(), bidimsa);
 
 	//	Transformation for block from canonical A to B
@@ -235,8 +245,21 @@ void btod_apply<N, Functor, Alloc>::compute_block(tensor_i<N, double> &blk,
 	index<N> ia(ib);
 	ia.permute(pinv);
 
-	//	Find the canonical index in A
+	// Find the orbit the index belongs to
 	orbit<N, double> oa(ctrla.req_const_symmetry(), ia);
+
+	// If the orbit of A is not allowed, we assume it all elements are 0.0
+	if (! oa.is_allowed()) {
+		double val = m_fn(0.0) * c;
+		if (val != 0.0) {
+			tensor<N, double, Alloc> tblk(blk.get_dims());
+			tod_set<N>(val).perform(tblk);
+			tod_copy<N>(tblk).perform(blk, 1.0);
+		}
+		return;
+	}
+
+	//	Find the canonical index in A
 	abs_index<N> acia(oa.get_abs_canonical_index(), bidimsa);
 
 	//	Transformation for block from canonical A to B
@@ -268,20 +291,28 @@ void btod_apply<N, Functor, Alloc>::make_schedule() {
 	block_tensor_ctrl<N, double> ctrla(m_bta);
 	dimensions<N> bidimsa = m_bta.get_bis().get_block_index_dims();
 
-	bool identity = m_perm.is_identity();
+	bool is_zero = (m_fn(0.0) == 0.0);
+	permutation<N> pinv(m_perm, ! m_perm.is_identity());
 
-	orbit_list<N, double> ola(ctrla.req_const_symmetry());
-	for(typename orbit_list<N, double>::iterator ioa = ola.begin();
-			ioa != ola.end(); ioa++) {
+	orbit_list<N, double> ol(m_sym);
+	for(typename orbit_list<N, double>::iterator io = ol.begin();
+			io != ol.end(); io++) {
 
-		if(ctrla.req_is_zero_block(ola.get_index(ioa))) continue;
+		// If m_fn(0.0) yields 0.0 only non-zero blocks of tensor A need to
+		// be considered
+		if (is_zero) {
+			index<N> ia(ol.get_index(io)); ia.permute(pinv);
 
-		if(!identity) {
-			index<N> bib(ola.get_index(ioa)); bib.permute(m_perm);
-			orbit<N, double> ob(m_sym, bib);
-			m_sch.insert(ob.get_abs_canonical_index());
-		} else {
-			m_sch.insert(ola.get_abs_index(ioa));
+			orbit<N, double> oa(ctrla.req_const_symmetry(), ia);
+			if (! oa.is_allowed()) continue;
+
+			bidimsa.abs_index(oa.get_abs_canonical_index(), ia);
+			if (ctrla.req_is_zero_block(ia)) continue;
+
+			m_sch.insert(ol.get_abs_index(io));
+		}
+		else {
+			m_sch.insert(ol.get_abs_index(io));
 		}
 	}
 }

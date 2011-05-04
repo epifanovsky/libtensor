@@ -25,6 +25,7 @@ private:
 	void test_sym_2() throw(libtest::test_exception);
 	void test_sym_3() throw(libtest::test_exception);
 	void test_sym_4() throw(libtest::test_exception);
+	void test_sym_5() throw(libtest::test_exception);
 	void test_add_nosym_1() throw(libtest::test_exception);
 	void test_add_nosym_2() throw(libtest::test_exception);
 	void test_add_nosym_3() throw(libtest::test_exception);
@@ -45,10 +46,6 @@ private:
 	void test_add_nesym_7_sp2() throw(libtest::test_exception);
 	void test_add_nesym_7_sp3() throw(libtest::test_exception);
 
-	void test_dir_1() throw(libtest::test_exception);
-	void test_dir_2() throw(libtest::test_exception);
-	void test_dir_3() throw(libtest::test_exception);
-	void test_dir_4() throw(libtest::test_exception);
 };
 
 } // namespace libtensor

@@ -3,7 +3,9 @@
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/btod/btod_apply.h>
 #include <libtensor/btod/btod_random.h>
+#include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/symmetry/se_perm.h>
+#include <libtensor/symmetry/se_label.h>
 #include <libtensor/tod/tod_apply.h>
 #include <libtensor/tod/tod_btconv.h>
 #include "../compare_ref.h"
@@ -16,15 +18,22 @@ namespace btod_apply_test_ns {
 struct sin_functor {
 	double operator()(const double &x) { return sin(x); }
 
-	template<size_t N>
-	void update_sym(symmetry<N, double> &sym) { }
+	bool is_asym() const { return false; }
+	bool sign() const { return false; }
 };
 
 struct cos_functor {
 	double operator()(const double &x) { return cos(x); }
 
-	template<size_t N>
-	void update_sym(symmetry<N, double> &sym) { }
+	bool is_asym() const { return false; }
+	bool sign() const { return true; }
+};
+
+struct exp_functor {
+	double operator()(const double &x) { return exp(x); }
+
+	bool is_asym() const { return true; }
+	bool sign() const { return true; }
 };
 
 } // namespace btod_apply_test_ns
@@ -33,6 +42,7 @@ void btod_apply_test::perform() throw(libtest::test_exception) {
 
 	test_zero_1();
 	test_zero_2();
+	test_zero_3();
 
 	test_nosym_1();
 	test_nosym_2();
@@ -42,6 +52,7 @@ void btod_apply_test::perform() throw(libtest::test_exception) {
 	test_sym_2();
 	test_sym_3();
 	test_sym_4();
+	test_sym_5();
 
 	test_add_nosym_1();
 	test_add_nosym_2();
@@ -101,7 +112,7 @@ void btod_apply_test::test_zero_1() throw(libtest::test_exception) {
 			orblst.get_index(iorbit));
 		index<2> blkidx;
 		bidims.abs_index(orb.get_abs_canonical_index(), blkidx);
-		if(!btb_ctrl.req_is_zero_block(blkidx)) {
+		if(! btb_ctrl.req_is_zero_block(blkidx)) {
 			fail_test(testname, __FILE__, __LINE__,
 				"All blocks are expected to be empty.");
 		}
@@ -199,7 +210,7 @@ void btod_apply_test::test_zero_3() throw(libtest::test_exception) {
 	btod_apply_test_ns::cos_functor cos;
 	btod_apply<2, btod_apply_test_ns::cos_functor>(bta, cos).perform(btb);
 
-	//	The set of non-zero blocks in the output must be empty now
+	//	The set of zero blocks in the output must be empty now
 
 	block_tensor_ctrl<2, double> btb_ctrl(btb);
 	orbit_list<2, double> orblst(btb_ctrl.req_symmetry());
@@ -209,9 +220,9 @@ void btod_apply_test::test_zero_3() throw(libtest::test_exception) {
 			orblst.get_index(iorbit));
 		index<2> blkidx;
 		bidims.abs_index(orb.get_abs_canonical_index(), blkidx);
-		if(!btb_ctrl.req_is_zero_block(blkidx)) {
+		if(btb_ctrl.req_is_zero_block(blkidx)) {
 			fail_test(testname, __FILE__, __LINE__,
-				"All blocks are expected to be empty.");
+				"All blocks are expected to be non-empty.");
 		}
 	}
 
@@ -645,6 +656,101 @@ void btod_apply_test::test_sym_4() throw(libtest::test_exception) {
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
 	}
+}
+
+/**	\test \f$ b_{ij} = exp(-a_{ij}) \f$, perm symmetry (+), label symmetry
+		dim(ij)=10, blocks, non-zero initial B
+ **/
+void btod_apply_test::test_sym_5() throw(libtest::test_exception) {
+
+	static const char *testname = "btod_apply_test::test_sym_5()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	try {
+
+	point_group_table pg(testname, 2);
+	pg.add_product(0, 0, 0);
+	pg.add_product(0, 1, 1);
+	pg.add_product(1, 1, 0);
+
+	product_table_container::get_instance().add(pg);
+
+	} catch (exception &e) {
+		product_table_container::get_instance().erase(testname);
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+
+	try {
+
+	index<2> i1, i2;
+	i2[0] = 9; i2[1] = 9;
+	dimensions<2> dima(index_range<2>(i1, i2));
+	block_index_space<2> bisa(dima);
+	mask<2> m; m[0] = true; m[1] = true;
+	bisa.split(m, 3);
+	bisa.split(m, 5);
+	tensor<2, double, allocator_t> ta(dima), tb(dima), tb_ref(dima);
+	block_tensor<2, double, allocator_t> bta(bisa), btb(bisa);
+
+	symmetry<2, double> sym_ref(bisa);
+
+	//	Set up symmetry
+	{
+	permutation<2> perm10; perm10.permute(0, 1);
+	se_perm<2, double> cycle(perm10, true);
+
+	se_label<2, double> irrep(bisa.get_block_index_dims(), testname);
+	irrep.assign(m, 0, 0);
+	irrep.assign(m, 1, 0);
+	irrep.assign(m, 2, 1);
+	irrep.add_target(0);
+
+	block_tensor_ctrl<2, double> ctrla(bta), ctrlb(btb);
+	ctrla.req_symmetry().insert(cycle);
+	ctrla.req_symmetry().insert(irrep);
+	ctrlb.req_symmetry().insert(cycle);
+	ctrlb.req_symmetry().insert(irrep);
+
+	irrep.add_target(1);
+	sym_ref.insert(irrep);
+	}
+
+	//	Load random data for input
+
+	btod_random<2>().perform(bta);
+	btod_random<2>().perform(btb);
+	bta.set_immutable();
+	tod_btconv<2>(bta).perform(ta);
+	tod_btconv<2>(btb).perform(tb_ref);
+
+	//	Apply functor
+
+	btod_apply_test_ns::exp_functor exp;
+	btod_apply<2, btod_apply_test_ns::exp_functor>(bta,
+			exp, -1.0).perform(btb);
+
+	{
+	block_tensor_ctrl<2, double> cb(btb);
+	compare_ref<2>::compare(testname, cb.req_const_symmetry(), sym_ref);
+	}
+
+	//	Compute the reference
+
+	tod_apply<2, btod_apply_test_ns::exp_functor>(ta,
+			exp, -1.0).perform(tb_ref);
+
+	//	Compare against the reference
+
+	tod_btconv<2>(btb).perform(tb);
+	compare_ref<2>::compare(testname, tb, tb_ref, 0.0);
+
+	} catch(exception &e) {
+		product_table_container::get_instance().erase(testname);
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+
+	product_table_container::get_instance().erase(testname);
 }
 
 /**	\test \f$ b_{ij} = b_{ij} + sin(a_{ij}) \f$, no symmetry, no blocks
