@@ -1,7 +1,10 @@
 #ifndef LIBTENSOR_LINALG_BASE_CBLAS_H
 #define LIBTENSOR_LINALG_BASE_CBLAS_H
 
+extern "C" { // Fixes older cblas.h versions without extern "C"
 #include <cblas.h>
+}
+
 #include "../generic/linalg_base_lowlevel.h"
 #include "../adaptive/linalg_base_highlevel.h"
 #include "../generic/linalg_base_memory_generic.h"
