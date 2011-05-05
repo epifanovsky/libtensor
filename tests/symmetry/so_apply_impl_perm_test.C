@@ -167,23 +167,32 @@ void so_apply_impl_perm_test::test_3(
 	so_apply_impl_perm_t op;
 	op.perform(params);
 
+	if(set2.is_empty())
+		fail_test(tnss.str().c_str(), __FILE__, __LINE__,
+				"set2.is_empty()");
+
+	symmetry_element_set_adapter<4, double, se_t> adapter(set2);
+	symmetry_element_set_adapter<4, double, se_t>::iterator i =
+			adapter.begin();
+	const se_t &elem1 = adapter.get_elem(i); i++;
 	if (is_asym) {
-		if(! set2.is_empty())
+		if(i != adapter.end())
 			fail_test(tnss.str().c_str(), __FILE__, __LINE__,
-					"! set2.is_empty()");
+					"Expected one element.");
+
+		if (! elem1.is_symm())
+			fail_test(tnss.str().c_str(), __FILE__, __LINE__,
+					"!elem1.is_symm()");
+
+		if (! elem1.get_perm().equals(permutation<4>().permute(1, 3))) {
+			fail_test(tnss.str().c_str(), __FILE__, __LINE__,
+					"Unexpected permutation in elem1.");
+		}
 	}
 	else {
-		if(set2.is_empty())
-			fail_test(tnss.str().c_str(), __FILE__, __LINE__,
-					"set2.is_empty()");
-
-		symmetry_element_set_adapter<4, double, se_t> adapter(set2);
-		symmetry_element_set_adapter<4, double, se_t>::iterator i =
-				adapter.begin();
-		const se_t &elem1 = adapter.get_elem(i); i++;
 		if(i == adapter.end())
 			fail_test(tnss.str().c_str(), __FILE__, __LINE__,
-					"Expected two elements.");
+				"Expected two elements.");
 
 		const se_t &elem2 = adapter.get_elem(i); i++;
 		if(i != adapter.end())
@@ -246,5 +255,6 @@ void so_apply_impl_perm_test::test_3(
 		fail_test(tnss.str().c_str(), __FILE__, __LINE__, e.what());
 	}
 }
+
 
 } // namespace libtensor

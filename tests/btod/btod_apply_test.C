@@ -713,6 +713,7 @@ void btod_apply_test::test_sym_5() throw(libtest::test_exception) {
 	ctrlb.req_symmetry().insert(irrep);
 
 	irrep.add_target(1);
+	sym_ref.insert(cycle);
 	sym_ref.insert(irrep);
 	}
 

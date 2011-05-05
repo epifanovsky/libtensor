@@ -52,15 +52,40 @@ void symmetry_operation_impl< so_apply<N, T>, se_part<N, T> >::do_perform(
 
 	params.grp2.clear();
 
-	// Result symmetry element set is empty, if functor is asymmetric
-	if (params.is_asym) return;
-
 	adapter_t adapter1(params.grp1);
-	for (typename adapter_t::iterator it1 = adapter1.begin();
+
+	// If functor is asymmetric, only positive mappings survive.
+	if (params.is_asym) {
+
+		for (typename adapter_t::iterator it1 = adapter1.begin();
 			it1 != adapter1.end(); it1++) {
 
-		const element_t &se1 = adapter1.get_elem(it1);
-		if (params.sign) {
+			const element_t &se1 = adapter1.get_elem(it1);
+			element_t se2(se1.get_bis(), se1.get_mask(), se1.get_npart());
+
+			const dimensions<N> &pdims = se1.get_pdims();
+			abs_index<N> ai(pdims);
+			do {
+				abs_index<N> bi(se1.get_direct_map(ai.get_index()), pdims);
+				if (ai.get_abs_index() >= bi.get_abs_index())
+					continue;
+
+				if (se1.get_sign(ai.get_index(), bi.get_index())) {
+					se2.add_map(ai.get_index(), bi.get_index());
+				}
+			} while (ai.inc());
+
+			se2.permute(params.perm1);
+			params.grp2.insert(se2);
+		}
+	}
+	// If functor is symmetric with respect to the y-axis all negative
+	// mappings become positive
+	else if (params.sign) {
+		for (typename adapter_t::iterator it1 = adapter1.begin();
+			it1 != adapter1.end(); it1++) {
+
+			const element_t &se1 = adapter1.get_elem(it1);
 			element_t se2(se1.get_bis(), se1.get_mask(), se1.get_npart());
 
 			const dimensions<N> &pdims = se1.get_pdims();
@@ -76,7 +101,12 @@ void symmetry_operation_impl< so_apply<N, T>, se_part<N, T> >::do_perform(
 			se2.permute(params.perm1);
 			params.grp2.insert(se2);
 		}
-		else {
+	}
+	else {
+		for (typename adapter_t::iterator it1 = adapter1.begin();
+			it1 != adapter1.end(); it1++) {
+
+			const element_t &se1 = adapter1.get_elem(it1);
 			element_t se2(se1);
 
 			se2.permute(params.perm1);

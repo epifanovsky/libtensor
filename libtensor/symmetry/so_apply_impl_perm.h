@@ -55,29 +55,29 @@ void symmetry_operation_impl< so_apply<N, T>, se_perm<N, T> >::do_perform(
 
 	params.grp2.clear();
 
-	// Result symmetry element set is empty, if functor is asymmetric
-	if (params.is_asym) return;
+	permutation_group<N, T> group;
 
-	adapter_t adapter1(params.grp1);
-	permutation_group<N, T> group(adapter1);
-	group.permute(params.perm1);
-
-	// If functor is symmetric
-	if (params.sign) {
-		symmetry_element_set<N, T> set(se_perm_t::k_sym_type);
-		group.convert(set);
-
-		adapter_t adapter(set);
+	adapter_t adapter(params.grp1);
+	if (params.is_asym) {
 		for (typename adapter_t::iterator it = adapter.begin();
 				it != adapter.end(); it++) {
 
 			const se_perm_t &el = adapter.get_elem(it);
-			params.grp2.insert(se_perm_t(el.get_perm(), true));
+			if (el.is_symm())
+				group.add_orbit(el.is_symm(), el.get_perm());
 		}
 	}
 	else {
-		group.convert(params.grp2);
+		for (typename adapter_t::iterator it = adapter.begin();
+				it != adapter.end(); it++) {
+
+			const se_perm_t &el = adapter.get_elem(it);
+			group.add_orbit(params.sign || el.is_symm(), el.get_perm());
+		}
 	}
+	group.permute(params.perm1);
+
+	group.convert(params.grp2);
 }
 
 

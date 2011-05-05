@@ -117,33 +117,33 @@ void so_apply_impl_part_test::test_2(
 	so_impl_part_t op;
 	op.perform(params);
 
+	if(set2.is_empty())
+		fail_test(tnss.str().c_str(), __FILE__, __LINE__,
+				"set2.is_empty().");
+
+	symmetry_element_set_adapter<2, double, se_t> ad2(set2);
+	symmetry_element_set_adapter<2, double, se_t>::iterator it = ad2.begin();
+
+	const se_t &elem2 = ad2.get_elem(it);
+	it++;
+	if(it != ad2.end())
+		fail_test(tnss.str().c_str(), __FILE__, __LINE__,
+				"Expected only one element.");
+
+	if (! elem2.map_exists(i00, i11))
+		fail_test(tnss.str().c_str(), __FILE__, __LINE__,
+				"Map [0, 0]->[1, 1] does not exist.");
+
+	if (! elem2.get_sign(i00, i11))
+		fail_test(tnss.str().c_str(), __FILE__, __LINE__,
+				"Wrong sign of map [0, 0]->[1, 1].");
+
 	if (is_asym) {
-		if(! set2.is_empty())
+		if (elem2.map_exists(i01, i10))
 			fail_test(tnss.str().c_str(), __FILE__, __LINE__,
-					"! set2.is_empty().");
+					"Map [0, 1]->[1, 0] does exist.");
 	}
 	else {
-		if(set2.is_empty())
-			fail_test(tnss.str().c_str(), __FILE__, __LINE__,
-					"set2.is_empty().");
-
-		symmetry_element_set_adapter<2, double, se_t> ad2(set2);
-		symmetry_element_set_adapter<2, double, se_t>::iterator it = ad2.begin();
-
-		const se_t &elem2 = ad2.get_elem(it);
-		it++;
-		if(it != ad2.end())
-			fail_test(tnss.str().c_str(), __FILE__, __LINE__,
-					"Expected only one element.");
-
-		if (! elem2.map_exists(i00, i11))
-			fail_test(tnss.str().c_str(), __FILE__, __LINE__,
-					"Map [0, 0]->[1, 1] does not exist.");
-
-		if (! elem2.get_sign(i00, i11))
-			fail_test(tnss.str().c_str(), __FILE__, __LINE__,
-					"Wrong sign of map [0, 0]->[1, 1].");
-
 		if (! elem2.map_exists(i01, i10))
 			fail_test(tnss.str().c_str(), __FILE__, __LINE__,
 					"Map [0, 1]->[1, 0] does not exist.");
@@ -209,33 +209,33 @@ void so_apply_impl_part_test::test_3(
 	so_impl_part_t op;
 	op.perform(params);
 
+	if (set2.is_empty())
+		fail_test(tnss.str().c_str(), __FILE__, __LINE__,
+				"set2.is_empty().");
+
+	symmetry_element_set_adapter<2, double, se_t> ad2(set2);
+	symmetry_element_set_adapter<2, double, se_t>::iterator it = ad2.begin();
+
+	const se_t &elem2 = ad2.get_elem(it);
+	it++;
+	if(it != ad2.end())
+		fail_test(tnss.str().c_str(), __FILE__, __LINE__,
+				"Expected only one element.");
+
+	if (! elem2.map_exists(i00, i10))
+		fail_test(tnss.str().c_str(), __FILE__, __LINE__,
+				"Map [0, 0]->[1, 0] does not exist.");
+
+	if (! elem2.get_sign(i00, i10))
+		fail_test(tnss.str().c_str(), __FILE__, __LINE__,
+				"Wrong sign of map [0, 0]->[1, 0].");
+
 	if (is_asym) {
-		if (! set2.is_empty())
+		if (elem2.map_exists(i01, i11))
 			fail_test(tnss.str().c_str(), __FILE__, __LINE__,
-					"!set2.is_empty().");
+					"Map [0, 1]->[1, 1] does exist.");
 	}
 	else {
-		if (set2.is_empty())
-			fail_test(tnss.str().c_str(), __FILE__, __LINE__,
-					"set2.is_empty().");
-
-		symmetry_element_set_adapter<2, double, se_t> ad2(set2);
-		symmetry_element_set_adapter<2, double, se_t>::iterator it = ad2.begin();
-
-		const se_t &elem2 = ad2.get_elem(it);
-		it++;
-		if(it != ad2.end())
-			fail_test(tnss.str().c_str(), __FILE__, __LINE__,
-					"Expected only one element.");
-
-		if (! elem2.map_exists(i00, i10))
-			fail_test(tnss.str().c_str(), __FILE__, __LINE__,
-					"Map [0, 0]->[1, 0] does not exist.");
-
-		if (! elem2.get_sign(i00, i10))
-			fail_test(tnss.str().c_str(), __FILE__, __LINE__,
-					"Wrong sign of map [0, 0]->[1, 0].");
-
 		if (! elem2.map_exists(i01, i11))
 			fail_test(tnss.str().c_str(), __FILE__, __LINE__,
 					"Map [0, 1]->[1, 1] does not exist.");
