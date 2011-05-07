@@ -186,6 +186,20 @@ block_index_space<N + M + K> btod_ewmult2<N, M, K>::make_bisc(
 template<size_t N, size_t M, size_t K>
 void btod_ewmult2<N, M, K>::make_symc() {
 
+/*
+	block_tensor_ctrl<k_ordera, double> ctrla(m_bta);
+	block_tensor_ctrl<k_orderb, double> ctrlb(m_btb);
+
+	//	Concatenate indexes: form symmetry of ij..pq..mn..pq..
+	block_index_space<k_ordera + k_orderb> bisab;
+	symmetry<k_ordera + k_orderb, double> symab(bisab);
+	permutation<k_ordera + k_orderb> permab;
+	so_concat<k_ordera, k_orderb, double>(ctrla.req_const_symmetry(),
+		ctrlb.req_const_symmetry(), permab).perform(symab);
+
+	//	Stabilize and remove the extra pq..
+	so_stabilize<k_ordera + k_orderb, K, 1, double> stab(symab);
+	stab.perform(m_symc);*/
 }
 
 
