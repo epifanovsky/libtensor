@@ -186,13 +186,76 @@ block_index_space<N + M + K> btod_ewmult2<N, M, K>::make_bisc(
 template<size_t N, size_t M, size_t K>
 void btod_ewmult2<N, M, K>::make_symc() {
 
+	block_index_space<k_ordera> bisa1(m_bta.get_bis());
+	bisa1.permute(m_perma);
+	block_index_space<k_orderb> bisb1(m_btb.get_bis());
+	bisb1.permute(m_permb);
+
+	dimensions<k_ordera> dimsa1(bisa1.get_dims());
+	dimensions<k_orderb> dimsb1(bisb1.get_dims());
+
+	//	Concatenate indexes: form bis for ij..pq..mn..pq..
+
+	index<k_ordera + k_orderb> iab1, iab2;
+	for(size_t i = 0; i < k_ordera; i++) iab2[i] = dimsa1[i] - 1;
+	for(size_t i = 0; i < k_orderb; i++) iab2[k_ordera + i] = dimsb1[i] - 1;
+	dimensions<k_ordera + k_orderb> dimsab(
+			index_range<k_ordera + k_orderb>(iab1, iab2));
+	block_index_space<k_ordera + k_orderb> bisab(dimsab);
+
+	mask<k_ordera + k_orderb> mdone;
+	for(size_t i = 0; i < K; i++) {
+		if(mdone[N + i]) continue;
+		mask<k_ordera + k_orderb> m;
+		size_t typa = bisa1.get_type(N + i);
+		for(size_t j = 0; j < k_ordera; j++) {
+			m[j] = bisa1.get_type(j) == typa;
+		}
+		size_t typb = bisb1.get_type(M + i);
+		for(size_t j = 0; j < k_orderb; j++) {
+			m[k_ordera + j] = bisb1.get_type(j) == typb;
+		}
+		const split_points &sp = bisa1.get_splits(typa);
+		for(size_t j = 0; j < sp.get_num_points(); j++) {
+			bisab.split(m, sp[j]);
+		}
+		mdone |= m;
+	}
+	for(size_t i = 0; i < N; i++) {
+		if(mdone[i]) continue;
+		mask<k_ordera + k_orderb> m;
+		size_t typa = bisa1.get_type(i);
+		for(size_t j = i; j < k_ordera; j++) {
+			m[j] = bisa1.get_type(j) == typa;
+		}
+		const split_points &sp = bisa1.get_splits(typa);
+		for(size_t j = 0; j < sp.get_num_points(); j++) {
+			bisab.split(m, sp[j]);
+		}
+		mdone |= m;
+	}
+	for(size_t i = 0; i < M; i++) {
+		if(mdone[k_ordera + i]) continue;
+		mask<k_ordera + k_orderb> m;
+		size_t typb = bisb1.get_type(i);
+		for(size_t j = i; j < k_orderb; j++) {
+			m[k_ordera + j] = bisb1.get_type(j) == typb;
+		}
+		const split_points &sp = bisb1.get_splits(typb);
+		for(size_t j = 0; j < sp.get_num_points(); j++) {
+			bisab.split(m, sp[j]);
+		}
+		mdone |= m;
+	}
+
+	//	Form symmetry of concatenated indexes
+
+	symmetry<k_ordera + k_orderb, double> symab(bisab);
+
 /*
 	block_tensor_ctrl<k_ordera, double> ctrla(m_bta);
 	block_tensor_ctrl<k_orderb, double> ctrlb(m_btb);
 
-	//	Concatenate indexes: form symmetry of ij..pq..mn..pq..
-	block_index_space<k_ordera + k_orderb> bisab;
-	symmetry<k_ordera + k_orderb, double> symab(bisab);
 	permutation<k_ordera + k_orderb> permab;
 	so_concat<k_ordera, k_orderb, double>(ctrla.req_const_symmetry(),
 		ctrlb.req_const_symmetry(), permab).perform(symab);

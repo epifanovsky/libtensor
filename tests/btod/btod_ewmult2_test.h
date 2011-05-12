@@ -20,6 +20,7 @@ private:
 	void test_3(bool doadd) throw(libtest::test_exception);
 	void test_4(bool doadd) throw(libtest::test_exception);
 	void test_5(bool doadd) throw(libtest::test_exception);
+	void test_6(bool doadd) throw(libtest::test_exception);
 
 };
 
