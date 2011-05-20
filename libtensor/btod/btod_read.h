@@ -151,12 +151,12 @@ void btod_read<N, Alloc>::perform(block_tensor_i<N, double> &bt) {
 	//	Read tensor elements from file into a buffer
 	//
 
-	typename Alloc::ptr_t buf_ptr = Alloc::allocate(dims.get_size());
-	double *buf = Alloc::lock(buf_ptr);
+	typename Alloc::pointer_type buf_ptr = Alloc::allocate(dims.get_size());
+	double *buf = Alloc::lock_rw(buf_ptr);
 
 	for(size_t i = 0; i < dims.get_size(); i++) {
 		if(!m_stream.good()) {
-			Alloc::unlock(buf_ptr); buf = 0;
+			Alloc::unlock_rw(buf_ptr); buf = 0;
 			Alloc::deallocate(buf_ptr);
 
 			throw_exc(k_clazz, method, "Unexpected end of stream.");
@@ -171,7 +171,7 @@ void btod_read<N, Alloc>::perform(block_tensor_i<N, double> &bt) {
 	btod_import_raw<N, Alloc>(buf, dims, m_zero_thresh, m_sym_thresh).
 		perform(bt);
 
-	Alloc::unlock(buf_ptr); buf = 0;
+	Alloc::unlock_rw(buf_ptr); buf = 0;
 	Alloc::deallocate(buf_ptr);
 
 	btod_read<N>::stop_timer();

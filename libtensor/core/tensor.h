@@ -136,7 +136,7 @@ public:
 
 public:
 	typedef T element_t; //!< Tensor element type
-	typedef typename Alloc::ptr_t ptr_t; //!< Memory pointer type
+	typedef typename Alloc::pointer_type ptr_t; //!< Memory pointer type
 	typedef typename tensor_i<N, T>::handle_t
 		handle_t; //!< Session handle type
 
@@ -232,7 +232,7 @@ const char *tensor<N, T, Alloc>::k_clazz = "tensor<N, T, Alloc>";
 
 template<size_t N, typename T, typename Alloc>
 tensor<N, T, Alloc>::tensor(const dimensions<N> &dims) :
-	m_dims(dims), m_data(Alloc::invalid_ptr), m_dataptr(0), m_ptrcount(0),
+	m_dims(dims), m_data(Alloc::invalid_pointer), m_dataptr(0), m_ptrcount(0),
 	m_sessions(8, 0), m_session_ptrcount(8, 0) {
 
 #ifdef LIBTENSOR_DEBUG
@@ -249,7 +249,7 @@ tensor<N, T, Alloc>::tensor(const dimensions<N> &dims) :
 template<size_t N, typename T, typename Alloc>
 tensor<N, T, Alloc>::tensor(const tensor_i<N, T> &t) :
 
-	m_dims(t.get_dims()), m_data(Alloc::invalid_ptr), m_dataptr(0),
+	m_dims(t.get_dims()), m_data(Alloc::invalid_pointer), m_dataptr(0),
 	m_ptrcount(0), m_sessions(8, 0), m_session_ptrcount(8, 0) {
 
 	m_data = Alloc::allocate(m_dims.get_size());
@@ -259,7 +259,7 @@ tensor<N, T, Alloc>::tensor(const tensor_i<N, T> &t) :
 template<size_t N, typename T, typename Alloc>
 tensor<N, T, Alloc>::tensor(const tensor<N, T, Alloc> &t) :
 
-	m_dims(t.m_dims), m_data(Alloc::invalid_ptr), m_dataptr(0),
+	m_dims(t.m_dims), m_data(Alloc::invalid_pointer), m_dataptr(0),
 	m_ptrcount(0), m_sessions(8, 0), m_session_ptrcount(8, 0) {
 
 	m_data = Alloc::allocate(m_dims.get_size());
@@ -270,7 +270,7 @@ template<size_t N, typename T, typename Alloc>
 tensor<N, T, Alloc>::~tensor() {
 
 	if(m_dataptr != 0) {
-		Alloc::unlock(m_data);
+		Alloc::unlock_rw(m_data);
 		m_dataptr = 0;
 	}
 	Alloc::deallocate(m_data);
@@ -347,7 +347,7 @@ T *tensor<N, T, Alloc>::on_req_dataptr(const handle_t &h) {
 	}
 
 	timings< tensor<N, T, Alloc> >::start_timer("lock");
-	m_dataptr = Alloc::lock(m_data);
+	m_dataptr = Alloc::lock_rw(m_data);
 	timings< tensor<N, T, Alloc> >::stop_timer("lock");
 	return m_dataptr;
 }
@@ -395,7 +395,7 @@ const T *tensor<N,T,Alloc>::on_req_const_dataptr(const handle_t &h) {
 	}
 
 	timings< tensor<N, T, Alloc> >::start_timer("lock");
-	m_dataptr = Alloc::lock(m_data);
+	m_dataptr = Alloc::lock_rw(m_data);
 	timings< tensor<N, T, Alloc> >::stop_timer("lock");
 	m_session_ptrcount[h] = 1;
 	m_ptrcount = 1;
@@ -425,7 +425,7 @@ inline void tensor<N, T, Alloc>::verify_session(size_t h) throw(bad_parameter) {
 template<size_t N, typename T, typename Alloc>
 inline void tensor<N, T, Alloc>::unlock_dataptr() {
 
-	Alloc::unlock(m_data);
+	Alloc::unlock_rw(m_data);
 	m_dataptr = 0;
 }
 
