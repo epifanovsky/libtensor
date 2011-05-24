@@ -13,6 +13,7 @@
 #include "diag/diag_operator.h"
 #include "direct_product/operator_direct_product.h"
 #include "dirsum/operator_dirsum.h"
+#include "ewmult/operator_ewmult.h"
 #include "mult/operator_div.h"
 #include "mult/operator_mult.h"
 #include "scale/operator_mul.h"

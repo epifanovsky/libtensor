@@ -4,6 +4,7 @@
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
 #include "../tod/tod_ewmult2.h"
+#include "../symmetry/so_concat.h"
 #include "bad_block_index_space.h"
 
 namespace libtensor {
@@ -186,6 +187,9 @@ block_index_space<N + M + K> btod_ewmult2<N, M, K>::make_bisc(
 template<size_t N, size_t M, size_t K>
 void btod_ewmult2<N, M, K>::make_symc() {
 
+	block_tensor_ctrl<k_ordera, double> ctrla(m_bta);
+	block_tensor_ctrl<k_orderb, double> ctrlb(m_btb);
+
 	block_index_space<k_ordera> bisa1(m_bta.get_bis());
 	bisa1.permute(m_perma);
 	block_index_space<k_orderb> bisb1(m_btb.get_bis());
@@ -252,14 +256,24 @@ void btod_ewmult2<N, M, K>::make_symc() {
 
 	symmetry<k_ordera + k_orderb, double> symab(bisab);
 
-/*
-	block_tensor_ctrl<k_ordera, double> ctrla(m_bta);
-	block_tensor_ctrl<k_orderb, double> ctrlb(m_btb);
-
-	permutation<k_ordera + k_orderb> permab;
+	sequence<k_ordera, size_t> seqa(0);
+	sequence<k_orderb, size_t> seqb(0);
+	sequence<k_ordera + k_orderb, size_t> seqab1(0), seqab2(0);
+	for(size_t i = 0; i < k_ordera; i++) seqa[i] = i;
+	for(size_t i = 0; i < k_orderb; i++) seqb[i] = i;
+	for(size_t i = 0; i < k_ordera; i++) {
+		seqab1[i] = i;
+		seqab2[i] = seqa[i];
+	}
+	for(size_t i = 0; i < k_orderb; i++) {
+		seqab1[k_ordera + i] = k_ordera + i;
+		seqab2[k_ordera + i] = k_ordera + seqb[i];
+	}
+	permutation_builder<k_ordera + k_orderb> permab(seqab2, seqab1);
 	so_concat<k_ordera, k_orderb, double>(ctrla.req_const_symmetry(),
-		ctrlb.req_const_symmetry(), permab).perform(symab);
+		ctrlb.req_const_symmetry(), permab.get_perm()).perform(symab);
 
+/*
 	//	Stabilize and remove the extra pq..
 	so_stabilize<k_ordera + k_orderb, K, 1, double> stab(symab);
 	stab.perform(m_symc);*/

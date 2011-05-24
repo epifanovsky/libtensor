@@ -13,6 +13,7 @@
 #include "direct_product_test.h"
 #include "dirsum_test.h"
 #include "dot_product_test.h"
+#include "ewmult_test.h"
 #include "expr_test.h"
 #include "labeled_btensor_test.h"
 #include "letter_expr_test.h"
@@ -47,6 +48,7 @@ namespace libtensor {
 	\li libtensor::direct_product_test
 	\li libtensor::dirsum_test
 	\li libtensor::dot_product_test
+	\li libtensor::ewmult_test
 	\li libtensor::expr_test
 	\li libtensor::labeled_btensor_test
 	\li libtensor::letter_test
@@ -69,6 +71,7 @@ private:
 	unit_test_factory<direct_product_test> m_utf_direct_product;
 	unit_test_factory<dirsum_test> m_utf_dirsum;
 	unit_test_factory<dot_product_test> m_utf_dot_product;
+	unit_test_factory<ewmult_test> m_utf_ewmult;
 	unit_test_factory<expr_test> m_utf_expr;
 	unit_test_factory<labeled_btensor_test> m_utf_labeled_btensor;
 	unit_test_factory<letter_test> m_utf_letter;

@@ -204,6 +204,7 @@ set(SRC_IFACE
 	iface/direct_product_test.C
 	iface/dirsum_test.C
 	iface/dot_product_test.C
+	iface/ewmult_test.C
 	iface/expr_test.C
 	iface/labeled_btensor_test.C
 	iface/letter_expr_test.C
