@@ -195,7 +195,7 @@ void btod_select<N, ComparePolicy>::perform(list_t &li, size_t n) {
 					tlist.clear();
 				}
 				else {
-					index<2> bidx2(bidx);
+					index<N> bidx2(bidx);
 					bidx2.permute(p);
 					ibt = li.insert(ibt, elem_t(bidx2, el.idx, el.value));
 					if (li.size() > n) li.pop_back();
