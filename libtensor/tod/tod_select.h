@@ -43,11 +43,15 @@ struct compare4absmin {
 	\tparam N Tensor order.
 	\tparam ComparePolicy Policy to select elements.
 
-	The operation selects a number of elements from a %tensor and adds them as
-	(index, value) to a given list. The elements are selected by the ordering
-	imposed on the elements by the compare policy. Zero elements are never
-	selected. The resulting list of elements is ordered according to the
+	The operation selects a number of elements from the %tensor and adds them
+	as (index, value) to a given list. The elements are selected by the
+	ordering imposed on the elements by the compare policy. Zero elements are
+	never selected. The resulting list of elements is ordered according to the
 	compare policy.
+
+	If a permutation and / or a coefficient are given in the construct, the
+	tensor elements are permuted and scaled before the list is constructed
+	(this does not affect the input tensor).
 
 	<b>Compare policy</b>
 
@@ -55,7 +59,7 @@ struct compare4absmin {
 	they are selected. Any type used as compare policy needs to implement a
 	function
 	<code>
-		bool operator( const double&, const double& )
+		bool operator(const double&, const double&)
 	</code>
 	which compares two %tensor elements. If the function returns true, the first
 	value is taken as the more optimal with respect to the compare policy.
@@ -78,6 +82,8 @@ public:
 
 private:
 	tensor_i<N, double> &m_t; //!< Tensor
+	permutation<N> m_perm; //!< Permutation of tensor
+	double m_c; //!< Scaling coefficient
 	compare_t m_cmp; //!< Compare policy object to select entries
 
 public:
@@ -88,8 +94,27 @@ public:
 		\param t Tensor.
 		\param cmp Compare policy object
 	 **/
-	tod_select(tensor_i<N, double> &t, compare_t cmp=compare4absmin() ) :
-		m_t(t), m_cmp(cmp) { }
+	tod_select(tensor_i<N, double> &t, compare_t cmp=compare4absmin()) :
+		m_t(t), m_c(1.0), m_cmp(cmp) { }
+
+	/** \brief Constuctor
+		\param t Tensor.
+		\param c Coefficient.
+		\param cmp Compare policy object.
+	 **/
+	tod_select(tensor_i<N, double> &t,
+			double c, compare_t cmp=compare4absmin()) :
+		m_t(t), m_c(c), m_cmp(cmp) { }
+
+	/** \brief Constuctor
+		\param t Tensor
+		\param p Permutation
+		\param c Coefficient
+		\param cmp Compare policy object.
+	 **/
+	tod_select(tensor_i<N, double> &t, const permutation<N> &p,
+			double c, compare_t cmp=compare4absmin()) :
+		m_t(t), m_perm(p), m_c(c), m_cmp(cmp) { }
 
 	//@}
 
@@ -115,6 +140,8 @@ void tod_select<N,ComparePolicy>::perform(list_t &li, size_t n) {
 	const dimensions<N> &d = m_t.get_dims();
 	const double *p = ctrl.req_const_dataptr();
 
+	bool do_perm = !m_perm.is_identity();
+
 	size_t i = 0;
 	while (i < d.get_size() && p[i] == 0.0) i++;
 
@@ -125,8 +152,9 @@ void tod_select<N,ComparePolicy>::perform(list_t &li, size_t n) {
 
 	if (li.empty()) {
 		index<N> idx;
-		d.abs_index(i,idx);
-		li.insert(li.end(),elem_t(idx,p[i]));
+		d.abs_index(i, idx);
+		if (do_perm) idx.permute(m_perm);
+		li.insert(li.end(), elem_t(idx, m_c * p[i]));
 		i++;
 	}
 
@@ -134,27 +162,30 @@ void tod_select<N,ComparePolicy>::perform(list_t &li, size_t n) {
 		//ignore zero elements
 		if (p[i] == 0.0) continue;
 
-		if (! m_cmp(p[i], li.back().value)) {
+		double val = p[i] * m_c;
+
+		if (! m_cmp(val, li.back().value)) {
 			if (li.size() < n) {
 				index<N> idx;
-				d.abs_index(i,idx);
-				li.push_back(elem_t(idx,p[i]));
+				d.abs_index(i, idx);
+				if (do_perm) idx.permute(m_perm);
+				li.push_back(elem_t(idx, val));
 			}
 		}
 		else {
 			if (li.size() == n) li.pop_back();
 
-			typename list_t::iterator it=li.begin();
-			while (it != li.end() && ! m_cmp(p[i], it->value)) it++;
+			typename list_t::iterator it = li.begin();
+			while (it != li.end() && ! m_cmp(val, it->value)) it++;
 			index<N> idx;
-			d.abs_index(i,idx);
-			li.insert(it, elem_t(idx,p[i]));
+			d.abs_index(i, idx);
+			if (do_perm) idx.permute(m_perm);
+			li.insert(it, elem_t(idx, val));
 		}
 	}
 
 	ctrl.ret_dataptr(p);
 }
-
 
 } // namespace libtensor
 

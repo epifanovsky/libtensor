@@ -24,11 +24,6 @@ namespace libtensor {
 	elements by the compare policy. Zero elements are never selected. The
 	resulting list of elements is ordered according to the compare policy.
 
-	TODO: The operation does not take proper care of blocks in an orbit whose
-	transformation coefficients are -1.0, if the compare policy does not compare
-	the absolute values. For the moment we do not need such select routine.
-	Still this should be fixed in future.
-
 	<b>Compare policy</b>
 
 	The compare policy type determines the ordering of block %tensor elements by
@@ -135,20 +130,26 @@ void btod_select<N, ComparePolicy>::perform(list_t &li, size_t n) {
 
 	static const char *method = "perform(list_t &, size_t)";
 
+	typedef tod_select<N, ComparePolicy> tselect_t;
+	typedef typename tselect_t::list_t tlist_t;
+	typedef typename tselect_t::elem_t telem_t;
+
 	if (n == 0) return;
 
-	block_tensor_ctrl<N, double> ctrl(m_bt);
 	const block_index_space<N> &bis = m_bt.get_bis();
-	const symmetry<N, double> &sym = ctrl.req_const_symmetry();
+	dimensions<N> bidims(bis.get_block_index_dims());
 
+	block_tensor_ctrl<N, double> ctrl(m_bt);
+	const symmetry<N, double> &sym = ctrl.req_const_symmetry();
 	orbit_list<N, double> ol(m_sym);
-	// loop over all orbits
+
+	// Loop over all orbits of imposed symmetry
 	for (typename orbit_list<N, double>::iterator iorb = ol.begin();
 			iorb != ol.end(); iorb++) {
 
 		index<N> blidx(ol.get_index(iorb));
+		// Get orbit of block in actual symmetry of bt
 		orbit<N, double> orb(sym, blidx);
-
 		if (! orb.is_allowed()) continue;
 
 		abs_index<N> cidx(orb.get_abs_canonical_index(),
@@ -157,21 +158,16 @@ void btod_select<N, ComparePolicy>::perform(list_t &li, size_t n) {
 		if (ctrl.req_is_zero_block(cidx.get_index())) continue;
 
 		const transf<N, double> &tr = orb.get_transf(blidx);
-
 		tensor_i<N, double> &t = ctrl.req_block(cidx.get_index());
 
-		typedef tod_select<N, ComparePolicy> tselect_t;
-
-		typename tselect_t::list_t tlist;
-		tselect_t(t, m_cmp).perform(tlist, n);
+		tlist_t tlist;
+		tselect_t(t, tr.get_perm(), tr.get_coeff(), m_cmp).perform(tlist, n);
 
 		typename list_t::iterator ibt = li.begin();
 		while (! tlist.empty()) {
 
-			typename tselect_t::elem_t &el = tlist.front();
+			telem_t &el = tlist.front();
 
-			el.value *= tr.get_coeff();
-			el.idx.permute(tr.get_perm());
 			while (ibt != li.end()) {
 				if (m_cmp(el.value, ibt->value)) break;
 				ibt++;

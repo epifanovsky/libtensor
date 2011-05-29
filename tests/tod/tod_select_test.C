@@ -15,15 +15,26 @@ void tod_select_test::perform() throw(libtest::test_exception) {
 
 	srand48(time(0));
 
-	test_1();
+	test_1<compare4absmax>(4, 1.0);
+	test_1<compare4absmax>(4, -2.0);
+	test_1<compare4min>(4, 0.5);
+	test_1<compare4min>(4, -1.0);
+
+	test_2<compare4absmin>(4, 1.0);
+	test_2<compare4absmin>(4, -0.5);
+	test_2<compare4max>(4, 2.0);
+	test_2<compare4max>(4, -1.0);
+
 }
 
-
-void tod_select_test::test_1() throw(libtest::test_exception) {
+template<typename ComparePolicy>
+void tod_select_test::test_1(size_t n, double c)
+		throw(libtest::test_exception) {
 
 	static const char *testname = "tod_select_test::test_1()";
 
 	typedef libvmm::std_allocator<double> allocator_t;
+	typedef typename tod_select<2, ComparePolicy>::list_t list_t;
 
 	try {
 
@@ -33,51 +44,67 @@ void tod_select_test::test_1() throw(libtest::test_exception) {
 	tensor<2, double, allocator_t> t(dims);
 
 	size_t sz;
-	{
-	tensor_ctrl<2, double> tc(t);
+	sz = dims.get_size();
 
+	{
+	//
 	//	Fill in random data
 	//
+	tensor_ctrl<2, double> tc(t);
 	double *d = tc.req_dataptr();
-	sz = dims.get_size();
+
 	for(size_t i = 0; i < sz; i++) d[i] = drand48();
+
 	tc.ret_dataptr(d); d = 0;
 
-	// compare4absmin
-	compare4absmin cmp;
-	tod_select<2> tsel(t, cmp);
-	typedef tod_select<2>::list_t list_t;
-	list_t li_am;
-	tsel.perform(li_am, 4);
+	}
 
-	list_t::iterator it=li_am.begin();
+	// Perform the operation
+	ComparePolicy cmp;
+	list_t li;
+	tod_select<2, ComparePolicy> tsel(t, c, cmp);
+	tsel.perform(li, n);
+
+	{ // Check the resulting list
+
+	tensor_ctrl<2, double> tc(t);
 	const double *cd = tc.req_const_dataptr();
-	while ( it != li_am.end() ) {
-		for (size_t i=0; i<sz; i++) {
-			if ( cd[i]==0.0 ) continue;
+	// Loop over all list elements
+	for (typename list_t::const_iterator it = li.begin();
+			it != li.end(); it++) {
 
-			if ( cmp(cd[i],it->value) ) {
-				list_t::iterator it2=li_am.begin();
-				bool ok=false;
-				while ( it2 != it ) {
-					if (cd[i] == it2->value &&
-							i == dims.abs_index(it2->idx))
-						ok=true;
-					it2++;
+		// Loop over all data elements in tensor
+		for (size_t i = 0; i < sz; i++) {
+
+			if (cd[i] == 0.0) continue;
+
+			double val = cd[i] * c;
+			if (cmp(val, it->value)) {
+
+				bool ok = false;
+				for (typename list_t::const_iterator it2 = li.begin();
+						it2 != it; it2++) {
+
+					if (val == it2->value &&
+							i == dims.abs_index(it2->idx)) {
+						ok = true; break;
+					}
 				}
-				if (!ok) {
+
+				if (! ok) {
 					std::ostringstream oss;
 					index<2> idx;
-					dims.abs_index(i,idx);
+					dims.abs_index(i, idx);
 					oss << "Unsorted list at element (" << it->idx << ", "
 							<< it->value << "). Found in tensor at "
 							<< idx << ", value = " << cd[i] << ".";
-					fail_test(testname,__FILE__,__LINE__,oss.str().c_str());
+					fail_test(testname, __FILE__, __LINE__,
+							oss.str().c_str());
 				}
 			}
-		}
-		it++;
-	}
+		} // for i
+	} // for it
+
 	}
 
 	} catch(exception &e) {
@@ -85,5 +112,93 @@ void tod_select_test::test_1() throw(libtest::test_exception) {
 	}
 }
 
+template<typename ComparePolicy>
+void tod_select_test::test_2(size_t n, double c)
+		throw(libtest::test_exception) {
+
+	static const char *testname = "tod_select_test::test_2()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+	typedef typename tod_select<3, ComparePolicy>::list_t list_t;
+
+	try {
+
+	permutation<3> perm; perm.permute(0, 1).permute(1, 2);
+	permutation<3> pinv(perm, true);
+	index<3> i1, i2;
+	i2[0] = 3; i2[1] = 4; i2[2] = 2;
+	dimensions<3> dims(index_range<3>(i1, i2));
+	tensor<3, double, allocator_t> t(dims);
+
+	size_t sz;
+	sz = dims.get_size();
+
+	{
+	//
+	//	Fill in random data
+	//
+	tensor_ctrl<3, double> tc(t);
+	double *d = tc.req_dataptr();
+
+	for(size_t i = 0; i < sz; i++) d[i] = drand48();
+
+	tc.ret_dataptr(d); d = 0;
+
+	}
+
+	// Perform the operation
+	ComparePolicy cmp;
+	list_t li;
+	tod_select<3, ComparePolicy> tsel(t, perm, c, cmp);
+	tsel.perform(li, n);
+
+	{ // Check the resulting list
+
+	tensor_ctrl<3, double> tc(t);
+	const double *cd = tc.req_const_dataptr();
+	// Loop over all list elements
+	for (typename list_t::const_iterator it = li.begin();
+			it != li.end(); it++) {
+
+		// Loop over all data elements in tensor
+		for (size_t i = 0; i < sz; i++) {
+
+			if (cd[i] == 0.0) continue;
+
+			double val = cd[i] * c;
+			if (cmp(val, it->value)) {
+
+				bool ok = false;
+				for (typename list_t::const_iterator it2 = li.begin();
+						it2 != it; it2++) {
+
+					index<3> idx(it2->idx);
+					idx.permute(pinv);
+					if (val == it2->value &&
+							i == dims.abs_index(idx)) {
+						ok = true; break;
+					}
+				}
+
+				if (! ok) {
+					std::ostringstream oss;
+					index<3> idx;
+					dims.abs_index(i, idx);
+					oss << "Unsorted list at element (" << it->idx << ", "
+							<< it->value << "). Found in tensor at "
+							<< idx << ", value = " << cd[i] << ".";
+					fail_test(testname, __FILE__, __LINE__,
+							oss.str().c_str());
+				}
+			}
+		} // for i
+	} // for it
+
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
 
 } // namespace libtensor

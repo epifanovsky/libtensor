@@ -14,11 +14,16 @@ public:
 	virtual void perform() throw(libtest::test_exception);
 
 private:
-	void test_1() throw(libtest::test_exception);
-	void test_2() throw(libtest::test_exception);
-	void test_3() throw(libtest::test_exception);
-	void test_4() throw(libtest::test_exception);
-	void test_5() throw(libtest::test_exception);
+	template<typename ComparePolicy>
+	void test_1(size_t n) throw(libtest::test_exception);
+	template<typename ComparePolicy>
+	void test_2(size_t n) throw(libtest::test_exception);
+	template<typename ComparePolicy>
+	void test_3(size_t n, bool symm) throw(libtest::test_exception);
+	template<typename ComparePolicy>
+	void test_4(size_t n, bool symm) throw(libtest::test_exception);
+	template<typename ComparePolicy>
+	void test_5(size_t n) throw(libtest::test_exception);
 };
 
 } // namespace libtensor
