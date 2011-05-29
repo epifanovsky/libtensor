@@ -237,7 +237,6 @@ void btod_select_test::test_3(size_t n,
 	btod_random<2>().perform(bt);
 	tod_btconv<2>(bt).perform(t_ref);
 
-
 	// Compute list
 	ComparePolicy cmp;
 	typename btod_select_t::list_t btlist;
@@ -245,7 +244,7 @@ void btod_select_test::test_3(size_t n,
 
 	// Compute reference list
 	typename tod_select_t::list_t tlist;
-	tod_select_t(t_ref, cmp).perform(tlist, n * 2);
+	tod_select_t(t_ref, cmp).perform(tlist, n);
 
 	// Compare against reference
 	double last_value = 0.0;
@@ -254,6 +253,14 @@ void btod_select_test::test_3(size_t n,
 
 		typename tod_select_t::list_t::const_iterator it = tlist.begin();
 		while (it != tlist.end() && it->value != ibt->value) it++;
+
+		if (it == tlist.end()) {
+			std::ostringstream oss;
+			oss << "List element not found in reference "
+					<< "(" << ibt->bidx << ", "
+					<< ibt->idx << ": " << ibt->value << ").";
+			fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
+		}
 
 		while (it != tlist.end() && it->value == ibt->value) {
 
@@ -265,7 +272,7 @@ void btod_select_test::test_3(size_t n,
 			it++;
 		}
 
-		if (it == tlist.end() || it->value != ibt->value) {
+		if (it->value != ibt->value) {
 			std::ostringstream oss;
 			oss << "List element not found in reference "
 					<< "(" << ibt->bidx << ", "

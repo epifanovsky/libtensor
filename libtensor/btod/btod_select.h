@@ -91,7 +91,6 @@ public:
 private:
 	btod_select(const btod_select<N, ComparePolicy> &);
 	const btod_select<N> &operator=(const btod_select<N, ComparePolicy> &);
-
 };
 
 template<size_t N, typename ComparePolicy>
@@ -144,49 +143,70 @@ void btod_select<N, ComparePolicy>::perform(list_t &li, size_t n) {
 	orbit_list<N, double> ol(m_sym);
 
 	// Loop over all orbits of imposed symmetry
-	for (typename orbit_list<N, double>::iterator iorb = ol.begin();
-			iorb != ol.end(); iorb++) {
+	for (typename orbit_list<N, double>::iterator iol = ol.begin();
+			iol != ol.end(); iol++) {
 
-		index<N> blidx(ol.get_index(iorb));
+		// Canonical index of block in imposed symmetry
+		index<N> bidx(ol.get_index(iol));
+
 		// Get orbit of block in actual symmetry of bt
-		orbit<N, double> orb(sym, blidx);
-		if (! orb.is_allowed()) continue;
+		orbit<N, double> oa(sym, bidx);
 
-		abs_index<N> cidx(orb.get_abs_canonical_index(),
+		// Check if this orbit is allowed
+		if (! oa.is_allowed()) continue;
+
+		abs_index<N> cidx(oa.get_abs_canonical_index(),
 				bis.get_block_index_dims());
 
+		// And non-zero
 		if (ctrl.req_is_zero_block(cidx.get_index())) continue;
 
-		const transf<N, double> &tr = orb.get_transf(blidx);
+		// If yes, obtain block
 		tensor_i<N, double> &t = ctrl.req_block(cidx.get_index());
 
-		tlist_t tlist;
-		tselect_t(t, tr.get_perm(), tr.get_coeff(), m_cmp).perform(tlist, n);
+		const transf<N, double> &tra = oa.get_transf(bidx);
 
-		typename list_t::iterator ibt = li.begin();
-		while (! tlist.empty()) {
+		// Loop over whole orbit of imposed symmetry
+		// and add elements from all blocks in orbit to the list.
+		orbit<N, double> ob(m_sym, bidx);
+		for (typename orbit<N, double>::iterator iob = ob.begin();
+				iob != ob.end(); iob++) {
 
-			telem_t &el = tlist.front();
+			const transf<N, double> &trb = ob.get_transf(iob);
 
-			while (ibt != li.end()) {
-				if (m_cmp(el.value, ibt->value)) break;
-				ibt++;
-			}
-			if (li.size() == n && ibt == li.end()) {
-				tlist.clear();
-			}
-			else {
-				ibt = li.insert(ibt, elem_t(blidx, el.idx, el.value));
-				if (li.size() > n) li.pop_back();
-				tlist.pop_front();
-				ibt++;
+			permutation<N> p(tra.get_perm());
+			p.permute(trb.get_perm());
+
+			tlist_t tlist;
+			tselect_t(t, p, tra.get_coeff() * trb.get_coeff(),
+					m_cmp).perform(tlist, n);
+
+			// Add the elements to the list
+			typename list_t::iterator ibt = li.begin();
+			while (! tlist.empty()) {
+
+				telem_t &el = tlist.front();
+
+				while (ibt != li.end()) {
+					if (m_cmp(el.value, ibt->value)) break;
+					ibt++;
+				}
+				if (li.size() == n && ibt == li.end()) {
+					tlist.clear();
+				}
+				else {
+					index<2> bidx2(bidx);
+					bidx2.permute(p);
+					ibt = li.insert(ibt, elem_t(bidx2, el.idx, el.value));
+					if (li.size() > n) li.pop_back();
+					tlist.pop_front();
+					ibt++;
+				}
 			}
 		}
-
 		ctrl.ret_block(cidx.get_index());
 	}
 }
-
 
 } // namespace libtensor
 
