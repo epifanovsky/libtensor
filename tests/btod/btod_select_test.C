@@ -10,6 +10,7 @@
 #include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/symmetry/product_table_container.h>
 #include <libtensor/symmetry/se_label.h>
+#include <libtensor/symmetry/se_part.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/tod/tod_btconv.h>
 #include <libtensor/tod/tod_select.h>
@@ -64,6 +65,11 @@ void btod_select_test::perform() throw(libtest::test_exception) {
 	test_5<compare4absmin>(12);
 	test_5<compare4max>(19);
 	test_5<compare4min>(3);
+
+	test_6<compare4absmax>(20);
+	test_6<compare4absmin>(30);
+	test_6<compare4max>(15);
+	test_6<compare4min>(8);
 
 	}
 	catch (...) {
@@ -411,7 +417,7 @@ void btod_select_test::test_5(size_t n) throw(libtest::test_exception) {
 	// Compute list
 	ComparePolicy cmp;
 	typename btod_select_t::list_t btlist;
-	btod_select_t(bt, sym, cmp).perform(btlist, 10);
+	btod_select_t(bt, sym, cmp).perform(btlist, n);
 
 	double last_value = 0.0;
 	index<2> vidx1, vidx2;
@@ -434,6 +440,103 @@ void btod_select_test::test_5(size_t n) throw(libtest::test_exception) {
 					<< "(" << last_value << " before " << ibt->value
 					<< " in list).";
 			fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
+		}
+		last_value = ibt->value;
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+/** \test Selecting elements from random block tensor with partition symmetry.
+ **/
+template<typename ComparePolicy>
+void btod_select_test::test_6(size_t n) throw(libtest::test_exception) {
+
+	static const char *testname = "btod_select_test::test_6()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+	typedef tod_select<2, ComparePolicy> tod_select_t;
+	typedef btod_select<2, ComparePolicy> btod_select_t;
+
+	try {
+
+	index<2> i1, i2; i2[0] = 5; i2[1] = 7;
+	dimensions<2> dims(index_range<2>(i1, i2));
+	block_index_space<2> bis(dims);
+	mask<2> m01, m10; m01[1] = true; m10[0] = true;
+	bis.split(m10, 3);
+	bis.split(m01, 4);
+	block_tensor<2, double, allocator_t> bt(bis);
+	tensor<2, double, allocator_t> t_ref(dims);
+	{
+	block_tensor_ctrl<2, double> cb(bt);
+	symmetry<2, double> &sym = cb.req_symmetry();
+	mask<2> m; m[0] = true; m[1] = true;
+	se_part<2, double> spx(bis, m, 2);
+	index<2> i00, i01, i10, i11;
+	i10[0] = 1; i01[1] = 1;
+	i11[0] = 1; i11[1] = 1;
+	spx.add_map(i00, i11);
+	spx.add_map(i01, i10);
+	sym.insert(spx);
+	}
+
+	//	Fill in random data
+	btod_random<2>().perform(bt);
+	tod_btconv<2>(bt).perform(t_ref);
+
+	// Compute list
+	ComparePolicy cmp;
+	typename btod_select_t::list_t btlist;
+	btod_select_t(bt, cmp).perform(btlist, n);
+
+	// Compute reference
+	typename tod_select_t::list_t tlist;
+	tod_select_t(t_ref, cmp).perform(tlist, n);
+
+	// Compare against reference
+	double last_value = 0.0;
+	for (typename btod_select_t::list_t::const_iterator ibt = btlist.begin();
+			ibt != btlist.end(); ibt++) {
+
+		typename tod_select_t::list_t::const_iterator it = tlist.begin();
+		while (it != tlist.end() && it->value != ibt->value) it++;
+
+		if (it == tlist.end()) {
+			std::ostringstream oss;
+			oss << "List element not found in reference "
+					<< "(" << ibt->bidx << ", "
+					<< ibt->idx << ": " << ibt->value << ").";
+			fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
+		}
+
+		while (it != tlist.end() && it->value == ibt->value) {
+
+			index<2> idx = bis.get_block_start(ibt->bidx);
+			idx[0] += ibt->idx[0];
+			idx[1] += ibt->idx[1];
+			if (idx.equals(it->idx)) break;
+
+			it++;
+		}
+
+		if (it->value != ibt->value) {
+			std::ostringstream oss;
+			oss << "List element not found in reference "
+					<< "(" << ibt->bidx << ", "
+					<< ibt->idx << ": " << ibt->value << ").";
+			fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
+		}
+
+		if (ibt != btlist.begin() && cmp(ibt->value, last_value)) {
+			std::ostringstream oss;
+			oss << "Invalid ordering of values "
+					<< "(" << last_value << " before " << ibt->value
+					<< " in list).";
+			fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
+
 		}
 		last_value = ibt->value;
 	}

@@ -24,6 +24,8 @@ private:
 	void test_4(size_t n, bool symm) throw(libtest::test_exception);
 	template<typename ComparePolicy>
 	void test_5(size_t n) throw(libtest::test_exception);
+	template<typename ComparePolicy>
+	void test_6(size_t n) throw(libtest::test_exception);
 };
 
 } // namespace libtensor

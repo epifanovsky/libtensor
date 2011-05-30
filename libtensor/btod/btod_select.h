@@ -16,19 +16,21 @@ namespace libtensor {
 	\tparam N Tensor order.
 	\tparam ComparePolicy Policy to select elements.
 
-	The operation selects a number of elements from a block %tensor and adds
-	them as (block %index, %index, value) data to a given list. If a symmetry
-	is given, this symmetry is imposed on the block tensor to select elements
-	from unique, non-zero blocks within this symmetry (the block tensor is not
-	modified by this). The elements	are selected by the ordering imposed on the
-	elements by the compare policy. Zero elements are never selected. The
-	resulting list of elements is ordered according to the compare policy.
+	The operation uses a block %tensor, a symmetry and a compare policy to
+	create an ordered list of n block %tensor elements as (block %index,
+	%index, value) data. The elements are selected from all blocks that are
+	allowed by symmetry and non-zero. If a symmetry is explicitly given,
+	this symmetry is imposed on the block %tensor (though the block tensor
+	is not modified). Thus, the elements from a block are first transformed
+	(if necessary) according to the the transformations of the specified
+	symmetry, before they are subjected to the compare policy to be selected
+	for the list.
 
 	<b>Compare policy</b>
 
-	The compare policy type determines the ordering of block %tensor elements by
-	which they are selected. Any type used as compare policy needs to implement
-	a function
+	The compare policy type determines the ordering of block %tensor elements
+	by which they are selected. Any type used as compare policy needs to
+	implement a function
 	<code>
 		bool operator( const double&, const double& )
 	</code>
@@ -57,6 +59,10 @@ public:
 	typedef std::list<elem_t> list_t; //!< List type for index-value pairs
 
 private:
+	typedef tod_select<N, compare_t> tod_select_t;
+	typedef typename tod_select_t::list_t tod_list_t;
+	typedef typename tod_select_t::elem_t tod_elem_t;
+
 	block_tensor_i<N, double> &m_bt; //!< Block tensor to select data from
 	symmetry<N, double> m_sym; //!< Symmetry imposed on block tensor
 	compare_t m_cmp; //!< Compare policy object to select entries
@@ -88,6 +94,11 @@ public:
 	 **/
 	void perform(list_t &li, size_t n);
 
+
+private:
+	void merge_lists(list_t &to, const index<N> &bidx,
+			const tod_list_t &from, size_t n);
+
 private:
 	btod_select(const btod_select<N, ComparePolicy> &);
 	const btod_select<N> &operator=(const btod_select<N, ComparePolicy> &);
@@ -114,7 +125,8 @@ btod_select<N, ComparePolicy>::btod_select(block_tensor_i<N, double> &bt,
 	m_bt(bt), m_sym(m_bt.get_bis()), m_cmp(cmp) {
 
 	static const char *method =
-			"btod_select(block_tensor_i<N, double>,	const symmetry<N, double> &, compare_t)";
+			"btod_select(block_tensor_i<N, double>,	"
+			"const symmetry<N, double> &, compare_t)";
 
 	if (! m_sym.get_bis().equals(sym.get_bis()))
 		throw bad_parameter(g_ns, k_clazz, method,
@@ -129,82 +141,91 @@ void btod_select<N, ComparePolicy>::perform(list_t &li, size_t n) {
 
 	static const char *method = "perform(list_t &, size_t)";
 
-	typedef tod_select<N, ComparePolicy> tselect_t;
-	typedef typename tselect_t::list_t tlist_t;
-	typedef typename tselect_t::elem_t telem_t;
-
 	if (n == 0) return;
+	li.clear();
 
 	const block_index_space<N> &bis = m_bt.get_bis();
 	dimensions<N> bidims(bis.get_block_index_dims());
 
 	block_tensor_ctrl<N, double> ctrl(m_bt);
 	const symmetry<N, double> &sym = ctrl.req_const_symmetry();
-	orbit_list<N, double> ol(m_sym);
 
 	// Loop over all orbits of imposed symmetry
+	orbit_list<N, double> ol(m_sym);
 	for (typename orbit_list<N, double>::iterator iol = ol.begin();
 			iol != ol.end(); iol++) {
 
-		// Canonical index of block in imposed symmetry
-		index<N> bidx(ol.get_index(iol));
+		abs_index<N> aia(ol.get_abs_index(iol), bidims);
 
-		// Get orbit of block in actual symmetry of bt
-		orbit<N, double> oa(sym, bidx);
-
-		// Check if this orbit is allowed
+		orbit<N, double> oa(sym, aia.get_index());
 		if (! oa.is_allowed()) continue;
 
-		abs_index<N> cidx(oa.get_abs_canonical_index(),
-				bis.get_block_index_dims());
+		abs_index<N> aib(oa.get_abs_canonical_index(), bidims);
+		if (ctrl.req_is_zero_block(aib.get_index())) continue;
 
-		// And non-zero
-		if (ctrl.req_is_zero_block(cidx.get_index())) continue;
+		// Obtain block
+		tensor_i<N, double> &t = ctrl.req_block(aib.get_index());
 
-		// If yes, obtain block
-		tensor_i<N, double> &t = ctrl.req_block(cidx.get_index());
+		const transf<N, double> &tra = oa.get_transf(aia.get_index());
 
-		const transf<N, double> &tra = oa.get_transf(bidx);
+		// Create element list for canonical block
+		tod_list_t tlc;
+		tod_select_t(t, tra.get_perm(), tra.get_coeff(), m_cmp).perform(tlc, n);
+		merge_lists(li, aia.get_index(), tlc, n);
 
 		// Loop over whole orbit of imposed symmetry
-		// and add elements from all blocks in orbit to the list.
-		orbit<N, double> ob(m_sym, bidx);
+		orbit<N, double> ob(m_sym, aia.get_index());
 		for (typename orbit<N, double>::iterator iob = ob.begin();
 				iob != ob.end(); iob++) {
 
+			abs_index<N> aic(ob.get_abs_index(iob), bidims);
 			const transf<N, double> &trb = ob.get_transf(iob);
 
-			permutation<N> p(tra.get_perm());
-			p.permute(trb.get_perm());
+			// Same index, identity transformation: skip block
+			if (aia.get_abs_index() == aic.get_abs_index() &&
+					trb.is_identity() && trb.get_coeff() == 1.0)
+				continue;
 
-			tlist_t tlist;
-			tselect_t(t, p, tra.get_coeff() * trb.get_coeff(),
-					m_cmp).perform(tlist, n);
+			// Identity transformation: add elements under different block
+			if (trb.is_identity() && trb.get_coeff() == 1.0) {
+				merge_lists(li, aic.get_index(), tlc, n);
+			}
+			// Permutation: add permuted elements
+			else {
+				permutation<N> pa(tra.get_perm());
+				pa.permute(trb.get_perm());
 
-			// Add the elements to the list
-			typename list_t::iterator ibt = li.begin();
-			while (! tlist.empty()) {
+				tod_list_t tlx;
+				tod_select_t(t, pa, tra.get_coeff() * trb.get_coeff(),
+						m_cmp).perform(tlx, n);
 
-				telem_t &el = tlist.front();
-
-				while (ibt != li.end()) {
-					if (m_cmp(el.value, ibt->value)) break;
-					ibt++;
-				}
-				if (li.size() == n && ibt == li.end()) {
-					tlist.clear();
-				}
-				else {
-					index<N> bidx2(bidx);
-					bidx2.permute(p);
-					ibt = li.insert(ibt, elem_t(bidx2, el.idx, el.value));
-					if (li.size() > n) li.pop_back();
-					tlist.pop_front();
-					ibt++;
-				}
+				merge_lists(li, aic.get_index(), tlx, n);
 			}
 		}
-		ctrl.ret_block(cidx.get_index());
+		ctrl.ret_block(aib.get_index());
+	}
+}
+
+template<size_t N, typename ComparePolicy>
+void btod_select<N, ComparePolicy>::merge_lists(
+		list_t &to, const index<N> &bidx, const tod_list_t &from, size_t n) {
+
+	typename list_t::iterator ibt = to.begin();
+	for (typename tod_list_t::const_iterator it = from.begin();
+			it != from.end(); it++) {
+
+		while (ibt != to.end()) {
+			if (m_cmp(it->value, ibt->value)) break;
+			ibt++;
+		}
+
+		if (to.size() == n && ibt == to.end()) {
+			return;
+		}
+
+		ibt = to.insert(ibt, elem_t(bidx, it->idx, it->value));
+		if (to.size() > n) to.pop_back();
+		ibt++;
 	}
 }
 
