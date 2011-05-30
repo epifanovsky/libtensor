@@ -16,15 +16,18 @@ namespace libtensor {
 	\tparam N Tensor order.
 	\tparam ComparePolicy Policy to select elements.
 
-	The operation uses a block %tensor, a symmetry and a compare policy to
-	create an ordered list of n block %tensor elements as (block %index,
-	%index, value) data. The elements are selected from all blocks that are
-	allowed by symmetry and non-zero. If a symmetry is explicitly given,
-	this symmetry is imposed on the block %tensor (though the block tensor
-	is not modified). Thus, the elements from a block are first transformed
-	(if necessary) according to the the transformations of the specified
-	symmetry, before they are subjected to the compare policy to be selected
-	for the list.
+	The operation uses a block %tensor, a %symmetry and a compare policy to
+	create an ordered list of block %tensor elements as (block %index,
+	%index, value) data. The optional %symmetry is employed to determine the
+	blocks from which elements can be selected. If it is not given, the
+	internal symmetry of the block %tensor is used instead.
+
+	Elements are selected exclusively from blocks which are unique, allowed,
+	and non-zero within the given symmetry. If the symmetry by which the
+	blocks are determined differs from the %symmetry of the block %tensor,
+	the unique blocks within both symmetries might differ. Is this the case,
+	a block present in the block %tensor might be transformed to yield the
+	unique block within the symmetry before elements are selected.
 
 	<b>Compare policy</b>
 
@@ -168,40 +171,40 @@ void btod_select<N, ComparePolicy>::perform(list_t &li, size_t n) {
 
 		const transf<N, double> &tra = oa.get_transf(aia.get_index());
 
-		// Create element list for canonical block
+		// Create element list for canonical block (within the symmetry)
 		tod_list_t tlc;
 		tod_select_t(t, tra.get_perm(), tra.get_coeff(), m_cmp).perform(tlc, n);
 		merge_lists(li, aia.get_index(), tlc, n);
 
-		// Loop over whole orbit of imposed symmetry
-		orbit<N, double> ob(m_sym, aia.get_index());
-		for (typename orbit<N, double>::iterator iob = ob.begin();
-				iob != ob.end(); iob++) {
-
-			abs_index<N> aic(ob.get_abs_index(iob), bidims);
-			const transf<N, double> &trb = ob.get_transf(iob);
-
-			// Same index, identity transformation: skip block
-			if (aia.get_abs_index() == aic.get_abs_index() &&
-					trb.is_identity() && trb.get_coeff() == 1.0)
-				continue;
-
-			// Identity transformation: add elements under different block
-			if (trb.is_identity() && trb.get_coeff() == 1.0) {
-				merge_lists(li, aic.get_index(), tlc, n);
-			}
-			// Permutation: add permuted elements
-			else {
-				permutation<N> pa(tra.get_perm());
-				pa.permute(trb.get_perm());
-
-				tod_list_t tlx;
-				tod_select_t(t, pa, tra.get_coeff() * trb.get_coeff(),
-						m_cmp).perform(tlx, n);
-
-				merge_lists(li, aic.get_index(), tlx, n);
-			}
-		}
+//		// Loop over whole orbit of imposed symmetry
+//		orbit<N, double> ob(m_sym, aia.get_index());
+//		for (typename orbit<N, double>::iterator iob = ob.begin();
+//				iob != ob.end(); iob++) {
+//
+//			abs_index<N> aic(ob.get_abs_index(iob), bidims);
+//			const transf<N, double> &trb = ob.get_transf(iob);
+//
+//			// Same index, identity transformation: skip block
+//			if (aia.get_abs_index() == aic.get_abs_index() &&
+//					trb.is_identity() && trb.get_coeff() == 1.0)
+//				continue;
+//
+//			// Identity transformation: add elements under different block
+//			if (trb.is_identity() && trb.get_coeff() == 1.0) {
+//				merge_lists(li, aic.get_index(), tlc, n);
+//			}
+//			// Permutation: add permuted elements
+//			else {
+//				permutation<N> pa(tra.get_perm());
+//				pa.permute(trb.get_perm());
+//
+//				tod_list_t tlx;
+//				tod_select_t(t, pa, tra.get_coeff() * trb.get_coeff(),
+//						m_cmp).perform(tlx, n);
+//
+//				merge_lists(li, aic.get_index(), tlx, n);
+//			}
+//		}
 		ctrl.ret_block(aib.get_index());
 	}
 }
