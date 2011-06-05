@@ -73,10 +73,18 @@ template<size_t N>
 void btod_set_elem<N>::perform(block_tensor_i<N, double> &bt,
 	const index<N> &bidx, const index<N> &idx, double d) {
 
+	static const char *method = "perform(block_tensor_i<N, double> &, "
+			"const index<N> &, const index<N> &, double)";
+
 	block_tensor_ctrl<N, double> ctrl(bt);
 
 	dimensions<N> bidims(bt.get_bis().get_block_index_dims());
 	orbit<N, double> o(ctrl.req_const_symmetry(), bidx);
+
+	if (! o.is_allowed())
+		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
+				"Block index not allowed by symmetry.");
+
 	const transf<N, double> &tr = o.get_transf(bidx);
 	abs_index<N> abidx(o.get_abs_canonical_index(), bidims);
 

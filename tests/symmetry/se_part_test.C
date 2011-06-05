@@ -14,10 +14,12 @@ void se_part_test::perform() throw(libtest::test_exception) {
 	test_3a();
 	test_3b();
 	test_4();
+	test_5();
 	test_perm_1();
 	test_perm_2();
 	test_perm_3();
 	test_perm_4();
+	test_perm_5();
 	test_exc();
 }
 
@@ -486,6 +488,113 @@ void se_part_test::test_4() throw(libtest::test_exception) {
 	}
 }
 
+/**	\test Two partitions, two blocks in each partition (2-dim), forbidden
+ **/
+void se_part_test::test_5() throw(libtest::test_exception) {
+
+	static const char *testname = "se_part_test::test_5()";
+
+	try {
+
+	index<2> i1, i2;
+	i2[0] = 9; i2[1] = 9;
+	block_index_space<2> bis(dimensions<2>(index_range<2>(i1, i2)));
+	mask<2> m11;
+	m11[0] = true; m11[1] = true;
+	bis.split(m11, 2);
+	bis.split(m11, 5);
+	bis.split(m11, 7);
+
+	index<2> i00, i01, i02, i03, i10, i11, i12, i13, i20, i21, i22, i23,
+		i30, i31, i32, i33;
+	i01[0] = 0; i01[1] = 1;
+	i02[0] = 0; i02[1] = 2;
+	i03[0] = 0; i03[1] = 3;
+	i10[0] = 1; i10[1] = 0;
+	i11[0] = 1; i11[1] = 1;
+	i12[0] = 1; i12[1] = 2;
+	i13[0] = 1; i13[1] = 3;
+	i20[0] = 2; i20[1] = 0;
+	i21[0] = 2; i21[1] = 1;
+	i22[0] = 2; i22[1] = 2;
+	i23[0] = 2; i23[1] = 3;
+	i30[0] = 3; i30[1] = 0;
+	i31[0] = 3; i31[1] = 1;
+	i32[0] = 3; i32[1] = 2;
+	i33[0] = 3; i33[1] = 3;
+
+	se_part<2, double> elem1(bis, m11, 2);
+	elem1.add_map(i00, i11);
+	elem1.mark_forbidden(i01);
+	elem1.mark_forbidden(i10);
+
+	index<2> i00a(i00), i01a(i01), i02a(i02), i03a(i03),
+		i10a(i10), i11a(i11), i12a(i12), i13a(i13),
+		i20a(i20), i21a(i21), i22a(i22), i23a(i23),
+		i30a(i30), i31a(i31), i32a(i32), i33a(i33);
+	elem1.apply(i00a);
+	if(!i00a.equals(i22)) {
+		fail_test(testname, __FILE__, __LINE__, "!i00a.equals(i22)");
+	}
+	elem1.apply(i01a);
+	if(!i01a.equals(i23)) {
+		fail_test(testname, __FILE__, __LINE__, "!i01a.equals(i23)");
+	}
+	if(elem1.is_allowed(i02)) {
+		fail_test(testname, __FILE__, __LINE__, "i02 is allowed.");
+	}
+	if(elem1.is_allowed(i03)) {
+		fail_test(testname, __FILE__, __LINE__, "i03 is allowed.");
+	}
+	elem1.apply(i10a);
+	if(!i10a.equals(i32)) {
+		fail_test(testname, __FILE__, __LINE__, "!i10a.equals(i32)");
+	}
+	elem1.apply(i11a);
+	if(!i11a.equals(i33)) {
+		fail_test(testname, __FILE__, __LINE__, "!i11a.equals(i33)");
+	}
+	if(elem1.is_allowed(i12)) {
+		fail_test(testname, __FILE__, __LINE__, "i12 is allowed.");
+	}
+	if(elem1.is_allowed(i13)) {
+		fail_test(testname, __FILE__, __LINE__, "i13 is allowed.");
+	}
+	if(elem1.is_allowed(i20)) {
+		fail_test(testname, __FILE__, __LINE__, "i20 is allowed.");
+	}
+	if(elem1.is_allowed(i21)) {
+		fail_test(testname, __FILE__, __LINE__, "i21 is allowed.");
+	}
+	elem1.apply(i22a);
+	if(!i22a.equals(i00)) {
+		fail_test(testname, __FILE__, __LINE__, "!i22a.equals(i00)");
+	}
+	elem1.apply(i23a);
+	if(!i23a.equals(i01)) {
+		fail_test(testname, __FILE__, __LINE__, "!i23a.equals(i01)");
+	}
+	if(elem1.is_allowed(i30)) {
+		fail_test(testname, __FILE__, __LINE__, "i30 is allowed.");
+	}
+	if(elem1.is_allowed(i31)) {
+		fail_test(testname, __FILE__, __LINE__, "i31 is allowed.");
+	}
+	elem1.apply(i32a);
+	if(!i32a.equals(i10)) {
+		fail_test(testname, __FILE__, __LINE__, "!i32a.equals(i10)");
+	}
+	elem1.apply(i33a);
+	if(!i33a.equals(i11)) {
+		fail_test(testname, __FILE__, __LINE__, "!i33a.equals(i11)");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
 /**	\test Permutation of se_part: two partitions, two or three blocks in
 		each partition (4-dim), block sizes vary for different dimensions
  **/
@@ -744,6 +853,74 @@ void se_part_test::test_perm_4() throw(libtest::test_exception) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
 	}
 }
+
+/**	\test Permutation of se_part: two partitions, two blocks in
+		each partition (2-dim), block sizes vary for different dimensions,
+		forbidden partitions
+ **/
+void se_part_test::test_perm_5() throw(libtest::test_exception) {
+
+	static const char *testname = "se_part_test::test_perm_5()";
+
+	try {
+
+	index<2> i1, i2;
+	i2[0] = 9; i2[1] = 19;
+	block_index_space<2> bis(dimensions<2>(index_range<2>(i1, i2)));
+	mask<2> m01, m10, m11;
+	m10[0] = true; m01[1] = true;
+	m11[0] = true; m11[1] = true;
+	bis.split(m10, 2);
+	bis.split(m10, 5);
+	bis.split(m10, 7);
+	bis.split(m01, 3);
+	bis.split(m01, 6);
+	bis.split(m01, 10);
+	bis.split(m01, 13);
+	bis.split(m01, 16);
+
+	index<2> i00, i01, i10, i11;
+	i10[0] = 1; i01[1] = 1;
+	i11[0] = 1; i11[1] = 1;
+
+	se_part<2, double> elem(bis, m11, 2);
+	elem.add_map(i01, i11, true);
+	elem.mark_forbidden(i00);
+	elem.mark_forbidden(i10);
+
+	permutation<2> perm; perm.permute(0, 1);
+	bis.permute(perm);
+
+	dimensions<2> pdims(index_range<2>(i00, i11));
+	mask<2> msk;
+	msk[0] = true; msk[1] = true;
+
+	elem.permute(perm);
+
+	if (! bis.equals(elem.get_bis())) {
+		fail_test(testname, __FILE__, __LINE__, "Wrong bis.");
+	}
+	if (! pdims.equals(elem.get_pdims())) {
+		fail_test(testname, __FILE__, __LINE__, "Wrong pdims.");
+	}
+	if (! msk.equals(elem.get_mask())) {
+		fail_test(testname, __FILE__, __LINE__, "Wrong mask.");
+	}
+	if (! elem.map_exists(i10, i11)) {
+		fail_test(testname, __FILE__, __LINE__, "Missing map: 10->11.");
+	}
+	if (! elem.is_forbidden(i00)) {
+		fail_test(testname, __FILE__, __LINE__, "i00 is allowed.");
+	}
+	if (! elem.is_forbidden(i01)) {
+		fail_test(testname, __FILE__, __LINE__, "i01 is allowed.");
+	}
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
 
 /**	\test Two partitions, blocks with unequal size in each partition (2-dim)
  **/

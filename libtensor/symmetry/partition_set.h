@@ -115,7 +115,7 @@ public:
 	 	indexes of the mappings have to be identical. The sign of the result
 	 	mapping is then determined by both signs of the mappings, i.e. if both
 	 	signs are identical, the resulting sign is positive (true), or if the
-	 	signs are opposite, the resuling sign is negative (false).
+	 	signs are opposite, the resulting sign is negative (false).
 	 **/
 	void intersect(const partition_set<N, T> &set, bool mult = false);
 
@@ -382,6 +382,21 @@ void partition_set<N, T>::intersect(const partition_set<N, T> &set, bool mult) {
 			abs_index<N> ai(x1->get_pdims());
 			do {
 				const index<N> &i1 = ai.get_index();
+//				if (! x1->has_map(i1) && ! x2->has_map(i1)) {
+//					new_part->mark_forbidden(i1);
+//					continue;
+//				}
+//
+//				if (! x1->has_map(i1)) {
+//					index<N> i2 = x2->get_direct_map(i1);
+//					new_part->add_map(i1, i2, x2->get_sign(i1, i2));
+//				}
+//
+//				if (! x2->has_map(i1)) {
+//					index<N> i2 = x1->get_direct_map(i1);
+//					new_part->add_map(i1, i2, x1->get_sign(i1, i2));
+//				}
+
 				index<N> i2 = x1->get_direct_map(i1);
 				while (! i2.equals(i1)) {
 					if (x2->map_exists(i1, i2)) {

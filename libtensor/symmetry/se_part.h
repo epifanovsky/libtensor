@@ -70,8 +70,6 @@ public:
 
 	//@}
 
-
-
 	//!	\name Manipulations
 	//@{
 
@@ -81,6 +79,12 @@ public:
 		\param sign Sign of the mapping (true positive, false negative)
 	 **/
 	void add_map(const index<N> &idx1, const index<N> &idx2, bool sign = true);
+
+	/** \brief Marks a partition as not allowed (i.e. all blocks in it
+			are not allowed)
+	 	\param idx Partition %index.
+	 **/
+	void mark_forbidden(const index<N> &idx);
 
 	//@}
 
@@ -103,6 +107,14 @@ public:
 	const dimensions<N> &get_pdims() const {
 		return m_pdims;
 	}
+
+	/** \brief Checks if the partition is forbidden
+		\param idx Partition %index
+
+		This function yields similar functionality as is_allowed(), but it
+		answers the negative question for partitions instead of blocks.
+	 **/
+	bool is_forbidden(const index<N> &idx) const;
 
 	/** \brief Returns the index to which idx is mapped directly
 			(refers to forward mapping)
@@ -159,10 +171,7 @@ public:
 
 	/**	\copydoc symmetry_element_i<N, T>::is_allowed
 	 **/
-	virtual bool is_allowed(const index<N> &idx) const {
-
-		return true;
-	}
+	virtual bool is_allowed(const index<N> &idx) const;
 
 	/**	\copydoc symmetry_element_i<N, T>::apply(index<N>&)
 	 **/
@@ -259,11 +268,11 @@ void se_part<N, T>::add_map(
 
 #ifdef LIBTENSOR_DEBUG
 	if(!is_valid_pidx(idx1)) {
-		throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
+		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
 			"idx1");
 	}
 	if(!is_valid_pidx(idx2)) {
-		throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
+		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
 			"idx2");
 	}
 #endif // LIBTENSOR_DEBUG
@@ -282,9 +291,10 @@ void se_part<N, T>::add_map(
 		ax = axf; axf = m_fmap[ax];
 	}
 	if (ax == b) {
-		if (sx != sign)
-			throw bad_parameter(g_ns, k_clazz, method,
-					__FILE__, __LINE__, "Mapping exists with different sign.");
+		if (sx != sign) {
+			throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
+					"Mapping exists with different sign.");
+		}
 
 		return;
 	}
@@ -310,6 +320,31 @@ void se_part<N, T>::add_map(
 }
 
 template<size_t N, typename T>
+void se_part<N, T>::mark_forbidden(const index<N> &idx) {
+
+	static const char *method = "mark_forbidden(const index<N>&)";
+
+#ifdef LIBTENSOR_DEBUG
+	if(!is_valid_pidx(idx)) {
+		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__, "idx");
+	}
+#endif // LIBTENSOR_DEBUG
+
+	abs_index<N> aidx(idx, m_pdims);
+	size_t a = aidx.get_abs_index();
+
+	size_t af = m_fmap[a];
+	m_fmap[a] = (size_t) -1;
+	m_rmap[a] = (size_t) -1;
+	while (af != a) {
+		size_t ax = af;
+		af = m_fmap[ax];
+		m_fmap[ax] = (size_t) -1;
+		m_rmap[ax] = (size_t) -1;
+	}
+}
+
+template<size_t N, typename T>
 size_t se_part<N, T>::get_npart() const {
 
 	for (size_t i = 0; i < N; i++) if (m_mask[i]) return m_pdims[i];
@@ -317,17 +352,33 @@ size_t se_part<N, T>::get_npart() const {
 }
 
 template<size_t N, typename T>
+bool se_part<N, T>::is_forbidden(const index<N> &idx) const {
+
+	abs_index<N> apidx(idx, m_pdims);
+	return (m_fmap[apidx.get_abs_index()] != (size_t) -1);
+}
+
+template<size_t N, typename T>
 index<N> se_part<N, T>::get_direct_map(const index<N> &idx) const {
 
-	abs_index<N> ai(idx, m_pdims);
-	abs_index<N> aif(m_fmap[ai.get_abs_index()], m_pdims);
-	return aif.get_index();
+	static const char *method = "get_direct_map(const index<N>&)";
+
+	abs_index<N> apidx(idx, m_pdims);
+#ifdef LIBTENSOR_DEBUG
+	if (m_fmap[apidx.get_abs_index()] == (size_t) -1)
+		throw bad_parameter(g_ns, k_clazz, method,
+				__FILE__, __LINE__, "Partition is not allowed.");
+#endif
+
+	abs_index<N> afpidx(m_fmap[apidx.get_abs_index()], m_pdims);
+	return afpidx.get_index();
 }
 
 template<size_t N, typename T>
 bool se_part<N, T>::get_sign(const index<N> &from, const index<N> &to) const {
 
-	static const char *method = "get_sign(const index<N> &, const index<N> &)";
+	static const char *method = "get_sign(const index<N>&, const index<N>&)";
+
 	size_t a = abs_index<N>(from, m_pdims).get_abs_index();
 	size_t b = abs_index<N>(to, m_pdims).get_abs_index();
 
@@ -369,6 +420,17 @@ bool se_part<N, T>::is_valid_bis(const block_index_space<N> &bis) const {
 }
 
 template<size_t N, typename T>
+bool se_part<N, T>::is_allowed(const index<N> &idx) const {
+
+	index<N> pidx;
+	for (register size_t i = 0; i < N; i++) {
+		if (m_mask[i]) pidx[i] = idx[i] * m_pdims[i] / m_bidims[i];
+	}
+	return !is_forbidden(pidx);
+}
+
+
+template<size_t N, typename T>
 void se_part<N, T>::permute(const permutation<N> &perm) {
 
 	if (perm.is_identity()) return;
@@ -407,6 +469,12 @@ void se_part<N, T>::permute(const permutation<N> &perm) {
 			ia.permute(perm);
 			abs_index<N> naia(ia, m_pdims);
 
+			if (fmap[i] == (size_t) -1) {
+				m_fmap[naia.get_abs_index()] =
+						m_rmap[naia.get_abs_index()] = (size_t) -1;
+				continue;
+			}
+
 			abs_index<N> aib(fmap[i], pdims);
 			index<N> ib(aib.get_index());
 			ib.permute(perm);
@@ -432,6 +500,8 @@ void se_part<N, T>::apply(index<N> &idx) const {
 template<size_t N, typename T>
 void se_part<N, T>::apply(index<N> &idx, transf<N, T> &tr) const {
 
+	static const char *method = "apply(index<N> &, transf<N, T> &)";
+
 	//	Determine partition index and offset within partition
 	//
 	index<N> pidx, poff;
@@ -449,6 +519,10 @@ void se_part<N, T>::apply(index<N> &idx, transf<N, T> &tr) const {
 	//	Map the partition index
 	//
 	abs_index<N> apidx(pidx, m_pdims);
+	if (m_fmap[apidx.get_abs_index()] == (size_t) -1)
+		throw bad_parameter(g_ns, k_clazz, method,
+				__FILE__, __LINE__, "Index is not allowed.");
+
 	abs_index<N> apidx_mapped(m_fmap[apidx.get_abs_index()], m_pdims);
 	pidx = apidx_mapped.get_index();
 
@@ -516,8 +590,7 @@ dimensions<N> se_part<N, T>::make_pdims(const block_index_space<N> &bis,
 			for(size_t k = 1; k < np; k++) {
 				if(pts[k * psz + j - 1] != pt0 + k * d) {
 					throw bad_symmetry(g_ns, k_clazz,
-						method, __FILE__, __LINE__,
-						"bis");
+						method, __FILE__, __LINE__, "bis");
 				}
 			}
 		}
