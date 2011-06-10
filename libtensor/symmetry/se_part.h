@@ -82,6 +82,10 @@ public:
 
 	/** \brief Marks a partition as not allowed (i.e. all blocks in it
 			are not allowed)
+
+		If a mapping exist that includes the partition, the partition is
+		removed from it, and the sign of the new mapping is adjusted.
+
 	 	\param idx Partition %index.
 	 **/
 	void mark_forbidden(const index<N> &idx);
@@ -283,6 +287,16 @@ void se_part<N, T>::add_map(
 	if(a == b) return;
 	if(a > b) std::swap(a, b);
 
+	// If a was forbidden allow it (create a one-loop)
+	if (m_fmap[a] == (size_t) -1) {
+		m_fmap[a] = a; m_rmap[a] = a;
+	}
+
+	// If b was forbidden allow it (create a one-loop)
+	if (m_fmap[b] == (size_t) -1) {
+		m_fmap[b] = b; m_rmap[b] = b;
+	}
+
 	// check if b is in the same loop as a
 	size_t ax = a, axf = m_fmap[ax];
 	bool sx = true;
@@ -333,15 +347,11 @@ void se_part<N, T>::mark_forbidden(const index<N> &idx) {
 	abs_index<N> aidx(idx, m_pdims);
 	size_t a = aidx.get_abs_index();
 
-	size_t af = m_fmap[a];
+	size_t af = m_fmap[a], ar = m_rmap[a];
+	m_fmap[ar] = af; m_rmap[af] = ar;
+	m_fsign[ar] = (m_fsign[ar] == m_fsign[a]);
 	m_fmap[a] = (size_t) -1;
 	m_rmap[a] = (size_t) -1;
-	while (af != a) {
-		size_t ax = af;
-		af = m_fmap[ax];
-		m_fmap[ax] = (size_t) -1;
-		m_rmap[ax] = (size_t) -1;
-	}
 }
 
 template<size_t N, typename T>
@@ -355,7 +365,7 @@ template<size_t N, typename T>
 bool se_part<N, T>::is_forbidden(const index<N> &idx) const {
 
 	abs_index<N> apidx(idx, m_pdims);
-	return (m_fmap[apidx.get_abs_index()] != (size_t) -1);
+	return (m_fmap[apidx.get_abs_index()] == (size_t) -1);
 }
 
 template<size_t N, typename T>
@@ -405,8 +415,11 @@ bool se_part<N, T>::map_exists(
 	size_t b = abs_index<N>(to, m_pdims).get_abs_index();
 
 	if (a > b) std::swap(a, b);
+	if (m_fmap[a] == (size_t) -1) return false;
+	if (m_fmap[b] == (size_t) -1) return false;
 
 	size_t x = m_fmap[a];
+
 	while (x != b && a < x) {
 		x = m_fmap[x];
 	}
@@ -424,7 +437,13 @@ bool se_part<N, T>::is_allowed(const index<N> &idx) const {
 
 	index<N> pidx;
 	for (register size_t i = 0; i < N; i++) {
-		if (m_mask[i]) pidx[i] = idx[i] * m_pdims[i] / m_bidims[i];
+		if (m_pdims[i] == 1) {
+			pidx[i] = 0;
+		}
+		else {
+			register size_t n = m_bidims[i] / m_pdims[i];
+			pidx[i] = idx[i] / n;
+		}
 	}
 	return !is_forbidden(pidx);
 }
