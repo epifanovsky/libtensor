@@ -83,8 +83,8 @@ public:
 	/** \brief Marks a partition as not allowed (i.e. all blocks in it
 			are not allowed)
 
-		If a mapping exist that includes the partition, the partition is
-		removed from it, and the sign of the new mapping is adjusted.
+		If a mapping exist that includes the partition, all partitions in the
+		mapping are marked as forbidden.
 
 	 	\param idx Partition %index.
 	 **/
@@ -347,11 +347,17 @@ void se_part<N, T>::mark_forbidden(const index<N> &idx) {
 	abs_index<N> aidx(idx, m_pdims);
 	size_t a = aidx.get_abs_index();
 
-	size_t af = m_fmap[a], ar = m_rmap[a];
-	m_fmap[ar] = af; m_rmap[af] = ar;
-	m_fsign[ar] = (m_fsign[ar] == m_fsign[a]);
-	m_fmap[a] = (size_t) -1;
-	m_rmap[a] = (size_t) -1;
+	if (m_fmap[a] == (size_t) -1) return;
+
+	size_t af = m_fmap[a];
+	while (af != a) {
+		size_t ax = af;
+		af = m_fmap[ax];
+		m_fmap[ax] = (size_t) -1;
+		m_rmap[ax] = (size_t) -1;
+	}
+    m_fmap[a] = (size_t) -1;
+    m_rmap[a] = (size_t) -1;
 }
 
 template<size_t N, typename T>
@@ -538,9 +544,9 @@ void se_part<N, T>::apply(index<N> &idx, transf<N, T> &tr) const {
 	//	Map the partition index
 	//
 	abs_index<N> apidx(pidx, m_pdims);
-	if (m_fmap[apidx.get_abs_index()] == (size_t) -1)
-		throw bad_parameter(g_ns, k_clazz, method,
-				__FILE__, __LINE__, "Index is not allowed.");
+	if (m_fmap[apidx.get_abs_index()] == (size_t) -1) return;
+//		throw bad_parameter(g_ns, k_clazz, method,
+//				__FILE__, __LINE__, "Index is not allowed.");
 
 	abs_index<N> apidx_mapped(m_fmap[apidx.get_abs_index()], m_pdims);
 	pidx = apidx_mapped.get_index();

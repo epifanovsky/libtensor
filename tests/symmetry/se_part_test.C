@@ -623,61 +623,22 @@ void se_part_test::test_6() throw(libtest::test_exception) {
 	i11[0] = 1; i11[1] = 1;
 
 	se_part<2, double> elem1(bis, m11, 2), elem2(bis, m11, 2);
-	elem1.add_map(i00, i01, true);
+	elem1.add_map(i00, i11, true);
 	elem1.add_map(i01, i10, false);
-	elem1.add_map(i10, i11, false);
 	elem1.mark_forbidden(i01);
 
-	if (elem1.map_exists(i00, i01)) {
-		fail_test(testname, __FILE__, __LINE__, "Map (i00->i01) exists.");
-	}
-	if (! elem1.map_exists(i00, i10)) {
-		fail_test(testname, __FILE__, __LINE__,
-				"Map (i00->i10) does not exist.");
-	}
-	if (elem1.get_sign(i00, i10)) {
-		fail_test(testname, __FILE__, __LINE__, "Map (i00->i10) is symm.");
-	}
+    if (elem1.map_exists(i00, i01)) {
+        fail_test(testname, __FILE__, __LINE__, "Map (i00->i01) exists.");
+    }
+    if (elem1.map_exists(i00, i10)) {
+        fail_test(testname, __FILE__, __LINE__, "Map (i00->i10) exists.");
+    }
 	if (! elem1.map_exists(i00, i11)) {
 		fail_test(testname, __FILE__, __LINE__,
-				"Map (i00->i11) does not exist.");
+		        "Map (i00->i11) does not exist.");
 	}
 	if (! elem1.get_sign(i00, i11)) {
-		fail_test(testname, __FILE__, __LINE__, "Map (i00->i11) is asymm.");
-	}
-	if (! elem1.is_forbidden(i01)) {
-		fail_test(testname, __FILE__, __LINE__, "i01 is not forbidden.");
-	}
-	if (elem1.map_exists(i01, i10)) {
-		fail_test(testname, __FILE__, __LINE__,
-				"Map (i01->i10) exists.");
-	}
-	if (elem1.map_exists(i01, i11)) {
-		fail_test(testname, __FILE__, __LINE__,
-				"Map (i01->i11) exists.");
-	}
-	if (! elem1.map_exists(i10, i11)) {
-		fail_test(testname, __FILE__, __LINE__,
-				"Map (i10->i11) does not exist.");
-	}
-	if (elem1.get_sign(i10, i11)) {
-		fail_test(testname, __FILE__, __LINE__, "Map (i10->i11) is symm.");
-	}
-
-	elem1.mark_forbidden(i10);
-
-	if (elem1.map_exists(i00, i01)) {
-		fail_test(testname, __FILE__, __LINE__, "Map (i00->i01) exists.");
-	}
-	if (elem1.map_exists(i00, i10)) {
-		fail_test(testname, __FILE__, __LINE__, "Map (i00->i10) exists.");
-	}
-	if (! elem1.map_exists(i00, i11)) {
-		fail_test(testname, __FILE__, __LINE__,
-				"Map (i00->i11) does not exist.");
-	}
-	if (! elem1.get_sign(i00, i11)) {
-		fail_test(testname, __FILE__, __LINE__, "Map (i00->i11) is asymm.");
+		fail_test(testname, __FILE__, __LINE__, "Map (i00->i10) is asymm.");
 	}
 	if (! elem1.is_forbidden(i01)) {
 		fail_test(testname, __FILE__, __LINE__, "i01 is not forbidden.");
@@ -688,17 +649,23 @@ void se_part_test::test_6() throw(libtest::test_exception) {
 	if (elem1.map_exists(i01, i11)) {
 		fail_test(testname, __FILE__, __LINE__, "Map (i01->i11) exists.");
 	}
-	if (! elem1.is_forbidden(i10)) {
-		fail_test(testname, __FILE__, __LINE__, "i10 is not forbidden.");
-	}
+    if (! elem1.is_forbidden(i10)) {
+        fail_test(testname, __FILE__, __LINE__, "i10 is not forbidden.");
+    }
 	if (elem1.map_exists(i10, i11)) {
 		fail_test(testname, __FILE__, __LINE__, "Map (i10->i11) exists.");
 	}
 
-	elem1.add_map(i01, i10, true);
-	if (elem1.map_exists(i00, i01)) {
-		fail_test(testname, __FILE__, __LINE__, "Map (i00->i01) exists.");
+
+	elem1.add_map(i00, i01, false);
+
+	if (! elem1.map_exists(i00, i01)) {
+		fail_test(testname, __FILE__, __LINE__,
+		        "Map (i00->i01) does not exist.");
 	}
+    if (elem1.get_sign(i00, i01)) {
+        fail_test(testname, __FILE__, __LINE__, "Map (i00->i01) is symm.");
+    }
 	if (elem1.map_exists(i00, i10)) {
 		fail_test(testname, __FILE__, __LINE__, "Map (i00->i10) exists.");
 	}
@@ -712,19 +679,73 @@ void se_part_test::test_6() throw(libtest::test_exception) {
 	if (elem1.is_forbidden(i01)) {
 		fail_test(testname, __FILE__, __LINE__, "i01 is forbidden.");
 	}
-	if (! elem1.map_exists(i01, i10)) {
+	if (elem1.map_exists(i01, i10)) {
+		fail_test(testname, __FILE__, __LINE__, "Map (i01->i10) exists.");
+	}
+	if (! elem1.map_exists(i01, i11)) {
 		fail_test(testname, __FILE__, __LINE__,
-				"Map (i01->i10) does not exists.");
+		        "Map (i01->i11) does not exist.");
 	}
-	if (! elem1.get_sign(i01, i10)) {
-		fail_test(testname, __FILE__, __LINE__, "Map (i01->i10) is asymm.");
-	}
-	if (elem1.map_exists(i01, i11)) {
-		fail_test(testname, __FILE__, __LINE__, "Map (i01->i11) exists.");
-	}
+    if (elem1.get_sign(i01, i11)) {
+        fail_test(testname, __FILE__, __LINE__, "Map (i00->i11) is symm.");
+    }
+    if (! elem1.is_forbidden(i10)) {
+        fail_test(testname, __FILE__, __LINE__, "i10 is not forbidden.");
+    }
 	if (elem1.map_exists(i10, i11)) {
 		fail_test(testname, __FILE__, __LINE__, "Map (i10->i11) exists.");
 	}
+
+    elem1.add_map(i10, i11, false);
+
+    if (! elem1.map_exists(i00, i01)) {
+        fail_test(testname, __FILE__, __LINE__,
+                "Map (i00->i01) does not exist.");
+    }
+    if (elem1.get_sign(i00, i01)) {
+        fail_test(testname, __FILE__, __LINE__, "Map (i00->i01) is symm.");
+    }
+    if (! elem1.map_exists(i00, i10)) {
+        fail_test(testname, __FILE__, __LINE__,
+                "Map (i00->i10) does not exist.");
+    }
+    if (elem1.get_sign(i00, i01)) {
+        fail_test(testname, __FILE__, __LINE__, "Map (i00->i01) is symm.");
+    }
+    if (! elem1.map_exists(i00, i11)) {
+        fail_test(testname, __FILE__, __LINE__,
+                "Map (i00->i11) does not exist.");
+    }
+    if (! elem1.get_sign(i00, i11)) {
+        fail_test(testname, __FILE__, __LINE__, "Map (i00->i11) is asymm.");
+    }
+    if (elem1.is_forbidden(i01)) {
+        fail_test(testname, __FILE__, __LINE__, "i01 is forbidden.");
+    }
+    if (! elem1.map_exists(i01, i10)) {
+        fail_test(testname, __FILE__, __LINE__,
+                "Map (i01->i10) does not exist.");
+    }
+    if (! elem1.get_sign(i01, i10)) {
+        fail_test(testname, __FILE__, __LINE__, "Map (i01->i10) is asymm.");
+    }
+    if (! elem1.map_exists(i01, i11)) {
+        fail_test(testname, __FILE__, __LINE__,
+                "Map (i01->i11) does not exist.");
+    }
+    if (elem1.get_sign(i01, i11)) {
+        fail_test(testname, __FILE__, __LINE__, "Map (i00->i11) is symm.");
+    }
+    if (elem1.is_forbidden(i10)) {
+        fail_test(testname, __FILE__, __LINE__, "i10 is forbidden.");
+    }
+    if (! elem1.map_exists(i10, i11)) {
+        fail_test(testname, __FILE__, __LINE__,
+                "Map (i10->i11) does not exist.");
+    }
+    if (elem1.get_sign(i10, i11)) {
+        fail_test(testname, __FILE__, __LINE__, "Map (i10->i11) is symm.");
+    }
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
