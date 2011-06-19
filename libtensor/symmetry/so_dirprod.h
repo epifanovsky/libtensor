@@ -45,10 +45,12 @@ private:
 public:
     so_dirprod(const symmetry<N, T> &sym1, const symmetry<M, T> &sym2,
             const permutation<N + M> &perm) :
-                m_sym1(sym1), m_sym2(sym2), m_perm(perm) { }
+        m_sym1(sym1), m_sym2(sym2), m_perm(perm)
+    { }
 
     so_dirprod(const symmetry<N, T> &sym1, const symmetry<M, T> &sym2) :
-        m_sym1(sym1), m_sym2(sym2) { }
+        m_sym1(sym1), m_sym2(sym2)
+    { }
 
     void perform(symmetry<N + M, T> &sym3);
 
@@ -72,10 +74,12 @@ private:
 
 public:
     so_dirprod(const symmetry<0, T> &sym1, const symmetry<M, T> &sym2) :
-        m_sym2(sym2) { }
+        m_sym2(sym2)
+    { }
+
     so_dirprod(const symmetry<0, T> &sym1, const symmetry<M, T> &sym2,
-            const permutation<M> &perm) :
-                m_sym2(sym2), m_perm(perm) { }
+            const permutation<M> &perm) : m_sym2(sym2), m_perm(perm)
+    { }
 
     void perform(symmetry<M, T> &sym3) {
 
@@ -97,10 +101,12 @@ private:
 
 public:
     so_dirprod(const symmetry<N, T> &sym1, const symmetry<0, T> &sym2) :
-        m_sym1(sym1) { }
+        m_sym1(sym1)
+    { }
+
     so_dirprod(const symmetry<N, T> &sym1, const symmetry<0, T> &sym2,
-            const permutation<N> &perm) :
-                m_sym1(sym1), m_perm(perm) { }
+            const permutation<N> &perm) : m_sym1(sym1), m_perm(perm)
+    { }
 
     void perform(symmetry<N, T> &sym3) {
 
@@ -129,13 +135,13 @@ void so_dirprod<N, M, T>::perform(symmetry<N + M, T> &sym3) {
 
         if(j == m_sym2.end()) {
             symmetry_element_set<M, T> set2(set1.get_id());
-            symmetry_operation_params<operation_t> params(
-                    set1, set2, m_perm, sym3.get_bis(), set3);
+            symmetry_operation_params<operation_t> params(set1, set2,
+                    m_perm, sym3.get_bis(), set3);
             dispatcher_t::get_instance().invoke(set1.get_id(), params);
         } else {
             const symmetry_element_set<M, T> &set2 = m_sym2.get_subset(j);
-            symmetry_operation_params<operation_t> params(
-                    set1, set2, m_perm, sym3.get_bis(), set3);
+            symmetry_operation_params<operation_t> params(set1, set2,
+                    m_perm, sym3.get_bis(), set3);
             dispatcher_t::get_instance().invoke(set1.get_id(), params);
         }
 
@@ -157,14 +163,12 @@ void so_dirprod<N, M, T>::perform(symmetry<N + M, T> &sym3) {
 
         symmetry_element_set<N + M, T> set3(set2.get_id());
 
-        symmetry_element_set<M, T> set1(set2.get_id());
-        symmetry_operation_params<operation_t> params(
-                set1, set2, m_perm, sym3.get_bis(), set3);
+        symmetry_element_set<N, T> set1(set2.get_id());
+        symmetry_operation_params<operation_t> params(set1, set2,
+                m_perm, sym3.get_bis(), set3);
         dispatcher_t::get_instance().invoke(set2.get_id(), params);
 
         copy_subset(set3, sym3);
-
-
     }
 }
 
@@ -201,7 +205,6 @@ public:
             const permutation<N + M> &perm_,
             const block_index_space<N + M> &bis_,
             symmetry_element_set<N + M, T> &g3_) :
-
         g1(g1_), g2(g2_), perm(perm_), bis(bis_), g3(g3_)
     { }
 
