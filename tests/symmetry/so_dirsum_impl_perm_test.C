@@ -1,12 +1,12 @@
-#include <libtensor/symmetry/so_dirprod_impl_perm.h>
+#include <libtensor/symmetry/so_dirsum_impl_perm.h>
 #include <libtensor/btod/transf_double.h>
 #include "../compare_ref.h"
-#include "so_dirprod_impl_perm_test.h"
+#include "so_dirsum_impl_perm_test.h"
 
 namespace libtensor {
 
 
-void so_dirprod_impl_perm_test::perform() throw(libtest::test_exception) {
+void so_dirsum_impl_perm_test::perform() throw(libtest::test_exception) {
 
 	test_empty_1();
 	test_empty_2(true);
@@ -24,18 +24,18 @@ void so_dirprod_impl_perm_test::perform() throw(libtest::test_exception) {
 }
 
 
-/**	\test Tests that the direct product of two empty group yields an empty
-        group of a higher order
+/**	\test Tests that the direct sum of two empty group yields an empty
+        group of a higher order.
  **/
-void so_dirprod_impl_perm_test::test_empty_1() throw(libtest::test_exception) {
+void so_dirsum_impl_perm_test::test_empty_1() throw(libtest::test_exception) {
 
 	static const char *testname =
-	        "so_dirprod_impl_perm_test::test_empty_1()";
+	        "so_dirsum_impl_perm_test::test_empty_1()";
 
 	typedef se_perm<2, double> se2_t;
 	typedef se_perm<3, double> se3_t;
     typedef se_perm<5, double> se5_t;
-	typedef so_dirprod<2, 3, double> so_t;
+	typedef so_dirsum<2, 3, double> so_t;
 	typedef symmetry_operation_impl<so_t, se5_t> so_impl_t;
 
 	try {
@@ -69,22 +69,21 @@ void so_dirprod_impl_perm_test::test_empty_1() throw(libtest::test_exception) {
 	}
 }
 
-
-/**	\test Direct product of a group with one element [012->120](+) and an empty
-        group (2-space) forming a 5-space. The result is expected to contain
-		a single element.
+/**	\test Direct sum of a group with one element [012->120](+/-) and an
+        empty group (2-space) forming a 5-space. Expected is a group
+        containing a single element (+) or an empty group (-).
  **/
-void so_dirprod_impl_perm_test::test_empty_2(
+void so_dirsum_impl_perm_test::test_empty_2(
         bool perm) throw(libtest::test_exception) {
 
     std::ostringstream tnss;
-    tnss << "so_dirprod_impl_perm_test::test_empty_2(" << perm << ")";
+    tnss << "so_dirsum_impl_perm_test::test_empty_2(" << perm << ")";
     std::string tns = tnss.str();
 
 	typedef se_perm<2, double> se2_t;
     typedef se_perm<3, double> se3_t;
 	typedef se_perm<5, double> se5_t;
-	typedef so_dirprod<3, 2, double> so_t;
+	typedef so_dirsum<3, 2, double> so_t;
 	typedef symmetry_operation_impl<so_t, se5_t> so_impl_t;
 
 	try {
@@ -120,27 +119,10 @@ void so_dirprod_impl_perm_test::test_empty_2(
 
 	compare_ref<5>::compare(tns.c_str(), bis, setc, setc_ref);
 
-    if(setc.is_empty()) {
-        fail_test(tns.c_str(), __FILE__, __LINE__,
-                "Expected a non-empty set.");
-    }
-
-    symmetry_element_set_adapter<5, double, se5_t> adapter(setc);
-    symmetry_element_set_adapter<5, double, se5_t>::iterator i =
-            adapter.begin();
-
-    const se5_t &el = adapter.get_elem(i);
-    i++;
-    if(i != adapter.end()) {
-        fail_test(tns.c_str(), __FILE__, __LINE__,
-                "Expected only one element.");
-    }
-    if(! el.is_symm()) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, "! el.is_symm()");
-    }
-    if(! el.get_perm().equals(p2)) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, "el.get_perm() != p2");
-    }
+	if(setc.is_empty()) {
+	    fail_test(tns.c_str(), __FILE__, __LINE__,
+	            "Expected a non-empty set.");
+	}
 
 	} catch(exception &e) {
 		fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
@@ -148,20 +130,20 @@ void so_dirprod_impl_perm_test::test_empty_2(
 }
 
 /**	\test Direct product of an empty group (2-space) and a group with one
-        element [012->201](-) forming a 5-space. The result is expected to
-        contain a single element.
+        element [012->201](+/-) forming a 5-space. Expected is a group
+        containing a single element (+) or an empty group (-).
  **/
-void so_dirprod_impl_perm_test::test_empty_3(
+void so_dirsum_impl_perm_test::test_empty_3(
         bool perm) throw(libtest::test_exception) {
 
     std::ostringstream tnss;
-    tnss << "so_dirprod_impl_perm_test::test_empty_3(" << perm << ")";
+    tnss << "so_dirsum_impl_perm_test::test_empty_3(" << perm << ")";
     std::string tns = tnss.str();
 
     typedef se_perm<2, double> se2_t;
     typedef se_perm<3, double> se3_t;
     typedef se_perm<5, double> se5_t;
-    typedef so_dirprod<2, 3, double> so_t;
+    typedef so_dirsum<2, 3, double> so_t;
     typedef symmetry_operation_impl<so_t, se5_t> so_impl_t;
 
     try {
@@ -197,26 +179,9 @@ void so_dirprod_impl_perm_test::test_empty_3(
 
     compare_ref<5>::compare(tns.c_str(), bis, setc, setc_ref);
 
-    if(setc.is_empty()) {
+    if (setc.is_empty()) {
         fail_test(tns.c_str(), __FILE__, __LINE__,
                 "Expected a non-empty set.");
-    }
-
-    symmetry_element_set_adapter<5, double, se5_t> adapter(setc);
-    symmetry_element_set_adapter<5, double, se5_t>::iterator i =
-            adapter.begin();
-
-    const se5_t &el = adapter.get_elem(i);
-    i++;
-    if(i != adapter.end()) {
-        fail_test(tns.c_str(), __FILE__, __LINE__,
-                "Expected only one element.");
-    }
-    if(el.is_symm()) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, "el.is_symm()");
-    }
-    if(! el.get_perm().equals(p2)) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, "el.get_perm() != p2");
     }
 
     } catch(exception &e) {
@@ -224,23 +189,22 @@ void so_dirprod_impl_perm_test::test_empty_3(
     }
 }
 
-
 /** \test Direct product of a group of one element [01->10](+/-) and a group
-        with two elements [012->120](+) and [01->10](+/-) forming
+        with two elements [012->120] and [01->10](+/-) forming
         a 5-space.
  **/
-void so_dirprod_impl_perm_test::test_nn_1(
+void so_dirsum_impl_perm_test::test_nn_1(
         bool symm1, bool symm2) throw(libtest::test_exception) {
 
     std::ostringstream tnss;
-    tnss << "so_dirprod_impl_perm_test::test_nn_1(" << symm1 << ", "
+    tnss << "so_dirsum_impl_perm_test::test_nn_1(" << symm1 << ", "
             << symm2 << ")";
     std::string tns = tnss.str();
 
     typedef se_perm<2, double> se2_t;
     typedef se_perm<3, double> se3_t;
     typedef se_perm<5, double> se5_t;
-    typedef so_dirprod<2, 3, double> so_t;
+    typedef so_dirsum<2, 3, double> so_t;
     typedef symmetry_operation_impl<so_t, se5_t> so_impl_t;
 
     try {
@@ -259,6 +223,7 @@ void so_dirprod_impl_perm_test::test_nn_1(
     se5_t elemc1(permutation<5>().permute(0, 1), symm1);
     se5_t elemc2(permutation<5>().permute(2, 3).permute(3, 4), true);
     se5_t elemc3(permutation<5>().permute(2, 3), symm2);
+    se5_t elemc4(permutation<5>().permute(0, 1).permute(2, 3), false);
 
     symmetry_element_set<2, double> seta(se2_t::k_sym_type);
     symmetry_element_set<3, double> setb(se3_t::k_sym_type);
@@ -269,9 +234,10 @@ void so_dirprod_impl_perm_test::test_nn_1(
     setb.insert(elemb1);
     setb.insert(elemb2);
 
-    setc_ref.insert(elemc1);
     setc_ref.insert(elemc2);
-    setc_ref.insert(elemc3);
+    if (symm1) setc_ref.insert(elemc1);
+    if (symm2) setc_ref.insert(elemc3);
+    if (! symm1 && ! symm2) setc_ref.insert(elemc4);
 
     permutation<5> px;
     symmetry_operation_params<so_t> params(seta, setb, px, bis, setc);
@@ -289,18 +255,18 @@ void so_dirprod_impl_perm_test::test_nn_1(
         [01->10](+/-) and a group of one element [01->10](+/-) forming
         a 5-space. The result is permuted with [01234->13204].
  **/
-void so_dirprod_impl_perm_test::test_nn_2(
+void so_dirsum_impl_perm_test::test_nn_2(
         bool symm1, bool symm2) throw(libtest::test_exception) {
 
     std::ostringstream tnss;
-    tnss << "so_dirprod_impl_perm_test::test_nn_2(" << symm1 << ", "
+    tnss << "so_dirsum_impl_perm_test::test_nn_2(" << symm1 << ", "
             << symm2 << ")";
     std::string tns = tnss.str();
 
     typedef se_perm<2, double> se2_t;
     typedef se_perm<3, double> se3_t;
     typedef se_perm<5, double> se5_t;
-    typedef so_dirprod<3, 2, double> so_t;
+    typedef so_dirsum<3, 2, double> so_t;
     typedef symmetry_operation_impl<so_t, se5_t> so_impl_t;
 
     try {
@@ -319,6 +285,7 @@ void so_dirprod_impl_perm_test::test_nn_2(
     se5_t elemc1(permutation<5>().permute(0, 2).permute(2, 3), true);
     se5_t elemc2(permutation<5>().permute(0, 3), symm1);
     se5_t elemc3(permutation<5>().permute(1, 4), symm2);
+    se5_t elemc4(permutation<5>().permute(0, 3).permute(1, 4), false);
 
     symmetry_element_set<3, double> seta(se3_t::k_sym_type);
     symmetry_element_set<2, double> setb(se2_t::k_sym_type);
@@ -330,8 +297,9 @@ void so_dirprod_impl_perm_test::test_nn_2(
     setb.insert(elemb);
 
     setc_ref.insert(elemc1);
-    setc_ref.insert(elemc2);
-    setc_ref.insert(elemc3);
+    if (symm1) setc_ref.insert(elemc2);
+    if (symm2) setc_ref.insert(elemc3);
+    if (! symm1 && ! symm2) setc_ref.insert(elemc4);
 
     permutation<5> px;
     px.permute(0, 1).permute(1, 3);

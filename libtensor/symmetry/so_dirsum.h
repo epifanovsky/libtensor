@@ -158,7 +158,7 @@ void so_dirsum<N, M, T>::perform(symmetry<N + M, T> &sym3) {
 
 		symmetry_element_set<N + M, T> set3(set2.get_id());
 
-		symmetry_element_set<M, T> set1(set2.get_id());
+		symmetry_element_set<N, T> set1(set2.get_id());
 		symmetry_operation_params<operation_t> params(
 		        set1, set2, m_perm, sym3.get_bis(), set3);
 		dispatcher_t::get_instance().invoke(set2.get_id(), params);
