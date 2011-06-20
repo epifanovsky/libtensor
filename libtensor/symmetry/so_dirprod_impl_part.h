@@ -64,138 +64,97 @@ se_part<N + M, T> >::do_perform(symmetry_operation_params_t &params) const {
     adapter2_t g2(params.g2);
     params.g3.clear();
 
-    // map result index to input index
+    // Create map at which position which index ends up.
     sequence<N + M, size_t> map(0);
     for (size_t i = 0; i < N + M; i++) map[i] = i;
-    params.perm.apply(map);
+    permutation<N + M> pinv(params.perm, true);
+    pinv.apply(map);
 
-    mask<N + M> msk1, msk2;
-    sequence<N, size_t> seq1a(0), seq1b(0);
-    sequence<M, size_t> seq2a(0), seq2b(0);
-    for (size_t i = 0, j = 0, k = 0; i < N + M; i++) {
-        if (map[i] < N) {
-            msk1[i] = true;
-            seq1a[j] = j; seq1b[j] = map[i];
-            j++;
-        }
-        else {
-            msk2[i] = true;
-            seq2a[k] = k; seq2b[k] = map[i] - N;
-            k++;
-        }
-    }
-
-    permutation_builder<N> pb1(seq1b, seq1a);
-    permutation_builder<M> pb2(seq2b, seq2a);
-    permutation<N> p1inv(pb1.get_perm(), true);
-    permutation<M> p2inv(pb2.get_perm(), true);
-
-    // Determine total masks for every number of partitions
-    typedef typename std::map< size_t, mask<N + M> > map_t;
-    map_t msks;
+    mask<N + M> tm;
     for(typename adapter1_t::iterator it1 = g1.begin();
             it1 != g1.end(); it1++) {
 
-        const se_part<N, T> &e = g1.get_elem(it1);
-        const mask<N> &mx = e.get_mask();
-        mask<N + M> m;
-        for (size_t i = 0, j = 0; i < N + M; i++)
-            if (msk1[i]) { m[i] = mx[j]; j++; }
-        msks[e.get_npart()] |= m;
+        const se_part<N, T> &e1 = g1.get_elem(it1);
+        const mask<N> &m1 = e1.get_mask();
+
+        mask<N + M> m3;
+        for (size_t i = 0; i < N; i++) {
+            if (tm[map[i]] && m1[i]) {
+                throw bad_symmetry(g_ns, k_clazz, method,
+                        __FILE__, __LINE__, "Overlapping masks in g1.");
+            }
+            tm[map[i]] |= m1[i];
+            m3[map[i]] = m1[i];
+        }
+
+        se_part<N + M, T> e3(params.bis, m3, e1.get_npart());
+
+        abs_index<N> ai(e1.get_pdims());
+        do {
+            const index<N> &i1a = ai.get_index();
+
+            index<N + M> i3a;
+            for (size_t i = 0; i < N; i++) i3a[map[i]] = i1a[i];
+
+            if (e1.is_forbidden(i1a)) {
+                e3.mark_forbidden(i3a);
+                continue;
+            }
+
+            index<N> i1b = e1.get_direct_map(i1a);
+            if (i1a == i1b) continue;
+
+            index<N + M> i3b;
+            for (size_t i = 0; i < N; i++) i3b[map[i]] = i1b[i];
+
+            e3.add_map(i3a, i3b, e1.get_sign(i1a, i1b));
+
+        } while (ai.inc());
+
+        params.g3.insert(e3);
     }
+
     for(typename adapter2_t::iterator it2 = g2.begin();
             it2 != g2.end(); it2++) {
 
-        const se_part<M, T> &e = g2.get_elem(it2);
-        const mask<M> &mx = e.get_mask();
-        mask<N + M> m;
-        for (size_t i = 0, j = 0; i < N + M; i++)
-            if (msk2[i]) { m[i] = mx[j]; j++; }
-        msks[e.get_npart()] |= m;
-    }
+        const se_part<M, T> &e2 = g2.get_elem(it2);
+        const mask<M> &m2 = e2.get_mask();
 
-    // Now loop over all npart
-    for(typename map_t::const_iterator it = msks.begin();
-            it != msks.end(); it++) {
-
-        se_part<N + M, T> part(params.bis, it->second, it->first);
-
-        for(typename adapter1_t::iterator it1 = g1.begin();
-                it1 != g1.end(); it1++) {
-
-            const se_part<N, T> &e = g1.get_elem(it1);
-            if (e.get_npart() != it->first) continue;
-
-            abs_index<N + M> aix(part.get_pdims());
-            do {
-                const index<N + M> &ix1 = aix.get_index();
-
-                index<N> i1;
-                for (size_t i = 0, j = 0; i < N + M; i++)
-                    if (msk1[i]) { i1[j] = ix1[i]; j++; }
-                i1.permute(p1inv);
-
-                if (e.is_forbidden(i1)) {
-                    part.mark_forbidden(ix1);
-                    continue;
-                }
-
-                index<N> i2 = e.get_direct_map(i1);
-                if (i1 == i2) continue;
-
-                index<N + M> ix2;
-                for (size_t i = 0, j = 0; i < N + M; i++)
-                    if (msk1[i]) { ix2[i] = i2[j]; j++; }
-                    else { ix2[i] = ix1[i]; }
-
-                if (part.is_forbidden(ix1))
-                    part.mark_forbidden(ix2);
-                else if (part.is_forbidden(ix2))
-                    part.mark_forbidden(ix1);
-                else
-                    part.add_map(ix1, ix2, e.get_sign(i1, i2));
-
-            } while (aix.inc());
-        }
-        for(typename adapter2_t::iterator it2 = g2.begin();
-                it2 != g2.end(); it2++) {
-
-            const se_part<M, T> &e = g2.get_elem(it2);
-            if (e.get_npart() != it->first) continue;
-
-            abs_index<N + M> aix(part.get_pdims());
-            do {
-                const index<N + M> &ix1 = aix.get_index();
-
-                index<M> i1;
-                for (size_t i = 0, j = 0; i < N + M; i++)
-                    if (msk2[i]) { i1[j] = ix1[i]; j++; }
-                i1.permute(p2inv);
-
-                if (e.is_forbidden(i1)) {
-                    part.mark_forbidden(ix1);
-                    continue;
-                }
-
-                index<M> i2 = e.get_direct_map(i1);
-                if (i1 == i2) continue;
-
-                index<N + M> ix2;
-                for (size_t i = 0, j = 0; i < N + M; i++)
-                    if (msk2[i]) { ix2[i] = i2[j]; j++; }
-                    else { ix2[i] = ix1[i]; }
-
-                if (part.is_forbidden(ix1))
-                    part.mark_forbidden(ix2);
-                else if (part.is_forbidden(ix2))
-                    part.mark_forbidden(ix1);
-                else
-                    part.add_map(ix1, ix2, e.get_sign(i1, i2));
-
-            } while (aix.inc());
+        mask<N + M> m3;
+        for (size_t i = 0; i < M; i++) {
+            if (tm[map[i + N]] && m2[i]) {
+                throw bad_symmetry(g_ns, k_clazz, method,
+                        __FILE__, __LINE__, "Overlapping masks in g2.");
+            }
+            tm[map[i + N]] |= m2[i];
+            m3[map[i + N]] = m2[i];
         }
 
-        params.g3.insert(part);
+        se_part<N + M, T> e3(params.bis, m3, e2.get_npart());
+
+        abs_index<M> ai(e2.get_pdims());
+        do {
+            const index<M> &i2a = ai.get_index();
+
+            index<N + M> i3a;
+            for (size_t i = 0; i < M; i++) i3a[map[i + N]] = i2a[i];
+
+            if (e2.is_forbidden(i2a)) {
+                e3.mark_forbidden(i3a);
+                continue;
+            }
+
+            index<M> i2b = e2.get_direct_map(i2a);
+            if (i2a == i2b) continue;
+
+            index<N + M> i3b;
+            for (size_t i = 0; i < M; i++) i3b[map[i + N]] = i2b[i];
+
+            e3.add_map(i3a, i3b, e2.get_sign(i2a, i2b));
+
+        } while (ai.inc());
+
+        params.g3.insert(e3);
     }
 }
 
