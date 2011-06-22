@@ -25,7 +25,7 @@ void linalg_ij_pji_p_x_test::test_ij_pji_p_x(size_t ni, size_t nj, size_t np,
 	throw(libtest::test_exception) {
 
 	std::ostringstream ss;
-	ss << "linalg_ij_pji_p_x_test::test_i_ipq_qp_x("
+	ss << "linalg_ij_pji_p_x_test::test_ij_pji_p_x("
 		<< ni << ", " << nj << ", " << np << ", " << sic << ", "
 		<< sja << ", " << spa << ", " << spb << ")";
 	std::string tnss = ss.str();
@@ -35,7 +35,7 @@ void linalg_ij_pji_p_x_test::test_ij_pji_p_x(size_t ni, size_t nj, size_t np,
 
 	try {
 
-	size_t sza = np * spa, szb = np, szc = ni * sic;
+	size_t sza = np * spa, szb = np * spb, szc = ni * sic;
 
 	a = new double[sza];
 	b = new double[szb];

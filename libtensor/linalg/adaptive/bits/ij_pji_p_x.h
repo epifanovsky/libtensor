@@ -25,10 +25,10 @@ void linalg_base_level3x_adaptive<M, L1, L2>::ij_pji_p_x(
 		L2::i_pi_p_x(nij, np, a1, nij1, b, spb, c, 1, d);
 	} else {
 		double *c1 = M::allocate(nij);
-		for(size_t i = 0; i < nij; i++) c1[i] = 0.0;
-		L2::i_pi_p_x(nij, np, a1, nij1, b, spb, c1, 1, d);
+		for(size_t ij = 0; ij < nij; ij++) c1[ij] = 0.0;
+		L2::i_pi_p_x(nij, np, a1, nij1, b, spb, c1, 1, 1.0);
 		for(size_t i = 0; i < ni; i++) {
-			L1::i_i_x(nj, c1 + i * nj, 1, 1.0, c + i * sic, 1);
+			L1::i_i_x(nj, c1 + i * nj, 1, d, c + i * sic, 1);
 		}
 		M::deallocate(c1);
 	}
