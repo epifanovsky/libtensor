@@ -77,6 +77,7 @@ set(SRC_LINALG
 	linalg/generic/linalg_base_level1_generic.C
 	linalg/generic/linalg_base_level2_generic.C
 	linalg/generic/linalg_base_level3_generic.C
+    linalg/generic/linalg_base_level3x_generic.C
 	linalg/generic/linalg_base_level4_generic.C
 	linalg/generic/linalg_base_level5_generic.C
 	linalg/generic/linalg_base_level6_generic.C
