@@ -10,6 +10,8 @@ namespace libtensor {
 	\ingroup libtensor_tod_kernel
  **/
 class kern_mul_ij_jipq_qp : public kernel_base<2, 1> {
+	friend class kern_mul_ijk_kjpq_iqp;
+
 public:
 	static const char *k_clazz; //!< Kernel name
 
