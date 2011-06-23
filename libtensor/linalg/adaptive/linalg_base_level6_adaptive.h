@@ -18,6 +18,13 @@ template<typename M, typename L1, typename L2, typename L3>
 struct linalg_base_level6_adaptive : public linalg_base_level6_generic {
 
 
+	static void ijkl_ipl_jpk_x(
+		size_t ni, size_t nj, size_t nk, size_t nl, size_t np,
+		const double *a, size_t spa, size_t sia,
+		const double *b, size_t spb, size_t sjb,
+		double *c, double d);
+
+
 	static void ijkl_ipkq_pljq_x(
 		size_t ni, size_t nj, size_t nk,
 		size_t nl, size_t np, size_t nq,
@@ -161,6 +168,7 @@ struct linalg_base_level6_adaptive : public linalg_base_level6_generic {
 } // namespace libtensor
 
 
+#include "bits/ijkl_ipl_jpk_x.h"
 #include "bits/ijkl_ipkq_pljq_x.h"
 #include "bits/ijkl_iplq_kpjq_x.h"
 #include "bits/ijkl_iplq_pkjq_x.h"
