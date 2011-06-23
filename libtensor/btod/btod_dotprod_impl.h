@@ -5,6 +5,7 @@
 #include "../tod/tod_dotprod.h"
 #include "bad_block_index_space.h"
 #include "transf_double.h"
+#include "../mp/task_batch.h"
 
 namespace libtensor {
 
@@ -135,6 +136,12 @@ void btod_dotprod<N>::calculate(std::vector<double> &v) {
 
 		permutation<N> pinv1(j->perm1, true), pinv2(j->perm2, true);
 
+		ctrl1[i]->req_sync_on();
+		ctrl2[i]->req_sync_on();
+
+		std::vector<dotprod_in_orbit_task*> tasklist;
+		task_batch tb;
+
 		for(typename orbit_list<N, double>::iterator io = ol.begin();
 			io != ol.end(); io++) {
 
@@ -142,9 +149,29 @@ void btod_dotprod<N>::calculate(std::vector<double> &v) {
 			i1.permute(pinv1);
 			i2.permute(pinv2);
 
-			v[i] += calc_in_orbit(*ctrl1[i], ol1, pinv1, *ctrl2[i],
-				ol2, pinv2, *sym[i], bidims, ol.get_index(io));
+			dotprod_in_orbit_task *t = new dotprod_in_orbit_task(
+				j->bt1, ol1, pinv1, j->bt2, ol2, pinv2,
+				*sym[i], bidims, ol.get_index(io));
+			tasklist.push_back(t);
+			tb.push(*t);
 		}
+
+		try {
+			tb.wait();
+		} catch(...) {
+			for(size_t k = 0; k < tasklist.size(); k++) {
+				delete tasklist[k];
+			}
+			throw;
+		}
+
+		for(size_t k = 0; k < tasklist.size(); k++) {
+			v[i] += tasklist[k]->get_d();
+			delete tasklist[k];
+		}
+
+		ctrl1[i]->req_sync_off();
+		ctrl2[i]->req_sync_off();
 	}
 
 	for(i = 0; i < narg; i++) {
@@ -163,26 +190,29 @@ void btod_dotprod<N>::calculate(std::vector<double> &v) {
 
 
 template<size_t N>
-double btod_dotprod<N>::calc_in_orbit(block_tensor_ctrl<N, double> &ctrl1,
-	const orbit_list<N, double> &ol1, const permutation<N> &pinv1,
-	block_tensor_ctrl<N, double> &ctrl2, const orbit_list<N, double> &ol2,
-	const permutation<N> &pinv2, const symmetry<N, double> &sym,
-	const dimensions<N> &bidims, const index<N> &idx) {
+const char *btod_dotprod<N>::dotprod_in_orbit_task::k_clazz =
+	"btod_dotprod<N>::dotprod_in_orbit_task";
 
-	orbit<N, double> orb(sym, idx);
+
+template<size_t N>
+void btod_dotprod<N>::dotprod_in_orbit_task::perform() throw(exception) {
+
+	block_tensor_ctrl<N, double> ctrl1(m_bt1), ctrl2(m_bt2);
+
+	orbit<N, double> orb(m_sym, m_idx);
 	double c = 0.0;
 	for(typename orbit<N, double>::iterator io = orb.begin();
 		io != orb.end(); io++) c += orb.get_transf(io).get_coeff();
 
-	if(c == 0.0) return 0.0;
+	if(c == 0.0) return;
 
-	dimensions<N> bidims1(bidims), bidims2(bidims);
-	bidims1.permute(pinv1);
-	bidims2.permute(pinv2);
+	dimensions<N> bidims1(m_bidims), bidims2(m_bidims);
+	bidims1.permute(m_pinv1);
+	bidims2.permute(m_pinv2);
 
-	index<N> i1(idx), i2(idx);
-	i1.permute(pinv1);
-	i2.permute(pinv2);
+	index<N> i1(m_idx), i2(m_idx);
+	i1.permute(m_pinv1);
+	i2.permute(m_pinv2);
 
 	orbit<N, double> orb1(ctrl1.req_const_symmetry(), i1),
 		orb2(ctrl2.req_const_symmetry(), i2);
@@ -193,14 +223,14 @@ double btod_dotprod<N>::calc_in_orbit(block_tensor_ctrl<N, double> &ctrl1,
 	abs_index<N> aci1(orb1.get_abs_canonical_index(), bidims1),
 		aci2(orb2.get_abs_canonical_index(), bidims2);
 	if(ctrl1.req_is_zero_block(aci1.get_index()) ||
-		ctrl2.req_is_zero_block(aci2.get_index())) return 0.0;
+		ctrl2.req_is_zero_block(aci2.get_index())) return;
 
 	tensor_i<N, double> &blk1 = ctrl1.req_block(aci1.get_index());
 	tensor_i<N, double> &blk2 = ctrl2.req_block(aci2.get_index());
 
 	permutation<N> perm1, perm2;
-	perm1.permute(tr1.get_perm()).permute(permutation<N>(pinv1, true));
-	perm2.permute(tr2.get_perm()).permute(permutation<N>(pinv2, true));
+	perm1.permute(tr1.get_perm()).permute(permutation<N>(m_pinv1, true));
+	perm2.permute(tr2.get_perm()).permute(permutation<N>(m_pinv2, true));
 
 	double d = tod_dotprod<N>(blk1, perm1, blk2, perm2).calculate() *
 		tr1.get_coeff() * tr2.get_coeff();
@@ -208,7 +238,7 @@ double btod_dotprod<N>::calc_in_orbit(block_tensor_ctrl<N, double> &ctrl1,
 	ctrl1.ret_block(aci1.get_index());
 	ctrl2.ret_block(aci2.get_index());
 
-	return c * d;
+	m_d = c * d;
 }
 
 
