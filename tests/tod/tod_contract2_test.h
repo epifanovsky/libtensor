@@ -69,6 +69,10 @@ private:
 	void test_ij_jp_pi(size_t ni, size_t nj, size_t np, double d = 0.0)
 		throw(libtest::test_exception);
 
+	// c_{ij} = \sum_p a_{p} b_{pji}
+	void test_ij_p_pji(size_t ni, size_t nj, size_t np, double d = 0.0)
+		throw(libtest::test_exception);
+
 	// c_{ij} = \sum_p a_{pji} b_{p}
 	void test_ij_pji_p(size_t ni, size_t nj, size_t np, double d = 0.0)
 		throw(libtest::test_exception);
