@@ -232,6 +232,24 @@ void tod_contract2_test::perform() throw(libtest::test_exception) {
 	test_ijk_pkj_ip(3, 5, 7, 11, -1.2);
 	test_ijk_pkj_ip(16, 16, 16, 16, 0.7);
 
+	test_ijkl_ipl_jpk(1, 1, 1, 1, 1);
+	test_ijkl_ipl_jpk(2, 1, 1, 1, 1);
+	test_ijkl_ipl_jpk(1, 2, 1, 1, 1);
+	test_ijkl_ipl_jpk(1, 1, 2, 1, 1);
+	test_ijkl_ipl_jpk(1, 1, 1, 2, 1);
+	test_ijkl_ipl_jpk(1, 1, 1, 1, 2);
+	test_ijkl_ipl_jpk(2, 3, 2, 3, 2);
+	test_ijkl_ipl_jpk(3, 5, 1, 7, 13);
+	test_ijkl_ipl_jpk(1, 1, 1, 1, 1, 0.0);
+	test_ijkl_ipl_jpk(1, 1, 1, 1, 1, -0.5);
+	test_ijkl_ipl_jpk(2, 1, 1, 1, 1, 2.0);
+	test_ijkl_ipl_jpk(1, 2, 1, 1, 1, -1.0);
+	test_ijkl_ipl_jpk(1, 1, 2, 1, 1, 3.7);
+	test_ijkl_ipl_jpk(1, 1, 1, 2, 1, 1.0);
+	test_ijkl_ipl_jpk(1, 1, 1, 1, 2, -1.2);
+	test_ijkl_ipl_jpk(2, 3, 2, 3, 2, 12.3);
+	test_ijkl_ipl_jpk(3, 5, 1, 7, 13, -1.25);
+
 	//
 	//	Test two-index contractions
 	//
@@ -2563,6 +2581,103 @@ void tod_contract2_test::test_ijk_kjpq_iqp(size_t ni, size_t nj, size_t nk,
 	//	Compare against the reference
 
 	compare_ref<3>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
+
+	} catch(exception &e) {
+		fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void tod_contract2_test::test_ijkl_ipl_jpk(size_t ni, size_t nj, size_t nk,
+	size_t nl, size_t np, double d) throw(libtest::test_exception) {
+
+	//	c_{ijkl} = \sum_{pq} a_{ipql} b_{pkqj}
+
+	std::stringstream tnss;
+	tnss << "tod_contract2_test::test_ijkl_ipl_jpk(" << ni << ", " << nj
+		<< ", " << nk << ", " << nl << ", " << np << ", " << d << ")";
+	std::string tns = tnss.str();
+
+	try {
+
+	index<3> ia1, ia2;
+	ia2[0] = ni - 1; ia2[1] = np - 1; ia2[2] = nl - 1;
+	index<3> ib1, ib2;
+	ib2[0] = nj - 1; ib2[1] = np - 1; ib2[2] = nk - 1;
+	index<4> ic1, ic2;
+	ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1; ic2[3] = nl - 1;
+	dimensions<3> dima(index_range<3>(ia1, ia2));
+	dimensions<3> dimb(index_range<3>(ib1, ib2));
+	dimensions<4> dimc(index_range<4>(ic1, ic2));
+	size_t sza = dima.get_size(), szb = dimb.get_size(),
+		szc = dimc.get_size();
+
+	tensor<3, double, allocator> ta(dima);
+	tensor<3, double, allocator> tb(dimb);
+	tensor<4, double, allocator> tc(dimc);
+	tensor<4, double, allocator> tc_ref(dimc);
+
+	double cij_max = 0.0;
+
+	{
+	tensor_ctrl<3, double> tca(ta);
+	tensor_ctrl<3, double> tcb(tb);
+	tensor_ctrl<4, double> tcc(tc);
+	tensor_ctrl<4, double> tcc_ref(tc_ref);
+	double *dta = tca.req_dataptr();
+	double *dtb = tcb.req_dataptr();
+	double *dtc1 = tcc.req_dataptr();
+	double *dtc2 = tcc_ref.req_dataptr();
+
+	//	Fill in random input
+
+	for(size_t i = 0; i < sza; i++) dta[i] = drand48();
+	for(size_t i = 0; i < szb; i++) dtb[i] = drand48();
+	for(size_t i = 0; i < szc; i++) dtc1[i] = drand48();
+	if(d == 0.0) for(size_t i = 0; i < szc; i++) dtc2[i] = 0.0;
+	else for(size_t i = 0; i < szc; i++) dtc2[i] = dtc1[i];
+
+	//	Generate reference data
+
+	index<3> ia; index<3> ib; index<4> ic;
+	double d1 = (d == 0.0) ? 1.0 : d;
+	for(size_t i = 0; i < ni; i++) {
+	for(size_t j = 0; j < nj; j++) {
+	for(size_t k = 0; k < nk; k++) {
+	for(size_t l = 0; l < nl; l++) {
+	for(size_t p = 0; p < np; p++) {
+		ia[0] = i; ia[1] = p; ia[2] = l;
+		ib[0] = j; ib[1] = p; ib[2] = k;
+		ic[0] = i; ic[1] = j; ic[2] = k; ic[3] = l;
+		abs_index<3> aa(ia, dima), ab(ib, dimb);
+		abs_index<4> ac(ic, dimc);
+		dtc2[ac.get_abs_index()] += d1 *
+			dta[aa.get_abs_index()] * dtb[ab.get_abs_index()];
+	}
+	}
+	}
+	}
+	}
+	for(size_t i = 0; i < szc; i++)
+		if(fabs(dtc2[i]) > cij_max) cij_max = fabs(dtc2[i]) ;
+
+	tca.ret_dataptr(dta); dta = 0; ta.set_immutable();
+	tcb.ret_dataptr(dtb); dtb = 0; tb.set_immutable();
+	tcc.ret_dataptr(dtc1); dtc1 = 0;
+	tcc_ref.ret_dataptr(dtc2); dtc2 = 0; tc_ref.set_immutable();
+	}
+
+	//	Invoke the contraction routine
+
+	permutation<4> permc; permc.permute(1, 2).permute(2, 3); // iljk->ijkl
+	contraction2<2, 2, 1> contr(permc);
+	contr.contract(1, 1);
+	if(d == 0.0) tod_contract2<2, 2, 1>(contr, ta, tb).perform(tc);
+	else tod_contract2<2, 2, 1>(contr, ta, tb).perform(tc, d);
+
+	//	Compare against the reference
+
+	compare_ref<4>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
 	} catch(exception &e) {
 		fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
