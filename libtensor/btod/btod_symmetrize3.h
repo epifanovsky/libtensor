@@ -283,45 +283,74 @@ void btod_symmetrize3<N>::make_schedule_blk(const abs_index<N> &ai,
 	orbit<N, double> o0(sym0, idx0), o1(sym0, idx1), o2(sym0, idx2),
 		o3(sym0, idx3), o4(sym0, idx4), o5(sym0, idx5);
 
+	//	This is a temporary schedule for the formation of the block
+	std::list<schrec> sch1;
+
+	//	Form the temporary schedule
+
 	if(sch0.contains(o0.get_abs_canonical_index())) {
 		transf<N, double> tr(o0.get_transf(idx0));
-		sch.insert(sym_schedule_pair_t(ai.get_abs_index(),
-			schrec(o0.get_abs_canonical_index(), tr)));
+		sch1.push_back(schrec(o0.get_abs_canonical_index(), tr));
 	}
 	if(sch0.contains(o1.get_abs_canonical_index())) {
 		transf<N, double> tr(o1.get_transf(idx1));
 		tr.permute(perm1);
 		tr.scale(scal);
-		sch.insert(sym_schedule_pair_t(ai.get_abs_index(),
-			schrec(o1.get_abs_canonical_index(), tr)));
+		sch1.push_back(schrec(o1.get_abs_canonical_index(), tr));
 	}
 	if(sch0.contains(o2.get_abs_canonical_index())) {
 		transf<N, double> tr(o2.get_transf(idx2));
 		tr.permute(perm2);
 		tr.scale(scal);
-		sch.insert(sym_schedule_pair_t(ai.get_abs_index(),
-			schrec(o2.get_abs_canonical_index(), tr)));
+		sch1.push_back(schrec(o2.get_abs_canonical_index(), tr));
 	}
 	if(sch0.contains(o3.get_abs_canonical_index())) {
 		transf<N, double> tr(o3.get_transf(idx3));
 		tr.permute(perm3);
 		tr.scale(scal);
-		sch.insert(sym_schedule_pair_t(ai.get_abs_index(),
-			schrec(o3.get_abs_canonical_index(), tr)));
+		sch1.push_back(schrec(o3.get_abs_canonical_index(), tr));
 	}
 	if(sch0.contains(o4.get_abs_canonical_index())) {
 		transf<N, double> tr(o4.get_transf(idx4));
 		tr.permute(perm1);
 		tr.permute(perm3);
-		sch.insert(sym_schedule_pair_t(ai.get_abs_index(),
-			schrec(o4.get_abs_canonical_index(), tr)));
+		sch1.push_back(schrec(o4.get_abs_canonical_index(), tr));
 	}
 	if(sch0.contains(o5.get_abs_canonical_index())) {
 		transf<N, double> tr(o5.get_transf(idx5));
 		tr.permute(perm1);
 		tr.permute(perm2);
-		sch.insert(sym_schedule_pair_t(ai.get_abs_index(),
-			schrec(o5.get_abs_canonical_index(), tr)));
+		sch1.push_back(schrec(o5.get_abs_canonical_index(), tr));
+	}
+
+	//	Consolidate and transfer the temporary schedule
+
+	while(!sch1.empty()) {
+		typename std::list<schrec>::iterator i = sch1.begin();
+		size_t aidx = i->ai;
+		double c = 0.0;
+		permutation<N> perm(i->tr.get_perm());
+		do {
+			if(i->ai == aidx) {
+				// TODO: Improve this comparison so it takes
+				// the intrinsic symmetry of the block into acct
+				if(i->tr.get_perm().equals(perm)) {
+					c += i->tr.get_coeff();
+					i = sch1.erase(i);
+				} else {
+					i++;
+				}
+			} else {
+				i++;
+			}
+		} while(i != sch1.end());
+		if(c != 0.0) {
+			transf<N, double> tr;
+			tr.permute(perm);
+			tr.scale(c);
+			sch.insert(sym_schedule_pair_t(ai.get_abs_index(),
+				schrec(aidx, tr)));
+		}
 	}
 }
 
