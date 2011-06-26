@@ -14,6 +14,9 @@ set(SRC
 	tod/loop_list_mul.C
 	tod/loop_list_elem.C
 	tod/loop_list_elem1.C
+    tod/kernels/kern_add_generic.C
+    tod/kernels/kern_add_i_i_x_x.C
+    tod/kernels/kern_add_i_x_i_x.C
 	tod/kernels/kern_mul_generic.C
 	tod/kernels/kern_mul_i_i_x.C
 	tod/kernels/kern_mul_i_ip_p.C
@@ -94,6 +97,7 @@ set(SRC_LINALG
 set(SRC_INST
 	tod/tod_add.C
 	tod/tod_contract2.C
+	tod/tod_dirsum.C
 	tod/tod_ewmult2.C
 	btod/additive_btod.C
 	btod/basic_btod.C
