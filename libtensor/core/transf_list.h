@@ -90,10 +90,14 @@ const char *transf_list<N, T>::k_clazz = "transf_list<N, T>";
 template<size_t N, typename T>
 transf_list<N, T>::transf_list(const symmetry<N, T> &sym, const index<N> &idx) {
 
+	transf_list<N, T>::start_timer();
+
 	abs_index<N> aidx(idx, sym.get_bis().get_block_index_dims());
 	transf_map_t visited;
 	visit(sym, aidx, transf<N, T>(), visited);
 	m_trlist.splice(m_trlist.end(), visited[aidx.get_abs_index()]);
+
+	transf_list<N, T>::stop_timer();
 }
 
 
