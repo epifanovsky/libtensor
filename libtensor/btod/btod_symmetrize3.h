@@ -2,6 +2,7 @@
 #define LIBTENSOR_BTOD_SYMMETRIZE3_H
 
 #include <algorithm>
+#include <libvmm/vm_allocator.h>
 #include "../exception.h"
 #include "../timings.h"
 #include "../core/block_index_subspace_builder.h"
@@ -173,16 +174,7 @@ void btod_symmetrize3<N>::compute_block(tensor_i<N, double> &blk,
 	make_schedule_blk(ai, sch);
 
 	tod_set<N>().perform(blk);
-
-	std::pair<iterator_t, iterator_t> jr =
-		sch.equal_range(ai.get_abs_index());
-	for(iterator_t j = jr.first; j != jr.second; j++) {
-
-		abs_index<N> aj(j->second.ai, bidims);
-		transf<N, double> trj(j->second.tr);
-		additive_btod<N>::compute_block(m_op, blk, aj.get_index(),
-			j->second.tr, 1.0);
-	}
+	compute_block(blk, i, transf<N, double>(), 1.0);
 }
 
 
@@ -200,13 +192,41 @@ void btod_symmetrize3<N>::compute_block(tensor_i<N, double> &blk,
 
 	std::pair<iterator_t, iterator_t> jr =
 		sch.equal_range(ai.get_abs_index());
-	for(iterator_t j = jr.first; j != jr.second; j++) {
+	std::list<schrec> sch1;
+	for(iterator_t j = jr.first; j != jr.second; ++j) {
+		sch1.push_back(j->second);
+	}
+	sch.clear();
 
-		abs_index<N> aj(j->second.ai, bidims);
-		transf<N, double> trj(j->second.tr);
-		trj.transform(tr);
-		additive_btod<N>::compute_block(m_op, blk, aj.get_index(),
-			trj, c);
+	while(!sch1.empty()) {
+		abs_index<N> ai(sch1.front().ai, bidims);
+		size_t n = 0;
+		for(typename std::list<schrec>::iterator j = sch1.begin(); j != sch1.end(); ++j) {
+			if(j->ai == ai.get_abs_index()) n++;
+		}
+		if(n == 1) {
+			transf<N, double> tri(sch1.front().tr);
+			tri.transform(tr);
+			additive_btod<N>::compute_block(m_op, blk, ai.get_index(), tri, c);
+			sch1.pop_front();
+		} else {
+			dimensions<N> dims(blk.get_dims());
+			dims.permute(permutation<N>(tr.get_perm(), true));
+			dims.permute(permutation<N>(sch1.front().tr.get_perm(), true));
+			// TODO: replace with "temporary block" feature
+			tensor< N, double, libvmm::vm_allocator<double> > tmp(dims);
+			tod_set<N>().perform(tmp);
+			additive_btod<N>::compute_block(m_op, tmp, ai.get_index(), tr, c);
+			for(typename std::list<schrec>::iterator j = sch1.begin(); j != sch1.end();) {
+				if(j->ai != ai.get_abs_index()) {
+					++j; continue;
+				}
+				transf<N, double> trj(j->tr);
+				trj.transform(tr);
+				tod_copy<N>(tmp, trj.get_perm(), trj.get_coeff()).perform(blk, 1.0);
+				j = sch1.erase(j);
+			}
+		}
 	}
 }
 
@@ -332,34 +352,18 @@ void btod_symmetrize3<N>::make_schedule_blk(const abs_index<N> &ai,
 		abs_index<N> aidx(i->ai, ai.get_dims());
 		double c = 0.0;
 		transf<N, double> tr0(i->tr);
-		transf_list<N, double> trl(m_op.get_symmetry(),
-			aidx.get_index());
 
 		do {
-			bool same = false;
 			if(i->ai != aidx.get_abs_index()) {
-				++i; continue;
+				++i;
+				continue;
 			}
-
-			permutation<N> perm(i->tr.get_perm());
-			if(tr0.get_perm().equals(perm)) {
+			if(tr0.get_perm().equals(i->tr.get_perm())) {
 				c += i->tr.get_coeff();
-				same = true;
-			} else {
-				for(typename transf_list<N,
-					double>::iterator j = trl.begin();
-					j != trl.end(); ++j) {
-
-					const transf<N, double> &tr =
-						trl.get_transf(j);
-					if(perm.equals(tr.get_perm())) {
-						c += tr.get_coeff();
-						same = true;
-						break;
-					}
-				}
+				i = sch1.erase(i);
+				continue;
 			}
-			if(same) i = sch1.erase(i); else ++i;
+			++i;
 		} while(i != sch1.end());
 		if(c != 0.0) {
 			transf<N, double> tr;
