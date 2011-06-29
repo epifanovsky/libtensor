@@ -33,6 +33,7 @@
 #include "linalg_ijkl_ipql_pkjq_x_test.h"
 #include "linalg_ijkl_ipql_pkqj_x_test.h"
 #include "linalg_ijkl_ipql_qkpj_x_test.h"
+#include "linalg_ijkl_ipql_qpkj_x_test.h"
 #include "linalg_ijkl_pikq_pljq_x_test.h"
 #include "linalg_ijkl_pilq_kpjq_x_test.h"
 #include "linalg_ijkl_pilq_pkjq_x_test.h"
@@ -95,6 +96,7 @@ namespace libtensor {
 	 - libtensor::linalg_ijkl_ipql_pkjq_x_test
 	 - libtensor::linalg_ijkl_ipql_pkqj_x_test
 	 - libtensor::linalg_ijkl_ipql_qkpj_x_test
+	 - libtensor::linalg_ijkl_ipql_qpkj_x_test
 	 - libtensor::linalg_ijkl_pikq_pljq_x_test
 	 - libtensor::linalg_ijkl_pilq_kpjq_x_test
 	 - libtensor::linalg_ijkl_pilq_pkjq_x_test
@@ -160,6 +162,8 @@ private:
 		m_utf_linalg_ijkl_ipql_pkqj_x;
 	unit_test_factory<linalg_ijkl_ipql_qkpj_x_test>
 		m_utf_linalg_ijkl_ipql_qkpj_x;
+	unit_test_factory<linalg_ijkl_ipql_qpkj_x_test>
+		m_utf_linalg_ijkl_ipql_qpkj_x;
 	unit_test_factory<linalg_ijkl_pikq_pljq_x_test>
 		m_utf_linalg_ijkl_pikq_pljq_x;
 	unit_test_factory<linalg_ijkl_pilq_kpjq_x_test>
