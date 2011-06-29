@@ -2,6 +2,7 @@
 #include "kern_mul_ijk_pji_pk.h"
 #include "kern_mul_ijk_pjqi_qpk.h"
 #include "kern_mul_ijk_pqji_pqk.h"
+#include "kern_mul_ijk_pqji_qpk.h"
 
 namespace libtensor {
 
@@ -74,6 +75,7 @@ kernel_base<2, 1> *kern_mul_ijk_pji_pk::match(const kern_mul_ij_pi_pj &z,
 
 	if(kern = kern_mul_ijk_pjqi_qpk::match(zz, in, out)) return kern;
 	if(kern = kern_mul_ijk_pqji_pqk::match(zz, in, out)) return kern;
+	if(kern = kern_mul_ijk_pqji_qpk::match(zz, in, out)) return kern;
 
 	return new kern_mul_ijk_pji_pk(zz);
 }
