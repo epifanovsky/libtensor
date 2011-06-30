@@ -16,11 +16,12 @@ public:
 
 private:
 	void test_1() throw(libtest::test_exception);
-	void test_2() throw(libtest::test_exception);
-	void test_3() throw(libtest::test_exception);
+	void test_2(bool symm) throw(libtest::test_exception);
+	void test_3(bool symm) throw(libtest::test_exception);
 	void test_4() throw(libtest::test_exception);
 	void test_5() throw(libtest::test_exception);
 	void test_6() throw(libtest::test_exception);
+    void test_7(bool s1, bool s2, bool dirsum) throw(libtest::test_exception);
 
 };
 

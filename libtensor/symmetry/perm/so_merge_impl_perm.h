@@ -23,16 +23,16 @@ namespace libtensor {
 
 	\ingroup libtensor_symmetry
  **/
-template<size_t N, size_t M, typename T>
-class symmetry_operation_impl< so_merge<N, M, T>, se_perm<N, T> > :
+template<size_t N, size_t M, size_t K, typename T>
+class symmetry_operation_impl< so_merge<N, M, K, T>, se_perm<N, T> > :
 	public symmetry_operation_impl_base<
-		so_merge<N, M, T>, se_perm<N, T> > {
+		so_merge<N, M, K, T>, se_perm<N, T> > {
 
 public:
 	static const char *k_clazz; //!< Class name
 
 public:
-	typedef so_merge<N, M, T> operation_t;
+	typedef so_merge<N, M, K, T> operation_t;
 	typedef se_perm<N, T> element_t;
 	typedef symmetry_operation_params<operation_t>
 		symmetry_operation_params_t;
@@ -43,14 +43,14 @@ protected:
 };
 
 
-template<size_t N, size_t M, typename T>
+template<size_t N, size_t M, size_t K, typename T>
 const char *symmetry_operation_impl<
-	so_merge<N, M, T>, se_perm<N, T> >::k_clazz =
-	"symmetry_operation_impl< so_merge<N, M, T>, se_perm<N, T> >";
+	so_merge<N, M, K, T>, se_perm<N, T> >::k_clazz =
+	"symmetry_operation_impl< so_merge<N, M, K, T>, se_perm<N, T> >";
 
 
-template<size_t N, size_t M, typename T>
-void symmetry_operation_impl< so_merge<N, M, T>,
+template<size_t N, size_t M, size_t K, typename T>
+void symmetry_operation_impl< so_merge<N, M, K, T>,
 	se_perm<N, T> >::do_perform(symmetry_operation_params_t &params) const {
 
 	static const char *method =

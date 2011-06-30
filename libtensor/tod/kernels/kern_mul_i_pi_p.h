@@ -14,6 +14,7 @@ class kern_mul_i_pi_p : public kernel_base<2, 1> {
 	friend class kern_mul_ij_pi_pj;
 	friend class kern_mul_ij_pj_ip;
 	friend class kern_mul_ij_pj_pi;
+	friend class kern_mul_ij_pji_p;
 
 public:
 	static const char *k_clazz; //!< Kernel name

@@ -3,6 +3,58 @@
 namespace libtensor {
 
 
+void linalg_base_level6_generic::ijkl_ikp_jpl_x(
+	size_t ni, size_t nj, size_t nk, size_t nl, size_t np,
+	const double *a, size_t ska, size_t sia,
+	const double *b, size_t spb, size_t sjb,
+	double *c, double d) {
+
+	for(size_t i = 0; i < ni; i++) {
+	for(size_t j = 0; j < nj; j++) {
+	for(size_t k = 0; k < nk; k++) {
+
+		const double *a1 = a + i * sia + k * ska;
+		const double *b1 = b + j * sjb;
+		double *c1 = c + ((i * nj + j) * nk + k) * nl;
+
+		for(size_t p = 0; p < np; p++) {
+		for(size_t l = 0; l < nl; l++) {
+			c1[l] += d * a1[p] * b1[p * spb + l];
+		}
+		}
+	}
+	}
+	}
+}
+
+
+void linalg_base_level6_generic::ijkl_ipl_jpk_x(
+	size_t ni, size_t nj, size_t nk, size_t nl, size_t np,
+	const double *a, size_t spa, size_t sia,
+	const double *b, size_t spb, size_t sjb,
+	double *c, double d) {
+
+	for(size_t i = 0; i < ni; i++) {
+	for(size_t j = 0; j < nj; j++) {
+
+		double *c1 = c + (i * nj + j) * nk * nl;
+
+		for(size_t p = 0; p < np; p++) {
+
+			const double *a1 = a + i * sia + p * spa;
+			const double *b1 = b + j * sjb + p * spb;
+
+			for(size_t k = 0; k < nk; k++) {
+			for(size_t l = 0; l < nl; l++) {
+				c1[k * nl + l] += d * a1[l] * b1[k];
+			}
+			}
+		}
+	}
+	}
+}
+
+
 void linalg_base_level6_generic::ijkl_ipkq_pljq_x(
 	size_t ni, size_t nj, size_t nk,
 	size_t nl, size_t np, size_t nq,

@@ -1,15 +1,14 @@
 #ifndef LIBTENSOR_SO_ADD_IMPL_LABEL_H
 #define LIBTENSOR_SO_ADD_IMPL_LABEL_H
 
-#include "../defs.h"
-#include "../exception.h"
-#include "symmetry_element_set_adapter.h"
-#include "symmetry_operation_impl_base.h"
-#include "so_add.h"
-#include "se_label.h"
+#include "../../defs.h"
+#include "../../exception.h"
+#include "../symmetry_element_set_adapter.h"
+#include "../symmetry_operation_impl_base.h"
+#include "../so_add.h"
+#include "../se_label.h"
 
 namespace libtensor {
-
 
 /**	\brief Implementation of so_add<N, T> for se_label<N, T>
 	\tparam N Tensor order.

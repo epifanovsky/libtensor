@@ -202,6 +202,84 @@ void tod_contract2_test::perform() throw(libtest::test_exception) {
 	test_ij_jp_pi(3, 5, 7, -1.2);
 	test_ij_jp_pi(16, 16, 16, 0.7);
 
+	test_ij_p_pji(1, 1, 1);
+	test_ij_p_pji(1, 1, 2);
+	test_ij_p_pji(1, 2, 1);
+	test_ij_p_pji(2, 1, 1);
+	test_ij_p_pji(3, 3, 3);
+	test_ij_p_pji(3, 5, 7);
+	test_ij_p_pji(16, 16, 16);
+	test_ij_p_pji(1, 1, 1, -0.5);
+	test_ij_p_pji(1, 1, 2, 2.0);
+	test_ij_p_pji(1, 2, 1, -1.0);
+	test_ij_p_pji(2, 1, 1, 3.7);
+	test_ij_p_pji(3, 3, 3, 1.0);
+	test_ij_p_pji(3, 5, 7, -1.2);
+	test_ij_p_pji(16, 16, 16, 0.7);
+
+	test_ij_pji_p(1, 1, 1);
+	test_ij_pji_p(1, 1, 2);
+	test_ij_pji_p(1, 2, 1);
+	test_ij_pji_p(2, 1, 1);
+	test_ij_pji_p(3, 3, 3);
+	test_ij_pji_p(3, 5, 7);
+	test_ij_pji_p(16, 16, 16);
+	test_ij_pji_p(1, 1, 1, -0.5);
+	test_ij_pji_p(1, 1, 2, 2.0);
+	test_ij_pji_p(1, 2, 1, -1.0);
+	test_ij_pji_p(2, 1, 1, 3.7);
+	test_ij_pji_p(3, 3, 3, 1.0);
+	test_ij_pji_p(3, 5, 7, -1.2);
+	test_ij_pji_p(16, 16, 16, 0.7);
+
+	test_ijk_ip_pkj(1, 1, 1, 1);
+	test_ijk_ip_pkj(1, 1, 2, 1);
+	test_ijk_ip_pkj(1, 2, 1, 2);
+	test_ijk_ip_pkj(2, 1, 1, 3);
+	test_ijk_ip_pkj(3, 3, 3, 3);
+	test_ijk_ip_pkj(3, 5, 7, 11);
+	test_ijk_ip_pkj(16, 16, 16, 16);
+	test_ijk_ip_pkj(1, 1, 1, 1, -0.5);
+	test_ijk_ip_pkj(1, 1, 2, 1, 2.0);
+	test_ijk_ip_pkj(1, 2, 1, 2, -1.0);
+	test_ijk_ip_pkj(2, 1, 1, 3, 3.7);
+	test_ijk_ip_pkj(3, 3, 3, 3, 1.0);
+	test_ijk_ip_pkj(3, 5, 7, 11, -1.2);
+	test_ijk_ip_pkj(16, 16, 16, 16, 0.7);
+
+	test_ijk_pkj_ip(1, 1, 1, 1);
+	test_ijk_pkj_ip(1, 1, 2, 1);
+	test_ijk_pkj_ip(1, 2, 1, 2);
+	test_ijk_pkj_ip(2, 1, 1, 3);
+	test_ijk_pkj_ip(3, 3, 3, 3);
+	test_ijk_pkj_ip(3, 5, 7, 11);
+	test_ijk_pkj_ip(16, 16, 16, 16);
+	test_ijk_pkj_ip(1, 1, 1, 1, -0.5);
+	test_ijk_pkj_ip(1, 1, 2, 1, 2.0);
+	test_ijk_pkj_ip(1, 2, 1, 2, -1.0);
+	test_ijk_pkj_ip(2, 1, 1, 3, 3.7);
+	test_ijk_pkj_ip(3, 3, 3, 3, 1.0);
+	test_ijk_pkj_ip(3, 5, 7, 11, -1.2);
+	test_ijk_pkj_ip(16, 16, 16, 16, 0.7);
+
+	test_ijkl_ipl_jpk(1, 1, 1, 1, 1);
+	test_ijkl_ipl_jpk(2, 1, 1, 1, 1);
+	test_ijkl_ipl_jpk(1, 2, 1, 1, 1);
+	test_ijkl_ipl_jpk(1, 1, 2, 1, 1);
+	test_ijkl_ipl_jpk(1, 1, 1, 2, 1);
+	test_ijkl_ipl_jpk(1, 1, 1, 1, 2);
+	test_ijkl_ipl_jpk(2, 3, 2, 3, 2);
+	test_ijkl_ipl_jpk(3, 5, 1, 7, 13);
+	test_ijkl_ipl_jpk(1, 1, 1, 1, 1, 0.0);
+	test_ijkl_ipl_jpk(1, 1, 1, 1, 1, -0.5);
+	test_ijkl_ipl_jpk(2, 1, 1, 1, 1, 2.0);
+	test_ijkl_ipl_jpk(1, 2, 1, 1, 1, -1.0);
+	test_ijkl_ipl_jpk(1, 1, 2, 1, 1, 3.7);
+	test_ijkl_ipl_jpk(1, 1, 1, 2, 1, 1.0);
+	test_ijkl_ipl_jpk(1, 1, 1, 1, 2, -1.2);
+	test_ijkl_ipl_jpk(2, 3, 2, 3, 2, 12.3);
+	test_ijkl_ipl_jpk(3, 5, 1, 7, 13, -1.25);
+
 	//
 	//	Test two-index contractions
 	//
@@ -257,10 +335,47 @@ void tod_contract2_test::perform() throw(libtest::test_exception) {
 	test_ij_jpq_iqp(11, 5, 7, 3, -1.2);
 	test_ij_jpq_iqp(16, 16, 16, 16, 0.7);
 
+	test_ij_jipq_qp(1, 1, 1, 1);
+	test_ij_jipq_qp(1, 1, 1, 2);
+	test_ij_jipq_qp(1, 1, 2, 1);
+	test_ij_jipq_qp(1, 2, 1, 1);
+	test_ij_jipq_qp(2, 1, 1, 1);
+	test_ij_jipq_qp(3, 3, 3, 3);
+	test_ij_jipq_qp(11, 5, 7, 3);
+	test_ij_jipq_qp(16, 16, 16, 16);
+	test_ij_jipq_qp(1, 1, 1, 1, -0.5);
+	test_ij_jipq_qp(1, 1, 1, 2, 2.0);
+	test_ij_jipq_qp(1, 1, 2, 1, -1.0);
+	test_ij_jipq_qp(1, 2, 1, 1, 3.7);
+	test_ij_jipq_qp(2, 1, 1, 1, 1.0);
+	test_ij_jipq_qp(3, 3, 3, 3, 1.0);
+	test_ij_jipq_qp(11, 5, 7, 3, -1.2);
+	test_ij_jipq_qp(16, 16, 16, 16, 0.7);
+
 	test_ij_pq_ijpq(1, 1, 1, 1);
 	test_ij_pq_ijpq(2, 2, 2, 2);
 	test_ij_pq_ijpq_a(1, 1, 1, 1, 0.25);
 	test_ij_pq_ijpq_a(2, 2, 2, 2, 0.25);
+
+	test_ijk_kjpq_iqp(1, 1, 1, 1, 1);
+	test_ijk_kjpq_iqp(2, 1, 1, 1, 1);
+	test_ijk_kjpq_iqp(1, 2, 1, 1, 1);
+	test_ijk_kjpq_iqp(1, 1, 2, 1, 1);
+	test_ijk_kjpq_iqp(1, 1, 1, 2, 1);
+	test_ijk_kjpq_iqp(1, 1, 1, 1, 2);
+	test_ijk_kjpq_iqp(2, 3, 2, 3, 2);
+	test_ijk_kjpq_iqp(3, 5, 1, 13, 11);
+	test_ijk_kjpq_iqp(3, 5, 2, 13, 11);
+	test_ijk_kjpq_iqp(1, 1, 1, 1, 1, 0.0);
+	test_ijk_kjpq_iqp(1, 1, 1, 1, 1, -0.5);
+	test_ijk_kjpq_iqp(2, 1, 1, 1, 1, 2.0);
+	test_ijk_kjpq_iqp(1, 2, 1, 1, 1, -1.0);
+	test_ijk_kjpq_iqp(1, 1, 2, 1, 1, 3.7);
+	test_ijk_kjpq_iqp(1, 1, 1, 2, 1, -1.2);
+	test_ijk_kjpq_iqp(1, 1, 1, 1, 2, 0.7);
+	test_ijk_kjpq_iqp(2, 3, 2, 2, 3, 12.3);
+	test_ijk_kjpq_iqp(3, 5, 1, 13, 11, -1.25);
+	test_ijk_kjpq_iqp(3, 5, 2, 13, 11, -1.25);
 
 	test_ijkl_iplq_kpjq(1, 1, 1, 1, 1, 1);
 	test_ijkl_iplq_kpjq(2, 1, 1, 1, 1, 1);
@@ -1684,6 +1799,381 @@ void tod_contract2_test::test_ij_jp_pi(
 	}
 }
 
+
+void tod_contract2_test::test_ij_p_pji(
+	size_t ni, size_t nj, size_t np, double d)
+	throw(libtest::test_exception) {
+
+	//	c_{ij} = \sum_p a_{p} b_{pji}
+
+	std::stringstream tnss;
+	tnss << "tod_contract2_test::test_ij_p_pji(" << ni << ", " << nj
+		<< ", " << np << ", " << d << ")";
+	std::string tns = tnss.str();
+
+	try {
+
+	index<1> ia1, ia2; ia2[0] = np - 1;
+	index<3> ib1, ib2; ib2[0] = np - 1; ib2[1] = nj - 1; ib2[2] = ni - 1;
+	index<2> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1;
+	dimensions<1> dima(index_range<1>(ia1, ia2));
+	dimensions<3> dimb(index_range<3>(ib1, ib2));
+	dimensions<2> dimc(index_range<2>(ic1, ic2));
+	size_t sza = dima.get_size(), szb = dimb.get_size(),
+		szc = dimc.get_size();
+
+	tensor<1, double, allocator> ta(dima);
+	tensor<3, double, allocator> tb(dimb);
+	tensor<2, double, allocator> tc(dimc);
+	tensor<2, double, allocator> tc_ref(dimc);
+
+	double cij_max = 0.0;
+
+	{
+	tensor_ctrl<1, double> tca(ta);
+	tensor_ctrl<3, double> tcb(tb);
+	tensor_ctrl<2, double> tcc(tc);
+	tensor_ctrl<2, double> tcc_ref(tc_ref);
+	double *dta = tca.req_dataptr();
+	double *dtb = tcb.req_dataptr();
+	double *dtc1 = tcc.req_dataptr();
+	double *dtc2 = tcc_ref.req_dataptr();
+
+	//	Fill in random input
+
+	for(size_t i = 0; i < sza; i++) dta[i] = drand48();
+	for(size_t i = 0; i < szb; i++) dtb[i] = drand48();
+	for(size_t i = 0; i < szc; i++) dtc1[i] = drand48();
+	if(d == 0.0) for(size_t i = 0; i < szc; i++) dtc2[i] = 0.0;
+	else for(size_t i = 0; i < szc; i++) dtc2[i] = dtc1[i];
+
+	//	Generate reference data
+
+	index<1> ia; index<3> ib; index<2> ic;
+	double d1 = (d == 0.0) ? 1.0 : d;
+	for(size_t i = 0; i < ni; i++) {
+	for(size_t j = 0; j < nj; j++) {
+	for(size_t p = 0; p < np; p++) {
+		ia[0] = p;
+		ib[0] = p; ib[1] = j; ib[2] = i;
+		ic[0] = i; ic[1] = j;
+		abs_index<1> aa(ia, dima);
+		abs_index<3> ab(ib, dimb);
+		abs_index<2> ac(ic, dimc);
+		dtc2[ac.get_abs_index()] += d1 *
+			dta[aa.get_abs_index()] * dtb[ab.get_abs_index()];
+	}
+	}
+	}
+	for(size_t i = 0; i < szc; i++)
+		if(fabs(dtc2[i]) > cij_max) cij_max = fabs(dtc2[i]) ;
+
+	tca.ret_dataptr(dta); dta = 0; ta.set_immutable();
+	tcb.ret_dataptr(dtb); dtb = 0; tb.set_immutable();
+	tcc.ret_dataptr(dtc1); dtc1 = 0;
+	tcc_ref.ret_dataptr(dtc2); dtc2 = 0; tc_ref.set_immutable();
+	}
+
+	//	Invoke the contraction routine
+
+	permutation<2> permc; permc.permute(0, 1);
+	contraction2<0, 2, 1> contr(permc);
+	contr.contract(0, 0);
+	if(d == 0.0) tod_contract2<0, 2, 1>(contr, ta, tb).perform(tc);
+	else tod_contract2<0, 2, 1>(contr, ta, tb).perform(tc, d);
+
+	//	Compare against the reference
+
+	compare_ref<2>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
+
+	} catch(exception &e) {
+		fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void tod_contract2_test::test_ij_pji_p(
+	size_t ni, size_t nj, size_t np, double d)
+	throw(libtest::test_exception) {
+
+	//	c_{ij} = \sum_p a_{pji} b_{p}
+
+	std::stringstream tnss;
+	tnss << "tod_contract2_test::test_ij_pji_p(" << ni << ", " << nj
+		<< ", " << np << ", " << d << ")";
+	std::string tns = tnss.str();
+
+	try {
+
+	index<3> ia1, ia2; ia2[0] = np - 1; ia2[1] = nj - 1; ia2[2] = ni - 1;
+	index<1> ib1, ib2; ib2[0] = np - 1;
+	index<2> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1;
+	dimensions<3> dima(index_range<3>(ia1, ia2));
+	dimensions<1> dimb(index_range<1>(ib1, ib2));
+	dimensions<2> dimc(index_range<2>(ic1, ic2));
+	size_t sza = dima.get_size(), szb = dimb.get_size(),
+		szc = dimc.get_size();
+
+	tensor<3, double, allocator> ta(dima);
+	tensor<1, double, allocator> tb(dimb);
+	tensor<2, double, allocator> tc(dimc);
+	tensor<2, double, allocator> tc_ref(dimc);
+
+	double cij_max = 0.0;
+
+	{
+	tensor_ctrl<3, double> tca(ta);
+	tensor_ctrl<1, double> tcb(tb);
+	tensor_ctrl<2, double> tcc(tc);
+	tensor_ctrl<2, double> tcc_ref(tc_ref);
+	double *dta = tca.req_dataptr();
+	double *dtb = tcb.req_dataptr();
+	double *dtc1 = tcc.req_dataptr();
+	double *dtc2 = tcc_ref.req_dataptr();
+
+	//	Fill in random input
+
+	for(size_t i = 0; i < sza; i++) dta[i] = drand48();
+	for(size_t i = 0; i < szb; i++) dtb[i] = drand48();
+	for(size_t i = 0; i < szc; i++) dtc1[i] = drand48();
+	if(d == 0.0) for(size_t i = 0; i < szc; i++) dtc2[i] = 0.0;
+	else for(size_t i = 0; i < szc; i++) dtc2[i] = dtc1[i];
+
+	//	Generate reference data
+
+	index<3> ia; index<1> ib; index<2> ic;
+	double d1 = (d == 0.0) ? 1.0 : d;
+	for(size_t i = 0; i < ni; i++) {
+	for(size_t j = 0; j < nj; j++) {
+	for(size_t p = 0; p < np; p++) {
+		ia[0] = p; ia[1] = j; ia[2] = i;
+		ib[0] = p;
+		ic[0] = i; ic[1] = j;
+		abs_index<3> aa(ia, dima);
+		abs_index<1> ab(ib, dimb);
+		abs_index<2> ac(ic, dimc);
+		dtc2[ac.get_abs_index()] += d1 *
+			dta[aa.get_abs_index()] * dtb[ab.get_abs_index()];
+	}
+	}
+	}
+	for(size_t i = 0; i < szc; i++)
+		if(fabs(dtc2[i]) > cij_max) cij_max = fabs(dtc2[i]) ;
+
+	tca.ret_dataptr(dta); dta = 0; ta.set_immutable();
+	tcb.ret_dataptr(dtb); dtb = 0; tb.set_immutable();
+	tcc.ret_dataptr(dtc1); dtc1 = 0;
+	tcc_ref.ret_dataptr(dtc2); dtc2 = 0; tc_ref.set_immutable();
+	}
+
+	//	Invoke the contraction routine
+
+	permutation<2> permc; permc.permute(0, 1);
+	contraction2<2, 0, 1> contr(permc);
+	contr.contract(0, 0);
+	if(d == 0.0) tod_contract2<2, 0, 1>(contr, ta, tb).perform(tc);
+	else tod_contract2<2, 0, 1>(contr, ta, tb).perform(tc, d);
+
+	//	Compare against the reference
+
+	compare_ref<2>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
+
+	} catch(exception &e) {
+		fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void tod_contract2_test::test_ijk_ip_pkj(
+	size_t ni, size_t nj, size_t nk, size_t np, double d)
+	throw(libtest::test_exception) {
+
+	//	c_{ijk} = \sum_p a_{ip} b_{pkj}
+
+	std::stringstream tnss;
+	tnss << "tod_contract2_test::test_ijk_ip_pkj(" << ni << ", " << nj
+		<< ", " << nk << ", " << np << ", " << d << ")";
+	std::string tns = tnss.str();
+
+	try {
+
+	index<2> ia1, ia2; ia2[0] = ni - 1; ia2[1] = np - 1;
+	index<3> ib1, ib2; ib2[0] = np - 1; ib2[1] = nk - 1; ib2[2] = nj - 1;
+	index<3> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1;
+	dimensions<2> dima(index_range<2>(ia1, ia2));
+	dimensions<3> dimb(index_range<3>(ib1, ib2));
+	dimensions<3> dimc(index_range<3>(ic1, ic2));
+	size_t sza = dima.get_size(), szb = dimb.get_size(),
+		szc = dimc.get_size();
+
+	tensor<2, double, allocator> ta(dima);
+	tensor<3, double, allocator> tb(dimb);
+	tensor<3, double, allocator> tc(dimc);
+	tensor<3, double, allocator> tc_ref(dimc);
+
+	double cij_max = 0.0;
+
+	{
+	tensor_ctrl<2, double> tca(ta);
+	tensor_ctrl<3, double> tcb(tb);
+	tensor_ctrl<3, double> tcc(tc);
+	tensor_ctrl<3, double> tcc_ref(tc_ref);
+	double *dta = tca.req_dataptr();
+	double *dtb = tcb.req_dataptr();
+	double *dtc1 = tcc.req_dataptr();
+	double *dtc2 = tcc_ref.req_dataptr();
+
+	//	Fill in random input
+
+	for(size_t i = 0; i < sza; i++) dta[i] = drand48();
+	for(size_t i = 0; i < szb; i++) dtb[i] = drand48();
+	for(size_t i = 0; i < szc; i++) dtc1[i] = drand48();
+	if(d == 0.0) for(size_t i = 0; i < szc; i++) dtc2[i] = 0.0;
+	else for(size_t i = 0; i < szc; i++) dtc2[i] = dtc1[i];
+
+	//	Generate reference data
+
+	index<2> ia; index<3> ib; index<3> ic;
+	double d1 = (d == 0.0) ? 1.0 : d;
+	for(size_t i = 0; i < ni; i++) {
+	for(size_t j = 0; j < nj; j++) {
+	for(size_t k = 0; k < nk; k++) {
+	for(size_t p = 0; p < np; p++) {
+		ia[0] = i; ia[1] = p;
+		ib[0] = p; ib[1] = k; ib[2] = j;
+		ic[0] = i; ic[1] = j; ic[2] = k;
+		abs_index<2> aa(ia, dima);
+		abs_index<3> ab(ib, dimb);
+		abs_index<3> ac(ic, dimc);
+		dtc2[ac.get_abs_index()] += d1 *
+			dta[aa.get_abs_index()] * dtb[ab.get_abs_index()];
+	}
+	}
+	}
+	}
+	for(size_t i = 0; i < szc; i++)
+		if(fabs(dtc2[i]) > cij_max) cij_max = fabs(dtc2[i]) ;
+
+	tca.ret_dataptr(dta); dta = 0; ta.set_immutable();
+	tcb.ret_dataptr(dtb); dtb = 0; tb.set_immutable();
+	tcc.ret_dataptr(dtc1); dtc1 = 0;
+	tcc_ref.ret_dataptr(dtc2); dtc2 = 0; tc_ref.set_immutable();
+	}
+
+	//	Invoke the contraction routine
+
+	permutation<3> permc;
+	permc.permute(1, 2); // ikj -> ijk
+	contraction2<1, 2, 1> contr(permc);
+	contr.contract(1, 0);
+	if(d == 0.0) tod_contract2<1, 2, 1>(contr, ta, tb).perform(tc);
+	else tod_contract2<1, 2, 1>(contr, ta, tb).perform(tc, d);
+
+	//	Compare against the reference
+
+	compare_ref<3>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
+
+	} catch(exception &e) {
+		fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void tod_contract2_test::test_ijk_pkj_ip(
+	size_t ni, size_t nj, size_t nk, size_t np, double d)
+	throw(libtest::test_exception) {
+
+	//	c_{ijk} = \sum_p a_{pkj} b_{ip}
+
+	std::stringstream tnss;
+	tnss << "tod_contract2_test::test_ijk_pkj_ip(" << ni << ", " << nj
+		<< ", " << nk << ", " << np << ", " << d << ")";
+	std::string tns = tnss.str();
+
+	try {
+
+	index<3> ia1, ia2; ia2[0] = np - 1; ia2[1] = nk - 1; ia2[2] = nj - 1;
+	index<2> ib1, ib2; ib2[0] = ni - 1; ib2[1] = np - 1;
+	index<3> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1;
+	dimensions<3> dima(index_range<3>(ia1, ia2));
+	dimensions<2> dimb(index_range<2>(ib1, ib2));
+	dimensions<3> dimc(index_range<3>(ic1, ic2));
+	size_t sza = dima.get_size(), szb = dimb.get_size(),
+		szc = dimc.get_size();
+
+	tensor<3, double, allocator> ta(dima);
+	tensor<2, double, allocator> tb(dimb);
+	tensor<3, double, allocator> tc(dimc);
+	tensor<3, double, allocator> tc_ref(dimc);
+
+	double cij_max = 0.0;
+
+	{
+	tensor_ctrl<3, double> tca(ta);
+	tensor_ctrl<2, double> tcb(tb);
+	tensor_ctrl<3, double> tcc(tc);
+	tensor_ctrl<3, double> tcc_ref(tc_ref);
+	double *dta = tca.req_dataptr();
+	double *dtb = tcb.req_dataptr();
+	double *dtc1 = tcc.req_dataptr();
+	double *dtc2 = tcc_ref.req_dataptr();
+
+	//	Fill in random input
+
+	for(size_t i = 0; i < sza; i++) dta[i] = drand48();
+	for(size_t i = 0; i < szb; i++) dtb[i] = drand48();
+	for(size_t i = 0; i < szc; i++) dtc1[i] = drand48();
+	if(d == 0.0) for(size_t i = 0; i < szc; i++) dtc2[i] = 0.0;
+	else for(size_t i = 0; i < szc; i++) dtc2[i] = dtc1[i];
+
+	//	Generate reference data
+
+	index<3> ia; index<2> ib; index<3> ic;
+	double d1 = (d == 0.0) ? 1.0 : d;
+	for(size_t i = 0; i < ni; i++) {
+	for(size_t j = 0; j < nj; j++) {
+	for(size_t k = 0; k < nk; k++) {
+	for(size_t p = 0; p < np; p++) {
+		ia[0] = p; ia[1] = k; ia[2] = j;
+		ib[0] = i; ib[1] = p;
+		ic[0] = i; ic[1] = j; ic[2] = k;
+		abs_index<3> aa(ia, dima);
+		abs_index<2> ab(ib, dimb);
+		abs_index<3> ac(ic, dimc);
+		dtc2[ac.get_abs_index()] += d1 *
+			dta[aa.get_abs_index()] * dtb[ab.get_abs_index()];
+	}
+	}
+	}
+	}
+	for(size_t i = 0; i < szc; i++)
+		if(fabs(dtc2[i]) > cij_max) cij_max = fabs(dtc2[i]) ;
+
+	tca.ret_dataptr(dta); dta = 0; ta.set_immutable();
+	tcb.ret_dataptr(dtb); dtb = 0; tb.set_immutable();
+	tcc.ret_dataptr(dtc1); dtc1 = 0;
+	tcc_ref.ret_dataptr(dtc2); dtc2 = 0; tc_ref.set_immutable();
+	}
+
+	//	Invoke the contraction routine
+
+	permutation<3> permc;
+	permc.permute(0, 2); // kji -> ijk
+	contraction2<2, 1, 1> contr(permc);
+	contr.contract(0, 1);
+	if(d == 0.0) tod_contract2<2, 1, 1>(contr, ta, tb).perform(tc);
+	else tod_contract2<2, 1, 1>(contr, ta, tb).perform(tc, d);
+
+	//	Compare against the reference
+
+	compare_ref<3>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
+
+	} catch(exception &e) {
+		fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+	}
+}
+
+
 void tod_contract2_test::test_ij_pqi_pjq(
 	size_t ni, size_t nj, size_t np, size_t nq, double d)
 	throw(libtest::test_exception) {
@@ -1960,6 +2450,102 @@ void tod_contract2_test::test_ij_jpq_iqp(
 	}
 }
 
+void tod_contract2_test::test_ij_jipq_qp(
+	size_t ni, size_t nj, size_t np, size_t nq, double d)
+	throw(libtest::test_exception) {
+
+	//	c_{ij} = \sum_{pq} a_{jipq} b_{qp}
+
+	std::stringstream tnss;
+	tnss << "tod_contract2_test::test_ij_jipq_qp(" << ni << ", " << nj
+		<< ", " << np << ", " << nq << ", " << d << ")";
+	std::string tns = tnss.str();
+
+	try {
+
+	index<4> ia1, ia2;
+	ia2[0] = nj - 1; ia2[1] = ni - 1; ia2[2] = np - 1; ia2[3] = nq - 1;
+	index<2> ib1, ib2;
+	ib2[0] = nq - 1; ib2[1] = np - 1;
+	index<2> ic1, ic2;
+	ic2[0] = ni - 1; ic2[1] = nj - 1;
+	dimensions<4> dima(index_range<4>(ia1, ia2));
+	dimensions<2> dimb(index_range<2>(ib1, ib2));
+	dimensions<2> dimc(index_range<2>(ic1, ic2));
+	size_t sza = dima.get_size(), szb = dimb.get_size(),
+		szc = dimc.get_size();
+
+	tensor<4, double, allocator> ta(dima);
+	tensor<2, double, allocator> tb(dimb);
+	tensor<2, double, allocator> tc(dimc);
+	tensor<2, double, allocator> tc_ref(dimc);
+
+	double cij_max = 0.0;
+
+	{
+	tensor_ctrl<4, double> tca(ta);
+	tensor_ctrl<2, double> tcb(tb);
+	tensor_ctrl<2, double> tcc(tc);
+	tensor_ctrl<2, double> tcc_ref(tc_ref);
+	double *dta = tca.req_dataptr();
+	double *dtb = tcb.req_dataptr();
+	double *dtc1 = tcc.req_dataptr();
+	double *dtc2 = tcc_ref.req_dataptr();
+
+	//	Fill in random input
+
+	for(size_t i = 0; i < sza; i++) dta[i] = drand48();
+	for(size_t i = 0; i < szb; i++) dtb[i] = drand48();
+	for(size_t i = 0; i < szc; i++) dtc1[i] = drand48();
+	if(d == 0.0) for(size_t i = 0; i < szc; i++) dtc2[i] = 0.0;
+	else for(size_t i = 0; i < szc; i++) dtc2[i] = dtc1[i];
+
+	//	Generate reference data
+
+	index<4> ia; index<2> ib; index<2> ic;
+	double d1 = (d == 0.0) ? 1.0 : d;
+	for(size_t i = 0; i < ni; i++) {
+	for(size_t j = 0; j < nj; j++) {
+	for(size_t p = 0; p < np; p++) {
+	for(size_t q = 0; q < nq; q++) {
+		ia[0] = j; ia[1] = i; ia[2] = p; ia[3] = q;
+		ib[0] = q; ib[1] = p;
+		ic[0] = i; ic[1] = j;
+		abs_index<4> aa(ia, dima);
+		abs_index<2> ab(ib, dimb);
+		abs_index<2> ac(ic, dimc);
+		dtc2[ac.get_abs_index()] += d1 *
+			dta[aa.get_abs_index()] * dtb[ab.get_abs_index()];
+	}
+	}
+	}
+	}
+	for(size_t i = 0; i < szc; i++)
+		if(fabs(dtc2[i]) > cij_max) cij_max = fabs(dtc2[i]) ;
+
+	tca.ret_dataptr(dta); dta = 0; ta.set_immutable();
+	tcb.ret_dataptr(dtb); dtb = 0; tb.set_immutable();
+	tcc.ret_dataptr(dtc1); dtc1 = 0;
+	tcc_ref.ret_dataptr(dtc2); dtc2 = 0; tc_ref.set_immutable();
+	}
+
+	//	Invoke the contraction routine
+
+	contraction2<2, 0, 2> contr(permutation<2>().permute(0, 1));
+	contr.contract(2, 1);
+	contr.contract(3, 0);
+	if(d == 0.0) tod_contract2<2, 0, 2>(contr, ta, tb).perform(tc);
+	else tod_contract2<2, 0, 2>(contr, ta, tb).perform(tc, d);
+
+	//	Compare against the reference
+
+	compare_ref<2>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
+
+	} catch(exception &e) {
+		fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+	}
+}
+
 void tod_contract2_test::test_ij_pq_ijpq(size_t ni, size_t nj, size_t np,
 	size_t nq) throw(libtest::test_exception) {
 
@@ -2123,6 +2709,201 @@ void tod_contract2_test::test_ij_pq_ijpq_a(size_t ni, size_t nj, size_t np,
 
 	compare_ref<2>::compare(tns.c_str(), tc, tc_ref, cij_max*k_thresh);
 }
+
+
+void tod_contract2_test::test_ijk_kjpq_iqp(size_t ni, size_t nj, size_t nk,
+	size_t np, size_t nq, double d) throw(libtest::test_exception) {
+
+	//	c_{ijk} = \sum_{pq} a_{kjpq} b_{iqp}
+
+	std::stringstream tnss;
+	tnss << "tod_contract2_test::test_ijk_kjpq_iqp(" << ni << ", " << nj
+		<< ", " << nk << ", " << np << ", " << nq << ", " << d << ")";
+	std::string tns = tnss.str();
+
+	try {
+
+	index<4> ia1, ia2;
+	ia2[0] = nk - 1; ia2[1] = nj - 1; ia2[2] = np - 1; ia2[3] = nq - 1;
+	index<3> ib1, ib2;
+	ib2[0] = ni - 1; ib2[1] = nq - 1; ib2[2] = np - 1;
+	index<3> ic1, ic2;
+	ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1;
+	dimensions<4> dima(index_range<4>(ia1, ia2));
+	dimensions<3> dimb(index_range<3>(ib1, ib2));
+	dimensions<3> dimc(index_range<3>(ic1, ic2));
+	size_t sza = dima.get_size(), szb = dimb.get_size(),
+		szc = dimc.get_size();
+
+	tensor<4, double, allocator> ta(dima);
+	tensor<3, double, allocator> tb(dimb);
+	tensor<3, double, allocator> tc(dimc);
+	tensor<3, double, allocator> tc_ref(dimc);
+
+	double cij_max = 0.0;
+
+	{
+	tensor_ctrl<4, double> tca(ta);
+	tensor_ctrl<3, double> tcb(tb);
+	tensor_ctrl<3, double> tcc(tc);
+	tensor_ctrl<3, double> tcc_ref(tc_ref);
+	double *dta = tca.req_dataptr();
+	double *dtb = tcb.req_dataptr();
+	double *dtc1 = tcc.req_dataptr();
+	double *dtc2 = tcc_ref.req_dataptr();
+
+	//	Fill in random input
+
+	for(size_t i = 0; i < sza; i++) dta[i] = drand48();
+	for(size_t i = 0; i < szb; i++) dtb[i] = drand48();
+	for(size_t i = 0; i < szc; i++) dtc1[i] = drand48();
+	if(d == 0.0) for(size_t i = 0; i < szc; i++) dtc2[i] = 0.0;
+	else for(size_t i = 0; i < szc; i++) dtc2[i] = dtc1[i];
+
+	//	Generate reference data
+
+	index<4> ia; index<3> ib; index<3> ic;
+	double d1 = (d == 0.0) ? 1.0 : d;
+	for(size_t i = 0; i < ni; i++) {
+	for(size_t j = 0; j < nj; j++) {
+	for(size_t k = 0; k < nk; k++) {
+	for(size_t p = 0; p < np; p++) {
+	for(size_t q = 0; q < nq; q++) {
+		ia[0] = k; ia[1] = j; ia[2] = p; ia[3] = q;
+		ib[0] = i; ib[1] = q; ib[2] = p;
+		ic[0] = i; ic[1] = j; ic[2] = k;
+		abs_index<4> aa(ia, dima);
+		abs_index<3> ab(ib, dimb), ac(ic, dimc);
+		dtc2[ac.get_abs_index()] += d1 *
+			dta[aa.get_abs_index()] * dtb[ab.get_abs_index()];
+	}
+	}
+	}
+	}
+	}
+	for(size_t i = 0; i < szc; i++)
+		if(fabs(dtc2[i]) > cij_max) cij_max = fabs(dtc2[i]) ;
+
+	tca.ret_dataptr(dta); dta = 0; ta.set_immutable();
+	tcb.ret_dataptr(dtb); dtb = 0; tb.set_immutable();
+	tcc.ret_dataptr(dtc1); dtc1 = 0;
+	tcc_ref.ret_dataptr(dtc2); dtc2 = 0; tc_ref.set_immutable();
+	}
+
+	//	Invoke the contraction routine
+
+	contraction2<2, 1, 2> contr(permutation<3>().permute(0, 2));
+	contr.contract(2, 2);
+	contr.contract(3, 1);
+	if(d == 0.0) tod_contract2<2, 1, 2>(contr, ta, tb).perform(tc);
+	else tod_contract2<2, 1, 2>(contr, ta, tb).perform(tc, d);
+
+	//	Compare against the reference
+
+	compare_ref<3>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
+
+	} catch(exception &e) {
+		fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void tod_contract2_test::test_ijkl_ipl_jpk(size_t ni, size_t nj, size_t nk,
+	size_t nl, size_t np, double d) throw(libtest::test_exception) {
+
+	//	c_{ijkl} = \sum_{pq} a_{ipql} b_{pkqj}
+
+	std::stringstream tnss;
+	tnss << "tod_contract2_test::test_ijkl_ipl_jpk(" << ni << ", " << nj
+		<< ", " << nk << ", " << nl << ", " << np << ", " << d << ")";
+	std::string tns = tnss.str();
+
+	try {
+
+	index<3> ia1, ia2;
+	ia2[0] = ni - 1; ia2[1] = np - 1; ia2[2] = nl - 1;
+	index<3> ib1, ib2;
+	ib2[0] = nj - 1; ib2[1] = np - 1; ib2[2] = nk - 1;
+	index<4> ic1, ic2;
+	ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1; ic2[3] = nl - 1;
+	dimensions<3> dima(index_range<3>(ia1, ia2));
+	dimensions<3> dimb(index_range<3>(ib1, ib2));
+	dimensions<4> dimc(index_range<4>(ic1, ic2));
+	size_t sza = dima.get_size(), szb = dimb.get_size(),
+		szc = dimc.get_size();
+
+	tensor<3, double, allocator> ta(dima);
+	tensor<3, double, allocator> tb(dimb);
+	tensor<4, double, allocator> tc(dimc);
+	tensor<4, double, allocator> tc_ref(dimc);
+
+	double cij_max = 0.0;
+
+	{
+	tensor_ctrl<3, double> tca(ta);
+	tensor_ctrl<3, double> tcb(tb);
+	tensor_ctrl<4, double> tcc(tc);
+	tensor_ctrl<4, double> tcc_ref(tc_ref);
+	double *dta = tca.req_dataptr();
+	double *dtb = tcb.req_dataptr();
+	double *dtc1 = tcc.req_dataptr();
+	double *dtc2 = tcc_ref.req_dataptr();
+
+	//	Fill in random input
+
+	for(size_t i = 0; i < sza; i++) dta[i] = drand48();
+	for(size_t i = 0; i < szb; i++) dtb[i] = drand48();
+	for(size_t i = 0; i < szc; i++) dtc1[i] = drand48();
+	if(d == 0.0) for(size_t i = 0; i < szc; i++) dtc2[i] = 0.0;
+	else for(size_t i = 0; i < szc; i++) dtc2[i] = dtc1[i];
+
+	//	Generate reference data
+
+	index<3> ia; index<3> ib; index<4> ic;
+	double d1 = (d == 0.0) ? 1.0 : d;
+	for(size_t i = 0; i < ni; i++) {
+	for(size_t j = 0; j < nj; j++) {
+	for(size_t k = 0; k < nk; k++) {
+	for(size_t l = 0; l < nl; l++) {
+	for(size_t p = 0; p < np; p++) {
+		ia[0] = i; ia[1] = p; ia[2] = l;
+		ib[0] = j; ib[1] = p; ib[2] = k;
+		ic[0] = i; ic[1] = j; ic[2] = k; ic[3] = l;
+		abs_index<3> aa(ia, dima), ab(ib, dimb);
+		abs_index<4> ac(ic, dimc);
+		dtc2[ac.get_abs_index()] += d1 *
+			dta[aa.get_abs_index()] * dtb[ab.get_abs_index()];
+	}
+	}
+	}
+	}
+	}
+	for(size_t i = 0; i < szc; i++)
+		if(fabs(dtc2[i]) > cij_max) cij_max = fabs(dtc2[i]) ;
+
+	tca.ret_dataptr(dta); dta = 0; ta.set_immutable();
+	tcb.ret_dataptr(dtb); dtb = 0; tb.set_immutable();
+	tcc.ret_dataptr(dtc1); dtc1 = 0;
+	tcc_ref.ret_dataptr(dtc2); dtc2 = 0; tc_ref.set_immutable();
+	}
+
+	//	Invoke the contraction routine
+
+	permutation<4> permc; permc.permute(1, 2).permute(2, 3); // iljk->ijkl
+	contraction2<2, 2, 1> contr(permc);
+	contr.contract(1, 1);
+	if(d == 0.0) tod_contract2<2, 2, 1>(contr, ta, tb).perform(tc);
+	else tod_contract2<2, 2, 1>(contr, ta, tb).perform(tc, d);
+
+	//	Compare against the reference
+
+	compare_ref<4>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
+
+	} catch(exception &e) {
+		fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+	}
+}
+
 
 void tod_contract2_test::test_ijkl_iplq_kpjq(size_t ni, size_t nj, size_t nk,
 	size_t nl, size_t np, size_t nq, double d)

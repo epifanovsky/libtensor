@@ -6,17 +6,17 @@
 #include "se_label.h"
 #include "se_part.h"
 #include "se_perm.h"
-#include "so_merge_impl_label.h"
-#include "so_merge_impl_part.h"
-#include "so_merge_impl_perm.h"
+#include "label/so_merge_impl_label.h"
+#include "part/so_merge_impl_part.h"
+#include "perm/so_merge_impl_perm.h"
 
 namespace libtensor {
 
 
-template<size_t N, size_t M, typename T>
-class symmetry_operation_handlers< so_merge<N, M, T> > {
+template<size_t N, size_t M, size_t K, typename T>
+class symmetry_operation_handlers< so_merge<N, M, K, T> > {
 public:
-	typedef so_merge<N, M, T> operation_t;
+	typedef so_merge<N, M, K, T> operation_t;
 	typedef symmetry_operation_dispatcher<operation_t> dispatcher_t;
 
 public:

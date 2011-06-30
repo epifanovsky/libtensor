@@ -1,4 +1,3 @@
-#include <libtensor/libtensor.h>
 #include "libtensor_core_suite.h"
 
 namespace libtensor {
@@ -14,7 +13,7 @@ libtensor_core_suite::libtensor_core_suite() :
 	add_test("block_map", m_utf_block_map);
 	add_test("block_tensor", m_utf_block_tensor);
 	add_test("dimensions", m_utf_dimensions);
-	add_test("direct_block_tensor", m_utf_direct_block_tensor);
+//	add_test("direct_block_tensor", m_utf_direct_block_tensor);
 	add_test("global_timings", m_utf_global_timings);
 	add_test("immutable", m_utf_immutable);
 	add_test("index", m_utf_index);

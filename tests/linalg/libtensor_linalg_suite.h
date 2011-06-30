@@ -2,6 +2,7 @@
 #define LIBTENSOR_LIBTENSOR_LINALG_SUITE_H
 
 #include <libtest/test_suite.h>
+#include "linalg_add_i_i_x_x_test.h"
 #include "linalg_x_p_p_test.h"
 #include "linalg_i_i_x_test.h"
 #include "linalg_x_pq_qp_test.h"
@@ -14,10 +15,15 @@
 #include "linalg_ij_ip_pj_x_test.h"
 #include "linalg_ij_pi_jp_x_test.h"
 #include "linalg_ij_pi_pj_x_test.h"
+#include "linalg_ij_pji_p_x_test.h"
 #include "linalg_ij_ipq_jqp_x_test.h"
+#include "linalg_ijk_ip_pkj_x_test.h"
 #include "linalg_ijk_ipkq_jpq_x_test.h"
+#include "linalg_ijk_ipq_kjqp_x_test.h"
 #include "linalg_ijk_pikq_jpq_x_test.h"
 #include "linalg_ijk_piqk_jpq_x_test.h"
+#include "linalg_ijkl_ikp_jpl_x_test.h"
+#include "linalg_ijkl_ipl_jpk_x_test.h"
 #include "linalg_ijkl_ipl_kpj_x_test.h"
 #include "linalg_ijkl_ipkq_pljq_x_test.h"
 #include "linalg_ijkl_iplq_kpjq_x_test.h"
@@ -58,6 +64,7 @@ namespace libtensor {
 
 
 	This suite runs the following tests:
+	 - libtensor::linalg_add_i_i_x_x_test
 	 - libtensor::linalg_x_p_p_test
 	 - libtensor::linalg_i_i_x_test
 	 - libtensor::linalg_x_pq_qp_test
@@ -70,10 +77,15 @@ namespace libtensor {
 	 - libtensor::linalg_ij_ip_pj_x_test
 	 - libtensor::linalg_ij_pi_jp_x_test
 	 - libtensor::linalg_ij_pi_pj_x_test
+	 - libtensor::linalg_ij_pji_p_x_test
 	 - libtensor::linalg_ij_ipq_jqp_x_test
+	 - libtensor::linalg_ijk_ip_pkj_x_test
 	 - libtensor::linalg_ijk_ipkq_jpq_x_test
+	 - libtensor::linalg_ijk_ipq_kjqp_x_test
 	 - libtensor::linalg_ijk_pikq_jpq_x_test
 	 - libtensor::linalg_ijk_piqk_jpq_x_test
+	 - libtensor::linalg_ijkl_ikp_jpl_x_test
+	 - libtensor::linalg_ijkl_ipl_jpk_x_test
 	 - libtensor::linalg_ijkl_ipl_kpj_x_test
 	 - libtensor::linalg_ijkl_ipkq_pljq_x_test
 	 - libtensor::linalg_ijkl_iplq_kpjq_x_test
@@ -102,6 +114,7 @@ namespace libtensor {
  **/
 class libtensor_linalg_suite : public libtest::test_suite {
 private:
+	unit_test_factory<linalg_add_i_i_x_x_test> m_utf_linalg_add_i_i_x_x;
 	unit_test_factory<linalg_x_p_p_test> m_utf_linalg_x_p_p;
 	unit_test_factory<linalg_i_i_x_test> m_utf_linalg_i_i_x;
 	unit_test_factory<linalg_x_pq_qp_test> m_utf_linalg_x_pq_qp;
@@ -114,13 +127,21 @@ private:
 	unit_test_factory<linalg_ij_ip_pj_x_test> m_utf_linalg_ij_ip_pj_x;
 	unit_test_factory<linalg_ij_pi_jp_x_test> m_utf_linalg_ij_pi_jp_x;
 	unit_test_factory<linalg_ij_pi_pj_x_test> m_utf_linalg_ij_pi_pj_x;
+	unit_test_factory<linalg_ij_pji_p_x_test> m_utf_linalg_ij_pji_p_x;
 	unit_test_factory<linalg_ij_ipq_jqp_x_test> m_utf_linalg_ij_ipq_jqp_x;
+	unit_test_factory<linalg_ijk_ip_pkj_x_test> m_utf_linalg_ijk_ip_pkj_x;
+	unit_test_factory<linalg_ijk_ipq_kjqp_x_test>
+		m_utf_linalg_ijk_ipq_kjqp_x;
 	unit_test_factory<linalg_ijk_ipkq_jpq_x_test>
 		m_utf_linalg_ijk_ipkq_jpq_x;
 	unit_test_factory<linalg_ijk_pikq_jpq_x_test>
 		m_utf_linalg_ijk_pikq_jpq_x;
 	unit_test_factory<linalg_ijk_piqk_jpq_x_test>
 		m_utf_linalg_ijk_piqk_jpq_x;
+	unit_test_factory<linalg_ijkl_ikp_jpl_x_test>
+		m_utf_linalg_ijkl_ikp_jpl_x;
+	unit_test_factory<linalg_ijkl_ipl_jpk_x_test>
+		m_utf_linalg_ijkl_ipl_jpk_x;
 	unit_test_factory<linalg_ijkl_ipl_kpj_x_test>
 		m_utf_linalg_ijkl_ipl_kpj_x;
 	unit_test_factory<linalg_ijkl_ipkq_pljq_x_test>

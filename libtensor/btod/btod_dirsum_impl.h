@@ -294,8 +294,8 @@ void btod_dirsum<N, M>::make_schedule(const orbit<k_ordera, double> &oa,
 
 			permutation_builder<k_orderc> pbc(seqc2, seqc1);
 			schrec rec;
-			rec.absidxa = aidxa.get_abs_index();
-			rec.absidxb = aidxb.get_abs_index();
+			rec.absidxa = oa.get_abs_canonical_index();
+			rec.absidxb = ob.get_abs_canonical_index();
 			rec.zeroa = zeroa;
 			rec.zerob = zerob;
 			rec.ka = m_ka * tra.get_coeff();

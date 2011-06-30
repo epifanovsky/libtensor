@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_POINT_GROUP_TABLE_H
 #define LIBTENSOR_POINT_GROUP_TABLE_H
 
-#include "../core/out_of_bounds.h"
+#include "../../core/out_of_bounds.h"
 #include "product_table_i.h"
 
 namespace libtensor {
@@ -17,11 +17,15 @@ namespace libtensor {
 	delete_product(). Each product of two labels can have as many result labels
 	as there are irreducible representations.
 
-	The function is_in_product checks whether the label given as second
-	parameter is in the product of the sequence of labels given as first
-	parameter. For more than two labels in the sequence the products are
-	evaluated from the right.
+	The function \c is_in_product() computes the product of the label sequence
+	given as first argument and compares the result to the label given as
+	second argument. If the label is present in the result, true is returned.
+	The product is evaluated from the right, i.e.
+	\code
+	l1 x (l2 x (l3 x ...))
+	\endcode
 
+    \ingroup libtensor_symmetry
  **/
 class point_group_table : public product_table_i {
 public:

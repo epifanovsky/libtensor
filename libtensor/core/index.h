@@ -211,14 +211,13 @@ inline bool index<N>::operator<(const index<N> &idx) const {
  **/
 template<size_t N>
 std::ostream &operator<<(std::ostream &os, const index<N> &i) {
-	os << "[";
-	for(size_t j = 0; j < N - 1; j++)
-		os << i.sequence<N, size_t>::at_nochk(j) << ",";
-	os << i.sequence<N, size_t>::at_nochk(N - 1);
+
+	os << "[" << i.sequence<N, size_t>::at_nochk(0);
+	for(size_t j = 1; j < N; j++)
+		os << ", " << i.sequence<N, size_t>::at_nochk(j);
 	os << "]";
 	return os;
 }
-
 
 /**	\brief Prints out an index<0> to an output stream
 

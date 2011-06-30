@@ -23,6 +23,7 @@ bool point_group_table::is_in_product(const label_group &lg, label_t l) const {
 	typedef std::list<label_t> list_t;
 	static const char *method = "is_in_product(const label_group &, label_t)";
 
+#ifdef LIBTENSOR_DEBUG
 	if (! is_valid(l))
 		throw out_of_bounds(g_ns, k_clazz, method,
 				__FILE__, __LINE__, "Invalid irrep.");
@@ -31,6 +32,7 @@ bool point_group_table::is_in_product(const label_group &lg, label_t l) const {
 		if (! is_valid(lg[i]))
 			throw out_of_bounds(g_ns, k_clazz, method,
 					__FILE__, __LINE__, "Invalid irrep.");
+#endif
 
 	list_t l1, l2, *ptr1, *ptr2;
 	label_group::const_reverse_iterator it1 = lg.rbegin();
@@ -66,9 +68,11 @@ void point_group_table::add_product(
 
 	const char *method = "add_product(label_t, label_t, label_t)";
 
+#ifdef LIBTENSOR_DEBUG
 	if (! is_valid(l1) || ! is_valid(l2) || ! is_valid(lr))
 		throw out_of_bounds(g_ns, k_clazz, method,
 				__FILE__, __LINE__, "Invalid irrep.");
+#endif
 
 	label_group &lg = m_table[abs_index(l1, l2)];
 
@@ -85,15 +89,18 @@ void point_group_table::delete_product(
 
 	const char *method = "delete_product(label_t, label_t)";
 
+#ifdef LIBTENSOR_DEBUG
 	if (! is_valid(l1) || ! is_valid(l2))
 		throw out_of_bounds(g_ns, k_clazz, method,
 				__FILE__, __LINE__, "Invalid irrep.");
+#endif
 
 	m_table[abs_index(l1, l2)].clear();
 }
 
 void point_group_table::check() const throw(exception) {
 
+#ifdef LIBTENSOR_DEBUG
 	const char *method = "check()";
 
 	typedef std::vector<label_group> table;
@@ -108,6 +115,7 @@ void point_group_table::check() const throw(exception) {
 						"Invalid irrep found in product table.");
 		}
 	}
+#endif
 }
 
 } // namespace libtensor

@@ -2,7 +2,7 @@
 #define LIBTENSOR_PRODUCT_TABLE_CONTAINER_H
 
 #include <libvmm/libvmm.h>
-#include "../exception.h"
+#include "../../exception.h"
 #include "product_table_i.h"
 
 namespace libtensor {
@@ -11,6 +11,7 @@ namespace libtensor {
 
 	Singleton object to store and access several product tables.
 
+	\ingroup libtensor_symmetry
  **/
 class product_table_container :
 	public libvmm::singleton<product_table_container> {

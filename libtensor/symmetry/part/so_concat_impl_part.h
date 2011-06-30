@@ -83,25 +83,36 @@ void symmetry_operation_impl< so_concat<N, M, T>,
 	permutation_builder<N> pb1(seq1b, seq1a);
 	permutation_builder<M> pb2(seq2b, seq2a);
 
-
-	partition_set<N + M, double> pset(params.bis);
+	partition_set<N + M, double> pset1(params.bis);
 
 	//	Go over each element in the first source group
 	for(typename adapter1_t::iterator it1 = g1.begin();
 			it1 != g1.end(); it1++) {
 
-		pset.add_partition(g1.get_elem(it1), pb1.get_perm(), msk1);
+		pset1.add_partition(g1.get_elem(it1), pb1.get_perm(), msk1);
 	}
 
-	//	Go over each element in the second source group
-	for(typename adapter2_t::iterator it2 = g2.begin();
-			it2 != g2.end(); it2++) {
+	if (params.dirsum) {
+	    partition_set<N + M, double> pset2(params.bis);
+	    // Go over each element in the second source group
+	    for(typename adapter2_t::iterator it2 = g2.begin();
+	            it2 != g2.end(); it2++) {
 
-		pset.add_partition(g2.get_elem(it2), pb2.get_perm(), msk2);
+	        pset2.add_partition(g2.get_elem(it2), pb2.get_perm(), msk2);
+	    }
+
+	    pset1.intersect(pset2, false);
+	}
+	else {
+        // Go over each element in the second source group
+        for(typename adapter2_t::iterator it2 = g2.begin();
+                it2 != g2.end(); it2++) {
+
+            pset1.add_partition(g2.get_elem(it2), pb2.get_perm(), msk2);
+        }
 	}
 
-	pset.convert(params.g3);
-
+	pset1.convert(params.g3);
 }
 
 

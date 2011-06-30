@@ -6,6 +6,7 @@
 #include "linalg_base_level1_generic.h"
 #include "linalg_base_level2_generic.h"
 #include "linalg_base_level3_generic.h"
+#include "linalg_base_level3x_generic.h"
 #include "linalg_base_level4_generic.h"
 #include "linalg_base_level5_generic.h"
 #include "linalg_base_level6_generic.h"
@@ -23,6 +24,7 @@ struct linalg_base_generic :
 		linalg_base_level1_generic,
 		linalg_base_level2_generic,
 		linalg_base_level3_generic>,
+	public linalg_base_level3x_generic,
 	public linalg_base_level4_generic,
 	public linalg_base_level5_generic,
 	public linalg_base_level6_generic

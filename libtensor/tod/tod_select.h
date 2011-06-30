@@ -94,7 +94,7 @@ public:
 		\param t Tensor.
 		\param cmp Compare policy object
 	 **/
-	tod_select(tensor_i<N, double> &t, compare_t cmp=compare4absmin()) :
+	tod_select(tensor_i<N, double> &t, compare_t cmp = compare_t()) :
 		m_t(t), m_c(1.0), m_cmp(cmp) { }
 
 	/** \brief Constuctor

@@ -67,7 +67,8 @@ void btod_contract2_test::perform() throw(libtest::test_exception) {
 	test_contr_18(0.0);
 	test_contr_18(-1.5);
 	test_contr_19();
-	test_contr_20();
+	test_contr_20a();
+    test_contr_20b();
 	test_contr_21();
 
 	//	Tests for the contraction of a block tensor with itself
@@ -2540,7 +2541,7 @@ void btod_contract2_test::test_contr_19()
 }
 
 
-void btod_contract2_test::test_contr_20()
+void btod_contract2_test::test_contr_20a()
 	throw(libtest::test_exception) {
 
 	//
@@ -2550,7 +2551,7 @@ void btod_contract2_test::test_contr_20()
 	//
 
 	std::ostringstream ss;
-	ss << "btod_contract2_test::test_contr_20()";
+	ss << "btod_contract2_test::test_contr_20a()";
 	std::string tn = ss.str();
 
 	typedef libvmm::std_allocator<double> allocator_t;
@@ -2621,6 +2622,109 @@ void btod_contract2_test::test_contr_20()
 
 }
 
+void btod_contract2_test::test_contr_20b()
+    throw(libtest::test_exception) {
+
+    //
+    //  c_iy = a_ix b_xy
+    //  Dimensions [i] = 10 (four blocks), [xy] = 16 (six blocks),
+    //  perm and part symmetry
+    //
+
+    std::ostringstream ss;
+    ss << "btod_contract2_test::test_contr_20b()";
+    std::string tn = ss.str();
+
+    typedef libvmm::std_allocator<double> allocator_t;
+
+    try {
+
+    index<2> i1a, i2a, i1b, i2b;
+    i2a[0] = 9; i2a[1] = 15;
+    i2b[0] = 15; i2b[1] = 15;
+
+    block_index_space<2> bisa(dimensions<2>(index_range<2>(i1a, i2a)));
+    block_index_space<2> bisb(dimensions<2>(index_range<2>(i1b, i2b)));
+
+    mask<2> m01, m10, m11;
+    m10[0] = true; m01[1] = true;
+    m11[0] = true; m11[1] = true;
+    bisa.split(m10, 3);
+    bisa.split(m10, 5);
+    bisa.split(m10, 8);
+    bisa.split(m01, 2);
+    bisa.split(m01, 5);
+    bisa.split(m01, 8);
+    bisa.split(m01, 10);
+    bisa.split(m01, 13);
+    bisb.split(m11, 2);
+    bisb.split(m11, 5);
+    bisb.split(m11, 8);
+    bisb.split(m11, 10);
+    bisb.split(m11, 13);
+
+    block_tensor<2, double, allocator_t> bta(bisa);
+    block_tensor<2, double, allocator_t> btb(bisb);
+    block_tensor<2, double, allocator_t> btc(bisa);
+
+    symmetry<2, double> sym_ref(bisa);
+
+    { // Set symmetry
+    se_perm<2, double> sp10(permutation<2>().permute(0, 1), true);
+    se_part<2, double> spa(bisa, m11, 2), spb(bisb, m11, 2);
+    index<2> i00, i01, i10, i11;
+    i10[0] = 1; i01[1] = 1;
+    i11[0] = 1; i11[1] = 1;
+    spa.add_map(i00, i11, true);
+    spa.mark_forbidden(i01);
+    spa.mark_forbidden(i10);
+    spb.add_map(i00, i11, true);
+    spb.mark_forbidden(i01);
+    spb.mark_forbidden(i10);
+
+    block_tensor_ctrl<2, double> ca(bta), cb(btb);
+    ca.req_symmetry().insert(spa);
+    cb.req_symmetry().insert(spb);
+    cb.req_symmetry().insert(sp10);
+    sym_ref.insert(spa);
+    }
+
+    //  Load random data for input
+
+    btod_random<2>().perform(bta);
+    btod_random<2>().perform(btb);
+    bta.set_immutable();
+    btb.set_immutable();
+
+    //  Convert block tensors to regular tensors
+
+    tensor<2, double, allocator_t> ta(bisa.get_dims());
+    tensor<2, double, allocator_t> tb(bisb.get_dims());
+    tensor<2, double, allocator_t> tc(bisa.get_dims()), tc_ref(bisa.get_dims());
+    tod_btconv<2>(bta).perform(ta);
+    tod_btconv<2>(btb).perform(tb);
+
+    //  Run contraction and compute the reference
+
+    contraction2<1, 1, 1> contr;
+    contr.contract(1, 0);
+    btod_contract2<1, 1, 1>(contr, bta, btb).perform(btc);
+    tod_btconv<2>(btc).perform(tc);
+    tod_contract2<1, 1, 1>(contr, ta, tb).perform(tc_ref);
+
+    //  Compare against reference
+    {
+    block_tensor_ctrl<2, double> cc(btc);
+    compare_ref<2>::compare(tn.c_str(), cc.req_const_symmetry(), sym_ref);
+    }
+
+    compare_ref<2>::compare(tn.c_str(), tc, tc_ref, 1e-14);
+
+    } catch(exception &e) {
+        fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
+    }
+
+}
 
 /**	\test Tests contraction \f$ c_{ij} = a_{ip} b_{jp} \f$.
 		Dimensions [ij] = 10 (two blocks), [p] = 12 (two blocks).
@@ -2661,9 +2765,10 @@ void btod_contract2_test::test_contr_21() throw(libtest::test_exception) {
 	{ // set symmetry
 		se_part<2, double> spa(bisa, m11, 2);
 		spa.add_map(i00, i11, true);
-		spa.add_map(i01, i10, true);
+		spa.mark_forbidden(i01);
+        spa.mark_forbidden(i10);
 
-		block_tensor_ctrl<2, double> ca(bta), cb(btb);
+        block_tensor_ctrl<2, double> ca(bta), cb(btb);
 //		ca.req_symmetry().insert(spa);
 		cb.req_symmetry().insert(spa);
 	}
@@ -2677,7 +2782,6 @@ void btod_contract2_test::test_contr_21() throw(libtest::test_exception) {
 		block_tensor_ctrl<2, double> ca(bta), cb(btb);
 		ca.req_zero_block(i01);
 		ca.req_zero_block(i10);
-		cb.req_zero_block(i01);
 	}
 	bta.set_immutable();
 	btb.set_immutable();

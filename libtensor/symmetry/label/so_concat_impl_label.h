@@ -65,7 +65,6 @@ void symmetry_operation_impl< so_concat<N, M, T>,
 	permutation<N + M> pinv(params.perm, true);
 	pinv.apply(map);
 
-
 	//	Go over each element in the first source group
 	for(typename adapter1_t::iterator i = g1.begin(); i != g1.end(); i++) {
 
@@ -146,10 +145,12 @@ void symmetry_operation_impl< so_concat<N, M, T>,
 						}
 					}
 				}
-				product_table_container::get_instance().ret_table(e1.get_table_id());
+				product_table_container::get_instance().ret_table(
+				        e1.get_table_id());
 
 				} catch (...) {
-					product_table_container::get_instance().ret_table(e1.get_table_id());
+					product_table_container::get_instance().ret_table(
+					        e1.get_table_id());
 					throw;
 				}
 			}

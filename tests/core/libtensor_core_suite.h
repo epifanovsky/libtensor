@@ -9,7 +9,7 @@
 #include "block_map_test.h"
 #include "block_tensor_test.h"
 #include "dimensions_test.h"
-#include "direct_block_tensor_test.h"
+//#include "direct_block_tensor_test.h"
 #include "global_timings_test.h"
 #include "immutable_test.h"
 #include "index_test.h"
@@ -89,7 +89,7 @@ private:
 	unit_test_factory<block_map_test> m_utf_block_map;
 	unit_test_factory<block_tensor_test> m_utf_block_tensor;
 	unit_test_factory<dimensions_test> m_utf_dimensions;
-	unit_test_factory<direct_block_tensor_test> m_utf_direct_block_tensor;
+//	unit_test_factory<direct_block_tensor_test> m_utf_direct_block_tensor;
 	unit_test_factory<global_timings_test> m_utf_global_timings;
 	unit_test_factory<immutable_test> m_utf_immutable;
 	unit_test_factory<index_test> m_utf_index;

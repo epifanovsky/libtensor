@@ -145,7 +145,7 @@ template<size_t N>
 std::ostream &operator<<(std::ostream &os, const mask<N> &m) {
 	os << "[";
 	for(size_t j = 0; j < N; j++)
-		os << m.sequence<N, bool>::at_nochk(j) ? '1' : '0';
+		os << (m.sequence<N, bool>::at_nochk(j) ? '1' : '0');
 	os << "]";
 	return os;
 }

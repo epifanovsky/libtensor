@@ -8,7 +8,7 @@ set(SRC_CORE
 	core/block_map_test.C
 	core/block_tensor_test.C
 	core/dimensions_test.C
-	core/direct_block_tensor_test.C
+#	core/direct_block_tensor_test.C
 	core/global_timings_test.C
 	core/immutable_test.C
 	core/index_test.C
@@ -65,93 +65,95 @@ set(SRC_TOD
 set(SRC_SYMMETRY
 	symmetry/libtensor_symmetry_tests.C
 	symmetry/libtensor_symmetry_suite.C
-	symmetry/partition_set_test.C
+#	symmetry/partition_set_test.C
 	symmetry/permutation_group_test.C
 	symmetry/point_group_table_test.C
 	symmetry/product_table_container_test.C
-	symmetry/se_label_test.C
+#	symmetry/se_label_test.C
 	symmetry/se_part_test.C
 	symmetry/se_perm_test.C
-	symmetry/so_add_impl_label_test.C
-	symmetry/so_add_impl_part_test.C
-	symmetry/so_add_impl_perm_test.C
-	symmetry/so_add_test.C
-	symmetry/so_apply_impl_label_test.C
-	symmetry/so_apply_impl_part_test.C
-	symmetry/so_apply_impl_perm_test.C
-	symmetry/so_apply_test.C
-	symmetry/so_concat_impl_label_test.C
-	symmetry/so_concat_impl_part_test.C
-	symmetry/so_concat_impl_perm_test.C
-	symmetry/so_concat_test.C
-	symmetry/so_copy_test.C
-	symmetry/so_dirprod_impl_perm_test.C
-	symmetry/so_dirprod_test.C
-	symmetry/so_dirsum_impl_perm_test.C
-	symmetry/so_dirsum_test.C
-	symmetry/so_merge_impl_label_test.C
-	symmetry/so_merge_impl_part_test.C
-	symmetry/so_merge_impl_perm_test.C
-	symmetry/so_merge_test.C
-	symmetry/so_mult_impl_label_test.C
-	symmetry/so_mult_impl_part_test.C
-	symmetry/so_mult_impl_perm_test.C
-	symmetry/so_mult_test.C
-	symmetry/so_permute_impl_label_test.C
-	symmetry/so_permute_impl_part_test.C
-	symmetry/so_permute_impl_perm_test.C
-	symmetry/so_proj_down_impl_label_test.C
-	symmetry/so_proj_down_impl_part_test.C
-	symmetry/so_proj_down_impl_perm_test.C
-	symmetry/so_proj_down_test.C
-	symmetry/so_proj_up_impl_label_test.C
-	symmetry/so_proj_up_impl_part_test.C
-	symmetry/so_proj_up_impl_perm_test.C
-	symmetry/so_proj_up_test.C
-	symmetry/so_stabilize_impl_label_test.C
-	symmetry/so_stabilize_impl_part_test.C
-	symmetry/so_stabilize_impl_perm_test.C
-	symmetry/so_stabilize_test.C
-	symmetry/so_symmetrize_test.C
+#	symmetry/so_add_impl_label_test.C
+#	symmetry/so_add_impl_part_test.C
+#	symmetry/so_add_impl_perm_test.C
+#	symmetry/so_add_test.C
+#	symmetry/so_apply_impl_label_test.C
+#	symmetry/so_apply_impl_part_test.C
+#	symmetry/so_apply_impl_perm_test.C
+#	symmetry/so_apply_test.C
+#	symmetry/so_concat_impl_label_test.C
+#	symmetry/so_concat_impl_part_test.C
+#	symmetry/so_concat_impl_perm_test.C
+#	symmetry/so_concat_test.C
+#	symmetry/so_copy_test.C
+#	symmetry/so_dirprod_impl_part_test.C
+#	symmetry/so_dirprod_impl_perm_test.C
+#	symmetry/so_dirprod_test.C
+#	symmetry/so_dirsum_impl_perm_test.C
+#	symmetry/so_dirsum_test.C
+#	symmetry/so_merge_impl_label_test.C
+#	symmetry/so_merge_impl_part_test.C
+#	symmetry/so_merge_impl_perm_test.C
+#	symmetry/so_merge_test.C
+#	symmetry/so_mult_impl_label_test.C
+#	symmetry/so_mult_impl_part_test.C
+#	symmetry/so_mult_impl_perm_test.C
+#	symmetry/so_mult_test.C
+#	symmetry/so_permute_impl_label_test.C
+#	symmetry/so_permute_impl_part_test.C
+#	symmetry/so_permute_impl_perm_test.C
+#	symmetry/so_proj_down_impl_label_test.C
+#	symmetry/so_proj_down_impl_part_test.C
+#	symmetry/so_proj_down_impl_perm_test.C
+#	symmetry/so_proj_down_test.C
+#	symmetry/so_proj_up_impl_label_test.C
+#	symmetry/so_proj_up_impl_part_test.C
+#	symmetry/so_proj_up_impl_perm_test.C
+#	symmetry/so_proj_up_test.C
+#	symmetry/so_stabilize_impl_label_test.C
+#	symmetry/so_stabilize_impl_part_test.C
+#	symmetry/so_stabilize_impl_perm_test.C
+#	symmetry/so_stabilize_test.C
+#	symmetry/so_symmetrize_test.C
 	symmetry/symmetry_element_set_adapter_test.C
 )
 
 set(SRC_BTOD
 	btod/libtensor_btod_tests.C
 	btod/libtensor_btod_suite.C
-	btod/addition_schedule_test.C
-	btod/btod_add_test.C
-	btod/btod_apply_test.C
-	btod/btod_compare_test.C
-	btod/btod_contract2_test.C
-	btod/btod_copy_test.C
-	btod/btod_diag_test.C
-	btod/btod_diagonalize_test.C
-	btod/btod_dirsum_test.C
-	btod/btod_dotprod_test.C
-	btod/btod_ewmult2_test.C
-	btod/btod_extract_test.C
-	btod/btod_import_raw_test.C
-	btod/btod_mult_test.C
-	btod/btod_mult1_test.C
-	btod/btod_print_test.C
-	btod/btod_random_test.C
-	btod/btod_read_test.C
-	btod/btod_scale_test.C
-	btod/btod_select_test.C
-	btod/btod_set_diag_test.C
-	btod/btod_set_elem_test.C
-	btod/btod_set_test.C
-	btod/btod_sum_test.C
-	btod/btod_symmetrize_test.C
-	btod/btod_symmetrize3_test.C
-	btod/btod_trace_test.C
-	btod/btod_tridiagonalize_test.C
+#	btod/addition_schedule_test.C
+#	btod/btod_add_test.C
+#	btod/btod_apply_test.C
+#	btod/btod_compare_test.C
+#	btod/btod_contract2_test.C
+#	btod/btod_copy_test.C
+#	btod/btod_diag_test.C
+#	btod/btod_diagonalize_test.C
+#	btod/btod_dirsum_test.C
+#	btod/btod_dotprod_test.C
+#	btod/btod_ewmult2_test.C
+#	btod/btod_extract_test.C
+#	btod/btod_import_raw_test.C
+#	btod/btod_mult_test.C
+#	btod/btod_mult1_test.C
+#	btod/btod_print_test.C
+#	btod/btod_random_test.C
+#	btod/btod_read_test.C
+#	btod/btod_scale_test.C
+#	btod/btod_select_test.C
+#	btod/btod_set_diag_test.C
+#	btod/btod_set_elem_test.C
+#	btod/btod_set_test.C
+#	btod/btod_sum_test.C
+#	btod/btod_symmetrize_test.C
+#	btod/btod_symmetrize3_test.C
+#	btod/btod_trace_test.C
+#	btod/btod_tridiagonalize_test.C
 )
 
 set(SRC_LINALG
 	linalg/libtensor_linalg_tests.C
 	linalg/libtensor_linalg_suite.C
+    linalg/linalg_add_i_i_x_x_test.C
 	linalg/linalg_x_p_p_test.C
 	linalg/linalg_i_i_x_test.C
 	linalg/linalg_x_pq_qp_test.C
@@ -164,10 +166,15 @@ set(SRC_LINALG
 	linalg/linalg_ij_ip_pj_x_test.C
 	linalg/linalg_ij_pi_jp_x_test.C
 	linalg/linalg_ij_pi_pj_x_test.C
+	linalg/linalg_ij_pji_p_x_test.C
 	linalg/linalg_ij_ipq_jqp_x_test.C
+	linalg/linalg_ijk_ip_pkj_x_test.C
+	linalg/linalg_ijk_ipq_kjqp_x_test.C
 	linalg/linalg_ijk_ipkq_jpq_x_test.C
 	linalg/linalg_ijk_pikq_jpq_x_test.C
 	linalg/linalg_ijk_piqk_jpq_x_test.C
+    linalg/linalg_ijkl_ikp_jpl_x_test.C
+    linalg/linalg_ijkl_ipl_jpk_x_test.C
 	linalg/linalg_ijkl_ipl_kpj_x_test.C
 	linalg/linalg_ijkl_ipkq_pljq_x_test.C
 	linalg/linalg_ijkl_iplq_kpjq_x_test.C
@@ -197,26 +204,26 @@ set(SRC_LINALG
 set(SRC_IFACE
 	iface/libtensor_iface_tests.C
 	iface/libtensor_iface_suite.C
-	iface/anon_eval_test.C
-	iface/bispace_expr_test.C
-	iface/bispace_test.C
-	iface/btensor_test.C
-	iface/contract_test.C
-	iface/diag_test.C
-	iface/direct_btensor_test.C
-	iface/direct_eval_test.C
-	iface/direct_product_test.C
-	iface/dirsum_test.C
-	iface/dot_product_test.C
-	iface/ewmult_test.C
-	iface/expr_test.C
-	iface/labeled_btensor_test.C
-	iface/letter_expr_test.C
-	iface/letter_test.C
-	iface/mapped_btensor_test.C
-	iface/mult_test.C
-	iface/symm_test.C
-	iface/trace_test.C
+#	iface/anon_eval_test.C
+#	iface/bispace_expr_test.C
+#	iface/bispace_test.C
+#	iface/btensor_test.C
+#	iface/contract_test.C
+#	iface/diag_test.C
+#	iface/direct_btensor_test.C
+#	iface/direct_eval_test.C
+#	iface/direct_product_test.C
+#	iface/dirsum_test.C
+#	iface/dot_product_test.C
+#	iface/ewmult_test.C
+#	iface/expr_test.C
+#	iface/labeled_btensor_test.C
+#	iface/letter_expr_test.C
+#	iface/letter_test.C
+#	iface/mapped_btensor_test.C
+#	iface/mult_test.C
+#	iface/symm_test.C
+#	iface/trace_test.C
 )
 
 set(TARGETS

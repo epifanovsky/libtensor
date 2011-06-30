@@ -1,8 +1,8 @@
 #include <sstream>
 #include <libtensor/core/orbit.h>
 #include <libtensor/btod/transf_double.h>
-#include <libtensor/symmetry/point_group_table.h>
-#include <libtensor/symmetry/product_table_container.h>
+#include <libtensor/symmetry/label/point_group_table.h>
+#include <libtensor/symmetry/label/product_table_container.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/symmetry/se_label.h>
 #include "orbit_test.h"
@@ -692,172 +692,173 @@ void orbit_test::test_9() throw(libtest::test_exception) {
 	typedef point_group_table::label_t label_t;
 	label_t ap = 0, app = 1;
 
-	try {
+	fail_test(testname, __FILE__, __LINE__, "Test disabled");
+//	try {
 
-	point_group_table cs(testname, 2);
-	cs.add_product(ap, ap, ap);
-	cs.add_product(ap, app, app);
-	cs.add_product(app, ap, app);
-	cs.add_product(app, app, ap);
-	cs.check();
-	product_table_container::get_instance().add(cs);
-
-	} catch (exception &e) {
-		fail_test(testname, __FILE__, __LINE__, e.what());
-	}
-
-	try {
-
-	index<2> i1, i2;
-	i2[0] = 2; i2[1] = 2;
-	mask<2> msk;
-	msk[0] = true; msk[1] = true;
-	dimensions<2> dims(index_range<2>(i1, i2));
-	block_index_space<2> bis(dims);
-	bis.split(msk, 1);
-	bis.split(msk, 2);
-	dimensions<2> bidims = bis.get_block_index_dims();
-
-	mask<2> m; m[0] = true; m[1] = true;
-	se_label<2, double> elem1(bis.get_block_index_dims(), testname);
-	elem1.assign(m, 0, ap);
-	elem1.assign(m, 1, app);
-	elem1.add_target(ap);
-
-	symmetry<2, double> sym(bis);
-	sym.insert(elem1);
-
-	permutation<2> p0;
-
-	index<2> i00;
-	abs_index<2> ai00(i00, bidims);
-	orbit<2, double> o00(sym, i00);
-	if(!o00.is_allowed()) {
-		std::ostringstream ss;
-		ss << "Orbit not allowed: " << i00 << ".";
-		fail_test(testname, __FILE__, __LINE__,
-			ss.str().c_str());
-	}
-	if(o00.get_abs_canonical_index() != ai00.get_abs_index()) {
-		std::ostringstream ss;
-		ss << "Failure to detect a canonical index: " << i00
-			<< ".";
-		fail_test(testname, __FILE__, __LINE__,
-			ss.str().c_str());
-	}
-	const transf<2, double> &tr00 = o00.get_transf(i00);
-	if(!tr00.get_perm().equals(p0)) {
-		std::ostringstream ss;
-		ss << "Incorrect block permutation for " << i00
-			<< ": " << tr00.get_perm() << " vs. " << p0
-			<< " (ref).";
-		fail_test(testname, __FILE__, __LINE__,
-			ss.str().c_str());
-	}
-	if(tr00.get_coeff() != 1.0) {
-		fail_test(testname, __FILE__, __LINE__,
-			"Incorrect block transformation (coeff).");
-	}
-
-	index<2> i01; i01[1] = 1;
-	abs_index<2> ai01(i01, bidims);
-	orbit<2, double> o01(sym, i01);
-	if(o01.is_allowed()) {
-		std::ostringstream ss;
-		ss << "Orbit allowed: " << i01 << ".";
-		fail_test(testname, __FILE__, __LINE__,
-			ss.str().c_str());
-	}
-	if(o01.get_abs_canonical_index() != ai01.get_abs_index()) {
-		std::ostringstream ss;
-		ss << "Failure to detect a canonical index: " << i01
-			<< ".";
-		fail_test(testname, __FILE__, __LINE__,
-			ss.str().c_str());
-	}
-	const transf<2, double> &tr01 = o01.get_transf(i01);
-	if(!tr01.get_perm().equals(p0)) {
-		std::ostringstream ss;
-		ss << "Incorrect block permutation for " << i01
-			<< ": " << tr01.get_perm() << " vs. " << p0
-			<< " (ref).";
-		fail_test(testname, __FILE__, __LINE__,
-			ss.str().c_str());
-	}
-	if(tr01.get_coeff() != 1.0) {
-		fail_test(testname, __FILE__, __LINE__,
-			"Incorrect block transformation (coeff).");
-	}
-
-	index<2> i10; i10[0] = 1;
-	abs_index<2> ai10(i10, bidims);
-	orbit<2, double> o10(sym, i10);
-	if(o10.is_allowed()) {
-		std::ostringstream ss;
-		ss << "Orbit allowed: " << i10 << ".";
-		fail_test(testname, __FILE__, __LINE__,
-			ss.str().c_str());
-	}
-	if(o10.get_abs_canonical_index() != ai10.get_abs_index()) {
-		std::ostringstream ss;
-		ss << "Failure to detect a canonical index: " << i10
-			<< ".";
-		fail_test(testname, __FILE__, __LINE__,
-			ss.str().c_str());
-	}
-	const transf<2, double> &tr10 = o10.get_transf(i10);
-	if(!tr10.get_perm().equals(p0)) {
-		std::ostringstream ss;
-		ss << "Incorrect block permutation for " << i10
-			<< ": " << tr10.get_perm() << " vs. " << p0
-			<< " (ref).";
-		fail_test(testname, __FILE__, __LINE__,
-			ss.str().c_str());
-	}
-	if(tr10.get_coeff() != 1.0) {
-		fail_test(testname, __FILE__, __LINE__,
-			"Incorrect block transformation (coeff).");
-	}
-
-	index<2> i11; i11[0] = 1; i11[1] = 1;
-	abs_index<2> ai11(i11, bidims);
-	orbit<2, double> o11(sym, i11);
-	if(!o11.is_allowed()) {
-		std::ostringstream ss;
-		ss << "Orbit not allowed: " << i11 << ".";
-		fail_test(testname, __FILE__, __LINE__,
-			ss.str().c_str());
-	}
-	if(o11.get_abs_canonical_index() != ai11.get_abs_index()) {
-		std::ostringstream ss;
-		ss << "Failure to detect a canonical index: " << i11
-			<< ".";
-		fail_test(testname, __FILE__, __LINE__,
-			ss.str().c_str());
-	}
-	const transf<2, double> &tr11 = o11.get_transf(i11);
-	if(!tr11.get_perm().equals(p0)) {
-		std::ostringstream ss;
-		ss << "Incorrect block permutation for " << i11
-			<< ": " << tr11.get_perm() << " vs. " << p0
-			<< " (ref).";
-		fail_test(testname, __FILE__, __LINE__,
-			ss.str().c_str());
-	}
-	if(tr11.get_coeff() != 1.0) {
-		fail_test(testname, __FILE__, __LINE__,
-			"Incorrect block transformation (coeff).");
-	}
-
-	} catch(exception &e) {
-		product_table_container::get_instance().erase(testname);
-		fail_test(testname, __FILE__, __LINE__, e.what());
-	} catch(libtest::test_exception) {
-		product_table_container::get_instance().erase(testname);
-		throw;
-	}
-
-	product_table_container::get_instance().erase(testname);
+//	point_group_table cs(testname, 2);
+//	cs.add_product(ap, ap, ap);
+//	cs.add_product(ap, app, app);
+//	cs.add_product(app, ap, app);
+//	cs.add_product(app, app, ap);
+//	cs.check();
+//	product_table_container::get_instance().add(cs);
+//
+//	} catch (exception &e) {
+//		fail_test(testname, __FILE__, __LINE__, e.what());
+//	}
+//
+//	try {
+//
+//	index<2> i1, i2;
+//	i2[0] = 2; i2[1] = 2;
+//	mask<2> msk;
+//	msk[0] = true; msk[1] = true;
+//	dimensions<2> dims(index_range<2>(i1, i2));
+//	block_index_space<2> bis(dims);
+//	bis.split(msk, 1);
+//	bis.split(msk, 2);
+//	dimensions<2> bidims = bis.get_block_index_dims();
+//
+//	mask<2> m; m[0] = true; m[1] = true;
+//	se_label<2, double> elem1(bis.get_block_index_dims(), testname);
+//	elem1.assign(m, 0, ap);
+//	elem1.assign(m, 1, app);
+//	elem1.add_target(ap);
+//
+//	symmetry<2, double> sym(bis);
+//	sym.insert(elem1);
+//
+//	permutation<2> p0;
+//
+//	index<2> i00;
+//	abs_index<2> ai00(i00, bidims);
+//	orbit<2, double> o00(sym, i00);
+//	if(!o00.is_allowed()) {
+//		std::ostringstream ss;
+//		ss << "Orbit not allowed: " << i00 << ".";
+//		fail_test(testname, __FILE__, __LINE__,
+//			ss.str().c_str());
+//	}
+//	if(o00.get_abs_canonical_index() != ai00.get_abs_index()) {
+//		std::ostringstream ss;
+//		ss << "Failure to detect a canonical index: " << i00
+//			<< ".";
+//		fail_test(testname, __FILE__, __LINE__,
+//			ss.str().c_str());
+//	}
+//	const transf<2, double> &tr00 = o00.get_transf(i00);
+//	if(!tr00.get_perm().equals(p0)) {
+//		std::ostringstream ss;
+//		ss << "Incorrect block permutation for " << i00
+//			<< ": " << tr00.get_perm() << " vs. " << p0
+//			<< " (ref).";
+//		fail_test(testname, __FILE__, __LINE__,
+//			ss.str().c_str());
+//	}
+//	if(tr00.get_coeff() != 1.0) {
+//		fail_test(testname, __FILE__, __LINE__,
+//			"Incorrect block transformation (coeff).");
+//	}
+//
+//	index<2> i01; i01[1] = 1;
+//	abs_index<2> ai01(i01, bidims);
+//	orbit<2, double> o01(sym, i01);
+//	if(o01.is_allowed()) {
+//		std::ostringstream ss;
+//		ss << "Orbit allowed: " << i01 << ".";
+//		fail_test(testname, __FILE__, __LINE__,
+//			ss.str().c_str());
+//	}
+//	if(o01.get_abs_canonical_index() != ai01.get_abs_index()) {
+//		std::ostringstream ss;
+//		ss << "Failure to detect a canonical index: " << i01
+//			<< ".";
+//		fail_test(testname, __FILE__, __LINE__,
+//			ss.str().c_str());
+//	}
+//	const transf<2, double> &tr01 = o01.get_transf(i01);
+//	if(!tr01.get_perm().equals(p0)) {
+//		std::ostringstream ss;
+//		ss << "Incorrect block permutation for " << i01
+//			<< ": " << tr01.get_perm() << " vs. " << p0
+//			<< " (ref).";
+//		fail_test(testname, __FILE__, __LINE__,
+//			ss.str().c_str());
+//	}
+//	if(tr01.get_coeff() != 1.0) {
+//		fail_test(testname, __FILE__, __LINE__,
+//			"Incorrect block transformation (coeff).");
+//	}
+//
+//	index<2> i10; i10[0] = 1;
+//	abs_index<2> ai10(i10, bidims);
+//	orbit<2, double> o10(sym, i10);
+//	if(o10.is_allowed()) {
+//		std::ostringstream ss;
+//		ss << "Orbit allowed: " << i10 << ".";
+//		fail_test(testname, __FILE__, __LINE__,
+//			ss.str().c_str());
+//	}
+//	if(o10.get_abs_canonical_index() != ai10.get_abs_index()) {
+//		std::ostringstream ss;
+//		ss << "Failure to detect a canonical index: " << i10
+//			<< ".";
+//		fail_test(testname, __FILE__, __LINE__,
+//			ss.str().c_str());
+//	}
+//	const transf<2, double> &tr10 = o10.get_transf(i10);
+//	if(!tr10.get_perm().equals(p0)) {
+//		std::ostringstream ss;
+//		ss << "Incorrect block permutation for " << i10
+//			<< ": " << tr10.get_perm() << " vs. " << p0
+//			<< " (ref).";
+//		fail_test(testname, __FILE__, __LINE__,
+//			ss.str().c_str());
+//	}
+//	if(tr10.get_coeff() != 1.0) {
+//		fail_test(testname, __FILE__, __LINE__,
+//			"Incorrect block transformation (coeff).");
+//	}
+//
+//	index<2> i11; i11[0] = 1; i11[1] = 1;
+//	abs_index<2> ai11(i11, bidims);
+//	orbit<2, double> o11(sym, i11);
+//	if(!o11.is_allowed()) {
+//		std::ostringstream ss;
+//		ss << "Orbit not allowed: " << i11 << ".";
+//		fail_test(testname, __FILE__, __LINE__,
+//			ss.str().c_str());
+//	}
+//	if(o11.get_abs_canonical_index() != ai11.get_abs_index()) {
+//		std::ostringstream ss;
+//		ss << "Failure to detect a canonical index: " << i11
+//			<< ".";
+//		fail_test(testname, __FILE__, __LINE__,
+//			ss.str().c_str());
+//	}
+//	const transf<2, double> &tr11 = o11.get_transf(i11);
+//	if(!tr11.get_perm().equals(p0)) {
+//		std::ostringstream ss;
+//		ss << "Incorrect block permutation for " << i11
+//			<< ": " << tr11.get_perm() << " vs. " << p0
+//			<< " (ref).";
+//		fail_test(testname, __FILE__, __LINE__,
+//			ss.str().c_str());
+//	}
+//	if(tr11.get_coeff() != 1.0) {
+//		fail_test(testname, __FILE__, __LINE__,
+//			"Incorrect block transformation (coeff).");
+//	}
+//
+//	} catch(exception &e) {
+//		product_table_container::get_instance().erase(testname);
+//		fail_test(testname, __FILE__, __LINE__, e.what());
+//	} catch(libtest::test_exception) {
+//		product_table_container::get_instance().erase(testname);
+//		throw;
+//	}
+//
+//	product_table_container::get_instance().erase(testname);
 
 
 
@@ -871,177 +872,179 @@ void orbit_test::test_10() throw(libtest::test_exception) {
 	typedef point_group_table::label_t label_t;
 	label_t ap = 0, app = 1;
 
-	try {
+    fail_test(testname, __FILE__, __LINE__, "Test disabled");
 
-	point_group_table cs(testname, 2);
-	cs.add_product(ap, ap, ap);
-	cs.add_product(ap, app, app);
-	cs.add_product(app, ap, app);
-	cs.add_product(app, app, ap);
-	cs.check();
-	product_table_container::get_instance().add(cs);
-
-	} catch(exception &e) {
-		fail_test(testname, __FILE__, __LINE__, e.what());
-	}
-
-	try {
-
-	index<2> i1, i2;
-	i2[0] = 2; i2[1] = 2;
-	mask<2> msk;
-	msk[0] = true; msk[1] = true;
-	dimensions<2> dims(index_range<2>(i1, i2));
-	block_index_space<2> bis(dims);
-	bis.split(msk, 1);
-	bis.split(msk, 2);
-	dimensions<2> bidims = bis.get_block_index_dims();
-
-
-	mask<2> m; m[0] = true; m[1] = true;
-	se_label<2, double> elem1(bis.get_block_index_dims(), testname);
-	elem1.assign(m, 0, ap);
-	elem1.assign(m, 1, app);
-	elem1.add_target(ap);
-
-	se_perm<2, double> elem2(permutation<2>().permute(0, 1), true);
-
-	symmetry<2, double> sym(bis);
-	sym.insert(elem1);
-	sym.insert(elem2);
-
-	permutation<2> p0, p1;
-	p1.permute(0, 1);
-
-	index<2> i00;
-	abs_index<2> ai00(i00, bidims);
-	orbit<2, double> o00(sym, i00);
-	if(!o00.is_allowed()) {
-		std::ostringstream ss;
-		ss << "Orbit not allowed: " << i00 << ".";
-		fail_test(testname, __FILE__, __LINE__,
-			ss.str().c_str());
-	}
-	if(o00.get_abs_canonical_index() != ai00.get_abs_index()) {
-		std::ostringstream ss;
-		ss << "Failure to detect a canonical index: " << i00
-			<< ".";
-		fail_test(testname, __FILE__, __LINE__,
-			ss.str().c_str());
-	}
-	const transf<2, double> &tr00 = o00.get_transf(i00);
-	if(!tr00.get_perm().equals(p0)) {
-		std::ostringstream ss;
-		ss << "Incorrect block permutation for " << i00
-			<< ": " << tr00.get_perm() << " vs. " << p0
-			<< " (ref).";
-		fail_test(testname, __FILE__, __LINE__,
-			ss.str().c_str());
-	}
-	if(tr00.get_coeff() != 1.0) {
-		fail_test(testname, __FILE__, __LINE__,
-			"Incorrect block transformation (coeff).");
-	}
-
-	index<2> i01; i01[1] = 1;
-	abs_index<2> ai01(i01, bidims);
-	orbit<2, double> o01(sym, i01);
-	if(o01.is_allowed()) {
-		std::ostringstream ss;
-		ss << "Orbit allowed: " << i01 << ".";
-		fail_test(testname, __FILE__, __LINE__,
-			ss.str().c_str());
-	}
-	if(o01.get_abs_canonical_index() != ai01.get_abs_index()) {
-		std::ostringstream ss;
-		ss << "Failure to detect a canonical index: " << i01
-			<< ".";
-		fail_test(testname, __FILE__, __LINE__,
-			ss.str().c_str());
-	}
-	const transf<2, double> &tr01 = o01.get_transf(i01);
-	if(!tr01.get_perm().equals(p0)) {
-		std::ostringstream ss;
-		ss << "Incorrect block permutation for " << i01
-			<< ": " << tr01.get_perm() << " vs. " << p0
-			<< " (ref).";
-		fail_test(testname, __FILE__, __LINE__,
-			ss.str().c_str());
-	}
-	if(tr01.get_coeff() != 1.0) {
-		fail_test(testname, __FILE__, __LINE__,
-			"Incorrect block transformation (coeff).");
-	}
-
-	index<2> i10; i10[0] = 1;
-	abs_index<2> ai10(i10, bidims);
-	orbit<2, double> o10(sym, i10);
-	if(o10.is_allowed()) {
-		std::ostringstream ss;
-		ss << "Orbit allowed: " << i10 << ".";
-		fail_test(testname, __FILE__, __LINE__,
-			ss.str().c_str());
-	}
-	if(o10.get_abs_canonical_index() != ai01.get_abs_index()) {
-		std::ostringstream ss;
-		ss << "Failure to detect a canonical index: " << i10
-			<< ".";
-		fail_test(testname, __FILE__, __LINE__,
-			ss.str().c_str());
-	}
-	const transf<2, double> &tr10 = o10.get_transf(i10);
-	if(!tr10.get_perm().equals(p1)) {
-		std::ostringstream ss;
-		ss << "Incorrect block permutation for " << i10
-			<< ": " << tr10.get_perm() << " vs. " << p1
-			<< " (ref).";
-		fail_test(testname, __FILE__, __LINE__,
-			ss.str().c_str());
-	}
-	if(tr10.get_coeff() != 1.0) {
-		fail_test(testname, __FILE__, __LINE__,
-			"Incorrect block transformation (coeff).");
-	}
-
-	index<2> i11; i11[0] = 1; i11[1] = 1;
-	abs_index<2> ai11(i11, bidims);
-	orbit<2, double> o11(sym, i11);
-	if(!o11.is_allowed()) {
-		std::ostringstream ss;
-		ss << "Orbit not allowed: " << i11 << ".";
-		fail_test(testname, __FILE__, __LINE__,
-			ss.str().c_str());
-	}
-	if(o11.get_abs_canonical_index() != ai11.get_abs_index()) {
-		std::ostringstream ss;
-		ss << "Failure to detect a canonical index: " << i11
-			<< ".";
-		fail_test(testname, __FILE__, __LINE__,
-			ss.str().c_str());
-	}
-	const transf<2, double> &tr11 = o11.get_transf(i11);
-	if(!tr11.get_perm().equals(p0)) {
-		std::ostringstream ss;
-		ss << "Incorrect block permutation for " << i11
-			<< ": " << tr11.get_perm() << " vs. " << p0
-			<< " (ref).";
-		fail_test(testname, __FILE__, __LINE__,
-			ss.str().c_str());
-	}
-	if(tr11.get_coeff() != 1.0) {
-		fail_test(testname, __FILE__, __LINE__,
-			"Incorrect block transformation (coeff).");
-	}
-
-	} catch(exception &e) {
-		product_table_container::get_instance().erase(testname);
-		fail_test(testname, __FILE__, __LINE__, e.what());
-	} catch(libtest::test_exception) {
-		product_table_container::get_instance().erase(testname);
-		throw;
-	}
-
-	product_table_container::get_instance().erase(testname);
+//    try {
+//
+//	point_group_table cs(testname, 2);
+//	cs.add_product(ap, ap, ap);
+//	cs.add_product(ap, app, app);
+//	cs.add_product(app, ap, app);
+//	cs.add_product(app, app, ap);
+//	cs.check();
+//	product_table_container::get_instance().add(cs);
+//
+//	} catch(exception &e) {
+//		fail_test(testname, __FILE__, __LINE__, e.what());
+//	}
+//
+//	try {
+//
+//	index<2> i1, i2;
+//	i2[0] = 2; i2[1] = 2;
+//	mask<2> msk;
+//	msk[0] = true; msk[1] = true;
+//	dimensions<2> dims(index_range<2>(i1, i2));
+//	block_index_space<2> bis(dims);
+//	bis.split(msk, 1);
+//	bis.split(msk, 2);
+//	dimensions<2> bidims = bis.get_block_index_dims();
+//
+//
+//	mask<2> m; m[0] = true; m[1] = true;
+//	se_label<2, double> elem1(bis.get_block_index_dims(), testname);
+//	elem1.assign(m, 0, ap);
+//	elem1.assign(m, 1, app);
+//	elem1.add_target(ap);
+//
+//	se_perm<2, double> elem2(permutation<2>().permute(0, 1), true);
+//
+//	symmetry<2, double> sym(bis);
+//	sym.insert(elem1);
+//	sym.insert(elem2);
+//
+//	permutation<2> p0, p1;
+//	p1.permute(0, 1);
+//
+//	index<2> i00;
+//	abs_index<2> ai00(i00, bidims);
+//	orbit<2, double> o00(sym, i00);
+//	if(!o00.is_allowed()) {
+//		std::ostringstream ss;
+//		ss << "Orbit not allowed: " << i00 << ".";
+//		fail_test(testname, __FILE__, __LINE__,
+//			ss.str().c_str());
+//	}
+//	if(o00.get_abs_canonical_index() != ai00.get_abs_index()) {
+//		std::ostringstream ss;
+//		ss << "Failure to detect a canonical index: " << i00
+//			<< ".";
+//		fail_test(testname, __FILE__, __LINE__,
+//			ss.str().c_str());
+//	}
+//	const transf<2, double> &tr00 = o00.get_transf(i00);
+//	if(!tr00.get_perm().equals(p0)) {
+//		std::ostringstream ss;
+//		ss << "Incorrect block permutation for " << i00
+//			<< ": " << tr00.get_perm() << " vs. " << p0
+//			<< " (ref).";
+//		fail_test(testname, __FILE__, __LINE__,
+//			ss.str().c_str());
+//	}
+//	if(tr00.get_coeff() != 1.0) {
+//		fail_test(testname, __FILE__, __LINE__,
+//			"Incorrect block transformation (coeff).");
+//	}
+//
+//	index<2> i01; i01[1] = 1;
+//	abs_index<2> ai01(i01, bidims);
+//	orbit<2, double> o01(sym, i01);
+//	if(o01.is_allowed()) {
+//		std::ostringstream ss;
+//		ss << "Orbit allowed: " << i01 << ".";
+//		fail_test(testname, __FILE__, __LINE__,
+//			ss.str().c_str());
+//	}
+//	if(o01.get_abs_canonical_index() != ai01.get_abs_index()) {
+//		std::ostringstream ss;
+//		ss << "Failure to detect a canonical index: " << i01
+//			<< ".";
+//		fail_test(testname, __FILE__, __LINE__,
+//			ss.str().c_str());
+//	}
+//	const transf<2, double> &tr01 = o01.get_transf(i01);
+//	if(!tr01.get_perm().equals(p0)) {
+//		std::ostringstream ss;
+//		ss << "Incorrect block permutation for " << i01
+//			<< ": " << tr01.get_perm() << " vs. " << p0
+//			<< " (ref).";
+//		fail_test(testname, __FILE__, __LINE__,
+//			ss.str().c_str());
+//	}
+//	if(tr01.get_coeff() != 1.0) {
+//		fail_test(testname, __FILE__, __LINE__,
+//			"Incorrect block transformation (coeff).");
+//	}
+//
+//	index<2> i10; i10[0] = 1;
+//	abs_index<2> ai10(i10, bidims);
+//	orbit<2, double> o10(sym, i10);
+//	if(o10.is_allowed()) {
+//		std::ostringstream ss;
+//		ss << "Orbit allowed: " << i10 << ".";
+//		fail_test(testname, __FILE__, __LINE__,
+//			ss.str().c_str());
+//	}
+//	if(o10.get_abs_canonical_index() != ai01.get_abs_index()) {
+//		std::ostringstream ss;
+//		ss << "Failure to detect a canonical index: " << i10
+//			<< ".";
+//		fail_test(testname, __FILE__, __LINE__,
+//			ss.str().c_str());
+//	}
+//	const transf<2, double> &tr10 = o10.get_transf(i10);
+//	if(!tr10.get_perm().equals(p1)) {
+//		std::ostringstream ss;
+//		ss << "Incorrect block permutation for " << i10
+//			<< ": " << tr10.get_perm() << " vs. " << p1
+//			<< " (ref).";
+//		fail_test(testname, __FILE__, __LINE__,
+//			ss.str().c_str());
+//	}
+//	if(tr10.get_coeff() != 1.0) {
+//		fail_test(testname, __FILE__, __LINE__,
+//			"Incorrect block transformation (coeff).");
+//	}
+//
+//	index<2> i11; i11[0] = 1; i11[1] = 1;
+//	abs_index<2> ai11(i11, bidims);
+//	orbit<2, double> o11(sym, i11);
+//	if(!o11.is_allowed()) {
+//		std::ostringstream ss;
+//		ss << "Orbit not allowed: " << i11 << ".";
+//		fail_test(testname, __FILE__, __LINE__,
+//			ss.str().c_str());
+//	}
+//	if(o11.get_abs_canonical_index() != ai11.get_abs_index()) {
+//		std::ostringstream ss;
+//		ss << "Failure to detect a canonical index: " << i11
+//			<< ".";
+//		fail_test(testname, __FILE__, __LINE__,
+//			ss.str().c_str());
+//	}
+//	const transf<2, double> &tr11 = o11.get_transf(i11);
+//	if(!tr11.get_perm().equals(p0)) {
+//		std::ostringstream ss;
+//		ss << "Incorrect block permutation for " << i11
+//			<< ": " << tr11.get_perm() << " vs. " << p0
+//			<< " (ref).";
+//		fail_test(testname, __FILE__, __LINE__,
+//			ss.str().c_str());
+//	}
+//	if(tr11.get_coeff() != 1.0) {
+//		fail_test(testname, __FILE__, __LINE__,
+//			"Incorrect block transformation (coeff).");
+//	}
+//
+//	} catch(exception &e) {
+//		product_table_container::get_instance().erase(testname);
+//		fail_test(testname, __FILE__, __LINE__, e.what());
+//	} catch(libtest::test_exception) {
+//		product_table_container::get_instance().erase(testname);
+//		throw;
+//	}
+//
+//	product_table_container::get_instance().erase(testname);
 }
 
 

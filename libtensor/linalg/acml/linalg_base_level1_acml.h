@@ -13,6 +13,23 @@ namespace libtensor {
 struct linalg_base_level1_acml : public linalg_base_level1_generic {
 
 
+	static void add_i_i_x_x(
+		size_t ni,
+		const double *a, size_t sia,
+		double b,
+		double *c, size_t sic,
+		double d) {
+
+		daxpy(ni, d, (double*)a, sia, c, sic);
+		double db = d * b;
+		if(sic == 1) {
+			for(size_t i = 0; i < ni; i++) c[i] += db;
+		} else {
+			for(size_t i = 0; i < ni; i++) c[i * sic] += db;
+		}
+	}
+
+
 	static void i_x(
 		size_t ni,
 		double a,

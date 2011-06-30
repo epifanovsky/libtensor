@@ -1446,7 +1446,7 @@ throw(libtest::test_exception) {
         sp1.mark_forbidden(i010);
         sp2.add_map(i000, i111, ! sign);
         sp2.add_map(i010, i101, ! sign);
-        sp2.mark_forbidden(i101);
+        sp2.mark_forbidden(i110);
 
         partition_set<3, double> pset1(bis), pset2(bis);
         permutation<3> p0;

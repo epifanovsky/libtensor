@@ -38,9 +38,17 @@ private:
 	void test_ikjl_ij_kl_2(bool rnd, double d = 0.0)
 		throw(libtest::test_exception);
 
-	// c_{ikjl} = a_{ij} + b_{kl} (with more than 1 block and symmetry elements)
-	void test_ikjl_ij_kl_3(bool part, bool label, bool rnd, double d = 0.0)
+	// c_{ikjl} = a_{ij} + b_{kl} (with more than 1 block and se_perm)
+	void test_ikjl_ij_kl_3a(bool s1, bool s2, bool rnd, double d = 0.0)
 		throw(libtest::test_exception);
+
+	// c_{ikjl} = a_{ij} + b_{kl} (with more than 1 block and se_part)
+    void test_ikjl_ij_kl_3b(bool rnd, double d = 0.0)
+        throw(libtest::test_exception);
+
+    // c_{ikjl} = a_{ij} + b_{kl} (with more than 1 block and se_label)
+    void test_ikjl_ij_kl_3c(bool rnd, double d = 0.0)
+        throw(libtest::test_exception);
 
 	// c_{iklj} = a_{ij} + a_{kl} (with more than 1 block and symmetry elements)
 	void test_iklj_ij_kl_1(bool rnd, double d = 0.0)

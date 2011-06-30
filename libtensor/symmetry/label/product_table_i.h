@@ -8,17 +8,22 @@ namespace libtensor {
 
 /** \brief Interface for general product tables
 
-	A product table establishes a map l1 x l2 -> l3 + l4 + ...  for a set of
-	labels {l1, l2, ...}. The set of labels is represented as unsigned
-	integers. The labels can stand for all kinds of objects as long as there
-	exists a mapping of a pair of objects onto a set of resulting objects. An
-	example of a set of labels would be the irreducible representations of a
-	point symmetry group.
+	A product table establishes a map
+	\code
+	l1 x l2 -> l3 + l4 + ...
+	\endcode
+	for a set of labels \code {l1, l2, ...} \endcode . Each label is
+	represented as unsigned integers. Labels can represent any information for
+	which a mapping of products of label pairs onto direct sums of labels
+	are required. A typical example of labels would be the irreducible
+	representations of a point symmetry group.
 
-	The interface provides functions for se_label and
-	product_table_container operate on. Any implementation has to provide these
-	to work with both classes.
+	This interface specifies the functions which se_label and
+	product_table_container use to operate. Any specific implementation of
+	product_table_i needs to provide these functions to work with both
+	classes.
 
+    \ingroup libtensor_symmetry
  **/
 class product_table_i {
 public:

@@ -6,9 +6,9 @@
 #include "se_label.h"
 #include "se_part.h"
 #include "se_perm.h"
-#include "so_add_impl_label.h"
-#include "so_add_impl_part.h"
-#include "so_add_impl_perm.h"
+#include "label/so_add_impl_label.h"
+#include "part/so_add_impl_part.h"
+#include "perm/so_add_impl_perm.h"
 
 namespace libtensor {
 

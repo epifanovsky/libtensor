@@ -1,9 +1,9 @@
 #ifndef LIBTENSOR_SO_ADD_IMPL_PART_H
 #define LIBTENSOR_SO_ADD_IMPL_PART_H
 
-#include "../defs.h"
-#include "../exception.h"
-#include "partition_set.h"
+#include "../../defs.h"
+#include "../../exception.h"
+//#include "partition_set.h"
 #include "symmetry_element_set_adapter.h"
 #include "symmetry_operation_impl_base.h"
 #include "so_add.h"

@@ -69,6 +69,14 @@ private:
 	void test_ij_jp_pi(size_t ni, size_t nj, size_t np, double d = 0.0)
 		throw(libtest::test_exception);
 
+	// c_{ij} = \sum_p a_{p} b_{pji}
+	void test_ij_p_pji(size_t ni, size_t nj, size_t np, double d = 0.0)
+		throw(libtest::test_exception);
+
+	// c_{ij} = \sum_p a_{pji} b_{p}
+	void test_ij_pji_p(size_t ni, size_t nj, size_t np, double d = 0.0)
+		throw(libtest::test_exception);
+
 	// c_{ij} = \sum_{pq} a_{pqi} b_{pjq}
 	void test_ij_pqi_pjq(size_t ni, size_t nj, size_t np, size_t nq,
 		double d = 0.0) throw(libtest::test_exception);
@@ -81,6 +89,10 @@ private:
 	void test_ij_jpq_iqp(size_t ni, size_t nj, size_t np, size_t nq,
 		double d = 0.0) throw(libtest::test_exception);
 
+	// c_{ij} = c_{ij} + d \sum_{pq} a_{jipq} b_{qp}
+	void test_ij_jipq_qp(size_t ni, size_t nj, size_t np, size_t nq,
+		double d = 0.0) throw(libtest::test_exception);
+
 	// c_{ij} = \sum_{pq} a_{pq} b_{ijpq}
 	void test_ij_pq_ijpq(size_t ni, size_t nj, size_t np, size_t nq)
 		throw(libtest::test_exception);
@@ -88,6 +100,22 @@ private:
 	// c_{ij} = c_{ij} + d \sum_{pq} a_{pq} b_{ijpq}
 	void test_ij_pq_ijpq_a(size_t ni, size_t nj, size_t np, size_t nq,
 		double d) throw(libtest::test_exception);
+
+	// c_{ijk} = \sum_{pq} a_{ip} b_{pkj}
+	void test_ijk_ip_pkj(size_t ni, size_t nj, size_t nk, size_t np,
+		double d = 0.0) throw(libtest::test_exception);
+
+	// c_{ijk} = \sum_{pq} a_{pkj} b_{ip}
+	void test_ijk_pkj_ip(size_t ni, size_t nj, size_t nk, size_t np,
+		double d = 0.0) throw(libtest::test_exception);
+
+	// c_{ijk} = c_{ijk} + d \sum_{pq} a_{kjpq} b_{iqp}
+	void test_ijk_kjpq_iqp(size_t ni, size_t nj, size_t nk, size_t np,
+		size_t nq, double d = 0.0) throw(libtest::test_exception);
+
+	// c_{ijkl} = c_{ijkl} + d \sum_{p} a_{ipl} b_{jpk}
+	void test_ijkl_ipl_jpk(size_t ni, size_t nj, size_t nk, size_t nl,
+		size_t np, double d = 0.0) throw(libtest::test_exception);
 
 	// c_{ijkl} = c_{ijkl} + d \sum_{pq} a_{iplq} b_{kpjq}
 	void test_ijkl_iplq_kpjq(size_t ni, size_t nj, size_t nk, size_t nl,

@@ -1,5 +1,5 @@
-#include <libtensor/symmetry/point_group_table.h>
-#include <libtensor/symmetry/product_table_container.h>
+#include <libtensor/symmetry/label/point_group_table.h>
+#include <libtensor/symmetry/label/product_table_container.h>
 #include "product_table_container_test.h"
 
 namespace libtensor {

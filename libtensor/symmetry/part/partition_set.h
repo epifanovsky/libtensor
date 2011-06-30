@@ -118,8 +118,10 @@ public:
         signs are opposite, the resulting sign is negative (false).
         The handling of forbidden partitions also depends on the mult flag.
         If mult = false, the intersection of a forbidden partition with one
-        which is part of a mapping results in the partition being allowed but
-        mapped onto itself. If mult = true, a similar intersection will leave
+        which is part of a mapping results in the partition being allowed. The
+        mapping is preserved if also the partition mapped onto intersects with
+        a forbidden partition. Otherwise the partition is removed from the
+        mapping. If mult = true, a similar intersection will leave
         the partition marked as forbidden.
      **/
     void intersect(const partition_set<N, T> &set, bool mult = false);
@@ -385,41 +387,69 @@ void partition_set<N, T>::intersect(const partition_set<N, T> &set, bool mult) {
 
             bool empty = true;
             abs_index<N> ai(x1->get_pdims());
-            do {
-                const index<N> &i1 = ai.get_index();
-                if (x1->is_forbidden(i1) && x2->is_forbidden(i1)) {
-                    new_part->mark_forbidden(i1);
-                    continue;
-                }
+            if (mult) {
+                do {
+                    const index<N> &i1 = ai.get_index();
+                    if (x1->is_forbidden(i1) || x2->is_forbidden(i1)) {
+                        new_part->mark_forbidden(i1);
+                        empty = false;
+                        continue;
+                    }
 
-                if (x1->is_forbidden(i1)) {
-                    if (mult) new_part->mark_forbidden(i1);
-                    continue;
-                }
 
-                index<N> i2 = x1->get_direct_map(i1);
-                while (! i2.equals(i1)) {
-                    if (x2->map_exists(i1, i2)) {
-                        bool sign1 = x1->get_sign(i1, i2);
-                        bool sign2 = x2->get_sign(i1, i2);
+                    index<N> i2 = x1->get_direct_map(i1);
+                    while (! i2.equals(i1)) {
+                        if (x2->map_exists(i1, i2)) {
+                            bool sign1 = x1->get_sign(i1, i2);
+                            bool sign2 = x2->get_sign(i1, i2);
 
-                        if (mult) {
                             new_part->add_map(i1, i2, sign1 == sign2);
                             empty = false;
+                            break;
                         }
-                        else {
+                        i2 = x1->get_direct_map(i2);
+                    }
+
+                } while (ai.inc());
+            } // end if mult
+            else {
+                do {
+                    const index<N> &i1 = ai.get_index();
+                    if (x1->is_forbidden(i1) && x2->is_forbidden(i1)) {
+                        new_part->mark_forbidden(i1);
+                        empty = false;
+                        continue;
+                    }
+
+                    se_part<N, double> *p1 = x1, *p2 = x2;
+                    if (p1->is_forbidden(i1)) std::swap(p1, p2);
+
+                    bool forbidden = p2->is_forbidden(i1);
+
+                    index<N> i2 = p1->get_direct_map(i1);
+                    while (! i2.equals(i1)) {
+                        if (p2->map_exists(i1, i2)) {
+                            bool sign1 = p1->get_sign(i1, i2);
+                            bool sign2 = p2->get_sign(i1, i2);
+
                             if (sign1 == sign2) {
                                 new_part->add_map(i1, i2, sign1);
                                 empty = false;
+                                break;
                             }
                         }
-                        break;
+                        else {
+                            if (forbidden && p2->is_forbidden(i2)) {
+                                new_part->add_map(i1, i2, p1->get_sign(i1, i2));
+                                empty = false;
+                                break;
+                            }
+                        }
+                        i2 = p1->get_direct_map(i2);
                     }
-                    i2 = x1->get_direct_map(i2);
-                }
 
-            } while (ai.inc());
-
+                } while (ai.inc());
+            }
             if (! m.equals(it2->second->get_mask())) {
                 delete x1; delete x2;
             }

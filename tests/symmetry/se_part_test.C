@@ -800,9 +800,6 @@ void se_part_test::test_perm_1() throw(libtest::test_exception) {
 	if (! pdims.equals(elem.get_pdims())) {
 		fail_test(testname, __FILE__, __LINE__, "Wrong pdims.");
 	}
-	if (! m0011.equals(elem.get_mask())) {
-		fail_test(testname, __FILE__, __LINE__, "Wrong mask.");
-	}
 	if (! elem.map_exists(i0000, i0011)) {
 		fail_test(testname, __FILE__, __LINE__, "Missing map: 0000->0011.");
 	}
@@ -866,9 +863,6 @@ void se_part_test::test_perm_2() throw(libtest::test_exception) {
 	if (! pdims.equals(elem.get_pdims())) {
 		fail_test(testname, __FILE__, __LINE__, "Wrong pdims.");
 	}
-	if (! msk.equals(elem.get_mask())) {
-		fail_test(testname, __FILE__, __LINE__, "Wrong mask.");
-	}
 	if (! elem.map_exists(i0000, i0101)) {
 		fail_test(testname, __FILE__, __LINE__, "Missing map: 0000->0011.");
 	}
@@ -928,9 +922,6 @@ void se_part_test::test_perm_3() throw(libtest::test_exception) {
 	}
 	if (! pdims.equals(elem.get_pdims())) {
 		fail_test(testname, __FILE__, __LINE__, "Wrong pdims.");
-	}
-	if (! m0011.equals(elem.get_mask())) {
-		fail_test(testname, __FILE__, __LINE__, "Wrong mask.");
 	}
 	if (! elem.map_exists(i0000, i0011)) {
 		fail_test(testname, __FILE__, __LINE__, "Missing map: 0000->0011.");
@@ -996,9 +987,6 @@ void se_part_test::test_perm_4() throw(libtest::test_exception) {
 	if (! pdims.equals(elem.get_pdims())) {
 		fail_test(testname, __FILE__, __LINE__, "Wrong pdims.");
 	}
-	if (! m1111.equals(elem.get_mask())) {
-		fail_test(testname, __FILE__, __LINE__, "Wrong mask.");
-	}
 	if (! elem.map_exists(i0000, i1111)) {
 		fail_test(testname, __FILE__, __LINE__, "Missing map: 0000->1111.");
 	}
@@ -1060,9 +1048,6 @@ void se_part_test::test_perm_5() throw(libtest::test_exception) {
 	}
 	if (! pdims.equals(elem.get_pdims())) {
 		fail_test(testname, __FILE__, __LINE__, "Wrong pdims.");
-	}
-	if (! msk.equals(elem.get_mask())) {
-		fail_test(testname, __FILE__, __LINE__, "Wrong mask.");
 	}
 	if (! elem.map_exists(i10, i11)) {
 		fail_test(testname, __FILE__, __LINE__, "Missing map: 10->11.");

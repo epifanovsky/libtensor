@@ -4,7 +4,7 @@
 #include <list>
 #include <libtest/unit_test.h>
 #include <libtensor/core/permutation.h>
-#include <libtensor/symmetry/permutation_group.h>
+#include <libtensor/symmetry/perm/permutation_group.h>
 
 namespace libtensor {
 

@@ -55,45 +55,45 @@ se_part<N + M, T> >::do_perform(symmetry_operation_params_t &params) const {
     typedef symmetry_element_set_adapter< N, T, se_part<N, T> > adapter1_t;
     typedef symmetry_element_set_adapter< M, T, se_part<M, T> > adapter2_t;
 
-#ifdef LIBTENSOR_DEBUG
-    //    consistency< se_part<N, T> >(params.g1).check();
-    //    consistency< se_part<M, T> >(params.g2).check();
-#endif
-
     adapter1_t g1(params.g1);
     adapter2_t g2(params.g2);
     params.g3.clear();
 
-    // Create map at which position which index ends up.
+    // Create map that tells the position where which index ends up.
     sequence<N + M, size_t> map(0);
     for (size_t i = 0; i < N + M; i++) map[i] = i;
     permutation<N + M> pinv(params.perm, true);
     pinv.apply(map);
 
-    mask<N + M> tm;
+    index<N + M> tot_pdims;
     for(typename adapter1_t::iterator it1 = g1.begin();
             it1 != g1.end(); it1++) {
 
         const se_part<N, T> &e1 = g1.get_elem(it1);
-        const mask<N> &m1 = e1.get_mask();
+        const dimensions<N> &pdims1 = e1.get_pdims();
 
-        mask<N + M> m3;
+        index<N + M> i3a, i3b;
         for (size_t i = 0; i < N; i++) {
-            if (tm[map[i]] && m1[i]) {
-                throw bad_symmetry(g_ns, k_clazz, method,
-                        __FILE__, __LINE__, "Overlapping masks in g1.");
+#ifdef LIBTENSOR_DEBUG
+            if (pdims1[i] != 1) {
+                if ((tot_pdims[map[i]] != 1) &&
+                        (tot_pdims[map[i]] != pdims1[i])) {
+                    throw bad_symmetry(g_ns, k_clazz, method, __FILE__,
+                            __LINE__, "Illegal pdims in g1.");
+                }
+                tot_pdims[map[i]] = pdims1[i];
             }
-            tm[map[i]] |= m1[i];
-            m3[map[i]] = m1[i];
+#endif
+            i3b[map[i]] = pdims1[i] - 1;
         }
 
-        se_part<N + M, T> e3(params.bis, m3, e1.get_npart());
+        se_part<N + M, T> e3(params.bis,
+                dimensions<N + M>(index_range<N + M>(i3a, i3b)));
 
-        abs_index<N> ai(e1.get_pdims());
+        abs_index<N> ai(pdims1);
         do {
             const index<N> &i1a = ai.get_index();
 
-            index<N + M> i3a;
             for (size_t i = 0; i < N; i++) i3a[map[i]] = i1a[i];
 
             if (e1.is_forbidden(i1a)) {
@@ -104,7 +104,6 @@ se_part<N + M, T> >::do_perform(symmetry_operation_params_t &params) const {
             index<N> i1b = e1.get_direct_map(i1a);
             if (i1a == i1b) continue;
 
-            index<N + M> i3b;
             for (size_t i = 0; i < N; i++) i3b[map[i]] = i1b[i];
 
             e3.add_map(i3a, i3b, e1.get_sign(i1a, i1b));
@@ -118,25 +117,30 @@ se_part<N + M, T> >::do_perform(symmetry_operation_params_t &params) const {
             it2 != g2.end(); it2++) {
 
         const se_part<M, T> &e2 = g2.get_elem(it2);
-        const mask<M> &m2 = e2.get_mask();
+        const dimensions<M> &pdims2 = e2.get_pdims();
 
-        mask<N + M> m3;
+        index<N + M> i3a, i3b;
         for (size_t i = 0; i < M; i++) {
-            if (tm[map[i + N]] && m2[i]) {
-                throw bad_symmetry(g_ns, k_clazz, method,
-                        __FILE__, __LINE__, "Overlapping masks in g2.");
+#ifdef LIBTENSOR_DEBUG
+            if (pdims2[i] != 1) {
+                if ((tot_pdims[map[i + N]] != 1) &&
+                        (tot_pdims[map[i + N]] != pdims2[i])) {
+                    throw bad_symmetry(g_ns, k_clazz, method, __FILE__,
+                            __LINE__, "Illegal pdims in g2.");
+                }
+                tot_pdims[map[i + N]] = pdims2[i];
             }
-            tm[map[i + N]] |= m2[i];
-            m3[map[i + N]] = m2[i];
+#endif
+            i3b[map[i + N]] = pdims2[i] - 1;
         }
 
-        se_part<N + M, T> e3(params.bis, m3, e2.get_npart());
+        se_part<N + M, T> e3(params.bis,
+                dimensions<N + M>(index_range<N + M>(i3a, i3b)));
 
         abs_index<M> ai(e2.get_pdims());
         do {
             const index<M> &i2a = ai.get_index();
 
-            index<N + M> i3a;
             for (size_t i = 0; i < M; i++) i3a[map[i + N]] = i2a[i];
 
             if (e2.is_forbidden(i2a)) {
