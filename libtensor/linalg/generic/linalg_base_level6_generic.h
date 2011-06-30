@@ -187,6 +187,15 @@ struct linalg_base_level6_generic {
 
 
 	/**	\brief \f$ c_{ijkl} = c_{ijkl} +
+			\sum_{pq} a_{piql} b_{qpkj} d \f$
+	 **/
+	static void ijkl_piql_qpkj_x(
+		size_t ni, size_t nj, size_t nk,
+		size_t nl, size_t np, size_t nq,
+		const double *a, const double *b, double *c, double d);
+
+
+	/**	\brief \f$ c_{ijkl} = c_{ijkl} +
 			\sum_{pq} a_{pkiq} b_{jplq} d \f$
 	 **/
 	static void ijkl_pkiq_jplq_x(

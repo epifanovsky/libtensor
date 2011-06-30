@@ -9,15 +9,15 @@ const char *kern_mul_ijkl_pqkj_qipl::k_clazz = "kern_mul_ijkl_pqkj_qipl";
 
 void kern_mul_ijkl_pqkj_qipl::run(const loop_registers<2, 1> &r) {
 
-//	if(m_sic == m_nj * m_sjc && m_sjc == m_nk * m_skc && m_skc == m_nl &&
-//		m_spa == m_nq * m_sqa && m_sqa == m_nk * m_ska &&
-//		m_ska == m_nj && m_sib == m_nq * m_sqb &&
-//		m_sqb == m_np * m_spb && m_spb == m_nl) {
-//
-//		linalg::ijkl_ipql_qpkj_x(m_ni, m_nj, m_nk, m_nl, m_nq, m_np,
-//			r.m_ptra[1], r.m_ptra[0], r.m_ptrb[0], m_d);
-//		return;
-//	}
+	if(m_sic == m_nj * m_sjc && m_sjc == m_nk * m_skc && m_skc == m_nl &&
+		m_spa == m_nq * m_sqa && m_sqa == m_nk * m_ska &&
+		m_ska == m_nj && m_sqb == m_ni * m_sib &&
+		m_sib == m_np * m_spb && m_spb == m_nl) {
+
+		linalg::ijkl_piql_qpkj_x(m_ni, m_nj, m_nk, m_nl, m_nq, m_np,
+			r.m_ptra[1], r.m_ptra[0], r.m_ptrb[0], m_d);
+		return;
+	}
 
 	for(size_t i = 0; i < m_ni; i++) {
 	for(size_t k = 0; k < m_nk; k++) {
