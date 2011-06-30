@@ -45,6 +45,14 @@ struct linalg_base_level5_generic {
 		const double *a, const double *b, double *c, double d);
 
 
+	/**	\brief \f$ c_{ijk} = c_{ijk} +
+			\sum_{p} a_{pkiq} b_{pjq} d \f$
+	 **/
+	static void ijk_pkiq_pjq_x(
+		size_t ni, size_t nj, size_t nk, size_t np, size_t nq,
+		const double *a, const double *b, double *c, double d);
+
+
 	/**	\brief \f$ c_{ijkl} = c_{ijkl} +
 			\sum_{p} a_{ipl} b_{kpj} d \f$
 	 **/

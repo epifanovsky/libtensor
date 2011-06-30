@@ -80,6 +80,32 @@ void linalg_base_level5_generic::ijk_pikq_jpq_x(
 }
 
 
+void linalg_base_level5_generic::ijk_pkiq_pjq_x(
+	size_t ni, size_t nj, size_t nk, size_t np, size_t nq,
+	const double *a, const double *b, double *c, double d) {
+
+	for(size_t p = 0; p < np; p++) {
+	for(size_t k = 0; k < nk; k++) {
+
+		const double *a1 = a + (p * nk + k) * ni * nq;
+		const double *b1 = b + p * nj * nq;
+
+		for(size_t i = 0; i < ni; i++) {
+		for(size_t j = 0; j < nj; j++) {
+
+			double *c1 = c + (i * nj + j) * nk;
+			size_t iq0 = i * nq, jq0 = j * nq;
+
+			for(size_t q = 0; q < nq; q++) {
+				c1[k] += d * a1[iq0 + q] * b1[jq0 + q];
+			}
+		}
+		}
+	}
+	}
+}
+
+
 void linalg_base_level5_generic::ijk_piqk_jpq_x(
 	size_t ni, size_t nj, size_t nk, size_t np, size_t nq,
 	const double *a, const double *b, double *c, double d) {

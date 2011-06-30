@@ -38,6 +38,11 @@ struct linalg_base_level5_adaptive : public linalg_base_level5_generic {
 		const double *a, const double *b, double *c, double d);
 
 
+	static void ijk_pkiq_pjq_x(
+		size_t ni, size_t nj, size_t nk, size_t np, size_t nq,
+		const double *a, const double *b, double *c, double d);
+
+
 };
 
 
@@ -48,6 +53,7 @@ struct linalg_base_level5_adaptive : public linalg_base_level5_generic {
 #include "bits/ijk_ipkq_jpq_x.h"
 #include "bits/ijk_pikq_jpq_x.h"
 #include "bits/ijk_piqk_jpq_x.h"
+#include "bits/ijk_pkiq_pjq_x.h"
 
 
 #endif // LIBTENSOR_LINALG_BASE_LEVEL5_ADAPTIVE_H
