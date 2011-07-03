@@ -1,4 +1,4 @@
-#include <libtensor/symmetry/so_stabilize_impl_perm.h>
+#include <libtensor/symmetry/perm/so_stabilize_impl_perm.h>
 #include <libtensor/btod/transf_double.h>
 #include "so_stabilize_impl_perm_test.h"
 

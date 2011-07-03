@@ -2,15 +2,14 @@
 #define LIBTENSOR_SO_PERMUTE_IMPL_PERM_H
 
 #include <list>
-#include "../defs.h"
-#include "../exception.h"
-#include "../not_implemented.h"
-#include "../core/permutation_builder.h"
+#include "../../defs.h"
+#include "../../exception.h"
+#include "../../core/permutation_builder.h"
+#include "../symmetry_element_set_adapter.h"
+#include "../symmetry_operation_impl_base.h"
+#include "../so_permute.h"
+#include "../se_perm.h"
 #include "permutation_group.h"
-#include "symmetry_element_set_adapter.h"
-#include "symmetry_operation_impl_base.h"
-#include "so_permute.h"
-#include "se_perm.h"
 
 namespace libtensor {
 

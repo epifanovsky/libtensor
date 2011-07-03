@@ -63,6 +63,7 @@ set(SRC_TOD
 )
 
 set(SRC_SYMMETRY
+    symmetry/combine_part_test.C
 	symmetry/libtensor_symmetry_tests.C
 	symmetry/libtensor_symmetry_suite.C
 #	symmetry/partition_set_test.C
@@ -72,43 +73,23 @@ set(SRC_SYMMETRY
 #	symmetry/se_label_test.C
 	symmetry/se_part_test.C
 	symmetry/se_perm_test.C
-#	symmetry/so_add_impl_label_test.C
-#	symmetry/so_add_impl_part_test.C
-#	symmetry/so_add_impl_perm_test.C
-#	symmetry/so_add_test.C
 #	symmetry/so_apply_impl_label_test.C
 #	symmetry/so_apply_impl_part_test.C
 #	symmetry/so_apply_impl_perm_test.C
 #	symmetry/so_apply_test.C
-#	symmetry/so_concat_impl_label_test.C
-#	symmetry/so_concat_impl_part_test.C
-#	symmetry/so_concat_impl_perm_test.C
-#	symmetry/so_concat_test.C
 #	symmetry/so_copy_test.C
-#	symmetry/so_dirprod_impl_part_test.C
-#	symmetry/so_dirprod_impl_perm_test.C
+	symmetry/so_dirprod_impl_part_test.C
+	symmetry/so_dirprod_impl_perm_test.C
 #	symmetry/so_dirprod_test.C
-#	symmetry/so_dirsum_impl_perm_test.C
+	symmetry/so_dirsum_impl_perm_test.C
 #	symmetry/so_dirsum_test.C
 #	symmetry/so_merge_impl_label_test.C
 #	symmetry/so_merge_impl_part_test.C
 #	symmetry/so_merge_impl_perm_test.C
 #	symmetry/so_merge_test.C
-#	symmetry/so_mult_impl_label_test.C
-#	symmetry/so_mult_impl_part_test.C
-#	symmetry/so_mult_impl_perm_test.C
-#	symmetry/so_mult_test.C
 #	symmetry/so_permute_impl_label_test.C
-#	symmetry/so_permute_impl_part_test.C
-#	symmetry/so_permute_impl_perm_test.C
-#	symmetry/so_proj_down_impl_label_test.C
-#	symmetry/so_proj_down_impl_part_test.C
-#	symmetry/so_proj_down_impl_perm_test.C
-#	symmetry/so_proj_down_test.C
-#	symmetry/so_proj_up_impl_label_test.C
-#	symmetry/so_proj_up_impl_part_test.C
-#	symmetry/so_proj_up_impl_perm_test.C
-#	symmetry/so_proj_up_test.C
+	symmetry/so_permute_impl_part_test.C
+	symmetry/so_permute_impl_perm_test.C
 #	symmetry/so_stabilize_impl_label_test.C
 #	symmetry/so_stabilize_impl_part_test.C
 #	symmetry/so_stabilize_impl_perm_test.C

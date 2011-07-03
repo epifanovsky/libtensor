@@ -1,14 +1,13 @@
 #ifndef LIBTENSOR_SO_DIRPROD_IMPL_PERM_H
 #define LIBTENSOR_SO_DIRPROD_IMPL_PERM_H
 
-#include "../defs.h"
-#include "../exception.h"
-#include "../not_implemented.h"
-#include "../core/permutation_builder.h"
-#include "symmetry_element_set_adapter.h"
-#include "symmetry_operation_impl_base.h"
-#include "so_dirprod.h"
-#include "se_perm.h"
+#include "../../defs.h"
+#include "../../exception.h"
+#include "../../core/permutation_builder.h"
+#include "../symmetry_element_set_adapter.h"
+#include "../symmetry_operation_impl_base.h"
+#include "../so_dirprod.h"
+#include "../se_perm.h"
 
 namespace libtensor {
 

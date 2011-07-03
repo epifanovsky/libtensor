@@ -9,6 +9,7 @@
 #include "../symmetry_operation_impl_base.h"
 #include "../so_dirsum.h"
 #include "../se_part.h"
+#include "combine_part.h"
 
 namespace libtensor {
 
@@ -75,7 +76,8 @@ se_part<N + M, T> >::do_perform(symmetry_operation_params_t &params) const {
     for (size_t i = 0; i < M; i++) i3b[map[i + N]] = pdims2[i] - 1;
 
     // Construct the result
-    se3(params.bis, dimensions<N + M>(index_range<N + M>(i3a, i3b)));
+    se_part<N + M, T> se3(params.bis,
+            dimensions<N + M>(index_range<N + M>(i3a, i3b)));
 
     // Loop over all result indexes
     abs_index<N + M> aix(se3.get_pdims());

@@ -1,12 +1,12 @@
 #ifndef LIBTENSOR_SO_PERMUTE_IMPL_PART_H
 #define LIBTENSOR_SO_PERMUTE_IMPL_PART_H
 
-#include "../defs.h"
-#include "../exception.h"
-#include "symmetry_element_set_adapter.h"
-#include "symmetry_operation_impl_base.h"
-#include "so_permute.h"
-#include "se_part.h"
+#include "../../defs.h"
+#include "../../exception.h"
+#include "../symmetry_element_set_adapter.h"
+#include "../symmetry_operation_impl_base.h"
+#include "../so_permute.h"
+#include "../se_part.h"
 
 namespace libtensor {
 

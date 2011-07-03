@@ -2,15 +2,13 @@
 #define LIBTENSOR_SO_DIRPROD_IMPL_PART_H
 
 #include <map>
-#include "../defs.h"
-#include "../exception.h"
-#include "../not_implemented.h"
-#include "../core/permutation_builder.h"
-#include "symmetry_element_set_adapter.h"
-#include "symmetry_operation_impl_base.h"
-#include "partition_set.h"
-#include "so_dirprod.h"
-#include "se_part.h"
+#include "../../defs.h"
+#include "../../exception.h"
+#include "../../core/permutation_builder.h"
+#include "../symmetry_element_set_adapter.h"
+#include "../symmetry_operation_impl_base.h"
+#include "../so_dirprod.h"
+#include "../se_part.h"
 
 namespace libtensor {
 
@@ -66,6 +64,8 @@ se_part<N + M, T> >::do_perform(symmetry_operation_params_t &params) const {
     pinv.apply(map);
 
     index<N + M> tot_pdims;
+    for (size_t i = 0; i < N + M; i++) tot_pdims[i] = 1;
+
     for(typename adapter1_t::iterator it1 = g1.begin();
             it1 != g1.end(); it1++) {
 
@@ -74,6 +74,7 @@ se_part<N + M, T> >::do_perform(symmetry_operation_params_t &params) const {
 
         index<N + M> i3a, i3b;
         for (size_t i = 0; i < N; i++) {
+
 #ifdef LIBTENSOR_DEBUG
             if (pdims1[i] != 1) {
                 if ((tot_pdims[map[i]] != 1) &&
