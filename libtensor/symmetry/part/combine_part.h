@@ -7,8 +7,13 @@
 namespace libtensor {
 
 /** \brief Combine multiple se_part<N, T> objects in a %symmetry element set
-        to one
+        to one.
 
+    This class takes a %symmetry element set of se_part<N, T> objects and
+    combines into a single se_part<N, T>. The resulting object has to produce
+    the same orbits and orbit list as the full set.
+
+    \ingroup libtensor_symmetry
  **/
 template<size_t N, typename T>
 class combine_part {
@@ -43,7 +48,7 @@ public:
     void perform(se_t &elx);
 
 private:
-    static const block_index_space<N> extract_bis(adapter_t &ad);
+    static const block_index_space<N> &extract_bis(adapter_t &ad);
     static dimensions<N> make_pdims(adapter_t &ad);
 };
 
@@ -57,57 +62,85 @@ combine_part<N, T>::combine_part(const symmetry_element_set<N, T> &set) :
 }
 
 template<size_t N, typename T>
-void combine_part<N, T>::perform(se_t &elx) {
+void combine_part<N, T>::perform(se_t &el) {
 
-    if (el.get_pdims() != m_pdims) {
-        throw bad_parameter(g_ns, k_clazz, "perform(se_t &)",
-                __FILE__, __LINE__, "pdims");
+    static const char *method = "perform(se_t &)";
+    if (! m_pdims.equals(el.get_pdims())) {
+        throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
+                "pdims");
+    }
+    if (! m_bis.equals(el.get_bis())) {
+        throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
+                "bis");
     }
 
-    for (adapter_t::iterator it = m_set.begin(); it != m_set.end(); it++) {
 
-        const se_t &e1 = m_set.get_elem(it);
-        const dimensions<N> pdims = e1.get_pdims();
+    // Loop over all partitions in the result se_part
+    abs_index<N> ai(m_pdims);
+    do {
 
-        abs_index<N> aix(m_pdims);
-        do {
-            const index<N> &ix = aix.get_index();
+        const index<N> &i1 = ai.get_index();
 
-            index<N> i1;
+        // Loop over all se_part<N, T> in the set
+        for (typename adapter_t::iterator it = m_set.begin();
+                it != m_set.end(); it++) {
+
+            const se_t &elx = m_set.get_elem(it);
+            const dimensions<N> &pdims = elx.get_pdims();
+
+            // Get the respective partition index in current se_part<N, T>
+            index<N> ix1;
             for (register size_t i = 0; i < N; i++) {
-                if (pdims[i] != 1) { i1[i] = ix[i]; }
+                if (pdims[i] != 1) { ix1[i] = i1[i]; }
             }
 
-            if (e1.is_forbidden(i1)) {
-                elx.mark_forbidden(ix);
+            // Partition is forbidden => result partition is also forbidden
+            if (elx.is_forbidden(ix1)) {
+                el.mark_forbidden(i1);
                 continue;
             }
 
-            index<N> i2 = e1.get_direct_map(i1);
-            if (i1 == i2) continue;
+            // Map is only of interest if ix1 < ix2
+            index<N> ix2 = elx.get_direct_map(ix1);
+            if (! (ix1 < ix2)) continue;
 
-            bool sign = e1.get_sign(i1, i2);
-
+            bool sx = elx.get_sign(ix1, ix2);
             for (size_t i = 0; i < N; i++) {
-                if (pdims[i] == 1) { i2[i] = ix[i]; }
+                if (pdims[i] == 1) { ix2[i] = i1[i]; }
             }
 
-            if (elx.is_forbidden(ix)) {
-                elx.mark_forbidden(i2);
+            if (i1 == ix2) continue;
+
+            // If result partition is already forbidden, mark also the target
+            // partition forbidden
+            if (el.is_forbidden(i1)) {
+                el.mark_forbidden(ix2);
+                continue;
+            }
+
+            if (el.map_exists(i1, ix2)) {
+                bool sign = el.get_sign(i1, ix2);
+                if (sx != sign) {
+                    el.mark_forbidden(i1);
+                }
             }
             else {
-                elx.add_map(ix, i2, sign);
+                el.add_map(i1, ix2, sx);
             }
-        } while (ai1.inc());
-    }
+        }
 
+    } while (ai.inc());
 }
 
 template<size_t N, typename T>
-static const block_index_space<N> &combine_part<N, T>::extract_bis(
-        adapter_t &ad) {
+const block_index_space<N> &combine_part<N, T>::extract_bis(adapter_t &ad) {
 
-    adapter_t::iterator it = ad.begin();
+    if (ad.is_empty()) {
+        throw bad_symmetry(g_ns, k_clazz, "extract_bis(adapter_t &)",
+                __FILE__, __LINE__, "Empty set.");
+    }
+
+    typename adapter_t::iterator it = ad.begin();
     const block_index_space<N> &bis = ad.get_elem(it).get_bis();
     it++;
     for (; it != ad.end(); it++) {
@@ -122,10 +155,15 @@ static const block_index_space<N> &combine_part<N, T>::extract_bis(
 }
 
 template<size_t N, typename T>
-static dimensions<N> combine_part<N, T>::make_pdims(adapter_t &ad) {
+dimensions<N> combine_part<N, T>::make_pdims(adapter_t &ad) {
+
+    if (ad.is_empty()) {
+        throw bad_symmetry(g_ns, k_clazz, "make_pdims(adapter_t &)",
+                __FILE__, __LINE__, "Empty set.");
+    }
 
     index<N> i1, i2;
-    for (adapter_t::iterator it = ad.begin(); it != ad.end(); it++) {
+    for (typename adapter_t::iterator it = ad.begin(); it != ad.end(); it++) {
 
         const se_t &el = ad.get_elem(it);
         const dimensions<N> &pdims = el.get_pdims();
