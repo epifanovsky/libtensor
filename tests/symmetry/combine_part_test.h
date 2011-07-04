@@ -12,14 +12,14 @@ namespace libtensor {
  **/
 class combine_part_test : public libtest::unit_test {
 public:
-	virtual void perform() throw(libtest::test_exception);
+    virtual void perform() throw(libtest::test_exception);
 
 private:
-	void test_1() throw(libtest::test_exception);
+    void test_1() throw(libtest::test_exception);
     void test_2(bool symm) throw(libtest::test_exception);
     void test_3(bool symm1, bool symm2) throw(libtest::test_exception);
-	void test_4a(bool symm1, bool symm2,
-	        bool forbidden) throw(libtest::test_exception);
+    void test_4a(bool symm1, bool symm2,
+            bool forbidden) throw(libtest::test_exception);
     void test_4b(bool symm1, bool symm2) throw(libtest::test_exception);
 
 };

@@ -11,22 +11,22 @@ namespace libtensor {
  **/
 class se_part_test : public libtest::unit_test {
 public:
-	virtual void perform() throw(libtest::test_exception);
+    virtual void perform() throw(libtest::test_exception);
 
 private:
-	void test_1() throw(libtest::test_exception);
-	void test_2() throw(libtest::test_exception);
-	void test_3a() throw(libtest::test_exception);
-	void test_3b() throw(libtest::test_exception);
-	void test_4() throw(libtest::test_exception);
-	void test_5() throw(libtest::test_exception);
-	void test_6() throw(libtest::test_exception);
-	void test_perm_1() throw(libtest::test_exception);
-	void test_perm_2() throw(libtest::test_exception);
-	void test_perm_3() throw(libtest::test_exception);
-	void test_perm_4() throw(libtest::test_exception);
-	void test_perm_5() throw(libtest::test_exception);
-	void test_exc() throw(libtest::test_exception);
+    void test_1() throw(libtest::test_exception);
+    void test_2() throw(libtest::test_exception);
+    void test_3a() throw(libtest::test_exception);
+    void test_3b() throw(libtest::test_exception);
+    void test_4() throw(libtest::test_exception);
+    void test_5() throw(libtest::test_exception);
+    void test_6() throw(libtest::test_exception);
+    void test_perm_1() throw(libtest::test_exception);
+    void test_perm_2() throw(libtest::test_exception);
+    void test_perm_3() throw(libtest::test_exception);
+    void test_perm_4() throw(libtest::test_exception);
+    void test_perm_5() throw(libtest::test_exception);
+    void test_exc() throw(libtest::test_exception);
 };
 
 } // namespace libtensor

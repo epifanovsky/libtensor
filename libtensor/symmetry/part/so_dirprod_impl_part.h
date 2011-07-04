@@ -38,14 +38,15 @@ protected:
 
 
 template<size_t N, size_t M, typename T>
-const char *symmetry_operation_impl< so_dirprod<N, M, T>,
-se_part<N + M, T> >::k_clazz =
+const char *
+symmetry_operation_impl< so_dirprod<N, M, T>, se_part<N + M, T> >::k_clazz =
         "symmetry_operation_impl< so_dirprod<N, M, T>, se_part<N, T> >";
 
 
 template<size_t N, size_t M, typename T>
-void symmetry_operation_impl< so_dirprod<N, M, T>,
-se_part<N + M, T> >::do_perform(symmetry_operation_params_t &params) const {
+void
+symmetry_operation_impl< so_dirprod<N, M, T>, se_part<N + M, T> >::do_perform(
+        symmetry_operation_params_t &params) const {
 
     static const char *method = "do_perform(symmetry_operation_params_t&)";
 

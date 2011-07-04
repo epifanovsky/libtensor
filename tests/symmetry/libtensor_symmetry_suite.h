@@ -80,17 +80,17 @@ namespace libtensor {
 	\li libtensor::so_stabilize_impl_perm_test
 	\li libtensor::so_symmetrize_test
 	\li libtensor::symmetry_element_set_adapter_test
-**/
+ **/
 class libtensor_symmetry_suite : public libtest::test_suite {
 private:
     unit_test_factory<combine_part_test> m_utf_combine_part;
-	unit_test_factory<permutation_group_test> m_utf_permutation_group;
-	unit_test_factory<point_group_table_test> m_utf_point_group_table;
-	unit_test_factory<product_table_container_test>
-		m_utf_product_table_container;
+    unit_test_factory<permutation_group_test> m_utf_permutation_group;
+    unit_test_factory<point_group_table_test> m_utf_point_group_table;
+    unit_test_factory<product_table_container_test>
+        m_utf_product_table_container;
 //	unit_test_factory<se_label_test> m_utf_se_label;
-	unit_test_factory<se_part_test> m_utf_se_part;
-	unit_test_factory<se_perm_test> m_utf_se_perm;
+    unit_test_factory<se_part_test> m_utf_se_part;
+    unit_test_factory<se_perm_test> m_utf_se_perm;
 //	unit_test_factory<so_apply_test> m_utf_so_apply;
 //	unit_test_factory<so_apply_impl_label_test> m_utf_so_apply_impl_label;
 //	unit_test_factory<so_apply_impl_part_test> m_utf_so_apply_impl_part;
@@ -114,12 +114,12 @@ private:
 //	unit_test_factory<so_stabilize_impl_part_test> m_utf_so_stabilize_impl_part;
 //	unit_test_factory<so_stabilize_impl_perm_test> m_utf_so_stabilize_impl_perm;
 //	unit_test_factory<so_symmetrize_test> m_utf_so_symmetrize;
-	unit_test_factory<symmetry_element_set_adapter_test>
-		m_utf_symmetry_element_set_adapter;
+    unit_test_factory<symmetry_element_set_adapter_test>
+        m_utf_symmetry_element_set_adapter;
 
 public:
-	//!	Creates the suite
-	libtensor_symmetry_suite();
+    //!	Creates the suite
+    libtensor_symmetry_suite();
 };
 
 } // namespace libtensor

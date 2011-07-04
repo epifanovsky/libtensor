@@ -40,13 +40,13 @@ protected:
 
 
 template<size_t N, size_t M, typename T>
-const char *symmetry_operation_impl<
-so_dirprod<N, M, T>, se_perm<N + M, T> >::k_clazz =
-        "symmetry_operation_impl< so_dirprod<N, M, T>, se_perm<N, T> >";
+const char *
+symmetry_operation_impl< so_dirprod<N, M, T>, se_perm<N + M, T> >::k_clazz =
+        "symmetry_operation_impl< so_dirprod<N, M, T>, se_perm<N + M, T> >";
 
 template<size_t N, size_t M, typename T>
-void symmetry_operation_impl<
-so_dirprod<N, M, T>, se_perm<N + M, T> >::do_perform(
+void
+symmetry_operation_impl< so_dirprod<N, M, T>, se_perm<N + M, T> >::do_perform(
         symmetry_operation_params_t &params) const {
 
     static const char *method = "do_perform(symmetry_operation_params_t&)";
