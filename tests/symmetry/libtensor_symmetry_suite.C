@@ -22,6 +22,7 @@ libtensor_symmetry_suite::libtensor_symmetry_suite() :
 	add_test("so_dirprod_impl_part", m_utf_so_dirprod_impl_part);
 	add_test("so_dirprod_impl_perm", m_utf_so_dirprod_impl_perm);
 //	add_test("so_dirsum", m_utf_so_dirsum);
+    add_test("so_dirsum_impl_part", m_utf_so_dirsum_impl_part);
 	add_test("so_dirsum_impl_perm", m_utf_so_dirsum_impl_perm);
 //	add_test("so_merge", m_utf_so_merge);
 //	add_test("so_merge_impl_label", m_utf_so_merge_impl_label);
