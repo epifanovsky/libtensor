@@ -1,5 +1,5 @@
-#ifndef LIBTENSOR_LABEL_TARGET_H
-#define LIBTENSOR_LABEL_TARGET_H
+#ifndef LIBTENSOR_LABEL_SET_H
+#define LIBTENSOR_LABEL_SET_H
 
 #include "../../core/dimensions.h"
 #include "../../core/mask.h"
@@ -171,25 +171,27 @@ template<size_t N>
 label_set<N>::label_set(const dimensions<N> &bidims, const mask<N> &msk,
         const std::string &id) : m_bidims(bidims), m_msk(msk),
     m_pt(product_table_container::get_instance().req_const_table(id)),
-    m_type(0), m_blk_labels(0), m_intr_labels(0), m_eval_msk(msk),
-    m_eval_size(0) {
+    m_type((size_t) -1), m_blk_labels(0), m_intr_labels(0),
+    m_eval_msk(msk), m_eval_size(0) {
 
     size_t cur_type = 0;
     for (register size_t i = 0; i < N; i++) {
         if (! m_msk[i]) continue;
+        if (m_type[i] != -1) continue;
 
         m_type[i] = cur_type;
         m_blk_labels[cur_type] = new label_group(m_bidims[i], m_pt.invalid());
+        m_eval_size++;
 
         for (register size_t j = i + 1; j < N; j++) {
-            if (! m_msk[i]) continue;
+            if (! m_msk[j]) continue;
 
             if (m_bidims[i] == m_bidims[j]) {
                 m_type[j] = cur_type;
+                m_eval_size++;
             }
         }
         cur_type++;
-        m_eval_size++;
     }
 }
 
@@ -296,7 +298,7 @@ void label_set<N>::add_intrinsic(label_t l) {
 #endif
 
     label_group::iterator it = m_intr_labels.begin();
-    for (; it != m_intr_labels.end() && l < *it; it++) { }
+    for (; it != m_intr_labels.end() && *it < l; it++) { }
 
     if (it == m_intr_labels.end()) {
         m_intr_labels.push_back(l);
@@ -310,7 +312,7 @@ void label_set<N>::add_intrinsic(label_t l) {
 template<size_t N>
 void label_set<N>::set_eval_msk(const mask<N> &emsk) {
 
-    static const char *method = "append(size_t)";
+    static const char *method = "set_eval_msk(size_t)";
 
     m_eval_size = 0;
     for (register size_t i = 0; i < N; i++) {
@@ -344,13 +346,14 @@ void label_set<N>::match_blk_labels() {
     sequence<N, label_group*> blk_labels(m_blk_labels);
 
     for (size_t i = 0; i < N; i++) {
-        m_type[i] = 0; m_blk_labels[i] = 0;
+        m_type[i] = (size_t) -1; m_blk_labels[i] = 0;
     }
 
     size_t cur_type = 0;
     for (register size_t i = 0; i < N; i++) {
 
         size_t itype = types[i];
+        if (itype == (size_t) -1) continue;
         if (blk_labels[itype] == 0) continue;
 
         m_type[i] = cur_type;
@@ -359,6 +362,8 @@ void label_set<N>::match_blk_labels() {
 
         for (size_t j = i + 1; j < N; j++) {
             size_t jtype = types[j];
+            if (jtype == (size_t) -1) continue;
+
             if (itype == jtype) {
                 m_type[j] = cur_type;
                 continue;
@@ -414,7 +419,7 @@ typename label_set<N>::label_t label_set<N>::get_label(size_t type,
     if (type > N || m_blk_labels[type] == 0) {
         throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__, "dim");
     }
-    if (m_blk_labels[type]->size() >= blk) {
+    if (m_blk_labels[type]->size() <= blk) {
         throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__, "blk");
     }
 #endif
@@ -482,5 +487,5 @@ bool label_set<N>::is_allowed(const index<N> &idx) const {
 
 } // namespace libtensor
 
-#endif
+#endif // LIBTENSOR_LABEL_SET_H
 

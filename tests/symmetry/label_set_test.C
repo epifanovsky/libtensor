@@ -1,7 +1,7 @@
 #include <libtensor/core/abs_index.h>
 #include <libtensor/core/block_index_space.h>
-#include <libtensor/symmetry/label/point_group_table.h>
 #include <libtensor/symmetry/label/label_set.h>
+#include <libtensor/symmetry/label/point_group_table.h>
 #include "label_set_test.h"
 
 namespace libtensor {
@@ -93,7 +93,7 @@ void label_set_test::test_basic_1() throw(libtest::test_exception) {
             fail_test(testname, __FILE__, __LINE__,
                     "Equal types for dims 1 and 2.");
         }
-        if (el.get_dim_type(2) == el.get_dim_type(3)) {
+        if (el.get_dim_type(2) != el.get_dim_type(3)) {
             fail_test(testname, __FILE__, __LINE__,
                     "Non-equal types for dims 2 and 3.");
         }
@@ -529,10 +529,11 @@ void label_set_test::test_set_4() throw(libtest::test_exception) {
         std::vector<bool> r3(bidims.get_size(), true);
         std::vector<bool> r4(bidims.get_size(), false);
         r1[0] = r1[1] = r1[2] = r1[3] =
-                r2[12] = r2[13] = r2[14] = r2[15] = true;
+                r1[12] = r1[13] = r1[14] = r1[15] = true;
         r2[0] = r2[1] = r2[2] = r2[3] =
-                r2[11] = r2[12] = r2[13] = r2[14] =
+                r2[8] = r2[9] = r2[10] = r2[11] =
                         r2[12] = r2[13] = r2[14] = r2[15] = true;
+        r4[12] = r4[13] = r4[14] = r4[15] = true;
 
         abs_index<2> ai(bidims);
         do {
@@ -606,7 +607,7 @@ void label_set_test::test_partial_1() throw(libtest::test_exception) {
         std::vector<bool> r4(bidims.get_size(), false);
         r1[0] = r1[1] = r1[2] = r1[3] = true;
         r2[0] = r2[1] = r2[2] = r2[3] =
-                r2[11] = r2[12] = r2[13] = r2[14] = true;
+                r2[8] = r2[9] = r2[10] = r2[11] = true;
 
         abs_index<2> ai(bidims);
         do {
@@ -647,7 +648,7 @@ void label_set_test::test_partial_1() throw(libtest::test_exception) {
  **/
 void label_set_test::test_partial_2() throw(libtest::test_exception) {
 
-    static const char *testname = "label_set_test::test_6()";
+    static const char *testname = "label_set_test::test_partial_2()";
 
     try {
 
@@ -691,17 +692,17 @@ void label_set_test::test_partial_2() throw(libtest::test_exception) {
 
         for (size_t i = 0; i < 4; i++) {
             for (size_t j = 0; j < 6; j++) {
-                r1[i * 96 + j * 6      ] = true; // x0x0
-                r1[i * 96 + j * 6 +  37] = r1[i * 96 + j * 6 +  38] = true;
-                r1[i * 96 + j * 6 +  75] = true; // x2x3
-                r1[i * 96 + j * 6 + 112] = r1[i * 96 + j * 6 + 113] = true;
-                r2[i * 96 + j * 6 +   1] = r2[i * 96 + j * 6 +   2] = true;
-                r2[i * 96 + j * 6 +   4] = r2[i * 96 + j * 6 +   5] = true;
-                r2[i * 96 + j * 6 +  73] = r2[i * 96 + j * 6 +  74] = true;
-                r2[i * 96 + j * 6 +  76] = r2[i * 96 + j * 6 +  77] = true;
+                r1[i * 144 + j * 6      ] = true; // x0x0
+                r1[i * 144 + j * 6 +  37] = r1[i * 144 + j * 6 +  38] = true;
+                r1[i * 144 + j * 6 +  75] = true; // x2x3
+                r1[i * 144 + j * 6 + 112] = r1[i * 144 + j * 6 + 113] = true;
+                r2[i * 144 + j * 6 +   1] = r2[i * 144 + j * 6 +   2] = true;
+                r2[i * 144 + j * 6 +   4] = r2[i * 144 + j * 6 +   5] = true;
+                r2[i * 144 + j * 6 +  73] = r2[i * 144 + j * 6 +  74] = true;
+                r2[i * 144 + j * 6 +  76] = r2[i * 144 + j * 6 +  77] = true;
                 for (size_t k = 0; k < 6; k++) {
-                    r2[i * 96 +  36 + j * 6 + k] = true;
-                    r2[i * 96 + 108 + j * 6 + k] = true;
+                    r2[i * 144 +  36 + j * 6 + k] = true;
+                    r2[i * 144 + 108 + j * 6 + k] = true;
                 }
             }
         }
@@ -788,6 +789,7 @@ void label_set_test::test_permute_1() throw(libtest::test_exception) {
         elem3.permute(p);
         elem4.permute(p);
 
+        bidims.permute(p);
         std::vector<bool> r1(bidims.get_size(), false);
         std::vector<bool> r2(bidims.get_size(), false);
         std::vector<bool> r3(bidims.get_size(), true);
@@ -878,6 +880,7 @@ void label_set_test::test_permute_2() throw(libtest::test_exception) {
         elem3.permute(p);
         elem4.permute(p);
 
+        bidims.permute(p);
         std::vector<bool> r1(bidims.get_size(), false);
         std::vector<bool> r2(bidims.get_size(), false);
         std::vector<bool> r3(bidims.get_size(), true);
@@ -938,7 +941,7 @@ void label_set_test::test_overlap() throw(libtest::test_exception) {
         mask<3> m001, m011, m110, m111, m010;
         m001[2] = true; m110[0] = true; m110[1] = true;
         m010[1] = true; m011[1] = true; m011[2] = true;
-        m111[0] = true; m111[1] = true; m111[1] = true;
+        m111[0] = true; m111[1] = true; m111[2] = true;
         bis.split(m110, 1); bis.split(m110, 2); bis.split(m110, 3);
         bis.split(m001, 1); bis.split(m001, 2); bis.split(m001, 3);
         bis.split(m001, 4); bis.split(m001, 5);
@@ -956,7 +959,7 @@ void label_set_test::test_overlap() throw(libtest::test_exception) {
             elem3.assign(m110, i, i);
         }
 
-        std::vector<label_set<4>::label_t> ll;
+        std::vector<label_set<4>::label_t> ll(6);
         ll[0] = 0; ll[1] = 1; ll[2] = 1; ll[3] = 2; ll[4] = 3; ll[5] = 3;
         for (size_t i = 0; i < 6; i++) {
             elem1.assign(m001, i, ll[i]);
