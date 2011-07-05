@@ -158,7 +158,7 @@ symmetry_operation_impl< so_dirsum<N, M, T>, se_part<N + M, T> >::do_perform(
             it2++;
             for (; it2 != flist1.end(); it1++, it2++) {
 
-                for (register size_t i = 0; i < M; i++) {
+                for (register size_t i = 0; i < N; i++) {
                     i3a[map[i]] = (*it1)[i];
                     i3b[map[i]] = (*it2)[i];
                 }
@@ -271,14 +271,27 @@ symmetry_operation_impl< so_dirsum<N, M, T>, se_part<N + M, T> >::do_perform(
                     i3b[map[i + N]] = i3a[map[i + N]];
                 }
 
-                se3.add_map(i3a, i3b, true);
+                se3.add_map(i3a, i3b, s1);
             }
-            if (s1 == s2 && ! s1) {
+
+            if ((i2a < i2b) && (s2 || fb1)) {
+
+                for (register size_t i = 0; i < N; i++) {
+                    i3b[map[i]] = i3a[map[i]];
+                }
+                for (register size_t i = 0; i < M; i++) {
+                    i3b[map[i + N]] = i2b[i];
+                }
+
+                se3.add_map(i3a, i3b, s2);
+            }
+
+            if (!fb1 && !fb2 && s1 == s2 && !s1) {
 
                 if (! (i1a < i1b && i2a < i2b)) continue;
 
                 for (register size_t i = 0; i < N; i++) {
-                    i3b[map[i]] = i3a[map[i]];
+                    i3b[map[i]] = i1b[i];
                 }
                 for (register size_t i = 0; i < M; i++) {
                     i3b[map[i + N]] = i2b[i];

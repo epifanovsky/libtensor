@@ -409,6 +409,8 @@ bool se_part<N, T>::get_sign(const index<N> &from, const index<N> &to) const {
     size_t a = abs_index<N>(from, m_pdims).get_abs_index();
     size_t b = abs_index<N>(to, m_pdims).get_abs_index();
 
+    if (a == b) return true;
+
     if (a > b) std::swap(a, b);
     size_t x = m_fmap[a];
     bool sign = m_fsign[a];

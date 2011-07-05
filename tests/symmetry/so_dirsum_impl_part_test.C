@@ -297,15 +297,17 @@ void so_dirsum_impl_part_test::test_nn_1(
         elemc.add_map(i101, i110, true);
         elemc.add_map(i001, i101, symm1);
 
+        if (symm1) {
+            elemc.add_map(i000, i100, symm1);
+            elemc.add_map(i011, i111, symm1);
+        }
+        if (symm2) {
+            elemc.add_map(i000, i011, symm2);
+            elemc.add_map(i100, i111, symm2);
+        }
         if (symm1 == symm2) {
             elemc.add_map(i000, i111, symm1);
             elemc.add_map(i011, i100, symm1);
-        }
-        if (symm1) {
-            elemc.add_map(i000, i100, true);
-        }
-        if (symm2) {
-            elemc.add_map(i000, i011, true);
         }
 
         symmetry_element_set<1, double> seta(se1_t::k_sym_type);
@@ -391,15 +393,17 @@ void so_dirsum_impl_part_test::test_nn_2(
         elemc.add_map(i011, i101, true);
         elemc.add_map(i010, i011, symm1);
 
+        if (symm1) {
+            elemc.add_map(i000, i001, symm1);
+            elemc.add_map(i110, i111, symm1);
+        }
+        if (symm2) {
+            elemc.add_map(i000, i110, symm2);
+            elemc.add_map(i001, i111, symm2);
+        }
         if (symm1 == symm2) {
             elemc.add_map(i000, i111, symm1);
             elemc.add_map(i110, i001, symm1);
-        }
-        if (symm1) {
-            elemc.add_map(i000, i001, true);
-        }
-        if (symm2) {
-            elemc.add_map(i000, i110, true);
         }
 
         symmetry_element_set<1, double> seta(se1_t::k_sym_type);
@@ -447,7 +451,7 @@ void so_dirsum_impl_part_test::test_nn_3(
     try {
 
         index<2> i1a, i2a; i2a[0] = 3; i2a[1] = 3;
-        index<4> i1c, i2c; i2c[0] = 3; i2c[1] = 3; i2c[2] = 3; i2c[2] = 3;
+        index<4> i1c, i2c; i2c[0] = 3; i2c[1] = 3; i2c[2] = 3; i2c[3] = 3;
 
         block_index_space<2> bisa(dimensions<2>(index_range<2>(i1a, i2a)));
         block_index_space<4> bisc(dimensions<4>(index_range<4>(i1c, i2c)));
@@ -484,22 +488,22 @@ void so_dirsum_impl_part_test::test_nn_3(
         elemc.add_map(i0101, i0110, true);
         elemc.add_map(i1001, i1010, true);
         elemc.add_map(i1101, i1110, true);
+        elemc.add_map(i0101, i1001, symm1);
         elemc.mark_forbidden(i0001);
         elemc.mark_forbidden(i0010);
 
         if (symm1) {
-            elemc.add_map(i0100, i1000, true);
-            elemc.add_map(i0101, i1001, true);
-            elemc.add_map(i0111, i1011, true);
+            elemc.add_map(i0100, i1000, symm1);
+            elemc.add_map(i0111, i1011, symm1);
         }
         if (symm2) {
-            elemc.add_map(i0100, i0111, true);
-            elemc.add_map(i1000, i1011, true);
-            elemc.add_map(i1100, i1111, true);
+            elemc.add_map(i0100, i0111, symm2);
+            elemc.add_map(i1000, i1011, symm2);
+            elemc.add_map(i1100, i1111, symm2);
         }
         if (symm1 == symm2) {
             elemc.add_map(i0100, i1011, symm1);
-            elemc.add_map(i1000, i1111, symm1); // only for real numbers
+            elemc.add_map(i0111, i1000, symm1); // only for real numbers
         }
 
         symmetry_element_set<2, double> seta(se2_t::k_sym_type);
