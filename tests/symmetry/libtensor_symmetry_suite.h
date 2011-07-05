@@ -3,6 +3,7 @@
 
 #include <libtest/test_suite.h>
 #include "combine_part_test.h"
+#include "label_set_test.h"
 #include "permutation_group_test.h"
 #include "point_group_table_test.h"
 #include "product_table_container_test.h"
@@ -49,6 +50,7 @@ namespace libtensor {
 
 	This suite runs the following tests:
     \li libtensor::combine_part_test
+    \li libtensor::label_set_test
 	\li libtensor::partition_set_test
 	\li libtensor::permutation_group_test
 	\li libtensor::point_group_table_test
@@ -84,6 +86,7 @@ namespace libtensor {
 class libtensor_symmetry_suite : public libtest::test_suite {
 private:
     unit_test_factory<combine_part_test> m_utf_combine_part;
+    unit_test_factory<label_set_test> m_utf_label_set;
     unit_test_factory<permutation_group_test> m_utf_permutation_group;
     unit_test_factory<point_group_table_test> m_utf_point_group_table;
     unit_test_factory<product_table_container_test>

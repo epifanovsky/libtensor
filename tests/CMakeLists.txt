@@ -64,6 +64,7 @@ set(SRC_TOD
 
 set(SRC_SYMMETRY
     symmetry/combine_part_test.C
+	symmetry/label_set_test.C
 	symmetry/libtensor_symmetry_tests.C
 	symmetry/libtensor_symmetry_suite.C
 #	symmetry/partition_set_test.C
@@ -155,6 +156,7 @@ set(SRC_LINALG
 	linalg/linalg_ijk_ipkq_jpq_x_test.C
 	linalg/linalg_ijk_pikq_jpq_x_test.C
 	linalg/linalg_ijk_piqk_jpq_x_test.C
+    linalg/linalg_ijk_pkiq_pjq_x_test.C
     linalg/linalg_ijkl_ikp_jpl_x_test.C
     linalg/linalg_ijkl_ipl_jpk_x_test.C
 	linalg/linalg_ijkl_ipl_kpj_x_test.C
@@ -166,6 +168,7 @@ set(SRC_LINALG
 	linalg/linalg_ijkl_ipql_pkjq_x_test.C
 	linalg/linalg_ijkl_ipql_pkqj_x_test.C
 	linalg/linalg_ijkl_ipql_qkpj_x_test.C
+	linalg/linalg_ijkl_ipql_qpkj_x_test.C
 	linalg/linalg_ijkl_pilq_kpjq_x_test.C
 	linalg/linalg_ijkl_pilq_pkjq_x_test.C
 	linalg/linalg_ijkl_pikq_pljq_x_test.C
@@ -174,6 +177,7 @@ set(SRC_LINALG
 	linalg/linalg_ijkl_piql_pkjq_x_test.C
 	linalg/linalg_ijkl_piql_pkqj_x_test.C
 	linalg/linalg_ijkl_piql_qkpj_x_test.C
+	linalg/linalg_ijkl_piql_qpkj_x_test.C
 	linalg/linalg_ijkl_pkiq_jplq_x_test.C
 	linalg/linalg_ijkl_pkiq_jpql_x_test.C
 	linalg/linalg_ijkl_pkiq_pjlq_x_test.C
