@@ -49,9 +49,9 @@ public:
 	//@{
 
 	mask<N> &operator|=(const mask<N> &other);
-	mask<N> operator|(const mask<N> &other);
+	mask<N> operator|(const mask<N> &other) const;
 	mask<N> &operator&=(const mask<N> &other);
-	mask<N> operator&(const mask<N> &other);
+	mask<N> operator&(const mask<N> &other) const;
 
 	//@}
 };
@@ -100,7 +100,7 @@ mask<N> &mask<N>::operator|=(const mask<N> &other) {
 
 
 template<size_t N>
-mask<N> mask<N>::operator|(const mask<N> &other) {
+mask<N> mask<N>::operator|(const mask<N> &other) const {
 
 	mask<N> m;
 	for(register size_t i = 0; i < N; i++) {
@@ -125,7 +125,7 @@ mask<N> &mask<N>::operator&=(const mask<N> &other) {
 
 
 template<size_t N>
-mask<N> mask<N>::operator&(const mask<N> &other) {
+mask<N> mask<N>::operator&(const mask<N> &other) const {
 
 	mask<N> m;
 	for(register size_t i = 0; i < N; i++) {
