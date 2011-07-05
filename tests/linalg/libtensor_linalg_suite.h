@@ -22,6 +22,7 @@
 #include "linalg_ijk_ipq_kjqp_x_test.h"
 #include "linalg_ijk_pikq_jpq_x_test.h"
 #include "linalg_ijk_piqk_jpq_x_test.h"
+#include "linalg_ijk_pkiq_pjq_x_test.h"
 #include "linalg_ijkl_ikp_jpl_x_test.h"
 #include "linalg_ijkl_ipl_jpk_x_test.h"
 #include "linalg_ijkl_ipl_kpj_x_test.h"
@@ -33,6 +34,7 @@
 #include "linalg_ijkl_ipql_pkjq_x_test.h"
 #include "linalg_ijkl_ipql_pkqj_x_test.h"
 #include "linalg_ijkl_ipql_qkpj_x_test.h"
+#include "linalg_ijkl_ipql_qpkj_x_test.h"
 #include "linalg_ijkl_pikq_pljq_x_test.h"
 #include "linalg_ijkl_pilq_kpjq_x_test.h"
 #include "linalg_ijkl_pilq_pkjq_x_test.h"
@@ -41,6 +43,7 @@
 #include "linalg_ijkl_piql_pkjq_x_test.h"
 #include "linalg_ijkl_piql_pkqj_x_test.h"
 #include "linalg_ijkl_piql_qkpj_x_test.h"
+#include "linalg_ijkl_piql_qpkj_x_test.h"
 #include "linalg_ijkl_pkiq_jplq_x_test.h"
 #include "linalg_ijkl_pkiq_jpql_x_test.h"
 #include "linalg_ijkl_pkiq_pjlq_x_test.h"
@@ -84,6 +87,7 @@ namespace libtensor {
 	 - libtensor::linalg_ijk_ipq_kjqp_x_test
 	 - libtensor::linalg_ijk_pikq_jpq_x_test
 	 - libtensor::linalg_ijk_piqk_jpq_x_test
+	 - libtensor::linalg_ijk_pkiq_pjq_x_test
 	 - libtensor::linalg_ijkl_ikp_jpl_x_test
 	 - libtensor::linalg_ijkl_ipl_jpk_x_test
 	 - libtensor::linalg_ijkl_ipl_kpj_x_test
@@ -95,6 +99,7 @@ namespace libtensor {
 	 - libtensor::linalg_ijkl_ipql_pkjq_x_test
 	 - libtensor::linalg_ijkl_ipql_pkqj_x_test
 	 - libtensor::linalg_ijkl_ipql_qkpj_x_test
+	 - libtensor::linalg_ijkl_ipql_qpkj_x_test
 	 - libtensor::linalg_ijkl_pikq_pljq_x_test
 	 - libtensor::linalg_ijkl_pilq_kpjq_x_test
 	 - libtensor::linalg_ijkl_pilq_pkjq_x_test
@@ -103,6 +108,7 @@ namespace libtensor {
 	 - libtensor::linalg_ijkl_piql_pkjq_x_test
 	 - libtensor::linalg_ijkl_piql_pkqj_x_test
 	 - libtensor::linalg_ijkl_piql_qkpj_x_test
+	 - libtensor::linalg_ijkl_piql_qpkj_x_test
 	 - libtensor::linalg_ijkl_pkiq_jplq_x_test
 	 - libtensor::linalg_ijkl_pkiq_jpql_x_test
 	 - libtensor::linalg_ijkl_pkiq_pjlq_x_test
@@ -138,6 +144,8 @@ private:
 		m_utf_linalg_ijk_pikq_jpq_x;
 	unit_test_factory<linalg_ijk_piqk_jpq_x_test>
 		m_utf_linalg_ijk_piqk_jpq_x;
+	unit_test_factory<linalg_ijk_pkiq_pjq_x_test>
+		m_utf_linalg_ijk_pkiq_pjq_x;
 	unit_test_factory<linalg_ijkl_ikp_jpl_x_test>
 		m_utf_linalg_ijkl_ikp_jpl_x;
 	unit_test_factory<linalg_ijkl_ipl_jpk_x_test>
@@ -160,6 +168,8 @@ private:
 		m_utf_linalg_ijkl_ipql_pkqj_x;
 	unit_test_factory<linalg_ijkl_ipql_qkpj_x_test>
 		m_utf_linalg_ijkl_ipql_qkpj_x;
+	unit_test_factory<linalg_ijkl_ipql_qpkj_x_test>
+		m_utf_linalg_ijkl_ipql_qpkj_x;
 	unit_test_factory<linalg_ijkl_pikq_pljq_x_test>
 		m_utf_linalg_ijkl_pikq_pljq_x;
 	unit_test_factory<linalg_ijkl_pilq_kpjq_x_test>
@@ -176,6 +186,8 @@ private:
 		m_utf_linalg_ijkl_piql_pkqj_x;
 	unit_test_factory<linalg_ijkl_piql_qkpj_x_test>
 		m_utf_linalg_ijkl_piql_qkpj_x;
+	unit_test_factory<linalg_ijkl_piql_qpkj_x_test>
+		m_utf_linalg_ijkl_piql_qpkj_x;
 	unit_test_factory<linalg_ijkl_pkiq_jplq_x_test>
 		m_utf_linalg_ijkl_pkiq_jplq_x;
 	unit_test_factory<linalg_ijkl_pkiq_jpql_x_test>

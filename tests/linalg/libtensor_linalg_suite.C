@@ -30,6 +30,7 @@ libtensor_linalg_suite::libtensor_linalg_suite() :
 	add_test("linalg_ijk_ipkq_jpq_x", m_utf_linalg_ijk_ipkq_jpq_x);
 	add_test("linalg_ijk_pikq_jpq_x", m_utf_linalg_ijk_pikq_jpq_x);
 	add_test("linalg_ijk_piqk_jpq_x", m_utf_linalg_ijk_piqk_jpq_x);
+	add_test("linalg_ijk_pkiq_pjq_x", m_utf_linalg_ijk_pkiq_pjq_x);
 	add_test("linalg_ijkl_ikp_jpl_x", m_utf_linalg_ijkl_ikp_jpl_x);
 	add_test("linalg_ijkl_ipl_jpk_x", m_utf_linalg_ijkl_ipl_jpk_x);
 	add_test("linalg_ijkl_ipl_kpj_x", m_utf_linalg_ijkl_ipl_kpj_x);
@@ -42,6 +43,7 @@ libtensor_linalg_suite::libtensor_linalg_suite() :
 	add_test("linalg_ijkl_ipql_pkjq_x", m_utf_linalg_ijkl_ipql_pkjq_x);
 	add_test("linalg_ijkl_ipql_pkqj_x", m_utf_linalg_ijkl_ipql_pkqj_x);
 	add_test("linalg_ijkl_ipql_qkpj_x", m_utf_linalg_ijkl_ipql_qkpj_x);
+	add_test("linalg_ijkl_ipql_qpkj_x", m_utf_linalg_ijkl_ipql_qpkj_x);
 	add_test("linalg_ijkl_pikq_pljq_x", m_utf_linalg_ijkl_pikq_pljq_x);
 	add_test("linalg_ijkl_pilq_kpjq_x", m_utf_linalg_ijkl_pilq_kpjq_x);
 	add_test("linalg_ijkl_pilq_pkjq_x", m_utf_linalg_ijkl_pilq_pkjq_x);
@@ -50,6 +52,7 @@ libtensor_linalg_suite::libtensor_linalg_suite() :
 	add_test("linalg_ijkl_piql_pkjq_x", m_utf_linalg_ijkl_piql_pkjq_x);
 	add_test("linalg_ijkl_piql_pkqj_x", m_utf_linalg_ijkl_piql_pkqj_x);
 	add_test("linalg_ijkl_piql_qkpj_x", m_utf_linalg_ijkl_piql_qkpj_x);
+	add_test("linalg_ijkl_piql_qpkj_x", m_utf_linalg_ijkl_piql_qpkj_x);
 	add_test("linalg_ijkl_pkiq_jplq_x", m_utf_linalg_ijkl_pkiq_jplq_x);
 	add_test("linalg_ijkl_pkiq_jpql_x", m_utf_linalg_ijkl_pkiq_jpql_x);
 	add_test("linalg_ijkl_pkiq_pjlq_x", m_utf_linalg_ijkl_pkiq_pjlq_x);
