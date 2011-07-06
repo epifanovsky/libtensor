@@ -81,9 +81,9 @@ void se_label_test::test_empty() throw(libtest::test_exception) {
         abs_index<2> ai(bidims);
         do {
 
-            if (! elem1.is_allowed(ai.get_index())) {
+            if (elem1.is_allowed(ai.get_index())) {
                 std::ostringstream oss;
-                oss << "! elem1.is_allowed(" << ai.get_index() << ")";
+                oss << "elem1.is_allowed(" << ai.get_index() << ")";
                 fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
             }
         } while (ai.inc());
@@ -232,16 +232,27 @@ void se_label_test::test_set_2() throw(libtest::test_exception) {
         subset3.add_intrinsic(3);
         subset4.clear_intrinsic();
 
+        std::vector<bool> r1(bidims.get_size(), false);
+        std::vector<bool> r2(bidims.get_size(), false);
+        std::vector<bool> r3(bidims.get_size(), true);
+        std::vector<bool> r4(bidims.get_size(), false);
+        r1[0] = r1[4] = r1[8] = r1[12] = true;
+        r2[0] = r2[2] = r2[4] = r2[6] =
+                r2[8] = r2[10] = r2[12] = r2[14] = true;
+
+
         abs_index<2> ai(bidims);
         do {
-            if (! elem1.is_allowed(ai.get_index())) {
+            if (elem1.is_allowed(ai.get_index()) != r1[ai.get_abs_index()]) {
                 std::ostringstream oss;
-                oss << "! elem1.is_allowed(" << ai.get_index() << ")";
+                oss << (r1[ai.get_abs_index()] ? "!" : "") <<
+                        "elem1.is_allowed(" << ai.get_index() << ")";
                 fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
             }
-            if (! elem2.is_allowed(ai.get_index())) {
+            if (elem2.is_allowed(ai.get_index()) != r2[ai.get_abs_index()]) {
                 std::ostringstream oss;
-                oss << "! elem2.is_allowed(" << ai.get_index() << ")";
+                oss << (r2[ai.get_abs_index()] ? "!" : "") <<
+                        "elem2.is_allowed(" << ai.get_index() << ")";
                 fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
             }
             if (! elem3.is_allowed(ai.get_index())) {
@@ -249,9 +260,9 @@ void se_label_test::test_set_2() throw(libtest::test_exception) {
                 oss << "! elem3.is_allowed(" << ai.get_index() << ")";
                 fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
             }
-            if (! elem4.is_allowed(ai.get_index())) {
+            if (elem4.is_allowed(ai.get_index())) {
                 std::ostringstream oss;
-                oss << "! elem4.is_allowed(" << ai.get_index() << ")";
+                oss << "elem4.is_allowed(" << ai.get_index() << ")";
                 fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
             }
 
@@ -345,11 +356,19 @@ void se_label_test::test_set_4() throw(libtest::test_exception) {
         subset1a.add_intrinsic(0);
         subset1b.add_intrinsic(1);
 
+        std::vector<bool> r1(bidims.get_size(), false);
+        for (size_t i = 0; i < 4; i++) {
+            r1[i * 4     ] = r1[i * 4 + 16] = true;
+            r1[i * 4 + 32] = r1[i * 4 + 48] = true;
+            r1[i * 4 + 17] = r1[i * 4 + 18] = r1[i * 4 + 19] = true;
+        }
+
         abs_index<3> ai(bidims);
         do {
-            if (! elem1.is_allowed(ai.get_index())) {
+            if (elem1.is_allowed(ai.get_index()) != r1[ai.get_abs_index()]) {
                 std::ostringstream oss;
-                oss << "! elem1.is_allowed(" << ai.get_index() << ")";
+                oss << (r1[ai.get_abs_index()] ? "!" : "") <<
+                        "elem1.is_allowed(" << ai.get_index() << ")";
                 fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
             }
 

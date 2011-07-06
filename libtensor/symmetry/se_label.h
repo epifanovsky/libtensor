@@ -32,7 +32,9 @@ namespace libtensor {
     functions.
 
     With the label sets allowed blocks are determined as follows:
-    - If any non-active dimension exists, all blocks are allowed.
+    - Any non-active dimensions are ignored, i.e.
+        - no label sets == all blocks forbidden
+        - the active dimensions determine the allowed blocks
     - If any label set determines a block to be allowed, the block is allowed.
 
 	\ingroup libtensor_symmetry
@@ -250,11 +252,8 @@ bool se_label<N, T>::is_allowed(const index<N> &idx) const {
 	}
 #endif
 
-	// If no label sets exist all blocks are allowed
-    if (m_sets.size() == 0) return true;
-
-	// If unmasked dimensions exist all blocks are allowed
-    for (size_t i = 0; i < N; i++) if (! m_total_msk[i]) return true;
+	// If no label sets exist all blocks are forbidden
+    if (m_sets.size() == 0) return false;
 
     // Loop over label sets
     for (const_iterator it = begin(); it != end(); it++) {
