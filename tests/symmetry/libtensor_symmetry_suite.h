@@ -15,6 +15,7 @@
 //#include "so_apply_impl_part_test.h"
 //#include "so_apply_impl_perm_test.h"
 //#include "so_dirprod_test.h"
+#include "so_dirprod_impl_label_test.h"
 #include "so_dirprod_impl_part_test.h"
 #include "so_dirprod_impl_perm_test.h"
 //#include "so_dirsum_test.h"
@@ -64,6 +65,7 @@ namespace libtensor {
 	\li libtensor::so_apply_impl_perm_test
 	\li libtensor::so_copy_test
     \li libtensor::so_dirprod_test
+    \li libtensor::so_dirprod_impl_label_test
     \li libtensor::so_dirprod_impl_part_test
     \li libtensor::so_dirprod_impl_perm_test
     \li libtensor::so_dirsum_test
@@ -100,6 +102,7 @@ private:
 //	unit_test_factory<so_apply_impl_perm_test> m_utf_so_apply_impl_perm;
 //	unit_test_factory<so_copy_test> m_utf_so_copy;
 //    unit_test_factory<so_dirprod_test> m_utf_so_dirprod;
+    unit_test_factory<so_dirprod_impl_label_test> m_utf_so_dirprod_impl_label;
     unit_test_factory<so_dirprod_impl_part_test> m_utf_so_dirprod_impl_part;
     unit_test_factory<so_dirprod_impl_perm_test> m_utf_so_dirprod_impl_perm;
 //    unit_test_factory<so_dirsum_test> m_utf_so_dirsum;

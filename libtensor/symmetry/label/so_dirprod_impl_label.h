@@ -1,35 +1,35 @@
-#ifndef LIBTENSOR_SO_CONCAT_IMPL_LABEL_H
-#define LIBTENSOR_SO_CONCAT_IMPL_LABEL_H
+#ifndef LIBTENSOR_SO_DIRPROD_IMPL_LABEL_H
+#define LIBTENSOR_SO_DIRPROD_IMPL_LABEL_H
 
-#include "../defs.h"
-#include "../exception.h"
-#include "../not_implemented.h"
-#include "../core/permutation_builder.h"
-#include "symmetry_element_set_adapter.h"
-#include "symmetry_operation_impl_base.h"
-#include "so_concat.h"
-#include "se_label.h"
+#include "../../defs.h"
+#include "../../exception.h"
+#include "../../core/permutation_builder.h"
+#include "../symmetry_element_set_adapter.h"
+#include "../symmetry_operation_impl_base.h"
+#include "../so_dirprod.h"
+#include "../se_label.h"
+#include "label_set.h"
 
 namespace libtensor {
 
 
-/**	\brief Implementation of so_concat<N, M, T> for se_perm<N, T>
+/**	\brief Implementation of so_dirprod<N, M, T> for se_label<N + M, T>
 	\tparam N Tensor order.
 	\tparam T Tensor element type.
 
 	\ingroup libtensor_symmetry
  **/
 template<size_t N, size_t M, typename T>
-class symmetry_operation_impl< so_concat<N, M, T>, se_label<N, T> > :
+class symmetry_operation_impl< so_dirprod<N, M, T>, se_label<N + M, T> > :
 	public symmetry_operation_impl_base<
-		so_concat<N, M, T>, se_label<N, T> > {
+		so_dirprod<N, M, T>, se_label<N + M, T> > {
 
 public:
 	static const char *k_clazz; //!< Class name
 
 public:
-	typedef so_concat<N, M, T> operation_t;
-	typedef se_label<N, T> element_t;
+	typedef so_dirprod<N, M, T> operation_t;
+	typedef se_label<N + M, T> element_t;
 	typedef symmetry_operation_params<operation_t>
 		symmetry_operation_params_t;
 
@@ -40,14 +40,15 @@ protected:
 
 
 template<size_t N, size_t M, typename T>
-const char *symmetry_operation_impl< so_concat<N, M, T>,
-	se_label<N, T> >::k_clazz =
-	"symmetry_operation_impl< so_concat<N, M, T>, se_label<N, T> >";
+const char *
+symmetry_operation_impl< so_dirprod<N, M, T>, se_label<N + M, T> >::k_clazz =
+	"symmetry_operation_impl< so_dirprod<N, M, T>, se_label<N + M, T> >";
 
 
 template<size_t N, size_t M, typename T>
-void symmetry_operation_impl< so_concat<N, M, T>,
-	se_label<N, T> >::do_perform(symmetry_operation_params_t &params) const {
+void
+symmetry_operation_impl< so_dirprod<N, M, T>, se_label<N + M, T> >::do_perform(
+        symmetry_operation_params_t &params) const {
 
 	static const char *method = "do_perform(symmetry_operation_params_t&)";
 
@@ -65,141 +66,112 @@ void symmetry_operation_impl< so_concat<N, M, T>,
 	permutation<N + M> pinv(params.perm, true);
 	pinv.apply(map);
 
+	dimensions<N + M> bidims = params.bis.get_block_index_dims();
 	//	Go over each element in the first source group
 	for(typename adapter1_t::iterator i = g1.begin(); i != g1.end(); i++) {
 
+		// Create result se_label
+		se_label<N + M, T> e3(bidims);
+
 		const se_label<N, T> &e1 = g1.get_elem(i);
+		// Loop over all label sets in the source se_label and copy them
+		for (typename se_label<N, T>::const_iterator iss = e1.begin();
+		        iss != e1.end(); iss++) {
 
-		// Create result se_label
-		se_label<N + M, T> e3(params.bis.get_block_index_dims(),
-				e1.get_table_id());
+		    const label_set<N> &ss1 = e1.get_subset(iss);
+		    const mask<N> &msk1 = ss1.get_mask();
+		    const mask<N> &emsk1 = ss1.get_eval_msk();
 
-		// Assign labels to the dimensions stemming from sym1
-		for (size_t k = 0; k < N; k++) {
-			mask<N + M> msk;
-			msk[map[k]] = true;
+		    mask<N + M> msk3, emsk3;
+	        for (register size_t k = 0; k < N; k++) {
+	            msk3[map[k]] = msk1[k];
+	            emsk3[map[k]] = emsk1[k];
+	        }
 
-			size_t ktype = e1.get_dim_type(k);
-			for (size_t l = 0; l < e1.get_dim(ktype); l++) {
-				typename se_label<N, T>::label_t label = e1.get_label(ktype, l);
-				if (! e1.is_valid(label)) continue;
+		    label_set<N + M> &ss3 = e3.create_subset(msk3, ss1.get_table_id());
+		    ss3.set_eval_msk(emsk3);
 
-				e3.assign(msk, l, label);
-			}
+            // Copy the intrinsic labels
+		    for (typename label_set<N>::iterator ii = ss1.begin();
+		            ii != ss1.end(); ii++) {
+		        ss3.add_intrinsic(ss1.get_intrinsic(ii));
+		    }
+
+		    // Assign labels to the dimensions stemming from ss1
+		    for (register size_t k = 0; k < N; k++) {
+		        mask<N + M> msk;
+		        msk[map[k]] = true;
+
+		        size_t ktype = ss1.get_dim_type(k);
+		        for (size_t kpos = 0; kpos < bidims[map[k]]; kpos++) {
+
+		            typename label_set<N>::label_t label =
+		                    ss1.get_label(ktype, kpos);
+
+		            if (! ss1.is_valid(label)) continue;
+		            ss3.assign(msk, kpos, label);
+		        }
+		    }
+
+		    ss3.match_blk_labels();
 		}
 
-		// check whether there is an se_label in set2 with the same
-		// product table
-		typename adapter2_t::iterator j = g2.begin();
-		for(; j != g2.end(); j++) {
-			if (e1.get_table_id() == g2.get_elem(j).get_table_id()) break;
-		}
-		if (j == g2.end()) {
-			e3.match_labels();
-
-			// set target labels
-			for (size_t k = 0; k < e1.get_n_targets(); k++)
-				e3.add_target(e1.get_target(k));
-		}
-		else {
-			// assign labels to the remaining dimensions
-			const se_label<M, T> &e2 = g2.get_elem(j);
-
-			for (size_t k = 0; k < M; k++) {
-				mask<N + M> msk;
-				msk[map[N + k]] = true;
-
-				size_t ktype = e2.get_dim_type(k);
-				for (size_t l = 0; l < e2.get_dim(ktype); l++) {
-					typename se_label<M, T>::label_t label =
-							e2.get_label(ktype, l);
-					if (! e2.is_valid(label)) continue;
-
-					e3.assign(msk, l, label);
-				}
-			}
-
-			e3.match_labels();
-
-			// set target labels
-			if (params.dirsum) {
-				for (size_t k = 0; k < e1.get_n_labels(); k++)
-					e3.add_target(k);
-			}
-			else {
-				// obtain product_table
-				const product_table_i &pt =
-						product_table_container::get_instance()
-								.req_const_table(e1.get_table_id());
-
-				try {
-
-				product_table_i::label_group lg(2);
-				for (size_t k = 0; k < e1.get_n_targets(); k++) {
-					for (size_t l = 0; l < e2.get_n_targets(); l++) {
-						lg[0] = e1.get_target(k);
-						lg[1] = e2.get_target(l);
-						for (typename se_label<N + M,T>::label_t m = 0;
-								m < pt.nlabels(); m++) {
-							if (pt.is_in_product(lg, m)) e3.add_target(m);
-						}
-					}
-				}
-				product_table_container::get_instance().ret_table(
-				        e1.get_table_id());
-
-				} catch (...) {
-					product_table_container::get_instance().ret_table(
-					        e1.get_table_id());
-					throw;
-				}
-			}
-
-		}
-		
 		params.g3.insert(e3);
 	}
+    //  Do the same for the second source group
+    for(typename adapter2_t::iterator i = g2.begin(); i != g2.end(); i++) {
 
-	//	Go over each element in the second source group
-	for(typename adapter2_t::iterator i = g2.begin(); i != g2.end(); i++) {
+        // Create result se_label
+        se_label<N + M, T> e3(bidims);
 
-		const se_label<M, T> &e2 = g2.get_elem(i);
+        const se_label<M, T> &e2 = g2.get_elem(i);
+        // Loop over all label sets in the source se_label and copy them
+        for (typename se_label<M, T>::const_iterator iss = e2.begin();
+                iss != e2.end(); iss++) {
 
-		typename adapter1_t::iterator j = g1.begin();
-		for(; j != g1.end(); j++) {
-			if (e2.get_table_id() == g1.get_elem(j).get_table_id()) break;
-		}
-		if (j != g1.end()) continue;
+            const label_set<M> &ss2 = e2.get_subset(iss);
+            const mask<M> &msk2 = ss2.get_mask();
+            const mask<M> &emsk2 = ss2.get_eval_msk();
 
-		// Create result se_label
-		se_label<N + M, T> e3(params.bis.get_block_index_dims(),
-				e2.get_table_id());
+            mask<N + M> msk3, emsk3;
+            for (register size_t k = 0; k < M; k++) {
+                msk3[map[k + N]] = msk2[k];
+                emsk3[map[k + N]] = emsk2[k];
+            }
 
-		for (size_t k = 0; k < M; k++) {
-			mask<N + M> msk;
-			msk[map[N + k]] = true;
+            label_set<N + M> &ss3 = e3.create_subset(msk3, ss2.get_table_id());
+            ss3.set_eval_msk(emsk3);
 
-			size_t ktype = e2.get_dim_type(k);
-			for (size_t l = 0; l < e2.get_dim(ktype); l++) {
-				typename se_label<M, T>::label_t label = e2.get_label(ktype, l);
-				if (! e2.is_valid(label)) continue;
+            // Copy the intrinsic labels
+            for (typename label_set<M>::iterator ii = ss2.begin();
+                    ii != ss2.end(); ii++) {
+                ss3.add_intrinsic(ss2.get_intrinsic(ii));
+            }
 
-				e3.assign(msk, l, label);
-			}
-		}
+            // Assign labels to the dimensions stemming from ss1
+            for (register size_t k = 0; k < M; k++) {
+                mask<N + M> msk;
+                msk[map[k + N]] = true;
 
-		e3.match_labels();
-		for (size_t k = 0; k < e2.get_n_targets(); k++)
-			e3.add_target(e2.get_target(k));
+                size_t ktype = ss2.get_dim_type(k);
+                for (size_t kpos = 0; kpos < bidims[map[k]]; kpos++) {
 
-		params.g3.insert(e3);
+                    typename label_set<M>::label_t label =
+                            ss2.get_label(ktype, kpos);
 
-	}
+                    if (! ss2.is_valid(label)) continue;
+                    ss3.assign(msk, kpos, label);
+                }
+            }
 
+            ss3.match_blk_labels();
+        }
 
+        params.g3.insert(e3);
+    }
 }
 
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_SO_PROJ_UP_IMPL_PERM_H
+#endif // LIBTENSOR_SO_DIRPROD_IMPL_LABEL_H
