@@ -16,14 +16,17 @@ public:
 private:
     static const char *table_id;
 
-    void test_1() throw(libtest::test_exception);
-    void test_2() throw(libtest::test_exception);
-    void test_3() throw(libtest::test_exception);
-    void test_4() throw(libtest::test_exception);
-    void test_5() throw(libtest::test_exception);
-    void test_6() throw(libtest::test_exception);
-    void test_7() throw(libtest::test_exception);
-    void test_8() throw(libtest::test_exception);
+    // Empty
+    void test_empty() throw(libtest::test_exception);
+    // One subset, full mask
+    void test_set_1() throw(libtest::test_exception);
+    // One subset, partial mask
+    void test_set_2() throw(libtest::test_exception);
+    // Two subsets, full mask
+    void test_set_3() throw(libtest::test_exception);
+    // Two subsets, partial mask
+    void test_set_4() throw(libtest::test_exception);
+    void test_permute() throw(libtest::test_exception);
 };
 
 } // namespace libtensor

@@ -11,7 +11,7 @@ libtensor_symmetry_suite::libtensor_symmetry_suite() :
 	add_test("permutation_group", m_utf_permutation_group);
 	add_test("point_group_table", m_utf_point_group_table);
 	add_test("product_table_container", m_utf_product_table_container);
-//	add_test("se_label", m_utf_se_label);
+	add_test("se_label", m_utf_se_label);
 	add_test("se_part", m_utf_se_part);
 	add_test("se_perm", m_utf_se_perm);
 //	add_test("so_apply", m_utf_so_apply);

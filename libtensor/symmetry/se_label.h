@@ -45,7 +45,9 @@ public:
 
 	typedef label_set<N> set_t; //!< Label set
 	typedef std::list<set_t *> set_list_t; //!< List of label sets
-	typedef typename set_list_t::const_iterator iterator; //!< List iterator
+
+    typedef typename set_list_t::iterator iterator; //!< List iterator
+	typedef typename set_list_t::const_iterator const_iterator; //!< List iterator
 
 private:
 	dimensions<N> m_bidims; //!< Block index dimensions
@@ -88,10 +90,14 @@ public:
 
 	//! \name STL-like iterators over label sets
 	//@{
-	iterator begin() const { return m_sets.begin(); }
-	iterator end() const { return m_sets.end(); }
+    iterator begin() { return m_sets.begin(); }
+    const_iterator begin() const { return m_sets.begin(); }
 
-	const set_t &get_subset(iterator it) const { return *it; }
+    iterator end() { return m_sets.end(); }
+    const_iterator end() const { return m_sets.end(); }
+
+	set_t &get_subset(iterator it);
+	const set_t &get_subset(const_iterator it) const;
 	//@}
 
 	//!	\name Implementation of symmetry_element_i<N, T>
@@ -144,14 +150,12 @@ se_label<N, T>::se_label(const dimensions<N> &bidims) : m_bidims(bidims) { }
 template<size_t N, typename T>
 se_label<N, T>::se_label(const se_label<N, T> &el) :
 	m_bidims(el.m_bidims), m_total_msk(el.m_total_msk),
-	m_sets(el.m_sets.size(), 0) {
+	m_sets(0) {
 
-    typename set_list_t::iterator it1 = m_sets.begin();
-    for (typename set_list_t::const_iterator it2 = el.m_sets.begin();
-            it2 != el.m_sets.end(); it2++, it1++) {
+    for (const_iterator it2 = el.begin(); it2 != el.end(); it2++) {
 
-        set_t *to = *it1, *from = *it2;
-        to = new set_t(*from);
+        set_t *set = new set_t(el.get_subset(it2));
+        m_sets.push_back(set);
     }
 }
 
@@ -170,8 +174,9 @@ typename se_label<N, T>::set_t &se_label<N, T>::create_subset(
     }
 #endif
 
-    set_t *set = new set_t(msk, id);
+    set_t *set = new set_t(m_bidims, msk, id);
     m_sets.push_back(set);
+    m_total_msk |= msk;
 
     return *set;
 }
@@ -179,12 +184,38 @@ typename se_label<N, T>::set_t &se_label<N, T>::create_subset(
 template<size_t N, typename T>
 void se_label<N, T>::clear() {
 
-    for (typename set_list_t::iterator it = m_sets.begin();
-            it != m_sets.end(); it++) {
+    for (iterator it = m_sets.begin(); it != m_sets.end(); it++) {
         delete *it; *it = 0;
     }
 
-    for (size_t i = 0; i < N; i++) m_total_msk[i] = false;
+    for (register size_t i = 0; i < N; i++) m_total_msk[i] = false;
+}
+
+template<size_t N, typename T>
+typename se_label<N, T>::set_t &se_label<N, T>::get_subset(iterator it) {
+
+#ifdef LIBTENSOR_DEBUG
+    static const char *method = "get_subset(iterator)";
+
+    if (it == m_sets.end())
+        throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__, "it");
+#endif
+
+    return *(*it);
+}
+
+template<size_t N, typename T>
+const typename se_label<N, T>::set_t &se_label<N, T>::get_subset(
+        const_iterator it) const {
+
+#ifdef LIBTENSOR_DEBUG
+    static const char *method = "get_subset(const_iterator)";
+
+    if (it == m_sets.end())
+        throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__, "it");
+#endif
+
+    return *(*it);
 }
 
 template<size_t N, typename T>
@@ -192,8 +223,8 @@ void se_label<N, T>::permute(const permutation<N> &p) {
 
     m_bidims.permute(p);
     m_total_msk.permute(p);
-    for (typename set_list_t::iterator it = m_sets.begin();
-            it != m_sets.end(); it++) m_sets.permute(p);
+    for (iterator it = m_sets.begin(); it != m_sets.end(); it++)
+        (*it)->permute(p);
 }
 
 template<size_t N, typename T>
@@ -226,9 +257,9 @@ bool se_label<N, T>::is_allowed(const index<N> &idx) const {
     for (size_t i = 0; i < N; i++) if (! m_total_msk[i]) return true;
 
     // Loop over label sets
-    for (iterator it = begin(); it != end(); it++) {
+    for (const_iterator it = begin(); it != end(); it++) {
 
-        if (it->is_allowed(idx)) return true;
+        if ((*it)->is_allowed(idx)) return true;
     }
 
 	return false;

@@ -7,7 +7,7 @@
 #include "permutation_group_test.h"
 #include "point_group_table_test.h"
 #include "product_table_container_test.h"
-//#include "se_label_test.h"
+#include "se_label_test.h"
 #include "se_part_test.h"
 #include "se_perm_test.h"
 //#include "so_apply_test.h"
@@ -91,7 +91,7 @@ private:
     unit_test_factory<point_group_table_test> m_utf_point_group_table;
     unit_test_factory<product_table_container_test>
         m_utf_product_table_container;
-//	unit_test_factory<se_label_test> m_utf_se_label;
+	unit_test_factory<se_label_test> m_utf_se_label;
     unit_test_factory<se_part_test> m_utf_se_part;
     unit_test_factory<se_perm_test> m_utf_se_perm;
 //	unit_test_factory<so_apply_test> m_utf_so_apply;
