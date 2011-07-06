@@ -149,8 +149,8 @@ public:
 
     //! \name STL-like iterator over intrinsic labels
     //@{
-    iterator begin() { return m_intr_labels.begin(); }
-    iterator end() { return m_intr_labels.end(); }
+    iterator begin() const { return m_intr_labels.begin(); }
+    iterator end() const { return m_intr_labels.end(); }
 
     label_t get_intrinsic(iterator it) const { return *it; }
     //@}
@@ -162,6 +162,10 @@ public:
     /** \brief Tests, if the block is allowed w.r.t to this label set
      **/
     bool is_allowed(const index<N> &bidx) const;
+
+    /** \brief Tests, if label is valid
+     **/
+    bool is_valid(label_t label) const { return m_pt.is_valid(label); }
 };
 
 template<size_t N>
