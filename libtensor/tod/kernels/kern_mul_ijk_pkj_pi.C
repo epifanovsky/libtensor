@@ -35,7 +35,7 @@ kernel_base<2, 1> *kern_mul_ijk_pkj_pi::match(const kern_mul_ij_pji_p &z,
 	size_t sic_min = 0;
 	for(iterator_t i = in.begin(); i != in.end(); i++) {
 		if(i->stepa(0) == 0 && i->stepa(1) == 1 && i->stepb(0) > 0) {
-			if(z.m_spa % (i->weight() * i->stepa(1))) continue;
+			if(z.m_spb % (i->weight() * i->stepa(1))) continue;
 			if(i->stepb(0) % (z.m_ni * z.m_sic)) continue;
 			if(sic_min == 0 || sic_min > i->stepb(0)) {
 				ii = i; sic_min = i->stepb(0);
