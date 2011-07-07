@@ -57,6 +57,7 @@ set(SRC
 	tod/kernels/kern_mul_ijk_piq_jpqk.C
 	tod/kernels/kern_mul_ijk_piq_pjkq.C
 	tod/kernels/kern_mul_ijk_piq_pjqk.C
+    tod/kernels/kern_mul_ijk_pj_ipk.C
     tod/kernels/kern_mul_ijk_pj_pik.C
 	tod/kernels/kern_mul_ijk_pji_pk.C
 	tod/kernels/kern_mul_ijk_pjq_ipqk.C
