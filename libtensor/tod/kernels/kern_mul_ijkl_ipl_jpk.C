@@ -57,7 +57,7 @@ kernel_base<2, 1> *kern_mul_ijkl_ipl_jpk::match(const kern_mul_ijk_ipk_pj &z,
 		if(i->stepa(0) == 0 && i->stepa(1) > 0 && i->stepb(0) > 0) {
 			if(i->stepa(1) % (z.m_spb * z.m_np)) continue;
 			if(i->stepb(0) % (z.m_sjc * z.m_nj)) continue;
-			if(z.m_sic % i->weight()) continue;
+			if(z.m_sic % (i->weight() * i->stepb(0))) continue;
 			if(sjb_min == 0 || sjb_min > i->stepa(1)) {
 				ij = i; sjb_min = i->stepa(1);
 			}
