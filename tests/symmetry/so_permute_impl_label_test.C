@@ -1,13 +1,13 @@
-#include <libtensor/symmetry/point_group_table.h>
-#include <libtensor/symmetry/product_table_container.h>
-#include <libtensor/symmetry/so_permute_impl_label.h>
 #include <libtensor/btod/transf_double.h>
+#include <libtensor/symmetry/label/point_group_table.h>
+#include <libtensor/symmetry/label/product_table_container.h>
+#include <libtensor/symmetry/label/so_permute_impl_label.h>
 #include "../compare_ref.h"
 #include "so_permute_impl_label_test.h"
 
 namespace libtensor {
 
-const char *so_permute_impl_label_test::k_table_id = "point_group";
+const char *so_permute_impl_label_test::k_table_id = "s6";
 
 void so_permute_impl_label_test::perform() throw(libtest::test_exception) {
 
@@ -74,25 +74,36 @@ void so_permute_impl_label_test::test_1() throw(libtest::test_exception) {
 	m4c[0] = true; m4d[1] = true; m4c[2] = true; m4d[3] = true;
 	bis4.split(m4, 2); bis4.split(m4, 4); bis4.split(m4, 6);
 
-	se4_t elem4a(bis4.get_block_index_dims(), k_table_id);
+	se4_t elem4a(bis4.get_block_index_dims());
+	{
+	    label_set<4> &ss4a = elem4a.create_subset(k_table_id);
+	    for (unsigned int i = 0; i < 4; i++) {
+	        ss4a.assign(m4a, i, i);
+	    }
+	    ss4a.assign(m4b, 0, 3);
+	    ss4a.assign(m4b, 1, 0);
+	    ss4a.assign(m4b, 2, 1);
+	    ss4a.assign(m4b, 3, 2);
+	    ss4a.add_intrinsic(2);
+
+	}
 
 	permutation<4> perm;
 	perm.permute(0, 1).permute(1, 2);
 	bis4.permute(perm);
 
-	se4_t elem4_ref(bis4.get_block_index_dims(), k_table_id);
+	se4_t elem4_ref(bis4.get_block_index_dims());
+	{
+	    label_set<4> &ss4_ref = elem4_ref.create_subset(k_table_id);
 
-	for (unsigned int i = 0; i < 4; i++) {
-		elem4a.assign(m4a, i, i);
-		elem4_ref.assign(m4c, i, i);
+	    for (unsigned int i = 0; i < 4; i++) {
+	        ss4_ref.assign(m4c, i, i);
+	    }
+	    ss4_ref.assign(m4d, 0, 3); ss4_ref.assign(m4d, 1, 0);
+	    ss4_ref.assign(m4d, 2, 1); ss4_ref.assign(m4d, 3, 2);
+
+	    ss4_ref.add_intrinsic(2);
 	}
-	elem4a.assign(m4b, 0, 3); elem4a.assign(m4b, 1, 0);
-	elem4a.assign(m4b, 2, 1); elem4a.assign(m4b, 3, 2);
-	elem4_ref.assign(m4d, 0, 3); elem4_ref.assign(m4d, 1, 0);
-	elem4_ref.assign(m4d, 2, 1); elem4_ref.assign(m4d, 3, 2);
-
-	elem4a.add_target(2);
-	elem4_ref.add_target(2);
 
 	symmetry_element_set<4, double> set1(se4_t::k_sym_type);
 	symmetry_element_set<4, double> set2(se4_t::k_sym_type);
@@ -109,40 +120,6 @@ void so_permute_impl_label_test::test_1() throw(libtest::test_exception) {
 
 	if(set2.is_empty()) {
 		fail_test(testname, __FILE__, __LINE__, "Expected a non-empty set.");
-	}
-
-	symmetry_element_set_adapter<4, double, se4_t> adapter(set2);
-	symmetry_element_set_adapter<4, double, se4_t>::iterator i =
-		adapter.begin();
-	const se4_t &elem4b = adapter.get_elem(i);
-	i++;
-	if(i != adapter.end()) {
-		fail_test(testname, __FILE__, __LINE__,
-			"Expected only one element.");
-	}
-	if(elem4b.get_n_targets() != 1) {
-		fail_test(testname, __FILE__, __LINE__,
-				"elem4b.get_n_targets() != 1");
-	}
-	if(elem4b.get_target(0) != 2) {
-		fail_test(testname, __FILE__, __LINE__,
-				"elem4b.get_target(0) != Au");
-	}
-	if(elem4b.get_dim_type(0) != elem4b.get_dim_type(2)) {
-		fail_test(testname, __FILE__, __LINE__,
-				"elem4b.get_dim_type(0) != elem4b.get_dim_type(2)");
-	}
-	if(elem4b.get_dim_type(0) == elem4b.get_dim_type(1)) {
-		fail_test(testname, __FILE__, __LINE__,
-				"elem4.get_dim_type(0) == elem4.get_dim_type(1)");
-	}
-	if(elem4b.get_dim_type(0) == elem4b.get_dim_type(3)) {
-		fail_test(testname, __FILE__, __LINE__,
-				"elem4.get_dim_type(0) == elem4.get_dim_type(3)");
-	}
-	if(elem4b.get_dim_type(1) != elem4b.get_dim_type(3)) {
-		fail_test(testname, __FILE__, __LINE__,
-				"elem4.get_dim_type(2) != elem4.get_dim_type(3)");
 	}
 
 	} catch(exception &e) {

@@ -6,7 +6,8 @@
 namespace libtensor {
 
 
-/**	\brief Tests the libtensor::so_permute_impl_label class
+/**	\brief Tests the class libtensor::
+        symmetry_operation_impl< so_permute<N, T>, se_label<N, T> >
 
 	\ingroup libtensor_tests_sym
  **/

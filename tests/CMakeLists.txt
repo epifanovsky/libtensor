@@ -91,7 +91,7 @@ set(SRC_SYMMETRY
 #	symmetry/so_merge_impl_part_test.C
 #	symmetry/so_merge_impl_perm_test.C
 #	symmetry/so_merge_test.C
-#	symmetry/so_permute_impl_label_test.C
+	symmetry/so_permute_impl_label_test.C
 	symmetry/so_permute_impl_part_test.C
 	symmetry/so_permute_impl_perm_test.C
 #	symmetry/so_stabilize_impl_label_test.C

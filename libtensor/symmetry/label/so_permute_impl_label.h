@@ -1,12 +1,12 @@
 #ifndef LIBTENSOR_SO_PERMUTE_IMPL_LABEL_H
 #define LIBTENSOR_SO_PERMUTE_IMPL_LABEL_H
 
-#include "../defs.h"
-#include "../exception.h"
-#include "symmetry_element_set_adapter.h"
-#include "symmetry_operation_impl_base.h"
-#include "so_permute.h"
-#include "se_label.h"
+#include "../../defs.h"
+#include "../../exception.h"
+#include "../symmetry_element_set_adapter.h"
+#include "../symmetry_operation_impl_base.h"
+#include "../so_permute.h"
+#include "../se_label.h"
 
 namespace libtensor {
 
@@ -36,12 +36,14 @@ protected:
 
 
 template<size_t N, typename T>
-const char *symmetry_operation_impl< so_permute<N, T>, se_label<N, T> >::k_clazz =
+const char *
+symmetry_operation_impl< so_permute<N, T>, se_label<N, T> >::k_clazz =
 	"symmetry_operation_impl< so_permute<N, T>, se_label<N, T> >";
 
 
 template<size_t N, typename T>
-void symmetry_operation_impl< so_permute<N, T>, se_label<N, T> >::do_perform(
+void
+symmetry_operation_impl< so_permute<N, T>, se_label<N, T> >::do_perform(
 	symmetry_operation_params_t &params) const {
 
 	static const char *method =
