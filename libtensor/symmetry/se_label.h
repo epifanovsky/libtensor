@@ -21,21 +21,18 @@ namespace libtensor {
 
     The main component of the symmetry element are so-called label sets
     (\sa label_set<N>). Each label set is defined with respect to a product
-    table and a subset of "active" dimensions. Each dimension of a symmetry
-    element can only be active in one label set. New label sets
-    are added to the symmetry element via the function
+    table. New label sets are added to the symmetry element via the functions
     \code
-    create_subset(const mask<N> &, const std::string &)
+    create_subset(const std::string &)
     \endcode
-    which creates an empty label set with the active dimensions given by
-    mask. The label set then needs to be set up using the respective member
-    functions.
+    or
+    \code
+    add_subset(const label_set<N> &)
+    \endcode
 
-    With the label sets allowed blocks are determined as follows:
-    - Any non-active dimensions are ignored, i.e.
-        - no label sets == all blocks forbidden
-        - the active dimensions determine the allowed blocks
-    - If any label set determines a block to be allowed, the block is allowed.
+    Allowed blocks are determined as follows:
+    - If no label sets exist, all blocks are allowed.
+    - If a block is allowed in any label set, it is allowed in total.
 
 	\ingroup libtensor_symmetry
  **/
@@ -53,8 +50,6 @@ public:
 
 private:
 	dimensions<N> m_bidims; //!< Block index dimensions
-	mask<N> m_total_msk; //!< Total mask
-
 	std::list<set_t *> m_sets; //!< List of label sets
 
 public:
@@ -77,13 +72,16 @@ public:
 	//!	\name Manipulating function
 	//@{
 
-	/** \brief A label subset using a mask and a product table id
+	/** \brief Create a label subset using a mask and a product table id
 
-	    \param msk Mask of "active" dimensions
 	    \param id Product table id
 	    \return Newly created subset
 	 **/
-	set_t &create_subset(const mask<N> &msk, const std::string &id);
+	set_t &create_subset(const std::string &id);
+
+	/** \brief Add a label set to the se_label
+	 **/
+    void add_subset(const set_t &set);
 
 	/** \brief Clear all subsets
 	 **/
@@ -151,8 +149,7 @@ se_label<N, T>::se_label(const dimensions<N> &bidims) : m_bidims(bidims) { }
 
 template<size_t N, typename T>
 se_label<N, T>::se_label(const se_label<N, T> &el) :
-	m_bidims(el.m_bidims), m_total_msk(el.m_total_msk),
-	m_sets(0) {
+	m_bidims(el.m_bidims), m_sets(0) {
 
     for (const_iterator it2 = el.begin(); it2 != el.end(); it2++) {
 
@@ -162,26 +159,30 @@ se_label<N, T>::se_label(const se_label<N, T> &el) :
 }
 
 template<size_t N, typename T>
-typename se_label<N, T>::set_t &se_label<N, T>::create_subset(
-        const mask<N> &msk, const std::string &id) {
+typename se_label<N, T>::set_t &
+se_label<N, T>::create_subset(const std::string &id) {
 
-#ifdef LIBTENSOR_DEBUG
-    static const char *method =
-            "create_subset(const mask<N> &, const std::string &)";
-
-    for (size_t i = 0; i < N; i++) {
-        if (m_total_msk[i] && msk[i])
-            throw bad_parameter(g_ns, k_clazz, method,
-                    __FILE__, __LINE__, "msk");
-    }
-#endif
-
-    set_t *set = new set_t(m_bidims, msk, id);
+    set_t *set = new set_t(m_bidims, id);
     m_sets.push_back(set);
-    m_total_msk |= msk;
 
     return *set;
 }
+
+template<size_t N, typename T>
+void se_label<N, T>::add_subset(const set_t &set) {
+
+#ifdef LIBTENSOR_DEBUG
+    static const char *method = "add_subset(const set_t &)";
+
+    if (! m_bidims.equals(set.get_block_index_dims())) {
+        throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__, "set");
+    }
+#endif
+
+    set_t *copy = new set_t(set);
+    m_sets.push_back(copy);
+}
+
 
 template<size_t N, typename T>
 void se_label<N, T>::clear() {
@@ -189,8 +190,6 @@ void se_label<N, T>::clear() {
     for (iterator it = m_sets.begin(); it != m_sets.end(); it++) {
         delete *it; *it = 0;
     }
-
-    for (register size_t i = 0; i < N; i++) m_total_msk[i] = false;
 }
 
 template<size_t N, typename T>
@@ -224,7 +223,6 @@ template<size_t N, typename T>
 void se_label<N, T>::permute(const permutation<N> &p) {
 
     m_bidims.permute(p);
-    m_total_msk.permute(p);
     for (iterator it = m_sets.begin(); it != m_sets.end(); it++)
         (*it)->permute(p);
 }
@@ -232,9 +230,7 @@ void se_label<N, T>::permute(const permutation<N> &p) {
 template<size_t N, typename T>
 bool se_label<N, T>::is_valid_bis(const block_index_space<N> &bis) const {
 
-	const dimensions<N> &bidims = bis.get_block_index_dims();
-
-	return (bidims == m_bidims);
+	return m_bidims.equals(bis.get_block_index_dims());
 }
 
 template<size_t N, typename T>
@@ -253,7 +249,7 @@ bool se_label<N, T>::is_allowed(const index<N> &idx) const {
 #endif
 
 	// If no label sets exist all blocks are forbidden
-    if (m_sets.size() == 0) return false;
+    if (m_sets.size() == 0) return true;
 
     // Loop over label sets
     for (const_iterator it = begin(); it != end(); it++) {

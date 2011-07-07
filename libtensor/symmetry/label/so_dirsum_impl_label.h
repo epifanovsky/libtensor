@@ -1,205 +1,166 @@
-#ifndef LIBTENSOR_SO_CONCAT_IMPL_LABEL_H
-#define LIBTENSOR_SO_CONCAT_IMPL_LABEL_H
+#ifndef LIBTENSOR_SO_DIRSUM_IMPL_LABEL_H
+#define LIBTENSOR_SO_DIRSUM_IMPL_LABEL_H
 
-#include "../defs.h"
-#include "../exception.h"
-#include "../not_implemented.h"
-#include "../core/permutation_builder.h"
-#include "symmetry_element_set_adapter.h"
-#include "symmetry_operation_impl_base.h"
-#include "so_concat.h"
-#include "se_label.h"
+#include "../../defs.h"
+#include "../../exception.h"
+#include "../symmetry_element_set_adapter.h"
+#include "../symmetry_operation_impl_base.h"
+#include "../so_dirsum.h"
+#include "../se_label.h"
+#include "transfer_label_set.h"
 
 namespace libtensor {
 
 
-/**	\brief Implementation of so_concat<N, M, T> for se_perm<N, T>
+/**	\brief Implementation of so_dirsum<N, M, T> for se_label<N, T>
 	\tparam N Tensor order.
 	\tparam T Tensor element type.
 
 	\ingroup libtensor_symmetry
  **/
 template<size_t N, size_t M, typename T>
-class symmetry_operation_impl< so_concat<N, M, T>, se_label<N, T> > :
-	public symmetry_operation_impl_base<
-		so_concat<N, M, T>, se_label<N, T> > {
+class symmetry_operation_impl< so_dirsum<N, M, T>, se_label<N + M, T> > :
+public symmetry_operation_impl_base< so_dirsum<N, M, T>, se_label<N + M, T> > {
 
 public:
-	static const char *k_clazz; //!< Class name
+    static const char *k_clazz; //!< Class name
 
 public:
-	typedef so_concat<N, M, T> operation_t;
-	typedef se_label<N, T> element_t;
-	typedef symmetry_operation_params<operation_t>
-		symmetry_operation_params_t;
+    typedef so_dirsum<N, M, T> operation_t;
+    typedef se_label<N + M, T> element_t;
+    typedef symmetry_operation_params<operation_t>
+    symmetry_operation_params_t;
 
 protected:
-	virtual void do_perform(symmetry_operation_params_t &params) const;
-
+    virtual void do_perform(symmetry_operation_params_t &params) const;
 };
 
 
 template<size_t N, size_t M, typename T>
-const char *symmetry_operation_impl< so_concat<N, M, T>,
-	se_label<N, T> >::k_clazz =
-	"symmetry_operation_impl< so_concat<N, M, T>, se_label<N, T> >";
+const char *
+symmetry_operation_impl< so_dirsum<N, M, T>, se_label<N + M, T> >::k_clazz =
+        "symmetry_operation_impl< so_dirsum<N, M, T>, se_label<N + M, T> >";
 
 
 template<size_t N, size_t M, typename T>
-void symmetry_operation_impl< so_concat<N, M, T>,
-	se_label<N, T> >::do_perform(symmetry_operation_params_t &params) const {
+void
+symmetry_operation_impl< so_dirsum<N, M, T>, se_label<N + M, T> >::do_perform(
+        symmetry_operation_params_t &params) const {
 
-	static const char *method = "do_perform(symmetry_operation_params_t&)";
+    static const char *method = "do_perform(symmetry_operation_params_t&)";
 
-	// Adapter type for the input groups
-	typedef symmetry_element_set_adapter< N, T, se_label<N, T> > adapter1_t;
-	typedef symmetry_element_set_adapter< M, T, se_label<M, T> > adapter2_t;
+    // Adapter type for the input groups
+    typedef symmetry_element_set_adapter< N, T, se_label<N, T> > adapter1_t;
+    typedef symmetry_element_set_adapter< M, T, se_label<M, T> > adapter2_t;
 
-	adapter1_t g1(params.g1);
-	adapter2_t g2(params.g2);
-	params.g3.clear();
+    params.g3.clear();
+    if (params.g1.is_empty() && params.g2.is_empty()) return;
 
-	// map result index to input index
-	sequence<N + M, size_t> map(0);
-	for (size_t j = 0; j < N + M; j++) map[j] = j;
-	permutation<N + M> pinv(params.perm, true);
-	pinv.apply(map);
+    adapter1_t g1(params.g1);
+    adapter2_t g2(params.g2);
 
-	//	Go over each element in the first source group
-	for(typename adapter1_t::iterator i = g1.begin(); i != g1.end(); i++) {
+    // map result index to input index
+    sequence<N + M, size_t> map(0);
+    for (size_t j = 0; j < N + M; j++) map[j] = j;
+    permutation<N + M> pinv(params.perm, true);
+    pinv.apply(map);
 
-		const se_label<N, T> &e1 = g1.get_elem(i);
+    sequence<N, size_t> map1(0);
+    for (size_t j = 0; j < N; j++) map1[j] = map[j];
 
-		// Create result se_label
-		se_label<N + M, T> e3(params.bis.get_block_index_dims(),
-				e1.get_table_id());
+    sequence<M, size_t> map2(0);
+    for (size_t j = 0; j < M; j++) map2[j] = map[j + N];
 
-		// Assign labels to the dimensions stemming from sym1
-		for (size_t k = 0; k < N; k++) {
-			mask<N + M> msk;
-			msk[map[k]] = true;
+    dimensions<N + M> bidims = params.bis.get_block_index_dims();
 
-			size_t ktype = e1.get_dim_type(k);
-			for (size_t l = 0; l < e1.get_dim(ktype); l++) {
-				typename se_label<N, T>::label_t label = e1.get_label(ktype, l);
-				if (! e1.is_valid(label)) continue;
+    std::list<element_t> l1, l2;
 
-				e3.assign(msk, l, label);
-			}
-		}
+    // Loop over each element in the first source group
+    for(typename adapter1_t::iterator i = g1.begin(); i != g1.end(); i++) {
 
-		// check whether there is an se_label in set2 with the same
-		// product table
-		typename adapter2_t::iterator j = g2.begin();
-		for(; j != g2.end(); j++) {
-			if (e1.get_table_id() == g2.get_elem(j).get_table_id()) break;
-		}
-		if (j == g2.end()) {
-			e3.match_labels();
+        // Create template for result se_label in list l1
+        l1.push_back(element_t(bidims));
+        element_t &e3 = l1.back();
 
-			// set target labels
-			for (size_t k = 0; k < e1.get_n_targets(); k++)
-				e3.add_target(e1.get_target(k));
-		}
-		else {
-			// assign labels to the remaining dimensions
-			const se_label<M, T> &e2 = g2.get_elem(j);
+        const se_label<N, T> &e1 = g1.get_elem(i);
+        transfer_label_set<N, T>(e1).perform(map1, e3);
+    }
 
-			for (size_t k = 0; k < M; k++) {
-				mask<N + M> msk;
-				msk[map[N + k]] = true;
+    // Loop over each element in the second source group
+    for(typename adapter2_t::iterator i = g2.begin(); i != g2.end(); i++) {
 
-				size_t ktype = e2.get_dim_type(k);
-				for (size_t l = 0; l < e2.get_dim(ktype); l++) {
-					typename se_label<M, T>::label_t label =
-							e2.get_label(ktype, l);
-					if (! e2.is_valid(label)) continue;
+        // Create template for result se_label in list l2
+        l2.push_back(element_t(bidims));
+        element_t &e3 = l2.back();
 
-					e3.assign(msk, l, label);
-				}
-			}
+        const se_label<M, T> &e2 = g2.get_elem(i);
+        transfer_label_set<M, T>(e2).perform(map2, e3);
+    }
 
-			e3.match_labels();
+    if (l1.empty()) {
 
-			// set target labels
-			if (params.dirsum) {
-				for (size_t k = 0; k < e1.get_n_labels(); k++)
-					e3.add_target(k);
-			}
-			else {
-				// obtain product_table
-				const product_table_i &pt =
-						product_table_container::get_instance()
-								.req_const_table(e1.get_table_id());
+        // If l1 is empty copy all elements in l2, but extend all evaluation
+        // masks to the l1 indexes before
+        for (typename std::list<element_t>::iterator it = l2.begin();
+                it != l2.end(); it++) {
 
-				try {
+            element_t &el2 = *it;
+            for (typename element_t::iterator iss = el2.begin();
+                    iss != el2.end(); iss++) {
 
-				product_table_i::label_group lg(2);
-				for (size_t k = 0; k < e1.get_n_targets(); k++) {
-					for (size_t l = 0; l < e2.get_n_targets(); l++) {
-						lg[0] = e1.get_target(k);
-						lg[1] = e2.get_target(l);
-						for (typename se_label<N + M,T>::label_t m = 0;
-								m < pt.nlabels(); m++) {
-							if (pt.is_in_product(lg, m)) e3.add_target(m);
-						}
-					}
-				}
-				product_table_container::get_instance().ret_table(
-				        e1.get_table_id());
+                label_set<N + M> &ss2 = el2.get_subset(iss);
+                mask<N + M> msk = ss2.get_mask();
+                for (size_t j = 0; j < N; j++) msk[map[j]] = true;
+                ss2.set_mask(msk);
+            }
 
-				} catch (...) {
-					product_table_container::get_instance().ret_table(
-					        e1.get_table_id());
-					throw;
-				}
-			}
+            params.g3.insert(el2);
+        }
+    }
+    else if (l2.empty()) {
 
-		}
-		
-		params.g3.insert(e3);
-	}
+        // If l2 is empty copy all elements in l1, but extend all evaluation
+        // masks to the l2 indexes before
+        for (typename std::list<element_t>::iterator it = l1.begin();
+                it != l1.end(); it++) {
 
-	//	Go over each element in the second source group
-	for(typename adapter2_t::iterator i = g2.begin(); i != g2.end(); i++) {
+            element_t &el1 = *it;
+            for (typename element_t::iterator iss = el1.begin();
+                    iss != el1.end(); iss++) {
 
-		const se_label<M, T> &e2 = g2.get_elem(i);
+                label_set<N + M> &ss1 = el1.get_subset(iss);
+                mask<N + M> msk = ss1.get_mask();
+                for (size_t j = 0; j < M; j++) msk[map[j + N]] = true;
+                ss1.set_mask(msk);
+            }
+            params.g3.insert(el1);
+        }
+    }
+    else {
+        // Otherwise combine l1 and l2
+        for (typename std::list<element_t>::iterator it1 = l1.begin();
+                it1 != l1.end(); it1++) {
 
-		typename adapter1_t::iterator j = g1.begin();
-		for(; j != g1.end(); j++) {
-			if (e2.get_table_id() == g1.get_elem(j).get_table_id()) break;
-		}
-		if (j != g1.end()) continue;
+            element_t &e1 = *it1;
 
-		// Create result se_label
-		se_label<N + M, T> e3(params.bis.get_block_index_dims(),
-				e2.get_table_id());
+            for (typename std::list<element_t>::iterator it2 = l2.begin();
+                    it2 != l2.end(); it2++) {
 
-		for (size_t k = 0; k < M; k++) {
-			mask<N + M> msk;
-			msk[map[N + k]] = true;
+                element_t &e2 = *it2;
 
-			size_t ktype = e2.get_dim_type(k);
-			for (size_t l = 0; l < e2.get_dim(ktype); l++) {
-				typename se_label<M, T>::label_t label = e2.get_label(ktype, l);
-				if (! e2.is_valid(label)) continue;
+                element_t e3(e1);
+                for (typename element_t::iterator iss = e2.begin();
+                        iss != e2.end(); iss++) {
 
-				e3.assign(msk, l, label);
-			}
-		}
+                    e3.add_subset(e2.get_subset(iss));
+                }
 
-		e3.match_labels();
-		for (size_t k = 0; k < e2.get_n_targets(); k++)
-			e3.add_target(e2.get_target(k));
-
-		params.g3.insert(e3);
-
-	}
-
-
+                params.g3.insert(e3);
+            }
+        }
+    }
 }
-
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_SO_PROJ_UP_IMPL_PERM_H
+#endif // LIBTENSOR_SO_DIRSUM_IMPL_LABEL_H

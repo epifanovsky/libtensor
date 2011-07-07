@@ -81,9 +81,9 @@ void se_label_test::test_empty() throw(libtest::test_exception) {
         abs_index<2> ai(bidims);
         do {
 
-            if (elem1.is_allowed(ai.get_index())) {
+            if (! elem1.is_allowed(ai.get_index())) {
                 std::ostringstream oss;
-                oss << "elem1.is_allowed(" << ai.get_index() << ")";
+                oss << "! elem1.is_allowed(" << ai.get_index() << ")";
                 fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
             }
         } while (ai.inc());
@@ -107,7 +107,6 @@ void se_label_test::test_set_1() throw(libtest::test_exception) {
         block_index_space<2> bis(dimensions<2>(index_range<2>(i1, i2)));
         mask<2> m01, m10, m11;
         m10[0] = true; m01[1] = true;
-        m11[0] = true; m11[1] = true;
         bis.split(m01, 1);
         bis.split(m01, 3);
         bis.split(m01, 5);
@@ -118,7 +117,7 @@ void se_label_test::test_set_1() throw(libtest::test_exception) {
         dimensions<2> bidims = bis.get_block_index_dims();
         se_label<2, double> elem1(bidims);
 
-        label_set<2> &subset1 = elem1.create_subset(m11, table_id);
+        label_set<2> &subset1 = elem1.create_subset(table_id);
         for (size_t i = 0; i < 4; i++) subset1.assign(m10, i, i);
         subset1.assign(m01, 0, 0); // ag
         subset1.assign(m01, 1, 2); // au
@@ -192,7 +191,7 @@ void se_label_test::test_set_1() throw(libtest::test_exception) {
 }
 
 
-/**	\test One subset, partial mask
+/**	\test One subset, partial evaluation mask
  **/
 void se_label_test::test_set_2() throw(libtest::test_exception) {
 
@@ -215,12 +214,13 @@ void se_label_test::test_set_2() throw(libtest::test_exception) {
         dimensions<2> bidims = bis.get_block_index_dims();
         se_label<2, double> elem1(bidims);
 
-        label_set<2> &subset1 = elem1.create_subset(m01, table_id);
+        label_set<2> &subset1 = elem1.create_subset(table_id);
         subset1.assign(m01, 0, 0); // ag
         subset1.assign(m01, 1, 2); // au
         subset1.assign(m01, 2, 1); // eg
         subset1.assign(m01, 3, 3); // eu
         subset1.add_intrinsic(0);
+        subset1.set_mask(m01);
 
         se_label<2, double> elem2(elem1), elem3(elem1), elem4(elem1);
         label_set<2> &subset2 = elem2.get_subset(elem2.begin());
@@ -234,25 +234,22 @@ void se_label_test::test_set_2() throw(libtest::test_exception) {
 
         std::vector<bool> r1(bidims.get_size(), false);
         std::vector<bool> r2(bidims.get_size(), false);
-        std::vector<bool> r3(bidims.get_size(), true);
-        std::vector<bool> r4(bidims.get_size(), false);
         r1[0] = r1[4] = r1[8] = r1[12] = true;
         r2[0] = r2[2] = r2[4] = r2[6] =
                 r2[8] = r2[10] = r2[12] = r2[14] = true;
-
 
         abs_index<2> ai(bidims);
         do {
             if (elem1.is_allowed(ai.get_index()) != r1[ai.get_abs_index()]) {
                 std::ostringstream oss;
                 oss << (r1[ai.get_abs_index()] ? "!" : "") <<
-                        "elem1.is_allowed(" << ai.get_index() << ")";
+                        " elem1.is_allowed(" << ai.get_index() << ")";
                 fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
             }
             if (elem2.is_allowed(ai.get_index()) != r2[ai.get_abs_index()]) {
                 std::ostringstream oss;
                 oss << (r2[ai.get_abs_index()] ? "!" : "") <<
-                        "elem2.is_allowed(" << ai.get_index() << ")";
+                        " elem2.is_allowed(" << ai.get_index() << ")";
                 fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
             }
             if (! elem3.is_allowed(ai.get_index())) {
@@ -295,15 +292,18 @@ void se_label_test::test_set_3() throw(libtest::test_exception) {
 
         dimensions<2> bidims = bis.get_block_index_dims();
         se_label<2, double> elem1(bidims);
-        label_set<2> &subset1a = elem1.create_subset(m01, table_id);
-        label_set<2> &subset1b = elem1.create_subset(m10, table_id);
-        for (size_t i = 0; i < 4; i++) subset1b.assign(m10, i, i);
+        label_set<2> &subset1a = elem1.create_subset(table_id);
         subset1a.assign(m01, 0, 0); // ag
         subset1a.assign(m01, 1, 2); // au
         subset1a.assign(m01, 2, 1); // eg
         subset1a.assign(m01, 3, 3); // eu
         subset1a.add_intrinsic(0);
+        subset1a.set_mask(m01);
+
+        label_set<2> &subset1b = elem1.create_subset(table_id);
+        for (size_t i = 0; i < 4; i++) subset1b.assign(m10, i, i);
         subset1b.add_intrinsic(1);
+        subset1b.set_mask(m10);
 
         std::vector<bool> r1(bidims.get_size(), false);
         r1[0] = r1[4] = r1[5] = r1[6] = r1[7] = r1[8] = r1[12] = true;
@@ -346,29 +346,24 @@ void se_label_test::test_set_4() throw(libtest::test_exception) {
 
         dimensions<3> bidims = bis.get_block_index_dims();
         se_label<3, double> elem1(bidims);
-        label_set<3> &subset1a = elem1.create_subset(m001, table_id);
-        label_set<3> &subset1b = elem1.create_subset(m100, table_id);
-        for (size_t i = 0; i < 4; i++) subset1b.assign(m100, i, i);
+        label_set<3> &subset1a = elem1.create_subset(table_id);
         subset1a.assign(m001, 0, 0); // ag
         subset1a.assign(m001, 1, 2); // au
         subset1a.assign(m001, 2, 1); // eg
         subset1a.assign(m001, 3, 3); // eu
         subset1a.add_intrinsic(0);
-        subset1b.add_intrinsic(1);
+        subset1a.set_mask(m001);
 
-        std::vector<bool> r1(bidims.get_size(), false);
-        for (size_t i = 0; i < 4; i++) {
-            r1[i * 4     ] = r1[i * 4 + 16] = true;
-            r1[i * 4 + 32] = r1[i * 4 + 48] = true;
-            r1[i * 4 + 17] = r1[i * 4 + 18] = r1[i * 4 + 19] = true;
-        }
+        label_set<3> &subset1b = elem1.create_subset(table_id);
+        for (size_t i = 0; i < 4; i++) subset1b.assign(m100, i, i);
+        subset1b.add_intrinsic(1);
+        subset1b.set_mask(m110);
 
         abs_index<3> ai(bidims);
         do {
-            if (elem1.is_allowed(ai.get_index()) != r1[ai.get_abs_index()]) {
+            if (! elem1.is_allowed(ai.get_index())) {
                 std::ostringstream oss;
-                oss << (r1[ai.get_abs_index()] ? "!" : "") <<
-                        "elem1.is_allowed(" << ai.get_index() << ")";
+                oss << "! elem1.is_allowed(" << ai.get_index() << ")";
                 fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
             }
 
@@ -407,8 +402,8 @@ void se_label_test::test_permute() throw(libtest::test_exception) {
         dimensions<4> bidims = bis.get_block_index_dims();
         se_label<4, double> elem1(bidims);
 
-        label_set<4> &subset1a = elem1.create_subset(m0101, table_id);
-        label_set<4> &subset1b = elem1.create_subset(m1010, table_id);
+        label_set<4> &subset1a = elem1.create_subset(table_id);
+        label_set<4> &subset1b = elem1.create_subset(table_id);
 
         // assign labels
         for (size_t i = 0; i < 4; i++) {
@@ -424,6 +419,8 @@ void se_label_test::test_permute() throw(libtest::test_exception) {
 
         subset1a.add_intrinsic(0);
         subset1b.add_intrinsic(1);
+        subset1a.set_mask(m0101);
+        subset1b.set_mask(m1010);
 
         permutation<4> p; p.permute(0, 1).permute(1, 3);
         elem1.permute(p);

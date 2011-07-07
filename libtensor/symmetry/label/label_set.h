@@ -12,11 +12,10 @@ namespace libtensor {
 
 /** \brief Subset of a se_label<N, T> %symmetry element.
 
-    A label subset defines allowed blocks with respect to a product table and
-    a set of dimensions belonging to the given product table.
+    A label subset defines allowed blocks with respect to a given product table.
 
     To achieve this it uses
-    - block labels along the active dimensions,
+    - block labels along the dimensions,
     - a set of intrinsic labels, and
     - an evaluation mask
     which can all be set and accessed using the respective member functions.
@@ -24,14 +23,17 @@ namespace libtensor {
     The evaluation mask defines which dimensions participate in the evaluation
     of a product of labels to determine if a block is allowed. Thus, only
     dimensions belonging to the product table can be part of the evaluation
-    mask. On construction the evaluation mask is set to the mask of dimensions.
+    mask. On construction the evaluation mask is set to all dimensions.
 
     Allowed blocks are determined as follows:
-    - Dimensions part of the label set, but not part of the evaluation mask
-      are ignored. Thus, if the evaluation mask does not contain any dimensions
-      the intrinsic label is used for determining the allowed blocks.
+    - Dimensions that are not part of the evaluation mask are ignored. Thus,
+      if all elements of the evaluation mask are set to false, only the
+      intrinsic labels are used to determine the allowed blocks.
     - If the intrinsic labels comprise all labels, all blocks are allowed.
-    - If one of the block indexes is unlabeled, the block is allowed.
+    - If one of the block indexes that are evaluated is unlabeled, the block
+      is allowed.
+    - If all blocks dimensions that are part of the evaluation mask are labeled
+      but no intrinsic labels are defined, the block is forbidden.
     - Build a label sequence from the evaluation mask and one intrinsic label
     - If the product of labels contains label 0, the block is allowed.
     - Repeat the last two steps with all other intrinsic labels.
@@ -49,7 +51,6 @@ public:
 
 private:
     dimensions<N> m_bidims; //!< Block index dimensions
-    mask<N> m_msk; //!< Mask of dimensions belonging to the current
     const product_table_i &m_pt; //!< Associated product table
 
     sequence<N, size_t> m_type; //!< Dimension types
@@ -64,11 +65,9 @@ public:
     //@{
     /** \brief Constructor
         \param bidims Block index dimensions
-        \param msk Mask of active dimensions
         \param id Product table id.
      **/
-    label_set(const dimensions<N> &bidims, const mask<N> &msk,
-            const std::string &id);
+    label_set(const dimensions<N> &bidims, const std::string &id);
 
     /** \brief Copy constructor
      **/
@@ -95,7 +94,7 @@ public:
     /** \brief Set the evaluation mask.
         \param emsk Mask.
      **/
-    void set_eval_msk(const mask<N> &emsk);
+    void set_mask(const mask<N> &msk);
 
     /** \brief Permute the indexes
         \param p Permutation
@@ -110,9 +109,9 @@ public:
      **/
     void clear_intrinsic() { m_intr_labels.clear(); }
 
-    /** \brief Clear the evaluation mask.
+    /** \brief Clear the evaluation mask (set all elements to false).
      **/
-    void clear_eval();
+    void clear_mask();
     //@}
 
     //! \name Access functions
@@ -120,10 +119,6 @@ public:
     /** \brief Get the block index dimensions
      **/
     const dimensions<N> &get_block_index_dims() const { return m_bidims; }
-
-    /** \brief Get the index mask
-     **/
-    const mask<N> &get_mask() const { return m_msk; }
 
     /** \brief Get the ID of the associated product table
      **/
@@ -144,7 +139,7 @@ public:
 
     /** \brief Get the i-th element in the evaluation order sequence
      **/
-    const mask<N> &get_eval_msk() const { return m_eval_msk; }
+    const mask<N> &get_mask() const { return m_eval_msk; }
     //@}
 
     //! \name STL-like iterator over intrinsic labels
@@ -154,10 +149,6 @@ public:
 
     label_t get_intrinsic(iterator it) const { return *it; }
     //@}
-
-    /** \brief Tests, if the two sets overlap
-     **/
-    bool has_overlap(const label_set<N> &set) const;
 
     /** \brief Tests, if the block is allowed w.r.t to this label set
      **/
@@ -172,26 +163,25 @@ template<size_t N>
 const char *label_set<N>::k_clazz = "label_set<N>";
 
 template<size_t N>
-label_set<N>::label_set(const dimensions<N> &bidims, const mask<N> &msk,
-        const std::string &id) : m_bidims(bidims), m_msk(msk),
-    m_pt(product_table_container::get_instance().req_const_table(id)),
-    m_type((size_t) -1), m_blk_labels(0), m_intr_labels(0),
-    m_eval_msk(msk), m_eval_size(0) {
+label_set<N>::label_set(const dimensions<N> &bidims, const std::string &id) :
+    m_bidims(bidims), m_type((size_t) -1), m_blk_labels(0),
+    m_intr_labels(0), m_eval_size(0),
+    m_pt(product_table_container::get_instance().req_const_table(id)) {
 
     size_t cur_type = 0;
     for (register size_t i = 0; i < N; i++) {
-        if (! m_msk[i]) continue;
         if (m_type[i] != -1) continue;
 
         m_type[i] = cur_type;
         m_blk_labels[cur_type] = new label_group(m_bidims[i], m_pt.invalid());
+        m_eval_msk[i] = true;
         m_eval_size++;
 
         for (register size_t j = i + 1; j < N; j++) {
-            if (! m_msk[j]) continue;
 
             if (m_bidims[i] == m_bidims[j]) {
                 m_type[j] = cur_type;
+                m_eval_msk[j] = true;
                 m_eval_size++;
             }
         }
@@ -200,8 +190,8 @@ label_set<N>::label_set(const dimensions<N> &bidims, const mask<N> &msk,
 }
 
 template<size_t N>
-label_set<N>::label_set(const label_set<N> &set) : m_bidims(set.m_bidims),
-    m_msk(set.m_msk), m_type(set.m_type), m_blk_labels(0),
+label_set<N>::label_set(const label_set<N> &set) :
+    m_bidims(set.m_bidims), m_type(set.m_type), m_blk_labels(0),
     m_intr_labels(set.m_intr_labels), m_eval_msk(set.m_eval_msk),
     m_eval_size(set.m_eval_size),
     m_pt(product_table_container::get_instance().req_const_table(
@@ -217,7 +207,7 @@ template<size_t N>
 label_set<N>::~label_set() {
 
     clear_intrinsic();
-    clear_eval();
+    clear_mask();
 
     for (register size_t i = 0; i < N && m_blk_labels[i] != 0; i++) {
         delete m_blk_labels[i]; m_blk_labels[i] = 0;
@@ -229,15 +219,6 @@ template<size_t N>
 void label_set<N>::assign(const mask<N> &msk, size_t blk, label_t l) {
 
     static const char *method = "assign(const mask<N> &, size_t, label_t)";
-
-#ifdef LIBTENSOR_DEBUG
-    for (register size_t k = 0; k < N; k++) {
-        if (msk[k] && ! m_msk[k]) {
-            throw bad_parameter(g_ns, k_clazz, method,
-                    __FILE__, __LINE__, "msk");
-        }
-    }
-#endif
 
     register size_t i = 0;
     for (; i < N; i++)  if (msk[i]) break;
@@ -314,30 +295,20 @@ void label_set<N>::add_intrinsic(label_t l) {
 }
 
 template<size_t N>
-void label_set<N>::set_eval_msk(const mask<N> &emsk) {
+void label_set<N>::set_mask(const mask<N> &msk) {
 
-    static const char *method = "set_eval_msk(size_t)";
+    static const char *method = "set_mask(size_t)";
 
     m_eval_size = 0;
     for (register size_t i = 0; i < N; i++) {
-        m_eval_msk[i] = emsk[i];
-        if (m_eval_msk[i]) {
-            m_eval_size++;
-
-#ifdef LIBTENSOR_DEBUG
-            if (! m_msk[i]) {
-                throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
-                    "Evaluation mask.");
-            }
-#endif
-        }
+        m_eval_msk[i] = msk[i];
+        if (m_eval_msk[i]) m_eval_size++;
     }
 }
 
 template<size_t N>
 void label_set<N>::permute(const permutation<N> &p) {
 
-    m_msk.permute(p);
     m_bidims.permute(p);
     p.apply(m_type);
     m_eval_msk.permute(p);
@@ -357,7 +328,6 @@ void label_set<N>::match_blk_labels() {
     for (register size_t i = 0; i < N; i++) {
 
         size_t itype = types[i];
-        if (itype == (size_t) -1) continue;
         if (blk_labels[itype] == 0) continue;
 
         m_type[i] = cur_type;
@@ -366,7 +336,6 @@ void label_set<N>::match_blk_labels() {
 
         for (size_t j = i + 1; j < N; j++) {
             size_t jtype = types[j];
-            if (jtype == (size_t) -1) continue;
 
             if (itype == jtype) {
                 m_type[j] = cur_type;
@@ -392,7 +361,7 @@ void label_set<N>::match_blk_labels() {
 }
 
 template<size_t N>
-void label_set<N>::clear_eval() {
+void label_set<N>::clear_mask() {
 
     m_eval_size = 0;
     for (register size_t i = 0; i < N; i++) {
@@ -405,7 +374,7 @@ size_t label_set<N>::get_dim_type(size_t dim) const {
 
 #ifdef LIBTENSOR_DEBUG
     static const char *method = "get_dim_type(size_t)";
-    if (dim > N || ! m_msk[dim]) {
+    if (dim > N) {
         throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__, "dim");
     }
 #endif
@@ -432,15 +401,6 @@ typename label_set<N>::label_t label_set<N>::get_label(size_t type,
 }
 
 template<size_t N>
-bool label_set<N>::has_overlap(const label_set<N> &set) const {
-
-    for (size_t i = 0; i < N; i++) {
-        if (m_msk[i] && set.m_msk[i]) return true;
-    }
-    return false;
-}
-
-template<size_t N>
 bool label_set<N>::is_allowed(const index<N> &idx) const {
 
 #ifdef LIBTENSOR_DEBUG
@@ -450,14 +410,17 @@ bool label_set<N>::is_allowed(const index<N> &idx) const {
     for (size_t i = 0; i < N; i++) {
         if (idx[i] < m_bidims[i]) continue;
 
-        throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
-                "bidx.");
+        throw bad_parameter(g_ns, k_clazz, method,
+                __FILE__, __LINE__, "bidx.");
     }
 
 #endif
 
     // No evaluation mask means check the intrinsic labels for zero label
     if (m_eval_size == 0) {
+        if (m_intr_labels.size() == 0)
+            return false;
+
         return (m_intr_labels[0] == 0);
     }
 

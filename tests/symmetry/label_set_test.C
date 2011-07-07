@@ -45,11 +45,7 @@ void label_set_test::perform() throw(libtest::test_exception) {
         test_set_2();
         test_set_3();
         test_set_4();
-        test_partial_1();
-        test_partial_2();
         test_permute_1();
-        test_permute_2();
-        test_overlap();
 
         product_table_container::get_instance().erase(table_id);
 
@@ -80,7 +76,7 @@ void label_set_test::test_basic_1() throw(libtest::test_exception) {
 
         mask<4> m0100, m0111;
         m0100[1] = true; m0111[1] = true; m0111[2] = true; m0111[3] = true;
-        label_set<4> el(bis.get_block_index_dims(), m0111, table_id);
+        label_set<4> el(bis.get_block_index_dims(), table_id);
 
         // Check assignment
         el.assign(m0011, 0, 0); // ag
@@ -140,19 +136,14 @@ void label_set_test::test_basic_1() throw(libtest::test_exception) {
                     "Wrong number of labels.");
         }
 
-        // Check evaluation mask
-        if (! m0111.equals(el.get_eval_msk())) {
-            fail_test(testname, __FILE__, __LINE__, "Default evaluation mask.");
-        }
-
-        el.set_eval_msk(m0011);
-        if (! m0011.equals(el.get_eval_msk())) {
+        el.set_mask(m0011);
+        if (! m0011.equals(el.get_mask())) {
             fail_test(testname, __FILE__, __LINE__, "Evaluation mask.");
         }
 
         // Check clears
-        el.clear_eval();
-        if (! mask<4>().equals(el.get_eval_msk())) {
+        el.clear_mask();
+        if (! mask<4>().equals(el.get_mask())) {
             fail_test(testname, __FILE__, __LINE__,
                     "Evaluation mask not empty.");
         }
@@ -189,7 +180,7 @@ void label_set_test::test_basic_2() throw(libtest::test_exception) {
         mask<4> m0100, m0010, m0001, m0111;
         m0100[1] = true; m0010[2] = true; m0001[3] = true;
         m0111[1] = true; m0111[2] = true; m0111[3] = true;
-        label_set<4> el(bis.get_block_index_dims(), m0111, table_id);
+        label_set<4> el(bis.get_block_index_dims(), table_id);
 
         // Check assignment
         for (label_set<4>::label_t i = 0; i < 4; i++) el.assign(m0001, i, i);
@@ -243,7 +234,7 @@ void label_set_test::test_set_1() throw(libtest::test_exception) {
         m11[0] = true; m11[1] = true;
         bis.split(m11, 2);
 
-        label_set<2> elem1(bis.get_block_index_dims(), m11, table_id);
+        label_set<2> elem1(bis.get_block_index_dims(), table_id);
         elem1.assign(m11, 0, 0); // ag
         elem1.assign(m11, 1, 2); // au
         elem1.add_intrinsic(0);
@@ -354,7 +345,7 @@ void label_set_test::test_set_2() throw(libtest::test_exception) {
         bis.split(m11, 3);
         dimensions<2> bidims = bis.get_block_index_dims();
 
-        label_set<2> elem1(bidims, m11, table_id);
+        label_set<2> elem1(bidims, table_id);
         for (size_t i = 0; i < 4; i++) elem1.assign(m10, i, i);
         elem1.assign(m01, 0, 0); // ag
         elem1.assign(m01, 1, 2); // au
@@ -432,8 +423,8 @@ void label_set_test::test_set_3() throw(libtest::test_exception) {
         bis.split(m11, 3);
         dimensions<2> bidims = bis.get_block_index_dims();
 
-        label_set<2> elem1(bidims, m11, table_id);
-        elem1.set_eval_msk(m10);
+        label_set<2> elem1(bidims, table_id);
+        elem1.set_mask(m10);
         for (size_t i = 0; i < 4; i++) elem1.assign(m10, i, i);
         elem1.assign(m01, 0, 0); // ag
         elem1.assign(m01, 1, 2); // au
@@ -508,8 +499,8 @@ void label_set_test::test_set_4() throw(libtest::test_exception) {
         bis.split(m11, 3);
         dimensions<2> bidims = bis.get_block_index_dims();
 
-        label_set<2> elem1(bidims, m11, table_id);
-        elem1.set_eval_msk(m10);
+        label_set<2> elem1(bidims, table_id);
+        elem1.set_mask(m10);
         for (size_t i = 0; i < 3; i++) elem1.assign(m10, i, i);
         elem1.assign(m01, 0, 0); // ag
         elem1.assign(m01, 1, 2); // au
@@ -571,177 +562,6 @@ void label_set_test::test_set_4() throw(libtest::test_exception) {
     }
 }
 
-/**	\test Partial set, complete eval mask, some intrinsic labels (2-dim)
- **/
-void label_set_test::test_partial_1() throw(libtest::test_exception) {
-
-    static const char *testname = "label_set_test::test_partial_1()";
-
-    try {
-
-        index<2> i1, i2;
-        i2[0] = 4; i2[1] = 4;
-        block_index_space<2> bis(dimensions<2>(index_range<2>(i1, i2)));
-        mask<2> m01, m10, m11;
-        m10[0] = true; m01[1] = true;
-        m11[0] = true; m11[1] = true;
-        bis.split(m11, 1);
-        bis.split(m11, 2);
-        bis.split(m11, 3);
-        dimensions<2> bidims = bis.get_block_index_dims();
-
-        label_set<2> elem1(bidims, m10, table_id);
-        for (size_t i = 0; i < 4; i++) elem1.assign(m10, i, i);
-        elem1.add_intrinsic(0);
-
-        label_set<2> elem2(elem1), elem3(elem1), elem4(elem1);
-        elem2.add_intrinsic(2);
-        elem3.add_intrinsic(1);
-        elem3.add_intrinsic(2);
-        elem3.add_intrinsic(3);
-        elem4.clear_intrinsic();
-
-        std::vector<bool> r1(bidims.get_size(), false);
-        std::vector<bool> r2(bidims.get_size(), false);
-        std::vector<bool> r3(bidims.get_size(), true);
-        std::vector<bool> r4(bidims.get_size(), false);
-        r1[0] = r1[1] = r1[2] = r1[3] = true;
-        r2[0] = r2[1] = r2[2] = r2[3] =
-                r2[8] = r2[9] = r2[10] = r2[11] = true;
-
-        abs_index<2> ai(bidims);
-        do {
-            if (elem1.is_allowed(ai.get_index()) != r1[ai.get_abs_index()]) {
-                std::ostringstream oss;
-                oss << (r1[ai.get_abs_index()] ? "!" : "") <<
-                        "elem1.is_allowed(" << ai.get_index() << ")";
-                fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
-            }
-            if (elem2.is_allowed(ai.get_index()) != r2[ai.get_abs_index()]) {
-                std::ostringstream oss;
-                oss << (r2[ai.get_abs_index()] ? "!" : "") <<
-                        "elem2.is_allowed(" << ai.get_index() << ")";
-                fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
-            }
-            if (elem3.is_allowed(ai.get_index()) != r3[ai.get_abs_index()]) {
-                std::ostringstream oss;
-                oss << (r3[ai.get_abs_index()] ? "!" : "") <<
-                        "elem3.is_allowed(" << ai.get_index() << ")";
-                fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
-            }
-            if (elem4.is_allowed(ai.get_index()) != r4[ai.get_abs_index()]) {
-                std::ostringstream oss;
-                oss << (r4[ai.get_abs_index()] ? "!" : "") <<
-                        "elem4.is_allowed(" << ai.get_index() << ")";
-                fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
-            }
-
-        } while (ai.inc());
-
-    } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
-    }
-
-}
-
-/** \test Partial set, partial eval mask, some intrinsic labels (4-dim)
- **/
-void label_set_test::test_partial_2() throw(libtest::test_exception) {
-
-    static const char *testname = "label_set_test::test_partial_2()";
-
-    try {
-
-        index<4> i1, i2;
-        i2[0] = 3; i2[1] = 3; i2[2] = 5; i2[3] = 5;
-        block_index_space<4> bis(dimensions<4>(index_range<4>(i1, i2)));
-        mask<4> m0011, m0100, m0101, m0111, m1100;
-        m1100[0] = true; m1100[1] = true; m0011[2] = true; m0011[3] = true;
-        m0100[1] = true; m0101[1] = true; m0101[3] = true;
-        m0111[1] = true; m0111[2] = true; m0111[3] = true;
-        bis.split(m1100, 1); bis.split(m1100, 2); bis.split(m1100, 3);
-        bis.split(m0011, 1); bis.split(m0011, 2); bis.split(m0011, 3);
-        bis.split(m0011, 4); bis.split(m0011, 5);
-
-        dimensions<4> bidims = bis.get_block_index_dims();
-        label_set<4> elem1(bidims, m0111, table_id);
-
-        // assign labels
-        for (size_t i = 0; i < 4; i++) elem1.assign(m0100, i, i);
-        elem1.assign(m0011, 0, 0); elem1.assign(m0011, 1, 1);
-        elem1.assign(m0011, 2, 1); elem1.assign(m0011, 3, 2);
-        elem1.assign(m0011, 4, 3); elem1.assign(m0011, 5, 3);
-
-        elem1.set_eval_msk(m0101);
-
-        elem1.add_intrinsic(0);
-
-        label_set<4> elem2(elem1), elem3(elem1), elem4(elem1);
-        elem2.clear_intrinsic();
-        elem2.add_intrinsic(1);
-        elem2.add_intrinsic(3);
-        elem3.add_intrinsic(1);
-        elem3.add_intrinsic(2);
-        elem3.add_intrinsic(3);
-        elem4.clear_intrinsic();
-
-        std::vector<bool> r1(bidims.get_size(), false);
-        std::vector<bool> r2(bidims.get_size(), false);
-        std::vector<bool> r3(bidims.get_size(), true);
-        std::vector<bool> r4(bidims.get_size(), false);
-
-        for (size_t i = 0; i < 4; i++) {
-            for (size_t j = 0; j < 6; j++) {
-                r1[i * 144 + j * 6      ] = true; // x0x0
-                r1[i * 144 + j * 6 +  37] = r1[i * 144 + j * 6 +  38] = true;
-                r1[i * 144 + j * 6 +  75] = true; // x2x3
-                r1[i * 144 + j * 6 + 112] = r1[i * 144 + j * 6 + 113] = true;
-                r2[i * 144 + j * 6 +   1] = r2[i * 144 + j * 6 +   2] = true;
-                r2[i * 144 + j * 6 +   4] = r2[i * 144 + j * 6 +   5] = true;
-                r2[i * 144 + j * 6 +  73] = r2[i * 144 + j * 6 +  74] = true;
-                r2[i * 144 + j * 6 +  76] = r2[i * 144 + j * 6 +  77] = true;
-                for (size_t k = 0; k < 6; k++) {
-                    r2[i * 144 +  36 + j * 6 + k] = true;
-                    r2[i * 144 + 108 + j * 6 + k] = true;
-                }
-            }
-        }
-
-        abs_index<4> ai(bidims);
-        do {
-            if (elem1.is_allowed(ai.get_index()) != r1[ai.get_abs_index()]) {
-                std::ostringstream oss;
-                oss << (r1[ai.get_abs_index()] ? "!" : "") <<
-                        "elem1.is_allowed(" << ai.get_index() << ")";
-                fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
-            }
-            if (elem2.is_allowed(ai.get_index()) != r2[ai.get_abs_index()]) {
-                std::ostringstream oss;
-                oss << (r2[ai.get_abs_index()] ? "!" : "") <<
-                        "elem2.is_allowed(" << ai.get_index() << ")";
-                fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
-            }
-            if (elem3.is_allowed(ai.get_index()) != r3[ai.get_abs_index()]) {
-                std::ostringstream oss;
-                oss << (r3[ai.get_abs_index()] ? "!" : "") <<
-                        "elem3.is_allowed(" << ai.get_index() << ")";
-                fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
-            }
-            if (elem4.is_allowed(ai.get_index()) != r4[ai.get_abs_index()]) {
-                std::ostringstream oss;
-                oss << (r4[ai.get_abs_index()] ? "!" : "") <<
-                        "elem4.is_allowed(" << ai.get_index() << ")";
-                fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
-            }
-
-        } while (ai.inc());
-
-    } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
-    }
-
-}
-
 /**	\test Full set, partial eval mask, permutation (3-dim)
  **/
 void label_set_test::test_permute_1() throw(libtest::test_exception) {
@@ -762,7 +582,7 @@ void label_set_test::test_permute_1() throw(libtest::test_exception) {
         bis.split(m001, 4); bis.split(m001, 5);
 
         dimensions<3> bidims = bis.get_block_index_dims();
-        label_set<3> elem1(bidims, m111, table_id);
+        label_set<3> elem1(bidims, table_id);
 
         // assign labels
         for (size_t i = 0; i < 4; i++) elem1.assign(m110, i, i);
@@ -770,7 +590,7 @@ void label_set_test::test_permute_1() throw(libtest::test_exception) {
         elem1.assign(m001, 2, 1); elem1.assign(m001, 3, 2);
         elem1.assign(m001, 4, 3); elem1.assign(m001, 5, 3);
 
-        elem1.set_eval_msk(m011);
+        elem1.set_mask(m011);
 
         elem1.add_intrinsic(0);
 
@@ -834,168 +654,6 @@ void label_set_test::test_permute_1() throw(libtest::test_exception) {
             }
 
         } while (ai.inc());
-
-    } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
-    }
-}
-
-/** \test Full set, partial eval mask, permutation (3-dim)
- **/
-void label_set_test::test_permute_2() throw(libtest::test_exception) {
-
-    static const char *testname = "label_set_test::test_permute_2()";
-
-    try {
-
-        index<3> i1, i2;
-        i2[0] = 3; i2[1] = 3; i2[2] = 5;
-        block_index_space<3> bis(dimensions<3>(index_range<3>(i1, i2)));
-        mask<3> m001, m010, m110;
-        m010[1] = true;
-        m110[0] = true; m110[1] = true; m001[2] = true;
-        bis.split(m110, 1); bis.split(m110, 2); bis.split(m110, 3);
-        bis.split(m001, 1); bis.split(m001, 2); bis.split(m001, 3);
-        bis.split(m001, 4); bis.split(m001, 5);
-
-        dimensions<3> bidims = bis.get_block_index_dims();
-        label_set<3> elem1(bidims, m110, table_id);
-
-        // assign labels
-        for (size_t i = 0; i < 4; i++) elem1.assign(m110, i, i);
-        elem1.set_eval_msk(m010);
-
-        elem1.add_intrinsic(0);
-
-        label_set<3> elem2(elem1), elem3(elem1), elem4(elem1);
-        elem2.add_intrinsic(1);
-        elem3.add_intrinsic(1);
-        elem3.add_intrinsic(2);
-        elem3.add_intrinsic(3);
-        elem4.clear_intrinsic();
-
-        permutation<3> p; p.permute(1, 2).permute(0, 1);
-        elem1.permute(p);
-        elem2.permute(p);
-        elem3.permute(p);
-        elem4.permute(p);
-
-        bidims.permute(p);
-        std::vector<bool> r1(bidims.get_size(), false);
-        std::vector<bool> r2(bidims.get_size(), false);
-        std::vector<bool> r3(bidims.get_size(), true);
-        std::vector<bool> r4(bidims.get_size(), false);
-
-        for (size_t i = 0; i < 6; i++) {
-            for (size_t j = 0; j < 4; j++) {
-                r1[i * 16 + j * 4] = true; // xx0
-                r2[i * 16 + j * 4] = r2[i * 16 + j * 4 + 1] = true; // xx0, xx1
-            }
-        }
-
-        abs_index<3> ai(bidims);
-        do {
-            if (elem1.is_allowed(ai.get_index()) != r1[ai.get_abs_index()]) {
-                std::ostringstream oss;
-                oss << (r1[ai.get_abs_index()] ? "!" : "") <<
-                        "elem1.is_allowed(" << ai.get_index() << ")";
-                fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
-            }
-            if (elem2.is_allowed(ai.get_index()) != r2[ai.get_abs_index()]) {
-                std::ostringstream oss;
-                oss << (r2[ai.get_abs_index()] ? "!" : "") <<
-                        "elem2.is_allowed(" << ai.get_index() << ")";
-                fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
-            }
-            if (elem3.is_allowed(ai.get_index()) != r3[ai.get_abs_index()]) {
-                std::ostringstream oss;
-                oss << (r3[ai.get_abs_index()] ? "!" : "") <<
-                        "elem3.is_allowed(" << ai.get_index() << ")";
-                fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
-            }
-            if (elem4.is_allowed(ai.get_index()) != r4[ai.get_abs_index()]) {
-                std::ostringstream oss;
-                oss << (r4[ai.get_abs_index()] ? "!" : "") <<
-                        "elem4.is_allowed(" << ai.get_index() << ")";
-                fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
-            }
-
-        } while (ai.inc());
-
-    } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
-    }
-}
-
-/** \test Overlap of complete and incomplete label sets (3-dim)
- **/
-void label_set_test::test_overlap() throw(libtest::test_exception) {
-
-    static const char *testname = "label_set_test::test_overlap()";
-
-    try {
-
-        index<3> i1, i2;
-        i2[0] = 3; i2[1] = 3; i2[2] = 5;
-        block_index_space<3> bis(dimensions<3>(index_range<3>(i1, i2)));
-        mask<3> m001, m011, m110, m111, m010;
-        m001[2] = true; m110[0] = true; m110[1] = true;
-        m010[1] = true; m011[1] = true; m011[2] = true;
-        m111[0] = true; m111[1] = true; m111[2] = true;
-        bis.split(m110, 1); bis.split(m110, 2); bis.split(m110, 3);
-        bis.split(m001, 1); bis.split(m001, 2); bis.split(m001, 3);
-        bis.split(m001, 4); bis.split(m001, 5);
-
-        dimensions<3> bidims = bis.get_block_index_dims();
-        label_set<3> elem1(bidims, m111, table_id);
-        label_set<3> elem2(bidims, m011, table_id);
-        label_set<3> elem3(bidims, m110, table_id);
-        label_set<3> elem4(bidims, m001, table_id);
-
-        // assign labels
-        for (size_t i = 0; i < 4; i++) {
-            elem1.assign(m110, i, i);
-            elem2.assign(m010, i, i);
-            elem3.assign(m110, i, i);
-        }
-
-        std::vector<label_set<4>::label_t> ll(6);
-        ll[0] = 0; ll[1] = 1; ll[2] = 1; ll[3] = 2; ll[4] = 3; ll[5] = 3;
-        for (size_t i = 0; i < 6; i++) {
-            elem1.assign(m001, i, ll[i]);
-            elem2.assign(m001, i, ll[i]);
-            elem4.assign(m001, i, ll[i]);
-        }
-
-        elem1.add_intrinsic(0);
-        elem2.add_intrinsic(1);
-        elem3.add_intrinsic(2);
-        elem4.add_intrinsic(3);
-
-        if (! elem1.has_overlap(elem2)) {
-            fail_test(testname, __FILE__, __LINE__,
-                    "elem1 and elem2 do not overlap.");
-        }
-        if (! elem1.has_overlap(elem3)) {
-            fail_test(testname, __FILE__, __LINE__,
-                    "elem1 and elem2 do not overlap.");
-        }
-        if (! elem1.has_overlap(elem4)) {
-            fail_test(testname, __FILE__, __LINE__,
-                    "elem1 and elem2 do not overlap.");
-        }
-        if (! elem2.has_overlap(elem3)) {
-            fail_test(testname, __FILE__, __LINE__,
-                    "elem2 and elem3 do not overlap.");
-        }
-        if (! elem2.has_overlap(elem4)) {
-            fail_test(testname, __FILE__, __LINE__,
-                    "elem2 and elem4 do not overlap.");
-        }
-        if (elem3.has_overlap(elem4)) {
-            fail_test(testname, __FILE__, __LINE__,
-                    "elem3 and elem4 overlap.");
-        }
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());

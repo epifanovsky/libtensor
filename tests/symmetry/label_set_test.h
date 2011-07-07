@@ -22,11 +22,7 @@ private:
     void test_set_2() throw(libtest::test_exception);
     void test_set_3() throw(libtest::test_exception);
     void test_set_4() throw(libtest::test_exception);
-    void test_partial_1() throw(libtest::test_exception);
-    void test_partial_2() throw(libtest::test_exception);
     void test_permute_1() throw(libtest::test_exception);
-    void test_permute_2() throw(libtest::test_exception);
-    void test_overlap() throw(libtest::test_exception);
 };
 
 } // namespace libtensor
