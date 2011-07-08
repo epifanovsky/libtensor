@@ -199,6 +199,7 @@ set(SRC_LINALG
 	linalg/linalg_ijkl_pliq_jpkq_x_test.C
 	linalg/linalg_ijkl_pliq_jpqk_x_test.C
 	linalg/linalg_ijkl_pliq_pjqk_x_test.C
+	linalg/linalg_ijklm_ipkm_jlp_x_test.C
 )
 
 set(SRC_IFACE

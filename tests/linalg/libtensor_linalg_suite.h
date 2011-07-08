@@ -53,6 +53,7 @@
 #include "linalg_ijkl_pliq_jpkq_x_test.h"
 #include "linalg_ijkl_pliq_jpqk_x_test.h"
 #include "linalg_ijkl_pliq_pjqk_x_test.h"
+#include "linalg_ijklm_ipkm_jlp_x_test.h"
 
 using libtest::unit_test_factory;
 
@@ -120,6 +121,7 @@ namespace libtensor {
 	 - libtensor::linalg_ijkl_pliq_jpkq_x_test
 	 - libtensor::linalg_ijkl_pliq_jpqk_x_test
 	 - libtensor::linalg_ijkl_pliq_pjqk_x_test
+	 - libtensor::linalg_ijklm_ipkm_jlp_x_test
 
  **/
 class libtensor_linalg_suite : public libtest::test_suite {
@@ -209,6 +211,8 @@ private:
 		m_utf_linalg_ijkl_pliq_jpqk_x;
 	unit_test_factory<linalg_ijkl_pliq_pjqk_x_test>
 		m_utf_linalg_ijkl_pliq_pjqk_x;
+	unit_test_factory<linalg_ijklm_ipkm_jlp_x_test>
+		m_utf_linalg_ijklm_ipkm_jlp_x;
 
 public:
 	//!	Creates the suite
