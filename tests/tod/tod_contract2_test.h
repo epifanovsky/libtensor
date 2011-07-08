@@ -105,6 +105,10 @@ private:
 	void test_ijk_ip_pkj(size_t ni, size_t nj, size_t nk, size_t np,
 		double d = 0.0) throw(libtest::test_exception);
 
+	// c_{ijk} = \sum_{pq} a_{pik} b_{pj}
+	void test_ijk_pik_pj(size_t ni, size_t nj, size_t nk, size_t np,
+		double d = 0.0) throw(libtest::test_exception);
+
 	// c_{ijk} = \sum_{pq} a_{pj} b_{ipk}
 	void test_ijk_pj_ipk(size_t ni, size_t nj, size_t nk, size_t np,
 		double d = 0.0) throw(libtest::test_exception);
