@@ -137,6 +137,10 @@ private:
 	void test_ijkl_ikp_jpl(size_t ni, size_t nj, size_t nk, size_t nl,
 		size_t np, double d = 0.0) throw(libtest::test_exception);
 
+	// c_{ijkl} = c_{ijkl} + d \sum_{p} a_{ipk} b_{jpl}
+	void test_ijkl_ipk_jpl(size_t ni, size_t nj, size_t nk, size_t nl,
+		size_t np, double d = 0.0) throw(libtest::test_exception);
+
 	// c_{ijkl} = c_{ijkl} + d \sum_{p} a_{ipl} b_{jpk}
 	void test_ijkl_ipl_jpk(size_t ni, size_t nj, size_t nk, size_t nl,
 		size_t np, double d = 0.0) throw(libtest::test_exception);
