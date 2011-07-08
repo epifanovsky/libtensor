@@ -10,6 +10,17 @@ const char *kern_mul_ijklm_jlp_ipkm::k_clazz = "kern_mul_ijklm_jlp_ipkm";
 
 void kern_mul_ijklm_jlp_ipkm::run(const loop_registers<2, 1> &r) {
 
+	if(m_sic == m_nj * m_sjc && m_sjc == m_nk * m_skc &&
+		m_skc == m_nl * m_slc && m_slc == m_nm &&
+		m_sja == m_nl * m_sla && m_sla == m_np &&
+		m_sib == m_np * m_spb && m_spb == m_nk * m_skb &&
+		m_skb == m_nm) {
+
+		linalg::ijklm_ipkm_jlp_x(m_ni, m_nj, m_nk, m_nl, m_nm, m_np,
+			r.m_ptra[1], r.m_ptra[0], r.m_ptrb[0], m_d);
+		return;
+	}
+
 	for(size_t i = 0; i < m_ni; i++)
 	for(size_t j = 0; j < m_nj; j++)
 	for(size_t k = 0; k < m_nk; k++) {
