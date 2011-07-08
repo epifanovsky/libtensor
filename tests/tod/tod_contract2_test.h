@@ -133,16 +133,20 @@ private:
 	void test_ijk_pqji_qpk(size_t ni, size_t nj, size_t nk, size_t np,
 		size_t nq, double d = 0.0) throw(libtest::test_exception);
 
+	// c_{ijkl} = c_{ijkl} + d \sum_{p} a_{ikp} b_{jpl}
+	void test_ijkl_ikp_jpl(size_t ni, size_t nj, size_t nk, size_t nl,
+		size_t np, double d = 0.0) throw(libtest::test_exception);
+
 	// c_{ijkl} = c_{ijkl} + d \sum_{p} a_{ipl} b_{jpk}
 	void test_ijkl_ipl_jpk(size_t ni, size_t nj, size_t nk, size_t nl,
 		size_t np, double d = 0.0) throw(libtest::test_exception);
 
-	// c_{ijkl} = c_{ijkl} + d \sum_{p} a_{jpl} b_{ipk}
-	void test_ijkl_jpl_ipk(size_t ni, size_t nj, size_t nk, size_t nl,
+	// c_{ijkl} = c_{ijkl} + d \sum_{p} a_{jkp} b_{ipl}
+	void test_ijkl_jkp_ipl(size_t ni, size_t nj, size_t nk, size_t nl,
 		size_t np, double d = 0.0) throw(libtest::test_exception);
 
-	// c_{ijkl} = c_{ijkl} + d \sum_{p} a_{ikp} b_{jpl}
-	void test_ijkl_ikp_jpl(size_t ni, size_t nj, size_t nk, size_t nl,
+	// c_{ijkl} = c_{ijkl} + d \sum_{p} a_{jpl} b_{ipk}
+	void test_ijkl_jpl_ipk(size_t ni, size_t nj, size_t nk, size_t nl,
 		size_t np, double d = 0.0) throw(libtest::test_exception);
 
 	// c_{ijkl} = c_{ijkl} + d \sum_{pq} a_{iplq} b_{kpjq}
@@ -258,6 +262,11 @@ private:
 
 	// c_{ijklm} = c_{ijklm} + d \sum_{p} a_{ipkm} b_{jpl}
 	void test_ijklm_ipkm_jpl(size_t ni, size_t nj, size_t nk, size_t nl,
+		size_t nm, size_t np, double d = 0.0)
+		throw(libtest::test_exception);
+
+	// c_{ijklm} = c_{ijklm} + d \sum_{p} a_{jlp} b_{ipkm}
+	void test_ijklm_jlp_ipkm(size_t ni, size_t nj, size_t nk, size_t nl,
 		size_t nm, size_t np, double d = 0.0)
 		throw(libtest::test_exception);
 
