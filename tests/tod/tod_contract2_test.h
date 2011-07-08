@@ -268,6 +268,11 @@ private:
 	void test_ijkl_ij_lk(size_t ni, size_t nj, size_t nk, size_t nl)
 		throw(libtest::test_exception);
 
+	// c_{ijklm} = c_{ijklm} + d \sum_{p} a_{ikp} b_{jpml}
+	void test_ijklm_ikp_jpml(size_t ni, size_t nj, size_t nk, size_t nl,
+		size_t nm, size_t np, double d = 0.0)
+		throw(libtest::test_exception);
+
 	// c_{ijklm} = c_{ijklm} + d \sum_{p} a_{ipkm} b_{jpl}
 	void test_ijklm_ipkm_jpl(size_t ni, size_t nj, size_t nk, size_t nl,
 		size_t nm, size_t np, double d = 0.0)

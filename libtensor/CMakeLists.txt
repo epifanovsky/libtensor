@@ -71,6 +71,7 @@ set(SRC
 	tod/kernels/kern_mul_ijk_pkq_piqj.C
 	tod/kernels/kern_mul_ijk_pqji_pqk.C
 	tod/kernels/kern_mul_ijk_pqji_qpk.C
+    tod/kernels/kern_mul_ijkl_ijp_plk.C
     tod/kernels/kern_mul_ijkl_ikp_jpl.C
     tod/kernels/kern_mul_ijkl_ipk_jpl.C
     tod/kernels/kern_mul_ijkl_ipl_jpk.C
@@ -93,6 +94,7 @@ set(SRC
 	tod/kernels/kern_mul_ijkl_pljq_piqk.C
 	tod/kernels/kern_mul_ijkl_pqkj_iqpl.C
 	tod/kernels/kern_mul_ijkl_pqkj_qipl.C
+    tod/kernels/kern_mul_ijklm_ikp_jpml.C
 	tod/kernels/kern_mul_ijklm_ipkm_jpl.C
     tod/kernels/kern_mul_ijklm_jlp_ipkm.C
     tod/kernels/kern_mul_ijklmn_kjmp_ipln.C
