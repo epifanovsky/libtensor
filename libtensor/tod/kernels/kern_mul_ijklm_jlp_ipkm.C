@@ -1,5 +1,6 @@
 #include "../../linalg/linalg.h"
 #include "kern_mul_ijklm_jlp_ipkm.h"
+#include "kern_mul_ijklmn_kjmp_ipln.h"
 
 namespace libtensor {
 
@@ -75,6 +76,8 @@ kernel_base<2, 1> *kern_mul_ijklm_jlp_ipkm::match(const kern_mul_ijkl_jkp_ipl &z
 	in.splice(out.begin(), out, ik);
 
 	kernel_base<2, 1> *kern = 0;
+
+	if(kern = kern_mul_ijklmn_kjmp_ipln::match(zz, in, out)) return kern;
 
 	return new kern_mul_ijklm_jlp_ipkm(zz);
 }

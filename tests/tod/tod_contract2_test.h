@@ -278,6 +278,11 @@ private:
 		size_t nm, size_t np, double d = 0.0)
 		throw(libtest::test_exception);
 
+	// c_{ijklmn} = c_{ijklmn} + d \sum_{p} a_{kjmp} b_{ipln}
+	void test_ijklmn_kjmp_ipln(size_t ni, size_t nj, size_t nk, size_t nl,
+		size_t nm, size_t nn, size_t np, double d = 0.0)
+		throw(libtest::test_exception);
+
 };
 
 } // namespace libtensor
