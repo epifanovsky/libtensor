@@ -57,22 +57,22 @@ struct linalg_base_level1_qchem : public linalg_base_level1_generic {
 		if(b == 1.0) {
 			if(sia == 1) {
 				if(sic == 1) {
-					mul_i_i_p11(ni, a, b, c);
+					mul_i_i_x_p11(ni, a, b, c);
 				} else {
-					mul_i_i_pxx(ni, a, sia, b, c, sic);
+					mul_i_i_x_pxx(ni, a, sia, b, c, sic);
 				}
 			} else {
-				mul_i_i_pxx(ni, a, sia, b, c, sic);
+				mul_i_i_x_pxx(ni, a, sia, b, c, sic);
 			}
 		} else if(b == -1.0) {
 			if(sia == 1) {
 				if(sic == 1) {
-					mul_i_i_m11(ni, a, b, c);
+					mul_i_i_x_m11(ni, a, b, c);
 				} else {
-					mul_i_i_mxx(ni, a, sia, b, c, sic);
+					mul_i_i_x_mxx(ni, a, sia, b, c, sic);
 				}
 			} else {
-				mul_i_i_mxx(ni, a, sia, b, c, sic);
+				mul_i_i_x_mxx(ni, a, sia, b, c, sic);
 			}
 		} else {
 			CL_DAXPY(ni, b, (double*)a, sia, c, sic);
