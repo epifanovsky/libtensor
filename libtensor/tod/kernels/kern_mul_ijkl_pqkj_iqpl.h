@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_KERN_MUL_IJKL_PQKJ_IQPL_H
 #define LIBTENSOR_KERN_MUL_IJKL_PQKJ_IQPL_H
 
+#include "kern_mul_ijk_pqj_iqpk.h"
 #include "kern_mul_ijk_pqji_qpk.h"
 
 namespace libtensor {
@@ -26,6 +27,9 @@ public:
 	}
 
 	virtual void run(const loop_registers<2, 1> &r);
+
+	static kernel_base<2, 1> *match(const kern_mul_ijk_pqj_iqpk &z,
+		list_t &in, list_t &out);
 
 	static kernel_base<2, 1> *match(const kern_mul_ijk_pqji_qpk &z,
 		list_t &in, list_t &out);
