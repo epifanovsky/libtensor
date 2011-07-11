@@ -32,6 +32,7 @@ kernel_base<2, 1> *kern_mul_ij_i_j::match(const kern_mul_i_i_x &z,
 	size_t sjb_min = 0;
 	for(iterator_t i = in.begin(); i != in.end(); i++) {
 		if(i->stepa(0) == 0 && i->stepa(1) > 0 && i->stepb(0) == 1) {
+			if(z.m_sic % (i->weight() * i->stepb(0))) continue;
 			if(sjb_min == 0 || sjb_min > i->stepa(1)) {
 				ij = i; sjb_min = i->stepa(1);
 			}

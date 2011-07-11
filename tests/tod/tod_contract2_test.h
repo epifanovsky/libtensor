@@ -37,6 +37,14 @@ private:
 	void test_i_ip_p(size_t ni, size_t np, double d = 0.0)
 		throw(libtest::test_exception);
 
+	// c_{ij} = c_{ij} + d a_i b_j
+	void test_ij_i_j(size_t ni, size_t nj, double d = 0.0)
+		throw(libtest::test_exception);
+
+	// c_{ij} = c_{ij} + d a_j b_i
+	void test_ij_j_i(size_t ni, size_t nj, double d = 0.0)
+		throw(libtest::test_exception);
+
 	// c_{ij} = \sum_p a_{pi} b_{pj}
 	void test_ij_pi_pj(size_t ni, size_t nj, size_t np, double d = 0.0)
 		throw(libtest::test_exception);
