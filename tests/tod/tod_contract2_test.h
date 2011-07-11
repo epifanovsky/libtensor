@@ -133,6 +133,10 @@ private:
 	void test_ijk_pkiq_pjq(size_t ni, size_t nj, size_t nk, size_t np,
 		size_t nq, double d = 0.0) throw(libtest::test_exception);
 
+	// c_{ijk} = c_{ijk} + d \sum_{pq} a_{pqj} b_{iqpk}
+	void test_ijk_pqj_iqpk(size_t ni, size_t nj, size_t nk, size_t np,
+		size_t nq, double d = 0.0) throw(libtest::test_exception);
+
 	// c_{ijk} = c_{ijk} + d \sum_{pq} a_{pqji} b_{qpk}
 	void test_ijk_pqji_qpk(size_t ni, size_t nj, size_t nk, size_t np,
 		size_t nq, double d = 0.0) throw(libtest::test_exception);
