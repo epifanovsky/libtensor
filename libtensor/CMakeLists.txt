@@ -70,6 +70,7 @@ set(SRC
 	tod/kernels/kern_mul_ijk_pkq_ipqj.C
 	tod/kernels/kern_mul_ijk_pkq_piqj.C
 	tod/kernels/kern_mul_ijk_pqj_iqpk.C
+    tod/kernels/kern_mul_ijk_pqj_qipk.C
 	tod/kernels/kern_mul_ijk_pqji_pqk.C
 	tod/kernels/kern_mul_ijk_pqji_qpk.C
     tod/kernels/kern_mul_ijkl_ijp_plk.C
