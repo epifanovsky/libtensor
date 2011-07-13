@@ -201,29 +201,37 @@ void btod_symmetrize3<N>::compute_block(tensor_i<N, double> &blk,
 	while(!sch1.empty()) {
 		abs_index<N> ai(sch1.front().ai, bidims);
 		size_t n = 0;
-		for(typename std::list<schrec>::iterator j = sch1.begin(); j != sch1.end(); ++j) {
+		for(typename std::list<schrec>::iterator j = sch1.begin();
+			j != sch1.end(); ++j) {
 			if(j->ai == ai.get_abs_index()) n++;
 		}
 		if(n == 1) {
 			transf<N, double> tri(sch1.front().tr);
 			tri.transform(tr);
-			additive_btod<N>::compute_block(m_op, blk, ai.get_index(), tri, c);
+			additive_btod<N>::compute_block(m_op, blk,
+				ai.get_index(), tri, c);
 			sch1.pop_front();
 		} else {
 			dimensions<N> dims(blk.get_dims());
 			dims.permute(permutation<N>(tr.get_perm(), true));
-			dims.permute(permutation<N>(sch1.front().tr.get_perm(), true));
+			dims.permute(permutation<N>(sch1.front().tr.get_perm(),
+				true));
 			// TODO: replace with "temporary block" feature
-			tensor< N, double, libvmm::vm_allocator<double> > tmp(dims);
+			tensor< N, double, libvmm::vm_allocator<double> > tmp(
+				dims);
 			tod_set<N>().perform(tmp);
-			additive_btod<N>::compute_block(m_op, tmp, ai.get_index(), tr, c);
-			for(typename std::list<schrec>::iterator j = sch1.begin(); j != sch1.end();) {
+			additive_btod<N>::compute_block(m_op, tmp,
+				ai.get_index(), transf<N, double>(), c);
+			for(typename std::list<schrec>::iterator j =
+				sch1.begin(); j != sch1.end();) {
+
 				if(j->ai != ai.get_abs_index()) {
 					++j; continue;
 				}
 				transf<N, double> trj(j->tr);
 				trj.transform(tr);
-				tod_copy<N>(tmp, trj.get_perm(), trj.get_coeff()).perform(blk, 1.0);
+				tod_copy<N>(tmp, trj.get_perm(),
+					trj.get_coeff()).perform(blk, 1.0);
 				j = sch1.erase(j);
 			}
 		}
