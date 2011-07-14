@@ -10,13 +10,14 @@ const char *kern_mul_ijkl_ipl_jpk::k_clazz = "kern_mul_ijkl_ipl_jpk";
 
 void kern_mul_ijkl_ipl_jpk::run(const loop_registers<2, 1> &r) {
 
+/*
 	if(m_skc == m_nl && m_sjc == m_skc * m_nk && m_sic == m_sjc * m_nj) {
 
 		linalg::ijkl_ipl_jpk_x(m_ni, m_nj, m_nk, m_nl, m_np, r.m_ptra[0],
 			m_spa, m_sia, r.m_ptra[1], m_spb, m_sjb, r.m_ptrb[0],
 			m_d);
 		return;
-	}
+	}*/
 
 	const double *pa = r.m_ptra[0];
 	double *pc = r.m_ptrb[0];
