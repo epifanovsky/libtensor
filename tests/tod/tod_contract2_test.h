@@ -113,6 +113,10 @@ private:
 	void test_ijk_ip_pkj(size_t ni, size_t nj, size_t nk, size_t np,
 		double d = 0.0) throw(libtest::test_exception);
 
+	// c_{ijk} = \sum_{pq} a_{pi} b_{pkj}
+	void test_ijk_pi_pkj(size_t ni, size_t nj, size_t nk, size_t np,
+		double d = 0.0) throw(libtest::test_exception);
+
 	// c_{ijk} = \sum_{pq} a_{pik} b_{pj}
 	void test_ijk_pik_pj(size_t ni, size_t nj, size_t nk, size_t np,
 		double d = 0.0) throw(libtest::test_exception);
