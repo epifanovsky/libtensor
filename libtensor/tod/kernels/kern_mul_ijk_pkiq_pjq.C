@@ -12,6 +12,15 @@ const char *kern_mul_ijk_pkiq_pjq::k_clazz = "kern_mul_ijk_pkiq_pjq";
 
 void kern_mul_ijk_pkiq_pjq::run(const loop_registers<2, 1> &r) {
 
+	if(m_sic == m_nj * m_sjc && m_sjc == m_nk && m_spa == m_nk * m_ska &&
+		m_ska == m_ni * m_sia && m_sia == m_nq &&
+		m_spb == m_nj * m_sjb && m_sjb == m_nq) {
+
+		linalg::ijk_pkiq_pjq_x(m_ni, m_nj, m_nk, m_np, m_nq,
+			r.m_ptra[0], r.m_ptra[1], r.m_ptrb[0], m_d);
+		return;
+	}
+
 	const double *pa = r.m_ptra[0], *pb = r.m_ptra[1];
 	double *pc = r.m_ptrb[0];
 	for(size_t i = 0; i < m_ni; i++) {

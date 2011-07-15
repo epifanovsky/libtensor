@@ -14,6 +14,26 @@ struct linalg_base_level6_generic {
 
 
 	/**	\brief \f$ c_{ijkl} = c_{ijkl} +
+			\sum_{p} a_{ikp} b_{jpl} d \f$
+	 **/
+	static void ijkl_ikp_jpl_x(
+		size_t ni, size_t nj, size_t nk, size_t nl, size_t np,
+		const double *a, size_t ska, size_t sia,
+		const double *b, size_t spb, size_t sjb,
+		double *c, double d);
+
+
+	/**	\brief \f$ c_{ijkl} = c_{ijkl} +
+			\sum_{p} a_{ipl} b_{jpk} d \f$
+	 **/
+	static void ijkl_ipl_jpk_x(
+		size_t ni, size_t nj, size_t nk, size_t nl, size_t np,
+		const double *a, size_t spa, size_t sia,
+		const double *b, size_t spb, size_t sjb,
+		double *c, double d);
+
+
+	/**	\brief \f$ c_{ijkl} = c_{ijkl} +
 			\sum_{pq} a_{ipkq} b_{pljq} d \f$
 	 **/
 	static void ijkl_ipkq_pljq_x(
@@ -80,6 +100,15 @@ struct linalg_base_level6_generic {
 			\sum_{pq} a_{ipql} b_{qkpj} d \f$
 	 **/
 	static void ijkl_ipql_qkpj_x(
+		size_t ni, size_t nj, size_t nk,
+		size_t nl, size_t np, size_t nq,
+		const double *a, const double *b, double *c, double d);
+
+
+	/**	\brief \f$ c_{ijkl} = c_{ijkl} +
+			\sum_{pq} a_{ipql} b_{qpkj} d \f$
+	 **/
+	static void ijkl_ipql_qpkj_x(
 		size_t ni, size_t nj, size_t nk,
 		size_t nl, size_t np, size_t nq,
 		const double *a, const double *b, double *c, double d);
@@ -158,6 +187,15 @@ struct linalg_base_level6_generic {
 
 
 	/**	\brief \f$ c_{ijkl} = c_{ijkl} +
+			\sum_{pq} a_{piql} b_{qpkj} d \f$
+	 **/
+	static void ijkl_piql_qpkj_x(
+		size_t ni, size_t nj, size_t nk,
+		size_t nl, size_t np, size_t nq,
+		const double *a, const double *b, double *c, double d);
+
+
+	/**	\brief \f$ c_{ijkl} = c_{ijkl} +
 			\sum_{pq} a_{pkiq} b_{jplq} d \f$
 	 **/
 	static void ijkl_pkiq_jplq_x(
@@ -217,6 +255,14 @@ struct linalg_base_level6_generic {
 	static void ijkl_pliq_pjqk_x(
 		size_t ni, size_t nj, size_t nk,
 		size_t nl, size_t np, size_t nq,
+		const double *a, const double *b, double *c, double d);
+
+	/**	\brief \f$ c_{ijklm} = c_{ijklm} +
+			\sum_{p} a_{ipkm} b_{jlp} d \f$
+	 **/
+	static void ijklm_ipkm_jlp_x(
+		size_t ni, size_t nj, size_t nk,
+		size_t nl, size_t nm, size_t np,
 		const double *a, const double *b, double *c, double d);
 
 };

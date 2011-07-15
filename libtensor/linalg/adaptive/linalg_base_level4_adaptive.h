@@ -26,6 +26,22 @@ struct linalg_base_level4_adaptive : public linalg_base_level4_generic {
 		double d);
 
 
+	static void ijk_ip_pkj_x(
+		size_t ni, size_t nj, size_t nk, size_t np,
+		const double *a, size_t sia,
+		const double *b, size_t skb, size_t spb,
+		double *c, size_t sjc, size_t sic,
+		double d);
+
+
+	static void ijk_pi_pkj_x(
+		size_t ni, size_t nj, size_t nk, size_t np,
+		const double *a, size_t spa,
+		const double *b, size_t skb, size_t spb,
+		double *c, size_t sjc, size_t sic,
+		double d);
+
+
 };
 
 
@@ -33,6 +49,8 @@ struct linalg_base_level4_adaptive : public linalg_base_level4_generic {
 
 
 #include "bits/ij_ipq_jqp_x.h"
+#include "bits/ijk_ip_pkj_x.h"
+#include "bits/ijk_pi_pkj_x.h"
 
 
 #endif // LIBTENSOR_LINALG_BASE_LEVEL4_ADAPTIVE_H

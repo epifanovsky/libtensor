@@ -3,7 +3,9 @@
 
 #include <algorithm>
 #include <list>
+#include <map>
 #include <vector>
+#include "../timings.h"
 #include "abs_index.h"
 #include "symmetry.h"
 #include "transf.h"
@@ -23,16 +25,20 @@ namespace libtensor {
 	\ingroup libtensor_core
  **/
 template<size_t N, typename T>
-class transf_list {
+class transf_list : public timings< transf_list<N, T> > {
 public:
 	static const char *k_clazz; //!< Class name
 
+private:
+	typedef std::list< transf<N, T> > transf_lst_t;
+	typedef std::map< size_t, transf_lst_t > transf_map_t;
+
 public:
-	typedef typename std::list< transf<N, T> >::const_iterator
+	typedef typename transf_lst_t::const_iterator
 		iterator; //!< List iterator
 
 private:
-	std::list< transf<N, T> > m_trlist;
+	transf_lst_t m_trlist;
 
 public:
 	/**	\brief Constructs the list of transformations
@@ -67,10 +73,12 @@ public:
 	//@}
 
 private:
-	void make_list(bool first, const index<N> &idx0,
-		const symmetry<N, T> &sym, const dimensions<N> &bidims,
-		const index<N> &idx, const transf<N, T> &tr,
-		std::vector<char> &chk);
+	bool is_found(const transf_lst_t &trlist, const transf<N, T> &tr) const;
+
+	void join_lists(transf_lst_t &l1, transf_lst_t &l2) const;
+
+	void visit(const symmetry<N, T> &sym, const abs_index<N> &aidx,
+		const transf<N, T> &tr, transf_map_t &visited);
 
 };
 
@@ -82,63 +90,81 @@ const char *transf_list<N, T>::k_clazz = "transf_list<N, T>";
 template<size_t N, typename T>
 transf_list<N, T>::transf_list(const symmetry<N, T> &sym, const index<N> &idx) {
 
-	dimensions<N> bidims = sym.get_bis().get_block_index_dims();
-	transf<N, T> tr0;
-	std::vector<char> chk(bidims.get_size(), 0);
+	transf_list<N, T>::start_timer();
 
-	make_list(true, idx, sym, bidims, idx, tr0, chk);
+	abs_index<N> aidx(idx, sym.get_bis().get_block_index_dims());
+	transf_map_t visited;
+	visit(sym, aidx, transf<N, T>(), visited);
+	m_trlist.splice(m_trlist.end(), visited[aidx.get_abs_index()]);
 
-        for(iterator i = m_trlist.begin(); i != m_trlist.end(); i++)
-       	for(iterator j = m_trlist.begin(); j != m_trlist.end(); j++) {
-       		transf<N, T> tr1(*i), tr2(*j);
-       		tr1.transform(tr2);
-       		if(is_found(tr1)) continue;
-       		m_trlist.push_back(tr1);
-       	}
+	transf_list<N, T>::stop_timer();
 }
 
 
 template<size_t N, typename T>
 bool transf_list<N, T>::is_found(const transf<N, T> &tr) const {
 
-	return std::find(m_trlist.begin(), m_trlist.end(), tr) !=
-		m_trlist.end();
+	return is_found(m_trlist, tr);
 }
 
 
 template<size_t N, typename T>
-void transf_list<N, T>::make_list(bool first, const index<N> &idx0,
-	const symmetry<N, T> &sym, const dimensions<N> &bidims,
-	const index<N> &idx, const transf<N, T> &tr, std::vector<char> &chk) {
+bool transf_list<N, T>::is_found(const transf_lst_t &trlist,
+	const transf<N, T> &tr) const {
 
-	abs_index<N> aidx(idx, bidims);
-	if(idx0.equals(idx)) {
+	return std::find(trlist.begin(), trlist.end(), tr) != trlist.end();
+}
 
-		if(!is_found(tr)) m_trlist.push_back(tr);
-		if(!first) return;
-	} else {
-		if(chk[aidx.get_abs_index()]) return;
+
+template<size_t N, typename T>
+void transf_list<N, T>::join_lists(transf_lst_t &l1, transf_lst_t &l2) const {
+
+	for(typename transf_lst_t::iterator i1 = l1.begin();
+		!l2.empty() && i1 != l1.end(); ++i1) {
+
+		typename transf_lst_t::iterator i2 = l2.begin();
+		while(i2 != l2.end()) {
+			if(*i1 == *i2) i2 = l2.erase(i2);
+			else ++i2;
+		}
 	}
+	l1.splice(l1.end(), l2);
+}
 
-	chk[aidx.get_abs_index()] = 1;
+
+template<size_t N, typename T>
+void transf_list<N, T>::visit(const symmetry<N, T> &sym,
+	const abs_index<N> &aidx, const transf<N, T> &tr,
+	transf_map_t &visited) {
+
+	transf<N, T> tr1(tr);
+	transf_lst_t lst1;
+	do {
+		lst1.push_back(tr1);
+		tr1.transform(tr);
+	} while(tr1 != tr);
+	join_lists(visited[aidx.get_abs_index()], lst1);
 
 	for(typename symmetry<N, T>::iterator iset = sym.begin();
-		iset != sym.end(); iset++) {
+		iset != sym.end(); ++iset) {
 
 		const symmetry_element_set<N, T> &eset = sym.get_subset(iset);
 		for(typename symmetry_element_set<N, T>::const_iterator ielem =
-			eset.begin(); ielem != eset.end(); ielem++) {
+			eset.begin(); ielem != eset.end(); ++ielem) {
 
 			const symmetry_element_i<N, T> &elem =
 				eset.get_elem(ielem);
-			index<N> idx2(idx);
+
+			index<N> idx2(aidx.get_index());
 			transf<N, T> tr2(tr);
 			elem.apply(idx2, tr2);
-			make_list(false, idx0, sym, bidims, idx2, tr2, chk);
+			abs_index<N> aidx2(idx2, aidx.get_dims());
+
+			if(!is_found(visited[aidx2.get_abs_index()], tr2)) {
+				visit(sym, aidx2, tr2, visited);
+			}
 		}
 	}
-
-	chk[aidx.get_abs_index()] = 0;
 }
 
 

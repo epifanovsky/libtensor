@@ -16,36 +16,48 @@ namespace libtensor {
 
 void btod_symmetrize_test::perform() throw(libtest::test_exception) {
 
-	test_1();
-	test_2();
-	test_3();
-	test_4();
-	test_5(false);
-	test_5(true);
-	test_6a(false, false, false, false);
-	test_6a(false, false, false, true);
-	test_6a(false, false, true, false);
-	test_6a(false, false, true, true);
-	test_6a(false, true, false, false);
-	test_6a(false, true, false, true);
-	test_6a(false, true, true, false);
-	test_6a(false, true, true, true);
-	test_6a(true, false, false, false);
-	test_6a(true, false, false, true);
-	test_6a(true, false, true, false);
-	test_6a(true, false, true, true);
-	test_6a(true, true, false, false);
-	test_6a(true, true, false, true);
-	test_6a(true, true, true, false);
-	test_6a(true, true, true, true);
-	test_6b(false, false, false);
-	test_6b(false, false, true);
-	test_6b(false, true, false);
-	test_6b(false, true, true);
-	test_6b(true, false, false);
-	test_6b(true, false, true);
-	test_6b(true, true, false);
-	test_6b(true, true, true);
+	libvmm::vm_allocator<double>::vmm().init(
+		16, 16, 16777216, 16777216, 0.90, 0.05);
+
+	try {
+
+		test_1();
+		test_2();
+		test_3();
+		test_4();
+		test_5(false);
+		test_5(true);
+		test_6a(false, false, false, false);
+		test_6a(false, false, false, true);
+		test_6a(false, false, true, false);
+		test_6a(false, false, true, true);
+		test_6a(false, true, false, false);
+		test_6a(false, true, false, true);
+		test_6a(false, true, true, false);
+		test_6a(false, true, true, true);
+		test_6a(true, false, false, false);
+		test_6a(true, false, false, true);
+		test_6a(true, false, true, false);
+		test_6a(true, false, true, true);
+		test_6a(true, true, false, false);
+		test_6a(true, true, false, true);
+		test_6a(true, true, true, false);
+		test_6a(true, true, true, true);
+		test_6b(false, false, false);
+		test_6b(false, false, true);
+		test_6b(false, true, false);
+		test_6b(false, true, true);
+		test_6b(true, false, false);
+		test_6b(true, false, true);
+		test_6b(true, true, false);
+		test_6b(true, true, true);
+
+	} catch(...) {
+		libvmm::vm_allocator<double>::vmm().shutdown();
+		throw;
+	}
+
+	libvmm::vm_allocator<double>::vmm().shutdown();
 }
 
 /**	\test Symmetrization of a non-symmetric 2-index block %tensor

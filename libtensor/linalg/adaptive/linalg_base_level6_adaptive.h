@@ -18,6 +18,20 @@ template<typename M, typename L1, typename L2, typename L3>
 struct linalg_base_level6_adaptive : public linalg_base_level6_generic {
 
 
+	static void ijkl_ikp_jpl_x(
+		size_t ni, size_t nj, size_t nk, size_t nl, size_t np,
+		const double *a, size_t ska, size_t sia,
+		const double *b, size_t spb, size_t sjb,
+		double *c, double d);
+
+
+	static void ijkl_ipl_jpk_x(
+		size_t ni, size_t nj, size_t nk, size_t nl, size_t np,
+		const double *a, size_t spa, size_t sia,
+		const double *b, size_t spb, size_t sjb,
+		double *c, double d);
+
+
 	static void ijkl_ipkq_pljq_x(
 		size_t ni, size_t nj, size_t nk,
 		size_t nl, size_t np, size_t nq,
@@ -61,6 +75,12 @@ struct linalg_base_level6_adaptive : public linalg_base_level6_generic {
 
 
 	static void ijkl_ipql_qkpj_x(
+		size_t ni, size_t nj, size_t nk,
+		size_t nl, size_t np, size_t nq,
+		const double *a, const double *b, double *c, double d);
+
+
+	static void ijkl_ipql_qpkj_x(
 		size_t ni, size_t nj, size_t nk,
 		size_t nl, size_t np, size_t nq,
 		const double *a, const double *b, double *c, double d);
@@ -114,6 +134,12 @@ struct linalg_base_level6_adaptive : public linalg_base_level6_generic {
 		const double *a, const double *b, double *c, double d);
 
 
+	static void ijkl_piql_qpkj_x(
+		size_t ni, size_t nj, size_t nk,
+		size_t nl, size_t np, size_t nq,
+		const double *a, const double *b, double *c, double d);
+
+
 	static void ijkl_pkiq_jplq_x(
 		size_t ni, size_t nj, size_t nk,
 		size_t nl, size_t np, size_t nq,
@@ -155,12 +181,20 @@ struct linalg_base_level6_adaptive : public linalg_base_level6_generic {
 		size_t nl, size_t np, size_t nq,
 		const double *a, const double *b, double *c, double d);
 
+
+	static void ijklm_ipkm_jlp_x(
+		size_t ni, size_t nj, size_t nk,
+		size_t nl, size_t nm, size_t np,
+		const double *a, const double *b, double *c, double d);
+
 };
 
 
 } // namespace libtensor
 
 
+#include "bits/ijkl_ikp_jpl_x.h"
+#include "bits/ijkl_ipl_jpk_x.h"
 #include "bits/ijkl_ipkq_pljq_x.h"
 #include "bits/ijkl_iplq_kpjq_x.h"
 #include "bits/ijkl_iplq_pkjq_x.h"
@@ -169,6 +203,7 @@ struct linalg_base_level6_adaptive : public linalg_base_level6_generic {
 #include "bits/ijkl_ipql_pkjq_x.h"
 #include "bits/ijkl_ipql_pkqj_x.h"
 #include "bits/ijkl_ipql_qkpj_x.h"
+#include "bits/ijkl_ipql_qpkj_x.h"
 #include "bits/ijkl_pikq_pljq_x.h"
 #include "bits/ijkl_pilq_kpjq_x.h"
 #include "bits/ijkl_pilq_pkjq_x.h"
@@ -177,6 +212,7 @@ struct linalg_base_level6_adaptive : public linalg_base_level6_generic {
 #include "bits/ijkl_piql_pkjq_x.h"
 #include "bits/ijkl_piql_pkqj_x.h"
 #include "bits/ijkl_piql_qkpj_x.h"
+#include "bits/ijkl_piql_qpkj_x.h"
 #include "bits/ijkl_pkiq_jplq_x.h"
 #include "bits/ijkl_pkiq_jpql_x.h"
 #include "bits/ijkl_pkiq_pjlq_x.h"
@@ -184,6 +220,7 @@ struct linalg_base_level6_adaptive : public linalg_base_level6_generic {
 #include "bits/ijkl_pliq_jpkq_x.h"
 #include "bits/ijkl_pliq_jpqk_x.h"
 #include "bits/ijkl_pliq_pjqk_x.h"
+#include "bits/ijklm_ipkm_jlp_x.h"
 
 
 #endif // LIBTENSOR_LINALG_BASE_LEVEL6_ADAPTIVE_H

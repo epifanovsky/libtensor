@@ -3,6 +3,58 @@
 namespace libtensor {
 
 
+void linalg_base_level6_generic::ijkl_ikp_jpl_x(
+	size_t ni, size_t nj, size_t nk, size_t nl, size_t np,
+	const double *a, size_t ska, size_t sia,
+	const double *b, size_t spb, size_t sjb,
+	double *c, double d) {
+
+	for(size_t i = 0; i < ni; i++) {
+	for(size_t j = 0; j < nj; j++) {
+	for(size_t k = 0; k < nk; k++) {
+
+		const double *a1 = a + i * sia + k * ska;
+		const double *b1 = b + j * sjb;
+		double *c1 = c + ((i * nj + j) * nk + k) * nl;
+
+		for(size_t p = 0; p < np; p++) {
+		for(size_t l = 0; l < nl; l++) {
+			c1[l] += d * a1[p] * b1[p * spb + l];
+		}
+		}
+	}
+	}
+	}
+}
+
+
+void linalg_base_level6_generic::ijkl_ipl_jpk_x(
+	size_t ni, size_t nj, size_t nk, size_t nl, size_t np,
+	const double *a, size_t spa, size_t sia,
+	const double *b, size_t spb, size_t sjb,
+	double *c, double d) {
+
+	for(size_t i = 0; i < ni; i++) {
+	for(size_t j = 0; j < nj; j++) {
+
+		double *c1 = c + (i * nj + j) * nk * nl;
+
+		for(size_t p = 0; p < np; p++) {
+
+			const double *a1 = a + i * sia + p * spa;
+			const double *b1 = b + j * sjb + p * spb;
+
+			for(size_t k = 0; k < nk; k++) {
+			for(size_t l = 0; l < nl; l++) {
+				c1[k * nl + l] += d * a1[l] * b1[k];
+			}
+			}
+		}
+	}
+	}
+}
+
+
 void linalg_base_level6_generic::ijkl_ipkq_pljq_x(
 	size_t ni, size_t nj, size_t nk,
 	size_t nl, size_t np, size_t nq,
@@ -228,6 +280,35 @@ void linalg_base_level6_generic::ijkl_ipql_qkpj_x(
 
 			for(size_t l = 0; l < nl; l++) {
 				c[ijk + l] += d * a1[l] * b1[pj];
+			}
+		}
+	}
+	}
+	}
+	}
+}
+
+
+void linalg_base_level6_generic::ijkl_ipql_qpkj_x(
+	size_t ni, size_t nj, size_t nk,
+	size_t nl, size_t np, size_t nq,
+	const double *a, const double *b, double *c, double d) {
+
+	for(size_t i = 0; i < ni; i++) {
+	for(size_t k = 0; k < nk; k++) {
+	for(size_t p = 0; p < np; p++) {
+	for(size_t q = 0; q < nq; q++) {
+
+		const double *a1 = a + ((i * np + p) * nq + q) * nl;
+		const double *b1 = b + (q * np + p) * nk * nj;
+
+		for(size_t j = 0; j < nj; j++) {
+
+			size_t ijk = ((i * nj + j) * nk + k) * nl;
+			size_t kj = k * nj + j;
+
+			for(size_t l = 0; l < nl; l++) {
+				c[ijk + l] += d * a1[l] * b1[kj];
 			}
 		}
 	}
@@ -472,6 +553,35 @@ void linalg_base_level6_generic::ijkl_piql_qkpj_x(
 }
 
 
+void linalg_base_level6_generic::ijkl_piql_qpkj_x(
+	size_t ni, size_t nj, size_t nk,
+	size_t nl, size_t np, size_t nq,
+	const double *a, const double *b, double *c, double d) {
+
+	for(size_t i = 0; i < ni; i++) {
+	for(size_t k = 0; k < nk; k++) {
+	for(size_t p = 0; p < np; p++) {
+	for(size_t q = 0; q < nq; q++) {
+
+		const double *a1 = a + ((p * ni + i) * nq + q) * nl;
+		const double *b1 = b + (q * np + p) * nk * nj;
+
+		for(size_t j = 0; j < nj; j++) {
+
+			size_t ijk = ((i * nj + j) * nk + k) * nl;
+			size_t kj = k * nj + j;
+
+			for(size_t l = 0; l < nl; l++) {
+				c[ijk + l] += d * a1[l] * b1[kj];
+			}
+		}
+	}
+	}
+	}
+	}
+}
+
+
 void linalg_base_level6_generic::ijkl_pkiq_jplq_x(
 	size_t ni, size_t nj, size_t nk,
 	size_t nl, size_t np, size_t nq,
@@ -678,6 +788,32 @@ void linalg_base_level6_generic::ijkl_pliq_pjqk_x(
 			}
 		}
 		}
+	}
+	}
+	}
+}
+
+
+void linalg_base_level6_generic::ijklm_ipkm_jlp_x(
+	size_t ni, size_t nj, size_t nk,
+	size_t nl, size_t nm, size_t np,
+	const double *a, const double *b, double *c, double d) {
+
+	for(size_t i = 0; i < ni; i++) {
+	for(size_t j = 0; j < nj; j++) {
+	for(size_t k = 0; k < nk; k++) {
+	for(size_t l = 0; l < nl; l++) {
+	for(size_t p = 0; p < np; p++) {
+
+		const double *a1 = a + ((i * np + p) * nk + k) * nm;
+		const double *b1 = b + (j * nl + l) * np;
+		double *c1 = c + (((i * nj + j) * nk + k) * nl + l) * nm;
+
+		for(size_t m = 0; m < nm; m++) {
+			c1[m] += d * a1[m] * b1[p];
+		}
+	}
+	}
 	}
 	}
 	}

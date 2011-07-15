@@ -37,6 +37,14 @@ private:
 	void test_i_ip_p(size_t ni, size_t np, double d = 0.0)
 		throw(libtest::test_exception);
 
+	// c_{ij} = c_{ij} + d a_i b_j
+	void test_ij_i_j(size_t ni, size_t nj, double d = 0.0)
+		throw(libtest::test_exception);
+
+	// c_{ij} = c_{ij} + d a_j b_i
+	void test_ij_j_i(size_t ni, size_t nj, double d = 0.0)
+		throw(libtest::test_exception);
+
 	// c_{ij} = \sum_p a_{pi} b_{pj}
 	void test_ij_pi_pj(size_t ni, size_t nj, size_t np, double d = 0.0)
 		throw(libtest::test_exception);
@@ -69,6 +77,14 @@ private:
 	void test_ij_jp_pi(size_t ni, size_t nj, size_t np, double d = 0.0)
 		throw(libtest::test_exception);
 
+	// c_{ij} = \sum_p a_{p} b_{pji}
+	void test_ij_p_pji(size_t ni, size_t nj, size_t np, double d = 0.0)
+		throw(libtest::test_exception);
+
+	// c_{ij} = \sum_p a_{pji} b_{p}
+	void test_ij_pji_p(size_t ni, size_t nj, size_t np, double d = 0.0)
+		throw(libtest::test_exception);
+
 	// c_{ij} = \sum_{pq} a_{pqi} b_{pjq}
 	void test_ij_pqi_pjq(size_t ni, size_t nj, size_t np, size_t nq,
 		double d = 0.0) throw(libtest::test_exception);
@@ -81,6 +97,10 @@ private:
 	void test_ij_jpq_iqp(size_t ni, size_t nj, size_t np, size_t nq,
 		double d = 0.0) throw(libtest::test_exception);
 
+	// c_{ij} = c_{ij} + d \sum_{pq} a_{jipq} b_{qp}
+	void test_ij_jipq_qp(size_t ni, size_t nj, size_t np, size_t nq,
+		double d = 0.0) throw(libtest::test_exception);
+
 	// c_{ij} = \sum_{pq} a_{pq} b_{ijpq}
 	void test_ij_pq_ijpq(size_t ni, size_t nj, size_t np, size_t nq)
 		throw(libtest::test_exception);
@@ -88,6 +108,70 @@ private:
 	// c_{ij} = c_{ij} + d \sum_{pq} a_{pq} b_{ijpq}
 	void test_ij_pq_ijpq_a(size_t ni, size_t nj, size_t np, size_t nq,
 		double d) throw(libtest::test_exception);
+
+	// c_{ijk} = \sum_{pq} a_{ip} b_{pkj}
+	void test_ijk_ip_pkj(size_t ni, size_t nj, size_t nk, size_t np,
+		double d = 0.0) throw(libtest::test_exception);
+
+	// c_{ijk} = \sum_{pq} a_{pi} b_{pkj}
+	void test_ijk_pi_pkj(size_t ni, size_t nj, size_t nk, size_t np,
+		double d = 0.0) throw(libtest::test_exception);
+
+	// c_{ijk} = \sum_{pq} a_{pik} b_{pj}
+	void test_ijk_pik_pj(size_t ni, size_t nj, size_t nk, size_t np,
+		double d = 0.0) throw(libtest::test_exception);
+
+	// c_{ijk} = \sum_{pq} a_{pj} b_{ipk}
+	void test_ijk_pj_ipk(size_t ni, size_t nj, size_t nk, size_t np,
+		double d = 0.0) throw(libtest::test_exception);
+
+	// c_{ijk} = \sum_{pq} a_{pj} b_{pik}
+	void test_ijk_pj_pik(size_t ni, size_t nj, size_t nk, size_t np,
+		double d = 0.0) throw(libtest::test_exception);
+
+	// c_{ijk} = \sum_{pq} a_{pkj} b_{ip}
+	void test_ijk_pkj_ip(size_t ni, size_t nj, size_t nk, size_t np,
+		double d = 0.0) throw(libtest::test_exception);
+
+	// c_{ijk} = \sum_{pq} a_{pkj} b_{pi}
+	void test_ijk_pkj_pi(size_t ni, size_t nj, size_t nk, size_t np,
+		double d = 0.0) throw(libtest::test_exception);
+
+	// c_{ijk} = c_{ijk} + d \sum_{pq} a_{kjpq} b_{iqp}
+	void test_ijk_kjpq_iqp(size_t ni, size_t nj, size_t nk, size_t np,
+		size_t nq, double d = 0.0) throw(libtest::test_exception);
+
+	// c_{ijk} = c_{ijk} + d \sum_{pq} a_{pkiq} b_{pjq}
+	void test_ijk_pkiq_pjq(size_t ni, size_t nj, size_t nk, size_t np,
+		size_t nq, double d = 0.0) throw(libtest::test_exception);
+
+	// c_{ijk} = c_{ijk} + d \sum_{pq} a_{pqj} b_{iqpk}
+	void test_ijk_pqj_iqpk(size_t ni, size_t nj, size_t nk, size_t np,
+		size_t nq, double d = 0.0) throw(libtest::test_exception);
+
+	// c_{ijk} = c_{ijk} + d \sum_{pq} a_{pqji} b_{qpk}
+	void test_ijk_pqji_qpk(size_t ni, size_t nj, size_t nk, size_t np,
+		size_t nq, double d = 0.0) throw(libtest::test_exception);
+
+	// c_{ijkl} = c_{ijkl} + d \sum_{p} a_{ikp} b_{jpl}
+	void test_ijkl_ikp_jpl(size_t ni, size_t nj, size_t nk, size_t nl,
+		size_t np, double d = 0.0) throw(libtest::test_exception);
+
+	// c_{ijkl} = c_{ijkl} + d \sum_{p} a_{ipk} b_{jpl}
+	void test_ijkl_ipk_jpl(size_t ni, size_t nj, size_t nk, size_t nl,
+		size_t np, double d = 0.0) throw(libtest::test_exception);
+
+	// c_{ijkl} = c_{ijkl} + d \sum_{p} a_{ipl} b_{jpk}
+	void test_ijkl_ipl_jpk(size_t ni, size_t nj, size_t nk, size_t nl,
+		size_t np, double d = 0.0) throw(libtest::test_exception);
+
+	// c_{ijkl} = c_{ijkl} + d \sum_{p} a_{jkp} b_{ipl}
+	void test_ijkl_jkp_ipl(size_t ni, size_t nj, size_t nk, size_t nl,
+		size_t np, double d = 0.0) throw(libtest::test_exception);
+
+	// c_{ijkl} = c_{ijkl} + d \sum_{p} a_{jpl} b_{ipk}
+	void test_ijkl_jpl_ipk(size_t ni, size_t nj, size_t nk, size_t nl,
+		size_t np, double d = 0.0) throw(libtest::test_exception);
 
 	// c_{ijkl} = c_{ijkl} + d \sum_{pq} a_{iplq} b_{kpjq}
 	void test_ijkl_iplq_kpjq(size_t ni, size_t nj, size_t nk, size_t nl,
@@ -131,6 +215,16 @@ private:
 
 	// c_{ijkl} = c_{ijkl} + d \sum_{pq} a_{piql} b_{pkqj}
 	void test_ijkl_piql_pkqj(size_t ni, size_t nj, size_t nk, size_t nl,
+		size_t np, size_t nq, double d = 0.0)
+		throw(libtest::test_exception);
+
+	// c_{ijkl} = c_{ijkl} + d \sum_{pq} a_{pqkj} b_{iqpl}
+	void test_ijkl_pqkj_iqpl(size_t ni, size_t nj, size_t nk, size_t nl,
+		size_t np, size_t nq, double d = 0.0)
+		throw(libtest::test_exception);
+
+	// c_{ijkl} = c_{ijkl} + d \sum_{pq} a_{pqkj} b_{qipl}
+	void test_ijkl_pqkj_qipl(size_t ni, size_t nj, size_t nk, size_t nl,
 		size_t np, size_t nq, double d = 0.0)
 		throw(libtest::test_exception);
 
@@ -188,6 +282,26 @@ private:
 
 	// c_{ijkl} = a_{ij} b_{lk}
 	void test_ijkl_ij_lk(size_t ni, size_t nj, size_t nk, size_t nl)
+		throw(libtest::test_exception);
+
+	// c_{ijklm} = c_{ijklm} + d \sum_{p} a_{ikp} b_{jpml}
+	void test_ijklm_ikp_jpml(size_t ni, size_t nj, size_t nk, size_t nl,
+		size_t nm, size_t np, double d = 0.0)
+		throw(libtest::test_exception);
+
+	// c_{ijklm} = c_{ijklm} + d \sum_{p} a_{ipkm} b_{jpl}
+	void test_ijklm_ipkm_jpl(size_t ni, size_t nj, size_t nk, size_t nl,
+		size_t nm, size_t np, double d = 0.0)
+		throw(libtest::test_exception);
+
+	// c_{ijklm} = c_{ijklm} + d \sum_{p} a_{jlp} b_{ipkm}
+	void test_ijklm_jlp_ipkm(size_t ni, size_t nj, size_t nk, size_t nl,
+		size_t nm, size_t np, double d = 0.0)
+		throw(libtest::test_exception);
+
+	// c_{ijklmn} = c_{ijklmn} + d \sum_{p} a_{kjmp} b_{ipln}
+	void test_ijklmn_kjmp_ipln(size_t ni, size_t nj, size_t nk, size_t nl,
+		size_t nm, size_t nn, size_t np, double d = 0.0)
 		throw(libtest::test_exception);
 
 };
