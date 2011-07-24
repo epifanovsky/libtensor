@@ -25,10 +25,12 @@ set(SRC
 	tod/kernels/kern_mul_i_p_pi.C
 	tod/kernels/kern_mul_i_pi_p.C
 	tod/kernels/kern_mul_i_x_i.C
+	tod/kernels/kern_mul_ij_i_j.C
 	tod/kernels/kern_mul_ij_ip_jp.C
 	tod/kernels/kern_mul_ij_ip_pj.C
 	tod/kernels/kern_mul_ij_ipq_jqp.C
 	tod/kernels/kern_mul_ij_ipq_pjq.C
+	tod/kernels/kern_mul_ij_j_i.C
 	tod/kernels/kern_mul_ij_jipq_qp.C
 	tod/kernels/kern_mul_ij_jp_ip.C
 	tod/kernels/kern_mul_ij_jp_pi.C
@@ -51,21 +53,33 @@ set(SRC
 	tod/kernels/kern_mul_ijk_kjpq_iqp.C
 	tod/kernels/kern_mul_ijk_kp_ipj.C
 	tod/kernels/kern_mul_ijk_kp_jpi.C
+    tod/kernels/kern_mul_ijk_pi_pkj.C
+    tod/kernels/kern_mul_ijk_pik_pj.C
 	tod/kernels/kern_mul_ijk_piq_jpkq.C
 	tod/kernels/kern_mul_ijk_piq_jpqk.C
 	tod/kernels/kern_mul_ijk_piq_pjkq.C
 	tod/kernels/kern_mul_ijk_piq_pjqk.C
+    tod/kernels/kern_mul_ijk_pj_ipk.C
+    tod/kernels/kern_mul_ijk_pj_pik.C
 	tod/kernels/kern_mul_ijk_pji_pk.C
 	tod/kernels/kern_mul_ijk_pjq_ipqk.C
 	tod/kernels/kern_mul_ijk_pjq_piqk.C
 	tod/kernels/kern_mul_ijk_pjqi_qpk.C
 	tod/kernels/kern_mul_ijk_pkiq_pjq.C
 	tod/kernels/kern_mul_ijk_pkj_ip.C
+	tod/kernels/kern_mul_ijk_pkj_pi.C
 	tod/kernels/kern_mul_ijk_pkq_ipqj.C
 	tod/kernels/kern_mul_ijk_pkq_piqj.C
+	tod/kernels/kern_mul_ijk_pqj_iqpk.C
+    tod/kernels/kern_mul_ijk_pqj_qipk.C
 	tod/kernels/kern_mul_ijk_pqji_pqk.C
 	tod/kernels/kern_mul_ijk_pqji_qpk.C
+    tod/kernels/kern_mul_ijkl_ijp_plk.C
+    tod/kernels/kern_mul_ijkl_ikp_jpl.C
+    tod/kernels/kern_mul_ijkl_ipk_jpl.C
     tod/kernels/kern_mul_ijkl_ipl_jpk.C
+    tod/kernels/kern_mul_ijkl_jkp_ipl.C
+    tod/kernels/kern_mul_ijkl_jpl_ipk.C
 	tod/kernels/kern_mul_ijkl_pkiq_jplq.C
 	tod/kernels/kern_mul_ijkl_pkiq_jpql.C
 	tod/kernels/kern_mul_ijkl_pkiq_pjlq.C
@@ -83,6 +97,10 @@ set(SRC
 	tod/kernels/kern_mul_ijkl_pljq_piqk.C
 	tod/kernels/kern_mul_ijkl_pqkj_iqpl.C
 	tod/kernels/kern_mul_ijkl_pqkj_qipl.C
+    tod/kernels/kern_mul_ijklm_ikp_jpml.C
+	tod/kernels/kern_mul_ijklm_ipkm_jpl.C
+    tod/kernels/kern_mul_ijklm_jlp_ipkm.C
+    tod/kernels/kern_mul_ijklmn_kjmp_ipln.C
 	tod/kernels/kern_mul_x_p_p.C
 	tod/kernels/kern_mul_x_pq_qp.C
 )

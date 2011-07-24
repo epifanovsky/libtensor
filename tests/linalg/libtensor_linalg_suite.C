@@ -25,6 +25,7 @@ libtensor_linalg_suite::libtensor_linalg_suite() :
 
 	add_test("linalg_ij_ipq_jqp_x", m_utf_linalg_ij_ipq_jqp_x);
 	add_test("linalg_ijk_ip_pkj_x", m_utf_linalg_ijk_ip_pkj_x);
+	add_test("linalg_ijk_pi_pkj_x", m_utf_linalg_ijk_pi_pkj_x);
 
 	add_test("linalg_ijk_ipq_kjqp_x", m_utf_linalg_ijk_ipq_kjqp_x);
 	add_test("linalg_ijk_ipkq_jpq_x", m_utf_linalg_ijk_ipkq_jpq_x);
@@ -32,6 +33,7 @@ libtensor_linalg_suite::libtensor_linalg_suite() :
 	add_test("linalg_ijk_piqk_jpq_x", m_utf_linalg_ijk_piqk_jpq_x);
 	add_test("linalg_ijk_pkiq_pjq_x", m_utf_linalg_ijk_pkiq_pjq_x);
 	add_test("linalg_ijkl_ikp_jpl_x", m_utf_linalg_ijkl_ikp_jpl_x);
+	add_test("linalg_ijkl_ipj_plk_x", m_utf_linalg_ijkl_ipj_plk_x);
 	add_test("linalg_ijkl_ipl_jpk_x", m_utf_linalg_ijkl_ipl_jpk_x);
 	add_test("linalg_ijkl_ipl_kpj_x", m_utf_linalg_ijkl_ipl_kpj_x);
 
@@ -60,6 +62,8 @@ libtensor_linalg_suite::libtensor_linalg_suite() :
 	add_test("linalg_ijkl_pliq_jpkq_x", m_utf_linalg_ijkl_pliq_jpkq_x);
 	add_test("linalg_ijkl_pliq_jpqk_x", m_utf_linalg_ijkl_pliq_jpqk_x);
 	add_test("linalg_ijkl_pliq_pjqk_x", m_utf_linalg_ijkl_pliq_pjqk_x);
+
+	add_test("linalg_ijklm_ipkm_jlp_x", m_utf_linalg_ijklm_ipkm_jlp_x);
 }
 
 

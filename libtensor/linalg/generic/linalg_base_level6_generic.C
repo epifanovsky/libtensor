@@ -794,4 +794,30 @@ void linalg_base_level6_generic::ijkl_pliq_pjqk_x(
 }
 
 
+void linalg_base_level6_generic::ijklm_ipkm_jlp_x(
+	size_t ni, size_t nj, size_t nk,
+	size_t nl, size_t nm, size_t np,
+	const double *a, const double *b, double *c, double d) {
+
+	for(size_t i = 0; i < ni; i++) {
+	for(size_t j = 0; j < nj; j++) {
+	for(size_t k = 0; k < nk; k++) {
+	for(size_t l = 0; l < nl; l++) {
+	for(size_t p = 0; p < np; p++) {
+
+		const double *a1 = a + ((i * np + p) * nk + k) * nm;
+		const double *b1 = b + (j * nl + l) * np;
+		double *c1 = c + (((i * nj + j) * nk + k) * nl + l) * nm;
+
+		for(size_t m = 0; m < nm; m++) {
+			c1[m] += d * a1[m] * b1[p];
+		}
+	}
+	}
+	}
+	}
+	}
+}
+
+
 } // namespace libtensor

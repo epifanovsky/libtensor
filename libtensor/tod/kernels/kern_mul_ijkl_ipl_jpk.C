@@ -1,5 +1,6 @@
 #include "../../linalg/linalg.h"
 #include "kern_mul_ijkl_ipl_jpk.h"
+#include "kern_mul_ijklm_ipkm_jpl.h"
 
 namespace libtensor {
 
@@ -9,13 +10,14 @@ const char *kern_mul_ijkl_ipl_jpk::k_clazz = "kern_mul_ijkl_ipl_jpk";
 
 void kern_mul_ijkl_ipl_jpk::run(const loop_registers<2, 1> &r) {
 
+/*
 	if(m_skc == m_nl && m_sjc == m_skc * m_nk && m_sic == m_sjc * m_nj) {
 
 		linalg::ijkl_ipl_jpk_x(m_ni, m_nj, m_nk, m_nl, m_np, r.m_ptra[0],
 			m_spa, m_sia, r.m_ptra[1], m_spb, m_sjb, r.m_ptrb[0],
 			m_d);
 		return;
-	}
+	}*/
 
 	const double *pa = r.m_ptra[0];
 	double *pc = r.m_ptrb[0];
@@ -56,7 +58,7 @@ kernel_base<2, 1> *kern_mul_ijkl_ipl_jpk::match(const kern_mul_ijk_ipk_pj &z,
 		if(i->stepa(0) == 0 && i->stepa(1) > 0 && i->stepb(0) > 0) {
 			if(i->stepa(1) % (z.m_spb * z.m_np)) continue;
 			if(i->stepb(0) % (z.m_sjc * z.m_nj)) continue;
-			if(z.m_sic % i->weight()) continue;
+			if(z.m_sic % (i->weight() * i->stepb(0))) continue;
 			if(sjb_min == 0 || sjb_min > i->stepa(1)) {
 				ij = i; sjb_min = i->stepa(1);
 			}
@@ -81,6 +83,8 @@ kernel_base<2, 1> *kern_mul_ijkl_ipl_jpk::match(const kern_mul_ijk_ipk_pj &z,
 	in.splice(out.begin(), out, ij);
 
 	kernel_base<2, 1> *kern = 0;
+
+	if(kern = kern_mul_ijklm_ipkm_jpl::match(zz, in, out)) return kern;
 
 	return new kern_mul_ijkl_ipl_jpk(zz);
 }

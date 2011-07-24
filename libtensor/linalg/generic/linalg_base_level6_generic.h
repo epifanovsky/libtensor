@@ -257,6 +257,14 @@ struct linalg_base_level6_generic {
 		size_t nl, size_t np, size_t nq,
 		const double *a, const double *b, double *c, double d);
 
+	/**	\brief \f$ c_{ijklm} = c_{ijklm} +
+			\sum_{p} a_{ipkm} b_{jlp} d \f$
+	 **/
+	static void ijklm_ipkm_jlp_x(
+		size_t ni, size_t nj, size_t nk,
+		size_t nl, size_t nm, size_t np,
+		const double *a, const double *b, double *c, double d);
+
 };
 
 

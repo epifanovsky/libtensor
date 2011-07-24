@@ -132,6 +132,27 @@ void linalg_base_level5_generic::ijk_piqk_jpq_x(
 }
 
 
+void linalg_base_level5_generic::ijkl_ipj_plk_x(
+	size_t ni, size_t nj, size_t nk, size_t nl, size_t np,
+	const double *a, const double *b, double *c, double d) {
+
+	for(size_t p = 0; p < np; p++) {
+		for(size_t i = 0; i < ni; i++)
+		for(size_t j = 0; j < nj; j++)
+		for(size_t k = 0; k < nk; k++) {
+
+			size_t ijk = ((i * nj + j) * nk + k) * nl;
+			size_t ipj = (i * np + p) * nj + j;
+			const double *b1 = b + p * nl * nk + k;
+
+			for(size_t l = 0; l < nl; l++) {
+				c[ijk + l] += d * a[ipj] * b1[l * nk];
+			}
+		}
+	}
+}
+
+
 void linalg_base_level5_generic::ijkl_ipl_kpj_x(
 	size_t ni, size_t nj, size_t nk, size_t nl, size_t np,
 	const double *a, const double *b, double *c, double d) {

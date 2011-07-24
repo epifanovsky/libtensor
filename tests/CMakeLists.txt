@@ -154,12 +154,14 @@ set(SRC_LINALG
 	linalg/linalg_ij_pji_p_x_test.C
 	linalg/linalg_ij_ipq_jqp_x_test.C
 	linalg/linalg_ijk_ip_pkj_x_test.C
+	linalg/linalg_ijk_pi_pkj_x_test.C
 	linalg/linalg_ijk_ipq_kjqp_x_test.C
 	linalg/linalg_ijk_ipkq_jpq_x_test.C
 	linalg/linalg_ijk_pikq_jpq_x_test.C
 	linalg/linalg_ijk_piqk_jpq_x_test.C
     linalg/linalg_ijk_pkiq_pjq_x_test.C
     linalg/linalg_ijkl_ikp_jpl_x_test.C
+    linalg/linalg_ijkl_ipj_plk_x_test.C
     linalg/linalg_ijkl_ipl_jpk_x_test.C
 	linalg/linalg_ijkl_ipl_kpj_x_test.C
 	linalg/linalg_ijkl_ipkq_pljq_x_test.C
@@ -187,6 +189,7 @@ set(SRC_LINALG
 	linalg/linalg_ijkl_pliq_jpkq_x_test.C
 	linalg/linalg_ijkl_pliq_jpqk_x_test.C
 	linalg/linalg_ijkl_pliq_pjqk_x_test.C
+	linalg/linalg_ijklm_ipkm_jlp_x_test.C
 )
 
 set(SRC_IFACE
