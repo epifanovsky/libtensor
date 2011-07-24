@@ -59,24 +59,29 @@ public:
 template<size_t N, size_t M, size_t K, typename T>
 void so_merge<N, M, K, T>::perform(symmetry<N - M + K, T> &sym2) {
 
-	for(typename symmetry<N, T>::iterator i = m_sym1.begin();
-		i != m_sym1.end(); i++) {
+#ifdef LIBTENSOR_DEBUG
+    static const char *method = "perform(symmetry<N - M + K, T> &)";
+    if (m_msk_set != K) {
+        bad_symmetry(g_ns, k_clazz, method, "Masks not set properly.");
+    }
+#endif
 
-		const symmetry_element_set<N, T> &set1 =
-			m_sym1.get_subset(i);
+	for(typename symmetry<N, T>::iterator i = m_sym1.begin();
+	        i != m_sym1.end(); i++) {
+
+		const symmetry_element_set<N, T> &set1 = m_sym1.get_subset(i);
+
 		symmetry_element_set<N - M + K, T> set2(set1.get_id());
-		symmetry_operation_params<operation_t> params(
-			set1, m_msk, set2);
+		symmetry_operation_params<operation_t> params(set1, m_msk, set2);
 		dispatcher_t::get_instance().invoke(set1.get_id(), params);
 
 		for(typename symmetry_element_set<N - M + K, T>::iterator j =
-			set2.begin(); j != set2.end(); j++) {
+		        set2.begin(); j != set2.end(); j++) {
 
 			sym2.insert(set2.get_elem(j));
 		}
 	}
 }
-
 
 template<size_t N, size_t M, size_t K, typename T>
 class symmetry_operation_params< so_merge<N, M, K, T> > :
@@ -84,15 +89,17 @@ class symmetry_operation_params< so_merge<N, M, K, T> > :
 
 public:
 	const symmetry_element_set<N, T> &grp1; //!< Symmetry group
-	mask<N> msk[K]; //!< Mask
-	symmetry_element_set<N - M + 1, T> &grp2;
+	mask<N> msk[K]; //!< Masks
+	block_index_space<N - M + K> bis; //!< Block index space of result
+	symmetry_element_set<N - M + K, T> &grp2;
 public:
 	symmetry_operation_params(
 		const symmetry_element_set<N, T> &grp1_,
 		const mask<N> (&msk_)[K],
-		symmetry_element_set<N - M + 1, T> &grp2_) :
+		const block_index_space<N - M + K, T> bis_,
+		symmetry_element_set<N - M + K, T> &grp2_) :
 
-		grp1(grp1_), grp2(grp2_) {
+		grp1(grp1_), grp2(grp2_), bis(bis_) {
 
 	    for (size_t i = 0; i < K; i++) msk[i] = msk_[i];
 	}
