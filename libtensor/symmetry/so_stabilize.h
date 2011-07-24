@@ -103,9 +103,12 @@ public:
 template<size_t N, size_t M, size_t K, typename T>
 void so_stabilize<N, M, K, T>::perform(symmetry<N - M, T> &sym2) {
 
-	if (m_msk_set != K)
-		throw_exc(k_clazz, "perform(symmetry<N - M, T> &)",
-				"Masks not set properly.");
+#ifdef LIBTENSOR_DEBUG
+    static const char *method = "perform(symmetry<N - M, T> &)";
+    if (m_msk_set != K) {
+        bad_symmetry(g_ns, k_clazz, method, "Masks not set properly.");
+    }
+#endif
 
 	for(typename symmetry<N, T>::iterator i = m_sym1.begin();
 		i != m_sym1.end(); i++) {

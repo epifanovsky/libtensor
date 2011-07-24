@@ -21,16 +21,16 @@ namespace libtensor {
 	\ingroup libtensor_symmetry
  **/
 template<size_t N, size_t M, size_t K, typename T>
-class symmetry_operation_impl< so_stabilize<N, M, K, T>, se_perm<N, T> > :
+class symmetry_operation_impl< so_stabilize<N, M, K, T>, se_perm<N - M, T> > :
 	public symmetry_operation_impl_base<
-		so_stabilize<N, M, K, T>, se_perm<N, T> > {
+		so_stabilize<N, M, K, T>, se_perm<N - M, T> > {
 
 public:
 	static const char *k_clazz; //!< Class name
 
 public:
 	typedef so_stabilize<N, M, K, T> operation_t;
-	typedef se_perm<N, T> element_t;
+	typedef se_perm<N - M, T> element_t;
 	typedef symmetry_operation_params<operation_t>
 		symmetry_operation_params_t;
 
@@ -77,9 +77,11 @@ void symmetry_operation_impl< so_stabilize<N, M, K, T>,
 			"params.msk");
 
 	adapter_t adapter1(params.grp1);
-	permutation_group<N, T> group1(adapter1);
-	permutation_group<N - M, T> group2;
-	group1.stabilize(params.msk, group2);
+	permutation_group<N, T> grp1(adapter1);
+	permutation_group<N, T> grp2;
+	group1.stabilize(params.msk, grp2);
+
+	symmetry_element_set<N, T> set()
 	group2.convert(params.grp2);
 }
 
