@@ -113,23 +113,25 @@ public:
     template<size_t M>
     void project_down(const mask<N> &msk, permutation_group<M, T> &g2);
 
-    /** \brief Generates a subgroup of all permutations which stabilize
-			the set of N - M masked elements the %mask must have.
-	 	\param msk Masks the elements to be stabilized (N - M times true)
-		\param g2 Resulting subgroup
-     **/
-    template<size_t M>
-    void stabilize(const mask<N> &msk, permutation_group<M, T> &g2);
+    /** \brief Generates a subgroup that stabilize the set of masked indexes.
+	 	\param msk Set of elements to be stabilized.
+		\param g2 Resulting subgroup.
 
-    /** \brief Generates a subgroup of all permutations that setwise stabilize
-			the given K sets of masked elements. Each %mask must have different
-			elements masked than any other. The total number of masked elements
-			must be N - M.
-	 	\param msk K masks of elements to be stabilized
-		\param g2 Resulting subgroup
+		The resulting subgroup will contain all permutations that map the set
+		of masked indexes onto itself.
      **/
-    template<size_t M, size_t K>
-    void stabilize(const mask<N> (&msk)[K], permutation_group<M, T> &g2);
+    void stabilize(const mask<N> &msk, permutation_group<N, T> &g2);
+
+    /** \brief Generates a subgroup that set-wise stabilizes the K sets of
+             masked indexes. All masks must be disjoint.
+	 	\param msk K masks of indexes to be stabilized
+		\param g2 Resulting subgroup
+
+		The resulting subgroup will contain all permutations that map each of
+		the sets of indexes onto itself or onto another set of the same size.
+     **/
+    template<size_t K>
+    void stabilize(const mask<N> (&msk)[K], permutation_group<N, T> &g2);
 
     void permute(const permutation<N> &perm);
 
@@ -160,10 +162,16 @@ private:
     void permute_branching(branching &br, const permutation<N> &perm);
 
     /**	\brief Computes a generating set for the subgroup that stabilizes
-			one or more sets given by msk
+			a set given by msk
 		\param br Branching representing the group
 		\param msk Sequence specifying the sets to stabilize
 		\param gs Generating set for the subgroup
+
+		The mask indicates set which is to be stabilized as follows
+		- Elements with identical numbers can be permuted
+		- Sets of elements with numbers other than zero can be permuted as a
+		  whole
+
      **/
     void make_setstabilizer(const branching &br, const sequence<N, size_t> &msk,
             perm_list_t &gs);
@@ -315,10 +323,9 @@ void permutation_group<N, T>::project_down(
 
 }
 
-
-template<size_t N, typename T> template<size_t M>
+template<size_t N, typename T>
 void permutation_group<N, T>::stabilize(
-        const mask<N> &msk, permutation_group<M, T> &g2) {
+        const mask<N> &msk, permutation_group<N, T> &g2) {
 
     static const char *method =
             "stabilize<M>(const mask<N>&, permutation_group<M, T>&)";
@@ -329,15 +336,14 @@ void permutation_group<N, T>::stabilize(
     stabilize(msks, g2);
 }
 
-template<size_t N, typename T> template<size_t M, size_t K>
+template<size_t N, typename T> template<size_t K>
 void permutation_group<N, T>::stabilize(
-        const mask<N> (&msk)[K], permutation_group<M, T> &g2) {
+        const mask<N> (&msk)[K], permutation_group<N, T> &g2) {
 
     static const char *method =
-            "stabilize<M>(const mask<N>&, permutation_group<N - M, T>&)";
+            "stabilize<M>(const mask<N> &[K], permutation_group<N, T>&)";
 
     sequence<N, size_t> tm(0);
-    register size_t nm = 0;
     for(register size_t k = 0; k < K; k++) {
         const mask<N> &msk_k = msk[k];
         for (register size_t i = 0; i < N; i++) {
@@ -347,11 +353,8 @@ void permutation_group<N, T>::stabilize(
                         "Index masked twice.");
 
             tm[i] = k + 1;
-            nm++;
         }
     }
-    if(nm != N - M)
-        throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__, "msk");
 
     // generating set of G(P)
     perm_list_t gs;
@@ -360,24 +363,7 @@ void permutation_group<N, T>::stabilize(
     for (typename perm_list_t::const_iterator pi = gs.begin();
             pi != gs.end(); pi++) {
 
-        sequence<N, size_t> seq1a(0), seq2a(0);
-        sequence<M, size_t> seq1b(0), seq2b(0);
-        for (size_t i = 0; i < N; i++) seq1a[i] = seq2a[i] = i;
-        pi->first.apply(seq2a);
-        for (size_t i = 0, j = 0; i < N; i++) {
-            if (tm[i] != 0) continue;
-            seq1b[j] = seq1a[i];
-            seq2b[j] = seq2a[i];
-            j++;
-        }
-        permutation_builder<M> pb(seq2b, seq1b);
-        // if the resulting permutation is the identity just skip.
-        if (pb.get_perm().is_identity())
-            if (pi->second) continue;
-            else throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
-                    "Illegal result permutation group.");
-
-        g2.add_orbit(pi->second, pb.get_perm());
+        g2.add_orbit(pi->second, pi->first);
 
     }
     gs.clear();
@@ -791,9 +777,26 @@ void permutation_group<N, T>::make_setstabilizer(
             sequence<N, size_t> seq(0);
             for (size_t k = 0; k < N; k++) seq[k] = k;
             g.first.apply(seq);
+
+            mask<N> done;
             size_t l = 0;
-            for (; l < N; l++)
-                if (msk[l] && ! msk[seq[l]]) break;
+            for (; l < N; l++) {
+                if (done[l]) continue;
+
+                if (msk[seq[l]] == 0) {
+                    if (msk[l] != 0) break;
+                    else continue;
+                }
+
+                size_t m = l + 1;
+                for (; m < N; m++) {
+                    if (msk[m] != msk[l]) continue;
+                    done[m] = true;
+
+                    if (msk[seq[m]] != msk[seq[l]]) break;
+                }
+                if (m != N) break;
+            }
 
             if (l == N)	gs.push_back(g);
         }

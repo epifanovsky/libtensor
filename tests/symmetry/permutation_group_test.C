@@ -694,28 +694,26 @@ throw(libtest::test_exception) {
         set1.insert(se_perm_t(p1, symm));
         set1.insert(se_perm_t(p2, symm));
 
-        permutation_group<6, double> pg6(set1);
-
-        permutation_group<4, double> pg4;
+        permutation_group<6, double> pg1(set1), pg2;
         mask<6> msk; msk[1] = true; msk[3] = true;
-        pg6.stabilize(msk, pg4);
+        pg1.stabilize(msk, pg2);
 
-        permutation<4> p1b, p2b, p3b;
-        p1b.permute(0, 1).permute(1, 2).permute(2, 3);
-        p2b.permute(0, 1);
-        p3b.permute(1, 2).permute(2, 3);
+        permutation<6> p1b, p2b, p3b;
+        p1b.permute(0, 2).permute(2, 4).permute(4, 5);
+        p2b.permute(0, 2);
+        p3b.permute(2, 4).permute(4, 5);
 
-        if(!pg4.is_member(true, p1b)) {
+        if(!pg2.is_member(true, p1b)) {
             fail_test(testname, __FILE__, __LINE__,
-                    "!pg4.is_member(true, p1)");
+                    "!pg2.is_member(true, p1b)");
         }
-        if(!pg4.is_member(true, p2b)) {
+        if(!pg2.is_member(true, p2b)) {
             fail_test(testname, __FILE__, __LINE__,
-                    "!pg4.is_member(true, p2)");
+                    "!pg2.is_member(true, p2b)");
         }
-        if(!pg4.is_member(true, p3b)) {
+        if(!pg2.is_member(true, p3b)) {
             fail_test(testname, __FILE__, __LINE__,
-                    "!pg4.is_member(true, p3)");
+                    "!pg2.is_member(true, p3b)");
         }
 
     } catch(exception &e) {
@@ -723,7 +721,7 @@ throw(libtest::test_exception) {
     }
 }
 
-/**	\test Stabilize element set {1,3} in group [ijkl] = [[klij]
+/**	\test Stabilize element set {1,3} in group [ijkl] = [klij]
  **/
 void permutation_group_test::test_stabilize_2()
 throw(libtest::test_exception) {
@@ -737,16 +735,15 @@ throw(libtest::test_exception) {
 
         bool symm = true;
 
+        permutation<4> p1; p1.permute(0, 2).permute(1, 3);
         symmetry_element_set<4, double> set1(se_perm_t::k_sym_type);
-        set1.insert(se_perm_t(permutation<4>().permute(0, 2).permute(1, 3), symm));
-        permutation_group<4, double> pg4(set1);
+        set1.insert(se_perm_t(p1, symm));
 
-        permutation_group<2, double> pg2;
+        permutation_group<4, double> pg1(set1), pg2;
+
         mask<4> msk; msk[1] = true; msk[3] = true;
-        pg4.stabilize(msk, pg2);
+        pg1.stabilize(msk, pg2);
 
-        permutation<2> p1;
-        p1.permute(0, 1);
 
         if(!pg2.is_member(true, p1)) {
             fail_test(testname, __FILE__, __LINE__,
@@ -773,22 +770,26 @@ throw(libtest::test_exception) {
 
         bool symm = true;
 
-        symmetry_element_set<4, double> set1(se_perm_t::k_sym_type);
-        set1.insert(se_perm_t(permutation<4>().permute(0, 1), symm));
-        set1.insert(se_perm_t(permutation<4>().permute(2, 3), symm));
-        set1.insert(se_perm_t(permutation<4>().permute(0, 2).permute(1, 3), symm));
-        permutation_group<4, double> pg4(set1);
-
-        permutation_group<2, double> pg2;
-        mask<4> msk; msk[1] = true; msk[2] = true;
-        pg4.stabilize(msk, pg2);
-
-        permutation<2> p1;
+        permutation<4> p1, p2, p3;
         p1.permute(0, 1);
+        p2.permute(2, 3);
+        p3.permute(0, 2).permute(1, 3);
+        symmetry_element_set<4, double> set1(se_perm_t::k_sym_type);
+        set1.insert(se_perm_t(p1, symm));
+        set1.insert(se_perm_t(p2, symm));
+        set1.insert(se_perm_t(p3, true));
 
-        if(!pg2.is_member(true, p1)) {
+        permutation_group<4, double> pg1(set1), pg2;
+
+        mask<4> msk; msk[1] = true; msk[2] = true;
+        pg1.stabilize(msk, pg2);
+
+        permutation<4> p1b;
+        p1b.permute(0, 3).permute(1, 2);
+
+        if(! pg2.is_member(true, p1b)) {
             fail_test(testname, __FILE__, __LINE__,
-                    "!pg2.is_member(true, p1)");
+                    "!pg2.is_member(true, p1b)");
         }
 
     } catch(exception &e) {
@@ -809,22 +810,22 @@ throw(libtest::test_exception) {
 
     try {
 
-        symmetry_element_set<4, double> set1(se_perm_t::k_sym_type);
-        set1.insert(se_perm_t(permutation<4>().permute(0, 1), false));
-        set1.insert(se_perm_t(permutation<4>().permute(2, 3), false));
-        set1.insert(se_perm_t(permutation<4>().permute(0, 2).permute(1, 3), true));
-        permutation_group<4, double> pg4(set1);
-
-        permutation_group<2, double> pg2;
-        mask<4> msk; msk[0] = true; msk[2] = true;
-        pg4.stabilize(msk, pg2);
-
-        permutation<2> p1;
+        permutation<4> p1, p2, p3;
         p1.permute(0, 1);
+        p2.permute(2, 3);
+        p3.permute(0, 2).permute(1, 3);
+        symmetry_element_set<4, double> set1(se_perm_t::k_sym_type);
+        set1.insert(se_perm_t(p1, false));
+        set1.insert(se_perm_t(p2, false));
+        set1.insert(se_perm_t(p3, true));
+        permutation_group<4, double> pg1(set1), pg2;
 
-        if(!pg2.is_member(true, p1)) {
+        mask<4> msk; msk[0] = true; msk[2] = true;
+        pg1.stabilize(msk, pg2);
+
+        if(!pg2.is_member(true, p3)) {
             fail_test(testname, __FILE__, __LINE__,
-                    "!pg2.is_member(true, p1)");
+                    "!pg2.is_member(true, p3)");
         }
 
     } catch(exception &e) {
@@ -843,30 +844,32 @@ throw(libtest::test_exception) {
 
     typedef se_perm<4, double> se_perm_t;
 
-    symmetry_element_set<4, double> set1(se_perm_t::k_sym_type);
-    set1.insert(se_perm_t(permutation<4>().permute(0, 1), false));
-    set1.insert(se_perm_t(permutation<4>().permute(2, 3), false));
-    set1.insert(se_perm_t(permutation<4>().permute(0, 2).permute(1, 3), true));
-    permutation_group<4, double> pg4(set1);
-
-    permutation_group<2, double> pg2;
-    mask<4> msk; msk[0] = true; msk[1] = true;
-
-    bool failed = false;
     try {
 
-        pg4.stabilize(msk, pg2);
+        permutation<4> p1, p2, p3;
+        p1.permute(0, 1);
+        p2.permute(2, 3);
+        p3.permute(0, 2).permute(1, 3);
+        symmetry_element_set<4, double> set1(se_perm_t::k_sym_type);
+        set1.insert(se_perm_t(p1, false));
+        set1.insert(se_perm_t(p2, false));
+        set1.insert(se_perm_t(p3, true));
+        permutation_group<4, double> pg1(set1), pg2;
 
-    }
-    catch (exception & e) {
-        failed = true;
-    }
+        mask<4> msk; msk[0] = true; msk[1] = true;
 
-    if(!failed) {
-        fail_test(testname, __FILE__, __LINE__,
-                "Stabilized two anti-symmetrized indexes.");
-    }
+        pg1.stabilize(msk, pg2);
 
+        if(!pg2.is_member(false, p1)) {
+            fail_test(testname, __FILE__, __LINE__, "!pg2.is_member(true, p1)");
+        }
+        if(!pg2.is_member(false, p2)) {
+            fail_test(testname, __FILE__, __LINE__, "!pg2.is_member(true, p2)");
+        }
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
 }
 
 /**	\test Stabilize element set {2, 3, 4} in group S5
@@ -885,13 +888,12 @@ throw(libtest::test_exception) {
         set1.insert(se_perm_t(permutation<5>().permute(0, 1).permute(1, 2)
                 .permute(2, 3).permute(3, 4), true));
         set1.insert(se_perm_t(permutation<5>().permute(3, 4), true));
-        permutation_group<5, double> pg5(set1);
+        permutation_group<5, double> pg1(set1), pg2;
 
-        permutation_group<2, double> pg2;
         mask<5> msk; msk[2] = true; msk[3] = true; msk[4] = true;
-        pg5.stabilize(msk, pg2);
+        pg1.stabilize(msk, pg2);
 
-        permutation<2> p1;
+        permutation<5> p1;
         p1.permute(0, 1);
 
         if(!pg2.is_member(true, p1)) {
@@ -917,22 +919,25 @@ throw(libtest::test_exception) {
 
     try {
 
-        symmetry_element_set<4, double> set1(se_perm_t::k_sym_type);
-        set1.insert(se_perm_t(permutation<4>().permute(0, 1), false));
-        set1.insert(se_perm_t(permutation<4>().permute(2, 3), false));
-        set1.insert(se_perm_t(permutation<4>().permute(0, 2).permute(1, 3), true));
-        permutation_group<4, double> pg4(set1);
-
-        permutation_group<2, double> pg2;
-        mask<4> msk; msk[0] = true; msk[3] = true;
-        pg4.stabilize(msk, pg2);
-
-        permutation<2> p1;
+        permutation<4> p1, p2, p3;
         p1.permute(0, 1);
+        p2.permute(2, 3);
+        p3.permute(0, 2).permute(1, 3);
+        symmetry_element_set<4, double> set1(se_perm_t::k_sym_type);
+        set1.insert(se_perm_t(p1, false));
+        set1.insert(se_perm_t(p2, false));
+        set1.insert(se_perm_t(p3, true));
+        permutation_group<4, double> pg1(set1), pg2;
 
-        if(!pg2.is_member(true, p1)) {
+        mask<4> msk; msk[0] = true; msk[3] = true;
+        pg1.stabilize(msk, pg2);
+
+        permutation<4> p1b;
+        p1b.permute(0, 3).permute(1, 2);
+
+        if(!pg2.is_member(true, p1b)) {
             fail_test(testname, __FILE__, __LINE__,
-                    "!pg2.is_member(true, p1)");
+                    "!pg2.is_member(true, p1b)");
         }
 
     } catch(exception &e) {
@@ -950,27 +955,28 @@ throw(libtest::test_exception) {
 
     try {
 
+        permutation<6> p1, p2, p3, p4, p5;
+        p1.permute(0, 1);
+        p2.permute(1, 2);
+        p3.permute(3, 4);
+        p4.permute(4, 5);
+        p5.permute(0, 3).permute(1, 4).permute(2, 5);
         symmetry_element_set<6, double> set1(se_perm_t::k_sym_type);
-        set1.insert(se_perm_t(permutation<6>().permute(0, 1), true));
-        set1.insert(se_perm_t(permutation<6>().permute(1, 2), true));
-        set1.insert(se_perm_t(permutation<6>().permute(3, 4), true));
-        set1.insert(se_perm_t(permutation<6>().permute(4, 5), true));
-        set1.insert(se_perm_t(permutation<6>().permute(0, 3).
-                permute(1, 4).permute(2, 5), true));
-        permutation_group<6, double> pg6(set1);
+        set1.insert(se_perm_t(p1, true));
+        set1.insert(se_perm_t(p2, true));
+        set1.insert(se_perm_t(p3, true));
+        set1.insert(se_perm_t(p4, true));
+        set1.insert(se_perm_t(p5, true));
+        permutation_group<6, double> pg1(set1), pg2;
 
-        permutation_group<2, double> pg2;
         mask<6> msk[2];
         msk[0][2] = true; msk[0][5] = true;
         msk[1][1] = true; msk[1][4] = true;
-        pg6.stabilize(msk, pg2);
+        pg1.stabilize(msk, pg2);
 
-        permutation<2> p1;
-        p1.permute(0, 1);
-
-        if(!pg2.is_member(true, p1)) {
+        if(!pg2.is_member(true, p5)) {
             fail_test(testname, __FILE__, __LINE__,
-                    "!pg2.is_member(true, p1)");
+                    "!pg2.is_member(true, p5)");
         }
 
     } catch(exception &e) {
@@ -988,39 +994,41 @@ throw(libtest::test_exception) {
 
     try {
 
-        symmetry_element_set<8, double> set1(se_perm_t::k_sym_type);
-        set1.insert(se_perm_t(permutation<8>().permute(0, 1), false));
-        set1.insert(se_perm_t(permutation<8>().permute(2, 3), false));
-        set1.insert(se_perm_t(permutation<8>().permute(0, 2).permute(1, 3), true));
-        set1.insert(se_perm_t(permutation<8>().permute(4, 5), false));
-        set1.insert(se_perm_t(permutation<8>().permute(6, 7), false));
-        set1.insert(se_perm_t(permutation<8>().permute(4, 6).permute(5, 7), true));
-        set1.insert(se_perm_t(permutation<8>().permute(0, 4).
-                permute(1, 5).permute(2, 6).permute(3, 7), true));
-        permutation_group<8, double> pg8(set1);
-
-        permutation_group<4, double> pg4;
-        mask<8> msk[2];
-        msk[0][2] = true; msk[0][6] = true;
-        msk[1][3] = true; msk[1][7] = true;
-        pg8.stabilize(msk, pg4);
-
-        permutation<4> p1, p2, p3;
+        permutation<8> p1, p2, p3, p4, p5, p6, p7;
         p1.permute(0, 1);
         p2.permute(2, 3);
         p3.permute(0, 2).permute(1, 3);
+        p4.permute(4, 5);
+        p5.permute(6, 7);
+        p6.permute(4, 6).permute(5, 7);
+        p7.permute(0, 4).permute(1, 5).permute(2, 6).permute(3, 7);
 
-        if(!pg4.is_member(false, p1)) {
+        symmetry_element_set<8, double> set1(se_perm_t::k_sym_type);
+        set1.insert(se_perm_t(p1, false));
+        set1.insert(se_perm_t(p2, false));
+        set1.insert(se_perm_t(p3, true));
+        set1.insert(se_perm_t(p4, false));
+        set1.insert(se_perm_t(p5, false));
+        set1.insert(se_perm_t(p6, true));
+        set1.insert(se_perm_t(p7, true));
+        permutation_group<8, double> pg1(set1), pg2;
+
+        mask<8> msk[2];
+        msk[0][2] = true; msk[0][6] = true;
+        msk[1][3] = true; msk[1][7] = true;
+        pg1.stabilize(msk, pg2);
+
+        if(!pg2.is_member(false, p1)) {
             fail_test(testname, __FILE__, __LINE__,
                     "!pg4.is_member(false, p1)");
         }
-        if(!pg4.is_member(false, p2)) {
+        if(!pg2.is_member(false, p4)) {
             fail_test(testname, __FILE__, __LINE__,
-                    "!pg4.is_member(false, p2)");
+                    "!pg4.is_member(false, p4)");
         }
-        if(!pg4.is_member(true, p3)) {
+        if(!pg2.is_member(true, p7)) {
             fail_test(testname, __FILE__, __LINE__,
-                    "!pg4.is_member(true, p3)");
+                    "!pg4.is_member(true, p7)");
         }
 
     } catch(exception &e) {
