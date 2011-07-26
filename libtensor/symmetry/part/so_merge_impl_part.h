@@ -107,7 +107,7 @@ se_part<N - M + K, T> >::do_perform(
 
 	const dimensions<N> &pdims1 = el1.get_pdims();
 
-	// Create result parition dimensions
+	// Create result partition dimensions
 	index<N - M + K> ia, ib;
 	for (size_t i = 0; i < N; i++) {
 #ifdef LIBTENSOR_DEBUG

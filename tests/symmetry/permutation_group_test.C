@@ -423,7 +423,6 @@ void permutation_group_test::test_8() throw(libtest::test_exception) {
     }
 }
 
-
 /**	\test Tests the projection of the S4(+) group in a 4-space onto
 		a 2-space, S2(+)
  **/
@@ -1361,8 +1360,8 @@ void permutation_group_test::gen_group(
 
     if(sign || ! perm0.is_identity()) lst.push_back(signed_perm_t(perm0, sign));
 
-    typename symmetry_element_set_adapter< N, T,
-    se_perm<N, T> >::iterator i = set.begin();
+    typename symmetry_element_set_adapter< N, T, se_perm<N, T> >::iterator i =
+            set.begin();
     for(; i != set.end(); i++) {
         const se_perm<N, T> &e = set.get_elem(i);
         permutation<N> perm1(perm0);

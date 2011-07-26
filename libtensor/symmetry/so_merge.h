@@ -10,7 +10,6 @@
 
 namespace libtensor {
 
-
 template<size_t N, size_t M, size_t K, typename T>
 class so_merge;
 
@@ -32,7 +31,11 @@ class symmetry_operation_params< so_merge<N, M, K, T> >;
 	\ingroup libtensor_symmetry
  **/
 template<size_t N, size_t M, size_t K, typename T>
-class so_merge : public symmetry_operation_base< so_merge<N, M, K, T> > {
+class so_merge :
+    public symmetry_operation_base< so_merge<N, M, K, T> > {
+public:
+    static const char *k_clazz; //!< Class name
+
 private:
 	typedef so_merge<N, M, K, T> operation_t;
 	typedef symmetry_operation_dispatcher<operation_t> dispatcher_t;
@@ -40,7 +43,7 @@ private:
 private:
 	const symmetry<N, T> &m_sym1; //!< Input symmetry.
 	mask<N> m_msk[K]; //!< K masks.
-	size_t m_msk_set;
+	size_t m_msk_set; //!< Number of masks set
 
 public:
 	/** \brief Constructor
@@ -57,12 +60,16 @@ public:
 };
 
 template<size_t N, size_t M, size_t K, typename T>
+const char *so_merge<N, M, K, T>::k_clazz = "so_merge<N, M, K, T>";
+
+template<size_t N, size_t M, size_t K, typename T>
 void so_merge<N, M, K, T>::perform(symmetry<N - M + K, T> &sym2) {
 
 #ifdef LIBTENSOR_DEBUG
     static const char *method = "perform(symmetry<N - M + K, T> &)";
     if (m_msk_set != K) {
-        bad_symmetry(g_ns, k_clazz, method, "Masks not set properly.");
+        bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
+                "Masks not set properly.");
     }
 #endif
 
@@ -86,20 +93,18 @@ void so_merge<N, M, K, T>::perform(symmetry<N - M + K, T> &sym2) {
 template<size_t N, size_t M, size_t K, typename T>
 class symmetry_operation_params< so_merge<N, M, K, T> > :
 	public symmetry_operation_params_i {
-
 public:
 	const symmetry_element_set<N, T> &grp1; //!< Symmetry group
 	mask<N> msk[K]; //!< Masks
-	block_index_space<N - M + K> bis; //!< Block index space of result
 	symmetry_element_set<N - M + K, T> &grp2;
+
 public:
 	symmetry_operation_params(
 		const symmetry_element_set<N, T> &grp1_,
 		const mask<N> (&msk_)[K],
-		const block_index_space<N - M + K, T> bis_,
 		symmetry_element_set<N - M + K, T> &grp2_) :
 
-		grp1(grp1_), grp2(grp2_), bis(bis_) {
+		grp1(grp1_), grp2(grp2_) {
 
 	    for (size_t i = 0; i < K; i++) msk[i] = msk_[i];
 	}

@@ -11,7 +11,6 @@
 
 namespace libtensor {
 
-
 template<size_t N, size_t M, typename T>
 class so_dirsum;
 
@@ -32,7 +31,8 @@ class symmetry_operation_params< so_dirsum<N, M, T> >;
 	\ingroup libtensor_symmetry
  **/
 template<size_t N, size_t M, typename T>
-class so_dirsum : public symmetry_operation_base< so_dirsum<N, M, T> > {
+class so_dirsum :
+    public symmetry_operation_base< so_dirsum<N, M, T> > {
 private:
 	typedef so_dirsum<N, M, T> operation_t;
 	typedef symmetry_operation_dispatcher<operation_t> dispatcher_t;

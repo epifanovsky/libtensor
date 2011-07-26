@@ -26,7 +26,7 @@
 //#include "so_merge_test.h"
 //#include "so_merge_impl_label_test.h"
 //#include "so_merge_impl_part_test.h"
-//#include "so_merge_impl_perm_test.h"
+#include "so_merge_impl_perm_test.h"
 #include "so_permute_impl_label_test.h"
 #include "so_permute_impl_part_test.h"
 #include "so_permute_impl_perm_test.h"
@@ -113,7 +113,7 @@ private:
 //	unit_test_factory<so_merge_test> m_utf_so_merge;
 //	unit_test_factory<so_merge_impl_label_test> m_utf_so_merge_impl_label;
 //	unit_test_factory<so_merge_impl_part_test> m_utf_so_merge_impl_part;
-//	unit_test_factory<so_merge_impl_perm_test> m_utf_so_merge_impl_perm;
+	unit_test_factory<so_merge_impl_perm_test> m_utf_so_merge_impl_perm;
 	unit_test_factory<so_permute_impl_label_test> m_utf_so_permute_impl_label;
     unit_test_factory<so_permute_impl_part_test> m_utf_so_permute_impl_part;
     unit_test_factory<so_permute_impl_perm_test> m_utf_so_permute_impl_perm;

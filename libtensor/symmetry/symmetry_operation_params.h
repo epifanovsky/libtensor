@@ -3,7 +3,6 @@
 
 namespace libtensor {
 
-
 class symmetry_operation_params_i {
 public:
 	virtual ~symmetry_operation_params_i() { }

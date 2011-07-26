@@ -43,11 +43,11 @@ symmetry_operation_impl< so_dirsum<N, M, T>, se_perm<N + M, T> >::k_clazz =
 
 
 template<size_t N, size_t M, typename T>
-void
-symmetry_operation_impl< so_dirsum<N, M, T>, se_perm<N + M, T> >::do_perform(
-        symmetry_operation_params_t &params) const {
+void symmetry_operation_impl< so_dirsum<N, M, T>, se_perm<N + M, T> >
+::do_perform(symmetry_operation_params_t &params) const {
 
-    static const char *method = "do_perform(symmetry_operation_params_t&)";
+    static const char *method =
+            "do_perform(symmetry_operation_params_t&)";
 
     //	Adapter type for the input group
     typedef symmetry_element_set_adapter< N, T, se_perm<N, T> > adapter1_t;
