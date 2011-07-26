@@ -25,70 +25,68 @@ public
 symmetry_operation_impl_base< so_merge<N, M, K, T>, se_perm<N, T> > {
 
 public:
-	static const char *k_clazz; //!< Class name
+    static const char *k_clazz; //!< Class name
 
 public:
-	typedef so_merge<N, M, K, T> operation_t;
-	typedef se_perm<N, T> element_t;
-	typedef symmetry_operation_params<operation_t>
-		symmetry_operation_params_t;
+    typedef so_merge<N, M, K, T> operation_t;
+    typedef se_perm<N, T> element_t;
+    typedef symmetry_operation_params<operation_t>
+        symmetry_operation_params_t;
 
 protected:
-	virtual void do_perform(symmetry_operation_params_t &params) const;
+    virtual void do_perform(symmetry_operation_params_t &params) const;
 
 };
 
 template<size_t N, size_t M, size_t K, typename T>
-const char *
-symmetry_operation_impl< so_merge<N, M, K, T>, se_perm<N, T> >::k_clazz =
-	"symmetry_operation_impl< so_merge<N, M, K, T>, se_perm<N, T> >";
+const char *symmetry_operation_impl< so_merge<N, M, K, T>, se_perm<N, T> >
+::k_clazz = "symmetry_operation_impl< so_merge<N, M, K, T>, se_perm<N, T> >";
 
 template<size_t N, size_t M, size_t K, typename T>
-void
-symmetry_operation_impl< so_merge<N, M, K, T>, se_perm<N, T> >::do_perform(
-        symmetry_operation_params_t &params) const {
+void symmetry_operation_impl< so_merge<N, M, K, T>, se_perm<N, T> >
+::do_perform(symmetry_operation_params_t &params) const {
 
-	static const char *method =
-		"do_perform(symmetry_operation_params_t&)";
+    static const char *method =
+            "do_perform(symmetry_operation_params_t&)";
 
-	//	Adapter type for the input group
-	//
+    //	Adapter type for the input group
+    //
     typedef se_perm<N - M + K, T> el2_t;
-	typedef symmetry_element_set_adapter<N, T, element_t> adapter1_t;
+    typedef symmetry_element_set_adapter<N, T, element_t> adapter1_t;
 
-	//	Verify that the projection mask is correct
-	//
-	size_t nm = 0;
-	mask<N> tm, mm; // Total mask and mask of vanishing indexes
-	for(size_t k = 0; k < K; k++) {
-	    const mask<N> &m = params.msk[k];
+    //	Verify that the projection mask is correct
+    //
+    size_t nm = 0;
+    mask<N> tm, mm; // Total mask and mask of vanishing indexes
+    for(size_t k = 0; k < K; k++) {
+        const mask<N> &m = params.msk[k];
 
-	    bool found = false;
-	    for (size_t i = 0; i < N; i++) {
-	        if (! m[i]) continue;
+        bool found = false;
+        for (size_t i = 0; i < N; i++) {
+            if (! m[i]) continue;
 
-	        if (tm[i]) {
+            if (tm[i]) {
                 throw bad_parameter(g_ns, k_clazz, method,
                         __FILE__, __LINE__, "Masks overlap.");
-	        }
+            }
 
-	        tm[i] = true;
-	        nm++;
+            tm[i] = true;
+            nm++;
 
-	        if (found) mm[i] = true;
-	        else found = true;
-	    }
-	}
+            if (found) mm[i] = true;
+            else found = true;
+        }
+    }
 
-	if(nm != M) {
-		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
-			"params.msk");
-	}
+    if(nm != M) {
+        throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
+                "params.msk");
+    }
 
-	adapter1_t g1(params.grp1);
-	permutation_group<N, T> grp1(g1);
-	permutation_group<N, T> grp2;
-	grp1.stabilize(params.msk, grp2);
+    adapter1_t g1(params.grp1);
+    permutation_group<N, T> grp1(g1);
+    permutation_group<N, T> grp2;
+    grp1.stabilize(params.msk, grp2);
 
     symmetry_element_set<N, T> set(element_t::k_sym_type);
     grp2.convert(set);
@@ -155,7 +153,7 @@ public:
     typedef so_merge<N, N, 1, T> operation_t;
     typedef se_perm<N, T> element_t;
     typedef symmetry_operation_params<operation_t>
-        symmetry_operation_params_t;
+    symmetry_operation_params_t;
 
 protected:
     virtual void do_perform(symmetry_operation_params_t &params) const;
@@ -163,27 +161,26 @@ protected:
 };
 
 template<size_t N, typename T>
-const char *
-symmetry_operation_impl< so_merge<N, N, 1, T>, se_perm<N, T> >::k_clazz =
-    "symmetry_operation_impl< so_merge<N, N, 1, T>, se_perm<N, T> >";
+const char *symmetry_operation_impl< so_merge<N, N, 1, T>, se_perm<N, T> >
+::k_clazz = "symmetry_operation_impl< so_merge<N, N, 1, T>, se_perm<N, T> >";
 
 template<size_t N, typename T>
 void symmetry_operation_impl< so_merge<N, N, 1, T>, se_perm<N, T> >
 ::do_perform(symmetry_operation_params_t &params) const {
 
-	static const char *method =
-		"do_perform(symmetry_operation_params_t&)";
+    static const char *method =
+            "do_perform(symmetry_operation_params_t&)";
 
-	//	Verify that the projection mask is correct
-	//
-	const mask<N> &m = params.msk[0];
-	size_t nm = 0;
-	for(size_t i = 0; i < N; i++) if(m[i]) nm++;
+    //	Verify that the projection mask is correct
+    //
+    const mask<N> &m = params.msk[0];
+    size_t nm = 0;
+    for(size_t i = 0; i < N; i++) if(m[i]) nm++;
 
-	if(nm != N) {
-		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
-			"params.msk");
-	}
+    if(nm != N) {
+        throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
+                "params.msk");
+    }
 
     //  Adapter type for the input group
     //
