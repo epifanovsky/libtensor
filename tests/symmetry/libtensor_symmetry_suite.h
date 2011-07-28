@@ -32,7 +32,7 @@
 #include "so_permute_impl_perm_test.h"
 //#include "so_stabilize_test.h"
 //#include "so_stabilize_impl_label_test.h"
-//#include "so_stabilize_impl_part_test.h"
+#include "so_reduce_impl_part_test.h"
 #include "so_reduce_impl_perm_test.h"
 //#include "so_symmetrize_test.h"
 #include "symmetry_element_set_adapter_test.h"
@@ -81,7 +81,7 @@ namespace libtensor {
 	\li libtensor::so_permute_impl_perm_test
 	\li libtensor::so_stabilize_test
 	\li libtensor::so_stabilize_impl_label_test
-	\li libtensor::so_stabilize_impl_part_test
+	\li libtensor::so_reduce_impl_part_test
 	\li libtensor::so_reduce_impl_perm_test
 	\li libtensor::so_symmetrize_test
 	\li libtensor::symmetry_element_set_adapter_test
@@ -119,8 +119,8 @@ private:
     unit_test_factory<so_permute_impl_perm_test> m_utf_so_permute_impl_perm;
 //	unit_test_factory<so_stabilize_test> m_utf_so_stabilize;
 //	unit_test_factory<so_stabilize_impl_label_test> m_utf_so_stabilize_impl_label;
-//	unit_test_factory<so_stabilize_impl_part_test> m_utf_so_stabilize_impl_part;
-	unit_test_factory<so_reduce_impl_perm_test> m_utf_so_stabilize_impl_perm;
+	unit_test_factory<so_reduce_impl_part_test> m_utf_so_reduce_impl_part;
+	unit_test_factory<so_reduce_impl_perm_test> m_utf_so_reduce_impl_perm;
 //	unit_test_factory<so_symmetrize_test> m_utf_so_symmetrize;
     unit_test_factory<symmetry_element_set_adapter_test>
         m_utf_symmetry_element_set_adapter;
