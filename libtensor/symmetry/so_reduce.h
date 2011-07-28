@@ -1,9 +1,10 @@
-#ifndef LIBTENSOR_SO_STABILIZE_H
-#define LIBTENSOR_SO_STABILIZE_H
+#ifndef LIBTENSOR_SO_REDUCE_H
+#define LIBTENSOR_SO_REDUCE_H
 
 #include "../core/mask.h"
 #include "../core/symmetry.h"
 #include "../core/symmetry_element_set.h"
+#include "bad_symmetry.h"
 #include "so_copy.h"
 #include "symmetry_operation_base.h"
 #include "symmetry_operation_dispatcher.h"
@@ -13,10 +14,10 @@ namespace libtensor {
 
 
 template<size_t N, size_t M, size_t K, typename T>
-class so_stabilize;
+class so_reduce;
 
 template<size_t N, size_t M, size_t K, typename T>
-class symmetry_operation_params< so_stabilize<N, M, K, T> >;
+class symmetry_operation_params< so_reduce<N, M, K, T> >;
 
 
 /**	\brief Projection of a %symmetry group onto a subspace
@@ -26,19 +27,16 @@ class symmetry_operation_params< so_stabilize<N, M, K, T> >;
 
 	The operation takes a %symmetry group that is defined for a %tensor
 	space of order N and produces a group that acts in a %tensor space
-	of order N - M by doing K separate stabilizations.
-
-	In contrast to so_proj_down the masks here specify the dimensions which
-	are to be stabilized, i.e. which do not remain in the result. Further
-	differences can be found in the implementations of the operation for the
-	various symmetry elements.
+	of order N - M by doing K separate reductions.
+    The masks specify the dimensions which are to be reduced, i.e. which do not
+	remain in the result.
 
 	\ingroup libtensor_symmetry
  **/
 template<size_t N, size_t M, size_t K, typename T>
-class so_stabilize : public symmetry_operation_base< so_stabilize<N, M, K, T> > {
+class so_reduce : public symmetry_operation_base< so_reduce<N, M, K, T> > {
 private:
-	typedef so_stabilize<N, M, K, T> operation_t;
+	typedef so_reduce<N, M, K, T> operation_t;
 	typedef symmetry_operation_dispatcher<operation_t> dispatcher_t;
 public:
 	static const char *k_clazz;
@@ -48,7 +46,7 @@ private:
 	mask<N> m_msk[K];
 	size_t m_msk_set;
 public:
-	so_stabilize(const symmetry<N, T> &sym1) : m_sym1(sym1), m_msk_set(0) {}
+	so_reduce(const symmetry<N, T> &sym1) : m_sym1(sym1), m_msk_set(0) {}
 
 	void add_mask(const mask<N> &msk) {
 		m_msk[m_msk_set++] = msk;
@@ -59,7 +57,7 @@ public:
 };
 
 template<size_t N, size_t M, size_t K, typename T>
-const char *so_stabilize<N, M, K, T>::k_clazz = "so_stabilize<N, M, K, T>";
+const char *so_reduce<N, M, K, T>::k_clazz = "so_reduce<N, M, K, T>";
 
 /**	\brief Projection of a %symmetry group onto vacuum (specialization)
 	\tparam N Order.
@@ -67,9 +65,9 @@ const char *so_stabilize<N, M, K, T>::k_clazz = "so_stabilize<N, M, K, T>";
 	\ingroup libtensor_symmetry
  **/
 template<size_t N, size_t K, typename T>
-class so_stabilize<N, N, K, T> {
+class so_reduce<N, N, K, T> {
 public:
-	so_stabilize(const symmetry<N, T> &sym1) { }
+	so_reduce(const symmetry<N, T> &sym1) { }
 
 	void add_mask(const mask<N> &msk) { }
 
@@ -85,11 +83,11 @@ public:
 	\ingroup libtensor_symmetry
  **/
 template<size_t N, size_t K, typename T>
-class so_stabilize<N, 0, K, T> {
+class so_reduce<N, 0, K, T> {
 private:
 	const symmetry<N, T> &m_sym1;
 public:
-	so_stabilize(const symmetry<N, T> &sym1) :
+	so_reduce(const symmetry<N, T> &sym1) :
 		m_sym1(sym1) { }
 
 	void add_mask(const mask<N> &msk) { }
@@ -101,12 +99,13 @@ public:
 
 
 template<size_t N, size_t M, size_t K, typename T>
-void so_stabilize<N, M, K, T>::perform(symmetry<N - M, T> &sym2) {
+void so_reduce<N, M, K, T>::perform(symmetry<N - M, T> &sym2) {
 
 #ifdef LIBTENSOR_DEBUG
     static const char *method = "perform(symmetry<N - M, T> &)";
     if (m_msk_set != K) {
-        bad_symmetry(g_ns, k_clazz, method, "Masks not set properly.");
+        bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
+                "Masks not set properly.");
     }
 #endif
 
@@ -130,7 +129,7 @@ void so_stabilize<N, M, K, T>::perform(symmetry<N - M, T> &sym2) {
 
 
 template<size_t N, size_t M, size_t K, typename T>
-class symmetry_operation_params< so_stabilize<N, M, K, T> > :
+class symmetry_operation_params< so_reduce<N, M, K, T> > :
 	public symmetry_operation_params_i {
 
 public:
@@ -155,7 +154,7 @@ public:
 
 } // namespace libtensor
 
-#include "so_stabilize_handlers.h"
+#include "so_reduce_handlers.h"
 
-#endif // LIBTENSOR_SO_STABILIZE_H
+#endif // LIBTENSOR_SO_REDUCE_H
 

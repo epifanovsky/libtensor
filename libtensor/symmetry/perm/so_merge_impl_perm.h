@@ -1,9 +1,9 @@
 #ifndef LIBTENSOR_SO_MERGE_IMPL_PERM_H
 #define LIBTENSOR_SO_MERGE_IMPL_PERM_H
 
+#include "../../core/permutation_builder.h"
 #include "../../defs.h"
 #include "../../exception.h"
-#include "../../core/permutation_builder.h"
 #include "../symmetry_element_set_adapter.h"
 #include "../symmetry_operation_impl_base.h"
 #include "../so_merge.h"
@@ -21,8 +21,7 @@ namespace libtensor {
  **/
 template<size_t N, size_t M, size_t K, typename T>
 class symmetry_operation_impl< so_merge<N, M, K, T>, se_perm<N, T> > :
-public
-symmetry_operation_impl_base< so_merge<N, M, K, T>, se_perm<N, T> > {
+public symmetry_operation_impl_base< so_merge<N, M, K, T>, se_perm<N, T> > {
 
 public:
     static const char *k_clazz; //!< Class name
@@ -52,7 +51,7 @@ void symmetry_operation_impl< so_merge<N, M, K, T>, se_perm<N, T> >
     //	Adapter type for the input group
     //
     typedef se_perm<N - M + K, T> el2_t;
-    typedef symmetry_element_set_adapter<N, T, element_t> adapter1_t;
+    typedef symmetry_element_set_adapter<N, T, element_t> adapter_t;
 
     //	Verify that the projection mask is correct
     //
@@ -83,7 +82,7 @@ void symmetry_operation_impl< so_merge<N, M, K, T>, se_perm<N, T> >
                 "params.msk");
     }
 
-    adapter1_t g1(params.grp1);
+    adapter_t g1(params.grp1);
     permutation_group<N, T> grp1(g1);
     permutation_group<N, T> grp2;
     grp1.stabilize(params.msk, grp2);
@@ -91,8 +90,8 @@ void symmetry_operation_impl< so_merge<N, M, K, T>, se_perm<N, T> >
     symmetry_element_set<N, T> set(element_t::k_sym_type);
     grp2.convert(set);
 
-    adapter1_t g2(set);
-    for (typename adapter1_t::iterator it = g2.begin(); it != g2.end(); it++) {
+    adapter_t g2(set);
+    for (typename adapter_t::iterator it = g2.begin(); it != g2.end(); it++) {
 
         const element_t &e2 = g2.get_elem(it);
 

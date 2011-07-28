@@ -37,7 +37,7 @@ libtensor_symmetry_suite::libtensor_symmetry_suite() :
 //	add_test("so_stabilize", m_utf_so_stabilize);
 //	add_test("so_stabilize_impl_label", m_utf_so_stabilize_impl_label);
 //	add_test("so_stabilize_impl_part", m_utf_so_stabilize_impl_part);
-//	add_test("so_stabilize_impl_perm", m_utf_so_stabilize_impl_perm);
+	add_test("so_reduce_impl_perm", m_utf_so_stabilize_impl_perm);
 //	add_test("so_symmetrize", m_utf_so_symmetrize);
 	add_test("symmetry_element_set_adapter",
 		m_utf_symmetry_element_set_adapter);

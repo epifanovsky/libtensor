@@ -53,8 +53,7 @@ void symmetry_operation_impl< so_merge<N, M, K, T>, se_part<N, T> >
     static const char *method =
             "do_perform(symmetry_operation_params_t&)";
 
-    //	Adapter type for the input group
-    //
+    //	Element type for the output group
     typedef se_part<N - M + K, T> el2_t;
 
     //	Verify that the projection mask is correct
