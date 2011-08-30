@@ -340,7 +340,10 @@ void partition_set<N, T>::permute(const permutation<N> &perm) {
 template<size_t N, typename T>
 void partition_set<N, T>::intersect(const partition_set<N, T> &set, bool mult) {
 
-	if (! m_bis.equals(set.m_bis)) {
+	block_index_space<N> bis1(m_bis), bis2(set.m_bis);
+	bis1.match_splits();
+	bis2.match_splits();
+	if(!bis1.equals(bis2)) {
 		throw bad_symmetry(g_ns, k_clazz,
 				"intersect(const partition_set<N, T> &)",
 				__FILE__, __LINE__, "set.m_bis");
