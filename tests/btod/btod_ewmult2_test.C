@@ -6,6 +6,7 @@
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/symmetry/se_perm.h>
+#include <libtensor/symmetry/se_label.h>
 #include <libtensor/symmetry/so_copy.h>
 #include <libtensor/tod/tod_btconv.h>
 #include <libtensor/tod/tod_ewmult2.h>
@@ -27,8 +28,9 @@ void btod_ewmult2_test::perform() throw(libtest::test_exception) {
 	test_4(true);
 	test_5(false);
 	test_5(true);
-	test_6(false);
-	test_6(true);
+//	test_6(false);
+//	test_6(true);
+	test_7();
 }
 
 
@@ -581,6 +583,161 @@ void btod_ewmult2_test::test_6(bool doadd) throw(libtest::test_exception) {
 	} catch(exception &e) {
 		fail_test(tnss.str().c_str(), __FILE__, __LINE__, e.what());
 	}
+}
+
+
+/**	\test $c_{ijk} = a_{ij} b_{ik}$, label symmetry
+ **/
+void btod_ewmult2_test::test_7() throw(libtest::test_exception) {
+
+	std::ostringstream tnss;
+	tnss << "btod_ewmult2_test::test_7()";
+
+	typedef libvmm::std_allocator<double> allocator_t;
+
+	static const char *pgsym = "cs";
+	point_group_table pgt(pgsym, 2);
+	pgt.add_product(0, 0, 0);
+	pgt.add_product(0, 1, 1);
+	pgt.add_product(1, 1, 0);
+	product_table_container::get_instance().add(pgt);
+
+	try {
+
+	size_t ni = 10, nj = 9, nk = 8;
+	index<2> ia1, ia2;
+	index<2> ib1, ib2;
+	index<3> ic1, ic2;
+	ia2[0] = ni - 1; ia2[1] = nj - 1;
+	ib2[0] = ni - 1; ib2[1] = nk - 1;
+	ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1;
+	dimensions<2> dimsa(index_range<2>(ia1, ia2));
+	dimensions<2> dimsb(index_range<2>(ib1, ib2));
+	dimensions<3> dimsc(index_range<3>(ic1, ic2));
+	block_index_space<2> bisa(dimsa);
+	block_index_space<2> bisb(dimsb);
+	block_index_space<3> bisc(dimsc), bisc_ref(dimsc);
+	mask<2> m01, m10;
+	mask<3> m001, m010, m100;
+	m10[0] = true; m01[1] = true;
+	m100[0] = true; m010[1] = true; m001[2] = true;
+	bisa.split(m10, 3);
+	bisa.split(m10, 5);
+	bisa.split(m10, 8);
+	bisa.split(m01, 6);
+	bisb.split(m10, 3);
+	bisb.split(m10, 5);
+	bisb.split(m10, 8);
+	bisb.split(m01, 6);
+	bisc.split(m100, 3);
+	bisc.split(m100, 5);
+	bisc.split(m100, 8);
+	bisc.split(m010, 6);
+	bisc.split(m001, 6);
+	bisc_ref.split(m100, 3);
+	bisc_ref.split(m100, 5);
+	bisc_ref.split(m100, 8);
+	bisc_ref.split(m010, 6);
+	bisc_ref.split(m001, 6);
+
+	block_tensor<2, double, allocator_t> bta(bisa);
+	block_tensor<2, double, allocator_t> btb(bisb);
+	block_tensor<3, double, allocator_t> btc(bisc);
+	symmetry<3, double> symc(bisc), symc_ref(bisc);
+	tensor<2, double, allocator_t> ta(dimsa);
+	tensor<2, double, allocator_t> tb(dimsb);
+	tensor<3, double, allocator_t> tc(dimsc), tc_ref(dimsc);
+
+	//	Set up symmetry
+
+	{
+		block_tensor_ctrl<2, double> ca(bta);
+		se_label<2, double> selabel(bisa.get_block_index_dims(), pgsym);
+		selabel.assign(m10, 0, 0);
+		selabel.assign(m10, 1, 1);
+		selabel.assign(m10, 2, 0);
+		selabel.assign(m10, 3, 1);
+		selabel.assign(m01, 0, 0);
+		selabel.assign(m01, 1, 1);
+		selabel.add_target(0);
+		selabel.add_target(1);
+		ca.req_symmetry().insert(selabel);
+	}
+	{
+		block_tensor_ctrl<2, double> cb(btb);
+		se_label<2, double> selabel(bisb.get_block_index_dims(), pgsym);
+		selabel.assign(m10, 0, 0);
+		selabel.assign(m10, 1, 1);
+		selabel.assign(m10, 2, 0);
+		selabel.assign(m10, 3, 1);
+		selabel.assign(m01, 0, 0);
+		selabel.assign(m01, 1, 1);
+		selabel.add_target(0);
+		selabel.add_target(1);
+		cb.req_symmetry().insert(selabel);
+	}
+	{
+		se_label<3, double> selabel(bisc_ref.get_block_index_dims(),
+			pgsym);
+		selabel.assign(m100, 0, 0);
+		selabel.assign(m100, 1, 1);
+		selabel.assign(m100, 2, 0);
+		selabel.assign(m100, 3, 1);
+		selabel.assign(m010, 0, 0);
+		selabel.assign(m010, 1, 1);
+		selabel.assign(m001, 0, 0);
+		selabel.assign(m001, 1, 1);
+		selabel.add_target(0);
+		selabel.add_target(1);
+		symc_ref.insert(selabel);
+	}
+
+	//	Fill in random data
+
+	btod_random<2>().perform(bta);
+	btod_random<2>().perform(btb);
+	btod_random<3>().perform(btc);
+	bta.set_immutable();
+	btb.set_immutable();
+
+	//	Prepare the reference
+
+	tod_btconv<2>(bta).perform(ta);
+	tod_btconv<2>(btb).perform(tb);
+	tod_btconv<3>(btc).perform(tc_ref);
+
+	//	Invoke the operation
+
+	permutation<2> perma; perma.permute(0, 1);
+	permutation<2> permb; permb.permute(0, 1);
+	permutation<3> permc; permc.permute(1, 2).permute(0, 1);
+	btod_ewmult2<1, 1, 1> op(bta, perma, btb, permb, permc);
+	if(!op.get_bis().equals(bisc_ref)) {
+		fail_test(tnss.str().c_str(), __FILE__, __LINE__, "Bad bis.");
+	}
+	tod_ewmult2<1, 1, 1>(ta, perma, tb, permb, permc).perform(tc_ref);
+	op.perform(btc);
+	tod_btconv<3>(btc).perform(tc);
+
+	//	Compare against the reference
+
+	{
+		block_tensor_ctrl<3, double> cc(btc);
+		so_copy<3, double>(cc.req_const_symmetry()).perform(symc);
+	}
+
+	compare_ref<3>::compare(tnss.str().c_str(), symc, symc_ref);
+	compare_ref<3>::compare(tnss.str().c_str(), tc, tc_ref, 1e-15);
+
+	} catch(exception &e) {
+		product_table_container::get_instance().erase(pgsym);
+		fail_test(tnss.str().c_str(), __FILE__, __LINE__, e.what());
+	} catch(...) {
+		product_table_container::get_instance().erase(pgsym);
+		throw;
+	}
+
+	product_table_container::get_instance().erase(pgsym);
 }
 
 
