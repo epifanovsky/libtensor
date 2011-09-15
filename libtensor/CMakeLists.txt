@@ -5,6 +5,7 @@ set(SRC
 	global_timings.C
 	timer.C
 	version.C
+	core/allocator.C
 	btod/btod_diagonalize.C
 	btod/btod_tridiagonalize.C
 	symmetry/point_group_table.C

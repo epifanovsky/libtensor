@@ -3,8 +3,8 @@
 
 #include <list>
 #include <map>
-#include <libvmm/vm_allocator.h>
 #include "../timings.h"
+#include "../core/allocator.h"
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
 #include "../symmetry/so_add.h"
@@ -231,8 +231,7 @@ void btod_symmetrize<N>::compute_block(tensor_i<N, double> &blk,
 		} else {
 			dimensions<N> dims(blk.get_dims());
 			// TODO: replace with "temporary block" feature
-			tensor< N, double, libvmm::vm_allocator<double> > tmp(
-				dims);
+			tensor< N, double, allocator<double> > tmp(dims);
 			tod_set<N>().perform(tmp);
 			additive_btod<N>::compute_block(m_op, tmp,
 				ai.get_index(), tri, c);

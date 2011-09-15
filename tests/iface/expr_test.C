@@ -1,4 +1,3 @@
-#include <libvmm/std_allocator.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/btod/btod_set_diag.h>
 #include <libtensor/symmetry/point_group_table.h>
@@ -14,8 +13,7 @@ namespace libtensor {
 
 void expr_test::perform() throw(libtest::test_exception) {
 
-	libvmm::vm_allocator<double>::vmm().init(
-		16, 16, 16777216, 16777216, 0.90, 0.05);
+	allocator<double>::vmm().init(16, 16, 16777216, 16777216);
 
 	try {
 
@@ -30,11 +28,11 @@ void expr_test::perform() throw(libtest::test_exception) {
 		test_9();
 
 	} catch(...) {
-		libvmm::vm_allocator<double>::vmm().shutdown();
+		allocator<double>::vmm().shutdown();
 		throw;
 	}
 
-	libvmm::vm_allocator<double>::vmm().shutdown();
+	allocator<double>::vmm().shutdown();
 }
 
 

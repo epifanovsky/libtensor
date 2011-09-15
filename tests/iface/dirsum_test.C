@@ -10,8 +10,7 @@ namespace libtensor {
 
 void dirsum_test::perform() throw(libtest::test_exception) {
 
-	libvmm::vm_allocator<double>::vmm().init(
-		16, 16, 16777216, 16777216, 0.90, 0.05);
+	allocator<double>::vmm().init(16, 16, 16777216, 16777216);
 
 	try {
 		test_tt_1();
@@ -25,11 +24,11 @@ void dirsum_test::perform() throw(libtest::test_exception) {
 		test_ee_1();
 
 	} catch(...) {
-		libvmm::vm_allocator<double>::vmm().shutdown();
+		allocator<double>::vmm().shutdown();
 		throw;
 	}
 
-	libvmm::vm_allocator<double>::vmm().shutdown();
+	allocator<double>::vmm().shutdown();
 }
 
 

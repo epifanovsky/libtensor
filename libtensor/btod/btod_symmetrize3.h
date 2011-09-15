@@ -2,9 +2,9 @@
 #define LIBTENSOR_BTOD_SYMMETRIZE3_H
 
 #include <algorithm>
-#include <libvmm/vm_allocator.h>
 #include "../exception.h"
 #include "../timings.h"
+#include "../core/allocator.h"
 #include "../core/block_index_subspace_builder.h"
 #include "../core/permutation_builder.h"
 #include "../core/transf_list.h"
@@ -217,8 +217,7 @@ void btod_symmetrize3<N>::compute_block(tensor_i<N, double> &blk,
 			dims.permute(permutation<N>(sch1.front().tr.get_perm(),
 				true));
 			// TODO: replace with "temporary block" feature
-			tensor< N, double, libvmm::vm_allocator<double> > tmp(
-				dims);
+			tensor< N, double, allocator<double> > tmp(dims);
 			tod_set<N>().perform(tmp);
 			additive_btod<N>::compute_block(m_op, tmp,
 				ai.get_index(), transf<N, double>(), c);
