@@ -103,7 +103,7 @@ public:
 		\param cmp Compare policy object.
 	 **/
 	tod_select(tensor_i<N, double> &t,
-			double c, compare_t cmp=compare4absmin()) :
+			double c, compare_t cmp = compare_t()) :
 		m_t(t), m_c(c), m_cmp(cmp) { }
 
 	/** \brief Constuctor
@@ -113,7 +113,7 @@ public:
 		\param cmp Compare policy object.
 	 **/
 	tod_select(tensor_i<N, double> &t, const permutation<N> &p,
-			double c, compare_t cmp=compare4absmin()) :
+			double c, compare_t cmp = compare_t()) :
 		m_t(t), m_perm(p), m_c(c), m_cmp(cmp) { }
 
 	//@}
