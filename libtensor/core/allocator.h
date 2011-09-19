@@ -81,6 +81,18 @@ class allocator :
 };
 
 
+/** \brief Proxy allocator that uses the new/delete
+
+    This memory allocator uses libvmm::std_allocator.
+
+    \ingroup libtensor_core
+ **/
+template<typename T>
+class std_allocator : public libvmm::std_allocator<T> {
+
+};
+
+
 } // namespace libtensor
 
 
