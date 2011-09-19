@@ -184,7 +184,7 @@ void tod_select<N,ComparePolicy>::perform(list_t &li, size_t n) {
 		}
 	}
 
-	ctrl.ret_dataptr(p);
+	ctrl.ret_const_dataptr(p);
 }
 
 } // namespace libtensor

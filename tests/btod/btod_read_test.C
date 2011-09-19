@@ -64,7 +64,7 @@ void btod_read_test::test_1() throw(libtest::test_exception) {
 			}
 			ss << std::endl;
 		}
-		ctrl.ret_dataptr(p); p = 0;
+		ctrl.ret_const_dataptr(p); p = 0;
 	}
 
 	block_index_space<2> bis(dims);
@@ -116,7 +116,7 @@ void btod_read_test::test_2() throw(libtest::test_exception) {
 			}
 			ss << std::endl;
 		}
-		ctrl.ret_dataptr(p); p = 0;
+		ctrl.ret_const_dataptr(p); p = 0;
 	}
 
 	block_index_space<2> bis(dims);
@@ -170,7 +170,7 @@ void btod_read_test::test_3() throw(libtest::test_exception) {
 			}
 			ss << std::endl;
 		}
-		ctrl.ret_dataptr(p); p = 0;
+		ctrl.ret_const_dataptr(p); p = 0;
 	}
 
 	block_index_space<2> bis(dims);
@@ -232,7 +232,7 @@ void btod_read_test::test_4() throw(libtest::test_exception) {
 			}
 			ss << std::endl;
 		}
-		ctrl.ret_dataptr(p); p = 0;
+		ctrl.ret_const_dataptr(p); p = 0;
 	}
 
 	btod_read<2>(ss).perform(bt);
@@ -276,7 +276,7 @@ void btod_read_test::test_5() throw(libtest::test_exception) {
 			ss.setf(std::ios::fixed, std::ios::floatfield);
 			ss << p[aidx.get_abs_index()] << " ";
 		} while(aidx.inc());
-		ctrl.ret_dataptr(p); p = 0;
+		ctrl.ret_const_dataptr(p); p = 0;
 	}
 
 	block_index_space<4> bis(dims);
@@ -331,7 +331,7 @@ void btod_read_test::test_6() throw(libtest::test_exception) {
 			ss.setf(std::ios::fixed, std::ios::floatfield);
 			ss << p[aidx.get_abs_index()] << " ";
 		} while(aidx.inc());
-		ctrl.ret_dataptr(p); p = 0;
+		ctrl.ret_const_dataptr(p); p = 0;
 	}
 
 	btod_read<4>(ss).perform(bt);
@@ -381,7 +381,7 @@ void btod_read_test::test_7() throw(libtest::test_exception) {
 			}
 			ss << std::endl;
 		}
-		ctrl.ret_dataptr(p); p = 0;
+		ctrl.ret_const_dataptr(p); p = 0;
 	}
 
 	block_index_space<2> bis(dims);
@@ -436,7 +436,7 @@ void btod_read_test::test_8() throw(libtest::test_exception) {
 			}
 			ss << std::endl;
 		}
-		ctrl.ret_dataptr(p); p = 0;
+		ctrl.ret_const_dataptr(p); p = 0;
 	}
 
 	block_index_space<2> bis(dims);
@@ -505,7 +505,7 @@ void btod_read_test::test_9() throw(libtest::test_exception) {
 			}
 			ss << std::endl;
 		}
-		ctrl.ret_dataptr(p); p = 0;
+		ctrl.ret_const_dataptr(p); p = 0;
 	}
 
 	block_index_space<2> bis(dims);
@@ -568,7 +568,7 @@ void btod_read_test::test_10() throw(libtest::test_exception) {
 			}
 			ss << std::endl;
 		}
-		ctrl.ret_dataptr(p); p = 0;
+		ctrl.ret_const_dataptr(p); p = 0;
 	}
 
 	block_index_space<2> bis(dims);

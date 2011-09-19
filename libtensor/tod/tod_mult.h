@@ -210,8 +210,8 @@ void tod_mult<N>::do_perform(tensor_i<N, double> &tc, bool doadd, double c) {
 	loop_list_elem::run_loop(loop, r, m_c * c, doadd, m_recip);
 
 	cc.ret_dataptr(pc); pc = 0;
-	cb.ret_dataptr(pb); pb = 0;
-	ca.ret_dataptr(pa); pa = 0;
+	cb.ret_const_dataptr(pb); pb = 0;
+	ca.ret_const_dataptr(pa); pa = 0;
 
 	} catch (...) {
 		tod_mult<N>::stop_timer();

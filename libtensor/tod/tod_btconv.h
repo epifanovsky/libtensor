@@ -160,7 +160,7 @@ void tod_btconv<N>::perform(tensor_i<N, double> &t) throw(exception) {
 			i++;
 		}
 
-		blk_ctrl.ret_dataptr(src_ptr);
+		blk_ctrl.ret_const_dataptr(src_ptr);
 		}
 		src_ctrl.ret_block(blk_idx);
 

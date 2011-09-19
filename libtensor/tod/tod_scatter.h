@@ -215,7 +215,7 @@ void tod_scatter<N, M>::do_perform(tensor_i<k_orderc, double> &tc, bool zero,
 		throw;
 	}
 
-	ctrla.ret_dataptr(ptra);
+	ctrla.ret_const_dataptr(ptra);
 	ctrlc.ret_dataptr(ptrc);
 
 	tod_scatter<N, M>::stop_timer();

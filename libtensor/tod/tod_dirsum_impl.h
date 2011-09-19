@@ -138,8 +138,8 @@ void tod_dirsum<N, M>::do_perform(tensor_i<k_orderc, double> &tc, bool zero,
 	tod_dirsum<N, M>::stop_timer(kern->get_name());
 	delete kern; kern = 0;
 
-	ca.ret_dataptr(pa);
-	cb.ret_dataptr(pb);
+	ca.ret_const_dataptr(pa);
+	cb.ret_const_dataptr(pb);
 	cc.ret_dataptr(pc);
 
 	} catch(...) {

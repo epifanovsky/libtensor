@@ -81,7 +81,7 @@ void btod_print<N, Alloc>::perform(
 	}
 	m_stream << std::endl;
 
-	ctrla.ret_dataptr(cptra);
+	ctrla.ret_const_dataptr(cptra);
 }
 
 

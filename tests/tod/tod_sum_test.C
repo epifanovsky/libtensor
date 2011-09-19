@@ -110,7 +110,7 @@ void tod_sum_test::test_1() throw(libtest::test_exception) {
 				break;
 			}
 		}
-		tctrl.ret_dataptr(p);
+		tctrl.ret_const_dataptr(p);
 	}
 
 	if(!ok) {

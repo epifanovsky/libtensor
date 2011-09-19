@@ -78,7 +78,7 @@ void btod_import_raw_test::test_1(const block_index_space<N> &bis)
 		tensor_ctrl_t tca(ta);
 		const double *pa = tca.req_const_dataptr();
 		btod_import_raw<N>(pa, bis.get_dims()).perform(btb);
-		tca.ret_dataptr(pa); pa = 0;
+		tca.ret_const_dataptr(pa); pa = 0;
 	}
 
 	//	Compare against the reference
@@ -151,7 +151,7 @@ void btod_import_raw_test::test_2(const block_index_space<N> &bis)
 		tensor_ctrl_t tca(ta);
 		const double *pa = tca.req_const_dataptr();
 		btod_import_raw<N>(pa, bis.get_dims()).perform(btb);
-		tca.ret_dataptr(pa); pa = 0;
+		tca.ret_const_dataptr(pa); pa = 0;
 	}
 
 	//	Compare against the reference

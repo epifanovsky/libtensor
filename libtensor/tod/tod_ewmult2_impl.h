@@ -186,8 +186,8 @@ void tod_ewmult2<N, M, K>::do_perform(tensor_i<k_orderc, double> &tc,
 	delete kern; kern = 0;
 
 	cc.ret_dataptr(pc); pc = 0;
-	cb.ret_dataptr(pb); pb = 0;
-	ca.ret_dataptr(pa); pa = 0;
+	cb.ret_const_dataptr(pb); pb = 0;
+	ca.ret_const_dataptr(pa); pa = 0;
 
 	} catch (...) {
 		tod_ewmult2<N, M, K>::stop_timer();

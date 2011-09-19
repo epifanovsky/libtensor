@@ -88,13 +88,13 @@ void tod_import_raw_test::test_1(const dimensions<N> &dims,
 		p2_ref[iwnd.get_abs_index()] = p1_ref[aidx.get_abs_index()];
 	} while(iwnd.inc());
 	tc2_ref.ret_dataptr(p2_ref);
-	tc1.ret_dataptr(p1_ref);
+	tc1.ret_const_dataptr(p1_ref);
 
 	//	Invoke the operation
 
 	p1_ref = tc1.req_const_dataptr();
 	tod_import_raw<N>(p1_ref, dims, ir).perform(t2);
-	tc1.ret_dataptr(p1_ref);
+	tc1.ret_const_dataptr(p1_ref);
 	}
 
 	//	Compare against the reference

@@ -466,7 +466,7 @@ void btod_select_test::test_3c(size_t n,
 		tensor_ctrl<2, double> tc(tmp);
 		const double *ptr = tc.req_const_dataptr();
 		btod_import_raw<2>(ptr, dims).perform(btmp);
-		tc.ret_dataptr(ptr);
+		tc.ret_const_dataptr(ptr);
 
 		block_tensor_ctrl<2, double> btc(btmp);
 		btc.req_zero_block(i01);
@@ -574,7 +574,7 @@ void btod_select_test::test_4a(size_t n,
 	tensor_ctrl<2, double> ctrl(tmp);
 	const double *ptr = ctrl.req_const_dataptr();
 	btod_import_raw<2>(ptr, dims).perform(bt);
-	ctrl.ret_dataptr(ptr);
+	ctrl.ret_const_dataptr(ptr);
 	}
 
 	// Compute list
@@ -652,7 +652,7 @@ void btod_select_test::test_4b(size_t n) throw(libtest::test_exception) {
 	tensor_ctrl<2, double> ctrl(tmp);
 	const double *ptr = ctrl.req_const_dataptr();
 	btod_import_raw<2>(ptr, dims).perform(bt);
-	ctrl.ret_dataptr(ptr);
+	ctrl.ret_const_dataptr(ptr);
 	}
 
 	// Compute list
@@ -731,7 +731,7 @@ void btod_select_test::test_4c(size_t n,
 	tensor_ctrl<2, double> ctrl(tmp);
 	const double *ptr = ctrl.req_const_dataptr();
 	btod_import_raw<2>(ptr, dims).perform(bt);
-	ctrl.ret_dataptr(ptr);
+	ctrl.ret_const_dataptr(ptr);
 	}
 
 	// Compute list

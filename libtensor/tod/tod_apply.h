@@ -205,7 +205,7 @@ void tod_apply<N, Functor>::do_perform(
 
 	loop_list_apply<Functor>::run_loop(loop, r, m_fn, c, m_c, do_add);
 
-	ca.ret_dataptr(pa);
+	ca.ret_const_dataptr(pa);
 	cb.ret_dataptr(pb);
 
 	} catch(...) {

@@ -181,8 +181,8 @@ double tod_dotprod<N>::calculate() {
 	}
 
 	clean_list();
-	m_tctrl1.ret_dataptr(pb);
-	m_tctrl2.ret_dataptr(pa);
+	m_tctrl1.ret_const_dataptr(pb);
+	m_tctrl2.ret_const_dataptr(pa);
 
 	tod_dotprod<N>::stop_timer();
 

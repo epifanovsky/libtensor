@@ -222,7 +222,7 @@ void tod_copy<N>::do_perform(tensor_i<N, double> &tb, double c) {
 
 	Base::run_loop(loop, r, m_c * c);
 
-	ca.ret_dataptr(pa);
+	ca.ret_const_dataptr(pa);
 	cb.ret_dataptr(pb);
 
 	} catch(...) {
