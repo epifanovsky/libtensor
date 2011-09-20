@@ -187,6 +187,7 @@ block_index_space<N + M + K> btod_ewmult2<N, M, K>::make_bisc(
 template<size_t N, size_t M, size_t K>
 void btod_ewmult2<N, M, K>::make_symc() {
 
+/*
 	block_tensor_ctrl<k_ordera, double> ctrla(m_bta);
 	block_tensor_ctrl<k_orderb, double> ctrlb(m_btb);
 
@@ -272,7 +273,7 @@ void btod_ewmult2<N, M, K>::make_symc() {
 	permutation_builder<k_ordera + k_orderb> permab(seqab2, seqab1);
 	so_concat<k_ordera, k_orderb, double>(ctrla.req_const_symmetry(),
 		ctrlb.req_const_symmetry(), permab.get_perm()).perform(symab);
-
+*/
 /*
 	//	Stabilize and remove the extra pq..
 	so_stabilize<k_ordera + k_orderb, K, 1, double> stab(symab);
@@ -285,6 +286,8 @@ void btod_ewmult2<N, M, K>::make_schedule() {
 
 	block_tensor_ctrl<k_ordera, double> ctrla(m_bta);
 	block_tensor_ctrl<k_orderb, double> ctrlb(m_btb);
+
+	btod_ewmult2<N, M, K>::start_timer("make_schedule");
 
 	orbit_list<k_orderc, double> ol(m_symc);
 	for(typename orbit_list<k_orderc, double>::iterator io = ol.begin();
@@ -316,6 +319,8 @@ void btod_ewmult2<N, M, K>::make_schedule() {
 
 		m_sch.insert(ol.get_abs_index(io));
 	}
+
+	btod_ewmult2<N, M, K>::stop_timer("make_schedule");
 }
 
 
@@ -326,6 +331,8 @@ void btod_ewmult2<N, M, K>::compute_block_impl(tensor_i<k_orderc, double> &blk,
 
 	block_tensor_ctrl<k_ordera, double> ctrla(m_bta);
 	block_tensor_ctrl<k_orderb, double> ctrlb(m_btb);
+
+	btod_ewmult2<N, M, K>::start_timer();
 
 	index<k_ordera> bidxa;
 	index<k_orderb> bidxb;
@@ -371,6 +378,8 @@ void btod_ewmult2<N, M, K>::compute_block_impl(tensor_i<k_orderc, double> &blk,
 
 	ctrla.ret_block(cidxa.get_index());
 	ctrlb.ret_block(cidxb.get_index());
+
+	btod_ewmult2<N, M, K>::stop_timer();
 }
 
 
