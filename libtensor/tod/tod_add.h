@@ -105,7 +105,20 @@ private:
 } // namespace libtensor
 
 
-#ifndef LIBTENSOR_INSTANTIATE_TEMPLATES
+#ifdef LIBTENSOR_INSTANTIATE_TEMPLATES
+
+namespace libtensor {
+
+    extern template class tod_add<1>;
+    extern template class tod_add<2>;
+    extern template class tod_add<3>;
+    extern template class tod_add<4>;
+    extern template class tod_add<5>;
+    extern template class tod_add<6>;
+
+} // namespace libtensor
+
+#else // LIBTENSOR_INSTANTIATE_TEMPLATES
 #include "tod_add_impl.h"
 #endif // LIBTENSOR_INSTANTIATE_TEMPLATES
 

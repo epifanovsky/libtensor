@@ -6,6 +6,8 @@ set(SRC
 	timer.C
 	version.C
 	core/allocator.C
+	core/orbit.C
+    core/orbit_list.C
 	btod/btod_diagonalize.C
 	btod/btod_tridiagonalize.C
 	symmetry/point_group_table.C

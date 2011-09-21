@@ -96,7 +96,19 @@ class std_allocator : public libvmm::std_allocator<T> {
 } // namespace libtensor
 
 
-#ifndef LIBTENSOR_INSTANTIATE_TEMPLATES
+#ifdef LIBTENSOR_INSTANTIATE_TEMPLATES
+
+namespace libtensor {
+
+    extern template class allocator<int>;
+    extern template class allocator<double>;
+
+    extern template class std_allocator<int>;
+    extern template class std_allocator<double>;
+
+} // namespace libtensor
+
+#else // LIBTENSOR_INSTANTIATE_TEMPLATES
 #include "allocator_impl.h"
 #endif // LIBTENSOR_INSTANTIATE_TEMPLATES
 

@@ -53,9 +53,11 @@ public:
 	static const char *k_clazz; //!< Class name
 
 public:
-	static const size_t k_ordera = N + K;
-	static const size_t k_orderb = M + K;
-	static const size_t k_orderc = N + M + K;
+	enum {
+	    k_ordera = N + K, //!< Order of first argument (A)
+	    k_orderb = M + K, //!< Order of second argument (B)
+	    k_orderc = N + M + K //!< Order of result (C)
+	};
 
 private:
 	tensor_i<k_ordera, double> &m_ta; //!< First argument (A)
@@ -127,7 +129,75 @@ private:
 
 } // namespace libtensor
 
-#ifndef LIBTENSOR_INSTANTIATE_TEMPLATES
+#ifdef LIBTENSOR_INSTANTIATE_TEMPLATES
+
+namespace libtensor {
+
+    extern template class tod_ewmult2<0, 0, 1>;
+    extern template class tod_ewmult2<0, 0, 2>;
+    extern template class tod_ewmult2<0, 0, 3>;
+    extern template class tod_ewmult2<0, 0, 4>;
+    extern template class tod_ewmult2<0, 0, 5>;
+    extern template class tod_ewmult2<0, 0, 6>;
+
+    extern template class tod_ewmult2<0, 1, 1>;
+    extern template class tod_ewmult2<0, 1, 2>;
+    extern template class tod_ewmult2<0, 1, 3>;
+    extern template class tod_ewmult2<0, 1, 4>;
+    extern template class tod_ewmult2<0, 1, 5>;
+    extern template class tod_ewmult2<1, 0, 1>;
+    extern template class tod_ewmult2<1, 0, 2>;
+    extern template class tod_ewmult2<1, 0, 3>;
+    extern template class tod_ewmult2<1, 0, 4>;
+    extern template class tod_ewmult2<1, 0, 5>;
+
+    extern template class tod_ewmult2<0, 2, 1>;
+    extern template class tod_ewmult2<0, 2, 2>;
+    extern template class tod_ewmult2<0, 2, 3>;
+    extern template class tod_ewmult2<0, 2, 4>;
+    extern template class tod_ewmult2<1, 1, 1>;
+    extern template class tod_ewmult2<1, 1, 2>;
+    extern template class tod_ewmult2<1, 1, 3>;
+    extern template class tod_ewmult2<1, 1, 4>;
+    extern template class tod_ewmult2<2, 0, 1>;
+    extern template class tod_ewmult2<2, 0, 2>;
+    extern template class tod_ewmult2<2, 0, 3>;
+    extern template class tod_ewmult2<2, 0, 4>;
+
+    extern template class tod_ewmult2<0, 3, 1>;
+    extern template class tod_ewmult2<0, 3, 2>;
+    extern template class tod_ewmult2<0, 3, 3>;
+    extern template class tod_ewmult2<1, 2, 1>;
+    extern template class tod_ewmult2<1, 2, 2>;
+    extern template class tod_ewmult2<1, 2, 3>;
+    extern template class tod_ewmult2<2, 1, 1>;
+    extern template class tod_ewmult2<2, 1, 2>;
+    extern template class tod_ewmult2<2, 1, 3>;
+    extern template class tod_ewmult2<3, 0, 1>;
+    extern template class tod_ewmult2<3, 0, 2>;
+    extern template class tod_ewmult2<3, 0, 3>;
+
+    extern template class tod_ewmult2<0, 4, 1>;
+    extern template class tod_ewmult2<0, 4, 2>;
+    extern template class tod_ewmult2<1, 3, 1>;
+    extern template class tod_ewmult2<1, 3, 2>;
+    extern template class tod_ewmult2<2, 2, 1>;
+    extern template class tod_ewmult2<2, 2, 2>;
+    extern template class tod_ewmult2<3, 1, 1>;
+    extern template class tod_ewmult2<3, 1, 2>;
+    extern template class tod_ewmult2<4, 0, 1>;
+    extern template class tod_ewmult2<4, 0, 2>;
+
+    extern template class tod_ewmult2<0, 5, 1>;
+    extern template class tod_ewmult2<1, 4, 1>;
+    extern template class tod_ewmult2<2, 3, 1>;
+    extern template class tod_ewmult2<3, 2, 1>;
+    extern template class tod_ewmult2<4, 1, 1>;
+    extern template class tod_ewmult2<5, 0, 1>;
+
+} // namespace libtensor
+
+#else // LIBTENSOR_INSTANTIATE_TEMPLATES
 #include "tod_ewmult2_impl.h"
 #endif // LIBTENSOR_INSTANTIATE_TEMPLATES
 
