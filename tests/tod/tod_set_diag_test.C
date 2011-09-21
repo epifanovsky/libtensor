@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <sstream>
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/abs_index.h>
 #include <libtensor/core/tensor.h>
 #include <libtensor/tod/tod_set_diag.h>
@@ -32,7 +32,7 @@ void tod_set_diag_test::run_test(const dimensions<N> &dims, double d)
 	std::ostringstream tnss;
 	tnss << "tod_set_diag_test::run_test(" << dims << ", " << d << ")";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 

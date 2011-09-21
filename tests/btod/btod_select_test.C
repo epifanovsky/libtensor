@@ -1,7 +1,7 @@
 #include <sstream>
 #include <cmath>
 #include <ctime>
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/core/tensor.h>
 #include <libtensor/btod/btod_import_raw.h>
@@ -94,7 +94,7 @@ void btod_select_test::test_1(size_t n) throw(libtest::test_exception) {
 
 	static const char *testname = "btod_select_test::test_1(size_t)";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tod_select<2, ComparePolicy> tod_select_t;
 	typedef btod_select<2, ComparePolicy> btod_select_t;
 
@@ -157,7 +157,7 @@ void btod_select_test::test_2(size_t n) throw(libtest::test_exception) {
 
 	static const char *testname = "btod_select_test::test_2(size_t)";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tod_select<2, ComparePolicy> tod_select_t;
 	typedef btod_select<2, ComparePolicy> btod_select_t;
 
@@ -225,7 +225,7 @@ void btod_select_test::test_3a(size_t n,
 
 	static const char *testname = "btod_select_test::test_3a(size_t)";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tod_select<2, ComparePolicy> tod_select_t;
 	typedef btod_select<2, ComparePolicy> btod_select_t;
 
@@ -333,7 +333,7 @@ void btod_select_test::test_3b(size_t n) throw(libtest::test_exception) {
 
 	static const char *testname = "btod_select_test::test_3b(size_t)";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tod_select<2, ComparePolicy> tod_select_t;
 	typedef btod_select<2, ComparePolicy> btod_select_t;
 
@@ -429,7 +429,7 @@ void btod_select_test::test_3c(size_t n,
 
 	static const char *testname = "btod_select_test::test_3c(size_t, bool)";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tod_select<2, ComparePolicy> tod_select_t;
 	typedef btod_select<2, ComparePolicy> btod_select_t;
 
@@ -543,7 +543,7 @@ void btod_select_test::test_4a(size_t n,
 
 	static const char *testname = "btod_select_test::test_4a(size_t, bool)";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tod_select<2, ComparePolicy> tod_select_t;
 	typedef btod_select<2, ComparePolicy> btod_select_t;
 
@@ -617,7 +617,7 @@ void btod_select_test::test_4b(size_t n) throw(libtest::test_exception) {
 
 	static const char *testname = "btod_select_test::test_4(size_t)";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tod_select<2, ComparePolicy> tod_select_t;
 	typedef btod_select<2, ComparePolicy> btod_select_t;
 
@@ -696,7 +696,7 @@ void btod_select_test::test_4c(size_t n,
 
 	static const char *testname = "btod_select_test::test_4c(size_t, bool)";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tod_select<2, ComparePolicy> tod_select_t;
 	typedef btod_select<2, ComparePolicy> btod_select_t;
 
@@ -775,7 +775,7 @@ void btod_select_test::test_5(size_t n) throw(libtest::test_exception) {
 
 	static const char *testname = "btod_select_test::test_5(size_t)";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tod_select<2, ComparePolicy> tod_select_t;
 	typedef btod_select<2, ComparePolicy> btod_select_t;
 

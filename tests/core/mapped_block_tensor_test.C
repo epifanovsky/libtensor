@@ -1,4 +1,4 @@
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/abs_index.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/core/block_tensor_ctrl.h>
@@ -87,7 +87,7 @@ void mapped_block_tensor_test::test_1() throw(libtest::test_exception) {
 
 	static const char *testname = "mapped_block_tensor_test::test_1()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -140,7 +140,7 @@ void mapped_block_tensor_test::test_2() throw(libtest::test_exception) {
 
 	static const char *testname = "mapped_block_tensor_test::test_2()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 

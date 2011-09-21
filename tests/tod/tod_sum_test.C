@@ -1,4 +1,4 @@
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/tensor.h>
 #include <libtensor/core/tensor_ctrl.h>
 #include <libtensor/tod/tod_additive.h>
@@ -7,7 +7,7 @@
 
 namespace libtensor {
 
-typedef tensor<4, double, libvmm::std_allocator<double> > tensor4_d;
+typedef tensor<4, double, std_allocator<double> > tensor4_d;
 
 void tod_sum_test::perform() throw(libtest::test_exception) {
 
@@ -83,7 +83,7 @@ void tod_sum_test::test_1() throw(libtest::test_exception) {
 
 	static const char *testname = "tod_sum_test::test_1()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 

@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <sstream>
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/tensor.h>
 #include <libtensor/tod/tod_dotprod.h>
 #include "tod_dotprod_test.h"
@@ -29,7 +29,7 @@ void tod_dotprod_test::perform() throw(libtest::test_exception) {
 
 void tod_dotprod_test::test_1(size_t ni) throw(libtest::test_exception) {
 
-	typedef libvmm::std_allocator<double> allocator;
+	typedef std_allocator<double> allocator;
 
 	std::ostringstream testname;
 	testname << "tod_dotprod_test::test_1(" << ni << ")";
@@ -88,7 +88,7 @@ void tod_dotprod_test::test_1(size_t ni) throw(libtest::test_exception) {
 void tod_dotprod_test::test_2(size_t ni, size_t nj, const permutation<2> &perm)
 	throw(libtest::test_exception) {
 
-	typedef libvmm::std_allocator<double> allocator;
+	typedef std_allocator<double> allocator;
 
 	std::ostringstream testname;
 	testname << "tod_dotprod_test::test_2(" << ni << ", " << nj << ")";

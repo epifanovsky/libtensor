@@ -1,6 +1,6 @@
 #include <sstream>
 #include <cstdlib>
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/tensor.h>
 #include <libtensor/core/tensor_ctrl.h>
 #include <libtensor/tod/tod_add.h>
@@ -11,8 +11,8 @@
 
 namespace libtensor {
 
-typedef tensor<2, double, libvmm::std_allocator<double> > tensor2_d;
-typedef tensor<4, double, libvmm::std_allocator<double> > tensor4_d;
+typedef tensor<2, double, std_allocator<double> > tensor2_d;
+typedef tensor<4, double, std_allocator<double> > tensor4_d;
 
 void tod_symcontract2_test::perform() throw(libtest::test_exception) {
 	test_ij_ip_jp(3,8);

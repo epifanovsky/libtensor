@@ -10,12 +10,6 @@
 namespace libtensor {
 
 
-typedef tensor<2,double,libvmm::std_allocator<double> > tensor2_d;
-typedef tensor_ctrl<2,double> tensor_ctrl2;
-typedef tensor<4,double,libvmm::std_allocator<double> > tensor4_d;
-typedef tensor_ctrl<4,double> tensor_ctrl4;
-
-
 const double tod_add_test::k_thresh = 1e-14;
 
 

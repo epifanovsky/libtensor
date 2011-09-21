@@ -1,4 +1,4 @@
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/tensor.h>
 #include <libtensor/tod/tod_random.h>
 #include "../compare_ref.h"
@@ -6,12 +6,12 @@
 
 namespace libtensor {
 
-typedef libvmm::std_allocator<double> allocator;
-typedef tensor<3, double, allocator> tensor3;
-typedef tensor_ctrl<3,double> tensor3_ctrl;
-
 void tod_random_test::perform() throw(libtest::test_exception)
 {
+    typedef std_allocator<double> allocator;
+    typedef tensor<3, double, allocator> tensor3;
+    typedef tensor_ctrl<3,double> tensor3_ctrl;
+
 	index<3> i3a, i3b; i3b[0]=10; i3b[1]=12; i3b[2]=11;
 	index_range<3> ir3(i3a, i3b); dimensions<3> dims3(ir3);
 	tensor3 ta3(dims3), tb3(dims3);

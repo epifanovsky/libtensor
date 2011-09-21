@@ -2,10 +2,10 @@
 #define LIBTENSOR_BTOD_IMPORT_RAW_H
 
 #include <sstream>
-#include <libvmm/std_allocator.h>
 #include "../defs.h"
 #include "../exception.h"
 #include "../core/abs_index.h"
+#include "../core/allocator.h"
 #include "../core/dimensions.h"
 #include "../core/block_tensor_i.h"
 #include "../core/block_tensor_ctrl.h"
@@ -40,7 +40,7 @@ namespace libtensor {
 
 	\ingroup libtensor_btod
  **/
-template<size_t N, typename Alloc = libvmm::std_allocator<double> >
+template<size_t N, typename Alloc = std_allocator<double> >
 class btod_import_raw {
 public:
 	static const char *k_clazz; //!< Class name

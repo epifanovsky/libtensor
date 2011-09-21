@@ -4,9 +4,9 @@
 #include <list>
 #include <map>
 #include <utility>
-#include <libvmm/std_allocator.h>
 #include "../defs.h"
 #include "../exception.h"
+#include "../core/allocator.h"
 #include "../core/block_tensor_i.h"
 #include "../core/block_tensor_ctrl.h"
 #include "../core/orbit_list.h"
@@ -153,7 +153,7 @@ template<size_t N>
 void btod_random<N>::make_random_blk(block_tensor_ctrl<N, double> &ctrl,
 	const dimensions<N> &bidims, const index<N> &idx) {
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	const symmetry<N, double> &sym = ctrl.req_symmetry();
 	size_t absidx = bidims.abs_index(idx);

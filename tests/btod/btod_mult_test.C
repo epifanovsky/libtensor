@@ -1,4 +1,4 @@
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/core/direct_block_tensor.h>
 #include <libtensor/btod/btod_dirsum.h>
@@ -85,7 +85,7 @@ void btod_mult_test::test_1(
 			<< (recip ? "true" : "false") << ","
 			<< (doadd ? "true" : "false") << ")";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -147,7 +147,7 @@ void btod_mult_test::test_2(
 			<< (recip ? "true" : "false") << ","
 			<< (doadd ? "true" : "false") << ")";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -211,7 +211,7 @@ void btod_mult_test::test_3(
 			<< (recip ? "true" : "false") << ","
 			<< (doadd ? "true" : "false") << ")";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -299,7 +299,7 @@ void btod_mult_test::test_4(
 			<< (recip ? "true" : "false") << ","
 			<< (doadd ? "true" : "false") << ")";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -388,7 +388,7 @@ void btod_mult_test::test_5(bool symm1, bool symm2) throw(libtest::test_exceptio
 			<< (symm1 ? "true" : "false") << ", "
 			<< (symm2 ? "true" : "false") << ")";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -488,7 +488,7 @@ void btod_mult_test::test_6(bool symm1, bool symm2) throw(libtest::test_exceptio
 			<< (symm1 ? "true" : "false") << ", "
 			<< (symm2 ? "true" : "false") << ")";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -602,7 +602,7 @@ void btod_mult_test::test_7(bool label, bool part,
 		product_table_container::get_instance().add(pg);
 	}
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -781,7 +781,7 @@ void btod_mult_test::test_8a(bool label, bool part)
 		product_table_container::get_instance().add(pg);
 	}
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -897,7 +897,7 @@ void btod_mult_test::test_8b(bool label, bool part)
 		product_table_container::get_instance().add(pg);
 	}
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 

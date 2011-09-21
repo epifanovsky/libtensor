@@ -42,7 +42,7 @@ namespace libtensor {
 
     The type of the elements is a template parameter:
     \code
-    typedef libvmm::std_allocator<tensor_element_t> tensor_element_alloc;
+    typedef std_allocator<tensor_element_t> tensor_element_alloc;
     tensor<tensor_element_t, tensor_element_alloc, permutator> t(...);
     \endcode
 

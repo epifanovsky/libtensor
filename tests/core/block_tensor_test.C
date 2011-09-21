@@ -1,4 +1,4 @@
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/core/block_tensor_ctrl.h>
 #include <libtensor/tod/tod_random.h>
@@ -20,7 +20,7 @@ void block_tensor_test::test_req_aux_block_1() throw(libtest::test_exception) {
 	static const char *testname =
 		"block_tensor_test::test_req_aux_block_1()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -63,7 +63,7 @@ void block_tensor_test::test_orbits_1() throw(libtest::test_exception) {
 /*
 	static const char *testname = "block_tensor_test::test_orbits_1()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef block_tensor<2, double, allocator_t> block_tensor_t;
 	typedef block_tensor_ctrl<2, double> block_tensor_ctrl_t;
 	typedef orbit_iterator<2, double> orbit_iterator_t;
@@ -93,7 +93,7 @@ void block_tensor_test::test_orbits_2() throw(libtest::test_exception) {
 /*
 	static const char *testname = "block_tensor_test::test_orbits_2()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tensor_i<2, double> block_t;
 	typedef block_tensor<2, double, allocator_t> block_tensor_t;
 	typedef block_tensor_ctrl<2, double> block_tensor_ctrl_t;
@@ -150,7 +150,7 @@ void block_tensor_test::test_orbits_3() throw(libtest::test_exception) {
 /*
 	static const char *testname = "block_tensor_test::test_orbits_3()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tensor_i<2, double> block_t;
 	typedef block_tensor<2, double, allocator_t> block_tensor_t;
 	typedef block_tensor_ctrl<2, double> block_tensor_ctrl_t;

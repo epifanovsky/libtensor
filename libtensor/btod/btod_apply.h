@@ -7,6 +7,7 @@
 #include "../exception.h"
 #include "../timings.h"
 #include "../core/abs_index.h"
+#include "../core/allocator.h"
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
 #include "../symmetry/so_apply.h"
@@ -54,7 +55,7 @@ namespace libtensor {
 
 	\ingroup libtensor_btod
  **/
-template<size_t N, typename Functor, typename Alloc = libvmm::std_allocator<double> >
+template<size_t N, typename Functor, typename Alloc = std_allocator<double> >
 class btod_apply :
 	public additive_btod<N>,
 	public timings< btod_apply<N, Functor, Alloc> > {

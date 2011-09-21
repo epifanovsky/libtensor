@@ -1,4 +1,4 @@
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/btod/btod_set_diag.h>
@@ -139,7 +139,7 @@ void btod_set_diag_test::test_generic(const char *testname,
 	const block_index_space<N> &bis, const symmetry<N, double> &sym,
 	double d) throw(libtest::test_exception) {
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 

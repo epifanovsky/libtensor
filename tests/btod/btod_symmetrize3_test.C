@@ -43,7 +43,7 @@ void btod_symmetrize3_test::test_1() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_symmetrize3_test::test_1()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -115,7 +115,7 @@ void btod_symmetrize3_test::test_2() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_symmetrize3_test::test_2()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -184,7 +184,7 @@ void btod_symmetrize3_test::test_3() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_symmetrize3_test::test_3()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -258,7 +258,7 @@ void btod_symmetrize3_test::test_4() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_symmetrize3_test::test_4()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -331,7 +331,7 @@ void btod_symmetrize3_test::test_5() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_symmetrize3_test::test_5()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -432,7 +432,7 @@ void btod_symmetrize3_test::test_6() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_symmetrize3_test::test_6()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -518,7 +518,7 @@ void btod_symmetrize3_test::test_7() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_symmetrize3_test::test_7()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 

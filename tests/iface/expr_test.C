@@ -1,3 +1,4 @@
+#include <libtensor/core/allocator.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/btod/btod_set_diag.h>
 #include <libtensor/symmetry/point_group_table.h>
@@ -261,7 +262,7 @@ void expr_test::test_6() throw(libtest::test_exception) {
 
 	static const char *testname = "expr_test::test_6()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -386,7 +387,7 @@ void expr_test::test_7() throw(libtest::test_exception) {
 
 	static const char *testname = "expr_test::test_7()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 

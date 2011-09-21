@@ -1,5 +1,5 @@
 #include <sstream>
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/abs_index.h>
 #include <libtensor/core/tensor.h>
 #include <libtensor/tod/tod_import_raw.h>
@@ -46,7 +46,7 @@ void tod_import_raw_test::test_1(const dimensions<N> &dims,
 	tnss << "tod_import_raw_test::test_1(" << dims << ", "
 		<< ir.get_begin() << "->" << ir.get_end() << ")";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tensor<N, double, allocator_t> tensor_t;
 	typedef tensor_ctrl<N, double> tensor_ctrl_t;
 

@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <sstream>
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/abs_index.h>
 #include <libtensor/core/tensor.h>
 #include <libtensor/tod/tod_ewmult2.h>
@@ -11,8 +11,6 @@
 
 namespace libtensor {
 
-
-typedef libvmm::std_allocator<double> allocator;
 
 const double tod_ewmult2_test::k_thresh = 1e-14;
 
@@ -108,6 +106,8 @@ void tod_ewmult2_test::test_i_i_i(size_t ni, double d)
 	tnss << "tod_ewmult2_test::test_i_i_i(" << ni << ", " << d << ")";
 	std::string tns = tnss.str();
 
+	typedef std_allocator<double> allocator;
+
 	try {
 
 	index<1> ia1, ia2; ia2[0] = ni - 1;
@@ -189,6 +189,8 @@ void tod_ewmult2_test::test_ij_ij_ij(size_t ni, size_t nj, double d)
 	tnss << "tod_ewmult2_test::test_ij_ij_ij(" << ni << ", " << nj << ", "
 		<< d << ")";
 	std::string tns = tnss.str();
+
+	typedef std_allocator<double> allocator;
 
 	try {
 
@@ -274,6 +276,8 @@ void tod_ewmult2_test::test_ij_ij_ji(size_t ni, size_t nj, double d)
 	tnss << "tod_ewmult2_test::test_ij_ij_ji(" << ni << ", " << nj << ", "
 		<< d << ")";
 	std::string tns = tnss.str();
+
+	typedef std_allocator<double> allocator;
 
 	try {
 
@@ -362,6 +366,8 @@ void tod_ewmult2_test::test_ijk_jki_kij(size_t ni, size_t nj, size_t nk,
 	tnss << "tod_ewmult2_test::test_ijk_jki_kij(" << ni << ", "
 		<< nj << ", " << nk << ", " << d << ")";
 	std::string tns = tnss.str();
+
+	typedef std_allocator<double> allocator;
 
 	try {
 
@@ -453,6 +459,8 @@ void tod_ewmult2_test::test_ijk_ik_kj(size_t ni, size_t nj, size_t nk,
 		<< nj << ", " << nk << ", " << d << ")";
 	std::string tns = tnss.str();
 
+	typedef std_allocator<double> allocator;
+
 	try {
 
 	index<2> ia1, ia2; ia2[0] = ni - 1; ia2[1] = nk - 1;
@@ -543,6 +551,8 @@ void tod_ewmult2_test::test_ijkl_kj_ikl(size_t ni, size_t nj, size_t nk,
 	tnss << "tod_ewmult2_test::test_ijkl_kj_ikl(" << ni << ", "
 		<< nj << ", " << nk << ", " << nl << ", " << d << ")";
 	std::string tns = tnss.str();
+
+	typedef std_allocator<double> allocator;
 
 	try {
 
@@ -638,6 +648,8 @@ void tod_ewmult2_test::test_ijkl_ljk_jil(size_t ni, size_t nj, size_t nk,
 	tnss << "tod_ewmult2_test::test_ijkl_ljk_jil(" << ni << ", "
 		<< nj << ", " << nk << ", " << nl << ", " << d << ")";
 	std::string tns = tnss.str();
+
+	typedef std_allocator<double> allocator;
 
 	try {
 

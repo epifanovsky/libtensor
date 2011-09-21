@@ -1,11 +1,11 @@
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/tensor.h>
 #include <libtensor/tod/tod_set.h>
 #include "tod_set_test.h"
 
 namespace libtensor {
 
-typedef tensor<4, double, libvmm::std_allocator<double> > tensor4_d;
+typedef tensor<4, double, std_allocator<double> > tensor4_d;
 
 void tod_set_test::perform() throw(libtest::test_exception) {
 	index<4> i1, i2;

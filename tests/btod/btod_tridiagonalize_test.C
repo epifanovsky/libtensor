@@ -1,4 +1,4 @@
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/btod/btod_copy.h>
 #include <libtensor/btod/btod_import_raw.h>
 #include <libtensor/btod/btod_tridiagonalize.h>
@@ -24,7 +24,7 @@ void btod_tridiagonalize_test::test_1() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_tridiagonalize_test::test_1()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 		//initial symmetric matrix
@@ -71,7 +71,7 @@ void btod_tridiagonalize_test::test_2() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_tridiagonalize_test::test_2()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -124,7 +124,7 @@ void btod_tridiagonalize_test::test_3() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_tridiagonalize_test::test_3()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 		double matrix[25] = { 2, -1,-1,0,0,-1,3,0,-2,0,-1,0,4,2,1,0,-2,2,8,3,0,

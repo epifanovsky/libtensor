@@ -1,5 +1,5 @@
 #include <sstream>
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/btod/btod_contract2.h>
 #include <libtensor/btod/btod_copy.h>
@@ -93,7 +93,7 @@ void btod_contract2_test::test_bis_1() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_bis_1()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -145,7 +145,7 @@ void btod_contract2_test::test_bis_2() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_bis_2()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -206,7 +206,7 @@ void btod_contract2_test::test_bis_3() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_bis_3()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -268,7 +268,7 @@ void btod_contract2_test::test_bis_4() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_bis_4()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -315,7 +315,7 @@ void btod_contract2_test::test_bis_5() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_bis_5()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -374,7 +374,7 @@ void btod_contract2_test::test_sym_1() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_sym_1()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -443,7 +443,7 @@ void btod_contract2_test::test_sym_2() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_sym_2()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -528,7 +528,7 @@ void btod_contract2_test::test_sym_3() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_sym_3()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -608,7 +608,7 @@ void btod_contract2_test::test_sym_4() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_sym_4()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -680,7 +680,7 @@ void btod_contract2_test::test_zeroblk_1() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_zeroblk_1()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -733,7 +733,7 @@ void btod_contract2_test::test_zeroblk_2() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_zeroblk_2()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -787,7 +787,7 @@ void btod_contract2_test::test_zeroblk_3() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_zeroblk_3()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -840,7 +840,7 @@ void btod_contract2_test::test_zeroblk_4() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_zeroblk_4()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -895,7 +895,7 @@ void btod_contract2_test::test_zeroblk_5() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_zeroblk_5()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -968,7 +968,7 @@ void btod_contract2_test::test_zeroblk_6() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_zeroblk_6()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -1040,7 +1040,7 @@ void btod_contract2_test::test_contr_1() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_contr_1()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -1109,7 +1109,7 @@ void btod_contract2_test::test_contr_2() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_contr_2()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -1179,7 +1179,7 @@ void btod_contract2_test::test_contr_3() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_contr_3()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -1261,7 +1261,7 @@ void btod_contract2_test::test_contr_4() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_contr_4()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -1356,7 +1356,7 @@ void btod_contract2_test::test_contr_5() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_contr_5()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -1457,7 +1457,7 @@ void btod_contract2_test::test_contr_6() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_contr_6()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -1556,7 +1556,7 @@ void btod_contract2_test::test_contr_7() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_contr_7()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -1634,7 +1634,7 @@ void btod_contract2_test::test_contr_8() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_contr_8()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -1702,7 +1702,7 @@ void btod_contract2_test::test_contr_9() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_contr_9()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -1770,7 +1770,7 @@ void btod_contract2_test::test_contr_10() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_contr_10()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -1827,7 +1827,7 @@ void btod_contract2_test::test_contr_11() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_contr_11()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -1889,7 +1889,7 @@ void btod_contract2_test::test_contr_12() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_contr_12()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -1953,7 +1953,7 @@ void btod_contract2_test::test_contr_13() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_contr_13()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -2023,7 +2023,7 @@ void btod_contract2_test::test_contr_14(double c)
 	ss << "btod_contract2_test::test_contr_14(" << c << ")";
 	std::string tn = ss.str();
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -2096,7 +2096,7 @@ void btod_contract2_test::test_contr_15(double c)
 	ss << "btod_contract2_test::test_contr_15(" << c << ")";
 	std::string tn = ss.str();
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -2172,7 +2172,7 @@ void btod_contract2_test::test_contr_16(double c)
 	ss << "btod_contract2_test::test_contr_16(" << c << ")";
 	std::string tn = ss.str();
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -2257,7 +2257,7 @@ void btod_contract2_test::test_contr_17(double c)
 	ss << "btod_contract2_test::test_contr_17(" << c << ")";
 	std::string tn = ss.str();
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -2350,7 +2350,7 @@ void btod_contract2_test::test_contr_18(double c)
 	ss << "btod_contract2_test::test_contr_18(" << c << ")";
 	std::string tn = ss.str();
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -2445,7 +2445,7 @@ void btod_contract2_test::test_contr_19()
 
 	product_table_container::get_instance().add(pg);
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -2553,7 +2553,7 @@ void btod_contract2_test::test_contr_20()
 	ss << "btod_contract2_test::test_contr_20()";
 	std::string tn = ss.str();
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -2633,7 +2633,7 @@ void btod_contract2_test::test_contr_21() throw(libtest::test_exception) {
 	ss << "btod_contract2_test::test_contr_21()";
 	std::string tn = ss.str();
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -2717,7 +2717,7 @@ void btod_contract2_test::test_self_1() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_self_1()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -2791,7 +2791,7 @@ void btod_contract2_test::test_self_2() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_self_2()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -2867,7 +2867,7 @@ void btod_contract2_test::test_self_3() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_self_3()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 

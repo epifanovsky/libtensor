@@ -1,7 +1,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <ctime>
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/symmetry/se_perm.h>
@@ -14,7 +14,7 @@ namespace libtensor {
 void btod_random_test::perform() throw(libtest::test_exception)
 {
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tensor<4, double, allocator_t> tensor_t;
 	typedef tensor_ctrl<4, double> tensor_ctrl_t;
 	typedef block_tensor<4, double, allocator_t> block_tensor_t;

@@ -1,7 +1,7 @@
 #include <cmath>
 #include <ctime>
 #include <sstream>
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/tensor.h>
 #include <libtensor/core/tensor_ctrl.h>
 #include <libtensor/tod/tod_scale.h>
@@ -36,7 +36,7 @@ template<size_t N>
 void tod_scale_test::test_generic(const char *testname,
 	const dimensions<N> &d, double c) throw(libtest::test_exception) {
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 

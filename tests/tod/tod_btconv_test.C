@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <sstream>
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/core/tensor.h>
 #include <libtensor/symmetry/se_perm.h>
@@ -41,7 +41,7 @@ void tod_btconv_test::test_1() throw(libtest::test_exception) {
 
 	static const char *testname = "tod_btconv_test::test_1()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tensor<2, double, allocator_t> tensor_t;
 	typedef tensor_ctrl<2, double> tensor_ctrl_t;
 	typedef block_tensor<2, double, allocator_t> block_tensor_t;
@@ -106,7 +106,7 @@ void tod_btconv_test::test_2() throw(libtest::test_exception) {
 
 	static const char *testname = "tod_btconv_test::test_2()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tensor<2, double, allocator_t> tensor_t;
 	typedef tensor_ctrl<2, double> tensor_ctrl_t;
 	typedef block_tensor<2, double, allocator_t> block_tensor_t;
@@ -187,7 +187,7 @@ void tod_btconv_test::test_3() throw(libtest::test_exception) {
 
 	static const char *testname = "tod_btconv_test::test_3()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tensor<2, double, allocator_t> tensor_t;
 	typedef tensor_ctrl<2, double> tensor_ctrl_t;
 	typedef block_tensor<2, double, allocator_t> block_tensor_t;
@@ -270,7 +270,7 @@ void tod_btconv_test::test_4() throw(libtest::test_exception) {
 
 	static const char *testname = "tod_btconv_test::test_4()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tensor<2, double, allocator_t> tensor_t;
 	typedef tensor_ctrl<2, double> tensor_ctrl_t;
 	typedef block_tensor<2, double, allocator_t> block_tensor_t;
@@ -373,7 +373,7 @@ void tod_btconv_test::test_5() throw(libtest::test_exception) {
 
 	static const char *testname = "tod_btconv_test::test_5()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tensor<2, double, allocator_t> tensor_t;
 	typedef tensor_ctrl<2, double> tensor_ctrl_t;
 	typedef block_tensor<2, double, allocator_t> block_tensor_t;
@@ -497,7 +497,7 @@ void tod_btconv_test::test_6() throw(libtest::test_exception) {
 
 	static const char *testname = "tod_btconv_test::test_6()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tensor<2, double, allocator_t> tensor_t;
 	typedef tensor_ctrl<2, double> tensor_ctrl_t;
 	typedef block_tensor<2, double, allocator_t> block_tensor_t;
@@ -603,7 +603,7 @@ void tod_btconv_test::test_7() throw(libtest::test_exception) {
 
 	static const char *testname = "tod_btconv_test::test_7()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tensor<2, double, allocator_t> tensor_t;
 	typedef tensor_ctrl<2, double> tensor_ctrl_t;
 	typedef block_tensor<2, double, allocator_t> block_tensor_t;
@@ -703,7 +703,7 @@ void tod_btconv_test::test_8() throw(libtest::test_exception) {
 
 	static const char *testname = "tod_btconv_test::test_8()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tensor<2, double, allocator_t> tensor_t;
 	typedef tensor_ctrl<2, double> tensor_ctrl_t;
 	typedef block_tensor<2, double, allocator_t> block_tensor_t;
@@ -852,7 +852,7 @@ void tod_btconv_test::test_9() throw(libtest::test_exception) {
 
 	static const char *testname = "tod_btconv_test::test_9()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tensor<4, double, allocator_t> tensor_t;
 	typedef tensor_ctrl<4, double> tensor_ctrl_t;
 	typedef block_tensor<4, double, allocator_t> block_tensor_t;
@@ -998,7 +998,7 @@ void tod_btconv_test::test_10() throw(libtest::test_exception) {
 
 	static const char *testname = "tod_btconv_test::test_10()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tensor<4, double, allocator_t> tensor_t;
 	typedef tensor_ctrl<4, double> tensor_ctrl_t;
 	typedef block_tensor<4, double, allocator_t> block_tensor_t;
@@ -1098,7 +1098,7 @@ void tod_btconv_test::test_11() throw(libtest::test_exception) {
 
 	static const char *testname = "tod_btconv_test::test_11()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tensor<4, double, allocator_t> tensor_t;
 	typedef tensor_ctrl<4, double> tensor_ctrl_t;
 	typedef block_tensor<4, double, allocator_t> block_tensor_t;
@@ -1222,7 +1222,7 @@ void tod_btconv_test::test_12() throw(libtest::test_exception) {
 
 	static const char *testname = "tod_btconv_test::test_12()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 

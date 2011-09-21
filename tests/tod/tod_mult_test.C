@@ -1,15 +1,12 @@
 #include <cmath>
 #include <ctime>
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/tensor.h>
 #include <libtensor/tod/tod_mult.h>
 #include "../compare_ref.h"
 #include "tod_mult_test.h"
 
 namespace libtensor {
-
-
-typedef libvmm::std_allocator<double> allocator;
 
 
 void tod_mult_test::perform() throw(libtest::test_exception) {
@@ -56,6 +53,8 @@ void tod_mult_test::test_pq_pq_1(size_t ni, size_t nj, bool recip)
 	tnss << "tod_mult_test::test_pq_pq_1("
 			<< ni << ", " << nj << ", " << recip << ")";
 	std::string tns = tnss.str();
+
+	typedef std_allocator<double> allocator;
 
 	try {
 
@@ -119,6 +118,8 @@ void tod_mult_test::test_pq_pq_2(
 			<< ni << ", " << nj << ", " << recip << ", " << coeff << ")";
 	std::string tns = tnss.str();
 
+	typedef std_allocator<double> allocator;
+
 	try {
 
 	index<2> i1, i2;
@@ -176,6 +177,8 @@ void tod_mult_test::test_pq_qp(bool recip, double coeff)
 	std::ostringstream tnss;
 	tnss << "tod_mult_test::test_3(" << recip << ", " << coeff << ")";
 	std::string tns = tnss.str();
+
+	typedef std_allocator<double> allocator;
 
 	try {
 
@@ -239,6 +242,8 @@ void tod_mult_test::test_qp_pq(bool recip, double coeff)
 	tnss << "tod_mult_test::test_4(" << recip << ", " << coeff << ")";
 	std::string tns = tnss.str();
 
+	typedef std_allocator<double> allocator;
+
 	try {
 
 	index<2> i1, i2;
@@ -300,6 +305,8 @@ void tod_mult_test::test_qp_qp(bool recip, double coeff)
 	std::ostringstream tnss;
 	tnss << "tod_mult_test::test_5(" << recip << ", " << coeff << ")";
 	std::string tns = tnss.str();
+
+	typedef std_allocator<double> allocator;
 
 	try {
 
@@ -365,6 +372,8 @@ void tod_mult_test::test_pqrs_qprs(
 	tnss << "tod_mult_test::test_pqrs_qprs(" << ni << ", " << nj << ", " << nk
 			<< ", " << nl << ", " << recip << ", " << coeff << ")";
 	std::string tns = tnss.str();
+
+	typedef std_allocator<double> allocator;
 
 	try {
 
@@ -443,6 +452,8 @@ void tod_mult_test::test_pqrs_qrps(
 			<< ", " << nl << ", " << recip << ", " << coeff << ")";
 	std::string tns = tnss.str();
 
+	typedef std_allocator<double> allocator;
+
 	try {
 
 	index<4> i1, i2;
@@ -519,6 +530,8 @@ void tod_mult_test::test_pqsr_pqrs(
 			<< ", " << nl << ", " << recip << ", " << coeff << ")";
 	std::string tns = tnss.str();
 
+	typedef std_allocator<double> allocator;
+
 	try {
 
 	index<4> i1, i2;
@@ -594,6 +607,8 @@ void tod_mult_test::test_prsq_qrps(size_t ni, size_t nj, size_t nk, size_t nl,
 	tnss << "tod_mult_test::test_prsq_qrps(" << ni << ", " << nj << ", " << nk
 			<< ", " << nl << ", " << recip << ", " << coeff << ")";
 	std::string tns = tnss.str();
+
+	typedef std_allocator<double> allocator;
 
 	try {
 

@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <sstream>
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/abs_index.h>
 #include <libtensor/core/tensor.h>
 #include <libtensor/tod/tod_contract2.h>
@@ -11,7 +11,7 @@
 
 namespace libtensor {
 
-typedef libvmm::std_allocator<double> allocator;
+typedef std_allocator<double> allocator_t;
 
 const double tod_contract2_test::k_thresh = 1e-14;
 
@@ -1042,10 +1042,10 @@ void tod_contract2_test::test_0_p_p(size_t np, double d)
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<1, double, allocator> ta(dima);
-	tensor<1, double, allocator> tb(dimb);
-	tensor<0, double, allocator> tc(dimc);
-	tensor<0, double, allocator> tc_ref(dimc);
+	tensor<1, double, allocator_t> ta(dima);
+	tensor<1, double, allocator_t> tb(dimb);
+	tensor<0, double, allocator_t> tc(dimc);
+	tensor<0, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -1124,10 +1124,10 @@ void tod_contract2_test::test_i_p_pi(size_t ni, size_t np, double d)
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<1, double, allocator> ta(dima);
-	tensor<2, double, allocator> tb(dimb);
-	tensor<1, double, allocator> tc(dimc);
-	tensor<1, double, allocator> tc_ref(dimc);
+	tensor<1, double, allocator_t> ta(dima);
+	tensor<2, double, allocator_t> tb(dimb);
+	tensor<1, double, allocator_t> tc(dimc);
+	tensor<1, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -1211,10 +1211,10 @@ void tod_contract2_test::test_i_p_ip(size_t ni, size_t np, double d)
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<1, double, allocator> ta(dima);
-	tensor<2, double, allocator> tb(dimb);
-	tensor<1, double, allocator> tc(dimc);
-	tensor<1, double, allocator> tc_ref(dimc);
+	tensor<1, double, allocator_t> ta(dima);
+	tensor<2, double, allocator_t> tb(dimb);
+	tensor<1, double, allocator_t> tc(dimc);
+	tensor<1, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -1298,10 +1298,10 @@ void tod_contract2_test::test_i_pi_p(size_t ni, size_t np, double d)
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<1, double, allocator> tb(dimb);
-	tensor<1, double, allocator> tc(dimc);
-	tensor<1, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<1, double, allocator_t> tb(dimb);
+	tensor<1, double, allocator_t> tc(dimc);
+	tensor<1, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -1385,10 +1385,10 @@ void tod_contract2_test::test_i_ip_p(size_t ni, size_t np, double d)
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<1, double, allocator> tb(dimb);
-	tensor<1, double, allocator> tc(dimc);
-	tensor<1, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<1, double, allocator_t> tb(dimb);
+	tensor<1, double, allocator_t> tc(dimc);
+	tensor<1, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -1472,10 +1472,10 @@ void tod_contract2_test::test_ij_i_j(size_t ni, size_t nj, double d)
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<1, double, allocator> ta(dima);
-	tensor<1, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<1, double, allocator_t> ta(dima);
+	tensor<1, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -1558,10 +1558,10 @@ void tod_contract2_test::test_ij_j_i(size_t ni, size_t nj, double d)
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<1, double, allocator> ta(dima);
-	tensor<1, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<1, double, allocator_t> ta(dima);
+	tensor<1, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -1645,10 +1645,10 @@ void tod_contract2_test::test_ij_pi_pj(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<2, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<2, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -1734,10 +1734,10 @@ void tod_contract2_test::test_ij_pi_jp(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<2, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<2, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -1823,10 +1823,10 @@ void tod_contract2_test::test_ij_ip_pj(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<2, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<2, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -1912,10 +1912,10 @@ void tod_contract2_test::test_ij_ip_jp(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<2, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<2, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -2001,10 +2001,10 @@ void tod_contract2_test::test_ij_pj_pi(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<2, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<2, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -2091,10 +2091,10 @@ void tod_contract2_test::test_ij_pj_ip(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<2, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<2, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -2181,10 +2181,10 @@ void tod_contract2_test::test_ij_jp_ip(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<2, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<2, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -2271,10 +2271,10 @@ void tod_contract2_test::test_ij_jp_pi(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<2, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<2, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -2361,10 +2361,10 @@ void tod_contract2_test::test_ij_p_pji(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<1, double, allocator> ta(dima);
-	tensor<3, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<1, double, allocator_t> ta(dima);
+	tensor<3, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -2453,10 +2453,10 @@ void tod_contract2_test::test_ij_pji_p(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<3, double, allocator> ta(dima);
-	tensor<1, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<3, double, allocator_t> ta(dima);
+	tensor<1, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -2545,10 +2545,10 @@ void tod_contract2_test::test_ijk_ip_pkj(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<3, double, allocator> tb(dimb);
-	tensor<3, double, allocator> tc(dimc);
-	tensor<3, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<3, double, allocator_t> tb(dimb);
+	tensor<3, double, allocator_t> tc(dimc);
+	tensor<3, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -2640,10 +2640,10 @@ void tod_contract2_test::test_ijk_pi_pkj(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<3, double, allocator> tb(dimb);
-	tensor<3, double, allocator> tc(dimc);
-	tensor<3, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<3, double, allocator_t> tb(dimb);
+	tensor<3, double, allocator_t> tc(dimc);
+	tensor<3, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -2735,10 +2735,10 @@ void tod_contract2_test::test_ijk_pik_pj(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<3, double, allocator> ta(dima);
-	tensor<2, double, allocator> tb(dimb);
-	tensor<3, double, allocator> tc(dimc);
-	tensor<3, double, allocator> tc_ref(dimc);
+	tensor<3, double, allocator_t> ta(dima);
+	tensor<2, double, allocator_t> tb(dimb);
+	tensor<3, double, allocator_t> tc(dimc);
+	tensor<3, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -2830,10 +2830,10 @@ void tod_contract2_test::test_ijk_pj_ipk(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<3, double, allocator> tb(dimb);
-	tensor<3, double, allocator> tc(dimc);
-	tensor<3, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<3, double, allocator_t> tb(dimb);
+	tensor<3, double, allocator_t> tc(dimc);
+	tensor<3, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -2925,10 +2925,10 @@ void tod_contract2_test::test_ijk_pj_pik(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<3, double, allocator> tb(dimb);
-	tensor<3, double, allocator> tc(dimc);
-	tensor<3, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<3, double, allocator_t> tb(dimb);
+	tensor<3, double, allocator_t> tc(dimc);
+	tensor<3, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -3020,10 +3020,10 @@ void tod_contract2_test::test_ijk_pkj_ip(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<3, double, allocator> ta(dima);
-	tensor<2, double, allocator> tb(dimb);
-	tensor<3, double, allocator> tc(dimc);
-	tensor<3, double, allocator> tc_ref(dimc);
+	tensor<3, double, allocator_t> ta(dima);
+	tensor<2, double, allocator_t> tb(dimb);
+	tensor<3, double, allocator_t> tc(dimc);
+	tensor<3, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -3115,10 +3115,10 @@ void tod_contract2_test::test_ijk_pkj_pi(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<3, double, allocator> ta(dima);
-	tensor<2, double, allocator> tb(dimb);
-	tensor<3, double, allocator> tc(dimc);
-	tensor<3, double, allocator> tc_ref(dimc);
+	tensor<3, double, allocator_t> ta(dima);
+	tensor<2, double, allocator_t> tb(dimb);
+	tensor<3, double, allocator_t> tc(dimc);
+	tensor<3, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -3210,10 +3210,10 @@ void tod_contract2_test::test_ij_pqi_pjq(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<3, double, allocator> ta(dima);
-	tensor<3, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<3, double, allocator_t> ta(dima);
+	tensor<3, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -3302,10 +3302,10 @@ void tod_contract2_test::test_ij_ipq_jqp(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<3, double, allocator> ta(dima);
-	tensor<3, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<3, double, allocator_t> ta(dima);
+	tensor<3, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -3394,10 +3394,10 @@ void tod_contract2_test::test_ij_jpq_iqp(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<3, double, allocator> ta(dima);
-	tensor<3, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<3, double, allocator_t> ta(dima);
+	tensor<3, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -3489,10 +3489,10 @@ void tod_contract2_test::test_ij_jipq_qp(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<2, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<2, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -3579,10 +3579,10 @@ void tod_contract2_test::test_ij_pq_ijpq(size_t ni, size_t nj, size_t np,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -3661,10 +3661,10 @@ void tod_contract2_test::test_ij_pq_ijpq_a(size_t ni, size_t nj, size_t np,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -3749,10 +3749,10 @@ void tod_contract2_test::test_ijk_kjpq_iqp(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<3, double, allocator> tb(dimb);
-	tensor<3, double, allocator> tc(dimc);
-	tensor<3, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<3, double, allocator_t> tb(dimb);
+	tensor<3, double, allocator_t> tc(dimc);
+	tensor<3, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -3846,10 +3846,10 @@ void tod_contract2_test::test_ijk_pkiq_pjq(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<3, double, allocator> tb(dimb);
-	tensor<3, double, allocator> tc(dimc);
-	tensor<3, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<3, double, allocator_t> tb(dimb);
+	tensor<3, double, allocator_t> tc(dimc);
+	tensor<3, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -3945,10 +3945,10 @@ void tod_contract2_test::test_ijk_pqj_iqpk(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<3, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<3, double, allocator> tc(dimc);
-	tensor<3, double, allocator> tc_ref(dimc);
+	tensor<3, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<3, double, allocator_t> tc(dimc);
+	tensor<3, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -4043,10 +4043,10 @@ void tod_contract2_test::test_ijk_pqji_qpk(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<3, double, allocator> tb(dimb);
-	tensor<3, double, allocator> tc(dimc);
-	tensor<3, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<3, double, allocator_t> tb(dimb);
+	tensor<3, double, allocator_t> tc(dimc);
+	tensor<3, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -4140,10 +4140,10 @@ void tod_contract2_test::test_ijkl_ikp_jpl(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<3, double, allocator> ta(dima);
-	tensor<3, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<3, double, allocator_t> ta(dima);
+	tensor<3, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -4238,10 +4238,10 @@ void tod_contract2_test::test_ijkl_ipk_jpl(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<3, double, allocator> ta(dima);
-	tensor<3, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<3, double, allocator_t> ta(dima);
+	tensor<3, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -4336,10 +4336,10 @@ void tod_contract2_test::test_ijkl_ipl_jpk(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<3, double, allocator> ta(dima);
-	tensor<3, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<3, double, allocator_t> ta(dima);
+	tensor<3, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -4433,10 +4433,10 @@ void tod_contract2_test::test_ijkl_jkp_ipl(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<3, double, allocator> ta(dima);
-	tensor<3, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<3, double, allocator_t> ta(dima);
+	tensor<3, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -4531,10 +4531,10 @@ void tod_contract2_test::test_ijkl_jpl_ipk(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<3, double, allocator> ta(dima);
-	tensor<3, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<3, double, allocator_t> ta(dima);
+	tensor<3, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -4633,10 +4633,10 @@ void tod_contract2_test::test_ijklm_ikp_jpml(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<3, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<5, double, allocator> tc(dimc);
-	tensor<5, double, allocator> tc_ref(dimc);
+	tensor<3, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<5, double, allocator_t> tc(dimc);
+	tensor<5, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -4738,10 +4738,10 @@ void tod_contract2_test::test_ijklm_ipkm_jpl(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<3, double, allocator> tb(dimb);
-	tensor<5, double, allocator> tc(dimc);
-	tensor<5, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<3, double, allocator_t> tb(dimb);
+	tensor<5, double, allocator_t> tc(dimc);
+	tensor<5, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -4843,10 +4843,10 @@ void tod_contract2_test::test_ijklm_jlp_ipkm(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<3, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<5, double, allocator> tc(dimc);
-	tensor<5, double, allocator> tc_ref(dimc);
+	tensor<3, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<5, double, allocator_t> tc(dimc);
+	tensor<5, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -4948,10 +4948,10 @@ void tod_contract2_test::test_ijklmn_kjmp_ipln(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<6, double, allocator> tc(dimc);
-	tensor<6, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<6, double, allocator_t> tc(dimc);
+	tensor<6, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -5055,10 +5055,10 @@ void tod_contract2_test::test_ijkl_iplq_kpjq(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -5155,10 +5155,10 @@ void tod_contract2_test::test_ijkl_iplq_pkjq(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -5255,10 +5255,10 @@ void tod_contract2_test::test_ijkl_iplq_pkqj(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -5355,10 +5355,10 @@ void tod_contract2_test::test_ijkl_ipql_kpqj(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -5455,10 +5455,10 @@ void tod_contract2_test::test_ijkl_ipql_pkqj(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -5555,10 +5555,10 @@ void tod_contract2_test::test_ijkl_pilq_kpjq(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -5655,10 +5655,10 @@ void tod_contract2_test::test_ijkl_pilq_pkjq(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -5755,10 +5755,10 @@ void tod_contract2_test::test_ijkl_piql_kpqj(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -5855,10 +5855,10 @@ void tod_contract2_test::test_ijkl_piql_pkqj(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -5955,10 +5955,10 @@ void tod_contract2_test::test_ijkl_pqkj_iqpl(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -6057,10 +6057,10 @@ void tod_contract2_test::test_ijkl_pqkj_qipl(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -6152,10 +6152,10 @@ void tod_contract2_test::test_ij_ipqr_jpqr(size_t ni, size_t nj, size_t np,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -6238,10 +6238,10 @@ void tod_contract2_test::test_ij_ipqr_jpqr_a(size_t ni, size_t nj, size_t np,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -6328,10 +6328,10 @@ void tod_contract2_test::test_ij_ipqr_pjrq(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -6420,10 +6420,10 @@ void tod_contract2_test::test_ij_jpqr_iprq(size_t ni, size_t nj, size_t np,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -6509,10 +6509,10 @@ void tod_contract2_test::test_ij_pqir_pqjr(size_t ni, size_t nj,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -6595,10 +6595,10 @@ void tod_contract2_test::test_ij_pqir_pqjr_a(size_t ni, size_t nj, size_t np,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -6688,10 +6688,10 @@ void tod_contract2_test::test_ijkl_pi_jklp(size_t ni, size_t nj,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cijkl_max = 0.0;
 
@@ -6795,10 +6795,10 @@ void tod_contract2_test::test_ijkl_pi_jklp_a(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cijkl_max = 0.0;
 
@@ -6896,10 +6896,10 @@ void tod_contract2_test::test_jikl_pi_jpkl(size_t ni, size_t nj,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -6982,10 +6982,10 @@ void tod_contract2_test::test_jikl_pi_jpkl_a(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -7067,10 +7067,10 @@ void tod_contract2_test::test_ijkl_ijp_klp(size_t ni, size_t nj,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<3, double, allocator> ta(dima);
-	tensor<3, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<3, double, allocator_t> ta(dima);
+	tensor<3, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -7151,10 +7151,10 @@ void tod_contract2_test::test_ijkl_ijp_klp_a(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<3, double, allocator> ta(dima);
-	tensor<3, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<3, double, allocator_t> ta(dima);
+	tensor<3, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -7242,10 +7242,10 @@ void tod_contract2_test::test_ijkl_ij_kl(size_t ni, size_t nj,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<2, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<2, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cijkl_max = 0.0;
 
@@ -7345,10 +7345,10 @@ void tod_contract2_test::test_ijkl_ij_lk(size_t ni, size_t nj,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<2, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<2, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cijkl_max = 0.0;
 

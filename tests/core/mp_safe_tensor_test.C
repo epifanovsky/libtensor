@@ -1,5 +1,5 @@
-#include <libvmm/std_allocator.h>
 #include <libvmm/thread.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/tensor_ctrl.h>
 #include "mp_safe_tensor_test.h"
 
@@ -68,7 +68,7 @@ void mp_safe_tensor_test::test_1() throw(libtest::test_exception) {
 
 	static const char *testname = "mp_safe_tensor_test::test_1()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -105,7 +105,7 @@ void mp_safe_tensor_test::test_2() throw(libtest::test_exception) {
 
 	static const char *testname = "mp_safe_tensor_test::test_2()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -159,7 +159,7 @@ void mp_safe_tensor_test::test_3() throw(libtest::test_exception) {
 
 	static const char *testname = "mp_safe_tensor_test::test_3()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 

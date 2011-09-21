@@ -1,4 +1,4 @@
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/tensor.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/btod/btod_apply.h>
@@ -81,7 +81,7 @@ void btod_apply_test::test_zero_1() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_apply_test::test_zero_1()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -129,7 +129,7 @@ void btod_apply_test::test_zero_2() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_apply_test::test_zero_2()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -184,7 +184,7 @@ void btod_apply_test::test_zero_3() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_apply_test::test_zero_3()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -237,7 +237,7 @@ void btod_apply_test::test_nosym_1() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_apply_test::test_nosym_1()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -280,7 +280,7 @@ void btod_apply_test::test_nosym_2() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_apply_test::test_nosym_2()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -327,7 +327,7 @@ void btod_apply_test::test_nosym_3() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_apply_test::test_nosym_3()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -374,7 +374,7 @@ void btod_apply_test::test_nosym_4() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_apply_test::test_nosym_4()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -425,7 +425,7 @@ void btod_apply_test::test_sym_1() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_apply_test::test_sym_1()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -477,7 +477,7 @@ void btod_apply_test::test_sym_2() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_apply_test::test_sym_2()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -531,7 +531,7 @@ void btod_apply_test::test_sym_3() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_apply_test::test_sym_3()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -597,7 +597,7 @@ void btod_apply_test::test_sym_4() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_apply_test::test_sym_4()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -665,7 +665,7 @@ void btod_apply_test::test_sym_5() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_apply_test::test_sym_5()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -760,7 +760,7 @@ void btod_apply_test::test_add_nosym_1() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_apply_test::test_add_nosym_1()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -805,7 +805,7 @@ void btod_apply_test::test_add_nosym_2() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_apply_test::test_add_nosym_2()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -857,7 +857,7 @@ void btod_apply_test::test_add_nosym_3() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_apply_test::test_add_nosym_3()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -913,7 +913,7 @@ void btod_apply_test::test_add_nosym_4() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_apply_test::test_add_nosym_4()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -964,7 +964,7 @@ void btod_apply_test::test_add_eqsym_1() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_apply_test::test_add_eqsym_1()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -1016,7 +1016,7 @@ void btod_apply_test::test_add_eqsym_2() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_apply_test::test_add_eqsym_2()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -1072,7 +1072,7 @@ void btod_apply_test::test_add_eqsym_3() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_copy_test::test_add_eqsym_3()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -1142,7 +1142,7 @@ void btod_apply_test::test_add_eqsym_4() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_apply_test::test_add_eqsym_4()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -1210,7 +1210,7 @@ void btod_apply_test::test_add_eqsym_5() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_apply_test::test_add_eqsym_5()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -1280,7 +1280,7 @@ void btod_apply_test::test_add_nesym_1() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_copy_test::test_add_nesym_1()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -1331,7 +1331,7 @@ void btod_apply_test::test_add_nesym_2() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_apply_test::test_add_nesym_2()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -1382,7 +1382,7 @@ void btod_apply_test::test_add_nesym_3() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_copy_test::test_add_nesym_3()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -1447,7 +1447,7 @@ void btod_apply_test::test_add_nesym_4() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_apply_test::test_add_nesym_4()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -1512,7 +1512,7 @@ void btod_apply_test::test_add_nesym_5() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_apply_test::test_add_nesym_5()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -1577,7 +1577,7 @@ void btod_apply_test::test_add_nesym_5_sp() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_apply_test::test_add_nesym_5_sp()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -1657,7 +1657,7 @@ void btod_apply_test::test_add_nesym_6() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_apply_test::test_add_nesym_6()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -1730,7 +1730,7 @@ void btod_apply_test::test_add_nesym_7_sp1() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_apply_test::test_add_nesym_7_sp1()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -1802,7 +1802,7 @@ void btod_apply_test::test_add_nesym_7_sp2() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_apply_test::test_add_nesym_7_sp2()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -1874,7 +1874,7 @@ void btod_apply_test::test_add_nesym_7_sp3() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_apply_test::test_add_nesym_7_sp3()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 

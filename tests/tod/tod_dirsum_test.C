@@ -1,7 +1,7 @@
 #include <cmath>
 #include <ctime>
 #include <sstream>
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/abs_index.h>
 #include <libtensor/core/tensor.h>
 #include <libtensor/tod/tod_dirsum.h>
@@ -10,7 +10,6 @@
 
 namespace libtensor {
 
-typedef libvmm::std_allocator<double> allocator;
 
 void tod_dirsum_test::perform() throw(libtest::test_exception) {
 
@@ -67,6 +66,8 @@ void tod_dirsum_test::test_ij_i_j(size_t ni, size_t nj, double d)
 	tnss << "tod_dirsum_test::test_ij_i_j(" << ni << ", " << nj << ", "
 		<< d << ")";
 	std::string tns = tnss.str();
+
+	typedef std_allocator<double> allocator;
 
 	try {
 
@@ -147,6 +148,8 @@ void tod_dirsum_test::test_ikj_ij_k_1(size_t ni, size_t nj, size_t nk,
 	tnss << "tod_dirsum_test::test_ikj_ij_k(" << ni << ", " << nj << ", "
 		<< nk << ", " << d << ")";
 	std::string tns = tnss.str();
+
+	typedef std_allocator<double> allocator;
 
 	try {
 
@@ -236,6 +239,8 @@ void tod_dirsum_test::test_ikjl_ij_kl_1(size_t ni, size_t nj, size_t nk,
 	tnss << "tod_dirsum_test::test_ikjl_ij_kl(" << ni << ", " << nj << ", "
 		<< nk << ", " << nl << ", " << d << ")";
 	std::string tns = tnss.str();
+
+	typedef std_allocator<double> allocator;
 
 	try {
 

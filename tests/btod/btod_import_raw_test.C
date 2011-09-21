@@ -1,5 +1,5 @@
 #include <sstream>
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/btod/btod_import_raw.h>
 #include <libtensor/tod/tod_add.h>
@@ -52,7 +52,7 @@ void btod_import_raw_test::test_1(const block_index_space<N> &bis)
 	std::ostringstream tnss;
 	tnss << "btod_import_raw_test::test_1(" << bis << ")";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tensor<N, double, allocator_t> tensor_t;
 	typedef tensor_ctrl<N, double> tensor_ctrl_t;
 	typedef block_tensor<N, double, allocator_t> block_tensor_t;
@@ -98,7 +98,7 @@ void btod_import_raw_test::test_2(const block_index_space<N> &bis)
 	std::ostringstream tnss;
 	tnss << "btod_import_raw_test::test_2(" << bis << ")";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tensor<N, double, allocator_t> tensor_t;
 	typedef tensor_ctrl<N, double> tensor_ctrl_t;
 	typedef block_tensor<N, double, allocator_t> block_tensor_t;

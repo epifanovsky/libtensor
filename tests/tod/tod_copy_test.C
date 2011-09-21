@@ -1,5 +1,5 @@
 #include <sstream>
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/tensor.h>
 #include <libtensor/tod/tod_copy.h>
 #include "../compare_ref.h"
@@ -7,8 +7,8 @@
 
 namespace libtensor {
 
-typedef libvmm::std_allocator<double> allocator;
-typedef tensor<4, double, allocator> tensor4;
+typedef std_allocator<double> allocator_t;
+typedef tensor<4, double, allocator_t> tensor4;
 typedef tensor_ctrl<4,double> tensor4_ctrl;
 
 void tod_copy_test::perform() throw(libtest::test_exception) {
@@ -90,7 +90,7 @@ void tod_copy_test::test_plain(const dimensions<N> &dims)
 
 	try {
 
-	tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
+	tensor<N, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
 
 	{
 	tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
@@ -136,7 +136,7 @@ void tod_copy_test::test_plain_additive(const dimensions<N> &dims, double d)
 
 	try {
 
-	tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
+	tensor<N, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
 
 	{
 	tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
@@ -183,7 +183,7 @@ void tod_copy_test::test_scaled(const dimensions<N> &dims, double c)
 
 	try {
 
-	tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
+	tensor<N, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
 
 	{
 	tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
@@ -231,7 +231,7 @@ void tod_copy_test::test_scaled_additive(const dimensions<N> &dims, double c,
 
 	try {
 
-	tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
+	tensor<N, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
 
 	{
 	tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
@@ -283,7 +283,7 @@ void tod_copy_test::test_perm(const dimensions<N> &dims,
 	dimensions<N> dimsa(dims), dimsb(dims);
 	dimsb.permute(perm);
 
-	tensor<N, double, allocator> ta(dimsa), tb(dimsb), tb_ref(dimsb);
+	tensor<N, double, allocator_t> ta(dimsa), tb(dimsb), tb_ref(dimsb);
 
 	{
 	tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
@@ -335,7 +335,7 @@ void tod_copy_test::test_perm_additive(const dimensions<N> &dims,
 	dimensions<N> dimsa(dims), dimsb(dims);
 	dimsb.permute(perm);
 
-	tensor<N, double, allocator> ta(dimsa), tb(dimsb), tb_ref(dimsb);
+	tensor<N, double, allocator_t> ta(dimsa), tb(dimsb), tb_ref(dimsb);
 
 	{
 	tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
@@ -388,7 +388,7 @@ void tod_copy_test::test_perm_scaled(const dimensions<N> &dims,
 	dimensions<N> dimsa(dims), dimsb(dims);
 	dimsb.permute(perm);
 
-	tensor<N, double, allocator> ta(dimsa), tb(dimsb), tb_ref(dimsb);
+	tensor<N, double, allocator_t> ta(dimsa), tb(dimsb), tb_ref(dimsb);
 
 	{
 	tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
@@ -443,7 +443,7 @@ void tod_copy_test::test_perm_scaled_additive(const dimensions<N> &dims,
 	dimensions<N> dimsa(dims), dimsb(dims);
 	dimsb.permute(perm);
 
-	tensor<N, double, allocator> ta(dimsa), tb(dimsb), tb_ref(dimsb);
+	tensor<N, double, allocator_t> ta(dimsa), tb(dimsb), tb_ref(dimsb);
 
 	{
 	tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);

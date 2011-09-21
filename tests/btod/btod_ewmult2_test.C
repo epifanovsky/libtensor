@@ -1,6 +1,6 @@
 #include <iomanip>
 #include <sstream>
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/btod/btod_ewmult2.h>
 #include <libtensor/btod/btod_random.h>
@@ -41,7 +41,7 @@ void btod_ewmult2_test::test_1(bool doadd) throw(libtest::test_exception) {
 	std::ostringstream tnss;
 	tnss << "btod_ewmult2_test::test_1(" << doadd << ")";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -117,7 +117,7 @@ void btod_ewmult2_test::test_2(bool doadd) throw(libtest::test_exception) {
 	std::ostringstream tnss;
 	tnss << "btod_ewmult2_test::test_2(" << doadd << ")";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -201,7 +201,7 @@ void btod_ewmult2_test::test_3(bool doadd) throw(libtest::test_exception) {
 	std::ostringstream tnss;
 	tnss << "btod_ewmult2_test::test_3(" << doadd << ")";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -285,7 +285,7 @@ void btod_ewmult2_test::test_4(bool doadd) throw(libtest::test_exception) {
 	std::ostringstream tnss;
 	tnss << "btod_ewmult2_test::test_4(" << doadd << ")";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -377,7 +377,7 @@ void btod_ewmult2_test::test_5(bool doadd) throw(libtest::test_exception) {
 	std::ostringstream tnss;
 	tnss << "btod_ewmult2_test::test_5(" << doadd << ")";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -473,7 +473,7 @@ void btod_ewmult2_test::test_6(bool doadd) throw(libtest::test_exception) {
 	std::ostringstream tnss;
 	tnss << "btod_ewmult2_test::test_6(" << doadd << ")";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -593,7 +593,7 @@ void btod_ewmult2_test::test_7() throw(libtest::test_exception) {
 	std::ostringstream tnss;
 	tnss << "btod_ewmult2_test::test_7()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	static const char *pgsym = "cs";
 	point_group_table pgt(pgsym, 2);

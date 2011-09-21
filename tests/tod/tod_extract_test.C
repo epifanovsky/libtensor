@@ -1,15 +1,12 @@
 #include <cmath>
 #include <ctime>
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/tensor.h>
 #include <libtensor/tod/tod_extract.h>
 #include "../compare_ref.h"
 #include "tod_extract_test.h"
 
 namespace libtensor {
-
-
-typedef libvmm::std_allocator<double> allocator;
 
 
 void tod_extract_test::perform() throw(libtest::test_exception) {
@@ -29,6 +26,8 @@ void tod_extract_test::perform() throw(libtest::test_exception) {
 void tod_extract_test::test_1() throw(libtest::test_exception) {
 
 	static const char *testname = "tod_extract_test::test_1()";
+
+	typedef std_allocator<double> allocator;
 
 	try {
 
@@ -85,6 +84,8 @@ void tod_extract_test::test_1() throw(libtest::test_exception) {
 void tod_extract_test::test_2() throw(libtest::test_exception) {
 
 	static const char *testname = "tod_extract_test::test_2()";
+
+	typedef std_allocator<double> allocator;
 
 	try {
 
@@ -145,6 +146,8 @@ void tod_extract_test::test_3() throw(libtest::test_exception) {
 
 	static const char *testname = "tod_extract_test::test_3()";
 
+	typedef std_allocator<double> allocator;
+
 	try {
 
 	size_t ni = 6, nj = 11, nk = 3;
@@ -204,6 +207,8 @@ void tod_extract_test::test_4() throw(libtest::test_exception) {
 
 	static const char *testname = "tod_extract_test::test_4()";
 
+	typedef std_allocator<double> allocator;
+
 	try {
 
 
@@ -216,6 +221,8 @@ void tod_extract_test::test_4() throw(libtest::test_exception) {
 void tod_extract_test::test_5() throw(libtest::test_exception) {
 
 	static const char *testname = "tod_extract_test::test_5()";
+
+	typedef std_allocator<double> allocator;
 
 	try {
 

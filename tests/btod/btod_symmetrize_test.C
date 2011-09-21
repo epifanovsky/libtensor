@@ -65,7 +65,7 @@ void btod_symmetrize_test::test_1() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_symmetrize_test::test_1()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -126,7 +126,7 @@ void btod_symmetrize_test::test_2() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_symmetrize_test::test_2()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -188,7 +188,7 @@ void btod_symmetrize_test::test_3() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_symmetrize_test::test_3()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -258,7 +258,7 @@ void btod_symmetrize_test::test_4() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_symmetrize_test::test_4()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -327,7 +327,7 @@ void btod_symmetrize_test::test_5(bool symm) throw(libtest::test_exception) {
 
 	static const char *testname = "btod_symmetrize_test::test_5(bool)";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -396,7 +396,7 @@ void btod_symmetrize_test::test_6a(bool symm, bool label,
 			<< label << ", " << part << ", " << doadd << ")";
 	std::string tns = tnss.str();
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	if (label) {
 		point_group_table pg(tns, 2);
@@ -517,7 +517,7 @@ void btod_symmetrize_test::test_6b(bool symm, bool label,
 			<< label << ", " << part << ", " << ")";
 	std::string tns = tnss.str();
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	if (label) {
 		point_group_table pg(tns, 2);

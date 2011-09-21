@@ -1,15 +1,11 @@
 #include <sstream>
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/tensor.h>
 #include <libtensor/tod/tod_apply.h>
 #include "../compare_ref.h"
 #include "tod_apply_test.h"
 
 namespace libtensor {
-
-typedef libvmm::std_allocator<double> allocator;
-typedef tensor<4, double, allocator> tensor4;
-typedef tensor_ctrl<4,double> tensor4_ctrl;
 
 namespace tod_apply_test_ns {
 
@@ -98,6 +94,8 @@ void tod_apply_test::test_plain(Functor &fn, const dimensions<N> &dims)
 
 	static const char *testname = "tod_apply_test::test_plain()";
 
+	typedef std_allocator<double> allocator;
+
 	try {
 
 	tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
@@ -145,6 +143,8 @@ void tod_apply_test::test_plain_additive(Functor &fn,
 	const dimensions<N> &dims, double d) throw(libtest::test_exception) {
 
 	static const char *testname = "tod_apply_test::test_plain_additive()";
+
+    typedef std_allocator<double> allocator;
 
 	try {
 
@@ -196,6 +196,8 @@ void tod_apply_test::test_scaled(Functor &fn,
 
 	static const char *testname = "tod_apply_test::test_scaled()";
 
+    typedef std_allocator<double> allocator;
+
 	try {
 
 	tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
@@ -246,6 +248,8 @@ void tod_apply_test::test_scaled_additive(Functor &fn,
 
 	static const char *testname = "tod_apply_test::test_scaled_additive()";
 
+    typedef std_allocator<double> allocator;
+
 	try {
 
 	tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
@@ -295,6 +299,8 @@ void tod_apply_test::test_perm(Functor &fn, const dimensions<N> &dims,
 	const permutation<N> &perm) throw(libtest::test_exception) {
 
 	static const char *testname = "tod_apply_test::test_perm()";
+
+    typedef std_allocator<double> allocator;
 
 	try {
 
@@ -350,6 +356,8 @@ void tod_apply_test::test_perm_additive(Functor &fn, const dimensions<N> &dims,
 
 	static const char *testname = "tod_apply_test::test_perm_additive()";
 
+    typedef std_allocator<double> allocator;
+
 	try {
 
 	dimensions<N> dimsa(dims), dimsb(dims);
@@ -403,6 +411,8 @@ void tod_apply_test::test_perm_scaled(Functor &fn, const dimensions<N> &dims,
 	const permutation<N> &perm, double c) throw(libtest::test_exception) {
 
 	static const char *testname = "tod_apply_test::test_perm_scaled()";
+
+    typedef std_allocator<double> allocator;
 
 	try {
 
@@ -460,6 +470,8 @@ void tod_apply_test::test_perm_scaled_additive(Functor &fn,
 	static const char *testname =
 		"tod_apply_test::test_perm_scaled_additive()";
 
+    typedef std_allocator<double> allocator;
+
 	try {
 
 	dimensions<N> dimsa(dims), dimsb(dims);
@@ -509,12 +521,15 @@ void tod_apply_test::test_perm_scaled_additive(Functor &fn,
 }
 
 void tod_apply_test::test_exc() throw(libtest::test_exception) {
+
+    typedef std_allocator<double> allocator;
+
 	index<4> i1, i2, i3;
 	i2[0]=2; i2[1]=2; i2[2]=2; i2[3]=2;
 	i3[0]=3; i3[1]=3; i3[2]=3; i3[3]=3;
 	index_range<4> ir1(i1,i2), ir2(i1,i3);
 	dimensions<4> dim1(ir1), dim2(ir2);
-	tensor4 t1(dim1), t2(dim2);
+	tensor<4, double, allocator> t1(dim1), t2(dim2);
 
 	bool ok = false;
 	try {

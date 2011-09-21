@@ -1,9 +1,9 @@
 #ifndef LIBTENSOR_TOD_SYMCONTRACT2_H
 #define LIBTENSOR_TOD_SYMCONTRACT2_H
 
-#include <libvmm/std_allocator.h>
 #include "../defs.h"
 #include "../exception.h"
+#include "../core/allocator.h"
 #include "tod_additive.h"
 #include "tod_contract2.h"
 
@@ -83,7 +83,7 @@ template<size_t N, size_t M, size_t K>
 void tod_symcontract2<N,M,K>::perform(tensor_i<N+M,double> &t)
 	throw(exception) {
 	// intermediate tensor
-	tensor<N+M,double,libvmm::std_allocator<double> > tmp(t);
+	tensor<N+M,double,std_allocator<double> > tmp(t);
 
 	m_contr.perform(tmp);
 
@@ -97,7 +97,7 @@ void tod_symcontract2<N,M,K>::perform(tensor_i<N+M,double> &t)
 template<size_t N, size_t M, size_t K>
 void tod_symcontract2<N,M,K>::perform(tensor_i<N+M,double> &t, double c)
 	throw(exception) {
-	tensor<N+M,double,libvmm::std_allocator<double> > tmp(t);
+	tensor<N+M,double,std_allocator<double> > tmp(t);
 	m_contr.perform(tmp);
 
 	tod_add<N+M> add(tmp,1.0);

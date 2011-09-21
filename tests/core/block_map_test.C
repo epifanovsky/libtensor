@@ -1,4 +1,4 @@
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/block_map.h>
 #include "block_map_test.h"
 
@@ -14,9 +14,10 @@ void block_map_test::test_create() throw(libtest::test_exception) {
 
 	static const char *testname = "block_map_test::test_create()";
 
+    typedef std_allocator<double> allocator_t;
+
 	try {
 
-	typedef libvmm::std_allocator<double> allocator_t;
 	block_map<2, double, allocator_t> map;
 
 	if(map.contains(0)) {
@@ -80,9 +81,10 @@ void block_map_test::test_immutable() throw(libtest::test_exception) {
 
 	static const char *testname = "block_map_test::test_immutable()";
 
+    typedef std_allocator<double> allocator_t;
+
 	try {
 
-	typedef libvmm::std_allocator<double> allocator_t;
 	typedef tensor<2, double, allocator_t> tensor_t;
 	block_map<2, double, allocator_t> map;
 

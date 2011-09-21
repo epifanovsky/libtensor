@@ -1,5 +1,5 @@
 #include <sstream>
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/btod/btod_add.h>
 #include <libtensor/btod/btod_random.h>
@@ -52,7 +52,7 @@ void btod_add_test::test_1(double ca1, double ca2)
 	std::ostringstream tnss;
 	tnss << "btod_add_test::test_1(" << ca1 << ", " << ca2 << ")";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -116,7 +116,7 @@ void btod_add_test::test_2(double ca1, double ca2, double cs)
 	tnss << "btod_add_test::test_2(" << ca1 << ", " << ca2
 		<< ", " << cs << ")";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -180,7 +180,7 @@ void btod_add_test::test_3(double ca1, double ca2)
 	std::ostringstream tnss;
 	tnss << "btod_add_test::test_3(" << ca1 << ", " << ca2 << ")";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -256,7 +256,7 @@ void btod_add_test::test_4(double ca1, double ca2, double ca3, double ca4)
 	tnss << "btod_add_test::test_4(" << ca1 << ", " << ca2
 		<< ", " << ca3 << ", " << ca4 << ")";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -352,7 +352,7 @@ void btod_add_test::test_5() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_add_test::test_5()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef block_tensor<2, double, allocator_t> block_tensor_t;
 
 	try {
@@ -387,7 +387,7 @@ void btod_add_test::test_6() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_add_test::test_6()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef block_tensor<2, double, allocator_t> block_tensor_t;
 
 	try {
@@ -423,7 +423,7 @@ void btod_add_test::test_7() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_add_test::test_7()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -487,7 +487,7 @@ void btod_add_test::test_8() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_add_test::test_8()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -556,7 +556,7 @@ void btod_add_test::test_9() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_add_test::test_9()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 

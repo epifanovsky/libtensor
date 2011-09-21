@@ -1,3 +1,4 @@
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/core/direct_block_tensor.h>
 #include <libtensor/tod/tod_btconv.h>
@@ -29,7 +30,7 @@ void direct_block_tensor_test::test_op_1() throw(libtest::test_exception) {
 
 	static const char *testname = "direct_block_tensor_test::test_op_1()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -63,7 +64,7 @@ void direct_block_tensor_test::test_op_2() throw(libtest::test_exception) {
 
 	static const char *testname = "direct_block_tensor_test::test_op_2()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -105,7 +106,7 @@ void direct_block_tensor_test::test_op_3() throw(libtest::test_exception) {
 
 	static const char *testname = "direct_block_tensor_test::test_op_3()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -169,7 +170,7 @@ void direct_block_tensor_test::test_op_4() throw(libtest::test_exception) {
 
 	static const char *testname = "direct_block_tensor_test::test_op_4()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 

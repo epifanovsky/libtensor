@@ -1,4 +1,4 @@
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/btod/btod_copy.h>
 #include <libtensor/btod/btod_diagonalize.h>
 #include <libtensor/btod/btod_import_raw.h>
@@ -27,7 +27,7 @@ void btod_diagonalize_test::test_1() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_diagonalize_test::test_1()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 		double matrix[9] = { 1, 3, 4, 3, 2, 8, 4, 8, 3};
@@ -38,7 +38,7 @@ void btod_diagonalize_test::test_1() throw(libtest::test_exception) {
 		index<1> i2a, i2b;
 		i2b[0] = 2;
 
-		typedef libvmm::std_allocator<double> allocator_t;
+		typedef std_allocator<double> allocator_t;
 		dimensions<2> dims1(index_range<2>(i1a, i1b));
 		dimensions<1> dims2(index_range<1>(i2a, i2b));
 
@@ -102,7 +102,7 @@ void btod_diagonalize_test::test_2() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_diagonalize_test::test_2()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 		double matrix[16] = { 4, 1, -2, 2, 1, 2, 0, 1, -2, 0, 3, -2, 2,1,-2,-1};
@@ -113,7 +113,7 @@ void btod_diagonalize_test::test_2() throw(libtest::test_exception) {
 		index<1> i2a, i2b;
 		i2b[0] = 3;
 
-		typedef libvmm::std_allocator<double> allocator_t;
+		typedef std_allocator<double> allocator_t;
 		dimensions<2> dims1(index_range<2>(i1a, i1b));
 		dimensions<1> dims2(index_range<1>(i2a, i2b));
 
@@ -183,7 +183,7 @@ void btod_diagonalize_test::test_3() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_diagonalize_test::test_3()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 		double matrix[9] = { 3, 1, 0, 1, 3, 1, 0, 1, 3};
@@ -194,7 +194,7 @@ void btod_diagonalize_test::test_3() throw(libtest::test_exception) {
 		index<1> i2a, i2b;
 		i2b[0] = 2;
 
-		typedef libvmm::std_allocator<double> allocator_t;
+		typedef std_allocator<double> allocator_t;
 		dimensions<2> dims1(index_range<2>(i1a, i1b));
 		dimensions<1> dims2(index_range<1>(i2a, i2b));
 
@@ -260,7 +260,7 @@ void btod_diagonalize_test::test_4() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_diagonalize_test::test_4()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 		double matrix[16] = { 3, 1, 0, 0,1,4,8,0,0,8,5,6,0,0,6,7};
@@ -271,7 +271,7 @@ void btod_diagonalize_test::test_4() throw(libtest::test_exception) {
 		index<1> i2a, i2b;
 		i2b[0] = 3;
 
-		typedef libvmm::std_allocator<double> allocator_t;
+		typedef std_allocator<double> allocator_t;
 		dimensions<2> dims1(index_range<2>(i1a, i1b));
 		dimensions<1> dims2(index_range<1>(i2a, i2b));
 
@@ -339,7 +339,7 @@ void btod_diagonalize_test::test_5() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_diagonalize_test::test_5()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 		double matrix[25] = { 2, -1,-1,0,0,-1,3,0,-2,0,-1,0,4,2,1,0,-2,2,8,3,0,
@@ -351,7 +351,7 @@ void btod_diagonalize_test::test_5() throw(libtest::test_exception) {
 		index<1> i2a, i2b;
 		i2b[0] = 4;
 
-		typedef libvmm::std_allocator<double> allocator_t;
+		typedef std_allocator<double> allocator_t;
 		dimensions<2> dims1(index_range<2>(i1a, i1b));
 		dimensions<1> dims2(index_range<1>(i2a, i2b));
 

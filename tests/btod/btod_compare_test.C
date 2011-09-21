@@ -1,4 +1,4 @@
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/abs_index.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/core/block_tensor_ctrl.h>
@@ -36,7 +36,7 @@ void btod_compare_test::test_1() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_compare_test::test_1()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -72,7 +72,7 @@ void btod_compare_test::test_2a() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_compare_test::test_2a()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -114,7 +114,7 @@ void btod_compare_test::test_2b() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_compare_test::test_2b()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -157,7 +157,7 @@ void btod_compare_test::test_3a() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_compare_test::test_3a()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -213,7 +213,7 @@ void btod_compare_test::test_3b() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_compare_test::test_3b()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -269,7 +269,7 @@ void btod_compare_test::test_4a() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_compare_test::test_4a()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -329,7 +329,7 @@ void btod_compare_test::test_4b() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_compare_test::test_4b()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -389,7 +389,7 @@ void btod_compare_test::test_5a() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_compare_test::test_5a()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -447,7 +447,7 @@ void btod_compare_test::test_5b() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_compare_test::test_5b()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -505,7 +505,7 @@ void btod_compare_test::test_6() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_compare_test::test_6()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -554,7 +554,7 @@ void btod_compare_test::test_exc() throw(libtest::test_exception) {
 	typedef dimensions<2> dimensions_t;
 	typedef mask<2> mask_t;
 	typedef block_index_space<2> block_index_space_t;
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef block_tensor<2, double, allocator_t> block_tensor_t;
 
 
@@ -617,7 +617,7 @@ void btod_compare_test::test_operation() throw(libtest::test_exception) {
 	typedef dimensions<2> dimensions_t;
 	typedef mask<2> mask_t;
 	typedef block_index_space<2> block_index_space_t;
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef block_tensor<2, double, allocator_t> block_tensor_t;
 	typedef block_tensor_ctrl<2, double> block_tensor_ctrl_t;
 
