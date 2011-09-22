@@ -123,6 +123,7 @@ set(SRC_LINALG
 set(SRC_INST
 	tod/tod_add.C
 	tod/tod_contract2.C
+	tod/tod_copy.C
 	tod/tod_dirsum.C
 	tod/tod_ewmult2.C
 	btod/additive_btod.C
