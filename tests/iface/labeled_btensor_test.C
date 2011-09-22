@@ -202,13 +202,12 @@ void labeled_btensor_test::test_expr_copy_1() throw(libtest::test_exception) {
 
 		// Fill in random data
 
-		index<2> ida;
+		abs_index<2> aida(dims);
 		do {
-			size_t i;
-			i = dims.abs_index(ida);
+			size_t i = aida.get_abs_index();
 			dta[i] = dtb2[i] = drand48();
 			dtb1[i] = drand48();
-		} while(dims.inc_index(ida));
+		} while(aida.inc());
 
 		tca.ret_dataptr(dta); dta = NULL;
 		tcb.ret_dataptr(dtb1); dtb1 = NULL;
@@ -263,15 +262,17 @@ void labeled_btensor_test::test_expr_copy_2() throw(libtest::test_exception) {
 
 		// Fill in random data
 
-		index<2> ida;
+		abs_index<2> aida(dims);
 		permutation<2> p; p.permute(0, 1);
 		do {
-			index<2> idb = ida; idb.permute(p);
-			size_t i = dims.abs_index(ida);
-			size_t j = dims.abs_index(idb);
+		    index<2> idb(aida.get_index());
+			idb.permute(p);
+		    abs_index<2> aidb(idb, dims);
+			size_t i = aida.get_abs_index();
+			size_t j = aidb.get_abs_index();
 			dta[i] = dtb2[j] = drand48();
 			dtb1[j] = drand48();
-		} while(dims.inc_index(ida));
+		} while(aida.inc());
 
 		tca.ret_dataptr(dta); dta = NULL;
 		tcb.ret_dataptr(dtb1); dtb1 = NULL;
@@ -325,16 +326,18 @@ void labeled_btensor_test::test_expr_copy_3() throw(libtest::test_exception) {
 
 		// Fill in random data
 
-		index<2> ida;
+		abs_index<2> aida(dims);
 		permutation<2> p; p.permute(0, 1);
 		do {
-			index<2> idb = ida; idb.permute(p);
-			size_t i = dims.abs_index(ida);
-			size_t j = dims.abs_index(idb);
+			index<2> idb(aida.get_index());
+			idb.permute(p);
+			abs_index<2> aidb(idb, dims);
+			size_t i = aida.get_abs_index();
+			size_t j = aidb.get_abs_index();
 			dta[i] = drand48();
 			dtb2[j] = 1.5 * dta[i];
 			dtb1[j] = drand48();
-		} while(dims.inc_index(ida));
+		} while(aida.inc());
 
 		tca.ret_dataptr(dta); dta = NULL;
 		tcb.ret_dataptr(dtb1); dtb1 = NULL;
@@ -388,14 +391,13 @@ void labeled_btensor_test::test_expr_copy_4() throw(libtest::test_exception) {
 
 		// Fill in random data
 
-		index<2> ida;
+		abs_index<2> aida(dims);
 		do {
-			size_t i;
-			i = dims.abs_index(ida);
+			size_t i = aida.get_abs_index();
 			dta[i] = drand48();
 			dtb2[i] = -dta[i];
 			dtb1[i] = drand48();
-		} while(dims.inc_index(ida));
+		} while(aida.inc());
 
 		tca.ret_dataptr(dta); dta = NULL;
 		tcb.ret_dataptr(dtb1); dtb1 = NULL;
@@ -452,15 +454,14 @@ void labeled_btensor_test::test_expr_add_1() throw(libtest::test_exception) {
 
 		// Fill in random data
 
-		index<2> ida;
+		abs_index<2> aida(dims);
 		do {
-			size_t i;
-			i = dims.abs_index(ida);
+			size_t i = aida.get_abs_index();
 			dta[i] = drand48();
 			dtb[i] = drand48();
 			dtc1[i] = drand48();
 			dtc2[i] = dta[i] + dtb[i];
-		} while(dims.inc_index(ida));
+		} while(aida.inc());
 
 		tca.ret_dataptr(dta); dta = NULL;
 		tcb.ret_dataptr(dtb); dtb = NULL;
@@ -520,15 +521,14 @@ void labeled_btensor_test::test_expr_add_2() throw(libtest::test_exception) {
 
 		// Fill in random data
 
-		index<2> ida;
+		abs_index<2> aida(dims);
 		do {
-			size_t i;
-			i = dims.abs_index(ida);
+			size_t i = aida.get_abs_index();
 			dta[i] = drand48();
 			dtb[i] = drand48();
 			dtc1[i] = drand48();
 			dtc2[i] = -dta[i] + 3.0*dtb[i];
-		} while(dims.inc_index(ida));
+		} while(aida.inc());
 
 		tca.ret_dataptr(dta); dta = NULL;
 		tcb.ret_dataptr(dtb); dtb = NULL;
@@ -588,15 +588,14 @@ void labeled_btensor_test::test_expr_add_3() throw(libtest::test_exception) {
 
 		// Fill in random data
 
-		index<2> ida;
+		abs_index<2> aida(dims);
 		do {
-			size_t i;
-			i = dims.abs_index(ida);
+			size_t i = aida.get_abs_index();
 			dta[i] = drand48();
 			dtb[i] = drand48();
 			dtc1[i] = drand48();
 			dtc2[i] = dta[i] - dtb[i];
-		} while(dims.inc_index(ida));
+		} while(aida.inc());
 
 		tca.ret_dataptr(dta); dta = NULL;
 		tcb.ret_dataptr(dtb); dtb = NULL;
@@ -656,18 +655,19 @@ void labeled_btensor_test::test_expr_add_4() throw(libtest::test_exception) {
 
 		// Fill in random data
 
-		index<2> ida;
+		abs_index<2> aida(dims);
 		permutation<2> p; p.permute(0, 1);
 		do {
-			index<2> idb(ida);
+			index<2> idb(aida.get_index());
 			idb.permute(p);
-			size_t i = dims.abs_index(ida);
-			size_t j = dims.abs_index(idb);
+			abs_index<2> aidb(idb, dims);
+			size_t i = aida.get_abs_index();
+			size_t j = aidb.get_abs_index();
 			dta[i] = drand48();
 			dtb[j] = drand48();
 			dtc1[i] = drand48();
 			dtc2[i] = 4.0*dta[i] - 0.5*dtb[j];
-		} while(dims.inc_index(ida));
+		} while(aida.inc());
 
 		tca.ret_dataptr(dta); dta = NULL;
 		tcb.ret_dataptr(dtb); dtb = NULL;

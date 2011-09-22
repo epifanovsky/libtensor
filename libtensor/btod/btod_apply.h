@@ -307,8 +307,8 @@ void btod_apply<N, Functor, Alloc>::make_schedule() {
 			orbit<N, double> oa(ctrla.req_const_symmetry(), ia);
 			if (! oa.is_allowed()) continue;
 
-			bidimsa.abs_index(oa.get_abs_canonical_index(), ia);
-			if (ctrla.req_is_zero_block(ia)) continue;
+			abs_index<N> acia(oa.get_abs_canonical_index(), bidimsa);
+			if (ctrla.req_is_zero_block(acia.get_index())) continue;
 
 			m_sch.insert(ol.get_abs_index(io));
 		}

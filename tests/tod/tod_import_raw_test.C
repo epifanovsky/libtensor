@@ -1,6 +1,7 @@
 #include <sstream>
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/abs_index.h>
+#include <libtensor/core/print_dimensions.h>
 #include <libtensor/core/tensor.h>
 #include <libtensor/tod/tod_import_raw.h>
 #include "../compare_ref.h"

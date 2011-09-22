@@ -71,7 +71,7 @@ void tod_compare_test::test_operation(const dimensions<4> &dim,
 		for(size_t i=0; i<sz; i++) {
 			p2[i] = p1[i] = drand48();
 		}
-		diffptr = dim.abs_index(idx);
+		diffptr = abs_index<4>::get_abs_index(idx, dim);
 		p2[diffptr] += 1e-6;
 		diff1 = p1[diffptr];
 		diff2 = p2[diffptr];
@@ -85,7 +85,7 @@ void tod_compare_test::test_operation(const dimensions<4> &dim,
 		fail_test("tod_compare_test::test_operation()", __FILE__,
 			__LINE__, "tod_compare failed to find the difference");
 	}
-	if(dim.abs_index(op1.get_diff_index()) != diffptr) {
+	if(abs_index<4>::get_abs_index(op1.get_diff_index(), dim) != diffptr) {
 		fail_test("tod_compare_test::test_operation()", __FILE__,
 			__LINE__, "tod_compare returned an incorrect index");
 	}

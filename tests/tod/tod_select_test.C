@@ -85,19 +85,19 @@ void tod_select_test::test_1(size_t n, double c)
 				for (typename list_t::const_iterator it2 = li.begin();
 						it2 != it; it2++) {
 
+				    abs_index<2> aidx(it2->idx, dims);
 					if (val == it2->value &&
-							i == dims.abs_index(it2->idx)) {
+							i == aidx.get_abs_index()) {
 						ok = true; break;
 					}
 				}
 
 				if (! ok) {
 					std::ostringstream oss;
-					index<2> idx;
-					dims.abs_index(i, idx);
+					abs_index<2> aidx(i, dims);
 					oss << "Unsorted list at element (" << it->idx << ", "
 							<< it->value << "). Found in tensor at "
-							<< idx << ", value = " << cd[i] << ".";
+							<< aidx.get_index() << ", value = " << cd[i] << ".";
 					fail_test(testname, __FILE__, __LINE__,
 							oss.str().c_str());
 				}
@@ -174,19 +174,19 @@ void tod_select_test::test_2(size_t n, double c)
 
 					index<3> idx(it2->idx);
 					idx.permute(pinv);
+					abs_index<3> aidx(idx, dims);
 					if (val == it2->value &&
-							i == dims.abs_index(idx)) {
+							i == aidx.get_abs_index()) {
 						ok = true; break;
 					}
 				}
 
 				if (! ok) {
 					std::ostringstream oss;
-					index<3> idx;
-					dims.abs_index(i, idx);
+					abs_index<3> aidx(i, dims);
 					oss << "Unsorted list at element (" << it->idx << ", "
 							<< it->value << "). Found in tensor at "
-							<< idx << ", value = " << cd[i] << ".";
+							<< aidx.get_index() << ", value = " << cd[i] << ".";
 					fail_test(testname, __FILE__, __LINE__,
 							oss.str().c_str());
 				}

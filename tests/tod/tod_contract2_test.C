@@ -3608,15 +3608,18 @@ void tod_contract2_test::test_ij_pq_ijpq(size_t ni, size_t nj, size_t np,
 	for(size_t i=0; i<ni; i++) {
 	for(size_t j=0; j<nj; j++) {
 		ic[0]=i; ic[1]=j;
+        abs_index<2> ac(ic, dimc);
 		double cij = 0.0;
 		for(size_t p=0; p<np; p++) {
 		for(size_t q=0; q<nq; q++) {
 			ia[0]=p; ia[1]=q;
 			ib[0]=i; ib[1]=j; ib[2]=p; ib[3]=q;
-			cij += dta[dima.abs_index(ia)]*dtb[dimb.abs_index(ib)];
+	        abs_index<2> aa(ia, dima);
+	        abs_index<4> ab(ib, dimb);
+			cij += dta[aa.get_abs_index()]*dtb[ab.get_abs_index()];
 		}
 		}
-		dtc2[dimc.abs_index(ic)] = cij;
+		dtc2[ac.get_abs_index()] = cij;
 		if(fabs(cij) > cij_max) cij_max = fabs(cij);
 	}
 	}
@@ -3690,15 +3693,18 @@ void tod_contract2_test::test_ij_pq_ijpq_a(size_t ni, size_t nj, size_t np,
 	for(size_t i=0; i<ni; i++) {
 	for(size_t j=0; j<nj; j++) {
 		ic[0]=i; ic[1]=j;
+		abs_index<2> ac(ic, dimc);
 		double cij = 0.0;
 		for(size_t p=0; p<np; p++) {
 		for(size_t q=0; q<nq; q++) {
 			ia[0]=p; ia[1]=q;
 			ib[0]=i; ib[1]=j; ib[2]=p; ib[3]=q;
-			cij += dta[dima.abs_index(ia)]*dtb[dimb.abs_index(ib)];
+			abs_index<2> aa(ia, dima);
+			abs_index<4> ab(ib, dimb);
+			cij += dta[aa.get_abs_index()]*dtb[ab.get_abs_index()];
 		}
 		}
-		dtc2[dimc.abs_index(ic)] += d*cij;
+		dtc2[ac.get_abs_index()] += d*cij;
 		if(fabs(cij) > cij_max) cij_max = fabs(cij);
 	}
 	}
@@ -6181,17 +6187,20 @@ void tod_contract2_test::test_ij_ipqr_jpqr(size_t ni, size_t nj, size_t np,
 	for(size_t i=0; i<ni; i++) {
 	for(size_t j=0; j<nj; j++) {
 		ic[0]=i; ic[1]=j;
+        abs_index<2> ac(ic, dimc);
 		double cij = 0.0;
 		for(size_t p=0; p<np; p++) {
 		for(size_t q=0; q<nq; q++) {
 		for(size_t r=0; r<nr; r++) {
 			ia[0]=i; ia[1]=p; ia[2]=q; ia[3]=r;
 			ib[0]=j; ib[1]=p; ib[2]=q; ib[3]=r;
-			cij += dta[dima.abs_index(ia)]*dtb[dimb.abs_index(ib)];
+			abs_index<4> aa(ia, dima);
+			abs_index<4> ab(ib, dimb);
+			cij += dta[aa.get_abs_index()]*dtb[ab.get_abs_index()];
 		}
 		}
 		}
-		dtc2[dimc.abs_index(ic)] = cij;
+		dtc2[ac.get_abs_index()] = cij;
 		if(fabs(cij) > cij_max) cij_max = fabs(cij);
 	}
 	}
@@ -6267,17 +6276,19 @@ void tod_contract2_test::test_ij_ipqr_jpqr_a(size_t ni, size_t nj, size_t np,
 	for(size_t i=0; i<ni; i++) {
 	for(size_t j=0; j<nj; j++) {
 		ic[0]=i; ic[1]=j;
+		abs_index<2> ac(ic, dimc);
 		double cij = 0.0;
 		for(size_t p=0; p<np; p++) {
 		for(size_t q=0; q<nq; q++) {
 		for(size_t r=0; r<nr; r++) {
 			ia[0]=i; ia[1]=p; ia[2]=q; ia[3]=r;
 			ib[0]=j; ib[1]=p; ib[2]=q; ib[3]=r;
-			cij += dta[dima.abs_index(ia)]*dtb[dimb.abs_index(ib)];
+			abs_index<4> aa(ia, dima), ab(ib, dimb);
+			cij += dta[aa.get_abs_index()]*dtb[ab.get_abs_index()];
 		}
 		}
 		}
-		dtc2[dimc.abs_index(ic)] += d*cij;
+		dtc2[ac.get_abs_index()] += d*cij;
 		if(fabs(cij) > cij_max) cij_max = fabs(cij);
 	}
 	}
@@ -6449,18 +6460,20 @@ void tod_contract2_test::test_ij_jpqr_iprq(size_t ni, size_t nj, size_t np,
 	for(size_t i=0; i<ni; i++) {
 	for(size_t j=0; j<nj; j++) {
 		ic[0]=i; ic[1]=j;
+		abs_index<2> ac(ic, dimc);
 		double cij = 0.0;
 		for(size_t p=0; p<np; p++) {
 		for(size_t q=0; q<nq; q++) {
 		for(size_t r=0; r<nr; r++) {
 			ia[0]=j; ia[1]=p; ia[2]=q; ia[3]=r;
 			ib[0]=i; ib[1]=p; ib[2]=r; ib[3]=q;
-			cij += dta[dima.abs_index(ia)]*dtb[dimb.abs_index(ib)];
+			abs_index<4> aa(ia, dima), ab(ib, dimb);
+			cij += dta[aa.get_abs_index()]*dtb[ab.get_abs_index()];
 		}
 		}
 		}
-		if(d == 0.0) dtc2[dimc.abs_index(ic)] = cij;
-		else dtc2[dimc.abs_index(ic)] += d*cij;
+		if(d == 0.0) dtc2[ac.get_abs_index()] = cij;
+		else dtc2[ac.get_abs_index()] += d*cij;
 		if(fabs(cij) > cij_max) cij_max = fabs(cij);
 	}
 	}
@@ -6538,17 +6551,19 @@ void tod_contract2_test::test_ij_pqir_pqjr(size_t ni, size_t nj,
 	for(size_t i=0; i<ni; i++) {
 	for(size_t j=0; j<nj; j++) {
 		ic[0]=i; ic[1]=j;
+		abs_index<2> ac(ic, dimc);
 		double cij = 0.0;
 		for(size_t p=0; p<np; p++) {
 		for(size_t q=0; q<nq; q++) {
 		for(size_t r=0; r<nr; r++) {
 			ia[0]=p; ia[1]=q; ia[2]=i; ia[3]=r;
 			ib[0]=p; ib[1]=q; ib[2]=j; ib[3]=r;
-			cij += dta[dima.abs_index(ia)]*dtb[dimb.abs_index(ib)];
+			abs_index<4> aa(ia, dima), ab(ib, dimb);
+			cij += dta[aa.get_abs_index()]*dtb[ab.get_abs_index()];
 		}
 		}
 		}
-		dtc2[dimc.abs_index(ic)] = cij;
+		dtc2[ac.get_abs_index()] = cij;
 		if(fabs(cij) > cij_max) cij_max = fabs(cij);
 	}
 	}
@@ -6624,17 +6639,19 @@ void tod_contract2_test::test_ij_pqir_pqjr_a(size_t ni, size_t nj, size_t np,
 	for(size_t i=0; i<ni; i++) {
 	for(size_t j=0; j<nj; j++) {
 		ic[0]=i; ic[1]=j;
+		abs_index<2> ac(ic, dimc);
 		double cij = 0.0;
 		for(size_t p=0; p<np; p++) {
 		for(size_t q=0; q<nq; q++) {
 		for(size_t r=0; r<nr; r++) {
 			ia[0]=p; ia[1]=q; ia[2]=i; ia[3]=r;
 			ib[0]=p; ib[1]=q; ib[2]=j; ib[3]=r;
-			cij += dta[dima.abs_index(ia)]*dtb[dimb.abs_index(ib)];
+			abs_index<4> aa(ia, dima), ab(ib, dimb);
+			cij += dta[aa.get_abs_index()]*dtb[ab.get_abs_index()];
 		}
 		}
 		}
-		dtc2[dimc.abs_index(ic)] += d*cij;
+		dtc2[ac.get_abs_index()] += d*cij;
 		if(fabs(cij) > cij_max) cij_max = fabs(cij);
 	}
 	}
@@ -6927,14 +6944,17 @@ void tod_contract2_test::test_jikl_pi_jpkl(size_t ni, size_t nj,
 	for(size_t k=0; k<nk; k++) {
 	for(size_t l=0; l<nl; l++) {
 		ic[0]=j; ic[1]=i; ic[2]=k; ic[3]=l;
+		abs_index<4> ac(ic, dimc);
 		double cjikl = 0.0;
 		for(size_t p=0; p<np; p++) {
 			ia[0]=p; ia[1]=i;
 			ib[0]=j; ib[1]=p; ib[2]=k; ib[3]=l;
-			cjikl += dta[dima.abs_index(ia)]*
-				dtb[dimb.abs_index(ib)];
+			abs_index<2> aa(ia, dima);
+			abs_index<4> ab(ib, dimb);
+			cjikl += dta[aa.get_abs_index()]*
+				dtb[ab.get_abs_index()];
 		}
-		dtc2[dimc.abs_index(ic)] = cjikl;
+		dtc2[ac.get_abs_index()] = cjikl;
 		if(fabs(cjikl) > cij_max) cij_max = fabs(cjikl);
 	}
 	}
@@ -7013,14 +7033,17 @@ void tod_contract2_test::test_jikl_pi_jpkl_a(size_t ni, size_t nj, size_t nk,
 	for(size_t k=0; k<nk; k++) {
 	for(size_t l=0; l<nl; l++) {
 		ic[0]=j; ic[1]=i; ic[2]=k; ic[3]=l;
+		abs_index<4> ac(ic, dimc);
 		double cjikl = 0.0;
 		for(size_t p=0; p<np; p++) {
 			ia[0]=p; ia[1]=i;
 			ib[0]=j; ib[1]=p; ib[2]=k; ib[3]=l;
-			cjikl += dta[dima.abs_index(ia)]*
-				dtb[dimb.abs_index(ib)];
+			abs_index<2> aa(ia, dima);
+			abs_index<4> ab(ib, dimb);
+			cjikl += dta[aa.get_abs_index()]*
+				dtb[ab.get_abs_index()];
 		}
-		dtc2[dimc.abs_index(ic)] += d*cjikl;
+		dtc2[ac.get_abs_index()] += d*cjikl;
 		if(fabs(cjikl) > cij_max) cij_max = fabs(cjikl);
 	}
 	}
@@ -7098,13 +7121,15 @@ void tod_contract2_test::test_ijkl_ijp_klp(size_t ni, size_t nj,
 	for(size_t k=0; k<nk; k++) {
 	for(size_t l=0; l<nl; l++) {
 		ic[0]=i; ic[1]=j; ic[2]=k; ic[3]=l;
+		abs_index<4> ac(ic, dimc);
 		double cij = 0.0;
 		for(size_t p=0; p<np; p++) {
 			ia[0]=i; ia[1]=j; ia[2]=p;
 			ib[0]=k; ib[1]=l; ib[2]=p;
-			cij += dta[dima.abs_index(ia)]*dtb[dimb.abs_index(ib)];
+			abs_index<3> aa(ia, dima), ab(ib, dimb);
+			cij += dta[aa.get_abs_index()]*dtb[ab.get_abs_index()];
 		}
-		dtc2[dimc.abs_index(ic)] = cij;
+		dtc2[ac.get_abs_index()] = cij;
 		if(fabs(cij) > cij_max) cij_max = fabs(cij);
 	}
 	}
@@ -7182,13 +7207,15 @@ void tod_contract2_test::test_ijkl_ijp_klp_a(size_t ni, size_t nj, size_t nk,
 	for(size_t k=0; k<nk; k++) {
 	for(size_t l=0; l<nl; l++) {
 		ic[0]=i; ic[1]=j; ic[2]=k; ic[3]=l;
+		abs_index<4> ac(ic, dimc);
 		double cij = 0.0;
 		for(size_t p=0; p<np; p++) {
 			ia[0]=i; ia[1]=j; ia[2]=p;
 			ib[0]=k; ib[1]=l; ib[2]=p;
-			cij += dta[dima.abs_index(ia)]*dtb[dimb.abs_index(ib)];
+			abs_index<3> aa(ia, dima), ab(ib, dimb);
+			cij += dta[aa.get_abs_index()]*dtb[ab.get_abs_index()];
 		}
-		dtc2[dimc.abs_index(ic)] += d*cij;
+		dtc2[ac.get_abs_index()] += d*cij;
 		if(fabs(cij) > cij_max) cij_max = fabs(cij);
 	}
 	}

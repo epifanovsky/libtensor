@@ -109,14 +109,13 @@ void tod_apply_test::test_plain(Functor &fn, const dimensions<N> &dims)
 
 	// Fill in random data
 
-	index<N> ida;
+	abs_index<N> aida(dims);
 	do {
-		size_t i;
-		i = dims.abs_index(ida);
+		size_t i = aida.get_abs_index();
 		dta[i] = drand48();
 		dtb2[i] = fn(dta[i]);
 		dtb1[i] = drand48();
-	} while(dims.inc_index(ida));
+	} while(aida.inc());
 
 	tca.ret_dataptr(dta); dta = NULL;
 	tcb.ret_dataptr(dtb1); dtb1 = NULL;
@@ -159,14 +158,13 @@ void tod_apply_test::test_plain_additive(Functor &fn,
 
 	// Fill in random data
 
-	index<N> ida;
+	abs_index<N> aida(dims);
 	do {
-		size_t i;
-		i = dims.abs_index(ida);
+		size_t i = aida.get_abs_index();
 		dta[i] = drand48();
 		dtb1[i] = drand48();
 		dtb2[i] = dtb1[i] + d * fn(dta[i]);
-	} while(dims.inc_index(ida));
+	} while(aida.inc());
 
 	tca.ret_dataptr(dta); dta = NULL;
 	tcb.ret_dataptr(dtb1); dtb1 = NULL;
@@ -211,14 +209,13 @@ void tod_apply_test::test_scaled(Functor &fn,
 
 	// Fill in random data
 
-	index<N> ida;
+	abs_index<N> aida(dims);
 	do {
-		size_t i;
-		i = dims.abs_index(ida);
+		size_t i = aida.get_abs_index();
 		dta[i] = drand48();
 		dtb2[i] = fn(c * dta[i]);
 		dtb1[i] = drand48();
-	} while(dims.inc_index(ida));
+	} while(aida.inc());
 
 	tca.ret_dataptr(dta); dta = NULL;
 	tcb.ret_dataptr(dtb1); dtb1 = NULL;
@@ -263,14 +260,13 @@ void tod_apply_test::test_scaled_additive(Functor &fn,
 
 	// Fill in random data
 
-	index<N> ida;
+	abs_index<N> aida(dims);
 	do {
-		size_t i;
-		i = dims.abs_index(ida);
+		size_t i = aida.get_abs_index();
 		dta[i] = drand48();
 		dtb1[i] = drand48();
 		dtb2[i] = dtb1[i] + d * fn(c * dta[i]);
-	} while(dims.inc_index(ida));
+	} while(aida.inc());
 
 	tca.ret_dataptr(dta); dta = NULL;
 	tcb.ret_dataptr(dtb1); dtb1 = NULL;
@@ -318,17 +314,18 @@ void tod_apply_test::test_perm(Functor &fn, const dimensions<N> &dims,
 
 	// Fill in random data
 
-	index<N> ida;
+	abs_index<N> aida(dimsa);
 	do {
-		index<N> idb(ida);
+		index<N> idb(aida.get_index());
 		idb.permute(perm);
+		abs_index<N> aidb(idb, dimsb);
 		size_t i, j;
-		i = dimsa.abs_index(ida);
-		j = dimsb.abs_index(idb);
+		i = aida.get_abs_index();
+		j = aidb.get_abs_index();
 		dta[i] = drand48();
 		dtb1[i] = drand48();
 		dtb2[j] = fn(dta[i]);
-	} while(dimsa.inc_index(ida));
+	} while(aida.inc());
 
 	tca.ret_dataptr(dta); dta = NULL;
 	tcb.ret_dataptr(dtb1); dtb1 = NULL;
@@ -374,17 +371,18 @@ void tod_apply_test::test_perm_additive(Functor &fn, const dimensions<N> &dims,
 
 	// Fill in random data
 
-	index<N> ida;
+	abs_index<N> aida(dimsa);
 	do {
-		index<N> idb(ida);
+		index<N> idb(aida.get_index());
 		idb.permute(perm);
+		abs_index<N> aidb(idb, dimsb);
 		size_t i, j;
-		i = dimsa.abs_index(ida);
-		j = dimsb.abs_index(idb);
+		i = aida.get_abs_index();
+		j = aidb.get_abs_index();
 		dta[i] = drand48();
 		dtb1[j] = drand48();
 		dtb2[j] = dtb1[j] + d * fn(dta[i]);
-	} while(dimsa.inc_index(ida));
+	} while(aida.inc());
 
 	tca.ret_dataptr(dta); dta = NULL;
 	tcb.ret_dataptr(dtb1); dtb1 = NULL;
@@ -430,17 +428,18 @@ void tod_apply_test::test_perm_scaled(Functor &fn, const dimensions<N> &dims,
 
 	// Fill in random data
 
-	index<N> ida;
+	abs_index<N> aida(dimsa);
 	do {
-		index<N> idb(ida);
+		index<N> idb(aida.get_index());
 		idb.permute(perm);
+		abs_index<N> aidb(idb, dimsb);
 		size_t i, j;
-		i = dimsa.abs_index(ida);
-		j = dimsb.abs_index(idb);
+		i = aida.get_abs_index();
+		j = aidb.get_abs_index();
 		dta[i] = drand48();
 		dtb1[j] = drand48();
 		dtb2[j] = fn(c * dta[i]);
-	} while(dimsa.inc_index(ida));
+	} while(aida.inc());
 
 	tca.ret_dataptr(dta); dta = NULL;
 	tcb.ret_dataptr(dtb1); dtb1 = NULL;
@@ -488,17 +487,18 @@ void tod_apply_test::test_perm_scaled_additive(Functor &fn,
 
 	// Fill in random data
 
-	index<N> ida;
+	abs_index<N> aida(dimsa);
 	do {
-		index<N> idb(ida);
+		index<N> idb(aida.get_index());
 		idb.permute(perm);
+		abs_index<N> aidb(idb, dimsb);
 		size_t i, j;
-		i = dimsa.abs_index(ida);
-		j = dimsb.abs_index(idb);
+		i = aida.get_abs_index();
+		j = aidb.get_abs_index();
 		dta[i] = drand48();
 		dtb1[j] = drand48();
 		dtb2[j] = dtb1[j] + d * fn(c * dta[i]);
-	} while(dimsa.inc_index(ida));
+	} while(aida.inc());
 
 	tca.ret_dataptr(dta); dta = NULL;
 	tcb.ret_dataptr(dtb1); dtb1 = NULL;

@@ -6,6 +6,7 @@
 #include <utility>
 #include "../defs.h"
 #include "../exception.h"
+#include "../core/abs_index.h"
 #include "../core/allocator.h"
 #include "../core/block_tensor_i.h"
 #include "../core/block_tensor_ctrl.h"
@@ -106,7 +107,7 @@ bool btod_random<N>::make_transf_map(const symmetry<N, double> &sym,
 	const dimensions<N> &bidims, const index<N> &idx,
 	const transf<N, double> &tr, transf_map_t &alltransf) {
 
-	size_t absidx = bidims.abs_index(idx);
+	size_t absidx = abs_index<N>::get_abs_index(idx, bidims);
 	typename transf_map_t::iterator ilst = alltransf.find(absidx);
 	if(ilst == alltransf.end()) {
 		ilst = alltransf.insert(std::pair<size_t, transf_list_t>(
@@ -156,7 +157,7 @@ void btod_random<N>::make_random_blk(block_tensor_ctrl<N, double> &ctrl,
 	typedef std_allocator<double> allocator_t;
 
 	const symmetry<N, double> &sym = ctrl.req_symmetry();
-	size_t absidx = bidims.abs_index(idx);
+	size_t absidx = abs_index<N>::get_abs_index(idx, bidims);
 	tod_random<N> randop;
 
 	transf<N, double> tr0;

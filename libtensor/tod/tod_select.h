@@ -151,8 +151,8 @@ void tod_select<N,ComparePolicy>::perform(list_t &li, size_t n) {
 	}
 
 	if (li.empty()) {
-		index<N> idx;
-		d.abs_index(i, idx);
+	    abs_index<N> aidx(i, d);
+		index<N> idx(aidx.get_index());
 		if (do_perm) idx.permute(m_perm);
 		li.insert(li.end(), elem_t(idx, m_c * p[i]));
 		i++;
@@ -166,8 +166,8 @@ void tod_select<N,ComparePolicy>::perform(list_t &li, size_t n) {
 
 		if (! m_cmp(val, li.back().value)) {
 			if (li.size() < n) {
-				index<N> idx;
-				d.abs_index(i, idx);
+		        abs_index<N> aidx(i, d);
+				index<N> idx(aidx.get_index());
 				if (do_perm) idx.permute(m_perm);
 				li.push_back(elem_t(idx, val));
 			}
@@ -177,8 +177,8 @@ void tod_select<N,ComparePolicy>::perform(list_t &li, size_t n) {
 
 			typename list_t::iterator it = li.begin();
 			while (it != li.end() && ! m_cmp(val, it->value)) it++;
-			index<N> idx;
-			d.abs_index(i, idx);
+            abs_index<N> aidx(i, d);
+			index<N> idx(aidx.get_index());
 			if (do_perm) idx.permute(m_perm);
 			li.insert(it, elem_t(idx, val));
 		}

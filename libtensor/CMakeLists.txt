@@ -5,7 +5,9 @@ set(SRC
 	global_timings.C
 	timer.C
 	version.C
+	core/abs_index.C
 	core/allocator.C
+	core/dimensions.C
 	core/orbit.C
     core/orbit_list.C
 	btod/btod_diagonalize.C

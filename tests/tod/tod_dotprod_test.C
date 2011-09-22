@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <sstream>
+#include <libtensor/core/abs_index.h>
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/tensor.h>
 #include <libtensor/tod/tod_dotprod.h>
@@ -119,13 +120,14 @@ void tod_dotprod_test::test_2(size_t ni, size_t nj, const permutation<2> &perm)
 
 	// Generate reference data
 
-	index<2> ia;
+	abs_index<2> aia(dima);
 	do {
-		index<2> ib(ia); ib.permute(perm);
-		size_t i = dima.abs_index(ia);
-		size_t j = dimb.abs_index(ib);
+		index<2> ib(aia.get_index()); ib.permute(perm);
+		abs_index<2> aib(ib, dimb);
+		size_t i = aia.get_abs_index();
+		size_t j = aib.get_abs_index();
 		c_ref += dta[i] * dtb[j];
-	} while(dima.inc_index(ia));
+	} while(aia.inc());
 	tca.ret_dataptr(dta); dta = NULL; ta.set_immutable();
 	tcb.ret_dataptr(dtb); dtb = NULL; tb.set_immutable();
 	}

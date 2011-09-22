@@ -101,13 +101,12 @@ void tod_copy_test::test_plain(const dimensions<N> &dims)
 
 	// Fill in random data
 
-	index<N> ida;
+	abs_index<N> aida(dims);
 	do {
-		size_t i;
-		i = dims.abs_index(ida);
+		size_t i = aida.get_abs_index();
 		dta[i] = dtb2[i] = drand48();
 		dtb1[i] = drand48();
-	} while(dims.inc_index(ida));
+	} while(aida.inc());
 	tca.ret_dataptr(dta); dta = NULL;
 	tcb.ret_dataptr(dtb1); dtb1 = NULL;
 	tcb_ref.ret_dataptr(dtb2); dtb2 = NULL;
@@ -147,14 +146,13 @@ void tod_copy_test::test_plain_additive(const dimensions<N> &dims, double d)
 
 	// Fill in random data
 
-	index<N> ida;
+	abs_index<N> aida(dims);
 	do {
-		size_t i;
-		i = dims.abs_index(ida);
+		size_t i = aida.get_abs_index();
 		dta[i] = drand48();
 		dtb1[i] = drand48();
 		dtb2[i] = dtb1[i] + d * dta[i];
-	} while(dims.inc_index(ida));
+	} while(aida.inc());
 	tca.ret_dataptr(dta); dta = NULL;
 	tcb.ret_dataptr(dtb1); dtb1 = NULL;
 	tcb_ref.ret_dataptr(dtb2); dtb2 = NULL;
@@ -194,14 +192,13 @@ void tod_copy_test::test_scaled(const dimensions<N> &dims, double c)
 
 	// Fill in random data
 
-	index<N> ida;
+	abs_index<N> aida(dims);
 	do {
-		size_t i;
-		i = dims.abs_index(ida);
+		size_t i = aida.get_abs_index();
 		dta[i] = dtb2[i] = drand48();
 		dtb2[i] *= c;
 		dtb1[i] = drand48();
-	} while(dims.inc_index(ida));
+	} while(aida.inc());
 	tca.ret_dataptr(dta); dta = NULL;
 	tcb.ret_dataptr(dtb1); dtb1 = NULL;
 	tcb_ref.ret_dataptr(dtb2); dtb2 = NULL;
@@ -242,14 +239,13 @@ void tod_copy_test::test_scaled_additive(const dimensions<N> &dims, double c,
 
 	// Fill in random data
 
-	index<N> ida;
+	abs_index<N> aida(dims);
 	do {
-		size_t i;
-		i = dims.abs_index(ida);
+		size_t i = aida.get_abs_index();
 		dta[i] = drand48();
 		dtb1[i] = drand48();
 		dtb2[i] = dtb1[i] + c*d*dta[i];
-	} while(dims.inc_index(ida));
+	} while(aida.inc());
 	tca.ret_dataptr(dta); dta = NULL;
 	tcb.ret_dataptr(dtb1); dtb1 = NULL;
 	tcb_ref.ret_dataptr(dtb2); dtb2 = NULL;
@@ -294,16 +290,18 @@ void tod_copy_test::test_perm(const dimensions<N> &dims,
 
 	// Fill in random data
 
-	index<N> ida;
+	abs_index<N> aida(dimsa);
 	do {
+	    index<N> ida(aida.get_index());
 		index<N> idb(ida);
 		idb.permute(perm);
+		abs_index<N> aidb(idb, dimsb);
 		size_t i, j;
-		i = dimsa.abs_index(ida);
-		j = dimsb.abs_index(idb);
+		i = aida.get_abs_index();
+		j = aidb.get_abs_index();
 		dta[i] = dtb2[j] = drand48();
 		dtb1[i] = drand48();
-	} while(dimsa.inc_index(ida));
+	} while(aida.inc());
 	tca.ret_dataptr(dta); dta = NULL;
 	tcb.ret_dataptr(dtb1); dtb1 = NULL;
 	tcb_ref.ret_dataptr(dtb2); dtb2 = NULL;
@@ -346,17 +344,19 @@ void tod_copy_test::test_perm_additive(const dimensions<N> &dims,
 
 	// Fill in random data
 
-	index<N> ida;
+	abs_index<N> aida(dimsa);
 	do {
+	    index<N> ida(aida.get_index());
 		index<N> idb(ida);
 		idb.permute(perm);
+		abs_index<N> aidb(idb, dimsb);
 		size_t i, j;
-		i = dimsa.abs_index(ida);
-		j = dimsb.abs_index(idb);
+		i = aida.get_abs_index();
+		j = aidb.get_abs_index();
 		dta[i] = drand48();
 		dtb1[j] = drand48();
 		dtb2[j] = dtb1[j] + d*dta[i];
-	} while(dimsa.inc_index(ida));
+	} while(aida.inc());
 	tca.ret_dataptr(dta); dta = NULL;
 	tcb.ret_dataptr(dtb1); dtb1 = NULL;
 	tcb_ref.ret_dataptr(dtb2); dtb2 = NULL;
@@ -399,17 +399,18 @@ void tod_copy_test::test_perm_scaled(const dimensions<N> &dims,
 
 	// Fill in random data
 
-	index<N> ida;
+	abs_index<N> aida(dimsa);
 	do {
-		index<N> idb(ida);
+		index<N> idb(aida.get_index());
 		idb.permute(perm);
+		abs_index<N> aidb(idb, dimsb);
 		size_t i, j;
-		i = dimsa.abs_index(ida);
-		j = dimsb.abs_index(idb);
+		i = aida.get_abs_index();
+		j = aidb.get_abs_index();
 		dta[i] = drand48();
 		dtb1[j] = drand48();
 		dtb2[j] = c*dta[i];
-	} while(dimsa.inc_index(ida));
+	} while(aida.inc());
 	tca.ret_dataptr(dta); dta = NULL;
 	tcb.ret_dataptr(dtb1); dtb1 = NULL;
 	tcb_ref.ret_dataptr(dtb2); dtb2 = NULL;
@@ -454,17 +455,18 @@ void tod_copy_test::test_perm_scaled_additive(const dimensions<N> &dims,
 
 	// Fill in random data
 
-	index<N> ida;
+	abs_index<N> aida(dimsa);
 	do {
-		index<N> idb(ida);
+		index<N> idb(aida.get_index());
 		idb.permute(perm);
+		abs_index<N> aidb(idb, dimsb);
 		size_t i, j;
-		i = dimsa.abs_index(ida);
-		j = dimsb.abs_index(idb);
+		i = aida.get_abs_index();
+		j = aidb.get_abs_index();
 		dta[i] = drand48();
 		dtb1[j] = drand48();
 		dtb2[j] = dtb1[j] + c*d*dta[i];
-	} while(dimsa.inc_index(ida));
+	} while(aida.inc());
 	tca.ret_dataptr(dta); dta = NULL;
 	tcb.ret_dataptr(dtb1); dtb1 = NULL;
 	tcb_ref.ret_dataptr(dtb2); dtb2 = NULL;

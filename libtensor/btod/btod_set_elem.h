@@ -113,7 +113,7 @@ bool btod_set_elem<N>::make_transf_map(const symmetry<N, double> &sym,
 	const dimensions<N> &bidims, const index<N> &idx,
 	const transf<N, double> &tr, transf_map_t &alltransf) {
 
-	size_t absidx = bidims.abs_index(idx);
+	size_t absidx = abs_index<N>::get_abs_index(idx, bidims);
 	typename transf_map_t::iterator ilst = alltransf.find(absidx);
 	if(ilst == alltransf.end()) {
 		ilst = alltransf.insert(std::pair<size_t, transf_list_t>(

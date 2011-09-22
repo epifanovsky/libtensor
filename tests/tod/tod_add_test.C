@@ -236,8 +236,9 @@ void tod_add_test::test_add_two_pqrs_qprs(size_t p, size_t q, size_t r,
         for(size_t k = 0; k < dim1[2]; k++)
         for(size_t l = 0; l < dim1[3]; l++) {
             i1[0] = j; i1[1] = i; i1[2] = k; i1[3] = l;
-            ptr1_ref[cnt] += 0.1 * cptr2[dim2.abs_index(i1)];
-            t2_max = std::max(t2_max, fabs(cptr2[dim2.abs_index(i1)]));
+            abs_index<4> ai(i1, dim2);
+            ptr1_ref[cnt] += 0.1 * cptr2[ai.get_abs_index()];
+            t2_max = std::max(t2_max, fabs(cptr2[ai.get_abs_index()]));
             cnt++;
         }
         ctrl1_ref.ret_dataptr(ptr1_ref); ptr1_ref = 0;
@@ -304,8 +305,9 @@ void tod_add_test::test_add_two_pqrs_prsq(size_t p, size_t q, size_t r,
         for(size_t k = 0; k < dim1[2]; k++)
         for(size_t l = 0; l < dim1[3]; l++) {
             i1[0] = i; i1[1] = k; i1[2] = l; i1[3] = j;
-            ptr1_ref[cnt] += 0.1 * cptr2[dim2.abs_index(i1)];
-            t2_max = std::max(t2_max, fabs(cptr2[dim2.abs_index(i1)]));
+            abs_index<4> ai(i1, dim2);
+            ptr1_ref[cnt] += 0.1 * cptr2[ai.get_abs_index()];
+            t2_max = std::max(t2_max, fabs(cptr2[ai.get_abs_index()]));
             cnt++;
         }
         ctrl2.ret_const_dataptr(cptr2); cptr2 = 0;
@@ -373,8 +375,9 @@ void tod_add_test::test_add_two_pqrs_qpsr(size_t p, size_t q, size_t r,
         for(size_t k = 0; k < dim1[2]; k++)
         for(size_t l = 0; l < dim1[3]; l++) {
             i1[0] = j; i1[1] = i; i1[2] = l; i1[3] = k;
-            ptr1_ref[cnt] += 0.1 * cptr2[dim2.abs_index(i1)];
-            t2_max = std::max(t2_max, fabs(cptr2[dim2.abs_index(i1)]));
+            abs_index<4> ai(i1, dim2);
+            ptr1_ref[cnt] += 0.1 * cptr2[ai.get_abs_index()];
+            t2_max = std::max(t2_max, fabs(cptr2[ai.get_abs_index()]));
             cnt++;
         }
         ctrl2.ret_const_dataptr(cptr2); cptr2 = 0;
@@ -518,8 +521,9 @@ void tod_add_test::test_add_mult(size_t p, size_t q, size_t r, size_t s)
         for(size_t k = 0; k < dim[2]; k++)
         for(size_t l = 0; l < dim[3]; l++) {
             i1[0] = j; i1[1] = i; i1[2] = k; i1[3] = l;
+            abs_index<4> ai(i1, dim3);
             ptr1_ref[cnt] += 0.5 * (cptr2[cnt] -
-                4.0 * cptr3[dim3.abs_index(i1)] + 0.2 * cptr4[cnt]);
+                4.0 * cptr3[ai.get_abs_index()] + 0.2 * cptr4[cnt]);
             t_max = std::max(t_max, fabs(ptr1_ref[cnt]));
             cnt++;
         }

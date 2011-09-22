@@ -58,13 +58,16 @@ void tod_symcontract2_test::test_ij_ip_jp( size_t ni, size_t np )
 			double res=0.0;
 			for (size_t p=0; p<np; p++) {
 				ia1[1]=p; ia2[1]=p;
-				res += pta[dima.abs_index(ia1)] *
-					ptb[dima.abs_index(ia2)];
+				abs_index<2> aia1(ia1, dima), aia2(ia2, dima);
+				res += pta[aia1.get_abs_index()] *
+					ptb[aia2.get_abs_index()];
 			}
 
-			ptc_ref[dimc.abs_index(ic1)]+=res;
+            abs_index<2> aic1(ic1, dimc);
+			ptc_ref[aic1.get_abs_index()]+=res;
 			ic1[0]=j; ic1[1]=i;
-			ptc_ref[dimc.abs_index(ic1)]-=res;
+            abs_index<2> aic2(ic1, dimc);
+			ptc_ref[aic2.get_abs_index()]-=res;
 		}
 
 		tcc_ref.ret_dataptr(ptc_ref);
@@ -146,13 +149,16 @@ void tod_symcontract2_test::test_ijab_iapq_pbqj( size_t na,
 			for (size_t q=0; q<nq; q++) {
 				ia1[2]=p; ia1[3]=q;
 				ib1[0]=p; ib1[2]=q;
-				res += pta[dima.abs_index(ia1)] *
-					ptb[dimb.abs_index(ib1)];
+				abs_index<4> aia1(ia1, dima), aib1(ib1, dimb);
+				res += pta[aia1.get_abs_index()] *
+					ptb[aib1.get_abs_index()];
 			}
 
-			ptc_ref[dimc.abs_index(ic1)]+=res;
+			abs_index<4> aic1(ic1, dimc);
+			ptc_ref[aic1.get_abs_index()]+=res;
 			ic1[0]=j; ic1[1]=i; ic1[2]=b; ic1[3]=a;
-			ptc_ref[dimc.abs_index(ic1)]-=res;
+            abs_index<4> aic2(ic1, dimc);
+			ptc_ref[aic2.get_abs_index()]-=res;
 		}
 
 		tcc_ref.ret_dataptr(ptc_ref);

@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_ORBIT_LIST_IMPL_H
 #define LIBTENSOR_ORBIT_LIST_IMPL_H
 
+#include "abs_index.h"
 #include "orbit_list.h"
 
 namespace libtensor {
@@ -17,16 +18,16 @@ orbit_list<N, T>::orbit_list(const symmetry<N, T> &sym) :
     orbit_list<N, T>::start_timer();
 
     std::vector<char> chk(m_dims.get_size(), 0);
-    index<N> idx;
+    abs_index<N> aidx(m_dims);
     do {
-        size_t absidx = m_dims.abs_index(idx);
+        size_t absidx = aidx.get_abs_index();
         if(chk[absidx] == 0) {
-            if(mark_orbit(sym, idx, chk)) {
-                m_orb.insert(std::pair< size_t, index<N> >(
-                    absidx, idx));
+            if(mark_orbit(sym, aidx.get_index(), chk)) {
+                m_orb.insert(std::pair< size_t, index<N> >(absidx,
+                    aidx.get_index()));
             }
         }
-    } while(m_dims.inc_index(idx));
+    } while(aidx.inc());
 
     orbit_list<N, T>::stop_timer();
 }
@@ -42,7 +43,7 @@ size_t orbit_list<N, T>::get_size() const {
 template<size_t N, typename T>
 bool orbit_list<N, T>::contains(const index<N> &idx) const {
 
-    return contains(m_dims.abs_index(idx));
+    return contains(abs_index<N>::get_abs_index(idx, m_dims));
 }
 
 
@@ -85,7 +86,7 @@ template<size_t N, typename T>
 bool orbit_list<N, T>::mark_orbit(const symmetry<N, T> &sym,
     const index<N> &idx, std::vector<char> &chk) {
 
-    size_t absidx = m_dims.abs_index(idx);
+    size_t absidx = abs_index<N>::get_abs_index(idx, m_dims);
     if(chk[absidx]) return true;
 
     bool allowed = true;

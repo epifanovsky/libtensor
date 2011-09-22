@@ -184,7 +184,8 @@ void tod_mult1_test::test_pqrs_qrps(
 		for(size_t k = 0; k < nk; k++)
 		for(size_t l = 0; l < nl; l++) {
 			i1[0] = j; i1[1] = k; i1[2] = i; i1[3] = l;
-			pa_ref[cnt] = pa[cnt] + coeff * pa[cnt] / pb[dimb.abs_index(i1)];
+            abs_index<4> ai1(i1, dimb);
+			pa_ref[cnt] = pa[cnt] + coeff * pa[cnt] / pb[ai1.get_abs_index()];
 			cnt++;
 		}
 	}
@@ -194,7 +195,8 @@ void tod_mult1_test::test_pqrs_qrps(
 		for(size_t k = 0; k < nk; k++)
 		for(size_t l = 0; l < nl; l++) {
 			i1[0] = j; i1[1] = k; i1[2] = i; i1[3] = l;
-			pa_ref[cnt] = pa[cnt] + coeff * pa[cnt] * pb[dimb.abs_index(i1)];
+            abs_index<4> ai1(i1, dimb);
+			pa_ref[cnt] = pa[cnt] + coeff * pa[cnt] * pb[ai1.get_abs_index()];
 			cnt++;
 		}
 	}
