@@ -143,10 +143,11 @@ set(SRC_INST
 )
 
 set(SRC_MP
-	mp/task_dispatcher.C
-	mp/worker.C
-	mp/worker_group.C
-	mp/worker_pool.C
+    mp/cpu_pool.C
+    mp/task_dispatcher.C
+    mp/worker.C
+    mp/worker_group.C
+    mp/worker_pool.C
 )
 
 add_library(tensor ${SRC} ${SRC_LINALG} ${SRC_INST} ${SRC_MP})
