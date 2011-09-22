@@ -7,7 +7,7 @@ namespace libtensor {
 const char *worker::k_clazz = "worker";
 
 
-worker::worker(libvmm::cond &started, libvmm::mutex &cpu_lock) :
+worker::worker(cond &started, mutex &cpu_lock) :
 
 	m_started(started), m_cpu_lock(cpu_lock), m_term(false) {
 

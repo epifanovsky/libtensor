@@ -10,7 +10,7 @@ const char *task_dispatcher::k_clazz = "task_dispatcher";
 
 task_dispatcher::queue_id_t task_dispatcher::create_queue() {
 
-	libvmm::auto_spinlock lock(m_lock);
+	auto_spinlock lock(m_lock);
 
 	return m_stack.insert(m_stack.end(), new queue);
 }
@@ -20,7 +20,7 @@ void task_dispatcher::destroy_queue(queue_id_t &qid) {
 
 	static const char *method = "destroy_queue(queue_id_t&)";
 
-	libvmm::auto_spinlock lock(m_lock);
+	auto_spinlock lock(m_lock);
 
 	if(qid == m_stack.end()) {
 		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
@@ -37,7 +37,7 @@ void task_dispatcher::push_task(queue_id_t &qid, task_i &task) {
 
 	static const char *method = "push_task(queue_id_t&, task_i&)";
 
-	libvmm::auto_spinlock lock(m_lock);
+	auto_spinlock lock(m_lock);
 
 	if(qid == m_stack.end()) {
 		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
@@ -61,7 +61,7 @@ void task_dispatcher::wait_on_queue(queue_id_t &qid) {
 	static const char *method = "wait_on_queue(queue_id_t&)";
 
 	{
-		libvmm::auto_spinlock lock(m_lock);
+		auto_spinlock lock(m_lock);
 
 		queue &q = **qid;
 		if(q.finalized) {
@@ -74,7 +74,7 @@ void task_dispatcher::wait_on_queue(queue_id_t &qid) {
 	while(true) {
 		bool done = false;
 		{
-			libvmm::auto_spinlock lock(m_lock);
+			auto_spinlock lock(m_lock);
 			queue &q = **qid;
 			done = q.q.is_empty() && q.nrunning == 0;
 		}
@@ -83,7 +83,7 @@ void task_dispatcher::wait_on_queue(queue_id_t &qid) {
 	}
 
 	{
-		libvmm::auto_spinlock lock(m_lock);
+		auto_spinlock lock(m_lock);
 
 		queue &q = **qid;
 		if(q.exc != 0) {
@@ -109,13 +109,13 @@ void task_dispatcher::set_off_alarm() {
 void task_dispatcher::wait_next() {
 
 	{
-		libvmm::auto_spinlock lock(m_lock);
+		auto_spinlock lock(m_lock);
 		if(m_ntasks != 0) return;
 		m_nwaiting++;
 	}
 	m_alarm.wait();
 	{
-		libvmm::auto_spinlock lock(m_lock);
+		auto_spinlock lock(m_lock);
 		m_nwaiting--;
 	}
 }
@@ -127,7 +127,7 @@ void task_dispatcher::invoke_next() {
 	task_i *task = 0;
 
 	{
-		libvmm::auto_spinlock lock(m_lock);
+		auto_spinlock lock(m_lock);
 
 		std::list<queue*>::reverse_iterator i = m_stack.rbegin();
 		for(; i != m_stack.rend() && (*i)->q.is_empty(); i++);
@@ -148,7 +148,7 @@ void task_dispatcher::invoke_next() {
 	}
 
 	{
-		libvmm::auto_spinlock lock(m_lock);
+		auto_spinlock lock(m_lock);
 		q->nrunning--;
 		if(exc) {
 			if(q->exc == 0) q->exc = exc;

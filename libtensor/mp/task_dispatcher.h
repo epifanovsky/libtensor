@@ -2,9 +2,8 @@
 #define LIBTENSOR_TASK_DISPATCHER_H
 
 #include <list>
-#include <libvmm/auto_spinlock.h>
-#include <libvmm/cond.h>
 #include <libvmm/singleton.h>
+#include "threads.h"
 #include "task_queue.h"
 
 namespace libtensor {
@@ -35,8 +34,8 @@ public:
 	typedef std::list<queue*>::iterator queue_id_t; //!< Queue ID type
 
 private:
-	libvmm::spinlock m_lock; //!< Lock
-	libvmm::cond m_alarm; //!< Alarm for the processing pool
+	spinlock m_lock; //!< Lock
+	cond m_alarm; //!< Alarm for the processing pool
 	std::list<queue*> m_stack; //!< Stack of queues
 	volatile size_t m_ntasks; //!< Number of scheduled tasks
 	volatile size_t m_nwaiting; //!< Number of threads waiting on alarm

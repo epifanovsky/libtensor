@@ -5,10 +5,10 @@
 namespace libtensor {
 
 
-worker_group::worker_group(unsigned nthreads, libvmm::cond &started) {
+worker_group::worker_group(unsigned nthreads, cond &started) {
 
 	for(unsigned i = 0; i < nthreads; i++) {
-		m_started.push_back(new libvmm::cond);
+		m_started.push_back(new cond);
 		m_workers.push_back(new worker(*m_started[i], m_cpu_lock));
 	}
 

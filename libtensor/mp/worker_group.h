@@ -2,8 +2,7 @@
 #define LIBTENSOR_WORKER_GROUP_H
 
 #include <vector>
-#include <libvmm/cond.h>
-#include <libvmm/mutex.h>
+#include "threads.h"
 
 namespace libtensor {
 
@@ -19,11 +18,11 @@ class worker;
 class worker_group {
 private:
 	std::vector<worker*> m_workers; //!< Worker threads
-	std::vector<libvmm::cond*> m_started; //!< Worker start signals
-	libvmm::mutex m_cpu_lock; //!< CPU mutex
+	std::vector<cond*> m_started; //!< Worker start signals
+	mutex m_cpu_lock; //!< CPU mutex
 
 public:
-	worker_group(unsigned nthreads, libvmm::cond &started);
+	worker_group(unsigned nthreads, cond &started);
 
 	void start();
 

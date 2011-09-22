@@ -22,9 +22,9 @@ void worker_pool::init(unsigned ngroups, unsigned nthreads) {
 			"running");
 	}
 
-	std::vector<libvmm::cond*> sig(ngroups, 0);
+	std::vector<cond*> sig(ngroups, 0);
 	for(unsigned i = 0; i < ngroups; i++) {
-		sig[i] = new libvmm::cond;
+		sig[i] = new cond;
 		m_groups.push_back(new worker_group(nthreads, *sig[i]));
 	}
 	for(unsigned i = 0; i < ngroups; i++) {
