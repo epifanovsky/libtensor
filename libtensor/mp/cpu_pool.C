@@ -1,6 +1,10 @@
 #include "cpu_pool.h"
+#include "mp_exception.h"
 
 namespace libtensor {
+
+
+const char *cpu_pool::k_clazz = "cpu_pool";
 
 
 cpu_pool::cpu_pool(size_t ncpus) {
@@ -30,10 +34,13 @@ size_t cpu_pool::acquire_cpu() {
 
 void cpu_pool::release_cpu(size_t cpuid) {
 
+    static const char *method = "release_cpu(size_t)";
+
     {
         auto_spinlock lock(m_lock);
         if(m_cpus[cpuid] == 0) {
-            throw 0;
+            throw mp_exception(g_ns, k_clazz, method, __FILE__, __LINE__,
+                "bad_cpuid");
         }
         m_cpus[cpuid] = 0;
         m_free.push_back(cpuid);

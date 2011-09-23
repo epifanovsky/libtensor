@@ -238,7 +238,7 @@ const char *btod_contract2<N, M, K>::make_schedule_task::k_clazz =
 
 
 template<size_t N, size_t M, size_t K>
-void btod_contract2<N, M, K>::make_schedule_task::perform() throw(exception) {
+void btod_contract2<N, M, K>::make_schedule_task::perform(cpu_pool &cpus) throw(exception) {
 
 	make_schedule_task::start_timer("local");
 

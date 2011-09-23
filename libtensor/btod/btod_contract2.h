@@ -122,7 +122,7 @@ private:
 			assignment_schedule<k_orderc, double> &sch,
 			libvmm::mutex &sch_lock);
 		virtual ~make_schedule_task() { }
-		virtual void perform() throw(exception);
+		virtual void perform(cpu_pool &cpus) throw(exception);
 
 	private:
 		void make_schedule_a(const orbit_list<k_orderc, double> &olc,

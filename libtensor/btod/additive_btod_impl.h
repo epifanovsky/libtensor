@@ -57,7 +57,7 @@ void additive_btod<N>::perform(block_tensor_i<N, double> &bt, double c) {
 
 
 template<size_t N>
-void additive_btod<N>::task::perform() throw(exception) {
+void additive_btod<N>::task::perform(cpu_pool &cpus) throw(exception) {
 
 	block_tensor_ctrl<N, double> ctrl(m_bt);
 

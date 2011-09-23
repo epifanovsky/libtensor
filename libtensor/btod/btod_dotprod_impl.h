@@ -195,7 +195,7 @@ const char *btod_dotprod<N>::dotprod_in_orbit_task::k_clazz =
 
 
 template<size_t N>
-void btod_dotprod<N>::dotprod_in_orbit_task::perform() throw(exception) {
+void btod_dotprod<N>::dotprod_in_orbit_task::perform(cpu_pool &cpus) throw(exception) {
 
 	block_tensor_ctrl<N, double> ctrl1(m_bt1), ctrl2(m_bt2);
 

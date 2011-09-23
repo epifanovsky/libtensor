@@ -26,6 +26,9 @@ namespace libtensor {
     \ingroup libtensor_mp
  **/
 class cpu_pool {
+public:
+    static const char *k_clazz; //!< Class name
+
 private:
     std::vector<unsigned> m_cpus; //!< List of all CPUs marked as free/busy
     std::vector<size_t> m_free; //!< List of free CPUs

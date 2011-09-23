@@ -47,7 +47,7 @@ private:
 			m_btod(btod), m_bt(bt), m_bidims(bidims), m_sch(sch),
 			m_i(i), m_c(c) { }
 		virtual ~task() { }
-		virtual void perform() throw(exception);
+		virtual void perform(cpu_pool &cpus) throw(exception);
 	};
 
 public:

@@ -40,7 +40,7 @@ void basic_btod<N>::perform(block_tensor_i<N, double> &bt) {
 
 
 template<size_t N>
-void basic_btod<N>::task::perform() throw(exception) {
+void basic_btod<N>::task::perform(cpu_pool &cpus) throw(exception) {
 
 	block_tensor_ctrl<N, double> ctrl(m_bt);
 	abs_index<N> ai(m_sch.get_abs_index(m_i), m_bidims);

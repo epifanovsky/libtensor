@@ -2,33 +2,39 @@
 #define LIBTENSOR_WORKER_GROUP_H
 
 #include <vector>
-#include "threads.h"
+#include "worker.h"
 
 namespace libtensor {
 
-class worker;
 
-/**	\brief Group of worker threads
+/** \brief Group of worker threads sharing a pool of CPUs
 
-	A group of worker threads share a CPU and only one of the threads
-	is executed at the same time.
-
-	\ingroup libtensor_mp
+    \ingroup libtensor_mp
  **/
 class worker_group {
 private:
-	std::vector<worker*> m_workers; //!< Worker threads
-	std::vector<cond*> m_started; //!< Worker start signals
-	mutex m_cpu_lock; //!< CPU mutex
+    cpu_pool &m_cpus; //!< Pool of CPUs
+    std::vector<worker*> m_workers; //!< Worker threads
+    std::vector<cond*> m_started; //!< Worker start signals
 
 public:
-	worker_group(unsigned nthreads, cond &started);
+    /** \brief Initializes the group of workers
+        \param nthreads Number of threads in the group.
+        \param cpus Pool of CPUs.
+     **/
+    worker_group(size_t nthreads, cpu_pool &cpus);
 
-	void start();
+    /** \brief Starts all the threads in the group
+     **/
+    void start();
 
-	void terminate();
+    /** \brief Sends a termination signal to all the threads in the group
+     **/
+    void terminate();
 
-	void join();
+    /** \brief Waits until all the threads in the group have terminated
+     **/
+    void join();
 
 };
 
