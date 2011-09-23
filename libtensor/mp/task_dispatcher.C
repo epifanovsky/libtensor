@@ -152,16 +152,12 @@ void task_dispatcher::invoke_next(cpu_pool &cpus) {
     }
 
     exception *exc = 0;
-    size_t cpuid;
     try {
-        cpuid = cpus.acquire_cpu();
         task->perform(cpus);
-        cpus.release_cpu(cpuid);
     } catch(exception &e) {
         exc = e.clone();
-        cpus.release_cpu(cpuid);
     } catch(...) {
-        cpus.release_cpu(cpuid);
+
     }
 
     {
