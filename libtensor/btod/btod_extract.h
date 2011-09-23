@@ -255,7 +255,7 @@ void btod_extract<N, M>::do_compute_block(tensor_i<k_orderb, double> &blk,
 		ctrla.ret_block(cidxa.get_index());
 	} else {
 
-		if(zero) tod_set<N - M>().perform(blk);
+		if(zero) tod_set<N - M>().perform(cpus, blk);
 	}
 
 	btod_extract<N, M>::stop_timer();

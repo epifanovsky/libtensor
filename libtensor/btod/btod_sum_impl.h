@@ -81,7 +81,7 @@ template<size_t N>
 void btod_sum<N>::compute_block(bool zero, tensor_i<N, double> &blk,
     const index<N> &i, const transf<N, double> &tr, double c, cpu_pool &cpus) {
 
-    if(zero) tod_set<N>().perform(blk);
+    if(zero) tod_set<N>().perform(cpus, blk);
 
 	abs_index<N> ai(i, m_bidims);
 

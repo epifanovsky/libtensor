@@ -25,6 +25,8 @@ void btod_set_test::test_1() throw(libtest::test_exception) {
 
 	typedef std_allocator<double> allocator_t;
 
+	cpu_pool cpus(1);
+
 	try {
 
 	index<2> i1, i2;
@@ -38,7 +40,7 @@ void btod_set_test::test_1() throw(libtest::test_exception) {
 
 	//	Prepare the reference
 
-	tod_set<2>(1.0).perform(ta_ref);
+	tod_set<2>(1.0).perform(cpus, ta_ref);
 
 	//	Invoke the operation
 
@@ -63,6 +65,8 @@ void btod_set_test::test_2() throw(libtest::test_exception) {
 
 	typedef std_allocator<double> allocator_t;
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<2> i1, i2;
@@ -80,7 +84,7 @@ void btod_set_test::test_2() throw(libtest::test_exception) {
 
 	//	Prepare the reference
 
-	tod_set<2>(1.0).perform(ta_ref);
+	tod_set<2>(1.0).perform(cpus, ta_ref);
 
 	//	Invoke the operation
 

@@ -125,7 +125,7 @@ void btod_dirsum<N, M>::compute_block(bool zero, tensor_i<N + M, double> &blkc,
 		typename schedule_t::const_iterator isch =
 			m_op_sch.find(aic.get_abs_index());
 		if(isch == m_op_sch.end()) {
-            if(zero) tod_set<k_orderc>().perform(blkc);
+            if(zero) tod_set<k_orderc>().perform(cpus, blkc);
 		} else {
             compute_block(blkc, isch->second, trc, zero, kc, cpus);
 		}

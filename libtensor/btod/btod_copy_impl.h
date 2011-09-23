@@ -110,7 +110,7 @@ void btod_copy<N>::compute_block(bool zero, tensor_i<N, double> &blk,
 	tra.scale(m_c);
 	tra.transform(tr);
 
-    if(zero) tod_set<N>().perform(blk);
+    if(zero) tod_set<N>().perform(cpus, blk);
 	if(!ctrla.req_is_zero_block(acia.get_index())) {
 		tensor_i<N, double> &blka = ctrla.req_block(acia.get_index());
 		tod_copy<N>(blka, tra.get_perm(), tra.get_coeff()).perform(blk, c);

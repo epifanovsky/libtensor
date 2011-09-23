@@ -447,7 +447,7 @@ void btod_contract2<N, M, K>::contract_block(
 	tensor_i<k_orderc, double> &tc, const transf<k_orderc, double> &trc,
 	bool zero, double c, cpu_pool &cpus) {
 
-	if(zero) tod_set<k_orderc>().perform(tc);
+	if(zero) tod_set<k_orderc>().perform(cpus, tc);
 
 	std::list< index<k_ordera> > blksa;
 	std::list< index<k_orderb> > blksb;

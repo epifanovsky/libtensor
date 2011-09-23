@@ -90,7 +90,7 @@ void additive_btod<N>::task::perform(cpu_pool &cpus) throw (exception) {
         if(ila == la.end()) {
             abs_index<N> aia(node.cia, m_bidims);
             tensor_i<N, double> &blka = ctrl.req_aux_block(aia.get_index());
-            tod_set<N> ().perform(blka);
+            tod_set<N>().perform(cpus, blka);
             m_btod.compute_block(false, blka, aia.get_index(), node.tra, m_c,
                 cpus);
             la.push_back(la_pair_t(node.cia, &blka));
@@ -110,7 +110,7 @@ void additive_btod<N>::task::perform(cpu_pool &cpus) throw (exception) {
             tensor_i<N, double> &blkc = ctrl.req_block(aic.get_index());
             if(zerob) {
                 // this should actually never happen, but just in case
-                tod_set<N>().perform(blkc);
+                tod_set<N>().perform(cpus, blkc);
             } else {
                 tensor_i<N, double> &blkb = ctrl.req_block(aib.get_index());
                 tod_copy<N>(blkb, node.trb.get_perm(), node.trb.get_coeff()).

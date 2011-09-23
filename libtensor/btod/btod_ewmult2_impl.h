@@ -366,7 +366,7 @@ void btod_ewmult2<N, M, K>::compute_block_impl(tensor_i<k_orderc, double> &blk,
 	bool zeroa = ctrla.req_is_zero_block(cidxa.get_index());
 	bool zerob = ctrlb.req_is_zero_block(cidxb.get_index());
 
-	if(zero) tod_set<k_orderc>().perform(blk);
+	if(zero) tod_set<k_orderc>().perform(cpus, blk);
 	if(zeroa || zerob) return;
 
 	tensor_i<k_ordera, double> &blka = ctrla.req_block(cidxa.get_index());

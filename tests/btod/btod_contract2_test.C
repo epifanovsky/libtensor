@@ -2174,6 +2174,8 @@ void btod_contract2_test::test_contr_16(double c)
 
 	typedef std_allocator<double> allocator_t;
 
+	cpu_pool cpus(1);
+
 	try {
 
 	index<4> i1, i2;
@@ -2216,7 +2218,7 @@ void btod_contract2_test::test_contr_16(double c)
 	tensor<4, double, allocator_t> tc(dims_iaaa), tc_ref(dims_iaaa);
 	tod_btconv<4>(bta).perform(ta);
 	tod_btconv<4>(btb).perform(tb);
-	tod_set<4>().perform(tc_ref);
+	tod_set<4>().perform(cpus, tc_ref);
 
 	//	Run contraction and compute the reference
 

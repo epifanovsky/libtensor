@@ -268,7 +268,7 @@ void btod_mult<N>::compute_block(bool zero, tensor_i<N, double> &blk,
 	else
 		k *= trb.get_coeff();
 
-	if(zero) tod_set<N>().perform(blk);
+	if(zero) tod_set<N>().perform(cpus, blk);
 	tod_mult<N>(blka, pa, blkb, pb, m_recip, k).perform(blk, c);
 
 	ctrla.ret_block(cidxa.get_index());

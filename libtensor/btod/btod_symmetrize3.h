@@ -183,7 +183,7 @@ void btod_symmetrize3<N>::compute_block(bool zero, tensor_i<N, double> &blk,
 
 	typedef typename sym_schedule_t::iterator iterator_t;
 
-    if(zero) tod_set<N>().perform(blk);
+    if(zero) tod_set<N>().perform(cpus, blk);
 
 	dimensions<N> bidims(m_op.get_bis().get_block_index_dims());
 	abs_index<N> ai(i, bidims);

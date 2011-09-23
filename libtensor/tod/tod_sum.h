@@ -102,7 +102,8 @@ void tod_sum<N>::prefetch() {
 template<size_t N>
 void tod_sum<N>::perform(tensor_i<N, double> &t) {
 
-	tod_set<N>().perform(t);
+    cpu_pool cpus(1);
+	tod_set<N>().perform(cpus, t);
 	perform(t, 1.0);
 }
 
