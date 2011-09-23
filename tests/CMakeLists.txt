@@ -58,7 +58,6 @@ set(SRC_TOD
 	tod/tod_set_elem_test.C
 	tod/tod_set_test.C
 	tod/tod_sum_test.C
-	tod/tod_symcontract2_test.C
 	tod/tod_trace_test.C
 )
 
