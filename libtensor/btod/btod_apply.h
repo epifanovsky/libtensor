@@ -124,10 +124,9 @@ public:
 	//@}
 
 protected:
-	virtual void compute_block(tensor_i<N, double> &blk,
-		const index<N> &ib);
-	virtual void compute_block(tensor_i<N, double> &blk,
-		const index<N> &ib, const transf<N, double> &tr, double c);
+	virtual void compute_block(bool zero, tensor_i<N, double> &blk,
+		const index<N> &ib, const transf<N, double> &tr, double c,
+		cpu_pool &cpus);
 
 private:
 	static block_index_space<N> mk_bis(const block_index_space<N> &bis,
@@ -189,7 +188,7 @@ void btod_apply<N, Functor, Alloc>::sync_off() {
 	ctrla.req_sync_off();
 }
 
-
+/*
 template<size_t N, typename Functor, typename Alloc>
 void btod_apply<N, Functor, Alloc>::compute_block(
 		tensor_i<N, double> &blk, const index<N> &ib) {
@@ -226,16 +225,19 @@ void btod_apply<N, Functor, Alloc>::compute_block(
 	} else {
 		tod_set<N>(m_fn(0.0)).perform(blk);
 	}
-}
+}*/
 
 
 template<size_t N, typename Functor, typename Alloc>
-void btod_apply<N, Functor, Alloc>::compute_block(tensor_i<N, double> &blk,
-		const index<N> &ib, const transf<N, double> &tr, double c) {
+void btod_apply<N, Functor, Alloc>::compute_block(bool zero,
+    tensor_i<N, double> &blk, const index<N> &ib, const transf<N, double> &tr,
+    double c, cpu_pool &cpus) {
 
 	static const char *method =
-			"compute_block(tensor_i<N, double> &, const index<N> &, "
-			"const transf<N, double> &, double)";
+			"compute_block(bool, tensor_i<N, double> &, const index<N> &, "
+			"const transf<N, double> &, double, cpu_pool&)";
+
+	if(zero) tod_set<N>().perform(blk);
 
 	block_tensor_ctrl<N, double> ctrla(m_bta);
 	dimensions<N> bidimsa = m_bta.get_bis().get_block_index_dims();

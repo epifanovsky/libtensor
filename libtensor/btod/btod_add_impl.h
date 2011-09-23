@@ -113,7 +113,7 @@ void btod_add<N>::sync_off() {
 	}
 }
 
-
+/*
 template<size_t N>
 void btod_add<N>::compute_block(tensor_i<N, double> &blkb, const index<N> &ib) {
 
@@ -140,15 +140,16 @@ void btod_add<N>::compute_block(tensor_i<N, double> &blkb, const index<N> &ib) {
 	}
 
 	btod_add<N>::stop_timer();
-}
+}*/
 
 
 template<size_t N>
-void btod_add<N>::compute_block(tensor_i<N, double> &blkb, const index<N> &ib,
-	const transf<N, double> &trb, double kb) {
+void btod_add<N>::compute_block(bool zero, tensor_i<N, double> &blkb,
+    const index<N> &ib, const transf<N, double> &trb, double kb,
+    cpu_pool &cpus) {
 
-	static const char *method = "tensor_i<N, double>&, const index<N>&, "
-		"const transf<N, double>&, double)";
+	static const char *method = "compute_block(bool, tensor_i<N, double>&, "
+	    "const index<N>&, const transf<N, double>&, double, cpu_pool&)";
 
 	btod_add<N>::start_timer();
 
@@ -158,7 +159,7 @@ void btod_add<N>::compute_block(tensor_i<N, double> &blkb, const index<N> &ib,
 		std::pair<schiterator_t, schiterator_t> ipair =
 			m_op_sch.equal_range(aib.get_abs_index());
 		if(ipair.first != m_op_sch.end()) {
-			compute_block(blkb, ipair, false, trb, kb);
+			compute_block(blkb, ipair, zero, trb, kb, cpus);
 		}
 
 	} catch(...) {
@@ -173,7 +174,7 @@ void btod_add<N>::compute_block(tensor_i<N, double> &blkb, const index<N> &ib,
 template<size_t N>
 void btod_add<N>::compute_block(tensor_i<N, double> &blkb,
 	const std::pair<schiterator_t, schiterator_t> ipair, bool zero,
-	const transf<N, double> &trb, double kb) {
+	const transf<N, double> &trb, double kb, cpu_pool &cpus) {
 
 	size_t narg = m_ops.size();
 	std::vector<block_tensor_ctrl<N, double>*> ca(narg);

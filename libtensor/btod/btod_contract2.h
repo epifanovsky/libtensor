@@ -197,11 +197,9 @@ public:
 	using additive_btod<N + M>::perform;
 
 protected:
-	virtual void compute_block(tensor_i<N + M, double> &blk,
-		const index<N + M> &i);
-	virtual void compute_block(tensor_i<N + M, double> &blk,
+	virtual void compute_block(bool zero, tensor_i<N + M, double> &blk,
 		const index<N + M> &i, const transf<N + M, double> &tr,
-		double c);
+		double c, cpu_pool &cpus);
 
 private:
 	void make_schedule();
@@ -214,7 +212,7 @@ private:
 		block_tensor_ctrl<k_orderb, double> &ctrlb,
 		tensor_i<k_orderc, double> &blkc,
 		const transf<k_orderc, double> &trc,
-		bool zero, double c);
+		bool zero, double c, cpu_pool &cpus);
 
 private:
 	btod_contract2(const btod_contract2<N, M, K>&);

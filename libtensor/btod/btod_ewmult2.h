@@ -108,11 +108,9 @@ public:
 	//@}
 
 protected:
-	virtual void compute_block(tensor_i<k_orderc, double> &blk,
-		const index<k_orderc> &i);
-	virtual void compute_block(tensor_i<k_orderc, double> &blk,
+	virtual void compute_block(bool zero, tensor_i<k_orderc, double> &blk,
 		const index<k_orderc> &i, const transf<k_orderc, double> &tr,
-		double c);
+		double c, cpu_pool &cpus);
 
 private:
 	/**	\brief Computes the block index space of the result block tensor
@@ -136,7 +134,7 @@ private:
 	 **/
 	void compute_block_impl(tensor_i<k_orderc, double> &blk,
 		const index<k_orderc> &bidx, const transf<k_orderc, double> &tr,
-		bool zero, double d);
+		bool zero, double d, cpu_pool &cpus);
 };
 
 

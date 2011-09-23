@@ -7,6 +7,7 @@
 #include "block_tensor_i.h"
 #include "symmetry.h"
 #include "../btod/assignment_schedule.h"
+#include "../mp/cpu_pool.h"
 
 namespace libtensor {
 
@@ -44,7 +45,7 @@ public:
 	/**	\brief Computes a single block of the result
 	 **/
 	virtual void compute_block(tensor_i<N, double> &blk,
-		const index<N> &i) = 0;
+		const index<N> &i, cpu_pool &cpus) = 0;
 
 	/**	\brief Enables the synchronization of arguments
 	 **/

@@ -112,10 +112,9 @@ protected:
 	//!	\brief Implementation of additive_btod<N>
 	//@{
 
-	virtual void compute_block(tensor_i<N, double> &blk, const index<N> &i);
-
-	virtual void compute_block(tensor_i<N, double> &blk, const index<N> &i,
-		const transf<N, double> &tr, double c);
+	virtual void compute_block(bool zero, tensor_i<N, double> &blk,
+	    const index<N> &i, const transf<N, double> &tr, double c,
+	    cpu_pool &cpus);
 
 	//@}
 
@@ -160,7 +159,7 @@ btod_symmetrize3<N>::btod_symmetrize3(additive_btod<N> &op, size_t i1,
 	make_schedule();
 }
 
-
+/*
 template<size_t N>
 void btod_symmetrize3<N>::compute_block(tensor_i<N, double> &blk,
 	const index<N> &i) {
@@ -175,14 +174,16 @@ void btod_symmetrize3<N>::compute_block(tensor_i<N, double> &blk,
 
 	tod_set<N>().perform(blk);
 	compute_block(blk, i, transf<N, double>(), 1.0);
-}
+}*/
 
 
 template<size_t N>
-void btod_symmetrize3<N>::compute_block(tensor_i<N, double> &blk,
-	const index<N> &i, const transf<N, double> &tr, double c) {
+void btod_symmetrize3<N>::compute_block(bool zero, tensor_i<N, double> &blk,
+	const index<N> &i, const transf<N, double> &tr, double c, cpu_pool &cpus) {
 
 	typedef typename sym_schedule_t::iterator iterator_t;
+
+    if(zero) tod_set<N>().perform(blk);
 
 	dimensions<N> bidims(m_op.get_bis().get_block_index_dims());
 	abs_index<N> ai(i, bidims);
@@ -208,8 +209,8 @@ void btod_symmetrize3<N>::compute_block(tensor_i<N, double> &blk,
 		if(n == 1) {
 			transf<N, double> tri(sch1.front().tr);
 			tri.transform(tr);
-			additive_btod<N>::compute_block(m_op, blk,
-				ai.get_index(), tri, c);
+			additive_btod<N>::compute_block(m_op, false, blk,
+				ai.get_index(), tri, c, cpus);
 			sch1.pop_front();
 		} else {
 			dimensions<N> dims(blk.get_dims());
@@ -218,9 +219,8 @@ void btod_symmetrize3<N>::compute_block(tensor_i<N, double> &blk,
 				true));
 			// TODO: replace with "temporary block" feature
 			tensor< N, double, allocator<double> > tmp(dims);
-			tod_set<N>().perform(tmp);
-			additive_btod<N>::compute_block(m_op, tmp,
-				ai.get_index(), transf<N, double>(), c);
+			additive_btod<N>::compute_block(m_op, true, tmp,
+				ai.get_index(), transf<N, double>(), c, cpus);
 			for(typename std::list<schrec>::iterator j =
 				sch1.begin(); j != sch1.end();) {
 

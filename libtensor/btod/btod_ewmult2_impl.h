@@ -67,22 +67,22 @@ void btod_ewmult2<N, M, K>::sync_off() {
 	block_tensor_ctrl<k_orderb, double>(m_btb).req_sync_off();
 }
 
-
+/*
 template<size_t N, size_t M, size_t K>
 void btod_ewmult2<N, M, K>::compute_block(tensor_i<k_orderc, double> &blk,
 	const index<k_orderc> &bidx) {
 
 	transf<k_orderc, double> tr0;
 	compute_block_impl(blk, bidx, tr0, true, 1.0);
-}
+}*/
 
 
 template<size_t N, size_t M, size_t K>
-void btod_ewmult2<N, M, K>::compute_block(tensor_i<k_orderc, double> &blk,
-	const index<k_orderc> &bidx, const transf<k_orderc, double> &tr,
-	double d) {
+void btod_ewmult2<N, M, K>::compute_block(bool zero,
+    tensor_i<k_orderc, double> &blk, const index<k_orderc> &bidx,
+    const transf<k_orderc, double> &tr, double d, cpu_pool &cpus) {
 
-	compute_block_impl(blk, bidx, tr, false, d);
+	compute_block_impl(blk, bidx, tr, zero, d, cpus);
 }
 
 
@@ -327,7 +327,7 @@ void btod_ewmult2<N, M, K>::make_schedule() {
 template<size_t N, size_t M, size_t K>
 void btod_ewmult2<N, M, K>::compute_block_impl(tensor_i<k_orderc, double> &blk,
 	const index<k_orderc> &bidx, const transf<k_orderc, double> &tr,
-	bool zero, double d) {
+	bool zero, double d, cpu_pool &cpus) {
 
 	block_tensor_ctrl<k_ordera, double> ctrla(m_bta);
 	block_tensor_ctrl<k_orderb, double> ctrlb(m_btb);

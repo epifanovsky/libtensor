@@ -55,7 +55,7 @@ void btod_copy<N>::sync_off() {
 	ctrla.req_sync_off();
 }
 
-
+/*
 template<size_t N>
 void btod_copy<N>::compute_block(tensor_i<N, double> &blk, const index<N> &ib) {
 
@@ -85,11 +85,11 @@ void btod_copy<N>::compute_block(tensor_i<N, double> &blk, const index<N> &ib) {
 		tod_set<N>().perform(blk);
 	}
 }
-
+*/
 
 template<size_t N>
-void btod_copy<N>::compute_block(tensor_i<N, double> &blk, const index<N> &ib,
-	const transf<N, double> &tr, double c) {
+void btod_copy<N>::compute_block(bool zero, tensor_i<N, double> &blk,
+    const index<N> &ib, const transf<N, double> &tr, double c, cpu_pool &cpus) {
 
 	block_tensor_ctrl<N, double> ctrla(m_bta);
 	dimensions<N> bidimsa = m_bta.get_bis().get_block_index_dims();
@@ -110,6 +110,7 @@ void btod_copy<N>::compute_block(tensor_i<N, double> &blk, const index<N> &ib,
 	tra.scale(m_c);
 	tra.transform(tr);
 
+    if(zero) tod_set<N>().perform(blk);
 	if(!ctrla.req_is_zero_block(acia.get_index())) {
 		tensor_i<N, double> &blka = ctrla.req_block(acia.get_index());
 		tod_copy<N>(blka, tra.get_perm(), tra.get_coeff()).perform(blk, c);

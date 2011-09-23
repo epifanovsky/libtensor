@@ -78,7 +78,7 @@ void btod_dirsum<N, M>::sync_off() {
 	ctrlb.req_sync_off();
 }
 
-
+/*
 template<size_t N, size_t M>
 void btod_dirsum<N, M>::compute_block(tensor_i<N + M, double> &blkc,
 	const index<N + M> &ic) {
@@ -106,16 +106,16 @@ void btod_dirsum<N, M>::compute_block(tensor_i<N + M, double> &blkc,
 	}
 
 	btod_dirsum<N, M>::stop_timer();
-}
+}*/
 
 
 template<size_t N, size_t M>
-void btod_dirsum<N, M>::compute_block(tensor_i<N + M, double> &blkc,
+void btod_dirsum<N, M>::compute_block(bool zero, tensor_i<N + M, double> &blkc,
 	const index<N + M> &ic, const transf<N + M, double> &trc,
-	double kc) {
+	double kc, cpu_pool &cpus) {
 
-	static const char *method = "compute_block(tensor_i<N + M, double>&, "
-		"const index<N + M>&, const transf<N + M, double>&, double)";
+	static const char *method = "compute_block(bool, tensor_i<N + M, double>&, "
+		"const index<N + M>&, const transf<N + M, double>&, double, cpu_pool&)";
 
 	btod_dirsum<N, M>::start_timer();
 
@@ -124,8 +124,10 @@ void btod_dirsum<N, M>::compute_block(tensor_i<N + M, double> &blkc,
 		abs_index<k_orderc> aic(ic, m_bidimsc);
 		typename schedule_t::const_iterator isch =
 			m_op_sch.find(aic.get_abs_index());
-		if(isch != m_op_sch.end()) {
-			compute_block(blkc, isch->second, trc, false, kc);
+		if(isch == m_op_sch.end()) {
+            if(zero) tod_set<k_orderc>().perform(blkc);
+		} else {
+            compute_block(blkc, isch->second, trc, zero, kc, cpus);
 		}
 
 	} catch(...) {
@@ -140,7 +142,7 @@ void btod_dirsum<N, M>::compute_block(tensor_i<N + M, double> &blkc,
 template<size_t N, size_t M>
 void btod_dirsum<N, M>::compute_block(tensor_i<N + M, double> &blkc,
 	const schrec &rec, const transf<N + M, double> &trc, bool zeroc,
-	double kc) {
+	double kc, cpu_pool &cpus) {
 
 	block_tensor_ctrl<k_ordera, double> ca(m_bta);
 	block_tensor_ctrl<k_orderb, double> cb(m_btb);

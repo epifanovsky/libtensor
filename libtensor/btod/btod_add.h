@@ -140,10 +140,9 @@ public:
 	virtual void sync_on();
 	virtual void sync_off();
 
-	virtual void compute_block(tensor_i<N, double> &blk, const index<N> &i);
-
-	virtual void compute_block(tensor_i<N, double> &blk, const index<N> &i,
-		const transf<N, double> &tr, double c);
+	virtual void compute_block(bool zero, tensor_i<N, double> &blk,
+	    const index<N> &i, const transf<N, double> &tr, double c,
+	    cpu_pool &cpus);
 
 	using additive_btod<N>::perform;
 
@@ -152,7 +151,7 @@ public:
 private:
 	void compute_block(tensor_i<N, double> &blkb,
 		const std::pair<schiterator_t, schiterator_t> ipair, bool zero,
-		const transf<N, double> &trb, double kb);
+		const transf<N, double> &trb, double kb, cpu_pool &cpus);
 
 	void add_operand(block_tensor_i<N, double> &bt,
 		const permutation<N> &perm, double c);

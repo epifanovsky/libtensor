@@ -45,7 +45,7 @@ void btod_sum<N>::sync_off() {
 		iop != m_ops.end(); iop++) iop->get_op().sync_off();
 }
 
-
+/*
 template<size_t N>
 void btod_sum<N>::compute_block(tensor_i<N, double> &blk, const index<N> &i) {
 
@@ -74,12 +74,14 @@ void btod_sum<N>::compute_block(tensor_i<N, double> &blk, const index<N> &i) {
 			}
 		}
 	}
-}
+}*/
 
 
 template<size_t N>
-void btod_sum<N>::compute_block(tensor_i<N, double> &blk, const index<N> &i,
-	const transf<N, double> &tr, double c) {
+void btod_sum<N>::compute_block(bool zero, tensor_i<N, double> &blk,
+    const index<N> &i, const transf<N, double> &tr, double c, cpu_pool &cpus) {
+
+    if(zero) tod_set<N>().perform(blk);
 
 	abs_index<N> ai(i, m_bidims);
 
@@ -87,8 +89,8 @@ void btod_sum<N>::compute_block(tensor_i<N, double> &blk, const index<N> &i,
 		iop != m_ops.end(); iop++) {
 
 		if(iop->get_op().get_schedule().contains(ai.get_abs_index())) {
-			additive_btod<N>::compute_block(iop->get_op(), blk, i,
-				tr, c * iop->get_coeff());
+			additive_btod<N>::compute_block(iop->get_op(), false, blk, i,
+				tr, c * iop->get_coeff(), cpus);
 		}
 		else {
 			const symmetry<N, double> &sym = iop->get_op().get_symmetry();
@@ -100,8 +102,8 @@ void btod_sum<N>::compute_block(tensor_i<N, double> &blk, const index<N> &i,
 				transf<N, double> tra(orb.get_transf(i));
 				tra.transform(tr);
 
-				additive_btod<N>::compute_block(iop->get_op(), blk, ci.get_index(),
-					tra, c * iop->get_coeff());
+				additive_btod<N>::compute_block(iop->get_op(), false, blk,
+				    ci.get_index(), tra, c * iop->get_coeff(), cpus);
 			}
 		}
 	}

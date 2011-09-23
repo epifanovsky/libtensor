@@ -84,12 +84,9 @@ public:
 	virtual void sync_off();
 
 protected:
-	virtual void compute_block(tensor_i<k_orderb, double> &blk,
-		const index<k_orderb> &i);
-
-	virtual void compute_block(tensor_i<k_orderb, double> &blk,
+	virtual void compute_block(bool zero, tensor_i<k_orderb, double> &blk,
 		const index<k_orderb> &i, const transf<k_orderb, double> &tr,
-		double c);
+		double c, cpu_pool &cpus);
 
 private:
 	/**	\brief Forms the block %index space of the output or throws an
@@ -104,7 +101,7 @@ private:
 
 	void do_compute_block(tensor_i<k_orderb, double> &blk,
 		const index<k_orderb> &i, const transf<k_orderb, double> &tr,
-		double c, bool zero);
+		double c, bool zero, cpu_pool &cpus);
 
 private:
 	btod_extract(const btod_extract<N, M>&);
@@ -172,29 +169,29 @@ void btod_extract<N, M>::sync_off() {
 	ctrla.req_sync_off();
 }
 
-
+/*
 template<size_t N, size_t M>
 void btod_extract<N, M>::compute_block(tensor_i<k_orderb, double> &blk,
 	const index<k_orderb> &idx) {
 
 	transf<k_orderb, double> tr0;
 	do_compute_block(blk, idx, tr0, 1.0, true);
-}
+}*/
 
 
 template<size_t N, size_t M>
-void btod_extract<N, M>::compute_block(tensor_i<k_orderb, double> &blk,
+void btod_extract<N, M>::compute_block(bool zero, tensor_i<k_orderb, double> &blk,
 	const index<k_orderb> &idx, const transf<k_orderb, double> &tr,
-	double c) {
+	double c, cpu_pool &cpus) {
 
-	do_compute_block(blk, idx, tr, c, false);
+	do_compute_block(blk, idx, tr, c, zero, cpus);
 }
 
 
 template<size_t N, size_t M>
 void btod_extract<N, M>::do_compute_block(tensor_i<k_orderb, double> &blk,
 	const index<k_orderb> &idx, const transf<k_orderb, double> &tr,
-	double c, bool zero) {
+	double c, bool zero, cpu_pool &cpus) {
 
 	btod_extract<N, M>::start_timer();
 

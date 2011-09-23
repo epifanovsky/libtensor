@@ -109,12 +109,9 @@ public:
 	virtual void sync_on();
 	virtual void sync_off();
 
-	virtual void compute_block(tensor_i<N + M, double> &blk,
-		const index<N + M> &i);
-
-	virtual void compute_block(tensor_i<N + M, double> &blk,
+	virtual void compute_block(bool zero, tensor_i<N + M, double> &blk,
 		const index<N + M> &i, const transf<N + M, double> &tr,
-		double c);
+		double c, cpu_pool &cpus);
 
 	using additive_btod<N + M>::perform;
 
@@ -126,7 +123,7 @@ private:
 
 	void compute_block(tensor_i<N + M, double> &blkc,
 		const schrec &rec, const transf<N + M, double> &trc,
-		bool zeroc, double kc);
+		bool zeroc, double kc, cpu_pool &cpus);
 
 	void do_block_dirsum(block_tensor_ctrl<k_ordera, double> &ctrla,
 		block_tensor_ctrl<k_orderb, double> &ctrlb,

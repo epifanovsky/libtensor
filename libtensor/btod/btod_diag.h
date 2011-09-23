@@ -96,12 +96,9 @@ public:
 	using additive_btod<k_orderb>::perform;
 
 protected:
-	virtual void compute_block(tensor_i<k_orderb, double> &blk,
-		const index<k_orderb> &ib);
-
-	virtual void compute_block(tensor_i<k_orderb, double> &blk,
+	virtual void compute_block(bool zero, tensor_i<k_orderb, double> &blk,
 		const index<k_orderb> &ib, const transf<k_orderb, double> &trb,
-		double c);
+		double c, cpu_pool &cpus);
 
 private:
 	/**	\brief Forms the block %index space of the output or throws an
@@ -120,7 +117,7 @@ private:
 
 	void compute_block(tensor_i<k_orderb, double> &blk,
 		const index<k_orderb> &ib, const transf<k_orderb, double> &trb,
-		bool zero, double c);
+		bool zero, double c, cpu_pool &cpus);
 
 private:
 	btod_diag(const btod_diag<N, M>&);
@@ -174,29 +171,29 @@ void btod_diag<N, M>::sync_off() {
 	ctrla.req_sync_off();
 }
 
-
+/*
 template<size_t N, size_t M>
 void btod_diag<N, M>::compute_block(tensor_i<k_orderb, double> &blk,
 	const index<k_orderb> &ib) {
 
 	transf<k_orderb, double> trb0;
 	compute_block(blk, ib, trb0, true, 1.0);
+}*/
+
+
+template<size_t N, size_t M>
+void btod_diag<N, M>::compute_block(bool zero, tensor_i<k_orderb, double> &blk,
+	const index<k_orderb> &ib, const transf<k_orderb, double> &trb,
+	double c, cpu_pool &cpus) {
+
+	compute_block(blk, ib, trb, zero, c, cpus);
 }
 
 
 template<size_t N, size_t M>
 void btod_diag<N, M>::compute_block(tensor_i<k_orderb, double> &blk,
 	const index<k_orderb> &ib, const transf<k_orderb, double> &trb,
-	double c) {
-
-	compute_block(blk, ib, trb, false, c);
-}
-
-
-template<size_t N, size_t M>
-void btod_diag<N, M>::compute_block(tensor_i<k_orderb, double> &blk,
-	const index<k_orderb> &ib, const transf<k_orderb, double> &trb,
-	bool zero, double c) {
+	bool zero, double c, cpu_pool &cpus) {
 
 	btod_diag<N, M>::start_timer();
 

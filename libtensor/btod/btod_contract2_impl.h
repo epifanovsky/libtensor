@@ -62,7 +62,7 @@ void btod_contract2<N, M, K>::sync_off() {
 	ctrlb.req_sync_off();
 }
 
-
+/*
 template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::compute_block(tensor_i<N + M, double> &blk,
 	const index<N + M> &i) {
@@ -96,14 +96,15 @@ void btod_contract2<N, M, K>::compute_block(tensor_i<N + M, double> &blk,
 
 	btod_contract2<N, M, K>::stop_timer();
 }
-
+*/
 
 template<size_t N, size_t M, size_t K>
-void btod_contract2<N, M, K>::compute_block(tensor_i<N + M, double> &blk,
-	const index<N + M> &i, const transf<N + M, double> &tr, double c) {
+void btod_contract2<N, M, K>::compute_block(bool zero,
+    tensor_i<N + M, double> &blk, const index<N + M> &i,
+    const transf<N + M, double> &tr, double c, cpu_pool &cpus) {
 
-	static const char *method = "compute_block(tensor_i<N + M, double>&, "
-		"const index<N + M>&, const transf<N + M, double>&, double)";
+	static const char *method = "compute_block(bool, tensor_i<N + M, double>&, "
+		"const index<N + M>&, const transf<N + M, double>&, double, cpu_pool&)";
 
 	btod_contract2<N, M, K>::start_timer();
 
@@ -121,7 +122,7 @@ void btod_contract2<N, M, K>::compute_block(tensor_i<N + M, double> &blk,
 		}
 
 		contract_block(isch->second->first, aic.get_index(), ca, cb,
-			blk, tr, false, c);
+			blk, tr, zero, c, cpus);
 	} catch(...) {
 		btod_contract2<N, M, K>::stop_timer();
 		throw;
@@ -444,7 +445,7 @@ void btod_contract2<N, M, K>::contract_block(
 	block_tensor_ctrl<k_ordera, double> &ca,
 	block_tensor_ctrl<k_orderb, double> &cb,
 	tensor_i<k_orderc, double> &tc, const transf<k_orderc, double> &trc,
-	bool zero, double c) {
+	bool zero, double c, cpu_pool &cpus) {
 
 	if(zero) tod_set<k_orderc>().perform(tc);
 
