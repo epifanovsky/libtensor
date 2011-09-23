@@ -37,12 +37,14 @@ void linalg_add_i_i_x_x_test::test_add_i_i_x_x(size_t ni, size_t sia,
 	c_ref = new double[szc];
 
 	for(size_t i = 0; i < sza; i++) a[i] = drand48();
+	double ka = drand48() - 0.5;
 	for(size_t i = 0; i < szc; i++) c[i] = c_ref[i] = drand48();
 	b = drand48();
+    double kb = drand48() - 0.5;
 	d = drand48();
 
-	linalg::add_i_i_x_x(ni, a, sia, b, c, sic, d);
-	linalg_base_generic::add_i_i_x_x(ni, a, sia, b, c_ref, sic, d);
+	linalg::add_i_i_x_x(ni, a, sia, ka, b, kb, c, sic, d);
+	linalg_base_generic::add_i_i_x_x(ni, a, sia, ka, b, kb, c_ref, sic, d);
 
 	for(size_t i = 0; i < szc; i++) {
 		if(!cmp(c[i] - c_ref[i], c_ref[i])) {

@@ -15,13 +15,13 @@ struct linalg_base_level1_cblas : public linalg_base_level1_generic {
 
 	static void add_i_i_x_x(
 		size_t ni,
-		const double *a, size_t sia,
-		double b,
+		const double *a, size_t sia, double ka,
+		double b, double kb,
 		double *c, size_t sic,
 		double d) {
 
-		cblas_daxpy(ni, d, a, sia, c, sic);
-		double db = d * b;
+		cblas_daxpy(ni, d * ka, a, sia, c, sic);
+		double db = d * kb * b;
 		if(sic == 1) {
 			for(size_t i = 0; i < ni; i++) c[i] += db;
 		} else {

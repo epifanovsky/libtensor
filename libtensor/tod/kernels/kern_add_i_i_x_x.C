@@ -9,7 +9,7 @@ const char *kern_add_i_i_x_x::k_clazz = "kern_add_i_i_x_x";
 
 void kern_add_i_i_x_x::run(const loop_registers<2, 1> &r) {
 
-	linalg::add_i_i_x_x(m_ni, r.m_ptra[0], m_sia, r.m_ptra[1][0],
+	linalg::add_i_i_x_x(m_ni, r.m_ptra[0], m_sia, 1.0, r.m_ptra[1][0], 1.0,
 		r.m_ptrb[0], m_sic, m_d);
 }
 
