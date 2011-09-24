@@ -146,7 +146,7 @@ void tod_select<N,ComparePolicy>::perform(list_t &li, size_t n) {
 	while (i < d.get_size() && p[i] == 0.0) i++;
 
 	if (i == d.get_size()) {
-		ctrl.ret_dataptr(p);
+		ctrl.ret_const_dataptr(p);
 		return;	
 	}
 
