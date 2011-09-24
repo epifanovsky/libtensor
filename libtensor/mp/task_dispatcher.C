@@ -17,7 +17,7 @@ task_dispatcher::task_dispatcher() :
 
 task_dispatcher::queue_id_t task_dispatcher::create_queue() {
 
-	auto_lock lock(m_lock);
+	auto_lock_type lock(m_lock);
 
     return m_stack.insert(m_stack.end(), new queue);
 }
@@ -27,7 +27,7 @@ void task_dispatcher::destroy_queue(queue_id_t &qid) {
 
     static const char *method = "destroy_queue(queue_id_t&)";
 
-    auto_lock lock(m_lock);
+    auto_lock_type lock(m_lock);
 
     if(qid == m_stack.end()) {
         throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__, "qid");
@@ -43,7 +43,7 @@ void task_dispatcher::push_task(const queue_id_t &qid, task_i &task) {
 
     static const char *method = "push_task(const queue_id_t&, task_i&)";
 
-    auto_lock lock(m_lock);
+    auto_lock_type lock(m_lock);
 
     if(qid == m_stack.end()) {
         throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__, "qid");
@@ -73,7 +73,7 @@ void task_dispatcher::wait_on_queue(const queue_id_t &qid, cpu_pool &cpus) {
     static const char *method = "wait_on_queue(const queue_id_t&, cpu_pool&)";
 
     {
-        auto_lock lock(m_lock);
+        auto_lock_type lock(m_lock);
 
         queue &q = **qid;
         if(q.finalized) {
@@ -86,7 +86,7 @@ void task_dispatcher::wait_on_queue(const queue_id_t &qid, cpu_pool &cpus) {
     bool done = false;
     while(!done) {
         {
-            auto_lock lock(m_lock);
+            auto_lock_type lock(m_lock);
             queue &q = **qid;
             done = q.q.is_empty() && q.nrunning == 0;
         }
@@ -94,7 +94,7 @@ void task_dispatcher::wait_on_queue(const queue_id_t &qid, cpu_pool &cpus) {
     }
 
     {
-        auto_lock lock(m_lock);
+        auto_lock_type lock(m_lock);
 
         queue &q = **qid;
         if(q.exc != 0) {
@@ -121,13 +121,13 @@ void task_dispatcher::set_off_alarm() {
 void task_dispatcher::wait_next() {
 
     {
-        auto_lock lock(m_lock);
+        auto_lock_type lock(m_lock);
         if(m_ntasks != 0) return;
         m_nwaiting++;
     }
     m_alarm.wait();
     {
-        auto_lock lock(m_lock);
+        auto_lock_type lock(m_lock);
         m_nwaiting--;
     }
 }
@@ -139,7 +139,7 @@ void task_dispatcher::invoke_next(cpu_pool &cpus) {
     task_i *task = 0;
 
     {
-        auto_lock lock(m_lock);
+        auto_lock_type lock(m_lock);
 
         std::list<queue*>::reverse_iterator i = m_stack.rbegin();
         for(; i != m_stack.rend() && (*i)->q.is_empty(); i++);
@@ -161,7 +161,7 @@ void task_dispatcher::invoke_next(cpu_pool &cpus) {
     }
 
     {
-        auto_lock lock(m_lock);
+        auto_lock_type lock(m_lock);
         q->nrunning--;
         if(exc) {
             if(q->exc == 0) q->exc = exc;

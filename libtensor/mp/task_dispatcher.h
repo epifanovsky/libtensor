@@ -34,7 +34,11 @@ public:
     typedef std::list<queue*>::iterator queue_id_t; //!< Queue ID type
 
 private:
-    mutex m_lock; //!< Lock
+    typedef spinlock lock_type;
+    typedef auto_spinlock auto_lock_type;
+
+private:
+    lock_type m_lock; //!< Lock
     cond m_alarm; //!< Alarm for the processing pool
     bool m_mp; //!< Use multiple threads
     std::list<queue*> m_stack; //!< Stack of queues
