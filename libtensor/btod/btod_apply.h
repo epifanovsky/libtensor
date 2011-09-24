@@ -257,7 +257,7 @@ void btod_apply<N, Functor, Alloc>::compute_block(bool zero,
 		if (val != 0.0) {
 			tensor<N, double, Alloc> tblk(blk.get_dims());
 			tod_set<N>(val).perform(cpus, tblk);
-			tod_copy<N>(tblk).perform(blk, 1.0);
+			tod_copy<N>(tblk).perform(cpus, false, 1.0, blk);
 		}
 		return;
 	}
@@ -274,7 +274,7 @@ void btod_apply<N, Functor, Alloc>::compute_block(bool zero,
 	if(! ctrla.req_is_zero_block(acia.get_index())) {
 		tensor_i<N, double> &blka = ctrla.req_block(acia.get_index());
 		tod_apply<N, Functor>(blka, m_fn,
-				tra.get_perm(), tra.get_coeff()).perform(blk, c);
+				tra.get_perm(), tra.get_coeff()).perform(cpus, false, c, blk);
 		ctrla.ret_block(acia.get_index());
 	}
 	else {
@@ -282,7 +282,7 @@ void btod_apply<N, Functor, Alloc>::compute_block(bool zero,
 		if (val != 0.0) {
 			tensor<N, double, Alloc> tblk(blk.get_dims());
 			tod_set<N>(val).perform(cpus, tblk);
-			tod_copy<N>(tblk).perform(blk, 1.0);
+			tod_copy<N>(tblk).perform(cpus, false, 1.0, blk);
 		}
 	}
 }

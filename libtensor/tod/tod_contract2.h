@@ -99,8 +99,8 @@ public:
 
 	//!	\name Implementation of tod_additive<N+M>
 	//@{
-	virtual void perform(tensor_i<k_orderc, double> &tc);
-	virtual void perform(tensor_i<k_orderc, double> &tc, double d);
+    virtual void perform(cpu_pool &cpus, bool zero, double c,
+        tensor_i<k_orderc, double> &t);
 	//@}
 
 private:

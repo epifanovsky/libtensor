@@ -20,6 +20,8 @@ void btod_random_test::perform() throw(libtest::test_exception)
 	typedef block_tensor<4, double, allocator_t> block_tensor_t;
 	typedef block_tensor_ctrl<4, double> block_tensor_ctrl_t;
 
+	cpu_pool cpus(1);
+
 	try {
 
 	index<4> i1, i2;
@@ -59,16 +61,13 @@ void btod_random_test::perform() throw(libtest::test_exception)
 	permd.permute(0,2);
 	permd.permute(1,3);
 
-	tod_copy<4> cpyb(ta,permb,1.0);
-	cpyb.perform(tb);
+	tod_copy<4>(ta, permb, 1.0).perform(cpus, true, 1.0, tb);
 	compare_ref<4>::compare("btod_random_test::test_permb",ta,tb,1e-15);
 
-	tod_copy<4> cpyc(ta,permc,1.0);
-	cpyc.perform(tc);
+	tod_copy<4>(ta, permc, 1.0).perform(cpus, true, 1.0, tc);
 	compare_ref<4>::compare("btod_random_test::test_permb",ta,tc,1e-15);
 
-	tod_copy<4> cpyd(ta,permd,1.0);
-	cpyd.perform(td);
+	tod_copy<4>(ta, permd, 1.0).perform(cpus, true, 1.0, td);
 	compare_ref<4>::compare("btod_random_test::test_permb",ta,td,1e-15);
 
 	} catch(exception &exc) {

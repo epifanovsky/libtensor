@@ -486,7 +486,7 @@ void btod_contract2<N, M, K>::contract_block(
 
 	if(op_sum != 0) {
 		op_sum->prefetch();
-		op_sum->perform(tc, c);
+		op_sum->perform(cpus, false, c, tc);
 		delete op_sum; op_sum = 0;
 		for(typename std::list< tod_contract2<N, M, K>* >::const_iterator iptr =
 			op_ptrs.begin(); iptr != op_ptrs.end(); iptr++) {

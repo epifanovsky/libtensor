@@ -100,11 +100,8 @@ public:
 
     virtual void prefetch();
 
-    //!	\copydoc tod_additive<N>::perform(tensor_i<N, double>&)
-    virtual void perform(tensor_i<N,double> &t);
-
-    //!	\copydoc tod_additive<N>::perform(tensor_i<N, double>&, double)
-    virtual void perform(tensor_i<N,double> &t, double c);
+    virtual void perform(cpu_pool &cpus, bool zero, double c,
+        tensor_i<N, double> &tb);
 
     //@}
 
@@ -116,7 +113,7 @@ private:
         const permutation<N> &perm);
 
     template<typename Base>
-    void do_perform(tensor_i<N,double> &t, double c);
+    void do_perform(cpu_pool &cpus, double c, tensor_i<N,double> &t);
 
     template<typename Base>
     void build_loop(typename Base::list_t &loop, const dimensions<N> &dimsa,

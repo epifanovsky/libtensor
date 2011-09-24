@@ -114,7 +114,7 @@ void additive_btod<N>::task::perform(cpu_pool &cpus) throw (exception) {
             } else {
                 tensor_i<N, double> &blkb = ctrl.req_block(aib.get_index());
                 tod_copy<N>(blkb, node.trb.get_perm(), node.trb.get_coeff()).
-                    perform(blkc);
+                    perform(cpus, true, 1.0, blkc);
                 ctrl.ret_block(aib.get_index());
             }
             ctrl.ret_block(aic.get_index());
@@ -132,14 +132,14 @@ void additive_btod<N>::task::perform(cpu_pool &cpus) throw (exception) {
             if(zerob) {
                 abs_index<N> aia(node.cia, m_bidims);
                 tod_copy<N>(*ila->second, node.tra.get_perm(),
-                    node.tra.get_coeff()).perform(blkc);
+                    node.tra.get_coeff()).perform(cpus, true, 1.0, blkc);
             } else {
                 abs_index<N> aia(node.cia, m_bidims);
                 tensor_i<N, double> &blkb = ctrl.req_block(aib.get_index());
                 tod_copy<N>(*ila->second, node.tra.get_perm(),
-                    node.tra.get_coeff()).perform(blkc);
+                    node.tra.get_coeff()).perform(cpus, true, 1.0, blkc);
                 tod_copy<N>(blkb, node.trb.get_perm(), node.trb.get_coeff()).
-                    perform(blkc, 1.0);
+                    perform(cpus, false, 1.0, blkc);
                 ctrl.ret_block(aib.get_index());
             }
             ctrl.ret_block(aic.get_index());
@@ -162,11 +162,11 @@ void additive_btod<N>::task::perform(cpu_pool &cpus) throw (exception) {
         if(zerob) {
             abs_index<N> aia(node.cia, m_bidims);
             tod_copy<N> (*ila->second, node.tra.get_perm(),
-                node.tra.get_coeff()).perform(blkb);
+                node.tra.get_coeff()).perform(cpus, true, 1.0, blkb);
         } else {
             abs_index<N> aia(node.cia, m_bidims);
             tod_copy<N> (*ila->second, node.tra.get_perm(),
-                node.tra.get_coeff()).perform(blkb, 1.0);
+                node.tra.get_coeff()).perform(cpus, false, 1.0, blkb);
         }
         ctrl.ret_block(aib.get_index());
     }

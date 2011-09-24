@@ -264,6 +264,8 @@ void expr_test::test_6() throw(libtest::test_exception) {
 
 	typedef std_allocator<double> allocator_t;
 
+	cpu_pool cpus(1);
+
 	try {
 
 	bispace<1> so(10); so.split(2).split(5).split(7);
@@ -359,20 +361,20 @@ void expr_test::test_6() throw(libtest::test_exception) {
 	tod_contract2<2, 2, 2> top2(contr2, tt2, ti_oovv);
 
 	tensor<4, double, allocator_t> ttmp3a(i_oooo.get_bis().get_dims());
-	tod_contract2<3, 1, 1>(contr3, ti_ooov, tt1).perform(ttmp3a);
+	tod_contract2<3, 1, 1>(contr3, ti_ooov, tt1).perform(cpus, true, 1.0, ttmp3a);
 	tod_add<4> top3(ttmp3a);
 	top3.add_op(ttmp3a, permutation<4>().permute(0, 1), -1.0);
 
 	tensor<4, double, allocator_t> ttmp4a(i_oovv.get_bis().get_dims());
-	tod_contract2<2, 2, 0>(contr4a, tt1, tt1).perform(ttmp4a);
+	tod_contract2<2, 2, 0>(contr4a, tt1, tt1).perform(cpus, true, 1.0, ttmp4a);
 	tod_contract2<2, 2, 2> top4(contr4, ttmp4a, ti_oovv);
 
 	tensor<4, double, allocator_t> ti4_oooo(i4_oooo.get_bis().get_dims()),
 		ti4_oooo_ref(i4_oooo.get_bis().get_dims());
-	top1.perform(ti4_oooo_ref);
-	top2.perform(ti4_oooo_ref, 0.5);
-	top3.perform(ti4_oooo_ref, 1.0);
-	top4.perform(ti4_oooo_ref, 1.0);
+	top1.perform(cpus, true, 1.0, ti4_oooo_ref);
+	top2.perform(cpus, false, 0.5, ti4_oooo_ref);
+	top3.perform(cpus, false, 1.0, ti4_oooo_ref);
+	top4.perform(cpus, false, 1.0, ti4_oooo_ref);
 	tod_btconv<4>(i4_oooo).perform(ti4_oooo);
 
 	compare_ref<4>::compare(testname, ti4_oooo, ti4_oooo_ref, 5e-15);
@@ -388,6 +390,8 @@ void expr_test::test_7() throw(libtest::test_exception) {
 	static const char *testname = "expr_test::test_7()";
 
 	typedef std_allocator<double> allocator_t;
+
+	cpu_pool cpus(1);
 
 	try {
 
@@ -470,16 +474,16 @@ void expr_test::test_7() throw(libtest::test_exception) {
 	tod_contract2<3, 1, 1> top3(contr3, ti_ooov, tt1);
 
 	tensor<4, double, allocator_t> ttmp4a(i_oovv.get_bis().get_dims());
-	tod_copy<4>(tt2).perform(ttmp4a);
-	tod_contract2<2, 2, 0>(contr4a, tt1, tt1).perform(ttmp4a, 2.0);
+	tod_copy<4>(tt2).perform(cpus, true, 1.0, ttmp4a);
+	tod_contract2<2, 2, 0>(contr4a, tt1, tt1).perform(cpus, false, 2.0, ttmp4a);
 	tod_contract2<2, 2, 2> top4(contr4, ttmp4a, ti_oovv);
 
 	tensor<4, double, allocator_t> ti1_ovov(i1_ovov.get_bis().get_dims()),
 		ti1_ovov_ref(i1_ovov.get_bis().get_dims());
-	top1.perform(ti1_ovov_ref);
-	top2.perform(ti1_ovov_ref, -1.0);
-	top3.perform(ti1_ovov_ref, -1.0);
-	top4.perform(ti1_ovov_ref, 0.5);
+	top1.perform(cpus, true, 1.0, ti1_ovov_ref);
+	top2.perform(cpus, false, -1.0, ti1_ovov_ref);
+	top3.perform(cpus, false, -1.0, ti1_ovov_ref);
+	top4.perform(cpus, false, 0.5, ti1_ovov_ref);
 	tod_btconv<4>(i1_ovov).perform(ti1_ovov);
 
 	compare_ref<4>::compare(testname, ti1_ovov, ti1_ovov_ref, 5e-15);

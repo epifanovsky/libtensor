@@ -105,8 +105,10 @@ public:
 	//@{
 
 	virtual void prefetch();
-	virtual void perform(tensor_i<k_orderc, double> &tc);
-	virtual void perform(tensor_i<k_orderc, double> &tc, double d);
+    virtual void perform(cpu_pool &cpus, bool zero, double c,
+        tensor_i<k_orderc, double> &t);
+	void perform(cpu_pool &cpus, tensor_i<k_orderc, double> &tc);
+	void perform(cpu_pool &cpus, tensor_i<k_orderc, double> &tc, double d);
 
 	//@}
 
@@ -119,10 +121,6 @@ private:
 		const dimensions<k_orderb> &dimsb,
 		const permutation<k_orderb> &permb,
 		const permutation<k_orderc> &permc);
-
-	/**	\brief Computes the result
-	 **/
-	void do_perform(tensor_i<k_orderc, double> &tc, bool zero, double d);
 
 };
 

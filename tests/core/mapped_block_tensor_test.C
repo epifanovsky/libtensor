@@ -89,6 +89,7 @@ void mapped_block_tensor_test::test_1() throw(libtest::test_exception) {
 
 	typedef std_allocator<double> allocator_t;
 
+	cpu_pool cpus(1);
 	try {
 
 	index<2> i1, i2;
@@ -106,7 +107,7 @@ void mapped_block_tensor_test::test_1() throw(libtest::test_exception) {
 	abs_index<2> aidx1(bidims);
 	do {
 		tensor_i<2, double> &blk = ctrl.req_block(aidx1.get_index());
-		tod_random<2>().perform(blk);
+		tod_random<2>().perform(cpus, blk);
 		ctrl.ret_block(aidx1.get_index());
 	} while(aidx1.inc());
 
@@ -142,6 +143,8 @@ void mapped_block_tensor_test::test_2() throw(libtest::test_exception) {
 
 	typedef std_allocator<double> allocator_t;
 
+	cpu_pool cpus(1);
+
 	try {
 
 	index<2> i1, i2;
@@ -159,7 +162,7 @@ void mapped_block_tensor_test::test_2() throw(libtest::test_exception) {
 	abs_index<2> aidx1(bidims);
 	do {
 		tensor_i<2, double> &blk = ctrl.req_block(aidx1.get_index());
-		tod_random<2>().perform(blk);
+		tod_random<2>().perform(cpus, blk);
 		ctrl.ret_block(aidx1.get_index());
 	} while(aidx1.inc());
 

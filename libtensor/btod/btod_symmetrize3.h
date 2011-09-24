@@ -230,7 +230,7 @@ void btod_symmetrize3<N>::compute_block(bool zero, tensor_i<N, double> &blk,
 				transf<N, double> trj(j->tr);
 				trj.transform(tr);
 				tod_copy<N>(tmp, trj.get_perm(),
-					trj.get_coeff()).perform(blk, 1.0);
+					trj.get_coeff()).perform(cpus, false, 1.0, blk);
 				j = sch1.erase(j);
 			}
 		}

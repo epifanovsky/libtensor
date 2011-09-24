@@ -1031,6 +1031,8 @@ void tod_contract2_test::test_0_p_p(size_t np, double d)
 	tnss << "tod_contract2_test::test_0_p_p(" << np << ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<1> ia1, ia2; ia2[0] = np - 1;
@@ -1090,8 +1092,8 @@ void tod_contract2_test::test_0_p_p(size_t np, double d)
 
 	contraction2<0, 0, 1> contr;
 	contr.contract(0, 0);
-	if(d == 0.0) tod_contract2<0, 0, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<0, 0, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<0, 0, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<0, 0, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -1112,6 +1114,8 @@ void tod_contract2_test::test_i_p_pi(size_t ni, size_t np, double d)
 	tnss << "tod_contract2_test::test_i_p_pi(" << ni << ", " << np << ", "
 		<< d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -1177,8 +1181,8 @@ void tod_contract2_test::test_i_p_pi(size_t ni, size_t np, double d)
 
 	contraction2<0, 1, 1> contr;
 	contr.contract(0, 0);
-	if(d == 0.0) tod_contract2<0, 1, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<0, 1, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<0, 1, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<0, 1, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -1199,6 +1203,8 @@ void tod_contract2_test::test_i_p_ip(size_t ni, size_t np, double d)
 	tnss << "tod_contract2_test::test_i_p_ip(" << ni << ", " << np << ", "
 		<< d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -1264,8 +1270,8 @@ void tod_contract2_test::test_i_p_ip(size_t ni, size_t np, double d)
 
 	contraction2<0, 1, 1> contr;
 	contr.contract(0, 1);
-	if(d == 0.0) tod_contract2<0, 1, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<0, 1, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<0, 1, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<0, 1, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -1286,6 +1292,8 @@ void tod_contract2_test::test_i_pi_p(size_t ni, size_t np, double d)
 	tnss << "tod_contract2_test::test_i_pi_p(" << ni << ", " << np << ", "
 		<< d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -1351,8 +1359,8 @@ void tod_contract2_test::test_i_pi_p(size_t ni, size_t np, double d)
 
 	contraction2<1, 0, 1> contr;
 	contr.contract(0, 0);
-	if(d == 0.0) tod_contract2<1, 0, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<1, 0, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<1, 0, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<1, 0, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -1373,6 +1381,8 @@ void tod_contract2_test::test_i_ip_p(size_t ni, size_t np, double d)
 	tnss << "tod_contract2_test::test_i_ip_p(" << ni << ", " << np << ", "
 		<< d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -1438,8 +1448,8 @@ void tod_contract2_test::test_i_ip_p(size_t ni, size_t np, double d)
 
 	contraction2<1, 0, 1> contr;
 	contr.contract(1, 0);
-	if(d == 0.0) tod_contract2<1, 0, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<1, 0, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<1, 0, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<1, 0, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -1460,6 +1470,8 @@ void tod_contract2_test::test_ij_i_j(size_t ni, size_t nj, double d)
 	tnss << "tod_contract2_test::test_ij_i_j(" << ni << ", " << nj
 		<< ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -1524,8 +1536,8 @@ void tod_contract2_test::test_ij_i_j(size_t ni, size_t nj, double d)
 	//	Invoke the contraction routine
 
 	contraction2<1, 1, 0> contr;
-	if(d == 0.0) tod_contract2<1, 1, 0>(contr, ta, tb).perform(tc);
-	else tod_contract2<1, 1, 0>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<1, 1, 0>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<1, 1, 0>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -1546,6 +1558,8 @@ void tod_contract2_test::test_ij_j_i(size_t ni, size_t nj, double d)
 	tnss << "tod_contract2_test::test_ij_j_i(" << ni << ", " << nj
 		<< ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -1610,8 +1624,8 @@ void tod_contract2_test::test_ij_j_i(size_t ni, size_t nj, double d)
 	//	Invoke the contraction routine
 
 	contraction2<1, 1, 0> contr(permutation<2>().permute(0, 1));
-	if(d == 0.0) tod_contract2<1, 1, 0>(contr, ta, tb).perform(tc);
-	else tod_contract2<1, 1, 0>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<1, 1, 0>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<1, 1, 0>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -1634,6 +1648,8 @@ void tod_contract2_test::test_ij_pi_pj(
 		<< ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<2> ia1, ia2; ia2[0] = np - 1; ia2[1] = ni - 1;
@@ -1699,8 +1715,8 @@ void tod_contract2_test::test_ij_pi_pj(
 
 	contraction2<1, 1, 1> contr;
 	contr.contract(0, 0);
-	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<1, 1, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -1723,6 +1739,8 @@ void tod_contract2_test::test_ij_pi_jp(
 		<< ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<2> ia1, ia2; ia2[0] = np - 1; ia2[1] = ni - 1;
@@ -1788,8 +1806,8 @@ void tod_contract2_test::test_ij_pi_jp(
 
 	contraction2<1, 1, 1> contr;
 	contr.contract(0, 1);
-	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<1, 1, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -1811,6 +1829,8 @@ void tod_contract2_test::test_ij_ip_pj(
 	tnss << "tod_contract2_test::test_ij_ip_pj(" << ni << ", " << nj
 		<< ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -1877,8 +1897,8 @@ void tod_contract2_test::test_ij_ip_pj(
 
 	contraction2<1, 1, 1> contr;
 	contr.contract(1, 0);
-	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<1, 1, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -1900,6 +1920,8 @@ void tod_contract2_test::test_ij_ip_jp(
 	tnss << "tod_contract2_test::test_ij_ip_jp(" << ni << ", " << nj
 		<< ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -1966,8 +1988,8 @@ void tod_contract2_test::test_ij_ip_jp(
 
 	contraction2<1, 1, 1> contr;
 	contr.contract(1, 1);
-	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<1, 1, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -1989,6 +2011,8 @@ void tod_contract2_test::test_ij_pj_pi(
 	tnss << "tod_contract2_test::test_ij_pj_pi(" << ni << ", " << nj
 		<< ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -2056,8 +2080,8 @@ void tod_contract2_test::test_ij_pj_pi(
 	permutation<2> permc; permc.permute(0, 1);
 	contraction2<1, 1, 1> contr(permc);
 	contr.contract(0, 0);
-	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<1, 1, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -2079,6 +2103,8 @@ void tod_contract2_test::test_ij_pj_ip(
 	tnss << "tod_contract2_test::test_ij_pj_ip(" << ni << ", " << nj
 		<< ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -2146,8 +2172,8 @@ void tod_contract2_test::test_ij_pj_ip(
 	permutation<2> permc; permc.permute(0, 1);
 	contraction2<1, 1, 1> contr(permc);
 	contr.contract(0, 1);
-	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<1, 1, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -2169,6 +2195,8 @@ void tod_contract2_test::test_ij_jp_ip(
 	tnss << "tod_contract2_test::test_ij_jp_ip(" << ni << ", " << nj
 		<< ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -2236,8 +2264,8 @@ void tod_contract2_test::test_ij_jp_ip(
 	permutation<2> permc; permc.permute(0, 1);
 	contraction2<1, 1, 1> contr(permc);
 	contr.contract(1, 1);
-	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<1, 1, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -2259,6 +2287,8 @@ void tod_contract2_test::test_ij_jp_pi(
 	tnss << "tod_contract2_test::test_ij_jp_pi(" << ni << ", " << nj
 		<< ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -2326,8 +2356,8 @@ void tod_contract2_test::test_ij_jp_pi(
 	permutation<2> permc; permc.permute(0, 1);
 	contraction2<1, 1, 1> contr(permc);
 	contr.contract(1, 0);
-	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<1, 1, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -2349,6 +2379,8 @@ void tod_contract2_test::test_ij_p_pji(
 	tnss << "tod_contract2_test::test_ij_p_pji(" << ni << ", " << nj
 		<< ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -2418,8 +2450,8 @@ void tod_contract2_test::test_ij_p_pji(
 	permutation<2> permc; permc.permute(0, 1);
 	contraction2<0, 2, 1> contr(permc);
 	contr.contract(0, 0);
-	if(d == 0.0) tod_contract2<0, 2, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<0, 2, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<0, 2, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<0, 2, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -2441,6 +2473,8 @@ void tod_contract2_test::test_ij_pji_p(
 	tnss << "tod_contract2_test::test_ij_pji_p(" << ni << ", " << nj
 		<< ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -2510,8 +2544,8 @@ void tod_contract2_test::test_ij_pji_p(
 	permutation<2> permc; permc.permute(0, 1);
 	contraction2<2, 0, 1> contr(permc);
 	contr.contract(0, 0);
-	if(d == 0.0) tod_contract2<2, 0, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 0, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 0, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 0, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -2533,6 +2567,8 @@ void tod_contract2_test::test_ijk_ip_pkj(
 	tnss << "tod_contract2_test::test_ijk_ip_pkj(" << ni << ", " << nj
 		<< ", " << nk << ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -2605,8 +2641,8 @@ void tod_contract2_test::test_ijk_ip_pkj(
 	permc.permute(1, 2); // ikj -> ijk
 	contraction2<1, 2, 1> contr(permc);
 	contr.contract(1, 0);
-	if(d == 0.0) tod_contract2<1, 2, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<1, 2, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<1, 2, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<1, 2, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -2628,6 +2664,8 @@ void tod_contract2_test::test_ijk_pi_pkj(
 	tnss << "tod_contract2_test::test_ijk_pi_pkj(" << ni << ", " << nj
 		<< ", " << nk << ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -2700,8 +2738,8 @@ void tod_contract2_test::test_ijk_pi_pkj(
 	permc.permute(1, 2); // ikj -> ijk
 	contraction2<1, 2, 1> contr(permc);
 	contr.contract(0, 0);
-	if(d == 0.0) tod_contract2<1, 2, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<1, 2, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<1, 2, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<1, 2, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -2723,6 +2761,8 @@ void tod_contract2_test::test_ijk_pik_pj(
 	tnss << "tod_contract2_test::test_ijk_pik_pj(" << ni << ", " << nj
 		<< ", " << nk << ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -2795,8 +2835,8 @@ void tod_contract2_test::test_ijk_pik_pj(
 	permc.permute(1, 2); // ikj -> ijk
 	contraction2<2, 1, 1> contr(permc);
 	contr.contract(0, 0);
-	if(d == 0.0) tod_contract2<2, 1, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 1, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 1, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 1, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -2818,6 +2858,8 @@ void tod_contract2_test::test_ijk_pj_ipk(
 	tnss << "tod_contract2_test::test_ijk_pj_ipk(" << ni << ", " << nj
 		<< ", " << nk << ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -2890,8 +2932,8 @@ void tod_contract2_test::test_ijk_pj_ipk(
 	permc.permute(0, 1); // jik -> ijk
 	contraction2<1, 2, 1> contr(permc);
 	contr.contract(0, 1);
-	if(d == 0.0) tod_contract2<1, 2, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<1, 2, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<1, 2, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<1, 2, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -2913,6 +2955,8 @@ void tod_contract2_test::test_ijk_pj_pik(
 	tnss << "tod_contract2_test::test_ijk_pj_pik(" << ni << ", " << nj
 		<< ", " << nk << ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -2985,8 +3029,8 @@ void tod_contract2_test::test_ijk_pj_pik(
 	permc.permute(0, 1); // jik -> ijk
 	contraction2<1, 2, 1> contr(permc);
 	contr.contract(0, 0);
-	if(d == 0.0) tod_contract2<1, 2, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<1, 2, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<1, 2, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<1, 2, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -3008,6 +3052,8 @@ void tod_contract2_test::test_ijk_pkj_ip(
 	tnss << "tod_contract2_test::test_ijk_pkj_ip(" << ni << ", " << nj
 		<< ", " << nk << ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -3080,8 +3126,8 @@ void tod_contract2_test::test_ijk_pkj_ip(
 	permc.permute(0, 2); // kji -> ijk
 	contraction2<2, 1, 1> contr(permc);
 	contr.contract(0, 1);
-	if(d == 0.0) tod_contract2<2, 1, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 1, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 1, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 1, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -3103,6 +3149,8 @@ void tod_contract2_test::test_ijk_pkj_pi(
 	tnss << "tod_contract2_test::test_ijk_pkj_pi(" << ni << ", " << nj
 		<< ", " << nk << ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -3175,8 +3223,8 @@ void tod_contract2_test::test_ijk_pkj_pi(
 	permc.permute(0, 2); // kji -> ijk
 	contraction2<2, 1, 1> contr(permc);
 	contr.contract(0, 0);
-	if(d == 0.0) tod_contract2<2, 1, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 1, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 1, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 1, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -3198,6 +3246,8 @@ void tod_contract2_test::test_ij_pqi_pjq(
 	tnss << "tod_contract2_test::test_ij_pqi_pjq(" << ni << ", " << nj
 		<< ", " << np << ", " << nq << ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -3268,8 +3318,8 @@ void tod_contract2_test::test_ij_pqi_pjq(
 	contraction2<1, 1, 2> contr;
 	contr.contract(0, 0);
 	contr.contract(1, 2);
-	if(d == 0.0) tod_contract2<1, 1, 2>(contr, ta, tb).perform(tc);
-	else tod_contract2<1, 1, 2>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<1, 1, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<1, 1, 2>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -3290,6 +3340,8 @@ void tod_contract2_test::test_ij_ipq_jqp(
 	tnss << "tod_contract2_test::test_ij_ipq_jqp(" << ni << ", " << nj
 		<< ", " << np << ", " << nq << ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -3360,8 +3412,8 @@ void tod_contract2_test::test_ij_ipq_jqp(
 	contraction2<1, 1, 2> contr;
 	contr.contract(1, 2);
 	contr.contract(2, 1);
-	if(d == 0.0) tod_contract2<1, 1, 2>(contr, ta, tb).perform(tc);
-	else tod_contract2<1, 1, 2>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<1, 1, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<1, 1, 2>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -3382,6 +3434,8 @@ void tod_contract2_test::test_ij_jpq_iqp(
 	tnss << "tod_contract2_test::test_ij_jpq_iqp(" << ni << ", " << nj
 		<< ", " << np << ", " << nq << ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -3452,8 +3506,8 @@ void tod_contract2_test::test_ij_jpq_iqp(
 	contraction2<1, 1, 2> contr(permutation<2>().permute(0, 1));
 	contr.contract(1, 2);
 	contr.contract(2, 1);
-	if(d == 0.0) tod_contract2<1, 1, 2>(contr, ta, tb).perform(tc);
-	else tod_contract2<1, 1, 2>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<1, 1, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<1, 1, 2>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -3474,6 +3528,8 @@ void tod_contract2_test::test_ij_jipq_qp(
 	tnss << "tod_contract2_test::test_ij_jipq_qp(" << ni << ", " << nj
 		<< ", " << np << ", " << nq << ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -3548,8 +3604,8 @@ void tod_contract2_test::test_ij_jipq_qp(
 	contraction2<2, 0, 2> contr(permutation<2>().permute(0, 1));
 	contr.contract(2, 1);
 	contr.contract(3, 0);
-	if(d == 0.0) tod_contract2<2, 0, 2>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 0, 2>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 0, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 0, 2>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -3569,6 +3625,8 @@ void tod_contract2_test::test_ij_pq_ijpq(size_t ni, size_t nj, size_t np,
 	tnss << "tod_contract2_test::test_ij_pq_ijpq(" << ni << ", " << nj
 		<< ", " << np << ", " << nq << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	index<2> ia1, ia2; ia2[0]=np-1; ia2[1]=nq-1;
 	index<4> ib1, ib2; ib2[0]=ni-1; ib2[1]=nj-1; ib2[2]=np-1; ib2[3]=nq-1;
@@ -3638,7 +3696,7 @@ void tod_contract2_test::test_ij_pq_ijpq(size_t ni, size_t nj, size_t np,
 	contr.contract(1, 3);
 
 	tod_contract2<0, 2, 2> op(contr, ta, tb);
-	op.perform(tc);
+	op.perform(cpus, true, 1.0, tc);
 
 	// Compare against the reference
 
@@ -3654,6 +3712,8 @@ void tod_contract2_test::test_ij_pq_ijpq_a(size_t ni, size_t nj, size_t np,
 	tnss << "tod_contract2_test::test_ij_pq_ijpq_a(" << ni << ", " << nj
 		<< ", " << np << ", " << nq << ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	index<2> ia1, ia2; ia2[0]=np-1; ia2[1]=nq-1;
 	index<4> ib1, ib2; ib2[0]=ni-1; ib2[1]=nj-1; ib2[2]=np-1; ib2[3]=nq-1;
@@ -3723,7 +3783,7 @@ void tod_contract2_test::test_ij_pq_ijpq_a(size_t ni, size_t nj, size_t np,
 	contr.contract(1, 3);
 
 	tod_contract2<0, 2, 2> op(contr, ta, tb);
-	op.perform(tc, d);
+	op.perform(cpus, false, d, tc);
 
 	// Compare against the reference
 
@@ -3740,6 +3800,8 @@ void tod_contract2_test::test_ijk_kjpq_iqp(size_t ni, size_t nj, size_t nk,
 	tnss << "tod_contract2_test::test_ijk_kjpq_iqp(" << ni << ", " << nj
 		<< ", " << nk << ", " << np << ", " << nq << ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -3815,8 +3877,8 @@ void tod_contract2_test::test_ijk_kjpq_iqp(size_t ni, size_t nj, size_t nk,
 	contraction2<2, 1, 2> contr(permutation<3>().permute(0, 2));
 	contr.contract(2, 2);
 	contr.contract(3, 1);
-	if(d == 0.0) tod_contract2<2, 1, 2>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 1, 2>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 1, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 1, 2>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -3837,6 +3899,8 @@ void tod_contract2_test::test_ijk_pkiq_pjq(size_t ni, size_t nj, size_t nk,
 	tnss << "tod_contract2_test::test_ijk_pkiq_pjq(" << ni << ", " << nj
 		<< ", " << nk << ", " << np << ", " << nq << ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -3914,8 +3978,8 @@ void tod_contract2_test::test_ijk_pkiq_pjq(size_t ni, size_t nj, size_t nk,
 	contraction2<2, 1, 2> contr(permc);
 	contr.contract(0, 0);
 	contr.contract(3, 2);
-	if(d == 0.0) tod_contract2<2, 1, 2>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 1, 2>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 1, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 1, 2>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -3936,6 +4000,8 @@ void tod_contract2_test::test_ijk_pqj_iqpk(size_t ni, size_t nj, size_t nk,
 	tnss << "tod_contract2_test::test_ijk_pqj_iqpk(" << ni << ", " << nj
 		<< ", " << nk << ", " << np << ", " << nq << ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -4012,8 +4078,8 @@ void tod_contract2_test::test_ijk_pqj_iqpk(size_t ni, size_t nj, size_t nk,
 	contraction2<1, 2, 2> contr(permutation<3>().permute(0, 1));
 	contr.contract(0, 2);
 	contr.contract(1, 1);
-	if(d == 0.0) tod_contract2<1, 2, 2>(contr, ta, tb).perform(tc);
-	else tod_contract2<1, 2, 2>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<1, 2, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<1, 2, 2>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -4034,6 +4100,8 @@ void tod_contract2_test::test_ijk_pqji_qpk(size_t ni, size_t nj, size_t nk,
 	tnss << "tod_contract2_test::test_ijk_pqji_qpk(" << ni << ", " << nj
 		<< ", " << nk << ", " << np << ", " << nq << ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -4109,8 +4177,8 @@ void tod_contract2_test::test_ijk_pqji_qpk(size_t ni, size_t nj, size_t nk,
 	contraction2<2, 1, 2> contr(permutation<3>().permute(0, 1));
 	contr.contract(0, 1);
 	contr.contract(1, 0);
-	if(d == 0.0) tod_contract2<2, 1, 2>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 1, 2>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 1, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 1, 2>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -4131,6 +4199,8 @@ void tod_contract2_test::test_ijkl_ikp_jpl(size_t ni, size_t nj, size_t nk,
 	tnss << "tod_contract2_test::test_ijkl_ikp_jpl(" << ni << ", " << nj
 		<< ", " << nk << ", " << nl << ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -4207,8 +4277,8 @@ void tod_contract2_test::test_ijkl_ikp_jpl(size_t ni, size_t nj, size_t nk,
 	permc.permute(1, 2); // ikjl -> ijkl
 	contraction2<2, 2, 1> contr(permc);
 	contr.contract(2, 1);
-	if(d == 0.0) tod_contract2<2, 2, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 2, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 2, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 2, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -4229,6 +4299,8 @@ void tod_contract2_test::test_ijkl_ipk_jpl(size_t ni, size_t nj, size_t nk,
 	tnss << "tod_contract2_test::test_ijkl_ipk_jpl(" << ni << ", " << nj
 		<< ", " << nk << ", " << nl << ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -4305,8 +4377,8 @@ void tod_contract2_test::test_ijkl_ipk_jpl(size_t ni, size_t nj, size_t nk,
 	permc.permute(1, 2); // ikjl -> ijkl
 	contraction2<2, 2, 1> contr(permc);
 	contr.contract(1, 1);
-	if(d == 0.0) tod_contract2<2, 2, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 2, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 2, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 2, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -4327,6 +4399,8 @@ void tod_contract2_test::test_ijkl_ipl_jpk(size_t ni, size_t nj, size_t nk,
 	tnss << "tod_contract2_test::test_ijkl_ipl_jpk(" << ni << ", " << nj
 		<< ", " << nk << ", " << nl << ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -4402,8 +4476,8 @@ void tod_contract2_test::test_ijkl_ipl_jpk(size_t ni, size_t nj, size_t nk,
 	permutation<4> permc; permc.permute(1, 2).permute(2, 3); // iljk->ijkl
 	contraction2<2, 2, 1> contr(permc);
 	contr.contract(1, 1);
-	if(d == 0.0) tod_contract2<2, 2, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 2, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 2, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 2, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -4424,6 +4498,8 @@ void tod_contract2_test::test_ijkl_jkp_ipl(size_t ni, size_t nj, size_t nk,
 	tnss << "tod_contract2_test::test_ijkl_jkp_ipl(" << ni << ", " << nj
 		<< ", " << nk << ", " << nl << ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -4500,8 +4576,8 @@ void tod_contract2_test::test_ijkl_jkp_ipl(size_t ni, size_t nj, size_t nk,
 	permc.permute(0, 2).permute(1, 2); // jkil -> ijkl
 	contraction2<2, 2, 1> contr(permc);
 	contr.contract(2, 1);
-	if(d == 0.0) tod_contract2<2, 2, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 2, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 2, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 2, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -4522,6 +4598,8 @@ void tod_contract2_test::test_ijkl_jpl_ipk(size_t ni, size_t nj, size_t nk,
 	tnss << "tod_contract2_test::test_ijkl_jpl_ipk(" << ni << ", " << nj
 		<< ", " << nk << ", " << nl << ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -4599,8 +4677,8 @@ void tod_contract2_test::test_ijkl_jpl_ipk(size_t ni, size_t nj, size_t nk,
 	permc.permute(0, 2).permute(1, 2).permute(2, 3);
 	contraction2<2, 2, 1> contr(permc);
 	contr.contract(1, 1);
-	if(d == 0.0) tod_contract2<2, 2, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 2, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 2, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 2, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -4623,6 +4701,8 @@ void tod_contract2_test::test_ijklm_ikp_jpml(size_t ni, size_t nj, size_t nk,
 		<< ", " << nk << ", " << nl << ", " << nm << ", " << np
 		<< ", "  << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -4704,8 +4784,8 @@ void tod_contract2_test::test_ijklm_ikp_jpml(size_t ni, size_t nj, size_t nk,
 	permc.permute(1, 2).permute(3, 4);
 	contraction2<2, 3, 1> contr(permc);
 	contr.contract(2, 1);
-	if(d == 0.0) tod_contract2<2, 3, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 3, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 3, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 3, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -4728,6 +4808,8 @@ void tod_contract2_test::test_ijklm_ipkm_jpl(size_t ni, size_t nj, size_t nk,
 		<< ", " << nk << ", " << nl << ", " << nm << ", " << np
 		<< ", "  << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -4809,8 +4891,8 @@ void tod_contract2_test::test_ijklm_ipkm_jpl(size_t ni, size_t nj, size_t nk,
 	permc.permute(1, 3).permute(2, 3).permute(3, 4);
 	contraction2<3, 2, 1> contr(permc);
 	contr.contract(1, 1);
-	if(d == 0.0) tod_contract2<3, 2, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<3, 2, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<3, 2, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<3, 2, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -4833,6 +4915,8 @@ void tod_contract2_test::test_ijklm_jlp_ipkm(size_t ni, size_t nj, size_t nk,
 		<< ", " << nk << ", " << nl << ", " << nm << ", " << np
 		<< ", "  << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -4914,8 +4998,8 @@ void tod_contract2_test::test_ijklm_jlp_ipkm(size_t ni, size_t nj, size_t nk,
 	permc.permute(0, 2).permute(1, 2).permute(2, 3);
 	contraction2<2, 3, 1> contr(permc);
 	contr.contract(2, 1);
-	if(d == 0.0) tod_contract2<2, 3, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 3, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 3, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 3, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -4938,6 +5022,8 @@ void tod_contract2_test::test_ijklmn_kjmp_ipln(size_t ni, size_t nj, size_t nk,
 		<< ", " << nk << ", " << nl << ", " << nm << ", " << nn
 		<< ", "  << np << ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -5022,8 +5108,8 @@ void tod_contract2_test::test_ijklmn_kjmp_ipln(size_t ni, size_t nj, size_t nk,
 	permc.permute(0, 3).permute(2, 3).permute(3, 4);
 	contraction2<3, 3, 1> contr(permc);
 	contr.contract(3, 1);
-	if(d == 0.0) tod_contract2<3, 3, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<3, 3, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<3, 3, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<3, 3, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -5046,6 +5132,8 @@ void tod_contract2_test::test_ijkl_iplq_kpjq(size_t ni, size_t nj, size_t nk,
 		<< ", " << nk << ", " << nl << ", " << np << ", " << nq
 		<< ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -5122,8 +5210,8 @@ void tod_contract2_test::test_ijkl_iplq_kpjq(size_t ni, size_t nj, size_t nk,
 	contraction2<2, 2, 2> contr(permutation<4>().permute(1, 3));
 	contr.contract(1, 1);
 	contr.contract(3, 3);
-	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -5146,6 +5234,8 @@ void tod_contract2_test::test_ijkl_iplq_pkjq(size_t ni, size_t nj, size_t nk,
 		<< ", " << nk << ", " << nl << ", " << np << ", " << nq
 		<< ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -5222,8 +5312,8 @@ void tod_contract2_test::test_ijkl_iplq_pkjq(size_t ni, size_t nj, size_t nk,
 	contraction2<2, 2, 2> contr(permutation<4>().permute(1, 3));
 	contr.contract(1, 0);
 	contr.contract(3, 3);
-	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -5246,6 +5336,8 @@ void tod_contract2_test::test_ijkl_iplq_pkqj(size_t ni, size_t nj, size_t nk,
 		<< ", " << nk << ", " << nl << ", " << np << ", " << nq
 		<< ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -5322,8 +5414,8 @@ void tod_contract2_test::test_ijkl_iplq_pkqj(size_t ni, size_t nj, size_t nk,
 	contraction2<2, 2, 2> contr(permutation<4>().permute(1, 3));
 	contr.contract(1, 0);
 	contr.contract(3, 2);
-	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -5346,6 +5438,8 @@ void tod_contract2_test::test_ijkl_ipql_kpqj(size_t ni, size_t nj, size_t nk,
 		<< ", " << nk << ", " << nl << ", " << np << ", " << nq
 		<< ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -5422,8 +5516,8 @@ void tod_contract2_test::test_ijkl_ipql_kpqj(size_t ni, size_t nj, size_t nk,
 	contraction2<2, 2, 2> contr(permutation<4>().permute(1, 3));
 	contr.contract(1, 1);
 	contr.contract(2, 2);
-	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -5446,6 +5540,8 @@ void tod_contract2_test::test_ijkl_ipql_pkqj(size_t ni, size_t nj, size_t nk,
 		<< ", " << nk << ", " << nl << ", " << np << ", " << nq
 		<< ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -5522,8 +5618,8 @@ void tod_contract2_test::test_ijkl_ipql_pkqj(size_t ni, size_t nj, size_t nk,
 	contraction2<2, 2, 2> contr(permutation<4>().permute(1, 3));
 	contr.contract(1, 0);
 	contr.contract(2, 2);
-	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -5546,6 +5642,8 @@ void tod_contract2_test::test_ijkl_pilq_kpjq(size_t ni, size_t nj, size_t nk,
 		<< ", " << nk << ", " << nl << ", " << np << ", " << nq
 		<< ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -5622,8 +5720,8 @@ void tod_contract2_test::test_ijkl_pilq_kpjq(size_t ni, size_t nj, size_t nk,
 	contraction2<2, 2, 2> contr(permutation<4>().permute(1, 3));
 	contr.contract(0, 1);
 	contr.contract(3, 3);
-	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -5646,6 +5744,8 @@ void tod_contract2_test::test_ijkl_pilq_pkjq(size_t ni, size_t nj, size_t nk,
 		<< ", " << nk << ", " << nl << ", " << np << ", " << nq
 		<< ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -5722,8 +5822,8 @@ void tod_contract2_test::test_ijkl_pilq_pkjq(size_t ni, size_t nj, size_t nk,
 	contraction2<2, 2, 2> contr(permutation<4>().permute(1, 3));
 	contr.contract(0, 0);
 	contr.contract(3, 3);
-	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -5746,6 +5846,8 @@ void tod_contract2_test::test_ijkl_piql_kpqj(size_t ni, size_t nj, size_t nk,
 		<< ", " << nk << ", " << nl << ", " << np << ", " << nq
 		<< ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -5822,8 +5924,8 @@ void tod_contract2_test::test_ijkl_piql_kpqj(size_t ni, size_t nj, size_t nk,
 	contraction2<2, 2, 2> contr(permutation<4>().permute(1, 3));
 	contr.contract(0, 1);
 	contr.contract(2, 2);
-	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -5846,6 +5948,8 @@ void tod_contract2_test::test_ijkl_piql_pkqj(size_t ni, size_t nj, size_t nk,
 		<< ", " << nk << ", " << nl << ", " << np << ", " << nq
 		<< ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -5922,8 +6026,8 @@ void tod_contract2_test::test_ijkl_piql_pkqj(size_t ni, size_t nj, size_t nk,
 	contraction2<2, 2, 2> contr(permutation<4>().permute(1, 3));
 	contr.contract(0, 0);
 	contr.contract(2, 2);
-	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -5946,6 +6050,8 @@ void tod_contract2_test::test_ijkl_pqkj_iqpl(size_t ni, size_t nj, size_t nk,
 		<< ", " << nk << ", " << nl << ", " << np << ", " << nq
 		<< ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -6024,8 +6130,8 @@ void tod_contract2_test::test_ijkl_pqkj_iqpl(size_t ni, size_t nj, size_t nk,
 	contraction2<2, 2, 2> contr(permc);
 	contr.contract(0, 2);
 	contr.contract(1, 1);
-	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -6048,6 +6154,8 @@ void tod_contract2_test::test_ijkl_pqkj_qipl(size_t ni, size_t nj, size_t nk,
 		<< ", " << nk << ", " << nl << ", " << np << ", " << nq
 		<< ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -6126,8 +6234,8 @@ void tod_contract2_test::test_ijkl_pqkj_qipl(size_t ni, size_t nj, size_t nk,
 	contraction2<2, 2, 2> contr(permc);
 	contr.contract(0, 2);
 	contr.contract(1, 0);
-	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -6148,6 +6256,8 @@ void tod_contract2_test::test_ij_ipqr_jpqr(size_t ni, size_t nj, size_t np,
 	tnss << "tod_contract2_test::test_ij_ipqr_jpqr(" << ni << ", " << nj
 		<< ", " << np << ", " << nq << ", " << nr << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	index<4> ia1, ia2; ia2[0]=ni-1; ia2[1]=np-1; ia2[2]=nq-1; ia2[3]=nr-1;
 	index<4> ib1, ib2; ib2[0]=nj-1; ib2[1]=np-1; ib2[2]=nq-1; ib2[3]=nr-1;
@@ -6220,7 +6330,7 @@ void tod_contract2_test::test_ij_ipqr_jpqr(size_t ni, size_t nj, size_t np,
 	contr.contract(3, 3);
 
 	tod_contract2<1, 1, 3> op(contr, ta, tb);
-	op.perform(tc);
+	op.perform(cpus, true, 1.0, tc);
 
 	// Compare against the reference
 
@@ -6237,6 +6347,8 @@ void tod_contract2_test::test_ij_ipqr_jpqr_a(size_t ni, size_t nj, size_t np,
 	tnss << "tod_contract2_test::test_ij_ipqr_jpqr_a(" << ni << ", " << nj
 		<< ", " << np << ", " << nq << ", " << nr << ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	index<4> ia1, ia2; ia2[0]=ni-1; ia2[1]=np-1; ia2[2]=nq-1; ia2[3]=nr-1;
 	index<4> ib1, ib2; ib2[0]=nj-1; ib2[1]=np-1; ib2[2]=nq-1; ib2[3]=nr-1;
@@ -6308,7 +6420,7 @@ void tod_contract2_test::test_ij_ipqr_jpqr_a(size_t ni, size_t nj, size_t np,
 	contr.contract(3, 3);
 
 	tod_contract2<1, 1, 3> op(contr, ta, tb);
-	op.perform(tc, d);
+	op.perform(cpus, false, d, tc);
 
 	// Compare against the reference
 
@@ -6325,6 +6437,8 @@ void tod_contract2_test::test_ij_ipqr_pjrq(
 	tnss << "tod_contract2_test::test_ij_ipqr_pjrq(" << ni << ", " << nj
 		<< ", " << np << ", " << nq << ", " << nr << ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -6400,8 +6514,8 @@ void tod_contract2_test::test_ij_ipqr_pjrq(
 	contr.contract(1, 0);
 	contr.contract(2, 3);
 	contr.contract(3, 2);
-	if(d == 0.0) tod_contract2<1, 1, 3>(contr, ta, tb).perform(tc);
-	else tod_contract2<1, 1, 3>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<1, 1, 3>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<1, 1, 3>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -6421,6 +6535,8 @@ void tod_contract2_test::test_ij_jpqr_iprq(size_t ni, size_t nj, size_t np,
 	tnss << "tod_contract2_test::test_ij_jpqr_iprq(" << ni << ", " << nj
 		<< ", " << np << ", " << nq << ", " << nr << ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	index<4> ia1, ia2; ia2[0]=nj-1; ia2[1]=np-1; ia2[2]=nq-1; ia2[3]=nr-1;
 	index<4> ib1, ib2; ib2[0]=ni-1; ib2[1]=np-1; ib2[2]=nr-1; ib2[3]=nq-1;
@@ -6494,8 +6610,8 @@ void tod_contract2_test::test_ij_jpqr_iprq(size_t ni, size_t nj, size_t np,
 
 	//~ tod_contract2<1, 1, 3> op(contr, ta, tb);
 	tod_contract2<1, 1, 3> op(contr, tb, ta);
-	if(d == 0.0) op.perform(tc);
-	else op.perform(tc, d);
+	if(d == 0.0) op.perform(cpus, true, 1.0, tc);
+	else op.perform(cpus, false, d, tc);
 
 	// Compare against the reference
 
@@ -6512,6 +6628,8 @@ void tod_contract2_test::test_ij_pqir_pqjr(size_t ni, size_t nj,
 	tnss << "tod_contract2_test::test_ij_pqir_pqjr(" << ni << ", " << nj
 		<< ", " << np << ", " << nq << ", " << nr << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	index<4> ia1, ia2; ia2[0]=np-1; ia2[1]=nq-1; ia2[2]=ni-1; ia2[3]=nr-1;
 	index<4> ib1, ib2; ib2[0]=np-1; ib2[1]=nq-1; ib2[2]=nj-1; ib2[3]=nr-1;
@@ -6583,7 +6701,7 @@ void tod_contract2_test::test_ij_pqir_pqjr(size_t ni, size_t nj,
 	contr.contract(3, 3);
 
 	tod_contract2<1, 1, 3> op(contr, ta, tb);
-	op.perform(tc);
+	op.perform(cpus, true, 1.0, tc);
 
 	// Compare against the reference
 
@@ -6600,6 +6718,8 @@ void tod_contract2_test::test_ij_pqir_pqjr_a(size_t ni, size_t nj, size_t np,
 	tnss << "tod_contract2_test::test_ij_pqir_pqjr_a(" << ni << ", " << nj
 		<< ", " << np << ", " << nq << ", " << nr << ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	index<4> ia1, ia2; ia2[0]=np-1; ia2[1]=nq-1; ia2[2]=ni-1; ia2[3]=nr-1;
 	index<4> ib1, ib2; ib2[0]=np-1; ib2[1]=nq-1; ib2[2]=nj-1; ib2[3]=nr-1;
@@ -6671,7 +6791,7 @@ void tod_contract2_test::test_ij_pqir_pqjr_a(size_t ni, size_t nj, size_t np,
 	contr.contract(3, 3);
 
 	tod_contract2<1, 1, 3> op(contr, ta, tb);
-	op.perform(tc, d);
+	op.perform(cpus, false, d, tc);
 
 	// Compare against the reference
 
@@ -6689,6 +6809,8 @@ void tod_contract2_test::test_ijkl_pi_jklp(size_t ni, size_t nj,
 	std::ostringstream tnss;
 	tnss << "tod_contract2_test::test_ijkl_pi_jklp(" << ni << ", " << nj
 		<< ", " << nk << ", " << nl << ", " << np << ")";
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -6771,7 +6893,7 @@ void tod_contract2_test::test_ijkl_pi_jklp(size_t ni, size_t nj,
 	contraction2<1, 3, 1> contr;
 	contr.contract(0, 3);
 
-	tod_contract2<1, 3, 1>(contr, ta, tb).perform(tc);
+	tod_contract2<1, 3, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
 
 	//
 	//	Compare against the reference
@@ -6796,6 +6918,8 @@ void tod_contract2_test::test_ijkl_pi_jklp_a(size_t ni, size_t nj, size_t nk,
 	std::ostringstream tnss;
 	tnss << "tod_contract2_test::test_ijkl_pi_jklp_a(" << ni << ", " << nj
 		<< ", " << nk << ", " << nl << ", " << np << ", " << d << ")";
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -6878,7 +7002,7 @@ void tod_contract2_test::test_ijkl_pi_jklp_a(size_t ni, size_t nj, size_t nk,
 	contraction2<1, 3, 1> contr;
 	contr.contract(0, 3);
 
-	tod_contract2<1, 3, 1>(contr, ta, tb).perform(tc, d);
+	tod_contract2<1, 3, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//
 	//	Compare against the reference
@@ -6902,6 +7026,8 @@ void tod_contract2_test::test_jikl_pi_jpkl(size_t ni, size_t nj,
 	tnss << "tod_contract2_test::test_jikl_pi_jpkl(" << ni << ", " << nj
 		<< ", " << nk << ", " << nl << ", " << np << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	index<2> ia1, ia2; ia2[0]=np-1; ia2[1]=ni-1;
 	index<4> ib1, ib2; ib2[0]=nj-1; ib2[1]=np-1; ib2[2]=nk-1; ib2[3]=nl-1;
@@ -6974,7 +7100,7 @@ void tod_contract2_test::test_jikl_pi_jpkl(size_t ni, size_t nj,
 	contr.contract(0, 1);
 
 	tod_contract2<1, 3, 1> op(contr, ta, tb);
-	op.perform(tc);
+	op.perform(cpus, true, 1.0, tc);
 
 	// Compare against the reference
 
@@ -6991,6 +7117,8 @@ void tod_contract2_test::test_jikl_pi_jpkl_a(size_t ni, size_t nj, size_t nk,
 	tnss << "tod_contract2_test::test_jikl_pi_jpkl_a(" << ni << ", " << nj
 		<< ", " << nk << ", " << nl << ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	index<2> ia1, ia2; ia2[0]=np-1; ia2[1]=ni-1;
 	index<4> ib1, ib2; ib2[0]=nj-1; ib2[1]=np-1; ib2[2]=nk-1; ib2[3]=nl-1;
@@ -7063,7 +7191,7 @@ void tod_contract2_test::test_jikl_pi_jpkl_a(size_t ni, size_t nj, size_t nk,
 	contr.contract(0, 1);
 
 	tod_contract2<1, 3, 1> op(contr, ta, tb);
-	op.perform(tc, d);
+	op.perform(cpus, false, d, tc);
 
 	// Compare against the reference
 
@@ -7080,6 +7208,8 @@ void tod_contract2_test::test_ijkl_ijp_klp(size_t ni, size_t nj,
 	tnss << "tod_contract2_test::test_ijkl_ijp_klp(" << ni << ", " << nj
 		<< ", " << nk << ", " << nl << ", " << np << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	index<3> ia1, ia2; ia2[0]=ni-1; ia2[1]=nj-1; ia2[2]=np-1;
 	index<3> ib1, ib2; ib2[0]=nk-1; ib2[1]=nl-1; ib2[2]=np-1;
@@ -7149,7 +7279,7 @@ void tod_contract2_test::test_ijkl_ijp_klp(size_t ni, size_t nj,
 	contr.contract(2, 2);
 
 	tod_contract2<2, 2, 1> op(contr, ta, tb);
-	op.perform(tc);
+	op.perform(cpus, true, 1.0, tc);
 
 	// Compare against the reference
 
@@ -7166,6 +7296,8 @@ void tod_contract2_test::test_ijkl_ijp_klp_a(size_t ni, size_t nj, size_t nk,
 	tnss << "tod_contract2_test::test_ijkl_ijp_klp_a(" << ni << ", " << nj
 		<< ", " << nk << ", " << nl << ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
+
+    cpu_pool cpus(1);
 
 	index<3> ia1, ia2; ia2[0]=ni-1; ia2[1]=nj-1; ia2[2]=np-1;
 	index<3> ib1, ib2; ib2[0]=nk-1; ib2[1]=nl-1; ib2[2]=np-1;
@@ -7235,7 +7367,7 @@ void tod_contract2_test::test_ijkl_ijp_klp_a(size_t ni, size_t nj, size_t nk,
 	contr.contract(2, 2);
 
 	tod_contract2<2, 2, 1> op(contr, ta, tb);
-	op.perform(tc, d);
+	op.perform(cpus, false, d, tc);
 
 	// Compare against the reference
 
@@ -7253,6 +7385,8 @@ void tod_contract2_test::test_ijkl_ij_kl(size_t ni, size_t nj,
 	std::ostringstream tnss;
 	tnss << "tod_contract2_test::test_ijkl_ij_kl(" << ni << ", " << nj
 		<< ", " << nk << ", " << nl << ")";
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -7331,7 +7465,7 @@ void tod_contract2_test::test_ijkl_ij_kl(size_t ni, size_t nj,
 
 	contraction2<2, 2, 0> contr;
 
-	tod_contract2<2, 2, 0>(contr, ta, tb).perform(tc);
+	tod_contract2<2, 2, 0>(contr, ta, tb).perform(cpus, true, 1.0, tc);
 
 	//
 	//	Compare against the reference
@@ -7356,6 +7490,8 @@ void tod_contract2_test::test_ijkl_ij_lk(size_t ni, size_t nj,
 	std::ostringstream tnss;
 	tnss << "tod_contract2_test::test_ijkl_ij_lk(" << ni << ", " << nj
 		<< ", " << nk << ", " << nl << ")";
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -7436,7 +7572,7 @@ void tod_contract2_test::test_ijkl_ij_lk(size_t ni, size_t nj,
 	permc.permute(2, 3);
 	contraction2<2, 2, 0> contr(permc);
 
-	tod_contract2<2, 2, 0>(contr, ta, tb).perform(tc);
+	tod_contract2<2, 2, 0>(contr, ta, tb).perform(cpus, true, 1.0, tc);
 
 	//
 	//	Compare against the reference

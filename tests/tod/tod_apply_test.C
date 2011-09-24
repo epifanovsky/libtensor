@@ -96,6 +96,8 @@ void tod_apply_test::test_plain(Functor &fn, const dimensions<N> &dims)
 
 	typedef std_allocator<double> allocator;
 
+    cpu_pool cpus(1);
+
 	try {
 
 	tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
@@ -126,7 +128,7 @@ void tod_apply_test::test_plain(Functor &fn, const dimensions<N> &dims)
 	// Invoke the operation
 
 	tod_apply<N, Functor> cp(ta, fn);
-	cp.perform(tb);
+	cp.perform(cpus, tb);
 
 	// Compare against the reference
 
@@ -144,6 +146,8 @@ void tod_apply_test::test_plain_additive(Functor &fn,
 	static const char *testname = "tod_apply_test::test_plain_additive()";
 
     typedef std_allocator<double> allocator;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -175,7 +179,7 @@ void tod_apply_test::test_plain_additive(Functor &fn,
 	// Invoke the operation
 
 	tod_apply<N, Functor> cp(ta, fn);
-	cp.perform(tb, d);
+	cp.perform(cpus, tb, d);
 
 	// Compare against the reference
 
@@ -195,6 +199,8 @@ void tod_apply_test::test_scaled(Functor &fn,
 	static const char *testname = "tod_apply_test::test_scaled()";
 
     typedef std_allocator<double> allocator;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -226,7 +232,7 @@ void tod_apply_test::test_scaled(Functor &fn,
 	// Invoke the operation
 
 	tod_apply<N, Functor> cp(ta, fn, c);
-	cp.perform(tb);
+	cp.perform(cpus, tb);
 
 	// Compare against the reference
 
@@ -246,6 +252,8 @@ void tod_apply_test::test_scaled_additive(Functor &fn,
 	static const char *testname = "tod_apply_test::test_scaled_additive()";
 
     typedef std_allocator<double> allocator;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -277,7 +285,7 @@ void tod_apply_test::test_scaled_additive(Functor &fn,
 	// Invoke the operation
 
 	tod_apply<N, Functor> cp(ta, fn, c);
-	cp.perform(tb, d);
+	cp.perform(cpus, tb, d);
 
 	// Compare against the reference
 
@@ -297,6 +305,8 @@ void tod_apply_test::test_perm(Functor &fn, const dimensions<N> &dims,
 	static const char *testname = "tod_apply_test::test_perm()";
 
     typedef std_allocator<double> allocator;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -336,7 +346,7 @@ void tod_apply_test::test_perm(Functor &fn, const dimensions<N> &dims,
 	// Invoke the operation
 
 	tod_apply<N, Functor> cp(ta, fn, perm);
-	cp.perform(tb);
+	cp.perform(cpus, tb);
 
 	// Compare against the reference
 
@@ -354,6 +364,8 @@ void tod_apply_test::test_perm_additive(Functor &fn, const dimensions<N> &dims,
 	static const char *testname = "tod_apply_test::test_perm_additive()";
 
     typedef std_allocator<double> allocator;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -393,7 +405,7 @@ void tod_apply_test::test_perm_additive(Functor &fn, const dimensions<N> &dims,
 	// Invoke the operation
 
 	tod_apply<N, Functor> cp(ta, fn, perm);
-	cp.perform(tb, d);
+	cp.perform(cpus, tb, d);
 
 	// Compare against the reference
 
@@ -411,6 +423,8 @@ void tod_apply_test::test_perm_scaled(Functor &fn, const dimensions<N> &dims,
 	static const char *testname = "tod_apply_test::test_perm_scaled()";
 
     typedef std_allocator<double> allocator;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -450,7 +464,7 @@ void tod_apply_test::test_perm_scaled(Functor &fn, const dimensions<N> &dims,
 	// Invoke the operation
 
 	tod_apply<N, Functor> cp(ta, fn, perm, c);
-	cp.perform(tb);
+	cp.perform(cpus, tb);
 
 	// Compare against the reference
 
@@ -470,6 +484,8 @@ void tod_apply_test::test_perm_scaled_additive(Functor &fn,
 		"tod_apply_test::test_perm_scaled_additive()";
 
     typedef std_allocator<double> allocator;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -509,7 +525,7 @@ void tod_apply_test::test_perm_scaled_additive(Functor &fn,
 	// Invoke the operation
 
 	tod_apply<N, Functor> cp(ta, fn, perm, c);
-	cp.perform(tb, d);
+	cp.perform(cpus, tb, d);
 
 	// Compare against the reference
 
@@ -531,11 +547,13 @@ void tod_apply_test::test_exc() throw(libtest::test_exception) {
 	dimensions<4> dim1(ir1), dim2(ir2);
 	tensor<4, double, allocator> t1(dim1), t2(dim2);
 
+    cpu_pool cpus(1);
+
 	bool ok = false;
 	try {
 		tod_apply_test_ns::sin_functor sin;
 		tod_apply<4, tod_apply_test_ns::sin_functor> tc(t1, sin);
-		tc.perform(t2);
+		tc.perform(cpus, t2);
 	} catch(exception &e) {
 		ok = true;
 	}

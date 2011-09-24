@@ -199,6 +199,8 @@ void btod_copy_test::test_nosym_2() throw(libtest::test_exception) {
 
 	typedef std_allocator<double> allocator_t;
 
+	cpu_pool cpus(1);
+
 	try {
 
 	index<2> i1, i2;
@@ -222,7 +224,7 @@ void btod_copy_test::test_nosym_2() throw(libtest::test_exception) {
 	//	Create the reference
 
 	tod_btconv<2>(bta).perform(ta);
-	tod_copy<2>(ta, perm10, 2.0).perform(tb_ref);
+	tod_copy<2>(ta, perm10, 2.0).perform(cpus, true, 1.0, tb_ref);
 
 	//	Compare against the reference
 
@@ -287,6 +289,8 @@ void btod_copy_test::test_nosym_4() throw(libtest::test_exception) {
 
 	typedef std_allocator<double> allocator_t;
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<2> i1, i2;
@@ -314,7 +318,7 @@ void btod_copy_test::test_nosym_4() throw(libtest::test_exception) {
 	//	Create the reference
 
 	tod_btconv<2>(bta).perform(ta);
-	tod_copy<2>(ta, perm10, 2.0).perform(tb_ref);
+	tod_copy<2>(ta, perm10, 2.0).perform(cpus, true, 1.0, tb_ref);
 
 	//	Compare against the reference
 
@@ -384,6 +388,8 @@ void btod_copy_test::test_sym_2() throw(libtest::test_exception) {
 
 	typedef std_allocator<double> allocator_t;
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<2> i1, i2;
@@ -413,7 +419,7 @@ void btod_copy_test::test_sym_2() throw(libtest::test_exception) {
 	//	Compare against the reference
 
 	tod_btconv<2>(bta).perform(ta);
-	tod_copy<2>(ta, 2.0).perform(tb_ref);
+	tod_copy<2>(ta, 2.0).perform(cpus, true, 1.0, tb_ref);
 	tod_btconv<2>(btb).perform(tb);
 
 	compare_ref<2>::compare(testname, tb, tb_ref, 0.0);
@@ -432,6 +438,8 @@ void btod_copy_test::test_sym_3() throw(libtest::test_exception) {
 	static const char *testname = "btod_copy_test::test_sym_3()";
 
 	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -474,7 +482,7 @@ void btod_copy_test::test_sym_3() throw(libtest::test_exception) {
 	//	Create the reference
 
 	tod_btconv<3>(bta).perform(ta);
-	tod_copy<3>(ta, perm210, 0.3).perform(tb_ref);
+	tod_copy<3>(ta, perm210, 0.3).perform(cpus, true, 1.0, tb_ref);
 
 	//	Compare against the reference
 
@@ -495,6 +503,8 @@ void btod_copy_test::test_sym_4() throw(libtest::test_exception) {
 	static const char *testname = "btod_copy_test::test_sym_4()";
 
 	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -541,7 +551,7 @@ void btod_copy_test::test_sym_4() throw(libtest::test_exception) {
 
 	//	Compute the reference
 
-	tod_copy<4>(ta, -1.0).perform(tb_ref);
+	tod_copy<4>(ta, -1.0).perform(cpus, true, 1.0, tb_ref);
 
 	//	Compare against the reference
 
@@ -560,6 +570,8 @@ void btod_copy_test::test_add_nosym_1() throw(libtest::test_exception) {
 	static const char *testname = "btod_copy_test::test_add_nosym_1()";
 
 	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -584,7 +596,7 @@ void btod_copy_test::test_add_nosym_1() throw(libtest::test_exception) {
 
 	//	Compare against the reference
 
-	tod_copy<2>(ta).perform(tb_ref, 1.0);
+	tod_copy<2>(ta).perform(cpus, false, 1.0, tb_ref);
 	tod_btconv<2>(btb).perform(tb);
 
 	compare_ref<2>::compare(testname, tb, tb_ref, 0.0);
@@ -603,6 +615,8 @@ void btod_copy_test::test_add_nosym_2() throw(libtest::test_exception) {
 	static const char *testname = "btod_copy_test::test_add_nosym_2()";
 
 	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -632,7 +646,7 @@ void btod_copy_test::test_add_nosym_2() throw(libtest::test_exception) {
 	//	Create the reference
 
 	tod_btconv<2>(bta).perform(ta);
-	tod_copy<2>(ta, perm10, 2.0).perform(tb_ref, 1.0);
+	tod_copy<2>(ta, perm10, 2.0).perform(cpus, false, 1.0, tb_ref);
 
 	//	Compare against the reference
 
@@ -653,6 +667,8 @@ void btod_copy_test::test_add_nosym_3() throw(libtest::test_exception) {
 	static const char *testname = "btod_copy_test::test_add_nosym_3()";
 
 	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -687,7 +703,7 @@ void btod_copy_test::test_add_nosym_3() throw(libtest::test_exception) {
 
 	//	Compute the reference
 
-	tod_copy<4>(ta, 2.0).perform(tb_ref, 1.0);
+	tod_copy<4>(ta, 2.0).perform(cpus, false, 1.0, tb_ref);
 
 	//	Compare against the reference
 
@@ -707,6 +723,8 @@ void btod_copy_test::test_add_nosym_4() throw(libtest::test_exception) {
 	static const char *testname = "btod_copy_test::test_add_nosym_4()";
 
 	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -735,7 +753,7 @@ void btod_copy_test::test_add_nosym_4() throw(libtest::test_exception) {
 	//	Create the reference
 
 	tod_btconv<2>(bta).perform(ta);
-	tod_copy<2>(ta, perm10, 2.0).perform(tb_ref, 1.0);
+	tod_copy<2>(ta, perm10, 2.0).perform(cpus, false, 1.0, tb_ref);
 
 	//	Compare against the reference
 
@@ -756,6 +774,8 @@ void btod_copy_test::test_add_eqsym_1() throw(libtest::test_exception) {
 	static const char *testname = "btod_copy_test::test_add_eqsym_1()";
 
 	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -790,7 +810,7 @@ void btod_copy_test::test_add_eqsym_1() throw(libtest::test_exception) {
 	//	Compare against the reference
 
 	tod_btconv<2>(bta).perform(ta);
-	tod_copy<2>(ta).perform(tb_ref, 1.0);
+	tod_copy<2>(ta).perform(cpus, false, 1.0, tb_ref);
 
 	compare_ref<2>::compare(testname, tb, tb_ref, 0.0);
 
@@ -808,6 +828,8 @@ void btod_copy_test::test_add_eqsym_2() throw(libtest::test_exception) {
 	static const char *testname = "btod_copy_test::test_add_eqsym_2()";
 
 	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -842,7 +864,7 @@ void btod_copy_test::test_add_eqsym_2() throw(libtest::test_exception) {
 	//	Create the reference
 
 	tod_btconv<2>(bta).perform(ta);
-	tod_copy<2>(ta, perm10).perform(tb_ref, -1.0);
+	tod_copy<2>(ta, perm10).perform(cpus, false, -1.0, tb_ref);
 
 	//	Compare against the reference
 
@@ -862,6 +884,8 @@ void btod_copy_test::test_add_eqsym_3() throw(libtest::test_exception) {
 	static const char *testname = "btod_copy_test::test_add_eqsym_3()";
 
 	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -910,7 +934,7 @@ void btod_copy_test::test_add_eqsym_3() throw(libtest::test_exception) {
 	//	Create the reference
 
 	tod_btconv<3>(bta).perform(ta);
-	tod_copy<3>(ta, perm210, 1.5).perform(tb_ref, 0.5);
+	tod_copy<3>(ta, perm210, 1.5).perform(cpus, false, 0.5, tb_ref);
 
 	//	Compare against the reference
 
@@ -930,6 +954,8 @@ void btod_copy_test::test_add_eqsym_4() throw(libtest::test_exception) {
 	static const char *testname = "btod_copy_test::test_add_eqsym_4()";
 
 	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -976,7 +1002,7 @@ void btod_copy_test::test_add_eqsym_4() throw(libtest::test_exception) {
 
 	//	Compute the reference
 
-	tod_copy<4>(ta).perform(tb_ref, 2.0);
+	tod_copy<4>(ta).perform(cpus, false, 2.0, tb_ref);
 
 	//	Compare against the reference
 
@@ -996,6 +1022,8 @@ void btod_copy_test::test_add_eqsym_5() throw(libtest::test_exception) {
 	static const char *testname = "btod_copy_test::test_add_eqsym_5()";
 
 	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -1044,7 +1072,7 @@ void btod_copy_test::test_add_eqsym_5() throw(libtest::test_exception) {
 
 	//	Compute the reference
 
-	tod_copy<4>(ta, perm0213, 0.5).perform(tb_ref, 1.0);
+	tod_copy<4>(ta, perm0213, 0.5).perform(cpus, false, 1.0, tb_ref);
 
 	//	Compare against the reference
 
@@ -1064,6 +1092,8 @@ void btod_copy_test::test_add_nesym_1() throw(libtest::test_exception) {
 	static const char *testname = "btod_copy_test::test_add_nesym_1()";
 
 	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -1097,7 +1127,7 @@ void btod_copy_test::test_add_nesym_1() throw(libtest::test_exception) {
 	//	Compare against the reference
 
 	tod_btconv<2>(bta).perform(ta);
-	tod_copy<2>(ta).perform(tb_ref, 1.0);
+	tod_copy<2>(ta).perform(cpus, false, 1.0, tb_ref);
 
 	compare_ref<2>::compare(testname, tb, tb_ref, 0.0);
 
@@ -1115,6 +1145,8 @@ void btod_copy_test::test_add_nesym_2() throw(libtest::test_exception) {
 	static const char *testname = "btod_copy_test::test_add_nesym_2()";
 
 	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -1148,7 +1180,7 @@ void btod_copy_test::test_add_nesym_2() throw(libtest::test_exception) {
 	//	Compare against the reference
 
 	tod_btconv<2>(bta).perform(ta);
-	tod_copy<2>(ta).perform(tb_ref, 1.0);
+	tod_copy<2>(ta).perform(cpus, false, 1.0, tb_ref);
 
 	compare_ref<2>::compare(testname, tb, tb_ref, 0.0);
 
@@ -1166,6 +1198,8 @@ void btod_copy_test::test_add_nesym_3() throw(libtest::test_exception) {
 	static const char *testname = "btod_copy_test::test_add_nesym_3()";
 
 	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -1211,7 +1245,7 @@ void btod_copy_test::test_add_nesym_3() throw(libtest::test_exception) {
 
 	//	Compute the reference
 
-	tod_copy<4>(ta).perform(tb_ref, 1.5);
+	tod_copy<4>(ta).perform(cpus, false, 1.5, tb_ref);
 
 	//	Compare against the reference
 
@@ -1232,6 +1266,8 @@ void btod_copy_test::test_add_nesym_4() throw(libtest::test_exception) {
 
 	typedef std_allocator<double> allocator_t;
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<4> i1, i2;
@@ -1276,7 +1312,7 @@ void btod_copy_test::test_add_nesym_4() throw(libtest::test_exception) {
 
 	//	Compute the reference
 
-	tod_copy<4>(ta).perform(tb_ref, 1.5);
+	tod_copy<4>(ta).perform(cpus, false, 1.5, tb_ref);
 
 	//	Compare against the reference
 
@@ -1297,6 +1333,8 @@ void btod_copy_test::test_add_nesym_5() throw(libtest::test_exception) {
 
 	typedef std_allocator<double> allocator_t;
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<4> i1, i2;
@@ -1341,7 +1379,7 @@ void btod_copy_test::test_add_nesym_5() throw(libtest::test_exception) {
 
 	//	Compute the reference
 
-	tod_copy<4>(ta).perform(tb_ref, 1.5);
+	tod_copy<4>(ta).perform(cpus, false, 1.5, tb_ref);
 
 	//	Compare against the reference
 
@@ -1361,6 +1399,8 @@ void btod_copy_test::test_add_nesym_5_sp() throw(libtest::test_exception) {
 	static const char *testname = "btod_copy_test::test_add_nesym_5_sp()";
 
 	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -1421,7 +1461,7 @@ void btod_copy_test::test_add_nesym_5_sp() throw(libtest::test_exception) {
 
 	//	Compute the reference
 
-	tod_copy<4>(ta).perform(tb_ref, 1.5);
+	tod_copy<4>(ta).perform(cpus, false, 1.5, tb_ref);
 
 	//	Compare against the reference
 
@@ -1441,6 +1481,8 @@ void btod_copy_test::test_add_nesym_6() throw(libtest::test_exception) {
 	static const char *testname = "btod_copy_test::test_add_nesym_6()";
 
 	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -1487,7 +1529,7 @@ void btod_copy_test::test_add_nesym_6() throw(libtest::test_exception) {
 
 	//	Compute the reference
 
-	tod_copy<4>(ta, perm3210).perform(tb_ref, -0.1);
+	tod_copy<4>(ta, perm3210).perform(cpus, false, -0.1, tb_ref);
 
 	//	Compare against the reference
 
@@ -1512,6 +1554,8 @@ void btod_copy_test::test_add_nesym_7_sp1() throw(libtest::test_exception) {
 	static const char *testname = "btod_copy_test::test_add_nesym_7_sp1()";
 
 	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -1560,7 +1604,7 @@ void btod_copy_test::test_add_nesym_7_sp1() throw(libtest::test_exception) {
 
 	//	Compute the reference
 
-	tod_copy<4>(ta).perform(tb_ref, -2.0);
+	tod_copy<4>(ta).perform(cpus, false, -2.0, tb_ref);
 
 	//	Compare against the reference
 
@@ -1584,6 +1628,8 @@ void btod_copy_test::test_add_nesym_7_sp2() throw(libtest::test_exception) {
 	static const char *testname = "btod_copy_test::test_add_nesym_7_sp2()";
 
 	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -1631,7 +1677,7 @@ void btod_copy_test::test_add_nesym_7_sp2() throw(libtest::test_exception) {
 
 	//	Compute the reference
 
-	tod_copy<4>(ta).perform(tb_ref, -2.0);
+	tod_copy<4>(ta).perform(cpus, false, -2.0, tb_ref);
 
 	//	Compare against the reference
 
@@ -1656,6 +1702,8 @@ void btod_copy_test::test_add_nesym_7_sp3() throw(libtest::test_exception) {
 	static const char *testname = "btod_copy_test::test_add_nesym_7_sp3()";
 
 	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -1704,7 +1752,7 @@ void btod_copy_test::test_add_nesym_7_sp3() throw(libtest::test_exception) {
 
 	//	Compute the reference
 
-	tod_copy<4>(ta).perform(tb_ref, 2.0);
+	tod_copy<4>(ta).perform(cpus, false, 2.0, tb_ref);
 
 	//	Compare against the reference
 

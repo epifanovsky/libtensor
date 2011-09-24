@@ -1,6 +1,9 @@
 #ifndef LIBTENSOR_TOD_COPY_IMPL_H
 #define LIBTENSOR_TOD_COPY_IMPL_H
 
+#include "../mp/auto_cpu_lock.h"
+#include "tod_set.h"
+
 namespace libtensor {
 
 
@@ -33,29 +36,23 @@ void tod_copy<N>::prefetch() {
 
 
 template<size_t N>
-void tod_copy<N>::perform(tensor_i<N, double> &tb) {
+void tod_copy<N>::perform(cpu_pool &cpus, bool zero, double c,
+    tensor_i<N, double> &tb) {
 
-    static const char *method = "perform(tensor_i<N, double>&)";
-
-    if(!tb.get_dims().equals(m_dimsb)) {
-        throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "tb");
-    }
-
-    do_perform<loop_list_copy>(tb, 1.0);
-}
-
-
-template<size_t N>
-void tod_copy<N>::perform(tensor_i<N, double> &tb, double c) {
-
-    static const char *method = "perform(tensor_i<N, double>&, double)";
+    static const char *method =
+        "perform(cpu_pool&, bool, double, tensor_i<N, double>&)";
 
     if(!tb.get_dims().equals(m_dimsb)) {
         throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "tb");
     }
-    if(c == 0.0) return;
 
-    do_perform<loop_list_add>(tb, c);
+    if(zero) {
+        if(c == 0) tod_set<N>().perform(cpus, tb);
+        else do_perform<loop_list_copy>(cpus, c, tb);
+    } else {
+        if(c == 0) return;
+        do_perform<loop_list_add>(cpus, c, tb);
+    }
 }
 
 
@@ -70,7 +67,8 @@ dimensions<N> tod_copy<N>::mk_dimsb(tensor_i<N, double> &ta,
 
 
 template<size_t N> template<typename Base>
-void tod_copy<N>::do_perform(tensor_i<N, double> &tb, double c) {
+void tod_copy<N>::do_perform(cpu_pool &cpus, double c,
+    tensor_i<N, double> &tb) {
 
     typedef typename Base::list_t list_t;
     typedef typename Base::registers registers_t;
@@ -87,19 +85,23 @@ void tod_copy<N>::do_perform(tensor_i<N, double> &tb, double c) {
     const dimensions<N> &dimsa = m_ta.get_dims();
     const dimensions<N> &dimsb = tb.get_dims();
 
-    list_t loop;
-    build_loop<Base>(loop, dimsa, m_perm, dimsb);
-
     const double *pa = ca.req_const_dataptr();
     double *pb = cb.req_dataptr();
 
-    registers_t r;
-    r.m_ptra[0] = pa;
-    r.m_ptrb[0] = pb;
-    r.m_ptra_end[0] = pa + dimsa.get_size();
-    r.m_ptrb_end[0] = pb + dimsb.get_size();
+    {
+        auto_cpu_lock cpu(cpus);
 
-    Base::run_loop(loop, r, m_c * c);
+        list_t loop;
+        build_loop<Base>(loop, dimsa, m_perm, dimsb);
+
+        registers_t r;
+        r.m_ptra[0] = pa;
+        r.m_ptrb[0] = pb;
+        r.m_ptra_end[0] = pa + dimsa.get_size();
+        r.m_ptrb_end[0] = pb + dimsb.get_size();
+
+        Base::run_loop(loop, r, m_c * c);
+    }
 
     ca.ret_const_dataptr(pa);
     cb.ret_dataptr(pb);

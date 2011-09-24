@@ -199,8 +199,7 @@ void btod_add<N>::compute_block(tensor_i<N, double> &blkb,
 		op->add_op(ca[rec.iarg]->req_block(rec.idx), perm, k);
 	}
 
-	if(zero) op->perform(blkb);
-	else op->perform(blkb, 1.0);
+	op->perform(cpus, zero, 1.0, blkb);
 
 	delete op;
 

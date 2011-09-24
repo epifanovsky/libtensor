@@ -22,6 +22,8 @@ void block_tensor_test::test_req_aux_block_1() throw(libtest::test_exception) {
 
 	typedef std_allocator<double> allocator_t;
 
+	cpu_pool cpus(1);
+
 	try {
 
 	index<2> i1, i2;
@@ -43,10 +45,10 @@ void block_tensor_test::test_req_aux_block_1() throw(libtest::test_exception) {
 	tensor_i<2, double> &b10 = ctrl.req_aux_block(i10);
 	tensor_i<2, double> &b11 = ctrl.req_aux_block(i11);
 
-	tod_random<2>().perform(b00);
-	tod_random<2>().perform(b01);
-	tod_random<2>().perform(b10);
-	tod_random<2>().perform(b11);
+	tod_random<2>().perform(cpus, b00);
+	tod_random<2>().perform(cpus, b01);
+	tod_random<2>().perform(cpus, b10);
+	tod_random<2>().perform(cpus, b11);
 
 	ctrl.ret_aux_block(i00);
 	ctrl.ret_aux_block(i01);

@@ -88,6 +88,8 @@ void tod_copy_test::test_plain(const dimensions<N> &dims)
 
 	static const char *testname = "tod_copy_test::test_plain()";
 
+    cpu_pool cpus(1);
+
 	try {
 
 	tensor<N, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
@@ -116,7 +118,7 @@ void tod_copy_test::test_plain(const dimensions<N> &dims)
 	// Invoke the copy operation
 
 	tod_copy<N> cp(ta);
-	cp.perform(tb);
+	cp.perform(cpus, true, 1.0, tb);
 
 	// Compare against the reference
 
@@ -132,6 +134,8 @@ void tod_copy_test::test_plain_additive(const dimensions<N> &dims, double d)
 	throw(libtest::test_exception) {
 
 	static const char *testname = "tod_copy_test::test_plain_additive()";
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -162,7 +166,7 @@ void tod_copy_test::test_plain_additive(const dimensions<N> &dims, double d)
 	// Invoke the copy operation
 
 	tod_copy<N> cp(ta);
-	cp.perform(tb, d);
+	cp.perform(cpus, false, d, tb);
 
 	// Compare against the reference
 
@@ -178,6 +182,8 @@ void tod_copy_test::test_scaled(const dimensions<N> &dims, double c)
 	throw(libtest::test_exception) {
 
 	static const char *testname = "tod_copy_test::test_scaled()";
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -208,7 +214,7 @@ void tod_copy_test::test_scaled(const dimensions<N> &dims, double c)
 	// Invoke the copy operation
 
 	tod_copy<N> cp(ta, c);
-	cp.perform(tb);
+	cp.perform(cpus, true, 1.0, tb);
 
 	// Compare against the reference
 
@@ -225,6 +231,8 @@ void tod_copy_test::test_scaled_additive(const dimensions<N> &dims, double c,
 	double d) throw(libtest::test_exception) {
 
 	static const char *testname = "tod_copy_test::test_scaled_additive()";
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -255,7 +263,7 @@ void tod_copy_test::test_scaled_additive(const dimensions<N> &dims, double c,
 	// Invoke the copy operation
 
 	tod_copy<N> cp(ta, c);
-	cp.perform(tb, d);
+	cp.perform(cpus, false, d, tb);
 
 	// Compare against the reference
 
@@ -273,6 +281,8 @@ void tod_copy_test::test_perm(const dimensions<N> &dims,
 	const permutation<N> &perm) throw(libtest::test_exception) {
 
 	static const char *testname = "tod_copy_test::test_perm()";
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -311,7 +321,7 @@ void tod_copy_test::test_perm(const dimensions<N> &dims,
 	// Invoke the copy operation
 
 	tod_copy<N> cp(ta, perm);
-	cp.perform(tb);
+	cp.perform(cpus, true, 1.0, tb);
 
 	// Compare against the reference
 
@@ -327,6 +337,8 @@ void tod_copy_test::test_perm_additive(const dimensions<N> &dims,
 	const permutation<N> &perm, double d) throw(libtest::test_exception) {
 
 	static const char *testname = "tod_copy_test::test_perm_additive()";
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -366,7 +378,7 @@ void tod_copy_test::test_perm_additive(const dimensions<N> &dims,
 	// Invoke the copy operation
 
 	tod_copy<N> cp(ta, perm);
-	cp.perform(tb, d);
+	cp.perform(cpus, false, d, tb);
 
 	// Compare against the reference
 
@@ -382,6 +394,8 @@ void tod_copy_test::test_perm_scaled(const dimensions<N> &dims,
 	const permutation<N> &perm, double c) throw(libtest::test_exception) {
 
 	static const char *testname = "tod_copy_test::test_perm_scaled()";
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -420,7 +434,7 @@ void tod_copy_test::test_perm_scaled(const dimensions<N> &dims,
 	// Invoke the copy operation
 
 	tod_copy<N> cp(ta, perm, c);
-	cp.perform(tb);
+	cp.perform(cpus, true, 1.0, tb);
 
 	// Compare against the reference
 
@@ -438,6 +452,8 @@ void tod_copy_test::test_perm_scaled_additive(const dimensions<N> &dims,
 
 	static const char *testname =
 		"tod_copy_test::test_perm_scaled_additive()";
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -476,7 +492,7 @@ void tod_copy_test::test_perm_scaled_additive(const dimensions<N> &dims,
 	// Invoke the copy operation
 
 	tod_copy<N> cp(ta, perm, c);
-	cp.perform(tb, d);
+	cp.perform(cpus, false, d, tb);
 
 	// Compare against the reference
 
@@ -495,9 +511,11 @@ void tod_copy_test::test_exc() throw(libtest::test_exception) {
 	dimensions<4> dim1(ir1), dim2(ir2);
 	tensor4 t1(dim1), t2(dim2);
 
+    cpu_pool cpus(1);
+
 	bool ok = false;
 	try {
-		tod_copy<4> tc(t1); tc.perform(t2);
+		tod_copy<4> tc(t1); tc.perform(cpus, true, 1.0, t2);
 	} catch(exception &e) {
 		ok = true;
 	}

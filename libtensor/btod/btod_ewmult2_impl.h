@@ -374,7 +374,8 @@ void btod_ewmult2<N, M, K>::compute_block_impl(tensor_i<k_orderc, double> &blk,
 
 	permc.permute(tr.get_perm());
 	double k = m_d * tra.get_coeff() * trb.get_coeff() * tr.get_coeff();
-	tod_ewmult2<N, M, K>(blka, perma, blkb, permb, permc, k).perform(blk, d);
+	tod_ewmult2<N, M, K>(blka, perma, blkb, permb, permc, k).
+	    perform(cpus, false, d, blk);
 
 	ctrla.ret_block(cidxa.get_index());
 	ctrlb.ret_block(cidxb.get_index());

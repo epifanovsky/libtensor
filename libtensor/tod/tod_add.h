@@ -83,13 +83,15 @@ public:
 	 **/
 	void prefetch();
 
+    void perform(cpu_pool &cpus, bool zero, double c, tensor_i<N, double> &tb);
+
 	/**	\brief Computes the sum into the output %tensor
 	 **/
-	void perform(tensor_i<N, double> &t);
+//	void perform(tensor_i<N, double> &t);
 
 	/**	\brief Adds the sum to the output %tensor
 	 **/
-	void perform(tensor_i<N, double> &t, double c);
+//	void perform(tensor_i<N, double> &t, double c);
 
 	//@}
 

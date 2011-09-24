@@ -209,6 +209,8 @@ void btod_import_raw<N, Alloc>::verify_nonzero_orbit(
 
 	typedef typename orbit<N, double>::iterator iterator_t;
 
+	cpu_pool cpus(1);
+
 	//	Get the canonical block
 	abs_index<N> aci(o.get_abs_canonical_index(), bidims);
 	tensor_i<N, double> &cblk = ctrl.req_block(aci.get_index());
@@ -225,7 +227,8 @@ void btod_import_raw<N, Alloc>::verify_nonzero_orbit(
 		//	Compare with the transformed canonical block
 		tensor_i<N, double> &blk = ctrl.req_block(ai.get_index());
 		tensor<N, double, Alloc> tblk(blk.get_dims());
-		tod_copy<N>(cblk, tr.get_perm(), tr.get_coeff()).perform(tblk);
+		tod_copy<N>(cblk, tr.get_perm(), tr.get_coeff()).
+		    perform(cpus, true, 1.0, tblk);
 
 		tod_compare<N> cmp(blk, tblk, m_sym_thresh);
 		if(!cmp.compare()) {
