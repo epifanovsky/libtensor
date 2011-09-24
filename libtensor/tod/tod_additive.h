@@ -37,9 +37,6 @@ public:
     virtual void perform(cpu_pool &cpus, bool zero, double c,
         tensor_i<N, double> &t) = 0;
 
-    virtual void perform(tensor_i<N, double> &t, double c) { }
-    virtual void perform(tensor_i<N, double> &t) { }
-
 };
 
 
