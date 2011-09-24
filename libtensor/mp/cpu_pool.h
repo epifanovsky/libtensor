@@ -1,7 +1,9 @@
 #ifndef LIBTENSOR_CPU_POOL_H
 #define LIBTENSOR_CPU_POOL_H
 
+#include <string>
 #include <vector>
+#include "../timings.h"
 #include "threads.h"
 
 namespace libtensor {
@@ -25,13 +27,14 @@ namespace libtensor {
 
     \ingroup libtensor_mp
  **/
-class cpu_pool {
+class cpu_pool : public timings<cpu_pool> {
 public:
     static const char *k_clazz; //!< Class name
 
 private:
     std::vector<unsigned> m_cpus; //!< List of all CPUs marked as free/busy
     std::vector<size_t> m_free; //!< List of free CPUs
+    std::vector<std::string> m_name; //!< List of CPU names
     spinlock m_lock; //!< Lock for the lists
     cond m_cond; //!< Conditional to wait for CPUs
 
