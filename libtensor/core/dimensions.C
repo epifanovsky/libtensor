@@ -17,7 +17,6 @@ const char *dimensions<0>::k_clazz = "dimensions<0>";
 namespace libtensor {
 
 
-template class dimensions<0>;
 template class dimensions<1>;
 template class dimensions<2>;
 template class dimensions<3>;

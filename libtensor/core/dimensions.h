@@ -214,7 +214,6 @@ public:
 
 namespace libtensor {
 
-    extern template class dimensions<0>;
     extern template class dimensions<1>;
     extern template class dimensions<2>;
     extern template class dimensions<3>;
