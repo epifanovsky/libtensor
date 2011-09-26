@@ -35,7 +35,7 @@ private:
     std::vector<unsigned> m_cpus; //!< List of all CPUs marked as free/busy
     std::vector<size_t> m_free; //!< List of free CPUs
     std::vector<std::string> m_name; //!< List of CPU names
-    spinlock m_lock; //!< Lock for the lists
+    mutex m_lock; //!< Lock for the lists
     cond m_cond; //!< Conditional to wait for CPUs
 
 public:

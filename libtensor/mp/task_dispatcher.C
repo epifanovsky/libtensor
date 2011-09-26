@@ -83,14 +83,17 @@ void task_dispatcher::wait_on_queue(const queue_id_t &qid, cpu_pool &cpus) {
         q.finalized = true;
     }
 
-    bool done = false;
-    while(!done) {
+    while(true) {
+        bool done = false, alldone = false;
         {
             auto_lock_type lock(m_lock);
             queue &q = **qid;
             done = q.q.is_empty() && q.nrunning == 0;
+            alldone = m_ntasks == 0;
         }
-        if(!done) invoke_next(cpus);
+        if(done) break;
+        if(!alldone) invoke_next(cpus);
+        else wait_next();
     }
 
     {
@@ -168,6 +171,8 @@ void task_dispatcher::invoke_next(cpu_pool &cpus) {
             else delete exc;
         }
     }
+
+    m_alarm.broadcast();
 }
 
 
