@@ -232,7 +232,7 @@ void btod_dotprod<N>::dotprod_in_orbit_task::perform(cpu_pool &cpus) throw(excep
 	perm1.permute(tr1.get_perm()).permute(permutation<N>(m_pinv1, true));
 	perm2.permute(tr2.get_perm()).permute(permutation<N>(m_pinv2, true));
 
-	double d = tod_dotprod<N>(blk1, perm1, blk2, perm2).calculate() *
+	double d = tod_dotprod<N>(blk1, perm1, blk2, perm2).calculate(cpus) *
 		tr1.get_coeff() * tr2.get_coeff();
 
 	ctrl1.ret_block(aci1.get_index());

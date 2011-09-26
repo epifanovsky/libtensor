@@ -43,6 +43,8 @@ void btod_dotprod_test::test_1() throw(libtest::test_exception) {
 
 	typedef std_allocator<double> allocator_t;
 
+	cpu_pool cpus(1);
+
 	try {
 
 	index<2> i1, i2;
@@ -65,7 +67,7 @@ void btod_dotprod_test::test_1() throw(libtest::test_exception) {
 	tensor<2, double, allocator_t> t1(dims), t2(dims);
 	tod_btconv<2>(bt1).perform(t1);
 	tod_btconv<2>(bt2).perform(t2);
-	double d_ref = tod_dotprod<2>(t1, t2).calculate();
+	double d_ref = tod_dotprod<2>(t1, t2).calculate(cpus);
 
 	//	Compare
 
@@ -91,6 +93,8 @@ void btod_dotprod_test::test_2() throw(libtest::test_exception) {
 	static const char *testname = "btod_dotprod_test::test_2()";
 
 	typedef std_allocator<double> allocator_t;
+
+	cpu_pool cpus(1);
 
 	try {
 
@@ -134,6 +138,8 @@ void btod_dotprod_test::test_3() throw(libtest::test_exception) {
 
 	typedef std_allocator<double> allocator_t;
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<2> i1, i2;
@@ -160,7 +166,7 @@ void btod_dotprod_test::test_3() throw(libtest::test_exception) {
 	tensor<2, double, allocator_t> t1(dims), t2(dims);
 	tod_btconv<2>(bt1).perform(t1);
 	tod_btconv<2>(bt2).perform(t2);
-	double d_ref = tod_dotprod<2>(t1, t2).calculate();
+	double d_ref = tod_dotprod<2>(t1, t2).calculate(cpus);
 
 	//	Compare
 
@@ -187,6 +193,8 @@ void btod_dotprod_test::test_4() throw(libtest::test_exception) {
 	static const char *testname = "btod_dotprod_test::test_4()";
 
 	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -217,7 +225,7 @@ void btod_dotprod_test::test_4() throw(libtest::test_exception) {
 	tensor<2, double, allocator_t> t1(dims), t2(dims);
 	tod_btconv<2>(bt1).perform(t1);
 	tod_btconv<2>(bt2).perform(t2);
-	double d_ref = tod_dotprod<2>(t1, t2).calculate();
+	double d_ref = tod_dotprod<2>(t1, t2).calculate(cpus);
 
 	//	Compare
 
@@ -243,6 +251,8 @@ void btod_dotprod_test::test_5() throw(libtest::test_exception) {
 	static const char *testname = "btod_dotprod_test::test_5()";
 
 	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -283,8 +293,8 @@ void btod_dotprod_test::test_5() throw(libtest::test_exception) {
 	tod_btconv<2>(bt2).perform(t2);
 	tod_btconv<2>(bt3).perform(t3);
 	tod_btconv<2>(bt4).perform(t4);
-	double d1_ref = tod_dotprod<2>(t1, t2).calculate();
-	double d2_ref = tod_dotprod<2>(t3, t4).calculate();
+	double d1_ref = tod_dotprod<2>(t1, t2).calculate(cpus);
+	double d2_ref = tod_dotprod<2>(t3, t4).calculate(cpus);
 
 	//	Compare
 
@@ -316,6 +326,8 @@ void btod_dotprod_test::test_6() throw(libtest::test_exception) {
 	static const char *testname = "btod_dotprod_test::test_6()";
 
 	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -357,9 +369,9 @@ void btod_dotprod_test::test_6() throw(libtest::test_exception) {
 	tod_btconv<2>(bt2).perform(t2);
 	tod_btconv<2>(bt3).perform(t3);
 	tod_btconv<2>(bt4).perform(t4);
-	double d1_ref = tod_dotprod<2>(t1, t2).calculate();
-	double d2_ref = tod_dotprod<2>(t1, t3).calculate();
-	double d3_ref = tod_dotprod<2>(t1, t4).calculate();
+	double d1_ref = tod_dotprod<2>(t1, t2).calculate(cpus);
+	double d2_ref = tod_dotprod<2>(t1, t3).calculate(cpus);
+	double d3_ref = tod_dotprod<2>(t1, t4).calculate(cpus);
 
 	//	Compare
 
@@ -399,6 +411,8 @@ void btod_dotprod_test::test_7() throw(libtest::test_exception) {
 
 	typedef std_allocator<double> allocator_t;
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<2> i1, i2;
@@ -437,7 +451,7 @@ void btod_dotprod_test::test_7() throw(libtest::test_exception) {
 	tensor<2, double, allocator_t> t1(dims), t2(dims);
 	tod_btconv<2>(bt1).perform(t1);
 	tod_btconv<2>(bt2).perform(t2);
-	double d_ref = tod_dotprod<2>(t1, t2).calculate();
+	double d_ref = tod_dotprod<2>(t1, t2).calculate(cpus);
 
 	//	Compare
 
@@ -464,6 +478,8 @@ void btod_dotprod_test::test_8() throw(libtest::test_exception) {
 	static const char *testname = "btod_dotprod_test::test_8()";
 
 	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -539,10 +555,10 @@ void btod_dotprod_test::test_8() throw(libtest::test_exception) {
 	tod_btconv<4>(bt4).perform(t4);
 	tod_btconv<4>(bt5).perform(t5);
 	tod_btconv<4>(bt6).perform(t6);
-	double d1_ref = tod_dotprod<4>(t1, t2).calculate();
-	double d2_ref = tod_dotprod<4>(t3, t4).calculate();
+	double d1_ref = tod_dotprod<4>(t1, t2).calculate(cpus);
+	double d2_ref = tod_dotprod<4>(t3, t4).calculate(cpus);
 	double d3_ref = tod_dotprod<4>(t5, permutation<4>().permute(0, 2).
-		permute(1, 3), t6, permutation<4>()).calculate();
+		permute(1, 3), t6, permutation<4>()).calculate(cpus);
 
 	//	Compare
 
@@ -580,6 +596,8 @@ void btod_dotprod_test::test_9() throw(libtest::test_exception) {
 	static const char *testname = "btod_dotprod_test::test_9()";
 
 	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -621,7 +639,7 @@ void btod_dotprod_test::test_9() throw(libtest::test_exception) {
 	tensor<2, double, allocator_t> t1(dims), t2(dims);
 	tod_btconv<2>(bt1).perform(t1);
 	tod_btconv<2>(bt2).perform(t2);
-	double d_ref = tod_dotprod<2>(t1, t2).calculate();
+	double d_ref = tod_dotprod<2>(t1, t2).calculate(cpus);
 
 	//	Compare
 
@@ -660,6 +678,8 @@ void btod_dotprod_test::test_10() throw(libtest::test_exception) {
 
 		product_table_container::get_instance().add(pg);
 	}
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -705,7 +725,7 @@ void btod_dotprod_test::test_10() throw(libtest::test_exception) {
 	tensor<2, double, allocator_t> t1(dims), t2(dims);
 	tod_btconv<2>(bt1).perform(t1);
 	tod_btconv<2>(bt2).perform(t2);
-	double d_ref = tod_dotprod<2>(t1, t2).calculate();
+	double d_ref = tod_dotprod<2>(t1, t2).calculate(cpus);
 
 	//	Compare
 
@@ -736,6 +756,8 @@ void btod_dotprod_test::test_11() throw(libtest::test_exception) {
 
 	typedef std_allocator<double> allocator_t;
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<2> i1, i2;
@@ -764,7 +786,7 @@ void btod_dotprod_test::test_11() throw(libtest::test_exception) {
 	tensor<2, double, allocator_t> t1(dims), t2(dims);
 	tod_btconv<2>(bt1).perform(t1);
 	tod_btconv<2>(bt2).perform(t2);
-	double d_ref = tod_dotprod<2>(t1, t2).calculate();
+	double d_ref = tod_dotprod<2>(t1, t2).calculate(cpus);
 
 	//	Compare
 
@@ -791,6 +813,8 @@ void btod_dotprod_test::test_12() throw(libtest::test_exception) {
 	static const char *testname = "btod_dotprod_test::test_12()";
 
 	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -822,7 +846,7 @@ void btod_dotprod_test::test_12() throw(libtest::test_exception) {
 	tensor<2, double, allocator_t> t1(dims), t2(dims);
 	tod_btconv<2>(bt1).perform(t1);
 	tod_btconv<2>(bt2).perform(t2);
-	double d_ref = tod_dotprod<2>(t1, p10, t2, p01).calculate();
+	double d_ref = tod_dotprod<2>(t1, p10, t2, p01).calculate(cpus);
 
 	//	Compare
 

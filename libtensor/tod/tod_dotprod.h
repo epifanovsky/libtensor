@@ -9,6 +9,7 @@
 #include "../core/permutation.h"
 #include "../core/tensor_i.h"
 #include "../core/tensor_ctrl.h"
+#include "../mp/auto_cpu_lock.h"
 #include "contraction2.h"
 #include "bad_dimensions.h"
 #include "processor.h"
@@ -100,7 +101,7 @@ public:
 
 	/**	\brief Computes the dot product
 	 **/
-	double calculate();
+	double calculate(cpu_pool &cpus);
 
 private:
 	bool verify_dims();
@@ -152,7 +153,8 @@ void tod_dotprod<N>::prefetch() {
 }
 
 template<size_t N>
-double tod_dotprod<N>::calculate() {
+double tod_dotprod<N>::calculate(cpu_pool &cpus) {
+
 	tod_dotprod<N>::start_timer();
 
 	permutation<N> perma(m_perm1);
@@ -170,17 +172,22 @@ double tod_dotprod<N>::calculate() {
 
 	double result = 0.0;
 
-	try {
-		registers regs;
-		regs.m_ptra = pa; regs.m_ptrb = pb; regs.m_ptrc = &result;
-		processor_t proc(m_list, regs);
-		proc.process_next();
-	} catch(exception &e) {
-		clean_list();
-		throw;
+	{
+	    auto_cpu_lock cpu(cpus);
+
+	    try {
+	        registers regs;
+	        regs.m_ptra = pa; regs.m_ptrb = pb; regs.m_ptrc = &result;
+	        processor_t proc(m_list, regs);
+	        proc.process_next();
+	    } catch(exception &e) {
+	        clean_list();
+	        throw;
+	    }
+
+	    clean_list();
 	}
 
-	clean_list();
 	m_tctrl1.ret_const_dataptr(pb);
 	m_tctrl2.ret_const_dataptr(pa);
 

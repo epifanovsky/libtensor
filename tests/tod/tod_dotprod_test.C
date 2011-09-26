@@ -35,6 +35,8 @@ void tod_dotprod_test::test_1(size_t ni) throw(libtest::test_exception) {
 	std::ostringstream testname;
 	testname << "tod_dotprod_test::test_1(" << ni << ")";
 
+	cpu_pool cpus(1);
+
 	try {
 
 	index<1> ia1, ia2; ia2[0] = ni-1;
@@ -68,7 +70,7 @@ void tod_dotprod_test::test_1(size_t ni) throw(libtest::test_exception) {
 	// Invoke the operation
 
 	tod_dotprod<1> op(ta, tb);
-	double c = op.calculate();
+	double c = op.calculate(cpus);
 
 	// Compare against the reference
 
@@ -93,6 +95,8 @@ void tod_dotprod_test::test_2(size_t ni, size_t nj, const permutation<2> &perm)
 
 	std::ostringstream testname;
 	testname << "tod_dotprod_test::test_2(" << ni << ", " << nj << ")";
+
+	cpu_pool cpus(1);
 
 	try {
 
@@ -136,7 +140,7 @@ void tod_dotprod_test::test_2(size_t ni, size_t nj, const permutation<2> &perm)
 
 	permutation<2> p0;
 	tod_dotprod<2> op(ta, p0, tb, perm);
-	double c = op.calculate();
+	double c = op.calculate(cpus);
 
 	// Compare against the reference
 
