@@ -85,15 +85,17 @@ void task_dispatcher::wait_on_queue(const queue_id_t &qid, cpu_pool &cpus) {
 
     while(true) {
         bool done = false, alldone = false;
+        cond *sig = 0;
         {
             auto_lock_type lock(m_lock);
             queue &q = **qid;
+            sig = &q.sig;
             done = q.q.is_empty() && q.nrunning == 0;
             alldone = m_ntasks == 0;
         }
         if(done) break;
         if(!alldone) invoke_next(cpus);
-        else wait_next();
+        else sig->wait();
     }
 
     {
@@ -140,6 +142,7 @@ void task_dispatcher::invoke_next(cpu_pool &cpus) {
 
     queue *q = 0;
     task_i *task = 0;
+    cond *sig = 0;
 
     {
         auto_lock_type lock(m_lock);
@@ -150,6 +153,7 @@ void task_dispatcher::invoke_next(cpu_pool &cpus) {
 
         q = *i;
         task = &q->q.pop();
+        sig = &q->sig;
         q->nrunning++;
         m_ntasks--;
     }
@@ -172,7 +176,7 @@ void task_dispatcher::invoke_next(cpu_pool &cpus) {
         }
     }
 
-    m_alarm.broadcast();
+    sig->signal();
 }
 
 

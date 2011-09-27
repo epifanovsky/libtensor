@@ -23,6 +23,7 @@ public:
 private:
     struct queue {
         task_queue q; //!< Queue
+        cond sig; //!< Queue signal
         volatile size_t nrunning; //!< Number of running tasks
         bool finalized; //!< Finalized queue
         bool destroyed; //!< Destroyed queue
@@ -34,8 +35,8 @@ public:
     typedef std::list<queue*>::iterator queue_id_t; //!< Queue ID type
 
 private:
-    typedef mutex lock_type;
-    typedef auto_lock auto_lock_type;
+    typedef spinlock lock_type;
+    typedef auto_spinlock auto_lock_type;
 
 private:
     lock_type m_lock; //!< Lock
