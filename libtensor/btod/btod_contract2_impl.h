@@ -241,6 +241,8 @@ const char *btod_contract2<N, M, K>::make_schedule_task::k_clazz =
 template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::make_schedule_task::perform(cpu_pool &cpus) throw(exception) {
 
+    auto_cpu_lock cpu(cpus);
+
 	make_schedule_task::start_timer("local");
 
 	orbit_list<k_orderc, double> olc(m_symc);
