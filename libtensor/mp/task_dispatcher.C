@@ -17,9 +17,15 @@ task_dispatcher::task_dispatcher() :
 
 task_dispatcher::queue_id_t task_dispatcher::create_queue() {
 
-	auto_lock_type lock(m_lock);
+    current_task_queue &ctq = tls<current_task_queue>::get_instance().get();
+    task_queue *tq_parent = ctq.tq;
+    if(tq_parent == 0) tq_parent = &m_root;
+    task_queue *tq = new task_queue(tq_parent);
 
-    return m_stack.insert(m_stack.end(), new queue);
+    {
+        auto_lock lock(m_lock);
+        return m_tqs.insert(m_tqs.end(), tq);
+    }
 }
 
 
@@ -27,15 +33,24 @@ void task_dispatcher::destroy_queue(queue_id_t &qid) {
 
     static const char *method = "destroy_queue(queue_id_t&)";
 
-    auto_lock_type lock(m_lock);
+    current_task_queue &ctq = tls<current_task_queue>::get_instance().get();
+    task_queue *tq = 0;
 
-    if(qid == m_stack.end()) {
-        throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__, "qid");
+    {
+        auto_lock lock(m_lock);
+
+        if(qid == m_tqs.end()) {
+            throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
+                "qid");
+        }
+
+        tq = *qid;
+        ctq.tq = tq->get_parent();
+        m_tqs.erase(qid);
+        qid = m_tqs.end();
     }
 
-    queue *q = *qid;
-    erase_queue_from_list(qid);
-    delete q;
+    delete tq;
 }
 
 
@@ -43,20 +58,14 @@ void task_dispatcher::push_task(const queue_id_t &qid, task_i &task) {
 
     static const char *method = "push_task(const queue_id_t&, task_i&)";
 
-    auto_lock_type lock(m_lock);
+    auto_lock lock(m_lock);
 
-    if(qid == m_stack.end()) {
+    if(qid == m_tqs.end()) {
         throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__, "qid");
     }
 
-    queue &q = **qid;
-    if(q.finalized) {
-        throw mp_exception(g_ns, k_clazz, method, __FILE__, __LINE__,
-            "bad_queue_state: finalized");
-    }
-
-    q.q.push(task);
-    m_ntasks++;
+    task_queue &q = **qid;
+    q.push(&task);
     m_alarm.broadcast();
 }
 
@@ -70,120 +79,49 @@ void task_dispatcher::wait_on_queue(const queue_id_t &qid) {
 
 void task_dispatcher::wait_on_queue(const queue_id_t &qid, cpu_pool &cpus) {
 
-    static const char *method = "wait_on_queue(const queue_id_t&, cpu_pool&)";
-
-    {
-        auto_lock_type lock(m_lock);
-
-        queue &q = **qid;
-        if(q.finalized) {
-            throw mp_exception(g_ns, k_clazz, method, __FILE__, __LINE__,
-                "bad_queue_state: finalized");
-        }
-        q.finalized = true;
-    }
-
-    while(true) {
-        bool done = false, alldone = false;
-        cond *sig = 0;
-        {
-            auto_lock_type lock(m_lock);
-            queue &q = **qid;
-            sig = &q.sig;
-            done = q.q.is_empty() && q.nrunning == 0;
-            alldone = m_ntasks == 0;
-        }
-        if(done) break;
-        if(!alldone) invoke_next(cpus);
-        else sig->wait();
-    }
-
-    {
-        auto_lock_type lock(m_lock);
-
-        queue &q = **qid;
-        if(q.exc != 0) {
-            try {
-                q.exc->rethrow();
-            } catch(exception &e) {
-                delete q.exc;
-                q.exc = 0;
-                throw;
-            }
-        }
-    }
+    task_queue &q = **qid;
+    while(invoke_next(q, cpus));
+    q.wait();
 }
 
 
 void task_dispatcher::set_off_alarm() {
 
-    while(m_nwaiting > 0) {
-        m_alarm.broadcast();
-    }
+    m_alarm.broadcast();
 }
 
 
 void task_dispatcher::wait_next() {
 
-    {
-        auto_lock_type lock(m_lock);
-        if(m_ntasks != 0) return;
-        m_nwaiting++;
-    }
+    if(!m_root.is_empty()) return;
     m_alarm.wait();
-    {
-        auto_lock_type lock(m_lock);
-        m_nwaiting--;
-    }
 }
 
 
 void task_dispatcher::invoke_next(cpu_pool &cpus) {
 
-    queue *q = 0;
-    task_i *task = 0;
-    cond *sig = 0;
+    invoke_next(m_root, cpus);
+}
 
-    {
-        auto_lock_type lock(m_lock);
 
-        std::list<queue*>::reverse_iterator i = m_stack.rbegin();
-        for(; i != m_stack.rend() && (*i)->q.is_empty(); i++);
-        if(i == m_stack.rend()) return;
+bool task_dispatcher::invoke_next(task_queue &tq, cpu_pool &cpus) {
 
-        q = *i;
-        task = &q->q.pop();
-        sig = &q->sig;
-        q->nrunning++;
-        m_ntasks--;
-    }
+    std::pair<task_queue*, task_i*> tt = tq.pop();
+    if(tt.second == 0) return false;
 
-    exception *exc = 0;
+    current_task_queue &ctq = tls<current_task_queue>::get_instance().get();
+    ctq.tq = tt.first;
+
     try {
-        task->perform(cpus);
+        tt.second->perform(cpus);
     } catch(exception &e) {
-        exc = e.clone();
+        tt.first->set_exception(e);
     } catch(...) {
 
     }
 
-    {
-        auto_lock_type lock(m_lock);
-        q->nrunning--;
-        if(exc) {
-            if(q->exc == 0) q->exc = exc;
-            else delete exc;
-        }
-    }
-
-    sig->signal();
-}
-
-
-void task_dispatcher::erase_queue_from_list(queue_id_t &qid) {
-
-    m_stack.erase(qid);
-    qid = m_stack.end();
+    tt.first->finished(*tt.second);
+    return true;
 }
 
 

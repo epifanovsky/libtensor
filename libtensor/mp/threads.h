@@ -8,6 +8,7 @@
 #include <libvmm/rwlock.h>
 #include <libvmm/spinlock.h>
 #include <libvmm/thread.h>
+#include <libvmm/tls.h>
 
 namespace libtensor {
 
@@ -19,6 +20,7 @@ using libvmm::mutex;
 using libvmm::rwlock;
 using libvmm::spinlock;
 using libvmm::thread;
+using libvmm::tls;
 
 
 } // namespace libtensor

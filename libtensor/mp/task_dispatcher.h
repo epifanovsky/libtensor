@@ -10,6 +10,16 @@
 namespace libtensor {
 
 
+/** \brief Contains the current task queue for the thread
+
+    \ingroup libtensor_mp
+ **/
+struct current_task_queue {
+    task_queue *tq;
+    current_task_queue() : tq(0) { }
+};
+
+
 /** \brief Parallel task dispatcher
 
     \ingroup libtensor_mp
@@ -20,29 +30,15 @@ class task_dispatcher : public libvmm::singleton<task_dispatcher> {
 public:
     static const char *k_clazz; //!< Class name
 
-private:
-    struct queue {
-        task_queue q; //!< Queue
-        cond sig; //!< Queue signal
-        volatile size_t nrunning; //!< Number of running tasks
-        bool finalized; //!< Finalized queue
-        bool destroyed; //!< Destroyed queue
-        exception *exc; //!< Exception
-        queue() : nrunning(0), finalized(false), destroyed(false), exc(0) { }
-    };
-
 public:
-    typedef std::list<queue*>::iterator queue_id_t; //!< Queue ID type
+    typedef std::list<task_queue*>::iterator queue_id_t; //!< Queue ID type
 
 private:
-    typedef spinlock lock_type;
-    typedef auto_spinlock auto_lock_type;
-
-private:
-    lock_type m_lock; //!< Lock
+    mutex m_lock; //!< Lock
     cond m_alarm; //!< Alarm for the processing pool
     bool m_mp; //!< Use multiple threads
-    std::list<queue*> m_stack; //!< Stack of queues
+    task_queue m_root; //!< Root task queue
+    std::list<task_queue*> m_tqs; //!< List of task queues
     volatile size_t m_ntasks; //!< Number of scheduled tasks
     volatile size_t m_nwaiting; //!< Number of threads waiting on alarm
 
@@ -101,7 +97,7 @@ public:
     //@}
 
 private:
-    void erase_queue_from_list(queue_id_t &qid);
+    bool invoke_next(task_queue &tq, cpu_pool &cpus);
 
 };
 
