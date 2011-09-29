@@ -126,6 +126,7 @@ set(SRC_INST
 	tod/tod_copy.C
 	tod/tod_dirsum.C
 	tod/tod_ewmult2.C
+	tod/tod_import_raw_stream.C
 	btod/additive_btod.C
 	btod/basic_btod.C
 	btod/btod_add.C
