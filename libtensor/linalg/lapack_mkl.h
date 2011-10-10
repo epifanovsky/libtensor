@@ -146,6 +146,28 @@ inline int lapack_zgeev(char jobvl, char jobvr, size_t n, std::complex <double> 
         return mkl_info;
 }
 
+inline int lapack_dpotrf(char uplo, size_t n, double *a, size_t lda) {
+        
+        int mkl_n = n;
+        int mkl_lda = lda;
+        int mkl_info = 0;
+        dpotrf(&uplo, &mkl_n, a, &mkl_lda, &mkl_info);
+        return mkl_info;
+}
+
+inline int lapack_dpstrf(char uplo, size_t n, double *a, size_t lda, int *p, int *rank, double tol, double *work) {
+
+        int mkl_n = n;
+        int mkl_lda = lda;
+	double mkl_tol = tol;
+        int mkl_info = 0;
+        dpstrf(&uplo, &mkl_n, a, &mkl_lda, p, rank, &mkl_tol, work, &mkl_info);
+        //dpotrf(&uplo, &mkl_n, a, &mkl_lda, &mkl_info);
+
+        return mkl_info;
+}
+
+
 
 
 } // namespace libtensor

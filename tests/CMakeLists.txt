@@ -118,6 +118,7 @@ set(SRC_BTOD
     btod/addition_schedule_test.C
     btod/btod_add_test.C
     btod/btod_apply_test.C
+    btod/btod_cholesky_test.C
     btod/btod_compare_test.C
     btod/btod_contract2_test.C
     btod/btod_copy_test.C
