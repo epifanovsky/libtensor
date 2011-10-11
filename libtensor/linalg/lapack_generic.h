@@ -3,6 +3,10 @@
 
 #include <complex>
 
+#ifdef USE_QCHEM
+#include <qchem.h>
+#endif // USE_QCHEM
+
 extern "C" {
 	int dgesv_(int*, int*, double*, int*, int*, double*, int*, int*);
 	int dgesvd_(char*, char*, int*, int*, double*, int*, double*, double*,
@@ -17,7 +21,9 @@ extern "C" {
 	int zgeev_(char*, char*, int*, std::complex <double> *, int*, std::complex <double> *, 
 	std::complex <double> *, int*, std::complex <double> *, int*, std::complex <double> *, 
 	int*, double*, int*);
+#ifndef USE_QCHEM
 	int dpotrf_(char*, int*, double*, int*, int*);
+#endif // USE_QCHEM
         int dpstrf_(char*, int*, double*, int*, int*, int*, double *, double *, int* );
 }
 
