@@ -6,6 +6,8 @@ namespace libtensor {
 
 /**
 	\ingroup libtensor_tod_kernel
+	\tparam N Number of input arguments (tensors)
+	\tparam M Number of the result tensors
  **/
 template<size_t N, size_t M>
 struct loop_list_node {

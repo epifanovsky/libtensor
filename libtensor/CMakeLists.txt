@@ -14,6 +14,11 @@ set(SRC
 	tod/loop_list_mul.C
 	tod/loop_list_elem.C
 	tod/loop_list_elem1.C
+	tod/kernels/cuda_kern_copy_2d.cu
+	tod/kernels/cuda_kern_copy_4d.cu
+	tod/kernels/cuda_kern_copy_6d.cu
+    tod/kernels/cuda_kern_copy_generic.cu
+    tod/kernels/cuda_kern_functions.cu
     tod/kernels/kern_add_generic.C
     tod/kernels/kern_add_i_i_x_x.C
     tod/kernels/kern_add_i_x_i_x.C
@@ -143,7 +148,8 @@ set(SRC_MP
 	mp/worker_pool.C
 )
 
-add_library(tensor ${SRC} ${SRC_LINALG} ${SRC_INST} ${SRC_MP})
+
+cuda_add_library(tensor ${SRC} ${SRC_LINALG} ${SRC_INST} ${SRC_MP})
 
 IF(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
 set_property(SOURCE blas.C APPEND PROPERTY

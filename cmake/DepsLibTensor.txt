@@ -26,6 +26,14 @@ find_package(CBLAS)
 find_package(LAPACK)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH_SAVED})
 
+#Detect if CUDA is install and set it up
+FIND_PACKAGE(CUDA)
+SET(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} -ccbin icc -arch sm_20)
+if (CUDA_FOUND)
+	
+	set(CUDA_LIBS ${CUDA_LIBRARIES})
+	message(STATUS "Using CUDA: " ${CUDA_LIBRARIES})
+endif (CUDA_FOUND)
 #
 #	Set up compilation flags and paths
 if(IS_ICPC AND MKL_FOUND)
@@ -80,5 +88,5 @@ endif(IS_ICPC AND MKL_FOUND)
 
 #	Libtensor dependencies (libraries)
 #
-set(LIBTENSOR_DEP_LIBS ${LAPACK_LIBS} ${BLAS_LIBS})
+set(LIBTENSOR_DEP_LIBS ${LAPACK_LIBS} ${BLAS_LIBS} ${CUDA_LIBS})
 

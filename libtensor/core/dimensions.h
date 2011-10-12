@@ -25,8 +25,8 @@ std::ostream &operator<<(std::ostream &os, const dimensions<N> &dims);
 **/
 template<size_t N>
 class dimensions {
-	friend std::ostream &operator<< <N>(std::ostream &os,
-		const dimensions<N> &dims);
+	friend std::ostream &operator<<
+			<N>(std::ostream &os, const dimensions<N> &dims);
 
 private:
 	index<N> m_dims; //!< Tensor %dimensions

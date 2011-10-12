@@ -14,7 +14,8 @@ std::ostream &operator<<(std::ostream &os, const mask<N> &m);
 
 template<size_t N>
 class mask : public sequence<N, bool> {
-	friend std::ostream &operator<< <N>(std::ostream &os, const mask<N> &m);
+	friend std::ostream &operator<<
+			<N>(std::ostream &os, const mask<N> &m);
 
 public:
 	//!	\name Construction and destruction

@@ -101,7 +101,8 @@ std::ostream &operator<<(std::ostream &os, const index<0> &i);
 **/
 template<size_t N>
 class index : public sequence<N, size_t> {
-	friend std::ostream &operator<< <N>(std::ostream &os, const index<N> &i);
+	friend std::ostream &operator<<
+			<N>(std::ostream &os, const index<N> &i);
 
 public:
 	//!	\name Construction and destruction

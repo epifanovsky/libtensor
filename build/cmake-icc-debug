@@ -1,3 +1,4 @@
 #!/bin/sh
+VERBOSE=1
 CC=icc CXX=icpc cmake -D CMAKE_BUILD_TYPE=DEBUG ..
 
