@@ -153,6 +153,10 @@ set(SRC_MP
     mp/worker_pool.C
 )
 
+set(SRC_QCHEM
+    linalg/qchem/linalg_base_level1_qchem.C
+)
+
 if(qchemRootDir)
     include(${qchemRootDir}/cmake/DepsLibVmm.txt)
     include(${qchemRootDir}/cmake/DepsLibTensor.txt)
@@ -160,7 +164,9 @@ endif(qchemRootDir)
 
 add_library(tensor ${SRC} ${SRC_LINALG} ${SRC_INST} ${SRC_MP})
 if(qchemRootDir)
+    add_library(tensor_qchem ${SRC_QCHEM})
     add_dependencies(tensor generated_headers)
+    add_dependencies(tensor_qchem generated_headers)
 endif(qchemRootDir)
 
 set_property(TARGET tensor APPEND PROPERTY
