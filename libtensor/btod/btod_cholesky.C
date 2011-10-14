@@ -18,6 +18,10 @@
 #include "../core/tensor.h"
 #include "../core/tensor_ctrl.h"
 #include "../tod/tod_btconv.h"
+#include "../tod/tod_contract2.h"
+#include "../tod/tod_import_raw.h"
+#include "../tod/tod_copy.h"
+
 
 
 //#define PRINT 1
@@ -26,33 +30,30 @@
 namespace libtensor
 {
 btod_cholesky::btod_cholesky(block_tensor_i<2, double> &bta, double tol) :
-	m_bta(bta), m_tol(tol){
+	m_bta(bta), m_tol(tol),  
+	pta(new tensor<2, double, std_allocator <double> >(bta.get_bis().get_dims()))
+	{
 
 }
 
-void btod_cholesky::perform(block_tensor_i<2, double> &btb)
+btod_cholesky::~btod_cholesky(){
+	delete pta;
+	pta = NULL;
+}
+
+
+
+
+void btod_cholesky::decompose()
 	{
-        
-	/*
-	size_t n = 5, n2 = n * n;
-        
-        double *mat = new double [n2];
+	
+	tensor_i<2, double> &ta(*pta);
 
-        mat[0] = 1; mat[1] = 0; mat[2] = 0; mat[3] = 0; mat[4] = 0;
-        mat[5] = 1; mat[6] = 2; mat[7] = 0; mat[8] = 0; mat[9] = 0; 
-	mat[10] = 1; mat[11] = 3; mat[12] = 6; mat[13] = 0; mat[14] = 0;
-	mat[15] = 1; mat[16] = 4; mat[17] = 10; mat[18] = 20; mat[19] = 0;
-	mat[20] = 1; mat[21] = 5; mat[22] = 15; mat[23] = 35; mat[24] = 70;
-	*/
-       
-	// form the tensor with initial data
+	// put the data from input matrix to the buffer
         typedef std_allocator<double> allocator_t;
-        const dimensions<2> &dims = btb.get_bis().get_dims();
-	//create the tensor
-	tensor<2, double, allocator_t> ta(dims);
-	//fill tensor with data from source btensor
+        const dimensions<2> &dims = m_bta.get_bis().get_dims();
         tod_btconv<2>(m_bta).perform(ta);
-
+	
 	tensor_ctrl<2, double> tnsr_ctrl(ta);
         double *tnsr_ptr = tnsr_ctrl.req_dataptr();
 
@@ -60,10 +61,9 @@ void btod_cholesky::perform(block_tensor_i<2, double> &btb)
 
 	// initialize the workspace
 	int *p = new int [n];//PIV
-	int *rank = new int; //rank
+	int *rank; rank = &m_rank; *rank = n;
 	double *work = new double[2 * n];
-	
-	*rank = 0;	
+		
 	for(size_t k = 0; k < n; k++)
 	{
 	*(p+k) = 0;
@@ -73,11 +73,25 @@ void btod_cholesky::perform(block_tensor_i<2, double> &btb)
 	*(work+k) = 0;
 	}
 
+
 	#ifdef PRINT
+
+	/*
+	std::cout<<"The buffer before cholesky"<<std::endl;
+	for(int i = 0; i < n; i++)
+	{
+		std::cout<<std::endl;
+		for(int j = 0; j < n; j++)
+		{
+		std::cout<<tnsr_ptr[i*n + j]<<" ";
+		}
+	}
+	*/
 	std::cout<<std::endl;
 	std::cout<<"Parameters before solver are:"<<std::endl; 
 	std::cout<<"Tolerance is "<<m_tol<<std::endl;
 	std::cout<<"Size of the matrix is "<<n<<std::endl;
+	std::cout<<"Rank is "<<*rank<<std::endl;
 	#endif
 
 	if(libtensor::lapack_dpstrf('U', n, tnsr_ptr , n, p, rank, m_tol, work) != 0) {
@@ -86,7 +100,8 @@ void btod_cholesky::perform(block_tensor_i<2, double> &btb)
         }
 
 	//make zeros above the diagonal
-
+	//!!!!!!!!!!!!!!!!!!!
+	//are the limits correct? to n or to *rank? pretty sure to n
 	for(size_t i =0 ; i < n; i++)
         {
                 for(size_t j = i + 1 ; j < n; j++)
@@ -94,11 +109,14 @@ void btod_cholesky::perform(block_tensor_i<2, double> &btb)
                         *(tnsr_ptr + j + i * n) = 0;
                 }
         }
+
+	
  	
 	#ifdef PRINT
 	std::cout<<"Parameters after solver "<<std::endl;
 	std::cout<<"PIV"<<std::endl;
-
+	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	// does it go to rank or to n? should go to n
 	for(int i = 0; i < n; i++)
 	{
 	std::cout<<*(p+i)<<std::endl;
@@ -111,9 +129,12 @@ void btod_cholesky::perform(block_tensor_i<2, double> &btb)
 	double perm[n * n];
 	bool permzero = 1;
 
+	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	// I am not sure about limits
+	// should it be n or *rank for j. Pretty sure should be n
 	for(int i = 0; i < n; i ++)
 	{
-		for (int j=0; j<n; j++)
+		for (int j=0; j < n; j++)
 		{
 		if(*(p+j) == i + 1)
 		{
@@ -124,12 +145,12 @@ void btod_cholesky::perform(block_tensor_i<2, double> &btb)
 		{
 		perm[i * n + j] = 0;
 		}
-
 		}
 	}
 
 	//print perm
-	/*
+	#ifdef PRINT
+	std::cout<<"Permutational matrix is "<<std::endl;
 	for(int i = 0; i < n; i ++)
         {
 		std::cout<<std::endl;
@@ -140,35 +161,52 @@ void btod_cholesky::perform(block_tensor_i<2, double> &btb)
 
                 }
         }
-	*/
-	// temp matrix
+	#endif
 
-        //put data to the output block tensor
-        btod_import_raw<2>(tnsr_ptr, dims).perform(btb);
-	tnsr_ctrl.ret_dataptr(tnsr_ptr);
-
+        tnsr_ctrl.ret_dataptr(tnsr_ptr);
+	
+	// if the permutational matrix is non-trivial => 
+	// apply it to the buffer ta
 	if(!permzero)
 	{
-	block_tensor<2, double, allocator_t> tmp(btb.get_bis());
+        block_tensor<2, double, allocator_t> tmp(m_bta.get_bis());
         btod_import_raw<2>(perm, dims).perform(tmp);
         // now tmp has permutation matrix
 
         //second tmp matrix
-        block_tensor<2, double, allocator_t> tmp2(btb.get_bis());
-        btod_copy<2>(btb).perform(tmp2);
+	double *tnsr_ptr2 = tnsr_ctrl.req_dataptr();
+        block_tensor<2, double, allocator_t> tmp2(m_bta.get_bis());
+        btod_import_raw<2>(tnsr_ptr2,dims).perform(tmp2);
+	tnsr_ctrl.ret_dataptr(tnsr_ptr2);
+	// noew second tmp matrix has the information form the buffer
 
-        //now tmp2 has btb
-	contraction2<1,1,1> contr;
+	// tmp for the new buffer
+        block_tensor<2, double, allocator_t> tmp3(m_bta.get_bis());
+
+        //apply permutation
+        contraction2<1,1,1> contr;
         contr.contract(1,0);
-        btod_contract2<1,1,1>(contr,tmp,tmp2).perform(btb);
+        btod_contract2<1,1,1>(contr,tmp,tmp2).perform(tmp3);
+	
+	// update buffer
+        tod_btconv<2>(tmp3).perform(ta);
 	}
 	// cleanup
-
+	
 	delete[] p;
-	delete rank;
 	delete[] work;
 
 }
 
+
+void btod_cholesky::perform(block_tensor_i<2 , double> &btb)
+{
+        tensor_i<2, double> &ta(*pta);
+	// should I create a buffer of right size here?
+	tensor_ctrl<2, double> tnsr_ctrl(ta);
+        double *tnsr_ptr = tnsr_ctrl.req_dataptr();
+	btod_import_raw<2>(tnsr_ptr, btb.get_bis().get_dims()).perform(btb);
+	tnsr_ctrl.ret_dataptr(tnsr_ptr);
+}
 
 }//namespace libtensor

@@ -44,15 +44,37 @@ void btod_cholesky_test::test_1() throw(libtest::test_exception) {
 		block_index_space<2> bis1(dims1);
 
 		block_tensor<2, double, allocator_t> bta(bis1);//input matrix
-		block_tensor<2, double, allocator_t> btb(bis1);//output matrix
-                block_tensor<2, double, allocator_t> btbt(bis1);//transposed of output matrix
-
 		block_tensor<2, double, allocator_t> btb_ref(bis1);// reference matrix
 
 		btod_import_raw<2>(matrix, dims1).perform(bta);
 
 		//Decomposition
-		btod_cholesky(bta).perform(btb);
+		btod_cholesky chol(bta);
+
+		chol.decompose();
+
+                #ifdef PRINT
+                std::cout<<std::endl;
+                std::cout<<std::endl;
+
+                std::cout<<"Rank is "<<chol.get_rank()<<std::endl;
+
+                #endif
+
+		//allocate the btensor for output matrix
+		
+		index <2> i1c;
+		i1c[0] = dims1.get_dim(0) - 1;
+		i1c[1] = chol.get_rank() - 1; // number of columns = rank
+		
+		dimensions<2> dimsb(index_range<2>(i1a,i1c));
+
+		block_index_space<2> bisb(dimsb);
+
+                block_tensor<2, double, allocator_t> btb(bisb);//output matrix
+                block_tensor<2, double, allocator_t> btbt(bisb);//output matrix
+
+		chol.perform(btb);
 
 		//make matrix for comparison
 		btod_copy<2>(btb).perform(btbt);
@@ -91,6 +113,7 @@ void btod_cholesky_test::test_1() throw(libtest::test_exception) {
 
 /**	 \cholesky Compute Cholesky decomposition of 5x5 SPD matrix (with fragmentation)
  **/
+
 void btod_cholesky_test::test_2() throw(libtest::test_exception) {
 
         static const char *testname = "btod_cholesky_test::test_2()";
@@ -115,15 +138,41 @@ void btod_cholesky_test::test_2() throw(libtest::test_exception) {
                 bis1.split(splmsk, 3);
 
                 block_tensor<2, double, allocator_t> bta(bis1);//input matrix
-                block_tensor<2, double, allocator_t> btb(bis1);//output matrix
-                block_tensor<2, double, allocator_t> btbt(bis1);//transposed of output matrix
-
                 block_tensor<2, double, allocator_t> btb_ref(bis1);// reference matrix
 
                 btod_import_raw<2>(matrix, dims1).perform(bta);
 
                 //Decomposition
-                btod_cholesky(bta).perform(btb);
+                btod_cholesky chol(bta);
+
+                chol.decompose();
+
+                #ifdef PRINT
+                std::cout<<std::endl;
+                std::cout<<std::endl;
+
+                std::cout<<"Rank is "<<chol.get_rank()<<std::endl;
+
+                #endif
+
+                //allocate the btensor for output matrix
+
+                index <2> i1c;
+                i1c[0] = dims1.get_dim(0) - 1;
+                i1c[1] = chol.get_rank() - 1; // number of columns = rank
+
+                dimensions<2> dimsb(index_range<2>(i1a,i1c));
+
+                block_index_space<2> bisb(dimsb);
+
+		mask<2> splmskb; splmskb[0] = true;splmskb[1] = false;
+                bisb.split(splmskb, 3);
+
+                block_tensor<2, double, allocator_t> btb(bisb);//output matrix
+                block_tensor<2, double, allocator_t> btbt(bisb);//output matrix
+
+                chol.perform(btb);
+
 
 		//make matrix for comparison
                 btod_copy<2>(btb).perform(btbt);
@@ -151,8 +200,32 @@ void btod_cholesky_test::test_2() throw(libtest::test_exception) {
                 std::cout<<os.str();
 		#endif
 
-        //      Compare (P * L) * ( P * L)' against the input tensor
+        	//      Compare (P * L) * ( P * L)' against the input tensor
                 compare_ref<2>::compare(testname, btb_ref, bta, 1e-5);
+
+		//just test how well import works
+
+		std::cout<<"Output test "<<std::endl;
+
+                double matrixt[25] = { 1,1,1,1,1,1,2,3,4,5,1,3,6,10,15,1,4,10,20,35,
+                1,5,15,35,70};
+
+                index<2> i1at, i1bt;
+                i1bt[0] = 4; i1bt[1] = 2;
+
+                dimensions<2> dimst(index_range<2>(i1at, i1bt));
+
+                block_index_space<2> bist(dimst);
+
+                block_tensor<2, double, allocator_t> btt(bist);//input matrix
+
+		btod_import_raw<2>(matrixt, btt.get_bis().get_dims()).perform(btt);
+
+		std::stringstream ost;
+		btod_print<2>(ost).perform(btt);
+		std::cout<<ost.str()<<std::endl;
+
+		//end
 
         } catch(exception &e) {
                 fail_test(testname, __FILE__, __LINE__, e.what());
@@ -163,6 +236,7 @@ void btod_cholesky_test::test_2() throw(libtest::test_exception) {
 
 /**	\cholesky 3x3 matrix, random symmetric semidefinite
 **/
+
 void btod_cholesky_test::test_3() throw(libtest::test_exception) {
 
         static const char *testname = "btod_cholesky_test::test_3()";
@@ -185,17 +259,39 @@ void btod_cholesky_test::test_3() throw(libtest::test_exception) {
                 block_index_space<2> bis1(dims1);
 
                 block_tensor<2, double, allocator_t> bta(bis1);//input matrix
-                block_tensor<2, double, allocator_t> btb(bis1);//output matrix
-                block_tensor<2, double, allocator_t> btbt(bis1);//transposed of output matrix
-
 
                 block_tensor<2, double, allocator_t> btb_ref(bis1);// reference matrix
 
                 btod_import_raw<2>(matrix, dims1).perform(bta);
 
                 //Decomposition
-                btod_cholesky(bta).perform(btb);
-		
+                btod_cholesky chol(bta);
+
+                chol.decompose();
+
+                #ifdef PRINT
+                std::cout<<std::endl;
+                std::cout<<std::endl;
+
+                std::cout<<"Rank is "<<chol.get_rank()<<std::endl;
+
+                #endif
+
+                //allocate the btensor for output matrix
+
+                index <2> i1c;
+                i1c[0] = dims1.get_dim(0) - 1;
+                i1c[1] = chol.get_rank() - 1; // number of columns = rank
+
+                dimensions<2> dimsb(index_range<2>(i1a,i1c));
+
+                block_index_space<2> bisb(dimsb);
+                
+                block_tensor<2, double, allocator_t> btb(bisb);//output matrix
+                block_tensor<2, double, allocator_t> btbt(bisb);//output matrix
+
+                chol.perform(btb);
+
 		//make matrix for comparison
                 btod_copy<2>(btb).perform(btbt);
                 contraction2<1,1,1> contr;
@@ -232,6 +328,7 @@ void btod_cholesky_test::test_3() throw(libtest::test_exception) {
 
 /**     \cholesky 5x5 matrix, random symmetric semidefinite
 **/
+
 void btod_cholesky_test::test_4() throw(libtest::test_exception) {
 
         static const char *testname = "btod_cholesky_test::test_4()";
@@ -260,15 +357,41 @@ void btod_cholesky_test::test_4() throw(libtest::test_exception) {
                 bis1.split(splmsk, 2);
 
                 block_tensor<2, double, allocator_t> bta(bis1);//input matrix
-                block_tensor<2, double, allocator_t> btb(bis1);//output matrix
-                block_tensor<2, double, allocator_t> btbt(bis1);//transposed of output matrix
 
                 block_tensor<2, double, allocator_t> btb_ref(bis1);// reference matrix
 
                 btod_import_raw<2>(matrix, dims1).perform(bta);
 
                 //Decomposition
-                btod_cholesky(bta).perform(btb);
+                btod_cholesky chol(bta);
+
+                chol.decompose();
+
+                #ifdef PRINT
+                std::cout<<std::endl;
+                std::cout<<std::endl;
+
+                std::cout<<"Rank is "<<chol.get_rank()<<std::endl;
+
+                #endif
+
+                //allocate the btensor for output matrix
+
+                index <2> i1c;
+                i1c[0] = dims1.get_dim(0) - 1;
+                i1c[1] = chol.get_rank() - 1; // number of columns = rank
+
+                dimensions<2> dimsb(index_range<2>(i1a,i1c));
+
+                block_index_space<2> bisb(dimsb);
+
+                mask<2> splmskb; splmskb[0] = true;splmskb[1] = false;
+                bisb.split(splmskb, 2);
+                
+                block_tensor<2, double, allocator_t> btb(bisb);//output matrix
+                block_tensor<2, double, allocator_t> btbt(bisb);//output matrix
+
+                chol.perform(btb);
 
 		//make matrix for comparison
                 btod_copy<2>(btb).perform(btbt);
@@ -306,6 +429,7 @@ void btod_cholesky_test::test_4() throw(libtest::test_exception) {
 
 /**     \cholesky 5x5 matrix, random symmetric semidefinite (for some reasons dpstrf LAPACK routine fails,whereas dpotrf is OK)
 **/
+
 void btod_cholesky_test::test_5() throw(libtest::test_exception) {
 
         static const char *testname = "btod_cholesky_test::test_5()";
@@ -335,15 +459,40 @@ void btod_cholesky_test::test_5() throw(libtest::test_exception) {
                 bis1.split(splmsk, 2);
 
                 block_tensor<2, double, allocator_t> bta(bis1);//input matrix
-                block_tensor<2, double, allocator_t> btb(bis1);//output matrix
-                block_tensor<2, double, allocator_t> btbt(bis1);//transposed of output matrix
-
                 block_tensor<2, double, allocator_t> btb_ref(bis1);// reference matrix
 
                 btod_import_raw<2>(matrix, dims1).perform(bta);
 
                 //Decomposition
-                btod_cholesky(bta).perform(btb);
+                btod_cholesky chol(bta);
+
+                chol.decompose();
+
+                #ifdef PRINT
+                std::cout<<std::endl;
+                std::cout<<std::endl;
+
+                std::cout<<"Rank is "<<chol.get_rank()<<std::endl;
+
+                #endif
+
+                //allocate the btensor for output matrix
+
+                index <2> i1c;
+                i1c[0] = dims1.get_dim(0) - 1;
+                i1c[1] = chol.get_rank() - 1; // number of columns = rank
+
+                dimensions<2> dimsb(index_range<2>(i1a,i1c));
+
+                block_index_space<2> bisb(dimsb);
+
+                mask<2> splmskb; splmskb[0] = true;splmskb[1] = false;
+                bisb.split(splmskb, 2);
+                
+                block_tensor<2, double, allocator_t> btb(bisb);//output matrix
+                block_tensor<2, double, allocator_t> btbt(bisb);//output matrix
+
+                chol.perform(btb);
 
 		//make matrix for comparison
                 btod_copy<2>(btb).perform(btbt);
@@ -378,5 +527,6 @@ void btod_cholesky_test::test_5() throw(libtest::test_exception) {
                 fail_test(testname, __FILE__, __LINE__, e.what());
         }
 }
+
 
 } // namespace libtensor
