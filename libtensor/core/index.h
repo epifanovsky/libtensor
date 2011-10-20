@@ -182,8 +182,8 @@ template<size_t N>
 inline bool index<N>::equals(const index<N> &idx) const {
 
 	for(register size_t i = 0; i < N; i++)
-		if(sequence<N, size_t>::at_nochk(i) !=
-			idx.sequence<N, size_t>::at_nochk(i)) return false;
+		if(sequence<N, size_t>::at_nothrow(i) !=
+			idx.sequence<N, size_t>::at_nothrow(i)) return false;
 	return true;
 }
 
@@ -191,10 +191,10 @@ template<size_t N>
 inline bool index<N>::less(const index<N> &idx) const {
 
 	for(register size_t i = 0; i < N; i++) {
-		if(sequence<N, size_t>::at_nochk(i) <
-			idx.sequence<N, size_t>::at_nochk(i)) return true;
-		if(sequence<N, size_t>::at_nochk(i) >
-			idx.sequence<N, size_t>::at_nochk(i)) return false;
+		if(sequence<N, size_t>::at_nothrow(i) <
+			idx.sequence<N, size_t>::at_nothrow(i)) return true;
+		if(sequence<N, size_t>::at_nothrow(i) >
+			idx.sequence<N, size_t>::at_nothrow(i)) return false;
 	}
 	return false;
 }
@@ -214,8 +214,8 @@ template<size_t N>
 std::ostream &operator<<(std::ostream &os, const index<N> &i) {
 	os << "[";
 	for(size_t j = 0; j < N - 1; j++)
-		os << i.sequence<N, size_t>::at_nochk(j) << ",";
-	os << i.sequence<N, size_t>::at_nochk(N - 1);
+		os << i.sequence<N, size_t>::at_nothrow(j) << ",";
+	os << i.sequence<N, size_t>::at_nothrow(N - 1);
 	os << "]";
 	return os;
 }

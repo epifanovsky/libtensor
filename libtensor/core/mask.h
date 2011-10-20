@@ -74,8 +74,8 @@ template<size_t N>
 bool mask<N>::equals(const mask<N> &msk) const {
 
 	for(register size_t i = 0; i < N; i++)
-		if(sequence<N, bool>::at_nochk(i) !=
-			msk.sequence<N, bool>::at_nochk(i)) return false;
+		if(sequence<N, bool>::at_nothrow(i) !=
+			msk.sequence<N, bool>::at_nothrow(i)) return false;
 	return true;
 }
 
@@ -92,9 +92,9 @@ template<size_t N>
 mask<N> &mask<N>::operator|=(const mask<N> &other) {
 
 	for(register size_t i = 0; i < N; i++) {
-		sequence<N, bool>::at_nochk(i) =
-			sequence<N, bool>::at_nochk(i) ||
-				other.sequence<N, bool>::at_nochk(i);
+		sequence<N, bool>::at_nothrow(i) =
+			sequence<N, bool>::at_nothrow(i) ||
+				other.sequence<N, bool>::at_nothrow(i);
 	}
 	return *this;
 }
@@ -105,9 +105,9 @@ mask<N> mask<N>::operator|(const mask<N> &other) {
 
 	mask<N> m;
 	for(register size_t i = 0; i < N; i++) {
-		m.sequence<N, bool>::at_nochk(i) =
-			sequence<N, bool>::at_nochk(i) ||
-			other.sequence<N, bool>::at_nochk(i);
+		m.sequence<N, bool>::at_nothrow(i) =
+			sequence<N, bool>::at_nothrow(i) ||
+			other.sequence<N, bool>::at_nothrow(i);
 	}
 	return m;
 }
@@ -117,9 +117,9 @@ template<size_t N>
 mask<N> &mask<N>::operator&=(const mask<N> &other) {
 
 	for(register size_t i = 0; i < N; i++) {
-		sequence<N, bool>::at_nochk(i) =
-			sequence<N, bool>::at_nochk(i) &&
-				other.sequence<N, bool>::at_nochk(i);
+		sequence<N, bool>::at_nothrow(i) =
+			sequence<N, bool>::at_nothrow(i) &&
+				other.sequence<N, bool>::at_nothrow(i);
 	}
 	return *this;
 }
@@ -130,9 +130,9 @@ mask<N> mask<N>::operator&(const mask<N> &other) {
 
 	mask<N> m;
 	for(register size_t i = 0; i < N; i++) {
-		m.sequence<N, bool>::at_nochk(i) =
-			sequence<N, bool>::at_nochk(i) &&
-			other.sequence<N, bool>::at_nochk(i);
+		m.sequence<N, bool>::at_nothrow(i) =
+			sequence<N, bool>::at_nothrow(i) &&
+			other.sequence<N, bool>::at_nothrow(i);
 	}
 	return m;
 }
@@ -146,7 +146,7 @@ template<size_t N>
 std::ostream &operator<<(std::ostream &os, const mask<N> &m) {
 	os << "[";
 	for(size_t j = 0; j < N; j++)
-		os << m.sequence<N, bool>::at_nochk(j) ? '1' : '0';
+		os << m.sequence<N, bool>::at_nothrow(j) ? '1' : '0';
 	os << "]";
 	return os;
 }

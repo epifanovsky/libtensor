@@ -1,0 +1,26 @@
+#ifdef LIBTENSOR_INSTANTIATE_TEMPLATES
+
+#include "abs_index.h"
+#include "abs_index_impl.h"
+
+namespace libtensor {
+
+
+template class abs_index<0>;
+template class abs_index<1>;
+template class abs_index<2>;
+template class abs_index<3>;
+template class abs_index<4>;
+template class abs_index<5>;
+template class abs_index<6>;
+template class abs_index<7>;
+template class abs_index<8>;
+template class abs_index<9>;
+template class abs_index<10>;
+template class abs_index<11>;
+template class abs_index<12>;
+
+
+} // namespace libtensor
+
+#endif // LIBTENSOR_INSTANTIATE_TEMPLATES
