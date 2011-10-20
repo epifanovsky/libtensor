@@ -20,11 +20,6 @@ set(SRC
     tod/loop_list_mul.C
     tod/loop_list_elem.C
     tod/loop_list_elem1.C
-	tod/kernels/cuda_kern_copy_2d.cu
-	tod/kernels/cuda_kern_copy_4d.cu
-	tod/kernels/cuda_kern_copy_6d.cu
-    tod/kernels/cuda_kern_copy_generic.cu
-    tod/kernels/cuda_kern_functions.cu
     tod/kernels/kern_add_generic.C
     tod/kernels/kern_add_i_i_x_x.C
     tod/kernels/kern_add_i_x_i_x.C
@@ -116,6 +111,14 @@ set(SRC
     tod/kernels/kern_mul_x_pq_qp.C
 )
 
+set(SRC_CUDA
+	tod/kernels/cuda_kern_copy_2d.cu
+	tod/kernels/cuda_kern_copy_4d.cu
+	tod/kernels/cuda_kern_copy_6d.cu
+    tod/kernels/cuda_kern_copy_generic.cu
+    tod/kernels/cuda_kern_functions.cu
+)
+
 set(SRC_LINALG
     linalg/generic/linalg_base_level1_generic.C
     linalg/generic/linalg_base_level2_generic.C
@@ -173,7 +176,11 @@ if(qchemRootDir)
     add_dependencies(tensor_qchem generated_headers)
 endif(qchemRootDir)
 
-cuda_add_library(tensor ${SRC} ${SRC_LINALG} ${SRC_INST} ${SRC_MP})
+if (CUDA_FOUND)
+	cuda_add_library(tensor ${SRC} ${SRC_CUDA} ${SRC_LINALG} ${SRC_INST} ${SRC_MP})
+else()
+	add_library(tensor ${SRC} ${SRC_LINALG} ${SRC_INST} ${SRC_MP})
+endif (CUDA_FOUND)
 
 set_property(TARGET tensor APPEND PROPERTY
 	COMPILE_DEFINITIONS LIBTENSOR_INSTANTIATE_TEMPLATES)
