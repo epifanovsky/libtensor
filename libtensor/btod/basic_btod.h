@@ -50,7 +50,7 @@ private:
 			m_btod(btod), m_bt(bt), m_bidims(bidims), m_sch(sch),
 			m_i(i) { }
 		virtual ~task() { }
-		virtual void perform() throw(exception);
+		virtual void perform(cpu_pool &cpus) throw(exception);
 	};
 
 public:
@@ -69,7 +69,20 @@ protected:
 } // namespace libtensor
 
 
-#ifndef LIBTENSOR_INSTANTIATE_TEMPLATES
+#ifdef LIBTENSOR_INSTANTIATE_TEMPLATES
+
+namespace libtensor {
+
+    extern template class basic_btod<1>;
+    extern template class basic_btod<2>;
+    extern template class basic_btod<3>;
+    extern template class basic_btod<4>;
+    extern template class basic_btod<5>;
+    extern template class basic_btod<6>;
+
+} // namespace libtensor
+
+#else // LIBTENSOR_INSTANTIATE_TEMPLATES
 #include "basic_btod_impl.h"
 #endif // LIBTENSOR_INSTANTIATE_TEMPLATES
 

@@ -1,7 +1,6 @@
 #ifndef LIBTENSOR_MAPPED_BTENSOR_H
 #define LIBTENSOR_MAPPED_BTENSOR_H
 
-#include <libvmm/vm_allocator.h>
 #include "../defs.h"
 #include "../exception.h"
 #include "../core/block_tensor_ctrl.h"

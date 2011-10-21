@@ -3,8 +3,8 @@
 
 #include <list>
 #include <map>
-#include <libvmm/vm_allocator.h>
 #include "../timings.h"
+#include "../core/allocator.h"
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
 #include "../symmetry/so_add.h"
@@ -102,10 +102,9 @@ protected:
 	//!	\brief Implementation of additive_btod<N>
 	//@{
 
-	virtual void compute_block(tensor_i<N, double> &blk, const index<N> &i);
-
-	virtual void compute_block(tensor_i<N, double> &blk, const index<N> &i,
-		const transf<N, double> &tr, double c);
+	virtual void compute_block(bool zero, tensor_i<N, double> &blk,
+	    const index<N> &i, const transf<N, double> &tr, double c,
+	    cpu_pool &cpus);
 
 	//@}
 
@@ -182,7 +181,7 @@ void btod_symmetrize<N>::sync_off() {
 	m_op.sync_off();
 }
 
-
+/*
 template<size_t N>
 void btod_symmetrize<N>::compute_block(tensor_i<N, double> &blk,
 	const index<N> &i) {
@@ -194,14 +193,17 @@ void btod_symmetrize<N>::compute_block(tensor_i<N, double> &blk,
 
 	tod_set<N>().perform(blk);
 	compute_block(blk, i, transf<N, double>(), 1.0);
-}
+}*/
 
 
 template<size_t N>
-void btod_symmetrize<N>::compute_block(tensor_i<N, double> &blk,
-	const index<N> &idx, const transf<N, double> &tr, double c) {
+void btod_symmetrize<N>::compute_block(bool zero, tensor_i<N, double> &blk,
+	const index<N> &idx, const transf<N, double> &tr, double c,
+	cpu_pool &cpus) {
 
 	typedef typename sym_schedule_t::iterator iterator_t;
+
+    if(zero) tod_set<N>().perform(cpus, blk);
 
 	dimensions<N> bidims(m_bis.get_block_index_dims());
 	abs_index<N> aidx(idx, bidims);
@@ -225,17 +227,15 @@ void btod_symmetrize<N>::compute_block(tensor_i<N, double> &blk,
 		tri.transform(tr);
 
 		if(n == 1) {
-			additive_btod<N>::compute_block(m_op, blk,
-				ai.get_index(), tri, c);
+			additive_btod<N>::compute_block(m_op, false, blk,
+				ai.get_index(), tri, c, cpus);
 			sch1.pop_front();
 		} else {
 			dimensions<N> dims(blk.get_dims());
 			// TODO: replace with "temporary block" feature
-			tensor< N, double, libvmm::vm_allocator<double> > tmp(
-				dims);
-			tod_set<N>().perform(tmp);
-			additive_btod<N>::compute_block(m_op, tmp,
-				ai.get_index(), tri, c);
+			tensor< N, double, allocator<double> > tmp(dims);
+			additive_btod<N>::compute_block(m_op, true, tmp,
+				ai.get_index(), tri, c, cpus);
 			transf<N, double> tri_inv(tri);
 			tri_inv.invert();
 			for(typename std::list<schrec>::iterator j =
@@ -247,7 +247,7 @@ void btod_symmetrize<N>::compute_block(tensor_i<N, double> &blk,
 				trj.transform(j->tr);
 				trj.transform(tr);
 				tod_copy<N>(tmp, trj.get_perm(),
-					trj.get_coeff()).perform(blk, 1.0);
+					trj.get_coeff()).perform(cpus, false, 1.0, blk);
 				j = sch1.erase(j);
 			}
 		}

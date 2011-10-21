@@ -132,14 +132,15 @@ void tod_dirsum<N, M>::do_perform(tensor_i<k_orderc, double> &tc, bool zero,
 	r.m_ptra_end[1] = pb + dimsb.get_size();
 	r.m_ptrb_end[0] = pc + dimsc.get_size();
 
-	kernel_base<2, 1> *kern = kern_add_generic::match(d, loop_in, loop_out);
+	kernel_base<2, 1> *kern = kern_add_generic::match(m_ka, m_kb, d, loop_in,
+	    loop_out);
 	tod_dirsum<N, M>::start_timer(kern->get_name());
 	loop_list_runner<2, 1>(loop_in).run(r, *kern);
 	tod_dirsum<N, M>::stop_timer(kern->get_name());
 	delete kern; kern = 0;
 
-	ca.ret_dataptr(pa);
-	cb.ret_dataptr(pb);
+	ca.ret_const_dataptr(pa);
+	cb.ret_const_dataptr(pb);
 	cc.ret_dataptr(pc);
 
 	} catch(...) {

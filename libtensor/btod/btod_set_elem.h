@@ -73,6 +73,8 @@ template<size_t N>
 void btod_set_elem<N>::perform(block_tensor_i<N, double> &bt,
 	const index<N> &bidx, const index<N> &idx, double d) {
 
+    cpu_pool cpus(1);
+
 	block_tensor_ctrl<N, double> ctrl(bt);
 
 	dimensions<N> bidims(bt.get_bis().get_block_index_dims());
@@ -83,7 +85,7 @@ void btod_set_elem<N>::perform(block_tensor_i<N, double> &bt,
 	bool zero = ctrl.req_is_zero_block(abidx.get_index());
 	tensor_i<N, double> &blk = ctrl.req_block(abidx.get_index());
 
-	if(zero) tod_set<N>().perform(blk);
+	if(zero) tod_set<N>().perform(cpus, blk);
 
 	permutation<N> perm(tr.get_perm(), true);
 	index<N> idx1(idx); idx1.permute(perm);
@@ -113,7 +115,7 @@ bool btod_set_elem<N>::make_transf_map(const symmetry<N, double> &sym,
 	const dimensions<N> &bidims, const index<N> &idx,
 	const transf<N, double> &tr, transf_map_t &alltransf) {
 
-	size_t absidx = bidims.abs_index(idx);
+	size_t absidx = abs_index<N>::get_abs_index(idx, bidims);
 	typename transf_map_t::iterator ilst = alltransf.find(absidx);
 	if(ilst == alltransf.end()) {
 		ilst = alltransf.insert(std::pair<size_t, transf_list_t>(

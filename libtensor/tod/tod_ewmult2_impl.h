@@ -2,6 +2,7 @@
 #define LIBTENSOR_TOD_EWMULT2_IMPL_H
 
 #include "../core/tensor_ctrl.h"
+#include "../mp/auto_cpu_lock.h"
 #include "kernels/loop_list_runner.h"
 #include "kernels/kern_mul_generic.h"
 
@@ -52,31 +53,117 @@ void tod_ewmult2<N, M, K>::prefetch() {
 
 
 template<size_t N, size_t M, size_t K>
-void tod_ewmult2<N, M, K>::perform(tensor_i<k_orderc, double> &tc) {
+void tod_ewmult2<N, M, K>::perform(cpu_pool &cpus, bool zero, double d,
+    tensor_i<k_orderc, double> &tc) {
 
-	static const char *method = "perform(tensor_i<k_orderc, double>&)";
+    static const char *method =
+        "perform(cpu_pool&, bool, double, tensor_i<k_orderc, double>&)";
 
-	if(!m_dimsc.equals(tc.get_dims())) {
-		throw bad_dimensions(g_ns, k_clazz, method,
-			__FILE__, __LINE__, "tc");
-	}
+    if(!m_dimsc.equals(tc.get_dims())) {
+        throw bad_dimensions(g_ns, k_clazz, method,
+            __FILE__, __LINE__, "tc");
+    }
 
-	do_perform(tc, true, 1.0);
+    tod_ewmult2<N, M, K>::start_timer();
+
+    try {
+
+    tensor_ctrl<k_ordera, double> ca(m_ta);
+    tensor_ctrl<k_orderb, double> cb(m_tb);
+    tensor_ctrl<k_orderc, double> cc(tc);
+    ca.req_prefetch();
+    cb.req_prefetch();
+    cc.req_prefetch();
+
+    const dimensions<k_ordera> &dimsa = m_ta.get_dims();
+    const dimensions<k_orderb> &dimsb = m_tb.get_dims();
+    const dimensions<k_orderc> &dimsc = tc.get_dims();
+
+    sequence<k_ordera, size_t> ma(0);
+    sequence<k_orderb, size_t> mb(0);
+    sequence<k_orderc, size_t> mc(0);
+    for(size_t i = 0; i < k_ordera; i++) ma[i] = i;
+    for(size_t i = 0; i < k_orderb; i++) mb[i] = i;
+    for(size_t i = 0; i < k_orderc; i++) mc[i] = i;
+    m_perma.apply(ma);
+    m_permb.apply(mb);
+    m_permc.apply(mc);
+
+    std::list< loop_list_node<2, 1> > loop_in, loop_out;
+    //  i runs over indexes in C
+    //  m[i] runs over the "standard" index ordering
+    for(size_t i = 0; i < k_orderc; i++) {
+        typename std::list< loop_list_node<2, 1> >::iterator inode =
+            loop_in.insert(loop_in.end(),
+                loop_list_node<2, 1>(dimsc[i]));
+        inode->stepb(0) = dimsc.get_increment(i);
+        if(mc[i] < N) {
+            size_t j = mc[i];
+            inode->stepa(0) = dimsa.get_increment(ma[j]);
+            inode->stepa(1) = 0;
+        } else if(mc[i] < N + M) {
+            size_t j = mc[i] - N;
+            inode->stepa(0) = 0;
+            inode->stepa(1) = dimsb.get_increment(mb[j]);
+        } else {
+            size_t j = mc[i] - N - M;
+            inode->stepa(0) = dimsa.get_increment(ma[N + j]);
+            inode->stepa(1) = dimsb.get_increment(mb[M + j]);
+        }
+    }
+
+    const double *pa = ca.req_const_dataptr();
+    const double *pb = cb.req_const_dataptr();
+    double *pc = cc.req_dataptr();
+
+    {
+        auto_cpu_lock cpu(cpus);
+
+        if(zero) {
+            size_t sz = dimsc.get_size();
+            for(size_t i = 0; i < sz; i++) pc[i] = 0.0;
+        }
+
+        loop_registers<2, 1> r;
+        r.m_ptra[0] = pa;
+        r.m_ptra[1] = pb;
+        r.m_ptrb[0] = pc;
+        r.m_ptra_end[0] = pa + dimsa.get_size();
+        r.m_ptra_end[1] = pb + dimsb.get_size();
+        r.m_ptrb_end[0] = pc + dimsc.get_size();
+
+        kernel_base<2, 1> *kern = kern_mul_generic::match(m_d * d,
+            loop_in, loop_out);
+        tod_ewmult2<N, M, K>::start_timer(kern->get_name());
+        loop_list_runner<2, 1>(loop_in).run(r, *kern);
+        tod_ewmult2<N, M, K>::stop_timer(kern->get_name());
+        delete kern; kern = 0;
+    }
+
+    cc.ret_dataptr(pc); pc = 0;
+    cb.ret_const_dataptr(pb); pb = 0;
+    ca.ret_const_dataptr(pa); pa = 0;
+
+    } catch (...) {
+        tod_ewmult2<N, M, K>::stop_timer();
+        throw;
+    }
+
+    tod_ewmult2<N, M, K>::stop_timer();
 }
 
 
 template<size_t N, size_t M, size_t K>
-void tod_ewmult2<N, M, K>::perform(tensor_i<k_orderc, double> &tc, double d) {
+void tod_ewmult2<N, M, K>::perform(cpu_pool &cpus, tensor_i<k_orderc, double> &tc) {
 
-	static const char *method =
-		"perform(tensor_i<k_orderc, double>&, double)";
+    perform(cpus, true, 1.0, tc);
+}
 
-	if(!m_dimsc.equals(tc.get_dims())) {
-		throw bad_dimensions(g_ns, k_clazz, method,
-			__FILE__, __LINE__, "tc");
-	}
 
-	do_perform(tc, false, d);
+template<size_t N, size_t M, size_t K>
+void tod_ewmult2<N, M, K>::perform(cpu_pool &cpus, tensor_i<k_orderc, double> &tc, double d) {
+
+	perform(cpus, false, d, tc);
 }
 
 
@@ -106,95 +193,6 @@ dimensions<N + M + K> tod_ewmult2<N, M, K>::make_dimsc(
 	dimensions<k_orderc> dimsc(index_range<k_orderc>(i1, i2));
 	dimsc.permute(permc);
 	return dimsc;
-}
-
-
-template<size_t N, size_t M, size_t K>
-void tod_ewmult2<N, M, K>::do_perform(tensor_i<k_orderc, double> &tc,
-	bool zero, double d) {
-
-	tod_ewmult2<N, M, K>::start_timer();
-
-	try {
-
-	tensor_ctrl<k_ordera, double> ca(m_ta);
-	tensor_ctrl<k_orderb, double> cb(m_tb);
-	tensor_ctrl<k_orderc, double> cc(tc);
-	ca.req_prefetch();
-	cb.req_prefetch();
-	cc.req_prefetch();
-
-	const dimensions<k_ordera> &dimsa = m_ta.get_dims();
-	const dimensions<k_orderb> &dimsb = m_tb.get_dims();
-	const dimensions<k_orderc> &dimsc = tc.get_dims();
-
-	sequence<k_ordera, size_t> ma(0);
-	sequence<k_orderb, size_t> mb(0);
-	sequence<k_orderc, size_t> mc(0);
-	for(size_t i = 0; i < k_ordera; i++) ma[i] = i;
-	for(size_t i = 0; i < k_orderb; i++) mb[i] = i;
-	for(size_t i = 0; i < k_orderc; i++) mc[i] = i;
-	m_perma.apply(ma);
-	m_permb.apply(mb);
-	m_permc.apply(mc);
-
-	std::list< loop_list_node<2, 1> > loop_in, loop_out;
-	//	i runs over indexes in C
-	//	m[i] runs over the "standard" index ordering
-	for(size_t i = 0; i < k_orderc; i++) {
-		typename std::list< loop_list_node<2, 1> >::iterator inode =
-			loop_in.insert(loop_in.end(),
-				loop_list_node<2, 1>(dimsc[i]));
-		inode->stepb(0) = dimsc.get_increment(i);
-		if(mc[i] < N) {
-			size_t j = mc[i];
-			inode->stepa(0) = dimsa.get_increment(ma[j]);
-			inode->stepa(1) = 0;
-		} else if(mc[i] < N + M) {
-			size_t j = mc[i] - N;
-			inode->stepa(0) = 0;
-			inode->stepa(1) = dimsb.get_increment(mb[j]);
-		} else {
-			size_t j = mc[i] - N - M;
-			inode->stepa(0) = dimsa.get_increment(ma[N + j]);
-			inode->stepa(1) = dimsb.get_increment(mb[M + j]);
-		}
-	}
-
-	const double *pa = ca.req_const_dataptr();
-	const double *pb = cb.req_const_dataptr();
-	double *pc = cc.req_dataptr();
-
-	if(zero) {
-		size_t sz = dimsc.get_size();
-		for(size_t i = 0; i < sz; i++) pc[i] = 0.0;
-	}
-
-	loop_registers<2, 1> r;
-	r.m_ptra[0] = pa;
-	r.m_ptra[1] = pb;
-	r.m_ptrb[0] = pc;
-	r.m_ptra_end[0] = pa + dimsa.get_size();
-	r.m_ptra_end[1] = pb + dimsb.get_size();
-	r.m_ptrb_end[0] = pc + dimsc.get_size();
-
-	kernel_base<2, 1> *kern = kern_mul_generic::match(m_d * d,
-		loop_in, loop_out);
-	tod_ewmult2<N, M, K>::start_timer(kern->get_name());
-	loop_list_runner<2, 1>(loop_in).run(r, *kern);
-	tod_ewmult2<N, M, K>::stop_timer(kern->get_name());
-	delete kern; kern = 0;
-
-	cc.ret_dataptr(pc); pc = 0;
-	cb.ret_dataptr(pb); pb = 0;
-	ca.ret_dataptr(pa); pa = 0;
-
-	} catch (...) {
-		tod_ewmult2<N, M, K>::stop_timer();
-		throw;
-	}
-
-	tod_ewmult2<N, M, K>::stop_timer();
 }
 
 

@@ -1,6 +1,5 @@
 #include "../defs.h"
 #include "../exception.h"
-#include "../linalg.h"
 #include "../linalg/linalg.h"
 #include "loop_list_mul.h"
 #include "overflow.h"

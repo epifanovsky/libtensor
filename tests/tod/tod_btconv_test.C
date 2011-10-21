@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <sstream>
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/core/tensor.h>
 #include <libtensor/symmetry/se_perm.h>
@@ -41,7 +41,7 @@ void tod_btconv_test::test_1() throw(libtest::test_exception) {
 
 	static const char *testname = "tod_btconv_test::test_1()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tensor<2, double, allocator_t> tensor_t;
 	typedef tensor_ctrl<2, double> tensor_ctrl_t;
 	typedef block_tensor<2, double, allocator_t> block_tensor_t;
@@ -106,7 +106,7 @@ void tod_btconv_test::test_2() throw(libtest::test_exception) {
 
 	static const char *testname = "tod_btconv_test::test_2()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tensor<2, double, allocator_t> tensor_t;
 	typedef tensor_ctrl<2, double> tensor_ctrl_t;
 	typedef block_tensor<2, double, allocator_t> block_tensor_t;
@@ -140,19 +140,21 @@ void tod_btconv_test::test_2() throw(libtest::test_exception) {
 		pt_ref[i] = 0.0;
 	}
 
-	index<2> i_00, ii;
+	index<2> i_00;
 	index<2> istart = bis.get_block_start(i_00);
 	dimensions<2> dims_00 = bis.get_block_dims(i_00);
 	tensor_i<2, double> &blk_00 = btctrl.req_block(i_00);
 	{
 		tensor_ctrl_t tctrl_00(blk_00);
 		double *p_00 = tctrl_00.req_dataptr();
+		abs_index<2> aii(dims_00);
 		do {
-			index<2> iii(istart);
+			index<2> ii(aii.get_index()), iii(istart);
 			for(size_t j = 0; j < 2; j++) iii[j] += ii[j];
-			pt_ref[dims.abs_index(iii)] =
-				p_00[dims_00.abs_index(ii)] = drand48();
-		} while(dims_00.inc_index(ii));
+			abs_index<2> aiii(iii, dims);
+			pt_ref[aiii.get_abs_index()] =
+				p_00[aii.get_abs_index()] = drand48();
+		} while(aii.inc());
 		tctrl_00.ret_dataptr(p_00);
 	}
 	btctrl.ret_block(i_00);
@@ -187,7 +189,7 @@ void tod_btconv_test::test_3() throw(libtest::test_exception) {
 
 	static const char *testname = "tod_btconv_test::test_3()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tensor<2, double, allocator_t> tensor_t;
 	typedef tensor_ctrl<2, double> tensor_ctrl_t;
 	typedef block_tensor<2, double, allocator_t> block_tensor_t;
@@ -222,7 +224,7 @@ void tod_btconv_test::test_3() throw(libtest::test_exception) {
 		pt_ref[i] = 0.0;
 	}
 
-	index<2> i_11, ii;
+	index<2> i_11;
 	i_11[0] = 1; i_11[1] = 1;
 	index<2> istart = bis.get_block_start(i_11);
 	dimensions<2> dims_11 = bis.get_block_dims(i_11);
@@ -230,12 +232,14 @@ void tod_btconv_test::test_3() throw(libtest::test_exception) {
 	{
 		tensor_ctrl_t tctrl_11(blk_11);
 		double *p_11 = tctrl_11.req_dataptr();
+		abs_index<2> aii(dims_11);
 		do {
-			index<2> iii(istart);
+			index<2> ii(aii.get_index()), iii(istart);
 			for(size_t j = 0; j < 2; j++) iii[j] += ii[j];
-			pt_ref[dims.abs_index(iii)] =
-				p_11[dims_11.abs_index(ii)] = drand48();
-		} while(dims_11.inc_index(ii));
+			abs_index<2> aiii(iii, dims);
+			pt_ref[aiii.get_abs_index()] =
+				p_11[aii.get_abs_index()] = drand48();
+		} while(aii.inc());
 		tctrl_11.ret_dataptr(p_11);
 	}
 	btctrl.ret_block(i_11);
@@ -270,7 +274,7 @@ void tod_btconv_test::test_4() throw(libtest::test_exception) {
 
 	static const char *testname = "tod_btconv_test::test_4()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tensor<2, double, allocator_t> tensor_t;
 	typedef tensor_ctrl<2, double> tensor_ctrl_t;
 	typedef block_tensor<2, double, allocator_t> block_tensor_t;
@@ -305,7 +309,7 @@ void tod_btconv_test::test_4() throw(libtest::test_exception) {
 		pt_ref[i] = 0.0;
 	}
 
-	index<2> i_00, i_11, ii;
+	index<2> i_00, i_11;
 	i_11[0] = 1; i_11[1] = 1;
 	index<2> istart_00 = bis.get_block_start(i_00);
 	index<2> istart_11 = bis.get_block_start(i_11);
@@ -317,13 +321,14 @@ void tod_btconv_test::test_4() throw(libtest::test_exception) {
 	{
 		tensor_ctrl_t tctrl_00(blk_00);
 		p = tctrl_00.req_dataptr();
-		ii[0] = 0; ii[1] = 0;
+		abs_index<2> aii(dims_00);
 		do {
-			index<2> iii(istart_00);
+			index<2> ii(aii.get_index()), iii(istart_00);
 			for(size_t j = 0; j < 2; j++) iii[j] += ii[j];
-			pt_ref[dims.abs_index(iii)] = p[dims_00.abs_index(ii)] =
+			abs_index<2> aiii(iii, dims);
+			pt_ref[aiii.get_abs_index()] = p[aii.get_abs_index()] =
 				drand48();
-		} while(dims_00.inc_index(ii));
+		} while(aii.inc());
 		tctrl_00.ret_dataptr(p);
 	}
 	btctrl.ret_block(i_00);
@@ -332,13 +337,14 @@ void tod_btconv_test::test_4() throw(libtest::test_exception) {
 	{
 		tensor_ctrl_t tctrl_11(blk_11);
 		p = tctrl_11.req_dataptr();
-		ii[0] = 0; ii[1] = 0;
+		abs_index<2> aii(dims_11);
 		do {
-			index<2> iii(istart_11);
+			index<2> ii(aii.get_index()), iii(istart_11);
 			for(size_t j = 0; j < 2; j++) iii[j] += ii[j];
-			pt_ref[dims.abs_index(iii)] = p[dims_11.abs_index(ii)] =
+			abs_index<2> aiii(iii, dims);
+			pt_ref[aiii.get_abs_index()] = p[aii.get_abs_index()] =
 				drand48();
-		} while(dims_11.inc_index(ii));
+		} while(aii.inc());
 		tctrl_11.ret_dataptr(p);
 	}
 	btctrl.ret_block(i_11);
@@ -373,7 +379,7 @@ void tod_btconv_test::test_5() throw(libtest::test_exception) {
 
 	static const char *testname = "tod_btconv_test::test_5()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tensor<2, double, allocator_t> tensor_t;
 	typedef tensor_ctrl<2, double> tensor_ctrl_t;
 	typedef block_tensor<2, double, allocator_t> block_tensor_t;
@@ -413,8 +419,7 @@ void tod_btconv_test::test_5() throw(libtest::test_exception) {
 		pt_ref[i] = 0.0;
 	}
 
-	index<2> i_00, i_11, ii;
-	i_11[0] = 1; i_11[1] = 1;
+	index<2> i_00, i_11;
 	index<2> istart_00 = bis.get_block_start(i_00);
 	index<2> istart_11 = bis.get_block_start(i_11);
 	dimensions<2> dims_00 = bis.get_block_dims(i_00);
@@ -426,8 +431,9 @@ void tod_btconv_test::test_5() throw(libtest::test_exception) {
 	{
 		tensor_ctrl_t tctrl_00(blk_00);
 		p = tctrl_00.req_dataptr();
-		ii[0] = 0; ii[1] = 0;
+		abs_index<2> aii(dims_00);
 		do {
+		    index<2> ii(aii.get_index());
 			if(ii[0] > ii[1]) continue;
 			index<2> ii1(ii), ii2(ii); ii2.permute(perm);
 			index<2> iii1(istart_00), iii2(istart_00);
@@ -436,11 +442,11 @@ void tod_btconv_test::test_5() throw(libtest::test_exception) {
 				iii2[j] += ii2[j];
 			}
 			double d = drand48();
-			pt_ref[dims.abs_index(iii1)] =
-				pt_ref[dims.abs_index(iii2)] = d;
-			p[dims_00.abs_index(ii1)] =
-				p[dims_00.abs_index(ii2)] = d;
-		} while(dims_00.inc_index(ii));
+			abs_index<2> aii1(ii1, dims_00), aii2(ii2, dims_00);
+			abs_index<2> aiii1(iii1, dims), aiii2(iii2, dims);
+			pt_ref[aiii1.get_abs_index()] = pt_ref[aiii2.get_abs_index()] = d;
+			p[aii1.get_abs_index()] = p[aii2.get_abs_index()] = d;
+		} while(aii.inc());
 		tctrl_00.ret_dataptr(p);
 	}
 	btctrl.ret_block(i_00);
@@ -449,8 +455,9 @@ void tod_btconv_test::test_5() throw(libtest::test_exception) {
 	{
 		tensor_ctrl_t tctrl_11(blk_11);
 		p = tctrl_11.req_dataptr();
-		ii[0] = 0; ii[1] = 0;
+		abs_index<2> aii(dims_11);
 		do {
+		    index<2> ii(aii.get_index());
 			if(ii[0] > ii[1]) continue;
 			index<2> ii1(ii), ii2(ii); ii2.permute(perm);
 			index<2> iii1(istart_11), iii2(istart_11);
@@ -458,11 +465,13 @@ void tod_btconv_test::test_5() throw(libtest::test_exception) {
 				iii1[j] += ii1[j];
 				iii2[j] += ii2[j];
 			}
-			pt_ref[dims.abs_index(iii1)] =
-				p[dims_11.abs_index(ii1)] =
-				pt_ref[dims.abs_index(iii2)] =
-				p[dims_11.abs_index(ii2)] = drand48();
-		} while(dims_11.inc_index(ii));
+			abs_index<2> aii1(ii1, dims_11), aii2(ii2, dims_11);
+			abs_index<2> aiii1(iii1, dims), aiii2(iii2, dims);
+			pt_ref[aiii1.get_abs_index()] =
+				p[aii1.get_abs_index()] =
+				pt_ref[aiii2.get_abs_index()] =
+				p[aii2.get_abs_index()] = drand48();
+		} while(aii.inc());
 		tctrl_11.ret_dataptr(p);
 	}
 	btctrl.ret_block(i_11);
@@ -497,7 +506,7 @@ void tod_btconv_test::test_6() throw(libtest::test_exception) {
 
 	static const char *testname = "tod_btconv_test::test_6()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tensor<2, double, allocator_t> tensor_t;
 	typedef tensor_ctrl<2, double> tensor_ctrl_t;
 	typedef block_tensor<2, double, allocator_t> block_tensor_t;
@@ -533,7 +542,7 @@ void tod_btconv_test::test_6() throw(libtest::test_exception) {
 		pt_ref[i] = 0.0;
 	}
 
-	index<2> i_01, i_10, ii;
+	index<2> i_01, i_10;
 	i_01[0] = 0; i_01[1] = 1;
 	i_10[0] = 1; i_10[1] = 1;
 	index<2> istart_01 = bis.get_block_start(i_01);
@@ -547,13 +556,13 @@ void tod_btconv_test::test_6() throw(libtest::test_exception) {
 	{
 		tensor_ctrl_t tctrl_01(blk_01);
 		p = tctrl_01.req_dataptr();
-		ii[0] = 0; ii[1] = 0;
+		abs_index<2> aii(dims_01);
 		do {
-			index<2> iii(istart_01);
+			index<2> ii(aii.get_index()), iii(istart_01);
 			for(size_t j = 0; j < 2; j++) iii[j] += ii[j];
-			pt_ref[dims.abs_index(iii)] = p[dims_01.abs_index(ii)] =
-				drand48();
-		} while(dims_01.inc_index(ii));
+			abs_index<2> aiii(iii, dims);
+			pt_ref[aiii.get_abs_index()] = p[aii.get_abs_index()] = drand48();
+		} while(aii.inc());
 		tctrl_01.ret_dataptr(p);
 	}
 	btctrl.ret_block(i_01);
@@ -562,13 +571,13 @@ void tod_btconv_test::test_6() throw(libtest::test_exception) {
 	{
 		tensor_ctrl_t tctrl_10(blk_10);
 		p = tctrl_10.req_dataptr();
-		ii[0] = 0; ii[1] = 0;
+		abs_index<2> aii(dims_10);
 		do {
-			index<2> iii(istart_10);
+			index<2> ii(aii.get_index()), iii(istart_10);
 			for(size_t j = 0; j < 2; j++) iii[j] += ii[j];
-			pt_ref[dims.abs_index(iii)] = p[dims_10.abs_index(ii)] =
-				drand48();
-		} while(dims_10.inc_index(ii));
+			abs_index<2> aiii(iii, dims);
+			pt_ref[aiii.get_abs_index()] = p[aii.get_abs_index()] = drand48();
+		} while(aii.inc());
 		tctrl_10.ret_dataptr(p);
 	}
 	btctrl.ret_block(i_10);
@@ -603,7 +612,7 @@ void tod_btconv_test::test_7() throw(libtest::test_exception) {
 
 	static const char *testname = "tod_btconv_test::test_7()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tensor<2, double, allocator_t> tensor_t;
 	typedef tensor_ctrl<2, double> tensor_ctrl_t;
 	typedef block_tensor<2, double, allocator_t> block_tensor_t;
@@ -643,7 +652,7 @@ void tod_btconv_test::test_7() throw(libtest::test_exception) {
 		pt_ref[i] = 0.0;
 	}
 
-	index<2> i_01, i_10, ii;
+	index<2> i_01, i_10;
 	i_01[0] = 0; i_01[1] = 1;
 	i_10[0] = 1; i_10[1] = 0;
 	index<2> istart_01 = bis.get_block_start(i_01);
@@ -657,18 +666,20 @@ void tod_btconv_test::test_7() throw(libtest::test_exception) {
 	{
 		tensor_ctrl_t tctrl_01(blk_01);
 		p = tctrl_01.req_dataptr();
-		ii[0] = 0; ii[1] = 0;
+		abs_index<2> aii(dims_01);
 		do {
+		    index<2> ii(aii.get_index());
 			index<2> iii1(istart_01), iii2(istart_10);
 			index<2> ii2(ii); ii2.permute(perm);
 			for(size_t j = 0; j < 2; j++) {
 				iii1[j] += ii[j];
 				iii2[j] += ii2[j];
 			}
-			pt_ref[dims.abs_index(iii1)] =
-				pt_ref[dims.abs_index(iii2)] =
-				p[dims_01.abs_index(ii)] = drand48();
-		} while(dims_01.inc_index(ii));
+			abs_index<2> aiii1(iii1, dims), aiii2(iii2, dims);
+			pt_ref[aiii1.get_abs_index()] =
+				pt_ref[aiii2.get_abs_index()] =
+				p[aii.get_abs_index()] = drand48();
+		} while(aii.inc());
 		tctrl_01.ret_dataptr(p);
 	}
 	btctrl.ret_block(i_01);
@@ -703,7 +714,7 @@ void tod_btconv_test::test_8() throw(libtest::test_exception) {
 
 	static const char *testname = "tod_btconv_test::test_8()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tensor<2, double, allocator_t> tensor_t;
 	typedef tensor_ctrl<2, double> tensor_ctrl_t;
 	typedef block_tensor<2, double, allocator_t> block_tensor_t;
@@ -743,7 +754,7 @@ void tod_btconv_test::test_8() throw(libtest::test_exception) {
 		pt_ref[i] = 0.0;
 	}
 
-	index<2> i_00, i_01, i_10, i_11, ii;
+	index<2> i_00, i_01, i_10, i_11;
 	i_01[0] = 0; i_01[1] = 1;
 	i_10[0] = 1; i_10[1] = 0;
 	i_11[0] = 1; i_11[1] = 1;
@@ -762,8 +773,9 @@ void tod_btconv_test::test_8() throw(libtest::test_exception) {
 	{
 		tensor_ctrl_t tctrl_00(blk_00);
 		p = tctrl_00.req_dataptr();
-		ii[0] = 0; ii[1] = 0;
+		abs_index<2> aii(dims_00);
 		do {
+		    index<2> ii(aii.get_index());
 			if(ii[0] > ii[1]) continue;
 			index<2> ii1(ii), ii2(ii); ii2.permute(perm);
 			index<2> iii1(istart_00), iii2(istart_00);
@@ -771,11 +783,13 @@ void tod_btconv_test::test_8() throw(libtest::test_exception) {
 				iii1[j] += ii1[j];
 				iii2[j] += ii2[j];
 			}
-			pt_ref[dims.abs_index(iii1)] =
-				p[dims_00.abs_index(ii1)] =
-				pt_ref[dims.abs_index(iii2)] =
-				p[dims_00.abs_index(ii2)] = drand48();
-		} while(dims_00.inc_index(ii));
+			abs_index<2> aii1(ii1, dims_00), aii2(ii2, dims_00);
+			abs_index<2> aiii1(iii1, dims), aiii2(iii2, dims);
+			pt_ref[aiii1.get_abs_index()] =
+				p[aii1.get_abs_index()] =
+				pt_ref[aiii2.get_abs_index()] =
+				p[aii2.get_abs_index()] = drand48();
+		} while(aii.inc());
 		tctrl_00.ret_dataptr(p);
 	}
 	btctrl.ret_block(i_00);
@@ -784,18 +798,20 @@ void tod_btconv_test::test_8() throw(libtest::test_exception) {
 	{
 		tensor_ctrl_t tctrl_01(blk_01);
 		p = tctrl_01.req_dataptr();
-		ii[0] = 0; ii[1] = 0;
+		abs_index<2> aii(dims_01);
 		do {
+		    index<2> ii(aii.get_index());
 			index<2> iii1(istart_01), iii2(istart_10);
 			index<2> ii2(ii); ii2.permute(perm);
 			for(size_t j = 0; j < 2; j++) {
 				iii1[j] += ii[j];
 				iii2[j] += ii2[j];
 			}
-			pt_ref[dims.abs_index(iii1)] =
-				pt_ref[dims.abs_index(iii2)] =
-				p[dims_01.abs_index(ii)] = drand48();
-		} while(dims_01.inc_index(ii));
+			abs_index<2> aiii1(iii1, dims), aiii2(iii2, dims);
+			pt_ref[aiii1.get_abs_index()] =
+				pt_ref[aiii2.get_abs_index()] =
+				p[aii.get_abs_index()] = drand48();
+		} while(aii.inc());
 		tctrl_01.ret_dataptr(p);
 	}
 	btctrl.ret_block(i_01);
@@ -804,8 +820,9 @@ void tod_btconv_test::test_8() throw(libtest::test_exception) {
 	{
 		tensor_ctrl_t tctrl_11(blk_11);
 		p = tctrl_11.req_dataptr();
-		ii[0] = 0; ii[1] = 0;
+        abs_index<2> aii(dims_11);
 		do {
+            index<2> ii(aii.get_index());
 			if(ii[0] > ii[1]) continue;
 			index<2> ii1(ii), ii2(ii); ii2.permute(perm);
 			index<2> iii1(istart_11), iii2(istart_11);
@@ -813,11 +830,13 @@ void tod_btconv_test::test_8() throw(libtest::test_exception) {
 				iii1[j] += ii1[j];
 				iii2[j] += ii2[j];
 			}
-			pt_ref[dims.abs_index(iii1)] =
-				p[dims_11.abs_index(ii1)] =
-				pt_ref[dims.abs_index(iii2)] =
-				p[dims_11.abs_index(ii2)] = drand48();
-		} while(dims_11.inc_index(ii));
+            abs_index<2> aii1(ii1, dims_11), aii2(ii2, dims_11);
+            abs_index<2> aiii1(iii1, dims), aiii2(iii2, dims);
+			pt_ref[aiii1.get_abs_index()] =
+				p[aii1.get_abs_index()] =
+				pt_ref[aiii2.get_abs_index()] =
+				p[aii2.get_abs_index()] = drand48();
+		} while(aii.inc());
 		tctrl_11.ret_dataptr(p);
 	}
 	btctrl.ret_block(i_11);
@@ -852,7 +871,7 @@ void tod_btconv_test::test_9() throw(libtest::test_exception) {
 
 	static const char *testname = "tod_btconv_test::test_9()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tensor<4, double, allocator_t> tensor_t;
 	typedef tensor_ctrl<4, double> tensor_ctrl_t;
 	typedef block_tensor<4, double, allocator_t> block_tensor_t;
@@ -923,8 +942,9 @@ void tod_btconv_test::test_9() throw(libtest::test_exception) {
 		tensor_ctrl_t tctrl_0001(blk_0001);
 		p = tctrl_0001.req_dataptr();
 
-		index<4> ii;
+		abs_index<4> aii(dims_0001);
 		do {
+		    index<4> ii(aii.get_index());
 			if(ii[0] > ii[1] || ii[1] > ii[2]) continue;
 			index<4> ii1(ii), ii2(ii), ii3(ii), ii4(ii), ii5(ii);
 			ii1.permute(perm1);
@@ -944,12 +964,12 @@ void tod_btconv_test::test_9() throw(libtest::test_exception) {
 				iii5[k] = iii[k] + ii5[k];
 			}
 			for(size_t j = 0; j < 4; j++) {
-				pt_ref[dims.abs_index(iii0)] = d;
-				pt_ref[dims.abs_index(iii1)] = d;
-				pt_ref[dims.abs_index(iii2)] = d;
-				pt_ref[dims.abs_index(iii3)] = d;
-				pt_ref[dims.abs_index(iii4)] = d;
-				pt_ref[dims.abs_index(iii5)] = d;
+				pt_ref[abs_index<4>::get_abs_index(iii0, dims)] = d;
+				pt_ref[abs_index<4>::get_abs_index(iii1, dims)] = d;
+				pt_ref[abs_index<4>::get_abs_index(iii2, dims)] = d;
+				pt_ref[abs_index<4>::get_abs_index(iii3, dims)] = d;
+				pt_ref[abs_index<4>::get_abs_index(iii4, dims)] = d;
+				pt_ref[abs_index<4>::get_abs_index(iii5, dims)] = d;
 				iii0.permute(perm);
 				iii1.permute(perm);
 				iii2.permute(perm);
@@ -957,13 +977,13 @@ void tod_btconv_test::test_9() throw(libtest::test_exception) {
 				iii4.permute(perm);
 				iii5.permute(perm);
 			}
-			p[dims_0001.abs_index(ii)] =
-				p[dims_0001.abs_index(ii1)] =
-				p[dims_0001.abs_index(ii2)] =
-				p[dims_0001.abs_index(ii3)] =
-				p[dims_0001.abs_index(ii4)] =
-				p[dims_0001.abs_index(ii5)] = d;
-		} while(dims_0001.inc_index(ii));
+			p[aii.get_abs_index()] =
+				p[abs_index<4>::get_abs_index(ii1, dims_0001)] =
+				p[abs_index<4>::get_abs_index(ii2, dims_0001)] =
+				p[abs_index<4>::get_abs_index(ii3, dims_0001)] =
+				p[abs_index<4>::get_abs_index(ii4, dims_0001)] =
+				p[abs_index<4>::get_abs_index(ii5, dims_0001)] = d;
+		} while(aii.inc());
 		tctrl_0001.ret_dataptr(p);
 	}
 	btctrl.ret_block(i_0001);
@@ -998,7 +1018,7 @@ void tod_btconv_test::test_10() throw(libtest::test_exception) {
 
 	static const char *testname = "tod_btconv_test::test_10()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tensor<4, double, allocator_t> tensor_t;
 	typedef tensor_ctrl<4, double> tensor_ctrl_t;
 	typedef block_tensor<4, double, allocator_t> block_tensor_t;
@@ -1055,15 +1075,15 @@ void tod_btconv_test::test_10() throw(libtest::test_exception) {
 		tensor_ctrl_t tctrl_0010(blk_0010);
 		p = tctrl_0010.req_dataptr();
 
-		index<4> ii;
+		abs_index<4> aii(dims_0010);
 		do {
-			index<4> iii(istart_0010);
+			index<4> ii(aii.get_index()), iii(istart_0010);
 			index<4> iii0;
 			for(size_t k = 0; k < 4; k++) iii0[k] = iii[k] + ii[k];
 			double d = drand48();
-			p[dims_0010.abs_index(ii)] =
-				pt_ref[dims.abs_index(iii0)] = d;
-		} while(dims_0010.inc_index(ii));
+			abs_index<4> aiii0(iii0, dims);
+			p[aii.get_abs_index()] = pt_ref[aiii0.get_abs_index()] = d;
+		} while(aii.inc());
 		tctrl_0010.ret_dataptr(p);
 	}
 	btctrl.ret_block(i_0010);
@@ -1098,7 +1118,7 @@ void tod_btconv_test::test_11() throw(libtest::test_exception) {
 
 	static const char *testname = "tod_btconv_test::test_11()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tensor<4, double, allocator_t> tensor_t;
 	typedef tensor_ctrl<4, double> tensor_ctrl_t;
 	typedef block_tensor<4, double, allocator_t> block_tensor_t;
@@ -1166,8 +1186,9 @@ void tod_btconv_test::test_11() throw(libtest::test_exception) {
 		tensor_ctrl_t tctrl_0010(blk_0010);
 		p = tctrl_0010.req_dataptr();
 
-		index<4> ii;
+		abs_index<4> aii(dims_0010);
 		do {
+		    index<4> ii(aii.get_index());
 			if(ii[1] > ii[3]) continue;
 			index<4> ii1(ii);
 			ii1.permute(perm1);
@@ -1179,14 +1200,14 @@ void tod_btconv_test::test_11() throw(libtest::test_exception) {
 				iii1[k] = iii[k] + ii1[k];
 			}
 			for(size_t k = 0; k < 2; k++) {
-				pt_ref[dims.abs_index(iii0)] = d;
-				pt_ref[dims.abs_index(iii1)] = d;
+				pt_ref[abs_index<4>::get_abs_index(iii0, dims)] = d;
+				pt_ref[abs_index<4>::get_abs_index(iii1, dims)] = d;
 				iii0.permute(perm);
 				iii1.permute(perm);
 			}
-			p[dims_0010.abs_index(ii)] =
-				p[dims_0010.abs_index(ii1)] = d;
-		} while(dims_0010.inc_index(ii));
+			abs_index<4> aii1(ii1, dims_0010);
+			p[aii.get_abs_index()] = p[aii1.get_abs_index()] = d;
+		} while(aii.inc());
 		tctrl_0010.ret_dataptr(p);
 	}
 	btctrl.ret_block(i_0010);
@@ -1222,7 +1243,9 @@ void tod_btconv_test::test_12() throw(libtest::test_exception) {
 
 	static const char *testname = "tod_btconv_test::test_12()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+	cpu_pool cpus(1);
 
 	try {
 
@@ -1264,57 +1287,57 @@ void tod_btconv_test::test_12() throw(libtest::test_exception) {
 		d022 = bis.get_block_dims(i022);
 	tensor<3, double, allocator_t> t012(d012), t111(d111), t111a(d111),
 		t022(d022), t022a(d022);
-	tod_random<3>().perform(t012);
-	tod_random<3>().perform(t111a);
-	tod_random<3>().perform(t022a);
+	tod_random<3>().perform(cpus, t012);
+	tod_random<3>().perform(cpus, t111a);
+	tod_random<3>().perform(cpus, t022a);
 	tod_add<3> sym111(t111a);
 	sym111.add_op(t111a, permutation<3>().permute(0, 1), -1.0);
 	sym111.add_op(t111a, permutation<3>().permute(0, 2), -1.0);
-	sym111.perform(t111);
+	sym111.perform(cpus, true, 1.0, t111);
 	tod_add<3> sym022(t022a);
 	sym022.add_op(t022a, permutation<3>().permute(1, 2), -1.0);
-	sym022.perform(t022);
+	sym022.perform(cpus, true, 1.0, t022);
 
 	//	Copy [0,1,2]
 	//
-	tod_copy<3>(t012).perform(ctrla.req_block(i012));
+	tod_copy<3>(t012).perform(cpus, true, 1.0, ctrla.req_block(i012));
 	ctrla.ret_block(i012);
-	tod_copy<3>(t012).perform(ctrlb.req_block(i012));
+	tod_copy<3>(t012).perform(cpus, true, 1.0, ctrlb.req_block(i012));
 	ctrlb.ret_block(i012);
 	tod_copy<3>(t012, permutation<3>().permute(1, 2), -1.0).
-		perform(ctrlb.req_block(i021));
+		perform(cpus, true, 1.0, ctrlb.req_block(i021));
 	ctrlb.ret_block(i021);
 	tod_copy<3>(t012, permutation<3>().permute(0, 1), -1.0).
-		perform(ctrlb.req_block(i102));
+		perform(cpus, true, 1.0, ctrlb.req_block(i102));
 	ctrlb.ret_block(i102);
 	tod_copy<3>(t012, permutation<3>().permute(0, 1).permute(1, 2), 1.0).
-		perform(ctrlb.req_block(i120));
+		perform(cpus, true, 1.0, ctrlb.req_block(i120));
 	ctrlb.ret_block(i120);
 	tod_copy<3>(t012, permutation<3>().permute(0, 2), -1.0).
-		perform(ctrlb.req_block(i210));
+		perform(cpus, true, 1.0, ctrlb.req_block(i210));
 	ctrlb.ret_block(i210);
 	tod_copy<3>(t012, permutation<3>().permute(1, 2).permute(0, 1), 1.0).
-		perform(ctrlb.req_block(i201));
+		perform(cpus, true, 1.0, ctrlb.req_block(i201));
 	ctrlb.ret_block(i201);
 
 	//	Copy [0,2,2]
 	//
-	tod_copy<3>(t022).perform(ctrla.req_block(i022));
+	tod_copy<3>(t022).perform(cpus, true, 1.0, ctrla.req_block(i022));
 	ctrla.ret_block(i022);
-	tod_copy<3>(t022).perform(ctrlb.req_block(i022));
+	tod_copy<3>(t022).perform(cpus, true, 1.0, ctrlb.req_block(i022));
 	ctrlb.ret_block(i022);
 	tod_copy<3>(t022, permutation<3>().permute(0, 1), -1.0).
-		perform(ctrlb.req_block(i202));
+		perform(cpus, true, 1.0, ctrlb.req_block(i202));
 	ctrlb.ret_block(i202);
 	tod_copy<3>(t022, permutation<3>().permute(0, 1).permute(1, 2), 1.0).
-		perform(ctrlb.req_block(i220));
+		perform(cpus, true, 1.0, ctrlb.req_block(i220));
 	ctrlb.ret_block(i220);
 
 	//	Copy [1,1,1]
 	//
-	tod_copy<3>(t111).perform(ctrla.req_block(i111));
+	tod_copy<3>(t111).perform(cpus, true, 1.0, ctrla.req_block(i111));
 	ctrla.ret_block(i111);
-	tod_copy<3>(t111).perform(ctrlb.req_block(i111));
+	tod_copy<3>(t111).perform(cpus, true, 1.0, ctrlb.req_block(i111));
 	ctrlb.ret_block(i111);
 
 	bta.set_immutable();

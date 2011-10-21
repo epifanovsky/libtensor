@@ -49,9 +49,11 @@ public:
 	static const char *k_clazz; //!< Class name
 
 public:
-	static const size_t k_ordera = N; //!< Order of the first %tensor
-	static const size_t k_orderb = M; //!< Order of the second %tensor
-	static const size_t k_orderc = N + M; //!< Order of the result
+	enum {
+	    k_ordera = N, //!< Order of first argument (A)
+	    k_orderb = M, //!< Order of second argument (B)
+	    k_orderc = N + M //!< Order of result (C)
+	};
 
 private:
 	struct schrec {
@@ -107,12 +109,9 @@ public:
 	virtual void sync_on();
 	virtual void sync_off();
 
-	virtual void compute_block(tensor_i<N + M, double> &blk,
-		const index<N + M> &i);
-
-	virtual void compute_block(tensor_i<N + M, double> &blk,
+	virtual void compute_block(bool zero, tensor_i<N + M, double> &blk,
 		const index<N + M> &i, const transf<N + M, double> &tr,
-		double c);
+		double c, cpu_pool &cpus);
 
 	using additive_btod<N + M>::perform;
 
@@ -124,7 +123,7 @@ private:
 
 	void compute_block(tensor_i<N + M, double> &blkc,
 		const schrec &rec, const transf<N + M, double> &trc,
-		bool zeroc, double kc);
+		bool zeroc, double kc, cpu_pool &cpus);
 
 	void do_block_dirsum(block_tensor_ctrl<k_ordera, double> &ctrla,
 		block_tensor_ctrl<k_orderb, double> &ctrlb,
@@ -224,7 +223,29 @@ private:
 
 } // namespace libtensor
 
-#ifndef LIBTENSOR_INSTANTIATE_TEMPLATES
+#ifdef LIBTENSOR_INSTANTIATE_TEMPLATES
+
+namespace libtensor {
+
+    extern template class btod_dirsum<1, 1>;
+    extern template class btod_dirsum<1, 2>;
+    extern template class btod_dirsum<1, 3>;
+    extern template class btod_dirsum<1, 4>;
+    extern template class btod_dirsum<1, 5>;
+    extern template class btod_dirsum<2, 1>;
+    extern template class btod_dirsum<2, 2>;
+    extern template class btod_dirsum<2, 3>;
+    extern template class btod_dirsum<2, 4>;
+    extern template class btod_dirsum<3, 1>;
+    extern template class btod_dirsum<3, 2>;
+    extern template class btod_dirsum<3, 3>;
+    extern template class btod_dirsum<4, 1>;
+    extern template class btod_dirsum<4, 2>;
+    extern template class btod_dirsum<5, 1>;
+
+} // namespace libtensor
+
+#else // LIBTENSOR_INSTANTIATE_TEMPLATES
 #include "btod_dirsum_impl.h"
 #endif // LIBTENSOR_INSTANTIATE_TEMPLATES
 

@@ -8,22 +8,22 @@ namespace libtensor {
 
 void ewmult_test::perform() throw(libtest::test_exception) {
 
-	libvmm::vm_allocator<double>::vmm().init(
-		16, 16, 16777216, 16777216, 0.90, 0.05);
+	allocator<double>::vmm().init(16, 16, 16777216, 16777216);
 
 	try {
 
 		test_tt_1();
+		test_tt_2();
 		test_te_1();
 		test_et_1();
 		test_ee_1();
 
 	} catch(...) {
-		libvmm::vm_allocator<double>::vmm().shutdown();
+		allocator<double>::vmm().shutdown();
 		throw;
 	}
 
-	libvmm::vm_allocator<double>::vmm().shutdown();
+	allocator<double>::vmm().shutdown();
 }
 
 
@@ -57,6 +57,44 @@ void ewmult_test::test_tt_1() throw(libtest::test_exception) {
 	t3(a|b|c|i) = ewmult(i, t1(i|a), t2(b|c|i));
 
 	compare_ref<4>::compare(testname, t3, t3_ref, 1e-15);
+
+	} catch(exception &e) {
+		fail_test(testname, __FILE__, __LINE__, e.what());
+	}
+}
+
+
+void ewmult_test::test_tt_2() throw(libtest::test_exception) {
+
+	const char *testname = "ewmult_test::test_tt_2()";
+
+	try {
+
+	bispace<1> sp_i(10), sp_a(20);
+	bispace<2> sp_ia(sp_i|sp_a);
+	bispace<3> sp_iab(sp_i|sp_a|sp_a);
+
+	btensor<2> t1(sp_ia);
+	btensor<2> t2(sp_ia);
+	btensor<3> t3(sp_iab), t3_ref(sp_iab);
+
+	btod_random<2>().perform(t1);
+	btod_random<2>().perform(t2);
+	t1.set_immutable();
+	t2.set_immutable();
+
+	permutation<2> perm1;
+	perm1.permute(0, 1);
+	permutation<2> perm2;
+	perm2.permute(0, 1);
+	permutation<3> perm3;
+	perm3.permute(1, 2).permute(0, 1);
+	btod_ewmult2<1, 1, 1>(t1, perm1, t2, perm2, perm3).perform(t3_ref);
+
+	letter a, b, c, i;
+	t3(i|a|b) = ewmult(i, t1(i|a), t2(i|b));
+
+	compare_ref<3>::compare(testname, t3, t3_ref, 1e-15);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());

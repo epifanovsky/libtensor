@@ -1,3 +1,4 @@
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/core/direct_block_tensor.h>
 #include <libtensor/tod/tod_btconv.h>
@@ -29,7 +30,7 @@ void direct_block_tensor_test::test_op_1() throw(libtest::test_exception) {
 
 	static const char *testname = "direct_block_tensor_test::test_op_1()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -63,7 +64,7 @@ void direct_block_tensor_test::test_op_2() throw(libtest::test_exception) {
 
 	static const char *testname = "direct_block_tensor_test::test_op_2()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -105,7 +106,9 @@ void direct_block_tensor_test::test_op_3() throw(libtest::test_exception) {
 
 	static const char *testname = "direct_block_tensor_test::test_op_3()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -153,7 +156,7 @@ void direct_block_tensor_test::test_op_3() throw(libtest::test_exception) {
 	tod_btconv<4>(bta).perform(ta);
 	tod_btconv<4>(btb).perform(tb);
 	tod_btconv<4>(btc).perform(tc);
-	tod_contract2<2, 2, 2>(contr, ta, ta).perform(tc_ref);
+	tod_contract2<2, 2, 2>(contr, ta, ta).perform(cpus, true, 1.0, tc_ref);
 
 	compare_ref<4>::compare(testname, tc, tc_ref, 2e-14);
 
@@ -169,7 +172,9 @@ void direct_block_tensor_test::test_op_4() throw(libtest::test_exception) {
 
 	static const char *testname = "direct_block_tensor_test::test_op_4()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+	cpu_pool cpus(1);
 
 	try {
 
@@ -226,16 +231,16 @@ void direct_block_tensor_test::test_op_4() throw(libtest::test_exception) {
 	tod_btconv<2>(bta2).perform(ta2);
 	tod_btconv<2>(bta3).perform(ta3);
 	tod_btconv<2>(bta4).perform(ta4);
-	tod_copy<2>(ta1, 2.0).perform(ta5);
-	tod_copy<2>(ta2, -2.0).perform(ta5, 1.0);
-	tod_copy<2>(ta3, -3.0).perform(ta6);
-	tod_copy<2>(ta4, 2.5).perform(ta6, 1.0);
+	tod_copy<2>(ta1, 2.0).perform(cpus, true, 1.0, ta5);
+	tod_copy<2>(ta2, -2.0).perform(cpus, false, 1.0, ta5);
+	tod_copy<2>(ta3, -3.0).perform(cpus, true, 1.0, ta6);
+	tod_copy<2>(ta4, 2.5).perform(cpus, false, 1.0, ta6);
 
 	tensor<4, double, allocator_t> tb1(dims4), tb2(dims4), tc(dims4),
 		tc_ref(dims4);
 	tod_dirsum<2, 2>(ta5, 1.0, ta6, -2.0).perform(tb1);
 	tod_dirsum<2, 2>(ta5, -2.0, ta6, 1.0).perform(tb2);
-	tod_contract2<2, 2, 2>(contr, tb1, tb2).perform(tc_ref);
+	tod_contract2<2, 2, 2>(contr, tb1, tb2).perform(cpus, true, 1.0, tc_ref);
 	tod_btconv<4>(btc).perform(tc);
 
 	compare_ref<4>::compare(testname, tc, tc_ref, 1e-13);

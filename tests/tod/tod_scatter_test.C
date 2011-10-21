@@ -1,7 +1,7 @@
 #include <cmath>
 #include <ctime>
 #include <sstream>
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/abs_index.h>
 #include <libtensor/core/tensor.h>
 #include <libtensor/tod/tod_scatter.h>
@@ -9,8 +9,6 @@
 #include "tod_scatter_test.h"
 
 namespace libtensor {
-
-typedef libvmm::std_allocator<double> allocator;
 
 void tod_scatter_test::perform() throw(libtest::test_exception) {
 
@@ -37,6 +35,8 @@ void tod_scatter_test::test_ij_j(size_t ni, size_t nj, double d)
 	tnss << "tod_scatter_test::test_ij_j(" << ni << ", " << nj << ", "
 		<< d << ")";
 	std::string tns = tnss.str();
+
+	typedef std_allocator<double> allocator;
 
 	try {
 

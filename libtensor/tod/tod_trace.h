@@ -129,7 +129,7 @@ double tod_trace<N>::calculate() {
 
 	loop_list_add::run_loop(loop, r, 1.0);
 
-	ca.ret_dataptr(pa);
+	ca.ret_const_dataptr(pa);
 
 	} catch(...) {
 		tod_trace<N>::stop_timer();

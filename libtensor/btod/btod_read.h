@@ -2,10 +2,10 @@
 #define LIBTENSOR_BTOD_READ_H
 
 #include <istream>
-#include <libvmm/std_allocator.h>
 #include "../defs.h"
 #include "../exception.h"
 #include "../timings.h"
+#include "../core/allocator.h"
 #include "../core/block_tensor_i.h"
 #include "../tod/bad_dimensions.h"
 #include "btod_import_raw.h"
@@ -60,7 +60,7 @@ namespace libtensor {
 
 	\ingroup libtensor_btod
  **/
-template<size_t N, typename Alloc = libvmm::std_allocator<double> >
+template<size_t N, typename Alloc = std_allocator<double> >
 class btod_read : public timings< btod_read<N, Alloc> > {
 public:
 	static const char *k_clazz; //!< Class name

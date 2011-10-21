@@ -1,14 +1,15 @@
 #ifndef LIBTENSOR_GLOBAL_TIMINGS_H
 #define LIBTENSOR_GLOBAL_TIMINGS_H
 
-#include <libvmm/auto_lock.h>
-#include <libvmm/singleton.h>
-#include "timer.h"
-#include "exception.h"
 #include <iostream>
 #include <map>
 #include <string>
 #include <utility>
+#include <libvmm/singleton.h>
+#include "mp/threads.h"
+#include "timer.h"
+#include "exception.h"
+
 
 namespace libtensor {
 
@@ -47,7 +48,7 @@ private:
 	typedef std::pair<const std::string, timing_t> pair_t;
 
 	map_t m_times; //!< map containing all run times
-	mutable libvmm::mutex m_lock; //!< Mutex for thread safety
+	mutable spinlock m_lock; //!< Mutex for thread safety
 
 protected:
 	global_timings() { }
@@ -78,7 +79,7 @@ public:
 inline void global_timings::add_to_timer(const std::string &id,
 	const timer &t) {
 
-	libvmm::auto_lock lock(m_lock);
+	auto_spinlock lock(m_lock);
 
 	std::pair<map_t::iterator, bool> r = m_times.insert(pair_t(
 		id, timing_t(t.duration())));
@@ -90,14 +91,14 @@ inline void global_timings::add_to_timer(const std::string &id,
 
 inline void global_timings::reset() {
 
-	libvmm::auto_lock lock(m_lock);
+	auto_spinlock lock(m_lock);
 	m_times.clear();
 }
 
 
 inline time_diff_t global_timings::get_time(const std::string &id) const {
 
-	libvmm::auto_lock lock(m_lock);
+	auto_spinlock lock(m_lock);
 
 	map_t::const_iterator it = m_times.find(id);
 	if(it == m_times.end()) {
@@ -110,7 +111,7 @@ inline time_diff_t global_timings::get_time(const std::string &id) const {
 
 inline size_t global_timings::ntimings() const {
 
-	libvmm::auto_lock lock(m_lock);
+	auto_spinlock lock(m_lock);
 	return m_times.size();
 }
 

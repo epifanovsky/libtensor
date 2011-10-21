@@ -103,7 +103,7 @@ public:
 		\param cmp Compare policy object.
 	 **/
 	tod_select(tensor_i<N, double> &t,
-			double c, compare_t cmp=compare4absmin()) :
+			double c, compare_t cmp = compare_t()) :
 		m_t(t), m_c(c), m_cmp(cmp) { }
 
 	/** \brief Constuctor
@@ -113,7 +113,7 @@ public:
 		\param cmp Compare policy object.
 	 **/
 	tod_select(tensor_i<N, double> &t, const permutation<N> &p,
-			double c, compare_t cmp=compare4absmin()) :
+			double c, compare_t cmp = compare_t()) :
 		m_t(t), m_perm(p), m_c(c), m_cmp(cmp) { }
 
 	//@}
@@ -146,13 +146,13 @@ void tod_select<N,ComparePolicy>::perform(list_t &li, size_t n) {
 	while (i < d.get_size() && p[i] == 0.0) i++;
 
 	if (i == d.get_size()) {
-		ctrl.ret_dataptr(p);
+		ctrl.ret_const_dataptr(p);
 		return;	
 	}
 
 	if (li.empty()) {
-		index<N> idx;
-		d.abs_index(i, idx);
+	    abs_index<N> aidx(i, d);
+		index<N> idx(aidx.get_index());
 		if (do_perm) idx.permute(m_perm);
 		li.insert(li.end(), elem_t(idx, m_c * p[i]));
 		i++;
@@ -166,8 +166,8 @@ void tod_select<N,ComparePolicy>::perform(list_t &li, size_t n) {
 
 		if (! m_cmp(val, li.back().value)) {
 			if (li.size() < n) {
-				index<N> idx;
-				d.abs_index(i, idx);
+		        abs_index<N> aidx(i, d);
+				index<N> idx(aidx.get_index());
 				if (do_perm) idx.permute(m_perm);
 				li.push_back(elem_t(idx, val));
 			}
@@ -177,14 +177,14 @@ void tod_select<N,ComparePolicy>::perform(list_t &li, size_t n) {
 
 			typename list_t::iterator it = li.begin();
 			while (it != li.end() && ! m_cmp(val, it->value)) it++;
-			index<N> idx;
-			d.abs_index(i, idx);
+            abs_index<N> aidx(i, d);
+			index<N> idx(aidx.get_index());
 			if (do_perm) idx.permute(m_perm);
 			li.insert(it, elem_t(idx, val));
 		}
 	}
 
-	ctrl.ret_dataptr(p);
+	ctrl.ret_const_dataptr(p);
 }
 
 } // namespace libtensor

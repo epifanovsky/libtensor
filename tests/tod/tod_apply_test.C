@@ -1,15 +1,11 @@
 #include <sstream>
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/tensor.h>
 #include <libtensor/tod/tod_apply.h>
 #include "../compare_ref.h"
 #include "tod_apply_test.h"
 
 namespace libtensor {
-
-typedef libvmm::std_allocator<double> allocator;
-typedef tensor<4, double, allocator> tensor4;
-typedef tensor_ctrl<4,double> tensor4_ctrl;
 
 namespace tod_apply_test_ns {
 
@@ -98,6 +94,10 @@ void tod_apply_test::test_plain(Functor &fn, const dimensions<N> &dims)
 
 	static const char *testname = "tod_apply_test::test_plain()";
 
+	typedef std_allocator<double> allocator;
+
+    cpu_pool cpus(1);
+
 	try {
 
 	tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
@@ -111,14 +111,13 @@ void tod_apply_test::test_plain(Functor &fn, const dimensions<N> &dims)
 
 	// Fill in random data
 
-	index<N> ida;
+	abs_index<N> aida(dims);
 	do {
-		size_t i;
-		i = dims.abs_index(ida);
+		size_t i = aida.get_abs_index();
 		dta[i] = drand48();
 		dtb2[i] = fn(dta[i]);
 		dtb1[i] = drand48();
-	} while(dims.inc_index(ida));
+	} while(aida.inc());
 
 	tca.ret_dataptr(dta); dta = NULL;
 	tcb.ret_dataptr(dtb1); dtb1 = NULL;
@@ -129,7 +128,7 @@ void tod_apply_test::test_plain(Functor &fn, const dimensions<N> &dims)
 	// Invoke the operation
 
 	tod_apply<N, Functor> cp(ta, fn);
-	cp.perform(tb);
+	cp.perform(cpus, tb);
 
 	// Compare against the reference
 
@@ -146,6 +145,10 @@ void tod_apply_test::test_plain_additive(Functor &fn,
 
 	static const char *testname = "tod_apply_test::test_plain_additive()";
 
+    typedef std_allocator<double> allocator;
+
+    cpu_pool cpus(1);
+
 	try {
 
 	tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
@@ -159,14 +162,13 @@ void tod_apply_test::test_plain_additive(Functor &fn,
 
 	// Fill in random data
 
-	index<N> ida;
+	abs_index<N> aida(dims);
 	do {
-		size_t i;
-		i = dims.abs_index(ida);
+		size_t i = aida.get_abs_index();
 		dta[i] = drand48();
 		dtb1[i] = drand48();
 		dtb2[i] = dtb1[i] + d * fn(dta[i]);
-	} while(dims.inc_index(ida));
+	} while(aida.inc());
 
 	tca.ret_dataptr(dta); dta = NULL;
 	tcb.ret_dataptr(dtb1); dtb1 = NULL;
@@ -177,7 +179,7 @@ void tod_apply_test::test_plain_additive(Functor &fn,
 	// Invoke the operation
 
 	tod_apply<N, Functor> cp(ta, fn);
-	cp.perform(tb, d);
+	cp.perform(cpus, tb, d);
 
 	// Compare against the reference
 
@@ -196,6 +198,10 @@ void tod_apply_test::test_scaled(Functor &fn,
 
 	static const char *testname = "tod_apply_test::test_scaled()";
 
+    typedef std_allocator<double> allocator;
+
+    cpu_pool cpus(1);
+
 	try {
 
 	tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
@@ -209,14 +215,13 @@ void tod_apply_test::test_scaled(Functor &fn,
 
 	// Fill in random data
 
-	index<N> ida;
+	abs_index<N> aida(dims);
 	do {
-		size_t i;
-		i = dims.abs_index(ida);
+		size_t i = aida.get_abs_index();
 		dta[i] = drand48();
 		dtb2[i] = fn(c * dta[i]);
 		dtb1[i] = drand48();
-	} while(dims.inc_index(ida));
+	} while(aida.inc());
 
 	tca.ret_dataptr(dta); dta = NULL;
 	tcb.ret_dataptr(dtb1); dtb1 = NULL;
@@ -227,7 +232,7 @@ void tod_apply_test::test_scaled(Functor &fn,
 	// Invoke the operation
 
 	tod_apply<N, Functor> cp(ta, fn, c);
-	cp.perform(tb);
+	cp.perform(cpus, tb);
 
 	// Compare against the reference
 
@@ -246,6 +251,10 @@ void tod_apply_test::test_scaled_additive(Functor &fn,
 
 	static const char *testname = "tod_apply_test::test_scaled_additive()";
 
+    typedef std_allocator<double> allocator;
+
+    cpu_pool cpus(1);
+
 	try {
 
 	tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
@@ -259,14 +268,13 @@ void tod_apply_test::test_scaled_additive(Functor &fn,
 
 	// Fill in random data
 
-	index<N> ida;
+	abs_index<N> aida(dims);
 	do {
-		size_t i;
-		i = dims.abs_index(ida);
+		size_t i = aida.get_abs_index();
 		dta[i] = drand48();
 		dtb1[i] = drand48();
 		dtb2[i] = dtb1[i] + d * fn(c * dta[i]);
-	} while(dims.inc_index(ida));
+	} while(aida.inc());
 
 	tca.ret_dataptr(dta); dta = NULL;
 	tcb.ret_dataptr(dtb1); dtb1 = NULL;
@@ -277,7 +285,7 @@ void tod_apply_test::test_scaled_additive(Functor &fn,
 	// Invoke the operation
 
 	tod_apply<N, Functor> cp(ta, fn, c);
-	cp.perform(tb, d);
+	cp.perform(cpus, tb, d);
 
 	// Compare against the reference
 
@@ -296,6 +304,10 @@ void tod_apply_test::test_perm(Functor &fn, const dimensions<N> &dims,
 
 	static const char *testname = "tod_apply_test::test_perm()";
 
+    typedef std_allocator<double> allocator;
+
+    cpu_pool cpus(1);
+
 	try {
 
 	dimensions<N> dimsa(dims), dimsb(dims);
@@ -312,17 +324,18 @@ void tod_apply_test::test_perm(Functor &fn, const dimensions<N> &dims,
 
 	// Fill in random data
 
-	index<N> ida;
+	abs_index<N> aida(dimsa);
 	do {
-		index<N> idb(ida);
+		index<N> idb(aida.get_index());
 		idb.permute(perm);
+		abs_index<N> aidb(idb, dimsb);
 		size_t i, j;
-		i = dimsa.abs_index(ida);
-		j = dimsb.abs_index(idb);
+		i = aida.get_abs_index();
+		j = aidb.get_abs_index();
 		dta[i] = drand48();
 		dtb1[i] = drand48();
 		dtb2[j] = fn(dta[i]);
-	} while(dimsa.inc_index(ida));
+	} while(aida.inc());
 
 	tca.ret_dataptr(dta); dta = NULL;
 	tcb.ret_dataptr(dtb1); dtb1 = NULL;
@@ -333,7 +346,7 @@ void tod_apply_test::test_perm(Functor &fn, const dimensions<N> &dims,
 	// Invoke the operation
 
 	tod_apply<N, Functor> cp(ta, fn, perm);
-	cp.perform(tb);
+	cp.perform(cpus, tb);
 
 	// Compare against the reference
 
@@ -350,6 +363,10 @@ void tod_apply_test::test_perm_additive(Functor &fn, const dimensions<N> &dims,
 
 	static const char *testname = "tod_apply_test::test_perm_additive()";
 
+    typedef std_allocator<double> allocator;
+
+    cpu_pool cpus(1);
+
 	try {
 
 	dimensions<N> dimsa(dims), dimsb(dims);
@@ -366,17 +383,18 @@ void tod_apply_test::test_perm_additive(Functor &fn, const dimensions<N> &dims,
 
 	// Fill in random data
 
-	index<N> ida;
+	abs_index<N> aida(dimsa);
 	do {
-		index<N> idb(ida);
+		index<N> idb(aida.get_index());
 		idb.permute(perm);
+		abs_index<N> aidb(idb, dimsb);
 		size_t i, j;
-		i = dimsa.abs_index(ida);
-		j = dimsb.abs_index(idb);
+		i = aida.get_abs_index();
+		j = aidb.get_abs_index();
 		dta[i] = drand48();
 		dtb1[j] = drand48();
 		dtb2[j] = dtb1[j] + d * fn(dta[i]);
-	} while(dimsa.inc_index(ida));
+	} while(aida.inc());
 
 	tca.ret_dataptr(dta); dta = NULL;
 	tcb.ret_dataptr(dtb1); dtb1 = NULL;
@@ -387,7 +405,7 @@ void tod_apply_test::test_perm_additive(Functor &fn, const dimensions<N> &dims,
 	// Invoke the operation
 
 	tod_apply<N, Functor> cp(ta, fn, perm);
-	cp.perform(tb, d);
+	cp.perform(cpus, tb, d);
 
 	// Compare against the reference
 
@@ -404,6 +422,10 @@ void tod_apply_test::test_perm_scaled(Functor &fn, const dimensions<N> &dims,
 
 	static const char *testname = "tod_apply_test::test_perm_scaled()";
 
+    typedef std_allocator<double> allocator;
+
+    cpu_pool cpus(1);
+
 	try {
 
 	dimensions<N> dimsa(dims), dimsb(dims);
@@ -420,17 +442,18 @@ void tod_apply_test::test_perm_scaled(Functor &fn, const dimensions<N> &dims,
 
 	// Fill in random data
 
-	index<N> ida;
+	abs_index<N> aida(dimsa);
 	do {
-		index<N> idb(ida);
+		index<N> idb(aida.get_index());
 		idb.permute(perm);
+		abs_index<N> aidb(idb, dimsb);
 		size_t i, j;
-		i = dimsa.abs_index(ida);
-		j = dimsb.abs_index(idb);
+		i = aida.get_abs_index();
+		j = aidb.get_abs_index();
 		dta[i] = drand48();
 		dtb1[j] = drand48();
 		dtb2[j] = fn(c * dta[i]);
-	} while(dimsa.inc_index(ida));
+	} while(aida.inc());
 
 	tca.ret_dataptr(dta); dta = NULL;
 	tcb.ret_dataptr(dtb1); dtb1 = NULL;
@@ -441,7 +464,7 @@ void tod_apply_test::test_perm_scaled(Functor &fn, const dimensions<N> &dims,
 	// Invoke the operation
 
 	tod_apply<N, Functor> cp(ta, fn, perm, c);
-	cp.perform(tb);
+	cp.perform(cpus, tb);
 
 	// Compare against the reference
 
@@ -460,6 +483,10 @@ void tod_apply_test::test_perm_scaled_additive(Functor &fn,
 	static const char *testname =
 		"tod_apply_test::test_perm_scaled_additive()";
 
+    typedef std_allocator<double> allocator;
+
+    cpu_pool cpus(1);
+
 	try {
 
 	dimensions<N> dimsa(dims), dimsb(dims);
@@ -476,17 +503,18 @@ void tod_apply_test::test_perm_scaled_additive(Functor &fn,
 
 	// Fill in random data
 
-	index<N> ida;
+	abs_index<N> aida(dimsa);
 	do {
-		index<N> idb(ida);
+		index<N> idb(aida.get_index());
 		idb.permute(perm);
+		abs_index<N> aidb(idb, dimsb);
 		size_t i, j;
-		i = dimsa.abs_index(ida);
-		j = dimsb.abs_index(idb);
+		i = aida.get_abs_index();
+		j = aidb.get_abs_index();
 		dta[i] = drand48();
 		dtb1[j] = drand48();
 		dtb2[j] = dtb1[j] + d * fn(c * dta[i]);
-	} while(dimsa.inc_index(ida));
+	} while(aida.inc());
 
 	tca.ret_dataptr(dta); dta = NULL;
 	tcb.ret_dataptr(dtb1); dtb1 = NULL;
@@ -497,7 +525,7 @@ void tod_apply_test::test_perm_scaled_additive(Functor &fn,
 	// Invoke the operation
 
 	tod_apply<N, Functor> cp(ta, fn, perm, c);
-	cp.perform(tb, d);
+	cp.perform(cpus, tb, d);
 
 	// Compare against the reference
 
@@ -509,18 +537,23 @@ void tod_apply_test::test_perm_scaled_additive(Functor &fn,
 }
 
 void tod_apply_test::test_exc() throw(libtest::test_exception) {
+
+    typedef std_allocator<double> allocator;
+
 	index<4> i1, i2, i3;
 	i2[0]=2; i2[1]=2; i2[2]=2; i2[3]=2;
 	i3[0]=3; i3[1]=3; i3[2]=3; i3[3]=3;
 	index_range<4> ir1(i1,i2), ir2(i1,i3);
 	dimensions<4> dim1(ir1), dim2(ir2);
-	tensor4 t1(dim1), t2(dim2);
+	tensor<4, double, allocator> t1(dim1), t2(dim2);
+
+    cpu_pool cpus(1);
 
 	bool ok = false;
 	try {
 		tod_apply_test_ns::sin_functor sin;
 		tod_apply<4, tod_apply_test_ns::sin_functor> tc(t1, sin);
-		tc.perform(t2);
+		tc.perform(cpus, t2);
 	} catch(exception &e) {
 		ok = true;
 	}

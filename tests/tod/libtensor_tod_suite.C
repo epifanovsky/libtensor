@@ -19,6 +19,7 @@ libtensor_tod_suite::libtensor_tod_suite() : libtest::test_suite("libtensor") {
 	add_test("tod_ewmult2", m_utf_tod_ewmult2);
 	add_test("tod_extract", m_utf_tod_extract);
 	add_test("tod_import_raw", m_utf_tod_import_raw);
+    add_test("tod_import_raw_stream", m_utf_tod_import_raw_stream);
 	add_test("tod_mult", m_utf_tod_mult);
 	add_test("tod_mult1", m_utf_tod_mult1);
 	add_test("tod_random", m_utf_tod_random);
@@ -29,7 +30,6 @@ libtensor_tod_suite::libtensor_tod_suite() : libtest::test_suite("libtensor") {
 	add_test("tod_set_diag", m_utf_tod_set_diag);
 	add_test("tod_set_elem", m_utf_tod_set_elem);
 	add_test("tod_sum", m_utf_tod_sum);
-	add_test("tod_symcontract2", m_utf_tod_symcontract2);
 	add_test("tod_trace", m_utf_tod_trace);
 }
 

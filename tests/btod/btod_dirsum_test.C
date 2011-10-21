@@ -1,7 +1,7 @@
 #include <cmath>
 #include <ctime>
 #include <sstream>
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/abs_index.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/core/tensor.h>
@@ -18,7 +18,6 @@
 
 namespace libtensor {
 
-typedef libvmm::std_allocator<double> allocator;
 
 void btod_dirsum_test::perform() throw(libtest::test_exception) {
 
@@ -97,6 +96,8 @@ void btod_dirsum_test::test_ij_i_j_1(bool rnd, double d)
 	tnss << "btod_dirsum_test::test_ij_i_j_1(" << rnd << ", " << d << ")";
 	std::string tns = tnss.str();
 
+	typedef std_allocator<double> allocator;
+
 	try {
 
 	size_t ni = 9, nj = 7;
@@ -156,6 +157,8 @@ void btod_dirsum_test::test_ij_i_j_2(bool rnd, double d)
 	std::stringstream tnss;
 	tnss << "btod_dirsum_test::test_ij_i_j_2(" << rnd << ", " << d << ")";
 	std::string tns = tnss.str();
+
+    typedef std_allocator<double> allocator;
 
 	try {
 
@@ -236,6 +239,8 @@ void btod_dirsum_test::test_ij_i_j_3(bool rnd, double d)
 	std::stringstream tnss;
 	tnss << "btod_dirsum_test::test_ij_i_j_3(" << rnd << ", " << d << ")";
 	std::string tns = tnss.str();
+
+    typedef std_allocator<double> allocator;
 
 	try {
 
@@ -318,6 +323,8 @@ void btod_dirsum_test::test_ijk_ij_k_1(bool rnd, double d)
 		<< ")";
 	std::string tns = tnss.str();
 
+    typedef std_allocator<double> allocator;
+
 	try {
 
 	size_t ni = 9, nj = 9, nk = 7;
@@ -388,6 +395,8 @@ void btod_dirsum_test::test_ikjl_ij_kl_1(bool rnd, double d)
 	tnss << "btod_dirsum_test::test_ikjl_ij_kl_1(" << rnd << ", " << d
 		<< ")";
 	std::string tns = tnss.str();
+
+    typedef std_allocator<double> allocator;
 
 	try {
 
@@ -461,6 +470,8 @@ void btod_dirsum_test::test_ikjl_ij_kl_2(bool rnd, double d)
 	tnss << "btod_dirsum_test::test_ikjl_ij_kl_2(" << rnd << ", " << d
 		<< ")";
 	std::string tns = tnss.str();
+
+    typedef std_allocator<double> allocator;
 
 	try {
 
@@ -560,6 +571,8 @@ void btod_dirsum_test::test_ikjl_ij_kl_3a(bool s1, bool s2,
     tnss << "btod_dirsum_test::test_ikjl_ij_kl_3a(" << s1 << ", " << s2
             << ", " << rnd << ", " << d << ")";
     std::string tns = tnss.str();
+
+    typedef std_allocator<double> allocator;
 
     try {
 
@@ -680,6 +693,8 @@ void btod_dirsum_test::test_ikjl_ij_kl_3b(bool rnd,
 	tnss << "btod_dirsum_test::test_ikjl_ij_kl_3b("
 	        << rnd << ", " << d << ")";
 	std::string tns = tnss.str();
+
+    typedef std_allocator<double> allocator;
 
 	try {
 
@@ -819,6 +834,8 @@ void btod_dirsum_test::test_ikjl_ij_kl_3c(
     tnss << "btod_dirsum_test::test_ikjl_ij_kl_3c("
             << ", " << rnd << ", " << d << ")";
     std::string tns = tnss.str();
+
+    typedef std_allocator<double> allocator;
 
     {
         point_group_table pg(tns, 2);
@@ -962,6 +979,8 @@ void btod_dirsum_test::test_iklj_ij_kl_1(bool rnd, double d)
 	tnss << "btod_dirsum_test::test_ikjl_ij_kl_1(" << rnd << ", " << d
 		<< ")";
 	std::string tns = tnss.str();
+
+    typedef std_allocator<double> allocator;
 
 	try {
 

@@ -1,6 +1,7 @@
 #include <sstream>
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/abs_index.h>
+#include <libtensor/core/print_dimensions.h>
 #include <libtensor/core/tensor.h>
 #include <libtensor/tod/tod_import_raw.h>
 #include "../compare_ref.h"
@@ -46,7 +47,7 @@ void tod_import_raw_test::test_1(const dimensions<N> &dims,
 	tnss << "tod_import_raw_test::test_1(" << dims << ", "
 		<< ir.get_begin() << "->" << ir.get_end() << ")";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tensor<N, double, allocator_t> tensor_t;
 	typedef tensor_ctrl<N, double> tensor_ctrl_t;
 
@@ -88,13 +89,13 @@ void tod_import_raw_test::test_1(const dimensions<N> &dims,
 		p2_ref[iwnd.get_abs_index()] = p1_ref[aidx.get_abs_index()];
 	} while(iwnd.inc());
 	tc2_ref.ret_dataptr(p2_ref);
-	tc1.ret_dataptr(p1_ref);
+	tc1.ret_const_dataptr(p1_ref);
 
 	//	Invoke the operation
 
 	p1_ref = tc1.req_const_dataptr();
 	tod_import_raw<N>(p1_ref, dims, ir).perform(t2);
-	tc1.ret_dataptr(p1_ref);
+	tc1.ret_const_dataptr(p1_ref);
 	}
 
 	//	Compare against the reference

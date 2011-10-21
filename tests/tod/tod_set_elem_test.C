@@ -1,6 +1,6 @@
 #include <cmath>
 #include <ctime>
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/tensor.h>
 #include <libtensor/tod/tod_set_elem.h>
 #include "../compare_ref.h"
@@ -21,7 +21,7 @@ void tod_set_elem_test::test_1() throw(libtest::test_exception) {
 
 	static const char *testname = "tod_set_elem_test::test_1()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 

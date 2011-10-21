@@ -144,8 +144,8 @@ bool tod_compare<N>::compare() {
 	}
 	if(!equal) m_idx_diff = idx.get_index();
 
-	tctrl1.ret_dataptr(p1);
-	tctrl2.ret_dataptr(p2);
+	tctrl1.ret_const_dataptr(p1);
+	tctrl2.ret_const_dataptr(p2);
 
 	return equal;
 }

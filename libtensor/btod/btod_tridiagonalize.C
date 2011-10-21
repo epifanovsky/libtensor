@@ -1,5 +1,5 @@
 #include <iostream>
-#include <libvmm/libvmm.h>
+#include "../core/allocator.h"
 #include "../core/block_tensor_ctrl.h"
 #include "../core/block_tensor.h"
 #include "btod_add.h"
@@ -48,7 +48,7 @@ void btod_tridiagonalize::perform(block_tensor_i<2, double> &btb,
 		bis.split(splmskc,f);
 	}
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	block_tensor<1, double, allocator_t> btcol(bis);//tensor which contains
 	//column
 
@@ -134,11 +134,13 @@ void btod_tridiagonalize::perform(block_tensor_i<2, double> &btb,
 				tensor_i<1 ,double> &tcol = cab.req_block(idx);
 				tensor_ctrl<1, double> ca(tcol);
 
+				{
 				const double *pa = ca.req_const_dataptr();
-			sum += (*(pa + pos)) * (*(pa + pos));
-			ca.ret_dataptr(pa);
-			pa=0;
-			cab.ret_block(idx);
+				sum += (*(pa + pos)) * (*(pa + pos));
+				ca.ret_const_dataptr(pa);
+				pa=0;
+				}
+				cab.ret_block(idx);
 			}
 
 			pos++;
@@ -164,12 +166,14 @@ void btod_tridiagonalize::perform(block_tensor_i<2, double> &btb,
 		tensor_i<1 ,double> &tcol = cab.req_block(idx);
 		tensor_ctrl<1, double> ca(tcol);
 
-		const double *pa = ca.req_const_dataptr();
+		{
+		    const double *pa = ca.req_const_dataptr();
 
-		a = *(pa + pos);
+		    a = *(pa + pos);
 
-		ca.ret_dataptr(pa);
-		pa=0;
+		    ca.ret_const_dataptr(pa);
+		    pa=0;
+		}
 		cab.ret_block(idx);
 
 		if(a>=0.0)
@@ -235,11 +239,13 @@ void btod_tridiagonalize::perform(block_tensor_i<2, double> &btb,
 			{
 				tensor_i<1 ,double> &tcol1 = cab.req_block(idx);
 				tensor_ctrl<1, double> ca1(tcol1);
-				const double *pa1 = ca1.req_const_dataptr();
-				idxibl1[0]=pos;
-				btod_set_elem<1>().perform(v,idx,idxibl1,*(pa1 + pos));
-				ca1.ret_dataptr(pa1);
-				pa1=0;
+				{
+				    const double *pa1 = ca1.req_const_dataptr();
+				    idxibl1[0]=pos;
+				    btod_set_elem<1>().perform(v,idx,idxibl1,*(pa1 + pos));
+				    ca1.ret_const_dataptr(pa1);
+				    pa1=0;
+				}
 				cab.ret_block(idx);
 			}
 
@@ -305,11 +311,13 @@ void btod_tridiagonalize::print(block_tensor_i<2, double> &btb)
 			{
 			tensor_i<2 ,double> &tbtb = ctrl.req_block(idxi);
 			tensor_ctrl<2, double> catrl(tbtb);
-			const double *pa = catrl.req_const_dataptr();
-			std::cout<<*(pa + posv * m_bta.get_bis().get_block_dims(idxi)
-					.get_dim(1) + posh)<<" ";
-			catrl.ret_dataptr(pa);
-			pa=0;
+			{
+			    const double *pa = catrl.req_const_dataptr();
+			    std::cout<<*(pa + posv * m_bta.get_bis().get_block_dims(idxi)
+			            .get_dim(1) + posh)<<" ";
+			    catrl.ret_const_dataptr(pa);
+			    pa=0;
+			}
 			ctrl.ret_block(idxi);
 			}
 			else
@@ -354,11 +362,13 @@ void btod_tridiagonalize::print(block_tensor_i<2, double> &btb)
 			{
 			tensor_i<2 ,double> &tbtb = ctrl.req_block(idxi);
 			tensor_ctrl<2, double> catrl(tbtb);
+			{
 			const double *pa = catrl.req_const_dataptr();
 			std::cout<<*(pa + posv * btb.get_bis().get_block_dims(idxi).
 					get_dim(1) + posh)<<" ";
-			catrl.ret_dataptr(pa);
+			catrl.ret_const_dataptr(pa);
 			pa=0;
+			}
 			ctrl.ret_block(idxi);
 			}
 			else

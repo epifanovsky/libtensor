@@ -1,4 +1,4 @@
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/btod/btod_mult1.h>
 #include <libtensor/btod/btod_random.h>
@@ -36,7 +36,7 @@ void btod_mult1_test::test_1(
 			<< (recip ? "true" : "false") << ","
 			<< (doadd ? "true" : "false") << ")";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -93,7 +93,7 @@ void btod_mult1_test::test_2(
 			<< (recip ? "true" : "false") << ","
 			<< (doadd ? "true" : "false") << ")";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -152,7 +152,7 @@ void btod_mult1_test::test_3(
 			<< (recip ? "true" : "false") << ","
 			<< (doadd ? "true" : "false") << ")";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -226,7 +226,7 @@ void btod_mult1_test::test_4(
 			<< (recip ? "true" : "false") << ","
 			<< (doadd ? "true" : "false") << ")";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -303,7 +303,7 @@ void btod_mult1_test::test_5(bool recip, bool doadd)
 			<< (recip ? "true" : "false") << ", "
 			<< (doadd ? "true" : "false") << ")";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 

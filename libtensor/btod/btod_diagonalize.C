@@ -1,5 +1,5 @@
 #include <iostream>
-#include <libvmm/libvmm.h>
+#include "../core/allocator.h"
 #include "../core/block_tensor_ctrl.h"
 #include "../core/block_tensor.h"
 #include "btod_add.h"
@@ -28,7 +28,7 @@ void btod_diagonalize::perform(block_tensor_i<2, double> &btb,
 		block_tensor_i <1, double> &eigvalue)
 	{
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	btod_set_diag<2> (1).perform(eigvector);
 
@@ -80,7 +80,7 @@ void btod_diagonalize::perform(block_tensor_i<2, double> &btb,
 		elem = *(pas + posc1 + posc0 * btb.get_bis().get_block_dims(idxc).
 				get_dim(1));
 
-		cbtbs.ret_dataptr(pas);
+		cbtbs.ret_const_dataptr(pas);
 		}
 		cab.ret_block(idxc);
 
@@ -144,7 +144,7 @@ void btod_diagonalize::perform(block_tensor_i<2, double> &btb,
 
 		x = *(pa + pos + pos * btb.get_bis().get_block_dims(idx).get_dim(1));
 
-		cbtb.ret_dataptr(pa);
+		cbtb.ret_const_dataptr(pa);
 		}
 		cab.ret_block(idx);
 
@@ -165,7 +165,7 @@ void btod_diagonalize::perform(block_tensor_i<2, double> &btb,
 			b = *(pa2 + pos1 + pos0 * btb.get_bis().get_block_dims(idx).
 					get_dim(1));
 
-			cbtb2.ret_dataptr(pa2);
+			cbtb2.ret_const_dataptr(pa2);
 			}
 			cab.ret_block(idx);
 
@@ -183,7 +183,7 @@ void btod_diagonalize::perform(block_tensor_i<2, double> &btb,
 			b = *(pa2 + pos1 + pos0 * btb.get_bis().get_block_dims(idx).
 					get_dim(1));
 
-			cbtb2.ret_dataptr(pa2);
+			cbtb2.ret_const_dataptr(pa2);
 			}
 
 			cab.ret_block(idx);
@@ -319,7 +319,7 @@ void btod_diagonalize::perform(block_tensor_i<2, double> &btb,
 			elem = *(pas + posc1 + posc0 * btb.get_bis().get_block_dims(idxc).
 					get_dim(1));
 
-			cbtbs.ret_dataptr(pas);
+			cbtbs.ret_const_dataptr(pas);
 			}
 			cab.ret_block(idxc);
 
@@ -395,7 +395,7 @@ block_tensor_i <2, double> &eigvector,block_tensor_i <1, double> &eigvalue)
 			const double *pa = catrl.req_const_dataptr();
 			std::cout<<*(pa + pos0 * m_bta.get_bis().get_block_dims(idxi).
 					get_dim(1) + pos1)<<" ";
-			catrl.ret_dataptr(pa);
+			catrl.ret_const_dataptr(pa);
 				}
 			ctrla.ret_block(idxi);
 			}
@@ -461,7 +461,7 @@ block_tensor_i <2, double> &eigvector,block_tensor_i <1, double> &eigvalue)
 					const double *pa = catrl.req_const_dataptr();
 					std::cout<<*(pa + pos0 * btb.get_bis().get_block_dims(idxi).
 							get_dim(1) + pos1)<<" ";
-					catrl.ret_dataptr(pa);
+					catrl.ret_const_dataptr(pa);
 				}
 				ctrlb.ret_block(idxi);
 			}
@@ -510,7 +510,7 @@ block_tensor_i <2, double> &eigvector,block_tensor_i <1, double> &eigvalue)
 			const double *pa = catrl.req_const_dataptr();
 			std::cout<<*(pa + pos0 * eigvector.get_bis().get_block_dims(idxi).
 					get_dim(1) + pos1)<<" ";
-			catrl.ret_dataptr(pa);
+			catrl.ret_const_dataptr(pa);
 				}
 			ctrlevec.ret_block(idxi);
 			}
@@ -565,7 +565,7 @@ void btod_diagonalize::check(block_tensor_i <2, double> &bta ,
 	{
 		tol = m_tol;
 	}
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	block_tensor_ctrl<1, double> ctrleigval(eigvalue);
 
 	block_tensor<1, double, allocator_t> zero(eigvalue.get_bis());
@@ -633,7 +633,7 @@ void btod_diagonalize::check(block_tensor_i <2, double> &bta ,
 						checked = 0;
 					}
 
-				cavp2.ret_dataptr(pav2);
+				cavp2.ret_const_dataptr(pav2);
 						}
 				ctrlzero.ret_block(idxv2);
 					}
@@ -693,7 +693,7 @@ void btod_diagonalize::sort(block_tensor_i <1, double> &eigvalue,size_t *map)
 
 							x1=*(pav2 + pos2);
 
-						cavp2.ret_dataptr(pav2);
+						cavp2.ret_const_dataptr(pav2);
 								}
 						ctrleigvalue.ret_block(idxv2);
 							}
@@ -725,7 +725,7 @@ void btod_diagonalize::sort(block_tensor_i <1, double> &eigvalue,size_t *map)
 
 								x2=*(pav2 + pos2);
 
-							cavp2.ret_dataptr(pav2);
+							cavp2.ret_const_dataptr(pav2);
 								}
 							ctrleigvalue.ret_block(idxv2);
 								}
@@ -776,7 +776,7 @@ double btod_diagonalize::get_eigenvalue(block_tensor_i <1, double> &eigvalue,
 					const double *pav = cavp.req_const_dataptr();
 
 					answer=*(pav + pos);
-				cavp.ret_dataptr(pav);
+				cavp.ret_const_dataptr(pav);
 						}
 				ctrleigval.ret_block(idxv);
 					}

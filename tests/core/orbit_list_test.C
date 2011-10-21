@@ -1,4 +1,5 @@
 #include <sstream>
+#include <libtensor/core/abs_index.h>
 #include <libtensor/core/orbit_list.h>
 #include <libtensor/btod/transf_double.h>
 #include <libtensor/symmetry/se_perm.h>
@@ -50,8 +51,9 @@ void orbit_list_test::test_1() throw(libtest::test_exception) {
 			ss.str().c_str());
 	}
 
-	index<2> io;
+	abs_index<2> aio(dims);
 	do {
+	    const index<2> &io = aio.get_index();
 		bool can = false, can_ref = true;
 		orbit_list<2, double>::iterator i = orblst.begin();
 		while(i != orblst.end()) {
@@ -68,7 +70,7 @@ void orbit_list_test::test_1() throw(libtest::test_exception) {
 			fail_test(testname, __FILE__, __LINE__,
 				ss.str().c_str());
 		}
-	} while(dims.inc_index(io));
+	} while(aio.inc());
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
@@ -109,8 +111,9 @@ void orbit_list_test::test_2() throw(libtest::test_exception) {
 			ss.str().c_str());
 	}
 
-	index<2> io;
+	abs_index<2> aio(dims);
 	do {
+	    const index<2> &io = aio.get_index();
 		bool can_ref = io[0] <= io[1];
 		bool can = false;
 		orbit_list<2, double>::iterator i = orblst.begin();
@@ -128,7 +131,7 @@ void orbit_list_test::test_2() throw(libtest::test_exception) {
 			fail_test(testname, __FILE__, __LINE__,
 				ss.str().c_str());
 		}
-	} while(dims.inc_index(io));
+	} while(aio.inc());
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
@@ -169,8 +172,9 @@ void orbit_list_test::test_3() throw(libtest::test_exception) {
 			ss.str().c_str());
 	}
 
-	index<4> io;
+	abs_index<4> aio(dims);
 	do {
+	    const index<4> &io = aio.get_index();
 		bool can_ref = io[0] <= io[1];
 		bool can = false;
 		orbit_list<4, double>::iterator i = orblst.begin();
@@ -188,7 +192,7 @@ void orbit_list_test::test_3() throw(libtest::test_exception) {
 			fail_test(testname, __FILE__, __LINE__,
 				ss.str().c_str());
 		}
-	} while(dims.inc_index(io));
+	} while(aio.inc());
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
@@ -229,8 +233,9 @@ void orbit_list_test::test_4() throw(libtest::test_exception) {
 			ss.str().c_str());
 	}
 
-	index<4> io;
+	abs_index<4> aio(dims);
 	do {
+	    const index<4> &io = aio.get_index();
 		bool can_ref = io[1] <= io[2];
 		bool can = false;
 		orbit_list<4, double>::iterator i = orblst.begin();
@@ -248,7 +253,7 @@ void orbit_list_test::test_4() throw(libtest::test_exception) {
 			fail_test(testname, __FILE__, __LINE__,
 				ss.str().c_str());
 		}
-	} while(dims.inc_index(io));
+	} while(aio.inc());
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
@@ -289,8 +294,9 @@ void orbit_list_test::test_5() throw(libtest::test_exception) {
 			ss.str().c_str());
 	}
 
-	index<4> io;
+	abs_index<4> aio(dims);
 	do {
+	    const index<4> &io = aio.get_index();
 		bool can_ref = (io[0] == io[1] && io[0] <= io[2]) ||
 			(io[0] < io[1] && io[0] < io[2]);
 		bool can = false;
@@ -309,7 +315,7 @@ void orbit_list_test::test_5() throw(libtest::test_exception) {
 			fail_test(testname, __FILE__, __LINE__,
 				ss.str().c_str());
 		}
-	} while(dims.inc_index(io));
+	} while(aio.inc());
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
@@ -354,8 +360,9 @@ void orbit_list_test::test_6() throw(libtest::test_exception) {
 			ss.str().c_str());
 	}
 
-	index<4> io;
+	abs_index<4> aio(dims);
 	do {
+	    const index<4> &io = aio.get_index();
 		bool can_ref = (io[0] <= io[1] && io[2] <= io[3]);
 		bool can = false;
 		orbit_list<4, double>::iterator i = orblst.begin();
@@ -373,7 +380,7 @@ void orbit_list_test::test_6() throw(libtest::test_exception) {
 			fail_test(testname, __FILE__, __LINE__,
 				ss.str().c_str());
 		}
-	} while(dims.inc_index(io));
+	} while(aio.inc());
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
@@ -418,8 +425,9 @@ void orbit_list_test::test_7() throw(libtest::test_exception) {
 			ss.str().c_str());
 	}
 
-	index<4> io;
+	abs_index<4> aio(dims);
 	do {
+	    const index<4> &io = aio.get_index();
 		bool can_ref = (io[0] <= io[1] && io[1] <= io[2]);
 		bool can = false;
 		orbit_list<4, double>::iterator i = orblst.begin();
@@ -437,7 +445,7 @@ void orbit_list_test::test_7() throw(libtest::test_exception) {
 			fail_test(testname, __FILE__, __LINE__,
 				ss.str().c_str());
 		}
-	} while(dims.inc_index(io));
+	} while(aio.inc());
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
@@ -482,8 +490,9 @@ void orbit_list_test::test_8() throw(libtest::test_exception) {
 			ss.str().c_str());
 	}
 
-	index<4> io;
+	abs_index<4> aio(dims);
 	do {
+	    const index<4> &io = aio.get_index();
 		bool can_ref =
 			(io[0] <= io[1] && io[1] <= io[2] && io[2] <= io[3]);
 		bool can = false;
@@ -502,7 +511,7 @@ void orbit_list_test::test_8() throw(libtest::test_exception) {
 			fail_test(testname, __FILE__, __LINE__,
 				ss.str().c_str());
 		}
-	} while(dims.inc_index(io));
+	} while(aio.inc());
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
@@ -551,8 +560,9 @@ void orbit_list_test::test_9() throw(libtest::test_exception) {
 			ss.str().c_str());
 	}
 
-	index<4> io;
+	abs_index<4> aio(bdims);
 	do {
+	    const index<4> &io = aio.get_index();
 		bool can_ref = (io[0] <= io[2] && io[1] <= io[3]);
 		bool can = false;
 		orbit_list<4, double>::iterator i = orblst.begin();
@@ -570,7 +580,7 @@ void orbit_list_test::test_9() throw(libtest::test_exception) {
 			fail_test(testname, __FILE__, __LINE__,
 				ss.str().c_str());
 		}
-	} while(bdims.inc_index(io));
+	} while(aio.inc());
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());

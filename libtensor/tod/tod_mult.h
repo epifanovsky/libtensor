@@ -4,6 +4,7 @@
 #include "../defs.h"
 #include "../timings.h"
 #include "../core/tensor_i.h"
+#include "../mp/auto_cpu_lock.h"
 #include "loop_list_elem.h"
 #include "tod_additive.h"
 #include "bad_dimensions.h"
@@ -76,9 +77,12 @@ public:
 	//@{
 	virtual void prefetch();
 
-	virtual void perform(tensor_i<N, double> &tc);
+    virtual void perform(cpu_pool &cpus, bool zero, double c,
+        tensor_i<N, double> &tc);
 
-	virtual void perform(tensor_i<N, double> &tc, double c);
+	void perform(cpu_pool &cpus, tensor_i<N, double> &tc);
+
+	void perform(cpu_pool &cpus, tensor_i<N, double> &tc, double c);
 	//@}
 
 private:
@@ -146,80 +150,80 @@ void tod_mult<N>::prefetch() {
 
 }
 
+
 template<size_t N>
-void tod_mult<N>::perform(tensor_i<N, double> &tc) {
+void tod_mult<N>::perform(cpu_pool &cpus, tensor_i<N, double> &tc) {
 
-	static const char *method = "perform(tensor_i<N, double>&)";
-
-	if(! m_dimsc.equals(tc.get_dims())) {
-		throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__,
-			"tc");
-	}
-
-	do_perform(tc, false, 1.0);
+    perform(cpus, true, 1.0, tc);
 }
 
+
 template<size_t N>
-void tod_mult<N>::perform(tensor_i<N, double> &tc, double c) {
+void tod_mult<N>::perform(cpu_pool &cpus, tensor_i<N, double> &tc, double c) {
 
-	static const char *method = "perform(tensor_i<N, double>&, double)";
-
-	if(! m_dimsc.equals(tc.get_dims())) {
-		throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__,
-			"tc");
-	}
-
-	do_perform(tc, true, c);
+    perform(cpus, false, c, tc);
 }
 
+
 template<size_t N>
-void tod_mult<N>::do_perform(tensor_i<N, double> &tc, bool doadd, double c) {
+void tod_mult<N>::perform(cpu_pool &cpus, bool zero, double c,
+    tensor_i<N, double> &tc) {
 
-	typedef typename loop_list_elem::list_t list_t;
-	typedef typename loop_list_elem::registers registers_t;
-	typedef typename loop_list_elem::node node_t;
+    static const char *method =
+        "perform(cpu_pool&, bool, double, tensor_i<N, double>&)";
 
-	tod_mult<N>::start_timer();
+    if(!m_dimsc.equals(tc.get_dims())) {
+        throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "tc");
+    }
 
-	try {
+    typedef typename loop_list_elem::list_t list_t;
+    typedef typename loop_list_elem::registers registers_t;
+    typedef typename loop_list_elem::node node_t;
 
-	tensor_ctrl<N, double> ca(m_ta), cb(m_tb), cc(tc);
-	ca.req_prefetch();
-	cb.req_prefetch();
-	cc.req_prefetch();
+    tod_mult<N>::start_timer();
 
-	const dimensions<N> &dimsa = m_ta.get_dims();
-	const dimensions<N> &dimsb = m_tb.get_dims();
-	const dimensions<N> &dimsc = tc.get_dims();
+    try {
 
-	list_t loop;
-	build_loop(loop, dimsa, m_perma, dimsb, m_permb, dimsc);
+    tensor_ctrl<N, double> ca(m_ta), cb(m_tb), cc(tc);
+    ca.req_prefetch();
+    cb.req_prefetch();
+    cc.req_prefetch();
 
-	const double *pa = ca.req_const_dataptr();
-	const double *pb = cb.req_const_dataptr();
-	double *pc = cc.req_dataptr();
+    const dimensions<N> &dimsa = m_ta.get_dims();
+    const dimensions<N> &dimsb = m_tb.get_dims();
+    const dimensions<N> &dimsc = tc.get_dims();
 
-	registers_t r;
-	r.m_ptra[0] = pa;
-	r.m_ptra[1] = pb;
-	r.m_ptrb[0] = pc;
-	r.m_ptra_end[0] = pa + dimsa.get_size();
-	r.m_ptra_end[1] = pb + dimsb.get_size();
-	r.m_ptrb_end[0] = pc + dimsc.get_size();
+    list_t loop;
+    build_loop(loop, dimsa, m_perma, dimsb, m_permb, dimsc);
 
-	loop_list_elem::run_loop(loop, r, m_c * c, doadd, m_recip);
+    const double *pa = ca.req_const_dataptr();
+    const double *pb = cb.req_const_dataptr();
+    double *pc = cc.req_dataptr();
 
-	cc.ret_dataptr(pc); pc = 0;
-	cb.ret_dataptr(pb); pb = 0;
-	ca.ret_dataptr(pa); pa = 0;
+    {
+        auto_cpu_lock cpu(cpus);
 
-	} catch (...) {
-		tod_mult<N>::stop_timer();
-		throw;
-	}
+        registers_t r;
+        r.m_ptra[0] = pa;
+        r.m_ptra[1] = pb;
+        r.m_ptrb[0] = pc;
+        r.m_ptra_end[0] = pa + dimsa.get_size();
+        r.m_ptra_end[1] = pb + dimsb.get_size();
+        r.m_ptrb_end[0] = pc + dimsc.get_size();
 
-	tod_mult<N>::stop_timer();
+        loop_list_elem::run_loop(loop, r, m_c * c, !zero, m_recip);
+    }
 
+    cc.ret_dataptr(pc); pc = 0;
+    cb.ret_const_dataptr(pb); pb = 0;
+    ca.ret_const_dataptr(pa); pa = 0;
+
+    } catch (...) {
+        tod_mult<N>::stop_timer();
+        throw;
+    }
+
+    tod_mult<N>::stop_timer();
 }
 
 

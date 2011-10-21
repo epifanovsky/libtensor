@@ -1,7 +1,8 @@
 #ifndef LIBTENSOR_PRODUCT_TABLE_CONTAINER_H
 #define LIBTENSOR_PRODUCT_TABLE_CONTAINER_H
 
-#include <libvmm/libvmm.h>
+#include <map>
+#include <libvmm/singleton.h>
 #include "../exception.h"
 #include "product_table_i.h"
 

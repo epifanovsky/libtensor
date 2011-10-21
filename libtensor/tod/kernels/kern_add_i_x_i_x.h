@@ -15,6 +15,7 @@ public:
 	static const char *k_clazz; //!< Kernel name
 
 private:
+    double m_ka, m_kb;
 	double m_d;
 	size_t m_ni;
 	size_t m_sib, m_sic;

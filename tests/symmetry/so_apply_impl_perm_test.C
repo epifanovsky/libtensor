@@ -1,3 +1,4 @@
+#include <sstream>
 #include <libtensor/symmetry/so_apply_impl_perm.h>
 #include <libtensor/btod/transf_double.h>
 #include "so_apply_impl_perm_test.h"

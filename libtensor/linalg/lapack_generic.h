@@ -3,6 +3,10 @@
 
 #include <complex>
 
+#ifdef USE_QCHEM
+#include <qchem.h>
+#endif // USE_QCHEM
+
 extern "C" {
 	int dgesv_(int*, int*, double*, int*, int*, double*, int*, int*);
 	int dgesvd_(char*, char*, int*, int*, double*, int*, double*, double*,
@@ -14,10 +18,13 @@ extern "C" {
 		int*);
 	int dgeev_(char*, char*, int*, double*, int*, double*, double*, double*,
 		int*, double*, int*, double*, int*, int*);
-        int zgeev_(char*, char*, int*, std::complex <double> *, int*, std::complex <double> *, 
+	int zgeev_(char*, char*, int*, std::complex <double> *, int*, std::complex <double> *, 
 	std::complex <double> *, int*, std::complex <double> *, int*, std::complex <double> *, 
 	int*, double*, int*);
-
+#ifndef USE_QCHEM
+	int dpotrf_(char*, int*, double*, int*, int*);
+#endif // USE_QCHEM
+        int dpstrf_(char*, int*, double*, int*, int*, int*, double *, double *, int* );
 }
 
 
@@ -136,6 +143,26 @@ inline int lapack_zgeev(char jobvl, char jobvr, size_t n, std::complex <double> 
         zgeev_(&jobvl, &jobvr, &gen_n, a, &gen_lda, w, vl, &gen_ldvl, vr, &gen_ldvr, work, &gen_lwork, rwork, &gen_info);     
         return gen_info;
 }
+
+inline int lapack_dpotrf(char uplo, size_t n, double *a, size_t lda) {
+
+        int gen_n = n;
+        int gen_lda = lda;
+        int gen_info = 0;
+        dpotrf_(&uplo, &gen_n, a, &gen_lda, &gen_info);
+        return gen_info;
+}
+
+inline int lapack_dpstrf(char uplo, size_t n, double *a, size_t lda, int *p, int *rank, double tol, double *work) {
+
+        int gen_n = n;
+        int gen_lda = lda;
+	double gen_tol = tol;
+        int gen_info = 0;
+        dpstrf_(&uplo, &gen_n, a, &gen_lda, p, rank, &gen_tol, work ,&gen_info);
+        return gen_info;
+}
+
 
 } // namespace libtensor
 

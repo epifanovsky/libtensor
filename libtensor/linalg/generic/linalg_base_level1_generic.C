@@ -5,13 +5,13 @@ namespace libtensor {
 
 void linalg_base_level1_generic::add_i_i_x_x(
 	size_t ni,
-	const double *a, size_t sia,
-	double b,
+	const double *a, size_t sia, double ka,
+	double b, double kb,
 	double *c, size_t sic,
 	double d) {
 
 	for(size_t i = 0; i < ni; i++) {
-		c[i * sic] += (a[i * sia] + b) * d;
+		c[i * sic] += (ka * a[i * sia] + kb * b) * d;
 	}
 }
 

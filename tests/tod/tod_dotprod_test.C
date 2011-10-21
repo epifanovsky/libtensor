@@ -2,7 +2,8 @@
 #include <cstdlib>
 #include <ctime>
 #include <sstream>
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/abs_index.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/tensor.h>
 #include <libtensor/tod/tod_dotprod.h>
 #include "tod_dotprod_test.h"
@@ -29,10 +30,12 @@ void tod_dotprod_test::perform() throw(libtest::test_exception) {
 
 void tod_dotprod_test::test_1(size_t ni) throw(libtest::test_exception) {
 
-	typedef libvmm::std_allocator<double> allocator;
+	typedef std_allocator<double> allocator;
 
 	std::ostringstream testname;
 	testname << "tod_dotprod_test::test_1(" << ni << ")";
+
+	cpu_pool cpus(1);
 
 	try {
 
@@ -67,7 +70,7 @@ void tod_dotprod_test::test_1(size_t ni) throw(libtest::test_exception) {
 	// Invoke the operation
 
 	tod_dotprod<1> op(ta, tb);
-	double c = op.calculate();
+	double c = op.calculate(cpus);
 
 	// Compare against the reference
 
@@ -88,10 +91,12 @@ void tod_dotprod_test::test_1(size_t ni) throw(libtest::test_exception) {
 void tod_dotprod_test::test_2(size_t ni, size_t nj, const permutation<2> &perm)
 	throw(libtest::test_exception) {
 
-	typedef libvmm::std_allocator<double> allocator;
+	typedef std_allocator<double> allocator;
 
 	std::ostringstream testname;
 	testname << "tod_dotprod_test::test_2(" << ni << ", " << nj << ")";
+
+	cpu_pool cpus(1);
 
 	try {
 
@@ -119,13 +124,14 @@ void tod_dotprod_test::test_2(size_t ni, size_t nj, const permutation<2> &perm)
 
 	// Generate reference data
 
-	index<2> ia;
+	abs_index<2> aia(dima);
 	do {
-		index<2> ib(ia); ib.permute(perm);
-		size_t i = dima.abs_index(ia);
-		size_t j = dimb.abs_index(ib);
+		index<2> ib(aia.get_index()); ib.permute(perm);
+		abs_index<2> aib(ib, dimb);
+		size_t i = aia.get_abs_index();
+		size_t j = aib.get_abs_index();
 		c_ref += dta[i] * dtb[j];
-	} while(dima.inc_index(ia));
+	} while(aia.inc());
 	tca.ret_dataptr(dta); dta = NULL; ta.set_immutable();
 	tcb.ret_dataptr(dtb); dtb = NULL; tb.set_immutable();
 	}
@@ -134,7 +140,7 @@ void tod_dotprod_test::test_2(size_t ni, size_t nj, const permutation<2> &perm)
 
 	permutation<2> p0;
 	tod_dotprod<2> op(ta, p0, tb, perm);
-	double c = op.calculate();
+	double c = op.calculate(cpus);
 
 	// Compare against the reference
 

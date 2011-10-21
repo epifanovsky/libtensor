@@ -1,5 +1,5 @@
 #include <sstream>
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/btod/btod_import_raw.h>
 #include <libtensor/tod/tod_add.h>
@@ -52,10 +52,12 @@ void btod_import_raw_test::test_1(const block_index_space<N> &bis)
 	std::ostringstream tnss;
 	tnss << "btod_import_raw_test::test_1(" << bis << ")";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tensor<N, double, allocator_t> tensor_t;
 	typedef tensor_ctrl<N, double> tensor_ctrl_t;
 	typedef block_tensor<N, double, allocator_t> block_tensor_t;
+
+	cpu_pool cpus(1);
 
 	try {
 
@@ -66,11 +68,11 @@ void btod_import_raw_test::test_1(const block_index_space<N> &bis)
 
 	//	Fill in random data
 
-	tod_random<N>().perform(ta);
+	tod_random<N>().perform(cpus, ta);
 
 	//	Create reference data
 
-	tod_copy<N>(ta).perform(tb_ref);
+	tod_copy<N>(ta).perform(cpus, true, 1.0, tb_ref);
 
 	//	Invoke the operation
 
@@ -78,7 +80,7 @@ void btod_import_raw_test::test_1(const block_index_space<N> &bis)
 		tensor_ctrl_t tca(ta);
 		const double *pa = tca.req_const_dataptr();
 		btod_import_raw<N>(pa, bis.get_dims()).perform(btb);
-		tca.ret_dataptr(pa); pa = 0;
+		tca.ret_const_dataptr(pa); pa = 0;
 	}
 
 	//	Compare against the reference
@@ -98,7 +100,7 @@ void btod_import_raw_test::test_2(const block_index_space<N> &bis)
 	std::ostringstream tnss;
 	tnss << "btod_import_raw_test::test_2(" << bis << ")";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tensor<N, double, allocator_t> tensor_t;
 	typedef tensor_ctrl<N, double> tensor_ctrl_t;
 	typedef block_tensor<N, double, allocator_t> block_tensor_t;
@@ -151,7 +153,7 @@ void btod_import_raw_test::test_2(const block_index_space<N> &bis)
 		tensor_ctrl_t tca(ta);
 		const double *pa = tca.req_const_dataptr();
 		btod_import_raw<N>(pa, bis.get_dims()).perform(btb);
-		tca.ret_dataptr(pa); pa = 0;
+		tca.ret_const_dataptr(pa); pa = 0;
 	}
 
 	//	Compare against the reference

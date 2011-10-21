@@ -1,5 +1,5 @@
 #include <sstream>
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/tensor.h>
 #include <libtensor/tod/tod_copy.h>
 #include "../compare_ref.h"
@@ -7,8 +7,8 @@
 
 namespace libtensor {
 
-typedef libvmm::std_allocator<double> allocator;
-typedef tensor<4, double, allocator> tensor4;
+typedef std_allocator<double> allocator_t;
+typedef tensor<4, double, allocator_t> tensor4;
 typedef tensor_ctrl<4,double> tensor4_ctrl;
 
 void tod_copy_test::perform() throw(libtest::test_exception) {
@@ -88,9 +88,11 @@ void tod_copy_test::test_plain(const dimensions<N> &dims)
 
 	static const char *testname = "tod_copy_test::test_plain()";
 
+    cpu_pool cpus(1);
+
 	try {
 
-	tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
+	tensor<N, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
 
 	{
 	tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
@@ -101,13 +103,12 @@ void tod_copy_test::test_plain(const dimensions<N> &dims)
 
 	// Fill in random data
 
-	index<N> ida;
+	abs_index<N> aida(dims);
 	do {
-		size_t i;
-		i = dims.abs_index(ida);
+		size_t i = aida.get_abs_index();
 		dta[i] = dtb2[i] = drand48();
 		dtb1[i] = drand48();
-	} while(dims.inc_index(ida));
+	} while(aida.inc());
 	tca.ret_dataptr(dta); dta = NULL;
 	tcb.ret_dataptr(dtb1); dtb1 = NULL;
 	tcb_ref.ret_dataptr(dtb2); dtb2 = NULL;
@@ -117,7 +118,7 @@ void tod_copy_test::test_plain(const dimensions<N> &dims)
 	// Invoke the copy operation
 
 	tod_copy<N> cp(ta);
-	cp.perform(tb);
+	cp.perform(cpus, true, 1.0, tb);
 
 	// Compare against the reference
 
@@ -134,9 +135,11 @@ void tod_copy_test::test_plain_additive(const dimensions<N> &dims, double d)
 
 	static const char *testname = "tod_copy_test::test_plain_additive()";
 
+    cpu_pool cpus(1);
+
 	try {
 
-	tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
+	tensor<N, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
 
 	{
 	tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
@@ -147,14 +150,13 @@ void tod_copy_test::test_plain_additive(const dimensions<N> &dims, double d)
 
 	// Fill in random data
 
-	index<N> ida;
+	abs_index<N> aida(dims);
 	do {
-		size_t i;
-		i = dims.abs_index(ida);
+		size_t i = aida.get_abs_index();
 		dta[i] = drand48();
 		dtb1[i] = drand48();
 		dtb2[i] = dtb1[i] + d * dta[i];
-	} while(dims.inc_index(ida));
+	} while(aida.inc());
 	tca.ret_dataptr(dta); dta = NULL;
 	tcb.ret_dataptr(dtb1); dtb1 = NULL;
 	tcb_ref.ret_dataptr(dtb2); dtb2 = NULL;
@@ -164,7 +166,7 @@ void tod_copy_test::test_plain_additive(const dimensions<N> &dims, double d)
 	// Invoke the copy operation
 
 	tod_copy<N> cp(ta);
-	cp.perform(tb, d);
+	cp.perform(cpus, false, d, tb);
 
 	// Compare against the reference
 
@@ -181,9 +183,11 @@ void tod_copy_test::test_scaled(const dimensions<N> &dims, double c)
 
 	static const char *testname = "tod_copy_test::test_scaled()";
 
+    cpu_pool cpus(1);
+
 	try {
 
-	tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
+	tensor<N, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
 
 	{
 	tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
@@ -194,14 +198,13 @@ void tod_copy_test::test_scaled(const dimensions<N> &dims, double c)
 
 	// Fill in random data
 
-	index<N> ida;
+	abs_index<N> aida(dims);
 	do {
-		size_t i;
-		i = dims.abs_index(ida);
+		size_t i = aida.get_abs_index();
 		dta[i] = dtb2[i] = drand48();
 		dtb2[i] *= c;
 		dtb1[i] = drand48();
-	} while(dims.inc_index(ida));
+	} while(aida.inc());
 	tca.ret_dataptr(dta); dta = NULL;
 	tcb.ret_dataptr(dtb1); dtb1 = NULL;
 	tcb_ref.ret_dataptr(dtb2); dtb2 = NULL;
@@ -211,7 +214,7 @@ void tod_copy_test::test_scaled(const dimensions<N> &dims, double c)
 	// Invoke the copy operation
 
 	tod_copy<N> cp(ta, c);
-	cp.perform(tb);
+	cp.perform(cpus, true, 1.0, tb);
 
 	// Compare against the reference
 
@@ -229,9 +232,11 @@ void tod_copy_test::test_scaled_additive(const dimensions<N> &dims, double c,
 
 	static const char *testname = "tod_copy_test::test_scaled_additive()";
 
+    cpu_pool cpus(1);
+
 	try {
 
-	tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
+	tensor<N, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
 
 	{
 	tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
@@ -242,14 +247,13 @@ void tod_copy_test::test_scaled_additive(const dimensions<N> &dims, double c,
 
 	// Fill in random data
 
-	index<N> ida;
+	abs_index<N> aida(dims);
 	do {
-		size_t i;
-		i = dims.abs_index(ida);
+		size_t i = aida.get_abs_index();
 		dta[i] = drand48();
 		dtb1[i] = drand48();
 		dtb2[i] = dtb1[i] + c*d*dta[i];
-	} while(dims.inc_index(ida));
+	} while(aida.inc());
 	tca.ret_dataptr(dta); dta = NULL;
 	tcb.ret_dataptr(dtb1); dtb1 = NULL;
 	tcb_ref.ret_dataptr(dtb2); dtb2 = NULL;
@@ -259,7 +263,7 @@ void tod_copy_test::test_scaled_additive(const dimensions<N> &dims, double c,
 	// Invoke the copy operation
 
 	tod_copy<N> cp(ta, c);
-	cp.perform(tb, d);
+	cp.perform(cpus, false, d, tb);
 
 	// Compare against the reference
 
@@ -278,12 +282,14 @@ void tod_copy_test::test_perm(const dimensions<N> &dims,
 
 	static const char *testname = "tod_copy_test::test_perm()";
 
+    cpu_pool cpus(1);
+
 	try {
 
 	dimensions<N> dimsa(dims), dimsb(dims);
 	dimsb.permute(perm);
 
-	tensor<N, double, allocator> ta(dimsa), tb(dimsb), tb_ref(dimsb);
+	tensor<N, double, allocator_t> ta(dimsa), tb(dimsb), tb_ref(dimsb);
 
 	{
 	tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
@@ -294,16 +300,18 @@ void tod_copy_test::test_perm(const dimensions<N> &dims,
 
 	// Fill in random data
 
-	index<N> ida;
+	abs_index<N> aida(dimsa);
 	do {
+	    index<N> ida(aida.get_index());
 		index<N> idb(ida);
 		idb.permute(perm);
+		abs_index<N> aidb(idb, dimsb);
 		size_t i, j;
-		i = dimsa.abs_index(ida);
-		j = dimsb.abs_index(idb);
+		i = aida.get_abs_index();
+		j = aidb.get_abs_index();
 		dta[i] = dtb2[j] = drand48();
 		dtb1[i] = drand48();
-	} while(dimsa.inc_index(ida));
+	} while(aida.inc());
 	tca.ret_dataptr(dta); dta = NULL;
 	tcb.ret_dataptr(dtb1); dtb1 = NULL;
 	tcb_ref.ret_dataptr(dtb2); dtb2 = NULL;
@@ -313,7 +321,7 @@ void tod_copy_test::test_perm(const dimensions<N> &dims,
 	// Invoke the copy operation
 
 	tod_copy<N> cp(ta, perm);
-	cp.perform(tb);
+	cp.perform(cpus, true, 1.0, tb);
 
 	// Compare against the reference
 
@@ -330,12 +338,14 @@ void tod_copy_test::test_perm_additive(const dimensions<N> &dims,
 
 	static const char *testname = "tod_copy_test::test_perm_additive()";
 
+    cpu_pool cpus(1);
+
 	try {
 
 	dimensions<N> dimsa(dims), dimsb(dims);
 	dimsb.permute(perm);
 
-	tensor<N, double, allocator> ta(dimsa), tb(dimsb), tb_ref(dimsb);
+	tensor<N, double, allocator_t> ta(dimsa), tb(dimsb), tb_ref(dimsb);
 
 	{
 	tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
@@ -346,17 +356,19 @@ void tod_copy_test::test_perm_additive(const dimensions<N> &dims,
 
 	// Fill in random data
 
-	index<N> ida;
+	abs_index<N> aida(dimsa);
 	do {
+	    index<N> ida(aida.get_index());
 		index<N> idb(ida);
 		idb.permute(perm);
+		abs_index<N> aidb(idb, dimsb);
 		size_t i, j;
-		i = dimsa.abs_index(ida);
-		j = dimsb.abs_index(idb);
+		i = aida.get_abs_index();
+		j = aidb.get_abs_index();
 		dta[i] = drand48();
 		dtb1[j] = drand48();
 		dtb2[j] = dtb1[j] + d*dta[i];
-	} while(dimsa.inc_index(ida));
+	} while(aida.inc());
 	tca.ret_dataptr(dta); dta = NULL;
 	tcb.ret_dataptr(dtb1); dtb1 = NULL;
 	tcb_ref.ret_dataptr(dtb2); dtb2 = NULL;
@@ -366,7 +378,7 @@ void tod_copy_test::test_perm_additive(const dimensions<N> &dims,
 	// Invoke the copy operation
 
 	tod_copy<N> cp(ta, perm);
-	cp.perform(tb, d);
+	cp.perform(cpus, false, d, tb);
 
 	// Compare against the reference
 
@@ -383,12 +395,14 @@ void tod_copy_test::test_perm_scaled(const dimensions<N> &dims,
 
 	static const char *testname = "tod_copy_test::test_perm_scaled()";
 
+    cpu_pool cpus(1);
+
 	try {
 
 	dimensions<N> dimsa(dims), dimsb(dims);
 	dimsb.permute(perm);
 
-	tensor<N, double, allocator> ta(dimsa), tb(dimsb), tb_ref(dimsb);
+	tensor<N, double, allocator_t> ta(dimsa), tb(dimsb), tb_ref(dimsb);
 
 	{
 	tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
@@ -399,17 +413,18 @@ void tod_copy_test::test_perm_scaled(const dimensions<N> &dims,
 
 	// Fill in random data
 
-	index<N> ida;
+	abs_index<N> aida(dimsa);
 	do {
-		index<N> idb(ida);
+		index<N> idb(aida.get_index());
 		idb.permute(perm);
+		abs_index<N> aidb(idb, dimsb);
 		size_t i, j;
-		i = dimsa.abs_index(ida);
-		j = dimsb.abs_index(idb);
+		i = aida.get_abs_index();
+		j = aidb.get_abs_index();
 		dta[i] = drand48();
 		dtb1[j] = drand48();
 		dtb2[j] = c*dta[i];
-	} while(dimsa.inc_index(ida));
+	} while(aida.inc());
 	tca.ret_dataptr(dta); dta = NULL;
 	tcb.ret_dataptr(dtb1); dtb1 = NULL;
 	tcb_ref.ret_dataptr(dtb2); dtb2 = NULL;
@@ -419,7 +434,7 @@ void tod_copy_test::test_perm_scaled(const dimensions<N> &dims,
 	// Invoke the copy operation
 
 	tod_copy<N> cp(ta, perm, c);
-	cp.perform(tb);
+	cp.perform(cpus, true, 1.0, tb);
 
 	// Compare against the reference
 
@@ -438,12 +453,14 @@ void tod_copy_test::test_perm_scaled_additive(const dimensions<N> &dims,
 	static const char *testname =
 		"tod_copy_test::test_perm_scaled_additive()";
 
+    cpu_pool cpus(1);
+
 	try {
 
 	dimensions<N> dimsa(dims), dimsb(dims);
 	dimsb.permute(perm);
 
-	tensor<N, double, allocator> ta(dimsa), tb(dimsb), tb_ref(dimsb);
+	tensor<N, double, allocator_t> ta(dimsa), tb(dimsb), tb_ref(dimsb);
 
 	{
 	tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
@@ -454,17 +471,18 @@ void tod_copy_test::test_perm_scaled_additive(const dimensions<N> &dims,
 
 	// Fill in random data
 
-	index<N> ida;
+	abs_index<N> aida(dimsa);
 	do {
-		index<N> idb(ida);
+		index<N> idb(aida.get_index());
 		idb.permute(perm);
+		abs_index<N> aidb(idb, dimsb);
 		size_t i, j;
-		i = dimsa.abs_index(ida);
-		j = dimsb.abs_index(idb);
+		i = aida.get_abs_index();
+		j = aidb.get_abs_index();
 		dta[i] = drand48();
 		dtb1[j] = drand48();
 		dtb2[j] = dtb1[j] + c*d*dta[i];
-	} while(dimsa.inc_index(ida));
+	} while(aida.inc());
 	tca.ret_dataptr(dta); dta = NULL;
 	tcb.ret_dataptr(dtb1); dtb1 = NULL;
 	tcb_ref.ret_dataptr(dtb2); dtb2 = NULL;
@@ -474,7 +492,7 @@ void tod_copy_test::test_perm_scaled_additive(const dimensions<N> &dims,
 	// Invoke the copy operation
 
 	tod_copy<N> cp(ta, perm, c);
-	cp.perform(tb, d);
+	cp.perform(cpus, false, d, tb);
 
 	// Compare against the reference
 
@@ -493,9 +511,11 @@ void tod_copy_test::test_exc() throw(libtest::test_exception) {
 	dimensions<4> dim1(ir1), dim2(ir2);
 	tensor4 t1(dim1), t2(dim2);
 
+    cpu_pool cpus(1);
+
 	bool ok = false;
 	try {
-		tod_copy<4> tc(t1); tc.perform(t2);
+		tod_copy<4> tc(t1); tc.perform(cpus, true, 1.0, t2);
 	} catch(exception &e) {
 		ok = true;
 	}

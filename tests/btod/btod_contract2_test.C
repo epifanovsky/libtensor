@@ -1,5 +1,5 @@
 #include <sstream>
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/btod/btod_contract2.h>
 #include <libtensor/btod/btod_copy.h>
@@ -93,7 +93,7 @@ void btod_contract2_test::test_bis_1() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_bis_1()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -145,7 +145,7 @@ void btod_contract2_test::test_bis_2() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_bis_2()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -206,7 +206,7 @@ void btod_contract2_test::test_bis_3() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_bis_3()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -268,7 +268,7 @@ void btod_contract2_test::test_bis_4() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_bis_4()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -315,7 +315,7 @@ void btod_contract2_test::test_bis_5() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_bis_5()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -374,7 +374,7 @@ void btod_contract2_test::test_sym_1() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_sym_1()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -443,7 +443,7 @@ void btod_contract2_test::test_sym_2() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_sym_2()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -528,7 +528,7 @@ void btod_contract2_test::test_sym_3() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_sym_3()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -608,7 +608,7 @@ void btod_contract2_test::test_sym_4() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_sym_4()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -680,7 +680,7 @@ void btod_contract2_test::test_zeroblk_1() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_zeroblk_1()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -733,7 +733,7 @@ void btod_contract2_test::test_zeroblk_2() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_zeroblk_2()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -787,7 +787,7 @@ void btod_contract2_test::test_zeroblk_3() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_zeroblk_3()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -840,7 +840,7 @@ void btod_contract2_test::test_zeroblk_4() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_zeroblk_4()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -895,7 +895,7 @@ void btod_contract2_test::test_zeroblk_5() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_zeroblk_5()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -968,7 +968,7 @@ void btod_contract2_test::test_zeroblk_6() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_zeroblk_6()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -1040,7 +1040,9 @@ void btod_contract2_test::test_contr_1() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_contr_1()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+	cpu_pool cpus(1);
 
 	try {
 
@@ -1088,7 +1090,7 @@ void btod_contract2_test::test_contr_1() throw(libtest::test_exception) {
 	//	Compute reference tensor
 
 	tod_contract2<2, 2, 2> op_ref(contr, ta, tb);
-	op_ref.perform(tc_ref);
+	op_ref.perform(cpus, true, 1.0, tc_ref);
 
 	//	Compare against reference
 
@@ -1109,7 +1111,9 @@ void btod_contract2_test::test_contr_2() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_contr_2()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -1158,7 +1162,7 @@ void btod_contract2_test::test_contr_2() throw(libtest::test_exception) {
 	//	Compute reference tensor
 
 	tod_contract2<2, 2, 2> op_ref(contr, ta, tb);
-	op_ref.perform(tc_ref);
+	op_ref.perform(cpus, true, 1.0, tc_ref);
 
 	//	Compare against reference
 
@@ -1179,7 +1183,9 @@ void btod_contract2_test::test_contr_3() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_contr_3()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -1240,7 +1246,7 @@ void btod_contract2_test::test_contr_3() throw(libtest::test_exception) {
 	//	Compute reference tensor
 
 	tod_contract2<2, 2, 2> op_ref(contr, ta, tb);
-	op_ref.perform(tc_ref);
+	op_ref.perform(cpus, true, 1.0, tc_ref);
 
 	//	Compare against reference
 
@@ -1261,7 +1267,9 @@ void btod_contract2_test::test_contr_4() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_contr_4()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -1334,7 +1342,7 @@ void btod_contract2_test::test_contr_4() throw(libtest::test_exception) {
 	//	Compute reference tensor
 
 	tod_contract2<2, 2, 2> op_ref(contr, ta, tb);
-	op_ref.perform(tc_ref);
+	op_ref.perform(cpus, true, 1.0, tc_ref);
 
 	//	Compare against reference
 
@@ -1356,7 +1364,9 @@ void btod_contract2_test::test_contr_5() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_contr_5()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -1435,7 +1445,7 @@ void btod_contract2_test::test_contr_5() throw(libtest::test_exception) {
 	//	Compute reference tensor
 
 	tod_contract2<2, 2, 2> op_ref(contr, ta, tb);
-	op_ref.perform(tc_ref, 2.0);
+	op_ref.perform(cpus, false, 2.0, tc_ref);
 
 	//	Compare against reference
 
@@ -1457,7 +1467,9 @@ void btod_contract2_test::test_contr_6() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_contr_6()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -1535,7 +1547,7 @@ void btod_contract2_test::test_contr_6() throw(libtest::test_exception) {
 	//	Compute reference tensor
 
 	tod_contract2<2, 2, 2> op_ref(contr, ta, tb);
-	op_ref.perform(tc_ref, 2.0);
+	op_ref.perform(cpus, false, 2.0, tc_ref);
 
 	//	Compare against reference
 
@@ -1556,7 +1568,9 @@ void btod_contract2_test::test_contr_7() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_contr_7()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -1613,7 +1627,7 @@ void btod_contract2_test::test_contr_7() throw(libtest::test_exception) {
 	//	Compute reference tensor
 
 	tod_contract2<1, 3, 1> op_ref(contr, ta, tb);
-	op_ref.perform(tc_ref);
+	op_ref.perform(cpus, true, 1.0, tc_ref);
 
 	//	Compare against reference
 
@@ -1634,7 +1648,9 @@ void btod_contract2_test::test_contr_8() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_contr_8()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -1681,7 +1697,7 @@ void btod_contract2_test::test_contr_8() throw(libtest::test_exception) {
 	//	Compute reference tensor
 
 	tod_contract2<1, 3, 1> op_ref(contr, ta, tb);
-	op_ref.perform(tc_ref, 1.0);
+	op_ref.perform(cpus, false, 1.0, tc_ref);
 
 	//	Compare against reference
 
@@ -1702,7 +1718,9 @@ void btod_contract2_test::test_contr_9() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_contr_9()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -1748,7 +1766,7 @@ void btod_contract2_test::test_contr_9() throw(libtest::test_exception) {
 	//	Compute reference tensor
 
 	tod_contract2<1, 3, 1> op_ref(contr, ta, tb);
-	op_ref.perform(tc_ref, -1.0);
+	op_ref.perform(cpus, false, -1.0, tc_ref);
 
 	//	Compare against reference
 
@@ -1770,7 +1788,9 @@ void btod_contract2_test::test_contr_10() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_contr_10()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -1827,7 +1847,9 @@ void btod_contract2_test::test_contr_11() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_contr_11()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -1868,7 +1890,7 @@ void btod_contract2_test::test_contr_11() throw(libtest::test_exception) {
 
 	btod_contract2<2, 2, 0>(contr, bta, btb).perform(btc);
 	tod_btconv<4>(btc).perform(tc);
-	tod_contract2<2, 2, 0>(contr, ta, tb).perform(tc_ref);
+	tod_contract2<2, 2, 0>(contr, ta, tb).perform(cpus, true, 1.0, tc_ref);
 
 	//	Compare against reference
 
@@ -1889,7 +1911,9 @@ void btod_contract2_test::test_contr_12() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_contr_12()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -1932,7 +1956,7 @@ void btod_contract2_test::test_contr_12() throw(libtest::test_exception) {
 
 	btod_contract2<2, 2, 0>(contr, bta, btb).perform(btc);
 	tod_btconv<4>(btc).perform(tc);
-	tod_contract2<2, 2, 0>(contr, ta, tb).perform(tc_ref);
+	tod_contract2<2, 2, 0>(contr, ta, tb).perform(cpus, true, 1.0, tc_ref);
 
 	//	Compare against reference
 
@@ -1953,7 +1977,9 @@ void btod_contract2_test::test_contr_13() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_contr_13()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -1998,7 +2024,7 @@ void btod_contract2_test::test_contr_13() throw(libtest::test_exception) {
 	btod_contract2<2, 0, 2> op(contr, bta, btb);
 	op.perform(btc);
 	tod_btconv<2>(btc).perform(tc);
-	tod_contract2<2, 0, 2>(contr, ta, tb).perform(tc_ref);
+	tod_contract2<2, 0, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc_ref);
 
 	//	Compare against reference
 
@@ -2023,7 +2049,9 @@ void btod_contract2_test::test_contr_14(double c)
 	ss << "btod_contract2_test::test_contr_14(" << c << ")";
 	std::string tn = ss.str();
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -2069,8 +2097,8 @@ void btod_contract2_test::test_contr_14(double c)
 	if(c == 0.0) btod_contract2<2, 2, 2>(contr, bta, btb).perform(btc);
 	else btod_contract2<2, 2, 2>(contr, bta, btb).perform(btc, c);
 	tod_btconv<4>(btc).perform(tc);
-	if(c == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc_ref);
-	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc_ref, c);
+	if(c == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc_ref);
+	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, false, c, tc_ref);
 
 	//	Compare against reference
 
@@ -2096,7 +2124,9 @@ void btod_contract2_test::test_contr_15(double c)
 	ss << "btod_contract2_test::test_contr_15(" << c << ")";
 	std::string tn = ss.str();
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -2146,8 +2176,8 @@ void btod_contract2_test::test_contr_15(double c)
 	if(c == 0.0) btod_contract2<2, 2, 2>(contr, bta, btb).perform(btc);
 	else btod_contract2<2, 2, 2>(contr, bta, btb).perform(btc, c);
 	tod_btconv<4>(btc).perform(tc);
-	if(c == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc_ref);
-	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc_ref, c);
+	if(c == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc_ref);
+	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, false, c, tc_ref);
 
 	//	Compare against reference
 
@@ -2172,7 +2202,9 @@ void btod_contract2_test::test_contr_16(double c)
 	ss << "btod_contract2_test::test_contr_16(" << c << ")";
 	std::string tn = ss.str();
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+	cpu_pool cpus(1);
 
 	try {
 
@@ -2216,7 +2248,7 @@ void btod_contract2_test::test_contr_16(double c)
 	tensor<4, double, allocator_t> tc(dims_iaaa), tc_ref(dims_iaaa);
 	tod_btconv<4>(bta).perform(ta);
 	tod_btconv<4>(btb).perform(tb);
-	tod_set<4>().perform(tc_ref);
+	tod_set<4>().perform(cpus, tc_ref);
 
 	//	Run contraction and compute the reference
 
@@ -2230,8 +2262,8 @@ void btod_contract2_test::test_contr_16(double c)
 	if(c == 0.0) btod_contract2<2, 2, 2>(contr, bta, btb).perform(btc);
 	else btod_contract2<2, 2, 2>(contr, bta, btb).perform(btc, c);
 	tod_btconv<4>(btc).perform(tc);
-	if(c == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc_ref);
-	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc_ref, c);
+	if(c == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc_ref);
+	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, false, c, tc_ref);
 
 	//	Compare against reference
 
@@ -2257,7 +2289,9 @@ void btod_contract2_test::test_contr_17(double c)
 	ss << "btod_contract2_test::test_contr_17(" << c << ")";
 	std::string tn = ss.str();
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -2323,8 +2357,8 @@ void btod_contract2_test::test_contr_17(double c)
 	if(c == 0.0) btod_contract2<1, 1, 3>(contr, bta, btb).perform(btc);
 	else btod_contract2<1, 1, 3>(contr, bta, btb).perform(btc, c);
 	tod_btconv<2>(btc).perform(tc);
-	if(c == 0.0) tod_contract2<1, 1, 3>(contr, ta, tb).perform(tc_ref);
-	else tod_contract2<1, 1, 3>(contr, ta, tb).perform(tc_ref, c);
+	if(c == 0.0) tod_contract2<1, 1, 3>(contr, ta, tb).perform(cpus, true, 1.0, tc_ref);
+	else tod_contract2<1, 1, 3>(contr, ta, tb).perform(cpus, false, c, tc_ref);
 
 	//	Compare against reference
 
@@ -2350,7 +2384,9 @@ void btod_contract2_test::test_contr_18(double c)
 	ss << "btod_contract2_test::test_contr_18(" << c << ")";
 	std::string tn = ss.str();
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -2413,8 +2449,8 @@ void btod_contract2_test::test_contr_18(double c)
 	if(c == 0.0) btod_contract2<1, 1, 3>(contr, bta, btb).perform(btc);
 	else btod_contract2<1, 1, 3>(contr, bta, btb).perform(btc, c);
 	tod_btconv<2>(btc).perform(tc);
-	if(c == 0.0) tod_contract2<1, 1, 3>(contr, ta, tb).perform(tc_ref);
-	else tod_contract2<1, 1, 3>(contr, ta, tb).perform(tc_ref, c);
+	if(c == 0.0) tod_contract2<1, 1, 3>(contr, ta, tb).perform(cpus, true, 1.0, tc_ref);
+	else tod_contract2<1, 1, 3>(contr, ta, tb).perform(cpus, false, c, tc_ref);
 
 	//	Compare against reference
 
@@ -2445,7 +2481,9 @@ void btod_contract2_test::test_contr_19()
 
 	product_table_container::get_instance().add(pg);
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -2524,7 +2562,7 @@ void btod_contract2_test::test_contr_19()
 	contr.contract(3, 1);
 	btod_contract2<2, 2, 2>(contr, bta, btb).perform(btc);
 	tod_btconv<4>(btc).perform(tc);
-	tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc_ref);
+	tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc_ref);
 
 	//	Compare against reference
 
@@ -2553,7 +2591,9 @@ void btod_contract2_test::test_contr_20()
 	ss << "btod_contract2_test::test_contr_20()";
 	std::string tn = ss.str();
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -2609,7 +2649,7 @@ void btod_contract2_test::test_contr_20()
 	contr.contract(1, 0);
 	btod_contract2<1, 1, 1>(contr, bta, btb).perform(btc);
 	tod_btconv<2>(btc).perform(tc);
-	tod_contract2<1, 1, 1>(contr, ta, tb).perform(tc_ref);
+	tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc_ref);
 
 	//	Compare against reference
 
@@ -2633,7 +2673,9 @@ void btod_contract2_test::test_contr_21() throw(libtest::test_exception) {
 	ss << "btod_contract2_test::test_contr_21()";
 	std::string tn = ss.str();
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -2697,7 +2739,7 @@ void btod_contract2_test::test_contr_21() throw(libtest::test_exception) {
 	contr.contract(1, 1);
 	btod_contract2<1, 1, 1>(contr, bta, btb).perform(btc);
 	tod_btconv<2>(btc).perform(tc);
-	tod_contract2<1, 1, 1>(contr, ta, tb).perform(tc_ref);
+	tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc_ref);
 
 	//	Compare against reference
 
@@ -2717,7 +2759,9 @@ void btod_contract2_test::test_self_1() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_self_1()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -2771,7 +2815,7 @@ void btod_contract2_test::test_self_1() throw(libtest::test_exception) {
 		block_tensor_ctrl<4, double> cc(btc);
 		so_copy<4, double>(cc.req_const_symmetry()).perform(symc);
 	}
-	tod_contract2<2, 2, 0>(contr, ta, ta).perform(tc_ref);
+	tod_contract2<2, 2, 0>(contr, ta, ta).perform(cpus, true, 1.0, tc_ref);
 
 	//	Compare against reference
 
@@ -2791,7 +2835,9 @@ void btod_contract2_test::test_self_2() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_self_2()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -2846,7 +2892,7 @@ void btod_contract2_test::test_self_2() throw(libtest::test_exception) {
 		block_tensor_ctrl<4, double> cc(btc);
 		so_copy<4, double>(cc.req_const_symmetry()).perform(symc);
 	}
-	tod_contract2<2, 2, 1>(contr, ta, ta).perform(tc_ref);
+	tod_contract2<2, 2, 1>(contr, ta, ta).perform(cpus, true, 1.0, tc_ref);
 
 	//	Compare against reference
 
@@ -2867,7 +2913,9 @@ void btod_contract2_test::test_self_3() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_contract2_test::test_self_3()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -2930,7 +2978,7 @@ void btod_contract2_test::test_self_3() throw(libtest::test_exception) {
 		block_tensor_ctrl<4, double> cc(btc);
 		so_copy<4, double>(cc.req_const_symmetry()).perform(symc);
 	}
-	tod_contract2<2, 2, 1>(contr, ta, ta).perform(tc_ref);
+	tod_contract2<2, 2, 1>(contr, ta, ta).perform(cpus, true, 1.0, tc_ref);
 
 	//	Compare against reference
 

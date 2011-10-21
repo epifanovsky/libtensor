@@ -1,4 +1,4 @@
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/btod/btod_add.h>
 #include <libtensor/btod/btod_contract2.h>
@@ -38,7 +38,7 @@ void btod_sum_test::test_1() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_sum_test::test_1()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef block_tensor<2, double, allocator_t> block_tensor_t;
 
 	try {
@@ -79,7 +79,7 @@ void btod_sum_test::test_2() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_sum_test::test_2()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef block_tensor<2, double, allocator_t> block_tensor_t;
 
 	try {
@@ -130,7 +130,7 @@ void btod_sum_test::test_3() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_sum_test::test_3()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef block_tensor<2, double, allocator_t> block_tensor_t;
 
 	try {
@@ -179,7 +179,7 @@ void btod_sum_test::test_4() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_sum_test::test_4()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef block_tensor<4, double, allocator_t> block_tensor_t;
 
 	try {
@@ -231,7 +231,7 @@ void btod_sum_test::test_5() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_sum_test::test_5()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef block_tensor<2, double, allocator_t> block_tensor_t;
 
 	try {
@@ -299,7 +299,7 @@ void btod_sum_test::test_6(bool do_add) throw(libtest::test_exception) {
 
 	static const char *testname = "btod_sum_test::test_6()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef block_tensor<2, double, allocator_t> block_tensor_t;
 
 	try {
@@ -390,7 +390,7 @@ void btod_sum_test::test_7() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_sum_test::test_7()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -448,7 +448,7 @@ void btod_sum_test::test_8() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_sum_test::test_8()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -504,7 +504,7 @@ void btod_sum_test::test_9a() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_sum_test::test_9a()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -570,7 +570,7 @@ void btod_sum_test::test_9b() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_sum_test::test_9b()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -618,6 +618,7 @@ void btod_sum_test::test_9b() throw(libtest::test_exception) {
 	btod_sum<4> sum(op1);
 	sum.add_op(op2, -1.0);
 
+	cpu_pool cpus(1);
 	const assignment_schedule<4, double> &sch = sum.get_schedule();
 	block_tensor_ctrl<4, double> c3(bt3);
 	so_copy<4, double>(sum.get_symmetry()).perform(c3.req_symmetry());
@@ -627,7 +628,8 @@ void btod_sum_test::test_9b() throw(libtest::test_exception) {
 		abs_index<4> ijab(sch.get_abs_index(i),
 			bis_ijab.get_block_index_dims());
 		tensor_i<4, double> &blk = c3.req_block(ijab.get_index());
-		sum.compute_block(blk, ijab.get_index());
+		sum.compute_block(true, blk, ijab.get_index(), transf<4, double>(),
+		    1.0, cpus);
 		c3.ret_block(ijab.get_index());
 	}
 
@@ -647,7 +649,7 @@ void btod_sum_test::test_10a() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_sum_test::test_10a()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef block_tensor<2, double, allocator_t> block_tensor_t;
 
 	try {
@@ -694,7 +696,7 @@ void btod_sum_test::test_10b() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_sum_test::test_10b()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef block_tensor<2, double, allocator_t> block_tensor_t;
 
 	try {

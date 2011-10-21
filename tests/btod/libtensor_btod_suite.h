@@ -5,6 +5,7 @@
 #include "addition_schedule_test.h"
 #include "btod_add_test.h"
 #include "btod_apply_test.h"
+#include "btod_cholesky_test.h"
 #include "btod_compare_test.h"
 #include "btod_contract2_test.h"
 #include "btod_copy_test.h"
@@ -15,6 +16,7 @@
 #include "btod_ewmult2_test.h"
 #include "btod_extract_test.h"
 #include "btod_import_raw_test.h"
+#include "btod_import_raw_stream_test.h"
 #include "btod_mult_test.h"
 #include "btod_mult1_test.h"
 #include "btod_print_test.h"
@@ -49,6 +51,7 @@ namespace libtensor {
 	\li libtensor::addition_schedule_test
 	\li libtensor::btod_add_test
 	\li libtensor::btod_apply_test
+        \li libtensor::btod_cholesky_test
 	\li libtensor::btod_compare_test
 	\li libtensor::btod_contract2_test
 	\li libtensor::btod_copy_test
@@ -59,6 +62,7 @@ namespace libtensor {
 	\li libtensor::btod_ewmult2_test
 	\li libtensor::btod_extract_test
 	\li libtensor::btod_import_raw_test
+    \li libtensor::btod_import_raw_stream_test
 	\li libtensor::btod_mult_test
 	\li libtensor::btod_mult1_test
 	\li libtensor::btod_print_test
@@ -80,6 +84,7 @@ private:
 	unit_test_factory<addition_schedule_test> m_utf_addition_schedule;
 	unit_test_factory<btod_add_test> m_utf_btod_add;
 	unit_test_factory<btod_apply_test> m_utf_btod_apply;
+	unit_test_factory<btod_cholesky_test> m_utf_btod_cholesky;
 	unit_test_factory<btod_compare_test> m_utf_btod_compare;
 	unit_test_factory<btod_contract2_test> m_utf_btod_contract2;
 	unit_test_factory<btod_copy_test> m_utf_btod_copy;
@@ -90,6 +95,7 @@ private:
 	unit_test_factory<btod_ewmult2_test> m_utf_btod_ewmult2;
 	unit_test_factory<btod_extract_test> m_utf_btod_extract;
 	unit_test_factory<btod_import_raw_test> m_utf_btod_import_raw;
+	unit_test_factory<btod_import_raw_stream_test> m_utf_btod_import_raw_stream;
 	unit_test_factory<btod_mult_test> m_utf_btod_mult;
 	unit_test_factory<btod_mult1_test> m_utf_btod_mult1;
 	unit_test_factory<btod_print_test> m_utf_btod_print;

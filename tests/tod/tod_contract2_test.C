@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <sstream>
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/abs_index.h>
 #include <libtensor/core/tensor.h>
 #include <libtensor/tod/tod_contract2.h>
@@ -11,7 +11,7 @@
 
 namespace libtensor {
 
-typedef libvmm::std_allocator<double> allocator;
+typedef std_allocator<double> allocator_t;
 
 const double tod_contract2_test::k_thresh = 1e-14;
 
@@ -1031,6 +1031,8 @@ void tod_contract2_test::test_0_p_p(size_t np, double d)
 	tnss << "tod_contract2_test::test_0_p_p(" << np << ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<1> ia1, ia2; ia2[0] = np - 1;
@@ -1042,10 +1044,10 @@ void tod_contract2_test::test_0_p_p(size_t np, double d)
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<1, double, allocator> ta(dima);
-	tensor<1, double, allocator> tb(dimb);
-	tensor<0, double, allocator> tc(dimc);
-	tensor<0, double, allocator> tc_ref(dimc);
+	tensor<1, double, allocator_t> ta(dima);
+	tensor<1, double, allocator_t> tb(dimb);
+	tensor<0, double, allocator_t> tc(dimc);
+	tensor<0, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -1090,8 +1092,8 @@ void tod_contract2_test::test_0_p_p(size_t np, double d)
 
 	contraction2<0, 0, 1> contr;
 	contr.contract(0, 0);
-	if(d == 0.0) tod_contract2<0, 0, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<0, 0, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<0, 0, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<0, 0, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -1113,6 +1115,8 @@ void tod_contract2_test::test_i_p_pi(size_t ni, size_t np, double d)
 		<< d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<1> ia1, ia2; ia2[0] = np - 1;
@@ -1124,10 +1128,10 @@ void tod_contract2_test::test_i_p_pi(size_t ni, size_t np, double d)
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<1, double, allocator> ta(dima);
-	tensor<2, double, allocator> tb(dimb);
-	tensor<1, double, allocator> tc(dimc);
-	tensor<1, double, allocator> tc_ref(dimc);
+	tensor<1, double, allocator_t> ta(dima);
+	tensor<2, double, allocator_t> tb(dimb);
+	tensor<1, double, allocator_t> tc(dimc);
+	tensor<1, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -1177,8 +1181,8 @@ void tod_contract2_test::test_i_p_pi(size_t ni, size_t np, double d)
 
 	contraction2<0, 1, 1> contr;
 	contr.contract(0, 0);
-	if(d == 0.0) tod_contract2<0, 1, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<0, 1, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<0, 1, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<0, 1, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -1200,6 +1204,8 @@ void tod_contract2_test::test_i_p_ip(size_t ni, size_t np, double d)
 		<< d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<1> ia1, ia2; ia2[0] = np - 1;
@@ -1211,10 +1217,10 @@ void tod_contract2_test::test_i_p_ip(size_t ni, size_t np, double d)
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<1, double, allocator> ta(dima);
-	tensor<2, double, allocator> tb(dimb);
-	tensor<1, double, allocator> tc(dimc);
-	tensor<1, double, allocator> tc_ref(dimc);
+	tensor<1, double, allocator_t> ta(dima);
+	tensor<2, double, allocator_t> tb(dimb);
+	tensor<1, double, allocator_t> tc(dimc);
+	tensor<1, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -1264,8 +1270,8 @@ void tod_contract2_test::test_i_p_ip(size_t ni, size_t np, double d)
 
 	contraction2<0, 1, 1> contr;
 	contr.contract(0, 1);
-	if(d == 0.0) tod_contract2<0, 1, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<0, 1, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<0, 1, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<0, 1, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -1287,6 +1293,8 @@ void tod_contract2_test::test_i_pi_p(size_t ni, size_t np, double d)
 		<< d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<2> ia1, ia2; ia2[0] = np - 1; ia2[1] = ni - 1;
@@ -1298,10 +1306,10 @@ void tod_contract2_test::test_i_pi_p(size_t ni, size_t np, double d)
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<1, double, allocator> tb(dimb);
-	tensor<1, double, allocator> tc(dimc);
-	tensor<1, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<1, double, allocator_t> tb(dimb);
+	tensor<1, double, allocator_t> tc(dimc);
+	tensor<1, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -1351,8 +1359,8 @@ void tod_contract2_test::test_i_pi_p(size_t ni, size_t np, double d)
 
 	contraction2<1, 0, 1> contr;
 	contr.contract(0, 0);
-	if(d == 0.0) tod_contract2<1, 0, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<1, 0, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<1, 0, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<1, 0, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -1374,6 +1382,8 @@ void tod_contract2_test::test_i_ip_p(size_t ni, size_t np, double d)
 		<< d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<2> ia1, ia2; ia2[0] = ni - 1; ia2[1] = np - 1;
@@ -1385,10 +1395,10 @@ void tod_contract2_test::test_i_ip_p(size_t ni, size_t np, double d)
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<1, double, allocator> tb(dimb);
-	tensor<1, double, allocator> tc(dimc);
-	tensor<1, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<1, double, allocator_t> tb(dimb);
+	tensor<1, double, allocator_t> tc(dimc);
+	tensor<1, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -1438,8 +1448,8 @@ void tod_contract2_test::test_i_ip_p(size_t ni, size_t np, double d)
 
 	contraction2<1, 0, 1> contr;
 	contr.contract(1, 0);
-	if(d == 0.0) tod_contract2<1, 0, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<1, 0, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<1, 0, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<1, 0, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -1461,6 +1471,8 @@ void tod_contract2_test::test_ij_i_j(size_t ni, size_t nj, double d)
 		<< ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<1> ia1, ia2; ia2[0] = ni - 1;
@@ -1472,10 +1484,10 @@ void tod_contract2_test::test_ij_i_j(size_t ni, size_t nj, double d)
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<1, double, allocator> ta(dima);
-	tensor<1, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<1, double, allocator_t> ta(dima);
+	tensor<1, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -1524,8 +1536,8 @@ void tod_contract2_test::test_ij_i_j(size_t ni, size_t nj, double d)
 	//	Invoke the contraction routine
 
 	contraction2<1, 1, 0> contr;
-	if(d == 0.0) tod_contract2<1, 1, 0>(contr, ta, tb).perform(tc);
-	else tod_contract2<1, 1, 0>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<1, 1, 0>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<1, 1, 0>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -1547,6 +1559,8 @@ void tod_contract2_test::test_ij_j_i(size_t ni, size_t nj, double d)
 		<< ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<1> ia1, ia2; ia2[0] = nj - 1;
@@ -1558,10 +1572,10 @@ void tod_contract2_test::test_ij_j_i(size_t ni, size_t nj, double d)
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<1, double, allocator> ta(dima);
-	tensor<1, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<1, double, allocator_t> ta(dima);
+	tensor<1, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -1610,8 +1624,8 @@ void tod_contract2_test::test_ij_j_i(size_t ni, size_t nj, double d)
 	//	Invoke the contraction routine
 
 	contraction2<1, 1, 0> contr(permutation<2>().permute(0, 1));
-	if(d == 0.0) tod_contract2<1, 1, 0>(contr, ta, tb).perform(tc);
-	else tod_contract2<1, 1, 0>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<1, 1, 0>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<1, 1, 0>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -1634,6 +1648,8 @@ void tod_contract2_test::test_ij_pi_pj(
 		<< ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<2> ia1, ia2; ia2[0] = np - 1; ia2[1] = ni - 1;
@@ -1645,10 +1661,10 @@ void tod_contract2_test::test_ij_pi_pj(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<2, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<2, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -1699,8 +1715,8 @@ void tod_contract2_test::test_ij_pi_pj(
 
 	contraction2<1, 1, 1> contr;
 	contr.contract(0, 0);
-	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<1, 1, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -1723,6 +1739,8 @@ void tod_contract2_test::test_ij_pi_jp(
 		<< ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<2> ia1, ia2; ia2[0] = np - 1; ia2[1] = ni - 1;
@@ -1734,10 +1752,10 @@ void tod_contract2_test::test_ij_pi_jp(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<2, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<2, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -1788,8 +1806,8 @@ void tod_contract2_test::test_ij_pi_jp(
 
 	contraction2<1, 1, 1> contr;
 	contr.contract(0, 1);
-	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<1, 1, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -1812,6 +1830,8 @@ void tod_contract2_test::test_ij_ip_pj(
 		<< ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<2> ia1, ia2; ia2[0] = ni - 1; ia2[1] = np - 1;
@@ -1823,10 +1843,10 @@ void tod_contract2_test::test_ij_ip_pj(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<2, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<2, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -1877,8 +1897,8 @@ void tod_contract2_test::test_ij_ip_pj(
 
 	contraction2<1, 1, 1> contr;
 	contr.contract(1, 0);
-	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<1, 1, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -1901,6 +1921,8 @@ void tod_contract2_test::test_ij_ip_jp(
 		<< ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<2> ia1, ia2; ia2[0] = ni - 1; ia2[1] = np - 1;
@@ -1912,10 +1934,10 @@ void tod_contract2_test::test_ij_ip_jp(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<2, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<2, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -1966,8 +1988,8 @@ void tod_contract2_test::test_ij_ip_jp(
 
 	contraction2<1, 1, 1> contr;
 	contr.contract(1, 1);
-	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<1, 1, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -1990,6 +2012,8 @@ void tod_contract2_test::test_ij_pj_pi(
 		<< ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<2> ia1, ia2; ia2[0] = np - 1; ia2[1] = nj - 1;
@@ -2001,10 +2025,10 @@ void tod_contract2_test::test_ij_pj_pi(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<2, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<2, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -2056,8 +2080,8 @@ void tod_contract2_test::test_ij_pj_pi(
 	permutation<2> permc; permc.permute(0, 1);
 	contraction2<1, 1, 1> contr(permc);
 	contr.contract(0, 0);
-	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<1, 1, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -2080,6 +2104,8 @@ void tod_contract2_test::test_ij_pj_ip(
 		<< ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<2> ia1, ia2; ia2[0] = np - 1; ia2[1] = nj - 1;
@@ -2091,10 +2117,10 @@ void tod_contract2_test::test_ij_pj_ip(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<2, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<2, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -2146,8 +2172,8 @@ void tod_contract2_test::test_ij_pj_ip(
 	permutation<2> permc; permc.permute(0, 1);
 	contraction2<1, 1, 1> contr(permc);
 	contr.contract(0, 1);
-	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<1, 1, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -2170,6 +2196,8 @@ void tod_contract2_test::test_ij_jp_ip(
 		<< ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<2> ia1, ia2; ia2[0] = nj - 1; ia2[1] = np - 1;
@@ -2181,10 +2209,10 @@ void tod_contract2_test::test_ij_jp_ip(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<2, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<2, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -2236,8 +2264,8 @@ void tod_contract2_test::test_ij_jp_ip(
 	permutation<2> permc; permc.permute(0, 1);
 	contraction2<1, 1, 1> contr(permc);
 	contr.contract(1, 1);
-	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<1, 1, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -2260,6 +2288,8 @@ void tod_contract2_test::test_ij_jp_pi(
 		<< ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<2> ia1, ia2; ia2[0] = nj - 1; ia2[1] = np - 1;
@@ -2271,10 +2301,10 @@ void tod_contract2_test::test_ij_jp_pi(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<2, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<2, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -2326,8 +2356,8 @@ void tod_contract2_test::test_ij_jp_pi(
 	permutation<2> permc; permc.permute(0, 1);
 	contraction2<1, 1, 1> contr(permc);
 	contr.contract(1, 0);
-	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<1, 1, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -2350,6 +2380,8 @@ void tod_contract2_test::test_ij_p_pji(
 		<< ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<1> ia1, ia2; ia2[0] = np - 1;
@@ -2361,10 +2393,10 @@ void tod_contract2_test::test_ij_p_pji(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<1, double, allocator> ta(dima);
-	tensor<3, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<1, double, allocator_t> ta(dima);
+	tensor<3, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -2418,8 +2450,8 @@ void tod_contract2_test::test_ij_p_pji(
 	permutation<2> permc; permc.permute(0, 1);
 	contraction2<0, 2, 1> contr(permc);
 	contr.contract(0, 0);
-	if(d == 0.0) tod_contract2<0, 2, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<0, 2, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<0, 2, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<0, 2, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -2442,6 +2474,8 @@ void tod_contract2_test::test_ij_pji_p(
 		<< ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<3> ia1, ia2; ia2[0] = np - 1; ia2[1] = nj - 1; ia2[2] = ni - 1;
@@ -2453,10 +2487,10 @@ void tod_contract2_test::test_ij_pji_p(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<3, double, allocator> ta(dima);
-	tensor<1, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<3, double, allocator_t> ta(dima);
+	tensor<1, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -2510,8 +2544,8 @@ void tod_contract2_test::test_ij_pji_p(
 	permutation<2> permc; permc.permute(0, 1);
 	contraction2<2, 0, 1> contr(permc);
 	contr.contract(0, 0);
-	if(d == 0.0) tod_contract2<2, 0, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 0, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 0, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 0, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -2534,6 +2568,8 @@ void tod_contract2_test::test_ijk_ip_pkj(
 		<< ", " << nk << ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<2> ia1, ia2; ia2[0] = ni - 1; ia2[1] = np - 1;
@@ -2545,10 +2581,10 @@ void tod_contract2_test::test_ijk_ip_pkj(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<3, double, allocator> tb(dimb);
-	tensor<3, double, allocator> tc(dimc);
-	tensor<3, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<3, double, allocator_t> tb(dimb);
+	tensor<3, double, allocator_t> tc(dimc);
+	tensor<3, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -2605,8 +2641,8 @@ void tod_contract2_test::test_ijk_ip_pkj(
 	permc.permute(1, 2); // ikj -> ijk
 	contraction2<1, 2, 1> contr(permc);
 	contr.contract(1, 0);
-	if(d == 0.0) tod_contract2<1, 2, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<1, 2, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<1, 2, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<1, 2, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -2629,6 +2665,8 @@ void tod_contract2_test::test_ijk_pi_pkj(
 		<< ", " << nk << ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<2> ia1, ia2; ia2[0] = np - 1; ia2[1] = ni - 1;
@@ -2640,10 +2678,10 @@ void tod_contract2_test::test_ijk_pi_pkj(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<3, double, allocator> tb(dimb);
-	tensor<3, double, allocator> tc(dimc);
-	tensor<3, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<3, double, allocator_t> tb(dimb);
+	tensor<3, double, allocator_t> tc(dimc);
+	tensor<3, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -2700,8 +2738,8 @@ void tod_contract2_test::test_ijk_pi_pkj(
 	permc.permute(1, 2); // ikj -> ijk
 	contraction2<1, 2, 1> contr(permc);
 	contr.contract(0, 0);
-	if(d == 0.0) tod_contract2<1, 2, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<1, 2, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<1, 2, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<1, 2, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -2724,6 +2762,8 @@ void tod_contract2_test::test_ijk_pik_pj(
 		<< ", " << nk << ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<3> ia1, ia2; ia2[0] = np - 1; ia2[1] = ni - 1; ia2[2] = nk - 1;
@@ -2735,10 +2775,10 @@ void tod_contract2_test::test_ijk_pik_pj(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<3, double, allocator> ta(dima);
-	tensor<2, double, allocator> tb(dimb);
-	tensor<3, double, allocator> tc(dimc);
-	tensor<3, double, allocator> tc_ref(dimc);
+	tensor<3, double, allocator_t> ta(dima);
+	tensor<2, double, allocator_t> tb(dimb);
+	tensor<3, double, allocator_t> tc(dimc);
+	tensor<3, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -2795,8 +2835,8 @@ void tod_contract2_test::test_ijk_pik_pj(
 	permc.permute(1, 2); // ikj -> ijk
 	contraction2<2, 1, 1> contr(permc);
 	contr.contract(0, 0);
-	if(d == 0.0) tod_contract2<2, 1, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 1, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 1, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 1, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -2819,6 +2859,8 @@ void tod_contract2_test::test_ijk_pj_ipk(
 		<< ", " << nk << ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<2> ia1, ia2; ia2[0] = np - 1; ia2[1] = nj - 1;
@@ -2830,10 +2872,10 @@ void tod_contract2_test::test_ijk_pj_ipk(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<3, double, allocator> tb(dimb);
-	tensor<3, double, allocator> tc(dimc);
-	tensor<3, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<3, double, allocator_t> tb(dimb);
+	tensor<3, double, allocator_t> tc(dimc);
+	tensor<3, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -2890,8 +2932,8 @@ void tod_contract2_test::test_ijk_pj_ipk(
 	permc.permute(0, 1); // jik -> ijk
 	contraction2<1, 2, 1> contr(permc);
 	contr.contract(0, 1);
-	if(d == 0.0) tod_contract2<1, 2, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<1, 2, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<1, 2, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<1, 2, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -2914,6 +2956,8 @@ void tod_contract2_test::test_ijk_pj_pik(
 		<< ", " << nk << ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<2> ia1, ia2; ia2[0] = np - 1; ia2[1] = nj - 1;
@@ -2925,10 +2969,10 @@ void tod_contract2_test::test_ijk_pj_pik(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<3, double, allocator> tb(dimb);
-	tensor<3, double, allocator> tc(dimc);
-	tensor<3, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<3, double, allocator_t> tb(dimb);
+	tensor<3, double, allocator_t> tc(dimc);
+	tensor<3, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -2985,8 +3029,8 @@ void tod_contract2_test::test_ijk_pj_pik(
 	permc.permute(0, 1); // jik -> ijk
 	contraction2<1, 2, 1> contr(permc);
 	contr.contract(0, 0);
-	if(d == 0.0) tod_contract2<1, 2, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<1, 2, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<1, 2, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<1, 2, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -3009,6 +3053,8 @@ void tod_contract2_test::test_ijk_pkj_ip(
 		<< ", " << nk << ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<3> ia1, ia2; ia2[0] = np - 1; ia2[1] = nk - 1; ia2[2] = nj - 1;
@@ -3020,10 +3066,10 @@ void tod_contract2_test::test_ijk_pkj_ip(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<3, double, allocator> ta(dima);
-	tensor<2, double, allocator> tb(dimb);
-	tensor<3, double, allocator> tc(dimc);
-	tensor<3, double, allocator> tc_ref(dimc);
+	tensor<3, double, allocator_t> ta(dima);
+	tensor<2, double, allocator_t> tb(dimb);
+	tensor<3, double, allocator_t> tc(dimc);
+	tensor<3, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -3080,8 +3126,8 @@ void tod_contract2_test::test_ijk_pkj_ip(
 	permc.permute(0, 2); // kji -> ijk
 	contraction2<2, 1, 1> contr(permc);
 	contr.contract(0, 1);
-	if(d == 0.0) tod_contract2<2, 1, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 1, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 1, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 1, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -3104,6 +3150,8 @@ void tod_contract2_test::test_ijk_pkj_pi(
 		<< ", " << nk << ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<3> ia1, ia2; ia2[0] = np - 1; ia2[1] = nk - 1; ia2[2] = nj - 1;
@@ -3115,10 +3163,10 @@ void tod_contract2_test::test_ijk_pkj_pi(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<3, double, allocator> ta(dima);
-	tensor<2, double, allocator> tb(dimb);
-	tensor<3, double, allocator> tc(dimc);
-	tensor<3, double, allocator> tc_ref(dimc);
+	tensor<3, double, allocator_t> ta(dima);
+	tensor<2, double, allocator_t> tb(dimb);
+	tensor<3, double, allocator_t> tc(dimc);
+	tensor<3, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -3175,8 +3223,8 @@ void tod_contract2_test::test_ijk_pkj_pi(
 	permc.permute(0, 2); // kji -> ijk
 	contraction2<2, 1, 1> contr(permc);
 	contr.contract(0, 0);
-	if(d == 0.0) tod_contract2<2, 1, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 1, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 1, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 1, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -3199,6 +3247,8 @@ void tod_contract2_test::test_ij_pqi_pjq(
 		<< ", " << np << ", " << nq << ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<3> ia1, ia2; ia2[0] = np - 1; ia2[1] = nq - 1; ia2[2] = ni - 1;
@@ -3210,10 +3260,10 @@ void tod_contract2_test::test_ij_pqi_pjq(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<3, double, allocator> ta(dima);
-	tensor<3, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<3, double, allocator_t> ta(dima);
+	tensor<3, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -3268,8 +3318,8 @@ void tod_contract2_test::test_ij_pqi_pjq(
 	contraction2<1, 1, 2> contr;
 	contr.contract(0, 0);
 	contr.contract(1, 2);
-	if(d == 0.0) tod_contract2<1, 1, 2>(contr, ta, tb).perform(tc);
-	else tod_contract2<1, 1, 2>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<1, 1, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<1, 1, 2>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -3291,6 +3341,8 @@ void tod_contract2_test::test_ij_ipq_jqp(
 		<< ", " << np << ", " << nq << ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<3> ia1, ia2; ia2[0] = ni - 1; ia2[1] = np - 1; ia2[2] = nq - 1;
@@ -3302,10 +3354,10 @@ void tod_contract2_test::test_ij_ipq_jqp(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<3, double, allocator> ta(dima);
-	tensor<3, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<3, double, allocator_t> ta(dima);
+	tensor<3, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -3360,8 +3412,8 @@ void tod_contract2_test::test_ij_ipq_jqp(
 	contraction2<1, 1, 2> contr;
 	contr.contract(1, 2);
 	contr.contract(2, 1);
-	if(d == 0.0) tod_contract2<1, 1, 2>(contr, ta, tb).perform(tc);
-	else tod_contract2<1, 1, 2>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<1, 1, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<1, 1, 2>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -3383,6 +3435,8 @@ void tod_contract2_test::test_ij_jpq_iqp(
 		<< ", " << np << ", " << nq << ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<3> ia1, ia2; ia2[0] = nj - 1; ia2[1] = np - 1; ia2[2] = nq - 1;
@@ -3394,10 +3448,10 @@ void tod_contract2_test::test_ij_jpq_iqp(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<3, double, allocator> ta(dima);
-	tensor<3, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<3, double, allocator_t> ta(dima);
+	tensor<3, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -3452,8 +3506,8 @@ void tod_contract2_test::test_ij_jpq_iqp(
 	contraction2<1, 1, 2> contr(permutation<2>().permute(0, 1));
 	contr.contract(1, 2);
 	contr.contract(2, 1);
-	if(d == 0.0) tod_contract2<1, 1, 2>(contr, ta, tb).perform(tc);
-	else tod_contract2<1, 1, 2>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<1, 1, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<1, 1, 2>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -3475,6 +3529,8 @@ void tod_contract2_test::test_ij_jipq_qp(
 		<< ", " << np << ", " << nq << ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<4> ia1, ia2;
@@ -3489,10 +3545,10 @@ void tod_contract2_test::test_ij_jipq_qp(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<2, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<2, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -3548,8 +3604,8 @@ void tod_contract2_test::test_ij_jipq_qp(
 	contraction2<2, 0, 2> contr(permutation<2>().permute(0, 1));
 	contr.contract(2, 1);
 	contr.contract(3, 0);
-	if(d == 0.0) tod_contract2<2, 0, 2>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 0, 2>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 0, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 0, 2>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -3570,6 +3626,8 @@ void tod_contract2_test::test_ij_pq_ijpq(size_t ni, size_t nj, size_t np,
 		<< ", " << np << ", " << nq << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	index<2> ia1, ia2; ia2[0]=np-1; ia2[1]=nq-1;
 	index<4> ib1, ib2; ib2[0]=ni-1; ib2[1]=nj-1; ib2[2]=np-1; ib2[3]=nq-1;
 	index<2> ic1, ic2; ic2[0]=ni-1; ic2[1]=nj-1;
@@ -3579,10 +3637,10 @@ void tod_contract2_test::test_ij_pq_ijpq(size_t ni, size_t nj, size_t np,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -3608,15 +3666,18 @@ void tod_contract2_test::test_ij_pq_ijpq(size_t ni, size_t nj, size_t np,
 	for(size_t i=0; i<ni; i++) {
 	for(size_t j=0; j<nj; j++) {
 		ic[0]=i; ic[1]=j;
+        abs_index<2> ac(ic, dimc);
 		double cij = 0.0;
 		for(size_t p=0; p<np; p++) {
 		for(size_t q=0; q<nq; q++) {
 			ia[0]=p; ia[1]=q;
 			ib[0]=i; ib[1]=j; ib[2]=p; ib[3]=q;
-			cij += dta[dima.abs_index(ia)]*dtb[dimb.abs_index(ib)];
+	        abs_index<2> aa(ia, dima);
+	        abs_index<4> ab(ib, dimb);
+			cij += dta[aa.get_abs_index()]*dtb[ab.get_abs_index()];
 		}
 		}
-		dtc2[dimc.abs_index(ic)] = cij;
+		dtc2[ac.get_abs_index()] = cij;
 		if(fabs(cij) > cij_max) cij_max = fabs(cij);
 	}
 	}
@@ -3635,7 +3696,7 @@ void tod_contract2_test::test_ij_pq_ijpq(size_t ni, size_t nj, size_t np,
 	contr.contract(1, 3);
 
 	tod_contract2<0, 2, 2> op(contr, ta, tb);
-	op.perform(tc);
+	op.perform(cpus, true, 1.0, tc);
 
 	// Compare against the reference
 
@@ -3652,6 +3713,8 @@ void tod_contract2_test::test_ij_pq_ijpq_a(size_t ni, size_t nj, size_t np,
 		<< ", " << np << ", " << nq << ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	index<2> ia1, ia2; ia2[0]=np-1; ia2[1]=nq-1;
 	index<4> ib1, ib2; ib2[0]=ni-1; ib2[1]=nj-1; ib2[2]=np-1; ib2[3]=nq-1;
 	index<2> ic1, ic2; ic2[0]=ni-1; ic2[1]=nj-1;
@@ -3661,10 +3724,10 @@ void tod_contract2_test::test_ij_pq_ijpq_a(size_t ni, size_t nj, size_t np,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -3690,15 +3753,18 @@ void tod_contract2_test::test_ij_pq_ijpq_a(size_t ni, size_t nj, size_t np,
 	for(size_t i=0; i<ni; i++) {
 	for(size_t j=0; j<nj; j++) {
 		ic[0]=i; ic[1]=j;
+		abs_index<2> ac(ic, dimc);
 		double cij = 0.0;
 		for(size_t p=0; p<np; p++) {
 		for(size_t q=0; q<nq; q++) {
 			ia[0]=p; ia[1]=q;
 			ib[0]=i; ib[1]=j; ib[2]=p; ib[3]=q;
-			cij += dta[dima.abs_index(ia)]*dtb[dimb.abs_index(ib)];
+			abs_index<2> aa(ia, dima);
+			abs_index<4> ab(ib, dimb);
+			cij += dta[aa.get_abs_index()]*dtb[ab.get_abs_index()];
 		}
 		}
-		dtc2[dimc.abs_index(ic)] += d*cij;
+		dtc2[ac.get_abs_index()] += d*cij;
 		if(fabs(cij) > cij_max) cij_max = fabs(cij);
 	}
 	}
@@ -3717,7 +3783,7 @@ void tod_contract2_test::test_ij_pq_ijpq_a(size_t ni, size_t nj, size_t np,
 	contr.contract(1, 3);
 
 	tod_contract2<0, 2, 2> op(contr, ta, tb);
-	op.perform(tc, d);
+	op.perform(cpus, false, d, tc);
 
 	// Compare against the reference
 
@@ -3735,6 +3801,8 @@ void tod_contract2_test::test_ijk_kjpq_iqp(size_t ni, size_t nj, size_t nk,
 		<< ", " << nk << ", " << np << ", " << nq << ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<4> ia1, ia2;
@@ -3749,10 +3817,10 @@ void tod_contract2_test::test_ijk_kjpq_iqp(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<3, double, allocator> tb(dimb);
-	tensor<3, double, allocator> tc(dimc);
-	tensor<3, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<3, double, allocator_t> tb(dimb);
+	tensor<3, double, allocator_t> tc(dimc);
+	tensor<3, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -3809,8 +3877,8 @@ void tod_contract2_test::test_ijk_kjpq_iqp(size_t ni, size_t nj, size_t nk,
 	contraction2<2, 1, 2> contr(permutation<3>().permute(0, 2));
 	contr.contract(2, 2);
 	contr.contract(3, 1);
-	if(d == 0.0) tod_contract2<2, 1, 2>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 1, 2>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 1, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 1, 2>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -3832,6 +3900,8 @@ void tod_contract2_test::test_ijk_pkiq_pjq(size_t ni, size_t nj, size_t nk,
 		<< ", " << nk << ", " << np << ", " << nq << ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<4> ia1, ia2;
@@ -3846,10 +3916,10 @@ void tod_contract2_test::test_ijk_pkiq_pjq(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<3, double, allocator> tb(dimb);
-	tensor<3, double, allocator> tc(dimc);
-	tensor<3, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<3, double, allocator_t> tb(dimb);
+	tensor<3, double, allocator_t> tc(dimc);
+	tensor<3, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -3908,8 +3978,8 @@ void tod_contract2_test::test_ijk_pkiq_pjq(size_t ni, size_t nj, size_t nk,
 	contraction2<2, 1, 2> contr(permc);
 	contr.contract(0, 0);
 	contr.contract(3, 2);
-	if(d == 0.0) tod_contract2<2, 1, 2>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 1, 2>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 1, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 1, 2>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -3931,6 +4001,8 @@ void tod_contract2_test::test_ijk_pqj_iqpk(size_t ni, size_t nj, size_t nk,
 		<< ", " << nk << ", " << np << ", " << nq << ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<3> ia1, ia2;
@@ -3945,10 +4017,10 @@ void tod_contract2_test::test_ijk_pqj_iqpk(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<3, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<3, double, allocator> tc(dimc);
-	tensor<3, double, allocator> tc_ref(dimc);
+	tensor<3, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<3, double, allocator_t> tc(dimc);
+	tensor<3, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -4006,8 +4078,8 @@ void tod_contract2_test::test_ijk_pqj_iqpk(size_t ni, size_t nj, size_t nk,
 	contraction2<1, 2, 2> contr(permutation<3>().permute(0, 1));
 	contr.contract(0, 2);
 	contr.contract(1, 1);
-	if(d == 0.0) tod_contract2<1, 2, 2>(contr, ta, tb).perform(tc);
-	else tod_contract2<1, 2, 2>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<1, 2, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<1, 2, 2>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -4029,6 +4101,8 @@ void tod_contract2_test::test_ijk_pqji_qpk(size_t ni, size_t nj, size_t nk,
 		<< ", " << nk << ", " << np << ", " << nq << ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<4> ia1, ia2;
@@ -4043,10 +4117,10 @@ void tod_contract2_test::test_ijk_pqji_qpk(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<3, double, allocator> tb(dimb);
-	tensor<3, double, allocator> tc(dimc);
-	tensor<3, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<3, double, allocator_t> tb(dimb);
+	tensor<3, double, allocator_t> tc(dimc);
+	tensor<3, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -4103,8 +4177,8 @@ void tod_contract2_test::test_ijk_pqji_qpk(size_t ni, size_t nj, size_t nk,
 	contraction2<2, 1, 2> contr(permutation<3>().permute(0, 1));
 	contr.contract(0, 1);
 	contr.contract(1, 0);
-	if(d == 0.0) tod_contract2<2, 1, 2>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 1, 2>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 1, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 1, 2>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -4126,6 +4200,8 @@ void tod_contract2_test::test_ijkl_ikp_jpl(size_t ni, size_t nj, size_t nk,
 		<< ", " << nk << ", " << nl << ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<3> ia1, ia2;
@@ -4140,10 +4216,10 @@ void tod_contract2_test::test_ijkl_ikp_jpl(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<3, double, allocator> ta(dima);
-	tensor<3, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<3, double, allocator_t> ta(dima);
+	tensor<3, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -4201,8 +4277,8 @@ void tod_contract2_test::test_ijkl_ikp_jpl(size_t ni, size_t nj, size_t nk,
 	permc.permute(1, 2); // ikjl -> ijkl
 	contraction2<2, 2, 1> contr(permc);
 	contr.contract(2, 1);
-	if(d == 0.0) tod_contract2<2, 2, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 2, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 2, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 2, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -4224,6 +4300,8 @@ void tod_contract2_test::test_ijkl_ipk_jpl(size_t ni, size_t nj, size_t nk,
 		<< ", " << nk << ", " << nl << ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<3> ia1, ia2;
@@ -4238,10 +4316,10 @@ void tod_contract2_test::test_ijkl_ipk_jpl(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<3, double, allocator> ta(dima);
-	tensor<3, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<3, double, allocator_t> ta(dima);
+	tensor<3, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -4299,8 +4377,8 @@ void tod_contract2_test::test_ijkl_ipk_jpl(size_t ni, size_t nj, size_t nk,
 	permc.permute(1, 2); // ikjl -> ijkl
 	contraction2<2, 2, 1> contr(permc);
 	contr.contract(1, 1);
-	if(d == 0.0) tod_contract2<2, 2, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 2, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 2, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 2, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -4322,6 +4400,8 @@ void tod_contract2_test::test_ijkl_ipl_jpk(size_t ni, size_t nj, size_t nk,
 		<< ", " << nk << ", " << nl << ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<3> ia1, ia2;
@@ -4336,10 +4416,10 @@ void tod_contract2_test::test_ijkl_ipl_jpk(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<3, double, allocator> ta(dima);
-	tensor<3, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<3, double, allocator_t> ta(dima);
+	tensor<3, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -4396,8 +4476,8 @@ void tod_contract2_test::test_ijkl_ipl_jpk(size_t ni, size_t nj, size_t nk,
 	permutation<4> permc; permc.permute(1, 2).permute(2, 3); // iljk->ijkl
 	contraction2<2, 2, 1> contr(permc);
 	contr.contract(1, 1);
-	if(d == 0.0) tod_contract2<2, 2, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 2, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 2, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 2, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -4419,6 +4499,8 @@ void tod_contract2_test::test_ijkl_jkp_ipl(size_t ni, size_t nj, size_t nk,
 		<< ", " << nk << ", " << nl << ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<3> ia1, ia2;
@@ -4433,10 +4515,10 @@ void tod_contract2_test::test_ijkl_jkp_ipl(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<3, double, allocator> ta(dima);
-	tensor<3, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<3, double, allocator_t> ta(dima);
+	tensor<3, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -4494,8 +4576,8 @@ void tod_contract2_test::test_ijkl_jkp_ipl(size_t ni, size_t nj, size_t nk,
 	permc.permute(0, 2).permute(1, 2); // jkil -> ijkl
 	contraction2<2, 2, 1> contr(permc);
 	contr.contract(2, 1);
-	if(d == 0.0) tod_contract2<2, 2, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 2, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 2, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 2, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -4517,6 +4599,8 @@ void tod_contract2_test::test_ijkl_jpl_ipk(size_t ni, size_t nj, size_t nk,
 		<< ", " << nk << ", " << nl << ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<3> ia1, ia2;
@@ -4531,10 +4615,10 @@ void tod_contract2_test::test_ijkl_jpl_ipk(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<3, double, allocator> ta(dima);
-	tensor<3, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<3, double, allocator_t> ta(dima);
+	tensor<3, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -4593,8 +4677,8 @@ void tod_contract2_test::test_ijkl_jpl_ipk(size_t ni, size_t nj, size_t nk,
 	permc.permute(0, 2).permute(1, 2).permute(2, 3);
 	contraction2<2, 2, 1> contr(permc);
 	contr.contract(1, 1);
-	if(d == 0.0) tod_contract2<2, 2, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 2, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 2, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 2, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -4618,6 +4702,8 @@ void tod_contract2_test::test_ijklm_ikp_jpml(size_t ni, size_t nj, size_t nk,
 		<< ", "  << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<3> ia1, ia2;
@@ -4633,10 +4719,10 @@ void tod_contract2_test::test_ijklm_ikp_jpml(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<3, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<5, double, allocator> tc(dimc);
-	tensor<5, double, allocator> tc_ref(dimc);
+	tensor<3, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<5, double, allocator_t> tc(dimc);
+	tensor<5, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -4698,8 +4784,8 @@ void tod_contract2_test::test_ijklm_ikp_jpml(size_t ni, size_t nj, size_t nk,
 	permc.permute(1, 2).permute(3, 4);
 	contraction2<2, 3, 1> contr(permc);
 	contr.contract(2, 1);
-	if(d == 0.0) tod_contract2<2, 3, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 3, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 3, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 3, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -4723,6 +4809,8 @@ void tod_contract2_test::test_ijklm_ipkm_jpl(size_t ni, size_t nj, size_t nk,
 		<< ", "  << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<4> ia1, ia2;
@@ -4738,10 +4826,10 @@ void tod_contract2_test::test_ijklm_ipkm_jpl(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<3, double, allocator> tb(dimb);
-	tensor<5, double, allocator> tc(dimc);
-	tensor<5, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<3, double, allocator_t> tb(dimb);
+	tensor<5, double, allocator_t> tc(dimc);
+	tensor<5, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -4803,8 +4891,8 @@ void tod_contract2_test::test_ijklm_ipkm_jpl(size_t ni, size_t nj, size_t nk,
 	permc.permute(1, 3).permute(2, 3).permute(3, 4);
 	contraction2<3, 2, 1> contr(permc);
 	contr.contract(1, 1);
-	if(d == 0.0) tod_contract2<3, 2, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<3, 2, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<3, 2, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<3, 2, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -4828,6 +4916,8 @@ void tod_contract2_test::test_ijklm_jlp_ipkm(size_t ni, size_t nj, size_t nk,
 		<< ", "  << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<3> ia1, ia2;
@@ -4843,10 +4933,10 @@ void tod_contract2_test::test_ijklm_jlp_ipkm(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<3, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<5, double, allocator> tc(dimc);
-	tensor<5, double, allocator> tc_ref(dimc);
+	tensor<3, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<5, double, allocator_t> tc(dimc);
+	tensor<5, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -4908,8 +4998,8 @@ void tod_contract2_test::test_ijklm_jlp_ipkm(size_t ni, size_t nj, size_t nk,
 	permc.permute(0, 2).permute(1, 2).permute(2, 3);
 	contraction2<2, 3, 1> contr(permc);
 	contr.contract(2, 1);
-	if(d == 0.0) tod_contract2<2, 3, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 3, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 3, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 3, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -4933,6 +5023,8 @@ void tod_contract2_test::test_ijklmn_kjmp_ipln(size_t ni, size_t nj, size_t nk,
 		<< ", "  << np << ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<4> ia1, ia2;
@@ -4948,10 +5040,10 @@ void tod_contract2_test::test_ijklmn_kjmp_ipln(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<6, double, allocator> tc(dimc);
-	tensor<6, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<6, double, allocator_t> tc(dimc);
+	tensor<6, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -5016,8 +5108,8 @@ void tod_contract2_test::test_ijklmn_kjmp_ipln(size_t ni, size_t nj, size_t nk,
 	permc.permute(0, 3).permute(2, 3).permute(3, 4);
 	contraction2<3, 3, 1> contr(permc);
 	contr.contract(3, 1);
-	if(d == 0.0) tod_contract2<3, 3, 1>(contr, ta, tb).perform(tc);
-	else tod_contract2<3, 3, 1>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<3, 3, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<3, 3, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -5041,6 +5133,8 @@ void tod_contract2_test::test_ijkl_iplq_kpjq(size_t ni, size_t nj, size_t nk,
 		<< ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<4> ia1, ia2;
@@ -5055,10 +5149,10 @@ void tod_contract2_test::test_ijkl_iplq_kpjq(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -5116,8 +5210,8 @@ void tod_contract2_test::test_ijkl_iplq_kpjq(size_t ni, size_t nj, size_t nk,
 	contraction2<2, 2, 2> contr(permutation<4>().permute(1, 3));
 	contr.contract(1, 1);
 	contr.contract(3, 3);
-	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -5141,6 +5235,8 @@ void tod_contract2_test::test_ijkl_iplq_pkjq(size_t ni, size_t nj, size_t nk,
 		<< ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<4> ia1, ia2;
@@ -5155,10 +5251,10 @@ void tod_contract2_test::test_ijkl_iplq_pkjq(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -5216,8 +5312,8 @@ void tod_contract2_test::test_ijkl_iplq_pkjq(size_t ni, size_t nj, size_t nk,
 	contraction2<2, 2, 2> contr(permutation<4>().permute(1, 3));
 	contr.contract(1, 0);
 	contr.contract(3, 3);
-	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -5241,6 +5337,8 @@ void tod_contract2_test::test_ijkl_iplq_pkqj(size_t ni, size_t nj, size_t nk,
 		<< ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<4> ia1, ia2;
@@ -5255,10 +5353,10 @@ void tod_contract2_test::test_ijkl_iplq_pkqj(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -5316,8 +5414,8 @@ void tod_contract2_test::test_ijkl_iplq_pkqj(size_t ni, size_t nj, size_t nk,
 	contraction2<2, 2, 2> contr(permutation<4>().permute(1, 3));
 	contr.contract(1, 0);
 	contr.contract(3, 2);
-	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -5341,6 +5439,8 @@ void tod_contract2_test::test_ijkl_ipql_kpqj(size_t ni, size_t nj, size_t nk,
 		<< ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<4> ia1, ia2;
@@ -5355,10 +5455,10 @@ void tod_contract2_test::test_ijkl_ipql_kpqj(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -5416,8 +5516,8 @@ void tod_contract2_test::test_ijkl_ipql_kpqj(size_t ni, size_t nj, size_t nk,
 	contraction2<2, 2, 2> contr(permutation<4>().permute(1, 3));
 	contr.contract(1, 1);
 	contr.contract(2, 2);
-	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -5441,6 +5541,8 @@ void tod_contract2_test::test_ijkl_ipql_pkqj(size_t ni, size_t nj, size_t nk,
 		<< ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<4> ia1, ia2;
@@ -5455,10 +5557,10 @@ void tod_contract2_test::test_ijkl_ipql_pkqj(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -5516,8 +5618,8 @@ void tod_contract2_test::test_ijkl_ipql_pkqj(size_t ni, size_t nj, size_t nk,
 	contraction2<2, 2, 2> contr(permutation<4>().permute(1, 3));
 	contr.contract(1, 0);
 	contr.contract(2, 2);
-	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -5541,6 +5643,8 @@ void tod_contract2_test::test_ijkl_pilq_kpjq(size_t ni, size_t nj, size_t nk,
 		<< ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<4> ia1, ia2;
@@ -5555,10 +5659,10 @@ void tod_contract2_test::test_ijkl_pilq_kpjq(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -5616,8 +5720,8 @@ void tod_contract2_test::test_ijkl_pilq_kpjq(size_t ni, size_t nj, size_t nk,
 	contraction2<2, 2, 2> contr(permutation<4>().permute(1, 3));
 	contr.contract(0, 1);
 	contr.contract(3, 3);
-	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -5641,6 +5745,8 @@ void tod_contract2_test::test_ijkl_pilq_pkjq(size_t ni, size_t nj, size_t nk,
 		<< ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<4> ia1, ia2;
@@ -5655,10 +5761,10 @@ void tod_contract2_test::test_ijkl_pilq_pkjq(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -5716,8 +5822,8 @@ void tod_contract2_test::test_ijkl_pilq_pkjq(size_t ni, size_t nj, size_t nk,
 	contraction2<2, 2, 2> contr(permutation<4>().permute(1, 3));
 	contr.contract(0, 0);
 	contr.contract(3, 3);
-	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -5741,6 +5847,8 @@ void tod_contract2_test::test_ijkl_piql_kpqj(size_t ni, size_t nj, size_t nk,
 		<< ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<4> ia1, ia2;
@@ -5755,10 +5863,10 @@ void tod_contract2_test::test_ijkl_piql_kpqj(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -5816,8 +5924,8 @@ void tod_contract2_test::test_ijkl_piql_kpqj(size_t ni, size_t nj, size_t nk,
 	contraction2<2, 2, 2> contr(permutation<4>().permute(1, 3));
 	contr.contract(0, 1);
 	contr.contract(2, 2);
-	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -5841,6 +5949,8 @@ void tod_contract2_test::test_ijkl_piql_pkqj(size_t ni, size_t nj, size_t nk,
 		<< ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<4> ia1, ia2;
@@ -5855,10 +5965,10 @@ void tod_contract2_test::test_ijkl_piql_pkqj(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -5916,8 +6026,8 @@ void tod_contract2_test::test_ijkl_piql_pkqj(size_t ni, size_t nj, size_t nk,
 	contraction2<2, 2, 2> contr(permutation<4>().permute(1, 3));
 	contr.contract(0, 0);
 	contr.contract(2, 2);
-	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -5941,6 +6051,8 @@ void tod_contract2_test::test_ijkl_pqkj_iqpl(size_t ni, size_t nj, size_t nk,
 		<< ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<4> ia1, ia2;
@@ -5955,10 +6067,10 @@ void tod_contract2_test::test_ijkl_pqkj_iqpl(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -6018,8 +6130,8 @@ void tod_contract2_test::test_ijkl_pqkj_iqpl(size_t ni, size_t nj, size_t nk,
 	contraction2<2, 2, 2> contr(permc);
 	contr.contract(0, 2);
 	contr.contract(1, 1);
-	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -6043,6 +6155,8 @@ void tod_contract2_test::test_ijkl_pqkj_qipl(size_t ni, size_t nj, size_t nk,
 		<< ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<4> ia1, ia2;
@@ -6057,10 +6171,10 @@ void tod_contract2_test::test_ijkl_pqkj_qipl(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -6120,8 +6234,8 @@ void tod_contract2_test::test_ijkl_pqkj_qipl(size_t ni, size_t nj, size_t nk,
 	contraction2<2, 2, 2> contr(permc);
 	contr.contract(0, 2);
 	contr.contract(1, 0);
-	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc);
-	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -6143,6 +6257,8 @@ void tod_contract2_test::test_ij_ipqr_jpqr(size_t ni, size_t nj, size_t np,
 		<< ", " << np << ", " << nq << ", " << nr << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	index<4> ia1, ia2; ia2[0]=ni-1; ia2[1]=np-1; ia2[2]=nq-1; ia2[3]=nr-1;
 	index<4> ib1, ib2; ib2[0]=nj-1; ib2[1]=np-1; ib2[2]=nq-1; ib2[3]=nr-1;
 	index<2> ic1, ic2; ic2[0]=ni-1; ic2[1]=nj-1;
@@ -6152,10 +6268,10 @@ void tod_contract2_test::test_ij_ipqr_jpqr(size_t ni, size_t nj, size_t np,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -6181,17 +6297,20 @@ void tod_contract2_test::test_ij_ipqr_jpqr(size_t ni, size_t nj, size_t np,
 	for(size_t i=0; i<ni; i++) {
 	for(size_t j=0; j<nj; j++) {
 		ic[0]=i; ic[1]=j;
+        abs_index<2> ac(ic, dimc);
 		double cij = 0.0;
 		for(size_t p=0; p<np; p++) {
 		for(size_t q=0; q<nq; q++) {
 		for(size_t r=0; r<nr; r++) {
 			ia[0]=i; ia[1]=p; ia[2]=q; ia[3]=r;
 			ib[0]=j; ib[1]=p; ib[2]=q; ib[3]=r;
-			cij += dta[dima.abs_index(ia)]*dtb[dimb.abs_index(ib)];
+			abs_index<4> aa(ia, dima);
+			abs_index<4> ab(ib, dimb);
+			cij += dta[aa.get_abs_index()]*dtb[ab.get_abs_index()];
 		}
 		}
 		}
-		dtc2[dimc.abs_index(ic)] = cij;
+		dtc2[ac.get_abs_index()] = cij;
 		if(fabs(cij) > cij_max) cij_max = fabs(cij);
 	}
 	}
@@ -6211,7 +6330,7 @@ void tod_contract2_test::test_ij_ipqr_jpqr(size_t ni, size_t nj, size_t np,
 	contr.contract(3, 3);
 
 	tod_contract2<1, 1, 3> op(contr, ta, tb);
-	op.perform(tc);
+	op.perform(cpus, true, 1.0, tc);
 
 	// Compare against the reference
 
@@ -6229,6 +6348,8 @@ void tod_contract2_test::test_ij_ipqr_jpqr_a(size_t ni, size_t nj, size_t np,
 		<< ", " << np << ", " << nq << ", " << nr << ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	index<4> ia1, ia2; ia2[0]=ni-1; ia2[1]=np-1; ia2[2]=nq-1; ia2[3]=nr-1;
 	index<4> ib1, ib2; ib2[0]=nj-1; ib2[1]=np-1; ib2[2]=nq-1; ib2[3]=nr-1;
 	index<2> ic1, ic2; ic2[0]=ni-1; ic2[1]=nj-1;
@@ -6238,10 +6359,10 @@ void tod_contract2_test::test_ij_ipqr_jpqr_a(size_t ni, size_t nj, size_t np,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -6267,17 +6388,19 @@ void tod_contract2_test::test_ij_ipqr_jpqr_a(size_t ni, size_t nj, size_t np,
 	for(size_t i=0; i<ni; i++) {
 	for(size_t j=0; j<nj; j++) {
 		ic[0]=i; ic[1]=j;
+		abs_index<2> ac(ic, dimc);
 		double cij = 0.0;
 		for(size_t p=0; p<np; p++) {
 		for(size_t q=0; q<nq; q++) {
 		for(size_t r=0; r<nr; r++) {
 			ia[0]=i; ia[1]=p; ia[2]=q; ia[3]=r;
 			ib[0]=j; ib[1]=p; ib[2]=q; ib[3]=r;
-			cij += dta[dima.abs_index(ia)]*dtb[dimb.abs_index(ib)];
+			abs_index<4> aa(ia, dima), ab(ib, dimb);
+			cij += dta[aa.get_abs_index()]*dtb[ab.get_abs_index()];
 		}
 		}
 		}
-		dtc2[dimc.abs_index(ic)] += d*cij;
+		dtc2[ac.get_abs_index()] += d*cij;
 		if(fabs(cij) > cij_max) cij_max = fabs(cij);
 	}
 	}
@@ -6297,7 +6420,7 @@ void tod_contract2_test::test_ij_ipqr_jpqr_a(size_t ni, size_t nj, size_t np,
 	contr.contract(3, 3);
 
 	tod_contract2<1, 1, 3> op(contr, ta, tb);
-	op.perform(tc, d);
+	op.perform(cpus, false, d, tc);
 
 	// Compare against the reference
 
@@ -6315,6 +6438,8 @@ void tod_contract2_test::test_ij_ipqr_pjrq(
 		<< ", " << np << ", " << nq << ", " << nr << ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<4> ia1, ia2;
@@ -6328,10 +6453,10 @@ void tod_contract2_test::test_ij_ipqr_pjrq(
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -6389,8 +6514,8 @@ void tod_contract2_test::test_ij_ipqr_pjrq(
 	contr.contract(1, 0);
 	contr.contract(2, 3);
 	contr.contract(3, 2);
-	if(d == 0.0) tod_contract2<1, 1, 3>(contr, ta, tb).perform(tc);
-	else tod_contract2<1, 1, 3>(contr, ta, tb).perform(tc, d);
+	if(d == 0.0) tod_contract2<1, 1, 3>(contr, ta, tb).perform(cpus, true, 1.0, tc);
+	else tod_contract2<1, 1, 3>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//	Compare against the reference
 
@@ -6411,6 +6536,8 @@ void tod_contract2_test::test_ij_jpqr_iprq(size_t ni, size_t nj, size_t np,
 		<< ", " << np << ", " << nq << ", " << nr << ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	index<4> ia1, ia2; ia2[0]=nj-1; ia2[1]=np-1; ia2[2]=nq-1; ia2[3]=nr-1;
 	index<4> ib1, ib2; ib2[0]=ni-1; ib2[1]=np-1; ib2[2]=nr-1; ib2[3]=nq-1;
 	index<2> ic1, ic2; ic2[0]=ni-1; ic2[1]=nj-1;
@@ -6420,10 +6547,10 @@ void tod_contract2_test::test_ij_jpqr_iprq(size_t ni, size_t nj, size_t np,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -6449,18 +6576,20 @@ void tod_contract2_test::test_ij_jpqr_iprq(size_t ni, size_t nj, size_t np,
 	for(size_t i=0; i<ni; i++) {
 	for(size_t j=0; j<nj; j++) {
 		ic[0]=i; ic[1]=j;
+		abs_index<2> ac(ic, dimc);
 		double cij = 0.0;
 		for(size_t p=0; p<np; p++) {
 		for(size_t q=0; q<nq; q++) {
 		for(size_t r=0; r<nr; r++) {
 			ia[0]=j; ia[1]=p; ia[2]=q; ia[3]=r;
 			ib[0]=i; ib[1]=p; ib[2]=r; ib[3]=q;
-			cij += dta[dima.abs_index(ia)]*dtb[dimb.abs_index(ib)];
+			abs_index<4> aa(ia, dima), ab(ib, dimb);
+			cij += dta[aa.get_abs_index()]*dtb[ab.get_abs_index()];
 		}
 		}
 		}
-		if(d == 0.0) dtc2[dimc.abs_index(ic)] = cij;
-		else dtc2[dimc.abs_index(ic)] += d*cij;
+		if(d == 0.0) dtc2[ac.get_abs_index()] = cij;
+		else dtc2[ac.get_abs_index()] += d*cij;
 		if(fabs(cij) > cij_max) cij_max = fabs(cij);
 	}
 	}
@@ -6481,8 +6610,8 @@ void tod_contract2_test::test_ij_jpqr_iprq(size_t ni, size_t nj, size_t np,
 
 	//~ tod_contract2<1, 1, 3> op(contr, ta, tb);
 	tod_contract2<1, 1, 3> op(contr, tb, ta);
-	if(d == 0.0) op.perform(tc);
-	else op.perform(tc, d);
+	if(d == 0.0) op.perform(cpus, true, 1.0, tc);
+	else op.perform(cpus, false, d, tc);
 
 	// Compare against the reference
 
@@ -6500,6 +6629,8 @@ void tod_contract2_test::test_ij_pqir_pqjr(size_t ni, size_t nj,
 		<< ", " << np << ", " << nq << ", " << nr << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	index<4> ia1, ia2; ia2[0]=np-1; ia2[1]=nq-1; ia2[2]=ni-1; ia2[3]=nr-1;
 	index<4> ib1, ib2; ib2[0]=np-1; ib2[1]=nq-1; ib2[2]=nj-1; ib2[3]=nr-1;
 	index<2> ic1, ic2; ic2[0]=ni-1; ic2[1]=nj-1;
@@ -6509,10 +6640,10 @@ void tod_contract2_test::test_ij_pqir_pqjr(size_t ni, size_t nj,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -6538,17 +6669,19 @@ void tod_contract2_test::test_ij_pqir_pqjr(size_t ni, size_t nj,
 	for(size_t i=0; i<ni; i++) {
 	for(size_t j=0; j<nj; j++) {
 		ic[0]=i; ic[1]=j;
+		abs_index<2> ac(ic, dimc);
 		double cij = 0.0;
 		for(size_t p=0; p<np; p++) {
 		for(size_t q=0; q<nq; q++) {
 		for(size_t r=0; r<nr; r++) {
 			ia[0]=p; ia[1]=q; ia[2]=i; ia[3]=r;
 			ib[0]=p; ib[1]=q; ib[2]=j; ib[3]=r;
-			cij += dta[dima.abs_index(ia)]*dtb[dimb.abs_index(ib)];
+			abs_index<4> aa(ia, dima), ab(ib, dimb);
+			cij += dta[aa.get_abs_index()]*dtb[ab.get_abs_index()];
 		}
 		}
 		}
-		dtc2[dimc.abs_index(ic)] = cij;
+		dtc2[ac.get_abs_index()] = cij;
 		if(fabs(cij) > cij_max) cij_max = fabs(cij);
 	}
 	}
@@ -6568,7 +6701,7 @@ void tod_contract2_test::test_ij_pqir_pqjr(size_t ni, size_t nj,
 	contr.contract(3, 3);
 
 	tod_contract2<1, 1, 3> op(contr, ta, tb);
-	op.perform(tc);
+	op.perform(cpus, true, 1.0, tc);
 
 	// Compare against the reference
 
@@ -6586,6 +6719,8 @@ void tod_contract2_test::test_ij_pqir_pqjr_a(size_t ni, size_t nj, size_t np,
 		<< ", " << np << ", " << nq << ", " << nr << ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	index<4> ia1, ia2; ia2[0]=np-1; ia2[1]=nq-1; ia2[2]=ni-1; ia2[3]=nr-1;
 	index<4> ib1, ib2; ib2[0]=np-1; ib2[1]=nq-1; ib2[2]=nj-1; ib2[3]=nr-1;
 	index<2> ic1, ic2; ic2[0]=ni-1; ic2[1]=nj-1;
@@ -6595,10 +6730,10 @@ void tod_contract2_test::test_ij_pqir_pqjr_a(size_t ni, size_t nj, size_t np,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<4, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	tensor<4, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<2, double, allocator_t> tc(dimc);
+	tensor<2, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -6624,17 +6759,19 @@ void tod_contract2_test::test_ij_pqir_pqjr_a(size_t ni, size_t nj, size_t np,
 	for(size_t i=0; i<ni; i++) {
 	for(size_t j=0; j<nj; j++) {
 		ic[0]=i; ic[1]=j;
+		abs_index<2> ac(ic, dimc);
 		double cij = 0.0;
 		for(size_t p=0; p<np; p++) {
 		for(size_t q=0; q<nq; q++) {
 		for(size_t r=0; r<nr; r++) {
 			ia[0]=p; ia[1]=q; ia[2]=i; ia[3]=r;
 			ib[0]=p; ib[1]=q; ib[2]=j; ib[3]=r;
-			cij += dta[dima.abs_index(ia)]*dtb[dimb.abs_index(ib)];
+			abs_index<4> aa(ia, dima), ab(ib, dimb);
+			cij += dta[aa.get_abs_index()]*dtb[ab.get_abs_index()];
 		}
 		}
 		}
-		dtc2[dimc.abs_index(ic)] += d*cij;
+		dtc2[ac.get_abs_index()] += d*cij;
 		if(fabs(cij) > cij_max) cij_max = fabs(cij);
 	}
 	}
@@ -6654,7 +6791,7 @@ void tod_contract2_test::test_ij_pqir_pqjr_a(size_t ni, size_t nj, size_t np,
 	contr.contract(3, 3);
 
 	tod_contract2<1, 1, 3> op(contr, ta, tb);
-	op.perform(tc, d);
+	op.perform(cpus, false, d, tc);
 
 	// Compare against the reference
 
@@ -6673,6 +6810,8 @@ void tod_contract2_test::test_ijkl_pi_jklp(size_t ni, size_t nj,
 	tnss << "tod_contract2_test::test_ijkl_pi_jklp(" << ni << ", " << nj
 		<< ", " << nk << ", " << nl << ", " << np << ")";
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<2> ia1, ia2;
@@ -6688,10 +6827,10 @@ void tod_contract2_test::test_ijkl_pi_jklp(size_t ni, size_t nj,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cijkl_max = 0.0;
 
@@ -6754,7 +6893,7 @@ void tod_contract2_test::test_ijkl_pi_jklp(size_t ni, size_t nj,
 	contraction2<1, 3, 1> contr;
 	contr.contract(0, 3);
 
-	tod_contract2<1, 3, 1>(contr, ta, tb).perform(tc);
+	tod_contract2<1, 3, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc);
 
 	//
 	//	Compare against the reference
@@ -6780,6 +6919,8 @@ void tod_contract2_test::test_ijkl_pi_jklp_a(size_t ni, size_t nj, size_t nk,
 	tnss << "tod_contract2_test::test_ijkl_pi_jklp_a(" << ni << ", " << nj
 		<< ", " << nk << ", " << nl << ", " << np << ", " << d << ")";
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<2> ia1, ia2;
@@ -6795,10 +6936,10 @@ void tod_contract2_test::test_ijkl_pi_jklp_a(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cijkl_max = 0.0;
 
@@ -6861,7 +7002,7 @@ void tod_contract2_test::test_ijkl_pi_jklp_a(size_t ni, size_t nj, size_t nk,
 	contraction2<1, 3, 1> contr;
 	contr.contract(0, 3);
 
-	tod_contract2<1, 3, 1>(contr, ta, tb).perform(tc, d);
+	tod_contract2<1, 3, 1>(contr, ta, tb).perform(cpus, false, d, tc);
 
 	//
 	//	Compare against the reference
@@ -6886,6 +7027,8 @@ void tod_contract2_test::test_jikl_pi_jpkl(size_t ni, size_t nj,
 		<< ", " << nk << ", " << nl << ", " << np << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	index<2> ia1, ia2; ia2[0]=np-1; ia2[1]=ni-1;
 	index<4> ib1, ib2; ib2[0]=nj-1; ib2[1]=np-1; ib2[2]=nk-1; ib2[3]=nl-1;
 	index<4> ic1, ic2; ic2[0]=nj-1; ic2[1]=ni-1; ic2[2]=nk-1; ic2[3]=nl-1;
@@ -6896,10 +7039,10 @@ void tod_contract2_test::test_jikl_pi_jpkl(size_t ni, size_t nj,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -6927,14 +7070,17 @@ void tod_contract2_test::test_jikl_pi_jpkl(size_t ni, size_t nj,
 	for(size_t k=0; k<nk; k++) {
 	for(size_t l=0; l<nl; l++) {
 		ic[0]=j; ic[1]=i; ic[2]=k; ic[3]=l;
+		abs_index<4> ac(ic, dimc);
 		double cjikl = 0.0;
 		for(size_t p=0; p<np; p++) {
 			ia[0]=p; ia[1]=i;
 			ib[0]=j; ib[1]=p; ib[2]=k; ib[3]=l;
-			cjikl += dta[dima.abs_index(ia)]*
-				dtb[dimb.abs_index(ib)];
+			abs_index<2> aa(ia, dima);
+			abs_index<4> ab(ib, dimb);
+			cjikl += dta[aa.get_abs_index()]*
+				dtb[ab.get_abs_index()];
 		}
-		dtc2[dimc.abs_index(ic)] = cjikl;
+		dtc2[ac.get_abs_index()] = cjikl;
 		if(fabs(cjikl) > cij_max) cij_max = fabs(cjikl);
 	}
 	}
@@ -6954,7 +7100,7 @@ void tod_contract2_test::test_jikl_pi_jpkl(size_t ni, size_t nj,
 	contr.contract(0, 1);
 
 	tod_contract2<1, 3, 1> op(contr, ta, tb);
-	op.perform(tc);
+	op.perform(cpus, true, 1.0, tc);
 
 	// Compare against the reference
 
@@ -6972,6 +7118,8 @@ void tod_contract2_test::test_jikl_pi_jpkl_a(size_t ni, size_t nj, size_t nk,
 		<< ", " << nk << ", " << nl << ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	index<2> ia1, ia2; ia2[0]=np-1; ia2[1]=ni-1;
 	index<4> ib1, ib2; ib2[0]=nj-1; ib2[1]=np-1; ib2[2]=nk-1; ib2[3]=nl-1;
 	index<4> ic1, ic2; ic2[0]=nj-1; ic2[1]=ni-1; ic2[2]=nk-1; ic2[3]=nl-1;
@@ -6982,10 +7130,10 @@ void tod_contract2_test::test_jikl_pi_jpkl_a(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<4, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<4, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -7013,14 +7161,17 @@ void tod_contract2_test::test_jikl_pi_jpkl_a(size_t ni, size_t nj, size_t nk,
 	for(size_t k=0; k<nk; k++) {
 	for(size_t l=0; l<nl; l++) {
 		ic[0]=j; ic[1]=i; ic[2]=k; ic[3]=l;
+		abs_index<4> ac(ic, dimc);
 		double cjikl = 0.0;
 		for(size_t p=0; p<np; p++) {
 			ia[0]=p; ia[1]=i;
 			ib[0]=j; ib[1]=p; ib[2]=k; ib[3]=l;
-			cjikl += dta[dima.abs_index(ia)]*
-				dtb[dimb.abs_index(ib)];
+			abs_index<2> aa(ia, dima);
+			abs_index<4> ab(ib, dimb);
+			cjikl += dta[aa.get_abs_index()]*
+				dtb[ab.get_abs_index()];
 		}
-		dtc2[dimc.abs_index(ic)] += d*cjikl;
+		dtc2[ac.get_abs_index()] += d*cjikl;
 		if(fabs(cjikl) > cij_max) cij_max = fabs(cjikl);
 	}
 	}
@@ -7040,7 +7191,7 @@ void tod_contract2_test::test_jikl_pi_jpkl_a(size_t ni, size_t nj, size_t nk,
 	contr.contract(0, 1);
 
 	tod_contract2<1, 3, 1> op(contr, ta, tb);
-	op.perform(tc, d);
+	op.perform(cpus, false, d, tc);
 
 	// Compare against the reference
 
@@ -7058,6 +7209,8 @@ void tod_contract2_test::test_ijkl_ijp_klp(size_t ni, size_t nj,
 		<< ", " << nk << ", " << nl << ", " << np << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	index<3> ia1, ia2; ia2[0]=ni-1; ia2[1]=nj-1; ia2[2]=np-1;
 	index<3> ib1, ib2; ib2[0]=nk-1; ib2[1]=nl-1; ib2[2]=np-1;
 	index<4> ic1, ic2; ic2[0]=ni-1; ic2[1]=nj-1; ic2[2]=nk-1; ic2[3]=nl-1;
@@ -7067,10 +7220,10 @@ void tod_contract2_test::test_ijkl_ijp_klp(size_t ni, size_t nj,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<3, double, allocator> ta(dima);
-	tensor<3, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<3, double, allocator_t> ta(dima);
+	tensor<3, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -7098,13 +7251,15 @@ void tod_contract2_test::test_ijkl_ijp_klp(size_t ni, size_t nj,
 	for(size_t k=0; k<nk; k++) {
 	for(size_t l=0; l<nl; l++) {
 		ic[0]=i; ic[1]=j; ic[2]=k; ic[3]=l;
+		abs_index<4> ac(ic, dimc);
 		double cij = 0.0;
 		for(size_t p=0; p<np; p++) {
 			ia[0]=i; ia[1]=j; ia[2]=p;
 			ib[0]=k; ib[1]=l; ib[2]=p;
-			cij += dta[dima.abs_index(ia)]*dtb[dimb.abs_index(ib)];
+			abs_index<3> aa(ia, dima), ab(ib, dimb);
+			cij += dta[aa.get_abs_index()]*dtb[ab.get_abs_index()];
 		}
-		dtc2[dimc.abs_index(ic)] = cij;
+		dtc2[ac.get_abs_index()] = cij;
 		if(fabs(cij) > cij_max) cij_max = fabs(cij);
 	}
 	}
@@ -7124,7 +7279,7 @@ void tod_contract2_test::test_ijkl_ijp_klp(size_t ni, size_t nj,
 	contr.contract(2, 2);
 
 	tod_contract2<2, 2, 1> op(contr, ta, tb);
-	op.perform(tc);
+	op.perform(cpus, true, 1.0, tc);
 
 	// Compare against the reference
 
@@ -7142,6 +7297,8 @@ void tod_contract2_test::test_ijkl_ijp_klp_a(size_t ni, size_t nj, size_t nk,
 		<< ", " << nk << ", " << nl << ", " << np << ", " << d << ")";
 	std::string tns = tnss.str();
 
+    cpu_pool cpus(1);
+
 	index<3> ia1, ia2; ia2[0]=ni-1; ia2[1]=nj-1; ia2[2]=np-1;
 	index<3> ib1, ib2; ib2[0]=nk-1; ib2[1]=nl-1; ib2[2]=np-1;
 	index<4> ic1, ic2; ic2[0]=ni-1; ic2[1]=nj-1; ic2[2]=nk-1; ic2[3]=nl-1;
@@ -7151,10 +7308,10 @@ void tod_contract2_test::test_ijkl_ijp_klp_a(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<3, double, allocator> ta(dima);
-	tensor<3, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<3, double, allocator_t> ta(dima);
+	tensor<3, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cij_max = 0.0;
 
@@ -7182,13 +7339,15 @@ void tod_contract2_test::test_ijkl_ijp_klp_a(size_t ni, size_t nj, size_t nk,
 	for(size_t k=0; k<nk; k++) {
 	for(size_t l=0; l<nl; l++) {
 		ic[0]=i; ic[1]=j; ic[2]=k; ic[3]=l;
+		abs_index<4> ac(ic, dimc);
 		double cij = 0.0;
 		for(size_t p=0; p<np; p++) {
 			ia[0]=i; ia[1]=j; ia[2]=p;
 			ib[0]=k; ib[1]=l; ib[2]=p;
-			cij += dta[dima.abs_index(ia)]*dtb[dimb.abs_index(ib)];
+			abs_index<3> aa(ia, dima), ab(ib, dimb);
+			cij += dta[aa.get_abs_index()]*dtb[ab.get_abs_index()];
 		}
-		dtc2[dimc.abs_index(ic)] += d*cij;
+		dtc2[ac.get_abs_index()] += d*cij;
 		if(fabs(cij) > cij_max) cij_max = fabs(cij);
 	}
 	}
@@ -7208,7 +7367,7 @@ void tod_contract2_test::test_ijkl_ijp_klp_a(size_t ni, size_t nj, size_t nk,
 	contr.contract(2, 2);
 
 	tod_contract2<2, 2, 1> op(contr, ta, tb);
-	op.perform(tc, d);
+	op.perform(cpus, false, d, tc);
 
 	// Compare against the reference
 
@@ -7227,6 +7386,8 @@ void tod_contract2_test::test_ijkl_ij_kl(size_t ni, size_t nj,
 	tnss << "tod_contract2_test::test_ijkl_ij_kl(" << ni << ", " << nj
 		<< ", " << nk << ", " << nl << ")";
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<2> ia1, ia2;
@@ -7242,10 +7403,10 @@ void tod_contract2_test::test_ijkl_ij_kl(size_t ni, size_t nj,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<2, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<2, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cijkl_max = 0.0;
 
@@ -7304,7 +7465,7 @@ void tod_contract2_test::test_ijkl_ij_kl(size_t ni, size_t nj,
 
 	contraction2<2, 2, 0> contr;
 
-	tod_contract2<2, 2, 0>(contr, ta, tb).perform(tc);
+	tod_contract2<2, 2, 0>(contr, ta, tb).perform(cpus, true, 1.0, tc);
 
 	//
 	//	Compare against the reference
@@ -7330,6 +7491,8 @@ void tod_contract2_test::test_ijkl_ij_lk(size_t ni, size_t nj,
 	tnss << "tod_contract2_test::test_ijkl_ij_lk(" << ni << ", " << nj
 		<< ", " << nk << ", " << nl << ")";
 
+    cpu_pool cpus(1);
+
 	try {
 
 	index<2> ia1, ia2;
@@ -7345,10 +7508,10 @@ void tod_contract2_test::test_ijkl_ij_lk(size_t ni, size_t nj,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<2, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	tensor<2, double, allocator_t> ta(dima);
+	tensor<2, double, allocator_t> tb(dimb);
+	tensor<4, double, allocator_t> tc(dimc);
+	tensor<4, double, allocator_t> tc_ref(dimc);
 
 	double cijkl_max = 0.0;
 
@@ -7409,7 +7572,7 @@ void tod_contract2_test::test_ijkl_ij_lk(size_t ni, size_t nj,
 	permc.permute(2, 3);
 	contraction2<2, 2, 0> contr(permc);
 
-	tod_contract2<2, 2, 0>(contr, ta, tb).perform(tc);
+	tod_contract2<2, 2, 0>(contr, ta, tb).perform(cpus, true, 1.0, tc);
 
 	//
 	//	Compare against the reference

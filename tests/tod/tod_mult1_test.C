@@ -1,15 +1,12 @@
 #include <cmath>
 #include <ctime>
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/tensor.h>
 #include <libtensor/tod/tod_mult1.h>
 #include "../compare_ref.h"
 #include "tod_mult1_test.h"
 
 namespace libtensor {
-
-
-typedef libvmm::std_allocator<double> allocator;
 
 
 void tod_mult1_test::perform() throw(libtest::test_exception) {
@@ -34,6 +31,8 @@ void tod_mult1_test::test_pq_pq_1(
 	tnss << "tod_mult1_test::test_pq_pq_1(" << ni << ", " << nj << ", "
 			<< recip << ")";
 	std::string tns = tnss.str();
+
+	typedef std_allocator<double> allocator;
 
 	try {
 
@@ -91,6 +90,8 @@ void tod_mult1_test::test_pq_pq_2(
 			<< recip << ", " << coeff << ")";
 	std::string tns = tnss.str();
 
+	typedef std_allocator<double> allocator;
+
 	try {
 
 	index<2> i1, i2;
@@ -147,6 +148,8 @@ void tod_mult1_test::test_pqrs_qrps(
 			<< nk << ", " << nl << ", " << recip << ", " << coeff << ")";
 	std::string tns = tnss.str();
 
+	typedef std_allocator<double> allocator;
+
 	try {
 
 	index<4> i1, i2;
@@ -181,7 +184,8 @@ void tod_mult1_test::test_pqrs_qrps(
 		for(size_t k = 0; k < nk; k++)
 		for(size_t l = 0; l < nl; l++) {
 			i1[0] = j; i1[1] = k; i1[2] = i; i1[3] = l;
-			pa_ref[cnt] = pa[cnt] + coeff * pa[cnt] / pb[dimb.abs_index(i1)];
+            abs_index<4> ai1(i1, dimb);
+			pa_ref[cnt] = pa[cnt] + coeff * pa[cnt] / pb[ai1.get_abs_index()];
 			cnt++;
 		}
 	}
@@ -191,7 +195,8 @@ void tod_mult1_test::test_pqrs_qrps(
 		for(size_t k = 0; k < nk; k++)
 		for(size_t l = 0; l < nl; l++) {
 			i1[0] = j; i1[1] = k; i1[2] = i; i1[3] = l;
-			pa_ref[cnt] = pa[cnt] + coeff * pa[cnt] * pb[dimb.abs_index(i1)];
+            abs_index<4> ai1(i1, dimb);
+			pa_ref[cnt] = pa[cnt] + coeff * pa[cnt] * pb[ai1.get_abs_index()];
 			cnt++;
 		}
 	}

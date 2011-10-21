@@ -15,8 +15,8 @@ endif(UNIX)
 #
 string(REGEX MATCH icpc IS_ICPC ${CMAKE_CXX_COMPILER})
 
-#
 #	Detect the linear algebra library
+#
 set(CMAKE_MODULE_PATH_SAVED ${CMAKE_MODULE_PATH})
 set(CMAKE_MODULE_PATH ${LIBTENSOR_DIR}/cmake)
 find_package(MKL)

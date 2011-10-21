@@ -1,7 +1,7 @@
 #include <sstream>
 #include <cmath>
 #include <ctime>
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/core/tensor.h>
 #include <libtensor/btod/btod_import_raw.h>
@@ -94,7 +94,7 @@ void btod_select_test::test_1(size_t n) throw(libtest::test_exception) {
 
 	static const char *testname = "btod_select_test::test_1(size_t)";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tod_select<2, ComparePolicy> tod_select_t;
 	typedef btod_select<2, ComparePolicy> btod_select_t;
 
@@ -157,7 +157,7 @@ void btod_select_test::test_2(size_t n) throw(libtest::test_exception) {
 
 	static const char *testname = "btod_select_test::test_2(size_t)";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tod_select<2, ComparePolicy> tod_select_t;
 	typedef btod_select<2, ComparePolicy> btod_select_t;
 
@@ -225,9 +225,11 @@ void btod_select_test::test_3a(size_t n,
 
 	static const char *testname = "btod_select_test::test_3a(size_t)";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tod_select<2, ComparePolicy> tod_select_t;
 	typedef btod_select<2, ComparePolicy> btod_select_t;
+
+	cpu_pool cpus(1);
 
 	try {
 
@@ -258,7 +260,7 @@ void btod_select_test::test_3a(size_t n,
 			tensor_i<2, double> &ta = ca.req_block(ol.get_index(it)),
 					&tb = cb.req_block(ol.get_index(it));
 
-			tod_copy<2>(ta).perform(tb);
+			tod_copy<2>(ta).perform(cpus, true, 1.0, tb);
 
 			ca.ret_block(ol.get_index(it));
 			cb.ret_block(ol.get_index(it));
@@ -333,7 +335,7 @@ void btod_select_test::test_3b(size_t n) throw(libtest::test_exception) {
 
 	static const char *testname = "btod_select_test::test_3b(size_t)";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tod_select<2, ComparePolicy> tod_select_t;
 	typedef btod_select<2, ComparePolicy> btod_select_t;
 
@@ -429,7 +431,7 @@ void btod_select_test::test_3c(size_t n,
 
 	static const char *testname = "btod_select_test::test_3c(size_t, bool)";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tod_select<2, ComparePolicy> tod_select_t;
 	typedef btod_select<2, ComparePolicy> btod_select_t;
 
@@ -466,7 +468,7 @@ void btod_select_test::test_3c(size_t n,
 		tensor_ctrl<2, double> tc(tmp);
 		const double *ptr = tc.req_const_dataptr();
 		btod_import_raw<2>(ptr, dims).perform(btmp);
-		tc.ret_dataptr(ptr);
+		tc.ret_const_dataptr(ptr);
 
 		block_tensor_ctrl<2, double> btc(btmp);
 		btc.req_zero_block(i01);
@@ -543,7 +545,7 @@ void btod_select_test::test_4a(size_t n,
 
 	static const char *testname = "btod_select_test::test_4a(size_t, bool)";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tod_select<2, ComparePolicy> tod_select_t;
 	typedef btod_select<2, ComparePolicy> btod_select_t;
 
@@ -574,7 +576,7 @@ void btod_select_test::test_4a(size_t n,
 	tensor_ctrl<2, double> ctrl(tmp);
 	const double *ptr = ctrl.req_const_dataptr();
 	btod_import_raw<2>(ptr, dims).perform(bt);
-	ctrl.ret_dataptr(ptr);
+	ctrl.ret_const_dataptr(ptr);
 	}
 
 	// Compute list
@@ -617,7 +619,7 @@ void btod_select_test::test_4b(size_t n) throw(libtest::test_exception) {
 
 	static const char *testname = "btod_select_test::test_4(size_t)";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tod_select<2, ComparePolicy> tod_select_t;
 	typedef btod_select<2, ComparePolicy> btod_select_t;
 
@@ -652,7 +654,7 @@ void btod_select_test::test_4b(size_t n) throw(libtest::test_exception) {
 	tensor_ctrl<2, double> ctrl(tmp);
 	const double *ptr = ctrl.req_const_dataptr();
 	btod_import_raw<2>(ptr, dims).perform(bt);
-	ctrl.ret_dataptr(ptr);
+	ctrl.ret_const_dataptr(ptr);
 	}
 
 	// Compute list
@@ -696,7 +698,7 @@ void btod_select_test::test_4c(size_t n,
 
 	static const char *testname = "btod_select_test::test_4c(size_t, bool)";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tod_select<2, ComparePolicy> tod_select_t;
 	typedef btod_select<2, ComparePolicy> btod_select_t;
 
@@ -731,7 +733,7 @@ void btod_select_test::test_4c(size_t n,
 	tensor_ctrl<2, double> ctrl(tmp);
 	const double *ptr = ctrl.req_const_dataptr();
 	btod_import_raw<2>(ptr, dims).perform(bt);
-	ctrl.ret_dataptr(ptr);
+	ctrl.ret_const_dataptr(ptr);
 	}
 
 	// Compute list
@@ -775,9 +777,11 @@ void btod_select_test::test_5(size_t n) throw(libtest::test_exception) {
 
 	static const char *testname = "btod_select_test::test_5(size_t)";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tod_select<2, ComparePolicy> tod_select_t;
 	typedef btod_select<2, ComparePolicy> btod_select_t;
+
+	cpu_pool cpus(1);
 
 	try {
 
@@ -839,7 +843,7 @@ void btod_select_test::test_5(size_t n) throw(libtest::test_exception) {
 			abs_index<2> ai(oa.get_abs_canonical_index(), bidims);
 			tensor_i<2, double> &ta = ca.req_block(ai.get_index()),
 					&tb = cb.req_block(ib);
-			tod_copy<2>(ta, tra.get_perm(), tra.get_coeff()).perform(tb);
+			tod_copy<2>(ta, tra.get_perm(), tra.get_coeff()).perform(cpus, true, 1.0, tb);
 
 			ca.ret_block(ai.get_index());
 			cb.ret_block(ib);
