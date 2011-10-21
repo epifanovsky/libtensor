@@ -227,6 +227,12 @@ set(SRC_IFACE
 	iface/trace_test.C
 )
 
+set(SRC_CUDA
+    tod/libtensor_tod_cuda_tests.C
+    tod/libtensor_tod_cuda_suite.C
+    tod/tod_cuda_copy_test.cu 
+)
+
 set(TARGETS
 	libtensor_core_tests
 	libtensor_tod_tests
@@ -234,7 +240,6 @@ set(TARGETS
 	libtensor_iface_tests
 	libtensor_linalg_tests
 	libtensor_symmetry_tests
-	libtensor_cuda_tests
 )
 
 
@@ -247,18 +252,10 @@ add_executable(libtensor_tod_tests ${SRC_TOD})
 
 include(${LIBTEST_DIR}/cmake/SetupLibTest.txt)
 
-if (CUDA_FOUND)
-	set(CUDA_SRC
-			tod/libtensor_tod_cuda_tests.C
-			tod/libtensor_tod_cuda_suite.C
-			tod/tod_cuda_copy_test.cu 
-		)
-	cuda_add_executable(libtensor_cuda_tests ${CUDA_SRC})
-	#set_target_properties(libtest_cuda_tests PROPERTIES
-	#	COMPILE_DEFINITIONS_DEBUG LIBVMM_DEBUG)
-endif (CUDA_FOUND)
-
-
+if(CUDA_FOUND)
+    set(TARGETS ${TARGETS} libtensor_cuda_tests)
+    cuda_add_executable(libtensor_cuda_tests ${SRC_CUDA})
+endif(CUDA_FOUND)
 
 set_property(TARGET ${TARGETS} APPEND PROPERTY
 	COMPILE_DEFINITIONS LIBTENSOR_INSTANTIATE_TEMPLATES)
