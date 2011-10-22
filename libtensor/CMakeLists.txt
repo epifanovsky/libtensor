@@ -11,6 +11,7 @@ set(SRC
     core/orbit.C
     core/orbit_list.C
     btod/btod_cholesky.C
+    btod/cholesky.C
     btod/btod_diagonalize.C
     btod/btod_tridiagonalize.C
     symmetry/point_group_table.C
