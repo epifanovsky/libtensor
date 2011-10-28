@@ -13,7 +13,7 @@ namespace libtensor {
 class cholesky
 {
 public:
-	cholesky(block_tensor_i<2, double> &bta, double tol = 1e-4, int maxiter = 100000);
+	cholesky(block_tensor_i<2, double> &bta, double tol = 1e-4);
 	//!< bta - input matrix.
 	~cholesky();
 	virtual void decompose();
@@ -22,21 +22,14 @@ public:
 	//!< btb - output matrix. put data to the output matrix
 	double get_tol(){return m_tol;};
 	//!< Show the tolerance
-	int get_maxiter(){return m_maxiter;};
-	//!< Show the number of max iterations
-	int get_iter(){return m_iter;};
-	//!< Show the number of iterations have been done
-	bool get_doneiter(){return doneiter;};
-	//!< Check if iterations are converged
 	int get_rank() {return m_rank;};
+	//!< Get the rank of the decomposed matrix
 private:
 	block_tensor_i<2, double> &m_bta; //!< Input block %tensor
 	double m_tol;//!< Tolerance
-	int m_maxiter;//!< Maximum number of iterations
-	int m_iter;//!< Number of iterations have been done
-	bool doneiter;//!< iterations are converged?
 	double m_rank;
 	block_tensor <2, double, std_allocator<double> > * pta;//!< buffer
+	double sort_diag(block_tensor_i<2, double> &D, index<2> &idxbl, index<2> &idxibl);
 };
 
 }

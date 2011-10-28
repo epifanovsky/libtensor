@@ -12,6 +12,7 @@
 #include "btod_set_diag.h"
 #include "btod_set_elem.h"
 #include "btod_set.h"
+#include "btod_select.h"
 
 #include "btod_print.h"
 
@@ -21,10 +22,9 @@
 namespace libtensor
 {
 
-cholesky::cholesky(block_tensor_i<2, double> &bta, double tol,int maxiter) :
-m_bta(bta) ,m_tol(tol),m_maxiter(maxiter),m_iter(0), doneiter(0), m_rank(0)
+cholesky::cholesky(block_tensor_i<2, double> &bta, double tol) :
+m_bta(bta) ,m_tol(tol), m_rank(0)
 , pta(new block_tensor<2, double, std_allocator <double> >(bta.get_bis()))
-
 {
 
 }
@@ -38,41 +38,13 @@ cholesky::~cholesky(){
 void cholesky::decompose()
 {
 	
-	block_tensor_i<2, double> &buff(*pta);
-	btod_copy<2>(m_bta).perform(buff);
+	typedef std_allocator<double> allocator_t;
+	block_tensor_i<2, double> &buff(*pta);// buffer
+	block_tensor<2, double, std_allocator <double> > D(buff.get_bis());// Residual matrix
 
-	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	// zero out small elements
-	/*
-	// find highest diag element
-	index<1> i1a, i1b;
-        i1b[0] = buff.get_bis().get_dims().get_dim(0);
-
-        dimensions<1> dims1(index_range<1>(i1a, i1b));
-
-        block_index_space<1> bis1(dims1);
-
-        block_tensor<1, double, allocator_t> diag(bis1);//input matrix
-
-	mask<2> msk;
-        msk[0] = true; msk[1] = true;
-        btod_diag<2, 2>(buff, msk).perform(diag);
-
-	//!!!!!!!!!!!!!!!!!!!!!!!
-	// here I should run other all diag elements and fing highes one
-
-	// should be divided by max element
-	double thresh = m_tol;
-
-	//run over the tensor and zero out everythin smaller than thresh
-
-	*/
+	btod_copy<2>(m_bta).perform(buff); // now buffer has imput matrix
+	btod_copy<2>(buff).perform(D); // now D has input matrix
 	
-	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	// make permutations
-	
-
-	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// find Cholesky
 	size_t n = buff.get_bis().get_dims().get_dim(0);//size of the matrix
 
@@ -81,11 +53,7 @@ void cholesky::decompose()
 
 	size_t pos1 = 0;
 
-	//!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	// change to the maxdiag from the prev routine when we zero out
-	double maxdiag = 100;
-	// CHANGE LIMITS FROM N-2 TO N
-	for(size_t i1 = 0; i1 < n  && maxdiag > m_tol; i1++)
+	for(size_t i1 = 0; i1 < n ; i1++)
 	{
 	// first run over index 1 (columns of the matrices)
         if(buff.get_bis().get_block_dims(idx).get_dim(1) - 1 < pos1)
@@ -96,7 +64,57 @@ void cholesky::decompose()
 
         idx[0] = 0;
         size_t pos0 = 0;
+
+        index<2> idxibl; // index inside block
+        idxibl[0] = 0; idxibl[1] = 0;
+
+        index<2> idxbl; // index of the block
+        idxbl[0] = 0; idxbl[1] = 0; 
+
+	double diag = 0;
+	diag = sort_diag(D, idxbl, idxibl);
+	// extracted the maximum diagonal element
+
+	if(diag < m_tol) break;
+
+	m_rank++; // increase the rank
+
+	// mask for column extraction
+
+	mask<2> msk;
+	msk[0] = true; msk[1] = false;
 	
+	btod_extract<2, 1> ex(D, msk, idxbl, idxibl);
+
+	block_tensor<1, double, std_allocator <double> > column(ex.get_bis());
+
+	ex.perform(column);
+	// now column has a bt with column
+
+	// scale the element
+
+        tensor <1 , double, std_allocator <double> > columnt(column.get_bis().get_dims());
+
+	btod_scale<1>(column,1/sqrt(diag)).perform();
+
+        tod_btconv<1>(column).perform(columnt); // now columnt has cholesky vector
+
+	// update residual D^{j} = D^{j-1} - L^{j}*L^{j}'
+
+	block_tensor<2, double, allocator_t> tmp(buff.get_bis());
+	block_tensor<2, double, allocator_t> tmp2(buff.get_bis());
+
+	contraction2<1,1,0> contr;
+	btod_contract2<1,1,0>(contr,column,column).perform(tmp);
+
+	btod_add<2> op(D);
+	op.add_op(tmp,-1);
+	op.perform(tmp2);
+
+	btod_copy<2>(tmp2).perform(D);
+	
+	//save the vector to the buffer
+
 	for(size_t i0 = 0 ; i0 < n; i0++)
 	{
 	// after that run over index 0 (rows of the matrix)
@@ -113,242 +131,22 @@ void cholesky::decompose()
         tensor_ctrl<2, double> ct(t);
        	double *p = ct.req_dataptr();
 
-	if( i0 < i1)//above diagonal
-	{
-	//make zeros
-
 	size_t np = buff.get_bis().get_block_dims(idx).get_dim(1);
 
-	*(p + pos0 * np + pos1) = 0;
+	tensor_ctrl<1, double> ct2(columnt);
+        const double *px = ct2.req_const_dataptr();
+	
+	*(p + pos0 * np + pos1) = *(px + i0) ;
+	// put the Cholesky vector to the buffer
 
 	ct.ret_dataptr(p);
         ctrl.ret_block(idx);
-	}
-	else if(i0 == i1)// diagonal
-	{
-	// L_{ii} = sqrt(V_{ii});
 
-	size_t np = buff.get_bis().get_block_dims(idx).get_dim(1);
-
-	double tmp = *(p + pos0 * np + pos1);
-	if (tmp < 0)
-	{
-	std::cout<<std::endl;
-	std::cout<<"Error in Cholesky factorization - element "<<i0<<","<<i1<<" is less than zero ("<<tmp<<")"<<std::endl;
-	throw 1;
-	}
-
-	*(p + pos0 * np + pos1) = sqrt(tmp);
-
-        ct.ret_dataptr(p);
-        ctrl.ret_block(idx);
-	}
-	else// non -diagonal
-	{
-	// 1. L_{ij} = V_{ij} - \sum_{k=1}^{i-1} L_{jk} L_{ik}/L_{ii}
-	
-	size_t np = buff.get_bis().get_block_dims(idx).get_dim(1);
-
-	// tmp contains V_{ij}
-	double tmp;
-	tmp = *(p + pos0 * np + pos1);
-
-        ct.ret_dataptr(p);
-        ctrl.ret_block(idx);
-
-        index<2> idxp;
-
-        idxp[0] = idx[0];
-        idxp[1] = 0 ;
-
-        size_t posp0 = pos0;
-        size_t posp1 = 0;
-
-	double *pp;
-
-	// subtract \sum_{k=1}^{i-1} L_{jk} L_{ik}
-	if( i1 > 0)
-	{
-	
-	for(size_t k = 0; k <= (i1 - 1); k++)
-	{
-	
-
-	idxp[0] = idx[0];
-	idxp[1] = 0 ;
-
-	posp0 = pos0;
-	posp1 = 0;
-
-	// find posp1 and idxp[1]
-	// This is for L_{jk}
-
-	for(size_t m = 0; m < k; m++)
-	{
-	posp1++;
-	if(buff.get_bis().get_block_dims(idxp).get_dim(1) - 1 < posp1)
-	{
-		posp1 -= buff.get_bis().get_block_dims(idxp).get_dim(1);
-                idxp[1]++;
-	}
-	// should it be else here?
-	}
-	
-	tensor_i<2 ,double> &tt = ctrl.req_block(idxp); 
-	tensor_ctrl<2, double> ctt(tt);	
-        pp = ctt.req_dataptr();
-
-	size_t np = buff.get_bis().get_block_dims(idxp).get_dim(1);	
-	double tmp1 = *(pp + posp0 * np + posp1);
-
-	ctt.ret_dataptr(pp);
-        ctrl.ret_block(idxp);
-
-	idxp[0] = 0;
-	posp0 = 0;
-
-	//find posp0 and inxp[0]
-	// FInd L_{ik}
-	
-	for(size_t m = 0; m < i1; m++)
-	{
-	posp0++;
-        if(buff.get_bis().get_block_dims(idxp).get_dim(0) - 1 < posp0)
-        {
-                posp0 -= buff.get_bis().get_block_dims(idxp).get_dim(0);
-                idxp[0]++;
-        }
-	}
-
-	tensor_i<2 ,double> &t2 = ctrl.req_block(idxp); 
-	tensor_ctrl<2, double> ct2(t2);
-        pp = ct2.req_dataptr();
-
-	np = buff.get_bis().get_block_dims(idxp).get_dim(1);
-
-	double tmp2 = *(pp + posp0 * np + posp1);
-
-
-        ct2.ret_dataptr(pp);
-        ctrl.ret_block(idxp);
-
-	tmp -=  tmp1 * tmp2;
-	
-	// now tmp has V_{ij} - L{ij} * L_{ik}
-
-	}
-	}// end of sumation over k
-	
-	// divide by diagonal
-	
-	idxp[0] = 0;
-        idxp[1] = idx[1];
-	posp0 = 0;
-	posp1 = pos1;
-
-        for(size_t m = 0; m < i1; m++)
-        {
-	posp0++;
-        if(buff.get_bis().get_block_dims(idxp).get_dim(0) - 1 < posp0)
-        {
-                posp0 -= buff.get_bis().get_block_dims(idxp).get_dim(0);
-                idxp[0]++;
-        }
-        // should it be else here?
-        }
-
-        tensor_i<2 ,double> &t3 = ctrl.req_block(idxp); 
-	tensor_ctrl<2, double> ct3(t3);
-        pp = ct3.req_dataptr();
-
-	np = buff.get_bis().get_block_dims(idxp).get_dim(1);
-
-	tmp = tmp / (*(pp + posp0 * np + posp1));
-
-
-	// now tmp has V_{ij} - \sum_{k=1}^{i-1} L_{jk} L_{ik}/L_{ii}
-
-	ct3.ret_dataptr(pp);
-        ctrl.ret_block(idxp);
-
-        tensor_i<2 ,double> &t4 = ctrl.req_block(idx); 
-	tensor_ctrl<2, double> ct4(t4);
-        p = ct4.req_dataptr();
-	
-	np = buff.get_bis().get_block_dims(idx).get_dim(1);
-
-	*(p + pos0 * np + pos1) = tmp;
-
-        ct4.ret_dataptr(p);
-        ctrl.ret_block(idx);
-
-	// end of the step 1.
-
-	//last step - update diagonals
-	// V_{jj} = V_{jj} - L^2{ji}
-	
-	idxp[0]=idx[0];
-	posp0 = pos0;
-	idxp[1] = 0;
-	posp1 = 0;
-
-	for(size_t m = 0;m < i0 ; m++)
-	{
-	posp1++;
-	if(buff.get_bis().get_block_dims(idxp).get_dim(1) - 1 < posp1)
-        {
-                posp1 -= buff.get_bis().get_block_dims(idxp).get_dim(1);
-                idxp[1]++;
-        }
-        // should it be else here?
-	}	
-
-	np =  buff.get_bis().get_block_dims(idxp).get_dim(1);
-
-        tensor_i<2 ,double> &t5 = ctrl.req_block(idxp); 
-	tensor_ctrl<2, double> ct5(t5);
-        pp = ct5.req_dataptr();
-
-	tmp = *(pp + posp0 * np + posp1);
-
-
-	// now tmp has diagonal V_{jj}
-
-        ct5.ret_dataptr(pp);
-        ctrl.ret_block(idxp);
-
-        tensor_i<2 ,double> &t6 = ctrl.req_block(idx); 
-	tensor_ctrl<2, double> ct6(t6);
-        p = ct6.req_dataptr();
-
-	np =  buff.get_bis().get_block_dims(idx).get_dim(1);
-
-	double tmp2 = *(p + pos0 * np + pos1);
-
-	tmp -= tmp2 * tmp2;
-
-	// now tmp has V_{jj} - L_{ji}^2
-
-        ct6.ret_dataptr(p);
-        ctrl.ret_block(idx);
-
-
-        np =  buff.get_bis().get_block_dims(idxp).get_dim(1);
-        tensor_i<2 ,double> &t7 = ctrl.req_block(idxp); 
-	tensor_ctrl<2, double> ct7(t7);
-        pp = ct7.req_dataptr();
-
-	*(pp + posp0 * np + posp1) = tmp;
-
-        ct7.ret_dataptr(pp);
-        ctrl.ret_block(idxp);
-	
-	}
+	ct2.ret_const_dataptr(px);
 
 	pos0++;
 	}
 
-	m_rank++;
 	pos1++;
 	
 	std::stringstream os;
@@ -362,8 +160,60 @@ void cholesky::decompose()
 	}
 
 
-	// apply permutation back
-	
+}
+
+double cholesky::sort_diag(block_tensor_i<2, double> &D, index<2> &idxbl, index<2> &idxibl)
+{
+	typedef std_allocator<double> allocator_t;
+
+	// extract diagonal
+
+        size_t nd = D.get_bis().get_dims().get_dim(0);
+
+        mask<2> msk;
+        msk[0] = true; msk[1] = true;
+	// mask to extract diagonal
+        btod_diag<2, 2> d(D, msk);
+        block_tensor<1, double, std_allocator <double> > diagbt(d.get_bis());
+        d.perform(diagbt);
+
+	// now diagbt has diagonal
+
+	// find the highest diag element
+
+	#ifdef PRINT
+        std::stringstream os;
+        os<<std::endl;	
+	os<<"Diagonal is "<<std::endl;
+	btod_print<1>(os).perform(diagbt);
+
+        #endif
+
+	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	// here should change it to Zhenya's procedure
+
+        double maxdiag = 0;
+        size_t i1 = 0; // number of the maximum element
+        size_t pos = 0;
+
+ 	btod_select<1, compare4absmax>::list_t lst1;
+	btod_select<1, compare4absmax>(diagbt).perform(lst1, 1);
+
+       	if(lst1.begin() != lst1.end()) {
+                        maxdiag = lst1.begin()->value;
+			index<1> bidx;
+	        	bidx = lst1.begin()->bidx;
+			index<1> idx;
+      			idx = lst1.begin()->idx;
+			idxbl[0] = 0; idxbl[1] = bidx[0];
+			idxibl[0] = 0; idxibl[1] = idx[0];
+			// here it might be a bug if
+			// bis of diag not equal to the
+			// bis of the columns of the
+			// matrix
+        }
+
+	return maxdiag;
 }
 
 void cholesky::perform(block_tensor_i<2, double> &btb)
@@ -373,10 +223,6 @@ void cholesky::perform(block_tensor_i<2, double> &btb)
 	size_t R = m_rank ;
 	
 	block_tensor_i<2, double> &buff(*pta);
-
-	// Should be removed!
-	//btod_copy<2>(buff).perform(btb);
-	//btod_set<2>(3).perform(btb);
 	
 	index<2> idxi;
 	idxi[0] = 0;
@@ -459,7 +305,6 @@ void cholesky::perform(block_tensor_i<2, double> &btb)
 	}
 
 }
-
 
 }//namespace libtensor
 

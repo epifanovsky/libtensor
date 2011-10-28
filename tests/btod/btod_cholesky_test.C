@@ -22,7 +22,7 @@ void btod_cholesky_test::perform() throw(libtest::test_exception) {
 	test_2();
 	test_3();
 	test_4();
-	//test_5(); //this test fail for dpstrf
+	test_5(); //this test fail for dpstrf
 }
 
 
