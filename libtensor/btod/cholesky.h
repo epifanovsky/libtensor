@@ -27,7 +27,7 @@ public:
 private:
 	block_tensor_i<2, double> &m_bta; //!< Input block %tensor
 	double m_tol;//!< Tolerance
-	double m_rank;
+	int m_rank;
 	block_tensor <2, double, std_allocator<double> > * pta;//!< buffer
 	double sort_diag(block_tensor_i<2, double> &D, index<2> &idxbl, index<2> &idxibl);
 };

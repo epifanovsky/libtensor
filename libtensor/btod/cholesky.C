@@ -101,17 +101,11 @@ void cholesky::decompose()
 
 	// update residual D^{j} = D^{j-1} - L^{j}*L^{j}'
 
-	block_tensor<2, double, allocator_t> tmp(buff.get_bis());
-	block_tensor<2, double, allocator_t> tmp2(buff.get_bis());
-
 	contraction2<1,1,0> contr;
-	btod_contract2<1,1,0>(contr,column,column).perform(tmp);
+        btod_contract2<1,1,0> opcntr(contr,column,column);
 
-	btod_add<2> op(D);
-	op.add_op(tmp,-1);
-	op.perform(tmp2);
+	opcntr.perform(D,-1);
 
-	btod_copy<2>(tmp2).perform(D);
 	
 	//save the vector to the buffer
 
