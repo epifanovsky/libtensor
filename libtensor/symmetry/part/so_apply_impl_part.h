@@ -1,13 +1,13 @@
 #ifndef LIBTENSOR_SO_APPLY_IMPL_PART_H
 #define LIBTENSOR_SO_APPLY_IMPL_PART_H
 
-#include "../defs.h"
-#include "../exception.h"
+#include "../../defs.h"
+#include "../../exception.h"
+#include "../symmetry_element_set_adapter.h"
+#include "../symmetry_operation_impl_base.h"
+#include "../so_apply.h"
+#include "../se_part.h"
 #include "partition_set.h"
-#include "symmetry_element_set_adapter.h"
-#include "symmetry_operation_impl_base.h"
-#include "so_apply.h"
-#include "se_part.h"
 
 namespace libtensor {
 
@@ -61,18 +61,21 @@ void symmetry_operation_impl< so_apply<N, T>, se_part<N, T> >::do_perform(
                 it1 != adapter1.end(); it1++) {
 
             const element_t &se1 = adapter1.get_elem(it1);
-            element_t se2(se1.get_bis(), se1.get_mask(), se1.get_npart());
-
             const dimensions<N> &pdims = se1.get_pdims();
+            element_t se2(se1.get_bis(), pdims);
+
             abs_index<N> ai(pdims);
             do {
-                abs_index<N> bi(se1.get_direct_map(ai.get_index()), pdims);
-                if (ai.get_abs_index() >= bi.get_abs_index())
-                    continue;
-
-                if (se1.get_sign(ai.get_index(), bi.get_index())) {
-                    se2.add_map(ai.get_index(), bi.get_index());
+                const index<N> &i1 = ai.get_index();
+                if (se1.is_forbidden(i1)) {
+                    se2.mark_forbidden(i1); continue;
                 }
+
+                index<N> i2 = se1.get_direct_map(i1);
+                if (i1 >= i2) continue;
+
+                if (se1.get_sign(i1, i2)) se2.add_map(i1, i2, true);
+
             } while (ai.inc());
 
             se2.permute(params.perm1);
@@ -86,16 +89,22 @@ void symmetry_operation_impl< so_apply<N, T>, se_part<N, T> >::do_perform(
                 it1 != adapter1.end(); it1++) {
 
             const element_t &se1 = adapter1.get_elem(it1);
-            element_t se2(se1.get_bis(), se1.get_mask(), se1.get_npart());
-
             const dimensions<N> &pdims = se1.get_pdims();
+
+            element_t se2(se1.get_bis(), pdims);
+
             abs_index<N> ai(pdims);
             do {
-                abs_index<N> bi(se1.get_direct_map(ai.get_index()), pdims);
-                if (ai.get_abs_index() >= bi.get_abs_index())
-                    continue;
+                const index<N> &i1 = ai.get_index();
+                if (se1.is_forbidden(i1)) {
+                    se2.mark_forbidden(i1); continue;
+                }
 
-                se2.add_map(ai.get_index(), bi.get_index());
+                index<N> i2 = se1.get_direct_map(i1);
+                if (i1 >= i2) continue;
+
+                se2.add_map(i1, i2, true);
+
             } while (ai.inc());
 
             se2.permute(params.perm1);

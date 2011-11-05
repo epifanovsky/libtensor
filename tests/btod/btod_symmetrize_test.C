@@ -1,4 +1,4 @@
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/core/block_tensor_ctrl.h>
 #include <libtensor/btod/btod_add.h>
@@ -16,8 +16,7 @@ namespace libtensor {
 
 void btod_symmetrize_test::perform() throw(libtest::test_exception) {
 
-	libvmm::vm_allocator<double>::vmm().init(
-		16, 16, 16777216, 16777216, 0.90, 0.05);
+	allocator<double>::vmm().init(16, 16, 16777216, 16777216);
 
 	try {
 
@@ -53,11 +52,11 @@ void btod_symmetrize_test::perform() throw(libtest::test_exception) {
 		test_6b(true, true, true);
 
 	} catch(...) {
-		libvmm::vm_allocator<double>::vmm().shutdown();
+		allocator<double>::vmm().shutdown();
 		throw;
 	}
 
-	libvmm::vm_allocator<double>::vmm().shutdown();
+	allocator<double>::vmm().shutdown();
 }
 
 /**	\test Symmetrization of a non-symmetric 2-index block %tensor
@@ -66,7 +65,9 @@ void btod_symmetrize_test::test_1() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_symmetrize_test::test_1()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+	cpu_pool cpus(1);
 
 	try {
 
@@ -92,7 +93,7 @@ void btod_symmetrize_test::test_1() throw(libtest::test_exception) {
 	tod_btconv<2>(bta).perform(ta);
 	tod_add<2> refop(ta);
 	refop.add_op(ta, permutation<2>().permute(0, 1), 1.0);
-	refop.perform(tb_ref);
+	refop.perform(cpus, true, 1.0, tb_ref);
 
 	//	Run the symmetrization operation
 
@@ -127,7 +128,9 @@ void btod_symmetrize_test::test_2() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_symmetrize_test::test_2()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+	cpu_pool cpus(1);
 
 	try {
 
@@ -153,7 +156,7 @@ void btod_symmetrize_test::test_2() throw(libtest::test_exception) {
 	tod_btconv<2>(bta).perform(ta);
 	tod_add<2> refop(ta);
 	refop.add_op(ta, permutation<2>().permute(0, 1), -1.0);
-	refop.perform(tb_ref);
+	refop.perform(cpus, true, 1.0, tb_ref);
 
 	//	Run the symmetrization operation
 
@@ -189,7 +192,9 @@ void btod_symmetrize_test::test_3() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_symmetrize_test::test_3()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -222,7 +227,7 @@ void btod_symmetrize_test::test_3() throw(libtest::test_exception) {
 	tod_btconv<4>(bta).perform(ta);
 	tod_add<4> refop(ta);
 	refop.add_op(ta, permutation<4>().permute(1, 3), -1.0);
-	refop.perform(tb_ref);
+	refop.perform(cpus, true, 1.0, tb_ref);
 
 	//	Run the symmetrization operation
 
@@ -259,7 +264,9 @@ void btod_symmetrize_test::test_4() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_symmetrize_test::test_4()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -292,7 +299,7 @@ void btod_symmetrize_test::test_4() throw(libtest::test_exception) {
 	tod_btconv<4>(bta).perform(ta);
 	tod_add<4> refop(ta);
 	refop.add_op(ta, permutation<4>().permute(0, 2), 1.0);
-	refop.perform(tb_ref);
+	refop.perform(cpus, true, 1.0, tb_ref);
 
 	//	Run the symmetrization operation
 
@@ -328,7 +335,9 @@ void btod_symmetrize_test::test_5(bool symm) throw(libtest::test_exception) {
 
 	static const char *testname = "btod_symmetrize_test::test_5(bool)";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -356,7 +365,7 @@ void btod_symmetrize_test::test_5(bool symm) throw(libtest::test_exception) {
 	tod_add<4> refop(ta);
 	refop.add_op(ta, permutation<4>().permute(0, 2).permute(1, 3),
 			(symm ? 1.0 : -1.0));
-	refop.perform(tb_ref);
+	refop.perform(cpus, true, 1.0, tb_ref);
 
 	//	Run the symmetrization operation
 
@@ -397,7 +406,7 @@ void btod_symmetrize_test::test_6a(bool symm, bool label,
 			<< label << ", " << part << ", " << doadd << ")";
 	std::string tns = tnss.str();
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	if (label) {
 		point_group_table pg(tns, 2);
@@ -407,6 +416,8 @@ void btod_symmetrize_test::test_6a(bool symm, bool label,
 
 		product_table_container::get_instance().add(pg);
 	}
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -473,10 +484,10 @@ void btod_symmetrize_test::test_6a(bool symm, bool label,
 	refop.add_op(ta, p, (symm ? 1.0 : -1.0));
 	if (doadd) {
 		tod_btconv<2>(btb).perform(tb_ref);
-		refop.perform(tb_ref, 0.25);
+		refop.perform(cpus, false, 0.25, tb_ref);
 	}
 	else {
-		refop.perform(tb_ref);
+		refop.perform(cpus, true, 1.0, tb_ref);
 	}
 
 	//	Run the symmetrization operation
@@ -518,7 +529,7 @@ void btod_symmetrize_test::test_6b(bool symm, bool label,
 			<< label << ", " << part << ", " << ")";
 	std::string tns = tnss.str();
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	if (label) {
 		point_group_table pg(tns, 2);
@@ -528,6 +539,8 @@ void btod_symmetrize_test::test_6b(bool symm, bool label,
 
 		product_table_container::get_instance().add(pg);
 	}
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -614,7 +627,7 @@ void btod_symmetrize_test::test_6b(bool symm, bool label,
 	refop.add_op(ta, p1, (symm ? 1.0 : -1.0));
 	refop.add_op(ta, p2, (symm ? 1.0 : -1.0));
 	refop.add_op(ta, permutation<4>().permute(p1).permute(p2), 1.0);
-	refop.perform(tb_ref);
+	refop.perform(cpus, true, 1.0, tb_ref);
 
 	//	Run the symmetrization operation
 

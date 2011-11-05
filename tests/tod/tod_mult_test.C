@@ -1,15 +1,12 @@
 #include <cmath>
 #include <ctime>
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/tensor.h>
 #include <libtensor/tod/tod_mult.h>
 #include "../compare_ref.h"
 #include "tod_mult_test.h"
 
 namespace libtensor {
-
-
-typedef libvmm::std_allocator<double> allocator;
 
 
 void tod_mult_test::perform() throw(libtest::test_exception) {
@@ -57,6 +54,10 @@ void tod_mult_test::test_pq_pq_1(size_t ni, size_t nj, bool recip)
 			<< ni << ", " << nj << ", " << recip << ")";
 	std::string tns = tnss.str();
 
+	typedef std_allocator<double> allocator;
+
+    cpu_pool cpus(1);
+
 	try {
 
 	index<2> i1, i2;
@@ -99,7 +100,7 @@ void tod_mult_test::test_pq_pq_1(size_t ni, size_t nj, bool recip)
 	tb.set_immutable();
 	tc_ref.set_immutable();
 
-	tod_mult<2>(ta, tb, recip).perform(tc);
+	tod_mult<2>(ta, tb, recip).perform(cpus, tc);
 
 	compare_ref<2>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 
@@ -118,6 +119,10 @@ void tod_mult_test::test_pq_pq_2(
 	tnss << "tod_mult_test::test_pq_pq_2("
 			<< ni << ", " << nj << ", " << recip << ", " << coeff << ")";
 	std::string tns = tnss.str();
+
+	typedef std_allocator<double> allocator;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -159,7 +164,7 @@ void tod_mult_test::test_pq_pq_2(
 	tb.set_immutable();
 	tc_ref.set_immutable();
 
-	tod_mult<2>(ta, tb, recip).perform(tc, coeff);
+	tod_mult<2>(ta, tb, recip).perform(cpus, tc, coeff);
 
 	compare_ref<2>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 
@@ -176,6 +181,10 @@ void tod_mult_test::test_pq_qp(bool recip, double coeff)
 	std::ostringstream tnss;
 	tnss << "tod_mult_test::test_3(" << recip << ", " << coeff << ")";
 	std::string tns = tnss.str();
+
+	typedef std_allocator<double> allocator;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -223,7 +232,7 @@ void tod_mult_test::test_pq_qp(bool recip, double coeff)
 
 	permutation<2> pa, pb;
 	pb.permute(0, 1);
-	tod_mult<2>(ta, pa, tb, pb, recip, coeff).perform(tc, 1.0);
+	tod_mult<2>(ta, pa, tb, pb, recip, coeff).perform(cpus, tc, 1.0);
 
 	compare_ref<2>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 
@@ -238,6 +247,10 @@ void tod_mult_test::test_qp_pq(bool recip, double coeff)
 	std::ostringstream tnss;
 	tnss << "tod_mult_test::test_4(" << recip << ", " << coeff << ")";
 	std::string tns = tnss.str();
+
+	typedef std_allocator<double> allocator;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -285,7 +298,7 @@ void tod_mult_test::test_qp_pq(bool recip, double coeff)
 
 	permutation<2> pa, pb;
 	pa.permute(0, 1);
-	tod_mult<2>(ta, pa, tb, pb, recip, coeff).perform(tc, 1.0);
+	tod_mult<2>(ta, pa, tb, pb, recip, coeff).perform(cpus, tc, 1.0);
 
 	compare_ref<2>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 
@@ -300,6 +313,10 @@ void tod_mult_test::test_qp_qp(bool recip, double coeff)
 	std::ostringstream tnss;
 	tnss << "tod_mult_test::test_5(" << recip << ", " << coeff << ")";
 	std::string tns = tnss.str();
+
+	typedef std_allocator<double> allocator;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -348,7 +365,7 @@ void tod_mult_test::test_qp_qp(bool recip, double coeff)
 	permutation<2> pa, pb;
 	pa.permute(0, 1);
 	pb.permute(0, 1);
-	tod_mult<2>(ta, pa, tb, pb, recip, coeff).perform(tc, 1.0);
+	tod_mult<2>(ta, pa, tb, pb, recip, coeff).perform(cpus, tc, 1.0);
 
 	compare_ref<2>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 
@@ -365,6 +382,10 @@ void tod_mult_test::test_pqrs_qprs(
 	tnss << "tod_mult_test::test_pqrs_qprs(" << ni << ", " << nj << ", " << nk
 			<< ", " << nl << ", " << recip << ", " << coeff << ")";
 	std::string tns = tnss.str();
+
+	typedef std_allocator<double> allocator;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -401,7 +422,8 @@ void tod_mult_test::test_pqrs_qprs(
 		for(size_t k = 0; k < nk; k++)
 		for(size_t l = 0; l < nl; l++) {
 			i1[0] = j; i1[1] = i; i1[2] = k; i1[3] = l;
-			pc_ref[cnt] = pc[cnt] + coeff * pa[cnt] / pb[dimb.abs_index(i1)];
+			abs_index<4> ai1(i1, dimb);
+			pc_ref[cnt] = pc[cnt] + coeff * pa[cnt] / pb[ai1.get_abs_index()];
 			cnt++;
 		}
 	}
@@ -411,7 +433,8 @@ void tod_mult_test::test_pqrs_qprs(
 		for(size_t k = 0; k < nk; k++)
 		for(size_t l = 0; l < nl; l++) {
 			i1[0] = j; i1[1] = i; i1[2] = k; i1[3] = l;
-			pc_ref[cnt] = pc[cnt] + coeff * pa[cnt] * pb[dimb.abs_index(i1)];
+			abs_index<4> ai1(i1, dimb);
+			pc_ref[cnt] = pc[cnt] + coeff * pa[cnt] * pb[ai1.get_abs_index()];
 			cnt++;
 		}
 	}
@@ -425,7 +448,7 @@ void tod_mult_test::test_pqrs_qprs(
 	tb.set_immutable();
 	tc_ref.set_immutable();
 
-	tod_mult<4>(ta, p1, tb, p2, recip, coeff).perform(tc, 1.0);
+	tod_mult<4>(ta, p1, tb, p2, recip, coeff).perform(cpus, tc, 1.0);
 
 	compare_ref<4>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 
@@ -442,6 +465,10 @@ void tod_mult_test::test_pqrs_qrps(
 	tnss << "tod_mult_test::test_pqrs_qrps(" << ni << ", " << nj << ", " << nk
 			<< ", " << nl << ", " << recip << ", " << coeff << ")";
 	std::string tns = tnss.str();
+
+	typedef std_allocator<double> allocator;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -477,7 +504,8 @@ void tod_mult_test::test_pqrs_qrps(
 		for(size_t k = 0; k < nk; k++)
 		for(size_t l = 0; l < nl; l++) {
 			i1[0]=j; i1[1]=k; i1[2]=i; i1[3]=l;
-			pc_ref[cnt] = pc[cnt] + coeff * pa[cnt] / pb[dimb.abs_index(i1)];
+			abs_index<4> ai1(i1, dimb);
+			pc_ref[cnt] = pc[cnt] + coeff * pa[cnt] / pb[ai1.get_abs_index()];
 			cnt++;
 		}
 	}
@@ -487,7 +515,8 @@ void tod_mult_test::test_pqrs_qrps(
 		for(size_t k = 0; k < nk; k++)
 		for(size_t l = 0; l < nl; l++) {
 			i1[0]=j; i1[1]=k; i1[2]=i; i1[3]=l;
-			pc_ref[cnt] = pc[cnt] + coeff * pa[cnt] * pb[dimb.abs_index(i1)];
+			abs_index<4> ai1(i1, dimb);
+			pc_ref[cnt] = pc[cnt] + coeff * pa[cnt] * pb[ai1.get_abs_index()];
 			cnt++;
 		}
 	}
@@ -501,7 +530,7 @@ void tod_mult_test::test_pqrs_qrps(
 	tb.set_immutable();
 	tc_ref.set_immutable();
 
-	tod_mult<4>(ta, p1, tb, p2, recip, coeff).perform(tc, 1.0);
+	tod_mult<4>(ta, p1, tb, p2, recip, coeff).perform(cpus, tc, 1.0);
 
 	compare_ref<4>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 
@@ -518,6 +547,10 @@ void tod_mult_test::test_pqsr_pqrs(
 	tnss << "tod_mult_test::test_pqsr_pqrs(" << ni << ", " << nj << ", " << nk
 			<< ", " << nl << ", " << recip << ", " << coeff << ")";
 	std::string tns = tnss.str();
+
+	typedef std_allocator<double> allocator;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -553,7 +586,8 @@ void tod_mult_test::test_pqsr_pqrs(
 		for(size_t k = 0; k < nk; k++)
 		for(size_t l = 0; l < nl; l++) {
 			i1[0] = i; i1[1] = j; i1[2] = l; i1[3] = k;
-			pc_ref[cnt] = pc[cnt] + coeff * pa[dima.abs_index(i1)] / pb[cnt];
+            abs_index<4> ai1(i1, dima);
+			pc_ref[cnt] = pc[cnt] + coeff * pa[ai1.get_abs_index()] / pb[cnt];
 			cnt++;
 		}
 
@@ -564,7 +598,8 @@ void tod_mult_test::test_pqsr_pqrs(
 		for(size_t k = 0; k < nk; k++)
 		for(size_t l = 0; l < nl; l++) {
 			i1[0] = i; i1[1] = j; i1[2] = l; i1[3] = k;
-			pc_ref[cnt] = pc[cnt] + coeff * pa[dima.abs_index(i1)] * pb[cnt];
+            abs_index<4> ai1(i1, dima);
+			pc_ref[cnt] = pc[cnt] + coeff * pa[ai1.get_abs_index()] * pb[cnt];
 			cnt++;
 		}
 	}
@@ -578,7 +613,7 @@ void tod_mult_test::test_pqsr_pqrs(
 	tb.set_immutable();
 	tc_ref.set_immutable();
 
-	tod_mult<4>(ta, p1, tb, p2, recip, coeff).perform(tc, 1.0);
+	tod_mult<4>(ta, p1, tb, p2, recip, coeff).perform(cpus, tc, 1.0);
 
 	compare_ref<4>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 
@@ -594,6 +629,10 @@ void tod_mult_test::test_prsq_qrps(size_t ni, size_t nj, size_t nk, size_t nl,
 	tnss << "tod_mult_test::test_prsq_qrps(" << ni << ", " << nj << ", " << nk
 			<< ", " << nl << ", " << recip << ", " << coeff << ")";
 	std::string tns = tnss.str();
+
+	typedef std_allocator<double> allocator;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -636,8 +675,9 @@ void tod_mult_test::test_prsq_qrps(size_t ni, size_t nj, size_t nk, size_t nl,
 		for(size_t l = 0; l < nl; l++) {
 			i1[0] = i; i1[1] = k; i1[2] = l; i1[3] = j;
 			i2[0] = j; i2[1] = k; i2[2] = i; i2[3] = l;
+			abs_index<4> ai1(i1, dima), ai2(i2, dimb);
 			pc_ref[cnt] = pc[cnt] +
-					coeff * pa[dima.abs_index(i1)] / pb[dimb.abs_index(i2)];
+					coeff * pa[ai1.get_abs_index()] / pb[ai2.get_abs_index()];
 			cnt++;
 		}
 	}
@@ -648,8 +688,9 @@ void tod_mult_test::test_prsq_qrps(size_t ni, size_t nj, size_t nk, size_t nl,
 		for(size_t l = 0; l < nl; l++) {
 			i1[0] = i; i1[1] = k; i1[2] = l; i1[3] = j;
 			i2[0] = j; i2[1] = k; i2[2] = i; i2[3] = l;
+            abs_index<4> ai1(i1, dima), ai2(i2, dimb);
 			pc_ref[cnt] = pc[cnt] +
-					coeff * pa[dima.abs_index(i1)] * pb[dimb.abs_index(i2)];
+					coeff * pa[ai1.get_abs_index()] * pb[ai2.get_abs_index()];
 			cnt++;
 		}
 	}
@@ -663,7 +704,7 @@ void tod_mult_test::test_prsq_qrps(size_t ni, size_t nj, size_t nk, size_t nl,
 	tb.set_immutable();
 	tc_ref.set_immutable();
 
-	tod_mult<4>(ta, p1, tb, p2, recip, coeff).perform(tc, 1.0);
+	tod_mult<4>(ta, p1, tb, p2, recip, coeff).perform(cpus, tc, 1.0);
 
 	compare_ref<4>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 

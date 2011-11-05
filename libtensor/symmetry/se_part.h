@@ -216,8 +216,8 @@ const char *se_part<N, T>::k_sym_type = "part";
 template<size_t N, typename T>
 se_part<N, T>::se_part(const block_index_space<N> &bis,
         const mask<N> &msk, size_t npart) :
-    m_bis(bis), m_bidims(m_bis.get_block_index_dims()),
-    m_pdims(make_pdims(bis, msk, npart)), m_fmap(0), m_rmap(0), m_fsign(0) {
+        m_bis(bis), m_bidims(m_bis.get_block_index_dims()),
+        m_pdims(make_pdims(bis, msk, npart)), m_fmap(0), m_rmap(0), m_fsign(0) {
 
     static const char *method =
             "se_part(const block_index_space<N>&, const mask<N>&, size_t)";
@@ -235,8 +235,8 @@ se_part<N, T>::se_part(const block_index_space<N> &bis,
 template<size_t N, typename T>
 se_part<N, T>::se_part(const block_index_space<N> &bis,
         const dimensions<N> &pdims) :
-    m_bis(bis), m_bidims(m_bis.get_block_index_dims()), m_pdims(pdims),
-    m_fmap(0), m_rmap(0), m_fsign(0) {
+        m_bis(bis), m_bidims(m_bis.get_block_index_dims()), m_pdims(pdims),
+        m_fmap(0), m_rmap(0), m_fsign(0) {
 
     static const char *method =
             "se_part(const block_index_space<N>&, const dimensions<N>&)";
@@ -259,8 +259,8 @@ se_part<N, T>::se_part(const block_index_space<N> &bis,
 
 template<size_t N, typename T>
 se_part<N, T>::se_part(const se_part<N, T> &elem) :
-    m_bis(elem.m_bis), m_bidims(elem.m_bidims), m_pdims(elem.m_pdims),
-    m_fmap(0), m_fsign(0) {
+m_bis(elem.m_bis), m_bidims(elem.m_bidims), m_pdims(elem.m_pdims),
+m_fmap(0), m_fsign(0) {
 
     size_t mapsz = m_pdims.get_size();
     m_fmap = new size_t[mapsz];

@@ -159,6 +159,16 @@ addition_schedule<N, T>::addition_schedule(const symmetry<N, T> &syma,
 
 	permutation<N> perm0;
 	so_add<N, T>(m_syma, perm0, m_symb, perm0).perform(m_symc);
+    // permutation<N + N> perm0;
+	// symmetry<N + N, T> symx;
+	// so_dirsum<N, N, T>(m_syma, m_symb, perm0).perform(symx);
+	// so_merge<N + N, N + N, N, T> merge(symx);
+	// for (size_t i = 0; i < N; i++) {
+	//     mask<N + N> m;
+	//     m[i] = m[i + N] = true;
+	//     merge.add_mask(m);
+	// }
+	// merge.perform(m_symc);
 }
 
 

@@ -139,30 +139,28 @@ void tod_btconv<N>::perform(tensor_i<N, double> &t) throw(exception) {
 
 		orbit<N, double> orb(src_ctrl.req_const_symmetry(),
 			orblst.get_index(iorbit));
-		index<N> blk_idx;
-		bidims.abs_index(orb.get_abs_canonical_index(), blk_idx);
-		if(src_ctrl.req_is_zero_block(blk_idx)) continue;
+		abs_index<N> abidx(orb.get_abs_canonical_index(), bidims);
+		if(src_ctrl.req_is_zero_block(abidx.get_index())) continue;
 
-		tensor_i<N, double> &blk = src_ctrl.req_block(blk_idx);
+		tensor_i<N, double> &blk = src_ctrl.req_block(abidx.get_index());
 		{
 		tensor_ctrl<N, double> blk_ctrl(blk);
 		const double *src_ptr = blk_ctrl.req_const_dataptr();
 
 		typename orbit<N, double>::iterator i = orb.begin();
 		while(i != orb.end()) {
-			index<N> idx;
-			bidims.abs_index(i->first, idx);
+		    abs_index<N> aidx(i->first, bidims);
 			const transf<N, double> &tr = i->second;
-			index<N> dst_offset = bis.get_block_start(idx);
+			index<N> dst_offset = bis.get_block_start(aidx.get_index());
 			copy_block(dst_ptr, t.get_dims(), dst_offset,
 				src_ptr, blk.get_dims(),
 				tr.get_perm(), tr.get_coeff());
 			i++;
 		}
 
-		blk_ctrl.ret_dataptr(src_ptr);
+		blk_ctrl.ret_const_dataptr(src_ptr);
 		}
-		src_ctrl.ret_block(blk_idx);
+		src_ctrl.ret_block(abidx.get_index());
 
 	}
 
@@ -197,7 +195,7 @@ void tod_btconv<N>::copy_block(double *optr, const dimensions<N> &odims,
 
 	registers regs;
 	regs.m_ptra = iptr;
-	regs.m_ptrb = optr + odims.abs_index(ooffs);
+	regs.m_ptrb = optr + abs_index<N>::get_abs_index(ooffs, odims);
 	processor_t proc(lst, regs);
 	proc.process_next();
 

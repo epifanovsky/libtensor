@@ -39,103 +39,103 @@ namespace libtensor {
 template<size_t N, typename T>
 class se_label : public symmetry_element_i<N, T> {
 public:
-	static const char *k_clazz; //!< Class name
-	static const char *k_sym_type; //!< Symmetry type
+    static const char *k_clazz; //!< Class name
+    static const char *k_sym_type; //!< Symmetry type
 
-	typedef label_set<N> set_t; //!< Label set
-	typedef std::list<set_t *> set_list_t; //!< List of label sets
+    typedef label_set<N> set_t; //!< Label set
+    typedef std::list<set_t *> set_list_t; //!< List of label sets
 
     typedef typename set_list_t::iterator iterator; //!< List iterator
-	typedef typename set_list_t::const_iterator const_iterator; //!< List iterator
+    typedef typename set_list_t::const_iterator const_iterator; //!< List iterator
 
 private:
-	dimensions<N> m_bidims; //!< Block index dimensions
-	std::list<set_t *> m_sets; //!< List of label sets
+    dimensions<N> m_bidims; //!< Block index dimensions
+    std::list<set_t *> m_sets; //!< List of label sets
 
 public:
-	//!	\name Construction and destruction
-	//@{
+    //!	\name Construction and destruction
+    //@{
     /** \brief Initializes the %symmetry element
         \param bidims Block %index dimensions.
      **/
     se_label(const dimensions<N> &bidims);
 
-	/**	\brief Copy constructor
-	 **/
-	se_label(const se_label<N, T> &elem);
+    /**	\brief Copy constructor
+     **/
+    se_label(const se_label<N, T> &elem);
 
-	/**	\brief Virtual destructor
-	 **/
-	virtual ~se_label() { clear(); }
-	//@}
+    /**	\brief Virtual destructor
+     **/
+    virtual ~se_label() { clear(); }
+    //@}
 
-	//!	\name Manipulating function
-	//@{
+    //!	\name Manipulating function
+    //@{
 
-	/** \brief Create a label subset using a mask and a product table id
+    /** \brief Create a label subset using a mask and a product table id
 
 	    \param id Product table id
 	    \return Newly created subset
-	 **/
-	set_t &create_subset(const std::string &id);
+     **/
+    set_t &create_subset(const std::string &id);
 
-	/** \brief Add a label set to the se_label
-	 **/
+    /** \brief Add a label set to the se_label
+     **/
     void add_subset(const set_t &set);
 
-	/** \brief Clear all subsets
-	 **/
-	void clear();
-	//@}
+    /** \brief Clear all subsets
+     **/
+    void clear();
+    //@}
 
-	//! \name STL-like iterators over label sets
-	//@{
+    //! \name STL-like iterators over label sets
+    //@{
     iterator begin() { return m_sets.begin(); }
     const_iterator begin() const { return m_sets.begin(); }
 
     iterator end() { return m_sets.end(); }
     const_iterator end() const { return m_sets.end(); }
 
-	set_t &get_subset(iterator it);
-	const set_t &get_subset(const_iterator it) const;
-	//@}
+    set_t &get_subset(iterator it);
+    const set_t &get_subset(const_iterator it) const;
+    //@}
 
-	//!	\name Implementation of symmetry_element_i<N, T>
-	//@{
+    //!	\name Implementation of symmetry_element_i<N, T>
+    //@{
 
-	/**	\copydoc symmetry_element_i<N, T>::get_type()
-	 **/
-	virtual const char *get_type() const {
-		return k_sym_type;
-	}
+    /**	\copydoc symmetry_element_i<N, T>::get_type()
+     **/
+    virtual const char *get_type() const {
+        return k_sym_type;
+    }
 
-	/**	\copydoc symmetry_element_i<N, T>::clone()
-	 **/
-	virtual symmetry_element_i<N, T> *clone() const {
-		return new se_label<N, T>(*this);
-	}
+    /**	\copydoc symmetry_element_i<N, T>::clone()
+     **/
+    virtual symmetry_element_i<N, T> *clone() const {
+        return new se_label<N, T>(*this);
+    }
 
-	/**	\copydoc symmetry_element_i<N, T>::permute
-	 **/
-	void permute(const permutation<N> &perm);
+    /**	\copydoc symmetry_element_i<N, T>::permute
+     **/
+    void permute(const permutation<N> &perm);
 
-	/**	\copydoc symmetry_element_i<N, T>::is_valid_bis
-	 **/
-	virtual bool is_valid_bis(const block_index_space<N> &bis) const;
+    /**	\copydoc symmetry_element_i<N, T>::is_valid_bis
+     **/
+    virtual bool is_valid_bis(const block_index_space<N> &bis) const;
 
-	/**	\copydoc symmetry_element_i<N, T>::is_allowed
-	 **/
-	virtual bool is_allowed(const index<N> &idx) const;
+    /**	\copydoc symmetry_element_i<N, T>::is_allowed
+     **/
+    virtual bool is_allowed(const index<N> &idx) const;
 
-	/**	\copydoc symmetry_element_i<N, T>::apply(index<N>&)
-	 **/
-	virtual void apply(index<N> &idx) const { }
+    /**	\copydoc symmetry_element_i<N, T>::apply(index<N>&)
+     **/
+    virtual void apply(index<N> &idx) const { }
 
-	/**	\copydoc symmetry_element_i<N, T>::apply(
+    /**	\copydoc symmetry_element_i<N, T>::apply(
 			index<N>&, transf<N, T>&)
-	 **/
-	virtual void apply(index<N> &idx, transf<N, T> &tr) const { }
-	//@}
+     **/
+    virtual void apply(index<N> &idx, transf<N, T> &tr) const { }
+    //@}
 };
 
 template<size_t N, typename T>
@@ -149,7 +149,7 @@ se_label<N, T>::se_label(const dimensions<N> &bidims) : m_bidims(bidims) { }
 
 template<size_t N, typename T>
 se_label<N, T>::se_label(const se_label<N, T> &el) :
-	m_bidims(el.m_bidims), m_sets(0) {
+m_bidims(el.m_bidims), m_sets(0) {
 
     for (const_iterator it2 = el.begin(); it2 != el.end(); it2++) {
 
@@ -230,25 +230,25 @@ void se_label<N, T>::permute(const permutation<N> &p) {
 template<size_t N, typename T>
 bool se_label<N, T>::is_valid_bis(const block_index_space<N> &bis) const {
 
-	return m_bidims.equals(bis.get_block_index_dims());
+    return m_bidims.equals(bis.get_block_index_dims());
 }
 
 template<size_t N, typename T>
 bool se_label<N, T>::is_allowed(const index<N> &idx) const {
 
-	static const char *method = "is_allowed(const index<N> &)";
+    static const char *method = "is_allowed(const index<N> &)";
 
 #ifdef LIBTENSOR_DEBUG
-	// Test, if index is valid block index
-	for (size_t i = 0; i < N; i++) {
-	    if (idx[i] >= m_bidims[i]) {
-	        throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
-	                "idx.");
-	    }
-	}
+    // Test, if index is valid block index
+    for (size_t i = 0; i < N; i++) {
+        if (idx[i] >= m_bidims[i]) {
+            throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
+                    "idx.");
+        }
+    }
 #endif
 
-	// If no label sets exist all blocks are forbidden
+    // If no label sets exist all blocks are forbidden
     if (m_sets.size() == 0) return true;
 
     // Loop over label sets
@@ -257,7 +257,7 @@ bool se_label<N, T>::is_allowed(const index<N> &idx) const {
         if ((*it)->is_allowed(idx)) return true;
     }
 
-	return false;
+    return false;
 }
 
 } // namespace libtensor

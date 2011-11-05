@@ -3,9 +3,9 @@
 
 #include <ostream>
 #include <iomanip>
-#include <libvmm/libvmm.h>
 #include "../defs.h"
 #include "../exception.h"
+#include "../core/allocator.h"
 #include "../core/block_tensor_i.h"
 #include "../core/tensor.h"
 #include "../core/tensor_ctrl.h"
@@ -13,7 +13,7 @@
 
 namespace libtensor {
 
-template<size_t N, typename Alloc = libvmm::std_allocator<double> >
+template<size_t N, typename Alloc = std_allocator<double> >
 class btod_print {
 public:
 	static const char *k_clazz; //!< Class name
@@ -51,7 +51,7 @@ void btod_print<N, Alloc>::perform(
 	}
 	m_stream << std::endl;
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	tensor<N, double, Alloc> ta(dims);
 	tod_btconv<N>(bt).perform(ta);
 
@@ -81,7 +81,7 @@ void btod_print<N, Alloc>::perform(
 	}
 	m_stream << std::endl;
 
-	ctrla.ret_dataptr(cptra);
+	ctrla.ret_const_dataptr(cptra);
 }
 
 

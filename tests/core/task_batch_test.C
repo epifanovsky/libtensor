@@ -27,7 +27,7 @@ public:
 	task_1(int oldval, int newval, unsigned wait = 100) :
 		m_val(oldval), m_newval(newval), m_wait(wait) { }
 	virtual ~task_1() { }
-	virtual void perform() throw(exception) {
+	virtual void perform(cpu_pool&) throw(exception) {
 		usleep(m_wait);
 		m_val = m_newval;
 	}
@@ -44,7 +44,7 @@ private:
 public:
 	task_2(size_t n) : m_n(n), m_ok(false) { }
 	virtual ~task_2() { }
-	virtual void perform() throw(exception) {
+	virtual void perform(cpu_pool&) throw(exception) {
 
 		std::vector<task_1*> t(m_n);
 		for(size_t i = 0; i < m_n; i++) {
@@ -71,7 +71,7 @@ public:
 class task_3 : public task_i {
 public:
 	virtual ~task_3() { }
-	virtual void perform() throw(exception) {
+	virtual void perform(cpu_pool&) throw(exception) {
 		throw bad_parameter("task_batch_test_ns", "task_3", "perform()",
 			__FILE__, __LINE__, "a");
 	}

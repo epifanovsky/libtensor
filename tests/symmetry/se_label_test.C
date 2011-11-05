@@ -1,3 +1,4 @@
+#include <sstream>
 #include <libtensor/btod/transf_double.h>
 #include <libtensor/core/abs_index.h>
 #include <libtensor/symmetry/label/point_group_table.h>

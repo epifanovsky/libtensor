@@ -12,29 +12,7 @@ void so_dirprod_impl_label_test::perform() throw(libtest::test_exception) {
 
     static const char *testname = "so_dirprod_impl_label_test::perform()";
 
-    try {
-
-        point_group_table s6(k_table_id, 4);
-        point_group_table::label_t ag = 0, eg = 1, au = 2, eu = 3;
-        s6.add_product(ag, ag, ag);
-        s6.add_product(ag, eg, eg);
-        s6.add_product(ag, au, au);
-        s6.add_product(ag, eu, eu);
-        s6.add_product(eg, eg, ag);
-        s6.add_product(eg, eg, eg);
-        s6.add_product(eg, au, eu);
-        s6.add_product(eg, eu, au);
-        s6.add_product(eg, eu, eu);
-        s6.add_product(au, au, ag);
-        s6.add_product(au, eu, eg);
-        s6.add_product(eu, eu, ag);
-        s6.add_product(eu, eu, eg);
-        s6.check();
-        product_table_container::get_instance().add(s6);
-
-    } catch (exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
-    }
+    setup_pg_table();
 
     try {
 
@@ -500,6 +478,35 @@ void so_dirprod_impl_label_test::test_nn_2() throw(libtest::test_exception) {
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+void
+so_dirprod_impl_label_test::setup_pg_table() throw(libtest::test_exception) {
+
+    try {
+
+        point_group_table s6(k_table_id, 4);
+        point_group_table::label_t ag = 0, eg = 1, au = 2, eu = 3;
+        s6.add_product(ag, ag, ag);
+        s6.add_product(ag, eg, eg);
+        s6.add_product(ag, au, au);
+        s6.add_product(ag, eu, eu);
+        s6.add_product(eg, eg, ag);
+        s6.add_product(eg, eg, eg);
+        s6.add_product(eg, au, eu);
+        s6.add_product(eg, eu, au);
+        s6.add_product(eg, eu, eu);
+        s6.add_product(au, au, ag);
+        s6.add_product(au, eu, eg);
+        s6.add_product(eu, eu, ag);
+        s6.add_product(eu, eu, eg);
+        s6.check();
+        product_table_container::get_instance().add(s6);
+
+    } catch (exception &e) {
+        fail_test("so_dirprod_impl_label_test::setup_pg_table()",
+                __FILE__, __LINE__, e.what());
     }
 }
 

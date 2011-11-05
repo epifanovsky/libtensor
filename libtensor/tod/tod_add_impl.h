@@ -1,6 +1,8 @@
 #ifndef LIBTENSOR_TOD_ADD_IMPL_H
 #define LIBTENSOR_TOD_ADD_IMPL_H
 
+#include "tod_set.h"
+
 namespace libtensor {
 
 
@@ -94,6 +96,32 @@ void tod_add<N>::prefetch() {
 
 
 template<size_t N>
+void tod_add<N>::perform(cpu_pool &cpus, bool zero, double c,
+    tensor_i<N, double> &t) {
+
+    static const char *method =
+        "perform(cpu_pool&, bool, double, tensor_i<N, double>&)";
+
+    //  Check the dimensions of the output tensor
+    if(!t.get_dims().equals(m_dims)) {
+        throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "t");
+    }
+
+    if(zero) tod_set<N>().perform(cpus, t);
+    if(c == 0.0) return;
+
+    tod_add<N>::start_timer();
+
+    typename std::list<arg>::iterator i = m_args.begin();
+    for(; i != m_args.end(); ++i) {
+        tod_copy<N>(i->t, i->p, i->c).perform(cpus, false, c, t);
+    }
+
+    tod_add<N>::stop_timer();
+}
+
+/*
+template<size_t N>
 void tod_add<N>::perform(tensor_i<N, double> &t) {
 
 	static const char *method = "perform(tensor_i<N, double>&)";
@@ -138,7 +166,7 @@ void tod_add<N>::perform(tensor_i<N, double> &t, double c) {
 	}
 
 	tod_add<N>::stop_timer();
-}
+}*/
 
 
 } // namespace libtensor

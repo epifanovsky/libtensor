@@ -159,7 +159,7 @@ void tod_mult1<N>::do_perform(tensor_i<N, double> &ta, bool doadd, double c) {
 
 	loop_list_elem1::run_loop(loop, r, m_c * c, doadd, m_recip);
 
-	cb.ret_dataptr(pb); pb = 0;
+	cb.ret_const_dataptr(pb); pb = 0;
 	ca.ret_dataptr(pa); pa = 0;
 
 	} catch (...) {

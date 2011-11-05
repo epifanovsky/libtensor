@@ -1,4 +1,4 @@
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/core/mask.h>
 #include <libtensor/btod/btod_diag.h>
@@ -57,7 +57,7 @@ void btod_diag_test::test_zero_1() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_diag_test::test_zero_1()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -89,9 +89,8 @@ void btod_diag_test::test_zero_1() throw(libtest::test_exception) {
 	for (orbit_list<1, double>::iterator ib = olb.begin();
 			ib != olb.end(); ib++) {
 		orbit<1, double> ob(ctrlb.req_const_symmetry(), olb.get_index(ib));
-		index<1> bidx;
-		bidims1.abs_index(ob.get_abs_canonical_index(), bidx);
-		if (! ctrlb.req_is_zero_block(bidx))
+		abs_index<1> bidx(ob.get_abs_canonical_index(), bidims1);
+		if (! ctrlb.req_is_zero_block(bidx.get_index()))
 			fail_test(testname, __FILE__, __LINE__, "Unexpected non-zero block.");
 	}
 
@@ -106,7 +105,7 @@ void btod_diag_test::test_zero_2() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_diag_test::test_zero_2()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -145,9 +144,8 @@ void btod_diag_test::test_zero_2() throw(libtest::test_exception) {
 	for (orbit_list<1, double>::iterator ib = olb.begin();
 			ib != olb.end(); ib++) {
 		orbit<1, double> ob(ctrlb.req_const_symmetry(), olb.get_index(ib));
-		index<1> bidx;
-		bidims1.abs_index(ob.get_abs_canonical_index(), bidx);
-		if (! ctrlb.req_is_zero_block(bidx))
+		abs_index<1> bidx(ob.get_abs_canonical_index(), bidims1);
+		if (! ctrlb.req_is_zero_block(bidx.get_index()))
 			fail_test(testname, __FILE__, __LINE__, "Unexpected non-zero block.");
 	}
 
@@ -163,7 +161,7 @@ void btod_diag_test::test_nosym_1(bool add) throw(libtest::test_exception) {
 
 	static const char *testname = "btod_diag_test::test_nosym_1(bool)";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -227,7 +225,7 @@ void btod_diag_test::test_nosym_2(bool add) throw(libtest::test_exception) {
 
 	static const char *testname = "btod_diag_test::test_nosym_2(bool)";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -302,7 +300,7 @@ void btod_diag_test::test_nosym_3(bool add) throw(libtest::test_exception) {
 
 	static const char *testname = "btod_diag_test::test_nosym_3(bool)";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -375,7 +373,7 @@ void btod_diag_test::test_nosym_4(bool add) throw(libtest::test_exception) {
 
 	static const char *testname = "btod_diag_test::test_nosym_4(bool)";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -453,7 +451,7 @@ void btod_diag_test::test_sym_1(bool add) throw(libtest::test_exception) {
 
 	static const char *testname = "btod_diag_test::test_sym_1(bool)";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -531,7 +529,7 @@ void btod_diag_test::test_sym_2(bool add) throw(libtest::test_exception) {
 
 	static const char *testname = "btod_diag_test::test_sym_2(bool)";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -614,7 +612,7 @@ void btod_diag_test::test_sym_3(bool add) throw(libtest::test_exception) {
 
 	static const char *testname = "btod_diag_test::test_sym_3(bool)";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -693,7 +691,7 @@ void btod_diag_test::test_sym_4(bool add) throw(libtest::test_exception) {
 
 	static const char *testname = "btod_diag_test::test_sym_4(bool)";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -777,7 +775,7 @@ void btod_diag_test::test_sym_5(bool add) throw(libtest::test_exception) {
 
 	static const char *testname = "btod_diag_test::test_sym_5(bool)";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -861,7 +859,7 @@ void btod_diag_test::test_sym_6(bool add) throw(libtest::test_exception) {
 
 	static const char *testname = "btod_diag_test::test_sym_6(bool)";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -936,7 +934,7 @@ void btod_diag_test::test_sym_7(bool add) throw(libtest::test_exception) {
 
 	static const char *testname = "btod_diag_test::test_sym_7(bool)";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	bool need_erase = true;
 	const char *pgtid = "point_group_cs";

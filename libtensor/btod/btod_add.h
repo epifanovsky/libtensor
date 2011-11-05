@@ -140,10 +140,9 @@ public:
 	virtual void sync_on();
 	virtual void sync_off();
 
-	virtual void compute_block(tensor_i<N, double> &blk, const index<N> &i);
-
-	virtual void compute_block(tensor_i<N, double> &blk, const index<N> &i,
-		const transf<N, double> &tr, double c);
+	virtual void compute_block(bool zero, tensor_i<N, double> &blk,
+	    const index<N> &i, const transf<N, double> &tr, double c,
+	    cpu_pool &cpus);
 
 	using additive_btod<N>::perform;
 
@@ -152,7 +151,7 @@ public:
 private:
 	void compute_block(tensor_i<N, double> &blkb,
 		const std::pair<schiterator_t, schiterator_t> ipair, bool zero,
-		const transf<N, double> &trb, double kb);
+		const transf<N, double> &trb, double kb, cpu_pool &cpus);
 
 	void add_operand(block_tensor_i<N, double> &bt,
 		const permutation<N> &perm, double c);
@@ -169,7 +168,20 @@ private:
 } // namespace libtensor
 
 
-#ifndef LIBTENSOR_INSTANTIATE_TEMPLATES
+#ifdef LIBTENSOR_INSTANTIATE_TEMPLATES
+
+namespace libtensor {
+
+    extern template class btod_add<1>;
+    extern template class btod_add<2>;
+    extern template class btod_add<3>;
+    extern template class btod_add<4>;
+    extern template class btod_add<5>;
+    extern template class btod_add<6>;
+
+} // namespace libtensor
+
+#else // LIBTENSOR_INSTANTIATE_TEMPLATES
 #include "btod_add_impl.h"
 #endif // LIBTENSOR_INSTANTIATE_TEMPLATES
 

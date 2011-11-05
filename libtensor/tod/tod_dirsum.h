@@ -51,9 +51,11 @@ private:
 	};
 
 public:
-	static const size_t k_ordera = N; //!< Order of the first %tensor
-	static const size_t k_orderb = M; //!< Order of the second %tensor
-	static const size_t k_orderc = N + M; //!< Order of the result
+	enum {
+	    k_ordera = N, //!< Order of first argument (A)
+	    k_orderb = M, //!< Order of second argument (B)
+	    k_orderc = N + M //!< Order of result (C)
+	};
 
 private:
 	tensor_i<k_ordera, double> &m_ta; //!< First %tensor (A)
@@ -94,7 +96,33 @@ private:
 } // namespace libtensor
 
 
-#ifndef LIBTENSOR_INSTANTIATE_TEMPLATES
+#ifdef LIBTENSOR_INSTANTIATE_TEMPLATES
+
+namespace libtensor {
+
+    extern template class tod_dirsum<1, 1>;
+
+    extern template class tod_dirsum<1, 2>;
+    extern template class tod_dirsum<2, 1>;
+
+    extern template class tod_dirsum<1, 3>;
+    extern template class tod_dirsum<2, 2>;
+    extern template class tod_dirsum<3, 1>;
+
+    extern template class tod_dirsum<1, 4>;
+    extern template class tod_dirsum<2, 3>;
+    extern template class tod_dirsum<3, 2>;
+    extern template class tod_dirsum<4, 1>;
+
+    extern template class tod_dirsum<1, 5>;
+    extern template class tod_dirsum<2, 4>;
+    extern template class tod_dirsum<3, 3>;
+    extern template class tod_dirsum<4, 2>;
+    extern template class tod_dirsum<5, 1>;
+
+} // namespace libtensor
+
+#else // LIBTENSOR_INSTANTIATE_TEMPLATES
 #include "tod_dirsum_impl.h"
 #endif // LIBTENSOR_INSTANTIATE_TEMPLATES
 

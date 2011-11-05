@@ -30,7 +30,7 @@ public:
     typedef so_reduce<N, M, K, T> operation_t;
     typedef se_part<N, T> element_t;
     typedef symmetry_operation_params<operation_t>
-        symmetry_operation_params_t;
+    symmetry_operation_params_t;
 
 protected:
     virtual void do_perform(symmetry_operation_params_t &params) const;

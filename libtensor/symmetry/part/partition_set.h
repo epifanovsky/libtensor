@@ -4,12 +4,12 @@
 #include <algorithm>
 #include <list>
 #include <map>
-#include "../defs.h"
-#include "../not_implemented.h"
-#include "../core/permutation_builder.h"
-#include "bad_symmetry.h"
-#include "symmetry_element_set_adapter.h"
-#include "se_part.h"
+#include "../../defs.h"
+#include "../../not_implemented.h"
+#include "../../core/permutation_builder.h"
+#include "../bad_symmetry.h"
+#include "../symmetry_element_set_adapter.h"
+#include "../se_part.h"
 
 namespace libtensor {
 

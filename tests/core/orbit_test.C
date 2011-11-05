@@ -40,8 +40,9 @@ void orbit_test::test_1() throw(libtest::test_exception) {
 	bis.split(msk, 2);
 	symmetry<2, double> sym(bis);
 
-	index<2> io;
+	abs_index<2> aio(dims);
 	do {
+	    const index<2> &io = aio.get_index();
 		orbit<2, double> orb(sym, io);
 		if(!orb.is_allowed()) {
 			std::ostringstream ss;
@@ -49,10 +50,9 @@ void orbit_test::test_1() throw(libtest::test_exception) {
 			fail_test(testname, __FILE__, __LINE__,
 				ss.str().c_str());
 		}
-		if(orb.get_abs_canonical_index() != dims.abs_index(io)) {
+		if(orb.get_abs_canonical_index() != aio.get_abs_index()) {
 			std::ostringstream ss;
-			ss << "Failure to detect a canonical index: " << io
-				<< ".";
+			ss << "Failure to detect a canonical index: " << io << ".";
 			fail_test(testname, __FILE__, __LINE__,
 				ss.str().c_str());
 		}
@@ -71,7 +71,7 @@ void orbit_test::test_1() throw(libtest::test_exception) {
 			fail_test(testname, __FILE__, __LINE__,
 				"Incorrect block transformation (coeff).");
 		}
-	} while(dims.inc_index(io));
+	} while(aio.inc());
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
@@ -97,19 +97,19 @@ void orbit_test::test_2() throw(libtest::test_exception) {
 	se_perm<2, double> cycle(perm, true);
 	sym.insert(cycle);
 
-	index<2> io;
+	abs_index<2> aio(dims);
 	do {
+        const index<2> &io = aio.get_index();
 		orbit<2, double> orb(sym, io);
 		if(!orb.is_allowed()) {
 			std::ostringstream ss;
 			ss << "Orbit not allowed: " << io << ".";
-			fail_test(testname, __FILE__, __LINE__,
-				ss.str().c_str());
+			fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
 		}
 		bool can = io[0] <= io[1];
 		size_t abscanidx = orb.get_abs_canonical_index();
-		if((can && abscanidx != dims.abs_index(io)) ||
-			(!can && abscanidx == dims.abs_index(io))) {
+		if((can && abscanidx != aio.get_abs_index()) ||
+			(!can && abscanidx == aio.get_abs_index())) {
 
 			std::ostringstream ss;
 			ss << "Failure to detect a canonical index: " << io
@@ -132,7 +132,8 @@ void orbit_test::test_2() throw(libtest::test_exception) {
 			permutation<2> pref; pref.permute(0, 1);
 			index<2> io2(io);
 			io2.permute(pref);
-			if(abscanidx != dims.abs_index(io2)) {
+			abs_index<2> aio2(io2, dims);
+			if(abscanidx != aio2.get_abs_index()) {
 				fail_test(testname, __FILE__, __LINE__,
 					"Inconsistent orbit composition (2).");
 			}
@@ -149,7 +150,7 @@ void orbit_test::test_2() throw(libtest::test_exception) {
 					"Incorrect block scaling coeff (2).");
 			}
 		}
-	} while(dims.inc_index(io));
+	} while(aio.inc());
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
@@ -174,8 +175,9 @@ void orbit_test::test_3() throw(libtest::test_exception) {
 	se_perm<4, double> cycle(perm, true);
 	sym.insert(cycle);
 
-	index<4> io;
+	abs_index<4> aio(dims);
 	do {
+	    const index<4> &io = aio.get_index();
 		orbit<4, double> orb(sym, io);
 		if(!orb.is_allowed()) {
 			std::ostringstream ss;
@@ -185,8 +187,8 @@ void orbit_test::test_3() throw(libtest::test_exception) {
 		}
 		bool can = io[0] <= io[1];
 		size_t abscanidx = orb.get_abs_canonical_index();
-		if((can && abscanidx != dims.abs_index(io)) ||
-			(!can && abscanidx == dims.abs_index(io))) {
+		if((can && abscanidx != aio.get_abs_index()) ||
+			(!can && abscanidx == aio.get_abs_index())) {
 
 			std::ostringstream ss;
 			ss << "Failure to detect a canonical index: " << io
@@ -209,7 +211,8 @@ void orbit_test::test_3() throw(libtest::test_exception) {
 			permutation<4> pref; pref.permute(0, 1);
 			index<4> io2(io);
 			io2.permute(pref);
-			if(abscanidx != dims.abs_index(io2)) {
+			abs_index<4> aio2(io2, dims);
+			if(abscanidx != aio2.get_abs_index()) {
 				fail_test(testname, __FILE__, __LINE__,
 					"Inconsistent orbit composition (2).");
 			}
@@ -226,7 +229,7 @@ void orbit_test::test_3() throw(libtest::test_exception) {
 					"Incorrect block scaling coeff (2).");
 			}
 		}
-	} while(dims.inc_index(io));
+	} while(aio.inc());
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
@@ -252,8 +255,9 @@ void orbit_test::test_4() throw(libtest::test_exception) {
 	se_perm<4, double> cycle(perm, true);
 	sym.insert(cycle);
 
-	index<4> io;
+	abs_index<4> aio(dims);
 	do {
+	    const index<4> &io = aio.get_index();
 		orbit<4, double> orb(sym, io);
 		if(!orb.is_allowed()) {
 			std::ostringstream ss;
@@ -263,8 +267,8 @@ void orbit_test::test_4() throw(libtest::test_exception) {
 		}
 		bool can = io[1] <= io[2];
 		size_t abscanidx = orb.get_abs_canonical_index();
-		if((can && abscanidx != dims.abs_index(io)) ||
-			(!can && abscanidx == dims.abs_index(io))) {
+		if((can && abscanidx != aio.get_abs_index()) ||
+			(!can && abscanidx == aio.get_abs_index())) {
 
 			std::ostringstream ss;
 			ss << "Failure to detect a canonical index: " << io
@@ -287,7 +291,8 @@ void orbit_test::test_4() throw(libtest::test_exception) {
 			permutation<4> pref; pref.permute(1, 2);
 			index<4> io2(io);
 			io2.permute(pref);
-			if(abscanidx != dims.abs_index(io2)) {
+			abs_index<4> aio2(io2, dims);
+			if(abscanidx != aio2.get_abs_index()) {
 				fail_test(testname, __FILE__, __LINE__,
 					"Inconsistent orbit composition (2).");
 			}
@@ -304,7 +309,7 @@ void orbit_test::test_4() throw(libtest::test_exception) {
 					"Incorrect block scaling coeff (2).");
 			}
 		}
-	} while(dims.inc_index(io));
+	} while(aio.inc());
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
@@ -330,8 +335,9 @@ void orbit_test::test_5() throw(libtest::test_exception) {
 	se_perm<4, double> cycle(perm, true);
 	sym.insert(cycle);
 
-	index<4> io;
+	abs_index<4> aio(dims);
 	do {
+	    const index<4> &io = aio.get_index();
 		orbit<4, double> orb(sym, io);
 		if(!orb.is_allowed()) {
 			std::ostringstream ss;
@@ -342,8 +348,8 @@ void orbit_test::test_5() throw(libtest::test_exception) {
 		bool can = (io[0] == io[1] && io[0] <= io[2]) ||
 			(io[0] < io[1] && io[0] < io[2]);
 		size_t abscanidx = orb.get_abs_canonical_index();
-		if((can && abscanidx != dims.abs_index(io)) ||
-			(!can && abscanidx == dims.abs_index(io))) {
+		if((can && abscanidx != aio.get_abs_index()) ||
+			(!can && abscanidx == aio.get_abs_index())) {
 
 			std::ostringstream ss;
 			ss << "Failure to detect a canonical index: " << io
@@ -372,7 +378,8 @@ void orbit_test::test_5() throw(libtest::test_exception) {
 				p3.permute(p2);
 			}
 			p3.invert();
-			if(abscanidx != dims.abs_index(io2)) {
+			abs_index<4> aio2(io2, dims);
+			if(abscanidx != aio2.get_abs_index()) {
 				std::ostringstream ss;
 				ss << "Unexpected canonical index for " << io
 					<< ": " << abscanidx << " vs. " << io2
@@ -393,7 +400,7 @@ void orbit_test::test_5() throw(libtest::test_exception) {
 					"Incorrect block scaling coeff (2).");
 			}
 		}
-	} while(dims.inc_index(io));
+	} while(aio.inc());
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
@@ -422,8 +429,9 @@ void orbit_test::test_6() throw(libtest::test_exception) {
 	sym.insert(cycle1);
 	sym.insert(cycle2);
 
-	index<4> io;
+	abs_index<4> aio(dims);
 	do {
+	    const index<4> &io = aio.get_index();
 		orbit<4, double> orb(sym, io);
 		if(!orb.is_allowed()) {
 			std::ostringstream ss;
@@ -433,8 +441,8 @@ void orbit_test::test_6() throw(libtest::test_exception) {
 		}
 		bool can = (io[0] <= io[1] && io[2] <= io[3]);
 		size_t abscanidx = orb.get_abs_canonical_index();
-		if((can && abscanidx != dims.abs_index(io)) ||
-			(!can && abscanidx == dims.abs_index(io))) {
+		if((can && abscanidx != aio.get_abs_index()) ||
+			(!can && abscanidx == aio.get_abs_index())) {
 
 			std::ostringstream ss;
 			ss << "Failure to detect a canonical index: " << io
@@ -467,7 +475,8 @@ void orbit_test::test_6() throw(libtest::test_exception) {
 				pref.permute(p2);
 			}
 			pref.invert();
-			if(abscanidx != dims.abs_index(io2)) {
+			abs_index<4> aio2(io2, dims);
+			if(abscanidx != aio2.get_abs_index()) {
 				std::ostringstream ss;
 				ss << "Unexpected canonical index for " << io
 					<< ": " << abscanidx << " vs. " << io2
@@ -488,7 +497,7 @@ void orbit_test::test_6() throw(libtest::test_exception) {
 					"Incorrect block scaling coeff (2).");
 			}
 		}
-	} while(dims.inc_index(io));
+	} while(aio.inc());
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
@@ -517,8 +526,9 @@ void orbit_test::test_7() throw(libtest::test_exception) {
 	sym.insert(cycle1);
 	sym.insert(cycle2);
 
-	index<4> io;
+	abs_index<4> aio(dims);
 	do {
+	    const index<4> &io = aio.get_index();
 		orbit<4, double> orb(sym, io);
 		if(!orb.is_allowed()) {
 			std::ostringstream ss;
@@ -528,10 +538,9 @@ void orbit_test::test_7() throw(libtest::test_exception) {
 		}
 		bool can = (io[0] <= io[1] && io[1] <= io[2]);
 		size_t abscanidx = orb.get_abs_canonical_index();
-		index<4> canidx;
-		dims.abs_index(abscanidx, canidx);
-		if((can && abscanidx != dims.abs_index(io)) ||
-			(!can && abscanidx == dims.abs_index(io))) {
+		abs_index<4> canidx(abscanidx, dims);
+		if((can && abscanidx != aio.get_abs_index()) ||
+			(!can && abscanidx == aio.get_abs_index())) {
 
 			std::ostringstream ss;
 			ss << "Failure to detect a canonical index: " << io
@@ -560,10 +569,11 @@ void orbit_test::test_7() throw(libtest::test_exception) {
 			if(io2[0] > io2[1]) io2.permute(p1);
 			index<4> io3(io2);
 			io3.permute(tr.get_perm());
-			if(abscanidx != dims.abs_index(io2)) {
+			abs_index<4> aio2(io2, dims);
+			if(abscanidx != aio2.get_abs_index()) {
 				std::ostringstream ss;
 				ss << "Unexpected canonical index for " << io
-					<< ": " << canidx << " vs. " << io2
+					<< ": " << canidx.get_index() << " vs. " << io2
 					<< " (ref).";
 				fail_test(testname, __FILE__, __LINE__,
 					ss.str().c_str());
@@ -581,7 +591,7 @@ void orbit_test::test_7() throw(libtest::test_exception) {
 					"Incorrect block scaling coeff (2).");
 			}
 		}
-	} while(dims.inc_index(io));
+	} while(aio.inc());
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
@@ -610,8 +620,9 @@ void orbit_test::test_8() throw(libtest::test_exception) {
 	sym.insert(cycle1);
 	sym.insert(cycle2);
 
-	index<4> io;
+	abs_index<4> aio(dims);
 	do {
+	    const index<4> &io = aio.get_index();
 		orbit<4, double> orb(sym, io);
 		if(!orb.is_allowed()) {
 			std::ostringstream ss;
@@ -621,10 +632,9 @@ void orbit_test::test_8() throw(libtest::test_exception) {
 		}
 		bool can = (io[0] <= io[1] && io[1] <= io[2] && io[2] <= io[3]);
 		size_t abscanidx = orb.get_abs_canonical_index();
-		index<4> canidx;
-		dims.abs_index(abscanidx, canidx);
-		if((can && abscanidx != dims.abs_index(io)) ||
-			(!can && abscanidx == dims.abs_index(io))) {
+		abs_index<4> canidx(abscanidx, dims);
+		if((can && abscanidx != aio.get_abs_index()) ||
+			(!can && abscanidx == aio.get_abs_index())) {
 			std::ostringstream ss;
 			ss << "Failure to detect a canonical index: " << io
 				<< " (can = " << can << ").";
@@ -656,10 +666,11 @@ void orbit_test::test_8() throw(libtest::test_exception) {
 			if(io2[0] > io2[1]) io2.permute(p1);
 			index<4> io3(io2);
 			io3.permute(tr.get_perm());
-			if(abscanidx != dims.abs_index(io2)) {
+			abs_index<4> aio2(io2, dims);
+			if(abscanidx != aio2.get_abs_index()) {
 				std::ostringstream ss;
 				ss << "Unexpected canonical index for " << io
-					<< ": " << canidx << " vs. " << io2
+					<< ": " << canidx.get_index() << " vs. " << io2
 					<< " (ref).";
 				fail_test(testname, __FILE__, __LINE__,
 					ss.str().c_str());
@@ -677,7 +688,7 @@ void orbit_test::test_8() throw(libtest::test_exception) {
 					"Incorrect block scaling coeff (2).");
 			}
 		}
-	} while(dims.inc_index(io));
+	} while(aio.inc());
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());

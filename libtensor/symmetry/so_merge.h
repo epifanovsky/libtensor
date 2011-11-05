@@ -32,30 +32,30 @@ class symmetry_operation_params< so_merge<N, M, K, T> >;
  **/
 template<size_t N, size_t M, size_t K, typename T>
 class so_merge :
-    public symmetry_operation_base< so_merge<N, M, K, T> > {
+public symmetry_operation_base< so_merge<N, M, K, T> > {
 public:
     static const char *k_clazz; //!< Class name
 
 private:
-	typedef so_merge<N, M, K, T> operation_t;
-	typedef symmetry_operation_dispatcher<operation_t> dispatcher_t;
+    typedef so_merge<N, M, K, T> operation_t;
+    typedef symmetry_operation_dispatcher<operation_t> dispatcher_t;
 
 private:
-	const symmetry<N, T> &m_sym1; //!< Input symmetry.
-	mask<N> m_msk[K]; //!< K masks.
-	size_t m_msk_set; //!< Number of masks set
+    const symmetry<N, T> &m_sym1; //!< Input symmetry.
+    mask<N> m_msk[K]; //!< K masks.
+    size_t m_msk_set; //!< Number of masks set
 
 public:
-	/** \brief Constructor
+    /** \brief Constructor
 		\param sym1 Input symmetry.
 		\param msk Mask.
-	 **/
-	so_merge(const symmetry<N, T> &sym1) :
-		m_sym1(sym1) { }
+     **/
+    so_merge(const symmetry<N, T> &sym1) :
+        m_sym1(sym1) { }
 
-	void add_mask(const mask<N> &msk) { m_msk[m_msk_set++] = msk; }
+    void add_mask(const mask<N> &msk) { m_msk[m_msk_set++] = msk; }
 
-	void perform(symmetry<N - M + K, T> &sym2);
+    void perform(symmetry<N - M + K, T> &sym2);
 
 };
 
@@ -73,43 +73,43 @@ void so_merge<N, M, K, T>::perform(symmetry<N - M + K, T> &sym2) {
     }
 #endif
 
-	for(typename symmetry<N, T>::iterator i = m_sym1.begin();
-	        i != m_sym1.end(); i++) {
+    for(typename symmetry<N, T>::iterator i = m_sym1.begin();
+            i != m_sym1.end(); i++) {
 
-		const symmetry_element_set<N, T> &set1 = m_sym1.get_subset(i);
+        const symmetry_element_set<N, T> &set1 = m_sym1.get_subset(i);
 
-		symmetry_element_set<N - M + K, T> set2(set1.get_id());
-		symmetry_operation_params<operation_t> params(set1, m_msk, set2);
-		dispatcher_t::get_instance().invoke(set1.get_id(), params);
+        symmetry_element_set<N - M + K, T> set2(set1.get_id());
+        symmetry_operation_params<operation_t> params(set1, m_msk, set2);
+        dispatcher_t::get_instance().invoke(set1.get_id(), params);
 
-		for(typename symmetry_element_set<N - M + K, T>::iterator j =
-		        set2.begin(); j != set2.end(); j++) {
+        for(typename symmetry_element_set<N - M + K, T>::iterator j =
+                set2.begin(); j != set2.end(); j++) {
 
-			sym2.insert(set2.get_elem(j));
-		}
-	}
+            sym2.insert(set2.get_elem(j));
+        }
+    }
 }
 
 template<size_t N, size_t M, size_t K, typename T>
 class symmetry_operation_params< so_merge<N, M, K, T> > :
-	public symmetry_operation_params_i {
+public symmetry_operation_params_i {
 public:
-	const symmetry_element_set<N, T> &grp1; //!< Symmetry group
-	mask<N> msk[K]; //!< Masks
-	symmetry_element_set<N - M + K, T> &grp2;
+    const symmetry_element_set<N, T> &grp1; //!< Symmetry group
+    mask<N> msk[K]; //!< Masks
+    symmetry_element_set<N - M + K, T> &grp2;
 
 public:
-	symmetry_operation_params(
-		const symmetry_element_set<N, T> &grp1_,
-		const mask<N> (&msk_)[K],
-		symmetry_element_set<N - M + K, T> &grp2_) :
+    symmetry_operation_params(
+            const symmetry_element_set<N, T> &grp1_,
+            const mask<N> (&msk_)[K],
+            symmetry_element_set<N - M + K, T> &grp2_) :
 
-		grp1(grp1_), grp2(grp2_) {
+                grp1(grp1_), grp2(grp2_) {
 
-	    for (size_t i = 0; i < K; i++) msk[i] = msk_[i];
-	}
+        for (size_t i = 0; i < K; i++) msk[i] = msk_[i];
+    }
 
-	virtual ~symmetry_operation_params() { }
+    virtual ~symmetry_operation_params() { }
 };
 
 

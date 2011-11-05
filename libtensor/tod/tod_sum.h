@@ -59,8 +59,8 @@ public:
 	//@{
 
 	virtual void prefetch();
-	virtual void perform(tensor_i<N, double> &t);
-	virtual void perform(tensor_i<N, double> &t, double c);
+    virtual void perform(cpu_pool &cpus, bool zero, double c,
+        tensor_i<N, double> &t);
 
 	//@}
 
@@ -100,21 +100,16 @@ void tod_sum<N>::prefetch() {
 
 
 template<size_t N>
-void tod_sum<N>::perform(tensor_i<N, double> &t) {
+void tod_sum<N>::perform(cpu_pool &cpus, bool zero, double c,
+    tensor_i<N, double> &t) {
 
-	tod_set<N>().perform(t);
-	perform(t, 1.0);
-}
+    if(zero) tod_set<N>().perform(cpus, t);
 
+    for(typename std::list<node>::iterator i = m_lst.begin();
+        i != m_lst.end(); ++i) {
 
-template<size_t N>
-void tod_sum<N>::perform(tensor_i<N, double> &t, double c) {
-
-	for(typename std::list<node>::iterator i = m_lst.begin();
-		i != m_lst.end(); i++) {
-
-		i->m_op.perform(t, c * i->m_c);
-	}
+        i->m_op.perform(cpus, false, c * i->m_c, t);
+    }
 }
 
 

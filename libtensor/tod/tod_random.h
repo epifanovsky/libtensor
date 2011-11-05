@@ -6,6 +6,7 @@
 #include "../defs.h"
 #include "../exception.h"
 #include "../core/tensor_ctrl.h"
+#include "../mp/auto_cpu_lock.h"
 #include "tod_additive.h"
 
 namespace libtensor {
@@ -39,13 +40,12 @@ public:
 	//!		libtensor::direct_tensor_operation<N, double>
 	//@{
 	virtual void prefetch() throw(exception);
-	virtual void perform(tensor_i<N, double> &t) throw(exception);
+    virtual void perform(cpu_pool &cpus, bool zero, double c,
+        tensor_i<N, double> &t);
+	void perform(cpu_pool &cpus, tensor_i<N, double> &t);
+    void perform(cpu_pool &cpus, tensor_i<N, double> &t, double c);
 	//@}
 
-	//!	\name Implementation of libtensor::tod_additive<N>
-	//@{
-	virtual void perform(tensor_i<N, double> &t, double c) throw(exception);
-	//@}
 private:
 	void do_perform( tensor_i<N,double>& t, double c ) throw(exception);
 };
@@ -75,25 +75,36 @@ void tod_random<N>::prefetch() throw(exception) {
 }
 
 template<size_t N>
-void tod_random<N>::perform(tensor_i<N, double> &t) throw(exception) {
-	tensor_ctrl<N,double> ctrl(t);
-	double* ptr=ctrl.req_dataptr();
-	size_t total_size=t.get_dims().get_size();
+void tod_random<N>::perform(cpu_pool &cpus, tensor_i<N, double> &t) {
 
-	for (size_t i=0; i<total_size; i++) ptr[i]=drand48();
-
-	ctrl.ret_dataptr(ptr);
+    perform(cpus, true, 1.0, t);
 }
 
 template<size_t N>
-void tod_random<N>::perform(tensor_i<N, double> &t, double c) throw(exception) {
-	tensor_ctrl<N,double> ctrl(t);
-	double* ptr=ctrl.req_dataptr();
-	size_t total_size=t.get_dims().get_size();
+void tod_random<N>::perform(cpu_pool &cpus, tensor_i<N, double> &t, double c) {
 
-	for (size_t i=0; i<total_size; i++) ptr[i]+=c*drand48();
+    perform(cpus, false, c, t);
+}
 
-	ctrl.ret_dataptr(ptr);
+template<size_t N>
+void tod_random<N>::perform(cpu_pool &cpus, bool zero, double c,
+    tensor_i<N, double> &t) {
+
+    tensor_ctrl<N, double> ctrl(t);
+    size_t sz = t.get_dims().get_size();
+    double *ptr = ctrl.req_dataptr();
+
+    {
+        auto_cpu_lock cpu(cpus);
+
+        if(zero) {
+            for(size_t i = 0; i < sz; i++) ptr[i] = c * drand48();
+        } else {
+            for(size_t i = 0; i < sz; i++) ptr[i] += c * drand48();
+        }
+    }
+
+    ctrl.ret_dataptr(ptr);
 }
 
 } // namespace libtensor

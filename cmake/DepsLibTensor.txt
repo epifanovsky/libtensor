@@ -15,8 +15,8 @@ endif(UNIX)
 #
 string(REGEX MATCH icpc IS_ICPC ${CMAKE_CXX_COMPILER})
 
-#
 #	Detect the linear algebra library
+#
 set(CMAKE_MODULE_PATH_SAVED ${CMAKE_MODULE_PATH})
 set(CMAKE_MODULE_PATH ${LIBTENSOR_DIR}/cmake)
 find_package(MKL)
@@ -26,8 +26,8 @@ find_package(CBLAS)
 find_package(LAPACK)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH_SAVED})
 
-#
 #	Set up compilation flags and paths
+#
 if(IS_ICPC AND MKL_FOUND)
 	SetupMKL()
 else(IS_ICPC AND MKL_FOUND)

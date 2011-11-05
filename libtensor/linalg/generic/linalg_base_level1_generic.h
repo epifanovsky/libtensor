@@ -23,8 +23,8 @@ struct linalg_base_level1_generic {
 	 **/
 	static void add_i_i_x_x(
 		size_t ni,
-		const double *a, size_t sia,
-		double b,
+		const double *a, size_t sia, double ka,
+		double b, double kb,
 		double *c, size_t sic,
 		double d);
 

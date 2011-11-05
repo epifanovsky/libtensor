@@ -85,7 +85,7 @@ private:
 			m_sym(sym), m_bidims(bidims), m_idx(idx), m_d(0.0) { }
 
 		virtual ~dotprod_in_orbit_task() { }
-		virtual void perform() throw(exception);
+		virtual void perform(cpu_pool &cpus) throw(exception);
 
 		double get_d() const { return m_d; }
 	};

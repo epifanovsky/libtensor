@@ -1,13 +1,13 @@
 #ifndef LIBTENSOR_SO_APPLY_IMPL_PERM_H
 #define LIBTENSOR_SO_APPLY_IMPL_PERM_H
 
-#include "../defs.h"
-#include "../exception.h"
+#include "../../defs.h"
+#include "../../exception.h"
+#include "../symmetry_element_set_adapter.h"
+#include "../symmetry_operation_impl_base.h"
+#include "../so_apply.h"
+#include "../se_perm.h"
 #include "permutation_group.h"
-#include "symmetry_element_set_adapter.h"
-#include "symmetry_operation_impl_base.h"
-#include "so_apply.h"
-#include "se_perm.h"
 
 namespace libtensor {
 

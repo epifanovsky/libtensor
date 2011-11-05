@@ -5,6 +5,8 @@
 #include "../defs.h"
 #include "../exception.h"
 #include "../mp/default_sync_policy.h"
+#include "../mp/task_i.h"
+#include "../mp/task_batch.h"
 #include "abs_index.h"
 #include "block_map.h"
 #include "direct_block_tensor_base.h"
@@ -56,6 +58,21 @@ private:
 				m_lock->unlock();
 			}
 		}
+	};
+
+	class task : public task_i {
+	private:
+	    direct_block_tensor_operation<N, T> &m_op;
+	    index<N> m_idx;
+	    tensor_i<N, T> &m_blk;
+
+	public:
+	    task(direct_block_tensor_operation<N, T> &op, const index<N> &idx,
+	        tensor_i<N, T> &blk) : m_op(op), m_idx(idx), m_blk(blk) { }
+	    virtual ~task() { }
+	    void perform(cpu_pool &cpus) throw(exception) {
+	        m_op.compute_block(m_blk, m_idx, cpus);
+	    }
 	};
 
 public:
@@ -168,7 +185,10 @@ tensor_i<N, T> &direct_block_tensor<N, T, Alloc, Sync>::on_req_block(
 		std::set<size_t>::iterator i =
 			m_inprogress.insert(aidx.get_abs_index()).first;
 		lock.unlock();
-		get_op().compute_block(blk, idx);
+		task t(get_op(), idx, blk);
+		task_batch tb;
+		tb.push(t);
+		tb.wait();
 		lock.lock();
 		m_inprogress.erase(i);
 		m_cond.signal(aidx.get_abs_index());

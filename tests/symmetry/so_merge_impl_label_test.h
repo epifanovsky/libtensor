@@ -16,11 +16,16 @@ public:
 
 private:
 	static const char *k_table_id;
-	void test_1() throw(libtest::test_exception);
-	void test_2() throw(libtest::test_exception);
-	void test_3() throw(libtest::test_exception);
-	void test_4() throw(libtest::test_exception);
+	void test_empty_1() throw(libtest::test_exception);
+    void test_empty_2() throw(libtest::test_exception);
+	void test_nm1_1() throw(libtest::test_exception);
+	void test_nm1_2() throw(libtest::test_exception);
+	void test_2n2nn_1() throw(libtest::test_exception);
+    void test_2n2nn_2() throw(libtest::test_exception);
+    void test_nmk_1() throw(libtest::test_exception);
+    void test_nmk_2() throw(libtest::test_exception);
 
+    void setup_pg_table() throw(libtest::test_exception);
 };
 
 

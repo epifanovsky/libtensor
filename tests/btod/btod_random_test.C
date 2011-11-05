@@ -1,7 +1,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <ctime>
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/symmetry/se_perm.h>
@@ -14,11 +14,13 @@ namespace libtensor {
 void btod_random_test::perform() throw(libtest::test_exception)
 {
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 	typedef tensor<4, double, allocator_t> tensor_t;
 	typedef tensor_ctrl<4, double> tensor_ctrl_t;
 	typedef block_tensor<4, double, allocator_t> block_tensor_t;
 	typedef block_tensor_ctrl<4, double> block_tensor_ctrl_t;
+
+	cpu_pool cpus(1);
 
 	try {
 
@@ -59,16 +61,13 @@ void btod_random_test::perform() throw(libtest::test_exception)
 	permd.permute(0,2);
 	permd.permute(1,3);
 
-	tod_copy<4> cpyb(ta,permb,1.0);
-	cpyb.perform(tb);
+	tod_copy<4>(ta, permb, 1.0).perform(cpus, true, 1.0, tb);
 	compare_ref<4>::compare("btod_random_test::test_permb",ta,tb,1e-15);
 
-	tod_copy<4> cpyc(ta,permc,1.0);
-	cpyc.perform(tc);
+	tod_copy<4>(ta, permc, 1.0).perform(cpus, true, 1.0, tc);
 	compare_ref<4>::compare("btod_random_test::test_permb",ta,tc,1e-15);
 
-	tod_copy<4> cpyd(ta,permd,1.0);
-	cpyd.perform(td);
+	tod_copy<4>(ta, permd, 1.0).perform(cpus, true, 1.0, td);
 	compare_ref<4>::compare("btod_random_test::test_permb",ta,td,1e-15);
 
 	} catch(exception &exc) {

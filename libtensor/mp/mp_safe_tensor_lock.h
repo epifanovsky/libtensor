@@ -1,8 +1,8 @@
 #ifndef LIBTENSOR_MP_SAFE_TENSOR_LOCK_H
 #define LIBTENSOR_MP_SAFE_TENSOR_LOCK_H
 
-#include <libvmm/mutex.h>
 #include <libvmm/singleton.h>
+#include "threads.h"
 
 namespace libtensor {
 
@@ -15,7 +15,7 @@ class mp_safe_tensor_lock : public libvmm::singleton<mp_safe_tensor_lock> {
 	friend class libvmm::singleton<mp_safe_tensor_lock>;
 
 private:
-	libvmm::mutex m_lock; //!< Lock object
+	mutex m_lock; //!< Lock object
 
 protected:
 	mp_safe_tensor_lock() { }

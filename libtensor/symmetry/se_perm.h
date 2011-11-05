@@ -35,97 +35,97 @@ namespace libtensor {
 template<size_t N, typename T>
 class se_perm : public symmetry_element_i<N, T> {
 public:
-	static const char *k_clazz; //!< Class name
-	static const char *k_sym_type; //!< Symmetry type
+    static const char *k_clazz; //!< Class name
+    static const char *k_sym_type; //!< Symmetry type
 
 private:
-	permutation<N> m_perm; //!< Permutation
-	bool m_even; //!< Even/odd %permutation
-	bool m_symm; //!< Symmetric/anti-symmetric
-	transf<N, T> m_transf; //!< Block transformation
+    permutation<N> m_perm; //!< Permutation
+    bool m_even; //!< Even/odd %permutation
+    bool m_symm; //!< Symmetric/anti-symmetric
+    transf<N, T> m_transf; //!< Block transformation
 
 public:
-	//!	\name Construction and destruction
-	//@{
+    //!	\name Construction and destruction
+    //@{
 
-	/**	\brief Initializes the %symmetry element
+    /**	\brief Initializes the %symmetry element
 		\param perm Permutation.
 		\param symm Symmetric/anti-symmetric.
 		\throw bad_symmetry If the permutation and the flag are
 			inconsistent.
-	 **/
-	se_perm(const permutation<N> &perm, bool symm);
+     **/
+    se_perm(const permutation<N> &perm, bool symm);
 
-	/**	\brief Copy constructor
-	 **/
-	se_perm(const se_perm<N, T> &elem);
+    /**	\brief Copy constructor
+     **/
+    se_perm(const se_perm<N, T> &elem);
 
-	/**	\brief Virtual destructor
-	 **/
-	virtual ~se_perm() { }
+    /**	\brief Virtual destructor
+     **/
+    virtual ~se_perm() { }
 
-	//@}
-
-
-	//!	\name Permutational %symmetry
-	//@{
-
-	const permutation<N> &get_perm() const {
-		return m_perm;
-	}
-
-	bool is_symm() const {
-		return m_symm;
-	}
-
-	const transf<N, T> &get_transf() const {
-		return m_transf;
-	}
+    //@}
 
 
-	//!	\name Implementation of symmetry_element_i<N, T>
-	//@{
+    //!	\name Permutational %symmetry
+    //@{
 
-	/**	\copydoc symmetry_element_i<N, T>::get_type()
-	 **/
-	virtual const char *get_type() const {
-		return k_sym_type;
-	}
+    const permutation<N> &get_perm() const {
+        return m_perm;
+    }
 
-	/**	\copydoc symmetry_element_i<N, T>::clone()
-	 **/
-	virtual symmetry_element_i<N, T> *clone() const {
-		return new se_perm<N, T>(*this);
-	}
+    bool is_symm() const {
+        return m_symm;
+    }
 
-	/**	\copydoc symmetry_element_i<N, T>::is_valid_bis
-	 **/
-	virtual bool is_valid_bis(const block_index_space<N> &bis) const;
+    const transf<N, T> &get_transf() const {
+        return m_transf;
+    }
 
-	/**	\copydoc symmetry_element_i<N, T>::is_allowed
-	 **/
-	virtual bool is_allowed(const index<N> &idx) const {
 
-		return true;
-	}
+    //!	\name Implementation of symmetry_element_i<N, T>
+    //@{
 
-	/**	\copydoc symmetry_element_i<N, T>::apply(index<N>&)
-	 **/
-	virtual void apply(index<N> &idx) const {
+    /**	\copydoc symmetry_element_i<N, T>::get_type()
+     **/
+    virtual const char *get_type() const {
+        return k_sym_type;
+    }
 
-		idx.permute(m_transf.get_perm());
-	}
+    /**	\copydoc symmetry_element_i<N, T>::clone()
+     **/
+    virtual symmetry_element_i<N, T> *clone() const {
+        return new se_perm<N, T>(*this);
+    }
 
-	/**	\copydoc symmetry_element_i<N, T>::apply(
+    /**	\copydoc symmetry_element_i<N, T>::is_valid_bis
+     **/
+    virtual bool is_valid_bis(const block_index_space<N> &bis) const;
+
+    /**	\copydoc symmetry_element_i<N, T>::is_allowed
+     **/
+    virtual bool is_allowed(const index<N> &idx) const {
+
+        return true;
+    }
+
+    /**	\copydoc symmetry_element_i<N, T>::apply(index<N>&)
+     **/
+    virtual void apply(index<N> &idx) const {
+
+        idx.permute(m_transf.get_perm());
+    }
+
+    /**	\copydoc symmetry_element_i<N, T>::apply(
 			index<N>&, transf<N, T>&)
-	 **/
-	virtual void apply(index<N> &idx, transf<N, T> &tr) const {
+     **/
+    virtual void apply(index<N> &idx, transf<N, T> &tr) const {
 
-		idx.permute(m_transf.get_perm());
-		tr.transform(m_transf);
-	}
+        idx.permute(m_transf.get_perm());
+        tr.transform(m_transf);
+    }
 
-	//@}
+    //@}
 };
 
 
@@ -139,30 +139,30 @@ const char *se_perm<N, T>::k_sym_type = "perm";
 
 template<size_t N, typename T>
 se_perm<N, T>::se_perm(const permutation<N> &perm, bool symm) :
-	m_perm(perm), m_symm(symm) {
+m_perm(perm), m_symm(symm) {
 
-	static const char *method = "se_perm(const permutation<N>&, bool)";
+    static const char *method = "se_perm(const permutation<N>&, bool)";
 
-	if(perm.is_identity()) {
-		throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
-			"perm.is_identity()");
-	}
+    if(perm.is_identity()) {
+        throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
+                "perm.is_identity()");
+    }
 
-	size_t n = 0;
-	permutation<N> p(m_perm);
-	do {
-		p.permute(m_perm); n++;
-	} while(!p.is_identity());
+    size_t n = 0;
+    permutation<N> p(m_perm);
+    do {
+        p.permute(m_perm); n++;
+    } while(!p.is_identity());
 
-	m_even = n % 2 == 0;
-	m_transf.permute(m_perm);
-	if(!m_even && !m_symm) m_transf.scale(-1);
+    m_even = n % 2 == 0;
+    m_transf.permute(m_perm);
+    if(!m_even && !m_symm) m_transf.scale(-1);
 }
 
 
 template<size_t N, typename T>
 se_perm<N, T>::se_perm(const se_perm<N, T> &elem) :
-	m_perm(elem.m_perm), m_symm(elem.m_symm), m_transf(elem.m_transf) {
+m_perm(elem.m_perm), m_symm(elem.m_symm), m_transf(elem.m_transf) {
 
 }
 
@@ -170,9 +170,9 @@ se_perm<N, T>::se_perm(const se_perm<N, T> &elem) :
 template<size_t N, typename T>
 bool se_perm<N, T>::is_valid_bis(const block_index_space<N> &bis) const {
 
-	block_index_space<N> bis2(bis);
-	bis2.permute(m_perm);
-	return bis2.equals(bis);
+    block_index_space<N> bis2(bis);
+    bis2.permute(m_perm);
+    return bis2.equals(bis);
 }
 
 

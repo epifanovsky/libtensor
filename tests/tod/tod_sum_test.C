@@ -1,4 +1,4 @@
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/tensor.h>
 #include <libtensor/core/tensor_ctrl.h>
 #include <libtensor/tod/tod_additive.h>
@@ -7,7 +7,7 @@
 
 namespace libtensor {
 
-typedef tensor<4, double, libvmm::std_allocator<double> > tensor4_d;
+typedef tensor<4, double, std_allocator<double> > tensor4_d;
 
 void tod_sum_test::perform() throw(libtest::test_exception) {
 
@@ -23,21 +23,17 @@ class testop_set : public tod_additive<4> {
 public:
 	virtual void prefetch() { }
 
-	virtual void perform(tensor_i<4,double> &t) {
+	virtual void perform(cpu_pool &cpus, bool zero, double c,
+	    tensor_i<4,double> &t) {
 
 		size_t sz = t.get_dims().get_size();
 		tensor_ctrl<4, double> tctrl(t);
 		double *p = tctrl.req_dataptr();
-		for(size_t i = 0; i < sz; i++) p[i] = (double)i;
-		tctrl.ret_dataptr(p);
-	}
-
-	virtual void perform(tensor_i<4,double> &t, double c) {
-
-		size_t sz = t.get_dims().get_size();
-		tensor_ctrl<4, double> tctrl(t);
-		double *p = tctrl.req_dataptr();
-		for(size_t i = 0; i < sz; i++) p[i] += c * (double)i;
+		if(zero) {
+            for(size_t i = 0; i < sz; i++) p[i] = c * (double)i;
+		} else {
+		    for(size_t i = 0; i < sz; i++) p[i] += c * (double)i;
+		}
 		tctrl.ret_dataptr(p);
 	}
 
@@ -54,21 +50,17 @@ public:
 
 	virtual void prefetch() { }
 
-	virtual void perform(tensor_i<4, double> &t) {
+	virtual void perform(cpu_pool &cpus, bool zero, double c,
+	    tensor_i<4, double> &t) {
 
 		size_t sz = t.get_dims().get_size();
 		tensor_ctrl<4, double> tctrl(t);
 		double *p = tctrl.req_dataptr();
-		for(size_t i = 0; i < sz; i++) p[i] += m_v;
-		tctrl.ret_dataptr(p);
-	}
-
-	virtual void perform(tensor_i<4, double> &t, double c) {
-
-		size_t sz = t.get_dims().get_size();
-		tensor_ctrl<4, double> tctrl(t);
-		double *p = tctrl.req_dataptr();
-		for(size_t i = 0; i < sz; i++) p[i] += m_v * c;
+		if(zero) {
+            for(size_t i = 0; i < sz; i++) p[i] = m_v * c;
+		} else {
+		    for(size_t i = 0; i < sz; i++) p[i] += m_v * c;
+		}
 		tctrl.ret_dataptr(p);
 	}
 
@@ -83,7 +75,9 @@ void tod_sum_test::test_1() throw(libtest::test_exception) {
 
 	static const char *testname = "tod_sum_test::test_1()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -97,7 +91,7 @@ void tod_sum_test::test_1() throw(libtest::test_exception) {
 	ns::testop_add add1(1.0), add2(2.0);
 	op.add_op(add1, 1.0);
 	op.add_op(add2, 1.0);
-	op.perform(t);
+	op.perform(cpus, true, 1.0, t);
 
 	bool ok = true;
 	{
@@ -110,7 +104,7 @@ void tod_sum_test::test_1() throw(libtest::test_exception) {
 				break;
 			}
 		}
-		tctrl.ret_dataptr(p);
+		tctrl.ret_const_dataptr(p);
 	}
 
 	if(!ok) {

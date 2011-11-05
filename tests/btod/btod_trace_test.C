@@ -1,4 +1,4 @@
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/core/block_tensor_ctrl.h>
 #include <libtensor/btod/btod_trace.h>
@@ -35,7 +35,7 @@ void btod_trace_test::test_zero_1() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_trace_test::test_zero_1()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -77,7 +77,7 @@ void btod_trace_test::test_nosym_1() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_trace_test::test_nosym_1()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -125,7 +125,7 @@ void btod_trace_test::test_nosym_1_sp() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_trace_test::test_nosym_1_sp()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -178,7 +178,7 @@ void btod_trace_test::test_nosym_2() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_trace_test::test_nosym_2()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -227,7 +227,7 @@ void btod_trace_test::test_nosym_3() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_trace_test::test_nosym_3()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -278,7 +278,7 @@ void btod_trace_test::test_nosym_4() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_trace_test::test_nosym_4()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -330,7 +330,7 @@ void btod_trace_test::test_nosym_5() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_trace_test::test_nosym_5()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -377,7 +377,7 @@ void btod_trace_test::test_nosym_6() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_trace_test::test_nosym_6()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -428,7 +428,7 @@ void btod_trace_test::test_nosym_7() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_trace_test::test_nosym_7()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -478,7 +478,7 @@ void btod_trace_test::test_permsym_1() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_trace_test::test_permsym_1()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -533,7 +533,7 @@ void btod_trace_test::test_permsym_2() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_trace_test::test_permsym_2()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 

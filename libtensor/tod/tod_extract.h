@@ -311,7 +311,7 @@ void tod_extract<N, M>::do_perform(tensor_i<k_orderb, double> &tb, double c) {
 	clean_list(lst);
 
 	cb.ret_dataptr(pb); pb = 0;
-	ca.ret_dataptr(pa); pa = 0;
+	ca.ret_const_dataptr(pa); pa = 0;
 
 	tod_extract<N, M>::stop_timer();
 }

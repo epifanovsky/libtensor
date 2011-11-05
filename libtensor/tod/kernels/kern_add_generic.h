@@ -18,6 +18,7 @@ public:
 	static const char *k_clazz; //!< Kernel name
 
 private:
+	double m_ka, m_kb;
 	double m_d;
 
 public:
@@ -29,7 +30,8 @@ public:
 
 	virtual void run(const loop_registers<2, 1> &r);
 
-	static kernel_base<2, 1> *match(double d, list_t &in, list_t &out);
+	static kernel_base<2, 1> *match(double ka, double kb, double d, list_t &in,
+	    list_t &out);
 
 };
 

@@ -1,3 +1,4 @@
+#include <libtensor/core/allocator.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/iface/iface.h>
@@ -10,8 +11,7 @@ namespace libtensor {
 
 void anon_eval_test::perform() throw(libtest::test_exception) {
 
-	libvmm::vm_allocator<double>::vmm().init(
-		16, 16, 16777216, 16777216, 0.90, 0.05);
+	allocator<double>::vmm().init(16, 16, 16777216, 16777216);
 
 	try {
 
@@ -30,11 +30,11 @@ void anon_eval_test::perform() throw(libtest::test_exception) {
 		test_mixed_1();
 
 	} catch(...) {
-		libvmm::vm_allocator<double>::vmm().shutdown();
+		allocator<double>::vmm().shutdown();
 		throw;
 	}
 
-	libvmm::vm_allocator<double>::vmm().shutdown();
+	allocator<double>::vmm().shutdown();
 }
 
 
@@ -65,7 +65,7 @@ void anon_eval_test::test_copy_1() throw(libtest::test_exception) {
 	//
 
 	static const char *testname = "anon_eval_test::test_copy_1()";
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -99,7 +99,7 @@ void anon_eval_test::test_copy_2() throw(libtest::test_exception) {
 	//
 
 	static const char *testname = "anon_eval_test::test_copy_2()";
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -135,7 +135,7 @@ void anon_eval_test::test_copy_3() throw(libtest::test_exception) {
 	//
 
 	static const char *testname = "anon_eval_test::test_copy_3()";
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -169,7 +169,7 @@ void anon_eval_test::test_copy_4() throw(libtest::test_exception) {
 	//
 
 	static const char *testname = "anon_eval_test::test_copy_4()";
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -205,7 +205,7 @@ void anon_eval_test::test_copy_5() throw(libtest::test_exception) {
 	//
 
 	static const char *testname = "anon_eval_test::test_copy_5()";
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -244,7 +244,7 @@ void anon_eval_test::test_copy_6() throw(libtest::test_exception) {
 	//
 
 	static const char *testname = "anon_eval_test::test_copy_6()";
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -285,7 +285,7 @@ void anon_eval_test::test_add_1() throw(libtest::test_exception) {
 	//
 
 	static const char *testname = "anon_eval_test::test_add_1()";
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -321,7 +321,7 @@ void anon_eval_test::test_contr_1() throw(libtest::test_exception) {
 	//
 
 	static const char *testname = "anon_eval_test::test_contr_1()";
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -361,7 +361,7 @@ void anon_eval_test::test_contr_2() throw(libtest::test_exception) {
 	//
 
 	static const char *testname = "anon_eval_test::test_contr_2()";
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -403,7 +403,7 @@ void anon_eval_test::test_mixed_1() throw(libtest::test_exception) {
 	//
 
 	static const char *testname = "anon_eval_test::test_mixed_1()";
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 

@@ -1,72 +1,61 @@
 #ifndef LIBTENSOR_TOD_SET_H
 #define LIBTENSOR_TOD_SET_H
 
-#include "../defs.h"
-#include "../exception.h"
 #include "../core/tensor_ctrl.h"
+#include "../mp/auto_cpu_lock.h"
 
 namespace libtensor {
 
-/**	\brief Assigns a value to all elements
 
-	\ingroup libtensor_tod
-**/
+/**	\brief Sets all elements of a tensor to the given value
+    \tparam N Tensor order.
+
+    \ingroup libtensor_tod
+ **/
 template<size_t N>
 class tod_set {
 private:
-	double m_val; //!< Value
+    double m_v; //!< Value
 
 public:
-	//!	\name Construction and destruction
-	//@{
+    /**	\brief Initializes the operation
+        \param v Value to be assigned to the tensor elements.
+     **/
+    tod_set(double v = 0.0);
 
-	/**	\brief Initializes the operation
-		\param v Tensor element value
-	**/
-	tod_set(const double v = 0.0);
+    /**	\brief Performs the operation
+        \param cpus Pool of CPUs.
+        \param t Output tensor.
+     **/
+    void perform(cpu_pool &cpus, tensor_i<N, double> &t);
 
-	/**	\brief Destructor
-	**/
-	~tod_set();
-
-	//@}
-
-	//!	\name Operation
-	//@{
-
-	/**	\brief Assigns the elements of a tensor a value
-		\param t Tensor.
-	**/
-	void perform(tensor_i<N,double> &t) throw(exception);
-
-	void prefetch() throw(exception);
-
-	//@}
 };
 
-template<size_t N>
-inline tod_set<N>::tod_set(const double v) {
-	m_val = v;
-}
 
 template<size_t N>
-inline tod_set<N>::~tod_set() {
+tod_set<N>::tod_set(const double v) :
+
+    m_v(v) {
+
 }
 
-template<size_t N>
-void tod_set<N>::perform(tensor_i<N,double> &t) throw(exception) {
-	tensor_ctrl<N,double> tctrl(t);
-	double *d = tctrl.req_dataptr();
-	size_t sz = t.get_dims().get_size();
-	for(size_t i=0; i<sz; i++) d[i] = m_val;
-	tctrl.ret_dataptr(d);
-}
 
 template<size_t N>
-inline void tod_set<N>::prefetch() throw(exception) {
+void tod_set<N>::perform(cpu_pool &cpus, tensor_i<N, double> &t) {
+
+    tensor_ctrl<N, double> ctrl(t);
+    double *d = ctrl.req_dataptr();
+
+    {
+        auto_cpu_lock cpu(cpus);
+        size_t sz = t.get_dims().get_size();
+        for(size_t i = 0; i < sz; i++) d[i] = m_v;
+    }
+
+    ctrl.ret_dataptr(d);
 }
+
 
 } // namespace libtensor
 
 #endif // LIBTENSOR_TOD_SET_H
-

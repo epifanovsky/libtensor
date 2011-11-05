@@ -45,7 +45,7 @@ private:
 public:
     so_dirprod(const symmetry<N, T> &sym1, const symmetry<M, T> &sym2,
             const permutation<N + M> &perm) :
-        m_sym1(sym1), m_sym2(sym2), m_perm(perm)
+                m_sym1(sym1), m_sym2(sym2), m_perm(perm)
     { }
 
     so_dirprod(const symmetry<N, T> &sym1, const symmetry<M, T> &sym2) :
@@ -205,7 +205,7 @@ public:
             const permutation<N + M> &perm_,
             const block_index_space<N + M> &bis_,
             symmetry_element_set<N + M, T> &g3_) :
-        g1(g1_), g2(g2_), perm(perm_), bis(bis_), g3(g3_)
+                g1(g1_), g2(g2_), perm(perm_), bis(bis_), g3(g3_)
     { }
 
 };

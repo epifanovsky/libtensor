@@ -19,18 +19,18 @@ namespace libtensor {
 template<size_t N, typename T>
 class so_copy {
 private:
-	const symmetry<N, T> &m_sym1;
+    const symmetry<N, T> &m_sym1;
 
 public:
-	/**	\brief Initializes the operation
+    /**	\brief Initializes the operation
 		\param sym1 Source %symmetry container.
-	 **/
-	so_copy(const symmetry<N, T> &sym1) : m_sym1(sym1) { }
+     **/
+    so_copy(const symmetry<N, T> &sym1) : m_sym1(sym1) { }
 
-	/**	\brief Performs the operation
+    /**	\brief Performs the operation
 		\param sym2 Destination %symmetry container.
-	 **/
-	void perform(symmetry<N, T> &sym2);
+     **/
+    void perform(symmetry<N, T> &sym2);
 
 };
 
@@ -38,19 +38,19 @@ public:
 template<size_t N, typename T>
 void so_copy<N, T>::perform(symmetry<N, T> &sym2) {
 
-	sym2.clear();
+    sym2.clear();
 
-	for(typename symmetry<N, T>::iterator i = m_sym1.begin();
-		i != m_sym1.end(); i++) {
+    for(typename symmetry<N, T>::iterator i = m_sym1.begin();
+            i != m_sym1.end(); i++) {
 
-		const symmetry_element_set<N, T> &set1 = m_sym1.get_subset(i);
+        const symmetry_element_set<N, T> &set1 = m_sym1.get_subset(i);
 
-		for(typename symmetry_element_set<N, T>::const_iterator j =
-			set1.begin(); j != set1.end(); j++) {
+        for(typename symmetry_element_set<N, T>::const_iterator j =
+                set1.begin(); j != set1.end(); j++) {
 
-			sym2.insert(set1.get_elem(j));
-		}
-	}
+            sym2.insert(set1.get_elem(j));
+        }
+    }
 }
 
 

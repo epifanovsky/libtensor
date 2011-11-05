@@ -3,6 +3,7 @@
 
 #include "acml/acml_h.h"
 
+
 namespace libtensor {
 
 
@@ -87,6 +88,17 @@ inline int lapack_zgeev(char jobvl, char jobvr, size_t n, std::complex <double> 
         return info;
 }
 
+inline int lapack_dpotrf(char uplo, size_t n, double *a, size_t lda) {
+        int info = 0;
+        dpotrf(uplo, n, a, lda, &info);
+        return info;
+}
+
+inline int lapack_dpstrf(char uplo, size_t n, double *a, size_t lda, int *p, int *rank, double tol, double *work) {
+        int info = 0;
+        dpstrf(uplo, n, a, lda, p, rank, tol, work, &info);
+        return info;
+}
 
 } // namespace libtensor
 

@@ -58,7 +58,7 @@ const char *combine_part<N, T>::k_clazz = "combine_part<N, T>";
 
 template<size_t N, typename T>
 combine_part<N, T>::combine_part(const symmetry_element_set<N, T> &set) :
-    m_set(set), m_bis(extract_bis(m_set)), m_pdims(make_pdims(m_set)) {
+m_set(set), m_bis(extract_bis(m_set)), m_pdims(make_pdims(m_set)) {
 }
 
 template<size_t N, typename T>

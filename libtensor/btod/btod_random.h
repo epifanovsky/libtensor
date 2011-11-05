@@ -4,9 +4,10 @@
 #include <list>
 #include <map>
 #include <utility>
-#include <libvmm/std_allocator.h>
 #include "../defs.h"
 #include "../exception.h"
+#include "../core/abs_index.h"
+#include "../core/allocator.h"
 #include "../core/block_tensor_i.h"
 #include "../core/block_tensor_ctrl.h"
 #include "../core/orbit_list.h"
@@ -57,7 +58,7 @@ private:
 		const dimensions<N> &bidims, const index<N> &idx,
 		const transf<N, double> &tr, transf_map_t &alltransf);
 
-	void make_random_blk(block_tensor_ctrl<N, double> &ctrl,
+	void make_random_blk(cpu_pool &cpus, block_tensor_ctrl<N, double> &ctrl,
 		const dimensions<N> &bidims, const index<N> &idx);
 
 private:
@@ -73,6 +74,8 @@ const char *btod_random<N>::k_clazz = "btod_random<N>";
 template<size_t N>
 void btod_random<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 
+    cpu_pool cpus(1);
+
 	timings_base::start_timer();
 
 	dimensions<N> bidims(bt.get_bis().get_block_index_dims());
@@ -81,7 +84,7 @@ void btod_random<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 	orbit_list<N, double> orblist(ctrl.req_symmetry());
 	typename orbit_list<N, double>::iterator iorbit = orblist.begin();
 	for(; iorbit != orblist.end(); iorbit++) {
-		make_random_blk(ctrl, bidims, orblist.get_index(iorbit));
+		make_random_blk(cpus, ctrl, bidims, orblist.get_index(iorbit));
 	}
 
 	timings_base::stop_timer();
@@ -91,11 +94,13 @@ template<size_t N>
 void btod_random<N>::perform(block_tensor_i<N, double> &bt, const index<N> &idx)
 	throw(exception) {
 
+    cpu_pool cpus(1);
+
 	timings_base::start_timer();
 
 	dimensions<N> bidims(bt.get_bis().get_block_index_dims());
 	block_tensor_ctrl<N, double> ctrl(bt);
-	make_random_blk(ctrl, bidims, idx);
+	make_random_blk(cpus, ctrl, bidims, idx);
 
 	timings_base::stop_timer();
 }
@@ -106,7 +111,7 @@ bool btod_random<N>::make_transf_map(const symmetry<N, double> &sym,
 	const dimensions<N> &bidims, const index<N> &idx,
 	const transf<N, double> &tr, transf_map_t &alltransf) {
 
-	size_t absidx = bidims.abs_index(idx);
+	size_t absidx = abs_index<N>::get_abs_index(idx, bidims);
 	typename transf_map_t::iterator ilst = alltransf.find(absidx);
 	if(ilst == alltransf.end()) {
 		ilst = alltransf.insert(std::pair<size_t, transf_list_t>(
@@ -150,13 +155,14 @@ bool btod_random<N>::make_transf_map(const symmetry<N, double> &sym,
 
 
 template<size_t N>
-void btod_random<N>::make_random_blk(block_tensor_ctrl<N, double> &ctrl,
-	const dimensions<N> &bidims, const index<N> &idx) {
+void btod_random<N>::make_random_blk(cpu_pool &cpus,
+    block_tensor_ctrl<N, double> &ctrl, const dimensions<N> &bidims,
+    const index<N> &idx) {
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	const symmetry<N, double> &sym = ctrl.req_symmetry();
-	size_t absidx = bidims.abs_index(idx);
+	size_t absidx = abs_index<N>::get_abs_index(idx, bidims);
 	tod_random<N> randop;
 
 	transf<N, double> tr0;
@@ -173,13 +179,13 @@ void btod_random<N>::make_random_blk(block_tensor_ctrl<N, double> &ctrl,
 	typename transf_list_t::iterator itr = ilst->second.begin();
 	if(itr == ilst->second.end()) {
 		timings_base::start_timer("randop");
-		randop.perform(blk);
+		randop.perform(cpus, true, 1.0, blk);
 		timings_base::stop_timer("randop");
 	} else {
 		tensor<N, double, allocator_t> rnd(blk.get_dims()),
 			symrnd(blk.get_dims());
 		timings_base::start_timer("randop");
-		randop.perform(rnd);
+		randop.perform(cpus, true, 1.0, rnd);
 		timings_base::stop_timer("randop");
 		double totcoeff = itr->get_coeff();
 		tod_add<N> symop(rnd, itr->get_perm(), totcoeff);
@@ -190,9 +196,9 @@ void btod_random<N>::make_random_blk(block_tensor_ctrl<N, double> &ctrl,
 		}
 
 		timings_base::start_timer("symop&copy");
-		symop.perform(symrnd);
+		symop.perform(cpus, true, 1.0, symrnd);
 		totcoeff = (totcoeff == 0.0) ? 1.0 : 1.0/totcoeff;
-		tod_copy<N>(symrnd, totcoeff).perform(blk);
+		tod_copy<N>(symrnd, totcoeff).perform(cpus, true, 1.0, blk);
 		timings_base::stop_timer("symop&copy");
 	}
 

@@ -5,9 +5,10 @@ namespace libtensor {
 libtensor_btod_suite::libtensor_btod_suite() :
 		libtest::test_suite("libtensor_btod") {
 
-//	add_test("addition_schedule", m_utf_addition_schedule);
+	add_test("addition_schedule", m_utf_addition_schedule);
 //	add_test("btod_add", m_utf_btod_add);
 //	add_test("btod_apply", m_utf_btod_apply);
+//	add_test("btod_cholesky", m_utf_btod_cholesky);
 //	add_test("btod_compare", m_utf_btod_compare);
 //	add_test("btod_contract2", m_utf_btod_contract2);
 //	add_test("btod_copy", m_utf_btod_copy);
@@ -18,6 +19,7 @@ libtensor_btod_suite::libtensor_btod_suite() :
 //	add_test("btod_ewmult2", m_utf_btod_ewmult2);
 //	add_test("btod_extract", m_utf_btod_extract);
 //	add_test("btod_import_raw", m_utf_btod_import_raw);
+//	add_test("btod_import_raw_stream", m_utf_btod_import_raw_stream);
 //	add_test("btod_mult", m_utf_btod_mult);
 //	add_test("btod_mult1", m_utf_btod_mult1);
 //	add_test("btod_print", m_utf_btod_print);

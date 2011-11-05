@@ -27,51 +27,51 @@ namespace libtensor {
  **/
 class product_table_i {
 public:
-	typedef unsigned int label_t;
-	typedef std::vector<label_t> label_group;
+    typedef unsigned int label_t;
+    typedef std::vector<label_t> label_group;
 
 public:
-	//! \name Constructors / destructors
-	//@{
+    //! \name Constructors / destructors
+    //@{
 
-	/** \brief Virtual destructor
-	 **/
-	virtual ~product_table_i() { }
+    /** \brief Virtual destructor
+     **/
+    virtual ~product_table_i() { }
 
-	/** \brief Creates an identical copy of the product table.
-	 **/
-	virtual product_table_i *clone() const = 0;
+    /** \brief Creates an identical copy of the product table.
+     **/
+    virtual product_table_i *clone() const = 0;
 
-	//@}
+    //@}
 
-	/** \brief Returns the id identifying the product table.
-	 **/
-	virtual const std::string &get_id() const = 0;
+    /** \brief Returns the id identifying the product table.
+     **/
+    virtual const std::string &get_id() const = 0;
 
-	/** \brief Checks whether a label is valid.
-	 **/
-	virtual bool is_valid(label_t l) const = 0;
+    /** \brief Checks whether a label is valid.
+     **/
+    virtual bool is_valid(label_t l) const = 0;
 
-	/** \brief Returns the number of valid labels
-	 **/
-	virtual size_t nlabels() const = 0;
+    /** \brief Returns the number of valid labels
+     **/
+    virtual size_t nlabels() const = 0;
 
-	/** \brief Returns an invalid label
-	 **/
-	virtual label_t invalid() const = 0;
+    /** \brief Returns an invalid label
+     **/
+    virtual label_t invalid() const = 0;
 
-	/** \brief Determines if the label is in the product.
+    /** \brief Determines if the label is in the product.
 
 		\param lg Group of labels to take the product of.
 		\param l Label to check against.
 		\return True if label is in the product, else false.
-	 **/
-	virtual bool is_in_product(const label_group &lg, label_t l) const = 0;
+     **/
+    virtual bool is_in_product(const label_group &lg, label_t l) const = 0;
 
-	/** \brief Does a consistency check on the table.
+    /** \brief Does a consistency check on the table.
 		\throw exception If product table is not set up properly.
-	 **/
-	virtual void check() const throw(exception) = 0;
+     **/
+    virtual void check() const throw(exception) = 0;
 };
 
 }

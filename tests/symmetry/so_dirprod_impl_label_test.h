@@ -24,6 +24,7 @@ private:
     void test_nn_1() throw(libtest::test_exception);
     void test_nn_2() throw(libtest::test_exception);
 
+    void setup_pg_table() throw(libtest::test_exception);
 };
 
 

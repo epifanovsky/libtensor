@@ -12,10 +12,8 @@ void so_dirsum_test::perform() throw(libtest::test_exception) {
 	test_empty_1();
     test_empty_2();
     test_empty_3();
-    test_se_1(true, true);
-    test_se_1(true, false);
-    test_se_1(false, true);
-    test_se_1(false, false);
+    test_se_1( true, true); test_se_1( true, false);
+    test_se_1(false, true); test_se_1(false, false);
     test_se_2();
     test_se_3();
     test_se_4();

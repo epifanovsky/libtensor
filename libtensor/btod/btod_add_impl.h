@@ -113,7 +113,7 @@ void btod_add<N>::sync_off() {
 	}
 }
 
-
+/*
 template<size_t N>
 void btod_add<N>::compute_block(tensor_i<N, double> &blkb, const index<N> &ib) {
 
@@ -140,15 +140,16 @@ void btod_add<N>::compute_block(tensor_i<N, double> &blkb, const index<N> &ib) {
 	}
 
 	btod_add<N>::stop_timer();
-}
+}*/
 
 
 template<size_t N>
-void btod_add<N>::compute_block(tensor_i<N, double> &blkb, const index<N> &ib,
-	const transf<N, double> &trb, double kb) {
+void btod_add<N>::compute_block(bool zero, tensor_i<N, double> &blkb,
+    const index<N> &ib, const transf<N, double> &trb, double kb,
+    cpu_pool &cpus) {
 
-	static const char *method = "tensor_i<N, double>&, const index<N>&, "
-		"const transf<N, double>&, double)";
+	static const char *method = "compute_block(bool, tensor_i<N, double>&, "
+	    "const index<N>&, const transf<N, double>&, double, cpu_pool&)";
 
 	btod_add<N>::start_timer();
 
@@ -158,7 +159,7 @@ void btod_add<N>::compute_block(tensor_i<N, double> &blkb, const index<N> &ib,
 		std::pair<schiterator_t, schiterator_t> ipair =
 			m_op_sch.equal_range(aib.get_abs_index());
 		if(ipair.first != m_op_sch.end()) {
-			compute_block(blkb, ipair, false, trb, kb);
+			compute_block(blkb, ipair, zero, trb, kb, cpus);
 		}
 
 	} catch(...) {
@@ -173,7 +174,7 @@ void btod_add<N>::compute_block(tensor_i<N, double> &blkb, const index<N> &ib,
 template<size_t N>
 void btod_add<N>::compute_block(tensor_i<N, double> &blkb,
 	const std::pair<schiterator_t, schiterator_t> ipair, bool zero,
-	const transf<N, double> &trb, double kb) {
+	const transf<N, double> &trb, double kb, cpu_pool &cpus) {
 
 	size_t narg = m_ops.size();
 	std::vector<block_tensor_ctrl<N, double>*> ca(narg);
@@ -198,8 +199,7 @@ void btod_add<N>::compute_block(tensor_i<N, double> &blkb,
 		op->add_op(ca[rec.iarg]->req_block(rec.idx), perm, k);
 	}
 
-	if(zero) op->perform(blkb);
-	else op->perform(blkb, 1.0);
+	op->perform(cpus, zero, 1.0, blkb);
 
 	delete op;
 
@@ -237,6 +237,28 @@ void btod_add<N>::add_operand(block_tensor_i<N, double> &bt,
 		so_copy<N, double>(m_sym).perform(symcopy);
 		so_add<N, double>(symcopy, permutation<N>(),
 			ca.req_const_symmetry(), perm).perform(m_sym);
+		// sequence<N, size_t> seq2a;
+		// sequence<N + N, size_t> seq1b, seq2b;
+		// for (size_t i = 0; i < N; i++) {
+		//     seq2a[i] = i + N;
+        //     seq1b[i] = seq2b[i] = i;
+		// }
+		//
+		// perm.apply(seq2a);
+		// for (size_t i = N; i < N + N; i++) {
+		//    seq1b[i] = i; seq2b[i] = seq2a[i];
+		// permutation_builder<N + N> pb(seq2b, seq1b);
+		//
+	    // symmetry<N + N, T> symx;
+	    // so_dirsum<N, N, T>(symcopy,
+		//     ca.req_const_symmetry(), pb.get_perm()).perform(symx);
+	    // so_merge<N + N, N + N, N, T> merge(symx);
+	    // for (size_t i = 0; i < N; i++) {
+	    //     mask<N + N> m;
+	    //     m[i] = m[seq2a[i]] = true;
+	    //     merge.add_mask(m);
+	    // }
+	    // merge.perform(m_symc);
 	}
 	m_dirty_sch = true;
 }

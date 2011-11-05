@@ -98,10 +98,9 @@ public:
 	using additive_btod<N>::perform;
 
 protected:
-	virtual void compute_block(tensor_i<N, double> &blk, const index<N> &idx);
-
-	virtual void compute_block(tensor_i<N, double> &blk, const index<N> &idx,
-			const transf<N, double> &tr, double c);
+	virtual void compute_block(bool zero, tensor_i<N, double> &blk,
+	    const index<N> &idx, const transf<N, double> &tr, double c,
+	    cpu_pool &cpus);
 
 private:
 	btod_mult(const btod_mult<N> &);
@@ -187,7 +186,7 @@ void btod_mult<N>::sync_off() {
 	ctrlb.req_sync_off();
 }
 
-
+/*
 template<size_t N>
 void btod_mult<N>::compute_block(
 		tensor_i<N, double> &blk, const index<N> &idx) {
@@ -227,14 +226,14 @@ void btod_mult<N>::compute_block(
 
 	ctrla.ret_block(cidxa.get_index());
 	ctrlb.ret_block(cidxb.get_index());
-}
+}*/
 
 
 
 template<size_t N>
-void btod_mult<N>::compute_block(
-		tensor_i<N, double> &blk, const index<N> &idx,
-		const transf<N, double> &tr, double c) {
+void btod_mult<N>::compute_block(bool zero, tensor_i<N, double> &blk,
+    const index<N> &idx, const transf<N, double> &tr, double c,
+    cpu_pool &cpus) {
 
 	block_tensor_ctrl<N, double> ctrla(m_bta), ctrlb(m_btb);
 
@@ -269,7 +268,8 @@ void btod_mult<N>::compute_block(
 	else
 		k *= trb.get_coeff();
 
-	tod_mult<N>(blka, pa, blkb, pb, m_recip, k).perform(blk, c);
+	if(zero) tod_set<N>().perform(cpus, blk);
+	tod_mult<N>(blka, pa, blkb, pb, m_recip, k).perform(cpus, false, c, blk);
 
 	ctrla.ret_block(cidxa.get_index());
 	ctrlb.ret_block(cidxb.get_index());

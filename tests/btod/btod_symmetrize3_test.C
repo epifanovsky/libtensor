@@ -1,4 +1,4 @@
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/core/block_tensor_ctrl.h>
 #include <libtensor/btod/btod_add.h>
@@ -15,8 +15,7 @@ namespace libtensor {
 
 void btod_symmetrize3_test::perform() throw(libtest::test_exception) {
 
-	libvmm::vm_allocator<double>::vmm().init(
-		16, 16, 16777216, 16777216, 0.90, 0.05);
+	allocator<double>::vmm().init(16, 16, 16777216, 16777216);
 
 	try {
 
@@ -29,11 +28,11 @@ void btod_symmetrize3_test::perform() throw(libtest::test_exception) {
 		test_7();
 
 	} catch(...) {
-		libvmm::vm_allocator<double>::vmm().shutdown();
+		allocator<double>::vmm().shutdown();
 		throw;
 	}
 
-	libvmm::vm_allocator<double>::vmm().shutdown();
+	allocator<double>::vmm().shutdown();
 }
 
 
@@ -44,7 +43,9 @@ void btod_symmetrize3_test::test_1() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_symmetrize3_test::test_1()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -74,7 +75,7 @@ void btod_symmetrize3_test::test_1() throw(libtest::test_exception) {
 	refop.add_op(ta, permutation<3>().permute(1, 2), 1.0);
 	refop.add_op(ta, permutation<3>().permute(0, 1).permute(0, 2), 1.0);
 	refop.add_op(ta, permutation<3>().permute(0, 1).permute(1, 2), 1.0);
-	refop.perform(tb_ref);
+	refop.perform(cpus, true, 1.0, tb_ref);
 
 	symmetry<3, double> symb(bis), symb_ref(bis);
 	symb_ref.insert(se_perm<3, double>(
@@ -116,7 +117,9 @@ void btod_symmetrize3_test::test_2() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_symmetrize3_test::test_2()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -146,7 +149,7 @@ void btod_symmetrize3_test::test_2() throw(libtest::test_exception) {
 	refop.add_op(ta, permutation<3>().permute(1, 2), -1.0);
 	refop.add_op(ta, permutation<3>().permute(0, 1).permute(0, 2), 1.0);
 	refop.add_op(ta, permutation<3>().permute(0, 1).permute(1, 2), 1.0);
-	refop.perform(tb_ref);
+	refop.perform(cpus, true, 1.0, tb_ref);
 
 	//	Run the symmetrization operation
 
@@ -185,7 +188,9 @@ void btod_symmetrize3_test::test_3() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_symmetrize3_test::test_3()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -220,7 +225,7 @@ void btod_symmetrize3_test::test_3() throw(libtest::test_exception) {
 	refop.add_op(ta, permutation<3>().permute(1, 2), 1.0);
 	refop.add_op(ta, permutation<3>().permute(0, 1).permute(0, 2), 1.0);
 	refop.add_op(ta, permutation<3>().permute(0, 1).permute(1, 2), 1.0);
-	refop.perform(tb_ref);
+	refop.perform(cpus, true, 1.0, tb_ref);
 
 	//	Run the symmetrization operation
 
@@ -259,7 +264,9 @@ void btod_symmetrize3_test::test_4() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_symmetrize3_test::test_4()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -294,7 +301,7 @@ void btod_symmetrize3_test::test_4() throw(libtest::test_exception) {
 	refop.add_op(ta, permutation<4>().permute(1, 2), 1.0);
 	refop.add_op(ta, permutation<4>().permute(0, 1).permute(0, 2), 1.0);
 	refop.add_op(ta, permutation<4>().permute(0, 1).permute(1, 2), 1.0);
-	refop.perform(tb_ref);
+	refop.perform(cpus, true, 1.0, tb_ref);
 
 	//	Run the symmetrization operation
 
@@ -332,7 +339,9 @@ void btod_symmetrize3_test::test_5() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_symmetrize3_test::test_5()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -377,7 +386,7 @@ void btod_symmetrize3_test::test_5() throw(libtest::test_exception) {
 	refop.add_op(ta, permutation<3>().permute(1, 2), 1.0);
 	refop.add_op(ta, permutation<3>().permute(0, 1).permute(0, 2), 1.0);
 	refop.add_op(ta, permutation<3>().permute(0, 1).permute(1, 2), 1.0);
-	refop.perform(tb_ref);
+	refop.perform(cpus, true, 1.0, tb_ref);
 
 	symmetry<3, double> symb(bis), symb_ref(bis);
 	symb_ref.insert(se_perm<3, double>(
@@ -433,7 +442,9 @@ void btod_symmetrize3_test::test_6() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_symmetrize3_test::test_6()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -468,14 +479,14 @@ void btod_symmetrize3_test::test_6() throw(libtest::test_exception) {
 	refop1.add_op(ta, permutation<6>().permute(1, 2), -1.0);
 	refop1.add_op(ta, permutation<6>().permute(0, 1).permute(0, 2), 1.0);
 	refop1.add_op(ta, permutation<6>().permute(0, 1).permute(1, 2), 1.0);
-	refop1.perform(ta1);
+	refop1.perform(cpus, true, 1.0, ta1);
 	tod_add<6> refop2(ta1);
 	refop2.add_op(ta1, permutation<6>().permute(3, 4), -1.0);
 	refop2.add_op(ta1, permutation<6>().permute(3, 5), -1.0);
 	refop2.add_op(ta1, permutation<6>().permute(4, 5), -1.0);
 	refop2.add_op(ta1, permutation<6>().permute(3, 4).permute(3, 5), 1.0);
 	refop2.add_op(ta1, permutation<6>().permute(3, 4).permute(4, 5), 1.0);
-	refop2.perform(tb_ref);
+	refop2.perform(cpus, true, 1.0, tb_ref);
 
 	//	Run the symmetrization operation
 
@@ -519,7 +530,9 @@ void btod_symmetrize3_test::test_7() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_symmetrize3_test::test_7()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -564,14 +577,14 @@ void btod_symmetrize3_test::test_7() throw(libtest::test_exception) {
 	refop1.add_op(ta, permutation<6>().permute(1, 2), -1.0);
 	refop1.add_op(ta, permutation<6>().permute(0, 1).permute(0, 2), 1.0);
 	refop1.add_op(ta, permutation<6>().permute(0, 1).permute(1, 2), 1.0);
-	refop1.perform(ta1);
+	refop1.perform(cpus, true, 1.0, ta1);
 	tod_add<6> refop2(ta1);
 	refop2.add_op(ta1, permutation<6>().permute(3, 4), -1.0);
 	refop2.add_op(ta1, permutation<6>().permute(3, 5), -1.0);
 	refop2.add_op(ta1, permutation<6>().permute(4, 5), -1.0);
 	refop2.add_op(ta1, permutation<6>().permute(3, 4).permute(3, 5), 1.0);
 	refop2.add_op(ta1, permutation<6>().permute(3, 4).permute(4, 5), 1.0);
-	refop2.perform(tb_ref, 2.0);
+	refop2.perform(cpus, false, 2.0, tb_ref);
 
 	//	Run the symmetrization operation
 

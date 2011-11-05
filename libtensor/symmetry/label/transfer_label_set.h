@@ -48,11 +48,17 @@ void transfer_label_set<N, T>::perform<M>(const sequence<N, size_t> &map,
 
     static size_t k_diff = N - M;
 
+    mask<M> done;
     for (size_t i = 0; i < N; i++) {
         if (map[i] >= M) {
             throw bad_parameter(g_ns, k_clazz, method,
                     __FILE__, __LINE__, "map");
         }
+        if (done[map[i]]) {
+            throw bad_parameter(g_ns, k_clazz, method,
+                    __FILE__, __LINE__, "Non-unique mapping");
+        }
+        done[map[i]] = true;
     }
 #endif
 

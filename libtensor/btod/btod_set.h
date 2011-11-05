@@ -12,28 +12,34 @@
 namespace libtensor {
 
 
-/**	\brief Sets all elements of a block %tensor to a value preserving
-		%symmetry
-	\tparam N Tensor order.
+/**	\brief Sets all elements of a block tensor to a value preserving
+        the symmetry
+    \tparam N Tensor order.
 
-	\ingroup libtensor_btod
+    \ingroup libtensor_btod
  **/
 template<size_t N>
 class btod_set {
 public:
-	static const char *k_clazz; //!< Class name
+    static const char *k_clazz; //!< Class name
 
 private:
-	double m_a; //!< Value
+    double m_v; //!< Value
 
 public:
-	btod_set(double a = 0.0);
+    /** \brief Initializes the operation
+        \param v Value to be assigned to the tensor elements.
+     **/
+    btod_set(double v = 0.0);
 
-	void perform(block_tensor_i<N, double> &btb);
+    /** \brief Performs the operation
+        \param bt Output block tensor.
+     **/
+    void perform(block_tensor_i<N, double> &bt);
 
 private:
-	btod_set(const btod_set<N> &);
-	const btod_set<N> &operator=(const btod_set<N> &);
+    btod_set(const btod_set<N> &);
+    const btod_set<N> &operator=(const btod_set<N> &);
 
 };
 
@@ -43,30 +49,33 @@ const char *btod_set<N>::k_clazz = "btod_set<N>";
 
 
 template<size_t N>
-btod_set<N>::btod_set(double a) : m_a(a) {
+btod_set<N>::btod_set(double v) :
+
+    m_v(v) {
 
 }
 
-
 template<size_t N>
-void btod_set<N>::perform(block_tensor_i<N, double> &btb) {
+void btod_set<N>::perform(block_tensor_i<N, double> &bt) {
 
-	block_tensor_ctrl<N, double> ctrlb(btb);
+    cpu_pool cpus(1);
 
-	orbit_list<N, double> olstb(ctrlb.req_symmetry());
+    block_tensor_ctrl<N, double> ctrl(bt);
 
-	for(typename orbit_list<N, double>::iterator iob = olstb.begin();
-		iob != olstb.end(); iob++) {
+    orbit_list<N, double> ol(ctrl.req_symmetry());
 
-		index<N> idxb(olstb.get_index(iob));
-		if(m_a == 0.0) {
-			ctrlb.req_zero_block(idxb);
-		} else {
-			tensor_i<N, double> &blkb = ctrlb.req_block(idxb);
-			tod_set<N>(m_a).perform(blkb);
-			ctrlb.ret_block(idxb);
-		}
-	}
+    for(typename orbit_list<N, double>::iterator io = ol.begin();
+        io != ol.end(); ++io) {
+
+        index<N> bi(ol.get_index(io));
+        if(m_v == 0.0) {
+            ctrl.req_zero_block(bi);
+        } else {
+            tensor_i<N, double> &blk = ctrl.req_block(bi);
+            tod_set<N>(m_v).perform(cpus, blk);
+            ctrl.ret_block(bi);
+        }
+    }
 }
 
 

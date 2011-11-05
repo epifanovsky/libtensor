@@ -1,5 +1,5 @@
 #include <sstream>
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/core/tensor.h>
 #include <libtensor/btod/btod_random.h>
@@ -12,7 +12,7 @@
 namespace libtensor {
 
 
-typedef libvmm::std_allocator<double> allocator_t;
+typedef std_allocator<double> allocator_t;
 
 
 void btod_scale_test::perform() throw(libtest::test_exception) {

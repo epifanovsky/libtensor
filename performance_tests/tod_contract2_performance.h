@@ -166,6 +166,8 @@ void tod_contract2_ref<R,N,M,K,DimData>::do_calculate()
 template<size_t R, size_t N, size_t M, size_t K, typename DimData>
 void tod_contract2_p1<R,N,M,K,DimData>::do_calculate()
 {
+    cpu_pool cpus(1);
+
 	DimData d;
 
 	dimensions<N+M> dima(d.dimA());
@@ -193,12 +195,14 @@ void tod_contract2_p1<R,N,M,K,DimData>::do_calculate()
 	contraction2<N,M,K> contr(perm);
 	for (size_t i=0; i<K; i++) contr.contract(i+N,i+M);
 	tod_contract2<N,M,K> op(contr,tb,tc);
-	op.perform(ta,0.5);
+	op.perform(cpus, false, 0.5, ta);
 }
 
 template<size_t R, size_t N, size_t M, size_t K, typename DimData>
 void tod_contract2_p2<R,N,M,K,DimData>::do_calculate()
 {
+    cpu_pool cpus(1);
+
 	DimData d;
 	dimensions<N+M> dima(d.dimA());
 	dimensions<N+K> dimb(d.dimB());
@@ -236,13 +240,15 @@ void tod_contract2_p2<R,N,M,K,DimData>::do_calculate()
 	contraction2<N,M,K> contr(perm);
 	for (size_t i=0; i<K; i++) contr.contract(i+N,i);
 	tod_contract2<N,M,K> op(contr,tb,tc);
-	op.perform(ta,0.5);
+	op.perform(cpus, false, 0.5, ta);
 }
 
 
 template<size_t R, size_t N, size_t M, size_t K, typename DimData>
 void tod_contract2_p3<R,N,M,K,DimData>::do_calculate()
 {
+    cpu_pool cpus(1);
+
 	DimData d;
 
 	dimensions<N+M> dima(d.dimA());
@@ -275,13 +281,15 @@ void tod_contract2_p3<R,N,M,K,DimData>::do_calculate()
 	contraction2<N,M,K> contr(perma);
 	for (size_t i=0; i<K; i++) contr.contract(i+N,i+M);
 	tod_contract2<N,M,K> op(contr,tb,tc);
-	op.perform(ta,1.0);
+	op.perform(cpus, false, 1.0, ta);
 }
 
 
 template<size_t R, size_t N, size_t M, size_t K, typename DimData>
 void tod_contract2_p4<R,N,M,K,DimData>::do_calculate()
 {
+    cpu_pool cpus(1);
+
 	DimData d;
 	dimensions<N+M> dima(d.dimA());
 	dimensions<N+K> dimb(d.dimB());
@@ -314,7 +322,7 @@ void tod_contract2_p4<R,N,M,K,DimData>::do_calculate()
 	contraction2<N,M,K> contr(perm);
 	for (size_t i=0; i<K; i++) contr.contract(M+i,M+K-1-i);
 	tod_contract2<N,M,K> op(contr,tb,tc);
-	op.perform(ta,1.0);
+	op.perform(cpus, false, 1.0, ta);
 }
 
 

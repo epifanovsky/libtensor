@@ -190,11 +190,11 @@ permutation_group<N, T>::permutation_group(
     perm_list_t gs1, gs2;
 
     typedef symmetry_element_set_adapter<N, T, se_perm_t> adapter_t;
-//    std::cout << "ctor" << std::endl;
+    //    std::cout << "ctor" << std::endl;
     for(typename adapter_t::iterator i = set.begin(); i != set.end(); i++) {
-//
+        //
         const se_perm_t &e = set.get_elem(i);
-//        std::cout << (e.is_symm() ? "symm" : "asymm") << " " << e.get_perm() << std::endl;
+        //        std::cout << (e.is_symm() ? "symm" : "asymm") << " " << e.get_perm() << std::endl;
         gs1.push_back(signed_perm_t(e.get_perm(), e.is_symm()));
     }
 
@@ -204,16 +204,16 @@ permutation_group<N, T>::permutation_group(
         std::swap(p1, p2);
         p2->clear();
     }
-//    std::cout << "Branching:" << std::endl;
-//    for (size_t i = 0; i < N; i++) {
-//        std::cout << i << " - " << m_br.m_edges[i] << ": ";
-//        std::cout << m_br.m_sigma[i].first <<
-//                "(" << (m_br.m_sigma[i].second ? '+' : '-') << ")" << ", " <<
-//                m_br.m_tau[i].first <<
-//                "(" << (m_br.m_sigma[i].second ? '+' : '-') << ")" << std::endl;
-//    }
-//
-//    std::cout << "ctor end" << std::endl;
+    //    std::cout << "Branching:" << std::endl;
+    //    for (size_t i = 0; i < N; i++) {
+    //        std::cout << i << " - " << m_br.m_edges[i] << ": ";
+    //        std::cout << m_br.m_sigma[i].first <<
+    //                "(" << (m_br.m_sigma[i].second ? '+' : '-') << ")" << ", " <<
+    //                m_br.m_tau[i].first <<
+    //                "(" << (m_br.m_sigma[i].second ? '+' : '-') << ")" << std::endl;
+    //    }
+    //
+    //    std::cout << "ctor end" << std::endl;
 }
 
 
@@ -464,14 +464,14 @@ void permutation_group<N, T>::make_branching(branching &br, size_t i,
     perm_vec_t transv(N);
     for (size_t k = 0; k < N; k++) transv[k].second = true;
 
-//    std::cout << "make_branching" << std::endl;
-//    std::cout << "transversal(" << i << ")" << std::endl;
-//    std::cout << "genset: <";
-//    for(typename perm_list_t::const_iterator pi = gs.begin();
-//            pi != gs.end(); pi++) {
-//        std::cout << " " << pi->first << "(" << (pi->second?'+':'-') << ")";
-//    }
-//    std::cout << " >" << std::endl;
+    //    std::cout << "make_branching" << std::endl;
+    //    std::cout << "transversal(" << i << ")" << std::endl;
+    //    std::cout << "genset: <";
+    //    for(typename perm_list_t::const_iterator pi = gs.begin();
+    //            pi != gs.end(); pi++) {
+    //        std::cout << " " << pi->first << "(" << (pi->second?'+':'-') << ")";
+    //    }
+    //    std::cout << " >" << std::endl;
 
     std::vector<size_t> delta;
     delta.push_back(i);
@@ -510,12 +510,12 @@ void permutation_group<N, T>::make_branching(branching &br, size_t i,
         }
     }
 
-//    std::cout << "transv: {";
-//    for(size_t j = 0; j < N; j++) {
-//        std::cout << " " << transv[j].first <<
-//                "(" << (transv[j].second ? '+' : '-') << ")";
-//    }
-//    std::cout << " }" << std::endl;
+    //    std::cout << "transv: {";
+    //    for(size_t j = 0; j < N; j++) {
+    //        std::cout << " " << transv[j].first <<
+    //                "(" << (transv[j].second ? '+' : '-') << ")";
+    //    }
+    //    std::cout << " }" << std::endl;
 
     for(typename std::vector<size_t>::iterator dd = delta.begin();
             dd != delta.end(); dd++) {
@@ -535,19 +535,19 @@ void permutation_group<N, T>::make_branching(branching &br, size_t i,
                 br.m_tau[i].second : ! br.m_tau[i].second);
     }
 
-//    std::cout << "graph: {" << std::endl;
-//    for(size_t j = 0; j < N; j++) {
-//        size_t k = br.m_edges[j];
-//        if(k == N) continue;
-//        permutation<N> pinv(br.m_sigma[j].first, true);
-//        std::cout << j << "->" << k <<
-//                " " << br.m_sigma[j].first <<
-//                "(" << (br.m_sigma[j].second ? '+' : '-') << ")" <<
-//                " " << br.m_tau[j].first <<
-//                "(" << (br.m_tau[j].second ? '+' : '-') << ")" <<
-//                " " << k << "->" << j << " " << pinv << std::endl;
-//    }
-//    std::cout << "}" << std::endl;
+    //    std::cout << "graph: {" << std::endl;
+    //    for(size_t j = 0; j < N; j++) {
+    //        size_t k = br.m_edges[j];
+    //        if(k == N) continue;
+    //        permutation<N> pinv(br.m_sigma[j].first, true);
+    //        std::cout << j << "->" << k <<
+    //                " " << br.m_sigma[j].first <<
+    //                "(" << (br.m_sigma[j].second ? '+' : '-') << ")" <<
+    //                " " << br.m_tau[j].first <<
+    //                "(" << (br.m_tau[j].second ? '+' : '-') << ")" <<
+    //                " " << k << "->" << j << " " << pinv << std::endl;
+    //    }
+    //    std::cout << "}" << std::endl;
 
     for(typename perm_list_t::const_iterator pi = gs.begin();
             pi != gs.end(); pi++) {
@@ -580,13 +580,13 @@ void permutation_group<N, T>::make_branching(branching &br, size_t i,
         }
     }
 
-//    std::cout << "genset2: <";
-//    for(typename perm_list_t::const_iterator pi = gs2.begin();
-//            pi != gs2.end(); pi++) {
-//
-//        std::cout << " " << pi->first << "(" << (pi->second ? '+' : '-') << ")";
-//    }
-//    std::cout << " >" << std::endl;
+    //    std::cout << "genset2: <";
+    //    for(typename perm_list_t::const_iterator pi = gs2.begin();
+    //            pi != gs2.end(); pi++) {
+    //
+    //        std::cout << " " << pi->first << "(" << (pi->second ? '+' : '-') << ")";
+    //    }
+    //    std::cout << " >" << std::endl;
 
 }
 

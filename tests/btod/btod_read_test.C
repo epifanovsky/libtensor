@@ -1,6 +1,6 @@
 #include <cmath>
 #include <sstream>
-#include <libvmm/std_allocator.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/abs_index.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/btod/btod_random.h>
@@ -36,7 +36,9 @@ void btod_read_test::test_1() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_read_test::test_1()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -44,7 +46,7 @@ void btod_read_test::test_1() throw(libtest::test_exception) {
 	i2[0] = 4; i2[1] = 5;
 	dimensions<2> dims(index_range<2>(i1, i2));
 	tensor<2, double, allocator_t> t(dims), t_ref(dims);
-	tod_random<2>().perform(t_ref);
+	tod_random<2>().perform(cpus, t_ref);
 
 	std::stringstream ss;
 	ss << "2 " << dims[0] << " " << dims[1] << std::endl;
@@ -64,7 +66,7 @@ void btod_read_test::test_1() throw(libtest::test_exception) {
 			}
 			ss << std::endl;
 		}
-		ctrl.ret_dataptr(p); p = 0;
+		ctrl.ret_const_dataptr(p); p = 0;
 	}
 
 	block_index_space<2> bis(dims);
@@ -88,7 +90,9 @@ void btod_read_test::test_2() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_read_test::test_2()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -96,7 +100,7 @@ void btod_read_test::test_2() throw(libtest::test_exception) {
 	i2[0] = 4; i2[1] = 5;
 	dimensions<2> dims(index_range<2>(i1, i2));
 	tensor<2, double, allocator_t> t(dims), t_ref(dims);
-	tod_random<2>().perform(t_ref);
+	tod_random<2>().perform(cpus, t_ref);
 
 	std::stringstream ss;
 	ss << "2 " << dims[0] << " " << dims[1] << std::endl;
@@ -116,7 +120,7 @@ void btod_read_test::test_2() throw(libtest::test_exception) {
 			}
 			ss << std::endl;
 		}
-		ctrl.ret_dataptr(p); p = 0;
+		ctrl.ret_const_dataptr(p); p = 0;
 	}
 
 	block_index_space<2> bis(dims);
@@ -142,7 +146,9 @@ void btod_read_test::test_3() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_read_test::test_3()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+	cpu_pool cpus(1);
 
 	try {
 
@@ -150,7 +156,7 @@ void btod_read_test::test_3() throw(libtest::test_exception) {
 	i2[0] = 4; i2[1] = 5;
 	dimensions<2> dims(index_range<2>(i1, i2));
 	tensor<2, double, allocator_t> t(dims), t_ref(dims);
-	tod_set<2>().perform(t_ref);
+	tod_set<2>().perform(cpus, t_ref);
 
 	std::stringstream ss;
 	ss << "2 " << dims[0] << " " << dims[1] << std::endl;
@@ -170,7 +176,7 @@ void btod_read_test::test_3() throw(libtest::test_exception) {
 			}
 			ss << std::endl;
 		}
-		ctrl.ret_dataptr(p); p = 0;
+		ctrl.ret_const_dataptr(p); p = 0;
 	}
 
 	block_index_space<2> bis(dims);
@@ -194,7 +200,7 @@ void btod_read_test::test_4() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_read_test::test_4()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -232,7 +238,7 @@ void btod_read_test::test_4() throw(libtest::test_exception) {
 			}
 			ss << std::endl;
 		}
-		ctrl.ret_dataptr(p); p = 0;
+		ctrl.ret_const_dataptr(p); p = 0;
 	}
 
 	btod_read<2>(ss).perform(bt);
@@ -253,7 +259,9 @@ void btod_read_test::test_5() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_read_test::test_5()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -261,7 +269,7 @@ void btod_read_test::test_5() throw(libtest::test_exception) {
 	i2[0] = 4; i2[1] = 5; i2[2] = 4; i2[3] = 5;
 	dimensions<4> dims(index_range<4>(i1, i2));
 	tensor<4, double, allocator_t> t(dims), t_ref(dims);
-	tod_random<4>().perform(t_ref);
+	tod_random<4>().perform(cpus, t_ref);
 
 	std::stringstream ss;
 	ss << "4 " << dims[0] << " " << dims[1] << " " << dims[2] << " "
@@ -276,7 +284,7 @@ void btod_read_test::test_5() throw(libtest::test_exception) {
 			ss.setf(std::ios::fixed, std::ios::floatfield);
 			ss << p[aidx.get_abs_index()] << " ";
 		} while(aidx.inc());
-		ctrl.ret_dataptr(p); p = 0;
+		ctrl.ret_const_dataptr(p); p = 0;
 	}
 
 	block_index_space<4> bis(dims);
@@ -300,7 +308,7 @@ void btod_read_test::test_6() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_read_test::test_6()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
 
 	try {
 
@@ -331,7 +339,7 @@ void btod_read_test::test_6() throw(libtest::test_exception) {
 			ss.setf(std::ios::fixed, std::ios::floatfield);
 			ss << p[aidx.get_abs_index()] << " ";
 		} while(aidx.inc());
-		ctrl.ret_dataptr(p); p = 0;
+		ctrl.ret_const_dataptr(p); p = 0;
 	}
 
 	btod_read<4>(ss).perform(bt);
@@ -353,7 +361,9 @@ void btod_read_test::test_7() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_read_test::test_7()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -361,7 +371,7 @@ void btod_read_test::test_7() throw(libtest::test_exception) {
 	i2[0] = 1; i2[1] = 1;
 	dimensions<2> dims(index_range<2>(i1, i2));
 	tensor<2, double, allocator_t> t(dims), t_ref(dims);
-	tod_random<2>().perform(t_ref);
+	tod_random<2>().perform(cpus, t_ref);
 
 	std::stringstream ss;
 	ss << "2 " << dims[0] << " " << dims[1] << std::endl;
@@ -381,7 +391,7 @@ void btod_read_test::test_7() throw(libtest::test_exception) {
 			}
 			ss << std::endl;
 		}
-		ctrl.ret_dataptr(p); p = 0;
+		ctrl.ret_const_dataptr(p); p = 0;
 	}
 
 	block_index_space<2> bis(dims);
@@ -408,7 +418,9 @@ void btod_read_test::test_8() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_read_test::test_8()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -416,7 +428,7 @@ void btod_read_test::test_8() throw(libtest::test_exception) {
 	i2[0] = 2; i2[1] = 2;
 	dimensions<2> dims(index_range<2>(i1, i2));
 	tensor<2, double, allocator_t> t(dims), t_ref(dims);
-	tod_random<2>().perform(t_ref);
+	tod_random<2>().perform(cpus, t_ref);
 
 	std::stringstream ss;
 	ss << "2 " << dims[0] << " " << dims[1] << std::endl;
@@ -436,7 +448,7 @@ void btod_read_test::test_8() throw(libtest::test_exception) {
 			}
 			ss << std::endl;
 		}
-		ctrl.ret_dataptr(p); p = 0;
+		ctrl.ret_const_dataptr(p); p = 0;
 	}
 
 	block_index_space<2> bis(dims);
@@ -462,7 +474,9 @@ void btod_read_test::test_9() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_read_test::test_9()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -470,7 +484,7 @@ void btod_read_test::test_9() throw(libtest::test_exception) {
 	i2[0] = 2; i2[1] = 2;
 	dimensions<2> dims(index_range<2>(i1, i2));
 	tensor<2, double, allocator_t> t(dims), t_ref(dims);
-	tod_random<2>().perform(t_ref);
+	tod_random<2>().perform(cpus, t_ref);
 
 	std::stringstream ss;
 	ss << "2 " << dims[0] << " " << dims[1] << std::endl;
@@ -505,7 +519,7 @@ void btod_read_test::test_9() throw(libtest::test_exception) {
 			}
 			ss << std::endl;
 		}
-		ctrl.ret_dataptr(p); p = 0;
+		ctrl.ret_const_dataptr(p); p = 0;
 	}
 
 	block_index_space<2> bis(dims);
@@ -539,7 +553,9 @@ void btod_read_test::test_10() throw(libtest::test_exception) {
 
 	static const char *testname = "btod_read_test::test_10()";
 
-	typedef libvmm::std_allocator<double> allocator_t;
+	typedef std_allocator<double> allocator_t;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -547,7 +563,7 @@ void btod_read_test::test_10() throw(libtest::test_exception) {
 	i2[0] = 2; i2[1] = 2;
 	dimensions<2> dims(index_range<2>(i1, i2));
 	tensor<2, double, allocator_t> t(dims), t_ref(dims);
-	tod_random<2>().perform(t_ref);
+	tod_random<2>().perform(cpus, t_ref);
 
 	std::stringstream ss;
 	ss << "2 " << dims[0] << " " << dims[1] << std::endl;
@@ -568,7 +584,7 @@ void btod_read_test::test_10() throw(libtest::test_exception) {
 			}
 			ss << std::endl;
 		}
-		ctrl.ret_dataptr(p); p = 0;
+		ctrl.ret_const_dataptr(p); p = 0;
 	}
 
 	block_index_space<2> bis(dims);
