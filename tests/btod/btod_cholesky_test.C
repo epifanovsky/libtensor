@@ -8,7 +8,10 @@
 #include "../compare_ref.h"
 #include "libtensor/btod/btod_contract2.h"
 
-#define PRINT 1
+// for our custom cholesky
+#include "libtensor/btod/cholesky.h"
+
+//#define PRINT 1
 
 namespace libtensor {
 
@@ -19,7 +22,7 @@ void btod_cholesky_test::perform() throw(libtest::test_exception) {
 	test_2();
 	test_3();
 	test_4();
-	//test_5(); //this test fail for dpstrf
+	test_5(); //this test fail for dpstrf
 }
 
 
@@ -35,13 +38,18 @@ void btod_cholesky_test::test_1() throw(libtest::test_exception) {
 
 		//initial symmetric matrix
 		double matrix[9] = { 1, 1, 1, 1, 2, 3, 1, 3, 6};
+		//double matrix[9] = {1,2,3,4,5,6,7,8,9};
 
 		index<2> i1a, i1b;
 		i1b[0] = 2; i1b[1] = 2;
 
 		dimensions<2> dims1(index_range<2>(i1a, i1b));
 
+		
 		block_index_space<2> bis1(dims1);
+		
+                mask<2> splmsk; splmsk[0] = true;splmsk[1] = true;
+                //bis1.split(splmsk, 2);
 
 		block_tensor<2, double, allocator_t> bta(bis1);//input matrix
 		block_tensor<2, double, allocator_t> btb_ref(bis1);// reference matrix
@@ -49,7 +57,8 @@ void btod_cholesky_test::test_1() throw(libtest::test_exception) {
 		btod_import_raw<2>(matrix, dims1).perform(bta);
 
 		//Decomposition
-		btod_cholesky chol(bta);
+		//btod_cholesky chol(bta);
+		cholesky chol(bta);
 
 		chol.decompose();
 
@@ -143,7 +152,8 @@ void btod_cholesky_test::test_2() throw(libtest::test_exception) {
                 btod_import_raw<2>(matrix, dims1).perform(bta);
 
                 //Decomposition
-                btod_cholesky chol(bta);
+                //btod_cholesky chol(bta);
+		cholesky chol(bta);		
 
                 chol.decompose();
 
@@ -204,7 +214,7 @@ void btod_cholesky_test::test_2() throw(libtest::test_exception) {
                 compare_ref<2>::compare(testname, btb_ref, bta, 1e-5);
 
 		//just test how well import works
-
+		/*
 		std::cout<<"Output test "<<std::endl;
 
                 double matrixt[25] = { 1,1,1,1,1,1,2,3,4,5,1,3,6,10,15,1,4,10,20,35,
@@ -226,7 +236,7 @@ void btod_cholesky_test::test_2() throw(libtest::test_exception) {
 		std::cout<<ost.str()<<std::endl;
 
 		//end
-
+		*/
         } catch(exception &e) {
                 fail_test(testname, __FILE__, __LINE__, e.what());
         }
@@ -265,7 +275,8 @@ void btod_cholesky_test::test_3() throw(libtest::test_exception) {
                 btod_import_raw<2>(matrix, dims1).perform(bta);
 
                 //Decomposition
-                btod_cholesky chol(bta);
+                //btod_cholesky chol(bta);
+		cholesky chol(bta);
 
                 chol.decompose();
 
@@ -355,6 +366,7 @@ void btod_cholesky_test::test_4() throw(libtest::test_exception) {
                 //splitting
                 mask<2> splmsk; splmsk[0] = true;splmsk[1] = true;
                 bis1.split(splmsk, 2);
+		bis1.split(splmsk, 4);
 
                 block_tensor<2, double, allocator_t> bta(bis1);//input matrix
 
@@ -363,7 +375,8 @@ void btod_cholesky_test::test_4() throw(libtest::test_exception) {
                 btod_import_raw<2>(matrix, dims1).perform(bta);
 
                 //Decomposition
-                btod_cholesky chol(bta);
+                //btod_cholesky chol(bta);
+		cholesky chol(bta);
 
                 chol.decompose();
 
@@ -387,6 +400,8 @@ void btod_cholesky_test::test_4() throw(libtest::test_exception) {
 
                 mask<2> splmskb; splmskb[0] = true;splmskb[1] = false;
                 bisb.split(splmskb, 2);
+		bisb.split(splmskb, 4);
+
                 
                 block_tensor<2, double, allocator_t> btb(bisb);//output matrix
                 block_tensor<2, double, allocator_t> btbt(bisb);//output matrix
@@ -464,7 +479,8 @@ void btod_cholesky_test::test_5() throw(libtest::test_exception) {
                 btod_import_raw<2>(matrix, dims1).perform(bta);
 
                 //Decomposition
-                btod_cholesky chol(bta);
+                //btod_cholesky chol(bta);
+		cholesky chol(bta);
 
                 chol.decompose();
 

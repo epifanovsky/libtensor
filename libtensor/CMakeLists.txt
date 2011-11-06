@@ -11,6 +11,7 @@ set(SRC
     core/orbit.C
     core/orbit_list.C
     btod/btod_cholesky.C
+    btod/cholesky.C
     btod/btod_diagonalize.C
     btod/btod_tridiagonalize.C
     symmetry/point_group_table.C
@@ -134,6 +135,7 @@ set(SRC_INST
     tod/tod_contract2.C
     tod/tod_copy.C
     tod/tod_dirsum.C
+    tod/tod_dotprod.C
     tod/tod_ewmult2.C
     tod/tod_import_raw_stream.C
     btod/additive_btod.C

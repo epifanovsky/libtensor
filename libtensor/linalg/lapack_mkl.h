@@ -158,6 +158,7 @@ inline int lapack_dpstrf(char uplo, size_t n, double *a, size_t lda, int *p,
 #else // HAVE_LAPACK_DPSTRF
     throw not_implemented(g_ns, 0, "lapack_dpstrf", __FILE__, __LINE__);
 #endif // HAVE_LAPACK_DPSTRF
+
     return mkl_info;
 }
 

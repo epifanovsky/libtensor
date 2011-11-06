@@ -202,10 +202,24 @@ void btod_cholesky::decompose()
 void btod_cholesky::perform(block_tensor_i<2 , double> &btb)
 {
         tensor_i<2, double> &ta(*pta);
-	// should I create a buffer of right size here?
 	tensor_ctrl<2, double> tnsr_ctrl(ta);
         double *tnsr_ptr = tnsr_ctrl.req_dataptr();
-	btod_import_raw<2>(tnsr_ptr, btb.get_bis().get_dims()).perform(btb);
+	// temporary solution  - make the buffer of the size n by rank
+
+	int n = btb.get_bis().get_dims().get_dim(0);
+        int R = btb.get_bis().get_dims().get_dim(1);
+
+	double tmp [n * R];
+
+	for(int i = 0; i < n; i++)
+	{
+		for(int j = 0; j < R; j++)
+		{
+			tmp[i * R + j] = *(tnsr_ptr + i * n + j);
+		}
+	} 
+	//btod_import_raw<2>(tnsr_ptr, btb.get_bis().get_dims()).perform(btb);
+	btod_import_raw<2>(tmp, btb.get_bis().get_dims()).perform(btb);
 	tnsr_ctrl.ret_dataptr(tnsr_ptr);
 }
 
