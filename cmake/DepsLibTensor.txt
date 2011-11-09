@@ -26,17 +26,19 @@ find_package(CBLAS)
 find_package(LAPACK)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH_SAVED})
 
-#    Detect the CUDA compiler and library
-#
-find_package(CUDA)
-if(CUDA_FOUND)
-    set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} -ccbin icc -arch sm_20)
-    set(CUDA_LIBS ${CUDA_LIBRARIES})
-    message(STATUS "Using CUDA: " ${CUDA_LIBRARIES})
-endif(CUDA_FOUND)
+#Detect if CUDA is install and set it up
+FIND_PACKAGE(CUDA)
+message(STATUS "${CUDA_NVCC_EXECUTABLE}")
+message(STATUS ${CUDA_NVCC_FLAGS})
+if(NOT CUDA_FLAGS_SET)
+    	SET(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} -ccbin icc -arch sm_20 -v)
+    	set(CUDA_FLAGS_SET 1 CACHE BOOL "NVCC flags set at libtensor")
+	endif(NOT CUDA_FLAGS_SET)	
+if (CUDA_FOUND)
+	set(CUDA_LIBS ${CUDA_LIBRARIES})
+	message(STATUS "Using CUDA: " ${CUDA_LIBRARIES})
+endif (CUDA_FOUND)
 
-#
-#	Set up compilation flags and paths
 if(IS_ICPC AND MKL_FOUND)
 	SetupMKL()
 else(IS_ICPC AND MKL_FOUND)
