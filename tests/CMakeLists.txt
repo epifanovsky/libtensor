@@ -270,4 +270,3 @@ foreach(TARGET ${TARGETS})
 target_link_libraries(${TARGET}
 	tensor ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} test)
 endforeach(TARGET)
-
