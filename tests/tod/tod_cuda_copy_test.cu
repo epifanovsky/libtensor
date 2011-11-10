@@ -181,14 +181,20 @@ void tod_cuda_copy_test::test_plain(const dimensions<N> &dims)
 	double *d_dtb1 = d_tcb.req_dataptr();
 
 	// Fill in random data
-
-	index<N> ida;
+	abs_index<N> aida(dims);
 	do {
-		size_t i;
-		i = dims.abs_index(ida);
+		size_t i = aida.get_abs_index();
 		h_dta[i] = h_dtb2[i] = drand48();
 		h_dtb1[i] = drand48();
-	} while(dims.inc_index(ida));
+	} while(aida.inc());
+
+//	index<N> ida;
+//	do {
+//		size_t i;
+//		i = dims.abs_index(ida);
+//		h_dta[i] = h_dtb2[i] = drand48();
+//		h_dtb1[i] = drand48();
+//	} while(dims.inc_index(ida));
 
 	//copy a and b from host to device
 	cuda_allocator::copy_to_device(d_dta, h_dta, dims.get_size());
@@ -200,12 +206,15 @@ void tod_cuda_copy_test::test_plain(const dimensions<N> &dims)
 	d_tca.ret_dataptr(d_dta); d_dta = NULL;
 	d_tcb.ret_dataptr(d_dtb1); d_dtb1 = NULL;
 	h_ta.set_immutable(); h_tb_ref.set_immutable();
+	std::cout << "\nFirst adapter return\n ";
 	}
 
 	// Invoke the copy operation
 
 	tod_cuda_copy<N> cp(d_ta);
+	std::cout << "\nCuda copy initialized\n ";
 	cp.perform(d_tb);
+	std::cout << "\nCuda copy performed\n ";
 
 	//copy from device to host
 	{
@@ -214,16 +223,19 @@ void tod_cuda_copy_test::test_plain(const dimensions<N> &dims)
 
 		double *h_dtb1 = h_tcb.req_dataptr();
 		double *d_dtb1 = d_tcb.req_dataptr();
-		const double *h_dtb2 = h_tcb_ref.req_const_dataptr();
+		std::cout << "\nSeconf adapter requested\n ";
+//		const double *h_dtb2 = h_tcb_ref.req_const_dataptr();
 
 		cuda_allocator::copy_to_host(h_dtb1, d_dtb1, dims.get_size());
 
-		std::cout << "h_tb: " << h_dtb1[0] << ", " << h_dtb1[1] << ", " << h_dtb1[2] << ", " << h_dtb1[3]<< ", " << h_dtb1[4]<< ", " << h_dtb1[4]<< ", " << h_dtb1[6] << ", " << "\n";
-		std::cout << "h_tb_ref: " << h_dtb2[0] << ", " << h_dtb2[1] << ", " << h_dtb2[2] << ", " << h_dtb2[3]<< ", " << h_dtb2[4]<< ", " << h_dtb2[5]<< ", " << h_dtb2[6] << ", " << "\n";
+//		std::cout << "h_tb: " << h_dtb1[0] << ", " << h_dtb1[1] << ", " << h_dtb1[2] << ", " << h_dtb1[3]<< ", " << h_dtb1[4]<< ", " << h_dtb1[4]<< ", " << h_dtb1[6] << ", " << "\n";
+//		std::cout << "h_tb_ref: " << h_dtb2[0] << ", " << h_dtb2[1] << ", " << h_dtb2[2] << ", " << h_dtb2[3]<< ", " << h_dtb2[4]<< ", " << h_dtb2[5]<< ", " << h_dtb2[6] << ", " << "\n";
 
 		h_tcb.ret_dataptr(h_dtb1); h_dtb1 = NULL;
+		std::cout << "Second adapter return\n ";
 		d_tcb.ret_dataptr(d_dtb1); d_dtb1 = NULL;
-		h_tcb_ref.ret_dataptr(h_dtb2); h_dtb2 = NULL;
+		std::cout << "Third adapter return\n ";
+//		h_tcb_ref.ret_const_dataptr(h_dtb2); h_dtb2 = NULL;
 	}
 
 
@@ -261,14 +273,14 @@ void tod_cuda_copy_test::test_plain_additive(const dimensions<N> &dims, double d
 
 	// Fill in random data
 
-	index<N> ida;
+	abs_index<N> aida(dims);
 	do {
 		size_t i;
-		i = dims.abs_index(ida);
+		i = aida.get_abs_index();
 		h_dta[i] = drand48();
 		h_dtb1[i] = drand48();
 		h_dtb2[i] = h_dtb1[i] + d * h_dta[i];
-	} while(dims.inc_index(ida));
+	} while(aida.inc());
 
 	//copy a and b from host to device
 	cuda_allocator::copy_to_device(d_dta, h_dta, dims.get_size());
@@ -335,14 +347,14 @@ void tod_cuda_copy_test::test_scaled(const dimensions<N> &dims, double c)
 
 	// Fill in random data
 
-	index<N> ida;
+	abs_index<N> aida(dims);
 	do {
 		size_t i;
-		i = dims.abs_index(ida);
+		i = aida.get_abs_index();
 		h_dta[i] = h_dtb2[i] = drand48();
 		h_dtb2[i] *= c;
 		h_dtb1[i] = drand48();
-	} while(dims.inc_index(ida));
+	} while(aida.inc());
 	//copy a and b from host to device
 	cuda_allocator::copy_to_device(d_dta, h_dta, dims.get_size());
 	cuda_allocator::copy_to_device(d_dtb1, h_dtb1, dims.get_size());
@@ -407,14 +419,14 @@ void tod_cuda_copy_test::test_scaled_additive(const dimensions<N> &dims, double 
 
 	// Fill in random data
 
-	index<N> ida;
+	abs_index<N> aida(dims);
 	do {
 		size_t i;
-		i = dims.abs_index(ida);
+		i = aida.get_abs_index();
 		h_dta[i] = drand48();
 		h_dtb1[i] = drand48();
 		h_dtb2[i] = h_dtb1[i] + c*d*h_dta[i];
-	} while(dims.inc_index(ida));
+	} while(aida.inc());
 
 	//copy a and b from host to device
 	cuda_allocator::copy_to_device(d_dta, h_dta, dims.get_size());
@@ -483,17 +495,18 @@ void tod_cuda_copy_test::test_perm(const dimensions<N> &dims,
 	double *d_dtb1 = d_tcb.req_dataptr();
 
 	// Fill in random data
-
-	index<N> ida;
+	abs_index<N> aida(dims);
 	do {
+		index<N> ida(aida.get_index());
 		index<N> idb(ida);
 		idb.permute(perm);
+		abs_index<N> aidb(idb, dimsb);
 		size_t i, j;
-		i = dimsa.abs_index(ida);
-		j = dimsb.abs_index(idb);
+		i = aida.get_abs_index();
+		j = aidb.get_abs_index();
 		h_dta[i] = h_dtb2[j] = drand48();
 		h_dtb1[i] = drand48();
-	} while(dimsa.inc_index(ida));
+	} while(aida.inc());
 
 	//copy a and b from host to device
 	cuda_allocator::copy_to_device(d_dta, h_dta, dims.get_size());
@@ -561,18 +574,19 @@ void tod_cuda_copy_test::test_perm_additive(const dimensions<N> &dims,
 	double *d_dtb1 = d_tcb.req_dataptr();
 
 	// Fill in random data
-
-	index<N> ida;
+	abs_index<N> aida(dims);
 	do {
+		index<N> ida(aida.get_index());
 		index<N> idb(ida);
 		idb.permute(perm);
+		abs_index<N> aidb(idb, dimsb);
 		size_t i, j;
-		i = dimsa.abs_index(ida);
-		j = dimsb.abs_index(idb);
+		i = aida.get_abs_index();
+		j = aidb.get_abs_index();
 		h_dta[i] = drand48();
 		h_dtb1[j] = drand48();
 		h_dtb2[j] = h_dtb1[j] + d*h_dta[i];
-	} while(dimsa.inc_index(ida));
+	} while(aida.inc());
 
 	//copy a and b from host to device
 	cuda_allocator::copy_to_device(d_dta, h_dta, dims.get_size());
@@ -641,17 +655,19 @@ void tod_cuda_copy_test::test_perm_scaled(const dimensions<N> &dims,
 
 	// Fill in random data
 
-	index<N> ida;
+	abs_index<N> aida(dims);
 	do {
+		index<N> ida(aida.get_index());
 		index<N> idb(ida);
 		idb.permute(perm);
+		abs_index<N> aidb(idb, dimsb);
 		size_t i, j;
-		i = dimsa.abs_index(ida);
-		j = dimsb.abs_index(idb);
+		i = aida.get_abs_index();
+		j = aidb.get_abs_index();
 		h_dta[i] = drand48();
 		h_dtb1[j] = drand48();
 		h_dtb2[j] = c*h_dta[i];
-	} while(dimsa.inc_index(ida));
+	} while(aida.inc());
 
 	//copy a and b from host to device
 	cuda_allocator::copy_to_device(d_dta, h_dta, dims.get_size());
@@ -721,17 +737,19 @@ void tod_cuda_copy_test::test_perm_scaled_additive(const dimensions<N> &dims,
 
 	// Fill in random data
 
-	index<N> ida;
+	abs_index<N> aida(dims);
 	do {
+		index<N> ida(aida.get_index());
 		index<N> idb(ida);
 		idb.permute(perm);
+		abs_index<N> aidb(idb, dimsb);
 		size_t i, j;
-		i = dimsa.abs_index(ida);
-		j = dimsb.abs_index(idb);
+		i = aida.get_abs_index();
+		j = aidb.get_abs_index();
 		h_dta[i] = drand48();
 		h_dtb1[j] = drand48();
 		h_dtb2[j] = h_dtb1[j] + c*d*h_dta[i];
-	} while(dimsa.inc_index(ida));
+	} while(aida.inc());
 
 
 	//copy a and b from host to device
