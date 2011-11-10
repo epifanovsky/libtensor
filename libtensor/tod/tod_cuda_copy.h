@@ -168,9 +168,8 @@ void tod_cuda_copy<N>::perform(tensor_i<N, double> &tb, double c) {
 	static const char *method = "perform(tensor_i<N, double>&, double)";
 
 	if(!tb.get_dims().equals(m_dimsb)) {
-		std::cout << "\n m_dimsb = " << m_dimsb << "\n tb dims = " << tb.get_dims();
-		throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__,
-			"tb");
+//		std::cout << "\n m_dimsb = " << m_dimsb << "\n tb dims = " << tb.get_dims();
+		throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__,	"tb");
 	}
 	if(c == 0) return;
 
@@ -213,7 +212,7 @@ void tod_cuda_copy<N>::do_perform(tensor_i<N, double> &tb, double c) {
 	delete kern; kern = 0;
 
 
-	ca.ret_dataptr(pa);
+	ca.ret_const_dataptr(pa);
 	cb.ret_dataptr(pb);
 
 	} catch(...) {
