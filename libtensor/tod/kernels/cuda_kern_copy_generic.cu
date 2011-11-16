@@ -60,8 +60,8 @@ cuda_kern_copy_generic *cuda_kern_copy_generic::match(const double *pa, double *
 	{
 		//get b increments using the map
 		uint2 b_incrs = make_uint2(dimsb.get_increment(map[1]), dimsb.get_increment(map[0]) );
-		std::cout << "dimsb dimensions: " << dimsb.get_dim(0) << ", " << dimsb.get_dim(1) << "\n";
-		std::cout << "b_incrs: " << b_incrs.x << ", " << b_incrs.y << "\n " ;
+//		std::cout << "dimsb dimensions: " << dimsb.get_dim(0) << ", " << dimsb.get_dim(1) << "\n";
+//		std::cout << "b_incrs: " << b_incrs.x << ", " << b_incrs.y << "\n " ;
 		// setup execution parameters
 		dim3 threads(dimsa.get_dim(1));
 		dim3 grid(dimsa.get_dim(0));
@@ -73,9 +73,9 @@ cuda_kern_copy_generic *cuda_kern_copy_generic::match(const double *pa, double *
 	{
 		//get b increments using the map
 		uint4 b_incrs = make_uint4(dimsb.get_increment(map[3]), dimsb.get_increment(map[2]), dimsb.get_increment(map[1]), dimsb.get_increment(map[0]) );
-		std::cout << "dimsb dimensions: " << dimsb.get_dim(0) << ", " << dimsb.get_dim(1) << ", " << dimsb.get_dim(2)  << ", " << dimsb.get_dim(3) << "\n";
+//		std::cout << "dimsb dimensions: " << dimsb.get_dim(0) << ", " << dimsb.get_dim(1) << ", " << dimsb.get_dim(2)  << ", " << dimsb.get_dim(3) << "\n";
 
-		std::cout << "b_incrs: " << b_incrs.x << ", " << b_incrs.y << ", " << b_incrs.z << ", " << b_incrs.w << "\n " ;
+//		std::cout << "b_incrs: " << b_incrs.x << ", " << b_incrs.y << ", " << b_incrs.z << ", " << b_incrs.w << "\n " ;
 		// setup execution parameters
 		dim3 threads(dimsa.get_dim(3), dimsa.get_dim(2));
 		dim3 grid(dimsa.get_dim(1), dimsa.get_dim(0));
