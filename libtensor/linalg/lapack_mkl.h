@@ -141,6 +141,18 @@ inline int lapack_dpotrf(char uplo, size_t n, double *a, size_t lda) {
     return mkl_info;
 }
 
+inline int lapack_dlarnv(size_t idist, int * iseed, size_t n, double *x) {
+
+    int mkl_idist = idist;
+    int mkl_n = n;
+
+    dlarnv(&mkl_idist, iseed, &mkl_n, x);
+
+    return 0;
+   
+}
+
+
 
 /** \brief LAPACK function dpstrf (Intel MKL)
 
@@ -150,14 +162,15 @@ inline int lapack_dpstrf(char uplo, size_t n, double *a, size_t lda, int *p,
     int *rank, double tol, double *work) {
 
     int mkl_info = 0;
-#ifdef HAVE_LAPACK_DPSTRF
+//#ifdef HAVE_LAPACK_DPSTRF
     int mkl_n = n;
     int mkl_lda = lda;
     double mkl_tol = tol;
-    dpstrf(&uplo, &mkl_n, a, &mkl_lda, p, rank, &mkl_tol, work, &mkl_info);
-#else // HAVE_LAPACK_DPSTRF
-    throw not_implemented(g_ns, 0, "lapack_dpstrf", __FILE__, __LINE__);
-#endif // HAVE_LAPACK_DPSTRF
+	dpotrf(&uplo, &mkl_n, a, &mkl_lda, &mkl_info);
+    //dpstrf(&uplo, &mkl_n, a, &mkl_lda, p, rank, &mkl_tol, work, &mkl_info);
+//#else // HAVE_LAPACK_DPSTRF
+//    throw not_implemented(g_ns, 0, "lapack_dpstrf", __FILE__, __LINE__);
+//#endif // HAVE_LAPACK_DPSTRF
 
     return mkl_info;
 }

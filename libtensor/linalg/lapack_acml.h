@@ -103,6 +103,17 @@ inline int lapack_dpotrf(char uplo, size_t n, double *a, size_t lda) {
     return info;
 }
 
+inline int lapack_dlarnv(size_t idist, int * iseed, size_t n, double *x) {
+
+    dlarnv(idist, iseed, n, x);
+
+    return 0;
+    
+}
+
+
+
+
 
 /** \brief LAPACK function dpotrf (ACML)
 
