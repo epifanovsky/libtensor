@@ -159,17 +159,11 @@ set(SRC_QCHEM
     linalg/qchem/linalg_base_level1_qchem.C
 )
 
-if(qchemRootDir)
-    include(${qchemRootDir}/cmake/DepsLibVmm.txt)
-    include(${qchemRootDir}/cmake/DepsLibTensor.txt)
-endif(qchemRootDir)
-
 add_library(tensor ${SRC} ${SRC_LINALG} ${SRC_INST} ${SRC_MP})
-if(qchemRootDir)
+if(QCHEM_SOURCE_DIR)
     add_library(tensor_qchem ${SRC_QCHEM})
-    add_dependencies(tensor generated_headers)
-    add_dependencies(tensor_qchem generated_headers)
-endif(qchemRootDir)
+    add_dependencies(tensor_qchem tensor)
+endif(QCHEM_SOURCE_DIR)
 
 set_property(TARGET tensor APPEND PROPERTY
 	COMPILE_DEFINITIONS LIBTENSOR_INSTANTIATE_TEMPLATES)
