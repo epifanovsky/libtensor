@@ -92,6 +92,14 @@ inline int lapack_zgeev(char jobvl, char jobvr, size_t n,
 }
 
 
+inline int lapack_dgelss(size_t m, size_t n, size_t nrhs, double *B, size_t lda, double *rhs, size_t ldb, double *S, double rcond,  
+                int *rank, double *work, size_t lwork) {
+
+    int info = 0;
+    dgelss(m, n, nrhs, B, lda, rhs, ldb, S, rcond, rank, work, lwork, &info);
+    return info;
+}
+
 /** \brief LAPACK function dpotrf (ACML)
 
     \ingroup libtensor_linalg
@@ -103,6 +111,11 @@ inline int lapack_dpotrf(char uplo, size_t n, double *a, size_t lda) {
     return info;
 }
 
+/** \brief LAPACK function dlarnv (ACML)
+
+    \ingroup libtensor_linalg
+ **/
+
 inline int lapack_dlarnv(size_t idist, int * iseed, size_t n, double *x) {
 
     dlarnv(idist, iseed, n, x);
@@ -110,9 +123,6 @@ inline int lapack_dlarnv(size_t idist, int * iseed, size_t n, double *x) {
     return 0;
     
 }
-
-
-
 
 
 /** \brief LAPACK function dpotrf (ACML)

@@ -21,6 +21,7 @@ extern "C" {
 	int zgeev_(char*, char*, int*, std::complex <double> *, int*, std::complex <double> *, 
 	std::complex <double> *, int*, std::complex <double> *, int*, std::complex <double> *, 
 	int*, double*, int*);
+	int dgelss_(int*, int*, int*, double*, int*, double*, int*, double*, double*, int*, double*, int*);
 	int dlarnv_(int *, int *, int*, double *);
 #ifndef USE_QCHEM
 	int dpotrf_(char*, int*, double*, int*, int*);
@@ -143,6 +144,22 @@ inline int lapack_zgeev(char jobvl, char jobvr, size_t n, std::complex <double> 
         int gen_info = 0;
         zgeev_(&jobvl, &jobvr, &gen_n, a, &gen_lda, w, vl, &gen_ldvl, vr, &gen_ldvr, work, &gen_lwork, rwork, &gen_info);     
         return gen_info;
+}
+
+
+inline int lapack_dgelss(size_t m, size_t n, size_t nrhs, double *B, size_t lda, double *rhs, size_t ldb, double *S, double rcond,  
+                int *rank, double *work, size_t lwork) {
+
+    int gen_m = m;
+    int gen_n = n;
+    int gen_nrhs = nrhs;
+    int gen_lda = lda;
+    int gen_ldb = ldb;
+    double gen_rcond = rcond;
+    int gen_lwork = lwork;
+    int gen_info = 0;
+    dgelss_(&gen_m, &gen_n, &gen_nrhs, B, &gen_lda, rhs, &gen_ldb, S, &gen_rcond, rank, work, &gen_lwork, &gen_info);
+    return gen_info;
 }
 
 inline int lapack_dpotrf(char uplo, size_t n, double *a, size_t lda) {

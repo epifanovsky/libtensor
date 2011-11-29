@@ -127,6 +127,24 @@ inline int lapack_zgeev(char jobvl, char jobvr, size_t n,
     return mkl_info;
 }
 
+/** \brief LAPACK function dgelss (Intel MKL)
+
+    \ingroup libtensor_linalg
+ **/
+inline int lapack_dgelss(size_t m, size_t n, size_t nrhs, double *B, size_t lda, double *rhs, size_t ldb, double *S, double rcond, 
+		int *rank, double *work, size_t lwork) {
+
+    int mkl_m = m;
+    int mkl_n = n;
+    int mkl_nrhs = nrhs;
+    int mkl_lda = lda;
+    int mkl_ldb = ldb;
+    double mkl_rcond = rcond;
+    int mkl_lwork = lwork;
+    int mkl_info = 0;
+    dgelss(&mkl_m, &mkl_n, &mkl_nrhs, B, &mkl_lda, rhs, &mkl_ldb, S, &mkl_rcond, rank, work, &mkl_lwork, &mkl_info);
+    return mkl_info;
+}
 
 /** \brief LAPACK function dpotrf (Intel MKL)
 
@@ -140,6 +158,11 @@ inline int lapack_dpotrf(char uplo, size_t n, double *a, size_t lda) {
     dpotrf(&uplo, &mkl_n, a, &mkl_lda, &mkl_info);
     return mkl_info;
 }
+
+/** \brief LAPACK function dlarnv (Intel MKL)
+
+    \ingroup libtensor_linalg
+ **/
 
 inline int lapack_dlarnv(size_t idist, int * iseed, size_t n, double *x) {
 
