@@ -21,7 +21,7 @@ extern "C" {
 	int zgeev_(char*, char*, int*, std::complex <double> *, int*, std::complex <double> *, 
 	std::complex <double> *, int*, std::complex <double> *, int*, std::complex <double> *, 
 	int*, double*, int*);
-	int dgelss_(int*, int*, int*, double*, int*, double*, int*, double*, double*, int*, double*, int*);
+	int dgelss_(int*, int*, int*, double*, int*, double*, int*, double*, double*, int*, double*, int*, int*);
 	int dlarnv_(int *, int *, int*, double *);
 #ifndef USE_QCHEM
 	int dpotrf_(char*, int*, double*, int*, int*);
@@ -176,7 +176,7 @@ inline int lapack_dlarnv(size_t idist, int * iseed, size_t n, double *x) {
     int gen_idist = idist;
     int gen_n = n;
 
-    dlarnv(&gen_idist, iseed, &gen_n, x);
+    dlarnv_(&gen_idist, iseed, &gen_n, x);
 
     return 0;
     
