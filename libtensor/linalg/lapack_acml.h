@@ -100,6 +100,16 @@ inline int lapack_dgelss(size_t m, size_t n, size_t nrhs, double *B, size_t lda,
     return info;
 }
 
+
+inline int lapack_dgelsd(size_t m, size_t n, size_t nrhs, double *B, size_t lda, double *rhs, size_t ldb, double *S, double rcond,
+                int *rank, double *work, size_t lwork, int * iwork) {
+
+    int info = 0;
+    dgelsd(m, n, nrhs, B, lda, rhs, ldb, S, rcond, rank, work, lwork, iwork,&info);
+    return info;
+}
+
+
 /** \brief LAPACK function dpotrf (ACML)
 
     \ingroup libtensor_linalg

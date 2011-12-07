@@ -146,6 +146,27 @@ inline int lapack_dgelss(size_t m, size_t n, size_t nrhs, double *B, size_t lda,
     return mkl_info;
 }
 
+
+/** \brief LAPACK function dgelsd (Intel MKL)
+
+    \ingroup libtensor_linalg
+ **/
+inline int lapack_dgelsd(size_t m, size_t n, size_t nrhs, double *B, size_t lda, double *rhs, size_t ldb, double *S, double rcond,
+                int *rank, double *work, size_t lwork, int * iwork) {
+
+    int mkl_m = m;
+    int mkl_n = n;
+    int mkl_nrhs = nrhs;
+    int mkl_lda = lda;
+    int mkl_ldb = ldb;
+    double mkl_rcond = rcond;
+    int mkl_lwork = lwork;
+    int mkl_info = 0;
+    dgelsd(&mkl_m, &mkl_n, &mkl_nrhs, B, &mkl_lda, rhs, &mkl_ldb, S, &mkl_rcond, rank, work, &mkl_lwork, iwork ,&mkl_info);
+    return mkl_info;
+}
+
+
 /** \brief LAPACK function dpotrf (Intel MKL)
 
     \ingroup libtensor_linalg
