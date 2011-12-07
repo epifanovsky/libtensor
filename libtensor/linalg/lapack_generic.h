@@ -21,8 +21,8 @@ extern "C" {
 	int zgeev_(char*, char*, int*, std::complex <double> *, int*, std::complex <double> *, 
 	std::complex <double> *, int*, std::complex <double> *, int*, std::complex <double> *, 
 	int*, double*, int*);
-	int dgelss_(int*, int*, int*, double*, int*, double*, int*, double*, double*, int*, double*, int*);
-	int dgelsd_(int*, int*, int*, double*, int*, double*, int*, double*, double*, int*, double*, int*, int*);
+	int dgelss_(int*, int*, int*, double*, int*, double*, int*, double*, double*, int*, double*, int*, int*);
+	int dgelsd_(int*, int*, int*, double*, int*, double*, int*, double*, double*, int*, double*, int*, int*, int*);
 	int dlarnv_(int *, int *, int*, double *);
 #ifndef USE_QCHEM
     int dpotrf_(char*, int*, double*, int*, int*);
