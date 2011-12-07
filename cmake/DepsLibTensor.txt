@@ -76,22 +76,7 @@ endif(GSL_FOUND AND LAPACK_FOUND)
 endif(ACML_FOUND)
 endif(IS_ICPC AND MKL_FOUND)
 
-#
-#    Set up CUDA
-#
-find_package(CUDA)
-if(CUDA_FOUND)
-    if(NOT CUDA_NVCC_FLAGS_SET)
-        set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} -ccbin icc -arch sm_20)
-        set(CUDA_NVCC_FLAGS_SET 1)
-        mark_as_advanced(CUDA_NVCC_FLAGS_SET)
-        message(STATUS "Cuda flag set at libtensor: " ${CUDA_NVCC_FLAGS})
-    endif(NOT CUDA_NVCC_FLAGS_SET)	
-      set(CUDA_LIBS ${CUDA_LIBRARIES})
-	message(STATUS "Using CUDA: " ${CUDA_LIBRARIES})
-endif(CUDA_FOUND)
-
 #	Libtensor dependencies (libraries)
 #
-set(LIBTENSOR_DEP_LIBS ${LAPACK_LIBS} ${BLAS_LIBS} ${CUDA_LIBS})
+set(LIBTENSOR_DEP_LIBS ${LAPACK_LIBS} ${BLAS_LIBS})
 
