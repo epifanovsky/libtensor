@@ -8,22 +8,24 @@
 #endif // USE_QCHEM
 
 extern "C" {
-	int dgesv_(int*, int*, double*, int*, int*, double*, int*, int*);
-	int dgesvd_(char*, char*, int*, int*, double*, int*, double*, double*,
-		int*, double*, int*, double*, int*, int*);
-	int zgesvd_(char*, char*, int*, int*, std::complex <double> *, int*, double*, std::complex <double> *,
-                int*, std::complex <double> *, int*, std::complex <double> *, int*, double*, int*);
-
-	int dsyev_(char*, char*, int*, double*, int*, double*, double*, int*,
-		int*);
-	int dgeev_(char*, char*, int*, double*, int*, double*, double*, double*,
-		int*, double*, int*, double*, int*, int*);
-	int zgeev_(char*, char*, int*, std::complex <double> *, int*, std::complex <double> *, 
-	std::complex <double> *, int*, std::complex <double> *, int*, std::complex <double> *, 
-	int*, double*, int*);
-	int dgelss_(int*, int*, int*, double*, int*, double*, int*, double*, double*, int*, double*, int*, int*);
-	int dgelsd_(int*, int*, int*, double*, int*, double*, int*, double*, double*, int*, double*, int*, int*, int*);
-	int dlarnv_(int *, int *, int*, double *);
+    int dgesv_(int*, int*, double*, int*, int*, double*, int*, int*);
+    int dgesvd_(char*, char*, int*, int*, double*, int*, double*, double*,
+        int*, double*, int*, double*, int*, int*);
+    int zgesvd_(char*, char*, int*, int*, std::complex<double>*, int*,
+        double*, std::complex<double>*, int*, std::complex<double>*, int*,
+        std::complex<double>*, int*, double*, int*);
+    int dsyev_(char*, char*, int*, double*, int*, double*, double*, int*, int*);
+    int dgeev_(char*, char*, int*, double*, int*, double*, double*, double*,
+        int*, double*, int*, double*, int*, int*);
+    int zgeev_(char*, char*, int*, std::complex<double>*, int*,
+        std::complex<double>*, std::complex<double>*, int*,
+        std::complex<double>*, int*, std::complex<double>*, int*, double*,
+        int*);
+    int dgelss_(int*, int*, int*, double*, int*, double*, int*, double*,
+        double*, int*, double*, int*, int*);
+    int dgelsd_(int*, int*, int*, double*, int*, double*, int*, double*,
+        double*, int*, double*, int*, int*, int*);
+    int dlarnv_(int*, int*, int*, double*);
 #ifndef USE_QCHEM
     int dpotrf_(char*, int*, double*, int*, int*);
 #endif // USE_QCHEM
@@ -79,7 +81,7 @@ inline int lapack_zgesvd(char jobu, char jobvt, size_t m, size_t n,
     std::complex<double> *a, size_t lda, double *s, std::complex<double> *u,
     size_t ldu, std::complex<double> *vt, size_t ldvt,
     std::complex<double> *work, size_t lwork, double *rwork) {
-    
+	
     int gen_m = m;
     int gen_n = n;
     int gen_lda = lda;
@@ -88,8 +90,8 @@ inline int lapack_zgesvd(char jobu, char jobvt, size_t m, size_t n,
     int gen_lwork = lwork;
     int gen_info = 0;
 
-    zgesvd_(&jobu, &jobvt, &gen_m, &gen_n, a, &gen_lda, s, u, &gen_ldu, vt,
-        &gen_ldvt, work, &gen_lwork, rwork, &gen_info);
+    zgesvd_(&jobu, &jobvt, &gen_m, &gen_n, a, &gen_lda, s, u, &gen_ldu,
+        vt, &gen_ldvt, work, &gen_lwork, rwork, &gen_info);
     return gen_info;
 }
 
@@ -172,8 +174,14 @@ inline int lapack_dgelss(size_t m, size_t n, size_t nrhs, double *B, size_t lda,
     return gen_info;
 }
 
-inline int lapack_dgelsd(size_t m, size_t n, size_t nrhs, double *B, size_t lda, double *rhs, size_t ldb, double *S, double rcond,
-                int *rank, double *work, size_t lwork, int * iwork) {
+
+/** \brief LAPACK function dgelsd (generic)
+
+    \ingroup libtensor_linalg
+ **/
+inline int lapack_dgelsd(size_t m, size_t n, size_t nrhs, double *B, size_t lda,
+    double *rhs, size_t ldb, double *S, double rcond, int *rank, double *work,
+    size_t lwork, int *iwork) {
 
     int gen_m = m;
     int gen_n = n;
@@ -183,12 +191,16 @@ inline int lapack_dgelsd(size_t m, size_t n, size_t nrhs, double *B, size_t lda,
     double gen_rcond = rcond;
     int gen_lwork = lwork;
     int gen_info = 0;
-    dgelsd_(&gen_m, &gen_n, &gen_nrhs, B, &gen_lda, rhs, &gen_ldb, S, &gen_rcond, rank, work, &gen_lwork, iwork, &gen_info);
+    dgelsd_(&gen_m, &gen_n, &gen_nrhs, B, &gen_lda, rhs, &gen_ldb, S,
+        &gen_rcond, rank, work, &gen_lwork, iwork, &gen_info);
     return gen_info;
 }
 
 
+/** \brief LAPACK function dpotrf (generic)
 
+    \ingroup libtensor_linalg
+ **/
 inline int lapack_dpotrf(char uplo, size_t n, double *a, size_t lda) {
 
     int gen_n = n;
