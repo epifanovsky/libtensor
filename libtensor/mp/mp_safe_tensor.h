@@ -46,14 +46,14 @@ protected:
 		if(m_mtx == 0) m_mtx = new mutex;
 		mp_safe_tensor_lock::get_instance().unlock();
 
-		auto_lock lock(*m_mtx);
+		auto_lock<mutex> lock(*m_mtx);
 		return tensor<N, T, Alloc>::on_req_open_session();
 	}
 
 	virtual void on_req_close_session(const handle_t &h) {
 
 		{
-			auto_lock lock(*m_mtx);
+			auto_lock<mutex> lock(*m_mtx);
 			tensor<N, T, Alloc>::on_req_close_session(h);
 		}
 
@@ -66,31 +66,31 @@ protected:
 
 	virtual void on_req_prefetch(const handle_t &h) {
 
-		auto_lock lock(*m_mtx);
+		auto_lock<mutex> lock(*m_mtx);
 		tensor<N, T, Alloc>::on_req_prefetch(h);
 	}
 
 	virtual T *on_req_dataptr(const handle_t &h) {
 
-		auto_lock lock(*m_mtx);
+		auto_lock<mutex> lock(*m_mtx);
 		return tensor<N, T, Alloc>::on_req_dataptr(h);
 	}
 
 	virtual void on_ret_dataptr(const handle_t &h, const T *p) {
 
-		auto_lock lock(*m_mtx);
+		auto_lock<mutex> lock(*m_mtx);
 		tensor<N, T, Alloc>::on_ret_dataptr(h, p);
 	}
 
 	virtual const T *on_req_const_dataptr(const handle_t &h) {
 
-		auto_lock lock(*m_mtx);
+		auto_lock<mutex> lock(*m_mtx);
 		return tensor<N, T, Alloc>::on_req_const_dataptr(h);
 	}
 
 	virtual void on_ret_const_dataptr(const handle_t &h, const T *p) {
 
-		auto_lock lock(*m_mtx);
+		auto_lock<mutex> lock(*m_mtx);
 		tensor<N, T, Alloc>::on_ret_const_dataptr(h, p);
 	}
 

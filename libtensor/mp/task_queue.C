@@ -25,7 +25,7 @@ task_queue::~task_queue() {
 bool task_queue::is_empty() const {
 
     {
-        auto_lock lock(m_lock);
+        auto_lock<mutex> lock(m_lock);
 
         if(m_queued > 0) return false;
 
@@ -48,7 +48,7 @@ void task_queue::push(task_i *task) {
     }
 #endif // LIBTENSOR_DEBUG
     {
-        auto_lock lock(m_lock);
+        auto_lock<mutex> lock(m_lock);
         m_q.push_back(task);
         m_queued++;
     }
@@ -62,7 +62,7 @@ std::pair<task_queue*, task_i*> task_queue::pop() {
     std::pair<task_queue*, task_i*> tt(0, 0);
 
     {
-        auto_lock lock(m_lock);
+        auto_lock<mutex> lock(m_lock);
 
         //  Scan through the children first
         std::set<task_queue*>::iterator i = m_children.begin();
@@ -91,7 +91,7 @@ void task_queue::finished(task_i &task) {
 
     bool empty = false;
     {
-        auto_lock lock(m_lock);
+        auto_lock<mutex> lock(m_lock);
         m_inprogress--;
         empty = (m_queued == 0 && m_inprogress == 0);
     }
@@ -101,7 +101,7 @@ void task_queue::finished(task_i &task) {
 
 void task_queue::set_exception(exception &exc) {
 
-    auto_lock lock(m_lock);
+    auto_lock<mutex> lock(m_lock);
 
     if(!m_exc) m_exc = exc.clone();
 }
@@ -111,14 +111,14 @@ void task_queue::wait() {
 
     while(true) {
         {
-            auto_lock lock(m_lock);
+            auto_lock<mutex> lock(m_lock);
             if(m_queued == 0 && m_inprogress == 0) break;
         }
         m_sig.wait();
     }
 
     {
-        auto_lock lock(m_lock);
+        auto_lock<mutex> lock(m_lock);
 
         if(m_exc) {
             try {
@@ -135,14 +135,14 @@ void task_queue::wait() {
 
 void task_queue::add_child(task_queue *q) {
 
-    auto_lock lock(m_lock);
+    auto_lock<mutex> lock(m_lock);
     m_children.insert(q);
 }
 
 
 void task_queue::remove_child(task_queue *q) {
 
-    auto_lock lock(m_lock);
+    auto_lock<mutex> lock(m_lock);
     m_children.erase(q);
 }
 

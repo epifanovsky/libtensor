@@ -79,7 +79,7 @@ public:
 inline void global_timings::add_to_timer(const std::string &id,
 	const timer &t) {
 
-	auto_spinlock lock(m_lock);
+	auto_lock<spinlock> lock(m_lock);
 
 	std::pair<map_t::iterator, bool> r = m_times.insert(pair_t(
 		id, timing_t(t.duration())));
@@ -91,14 +91,14 @@ inline void global_timings::add_to_timer(const std::string &id,
 
 inline void global_timings::reset() {
 
-	auto_spinlock lock(m_lock);
+	auto_lock<spinlock> lock(m_lock);
 	m_times.clear();
 }
 
 
 inline time_diff_t global_timings::get_time(const std::string &id) const {
 
-	auto_spinlock lock(m_lock);
+	auto_lock<spinlock> lock(m_lock);
 
 	map_t::const_iterator it = m_times.find(id);
 	if(it == m_times.end()) {
@@ -111,7 +111,7 @@ inline time_diff_t global_timings::get_time(const std::string &id) const {
 
 inline size_t global_timings::ntimings() const {
 
-	auto_spinlock lock(m_lock);
+	auto_lock<spinlock> lock(m_lock);
 	return m_times.size();
 }
 

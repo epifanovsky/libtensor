@@ -1,26 +1,24 @@
 #ifndef LIBTENSOR_THREADS_H
 #define LIBTENSOR_THREADS_H
 
-#include <libvmm/auto_lock.h>
-#include <libvmm/auto_spinlock.h>
-#include <libvmm/cond.h>
-#include <libvmm/mutex.h>
-#include <libvmm/rwlock.h>
-#include <libvmm/spinlock.h>
-#include <libvmm/thread.h>
-#include <libvmm/tls.h>
+#include <libutil/threads/auto_lock.h>
+#include <libutil/threads/cond.h>
+#include <libutil/threads/mutex.h>
+#include <libutil/threads/rwlock.h>
+#include <libutil/threads/spinlock.h>
+#include <libutil/threads/thread.h>
+#include <libutil/threads/tls.h>
 
 namespace libtensor {
 
 
-using libvmm::auto_lock;
-using libvmm::auto_spinlock;
-using libvmm::cond;
-using libvmm::mutex;
-using libvmm::rwlock;
-using libvmm::spinlock;
-using libvmm::thread;
-using libvmm::tls;
+using libutil::auto_lock;
+using libutil::cond;
+using libutil::mutex;
+using libutil::rwlock;
+using libutil::spinlock;
+using libutil::thread;
+using libutil::tls;
 
 
 } // namespace libtensor

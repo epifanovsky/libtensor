@@ -257,6 +257,6 @@ set_property(TARGET ${TARGETS} APPEND PROPERTY
 
 foreach(TARGET ${TARGETS})
 target_link_libraries(${TARGET}
-	tensor ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} test)
+	tensor ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} test)
 endforeach(TARGET)
 
