@@ -21,15 +21,15 @@ public:
 		cout.flush();
 
 		// reset timings
-		global_timings::get_instance().reset();
+		libutil::global_timings::get_instance().reset();
 	}
 
 	virtual void on_test_end_success(const char *test) {
 		cout << " ... Test done." << endl;
 		// print timings
-		if ( global_timings::get_instance().ntimings() > 0 ) {
+		if ( libutil::global_timings::get_instance().ntimings() > 0 ) {
 			cout << "Timings are: " << endl;
-			cout << global_timings::get_instance() << endl;
+			cout << libutil::global_timings::get_instance() << endl;
 		}
 		else
 			cout << "No Timings" << endl;

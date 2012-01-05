@@ -2,8 +2,6 @@ set(SRC
     backtrace.C
     defs.C
     exception.C
-    global_timings.C
-    timer.C
     version.C
     core/abs_index.C
     core/allocator.C
