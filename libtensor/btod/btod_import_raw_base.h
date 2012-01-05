@@ -9,7 +9,7 @@
 #include "../core/block_tensor_ctrl.h"
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
-#include "../core/tensor_i.h"
+#include <libtensor/dense_tensor/dense_tensor_i.h>
 #include "../core/tensor_ctrl.h"
 #include "../core/tensor.h"
 #include "../tod/tod_compare.h"
@@ -55,7 +55,7 @@ protected:
     /** \brief Checks that the given tensor only contains zeros within
             a threshold
      **/
-    bool check_zero(tensor_i<N, double> &t, double thresh);
+    bool check_zero(dense_tensor_i<N, double> &t, double thresh);
 
 private:
     void verify_zero_orbit(block_tensor_ctrl<N, double> &ctrl,
@@ -151,7 +151,7 @@ void btod_import_raw_base<N, Alloc>::verify_nonzero_orbit(
 
     //	Get the canonical block
     abs_index<N> aci(o.get_abs_canonical_index(), bidims);
-    tensor_i<N, double> &cblk = ctrl.req_block(aci.get_index());
+    dense_tensor_i<N, double> &cblk = ctrl.req_block(aci.get_index());
 
     for(iterator_t i = o.begin(); i != o.end(); ++i) {
 
@@ -163,7 +163,7 @@ void btod_import_raw_base<N, Alloc>::verify_nonzero_orbit(
         const transf<N, double> &tr = o.get_transf(i);
 
         //	Compare with the transformed canonical block
-        tensor_i<N, double> &blk = ctrl.req_block(ai.get_index());
+        dense_tensor_i<N, double> &blk = ctrl.req_block(ai.get_index());
         tensor<N, double, Alloc> tblk(blk.get_dims());
         tod_copy<N> (cblk, tr.get_perm(), tr.get_coeff()).
             perform(cpus, true, 1.0, tblk);
@@ -195,7 +195,7 @@ void btod_import_raw_base<N, Alloc>::verify_nonzero_orbit(
 
 
 template<size_t N, typename Alloc>
-bool btod_import_raw_base<N, Alloc>::check_zero(tensor_i<N, double> &t,
+bool btod_import_raw_base<N, Alloc>::check_zero(dense_tensor_i<N, double> &t,
     double thresh) {
 
     tensor_ctrl<N, double> c(t);

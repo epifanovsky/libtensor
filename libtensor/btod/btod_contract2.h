@@ -197,7 +197,7 @@ public:
 	using additive_btod<N + M>::perform;
 
 protected:
-	virtual void compute_block(bool zero, tensor_i<N + M, double> &blk,
+	virtual void compute_block(bool zero, dense_tensor_i<N + M, double> &blk,
 		const index<N + M> &i, const transf<N + M, double> &tr,
 		double c, cpu_pool &cpus);
 
@@ -210,7 +210,7 @@ private:
 		block_contr_list_t &lst, const index<k_orderc> &idxc,
 		block_tensor_ctrl<k_ordera, double> &ctrla,
 		block_tensor_ctrl<k_orderb, double> &ctrlb,
-		tensor_i<k_orderc, double> &blkc,
+		dense_tensor_i<k_orderc, double> &blkc,
 		const transf<k_orderc, double> &trc,
 		bool zero, double c, cpu_pool &cpus);
 

@@ -18,16 +18,16 @@ namespace mp_safe_tensor_test_ns {
 
 class thread_1 : public libvmm::thread {
 private:
-	tensor_i<1, double> &m_t1;
-	tensor_i<1, double> &m_t2;
-	tensor_i<1, double> &m_t3;
+	dense_tensor_i<1, double> &m_t1;
+	dense_tensor_i<1, double> &m_t2;
+	dense_tensor_i<1, double> &m_t3;
 	size_t m_n;
 	bool m_ok;
 	std::string m_error;
 
 public:
-	thread_1(tensor_i<1, double> &t1, tensor_i<1, double> &t2,
-		tensor_i<1, double> &t3, size_t n) :
+	thread_1(dense_tensor_i<1, double> &t1, dense_tensor_i<1, double> &t2,
+		dense_tensor_i<1, double> &t3, size_t n) :
 		m_t1(t1), m_t2(t2), m_t3(t3), m_n(n), m_ok(true) { }
 	virtual ~thread_1() { }
 	virtual void run() {

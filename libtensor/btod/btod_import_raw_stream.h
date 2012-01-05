@@ -119,7 +119,7 @@ void btod_import_raw_stream<N, Alloc>::perform(block_tensor_i<N, double> &bt) {
     abs_index<N> bi(bdims);
 
     do {
-        tensor_i<N, double> &blk = ctrl.req_block(bi.get_index());
+        dense_tensor_i<N, double> &blk = ctrl.req_block(bi.get_index());
 
         index<N> blk_start(bis.get_block_start(bi.get_index()));
         dimensions<N> blk_dims(bis.get_block_dims(bi.get_index()));

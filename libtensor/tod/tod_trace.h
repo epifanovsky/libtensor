@@ -6,7 +6,7 @@
 #include "../not_implemented.h"
 #include "../timings.h"
 #include "../core/permutation.h"
-#include "../core/tensor_i.h"
+#include "../dense_tensor/dense_tensor_i.h"
 #include "../core/tensor_ctrl.h"
 #include "bad_dimensions.h"
 #include "loop_list_add.h"
@@ -35,20 +35,20 @@ public:
 	static const size_t k_ordera = 2 * N; //!< Order of the %tensor
 
 private:
-	tensor_i<k_ordera, double> &m_t; //!< Input %tensor
+	dense_tensor_i<k_ordera, double> &m_t; //!< Input %tensor
 	permutation<k_ordera> m_perm; //!< Permutation of the %tensor
 
 public:
 	/**	\brief Creates the operation
 		\param t Input %tensor.
 	 **/
-	tod_trace(tensor_i<k_ordera, double> &t);
+	tod_trace(dense_tensor_i<k_ordera, double> &t);
 
 	/**	\brief Creates the operation
 		\param t Input %tensor.
 		\param p Permutation of the %tensor.
 	 **/
-	tod_trace(tensor_i<k_ordera, double> &t,
+	tod_trace(dense_tensor_i<k_ordera, double> &t,
 		const permutation<k_ordera> &p);
 
 	/**	\brief Computes the trace
@@ -69,14 +69,14 @@ const char *tod_trace<N>::k_clazz = "tod_trace<N>";
 
 
 template<size_t N>
-tod_trace<N>::tod_trace(tensor_i<k_ordera, double> &t) : m_t(t) {
+tod_trace<N>::tod_trace(dense_tensor_i<k_ordera, double> &t) : m_t(t) {
 
 	check_dims();
 }
 
 
 template<size_t N>
-tod_trace<N>::tod_trace(tensor_i<k_ordera, double> &t,
+tod_trace<N>::tod_trace(dense_tensor_i<k_ordera, double> &t,
 	const permutation<k_ordera> &p) : m_t(t), m_perm(p) {
 
 	check_dims();

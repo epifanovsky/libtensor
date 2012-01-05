@@ -7,7 +7,7 @@
 #include "../timings.h"
 #include "../core/mask.h"
 #include "../core/permutation.h"
-#include "../core/tensor_i.h"
+#include "../dense_tensor/dense_tensor_i.h"
 #include "../core/tensor_ctrl.h"
 #include "bad_dimensions.h"
 #include "processor.h"
@@ -112,7 +112,7 @@ private:
 	};
 
 private:
-	tensor_i<N, double> &m_t; //!< Input %tensor
+	dense_tensor_i<N, double> &m_t; //!< Input %tensor
 	mask<N> m_mask; //!< Diagonal mask
 	permutation<N - M + 1> m_perm; //!< Permutation of the result
 	double m_c; //!< Scaling coefficient
@@ -124,7 +124,7 @@ public:
 		\param m Diagonal mask.
 		\param c Scaling coefficient (default 1.0).
 	 **/
-	tod_diag(tensor_i<N, double> &t, const mask<N> &m, double c = 1.0);
+	tod_diag(dense_tensor_i<N, double> &t, const mask<N> &m, double c = 1.0);
 
 	/**	\brief Creates the operation
 		\param t Input %tensor.
@@ -132,19 +132,19 @@ public:
 		\param p Permutation of result.
 		\param c Scaling coefficient (default 1.0)
 	 **/
-	tod_diag(tensor_i<N, double> &t, const mask<N> &m,
+	tod_diag(dense_tensor_i<N, double> &t, const mask<N> &m,
 		const permutation<N - M + 1> &p, double c = 1.0);
 
 	/**	\brief Performs the operation, replaces the output
 		\param tb Output %tensor.
 	 **/
-	void perform(tensor_i<k_orderb, double> &tb);
+	void perform(dense_tensor_i<k_orderb, double> &tb);
 
 	/**	\brief Performs the operation, adds to the output
 		\param tb Output %tensor.
 		\param c Coefficient.
 	 **/
-	void perform(tensor_i<k_orderb, double> &tb, double c);
+	void perform(dense_tensor_i<k_orderb, double> &tb, double c);
 
 private:
 	/**	\brief Forms the %dimensions of the output or throws an
@@ -156,13 +156,13 @@ private:
 	/**	\brief Forms the loop and executes the operation
 	 **/
 	template<typename CoreOp>
-	void do_perform(tensor_i<k_orderb, double> &tb, double c);
+	void do_perform(dense_tensor_i<k_orderb, double> &tb, double c);
 
 	/**	\brief Builds the nested loop list
 	 **/
 	template<typename CoreOp>
 	void build_list(
-		loop_list_t &list, tensor_i<k_orderb, double> &tb, double c);
+		loop_list_t &list, dense_tensor_i<k_orderb, double> &tb, double c);
 
 	/**	\brief Cleans the nested loop list
 	 **/
@@ -181,7 +181,7 @@ const char *tod_diag<N, M>::op_daxpy::k_clazz = "tod_diag<N, M>::op_daxpy";
 
 
 template<size_t N, size_t M>
-tod_diag<N, M>::tod_diag(tensor_i<N, double> &t, const mask<N> &m, double c) :
+tod_diag<N, M>::tod_diag(dense_tensor_i<N, double> &t, const mask<N> &m, double c) :
 
 	m_t(t), m_mask(m), m_c(c), m_dims(mk_dims(t.get_dims(), m_mask)) {
 
@@ -189,7 +189,7 @@ tod_diag<N, M>::tod_diag(tensor_i<N, double> &t, const mask<N> &m, double c) :
 
 
 template<size_t N, size_t M>
-tod_diag<N, M>::tod_diag(tensor_i<N, double> &t, const mask<N> &m,
+tod_diag<N, M>::tod_diag(dense_tensor_i<N, double> &t, const mask<N> &m,
 	const permutation<N - M + 1> &p, double c) :
 
 	m_t(t), m_mask(m), m_perm(p), m_c(c),
@@ -200,7 +200,7 @@ tod_diag<N, M>::tod_diag(tensor_i<N, double> &t, const mask<N> &m,
 
 
 template<size_t N, size_t M>
-void tod_diag<N, M>::perform(tensor_i<k_orderb, double> &tb) {
+void tod_diag<N, M>::perform(dense_tensor_i<k_orderb, double> &tb) {
 
 	static const char *method = "perform(tensor_i<N - M + 1, double> &)";
 
@@ -214,7 +214,7 @@ void tod_diag<N, M>::perform(tensor_i<k_orderb, double> &tb) {
 
 
 template<size_t N, size_t M>
-void tod_diag<N, M>::perform(tensor_i<k_orderb, double> &tb, double c) {
+void tod_diag<N, M>::perform(dense_tensor_i<k_orderb, double> &tb, double c) {
 
 	static const char *method =
 		"perform(tensor_i<N - M + 1, double> &, double)";
@@ -268,7 +268,7 @@ dimensions<N - M + 1> tod_diag<N, M>::mk_dims(const dimensions<N> &dims,
 
 
 template<size_t N, size_t M> template<typename CoreOp>
-void tod_diag<N, M>::do_perform(tensor_i<k_orderb, double> &tb, double c) {
+void tod_diag<N, M>::do_perform(dense_tensor_i<k_orderb, double> &tb, double c) {
 
 	static const char *method =
 		"do_perform(tensor_i<N - M + 1, double>&, double)";
@@ -306,7 +306,7 @@ void tod_diag<N, M>::do_perform(tensor_i<k_orderb, double> &tb, double c) {
 
 template<size_t N, size_t M> template<typename CoreOp>
 void tod_diag<N, M>::build_list(
-	loop_list_t &list, tensor_i<k_orderb, double> &tb, double c) {
+	loop_list_t &list, dense_tensor_i<k_orderb, double> &tb, double c) {
 
 	static const char *method = "build_list(loop_list_t&, "
 		"tensor_i<N - M + 1, double>&, double)";

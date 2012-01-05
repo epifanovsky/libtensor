@@ -4,7 +4,7 @@
 #include "../defs.h"
 #include "../linalg/linalg.h"
 #include "../timings.h"
-#include "../core/tensor_i.h"
+#include "../dense_tensor/dense_tensor_i.h"
 #include "../core/tensor_ctrl.h"
 
 namespace libtensor {
@@ -21,7 +21,7 @@ public:
 	static const char *k_clazz; //!< Class name
 
 private:
-	tensor_i<N, double> &m_t; //!< Tensor
+	dense_tensor_i<N, double> &m_t; //!< Tensor
 	double m_c; //!< Scaling coefficient
 
 public:
@@ -29,7 +29,7 @@ public:
 		\param t Tensor.
 		\param c Scaling coefficient
 	 **/
-	tod_scale(tensor_i<N, double> &t, double c) : m_t(t), m_c(c) { }
+	tod_scale(dense_tensor_i<N, double> &t, double c) : m_t(t), m_c(c) { }
 
 	/**	\brief Performs the operation
 	 **/

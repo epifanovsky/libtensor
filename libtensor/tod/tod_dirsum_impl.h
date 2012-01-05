@@ -15,8 +15,8 @@ const char *tod_dirsum<N, M>::k_clazz = "tod_dirsum<N, M>";
 
 
 template<size_t N, size_t M>
-tod_dirsum<N, M>::tod_dirsum(tensor_i<k_ordera, double> &ta, double ka,
-	tensor_i<k_orderb, double> &tb, double kb) :
+tod_dirsum<N, M>::tod_dirsum(dense_tensor_i<k_ordera, double> &ta, double ka,
+	dense_tensor_i<k_orderb, double> &tb, double kb) :
 
 	m_ta(ta), m_tb(tb), m_ka(ka), m_kb(kb),
 	m_dimsc(mk_dimsc(ta, tb)) {
@@ -25,8 +25,8 @@ tod_dirsum<N, M>::tod_dirsum(tensor_i<k_ordera, double> &ta, double ka,
 
 
 template<size_t N, size_t M>
-tod_dirsum<N, M>::tod_dirsum(tensor_i<k_ordera, double> &ta, double ka,
-	tensor_i<k_orderb, double> &tb, double kb,
+tod_dirsum<N, M>::tod_dirsum(dense_tensor_i<k_ordera, double> &ta, double ka,
+	dense_tensor_i<k_orderb, double> &tb, double kb,
 	const permutation<k_orderc> &permc) :
 
 	m_ta(ta), m_tb(tb), m_ka(ka), m_kb(kb), m_permc(permc),
@@ -37,7 +37,7 @@ tod_dirsum<N, M>::tod_dirsum(tensor_i<k_ordera, double> &ta, double ka,
 
 
 template<size_t N, size_t M>
-void tod_dirsum<N, M>::perform(tensor_i<k_orderc, double> &tc) {
+void tod_dirsum<N, M>::perform(dense_tensor_i<k_orderc, double> &tc) {
 
 	static const char *method = "perform(tensor_i<N + M, double>&)";
 
@@ -51,7 +51,7 @@ void tod_dirsum<N, M>::perform(tensor_i<k_orderc, double> &tc) {
 
 
 template<size_t N, size_t M>
-void tod_dirsum<N, M>::perform(tensor_i<k_orderc, double> &tc, double kc) {
+void tod_dirsum<N, M>::perform(dense_tensor_i<k_orderc, double> &tc, double kc) {
 
 	static const char *method =
 		"perform(tensor_i<N + M, double>&, double)";
@@ -67,7 +67,7 @@ void tod_dirsum<N, M>::perform(tensor_i<k_orderc, double> &tc, double kc) {
 
 template<size_t N, size_t M>
 dimensions<N + M> tod_dirsum<N, M>::mk_dimsc(
-	tensor_i<k_ordera, double> &ta, tensor_i<k_orderb, double> &tb) {
+	dense_tensor_i<k_ordera, double> &ta, dense_tensor_i<k_orderb, double> &tb) {
 
 	const dimensions<k_ordera> &dimsa = ta.get_dims();
 	const dimensions<k_orderb> &dimsb = tb.get_dims();
@@ -83,7 +83,7 @@ dimensions<N + M> tod_dirsum<N, M>::mk_dimsc(
 
 
 template<size_t N, size_t M>
-void tod_dirsum<N, M>::do_perform(tensor_i<k_orderc, double> &tc, bool zero,
+void tod_dirsum<N, M>::do_perform(dense_tensor_i<k_orderc, double> &tc, bool zero,
 	double d) {
 
 	tod_dirsum<N, M>::start_timer();

@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_TOD_ADDITIVE_H
 #define LIBTENSOR_TOD_ADDITIVE_H
 
-#include "../core/tensor_i.h"
+#include "../dense_tensor/dense_tensor_i.h"
 #include "../mp/cpu_pool.h"
 
 namespace libtensor {
@@ -35,7 +35,7 @@ public:
         \param t Output tensor.
      **/
     virtual void perform(cpu_pool &cpus, bool zero, double c,
-        tensor_i<N, double> &t) = 0;
+        dense_tensor_i<N, double> &t) = 0;
 
 };
 

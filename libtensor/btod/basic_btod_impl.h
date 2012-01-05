@@ -46,7 +46,7 @@ void basic_btod<N>::task::perform(cpu_pool &cpus) throw (exception) {
 
     block_tensor_ctrl<N, double> ctrl(m_bt);
     abs_index<N> ai(m_sch.get_abs_index(m_i), m_bidims);
-    tensor_i<N, double> &blk = ctrl.req_block(ai.get_index());
+    dense_tensor_i<N, double> &blk = ctrl.req_block(ai.get_index());
     m_btod.compute_block(blk, ai.get_index(), cpus);
     ctrl.ret_block(ai.get_index());
 }

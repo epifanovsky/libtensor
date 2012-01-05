@@ -27,14 +27,14 @@ public:
 	/**	\brief Assigns the element of a tensor a value
 		\param t Tensor.
 	 **/
-	void perform(tensor_i<N, double> &t, const index<N> &idx, double d);
+	void perform(dense_tensor_i<N, double> &t, const index<N> &idx, double d);
 
 	//@}
 };
 
 
 template<size_t N>
-void tod_set_elem<N>::perform(tensor_i<N, double> &t, const index<N> &idx,
+void tod_set_elem<N>::perform(dense_tensor_i<N, double> &t, const index<N> &idx,
 	double d) {
 
 	abs_index<N> aidx(idx, t.get_dims());

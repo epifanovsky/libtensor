@@ -6,7 +6,7 @@
 #include "block_index_space.h"
 #include "index.h"
 #include "symmetry.h"
-#include "tensor_i.h"
+#include "../dense_tensor/dense_tensor_i.h"
 
 namespace libtensor {
 
@@ -18,13 +18,13 @@ template<size_t N, typename T> class block_tensor_ctrl;
 
 	Block tensors break down the whole %tensor into small blocks and
 	implement %symmetry relations between them. Each individual block is
-	a small %tensor itself and can be addressed using the tensor_i<N, T>
+	a small %tensor itself and can be addressed using the dense_tensor_i<N, T>
 	interface.
 
 	The block %tensor interface does not impose any restrictions on how
 	a particular implementation operates. However, it defines a set of
 	events which have to reacted upon. The overall mechanism is the same
-	as for regular tensors (see tensor_i<N, T>): a control object (an
+	as for regular tensors (see dense_tensor_i<N, T>): a control object (an
 	instance of block_tensor_ctrl<N, T>) mediates requests to the block
 	%tensor object and ensures the completeness of the interaction session.
 
@@ -87,7 +87,7 @@ protected:
 		\param idx Block %index.
 		\return Reference to the requested block.
 	 **/
-	virtual tensor_i<N, T> &on_req_block(const index<N> &idx)
+	virtual dense_tensor_i<N, T> &on_req_block(const index<N> &idx)
 		throw(exception) = 0;
 
 	/**	\brief Invoked to return a canonical block
@@ -99,7 +99,7 @@ protected:
 		\param idx Block %index.
 		\return Reference to the requested block.
 	 **/
-	virtual tensor_i<N, T> &on_req_aux_block(const index<N> &idx)
+	virtual dense_tensor_i<N, T> &on_req_aux_block(const index<N> &idx)
 		throw(exception) = 0;
 
 	/**	\brief Invoked to return an auxiliary canonical block

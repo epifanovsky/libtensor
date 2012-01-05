@@ -27,7 +27,7 @@ public:
         \param cpus Pool of CPUs.
         \param t Output tensor.
      **/
-    void perform(cpu_pool &cpus, tensor_i<N, double> &t);
+    void perform(cpu_pool &cpus, dense_tensor_i<N, double> &t);
 
 };
 
@@ -41,7 +41,7 @@ tod_set<N>::tod_set(const double v) :
 
 
 template<size_t N>
-void tod_set<N>::perform(cpu_pool &cpus, tensor_i<N, double> &t) {
+void tod_set<N>::perform(cpu_pool &cpus, dense_tensor_i<N, double> &t) {
 
     tensor_ctrl<N, double> ctrl(t);
     double *d = ctrl.req_dataptr();

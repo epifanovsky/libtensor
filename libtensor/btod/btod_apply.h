@@ -124,7 +124,7 @@ public:
 	//@}
 
 protected:
-	virtual void compute_block(bool zero, tensor_i<N, double> &blk,
+	virtual void compute_block(bool zero, dense_tensor_i<N, double> &blk,
 		const index<N> &ib, const transf<N, double> &tr, double c,
 		cpu_pool &cpus);
 
@@ -191,7 +191,7 @@ void btod_apply<N, Functor, Alloc>::sync_off() {
 /*
 template<size_t N, typename Functor, typename Alloc>
 void btod_apply<N, Functor, Alloc>::compute_block(
-		tensor_i<N, double> &blk, const index<N> &ib) {
+		dense_tensor_i<N, double> &blk, const index<N> &ib) {
 
 	block_tensor_ctrl<N, double> ctrla(m_bta);
 	dimensions<N> bidimsa = m_bta.get_bis().get_block_index_dims();
@@ -218,7 +218,7 @@ void btod_apply<N, Functor, Alloc>::compute_block(
 	tra.scale(m_c);
 
 	if(!ctrla.req_is_zero_block(acia.get_index())) {
-		tensor_i<N, double> &blka = ctrla.req_block(acia.get_index());
+		dense_tensor_i<N, double> &blka = ctrla.req_block(acia.get_index());
 		tod_apply<N, Functor>(blka, m_fn,
 				tra.get_perm(), tra.get_coeff()).perform(blk);
 		ctrla.ret_block(acia.get_index());
@@ -230,7 +230,7 @@ void btod_apply<N, Functor, Alloc>::compute_block(
 
 template<size_t N, typename Functor, typename Alloc>
 void btod_apply<N, Functor, Alloc>::compute_block(bool zero,
-    tensor_i<N, double> &blk, const index<N> &ib, const transf<N, double> &tr,
+    dense_tensor_i<N, double> &blk, const index<N> &ib, const transf<N, double> &tr,
     double c, cpu_pool &cpus) {
 
 	static const char *method =
@@ -272,7 +272,7 @@ void btod_apply<N, Functor, Alloc>::compute_block(bool zero,
 	tra.transform(tr);
 
 	if(! ctrla.req_is_zero_block(acia.get_index())) {
-		tensor_i<N, double> &blka = ctrla.req_block(acia.get_index());
+		dense_tensor_i<N, double> &blka = ctrla.req_block(acia.get_index());
 		tod_apply<N, Functor>(blka, m_fn,
 				tra.get_perm(), tra.get_coeff()).perform(cpus, false, c, blk);
 		ctrla.ret_block(acia.get_index());

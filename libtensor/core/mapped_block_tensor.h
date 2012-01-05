@@ -51,10 +51,10 @@ protected:
 
 	virtual const symmetry<N, T> &on_req_const_symmetry() throw(exception);
 	virtual symmetry<N, T> &on_req_symmetry() throw(exception);
-	virtual tensor_i<N, T> &on_req_block(const index<N> &idx)
+	virtual dense_tensor_i<N, T> &on_req_block(const index<N> &idx)
 		throw(exception);
 	virtual void on_ret_block(const index<N> &idx) throw(exception);
-	virtual tensor_i<N, T> &on_req_aux_block(const index<N> &idx)
+	virtual dense_tensor_i<N, T> &on_req_aux_block(const index<N> &idx)
 		throw(exception);
 	virtual void on_ret_aux_block(const index<N> &idx) throw(exception);
 	virtual bool on_req_is_zero_block(const index<N> &idx) throw(exception);
@@ -126,7 +126,7 @@ symmetry<N, T> &mapped_block_tensor<N, T>::on_req_symmetry() throw(exception) {
 
 
 template<size_t N, typename T>
-tensor_i<N, T> &mapped_block_tensor<N, T>::on_req_block(const index<N> &idx)
+dense_tensor_i<N, T> &mapped_block_tensor<N, T>::on_req_block(const index<N> &idx)
 	throw(exception) {
 
 	index<N> idx2;
@@ -146,7 +146,7 @@ void mapped_block_tensor<N, T>::on_ret_block(const index<N> &idx)
 
 
 template<size_t N, typename T>
-tensor_i<N, T> &mapped_block_tensor<N, T>::on_req_aux_block(const index<N> &idx)
+dense_tensor_i<N, T> &mapped_block_tensor<N, T>::on_req_aux_block(const index<N> &idx)
 	throw(exception) {
 
 	static const char *method = "on_req_aux_block(const index<N>&)";

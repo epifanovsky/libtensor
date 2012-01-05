@@ -8,7 +8,7 @@
 #include "../timings.h"
 #include "immutable.h"
 #include "permutation.h"
-#include "tensor_i.h"
+#include "../dense_tensor/dense_tensor_i.h"
 
 namespace libtensor {
 
@@ -127,7 +127,7 @@ namespace libtensor {
  **/
 template<size_t N, typename T, typename Alloc>
 class tensor :
-    public tensor_i<N, T> ,
+    public dense_tensor_i<N, T> ,
     public immutable,
     public timings< tensor<N, T, Alloc> > {
 
@@ -137,7 +137,7 @@ public:
 public:
     typedef T element_t; //!< Tensor element type
     typedef typename Alloc::pointer_type ptr_t; //!< Memory pointer type
-    typedef typename tensor_i<N,T>::handle_t handle_t; //!< Session handle type
+    typedef typename dense_tensor_i<N,T>::handle_t handle_t; //!< Session handle type
 
 private:
     dimensions<N> m_dims; //!< Tensor %dimensions
@@ -159,9 +159,9 @@ public:
 
     /**	\brief Creates an empty %tensor with the same %dimensions
             (data are not copied)
-        \param t Another %tensor (tensor_i<N, T>).
+        \param t Another %tensor (dense_tensor_i<N, T>).
      **/
-    tensor(const tensor_i<N,T> &t);
+    tensor(const dense_tensor_i<N,T> &t);
 
     /**	\brief Creates an empty %tensor with the same %dimensions
         (data are not copied)
@@ -176,7 +176,7 @@ public:
     //@}
 
 
-    //!	\name Implementation of libtensor::tensor_i<N, T>
+    //!	\name Implementation of libtensor::dense_tensor_i<N, T>
     //@{
 
     /**	\brief Returns the %dimensions of the %tensor
@@ -188,7 +188,7 @@ public:
     //@}
 
 protected:
-    //!	\name Implementation of libtensor::tensor_i<N, T>
+    //!	\name Implementation of libtensor::dense_tensor_i<N, T>
     //@{
 
     virtual handle_t on_req_open_session();
@@ -250,7 +250,7 @@ tensor<N, T, Alloc>::tensor(const dimensions<N> &dims) :
 
 
 template<size_t N, typename T, typename Alloc>
-tensor<N, T, Alloc>::tensor(const tensor_i<N, T> &t) :
+tensor<N, T, Alloc>::tensor(const dense_tensor_i<N, T> &t) :
 
     m_dims(t.get_dims()), m_data(Alloc::invalid_pointer), m_dataptr(0),
         m_const_dataptr(0), m_ptrcount(0), m_sessions(8, 0),

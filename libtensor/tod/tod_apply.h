@@ -4,7 +4,7 @@
 #include "../defs.h"
 #include "../exception.h"
 #include "../timings.h"
-#include "../core/tensor_i.h"
+#include "../dense_tensor/dense_tensor_i.h"
 #include "../core/tensor_ctrl.h"
 #include "../mp/auto_cpu_lock.h"
 #include "loop_list_apply.h"
@@ -46,7 +46,7 @@ public:
 	static const char *k_clazz; //!< Class name
 
 private:
-	tensor_i<N, double> &m_ta; //!< Source %tensor
+	dense_tensor_i<N, double> &m_ta; //!< Source %tensor
 	Functor m_fn; //!< Functor
 	permutation<N> m_perm; //!< Permutation of elements
 	double m_c; //!< Scaling coefficient
@@ -60,14 +60,14 @@ public:
 		\param ta Source %tensor.
 		\param c Coefficient.
 	 **/
-	tod_apply(tensor_i<N, double> &ta, const Functor &fn, double c = 1.0);
+	tod_apply(dense_tensor_i<N, double> &ta, const Functor &fn, double c = 1.0);
 
 	/**	\brief Prepares the permute & copy operation
 		\param ta Source %tensor.
 		\param p Permutation of %tensor elements.
 		\param c Coefficient.
 	 **/
-	tod_apply(tensor_i<N, double> &ta, const Functor &fn,
+	tod_apply(dense_tensor_i<N, double> &ta, const Functor &fn,
 			const permutation<N> &p, double c = 1.0);
 
 	/**	\brief Virtual destructor
@@ -83,10 +83,10 @@ public:
 	virtual void prefetch();
 
     virtual void perform(cpu_pool &cpus, bool zero, double c,
-        tensor_i<N, double> &t);
+        dense_tensor_i<N, double> &t);
 
-	void perform(cpu_pool &cpus, tensor_i<N, double> &t);
-	void perform(cpu_pool &cpus, tensor_i<N, double> &t, double c);
+	void perform(cpu_pool &cpus, dense_tensor_i<N, double> &t);
+	void perform(cpu_pool &cpus, dense_tensor_i<N, double> &t, double c);
 
 	//@}
 
@@ -94,10 +94,10 @@ private:
 	/**	\brief Creates the dimensions of the output using an input
 			%tensor and a permutation of indexes
 	 **/
-	static dimensions<N> mk_dimsb(tensor_i<N, double> &ta,
+	static dimensions<N> mk_dimsb(dense_tensor_i<N, double> &ta,
 		const permutation<N> &perm);
 
-	void do_perform(tensor_i<N, double> &t, double c, bool do_add);
+	void do_perform(dense_tensor_i<N, double> &t, double c, bool do_add);
 
 	void build_loop(typename loop_list_apply<Functor>::list_t &loop,
 			const dimensions<N> &dimsa, const permutation<N> &perma,
@@ -113,7 +113,7 @@ const char *tod_apply<N, Functor>::k_clazz = "tod_apply<N, Functor>";
 
 
 template<size_t N, typename Functor>
-tod_apply<N, Functor>::tod_apply(tensor_i<N, double> &ta,
+tod_apply<N, Functor>::tod_apply(dense_tensor_i<N, double> &ta,
 		const Functor &fn, double c) :
 	m_ta(ta), m_fn(fn), m_c(c), m_dimsb(mk_dimsb(m_ta, m_perm)) {
 
@@ -121,7 +121,7 @@ tod_apply<N, Functor>::tod_apply(tensor_i<N, double> &ta,
 
 
 template<size_t N, typename Functor>
-tod_apply<N, Functor>::tod_apply(tensor_i<N, double> &ta, const Functor &fn,
+tod_apply<N, Functor>::tod_apply(dense_tensor_i<N, double> &ta, const Functor &fn,
 		const permutation<N> &p, double c) :
 	m_ta(ta), m_fn(fn), m_perm(p), m_c(c), m_dimsb(mk_dimsb(ta, p)) {
 
@@ -137,7 +137,7 @@ void tod_apply<N, Functor>::prefetch() {
 
 template<size_t N, typename Functor>
 void tod_apply<N, Functor>::perform(cpu_pool &cpus, bool zero, double c,
-    tensor_i<N, double> &tb) {
+    dense_tensor_i<N, double> &tb) {
 
     static const char *method =
         "perform(cpu_pool&, bool, double, tensor_i<N, double>&)";
@@ -192,14 +192,14 @@ void tod_apply<N, Functor>::perform(cpu_pool &cpus, bool zero, double c,
 
 
 template<size_t N, typename Functor>
-void tod_apply<N, Functor>::perform(cpu_pool &cpus, tensor_i<N, double> &tb) {
+void tod_apply<N, Functor>::perform(cpu_pool &cpus, dense_tensor_i<N, double> &tb) {
 
     perform(cpus, true, 1.0, tb);
 }
 
 
 template<size_t N, typename Functor>
-void tod_apply<N, Functor>::perform(cpu_pool &cpus, tensor_i<N, double> &tb,
+void tod_apply<N, Functor>::perform(cpu_pool &cpus, dense_tensor_i<N, double> &tb,
     double c) {
 
     perform(cpus, false, c, tb);
@@ -208,7 +208,7 @@ void tod_apply<N, Functor>::perform(cpu_pool &cpus, tensor_i<N, double> &tb,
 
 template<size_t N, typename Functor>
 dimensions<N> tod_apply<N, Functor>::mk_dimsb(
-		tensor_i<N, double> &ta, const permutation<N> &perm) {
+		dense_tensor_i<N, double> &ta, const permutation<N> &perm) {
 
 	dimensions<N> dims(ta.get_dims());
 	dims.permute(perm);
@@ -218,7 +218,7 @@ dimensions<N> tod_apply<N, Functor>::mk_dimsb(
 
 template<size_t N, typename Functor>
 void tod_apply<N, Functor>::do_perform(
-		tensor_i<N, double> &tb, double c, bool do_add) {
+		dense_tensor_i<N, double> &tb, double c, bool do_add) {
 
 }
 

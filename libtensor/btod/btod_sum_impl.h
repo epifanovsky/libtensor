@@ -47,7 +47,7 @@ void btod_sum<N>::sync_off() {
 
 /*
 template<size_t N>
-void btod_sum<N>::compute_block(tensor_i<N, double> &blk, const index<N> &i) {
+void btod_sum<N>::compute_block(dense_tensor_i<N, double> &blk, const index<N> &i) {
 
 	abs_index<N> ai(i, m_bidims);
 	transf<N, double> tr0;
@@ -78,7 +78,7 @@ void btod_sum<N>::compute_block(tensor_i<N, double> &blk, const index<N> &i) {
 
 
 template<size_t N>
-void btod_sum<N>::compute_block(bool zero, tensor_i<N, double> &blk,
+void btod_sum<N>::compute_block(bool zero, dense_tensor_i<N, double> &blk,
     const index<N> &i, const transf<N, double> &tr, double c, cpu_pool &cpus) {
 
     if(zero) tod_set<N>().perform(cpus, blk);

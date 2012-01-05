@@ -47,7 +47,7 @@ btod_cholesky::~btod_cholesky(){
 void btod_cholesky::decompose()
 	{
 	
-	tensor_i<2, double> &ta(*pta);
+	dense_tensor_i<2, double> &ta(*pta);
 
 	// put the data from input matrix to the buffer
         typedef std_allocator<double> allocator_t;
@@ -201,7 +201,7 @@ void btod_cholesky::decompose()
 
 void btod_cholesky::perform(block_tensor_i<2 , double> &btb)
 {
-        tensor_i<2, double> &ta(*pta);
+        dense_tensor_i<2, double> &ta(*pta);
 	tensor_ctrl<2, double> tnsr_ctrl(ta);
         double *tnsr_ptr = tnsr_ctrl.req_dataptr();
 	// temporary solution  - make the buffer of the size n by rank

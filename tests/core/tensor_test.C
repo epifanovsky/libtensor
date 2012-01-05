@@ -64,7 +64,7 @@ void tensor_test::test_ctor() throw(libtest::test_exception) {
             "Incorrect tensor dimension 1 (t2)");
     }
 
-    tensor_i<2, double> &pt2 = t2;
+    dense_tensor_i<2, double> &pt2 = t2;
     tensor<2, double, allocator> t3(pt2);
 
     if(t3.is_immutable()) {
@@ -105,7 +105,7 @@ public:
         return m_ok;
     }
 
-    void perform(tensor_i<2, int> &t) {
+    void perform(dense_tensor_i<2, int> &t) {
 
         m_ok = false;
         dimensions<2> d(t.get_dims());
@@ -180,7 +180,7 @@ public:
 
     }
 
-    void perform(tensor_i<2, int> &t) throw(exception) {
+    void perform(dense_tensor_i<2, int> &t) throw(exception) {
 
         dimensions<2> d(t.get_dims());
         tensor_ctrl<2, int> tctrl(t);
@@ -210,7 +210,7 @@ public:
         return m_ok;
     }
 
-    void perform(tensor_i<2, int> &t) {
+    void perform(dense_tensor_i<2, int> &t) {
 
         m_ok = true;
         dimensions<2> d(t.get_dims());
@@ -242,7 +242,7 @@ public:
         return m_ok;
     }
 
-    void perform(tensor_i<2, int> &t) {
+    void perform(dense_tensor_i<2, int> &t) {
 
         m_ok = true;
         tensor_ctrl<2, int> tctrl(t);

@@ -257,7 +257,7 @@ void btod_select_test::test_3a(size_t n,
 		for (orbit_list<2, double>::iterator it = ol.begin();
 				it != ol.end(); it++) {
 
-			tensor_i<2, double> &ta = ca.req_block(ol.get_index(it)),
+			dense_tensor_i<2, double> &ta = ca.req_block(ol.get_index(it)),
 					&tb = cb.req_block(ol.get_index(it));
 
 			tod_copy<2>(ta).perform(cpus, true, 1.0, tb);
@@ -841,7 +841,7 @@ void btod_select_test::test_5(size_t n) throw(libtest::test_exception) {
 			const transf<2, double> &tra = oa.get_transf(ib);
 
 			abs_index<2> ai(oa.get_abs_canonical_index(), bidims);
-			tensor_i<2, double> &ta = ca.req_block(ai.get_index()),
+			dense_tensor_i<2, double> &ta = ca.req_block(ai.get_index()),
 					&tb = cb.req_block(ib);
 			tod_copy<2>(ta, tra.get_perm(), tra.get_coeff()).perform(cpus, true, 1.0, tb);
 

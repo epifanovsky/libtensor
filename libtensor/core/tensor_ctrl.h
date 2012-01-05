@@ -3,7 +3,7 @@
 
 #include "../defs.h"
 #include "../exception.h"
-#include "tensor_i.h"
+#include "../dense_tensor/dense_tensor_i.h"
 
 namespace libtensor {
 
@@ -23,11 +23,11 @@ namespace libtensor {
 template<size_t N, typename T>
 class tensor_ctrl {
 private:
-	typedef typename tensor_i<N, T>::handle_t
+	typedef typename dense_tensor_i<N, T>::handle_t
 		handle_t; //!< Session handle type
 
 private:
-	tensor_i<N, T> &m_t; //!< Controlled %tensor object
+	dense_tensor_i<N, T> &m_t; //!< Controlled %tensor object
 	handle_t m_h; //!< Session handle
 
 public:
@@ -37,7 +37,7 @@ public:
 	/**	\brief Initializes the control object, initiates a session
 		\param t Tensor instance.
 	 **/
-	tensor_ctrl(tensor_i<N, T> &t);
+	tensor_ctrl(dense_tensor_i<N, T> &t);
 
 	/**	\brief Destroys the control object, closes the session
 	 **/
@@ -60,7 +60,7 @@ public:
 
 
 template<size_t N, typename T>
-inline tensor_ctrl<N, T>::tensor_ctrl(tensor_i<N, T> &t) : m_t(t) {
+inline tensor_ctrl<N, T>::tensor_ctrl(dense_tensor_i<N, T> &t) : m_t(t) {
 
 	m_h = m_t.on_req_open_session();
 }

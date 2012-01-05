@@ -3,7 +3,7 @@
 
 #include "../defs.h"
 #include "../exception.h"
-#include "../core/tensor_i.h"
+#include "../dense_tensor/dense_tensor_i.h"
 #include "../core/tensor_ctrl.h"
 #include "bad_dimensions.h"
 
@@ -43,7 +43,7 @@ public:
 
 	/**	\brief Performs the operation
 	 **/
-	void perform(tensor_i<N, double> &t) throw(exception);
+	void perform(dense_tensor_i<N, double> &t) throw(exception);
 
 	//@}
 };
@@ -60,7 +60,7 @@ tod_set_diag<N>::tod_set_diag(double v) : m_v(v) {
 
 
 template<size_t N>
-void tod_set_diag<N>::perform(tensor_i<N, double> &t) throw(exception) {
+void tod_set_diag<N>::perform(dense_tensor_i<N, double> &t) throw(exception) {
 
 	static const char *method = "perform(tensor_i<N, double>&)";
 

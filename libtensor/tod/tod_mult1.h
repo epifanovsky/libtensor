@@ -3,7 +3,7 @@
 
 #include "../defs.h"
 #include "../timings.h"
-#include "../core/tensor_i.h"
+#include "../dense_tensor/dense_tensor_i.h"
 #include "loop_list_elem1.h"
 #include "bad_dimensions.h"
 
@@ -33,7 +33,7 @@ public:
 	static const char *k_clazz; //!< Class name
 
 private:
-	tensor_i<N, double> &m_tb; //!< Second argument
+	dense_tensor_i<N, double> &m_tb; //!< Second argument
 	permutation<N> m_pb; //!< Permutation of argument
 	bool m_recip; //!< Reciprocal (multiplication by 1/bi)
 	double m_c; //!< Scaling coefficient
@@ -45,7 +45,7 @@ public:
 			\c true sets up element-wise division.
 		\param c Coefficient
 	 **/
-	tod_mult1(tensor_i<N, double> &tb, bool recip = false, double c = 1.0);
+	tod_mult1(dense_tensor_i<N, double> &tb, bool recip = false, double c = 1.0);
 
 	/**	\brief Creates the operation
 		\param tb Second argument.
@@ -54,22 +54,22 @@ public:
 			\c true sets up element-wise division.
 		\param c Coefficient
 	 **/
-	tod_mult1(tensor_i<N, double> &tb, const permutation<N> &p,
+	tod_mult1(dense_tensor_i<N, double> &tb, const permutation<N> &p,
 			bool recip = false, double c = 1.0);
 
 	/**	\brief Performs the operation, replaces the output.
 		\param ta Tensor A.
 	 **/
-	void perform(tensor_i<N, double> &ta);
+	void perform(dense_tensor_i<N, double> &ta);
 
 	/**	\brief Performs the operation, adds to the output.
 		\param ta Tensor A.
 		\param c Coefficient.
 	 **/
-	void perform(tensor_i<N, double> &ta, double c);
+	void perform(dense_tensor_i<N, double> &ta, double c);
 
 private:
-	void do_perform(tensor_i<N, double> &ta, bool doadd, double c);
+	void do_perform(dense_tensor_i<N, double> &ta, bool doadd, double c);
 
 	void build_loop(typename loop_list_elem1::list_t &loop,
 			const dimensions<N> &dimsa, const dimensions<N> &dimsb,
@@ -82,19 +82,19 @@ const char *tod_mult1<N>::k_clazz = "tod_mult1<N>";
 
 
 template<size_t N>
-tod_mult1<N>::tod_mult1(tensor_i<N, double> &tb, bool recip, double c) :
+tod_mult1<N>::tod_mult1(dense_tensor_i<N, double> &tb, bool recip, double c) :
 	m_tb(tb), m_recip(recip), m_c(c) {
 }
 
 template<size_t N>
-tod_mult1<N>::tod_mult1(tensor_i<N, double> &tb, const permutation<N> &p,
+tod_mult1<N>::tod_mult1(dense_tensor_i<N, double> &tb, const permutation<N> &p,
 		bool recip, double c) :
 	m_tb(tb), m_pb(p), m_recip(recip), m_c(c) {
 }
 
 
 template<size_t N>
-void tod_mult1<N>::perform(tensor_i<N, double> &ta) {
+void tod_mult1<N>::perform(dense_tensor_i<N, double> &ta) {
 
 	static const char *method = "perform(tensor_i<N, double>&)";
 
@@ -112,7 +112,7 @@ void tod_mult1<N>::perform(tensor_i<N, double> &ta) {
 
 
 template<size_t N>
-void tod_mult1<N>::perform(tensor_i<N, double> &ta, double c) {
+void tod_mult1<N>::perform(dense_tensor_i<N, double> &ta, double c) {
 
 	static const char *method = "perform(tensor_i<N, double>&, double)";
 
@@ -128,7 +128,7 @@ void tod_mult1<N>::perform(tensor_i<N, double> &ta, double c) {
 }
 
 template<size_t N>
-void tod_mult1<N>::do_perform(tensor_i<N, double> &ta, bool doadd, double c) {
+void tod_mult1<N>::do_perform(dense_tensor_i<N, double> &ta, bool doadd, double c) {
 
 	typedef typename loop_list_elem1::list_t list_t;
 	typedef typename loop_list_elem1::registers registers_t;

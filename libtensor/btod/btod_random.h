@@ -174,7 +174,7 @@ void btod_random<N>::make_random_blk(cpu_pool &cpus,
 		return;
 	}
 
-	tensor_i<N, double> &blk = ctrl.req_block(idx);
+	dense_tensor_i<N, double> &blk = ctrl.req_block(idx);
 
 	typename transf_list_t::iterator itr = ilst->second.begin();
 	if(itr == ilst->second.end()) {

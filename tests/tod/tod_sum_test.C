@@ -24,7 +24,7 @@ public:
 	virtual void prefetch() { }
 
 	virtual void perform(cpu_pool &cpus, bool zero, double c,
-	    tensor_i<4,double> &t) {
+	    dense_tensor_i<4,double> &t) {
 
 		size_t sz = t.get_dims().get_size();
 		tensor_ctrl<4, double> tctrl(t);
@@ -51,7 +51,7 @@ public:
 	virtual void prefetch() { }
 
 	virtual void perform(cpu_pool &cpus, bool zero, double c,
-	    tensor_i<4, double> &t) {
+	    dense_tensor_i<4, double> &t) {
 
 		size_t sz = t.get_dims().get_size();
 		tensor_ctrl<4, double> tctrl(t);

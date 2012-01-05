@@ -156,7 +156,7 @@ private:
 	/**	\brief Checks whether the %tensor is filled with zeros,
 			within the threshold
 	 **/
-	bool check_zero(tensor_i<N, double> &t);
+	bool check_zero(dense_tensor_i<N, double> &t);
 
 private:
 	btod_compare(const btod_compare<N>&);
@@ -362,8 +362,8 @@ bool btod_compare<N>::compare_data(const abs_index<N> &aidx,
 
 	if(zero1) return true;
 
-	tensor_i<N, double> &t1 = ctrl1.req_block(aidx.get_index());
-	tensor_i<N, double> &t2 = ctrl2.req_block(aidx.get_index());
+	dense_tensor_i<N, double> &t1 = ctrl1.req_block(aidx.get_index());
+	dense_tensor_i<N, double> &t2 = ctrl2.req_block(aidx.get_index());
 
 	tod_compare<N> cmp(t1, t2, m_thresh);
 	if(cmp.compare()) return true;
@@ -383,7 +383,7 @@ bool btod_compare<N>::compare_data(const abs_index<N> &aidx,
 
 
 template<size_t N>
-bool btod_compare<N>::check_zero(tensor_i<N, double> &t) {
+bool btod_compare<N>::check_zero(dense_tensor_i<N, double> &t) {
 
 	tensor_ctrl<N, double> c(t);
 	const double *p = c.req_const_dataptr();

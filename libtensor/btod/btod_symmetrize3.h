@@ -112,7 +112,7 @@ protected:
 	//!	\brief Implementation of additive_btod<N>
 	//@{
 
-	virtual void compute_block(bool zero, tensor_i<N, double> &blk,
+	virtual void compute_block(bool zero, dense_tensor_i<N, double> &blk,
 	    const index<N> &i, const transf<N, double> &tr, double c,
 	    cpu_pool &cpus);
 
@@ -161,7 +161,7 @@ btod_symmetrize3<N>::btod_symmetrize3(additive_btod<N> &op, size_t i1,
 
 /*
 template<size_t N>
-void btod_symmetrize3<N>::compute_block(tensor_i<N, double> &blk,
+void btod_symmetrize3<N>::compute_block(dense_tensor_i<N, double> &blk,
 	const index<N> &i) {
 
 	typedef typename sym_schedule_t::iterator iterator_t;
@@ -178,7 +178,7 @@ void btod_symmetrize3<N>::compute_block(tensor_i<N, double> &blk,
 
 
 template<size_t N>
-void btod_symmetrize3<N>::compute_block(bool zero, tensor_i<N, double> &blk,
+void btod_symmetrize3<N>::compute_block(bool zero, dense_tensor_i<N, double> &blk,
 	const index<N> &i, const transf<N, double> &tr, double c, cpu_pool &cpus) {
 
 	typedef typename sym_schedule_t::iterator iterator_t;

@@ -10,7 +10,7 @@
 #include "../core/block_tensor_ctrl.h"
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
-#include "../core/tensor_i.h"
+#include "../dense_tensor/dense_tensor_i.h"
 #include "../core/tensor_ctrl.h"
 #include "../tod/bad_dimensions.h"
 #include "../tod/processor.h"
@@ -88,7 +88,7 @@ public:
 	//!	\name Tensor operation
 	//@{
 
-	void perform(tensor_i<N, double> &t) throw(exception);
+	void perform(dense_tensor_i<N, double> &t) throw(exception);
 
 	//@}
 
@@ -115,7 +115,7 @@ tod_btconv<N>::~tod_btconv() {
 }
 
 template<size_t N>
-void tod_btconv<N>::perform(tensor_i<N, double> &t) throw(exception) {
+void tod_btconv<N>::perform(dense_tensor_i<N, double> &t) throw(exception) {
 	tod_btconv<N>::start_timer();
 
 	static const char *method = "perform(tensor_i<N, double>&)";
@@ -142,7 +142,7 @@ void tod_btconv<N>::perform(tensor_i<N, double> &t) throw(exception) {
 		abs_index<N> abidx(orb.get_abs_canonical_index(), bidims);
 		if(src_ctrl.req_is_zero_block(abidx.get_index())) continue;
 
-		tensor_i<N, double> &blk = src_ctrl.req_block(abidx.get_index());
+		dense_tensor_i<N, double> &blk = src_ctrl.req_block(abidx.get_index());
 		{
 		tensor_ctrl<N, double> blk_ctrl(blk);
 		const double *src_ptr = blk_ctrl.req_const_dataptr();

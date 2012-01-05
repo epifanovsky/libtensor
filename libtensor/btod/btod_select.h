@@ -167,7 +167,7 @@ void btod_select<N, ComparePolicy>::perform(list_t &li, size_t n) {
 		if (ctrl.req_is_zero_block(aib.get_index())) continue;
 
 		// Obtain block
-		tensor_i<N, double> &t = ctrl.req_block(aib.get_index());
+		dense_tensor_i<N, double> &t = ctrl.req_block(aib.get_index());
 
 		const transf<N, double> &tra = oa.get_transf(aia.get_index());
 

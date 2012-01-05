@@ -9,7 +9,7 @@ const char *tod_import_raw_stream<N>::k_clazz = "tod_import_raw_stream<N>";
 
 
 template<size_t N>
-void tod_import_raw_stream<N>::perform(tensor_i<N, double> &ta) {
+void tod_import_raw_stream<N>::perform(dense_tensor_i<N, double> &ta) {
 
     static const char *method = "perform(tensor_i<N, double>&)";
 

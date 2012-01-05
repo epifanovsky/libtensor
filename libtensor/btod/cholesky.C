@@ -121,7 +121,7 @@ void cholesky::decompose()
 
 	block_tensor_ctrl<2, double> ctrl(buff);
 
-        tensor_i<2, double> &t = ctrl.req_block(idx);
+        dense_tensor_i<2, double> &t = ctrl.req_block(idx);
         tensor_ctrl<2, double> ct(t);
        	double *p = ct.req_dataptr();
 
@@ -268,11 +268,11 @@ void cholesky::perform(block_tensor_i<2, double> &btb)
 		{
 	
 		
-		tensor_i<2, double> &ti = ctrli.req_block(idxi);
+		dense_tensor_i<2, double> &ti = ctrli.req_block(idxi);
 		tensor_ctrl<2, double> cti(ti);
 		const double *pi = cti.req_const_dataptr();		
 		
-		tensor_i<2, double> &to = ctrlo.req_block(idxo);
+		dense_tensor_i<2, double> &to = ctrlo.req_block(idxo);
 		tensor_ctrl<2, double> cto(to);
 		double *po = cto.req_dataptr();
 

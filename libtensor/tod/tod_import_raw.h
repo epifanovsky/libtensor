@@ -92,7 +92,7 @@ public:
 	/**	\brief Performs the operation
 		\param t Output %tensor
 	 **/
-	void perform(tensor_i<N, double> &t);
+	void perform(dense_tensor_i<N, double> &t);
 
 };
 
@@ -102,7 +102,7 @@ const char *tod_import_raw<N>::k_clazz = "tod_import_raw<N>";
 
 
 template<size_t N>
-void tod_import_raw<N>::perform(tensor_i<N, double> &t) {
+void tod_import_raw<N>::perform(dense_tensor_i<N, double> &t) {
 
 	static const char *method = "perform(tensor_i<N, double>&)";
 

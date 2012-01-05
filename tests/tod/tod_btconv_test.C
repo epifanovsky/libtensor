@@ -143,7 +143,7 @@ void tod_btconv_test::test_2() throw(libtest::test_exception) {
 	index<2> i_00;
 	index<2> istart = bis.get_block_start(i_00);
 	dimensions<2> dims_00 = bis.get_block_dims(i_00);
-	tensor_i<2, double> &blk_00 = btctrl.req_block(i_00);
+	dense_tensor_i<2, double> &blk_00 = btctrl.req_block(i_00);
 	{
 		tensor_ctrl_t tctrl_00(blk_00);
 		double *p_00 = tctrl_00.req_dataptr();
@@ -228,7 +228,7 @@ void tod_btconv_test::test_3() throw(libtest::test_exception) {
 	i_11[0] = 1; i_11[1] = 1;
 	index<2> istart = bis.get_block_start(i_11);
 	dimensions<2> dims_11 = bis.get_block_dims(i_11);
-	tensor_i<2, double> &blk_11 = btctrl.req_block(i_11);
+	dense_tensor_i<2, double> &blk_11 = btctrl.req_block(i_11);
 	{
 		tensor_ctrl_t tctrl_11(blk_11);
 		double *p_11 = tctrl_11.req_dataptr();
@@ -317,7 +317,7 @@ void tod_btconv_test::test_4() throw(libtest::test_exception) {
 	dimensions<2> dims_11 = bis.get_block_dims(i_11);
 	double *p = NULL;
 
-	tensor_i<2, double> &blk_00 = btctrl.req_block(i_00);
+	dense_tensor_i<2, double> &blk_00 = btctrl.req_block(i_00);
 	{
 		tensor_ctrl_t tctrl_00(blk_00);
 		p = tctrl_00.req_dataptr();
@@ -333,7 +333,7 @@ void tod_btconv_test::test_4() throw(libtest::test_exception) {
 	}
 	btctrl.ret_block(i_00);
 
-	tensor_i<2, double> &blk_11 = btctrl.req_block(i_11);
+	dense_tensor_i<2, double> &blk_11 = btctrl.req_block(i_11);
 	{
 		tensor_ctrl_t tctrl_11(blk_11);
 		p = tctrl_11.req_dataptr();
@@ -427,7 +427,7 @@ void tod_btconv_test::test_5() throw(libtest::test_exception) {
 	double *p = NULL;
 	permutation<2> perm; perm.permute(0, 1);
 
-	tensor_i<2, double> &blk_00 = btctrl.req_block(i_00);
+	dense_tensor_i<2, double> &blk_00 = btctrl.req_block(i_00);
 	{
 		tensor_ctrl_t tctrl_00(blk_00);
 		p = tctrl_00.req_dataptr();
@@ -451,7 +451,7 @@ void tod_btconv_test::test_5() throw(libtest::test_exception) {
 	}
 	btctrl.ret_block(i_00);
 
-	tensor_i<2, double> &blk_11 = btctrl.req_block(i_11);
+	dense_tensor_i<2, double> &blk_11 = btctrl.req_block(i_11);
 	{
 		tensor_ctrl_t tctrl_11(blk_11);
 		p = tctrl_11.req_dataptr();
@@ -552,7 +552,7 @@ void tod_btconv_test::test_6() throw(libtest::test_exception) {
 	double *p = NULL;
 	permutation<2> perm; perm.permute(0, 1);
 
-	tensor_i<2, double> &blk_01 = btctrl.req_block(i_01);
+	dense_tensor_i<2, double> &blk_01 = btctrl.req_block(i_01);
 	{
 		tensor_ctrl_t tctrl_01(blk_01);
 		p = tctrl_01.req_dataptr();
@@ -567,7 +567,7 @@ void tod_btconv_test::test_6() throw(libtest::test_exception) {
 	}
 	btctrl.ret_block(i_01);
 
-	tensor_i<2, double> &blk_10 = btctrl.req_block(i_10);
+	dense_tensor_i<2, double> &blk_10 = btctrl.req_block(i_10);
 	{
 		tensor_ctrl_t tctrl_10(blk_10);
 		p = tctrl_10.req_dataptr();
@@ -662,7 +662,7 @@ void tod_btconv_test::test_7() throw(libtest::test_exception) {
 	double *p = NULL;
 	permutation<2> perm; perm.permute(0, 1);
 
-	tensor_i<2, double> &blk_01 = btctrl.req_block(i_01);
+	dense_tensor_i<2, double> &blk_01 = btctrl.req_block(i_01);
 	{
 		tensor_ctrl_t tctrl_01(blk_01);
 		p = tctrl_01.req_dataptr();
@@ -769,7 +769,7 @@ void tod_btconv_test::test_8() throw(libtest::test_exception) {
 	double *p = NULL;
 	permutation<2> perm; perm.permute(0, 1);
 
-	tensor_i<2, double> &blk_00 = btctrl.req_block(i_00);
+	dense_tensor_i<2, double> &blk_00 = btctrl.req_block(i_00);
 	{
 		tensor_ctrl_t tctrl_00(blk_00);
 		p = tctrl_00.req_dataptr();
@@ -794,7 +794,7 @@ void tod_btconv_test::test_8() throw(libtest::test_exception) {
 	}
 	btctrl.ret_block(i_00);
 
-	tensor_i<2, double> &blk_01 = btctrl.req_block(i_01);
+	dense_tensor_i<2, double> &blk_01 = btctrl.req_block(i_01);
 	{
 		tensor_ctrl_t tctrl_01(blk_01);
 		p = tctrl_01.req_dataptr();
@@ -816,7 +816,7 @@ void tod_btconv_test::test_8() throw(libtest::test_exception) {
 	}
 	btctrl.ret_block(i_01);
 
-	tensor_i<2, double> &blk_11 = btctrl.req_block(i_11);
+	dense_tensor_i<2, double> &blk_11 = btctrl.req_block(i_11);
 	{
 		tensor_ctrl_t tctrl_11(blk_11);
 		p = tctrl_11.req_dataptr();
@@ -937,7 +937,7 @@ void tod_btconv_test::test_9() throw(libtest::test_exception) {
 	perm4.permute(0, 1).permute(1, 2);
 	perm5.permute(1, 2).permute(0 ,1);
 
-	tensor_i<4, double> &blk_0001 = btctrl.req_block(i_0001);
+	dense_tensor_i<4, double> &blk_0001 = btctrl.req_block(i_0001);
 	{
 		tensor_ctrl_t tctrl_0001(blk_0001);
 		p = tctrl_0001.req_dataptr();
@@ -1070,7 +1070,7 @@ void tod_btconv_test::test_10() throw(libtest::test_exception) {
 	double *p = NULL;
 	permutation<4> perm; perm.permute(0, 2);
 
-	tensor_i<4, double> &blk_0010 = btctrl.req_block(i_0010);
+	dense_tensor_i<4, double> &blk_0010 = btctrl.req_block(i_0010);
 	{
 		tensor_ctrl_t tctrl_0010(blk_0010);
 		p = tctrl_0010.req_dataptr();
@@ -1181,7 +1181,7 @@ void tod_btconv_test::test_11() throw(libtest::test_exception) {
 	permutation<4> perm; perm.permute(0, 2);
 	permutation<4> perm1; perm1.permute(1, 3);
 
-	tensor_i<4, double> &blk_0010 = btctrl.req_block(i_0010);
+	dense_tensor_i<4, double> &blk_0010 = btctrl.req_block(i_0010);
 	{
 		tensor_ctrl_t tctrl_0010(blk_0010);
 		p = tctrl_0010.req_dataptr();

@@ -4,7 +4,7 @@
 #include "../defs.h"
 #include "../exception.h"
 #include "../timings.h"
-#include "../core/tensor_i.h"
+#include "../dense_tensor/dense_tensor_i.h"
 #include "../core/tensor_ctrl.h"
 #include "loop_list_add.h"
 #include "loop_list_copy.h"
@@ -25,21 +25,21 @@ namespace libtensor {
 
     Plain copy:
     \code
-    tensor_i<2, double> &t1(...), &t2(...);
+    dense_tensor_i<2, double> &t1(...), &t2(...);
     tod_copy<2> cp(t1);
     cp.perform(t2); // Copies the elements of t1 to t2
     \endcode
 
     Scaled copy:
     \code
-    tensor_i<2, double> &t1(...), &t2(...);
+    dense_tensor_i<2, double> &t1(...), &t2(...);
     tod_copy<2> cp(t1, 0.5);
     cp.perform(t2); // Copies the elements of t1 multiplied by 0.5 to t2
     \endcode
 
     Permuted copy:
     \code
-    tensor_i<2, double> &t1(...), &t2(...);
+    dense_tensor_i<2, double> &t1(...), &t2(...);
     permutation<2> perm; perm.permute(0, 1); // Sets up a permutation
     tod_copy<2> cp(t1, perm);
     cp.perform(t2); // Copies transposed t1 to t2
@@ -47,7 +47,7 @@ namespace libtensor {
 
     Permuted and scaled copy:
     \code
-    tensor_i<2, double> &t1(...), &t2(...);
+    dense_tensor_i<2, double> &t1(...), &t2(...);
     permutation<2> perm; perm.permute(0, 1); // Sets up a permutation
     tod_copy<2> cp(t1, perm, 0.5);
     cp.perform(t2); // Copies transposed t1 scaled by 0.5 to t2
@@ -65,7 +65,7 @@ public:
     static const char *k_clazz; //!< Class name
 
 private:
-    tensor_i<N,double> &m_ta; //!< Source %tensor
+    dense_tensor_i<N,double> &m_ta; //!< Source %tensor
     permutation<N> m_perm; //!< Permutation of elements
     double m_c; //!< Scaling coefficient
     dimensions<N> m_dimsb; //!< Dimensions of output %tensor
@@ -78,14 +78,14 @@ public:
         \param ta Source %tensor.
         \param c Coefficient.
      **/
-    tod_copy(tensor_i<N,double> &ta, double c = 1.0);
+    tod_copy(dense_tensor_i<N,double> &ta, double c = 1.0);
 
     /**	\brief Prepares the permute & copy operation
         \param ta Source %tensor.
         \param p Permutation of %tensor elements.
         \param c Coefficient.
      **/
-    tod_copy(tensor_i<N,double> &ta, const permutation<N> &p, double c = 1.0);
+    tod_copy(dense_tensor_i<N,double> &ta, const permutation<N> &p, double c = 1.0);
 
     /**	\brief Virtual destructor
      **/
@@ -101,7 +101,7 @@ public:
     virtual void prefetch();
 
     virtual void perform(cpu_pool &cpus, bool zero, double c,
-        tensor_i<N, double> &tb);
+        dense_tensor_i<N, double> &tb);
 
     //@}
 
@@ -109,11 +109,11 @@ private:
     /**	\brief Creates the dimensions of the output using an input
             %tensor and a permutation of indexes
      **/
-    static dimensions<N> mk_dimsb(tensor_i<N,double> &ta,
+    static dimensions<N> mk_dimsb(dense_tensor_i<N,double> &ta,
         const permutation<N> &perm);
 
     template<typename Base>
-    void do_perform(cpu_pool &cpus, double c, tensor_i<N,double> &t);
+    void do_perform(cpu_pool &cpus, double c, dense_tensor_i<N,double> &t);
 
     template<typename Base>
     void build_loop(typename Base::list_t &loop, const dimensions<N> &dimsa,

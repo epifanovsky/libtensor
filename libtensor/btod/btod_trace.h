@@ -86,7 +86,7 @@ double btod_trace<N>::calculate() {
 
 	if(ca.req_is_zero_block(ola.get_index(ioa))) continue;
 
-	tensor_i<k_ordera, double> *ba = 0;
+	dense_tensor_i<k_ordera, double> *ba = 0;
 
 	orbit<k_ordera, double> oa(ca.req_const_symmetry(), ola.get_index(ioa));
 	for(typename orbit<k_ordera, double>::iterator iia = oa.begin();

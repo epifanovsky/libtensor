@@ -81,7 +81,7 @@ public:
 	typedef std::list<elem_t> list_t; //!< List type for index-value pairs
 
 private:
-	tensor_i<N, double> &m_t; //!< Tensor
+	dense_tensor_i<N, double> &m_t; //!< Tensor
 	permutation<N> m_perm; //!< Permutation of tensor
 	double m_c; //!< Scaling coefficient
 	compare_t m_cmp; //!< Compare policy object to select entries
@@ -94,7 +94,7 @@ public:
 		\param t Tensor.
 		\param cmp Compare policy object
 	 **/
-	tod_select(tensor_i<N, double> &t, compare_t cmp = compare_t()) :
+	tod_select(dense_tensor_i<N, double> &t, compare_t cmp = compare_t()) :
 		m_t(t), m_c(1.0), m_cmp(cmp) { }
 
 	/** \brief Constuctor
@@ -102,7 +102,7 @@ public:
 		\param c Coefficient.
 		\param cmp Compare policy object.
 	 **/
-	tod_select(tensor_i<N, double> &t,
+	tod_select(dense_tensor_i<N, double> &t,
 			double c, compare_t cmp = compare_t()) :
 		m_t(t), m_c(c), m_cmp(cmp) { }
 
@@ -112,7 +112,7 @@ public:
 		\param c Coefficient
 		\param cmp Compare policy object.
 	 **/
-	tod_select(tensor_i<N, double> &t, const permutation<N> &p,
+	tod_select(dense_tensor_i<N, double> &t, const permutation<N> &p,
 			double c, compare_t cmp = compare_t()) :
 		m_t(t), m_perm(p), m_c(c), m_cmp(cmp) { }
 

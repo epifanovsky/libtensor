@@ -115,10 +115,10 @@ void btod_add<N>::sync_off() {
 
 /*
 template<size_t N>
-void btod_add<N>::compute_block(tensor_i<N, double> &blkb, const index<N> &ib) {
+void btod_add<N>::compute_block(dense_tensor_i<N, double> &blkb, const index<N> &ib) {
 
 	static const char *method =
-		"compute_block(tensor_i<N, double>&, const index<N>&)";
+		"compute_block(dense_tensor_i<N, double>&, const index<N>&)";
 
 	btod_add<N>::start_timer();
 
@@ -144,7 +144,7 @@ void btod_add<N>::compute_block(tensor_i<N, double> &blkb, const index<N> &ib) {
 
 
 template<size_t N>
-void btod_add<N>::compute_block(bool zero, tensor_i<N, double> &blkb,
+void btod_add<N>::compute_block(bool zero, dense_tensor_i<N, double> &blkb,
     const index<N> &ib, const transf<N, double> &trb, double kb,
     cpu_pool &cpus) {
 
@@ -172,7 +172,7 @@ void btod_add<N>::compute_block(bool zero, tensor_i<N, double> &blkb,
 
 
 template<size_t N>
-void btod_add<N>::compute_block(tensor_i<N, double> &blkb,
+void btod_add<N>::compute_block(dense_tensor_i<N, double> &blkb,
 	const std::pair<schiterator_t, schiterator_t> ipair, bool zero,
 	const transf<N, double> &trb, double kb, cpu_pool &cpus) {
 

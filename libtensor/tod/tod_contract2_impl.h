@@ -15,7 +15,7 @@ const char *tod_contract2<N, M, K>::k_clazz = "tod_contract2<N, M, K>";
 
 template<size_t N, size_t M, size_t K>
 tod_contract2<N, M, K>::tod_contract2(const contraction2<N, M, K> &contr,
-	tensor_i<k_ordera, double> &ta, tensor_i<k_orderb, double> &tb) :
+	dense_tensor_i<k_ordera, double> &ta, dense_tensor_i<k_orderb, double> &tb) :
 
 	m_contr(contr), m_ta(ta), m_tb(tb) {
 
@@ -38,7 +38,7 @@ void tod_contract2<N, M, K>::prefetch() {
 
 template<size_t N, size_t M, size_t K>
 void tod_contract2<N, M, K>::perform(cpu_pool &cpus, bool zero, double d,
-    tensor_i<k_orderc, double> &tc) {
+    dense_tensor_i<k_orderc, double> &tc) {
 
     tod_contract2<N, M, K>::start_timer();
 
