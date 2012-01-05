@@ -93,7 +93,7 @@ void cholesky::decompose()
 
 	// scale the element
 
-        tensor <1 , double, std_allocator <double> > columnt(column.get_bis().get_dims());
+        dense_tensor <1 , double, std_allocator <double> > columnt(column.get_bis().get_dims());
 
 	btod_scale<1>(column,1/sqrt(diag)).perform();
 

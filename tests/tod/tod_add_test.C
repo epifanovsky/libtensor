@@ -2,7 +2,7 @@
 #include <cmath>
 #include <sstream>
 #include <libtensor/core/allocator.h>
-#include <libtensor/core/tensor.h>
+#include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/tod/tod_add.h>
 #include "../compare_ref.h"
 #include "tod_add_test.h"
@@ -48,7 +48,7 @@ void tod_add_test::test_exc() throw(libtest::test_exception) {
     permutation<4> p1;
     p1.permute(0, 1);
 
-    tensor<4, double, allocator> t1(dim), t2(dim);
+    dense_tensor<4, double, allocator> t1(dim), t2(dim);
     tod_add<4> add(t1, p1, 0.4);
 
     bool ok = false;
@@ -103,7 +103,7 @@ void tod_add_test::test_add_to_self_pqrs(size_t p, size_t q, size_t r, size_t s)
     i2[3] = s;
     index_range<4> ir(i1, i2);
     dimensions<4> dim(ir);
-    tensor<4, double, allocator> tc(dim), ta(dim), tc_ref(dim);
+    dense_tensor<4, double, allocator> tc(dim), ta(dim), tc_ref(dim);
 
     double ta_max = 0.0;
     {
@@ -157,7 +157,7 @@ void tod_add_test::test_add_two_pqrs_pqrs(size_t p, size_t q, size_t r,
     i2[3] = s;
     index_range<4> ir(i1, i2);
     dimensions<4> dim(ir);
-    tensor<4, double, allocator> t1(dim), t2(dim), t1_ref(dim);
+    dense_tensor<4, double, allocator> t1(dim), t2(dim), t1_ref(dim);
 
     double t2_max = 0.0;
     {
@@ -219,7 +219,7 @@ void tod_add_test::test_add_two_pqrs_qprs(size_t p, size_t q, size_t r,
     p2.permute(0, 1);
     dim2.permute(p2);
 
-    tensor<4, double, allocator> t1(dim1), t2(dim2), t1_ref(dim1);
+    dense_tensor<4, double, allocator> t1(dim1), t2(dim2), t1_ref(dim1);
 
     double t2_max = 0.0;
     {
@@ -292,7 +292,7 @@ void tod_add_test::test_add_two_pqrs_prsq(size_t p, size_t q, size_t r,
     dim2.permute(p2);
     p2.invert();
 
-    tensor<4, double, allocator> t1(dim1), t2(dim2), t1_ref(dim1);
+    dense_tensor<4, double, allocator> t1(dim1), t2(dim2), t1_ref(dim1);
 
     double t2_max = 0.0;
     {
@@ -362,7 +362,7 @@ void tod_add_test::test_add_two_pqrs_qpsr(size_t p, size_t q, size_t r,
     p2.permute(2, 3);
     dim2.permute(p2);
 
-    tensor<4, double, allocator> t1(dim1), t2(dim2), t1_ref(dim1);
+    dense_tensor<4, double, allocator> t1(dim1), t2(dim2), t1_ref(dim1);
 
     double t2_max = 0.0;
     {
@@ -433,7 +433,7 @@ void tod_add_test::test_add_two_ijkl_kjli(size_t ni, size_t nj, size_t nk,
     dimensions<4> dims_kjli(dims_ijkl);
     dims_kjli.permute(perm);
 
-    tensor<4, double, allocator> t1(dims_ijkl), t2(dims_kjli),
+    dense_tensor<4, double, allocator> t1(dims_ijkl), t2(dims_kjli),
         t3(dims_kjli), t3_ref(dims_kjli);
 
     dense_tensor_ctrl<4, double> ct1(t1), ct2(t2), ct3_ref(t3_ref);
@@ -504,7 +504,7 @@ void tod_add_test::test_add_mult(size_t p, size_t q, size_t r, size_t s)
     permutation<4> p3;
     p3.permute(0, 1);
     dim3.permute(p3);
-    tensor<4, double, allocator> t1(dim), t2(dim), t3(dim3), t4(dim),
+    dense_tensor<4, double, allocator> t1(dim), t2(dim), t3(dim3), t4(dim),
         t1_ref(dim);
 
     double t_max = 0.0;
@@ -584,7 +584,7 @@ void tod_add_test::test_add_two_pq_qp(size_t p, size_t q)
     permutation<2> perm, p3;
     p3.permute(0, 1);
     dim3.permute(p3);
-    tensor<2, double, allocator> t1(dim), t2(dim), t3(dim3), t1_ref(dim);
+    dense_tensor<2, double, allocator> t1(dim), t2(dim), t3(dim3), t1_ref(dim);
 
     double t_max = 0.0;
     {

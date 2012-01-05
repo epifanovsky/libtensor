@@ -4,7 +4,7 @@
 #include <sstream>
 #include <libtensor/core/abs_index.h>
 #include <libtensor/core/allocator.h>
-#include <libtensor/core/tensor.h>
+#include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/tod/tod_dotprod.h>
 #include "tod_dotprod_test.h"
 
@@ -45,8 +45,8 @@ void tod_dotprod_test::test_1(size_t ni) throw(libtest::test_exception) {
 	dimensions<1> dimb(index_range<1>(ib1, ib2));
 	size_t sza = dima.get_size(), szb = dimb.get_size();
 
-	tensor<1, double, allocator> ta(dima);
-	tensor<1, double, allocator> tb(dimb);
+	dense_tensor<1, double, allocator> ta(dima);
+	dense_tensor<1, double, allocator> tb(dimb);
 
 	double c_ref = 0.0;
 	{
@@ -107,8 +107,8 @@ void tod_dotprod_test::test_2(size_t ni, size_t nj, const permutation<2> &perm)
 	dimb.permute(perm);
 	size_t sza = dima.get_size(), szb = dimb.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<2, double, allocator> tb(dimb);
+	dense_tensor<2, double, allocator> ta(dima);
+	dense_tensor<2, double, allocator> tb(dimb);
 
 	double c_ref = 0.0;
 	{

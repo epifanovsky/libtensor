@@ -3,7 +3,7 @@
 #include <cstdlib>
 #include <sstream>
 #include <libtensor/core/allocator.h>
-#include <libtensor/core/tensor.h>
+#include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/tod/tod_select.h>
 #include "tod_select_test.h"
 
@@ -41,7 +41,7 @@ void tod_select_test::test_1(size_t n, double c)
 	index<2> i1, i2;
 	i2[0] = 3; i2[1] = 4;
 	dimensions<2> dims(index_range<2>(i1, i2));
-	tensor<2, double, allocator_t> t(dims);
+	dense_tensor<2, double, allocator_t> t(dims);
 
 	size_t sz;
 	sz = dims.get_size();
@@ -128,7 +128,7 @@ void tod_select_test::test_2(size_t n, double c)
 	index<3> i1, i2;
 	i2[0] = 3; i2[1] = 4; i2[2] = 2;
 	dimensions<3> dims(index_range<3>(i1, i2));
-	tensor<3, double, allocator_t> t(dims);
+	dense_tensor<3, double, allocator_t> t(dims);
 
 	size_t sz;
 	sz = dims.get_size();

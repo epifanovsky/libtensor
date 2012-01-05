@@ -1,7 +1,7 @@
 #include <cmath>
 #include <ctime>
 #include <libtensor/core/allocator.h>
-#include <libtensor/core/tensor.h>
+#include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/tod/tod_mult1.h>
 #include "../compare_ref.h"
 #include "tod_mult1_test.h"
@@ -41,7 +41,7 @@ void tod_mult1_test::test_pq_pq_1(
 	dimensions<2> dims(index_range<2>(i1, i2));
 	size_t sz = dims.get_size();
 
-	tensor<2, double, allocator> ta(dims), tb(dims), ta_ref(dims);
+	dense_tensor<2, double, allocator> ta(dims), tb(dims), ta_ref(dims);
 
 	{
 	dense_tensor_ctrl<2, double> tca(ta), tcb(tb), tca_ref(ta_ref);
@@ -99,7 +99,7 @@ void tod_mult1_test::test_pq_pq_2(
 	dimensions<2> dims(index_range<2>(i1, i2));
 	size_t sz = dims.get_size();
 
-	tensor<2, double, allocator> ta(dims), tb(dims), ta_ref(dims);
+	dense_tensor<2, double, allocator> ta(dims), tb(dims), ta_ref(dims);
 
 	{
 	dense_tensor_ctrl<2, double> tca(ta), tcb(tb), tca_ref(ta_ref);
@@ -165,7 +165,7 @@ void tod_mult1_test::test_pqrs_qrps(
 
 	size_t sz = dima.get_size();
 
-	tensor<4, double, allocator> ta(dima), tb(dimb), ta_ref(dima);
+	dense_tensor<4, double, allocator> ta(dima), tb(dimb), ta_ref(dima);
 
 	{
 	dense_tensor_ctrl<4, double> tca(ta), tcb(tb), tca_ref(ta_ref);

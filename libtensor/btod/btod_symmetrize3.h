@@ -218,7 +218,7 @@ void btod_symmetrize3<N>::compute_block(bool zero, dense_tensor_i<N, double> &bl
 			dims.permute(permutation<N>(sch1.front().tr.get_perm(),
 				true));
 			// TODO: replace with "temporary block" feature
-			tensor< N, double, allocator<double> > tmp(dims);
+			dense_tensor< N, double, allocator<double> > tmp(dims);
 			additive_btod<N>::compute_block(m_op, true, tmp,
 				ai.get_index(), transf<N, double>(), c, cpus);
 			for(typename std::list<schrec>::iterator j =

@@ -46,7 +46,7 @@ void direct_block_tensor_test::test_op_1() throw(libtest::test_exception) {
 	btod_copy<2> op_copy(bta);
 	direct_block_tensor<2, double, allocator_t> btb(op_copy);
 
-	tensor<2, double, allocator_t> tc(dims), tc_ref(dims);
+	dense_tensor<2, double, allocator_t> tc(dims), tc_ref(dims);
 	tod_btconv<2>(bta).perform(tc_ref);
 	tod_btconv<2>(btb).perform(tc);
 	compare_ref<2>::compare(testname, tc, tc_ref, 0.0);
@@ -88,7 +88,7 @@ void direct_block_tensor_test::test_op_2() throw(libtest::test_exception) {
 	btod_copy<2> op_copy(bta);
 	direct_block_tensor<2, double, allocator_t> btb(op_copy);
 
-	tensor<2, double, allocator_t> tc(dims), tc_ref(dims);
+	dense_tensor<2, double, allocator_t> tc(dims), tc_ref(dims);
 	tod_btconv<2>(bta).perform(tc_ref);
 	tod_btconv<2>(btb).perform(tc);
 	compare_ref<2>::compare(testname, tc, tc_ref, 0.0);
@@ -151,7 +151,7 @@ void direct_block_tensor_test::test_op_3() throw(libtest::test_exception) {
 
 	btod_contract2<2, 2, 2>(contr, dbta, dbta).perform(btc);
 
-	tensor<4, double, allocator_t> ta(dims), tb(dims), tc(dims),
+	dense_tensor<4, double, allocator_t> ta(dims), tb(dims), tc(dims),
 		tc_ref(dims);
 	tod_btconv<4>(bta).perform(ta);
 	tod_btconv<4>(btb).perform(tb);
@@ -225,7 +225,7 @@ void direct_block_tensor_test::test_op_4() throw(libtest::test_exception) {
 	block_tensor<4, double, allocator_t> btc(bis4);
 	btod_contract2<2, 2, 2>(contr, dbtb1, dbtb2).perform(btc);
 
-	tensor<2, double, allocator_t> ta1(dims2), ta2(dims2), ta3(dims2),
+	dense_tensor<2, double, allocator_t> ta1(dims2), ta2(dims2), ta3(dims2),
 		ta4(dims2), ta5(dims2), ta6(dims2);
 	tod_btconv<2>(bta1).perform(ta1);
 	tod_btconv<2>(bta2).perform(ta2);
@@ -236,7 +236,7 @@ void direct_block_tensor_test::test_op_4() throw(libtest::test_exception) {
 	tod_copy<2>(ta3, -3.0).perform(cpus, true, 1.0, ta6);
 	tod_copy<2>(ta4, 2.5).perform(cpus, false, 1.0, ta6);
 
-	tensor<4, double, allocator_t> tb1(dims4), tb2(dims4), tc(dims4),
+	dense_tensor<4, double, allocator_t> tb1(dims4), tb2(dims4), tc(dims4),
 		tc_ref(dims4);
 	tod_dirsum<2, 2>(ta5, 1.0, ta6, -2.0).perform(tb1);
 	tod_dirsum<2, 2>(ta5, -2.0, ta6, 1.0).perform(tb2);

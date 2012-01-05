@@ -1,6 +1,6 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor.h>
-#include <libtensor/core/tensor.h>
+#include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/btod/btod_set_elem.h>
 #include <libtensor/symmetry/se_perm.h>
@@ -33,7 +33,7 @@ void btod_set_elem_test::test_1() throw(libtest::test_exception) {
 	dimensions<2> dims(index_range<2>(i1, i2));
 	block_index_space<2> bis(dims);
 	block_tensor<2, double, allocator_t> bt(bis);
-	tensor<2, double, allocator_t> t(dims), t_ref(dims);
+	dense_tensor<2, double, allocator_t> t(dims), t_ref(dims);
 
 	//	Fill in random data
 	//
@@ -79,7 +79,7 @@ void btod_set_elem_test::test_2() throw(libtest::test_exception) {
 	bis.split(m10, 3);
 	bis.split(m01, 4);
 	block_tensor<2, double, allocator_t> bt(bis);
-	tensor<2, double, allocator_t> t(dims), t_ref(dims);
+	dense_tensor<2, double, allocator_t> t(dims), t_ref(dims);
 
 	//	Fill in random data
 	//
@@ -145,7 +145,7 @@ void btod_set_elem_test::test_3() throw(libtest::test_exception) {
 	bis.split(m, 3);
 	bis.split(m, 6);
 	block_tensor<2, double, allocator_t> bt(bis);
-	tensor<2, double, allocator_t> t(dims), t_ref(dims);
+	dense_tensor<2, double, allocator_t> t(dims), t_ref(dims);
 
 	//	Set up symmetry
 	//

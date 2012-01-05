@@ -67,7 +67,7 @@ void btod_symmetrize3_test::test_1() throw(libtest::test_exception) {
 
 	//	Prepare reference data
 
-	tensor<3, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
+	dense_tensor<3, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
 	tod_btconv<3>(bta).perform(ta);
 	tod_add<3> refop(ta);
 	refop.add_op(ta, permutation<3>().permute(0, 1), 1.0);
@@ -141,7 +141,7 @@ void btod_symmetrize3_test::test_2() throw(libtest::test_exception) {
 
 	//	Prepare reference data
 
-	tensor<3, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
+	dense_tensor<3, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
 	tod_btconv<3>(bta).perform(ta);
 	tod_add<3> refop(ta);
 	refop.add_op(ta, permutation<3>().permute(0, 1), -1.0);
@@ -217,7 +217,7 @@ void btod_symmetrize3_test::test_3() throw(libtest::test_exception) {
 
 	//	Prepare reference data
 
-	tensor<3, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
+	dense_tensor<3, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
 	tod_btconv<3>(bta).perform(ta);
 	tod_add<3> refop(ta);
 	refop.add_op(ta, permutation<3>().permute(0, 1), 1.0);
@@ -293,7 +293,7 @@ void btod_symmetrize3_test::test_4() throw(libtest::test_exception) {
 
 	//	Prepare reference data
 
-	tensor<4, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
+	dense_tensor<4, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
 	tod_btconv<4>(bta).perform(ta);
 	tod_add<4> refop(ta);
 	refop.add_op(ta, permutation<4>().permute(0, 1), 1.0);
@@ -378,7 +378,7 @@ void btod_symmetrize3_test::test_5() throw(libtest::test_exception) {
 
 	//	Prepare reference data
 
-	tensor<3, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
+	dense_tensor<3, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
 	tod_btconv<3>(bta).perform(ta);
 	tod_add<3> refop(ta);
 	refop.add_op(ta, permutation<3>().permute(0, 1), 1.0);
@@ -470,7 +470,7 @@ void btod_symmetrize3_test::test_6() throw(libtest::test_exception) {
 
 	//	Prepare reference data
 
-	tensor<6, double, allocator_t> ta(dims), ta1(dims), tb(dims),
+	dense_tensor<6, double, allocator_t> ta(dims), ta1(dims), tb(dims),
 		tb_ref(dims);
 	tod_btconv<6>(bta).perform(ta);
 	tod_add<6> refop1(ta);
@@ -567,7 +567,7 @@ void btod_symmetrize3_test::test_7() throw(libtest::test_exception) {
 
 	//	Prepare reference data
 
-	tensor<6, double, allocator_t> ta(dims), ta1(dims), tb(dims),
+	dense_tensor<6, double, allocator_t> ta(dims), ta1(dims), tb(dims),
 		tb_ref(dims);
 	tod_btconv<6>(bta).perform(ta);
 	tod_btconv<6>(btb).perform(tb_ref);

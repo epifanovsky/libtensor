@@ -15,8 +15,8 @@
 #include "btod_import_raw.h"
 #include <libtensor/linalg.h> //necessary to include LAPACK functions
 
-#include "../core/tensor.h"
-#include "../dense_tensor/dense_tensor_ctrl.h"
+#include <libtensor/dense_tensor/dense_tensor.h>
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include "../tod/tod_btconv.h"
 #include "../tod/tod_contract2.h"
 #include "../tod/tod_import_raw.h"
@@ -31,7 +31,7 @@ namespace libtensor
 {
 btod_cholesky::btod_cholesky(block_tensor_i<2, double> &bta, double tol) :
 	m_bta(bta), m_tol(tol),  
-	pta(new tensor<2, double, std_allocator <double> >(bta.get_bis().get_dims()))
+	pta(new dense_tensor<2, double, std_allocator <double> >(bta.get_bis().get_dims()))
 	{
 
 }

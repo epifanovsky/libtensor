@@ -68,9 +68,9 @@ void btod_ewmult2_test::test_1(bool doadd) throw(libtest::test_exception) {
 	block_tensor<1, double, allocator_t> bta(bisa);
 	block_tensor<1, double, allocator_t> btb(bisb);
 	block_tensor<1, double, allocator_t> btc(bisc);
-	tensor<1, double, allocator_t> ta(dimsa);
-	tensor<1, double, allocator_t> tb(dimsb);
-	tensor<1, double, allocator_t> tc(dimsc), tc_ref(dimsc);
+	dense_tensor<1, double, allocator_t> ta(dimsa);
+	dense_tensor<1, double, allocator_t> tb(dimsb);
+	dense_tensor<1, double, allocator_t> tc(dimsc), tc_ref(dimsc);
 
 	//	Fill in random data
 
@@ -149,9 +149,9 @@ void btod_ewmult2_test::test_2(bool doadd) throw(libtest::test_exception) {
 	block_tensor<2, double, allocator_t> bta(bisa);
 	block_tensor<2, double, allocator_t> btb(bisb);
 	block_tensor<2, double, allocator_t> btc(bisc);
-	tensor<2, double, allocator_t> ta(dimsa);
-	tensor<2, double, allocator_t> tb(dimsb);
-	tensor<2, double, allocator_t> tc(dimsc), tc_ref(dimsc);
+	dense_tensor<2, double, allocator_t> ta(dimsa);
+	dense_tensor<2, double, allocator_t> tb(dimsb);
+	dense_tensor<2, double, allocator_t> tc(dimsc), tc_ref(dimsc);
 
 	//	Fill in random data
 
@@ -235,9 +235,9 @@ void btod_ewmult2_test::test_3(bool doadd) throw(libtest::test_exception) {
 	block_tensor<2, double, allocator_t> bta(bisa);
 	block_tensor<2, double, allocator_t> btb(bisb);
 	block_tensor<2, double, allocator_t> btc(bisc);
-	tensor<2, double, allocator_t> ta(dimsa);
-	tensor<2, double, allocator_t> tb(dimsb);
-	tensor<2, double, allocator_t> tc(dimsc), tc_ref(dimsc);
+	dense_tensor<2, double, allocator_t> ta(dimsa);
+	dense_tensor<2, double, allocator_t> tb(dimsb);
+	dense_tensor<2, double, allocator_t> tc(dimsc), tc_ref(dimsc);
 
 	//	Fill in random data
 
@@ -329,9 +329,9 @@ void btod_ewmult2_test::test_4(bool doadd) throw(libtest::test_exception) {
 	block_tensor<2, double, allocator_t> bta(bisa);
 	block_tensor<3, double, allocator_t> btb(bisb);
 	block_tensor<4, double, allocator_t> btc(bisc);
-	tensor<2, double, allocator_t> ta(dimsa);
-	tensor<3, double, allocator_t> tb(dimsb);
-	tensor<4, double, allocator_t> tc(dimsc), tc_ref(dimsc);
+	dense_tensor<2, double, allocator_t> ta(dimsa);
+	dense_tensor<3, double, allocator_t> tb(dimsb);
+	dense_tensor<4, double, allocator_t> tc(dimsc), tc_ref(dimsc);
 
 	//	Fill in random data
 
@@ -426,9 +426,9 @@ void btod_ewmult2_test::test_5(bool doadd) throw(libtest::test_exception) {
 	block_tensor<3, double, allocator_t> bta(bisa);
 	block_tensor<3, double, allocator_t> btb(bisb);
 	block_tensor<4, double, allocator_t> btc(bisc);
-	tensor<3, double, allocator_t> ta(dimsa);
-	tensor<3, double, allocator_t> tb(dimsb);
-	tensor<4, double, allocator_t> tc(dimsc), tc_ref(dimsc);
+	dense_tensor<3, double, allocator_t> ta(dimsa);
+	dense_tensor<3, double, allocator_t> tb(dimsb);
+	dense_tensor<4, double, allocator_t> tc(dimsc), tc_ref(dimsc);
 
 	//	Fill in random data
 
@@ -526,9 +526,9 @@ void btod_ewmult2_test::test_6(bool doadd) throw(libtest::test_exception) {
 	block_tensor<3, double, allocator_t> btb(bisb);
 	block_tensor<4, double, allocator_t> btc(bisc);
 	symmetry<4, double> symc(bisc), symc_ref(bisc);
-	tensor<3, double, allocator_t> ta(dimsa);
-	tensor<3, double, allocator_t> tb(dimsb);
-	tensor<4, double, allocator_t> tc(dimsc), tc_ref(dimsc);
+	dense_tensor<3, double, allocator_t> ta(dimsa);
+	dense_tensor<3, double, allocator_t> tb(dimsb);
+	dense_tensor<4, double, allocator_t> tc(dimsc), tc_ref(dimsc);
 
 	//	Set up symmetry
 
@@ -658,9 +658,9 @@ void btod_ewmult2_test::test_7() throw(libtest::test_exception) {
 	block_tensor<2, double, allocator_t> btb(bisb);
 	block_tensor<3, double, allocator_t> btc(bisc);
 	symmetry<3, double> symc(bisc), symc_ref(bisc);
-	tensor<2, double, allocator_t> ta(dimsa);
-	tensor<2, double, allocator_t> tb(dimsb);
-	tensor<3, double, allocator_t> tc(dimsc), tc_ref(dimsc);
+	dense_tensor<2, double, allocator_t> ta(dimsa);
+	dense_tensor<2, double, allocator_t> tb(dimsb);
+	dense_tensor<3, double, allocator_t> tc(dimsc), tc_ref(dimsc);
 
 	//	Set up symmetry
 

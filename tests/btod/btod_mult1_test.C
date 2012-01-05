@@ -47,7 +47,7 @@ void btod_mult1_test::test_1(
 	dimensions<2> bidims(bis.get_block_index_dims());
 
 	block_tensor<2, double, allocator_t> bta(bis), btb(bis);
-	tensor<2, double, allocator_t> ta(dims), tb(dims), ta_ref(dims);
+	dense_tensor<2, double, allocator_t> ta(dims), tb(dims), ta_ref(dims);
 
 	//	Fill in random data
 
@@ -106,7 +106,7 @@ void btod_mult1_test::test_2(
 	p10.permute(0, 1);
 
 	block_tensor<2, double, allocator_t> bta(bis), btb(bis);
-	tensor<2, double, allocator_t> ta(dims), tb(dims), ta_ref(dims);
+	dense_tensor<2, double, allocator_t> ta(dims), tb(dims), ta_ref(dims);
 
 	//	Fill in random data
 
@@ -168,7 +168,7 @@ void btod_mult1_test::test_3(
 	se_perm<2, double> sp10(p10, true), ap10(p10, false);
 
 	block_tensor<2, double, allocator_t> bta(bis), btb(bis);
-	tensor<2, double, allocator_t> ta(dims), tb(dims), ta_ref(dims);
+	dense_tensor<2, double, allocator_t> ta(dims), tb(dims), ta_ref(dims);
 
 	//  Add symmetries
 
@@ -244,7 +244,7 @@ void btod_mult1_test::test_4(
 	se_perm<4, double> sp10(p10, true), ap32(p32, false);
 
 	block_tensor<4, double, allocator_t> bta(bis), btb(bis);
-	tensor<4, double, allocator_t> ta(dims), tb(dims), ta_ref(dims);
+	dense_tensor<4, double, allocator_t> ta(dims), tb(dims), ta_ref(dims);
 
 	//  Add symmetries
 
@@ -320,7 +320,7 @@ void btod_mult1_test::test_5(bool recip, bool doadd)
 
 	block_tensor<2, double, allocator_t> bta(bis), btb(bis);
 	symmetry<2, double> syma(bis), syma_ref(bis);
-	tensor<2, double, allocator_t> ta(dims), tb(dims), ta_ref(dims);
+	dense_tensor<2, double, allocator_t> ta(dims), tb(dims), ta_ref(dims);
 
 	//	Install symmetry
 

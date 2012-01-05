@@ -7,6 +7,7 @@ set(SRC_CORE
 	core/block_index_subspace_builder_test.C
 	core/block_map_test.C
 	core/block_tensor_test.C
+        core/dense_tensor_test.C
 	core/dimensions_test.C
 	core/direct_block_tensor_test.C
 	core/global_timings_test.C
@@ -24,7 +25,6 @@ set(SRC_CORE
 	core/symmetry_test.C
 	core/symmetry_element_set_test.C
 	core/task_batch_test.C
-	core/tensor_test.C
 	core/timer_test.C
 	core/timings_test.C
 	core/transf_list_test.C

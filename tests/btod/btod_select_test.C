@@ -3,7 +3,7 @@
 #include <ctime>
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor.h>
-#include <libtensor/core/tensor.h>
+#include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/btod/btod_import_raw.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/btod/btod_select.h>
@@ -104,7 +104,7 @@ void btod_select_test::test_1(size_t n) throw(libtest::test_exception) {
 	dimensions<2> dims(index_range<2>(i1, i2));
 	block_index_space<2> bis(dims);
 	block_tensor<2, double, allocator_t> bt(bis);
-	tensor<2, double, allocator_t> t_ref(dims);
+	dense_tensor<2, double, allocator_t> t_ref(dims);
 
 	//	Fill in random data
 	btod_random<2>().perform(bt);
@@ -170,7 +170,7 @@ void btod_select_test::test_2(size_t n) throw(libtest::test_exception) {
 	bis.split(m10, 3);
 	bis.split(m01, 4);
 	block_tensor<2, double, allocator_t> bt(bis);
-	tensor<2, double, allocator_t> t_ref(dims);
+	dense_tensor<2, double, allocator_t> t_ref(dims);
 
 	//	Fill in random data
 	btod_random<2>().perform(bt);
@@ -240,7 +240,7 @@ void btod_select_test::test_3a(size_t n,
 	bis.split(m11, 3);
 	bis.split(m11, 5);
 	block_tensor<2, double, allocator_t> bt(bis);
-	tensor<2, double, allocator_t> t_ref(dims);
+	dense_tensor<2, double, allocator_t> t_ref(dims);
 	{
 		block_tensor_ctrl<2, double> btc(bt);
 		btc.req_symmetry().insert(
@@ -348,7 +348,7 @@ void btod_select_test::test_3b(size_t n) throw(libtest::test_exception) {
 	bis.split(m11, 3);
 	bis.split(m11, 5);
 	block_tensor<2, double, allocator_t> bt(bis);
-	tensor<2, double, allocator_t> t_ref(dims);
+	dense_tensor<2, double, allocator_t> t_ref(dims);
 
 	{ // Setup symmetry
 	block_tensor_ctrl<2, double> btc(bt);
@@ -443,7 +443,7 @@ void btod_select_test::test_3c(size_t n,
 	mask<2> m11; m11[0] = true; m11[1] = true;
 	bis.split(m11, 5);
 	block_tensor<2, double, allocator_t> bt(bis);
-	tensor<2, double, allocator_t> t_ref(dims);
+	dense_tensor<2, double, allocator_t> t_ref(dims);
 
 	index<2> i00, i01, i10, i11;
 	i10[0] = 1; i01[1] = 1;
@@ -461,7 +461,7 @@ void btod_select_test::test_3c(size_t n,
 	//	Fill in random data
 	btod_random<2>().perform(bt);
 	{
-		tensor<2, double, allocator_t> tmp(dims);
+		dense_tensor<2, double, allocator_t> tmp(dims);
 		block_tensor<2, double, allocator_t> btmp(bis);
 
 		tod_btconv<2>(bt).perform(tmp);
@@ -571,7 +571,7 @@ void btod_select_test::test_4a(size_t n,
 	//	Fill in random data
 	btod_random<2>().perform(bt_ref);
 	{
-	tensor<2, double, allocator_t> tmp(dims);
+	dense_tensor<2, double, allocator_t> tmp(dims);
 	tod_btconv<2>(bt_ref).perform(tmp);
 	dense_tensor_ctrl<2, double> ctrl(tmp);
 	const double *ptr = ctrl.req_const_dataptr();
@@ -649,7 +649,7 @@ void btod_select_test::test_4b(size_t n) throw(libtest::test_exception) {
 	//	Fill in random data
 	btod_random<2>().perform(bt_ref);
 	{
-	tensor<2, double, allocator_t> tmp(dims);
+	dense_tensor<2, double, allocator_t> tmp(dims);
 	tod_btconv<2>(bt_ref).perform(tmp);
 	dense_tensor_ctrl<2, double> ctrl(tmp);
 	const double *ptr = ctrl.req_const_dataptr();
@@ -728,7 +728,7 @@ void btod_select_test::test_4c(size_t n,
 	//	Fill in random data
 	btod_random<2>().perform(bt_ref);
 	{
-	tensor<2, double, allocator_t> tmp(dims);
+	dense_tensor<2, double, allocator_t> tmp(dims);
 	tod_btconv<2>(bt_ref).perform(tmp);
 	dense_tensor_ctrl<2, double> ctrl(tmp);
 	const double *ptr = ctrl.req_const_dataptr();

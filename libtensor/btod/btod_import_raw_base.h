@@ -10,7 +10,7 @@
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include "../core/tensor.h"
+#include <libtensor/dense_tensor/dense_tensor.h>
 #include "../tod/tod_compare.h"
 #include "../tod/tod_copy.h"
 #include "../symmetry/so_copy.h"
@@ -163,7 +163,7 @@ void btod_import_raw_base<N, Alloc>::verify_nonzero_orbit(
 
         //	Compare with the transformed canonical block
         dense_tensor_i<N, double> &blk = ctrl.req_block(ai.get_index());
-        tensor<N, double, Alloc> tblk(blk.get_dims());
+        dense_tensor<N, double, Alloc> tblk(blk.get_dims());
         tod_copy<N> (cblk, tr.get_perm(), tr.get_coeff()).
             perform(cpus, true, 1.0, tblk);
 

@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <libtensor/core/allocator.h>
-#include <libtensor/core/tensor.h>
+#include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/tod/tod_compare.h>
 #include "tod_compare_test.h"
 
@@ -27,7 +27,7 @@ void tod_compare_test::perform() throw(libtest::test_exception) {
 void tod_compare_test::test_exc() throw(libtest::test_exception) {
 
     typedef std_allocator<double> allocator;
-    typedef tensor<4, double, std_allocator<double> > tensor4;
+    typedef dense_tensor<4, double, std_allocator<double> > tensor4;
     typedef dense_tensor_ctrl<4,double> tensor4_ctrl;
 
 	index<4> i1, i2, i3;
@@ -54,7 +54,7 @@ void tod_compare_test::test_operation(const dimensions<4> &dim,
 	const index<4> &idx) throw(libtest::test_exception) {
 
     typedef std_allocator<double> allocator;
-    typedef tensor<4, double, std_allocator<double> > tensor4;
+    typedef dense_tensor<4, double, std_allocator<double> > tensor4;
     typedef dense_tensor_ctrl<4,double> tensor4_ctrl;
 
 	tensor4 t1(dim), t2(dim);
@@ -117,7 +117,7 @@ void tod_compare_test::test_0() throw(libtest::test_exception) {
 
 	index<0> i1, i2;
 	dimensions<0> dims(index_range<0>(i1, i2));
-	tensor<0, double, allocator> t1(dims), t2(dims), t3(dims);
+	dense_tensor<0, double, allocator> t1(dims), t2(dims), t3(dims);
 
 	{
 		dense_tensor_ctrl<0, double> tc1(t1), tc2(t2), tc3(t3);
@@ -160,7 +160,7 @@ void tod_compare_test::test_1() throw(libtest::test_exception) {
 	i2[0] = 5; i2[1] = 5;
 	dimensions<2> dims(index_range<2>(i1, i2));
 	size_t sz = dims.get_size();
-	tensor<2, double, allocator> t1(dims), t2(dims);
+	dense_tensor<2, double, allocator> t1(dims), t2(dims);
 
 	{
 		dense_tensor_ctrl<2, double> tc1(t1), tc2(t2);

@@ -1,5 +1,5 @@
 #include <libtensor/core/allocator.h>
-#include <libtensor/core/tensor.h>
+#include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/btod/btod_copy.h>
 #include <libtensor/btod/btod_random.h>
@@ -67,7 +67,7 @@ void btod_copy_test::test_zero_1() throw(libtest::test_exception) {
 	dimensions<2> dims(index_range<2>(i1, i2));
 	block_index_space<2> bis(dims);
 	dimensions<2> bidims(bis.get_block_index_dims());
-	tensor<2, double, allocator_t> ta(dims), tb(dims);
+	dense_tensor<2, double, allocator_t> ta(dims), tb(dims);
 	block_tensor<2, double, allocator_t> bta(bis), btb(bis);
 
 	//	Fill the output with random data
@@ -119,7 +119,7 @@ void btod_copy_test::test_zero_2() throw(libtest::test_exception) {
 	bis.split(msk1, 6);
 	bis.split(msk2, 5);
 	dimensions<2> bidims(bis.get_block_index_dims());
-	tensor<2, double, allocator_t> ta(dims), tb(dims);
+	dense_tensor<2, double, allocator_t> ta(dims), tb(dims);
 	block_tensor<2, double, allocator_t> bta(bis), btb(bis);
 
 	//	Fill the output with random data
@@ -166,7 +166,7 @@ void btod_copy_test::test_nosym_1() throw(libtest::test_exception) {
 	i2[0] = 10; i2[1] = 10;
 	dimensions<2> dims(index_range<2>(i1, i2));
 	block_index_space<2> bis(dims);
-	tensor<2, double, allocator_t> ta(dims), tb(dims);
+	dense_tensor<2, double, allocator_t> ta(dims), tb(dims);
 	block_tensor<2, double, allocator_t> bta(bis), btb(bis);
 
 	//	Fill the input with random data
@@ -207,7 +207,7 @@ void btod_copy_test::test_nosym_2() throw(libtest::test_exception) {
 	i2[0] = 10; i2[1] = 10;
 	dimensions<2> dims(index_range<2>(i1, i2));
 	block_index_space<2> bis(dims);
-	tensor<2, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
+	dense_tensor<2, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
 	block_tensor<2, double, allocator_t> bta(bis), btb(bis);
 	permutation<2> perm10;
 	perm10.permute(0, 1);
@@ -255,7 +255,7 @@ void btod_copy_test::test_nosym_3() throw(libtest::test_exception) {
 	mask<2> m; m[0] = true; m[1] = true;
 	bis.split(m, 3);
 	bis.split(m, 7);
-	tensor<2, double, allocator_t> ta(dims), tb(dims);
+	dense_tensor<2, double, allocator_t> ta(dims), tb(dims);
 	block_tensor<2, double, allocator_t> bta(bis), btb(bis);
 
 	//	Fill the input with random data
@@ -300,7 +300,7 @@ void btod_copy_test::test_nosym_4() throw(libtest::test_exception) {
 	mask<2> m; m[0] = true; m[1] = true;
 	bis.split(m, 3);
 	bis.split(m, 7);
-	tensor<2, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
+	dense_tensor<2, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
 	block_tensor<2, double, allocator_t> bta(bis), btb(bis);
 	permutation<2> perm10;
 	perm10.permute(0, 1);
@@ -349,7 +349,7 @@ void btod_copy_test::test_sym_1() throw(libtest::test_exception) {
 	mask<2> m; m[0] = true; m[1] = true;
 	bis.split(m, 3);
 	bis.split(m, 7);
-	tensor<2, double, allocator_t> ta(dims), tb(dims);
+	dense_tensor<2, double, allocator_t> ta(dims), tb(dims);
 	block_tensor<2, double, allocator_t> bta(bis), btb(bis);
 
 	//	Fill the input with random data
@@ -399,7 +399,7 @@ void btod_copy_test::test_sym_2() throw(libtest::test_exception) {
 	mask<2> m; m[0] = true; m[1] = true;
 	bis.split(m, 3);
 	bis.split(m, 7);
-	tensor<2, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
+	dense_tensor<2, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
 	block_tensor<2, double, allocator_t> bta(bis), btb(bis);
 
 	//	Fill the input with random data
@@ -459,7 +459,7 @@ void btod_copy_test::test_sym_3() throw(libtest::test_exception) {
 	bisb.split(mb1, 3);
 	bisb.split(mb1, 7);
 	bisb.split(mb2, 2);
-	tensor<3, double, allocator_t> ta(dima), tb(dimb), tb_ref(dimb);
+	dense_tensor<3, double, allocator_t> ta(dima), tb(dimb), tb_ref(dimb);
 	block_tensor<3, double, allocator_t> bta(bisa), btb(bisb);
 
 	permutation<3> perm210, perm021;
@@ -521,7 +521,7 @@ void btod_copy_test::test_sym_4() throw(libtest::test_exception) {
 	bisb.split(m1, 3);
 	bisb.split(m1, 5);
 	bisb.split(m2, 4);
-	tensor<4, double, allocator_t> ta(dima), tb(dimb), tb_ref(dimb);
+	dense_tensor<4, double, allocator_t> ta(dima), tb(dimb), tb_ref(dimb);
 	block_tensor<4, double, allocator_t> bta(bisa), btb(bisb);
 
 	//	Set up symmetry
@@ -579,7 +579,7 @@ void btod_copy_test::test_add_nosym_1() throw(libtest::test_exception) {
 	i2[0] = 10; i2[1] = 10;
 	dimensions<2> dims(index_range<2>(i1, i2));
 	block_index_space<2> bis(dims);
-	tensor<2, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
+	dense_tensor<2, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
 	block_tensor<2, double, allocator_t> bta(bis), btb(bis);
 
 	//	Fill the input with random data
@@ -627,7 +627,7 @@ void btod_copy_test::test_add_nosym_2() throw(libtest::test_exception) {
 	mask<2> m; m[0] = true; m[1] = true;
 	bis.split(m, 3);
 	bis.split(m, 7);
-	tensor<2, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
+	dense_tensor<2, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
 	block_tensor<2, double, allocator_t> bta(bis), btb(bis);
 	permutation<2> perm10;
 	perm10.permute(0, 1);
@@ -685,7 +685,7 @@ void btod_copy_test::test_add_nosym_3() throw(libtest::test_exception) {
 	bisb.split(m1, 3);
 	bisb.split(m1, 5);
 	bisb.split(m2, 4);
-	tensor<4, double, allocator_t> ta(dima), tb(dimb), tb_ref(dimb);
+	dense_tensor<4, double, allocator_t> ta(dima), tb(dimb), tb_ref(dimb);
 	block_tensor<4, double, allocator_t> bta(bisa), btb(bisb);
 
 	//	Load random data for input
@@ -735,7 +735,7 @@ void btod_copy_test::test_add_nosym_4() throw(libtest::test_exception) {
 	mask<2> m; m[0] = true; m[1] = true;
 	bis.split(m, 3);
 	bis.split(m, 7);
-	tensor<2, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
+	dense_tensor<2, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
 	block_tensor<2, double, allocator_t> bta(bis), btb(bis);
 	permutation<2> perm10;
 	perm10.permute(0, 1);
@@ -786,7 +786,7 @@ void btod_copy_test::test_add_eqsym_1() throw(libtest::test_exception) {
 	mask<2> m; m[0] = true; m[1] = true;
 	bis.split(m, 3);
 	bis.split(m, 7);
-	tensor<2, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
+	dense_tensor<2, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
 	block_tensor<2, double, allocator_t> bta(bis), btb(bis);
 
 	//	Fill the input with random data
@@ -840,7 +840,7 @@ void btod_copy_test::test_add_eqsym_2() throw(libtest::test_exception) {
 	mask<2> m; m[0] = true; m[1] = true;
 	bis.split(m, 3);
 	bis.split(m, 7);
-	tensor<2, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
+	dense_tensor<2, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
 	block_tensor<2, double, allocator_t> bta(bis), btb(bis);
 	permutation<2> perm10;
 	perm10.permute(0, 1);
@@ -905,7 +905,7 @@ void btod_copy_test::test_add_eqsym_3() throw(libtest::test_exception) {
 	bisb.split(mb1, 3);
 	bisb.split(mb1, 7);
 	bisb.split(mb2, 2);
-	tensor<3, double, allocator_t> ta(dima), tb(dimb), tb_ref(dimb);
+	dense_tensor<3, double, allocator_t> ta(dima), tb(dimb), tb_ref(dimb);
 	block_tensor<3, double, allocator_t> bta(bisa), btb(bisb);
 
 	permutation<3> perm210, perm021, perm102;
@@ -972,7 +972,7 @@ void btod_copy_test::test_add_eqsym_4() throw(libtest::test_exception) {
 	bisb.split(m1, 3);
 	bisb.split(m1, 5);
 	bisb.split(m2, 4);
-	tensor<4, double, allocator_t> ta(dima), tb(dimb), tb_ref(dimb);
+	dense_tensor<4, double, allocator_t> ta(dima), tb(dimb), tb_ref(dimb);
 	block_tensor<4, double, allocator_t> bta(bisa), btb(bisb);
 
 	//	Set up symmetry
@@ -1042,7 +1042,7 @@ void btod_copy_test::test_add_eqsym_5() throw(libtest::test_exception) {
 	bisb.split(m1b, 3);
 	bisb.split(m1b, 5);
 	bisb.split(m2b, 4);
-	tensor<4, double, allocator_t> ta(dima), tb(dimb), tb_ref(dimb);
+	dense_tensor<4, double, allocator_t> ta(dima), tb(dimb), tb_ref(dimb);
 	block_tensor<4, double, allocator_t> bta(bisa), btb(bisb);
 	permutation<4> perm0213;
 	perm0213.permute(1, 2);
@@ -1104,7 +1104,7 @@ void btod_copy_test::test_add_nesym_1() throw(libtest::test_exception) {
 	mask<2> m; m[0] = true; m[1] = true;
 	bis.split(m, 3);
 	bis.split(m, 7);
-	tensor<2, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
+	dense_tensor<2, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
 	block_tensor<2, double, allocator_t> bta(bis), btb(bis);
 
 	//	Fill the input with random data
@@ -1157,7 +1157,7 @@ void btod_copy_test::test_add_nesym_2() throw(libtest::test_exception) {
 	mask<2> m; m[0] = true; m[1] = true;
 	bis.split(m, 3);
 	bis.split(m, 7);
-	tensor<2, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
+	dense_tensor<2, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
 	block_tensor<2, double, allocator_t> bta(bis), btb(bis);
 
 	//	Fill the input with random data
@@ -1214,7 +1214,7 @@ void btod_copy_test::test_add_nesym_3() throw(libtest::test_exception) {
 	bisa.split(m1, 5);
 	bisb.split(m1, 3);
 	bisb.split(m1, 5);
-	tensor<4, double, allocator_t> ta(dima), tb(dimb), tb_ref(dimb);
+	dense_tensor<4, double, allocator_t> ta(dima), tb(dimb), tb_ref(dimb);
 	block_tensor<4, double, allocator_t> bta(bisa), btb(bisb);
 
 	//	Set up symmetry
@@ -1281,7 +1281,7 @@ void btod_copy_test::test_add_nesym_4() throw(libtest::test_exception) {
 	bisa.split(m1, 5);
 	bisb.split(m1, 3);
 	bisb.split(m1, 5);
-	tensor<4, double, allocator_t> ta(dima), tb(dimb), tb_ref(dimb);
+	dense_tensor<4, double, allocator_t> ta(dima), tb(dimb), tb_ref(dimb);
 	block_tensor<4, double, allocator_t> bta(bisa), btb(bisb);
 
 	//	Set up symmetry
@@ -1348,7 +1348,7 @@ void btod_copy_test::test_add_nesym_5() throw(libtest::test_exception) {
 	bisa.split(m1, 5);
 	bisb.split(m1, 3);
 	bisb.split(m1, 5);
-	tensor<4, double, allocator_t> ta(dima), tb(dimb), tb_ref(dimb);
+	dense_tensor<4, double, allocator_t> ta(dima), tb(dimb), tb_ref(dimb);
 	block_tensor<4, double, allocator_t> bta(bisa), btb(bisb);
 
 	//	Set up symmetry
@@ -1415,7 +1415,7 @@ void btod_copy_test::test_add_nesym_5_sp() throw(libtest::test_exception) {
 	bisa.split(m1, 5);
 	bisb.split(m1, 3);
 	bisb.split(m1, 5);
-	tensor<4, double, allocator_t> ta(dima), tb(dimb), tb_ref(dimb);
+	dense_tensor<4, double, allocator_t> ta(dima), tb(dimb), tb_ref(dimb);
 	block_tensor<4, double, allocator_t> bta(bisa), btb(bisb);
 
 	//	Set up symmetry
@@ -1497,7 +1497,7 @@ void btod_copy_test::test_add_nesym_6() throw(libtest::test_exception) {
 	bisa.split(m1, 5);
 	bisb.split(m1, 3);
 	bisb.split(m1, 5);
-	tensor<4, double, allocator_t> ta(dima), tb(dimb), tb_ref(dimb);
+	dense_tensor<4, double, allocator_t> ta(dima), tb(dimb), tb_ref(dimb);
 	block_tensor<4, double, allocator_t> bta(bisa), btb(bisb);
 
 	//	Set up symmetry
@@ -1570,7 +1570,7 @@ void btod_copy_test::test_add_nesym_7_sp1() throw(libtest::test_exception) {
 	bisa.split(m1, 5);
 	bisb.split(m1, 3);
 	bisb.split(m1, 5);
-	tensor<4, double, allocator_t> ta(dima), tb(dimb), tb_ref(dimb);
+	dense_tensor<4, double, allocator_t> ta(dima), tb(dimb), tb_ref(dimb);
 	block_tensor<4, double, allocator_t> bta(bisa), btb(bisb);
 
 	//	Set up symmetry
@@ -1644,7 +1644,7 @@ void btod_copy_test::test_add_nesym_7_sp2() throw(libtest::test_exception) {
 	bisa.split(m1, 5);
 	bisb.split(m1, 3);
 	bisb.split(m1, 5);
-	tensor<4, double, allocator_t> ta(dima), tb(dimb), tb_ref(dimb);
+	dense_tensor<4, double, allocator_t> ta(dima), tb(dimb), tb_ref(dimb);
 	block_tensor<4, double, allocator_t> bta(bisa), btb(bisb);
 
 	//	Set up symmetry
@@ -1718,7 +1718,7 @@ void btod_copy_test::test_add_nesym_7_sp3() throw(libtest::test_exception) {
 	bisa.split(m1, 5);
 	bisb.split(m1, 3);
 	bisb.split(m1, 5);
-	tensor<4, double, allocator_t> ta(dima), tb(dimb), tb_ref(dimb);
+	dense_tensor<4, double, allocator_t> ta(dima), tb(dimb), tb_ref(dimb);
 	block_tensor<4, double, allocator_t> bta(bisa), btb(bisb);
 
 	//	Set up symmetry
@@ -1769,7 +1769,7 @@ void btod_copy_test::test_dir_1() throw(libtest::test_exception) {
 	static const char *testname = "btod_copy_test::test_dir_1()";
 
 	typedef std_allocator<double> allocator_t;
-	typedef tensor<2, double, allocator_t> tensor_t;
+	typedef dense_tensor<2, double, allocator_t> tensor_t;
 	typedef dense_tensor_ctrl<2, double> tensor_ctrl_t;
 	typedef block_tensor<2, double, allocator_t> block_tensor_t;
 	typedef block_tensor_ctrl<2, double> block_tensor_ctrl_t;

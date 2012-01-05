@@ -8,6 +8,7 @@
 #include "block_index_subspace_builder_test.h"
 #include "block_map_test.h"
 #include "block_tensor_test.h"
+#include "dense_tensor_test.h"
 #include "dimensions_test.h"
 #include "direct_block_tensor_test.h"
 #include "global_timings_test.h"
@@ -25,7 +26,6 @@
 #include "symmetry_test.h"
 #include "symmetry_element_set_test.h"
 #include "task_batch_test.h"
-#include "tensor_test.h"
 #include "timer_test.h"
 #include "timings_test.h"
 #include "transf_list_test.h"
@@ -56,6 +56,7 @@ namespace libtensor {
 	\li libtensor::block_index_subspace_builder_test
 	\li libtensor::block_map_test
 	\li libtensor::block_tensor_test
+        \li libtensor::dense_tensor_test
 	\li libtensor::dimensions_test
 	\li libtensor::direct_block_tensor_test
 	\li libtensor::global_timings_test
@@ -73,7 +74,6 @@ namespace libtensor {
 	\li libtensor::symmetry_test
 	\li libtensor::symmetry_element_set_test
 	\li libtensor::task_batch_test
-	\li libtensor::tensor_test
 	\li libtensor::timer_test
 	\li libtensor::timings_test
 	\li libtensor::transf_list_test
@@ -88,6 +88,7 @@ private:
 		m_utf_block_index_subspace_builder;
 	unit_test_factory<block_map_test> m_utf_block_map;
 	unit_test_factory<block_tensor_test> m_utf_block_tensor;
+        unit_test_factory<dense_tensor_test> m_utf_dense_tensor;
 	unit_test_factory<dimensions_test> m_utf_dimensions;
 	unit_test_factory<direct_block_tensor_test> m_utf_direct_block_tensor;
 	unit_test_factory<global_timings_test> m_utf_global_timings;
@@ -105,7 +106,6 @@ private:
 	unit_test_factory<symmetry_test> m_utf_symmetry;
 	unit_test_factory<symmetry_element_set_test> m_utf_symmetry_element_set;
 	unit_test_factory<task_batch_test> m_utf_task_batch;
-	unit_test_factory<tensor_test> m_utf_tensor;
 	unit_test_factory<timer_test> m_utf_timer;
 	unit_test_factory<timings_test> m_utf_timings;
 	unit_test_factory<transf_list_test> m_utf_transf_list;

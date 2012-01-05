@@ -2,7 +2,7 @@
 #include <ctime>
 #include <sstream>
 #include <libtensor/core/allocator.h>
-#include <libtensor/core/tensor.h>
+#include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/tod/tod_scale.h>
 #include "../compare_ref.h"
@@ -40,7 +40,7 @@ void tod_scale_test::test_generic(const char *testname,
 
 	try {
 
-	tensor<N, double, allocator_t> t(d), t_ref(d);
+	dense_tensor<N, double, allocator_t> t(d), t_ref(d);
 
 	{
 	dense_tensor_ctrl<N, double> tc(t), tc_ref(t_ref);

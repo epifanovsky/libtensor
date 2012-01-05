@@ -7,7 +7,7 @@
 #include "../exception.h"
 #include "../core/allocator.h"
 #include "../core/block_tensor_i.h"
-#include "../core/tensor.h"
+#include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include "../tod/tod_btconv.h"
 
@@ -52,7 +52,7 @@ void btod_print<N, Alloc>::perform(
 	m_stream << std::endl;
 
 	typedef std_allocator<double> allocator_t;
-	tensor<N, double, Alloc> ta(dims);
+	dense_tensor<N, double, Alloc> ta(dims);
 	tod_btconv<N>(bt).perform(ta);
 
 	dense_tensor_ctrl<N, double> ctrla(ta);

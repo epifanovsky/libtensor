@@ -78,7 +78,7 @@ void btod_add_test::test_1(double ca1, double ca2)
 
 	//	Prepare reference data
 
-	tensor<2, double, allocator_t> ta1(dims_ia), ta2(dims_ai),
+	dense_tensor<2, double, allocator_t> ta1(dims_ia), ta2(dims_ai),
 		tb(dims_ia), tb_ref(dims_ia);
 	tod_btconv<2>(bta1).perform(ta1);
 	tod_btconv<2>(bta2).perform(ta2);
@@ -145,7 +145,7 @@ void btod_add_test::test_2(double ca1, double ca2, double cs)
 
 	//	Prepare reference data
 
-	tensor<2, double, allocator_t> ta1(dims_ia), ta2(dims_ai),
+	dense_tensor<2, double, allocator_t> ta1(dims_ia), ta2(dims_ai),
 		tb(dims_ia), tb_ref(dims_ia);
 	tod_btconv<2>(bta1).perform(ta1);
 	tod_btconv<2>(bta2).perform(ta2);
@@ -218,7 +218,7 @@ void btod_add_test::test_3(double ca1, double ca2)
 
 	//	 Prepare the reference
 
-	tensor<2, double, allocator_t> ta1(dims), ta2(dims), tb(dims),
+	dense_tensor<2, double, allocator_t> ta1(dims), ta2(dims), tb(dims),
 		tb_ref(dims);
 
 	tod_btconv<2>(bta1).perform(ta1);
@@ -317,7 +317,7 @@ void btod_add_test::test_4(double ca1, double ca2, double ca3, double ca4)
 
 	//	 Prepare the reference
 
-	tensor<4, double, allocator_t> ta1(dims), ta2(dims), ta3(dims),
+	dense_tensor<4, double, allocator_t> ta1(dims), ta2(dims), ta3(dims),
 		ta4(dims), tb(dims), tb_ref(dims);
 	tod_btconv<4>(bta1).perform(ta1);
 	tod_btconv<4>(bta2).perform(ta2);
@@ -458,7 +458,7 @@ void btod_add_test::test_7() throw(libtest::test_exception) {
 
 	block_tensor<4, double, allocator_t> bt1(bis_caib), bt2(bis_caib),
 		bt3(bis_iabc);
-	tensor<4, double, allocator_t> t1(dims_caib), t2(dims_caib),
+	dense_tensor<4, double, allocator_t> t1(dims_caib), t2(dims_caib),
 		t3(dims_iabc), t3_ref(dims_iabc);
 
 	btod_random<4>().perform(bt1);
@@ -521,7 +521,7 @@ void btod_add_test::test_8() throw(libtest::test_exception) {
 	bis_ijab.split(m4, 2);
 
 	block_tensor<4, double, allocator_t> bta(bis_ijab), btb(bis_iajb);
-	tensor<4, double, allocator_t> ta(dims_ijab), tb(dims_iajb),
+	dense_tensor<4, double, allocator_t> ta(dims_ijab), tb(dims_iajb),
 		tb_ref(dims_iajb);
 	symmetry<4, double> syma_ref(bis_iajb);
 
@@ -592,7 +592,7 @@ void btod_add_test::test_9() throw(libtest::test_exception) {
 	bis_ijab.split(m4, 2);
 
 	block_tensor<4, double, allocator_t> bta(bis_iajb), btb(bis_ijab);
-	tensor<4, double, allocator_t> ta(dims_iajb), tb(dims_ijab),
+	dense_tensor<4, double, allocator_t> ta(dims_iajb), tb(dims_ijab),
 		tb_ref(dims_ijab);
 	symmetry<4, double> syma_ref(bis_ijab);
 

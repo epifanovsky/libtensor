@@ -10,8 +10,8 @@
 #include "block_tensor_i.h"
 #include "immutable.h"
 #include "orbit_list.h"
-#include "tensor.h"
-#include "../dense_tensor/dense_tensor_ctrl.h"
+#include <libtensor/dense_tensor/dense_tensor.h>
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 
 namespace libtensor {
 

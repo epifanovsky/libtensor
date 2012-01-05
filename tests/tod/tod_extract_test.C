@@ -1,7 +1,7 @@
 #include <cmath>
 #include <ctime>
 #include <libtensor/core/allocator.h>
-#include <libtensor/core/tensor.h>
+#include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/tod/tod_extract.h>
 #include "../compare_ref.h"
 #include "tod_extract_test.h"
@@ -39,8 +39,8 @@ void tod_extract_test::test_1() throw(libtest::test_exception) {
 	dimensions<2> dims2(index_range<2>(i2a, i2b));
 	size_t sza = dims2.get_size(), szb = dims1.get_size();
 
-	tensor<2, double, allocator> ta(dims2);
-	tensor<1, double, allocator> tb(dims1), tb_ref(dims1);
+	dense_tensor<2, double, allocator> ta(dims2);
+	dense_tensor<1, double, allocator> tb(dims1), tb_ref(dims1);
 
 	{
 	dense_tensor_ctrl<2, double> tca(ta);
@@ -98,8 +98,8 @@ void tod_extract_test::test_2() throw(libtest::test_exception) {
 	dimensions<3> dims3(index_range<3>(i3a, i3b));
 	size_t sza = dims3.get_size(), szb = dims2.get_size();
 
-	tensor<3, double, allocator> ta(dims3);
-	tensor<2, double, allocator> tb(dims2), tb_ref(dims2);
+	dense_tensor<3, double, allocator> ta(dims3);
+	dense_tensor<2, double, allocator> tb(dims2), tb_ref(dims2);
 
 	{
 	dense_tensor_ctrl<3, double> tca(ta);
@@ -159,8 +159,8 @@ void tod_extract_test::test_3() throw(libtest::test_exception) {
 	dimensions<3> dims3(index_range<3>(i3a, i3b));
 	size_t sza = dims3.get_size(), szb = dims2.get_size();
 
-	tensor<3, double, allocator> ta(dims3);
-	tensor<2, double, allocator> tb(dims2), tb_ref(dims2);
+	dense_tensor<3, double, allocator> ta(dims3);
+	dense_tensor<2, double, allocator> tb(dims2), tb_ref(dims2);
 
 	{
 	dense_tensor_ctrl<3, double> tca(ta);

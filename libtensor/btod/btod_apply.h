@@ -255,7 +255,7 @@ void btod_apply<N, Functor, Alloc>::compute_block(bool zero,
 	if (! oa.is_allowed()) {
 		double val = m_fn(0.0) * c;
 		if (val != 0.0) {
-			tensor<N, double, Alloc> tblk(blk.get_dims());
+			dense_tensor<N, double, Alloc> tblk(blk.get_dims());
 			tod_set<N>(val).perform(cpus, tblk);
 			tod_copy<N>(tblk).perform(cpus, false, 1.0, blk);
 		}
@@ -280,7 +280,7 @@ void btod_apply<N, Functor, Alloc>::compute_block(bool zero,
 	else {
 		double val = m_fn(0.0) * c * tra.get_coeff();
 		if (val != 0.0) {
-			tensor<N, double, Alloc> tblk(blk.get_dims());
+			dense_tensor<N, double, Alloc> tblk(blk.get_dims());
 			tod_set<N>(val).perform(cpus, tblk);
 			tod_copy<N>(tblk).perform(cpus, false, 1.0, blk);
 		}

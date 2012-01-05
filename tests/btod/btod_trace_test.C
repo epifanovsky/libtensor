@@ -90,7 +90,7 @@ void btod_trace_test::test_nosym_1() throw(libtest::test_exception) {
 	bis.split(m, 7);
 
 	block_tensor<2, double, allocator_t> bta(bis);
-	tensor<2, double, allocator_t> ta(dims);
+	dense_tensor<2, double, allocator_t> ta(dims);
 
 	//	Fill in random data
 	btod_random<2>().perform(bta);
@@ -138,7 +138,7 @@ void btod_trace_test::test_nosym_1_sp() throw(libtest::test_exception) {
 	bis.split(m, 7);
 
 	block_tensor<2, double, allocator_t> bta(bis);
-	tensor<2, double, allocator_t> ta(dims);
+	dense_tensor<2, double, allocator_t> ta(dims);
 
 	//	Fill in random data
 	index<2> i00, i12, i22;
@@ -191,7 +191,7 @@ void btod_trace_test::test_nosym_2() throw(libtest::test_exception) {
 	bis.split(m, 7);
 
 	block_tensor<2, double, allocator_t> bta(bis);
-	tensor<2, double, allocator_t> ta(dims);
+	dense_tensor<2, double, allocator_t> ta(dims);
 
 	//	Fill in random data
 	btod_random<2>().perform(bta);
@@ -243,7 +243,7 @@ void btod_trace_test::test_nosym_3() throw(libtest::test_exception) {
 	bis.split(m2, 5);
 
 	block_tensor<4, double, allocator_t> bta(bis);
-	tensor<4, double, allocator_t> ta(dims);
+	dense_tensor<4, double, allocator_t> ta(dims);
 
 	//	Fill in random data
 	btod_random<4>().perform(bta);
@@ -294,7 +294,7 @@ void btod_trace_test::test_nosym_4() throw(libtest::test_exception) {
 	bis.split(m2, 5);
 
 	block_tensor<4, double, allocator_t> bta(bis);
-	tensor<4, double, allocator_t> ta(dims);
+	dense_tensor<4, double, allocator_t> ta(dims);
 
 	//	Fill in random data
 	btod_random<4>().perform(bta);
@@ -342,7 +342,7 @@ void btod_trace_test::test_nosym_5() throw(libtest::test_exception) {
 	bis.split(m, 1);
 
 	block_tensor<2, double, allocator_t> bta(bis);
-	tensor<2, double, allocator_t> ta(dims);
+	dense_tensor<2, double, allocator_t> ta(dims);
 
 	//	Fill in random data
 	btod_random<2>().perform(bta);
@@ -393,7 +393,7 @@ void btod_trace_test::test_nosym_6() throw(libtest::test_exception) {
 	bis.split(m2, 1);
 
 	block_tensor<4, double, allocator_t> bta(bis);
-	tensor<4, double, allocator_t> ta(dims);
+	dense_tensor<4, double, allocator_t> ta(dims);
 
 	//	Fill in random data
 	btod_random<4>().perform(bta);
@@ -443,7 +443,7 @@ void btod_trace_test::test_nosym_7() throw(libtest::test_exception) {
 	bis.split(m, 2); bis.split(m, 5); bis.split(m, 7);
 
 	block_tensor<4, double, allocator_t> bta(bis);
-	tensor<4, double, allocator_t> ta(dims);
+	dense_tensor<4, double, allocator_t> ta(dims);
 
 	//	Fill in random data
 	btod_random<4>().perform(bta);
@@ -491,7 +491,7 @@ void btod_trace_test::test_permsym_1() throw(libtest::test_exception) {
 	bis.split(m, 7);
 
 	block_tensor<2, double, allocator_t> bta(bis);
-	tensor<2, double, allocator_t> ta(dims);
+	dense_tensor<2, double, allocator_t> ta(dims);
 
 	//	Set up symmetry
 	{
@@ -549,7 +549,7 @@ void btod_trace_test::test_permsym_2() throw(libtest::test_exception) {
 	bis.split(m2, 5);
 
 	block_tensor<4, double, allocator_t> bta(bis);
-	tensor<4, double, allocator_t> ta(dims);
+	dense_tensor<4, double, allocator_t> ta(dims);
 
 	//	Set up symmetry
 	{

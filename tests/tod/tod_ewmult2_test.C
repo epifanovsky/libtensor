@@ -4,7 +4,7 @@
 #include <sstream>
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/abs_index.h>
-#include <libtensor/core/tensor.h>
+#include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/tod/tod_ewmult2.h>
 #include "tod_ewmult2_test.h"
 #include "../compare_ref.h"
@@ -121,10 +121,10 @@ void tod_ewmult2_test::test_i_i_i(size_t ni, double d)
 	size_t sza = dimsa.get_size(), szb = dimsb.get_size(),
 		szc = dimsc.get_size();
 
-	tensor<1, double, allocator> ta(dimsa);
-	tensor<1, double, allocator> tb(dimsb);
-	tensor<1, double, allocator> tc(dimsc);
-	tensor<1, double, allocator> tc_ref(dimsc);
+	dense_tensor<1, double, allocator> ta(dimsa);
+	dense_tensor<1, double, allocator> tb(dimsb);
+	dense_tensor<1, double, allocator> tc(dimsc);
+	dense_tensor<1, double, allocator> tc_ref(dimsc);
 
 	double cij_max = 0.0;
 
@@ -207,10 +207,10 @@ void tod_ewmult2_test::test_ij_ij_ij(size_t ni, size_t nj, double d)
 	size_t sza = dimsa.get_size(), szb = dimsb.get_size(),
 		szc = dimsc.get_size();
 
-	tensor<2, double, allocator> ta(dimsa);
-	tensor<2, double, allocator> tb(dimsb);
-	tensor<2, double, allocator> tc(dimsc);
-	tensor<2, double, allocator> tc_ref(dimsc);
+	dense_tensor<2, double, allocator> ta(dimsa);
+	dense_tensor<2, double, allocator> tb(dimsb);
+	dense_tensor<2, double, allocator> tc(dimsc);
+	dense_tensor<2, double, allocator> tc_ref(dimsc);
 
 	double cij_max = 0.0;
 	double d2 = drand48();
@@ -296,10 +296,10 @@ void tod_ewmult2_test::test_ij_ij_ji(size_t ni, size_t nj, double d)
 	size_t sza = dimsa.get_size(), szb = dimsb.get_size(),
 		szc = dimsc.get_size();
 
-	tensor<2, double, allocator> ta(dimsa);
-	tensor<2, double, allocator> tb(dimsb);
-	tensor<2, double, allocator> tc(dimsc);
-	tensor<2, double, allocator> tc_ref(dimsc);
+	dense_tensor<2, double, allocator> ta(dimsa);
+	dense_tensor<2, double, allocator> tb(dimsb);
+	dense_tensor<2, double, allocator> tc(dimsc);
+	dense_tensor<2, double, allocator> tc_ref(dimsc);
 
 	double cij_max = 0.0;
 	double d2 = drand48();
@@ -388,10 +388,10 @@ void tod_ewmult2_test::test_ijk_jki_kij(size_t ni, size_t nj, size_t nk,
 	size_t sza = dimsa.get_size(), szb = dimsb.get_size(),
 		szc = dimsc.get_size();
 
-	tensor<3, double, allocator> ta(dimsa);
-	tensor<3, double, allocator> tb(dimsb);
-	tensor<3, double, allocator> tc(dimsc);
-	tensor<3, double, allocator> tc_ref(dimsc);
+	dense_tensor<3, double, allocator> ta(dimsa);
+	dense_tensor<3, double, allocator> tb(dimsb);
+	dense_tensor<3, double, allocator> tc(dimsc);
+	dense_tensor<3, double, allocator> tc_ref(dimsc);
 
 	double cij_max = 0.0;
 	double d2 = drand48();
@@ -482,10 +482,10 @@ void tod_ewmult2_test::test_ijk_ik_kj(size_t ni, size_t nj, size_t nk,
 	size_t sza = dimsa.get_size(), szb = dimsb.get_size(),
 		szc = dimsc.get_size();
 
-	tensor<2, double, allocator> ta(dimsa);
-	tensor<2, double, allocator> tb(dimsb);
-	tensor<3, double, allocator> tc(dimsc);
-	tensor<3, double, allocator> tc_ref(dimsc);
+	dense_tensor<2, double, allocator> ta(dimsa);
+	dense_tensor<2, double, allocator> tb(dimsb);
+	dense_tensor<3, double, allocator> tc(dimsc);
+	dense_tensor<3, double, allocator> tc_ref(dimsc);
 
 	double cij_max = 0.0;
 	double d2 = drand48();
@@ -578,10 +578,10 @@ void tod_ewmult2_test::test_ijkl_kj_ikl(size_t ni, size_t nj, size_t nk,
 	size_t sza = dimsa.get_size(), szb = dimsb.get_size(),
 		szc = dimsc.get_size();
 
-	tensor<2, double, allocator> ta(dimsa);
-	tensor<3, double, allocator> tb(dimsb);
-	tensor<4, double, allocator> tc(dimsc);
-	tensor<4, double, allocator> tc_ref(dimsc);
+	dense_tensor<2, double, allocator> ta(dimsa);
+	dense_tensor<3, double, allocator> tb(dimsb);
+	dense_tensor<4, double, allocator> tc(dimsc);
+	dense_tensor<4, double, allocator> tc_ref(dimsc);
 
 	double cij_max = 0.0;
 	double d2 = drand48();
@@ -677,10 +677,10 @@ void tod_ewmult2_test::test_ijkl_ljk_jil(size_t ni, size_t nj, size_t nk,
 	size_t sza = dimsa.get_size(), szb = dimsb.get_size(),
 		szc = dimsc.get_size();
 
-	tensor<3, double, allocator> ta(dimsa);
-	tensor<3, double, allocator> tb(dimsb);
-	tensor<4, double, allocator> tc(dimsc);
-	tensor<4, double, allocator> tc_ref(dimsc);
+	dense_tensor<3, double, allocator> ta(dimsa);
+	dense_tensor<3, double, allocator> tb(dimsb);
+	dense_tensor<4, double, allocator> tc(dimsc);
+	dense_tensor<4, double, allocator> tc_ref(dimsc);
 
 	double cij_max = 0.0;
 	double d2 = drand48();

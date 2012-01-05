@@ -3,7 +3,7 @@
 #include <sstream>
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/abs_index.h>
-#include <libtensor/core/tensor.h>
+#include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/tod/tod_dirsum.h>
 #include "../compare_ref.h"
 #include "tod_dirsum_test.h"
@@ -89,10 +89,10 @@ void tod_dirsum_test::test_ij_i_j_1(size_t ni, size_t nj, double d)
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<1, double, allocator> ta(dima);
-	tensor<1, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	dense_tensor<1, double, allocator> ta(dima);
+	dense_tensor<1, double, allocator> tb(dimb);
+	dense_tensor<2, double, allocator> tc(dimc);
+	dense_tensor<2, double, allocator> tc_ref(dimc);
 
 	{
 	dense_tensor_ctrl<1, double> tca(ta);
@@ -171,10 +171,10 @@ void tod_dirsum_test::test_ij_i_j_2(size_t ni, size_t nj, double d)
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    tensor<1, double, allocator> ta(dima);
-    tensor<1, double, allocator> tb(dimb);
-    tensor<2, double, allocator> tc(dimc);
-    tensor<2, double, allocator> tc_ref(dimc);
+    dense_tensor<1, double, allocator> ta(dima);
+    dense_tensor<1, double, allocator> tb(dimb);
+    dense_tensor<2, double, allocator> tc(dimc);
+    dense_tensor<2, double, allocator> tc_ref(dimc);
 
     {
     dense_tensor_ctrl<1, double> tca(ta);
@@ -256,10 +256,10 @@ void tod_dirsum_test::test_ikj_ij_k_1(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<1, double, allocator> tb(dimb);
-	tensor<3, double, allocator> tc(dimc);
-	tensor<3, double, allocator> tc_ref(dimc);
+	dense_tensor<2, double, allocator> ta(dima);
+	dense_tensor<1, double, allocator> tb(dimb);
+	dense_tensor<3, double, allocator> tc(dimc);
+	dense_tensor<3, double, allocator> tc_ref(dimc);
 
 	{
 	dense_tensor_ctrl<2, double> tca(ta);
@@ -347,10 +347,10 @@ void tod_dirsum_test::test_ikjl_ij_kl_1(size_t ni, size_t nj, size_t nk,
 	size_t sza = dima.get_size(), szb = dimb.get_size(),
 		szc = dimc.get_size();
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<2, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	dense_tensor<2, double, allocator> ta(dima);
+	dense_tensor<2, double, allocator> tb(dimb);
+	dense_tensor<4, double, allocator> tc(dimc);
+	dense_tensor<4, double, allocator> tc_ref(dimc);
 
 	{
 	dense_tensor_ctrl<2, double> tca(ta);

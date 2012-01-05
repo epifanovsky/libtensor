@@ -23,7 +23,7 @@ public:
 	//!< put the data from buffer to output btensor, btb - output btensor
 private:
 	block_tensor_i<2, double> &m_bta; //!< Input block %tensor
-	tensor <2, double, std_allocator<double> > * pta;//!< buffer
+	dense_tensor <2, double, std_allocator<double> > * pta;//!< buffer
 	double m_tol; //!< tolerance for decomsposition
 	int m_rank; //!< rank of decomposed matrix
 };

@@ -6,9 +6,9 @@
 #include "../defs.h"
 #include "../exception.h"
 #include "../timings.h"
-#include "immutable.h"
-#include "permutation.h"
-#include "../dense_tensor/dense_tensor_i.h"
+#include <libtensor/core/immutable.h>
+#include <libtensor/core/permutation.h>
+#include "dense_tensor_i.h"
 
 namespace libtensor {
 
@@ -126,10 +126,10 @@ namespace libtensor {
     \ingroup libtensor_core
  **/
 template<size_t N, typename T, typename Alloc>
-class tensor :
+class dense_tensor :
     public dense_tensor_i<N, T> ,
     public immutable,
-    public timings< tensor<N, T, Alloc> > {
+    public timings< dense_tensor<N, T, Alloc> > {
 
 public:
     static const char *k_clazz; //!< Class name
@@ -155,23 +155,23 @@ public:
     /**	\brief Creates an empty %tensor
         \param dims Non-zero %tensor dimensions.
      **/
-    tensor(const dimensions<N> &dims);
+    dense_tensor(const dimensions<N> &dims);
 
     /**	\brief Creates an empty %tensor with the same %dimensions
             (data are not copied)
         \param t Another %tensor (dense_tensor_i<N, T>).
      **/
-    tensor(const dense_tensor_i<N,T> &t);
+    dense_tensor(const dense_tensor_i<N,T> &t);
 
     /**	\brief Creates an empty %tensor with the same %dimensions
         (data are not copied)
         \param t Another %tensor (tensor<N, T, Alloc).
      **/
-    tensor(const tensor<N,T,Alloc> &t);
+    dense_tensor(const dense_tensor<N,T,Alloc> &t);
 
     /**	\brief Virtual destructor
      **/
-    virtual ~tensor();
+    virtual ~dense_tensor();
 
     //@}
 
@@ -227,11 +227,11 @@ protected:
 
 
 template<size_t N, typename T, typename Alloc>
-const char *tensor<N,T,Alloc>::k_clazz = "tensor<N, T, Alloc>";
+const char *dense_tensor<N,T,Alloc>::k_clazz = "tensor<N, T, Alloc>";
 
 
 template<size_t N, typename T, typename Alloc>
-tensor<N, T, Alloc>::tensor(const dimensions<N> &dims) :
+dense_tensor<N, T, Alloc>::dense_tensor(const dimensions<N> &dims) :
 
     m_dims(dims), m_data(Alloc::invalid_pointer), m_dataptr(0),
         m_const_dataptr(0), m_ptrcount(0), m_sessions(8, 0),
@@ -250,7 +250,7 @@ tensor<N, T, Alloc>::tensor(const dimensions<N> &dims) :
 
 
 template<size_t N, typename T, typename Alloc>
-tensor<N, T, Alloc>::tensor(const dense_tensor_i<N, T> &t) :
+dense_tensor<N, T, Alloc>::dense_tensor(const dense_tensor_i<N, T> &t) :
 
     m_dims(t.get_dims()), m_data(Alloc::invalid_pointer), m_dataptr(0),
         m_const_dataptr(0), m_ptrcount(0), m_sessions(8, 0),
@@ -261,7 +261,7 @@ tensor<N, T, Alloc>::tensor(const dense_tensor_i<N, T> &t) :
 
 
 template<size_t N, typename T, typename Alloc>
-tensor<N, T, Alloc>::tensor(const tensor<N, T, Alloc> &t) :
+dense_tensor<N, T, Alloc>::dense_tensor(const dense_tensor<N, T, Alloc> &t) :
 
     m_dims(t.m_dims), m_data(Alloc::invalid_pointer), m_dataptr(0),
         m_const_dataptr(0), m_ptrcount(0), m_sessions(8, 0),
@@ -272,7 +272,7 @@ tensor<N, T, Alloc>::tensor(const tensor<N, T, Alloc> &t) :
 
 
 template<size_t N, typename T, typename Alloc>
-tensor<N, T, Alloc>::~tensor() {
+dense_tensor<N, T, Alloc>::~dense_tensor() {
 
     if(m_const_dataptr != 0) {
         Alloc::unlock_ro(m_data);
@@ -286,15 +286,15 @@ tensor<N, T, Alloc>::~tensor() {
 
 
 template<size_t N, typename T, typename Alloc>
-const dimensions<N> &tensor<N, T, Alloc>::get_dims() const {
+const dimensions<N> &dense_tensor<N, T, Alloc>::get_dims() const {
 
     return m_dims;
 }
 
 
 template<size_t N, typename T, typename Alloc>
-typename tensor<N, T, Alloc>::handle_t
-tensor<N, T, Alloc>::on_req_open_session() {
+typename dense_tensor<N, T, Alloc>::handle_t
+dense_tensor<N, T, Alloc>::on_req_open_session() {
 
     size_t sz = m_sessions.size();
 
@@ -315,7 +315,7 @@ tensor<N, T, Alloc>::on_req_open_session() {
 
 
 template<size_t N, typename T, typename Alloc>
-void tensor<N, T, Alloc>::on_req_close_session(const handle_t &h) {
+void dense_tensor<N, T, Alloc>::on_req_close_session(const handle_t &h) {
 
     verify_session(h);
 
@@ -337,7 +337,7 @@ void tensor<N, T, Alloc>::on_req_close_session(const handle_t &h) {
 
 
 template<size_t N, typename T, typename Alloc>
-void tensor<N, T, Alloc>::on_req_prefetch(const handle_t &h) {
+void dense_tensor<N, T, Alloc>::on_req_prefetch(const handle_t &h) {
 
     verify_session(h);
 
@@ -346,7 +346,7 @@ void tensor<N, T, Alloc>::on_req_prefetch(const handle_t &h) {
 
 
 template<size_t N, typename T, typename Alloc>
-T *tensor<N, T, Alloc>::on_req_dataptr(const handle_t &h) {
+T *dense_tensor<N, T, Alloc>::on_req_dataptr(const handle_t &h) {
 
     static const char *method = "on_req_dataptr(const handle_t&)";
 
@@ -365,9 +365,9 @@ T *tensor<N, T, Alloc>::on_req_dataptr(const handle_t &h) {
             "Data pointer is already checked out for ro");
     }
 
-    timings<tensor<N,T,Alloc> >::start_timer("lock_rw");
+    timings<dense_tensor<N,T,Alloc> >::start_timer("lock_rw");
     m_dataptr = Alloc::lock_rw(m_data);
-    timings<tensor<N,T,Alloc> >::stop_timer("lock_rw");
+    timings<dense_tensor<N,T,Alloc> >::stop_timer("lock_rw");
     m_session_ptrcount[h] = 1;
     m_ptrcount = 1;
     return m_dataptr;
@@ -375,7 +375,7 @@ T *tensor<N, T, Alloc>::on_req_dataptr(const handle_t &h) {
 
 
 template<size_t N, typename T, typename Alloc>
-void tensor<N, T, Alloc>::on_ret_dataptr(const handle_t &h, const T *p) {
+void dense_tensor<N, T, Alloc>::on_ret_dataptr(const handle_t &h, const T *p) {
 
     static const char *method = "on_ret_dataptr(const handle_t&, const T*)";
 
@@ -397,7 +397,7 @@ void tensor<N, T, Alloc>::on_ret_dataptr(const handle_t &h, const T *p) {
 
 
 template<size_t N, typename T, typename Alloc>
-const T *tensor<N, T, Alloc>::on_req_const_dataptr(const handle_t &h) {
+const T *dense_tensor<N, T, Alloc>::on_req_const_dataptr(const handle_t &h) {
 
     static const char *method = "on_req_const_dataptr(const handle_t&)";
 
@@ -413,9 +413,9 @@ const T *tensor<N, T, Alloc>::on_req_const_dataptr(const handle_t &h) {
         return m_const_dataptr;
     }
 
-    timings<tensor<N,T,Alloc> >::start_timer("lock_ro");
+    timings<dense_tensor<N,T,Alloc> >::start_timer("lock_ro");
     m_const_dataptr = Alloc::lock_ro(m_data);
-    timings<tensor<N,T,Alloc> >::stop_timer("lock_ro");
+    timings<dense_tensor<N,T,Alloc> >::stop_timer("lock_ro");
     m_session_ptrcount[h] = 1;
     m_ptrcount = 1;
     return m_const_dataptr;
@@ -423,7 +423,7 @@ const T *tensor<N, T, Alloc>::on_req_const_dataptr(const handle_t &h) {
 
 
 template<size_t N, typename T, typename Alloc>
-void tensor<N, T, Alloc>::on_ret_const_dataptr(const handle_t &h, const T *p) {
+void dense_tensor<N, T, Alloc>::on_ret_const_dataptr(const handle_t &h, const T *p) {
 
     static const char *method =
         "on_ret_const_dataptr(const handle_t&, const T*)";
@@ -450,7 +450,7 @@ void tensor<N, T, Alloc>::on_ret_const_dataptr(const handle_t &h, const T *p) {
 
 
 template<size_t N, typename T, typename Alloc>
-inline void tensor<N, T, Alloc>::verify_session(size_t h) {
+inline void dense_tensor<N, T, Alloc>::verify_session(size_t h) {
 
     static const char *method = "verify_session(size_t)";
 

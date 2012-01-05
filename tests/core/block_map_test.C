@@ -85,7 +85,7 @@ void block_map_test::test_immutable() throw(libtest::test_exception) {
 
 	try {
 
-	typedef tensor<2, double, allocator_t> tensor_t;
+	typedef dense_tensor<2, double, allocator_t> tensor_t;
 	block_map<2, double, allocator_t> map;
 
 	index<2> i1, i2;

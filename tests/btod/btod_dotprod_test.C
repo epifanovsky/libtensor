@@ -64,7 +64,7 @@ void btod_dotprod_test::test_1() throw(libtest::test_exception) {
 
 	//	Compute the reference
 
-	tensor<2, double, allocator_t> t1(dims), t2(dims);
+	dense_tensor<2, double, allocator_t> t1(dims), t2(dims);
 	tod_btconv<2>(bt1).perform(t1);
 	tod_btconv<2>(bt2).perform(t2);
 	double d_ref = tod_dotprod<2>(t1, t2).calculate(cpus);
@@ -163,7 +163,7 @@ void btod_dotprod_test::test_3() throw(libtest::test_exception) {
 
 	//	Compute the reference
 
-	tensor<2, double, allocator_t> t1(dims), t2(dims);
+	dense_tensor<2, double, allocator_t> t1(dims), t2(dims);
 	tod_btconv<2>(bt1).perform(t1);
 	tod_btconv<2>(bt2).perform(t2);
 	double d_ref = tod_dotprod<2>(t1, t2).calculate(cpus);
@@ -222,7 +222,7 @@ void btod_dotprod_test::test_4() throw(libtest::test_exception) {
 
 	//	Compute the reference
 
-	tensor<2, double, allocator_t> t1(dims), t2(dims);
+	dense_tensor<2, double, allocator_t> t1(dims), t2(dims);
 	tod_btconv<2>(bt1).perform(t1);
 	tod_btconv<2>(bt2).perform(t2);
 	double d_ref = tod_dotprod<2>(t1, t2).calculate(cpus);
@@ -288,7 +288,7 @@ void btod_dotprod_test::test_5() throw(libtest::test_exception) {
 
 	//	Compute the reference
 
-	tensor<2, double, allocator_t> t1(dims), t2(dims), t3(dims), t4(dims);
+	dense_tensor<2, double, allocator_t> t1(dims), t2(dims), t3(dims), t4(dims);
 	tod_btconv<2>(bt1).perform(t1);
 	tod_btconv<2>(bt2).perform(t2);
 	tod_btconv<2>(bt3).perform(t3);
@@ -364,7 +364,7 @@ void btod_dotprod_test::test_6() throw(libtest::test_exception) {
 
 	//	Compute the reference
 
-	tensor<2, double, allocator_t> t1(dims), t2(dims), t3(dims), t4(dims);
+	dense_tensor<2, double, allocator_t> t1(dims), t2(dims), t3(dims), t4(dims);
 	tod_btconv<2>(bt1).perform(t1);
 	tod_btconv<2>(bt2).perform(t2);
 	tod_btconv<2>(bt3).perform(t3);
@@ -448,7 +448,7 @@ void btod_dotprod_test::test_7() throw(libtest::test_exception) {
 
 	//	Compute the reference
 
-	tensor<2, double, allocator_t> t1(dims), t2(dims);
+	dense_tensor<2, double, allocator_t> t1(dims), t2(dims);
 	tod_btconv<2>(bt1).perform(t1);
 	tod_btconv<2>(bt2).perform(t2);
 	double d_ref = tod_dotprod<2>(t1, t2).calculate(cpus);
@@ -547,7 +547,7 @@ void btod_dotprod_test::test_8() throw(libtest::test_exception) {
 
 	//	Compute the reference
 
-	tensor<4, double, allocator_t> t1(dims), t2(dims), t3(dims), t4(dims),
+	dense_tensor<4, double, allocator_t> t1(dims), t2(dims), t3(dims), t4(dims),
 		t5(dims), t6(dims);
 	tod_btconv<4>(bt1).perform(t1);
 	tod_btconv<4>(bt2).perform(t2);
@@ -636,7 +636,7 @@ void btod_dotprod_test::test_9() throw(libtest::test_exception) {
 
 	//	Compute the reference
 
-	tensor<2, double, allocator_t> t1(dims), t2(dims);
+	dense_tensor<2, double, allocator_t> t1(dims), t2(dims);
 	tod_btconv<2>(bt1).perform(t1);
 	tod_btconv<2>(bt2).perform(t2);
 	double d_ref = tod_dotprod<2>(t1, t2).calculate(cpus);
@@ -722,7 +722,7 @@ void btod_dotprod_test::test_10() throw(libtest::test_exception) {
 
 	//	Compute the reference
 
-	tensor<2, double, allocator_t> t1(dims), t2(dims);
+	dense_tensor<2, double, allocator_t> t1(dims), t2(dims);
 	tod_btconv<2>(bt1).perform(t1);
 	tod_btconv<2>(bt2).perform(t2);
 	double d_ref = tod_dotprod<2>(t1, t2).calculate(cpus);
@@ -783,7 +783,7 @@ void btod_dotprod_test::test_11() throw(libtest::test_exception) {
 
 	//	Compute the reference
 
-	tensor<2, double, allocator_t> t1(dims), t2(dims);
+	dense_tensor<2, double, allocator_t> t1(dims), t2(dims);
 	tod_btconv<2>(bt1).perform(t1);
 	tod_btconv<2>(bt2).perform(t2);
 	double d_ref = tod_dotprod<2>(t1, t2).calculate(cpus);
@@ -843,7 +843,7 @@ void btod_dotprod_test::test_12() throw(libtest::test_exception) {
 
 	//	Compute the reference
 
-	tensor<2, double, allocator_t> t1(dims), t2(dims);
+	dense_tensor<2, double, allocator_t> t1(dims), t2(dims);
 	tod_btconv<2>(bt1).perform(t1);
 	tod_btconv<2>(bt2).perform(t2);
 	double d_ref = tod_dotprod<2>(t1, p10, t2, p01).calculate(cpus);

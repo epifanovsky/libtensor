@@ -1,6 +1,6 @@
 #include <sstream>
 #include <libtensor/core/allocator.h>
-#include <libtensor/core/tensor.h>
+#include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/tod/tod_apply.h>
 #include "../compare_ref.h"
 #include "tod_apply_test.h"
@@ -100,7 +100,7 @@ void tod_apply_test::test_plain(Functor &fn, const dimensions<N> &dims)
 
 	try {
 
-	tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
+	dense_tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
 
 	{
 	dense_tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
@@ -151,7 +151,7 @@ void tod_apply_test::test_plain_additive(Functor &fn,
 
 	try {
 
-	tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
+	dense_tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
 
 	{
 	dense_tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
@@ -204,7 +204,7 @@ void tod_apply_test::test_scaled(Functor &fn,
 
 	try {
 
-	tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
+	dense_tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
 
 	{
 	dense_tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
@@ -257,7 +257,7 @@ void tod_apply_test::test_scaled_additive(Functor &fn,
 
 	try {
 
-	tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
+	dense_tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
 
 	{
 	dense_tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
@@ -313,7 +313,7 @@ void tod_apply_test::test_perm(Functor &fn, const dimensions<N> &dims,
 	dimensions<N> dimsa(dims), dimsb(dims);
 	dimsb.permute(perm);
 
-	tensor<N, double, allocator> ta(dimsa), tb(dimsb), tb_ref(dimsb);
+	dense_tensor<N, double, allocator> ta(dimsa), tb(dimsb), tb_ref(dimsb);
 
 	{
 	dense_tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
@@ -372,7 +372,7 @@ void tod_apply_test::test_perm_additive(Functor &fn, const dimensions<N> &dims,
 	dimensions<N> dimsa(dims), dimsb(dims);
 	dimsb.permute(perm);
 
-	tensor<N, double, allocator> ta(dimsa), tb(dimsb), tb_ref(dimsb);
+	dense_tensor<N, double, allocator> ta(dimsa), tb(dimsb), tb_ref(dimsb);
 
 	{
 	dense_tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
@@ -431,7 +431,7 @@ void tod_apply_test::test_perm_scaled(Functor &fn, const dimensions<N> &dims,
 	dimensions<N> dimsa(dims), dimsb(dims);
 	dimsb.permute(perm);
 
-	tensor<N, double, allocator> ta(dimsa), tb(dimsb), tb_ref(dimsb);
+	dense_tensor<N, double, allocator> ta(dimsa), tb(dimsb), tb_ref(dimsb);
 
 	{
 	dense_tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
@@ -492,7 +492,7 @@ void tod_apply_test::test_perm_scaled_additive(Functor &fn,
 	dimensions<N> dimsa(dims), dimsb(dims);
 	dimsb.permute(perm);
 
-	tensor<N, double, allocator> ta(dimsa), tb(dimsb), tb_ref(dimsb);
+	dense_tensor<N, double, allocator> ta(dimsa), tb(dimsb), tb_ref(dimsb);
 
 	{
 	dense_tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
@@ -545,7 +545,7 @@ void tod_apply_test::test_exc() throw(libtest::test_exception) {
 	i3[0]=3; i3[1]=3; i3[2]=3; i3[3]=3;
 	index_range<4> ir1(i1,i2), ir2(i1,i3);
 	dimensions<4> dim1(ir1), dim2(ir2);
-	tensor<4, double, allocator> t1(dim1), t2(dim2);
+	dense_tensor<4, double, allocator> t1(dim1), t2(dim2);
 
     cpu_pool cpus(1);
 

@@ -1,7 +1,7 @@
 #include <cmath>
 #include <ctime>
 #include <libtensor/core/allocator.h>
-#include <libtensor/core/tensor.h>
+#include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/tod/tod_mult.h>
 #include "../compare_ref.h"
 #include "tod_mult_test.h"
@@ -65,7 +65,7 @@ void tod_mult_test::test_pq_pq_1(size_t ni, size_t nj, bool recip)
 	dimensions<2> dims(index_range<2>(i1, i2));
 	size_t sz = dims.get_size();
 
-	tensor<2, double, allocator> ta(dims), tb(dims), tc(dims), tc_ref(dims);
+	dense_tensor<2, double, allocator> ta(dims), tb(dims), tc(dims), tc_ref(dims);
 
 	{
 	dense_tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
@@ -131,7 +131,7 @@ void tod_mult_test::test_pq_pq_2(
 	dimensions<2> dims(index_range<2>(i1, i2));
 	size_t sz = dims.get_size();
 
-	tensor<2, double, allocator> ta(dims), tb(dims), tc(dims), tc_ref(dims);
+	dense_tensor<2, double, allocator> ta(dims), tb(dims), tc(dims), tc_ref(dims);
 
 	{
 	dense_tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
@@ -193,7 +193,7 @@ void tod_mult_test::test_pq_qp(bool recip, double coeff)
 	dimensions<2> dims(index_range<2>(i1, i2));
 	size_t sz = dims.get_size();
 
-	tensor<2, double, allocator> ta(dims), tb(dims), tc(dims), tc_ref(dims);
+	dense_tensor<2, double, allocator> ta(dims), tb(dims), tc(dims), tc_ref(dims);
 
 	{
 	dense_tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
@@ -259,7 +259,7 @@ void tod_mult_test::test_qp_pq(bool recip, double coeff)
 	dimensions<2> dims(index_range<2>(i1, i2));
 	size_t sz = dims.get_size();
 
-	tensor<2, double, allocator> ta(dims), tb(dims), tc(dims), tc_ref(dims);
+	dense_tensor<2, double, allocator> ta(dims), tb(dims), tc(dims), tc_ref(dims);
 
 	{
 	dense_tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
@@ -325,7 +325,7 @@ void tod_mult_test::test_qp_qp(bool recip, double coeff)
 	dimensions<2> dims(index_range<2>(i1, i2));
 	size_t sz = dims.get_size();
 
-	tensor<2, double, allocator> ta(dims), tb(dims), tc(dims), tc_ref(dims);
+	dense_tensor<2, double, allocator> ta(dims), tb(dims), tc(dims), tc_ref(dims);
 
 	{
 	dense_tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
@@ -399,7 +399,7 @@ void tod_mult_test::test_pqrs_qprs(
 	dimb.permute(p2);
 	p2.invert();
 
-	tensor<4, double, allocator> ta(dima), tb(dimb), tc(dima), tc_ref(dima);
+	dense_tensor<4, double, allocator> ta(dima), tb(dimb), tc(dima), tc_ref(dima);
 
 	{
 	dense_tensor_ctrl<4, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
@@ -482,7 +482,7 @@ void tod_mult_test::test_pqrs_qrps(
 	dimb.permute(p2);
 	p2.invert();
 
-	tensor<4, double, allocator> ta(dima), tb(dimb), tc(dima), tc_ref(dima);
+	dense_tensor<4, double, allocator> ta(dima), tb(dimb), tc(dima), tc_ref(dima);
 
 	size_t sz = dima.get_size();
 	{
@@ -563,7 +563,7 @@ void tod_mult_test::test_pqsr_pqrs(
 	dima.permute(p1);
 	p1.invert();
 
-	tensor<4, double, allocator> ta(dima), tb(dimb), tc(dimb), tc_ref(dimb);
+	dense_tensor<4, double, allocator> ta(dima), tb(dimb), tc(dimb), tc_ref(dimb);
 
 	{
 	dense_tensor_ctrl<4, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
@@ -651,7 +651,7 @@ void tod_mult_test::test_prsq_qrps(size_t ni, size_t nj, size_t nk, size_t nl,
 	p1.invert();
 	p2.invert();
 
-	tensor<4, double, allocator> ta(dima), tb(dimb), tc(dims), tc_ref(dims);
+	dense_tensor<4, double, allocator> ta(dima), tb(dimb), tc(dims), tc_ref(dims);
 
 	{
 	dense_tensor_ctrl<4, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);

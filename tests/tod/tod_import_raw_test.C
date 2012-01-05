@@ -2,7 +2,7 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/abs_index.h>
 #include <libtensor/core/print_dimensions.h>
-#include <libtensor/core/tensor.h>
+#include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/tod/tod_import_raw.h>
 #include "../compare_ref.h"
 #include "tod_import_raw_test.h"
@@ -48,7 +48,7 @@ void tod_import_raw_test::test_1(const dimensions<N> &dims,
 		<< ir.get_begin() << "->" << ir.get_end() << ")";
 
 	typedef std_allocator<double> allocator_t;
-	typedef tensor<N, double, allocator_t> tensor_t;
+	typedef dense_tensor<N, double, allocator_t> tensor_t;
 	typedef dense_tensor_ctrl<N, double> tensor_ctrl_t;
 
 	try {

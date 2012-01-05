@@ -80,7 +80,7 @@ public:
 		\throw block_not_found If the %index supplied does not
 			correspond to a block
 	 **/
-	tensor<N, T, Alloc> &get(size_t idx) throw(block_not_found);
+	dense_tensor<N, T, Alloc> &get(size_t idx) throw(block_not_found);
 
 	/**	\brief Removes all blocks
 		\throw immut_violation If the object is immutable.
@@ -176,7 +176,7 @@ inline bool block_map<N, T, Alloc>::contains(size_t idx) const {
 
 
 template<size_t N, typename T, typename Alloc>
-tensor<N, T, Alloc> &block_map<N, T, Alloc>::get(size_t idx)
+dense_tensor<N, T, Alloc> &block_map<N, T, Alloc>::get(size_t idx)
 	throw(block_not_found) {
 
 	static const char *method = "get(size_t)";
