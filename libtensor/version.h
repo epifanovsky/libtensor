@@ -3,7 +3,7 @@
 
 #include <list>
 #include <string>
-#include <libvmm/singleton.h>
+#include <libutil/singleton.h>
 
 namespace libtensor {
 
@@ -19,8 +19,8 @@ namespace libtensor {
 
     \ingroup libtensor
  **/
-class version : public libvmm::singleton<version> {
-    friend class libvmm::singleton<version>;
+class version : public libutil::singleton<version> {
+    friend class libutil::singleton<version>;
 
 private:
     static const unsigned k_major = 2; //!< Major %version number
@@ -80,6 +80,7 @@ public:
     }
 
 };
+
 
 } // namespace libtensor
 

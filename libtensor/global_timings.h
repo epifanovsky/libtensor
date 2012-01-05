@@ -5,7 +5,7 @@
 #include <map>
 #include <string>
 #include <utility>
-#include <libvmm/singleton.h>
+#include <libutil/singleton.h>
 #include "mp/threads.h"
 #include "timer.h"
 #include "exception.h"
@@ -24,9 +24,9 @@ namespace libtensor {
 
 	\ingroup libtensor_core_time
  **/
-class global_timings : public libvmm::singleton<global_timings> {
+class global_timings : public libutil::singleton<global_timings> {
 
-	friend class libvmm::singleton<global_timings>;
+	friend class libutil::singleton<global_timings>;
 	friend std::ostream& operator<<(std::ostream&, const global_timings&);
 
 private:
