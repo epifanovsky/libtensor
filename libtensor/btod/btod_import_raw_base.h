@@ -9,8 +9,7 @@
 #include "../core/block_tensor_ctrl.h"
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
-#include <libtensor/dense_tensor/dense_tensor_i.h>
-#include "../core/tensor_ctrl.h"
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include "../core/tensor.h"
 #include "../tod/tod_compare.h"
 #include "../tod/tod_copy.h"
@@ -198,7 +197,7 @@ template<size_t N, typename Alloc>
 bool btod_import_raw_base<N, Alloc>::check_zero(dense_tensor_i<N, double> &t,
     double thresh) {
 
-    tensor_ctrl<N, double> c(t);
+    dense_tensor_ctrl<N, double> c(t);
     const double *p = c.req_const_dataptr();
     size_t sz = t.get_dims().get_size();
     bool ok = true;

@@ -122,12 +122,12 @@ void cholesky::decompose()
 	block_tensor_ctrl<2, double> ctrl(buff);
 
         dense_tensor_i<2, double> &t = ctrl.req_block(idx);
-        tensor_ctrl<2, double> ct(t);
+        dense_tensor_ctrl<2, double> ct(t);
        	double *p = ct.req_dataptr();
 
 	size_t np = buff.get_bis().get_block_dims(idx).get_dim(1);
 
-	tensor_ctrl<1, double> ct2(columnt);
+	dense_tensor_ctrl<1, double> ct2(columnt);
         const double *px = ct2.req_const_dataptr();
 	
 	*(p + pos0 * np + pos1) = *(px + i0) ;
@@ -269,11 +269,11 @@ void cholesky::perform(block_tensor_i<2, double> &btb)
 	
 		
 		dense_tensor_i<2, double> &ti = ctrli.req_block(idxi);
-		tensor_ctrl<2, double> cti(ti);
+		dense_tensor_ctrl<2, double> cti(ti);
 		const double *pi = cti.req_const_dataptr();		
 		
 		dense_tensor_i<2, double> &to = ctrlo.req_block(idxo);
-		tensor_ctrl<2, double> cto(to);
+		dense_tensor_ctrl<2, double> cto(to);
 		double *po = cto.req_dataptr();
 
 		size_t Rp = btb.get_bis().get_block_dims(idxo).get_dim(1); 

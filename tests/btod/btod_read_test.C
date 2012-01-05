@@ -52,7 +52,7 @@ void btod_read_test::test_1() throw(libtest::test_exception) {
 	ss << "2 " << dims[0] << " " << dims[1] << std::endl;
 
 	{
-		tensor_ctrl<2, double> ctrl(t_ref);
+		dense_tensor_ctrl<2, double> ctrl(t_ref);
 		const double *p = ctrl.req_const_dataptr();
 		for(size_t i = 0; i < dims[0]; i++) {
 			index<2> idx;
@@ -106,7 +106,7 @@ void btod_read_test::test_2() throw(libtest::test_exception) {
 	ss << "2 " << dims[0] << " " << dims[1] << std::endl;
 
 	{
-		tensor_ctrl<2, double> ctrl(t_ref);
+		dense_tensor_ctrl<2, double> ctrl(t_ref);
 		const double *p = ctrl.req_const_dataptr();
 		for(size_t i = 0; i < dims[0]; i++) {
 			index<2> idx;
@@ -162,7 +162,7 @@ void btod_read_test::test_3() throw(libtest::test_exception) {
 	ss << "2 " << dims[0] << " " << dims[1] << std::endl;
 
 	{
-		tensor_ctrl<2, double> ctrl(t_ref);
+		dense_tensor_ctrl<2, double> ctrl(t_ref);
 		const double *p = ctrl.req_const_dataptr();
 		for(size_t i = 0; i < dims[0]; i++) {
 			index<2> idx;
@@ -224,7 +224,7 @@ void btod_read_test::test_4() throw(libtest::test_exception) {
 	ss << "2 " << dims[0] << " " << dims[1] << std::endl;
 
 	{
-		tensor_ctrl<2, double> ctrl(t_ref);
+		dense_tensor_ctrl<2, double> ctrl(t_ref);
 		const double *p = ctrl.req_const_dataptr();
 		for(size_t i = 0; i < dims[0]; i++) {
 			index<2> idx;
@@ -276,7 +276,7 @@ void btod_read_test::test_5() throw(libtest::test_exception) {
 		<< dims[3] << std::endl;
 
 	{
-		tensor_ctrl<4, double> ctrl(t_ref);
+		dense_tensor_ctrl<4, double> ctrl(t_ref);
 		const double *p = ctrl.req_const_dataptr();
 		abs_index<4> aidx(dims);
 		do {
@@ -331,7 +331,7 @@ void btod_read_test::test_6() throw(libtest::test_exception) {
 		<< dims[3] << std::endl;
 
 	{
-		tensor_ctrl<4, double> ctrl(t_ref);
+		dense_tensor_ctrl<4, double> ctrl(t_ref);
 		const double *p = ctrl.req_const_dataptr();
 		abs_index<4> aidx(dims);
 		do {
@@ -377,7 +377,7 @@ void btod_read_test::test_7() throw(libtest::test_exception) {
 	ss << "2 " << dims[0] << " " << dims[1] << std::endl;
 
 	{
-		tensor_ctrl<2, double> ctrl(t_ref);
+		dense_tensor_ctrl<2, double> ctrl(t_ref);
 		const double *p = ctrl.req_const_dataptr();
 		for(size_t i = 0; i < dims[0]; i++) {
 			index<2> idx;
@@ -434,7 +434,7 @@ void btod_read_test::test_8() throw(libtest::test_exception) {
 	ss << "2 " << dims[0] << " " << dims[1] << std::endl;
 
 	{
-		tensor_ctrl<2, double> ctrl(t_ref);
+		dense_tensor_ctrl<2, double> ctrl(t_ref);
 		const double *p = ctrl.req_const_dataptr();
 		for(size_t i = 0; i < dims[0]; i++) {
 			index<2> idx;
@@ -491,7 +491,7 @@ void btod_read_test::test_9() throw(libtest::test_exception) {
 
 	{
 		// modify t_ref to have permutational symmetry
-		tensor_ctrl<2, double> ctrl(t_ref);
+		dense_tensor_ctrl<2, double> ctrl(t_ref);
 
 		double *ptr = ctrl.req_dataptr();
 		for(size_t i = 0; i < dims[0]; i++) {
@@ -569,7 +569,7 @@ void btod_read_test::test_10() throw(libtest::test_exception) {
 	ss << "2 " << dims[0] << " " << dims[1] << std::endl;
 
 	{
-		tensor_ctrl<2, double> ctrl(t_ref);
+		dense_tensor_ctrl<2, double> ctrl(t_ref);
 
 		const double *p = ctrl.req_const_dataptr();
 		for(size_t i = 0; i < dims[0]; i++) {

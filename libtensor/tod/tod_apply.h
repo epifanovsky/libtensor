@@ -4,8 +4,7 @@
 #include "../defs.h"
 #include "../exception.h"
 #include "../timings.h"
-#include "../dense_tensor/dense_tensor_i.h"
-#include "../core/tensor_ctrl.h"
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include "../mp/auto_cpu_lock.h"
 #include "loop_list_apply.h"
 #include "tod_additive.h"
@@ -131,7 +130,7 @@ tod_apply<N, Functor>::tod_apply(dense_tensor_i<N, double> &ta, const Functor &f
 template<size_t N, typename Functor>
 void tod_apply<N, Functor>::prefetch() {
 
-	tensor_ctrl<N, double>(m_ta).req_prefetch();
+	dense_tensor_ctrl<N, double>(m_ta).req_prefetch();
 }
 
 
@@ -155,7 +154,7 @@ void tod_apply<N, Functor>::perform(cpu_pool &cpus, bool zero, double c,
 
     try {
 
-    tensor_ctrl<N, double> ca(m_ta), cb(tb);
+    dense_tensor_ctrl<N, double> ca(m_ta), cb(tb);
     ca.req_prefetch();
     cb.req_prefetch();
 

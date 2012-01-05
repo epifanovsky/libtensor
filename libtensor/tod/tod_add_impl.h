@@ -87,11 +87,11 @@ void tod_add<N>::add_operand(dense_tensor_i<N, double> &t, const permutation<N> 
 template<size_t N>
 void tod_add<N>::prefetch() {
 
-	for(typename std::list<arg>::iterator i = m_args.begin();
-		i != m_args.end(); i++) {
+    for(typename std::list<arg>::iterator i = m_args.begin();
+        i != m_args.end(); ++i) {
 
-		tensor_ctrl<N, double>(i->t).req_prefetch();
-	}
+        dense_tensor_ctrl<N, double>(i->t).req_prefetch();
+    }
 }
 
 

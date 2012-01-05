@@ -40,7 +40,7 @@ void tod_set_diag_test::run_test(const dimensions<N> &dims, double d)
 	tensor<N, double, allocator_t> t(dims), t_ref(dims);
 
 	{
-	tensor_ctrl<N, double> ctrl(t), ctrl_ref(t_ref);
+	dense_tensor_ctrl<N, double> ctrl(t), ctrl_ref(t_ref);
 
 	double *p = ctrl.req_dataptr();
 	double *p_ref = ctrl_ref.req_dataptr();

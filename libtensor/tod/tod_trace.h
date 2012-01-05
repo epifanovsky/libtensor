@@ -6,8 +6,7 @@
 #include "../not_implemented.h"
 #include "../timings.h"
 #include "../core/permutation.h"
-#include "../dense_tensor/dense_tensor_i.h"
-#include "../core/tensor_ctrl.h"
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include "bad_dimensions.h"
 #include "loop_list_add.h"
 
@@ -97,7 +96,7 @@ double tod_trace<N>::calculate() {
 
 	tod_trace<N>::start_timer();
 
-	tensor_ctrl<k_ordera, double> ca(m_t);
+	dense_tensor_ctrl<k_ordera, double> ca(m_t);
 	ca.req_prefetch();
 
 	sequence<k_ordera, size_t> map(0);

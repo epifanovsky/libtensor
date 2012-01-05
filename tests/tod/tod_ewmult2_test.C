@@ -129,10 +129,10 @@ void tod_ewmult2_test::test_i_i_i(size_t ni, double d)
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<1, double> tca(ta);
-	tensor_ctrl<1, double> tcb(tb);
-	tensor_ctrl<1, double> tcc(tc);
-	tensor_ctrl<1, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<1, double> tca(ta);
+	dense_tensor_ctrl<1, double> tcb(tb);
+	dense_tensor_ctrl<1, double> tcc(tc);
+	dense_tensor_ctrl<1, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -216,10 +216,10 @@ void tod_ewmult2_test::test_ij_ij_ij(size_t ni, size_t nj, double d)
 	double d2 = drand48();
 
 	{
-	tensor_ctrl<2, double> tca(ta);
-	tensor_ctrl<2, double> tcb(tb);
-	tensor_ctrl<2, double> tcc(tc);
-	tensor_ctrl<2, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<2, double> tca(ta);
+	dense_tensor_ctrl<2, double> tcb(tb);
+	dense_tensor_ctrl<2, double> tcc(tc);
+	dense_tensor_ctrl<2, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -305,10 +305,10 @@ void tod_ewmult2_test::test_ij_ij_ji(size_t ni, size_t nj, double d)
 	double d2 = drand48();
 
 	{
-	tensor_ctrl<2, double> tca(ta);
-	tensor_ctrl<2, double> tcb(tb);
-	tensor_ctrl<2, double> tcc(tc);
-	tensor_ctrl<2, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<2, double> tca(ta);
+	dense_tensor_ctrl<2, double> tcb(tb);
+	dense_tensor_ctrl<2, double> tcc(tc);
+	dense_tensor_ctrl<2, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -397,10 +397,10 @@ void tod_ewmult2_test::test_ijk_jki_kij(size_t ni, size_t nj, size_t nk,
 	double d2 = drand48();
 
 	{
-	tensor_ctrl<3, double> tca(ta);
-	tensor_ctrl<3, double> tcb(tb);
-	tensor_ctrl<3, double> tcc(tc);
-	tensor_ctrl<3, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<3, double> tca(ta);
+	dense_tensor_ctrl<3, double> tcb(tb);
+	dense_tensor_ctrl<3, double> tcc(tc);
+	dense_tensor_ctrl<3, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -491,10 +491,10 @@ void tod_ewmult2_test::test_ijk_ik_kj(size_t ni, size_t nj, size_t nk,
 	double d2 = drand48();
 
 	{
-	tensor_ctrl<2, double> tca(ta);
-	tensor_ctrl<2, double> tcb(tb);
-	tensor_ctrl<3, double> tcc(tc);
-	tensor_ctrl<3, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<2, double> tca(ta);
+	dense_tensor_ctrl<2, double> tcb(tb);
+	dense_tensor_ctrl<3, double> tcc(tc);
+	dense_tensor_ctrl<3, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -587,10 +587,10 @@ void tod_ewmult2_test::test_ijkl_kj_ikl(size_t ni, size_t nj, size_t nk,
 	double d2 = drand48();
 
 	{
-	tensor_ctrl<2, double> tca(ta);
-	tensor_ctrl<3, double> tcb(tb);
-	tensor_ctrl<4, double> tcc(tc);
-	tensor_ctrl<4, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<2, double> tca(ta);
+	dense_tensor_ctrl<3, double> tcb(tb);
+	dense_tensor_ctrl<4, double> tcc(tc);
+	dense_tensor_ctrl<4, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -686,10 +686,10 @@ void tod_ewmult2_test::test_ijkl_ljk_jil(size_t ni, size_t nj, size_t nk,
 	double d2 = drand48();
 
 	{
-	tensor_ctrl<3, double> tca(ta);
-	tensor_ctrl<3, double> tcb(tb);
-	tensor_ctrl<4, double> tcc(tc);
-	tensor_ctrl<4, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<3, double> tca(ta);
+	dense_tensor_ctrl<3, double> tcb(tb);
+	dense_tensor_ctrl<4, double> tcc(tc);
+	dense_tensor_ctrl<4, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();

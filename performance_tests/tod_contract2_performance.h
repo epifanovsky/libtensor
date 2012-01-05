@@ -176,9 +176,9 @@ void tod_contract2_p1<R,N,M,K,DimData>::do_calculate()
 	tensor<N+M, double, libvmm::std_allocator<double> > ta(dima);
 	tensor<N+K, double, libvmm::std_allocator<double> > tb(dimb);
 	tensor<M+K, double, libvmm::std_allocator<double> > tc(dimc);
-	tensor_ctrl<N+M,double> tca(ta);
-	tensor_ctrl<N+K,double> tcb(tb);
-	tensor_ctrl<M+K,double> tcc(tc);
+	dense_tensor_ctrl<N+M,double> tca(ta);
+	dense_tensor_ctrl<N+K,double> tcb(tb);
+	dense_tensor_ctrl<M+K,double> tcc(tc);
 
 	double *ptra=tca.req_dataptr();
 	double *ptrb=tcb.req_dataptr();
@@ -221,9 +221,9 @@ void tod_contract2_p2<R,N,M,K,DimData>::do_calculate()
 	tensor<N+M, double, libvmm::std_allocator<double> > ta(dima);
 	tensor<N+K, double, libvmm::std_allocator<double> > tb(dimb);
 	tensor<M+K, double, libvmm::std_allocator<double> > tc(dimc);
-	tensor_ctrl<N+M,double> tca(ta);
-	tensor_ctrl<N+K,double> tcb(tb);
-	tensor_ctrl<M+K,double> tcc(tc);
+	dense_tensor_ctrl<N+M,double> tca(ta);
+	dense_tensor_ctrl<N+K,double> tcb(tb);
+	dense_tensor_ctrl<M+K,double> tcc(tc);
 
 	double *ptra=tca.req_dataptr();
 	double *ptrb=tcb.req_dataptr();
@@ -263,9 +263,9 @@ void tod_contract2_p3<R,N,M,K,DimData>::do_calculate()
 	tensor<N+M, double, libvmm::std_allocator<double> > ta(dima);
 	tensor<N+K, double, libvmm::std_allocator<double> > tb(dimb);
 	tensor<M+K, double, libvmm::std_allocator<double> > tc(dimc);
-	tensor_ctrl<N+M,double> tca(ta);
-	tensor_ctrl<N+K,double> tcb(tb);
-	tensor_ctrl<M+K,double> tcc(tc);
+	dense_tensor_ctrl<N+M,double> tca(ta);
+	dense_tensor_ctrl<N+K,double> tcb(tb);
+	dense_tensor_ctrl<M+K,double> tcc(tc);
 
 	double *ptra=tca.req_dataptr();
 	double *ptrb=tcb.req_dataptr();
@@ -303,9 +303,9 @@ void tod_contract2_p4<R,N,M,K,DimData>::do_calculate()
 	tensor<N+M, double, libvmm::std_allocator<double> > ta(dima);
 	tensor<N+K, double, libvmm::std_allocator<double> > tb(dimb);
 	tensor<M+K, double, libvmm::std_allocator<double> > tc(dimc);
-	tensor_ctrl<N+M,double> tca(ta);
-	tensor_ctrl<N+K,double> tcb(tb);
-	tensor_ctrl<N+K,double> tcc(tc);
+	dense_tensor_ctrl<N+M,double> tca(ta);
+	dense_tensor_ctrl<N+K,double> tcb(tb);
+	dense_tensor_ctrl<N+K,double> tcc(tc);
 
 	double *ptra=tca.req_dataptr();
 	double *ptrb=tcb.req_dataptr();

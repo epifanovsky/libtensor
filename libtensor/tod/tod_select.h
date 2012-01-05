@@ -1,12 +1,12 @@
 #ifndef LIBTENSOR_TOD_SELECT_H
 #define LIBTENSOR_TOD_SELECT_H
 
+#include <cmath>
 #include "../defs.h"
 #include "../exception.h"
 #include "../core/abs_index.h"
 #include "../core/index.h"
-#include "../core/tensor_ctrl.h"
-#include <cmath>
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 
 namespace libtensor {
 
@@ -136,7 +136,7 @@ void tod_select<N,ComparePolicy>::perform(list_t &li, size_t n) {
 
 	if (n == 0) return;
 
-	tensor_ctrl<N, double> ctrl(m_t);
+	dense_tensor_ctrl<N, double> ctrl(m_t);
 	const dimensions<N> &d = m_t.get_dims();
 	const double *p = ctrl.req_const_dataptr();
 

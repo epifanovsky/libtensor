@@ -6,7 +6,7 @@
 namespace libtensor {
 
 
-template<size_t N, typename T> class tensor_ctrl;
+template<size_t N, typename T> class dense_tensor_ctrl;
 
 
 /** \brief Tensor interface
@@ -29,7 +29,7 @@ template<size_t N, typename T> class tensor_ctrl;
     interface, the physical pointer to the array shall contain dense data
     ordered as specified above.
 
-    Raw %tensor data are accessed via a control object (tensor_ctrl), which
+    Raw %tensor data are accessed via a control object (dense_tensor_ctrl), which
     provides user-end methods. Implementations of this interface, however,
     shall realize a set of protected functions that are necessary to handle
     requests from the user.
@@ -40,13 +40,13 @@ template<size_t N, typename T> class tensor_ctrl;
     to identify the session. Session termination requests are handled by
     on_req_close_session(), which shall invalidate the handle.
 
-    \sa tensor_ctrl
+    \sa dense_tensor_ctrl
 
     \ingroup libtensor_core
  **/
 template<size_t N, typename T>
 class dense_tensor_i {
-    friend class tensor_ctrl<N, T>;
+    friend class dense_tensor_ctrl<N, T>;
 
 public:
     typedef size_t handle_t; //!< Session handle type

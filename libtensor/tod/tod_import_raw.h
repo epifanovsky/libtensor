@@ -111,7 +111,7 @@ void tod_import_raw<N>::perform(dense_tensor_i<N, double> &t) {
 		throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "t.");
 	}
 
-	tensor_ctrl<N, double> tctrl(t);
+	dense_tensor_ctrl<N, double> tctrl(t);
 
 	loop_list_t lst;
 	for(size_t i = 0; i < N; i++) {

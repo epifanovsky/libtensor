@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_TOD_DIRSUM_IMPL_H
 #define LIBTENSOR_TOD_DIRSUM_IMPL_H
 
-#include "../core/tensor_ctrl.h"
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include "contraction2.h"
 #include "contraction2_list_builder.h"
 #include "kernels/loop_list_runner.h"
@@ -90,9 +90,9 @@ void tod_dirsum<N, M>::do_perform(dense_tensor_i<k_orderc, double> &tc, bool zer
 
 	try {
 
-	tensor_ctrl<k_ordera, double> ca(m_ta);
-	tensor_ctrl<k_orderb, double> cb(m_tb);
-	tensor_ctrl<k_orderc, double> cc(tc);
+	dense_tensor_ctrl<k_ordera, double> ca(m_ta);
+	dense_tensor_ctrl<k_orderb, double> cb(m_tb);
+	dense_tensor_ctrl<k_orderc, double> cc(tc);
 
 	ca.req_prefetch();
 	cb.req_prefetch();

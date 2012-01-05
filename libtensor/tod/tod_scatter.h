@@ -5,8 +5,7 @@
 #include "../defs.h"
 #include "../exception.h"
 #include "../timings.h"
-#include "../dense_tensor/dense_tensor_i.h"
-#include "../core/tensor_ctrl.h"
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include "bad_dimensions.h"
 #include "contraction2.h"
 #include "contraction2_list_builder.h"
@@ -174,8 +173,8 @@ void tod_scatter<N, M>::do_perform(dense_tensor_i<k_orderc, double> &tc, bool ze
 		}
 	}
 
-	tensor_ctrl<k_ordera, double> ctrla(m_ta);
-	tensor_ctrl<k_orderc, double> ctrlc(tc);
+	dense_tensor_ctrl<k_ordera, double> ctrla(m_ta);
+	dense_tensor_ctrl<k_orderc, double> ctrlc(tc);
 
 	const double *ptra = ctrla.req_const_dataptr();
 	double *ptrc = ctrlc.req_dataptr();

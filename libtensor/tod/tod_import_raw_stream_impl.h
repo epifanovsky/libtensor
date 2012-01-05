@@ -18,7 +18,7 @@ void tod_import_raw_stream<N>::perform(dense_tensor_i<N, double> &ta) {
         throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "t");
     }
 
-    tensor_ctrl<N, double> ca(ta);
+    dense_tensor_ctrl<N, double> ca(ta);
     double *pa = ca.req_dataptr();
     read_data(0, m_dims, m_ir, pa);
     ca.ret_dataptr(pa);

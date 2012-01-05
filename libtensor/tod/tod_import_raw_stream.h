@@ -4,7 +4,7 @@
 #include <iostream>
 #include "../core/dimensions.h"
 #include "../core/index_range.h"
-#include "../core/tensor_ctrl.h"
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include "bad_dimensions.h"
 
 namespace libtensor {

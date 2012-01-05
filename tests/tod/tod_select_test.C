@@ -50,7 +50,7 @@ void tod_select_test::test_1(size_t n, double c)
 	//
 	//	Fill in random data
 	//
-	tensor_ctrl<2, double> tc(t);
+	dense_tensor_ctrl<2, double> tc(t);
 	double *d = tc.req_dataptr();
 
 	for(size_t i = 0; i < sz; i++) d[i] = drand48();
@@ -67,7 +67,7 @@ void tod_select_test::test_1(size_t n, double c)
 
 	{ // Check the resulting list
 
-	tensor_ctrl<2, double> tc(t);
+	dense_tensor_ctrl<2, double> tc(t);
 	const double *cd = tc.req_const_dataptr();
 	// Loop over all list elements
 	for (typename list_t::const_iterator it = li.begin();
@@ -137,7 +137,7 @@ void tod_select_test::test_2(size_t n, double c)
 	//
 	//	Fill in random data
 	//
-	tensor_ctrl<3, double> tc(t);
+	dense_tensor_ctrl<3, double> tc(t);
 	double *d = tc.req_dataptr();
 
 	for(size_t i = 0; i < sz; i++) d[i] = drand48();
@@ -154,7 +154,7 @@ void tod_select_test::test_2(size_t n, double c)
 
 	{ // Check the resulting list
 
-	tensor_ctrl<3, double> tc(t);
+	dense_tensor_ctrl<3, double> tc(t);
 	const double *cd = tc.req_const_dataptr();
 	// Loop over all list elements
 	for (typename list_t::const_iterator it = li.begin();

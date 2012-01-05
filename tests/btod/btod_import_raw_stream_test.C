@@ -54,7 +54,7 @@ void btod_import_raw_stream_test::test_1(const block_index_space<N> &bis)
 
 	typedef std_allocator<double> allocator_t;
 	typedef tensor<N, double, allocator_t> tensor_t;
-	typedef tensor_ctrl<N, double> tensor_ctrl_t;
+	typedef dense_tensor_ctrl<N, double> tensor_ctrl_t;
 	typedef block_tensor<N, double, allocator_t> block_tensor_t;
 
 	cpu_pool cpus(1);
@@ -104,7 +104,7 @@ void btod_import_raw_stream_test::test_2(const block_index_space<N> &bis)
 
 	typedef std_allocator<double> allocator_t;
 	typedef tensor<N, double, allocator_t> tensor_t;
-	typedef tensor_ctrl<N, double> tensor_ctrl_t;
+	typedef dense_tensor_ctrl<N, double> tensor_ctrl_t;
 	typedef block_tensor<N, double, allocator_t> block_tensor_t;
 
 	try {

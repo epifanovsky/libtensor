@@ -43,8 +43,8 @@ void tod_extract_test::test_1() throw(libtest::test_exception) {
 	tensor<1, double, allocator> tb(dims1), tb_ref(dims1);
 
 	{
-	tensor_ctrl<2, double> tca(ta);
-	tensor_ctrl<1, double> tcb(tb), tcb_ref(tb_ref);
+	dense_tensor_ctrl<2, double> tca(ta);
+	dense_tensor_ctrl<1, double> tcb(tb), tcb_ref(tb_ref);
 
 	double *pa = tca.req_dataptr();
 	double *pb = tcb.req_dataptr();
@@ -102,8 +102,8 @@ void tod_extract_test::test_2() throw(libtest::test_exception) {
 	tensor<2, double, allocator> tb(dims2), tb_ref(dims2);
 
 	{
-	tensor_ctrl<3, double> tca(ta);
-	tensor_ctrl<2, double> tcb(tb), tcb_ref(tb_ref);
+	dense_tensor_ctrl<3, double> tca(ta);
+	dense_tensor_ctrl<2, double> tcb(tb), tcb_ref(tb_ref);
 
 	double *pa = tca.req_dataptr();
 	double *pb = tcb.req_dataptr();
@@ -163,8 +163,8 @@ void tod_extract_test::test_3() throw(libtest::test_exception) {
 	tensor<2, double, allocator> tb(dims2), tb_ref(dims2);
 
 	{
-	tensor_ctrl<3, double> tca(ta);
-	tensor_ctrl<2, double> tcb(tb), tcb_ref(tb_ref);
+	dense_tensor_ctrl<3, double> tca(ta);
+	dense_tensor_ctrl<2, double> tcb(tb), tcb_ref(tb_ref);
 
 	double *pa = tca.req_dataptr();
 	double *pb = tcb.req_dataptr();

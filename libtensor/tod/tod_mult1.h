@@ -138,7 +138,7 @@ void tod_mult1<N>::do_perform(dense_tensor_i<N, double> &ta, bool doadd, double 
 
 	try {
 
-	tensor_ctrl<N, double> ca(ta), cb(m_tb);
+	dense_tensor_ctrl<N, double> ca(ta), cb(m_tb);
 	ca.req_prefetch();
 	cb.req_prefetch();
 

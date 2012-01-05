@@ -44,7 +44,7 @@ void tod_mult1_test::test_pq_pq_1(
 	tensor<2, double, allocator> ta(dims), tb(dims), ta_ref(dims);
 
 	{
-	tensor_ctrl<2, double> tca(ta), tcb(tb), tca_ref(ta_ref);
+	dense_tensor_ctrl<2, double> tca(ta), tcb(tb), tca_ref(ta_ref);
 
 	double *pa = tca.req_dataptr();
 	double *pb = tcb.req_dataptr();
@@ -102,7 +102,7 @@ void tod_mult1_test::test_pq_pq_2(
 	tensor<2, double, allocator> ta(dims), tb(dims), ta_ref(dims);
 
 	{
-	tensor_ctrl<2, double> tca(ta), tcb(tb), tca_ref(ta_ref);
+	dense_tensor_ctrl<2, double> tca(ta), tcb(tb), tca_ref(ta_ref);
 
 	double *pa = tca.req_dataptr();
 	double *pb = tcb.req_dataptr();
@@ -168,7 +168,7 @@ void tod_mult1_test::test_pqrs_qrps(
 	tensor<4, double, allocator> ta(dima), tb(dimb), ta_ref(dima);
 
 	{
-	tensor_ctrl<4, double> tca(ta), tcb(tb), tca_ref(ta_ref);
+	dense_tensor_ctrl<4, double> tca(ta), tcb(tb), tca_ref(ta_ref);
 
 	double *pa = tca.req_dataptr();
 	double *pb = tcb.req_dataptr();

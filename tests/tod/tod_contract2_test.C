@@ -1052,10 +1052,10 @@ void tod_contract2_test::test_0_p_p(size_t np, double d)
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<1, double> tca(ta);
-	tensor_ctrl<1, double> tcb(tb);
-	tensor_ctrl<0, double> tcc(tc);
-	tensor_ctrl<0, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<1, double> tca(ta);
+	dense_tensor_ctrl<1, double> tcb(tb);
+	dense_tensor_ctrl<0, double> tcc(tc);
+	dense_tensor_ctrl<0, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -1136,10 +1136,10 @@ void tod_contract2_test::test_i_p_pi(size_t ni, size_t np, double d)
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<1, double> tca(ta);
-	tensor_ctrl<2, double> tcb(tb);
-	tensor_ctrl<1, double> tcc(tc);
-	tensor_ctrl<1, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<1, double> tca(ta);
+	dense_tensor_ctrl<2, double> tcb(tb);
+	dense_tensor_ctrl<1, double> tcc(tc);
+	dense_tensor_ctrl<1, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -1225,10 +1225,10 @@ void tod_contract2_test::test_i_p_ip(size_t ni, size_t np, double d)
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<1, double> tca(ta);
-	tensor_ctrl<2, double> tcb(tb);
-	tensor_ctrl<1, double> tcc(tc);
-	tensor_ctrl<1, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<1, double> tca(ta);
+	dense_tensor_ctrl<2, double> tcb(tb);
+	dense_tensor_ctrl<1, double> tcc(tc);
+	dense_tensor_ctrl<1, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -1314,10 +1314,10 @@ void tod_contract2_test::test_i_pi_p(size_t ni, size_t np, double d)
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<2, double> tca(ta);
-	tensor_ctrl<1, double> tcb(tb);
-	tensor_ctrl<1, double> tcc(tc);
-	tensor_ctrl<1, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<2, double> tca(ta);
+	dense_tensor_ctrl<1, double> tcb(tb);
+	dense_tensor_ctrl<1, double> tcc(tc);
+	dense_tensor_ctrl<1, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -1403,10 +1403,10 @@ void tod_contract2_test::test_i_ip_p(size_t ni, size_t np, double d)
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<2, double> tca(ta);
-	tensor_ctrl<1, double> tcb(tb);
-	tensor_ctrl<1, double> tcc(tc);
-	tensor_ctrl<1, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<2, double> tca(ta);
+	dense_tensor_ctrl<1, double> tcb(tb);
+	dense_tensor_ctrl<1, double> tcc(tc);
+	dense_tensor_ctrl<1, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -1492,10 +1492,10 @@ void tod_contract2_test::test_ij_i_j(size_t ni, size_t nj, double d)
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<1, double> tca(ta);
-	tensor_ctrl<1, double> tcb(tb);
-	tensor_ctrl<2, double> tcc(tc);
-	tensor_ctrl<2, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<1, double> tca(ta);
+	dense_tensor_ctrl<1, double> tcb(tb);
+	dense_tensor_ctrl<2, double> tcc(tc);
+	dense_tensor_ctrl<2, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -1580,10 +1580,10 @@ void tod_contract2_test::test_ij_j_i(size_t ni, size_t nj, double d)
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<1, double> tca(ta);
-	tensor_ctrl<1, double> tcb(tb);
-	tensor_ctrl<2, double> tcc(tc);
-	tensor_ctrl<2, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<1, double> tca(ta);
+	dense_tensor_ctrl<1, double> tcb(tb);
+	dense_tensor_ctrl<2, double> tcc(tc);
+	dense_tensor_ctrl<2, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -1669,10 +1669,10 @@ void tod_contract2_test::test_ij_pi_pj(
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<2, double> tca(ta);
-	tensor_ctrl<2, double> tcb(tb);
-	tensor_ctrl<2, double> tcc(tc);
-	tensor_ctrl<2, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<2, double> tca(ta);
+	dense_tensor_ctrl<2, double> tcb(tb);
+	dense_tensor_ctrl<2, double> tcc(tc);
+	dense_tensor_ctrl<2, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -1760,10 +1760,10 @@ void tod_contract2_test::test_ij_pi_jp(
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<2, double> tca(ta);
-	tensor_ctrl<2, double> tcb(tb);
-	tensor_ctrl<2, double> tcc(tc);
-	tensor_ctrl<2, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<2, double> tca(ta);
+	dense_tensor_ctrl<2, double> tcb(tb);
+	dense_tensor_ctrl<2, double> tcc(tc);
+	dense_tensor_ctrl<2, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -1851,10 +1851,10 @@ void tod_contract2_test::test_ij_ip_pj(
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<2, double> tca(ta);
-	tensor_ctrl<2, double> tcb(tb);
-	tensor_ctrl<2, double> tcc(tc);
-	tensor_ctrl<2, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<2, double> tca(ta);
+	dense_tensor_ctrl<2, double> tcb(tb);
+	dense_tensor_ctrl<2, double> tcc(tc);
+	dense_tensor_ctrl<2, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -1942,10 +1942,10 @@ void tod_contract2_test::test_ij_ip_jp(
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<2, double> tca(ta);
-	tensor_ctrl<2, double> tcb(tb);
-	tensor_ctrl<2, double> tcc(tc);
-	tensor_ctrl<2, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<2, double> tca(ta);
+	dense_tensor_ctrl<2, double> tcb(tb);
+	dense_tensor_ctrl<2, double> tcc(tc);
+	dense_tensor_ctrl<2, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -2033,10 +2033,10 @@ void tod_contract2_test::test_ij_pj_pi(
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<2, double> tca(ta);
-	tensor_ctrl<2, double> tcb(tb);
-	tensor_ctrl<2, double> tcc(tc);
-	tensor_ctrl<2, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<2, double> tca(ta);
+	dense_tensor_ctrl<2, double> tcb(tb);
+	dense_tensor_ctrl<2, double> tcc(tc);
+	dense_tensor_ctrl<2, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -2125,10 +2125,10 @@ void tod_contract2_test::test_ij_pj_ip(
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<2, double> tca(ta);
-	tensor_ctrl<2, double> tcb(tb);
-	tensor_ctrl<2, double> tcc(tc);
-	tensor_ctrl<2, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<2, double> tca(ta);
+	dense_tensor_ctrl<2, double> tcb(tb);
+	dense_tensor_ctrl<2, double> tcc(tc);
+	dense_tensor_ctrl<2, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -2217,10 +2217,10 @@ void tod_contract2_test::test_ij_jp_ip(
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<2, double> tca(ta);
-	tensor_ctrl<2, double> tcb(tb);
-	tensor_ctrl<2, double> tcc(tc);
-	tensor_ctrl<2, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<2, double> tca(ta);
+	dense_tensor_ctrl<2, double> tcb(tb);
+	dense_tensor_ctrl<2, double> tcc(tc);
+	dense_tensor_ctrl<2, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -2309,10 +2309,10 @@ void tod_contract2_test::test_ij_jp_pi(
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<2, double> tca(ta);
-	tensor_ctrl<2, double> tcb(tb);
-	tensor_ctrl<2, double> tcc(tc);
-	tensor_ctrl<2, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<2, double> tca(ta);
+	dense_tensor_ctrl<2, double> tcb(tb);
+	dense_tensor_ctrl<2, double> tcc(tc);
+	dense_tensor_ctrl<2, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -2401,10 +2401,10 @@ void tod_contract2_test::test_ij_p_pji(
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<1, double> tca(ta);
-	tensor_ctrl<3, double> tcb(tb);
-	tensor_ctrl<2, double> tcc(tc);
-	tensor_ctrl<2, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<1, double> tca(ta);
+	dense_tensor_ctrl<3, double> tcb(tb);
+	dense_tensor_ctrl<2, double> tcc(tc);
+	dense_tensor_ctrl<2, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -2495,10 +2495,10 @@ void tod_contract2_test::test_ij_pji_p(
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<3, double> tca(ta);
-	tensor_ctrl<1, double> tcb(tb);
-	tensor_ctrl<2, double> tcc(tc);
-	tensor_ctrl<2, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<3, double> tca(ta);
+	dense_tensor_ctrl<1, double> tcb(tb);
+	dense_tensor_ctrl<2, double> tcc(tc);
+	dense_tensor_ctrl<2, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -2589,10 +2589,10 @@ void tod_contract2_test::test_ijk_ip_pkj(
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<2, double> tca(ta);
-	tensor_ctrl<3, double> tcb(tb);
-	tensor_ctrl<3, double> tcc(tc);
-	tensor_ctrl<3, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<2, double> tca(ta);
+	dense_tensor_ctrl<3, double> tcb(tb);
+	dense_tensor_ctrl<3, double> tcc(tc);
+	dense_tensor_ctrl<3, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -2686,10 +2686,10 @@ void tod_contract2_test::test_ijk_pi_pkj(
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<2, double> tca(ta);
-	tensor_ctrl<3, double> tcb(tb);
-	tensor_ctrl<3, double> tcc(tc);
-	tensor_ctrl<3, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<2, double> tca(ta);
+	dense_tensor_ctrl<3, double> tcb(tb);
+	dense_tensor_ctrl<3, double> tcc(tc);
+	dense_tensor_ctrl<3, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -2783,10 +2783,10 @@ void tod_contract2_test::test_ijk_pik_pj(
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<3, double> tca(ta);
-	tensor_ctrl<2, double> tcb(tb);
-	tensor_ctrl<3, double> tcc(tc);
-	tensor_ctrl<3, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<3, double> tca(ta);
+	dense_tensor_ctrl<2, double> tcb(tb);
+	dense_tensor_ctrl<3, double> tcc(tc);
+	dense_tensor_ctrl<3, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -2880,10 +2880,10 @@ void tod_contract2_test::test_ijk_pj_ipk(
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<2, double> tca(ta);
-	tensor_ctrl<3, double> tcb(tb);
-	tensor_ctrl<3, double> tcc(tc);
-	tensor_ctrl<3, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<2, double> tca(ta);
+	dense_tensor_ctrl<3, double> tcb(tb);
+	dense_tensor_ctrl<3, double> tcc(tc);
+	dense_tensor_ctrl<3, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -2977,10 +2977,10 @@ void tod_contract2_test::test_ijk_pj_pik(
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<2, double> tca(ta);
-	tensor_ctrl<3, double> tcb(tb);
-	tensor_ctrl<3, double> tcc(tc);
-	tensor_ctrl<3, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<2, double> tca(ta);
+	dense_tensor_ctrl<3, double> tcb(tb);
+	dense_tensor_ctrl<3, double> tcc(tc);
+	dense_tensor_ctrl<3, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -3074,10 +3074,10 @@ void tod_contract2_test::test_ijk_pkj_ip(
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<3, double> tca(ta);
-	tensor_ctrl<2, double> tcb(tb);
-	tensor_ctrl<3, double> tcc(tc);
-	tensor_ctrl<3, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<3, double> tca(ta);
+	dense_tensor_ctrl<2, double> tcb(tb);
+	dense_tensor_ctrl<3, double> tcc(tc);
+	dense_tensor_ctrl<3, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -3171,10 +3171,10 @@ void tod_contract2_test::test_ijk_pkj_pi(
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<3, double> tca(ta);
-	tensor_ctrl<2, double> tcb(tb);
-	tensor_ctrl<3, double> tcc(tc);
-	tensor_ctrl<3, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<3, double> tca(ta);
+	dense_tensor_ctrl<2, double> tcb(tb);
+	dense_tensor_ctrl<3, double> tcc(tc);
+	dense_tensor_ctrl<3, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -3268,10 +3268,10 @@ void tod_contract2_test::test_ij_pqi_pjq(
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<3, double> tca(ta);
-	tensor_ctrl<3, double> tcb(tb);
-	tensor_ctrl<2, double> tcc(tc);
-	tensor_ctrl<2, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<3, double> tca(ta);
+	dense_tensor_ctrl<3, double> tcb(tb);
+	dense_tensor_ctrl<2, double> tcc(tc);
+	dense_tensor_ctrl<2, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -3362,10 +3362,10 @@ void tod_contract2_test::test_ij_ipq_jqp(
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<3, double> tca(ta);
-	tensor_ctrl<3, double> tcb(tb);
-	tensor_ctrl<2, double> tcc(tc);
-	tensor_ctrl<2, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<3, double> tca(ta);
+	dense_tensor_ctrl<3, double> tcb(tb);
+	dense_tensor_ctrl<2, double> tcc(tc);
+	dense_tensor_ctrl<2, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -3456,10 +3456,10 @@ void tod_contract2_test::test_ij_jpq_iqp(
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<3, double> tca(ta);
-	tensor_ctrl<3, double> tcb(tb);
-	tensor_ctrl<2, double> tcc(tc);
-	tensor_ctrl<2, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<3, double> tca(ta);
+	dense_tensor_ctrl<3, double> tcb(tb);
+	dense_tensor_ctrl<2, double> tcc(tc);
+	dense_tensor_ctrl<2, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -3553,10 +3553,10 @@ void tod_contract2_test::test_ij_jipq_qp(
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<4, double> tca(ta);
-	tensor_ctrl<2, double> tcb(tb);
-	tensor_ctrl<2, double> tcc(tc);
-	tensor_ctrl<2, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<4, double> tca(ta);
+	dense_tensor_ctrl<2, double> tcb(tb);
+	dense_tensor_ctrl<2, double> tcc(tc);
+	dense_tensor_ctrl<2, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -3645,10 +3645,10 @@ void tod_contract2_test::test_ij_pq_ijpq(size_t ni, size_t nj, size_t np,
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<2, double> tca(ta);
-	tensor_ctrl<4, double> tcb(tb);
-	tensor_ctrl<2, double> tcc(tc);
-	tensor_ctrl<2, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<2, double> tca(ta);
+	dense_tensor_ctrl<4, double> tcb(tb);
+	dense_tensor_ctrl<2, double> tcc(tc);
+	dense_tensor_ctrl<2, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -3732,10 +3732,10 @@ void tod_contract2_test::test_ij_pq_ijpq_a(size_t ni, size_t nj, size_t np,
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<2, double> tca(ta);
-	tensor_ctrl<4, double> tcb(tb);
-	tensor_ctrl<2, double> tcc(tc);
-	tensor_ctrl<2, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<2, double> tca(ta);
+	dense_tensor_ctrl<4, double> tcb(tb);
+	dense_tensor_ctrl<2, double> tcc(tc);
+	dense_tensor_ctrl<2, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -3825,10 +3825,10 @@ void tod_contract2_test::test_ijk_kjpq_iqp(size_t ni, size_t nj, size_t nk,
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<4, double> tca(ta);
-	tensor_ctrl<3, double> tcb(tb);
-	tensor_ctrl<3, double> tcc(tc);
-	tensor_ctrl<3, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<4, double> tca(ta);
+	dense_tensor_ctrl<3, double> tcb(tb);
+	dense_tensor_ctrl<3, double> tcc(tc);
+	dense_tensor_ctrl<3, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -3924,10 +3924,10 @@ void tod_contract2_test::test_ijk_pkiq_pjq(size_t ni, size_t nj, size_t nk,
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<4, double> tca(ta);
-	tensor_ctrl<3, double> tcb(tb);
-	tensor_ctrl<3, double> tcc(tc);
-	tensor_ctrl<3, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<4, double> tca(ta);
+	dense_tensor_ctrl<3, double> tcb(tb);
+	dense_tensor_ctrl<3, double> tcc(tc);
+	dense_tensor_ctrl<3, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -4025,10 +4025,10 @@ void tod_contract2_test::test_ijk_pqj_iqpk(size_t ni, size_t nj, size_t nk,
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<3, double> tca(ta);
-	tensor_ctrl<4, double> tcb(tb);
-	tensor_ctrl<3, double> tcc(tc);
-	tensor_ctrl<3, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<3, double> tca(ta);
+	dense_tensor_ctrl<4, double> tcb(tb);
+	dense_tensor_ctrl<3, double> tcc(tc);
+	dense_tensor_ctrl<3, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -4125,10 +4125,10 @@ void tod_contract2_test::test_ijk_pqji_qpk(size_t ni, size_t nj, size_t nk,
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<4, double> tca(ta);
-	tensor_ctrl<3, double> tcb(tb);
-	tensor_ctrl<3, double> tcc(tc);
-	tensor_ctrl<3, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<4, double> tca(ta);
+	dense_tensor_ctrl<3, double> tcb(tb);
+	dense_tensor_ctrl<3, double> tcc(tc);
+	dense_tensor_ctrl<3, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -4224,10 +4224,10 @@ void tod_contract2_test::test_ijkl_ikp_jpl(size_t ni, size_t nj, size_t nk,
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<3, double> tca(ta);
-	tensor_ctrl<3, double> tcb(tb);
-	tensor_ctrl<4, double> tcc(tc);
-	tensor_ctrl<4, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<3, double> tca(ta);
+	dense_tensor_ctrl<3, double> tcb(tb);
+	dense_tensor_ctrl<4, double> tcc(tc);
+	dense_tensor_ctrl<4, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -4324,10 +4324,10 @@ void tod_contract2_test::test_ijkl_ipk_jpl(size_t ni, size_t nj, size_t nk,
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<3, double> tca(ta);
-	tensor_ctrl<3, double> tcb(tb);
-	tensor_ctrl<4, double> tcc(tc);
-	tensor_ctrl<4, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<3, double> tca(ta);
+	dense_tensor_ctrl<3, double> tcb(tb);
+	dense_tensor_ctrl<4, double> tcc(tc);
+	dense_tensor_ctrl<4, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -4424,10 +4424,10 @@ void tod_contract2_test::test_ijkl_ipl_jpk(size_t ni, size_t nj, size_t nk,
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<3, double> tca(ta);
-	tensor_ctrl<3, double> tcb(tb);
-	tensor_ctrl<4, double> tcc(tc);
-	tensor_ctrl<4, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<3, double> tca(ta);
+	dense_tensor_ctrl<3, double> tcb(tb);
+	dense_tensor_ctrl<4, double> tcc(tc);
+	dense_tensor_ctrl<4, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -4523,10 +4523,10 @@ void tod_contract2_test::test_ijkl_jkp_ipl(size_t ni, size_t nj, size_t nk,
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<3, double> tca(ta);
-	tensor_ctrl<3, double> tcb(tb);
-	tensor_ctrl<4, double> tcc(tc);
-	tensor_ctrl<4, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<3, double> tca(ta);
+	dense_tensor_ctrl<3, double> tcb(tb);
+	dense_tensor_ctrl<4, double> tcc(tc);
+	dense_tensor_ctrl<4, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -4623,10 +4623,10 @@ void tod_contract2_test::test_ijkl_jpl_ipk(size_t ni, size_t nj, size_t nk,
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<3, double> tca(ta);
-	tensor_ctrl<3, double> tcb(tb);
-	tensor_ctrl<4, double> tcc(tc);
-	tensor_ctrl<4, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<3, double> tca(ta);
+	dense_tensor_ctrl<3, double> tcb(tb);
+	dense_tensor_ctrl<4, double> tcc(tc);
+	dense_tensor_ctrl<4, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -4727,10 +4727,10 @@ void tod_contract2_test::test_ijklm_ikp_jpml(size_t ni, size_t nj, size_t nk,
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<3, double> tca(ta);
-	tensor_ctrl<4, double> tcb(tb);
-	tensor_ctrl<5, double> tcc(tc);
-	tensor_ctrl<5, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<3, double> tca(ta);
+	dense_tensor_ctrl<4, double> tcb(tb);
+	dense_tensor_ctrl<5, double> tcc(tc);
+	dense_tensor_ctrl<5, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -4834,10 +4834,10 @@ void tod_contract2_test::test_ijklm_ipkm_jpl(size_t ni, size_t nj, size_t nk,
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<4, double> tca(ta);
-	tensor_ctrl<3, double> tcb(tb);
-	tensor_ctrl<5, double> tcc(tc);
-	tensor_ctrl<5, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<4, double> tca(ta);
+	dense_tensor_ctrl<3, double> tcb(tb);
+	dense_tensor_ctrl<5, double> tcc(tc);
+	dense_tensor_ctrl<5, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -4941,10 +4941,10 @@ void tod_contract2_test::test_ijklm_jlp_ipkm(size_t ni, size_t nj, size_t nk,
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<3, double> tca(ta);
-	tensor_ctrl<4, double> tcb(tb);
-	tensor_ctrl<5, double> tcc(tc);
-	tensor_ctrl<5, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<3, double> tca(ta);
+	dense_tensor_ctrl<4, double> tcb(tb);
+	dense_tensor_ctrl<5, double> tcc(tc);
+	dense_tensor_ctrl<5, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -5048,10 +5048,10 @@ void tod_contract2_test::test_ijklmn_kjmp_ipln(size_t ni, size_t nj, size_t nk,
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<4, double> tca(ta);
-	tensor_ctrl<4, double> tcb(tb);
-	tensor_ctrl<6, double> tcc(tc);
-	tensor_ctrl<6, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<4, double> tca(ta);
+	dense_tensor_ctrl<4, double> tcb(tb);
+	dense_tensor_ctrl<6, double> tcc(tc);
+	dense_tensor_ctrl<6, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -5157,10 +5157,10 @@ void tod_contract2_test::test_ijkl_iplq_kpjq(size_t ni, size_t nj, size_t nk,
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<4, double> tca(ta);
-	tensor_ctrl<4, double> tcb(tb);
-	tensor_ctrl<4, double> tcc(tc);
-	tensor_ctrl<4, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<4, double> tca(ta);
+	dense_tensor_ctrl<4, double> tcb(tb);
+	dense_tensor_ctrl<4, double> tcc(tc);
+	dense_tensor_ctrl<4, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -5259,10 +5259,10 @@ void tod_contract2_test::test_ijkl_iplq_pkjq(size_t ni, size_t nj, size_t nk,
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<4, double> tca(ta);
-	tensor_ctrl<4, double> tcb(tb);
-	tensor_ctrl<4, double> tcc(tc);
-	tensor_ctrl<4, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<4, double> tca(ta);
+	dense_tensor_ctrl<4, double> tcb(tb);
+	dense_tensor_ctrl<4, double> tcc(tc);
+	dense_tensor_ctrl<4, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -5361,10 +5361,10 @@ void tod_contract2_test::test_ijkl_iplq_pkqj(size_t ni, size_t nj, size_t nk,
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<4, double> tca(ta);
-	tensor_ctrl<4, double> tcb(tb);
-	tensor_ctrl<4, double> tcc(tc);
-	tensor_ctrl<4, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<4, double> tca(ta);
+	dense_tensor_ctrl<4, double> tcb(tb);
+	dense_tensor_ctrl<4, double> tcc(tc);
+	dense_tensor_ctrl<4, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -5463,10 +5463,10 @@ void tod_contract2_test::test_ijkl_ipql_kpqj(size_t ni, size_t nj, size_t nk,
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<4, double> tca(ta);
-	tensor_ctrl<4, double> tcb(tb);
-	tensor_ctrl<4, double> tcc(tc);
-	tensor_ctrl<4, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<4, double> tca(ta);
+	dense_tensor_ctrl<4, double> tcb(tb);
+	dense_tensor_ctrl<4, double> tcc(tc);
+	dense_tensor_ctrl<4, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -5565,10 +5565,10 @@ void tod_contract2_test::test_ijkl_ipql_pkqj(size_t ni, size_t nj, size_t nk,
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<4, double> tca(ta);
-	tensor_ctrl<4, double> tcb(tb);
-	tensor_ctrl<4, double> tcc(tc);
-	tensor_ctrl<4, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<4, double> tca(ta);
+	dense_tensor_ctrl<4, double> tcb(tb);
+	dense_tensor_ctrl<4, double> tcc(tc);
+	dense_tensor_ctrl<4, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -5667,10 +5667,10 @@ void tod_contract2_test::test_ijkl_pilq_kpjq(size_t ni, size_t nj, size_t nk,
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<4, double> tca(ta);
-	tensor_ctrl<4, double> tcb(tb);
-	tensor_ctrl<4, double> tcc(tc);
-	tensor_ctrl<4, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<4, double> tca(ta);
+	dense_tensor_ctrl<4, double> tcb(tb);
+	dense_tensor_ctrl<4, double> tcc(tc);
+	dense_tensor_ctrl<4, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -5769,10 +5769,10 @@ void tod_contract2_test::test_ijkl_pilq_pkjq(size_t ni, size_t nj, size_t nk,
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<4, double> tca(ta);
-	tensor_ctrl<4, double> tcb(tb);
-	tensor_ctrl<4, double> tcc(tc);
-	tensor_ctrl<4, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<4, double> tca(ta);
+	dense_tensor_ctrl<4, double> tcb(tb);
+	dense_tensor_ctrl<4, double> tcc(tc);
+	dense_tensor_ctrl<4, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -5871,10 +5871,10 @@ void tod_contract2_test::test_ijkl_piql_kpqj(size_t ni, size_t nj, size_t nk,
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<4, double> tca(ta);
-	tensor_ctrl<4, double> tcb(tb);
-	tensor_ctrl<4, double> tcc(tc);
-	tensor_ctrl<4, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<4, double> tca(ta);
+	dense_tensor_ctrl<4, double> tcb(tb);
+	dense_tensor_ctrl<4, double> tcc(tc);
+	dense_tensor_ctrl<4, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -5973,10 +5973,10 @@ void tod_contract2_test::test_ijkl_piql_pkqj(size_t ni, size_t nj, size_t nk,
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<4, double> tca(ta);
-	tensor_ctrl<4, double> tcb(tb);
-	tensor_ctrl<4, double> tcc(tc);
-	tensor_ctrl<4, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<4, double> tca(ta);
+	dense_tensor_ctrl<4, double> tcb(tb);
+	dense_tensor_ctrl<4, double> tcc(tc);
+	dense_tensor_ctrl<4, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -6075,10 +6075,10 @@ void tod_contract2_test::test_ijkl_pqkj_iqpl(size_t ni, size_t nj, size_t nk,
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<4, double> tca(ta);
-	tensor_ctrl<4, double> tcb(tb);
-	tensor_ctrl<4, double> tcc(tc);
-	tensor_ctrl<4, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<4, double> tca(ta);
+	dense_tensor_ctrl<4, double> tcb(tb);
+	dense_tensor_ctrl<4, double> tcc(tc);
+	dense_tensor_ctrl<4, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -6179,10 +6179,10 @@ void tod_contract2_test::test_ijkl_pqkj_qipl(size_t ni, size_t nj, size_t nk,
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<4, double> tca(ta);
-	tensor_ctrl<4, double> tcb(tb);
-	tensor_ctrl<4, double> tcc(tc);
-	tensor_ctrl<4, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<4, double> tca(ta);
+	dense_tensor_ctrl<4, double> tcb(tb);
+	dense_tensor_ctrl<4, double> tcc(tc);
+	dense_tensor_ctrl<4, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -6276,10 +6276,10 @@ void tod_contract2_test::test_ij_ipqr_jpqr(size_t ni, size_t nj, size_t np,
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<4, double> tca(ta);
-	tensor_ctrl<4, double> tcb(tb);
-	tensor_ctrl<2, double> tcc(tc);
-	tensor_ctrl<2, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<4, double> tca(ta);
+	dense_tensor_ctrl<4, double> tcb(tb);
+	dense_tensor_ctrl<2, double> tcc(tc);
+	dense_tensor_ctrl<2, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -6367,10 +6367,10 @@ void tod_contract2_test::test_ij_ipqr_jpqr_a(size_t ni, size_t nj, size_t np,
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<4, double> tca(ta);
-	tensor_ctrl<4, double> tcb(tb);
-	tensor_ctrl<2, double> tcc(tc);
-	tensor_ctrl<2, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<4, double> tca(ta);
+	dense_tensor_ctrl<4, double> tcb(tb);
+	dense_tensor_ctrl<2, double> tcc(tc);
+	dense_tensor_ctrl<2, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -6461,10 +6461,10 @@ void tod_contract2_test::test_ij_ipqr_pjrq(
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<4, double> tca(ta);
-	tensor_ctrl<4, double> tcb(tb);
-	tensor_ctrl<2, double> tcc(tc);
-	tensor_ctrl<2, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<4, double> tca(ta);
+	dense_tensor_ctrl<4, double> tcb(tb);
+	dense_tensor_ctrl<2, double> tcc(tc);
+	dense_tensor_ctrl<2, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -6555,10 +6555,10 @@ void tod_contract2_test::test_ij_jpqr_iprq(size_t ni, size_t nj, size_t np,
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<4, double> tca(ta);
-	tensor_ctrl<4, double> tcb(tb);
-	tensor_ctrl<2, double> tcc(tc);
-	tensor_ctrl<2, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<4, double> tca(ta);
+	dense_tensor_ctrl<4, double> tcb(tb);
+	dense_tensor_ctrl<2, double> tcc(tc);
+	dense_tensor_ctrl<2, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -6648,10 +6648,10 @@ void tod_contract2_test::test_ij_pqir_pqjr(size_t ni, size_t nj,
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<4, double> tca(ta);
-	tensor_ctrl<4, double> tcb(tb);
-	tensor_ctrl<2, double> tcc(tc);
-	tensor_ctrl<2, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<4, double> tca(ta);
+	dense_tensor_ctrl<4, double> tcb(tb);
+	dense_tensor_ctrl<2, double> tcc(tc);
+	dense_tensor_ctrl<2, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -6738,10 +6738,10 @@ void tod_contract2_test::test_ij_pqir_pqjr_a(size_t ni, size_t nj, size_t np,
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<4, double> tca(ta);
-	tensor_ctrl<4, double> tcb(tb);
-	tensor_ctrl<2, double> tcc(tc);
-	tensor_ctrl<2, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<4, double> tca(ta);
+	dense_tensor_ctrl<4, double> tcb(tb);
+	dense_tensor_ctrl<2, double> tcc(tc);
+	dense_tensor_ctrl<2, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -6835,10 +6835,10 @@ void tod_contract2_test::test_ijkl_pi_jklp(size_t ni, size_t nj,
 	double cijkl_max = 0.0;
 
 	{
-	tensor_ctrl<2, double> tca(ta);
-	tensor_ctrl<4, double> tcb(tb);
-	tensor_ctrl<4, double> tcc(tc);
-	tensor_ctrl<4, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<2, double> tca(ta);
+	dense_tensor_ctrl<4, double> tcb(tb);
+	dense_tensor_ctrl<4, double> tcc(tc);
+	dense_tensor_ctrl<4, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -6944,10 +6944,10 @@ void tod_contract2_test::test_ijkl_pi_jklp_a(size_t ni, size_t nj, size_t nk,
 	double cijkl_max = 0.0;
 
 	{
-	tensor_ctrl<2, double> tca(ta);
-	tensor_ctrl<4, double> tcb(tb);
-	tensor_ctrl<4, double> tcc(tc);
-	tensor_ctrl<4, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<2, double> tca(ta);
+	dense_tensor_ctrl<4, double> tcb(tb);
+	dense_tensor_ctrl<4, double> tcc(tc);
+	dense_tensor_ctrl<4, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -7047,10 +7047,10 @@ void tod_contract2_test::test_jikl_pi_jpkl(size_t ni, size_t nj,
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<2, double> tca(ta);
-	tensor_ctrl<4, double> tcb(tb);
-	tensor_ctrl<4, double> tcc(tc);
-	tensor_ctrl<4, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<2, double> tca(ta);
+	dense_tensor_ctrl<4, double> tcb(tb);
+	dense_tensor_ctrl<4, double> tcc(tc);
+	dense_tensor_ctrl<4, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -7138,10 +7138,10 @@ void tod_contract2_test::test_jikl_pi_jpkl_a(size_t ni, size_t nj, size_t nk,
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<2, double> tca(ta);
-	tensor_ctrl<4, double> tcb(tb);
-	tensor_ctrl<4, double> tcc(tc);
-	tensor_ctrl<4, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<2, double> tca(ta);
+	dense_tensor_ctrl<4, double> tcb(tb);
+	dense_tensor_ctrl<4, double> tcc(tc);
+	dense_tensor_ctrl<4, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -7228,10 +7228,10 @@ void tod_contract2_test::test_ijkl_ijp_klp(size_t ni, size_t nj,
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<3, double> tca(ta);
-	tensor_ctrl<3, double> tcb(tb);
-	tensor_ctrl<4, double> tcc(tc);
-	tensor_ctrl<4, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<3, double> tca(ta);
+	dense_tensor_ctrl<3, double> tcb(tb);
+	dense_tensor_ctrl<4, double> tcc(tc);
+	dense_tensor_ctrl<4, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -7316,10 +7316,10 @@ void tod_contract2_test::test_ijkl_ijp_klp_a(size_t ni, size_t nj, size_t nk,
 	double cij_max = 0.0;
 
 	{
-	tensor_ctrl<3, double> tca(ta);
-	tensor_ctrl<3, double> tcb(tb);
-	tensor_ctrl<4, double> tcc(tc);
-	tensor_ctrl<4, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<3, double> tca(ta);
+	dense_tensor_ctrl<3, double> tcb(tb);
+	dense_tensor_ctrl<4, double> tcc(tc);
+	dense_tensor_ctrl<4, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -7411,10 +7411,10 @@ void tod_contract2_test::test_ijkl_ij_kl(size_t ni, size_t nj,
 	double cijkl_max = 0.0;
 
 	{
-	tensor_ctrl<2, double> tca(ta);
-	tensor_ctrl<2, double> tcb(tb);
-	tensor_ctrl<4, double> tcc(tc);
-	tensor_ctrl<4, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<2, double> tca(ta);
+	dense_tensor_ctrl<2, double> tcb(tb);
+	dense_tensor_ctrl<4, double> tcc(tc);
+	dense_tensor_ctrl<4, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
@@ -7516,10 +7516,10 @@ void tod_contract2_test::test_ijkl_ij_lk(size_t ni, size_t nj,
 	double cijkl_max = 0.0;
 
 	{
-	tensor_ctrl<2, double> tca(ta);
-	tensor_ctrl<2, double> tcb(tb);
-	tensor_ctrl<4, double> tcc(tc);
-	tensor_ctrl<4, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<2, double> tca(ta);
+	dense_tensor_ctrl<2, double> tcb(tb);
+	dense_tensor_ctrl<4, double> tcc(tc);
+	dense_tensor_ctrl<4, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();

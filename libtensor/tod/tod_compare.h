@@ -4,8 +4,7 @@
 #include <cmath>
 #include "../defs.h"
 #include "../core/abs_index.h"
-#include "../dense_tensor/dense_tensor_i.h"
-#include "../core/tensor_ctrl.h"
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include "bad_dimensions.h"
 
 namespace libtensor {
@@ -116,7 +115,7 @@ inline tod_compare<N>::tod_compare(
 template<size_t N>
 bool tod_compare<N>::compare() {
 
-	tensor_ctrl<N, double> tctrl1(m_t1), tctrl2(m_t2);
+	dense_tensor_ctrl<N, double> tctrl1(m_t1), tctrl2(m_t2);
 	const double *p1 = tctrl1.req_const_dataptr();
 	const double *p2 = tctrl2.req_const_dataptr();
 

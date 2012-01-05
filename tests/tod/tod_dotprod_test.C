@@ -50,8 +50,8 @@ void tod_dotprod_test::test_1(size_t ni) throw(libtest::test_exception) {
 
 	double c_ref = 0.0;
 	{
-	tensor_ctrl<1, double> tca(ta);
-	tensor_ctrl<1, double> tcb(tb);
+	dense_tensor_ctrl<1, double> tca(ta);
+	dense_tensor_ctrl<1, double> tcb(tb);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 
@@ -112,8 +112,8 @@ void tod_dotprod_test::test_2(size_t ni, size_t nj, const permutation<2> &perm)
 
 	double c_ref = 0.0;
 	{
-	tensor_ctrl<2, double> tca(ta);
-	tensor_ctrl<2, double> tcb(tb);
+	dense_tensor_ctrl<2, double> tca(ta);
+	dense_tensor_ctrl<2, double> tcb(tb);
 	double *dta = tca.req_dataptr();
 	double *dtb = tcb.req_dataptr();
 

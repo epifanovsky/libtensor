@@ -385,7 +385,7 @@ bool btod_compare<N>::compare_data(const abs_index<N> &aidx,
 template<size_t N>
 bool btod_compare<N>::check_zero(dense_tensor_i<N, double> &t) {
 
-	tensor_ctrl<N, double> c(t);
+	dense_tensor_ctrl<N, double> c(t);
 	const double *p = c.req_const_dataptr();
 	size_t sz = t.get_dims().get_size();
 	bool ok = true;

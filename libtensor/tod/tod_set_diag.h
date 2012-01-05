@@ -3,8 +3,7 @@
 
 #include "../defs.h"
 #include "../exception.h"
-#include "../dense_tensor/dense_tensor_i.h"
-#include "../core/tensor_ctrl.h"
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include "bad_dimensions.h"
 
 namespace libtensor {
@@ -76,7 +75,7 @@ void tod_set_diag<N>::perform(dense_tensor_i<N, double> &t) throw(exception) {
 	size_t inc = 0;
 	for(size_t i = 0; i < N; i++) inc += dims.get_increment(i);
 
-	tensor_ctrl<N, double> ctrl(t);
+	dense_tensor_ctrl<N, double> ctrl(t);
 	double *d = ctrl.req_dataptr();
 	for(size_t i = 0; i < n; i++) d[i*inc] = m_v;
 	ctrl.ret_dataptr(d);

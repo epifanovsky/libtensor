@@ -5,7 +5,7 @@
 #include <cstdlib>
 #include "../defs.h"
 #include "../exception.h"
-#include "../core/tensor_ctrl.h"
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include "../mp/auto_cpu_lock.h"
 #include "tod_additive.h"
 
@@ -90,7 +90,7 @@ template<size_t N>
 void tod_random<N>::perform(cpu_pool &cpus, bool zero, double c,
     dense_tensor_i<N, double> &t) {
 
-    tensor_ctrl<N, double> ctrl(t);
+    dense_tensor_ctrl<N, double> ctrl(t);
     size_t sz = t.get_dims().get_size();
     double *ptr = ctrl.req_dataptr();
 

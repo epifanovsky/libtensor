@@ -49,7 +49,7 @@ void tod_import_raw_stream_test::test_1(const dimensions<N> &dims,
 
     typedef std_allocator<double> allocator_t;
     typedef tensor<N, double, allocator_t> tensor_t;
-    typedef tensor_ctrl<N, double> tensor_ctrl_t;
+    typedef dense_tensor_ctrl<N, double> tensor_ctrl_t;
 
     try {
 

@@ -31,7 +31,7 @@ void tod_set_elem_test::test_1() throw(libtest::test_exception) {
 	tensor<2, double, allocator_t> t(dims), t_ref(dims);
 
 	{
-	tensor_ctrl<2, double> tc(t), tc_ref(t_ref);
+	dense_tensor_ctrl<2, double> tc(t), tc_ref(t_ref);
 
 	//	Fill in random data
 	//

@@ -68,7 +68,7 @@ void tod_mult_test::test_pq_pq_1(size_t ni, size_t nj, bool recip)
 	tensor<2, double, allocator> ta(dims), tb(dims), tc(dims), tc_ref(dims);
 
 	{
-	tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
+	dense_tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
 
 	double *pa = tca.req_dataptr();
 	double *pb = tcb.req_dataptr();
@@ -134,7 +134,7 @@ void tod_mult_test::test_pq_pq_2(
 	tensor<2, double, allocator> ta(dims), tb(dims), tc(dims), tc_ref(dims);
 
 	{
-	tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
+	dense_tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
 
 	double *pa = tca.req_dataptr();
 	double *pb = tcb.req_dataptr();
@@ -196,7 +196,7 @@ void tod_mult_test::test_pq_qp(bool recip, double coeff)
 	tensor<2, double, allocator> ta(dims), tb(dims), tc(dims), tc_ref(dims);
 
 	{
-	tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
+	dense_tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
 
 	double *pa = tca.req_dataptr();
 	double *pb = tcb.req_dataptr();
@@ -262,7 +262,7 @@ void tod_mult_test::test_qp_pq(bool recip, double coeff)
 	tensor<2, double, allocator> ta(dims), tb(dims), tc(dims), tc_ref(dims);
 
 	{
-	tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
+	dense_tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
 
 	double *pa = tca.req_dataptr();
 	double *pb = tcb.req_dataptr();
@@ -328,7 +328,7 @@ void tod_mult_test::test_qp_qp(bool recip, double coeff)
 	tensor<2, double, allocator> ta(dims), tb(dims), tc(dims), tc_ref(dims);
 
 	{
-	tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
+	dense_tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
 
 	double *pa = tca.req_dataptr();
 	double *pb = tcb.req_dataptr();
@@ -402,7 +402,7 @@ void tod_mult_test::test_pqrs_qprs(
 	tensor<4, double, allocator> ta(dima), tb(dimb), tc(dima), tc_ref(dima);
 
 	{
-	tensor_ctrl<4, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
+	dense_tensor_ctrl<4, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
 
 	double *pa = tca.req_dataptr();
 	double *pb = tcb.req_dataptr();
@@ -486,7 +486,7 @@ void tod_mult_test::test_pqrs_qrps(
 
 	size_t sz = dima.get_size();
 	{
-	tensor_ctrl<4, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
+	dense_tensor_ctrl<4, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
 
 	double *pa = tca.req_dataptr();
 	double *pb = tcb.req_dataptr();
@@ -566,7 +566,7 @@ void tod_mult_test::test_pqsr_pqrs(
 	tensor<4, double, allocator> ta(dima), tb(dimb), tc(dimb), tc_ref(dimb);
 
 	{
-	tensor_ctrl<4, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
+	dense_tensor_ctrl<4, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
 
 	double *pa = tca.req_dataptr();
 	double *pb = tcb.req_dataptr();
@@ -654,7 +654,7 @@ void tod_mult_test::test_prsq_qrps(size_t ni, size_t nj, size_t nk, size_t nl,
 	tensor<4, double, allocator> ta(dima), tb(dimb), tc(dims), tc_ref(dims);
 
 	{
-	tensor_ctrl<4, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
+	dense_tensor_ctrl<4, double> tca(ta), tcb(tb), tcc(tc), tcc_ref(tc_ref);
 
 	double *pa = tca.req_dataptr();
 	double *pb = tcb.req_dataptr();

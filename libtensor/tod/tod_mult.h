@@ -145,8 +145,8 @@ tod_mult<N>::~tod_mult() {
 template<size_t N>
 void tod_mult<N>::prefetch() {
 
-	tensor_ctrl<N, double>(m_ta).req_prefetch();
-	tensor_ctrl<N, double>(m_tb).req_prefetch();
+    dense_tensor_ctrl<N, double>(m_ta).req_prefetch();
+    dense_tensor_ctrl<N, double>(m_tb).req_prefetch();
 
 }
 
@@ -184,7 +184,7 @@ void tod_mult<N>::perform(cpu_pool &cpus, bool zero, double c,
 
     try {
 
-    tensor_ctrl<N, double> ca(m_ta), cb(m_tb), cc(tc);
+    dense_tensor_ctrl<N, double> ca(m_ta), cb(m_tb), cc(tc);
     ca.req_prefetch();
     cb.req_prefetch();
     cc.req_prefetch();

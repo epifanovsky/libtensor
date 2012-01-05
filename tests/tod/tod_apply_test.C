@@ -103,7 +103,7 @@ void tod_apply_test::test_plain(Functor &fn, const dimensions<N> &dims)
 	tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
 
 	{
-	tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
+	dense_tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
 
 	double *dta = tca.req_dataptr();
 	double *dtb1 = tcb.req_dataptr();
@@ -154,7 +154,7 @@ void tod_apply_test::test_plain_additive(Functor &fn,
 	tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
 
 	{
-	tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
+	dense_tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
 
 	double *dta = tca.req_dataptr();
 	double *dtb1 = tcb.req_dataptr();
@@ -207,7 +207,7 @@ void tod_apply_test::test_scaled(Functor &fn,
 	tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
 
 	{
-	tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
+	dense_tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
 
 	double *dta = tca.req_dataptr();
 	double *dtb1 = tcb.req_dataptr();
@@ -260,7 +260,7 @@ void tod_apply_test::test_scaled_additive(Functor &fn,
 	tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
 
 	{
-	tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
+	dense_tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
 
 	double *dta = tca.req_dataptr();
 	double *dtb1 = tcb.req_dataptr();
@@ -316,7 +316,7 @@ void tod_apply_test::test_perm(Functor &fn, const dimensions<N> &dims,
 	tensor<N, double, allocator> ta(dimsa), tb(dimsb), tb_ref(dimsb);
 
 	{
-	tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
+	dense_tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
 
 	double *dta = tca.req_dataptr();
 	double *dtb1 = tcb.req_dataptr();
@@ -375,7 +375,7 @@ void tod_apply_test::test_perm_additive(Functor &fn, const dimensions<N> &dims,
 	tensor<N, double, allocator> ta(dimsa), tb(dimsb), tb_ref(dimsb);
 
 	{
-	tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
+	dense_tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
 
 	double *dta = tca.req_dataptr();
 	double *dtb1 = tcb.req_dataptr();
@@ -434,7 +434,7 @@ void tod_apply_test::test_perm_scaled(Functor &fn, const dimensions<N> &dims,
 	tensor<N, double, allocator> ta(dimsa), tb(dimsb), tb_ref(dimsb);
 
 	{
-	tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
+	dense_tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
 
 	double *dta = tca.req_dataptr();
 	double *dtb1 = tcb.req_dataptr();
@@ -495,7 +495,7 @@ void tod_apply_test::test_perm_scaled_additive(Functor &fn,
 	tensor<N, double, allocator> ta(dimsa), tb(dimsb), tb_ref(dimsb);
 
 	{
-	tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
+	dense_tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
 
 	double *dta = tca.req_dataptr();
 	double *dtb1 = tcb.req_dataptr();

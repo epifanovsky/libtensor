@@ -1,6 +1,6 @@
 #include <libvmm/thread.h>
 #include <libtensor/core/allocator.h>
-#include <libtensor/core/tensor_ctrl.h>
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include "mp_safe_tensor_test.h"
 
 namespace libtensor {
@@ -35,7 +35,7 @@ public:
 		try {
 		for(size_t i = 0; i < m_n; i++) {
 			size_t sz = m_t1.get_dims().get_size();
-			tensor_ctrl<1, double> c1(m_t1), c2(m_t2), c3(m_t3);
+			dense_tensor_ctrl<1, double> c1(m_t1), c2(m_t2), c3(m_t3);
 			const double *p1 = c1.req_const_dataptr();
 			const double *p2 = c2.req_const_dataptr();
 			double *p3 = c3.req_dataptr();
@@ -78,7 +78,7 @@ void mp_safe_tensor_test::test_1() throw(libtest::test_exception) {
 	size_t sz = dims.get_size();
 
 	mp_safe_tensor<2, double, allocator_t> t1(dims);
-	tensor_ctrl<2, double> c1(t1);
+	dense_tensor_ctrl<2, double> c1(t1);
 
 	c1.req_prefetch();
 
@@ -115,7 +115,7 @@ void mp_safe_tensor_test::test_2() throw(libtest::test_exception) {
 	size_t sz = dims.get_size();
 
 	mp_safe_tensor<2, double, allocator_t> t1(dims);
-	tensor_ctrl<2, double> c1(t1), c2(t1);
+	dense_tensor_ctrl<2, double> c1(t1), c2(t1);
 
 	c1.req_prefetch();
 

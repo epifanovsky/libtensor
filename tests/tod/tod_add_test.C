@@ -107,7 +107,7 @@ void tod_add_test::test_add_to_self_pqrs(size_t p, size_t q, size_t r, size_t s)
 
     double ta_max = 0.0;
     {
-        tensor_ctrl<4, double> ctrla(ta), ctrlc_ref(tc_ref);
+        dense_tensor_ctrl<4, double> ctrla(ta), ctrlc_ref(tc_ref);
 
         double *ptra = ctrla.req_dataptr();
         for(size_t i = 0; i < dim.get_size(); i++) ptra[i] = drand48();
@@ -161,7 +161,7 @@ void tod_add_test::test_add_two_pqrs_pqrs(size_t p, size_t q, size_t r,
 
     double t2_max = 0.0;
     {
-        tensor_ctrl<4, double> ctrl1(t1), ctrl2(t2), ctrl1_ref(t1_ref);
+        dense_tensor_ctrl<4, double> ctrl1(t1), ctrl2(t2), ctrl1_ref(t1_ref);
 
         double *ptr1 = ctrl1.req_dataptr();
         double *ptr1_ref = ctrl1_ref.req_dataptr();
@@ -223,7 +223,7 @@ void tod_add_test::test_add_two_pqrs_qprs(size_t p, size_t q, size_t r,
 
     double t2_max = 0.0;
     {
-        tensor_ctrl<4, double> ctrl1(t1), ctrl2(t2), ctrl1_ref(t1_ref);
+        dense_tensor_ctrl<4, double> ctrl1(t1), ctrl2(t2), ctrl1_ref(t1_ref);
 
         double *ptr1 = ctrl1.req_dataptr();
         double *ptr1_ref = ctrl1_ref.req_dataptr();
@@ -296,7 +296,7 @@ void tod_add_test::test_add_two_pqrs_prsq(size_t p, size_t q, size_t r,
 
     double t2_max = 0.0;
     {
-        tensor_ctrl<4, double> ctrl1(t1), ctrl2(t2), ctrl1_ref(t1_ref);
+        dense_tensor_ctrl<4, double> ctrl1(t1), ctrl2(t2), ctrl1_ref(t1_ref);
 
         double *ptr1 = ctrl1.req_dataptr();
         double *ptr1_ref = ctrl1_ref.req_dataptr();
@@ -366,7 +366,7 @@ void tod_add_test::test_add_two_pqrs_qpsr(size_t p, size_t q, size_t r,
 
     double t2_max = 0.0;
     {
-        tensor_ctrl<4, double> ctrl1(t1), ctrl2(t2), ctrl1_ref(t1_ref);
+        dense_tensor_ctrl<4, double> ctrl1(t1), ctrl2(t2), ctrl1_ref(t1_ref);
 
         double *ptr1 = ctrl1.req_dataptr();
         double *ptr2 = ctrl2.req_dataptr();
@@ -436,7 +436,7 @@ void tod_add_test::test_add_two_ijkl_kjli(size_t ni, size_t nj, size_t nk,
     tensor<4, double, allocator> t1(dims_ijkl), t2(dims_kjli),
         t3(dims_kjli), t3_ref(dims_kjli);
 
-    tensor_ctrl<4, double> ct1(t1), ct2(t2), ct3_ref(t3_ref);
+    dense_tensor_ctrl<4, double> ct1(t1), ct2(t2), ct3_ref(t3_ref);
 
     double *p1 = ct1.req_dataptr();
     double *p2 = ct2.req_dataptr();
@@ -509,7 +509,7 @@ void tod_add_test::test_add_mult(size_t p, size_t q, size_t r, size_t s)
 
     double t_max = 0.0;
     {
-        tensor_ctrl<4, double> ctrl1(t1), ctrl2(t2), ctrl3(t3), ctrl4(t4),
+        dense_tensor_ctrl<4, double> ctrl1(t1), ctrl2(t2), ctrl3(t3), ctrl4(t4),
             ctrl1_ref(t1_ref);
 
         double *ptr1 = ctrl1.req_dataptr();
@@ -588,7 +588,7 @@ void tod_add_test::test_add_two_pq_qp(size_t p, size_t q)
 
     double t_max = 0.0;
     {
-        tensor_ctrl<2, double> ctrl1(t1), ctrl2(t2), ctrl3(t3),
+        dense_tensor_ctrl<2, double> ctrl1(t1), ctrl2(t2), ctrl3(t3),
             ctrl1_ref(t1_ref);
 
         double *ptr1 = ctrl1.req_dataptr();

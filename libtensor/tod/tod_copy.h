@@ -4,8 +4,7 @@
 #include "../defs.h"
 #include "../exception.h"
 #include "../timings.h"
-#include "../dense_tensor/dense_tensor_i.h"
-#include "../core/tensor_ctrl.h"
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include "loop_list_add.h"
 #include "loop_list_copy.h"
 #include "tod_additive.h"

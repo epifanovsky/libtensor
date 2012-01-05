@@ -1,5 +1,5 @@
 #include <libtensor/core/allocator.h>
-#include <libtensor/core/tensor_ctrl.h>
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include "tensor_test.h"
 
 namespace libtensor {
@@ -110,7 +110,7 @@ public:
         m_ok = false;
         dimensions<2> d(t.get_dims());
         int *ptr = 0;
-        tensor_ctrl<2, int> tctrl(t);
+        dense_tensor_ctrl<2, int> tctrl(t);
         try {
             ptr = tctrl.req_dataptr();
         } catch(exception &e) {
@@ -183,7 +183,7 @@ public:
     void perform(dense_tensor_i<2, int> &t) throw(exception) {
 
         dimensions<2> d(t.get_dims());
-        tensor_ctrl<2, int> tctrl(t);
+        dense_tensor_ctrl<2, int> tctrl(t);
         int *ptr = tctrl.req_dataptr();
         if(ptr) {
             for(size_t i = 0; i < d.get_size(); i++) ptr[i] = m_val;
@@ -214,7 +214,7 @@ public:
 
         m_ok = true;
         dimensions<2> d(t.get_dims());
-        tensor_ctrl<2, int> tctrl(t);
+        dense_tensor_ctrl<2, int> tctrl(t);
         const int *ptr = tctrl.req_const_dataptr();
         if(ptr) {
             for(size_t i = 0; i < d.get_size(); i++) {
@@ -245,7 +245,7 @@ public:
     void perform(dense_tensor_i<2, int> &t) {
 
         m_ok = true;
-        tensor_ctrl<2, int> tctrl(t);
+        dense_tensor_ctrl<2, int> tctrl(t);
 
         // After rw-checkout, ro-checkout is not allowed
         int *ptr = tctrl.req_dataptr();
@@ -344,11 +344,11 @@ void tensor_test::test_1() throw(libtest::test_exception) {
 
     tensor<2, double, allocator> t(dims);
 
-    tensor_ctrl<2, double> c1(t);
+    dense_tensor_ctrl<2, double> c1(t);
     const double *p1 = c1.req_const_dataptr();
 
     {
-        tensor_ctrl<2, double> c2(t);
+        dense_tensor_ctrl<2, double> c2(t);
         const double *p2 = c2.req_const_dataptr();
         c2.ret_const_dataptr(p2);
         p2 = 0;
@@ -380,7 +380,7 @@ void tensor_test::test_2() throw(libtest::test_exception) {
 
     tensor<2, double, allocator> t(dims);
 
-    tensor_ctrl<2, double> c00(t), c01(t), c02(t), c03(t), c04(t), c05(t),
+    dense_tensor_ctrl<2, double> c00(t), c01(t), c02(t), c03(t), c04(t), c05(t),
         c06(t), c07(t), c08(t), c09(t), c10(t), c11(t), c12(t), c13(t),
         c14(t), c15(t), c16(t), c17(t), c18(t), c19(t), c20(t), c21(t),
         c22(t), c23(t), c24(t), c25(t), c26(t), c27(t), c28(t), c29(t),

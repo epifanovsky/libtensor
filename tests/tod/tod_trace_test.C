@@ -67,7 +67,7 @@ void tod_trace_test::test_1(size_t ni) throw(libtest::test_exception) {
 
 	double d_ref = 0.0;
 	{
-		tensor_ctrl<2, double> tca(ta);
+		dense_tensor_ctrl<2, double> tca(ta);
 
 		double *pa = tca.req_dataptr();
 
@@ -119,7 +119,7 @@ void tod_trace_test::test_2(size_t ni) throw(libtest::test_exception) {
 
 	double d_ref = 0.0;
 	{
-		tensor_ctrl<2, double> tca(ta);
+		dense_tensor_ctrl<2, double> tca(ta);
 
 		double *pa = tca.req_dataptr();
 
@@ -173,7 +173,7 @@ void tod_trace_test::test_3(size_t ni, size_t nj)
 
 	double d_ref = 0.0;
 	{
-		tensor_ctrl<4, double> tca(ta);
+		dense_tensor_ctrl<4, double> tca(ta);
 
 		double *pa = tca.req_dataptr();
 
@@ -229,7 +229,7 @@ void tod_trace_test::test_4(size_t ni, size_t nj)
 
 	double d_ref = 0.0;
 	{
-		tensor_ctrl<4, double> tca(ta);
+		dense_tensor_ctrl<4, double> tca(ta);
 
 		double *pa = tca.req_dataptr();
 
@@ -288,7 +288,7 @@ void tod_trace_test::test_5(size_t ni, size_t nj, size_t nk)
 
 	double d_ref = 0.0;
 	{
-		tensor_ctrl<6, double> tca(ta);
+		dense_tensor_ctrl<6, double> tca(ta);
 
 		double *pa = tca.req_dataptr();
 
@@ -349,7 +349,7 @@ void tod_trace_test::test_6(size_t ni, size_t nj, size_t nk)
 
 	double d_ref = 0.0;
 	{
-		tensor_ctrl<6, double> tca(ta);
+		dense_tensor_ctrl<6, double> tca(ta);
 
 		double *pa = tca.req_dataptr();
 

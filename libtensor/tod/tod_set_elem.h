@@ -5,7 +5,7 @@
 #include "../exception.h"
 #include "../core/abs_index.h"
 #include "../core/index.h"
-#include "../core/tensor_ctrl.h"
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 
 namespace libtensor {
 
@@ -38,7 +38,7 @@ void tod_set_elem<N>::perform(dense_tensor_i<N, double> &t, const index<N> &idx,
 	double d) {
 
 	abs_index<N> aidx(idx, t.get_dims());
-	tensor_ctrl<N, double> ctrl(t);
+	dense_tensor_ctrl<N, double> ctrl(t);
 	double *p = ctrl.req_dataptr();
 	p[aidx.get_abs_index()] = d;
 	ctrl.ret_dataptr(p);

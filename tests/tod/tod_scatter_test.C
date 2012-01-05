@@ -51,9 +51,9 @@ void tod_scatter_test::test_ij_j(size_t ni, size_t nj, double d)
 	tensor<2, double, allocator> tc_ref(dimc);
 
 	{
-	tensor_ctrl<1, double> tca(ta);
-	tensor_ctrl<2, double> tcc(tc);
-	tensor_ctrl<2, double> tcc_ref(tc_ref);
+	dense_tensor_ctrl<1, double> tca(ta);
+	dense_tensor_ctrl<2, double> tcc(tc);
+	dense_tensor_ctrl<2, double> tcc_ref(tc_ref);
 	double *dta = tca.req_dataptr();
 	double *dtc1 = tcc.req_dataptr();
 	double *dtc2 = tcc_ref.req_dataptr();

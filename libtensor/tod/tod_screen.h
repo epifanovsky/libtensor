@@ -4,8 +4,7 @@
 #include <cmath>
 #include "../defs.h"
 #include "../timings.h"
-#include "../dense_tensor/dense_tensor_i.h"
-#include "../core/tensor_ctrl.h"
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 
 namespace libtensor {
 
@@ -60,7 +59,7 @@ const char *tod_screen<N>::k_clazz = "tod_screen<N>";
 template<size_t N>
 bool tod_screen<N>::perform(dense_tensor_i<N, double> &t) {
 
-	tensor_ctrl<N, double> ctrl(t);
+	dense_tensor_ctrl<N, double> ctrl(t);
 
 	bool ret = false;
 

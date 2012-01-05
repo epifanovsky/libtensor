@@ -11,7 +11,7 @@
 #include "immutable.h"
 #include "orbit_list.h"
 #include "tensor.h"
-#include "tensor_ctrl.h"
+#include "../dense_tensor/dense_tensor_ctrl.h"
 
 namespace libtensor {
 

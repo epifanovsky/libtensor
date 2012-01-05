@@ -10,8 +10,7 @@
 #include "../core/block_tensor_ctrl.h"
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
-#include "../dense_tensor/dense_tensor_i.h"
-#include "../core/tensor_ctrl.h"
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include "../tod/bad_dimensions.h"
 #include "../tod/processor.h"
 #include "../btod/transf_double.h"
@@ -127,7 +126,7 @@ void tod_btconv<N>::perform(dense_tensor_i<N, double> &t) throw(exception) {
 	}
 
 	block_tensor_ctrl<N, double> src_ctrl(m_bt);
-	tensor_ctrl<N, double> dst_ctrl(t);
+	dense_tensor_ctrl<N, double> dst_ctrl(t);
 
 	double *dst_ptr = dst_ctrl.req_dataptr();
 	size_t sz = t.get_dims().get_size();
@@ -144,7 +143,7 @@ void tod_btconv<N>::perform(dense_tensor_i<N, double> &t) throw(exception) {
 
 		dense_tensor_i<N, double> &blk = src_ctrl.req_block(abidx.get_index());
 		{
-		tensor_ctrl<N, double> blk_ctrl(blk);
+		dense_tensor_ctrl<N, double> blk_ctrl(blk);
 		const double *src_ptr = blk_ctrl.req_const_dataptr();
 
 		typename orbit<N, double>::iterator i = orb.begin();

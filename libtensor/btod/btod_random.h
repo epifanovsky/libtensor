@@ -12,7 +12,7 @@
 #include "../core/block_tensor_ctrl.h"
 #include "../core/orbit_list.h"
 #include "../core/tensor.h"
-#include "../core/tensor_ctrl.h"
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include "../tod/tod_add.h"
 #include "../tod/tod_copy.h"
 #include "../tod/tod_random.h"

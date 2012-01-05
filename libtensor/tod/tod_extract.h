@@ -8,8 +8,7 @@
 #include "../core/index.h"
 #include "../core/mask.h"
 #include "../core/permutation.h"
-#include "../dense_tensor/dense_tensor_i.h"
-#include "../core/tensor_ctrl.h"
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include "bad_dimensions.h"
 #include "processor.h"
 
@@ -276,8 +275,8 @@ void tod_extract<N, M>::do_perform(dense_tensor_i<k_orderb, double> &tb, double 
 
 	tod_extract<N, M>::start_timer();
 
-	tensor_ctrl<k_ordera, double> ca(m_t);
-	tensor_ctrl<k_orderb, double> cb(tb);
+	dense_tensor_ctrl<k_ordera, double> ca(m_t);
+	dense_tensor_ctrl<k_orderb, double> cb(tb);
 	const double *pa = ca.req_const_dataptr();
 	double *pb = cb.req_dataptr();
 

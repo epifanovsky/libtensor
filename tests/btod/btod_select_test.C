@@ -465,7 +465,7 @@ void btod_select_test::test_3c(size_t n,
 		block_tensor<2, double, allocator_t> btmp(bis);
 
 		tod_btconv<2>(bt).perform(tmp);
-		tensor_ctrl<2, double> tc(tmp);
+		dense_tensor_ctrl<2, double> tc(tmp);
 		const double *ptr = tc.req_const_dataptr();
 		btod_import_raw<2>(ptr, dims).perform(btmp);
 		tc.ret_const_dataptr(ptr);
@@ -573,7 +573,7 @@ void btod_select_test::test_4a(size_t n,
 	{
 	tensor<2, double, allocator_t> tmp(dims);
 	tod_btconv<2>(bt_ref).perform(tmp);
-	tensor_ctrl<2, double> ctrl(tmp);
+	dense_tensor_ctrl<2, double> ctrl(tmp);
 	const double *ptr = ctrl.req_const_dataptr();
 	btod_import_raw<2>(ptr, dims).perform(bt);
 	ctrl.ret_const_dataptr(ptr);
@@ -651,7 +651,7 @@ void btod_select_test::test_4b(size_t n) throw(libtest::test_exception) {
 	{
 	tensor<2, double, allocator_t> tmp(dims);
 	tod_btconv<2>(bt_ref).perform(tmp);
-	tensor_ctrl<2, double> ctrl(tmp);
+	dense_tensor_ctrl<2, double> ctrl(tmp);
 	const double *ptr = ctrl.req_const_dataptr();
 	btod_import_raw<2>(ptr, dims).perform(bt);
 	ctrl.ret_const_dataptr(ptr);
@@ -730,7 +730,7 @@ void btod_select_test::test_4c(size_t n,
 	{
 	tensor<2, double, allocator_t> tmp(dims);
 	tod_btconv<2>(bt_ref).perform(tmp);
-	tensor_ctrl<2, double> ctrl(tmp);
+	dense_tensor_ctrl<2, double> ctrl(tmp);
 	const double *ptr = ctrl.req_const_dataptr();
 	btod_import_raw<2>(ptr, dims).perform(bt);
 	ctrl.ret_const_dataptr(ptr);

@@ -16,7 +16,7 @@
 #include <libtensor/linalg.h> //necessary to include LAPACK functions
 
 #include "../core/tensor.h"
-#include "../core/tensor_ctrl.h"
+#include "../dense_tensor/dense_tensor_ctrl.h"
 #include "../tod/tod_btconv.h"
 #include "../tod/tod_contract2.h"
 #include "../tod/tod_import_raw.h"
@@ -54,7 +54,7 @@ void btod_cholesky::decompose()
         const dimensions<2> &dims = m_bta.get_bis().get_dims();
         tod_btconv<2>(m_bta).perform(ta);
 	
-	tensor_ctrl<2, double> tnsr_ctrl(ta);
+	dense_tensor_ctrl<2, double> tnsr_ctrl(ta);
         double *tnsr_ptr = tnsr_ctrl.req_dataptr();
 
 	size_t n = dims.get_dim(0);// size of the matrix
@@ -202,7 +202,7 @@ void btod_cholesky::decompose()
 void btod_cholesky::perform(block_tensor_i<2 , double> &btb)
 {
         dense_tensor_i<2, double> &ta(*pta);
-	tensor_ctrl<2, double> tnsr_ctrl(ta);
+	dense_tensor_ctrl<2, double> tnsr_ctrl(ta);
         double *tnsr_ptr = tnsr_ctrl.req_dataptr();
 	// temporary solution  - make the buffer of the size n by rank
 

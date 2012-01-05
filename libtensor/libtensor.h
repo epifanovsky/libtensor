@@ -16,7 +16,7 @@
 #include "core/permutation_builder.h"
 
 #include "dense_tensor/dense_tensor_i.h"
-#include "core/tensor_ctrl.h"
+#include "dense_tensor/dense_tensor_ctrl.h"
 #include "core/tensor.h"
 
 #include "core/block_map.h"
