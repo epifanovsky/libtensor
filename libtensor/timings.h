@@ -26,12 +26,12 @@ template<typename T> class timings;
 #ifdef LIBTENSOR_TIMINGS
 
 template<typename T>
-class timings : public libutil::timings<T> { };
+class timings : public libutil::timings<T, true> { };
 
 #else
 
 template<typename T>
-class timings : public libutil::timings<T> { };
+class timings : public libutil::timings<T, false> { };
 
 #endif // LIBTENSOR_TIMINGS
 
