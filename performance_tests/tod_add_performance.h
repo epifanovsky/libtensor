@@ -3,6 +3,7 @@
 
 
 #include <libtest/libtest.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/libtensor.h>
 #include <libtensor/linalg/linalg.h>
 #include "performance_test.h"
@@ -118,7 +119,7 @@ void tod_add_p1<R,N,DimData>::do_calculate()
 
 	DimData d;
 	dimensions<N> dim(d.dimA());
-	dense_tensor<N, double, libvmm::std_allocator<double> > ta(dim), tb(dim);
+	dense_tensor<N, double, std_allocator<double> > ta(dim), tb(dim);
 	dense_tensor_ctrl<N,double> tca(ta), tcb(tb);
 
 	double *ptra=tca.req_dataptr();
@@ -148,7 +149,7 @@ void tod_add_p2<R,N,DimData>::do_calculate()
 
 	dimb.permute(permb);
 
-	dense_tensor<N, double, libvmm::std_allocator<double> > ta(dima), tb(dimb);
+	dense_tensor<N, double, std_allocator<double> > ta(dima), tb(dimb);
 	dense_tensor_ctrl<N,double> tca(ta), tcb(tb);
 
 	double *ptra=tca.req_dataptr();
@@ -178,7 +179,7 @@ void tod_add_p3<R,N,DimData>::do_calculate()
 
 	dimb.permute(permb);
 
-	dense_tensor<N, double, libvmm::std_allocator<double> > ta(dima), tb(dimb);
+	dense_tensor<N, double, std_allocator<double> > ta(dima), tb(dimb);
 	dense_tensor_ctrl<N,double> tca(ta), tcb(tb);
 
 	double *ptra=tca.req_dataptr();
