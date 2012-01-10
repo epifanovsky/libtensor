@@ -1,11 +1,11 @@
 #include <libtensor/core/allocator.h>
-#include <libtensor/core/tensor.h>
+#include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/tod/tod_set.h>
 #include "tod_set_test.h"
 
 namespace libtensor {
 
-typedef tensor<4, double, std_allocator<double> > tensor4_d;
+typedef dense_tensor<4, double, std_allocator<double> > tensor4_d;
 
 void tod_set_test::perform() throw(libtest::test_exception) {
 

@@ -3,6 +3,7 @@
 
 
 #include <libtest/libtest.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/libtensor.h>
 #include <libtensor/linalg/linalg.h>
 #include "performance_test.h"
@@ -173,12 +174,12 @@ void tod_contract2_p1<R,N,M,K,DimData>::do_calculate()
 	dimensions<N+M> dima(d.dimA());
 	dimensions<N+K> dimb(d.dimB());
 	dimensions<M+K> dimc(d.dimC());
-	tensor<N+M, double, libvmm::std_allocator<double> > ta(dima);
-	tensor<N+K, double, libvmm::std_allocator<double> > tb(dimb);
-	tensor<M+K, double, libvmm::std_allocator<double> > tc(dimc);
-	tensor_ctrl<N+M,double> tca(ta);
-	tensor_ctrl<N+K,double> tcb(tb);
-	tensor_ctrl<M+K,double> tcc(tc);
+	dense_tensor<N+M, double, std_allocator<double> > ta(dima);
+	dense_tensor<N+K, double, std_allocator<double> > tb(dimb);
+	dense_tensor<M+K, double, std_allocator<double> > tc(dimc);
+	dense_tensor_ctrl<N+M,double> tca(ta);
+	dense_tensor_ctrl<N+K,double> tcb(tb);
+	dense_tensor_ctrl<M+K,double> tcc(tc);
 
 	double *ptra=tca.req_dataptr();
 	double *ptrb=tcb.req_dataptr();
@@ -218,12 +219,12 @@ void tod_contract2_p2<R,N,M,K,DimData>::do_calculate()
 	permutation_builder<M+K> pbc(a,b);
 	dimc.permute(pbc.get_perm());
 
-	tensor<N+M, double, libvmm::std_allocator<double> > ta(dima);
-	tensor<N+K, double, libvmm::std_allocator<double> > tb(dimb);
-	tensor<M+K, double, libvmm::std_allocator<double> > tc(dimc);
-	tensor_ctrl<N+M,double> tca(ta);
-	tensor_ctrl<N+K,double> tcb(tb);
-	tensor_ctrl<M+K,double> tcc(tc);
+	dense_tensor<N+M, double, std_allocator<double> > ta(dima);
+	dense_tensor<N+K, double, std_allocator<double> > tb(dimb);
+	dense_tensor<M+K, double, std_allocator<double> > tc(dimc);
+	dense_tensor_ctrl<N+M,double> tca(ta);
+	dense_tensor_ctrl<N+K,double> tcb(tb);
+	dense_tensor_ctrl<M+K,double> tcc(tc);
 
 	double *ptra=tca.req_dataptr();
 	double *ptrb=tcb.req_dataptr();
@@ -260,12 +261,12 @@ void tod_contract2_p3<R,N,M,K,DimData>::do_calculate()
 	}
 	dima.permute(perma);
 
-	tensor<N+M, double, libvmm::std_allocator<double> > ta(dima);
-	tensor<N+K, double, libvmm::std_allocator<double> > tb(dimb);
-	tensor<M+K, double, libvmm::std_allocator<double> > tc(dimc);
-	tensor_ctrl<N+M,double> tca(ta);
-	tensor_ctrl<N+K,double> tcb(tb);
-	tensor_ctrl<M+K,double> tcc(tc);
+	dense_tensor<N+M, double, std_allocator<double> > ta(dima);
+	dense_tensor<N+K, double, std_allocator<double> > tb(dimb);
+	dense_tensor<M+K, double, std_allocator<double> > tc(dimc);
+	dense_tensor_ctrl<N+M,double> tca(ta);
+	dense_tensor_ctrl<N+K,double> tcb(tb);
+	dense_tensor_ctrl<M+K,double> tcc(tc);
 
 	double *ptra=tca.req_dataptr();
 	double *ptrb=tcb.req_dataptr();
@@ -300,12 +301,12 @@ void tod_contract2_p4<R,N,M,K,DimData>::do_calculate()
 		permc.permute(M+i,M+K-1-i);
 	dimc.permute(permc);
 
-	tensor<N+M, double, libvmm::std_allocator<double> > ta(dima);
-	tensor<N+K, double, libvmm::std_allocator<double> > tb(dimb);
-	tensor<M+K, double, libvmm::std_allocator<double> > tc(dimc);
-	tensor_ctrl<N+M,double> tca(ta);
-	tensor_ctrl<N+K,double> tcb(tb);
-	tensor_ctrl<N+K,double> tcc(tc);
+	dense_tensor<N+M, double, std_allocator<double> > ta(dima);
+	dense_tensor<N+K, double, std_allocator<double> > tb(dimb);
+	dense_tensor<M+K, double, std_allocator<double> > tc(dimc);
+	dense_tensor_ctrl<N+M,double> tca(ta);
+	dense_tensor_ctrl<N+K,double> tcb(tb);
+	dense_tensor_ctrl<N+K,double> tcc(tc);
 
 	double *ptra=tca.req_dataptr();
 	double *ptrb=tcb.req_dataptr();

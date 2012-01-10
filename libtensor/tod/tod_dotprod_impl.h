@@ -13,7 +13,7 @@ const char *tod_dotprod<N>::op_ddot::k_clazz = "tod_dotprod<N>::op_ddot";
 
 
 template<size_t N>
-tod_dotprod<N>::tod_dotprod(tensor_i<N, double> &t1, tensor_i<N, double> &t2) :
+tod_dotprod<N>::tod_dotprod(dense_tensor_i<N, double> &t1, dense_tensor_i<N, double> &t2) :
 
     m_t1(t1), m_tctrl1(m_t1), m_t2(t2), m_tctrl2(m_t2) {
 
@@ -27,8 +27,8 @@ tod_dotprod<N>::tod_dotprod(tensor_i<N, double> &t1, tensor_i<N, double> &t2) :
 
 
 template<size_t N>
-tod_dotprod<N>::tod_dotprod(tensor_i<N, double> &t1,
-    const permutation<N> &perm1, tensor_i<N, double> &t2,
+tod_dotprod<N>::tod_dotprod(dense_tensor_i<N, double> &t1,
+    const permutation<N> &perm1, dense_tensor_i<N, double> &t2,
     const permutation<N> &perm2) :
 
     m_t1(t1), m_tctrl1(m_t1), m_perm1(perm1), m_t2(t2), m_tctrl2(m_t2),

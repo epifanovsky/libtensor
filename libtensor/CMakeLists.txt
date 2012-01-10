@@ -2,8 +2,6 @@ set(SRC
     backtrace.C
     defs.C
     exception.C
-    global_timings.C
-    timer.C
     version.C
     core/abs_index.C
     core/allocator.C
@@ -113,6 +111,7 @@ set(SRC
 )
 
 set(SRC_CUDA
+    dense_tensor/inst/dense_tensor_cuda_inst.C
     tod/kernels/cuda_kern_copy_2d.cu
     tod/kernels/cuda_kern_copy_4d.cu
     tod/kernels/cuda_kern_copy_6d.cu
@@ -131,6 +130,7 @@ set(SRC_LINALG
 )
 
 set(SRC_INST
+    dense_tensor/inst/dense_tensor_inst.C
     tod/tod_add.C
     tod/tod_contract2.C
     tod/tod_copy.C
@@ -167,16 +167,10 @@ set(SRC_QCHEM
     linalg/qchem/linalg_base_level1_qchem.C
 )
 
-if(qchemRootDir)
-    include(${qchemRootDir}/cmake/DepsLibVmm.txt)
-    include(${qchemRootDir}/cmake/DepsLibTensor.txt)
-endif(qchemRootDir)
-
-if(qchemRootDir)
+if(QCHEM_SOURCE_DIR)
     add_library(tensor_qchem ${SRC_QCHEM})
-    add_dependencies(tensor generated_headers)
-    add_dependencies(tensor_qchem generated_headers)
-endif(qchemRootDir)
+    add_dependencies(tensor_qchem tensor)
+endif(QCHEM_SOURCE_DIR)
 
 if(CUDA_FOUND)
     cuda_add_library(tensor ${SRC} ${SRC_CUDA} ${SRC_LINALG} ${SRC_INST} ${SRC_MP})
@@ -185,11 +179,10 @@ else(CUDA_FOUND)
 endif(CUDA_FOUND)
 
 set_property(TARGET tensor APPEND PROPERTY
-	COMPILE_DEFINITIONS LIBTENSOR_INSTANTIATE_TEMPLATES)
+    COMPILE_DEFINITIONS LIBTENSOR_INSTANTIATE_TEMPLATES)
 set_property(TARGET tensor APPEND PROPERTY
-	COMPILE_DEFINITIONS LIBTENSOR_TIMINGS)
+    COMPILE_DEFINITIONS LIBTENSOR_TIMINGS)
 set_property(TARGET tensor APPEND PROPERTY
-	COMPILE_DEFINITIONS_DEBUG LIBVMM_DEBUG)
+    COMPILE_DEFINITIONS_DEBUG LIBVMM_DEBUG)
 set_property(TARGET tensor APPEND PROPERTY
-	COMPILE_DEFINITIONS_DEBUG LIBTENSOR_DEBUG)
-
+    COMPILE_DEFINITIONS_DEBUG LIBTENSOR_DEBUG)

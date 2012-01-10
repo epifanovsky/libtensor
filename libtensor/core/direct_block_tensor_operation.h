@@ -44,7 +44,7 @@ public:
 
 	/**	\brief Computes a single block of the result
 	 **/
-	virtual void compute_block(tensor_i<N, double> &blk,
+	virtual void compute_block(dense_tensor_i<N, double> &blk,
 		const index<N> &i, cpu_pool &cpus) = 0;
 
 	/**	\brief Enables the synchronization of arguments

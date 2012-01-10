@@ -14,8 +14,8 @@ namespace libtensor {
 template<size_t N>
 class compare_ref {
 public:
-	static void compare(const char *test, tensor_i<N, double> &t,
-		tensor_i<N, double> &t_ref, double thresh)
+	static void compare(const char *test, dense_tensor_i<N, double> &t,
+		dense_tensor_i<N, double> &t_ref, double thresh)
 		throw(exception, libtest::test_exception);
 	static void compare(const char *test, block_tensor_i<N, double> &t,
 		block_tensor_i<N, double> &t_ref, double thresh)
@@ -31,8 +31,8 @@ public:
 
 
 template<size_t N>
-void compare_ref<N>::compare(const char *test, tensor_i<N, double> &t,
-	tensor_i<N, double> &t_ref, double thresh)
+void compare_ref<N>::compare(const char *test, dense_tensor_i<N, double> &t,
+	dense_tensor_i<N, double> &t_ref, double thresh)
 	throw(exception, libtest::test_exception) {
 
 	tod_compare<N> cmp(t, t_ref, thresh);

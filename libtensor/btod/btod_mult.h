@@ -98,7 +98,7 @@ public:
 	using additive_btod<N>::perform;
 
 protected:
-	virtual void compute_block(bool zero, tensor_i<N, double> &blk,
+	virtual void compute_block(bool zero, dense_tensor_i<N, double> &blk,
 	    const index<N> &idx, const transf<N, double> &tr, double c,
 	    cpu_pool &cpus);
 
@@ -189,7 +189,7 @@ void btod_mult<N>::sync_off() {
 /*
 template<size_t N>
 void btod_mult<N>::compute_block(
-		tensor_i<N, double> &blk, const index<N> &idx) {
+		dense_tensor_i<N, double> &blk, const index<N> &idx) {
 
 	block_tensor_ctrl<N, double> ctrla(m_bta), ctrlb(m_btb);
 
@@ -213,8 +213,8 @@ void btod_mult<N>::compute_block(
 	permutation<N> pb(trb.get_perm());
 	pb.permute(m_pb);
 
-	tensor_i<N, double> &blka = ctrla.req_block(cidxa.get_index());
-	tensor_i<N, double> &blkb = ctrlb.req_block(cidxb.get_index());
+	dense_tensor_i<N, double> &blka = ctrla.req_block(cidxa.get_index());
+	dense_tensor_i<N, double> &blkb = ctrlb.req_block(cidxb.get_index());
 
 	double k = m_c * tra.get_coeff();
 	if (m_recip)
@@ -231,7 +231,7 @@ void btod_mult<N>::compute_block(
 
 
 template<size_t N>
-void btod_mult<N>::compute_block(bool zero, tensor_i<N, double> &blk,
+void btod_mult<N>::compute_block(bool zero, dense_tensor_i<N, double> &blk,
     const index<N> &idx, const transf<N, double> &tr, double c,
     cpu_pool &cpus) {
 
@@ -259,8 +259,8 @@ void btod_mult<N>::compute_block(bool zero, tensor_i<N, double> &blk,
 	pb.permute(m_pb);
 	pb.permute(pinvc);
 
-	tensor_i<N, double> &blka = ctrla.req_block(cidxa.get_index());
-	tensor_i<N, double> &blkb = ctrlb.req_block(cidxb.get_index());
+	dense_tensor_i<N, double> &blka = ctrla.req_block(cidxa.get_index());
+	dense_tensor_i<N, double> &blkb = ctrlb.req_block(cidxb.get_index());
 
 	double k = m_c * tr.get_coeff() * tra.get_coeff();
 	if (m_recip)

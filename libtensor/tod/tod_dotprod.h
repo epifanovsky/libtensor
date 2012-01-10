@@ -6,8 +6,7 @@
 #include "../timings.h"
 #include "../linalg/linalg.h"
 #include "../core/permutation.h"
-#include "../core/tensor_i.h"
-#include "../core/tensor_ctrl.h"
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include "../mp/auto_cpu_lock.h"
 #include "contraction2.h"
 #include "bad_dimensions.h"
@@ -77,10 +76,10 @@ private:
     };
 
 private:
-    tensor_i<N,double> &m_t1; //!< First %tensor
-    tensor_ctrl<N,double> m_tctrl1; //!< First %tensor control
-    tensor_i<N,double> &m_t2; //!< Second %tensor
-    tensor_ctrl<N,double> m_tctrl2; //!< Second %tensor control
+    dense_tensor_i<N,double> &m_t1; //!< First %tensor
+    dense_tensor_ctrl<N,double> m_tctrl1; //!< First %tensor control
+    dense_tensor_i<N,double> &m_t2; //!< Second %tensor
+    dense_tensor_ctrl<N,double> m_tctrl2; //!< Second %tensor control
     permutation<N> m_perm1; //!< Permutation of the first %tensor
     permutation<N> m_perm2; //!< Permutation of the second %tensor
     loop_list_t m_list; //!< Loop list
@@ -89,10 +88,10 @@ public:
     //!	\name Construction and destruction
     //@{
 
-    tod_dotprod(tensor_i<N, double> &t1, tensor_i<N, double> &t2);
+    tod_dotprod(dense_tensor_i<N, double> &t1, dense_tensor_i<N, double> &t2);
 
-    tod_dotprod(tensor_i<N, double> &t1, const permutation<N> &perm1,
-        tensor_i<N, double> &t2, const permutation<N> &perm2);
+    tod_dotprod(dense_tensor_i<N, double> &t1, const permutation<N> &perm1,
+        dense_tensor_i<N, double> &t2, const permutation<N> &perm2);
 
     //@}
 

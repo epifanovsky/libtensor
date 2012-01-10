@@ -64,11 +64,11 @@ void btod_contract2<N, M, K>::sync_off() {
 
 /*
 template<size_t N, size_t M, size_t K>
-void btod_contract2<N, M, K>::compute_block(tensor_i<N + M, double> &blk,
+void btod_contract2<N, M, K>::compute_block(dense_tensor_i<N + M, double> &blk,
 	const index<N + M> &i) {
 
 	static const char *method =
-		"compute_block(tensor_i<N + M, double>&, const index<N + M>&)";
+		"compute_block(dense_tensor_i<N + M, double>&, const index<N + M>&)";
 
 	btod_contract2<N, M, K>::start_timer();
 
@@ -100,7 +100,7 @@ void btod_contract2<N, M, K>::compute_block(tensor_i<N + M, double> &blk,
 
 template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::compute_block(bool zero,
-    tensor_i<N + M, double> &blk, const index<N + M> &i,
+    dense_tensor_i<N + M, double> &blk, const index<N + M> &i,
     const transf<N + M, double> &tr, double c, cpu_pool &cpus) {
 
 	static const char *method = "compute_block(bool, tensor_i<N + M, double>&, "
@@ -446,7 +446,7 @@ void btod_contract2<N, M, K>::contract_block(
 	block_contr_list_t &lst, const index<k_orderc> &idxc,
 	block_tensor_ctrl<k_ordera, double> &ca,
 	block_tensor_ctrl<k_orderb, double> &cb,
-	tensor_i<k_orderc, double> &tc, const transf<k_orderc, double> &trc,
+	dense_tensor_i<k_orderc, double> &tc, const transf<k_orderc, double> &trc,
 	bool zero, double c, cpu_pool &cpus) {
 
 	if(zero) tod_set<k_orderc>().perform(cpus, tc);
@@ -468,8 +468,8 @@ void btod_contract2<N, M, K>::contract_block(
 		bool zerob = cb.req_is_zero_block(ib);
 		if(zeroa || zerob) continue;
 
-		tensor_i<k_ordera, double> &blka = ca.req_block(ia);
-		tensor_i<k_orderb, double> &blkb = cb.req_block(ib);
+		dense_tensor_i<k_ordera, double> &blka = ca.req_block(ia);
+		dense_tensor_i<k_orderb, double> &blkb = cb.req_block(ib);
 		blksa.push_back(ia);
 		blksb.push_back(ib);
 

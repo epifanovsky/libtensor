@@ -15,9 +15,9 @@
 #include "core/permutation.h"
 #include "core/permutation_builder.h"
 
-#include "core/tensor_i.h"
-#include "core/tensor_ctrl.h"
-#include "core/tensor.h"
+#include "dense_tensor/dense_tensor_i.h"
+#include "dense_tensor/dense_tensor_ctrl.h"
+#include "dense_tensor/dense_tensor.h"
 
 #include "core/block_map.h"
 #include "core/block_tensor_i.h"

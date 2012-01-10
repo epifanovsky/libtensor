@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_WORKER_POOL_H
 #define LIBTENSOR_WORKER_POOL_H
 
-#include <libvmm/singleton.h>
+#include <libutil/singleton.h>
 #include "cpu_pool.h"
 #include "worker_group.h"
 
@@ -16,8 +16,8 @@ namespace libtensor {
 
     \ingroup libtensor_mp
  **/
-class worker_pool : public libvmm::singleton<worker_pool> {
-    friend class libvmm::singleton<worker_pool>;
+class worker_pool : public libutil::singleton<worker_pool> {
+    friend class libutil::singleton<worker_pool>;
 
 public:
     static const char *k_clazz; //!< Class name

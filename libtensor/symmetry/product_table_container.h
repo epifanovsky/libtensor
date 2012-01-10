@@ -2,7 +2,7 @@
 #define LIBTENSOR_PRODUCT_TABLE_CONTAINER_H
 
 #include <map>
-#include <libvmm/singleton.h>
+#include <libutil/singleton.h>
 #include "../exception.h"
 #include "product_table_i.h"
 
@@ -14,9 +14,9 @@ namespace libtensor {
 
  **/
 class product_table_container :
-	public libvmm::singleton<product_table_container> {
+	public libutil::singleton<product_table_container> {
 
-	friend class libvmm::singleton<product_table_container>;
+	friend class libutil::singleton<product_table_container>;
 
 public:
 	typedef product_table_i::label_t label_t;

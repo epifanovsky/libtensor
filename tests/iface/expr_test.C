@@ -345,11 +345,11 @@ void expr_test::test_6() throw(libtest::test_exception) {
 
 	compare_ref<4>::compare(testname, i4_oooo, i4_oooo_ref, 5e-15);
 
-	tensor<4, double, allocator_t> ti_oooo(i_oooo.get_bis().get_dims());
-	tensor<4, double, allocator_t> ti_ooov(i_ooov.get_bis().get_dims());
-	tensor<4, double, allocator_t> ti_oovv(i_oovv.get_bis().get_dims());
-	tensor<2, double, allocator_t> tt1(t1.get_bis().get_dims());
-	tensor<4, double, allocator_t> tt2(t2.get_bis().get_dims());
+	dense_tensor<4, double, allocator_t> ti_oooo(i_oooo.get_bis().get_dims());
+	dense_tensor<4, double, allocator_t> ti_ooov(i_ooov.get_bis().get_dims());
+	dense_tensor<4, double, allocator_t> ti_oovv(i_oovv.get_bis().get_dims());
+	dense_tensor<2, double, allocator_t> tt1(t1.get_bis().get_dims());
+	dense_tensor<4, double, allocator_t> tt2(t2.get_bis().get_dims());
 	tod_btconv<4>(i_oooo).perform(ti_oooo);
 	tod_btconv<4>(i_ooov).perform(ti_ooov);
 	tod_btconv<4>(i_oovv).perform(ti_oovv);
@@ -360,16 +360,16 @@ void expr_test::test_6() throw(libtest::test_exception) {
 
 	tod_contract2<2, 2, 2> top2(contr2, tt2, ti_oovv);
 
-	tensor<4, double, allocator_t> ttmp3a(i_oooo.get_bis().get_dims());
+	dense_tensor<4, double, allocator_t> ttmp3a(i_oooo.get_bis().get_dims());
 	tod_contract2<3, 1, 1>(contr3, ti_ooov, tt1).perform(cpus, true, 1.0, ttmp3a);
 	tod_add<4> top3(ttmp3a);
 	top3.add_op(ttmp3a, permutation<4>().permute(0, 1), -1.0);
 
-	tensor<4, double, allocator_t> ttmp4a(i_oovv.get_bis().get_dims());
+	dense_tensor<4, double, allocator_t> ttmp4a(i_oovv.get_bis().get_dims());
 	tod_contract2<2, 2, 0>(contr4a, tt1, tt1).perform(cpus, true, 1.0, ttmp4a);
 	tod_contract2<2, 2, 2> top4(contr4, ttmp4a, ti_oovv);
 
-	tensor<4, double, allocator_t> ti4_oooo(i4_oooo.get_bis().get_dims()),
+	dense_tensor<4, double, allocator_t> ti4_oooo(i4_oooo.get_bis().get_dims()),
 		ti4_oooo_ref(i4_oooo.get_bis().get_dims());
 	top1.perform(cpus, true, 1.0, ti4_oooo_ref);
 	top2.perform(cpus, false, 0.5, ti4_oooo_ref);
@@ -454,12 +454,12 @@ void expr_test::test_7() throw(libtest::test_exception) {
 
 	compare_ref<4>::compare(testname, i1_ovov, i1_ovov_ref, 5e-15);
 
-	tensor<4, double, allocator_t> ti_ooov(i_ooov.get_bis().get_dims());
-	tensor<4, double, allocator_t> ti_oovv(i_oovv.get_bis().get_dims());
-	tensor<4, double, allocator_t> ti_ovov(i_ovov.get_bis().get_dims());
-	tensor<4, double, allocator_t> ti_ovvv(i_ovvv.get_bis().get_dims());
-	tensor<2, double, allocator_t> tt1(t1.get_bis().get_dims());
-	tensor<4, double, allocator_t> tt2(t2.get_bis().get_dims());
+	dense_tensor<4, double, allocator_t> ti_ooov(i_ooov.get_bis().get_dims());
+	dense_tensor<4, double, allocator_t> ti_oovv(i_oovv.get_bis().get_dims());
+	dense_tensor<4, double, allocator_t> ti_ovov(i_ovov.get_bis().get_dims());
+	dense_tensor<4, double, allocator_t> ti_ovvv(i_ovvv.get_bis().get_dims());
+	dense_tensor<2, double, allocator_t> tt1(t1.get_bis().get_dims());
+	dense_tensor<4, double, allocator_t> tt2(t2.get_bis().get_dims());
 	tod_btconv<4>(i_ooov).perform(ti_ooov);
 	tod_btconv<4>(i_oovv).perform(ti_oovv);
 	tod_btconv<4>(i_ovov).perform(ti_ovov);
@@ -473,12 +473,12 @@ void expr_test::test_7() throw(libtest::test_exception) {
 
 	tod_contract2<3, 1, 1> top3(contr3, ti_ooov, tt1);
 
-	tensor<4, double, allocator_t> ttmp4a(i_oovv.get_bis().get_dims());
+	dense_tensor<4, double, allocator_t> ttmp4a(i_oovv.get_bis().get_dims());
 	tod_copy<4>(tt2).perform(cpus, true, 1.0, ttmp4a);
 	tod_contract2<2, 2, 0>(contr4a, tt1, tt1).perform(cpus, false, 2.0, ttmp4a);
 	tod_contract2<2, 2, 2> top4(contr4, ttmp4a, ti_oovv);
 
-	tensor<4, double, allocator_t> ti1_ovov(i1_ovov.get_bis().get_dims()),
+	dense_tensor<4, double, allocator_t> ti1_ovov(i1_ovov.get_bis().get_dims()),
 		ti1_ovov_ref(i1_ovov.get_bis().get_dims());
 	top1.perform(cpus, true, 1.0, ti1_ovov_ref);
 	top2.perform(cpus, false, -1.0, ti1_ovov_ref);

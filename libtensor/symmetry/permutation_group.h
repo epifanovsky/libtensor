@@ -423,7 +423,7 @@ bool permutation_group<N, T>::is_member(const branching &br,
 	sequence<N, size_t> seq(0);
 
 	if(perm.is_identity()) return sign;
-	if(i >= N - 1) return false;
+	if(i + 1 >= N) return false;
 
 	//	Find the element pi1 of the right coset representative Ui
 	//	for which rho = pi * pi1^{-1} stabilizes i. (pi == perm).

@@ -8,8 +8,7 @@
 #include "../core/index.h"
 #include "../core/mask.h"
 #include "../core/permutation.h"
-#include "../core/tensor_i.h"
-#include "../core/tensor_ctrl.h"
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include "bad_dimensions.h"
 #include "processor.h"
 
@@ -112,7 +111,7 @@ private:
 	};
 
 private:
-	tensor_i<N, double> &m_t; //!< Input %tensor
+	dense_tensor_i<N, double> &m_t; //!< Input %tensor
 	mask<N> m_mask; //!< Mask for extraction
 	permutation<N - M> m_perm; //!< Permutation of the result
 	double m_c; //!< Scaling coefficient
@@ -125,7 +124,7 @@ public:
 		\param m Extraction mask.
 		\param c Scaling coefficient (default 1.0).
 	 **/
-	tod_extract(tensor_i<N, double> &t, const mask<N> &m, const index<N> &idx,
+	tod_extract(dense_tensor_i<N, double> &t, const mask<N> &m, const index<N> &idx,
 		double c = 1.0);
 
 	/**	\brief Creates the operation
@@ -134,19 +133,19 @@ public:
 		\param p Permutation of result.
 		\param c Scaling coefficient (default 1.0)
 	 **/
-	tod_extract(tensor_i<N, double> &t, const mask<N> &m,
+	tod_extract(dense_tensor_i<N, double> &t, const mask<N> &m,
 		const permutation<N - M> &p, const index<N> &idx, double c = 1.0);
 
 	/**	\brief Performs the operation, replaces the output
 		\param tb Output %tensor.
 	 **/
-	void perform(tensor_i<k_orderb, double> &tb);
+	void perform(dense_tensor_i<k_orderb, double> &tb);
 
 	/**	\brief Performs the operation, adds to the output
 		\param tb Output %tensor.
 		\param c Coefficient.
 	 **/
-	void perform(tensor_i<k_orderb, double> &tb, double c);
+	void perform(dense_tensor_i<k_orderb, double> &tb, double c);
 
 private:
 	/**	\brief Forms the %dimensions of the output or throws an
@@ -158,13 +157,13 @@ private:
 	/**	\brief Forms the loop and executes the operation
 	 **/
 	template<typename CoreOp>
-	void do_perform(tensor_i<k_orderb, double> &tb, double c);
+	void do_perform(dense_tensor_i<k_orderb, double> &tb, double c);
 
 	/**	\brief Builds the nested loop list
 	 **/
 	template<typename CoreOp>
 	void build_list(
-		loop_list_t &list, tensor_i<k_orderb, double> &tb, double c);
+		loop_list_t &list, dense_tensor_i<k_orderb, double> &tb, double c);
 
 	/**	\brief Cleans the nested loop list
 	 **/
@@ -185,7 +184,7 @@ const char *tod_extract<N, M>::op_daxpy::k_clazz =
 
 
 template<size_t N, size_t M>
-tod_extract<N, M>::tod_extract(tensor_i<N, double> &t, const mask<N> &m,
+tod_extract<N, M>::tod_extract(dense_tensor_i<N, double> &t, const mask<N> &m,
 	const index<N> &idx, double c) :
 
 	m_t(t), m_mask(m), m_c(c), m_dims(mk_dims(t.get_dims(), m_mask)),
@@ -195,7 +194,7 @@ tod_extract<N, M>::tod_extract(tensor_i<N, double> &t, const mask<N> &m,
 
 
 template<size_t N, size_t M>
-tod_extract<N, M>::tod_extract(tensor_i<N, double> &t, const mask<N> &m,
+tod_extract<N, M>::tod_extract(dense_tensor_i<N, double> &t, const mask<N> &m,
 	const permutation<N - M> &p, const index<N> &idx, double c) :
 
 	m_t(t), m_mask(m), m_perm(p), m_c(c),
@@ -208,7 +207,7 @@ tod_extract<N, M>::tod_extract(tensor_i<N, double> &t, const mask<N> &m,
 
 
 template<size_t N, size_t M>
-void tod_extract<N, M>::perform(tensor_i<k_orderb, double> &tb) {
+void tod_extract<N, M>::perform(dense_tensor_i<k_orderb, double> &tb) {
 
 	static const char *method = "perform(tensor_i<N - M, double>&)";
 
@@ -222,7 +221,7 @@ void tod_extract<N, M>::perform(tensor_i<k_orderb, double> &tb) {
 
 
 template<size_t N, size_t M>
-void tod_extract<N, M>::perform(tensor_i<k_orderb, double> &tb, double c) {
+void tod_extract<N, M>::perform(dense_tensor_i<k_orderb, double> &tb, double c) {
 
 	static const char *method =
 		"perform(tensor_i<N - M, double>&, double)";
@@ -269,15 +268,15 @@ dimensions<N - M> tod_extract<N, M>::mk_dims(const dimensions<N> &dims,
 
 
 template<size_t N, size_t M> template<typename CoreOp>
-void tod_extract<N, M>::do_perform(tensor_i<k_orderb, double> &tb, double c) {
+void tod_extract<N, M>::do_perform(dense_tensor_i<k_orderb, double> &tb, double c) {
 
 	static const char *method =
 		"do_perform(tensor_i<N - M, double>&, double)";
 
 	tod_extract<N, M>::start_timer();
 
-	tensor_ctrl<k_ordera, double> ca(m_t);
-	tensor_ctrl<k_orderb, double> cb(tb);
+	dense_tensor_ctrl<k_ordera, double> ca(m_t);
+	dense_tensor_ctrl<k_orderb, double> cb(tb);
 	const double *pa = ca.req_const_dataptr();
 	double *pb = cb.req_dataptr();
 
@@ -319,7 +318,7 @@ void tod_extract<N, M>::do_perform(tensor_i<k_orderb, double> &tb, double c) {
 
 template<size_t N, size_t M> template<typename CoreOp>
 void tod_extract<N, M>::build_list(
-	loop_list_t &list, tensor_i<k_orderb, double> &tb, double c) {
+	loop_list_t &list, dense_tensor_i<k_orderb, double> &tb, double c) {
 
 	static const char *method = "build_list(loop_list_t&, "
 		"tensor_i<N - M, double>&, double)";

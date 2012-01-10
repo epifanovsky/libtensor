@@ -52,8 +52,8 @@ void btod_extract_test::test_1() throw(libtest::test_exception) {
 	block_tensor<2, double, allocator_t> bta(bis2);
 	block_tensor<1, double, allocator_t> btb(bis1);
 
-	tensor<2, double, allocator_t> ta(dims2);
-	tensor<1, double, allocator_t> tb(dims1), tb_ref(dims1);
+	dense_tensor<2, double, allocator_t> ta(dims2);
+	dense_tensor<1, double, allocator_t> tb(dims1), tb_ref(dims1);
 
 	mask<2> msk;
 	msk[0] = false; msk[1] = true;
@@ -107,8 +107,8 @@ void btod_extract_test::test_2() throw(libtest::test_exception) {
 	block_tensor<3, double, allocator_t> bta(bis3);
 	block_tensor<2, double, allocator_t> btb(bis2);
 
-	tensor<3, double, allocator_t> ta(dims3);
-	tensor<2, double, allocator_t> tb(dims2), tb_ref(dims2);
+	dense_tensor<3, double, allocator_t> ta(dims3);
+	dense_tensor<2, double, allocator_t> tb(dims2), tb_ref(dims2);
 
 	mask<3> msk;
 	msk[0] = true; msk[1] = false;msk[2] = true;
@@ -164,8 +164,8 @@ void btod_extract_test::test_3() throw(libtest::test_exception) {
 	block_tensor<5, double, allocator_t> bta(bis5);
 	block_tensor<3, double, allocator_t> btb(bis3);
 
-	tensor<5, double, allocator_t> ta(dims5);
-	tensor<3, double, allocator_t> tb(dims3), tb_ref(dims3);
+	dense_tensor<5, double, allocator_t> ta(dims5);
+	dense_tensor<3, double, allocator_t> tb(dims3), tb_ref(dims3);
 
 	mask<5> msk;
 	msk[0] = false; msk[1] = true;msk[2] = true;msk[3] = false; msk[4] = true;
@@ -220,8 +220,8 @@ void btod_extract_test::test_4() throw(libtest::test_exception) {
 	block_tensor<5, double, allocator_t> bta(bis5);
 	block_tensor<2, double, allocator_t> btb(bis2);
 
-	tensor<5, double, allocator_t> ta(dims5);
-	tensor<2, double, allocator_t> tb(dims2), tb_ref(dims2);
+	dense_tensor<5, double, allocator_t> ta(dims5);
+	dense_tensor<2, double, allocator_t> tb(dims2), tb_ref(dims2);
 
 	mask<5> msk;
 	msk[0] = false; msk[1] = true;msk[2] = false;msk[3] = true; msk[4] = false;
@@ -286,8 +286,8 @@ void btod_extract_test::test_5() throw(libtest::test_exception) {
 	block_tensor<2, double, allocator_t> bta(bis2);
 	block_tensor<1, double, allocator_t> btb(bis1);
 
-	tensor<2, double, allocator_t> ta(dims2);
-	tensor<1, double, allocator_t> tb(dims1), tb_ref(dims1);
+	dense_tensor<2, double, allocator_t> ta(dims2);
+	dense_tensor<1, double, allocator_t> tb(dims1), tb_ref(dims1);
 
 	mask<2> msk;
 	msk[0] = false; msk[1] = true;
@@ -353,8 +353,8 @@ void btod_extract_test::test_6() throw(libtest::test_exception) {
 	block_tensor<3, double, allocator_t> bta(bis3);
 	block_tensor<2, double, allocator_t> btb(bis2);
 
-	tensor<3, double, allocator_t> ta(dims3);
-	tensor<2, double, allocator_t> tb(dims2), tb_ref(dims2);
+	dense_tensor<3, double, allocator_t> ta(dims3);
+	dense_tensor<2, double, allocator_t> tb(dims2), tb_ref(dims2);
 
 	mask<3> msk;
 	msk[0] = true; msk[1] = false;msk[2] = true;
@@ -426,8 +426,8 @@ void btod_extract_test::test_7() throw(libtest::test_exception) {
 	block_tensor<4, double, allocator_t> bta(bis4);
 	block_tensor<2, double, allocator_t> btb(bis2);
 
-	tensor<4, double, allocator_t> ta(dims4);
-	tensor<2, double, allocator_t> tb(dims2), tb_ref(dims2);
+	dense_tensor<4, double, allocator_t> ta(dims4);
+	dense_tensor<2, double, allocator_t> tb(dims2), tb_ref(dims2);
 
 	mask<4> msk;
 	msk[0] = true; msk[1] = false;msk[2] = false;msk[3] = true;
@@ -496,8 +496,8 @@ void btod_extract_test::test_8() throw(libtest::test_exception) {
 	block_tensor<4, double, allocator_t> bta(bis4);
 	block_tensor<2, double, allocator_t> btb(bis2);
 
-	tensor<4, double, allocator_t> ta(dims4);
-	tensor<2, double, allocator_t> tb(dims2), tb_ref(dims2);
+	dense_tensor<4, double, allocator_t> ta(dims4);
+	dense_tensor<2, double, allocator_t> tb(dims2), tb_ref(dims2);
 
 	mask<4> msk;
 	msk[0] = true; msk[1] = false;msk[2] = false;msk[3] = true;
@@ -555,8 +555,8 @@ void btod_extract_test::test_9() throw(libtest::test_exception) {
 	block_tensor<3, double, allocator_t> bta(bis3);
 	block_tensor<2, double, allocator_t> btb(bis2);
 
-	tensor<3, double, allocator_t> ta(dims3);
-	tensor<2, double, allocator_t> tb(dims2), tb_ref(dims2);
+	dense_tensor<3, double, allocator_t> ta(dims3);
+	dense_tensor<2, double, allocator_t> tb(dims2), tb_ref(dims2);
 
 	mask<3> msk;
 	msk[0] = true; msk[1] = false;msk[2] = true;
@@ -645,8 +645,8 @@ void btod_extract_test::test_10() throw(libtest::test_exception) {
 	block_tensor_ctrl<2, double> cbtb(btb);
 	cbtb.req_symmetry().insert(sp10);
 
-	tensor<4, double, allocator_t> ta(dims4);
-	tensor<2, double, allocator_t> tb(dims2), tb_ref(dims2);
+	dense_tensor<4, double, allocator_t> ta(dims4);
+	dense_tensor<2, double, allocator_t> tb(dims2), tb_ref(dims2);
 
 	mask<4> msk;
 	msk[0] = true; msk[1] = false; msk[2] = false; msk[3] = true;
@@ -714,8 +714,8 @@ void btod_extract_test::test_11() throw(libtest::test_exception) {
 	block_tensor_ctrl<3, double> cbta(bta);
 	cbta.req_symmetry().insert(ap21);
 
-	tensor<3, double, allocator_t> ta(dims3);
-	tensor<2, double, allocator_t> tb(dims2), tb_ref(dims2);
+	dense_tensor<3, double, allocator_t> ta(dims3);
+	dense_tensor<2, double, allocator_t> tb(dims2), tb_ref(dims2);
 
 	mask<3> msk;
 	msk[0] = true; msk[1] = false; msk[2] = true;
@@ -799,8 +799,8 @@ void btod_extract_test::test_12a() throw(libtest::test_exception) {
 	cbta.req_symmetry().insert(se_perm<4, double>(
 		permutation<4>().permute(0, 2).permute(1, 3), true));
 
-	tensor<4, double, allocator_t> ta(dims4);
-	tensor<2, double, allocator_t> tb(dims2), tb_ref(dims2);
+	dense_tensor<4, double, allocator_t> ta(dims4);
+	dense_tensor<2, double, allocator_t> tb(dims2), tb_ref(dims2);
 
 	mask<4> msk;
 	msk[0] = false; msk[1] = true; msk[2] = false; msk[3] = true;
@@ -889,8 +889,8 @@ void btod_extract_test::test_12b() throw(libtest::test_exception) {
 	cbtb.req_symmetry().insert(se_perm<2, double>(
 		permutation<2>().permute(0, 1), true));
 
-	tensor<4, double, allocator_t> ta(dims4);
-	tensor<2, double, allocator_t> tb(dims2), tb_ref(dims2);
+	dense_tensor<4, double, allocator_t> ta(dims4);
+	dense_tensor<2, double, allocator_t> tb(dims2), tb_ref(dims2);
 
 	mask<4> msk;
 	msk[0] = false; msk[1] = true; msk[2] = false; msk[3] = true;
@@ -977,8 +977,8 @@ void btod_extract_test::test_12c() throw(libtest::test_exception) {
 	cbta.req_symmetry().insert(se_perm<4, double>(
 		permutation<4>().permute(0, 2).permute(1, 3), true));
 
-	tensor<4, double, allocator_t> ta(dims4);
-	tensor<2, double, allocator_t> tb(dims2), tb_ref(dims2);
+	dense_tensor<4, double, allocator_t> ta(dims4);
+	dense_tensor<2, double, allocator_t> tb(dims2), tb_ref(dims2);
 
 	mask<4> msk;
 	msk[0] = false; msk[1] = true; msk[2] = false; msk[3] = true;
@@ -1062,8 +1062,8 @@ void btod_extract_test::test_13a() throw(libtest::test_exception) {
 	cbta.req_symmetry().insert(se_perm<4, double>(
 		permutation<4>().permute(0, 1), false));
 
-	tensor<4, double, allocator_t> ta(dims4);
-	tensor<2, double, allocator_t> tb(dims2), tb_ref(dims2);
+	dense_tensor<4, double, allocator_t> ta(dims4);
+	dense_tensor<2, double, allocator_t> tb(dims2), tb_ref(dims2);
 
 	mask<4> msk;
 	msk[0] = false; msk[1] = true; msk[2] = false; msk[3] = true;

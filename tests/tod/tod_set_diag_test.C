@@ -5,7 +5,7 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/abs_index.h>
 #include <libtensor/core/print_dimensions.h>
-#include <libtensor/core/tensor.h>
+#include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/tod/tod_set_diag.h>
 #include "../compare_ref.h"
 #include "tod_set_diag_test.h"
@@ -37,10 +37,10 @@ void tod_set_diag_test::run_test(const dimensions<N> &dims, double d)
 
 	try {
 
-	tensor<N, double, allocator_t> t(dims), t_ref(dims);
+	dense_tensor<N, double, allocator_t> t(dims), t_ref(dims);
 
 	{
-	tensor_ctrl<N, double> ctrl(t), ctrl_ref(t_ref);
+	dense_tensor_ctrl<N, double> ctrl(t), ctrl_ref(t_ref);
 
 	double *p = ctrl.req_dataptr();
 	double *p_ref = ctrl_ref.req_dataptr();

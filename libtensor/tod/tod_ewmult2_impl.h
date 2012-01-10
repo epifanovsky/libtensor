@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_TOD_EWMULT2_IMPL_H
 #define LIBTENSOR_TOD_EWMULT2_IMPL_H
 
-#include "../core/tensor_ctrl.h"
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include "../mp/auto_cpu_lock.h"
 #include "kernels/loop_list_runner.h"
 #include "kernels/kern_mul_generic.h"
@@ -14,8 +14,8 @@ const char *tod_ewmult2<N, M, K>::k_clazz = "tod_ewmult2<N, M, K>";
 
 
 template<size_t N, size_t M, size_t K>
-tod_ewmult2<N, M, K>::tod_ewmult2(tensor_i<k_ordera, double> &ta,
-	tensor_i<k_orderb, double> &tb, double d) :
+tod_ewmult2<N, M, K>::tod_ewmult2(dense_tensor_i<k_ordera, double> &ta,
+	dense_tensor_i<k_orderb, double> &tb, double d) :
 
 	m_ta(ta), m_tb(tb), m_d(d),
 	m_dimsc(make_dimsc(ta.get_dims(), permutation<k_ordera>(),
@@ -26,8 +26,8 @@ tod_ewmult2<N, M, K>::tod_ewmult2(tensor_i<k_ordera, double> &ta,
 
 
 template<size_t N, size_t M, size_t K>
-tod_ewmult2<N, M, K>::tod_ewmult2(tensor_i<k_ordera, double> &ta,
-	const permutation<k_ordera> &perma, tensor_i<k_orderb, double> &tb,
+tod_ewmult2<N, M, K>::tod_ewmult2(dense_tensor_i<k_ordera, double> &ta,
+	const permutation<k_ordera> &perma, dense_tensor_i<k_orderb, double> &tb,
 	const permutation<k_orderb> &permb, const permutation<k_orderc> &permc,
 	double d) :
 
@@ -47,14 +47,14 @@ tod_ewmult2<N, M, K>::~tod_ewmult2() {
 template<size_t N, size_t M, size_t K>
 void tod_ewmult2<N, M, K>::prefetch() {
 
-	tensor_ctrl<k_ordera, double>(m_ta).req_prefetch();
-	tensor_ctrl<k_orderb, double>(m_tb).req_prefetch();
+    dense_tensor_ctrl<k_ordera, double>(m_ta).req_prefetch();
+    dense_tensor_ctrl<k_orderb, double>(m_tb).req_prefetch();
 }
 
 
 template<size_t N, size_t M, size_t K>
 void tod_ewmult2<N, M, K>::perform(cpu_pool &cpus, bool zero, double d,
-    tensor_i<k_orderc, double> &tc) {
+    dense_tensor_i<k_orderc, double> &tc) {
 
     static const char *method =
         "perform(cpu_pool&, bool, double, tensor_i<k_orderc, double>&)";
@@ -68,9 +68,9 @@ void tod_ewmult2<N, M, K>::perform(cpu_pool &cpus, bool zero, double d,
 
     try {
 
-    tensor_ctrl<k_ordera, double> ca(m_ta);
-    tensor_ctrl<k_orderb, double> cb(m_tb);
-    tensor_ctrl<k_orderc, double> cc(tc);
+    dense_tensor_ctrl<k_ordera, double> ca(m_ta);
+    dense_tensor_ctrl<k_orderb, double> cb(m_tb);
+    dense_tensor_ctrl<k_orderc, double> cc(tc);
     ca.req_prefetch();
     cb.req_prefetch();
     cc.req_prefetch();
@@ -154,14 +154,14 @@ void tod_ewmult2<N, M, K>::perform(cpu_pool &cpus, bool zero, double d,
 
 
 template<size_t N, size_t M, size_t K>
-void tod_ewmult2<N, M, K>::perform(cpu_pool &cpus, tensor_i<k_orderc, double> &tc) {
+void tod_ewmult2<N, M, K>::perform(cpu_pool &cpus, dense_tensor_i<k_orderc, double> &tc) {
 
     perform(cpus, true, 1.0, tc);
 }
 
 
 template<size_t N, size_t M, size_t K>
-void tod_ewmult2<N, M, K>::perform(cpu_pool &cpus, tensor_i<k_orderc, double> &tc, double d) {
+void tod_ewmult2<N, M, K>::perform(cpu_pool &cpus, dense_tensor_i<k_orderc, double> &tc, double d) {
 
 	perform(cpus, false, d, tc);
 }

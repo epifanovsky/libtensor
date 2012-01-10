@@ -1,12 +1,12 @@
 #ifndef LIBTENSOR_TOD_SELECT_H
 #define LIBTENSOR_TOD_SELECT_H
 
+#include <cmath>
 #include "../defs.h"
 #include "../exception.h"
 #include "../core/abs_index.h"
 #include "../core/index.h"
-#include "../core/tensor_ctrl.h"
-#include <cmath>
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 
 namespace libtensor {
 
@@ -81,7 +81,7 @@ public:
 	typedef std::list<elem_t> list_t; //!< List type for index-value pairs
 
 private:
-	tensor_i<N, double> &m_t; //!< Tensor
+	dense_tensor_i<N, double> &m_t; //!< Tensor
 	permutation<N> m_perm; //!< Permutation of tensor
 	double m_c; //!< Scaling coefficient
 	compare_t m_cmp; //!< Compare policy object to select entries
@@ -94,7 +94,7 @@ public:
 		\param t Tensor.
 		\param cmp Compare policy object
 	 **/
-	tod_select(tensor_i<N, double> &t, compare_t cmp = compare_t()) :
+	tod_select(dense_tensor_i<N, double> &t, compare_t cmp = compare_t()) :
 		m_t(t), m_c(1.0), m_cmp(cmp) { }
 
 	/** \brief Constuctor
@@ -102,7 +102,7 @@ public:
 		\param c Coefficient.
 		\param cmp Compare policy object.
 	 **/
-	tod_select(tensor_i<N, double> &t,
+	tod_select(dense_tensor_i<N, double> &t,
 			double c, compare_t cmp = compare_t()) :
 		m_t(t), m_c(c), m_cmp(cmp) { }
 
@@ -112,7 +112,7 @@ public:
 		\param c Coefficient
 		\param cmp Compare policy object.
 	 **/
-	tod_select(tensor_i<N, double> &t, const permutation<N> &p,
+	tod_select(dense_tensor_i<N, double> &t, const permutation<N> &p,
 			double c, compare_t cmp = compare_t()) :
 		m_t(t), m_perm(p), m_c(c), m_cmp(cmp) { }
 
@@ -136,7 +136,7 @@ void tod_select<N,ComparePolicy>::perform(list_t &li, size_t n) {
 
 	if (n == 0) return;
 
-	tensor_ctrl<N, double> ctrl(m_t);
+	dense_tensor_ctrl<N, double> ctrl(m_t);
 	const dimensions<N> &d = m_t.get_dims();
 	const double *p = ctrl.req_const_dataptr();
 

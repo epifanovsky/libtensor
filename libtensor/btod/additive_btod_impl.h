@@ -8,7 +8,7 @@ namespace libtensor {
 
 
 template<size_t N>
-void additive_btod<N>::compute_block(tensor_i<N, double> &blk,
+void additive_btod<N>::compute_block(dense_tensor_i<N, double> &blk,
     const index<N> &i, cpu_pool &cpus) {
 
     compute_block(true, blk, i, transf<N, double>(), 1.0, cpus);
@@ -17,7 +17,7 @@ void additive_btod<N>::compute_block(tensor_i<N, double> &blk,
 
 template<size_t N>
 void additive_btod<N>::compute_block(additive_btod<N> &op, bool zero,
-    tensor_i<N, double> &blk, const index<N> &i, const transf<N, double> &tr,
+    dense_tensor_i<N, double> &blk, const index<N> &i, const transf<N, double> &tr,
     double c, cpu_pool &cpus) {
 
     op.compute_block(zero, blk, i, tr, c, cpus);
@@ -73,7 +73,7 @@ void additive_btod<N>::task::perform(cpu_pool &cpus) throw (exception) {
 
     const typename schedule_t::schedule_group &grp = m_sch.get_node(m_i);
 
-    typedef std::pair<size_t, tensor_i<N, double>*> la_pair_t;
+    typedef std::pair<size_t, dense_tensor_i<N, double>*> la_pair_t;
     std::list<la_pair_t> la;
 
     for(typename std::list<typename schedule_t::schedule_node>::const_iterator
@@ -89,7 +89,7 @@ void additive_btod<N>::task::perform(cpu_pool &cpus) throw (exception) {
         }
         if(ila == la.end()) {
             abs_index<N> aia(node.cia, m_bidims);
-            tensor_i<N, double> &blka = ctrl.req_aux_block(aia.get_index());
+            dense_tensor_i<N, double> &blka = ctrl.req_aux_block(aia.get_index());
             tod_set<N>().perform(cpus, blka);
             m_btod.compute_block(false, blka, aia.get_index(), node.tra, m_c,
                 cpus);
@@ -107,12 +107,12 @@ void additive_btod<N>::task::perform(cpu_pool &cpus) throw (exception) {
 
             abs_index<N> aib(node.cib, m_bidims), aic(node.cic, m_bidims);
             bool zerob = ctrl.req_is_zero_block(aib.get_index());
-            tensor_i<N, double> &blkc = ctrl.req_block(aic.get_index());
+            dense_tensor_i<N, double> &blkc = ctrl.req_block(aic.get_index());
             if(zerob) {
                 // this should actually never happen, but just in case
                 tod_set<N>().perform(cpus, blkc);
             } else {
-                tensor_i<N, double> &blkb = ctrl.req_block(aib.get_index());
+                dense_tensor_i<N, double> &blkb = ctrl.req_block(aib.get_index());
                 tod_copy<N>(blkb, node.trb.get_perm(), node.trb.get_coeff()).
                     perform(cpus, true, 1.0, blkc);
                 ctrl.ret_block(aib.get_index());
@@ -128,14 +128,14 @@ void additive_btod<N>::task::perform(cpu_pool &cpus) throw (exception) {
 
             abs_index<N> aib(node.cib, m_bidims), aic(node.cic, m_bidims);
             bool zerob = ctrl.req_is_zero_block(aib.get_index());
-            tensor_i<N, double> &blkc = ctrl.req_block(aic.get_index());
+            dense_tensor_i<N, double> &blkc = ctrl.req_block(aic.get_index());
             if(zerob) {
                 abs_index<N> aia(node.cia, m_bidims);
                 tod_copy<N>(*ila->second, node.tra.get_perm(),
                     node.tra.get_coeff()).perform(cpus, true, 1.0, blkc);
             } else {
                 abs_index<N> aia(node.cia, m_bidims);
-                tensor_i<N, double> &blkb = ctrl.req_block(aib.get_index());
+                dense_tensor_i<N, double> &blkb = ctrl.req_block(aib.get_index());
                 tod_copy<N>(*ila->second, node.tra.get_perm(),
                     node.tra.get_coeff()).perform(cpus, true, 1.0, blkc);
                 tod_copy<N>(blkb, node.trb.get_perm(), node.trb.get_coeff()).
@@ -158,7 +158,7 @@ void additive_btod<N>::task::perform(cpu_pool &cpus) throw (exception) {
 
         abs_index<N> aib(node.cib, m_bidims);
         bool zerob = ctrl.req_is_zero_block(aib.get_index());
-        tensor_i<N, double> &blkb = ctrl.req_block(aib.get_index());
+        dense_tensor_i<N, double> &blkb = ctrl.req_block(aib.get_index());
         if(zerob) {
             abs_index<N> aia(node.cia, m_bidims);
             tod_copy<N> (*ila->second, node.tra.get_perm(),

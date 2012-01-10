@@ -80,11 +80,11 @@ void btod_dirsum<N, M>::sync_off() {
 
 /*
 template<size_t N, size_t M>
-void btod_dirsum<N, M>::compute_block(tensor_i<N + M, double> &blkc,
+void btod_dirsum<N, M>::compute_block(dense_tensor_i<N + M, double> &blkc,
 	const index<N + M> &ic) {
 
 	static const char *method =
-		"compute_block(tensor_i<N + M, double>&, const index<N + M>&)";
+		"compute_block(dense_tensor_i<N + M, double>&, const index<N + M>&)";
 
 	btod_dirsum<N, M>::start_timer();
 
@@ -110,7 +110,7 @@ void btod_dirsum<N, M>::compute_block(tensor_i<N + M, double> &blkc,
 
 
 template<size_t N, size_t M>
-void btod_dirsum<N, M>::compute_block(bool zero, tensor_i<N + M, double> &blkc,
+void btod_dirsum<N, M>::compute_block(bool zero, dense_tensor_i<N + M, double> &blkc,
 	const index<N + M> &ic, const transf<N + M, double> &trc,
 	double kc, cpu_pool &cpus) {
 
@@ -140,7 +140,7 @@ void btod_dirsum<N, M>::compute_block(bool zero, tensor_i<N + M, double> &blkc,
 
 
 template<size_t N, size_t M>
-void btod_dirsum<N, M>::compute_block(tensor_i<N + M, double> &blkc,
+void btod_dirsum<N, M>::compute_block(dense_tensor_i<N + M, double> &blkc,
 	const schrec &rec, const transf<N + M, double> &trc, bool zeroc,
 	double kc, cpu_pool &cpus) {
 
@@ -317,13 +317,13 @@ template<size_t N, size_t M>
 void btod_dirsum<N, M>::do_block_dirsum(
 	block_tensor_ctrl<k_ordera, double> &ctrla,
 	block_tensor_ctrl<k_orderb, double> &ctrlb,
-	tensor_i<k_orderc, double> &blkc, double kc,
+	dense_tensor_i<k_orderc, double> &blkc, double kc,
 	const index<k_ordera> &ia, double ka,
 	const index<k_orderb> &ib, double kb,
 	const permutation<k_orderc> &permc, bool zero) {
 
-	tensor_i<k_ordera, double> &blka = ctrla.req_block(ia);
-	tensor_i<k_orderb, double> &blkb = ctrlb.req_block(ib);
+	dense_tensor_i<k_ordera, double> &blka = ctrla.req_block(ia);
+	dense_tensor_i<k_orderb, double> &blkb = ctrlb.req_block(ib);
 
 	if(zero) {
 		tod_dirsum<N, M>(blka, ka, blkb, kb, permc).perform(blkc);
@@ -342,11 +342,11 @@ void btod_dirsum<N, M>::do_block_dirsum(
 template<size_t N, size_t M>
 void btod_dirsum<N, M>::do_block_scatter_a(
 	block_tensor_ctrl<k_ordera, double> &ctrla,
-	tensor_i<k_orderc, double> &blkc, double kc,
+	dense_tensor_i<k_orderc, double> &blkc, double kc,
 	const index<k_ordera> &ia, double ka,
 	const permutation<k_orderc> permc, bool zero) {
 
-	tensor_i<k_ordera, double> &blka = ctrla.req_block(ia);
+	dense_tensor_i<k_ordera, double> &blka = ctrla.req_block(ia);
 
 	if(zero) {
 		tod_scatter<N, M>(blka, ka, permc).perform(blkc);
@@ -364,11 +364,11 @@ void btod_dirsum<N, M>::do_block_scatter_a(
 template<size_t N, size_t M>
 void btod_dirsum<N, M>::do_block_scatter_b(
 	block_tensor_ctrl<k_orderb, double> &ctrlb,
-	tensor_i<k_orderc, double> &blkc, double kc,
+	dense_tensor_i<k_orderc, double> &blkc, double kc,
 	const index<k_orderb> &ib, double kb,
 	const permutation<k_orderc> permc, bool zero) {
 
-	tensor_i<k_orderb, double> &blkb = ctrlb.req_block(ib);
+	dense_tensor_i<k_orderb, double> &blkb = ctrlb.req_block(ib);
 
 	if(zero) {
 		tod_scatter<M, N>(blkb, kb, permc).perform(blkc);

@@ -69,8 +69,8 @@ public:
 
 private:
 	contraction2<N, M, K> m_contr; //!< Contraction
-	tensor_i<k_ordera, double> &m_ta; //!< First tensor (a)
-	tensor_i<k_orderb, double> &m_tb; //!< Second tensor (b)
+	dense_tensor_i<k_ordera, double> &m_ta; //!< First tensor (a)
+	dense_tensor_i<k_orderb, double> &m_tb; //!< Second tensor (b)
 
 public:
 	//!	\name Construction and destruction
@@ -83,7 +83,7 @@ public:
 		\param tb Tensor b (second argument).
 	 **/
 	tod_contract2(const contraction2<N, M, K> &contr,
-		tensor_i<k_ordera, double> &ta, tensor_i<k_orderb, double> &tb);
+		dense_tensor_i<k_ordera, double> &ta, dense_tensor_i<k_orderb, double> &tb);
 
 
 	/**	\brief Virtual destructor
@@ -100,11 +100,11 @@ public:
 	//!	\name Implementation of tod_additive<N+M>
 	//@{
     virtual void perform(cpu_pool &cpus, bool zero, double c,
-        tensor_i<k_orderc, double> &t);
+        dense_tensor_i<k_orderc, double> &t);
 	//@}
 
 private:
-	void do_perform(tensor_i<k_orderc, double> &tc, bool zero, double d);
+	void do_perform(dense_tensor_i<k_orderc, double> &tc, bool zero, double d);
 
 };
 

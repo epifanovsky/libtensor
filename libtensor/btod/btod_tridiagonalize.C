@@ -131,8 +131,8 @@ void btod_tridiagonalize::perform(block_tensor_i<2, double> &btb,
 
 			if(cab.req_is_zero_block(idx)==false)
 			{
-				tensor_i<1 ,double> &tcol = cab.req_block(idx);
-				tensor_ctrl<1, double> ca(tcol);
+				dense_tensor_i<1 ,double> &tcol = cab.req_block(idx);
+				dense_tensor_ctrl<1, double> ca(tcol);
 
 				{
 				const double *pa = ca.req_const_dataptr();
@@ -163,8 +163,8 @@ void btod_tridiagonalize::perform(block_tensor_i<2, double> &btb,
 			}
 		}
 
-		tensor_i<1 ,double> &tcol = cab.req_block(idx);
-		tensor_ctrl<1, double> ca(tcol);
+		dense_tensor_i<1 ,double> &tcol = cab.req_block(idx);
+		dense_tensor_ctrl<1, double> ca(tcol);
 
 		{
 		    const double *pa = ca.req_const_dataptr();
@@ -237,8 +237,8 @@ void btod_tridiagonalize::perform(block_tensor_i<2, double> &btb,
 			}
 			else
 			{
-				tensor_i<1 ,double> &tcol1 = cab.req_block(idx);
-				tensor_ctrl<1, double> ca1(tcol1);
+				dense_tensor_i<1 ,double> &tcol1 = cab.req_block(idx);
+				dense_tensor_ctrl<1, double> ca1(tcol1);
 				{
 				    const double *pa1 = ca1.req_const_dataptr();
 				    idxibl1[0]=pos;
@@ -309,8 +309,8 @@ void btod_tridiagonalize::print(block_tensor_i<2, double> &btb)
 			block_tensor_ctrl<2, double> ctrl(m_bta);
 			if(ctrl.req_is_zero_block(idxi)==false)
 			{
-			tensor_i<2 ,double> &tbtb = ctrl.req_block(idxi);
-			tensor_ctrl<2, double> catrl(tbtb);
+			dense_tensor_i<2 ,double> &tbtb = ctrl.req_block(idxi);
+			dense_tensor_ctrl<2, double> catrl(tbtb);
 			{
 			    const double *pa = catrl.req_const_dataptr();
 			    std::cout<<*(pa + posv * m_bta.get_bis().get_block_dims(idxi)
@@ -360,8 +360,8 @@ void btod_tridiagonalize::print(block_tensor_i<2, double> &btb)
 			block_tensor_ctrl<2, double> ctrl(btb);
 			if(ctrl.req_is_zero_block(idxi)==false)
 			{
-			tensor_i<2 ,double> &tbtb = ctrl.req_block(idxi);
-			tensor_ctrl<2, double> catrl(tbtb);
+			dense_tensor_i<2 ,double> &tbtb = ctrl.req_block(idxi);
+			dense_tensor_ctrl<2, double> catrl(tbtb);
 			{
 			const double *pa = catrl.req_const_dataptr();
 			std::cout<<*(pa + posv * btb.get_bis().get_block_dims(idxi).

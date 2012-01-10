@@ -23,7 +23,7 @@ task_dispatcher::queue_id_t task_dispatcher::create_queue() {
     task_queue *tq = new task_queue(tq_parent);
 
     {
-        auto_lock lock(m_lock);
+        auto_lock<mutex> lock(m_lock);
         return m_tqs.insert(m_tqs.end(), tq);
     }
 }
@@ -37,7 +37,7 @@ void task_dispatcher::destroy_queue(queue_id_t &qid) {
     task_queue *tq = 0;
 
     {
-        auto_lock lock(m_lock);
+        auto_lock<mutex> lock(m_lock);
 
         if(qid == m_tqs.end()) {
             throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
@@ -58,7 +58,7 @@ void task_dispatcher::push_task(const queue_id_t &qid, task_i &task) {
 
     static const char *method = "push_task(const queue_id_t&, task_i&)";
 
-    auto_lock lock(m_lock);
+    auto_lock<mutex> lock(m_lock);
 
     if(qid == m_tqs.end()) {
         throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__, "qid");

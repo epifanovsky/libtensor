@@ -102,7 +102,7 @@ protected:
 	//!	\brief Implementation of additive_btod<N>
 	//@{
 
-	virtual void compute_block(bool zero, tensor_i<N, double> &blk,
+	virtual void compute_block(bool zero, dense_tensor_i<N, double> &blk,
 	    const index<N> &i, const transf<N, double> &tr, double c,
 	    cpu_pool &cpus);
 
@@ -183,7 +183,7 @@ void btod_symmetrize<N>::sync_off() {
 
 /*
 template<size_t N>
-void btod_symmetrize<N>::compute_block(tensor_i<N, double> &blk,
+void btod_symmetrize<N>::compute_block(dense_tensor_i<N, double> &blk,
 	const index<N> &i) {
 
 	typedef typename sym_schedule_t::iterator iterator_t;
@@ -197,7 +197,7 @@ void btod_symmetrize<N>::compute_block(tensor_i<N, double> &blk,
 
 
 template<size_t N>
-void btod_symmetrize<N>::compute_block(bool zero, tensor_i<N, double> &blk,
+void btod_symmetrize<N>::compute_block(bool zero, dense_tensor_i<N, double> &blk,
 	const index<N> &idx, const transf<N, double> &tr, double c,
 	cpu_pool &cpus) {
 
@@ -233,7 +233,7 @@ void btod_symmetrize<N>::compute_block(bool zero, tensor_i<N, double> &blk,
 		} else {
 			dimensions<N> dims(blk.get_dims());
 			// TODO: replace with "temporary block" feature
-			tensor< N, double, allocator<double> > tmp(dims);
+			dense_tensor< N, double, allocator<double> > tmp(dims);
 			additive_btod<N>::compute_block(m_op, true, tmp,
 				ai.get_index(), tri, c, cpus);
 			transf<N, double> tri_inv(tri);

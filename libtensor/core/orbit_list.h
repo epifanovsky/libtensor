@@ -14,9 +14,10 @@ namespace libtensor {
 
 
 template<size_t N, typename T>
-class orbit_list : public timings<orbit_list<N, T> > {
-	friend class timings<orbit_list<N, T> >;
-	static const char* k_clazz;
+class orbit_list : public timings< orbit_list<N, T> > {
+public:
+    static const char *k_clazz; //!< Class name
+
 public:
 	typedef typename std::map< size_t, index<N> >::const_iterator iterator;
 

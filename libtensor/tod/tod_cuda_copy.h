@@ -4,8 +4,8 @@
 #include "../defs.h"
 #include "../exception.h"
 #include "../timings.h"
-#include "../core/tensor_i.h"
-#include "../core/tensor_ctrl.h"
+#include <libtensor/dense_tensor/dense_tensor_i.h>
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include "kernels/cuda_kern_copy_generic.h"
 //#include "loop_list_add.h"
 //#include "loop_list_copy.h"
@@ -26,21 +26,21 @@ namespace libtensor {
 
 	Plain copy:
 	\code
-	tensor_i<2, double> &t1(...), &t2(...);
+	dense_tensor_i<2, double> &t1(...), &t2(...);
 	tod_cuda_copy<2> cp(t1);
 	cp.perform(t2); // Copies the elements of t1 to t2
 	\endcode
 
 	Scaled copy:
 	\code
-	tensor_i<2, double> &t1(...), &t2(...);
+	dense_tensor_i<2, double> &t1(...), &t2(...);
 	tod_cuda_copy<2> cp(t1, 0.5);
 	cp.perform(t2); // Copies the elements of t1 multiplied by 0.5 to t2
 	\endcode
 
 	Permuted copy:
 	\code
-	tensor_i<2, double> &t1(...), &t2(...);
+	dense_tensor_i<2, double> &t1(...), &t2(...);
 	permutation<2> perm; perm.permute(0, 1); // Sets up a permutation
 	tod_cuda_copy<2> cp(t1, perm);
 	cp.perform(t2); // Copies transposed t1 to t2
@@ -48,7 +48,7 @@ namespace libtensor {
 
 	Permuted and scaled copy:
 	\code
-	tensor_i<2, double> &t1(...), &t2(...);
+	dense_tensor_i<2, double> &t1(...), &t2(...);
 	permutation<2> perm; perm.permute(0, 1); // Sets up a permutation
 	tod_cuda_copy<2> cp(t1, perm, 0.5);
 	cp.perform(t2); // Copies transposed t1 scaled by 0.5 to t2
@@ -64,7 +64,7 @@ public:
 	static const char *k_clazz; //!< Class name
 
 private:
-	tensor_i<N, double> &m_ta; //!< Source %tensor
+	dense_tensor_i<N, double> &m_ta; //!< Source %tensor
 	permutation<N> m_perm; //!< Permutation of elements
 	double m_c; //!< Scaling coefficient
 	dimensions<N> m_dimsb; //!< Dimensions of output %tensor
@@ -77,14 +77,14 @@ public:
 		\param ta Source %tensor.
 		\param c Coefficient.
 	 **/
-	tod_cuda_copy(tensor_i<N, double> &ta, double c = 1.0);
+	tod_cuda_copy(dense_tensor_i<N, double> &ta, double c = 1.0);
 
 	/**	\brief Prepares the permute & copy operation
 		\param ta Source %tensor.
 		\param p Permutation of %tensor elements.
 		\param c Coefficient.
 	 **/
-	tod_cuda_copy(tensor_i<N, double> &ta, const permutation<N> &p,
+	tod_cuda_copy(dense_tensor_i<N, double> &ta, const permutation<N> &p,
 		double c = 1.0);
 
 	/**	\brief Virtual destructor
@@ -99,11 +99,11 @@ public:
 
 	virtual void prefetch();
 
-	//!	\copydoc tod_additive<N>::perform(tensor_i<N, double>&)
-	virtual void perform(tensor_i<N, double> &t);
+	//!	\copydoc tod_additive<N>::perform(dense_tensor_i<N, double>&)
+	virtual void perform(dense_tensor_i<N, double> &t);
 
-	//!	\copydoc tod_additive<N>::perform(tensor_i<N, double>&, double)
-	virtual void perform(tensor_i<N, double> &t, double c);
+	//!	\copydoc tod_additive<N>::perform(dense_tensor_i<N, double>&, double)
+	virtual void perform(dense_tensor_i<N, double> &t, double c);
 
 	//@}
 
@@ -111,10 +111,10 @@ private:
 	/**	\brief Creates the dimensions of the output using an input
 			%tensor and a permutation of indexes
 	 **/
-	static dimensions<N> mk_dimsb(tensor_i<N, double> &ta,
+	static dimensions<N> mk_dimsb(dense_tensor_i<N, double> &ta,
 		const permutation<N> &perm);
 
-	void do_perform(tensor_i<N, double> &t, double c);
+	void do_perform(dense_tensor_i<N, double> &t, double c);
 //
 //	template<typename Base>
 //	void build_loop(typename Base::list_t &loop, const dimensions<N> &dimsa,
@@ -128,14 +128,14 @@ const char *tod_cuda_copy<N>::k_clazz = "tod_cuda_copy<N>";
 
 
 template<size_t N>
-tod_cuda_copy<N>::tod_cuda_copy(tensor_i<N, double> &ta, double c) :
+tod_cuda_copy<N>::tod_cuda_copy(dense_tensor_i<N, double> &ta, double c) :
 	m_ta(ta), m_c(c), m_dimsb(mk_dimsb(m_ta, m_perm)) {
 
 }
 
 
 template<size_t N>
-tod_cuda_copy<N>::tod_cuda_copy(tensor_i<N, double> &ta, const permutation<N> &p,
+tod_cuda_copy<N>::tod_cuda_copy(dense_tensor_i<N, double> &ta, const permutation<N> &p,
 	double c) : m_ta(ta), m_perm(p), m_c(c), m_dimsb(mk_dimsb(ta, p)) {
 
 }
@@ -144,14 +144,14 @@ tod_cuda_copy<N>::tod_cuda_copy(tensor_i<N, double> &ta, const permutation<N> &p
 template<size_t N>
 void tod_cuda_copy<N>::prefetch() {
 
-	tensor_ctrl<N, double>(m_ta).req_prefetch();
+	dense_tensor_ctrl<N, double>(m_ta).req_prefetch();
 }
 
 
 template<size_t N>
-void tod_cuda_copy<N>::perform(tensor_i<N, double> &tb) {
+void tod_cuda_copy<N>::perform(dense_tensor_i<N, double> &tb) {
 
-	static const char *method = "perform(tensor_i<N, double>&)";
+	static const char *method = "perform(dense_tensor_i<N, double>&)";
 
 	if(!tb.get_dims().equals(m_dimsb)) {
 		throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__,
@@ -163,9 +163,9 @@ void tod_cuda_copy<N>::perform(tensor_i<N, double> &tb) {
 
 
 template<size_t N>
-void tod_cuda_copy<N>::perform(tensor_i<N, double> &tb, double c) {
+void tod_cuda_copy<N>::perform(dense_tensor_i<N, double> &tb, double c) {
 
-	static const char *method = "perform(tensor_i<N, double>&, double)";
+	static const char *method = "perform(dense_tensor_i<N, double>&, double)";
 
 	if(!tb.get_dims().equals(m_dimsb)) {
 //		std::cout << "\n m_dimsb = " << m_dimsb << "\n tb dims = " << tb.get_dims();
@@ -178,7 +178,7 @@ void tod_cuda_copy<N>::perform(tensor_i<N, double> &tb, double c) {
 
 
 template<size_t N>
-dimensions<N> tod_cuda_copy<N>::mk_dimsb(tensor_i<N, double> &ta,
+dimensions<N> tod_cuda_copy<N>::mk_dimsb(dense_tensor_i<N, double> &ta,
 	const permutation<N> &perm) {
 
 	dimensions<N> dims(ta.get_dims());
@@ -188,14 +188,14 @@ dimensions<N> tod_cuda_copy<N>::mk_dimsb(tensor_i<N, double> &ta,
 
 
 template<size_t N>
-void tod_cuda_copy<N>::do_perform(tensor_i<N, double> &tb, double c) {
+void tod_cuda_copy<N>::do_perform(dense_tensor_i<N, double> &tb, double c) {
 
 
 	tod_cuda_copy<N>::start_timer();
 
 	try {
 
-	tensor_ctrl<N, double> ca(m_ta), cb(tb);
+	dense_tensor_ctrl<N, double> ca(m_ta), cb(tb);
 	ca.req_prefetch();
 	cb.req_prefetch();
 

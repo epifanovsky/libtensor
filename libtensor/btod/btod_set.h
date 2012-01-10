@@ -71,7 +71,7 @@ void btod_set<N>::perform(block_tensor_i<N, double> &bt) {
         if(m_v == 0.0) {
             ctrl.req_zero_block(bi);
         } else {
-            tensor_i<N, double> &blk = ctrl.req_block(bi);
+            dense_tensor_i<N, double> &blk = ctrl.req_block(bi);
             tod_set<N>(m_v).perform(cpus, blk);
             ctrl.ret_block(bi);
         }

@@ -188,14 +188,14 @@ void labeled_btensor_test::test_expr_copy_1() throw(libtest::test_exception) {
 	block_tensor_ctrl<2, double> btctrla(bta), btctrlb(btb),
 		btctrlb_ref(btb_ref);
 	index<2> i0;
-	tensor_i<2, double> &ta = btctrla.req_block(i0);
-	tensor_i<2, double> &tb = btctrlb.req_block(i0);
-	tensor_i<2, double> &tb_ref = btctrlb_ref.req_block(i0);
+	dense_tensor_i<2, double> &ta = btctrla.req_block(i0);
+	dense_tensor_i<2, double> &tb = btctrlb.req_block(i0);
+	dense_tensor_i<2, double> &tb_ref = btctrlb_ref.req_block(i0);
 
 	dimensions<2> dims(ta.get_dims());
 
 	{
-		tensor_ctrl<2, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
+		dense_tensor_ctrl<2, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
 		double *dta = tca.req_dataptr();
 		double *dtb1 = tcb.req_dataptr();
 		double *dtb2 = tcb_ref.req_dataptr();
@@ -248,14 +248,14 @@ void labeled_btensor_test::test_expr_copy_2() throw(libtest::test_exception) {
 	block_tensor_ctrl<2, double> btctrla(bta), btctrlb(btb),
 		btctrlb_ref(btb_ref);
 	index<2> i0;
-	tensor_i<2, double> &ta = btctrla.req_block(i0);
-	tensor_i<2, double> &tb = btctrlb.req_block(i0);
-	tensor_i<2, double> &tb_ref = btctrlb_ref.req_block(i0);
+	dense_tensor_i<2, double> &ta = btctrla.req_block(i0);
+	dense_tensor_i<2, double> &tb = btctrlb.req_block(i0);
+	dense_tensor_i<2, double> &tb_ref = btctrlb_ref.req_block(i0);
 
 	dimensions<2> dims(ta.get_dims());
 
 	{
-		tensor_ctrl<2, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
+		dense_tensor_ctrl<2, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
 		double *dta = tca.req_dataptr();
 		double *dtb1 = tcb.req_dataptr();
 		double *dtb2 = tcb_ref.req_dataptr();
@@ -312,14 +312,14 @@ void labeled_btensor_test::test_expr_copy_3() throw(libtest::test_exception) {
 	block_tensor_ctrl<2, double> btctrla(bta), btctrlb(btb),
 		btctrlb_ref(btb_ref);
 	index<2> i0;
-	tensor_i<2, double> &ta = btctrla.req_block(i0);
-	tensor_i<2, double> &tb = btctrlb.req_block(i0);
-	tensor_i<2, double> &tb_ref = btctrlb_ref.req_block(i0);
+	dense_tensor_i<2, double> &ta = btctrla.req_block(i0);
+	dense_tensor_i<2, double> &tb = btctrlb.req_block(i0);
+	dense_tensor_i<2, double> &tb_ref = btctrlb_ref.req_block(i0);
 
 	dimensions<2> dims(ta.get_dims());
 
 	{
-		tensor_ctrl<2, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
+		dense_tensor_ctrl<2, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
 		double *dta = tca.req_dataptr();
 		double *dtb1 = tcb.req_dataptr();
 		double *dtb2 = tcb_ref.req_dataptr();
@@ -377,14 +377,14 @@ void labeled_btensor_test::test_expr_copy_4() throw(libtest::test_exception) {
 	block_tensor_ctrl<2, double> btctrla(bta), btctrlb(btb),
 		btctrlb_ref(btb_ref);
 	index<2> i0;
-	tensor_i<2, double> &ta = btctrla.req_block(i0);
-	tensor_i<2, double> &tb = btctrlb.req_block(i0);
-	tensor_i<2, double> &tb_ref = btctrlb_ref.req_block(i0);
+	dense_tensor_i<2, double> &ta = btctrla.req_block(i0);
+	dense_tensor_i<2, double> &tb = btctrlb.req_block(i0);
+	dense_tensor_i<2, double> &tb_ref = btctrlb_ref.req_block(i0);
 
 	dimensions<2> dims(ta.get_dims());
 
 	{
-		tensor_ctrl<2, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
+		dense_tensor_ctrl<2, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
 		double *dta = tca.req_dataptr();
 		double *dtb1 = tcb.req_dataptr();
 		double *dtb2 = tcb_ref.req_dataptr();
@@ -437,15 +437,15 @@ void labeled_btensor_test::test_expr_add_1() throw(libtest::test_exception) {
 	block_tensor_ctrl<2, double> btctrla(bta), btctrlb(btb),
 		btctrlc(btc), btctrlc_ref(btc_ref);
 	index<2> i0;
-	tensor_i<2, double> &ta = btctrla.req_block(i0);
-	tensor_i<2, double> &tb = btctrlb.req_block(i0);
-	tensor_i<2, double> &tc = btctrlc.req_block(i0);
-	tensor_i<2, double> &tc_ref = btctrlc_ref.req_block(i0);
+	dense_tensor_i<2, double> &ta = btctrla.req_block(i0);
+	dense_tensor_i<2, double> &tb = btctrlb.req_block(i0);
+	dense_tensor_i<2, double> &tc = btctrlc.req_block(i0);
+	dense_tensor_i<2, double> &tc_ref = btctrlc_ref.req_block(i0);
 
 	dimensions<2> dims(ta.get_dims());
 
 	{
-		tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc),
+		dense_tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc),
 			tcc_ref(tc_ref);
 		double *dta = tca.req_dataptr();
 		double *dtb = tcb.req_dataptr();
@@ -504,15 +504,15 @@ void labeled_btensor_test::test_expr_add_2() throw(libtest::test_exception) {
 	block_tensor_ctrl<2, double> btctrla(bta), btctrlb(btb),
 		btctrlc(btc), btctrlc_ref(btc_ref);
 	index<2> i0;
-	tensor_i<2, double> &ta = btctrla.req_block(i0);
-	tensor_i<2, double> &tb = btctrlb.req_block(i0);
-	tensor_i<2, double> &tc = btctrlc.req_block(i0);
-	tensor_i<2, double> &tc_ref = btctrlc_ref.req_block(i0);
+	dense_tensor_i<2, double> &ta = btctrla.req_block(i0);
+	dense_tensor_i<2, double> &tb = btctrlb.req_block(i0);
+	dense_tensor_i<2, double> &tc = btctrlc.req_block(i0);
+	dense_tensor_i<2, double> &tc_ref = btctrlc_ref.req_block(i0);
 
 	dimensions<2> dims(ta.get_dims());
 
 	{
-		tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc),
+		dense_tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc),
 			tcc_ref(tc_ref);
 		double *dta = tca.req_dataptr();
 		double *dtb = tcb.req_dataptr();
@@ -571,15 +571,15 @@ void labeled_btensor_test::test_expr_add_3() throw(libtest::test_exception) {
 	block_tensor_ctrl<2, double> btctrla(bta), btctrlb(btb),
 		btctrlc(btc), btctrlc_ref(btc_ref);
 	index<2> i0;
-	tensor_i<2, double> &ta = btctrla.req_block(i0);
-	tensor_i<2, double> &tb = btctrlb.req_block(i0);
-	tensor_i<2, double> &tc = btctrlc.req_block(i0);
-	tensor_i<2, double> &tc_ref = btctrlc_ref.req_block(i0);
+	dense_tensor_i<2, double> &ta = btctrla.req_block(i0);
+	dense_tensor_i<2, double> &tb = btctrlb.req_block(i0);
+	dense_tensor_i<2, double> &tc = btctrlc.req_block(i0);
+	dense_tensor_i<2, double> &tc_ref = btctrlc_ref.req_block(i0);
 
 	dimensions<2> dims(ta.get_dims());
 
 	{
-		tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc),
+		dense_tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc),
 			tcc_ref(tc_ref);
 		double *dta = tca.req_dataptr();
 		double *dtb = tcb.req_dataptr();
@@ -638,15 +638,15 @@ void labeled_btensor_test::test_expr_add_4() throw(libtest::test_exception) {
 	block_tensor_ctrl<2, double> btctrla(bta), btctrlb(btb),
 		btctrlc(btc), btctrlc_ref(btc_ref);
 	index<2> i0;
-	tensor_i<2, double> &ta = btctrla.req_block(i0);
-	tensor_i<2, double> &tb = btctrlb.req_block(i0);
-	tensor_i<2, double> &tc = btctrlc.req_block(i0);
-	tensor_i<2, double> &tc_ref = btctrlc_ref.req_block(i0);
+	dense_tensor_i<2, double> &ta = btctrla.req_block(i0);
+	dense_tensor_i<2, double> &tb = btctrlb.req_block(i0);
+	dense_tensor_i<2, double> &tc = btctrlc.req_block(i0);
+	dense_tensor_i<2, double> &tc_ref = btctrlc_ref.req_block(i0);
 
 	dimensions<2> dims(ta.get_dims());
 
 	{
-		tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc),
+		dense_tensor_ctrl<2, double> tca(ta), tcb(tb), tcc(tc),
 			tcc_ref(tc_ref);
 		double *dta = tca.req_dataptr();
 		double *dtb = tcb.req_dataptr();

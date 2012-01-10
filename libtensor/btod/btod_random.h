@@ -11,8 +11,8 @@
 #include "../core/block_tensor_i.h"
 #include "../core/block_tensor_ctrl.h"
 #include "../core/orbit_list.h"
-#include "../core/tensor.h"
-#include "../core/tensor_ctrl.h"
+#include <libtensor/dense_tensor/dense_tensor.h>
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include "../tod/tod_add.h"
 #include "../tod/tod_copy.h"
 #include "../tod/tod_random.h"
@@ -174,7 +174,7 @@ void btod_random<N>::make_random_blk(cpu_pool &cpus,
 		return;
 	}
 
-	tensor_i<N, double> &blk = ctrl.req_block(idx);
+	dense_tensor_i<N, double> &blk = ctrl.req_block(idx);
 
 	typename transf_list_t::iterator itr = ilst->second.begin();
 	if(itr == ilst->second.end()) {
@@ -182,7 +182,7 @@ void btod_random<N>::make_random_blk(cpu_pool &cpus,
 		randop.perform(cpus, true, 1.0, blk);
 		timings_base::stop_timer("randop");
 	} else {
-		tensor<N, double, allocator_t> rnd(blk.get_dims()),
+		dense_tensor<N, double, allocator_t> rnd(blk.get_dims()),
 			symrnd(blk.get_dims());
 		timings_base::start_timer("randop");
 		randop.perform(cpus, true, 1.0, rnd);

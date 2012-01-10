@@ -1078,7 +1078,7 @@ void btod_contract2_test::test_contr_1() throw(libtest::test_exception) {
 
 	//	Convert block tensors to regular tensors
 
-	tensor<4, double, allocator_t> ta(dims), tb(dims), tc(dims),
+	dense_tensor<4, double, allocator_t> ta(dims), tb(dims), tc(dims),
 		tc_ref(dims);
 	tod_btconv<4> conva(bta);
 	conva.perform(ta);
@@ -1150,7 +1150,7 @@ void btod_contract2_test::test_contr_2() throw(libtest::test_exception) {
 
 	//	Convert block tensors to regular tensors
 
-	tensor<4, double, allocator_t> ta(dims), tb(dims), tc(dims),
+	dense_tensor<4, double, allocator_t> ta(dims), tb(dims), tc(dims),
 		tc_ref(dims);
 	tod_btconv<4> conva(bta);
 	conva.perform(ta);
@@ -1234,7 +1234,7 @@ void btod_contract2_test::test_contr_3() throw(libtest::test_exception) {
 
 	//	Convert block tensors to regular tensors
 
-	tensor<4, double, allocator_t> ta(dimsa), tb(dimsb), tc(dimsc),
+	dense_tensor<4, double, allocator_t> ta(dimsa), tb(dimsb), tc(dimsc),
 		tc_ref(dimsc);
 	tod_btconv<4> conva(bta);
 	conva.perform(ta);
@@ -1330,7 +1330,7 @@ void btod_contract2_test::test_contr_4() throw(libtest::test_exception) {
 
 	//	Convert block tensors to regular tensors
 
-	tensor<4, double, allocator_t> ta(dimsa), tb(dimsb), tc(dimsc),
+	dense_tensor<4, double, allocator_t> ta(dimsa), tb(dimsb), tc(dimsc),
 		tc_ref(dimsc);
 	tod_btconv<4> conva(bta);
 	conva.perform(ta);
@@ -1421,7 +1421,7 @@ void btod_contract2_test::test_contr_5() throw(libtest::test_exception) {
 
 	//	Convert input block tensors to regular tensors
 
-	tensor<4, double, allocator_t> ta(dimsa), tb(dimsb), tc(dimsc),
+	dense_tensor<4, double, allocator_t> ta(dimsa), tb(dimsb), tc(dimsc),
 		tc_ref(dimsc);
 	tod_btconv<4> conva(bta);
 	conva.perform(ta);
@@ -1523,7 +1523,7 @@ void btod_contract2_test::test_contr_6() throw(libtest::test_exception) {
 
 	//	Convert input block tensors to regular tensors
 
-	tensor<4, double, allocator_t> ta(dimsa), tb(dimsb), tc(dimsc),
+	dense_tensor<4, double, allocator_t> ta(dimsa), tb(dimsb), tc(dimsc),
 		tc_ref(dimsc);
 	tod_btconv<4> conva(bta);
 	conva.perform(ta);
@@ -1615,8 +1615,8 @@ void btod_contract2_test::test_contr_7() throw(libtest::test_exception) {
 
 	//	Convert block tensors to regular tensors
 
-	tensor<2, double, allocator_t> ta(dimsa);
-	tensor<4, double, allocator_t> tb(dimsb), tc(dimsc), tc_ref(dimsc);
+	dense_tensor<2, double, allocator_t> ta(dimsa);
+	dense_tensor<4, double, allocator_t> tb(dimsb), tc(dimsc), tc_ref(dimsc);
 	tod_btconv<2> conva(bta);
 	conva.perform(ta);
 	tod_btconv<4> convb(btb);
@@ -1678,8 +1678,8 @@ void btod_contract2_test::test_contr_8() throw(libtest::test_exception) {
 
 	//	Convert block tensors to regular tensors
 
-	tensor<2, double, allocator_t> ta(dimsa);
-	tensor<4, double, allocator_t> tb(dimsb), tc(dimsc), tc_ref(dimsc);
+	dense_tensor<2, double, allocator_t> ta(dimsa);
+	dense_tensor<4, double, allocator_t> tb(dimsb), tc(dimsc), tc_ref(dimsc);
 	tod_btconv<2>(bta).perform(ta);
 	tod_btconv<4>(btb).perform(tb);
 	tod_btconv<4>(btc).perform(tc_ref);
@@ -1747,8 +1747,8 @@ void btod_contract2_test::test_contr_9() throw(libtest::test_exception) {
 
 	//	Convert block tensors to regular tensors
 
-	tensor<2, double, allocator_t> ta(dimsa);
-	tensor<4, double, allocator_t> tb(dimsb), tc(dimsc), tc_ref(dimsc);
+	dense_tensor<2, double, allocator_t> ta(dimsa);
+	dense_tensor<4, double, allocator_t> tb(dimsb), tc(dimsc), tc_ref(dimsc);
 	tod_btconv<2>(bta).perform(ta);
 	tod_btconv<4>(btb).perform(tb);
 	tod_btconv<4>(btc).perform(tc_ref);
@@ -1878,9 +1878,9 @@ void btod_contract2_test::test_contr_11() throw(libtest::test_exception) {
 
 	//	Convert block tensors to regular tensors
 
-	tensor<2, double, allocator_t> ta(dimsa);
-	tensor<2, double, allocator_t> tb(dimsb);
-	tensor<4, double, allocator_t> tc(dimsc), tc_ref(dimsc);
+	dense_tensor<2, double, allocator_t> ta(dimsa);
+	dense_tensor<2, double, allocator_t> tb(dimsb);
+	dense_tensor<4, double, allocator_t> tc(dimsc), tc_ref(dimsc);
 	tod_btconv<2>(bta).perform(ta);
 	tod_btconv<2>(btb).perform(tb);
 
@@ -1942,9 +1942,9 @@ void btod_contract2_test::test_contr_12() throw(libtest::test_exception) {
 
 	//	Convert block tensors to regular tensors
 
-	tensor<2, double, allocator_t> ta(dimsa);
-	tensor<2, double, allocator_t> tb(dimsb);
-	tensor<4, double, allocator_t> tc(dimsc), tc_ref(dimsc);
+	dense_tensor<2, double, allocator_t> ta(dimsa);
+	dense_tensor<2, double, allocator_t> tb(dimsb);
+	dense_tensor<4, double, allocator_t> tc(dimsc), tc_ref(dimsc);
 	tod_btconv<2>(bta).perform(ta);
 	tod_btconv<2>(btb).perform(tb);
 
@@ -2009,9 +2009,9 @@ void btod_contract2_test::test_contr_13() throw(libtest::test_exception) {
 
 	//	Convert block tensors to regular tensors
 
-	tensor<4, double, allocator_t> ta(dimsa);
-	tensor<2, double, allocator_t> tb(dimsb);
-	tensor<2, double, allocator_t> tc(dimsc), tc_ref(dimsc);
+	dense_tensor<4, double, allocator_t> ta(dimsa);
+	dense_tensor<2, double, allocator_t> tb(dimsb);
+	dense_tensor<2, double, allocator_t> tc(dimsc), tc_ref(dimsc);
 	tod_btconv<4>(bta).perform(ta);
 	tod_btconv<2>(btb).perform(tb);
 
@@ -2081,9 +2081,9 @@ void btod_contract2_test::test_contr_14(double c)
 
 	//	Convert block tensors to regular tensors
 
-	tensor<4, double, allocator_t> ta(dims);
-	tensor<4, double, allocator_t> tb(dims);
-	tensor<4, double, allocator_t> tc(dims), tc_ref(dims);
+	dense_tensor<4, double, allocator_t> ta(dims);
+	dense_tensor<4, double, allocator_t> tb(dims);
+	dense_tensor<4, double, allocator_t> tc(dims), tc_ref(dims);
 	tod_btconv<4>(bta).perform(ta);
 	tod_btconv<4>(btb).perform(tb);
 	if(c != 0.0) tod_btconv<4>(btc).perform(tc_ref);
@@ -2160,9 +2160,9 @@ void btod_contract2_test::test_contr_15(double c)
 
 	//	Convert block tensors to regular tensors
 
-	tensor<4, double, allocator_t> ta(dims);
-	tensor<4, double, allocator_t> tb(dims);
-	tensor<4, double, allocator_t> tc(dims), tc_ref(dims);
+	dense_tensor<4, double, allocator_t> ta(dims);
+	dense_tensor<4, double, allocator_t> tb(dims);
+	dense_tensor<4, double, allocator_t> tc(dims), tc_ref(dims);
 	tod_btconv<4>(bta).perform(ta);
 	tod_btconv<4>(btb).perform(tb);
 	if(c != 0.0) tod_btconv<4>(btc).perform(tc_ref);
@@ -2243,9 +2243,9 @@ void btod_contract2_test::test_contr_16(double c)
 
 	//	Convert block tensors to regular tensors
 
-	tensor<4, double, allocator_t> ta(dims_iaaa);
-	tensor<4, double, allocator_t> tb(dims_iiaa);
-	tensor<4, double, allocator_t> tc(dims_iaaa), tc_ref(dims_iaaa);
+	dense_tensor<4, double, allocator_t> ta(dims_iaaa);
+	dense_tensor<4, double, allocator_t> tb(dims_iiaa);
+	dense_tensor<4, double, allocator_t> tc(dims_iaaa), tc_ref(dims_iaaa);
 	tod_btconv<4>(bta).perform(ta);
 	tod_btconv<4>(btb).perform(tb);
 	tod_set<4>().perform(cpus, tc_ref);
@@ -2340,9 +2340,9 @@ void btod_contract2_test::test_contr_17(double c)
 
 	//	Convert block tensors to regular tensors
 
-	tensor<4, double, allocator_t> ta(dims_iiaa);
-	tensor<4, double, allocator_t> tb(dims_iiaa);
-	tensor<2, double, allocator_t> tc(dims_ii), tc_ref(dims_ii);
+	dense_tensor<4, double, allocator_t> ta(dims_iiaa);
+	dense_tensor<4, double, allocator_t> tb(dims_iiaa);
+	dense_tensor<2, double, allocator_t> tc(dims_ii), tc_ref(dims_ii);
 	tod_btconv<4>(bta).perform(ta);
 	tod_btconv<4>(btb).perform(tb);
 	tod_btconv<2>(btc).perform(tc_ref);
@@ -2432,9 +2432,9 @@ void btod_contract2_test::test_contr_18(double c)
 
 	//	Convert block tensors to regular tensors
 
-	tensor<4, double, allocator_t> ta(dims_iiaa);
-	tensor<4, double, allocator_t> tb(dims_iaia);
-	tensor<2, double, allocator_t> tc(dims_ii), tc_ref(dims_ii);
+	dense_tensor<4, double, allocator_t> ta(dims_iiaa);
+	dense_tensor<4, double, allocator_t> tb(dims_iaia);
+	dense_tensor<2, double, allocator_t> tc(dims_ii), tc_ref(dims_ii);
 	tod_btconv<4>(bta).perform(ta);
 	tod_btconv<4>(btb).perform(tb);
 	tod_btconv<2>(btc).perform(tc_ref);
@@ -2548,9 +2548,9 @@ void btod_contract2_test::test_contr_19()
 
 	//	Convert block tensors to regular tensors
 
-	tensor<4, double, allocator_t> ta(dims_iiii);
-	tensor<4, double, allocator_t> tb(dims_iiaa);
-	tensor<4, double, allocator_t> tc(dims_iiaa), tc_ref(dims_iiaa);
+	dense_tensor<4, double, allocator_t> ta(dims_iiii);
+	dense_tensor<4, double, allocator_t> tb(dims_iiaa);
+	dense_tensor<4, double, allocator_t> tc(dims_iiaa), tc_ref(dims_iiaa);
 	tod_btconv<4>(bta).perform(ta);
 	tod_btconv<4>(btb).perform(tb);
 	tod_btconv<4>(btc).perform(tc_ref);
@@ -2637,9 +2637,9 @@ void btod_contract2_test::test_contr_20()
 
 	//	Convert block tensors to regular tensors
 
-	tensor<2, double, allocator_t> ta(bisa.get_dims());
-	tensor<2, double, allocator_t> tb(bisb.get_dims());
-	tensor<2, double, allocator_t> tc(bisa.get_dims()), tc_ref(bisa.get_dims());
+	dense_tensor<2, double, allocator_t> ta(bisa.get_dims());
+	dense_tensor<2, double, allocator_t> tb(bisb.get_dims());
+	dense_tensor<2, double, allocator_t> tc(bisa.get_dims()), tc_ref(bisa.get_dims());
 	tod_btconv<2>(bta).perform(ta);
 	tod_btconv<2>(btb).perform(tb);
 
@@ -2726,9 +2726,9 @@ void btod_contract2_test::test_contr_21() throw(libtest::test_exception) {
 
 	//	Convert block tensors to regular tensors
 
-	tensor<2, double, allocator_t> ta(bisa.get_dims());
-	tensor<2, double, allocator_t> tb(bisa.get_dims());
-	tensor<2, double, allocator_t> tc(bisc.get_dims()),
+	dense_tensor<2, double, allocator_t> ta(bisa.get_dims());
+	dense_tensor<2, double, allocator_t> tb(bisa.get_dims());
+	dense_tensor<2, double, allocator_t> tc(bisc.get_dims()),
 		tc_ref(bisc.get_dims());
 	tod_btconv<2>(bta).perform(ta);
 	tod_btconv<2>(btb).perform(tb);
@@ -2801,8 +2801,8 @@ void btod_contract2_test::test_self_1() throw(libtest::test_exception) {
 
 	//	Convert block tensors to regular tensors
 
-	tensor<2, double, allocator_t> ta(dims_ia);
-	tensor<4, double, allocator_t> tc(dims_ijab), tc_ref(dims_ijab);
+	dense_tensor<2, double, allocator_t> ta(dims_ia);
+	dense_tensor<4, double, allocator_t> tc(dims_ijab), tc_ref(dims_ijab);
 	tod_btconv<2>(bta).perform(ta);
 	tod_btconv<4>(btc).perform(tc);
 
@@ -2878,8 +2878,8 @@ void btod_contract2_test::test_self_2() throw(libtest::test_exception) {
 
 	//	Convert block tensors to regular tensors
 
-	tensor<3, double, allocator_t> ta(dims_iac);
-	tensor<4, double, allocator_t> tc(dims_ijab), tc_ref(dims_ijab);
+	dense_tensor<3, double, allocator_t> ta(dims_iac);
+	dense_tensor<4, double, allocator_t> tc(dims_ijab), tc_ref(dims_ijab);
 	tod_btconv<3>(bta).perform(ta);
 	tod_btconv<4>(btc).perform(tc);
 
@@ -2964,8 +2964,8 @@ void btod_contract2_test::test_self_3() throw(libtest::test_exception) {
 
 	//	Convert block tensors to regular tensors
 
-	tensor<3, double, allocator_t> ta(dims_iac);
-	tensor<4, double, allocator_t> tc(dims_ijab), tc_ref(dims_ijab);
+	dense_tensor<3, double, allocator_t> ta(dims_iac);
+	dense_tensor<4, double, allocator_t> tc(dims_ijab), tc_ref(dims_ijab);
 	tod_btconv<3>(bta).perform(ta);
 	tod_btconv<4>(btc).perform(tc);
 

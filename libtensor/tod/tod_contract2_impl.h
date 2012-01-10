@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_TOD_CONTRACT2_IMPL_H
 #define LIBTENSOR_TOD_CONTRACT2_IMPL_H
 
-#include "../core/tensor_ctrl.h"
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include "../mp/auto_cpu_lock.h"
 #include "kernels/loop_list_runner.h"
 #include "kernels/kern_mul_generic.h"
@@ -15,7 +15,7 @@ const char *tod_contract2<N, M, K>::k_clazz = "tod_contract2<N, M, K>";
 
 template<size_t N, size_t M, size_t K>
 tod_contract2<N, M, K>::tod_contract2(const contraction2<N, M, K> &contr,
-	tensor_i<k_ordera, double> &ta, tensor_i<k_orderb, double> &tb) :
+	dense_tensor_i<k_ordera, double> &ta, dense_tensor_i<k_orderb, double> &tb) :
 
 	m_contr(contr), m_ta(ta), m_tb(tb) {
 
@@ -31,22 +31,22 @@ tod_contract2<N, M, K>::~tod_contract2() {
 template<size_t N, size_t M, size_t K>
 void tod_contract2<N, M, K>::prefetch() {
 
-	tensor_ctrl<k_ordera, double>(m_ta).req_prefetch();
-	tensor_ctrl<k_orderb, double>(m_tb).req_prefetch();
+    dense_tensor_ctrl<k_ordera, double>(m_ta).req_prefetch();
+    dense_tensor_ctrl<k_orderb, double>(m_tb).req_prefetch();
 }
 
 
 template<size_t N, size_t M, size_t K>
 void tod_contract2<N, M, K>::perform(cpu_pool &cpus, bool zero, double d,
-    tensor_i<k_orderc, double> &tc) {
+    dense_tensor_i<k_orderc, double> &tc) {
 
     tod_contract2<N, M, K>::start_timer();
 
     try {
 
-    tensor_ctrl<k_ordera, double> ca(m_ta);
-    tensor_ctrl<k_orderb, double> cb(m_tb);
-    tensor_ctrl<k_orderc, double> cc(tc);
+    dense_tensor_ctrl<k_ordera, double> ca(m_ta);
+    dense_tensor_ctrl<k_orderb, double> cb(m_tb);
+    dense_tensor_ctrl<k_orderc, double> cc(tc);
 
     ca.req_prefetch();
     cb.req_prefetch();

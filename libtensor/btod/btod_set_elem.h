@@ -83,7 +83,7 @@ void btod_set_elem<N>::perform(block_tensor_i<N, double> &bt,
 	abs_index<N> abidx(o.get_abs_canonical_index(), bidims);
 
 	bool zero = ctrl.req_is_zero_block(abidx.get_index());
-	tensor_i<N, double> &blk = ctrl.req_block(abidx.get_index());
+	dense_tensor_i<N, double> &blk = ctrl.req_block(abidx.get_index());
 
 	if(zero) tod_set<N>().perform(cpus, blk);
 

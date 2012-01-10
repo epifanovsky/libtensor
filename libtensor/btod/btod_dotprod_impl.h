@@ -225,8 +225,8 @@ void btod_dotprod<N>::dotprod_in_orbit_task::perform(cpu_pool &cpus) throw(excep
 	if(ctrl1.req_is_zero_block(aci1.get_index()) ||
 		ctrl2.req_is_zero_block(aci2.get_index())) return;
 
-	tensor_i<N, double> &blk1 = ctrl1.req_block(aci1.get_index());
-	tensor_i<N, double> &blk2 = ctrl2.req_block(aci2.get_index());
+	dense_tensor_i<N, double> &blk1 = ctrl1.req_block(aci1.get_index());
+	dense_tensor_i<N, double> &blk2 = ctrl2.req_block(aci2.get_index());
 
 	permutation<N> perm1, perm2;
 	perm1.permute(tr1.get_perm()).permute(permutation<N>(m_pinv1, true));

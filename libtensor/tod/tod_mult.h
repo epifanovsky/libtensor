@@ -3,7 +3,7 @@
 
 #include "../defs.h"
 #include "../timings.h"
-#include "../core/tensor_i.h"
+#include "../dense_tensor/dense_tensor_i.h"
 #include "../mp/auto_cpu_lock.h"
 #include "loop_list_elem.h"
 #include "tod_additive.h"
@@ -31,8 +31,8 @@ public:
 	static const char *k_clazz; //!< Class name
 
 private:
-	tensor_i<N, double> &m_ta; //!< First argument
-	tensor_i<N, double> &m_tb; //!< Second argument
+	dense_tensor_i<N, double> &m_ta; //!< First argument
+	dense_tensor_i<N, double> &m_tb; //!< Second argument
 	permutation<N> m_perma; //!< Permutation of first argument
 	permutation<N> m_permb; //!< Permutation of second argument
 	bool m_recip; //!< Reciprocal (multiplication by 1/bi)
@@ -51,7 +51,7 @@ public:
 			\c true sets up element-wise division.
 		\param coeff Scaling coefficient
 	 **/
-	tod_mult(tensor_i<N, double> &ta, tensor_i<N, double> &tb,
+	tod_mult(dense_tensor_i<N, double> &ta, dense_tensor_i<N, double> &tb,
 		bool recip = false, double c = 1.0);
 
 	/**	\brief Creates the operation
@@ -63,8 +63,8 @@ public:
 			\c true sets up element-wise division.
 		\param coeff Scaling coefficient
 	 **/
-	tod_mult(tensor_i<N, double> &ta, const permutation<N> &pa,
-			tensor_i<N, double> &tb, const permutation<N> &pb,
+	tod_mult(dense_tensor_i<N, double> &ta, const permutation<N> &pa,
+			dense_tensor_i<N, double> &tb, const permutation<N> &pb,
 			bool recip = false, double c = 1.0);
 
 	/** \brief Virtual destructor
@@ -78,15 +78,15 @@ public:
 	virtual void prefetch();
 
     virtual void perform(cpu_pool &cpus, bool zero, double c,
-        tensor_i<N, double> &tc);
+        dense_tensor_i<N, double> &tc);
 
-	void perform(cpu_pool &cpus, tensor_i<N, double> &tc);
+	void perform(cpu_pool &cpus, dense_tensor_i<N, double> &tc);
 
-	void perform(cpu_pool &cpus, tensor_i<N, double> &tc, double c);
+	void perform(cpu_pool &cpus, dense_tensor_i<N, double> &tc, double c);
 	//@}
 
 private:
-	void do_perform(tensor_i<N, double> &tc, bool doadd, double c);
+	void do_perform(dense_tensor_i<N, double> &tc, bool doadd, double c);
 
 	void build_loop(typename loop_list_elem::list_t &loop,
 			const dimensions<N> &dimsa, const permutation<N> &perma,
@@ -101,7 +101,7 @@ const char *tod_mult<N>::k_clazz = "tod_mult<N>";
 
 template<size_t N>
 tod_mult<N>::tod_mult(
-	tensor_i<N, double> &ta, tensor_i<N, double> &tb, bool recip, double c) :
+	dense_tensor_i<N, double> &ta, dense_tensor_i<N, double> &tb, bool recip, double c) :
 
 	m_ta(ta), m_tb(tb), m_dimsc(ta.get_dims()), m_recip(recip), m_c(c) {
 
@@ -117,8 +117,8 @@ tod_mult<N>::tod_mult(
 
 template<size_t N>
 tod_mult<N>::tod_mult(
-	tensor_i<N, double> &ta, const permutation<N> &pa,
-	tensor_i<N, double> &tb, const permutation<N> &pb,
+	dense_tensor_i<N, double> &ta, const permutation<N> &pa,
+	dense_tensor_i<N, double> &tb, const permutation<N> &pb,
 	bool recip, double c) :
 
 	m_ta(ta), m_tb(tb), m_perma(pa), m_permb(pb),
@@ -145,21 +145,21 @@ tod_mult<N>::~tod_mult() {
 template<size_t N>
 void tod_mult<N>::prefetch() {
 
-	tensor_ctrl<N, double>(m_ta).req_prefetch();
-	tensor_ctrl<N, double>(m_tb).req_prefetch();
+    dense_tensor_ctrl<N, double>(m_ta).req_prefetch();
+    dense_tensor_ctrl<N, double>(m_tb).req_prefetch();
 
 }
 
 
 template<size_t N>
-void tod_mult<N>::perform(cpu_pool &cpus, tensor_i<N, double> &tc) {
+void tod_mult<N>::perform(cpu_pool &cpus, dense_tensor_i<N, double> &tc) {
 
     perform(cpus, true, 1.0, tc);
 }
 
 
 template<size_t N>
-void tod_mult<N>::perform(cpu_pool &cpus, tensor_i<N, double> &tc, double c) {
+void tod_mult<N>::perform(cpu_pool &cpus, dense_tensor_i<N, double> &tc, double c) {
 
     perform(cpus, false, c, tc);
 }
@@ -167,7 +167,7 @@ void tod_mult<N>::perform(cpu_pool &cpus, tensor_i<N, double> &tc, double c) {
 
 template<size_t N>
 void tod_mult<N>::perform(cpu_pool &cpus, bool zero, double c,
-    tensor_i<N, double> &tc) {
+    dense_tensor_i<N, double> &tc) {
 
     static const char *method =
         "perform(cpu_pool&, bool, double, tensor_i<N, double>&)";
@@ -184,7 +184,7 @@ void tod_mult<N>::perform(cpu_pool &cpus, bool zero, double c,
 
     try {
 
-    tensor_ctrl<N, double> ca(m_ta), cb(m_tb), cc(tc);
+    dense_tensor_ctrl<N, double> ca(m_ta), cb(m_tb), cc(tc);
     ca.req_prefetch();
     cb.req_prefetch();
     cc.req_prefetch();

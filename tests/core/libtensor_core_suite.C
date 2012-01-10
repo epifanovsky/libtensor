@@ -13,9 +13,9 @@ libtensor_core_suite::libtensor_core_suite() :
 		m_utf_block_index_subspace_builder);
 	add_test("block_map", m_utf_block_map);
 	add_test("block_tensor", m_utf_block_tensor);
+        add_test("dense_tensor", m_utf_dense_tensor);
 	add_test("dimensions", m_utf_dimensions);
 	add_test("direct_block_tensor", m_utf_direct_block_tensor);
-	add_test("global_timings", m_utf_global_timings);
 	add_test("immutable", m_utf_immutable);
 	add_test("index", m_utf_index);
 	add_test("index_range", m_utf_index_range);
@@ -30,9 +30,6 @@ libtensor_core_suite::libtensor_core_suite() :
 	add_test("symmetry", m_utf_symmetry);
 	add_test("symmetry_element_set", m_utf_symmetry_element_set);
 	add_test("task_batch", m_utf_task_batch);
-	add_test("tensor", m_utf_tensor);
-	add_test("timer", m_utf_timer);
-	add_test("timings", m_utf_timings);
 	add_test("transf_list", m_utf_transf_list);
 	add_test("version", m_utf_version);
 }
