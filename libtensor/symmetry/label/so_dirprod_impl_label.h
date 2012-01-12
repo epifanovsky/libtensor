@@ -74,82 +74,141 @@ symmetry_operation_impl< so_dirprod<N, M, T>, se_label<N + M, T> >::do_perform(
 
     dimensions<N + M> bidims = params.bis.get_block_index_dims();
     //	Go over each element in the first source group
-    for(typename adapter1_t::iterator i = g1.begin(); i != g1.end(); i++) {
+    for (typename adapter1_t::iterator it1 = g1.begin();
+            it1 != g1.end(); it1++) {
 
-        const se_label<N, T> &e1 = g1.get_elem(i);
-        const block_labeling<N> &bl1 = e1.get_labeling();
+        const se_label<N, T> &e1 = g1.get_elem(it1);
 
         // Create result se_label
         se_label<N + M, T> e3(bidims, e1.get_table_id());
-        block_labeling<N + M> &bl3 = e3.get_labeling();
+        transfer_labeling(e1.get_labeling(), map1, e3.get_labeling());
 
         // Look for an element in the second source group that has the
         // same product table
-        typename adapter2_t::iterator j = g2.begin();
-        for(; j != g2.end(); j++) {
+        typename adapter2_t::iterator it2 = g2.begin();
+        for (; it2 != g2.end(); it2++) {
 
-            if (e1.get_table_id().compare(g2.get_elem(j).get_table_id()) == 0)
+            if (e1.get_table_id() == g2.get_elem(it2).get_table_id())
                 break;
         }
 
-        const se_label<M, T> &e2 = g2.get_elem(j);
+        // If there is none
+        if (it2 == g2.end()) {
+            // Transfer the rule from e1
+            evaluation_rule r3(e1.get_rule());
+            for (evaluation_rule::rule_iterator ir = r3.begin();
+                    ir != r3.end(); ir++) {
 
-        // Combine the block labelings
+                std::vector<size_t> &o3 =
+                        r3.get_eval_order(r3.get_rule_id(ir));
+                for (size_t i = 0; i < o3.size(); i++) {
+                    if (o3[i] == evaluation_rule::k_intrinsic) continue;
+                    o3[i] = map1[o3[i]];
+                }
+            }
 
+            // Set the rule and finish off
+            e3.set_rule(r3);
+            params.g3.insert(e3);
+
+            continue;
+        }
+
+        // If there is an se_label with the same product table
+        const se_label<M, T> &e2 = g2.get_elem(it2);
+        transfer_labeling(e2.get_labeling(), map2, e3.get_labeling());
 
         // Combine the evaluation rules
+        evaluation_rule r3;
         const evaluation_rule &r1 = e1.get_rule();
         const evaluation_rule &r2 = e2.get_rule();
-        evaluation_rule r3;
 
-        typedef evaluation_rule::rule_iterator rule_iterator;
-        typedef std::map<rule_iterator, rule_iterator> rule_iterator_map;
-        typedef std::pair<rule_iterator, rule_iterator> rule_iterator_pair;
-        rule_iterator_map m1to3, m2to3;
+        typedef evaluation_rule::rule_id rule_id;
+        typedef std::map<rule_id, rule_id> rule_id_map;
+        typedef std::pair<rule_id, rule_id> rule_id_pair;
+        rule_id_map m1to3, m2to3;
 
-        for (rule_iterator ir = r1.begin(); ir != r1.end(); ir++) {
-            const evaluation_rule::basic_rule &br1 = r1.get_rule(ir);
-            rule_iterator ir3 = r3.add_rule(br1.intr, br1.order);
-            m1to3.push_back(rule_iterator_pair(ir, ir3));
+        for (evaluation_rule::rule_iterator ir = r1.begin();
+                ir != r1.end(); ir++) {
+
+            rule_id rid3 = r3.add_rule(r1.get_intrinsic(ir),
+                    r1.get_eval_order(ir));
+
+            std::vector<size_t> &o3 = r3.get_eval_order(rid3);
+            for (size_t i = 0; i < o3.size(); i++) {
+                if (o3[i] == evaluation_rule::k_intrinsic) continue;
+                o3[i] = map1[o3[i]];
+            }
+
+            m1to3.insert(rule_id_pair(r1.get_rule_id(ir), rid3));
         }
 
-        for (rule_iterator ir = r2.begin(); ir != r2.end(); ir++) {
-            const evaluation_rule::basic_rule &br2 = r2.get_rule(ir);
-            rule_iterator ir3 = r3.add_rule(br2.intr, br2.order);
-            m2to3.push_back(rule_iterator_pair(ir, ir3));
+        for (evaluation_rule::rule_iterator ir = r2.begin();
+                ir != r2.end(); ir++) {
+
+            rule_id rid3 = r3.add_rule(r2.get_intrinsic(ir),
+                    r2.get_eval_order(ir));
+
+            std::vector<size_t> &o3 = r3.get_eval_order(rid3);
+            for (size_t i = 0; i < o3.size(); i++) {
+                if (o3[i] == evaluation_rule::k_intrinsic) continue;
+                o3[i] = map2[o3[i]];
+            }
+
+            m2to3.insert(rule_id_pair(r2.get_rule_id(ir), rid3));
         }
 
+        for (size_t i = 0; i < r1.get_n_products(); i++) {
+            for (size_t j = 0; j < r2.get_n_products(); j++) {
 
-        for (sum_iterator is1 = r1.sbegin(); is1 != r1.send(); is1++) {
-            for (sum_iterator is2 = r2.sbegin(); is2 != r2.send(); is2++) {
+                evaluation_rule::product_iterator ip = r1.begin(i);
+                size_t pno = r3.add_product(m1to3[r1.get_rule_id(ip)]);
+                ip++;
 
-                product_iterator ip1 = r1.pbegin(is1);
-                const evaluation_rule::rules_product &pr3 =
-                        r3.new_product(m1to3[r1.get_rule(ip1)]);
-                ip1++;
+                for (; ip != r1.end(i); ip++)
+                    r3.add_to_product(pno, m1to3[r1.get_rule_id(ip)]);
 
-                for (; ip1 != r1.pend(is1); ip1++) {
-                    r3.add_to_product(pr3, m1to3[r1.get_rule(ip1)]);
-                }
-
-                for (product_iterator ip2 = r.begin(); ip2 != pr2.end(); ip2++) {
-                    r3.add_to_product(pr3, m2to3[r2.get_rule(ip2)]);
-                }
+                for (ip = r2.begin(j); ip != r2.end(j); ip++)
+                    r3.add_to_product(pno, m2to3[r2.get_rule_id(ip)]);
             }
         }
 
+        e3.set_rule(r3);
         params.g3.insert(e3);
     }
 
-    //  Do the same for the second source group
-    for(typename adapter2_t::iterator i = g2.begin(); i != g2.end(); i++) {
+    // Now look in the second source group for symmetry elements that have not
+    // been taken care off
+    for (typename adapter2_t::iterator it2 = g2.begin();
+            it2 != g2.end(); it2++) {
+
+        const se_label<M, T> &e2 = g2.get_elem(it2);
+
+        typename adapter1_t::iterator it1 = g1.begin();
+        for (; it1 != g1.end(); it1++) {
+
+            if (g1.get_elem(it1).get_table_id() == e2.get_table_id()) break;
+        }
+        if (it1 != g1.end()) continue;
 
         // Create result se_label
-        se_label<N + M, T> e3(bidims);
+        se_label<N + M, T> e3(bidims, e2.get_table_id());
+        transfer_labeling(e2.get_labeling(), map2, e3.get_labeling());
 
-        const se_label<M, T> &e2 = g2.get_elem(i);
-        transfer_label_set<M, T>(e2).perform(map2, e3);
+        // Transfer the rule from e2
+        evaluation_rule r3(e2.get_rule());
+        for (evaluation_rule::rule_iterator ir = r3.begin();
+                ir != r3.end(); ir++) {
 
+            std::vector<size_t> &o3 = r3.get_eval_order(r3.get_rule_id(ir));
+            for (size_t i = 0; i < o3.size(); i++) {
+                if (o3[i] == evaluation_rule::k_intrinsic) continue;
+                o3[i] = map2[o3[i]];
+            }
+        }
+
+        // Set the rule and finish off
+        e3.set_rule(r3);
         params.g3.insert(e3);
     }
 }

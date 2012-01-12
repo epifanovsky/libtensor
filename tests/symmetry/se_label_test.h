@@ -1,9 +1,7 @@
 #ifndef LIBTENSOR_SE_LABEL_TEST_H
 #define LIBTENSOR_SE_LABEL_TEST_H
 
-#include <vector>
-#include <libtest/unit_test.h>
-#include <libtensor/symmetry/se_label.h>
+#include "se_label_test_base.h"
 
 
 namespace libtensor {
@@ -12,7 +10,7 @@ namespace libtensor {
 
 	\ingroup libtensor_tests_sym
  **/
-class se_label_test : public libtest::unit_test {
+class se_label_test : public se_label_test_base {
 public:
     virtual void perform() throw(libtest::test_exception);
 
@@ -30,12 +28,8 @@ private:
     void test_permute_2(
             const std::string &table_id) throw(libtest::test_exception);
 
-    std::string setup_s6_symmetry();
-
-    template<size_t N>
-    void check_allowed(const char *testname, const char *sename, 
-            const se_label<N, double> &se, const std::vector<bool> &expected) 
-        throw(libtest::test_exception);
+    using se_label_test_base::setup_pg_table;
+    using se_label_test_base::check_allowed;
 };
 
 } // namespace libtensor

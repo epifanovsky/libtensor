@@ -113,10 +113,20 @@ public:
         previously given rule.
      **/
     void set_rule(const evaluation_rule &rule);
+    //@}
+
+    //! \name Access functions
+    //@{
 
     /** \brief Return the current evaluation rule.
      **/
     const evaluation_rule &get_rule() const { return m_rule; }
+
+    /** \brief Returns the id of the product table
+     **/
+    const std::string &get_table_id() const {
+        return m_pt.get_id();
+    }
 
     //@}
 

@@ -8,7 +8,7 @@ namespace libtensor {
 
 void se_label_test::perform() throw(libtest::test_exception) {
 
-    std::string s6 = setup_s6_symmetry();
+    std::string s6 = setup_pg_table();
     try {
 
          test_basic_1(s6);
@@ -445,63 +445,5 @@ void se_label_test::test_permute_2(
     check_allowed(tns.c_str(), "el2", el2, ex2);
 }
 
-/** \brief Setup the product table for S6 point group symmetry
-
-     \return Table ID
- **/
-std::string se_label_test::setup_s6_symmetry() {
-
-    try {
-
-        point_group_table s6("s6", 4);
-        point_group_table::label_t ag = 0, eg = 1, au = 2, eu = 3;
-        s6.add_product(ag, ag, ag);
-        s6.add_product(ag, eg, eg);
-        s6.add_product(ag, au, au);
-        s6.add_product(ag, eu, eu);
-        s6.add_product(eg, eg, ag);
-        s6.add_product(eg, eg, eg);
-        s6.add_product(eg, au, eu);
-        s6.add_product(eg, eu, au);
-        s6.add_product(eg, eu, eu);
-        s6.add_product(au, au, ag);
-        s6.add_product(au, eu, eg);
-        s6.add_product(eu, eu, ag);
-        s6.add_product(eu, eu, eg);
-        s6.check();
-        product_table_container::get_instance().add(s6);
-
-    } catch (exception &e) {
-        fail_test("se_label_test::setup_s6_symmetry()", __FILE__, __LINE__,
-                e.what());
-    }
-
-    return "s6";
-}
-
-template<size_t N>
-void se_label_test::check_allowed(const char *testname, const char *sename,
-        const se_label<N, double> &se, const std::vector<bool> &expected) 
-    throw(libtest::test_exception) {
-
-    const block_labeling<N> &bl = se.get_labeling();
-    const dimensions<N> &bidims = bl.get_block_index_dims();
-
-    if (bidims.get_size() != expected.size())
-        throw;
-
-    abs_index<N> ai(bidims);
-    do {
-
-        if (se.is_allowed(ai.get_index()) != expected[ai.get_abs_index()]) {
-            std::ostringstream oss;
-            oss << (expected[ai.get_abs_index()] ? "!" : "")
-                << sename << ".is_allowed(" << ai.get_index() << ")";
-            fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
-        }
-
-    } while (ai.inc());
-
-}
 
 } // namespace libtensor
