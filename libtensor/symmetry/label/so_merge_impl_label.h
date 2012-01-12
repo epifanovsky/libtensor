@@ -130,7 +130,18 @@ void symmetry_operation_impl< so_merge<N, M, K, T>, se_label<N, T> >
 #endif
 
         const element_t &se1 = g1.get_elem(it1);
-        el2_t se2(bidims2);
+        el2_t se2(bidims2, se1.get_table_id());
+
+        // Loop over all
+        const composite_rule &r1 = se1.get_rule();
+        composite_rule r2(r1, map);
+        for (it = r1.begin(); it != r1.end(); it++) {
+
+
+            r2.push_back(it);
+
+        }
+
 
         // Loop over all label sets
         for (typename element_t::const_iterator iss = se1.begin();

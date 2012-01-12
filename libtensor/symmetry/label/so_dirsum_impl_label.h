@@ -73,17 +73,92 @@ symmetry_operation_impl< so_dirsum<N, M, T>, se_label<N + M, T> >::do_perform(
 
     dimensions<N + M> bidims = params.bis.get_block_index_dims();
 
-    std::list<element_t> l1, l2;
-
     // Loop over each element in the first source group
     for(typename adapter1_t::iterator i = g1.begin(); i != g1.end(); i++) {
 
-        // Create template for result se_label in list l1
-        l1.push_back(element_t(bidims));
-        element_t &e3 = l1.back();
+        const se_label<N, T> &e1 = g1.get_elem(i1);
+        const std::string &id = e1.get_table_id();
 
-        const se_label<N, T> &e1 = g1.get_elem(i);
-        transfer_label_set<N, T>(e1).perform(map1, e3);
+        element_t e3(bidims, id);
+
+        // First transfer block labels from e1 to e3
+        const block_labeling<N> &bl1 = e1.get_labels();
+        block_labeling<N + M> &l3 = e3.get_block_labeling();
+
+        // Loop over all types in e1
+        // Create a mask for every type
+        // Assign labels to this type
+
+
+        // Next transfer the evaluation rule
+        // Loop over basic rules
+        // Copy basic rule and add it result rule
+        composite_rule r3;
+        const composite_rule &r1 = e1.get_rule();
+        for (i = 0; i < r1.size(); i++) {
+            basic_rule b3(r1[i]);
+            for (j = 0; j < b3.size(); j++) {
+                if (b3[j] >= N) continue;
+
+                b3[j] = map1[b3[j]];
+            }
+
+            r3.append(b3);
+        }
+
+        for (rit1 = r1.begin(); rit1 != r1.end(); r1++) {
+            r3.append(r1.get_list(rit1));
+        }
+
+        //
+        for (rit2 = r2.begin(); rit2 != r2.end(); rit2++) {
+            rule_no_list p3(r2.get_list(rit2));
+            for (pit = p3.begin(); pit != p3.end(); pit++) {
+                *pit += r1.size();
+            }
+            r3.append(p3);
+        }
+
+
+
+
+        //
+        for (rit1 = r1.begin(); rit1 != r1.end(); rit1++) {
+            const rule_no_list &p1 = r1.get_list(rit1);
+            for (rit2 = r2.begin(); rit2 != r2.end(); rit2++) {
+                const rule_no_list &p2 = r2.get_list(rit2);
+
+                rule_no_list p3(p1);
+                pit = p3.end();
+                p3.insert(pit, p2.begin(), p2.end());
+                for ( ; pit != p3.end(); pit++) {
+                    *pit += r1.size();
+                }
+                r3.append(p3);
+            }
+        }
+
+
+
+        // Loop over each element in the second source group
+        typename adapter2_t::iterator j = g2.begin();
+        for( ; j != g2.end(); j++) {
+
+            if (e1.get_table_id().compare(g2.get_elem(j).get_table_id()) == 0)
+                break;
+        }
+
+
+        composite_rule r3;
+        if (j == g2.end()) {
+            //
+        }
+        else {
+            // Loop over all typed in e2 ...
+
+            //
+            composite_rule
+        }
     }
 
     // Loop over each element in the second source group
