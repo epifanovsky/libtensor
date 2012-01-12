@@ -8,8 +8,6 @@
 #include "../symmetry_operation_impl_base.h"
 #include "../so_dirprod.h"
 #include "../se_label.h"
-#include "label_set.h"
-#include "transfer_label_set.h"
 
 namespace libtensor {
 
