@@ -15,6 +15,7 @@ set(SRC
 #    btod/btod_diagonalize.C
 #    btod/btod_tridiagonalize.C
     symmetry/label/block_labeling.C
+    symmetry/label/evaluation_rule.C
     symmetry/label/point_group_table.C
     symmetry/label/product_table_container.C
     tod/loop_list_add.C

@@ -16,7 +16,7 @@ set(SRC_CORE
 	core/mapped_block_tensor_test.C
 	core/mask_test.C
 	core/mp_safe_tensor_test.C
-	core/orbit_test.C
+#	core/orbit_test.C
 	core/orbit_list_test.C
 	core/permutation_test.C
 	core/permutation_builder_test.C
@@ -27,7 +27,7 @@ set(SRC_CORE
 	core/tensor_test.C
 	core/timer_test.C
 	core/timings_test.C
-	core/transf_list_test.C
+#	core/transf_list_test.C
 	core/version_test.C
 )
 
@@ -63,15 +63,16 @@ set(SRC_TOD
 )
 
 set(SRC_SYMMETRY
+	symmetry/block_labeling_test.C
     symmetry/combine_part_test.C
-	symmetry/label_set_test.C
+	symmetry/evaluation_rule_test.C
 	symmetry/libtensor_symmetry_tests.C
 	symmetry/libtensor_symmetry_suite.C
 #	symmetry/partition_set_test.C
 	symmetry/permutation_group_test.C
 	symmetry/point_group_table_test.C
 	symmetry/product_table_container_test.C
-	symmetry/se_label_test.C
+#	symmetry/se_label_test.C
 	symmetry/se_part_test.C
 	symmetry/se_perm_test.C
 #	symmetry/so_apply_impl_label_test.C
@@ -79,11 +80,11 @@ set(SRC_SYMMETRY
 #	symmetry/so_apply_impl_perm_test.C
 #	symmetry/so_apply_test.C
 #	symmetry/so_copy_test.C
-	symmetry/so_dirprod_impl_label_test.C
+#	symmetry/so_dirprod_impl_label_test.C
 	symmetry/so_dirprod_impl_part_test.C
 	symmetry/so_dirprod_impl_perm_test.C
 #	symmetry/so_dirprod_test.C
-	symmetry/so_dirsum_impl_label_test.C
+#	symmetry/so_dirsum_impl_label_test.C
 	symmetry/so_dirsum_impl_part_test.C
 	symmetry/so_dirsum_impl_perm_test.C
 #	symmetry/so_dirsum_test.C
@@ -91,7 +92,7 @@ set(SRC_SYMMETRY
 	symmetry/so_merge_impl_part_test.C
 	symmetry/so_merge_impl_perm_test.C
 #	symmetry/so_merge_test.C
-	symmetry/so_permute_impl_label_test.C
+#	symmetry/so_permute_impl_label_test.C
 	symmetry/so_permute_impl_part_test.C
 	symmetry/so_permute_impl_perm_test.C
 #	symmetry/so_stabilize_impl_label_test.C
@@ -105,7 +106,7 @@ set(SRC_SYMMETRY
 set(SRC_BTOD
 	btod/libtensor_btod_tests.C
 	btod/libtensor_btod_suite.C
-	btod/addition_schedule_test.C
+#	btod/addition_schedule_test.C
 #	btod/btod_add_test.C
 #	btod/btod_apply_test.C
 #	btod/btod_compare_test.C
