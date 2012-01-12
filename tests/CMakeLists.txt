@@ -89,7 +89,7 @@ set(SRC_SYMMETRY
     symmetry/so_dirsum_impl_part_test.C
     symmetry/so_dirsum_impl_perm_test.C
 #	symmetry/so_dirsum_test.C
-#	symmetry/so_merge_impl_label_test.C
+	symmetry/so_merge_impl_label_test.C
     symmetry/so_merge_impl_part_test.C
     symmetry/so_merge_impl_perm_test.C
 #	symmetry/so_merge_test.C

@@ -134,7 +134,7 @@ void so_dirsum_impl_label_test::test_empty_2(const std::string &table_id,
     it++;
     if (it != adc.end()) {
         fail_test(tns.c_str(), __FILE__, __LINE__,
-                "More than 1 element in set.");
+                "Expected only one element.");
     }
 
     std::vector<bool> rx(bidimsc.get_size(), true);
@@ -204,7 +204,7 @@ void so_dirsum_impl_label_test::test_empty_3(const std::string &table_id,
     it++;
     if (it != adc.end()) {
         fail_test(tns.c_str(), __FILE__, __LINE__,
-                "More than 1 element in set.");
+                "Expected only one element.");
     }
 
     std::vector<bool> rx(bidimsc.get_size(), true);
@@ -286,7 +286,7 @@ void so_dirsum_impl_label_test::test_nn_1(
     it++;
     if (it != adc.end()) {
         fail_test(tns.c_str(), __FILE__, __LINE__,
-                "More than 1 element in set.");
+                "Expected only one element.");
     }
 
     std::vector<bool> rx(bidimsc.get_size(), false);
@@ -393,7 +393,7 @@ void so_dirsum_impl_label_test::test_nn_2(
     it++;
     if (it != adc.end()) {
         fail_test(tns.c_str(), __FILE__, __LINE__,
-                "More than 1 element in set.");
+                "Expected only one element.");
     }
 
     std::vector<bool> rx(bidimsc.get_size(), false);
@@ -497,7 +497,7 @@ void so_dirsum_impl_label_test::test_nn_3(
     it++;
     if (it != adc.end()) {
         fail_test(tns.c_str(), __FILE__, __LINE__,
-                "More than 1 element in set.");
+                "Expected only one element.");
     }
 
     std::vector<bool> rx(bidimsc.get_size(), false);

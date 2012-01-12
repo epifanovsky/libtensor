@@ -180,8 +180,7 @@ throw(libtest::test_exception) {
     typedef se_part<3, double> se3_t;
     typedef se_part<1, double> se1_t;
     typedef so_merge<3, 3, 1, double> so_merge_t;
-    typedef symmetry_operation_impl<so_merge_t, se3_t>
-    so_merge_impl_t;
+    typedef symmetry_operation_impl<so_merge_t, se3_t> so_merge_impl_t;
 
     try {
 
@@ -257,8 +256,7 @@ throw(libtest::test_exception) {
     typedef se_part<4, double> se4_t;
     typedef se_part<2, double> se2_t;
     typedef so_merge<4, 4, 2, double> so_merge_t;
-    typedef symmetry_operation_impl<so_merge_t, se4_t>
-    so_merge_impl_t;
+    typedef symmetry_operation_impl<so_merge_t, se4_t> so_merge_impl_t;
 
     try {
 
@@ -449,8 +447,7 @@ throw(libtest::test_exception) {
     typedef se_part<5, double> se5_t;
     typedef se_part<3, double> se3_t;
     typedef so_merge<5, 4, 2, double> so_merge_t;
-    typedef symmetry_operation_impl<so_merge_t, se5_t>
-    so_merge_impl_t;
+    typedef symmetry_operation_impl<so_merge_t, se5_t> so_merge_impl_t;
 
     try {
 
