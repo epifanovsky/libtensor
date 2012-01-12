@@ -10,7 +10,7 @@
 namespace libtensor {
 
 
-/**	\brief Describes how the the canonical block needs to be transformed to
+/**	\brief Describes how the canonical block needs to be transformed to
 		 obtain a replica
 	\tparam N Tensor order.
 	\tparam T Tensor element type.
