@@ -2,12 +2,12 @@
 #define LIBTENSOR_LIBTENSOR_SYMMETRY_SUITE_H
 
 #include <libtest/test_suite.h>
+#include "block_labeling_test.h"
 #include "combine_part_test.h"
-#include "label_set_test.h"
 #include "permutation_group_test.h"
 #include "point_group_table_test.h"
 #include "product_table_container_test.h"
-#include "se_label_test.h"
+//#include "se_label_test.h"
 #include "se_part_test.h"
 #include "se_perm_test.h"
 //#include "so_apply_test.h"
@@ -15,11 +15,11 @@
 //#include "so_apply_impl_part_test.h"
 //#include "so_apply_impl_perm_test.h"
 //#include "so_dirprod_test.h"
-#include "so_dirprod_impl_label_test.h"
+//#include "so_dirprod_impl_label_test.h"
 #include "so_dirprod_impl_part_test.h"
 #include "so_dirprod_impl_perm_test.h"
 //#include "so_dirsum_test.h"
-#include "so_dirsum_impl_label_test.h"
+//#include "so_dirsum_impl_label_test.h"
 #include "so_dirsum_impl_part_test.h"
 #include "so_dirsum_impl_perm_test.h"
 //#include "so_copy_test.h"
@@ -27,7 +27,7 @@
 //#include "so_merge_impl_label_test.h"
 #include "so_merge_impl_part_test.h"
 #include "so_merge_impl_perm_test.h"
-#include "so_permute_impl_label_test.h"
+//#include "so_permute_impl_label_test.h"
 #include "so_permute_impl_part_test.h"
 #include "so_permute_impl_perm_test.h"
 //#include "so_stabilize_test.h"
@@ -51,8 +51,8 @@ namespace libtensor {
 	\ingroup libtensor_tests
 
 	This suite runs the following tests:
+    \li libtensor::block_labeling_test
     \li libtensor::combine_part_test
-    \li libtensor::label_set_test
 	\li libtensor::partition_set_test
 	\li libtensor::permutation_group_test
 	\li libtensor::point_group_table_test
@@ -88,13 +88,13 @@ namespace libtensor {
  **/
 class libtensor_symmetry_suite : public libtest::test_suite {
 private:
+    unit_test_factory<block_labeling_test> m_utf_block_labeling;
     unit_test_factory<combine_part_test> m_utf_combine_part;
-    unit_test_factory<label_set_test> m_utf_label_set;
     unit_test_factory<permutation_group_test> m_utf_permutation_group;
     unit_test_factory<point_group_table_test> m_utf_point_group_table;
     unit_test_factory<product_table_container_test>
         m_utf_product_table_container;
-	unit_test_factory<se_label_test> m_utf_se_label;
+//	unit_test_factory<se_label_test> m_utf_se_label;
     unit_test_factory<se_part_test> m_utf_se_part;
     unit_test_factory<se_perm_test> m_utf_se_perm;
 //	unit_test_factory<so_apply_test> m_utf_so_apply;
@@ -103,18 +103,18 @@ private:
 //	unit_test_factory<so_apply_impl_perm_test> m_utf_so_apply_impl_perm;
 //	unit_test_factory<so_copy_test> m_utf_so_copy;
 //    unit_test_factory<so_dirprod_test> m_utf_so_dirprod;
-    unit_test_factory<so_dirprod_impl_label_test> m_utf_so_dirprod_impl_label;
+//    unit_test_factory<so_dirprod_impl_label_test> m_utf_so_dirprod_impl_label;
     unit_test_factory<so_dirprod_impl_part_test> m_utf_so_dirprod_impl_part;
     unit_test_factory<so_dirprod_impl_perm_test> m_utf_so_dirprod_impl_perm;
 //    unit_test_factory<so_dirsum_test> m_utf_so_dirsum;
-    unit_test_factory<so_dirsum_impl_label_test> m_utf_so_dirsum_impl_label;
+//    unit_test_factory<so_dirsum_impl_label_test> m_utf_so_dirsum_impl_label;
     unit_test_factory<so_dirsum_impl_part_test> m_utf_so_dirsum_impl_part;
     unit_test_factory<so_dirsum_impl_perm_test> m_utf_so_dirsum_impl_perm;
 //	unit_test_factory<so_merge_test> m_utf_so_merge;
 //	unit_test_factory<so_merge_impl_label_test> m_utf_so_merge_impl_label;
 	unit_test_factory<so_merge_impl_part_test> m_utf_so_merge_impl_part;
 	unit_test_factory<so_merge_impl_perm_test> m_utf_so_merge_impl_perm;
-	unit_test_factory<so_permute_impl_label_test> m_utf_so_permute_impl_label;
+//	unit_test_factory<so_permute_impl_label_test> m_utf_so_permute_impl_label;
     unit_test_factory<so_permute_impl_part_test> m_utf_so_permute_impl_part;
     unit_test_factory<so_permute_impl_perm_test> m_utf_so_permute_impl_perm;
 //	unit_test_factory<so_stabilize_test> m_utf_so_stabilize;
