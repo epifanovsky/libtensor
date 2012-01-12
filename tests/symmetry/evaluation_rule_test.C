@@ -39,29 +39,28 @@ void evaluation_rule_test::test_1() throw(libtest::test_exception) {
                 it != rules.end(); it++) {
 
             evaluation_rule::rule_id cur_id = rules.get_rule_id(it);
-            const label_group &cur_i = rules.get_intrinsic(it);
-            const std::vector<size_t> &cur_o = rules.get_eval_order(it);
+            const evaluation_rule::basic_rule &cur = rules.get_rule(it);
 
             if (cur_id == id1) {
                 if (done1)
                     fail_test(testname, __FILE__, __LINE__,
                             "Non-unique rule ID");
 
-                if (cur_i.size() != i1.size())
+                if (cur.intr.size() != i1.size())
                     fail_test(testname, __FILE__, __LINE__,
                             "Unexpected intrinsic labels");
 
-                for (size_t i = 0; i < cur_i.size(); i++)
-                    if (cur_i[i] != i1[i])
+                for (size_t i = 0; i < cur.intr.size(); i++)
+                    if (cur.intr[i] != i1[i])
                         fail_test(testname, __FILE__, __LINE__,
                                 "Unexpected intrinsic labels");
 
-                if (cur_o.size() != o1.size())
+                if (cur.order.size() != o1.size())
                     fail_test(testname, __FILE__, __LINE__,
                             "Unexpected evaluation order");
 
-                for (size_t i = 0; i < cur_o.size(); i++)
-                    if (cur_o[i] != o1[i])
+                for (size_t i = 0; i < cur.order.size(); i++)
+                    if (cur.order[i] != o1[i])
                         fail_test(testname, __FILE__, __LINE__,
                                 "Unexpected evaluation order");
 
@@ -72,21 +71,21 @@ void evaluation_rule_test::test_1() throw(libtest::test_exception) {
                     fail_test(testname, __FILE__, __LINE__,
                             "Non-unique rule ID");
 
-                if (cur_i.size() != i2.size())
+                if (cur.intr.size() != i2.size())
                     fail_test(testname, __FILE__, __LINE__,
                             "Unexpected intrinsic labels");
 
-                for (size_t i = 0; i < cur_i.size(); i++)
-                    if (cur_i[i] != i2[i])
+                for (size_t i = 0; i < cur.intr.size(); i++)
+                    if (cur.intr[i] != i2[i])
                         fail_test(testname, __FILE__, __LINE__,
                                 "Unexpected intrinsic labels");
 
-                if (cur_o.size() != o2.size())
+                if (cur.order.size() != o2.size())
                     fail_test(testname, __FILE__, __LINE__,
                             "Unexpected evaluation order");
 
-                for (size_t i = 0; i < cur_o.size(); i++)
-                    if (cur_o[i] != o2[i])
+                for (size_t i = 0; i < cur.order.size(); i++)
+                    if (cur.order[i] != o2[i])
                         fail_test(testname, __FILE__, __LINE__,
                                 "Unexpected evaluation order");
 
@@ -97,21 +96,21 @@ void evaluation_rule_test::test_1() throw(libtest::test_exception) {
                     fail_test(testname, __FILE__, __LINE__,
                             "Non-unique rule ID");
 
-                if (cur_i.size() != i3.size())
+                if (cur.intr.size() != i3.size())
                     fail_test(testname, __FILE__, __LINE__,
                             "Unexpected intrinsic labels");
 
-                for (size_t i = 0; i < cur_i.size(); i++)
-                    if (cur_i[i] != i3[i])
+                for (size_t i = 0; i < cur.intr.size(); i++)
+                    if (cur.intr[i] != i3[i])
                         fail_test(testname, __FILE__, __LINE__,
                                 "Unexpected intrinsic labels");
 
-                if (cur_o.size() != o3.size())
+                if (cur.order.size() != o3.size())
                     fail_test(testname, __FILE__, __LINE__,
                             "Unexpected evaluation order");
 
-                for (size_t i = 0; i < cur_o.size(); i++)
-                    if (cur_o[i] != o3[i])
+                for (size_t i = 0; i < cur.order.size(); i++)
+                    if (cur.order[i] != o3[i])
                         fail_test(testname, __FILE__, __LINE__,
                                 "Unexpected evaluation order");
 

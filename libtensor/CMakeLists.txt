@@ -18,6 +18,7 @@ set(SRC
     symmetry/label/evaluation_rule.C
     symmetry/label/point_group_table.C
     symmetry/label/product_table_container.C
+    symmetry/label/transfer_rule.C
     tod/loop_list_add.C
     tod/loop_list_copy.C
     tod/loop_list_mul.C

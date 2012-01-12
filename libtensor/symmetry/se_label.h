@@ -10,6 +10,7 @@
 #include "label/evaluation_rule.h"
 #include "label/product_table_container.h"
 #include "label/product_table_i.h"
+#include "label/transfer_rule.h"
 
 namespace libtensor {
 
@@ -26,15 +27,19 @@ namespace libtensor {
 
     Allowed blocks are determined as follows from the evaluation rule:
     - All blocks are forbidden, if the rule setup of the evaluation rule is
-        empty
+      empty
     - A block is allowed, if it is allowed by any of the products in the rule
-        setup
+      setup
     - A block is allowed by a product, if it is allowed by all basic rules in
-        this product
+      this product
     - A block is allowed by a basic rule, if any product of labels specified
-        by the rule contains label 0
+      by the rule contains label 0
     - A product of labels is formed from the block labels and one intrinsic
-        label using the evaluation order parameter of the basic rule.
+      label using the evaluation order parameter of the basic rule.
+    - If this is not possible since the evaluation order has zero length or
+      no intrinsic labels are set, but the evaluation order comprises the
+      intrinsic label index, all blocks are discarded by this rule.
+    - If any product contains an invalid label the block is allowed.
 
 	\ingroup libtensor_symmetry
  **/
@@ -166,6 +171,7 @@ public:
      **/
     virtual void apply(index<N> &idx, transf<N, T> &tr) const { }
     //@}
+
 };
 
 template<size_t N, typename T>
@@ -199,58 +205,76 @@ template<size_t N, typename T>
 void se_label<N, T>::set_rule(const label_group &intr,
         const permutation<N> &p, size_t pos) {
 
-#ifdef LIBTENSOR_DEBUG
-    const char *method =
+    static const char *method =
             "set_rule(const label_group &, const permutation<N> &, size_t)";
+
+#ifdef LIBTENSOR_DEBUG
     if (pos > N + 1) {
-        throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
-                "Illegal pos.");
+        throw bad_parameter(g_ns, k_clazz, method,
+                __FILE__, __LINE__, "pos");
     }
 #endif
 
-    // Form the evaluation order as required by the evaluation rule
+    // Check the intrinsic labels for duplicates and valid labels
+    std::map<label_t, bool> lmap;
+    for (size_t i = 0; i < intr.size(); i++) {
+        if (! m_pt.is_valid(intr[i]))
+            throw bad_parameter(g_ns, k_clazz, method,
+                    __FILE__, __LINE__, "intr");
+
+        lmap[intr[i]] = true;
+    }
+
+    // Now start updating the evaluation rule by clearing the old
+    m_rule.clear_all();
+
+    // This is a trivial rule => simplify it
+    if (lmap.size() == m_pt.nlabels()) {
+
+        // All blocks allowed: one element, only intrinsic in evaluation order
+        evaluation_rule::rule_id id =
+                m_rule.add_rule(evaluation_rule::label_group(1, 0),
+                        std::vector<size_t>(1, evaluation_rule::k_intrinsic));
+        m_rule.add_product(id);
+
+        return;
+    }
+    else if (lmap.size() == 0) {
+        // No blocks allowed: empty rule
+        return;
+    }
+
+    // Form the evaluation order as required by evaluation_rule
     sequence<N, size_t> tmp_order;
     for (size_t i = 0; i < N; i++) tmp_order[i] = i;
     p.apply(tmp_order);
 
+    // Create an ordered label_group
+    label_group new_intr;
+    for (std::map<label_t, bool>::iterator it = lmap.begin();
+            it != lmap.end(); it++) {
+        new_intr.push_back(it->first);
+    }
+
+    // Create the evaluation order as required by evaluation_rule
     std::vector<size_t> order(N + 1);
     for (size_t i = 0; i < pos; i++) order[i] = tmp_order[i];
     order[pos] = evaluation_rule::k_intrinsic;
     for (size_t i = pos; i < N; i++) order[i + 1] = tmp_order[i];
 
-    // Clear the old evaluation rule
-    m_rule.clear_all();
-
-    evaluation_rule::rule_id id = m_rule.add_rule(intr, order);
+    evaluation_rule::rule_id id = m_rule.add_rule(new_intr, order);
     m_rule.add_product(id);
 }
 
 template<size_t N, typename T>
 void se_label<N, T>::set_rule(const evaluation_rule &rule) {
 
-#ifdef LIBTENSOR_DEBUG
     static const char *method = "set_rule(const evaluation_rule &)";
 
-    for (evaluation_rule::rule_iterator it = rule.begin();
-            it != rule.end(); it++) {
+    typedef evaluation_rule::rule_id rule_id;
+    typedef std::map<rule_id, rule_id> rule_id_map;
 
-        const label_group &intr = rule.get_intrinsic(it);
-        for (size_t i = 0; i < intr.size(); i++) {
-            if (! m_pt.is_valid(intr[i]))
-                throw bad_symmetry(g_ns, k_clazz, method,
-                        __FILE__, __LINE__, "Invalid label.");
-        }
-
-        const std::vector<size_t> &order = rule.get_eval_order(it);
-        for (size_t i = 0; i < order.size(); i++) {
-            if (order[i] == evaluation_rule::k_intrinsic) continue;
-
-            if (order[i] >= N)
-                throw bad_symmetry(g_ns, k_clazz, method,
-                        __FILE__, __LINE__, "Invalid order.");
-        }
-    }
-#endif
+    transfer_rule(rule, N, m_pt.get_id()).perform(m_rule);
 
     m_rule = rule;
 }
@@ -268,12 +292,12 @@ void se_label<N, T>::permute(const permutation<N> &p) {
     for (evaluation_rule::rule_iterator it = m_rule.begin();
             it != m_rule.end(); it++) {
 
-        std::vector<size_t> &order = 
-            m_rule.get_eval_order(m_rule.get_rule_id(it));
-        for (size_t i = 0; i < order.size(); i++) {
-            if (order[i] == evaluation_rule::k_intrinsic) continue;
+        evaluation_rule::basic_rule &br =
+                m_rule.get_rule(m_rule.get_rule_id(it));
+        for (size_t i = 0; i < br.order.size(); i++) {
+            if (br.order[i] == evaluation_rule::k_intrinsic) continue;
 
-            order[i] = dims[order[i]];
+            br.order[i] = dims[br.order[i]];
         }
     }
 }
@@ -311,38 +335,38 @@ bool se_label<N, T>::is_allowed(const index<N> &idx) const {
     for (evaluation_rule::rule_iterator it = m_rule.begin();
             it != m_rule.end(); it++) {
 
-        const std::vector<size_t> &order = m_rule.get_eval_order(it);
-        const label_group &intr = m_rule.get_intrinsic(it);
+        const evaluation_rule::basic_rule &br = m_rule.get_rule(it);
+        evaluation_rule::rule_id rid = m_rule.get_rule_id(it);
 
-        label_group lg(order.size());
+        if (br.order.size() == 0) { allowed[rid] = false; continue; }
+
+        label_group lg(br.order.size());
         size_t pos = (size_t) -1;
 
         bool has_invalid = false;
-        for (size_t i = 0; i < order.size(); i++) {
-            if (order[i] == evaluation_rule::k_intrinsic) {
+        for (size_t i = 0; i < br.order.size(); i++) {
+            if (br.order[i] == evaluation_rule::k_intrinsic) {
                 pos = i; continue;
             }
 
-            lg[i] = blk[order[i]];
+            lg[i] = blk[br.order[i]];
             if (! m_pt.is_valid(lg[i])) { has_invalid = true; break; }
         }
 
-        if (has_invalid) {
-            allowed[m_rule.get_rule_id(it)] = true;
-            continue;
-        }
+        if (has_invalid) { allowed[rid] = true; continue; }
 
         bool cur = false;
         if (pos == (size_t) -1) {
             cur = m_pt.is_in_product(lg, 0);
         }
         else {
-            for (size_t k = 0; k < intr.size(); k++) {
-                lg[pos] = intr[k];
+            for (size_t k = 0; k < br.intr.size(); k++) {
+                if (! m_pt.is_valid(br.intr[k])) { cur = true; break; }
+                lg[pos] = br.intr[k];
                 cur = cur || m_pt.is_in_product(lg, 0);
             }
         }
-        allowed[m_rule.get_rule_id(it)] = cur;
+        allowed[rid] = cur;
     }
 
     // loop over sums in the evaluation rule

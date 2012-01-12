@@ -45,22 +45,21 @@ void se_label_test::test_basic_1(
     el.set_rule(0);
     const evaluation_rule &r1 = el.get_rule();
     evaluation_rule::rule_iterator it = r1.begin();
-    const evaluation_rule::label_group &intr1 = r1.get_intrinsic(it);
-    const std::vector<size_t> &o1 = r1.get_eval_order(it);
-    if (intr1.size() != 1)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# intr1");
-    if (intr1[0] != 0)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "intr1");
-    if (o1.size() != 4)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# o1");
-    if (o1[0] != 0)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "o1[0]");
-    if (o1[1] != 1)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "o1[1]");
-    if (o1[2] != 2)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "o1[2]");
-    if (o1[3] != evaluation_rule::k_intrinsic)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "o1[3]");
+    const evaluation_rule::basic_rule &br1 = r1.get_rule(it);
+    if (br1.intr.size() != 1)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "# br1.intr");
+    if (br1.intr[0] != 0)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "br1.intr");
+    if (br1.order.size() != 4)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "# br1.order");
+    if (br1.order[0] != 0)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "br1.order[0]");
+    if (br1.order[1] != 1)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "br1.order[1]");
+    if (br1.order[2] != 2)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "br1.order[2]");
+    if (br1.order[3] != evaluation_rule::k_intrinsic)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "br1.order[3]");
     it++;
     if (it != r1.end())
         fail_test(tns.c_str(), __FILE__, __LINE__, "# rules");
@@ -70,22 +69,21 @@ void se_label_test::test_basic_1(
     el.set_rule(2, p2, 1);
     const evaluation_rule &r2 = el.get_rule();
     it = r2.begin();
-    const evaluation_rule::label_group &intr2 = r2.get_intrinsic(it);
-    const std::vector<size_t> &o2 = r2.get_eval_order(it);
-    if (intr2.size() != 1)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# intr2");
-    if (intr2[0] != 2)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "intr2");
-    if (o2.size() != 4)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# o2");
-    if (o2[0] != 1)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "o2[0]");
-    if (o2[1] != evaluation_rule::k_intrinsic)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "o2[1]");
-    if (o2[2] != 2)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "o2[2]");
-    if (o2[3] != 0)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "o2[3]");
+    const evaluation_rule::basic_rule &br2 = r2.get_rule(it);
+    if (br2.intr.size() != 1)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "# br2.intr");
+    if (br2.intr[0] != 2)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "br2.intr");
+    if (br2.order.size() != 4)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "# br2.order");
+    if (br2.order[0] != 1)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "br2.order[0]");
+    if (br2.order[1] != evaluation_rule::k_intrinsic)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "br2.order[1]");
+    if (br2.order[2] != 2)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "br2.order[2]");
+    if (br2.order[3] != 0)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "br2.order[3]");
     it++;
     if (it != r2.end())
         fail_test(tns.c_str(), __FILE__, __LINE__, "# rules");
@@ -94,24 +92,23 @@ void se_label_test::test_basic_1(
     el.set_rule(lg3, p2, 2);
     const evaluation_rule &r3 = el.get_rule();
     it = r3.begin();
-    const evaluation_rule::label_group &intr3 = r3.get_intrinsic(it);
-    const std::vector<size_t> &o3 = r3.get_eval_order(it);
-    if (intr3.size() != 2)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# intr3");
-    if (intr3[0] != 0)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "intr3[0]");
-    if (intr3[1] != 2)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "intr3[1]");
-    if (o3.size() != 4)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# o3");
-    if (o3[0] != 1)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "o3[0]");
-    if (o3[1] != 2)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "o3[1]");
-    if (o3[2] != evaluation_rule::k_intrinsic)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "o3[2]");
-    if (o3[3] != 0)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "o3[3]");
+    const evaluation_rule::basic_rule &br3 = r3.get_rule(it);
+    if (br3.intr.size() != 2)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "# br3.intr");
+    if (br3.intr[0] != 0)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "br3.intr[0]");
+    if (br3.intr[1] != 2)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "br3.intr[1]");
+    if (br3.order.size() != 4)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "# br3.order");
+    if (br3.order[0] != 1)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "br3.order[0]");
+    if (br3.order[1] != 2)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "br3.order[1]");
+    if (br3.order[2] != evaluation_rule::k_intrinsic)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "br3.order[2]");
+    if (br3.order[3] != 0)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "br3.order[3]");
     it++;
     if (it != r3.end())
         fail_test(tns.c_str(), __FILE__, __LINE__, "# rules");
@@ -130,35 +127,33 @@ void se_label_test::test_basic_1(
     el.set_rule(r4ref);
     const evaluation_rule &r4 = el.get_rule();
     it = r4.begin();
-    const evaluation_rule::label_group &intr4a = r4.get_intrinsic(it);
-    const std::vector<size_t> &o4a = r4.get_eval_order(it);
-    if (intr4a.size() != 2)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# intr4a");
-    if (intr4a[0] != 0)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "intr4a[0]");
-    if (intr4a[1] != 2)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "intr4a[1]");
-    if (o4a.size() != 3)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# o3");
-    if (o4a[0] != 1)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "o3[0]");
-    if (o4a[1] != 0)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "o3[1]");
-    if (o4a[2] != evaluation_rule::k_intrinsic)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "o3[2]");
+    const evaluation_rule::basic_rule &br4a = r4.get_rule(it);
+    if (br4a.intr.size() != 2)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "# br4a.intr");
+    if (br4a.intr[0] != 0)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "br4a.intr[0]");
+    if (br4a.intr[1] != 2)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "br4a.intr[1]");
+    if (br4a.order.size() != 3)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "# br4a.order");
+    if (br4a.order[0] != 1)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "br4a.order[0]");
+    if (br4a.order[1] != 0)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "br4a.order[1]");
+    if (br4a.order[2] != evaluation_rule::k_intrinsic)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "br4a.order[2]");
     it++;
-    const evaluation_rule::label_group &intr4b = r4.get_intrinsic(it);
-    const std::vector<size_t> &o4b = r4.get_eval_order(it);
-    if (intr4b.size() != 1)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# intr4b");
-    if (intr4b[0] != 1)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "intr4b[0]");
-    if (o4b.size() != 2)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# o4b");
-    if (o4b[0] != 2)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "o4b[0]");
-    if (o4b[1] != evaluation_rule::k_intrinsic)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "o4b[1]");
+    const evaluation_rule::basic_rule &br4b = r4.get_rule(it);
+    if (br4b.intr.size() != 1)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "# br4b.intr");
+    if (br4b.intr[0] != 1)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "br4b.intr[0]");
+    if (br4b.order.size() != 2)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "# br4b.order");
+    if (br4b.order[0] != 2)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "br4b.order[0]");
+    if (br4b.order[1] != evaluation_rule::k_intrinsic)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "br4b.order[1]");
     it++;
     if (it != r4.end())
         fail_test(tns.c_str(), __FILE__, __LINE__, "# rules");

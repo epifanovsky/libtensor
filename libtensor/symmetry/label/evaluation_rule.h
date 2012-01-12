@@ -27,18 +27,20 @@ public:
     typedef product_table_i::label_t label_t;
     typedef product_table_i::label_group label_group;
 
-    typedef size_t rule_id;
-
-private:
+public:
     struct basic_rule {
         std::vector<size_t> order; //!< Evaluation order of dimensions
         label_group intr; //!< Intrinsic labels
 
+        basic_rule() {}
         basic_rule(const label_group &intr_,
                 const std::vector<size_t> order_) :
             intr(intr_), order(order_) { }
     };
 
+    typedef size_t rule_id;
+
+private:
     typedef std::map<rule_id, basic_rule> rule_list;
 
 public:
@@ -53,6 +55,7 @@ public:
 
 private:
     rule_list m_rules; //!< List of basic rules
+    rule_id m_next_rule_id; //!< Next rule ID
     product_list m_setup; //!< Rules setup
 
 public:
@@ -107,81 +110,43 @@ public:
         return it->first;
     }
 
-    /** \brief Return the intrinsic labels of a basic rule
+    /** \brief Return a basic rule
         \param id Rule ID
      **/
-    label_group &get_intrinsic(rule_id id) {
+    basic_rule &get_rule(rule_id id) {
 
         rule_list::iterator it = m_rules.find(id);
 #ifdef LIBTENSOR_DEBUG
         if (it == m_rules.end()) {
             throw bad_parameter(g_ns, k_clazz,
-                                "get_intrinsic(rule_id)", __FILE__, __LINE__, "it");
+                                "get_rule(rule_id)", __FILE__, __LINE__, "it");
         }
 #endif
-        return it->second.intr;
+        return it->second;
     }
 
-    /** \brief Return the intrinsic labels of a basic rule
+    /** \brief Return a basic rule (const version
         \param id Rule ID
      **/
-    const label_group &get_intrinsic(rule_id id) const {
+    const basic_rule &get_rule(rule_id id) const {
 
         rule_iterator it = m_rules.find(id);
-        return get_intrinsic(it);
+        return get_rule(it);
     }
 
 
 
-    /** \brief Return the intrinsic labels of a basic rule
+    /** \brief Return a basic rule
         \param it Iterator pointing to a rule
      **/
-    const label_group &get_intrinsic(rule_iterator it) const {
+    const basic_rule &get_rule(rule_iterator it) const {
 #ifdef LIBTENSOR_DEBUG
         if (! is_valid_rule(it))
             throw bad_parameter(g_ns, k_clazz,
-                    "get_intrinsic(rule_iterator)", __FILE__, __LINE__, "it");
+                    "get_rule(rule_iterator)", __FILE__, __LINE__, "it");
 #endif
 
-        return it->second.intr;
-    }
-
-    /** \brief Return the evaluation order of a basic rule
-        \param id Rule ID
-     **/
-    std::vector<size_t> &get_eval_order(rule_id id) {
-
-        rule_list::iterator it = m_rules.find(id);
-#ifdef LIBTENSOR_DEBUG
-        if (it == m_rules.end()) {
-            throw bad_parameter(g_ns, k_clazz,
-                                "get_eval_order(rule_id)", __FILE__, __LINE__, "it");
-        }
-#endif
-        return it->second.order;
-    }
-
-    /** \brief Return the evaluation order of a basic rule
-        \param id Rule ID
-     **/
-    const std::vector<size_t> &get_eval_order(rule_id id) const {
-
-        rule_iterator it = m_rules.find(id);
-        return get_eval_order(it);
-    }
-
-
-    /** \brief Return the evaluation order of a basic rule
-        \param it Iterator pointing to a rule
-     **/
-    const std::vector<size_t> &get_eval_order(rule_iterator it) const {
-#ifdef LIBTENSOR_DEBUG
-        if (! is_valid_rule(it))
-            throw bad_parameter(g_ns, k_clazz,
-                    "get_eval_order(rule_iterator)", __FILE__, __LINE__, "it");
-#endif
-
-        return it->second.order;
+        return it->second;
     }
 
     //@}
@@ -240,7 +205,7 @@ public:
         \param pit Iterator pointing to a rule
         \return Rule ID
      **/
-    rule_iterator get_rule(product_iterator pit) const {
+    const basic_rule &get_rule(product_iterator pit) const {
 #ifdef LIBTENSOR_DEBUG
         if (! is_valid_product_iterator(pit))
             throw bad_parameter(g_ns, k_clazz,
@@ -248,7 +213,7 @@ public:
                     __FILE__, __LINE__, "pit");
 #endif
 
-        return pit->second;
+        return pit->second->second;
     }
     //@}
 
@@ -258,17 +223,13 @@ public:
 
     /** \brief Delete the rule setup as well as the list of rules
      **/
-    void clear_all() {
-        clear_setup();
-        m_rules.clear();
-    }
+    void clear_all() { m_setup.clear(); m_rules.clear(); }
 
 private:
-    rule_id new_rule_id() const { return m_rules.size(); }
+    rule_id new_rule_id() { return m_next_rule_id++; }
 
     bool is_valid_rule(rule_iterator it) const;
     bool is_valid_product_iterator(product_iterator it) const;
-
 };
 
 } // namespace libtensor

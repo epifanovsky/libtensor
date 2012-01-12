@@ -99,11 +99,11 @@ symmetry_operation_impl< so_dirprod<N, M, T>, se_label<N + M, T> >::do_perform(
             for (evaluation_rule::rule_iterator ir = r3.begin();
                     ir != r3.end(); ir++) {
 
-                std::vector<size_t> &o3 =
-                        r3.get_eval_order(r3.get_rule_id(ir));
-                for (size_t i = 0; i < o3.size(); i++) {
-                    if (o3[i] == evaluation_rule::k_intrinsic) continue;
-                    o3[i] = map1[o3[i]];
+                evaluation_rule::basic_rule &br3 =
+                        r3.get_rule(r3.get_rule_id(ir));
+                for (size_t i = 0; i < br3.order.size(); i++) {
+                    if (br3.order[i] == evaluation_rule::k_intrinsic) continue;
+                    br3.order[i] = map1[br3.order[i]];
                 }
             }
 
@@ -131,13 +131,13 @@ symmetry_operation_impl< so_dirprod<N, M, T>, se_label<N + M, T> >::do_perform(
         for (evaluation_rule::rule_iterator ir = r1.begin();
                 ir != r1.end(); ir++) {
 
-            rule_id rid3 = r3.add_rule(r1.get_intrinsic(ir),
-                    r1.get_eval_order(ir));
+            const evaluation_rule::basic_rule &br1 = r1.get_rule(ir);
+            rule_id rid3 = r3.add_rule(br1.intr, br1.order);
 
-            std::vector<size_t> &o3 = r3.get_eval_order(rid3);
-            for (size_t i = 0; i < o3.size(); i++) {
-                if (o3[i] == evaluation_rule::k_intrinsic) continue;
-                o3[i] = map1[o3[i]];
+            evaluation_rule::basic_rule &br3 = r3.get_rule(rid3);
+            for (size_t i = 0; i < br3.order.size(); i++) {
+                if (br3.order[i] == evaluation_rule::k_intrinsic) continue;
+                br3.order[i] = map1[br3.order[i]];
             }
 
             m1to3.insert(rule_id_pair(r1.get_rule_id(ir), rid3));
@@ -146,13 +146,13 @@ symmetry_operation_impl< so_dirprod<N, M, T>, se_label<N + M, T> >::do_perform(
         for (evaluation_rule::rule_iterator ir = r2.begin();
                 ir != r2.end(); ir++) {
 
-            rule_id rid3 = r3.add_rule(r2.get_intrinsic(ir),
-                    r2.get_eval_order(ir));
+            const evaluation_rule::basic_rule &br2 = r2.get_rule(ir);
+            rule_id rid3 = r3.add_rule(br2.intr, br2.order);
 
-            std::vector<size_t> &o3 = r3.get_eval_order(rid3);
-            for (size_t i = 0; i < o3.size(); i++) {
-                if (o3[i] == evaluation_rule::k_intrinsic) continue;
-                o3[i] = map2[o3[i]];
+            evaluation_rule::basic_rule &br3 = r3.get_rule(rid3);
+            for (size_t i = 0; i < br3.order.size(); i++) {
+                if (br3.order[i] == evaluation_rule::k_intrinsic) continue;
+                br3.order[i] = map2[br3.order[i]];
             }
 
             m2to3.insert(rule_id_pair(r2.get_rule_id(ir), rid3));
@@ -200,10 +200,10 @@ symmetry_operation_impl< so_dirprod<N, M, T>, se_label<N + M, T> >::do_perform(
         for (evaluation_rule::rule_iterator ir = r3.begin();
                 ir != r3.end(); ir++) {
 
-            std::vector<size_t> &o3 = r3.get_eval_order(r3.get_rule_id(ir));
-            for (size_t i = 0; i < o3.size(); i++) {
-                if (o3[i] == evaluation_rule::k_intrinsic) continue;
-                o3[i] = map2[o3[i]];
+            evaluation_rule::basic_rule &br3 = r3.get_rule(r3.get_rule_id(ir));
+            for (size_t i = 0; i < br3.order.size(); i++) {
+                if (br3.order[i] == evaluation_rule::k_intrinsic) continue;
+                br3.order[i] = map2[br3.order[i]];
             }
         }
 
