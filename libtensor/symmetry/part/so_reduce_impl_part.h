@@ -25,6 +25,7 @@ public symmetry_operation_impl_base< so_reduce<N, M, K, T>, se_part<N, T> > {
 
 public:
     static const char *k_clazz; //!< Class name
+    static const size_t k_order2 = N - M; //!< Dimension of result
 
 public:
     typedef so_reduce<N, M, K, T> operation_t;
@@ -48,13 +49,11 @@ void symmetry_operation_impl< so_reduce<N, M, K, T>, se_part<N, T> >
     static const char *method =
             "do_perform(const symmetry_operation_params_t&)";
 
-    static const size_t k_orderc = N - M;
-
     typedef symmetry_element_set_adapter< N, T, element_t> adapter_t;
-    typedef se_part<k_orderc, T> el2_t;
+    typedef se_part<k_order2, T> el2_t;
     typedef std::list< index<N> > ilist_t;
 
-    //	Verify that the projection mask is correct
+    //	Verify that the projection masks are correct
     //
     mask<N> tm, rm;
     size_t nm = 0;
@@ -85,7 +84,7 @@ void symmetry_operation_impl< so_reduce<N, M, K, T>, se_part<N, T> >
         if (tm[i]) {
             for (size_t k = 0; k < K; k++) {
                 if (! params.msk[k][i]) continue;
-                map[i] = k_orderc + k;
+                map[i] = k_order2 + k;
             }
         }
         else {
@@ -99,29 +98,29 @@ void symmetry_operation_impl< so_reduce<N, M, K, T>, se_part<N, T> >
 
     const dimensions<N> &pdims1 = el1.get_pdims();
 
-    index<k_orderc> ia, ib;
+    index<k_order2> ia, ib;
     index<K> ixa, ixb;
     for (size_t i = 0; i < N; i++) {
         rm[i] = ! tm[i];
         if (tm[i]) {
-            ixb[map[i] - k_orderc] = pdims1[i] - 1;
+            ixb[map[i] - k_order2] = pdims1[i] - 1;
         }
         else {
             ib[map[i]] = pdims1[i] - 1;
         }
     }
 
-    dimensions<k_orderc> pdims2(index_range<k_orderc>(ia, ib));
-    block_index_subspace_builder<k_orderc, M> bb(el1.get_bis(), rm);
+    dimensions<k_order2> pdims2(index_range<k_order2>(ia, ib));
+    block_index_subspace_builder<k_order2, M> bb(el1.get_bis(), rm);
     el2_t el2(bb.get_bis(), pdims2);
 
     bool empty = true;
 
     dimensions<K> pdimsx(index_range<K>(ixa, ixb));
 
-    abs_index<k_orderc> ai2a(pdims2);
+    abs_index<k_order2> ai2a(pdims2);
     do {
-        const index<k_orderc> &i2a = ai2a.get_index();
+        const index<k_order2> &i2a = ai2a.get_index();
 
         // Create a list of all possible indexes from the input
         ilist_t la;
@@ -131,7 +130,7 @@ void symmetry_operation_impl< so_reduce<N, M, K, T>, se_part<N, T> >
 
             index<N> i1a;
             for (size_t i = 0, j = 0; i < N; i++) {
-                if (tm[i]) i1a[i] = i3a[map[i] - k_orderc];
+                if (tm[i]) i1a[i] = i3a[map[i] - k_order2];
                 else i1a[i] = i2a[j++];
             }
 
@@ -145,10 +144,10 @@ void symmetry_operation_impl< so_reduce<N, M, K, T>, se_part<N, T> >
             continue;
         }
 
-        abs_index<k_orderc> ai2b(i2a, pdims2);
+        abs_index<k_order2> ai2b(i2a, pdims2);
         while (ai2b.inc()) {
 
-            const index<k_orderc> &i2b = ai2b.get_index();
+            const index<k_order2> &i2b = ai2b.get_index();
 
             ilist_t lb;
 
@@ -158,7 +157,7 @@ void symmetry_operation_impl< so_reduce<N, M, K, T>, se_part<N, T> >
 
                 index<N> i1b;
                 for (size_t i = 0, j = 0; i < N; i++) {
-                    if (tm[i]) i1b[i] = i3b[map[i] - k_orderc];
+                    if (tm[i]) i1b[i] = i3b[map[i] - k_order2];
                     else i1b[i] = i2b[j++];
                 }
 

@@ -7,54 +7,32 @@
 
 namespace libtensor {
 
-const char *so_permute_impl_label_test::k_table_id = "s6";
-
 void so_permute_impl_label_test::perform() throw(libtest::test_exception) {
 
-	try {
-
-	point_group_table s6(k_table_id, 4);
-	point_group_table::label_t ag = 0, eg = 1, au = 2, eu = 3;
-	s6.add_product(ag, ag, ag);
-	s6.add_product(ag, eg, eg);
-	s6.add_product(ag, au, au);
-	s6.add_product(ag, eu, eu);
-	s6.add_product(eg, eg, ag);
-	s6.add_product(eg, eg, eg);
-	s6.add_product(eg, au, eu);
-	s6.add_product(eg, eu, au);
-	s6.add_product(eg, eu, eu);
-	s6.add_product(au, au, ag);
-	s6.add_product(au, eu, eg);
-	s6.add_product(eu, eu, ag);
-	s6.add_product(eu, eu, eg);
-	s6.check();
-	product_table_container::get_instance().add(s6);
-
-	} catch (exception &e) {
-		fail_test("so_permute_impl_perm_test::perform()", __FILE__, __LINE__,
-				e.what());
-	}
+    std::string s6 = setup_pg_table();
 
 	try {
 
-	test_1();
+	test_1(s6);
 
 	} catch (libtest::test_exception) {
-		product_table_container::get_instance().erase(k_table_id);
+		product_table_container::get_instance().erase(s6);
 		throw;
 	}
 
-	product_table_container::get_instance().erase(k_table_id);
+	product_table_container::get_instance().erase(s6);
 
 }
 
 
 /**	\test Permutes a group with one element of Au symmetry.
  **/
-void so_permute_impl_label_test::test_1() throw(libtest::test_exception) {
+void so_permute_impl_label_test::test_1(
+        const std::string &table_id) throw(libtest::test_exception) {
 
-	static const char *testname = "so_permute_impl_label_test::test_1()";
+    std::ostringstream tnss;
+    tnss << "so_permute_impl_label_test::test_1(" << table_id << ")";
+    std::string tns = tnss.str();
 
 	typedef se_label<4, double> se4_t;
 	typedef so_permute<4, double> so_permute_t;
@@ -63,67 +41,65 @@ void so_permute_impl_label_test::test_1() throw(libtest::test_exception) {
 
 	try {
 
-	index<4> i4a, i4b;
-	i4b[0] = 8; i4b[1] = 8; i4b[2] = 8; i4b[3] = 8;
+	index<4> i1, i2;
+	i2[0] = 8; i2[1] = 8; i2[2] = 8; i2[3] = 8;
 
-	block_index_space<4> bis4(dimensions<4>(index_range<4>(i4a, i4b)));
+	block_index_space<4> bis(dimensions<4>(index_range<4>(i1, i2)));
 
-	mask<4> m4, m4a, m4b, m4c, m4d;
-	m4[0] = true; m4[1] = true; m4[2] = true; m4[3] = true;
-	m4a[0] = true; m4a[1] = true; m4b[2] = true; m4b[3] = true;
-	m4c[0] = true; m4d[1] = true; m4c[2] = true; m4d[3] = true;
-	bis4.split(m4, 2); bis4.split(m4, 4); bis4.split(m4, 6);
+	mask<4> m, ma, mb, mc, md;
+	m[0] = true; m[1] = true; m[2] = true; m[3] = true;
+	ma[0] = true; ma[1] = true; mb[2] = true; mb[3] = true;
+	mc[0] = true; md[1] = true; mc[2] = true; md[3] = true;
+	bis.split(m, 2); bis.split(m, 4); bis.split(m, 6);
 
-	se4_t elem4a(bis4.get_block_index_dims());
+	se4_t el(bis.get_block_index_dims(), table_id);
 	{
-	    label_set<4> &ss4a = elem4a.create_subset(k_table_id);
+	    block_labeling<4> &bl = el.get_labeling();
 	    for (unsigned int i = 0; i < 4; i++) {
-	        ss4a.assign(m4a, i, i);
+	        bl.assign(ma, i, i);
 	    }
-	    ss4a.assign(m4b, 0, 3);
-	    ss4a.assign(m4b, 1, 0);
-	    ss4a.assign(m4b, 2, 1);
-	    ss4a.assign(m4b, 3, 2);
-	    ss4a.add_intrinsic(2);
 
+	    bl.assign(mb, 0, 3);
+	    bl.assign(mb, 1, 0);
+	    bl.assign(mb, 2, 1);
+	    bl.assign(mb, 3, 2);
+	    el.set_rule(2);
 	}
-
 	permutation<4> perm;
 	perm.permute(0, 1).permute(1, 2);
-	bis4.permute(perm);
+	bis.permute(perm);
 
-	se4_t elem4_ref(bis4.get_block_index_dims());
+	se4_t el_ref(bis.get_block_index_dims(), table_id);
 	{
-	    label_set<4> &ss4_ref = elem4_ref.create_subset(k_table_id);
-
+	    block_labeling<4> &bl_ref = el_ref.get_labeling();
 	    for (unsigned int i = 0; i < 4; i++) {
-	        ss4_ref.assign(m4c, i, i);
+	        bl_ref.assign(mc, i, i);
 	    }
-	    ss4_ref.assign(m4d, 0, 3); ss4_ref.assign(m4d, 1, 0);
-	    ss4_ref.assign(m4d, 2, 1); ss4_ref.assign(m4d, 3, 2);
+	    bl_ref.assign(md, 0, 3); bl_ref.assign(md, 1, 0);
+	    bl_ref.assign(md, 2, 1); bl_ref.assign(md, 3, 2);
 
-	    ss4_ref.add_intrinsic(2);
+	    el_ref.set_rule(2);
 	}
 
 	symmetry_element_set<4, double> set1(se4_t::k_sym_type);
 	symmetry_element_set<4, double> set2(se4_t::k_sym_type);
 	symmetry_element_set<4, double> set2_ref(se4_t::k_sym_type);
 
-	set1.insert(elem4a);
-	set2_ref.insert(elem4_ref);
+	set1.insert(el);
+	set2_ref.insert(el_ref);
 
 	symmetry_operation_params<so_permute_t> params(set1, perm, set2);
 
 	so_permute_impl_t().perform(params);
 
-	compare_ref<4>::compare(testname, bis4, set2, set2_ref);
+	compare_ref<4>::compare(tns.c_str(), bis, set2, set2_ref);
 
 	if(set2.is_empty()) {
-		fail_test(testname, __FILE__, __LINE__, "Expected a non-empty set.");
+		fail_test(tns.c_str(), __FILE__, __LINE__, "Expected a non-empty set.");
 	}
 
 	} catch(exception &e) {
-		fail_test(testname, __FILE__, __LINE__, e.what());
+		fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
 	}
 }
 

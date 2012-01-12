@@ -45,6 +45,7 @@ private:
     const symmetry<N, T> &m_sym1;
     mask<N> m_msk[K];
     size_t m_msk_set;
+
 public:
     so_reduce(const symmetry<N, T> &sym1) : m_sym1(sym1), m_msk_set(0) {}
 
