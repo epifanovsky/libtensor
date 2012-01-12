@@ -17,7 +17,7 @@
 #include "mapped_block_tensor_test.h"
 #include "mask_test.h"
 #include "mp_safe_tensor_test.h"
-#include "orbit_test.h"
+//#include "orbit_test.h"
 #include "orbit_list_test.h"
 #include "permutation_test.h"
 #include "permutation_builder_test.h"
@@ -28,7 +28,7 @@
 #include "tensor_test.h"
 #include "timer_test.h"
 #include "timings_test.h"
-#include "transf_list_test.h"
+//#include "transf_list_test.h"
 #include "version_test.h"
 
 using libtest::unit_test_factory;
@@ -97,7 +97,7 @@ private:
 	unit_test_factory<mapped_block_tensor_test> m_utf_mapped_block_tensor;
 	unit_test_factory<mask_test> m_utf_mask;
 	unit_test_factory<mp_safe_tensor_test> m_utf_mp_safe_tensor;
-	unit_test_factory<orbit_test> m_utf_orbit;
+//	unit_test_factory<orbit_test> m_utf_orbit;
 	unit_test_factory<orbit_list_test> m_utf_orbit_list;
 	unit_test_factory<permutation_test> m_utf_permutation;
 	unit_test_factory<permutation_builder_test> m_utf_permutation_builder;
@@ -108,7 +108,7 @@ private:
 	unit_test_factory<tensor_test> m_utf_tensor;
 	unit_test_factory<timer_test> m_utf_timer;
 	unit_test_factory<timings_test> m_utf_timings;
-	unit_test_factory<transf_list_test> m_utf_transf_list;
+//	unit_test_factory<transf_list_test> m_utf_transf_list;
 	unit_test_factory<version_test> m_utf_version;
 
 public:

@@ -25,12 +25,12 @@ public:
         static bool installed = false;
         if(installed) return;
 
-        //		typedef se_label<N, T> se_label_t;
+//      typedef se_label<N, T> se_label_t;
         typedef se_part<N, T> se_part_t;
         typedef se_perm<N, T> se_perm_t;
 
-        //		dispatcher_t::get_instance().register_impl(
-        //			symmetry_operation_impl<operation_t, se_label_t>());
+//      dispatcher_t::get_instance().register_impl(
+//      symmetry_operation_impl<operation_t, se_label_t>());
         dispatcher_t::get_instance().register_impl(
                 symmetry_operation_impl<operation_t, se_part_t>());
         dispatcher_t::get_instance().register_impl(

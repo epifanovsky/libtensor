@@ -21,7 +21,7 @@ libtensor_core_suite::libtensor_core_suite() :
 	add_test("mapped_block_tensor", m_utf_mapped_block_tensor);
 	add_test("mask", m_utf_mask);
 	add_test("mp_safe_tensor", m_utf_mp_safe_tensor);
-	add_test("orbit", m_utf_orbit);
+//	add_test("orbit", m_utf_orbit);
 	add_test("orbit_list", m_utf_orbit_list);
 	add_test("permutation", m_utf_permutation);
 	add_test("permutation_builder", m_utf_permutation_builder);
@@ -32,7 +32,7 @@ libtensor_core_suite::libtensor_core_suite() :
 	add_test("tensor", m_utf_tensor);
 	add_test("timer", m_utf_timer);
 	add_test("timings", m_utf_timings);
-	add_test("transf_list", m_utf_transf_list);
+//	add_test("transf_list", m_utf_transf_list);
 	add_test("version", m_utf_version);
 }
 
