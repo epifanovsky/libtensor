@@ -306,14 +306,21 @@ bool se_label<N, T>::is_allowed(const index<N> &idx) const {
 
         label_group lg(order.size());
         size_t pos = (size_t) -1;
+
+        bool has_invalid = false;
         for (size_t i = 0; i < order.size(); i++) {
             if (order[i] == evaluation_rule::k_intrinsic) {
                 pos = i; continue;
             }
 
             lg[i] = blk[order[i]];
+            if (! m_pt.is_valid(lg[i])) { has_invalid = true; break; }
         }
 
+        if (has_invalid) {
+            allowed[m_rule.get_rule_id(it)] = true;
+            continue;
+        }
 
         bool cur = false;
         if (pos == (size_t) -1) {
@@ -331,7 +338,7 @@ bool se_label<N, T>::is_allowed(const index<N> &idx) const {
     // loop over sums in the evaluation rule
     for (size_t i = 0; i < m_rule.get_n_products(); i++) {
 
-        bool is_allowed = false;
+        bool is_allowed = true;
         for (evaluation_rule::product_iterator it = m_rule.begin(i);
                 it != m_rule.end(i); it++) {
 
