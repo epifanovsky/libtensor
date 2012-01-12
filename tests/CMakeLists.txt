@@ -102,6 +102,7 @@ set(SRC_SYMMETRY
 #	symmetry/so_stabilize_test.C
 #	symmetry/so_symmetrize_test.C
     symmetry/symmetry_element_set_adapter_test.C
+    symmetry/transfer_rule_test.C
 )
 
 set(SRC_BTOD
