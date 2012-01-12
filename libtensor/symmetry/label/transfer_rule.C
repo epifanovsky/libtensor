@@ -43,9 +43,9 @@ void transfer_rule::perform(evaluation_rule &to) {
             rid = ir->second;
         }
         size_t pid = to.add_product(rid);
-        pit++;
 
-        for (; pit != it->end(); it++) {
+        pit++;
+        for (; pit != it->end(); pit++) {
 
             ir = map.find(pit->first);
             if (ir == map.end()) {
