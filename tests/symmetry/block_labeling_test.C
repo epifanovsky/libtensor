@@ -220,6 +220,9 @@ void block_labeling_test::test_permute_1() throw(libtest::test_exception) {
         pa.permute(0, 1);
         pb.permute(0, 1).permute(1, 2);
 
+        // [012->120]
+        // result: ijk before kij
+        // before: ijk result jki
         elema.permute(pa);
         elemb.permute(pb);
 
@@ -237,7 +240,7 @@ void block_labeling_test::test_permute_1() throw(libtest::test_exception) {
 
             size_t cur_type = elem.get_dim_type(i);
             size_t cur_type_a = elema.get_dim_type(mapa[i]);
-            size_t cur_type_b = elema.get_dim_type(mapb[i]);
+            size_t cur_type_b = elemb.get_dim_type(mapb[i]);
 
             if (elem.get_dim(cur_type) != elema.get_dim(cur_type_a))
                 fail_test(testname, __FILE__, __LINE__,
