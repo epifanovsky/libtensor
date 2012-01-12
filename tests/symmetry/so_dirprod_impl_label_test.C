@@ -21,6 +21,7 @@ void so_dirprod_impl_label_test::perform() throw(libtest::test_exception) {
         test_empty_3(table_id, false);
         test_nn_1(table_id);
         test_nn_2(table_id);
+        test_nn_3(table_id);
 
     } catch (libtest::test_exception) {
         product_table_container::get_instance().erase(table_id);
@@ -109,9 +110,8 @@ void so_dirprod_impl_label_test::test_empty_2(
     { // Assign block labels
         block_labeling<2> &bla = elema.get_labeling();
         for (size_t i = 0; i < 4; i++) bla.assign(ma, i, i);
+        elema.set_rule(2);
     }
-
-    elema.set_rule(2);
 
     symmetry_element_set<2, double> seta(se2_t::k_sym_type);
     symmetry_element_set<1, double> setb(se1_t::k_sym_type);
@@ -138,8 +138,6 @@ void so_dirprod_impl_label_test::test_empty_2(
         fail_test(tns.c_str(), __FILE__, __LINE__,
                 "More than 1 element in set.");
     }
-
-    //[ij] * [k]
 
     std::vector<bool> rx(bidimsc.get_size(), false);
     size_t ii = 0, ij = 1, ik = 2;
@@ -170,7 +168,8 @@ void so_dirprod_impl_label_test::test_empty_3(
         const std::string &table_id, bool perm) throw(libtest::test_exception) {
 
     std::ostringstream tnss;
-    tnss << "so_dirprod_impl_label_test::test_empty_3(" << perm << ")";
+    tnss << "so_dirprod_impl_label_test::test_empty_3("
+            << table_id << "," << perm << ")";
     std::string tns = tnss.str();
 
     typedef se_label<1, double> se1_t;
@@ -197,8 +196,8 @@ void so_dirprod_impl_label_test::test_empty_3(
     { // Assign block labels
         block_labeling<2> &blb = elemb.get_labeling();
         for (size_t i = 0; i < 4; i++) blb.assign(mb, i, i);
+        elemb.set_rule(3);
     }
-    elemb.set_rule(3);
 
     symmetry_element_set<1, double> seta(se1_t::k_sym_type);
     symmetry_element_set<2, double> setb(se2_t::k_sym_type);
@@ -291,15 +290,15 @@ void so_dirprod_impl_label_test::test_nn_1(
     {
         block_labeling<1> &bla = elema.get_labeling();
         for (size_t i = 0; i < 4; i++) bla.assign(ma, i, i);
+        elema.set_rule(1);
     }
-    elema.set_rule(1);
 
     se2_t elemb(bisb.get_block_index_dims(), table_id);
     {
         block_labeling<2> &blb = elemb.get_labeling();
         for (size_t i = 0; i < 4; i++) blb.assign(mb, i, i);
+        elemb.set_rule(2);
     }
-    elemb.set_rule(2);
 
     symmetry_element_set<1, double> seta(se1_t::k_sym_type);
     symmetry_element_set<2, double> setb(se2_t::k_sym_type);
@@ -332,7 +331,6 @@ void so_dirprod_impl_label_test::test_nn_1(
     rx[18] = rx[23] = rx[24] = rx[29] = true;
 
     check_allowed(tns.c_str(), "elemc", elemc, rx);
-
 }
 
 /** \test Direct product of a group in 1-space and a group in 2-space. The
@@ -372,15 +370,15 @@ void so_dirprod_impl_label_test::test_nn_2(
     {
         block_labeling<1> &bla = elema.get_labeling();
         for (size_t i = 0; i < 4; i++) bla.assign(ma, i, i);
+        elema.set_rule(1);
     }
-    elema.set_rule(1);
 
     se2_t elemb(bisb.get_block_index_dims(), table_id);
     {
         block_labeling<2> &blb = elemb.get_labeling();
         for (size_t i = 0; i < 4; i++) blb.assign(mb, i, i);
+        elemb.set_rule(2);
     }
-    elemb.set_rule(2);
 
     symmetry_element_set<1, double> seta(se1_t::k_sym_type);
     symmetry_element_set<2, double> setb(se2_t::k_sym_type);
@@ -463,10 +461,11 @@ void so_dirprod_impl_label_test::test_nn_3(
         for (size_t i = 0; i < 4; i++) blb.assign(mb, i, i);
 
         evaluation_rule rb;
-        std::vector<size_t> ob1(2), ob2(4);
-        ob1[0] = 0; ob2[0] = ob2[1] = 0; ob2[2] = 1;
-        ob1[1] = ob2[3] = evaluation_rule::k_intrinsic;
-        evaluation_rule::label_group ib1(1, 1), ib2(1, 0);
+        std::vector<size_t> ob1(2), ob2(3);
+        ob1[0] = 0;
+        ob2[0] = ob2[1] = 1;
+        ob1[1] = ob2[2] = evaluation_rule::k_intrinsic;
+        evaluation_rule::label_group ib1(1, 2), ib2(1, 0);
         evaluation_rule::rule_id irb1 = rb.add_rule(ib1, ob1);
         evaluation_rule::rule_id irb2 = rb.add_rule(ib2, ob2);
         rb.add_product(irb1);
@@ -501,7 +500,13 @@ void so_dirprod_impl_label_test::test_nn_3(
     }
 
     std::vector<bool> rx(bidimsc.get_size(), false);
-    rx[16] = rx[20] = rx[21] = rx[24] = rx[28] = rx[29] = true;
+    index<3> idx;
+    size_t ii = 0, ij = 1, ik = 2;
+    idx[ii] = 1; idx[ij] = 2;
+    for (size_t k = 0; k < 4; k++) {
+        idx[ik] = k;
+        rx[abs_index<3>(idx, bidimsc).get_abs_index()] = true;
+    }
 
     check_allowed(tns.c_str(), "elemc", elemc, rx);
 

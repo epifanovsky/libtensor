@@ -20,7 +20,7 @@
 #include "so_dirprod_impl_part_test.h"
 #include "so_dirprod_impl_perm_test.h"
 //#include "so_dirsum_test.h"
-//#include "so_dirsum_impl_label_test.h"
+#include "so_dirsum_impl_label_test.h"
 #include "so_dirsum_impl_part_test.h"
 #include "so_dirsum_impl_perm_test.h"
 //#include "so_copy_test.h"
@@ -110,7 +110,7 @@ private:
     unit_test_factory<so_dirprod_impl_part_test> m_utf_so_dirprod_impl_part;
     unit_test_factory<so_dirprod_impl_perm_test> m_utf_so_dirprod_impl_perm;
 //    unit_test_factory<so_dirsum_test> m_utf_so_dirsum;
-//    unit_test_factory<so_dirsum_impl_label_test> m_utf_so_dirsum_impl_label;
+    unit_test_factory<so_dirsum_impl_label_test> m_utf_so_dirsum_impl_label;
     unit_test_factory<so_dirsum_impl_part_test> m_utf_so_dirsum_impl_part;
     unit_test_factory<so_dirsum_impl_perm_test> m_utf_so_dirsum_impl_perm;
 //	unit_test_factory<so_merge_test> m_utf_so_merge;
