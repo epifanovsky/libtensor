@@ -7,97 +7,157 @@
 
 namespace libtensor {
 
-const char *se_label_test::table_id = "point_group";
-
 void se_label_test::perform() throw(libtest::test_exception) {
 
-    // Setup point_group_table and product_table_container
-
+    std::string s6 = setup_s6_symmetry();
     try {
 
-        point_group_table s6(table_id, 4);
-        point_group_table::label_t ag = 0, eg = 1, au = 2, eu = 3;
-        s6.add_product(ag, ag, ag);
-        s6.add_product(ag, eg, eg);
-        s6.add_product(ag, au, au);
-        s6.add_product(ag, eu, eu);
-        s6.add_product(eg, eg, ag);
-        s6.add_product(eg, eg, eg);
-        s6.add_product(eg, au, eu);
-        s6.add_product(eg, eu, au);
-        s6.add_product(eg, eu, eu);
-        s6.add_product(au, au, ag);
-        s6.add_product(au, eu, eg);
-        s6.add_product(eu, eu, ag);
-        s6.add_product(eu, eu, eg);
-        s6.check();
-        product_table_container::get_instance().add(s6);
-
-    } catch (exception &e) {
-        fail_test("se_label_test::perform()", __FILE__, __LINE__,
-                e.what());
-    }
-
-    try {
-
-        test_empty();
-        test_set_1();
-        test_set_2();
-        test_set_3();
-        test_set_4();
-        test_permute();
-
-        product_table_container::get_instance().erase(table_id);
+        test_1(s6);
 
     } catch (libtest::test_exception) {
-        product_table_container::get_instance().erase(table_id);
+        product_table_container::get_instance().erase(s6);
         throw;
     }
+
+    product_table_container::get_instance().erase(s6);
 }
 
-
-/**	\test Empty se_label<N, T>
+/** \test Test setting evaluation rules
  **/
-void se_label_test::test_empty() throw(libtest::test_exception) {
+void se_label_test::test_basic_1(
+        const std::string &table_id) throw(libtest::test_exception) {
 
-    static const char *testname = "se_label_test::test_empty()";
+    std::string tns("se_label_test::test_basic_1(" + table_id + ")");
 
-    try {
+    index<3> i1, i2;
+    i2[0] = 1; i2[1] = 1; i2[2] = 1;
+    dimensions<3> bidims(index_range<3>(i1, i2));
 
-        index<2> i1, i2;
-        i2[0] = 9; i2[1] = 9;
-        block_index_space<2> bis(dimensions<2>(index_range<2>(i1, i2)));
-        mask<2> m11;
-        m11[0] = true; m11[1] = true;
-        bis.split(m11, 5);
+    se_label<3, double> el(bidims, table_id);
 
-        dimensions<2> bidims = bis.get_block_index_dims();
-        se_label<2, double> elem1(bidims);
+    // Simplest rule
+    el.set_rule(0);
+    const evaluation_rule &r1 = el.get_rule();
+    evaluation_rule::rule_iterator it = r1.begin();
+    const evaluation_rule::label_group &intr1 = r1.get_intrinsic(it);
+    const std::vector<size_t> &o1 = r1.get_eval_order(it);
+    if (intr1.size() != 1)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "# intr1");
+    if (intr1[0] != 0)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "intr1");
+    if (o1.size() != 4)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "# o1");
+    if (o1[0] != 0)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "o1[0]");
+    if (o1[1] != 1)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "o1[1]");
+    if (o1[2] != 2)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "o1[2]");
+    if (o1[3] != evaluation_rule::k_intrinsic)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "o1[3]");
+    it++;
+    if (it != r1.end())
+        fail_test(tns.c_str(), __FILE__, __LINE__, "# rules");
 
-        se_label<2, double>::iterator it = elem1.begin();
-        if (it != elem1.end()) {
-            fail_test(testname, __FILE__, __LINE__, "Subset found.");
-        }
+    // Simple rule with different order
+    permutation<3> p2; p2.permute(0, 1).permute(1, 2);
+    el.set_rule(2, p2, 1);
+    const evaluation_rule &r2 = el.get_rule();
+    it = r2.begin();
+    const evaluation_rule::label_group &intr2 = r2.get_intrinsic(it);
+    const std::vector<size_t> &o2 = r2.get_eval_order(it);
+    if (intr2.size() != 1)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "# intr2");
+    if (intr2[0] != 2)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "intr2");
+    if (o2.size() != 4)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "# o2");
+    if (o2[0] != 1)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "o2[0]");
+    if (o2[1] != evaluation_rule::k_intrinsic)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "o2[1]");
+    if (o2[2] != 2)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "o2[2]");
+    if (o2[3] != 0)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "o2[3]");
+    it++;
+    if (it != r2.end())
+        fail_test(tns.c_str(), __FILE__, __LINE__, "# rules");
 
-        abs_index<2> ai(bidims);
-        do {
+    label_group lg(2, 0); lg[1] = 2;
+    el.set_rule(lg, p2, 2);
+    const evaluation_rule &r3 = el.get_rule();
+    it = r3.begin();
+    const evaluation_rule::label_group &intr3 = r3.get_intrinsic(it);
+    const std::vector<size_t> &o3 = r3.get_eval_order(it);
+    if (intr3.size() != 2)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "# intr3");
+    if (intr3[0] != 0)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "intr3[0]");
+    if (intr3[1] != 2)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "intr3[1]");
+    if (o3.size() != 4)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "# o3");
+    if (o3[0] != 1)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "o3[0]");
+    if (o3[1] != 2)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "o3[1]");
+    if (o3[2] != evaluation_rule::k_intrinsic)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "o3[2]");
+    if (o3[3] != 0)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "o3[3]");
+    it++;
+    if (it != r3.end())
+        fail_test(tns.c_str(), __FILE__, __LINE__, "# rules");
 
-            if (! elem1.is_allowed(ai.get_index())) {
-                std::ostringstream oss;
-                oss << "! elem1.is_allowed(" << ai.get_index() << ")";
-                fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
-            }
-        } while (ai.inc());
 
-    } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
-    }
+    label_group lg(2, 0);
+    lg[1] = 2;
+    el.set_rule(lg, p2, 0);
+    const evaluation_rule &r4 = el.get_rule();
+
+
+}
+
+/**	\test Two blocks, all labeled, basic rules
+ **/
+void se_label_test::test_1() throw(libtest::test_exception) {
+
+    const char *testname = "se_label_test::test_1()";
+
+    index<2> i1, i2;
+    i2[0] = 1; i2[1] = 1;
+    dimensions<2> bidims(index_range<2>(i1, i2));
+
+    se_label<2, double> ela(bidims, table_id);
+    block_labeling<2> bl = ela.get_labeling();
+
+    mask<2> m; m[0] = m[1] = true;
+    bl.assign(m, 0, 0);
+    bl.assign(m, 0, 2);
+
+    se_label<2, double> elb(ela), elc(ela), eld(ela);
+
+    ela.set_rule(0);
+    elb.set_rule(1);
+    elc.set_rule(2);
+    elc.set_rule(3);
+
+
+    std::vector<bool> exa(4, false), exc(4, false), ex(4, false);
+    exa[0] = exa[3] = true;
+    exc[1] = exc[2] = true;
+
+    check_allowed(tns.c_str(), ela, exa);
+    check_allowed(tns.c_str(), elb, ex);
+    check_allowed(tns.c_str(), elc, exc);
+    check_allowed(tns.c_str(), eld, ex);
 }
 
 
 /**	\test One subset, full mask
  **/
-void se_label_test::test_set_1() throw(libtest::test_exception) {
+void se_label_test::test_2() throw(libtest::test_exception) {
 
     static const char *testname = "se_label_test::test_set_1()";
 
@@ -456,5 +516,60 @@ void se_label_test::test_permute() throw(libtest::test_exception) {
 
 }
 
+/** \brief Setup the product table for S6 point group symmetry
+
+     \return Table ID
+ **/
+std::string se_label_test::setup_s6_symmetry() const {
+
+    try {
+
+        point_group_table s6("s6", 4);
+        point_group_table::label_t ag = 0, eg = 1, au = 2, eu = 3;
+        s6.add_product(ag, ag, ag);
+        s6.add_product(ag, eg, eg);
+        s6.add_product(ag, au, au);
+        s6.add_product(ag, eu, eu);
+        s6.add_product(eg, eg, ag);
+        s6.add_product(eg, eg, eg);
+        s6.add_product(eg, au, eu);
+        s6.add_product(eg, eu, au);
+        s6.add_product(eg, eu, eu);
+        s6.add_product(au, au, ag);
+        s6.add_product(au, eu, eg);
+        s6.add_product(eu, eu, ag);
+        s6.add_product(eu, eu, eg);
+        s6.check();
+        product_table_container::get_instance().add(s6);
+
+    } catch (exception &e) {
+        fail_test("se_label_test::setup_s6_symmetry()", __FILE__, __LINE__,
+                e.what());
+    }
+}
+
+template<size_t N>
+void check_allowed(const char *testname,
+        const se_label<N, double> &se, const std::vector<bool> &expected) {
+
+    const block_labeling<N> &bl = se.get_labeling();
+    const dimensions<N> &bidims = bl.get_block_index_dims();
+
+    if (bidims.get_size() != expected.size())
+        throw;
+
+    abs_index<N> ai(bidims);
+    do {
+
+        if (se.is_allowed(ai.get_index()) == expected[ai.get_abs_index()]) {
+            std::ostringstream oss;
+            oss << (expected[ai.get_abs_index()] ? "!" : "")
+                    << "se.is_allowed(" << ai.get_index() << ")";
+            fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
+        }
+
+    } while (ai.inc());
+
+}
 
 } // namespace libtensor
