@@ -32,9 +32,8 @@ public:
         std::vector<size_t> order; //!< Evaluation order of dimensions
         label_group intr; //!< Intrinsic labels
 
-        basic_rule() {}
-        basic_rule(const label_group &intr_,
-                const std::vector<size_t> order_) :
+        basic_rule(const label_group &intr_ = label_group(),
+                const std::vector<size_t> order_ = std::vector<size_t>()) :
             intr(intr_), order(order_) { }
     };
 
@@ -59,6 +58,8 @@ private:
     product_list m_setup; //!< Rules setup
 
 public:
+    evaluation_rule() : m_next_rule_id(0) { }
+
     //! \name Manipulation functions
     //@{
 
@@ -194,7 +195,7 @@ public:
 #ifdef LIBTENSOR_DEBUG
         if (! is_valid_product_iterator(pit))
             throw bad_parameter(g_ns, k_clazz,
-                    "get_rule_intrinsic(const_product_iterator)",
+                    "get_rule_id(const_product_iterator)",
                     __FILE__, __LINE__, "pit");
 #endif
 
@@ -209,7 +210,7 @@ public:
 #ifdef LIBTENSOR_DEBUG
         if (! is_valid_product_iterator(pit))
             throw bad_parameter(g_ns, k_clazz,
-                    "get_rule_intrinsic(const_product_iterator)",
+                    "get_rule(const_product_iterator)",
                     __FILE__, __LINE__, "pit");
 #endif
 
