@@ -7,7 +7,7 @@ const char *evaluation_rule::k_clazz = "evaluation_rule";
 const size_t evaluation_rule::k_intrinsic = (size_t) -1;
 
 evaluation_rule::rule_id evaluation_rule::add_rule(
-        const label_group &intr, const std::vector<size_t> &order) {
+        const label_set &intr, const std::vector<size_t> &order) {
 
     rule_id id = new_rule_id();
     m_rules.insert(rule_list::value_type(id, basic_rule(intr, order)));

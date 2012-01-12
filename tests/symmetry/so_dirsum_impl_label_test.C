@@ -458,7 +458,8 @@ void so_dirsum_impl_label_test::test_nn_3(
         evaluation_rule ra;
         std::vector<size_t> oa1(2, 0), oa2(2, 1);
         oa1[1] = oa2[1] = evaluation_rule::k_intrinsic;
-        evaluation_rule::label_group ia1(1, 1), ia2(1, 2);
+        evaluation_rule::label_set ia1, ia2;
+        ia1.insert(1); ia2.insert(2);
         evaluation_rule::rule_id ira1 = ra.add_rule(ia1, oa1);
         evaluation_rule::rule_id ira2 = ra.add_rule(ia2, oa2);
         ra.add_product(ira1);

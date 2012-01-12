@@ -49,8 +49,8 @@ public:
     static const char *k_clazz; //!< Class name
     static const char *k_sym_type; //!< Symmetry type
 
-    typedef product_table_i::label_t label_t;
-    typedef product_table_i::label_group label_group;
+    typedef evaluation_rule::label_t label_t;
+    typedef evaluation_rule::label_set label_set;
 
 private:
     block_labeling<N> m_blk_labels; //!< Block index labels
@@ -97,7 +97,8 @@ public:
             const permutation<N> &p = permutation<N>(),
             size_t pos = N) {
 
-        set_rule(label_group(1, intr), p, pos);
+        label_set is; is.insert(intr);
+        set_rule(is, p, pos);
     }
 
     /** \brief Set the evaluation rule to consist of only one basic rule.
@@ -107,7 +108,7 @@ public:
 
         Replaces any existing rule with a basic rule.
      **/
-    void set_rule(const label_group &intr,
+    void set_rule(const label_set &intr,
             const permutation<N> &p = permutation<N>(),
             size_t pos = N);
 
@@ -202,44 +203,41 @@ se_label<N, T>::~se_label() {
 }
 
 template<size_t N, typename T>
-void se_label<N, T>::set_rule(const label_group &intr,
+void se_label<N, T>::set_rule(const label_set &intr,
         const permutation<N> &p, size_t pos) {
 
     static const char *method =
-            "set_rule(const label_group &, const permutation<N> &, size_t)";
+            "set_rule(const label_set &, const permutation<N> &, size_t)";
 
 #ifdef LIBTENSOR_DEBUG
     if (pos > N + 1) {
         throw bad_parameter(g_ns, k_clazz, method,
                 __FILE__, __LINE__, "pos");
     }
-#endif
 
     // Check the intrinsic labels for duplicates and valid labels
-    std::map<label_t, bool> lmap;
-    for (size_t i = 0; i < intr.size(); i++) {
-        if (! m_pt.is_valid(intr[i]))
+    for (label_set::const_iterator it = intr.begin(); it != intr.end(); it++) {
+        if (! m_pt.is_valid(*it))
             throw bad_parameter(g_ns, k_clazz, method,
                     __FILE__, __LINE__, "intr");
-
-        lmap[intr[i]] = true;
     }
+#endif
 
     // Now start updating the evaluation rule by clearing the old
     m_rule.clear_all();
 
     // This is a trivial rule => simplify it
-    if (lmap.size() == m_pt.nlabels()) {
+    if (intr.size() == m_pt.nlabels()) {
 
         // All blocks allowed: one element, only intrinsic in evaluation order
-        evaluation_rule::rule_id id =
-                m_rule.add_rule(evaluation_rule::label_group(1, 0),
-                        std::vector<size_t>(1, evaluation_rule::k_intrinsic));
+        label_set is; is.insert(0);
+        evaluation_rule::rule_id id = m_rule.add_rule(is,
+                std::vector<size_t>(1, evaluation_rule::k_intrinsic));
         m_rule.add_product(id);
 
         return;
     }
-    else if (lmap.size() == 0) {
+    else if (intr.size() == 0) {
         // No blocks allowed: empty rule
         return;
     }
@@ -249,20 +247,13 @@ void se_label<N, T>::set_rule(const label_group &intr,
     for (size_t i = 0; i < N; i++) tmp_order[i] = i;
     p.apply(tmp_order);
 
-    // Create an ordered label_group
-    label_group new_intr;
-    for (std::map<label_t, bool>::iterator it = lmap.begin();
-            it != lmap.end(); it++) {
-        new_intr.push_back(it->first);
-    }
-
     // Create the evaluation order as required by evaluation_rule
     std::vector<size_t> order(N + 1);
     for (size_t i = 0; i < pos; i++) order[i] = tmp_order[i];
     order[pos] = evaluation_rule::k_intrinsic;
     for (size_t i = pos; i < N; i++) order[i + 1] = tmp_order[i];
 
-    evaluation_rule::rule_id id = m_rule.add_rule(new_intr, order);
+    evaluation_rule::rule_id id = m_rule.add_rule(intr, order);
     m_rule.add_product(id);
 }
 
@@ -275,8 +266,6 @@ void se_label<N, T>::set_rule(const evaluation_rule &rule) {
     typedef std::map<rule_id, rule_id> rule_id_map;
 
     transfer_rule(rule, N, m_pt.get_id()).perform(m_rule);
-
-    m_rule = rule;
 }
 
 
@@ -325,7 +314,7 @@ bool se_label<N, T>::is_allowed(const index<N> &idx) const {
     }
 #endif
 
-    label_group blk(N);
+    product_table_i::label_group blk(N);
     for (size_t i = 0; i < N; i++) {
         size_t dim_type = m_blk_labels.get_dim_type(i);
         blk[i] = m_blk_labels.get_label(dim_type, idx[i]);
@@ -340,7 +329,7 @@ bool se_label<N, T>::is_allowed(const index<N> &idx) const {
 
         if (br.order.size() == 0) { allowed[rid] = false; continue; }
 
-        label_group lg(br.order.size());
+        product_table_i::label_group lg(br.order.size());
         size_t pos = (size_t) -1;
 
         bool has_invalid = false;
@@ -360,9 +349,10 @@ bool se_label<N, T>::is_allowed(const index<N> &idx) const {
             cur = m_pt.is_in_product(lg, 0);
         }
         else {
-            for (size_t k = 0; k < br.intr.size(); k++) {
-                if (! m_pt.is_valid(br.intr[k])) { cur = true; break; }
-                lg[pos] = br.intr[k];
+            for (label_set::const_iterator ii = br.intr.begin();
+                    ii != br.intr.end(); ii++) {
+                if (! m_pt.is_valid(*ii)) { cur = true; break; }
+                lg[pos] = *ii;
                 cur = cur || m_pt.is_in_product(lg, 0);
             }
         }

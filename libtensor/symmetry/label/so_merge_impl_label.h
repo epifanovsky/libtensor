@@ -81,11 +81,12 @@ void symmetry_operation_impl< so_merge<N, M, K, T>, se_label<N, T> >
         // Check if this is the first masked index in one of the masks
         if (tm[i]) {
             size_t k = 0;
-            for ( ; k < K; k++) { if (params.msk[k][i]) break; }
-
+            for (; k < K; k++) { if (params.msk[k][i]) break; }
             const mask<N> &m = params.msk[k];
-            for (k = 0; k < i; k++) {  if (m[k]) break; }
-            if (k != i) { map[i] = map[k]; continue; }
+
+            size_t ii = 0;
+            for (; ii < i; ii++) {  if (m[ii]) break; }
+            if (ii != i) { map[i] = map[ii]; continue; }
         }
 
         map[i] = j++;
@@ -99,19 +100,10 @@ void symmetry_operation_impl< so_merge<N, M, K, T>, se_label<N, T> >
             g1.get_elem(it1).get_labeling().get_block_index_dims();
 
     index<k_order2> idx1, idx2;
-    for (size_t i = 0, j = 0; i < N; i++) {
-        if (tm[i]) continue;
-        idx2[j++] = bidims1[i] - 1;
-    }
-
-    dimensions<k_order2> bidims2(index_range<k_order2>(idx1, idx2));
-    // Check the bidims for correctness
     for (size_t i = 0; i < N; i++) {
-        if (bidims2[map[i]] != bidims1[i]) {
-            throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
-                    "bidims2");
-        }
+        idx2[map[i]] = bidims1[i] - 1;
     }
+    dimensions<k_order2> bidims2(index_range<k_order2>(idx1, idx2));
 
     // Loop over all se_label elements and merge dimensions in each one
     for (; it1 != g1.end(); it1++) {

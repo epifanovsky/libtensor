@@ -21,8 +21,6 @@ private:
             const std::string &table_id) throw(libtest::test_exception);
     void test_basic_3(
             const std::string &table_id) throw(libtest::test_exception);
-    void test_basic_4(
-            const std::string &table_id) throw(libtest::test_exception);
     void test_merge_1(
             const std::string &table_id) throw(libtest::test_exception);
     void test_merge_2(

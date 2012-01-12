@@ -465,7 +465,8 @@ void so_dirprod_impl_label_test::test_nn_3(
         ob1[0] = 0;
         ob2[0] = ob2[1] = 1;
         ob1[1] = ob2[2] = evaluation_rule::k_intrinsic;
-        evaluation_rule::label_group ib1(1, 2), ib2(1, 0);
+        evaluation_rule::label_set ib1, ib2;
+        ib1.insert(2); ib2.insert(0);
         evaluation_rule::rule_id irb1 = rb.add_rule(ib1, ob1);
         evaluation_rule::rule_id irb2 = rb.add_rule(ib2, ob2);
         rb.add_product(irb1);

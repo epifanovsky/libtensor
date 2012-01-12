@@ -2,6 +2,7 @@
 #define LIBTENSOR_EVALUATION_RULE_H
 
 #include <map>
+#include <set>
 #include "../../exception.h"
 #include "product_table_i.h"
 
@@ -25,14 +26,14 @@ public:
 
 public:
     typedef product_table_i::label_t label_t;
-    typedef product_table_i::label_group label_group;
+    typedef std::set<label_t> label_set;
 
 public:
     struct basic_rule {
         std::vector<size_t> order; //!< Evaluation order of dimensions
-        label_group intr; //!< Intrinsic labels
+        label_set intr; //!< Intrinsic labels
 
-        basic_rule(const label_group &intr_ = label_group(),
+        basic_rule(const label_set &intr_ = label_set(),
                 const std::vector<size_t> order_ = std::vector<size_t>()) :
             intr(intr_), order(order_) { }
     };
@@ -68,7 +69,7 @@ public:
         \param order Evaluation order
         \return Returns the ID of the new rule
      **/
-    rule_id add_rule(const label_group &intr, const std::vector<size_t> &order);
+    rule_id add_rule(const label_set &intr, const std::vector<size_t> &order);
 
     /** \brief Add a new product to the list of products
         \param rule ID of the rule to be part of the new product

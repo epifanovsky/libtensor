@@ -103,7 +103,7 @@ void transfer_rule::analyze(const evaluation_rule &rule) {
                 if (br.intr.size() == 0) { forbidden = true; break; }
                 if (br.intr.size() == m_pt.nlabels()) { continue; }
                 if (br.order.size() == 1) {
-                    if (br.intr[0] != 0) { forbidden = true; break; }
+                    if (*(br.intr.begin()) != 0) { forbidden = true; break; }
                     else { continue; }
                 }
             }
@@ -114,7 +114,7 @@ void transfer_rule::analyze(const evaluation_rule &rule) {
             // Since the current basic rule is non-trivial, look at all
             // subsequent basic rules and check if we can merge
             std::list<rule_id> merge;
-            merge.push_back(rid);
+            //merge.push_back(rid);
             evaluation_rule::product_iterator pit2 = pit;
             pit2++;
             for (; pit2 != rule.end(i); pit2++) {
@@ -130,23 +130,24 @@ void transfer_rule::analyze(const evaluation_rule &rule) {
             // Multiple rules can be merged
             if ((merge.size() != 0) && found_intr[rid]) {
 
-                std::vector<bool> valid(m_pt.nlabels(), true);
+                label_set intr(br.intr);
                 for (std::list<rule_id>::iterator it = merge.begin();
                         it != merge.end(); it++) {
 
-                    const label_group &intrx = optimized[*it].intr;
+                    const label_set &intrx = optimized[*it].intr;
 
-                    size_t i = 0, j = 0;
-                    for (; j < m_pt.nlabels() && i < intrx.size(); j++) {
-                        if (j == intrx[i]) { i++; }
-                        else { valid[j] = false; }
+                    label_set::iterator iit1b = intr.begin(), iit1e = iit1b;
+                    for (label_set::const_iterator iit2 = intrx.begin();
+                            iit2 != intrx.end(); iit2++) {
+
+                        for (; iit1e != intr.end(); iit1e++) {
+                            if (*iit1e >= *iit2) break;
+                        }
+
+                        intr.erase(iit1b, iit1e);
+                        if (*iit1e == *iit2) iit1e++;
+                        iit1b = iit1e;
                     }
-                    for (; j < m_pt.nlabels(); j++) { valid[j] = false; }
-                }
-
-                label_group intr;
-                for (size_t i = 0; i < m_pt.nlabels(); i++) {
-                    if (valid[i]) intr.push_back(i);
                 }
 
                 if (intr.size() == 0) { forbidden = true; break; }
@@ -185,7 +186,9 @@ void transfer_rule::analyze(const evaluation_rule &rule) {
             m_req_rules.clear();
             m_products.clear();
 
-            m_req_rules[next_rid] = basic_rule(label_group(1, 0),
+            label_set intr;
+            intr.insert(0);
+            m_req_rules[next_rid] = basic_rule(intr,
                     std::vector<size_t>(1, evaluation_rule::k_intrinsic));
             cur_pr[next_rid] = m_req_rules.find(next_rid);
             m_products.push_back(cur_pr);
@@ -307,36 +310,30 @@ void transfer_rule::optimize_products() {
         // OK, there is something to merge, so delete the existing product...
         it1->clear();
 
-        size_t max_size = 0;
-        rule_list::iterator ir;
-        std::map<label_t, bool> lmap;
+        label_set intr;
         for (std::list<rule_list::iterator>::iterator irm = merge.begin();
                 irm != merge.end(); irm++) {
 
             const basic_rule &br = (*irm)->second;
-            if (br.intr.size() > max_size) {
-                max_size = br.intr.size(); ir = *irm;
-            }
-
-            for (size_t k = 0; k < br.intr.size(); k++) {
-                lmap[br.intr[k]] = true;
+            for (label_set::const_iterator ii = br.intr.begin();
+                    ii != br.intr.end(); ii++) {
+                intr.insert(*ii);
             }
         }
 
         // But the result of the merge is identical to one of the element
-        if (lmap.size() == max_size) {
-            (*it1)[ir->first] = ir; continue;
+        std::list<rule_list::iterator>::iterator irm = merge.begin();
+        for (; irm != merge.end(); irm++) {
+            if ((*irm)->second.intr.size() == intr.size()) break;
+        }
+
+        if (irm != merge.end()) {
+            (*it1)[(*irm)->first] = (*irm); continue;
         }
 
         // Otherwise create a new basic rule
-        label_group intr;
-        for (std::map<label_t, bool>::iterator il = lmap.begin();
-                il != lmap.end(); il++) {
-            intr.push_back(il->first);
-        }
-
         rule_id next_rid = m_req_rules.rbegin()->first + 1;
-        m_req_rules[next_rid] = basic_rule(intr, ir->second.order);
+        m_req_rules[next_rid] = basic_rule(intr, (*irm)->second.order);
         rule_list::iterator irx = m_req_rules.find(next_rid);
         (*it1)[next_rid] = irx;
     }
@@ -383,7 +380,7 @@ bool transfer_rule::transfer_basic(
         std::map<label_t, label_t> map;
         for (label_t l = 0; l < m_pt.nlabels(); l++) {
 
-            label_group lg(neq, l);
+            product_table_i::label_group lg(neq, l);
             label_t lt = 0;
             while (! m_pt.is_in_product(lg, lt)) lt++;
             map[l] = lt;
@@ -414,21 +411,7 @@ bool transfer_rule::transfer_basic(
     }
 
     if (found_intr) {
-        // Get a list of unique labels
-        std::map<label_t, bool> lmap;
-        for (size_t i = 0; i < from.intr.size(); i++) {
-            if (! m_pt.is_valid(from.intr[i])) {
-                throw bad_symmetry(g_ns, k_clazz, method,
-                        __FILE__, __LINE__, "Invalid label.");
-            }
-
-            lmap[from.intr[i]] = true;
-        }
-
-        for (std::map<label_t, bool>::iterator it = lmap.begin();
-                it != lmap.end(); it++) {
-            to.intr.push_back(it->first);
-        }
+        to.intr = from.intr;
     }
 
     return found_intr;
@@ -448,20 +431,16 @@ bool transfer_rule::equal_order(const std::vector<size_t> &o1,
     return true;
 }
 
-bool transfer_rule::equal_intr(const label_group &i1, const label_group &i2) {
+bool transfer_rule::equal_intr(const label_set &i1, const label_set &i2) {
 
     if (i1.size() != i2.size()) return false;
 
-    size_t i = 0;
-    for (; i < i1.size(); i++) {
-        size_t j = 0;
-        for (; j < i2.size(); j++) {
-            if (i1[i] == i2[j]) break; }
-        if (j == i2.size()) break;
+    label_set::iterator it1 = i1.begin(), it2 = i2.begin();
+    for (; it1 != i1.end(); it1++, it2++) {
+        if (*it1 != *it2) break;
     }
-    if (i != i1.size()) return false;
 
-    return true;
+    return (it1 == i1.end());
 }
 
 bool transfer_rule::equal_product(const product_t &pr1, const product_t &pr2) {

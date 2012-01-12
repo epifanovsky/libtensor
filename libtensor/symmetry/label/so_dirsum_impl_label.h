@@ -110,7 +110,7 @@ symmetry_operation_impl< so_dirsum<N, M, T>, se_label<N + M, T> >::do_perform(
             //    intrinsic label and use 0 (at least) as intrinsic label
             std::vector<size_t> o3x(M);
             for (size_t i = 0; i < M; i++) o3x[i] = map2[i];
-            evaluation_rule::label_group i3x(1, 0);
+            evaluation_rule::label_set i3x; i3x.insert(0);
             evaluation_rule::rule_id rid = r3.add_rule(i3x, o3x);
             r3.add_product(rid);
 
@@ -217,7 +217,7 @@ symmetry_operation_impl< so_dirsum<N, M, T>, se_label<N + M, T> >::do_perform(
         // Create a fake rule for non-existing e1
         std::vector<size_t> o3x(N);
         for (size_t i = 0; i < N; i++) o3x[i] = map1[i];
-        evaluation_rule::label_group i3x(1, 0);
+        evaluation_rule::label_set i3x; i3x.insert(0);
         evaluation_rule::rule_id rid = r3.add_rule(i3x, o3x);
         r3.add_product(rid);
 

@@ -143,13 +143,12 @@ void so_merge_impl_label_test::test_nm1_1(
 
     index<2> idx;
     size_t ii = 0, ij = 1;
-    idx[ii] = 0;
+    idx[ii] = 2;
     for (size_t j = 0; j < 4; j++) {
         idx[ij] = j;
         rx[abs_index<2>(idx, bidims2).get_abs_index()] = true;
     }
-    idx[ii] = 1;
-    idx[ij] = 1;
+    idx[ii] = 3; idx[ij] = 1;
     rx[abs_index<2>(idx, bidims2).get_abs_index()] = true;
     idx[ij] = 3;
     rx[abs_index<2>(idx, bidims2).get_abs_index()] = true;
@@ -237,7 +236,7 @@ void so_merge_impl_label_test::test_2n2nn_1(
         block_labeling<4> &bl1 = el1.get_labeling();
         mask<4> m1; m1[0] = m1[1] = m1[2] = m1[3] = true;
         for (size_t i = 0; i < 4; i++) bl1.assign(m1, i, i);
-        el1.set_rule(2);
+        el1.set_rule(0);
     }
 
     symmetry_element_set<4, double> set1(se4_t::k_sym_type);
@@ -267,15 +266,8 @@ void so_merge_impl_label_test::test_2n2nn_1(
     }
 
     const dimensions<2> &bidims2 = el2.get_labeling().get_block_index_dims();
-    std::vector<bool> rx(bidims2.get_size(), false);
+    std::vector<bool> rx(bidims2.get_size(), true);
 
-    index<2> idx;
-    for (size_t i = 0; i < 4; i++) {
-        idx[0] = i; idx[1] = 0;
-        rx[abs_index<2>(idx, bidims2).get_abs_index()] = true;
-        idx[0] = i; idx[1] = 1;
-        rx[abs_index<2>(idx, bidims2).get_abs_index()] = true;
-    }
     check_allowed(tns.c_str(), "el2", el2, rx);
 }
 
@@ -304,7 +296,7 @@ void so_merge_impl_label_test::test_2n2nn_2(const std::string &table_id,
         mask<4> m1; m1[0] = m1[1] = m1[2] = m1[3] = true;
         for (size_t i = 0; i < 4; i++) bl1.assign(m1, i, i);
         evaluation_rule r1;
-        evaluation_rule::label_group i1(1, 2);
+        evaluation_rule::label_set i1; i1.insert(2);
         std::vector<size_t> o1a(3), o1b(3);
         o1a[0] = 0; o1a[1] = 1;
         o1b[0] = 2; o1b[1] = 3;
@@ -378,7 +370,8 @@ void so_merge_impl_label_test::test_nmk_1(const std::string &table_id,
         for (size_t i = 0; i < 4; i++) bl1.assign(m1, i, i);
 
         evaluation_rule r1;
-        evaluation_rule::label_group i1a(1, 2), i1b(1, 3);
+        evaluation_rule::label_set i1a, i1b;
+        i1a.insert(2); i1b.insert(3);
         std::vector<size_t> o1a(3), o1b(4);
         o1a[0] = 0; o1a[1] = 1;
         o1b[0] = 2; o1b[1] = 3; o1b[2] = 4;
@@ -467,7 +460,7 @@ void so_merge_impl_label_test::test_nmk_2(const std::string &table_id,
         for (size_t i = 0; i < 4; i++) bl1.assign(m1, i, i);
 
         evaluation_rule r1;
-        evaluation_rule::label_group i1(1, 2);
+        evaluation_rule::label_set i1; i1.insert(2);
         std::vector<size_t> o1a(4), o1b(4);
         o1a[0] = 0; o1a[1] = 1; o1a[2] = 4;
         o1b[0] = 2; o1b[1] = 3; o1b[2] = 4;

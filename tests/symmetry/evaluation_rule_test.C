@@ -16,14 +16,15 @@ void evaluation_rule_test::test_1() throw(libtest::test_exception) {
 
     static const char *testname = "evaluation_rule_test::test_1()";
 
-    typedef evaluation_rule::label_group label_group;
+    typedef evaluation_rule::label_set label_set;
 
     try {
 
         evaluation_rule rules;
 
-        label_group i1(1, 0), i2(1, 1), i3(2, 0);
-        i3[1] = 1;
+        label_set i1, i2, i3;
+        i1.insert(0); i2.insert(1);
+        i3.insert(0); i3.insert(1);
         std::vector<size_t> o1(4, 0), o2(3, 0), o3(4, 0);
         o1[0] = 0; o1[1] = 1; o1[2] = 2; o1[3] = evaluation_rule::k_intrinsic;
         o2[0] = 1; o2[1] = 0; o2[2] = 2;
@@ -50,8 +51,10 @@ void evaluation_rule_test::test_1() throw(libtest::test_exception) {
                     fail_test(testname, __FILE__, __LINE__,
                             "Unexpected intrinsic labels");
 
-                for (size_t i = 0; i < cur.intr.size(); i++)
-                    if (cur.intr[i] != i1[i])
+                label_set::const_iterator it = cur.intr.begin();
+                label_set::const_iterator it1 = i1.begin();
+                for (; it != cur.intr.end(); it++, it1++)
+                    if ((*it) != (*it1))
                         fail_test(testname, __FILE__, __LINE__,
                                 "Unexpected intrinsic labels");
 
@@ -75,8 +78,10 @@ void evaluation_rule_test::test_1() throw(libtest::test_exception) {
                     fail_test(testname, __FILE__, __LINE__,
                             "Unexpected intrinsic labels");
 
-                for (size_t i = 0; i < cur.intr.size(); i++)
-                    if (cur.intr[i] != i2[i])
+                label_set::const_iterator it = cur.intr.begin();
+                label_set::const_iterator it2 = i2.begin();
+                for (; it != cur.intr.end(); it++, it2++)
+                    if ((*it) != (*it2))
                         fail_test(testname, __FILE__, __LINE__,
                                 "Unexpected intrinsic labels");
 
@@ -100,8 +105,10 @@ void evaluation_rule_test::test_1() throw(libtest::test_exception) {
                     fail_test(testname, __FILE__, __LINE__,
                             "Unexpected intrinsic labels");
 
-                for (size_t i = 0; i < cur.intr.size(); i++)
-                    if (cur.intr[i] != i3[i])
+                label_set::const_iterator it = cur.intr.begin();
+                label_set::const_iterator it3 = i3.begin();
+                for (; it != cur.intr.end(); it++, it3++)
+                    if ((*it) != (*it3))
                         fail_test(testname, __FILE__, __LINE__,
                                 "Unexpected intrinsic labels");
 
@@ -134,14 +141,15 @@ void evaluation_rule_test::test_2() throw(libtest::test_exception) {
 
     static const char *testname = "evaluation_rule_test::test_2()";
 
-    typedef evaluation_rule::label_group label_group;
+    typedef evaluation_rule::label_set label_set;
 
     try {
 
         evaluation_rule rules;
 
-        label_group i1(1, 0), i2(1, 1), i3(2, 0);
-        i3[1] = 1;
+        label_set i1, i2, i3;
+        i1.insert(0); i2.insert(1); i3.insert(0); i3.insert(1);
+
         std::vector<size_t> o1(4, 0), o2(3, 0), o3(4, 0);
         o1[0] = 0; o1[1] = 1; o1[2] = 2; o1[3] = evaluation_rule::k_intrinsic;
         o2[0] = 1; o2[1] = 0; o2[2] = 2;

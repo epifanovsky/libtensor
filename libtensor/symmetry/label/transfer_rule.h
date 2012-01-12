@@ -22,10 +22,10 @@ namespace libtensor {
 class transfer_rule : public timings<transfer_rule> {
 public:
     static const char *k_clazz;
-    typedef product_table_i::label_t label_t;
-    typedef product_table_i::label_group label_group;
 
 private:
+    typedef evaluation_rule::label_t label_t;
+    typedef evaluation_rule::label_set label_set;
     typedef evaluation_rule::rule_id rule_id;
     typedef evaluation_rule::basic_rule basic_rule;
     typedef std::map<rule_id, basic_rule> rule_list;
@@ -81,7 +81,7 @@ private:
 
     /** \brief Compare to intrinsic labels
      **/
-    static bool equal_intr(const label_group &i1, const label_group &i2);
+    static bool equal_intr(const label_set &i1, const label_set &i2);
 
     /** \brief Compare to rules products
      **/

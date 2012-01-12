@@ -48,7 +48,7 @@ void se_label_test::test_basic_1(
     const evaluation_rule::basic_rule &br1 = r1.get_rule(it);
     if (br1.intr.size() != 1)
         fail_test(tns.c_str(), __FILE__, __LINE__, "# br1.intr");
-    if (br1.intr[0] != 0)
+    if (br1.intr.count(0) == 0)
         fail_test(tns.c_str(), __FILE__, __LINE__, "br1.intr");
     if (br1.order.size() != 4)
         fail_test(tns.c_str(), __FILE__, __LINE__, "# br1.order");
@@ -72,7 +72,7 @@ void se_label_test::test_basic_1(
     const evaluation_rule::basic_rule &br2 = r2.get_rule(it);
     if (br2.intr.size() != 1)
         fail_test(tns.c_str(), __FILE__, __LINE__, "# br2.intr");
-    if (br2.intr[0] != 2)
+    if (br2.intr.count(2) == 0)
         fail_test(tns.c_str(), __FILE__, __LINE__, "br2.intr");
     if (br2.order.size() != 4)
         fail_test(tns.c_str(), __FILE__, __LINE__, "# br2.order");
@@ -88,17 +88,18 @@ void se_label_test::test_basic_1(
     if (it != r2.end())
         fail_test(tns.c_str(), __FILE__, __LINE__, "# rules");
 
-    evaluation_rule::label_group lg3(2, 0); lg3[1] = 2;
+    evaluation_rule::label_set lg3;
+    lg3.insert(0); lg3.insert(2);
     el.set_rule(lg3, p2, 2);
     const evaluation_rule &r3 = el.get_rule();
     it = r3.begin();
     const evaluation_rule::basic_rule &br3 = r3.get_rule(it);
     if (br3.intr.size() != 2)
         fail_test(tns.c_str(), __FILE__, __LINE__, "# br3.intr");
-    if (br3.intr[0] != 0)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br3.intr[0]");
-    if (br3.intr[1] != 2)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br3.intr[1]");
+    if (br3.intr.count(0) == 0)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "br3.intr");
+    if (br3.intr.count(2) == 0)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "br3.intr");
     if (br3.order.size() != 4)
         fail_test(tns.c_str(), __FILE__, __LINE__, "# br3.order");
     if (br3.order[0] != 1)
@@ -115,8 +116,8 @@ void se_label_test::test_basic_1(
 
 
     evaluation_rule r4ref;
-    evaluation_rule::label_group lg4a(2, 0), lg4b(1, 1);
-    lg4a[1] = 2;
+    evaluation_rule::label_set lg4a, lg4b;
+    lg4a.insert(0); lg4a.insert(2); lg4b.insert(1);
     std::vector<size_t> v4a(3,0), v4b(2,0); 
     v4a[0] = 1; v4a[1] = 0; v4a[2] = evaluation_rule::k_intrinsic;
     v4b[0] = 2; v4b[1] = evaluation_rule::k_intrinsic;
@@ -130,10 +131,10 @@ void se_label_test::test_basic_1(
     const evaluation_rule::basic_rule &br4a = r4.get_rule(it);
     if (br4a.intr.size() != 2)
         fail_test(tns.c_str(), __FILE__, __LINE__, "# br4a.intr");
-    if (br4a.intr[0] != 0)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br4a.intr[0]");
-    if (br4a.intr[1] != 2)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br4a.intr[1]");
+    if (br4a.intr.count(0) == 0)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "br4a.intr");
+    if (br4a.intr.count(2) == 0)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "br4a.intr");
     if (br4a.order.size() != 3)
         fail_test(tns.c_str(), __FILE__, __LINE__, "# br4a.order");
     if (br4a.order[0] != 1)
@@ -146,8 +147,8 @@ void se_label_test::test_basic_1(
     const evaluation_rule::basic_rule &br4b = r4.get_rule(it);
     if (br4b.intr.size() != 1)
         fail_test(tns.c_str(), __FILE__, __LINE__, "# br4b.intr");
-    if (br4b.intr[0] != 1)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br4b.intr[0]");
+    if (br4b.intr.count(1) == 0)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "br4b.intr");
     if (br4b.order.size() != 2)
         fail_test(tns.c_str(), __FILE__, __LINE__, "# br4b.order");
     if (br4b.order[0] != 2)
@@ -238,7 +239,7 @@ void se_label_test::test_allowed_2(
     evaluation_rule rule;
     std::vector<size_t> order(2, 0);
     order[1] = evaluation_rule::k_intrinsic;
-    evaluation_rule::label_group lg(1, 0);
+    evaluation_rule::label_set lg; lg.insert(0);
     evaluation_rule::rule_id rid = rule.add_rule(lg, order);
     rule.add_product(rid);
     el2.set_rule(rule);
@@ -283,7 +284,8 @@ void se_label_test::test_allowed_3(
     evaluation_rule r1, r2;
     std::vector<size_t> oa(2, 0), ob(2, 1);
     oa[1] = ob[1] = evaluation_rule::k_intrinsic;
-    evaluation_rule::label_group lga(1, 0), lgb(1, 1);
+    evaluation_rule::label_set lga, lgb;
+    lga.insert(0); lgb.insert(1);
     evaluation_rule::rule_id rid1a = r1.add_rule(lga, oa);
     evaluation_rule::rule_id rid1b = r1.add_rule(lgb, ob);
     evaluation_rule::rule_id rid2a = r2.add_rule(lga, oa);
@@ -412,7 +414,8 @@ void se_label_test::test_permute_2(
     evaluation_rule r1, r2;
     std::vector<size_t> oa(2, 0), ob(2, 1);
     oa[1] = ob[1] = evaluation_rule::k_intrinsic;
-    evaluation_rule::label_group lga(1, 0), lgb(1, 1);
+    evaluation_rule::label_set lga, lgb;
+    lga.insert(0); lgb.insert(1);
     evaluation_rule::rule_id rid1a = r1.add_rule(lga, oa);
     evaluation_rule::rule_id rid1b = r1.add_rule(lgb, ob);
     evaluation_rule::rule_id rid2a = r2.add_rule(lga, oa);
