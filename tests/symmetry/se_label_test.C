@@ -2,7 +2,6 @@
 #include <libtensor/btod/transf_double.h>
 #include <libtensor/core/abs_index.h>
 #include <libtensor/symmetry/label/point_group_table.h>
-#include <libtensor/symmetry/se_label.h>
 #include "se_label_test.h"
 
 namespace libtensor {
@@ -12,7 +11,12 @@ void se_label_test::perform() throw(libtest::test_exception) {
     std::string s6 = setup_s6_symmetry();
     try {
 
-        test_1(s6);
+         test_basic_1(s6);
+         test_allowed_1(s6);
+         test_allowed_2(s6);
+         test_allowed_3(s6);
+         test_permute_1(s6);
+         test_permute_2(s6);
 
     } catch (libtest::test_exception) {
         product_table_container::get_instance().erase(s6);
@@ -22,12 +26,14 @@ void se_label_test::perform() throw(libtest::test_exception) {
     product_table_container::get_instance().erase(s6);
 }
 
-/** \test Test setting evaluation rules
+/** \test Tests setting evaluation rules
  **/
 void se_label_test::test_basic_1(
-        const std::string &table_id) throw(libtest::test_exception) {
+    const std::string &table_id) throw(libtest::test_exception) {
 
-    std::string tns("se_label_test::test_basic_1(" + table_id + ")");
+    std::ostringstream tnss;
+    tnss << "se_label_test::test_basic_1(" << table_id << ")";
+    std::string tns = tnss.str();
 
     index<3> i1, i2;
     i2[0] = 1; i2[1] = 1; i2[2] = 1;
@@ -84,8 +90,8 @@ void se_label_test::test_basic_1(
     if (it != r2.end())
         fail_test(tns.c_str(), __FILE__, __LINE__, "# rules");
 
-    label_group lg(2, 0); lg[1] = 2;
-    el.set_rule(lg, p2, 2);
+    evaluation_rule::label_group lg3(2, 0); lg3[1] = 2;
+    el.set_rule(lg3, p2, 2);
     const evaluation_rule &r3 = el.get_rule();
     it = r3.begin();
     const evaluation_rule::label_group &intr3 = r3.get_intrinsic(it);
@@ -111,416 +117,339 @@ void se_label_test::test_basic_1(
         fail_test(tns.c_str(), __FILE__, __LINE__, "# rules");
 
 
-    label_group lg(2, 0);
-    lg[1] = 2;
-    el.set_rule(lg, p2, 0);
+    evaluation_rule r4ref;
+    evaluation_rule::label_group lg4a(2, 0), lg4b(1, 1);
+    lg4a[1] = 2;
+    std::vector<size_t> v4a(3,0), v4b(2,0); 
+    v4a[0] = 1; v4a[1] = 0; v4a[2] = evaluation_rule::k_intrinsic;
+    v4b[0] = 2; v4b[1] = evaluation_rule::k_intrinsic;
+    evaluation_rule::rule_id rid4a = r4ref.add_rule(lg4a, v4a);
+    evaluation_rule::rule_id rid4b = r4ref.add_rule(lg4b, v4b);
+    r4ref.add_product(rid4a);
+    r4ref.add_to_product(0, rid4b);
+    el.set_rule(r4ref);
     const evaluation_rule &r4 = el.get_rule();
-
-
+    it = r4.begin();
+    const evaluation_rule::label_group &intr4a = r4.get_intrinsic(it);
+    const std::vector<size_t> &o4a = r4.get_eval_order(it);
+    if (intr4a.size() != 2)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "# intr4a");
+    if (intr4a[0] != 0)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "intr4a[0]");
+    if (intr4a[1] != 2)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "intr4a[1]");
+    if (o4a.size() != 3)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "# o3");
+    if (o4a[0] != 1)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "o3[0]");
+    if (o4a[1] != 0)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "o3[1]");
+    if (o4a[2] != evaluation_rule::k_intrinsic)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "o3[2]");
+    it++;
+    const evaluation_rule::label_group &intr4b = r4.get_intrinsic(it);
+    const std::vector<size_t> &o4b = r4.get_eval_order(it);
+    if (intr4b.size() != 1)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "# intr4b");
+    if (intr4b[0] != 1)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "intr4b[0]");
+    if (o4b.size() != 2)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "# o4b");
+    if (o4b[0] != 2)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "o4b[0]");
+    if (o4b[1] != evaluation_rule::k_intrinsic)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "o4b[1]");
+    it++;
+    if (it != r4.end())
+        fail_test(tns.c_str(), __FILE__, __LINE__, "# rules");
 }
 
-/**	\test Two blocks, all labeled, basic rules
+/** \test Four blocks, all labeled, different index types, basic rules only
  **/
-void se_label_test::test_1() throw(libtest::test_exception) {
-
-    const char *testname = "se_label_test::test_1()";
+void se_label_test::test_allowed_1(
+    const std::string &table_id) throw(libtest::test_exception) {
+    
+    std::ostringstream tnss;
+    tnss << "se_label_test::test_allowed_1(" << table_id << ")";
+    std::string tns = tnss.str();
 
     index<2> i1, i2;
-    i2[0] = 1; i2[1] = 1;
+    i2[0] = 3; i2[1] = 3;
     dimensions<2> bidims(index_range<2>(i1, i2));
-
-    se_label<2, double> ela(bidims, table_id);
-    block_labeling<2> bl = ela.get_labeling();
-
-    mask<2> m; m[0] = m[1] = true;
-    bl.assign(m, 0, 0);
-    bl.assign(m, 0, 2);
-
-    se_label<2, double> elb(ela), elc(ela), eld(ela);
-
-    ela.set_rule(0);
-    elb.set_rule(1);
-    elc.set_rule(2);
-    elc.set_rule(3);
-
-
-    std::vector<bool> exa(4, false), exc(4, false), ex(4, false);
-    exa[0] = exa[3] = true;
-    exc[1] = exc[2] = true;
-
-    check_allowed(tns.c_str(), ela, exa);
-    check_allowed(tns.c_str(), elb, ex);
-    check_allowed(tns.c_str(), elc, exc);
-    check_allowed(tns.c_str(), eld, ex);
-}
-
-
-/**	\test One subset, full mask
- **/
-void se_label_test::test_2() throw(libtest::test_exception) {
-
-    static const char *testname = "se_label_test::test_set_1()";
-
-    try {
-
-        index<2> i1, i2;
-        i2[0] = 3; i2[1] = 5;
-        block_index_space<2> bis(dimensions<2>(index_range<2>(i1, i2)));
-        mask<2> m01, m10, m11;
-        m10[0] = true; m01[1] = true;
-        bis.split(m01, 1);
-        bis.split(m01, 3);
-        bis.split(m01, 5);
-        bis.split(m10, 1);
-        bis.split(m10, 2);
-        bis.split(m10, 3);
-
-        dimensions<2> bidims = bis.get_block_index_dims();
-        se_label<2, double> elem1(bidims);
-
-        label_set<2> &subset1 = elem1.create_subset(table_id);
-        for (size_t i = 0; i < 4; i++) subset1.assign(m10, i, i);
-        subset1.assign(m01, 0, 0); // ag
-        subset1.assign(m01, 1, 2); // au
-        subset1.assign(m01, 2, 1); // eg
-        subset1.assign(m01, 3, 3); // eu
-        subset1.add_intrinsic(0);
-
-        size_t nss = 0;
-        for (se_label<2, double>::const_iterator it = elem1.begin();
-                it != elem1.end(); it++) nss++;
-        if (nss != 1) {
-            fail_test(testname, __FILE__, __LINE__,
-                    "Wrong number of subsets.");
-        }
-
-        se_label<2, double> elem2(elem1), elem3(elem1), elem4(elem1);
-        nss = 0;
-        for (se_label<2, double>::const_iterator it = elem2.begin();
-                it != elem2.end(); it++) nss++;
-        if (nss != 1) {
-            fail_test(testname, __FILE__, __LINE__,
-                    "Wrong number of subsets.");
-        }
-
-        se_label<2, double>::iterator it2 = elem2.begin();
-        label_set<2> &subset2 = elem2.get_subset(it2);
-        label_set<2> &subset3 = elem3.get_subset(elem3.begin());
-        label_set<2> &subset4 = elem4.get_subset(elem4.begin());
-        subset2.add_intrinsic(1);
-        subset3.add_intrinsic(1);
-        subset3.add_intrinsic(2);
-        subset3.add_intrinsic(3);
-        subset4.clear_intrinsic();
-
-        std::vector<bool> r1(bidims.get_size(), false);
-        std::vector<bool> r2(bidims.get_size(), false);
-        r1[0] = r1[6] = r1[9] = r1[15] = true;
-        r2[0] = r2[2] = r2[4] = r2[6] =
-                r2[9] = r2[11] = r2[13] = r2[15] = true;
-
-        abs_index<2> ai(bidims);
-        do {
-            if (elem1.is_allowed(ai.get_index()) != r1[ai.get_abs_index()]) {
-                std::ostringstream oss;
-                oss << (r1[ai.get_abs_index()] ? "!" : "") <<
-                        "elem1.is_allowed(" << ai.get_index() << ")";
-                fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
-            }
-            if (elem2.is_allowed(ai.get_index()) != r2[ai.get_abs_index()]) {
-                std::ostringstream oss;
-                oss << (r2[ai.get_abs_index()] ? "!" : "") <<
-                        "elem2.is_allowed(" << ai.get_index() << ")";
-                fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
-            }
-            if (! elem3.is_allowed(ai.get_index())) {
-                std::ostringstream oss;
-                oss << "! elem3.is_allowed(" << ai.get_index() << ")";
-                fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
-            }
-            if (elem4.is_allowed(ai.get_index())) {
-                std::ostringstream oss;
-                oss << "elem4.is_allowed(" << ai.get_index() << ")";
-                fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
-            }
-
-        } while (ai.inc());
-
-    } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
-    }
-}
-
-
-/**	\test One subset, partial evaluation mask
- **/
-void se_label_test::test_set_2() throw(libtest::test_exception) {
-
-    static const char *testname = "se_label_test::test_set_2()";
-
-    try {
-
-        index<2> i1, i2;
-        i2[0] = 3; i2[1] = 5;
-        block_index_space<2> bis(dimensions<2>(index_range<2>(i1, i2)));
+    se_label<2, double> el1(bidims, table_id);
+    
+    { // Add the labels
         mask<2> m01, m10;
         m10[0] = true; m01[1] = true;
-        bis.split(m01, 1);
-        bis.split(m01, 3);
-        bis.split(m01, 5);
-        bis.split(m10, 1);
-        bis.split(m10, 2);
-        bis.split(m10, 3);
+        block_labeling<2> &bl = el1.get_labeling();
 
-        dimensions<2> bidims = bis.get_block_index_dims();
-        se_label<2, double> elem1(bidims);
-
-        label_set<2> &subset1 = elem1.create_subset(table_id);
-        subset1.assign(m01, 0, 0); // ag
-        subset1.assign(m01, 1, 2); // au
-        subset1.assign(m01, 2, 1); // eg
-        subset1.assign(m01, 3, 3); // eu
-        subset1.add_intrinsic(0);
-        subset1.set_mask(m01);
-
-        se_label<2, double> elem2(elem1), elem3(elem1), elem4(elem1);
-        label_set<2> &subset2 = elem2.get_subset(elem2.begin());
-        label_set<2> &subset3 = elem3.get_subset(elem3.begin());
-        label_set<2> &subset4 = elem4.get_subset(elem4.begin());
-        subset2.add_intrinsic(1);
-        subset3.add_intrinsic(1);
-        subset3.add_intrinsic(2);
-        subset3.add_intrinsic(3);
-        subset4.clear_intrinsic();
-
-        std::vector<bool> r1(bidims.get_size(), false);
-        std::vector<bool> r2(bidims.get_size(), false);
-        r1[0] = r1[4] = r1[8] = r1[12] = true;
-        r2[0] = r2[2] = r2[4] = r2[6] =
-                r2[8] = r2[10] = r2[12] = r2[14] = true;
-
-        abs_index<2> ai(bidims);
-        do {
-            if (elem1.is_allowed(ai.get_index()) != r1[ai.get_abs_index()]) {
-                std::ostringstream oss;
-                oss << (r1[ai.get_abs_index()] ? "!" : "") <<
-                        " elem1.is_allowed(" << ai.get_index() << ")";
-                fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
-            }
-            if (elem2.is_allowed(ai.get_index()) != r2[ai.get_abs_index()]) {
-                std::ostringstream oss;
-                oss << (r2[ai.get_abs_index()] ? "!" : "") <<
-                        " elem2.is_allowed(" << ai.get_index() << ")";
-                fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
-            }
-            if (! elem3.is_allowed(ai.get_index())) {
-                std::ostringstream oss;
-                oss << "! elem3.is_allowed(" << ai.get_index() << ")";
-                fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
-            }
-            if (elem4.is_allowed(ai.get_index())) {
-                std::ostringstream oss;
-                oss << "elem4.is_allowed(" << ai.get_index() << ")";
-                fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
-            }
-
-        } while (ai.inc());
-
-    } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        for (size_t i = 0; i < 4; i++) bl.assign(m10, i, i);
+        bl.assign(m01, 0, 0); // ag
+        bl.assign(m01, 1, 2); // au
+        bl.assign(m01, 2, 1); // eg
+        bl.assign(m01, 3, 3); // eu
     }
+
+    se_label<2, double> el2(el1), el3(el1), el4(el1);
+    
+    el1.set_rule(0);
+    el2.set_rule(1);
+    el3.set_rule(2);
+    el4.set_rule(3);
+
+    std::vector<bool> ex1(bidims.get_size(), false);
+    std::vector<bool> ex2(bidims.get_size(), false);
+    std::vector<bool> ex3(bidims.get_size(), false);
+    std::vector<bool> ex4(bidims.get_size(), false);
+
+    ex1[0] = ex1[6] = ex1[9] = ex1[15] = true;
+    ex2[2] = ex2[4] = ex2[6] = ex2[11] = ex2[13] = ex2[15] = true;
+    ex3[1] = ex3[7] = ex3[8] = ex3[14] = true;
+    ex4[3] = ex4[5] = ex4[7] = ex4[10] = ex4[12] = ex4[14] = true;
+
+    check_allowed(tns.c_str(), "el1", el1, ex1);
+    check_allowed(tns.c_str(), "el2", el2, ex2);
+    check_allowed(tns.c_str(), "el3", el3, ex3);
+    check_allowed(tns.c_str(), "el4", el4, ex4);
 }
 
-/**	\test Two subsets, no unmasked dimensions
+/** \test Four blocks, one dim unlabeled, rules including and not including
+        unlabeled dimension
  **/
-void se_label_test::test_set_3() throw(libtest::test_exception) {
+void se_label_test::test_allowed_2(
+    const std::string &table_id) throw(libtest::test_exception) {
+    
+    std::ostringstream tnss;
+    tnss << "se_label_test::test_allowed_2(" << table_id << ")";
+    std::string tns = tnss.str();
 
-    static const char *testname = "se_label_test::test_set_3()";
+    index<2> i1, i2;
+    i2[0] = 3; i2[1] = 3;
+    dimensions<2> bidims(index_range<2>(i1, i2));
+    se_label<2, double> el1(bidims, table_id);
 
-    try {
-
-        index<2> i1, i2;
-        i2[0] = 3; i2[1] = 5;
-        block_index_space<2> bis(dimensions<2>(index_range<2>(i1, i2)));
+    { // Add the labels 
+        block_labeling<2> &bl = el1.get_labeling();
         mask<2> m01, m10;
         m10[0] = true; m01[1] = true;
-        bis.split(m01, 1);
-        bis.split(m01, 3);
-        bis.split(m01, 5);
-        bis.split(m10, 1);
-        bis.split(m10, 2);
-        bis.split(m10, 3);
 
-        dimensions<2> bidims = bis.get_block_index_dims();
-        se_label<2, double> elem1(bidims);
-        label_set<2> &subset1a = elem1.create_subset(table_id);
-        subset1a.assign(m01, 0, 0); // ag
-        subset1a.assign(m01, 1, 2); // au
-        subset1a.assign(m01, 2, 1); // eg
-        subset1a.assign(m01, 3, 3); // eu
-        subset1a.add_intrinsic(0);
-        subset1a.set_mask(m01);
-
-        label_set<2> &subset1b = elem1.create_subset(table_id);
-        for (size_t i = 0; i < 4; i++) subset1b.assign(m10, i, i);
-        subset1b.add_intrinsic(1);
-        subset1b.set_mask(m10);
-
-        std::vector<bool> r1(bidims.get_size(), false);
-        r1[0] = r1[4] = r1[5] = r1[6] = r1[7] = r1[8] = r1[12] = true;
-
-        abs_index<2> ai(bidims);
-        do {
-            if (elem1.is_allowed(ai.get_index()) != r1[ai.get_abs_index()]) {
-                std::ostringstream oss;
-                oss << (r1[ai.get_abs_index()] ? "!" : "") <<
-                        "elem1.is_allowed(" << ai.get_index() << ")";
-                fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
-            }
-
-        } while (ai.inc());
-
-    } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        for (size_t i = 0; i < 4; i++) bl.assign(m10, i, i);
     }
+
+    se_label<2, double> el2(el1);        
+
+    el1.set_rule(0);
+
+    evaluation_rule rule;
+    std::vector<size_t> order(2, 0);
+    order[1] = evaluation_rule::k_intrinsic;
+    evaluation_rule::label_group lg(1, 0);
+    evaluation_rule::rule_id rid = rule.add_rule(lg, order);
+    rule.add_product(rid);
+    el2.set_rule(rule);
+
+    std::vector<bool> ex1(bidims.get_size(), true);
+    std::vector<bool> ex2(bidims.get_size(), false);
+
+    ex2[0] = ex2[1] = ex2[2] = ex2[3] = true;
+
+    check_allowed(tns.c_str(), "el1", el1, ex1);
+    check_allowed(tns.c_str(), "el2", el2, ex2);
 }
 
-/**	\test Two subsets, unmasked dimensions
+/** \test Four blocks, all dims labeled, composite rules
  **/
-void se_label_test::test_set_4() throw(libtest::test_exception) {
+void se_label_test::test_allowed_3(
+    const std::string &table_id) throw(libtest::test_exception) {
+    
+    std::ostringstream tnss;
+    tnss << "se_label_test::test_allowed_3(" << table_id << ")";
+    std::string tns = tnss.str();
 
-    static const char *testname = "se_label_test::test_set_4()";
+    index<2> i1, i2;
+    i2[0] = 3; i2[1] = 3;
+    dimensions<2> bidims(index_range<2>(i1, i2));
+    se_label<2, double> el1(bidims, table_id);
 
-    try {
+    { // Add the labels
+        block_labeling<2> &bl = el1.get_labeling();
+        mask<2> m01, m10;
+        m10[0] = true; m01[1] = true;
 
-        index<3> i1, i2;
-        i2[0] = 3; i2[1] = 3; i2[2] = 5;
-        block_index_space<3> bis(dimensions<3>(index_range<3>(i1, i2)));
-        mask<3> m001, m110, m100;
-        m100[0] = m110[0] = m110[1] = m001[2] = true;
-        bis.split(m110, 1);
-        bis.split(m110, 2);
-        bis.split(m110, 3);
-        bis.split(m001, 1);
-        bis.split(m001, 3);
-        bis.split(m001, 5);
-
-        dimensions<3> bidims = bis.get_block_index_dims();
-        se_label<3, double> elem1(bidims);
-        label_set<3> &subset1a = elem1.create_subset(table_id);
-        subset1a.assign(m001, 0, 0); // ag
-        subset1a.assign(m001, 1, 2); // au
-        subset1a.assign(m001, 2, 1); // eg
-        subset1a.assign(m001, 3, 3); // eu
-        subset1a.add_intrinsic(0);
-        subset1a.set_mask(m001);
-
-        label_set<3> &subset1b = elem1.create_subset(table_id);
-        for (size_t i = 0; i < 4; i++) subset1b.assign(m100, i, i);
-        subset1b.add_intrinsic(1);
-        subset1b.set_mask(m110);
-
-        abs_index<3> ai(bidims);
-        do {
-            if (! elem1.is_allowed(ai.get_index())) {
-                std::ostringstream oss;
-                oss << "! elem1.is_allowed(" << ai.get_index() << ")";
-                fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
-            }
-
-        } while (ai.inc());
-
-    } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        for (size_t i = 0; i < 4; i++) bl.assign(m10, i, i);
+        bl.assign(m01, 0, 0); // ag
+        bl.assign(m01, 1, 2); // au
+        bl.assign(m01, 2, 1); // eg
+        bl.assign(m01, 3, 3); // eu
     }
 
+    se_label<2, double> el2(el1);        
+
+    evaluation_rule r1, r2;
+    std::vector<size_t> oa(2, 0), ob(2, 1);
+    oa[1] = ob[1] = evaluation_rule::k_intrinsic;
+    evaluation_rule::label_group lga(1, 0), lgb(1, 1);
+    evaluation_rule::rule_id rid1a = r1.add_rule(lga, oa);
+    evaluation_rule::rule_id rid1b = r1.add_rule(lgb, ob);
+    evaluation_rule::rule_id rid2a = r2.add_rule(lga, oa);
+    evaluation_rule::rule_id rid2b = r2.add_rule(lgb, ob);
+    r1.add_product(rid1a);
+    r1.add_to_product(0, rid1b);
+    r2.add_product(rid2a);
+    r2.add_product(rid2b);
+
+    el1.set_rule(r1);
+    el2.set_rule(r2);
+
+    std::vector<bool> ex1(bidims.get_size(), false);
+    std::vector<bool> ex2(bidims.get_size(), false);
+
+    ex1[2] = true;
+    ex2[0] = ex2[1] = ex2[2] = ex2[3] = 
+        ex2[6] = ex2[10] = ex2[14] = true;
+
+    check_allowed(tns.c_str(), "el1", el1, ex1);
+    check_allowed(tns.c_str(), "el2", el2, ex2);
 }
 
-/**	\test Two subsets, no unmasked dimensions, permutation
+/** \test Four blocks, all labeled, different index types, basic rules only,
+        permute
  **/
-void se_label_test::test_permute() throw(libtest::test_exception) {
+void se_label_test::test_permute_1(
+    const std::string &table_id) throw(libtest::test_exception) {
+    
+    std::ostringstream tnss;
+    tnss << "se_label_test::test_permute_1(" << table_id << ")";
+    std::string tns = tnss.str();
 
-    static const char *testname = "se_label_test::test_permute()";
+    index<3> i1, i2;
+    i2[0] = 3; i2[1] = 3; i2[2] = 3;
+    dimensions<3> bidims(index_range<3>(i1, i2));
+    se_label<3, double> el1(bidims, table_id);
 
-    try {
+    {
+        block_labeling<3> &bl = el1.get_labeling();
+        mask<3> m011, m100;
+        m100[0] = true; m011[1] = true; m011[2] = true;
 
-        index<4> i1, i2;
-        i2[0] = 3; i2[1] = 3; i2[2] = 5; i2[3] = 5;
-        block_index_space<4> bis(dimensions<4>(index_range<4>(i1, i2)));
-        mask<4> m0001, m0011, m0100, m0101, m1010, m1100;
-        m0100[1] = true; m0001[3] = true;
-        m0101[1] = true; m0101[3] = true;
-        m1010[0] = true; m1010[2] = true;
-        m0011[2] = true; m0011[3] = true;
-        m1100[0] = true; m1100[1] = true;
-        bis.split(m1100, 1);
-        bis.split(m1100, 2);
-        bis.split(m1100, 3);
-        bis.split(m0011, 1);
-        bis.split(m0011, 3);
-        bis.split(m0011, 5);
-
-        dimensions<4> bidims = bis.get_block_index_dims();
-        se_label<4, double> elem1(bidims);
-
-        label_set<4> &subset1a = elem1.create_subset(table_id);
-        label_set<4> &subset1b = elem1.create_subset(table_id);
-
-        // assign labels
-        for (size_t i = 0; i < 4; i++) {
-            subset1a.assign(m0001, i, i);
-            subset1b.assign(m1010, i, i);
-        }
-
-        // assign different labels (two label types)
-        subset1a.assign(m0100, 0, 0);
-        subset1a.assign(m0100, 1, 2);
-        subset1a.assign(m0100, 2, 3);
-        subset1a.assign(m0100, 3, 1);
-
-        subset1a.add_intrinsic(0);
-        subset1b.add_intrinsic(1);
-        subset1a.set_mask(m0101);
-        subset1b.set_mask(m1010);
-
-        permutation<4> p; p.permute(0, 1).permute(1, 3);
-        elem1.permute(p);
-        bidims.permute(p);
-
-        std::vector<bool> r1(bidims.get_size(), false);
-        for (size_t i = 0; i < 4; i++) {
-            for (size_t j = 0; j < 4; j++) {
-                r1[i *  4 + j           ] = r1[i *  4 + j      +  96] = true;
-                r1[i *  4 + j      + 176] = r1[i *  4 + j      + 208] = true;
-                r1[i * 64 + j * 16 +   4] = true;
-                r1[i * 64 + j * 16 +   1] = r1[i * 64 + j * 16 +   5] = true;
-                r1[i * 64 + j * 16 +  14] = true;
-                r1[i * 64 + j * 16 +  11] = r1[i * 64 + j * 16 +  15] = true;
-            }
-        }
-
-        abs_index<4> ai(bidims);
-        do {
-            if (elem1.is_allowed(ai.get_index()) != r1[ai.get_abs_index()]) {
-                std::ostringstream oss;
-                oss << (r1[ai.get_abs_index()] ? "!" : "") <<
-                        "elem1.is_allowed(" << ai.get_index() << ")";
-                fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
-            }
-
-        } while (ai.inc());
-
-    } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        for (size_t i = 0; i < 4; i++) bl.assign(m100, i, i);
+        bl.assign(m011, 0, 0); // ag
+        bl.assign(m011, 1, 2); // au
+        bl.assign(m011, 2, 1); // eg
+        bl.assign(m011, 3, 3); // eu
     }
 
+    se_label<3, double> el2(el1), el3(el1), el4(el1);
+    
+    el1.set_rule(0);
+    el2.set_rule(1);
+    el3.set_rule(2);
+    el4.set_rule(3);
+
+    permutation<3> p1, p2; 
+    p1.permute(0, 1); p2.permute(0, 1).permute(1, 2);
+
+    el1.permute(p1);
+    el2.permute(p2);
+    el3.permute(p2);
+    el4.permute(p1);
+
+    std::vector<bool> ex1(bidims.get_size(), false);
+    std::vector<bool> ex2(bidims.get_size(), false);
+    std::vector<bool> ex3(bidims.get_size(), false);
+    std::vector<bool> ex4(bidims.get_size(), false);
+
+    ex1[0] = ex1[6] = ex1[9] = ex1[15] = 
+        ex1[17] = ex1[23] = ex1[24] = ex1[30] = 
+        ex1[34] = ex1[36] = ex1[38] = ex1[43] = ex1[45] = ex1[47] = 
+        ex1[51] = ex1[53] = ex1[55] = ex1[58] = ex1[60] = ex1[62] = true;
+    ex2[1] = ex2[7] = ex2[8] = ex2[9] = ex2[14] = ex2[15] = 
+        ex2[19] = ex2[21] = ex2[26] = ex2[27] = ex2[28] = ex2[29] = 
+        ex2[32] = ex2[33] = ex2[38] = ex2[39] = 
+        ex2[40] = ex2[41] = ex2[46] = ex2[47] = 
+        ex2[50] = ex2[51] = ex2[52] = ex2[53] = 
+        ex2[58] = ex2[59] = ex2[60] = ex2[61] = true;
+    ex3[2] = ex3[4] = ex3[11] = ex3[13] = 
+        ex3[16] = ex3[22] = ex3[25] = ex3[31] = 
+        ex3[35] = ex3[37] = ex3[42] = ex3[43] = ex3[44] = ex3[45] = 
+        ex3[49] = ex3[55] = ex3[56] = ex3[57] = ex3[62] = ex3[63] = true;
+    ex4[3] = ex4[5] = ex4[7] = ex4[10] = ex4[12] = ex4[14] = 
+        ex4[18] = ex4[20] = ex4[22] = ex4[27] = ex4[29] = ex4[31] = 
+        ex4[33] = ex4[35] = ex4[37] = ex4[39] = 
+        ex4[40] = ex4[42] = ex4[44] = ex4[46] = 
+        ex4[48] = ex4[50] = ex4[52] = ex4[54] = 
+        ex4[57] = ex4[59] = ex4[61] = ex4[63] = true;
+
+    check_allowed(tns.c_str(), "el1", el1, ex1);
+    check_allowed(tns.c_str(), "el2", el2, ex2);
+    check_allowed(tns.c_str(), "el3", el3, ex3);
+    check_allowed(tns.c_str(), "el4", el4, ex4);
+}
+
+/** \test Four blocks, all dims labeled, composite rules, permuted
+ **/
+void se_label_test::test_permute_2(
+    const std::string &table_id) throw(libtest::test_exception) {
+    
+    std::ostringstream tnss;
+    tnss << "se_label_test::test_permute_2(" << table_id << ")";
+    std::string tns = tnss.str();
+
+    index<2> i1, i2;
+    i2[0] = 3; i2[1] = 3;
+    dimensions<2> bidims(index_range<2>(i1, i2));
+    se_label<2, double> el1(bidims, table_id);
+
+    { // Add the labels
+        block_labeling<2> &bl = el1.get_labeling();
+        mask<2> m01, m10;
+        m10[0] = true; m01[1] = true;
+
+        for (size_t i = 0; i < 4; i++) bl.assign(m10, i, i);
+        bl.assign(m01, 0, 0); // ag
+        bl.assign(m01, 1, 2); // au
+        bl.assign(m01, 2, 1); // eg
+        bl.assign(m01, 3, 3); // eu
+    }
+   
+    se_label<2, double> el2(el1);        
+
+    evaluation_rule r1, r2;
+    std::vector<size_t> oa(2, 0), ob(2, 1);
+    oa[1] = ob[1] = evaluation_rule::k_intrinsic;
+    evaluation_rule::label_group lga(1, 0), lgb(1, 1);
+    evaluation_rule::rule_id rid1a = r1.add_rule(lga, oa);
+    evaluation_rule::rule_id rid1b = r1.add_rule(lgb, ob);
+    evaluation_rule::rule_id rid2a = r2.add_rule(lga, oa);
+    evaluation_rule::rule_id rid2b = r2.add_rule(lgb, ob);
+    r1.add_product(rid1a);
+    r1.add_to_product(0, rid1b);
+    r2.add_product(rid2a);
+    r2.add_product(rid2b);
+
+    el1.set_rule(r1);
+    el2.set_rule(r2);
+
+    permutation<2> p; p.permute(0, 1);
+    el1.permute(p);
+    el2.permute(p);
+
+    std::vector<bool> ex1(bidims.get_size(), false);
+    std::vector<bool> ex2(bidims.get_size(), false);
+
+    ex1[8] = true;
+    ex2[0] = ex2[4] = ex2[8] = ex2[12] = 
+        ex2[9] = ex2[10] = ex2[11] = true;
+
+    check_allowed(tns.c_str(), "el1", el1, ex1);
+    check_allowed(tns.c_str(), "el2", el2, ex2);
 }
 
 /** \brief Setup the product table for S6 point group symmetry
 
      \return Table ID
  **/
-std::string se_label_test::setup_s6_symmetry() const {
+std::string se_label_test::setup_s6_symmetry() {
 
     try {
 
@@ -546,11 +475,14 @@ std::string se_label_test::setup_s6_symmetry() const {
         fail_test("se_label_test::setup_s6_symmetry()", __FILE__, __LINE__,
                 e.what());
     }
+
+    return "s6";
 }
 
 template<size_t N>
-void check_allowed(const char *testname,
-        const se_label<N, double> &se, const std::vector<bool> &expected) {
+void se_label_test::check_allowed(const char *testname, const char *sename,
+        const se_label<N, double> &se, const std::vector<bool> &expected) 
+    throw(libtest::test_exception) {
 
     const block_labeling<N> &bl = se.get_labeling();
     const dimensions<N> &bidims = bl.get_block_index_dims();
@@ -561,10 +493,10 @@ void check_allowed(const char *testname,
     abs_index<N> ai(bidims);
     do {
 
-        if (se.is_allowed(ai.get_index()) == expected[ai.get_abs_index()]) {
+        if (se.is_allowed(ai.get_index()) != expected[ai.get_abs_index()]) {
             std::ostringstream oss;
             oss << (expected[ai.get_abs_index()] ? "!" : "")
-                    << "se.is_allowed(" << ai.get_index() << ")";
+                << sename << ".is_allowed(" << ai.get_index() << ")";
             fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
         }
 

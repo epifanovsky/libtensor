@@ -13,16 +13,16 @@
 
 namespace libtensor {
 
-/**	\brief Symmetry element for labels assigned to %tensor blocks
-	\tparam N Symmetry cardinality (%tensor order).
-	\tparam T Tensor element type.
+/** \brief Symmetry element for labels assigned to %tensor blocks
+    \tparam N Symmetry cardinality (%tensor order).
+    \tparam T Tensor element type.
 
-	This %symmetry element establishes a set of allowed blocks on the basis of
-	block labels along each dimension, an evaluation rule for block labels and
-	intrinsic labels, and a product table.
+    This %symmetry element establishes a set of allowed blocks on the basis of
+    block labels along each dimension, an evaluation rule for block labels and
+    intrinsic labels, and a product table.
 
-	The labeling of the blocks in each dimension is setup via the class
-	block_labeling.
+    The labeling of the blocks in each dimension is setup via the class
+    block_labeling.
 
     Allowed blocks are determined as follows from the evaluation rule:
     - All blocks are forbidden, if the rule setup of the evaluation rule is
@@ -90,7 +90,7 @@ public:
      **/
     void set_rule(const label_t &intr,
             const permutation<N> &p = permutation<N>(),
-            size_t pos = N + 1) {
+            size_t pos = N) {
 
         set_rule(label_group(1, intr), p, pos);
     }
@@ -104,7 +104,7 @@ public:
      **/
     void set_rule(const label_group &intr,
             const permutation<N> &p = permutation<N>(),
-            size_t pos = N + 1);
+            size_t pos = N);
 
     /** \brief Set the evaluation rule to a composite rule.
         \param rule Composite evaluation rule.
@@ -206,7 +206,7 @@ void se_label<N, T>::set_rule(const label_group &intr,
     std::vector<size_t> order(N + 1);
     for (size_t i = 0; i < pos; i++) order[i] = tmp_order[i];
     order[pos] = evaluation_rule::k_intrinsic;
-    for (size_t i = pos + 1; i < N + 1; i++) order[i + 1] = tmp_order[i];
+    for (size_t i = pos; i < N; i++) order[i + 1] = tmp_order[i];
 
     // Clear the old evaluation rule
     m_rule.clear_all();
@@ -251,14 +251,15 @@ void se_label<N, T>::permute(const permutation<N> &p) {
 
     m_blk_labels.permute(p);
 
-    sequence<N> dims;
+    sequence<N, size_t> dims;
     for(size_t i = 0; i < N; i++) dims[i] = i;
     p.apply(dims);
 
     for (evaluation_rule::rule_iterator it = m_rule.begin();
             it != m_rule.end(); it++) {
 
-        std::vector<size_t> &order = m_rule.get_eval_order(it);
+        std::vector<size_t> &order = 
+            m_rule.get_eval_order(m_rule.get_rule_id(it));
         for (size_t i = 0; i < order.size(); i++) {
             if (order[i] == evaluation_rule::k_intrinsic) continue;
 
@@ -280,7 +281,7 @@ bool se_label<N, T>::is_allowed(const index<N> &idx) const {
     static const char *method = "is_allowed(const index<N> &)";
 
 #ifdef LIBTENSOR_DEBUG
-    const dimensions<N> bidims = m_blk_labels.get_block_index_dims();
+    const dimensions<N> &bidims = m_blk_labels.get_block_index_dims();
     // Test, if index is valid block index
     for (size_t i = 0; i < N; i++) {
         if (idx[i] >= bidims[i]) {
@@ -310,7 +311,7 @@ bool se_label<N, T>::is_allowed(const index<N> &idx) const {
                 pos = i; continue;
             }
 
-            lg[i] = blk[rule.order[i]];
+            lg[i] = blk[order[i]];
         }
 
 
@@ -324,7 +325,7 @@ bool se_label<N, T>::is_allowed(const index<N> &idx) const {
                 cur = cur || m_pt.is_in_product(lg, 0);
             }
         }
-        allowed[m_rule.get_rule_id(it)](cur);
+        allowed[m_rule.get_rule_id(it)] = cur;
     }
 
     // loop over sums in the evaluation rule

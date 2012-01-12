@@ -110,11 +110,27 @@ public:
     /** \brief Return the intrinsic labels of a basic rule
         \param id Rule ID
      **/
+    label_group &get_intrinsic(rule_id id) {
+
+        rule_list::iterator it = m_rules.find(id);
+#ifdef LIBTENSOR_DEBUG
+        if (it == m_rules.end()) {
+            throw bad_parameter(g_ns, k_clazz,
+                                "get_intrinsic(rule_id)", __FILE__, __LINE__, "it");
+        }
+#endif
+        return it->second.intr;
+    }
+
+    /** \brief Return the intrinsic labels of a basic rule
+        \param id Rule ID
+     **/
     const label_group &get_intrinsic(rule_id id) const {
 
         rule_iterator it = m_rules.find(id);
         return get_intrinsic(it);
     }
+
 
 
     /** \brief Return the intrinsic labels of a basic rule
@@ -128,6 +144,21 @@ public:
 #endif
 
         return it->second.intr;
+    }
+
+    /** \brief Return the evaluation order of a basic rule
+        \param id Rule ID
+     **/
+    std::vector<size_t> &get_eval_order(rule_id id) {
+
+        rule_list::iterator it = m_rules.find(id);
+#ifdef LIBTENSOR_DEBUG
+        if (it == m_rules.end()) {
+            throw bad_parameter(g_ns, k_clazz,
+                                "get_eval_order(rule_id)", __FILE__, __LINE__, "it");
+        }
+#endif
+        return it->second.order;
     }
 
     /** \brief Return the evaluation order of a basic rule

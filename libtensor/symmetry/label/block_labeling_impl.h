@@ -201,7 +201,7 @@ void block_labeling<N>::clear() {
 
     for (register size_t i = 0; i < N && m_labels[i] != 0; i++) {
         label_group &lg = *(m_labels[i]);
-        for (size_t j = 0; j < lg.size(); j++) lg[j] = (size_t) -1;
+        for (size_t j = 0; j < lg.size(); j++) lg[j] = (label_t) -1;
     }
 
     match();
