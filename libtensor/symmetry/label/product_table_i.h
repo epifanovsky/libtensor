@@ -23,6 +23,22 @@ namespace libtensor {
 	product_table_i needs to provide these functions to work with both
 	classes.
 
+    TODO:
+    - tranfer parts of the implementation from point group table: table, id, ...
+    - all product tables are symmetric (otherwise not feasible with se_label)
+    - new typedef label_set
+    - deprecated member functions:
+      * nlabels()
+      * is_valid()
+      * invalid()
+    - new member functions:
+      * get_identity() -> return the "identity" label
+      * get_complete_label_set()
+      * product(label_t &, label_t &)
+      * product(label_t &, label_set &)
+      * product(label_set &, label_t &)
+      * product(label_set &, label_set &)
+
     \ingroup libtensor_symmetry
  **/
 class product_table_i {
