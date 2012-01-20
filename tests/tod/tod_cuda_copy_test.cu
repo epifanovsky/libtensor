@@ -205,15 +205,15 @@ void tod_cuda_copy_test::test_plain(const dimensions<N> &dims)
 	d_tca.ret_dataptr(d_dta); d_dta = NULL;
 	d_tcb.ret_dataptr(d_dtb1); d_dtb1 = NULL;
 	h_ta.set_immutable(); h_tb_ref.set_immutable();
-	std::cout << "\nFirst adapter return\n ";
+	//std::cout << "\nFirst adapter return\n ";
 	}
 
 	// Invoke the copy operation
 
 	tod_cuda_copy<N> cp(d_ta);
-	std::cout << "\nCuda copy initialized\n ";
+	//std::cout << "\nCuda copy initialized\n ";
 	cp.perform(d_tb);
-	std::cout << "\nCuda copy performed\n ";
+	//std::cout << "\nCuda copy performed\n ";
 
 	//copy from device to host
 	{
@@ -222,7 +222,7 @@ void tod_cuda_copy_test::test_plain(const dimensions<N> &dims)
 
 		double *h_dtb1 = h_tcb.req_dataptr();
 		double *d_dtb1 = d_tcb.req_dataptr();
-		std::cout << "\nSeconf adapter requested\n ";
+		//std::cout << "\nSeconf adapter requested\n ";
 //		const double *h_dtb2 = h_tcb_ref.req_const_dataptr();
 
 		cuda_allocator_t::copy_to_host(h_dtb1, d_dtb1, dims.get_size());
@@ -231,9 +231,9 @@ void tod_cuda_copy_test::test_plain(const dimensions<N> &dims)
 //		std::cout << "h_tb_ref: " << h_dtb2[0] << ", " << h_dtb2[1] << ", " << h_dtb2[2] << ", " << h_dtb2[3]<< ", " << h_dtb2[4]<< ", " << h_dtb2[5]<< ", " << h_dtb2[6] << ", " << "\n";
 
 		h_tcb.ret_dataptr(h_dtb1); h_dtb1 = NULL;
-		std::cout << "Second adapter return\n ";
+		//std::cout << "Second adapter return\n ";
 		d_tcb.ret_dataptr(d_dtb1); d_dtb1 = NULL;
-		std::cout << "Third adapter return\n ";
+		//std::cout << "Third adapter return\n ";
 //		h_tcb_ref.ret_const_dataptr(h_dtb2); h_dtb2 = NULL;
 	}
 

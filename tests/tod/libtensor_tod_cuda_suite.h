@@ -3,6 +3,8 @@
 
 #include <libtest/test_suite.h>
 #include "tod_cuda_copy_test.h"
+#include "tod_set_cuda_test.h"
+#include "tod_add_cuda_test.h"
 
 using libtest::unit_test_factory;
 
@@ -25,6 +27,8 @@ namespace libtensor {
 class libtensor_tod_cuda_suite : public libtest::test_suite {
 private:
 	unit_test_factory<tod_cuda_copy_test> m_utf_tod_cuda_copy;
+	unit_test_factory<tod_set_cuda_test> m_utf_tod_set_cuda;
+	unit_test_factory<tod_add_cuda_test> m_utf_tod_add_cuda;
 
 public:
 	//!	Creates the suite

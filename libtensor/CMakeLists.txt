@@ -117,6 +117,9 @@ set(SRC_CUDA
     tod/kernels/cuda_kern_copy_6d.cu
     tod/kernels/cuda_kern_copy_generic.cu
     tod/kernels/cuda_kern_functions.cu
+    tod/kernels/cuda_kern_set.cu
+    tod/tod_set_cuda.cu
+    tod/tod_add_cuda.C
 )
 
 set(SRC_LINALG
@@ -173,7 +176,7 @@ if(QCHEM_SOURCE_DIR)
 endif(QCHEM_SOURCE_DIR)
 
 if(CUDA_FOUND)
-    cuda_add_library(tensor ${SRC} ${SRC_CUDA} ${SRC_LINALG} ${SRC_INST} ${SRC_MP})
+    cuda_add_library(tensor ${SRC_CUDA} ${SRC} ${SRC_LINALG} ${SRC_INST} ${SRC_MP})
 else(CUDA_FOUND)
     add_library(tensor ${SRC} ${SRC_LINALG} ${SRC_INST} ${SRC_MP})
 endif(CUDA_FOUND)

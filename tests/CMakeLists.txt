@@ -229,7 +229,9 @@ set(SRC_IFACE
 set(SRC_CUDA
     tod/libtensor_tod_cuda_tests.C
     tod/libtensor_tod_cuda_suite.C
-    tod/tod_cuda_copy_test.cu 
+    tod/tod_cuda_copy_test.cu
+    tod/tod_set_cuda_test.cu
+    tod/tod_add_cuda_test.cu    
 )
 
 set(TARGETS
