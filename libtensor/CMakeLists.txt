@@ -143,6 +143,7 @@ set(SRC_INST
     btod/btod_dotprod.C
     btod/btod_ewmult2.C
     btod/btod_sum.C
+    block_tensor/btod/impl/btod_set.C
 )
 
 set(SRC_MP
