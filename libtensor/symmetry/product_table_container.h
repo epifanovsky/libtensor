@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_PRODUCT_TABLE_CONTAINER_H
 #define LIBTENSOR_PRODUCT_TABLE_CONTAINER_H
 
+#include <string>
 #include <map>
 #include <libutil/singleton.h>
 #include "../exception.h"

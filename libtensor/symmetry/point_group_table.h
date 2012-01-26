@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_POINT_GROUP_TABLE_H
 #define LIBTENSOR_POINT_GROUP_TABLE_H
 
+#include <string>
 #include "../core/out_of_bounds.h"
 #include "product_table_i.h"
 

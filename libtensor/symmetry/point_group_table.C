@@ -1,7 +1,8 @@
-#include "point_group_table.h"
-
 #include <iostream>
 #include <iomanip>
+#include <list>
+#include <libtensor/defs.h>
+#include "point_group_table.h"
 
 namespace libtensor {
 

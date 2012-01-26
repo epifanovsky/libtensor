@@ -1,3 +1,4 @@
+#include <libtensor/defs.h>
 #include "product_table_container.h"
 
 namespace libtensor {

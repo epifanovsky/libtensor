@@ -1,5 +1,4 @@
 set(SRC
-    backtrace.C
     defs.C
     exception.C
     version.C
