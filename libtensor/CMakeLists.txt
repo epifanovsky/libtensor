@@ -23,6 +23,7 @@ set(SRC
     tod/kernels/kern_add_i_i_x_x.C
     tod/kernels/kern_add_i_x_i_x.C
     tod/kernels/kern_mul_generic.C
+    tod/kernels/kern_mul_i_i_i.C
     tod/kernels/kern_mul_i_i_x.C
     tod/kernels/kern_mul_i_ip_p.C
     tod/kernels/kern_mul_i_ipq_qp.C

@@ -149,6 +149,7 @@ set(SRC_LINALG
     linalg/libtensor_linalg_suite.C
     linalg/linalg_add_i_i_x_x_test.C
     linalg/linalg_x_p_p_test.C
+    linalg/linalg_i_i_i_test.C
     linalg/linalg_i_i_x_test.C
     linalg/linalg_x_pq_qp_test.C
     linalg/linalg_i_ip_p_x_test.C
