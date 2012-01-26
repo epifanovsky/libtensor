@@ -18,7 +18,6 @@
 #include "labeled_btensor_test.h"
 #include "letter_expr_test.h"
 #include "letter_test.h"
-#include "mapped_btensor_test.h"
 #include "mult_test.h"
 #include "symm_test.h"
 #include "trace_test.h"
@@ -53,7 +52,6 @@ namespace libtensor {
 	\li libtensor::labeled_btensor_test
 	\li libtensor::letter_test
 	\li libtensor::letter_expr_test
-	\li libtensor::mapped_btensor_test
 	\li libtensor::mult_test
 	\li libtensor::symm_test
 	\li libtensor::trace_test
@@ -76,7 +74,6 @@ private:
 	unit_test_factory<labeled_btensor_test> m_utf_labeled_btensor;
 	unit_test_factory<letter_test> m_utf_letter;
 	unit_test_factory<letter_expr_test> m_utf_letter_expr;
-	unit_test_factory<mapped_btensor_test> m_utf_mapped_btensor;
 	unit_test_factory<mult_test> m_utf_mult;
 	unit_test_factory<symm_test> m_utf_symm;
 	unit_test_factory<trace_test> m_utf_trace;

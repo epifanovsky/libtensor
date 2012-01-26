@@ -3,7 +3,6 @@
 
 #include <libtest/test_suite.h>
 #include "abs_index_test.h"
-#include "block_index_map_test.h"
 #include "block_index_space_test.h"
 #include "block_index_subspace_builder_test.h"
 #include "block_map_test.h"
@@ -14,7 +13,6 @@
 #include "immutable_test.h"
 #include "index_test.h"
 #include "index_range_test.h"
-#include "mapped_block_tensor_test.h"
 #include "mask_test.h"
 #include "mp_safe_tensor_test.h"
 #include "orbit_test.h"
@@ -48,18 +46,16 @@ namespace libtensor {
 
 	This suite runs the following tests:
 	\li libtensor::abs_index_test
-	\li libtensor::block_index_map_test
 	\li libtensor::block_index_space_test
 	\li libtensor::block_index_subspace_builder_test
 	\li libtensor::block_map_test
 	\li libtensor::block_tensor_test
-        \li libtensor::dense_tensor_test
+    \li libtensor::dense_tensor_test
 	\li libtensor::dimensions_test
 	\li libtensor::direct_block_tensor_test
 	\li libtensor::immutable_test
 	\li libtensor::index_test
 	\li libtensor::index_range_test
-	\li libtensor::mapped_block_tensor_test
 	\li libtensor::mask_test
 	\li libtensor::mp_safe_tensor_test
 	\li libtensor::orbit_test
@@ -76,7 +72,6 @@ namespace libtensor {
 class libtensor_core_suite : public libtest::test_suite {
 private:
 	unit_test_factory<abs_index_test> m_utf_abs_index;
-	unit_test_factory<block_index_map_test> m_utf_block_index_map;
 	unit_test_factory<block_index_space_test> m_utf_block_index_space;
 	unit_test_factory<block_index_subspace_builder_test>
 		m_utf_block_index_subspace_builder;
@@ -88,7 +83,6 @@ private:
 	unit_test_factory<immutable_test> m_utf_immutable;
 	unit_test_factory<index_test> m_utf_index;
 	unit_test_factory<index_range_test> m_utf_index_range;
-	unit_test_factory<mapped_block_tensor_test> m_utf_mapped_block_tensor;
 	unit_test_factory<mask_test> m_utf_mask;
 	unit_test_factory<mp_safe_tensor_test> m_utf_mp_safe_tensor;
 	unit_test_factory<orbit_test> m_utf_orbit;

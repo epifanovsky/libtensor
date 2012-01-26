@@ -2,7 +2,6 @@ set(SRC_CORE
     core/libtensor_core_tests.C
     core/libtensor_core_suite.C
     core/abs_index_test.C
-    core/block_index_map_test.C
     core/block_index_space_test.C
     core/block_index_subspace_builder_test.C
     core/block_map_test.C
@@ -13,7 +12,6 @@ set(SRC_CORE
     core/immutable_test.C
     core/index_test.C
     core/index_range_test.C
-    core/mapped_block_tensor_test.C
     core/mask_test.C
     core/mp_safe_tensor_test.C
     core/orbit_test.C
@@ -221,7 +219,6 @@ set(SRC_IFACE
     iface/labeled_btensor_test.C
     iface/letter_expr_test.C
     iface/letter_test.C
-    iface/mapped_btensor_test.C
     iface/mult_test.C
     iface/symm_test.C
     iface/trace_test.C
