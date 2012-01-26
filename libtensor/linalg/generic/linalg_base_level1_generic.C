@@ -55,13 +55,14 @@ void linalg_base_level1_generic::i_i_x(
 }
 
 
-void linalg_base_level1_generic::i_i_i(
+void linalg_base_level1_generic::i_i_i_x(
     size_t ni,
     const double *a, size_t sia,
     const double *b, size_t sib,
-    double *c, size_t sic) {
+    double *c, size_t sic,
+    double d) {
 
-    for(size_t i = 0; i < ni; i++) c[i * sic] += a[i * sia] * b[i * sib];
+    for(size_t i = 0; i < ni; i++) c[i * sic] += d * a[i * sia] * b[i * sib];
 }
 
 

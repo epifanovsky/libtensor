@@ -77,7 +77,7 @@ struct linalg_base_level1_generic {
         double b,
         double *c, size_t sic);
 
-    /** \brief \f$ c_i = c_i + a_i b_i \f$
+    /** \brief \f$ c_i = c_i + d a_i b_i \f$
         \param ni Number of elements i.
         \param a Pointer to a.
         \param sia Step of i in a.
@@ -85,12 +85,14 @@ struct linalg_base_level1_generic {
         \param sib Step of i in b.
         \param c Pointer to c.
         \param sic Step of i in c.
+        \param d Scalar d
      **/
-    static void i_i_i(
+    static void i_i_i_x(
         size_t ni,
         const double *a, size_t sia,
         const double *b, size_t sib,
-        double *c, size_t sic);
+        double *c, size_t sic,
+        double d);
 
 };
 

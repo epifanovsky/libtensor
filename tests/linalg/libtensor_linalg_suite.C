@@ -9,7 +9,7 @@ libtensor_linalg_suite::libtensor_linalg_suite() :
     add_test("linalg_add_i_i_x_x", m_utf_linalg_add_i_i_x_x);
 
     add_test("linalg_x_p_p", m_utf_linalg_x_p_p);
-    add_test("linalg_i_i_i", m_utf_linalg_i_i_i);
+    add_test("linalg_i_i_i_x", m_utf_linalg_i_i_i_x);
     add_test("linalg_i_i_x", m_utf_linalg_i_i_x);
 
     add_test("linalg_x_pq_qp", m_utf_linalg_x_pq_qp);

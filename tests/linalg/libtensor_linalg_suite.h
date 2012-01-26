@@ -4,7 +4,7 @@
 #include <libtest/test_suite.h>
 #include "linalg_add_i_i_x_x_test.h"
 #include "linalg_x_p_p_test.h"
-#include "linalg_i_i_i_test.h"
+#include "linalg_i_i_i_x_test.h"
 #include "linalg_i_i_x_test.h"
 #include "linalg_x_pq_qp_test.h"
 #include "linalg_i_ip_p_x_test.h"
@@ -73,7 +73,7 @@ namespace libtensor {
     This suite runs the following tests:
      - libtensor::linalg_add_i_i_x_x_test
      - libtensor::linalg_x_p_p_test
-     - libtensor::linalg_i_i_i_test
+     - libtensor::linalg_i_i_i_x_test
      - libtensor::linalg_i_i_x_test
      - libtensor::linalg_x_pq_qp_test
      - libtensor::linalg_i_ip_p_x_test
@@ -130,7 +130,7 @@ class libtensor_linalg_suite : public libtest::test_suite {
 private:
     unit_test_factory<linalg_add_i_i_x_x_test> m_utf_linalg_add_i_i_x_x;
     unit_test_factory<linalg_x_p_p_test> m_utf_linalg_x_p_p;
-    unit_test_factory<linalg_i_i_i_test> m_utf_linalg_i_i_i;
+    unit_test_factory<linalg_i_i_i_x_test> m_utf_linalg_i_i_i_x;
     unit_test_factory<linalg_i_i_x_test> m_utf_linalg_i_i_x;
     unit_test_factory<linalg_x_pq_qp_test> m_utf_linalg_x_pq_qp;
     unit_test_factory<linalg_i_ip_p_x_test> m_utf_linalg_i_ip_p_x;
