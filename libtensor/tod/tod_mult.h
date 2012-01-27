@@ -4,6 +4,7 @@
 #include "../defs.h"
 #include "../timings.h"
 #include "../dense_tensor/dense_tensor_i.h"
+#include "../dense_tensor/dense_tensor_ctrl.h"
 #include "../mp/auto_cpu_lock.h"
 #include "loop_list_elem.h"
 #include "tod_additive.h"

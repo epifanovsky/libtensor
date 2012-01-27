@@ -20,7 +20,7 @@ template<size_t N, typename T, typename Alloc,
 	typename Sync = default_sync_policy>
 class mp_safe_tensor : public dense_tensor<N, T, Alloc> {
 public:
-	typedef typename dense_tensor_i<N, T>::handle_t
+	typedef typename dense_tensor_i<N, T>::session_handle_type
 		handle_t; //!< Session handle type
 
 private:

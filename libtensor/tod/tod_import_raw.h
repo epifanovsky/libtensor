@@ -6,6 +6,7 @@
 #include "../linalg/linalg.h"
 #include "../core/dimensions.h"
 #include "../core/index_range.h"
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include "processor.h"
 #include "bad_dimensions.h"
 
