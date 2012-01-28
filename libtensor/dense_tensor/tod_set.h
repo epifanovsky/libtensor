@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_TOD_SET_H
 #define LIBTENSOR_TOD_SET_H
 
+#include <libtensor/timings.h>
 #include <libtensor/mp/auto_cpu_lock.h>
 #include "dense_tensor_i.h"
 
@@ -13,7 +14,10 @@ namespace libtensor {
     \ingroup libtensor_dense_tensor_tod
  **/
 template<size_t N>
-class tod_set {
+class tod_set : public timings< tod_set<N> > {
+public:
+    static const char *k_clazz; //!< Class name
+
 private:
     double m_v; //!< Value
 

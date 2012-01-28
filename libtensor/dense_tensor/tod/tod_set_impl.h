@@ -8,18 +8,33 @@ namespace libtensor {
 
 
 template<size_t N>
+const char *tod_set<N>::k_clazz = "tod_set<N>";
+
+
+template<size_t N>
 void tod_set<N>::perform(cpu_pool &cpus, dense_tensor_wr_i<N, double> &t) {
 
-    dense_tensor_wr_ctrl<N, double> ctrl(t);
-    double *d = ctrl.req_dataptr();
+    tod_set<N>::start_timer();
 
-    {
-        auto_cpu_lock cpu(cpus);
-        size_t sz = t.get_dims().get_size();
-        for(size_t i = 0; i < sz; i++) d[i] = m_v;
+    try {
+
+        dense_tensor_wr_ctrl<N, double> ctrl(t);
+        double *d = ctrl.req_dataptr();
+
+        {
+            auto_cpu_lock cpu(cpus);
+            size_t sz = t.get_dims().get_size();
+            for(size_t i = 0; i < sz; i++) d[i] = m_v;
+        }
+
+        ctrl.ret_dataptr(d);
+
+    } catch(...) {
+        tod_set<N>::stop_timer();
+        throw;
     }
 
-    ctrl.ret_dataptr(d);
+    tod_set<N>::stop_timer();
 }
 
 
