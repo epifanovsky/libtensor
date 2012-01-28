@@ -2,7 +2,7 @@
 #define LIBTENSOR_TOD_COPY_IMPL_H
 
 #include "../mp/auto_cpu_lock.h"
-#include "tod_set.h"
+#include <libtensor/dense_tensor/tod_set.h>
 
 namespace libtensor {
 

@@ -13,7 +13,7 @@
 #include "../symmetry/so_apply.h"
 #include "../tod/tod_apply.h"
 #include "../tod/tod_copy.h"
-#include "../tod/tod_set.h"
+#include <libtensor/dense_tensor/tod_set.h>
 #include "bad_block_index_space.h"
 #include "additive_btod.h"
 

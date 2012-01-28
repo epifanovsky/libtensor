@@ -5,7 +5,7 @@
 #include "../defs.h"
 #include "../exception.h"
 #include "tod_additive.h"
-#include "tod_set.h"
+#include <libtensor/dense_tensor/tod_set.h>
 
 namespace libtensor {
 

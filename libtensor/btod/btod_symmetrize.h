@@ -10,7 +10,7 @@
 #include "../symmetry/so_add.h"
 #include "../symmetry/so_permute.h"
 #include "../symmetry/so_symmetrize.h"
-#include "../tod/tod_set.h"
+#include <libtensor/dense_tensor/tod_set.h>
 #include "additive_btod.h"
 #include "transf_double.h"
 

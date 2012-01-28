@@ -13,7 +13,7 @@
 #include "../tod/tod_dirsum.h"
 #include "../tod/tod_scale.h"
 #include "../tod/tod_scatter.h"
-#include "../tod/tod_set.h"
+#include <libtensor/dense_tensor/tod_set.h>
 #include "../symmetry/so_concat.h"
 #include "bad_block_index_space.h"
 #include "additive_btod.h"
