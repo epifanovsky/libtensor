@@ -3,7 +3,7 @@
 
 #include <cmath>
 #include "../tod/tod_add.h"
-#include "../tod/tod_copy.h"
+#include <libtensor/dense_tensor/tod_copy.h>
 #include <libtensor/dense_tensor/tod_set.h>
 #include "basic_btod.h"
 #include "addition_schedule.h"

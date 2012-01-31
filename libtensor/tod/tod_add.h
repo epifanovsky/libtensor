@@ -2,7 +2,7 @@
 #define LIBTENSOR_TOD_ADD_H
 
 #include <list>
-#include "tod_copy.h"
+#include <libtensor/dense_tensor/tod_copy.h>
 #include "bad_dimensions.h"
 
 namespace libtensor {

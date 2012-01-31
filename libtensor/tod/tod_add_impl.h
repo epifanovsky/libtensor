@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_TOD_ADD_IMPL_H
 #define LIBTENSOR_TOD_ADD_IMPL_H
 
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/dense_tensor/tod_set.h>
 
 namespace libtensor {

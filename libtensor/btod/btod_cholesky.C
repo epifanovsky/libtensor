@@ -20,7 +20,7 @@
 #include "../tod/tod_btconv.h"
 #include "../tod/tod_contract2.h"
 #include "../tod/tod_import_raw.h"
-#include "../tod/tod_copy.h"
+#include <libtensor/dense_tensor/tod_copy.h>
 
 
 

@@ -13,7 +13,7 @@
 #include <libtensor/symmetry/se_part.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/tod/tod_btconv.h>
-#include <libtensor/tod/tod_copy.h>
+#include <libtensor/dense_tensor/tod_set.h>
 #include <libtensor/tod/tod_select.h>
 #include "btod_select_test.h"
 

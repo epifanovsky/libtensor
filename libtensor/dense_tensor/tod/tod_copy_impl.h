@@ -1,8 +1,12 @@
 #ifndef LIBTENSOR_TOD_COPY_IMPL_H
 #define LIBTENSOR_TOD_COPY_IMPL_H
 
-#include "../mp/auto_cpu_lock.h"
-#include <libtensor/dense_tensor/tod_set.h>
+#include <libtensor/mp/auto_cpu_lock.h>
+#include <libtensor/tod/bad_dimensions.h>
+#include "../dense_tensor_ctrl.h"
+#include "../tod_set.h"
+#include "../tod_copy.h"
+
 
 namespace libtensor {
 
@@ -46,13 +50,15 @@ void tod_copy<N>::perform(cpu_pool &cpus, bool zero, double c,
         throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "tb");
     }
 
-    if(zero) {
-        if(c == 0) tod_set<N>().perform(cpus, tb);
-        else do_perform<loop_list_copy>(cpus, c, tb);
-    } else {
-        if(c == 0) return;
-        do_perform<loop_list_add>(cpus, c, tb);
+    //  Special case
+    if(c == 0.0) {
+        if(zero) tod_set<N>().perform(cpus, tb);
+        return;
     }
+
+    //  Run copy/add loop
+    if(zero) do_perform<loop_list_copy>(cpus, c, tb);
+    else do_perform<loop_list_add>(cpus, c, tb);
 }
 
 

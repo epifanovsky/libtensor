@@ -1,19 +1,17 @@
 #ifndef LIBTENSOR_TOD_COPY_H
 #define LIBTENSOR_TOD_COPY_H
 
-#include "../defs.h"
-#include "../exception.h"
-#include "../timings.h"
-#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include "loop_list_add.h"
-#include "loop_list_copy.h"
-#include "tod_additive.h"
-#include "bad_dimensions.h"
+#include <libtensor/timings.h>
+#include <libtensor/tod/loop_list_add.h>
+#include <libtensor/tod/loop_list_copy.h>
+#include <libtensor/mp/cpu_pool.h>
+#include "dense_tensor_i.h"
 
 namespace libtensor {
 
-/**	\brief Makes a copy of a %tensor, scales or permutes %tensor elements
-        if necessary
+
+/**	\brief Copies the contents of a tensor, permutes and scales the entries if
+        necessary
     \tparam N Tensor order.
 
     This operation makes a scaled and permuted copy of a %tensor.
@@ -52,61 +50,60 @@ namespace libtensor {
     cp.perform(t2); // Copies transposed t1 scaled by 0.5 to t2
     \endcode
 
-    \ingroup libtensor_tod
+    \ingroup libtensor_dense_tensor_tod
  **/
 template<size_t N>
-class tod_copy: public loop_list_add,
+class tod_copy :
+    public loop_list_add,
     public loop_list_copy,
-    public tod_additive<N> ,
-    public timings<tod_copy<N> > {
+    public timings< tod_copy<N> > {
 
 public:
     static const char *k_clazz; //!< Class name
 
 private:
-    dense_tensor_i<N,double> &m_ta; //!< Source %tensor
-    permutation<N> m_perm; //!< Permutation of elements
+    dense_tensor_i<N,double> &m_ta; //!< Source tensor
+    permutation<N> m_perm; //!< Permutation of indexes
     double m_c; //!< Scaling coefficient
-    dimensions<N> m_dimsb; //!< Dimensions of output %tensor
+    dimensions<N> m_dimsb; //!< Dimensions of output tensor
 
 public:
-    //!	\name Construction and destruction
-    //@{
-
     /**	\brief Prepares the copy operation
-        \param ta Source %tensor.
+        \param ta Source tensor.
         \param c Coefficient.
      **/
     tod_copy(dense_tensor_i<N,double> &ta, double c = 1.0);
 
     /**	\brief Prepares the permute & copy operation
-        \param ta Source %tensor.
-        \param p Permutation of %tensor elements.
+        \param ta Source tensor.
+        \param p Permutation of tensor indexes.
         \param c Coefficient.
      **/
-    tod_copy(dense_tensor_i<N,double> &ta, const permutation<N> &p, double c = 1.0);
+    tod_copy(dense_tensor_i<N,double> &ta, const permutation<N> &p,
+        double c = 1.0);
 
     /**	\brief Virtual destructor
      **/
-    virtual ~tod_copy() {
-    }
+    virtual ~tod_copy() { }
 
-    //@}
+    /** \brief Prefetches the source tensor
+     **/
+    void prefetch();
 
-
-    //!	\name Implementation of libtensor::tod_additive<N>
-    //@{
-
-    virtual void prefetch();
-
-    virtual void perform(cpu_pool &cpus, bool zero, double c,
+    /** \brief Runs the operation
+        \param cpus CPU pool.
+        \param zero Overwrite/add to flag.
+        \param c Scaling coefficient.
+        \param tb Output tensor.
+     **/
+    void perform(cpu_pool &cpus, bool zero, double c,
         dense_tensor_i<N, double> &tb);
 
     //@}
 
 private:
     /**	\brief Creates the dimensions of the output using an input
-            %tensor and a permutation of indexes
+            tensor and a permutation of indexes
      **/
     static dimensions<N> mk_dimsb(dense_tensor_i<N,double> &ta,
         const permutation<N> &perm);
@@ -122,24 +119,5 @@ private:
 
 
 } // namespace libtensor
-
-
-#ifdef LIBTENSOR_INSTANTIATE_TEMPLATES
-
-namespace libtensor {
-
-    extern template class tod_copy<1>;
-    extern template class tod_copy<2>;
-    extern template class tod_copy<3>;
-    extern template class tod_copy<4>;
-    extern template class tod_copy<5>;
-    extern template class tod_copy<6>;
-
-} // namespace libtensor
-
-#else // LIBTENSOR_INSTANTIATE_TEMPLATES
-#include "tod_copy_impl.h"
-#endif // LIBTENSOR_INSTANTIATE_TEMPLATES
-
 
 #endif // LIBTENSOR_TOD_COPY_H

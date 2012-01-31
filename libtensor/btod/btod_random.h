@@ -14,7 +14,7 @@
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include "../tod/tod_add.h"
-#include "../tod/tod_copy.h"
+#include <libtensor/dense_tensor/tod_copy.h>
 #include "../tod/tod_random.h"
 #include "../timings.h"
 #include "transf_double.h"

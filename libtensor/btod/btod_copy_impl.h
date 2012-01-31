@@ -6,7 +6,7 @@
 #include "../symmetry/so_copy.h"
 #include "../symmetry/so_permute.h"
 #include "../tod/tod_add.h"
-#include "../tod/tod_copy.h"
+#include <libtensor/dense_tensor/tod_copy.h>
 
 namespace libtensor {
 
