@@ -2,7 +2,7 @@
 #define LIBTENSOR_TOD_SET_H
 
 #include <libtensor/timings.h>
-#include <libtensor/mp/auto_cpu_lock.h>
+#include <libtensor/mp/cpu_pool.h>
 #include "dense_tensor_i.h"
 
 namespace libtensor {

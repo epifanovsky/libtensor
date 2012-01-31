@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_BTOD_CONTRACT2_IMPL_H
 #define LIBTENSOR_BTOD_CONTRACT2_IMPL_H
 
+#include <libtensor/mp/auto_cpu_lock.h>
 #include "../core/block_index_subspace_builder.h"
 #include "../core/mask.h"
 #include "../symmetry/so_concat.h"

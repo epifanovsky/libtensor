@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_TOD_SET_IMPL_H
 #define LIBTENSOR_TOD_SET_IMPL_H
 
+#include <libtensor/mp/auto_cpu_lock.h>
 #include "../dense_tensor_ctrl.h"
 #include "../tod_set.h"
 
