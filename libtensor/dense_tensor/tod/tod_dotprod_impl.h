@@ -1,6 +1,12 @@
 #ifndef LIBTENSOR_TOD_DOTPROD_IMPL_H
 #define LIBTENSOR_TOD_DOTPROD_IMPL_H
 
+#include <libtensor/mp/auto_cpu_lock.h>
+#include <libtensor/linalg/linalg.h>
+#include <libtensor/tod/bad_dimensions.h>
+#include "../dense_tensor_ctrl.h"
+#include "../tod_dotprod.h"
+
 namespace libtensor {
 
 
@@ -13,32 +19,35 @@ const char *tod_dotprod<N>::op_ddot::k_clazz = "tod_dotprod<N>::op_ddot";
 
 
 template<size_t N>
-tod_dotprod<N>::tod_dotprod(dense_tensor_i<N, double> &t1, dense_tensor_i<N, double> &t2) :
+tod_dotprod<N>::tod_dotprod(dense_tensor_i<N, double> &ta,
+    dense_tensor_i<N, double> &tb) :
 
-    m_t1(t1), m_tctrl1(m_t1), m_t2(t2), m_tctrl2(m_t2) {
+    m_ta(ta), m_tb(tb) {
 
-    static const char *method = "tod_dotprod(tensor_i<N, double>&, "
-        "tensor_i<N, double>&)";
+    static const char *method = "tod_dotprod(dense_tensor_i<N, double>&, "
+        "dense_tensor_i<N, double>&)";
 
     if(!verify_dims()) {
-        bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "t1, t2.");
+        throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__,
+            "ta != tb");
     }
 }
 
 
 template<size_t N>
-tod_dotprod<N>::tod_dotprod(dense_tensor_i<N, double> &t1,
-    const permutation<N> &perm1, dense_tensor_i<N, double> &t2,
-    const permutation<N> &perm2) :
+tod_dotprod<N>::tod_dotprod(dense_tensor_i<N, double> &ta,
+    const permutation<N> &perma, dense_tensor_i<N, double> &tb,
+    const permutation<N> &permb) :
 
-    m_t1(t1), m_tctrl1(m_t1), m_perm1(perm1), m_t2(t2), m_tctrl2(m_t2),
-    m_perm2(perm2) {
+    m_ta(ta), m_perma(perma), m_tb(tb), m_permb(permb) {
 
-    static const char *method = "tod_dotprod(tensor_i<N, double>&, "
-        "const permutation<N>&, tensor_i<N, double>&, const permutation<N>&)";
+    static const char *method = "tod_dotprod(dense_tensor_i<N, double>&, "
+        "const permutation<N>&, dense_tensor_i<N, double>&, "
+        "const permutation<N>&)";
 
     if(!verify_dims()) {
-        bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "t1, t2.");
+        throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__,
+            "ta != tb");
     }
 }
 
@@ -46,49 +55,57 @@ tod_dotprod<N>::tod_dotprod(dense_tensor_i<N, double> &t1,
 template<size_t N>
 void tod_dotprod<N>::prefetch() {
 
-    m_tctrl1.req_prefetch();
-    m_tctrl2.req_prefetch();
+    dense_tensor_ctrl<N, double>(m_ta).req_prefetch();
+    dense_tensor_ctrl<N, double>(m_tb).req_prefetch();
 }
 
 
 template<size_t N>
 double tod_dotprod<N>::calculate(cpu_pool &cpus) {
 
-    tod_dotprod<N>::start_timer();
-
-    permutation<N> perma(m_perm1);
-    perma.invert();
-    permutation<N> permb(m_perm2);
-    permb.permute(perma);
-
-    const dimensions<N> &dima(m_t1.get_dims());
-    const dimensions<N> &dimb(m_t2.get_dims());
-
-    build_list(m_list,dimb,permb,dima);
-
-    const double *pb = m_tctrl1.req_const_dataptr();
-    const double *pa = m_tctrl2.req_const_dataptr();
-
     double result = 0.0;
 
-    {
-        auto_cpu_lock cpu(cpus);
+    tod_dotprod<N>::start_timer();
 
-        try {
-            registers regs;
-            regs.m_ptra = pa; regs.m_ptrb = pb; regs.m_ptrc = &result;
-            processor_t proc(m_list, regs);
-            proc.process_next();
-        } catch(exception &e) {
+    try {
+
+        permutation<N> perma(m_perma);
+        perma.invert();
+        permutation<N> permb(m_permb);
+        permb.permute(perma);
+
+        const dimensions<N> &dima(m_ta.get_dims());
+        const dimensions<N> &dimb(m_tb.get_dims());
+
+        build_list(m_list, dimb, permb, dima);
+
+        dense_tensor_ctrl<N, double> ca(m_ta), cb(m_tb);
+        const double *pb = ca.req_const_dataptr();
+        const double *pa = cb.req_const_dataptr();
+
+        {
+            auto_cpu_lock cpu(cpus);
+
+            try {
+                registers regs;
+                regs.m_ptra = pa; regs.m_ptrb = pb; regs.m_ptrc = &result;
+                processor_t proc(m_list, regs);
+                proc.process_next();
+            } catch(exception &e) {
+                clean_list();
+                throw;
+            }
+
             clean_list();
-            throw;
         }
 
-        clean_list();
-    }
+        ca.ret_const_dataptr(pb);
+        cb.ret_const_dataptr(pa);
 
-    m_tctrl1.ret_const_dataptr(pb);
-    m_tctrl2.ret_const_dataptr(pa);
+    } catch(...) {
+        tod_dotprod<N>::stop_timer();
+        throw;
+    }
 
     tod_dotprod<N>::stop_timer();
 
@@ -99,11 +116,11 @@ double tod_dotprod<N>::calculate(cpu_pool &cpus) {
 template<size_t N>
 bool tod_dotprod<N>::verify_dims() {
 
-    dimensions<N> dims1(m_t1.get_dims());
-    dimensions<N> dims2(m_t2.get_dims());
-    dims1.permute(m_perm1);
-    dims2.permute(m_perm2);
-    return dims1.equals(dims2);
+    dimensions<N> dimsa(m_ta.get_dims());
+    dimensions<N> dimsb(m_tb.get_dims());
+    dimsa.permute(m_perma);
+    dimsb.permute(m_permb);
+    return dimsa.equals(dimsb);
 }
 
 

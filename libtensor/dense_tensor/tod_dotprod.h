@@ -2,23 +2,22 @@
 #define LIBTENSOR_TOD_DOTPROD_H
 
 #include <list>
-#include "../exception.h"
-#include "../timings.h"
-#include "../linalg/linalg.h"
-#include "../core/permutation.h"
-#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include "../mp/auto_cpu_lock.h"
-#include "contraction2.h"
-#include "bad_dimensions.h"
-#include "processor.h"
+#include <libtensor/timings.h>
+#include <libtensor/mp/cpu_pool.h>
+#include "dense_tensor_i.h"
+
+#include <libtensor/tod/processor.h>
 
 namespace libtensor {
 
 
-/**	\brief Calculates the dot product of two tensors
+/**	\brief Calculates the inner (dot) product of two tensors
     \tparam N Tensor order.
 
-    \ingroup libtensor_tod
+    The inner (dot) product of two tensors is defined as
+    \f$ d = sum_{ijk...} a_{ijk...} b_{ijk...} \f$
+
+    \ingroup libtensor_dense_tensor_tod
  **/
 template<size_t N>
 class tod_dotprod : public timings< tod_dotprod<N> > {
@@ -76,30 +75,34 @@ private:
     };
 
 private:
-    dense_tensor_i<N,double> &m_t1; //!< First %tensor
-    dense_tensor_ctrl<N,double> m_tctrl1; //!< First %tensor control
-    dense_tensor_i<N,double> &m_t2; //!< Second %tensor
-    dense_tensor_ctrl<N,double> m_tctrl2; //!< Second %tensor control
-    permutation<N> m_perm1; //!< Permutation of the first %tensor
-    permutation<N> m_perm2; //!< Permutation of the second %tensor
+    dense_tensor_i<N,double> &m_ta; //!< First tensor (A)
+    dense_tensor_i<N,double> &m_tb; //!< Second tensor (B)
+    permutation<N> m_perma; //!< Permutation of the first tensor (A)
+    permutation<N> m_permb; //!< Permutation of the second tensor (B)
     loop_list_t m_list; //!< Loop list
 
 public:
-    //!	\name Construction and destruction
-    //@{
+    /** \brief Initializes the operation
+        \param ta First tensor (A)
+        \param tb Second tensor (B)
+     **/
+    tod_dotprod(dense_tensor_i<N, double> &ta, dense_tensor_i<N, double> &tb);
 
-    tod_dotprod(dense_tensor_i<N, double> &t1, dense_tensor_i<N, double> &t2);
-
-    tod_dotprod(dense_tensor_i<N, double> &t1, const permutation<N> &perm1,
-        dense_tensor_i<N, double> &t2, const permutation<N> &perm2);
-
-    //@}
+    /** \brief Initializes the operation
+        \param ta First tensor (A)
+        \param perma Permutation of first tensor (A)
+        \param tb Second tensor (B)
+        \param permb Permutation of second tensor (B)
+     **/
+    tod_dotprod(dense_tensor_i<N, double> &ta, const permutation<N> &perma,
+        dense_tensor_i<N, double> &tb, const permutation<N> &permb);
 
     /**	\brief Prefetches the arguments
      **/
     void prefetch();
 
-    /**	\brief Computes the dot product
+    /**	\brief Computes the dot product and returns the value
+        \param cpus CPU pool.
      **/
     double calculate(cpu_pool &cpus);
 
@@ -113,10 +116,5 @@ private:
 
 
 } // namespace libtensor
-
-
-#ifndef LIBTENSOR_INSTANTIATE_TEMPLATES
-#include "tod_dotprod_impl.h"
-#endif // LIBTENSOR_INSTANTIATE_TEMPLATES
 
 #endif // LIBTENSOR_TOD_DOTPROD_H

@@ -45,7 +45,6 @@
 #include "tod/tod_contract2.h"
 #include "tod/tod_diag.h"
 #include "tod/tod_dirsum.h"
-#include "tod/tod_dotprod.h"
 #include "tod/tod_import_raw.h"
 #include "tod/tod_mult.h"
 #include "tod/tod_mult1.h"

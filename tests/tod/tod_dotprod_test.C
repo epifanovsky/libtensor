@@ -5,7 +5,8 @@
 #include <libtensor/core/abs_index.h>
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
-#include <libtensor/tod/tod_dotprod.h>
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
+#include <libtensor/dense_tensor/tod_dotprod.h>
 #include "tod_dotprod_test.h"
 
 namespace libtensor {
@@ -14,7 +15,7 @@ const double tod_dotprod_test::k_thresh = 1e-14;
 
 void tod_dotprod_test::perform() throw(libtest::test_exception) {
 
-	srand48(time(NULL));
+	srand48(time(0));
 
 	test_1(4);
 	test_1(16);
