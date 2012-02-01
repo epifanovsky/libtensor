@@ -19,13 +19,13 @@ const char *tod_dotprod<N>::op_ddot::k_clazz = "tod_dotprod<N>::op_ddot";
 
 
 template<size_t N>
-tod_dotprod<N>::tod_dotprod(dense_tensor_i<N, double> &ta,
-    dense_tensor_i<N, double> &tb) :
+tod_dotprod<N>::tod_dotprod(dense_tensor_rd_i<N, double> &ta,
+    dense_tensor_rd_i<N, double> &tb) :
 
     m_ta(ta), m_tb(tb) {
 
-    static const char *method = "tod_dotprod(dense_tensor_i<N, double>&, "
-        "dense_tensor_i<N, double>&)";
+    static const char *method = "tod_dotprod(dense_tensor_rd_i<N, double>&, "
+        "dense_tensor_rd_i<N, double>&)";
 
     if(!verify_dims()) {
         throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__,
@@ -35,14 +35,14 @@ tod_dotprod<N>::tod_dotprod(dense_tensor_i<N, double> &ta,
 
 
 template<size_t N>
-tod_dotprod<N>::tod_dotprod(dense_tensor_i<N, double> &ta,
-    const permutation<N> &perma, dense_tensor_i<N, double> &tb,
+tod_dotprod<N>::tod_dotprod(dense_tensor_rd_i<N, double> &ta,
+    const permutation<N> &perma, dense_tensor_rd_i<N, double> &tb,
     const permutation<N> &permb) :
 
     m_ta(ta), m_perma(perma), m_tb(tb), m_permb(permb) {
 
-    static const char *method = "tod_dotprod(dense_tensor_i<N, double>&, "
-        "const permutation<N>&, dense_tensor_i<N, double>&, "
+    static const char *method = "tod_dotprod(dense_tensor_rd_i<N, double>&, "
+        "const permutation<N>&, dense_tensor_rd_i<N, double>&, "
         "const permutation<N>&)";
 
     if(!verify_dims()) {
@@ -55,8 +55,8 @@ tod_dotprod<N>::tod_dotprod(dense_tensor_i<N, double> &ta,
 template<size_t N>
 void tod_dotprod<N>::prefetch() {
 
-    dense_tensor_ctrl<N, double>(m_ta).req_prefetch();
-    dense_tensor_ctrl<N, double>(m_tb).req_prefetch();
+    dense_tensor_rd_ctrl<N, double>(m_ta).req_prefetch();
+    dense_tensor_rd_ctrl<N, double>(m_tb).req_prefetch();
 }
 
 
@@ -79,7 +79,7 @@ double tod_dotprod<N>::calculate(cpu_pool &cpus) {
 
         build_list(m_list, dimb, permb, dima);
 
-        dense_tensor_ctrl<N, double> ca(m_ta), cb(m_tb);
+        dense_tensor_rd_ctrl<N, double> ca(m_ta), cb(m_tb);
         const double *pb = ca.req_const_dataptr();
         const double *pa = cb.req_const_dataptr();
 

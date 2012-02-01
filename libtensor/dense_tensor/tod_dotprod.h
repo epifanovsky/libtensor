@@ -104,8 +104,8 @@ private:
     };
 
 private:
-    dense_tensor_i<N,double> &m_ta; //!< First tensor (A)
-    dense_tensor_i<N,double> &m_tb; //!< Second tensor (B)
+    dense_tensor_rd_i<N,double> &m_ta; //!< First tensor (A)
+    dense_tensor_rd_i<N,double> &m_tb; //!< Second tensor (B)
     permutation<N> m_perma; //!< Permutation of the first tensor (A)
     permutation<N> m_permb; //!< Permutation of the second tensor (B)
     loop_list_t m_list; //!< Loop list
@@ -115,7 +115,8 @@ public:
         \param ta First tensor (A)
         \param tb Second tensor (B)
      **/
-    tod_dotprod(dense_tensor_i<N, double> &ta, dense_tensor_i<N, double> &tb);
+    tod_dotprod(dense_tensor_rd_i<N, double> &ta,
+        dense_tensor_rd_i<N, double> &tb);
 
     /** \brief Initializes the operation
         \param ta First tensor (A)
@@ -123,8 +124,8 @@ public:
         \param tb Second tensor (B)
         \param permb Permutation of second tensor (B)
      **/
-    tod_dotprod(dense_tensor_i<N, double> &ta, const permutation<N> &perma,
-        dense_tensor_i<N, double> &tb, const permutation<N> &permb);
+    tod_dotprod(dense_tensor_rd_i<N, double> &ta, const permutation<N> &perma,
+        dense_tensor_rd_i<N, double> &tb, const permutation<N> &permb);
 
     /**	\brief Prefetches the arguments
      **/
