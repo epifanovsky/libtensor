@@ -16,7 +16,7 @@ const char *tod_copy<N>::k_clazz = "tod_copy<N>";
 
 
 template<size_t N>
-tod_copy<N>::tod_copy(dense_tensor_i<N, double> &ta, double c) :
+tod_copy<N>::tod_copy(dense_tensor_rd_i<N, double> &ta, double c) :
 
     m_ta(ta), m_c(c), m_dimsb(mk_dimsb(m_ta, m_perm)) {
 
@@ -24,7 +24,7 @@ tod_copy<N>::tod_copy(dense_tensor_i<N, double> &ta, double c) :
 
 
 template<size_t N>
-tod_copy<N>::tod_copy(dense_tensor_i<N, double> &ta, const permutation<N> &p,
+tod_copy<N>::tod_copy(dense_tensor_rd_i<N, double> &ta, const permutation<N> &p,
     double c) :
 
     m_ta(ta), m_perm(p), m_c(c), m_dimsb(mk_dimsb(ta, p)) {
@@ -35,16 +35,16 @@ tod_copy<N>::tod_copy(dense_tensor_i<N, double> &ta, const permutation<N> &p,
 template<size_t N>
 void tod_copy<N>::prefetch() {
 
-    dense_tensor_ctrl<N, double>(m_ta).req_prefetch();
+    dense_tensor_rd_ctrl<N, double>(m_ta).req_prefetch();
 }
 
 
 template<size_t N>
 void tod_copy<N>::perform(cpu_pool &cpus, bool zero, double c,
-    dense_tensor_i<N, double> &tb) {
+    dense_tensor_wr_i<N, double> &tb) {
 
     static const char *method =
-        "perform(cpu_pool&, bool, double, tensor_i<N, double>&)";
+        "perform(cpu_pool&, bool, double, dense_tensor_wr_i<N, double>&)";
 
     if(!tb.get_dims().equals(m_dimsb)) {
         throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "tb");
@@ -63,7 +63,7 @@ void tod_copy<N>::perform(cpu_pool &cpus, bool zero, double c,
 
 
 template<size_t N>
-dimensions<N> tod_copy<N>::mk_dimsb(dense_tensor_i<N, double> &ta,
+dimensions<N> tod_copy<N>::mk_dimsb(dense_tensor_rd_i<N, double> &ta,
     const permutation<N> &perm) {
 
     dimensions<N> dims(ta.get_dims());
@@ -74,7 +74,7 @@ dimensions<N> tod_copy<N>::mk_dimsb(dense_tensor_i<N, double> &ta,
 
 template<size_t N> template<typename Base>
 void tod_copy<N>::do_perform(cpu_pool &cpus, double c,
-    dense_tensor_i<N, double> &tb) {
+    dense_tensor_wr_i<N, double> &tb) {
 
     typedef typename Base::list_t list_t;
     typedef typename Base::registers registers_t;
@@ -84,7 +84,8 @@ void tod_copy<N>::do_perform(cpu_pool &cpus, double c,
 
     try {
 
-    dense_tensor_ctrl<N, double> ca(m_ta), cb(tb);
+    dense_tensor_rd_ctrl<N, double> ca(m_ta);
+    dense_tensor_wr_ctrl<N, double> cb(tb);
     ca.req_prefetch();
     cb.req_prefetch();
 

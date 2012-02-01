@@ -62,7 +62,7 @@ public:
     static const char *k_clazz; //!< Class name
 
 private:
-    dense_tensor_i<N,double> &m_ta; //!< Source tensor
+    dense_tensor_rd_i<N,double> &m_ta; //!< Source tensor
     permutation<N> m_perm; //!< Permutation of indexes
     double m_c; //!< Scaling coefficient
     dimensions<N> m_dimsb; //!< Dimensions of output tensor
@@ -72,14 +72,14 @@ public:
         \param ta Source tensor.
         \param c Coefficient.
      **/
-    tod_copy(dense_tensor_i<N,double> &ta, double c = 1.0);
+    tod_copy(dense_tensor_rd_i<N,double> &ta, double c = 1.0);
 
     /**	\brief Prepares the permute & copy operation
         \param ta Source tensor.
         \param p Permutation of tensor indexes.
         \param c Coefficient.
      **/
-    tod_copy(dense_tensor_i<N,double> &ta, const permutation<N> &p,
+    tod_copy(dense_tensor_rd_i<N,double> &ta, const permutation<N> &p,
         double c = 1.0);
 
     /**	\brief Virtual destructor
@@ -97,7 +97,7 @@ public:
         \param tb Output tensor.
      **/
     void perform(cpu_pool &cpus, bool zero, double c,
-        dense_tensor_i<N, double> &tb);
+        dense_tensor_wr_i<N, double> &tb);
 
     //@}
 
@@ -105,11 +105,11 @@ private:
     /**	\brief Creates the dimensions of the output using an input
             tensor and a permutation of indexes
      **/
-    static dimensions<N> mk_dimsb(dense_tensor_i<N,double> &ta,
+    static dimensions<N> mk_dimsb(dense_tensor_rd_i<N,double> &ta,
         const permutation<N> &perm);
 
     template<typename Base>
-    void do_perform(cpu_pool &cpus, double c, dense_tensor_i<N,double> &t);
+    void do_perform(cpu_pool &cpus, double c, dense_tensor_wr_i<N,double> &t);
 
     template<typename Base>
     void build_loop(typename Base::list_t &loop, const dimensions<N> &dimsa,
