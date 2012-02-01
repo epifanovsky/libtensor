@@ -17,6 +17,35 @@ namespace libtensor {
     The inner (dot) product of two tensors is defined as
     \f$ d = sum_{ijk...} a_{ijk...} b_{ijk...} \f$
 
+    Arguments A and B may come with different index order, in which case
+    permutations of indexes must be supplied that bring the indexes to
+    the same order.
+
+
+    <b>Examples</b>
+
+    \code
+    dense_tensor_i<2, double> &ta = ..., &tb = ...;
+    // Compute \sum_{ij} a_{ij} b_{ij}
+    double d = tod_dotprod<2>(ta, tb).calculate();
+    \endcode
+
+    \code
+    dense_tensor_i<2, double> &ta = ..., &tb = ...;
+    permutation<2> pa, pb;
+    pb.permute(0, 1); // ji -> ij
+    // Compute \sum_{ij} a_{ij} b_{ji}
+    double d = tod_dotprod<2>(ta, pa, tb, pb).calculate();
+    \endcode
+
+    \code
+    dense_tensor_i<3, double> &ta = ..., &tb = ...;
+    permutation<3> pa, pb;
+    pb.permute(1, 2).permute(0, 1); // jki -> ijk
+    // Compute \sum_{ijk} a_{ijk} b_{jki}
+    double d = tod_dotprod<3>(ta, pa, tb, pb).calculate();
+    \endcode
+
     \ingroup libtensor_dense_tensor_tod
  **/
 template<size_t N>
