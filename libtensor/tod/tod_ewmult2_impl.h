@@ -120,8 +120,10 @@ void tod_ewmult2<N, M, K>::perform(cpu_pool &cpus, bool zero, double d,
         auto_cpu_lock cpu(cpus);
 
         if(zero) {
+            tod_ewmult2<N, M, K>::start_timer("zero");
             size_t sz = dimsc.get_size();
             for(size_t i = 0; i < sz; i++) pc[i] = 0.0;
+            tod_ewmult2<N, M, K>::stop_timer("zero");
         }
 
         loop_registers<2, 1> r;
