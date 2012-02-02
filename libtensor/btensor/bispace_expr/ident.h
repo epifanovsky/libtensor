@@ -1,9 +1,6 @@
 #ifndef LIBTENSOR_BISPACE_EXPR_IDENT_H
 #define LIBTENSOR_BISPACE_EXPR_IDENT_H
 
-#include "../../defs.h"
-#include "../../exception.h"
-#include "../expr_exception.h"
 #include "expr.h"
 
 namespace libtensor {
@@ -46,15 +43,13 @@ public:
 		expr< N, ident<N> > subexpr(*this);
 		size_t n = supexpr.contains(subexpr);
 		if(n == 0) {
-			throw expr_exception("libtensor::bispace_expr",
-				"ident<N>",
-				"locate_and_permute()", __FILE__, __LINE__,
+			throw expr_exception("ident<N>", "locate_and_permute()",
+			        __FILE__, __LINE__,
 				"Subexpression cannot be located.");
 		}
 		if(n > 1) {
-			throw expr_exception("libtensor::bispace_expr",
-				"ident<N>",
-				"locate_and_permute()", __FILE__, __LINE__,
+			throw expr_exception("ident<N>", "locate_and_permute()",
+			        __FILE__, __LINE__,
 				"More than one instance of the subexpression"
 				" is found.");
 		}
@@ -89,8 +84,7 @@ struct ident_subexpr_functor {
 	static size_t locate(
 		const ident<N> &e, const expr<M, D> &se) {
 
-		throw expr_exception("libtensor::bispace_expr",
-			"ident_subexpr_functor<N, M, D>",
+		throw expr_exception("ident_subexpr_functor<N, M, D>",
 			"locate()", __FILE__, __LINE__,
 			"Subexpression cannot be located.");
 	}
@@ -110,8 +104,8 @@ struct ident_subexpr_functor< N, N, ident<N> > {
 		const ident<N> &e, const expr< N, ident<N> > &se) {
 
 		if(!e.is_same(se.get_core())) {
-			throw expr_exception("libtensor::bispace_expr",
-				"ident_subexpr_functor< N, N, ident<N> >",
+			throw expr_exception(
+			        "ident_subexpr_functor< N, N, ident<N> >",
 				"locate()", __FILE__, __LINE__,
 				"Subexpression cannot be located.");
 		}

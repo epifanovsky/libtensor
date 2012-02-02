@@ -12,7 +12,7 @@
 namespace libtensor {
 
 
-/**	\brief Base class for additive block %tensor operations
+/** \brief Base class for additive block %tensor operations
     \tparam N Tensor order.
 
     Additive block %tensor operations are those that can add their result
@@ -50,6 +50,9 @@ private:
         }
         virtual void perform(cpu_pool &cpus) throw (exception);
     };
+
+public:
+    virtual ~additive_btod() { }
 
 public:
     using basic_btod<N>::get_bis;

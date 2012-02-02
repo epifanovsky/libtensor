@@ -33,7 +33,7 @@ public:
 		m_expr1(expr1), m_expr2(expr2) {
 
 		if(!get_subexpr(0).equals(m_expr2.get_core())) {
-			throw expr_exception("libtensor::bispace_expr",
+			throw expr_exception(
 				"sym<N, K, C>", "sym()", __FILE__, __LINE__,
 				"Incompatible subspaces.");
 		}

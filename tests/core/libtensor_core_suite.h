@@ -50,7 +50,7 @@ namespace libtensor {
 	\li libtensor::block_index_subspace_builder_test
 	\li libtensor::block_map_test
 	\li libtensor::block_tensor_test
-    \li libtensor::dense_tensor_test
+        \li libtensor::dense_tensor_test
 	\li libtensor::dimensions_test
 	\li libtensor::direct_block_tensor_test
 	\li libtensor::immutable_test

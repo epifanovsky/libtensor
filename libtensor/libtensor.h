@@ -90,6 +90,7 @@
 #include "symmetry/se_perm.h"
 
 
+/*
 #include "iface/bispace.h"
 #include "iface/btensor_i.h"
 #include "iface/btensor.h"
@@ -103,7 +104,7 @@
 #include "iface/expr/anon_eval.h"
 #include "iface/operators.h"
 #include "iface/labeled_btensor_impl.h"
-#include "iface/dot_product.h"
+#include "iface/dot_product.h"*/
 
 #endif // LIBTENSOR_H
 
