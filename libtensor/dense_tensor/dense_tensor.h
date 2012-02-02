@@ -133,11 +133,7 @@ public:
 public:
     typedef T element_t; //!< Tensor element type
     typedef typename Alloc::pointer_type ptr_t; //!< Memory pointer type
-<<<<<<< HEAD
     typedef typename dense_tensor_i<N, T>::session_handle_type handle_t; //!< Session handle type
-=======
-    typedef typename dense_tensor_i<N, T>::handle_t handle_t; //!< Session handle type
->>>>>>> refs/heads/expr
 
 private:
     dimensions<N> m_dims; //!< Tensor %dimensions

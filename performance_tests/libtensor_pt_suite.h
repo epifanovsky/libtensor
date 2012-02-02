@@ -9,10 +9,10 @@
 #include "tod_copy_scenario.h"
 #include "tod_contract2_scenario.h"
 #include "tod_dotprod_scenario.h"
-//#include "expression_test_scenario.h"
+#include "expression_test_scenario.h"
 
 #include "dimensions_data.h"
-//#include "bispace_data.h"
+#include "bispace_data.h"
 
 namespace libtensor {
 
@@ -37,14 +37,14 @@ class libtensor_pt_suite : public performance_test_suite {
 	typedef dimensions_data<2,2,2,32> dim32_t;
 	typedef dimensions_data<2,2,2,32> dim64_t;
 
-//	typedef arbitrary_blocks_data<32,64,2> normal2_t;
-//	typedef arbitrary_blocks_data<32,64,4> normal4_t;
-//	typedef arbitrary_blocks_data<32,64,8> normal8_t;
-//	typedef arbitrary_blocks_data<32,64,16> normal16_t;
-//	typedef arbitrary_blocks_data<32,256,4> large4_t;
-//	typedef arbitrary_blocks_data<32,256,8> large8_t;
-//	typedef arbitrary_blocks_data<32,256,16> large16_t;
-//	typedef arbitrary_blocks_data<32,256,16> large32_t;
+	typedef arbitrary_blocks_data<32,64,2> normal2_t;
+	typedef arbitrary_blocks_data<32,64,4> normal4_t;
+	typedef arbitrary_blocks_data<32,64,8> normal8_t;
+	typedef arbitrary_blocks_data<32,64,16> normal16_t;
+	typedef arbitrary_blocks_data<32,256,4> large4_t;
+	typedef arbitrary_blocks_data<32,256,8> large8_t;
+	typedef arbitrary_blocks_data<32,256,16> large16_t;
+	typedef arbitrary_blocks_data<32,256,16> large32_t;
 
 	tod_add_scenario<1000000,4,dim8_t> m_tod_add_ptsc1;
 	tod_add_scenario<60000,4,dim16_t> m_tod_add_ptsc2;
@@ -62,13 +62,13 @@ class libtensor_pt_suite : public performance_test_suite {
 	tod_dotprod_scenario<60000,4,dim16_t> m_tod_dotprod_ptsc2;
 	tod_dotprod_scenario<4000,4,dim32_t> m_tod_dotprod_ptsc3;
 
-//	expression_test_scenario<400,normal16_t> m_expression_tests_n16;
-//	expression_test_scenario<200,normal8_t> m_expression_tests_n8;
-//	expression_test_scenario<100,normal4_t> m_expression_tests_n4;
-//	expression_test_scenario<800,large32_t> m_expression_tests_l32;
-//	expression_test_scenario<400,large16_t> m_expression_tests_l16;
-//	expression_test_scenario<200,large8_t> m_expression_tests_l8;
-//	expression_test_scenario<100,large4_t> m_expression_tests_l4;
+	expression_test_scenario<400,normal16_t> m_expression_tests_n16;
+	expression_test_scenario<200,normal8_t> m_expression_tests_n8;
+	expression_test_scenario<100,normal4_t> m_expression_tests_n4;
+	expression_test_scenario<800,large32_t> m_expression_tests_l32;
+	expression_test_scenario<400,large16_t> m_expression_tests_l16;
+	expression_test_scenario<200,large8_t> m_expression_tests_l8;
+	expression_test_scenario<100,large4_t> m_expression_tests_l4;
 public:
 	//!	Creates the suite
 	libtensor_pt_suite();

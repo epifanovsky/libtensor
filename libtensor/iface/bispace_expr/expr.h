@@ -5,7 +5,7 @@
 #include "../../exception.h"
 #include "../../core/permutation_builder.h"
 #include "../bispace.h"
-#include "../../expr/expr_exception.h"
+#include "../expr_exception.h"
 
 namespace libtensor {
 

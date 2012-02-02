@@ -204,6 +204,8 @@ set(SRC_IFACE
     iface/libtensor_iface_tests.C
     iface/libtensor_iface_suite.C
     iface/anon_eval_test.C
+    iface/bispace_expr_test.C
+    iface/bispace_test.C
     iface/btensor_test.C
     iface/contract_test.C
     iface/diag_test.C
@@ -217,42 +219,23 @@ set(SRC_IFACE
     iface/labeled_btensor_test.C
     iface/letter_expr_test.C
     iface/letter_test.C
-    iface/mapped_btensor_test.C
     iface/mult_test.C
     iface/symm_test.C
     iface/trace_test.C
-)
-
-set(SRC_EXPR
-    expr/libtensor_expr_tests.C
-    expr/libtensor_expr_suite.C
-    expr/anytensor_test.C
-    expr/bispace_test.C
-    expr/bispace_expr_test.C
-    expr/btensor_test.C
-    expr/contract_test.C
-    expr/diag_test.C
-    expr/dirprod_test.C
-    expr/dirsum_test.C
-    expr/labeled_anytensor_test.C
-    expr/letter_test.C
-    expr/letter_expr_test.C
 )
 
 set(TARGETS
     libtensor_core_tests
     libtensor_tod_tests
     libtensor_btod_tests
-#    libtensor_iface_tests
-    libtensor_expr_tests
+    libtensor_iface_tests
     libtensor_linalg_tests
     libtensor_symmetry_tests
 )
 
 add_executable(libtensor_core_tests ${SRC_CORE})
 add_executable(libtensor_btod_tests ${SRC_BTOD})
-#add_executable(libtensor_iface_tests ${SRC_IFACE})
-add_executable(libtensor_expr_tests ${SRC_EXPR})
+add_executable(libtensor_iface_tests ${SRC_IFACE})
 add_executable(libtensor_linalg_tests ${SRC_LINALG})
 add_executable(libtensor_symmetry_tests ${SRC_SYMMETRY})
 add_executable(libtensor_tod_tests ${SRC_TOD})

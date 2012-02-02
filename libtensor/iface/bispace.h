@@ -331,7 +331,7 @@ const mask<N> &bispace<N>::get_sym_mask(size_t i) const {
 	for(; imsk != m_masks.end(); imsk++) {
 		if(imsk->at(i)) return *imsk;
 	}
-	throw expr_exception(k_clazz, method, __FILE__, __LINE__,
+	throw expr_exception(g_ns, k_clazz, method, __FILE__, __LINE__,
 		"Symmetry mask cannot be found.");
 }
 
@@ -363,7 +363,7 @@ void bispace<N>::splits_and_masks(const bispace_expr::expr<N, C> &expr) {
 		expr.mark_sym(i, msk);
 #ifdef LIBTENSOR_DEBUG
 		if(!msk[i]) {
-			throw expr_exception(k_clazz, method,
+			throw expr_exception(g_ns, k_clazz, method,
 				__FILE__, __LINE__, "Incorrect symmetry mask.");
 		}
 #endif // LIBTENSOR_DEBUG

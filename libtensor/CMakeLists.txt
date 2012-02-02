@@ -108,7 +108,6 @@ set(SRC
     tod/kernels/kern_mul_ijklmn_kjmp_ipln.C
     tod/kernels/kern_mul_x_p_p.C
     tod/kernels/kern_mul_x_pq_qp.C
-    btensor/inst/btensor_renderer_inst.C
 )
 
 set(SRC_LINALG
