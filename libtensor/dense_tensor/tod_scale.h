@@ -1,5 +1,5 @@
-#ifndef LIBTENSOR_TOD_SET_H
-#define LIBTENSOR_TOD_SET_H
+#ifndef LIBTENSOR_TOD_SCALE_H
+#define LIBTENSOR_TOD_SCALE_H
 
 #include <libtensor/timings.h>
 #include <libtensor/mp/cpu_pool.h>
@@ -8,24 +8,24 @@
 namespace libtensor {
 
 
-/**	\brief Sets all elements of a tensor to a given value
+/**	\brief Scales tensor elements by a constant
     \tparam N Tensor order.
 
     \ingroup libtensor_dense_tensor_tod
  **/
 template<size_t N>
-class tod_set : public timings< tod_set<N> > {
+class tod_scale: public timings< tod_scale<N> > {
 public:
     static const char *k_clazz; //!< Class name
 
 private:
-    double m_v; //!< Value
+    double m_c; //!< Scaling coefficient
 
 public:
     /**	\brief Initializes the operation
-        \param v Value to be assigned to the tensor elements.
+        \param c Scaling coefficient.
      **/
-    tod_set(double v = 0.0) : m_v(v) { }
+    tod_scale(double c) : m_c(c) { }
 
     /**	\brief Performs the operation
         \param cpus Pool of CPUs.
@@ -36,11 +36,11 @@ public:
 private:
     /** \brief Private copy constructor
      **/
-    tod_set(const tod_set&);
+    tod_scale(const tod_scale&);
 
 };
 
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_TOD_SET_H
+#endif // LIBTENSOR_TOD_SCALE_H

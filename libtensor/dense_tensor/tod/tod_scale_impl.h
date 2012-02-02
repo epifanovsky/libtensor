@@ -1,21 +1,22 @@
-#ifndef LIBTENSOR_TOD_SET_IMPL_H
-#define LIBTENSOR_TOD_SET_IMPL_H
+#ifndef LIBTENSOR_TOD_SCALE_IMPL_H
+#define LIBTENSOR_TOD_SCALE_IMPL_H
 
 #include <libtensor/mp/auto_cpu_lock.h>
+#include <libtensor/linalg/linalg.h>
 #include "../dense_tensor_ctrl.h"
-#include "../tod_set.h"
+#include "../tod_scale.h"
 
 namespace libtensor {
 
 
 template<size_t N>
-const char *tod_set<N>::k_clazz = "tod_set<N>";
+const char *tod_scale<N>::k_clazz = "tod_scale<N>";
 
 
 template<size_t N>
-void tod_set<N>::perform(cpu_pool &cpus, dense_tensor_wr_i<N, double> &ta) {
+void tod_scale<N>::perform(cpu_pool &cpus, dense_tensor_wr_i<N, double> &ta) {
 
-    tod_set<N>::start_timer();
+    tod_scale<N>::start_timer();
 
     try {
 
@@ -25,20 +26,22 @@ void tod_set<N>::perform(cpu_pool &cpus, dense_tensor_wr_i<N, double> &ta) {
         {
             auto_cpu_lock cpu(cpus);
             size_t sz = ta.get_dims().get_size();
-            for(size_t i = 0; i < sz; i++) p[i] = m_v;
+            linalg::i_x(sz, m_c, p, 1);
         }
 
         ca.ret_dataptr(p); p = 0;
 
     } catch(...) {
-        tod_set<N>::stop_timer();
+        tod_scale<N>::stop_timer();
         throw;
     }
 
-    tod_set<N>::stop_timer();
+    tod_scale<N>::stop_timer();
 }
+
+
 
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_TOD_SET_IMPL_H
+#endif // LIBTENSOR_TOD_SCALE_IMPL_H

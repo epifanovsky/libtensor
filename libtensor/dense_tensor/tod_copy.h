@@ -115,6 +115,11 @@ private:
     void build_loop(typename Base::list_t &loop, const dimensions<N> &dimsa,
         const permutation<N> &perma, const dimensions<N> &dimsb);
 
+private:
+    /** \brief Private copy constructor
+     **/
+    tod_copy(const tod_copy&);
+
 };
 
 

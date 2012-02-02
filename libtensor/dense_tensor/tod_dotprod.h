@@ -90,6 +90,11 @@ private:
      **/
     bool verify_dims();
 
+private:
+    /** \brief Private copy constructor
+     **/
+    tod_dotprod(const tod_dotprod&);
+
 };
 
 
