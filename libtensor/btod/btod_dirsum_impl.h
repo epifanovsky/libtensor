@@ -10,7 +10,7 @@
 #include "../core/orbit_list.h"
 #include "../core/permutation_builder.h"
 #include "../core/mask.h"
-#include "../tod/tod_dirsum.h"
+#include <libtensor/dense_tensor/tod_dirsum.h>
 #include <libtensor/dense_tensor/tod_scale.h>
 #include "../tod/tod_scatter.h"
 #include <libtensor/dense_tensor/tod_set.h>

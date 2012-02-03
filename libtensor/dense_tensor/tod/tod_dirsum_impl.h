@@ -1,11 +1,14 @@
 #ifndef LIBTENSOR_TOD_DIRSUM_IMPL_H
 #define LIBTENSOR_TOD_DIRSUM_IMPL_H
 
-#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include "contraction2.h"
-#include "contraction2_list_builder.h"
-#include "kernels/loop_list_runner.h"
-#include "kernels/kern_add_generic.h"
+#include <libtensor/mp/auto_cpu_lock.h>
+#include <libtensor/tod/bad_dimensions.h>
+#include <libtensor/tod/contraction2.h>
+#include <libtensor/tod/contraction2_list_builder.h>
+#include <libtensor/tod/kernels/loop_list_runner.h>
+#include <libtensor/tod/kernels/kern_add_generic.h>
+#include "../dense_tensor_ctrl.h"
+#include "../tod_dirsum.h"
 
 namespace libtensor {
 

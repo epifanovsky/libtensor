@@ -11,7 +11,7 @@
 #include <libtensor/symmetry/se_label.h>
 #include <libtensor/symmetry/se_part.h>
 #include <libtensor/tod/tod_btconv.h>
-#include <libtensor/tod/tod_dirsum.h>
+#include <libtensor/dense_tensor/tod_dirsum.h>
 #include "../compare_ref.h"
 #include "btod_dirsum_test.h"
 #include <libtensor/btod/btod_print.h>

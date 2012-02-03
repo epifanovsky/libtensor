@@ -7,7 +7,7 @@
 #include <libtensor/btod/btod_symmetrize.h>
 #include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/tod/tod_btconv.h>
-#include <libtensor/tod/tod_dirsum.h>
+#include <libtensor/dense_tensor/tod_dirsum.h>
 #include <libtensor/tod/tod_mult.h>
 #include <iomanip>
 #include <sstream>
