@@ -144,6 +144,7 @@ set(SRC_INST
     btod/btod_ewmult2.C
     btod/btod_sum.C
     block_tensor/btod/impl/btod_set.C
+    diag_tensor/impl/diag_tensor_space.C
 )
 
 set(SRC_MP
