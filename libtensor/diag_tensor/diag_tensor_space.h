@@ -19,6 +19,9 @@ namespace libtensor {
  **/
 template<size_t N>
 class diag_tensor_subspace {
+public:
+    static const char *k_clazz; //!< Class name
+
 private:
     std::vector< mask<N> > m_diag; //!< Diagonal masks
     mask<N> m_msk; //!< Total mask
