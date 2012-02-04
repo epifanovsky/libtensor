@@ -81,7 +81,7 @@ const char *diag_tensor_space<N>::k_clazz = "diag_tensor_space<N>";
 template<size_t N>
 diag_tensor_space<N>::diag_tensor_space(const dimensions<N> &dims) :
 
-    m_dims(dims) {
+    m_dims(dims), m_nss(0) {
 
 }
 
@@ -89,10 +89,12 @@ diag_tensor_space<N>::diag_tensor_space(const dimensions<N> &dims) :
 template<size_t N>
 diag_tensor_space<N>::diag_tensor_space(const diag_tensor_space &other) :
 
-    m_dims(other.m_dims) {
+    m_dims(other.m_dims), m_nss(other.m_nss) {
 
     for(size_t i = 0; i < other.m_ss.size(); i++) {
-        m_ss.push_back(new diag_tensor_subspace<N>(*other.m_ss[i]));
+        diag_tensor_subspace<N> *ss = 0;
+        if(other.m_ss[i]) ss = new diag_tensor_subspace<N>(*other.m_ss[i]);
+        m_ss.push_back(ss);
     }
 }
 
@@ -105,14 +107,22 @@ diag_tensor_space<N>::~diag_tensor_space() {
 
 
 template<size_t N>
+void diag_tensor_space<N>::get_all_subspaces(std::vector<size_t> &ss) const {
+
+    ss.clear();
+    for(size_t i = 0; i < m_ss.size(); i++) if(m_ss[i]) ss.push_back(i);
+}
+
+
+template<size_t N>
 const diag_tensor_subspace<N> &diag_tensor_space<N>::get_subspace(
     size_t n) const {
 
     static const char *method = "get_subspace(size_t)";
 
 #ifdef LIBTENSOR_DEBUG
-    if(n >= m_ss.size()) {
-        throw out_of_bounds(g_ns, k_clazz, method, __FILE__, __LINE__, "n");
+    if(n >= m_ss.size() || m_ss[n] == 0) {
+        throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__, "n");
     }
 #endif // LIBTENSOR_DEBUG
 
@@ -136,8 +146,16 @@ size_t diag_tensor_space<N>::add_subspace(const diag_tensor_subspace<N> &ss) {
         }
     }
 
-    m_ss.push_back(new diag_tensor_subspace<N>(ss));
-    return m_ss.size() - 1;
+    size_t n = m_ss.size();
+    diag_tensor_subspace<N> *ss1 = new diag_tensor_subspace<N>(ss);
+    for(size_t i = 0; i < m_ss.size(); i++) if(m_ss[i] == 0) {
+        n = i;
+        break;
+    }
+    if(n == m_ss.size()) m_ss.push_back(0);
+    m_ss[n] = ss1;
+    m_nss++;
+    return n;
 }
 
 
@@ -147,14 +165,14 @@ void diag_tensor_space<N>::remove_subspace(size_t n) {
     static const char *method = "remove_subspace(size_t)";
 
 #ifdef LIBTENSOR_DEBUG
-    if(n >= m_ss.size()) {
-        throw out_of_bounds(g_ns, k_clazz, method, __FILE__, __LINE__, "n");
+    if(n >= m_ss.size() || m_ss[n] == 0) {
+        throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__, "n");
     }
 #endif // LIBTENSOR_DEBUG
 
     delete m_ss[n];
     m_ss[n] = 0;
-    m_ss.erase(m_ss.begin() + n);
+    m_nss--;
 }
 
 

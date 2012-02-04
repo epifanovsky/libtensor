@@ -68,6 +68,12 @@ public:
     of all the spaces. If an entry is allowed by any of the subspaces, it is
     allowed by the space.
 
+    Upon addition, each subspace is assigned an integer, which can later be
+    used to identify that subspace within the space. The numbers are not
+    guaranteed to be consecutive or to come from a certain range. However,
+    each subspace's id is guaranteed to be the same as long as that subspace
+    is a part of the space. Removed subspace's number can be reused.
+
     \sa diag_tensor_base_i, diag_tensor_subspace
 
     \ingroup libtensor_diag_tensor
@@ -79,6 +85,7 @@ public:
 
 private:
     dimensions<N> m_dims; //!< Tensor dimensions
+    size_t m_nss; //!< Number of subspaces
     std::vector< diag_tensor_subspace<N>* > m_ss; //!< Subspaces
 
 public:
@@ -103,10 +110,14 @@ public:
     /** \brief Returns the number of subspaces in the space
      **/
     size_t get_nsubspaces() const {
-        return m_ss.size();
+        return m_nss;
     }
 
-    /** \brief Returns a subspace
+    /** \brief Returns all subspace numbers into a vector
+     **/
+    void get_all_subspaces(std::vector<size_t> &ssn) const;
+
+    /** \brief Returns a subspace by its number
      **/
     const diag_tensor_subspace<N> &get_subspace(size_t n) const;
 
@@ -114,7 +125,7 @@ public:
      **/
     size_t add_subspace(const diag_tensor_subspace<N> &ss);
 
-    /** \brief Removes a subspace
+    /** \brief Removes a subspace by its number
      **/
     void remove_subspace(size_t n);
 

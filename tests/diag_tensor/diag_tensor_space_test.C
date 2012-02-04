@@ -38,43 +38,67 @@ void diag_tensor_space_test::test_1() throw(libtest::test_exception) {
                 "dts.get_nsubspaces() != 0");
         }
 
-        dts.add_subspace(dts1);
-        dts.add_subspace(dts2);
+        size_t ssn1 = dts.add_subspace(dts1);
+        size_t ssn2 = dts.add_subspace(dts2);
+        if(ssn2 == ssn1) {
+            fail_test(testname, __FILE__, __LINE__, "ssn2 == ssn1");
+        }
 
         if(dts.get_nsubspaces() != 2) {
             fail_test(testname, __FILE__, __LINE__,
                 "dts.get_nsubspaces() != 2");
         }
 
-        size_t nsub = dts.get_nsubspaces(), isub = 0;
-        while(isub < nsub) {
-            if(m0101.equals(dts.get_subspace(isub).get_total_mask())) break;
-            isub++;
+        std::vector<size_t> ssn;
+        dts.get_all_subspaces(ssn);
+        if(ssn.size() != 2) {
+            fail_test(testname, __FILE__, __LINE__, "ssn.size() != 2");
         }
-        if(isub == nsub) {
+        std::vector<size_t>::iterator ssi1 =
+            std::find(ssn.begin(), ssn.end(), ssn1);
+        std::vector<size_t>::iterator ssi2 =
+            std::find(ssn.begin(), ssn.end(), ssn2);
+        if(ssi1 == ssn.end()) {
+            fail_test(testname, __FILE__, __LINE__, "ssi1 == ssn.end()");
+        }
+        if(ssi2 == ssn.end()) {
+            fail_test(testname, __FILE__, __LINE__, "ssi2 == ssn.end()");
+        }
+        
+        if(!m0101.equals(dts.get_subspace(ssn1).get_total_mask())) {
             fail_test(testname, __FILE__, __LINE__, "subspace 0101 not found");
         }
-        dts.remove_subspace(isub);
+        dts.remove_subspace(ssn1);
 
         if(dts.get_nsubspaces() != 1) {
             fail_test(testname, __FILE__, __LINE__,
                 "dts.get_nsubspaces() != 1");
         }
 
-        nsub = dts.get_nsubspaces();
-        isub = 0;
-        while(isub < nsub) {
-            if(m1010.equals(dts.get_subspace(isub).get_total_mask())) break;
-            isub++;
-        }
-        if(isub == nsub) {
+        if(!m1010.equals(dts.get_subspace(ssn2).get_total_mask())) {
             fail_test(testname, __FILE__, __LINE__, "subspace 1010 not found");
         }
-        dts.remove_subspace(isub);
+        dts.remove_subspace(ssn2);
 
         if(dts.get_nsubspaces() != 0) {
             fail_test(testname, __FILE__, __LINE__,
                 "dts.get_nsubspaces() != 0");
+        }
+
+        ssn1 = dts.add_subspace(dts1);
+        if(dts.get_nsubspaces() != 1) {
+            fail_test(testname, __FILE__, __LINE__,
+                "dts.get_nsubspaces() != 1");
+        }
+
+        ssn2 = dts.add_subspace(dts2);
+        if(ssn2 == ssn1) {
+            fail_test(testname, __FILE__, __LINE__, "ssn2 == ssn1");
+        }
+
+        if(dts.get_nsubspaces() != 2) {
+            fail_test(testname, __FILE__, __LINE__,
+                "dts.get_nsubspaces() != 2");
         }
 
     } catch(exception &e) {
