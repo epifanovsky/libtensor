@@ -327,14 +327,7 @@ void btod_dirsum<N, M>::do_block_dirsum(
 
 	cpu_pool cpus(1);
 
-	if(zero) {
-		tod_dirsum<N, M>(blka, ka, blkb, kb, permc).perform(blkc);
-		if(kc != 1.0) {
-			tod_scale<k_orderc>(kc).perform(cpus, blkc);
-		}
-	} else {
-		tod_dirsum<N, M>(blka, ka, blkb, kb, permc).perform(blkc, kc);
-	}
+	tod_dirsum<N, M>(blka, ka, blkb, kb, permc).perform(cpus, zero, kc, blkc);
 
 	ctrla.ret_block(ia);
 	ctrlb.ret_block(ib);

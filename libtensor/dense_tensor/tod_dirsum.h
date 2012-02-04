@@ -3,7 +3,6 @@
 
 #include <list>
 #include <libtensor/timings.h>
-#include <libtensor/tod/kernels/loop_list_node.h>
 #include <libtensor/mp/cpu_pool.h>
 #include "dense_tensor_i.h"
 
@@ -28,26 +27,6 @@ class tod_dirsum : public timings< tod_dirsum<N, M> > {
 public:
     static const char *k_clazz; //!< Class name
 
-private:
-    class loop_list_adapter {
-    private:
-        typedef std::list< loop_list_node<2, 1> > list_t;
-        list_t &m_list;
-
-    public:
-        loop_list_adapter(list_t &list) : m_list(list) { }
-        void append(size_t weight, size_t inca, size_t incb,
-            size_t incc) {
-            typedef typename list_t::iterator iterator_t;
-            typedef loop_list_node<2, 1> node_t;
-            iterator_t inode = m_list.insert(m_list.end(),
-                node_t(weight));
-            inode->stepa(0) = inca;
-            inode->stepa(1) = incb;
-            inode->stepb(0) = incc;
-        }
-    };
-
 public:
     enum {
         k_ordera = N, //!< Order of first argument (A)
@@ -56,37 +35,37 @@ public:
     };
 
 private:
-    dense_tensor_i<k_ordera, double> &m_ta; //!< First %tensor (A)
-    dense_tensor_i<k_orderb, double> &m_tb; //!< Second %tensor (B)
+    dense_tensor_rd_i<k_ordera, double> &m_ta; //!< First %tensor (A)
+    dense_tensor_rd_i<k_orderb, double> &m_tb; //!< Second %tensor (B)
     double m_ka; //!< Coefficient A
     double m_kb; //!< Coefficient B
     permutation<k_orderc> m_permc; //!< Permutation of the result
     dimensions<k_orderc> m_dimsc; //!< Dimensions of the result
 
 public:
-    /**    \brief Initializes the operation
+    /** \brief Initializes the operation
      **/
-    tod_dirsum(dense_tensor_i<k_ordera, double> &ta, double ka,
-        dense_tensor_i<k_orderb, double> &tb, double kb);
+    tod_dirsum(dense_tensor_rd_i<k_ordera, double> &ta, double ka,
+        dense_tensor_rd_i<k_orderb, double> &tb, double kb);
 
-    /**    \brief Initializes the operation
+    /** \brief Initializes the operation
      **/
-    tod_dirsum(dense_tensor_i<k_ordera, double> &ta, double ka,
-        dense_tensor_i<k_orderb, double> &tb, double kb,
+    tod_dirsum(dense_tensor_rd_i<k_ordera, double> &ta, double ka,
+        dense_tensor_rd_i<k_orderb, double> &tb, double kb,
         const permutation<k_orderc> &permc);
 
-    /**    \brief Performs the operation
+    /** \brief Performs the operation
+        \param cpus Pool of CPUs.
+        \param zero Zero the output array before running the operation.
+        \param d Scaling coefficient for the result.
+        \param tc Output tensor.
      **/
-    void perform(dense_tensor_i<k_orderc, double> &tc);
-
-    /**    \brief Performs the operation (additive)
-     **/
-    void perform(dense_tensor_i<k_orderc, double> &tc, double kc);
+    void perform(cpu_pool &cpus, bool zero, double d,
+        dense_tensor_wr_i<k_orderc, double> &tc);
 
 private:
-    static dimensions<N + M> mk_dimsc(dense_tensor_i<k_ordera, double> &ta,
-        dense_tensor_i<k_orderb, double> &tb);
-    void do_perform(dense_tensor_i<k_orderc, double> &tc, bool zero, double d);
+    static dimensions<N + M> mk_dimsc(dense_tensor_rd_i<k_ordera, double> &ta,
+        dense_tensor_rd_i<k_orderb, double> &tb);
 
 private:
     /** \brief Private copy constructor
