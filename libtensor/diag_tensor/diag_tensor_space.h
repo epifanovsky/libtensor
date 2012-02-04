@@ -74,10 +74,26 @@ public:
  **/
 template<size_t N>
 class diag_tensor_space {
+public:
+    static const char *k_clazz; //!< Class name
+
 private:
     dimensions<N> m_dims; //!< Tensor dimensions
+    std::vector< diag_tensor_subspace<N>* > m_ss; //!< Subspaces
 
 public:
+    /** \brief Initializes diag tensor space
+     **/
+    diag_tensor_space(const dimensions<N> &dims);
+
+    /** \brief Copy constructor
+     **/
+    diag_tensor_space(const diag_tensor_space &other);
+
+    /** \brief Destructor
+     **/
+    ~diag_tensor_space();
+
     /** \brief Returns tensor dimensions
      **/
     const dimensions<N> &get_dims() const {
@@ -86,11 +102,21 @@ public:
 
     /** \brief Returns the number of subspaces in the space
      **/
-    size_t get_nsubspaces() const;
+    size_t get_nsubspaces() const {
+        return m_ss.size();
+    }
 
     /** \brief Returns a subspace
      **/
     const diag_tensor_subspace<N> &get_subspace(size_t n) const;
+
+    /** \brief Adds a subspace, returns its number
+     **/
+    size_t add_subspace(const diag_tensor_subspace<N> &ss);
+
+    /** \brief Removes a subspace
+     **/
+    void remove_subspace(size_t n);
 
 };
 

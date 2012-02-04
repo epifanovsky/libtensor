@@ -60,6 +60,7 @@ set(SRC_TOD
 set(SRC_DIAG_TENSOR
     diag_tensor/libtensor_diag_tensor_tests.C
     diag_tensor/libtensor_diag_tensor_suite.C
+    diag_tensor/diag_tensor_space_test.C
     diag_tensor/diag_tensor_subspace_test.C
 )
 
