@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_DIRECT_BLOCK_TENSOR_H
 #define LIBTENSOR_DIRECT_BLOCK_TENSOR_H
 
-#include <libvmm/cond_map.h>
+#include <libutil/threads/cond_map.h>
 #include "../defs.h"
 #include "../exception.h"
 #include "../mp/default_sync_policy.h"
@@ -87,7 +87,7 @@ private:
 	block_map<N, T, Alloc> m_map; //!< Block map
 	std::map<size_t, size_t> m_count; //!< Block count
 	std::set<size_t> m_inprogress; //!< Computations in progress
-	libvmm::cond_map<size_t, size_t> m_cond; //!< Conditionals
+	libutil::cond_map<size_t, size_t> m_cond; //!< Conditionals
 
 public:
 	//!	\name Construction and destruction
@@ -195,7 +195,7 @@ dense_tensor_i<N, T> &direct_block_tensor<N, T, Alloc, Sync>::on_req_block(
 
 	} else if(inprogress) {
 
-		libvmm::loaded_cond<size_t> cond(0);
+		libutil::loaded_cond<size_t> cond(0);
 		m_cond.insert(aidx.get_abs_index(), &cond);
 		lock.unlock();
 		cond.wait();
