@@ -1,4 +1,3 @@
-#include <sstream>
 #include <libtensor/diag_tensor/diag_tensor_space.h>
 #include "diag_tensor_space_test.h"
 
@@ -47,6 +46,14 @@ void diag_tensor_space_test::test_1() throw(libtest::test_exception) {
         if(dts.get_nsubspaces() != 2) {
             fail_test(testname, __FILE__, __LINE__,
                 "dts.get_nsubspaces() != 2");
+        }
+        if(dts.get_subspace_size(ssn1) != 7 * 36) {
+            fail_test(testname, __FILE__, __LINE__,
+                "dts.get_subspace_size(ssn1) != 7 * 36");
+        }
+        if(dts.get_subspace_size(ssn2) != 6 * 49) {
+            fail_test(testname, __FILE__, __LINE__,
+                "dts.get_subspace_size(ssn2) != 6 * 49");
         }
 
         std::vector<size_t> ssn;

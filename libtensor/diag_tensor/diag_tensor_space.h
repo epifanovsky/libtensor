@@ -121,6 +121,10 @@ public:
      **/
     const diag_tensor_subspace<N> &get_subspace(size_t n) const;
 
+    /** \brief Returns the number of non-zero entries allowed by a subspace
+     **/
+    size_t get_subspace_size(size_t n) const;
+
     /** \brief Adds a subspace, returns its number
      **/
     size_t add_subspace(const diag_tensor_subspace<N> &ss);

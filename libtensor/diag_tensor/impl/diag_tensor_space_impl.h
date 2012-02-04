@@ -131,6 +131,28 @@ const diag_tensor_subspace<N> &diag_tensor_space<N>::get_subspace(
 
 
 template<size_t N>
+size_t diag_tensor_space<N>::get_subspace_size(size_t n) const {
+
+    const diag_tensor_subspace<N> &ss = get_subspace(n);
+    size_t sz = 1;
+
+    //  Count all diagonals
+    for(size_t id = 0; id < ss.get_ndiag(); id++) {
+        const mask<N> &m = ss.get_diag_mask(id);
+        size_t j = 0;
+        while(j < N && !m[j]) j++;
+        if(j == N) continue;
+        sz *= m_dims[j];
+    }
+    //  And then count all unrestricted indexes
+    const mask<N> &tm = ss.get_total_mask();
+    for(size_t i = 0; i < N; i++) if(!tm[i]) sz *= m_dims[i];
+
+    return sz;
+}
+
+
+template<size_t N>
 size_t diag_tensor_space<N>::add_subspace(const diag_tensor_subspace<N> &ss) {
 
     static const char *method = "add_subspace(const diag_tensor_subspace<N>&)";

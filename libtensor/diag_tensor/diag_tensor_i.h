@@ -62,13 +62,31 @@ class diag_tensor_base_i {
     friend class diag_tensor_base_ctrl<N, T>;
 
 public:
+    typedef unsigned session_handle_type;
+
+public:
     /** \brief Virtual destructor
      **/
     virtual ~diag_tensor_base_i() { }
 
+    /** \brief Returns the dimensions of the tensor
+     **/
+    virtual const dimensions<N> &get_dims() const = 0;
+
     /** \brief Returns the space of the tensor
      **/
     virtual const diag_tensor_space<N> &get_space() const = 0;
+
+protected:
+    /** \brief Request to open a session with the tensor
+        \return Session handle.
+     **/
+    virtual session_handle_type on_req_open_session() = 0;
+
+    /** \brief Request to close a previously opened session
+        \param h Session handle.
+     **/
+    virtual void on_req_close_session(const session_handle_type &h) = 0;
 
 };
 
@@ -76,12 +94,53 @@ public:
 template<size_t N, typename T>
 class diag_tensor_rd_i : virtual public diag_tensor_base_i<N, T> {
     friend class diag_tensor_rd_ctrl<N, T>;
+
+public:
+    typedef typename diag_tensor_base_i<N, T>::session_handle_type
+        session_handle_type;
+
+protected:
+    /** \brief Requests (checks out) read-only data pointer
+        \param h Session handle.
+        \param n Subspace number.
+     **/
+    virtual const T *on_req_const_dataptr(const session_handle_type &h,
+        size_t ssn) = 0;
+
+    /** \brief Returns (checks in) read-only data pointer
+        \param h Session handle.
+        \param n Subspace number.
+        \param p Data pointer.
+     **/
+    virtual void on_ret_const_dataptr(const session_handle_type &h,
+        size_t ssn, const T *p) = 0;
+
 };
 
 
 template<size_t N, typename T>
 class diag_tensor_wr_i : virtual public diag_tensor_base_i<N, T> {
     friend class diag_tensor_wr_ctrl<N, T>;
+
+public:
+    typedef typename diag_tensor_base_i<N, T>::session_handle_type
+        session_handle_type;
+
+protected:
+    /** \brief Requests (checks out) read-write data pointer
+        \param h Session handle.
+        \param n Subspace number.
+     **/
+    virtual T *on_req_dataptr(const session_handle_type &h, size_t ssn) = 0;
+
+    /** \brief Returns (checks in) read-write data pointer
+        \param h Session handle.
+        \param n Subspace number.
+        \param p Data pointer.
+     **/
+    virtual void on_ret_dataptr(const session_handle_type &h, size_t ssn,
+        T *p) = 0;
+
 };
 
 

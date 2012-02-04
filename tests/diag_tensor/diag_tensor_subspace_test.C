@@ -1,4 +1,3 @@
-#include <sstream>
 #include <libtensor/diag_tensor/diag_tensor_space.h>
 #include "diag_tensor_subspace_test.h"
 
