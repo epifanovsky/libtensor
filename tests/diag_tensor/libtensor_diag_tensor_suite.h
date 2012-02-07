@@ -5,6 +5,7 @@
 #include "diag_tensor_test.h"
 #include "diag_tensor_space_test.h"
 #include "diag_tensor_subspace_test.h"
+#include "tod_conv_diag_tensor_test.h"
 
 using libtest::unit_test_factory;
 
@@ -22,6 +23,7 @@ namespace libtensor {
      - libtensor::diag_tensor_test
      - libtensor::diag_tensor_space_test
      - libtensor::diag_tensor_subspace_test
+     - libtensor::tod_conv_diag_tensor_test
 
     \ingroup libtensor_diag_tensor_tests
  **/
@@ -30,6 +32,7 @@ private:
     unit_test_factory<diag_tensor_test> m_utf_diag_tensor;
     unit_test_factory<diag_tensor_space_test> m_utf_diag_tensor_space;
     unit_test_factory<diag_tensor_subspace_test> m_utf_diag_tensor_subspace;
+    unit_test_factory<tod_conv_diag_tensor_test> m_utf_tod_conv_diag_tensor;
 
 public:
     //! Creates the suite
