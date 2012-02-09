@@ -38,4 +38,4 @@ void bto_set<N, Traits>::perform(block_tensor_type &bt) {
 
 } // namespace libtensor
 
-#endif / LIBTENSOR_BTO_SET_IMPL_H
+#endif // LIBTENSOR_BTO_SET_IMPL_H
