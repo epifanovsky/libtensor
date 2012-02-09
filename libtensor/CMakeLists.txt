@@ -129,6 +129,7 @@ set(SRC_INST
     tod/tod_dotprod.C
     tod/tod_ewmult2.C
     tod/tod_import_raw_stream.C
+    tod/tod_vmpriority.C
     btod/additive_btod.C
     btod/basic_btod.C
     btod/btod_add.C

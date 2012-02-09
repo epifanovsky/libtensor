@@ -55,6 +55,7 @@ set(SRC_TOD
     tod/tod_set_test.C
     tod/tod_sum_test.C
     tod/tod_trace_test.C
+    tod/tod_vmpriority_test.C
 )
 
 set(SRC_SYMMETRY
