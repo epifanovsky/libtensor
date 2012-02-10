@@ -23,6 +23,8 @@ void bto_vmpriority<N, Traits>::set_priority() {
         io != ol.end(); ++io) {
 
         index<N> bi(ol.get_index(io));
+        if(ctrl.req_is_zero_block(bi)) continue;
+
         block_type &blk = ctrl.req_block(bi);
         to_vmpriority(blk).set_priority();
         ctrl.ret_block(bi);
@@ -46,6 +48,8 @@ void bto_vmpriority<N, Traits>::unset_priority() {
         io != ol.end(); ++io) {
 
         index<N> bi(ol.get_index(io));
+        if(ctrl.req_is_zero_block(bi)) continue;
+
         block_type &blk = ctrl.req_block(bi);
         to_vmpriority(blk).unset_priority();
         ctrl.ret_block(bi);
