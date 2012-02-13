@@ -129,6 +129,7 @@ set(SRC_INST
     tod/tod_dotprod.C
     tod/tod_ewmult2.C
     tod/tod_import_raw_stream.C
+    tod/tod_vmpriority.C
     btod/additive_btod.C
     btod/basic_btod.C
     btod/btod_add.C
@@ -144,6 +145,7 @@ set(SRC_INST
     btod/btod_ewmult2.C
     btod/btod_sum.C
     block_tensor/btod/impl/btod_set.C
+    block_tensor/btod/impl/btod_vmpriority.C
     diag_tensor/impl/diag_tensor_space.C
     diag_tensor/impl/diag_tensor.C
     diag_tensor/impl/tod_conv_diag_tensor.C
@@ -173,6 +175,11 @@ set_property(TARGET tensor APPEND PROPERTY
 set_property(TARGET tensor APPEND PROPERTY
     COMPILE_DEFINITIONS LIBTENSOR_TIMINGS)
 set_property(TARGET tensor APPEND PROPERTY
-    COMPILE_DEFINITIONS_DEBUG LIBVMM_DEBUG)
-set_property(TARGET tensor APPEND PROPERTY
     COMPILE_DEFINITIONS_DEBUG LIBTENSOR_DEBUG)
+if(HAVE_LIBVMM)
+    set_property(TARGET tensor APPEND PROPERTY
+        COMPILE_DEFINITIONS HAVE_LIBVMM)
+    set_property(TARGET tensor APPEND PROPERTY
+        COMPILE_DEFINITIONS_DEBUG LIBVMM_DEBUG)
+endif(HAVE_LIBVMM)
+

@@ -1,4 +1,4 @@
-#include <iostream>
+#include <sstream>
 #include "../core/allocator.h"
 #include "../core/block_tensor_ctrl.h"
 #include "../core/block_tensor.h"

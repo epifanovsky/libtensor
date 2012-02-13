@@ -127,6 +127,16 @@ void dense_tensor<N, T, Alloc>::on_req_prefetch(const handle_t &h) {
 
 
 template<size_t N, typename T, typename Alloc>
+void dense_tensor<N, T, Alloc>::on_req_priority(const handle_t &h, bool pri) {
+
+    verify_session(h);
+
+    if(pri) Alloc::set_priority(m_data);
+    else Alloc::unset_priority(m_data);
+}
+
+
+template<size_t N, typename T, typename Alloc>
 T *dense_tensor<N, T, Alloc>::on_req_dataptr(const handle_t &h) {
 
     static const char *method = "on_req_dataptr(const handle_t&)";

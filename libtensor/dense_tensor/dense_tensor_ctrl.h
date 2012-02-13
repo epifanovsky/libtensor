@@ -64,6 +64,13 @@ public:
         m_t.on_req_prefetch(m_h);
     }
 
+    /** \brief Asks the VM subsystem to keep the data in core memory
+        \param pri Set (true) or unset (false) VM in-core priority.
+     **/
+    void req_priority(bool pri) {
+        m_t.on_req_priority(m_h, pri);
+    }
+
     //@}
 
 protected:
