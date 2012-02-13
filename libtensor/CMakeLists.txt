@@ -149,6 +149,7 @@ set(SRC_INST
     diag_tensor/impl/diag_tensor_space.C
     diag_tensor/impl/diag_tensor.C
     diag_tensor/impl/tod_conv_diag_tensor.C
+    diag_tensor/impl/diag_tod_set.C
 )
 
 set(SRC_MP
