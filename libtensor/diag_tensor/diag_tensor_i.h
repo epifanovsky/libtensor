@@ -102,14 +102,14 @@ public:
 protected:
     /** \brief Requests (checks out) read-only data pointer
         \param h Session handle.
-        \param n Subspace number.
+        \param ssn Subspace number.
      **/
     virtual const T *on_req_const_dataptr(const session_handle_type &h,
         size_t ssn) = 0;
 
     /** \brief Returns (checks in) read-only data pointer
         \param h Session handle.
-        \param n Subspace number.
+        \param ssn Subspace number.
         \param p Data pointer.
      **/
     virtual void on_ret_const_dataptr(const session_handle_type &h,
@@ -127,15 +127,34 @@ public:
         session_handle_type;
 
 protected:
+    /** \brief Requests to add a subspace
+        \param h Session handle.
+        \param ss Subspace.
+     **/
+    virtual size_t on_req_add_subspace(const session_handle_type &h,
+        const diag_tensor_subspace<N> &ss) = 0;
+
+    /** \brief Requests to remove a subspace
+        \param h Session handle.
+        \param ssn Subspace number.
+     **/
+    virtual void on_req_remove_subspace(const session_handle_type &h,
+        size_t ssn) = 0;
+
+    /** \brief Requests to remove all subspaces; results in an empty tensor
+        \param h Session handle.
+     **/
+    virtual void on_req_remove_all_subspaces(const session_handle_type &h) = 0;
+
     /** \brief Requests (checks out) read-write data pointer
         \param h Session handle.
-        \param n Subspace number.
+        \param ssn Subspace number.
      **/
     virtual T *on_req_dataptr(const session_handle_type &h, size_t ssn) = 0;
 
     /** \brief Returns (checks in) read-write data pointer
         \param h Session handle.
-        \param n Subspace number.
+        \param ssn Subspace number.
         \param p Data pointer.
      **/
     virtual void on_ret_dataptr(const session_handle_type &h, size_t ssn,

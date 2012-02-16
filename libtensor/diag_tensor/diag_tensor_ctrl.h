@@ -97,6 +97,27 @@ public:
      **/
     virtual ~diag_tensor_wr_ctrl() { }
 
+    /** \brief Requests to add a subspace
+        \param ss Subspace.
+        \return Subspace number.
+     **/
+    size_t req_add_subspace(const diag_tensor_subspace<N> &ss) {
+        return m_t.on_req_add_subspace(get_h(), ss);
+    }
+
+    /** \brief Requests to remove a subspace and all data associated with it
+        \param ssn Subspace number.
+     **/
+    void req_remove_subspace(size_t ssn) {
+        m_t.on_req_remove_subspace(get_h(), ssn);
+    }
+
+    /** \brief Requests to remove all subspaces and all data
+     **/
+    void req_remove_all_subspaces() {
+        m_t.on_req_remove_all_subspaces(get_h());
+    }
+
     /** \brief Requests a raw data pointer to tensor data and returns
             it to the user
         \param ssn Subspace number.

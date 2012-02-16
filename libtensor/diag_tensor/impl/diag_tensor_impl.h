@@ -118,6 +118,74 @@ void diag_tensor<N, T, Alloc>::on_ret_const_dataptr(
 
 
 template<size_t N, typename T, typename Alloc>
+size_t diag_tensor<N, T, Alloc>::on_req_add_subspace(
+    const session_handle_type &h, const diag_tensor_subspace<N> &ss) {
+
+    static const char *method = "on_req_add_subspace()";
+
+    if(!verify_nocoptr()) {
+        throw 0;
+    }
+
+    size_t ssn = m_spc.add_subspace(ss);
+
+    std::pair<size_t, pointer_record> ppr;
+    ppr.first = ssn;
+    ppr.second.vptr = Alloc::allocate(m_spc.get_subspace_size(ssn));
+    m_ptr.insert(ppr);
+
+    return ssn;
+}
+
+
+template<size_t N, typename T, typename Alloc>
+void diag_tensor<N, T, Alloc>::on_req_remove_subspace(
+    const session_handle_type &h, size_t ssn) {
+
+    static const char *method = "on_req_remove_subspace()";
+
+    if(!verify_nocoptr()) {
+        throw 0;
+    }
+
+    typename std::map<size_t, pointer_record>::iterator iptr = m_ptr.find(ssn);
+    if(iptr == m_ptr.end()) {
+        //  Subspace data pointer not found
+        throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__, "ssn");
+    }
+
+    {
+        pointer_record &pr = iptr->second;
+        Alloc::deallocate(pr.vptr);
+    }
+
+    m_ptr.erase(iptr);
+    m_spc.remove_subspace(ssn);
+}
+
+
+template<size_t N, typename T, typename Alloc>
+void diag_tensor<N, T, Alloc>::on_req_remove_all_subspaces(
+    const session_handle_type &h) {
+
+    static const char *method = "on_req_remove_all_subspaces()";
+
+    if(!verify_nocoptr()) {
+        throw 0;
+    }
+
+    typename std::map<size_t, pointer_record>::iterator iptr = m_ptr.begin();
+    for(; iptr != m_ptr.end(); ++iptr) {
+        size_t ssn = iptr->first;
+        pointer_record &pr = iptr->second;
+        Alloc::deallocate(pr.vptr);
+        m_spc.remove_subspace(ssn);
+    }
+    m_ptr.clear();
+}
+
+
+template<size_t N, typename T, typename Alloc>
 T *diag_tensor<N, T, Alloc>::on_req_dataptr(const session_handle_type &h,
     size_t ssn) {
 
@@ -171,6 +239,20 @@ void diag_tensor<N, T, Alloc>::on_ret_dataptr(const session_handle_type &h,
     Alloc::unlock_rw(pr.vptr);
     pr.ptrcnt = 0;
     pr.dataptr = 0;
+}
+
+
+template<size_t N, typename T, typename Alloc>
+bool diag_tensor<N, T, Alloc>::verify_nocoptr() {
+
+    typename std::map<size_t, pointer_record>::iterator iptr = m_ptr.begin();
+    for(; iptr != m_ptr.end(); ++iptr) {
+        pointer_record &pr = iptr->second;
+        if(pr.const_ptrcnt != 0 || pr.ptrcnt != 0) {
+            return false;
+        }
+    }
+    return true;
 }
 
 
