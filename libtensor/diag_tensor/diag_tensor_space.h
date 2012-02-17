@@ -52,6 +52,15 @@ public:
      **/
     void set_diag_mask(size_t n, const mask<N> &msk);
 
+    /** \brief Returns true if two subspaces are the same
+
+        Performs the comparison of two subspaces. If they are effectively
+        the same (ignoring trivial diagonals), the function returns true.
+        Note that the subspaces need not be exactly identical to be equal
+        to each other.
+     **/
+    bool equals(const diag_tensor_subspace<N> &other);
+
 };
 
 

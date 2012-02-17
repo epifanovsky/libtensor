@@ -10,6 +10,10 @@ void diag_tensor_subspace_test::perform() throw(libtest::test_exception) {
     test_2();
     test_3();
 
+    test_equals_1();
+    test_equals_2();
+    test_equals_3();
+
     test_exc_1();
     test_exc_2();
     test_exc_3();
@@ -173,6 +177,184 @@ void diag_tensor_subspace_test::test_3() throw(libtest::test_exception) {
         }
         if(!m101000.equals(dts1.get_diag_mask(1))) {
             fail_test(testname, __FILE__, __LINE__, "dts1.get_diag_mask(1)");
+        }
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void diag_tensor_subspace_test::test_equals_1() throw(libtest::test_exception) {
+
+    static const char *testname = "diag_tensor_subspace_test::test_equals_1()";
+
+    try {
+
+        mask<1> m0, m1;
+        m1[0] = true;
+
+        diag_tensor_subspace<1> dts1(1), dts2(1);
+
+        if(!dts1.equals(dts2)) {
+            fail_test(testname, __FILE__, __LINE__, "!dts1.equals(dts2)");
+        }
+        if(!dts2.equals(dts1)) {
+            fail_test(testname, __FILE__, __LINE__, "!dts2.equals(dts1)");
+        }
+
+        dts1.set_diag_mask(0, m1);
+
+        if(!dts1.equals(dts2)) {
+            fail_test(testname, __FILE__, __LINE__, "!dts1.equals(dts2)");
+        }
+        if(!dts2.equals(dts1)) {
+            fail_test(testname, __FILE__, __LINE__, "!dts2.equals(dts1)");
+        }
+
+        dts2.set_diag_mask(0, m1);
+
+        if(!dts1.equals(dts2)) {
+            fail_test(testname, __FILE__, __LINE__, "!dts1.equals(dts2)");
+        }
+        if(!dts2.equals(dts1)) {
+            fail_test(testname, __FILE__, __LINE__, "!dts2.equals(dts1)");
+        }
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void diag_tensor_subspace_test::test_equals_2() throw(libtest::test_exception) {
+
+    static const char *testname = "diag_tensor_subspace_test::test_equals_2()";
+
+    try {
+
+        mask<2> m00, m01, m10, m11;
+        m10[0] = true; m01[1] = true;
+        m11[0] = true; m11[1] = true;
+
+        diag_tensor_subspace<2> dts1(2), dts2(2), dts3(1);
+
+        if(!dts1.equals(dts2)) {
+            fail_test(testname, __FILE__, __LINE__, "!dts1.equals(dts2)");
+        }
+        if(!dts1.equals(dts3)) {
+            fail_test(testname, __FILE__, __LINE__, "!dts1.equals(dts3)");
+        }
+        if(!dts2.equals(dts1)) {
+            fail_test(testname, __FILE__, __LINE__, "!dts2.equals(dts1)");
+        }
+        if(!dts3.equals(dts2)) {
+            fail_test(testname, __FILE__, __LINE__, "!dts3.equals(dts2)");
+        }
+
+        dts3.set_diag_mask(0, m11);
+
+        if(dts1.equals(dts3)) {
+            fail_test(testname, __FILE__, __LINE__, "dts1.equals(dts3)");
+        }
+        if(dts3.equals(dts2)) {
+            fail_test(testname, __FILE__, __LINE__, "dts3.equals(dts2)");
+        }
+        if(!dts3.equals(dts3)) {
+            fail_test(testname, __FILE__, __LINE__, "!dts3.equals(dts3)");
+        }
+
+        dts1.set_diag_mask(0, m10);
+
+        if(!dts1.equals(dts2)) {
+            fail_test(testname, __FILE__, __LINE__, "!dts1.equals(dts2)");
+        }
+        if(!dts2.equals(dts1)) {
+            fail_test(testname, __FILE__, __LINE__, "!dts2.equals(dts1)");
+        }
+        if(dts1.equals(dts3)) {
+            fail_test(testname, __FILE__, __LINE__, "dts1.equals(dts3)");
+        }
+
+        dts2.set_diag_mask(0, m01);
+
+        if(!dts1.equals(dts2)) {
+            fail_test(testname, __FILE__, __LINE__, "!dts1.equals(dts2)");
+        }
+        if(!dts2.equals(dts1)) {
+            fail_test(testname, __FILE__, __LINE__, "!dts2.equals(dts1)");
+        }
+        if(dts2.equals(dts3)) {
+            fail_test(testname, __FILE__, __LINE__, "dts2.equals(dts3)");
+        }
+
+        dts1.set_diag_mask(0, m01);
+
+        if(!dts1.equals(dts2)) {
+            fail_test(testname, __FILE__, __LINE__, "!dts1.equals(dts2)");
+        }
+        if(!dts2.equals(dts1)) {
+            fail_test(testname, __FILE__, __LINE__, "!dts2.equals(dts1)");
+        }
+        if(dts3.equals(dts1)) {
+            fail_test(testname, __FILE__, __LINE__, "dts3.equals(dts1)");
+        }
+
+        dts2.set_diag_mask(0, m10);
+
+        if(!dts1.equals(dts2)) {
+            fail_test(testname, __FILE__, __LINE__, "!dts1.equals(dts2)");
+        }
+        if(!dts2.equals(dts1)) {
+            fail_test(testname, __FILE__, __LINE__, "!dts2.equals(dts1)");
+        }
+        if(dts3.equals(dts2)) {
+            fail_test(testname, __FILE__, __LINE__, "dts3.equals(dts2)");
+        }
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void diag_tensor_subspace_test::test_equals_3() throw(libtest::test_exception) {
+
+    static const char *testname = "diag_tensor_subspace_test::test_equals_3()";
+
+    try {
+
+        mask<4> m0000, m0011, m1000, m0100;
+        m0011[2] = true; m0011[3] = true;
+        m1000[0] = true; m0100[1] = true;
+
+        diag_tensor_subspace<4> dts1(1), dts2(3);
+
+        if(!dts1.equals(dts2)) {
+            fail_test(testname, __FILE__, __LINE__, "!dts1.equals(dts2)");
+        }
+        if(!dts2.equals(dts1)) {
+            fail_test(testname, __FILE__, __LINE__, "!dts2.equals(dts1)");
+        }
+
+        dts1.set_diag_mask(0, m0011);
+        dts2.set_diag_mask(1, m0011);
+
+        if(!dts1.equals(dts2)) {
+            fail_test(testname, __FILE__, __LINE__, "!dts1.equals(dts2)");
+        }
+        if(!dts2.equals(dts1)) {
+            fail_test(testname, __FILE__, __LINE__, "!dts2.equals(dts1)");
+        }
+
+        dts2.set_diag_mask(0, m1000);
+        dts2.set_diag_mask(2, m0100);
+
+        if(!dts1.equals(dts2)) {
+            fail_test(testname, __FILE__, __LINE__, "!dts1.equals(dts2)");
+        }
+        if(!dts2.equals(dts1)) {
+            fail_test(testname, __FILE__, __LINE__, "!dts2.equals(dts1)");
         }
 
     } catch(exception &e) {
