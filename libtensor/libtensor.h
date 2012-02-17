@@ -42,7 +42,6 @@
 #include "tod/tod_apply.h"
 #include "tod/tod_btconv.h"
 #include "tod/tod_compare.h"
-#include "tod/tod_contract2.h"
 #include "tod/tod_diag.h"
 #include "tod/tod_import_raw.h"
 #include "tod/tod_mult.h"

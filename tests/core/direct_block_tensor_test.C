@@ -2,7 +2,7 @@
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/core/direct_block_tensor.h>
 #include <libtensor/tod/tod_btconv.h>
-#include <libtensor/tod/tod_contract2.h>
+#include <libtensor/dense_tensor/tod_contract2.h>
 #include <libtensor/dense_tensor/tod_dirsum.h>
 #include <libtensor/btod/btod_add.h>
 #include <libtensor/btod/btod_copy.h>

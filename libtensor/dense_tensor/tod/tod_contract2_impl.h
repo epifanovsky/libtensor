@@ -1,10 +1,15 @@
 #ifndef LIBTENSOR_TOD_CONTRACT2_IMPL_H
 #define LIBTENSOR_TOD_CONTRACT2_IMPL_H
 
+#include <memory>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include "../mp/auto_cpu_lock.h"
-#include "kernels/loop_list_runner.h"
-#include "kernels/kern_mul_generic.h"
+#include <libtensor/mp/auto_cpu_lock.h>
+#include <libtensor/tod/kernels/loop_list_runner.h>
+#include <libtensor/tod/kernels/kern_mul_generic.h>
+#include <libtensor/tod/contraction2_list_builder.h>
+#include <libtensor/tod/kernels/loop_list_node.h>
+#include "../tod_contract2.h"
+
 
 namespace libtensor {
 
@@ -15,15 +20,10 @@ const char *tod_contract2<N, M, K>::k_clazz = "tod_contract2<N, M, K>";
 
 template<size_t N, size_t M, size_t K>
 tod_contract2<N, M, K>::tod_contract2(const contraction2<N, M, K> &contr,
-	dense_tensor_i<k_ordera, double> &ta, dense_tensor_i<k_orderb, double> &tb) :
+    dense_tensor_i<k_ordera, double> &ta,
+    dense_tensor_i<k_orderb, double> &tb) :
 
-	m_contr(contr), m_ta(ta), m_tb(tb) {
-
-}
-
-
-template<size_t N, size_t M, size_t K>
-tod_contract2<N, M, K>::~tod_contract2() {
+    m_contr(contr), m_ta(ta), m_tb(tb) {
 
 }
 
@@ -83,11 +83,11 @@ void tod_contract2<N, M, K>::perform(cpu_pool &cpus, bool zero, double d,
         r.m_ptra_end[1] = pb + dimsb.get_size();
         r.m_ptrb_end[0] = pc + dimsc.get_size();
 
-        kernel_base<2, 1> *kern = kern_mul_generic::match(d, loop_in, loop_out);
+        std::auto_ptr< kernel_base<2, 1> > kern(
+            kern_mul_generic::match(d, loop_in, loop_out));
         tod_contract2<N, M, K>::start_timer(kern->get_name());
         loop_list_runner<2, 1>(loop_in).run(r, *kern);
         tod_contract2<N, M, K>::stop_timer(kern->get_name());
-        delete kern; kern = 0;
     }
 
     ca.ret_const_dataptr(pa);

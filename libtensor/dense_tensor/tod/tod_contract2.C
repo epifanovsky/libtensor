@@ -1,6 +1,3 @@
-#ifdef LIBTENSOR_INSTANTIATE_TEMPLATES
-
-#include "tod_contract2.h"
 #include "tod_contract2_impl.h"
 
 namespace libtensor {
@@ -108,5 +105,3 @@ template class tod_contract2<5, 1, 1>;
 
 
 } // namespace libtensor
-
-#endif // LIBTENSOR_INSTANTIATE_TEMPLATES

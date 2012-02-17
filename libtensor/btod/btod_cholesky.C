@@ -18,7 +18,7 @@
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include "../tod/tod_btconv.h"
-#include "../tod/tod_contract2.h"
+#include <libtensor/dense_tensor/tod_contract2.h>
 #include "../tod/tod_import_raw.h"
 #include <libtensor/dense_tensor/tod_copy.h>
 

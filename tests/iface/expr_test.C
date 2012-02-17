@@ -4,7 +4,7 @@
 #include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/symmetry/so_copy.h>
 #include <libtensor/tod/tod_btconv.h>
-#include <libtensor/tod/tod_contract2.h>
+#include <libtensor/dense_tensor/tod_contract2.h>
 #include <libtensor/iface/iface.h>
 #include "../compare_ref.h"
 #include "expr_test.h"
