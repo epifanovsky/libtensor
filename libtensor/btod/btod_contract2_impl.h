@@ -7,7 +7,6 @@
 #include "../symmetry/so_concat.h"
 #include "../symmetry/so_stabilize.h"
 #include <libtensor/dense_tensor/tod_contract2.h>
-#include "../tod/tod_sum.h"
 
 namespace libtensor {
 
