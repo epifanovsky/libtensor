@@ -30,6 +30,12 @@ void tod_conv_diag_tensor_test::perform() throw(libtest::test_exception) {
     test_1_ij(4, 4);
     test_1_ij(10, 21);
     test_1_ij(21, 10);
+    test_2_ij(1, 1);
+    test_2_ij(1, 4);
+    test_2_ij(4, 1);
+    test_2_ij(4, 4);
+    test_2_ij(10, 21);
+    test_2_ij(21, 10);
     test_1_ii(1);
     test_1_ii(4);
     test_1_ii(21);
@@ -209,6 +215,52 @@ void tod_conv_diag_tensor_test::test_1_ij(size_t ni, size_t nj)
 
         diag_tensor_space<2> dts(dims);
         diag_tensor_subspace<2> dtss1(0);
+        size_t ssn1 = dts.add_subspace(dtss1);
+
+        diag_tensor<2, double, allocator_t> dt(dts);
+        dense_tensor<2, double, allocator_t> t(dims), t_ref(dims);
+
+        {
+            diag_tensor_wr_ctrl<2, double> cdt(dt);
+            dense_tensor_wr_ctrl<2, double> ct_ref(t_ref);
+            double *p1 = cdt.req_dataptr(ssn1);
+            double *p2 = ct_ref.req_dataptr();
+            for(size_t i = 0; i < sz; i++) p1[i] = p2[i] = drand48();
+            cdt.ret_dataptr(ssn1, p1); p1 = 0;
+            ct_ref.ret_dataptr(p2); p2 = 0;
+        }
+
+        tod_conv_diag_tensor<2>(dt).perform(t);
+	compare_ref<2>::compare(tn.c_str(), t, t_ref, 1e-15);
+
+    } catch(exception &e) {
+        fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void tod_conv_diag_tensor_test::test_2_ij(size_t ni, size_t nj)
+    throw(libtest::test_exception) {
+
+    std::ostringstream tnss;
+    tnss << "tod_conv_diag_tensor_test::test_2_ij(" << ni << ", " << nj << ")";
+    std::string tn = tnss.str();
+
+    typedef std_allocator<double> allocator_t;
+
+    try {
+
+        index<2> i1, i2;
+        i2[0] = ni - 1; i2[1] = nj - 1;
+        dimensions<2> dims(index_range<2>(i1, i2));
+        size_t sz = dims.get_size();
+
+        mask<2> m01;
+        m01[1] = true;
+
+        diag_tensor_space<2> dts(dims);
+        diag_tensor_subspace<2> dtss1(1);
+        dtss1.set_diag_mask(0, m01);
         size_t ssn1 = dts.add_subspace(dtss1);
 
         diag_tensor<2, double, allocator_t> dt(dts);
@@ -498,9 +550,9 @@ void tod_conv_diag_tensor_test::test_1_iijj_ijij_ijjk(size_t ni)
             for(size_t j = 0; j < ni; j++)
             for(size_t k = 0; k < ni; k++) {
                 size_t ijjk = ((i * ni + j) * ni + j) * ni + k;
-                size_t jik = (j * ni + i) * ni + k;
-                p3[jik] = drand48();
-                p_ref[ijjk] += p3[jik];
+                size_t ijk = (i * ni + j) * ni + k;
+                p3[ijk] = drand48();
+                p_ref[ijjk] += p3[ijk];
             }
             cdt.ret_dataptr(ssn3, p3); p3 = 0;
 

@@ -53,41 +53,34 @@ void tod_conv_diag_tensor<N>::perform(dense_tensor_wr_i<N, double> &tb) {
             for(size_t i = 0; i < N; i++) if(md[i]) diags[i] = idiag;
         }
         mask<N> mdone;
-        size_t stepa = 1;
-        //  First do unrestricted indexes (starting from the fastest-running)
         for(size_t i = 0; i < N; i++) {
-            size_t j = N - i - 1;
-            if(diags[j] != N) continue;
-            inode = loop_in.insert(loop_in.end(),
-                loop_list_node<2, 1>(dims[j]));
-            inode->stepa(0) = stepa;
-            inode->stepa(1) = 0;
-            inode->stepb(0) = dims.get_increment(j);
-            stepa *= dims[j];
-            mdone[j] = true;
-        }
-        //  Then do diagonals (starting from the fastest-running)
-        for(size_t idiag = 0; idiag < ss.get_ndiag(); idiag++) {
-            size_t i = 0;
-            while(i < N && (diags[N - i - 1] == N || mdone[N - i - 1])) i++;
-            if(i == N) continue;
-            size_t j = N - i - 1;
-            size_t id = diags[j]; // Diagonal number
+
+            if(mdone[i]) continue;
+
             size_t stepb = 0;
-            const mask<N> &m = ss.get_diag_mask(id);
-            for(size_t i = 0; i < N; i++) {
-                if(m[i]) stepb += dims.get_increment(i);
+            if(diags[i] < N) {
+                const mask<N> &m = ss.get_diag_mask(diags[i]);
+                for(size_t j = 0; j < N; j++) {
+                    if(m[j]) stepb += dims.get_increment(j);
+                }
+                mdone |= m;
+            } else {
+                stepb = dims.get_increment(i);
+                mdone[i] = true;
             }
-            inode = loop_in.insert(loop_in.end(),
-                loop_list_node<2, 1>(dims[j]));
-            inode->stepa(0) = stepa;
+            size_t w = dims[i];
+            for(typename std::list< loop_list_node<2, 1> >::iterator jnode =
+                loop_in.begin(); jnode != loop_in.end(); ++jnode) {
+                jnode->stepa(0) *= w;
+            }
+            inode = loop_in.insert(loop_in.end(), loop_list_node<2, 1>(w));
+            inode->stepa(0) = 1;
             inode->stepa(1) = 0;
             inode->stepb(0) = stepb;
-            stepa *= dims[j];
-            mdone |= m;
         }
 #ifdef LIBTENSOR_DEBUG
-        if(stepa != dtsa.get_subspace_size(ssn)) {
+        if(loop_in.begin()->stepa(0) * loop_in.begin()->weight() !=
+            dtsa.get_subspace_size(ssn)) {
             throw 0;
         }
 #endif // LIBTENSOR_DEBUG

@@ -19,6 +19,7 @@ private:
     void test_2_i(size_t ni) throw(libtest::test_exception);
     void test_3_i(size_t ni) throw(libtest::test_exception);
     void test_1_ij(size_t ni, size_t nj) throw(libtest::test_exception);
+    void test_2_ij(size_t ni, size_t nj) throw(libtest::test_exception);
     void test_1_ii(size_t ni) throw(libtest::test_exception);
     void test_1_ii_ij(size_t ni) throw(libtest::test_exception);
     void test_1_iik_iji(size_t ni) throw(libtest::test_exception);
