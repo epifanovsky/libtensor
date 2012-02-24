@@ -75,6 +75,45 @@ void diag_tensor_subspace<N>::set_diag_mask(size_t n, const mask<N> &msk) {
 
 
 template<size_t N>
+bool diag_tensor_subspace<N>::equals(const diag_tensor_subspace<N> &other) {
+
+    std::vector<int> chk2(other.m_diag.size(), 0);
+
+    for(size_t i1 = 0; i1 < m_diag.size(); i1++) {
+
+        const mask<N> &m = m_diag[i1];
+
+        // Skip trivial masks and diagonals
+        size_t nset = 0;
+        for(size_t i = 0; i < N; i++) if(m[i]) nset++;
+        if(nset < 2) continue;
+
+        bool found_match = false;
+        for(size_t i2 = 0; i2 < chk2.size(); i2++) {
+            if(m.equals(other.m_diag[i2])) {
+                chk2[i2] = 1;
+                found_match = true;
+                break;
+            }
+        }
+        if(!found_match) return false;
+    }
+
+    for(size_t i2 = 0; i2 < chk2.size(); i2++) {
+
+        if(chk2[i2]) continue;
+
+        const mask<N> &m = other.m_diag[i2];
+        size_t nset = 0;
+        for(size_t i = 0; i < N; i++) if(m[i]) nset++;
+        if(nset >= 2) return false;
+    }
+
+    return true;
+}
+
+
+template<size_t N>
 const char *diag_tensor_space<N>::k_clazz = "diag_tensor_space<N>";
 
 
