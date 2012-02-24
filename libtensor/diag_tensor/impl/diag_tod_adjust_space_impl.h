@@ -7,6 +7,7 @@
 #include <libtensor/diag_tensor/diag_tensor_ctrl.h>
 #include <libtensor/tod/kernels/loop_list_runner.h>
 #include <libtensor/tod/kernels/kern_add_generic.h>
+#include <libtensor/tod/kernels/kern_copy_generic.h>
 #include <libtensor/tod/bad_dimensions.h>
 #include "../diag_tod_adjust_space.h"
 
@@ -45,7 +46,7 @@ void diag_tod_adjust_space<N>::perform(diag_tensor_wr_i<N, double> &ta) {
         //
 
         std::map<size_t, size_t> map12, map21;
-        std::set<size_t> exact, added, out, remain;
+        std::set<size_t> out, remain;
         for(size_t ssi1 = 0; ssi1 < ssl1.size(); ssi1++) {
 
             size_t ssn1 = ssl1[ssi1];
@@ -54,31 +55,35 @@ void diag_tod_adjust_space<N>::perform(diag_tensor_wr_i<N, double> &ta) {
                 size_t ssn2 = ssl2[ssi2];
                 const diag_tensor_subspace<N> &ss1 = dts1.get_subspace(ssn1);
                 const diag_tensor_subspace<N> &ss2 = dts2.get_subspace(ssn2);
-                if(ss1.equals(ss2)) {
-                    map12[ssn1] = ssn2;
-                    if(map21.find(ssn2) == map21.end()) {
-                        exact.insert(ssn1);
-                        remain.insert(ssn1);
-                        map21[ssn2] = ssn1;
-                    } else {
-                        out.insert(ssn1);
-                    }
+                if(!ss1.equals(ss2)) continue;
+
+                map12[ssn1] = ssn2;
+                if(map21.find(ssn2) == map21.end()) {
+                    remain.insert(ssn1);
+                    map21[ssn2] = ssn1;
                 } else {
-                    size_t ssn1n = ca.req_add_subspace(ss2);
-                    added.insert(ssn1n);
-                    remain.insert(ssn1n);
-                    double *pa = ca.req_dataptr(ssn1n);
-                    diag_tod_adjust_space<N>::start_timer("zero");
-                    size_t sz = dts1.get_subspace_size(ssn1n);
-                    memset(pa, 0, sizeof(double) * sz);
-                    diag_tod_adjust_space<N>::stop_timer("zero");
-                    ca.ret_dataptr(ssn1n, pa); pa = 0;
-                    map12[ssn1n] = ssn2;
-                    map21[ssn2] = ssn1n;
+                    out.insert(ssn1);
                 }
             }
-
             if(map12.find(ssn1) == map12.end()) out.insert(ssn1);
+        }
+
+        for(size_t ssi2 = 0; ssi2 < ssl2.size(); ssi2++) {
+
+            size_t ssn2 = ssl2[ssi2];
+            if(map21.find(ssn2) != map21.end()) continue;
+            const diag_tensor_subspace<N> &ss2 = dts2.get_subspace(ssn2);
+
+            size_t ssn1n = ca.req_add_subspace(ss2);
+            remain.insert(ssn1n);
+            double *pa = ca.req_dataptr(ssn1n);
+            diag_tod_adjust_space<N>::start_timer("zero");
+            size_t sz = dts1.get_subspace_size(ssn1n);
+            memset(pa, 0, sizeof(double) * sz);
+            diag_tod_adjust_space<N>::stop_timer("zero");
+            ca.ret_dataptr(ssn1n, pa); pa = 0;
+            map12[ssn1n] = ssn2;
+            map21[ssn2] = ssn1n;
         }
 
         //
@@ -128,8 +133,10 @@ void diag_tod_adjust_space<N>::constrained_copy(const dimensions<N> &dims,
     const diag_tensor_subspace<N> &ss1, double *p1, size_t sz1,
     const diag_tensor_subspace<N> &ss2, double *p2, size_t sz2) {
 
-    std::list< loop_list_node<2, 1> > loop_in, loop_out;
-    typename std::list< loop_list_node<2, 1> >::iterator inode = loop_in.end();
+    std::list< loop_list_node<2, 1> > lpadd1, lpadd2;
+    std::list< loop_list_node<1, 1> > lpset1, lpset2;
+    typename std::list< loop_list_node<2, 1> >::iterator iadd = lpadd1.end();
+    typename std::list< loop_list_node<1, 1> >::iterator iset = lpset1.end();
 
     double zero = 0.0;
 
@@ -149,24 +156,38 @@ void diag_tod_adjust_space<N>::constrained_copy(const dimensions<N> &dims,
             m0 |= m2;
         } while(!m1.equals(m2));
 
-        inode = loop_in.insert(loop_in.end(), loop_list_node<2, 1>(dims[i]));
-        inode->stepa(0) = get_increment(dims, ss1, m0);
-        inode->stepa(1) = 0;
-        inode->stepb(0) = get_increment(dims, ss2, m0);
+        iadd = lpadd1.insert(lpadd1.end(), loop_list_node<2, 1>(dims[i]));
+        iset = lpset1.insert(lpset1.end(), loop_list_node<1, 1>(dims[i]));
+        size_t inc1 = get_increment(dims, ss1, m0);
+        size_t inc2 = get_increment(dims, ss2, m0);
+        iadd->stepa(0) = inc1;
+        iadd->stepa(1) = 0;
+        iadd->stepb(0) = inc2;
+        iset->stepa(0) = 0;
+        iset->stepb(0) = inc1;
 
-        loop_registers<2, 1> r;
-        r.m_ptra[0] = p1;
-        r.m_ptra[1] = &zero;
-        r.m_ptrb[0] = p2;
-        r.m_ptra_end[0] = p1 + sz1;
-        r.m_ptra_end[1] = &zero + 1;
-        r.m_ptrb_end[0] = p2 + sz2;
+        loop_registers<2, 1> radd;
+        radd.m_ptra[0] = p1;
+        radd.m_ptra[1] = &zero;
+        radd.m_ptrb[0] = p2;
+        radd.m_ptra_end[0] = p1 + sz1;
+        radd.m_ptra_end[1] = &zero + 1;
+        radd.m_ptrb_end[0] = p2 + sz2;
+
+        loop_registers<1, 1> rset;
+        rset.m_ptra[0] = &zero;
+        rset.m_ptrb[0] = p1;
+        rset.m_ptra_end[0] = &zero + 1;
+        rset.m_ptrb_end[0] = p1 + sz1;
 
         {
             diag_tod_adjust_space<N>::start_timer("copy");
-            std::auto_ptr< kernel_base<2, 1> > kern(
-                kern_add_generic::match(1.0, 1.0, 1.0, loop_in, loop_out));
-            loop_list_runner<2, 1>(loop_in).run(r, *kern);
+            std::auto_ptr< kernel_base<2, 1> > kern_add(
+                kern_add_generic::match(1.0, 1.0, 1.0, lpadd1, lpadd2));
+            loop_list_runner<2, 1>(lpadd1).run(radd, *kern_add);
+            std::auto_ptr< kernel_base<1, 1> > kern_set(
+                kern_copy_generic::match(1.0, lpset1, lpset2));
+            loop_list_runner<1, 1>(lpset1).run(rset, *kern_set);
             diag_tod_adjust_space<N>::stop_timer("copy");
         }
 
