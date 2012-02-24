@@ -21,6 +21,7 @@ set(SRC
     tod/kernels/kern_add_generic.C
     tod/kernels/kern_add_i_i_x_x.C
     tod/kernels/kern_add_i_x_i_x.C
+    tod/kernels/kern_copy_generic.C
     tod/kernels/kern_mul_generic.C
     tod/kernels/kern_mul_i_i_i.C
     tod/kernels/kern_mul_i_i_x.C
