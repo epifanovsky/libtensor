@@ -64,8 +64,9 @@ set(SRC_DIAG_TENSOR
     diag_tensor/diag_tensor_test.C
     diag_tensor/diag_tensor_space_test.C
     diag_tensor/diag_tensor_subspace_test.C
-    diag_tensor/tod_conv_diag_tensor_test.C
+    diag_tensor/diag_tod_adjust_space_test.C
     diag_tensor/diag_tod_set_test.C
+    diag_tensor/tod_conv_diag_tensor_test.C
 )
 
 set(SRC_SYMMETRY

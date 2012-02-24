@@ -75,7 +75,8 @@ void diag_tensor_subspace<N>::set_diag_mask(size_t n, const mask<N> &msk) {
 
 
 template<size_t N>
-bool diag_tensor_subspace<N>::equals(const diag_tensor_subspace<N> &other) {
+bool diag_tensor_subspace<N>::equals(
+    const diag_tensor_subspace<N> &other) const {
 
     std::vector<int> chk2(other.m_diag.size(), 0);
 

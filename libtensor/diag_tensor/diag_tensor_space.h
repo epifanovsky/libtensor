@@ -59,7 +59,7 @@ public:
         Note that the subspaces need not be exactly identical to be equal
         to each other.
      **/
-    bool equals(const diag_tensor_subspace<N> &other);
+    bool equals(const diag_tensor_subspace<N> &other) const;
 
 };
 
