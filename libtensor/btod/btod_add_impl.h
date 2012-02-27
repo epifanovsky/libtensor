@@ -4,7 +4,7 @@
 #include "../symmetry/so_add.h"
 #include "../symmetry/so_copy.h"
 #include "../symmetry/so_permute.h"
-#include "../tod/tod_add.h"
+#include <libtensor/dense_tensor/tod_add.h>
 #include <libtensor/dense_tensor/tod_copy.h>
 
 namespace libtensor {

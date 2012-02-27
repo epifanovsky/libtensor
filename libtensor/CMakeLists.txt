@@ -122,6 +122,7 @@ set(SRC_LINALG
 
 set(SRC_INST
     dense_tensor/inst/dense_tensor_inst.C
+    dense_tensor/tod/tod_add.C
     dense_tensor/tod/tod_contract2.C
     dense_tensor/tod/tod_copy.C
     dense_tensor/tod/tod_dirsum.C
@@ -129,7 +130,6 @@ set(SRC_INST
     dense_tensor/tod/tod_ewmult2.C
     dense_tensor/tod/tod_scale.C
     dense_tensor/tod/tod_set.C
-    tod/tod_add.C
     tod/tod_import_raw_stream.C
     btod/additive_btod.C
     btod/basic_btod.C

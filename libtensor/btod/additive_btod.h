@@ -2,7 +2,7 @@
 #define LIBTENSOR_ADDITIVE_BTOD_H
 
 #include <cmath>
-#include "../tod/tod_add.h"
+#include <libtensor/dense_tensor/tod_add.h>
 #include <libtensor/dense_tensor/tod_copy.h>
 #include <libtensor/dense_tensor/tod_set.h>
 #include "basic_btod.h"

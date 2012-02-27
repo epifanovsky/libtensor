@@ -2,7 +2,7 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/btod/btod_import_raw_stream.h>
-#include <libtensor/tod/tod_add.h>
+#include <libtensor/dense_tensor/tod_add.h>
 #include <libtensor/tod/tod_btconv.h>
 #include <libtensor/tod/tod_random.h>
 #include <libtensor/symmetry/se_perm.h>
