@@ -61,6 +61,11 @@ public:
      **/
     bool equals(const diag_tensor_subspace<N> &other) const;
 
+    /** \brief Permutes subspace indexes
+        \param perm Permutation.
+     **/
+    void permute(const permutation<N> &perm);
+
 };
 
 
@@ -141,6 +146,11 @@ public:
     /** \brief Removes a subspace by its number
      **/
     void remove_subspace(size_t n);
+
+    /** \brief Permutes tensor space indexes
+        \param perm Permutation.
+     **/
+    void permute(const permutation<N> &perm);
 
 };
 

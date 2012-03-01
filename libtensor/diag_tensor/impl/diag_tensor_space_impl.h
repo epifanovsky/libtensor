@@ -115,6 +115,14 @@ bool diag_tensor_subspace<N>::equals(
 
 
 template<size_t N>
+void diag_tensor_subspace<N>::permute(const permutation<N> &perm) {
+
+    for(size_t i = 0; i < m_diag.size(); i++) m_diag[i].permute(perm);
+    m_msk.permute(perm);
+}
+
+
+template<size_t N>
 const char *diag_tensor_space<N>::k_clazz = "diag_tensor_space<N>";
 
 
@@ -235,6 +243,14 @@ void diag_tensor_space<N>::remove_subspace(size_t n) {
     delete m_ss[n];
     m_ss[n] = 0;
     m_nss--;
+}
+
+
+template<size_t N>
+void diag_tensor_space<N>::permute(const permutation<N> &perm) {
+
+    m_dims.permute(perm);
+    for(size_t i = 0; i < m_ss.size(); i++) if(m_ss[i]) m_ss[i]->permute(perm);
 }
 
 
