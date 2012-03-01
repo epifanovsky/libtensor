@@ -124,6 +124,7 @@ set(SRC_LINALG
 set(SRC_INST
     dense_tensor/inst/dense_tensor_inst.C
     tod/tod_add.C
+    dense_tensor/impl/to_contract2_dims.C
     tod/tod_contract2.C
     tod/tod_copy.C
     tod/tod_dirsum.C

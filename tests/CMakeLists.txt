@@ -35,6 +35,7 @@ set(SRC_TOD
     tod/tod_apply_test.C
     tod/tod_btconv_test.C
     tod/tod_compare_test.C
+    tod/to_contract2_dims_test.C
     tod/tod_contract2_test.C
     tod/tod_copy_test.C
     tod/tod_diag_test.C
