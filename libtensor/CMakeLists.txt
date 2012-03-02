@@ -151,6 +151,7 @@ set(SRC_INST
     diag_tensor/impl/diag_tensor_space.C
     diag_tensor/impl/diag_tensor.C
     diag_tensor/impl/tod_conv_diag_tensor.C
+    diag_tensor/impl/diag_to_add_space.C
     diag_tensor/impl/diag_tod_adjust_space.C
     diag_tensor/impl/diag_tod_contract2.C
     diag_tensor/impl/diag_tod_copy.C
