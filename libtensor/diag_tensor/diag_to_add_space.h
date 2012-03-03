@@ -33,7 +33,9 @@ public:
 
     /** \brief Returns the result space
      **/
-    const diag_tensor_space<N> &get_dtsc() const;
+    const diag_tensor_space<N> &get_dtsc() const {
+        return m_dtsc;
+    }
 
 private:
     /** \brief Returns true if the space contains the subspace
