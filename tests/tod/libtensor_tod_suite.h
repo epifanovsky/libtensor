@@ -27,6 +27,7 @@
 #include "tod_set_diag_test.h"
 #include "tod_set_elem_test.h"
 #include "tod_trace_test.h"
+#include "tod_vmpriority_test.h"
 
 using libtest::unit_test_factory;
 
@@ -68,6 +69,7 @@ namespace libtensor {
 	\li libtensor::tod_set_diag_test
 	\li libtensor::tod_set_elem_test
 	\li libtensor::tod_trace_test
+	\li libtensor::tod_vmpriority_test
 **/
 class libtensor_tod_suite : public libtest::test_suite {
 private:
@@ -97,6 +99,7 @@ private:
 	unit_test_factory<tod_set_diag_test> m_utf_tod_set_diag;
 	unit_test_factory<tod_set_elem_test> m_utf_tod_set_elem;
 	unit_test_factory<tod_trace_test> m_utf_tod_trace;
+	unit_test_factory<tod_vmpriority_test> m_utf_tod_vmpriority;
 
 public:
 	//!	Creates the suite

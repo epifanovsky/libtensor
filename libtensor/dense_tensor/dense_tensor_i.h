@@ -73,6 +73,11 @@ protected:
      **/
     virtual void on_req_prefetch(const session_handle_type &h) = 0;
 
+    /** \brief Handles requests to set in-core VM priority
+        \param h Session handle.
+        \param pri Set (true)/unset (false) priority.
+     **/
+    virtual void on_req_priority(const session_handle_type &h, bool pri) = 0;
 
     //@}
 };

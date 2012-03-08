@@ -54,6 +54,7 @@ set(SRC_TOD
     tod/tod_set_elem_test.C
     tod/tod_set_test.C
     tod/tod_trace_test.C
+    tod/tod_vmpriority_test.C
 )
 
 set(SRC_SYMMETRY
@@ -139,6 +140,7 @@ set(SRC_BTOD
     btod/btod_symmetrize3_test.C
     btod/btod_trace_test.C
     btod/btod_tridiagonalize_test.C
+    btod/btod_vmpriority_test.C
 )
 
 set(SRC_LINALG
@@ -244,9 +246,13 @@ include(${LIBTEST_DIR}/cmake/SetupLibTest.txt)
 set_property(TARGET ${TARGETS} APPEND PROPERTY
     COMPILE_DEFINITIONS LIBTENSOR_INSTANTIATE_TEMPLATES)
 set_property(TARGET ${TARGETS} APPEND PROPERTY
-    COMPILE_DEFINITIONS_DEBUG LIBVMM_DEBUG)
-set_property(TARGET ${TARGETS} APPEND PROPERTY
     COMPILE_DEFINITIONS_DEBUG LIBTENSOR_DEBUG)
+if(HAVE_LIBVMM)
+    set_property(TARGET ${TARGETS} APPEND PROPERTY
+        COMPILE_DEFINITIONS HAVE_LIBVMM)
+    set_property(TARGET ${TARGETS} APPEND PROPERTY
+        COMPILE_DEFINITIONS_DEBUG LIBVMM_DEBUG)
+endif(HAVE_LIBVMM)
 
 foreach(TARGET ${TARGETS})
 target_link_libraries(${TARGET}

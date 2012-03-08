@@ -32,6 +32,7 @@
 #include "btod_symmetrize3_test.h"
 #include "btod_trace_test.h"
 #include "btod_tridiagonalize_test.h"
+#include "btod_vmpriority_test.h"
 
 using libtest::unit_test_factory;
 
@@ -78,6 +79,7 @@ namespace libtensor {
 	\li libtensor::btod_symmetrize3_test
 	\li libtensor::btod_trace_test
 	\li libtensor::btod_tridiagonalize_test
+	\li libtensor::btod_vmpriority_test
 **/
 class libtensor_btod_suite : public libtest::test_suite {
 private:
@@ -111,6 +113,7 @@ private:
 	unit_test_factory<btod_symmetrize3_test> m_utf_btod_symmetrize3;
 	unit_test_factory<btod_trace_test> m_utf_btod_trace;
 	unit_test_factory<btod_tridiagonalize_test> m_utf_btod_tridiagonalize;
+	unit_test_factory<btod_vmpriority_test> m_utf_btod_vmpriority;
 
 public:
 	//!	Creates the suite

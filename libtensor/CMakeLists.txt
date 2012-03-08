@@ -21,6 +21,7 @@ set(SRC
     tod/kernels/kern_add_generic.C
     tod/kernels/kern_add_i_i_x_x.C
     tod/kernels/kern_add_i_x_i_x.C
+    tod/kernels/kern_copy_generic.C
     tod/kernels/kern_mul_generic.C
     tod/kernels/kern_mul_i_i_i.C
     tod/kernels/kern_mul_i_i_x.C
@@ -131,6 +132,7 @@ set(SRC_INST
     dense_tensor/tod/tod_scale.C
     dense_tensor/tod/tod_set.C
     tod/tod_import_raw_stream.C
+    tod/tod_vmpriority.C
     btod/additive_btod.C
     btod/basic_btod.C
     btod/btod_add.C
@@ -146,6 +148,7 @@ set(SRC_INST
     btod/btod_ewmult2.C
     btod/btod_sum.C
     block_tensor/btod/impl/btod_set.C
+    block_tensor/btod/impl/btod_vmpriority.C
 )
 
 set(SRC_MP
@@ -172,6 +175,11 @@ set_property(TARGET tensor APPEND PROPERTY
 set_property(TARGET tensor APPEND PROPERTY
     COMPILE_DEFINITIONS LIBTENSOR_TIMINGS)
 set_property(TARGET tensor APPEND PROPERTY
-    COMPILE_DEFINITIONS_DEBUG LIBVMM_DEBUG)
-set_property(TARGET tensor APPEND PROPERTY
     COMPILE_DEFINITIONS_DEBUG LIBTENSOR_DEBUG)
+if(HAVE_LIBVMM)
+    set_property(TARGET tensor APPEND PROPERTY
+        COMPILE_DEFINITIONS HAVE_LIBVMM)
+    set_property(TARGET tensor APPEND PROPERTY
+        COMPILE_DEFINITIONS_DEBUG LIBVMM_DEBUG)
+endif(HAVE_LIBVMM)
+
