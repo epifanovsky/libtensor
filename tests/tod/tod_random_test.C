@@ -1,6 +1,6 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
-#include <libtensor/tod/tod_random.h>
+#include <libtensor/dense_tensor/tod_random.h>
 #include "../compare_ref.h"
 #include "tod_random_test.h"
 
