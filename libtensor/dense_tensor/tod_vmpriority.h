@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_TOD_VMPRIORITY_H
 #define LIBTENSOR_TOD_VMPRIORITY_H
 
-#include <libtensor/dense_tensor/dense_tensor_i.h>
+#include "dense_tensor_i.h"
 
 namespace libtensor {
 

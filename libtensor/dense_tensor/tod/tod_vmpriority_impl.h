@@ -1,5 +1,5 @@
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include "tod_vmpriority.h"
+#include "../tod_vmpriority.h"
 
 namespace libtensor {
 
