@@ -11,7 +11,7 @@
 namespace libtensor {
 
 
-/**	\brief Calculates the inner (dot) product of two tensors
+/** \brief Calculates the inner (dot) product of two tensors
     \tparam N Tensor order.
 
     The inner (dot) product of two tensors is defined as
@@ -76,11 +76,11 @@ public:
     tod_dotprod(dense_tensor_rd_i<N, double> &ta, const permutation<N> &perma,
         dense_tensor_rd_i<N, double> &tb, const permutation<N> &permb);
 
-    /**	\brief Prefetches the arguments
+    /** \brief Prefetches the arguments
      **/
     void prefetch();
 
-    /**	\brief Computes the dot product and returns the value
+    /** \brief Computes the dot product and returns the value
         \param cpus CPU pool.
      **/
     double calculate(cpu_pool &cpus);

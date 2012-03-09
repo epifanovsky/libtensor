@@ -8,7 +8,7 @@
 namespace libtensor {
 
 
-/**	\brief Scales tensor elements by a constant
+/** \brief Scales tensor elements by a constant
     \tparam N Tensor order.
 
     \ingroup libtensor_dense_tensor_tod
@@ -22,12 +22,12 @@ private:
     double m_c; //!< Scaling coefficient
 
 public:
-    /**	\brief Initializes the operation
+    /** \brief Initializes the operation
         \param c Scaling coefficient.
      **/
     tod_scale(double c) : m_c(c) { }
 
-    /**	\brief Performs the operation
+    /** \brief Performs the operation
         \param cpus Pool of CPUs.
         \param ta Tensor.
      **/

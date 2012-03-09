@@ -10,7 +10,7 @@
 namespace libtensor {
 
 
-/**	\brief Copies the contents of a tensor, permutes and scales the entries if
+/** \brief Copies the contents of a tensor, permutes and scales the entries if
         necessary
     \tparam N Tensor order.
 
@@ -68,13 +68,13 @@ private:
     dimensions<N> m_dimsb; //!< Dimensions of output tensor
 
 public:
-    /**	\brief Prepares the copy operation
+    /** \brief Prepares the copy operation
         \param ta Source tensor.
         \param c Coefficient.
      **/
     tod_copy(dense_tensor_rd_i<N,double> &ta, double c = 1.0);
 
-    /**	\brief Prepares the permute & copy operation
+    /** \brief Prepares the permute & copy operation
         \param ta Source tensor.
         \param p Permutation of tensor indexes.
         \param c Coefficient.
@@ -82,7 +82,7 @@ public:
     tod_copy(dense_tensor_rd_i<N,double> &ta, const permutation<N> &p,
         double c = 1.0);
 
-    /**	\brief Virtual destructor
+    /** \brief Virtual destructor
      **/
     virtual ~tod_copy() { }
 
@@ -102,7 +102,7 @@ public:
     //@}
 
 private:
-    /**	\brief Creates the dimensions of the output using an input
+    /** \brief Creates the dimensions of the output using an input
             tensor and a permutation of indexes
      **/
     static dimensions<N> mk_dimsb(dense_tensor_rd_i<N,double> &ta,
