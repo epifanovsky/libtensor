@@ -48,7 +48,6 @@
 #include "tod/tod_scatter.h"
 #include "tod/tod_select.h"
 #include "tod/tod_set_diag.h"
-#include "tod/tod_set_elem.h"
 
 
 #include "btod/basic_btod.h"

@@ -9,7 +9,7 @@
 #include "../core/block_tensor_ctrl.h"
 #include "../core/orbit.h"
 #include <libtensor/dense_tensor/tod_set.h>
-#include "../tod/tod_set_elem.h"
+#include <libtensor/dense_tensor/tod_set_elem.h>
 #include "transf_double.h"
 
 namespace libtensor {

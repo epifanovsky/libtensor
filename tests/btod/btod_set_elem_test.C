@@ -5,7 +5,7 @@
 #include <libtensor/btod/btod_set_elem.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/tod/tod_btconv.h>
-#include <libtensor/tod/tod_set_elem.h>
+#include <libtensor/dense_tensor/tod_set_elem.h>
 #include "btod_set_elem_test.h"
 #include "../compare_ref.h"
 
