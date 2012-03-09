@@ -7,7 +7,7 @@
 #include "../core/block_tensor_ctrl.h"
 #include "../core/orbit.h"
 #include <libtensor/dense_tensor/tod_set.h>
-#include "../tod/tod_set_diag.h"
+#include <libtensor/dense_tensor/tod_set_diag.h>
 
 namespace libtensor {
 
