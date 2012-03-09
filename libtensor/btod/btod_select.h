@@ -7,7 +7,7 @@
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
 #include "../symmetry/so_copy.h"
-#include "../tod/tod_select.h"
+#include <libtensor/dense_tensor/tod_select.h>
 
 
 namespace libtensor {
