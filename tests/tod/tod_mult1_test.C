@@ -2,7 +2,7 @@
 #include <ctime>
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
-#include <libtensor/tod/tod_mult1.h>
+#include <libtensor/dense_tensor/tod_mult1.h>
 #include "../compare_ref.h"
 #include "tod_mult1_test.h"
 

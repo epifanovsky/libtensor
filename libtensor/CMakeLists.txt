@@ -129,6 +129,8 @@ set(SRC_INST
     dense_tensor/tod/tod_dirsum.C
     dense_tensor/tod/tod_dotprod.C
     dense_tensor/tod/tod_ewmult2.C
+    dense_tensor/tod/tod_mult.C
+    dense_tensor/tod/tod_mult1.C
     dense_tensor/tod/tod_random.C
     dense_tensor/tod/tod_scale.C
     dense_tensor/tod/tod_scatter.C
