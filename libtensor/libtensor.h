@@ -45,7 +45,6 @@
 #include "tod/tod_import_raw.h"
 #include "tod/tod_mult.h"
 #include "tod/tod_mult1.h"
-#include "tod/tod_scatter.h"
 
 
 #include "btod/basic_btod.h"
