@@ -129,6 +129,8 @@ set(SRC_INST
     dense_tensor/tod/tod_dirsum.C
     dense_tensor/tod/tod_dotprod.C
     dense_tensor/tod/tod_ewmult2.C
+    dense_tensor/tod/tod_import_raw.C
+    dense_tensor/tod/tod_import_raw_stream.C
     dense_tensor/tod/tod_mult.C
     dense_tensor/tod/tod_mult1.C
     dense_tensor/tod/tod_random.C
@@ -140,7 +142,6 @@ set(SRC_INST
     dense_tensor/tod/tod_set_elem.C
     dense_tensor/tod/tod_trace.C
     dense_tensor/tod/tod_vmpriority.C
-    tod/tod_import_raw_stream.C
     btod/additive_btod.C
     btod/basic_btod.C
     btod/btod_add.C

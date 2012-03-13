@@ -2,10 +2,8 @@
 #define LIBTENSOR_TOD_IMPORT_RAW_STREAM_H
 
 #include <iostream>
-#include "../core/dimensions.h"
-#include "../core/index_range.h"
-#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include "bad_dimensions.h"
+#include <libtensor/core/dimensions.h>
+#include "dense_tensor_i.h"
 
 namespace libtensor {
 
@@ -61,22 +59,5 @@ private:
 
 
 } // namespace libtensor
-
-#ifdef LIBTENSOR_INSTANTIATE_TEMPLATES
-
-namespace libtensor {
-
-extern template class tod_import_raw_stream<1>;
-extern template class tod_import_raw_stream<2>;
-extern template class tod_import_raw_stream<3>;
-extern template class tod_import_raw_stream<4>;
-extern template class tod_import_raw_stream<5>;
-extern template class tod_import_raw_stream<6>;
-
-} // namespace libtensor
-
-#else // LIBTENSOR_INSTANTIATE_TEMPLATES
-#include "tod_import_raw_stream_impl.h"
-#endif // LIBTENSOR_INSTANTIATE_TEMPLATES
 
 #endif // LIBTENSOR_TOD_IMPORT_RAW_STREAM_H
