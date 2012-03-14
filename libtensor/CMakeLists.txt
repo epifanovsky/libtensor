@@ -129,6 +129,7 @@ set(SRC_INST
     dense_tensor/tod/tod_dirsum.C
     dense_tensor/tod/tod_dotprod.C
     dense_tensor/tod/tod_ewmult2.C
+    dense_tensor/tod/tod_extract.C
     dense_tensor/tod/tod_import_raw.C
     dense_tensor/tod/tod_import_raw_stream.C
     dense_tensor/tod/tod_mult.C
