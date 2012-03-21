@@ -3,6 +3,7 @@
 
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
+#include "../core/permutation_builder.h"
 #include "../tod/tod_ewmult2.h"
 #include "../symmetry/so_dirprod.h"
 #include "../symmetry/so_merge.h"
@@ -188,9 +189,64 @@ block_index_space<N + M + K> btod_ewmult2<N, M, K>::make_bisc(
 template<size_t N, size_t M, size_t K>
 void btod_ewmult2<N, M, K>::make_symc() {
 
+    sequence<k_ordera, size_t> seq2a;
+    sequence<k_orderb, size_t> seq2b;
+    sequence<k_orderc, size_t> seq2c;
+    for (register size_t i = 0; i < k_ordera; i++) seq2a[i] = i;
+    m_perma.apply(seq2a);
+    for (register size_t i = 0, j = k_ordera; i < k_orderb; i++, j++)
+        seq2b[i] = j;
+    m_permb.apply(seq2b);
+    for (register size_t i = 0; i < k_orderc; i++) seq2c[i] = i;
+    m_permc.apply(seq2c);
+
+    sequence<k_orderc, size_t> seq2imx, seqx;
+    sequence<k_ordera + k_orderb, size_t> seq1im, seq2im, seq;
+    for (register size_t i = 0; i < N; i++) {
+        seq1im[i] = i;
+        seq2imx[i] = seq2a[i];
+    }
+    for (register size_t i = 0, j = N; i < M; i++, j++) {
+        seq1im[j] = j;
+        seq2imx[j] = seq2b[i];
+    }
+
+    mask<k_orderc> mskx;
+    mask<k_ordera + k_orderb> msk;
+    for (register size_t i = 0, j = N + M; i < K; i++, j++) {
+        seq1im[j] = j;
+        seq2imx[j] = seq2a[i + N];
+        mskx[j] = true;
+        seqx[j] = i;
+    }
+
+    for (register size_t i = 0, j = k_orderc; i < K; i++, j++) {
+        seq1im[j] = j;
+        seq2im[j] = seq2b[i + M];
+        msk[j] = true;
+        seq[j] = i;
+    }
+
+    for (register size_t i = 0; i < k_orderc; i++) {
+        seq2im[i] = seq2imx[seq2c[i]];
+        seq[i] = seqx[seq2c[i]];
+        msk[i] = mskx[seq2c[i]];
+    }
+
+    permutation_builder<k_ordera + k_orderb> pb(seq2im, seq1im);
+
+    block_index_space_product_builder<k_ordera, k_orderb> bbx(m_bta.get_bis(),
+            m_btb.get_bis(), pb.get_perm());
+
+    symmetry<k_ordera + k_orderb, double> symx(bbx.get_bis());
+
+    block_tensor_ctrl<k_ordera, double> ca(m_bta);
+    block_tensor_ctrl<k_orderb, double> cb(m_btb);
+    so_dirprod<k_ordera, k_orderb, double>(ca.req_const_symmetry(),
+            cb.req_const_symmetry(), pb.get_perm()).perform(symx);
+
+    so_merge<k_ordera + k_orderb, K, double>(symx, msk, seq).perform(m_symc);
 /*
-	block_tensor_ctrl<k_ordera, double> ctrla(m_bta);
-	block_tensor_ctrl<k_orderb, double> ctrlb(m_btb);
 
 	block_index_space<k_ordera> bisa1(m_bta.get_bis());
 	bisa1.permute(m_perma);
