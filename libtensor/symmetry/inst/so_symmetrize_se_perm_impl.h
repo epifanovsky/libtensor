@@ -20,9 +20,9 @@ void symmetry_operation_impl< so_symmetrize<N, T>, se_perm<N, T> >::do_perform(
     permutation_group<N, T> grp1(adapter1), grp2;
 
     size_t ngrp = 0, nidx = 0;
+    bool has_zero = false;
     for (register size_t i = 0; i < N; i++) {
-        if (params.idxgrp[i] == 0) continue;
-
+        if (params.idxgrp[i] == 0) { has_zero = true; continue; }
         ngrp = std::max(ngrp, params.idxgrp[i]);
         nidx = std::max(nidx, params.symidx[i]);
     }
@@ -48,8 +48,13 @@ void symmetry_operation_impl< so_symmetrize<N, T>, se_perm<N, T> >::do_perform(
     }
 
     sequence<N, size_t> stabseq;
-    for (register size_t i = 0; i < N; i++) stabseq[i] = params.symidx[i] + 1;
-    grp1.stabilize(params.symidx, grp2);
+    size_t offset = (has_zero ? 1 : 0);
+    for (register size_t i = 0; i < N; i++)
+        stabseq[i] = params.idxgrp[i] + offset;
+
+    grp1.stabilize(stabseq, grp2);
+//    params.grp2.clear();
+//    grp2.convert(params.grp2);
 
     if (ngrp > 2) grp2.add_orbit(params.symm || ((ngrp % 2) != 0), cp);
     grp2.add_orbit(params.symm, pp);
