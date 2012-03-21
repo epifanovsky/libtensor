@@ -123,6 +123,7 @@ symmetry_operation_impl< so_dirprod<N, M, T>, se_label<N + M, T> >::do_perform(
             // If there is an se_label with the same product table
             const se_label<M, T> &e2 = g2.get_elem(it2);
             transfer_labeling(e2.get_labeling(), map2, e3.get_labeling());
+            e3.get_labeling().match();
 
             // First transfer the sequences
             const evaluation_rule<M> &r2 = e2.get_rule();
