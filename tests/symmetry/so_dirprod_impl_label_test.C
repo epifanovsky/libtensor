@@ -215,7 +215,7 @@ void so_dirprod_impl_label_test::test_empty_3(
         fail_test(tns.c_str(), __FILE__, __LINE__,
                 "Expected a non-empty set.");
     }
-
+    // [012->120]
     symmetry_element_set_adapter<3, double, se3_t> adc(setc);
     symmetry_element_set_adapter<3, double, se3_t>::iterator it =
             adc.begin();
@@ -461,13 +461,12 @@ void so_dirprod_impl_label_test::test_nn_3(
         for (size_t i = 0; i < 4; i++) blb.assign(mb, i, i);
 
         evaluation_rule<2> rb;
-        basic_rule<2> br1, br2;
-        br1[0] = 1; br1.set_target(2);
-        br2[1] = 2; br2.set_target(0);
-        evaluation_rule<2>::rule_id_t irb1 = rb.add_rule(br1);
-        evaluation_rule<2>::rule_id_t irb2 = rb.add_rule(br2);
-        rb.add_product(irb1);
-        rb.add_to_product(0, irb2);
+        sequence<2, size_t> seq1, seq2;
+        seq1[0] = 1; seq2[1] = 2;
+        rb.add_sequence(seq1);
+        rb.add_sequence(seq2);
+        rb.add_product(0, 2, 0);
+        rb.add_to_product(0, 1, 0, 0);
         elemb.set_rule(rb);
     }
     symmetry_element_set<1, double> seta(se1_t::k_sym_type);

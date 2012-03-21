@@ -20,7 +20,7 @@ namespace libtensor {
  **/
 template<size_t N, size_t M, typename T>
 class symmetry_operation_impl< so_dirprod<N, M, T>, se_label<N + M, T> > :
-    public symmetry_operation_impl_base<so_dirprod<N, M, T>,
+    public symmetry_operation_impl_base< so_dirprod<N, M, T>,
         se_label<N + M, T> > {
 
 public:
@@ -29,8 +29,7 @@ public:
 public:
     typedef so_dirprod<N, M, T> operation_t;
     typedef se_label<N + M, T> element_t;
-    typedef symmetry_operation_params<operation_t>
-    symmetry_operation_params_t;
+    typedef symmetry_operation_params<operation_t> symmetry_operation_params_t;
 
 protected:
     virtual void do_perform(symmetry_operation_params_t &params) const;
@@ -54,9 +53,6 @@ symmetry_operation_impl< so_dirprod<N, M, T>, se_label<N + M, T> >::do_perform(
     // Adapter type for the input groups
     typedef symmetry_element_set_adapter< N, T, se_label<N, T> > adapter1_t;
     typedef symmetry_element_set_adapter< M, T, se_label<M, T> > adapter2_t;
-
-    typedef typename evaluation_rule<N + M>::rule_id_t rule_id_t;
-    typedef std::map<rule_id_t, rule_id_t> rule_id_map_t;
 
     adapter1_t g1(params.g1);
     adapter2_t g2(params.g2);
@@ -84,18 +80,18 @@ symmetry_operation_impl< so_dirprod<N, M, T>, se_label<N + M, T> >::do_perform(
         se_label<N + M, T> e3(bidims, e1.get_table_id());
         transfer_labeling(e1.get_labeling(), map1, e3.get_labeling());
 
-        // Transfer the basic rules
+        // Transfer the sequences
         evaluation_rule<N + M> r3;
         const evaluation_rule<N> &r1 = e1.get_rule();
 
-        rule_id_map_t m1to3;
-        for (typename evaluation_rule<N>::rule_iterator ir = r1.begin();
-                ir != r1.end(); ir++) {
+        std::map<size_t, size_t> m1to3;
+        for (size_t i = 0; i < r1.get_n_sequences(); i++) {
 
-            const basic_rule<N> &br1 = r1.get_rule(ir);
-            basic_rule<N + M> br3(br1.get_target());
-            for (size_t i = 0; i < N; i++) br3[map1[i]] = br1[i];
-            m1to3[r1.get_rule_id(ir)] = r3.add_rule(br3);
+            const sequence<N, size_t> &rs1 = r1[i];
+            sequence<N + M, size_t> rs3(0);
+            for (register size_t j = 0; j < N; j++) rs3[map1[j]] = rs1[j];
+
+            m1to3[i] = r3.add_sequence(rs3);
         }
 
         // Look for an element in the second source group that has the
@@ -109,55 +105,57 @@ symmetry_operation_impl< so_dirprod<N, M, T>, se_label<N + M, T> >::do_perform(
 
         // If there is none
         if (it2 == g2.end()) {
+
             // Transfer the products
             for (size_t i = 0; i < r1.get_n_products(); i++) {
 
-                typename evaluation_rule<N>::product_iterator ip = r1.begin(i);
-                size_t pno = r3.add_product(m1to3[r1.get_rule_id(ip)]);
+                typename evaluation_rule<N>::iterator ip = r1.begin(i);
+                size_t pno = r3.add_product(m1to3[r1.get_seq_no(ip)],
+                        r1.get_intrinsic(ip), r1.get_target(ip));
                 ip++;
                 for (; ip != r1.end(i); ip++) {
-                    r3.add_to_product(pno, m1to3[r1.get_rule_id(ip)]);
+                    r3.add_to_product(pno, m1to3[r1.get_seq_no(ip)],
+                            r1.get_intrinsic(ip), r1.get_target(ip));
                 }
             }
-
-            // Set the rule and finish off
-            e3.set_rule(r3);
-            params.g3.insert(e3);
-
-            continue;
         }
+        else {
+            // If there is an se_label with the same product table
+            const se_label<M, T> &e2 = g2.get_elem(it2);
+            transfer_labeling(e2.get_labeling(), map2, e3.get_labeling());
 
-        // If there is an se_label with the same product table
-        const se_label<M, T> &e2 = g2.get_elem(it2);
-        transfer_labeling(e2.get_labeling(), map2, e3.get_labeling());
+            // First transfer the sequences
+            const evaluation_rule<M> &r2 = e2.get_rule();
 
-        // First transfer the basic rules
-        const evaluation_rule<M> &r2 = e2.get_rule();
+            std::map<size_t, size_t> m2to3;
+            for (size_t i = 0; i < r2.get_n_sequences(); i++) {
 
-        rule_id_map_t m2to3;
-        for (typename evaluation_rule<M>::rule_iterator ir = r2.begin();
-                ir != r2.end(); ir++) {
+                const sequence<M, size_t> &rs2 = r2[i];
+                sequence<N + M, size_t> rs3(0);
+                for (register size_t j = 0; j < M; j++) rs3[map2[j]] = rs2[j];
 
-            const basic_rule<M> &br2 = r2.get_rule(ir);
-            basic_rule<N + M> br3(br2.get_target());
-            for (size_t i = 0; i < M; i++) br3[map2[i]] = br2[i];
-            m2to3[r2.get_rule_id(ir)] = r3.add_rule(br3);
-        }
+                m2to3[i] = r3.add_sequence(rs3);
+            }
 
-        // Then merge the products
-        for (size_t i = 0; i < r1.get_n_products(); i++) {
-            for (size_t j = 0; j < r2.get_n_products(); j++) {
+            // Then merge the products
+            for (size_t i = 0; i < r1.get_n_products(); i++) {
 
-                typename evaluation_rule<N>::product_iterator ip1 = r1.begin(i);
-                size_t pno = r3.add_product(m1to3[r1.get_rule_id(ip1)]);
-                ip1++;
+                for (size_t j = 0; j < r2.get_n_products(); j++) {
 
-                for (; ip1 != r1.end(i); ip1++)
-                    r3.add_to_product(pno, m1to3[r1.get_rule_id(ip1)]);
+                    typename evaluation_rule<N>::iterator ip1 = r1.begin(i);
+                    size_t pno = r3.add_product(m1to3[r1.get_seq_no(ip1)],
+                            r1.get_intrinsic(ip1), r1.get_target(ip1));
+                    ip1++;
 
-                for (typename evaluation_rule<M>::product_iterator ip2 =
-                        r2.begin(j); ip2 != r2.end(j); ip2++)
-                    r3.add_to_product(pno, m2to3[r2.get_rule_id(ip2)]);
+                    for (; ip1 != r1.end(i); ip1++)
+                        r3.add_to_product(pno, m1to3[r1.get_seq_no(ip1)],
+                                r1.get_intrinsic(ip1), r1.get_target(ip1));
+
+                    for (typename evaluation_rule<M>::iterator ip2 =
+                            r2.begin(j); ip2 != r2.end(j); ip2++)
+                        r3.add_to_product(pno, m2to3[r2.get_seq_no(ip2)],
+                                r2.get_intrinsic(ip2), r2.get_target(ip2));
+                }
             }
         }
 
@@ -186,24 +184,27 @@ symmetry_operation_impl< so_dirprod<N, M, T>, se_label<N + M, T> >::do_perform(
         // Transfer the rule from e2
         evaluation_rule<N + M> r3;
         const evaluation_rule<M> &r2 = e2.get_rule();
-        rule_id_map_t m2to3;
-        for (typename evaluation_rule<M>::rule_iterator ir = r2.begin();
-                ir != r2.end(); ir++) {
 
-            const basic_rule<M> &br2 = r2.get_rule(ir);
-            basic_rule<N + M> br3(br2.get_target());
-            for (size_t i = 0; i < M; i++) br3[map2[i]] = br2[i];
-            m2to3[r2.get_rule_id(ir)] = r3.add_rule(br3);
+        std::map<size_t, size_t> m2to3;
+        for (size_t i = 0; i < r2.get_n_sequences(); i++) {
+
+             const sequence<M, size_t> &rs2 = r2[i];
+             sequence<N + M, size_t> rs3(0);
+             for (register size_t j = 0; j < M; j++) rs3[map2[j]] = rs2[j];
+
+             m2to3[i] = r3.add_sequence(rs3);
         }
 
         // Transfer the products
         for (size_t i = 0; i < r2.get_n_products(); i++) {
 
-            typename evaluation_rule<M>::product_iterator ip = r2.begin(i);
-            size_t pno = r3.add_product(m2to3[r2.get_rule_id(ip)]);
+            typename evaluation_rule<M>::iterator ip = r2.begin(i);
+            size_t pno = r3.add_product(m2to3[r2.get_seq_no(ip)],
+                    r2.get_intrinsic(ip), r2.get_target(ip));
             ip++;
             for (; ip != r2.end(i); ip++) {
-                r3.add_to_product(pno, m2to3[r2.get_rule_id(ip)]);
+                r3.add_to_product(pno, m2to3[r2.get_seq_no(ip)],
+                        r2.get_intrinsic(ip), r2.get_target(ip));
             }
         }
 

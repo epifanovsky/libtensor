@@ -112,10 +112,11 @@ bool se_label<N, T>::is_allowed(const index<N> &idx) const {
         product_table_i::label_group_t &lg = lgs[i];
         for (size_t j = 0; j < N; j++) {
             if (seq[j] == 0) continue;
+
+            lg.insert(lg.end(), seq[j], blk[j]);
             if (blk[j] == product_table_i::k_invalid) {
                 invalid[i] = true; break;
             }
-            lg.insert(lg.end(), seq[j], blk[j]);
         }
     }
 

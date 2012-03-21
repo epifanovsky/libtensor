@@ -456,13 +456,12 @@ void so_dirsum_impl_label_test::test_nn_3(
         block_labeling<2> &bla = elema.get_labeling();
         for (size_t i = 0; i < 4; i++) bla.assign(ma, i, i);
         evaluation_rule<2> ra;
-        basic_rule<2> bra1, bra2;
-        bra1[0] = 1; bra1.set_target(1);
-        bra2[1] = 1; bra2.set_target(2);
-        evaluation_rule<2>::rule_id_t ira1 = ra.add_rule(bra1);
-        evaluation_rule<2>::rule_id_t ira2 = ra.add_rule(bra2);
-        ra.add_product(ira1);
-        ra.add_to_product(0, ira2);
+        sequence<2, size_t> seq1, seq2;
+        seq1[0] = seq2[1] = 1;
+        ra.add_sequence(seq1);
+        ra.add_sequence(seq2);
+        ra.add_product(0, 1, 0);
+        ra.add_to_product(0, 1, 2, 0);
         elema.set_rule(ra);
     }
 

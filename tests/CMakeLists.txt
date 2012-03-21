@@ -78,11 +78,11 @@ set(SRC_SYMMETRY
 #    symmetry/so_apply_impl_perm_test.C
 #    symmetry/so_apply_test.C
     symmetry/so_copy_test.C
-#    symmetry/so_dirprod_impl_label_test.C
+    symmetry/so_dirprod_impl_label_test.C
     symmetry/so_dirprod_impl_part_test.C
     symmetry/so_dirprod_impl_perm_test.C
 #    symmetry/so_dirprod_test.C
-#    symmetry/so_dirsum_impl_label_test.C
+    symmetry/so_dirsum_impl_label_test.C
     symmetry/so_dirsum_impl_part_test.C
     symmetry/so_dirsum_impl_perm_test.C
     symmetry/so_dirsum_test.C
