@@ -10,15 +10,18 @@ std::string se_label_test_base::setup_pg_table() throw(libtest::test_exception){
 
     try {
 
-        point_group_table::irrep_label_t ag = 0, eg = 1, au = 2, eu = 3;
-        point_group_table::irrep_map_t im;
+        point_group_table::label_t ag = 0, eg = 1, au = 2, eu = 3;
+        std::vector<std::string> im(4);
         im[ag] = "Ag"; im[eg] = "Eg"; im[au] = "Au"; im[eu] = "Eu";
-        point_group_table s6("s6", im, ag);
+        point_group_table s6("s6", im, "Ag");
+        s6.add_product(eg, eg, ag);
         s6.add_product(eg, eg, eg);
         s6.add_product(eg, au, eu);
         s6.add_product(eg, eu, au);
         s6.add_product(eg, eu, eu);
+        s6.add_product(au, au, ag);
         s6.add_product(au, eu, eg);
+        s6.add_product(eu, eu, ag);
         s6.add_product(eu, eu, eg);
         s6.check();
         product_table_container::get_instance().add(s6);

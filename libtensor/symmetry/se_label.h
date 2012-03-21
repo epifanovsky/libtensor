@@ -10,7 +10,6 @@
 #include "label/evaluation_rule.h"
 #include "label/product_table_container.h"
 #include "label/product_table_i.h"
-#include "label/transfer_rule.h"
 
 namespace libtensor {
 
@@ -22,31 +21,34 @@ namespace libtensor {
     block labels along each dimension, an evaluation rule, and a product table.
 
     The construction of \c se_label using the default constructor initializes
-    the class with no block labels and no evaluation rule set. To set the
-    labeling of the blocks in each dimension, first obtain the
-    \c block_labeling object using the member function \c get_labeling(). Then,
-    use the functions provided by the class \c block_labeling to set the labels
-    (for details refer to the documentation of \sa block_labeling). To set the
-    evaluation rule three functions \c set_rule() are provided:
-    - \c set_rule(label_t) --
-    - \c set_rule(const label_set_t &) --
-    - \c set_rule(const evaluation_rule<N> &) --
+    the class with a product table, but no block labels and no evaluation rule
+    set. The labeling of the blocks is stored in the \c block_labeling object
+    that can be obtained using the function \c get_labeling(). This object
+    provides all functions necessary to set the labels. For details refer to
+    the documentation of \sa block_labeling. The evaluation rule is also stored
+    as its own object. It be set using one of the \c set_rule() functions
+    provided:
+    - \c set_rule(label_t)
+    - \c set_rule(const label_set_t &)
+    - \c set_rule(const evaluation_rule<N> &)
 
     Allowed blocks are determined from the evaluation rule as follows:
-    - All blocks are forbidden, if the rule setup of the evaluation rule is
-      empty
+    - All blocks are forbidden, if the rule setup is empty.
     - A block is allowed, if it is allowed by any of the products in the rule
-      setup
-    - A block is allowed by a product, if it is allowed by all basic rules in
-      this product
-    - A block is allowed by a basic rule, if the product of labels specified
-      by the rule contains the target label
-    - The product of labels is formed from the block labels using the sequence
-      of multiplicities of the basic rule.
-    - If this is not possible since the evaluation order has zero length or
-      no intrinsic labels are set, but the evaluation order comprises the
-      intrinsic label index, all blocks are discarded by this rule.
-    - If any product contains an invalid label the block is allowed.
+      setup.
+    - A block is allowed by a product, if it is allowed by all terms in this
+      product.
+    - All blocks are allowed by a term, if the intrinsic label is the invalid
+      label.
+    - A block is forbidden by a term, if the respective sequence contains only
+      zeroes.
+    - A block is allowed by a term, if one of the block labels for which the
+      sequence is non-zero is the invalid label.
+    - A block is allowed by a term, if the product of labels specified
+      by the sequence and the intrinsic label contains the target label.
+    - The product of labels is a list of labels containing the intrinsic label
+      once and the i-th block label n times, if the i-th entry of the sequence
+      is n.
 
 	\ingroup libtensor_symmetry
  **/
@@ -93,28 +95,27 @@ public:
      **/
     const block_labeling<N> &get_labeling() const { return m_blk_labels; }
 
-    /** \brief Set the evaluation rule to consist of only one basic rule.
-        \param lt Target label.
+    /** \brief Set the evaluation rule to consist of only one 1-term product.
+        \param intr Intrinsic label.
+        \param target Target label
 
-        Replaces any existing rule with the basic rule given by the parameters.
+        Replaces any existing rules.
      **/
-    void set_rule(const label_t &lt) {
+    void set_rule(label_t intr, label_t target = 0);
 
-        label_set_t tls; tls.insert(lt);
-        set_rule(tls);
-    }
+    /** \brief Set the evaluation rule to consist of several 1-term products
+            (one product for each intrinsic label in the set)
+        \param intr Set of intrinsic labels.
+        \param target Target label.
 
-    /** \brief Set the evaluation rule to consist of only one basic rule.
-        \param tls Set of target labels.
-
-        Replaces any existing rule with a basic rule.
+        Replaces any existing rule.
      **/
-    void set_rule(const label_set_t &tls);
+    void set_rule(const label_set_t &intr, label_t target = 0);
 
-    /** \brief Set the evaluation rule to a composite rule.
-        \param rule Composite evaluation rule.
+    /** \brief Set the evaluation rule to the given rule.
+        \param rule Evaluation rule.
 
-        The function checks the given rule on validity and replaces any
+        The function checks the validity of the given rule and replaces any
         previously given rule.
      **/
     void set_rule(const evaluation_rule<N> &rule);

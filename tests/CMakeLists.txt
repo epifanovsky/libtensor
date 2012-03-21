@@ -69,8 +69,8 @@ set(SRC_SYMMETRY
     symmetry/permutation_group_test.C
     symmetry/point_group_table_test.C
     symmetry/product_table_container_test.C
-#    symmetry/se_label_test_base.C
-#    symmetry/se_label_test.C
+    symmetry/se_label_test_base.C
+    symmetry/se_label_test.C
     symmetry/se_part_test.C
     symmetry/se_perm_test.C
 #    symmetry/so_apply_impl_label_test.C

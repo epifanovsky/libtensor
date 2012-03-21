@@ -128,7 +128,20 @@ public:
     /** \brief Access a sequence.
         \param n Sequence index.
      **/
-    const sequence<N, size_t> operator[](size_t n) const {
+    const sequence<N, size_t> &operator[](size_t n) const {
+#ifdef LIBTENSOR_DEBUG
+        if (n >= m_sequences.size())
+            throw bad_parameter(g_ns, k_clazz,
+                    "operator[](size_t)", __FILE__, __LINE__, "n");
+#endif
+
+        return m_sequences[n];
+    }
+
+    /** \brief Access a sequence.
+        \param n Sequence index.
+     **/
+    sequence<N, size_t> &operator[](size_t n) {
 #ifdef LIBTENSOR_DEBUG
         if (n >= m_sequences.size())
             throw bad_parameter(g_ns, k_clazz,

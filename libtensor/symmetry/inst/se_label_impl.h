@@ -1,8 +1,6 @@
 #ifndef LIBTENSOR_SE_LABEL_IMPL_H
 #define LIBTENSOR_SE_LABEL_IMPL_H
 
-#include "../label/transfer_rule.h"
-
 namespace libtensor {
 
 template<size_t N, typename T>
@@ -31,29 +29,29 @@ se_label<N, T>::~se_label() {
 }
 
 template<size_t N, typename T>
-void se_label<N, T>::set_rule(const label_set_t &lts) {
+void se_label<N, T>::set_rule(label_t intr, label_t target) {
+
+    static const char *method = "set_rule(label_t, label_t)";
+
+    m_rule.clear_all();
+    if (target == product_table_i::k_invalid) return;
+
+    size_t seqno = m_rule.add_sequence(sequence<N, size_t>(1));
+    m_rule.add_product(seqno, intr, target);
+}
+template<size_t N, typename T>
+void se_label<N, T>::set_rule(const label_set_t &intr, label_t target) {
 
     static const char *method = "set_rule(const label_set &)";
-
-#ifdef LIBTENSOR_DEBUG
-    // Check the intrinsic labels for invalid labels
-    for (label_set_t::const_iterator it = lts.begin(); it != lts.end(); it++) {
-        if (! m_pt.is_valid(*it))
-            throw bad_parameter(g_ns, k_clazz, method,
-                    __FILE__, __LINE__, "lts.");
-    }
-#endif
 
     // Now start updating the evaluation rule by clearing the old
     m_rule.clear_all();
 
-    if (lts.empty()) return;
+    if (intr.empty()) return;
 
-    basic_rule<N> br(lts);
-    for (size_t i = 0; i < N; i++) br[i] = 1;
-
-    typename evaluation_rule<N>::rule_id_t id = m_rule.add_rule(br);
-    m_rule.add_product(id);
+    size_t seqno = m_rule.add_sequence(sequence<N, size_t>(1));
+    for (label_set_t::const_iterator it = intr.begin(); it != intr.end(); it++)
+        m_rule.add_product(seqno, *it, target);
 }
 
 template<size_t N, typename T>
@@ -62,7 +60,7 @@ void se_label<N, T>::set_rule(const evaluation_rule<N> &rule) {
     static const char *method = "set_rule(const evaluation_rule<N> &)";
 
     m_rule = rule;
-    transfer_rule<N>(rule, m_pt.get_id()).perform(m_rule);
+    m_rule.optimize();
 }
 
 
@@ -71,11 +69,9 @@ void se_label<N, T>::permute(const permutation<N> &p) {
 
     m_blk_labels.permute(p);
 
-    for (typename evaluation_rule<N>::rule_iterator it = m_rule.begin();
-            it != m_rule.end(); it++) {
+    for (size_t i = 0; i < m_rule.get_n_sequences(); i++) {
 
-        basic_rule<N> &br = m_rule.get_rule(m_rule.get_rule_id(it));
-        p.apply(br);
+        p.apply(m_rule[i]);
     }
 }
 
@@ -89,8 +85,6 @@ bool se_label<N, T>::is_valid_bis(const block_index_space<N> &bis) const {
 template<size_t N, typename T>
 bool se_label<N, T>::is_allowed(const index<N> &idx) const {
 
-    typedef typename evaluation_rule<N>::rule_id_t rule_id_t;
-
     static const char *method = "is_allowed(const index<N> &)";
 
 #ifdef LIBTENSOR_DEBUG
@@ -98,54 +92,31 @@ bool se_label<N, T>::is_allowed(const index<N> &idx) const {
     // Test, if index is valid block index
     for (size_t i = 0; i < N; i++) {
         if (idx[i] >= bidims[i]) {
-            throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
-                    "idx.");
+            throw bad_parameter(g_ns, k_clazz, method,
+                    __FILE__, __LINE__, "idx.");
         }
     }
 #endif
 
     // Construct the block label
     sequence<N, label_t> blk(product_table_i::k_invalid);
-    for (size_t i = 0; i < N; i++) {
-        size_t dim_type = m_blk_labels.get_dim_type(i);
-        blk[i] = m_blk_labels.get_label(dim_type, idx[i]);
+    for (register size_t i = 0; i < N; i++) {
+        blk[i] = m_blk_labels.get_label(m_blk_labels.get_dim_type(i), idx[i]);
     }
 
-    // Determine which basic rules are allowed.
-    label_set_t complete_set = m_pt.get_complete_set();
-
-    std::map<rule_id_t, bool> allowed;
-    for (typename evaluation_rule<N>::rule_iterator it = m_rule.begin();
-            it != m_rule.end(); it++) {
-
-        rule_id_t rid = m_rule.get_rule_id(it);
-        const basic_rule<N> &br = m_rule.get_rule(it);
-
-        product_table_i::label_group_t lg;
-        for (size_t i = 0; i < N; i++) {
-            for (size_t j = 0; j < br[i]; j++) lg.insert(blk[i]);
+    // Construct label groups for every sequence in rule
+    std::vector<product_table_i::label_group_t> lgs(m_rule.get_n_sequences());
+    std::vector<bool> invalid(m_rule.get_n_sequences(), false);
+    for (size_t i = 0; i < m_rule.get_n_sequences(); i++) {
+        const sequence<N, size_t> &seq = m_rule[i];
+        product_table_i::label_group_t &lg = lgs[i];
+        for (size_t j = 0; j < N; j++) {
+            if (seq[j] == 0) continue;
+            if (blk[j] == product_table_i::k_invalid) {
+                invalid[i] = true; break;
+            }
+            lg.insert(lg.end(), seq[j], blk[j]);
         }
-
-        const label_set_t &target = br.get_target();
-        // No dimensions in sequence or empty target == not allowed
-        if (lg.size() == 0 || target.size() == 0) {
-            allowed[rid] = false;
-            continue;
-        }
-        // Label of one or more dimensions invalid or target contains all labels
-        // == allowed
-        if (lg.count(product_table_i::k_invalid) != 0 ||
-                target.size() == complete_set.size()) {
-            allowed[rid] = true;
-            continue;
-        }
-
-        // Loop over all target labels and see if one is contained in the
-        label_set_t::const_iterator ii = target.begin();
-        for (; ii != target.end(); ii++) {
-            if (m_pt.is_in_product(lg, *ii)) break;
-        }
-        allowed[rid] = (ii != target.end());
     }
 
     // Loop over all products in the evaluation rule
@@ -153,10 +124,27 @@ bool se_label<N, T>::is_allowed(const index<N> &idx) const {
 
         // Loop over all terms in the current product
         bool is_allowed = true;
-        for (typename evaluation_rule<N>::product_iterator itr =
-                m_rule.begin(i); itr != m_rule.end(i); itr++) {
+        for (typename evaluation_rule<N>::iterator it =
+                m_rule.begin(i); it != m_rule.end(i); it++) {
 
-            is_allowed = is_allowed && allowed[m_rule.get_rule_id(itr)];
+            // Sequence is empty or target is invalid label ?
+            product_table_i::label_group_t &lg = lgs[m_rule.get_seq_no(it)];
+            if (lg.size() == 0 ||
+                    m_rule.get_target(it) == product_table_i::k_invalid) {
+                is_allowed = false; break;
+            }
+
+            // block label in sequence or intrinsic label is the invalid label
+            if (invalid[m_rule.get_seq_no(it)] ||
+                    m_rule.get_intrinsic(it) == product_table_i::k_invalid) {
+               continue;
+            }
+
+            lg.push_back(m_rule.get_intrinsic(it));
+            if (! m_pt.is_in_product(lg, m_rule.get_target(it))) {
+                is_allowed = false; break;
+            }
+            lg.pop_back();
         }
 
         if (is_allowed) return true;
