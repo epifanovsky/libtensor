@@ -109,7 +109,7 @@ public:
 	virtual void sync_on();
 	virtual void sync_off();
 
-	virtual void compute_block(bool zero, tensor_i<N + M, double> &blk,
+	virtual void compute_block(bool zero, dense_tensor_i<N + M, double> &blk,
 		const index<N + M> &i, const transf<N + M, double> &tr,
 		double c, cpu_pool &cpus);
 
@@ -121,24 +121,24 @@ private:
 		const orbit<k_orderb, double> &ob, bool zerob,
 		const orbit_list<k_orderc, double> &olc);
 
-	void compute_block(tensor_i<N + M, double> &blkc,
+	void compute_block(dense_tensor_i<N + M, double> &blkc,
 		const schrec &rec, const transf<N + M, double> &trc,
 		bool zeroc, double kc, cpu_pool &cpus);
 
 	void do_block_dirsum(block_tensor_ctrl<k_ordera, double> &ctrla,
 		block_tensor_ctrl<k_orderb, double> &ctrlb,
-		tensor_i<k_orderc, double> &blkc, double kc,
+		dense_tensor_i<k_orderc, double> &blkc, double kc,
 		const index<k_ordera> &ia, double ka,
 		const index<k_orderb> &ib, double kb,
 		const permutation<k_orderc> &permc, bool zero);
 
 	void do_block_scatter_a(block_tensor_ctrl<k_ordera, double> &ctrla,
-		tensor_i<k_orderc, double> &blkc, double kc,
+		dense_tensor_i<k_orderc, double> &blkc, double kc,
 		const index<k_ordera> &ia, double ka,
 		const permutation<k_orderc> permc, bool zero);
 
 	void do_block_scatter_b(block_tensor_ctrl<k_orderb, double> &ctrlb,
-		tensor_i<k_orderc, double> &blkc, double kc,
+		dense_tensor_i<k_orderc, double> &blkc, double kc,
 		const index<k_orderb> &ib, double kb,
 		const permutation<k_orderc> permc, bool zero);
 

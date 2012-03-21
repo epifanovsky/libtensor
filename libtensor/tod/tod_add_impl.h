@@ -11,7 +11,7 @@ const char* tod_add<N>::k_clazz = "tod_add<N>";
 
 
 template<size_t N>
-tod_add<N>::tod_add(tensor_i<N, double> &t, double c) : m_dims(t.get_dims()) {
+tod_add<N>::tod_add(dense_tensor_i<N, double> &t, double c) : m_dims(t.get_dims()) {
 
 	static const char *method = "tod_add(tensor_i<N, double>&, double)";
 
@@ -20,7 +20,7 @@ tod_add<N>::tod_add(tensor_i<N, double> &t, double c) : m_dims(t.get_dims()) {
 
 
 template<size_t N>
-tod_add<N>::tod_add(tensor_i<N, double> &t, const permutation<N> &p, double c) :
+tod_add<N>::tod_add(dense_tensor_i<N, double> &t, const permutation<N> &p, double c) :
 	m_dims(t.get_dims()) {
 
 	static const char *method =
@@ -38,7 +38,7 @@ tod_add<N>::~tod_add() {
 
 
 template<size_t N>
-void tod_add<N>::add_op(tensor_i<N, double> &t, double c) {
+void tod_add<N>::add_op(dense_tensor_i<N, double> &t, double c) {
 
 	static const char *method = "add_op(tensor_i<N, double>&, double)";
 
@@ -55,7 +55,7 @@ void tod_add<N>::add_op(tensor_i<N, double> &t, double c) {
 
 template<size_t N>
 void tod_add<N>::add_op(
-	tensor_i<N, double> &t, const permutation<N> &p, double c) {
+	dense_tensor_i<N, double> &t, const permutation<N> &p, double c) {
 
 	static const char *method =
 		"add_op(tensor_i<N, double>&, const permutation<N>&, double)";
@@ -74,7 +74,7 @@ void tod_add<N>::add_op(
 
 
 template<size_t N>
-void tod_add<N>::add_operand(tensor_i<N, double> &t, const permutation<N> &p,
+void tod_add<N>::add_operand(dense_tensor_i<N, double> &t, const permutation<N> &p,
 	double c) {
 
 	static const char *method = "add_operand(tensor_i<N, double>&, "
@@ -87,17 +87,17 @@ void tod_add<N>::add_operand(tensor_i<N, double> &t, const permutation<N> &p,
 template<size_t N>
 void tod_add<N>::prefetch() {
 
-	for(typename std::list<arg>::iterator i = m_args.begin();
-		i != m_args.end(); i++) {
+    for(typename std::list<arg>::iterator i = m_args.begin();
+        i != m_args.end(); ++i) {
 
-		tensor_ctrl<N, double>(i->t).req_prefetch();
-	}
+        dense_tensor_ctrl<N, double>(i->t).req_prefetch();
+    }
 }
 
 
 template<size_t N>
 void tod_add<N>::perform(cpu_pool &cpus, bool zero, double c,
-    tensor_i<N, double> &t) {
+    dense_tensor_i<N, double> &t) {
 
     static const char *method =
         "perform(cpu_pool&, bool, double, tensor_i<N, double>&)";
@@ -122,9 +122,9 @@ void tod_add<N>::perform(cpu_pool &cpus, bool zero, double c,
 
 /*
 template<size_t N>
-void tod_add<N>::perform(tensor_i<N, double> &t) {
+void tod_add<N>::perform(dense_tensor_i<N, double> &t) {
 
-	static const char *method = "perform(tensor_i<N, double>&)";
+	static const char *method = "perform(dense_tensor_i<N, double>&)";
 
 	//	Check the dimensions of the output tensor
 	if(!t.get_dims().equals(m_dims)) {
@@ -146,9 +146,9 @@ void tod_add<N>::perform(tensor_i<N, double> &t) {
 
 
 template<size_t N>
-void tod_add<N>::perform(tensor_i<N, double> &t, double c) {
+void tod_add<N>::perform(dense_tensor_i<N, double> &t, double c) {
 
-	static const char *method = "perform(tensor_i<N, double>&, double)";
+	static const char *method = "perform(dense_tensor_i<N, double>&, double)";
 
 	//	Check the dimensions of the output tensor
 	if(!t.get_dims().equals(m_dims)) {

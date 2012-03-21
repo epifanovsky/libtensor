@@ -4,8 +4,7 @@
 #include <cmath>
 #include "../defs.h"
 #include "../core/abs_index.h"
-#include "../core/tensor_i.h"
-#include "../core/tensor_ctrl.h"
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include "bad_dimensions.h"
 
 namespace libtensor {
@@ -21,7 +20,7 @@ namespace libtensor {
 
 	Example:
 	\code
-	tensor_i<2,double> &t1(...), &t2(...);
+	dense_tensor_i<2,double> &t1(...), &t2(...);
 	tod_compare<2> comp(t1, t2, 1e-16);
 	if(!comp.compare()) {
 		index<2> idx(comp.get_diff_index());
@@ -43,8 +42,8 @@ public:
 	static const char *k_clazz; //!< Class name
 
 private:
-	tensor_i<N, double> &m_t1; //!< First tensor
-	tensor_i<N, double> &m_t2; //!< Second tensor
+	dense_tensor_i<N, double> &m_t1; //!< First tensor
+	dense_tensor_i<N, double> &m_t2; //!< Second tensor
 	double m_thresh; //!< Equality threshold
 	index<N> m_idx_diff; //!< Index of the first different element
 	double m_diff_elem_1; //!< Value of the first different element in t1
@@ -59,7 +58,7 @@ public:
 		The two tensors must have the same dimensions, otherwise an
 		exception will be thrown.
 	**/
-	tod_compare(tensor_i<N, double> &t1, tensor_i<N, double> &t2,
+	tod_compare(dense_tensor_i<N, double> &t1, dense_tensor_i<N, double> &t2,
 		double thresh);
 
 	/**	\brief Performs the comparison
@@ -97,7 +96,7 @@ const char *tod_compare<N>::k_clazz = "tod_compare<N>";
 
 template<size_t N>
 inline tod_compare<N>::tod_compare(
-	tensor_i<N, double> &t1, tensor_i<N, double> &t2, double thresh) :
+	dense_tensor_i<N, double> &t1, dense_tensor_i<N, double> &t2, double thresh) :
 
 	m_t1(t1), m_t2(t2), m_thresh(fabs(thresh)),
 	m_diff_elem_1(0.0), m_diff_elem_2(0.0) {
@@ -116,7 +115,7 @@ inline tod_compare<N>::tod_compare(
 template<size_t N>
 bool tod_compare<N>::compare() {
 
-	tensor_ctrl<N, double> tctrl1(m_t1), tctrl2(m_t2);
+	dense_tensor_ctrl<N, double> tctrl1(m_t1), tctrl2(m_t2);
 	const double *p1 = tctrl1.req_const_dataptr();
 	const double *p2 = tctrl2.req_const_dataptr();
 

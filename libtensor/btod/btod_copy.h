@@ -83,7 +83,7 @@ public:
 	//@}
 
 protected:
-	virtual void compute_block(bool zero, tensor_i<N, double> &blk,
+	virtual void compute_block(bool zero, dense_tensor_i<N, double> &blk,
 		const index<N> &ib, const transf<N, double> &tr, double c,
 		cpu_pool &cpus);
 

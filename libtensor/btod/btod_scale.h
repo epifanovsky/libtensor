@@ -62,7 +62,7 @@ void btod_scale<N>::perform() {
 			if(m_c == 0.0) {
 				ctrl.req_zero_block(idx);
 			} else {
-				tensor_i<N, double> &blk = ctrl.req_block(idx);
+				dense_tensor_i<N, double> &blk = ctrl.req_block(idx);
 				tod_scale<N>(blk, m_c).perform();
 				ctrl.ret_block(idx);
 			}

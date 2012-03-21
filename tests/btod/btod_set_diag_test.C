@@ -144,7 +144,7 @@ void btod_set_diag_test::test_generic(const char *testname,
 	try {
 
 	block_tensor<N, double, allocator_t> bt(bis);
-	tensor<N, double, allocator_t> t(bis.get_dims()), t_ref(bis.get_dims());
+	dense_tensor<N, double, allocator_t> t(bis.get_dims()), t_ref(bis.get_dims());
 
 	//	Fill in random data & make reference
 

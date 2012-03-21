@@ -40,10 +40,10 @@ void block_tensor_test::test_req_aux_block_1() throw(libtest::test_exception) {
 	i10[0] = 1; i01[1] = 1;
 	i11[0] = 1; i11[1] = 1;
 
-	tensor_i<2, double> &b00 = ctrl.req_aux_block(i00);
-	tensor_i<2, double> &b01 = ctrl.req_aux_block(i01);
-	tensor_i<2, double> &b10 = ctrl.req_aux_block(i10);
-	tensor_i<2, double> &b11 = ctrl.req_aux_block(i11);
+	dense_tensor_i<2, double> &b00 = ctrl.req_aux_block(i00);
+	dense_tensor_i<2, double> &b01 = ctrl.req_aux_block(i01);
+	dense_tensor_i<2, double> &b10 = ctrl.req_aux_block(i10);
+	dense_tensor_i<2, double> &b11 = ctrl.req_aux_block(i11);
 
 	tod_random<2>().perform(cpus, b00);
 	tod_random<2>().perform(cpus, b01);
@@ -96,7 +96,7 @@ void block_tensor_test::test_orbits_2() throw(libtest::test_exception) {
 	static const char *testname = "block_tensor_test::test_orbits_2()";
 
 	typedef std_allocator<double> allocator_t;
-	typedef tensor_i<2, double> block_t;
+	typedef dense_tensor_i<2, double> block_t;
 	typedef block_tensor<2, double, allocator_t> block_tensor_t;
 	typedef block_tensor_ctrl<2, double> block_tensor_ctrl_t;
 	typedef orbit_iterator<2, double> orbit_iterator_t;
@@ -153,7 +153,7 @@ void block_tensor_test::test_orbits_3() throw(libtest::test_exception) {
 	static const char *testname = "block_tensor_test::test_orbits_3()";
 
 	typedef std_allocator<double> allocator_t;
-	typedef tensor_i<2, double> block_t;
+	typedef dense_tensor_i<2, double> block_t;
 	typedef block_tensor<2, double, allocator_t> block_tensor_t;
 	typedef block_tensor_ctrl<2, double> block_tensor_ctrl_t;
 	typedef orbit_iterator<2, double> orbit_iterator_t;

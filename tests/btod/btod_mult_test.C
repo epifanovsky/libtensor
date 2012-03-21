@@ -98,7 +98,7 @@ void btod_mult_test::test_1(
 	dimensions<2> bidims(bis.get_block_index_dims());
 
 	block_tensor<2, double, allocator_t> bta(bis), btb(bis), btc(bis);
-	tensor<2, double, allocator_t> ta(dims), tb(dims), tc(dims),
+	dense_tensor<2, double, allocator_t> ta(dims), tb(dims), tc(dims),
 		tc_ref(dims);
 
 	//	Fill in random data
@@ -162,7 +162,7 @@ void btod_mult_test::test_2(
 	dimensions<2> bidims(bis.get_block_index_dims());
 
 	block_tensor<2, double, allocator_t> bta(bis), btb(bis), btc(bis);
-	tensor<2, double, allocator_t> ta(dims), tb(dims), tc(dims),
+	dense_tensor<2, double, allocator_t> ta(dims), tb(dims), tc(dims),
 		tc_ref(dims);
 
 	//	Fill in random data
@@ -236,7 +236,7 @@ void btod_mult_test::test_3(
 	se_perm<2, double> sp(perm, true);
 	block_tensor<2, double, allocator_t> bta(bis), btb(bis), btc(bis);
 
-	tensor<2, double, allocator_t> ta(dims), tb(dims), tc(dims),
+	dense_tensor<2, double, allocator_t> ta(dims), tb(dims), tc(dims),
 		tc_ref(dims);
 
 
@@ -329,7 +329,7 @@ void btod_mult_test::test_4(
 	se_perm<4, double> spa(p10, false), spb(p32, true);
 
 	block_tensor<4, double, allocator_t> bta(bis), btb(bis), btc(bis);
-	tensor<4, double, allocator_t> ta(dims), tb(dims), tc(dims),
+	dense_tensor<4, double, allocator_t> ta(dims), tb(dims), tc(dims),
 		tc_ref(dims);
 
 	{
@@ -739,7 +739,7 @@ void btod_mult_test::test_7(bool label, bool part,
 	btb.set_immutable();
 
 	// Setup reference
-	tensor<4, double, allocator_t> ta(dims), tb(dims), tc(dims), tc_ref(dims);
+	dense_tensor<4, double, allocator_t> ta(dims), tb(dims), tc(dims), tc_ref(dims);
 	tod_btconv<4>(bta).perform(ta);
 	tod_btconv<4>(btb).perform(tb);
 
@@ -861,7 +861,7 @@ void btod_mult_test::test_8a(bool label, bool part)
 	btb.set_immutable();
 
 	// Setup reference
-	tensor<2, double, allocator_t> ta(dims), tb(dims), tc(dims), tc_ref(dims);
+	dense_tensor<2, double, allocator_t> ta(dims), tb(dims), tc(dims), tc_ref(dims);
 
 	tod_btconv<2>(bta).perform(ta);
 	tod_btconv<2>(btb).perform(tb);
@@ -1012,7 +1012,7 @@ void btod_mult_test::test_8b(bool label, bool part)
 	btb.set_immutable();
 
 	// Setup reference
-	tensor<4, double, allocator_t> ta(dims), tb(dims), tc(dims), tc_ref(dims);
+	dense_tensor<4, double, allocator_t> ta(dims), tb(dims), tc(dims), tc_ref(dims);
 
 	tod_btconv<4>(bta).perform(ta);
 	tod_btconv<4>(btb).perform(tb);

@@ -84,7 +84,7 @@ public:
 	virtual void sync_off();
 
 protected:
-	virtual void compute_block(bool zero, tensor_i<k_orderb, double> &blk,
+	virtual void compute_block(bool zero, dense_tensor_i<k_orderb, double> &blk,
 		const index<k_orderb> &i, const transf<k_orderb, double> &tr,
 		double c, cpu_pool &cpus);
 
@@ -99,7 +99,7 @@ private:
 	 **/
 	void make_schedule();
 
-	void do_compute_block(tensor_i<k_orderb, double> &blk,
+	void do_compute_block(dense_tensor_i<k_orderb, double> &blk,
 		const index<k_orderb> &i, const transf<k_orderb, double> &tr,
 		double c, bool zero, cpu_pool &cpus);
 
@@ -171,7 +171,7 @@ void btod_extract<N, M>::sync_off() {
 
 /*
 template<size_t N, size_t M>
-void btod_extract<N, M>::compute_block(tensor_i<k_orderb, double> &blk,
+void btod_extract<N, M>::compute_block(dense_tensor_i<k_orderb, double> &blk,
 	const index<k_orderb> &idx) {
 
 	transf<k_orderb, double> tr0;
@@ -180,7 +180,7 @@ void btod_extract<N, M>::compute_block(tensor_i<k_orderb, double> &blk,
 
 
 template<size_t N, size_t M>
-void btod_extract<N, M>::compute_block(bool zero, tensor_i<k_orderb, double> &blk,
+void btod_extract<N, M>::compute_block(bool zero, dense_tensor_i<k_orderb, double> &blk,
 	const index<k_orderb> &idx, const transf<k_orderb, double> &tr,
 	double c, cpu_pool &cpus) {
 
@@ -189,7 +189,7 @@ void btod_extract<N, M>::compute_block(bool zero, tensor_i<k_orderb, double> &bl
 
 
 template<size_t N, size_t M>
-void btod_extract<N, M>::do_compute_block(tensor_i<k_orderb, double> &blk,
+void btod_extract<N, M>::do_compute_block(dense_tensor_i<k_orderb, double> &blk,
 	const index<k_orderb> &idx, const transf<k_orderb, double> &tr,
 	double c, bool zero, cpu_pool &cpus) {
 
@@ -243,7 +243,7 @@ void btod_extract<N, M>::do_compute_block(tensor_i<k_orderb, double> &blk,
 
 	if(!zeroa) {
 
-		tensor_i<k_ordera, double> &blka = ctrla.req_block(
+		dense_tensor_i<k_ordera, double> &blka = ctrla.req_block(
 			cidxa.get_index());
 		if(zero) {
 			tod_extract<N, M>(blka, msk2, permb, idxibl2,

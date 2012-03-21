@@ -72,7 +72,7 @@ public:
         \param i Index of the block to compute.
         \param cpus Pool of CPUs.
      **/
-    virtual void compute_block(tensor_i<N, double> &blk, const index<N> &i,
+    virtual void compute_block(dense_tensor_i<N, double> &blk, const index<N> &i,
         cpu_pool &cpus);
 
     /**	\brief Computes a single block of the result and adds it to
@@ -84,7 +84,7 @@ public:
         \param c Scaling coefficient.
         \param cpus Pool of CPUs.
      **/
-    virtual void compute_block(bool zero, tensor_i<N, double> &blk,
+    virtual void compute_block(bool zero, dense_tensor_i<N, double> &blk,
         const index<N> &i, const transf<N, double> &tr, double c,
         cpu_pool &cpus) = 0;
 
@@ -93,7 +93,7 @@ protected:
             allows derived classes to call other additive operations
      **/
     void compute_block(additive_btod<N> &op, bool zero,
-        tensor_i<N, double> &blk, const index<N> &i,
+        dense_tensor_i<N, double> &blk, const index<N> &i,
         const transf<N, double> &tr, double c, cpu_pool &cpus);
 
 private:

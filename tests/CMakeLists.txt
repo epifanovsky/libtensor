@@ -7,16 +7,16 @@ set(SRC_CORE
     core/block_index_subspace_builder_test.C
     core/block_map_test.C
     core/block_tensor_test.C
+    core/dense_tensor_test.C
     core/dimensions_test.C
-#	core/direct_block_tensor_test.C
-    core/global_timings_test.C
+#    core/direct_block_tensor_test.C
     core/immutable_test.C
     core/index_test.C
     core/index_range_test.C
     core/mapped_block_tensor_test.C
     core/mask_test.C
     core/mp_safe_tensor_test.C
-#	core/orbit_test.C
+#    core/orbit_test.C
     core/orbit_list_test.C
     core/permutation_test.C
     core/permutation_builder_test.C
@@ -24,10 +24,7 @@ set(SRC_CORE
     core/symmetry_test.C
     core/symmetry_element_set_test.C
     core/task_batch_test.C
-    core/tensor_test.C
-    core/timer_test.C
-    core/timings_test.C
-#	core/transf_list_test.C
+    core/transf_list_test.C
     core/version_test.C
 )
 
@@ -75,31 +72,31 @@ set(SRC_SYMMETRY
     symmetry/se_label_test.C
     symmetry/se_part_test.C
     symmetry/se_perm_test.C
-#	symmetry/so_apply_impl_label_test.C
-#	symmetry/so_apply_impl_part_test.C
-#	symmetry/so_apply_impl_perm_test.C
-#	symmetry/so_apply_test.C
-	symmetry/so_copy_test.C
-	symmetry/so_dirprod_impl_label_test.C
+#    symmetry/so_apply_impl_label_test.C
+#    symmetry/so_apply_impl_part_test.C
+#    symmetry/so_apply_impl_perm_test.C
+#    symmetry/so_apply_test.C
+    symmetry/so_copy_test.C
+    symmetry/so_dirprod_impl_label_test.C
     symmetry/so_dirprod_impl_part_test.C
     symmetry/so_dirprod_impl_perm_test.C
-#	symmetry/so_dirprod_test.C
-	symmetry/so_dirsum_impl_label_test.C
+#    symmetry/so_dirprod_test.C
+    symmetry/so_dirsum_impl_label_test.C
     symmetry/so_dirsum_impl_part_test.C
     symmetry/so_dirsum_impl_perm_test.C
-	symmetry/so_dirsum_test.C
-	symmetry/so_merge_impl_label_test.C
+    symmetry/so_dirsum_test.C
+    symmetry/so_merge_impl_label_test.C
     symmetry/so_merge_impl_part_test.C
     symmetry/so_merge_impl_perm_test.C
-#	symmetry/so_merge_test.C
-	symmetry/so_permute_impl_label_test.C
+#    symmetry/so_merge_test.C
+    symmetry/so_permute_impl_label_test.C
     symmetry/so_permute_impl_part_test.C
     symmetry/so_permute_impl_perm_test.C
 #    symmetry/so_reduce_impl_label_test.C
     symmetry/so_reduce_impl_part_test.C
     symmetry/so_reduce_impl_perm_test.C
 #    symmetry/so_reduce_test.C
-#	symmetry/so_symmetrize_test.C
+#    symmetry/so_symmetrize_test.C
     symmetry/symmetry_element_set_adapter_test.C
     symmetry/transfer_rule_test.C
 )
@@ -199,26 +196,26 @@ set(SRC_LINALG
 set(SRC_IFACE
     iface/libtensor_iface_tests.C
     iface/libtensor_iface_suite.C
-#	iface/anon_eval_test.C
-#	iface/bispace_expr_test.C
-#	iface/bispace_test.C
-#	iface/btensor_test.C
-#	iface/contract_test.C
-#	iface/diag_test.C
-#	iface/direct_btensor_test.C
-#	iface/direct_eval_test.C
-#	iface/direct_product_test.C
-#	iface/dirsum_test.C
-#	iface/dot_product_test.C
-#	iface/ewmult_test.C
-#	iface/expr_test.C
-#	iface/labeled_btensor_test.C
-#	iface/letter_expr_test.C
-#	iface/letter_test.C
-#	iface/mapped_btensor_test.C
-#	iface/mult_test.C
-#	iface/symm_test.C
-#	iface/trace_test.C
+#    iface/anon_eval_test.C
+    iface/bispace_expr_test.C
+    iface/bispace_test.C
+    iface/btensor_test.C
+#    iface/contract_test.C
+#    iface/diag_test.C
+#    iface/direct_btensor_test.C
+#    iface/direct_eval_test.C
+#    iface/direct_product_test.C
+#    iface/dirsum_test.C
+#    iface/dot_product_test.C
+#    iface/ewmult_test.C
+#    iface/expr_test.C
+#    iface/labeled_btensor_test.C
+#    iface/letter_expr_test.C
+    iface/letter_test.C
+#    iface/mapped_btensor_test.C
+#    iface/mult_test.C
+#    iface/symm_test.C
+#    iface/trace_test.C
 )
 
 set(TARGETS
@@ -230,7 +227,6 @@ set(TARGETS
     libtensor_symmetry_tests
 )
 
-
 add_executable(libtensor_core_tests ${SRC_CORE})
 add_executable(libtensor_btod_tests ${SRC_BTOD})
 add_executable(libtensor_iface_tests ${SRC_IFACE})
@@ -241,14 +237,14 @@ add_executable(libtensor_tod_tests ${SRC_TOD})
 include(${LIBTEST_DIR}/cmake/SetupLibTest.txt)
 
 set_property(TARGET ${TARGETS} APPEND PROPERTY
-	COMPILE_DEFINITIONS LIBTENSOR_INSTANTIATE_TEMPLATES)
+    COMPILE_DEFINITIONS LIBTENSOR_INSTANTIATE_TEMPLATES)
 set_property(TARGET ${TARGETS} APPEND PROPERTY
-	COMPILE_DEFINITIONS_DEBUG LIBVMM_DEBUG)
+    COMPILE_DEFINITIONS_DEBUG LIBVMM_DEBUG)
 set_property(TARGET ${TARGETS} APPEND PROPERTY
-	COMPILE_DEFINITIONS_DEBUG LIBTENSOR_DEBUG)
+    COMPILE_DEFINITIONS_DEBUG LIBTENSOR_DEBUG)
 
 foreach(TARGET ${TARGETS})
 target_link_libraries(${TARGET}
-	tensor ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} test)
+    tensor ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} test)
 endforeach(TARGET)
 

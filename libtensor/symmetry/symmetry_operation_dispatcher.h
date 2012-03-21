@@ -3,7 +3,7 @@
 
 #include <map>
 #include <string>
-#include <libvmm/singleton.h>
+#include <libutil/singleton.h>
 #include "../defs.h" // for g_ns
 #include "../not_implemented.h"
 #include "symmetry_operation_impl_i.h"
@@ -13,9 +13,9 @@ namespace libtensor {
 
 template<typename OperT>
 class symmetry_operation_dispatcher :
-public libvmm::singleton< symmetry_operation_dispatcher<OperT> > {
+	public libutil::singleton< symmetry_operation_dispatcher<OperT> > {
 
-    friend class libvmm::singleton< symmetry_operation_dispatcher<OperT> >;
+	friend class libutil::singleton< symmetry_operation_dispatcher<OperT> >;
 
 public:
     static const char *k_clazz; //!< Class name

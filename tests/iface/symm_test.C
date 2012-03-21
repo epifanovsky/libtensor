@@ -793,7 +793,7 @@ void symm_test::test_symm3_t_1() throw(libtest::test_exception) {
 	t2(i|j|k) = symm(i, j, k, t1(i|j|k));
 
 	typedef std_allocator<double> allocator_t;
-	tensor<3, double, allocator_t> tt2(sp_ijk.get_bis().get_dims()),
+	dense_tensor<3, double, allocator_t> tt2(sp_ijk.get_bis().get_dims()),
 		tt2_ref(sp_ijk.get_bis().get_dims());
 	tod_btconv<3>(t2).perform(tt2);
 	tod_btconv<3>(t2_ref).perform(tt2_ref);

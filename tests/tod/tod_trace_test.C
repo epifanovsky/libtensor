@@ -1,7 +1,7 @@
 #include <cmath>
 #include <ctime>
 #include <libtensor/core/allocator.h>
-#include <libtensor/core/tensor.h>
+#include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/tod/tod_trace.h>
 #include "../compare_ref.h"
 #include "tod_trace_test.h"
@@ -63,11 +63,11 @@ void tod_trace_test::test_1(size_t ni) throw(libtest::test_exception) {
 	dimensions<2> dims(index_range<2>(i1, i2));
 	size_t sza = dims.get_size();
 
-	tensor<2, double, allocator_t> ta(dims);
+	dense_tensor<2, double, allocator_t> ta(dims);
 
 	double d_ref = 0.0;
 	{
-		tensor_ctrl<2, double> tca(ta);
+		dense_tensor_ctrl<2, double> tca(ta);
 
 		double *pa = tca.req_dataptr();
 
@@ -115,11 +115,11 @@ void tod_trace_test::test_2(size_t ni) throw(libtest::test_exception) {
 	dimensions<2> dims(index_range<2>(i1, i2));
 	size_t sza = dims.get_size();
 
-	tensor<2, double, allocator_t> ta(dims);
+	dense_tensor<2, double, allocator_t> ta(dims);
 
 	double d_ref = 0.0;
 	{
-		tensor_ctrl<2, double> tca(ta);
+		dense_tensor_ctrl<2, double> tca(ta);
 
 		double *pa = tca.req_dataptr();
 
@@ -169,11 +169,11 @@ void tod_trace_test::test_3(size_t ni, size_t nj)
 	dimensions<4> dims(index_range<4>(i1, i2));
 	size_t sza = dims.get_size();
 
-	tensor<4, double, allocator_t> ta(dims);
+	dense_tensor<4, double, allocator_t> ta(dims);
 
 	double d_ref = 0.0;
 	{
-		tensor_ctrl<4, double> tca(ta);
+		dense_tensor_ctrl<4, double> tca(ta);
 
 		double *pa = tca.req_dataptr();
 
@@ -225,11 +225,11 @@ void tod_trace_test::test_4(size_t ni, size_t nj)
 	dimensions<4> dims(index_range<4>(i1, i2));
 	size_t sza = dims.get_size();
 
-	tensor<4, double, allocator_t> ta(dims);
+	dense_tensor<4, double, allocator_t> ta(dims);
 
 	double d_ref = 0.0;
 	{
-		tensor_ctrl<4, double> tca(ta);
+		dense_tensor_ctrl<4, double> tca(ta);
 
 		double *pa = tca.req_dataptr();
 
@@ -284,11 +284,11 @@ void tod_trace_test::test_5(size_t ni, size_t nj, size_t nk)
 	dimensions<6> dims(index_range<6>(i1, i2));
 	size_t sza = dims.get_size();
 
-	tensor<6, double, allocator_t> ta(dims);
+	dense_tensor<6, double, allocator_t> ta(dims);
 
 	double d_ref = 0.0;
 	{
-		tensor_ctrl<6, double> tca(ta);
+		dense_tensor_ctrl<6, double> tca(ta);
 
 		double *pa = tca.req_dataptr();
 
@@ -345,11 +345,11 @@ void tod_trace_test::test_6(size_t ni, size_t nj, size_t nk)
 	dimensions<6> dims(index_range<6>(i1, i2));
 	size_t sza = dims.get_size();
 
-	tensor<6, double, allocator_t> ta(dims);
+	dense_tensor<6, double, allocator_t> ta(dims);
 
 	double d_ref = 0.0;
 	{
-		tensor_ctrl<6, double> tca(ta);
+		dense_tensor_ctrl<6, double> tca(ta);
 
 		double *pa = tca.req_dataptr();
 

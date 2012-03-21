@@ -64,11 +64,11 @@ private:
 	private:
 	    direct_block_tensor_operation<N, T> &m_op;
 	    index<N> m_idx;
-	    tensor_i<N, T> &m_blk;
+	    dense_tensor_i<N, T> &m_blk;
 
 	public:
 	    task(direct_block_tensor_operation<N, T> &op, const index<N> &idx,
-	        tensor_i<N, T> &blk) : m_op(op), m_idx(idx), m_blk(blk) { }
+	        dense_tensor_i<N, T> &blk) : m_op(op), m_idx(idx), m_blk(blk) { }
 	    virtual ~task() { }
 	    void perform(cpu_pool &cpus) throw(exception) {
 	        m_op.compute_block(m_blk, m_idx, cpus);
@@ -106,10 +106,10 @@ protected:
 
 	virtual bool on_req_is_zero_block(const index<N> &idx)
 		throw(exception);
-	virtual tensor_i<N, T> &on_req_block(const index<N> &idx)
+	virtual dense_tensor_i<N, T> &on_req_block(const index<N> &idx)
 		throw(exception);
 	virtual void on_ret_block(const index<N> &idx) throw(exception);
-	virtual tensor_i<N, T> &on_req_aux_block(const index<N> &idx)
+	virtual dense_tensor_i<N, T> &on_req_aux_block(const index<N> &idx)
 		throw(exception);
 	virtual void on_ret_aux_block(const index<N> &idx) throw(exception);
 	virtual void on_req_sync_on() throw(exception);
@@ -152,7 +152,7 @@ bool direct_block_tensor<N, T, Alloc, Sync>::on_req_is_zero_block(
 
 
 template<size_t N, typename T, typename Alloc, typename Sync>
-tensor_i<N, T> &direct_block_tensor<N, T, Alloc, Sync>::on_req_block(
+dense_tensor_i<N, T> &direct_block_tensor<N, T, Alloc, Sync>::on_req_block(
 	const index<N> &idx) throw(exception) {
 
 	static const char *method = "on_req_block(const index<N>&)";
@@ -178,7 +178,7 @@ tensor_i<N, T> &direct_block_tensor<N, T, Alloc, Sync>::on_req_block(
 		m_map.create(aidx.get_abs_index(), blkdims);
 	}
 
-	tensor_i<N, T> &blk = m_map.get(aidx.get_abs_index());
+	dense_tensor_i<N, T> &blk = m_map.get(aidx.get_abs_index());
 
 	if(newblock) {
 
@@ -231,7 +231,7 @@ void direct_block_tensor<N, T, Alloc, Sync>::on_ret_block(const index<N> &idx)
 
 
 template<size_t N, typename T, typename Alloc, typename Sync>
-tensor_i<N, T> &direct_block_tensor<N, T, Alloc, Sync>::on_req_aux_block(
+dense_tensor_i<N, T> &direct_block_tensor<N, T, Alloc, Sync>::on_req_aux_block(
 	const index<N> &idx) throw(exception) {
 
 	static const char *method = "on_req_aux_block(const index<N>&)";

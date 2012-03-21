@@ -2,7 +2,7 @@
 #define LIBTENSOR_TASK_DISPATCHER_H
 
 #include <list>
-#include <libvmm/singleton.h>
+#include <libutil/singleton.h>
 #include "cpu_pool.h"
 #include "task_queue.h"
 #include "threads.h"
@@ -24,8 +24,8 @@ struct current_task_queue {
 
     \ingroup libtensor_mp
  **/
-class task_dispatcher : public libvmm::singleton<task_dispatcher> {
-    friend class libvmm::singleton<task_dispatcher>;
+class task_dispatcher : public libutil::singleton<task_dispatcher> {
+    friend class libutil::singleton<task_dispatcher>;
 
 public:
     static const char *k_clazz; //!< Class name

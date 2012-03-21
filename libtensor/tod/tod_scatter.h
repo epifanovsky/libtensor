@@ -5,8 +5,7 @@
 #include "../defs.h"
 #include "../exception.h"
 #include "../timings.h"
-#include "../core/tensor_i.h"
-#include "../core/tensor_ctrl.h"
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include "bad_dimensions.h"
 #include "contraction2.h"
 #include "contraction2_list_builder.h"
@@ -67,7 +66,7 @@ private:
 	} m_scatter;
 
 private:
-	tensor_i<k_ordera, double> &m_ta; //!< First %tensor (A)
+	dense_tensor_i<k_ordera, double> &m_ta; //!< First %tensor (A)
 	double m_ka; //!< Coefficient A
 	permutation<k_orderc> m_permc; //!< Permutation of the result
 	loop_list_t m_list; //!< Loop list
@@ -75,26 +74,26 @@ private:
 public:
 	/**	\brief Initializes the operation
 	 **/
-	tod_scatter(tensor_i<k_ordera, double> &ta, double ka) :
+	tod_scatter(dense_tensor_i<k_ordera, double> &ta, double ka) :
 		m_ta(ta), m_ka(ka) { }
 
 	/**	\brief Initializes the operation
 	 **/
-	tod_scatter(tensor_i<k_ordera, double> &ta, double ka,
+	tod_scatter(dense_tensor_i<k_ordera, double> &ta, double ka,
 		const permutation<k_orderc> &permc) :
 		m_ta(ta), m_ka(ka), m_permc(permc) { }
 
 	/**	\brief Performs the operation
 	 **/
-	void perform(tensor_i<k_orderc, double> &tc);
+	void perform(dense_tensor_i<k_orderc, double> &tc);
 
 	/**	\brief Performs the operation (additive)
 	 **/
-	void perform(tensor_i<k_orderc, double> &tc, double kc);
+	void perform(dense_tensor_i<k_orderc, double> &tc, double kc);
 
 private:
-	void check_dimsc(tensor_i<k_orderc, double> &tc);
-	void do_perform(tensor_i<k_orderc, double> &tc, bool zero, double kc);
+	void check_dimsc(dense_tensor_i<k_orderc, double> &tc);
+	void do_perform(dense_tensor_i<k_orderc, double> &tc, bool zero, double kc);
 
 private:
 	void exec(loop_list_iterator_t &i, registers &regs);
@@ -109,7 +108,7 @@ const char *tod_scatter<N, M>::k_clazz = "tod_scatter<N, M>";
 
 
 template<size_t N, size_t M>
-void tod_scatter<N, M>::perform(tensor_i<k_orderc, double> &tc) {
+void tod_scatter<N, M>::perform(dense_tensor_i<k_orderc, double> &tc) {
 
 	check_dimsc(tc);
 	do_perform(tc, true, 1.0);
@@ -117,7 +116,7 @@ void tod_scatter<N, M>::perform(tensor_i<k_orderc, double> &tc) {
 
 
 template<size_t N, size_t M>
-void tod_scatter<N, M>::perform(tensor_i<k_orderc, double> &tc, double kc) {
+void tod_scatter<N, M>::perform(dense_tensor_i<k_orderc, double> &tc, double kc) {
 
 	check_dimsc(tc);
 	do_perform(tc, false, kc);
@@ -125,7 +124,7 @@ void tod_scatter<N, M>::perform(tensor_i<k_orderc, double> &tc, double kc) {
 
 
 template<size_t N, size_t M>
-void tod_scatter<N, M>::check_dimsc(tensor_i<k_orderc, double> &tc) {
+void tod_scatter<N, M>::check_dimsc(dense_tensor_i<k_orderc, double> &tc) {
 
 	static const char *method = "check_dimsc(tensor_i<N + M, double>&)";
 
@@ -149,7 +148,7 @@ void tod_scatter<N, M>::check_dimsc(tensor_i<k_orderc, double> &tc) {
 
 
 template<size_t N, size_t M>
-void tod_scatter<N, M>::do_perform(tensor_i<k_orderc, double> &tc, bool zero,
+void tod_scatter<N, M>::do_perform(dense_tensor_i<k_orderc, double> &tc, bool zero,
 	double kc) {
 
 	tod_scatter<N, M>::start_timer();
@@ -174,8 +173,8 @@ void tod_scatter<N, M>::do_perform(tensor_i<k_orderc, double> &tc, bool zero,
 		}
 	}
 
-	tensor_ctrl<k_ordera, double> ctrla(m_ta);
-	tensor_ctrl<k_orderc, double> ctrlc(tc);
+	dense_tensor_ctrl<k_ordera, double> ctrla(m_ta);
+	dense_tensor_ctrl<k_orderc, double> ctrlc(tc);
 
 	const double *ptra = ctrla.req_const_dataptr();
 	double *ptrc = ctrlc.req_dataptr();

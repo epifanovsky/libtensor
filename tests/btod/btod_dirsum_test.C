@@ -4,7 +4,7 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/abs_index.h>
 #include <libtensor/core/block_tensor.h>
-#include <libtensor/core/tensor.h>
+#include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/btod/btod_dirsum.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/symmetry/point_group_table.h>
@@ -115,10 +115,10 @@ void btod_dirsum_test::test_ij_i_j_1(bool rnd, double d)
 	block_tensor<1, double, allocator> btb(bisb);
 	block_tensor<2, double, allocator> btc(bisc);
 
-	tensor<1, double, allocator> ta(dima);
-	tensor<1, double, allocator> tb(dimb);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	dense_tensor<1, double, allocator> ta(dima);
+	dense_tensor<1, double, allocator> tb(dimb);
+	dense_tensor<2, double, allocator> tc(dimc);
+	dense_tensor<2, double, allocator> tc_ref(dimc);
 
 	//	Fill in random input
 
@@ -179,9 +179,9 @@ void btod_dirsum_test::test_ij_i_j_2(bool rnd, double d)
 	block_tensor<1, double, allocator> bta(bisa);
 	block_tensor<2, double, allocator> btc(bisc);
 
-	tensor<1, double, allocator> ta(dima);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	dense_tensor<1, double, allocator> ta(dima);
+	dense_tensor<2, double, allocator> tc(dimc);
+	dense_tensor<2, double, allocator> tc_ref(dimc);
 
 	//	Fill in random input
 
@@ -261,9 +261,9 @@ void btod_dirsum_test::test_ij_i_j_3(bool rnd, double d)
 	block_tensor<1, double, allocator> bta(bisa);
 	block_tensor<2, double, allocator> btc(bisc);
 
-	tensor<1, double, allocator> ta(dima);
-	tensor<2, double, allocator> tc(dimc);
-	tensor<2, double, allocator> tc_ref(dimc);
+	dense_tensor<1, double, allocator> ta(dima);
+	dense_tensor<2, double, allocator> tc(dimc);
+	dense_tensor<2, double, allocator> tc_ref(dimc);
 
 	//	Fill in random input
 
@@ -346,10 +346,10 @@ void btod_dirsum_test::test_ijk_ij_k_1(bool rnd, double d)
 	block_tensor<1, double, allocator> btb(bisb);
 	block_tensor<3, double, allocator> btc(bisc);
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<1, double, allocator> tb(dimb);
-	tensor<3, double, allocator> tc(dimc);
-	tensor<3, double, allocator> tc_ref(dimc);
+	dense_tensor<2, double, allocator> ta(dima);
+	dense_tensor<1, double, allocator> tb(dimb);
+	dense_tensor<3, double, allocator> tc(dimc);
+	dense_tensor<3, double, allocator> tc_ref(dimc);
 
 	//	Fill in random input
 
@@ -418,10 +418,10 @@ void btod_dirsum_test::test_ikjl_ij_kl_1(bool rnd, double d)
 	block_tensor<2, double, allocator> btb(bisb);
 	block_tensor<4, double, allocator> btc(bisc);
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<2, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	dense_tensor<2, double, allocator> ta(dima);
+	dense_tensor<2, double, allocator> tb(dimb);
+	dense_tensor<4, double, allocator> tc(dimc);
+	dense_tensor<4, double, allocator> tc_ref(dimc);
 
 	//	Fill in random input
 
@@ -509,10 +509,10 @@ void btod_dirsum_test::test_ikjl_ij_kl_2(bool rnd, double d)
 	block_tensor<2, double, allocator> btb(bisb);
 	block_tensor<4, double, allocator> btc(bisc);
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<2, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	dense_tensor<2, double, allocator> ta(dima);
+	dense_tensor<2, double, allocator> tb(dimb);
+	dense_tensor<4, double, allocator> tc(dimc);
+	dense_tensor<4, double, allocator> tc_ref(dimc);
 
 	//	Fill in random input
 
@@ -634,10 +634,10 @@ void btod_dirsum_test::test_ikjl_ij_kl_3a(bool s1, bool s2,
         }
     }
 
-    tensor<2, double, allocator> ta(dima);
-    tensor<2, double, allocator> tb(dimb);
-    tensor<4, double, allocator> tc(dimc);
-    tensor<4, double, allocator> tc_ref(dimc);
+    dense_tensor<2, double, allocator> ta(dima);
+    dense_tensor<2, double, allocator> tb(dimb);
+    dense_tensor<4, double, allocator> tc(dimc);
+    dense_tensor<4, double, allocator> tc_ref(dimc);
 
     //  Fill in random input
 
@@ -775,10 +775,10 @@ void btod_dirsum_test::test_ikjl_ij_kl_3b(bool rnd,
 		ctrlc.req_symmetry().insert(spc);
 	}
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<2, double, allocator> tb(dimb);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	dense_tensor<2, double, allocator> ta(dima);
+	dense_tensor<2, double, allocator> tb(dimb);
+	dense_tensor<4, double, allocator> tc(dimc);
+	dense_tensor<4, double, allocator> tc_ref(dimc);
 
 	//	Fill in random input
 
@@ -912,10 +912,10 @@ void btod_dirsum_test::test_ikjl_ij_kl_3c(
 
     }
 
-    tensor<2, double, allocator> ta(dima);
-    tensor<2, double, allocator> tb(dimb);
-    tensor<4, double, allocator> tc(dimc);
-    tensor<4, double, allocator> tc_ref(dimc);
+    dense_tensor<2, double, allocator> ta(dima);
+    dense_tensor<2, double, allocator> tb(dimb);
+    dense_tensor<4, double, allocator> tc(dimc);
+    dense_tensor<4, double, allocator> tc_ref(dimc);
 
     //  Fill in random input
 
@@ -1012,9 +1012,9 @@ void btod_dirsum_test::test_iklj_ij_kl_1(bool rnd, double d)
 	block_tensor<2, double, allocator> bta(bisa);
 	block_tensor<4, double, allocator> btc(bisc);
 
-	tensor<2, double, allocator> ta(dima);
-	tensor<4, double, allocator> tc(dimc);
-	tensor<4, double, allocator> tc_ref(dimc);
+	dense_tensor<2, double, allocator> ta(dima);
+	dense_tensor<4, double, allocator> tc(dimc);
+	dense_tensor<4, double, allocator> tc_ref(dimc);
 
 	// Set symmetry
 	{

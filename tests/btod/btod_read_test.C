@@ -45,14 +45,14 @@ void btod_read_test::test_1() throw(libtest::test_exception) {
 	index<2> i1, i2;
 	i2[0] = 4; i2[1] = 5;
 	dimensions<2> dims(index_range<2>(i1, i2));
-	tensor<2, double, allocator_t> t(dims), t_ref(dims);
+	dense_tensor<2, double, allocator_t> t(dims), t_ref(dims);
 	tod_random<2>().perform(cpus, t_ref);
 
 	std::stringstream ss;
 	ss << "2 " << dims[0] << " " << dims[1] << std::endl;
 
 	{
-		tensor_ctrl<2, double> ctrl(t_ref);
+		dense_tensor_ctrl<2, double> ctrl(t_ref);
 		const double *p = ctrl.req_const_dataptr();
 		for(size_t i = 0; i < dims[0]; i++) {
 			index<2> idx;
@@ -99,14 +99,14 @@ void btod_read_test::test_2() throw(libtest::test_exception) {
 	index<2> i1, i2;
 	i2[0] = 4; i2[1] = 5;
 	dimensions<2> dims(index_range<2>(i1, i2));
-	tensor<2, double, allocator_t> t(dims), t_ref(dims);
+	dense_tensor<2, double, allocator_t> t(dims), t_ref(dims);
 	tod_random<2>().perform(cpus, t_ref);
 
 	std::stringstream ss;
 	ss << "2 " << dims[0] << " " << dims[1] << std::endl;
 
 	{
-		tensor_ctrl<2, double> ctrl(t_ref);
+		dense_tensor_ctrl<2, double> ctrl(t_ref);
 		const double *p = ctrl.req_const_dataptr();
 		for(size_t i = 0; i < dims[0]; i++) {
 			index<2> idx;
@@ -155,14 +155,14 @@ void btod_read_test::test_3() throw(libtest::test_exception) {
 	index<2> i1, i2;
 	i2[0] = 4; i2[1] = 5;
 	dimensions<2> dims(index_range<2>(i1, i2));
-	tensor<2, double, allocator_t> t(dims), t_ref(dims);
+	dense_tensor<2, double, allocator_t> t(dims), t_ref(dims);
 	tod_set<2>().perform(cpus, t_ref);
 
 	std::stringstream ss;
 	ss << "2 " << dims[0] << " " << dims[1] << std::endl;
 
 	{
-		tensor_ctrl<2, double> ctrl(t_ref);
+		dense_tensor_ctrl<2, double> ctrl(t_ref);
 		const double *p = ctrl.req_const_dataptr();
 		for(size_t i = 0; i < dims[0]; i++) {
 			index<2> idx;
@@ -212,7 +212,7 @@ void btod_read_test::test_4() throw(libtest::test_exception) {
 	bis.split(msk1, 2); bis.split(msk2, 3);
 
 	block_tensor<2, double, allocator_t> bt(bis), bt_ref(bis);
-	tensor<2, double, allocator_t> t_ref(dims);
+	dense_tensor<2, double, allocator_t> t_ref(dims);
 	index<2> ii;
 	btod_random<2> rand;
 	rand.perform(bt_ref, ii);
@@ -224,7 +224,7 @@ void btod_read_test::test_4() throw(libtest::test_exception) {
 	ss << "2 " << dims[0] << " " << dims[1] << std::endl;
 
 	{
-		tensor_ctrl<2, double> ctrl(t_ref);
+		dense_tensor_ctrl<2, double> ctrl(t_ref);
 		const double *p = ctrl.req_const_dataptr();
 		for(size_t i = 0; i < dims[0]; i++) {
 			index<2> idx;
@@ -268,7 +268,7 @@ void btod_read_test::test_5() throw(libtest::test_exception) {
 	index<4> i1, i2;
 	i2[0] = 4; i2[1] = 5; i2[2] = 4; i2[3] = 5;
 	dimensions<4> dims(index_range<4>(i1, i2));
-	tensor<4, double, allocator_t> t(dims), t_ref(dims);
+	dense_tensor<4, double, allocator_t> t(dims), t_ref(dims);
 	tod_random<4>().perform(cpus, t_ref);
 
 	std::stringstream ss;
@@ -276,7 +276,7 @@ void btod_read_test::test_5() throw(libtest::test_exception) {
 		<< dims[3] << std::endl;
 
 	{
-		tensor_ctrl<4, double> ctrl(t_ref);
+		dense_tensor_ctrl<4, double> ctrl(t_ref);
 		const double *p = ctrl.req_const_dataptr();
 		abs_index<4> aidx(dims);
 		do {
@@ -321,7 +321,7 @@ void btod_read_test::test_6() throw(libtest::test_exception) {
 	m2[1] = true; m2[3] = true;
 	bis.split(m1, 2); bis.split(m2, 3);
 
-	tensor<4, double, allocator_t> t_ref(dims);
+	dense_tensor<4, double, allocator_t> t_ref(dims);
 	block_tensor<4, double, allocator_t> bt(bis), bt_ref(bis);
 	btod_random<4>().perform(bt_ref);
 	tod_btconv<4>(bt_ref).perform(t_ref);
@@ -331,7 +331,7 @@ void btod_read_test::test_6() throw(libtest::test_exception) {
 		<< dims[3] << std::endl;
 
 	{
-		tensor_ctrl<4, double> ctrl(t_ref);
+		dense_tensor_ctrl<4, double> ctrl(t_ref);
 		const double *p = ctrl.req_const_dataptr();
 		abs_index<4> aidx(dims);
 		do {
@@ -370,14 +370,14 @@ void btod_read_test::test_7() throw(libtest::test_exception) {
 	index<2> i1, i2;
 	i2[0] = 1; i2[1] = 1;
 	dimensions<2> dims(index_range<2>(i1, i2));
-	tensor<2, double, allocator_t> t(dims), t_ref(dims);
+	dense_tensor<2, double, allocator_t> t(dims), t_ref(dims);
 	tod_random<2>().perform(cpus, t_ref);
 
 	std::stringstream ss;
 	ss << "2 " << dims[0] << " " << dims[1] << std::endl;
 
 	{
-		tensor_ctrl<2, double> ctrl(t_ref);
+		dense_tensor_ctrl<2, double> ctrl(t_ref);
 		const double *p = ctrl.req_const_dataptr();
 		for(size_t i = 0; i < dims[0]; i++) {
 			index<2> idx;
@@ -427,14 +427,14 @@ void btod_read_test::test_8() throw(libtest::test_exception) {
 	index<2> i1, i2;
 	i2[0] = 2; i2[1] = 2;
 	dimensions<2> dims(index_range<2>(i1, i2));
-	tensor<2, double, allocator_t> t(dims), t_ref(dims);
+	dense_tensor<2, double, allocator_t> t(dims), t_ref(dims);
 	tod_random<2>().perform(cpus, t_ref);
 
 	std::stringstream ss;
 	ss << "2 " << dims[0] << " " << dims[1] << std::endl;
 
 	{
-		tensor_ctrl<2, double> ctrl(t_ref);
+		dense_tensor_ctrl<2, double> ctrl(t_ref);
 		const double *p = ctrl.req_const_dataptr();
 		for(size_t i = 0; i < dims[0]; i++) {
 			index<2> idx;
@@ -483,7 +483,7 @@ void btod_read_test::test_9() throw(libtest::test_exception) {
 	index<2> i1, i2;
 	i2[0] = 2; i2[1] = 2;
 	dimensions<2> dims(index_range<2>(i1, i2));
-	tensor<2, double, allocator_t> t(dims), t_ref(dims);
+	dense_tensor<2, double, allocator_t> t(dims), t_ref(dims);
 	tod_random<2>().perform(cpus, t_ref);
 
 	std::stringstream ss;
@@ -491,7 +491,7 @@ void btod_read_test::test_9() throw(libtest::test_exception) {
 
 	{
 		// modify t_ref to have permutational symmetry
-		tensor_ctrl<2, double> ctrl(t_ref);
+		dense_tensor_ctrl<2, double> ctrl(t_ref);
 
 		double *ptr = ctrl.req_dataptr();
 		for(size_t i = 0; i < dims[0]; i++) {
@@ -562,14 +562,14 @@ void btod_read_test::test_10() throw(libtest::test_exception) {
 	index<2> i1, i2;
 	i2[0] = 2; i2[1] = 2;
 	dimensions<2> dims(index_range<2>(i1, i2));
-	tensor<2, double, allocator_t> t(dims), t_ref(dims);
+	dense_tensor<2, double, allocator_t> t(dims), t_ref(dims);
 	tod_random<2>().perform(cpus, t_ref);
 
 	std::stringstream ss;
 	ss << "2 " << dims[0] << " " << dims[1] << std::endl;
 
 	{
-		tensor_ctrl<2, double> ctrl(t_ref);
+		dense_tensor_ctrl<2, double> ctrl(t_ref);
 
 		const double *p = ctrl.req_const_dataptr();
 		for(size_t i = 0; i < dims[0]; i++) {

@@ -16,6 +16,9 @@ namespace libtensor {
 
     TODO:
     - extend documentation
+    - add template parameter N 
+    - replace std::vector<size_t> by sequence<N, size_t> 
+    - make basic rule a separate class
 
     \ingroup libtensor_symmetry
  **/

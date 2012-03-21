@@ -27,10 +27,10 @@ public:
 
 private:
 	struct arg {
-		tensor_i<N, double> &t;
+		dense_tensor_i<N, double> &t;
 		permutation<N> p;
 		double c;
-		arg(tensor_i<N, double> &t_, const permutation<N> &p_,
+		arg(dense_tensor_i<N, double> &t_, const permutation<N> &p_,
 			double c_ = 1.0) : t(t_), p(p_), c(c_) { }
 	};
 
@@ -46,14 +46,14 @@ public:
 		\param t First %tensor in the series.
 		\param c Scaling coefficient.
 	 **/
-	tod_add(tensor_i<N, double> &t, double c = 1.0);
+	tod_add(dense_tensor_i<N, double> &t, double c = 1.0);
 
 	/**	\brief Initializes the addition operation
 		\param t First %tensor in the series.
 		\param p Permutation of the first %tensor.
 		\param c Scaling coefficient.
 	 **/
-	tod_add(tensor_i<N, double> &t, const permutation<N> &p,
+	tod_add(dense_tensor_i<N, double> &t, const permutation<N> &p,
 		double c = 1.0);
 
 	/**	\brief Virtual destructor
@@ -70,35 +70,35 @@ public:
 		\param t Tensor.
 		\param c Coefficient.
 	 **/
-	void add_op(tensor_i<N, double> &t, double c);
+	void add_op(dense_tensor_i<N, double> &t, double c);
 
 	/**	\brief Adds an operand
 		\param t Tensor.
 		\param p Permutation of %tensor elements.
 		\param c Coefficient.
 	 **/
-	void add_op(tensor_i<N, double> &t, const permutation<N> &p, double c);
+	void add_op(dense_tensor_i<N, double> &t, const permutation<N> &p, double c);
 
 	/**	\brief Prefetches the arguments
 	 **/
 	void prefetch();
 
-    void perform(cpu_pool &cpus, bool zero, double c, tensor_i<N, double> &tb);
+    void perform(cpu_pool &cpus, bool zero, double c, dense_tensor_i<N, double> &tb);
 
 	/**	\brief Computes the sum into the output %tensor
 	 **/
-//	void perform(tensor_i<N, double> &t);
+//	void perform(dense_tensor_i<N, double> &t);
 
 	/**	\brief Adds the sum to the output %tensor
 	 **/
-//	void perform(tensor_i<N, double> &t, double c);
+//	void perform(dense_tensor_i<N, double> &t, double c);
 
 	//@}
 
 private:
 	/**	\brief Adds an operand (implementation)
 	 **/
-	void add_operand(tensor_i<N, double> &t, const permutation<N> &perm,
+	void add_operand(dense_tensor_i<N, double> &t, const permutation<N> &perm,
 		double c);
 
 };

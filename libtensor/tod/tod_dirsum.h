@@ -5,7 +5,7 @@
 #include "../defs.h"
 #include "../exception.h"
 #include "../timings.h"
-#include "../core/tensor_i.h"
+#include "../dense_tensor/dense_tensor_i.h"
 #include "kernels/loop_list_node.h"
 #include "bad_dimensions.h"
 
@@ -58,8 +58,8 @@ public:
 	};
 
 private:
-	tensor_i<k_ordera, double> &m_ta; //!< First %tensor (A)
-	tensor_i<k_orderb, double> &m_tb; //!< Second %tensor (B)
+	dense_tensor_i<k_ordera, double> &m_ta; //!< First %tensor (A)
+	dense_tensor_i<k_orderb, double> &m_tb; //!< Second %tensor (B)
 	double m_ka; //!< Coefficient A
 	double m_kb; //!< Coefficient B
 	permutation<k_orderc> m_permc; //!< Permutation of the result
@@ -68,27 +68,27 @@ private:
 public:
 	/**	\brief Initializes the operation
 	 **/
-	tod_dirsum(tensor_i<k_ordera, double> &ta, double ka,
-		tensor_i<k_orderb, double> &tb, double kb);
+	tod_dirsum(dense_tensor_i<k_ordera, double> &ta, double ka,
+		dense_tensor_i<k_orderb, double> &tb, double kb);
 
 	/**	\brief Initializes the operation
 	 **/
-	tod_dirsum(tensor_i<k_ordera, double> &ta, double ka,
-		tensor_i<k_orderb, double> &tb, double kb,
+	tod_dirsum(dense_tensor_i<k_ordera, double> &ta, double ka,
+		dense_tensor_i<k_orderb, double> &tb, double kb,
 		const permutation<k_orderc> &permc);
 
 	/**	\brief Performs the operation
 	 **/
-	void perform(tensor_i<k_orderc, double> &tc);
+	void perform(dense_tensor_i<k_orderc, double> &tc);
 
 	/**	\brief Performs the operation (additive)
 	 **/
-	void perform(tensor_i<k_orderc, double> &tc, double kc);
+	void perform(dense_tensor_i<k_orderc, double> &tc, double kc);
 
 private:
-	static dimensions<N + M> mk_dimsc(tensor_i<k_ordera, double> &ta,
-		tensor_i<k_orderb, double> &tb);
-	void do_perform(tensor_i<k_orderc, double> &tc, bool zero, double d);
+	static dimensions<N + M> mk_dimsc(dense_tensor_i<k_ordera, double> &ta,
+		dense_tensor_i<k_orderb, double> &tb);
+	void do_perform(dense_tensor_i<k_orderc, double> &tc, bool zero, double d);
 
 };
 

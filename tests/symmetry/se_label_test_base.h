@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_SE_LABEL_TEST_BASE_H
 #define LIBTENSOR_SE_LABEL_TEST_BASE_H
 
+#include <sstream>
 #include <vector>
 #include <libtest/unit_test.h>
 #include <libtensor/core/abs_index.h>

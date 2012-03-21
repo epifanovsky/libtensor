@@ -45,7 +45,7 @@ void block_map_test::test_create() throw(libtest::test_exception) {
 			"Nonexisting block 2 reported to be found (2)");
 	}
 
-	tensor_i<2, double> &ta1 = map.get(0);
+	dense_tensor_i<2, double> &ta1 = map.get(0);
 	if(!ta1.get_dims().equals(dims1)) {
 		fail_test(testname, __FILE__, __LINE__,
 			"Block 0 has incorrect dimensions (2)");
@@ -61,8 +61,8 @@ void block_map_test::test_create() throw(libtest::test_exception) {
 			"Existing block 2 cannot be found (3)");
 	}
 
-	tensor_i<2, double> &tb1 = map.get(0);
-	tensor_i<2, double> &tb2 = map.get(2);
+	dense_tensor_i<2, double> &tb1 = map.get(0);
+	dense_tensor_i<2, double> &tb2 = map.get(2);
 	if(!tb1.get_dims().equals(dims1)) {
 		fail_test(testname, __FILE__, __LINE__,
 			"Block 0 has incorrect dimensions (3)");
@@ -85,7 +85,7 @@ void block_map_test::test_immutable() throw(libtest::test_exception) {
 
 	try {
 
-	typedef tensor<2, double, allocator_t> tensor_t;
+	typedef dense_tensor<2, double, allocator_t> tensor_t;
 	block_map<2, double, allocator_t> map;
 
 	index<2> i1, i2;

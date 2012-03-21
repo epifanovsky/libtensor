@@ -64,7 +64,7 @@ protected:
 
 	virtual bool on_req_is_zero_block(const index<N> &idx)
 		throw(exception) = 0;
-	virtual tensor_i<N, T> &on_req_block(const index<N> &idx)
+	virtual dense_tensor_i<N, T> &on_req_block(const index<N> &idx)
 		throw(exception) = 0;
 	virtual void on_ret_block(const index<N> &idx) throw(exception) = 0;
 

@@ -30,6 +30,9 @@ namespace libtensor {
 	must turn unity. The agreement is tested upon the creation of the
 	element. If it is not satisfied, an exception is thrown.
 
+        TODO:
+        - replace permutation and even / symm by tensor_transf
+
 	\ingroup libtensor_symmetry
  **/
 template<size_t N, typename T>
@@ -53,7 +56,7 @@ public:
 		\param symm Symmetric/anti-symmetric.
 		\throw bad_symmetry If the permutation and the flag are
 			inconsistent.
-     **/
+a     **/
     se_perm(const permutation<N> &perm, bool symm);
 
     /**	\brief Copy constructor

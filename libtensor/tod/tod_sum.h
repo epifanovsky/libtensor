@@ -60,7 +60,7 @@ public:
 
 	virtual void prefetch();
     virtual void perform(cpu_pool &cpus, bool zero, double c,
-        tensor_i<N, double> &t);
+        dense_tensor_i<N, double> &t);
 
 	//@}
 
@@ -101,7 +101,7 @@ void tod_sum<N>::prefetch() {
 
 template<size_t N>
 void tod_sum<N>::perform(cpu_pool &cpus, bool zero, double c,
-    tensor_i<N, double> &t) {
+    dense_tensor_i<N, double> &t) {
 
     if(zero) tod_set<N>().perform(cpus, t);
 

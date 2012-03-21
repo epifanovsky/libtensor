@@ -15,8 +15,8 @@ void btod_random_test::perform() throw(libtest::test_exception)
 {
 
 	typedef std_allocator<double> allocator_t;
-	typedef tensor<4, double, allocator_t> tensor_t;
-	typedef tensor_ctrl<4, double> tensor_ctrl_t;
+	typedef dense_tensor<4, double, allocator_t> tensor_t;
+	typedef dense_tensor_ctrl<4, double> tensor_ctrl_t;
 	typedef block_tensor<4, double, allocator_t> block_tensor_t;
 	typedef block_tensor_ctrl<4, double> block_tensor_ctrl_t;
 

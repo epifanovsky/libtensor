@@ -177,8 +177,8 @@ void btod_diag_test::test_nosym_1(bool add) throw(libtest::test_exception) {
 	block_tensor<2, double, allocator_t> bta(bis2);
 	block_tensor<1, double, allocator_t> btb(bis1);
 
-	tensor<2, double, allocator_t> ta(dims2);
-	tensor<1, double, allocator_t> tb(dims1), tb_ref(dims1);
+	dense_tensor<2, double, allocator_t> ta(dims2);
+	dense_tensor<1, double, allocator_t> tb(dims1), tb_ref(dims1);
 
 	mask<2> msk;
 	msk[0] = true; msk[1] = true;
@@ -248,8 +248,8 @@ void btod_diag_test::test_nosym_2(bool add) throw(libtest::test_exception) {
 	block_tensor<4, double, allocator_t> bta(bis4);
 	block_tensor<3, double, allocator_t> btb(bis3);
 
-	tensor<4, double, allocator_t> ta(dims4);
-	tensor<3, double, allocator_t> tb(dims3), tb_ref(dims3);
+	dense_tensor<4, double, allocator_t> ta(dims4);
+	dense_tensor<3, double, allocator_t> tb(dims3), tb_ref(dims3);
 
 	permutation<3> pb;
 	pb.permute(1,2);
@@ -323,8 +323,8 @@ void btod_diag_test::test_nosym_3(bool add) throw(libtest::test_exception) {
 	block_tensor<2, double, allocator_t> bta(bis2);
 	block_tensor<1, double, allocator_t> btb(bis1);
 
-	tensor<2, double, allocator_t> ta(dims2);
-	tensor<1, double, allocator_t> tb(dims1), tb_ref(dims1);
+	dense_tensor<2, double, allocator_t> ta(dims2);
+	dense_tensor<1, double, allocator_t> tb(dims1), tb_ref(dims1);
 
 	mask<2> msk;
 	msk[0] = true; msk[1] = true;
@@ -400,8 +400,8 @@ void btod_diag_test::test_nosym_4(bool add) throw(libtest::test_exception) {
 	block_tensor<4, double, allocator_t> bta(bis4);
 	block_tensor<3, double, allocator_t> btb(bis3);
 
-	tensor<4, double, allocator_t> ta(dims4);
-	tensor<3, double, allocator_t> tb(dims3), tb_ref(dims3);
+	dense_tensor<4, double, allocator_t> ta(dims4);
+	dense_tensor<3, double, allocator_t> tb(dims3), tb_ref(dims3);
 
 	mask<4> msk;
 	msk[1] = true; msk[3] = true;
@@ -474,8 +474,8 @@ void btod_diag_test::test_sym_1(bool add) throw(libtest::test_exception) {
 	block_tensor<2, double, allocator_t> bta(bis2);
 	block_tensor<1, double, allocator_t> btb(bis1);
 
-	tensor<2, double, allocator_t> ta(dims2);
-	tensor<1, double, allocator_t> tb(dims1), tb_ref(dims1);
+	dense_tensor<2, double, allocator_t> ta(dims2);
+	dense_tensor<1, double, allocator_t> tb(dims1), tb_ref(dims1);
 
 	permutation<2> perm10;
 	perm10.permute(0, 1);
@@ -556,8 +556,8 @@ void btod_diag_test::test_sym_2(bool add) throw(libtest::test_exception) {
 	block_tensor<3, double, allocator_t> bta(bis3);
 	block_tensor<2, double, allocator_t> btb(bis2);
 
-	tensor<3, double, allocator_t> ta(dims3);
-	tensor<2, double, allocator_t> tb(dims2), tb_ref(dims2);
+	dense_tensor<3, double, allocator_t> ta(dims3);
+	dense_tensor<2, double, allocator_t> tb(dims2), tb_ref(dims2);
 
 	permutation<3> perm10;
 	perm10.permute(0, 1);
@@ -635,8 +635,8 @@ void btod_diag_test::test_sym_3(bool add) throw(libtest::test_exception) {
 	block_tensor<2, double, allocator_t> bta(bis2);
 	block_tensor<1, double, allocator_t> btb(bis1);
 
-	tensor<2, double, allocator_t> ta(dims2);
-	tensor<1, double, allocator_t> tb(dims1), tb_ref(dims1);
+	dense_tensor<2, double, allocator_t> ta(dims2);
+	dense_tensor<1, double, allocator_t> tb(dims1), tb_ref(dims1);
 
 	permutation<2> perm10;
 	perm10.permute(0, 1);
@@ -718,8 +718,8 @@ void btod_diag_test::test_sym_4(bool add) throw(libtest::test_exception) {
 	block_tensor<4, double, allocator_t> bta(bis4);
 	block_tensor<3, double, allocator_t> btb(bis3);
 
-	tensor<4, double, allocator_t> ta(dims4);
-	tensor<3, double, allocator_t> tb(dims3), tb_ref(dims3);
+	dense_tensor<4, double, allocator_t> ta(dims4);
+	dense_tensor<3, double, allocator_t> tb(dims3), tb_ref(dims3);
 
 	permutation<4> perm20;
 	perm20.permute(0, 2);
@@ -802,8 +802,8 @@ void btod_diag_test::test_sym_5(bool add) throw(libtest::test_exception) {
 	block_tensor<4, double, allocator_t> bta(bis4);
 	block_tensor<3, double, allocator_t> btb(bis3);
 
-	tensor<4, double, allocator_t> ta(dims4);
-	tensor<3, double, allocator_t> tb(dims3), tb_ref(dims3);
+	dense_tensor<4, double, allocator_t> ta(dims4);
+	dense_tensor<3, double, allocator_t> tb(dims3), tb_ref(dims3);
 
 	{
 	se_perm<4, double> cycle1(permutation<4>().permute(0, 2).permute(1, 3), true);
@@ -886,8 +886,8 @@ void btod_diag_test::test_sym_6(bool add) throw(libtest::test_exception) {
 	block_tensor<4, double, allocator_t> bta(bis4);
 	block_tensor<3, double, allocator_t> btb(bis3);
 
-	tensor<4, double, allocator_t> ta(dims4);
-	tensor<3, double, allocator_t> tb(dims3), tb_ref(dims3);
+	dense_tensor<4, double, allocator_t> ta(dims4);
+	dense_tensor<3, double, allocator_t> tb(dims3), tb_ref(dims3);
 
 	block_tensor_ctrl<4, double> ctrla(bta);
 
@@ -983,8 +983,8 @@ void btod_diag_test::test_sym_7(bool add) throw(libtest::test_exception) {
 		ca.req_symmetry().insert(elem1);
 	}
 
-	tensor<2, double, allocator_t> ta(dims2);
-	tensor<1, double, allocator_t> tb(dims1), tb_ref(dims1);
+	dense_tensor<2, double, allocator_t> ta(dims2);
+	dense_tensor<1, double, allocator_t> tb(dims1), tb_ref(dims1);
 
 	mask<2> msk;
 	msk[0] = true; msk[1] = true;

@@ -112,7 +112,7 @@ protected:
 	//!	\brief Implementation of additive_btod<N>
 	//@{
 
-	virtual void compute_block(bool zero, tensor_i<N, double> &blk,
+	virtual void compute_block(bool zero, dense_tensor_i<N, double> &blk,
 	    const index<N> &i, const transf<N, double> &tr, double c,
 	    cpu_pool &cpus);
 
@@ -161,7 +161,7 @@ btod_symmetrize3<N>::btod_symmetrize3(additive_btod<N> &op, size_t i1,
 
 /*
 template<size_t N>
-void btod_symmetrize3<N>::compute_block(tensor_i<N, double> &blk,
+void btod_symmetrize3<N>::compute_block(dense_tensor_i<N, double> &blk,
 	const index<N> &i) {
 
 	typedef typename sym_schedule_t::iterator iterator_t;
@@ -178,7 +178,7 @@ void btod_symmetrize3<N>::compute_block(tensor_i<N, double> &blk,
 
 
 template<size_t N>
-void btod_symmetrize3<N>::compute_block(bool zero, tensor_i<N, double> &blk,
+void btod_symmetrize3<N>::compute_block(bool zero, dense_tensor_i<N, double> &blk,
 	const index<N> &i, const transf<N, double> &tr, double c, cpu_pool &cpus) {
 
 	typedef typename sym_schedule_t::iterator iterator_t;
@@ -218,7 +218,7 @@ void btod_symmetrize3<N>::compute_block(bool zero, tensor_i<N, double> &blk,
 			dims.permute(permutation<N>(sch1.front().tr.get_perm(),
 				true));
 			// TODO: replace with "temporary block" feature
-			tensor< N, double, allocator<double> > tmp(dims);
+			dense_tensor< N, double, allocator<double> > tmp(dims);
 			additive_btod<N>::compute_block(m_op, true, tmp,
 				ai.get_index(), transf<N, double>(), c, cpus);
 			for(typename std::list<schrec>::iterator j =

@@ -74,10 +74,10 @@ protected:
 	//@{
 	virtual symmetry<N, T> &on_req_symmetry() throw(exception);
 	virtual const symmetry<N, T> &on_req_const_symmetry() throw(exception);
-	virtual tensor_i<N, T> &on_req_block(const index<N> &idx)
+	virtual dense_tensor_i<N, T> &on_req_block(const index<N> &idx)
 		throw(exception);
 	virtual void on_ret_block(const index<N> &idx) throw(exception);
-	virtual tensor_i<N, T> &on_req_aux_block(const index<N> &idx)
+	virtual dense_tensor_i<N, T> &on_req_aux_block(const index<N> &idx)
 		throw(exception);
 	virtual void on_ret_aux_block(const index<N> &idx) throw(exception);
 	virtual bool on_req_is_zero_block(const index<N> &idx) throw(exception);
@@ -169,7 +169,7 @@ const symmetry<N, T> &direct_btensor<N, T, Traits>::on_req_const_symmetry()
 }
 
 template<size_t N, typename T, typename Traits>
-tensor_i<N, T> &direct_btensor<N, T, Traits>::on_req_block(const index<N> &idx)
+dense_tensor_i<N, T> &direct_btensor<N, T, Traits>::on_req_block(const index<N> &idx)
 	throw(exception) {
 
 	return m_ctrl.req_block(idx);
@@ -185,7 +185,7 @@ void direct_btensor<N, T, Traits>::on_ret_block(const index<N> &idx)
 
 
 template<size_t N, typename T, typename Traits>
-tensor_i<N, T> &direct_btensor<N, T, Traits>::on_req_aux_block(
+dense_tensor_i<N, T> &direct_btensor<N, T, Traits>::on_req_aux_block(
 	const index<N> &idx) throw(exception) {
 
 	return m_ctrl.req_aux_block(idx);

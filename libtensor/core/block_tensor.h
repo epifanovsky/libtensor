@@ -10,8 +10,8 @@
 #include "block_tensor_i.h"
 #include "immutable.h"
 #include "orbit_list.h"
-#include "tensor.h"
-#include "tensor_ctrl.h"
+#include <libtensor/dense_tensor/dense_tensor.h>
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 
 namespace libtensor {
 
@@ -108,10 +108,10 @@ protected:
 	//@{
 	virtual const symmetry<N, T> &on_req_const_symmetry() throw(exception);
 	virtual symmetry<N, T> &on_req_symmetry() throw(exception);
-	virtual tensor_i<N, T> &on_req_block(const index<N> &idx)
+	virtual dense_tensor_i<N, T> &on_req_block(const index<N> &idx)
 		throw(exception);
 	virtual void on_ret_block(const index<N> &idx) throw(exception);
-	virtual tensor_i<N, T> &on_req_aux_block(const index<N> &idx)
+	virtual dense_tensor_i<N, T> &on_req_aux_block(const index<N> &idx)
 		throw(exception);
 	virtual void on_ret_aux_block(const index<N> &idx) throw(exception);
 	virtual bool on_req_is_zero_block(const index<N> &idx) throw(exception);
@@ -206,7 +206,7 @@ symmetry<N, T> &block_tensor<N, T, Alloc, Sync>::on_req_symmetry()
 
 
 template<size_t N, typename T, typename Alloc, typename Sync>
-tensor_i<N, T> &block_tensor<N, T, Alloc, Sync>::on_req_block(
+dense_tensor_i<N, T> &block_tensor<N, T, Alloc, Sync>::on_req_block(
 	const index<N> &idx) throw(exception) {
 
 	static const char *method = "on_req_block(const index<N>&)";
@@ -238,7 +238,7 @@ void block_tensor<N, T, Alloc, Sync>::on_ret_block(const index<N> &idx)
 
 
 template<size_t N, typename T, typename Alloc, typename Sync>
-tensor_i<N, T> &block_tensor<N, T, Alloc, Sync>::on_req_aux_block(
+dense_tensor_i<N, T> &block_tensor<N, T, Alloc, Sync>::on_req_aux_block(
 	const index<N> &idx) throw(exception) {
 
 	static const char *method = "on_req_aux_block(const index<N>&)";

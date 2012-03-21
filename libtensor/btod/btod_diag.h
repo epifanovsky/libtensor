@@ -96,7 +96,7 @@ public:
 	using additive_btod<k_orderb>::perform;
 
 protected:
-	virtual void compute_block(bool zero, tensor_i<k_orderb, double> &blk,
+	virtual void compute_block(bool zero, dense_tensor_i<k_orderb, double> &blk,
 		const index<k_orderb> &ib, const transf<k_orderb, double> &trb,
 		double c, cpu_pool &cpus);
 
@@ -115,7 +115,7 @@ private:
 	 **/
 	void make_schedule();
 
-	void compute_block(tensor_i<k_orderb, double> &blk,
+	void compute_block(dense_tensor_i<k_orderb, double> &blk,
 		const index<k_orderb> &ib, const transf<k_orderb, double> &trb,
 		bool zero, double c, cpu_pool &cpus);
 
@@ -173,7 +173,7 @@ void btod_diag<N, M>::sync_off() {
 
 /*
 template<size_t N, size_t M>
-void btod_diag<N, M>::compute_block(tensor_i<k_orderb, double> &blk,
+void btod_diag<N, M>::compute_block(dense_tensor_i<k_orderb, double> &blk,
 	const index<k_orderb> &ib) {
 
 	transf<k_orderb, double> trb0;
@@ -182,7 +182,7 @@ void btod_diag<N, M>::compute_block(tensor_i<k_orderb, double> &blk,
 
 
 template<size_t N, size_t M>
-void btod_diag<N, M>::compute_block(bool zero, tensor_i<k_orderb, double> &blk,
+void btod_diag<N, M>::compute_block(bool zero, dense_tensor_i<k_orderb, double> &blk,
 	const index<k_orderb> &ib, const transf<k_orderb, double> &trb,
 	double c, cpu_pool &cpus) {
 
@@ -191,7 +191,7 @@ void btod_diag<N, M>::compute_block(bool zero, tensor_i<k_orderb, double> &blk,
 
 
 template<size_t N, size_t M>
-void btod_diag<N, M>::compute_block(tensor_i<k_orderb, double> &blk,
+void btod_diag<N, M>::compute_block(dense_tensor_i<k_orderb, double> &blk,
 	const index<k_orderb> &ib, const transf<k_orderb, double> &trb,
 	bool zero, double c, cpu_pool &cpus) {
 
@@ -256,7 +256,7 @@ void btod_diag<N, M>::compute_block(tensor_i<k_orderb, double> &blk,
 
 		//	Invoke the tensor operation
 		//
-		tensor_i<k_ordera, double> &blka = ctrla.req_block(acia.get_index());
+		dense_tensor_i<k_ordera, double> &blka = ctrla.req_block(acia.get_index());
 		double k = m_c * c * trb.get_coeff() / tra.get_coeff();
 		if(zero) tod_diag<N, M>(blka, m2, permb, k).perform(blk);
 		else tod_diag<N, M>(blka, m2, permb, k).perform(blk, 1.0);

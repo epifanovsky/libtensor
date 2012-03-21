@@ -69,7 +69,7 @@ void btod_ewmult2<N, M, K>::sync_off() {
 
 /*
 template<size_t N, size_t M, size_t K>
-void btod_ewmult2<N, M, K>::compute_block(tensor_i<k_orderc, double> &blk,
+void btod_ewmult2<N, M, K>::compute_block(dense_tensor_i<k_orderc, double> &blk,
 	const index<k_orderc> &bidx) {
 
 	transf<k_orderc, double> tr0;
@@ -79,7 +79,7 @@ void btod_ewmult2<N, M, K>::compute_block(tensor_i<k_orderc, double> &blk,
 
 template<size_t N, size_t M, size_t K>
 void btod_ewmult2<N, M, K>::compute_block(bool zero,
-    tensor_i<k_orderc, double> &blk, const index<k_orderc> &bidx,
+    dense_tensor_i<k_orderc, double> &blk, const index<k_orderc> &bidx,
     const transf<k_orderc, double> &tr, double d, cpu_pool &cpus) {
 
 	compute_block_impl(blk, bidx, tr, zero, d, cpus);
@@ -325,7 +325,7 @@ void btod_ewmult2<N, M, K>::make_schedule() {
 
 
 template<size_t N, size_t M, size_t K>
-void btod_ewmult2<N, M, K>::compute_block_impl(tensor_i<k_orderc, double> &blk,
+void btod_ewmult2<N, M, K>::compute_block_impl(dense_tensor_i<k_orderc, double> &blk,
 	const index<k_orderc> &bidx, const transf<k_orderc, double> &tr,
 	bool zero, double d, cpu_pool &cpus) {
 
@@ -369,8 +369,8 @@ void btod_ewmult2<N, M, K>::compute_block_impl(tensor_i<k_orderc, double> &blk,
 	if(zero) tod_set<k_orderc>().perform(cpus, blk);
 	if(zeroa || zerob) return;
 
-	tensor_i<k_ordera, double> &blka = ctrla.req_block(cidxa.get_index());
-	tensor_i<k_orderb, double> &blkb = ctrlb.req_block(cidxb.get_index());
+	dense_tensor_i<k_ordera, double> &blka = ctrla.req_block(cidxa.get_index());
+	dense_tensor_i<k_orderb, double> &blkb = ctrlb.req_block(cidxb.get_index());
 
 	permc.permute(tr.get_perm());
 	double k = m_d * tra.get_coeff() * trb.get_coeff() * tr.get_coeff();

@@ -14,26 +14,30 @@
 namespace libtensor {
 
 
-/**	\brief Symmetry between %tensor partitions
-	\tparam N Symmetry cardinality (%tensor order).
-	\tparam T Tensor element type.
+/** \brief Symmetry between %tensor partitions
+    \tparam N Symmetry cardinality (%tensor order).
+    \tparam T Tensor element type.
 
-	This %symmetry element establishes relationships between partitions
-	of a block %tensor. Each partition consists of one or more adjacent
-	blocks.
+    This %symmetry element establishes relationships between partitions
+    of a block %tensor. Each partition consists of one or more adjacent
+    blocks.
 
-	Tensor indexes that are affected by this %symmetry element are
-	specified using a mask.
+    Tensor indexes that are affected by this %symmetry element are
+    specified using a mask.
 
-	The number of partitions specifies how blocks will be grouped together.
-	For the block %index space to be valid with the %symmetry element,
-	the number of blocks along each affected dimension must be divisible
-	by the number of partitions. Moreover, block sizes must correspond
-	correctly from partition to partition. That is, if the partitions must
-	have the same block structure.
+    The number of partitions specifies how blocks will be grouped together.
+    For the block %index space to be valid with the %symmetry element,
+    the number of blocks along each affected dimension must be divisible
+    by the number of partitions. Moreover, block sizes must correspond
+    correctly from partition to partition. That is, if the partitions must
+    have the same block structure.
 
-	\ingroup libtensor_symmetry
- **/
+    TODO: 
+    - separate class definition and implementation
+    - replace sign by scalar_transf
+
+    \ingroup libtensor_symmetry
+**/
 template<size_t N, typename T>
 class se_part : public symmetry_element_i<N, T> {
 public:
@@ -53,16 +57,16 @@ public:
     //@{
 
     /**	\brief Initializes the %symmetry element
-		\param bis Block %index space.
-		\param msk Mask of affected dimensions.
-		\param npart Number of partitions along each dimension.
-     **/
+        \param bis Block %index space.
+        \param msk Mask of affected dimensions.
+        \param npart Number of partitions along each dimension.
+    **/
     se_part(const block_index_space<N> &bis, const mask<N> &msk, size_t npart);
 
     /** \brief Initializes the %symmetry element (varying number of partitions)
         \param bis Block %index space.
         \param pdims Partition dimensions.
-     **/
+    **/
     se_part(const block_index_space<N> &bis, const dimensions<N> &pdims);
 
     /**	\brief Copy constructor
@@ -79,20 +83,20 @@ public:
     //@{
 
     /**	\brief Adds a mapping between two partitions
-		\param idx1 First partition %index.
-		\param idx2 Second partition %index.
-		\param sign Sign of the mapping (true positive, false negative)
-     **/
+        \param idx1 First partition %index.
+        \param idx2 Second partition %index.
+        \param sign Sign of the mapping (true positive, false negative)
+    **/
     void add_map(const index<N> &idx1, const index<N> &idx2, bool sign = true);
 
     /** \brief Marks a partition as not allowed (i.e. all blocks in it
-			are not allowed)
+        are not allowed)
 
-		If a mapping exist that includes the partition, all partitions in the
-		mapping are marked as forbidden.
+        If a mapping exist that includes the partition, all partitions in the
+        mapping are marked as forbidden.
 
-	 	\param idx Partition %index.
-     **/
+        \param idx Partition %index.
+    **/
     void mark_forbidden(const index<N> &idx);
 
     //@}
@@ -114,37 +118,37 @@ public:
     }
 
     /** \brief Checks if the partition is forbidden
-		\param idx Partition %index
+        \param idx Partition %index
 
-		This function yields similar functionality as is_allowed(), but it
-		answers the negative question for partitions instead of blocks.
-     **/
+        This function yields similar functionality as is_allowed(), but it
+        answers the negative question for partitions instead of blocks.
+    **/
     bool is_forbidden(const index<N> &idx) const;
 
     /** \brief Returns the index to which idx is mapped directly
-			(refers to forward mapping)
-		\param idx Start index of map.
-		\return End index of the direct map.
-     **/
+        (refers to forward mapping)
+        \param idx Start index of map.
+        \return End index of the direct map.
+    **/
     index<N> get_direct_map(const index<N> &idx) const;
 
     /** \brief Returns the sign of the map between the two indexes.
-		\param from First index.
-		\param to Second index.
-		\return True for even map, false for odd (-1) map.
-     **/
+        \param from First index.
+        \param to Second index.
+        \return True for even map, false for odd (-1) map.
+    **/
     bool get_sign(const index<N> &from, const index<N> &to) const;
 
     /** \brief Check if there exists a map between two indexes
-		\param from First index.
-		\param to Second index.
-		\return True, if map exists.
-     **/
+        \param from First index.
+        \param to Second index.
+        \return True, if map exists.
+    **/
     bool map_exists(const index<N> &from, const index<N> &to) const;
 
     /** \brief Permute the dimensions of the symmetry element
-	 	\param perm Permutation
-     **/
+        \param perm Permutation
+    **/
     void permute(const permutation<N> &perm);
 
     //@}
@@ -177,32 +181,32 @@ public:
     virtual void apply(index<N> &idx) const;
 
     /**	\copydoc symmetry_element_i<N, T>::apply(
-			index<N>&, transf<N, T>&)
-     **/
+        index<N>&, transf<N, T>&)
+    **/
     virtual void apply(index<N> &idx, transf<N, T> &tr) const;
 
     //@}
 
 private:
     /**	\brief Builds the partition %dimensions, throws an exception
-			if the arguments are invalid
-     **/
+        if the arguments are invalid
+    **/
     static dimensions<N> make_pdims(const block_index_space<N> &bis,
-            const mask<N> &msk, size_t npart);
+                                    const mask<N> &msk, size_t npart);
 
     /** \brief Returns true if the partition %dimensions are valid in the
-            block index space
-     **/
+        block index space
+    **/
     static bool is_valid_pdims(const block_index_space<N> &bis,
-            const dimensions<N> &d);
+                               const dimensions<N> &d);
 
     /** Adds the map a->b to the loop a is in.
      **/
     void add_to_loop(size_t a, size_t b, bool sign);
 
     /**	\brief Returns true if the %index is a valid partition %index,
-			false otherwise
-     **/
+        false otherwise
+    **/
     bool is_valid_pidx(const index<N> &idx);
 
 };
@@ -220,7 +224,7 @@ se_part<N, T>::se_part(const block_index_space<N> &bis,
         m_pdims(make_pdims(bis, msk, npart)), m_fmap(0), m_rmap(0), m_fsign(0) {
 
     static const char *method =
-            "se_part(const block_index_space<N>&, const mask<N>&, size_t)";
+        "se_part(const block_index_space<N>&, const mask<N>&, size_t)";
 
     size_t mapsz = m_pdims.get_size();
     m_fmap = new size_t[mapsz];
@@ -239,7 +243,7 @@ se_part<N, T>::se_part(const block_index_space<N> &bis,
         m_fmap(0), m_rmap(0), m_fsign(0) {
 
     static const char *method =
-            "se_part(const block_index_space<N>&, const dimensions<N>&)";
+        "se_part(const block_index_space<N>&, const dimensions<N>&)";
 
 #ifdef LIBTENSOR_DEBUG
     if (! is_valid_pdims(bis, pdims)) {
@@ -259,8 +263,8 @@ se_part<N, T>::se_part(const block_index_space<N> &bis,
 
 template<size_t N, typename T>
 se_part<N, T>::se_part(const se_part<N, T> &elem) :
-m_bis(elem.m_bis), m_bidims(elem.m_bidims), m_pdims(elem.m_pdims),
-m_fmap(0), m_fsign(0) {
+    m_bis(elem.m_bis), m_bidims(elem.m_bidims), m_pdims(elem.m_pdims),
+    m_fmap(0), m_fsign(0) {
 
     size_t mapsz = m_pdims.get_size();
     m_fmap = new size_t[mapsz];
@@ -286,16 +290,16 @@ void se_part<N, T>::add_map(const index<N> &idx1,
         const index<N> &idx2, bool sign) {
 
     static const char *method =
-            "add_map(const index<N>&, const index<N>&, bool)";
+        "add_map(const index<N>&, const index<N>&, bool)";
 
 #ifdef LIBTENSOR_DEBUG
     if(!is_valid_pidx(idx1)) {
         throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
-                "idx1");
+                            "idx1");
     }
     if(!is_valid_pidx(idx2)) {
         throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
-                "idx2");
+                            "idx2");
     }
 #endif // LIBTENSOR_DEBUG
 
@@ -325,7 +329,7 @@ void se_part<N, T>::add_map(const index<N> &idx1,
     if (ax == b) {
         if (sx != sign) {
             throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
-                    "Mapping exists with different sign.");
+                                "Mapping exists with different sign.");
         }
 
         return;
@@ -394,7 +398,7 @@ index<N> se_part<N, T>::get_direct_map(const index<N> &idx) const {
 #ifdef LIBTENSOR_DEBUG
     if (m_fmap[apidx.get_abs_index()] == (size_t) -1)
         throw bad_parameter(g_ns, k_clazz, method,
-                __FILE__, __LINE__, "Partition is not allowed.");
+                            __FILE__, __LINE__, "Partition is not allowed.");
 #endif
 
     abs_index<N> afpidx(m_fmap[apidx.get_abs_index()], m_pdims);
@@ -421,14 +425,14 @@ bool se_part<N, T>::get_sign(const index<N> &from, const index<N> &to) const {
     }
     if (x <= a)
         throw bad_symmetry(g_ns, k_clazz, method,
-                __FILE__, __LINE__, "No mapping.");
+                           __FILE__, __LINE__, "No mapping.");
 
     return sign;
 }
 
 template<size_t N, typename T>
 bool se_part<N, T>::map_exists(
-        const index<N> &from, const index<N> &to) const {
+    const index<N> &from, const index<N> &to) const {
 
     size_t a = abs_index<N>(from, m_pdims).get_abs_index();
     size_t b = abs_index<N>(to, m_pdims).get_abs_index();
@@ -507,7 +511,7 @@ void se_part<N, T>::permute(const permutation<N> &perm) {
 
             if (fmap[i] == (size_t) -1) {
                 m_fmap[naia.get_abs_index()] =
-                        m_rmap[naia.get_abs_index()] = (size_t) -1;
+                    m_rmap[naia.get_abs_index()] = (size_t) -1;
                 continue;
             }
 
@@ -573,10 +577,10 @@ void se_part<N, T>::apply(index<N> &idx, transf<N, T> &tr) const {
 
 template<size_t N, typename T>
 dimensions<N> se_part<N, T>::make_pdims(const block_index_space<N> &bis,
-        const mask<N> &msk, size_t npart) {
+                                        const mask<N> &msk, size_t npart) {
 
     static const char *method = "make_pdims(const block_index_space<N>&, "
-            "const mask<N>&, size_t)";
+        "const mask<N>&, size_t)";
 
     if(npart < 2) {
         throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__, "npart");
@@ -612,7 +616,7 @@ dimensions<N> se_part<N, T>::make_pdims(const block_index_space<N> &bis,
 
 template<size_t N, typename T>
 bool se_part<N, T>::is_valid_pdims(
-        const block_index_space<N> &bis, const dimensions<N> &d) {
+    const block_index_space<N> &bis, const dimensions<N> &d) {
 
     dimensions<N> bidims = bis.get_block_index_dims();
 

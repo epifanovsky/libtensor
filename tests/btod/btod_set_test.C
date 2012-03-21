@@ -36,7 +36,7 @@ void btod_set_test::test_1() throw(libtest::test_exception) {
 	dimensions<2> bidims(bis.get_block_index_dims());
 
 	block_tensor<2, double, allocator_t> bta(bis);
-	tensor<2, double, allocator_t> ta(dims), ta_ref(dims);
+	dense_tensor<2, double, allocator_t> ta(dims), ta_ref(dims);
 
 	//	Prepare the reference
 
@@ -76,7 +76,7 @@ void btod_set_test::test_2() throw(libtest::test_exception) {
 	dimensions<2> bidims(bis.get_block_index_dims());
 
 	block_tensor<2, double, allocator_t> bta(bis);
-	tensor<2, double, allocator_t> ta(dims), ta_ref(dims);
+	dense_tensor<2, double, allocator_t> ta(dims), ta_ref(dims);
 
 	//	Fill in random data
 

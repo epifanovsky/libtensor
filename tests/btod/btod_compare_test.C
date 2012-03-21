@@ -643,10 +643,10 @@ void btod_compare_test::test_operation() throw(libtest::test_exception) {
 	inblock_idx[0]=1; inblock_idx[1]=1;
 
 	block_tensor_ctrl_t btctrl(bt2);
-	tensor_i<2,double>& t2=btctrl.req_block(block_idx);
+	dense_tensor_i<2,double>& t2=btctrl.req_block(block_idx);
 	double diff1, diff2;
 	{
-		tensor_ctrl<2,double> tctrl(t2);
+		dense_tensor_ctrl<2,double> tctrl(t2);
 		double *ptr=tctrl.req_dataptr();
 		diff1=ptr[4];
 		ptr[4]-=1.0;

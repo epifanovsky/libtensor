@@ -48,7 +48,7 @@ public:
 	void perform(block_tensor_i<N, double> &btc, double c);
 
 protected:
-	void compute_block(tensor_i<N, double> &blk, const index<N> &idx);
+	void compute_block(dense_tensor_i<N, double> &blk, const index<N> &idx);
 
 
 private:
@@ -150,8 +150,8 @@ void btod_mult1<N>::do_perform(
 		if (ctrla.req_is_zero_block(cidxa.get_index()))
 			continue;
 
-		tensor_i<N, double> &blk = ctrla.req_block(idx);
-		tensor_i<N, double> &blka = ctrla.req_block(cidxa.get_index());
+		dense_tensor_i<N, double> &blk = ctrla.req_block(idx);
+		dense_tensor_i<N, double> &blka = ctrla.req_block(cidxa.get_index());
 
 		const transf<N, double> &tra = oa.get_transf(idx);
 
@@ -191,8 +191,8 @@ void btod_mult1<N>::do_perform(
 		if (zeroa || zerob)
 			continue;
 
-		tensor_i<N, double> &blka = ctrla.req_block(idxa);
-		tensor_i<N, double> &blkb = ctrlb.req_block(cidxb.get_index());
+		dense_tensor_i<N, double> &blka = ctrla.req_block(idxa);
+		dense_tensor_i<N, double> &blkb = ctrlb.req_block(cidxb.get_index());
 
 		const transf<N, double> &trb = ob.get_transf(idxb);
 		double k = m_c;

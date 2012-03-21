@@ -106,7 +106,7 @@ void mapped_block_tensor_test::test_1() throw(libtest::test_exception) {
 
 	abs_index<2> aidx1(bidims);
 	do {
-		tensor_i<2, double> &blk = ctrl.req_block(aidx1.get_index());
+		dense_tensor_i<2, double> &blk = ctrl.req_block(aidx1.get_index());
 		tod_random<2>().perform(cpus, blk);
 		ctrl.ret_block(aidx1.get_index());
 	} while(aidx1.inc());
@@ -119,8 +119,8 @@ void mapped_block_tensor_test::test_1() throw(libtest::test_exception) {
 
 	abs_index<2> aidx2(bidims);
 	do {
-		tensor_i<2, double> &blk1 = ctrl.req_block(aidx2.get_index());
-		tensor_i<2, double> &blk2 = mctrl.req_block(aidx2.get_index());
+		dense_tensor_i<2, double> &blk1 = ctrl.req_block(aidx2.get_index());
+		dense_tensor_i<2, double> &blk2 = mctrl.req_block(aidx2.get_index());
 		if(&blk1 != &blk2) {
 			fail_test(testname, __FILE__, __LINE__,
 				"&blk1 != &blk2");
@@ -161,7 +161,7 @@ void mapped_block_tensor_test::test_2() throw(libtest::test_exception) {
 
 	abs_index<2> aidx1(bidims);
 	do {
-		tensor_i<2, double> &blk = ctrl.req_block(aidx1.get_index());
+		dense_tensor_i<2, double> &blk = ctrl.req_block(aidx1.get_index());
 		tod_random<2>().perform(cpus, blk);
 		ctrl.ret_block(aidx1.get_index());
 	} while(aidx1.inc());
@@ -176,8 +176,8 @@ void mapped_block_tensor_test::test_2() throw(libtest::test_exception) {
 	abs_index<2> aidx2(bidims);
 	do {
 		index<2> idx2(aidx2.get_index()); idx2.permute(perm);
-		tensor_i<2, double> &blk1 = ctrl.req_block(idx2);
-		tensor_i<2, double> &blk2 = mctrl.req_block(aidx2.get_index());
+		dense_tensor_i<2, double> &blk1 = ctrl.req_block(idx2);
+		dense_tensor_i<2, double> &blk2 = mctrl.req_block(aidx2.get_index());
 		if(&blk1 != &blk2) {
 			fail_test(testname, __FILE__, __LINE__,
 				"&blk1 != &blk2");

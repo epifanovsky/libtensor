@@ -1,7 +1,7 @@
 #include <cmath>
 #include <ctime>
 #include <libtensor/core/allocator.h>
-#include <libtensor/core/tensor.h>
+#include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/tod/tod_set_elem.h>
 #include "../compare_ref.h"
 #include "tod_set_elem_test.h"
@@ -28,10 +28,10 @@ void tod_set_elem_test::test_1() throw(libtest::test_exception) {
 	index<2> i1, i2;
 	i2[0] = 3; i2[1] = 4;
 	dimensions<2> dims(index_range<2>(i1, i2));
-	tensor<2, double, allocator_t> t(dims), t_ref(dims);
+	dense_tensor<2, double, allocator_t> t(dims), t_ref(dims);
 
 	{
-	tensor_ctrl<2, double> tc(t), tc_ref(t_ref);
+	dense_tensor_ctrl<2, double> tc(t), tc_ref(t_ref);
 
 	//	Fill in random data
 	//

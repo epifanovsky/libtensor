@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_MP_SAFE_TENSOR_LOCK_H
 #define LIBTENSOR_MP_SAFE_TENSOR_LOCK_H
 
-#include <libvmm/singleton.h>
+#include <libutil/singleton.h>
 #include "threads.h"
 
 namespace libtensor {
@@ -11,8 +11,8 @@ namespace libtensor {
 
 	\ingroup libtensor_mp
  **/
-class mp_safe_tensor_lock : public libvmm::singleton<mp_safe_tensor_lock> {
-	friend class libvmm::singleton<mp_safe_tensor_lock>;
+class mp_safe_tensor_lock : public libutil::singleton<mp_safe_tensor_lock> {
+	friend class libutil::singleton<mp_safe_tensor_lock>;
 
 private:
 	mutex m_lock; //!< Lock object

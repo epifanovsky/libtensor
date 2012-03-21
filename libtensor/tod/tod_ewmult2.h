@@ -3,7 +3,7 @@
 
 #include "../defs.h"
 #include "../timings.h"
-#include "../core/tensor_i.h"
+#include "../dense_tensor/dense_tensor_i.h"
 #include "loop_list_elem.h"
 #include "tod_additive.h"
 #include "bad_dimensions.h"
@@ -60,9 +60,9 @@ public:
 	};
 
 private:
-	tensor_i<k_ordera, double> &m_ta; //!< First argument (A)
+	dense_tensor_i<k_ordera, double> &m_ta; //!< First argument (A)
 	permutation<k_ordera> m_perma; //!< Permutation of first argument (A)
-	tensor_i<k_orderb, double> &m_tb; //!< Second argument (B)
+	dense_tensor_i<k_orderb, double> &m_tb; //!< Second argument (B)
 	permutation<k_orderb> m_permb; //!< Permutation of second argument (B)
 	permutation<k_orderc> m_permc; //!< Permutation of result (C)
 	double m_d; //!< Scaling coefficient
@@ -77,8 +77,8 @@ public:
 		\param tb Second argument (B).
 		\param d Scaling coefficient.
 	 **/
-	tod_ewmult2(tensor_i<k_ordera, double> &ta,
-		tensor_i<k_orderb, double> &tb, double d = 1.0);
+	tod_ewmult2(dense_tensor_i<k_ordera, double> &ta,
+		dense_tensor_i<k_orderb, double> &tb, double d = 1.0);
 
 	/**	\brief Initializes the operation
 		\param ta First argument (A).
@@ -88,9 +88,9 @@ public:
 		\param permc Permutation of result (C).
 		\param d Scaling coefficient.
 	 **/
-	tod_ewmult2(tensor_i<k_ordera, double> &ta,
+	tod_ewmult2(dense_tensor_i<k_ordera, double> &ta,
 		const permutation<k_ordera> &perma,
-		tensor_i<k_orderb, double> &tb,
+		dense_tensor_i<k_orderb, double> &tb,
 		const permutation<k_orderb> &permb,
 		const permutation<k_orderc> &permc, double d = 1.0);
 
@@ -106,9 +106,9 @@ public:
 
 	virtual void prefetch();
     virtual void perform(cpu_pool &cpus, bool zero, double c,
-        tensor_i<k_orderc, double> &t);
-	void perform(cpu_pool &cpus, tensor_i<k_orderc, double> &tc);
-	void perform(cpu_pool &cpus, tensor_i<k_orderc, double> &tc, double d);
+        dense_tensor_i<k_orderc, double> &t);
+	void perform(cpu_pool &cpus, dense_tensor_i<k_orderc, double> &tc);
+	void perform(cpu_pool &cpus, dense_tensor_i<k_orderc, double> &tc, double d);
 
 	//@}
 

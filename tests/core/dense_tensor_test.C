@@ -1,6 +1,8 @@
 #include <libtensor/core/allocator.h>
-#include <libtensor/core/tensor_ctrl.h>
-#include "tensor_test.h"
+#include <libtensor/dense_tensor/dense_tensor.h>
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
+#include <libtensor/dense_tensor/inst/dense_tensor_impl.h>
+#include "dense_tensor_test.h"
 
 namespace libtensor {
 
@@ -9,7 +11,7 @@ namespace tensor_test_ns { }
 using namespace tensor_test_ns;
 
 
-void tensor_test::perform() throw(libtest::test_exception) {
+void dense_tensor_test::perform() throw(libtest::test_exception) {
 
     test_ctor();
     test_immutable();
@@ -19,7 +21,7 @@ void tensor_test::perform() throw(libtest::test_exception) {
 }
 
 
-void tensor_test::test_ctor() throw(libtest::test_exception) {
+void dense_tensor_test::test_ctor() throw(libtest::test_exception) {
 
     static const char *testname = "tensor_test::test_ctor()";
 
@@ -32,7 +34,7 @@ void tensor_test::test_ctor() throw(libtest::test_exception) {
     i2[1] = 3;
     index_range<2> ir(i1, i2);
     dimensions<2> d1(ir);
-    tensor<2, double, allocator> t1(d1);
+    dense_tensor<2, double, allocator> t1(d1);
 
     if(t1.is_immutable()) {
         fail_test(testname, __FILE__, __LINE__,
@@ -48,7 +50,7 @@ void tensor_test::test_ctor() throw(libtest::test_exception) {
             "Incorrect tensor dimension 1 (t1)");
     }
 
-    tensor<2, double, allocator> t2(t1);
+    dense_tensor<2, double, allocator> t2(t1);
 
     if(t2.is_immutable()) {
         fail_test(testname, __FILE__, __LINE__,
@@ -64,8 +66,8 @@ void tensor_test::test_ctor() throw(libtest::test_exception) {
             "Incorrect tensor dimension 1 (t2)");
     }
 
-    tensor_i<2, double> &pt2 = t2;
-    tensor<2, double, allocator> t3(pt2);
+    dense_tensor_i<2, double> &pt2 = t2;
+    dense_tensor<2, double, allocator> t3(pt2);
 
     if(t3.is_immutable()) {
         fail_test(testname, __FILE__, __LINE__,
@@ -105,12 +107,12 @@ public:
         return m_ok;
     }
 
-    void perform(tensor_i<2, int> &t) {
+    void perform(dense_tensor_i<2, int> &t) {
 
         m_ok = false;
         dimensions<2> d(t.get_dims());
         int *ptr = 0;
-        tensor_ctrl<2, int> tctrl(t);
+        dense_tensor_ctrl<2, int> tctrl(t);
         try {
             ptr = tctrl.req_dataptr();
         } catch(exception &e) {
@@ -128,7 +130,7 @@ public:
 } // namespace tensor_test_ns
 
 
-void tensor_test::test_immutable() throw(libtest::test_exception) {
+void dense_tensor_test::test_immutable() throw(libtest::test_exception) {
 
     static const char *testname = "tensor_test::test_immutable()";
 
@@ -141,7 +143,7 @@ void tensor_test::test_immutable() throw(libtest::test_exception) {
     i2[1] = 3;
     index_range<2> ir(i1, i2);
     dimensions<2> d1(ir);
-    tensor<2, int, allocator> t1(d1);
+    dense_tensor<2, int, allocator> t1(d1);
 
     if(t1.is_immutable()) {
         fail_test(testname, __FILE__, __LINE__, "New tensor t1 is not mutable");
@@ -180,10 +182,10 @@ public:
 
     }
 
-    void perform(tensor_i<2, int> &t) throw(exception) {
+    void perform(dense_tensor_i<2, int> &t) throw(exception) {
 
         dimensions<2> d(t.get_dims());
-        tensor_ctrl<2, int> tctrl(t);
+        dense_tensor_ctrl<2, int> tctrl(t);
         int *ptr = tctrl.req_dataptr();
         if(ptr) {
             for(size_t i = 0; i < d.get_size(); i++) ptr[i] = m_val;
@@ -210,11 +212,11 @@ public:
         return m_ok;
     }
 
-    void perform(tensor_i<2, int> &t) {
+    void perform(dense_tensor_i<2, int> &t) {
 
         m_ok = true;
         dimensions<2> d(t.get_dims());
-        tensor_ctrl<2, int> tctrl(t);
+        dense_tensor_ctrl<2, int> tctrl(t);
         const int *ptr = tctrl.req_const_dataptr();
         if(ptr) {
             for(size_t i = 0; i < d.get_size(); i++) {
@@ -242,10 +244,10 @@ public:
         return m_ok;
     }
 
-    void perform(tensor_i<2, int> &t) {
+    void perform(dense_tensor_i<2, int> &t) {
 
         m_ok = true;
-        tensor_ctrl<2, int> tctrl(t);
+        dense_tensor_ctrl<2, int> tctrl(t);
 
         // After rw-checkout, ro-checkout is not allowed
         int *ptr = tctrl.req_dataptr();
@@ -285,7 +287,7 @@ public:
 } // namespace tensor_test_ns
 
 
-void tensor_test::test_operation()throw (libtest::test_exception) {
+void dense_tensor_test::test_operation()throw (libtest::test_exception) {
 
     static const char *testname = "tensor_test::test_operation()";
 
@@ -298,7 +300,7 @@ void tensor_test::test_operation()throw (libtest::test_exception) {
     i2[1] = 3;
     index_range<2> ir(i1, i2);
     dimensions<2> d1(ir);
-    tensor<2, int, allocator> t1(d1);
+    dense_tensor<2, int, allocator> t1(d1);
 
     op_set_int op1(1), op100(100);
     op_chkset_int chkop1(1), chkop100(100);
@@ -329,7 +331,7 @@ void tensor_test::test_operation()throw (libtest::test_exception) {
 }
 
 
-void tensor_test::test_1() throw(libtest::test_exception) {
+void dense_tensor_test::test_1() throw(libtest::test_exception) {
 
     static const char *testname = "tensor_test::test_1()";
 
@@ -342,13 +344,13 @@ void tensor_test::test_1() throw(libtest::test_exception) {
     i2[1] = 5;
     dimensions<2> dims(index_range<2> (i1, i2));
 
-    tensor<2, double, allocator> t(dims);
+    dense_tensor<2, double, allocator> t(dims);
 
-    tensor_ctrl<2, double> c1(t);
+    dense_tensor_ctrl<2, double> c1(t);
     const double *p1 = c1.req_const_dataptr();
 
     {
-        tensor_ctrl<2, double> c2(t);
+        dense_tensor_ctrl<2, double> c2(t);
         const double *p2 = c2.req_const_dataptr();
         c2.ret_const_dataptr(p2);
         p2 = 0;
@@ -365,7 +367,7 @@ void tensor_test::test_1() throw(libtest::test_exception) {
 
 /**	\test Opens and closes 33 sessions with a tensor
  **/
-void tensor_test::test_2() throw(libtest::test_exception) {
+void dense_tensor_test::test_2() throw(libtest::test_exception) {
 
     static const char *testname = "tensor_test::test_2()";
 
@@ -378,9 +380,9 @@ void tensor_test::test_2() throw(libtest::test_exception) {
     i2[1] = 5;
     dimensions<2> dims(index_range<2> (i1, i2));
 
-    tensor<2, double, allocator> t(dims);
+    dense_tensor<2, double, allocator> t(dims);
 
-    tensor_ctrl<2, double> c00(t), c01(t), c02(t), c03(t), c04(t), c05(t),
+    dense_tensor_ctrl<2, double> c00(t), c01(t), c02(t), c03(t), c04(t), c05(t),
         c06(t), c07(t), c08(t), c09(t), c10(t), c11(t), c12(t), c13(t),
         c14(t), c15(t), c16(t), c17(t), c18(t), c19(t), c20(t), c21(t),
         c22(t), c23(t), c24(t), c25(t), c26(t), c27(t), c28(t), c29(t),

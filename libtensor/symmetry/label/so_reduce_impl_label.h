@@ -1,8 +1,8 @@
 #ifndef LIBTENSOR_SO_REDUCE_IMPL_LABEL_H
 #define LIBTENSOR_SO_REDUCE_IMPL_LABEL_H
 
-#include <multimap>
-#include <multiset>
+#include <map>
+#include <set>
 #include "../../defs.h"
 #include "../../exception.h"
 #include "../symmetry_element_set_adapter.h"

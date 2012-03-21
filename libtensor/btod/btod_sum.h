@@ -96,7 +96,7 @@ public:
 	//!	\name Implementation of libtensor::additive_btod<N>
 	//@{
 
-	virtual void compute_block(bool zero, tensor_i<N, double> &blk,
+	virtual void compute_block(bool zero, dense_tensor_i<N, double> &blk,
 	    const index<N> &i, const transf<N, double> &tr, double c,
 	    cpu_pool &cpus);
 	virtual void perform(block_tensor_i<N, double> &bt);

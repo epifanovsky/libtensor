@@ -3,6 +3,7 @@
 
 
 #include <libtest/libtest.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/libtensor.h>
 #include <libtensor/linalg/linalg.h>
 #include "performance_test.h"
@@ -99,8 +100,8 @@ void tod_copy_p1<R,N,X>::do_calculate()
 
 	X d;
 	dimensions<N> dim(d.dimA());
-	tensor<N, double, libvmm::std_allocator<double> > ta(dim), tb(dim);
-	tensor_ctrl<N,double> tca(ta), tcb(tb);
+	dense_tensor<N, double, std_allocator<double> > ta(dim), tb(dim);
+	dense_tensor_ctrl<N,double> tca(ta), tcb(tb);
 
 	double *ptra=tca.req_dataptr();
 	double *ptrb=tcb.req_dataptr();
@@ -127,8 +128,8 @@ void tod_copy_p2<R,N,X>::do_calculate()
 
 	dimb.permute(permb);
 
-	tensor<N, double, libvmm::std_allocator<double> > ta(dima), tb(dimb);
-	tensor_ctrl<N,double> tca(ta), tcb(tb);
+	dense_tensor<N, double, std_allocator<double> > ta(dima), tb(dimb);
+	dense_tensor_ctrl<N,double> tca(ta), tcb(tb);
 
 	double *ptra=tca.req_dataptr();
 	double *ptrb=tcb.req_dataptr();

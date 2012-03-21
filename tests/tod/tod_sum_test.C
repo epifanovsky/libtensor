@@ -1,13 +1,13 @@
 #include <libtensor/core/allocator.h>
-#include <libtensor/core/tensor.h>
-#include <libtensor/core/tensor_ctrl.h>
+#include <libtensor/dense_tensor/dense_tensor.h>
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/tod/tod_additive.h>
 #include <libtensor/tod/tod_sum.h>
 #include "tod_sum_test.h"
 
 namespace libtensor {
 
-typedef tensor<4, double, std_allocator<double> > tensor4_d;
+typedef dense_tensor<4, double, std_allocator<double> > tensor4_d;
 
 void tod_sum_test::perform() throw(libtest::test_exception) {
 
@@ -24,10 +24,10 @@ public:
 	virtual void prefetch() { }
 
 	virtual void perform(cpu_pool &cpus, bool zero, double c,
-	    tensor_i<4,double> &t) {
+	    dense_tensor_i<4,double> &t) {
 
 		size_t sz = t.get_dims().get_size();
-		tensor_ctrl<4, double> tctrl(t);
+		dense_tensor_ctrl<4, double> tctrl(t);
 		double *p = tctrl.req_dataptr();
 		if(zero) {
             for(size_t i = 0; i < sz; i++) p[i] = c * (double)i;
@@ -51,10 +51,10 @@ public:
 	virtual void prefetch() { }
 
 	virtual void perform(cpu_pool &cpus, bool zero, double c,
-	    tensor_i<4, double> &t) {
+	    dense_tensor_i<4, double> &t) {
 
 		size_t sz = t.get_dims().get_size();
-		tensor_ctrl<4, double> tctrl(t);
+		dense_tensor_ctrl<4, double> tctrl(t);
 		double *p = tctrl.req_dataptr();
 		if(zero) {
             for(size_t i = 0; i < sz; i++) p[i] = m_v * c;
@@ -84,7 +84,7 @@ void tod_sum_test::test_1() throw(libtest::test_exception) {
 	index<4> i1, i2;
 	i2[0] = 3; i2[1] = 3; i2[2] = 4; i2[3] = 4;
 	dimensions<4> dims(index_range<4>(i1, i2));
-	tensor<4, double, allocator_t> t(dims);
+	dense_tensor<4, double, allocator_t> t(dims);
 
 	ns::testop_set setop;
 	tod_sum<4> op(setop);
@@ -95,7 +95,7 @@ void tod_sum_test::test_1() throw(libtest::test_exception) {
 
 	bool ok = true;
 	{
-		tensor_ctrl<4, double> tctrl(t);
+		dense_tensor_ctrl<4, double> tctrl(t);
 		const double *p = tctrl.req_const_dataptr();
 		size_t sz = dims.get_size();
 		for(size_t i = 0; i < sz; i++) {
