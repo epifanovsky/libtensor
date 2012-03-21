@@ -242,9 +242,10 @@ void transfer_labeling(const block_labeling<N> &from,
 #ifdef LIBTENSOR_DEBUG
         // and do some basic error checking:
         // 1) mapping outside the target dimensions
-        if (map[i] > M)
+        if (map[i] >= M) {
             throw bad_symmetry(g_ns, "", method,
                     __FILE__, __LINE__, "Invalid map.");
+        }
 
         // 2) mapping of different dimensions on to the same
         for (size_t j = i + 1; j < N; j++) {
