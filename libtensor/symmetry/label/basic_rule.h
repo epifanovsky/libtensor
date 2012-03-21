@@ -28,11 +28,11 @@ private:
     label_set_t m_targets; //!< Target labels
 
 public:
-    /** \brief Constructor
+    /** \brief Default constructor
         \param lt Target labels
      **/
     basic_rule(const label_set_t &lt = label_set_t()) :
-        m_targets(lt) { }
+        sequence<N, size_t>(0), m_targets(lt) { }
 
     /** \brief Add another label to the target labels
         \param lt New label.
@@ -52,6 +52,7 @@ public:
     const label_set_t &get_target() const {
         return m_targets;
     }
+
 };
 
 template<size_t N>

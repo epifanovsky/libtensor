@@ -41,7 +41,7 @@ libtensor_symmetry_suite::libtensor_symmetry_suite() :
 //	add_test("so_symmetrize", m_utf_so_symmetrize);
     add_test("symmetry_element_set_adapter",
              m_utf_symmetry_element_set_adapter);
-//    add_test("transfer_rule", m_utf_transfer_rule);
+    add_test("transfer_rule", m_utf_transfer_rule);
 }
 
 }

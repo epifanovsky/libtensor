@@ -37,7 +37,7 @@
 #include "so_reduce_impl_perm_test.h"
 //#include "so_symmetrize_test.h"
 #include "symmetry_element_set_adapter_test.h"
-//#include "transfer_rule_test.h"
+#include "transfer_rule_test.h"
 
 using libtest::unit_test_factory;
 
@@ -129,7 +129,7 @@ private:
 //	unit_test_factory<so_symmetrize_test> m_utf_so_symmetrize;
     unit_test_factory<symmetry_element_set_adapter_test>
         m_utf_symmetry_element_set_adapter;
-//    unit_test_factory<transfer_rule_test> m_utf_transfer_rule;
+    unit_test_factory<transfer_rule_test> m_utf_transfer_rule;
 
 public:
     //!	Creates the suite

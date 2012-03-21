@@ -15,7 +15,6 @@ set(SRC
     symmetry/label/point_group_table.C
     symmetry/label/product_table_container.C
     symmetry/label/product_table_i.C
-#    symmetry/label/transfer_rule.C
     tod/loop_list_add.C
     tod/loop_list_copy.C
     tod/loop_list_mul.C
@@ -127,6 +126,7 @@ set(SRC_INST
     symmetry/label/inst/basic_rule.C
     symmetry/label/inst/block_labeling.C
     symmetry/label/inst/evaluation_rule.C
+    symmetry/label/inst/transfer_rule.C
     tod/tod_add.C
     tod/tod_contract2.C
     tod/tod_copy.C

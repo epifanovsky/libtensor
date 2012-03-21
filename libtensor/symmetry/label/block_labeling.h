@@ -12,6 +12,17 @@ namespace libtensor {
 /** \brief Labels of block indexes of a block %tensor.
     \tparam N Block %tensor dimensions.
 
+    Block labeling stores the information about the labels of blocks along
+    each dimension.
+
+    A block labeling object is created using the block %index dimensions of
+    a block %tensor. All labels are initialized with the invalid label.
+    To modify the labeling the member functions \c assign and \c clear are
+    provided.
+    To access the block labels the functions \c get_dim_type, \c get_dim, and
+    \c get_label have to be used.
+
+    \ingroup libtensor_symmetry
  **/
 template<size_t N>
 class block_labeling {

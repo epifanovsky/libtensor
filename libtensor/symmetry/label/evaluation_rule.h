@@ -27,12 +27,11 @@ public:
 
 public:
     typedef size_t rule_id_t;
-    typedef basic_rule<N> basic_rule_t;
-    typedef typename basic_rule_t::label_t label_t;
-    typedef typename basic_rule_t::label_set_t label_set_t;
+    typedef typename basic_rule<N>::label_t label_t;
+    typedef typename basic_rule<N>::label_set_t label_set_t;
 
 private:
-    typedef std::map<rule_id_t, basic_rule_t> rule_list_t;
+    typedef std::map< rule_id_t, basic_rule<N> > rule_list_t;
 
 public:
     typedef typename rule_list_t::const_iterator rule_iterator;
@@ -62,7 +61,7 @@ public:
         \param br Basic rule
         \return Returns the ID of the new rule
      **/
-    rule_id_t add_rule(const basic_rule_t &br);
+    rule_id_t add_rule(const basic_rule<N> &br);
 
     /** \brief Add a new product to the list of products
         \param rule ID of the rule to be part of the new product
@@ -108,7 +107,7 @@ public:
     /** \brief Return a basic rule
         \param id Rule ID
      **/
-    basic_rule_t &get_rule(rule_id_t id) {
+    basic_rule<N> &get_rule(rule_id_t id) {
 
         typename rule_list_t::iterator it = m_rules.find(id);
 #ifdef LIBTENSOR_DEBUG
@@ -123,7 +122,7 @@ public:
     /** \brief Return a basic rule (const version
         \param id Rule ID
      **/
-    const basic_rule_t &get_rule(rule_id_t id) const {
+    const basic_rule<N> &get_rule(rule_id_t id) const {
 
         rule_iterator it = m_rules.find(id);
         return get_rule(it);
@@ -134,7 +133,7 @@ public:
     /** \brief Return a basic rule
         \param it Iterator pointing to a rule
      **/
-    const basic_rule_t &get_rule(rule_iterator it) const {
+    const basic_rule<N> &get_rule(rule_iterator it) const {
 #ifdef LIBTENSOR_DEBUG
         if (! is_valid_rule(it))
             throw bad_parameter(g_ns, k_clazz,
@@ -200,7 +199,7 @@ public:
         \param pit Iterator pointing to a rule
         \return Rule ID
      **/
-    const basic_rule_t &get_rule(product_iterator pit) const {
+    const basic_rule<N> &get_rule(product_iterator pit) const {
 #ifdef LIBTENSOR_DEBUG
         if (! is_valid_product_iterator(pit))
             throw bad_parameter(g_ns, k_clazz,

@@ -16,15 +16,13 @@ void evaluation_rule_test::test_1() throw(libtest::test_exception) {
 
     static const char *testname = "evaluation_rule_test::test_1()";
 
-    typedef evaluation_rule<3> eval_rule_t;
-    typedef eval_rule_t::label_set_t label_set_t;
-    typedef eval_rule_t::basic_rule_t basic_rule_t;
+    typedef product_table_i::label_set_t label_set_t;
 
     try {
 
-        eval_rule_t rules;
+        evaluation_rule<3> rules;
 
-        basic_rule_t br1, br2, br3;
+        basic_rule<3> br1, br2, br3;
         br1[0] = br1[1] = br1[2] = 1;
         br1.set_target(0);
         br2[0] = br2[1] = br2[2] = 1;
@@ -33,17 +31,17 @@ void evaluation_rule_test::test_1() throw(libtest::test_exception) {
         br3.set_target(0);
         br3.set_target(1);
 
-        eval_rule_t::rule_id_t id1, id2, id3;
+        evaluation_rule<3>::rule_id_t id1, id2, id3;
         id1 = rules.add_rule(br1);
         id2 = rules.add_rule(br2);
         id3 = rules.add_rule(br3);
 
         bool done1 = false, done2 = false, done3 = false;
-        for (eval_rule_t::rule_iterator it = rules.begin();
+        for (evaluation_rule<3>::rule_iterator it = rules.begin();
                 it != rules.end(); it++) {
 
-            eval_rule_t::rule_id_t cur_id = rules.get_rule_id(it);
-            const basic_rule_t &cur = rules.get_rule(it);
+            evaluation_rule<3>::rule_id_t cur_id = rules.get_rule_id(it);
+            const basic_rule<3> &cur = rules.get_rule(it);
 
             if (cur_id == id1) {
                 if (done1)
@@ -96,15 +94,12 @@ void evaluation_rule_test::test_2() throw(libtest::test_exception) {
 
     static const char *testname = "evaluation_rule_test::test_2()";
 
-    typedef evaluation_rule<3> eval_rule_t;
-    typedef eval_rule_t::label_set_t label_set_t;
-    typedef eval_rule_t::basic_rule_t basic_rule_t;
+    typedef product_table_i::label_set_t label_set_t;
 
     try {
 
-        eval_rule_t rules;
-
-        basic_rule_t br1, br2, br3;
+        evaluation_rule<3> rules;
+        basic_rule<3> br1, br2, br3;
         br1[0] = br1[1] = br1[2] = 1;
         br1.set_target(0);
         br2[0] = br2[1] = br2[2] = 1;
@@ -113,7 +108,7 @@ void evaluation_rule_test::test_2() throw(libtest::test_exception) {
         br3.set_target(0);
         br3.set_target(1);
 
-        eval_rule_t::rule_id_t id1, id2, id3;
+        evaluation_rule<3>::rule_id_t id1, id2, id3;
         id1 = rules.add_rule(br1);
         id2 = rules.add_rule(br2);
         id3 = rules.add_rule(br3);
@@ -128,10 +123,10 @@ void evaluation_rule_test::test_2() throw(libtest::test_exception) {
             fail_test(testname, __FILE__, __LINE__, "Unexpected # products.");
 
         bool done1 = false, done2 = false;
-        for (eval_rule_t::product_iterator it = rules.begin(pno1);
+        for (evaluation_rule<3>::product_iterator it = rules.begin(pno1);
                 it != rules.end(pno1); it++) {
 
-            eval_rule_t::rule_id_t id = rules.get_rule_id(it);
+            evaluation_rule<3>::rule_id_t id = rules.get_rule_id(it);
             if (id == id1) {
                 done1 = true;
             }
@@ -148,10 +143,10 @@ void evaluation_rule_test::test_2() throw(libtest::test_exception) {
         }
 
         done1 = false, done2 = false;
-        for (eval_rule_t::product_iterator it = rules.begin(pno2);
+        for (evaluation_rule<3>::product_iterator it = rules.begin(pno2);
                 it != rules.end(pno2); it++) {
 
-            eval_rule_t::rule_id_t id = rules.get_rule_id(it);
+            evaluation_rule<3>::rule_id_t id = rules.get_rule_id(it);
             if (id == id3) {
                 done1 = true;
             }

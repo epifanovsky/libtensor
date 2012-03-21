@@ -32,18 +32,27 @@ namespace libtensor {
  **/
 class product_table_i {
 public:
-    typedef size_t label_t;
-    typedef std::set<label_t> label_set_t;
-    typedef std::multiset<label_t> label_group_t;
+    typedef size_t label_t; //!< Label type
+    typedef std::set<label_t> label_set_t; //!< Set of unique labels
+    typedef std::multiset<label_t> label_group_t; //!< Group of labels
 
-public:
     static const char *k_clazz; //!< Class name
     static const label_t k_invalid; //!< Invalid label
 
+private:
+//    typedef std::map<label_t, label_set_t> table_t;
+
+//    const std::string m_id; //!< Table ID
+//    label_set_t m_labels; //!< Complete set of all labels
+//    label_t m_identity; //!< Identity label
+//    table_t m_table; //!< Product table
 
 public:
     //! \name Constructors / destructors
     //@{
+
+//    product_table_i(const std::string &id,
+//            const label_set_t &total, label_t ident = 0);
 
     /** \brief Virtual destructor
      **/
@@ -108,8 +117,7 @@ public:
         \param ls2 Set of labels in the second sum
         \retun Set of labels present in the result
      **/
-    virtual label_set_t product(
-            const label_set_t &ls1, const label_set_t &ls2) const = 0;
+    virtual label_set_t product(const label_set_t &ls1, const label_set_t &ls2) const = 0;
 
     /** \brief Does a consistency check on the table.
 		\throw exception If product table is not set up properly.

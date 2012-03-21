@@ -8,7 +8,7 @@ const char *evaluation_rule<N>::k_clazz = "evaluation_rule<N>";
 
 template<size_t N>
 typename evaluation_rule<N>::rule_id_t
-evaluation_rule<N>::add_rule(const basic_rule_t &br) {
+evaluation_rule<N>::add_rule(const basic_rule<N> &br) {
 
     rule_id_t id = new_rule_id();
     m_rules.insert(typename rule_list_t::value_type(id, br));

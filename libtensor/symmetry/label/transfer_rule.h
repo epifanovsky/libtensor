@@ -19,24 +19,24 @@ namespace libtensor {
 
     \ingroup libtensor_symmetry
  **/
-class transfer_rule : public timings<transfer_rule> {
+template<size_t N>
+class transfer_rule : public timings< transfer_rule<N> > {
 public:
     static const char *k_clazz;
 
 private:
-    typedef evaluation_rule::label_t label_t;
-    typedef evaluation_rule::label_set label_set;
-    typedef evaluation_rule::rule_id rule_id;
-    typedef evaluation_rule::basic_rule basic_rule;
-    typedef std::map<rule_id, basic_rule> rule_list;
-    typedef std::map<rule_id, rule_list::iterator> product_t;
+    typedef typename product_table_i::label_t label_t;
+    typedef typename product_table_i::label_set_t label_set_t;
 
+    typedef typename evaluation_rule<N>::rule_id_t rule_id_t;
+    typedef std::map< rule_id_t, basic_rule<N> > rule_list_t;
+    typedef std::map<rule_id_t, rule_id_t> rule_map_t;
+
+    const evaluation_rule<N> &m_from; //!< Evaluation rule to transfer
     const product_table_i &m_pt; //!< Product table
-    std::map<size_t, size_t> m_reduce; //!< Reduce ndims to less
 
-    rule_list m_req_rules;
-    std::list<product_t> m_products;
-    size_t m_ndims; //!< # dimensions
+    bool m_mergeable; //!< Flag if labels can be merged
+    label_set_t m_merge_set; //!< Result of a merge
 
 public:
     /** \brief Constructor
@@ -44,8 +44,7 @@ public:
         \param ndim # dimension allowed in the evaluation order
         \param id ID of product table
      **/
-    transfer_rule(const evaluation_rule &rule,
-            size_t max_dim, const std::string &id);
+    transfer_rule(const evaluation_rule<N> &rule, const std::string &id);
 
     /** \brief Destructor
      **/
@@ -54,42 +53,44 @@ public:
     /** \brief Perform checks and simplifications on rule
         \param rule Target evaluation rule
      **/
-    void perform(evaluation_rule &rule);
+    void perform(evaluation_rule<N> &rule);
 
 private:
-    /** \brief Take the evaluation rule apart and split it into its minimal
-            components
-        \param from Evaluation rule
+    /** \brief Optimize basic rules.
+        \param[out] opt Optimized rules.
+        \param[out] triv Trivial rules (true: allowed, false: forbidden).
      **/
-    void analyze(const evaluation_rule &from);
+    void optimize_basic(rule_list_t &opt,
+            std::map<rule_id_t, bool> &triv) const;
 
-    /** \brief Optimize the products w.r.t duplicate products
+    /** \brief Find similar or duplicate rules in list.
+        \param rules List of rules.
+        \param[out] sim Similar rules (i.e. sequences are identical).
+        \param[out] dupl Duplicate rules (i.e. also targets are identical).
      **/
-    void optimize_products();
-
-    /** \brief Transfers and optimizes a basic rule
-        \param from Source
-        \param to Target
-        \param pt Product table
-     **/
-    bool transfer_basic(const basic_rule &from, basic_rule &to);
-
-    /** \brief Compare to evaluation orders
-     **/
-    static bool equal_order(const std::vector<size_t> &o1,
-            const std::vector<size_t> &o2);
-
-    /** \brief Compare to intrinsic labels
-     **/
-    static bool equal_intr(const label_set &i1, const label_set &i2);
-
-    /** \brief Compare to rules products
-     **/
-    static bool equal_product(const product_t &pr1, const product_t &pr2);
-
+    static void find_similar(const rule_list_t &rules,
+            rule_map_t &sim, rule_map_t &dupl);
 };
 
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_SIMPLIFY_RULE_H
+#ifdef LIBTENSOR_INSTANTIATE_TEMPLATES
+
+namespace libtensor {
+
+    extern template class transfer_rule<1>;
+    extern template class transfer_rule<2>;
+    extern template class transfer_rule<3>;
+    extern template class transfer_rule<4>;
+    extern template class transfer_rule<5>;
+    extern template class transfer_rule<6>;
+
+} // namespace libtensor
+
+#else // LIBTENSOR_INSTANTIATE_TEMPLATES
+#include "inst/transfer_rule_impl.h"
+#endif // LIBTENSOR_INSTANTIATE_TEMPLATES
+
+
+#endif // LIBTENSOR_TRANSFER_RULE_H

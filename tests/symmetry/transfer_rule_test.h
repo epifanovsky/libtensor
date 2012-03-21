@@ -6,7 +6,7 @@
 
 namespace libtensor {
 
-/**	\brief Tests the libtensor::transfer_rule class
+/**	\brief Tests the libtensor::transfer_rule<N> class
 
 	\ingroup libtensor_tests_sym
  **/

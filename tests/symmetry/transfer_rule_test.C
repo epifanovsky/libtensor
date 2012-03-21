@@ -33,46 +33,28 @@ void transfer_rule_test::test_basic_1(
     tnss << "transfer_rule_test::test_basic_1(" << table_id << ")";
     std::string tns(tnss.str());
 
-    evaluation_rule from, to;
+    evaluation_rule<2> from, to;
 
-    { // Setup from
-        evaluation_rule::label_set i1; i1.insert(0);
-        std::vector<size_t> o1(3, 0);
-        o1[0] = 0; o1[1] = 1; o1[2] = evaluation_rule::k_intrinsic;
-        from.add_product(from.add_rule(i1, o1));
-    }
+    product_table_i::label_set_t i1; i1.insert(0);
+    basic_rule<2> br1(i1);
+    br1[0] = br1[1] = 1;
+    from.add_product(from.add_rule(br1));
 
-    transfer_rule(from, 2, table_id).perform(to);
+    transfer_rule<2>(from, table_id).perform(to);
 
-    evaluation_rule::rule_iterator it = to.begin();
-    const evaluation_rule::basic_rule &br = to.get_rule(it);
+    evaluation_rule<2>::rule_iterator it = to.begin();
     if (it == to.end())
         fail_test(tns.c_str(), __FILE__, __LINE__,
                 "Non-empty result expected.");
 
+    const basic_rule<2> &br2 = to.get_rule(it);
     it++;
     if (it != to.end())
         fail_test(tns.c_str(), __FILE__, __LINE__,
                 "Only one basic rule expected.");
 
-    if (br.intr.size() != 1)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# br.intr");
-
-    if (br.intr.count(0) == 0)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br.intr.count(0) == 0");
-
-    if (br.order.size() != 3)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# br.order");
-
-    if (br.order[0] != 0)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br.order[0] != 0");
-
-    if (br.order[1] != 1)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br.order[1] != 1");
-
-    if (br.order[2] != evaluation_rule::k_intrinsic)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br.order[2]");
-
+    if (br1 != br2)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "br1 != br2");
 }
 
 /** \test One basic rule, trivial rule (all allowed)
@@ -85,41 +67,29 @@ void transfer_rule_test::test_basic_2(
     std::string tns(tnss.str());
 
 
-    evaluation_rule from, to;
+    evaluation_rule<2> from, to;
 
-    { // Setup from
-        evaluation_rule::label_set i1;
-        for (evaluation_rule::label_t i = 0; i < 4; i++) i1.insert(i);
-        std::vector<size_t> o1(3, 0);
-        o1[0] = 0; o1[1] = 1;
-        o1[2] = evaluation_rule::k_intrinsic;
-        from.add_product(from.add_rule(i1, o1));
-    }
+    product_table_i::label_set_t i1;
+    for (product_table_i::label_t i = 0; i < 4; i++) i1.insert(i);
+    basic_rule<2> br1(i1);
+    br1[0] = br1[1] = 1;
+    from.add_product(from.add_rule(br1));
 
-    transfer_rule(from, 2, table_id).perform(to);
+    transfer_rule<2>(from, table_id).perform(to);
 
-    evaluation_rule::rule_iterator it = to.begin();
+    evaluation_rule<2>::rule_iterator it = to.begin();
     if (it == to.end())
         fail_test(tns.c_str(), __FILE__, __LINE__,
                 "Non-empty result expected.");
 
-    const evaluation_rule::basic_rule &br = to.get_rule(it);
+    const basic_rule<2> &br2 = to.get_rule(it);
     it++;
     if (it != to.end())
         fail_test(tns.c_str(), __FILE__, __LINE__,
                 "Only one basic rule expected.");
 
-    if (br.intr.size() != 1)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# br.intr");
-
-    if (br.intr.count(0) == 0)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br.intr.count(0) == 0");
-
-    if (br.order.size() != 1)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# br.order");
-
-    if (br.order[0] != evaluation_rule::k_intrinsic)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br.order[0]");
+    if (br1 != br2)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "br1 != br2");
 }
 
 /** \test One basic rule, trivial rule (all forbidden)
@@ -131,17 +101,15 @@ void transfer_rule_test::test_basic_3(
     tnss << "transfer_rule_test::test_basic_4(" << table_id << ")";
     std::string tns(tnss.str());
 
-    evaluation_rule from, to;
+    evaluation_rule<2> from, to;
 
-    { // Setup from
-        evaluation_rule::label_set i1; i1.insert(1);
-        std::vector<size_t> o1(1, evaluation_rule::k_intrinsic);
-        from.add_product(from.add_rule(i1, o1));
-    }
+    product_table_i::label_set_t i1; i1.insert(1);
+    basic_rule<2> br1(i1);
+    from.add_product(from.add_rule(br1));
 
-    transfer_rule(from, 2, table_id).perform(to);
+    transfer_rule<2>(from, table_id).perform(to);
 
-    evaluation_rule::rule_iterator it = to.begin();
+    evaluation_rule<2>::rule_iterator it = to.begin();
     if (it != to.end())
         fail_test(tns.c_str(), __FILE__, __LINE__,
                 "Empty result expected.");
@@ -156,54 +124,36 @@ void transfer_rule_test::test_merge_1(
     tnss << "transfer_rule_test::test_merge_1(" << table_id << ")";
     std::string tns(tnss.str());
 
-    evaluation_rule from, to;
+    evaluation_rule<2> from, to;
 
-    { // Setup from
-        evaluation_rule::label_set i1, i2;
-        i1.insert(0); i2.insert(0); i2.insert(1);
-        std::vector<size_t> o1(3), o2(3);
-        o1[0] = 0; o1[1] = 1; o1[2] = evaluation_rule::k_intrinsic;
-        o2[0] = 0; o2[1] = 1; o2[2] = evaluation_rule::k_intrinsic;
+    product_table_i::label_set_t i1, i2;
+    i1.insert(0); i2.insert(0); i2.insert(1);
+    basic_rule<2> br1(i1), br2(i2);
+    br1[0] = br1[1] = 1;
+    br2[0] = br2[1] = 1;
 
-        evaluation_rule::rule_id id1, id2;
-        id1 = from.add_rule(i1, o1);
-        id2 = from.add_rule(i2, o2);
+    evaluation_rule<2>::rule_id_t id1, id2;
+    id1 = from.add_rule(br1);
+    id2 = from.add_rule(br2);
 
-        from.add_product(id1);
-        from.add_to_product(0, id2);
-    }
+    from.add_product(id1);
+    from.add_to_product(0, id2);
 
-    transfer_rule(from, 2, table_id).perform(to);
+    transfer_rule<2>(from, table_id).perform(to);
 
-    evaluation_rule::rule_iterator it = to.begin();
+    evaluation_rule<2>::rule_iterator it = to.begin();
     if (it == to.end())
         fail_test(tns.c_str(), __FILE__, __LINE__,
                 "Non-empty result expected.");
 
-    const evaluation_rule::basic_rule &br = to.get_rule(it);
+    const basic_rule<2> &br3 = to.get_rule(it);
     it++;
     if (it != to.end())
         fail_test(tns.c_str(), __FILE__, __LINE__,
                 "Only one basic rule expected.");
 
-    if (br.intr.size() != 1)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# br.intr");
-
-    if (br.intr.count(0) == 0)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br.intr.count(0) == 0");
-
-    if (br.order.size() != 3)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# br.order");
-
-    if (br.order[0] != 0)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br.order[0] != 0");
-
-    if (br.order[1] != 1)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br.order[1] != 1");
-
-    if (br.order[2] != evaluation_rule::k_intrinsic)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br.order[2]");
-
+    if (br1 != br3)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "br1 != br3.");
 }
 
 /** \test Multiple rules, merge of two rules possible (in different products)
@@ -215,59 +165,38 @@ void transfer_rule_test::test_merge_2(
     tnss << "transfer_rule_test::test_merge_2(" << table_id << ")";
     std::string tns(tnss.str());
 
-    evaluation_rule from, to;
+    evaluation_rule<2> from, to;
 
-    { // Setup from
-        evaluation_rule::label_set i1, i2;
-        i1.insert(0); i2.insert(0); i2.insert(1);
+    product_table_i::label_set_t i1, i2;
+    i1.insert(0); i2.insert(0); i2.insert(1);
 
-        std::vector<size_t> o1(3), o2(3);
-        o1[0] = 0; o1[1] = 1; o1[2] = evaluation_rule::k_intrinsic;
-        o2[0] = 0; o2[1] = 1; o2[2] = evaluation_rule::k_intrinsic;
+    basic_rule<2> br1(i1), br2(i2);
+    br1[0] = br1[1] = 1;
+    br2[0] = br2[1] = 1;
 
-        evaluation_rule::rule_id id1, id2;
-        id1 = from.add_rule(i1, o1);
-        id2 = from.add_rule(i2, o2);
+    evaluation_rule<2>::rule_id_t id1, id2;
+    id1 = from.add_rule(br1);
+    id2 = from.add_rule(br2);
 
-        from.add_product(id1);
-        from.add_product(id2);
-    }
+    from.add_product(id1);
+    from.add_product(id2);
 
-    transfer_rule(from, 2, table_id).perform(to);
+    transfer_rule<2>(from, table_id).perform(to);
 
-    evaluation_rule::rule_iterator it = to.begin();
+    evaluation_rule<2>::rule_iterator it = to.begin();
     if (it == to.end())
         fail_test(tns.c_str(), __FILE__, __LINE__,
                 "Non-empty result expected.");
 
-    const evaluation_rule::basic_rule &br = to.get_rule(it);
+    const basic_rule<2> &br3 = to.get_rule(it);
 
     it++;
     if (it != to.end())
         fail_test(tns.c_str(), __FILE__, __LINE__,
                 "Only one basic rule expected.");
 
-    if (br.intr.size() != 2)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# br.intr");
-
-    if (br.intr.count(0) == 0)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br.intr.count(0) == 0");
-
-    if (br.intr.count(1) == 0)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br.intr.count(1) == 0");
-
-    if (br.order.size() != 3)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# br.order");
-
-    if (br.order[0] != 0)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br.order[0] != 0");
-
-    if (br.order[1] != 1)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br.order[1] != 1");
-
-    if (br.order[2] != evaluation_rule::k_intrinsic)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br.order[2]");
-
+    if (br2 != br3)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "br2 != br3");
 }
 
 /** \test Multiple rules, merge of twice the same rule possible
@@ -279,53 +208,35 @@ void transfer_rule_test::test_merge_3(
     tnss << "transfer_rule_test::test_merge_3(" << table_id << ")";
     std::string tns(tnss.str());
 
-    evaluation_rule from, to;
+    evaluation_rule<2> from, to;
+    product_table_i::label_set_t i1; i1.insert(0);
 
-    { // Setup from
-        evaluation_rule::label_set i1; i1.insert(0);
-        std::vector<size_t> o1(3);
-        o1[0] = 0; o1[1] = 1; o1[2] = evaluation_rule::k_intrinsic;
+    basic_rule<2> br1(i1);
+    br1[0] = br1[1] = 1;
 
-        evaluation_rule::rule_id id1, id2;
-        id1 = from.add_rule(i1, o1);
-        id2 = from.add_rule(i1, o1);
+    evaluation_rule<2>::rule_id_t id1, id2;
+    id1 = from.add_rule(br1);
+    id2 = from.add_rule(br1);
 
-        from.add_product(id1);
-        from.add_product(id2);
-    }
+    from.add_product(id1);
+    from.add_product(id2);
 
-    transfer_rule(from, 2, table_id).perform(to);
+    transfer_rule<2>(from, table_id).perform(to);
 
-    evaluation_rule::rule_iterator it = to.begin();
+    evaluation_rule<2>::rule_iterator it = to.begin();
     if (it == to.end())
         fail_test(tns.c_str(), __FILE__, __LINE__,
                 "Non-empty result expected.");
 
-    const evaluation_rule::basic_rule &br = to.get_rule(it);
+    const basic_rule<2> &br2 = to.get_rule(it);
 
     it++;
     if (it != to.end())
         fail_test(tns.c_str(), __FILE__, __LINE__,
                 "Only one basic rule expected.");
 
-    if (br.intr.size() != 1)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# br.intr");
-
-    if (br.intr.count(0) == 0)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br.intr.count(0) == 0");
-
-    if (br.order.size() != 3)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# br.order");
-
-    if (br.order[0] != 0)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br.order[0] != 0");
-
-    if (br.order[1] != 1)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br.order[1] != 1");
-
-    if (br.order[2] != evaluation_rule::k_intrinsic)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br.order[2]");
-
+    if (br1 != br2)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "br1 != br2");
 }
 
 
