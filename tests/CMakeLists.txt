@@ -72,29 +72,29 @@ set(SRC_SYMMETRY
     symmetry/se_label_test.C
     symmetry/se_part_test.C
     symmetry/se_perm_test.C
-    symmetry/so_apply_impl_label_test.C
-    symmetry/so_apply_impl_part_test.C
-    symmetry/so_apply_impl_perm_test.C
+    symmetry/so_apply_se_label_test.C
+    symmetry/so_apply_se_part_test.C
+    symmetry/so_apply_se_perm_test.C
     symmetry/so_apply_test.C
     symmetry/so_copy_test.C
-    symmetry/so_dirprod_impl_label_test.C
-    symmetry/so_dirprod_impl_part_test.C
-    symmetry/so_dirprod_impl_perm_test.C
+    symmetry/so_dirprod_se_label_test.C
+    symmetry/so_dirprod_se_part_test.C
+    symmetry/so_dirprod_se_perm_test.C
     symmetry/so_dirprod_test.C
-    symmetry/so_dirsum_impl_label_test.C
-    symmetry/so_dirsum_impl_part_test.C
-    symmetry/so_dirsum_impl_perm_test.C
+    symmetry/so_dirsum_se_label_test.C
+    symmetry/so_dirsum_se_part_test.C
+    symmetry/so_dirsum_se_perm_test.C
     symmetry/so_dirsum_test.C
-    symmetry/so_merge_impl_label_test.C
-    symmetry/so_merge_impl_part_test.C
-    symmetry/so_merge_impl_perm_test.C
+    symmetry/so_merge_se_label_test.C
+    symmetry/so_merge_se_part_test.C
+    symmetry/so_merge_se_perm_test.C
     symmetry/so_merge_test.C
-    symmetry/so_permute_impl_label_test.C
-    symmetry/so_permute_impl_part_test.C
-    symmetry/so_permute_impl_perm_test.C
-    symmetry/so_reduce_impl_label_test.C
-    symmetry/so_reduce_impl_part_test.C
-    symmetry/so_reduce_impl_perm_test.C
+    symmetry/so_permute_se_label_test.C
+    symmetry/so_permute_se_part_test.C
+    symmetry/so_permute_se_perm_test.C
+    symmetry/so_reduce_se_label_test.C
+    symmetry/so_reduce_se_part_test.C
+    symmetry/so_reduce_se_perm_test.C
     symmetry/so_reduce_test.C
     symmetry/so_symmetrize_test.C
     symmetry/symmetry_element_set_adapter_test.C

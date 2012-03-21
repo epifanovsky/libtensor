@@ -126,6 +126,7 @@ set(SRC_INST
     dense_tensor/inst/dense_tensor_inst.C
     symmetry/inst/block_labeling_inst.C
     symmetry/inst/combine_part_inst.C
+    symmetry/inst/combine_label_inst.C
     symmetry/inst/evaluation_rule_inst.C
     symmetry/inst/permutation_group_inst.C
     symmetry/inst/se_label_inst.C
