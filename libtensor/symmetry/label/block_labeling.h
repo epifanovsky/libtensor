@@ -113,6 +113,13 @@ public:
     //@}
 };
 
+/** \brief Compare to block labelings.
+    \return True if they are identical
+ **/
+template<size_t N>
+bool operator==(const block_labeling<N> &a, const block_labeling<N> &b);
+
+
 /** \brief Transfer labels between to block_labeling objects
     \param from Source of labeling
     \param map Index map
@@ -140,6 +147,19 @@ namespace libtensor {
     extern template class block_labeling<4>;
     extern template class block_labeling<5>;
     extern template class block_labeling<6>;
+
+    extern template
+    bool operator==(const block_labeling<1> &, const block_labeling<1> &);
+    extern template
+    bool operator==(const block_labeling<2> &, const block_labeling<2> &);
+    extern template
+    bool operator==(const block_labeling<3> &, const block_labeling<3> &);
+    extern template
+    bool operator==(const block_labeling<4> &, const block_labeling<4> &);
+    extern template
+    bool operator==(const block_labeling<5> &, const block_labeling<5> &);
+    extern template
+    bool operator==(const block_labeling<6> &, const block_labeling<6> &);
 
     extern template void transfer_labeling(const block_labeling<1> &,
             const sequence<1, size_t> &, block_labeling<1> &);

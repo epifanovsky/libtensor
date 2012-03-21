@@ -209,6 +209,22 @@ void block_labeling<N>::clear() {
     match();
 }
 
+template<size_t N>
+bool operator==(const block_labeling<N> &a, const block_labeling<N> &b) {
+
+    if (a.get_block_index_dims() != b.get_block_index_dims()) return false;
+
+    for (register size_t i = 0; i < N; i++) {
+        size_t ta = a.get_dim_type(i), tb = b.get_dim_type(i);
+
+        for (register size_t j = 0; j < a.get_dim(ta); j++) {
+            if (a.get_label(ta, j) != b.get_label(tb, j)) return false;
+        }
+    }
+
+    return true;
+}
+
 
 template<size_t N, size_t M>
 void transfer_labeling(const block_labeling<N> &from,

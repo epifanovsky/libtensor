@@ -13,6 +13,19 @@ template class block_labeling<4>;
 template class block_labeling<5>;
 template class block_labeling<6>;
 
+extern template
+bool operator==(const block_labeling<1> &, const block_labeling<1> &);
+extern template
+bool operator==(const block_labeling<2> &, const block_labeling<2> &);
+extern template
+bool operator==(const block_labeling<3> &, const block_labeling<3> &);
+extern template
+bool operator==(const block_labeling<4> &, const block_labeling<4> &);
+extern template
+bool operator==(const block_labeling<5> &, const block_labeling<5> &);
+extern template
+bool operator==(const block_labeling<6> &, const block_labeling<6> &);
+
 template void transfer_labeling(const block_labeling<1> &,
         const sequence<1, size_t> &, block_labeling<1> &);
 template void transfer_labeling(const block_labeling<1> &,
