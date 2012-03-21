@@ -130,17 +130,17 @@ bool se_label<N, T>::is_allowed(const index<N> &idx) const {
         for (typename evaluation_rule<N>::iterator it =
                 m_rule.begin(i); it != m_rule.end(i); it++) {
 
+            // Block label in sequence or intrinsic label is the invalid label
+            if (invalid[m_rule.get_seq_no(it)] ||
+                    m_rule.get_intrinsic(it) == product_table_i::k_invalid) {
+               continue;
+            }
+
             // Sequence is empty or target is invalid label ?
             product_table_i::label_group_t &lg = lgs[m_rule.get_seq_no(it)];
             if (lg.size() == 0 ||
                     m_rule.get_target(it) == product_table_i::k_invalid) {
                 is_allowed = false; break;
-            }
-
-            // block label in sequence or intrinsic label is the invalid label
-            if (invalid[m_rule.get_seq_no(it)] ||
-                    m_rule.get_intrinsic(it) == product_table_i::k_invalid) {
-               continue;
             }
 
             lg.push_back(m_rule.get_intrinsic(it));

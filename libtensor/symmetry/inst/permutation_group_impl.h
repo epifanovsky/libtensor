@@ -185,7 +185,7 @@ void permutation_group<N, T>::stabilize(
         throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__, "seq.");
 
     // 2) all sets are numbered consecutively
-    i = 0;
+    i = 1;
     for (; i < N && sets[i]; i++) { }
     for (; i < N && (! sets[i]); i++) { }
     if (i != N)
