@@ -1,5 +1,4 @@
 #include <libtensor/symmetry/so_apply_se_part.h>
-#include <libtensor/btod/transf_double.h>
 #include "../compare_ref.h"
 #include "so_apply_impl_part_test.h"
 

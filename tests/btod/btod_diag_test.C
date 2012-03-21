@@ -3,9 +3,10 @@
 #include <libtensor/core/mask.h>
 #include <libtensor/btod/btod_diag.h>
 #include <libtensor/btod/btod_random.h>
+#include <libtensor/symmetry/point_group_table.h>
+#include <libtensor/symmetry/product_table_container.h>
 #include <libtensor/symmetry/se_label.h>
 #include <libtensor/symmetry/se_perm.h>
-#include <libtensor/symmetry/label/point_group_table.h>
 #include <libtensor/tod/tod_btconv.h>
 #include <libtensor/tod/tod_diag.h>
 #include "btod_diag_test.h"

@@ -4,7 +4,8 @@
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/btod/btod_ewmult2.h>
 #include <libtensor/btod/btod_random.h>
-#include <libtensor/symmetry/label/point_group_table.h>
+#include <libtensor/symmetry/point_group_table.h>
+#include <libtensor/symmetry/product_table_container.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/symmetry/se_label.h>
 #include <libtensor/symmetry/so_copy.h>

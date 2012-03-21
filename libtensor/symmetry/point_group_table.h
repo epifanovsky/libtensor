@@ -2,7 +2,7 @@
 #define LIBTENSOR_POINT_GROUP_TABLE_H
 
 #include <vector>
-#include "../../core/out_of_bounds.h"
+#include <libtensor/core/out_of_bounds.h>
 #include "product_table_i.h"
 
 namespace libtensor {

@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <sstream>
-#include <libtensor/btod/transf_double.h>
-#include <libtensor/symmetry/perm/permutation_group.h>
+#include <libtensor/core/permutation_builder.h>
+#include <libtensor/symmetry/permutation_group.h>
 #include "permutation_group_test.h"
 
 namespace libtensor {

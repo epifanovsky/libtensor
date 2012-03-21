@@ -6,6 +6,7 @@
 #include "../core/block_tensor_ctrl.h"
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
+#include "../core/permutation_builder.h"
 #include "../symmetry/so_dirprod.h"
 #include "../symmetry/so_merge.h"
 #include "../tod/tod_mult.h"

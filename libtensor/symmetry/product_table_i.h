@@ -4,7 +4,7 @@
 #include <set>
 #include <string>
 #include <vector>
-#include "../bad_symmetry.h"
+#include "bad_symmetry.h"
 
 namespace libtensor {
 

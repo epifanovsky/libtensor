@@ -1,5 +1,4 @@
-#include <libtensor/symmetry/perm/so_permute_impl_perm.h>
-#include <libtensor/btod/transf_double.h>
+#include <libtensor/symmetry/so_permute_se_perm.h>
 #include "../compare_ref.h"
 #include "so_permute_impl_perm_test.h"
 

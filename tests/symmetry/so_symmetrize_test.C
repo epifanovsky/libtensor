@@ -2,7 +2,6 @@
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/symmetry/se_part.h>
 #include <libtensor/symmetry/so_symmetrize.h>
-#include <libtensor/btod/transf_double.h>
 #include "../compare_ref.h"
 #include "so_symmetrize_test.h"
 

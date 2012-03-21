@@ -6,9 +6,9 @@
 #include "se_label.h"
 #include "se_part.h"
 #include "se_perm.h"
-#include "label/so_symmetrize3_impl_label.h"
-#include "part/so_symmetrize3_impl_part.h"
-#include "perm/so_symmetrize3_impl_perm.h"
+#include "so_symmetrize3_se_label.h"
+#include "so_symmetrize3_se_part.h"
+#include "so_symmetrize3_se_perm.h"
 
 namespace libtensor {
 

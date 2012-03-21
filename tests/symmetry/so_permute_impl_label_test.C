@@ -1,7 +1,6 @@
-#include <libtensor/btod/transf_double.h>
-#include <libtensor/symmetry/label/point_group_table.h>
-#include <libtensor/symmetry/label/product_table_container.h>
-#include <libtensor/symmetry/label/so_permute_impl_label.h>
+#include <libtensor/symmetry/point_group_table.h>
+#include <libtensor/symmetry/product_table_container.h>
+#include <libtensor/symmetry/so_permute_se_label.h>
 #include "../compare_ref.h"
 #include "so_permute_impl_label_test.h"
 

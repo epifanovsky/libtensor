@@ -3,8 +3,8 @@
 
 #include <map>
 #include <typeinfo>
+#include <libtensor/exception.h>
 #include <libutil/singleton.h>
-#include "../../exception.h"
 #include "product_table_i.h"
 
 namespace libtensor {

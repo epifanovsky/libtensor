@@ -7,8 +7,8 @@
 #include <libtensor/btod/btod_import_raw.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/btod/btod_select.h>
-#include <libtensor/symmetry/label/point_group_table.h>
-#include <libtensor/symmetry/label/product_table_container.h>
+#include <libtensor/symmetry/point_group_table.h>
+#include <libtensor/symmetry/product_table_container.h>
 #include <libtensor/symmetry/se_label.h>
 #include <libtensor/symmetry/se_part.h>
 #include <libtensor/symmetry/se_perm.h>

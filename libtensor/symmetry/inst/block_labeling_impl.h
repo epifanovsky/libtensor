@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_BLOCK_LABELING_IMPL_H
 #define LIBTENSOR_BLOCK_LABELING_IMPL_H
 
-#include "../../bad_symmetry.h"
+#include "../bad_symmetry.h"
 
 namespace libtensor {
 

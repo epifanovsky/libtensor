@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_SO_APPLY_SE_PERM_IMPL_H
 #define LIBTENSOR_SO_APPLY_SE_PERM_IMPL_H
 
-#include "../perm/permutation_group.h"
+#include "../permutation_group.h"
 
 namespace libtensor {
 

@@ -1,5 +1,4 @@
-#include <libtensor/symmetry/part/combine_part.h>
-#include <libtensor/btod/transf_double.h>
+#include <libtensor/symmetry/combine_part.h>
 #include "../compare_ref.h"
 #include "combine_part_test.h"
 

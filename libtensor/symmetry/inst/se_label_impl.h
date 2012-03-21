@@ -2,10 +2,8 @@
 #define LIBTENSOR_SE_LABEL_IMPL_H
 
 #include <libtensor/defs.h>
-//#include "../core/dimensions.h"
-//#include "../core/mask.h"
 #include "../bad_symmetry.h"
-#include "../label/product_table_container.h"
+#include "../product_table_container.h"
 
 namespace libtensor {
 

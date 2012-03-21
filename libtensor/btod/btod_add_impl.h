@@ -2,6 +2,7 @@
 #define LIBTENSOR_BTOD_ADD_IMPL_H
 
 #include "../core/block_index_space_product_builder.h"
+#include "../core/permutation_builder.h"
 #include "../symmetry/so_dirsum.h"
 #include "../symmetry/so_merge.h"
 #include "../symmetry/so_permute.h"

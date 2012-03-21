@@ -1,4 +1,4 @@
-#include <libtensor/symmetry/part/so_dirprod_impl_part.h>
+#include <libtensor/symmetry/so_dirprod_se_part.h>
 #include <libtensor/btod/transf_double.h>
 #include "../compare_ref.h"
 #include "so_dirprod_impl_part_test.h"

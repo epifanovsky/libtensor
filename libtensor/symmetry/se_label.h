@@ -2,9 +2,9 @@
 #define LIBTENSOR_SE_LABEL_H
 
 #include <libtensor/core/symmetry_element_i.h>
-#include "label/block_labeling.h"
-#include "label/evaluation_rule.h"
-#include "label/product_table_i.h"
+#include "block_labeling.h"
+#include "evaluation_rule.h"
+#include "product_table_i.h"
 
 namespace libtensor {
 

@@ -1,8 +1,5 @@
-#ifdef LIBTENSOR_INSTANTIATE_TEMPLATES
-
 #include "../evaluation_rule.h"
 #include "evaluation_rule_impl.h"
-
 
 namespace libtensor {
 
@@ -20,6 +17,4 @@ template class evaluation_rule<11>;
 template class evaluation_rule<12>;
 
 } // namespace libtensor
-
-#endif // LIBTENSOR_INSTANTIATE_TEMPLATES
 

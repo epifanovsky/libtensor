@@ -1,8 +1,5 @@
-#ifdef LIBTENSOR_INSTANTIATE_TEMPLATES
-
 #include "../block_labeling.h"
 #include "block_labeling_impl.h"
-
 
 namespace libtensor {
 
@@ -345,6 +342,3 @@ template void transfer_labeling(const block_labeling<12> &,
         const sequence<12, size_t> &, block_labeling<12> &);
 
 } // namespace libtensor
-
-#endif // LIBTENSOR_INSTANTIATE_TEMPLATES
-

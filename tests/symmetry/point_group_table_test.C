@@ -1,4 +1,4 @@
-#include <libtensor/symmetry/label/point_group_table.h>
+#include <libtensor/symmetry/point_group_table.h>
 #include "point_group_table_test.h"
 
 namespace libtensor {

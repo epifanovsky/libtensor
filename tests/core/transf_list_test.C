@@ -1,7 +1,8 @@
 #include <sstream>
 #include <libtensor/core/transf_list.h>
 #include <libtensor/btod/transf_double.h>
-#include <libtensor/symmetry/label/point_group_table.h>
+#include <libtensor/symmetry/point_group_table.h>
+#include <libtensor/symmetry/product_table_container.h>
 #include <libtensor/symmetry/se_label.h>
 #include <libtensor/symmetry/se_part.h>
 #include <libtensor/symmetry/se_perm.h>

@@ -1,5 +1,4 @@
-#include <libtensor/symmetry/perm/so_merge_impl_perm.h>
-#include <libtensor/btod/transf_double.h>
+#include <libtensor/symmetry/so_merge_se_perm.h>
 #include <sstream>
 #include "so_merge_impl_perm_test.h"
 

@@ -7,7 +7,9 @@
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/btod/btod_dirsum.h>
 #include <libtensor/btod/btod_random.h>
-#include <libtensor/symmetry/label/point_group_table.h>
+#include <libtensor/symmetry/permutation_group.h>
+#include <libtensor/symmetry/point_group_table.h>
+#include <libtensor/symmetry/product_table_container.h>
 #include <libtensor/symmetry/se_label.h>
 #include <libtensor/symmetry/se_part.h>
 #include <libtensor/tod/tod_btconv.h>

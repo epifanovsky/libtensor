@@ -3,7 +3,9 @@
 #include <libtensor/btod/btod_contract2.h>
 #include <libtensor/btod/btod_copy.h>
 #include <libtensor/btod/btod_random.h>
-#include <libtensor/symmetry/label/point_group_table.h>
+#include <libtensor/symmetry/permutation_group.h>
+#include <libtensor/symmetry/point_group_table.h>
+#include <libtensor/symmetry/product_table_container.h>
 #include <libtensor/symmetry/so_copy.h>
 #include <libtensor/tod/tod_btconv.h>
 #include <libtensor/tod/tod_contract2.h>

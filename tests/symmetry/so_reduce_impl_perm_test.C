@@ -1,6 +1,4 @@
-#include <libtensor/symmetry/perm/so_reduce_impl_perm.h>
-#include <libtensor/btod/transf_double.h>
-#include <sstream>
+#include <libtensor/symmetry/so_reduce_se_perm.h>
 #include "../compare_ref.h"
 #include "so_reduce_impl_perm_test.h"
 

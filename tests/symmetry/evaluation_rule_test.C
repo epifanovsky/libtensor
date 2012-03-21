@@ -1,4 +1,4 @@
-#include <libtensor/symmetry/label/evaluation_rule.h>
+#include <libtensor/symmetry/evaluation_rule.h>
 #include "evaluation_rule_test.h"
 
 namespace libtensor {

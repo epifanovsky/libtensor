@@ -3,8 +3,8 @@
 
 #include <map>
 #include <vector>
-#include "../../core/sequence.h"
-#include "../../exception.h"
+#include <libtensor/core/sequence.h>
+#include <libtensor/exception.h>
 #include "product_table_i.h"
 
 namespace libtensor {

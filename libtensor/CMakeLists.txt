@@ -11,9 +11,9 @@ set(SRC
 #    btod/cholesky.C
 #    btod/btod_diagonalize.C
 #    btod/btod_tridiagonalize.C
-    symmetry/label/point_group_table.C
-    symmetry/label/product_table_container.C
-    symmetry/label/product_table_i.C
+    symmetry/point_group_table.C
+    symmetry/product_table_container.C
+    symmetry/product_table_i.C
     tod/loop_list_add.C
     tod/loop_list_copy.C
     tod/loop_list_mul.C
@@ -124,6 +124,10 @@ set(SRC_LINALG
 
 set(SRC_INST
     dense_tensor/inst/dense_tensor_inst.C
+    symmetry/inst/block_labeling_inst.C
+    symmetry/inst/combine_part_inst.C
+    symmetry/inst/evaluation_rule_inst.C
+    symmetry/inst/permutation_group_inst.C
     symmetry/inst/se_label_inst.C
     symmetry/inst/se_part_inst.C
     symmetry/inst/se_perm_inst.C
@@ -133,14 +137,33 @@ set(SRC_INST
     symmetry/inst/so_apply_se_perm_inst.C
     symmetry/inst/so_copy_inst.C
     symmetry/inst/so_dirprod_inst.C
+    symmetry/inst/so_dirprod_se_label_inst.C
+    symmetry/inst/so_dirprod_se_part_inst.C
+    symmetry/inst/so_dirprod_se_perm_inst.C
     symmetry/inst/so_dirsum_inst.C
+    symmetry/inst/so_dirsum_se_label_inst.C
+    symmetry/inst/so_dirsum_se_part_inst.C
+    symmetry/inst/so_dirsum_se_perm_inst.C
     symmetry/inst/so_merge_inst.C
+    symmetry/inst/so_merge_se_label_inst.C
+    symmetry/inst/so_merge_se_part_inst.C
+    symmetry/inst/so_merge_se_perm_inst.C
     symmetry/inst/so_permute_inst.C
+    symmetry/inst/so_permute_se_label_inst.C
+    symmetry/inst/so_permute_se_part_inst.C
+    symmetry/inst/so_permute_se_perm_inst.C
     symmetry/inst/so_reduce_inst.C
+    symmetry/inst/so_reduce_se_label_inst.C
+    symmetry/inst/so_reduce_se_part_inst.C
+    symmetry/inst/so_reduce_se_perm_inst.C
     symmetry/inst/so_symmetrize_inst.C
+    symmetry/inst/so_symmetrize_se_label_inst.C
+    symmetry/inst/so_symmetrize_se_part_inst.C
+    symmetry/inst/so_symmetrize_se_perm_inst.C
     symmetry/inst/so_symmetrize3_inst.C
-    symmetry/label/inst/block_labeling.C
-    symmetry/label/inst/evaluation_rule.C
+    symmetry/inst/so_symmetrize3_se_label_inst.C
+    symmetry/inst/so_symmetrize3_se_part_inst.C
+    symmetry/inst/so_symmetrize3_se_perm_inst.C
     tod/tod_add.C
     tod/tod_contract2.C
     tod/tod_copy.C

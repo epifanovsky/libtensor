@@ -1,5 +1,4 @@
-#include <libtensor/symmetry/part/so_merge_impl_part.h>
-#include <libtensor/btod/transf_double.h>
+#include <libtensor/symmetry/so_merge_se_part.h>
 #include "../compare_ref.h"
 #include "so_merge_impl_part_test.h"
 

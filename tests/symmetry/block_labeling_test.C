@@ -1,4 +1,4 @@
-#include <libtensor/symmetry/label/block_labeling.h>
+#include <libtensor/symmetry/block_labeling.h>
 #include "block_labeling_test.h"
 
 namespace libtensor {

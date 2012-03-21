@@ -2,9 +2,9 @@
 #define LIBTENSOR_BLOCK_LABELING_H
 
 #include <vector>
-#include "../../core/dimensions.h"
-#include "../../core/mask.h"
-#include "../../exception.h"
+#include <libtensor/core/dimensions.h>
+#include <libtensor/core/mask.h>
+#include <libtensor/exception.h>
 #include "product_table_i.h"
 
 namespace libtensor {

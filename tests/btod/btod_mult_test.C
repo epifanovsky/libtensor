@@ -2,8 +2,6 @@
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/btod/btod_mult.h>
 #include <libtensor/btod/btod_random.h>
-//#include <libtensor/btod/btod_symmetrize.h>
-//#include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/tod/tod_btconv.h>
 #include <libtensor/tod/tod_mult.h>
 #include <iomanip>

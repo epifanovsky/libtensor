@@ -1,5 +1,5 @@
-#include <libtensor/symmetry/label/so_dirsum_impl_label.h>
-#include <libtensor/symmetry/label/product_table_container.h>
+#include <libtensor/symmetry/so_dirsum_se_label.h>
+#include <libtensor/symmetry/product_table_container.h>
 #include "../compare_ref.h"
 #include "so_dirsum_impl_label_test.h"
 

@@ -1,4 +1,5 @@
-#include <libtensor/symmetry/label/so_merge_impl_label.h>
+#include <libtensor/symmetry/product_table_container.h>
+#include <libtensor/symmetry/so_merge_se_label.h>
 #include "so_merge_impl_label_test.h"
 
 namespace libtensor {

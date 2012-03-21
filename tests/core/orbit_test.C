@@ -1,8 +1,8 @@
 #include <sstream>
 #include <libtensor/core/orbit.h>
 #include <libtensor/btod/transf_double.h>
-#include <libtensor/symmetry/label/point_group_table.h>
-#include <libtensor/symmetry/label/product_table_container.h>
+#include <libtensor/symmetry/point_group_table.h>
+#include <libtensor/symmetry/product_table_container.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/symmetry/se_label.h>
 #include "orbit_test.h"
