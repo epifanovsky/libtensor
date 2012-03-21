@@ -86,7 +86,7 @@ void so_symmetrize_test::test_2() throw(libtest::test_exception) {
 }
 
 
-/**	\test Symmetrization of S2*S2 to S4 in 4-space.
+/**	\test Symmetrization of S2*S2 in 4-space.
  **/
 void so_symmetrize_test::test_3() throw(libtest::test_exception) {
 
@@ -105,16 +105,19 @@ void so_symmetrize_test::test_3() throw(libtest::test_exception) {
 	symmetry<4, double> sym1(bis), sym2(bis), sym2_ref(bis);
 
 	sym1.insert(se_perm<4, double>(
-		permutation<4>().permute(0, 1), true));
+	        permutation<4>().permute(0, 1), true));
 	sym1.insert(se_perm<4, double>(
-		permutation<4>().permute(2, 3), true));
+	        permutation<4>().permute(2, 3), true));
 	sym2_ref.insert(se_perm<4, double>(
-		permutation<4>().permute(0, 1), true));
-	sym2_ref.insert(se_perm<4, double>(permutation<4>().permute(0, 1).
-		permute(1, 2).permute(2, 3), true));
+	        permutation<4>().permute(0, 1), true));
+    sym2_ref.insert(se_perm<4, double>(
+            permutation<4>().permute(2, 3), true));
+    sym2_ref.insert(se_perm<4, double>(
+	        permutation<4>().permute(0, 2).permute(1, 3), true));
 
     sequence<4, size_t> seq1(0), seq2(0);
-    seq1[1] = 1; seq1[2] = 2; seq2[1] = seq2[2] = 1;
+    seq1[0] = seq1[1] = 1; seq1[2] = seq1[3] = 2;
+    seq2[0] = seq2[3] = 1; seq2[1] = seq2[2] = 2;
 	so_symmetrize<4, double>(sym1, seq1, seq2, true).perform(sym2);
 
 	compare_ref<4>::compare(testname, sym2, sym2_ref);
