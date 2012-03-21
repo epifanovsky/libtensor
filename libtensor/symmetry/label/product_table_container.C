@@ -17,6 +17,7 @@ void product_table_container::add(
         const product_table_i &pt) throw(bad_parameter) {
 
     static const char *method = "add(product_table_i &)";
+
     list_t::iterator it = m_tables.find(pt.get_id());
     if (it != m_tables.end())
         throw bad_parameter(g_ns, k_clazz, method,
@@ -31,13 +32,13 @@ void product_table_container::add(
                 __FILE__, __LINE__, e.what());
     }
 
-    it = m_tables.insert(m_tables.begin(), pair_t(pt.get_id(), container()));
+    it = m_tables.insert(m_tables.begin(), element_t(pt.get_id(), container()));
 
     it->second.m_pt = pt.clone();
 }
 
 void product_table_container::erase(
-        const std::string &id) throw(bad_parameter, exception) {
+        const std::string &id) throw(bad_parameter, generic_exception) {
 
     const char *method = "erase(const id_t &)";
 
@@ -47,7 +48,8 @@ void product_table_container::erase(
                 "Table does not exist.");
 
     if (it->second.m_co != 0)
-        throw_exc(k_clazz, method, "Table still checked out.");
+        throw generic_exception(g_ns, k_clazz, method, __FILE__, __LINE__,
+                "Table still checked out.");
 
     delete it->second.m_pt;
     it->second.m_pt = 0;

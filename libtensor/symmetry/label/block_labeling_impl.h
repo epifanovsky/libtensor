@@ -17,7 +17,8 @@ block_labeling<N>::block_labeling(const dimensions<N> &bidims) :
         if (m_type[i] != (size_t) -1) continue;
 
         m_type[i] = cur_type;
-        m_labels[cur_type] = new label_group(m_bidims[i], (size_t) -1);
+        m_labels[cur_type] =
+                new blk_label_t(m_bidims[i], product_table_i::k_invalid);
 
         for (register size_t j = i + 1; j < N; j++) {
 
@@ -34,7 +35,7 @@ block_labeling<N>::block_labeling(const block_labeling<N> &bl) :
 
     for (register size_t i = 0; i < N && bl.m_labels[i] != 0; i++) {
 
-        m_labels[i] = new label_group(*(bl.m_labels[i]));
+        m_labels[i] = new blk_label_t(*(bl.m_labels[i]));
     }
 }
 
@@ -87,7 +88,7 @@ void block_labeling<N>::assign(const mask<N> &msk, size_t blk, label_t l) {
         for (i = 0; i < N; i++) if (m_labels[i] == 0) break;
         cur_type = i;
         m_labels[cur_type] =
-                new label_group(*(m_labels[type]));
+                new blk_label_t(*(m_labels[type]));
 
         // Assign all masked indexes to the new type.
         for (i = 0; i < N; i++) {
@@ -111,7 +112,7 @@ template<size_t N>
 void block_labeling<N>::match() {
 
     sequence<N, size_t> types(m_type);
-    sequence<N, label_group*> labels(m_labels);
+    sequence<N, blk_label_t*> labels(m_labels);
 
     for (size_t i = 0; i < N; i++) {
         m_type[i] = (size_t) -1; m_labels[i] = 0;
@@ -124,7 +125,7 @@ void block_labeling<N>::match() {
         if (labels[itype] == 0) continue;
 
         m_type[i] = cur_type;
-        label_group *lli = m_labels[cur_type] = labels[itype];
+        blk_label_t *lli = m_labels[cur_type] = labels[itype];
         labels[itype] = 0;
 
         for (size_t j = i + 1; j < N; j++) {
@@ -200,8 +201,9 @@ template<size_t N>
 void block_labeling<N>::clear() {
 
     for (register size_t i = 0; i < N && m_labels[i] != 0; i++) {
-        label_group &lg = *(m_labels[i]);
-        for (size_t j = 0; j < lg.size(); j++) lg[j] = (label_t) -1;
+        blk_label_t &lg = *(m_labels[i]);
+        for (size_t j = 0; j < lg.size(); j++)
+            lg[j] = product_table_i::k_invalid;
     }
 
     match();

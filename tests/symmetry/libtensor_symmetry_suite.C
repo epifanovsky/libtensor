@@ -5,12 +5,12 @@ namespace libtensor {
 libtensor_symmetry_suite::libtensor_symmetry_suite() :
 		libtest::test_suite("libtensor") {
 
-//    add_test("block_labeling", m_utf_block_labeling);
+    add_test("block_labeling", m_utf_block_labeling);
     add_test("combine_part", m_utf_combine_part);
 //    add_test("evaluation_rule", m_utf_evaluation_rule);
     add_test("permutation_group", m_utf_permutation_group);
-//    add_test("point_group_table", m_utf_point_group_table);
-//    add_test("product_table_container", m_utf_product_table_container);
+    add_test("point_group_table", m_utf_point_group_table);
+    add_test("product_table_container", m_utf_product_table_container);
 //    add_test("se_label", m_utf_se_label);
     add_test("se_part", m_utf_se_part);
     add_test("se_perm", m_utf_se_perm);

@@ -12,11 +12,11 @@ set(SRC
 #    btod/cholesky.C
 #    btod/btod_diagonalize.C
 #    btod/btod_tridiagonalize.C
-#    symmetry/label/block_labeling.C
+    symmetry/label/block_labeling.C
 #    symmetry/label/evaluation_rule.C
-#    symmetry/label/point_group_table.C
-#    symmetry/label/product_table_container.C
-#    symmetry/label/product_table_i.C
+    symmetry/label/point_group_table.C
+    symmetry/label/product_table_container.C
+    symmetry/label/product_table_i.C
 #    symmetry/label/transfer_rule.C
     tod/loop_list_add.C
     tod/loop_list_copy.C

@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_BLOCK_LABELING_H
 #define LIBTENSOR_BLOCK_LABELING_H
 
+#include <vector>
 #include "../../core/dimensions.h"
 #include "../../core/mask.h"
 #include "../../exception.h"
@@ -18,12 +19,13 @@ public:
     static const char *k_clazz;
 
     typedef product_table_i::label_t label_t;
-    typedef product_table_i::label_group label_group;
 
 private:
+    typedef std::vector<label_t> blk_label_t;
+
     dimensions<N> m_bidims; //!< Block index dimensions
     sequence<N, size_t> m_type; //!< Types of every dimension
-    sequence<N, label_group*> m_labels; //!< Label types
+    sequence<N, blk_label_t*> m_labels; //!< Label types
 
 public:
     //! \name Constructor/Destructor

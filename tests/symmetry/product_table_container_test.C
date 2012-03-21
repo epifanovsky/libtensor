@@ -21,43 +21,28 @@ void product_table_container_test::test_1() throw(libtest::test_exception) {
 
     try {
 
-        typedef point_group_table::label_t label_t;
-        typedef point_group_table::label_group label_group;
+        typedef point_group_table::irrep_label_t irrep_label_t;
+        typedef point_group_table::irrep_group_t irrep_group_t;
+        typedef point_group_table::irrep_map_t irrep_map_t;
 
         product_table_container &ptc = product_table_container::get_instance();
 
-
-        point_group_table pg1(testname, 4), pg2(testname, 2);
-        label_t ag = 0, bg = 1, au = 2, bu = 3, g = 0, u = 1;
-        pg1.add_product(ag, ag, ag);
-        pg1.add_product(ag, bg, bg);
-        pg1.add_product(ag, au, au);
-        pg1.add_product(ag, bu, bu);
-        pg1.add_product(bg, ag, bg);
-        pg1.add_product(bg, bg, ag);
+        irrep_label_t ag = 0, bg = 1, au = 2, bu = 3, g = 0, u = 1;
+        irrep_map_t in1, in2;
+        in1[ag] = "Ag"; in1[bg] = "Bg"; in1[au] = "Au"; in1[bu] = "Bu";
+        in2[g] = "g"; in2[u] = "u";
+        point_group_table pg1(testname, in1, ag), pg2(testname, in2, g);
         pg1.add_product(bg, au, bu);
         pg1.add_product(bg, bu, au);
-        pg1.add_product(au, ag, au);
-        pg1.add_product(au, bg, bu);
-        pg1.add_product(au, au, ag);
         pg1.add_product(au, bu, bg);
-        pg1.add_product(bu, ag, bu);
-        pg1.add_product(bu, bg, au);
-        pg1.add_product(bu, au, bg);
-        pg1.add_product(bu, bu, ag);
         pg1.check();
-
-        pg2.add_product(g, g, g);
-        pg2.add_product(g, u, u);
-        pg2.add_product(u, g, u);
-        pg2.add_product(u, u, g);
         pg2.check();
 
-        ptc.add(pg1);
+        ptc.add(pg2);
         bool failed = false;
         try {
 
-            ptc.add(pg2);
+            ptc.add(pg1);
 
         } catch(exception &e) {
             failed = true;
@@ -71,12 +56,14 @@ void product_table_container_test::test_1() throw(libtest::test_exception) {
         ptc.erase(testname);
 
         // adding incomplete table
-        pg2.delete_product(u, g);
+        pg1.reset();
+        pg1.add_product(bg, au, bu);
+        pg1.add_product(bg, bu, au);
 
         failed = false;
         try {
 
-            ptc.add(pg2);
+            ptc.add(pg1);
 
         } catch(exception &e) {
             failed = true;
@@ -102,20 +89,17 @@ void product_table_container_test::test_2() throw(libtest::test_exception) {
 
     try {
 
-        typedef point_group_table::label_t label_t;
-        typedef point_group_table::label_group label_group;
+        typedef point_group_table::irrep_label_t irrep_label_t;
+        typedef point_group_table::irrep_group_t irrep_group_t;
+        typedef point_group_table::irrep_map_t irrep_map_t;
 
         product_table_container &ptc = product_table_container::get_instance();
 
         { // Setup point group table
-            point_group_table pg(testname, 2);
-            label_t g = 0, u = 1;
-            pg.add_product(g, g, g);
-            pg.add_product(g, u, u);
-            pg.add_product(u, g, u);
-            pg.add_product(u, u, g);
-            pg.check();
-
+            irrep_label_t g = 0, u = 1;
+            irrep_map_t irnames;
+            irnames[g] = "g"; irnames[u] = "u";
+            point_group_table pg(testname, irnames, g);
             ptc.add(pg);
         }
 
@@ -144,7 +128,8 @@ void product_table_container_test::test_2() throw(libtest::test_exception) {
         }
         if (! failed) {
             fail_test(testname, __FILE__, __LINE__,
-                    "Table requested for reading, while already checked out for writing.");
+                    "Table requested for reading, "
+                    "while already checked out for writing.");
         }
 
         ptc.ret_table(testname);
@@ -206,20 +191,17 @@ void product_table_container_test::test_3() throw(libtest::test_exception) {
 
     try {
 
-        typedef point_group_table::label_t label_t;
-        typedef point_group_table::label_group label_group;
+        typedef point_group_table::irrep_label_t irrep_label_t;
+        typedef point_group_table::irrep_group_t irrep_group_t;
+        typedef point_group_table::irrep_map_t irrep_map_t;
 
         product_table_container &ptc = product_table_container::get_instance();
 
         { // Setup point group table
-            point_group_table pg(testname, 2);
-            label_t g = 0, u = 1;
-            pg.add_product(g, g, g);
-            pg.add_product(g, u, u);
-            pg.add_product(u, g, u);
-            pg.add_product(u, u, g);
-            pg.check();
-
+            irrep_label_t g = 0, u = 1;
+            irrep_map_t irnames;
+            irnames[g] = "g"; irnames[u] = "u";
+            point_group_table pg(testname, irnames, g);
             ptc.add(pg);
         }
 
@@ -234,7 +216,8 @@ void product_table_container_test::test_3() throw(libtest::test_exception) {
             failed = true;
         }
         if (! failed) {
-            fail_test(testname, __FILE__, __LINE__, "Checked out table deleted.");
+            fail_test(testname, __FILE__, __LINE__,
+                    "Checked out table deleted.");
         }
 
         ptc.ret_table(testname);
@@ -250,7 +233,8 @@ void product_table_container_test::test_3() throw(libtest::test_exception) {
             failed = true;
         }
         if (! failed) {
-            fail_test(testname, __FILE__, __LINE__, "Checked out table deleted.");
+            fail_test(testname, __FILE__, __LINE__,
+                    "Checked out table deleted.");
         }
 
         ptc.ret_table(testname);
