@@ -94,7 +94,7 @@ void symmetry_operation_impl< so_dirsum<N, M, T>, se_perm<N + M, T> >
 
                 permutation<N> p(e1.get_perm());
                 p.permute(e1b.get_perm());
-                if (! p.is_identity()) continue;
+                if (p.is_identity()) continue;
 
                 sequence<N, size_t> a1(0);
                 sequence<N + M, size_t> a2a(0), a2b(0);
