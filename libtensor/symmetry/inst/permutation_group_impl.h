@@ -172,27 +172,6 @@ template<size_t N, typename T>
 void permutation_group<N, T>::stabilize(
         const sequence<N, size_t> &seq, permutation_group<N, T> &g2) {
 
-    static const char *method = "stabilize<M>(const sequence<N, size_t> &, "
-            "permutation_group<N, T>&)";
-
-#ifdef LIBTENSOR_DEBUG
-    // Do basic error checking
-    mask<N> sets;
-    // 1) no value of seq is larger than N (no more than N sets)
-    register size_t i = 0;
-    for (; i < N && seq[i] < N; i++) { sets[seq[i]] = true; }
-    if (i != N)
-        throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__, "seq.");
-
-    // 2) all sets are numbered consecutively
-    i = 1;
-    for (; i < N && sets[i]; i++) { }
-    for (; i < N && (! sets[i]); i++) { }
-    if (i != N)
-        throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__, "seq.");
-
-#endif
-
     // generating set of G(P)
     perm_list_t gs;
     make_setstabilizer(m_br, seq, gs);
