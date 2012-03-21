@@ -615,7 +615,7 @@ void btod_sum_test::test_9b() throw(libtest::test_exception) {
 	op1.perform(bt3_ref);
 	op2.perform(bt3_ref, -1.0);
 
-	btod_sum<4> sum(op1);
+    btod_sum<4> sum(op1);
 	sum.add_op(op2, -1.0);
 
 	cpu_pool cpus(1);

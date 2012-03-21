@@ -671,11 +671,9 @@ void btod_dotprod_test::test_10() throw(libtest::test_exception) {
 	// Setup product table
 	//
 	{
-	    std::vector<std::string> irnames;
+	    std::vector<std::string> irnames(2);
 	    irnames[0] = "g"; irnames[1] = "u";
 		point_group_table pg(tnss.str(), irnames, irnames[0]);
-		pg.add_product(0, 0, 0);
-		pg.add_product(0, 1, 1);
 		pg.add_product(1, 1, 0);
 
 		product_table_container::get_instance().add(pg);

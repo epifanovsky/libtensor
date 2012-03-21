@@ -41,9 +41,9 @@ void additive_btod<N>::perform(block_tensor_i<N, double> &bt, double c) {
     permutation<N + N> p0;
     block_index_space_product_builder<N, N> bbx(get_bis(), bt.get_bis(), p0);
     symmetry<N + N, double> symx(bbx.get_bis());
-    so_dirsum<N, N, double>(get_symmetry(), symcopy, p0).perform(symx);
+    so_dirsum<N, N, double>(symcopy, get_symmetry(), p0).perform(symx);
     so_merge<N + N, N + N, N, double> merge(symx);
-    for (size_t i = 0; i < N; i++) {
+    for (register size_t i = 0; i < N; i++) {
          mask<N + N> m;
          m[i] = m[i + N] = true;
          merge.add_mask(m);

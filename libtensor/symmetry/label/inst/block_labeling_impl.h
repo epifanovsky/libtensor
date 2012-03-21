@@ -235,7 +235,7 @@ void transfer_labeling(const block_labeling<N> &from,
 
     static const char *method =
             "transfer_labeling(const block_labeling<N> &, "
-            "const sequence<N> &, block_labeling<N+M> &)";
+            "const sequence<N> &, block_labeling<M> &)";
 
     mask<N> done;
     // Mark unmapped dimensions as done
