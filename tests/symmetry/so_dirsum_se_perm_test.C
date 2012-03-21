@@ -95,10 +95,15 @@ void so_dirsum_se_perm_test::test_empty_2(
         bis.split(m, 1);
         bis.split(m, 2);
 
-        permutation<3> p1; p1.permute(0, 1).permute(1, 2);
+        permutation<3> p1;
+        p1.permute(0, 1).permute(1, 2);
+
         permutation<5> p2;
-        if (perm) p2.permute(1, 4).permute(0, 1);
-        else p2.permute(0, 1).permute(1, 2);
+        if (perm)
+            p2.permute(1, 4).permute(0, 1);
+        else
+            p2.permute(0, 1).permute(1, 2);
+
         se3_t elema(p1, true);
         se5_t elemc(p2, true);
 
@@ -111,7 +116,9 @@ void so_dirsum_se_perm_test::test_empty_2(
         setc_ref.insert(elemc);
 
         permutation<5> px;
-        if (perm) px.permute(0, 2).permute(2, 4);
+        if (perm) {
+            px.permute(0, 2).permute(2, 4);
+        }
         symmetry_operation_params<so_t> params(seta, setb, px, bis, setc);
 
         so_se_t().perform(params);

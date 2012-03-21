@@ -72,9 +72,7 @@ template<size_t N, typename T>
 void se_label<N, T>::permute(const permutation<N> &p) {
 
     m_blk_labels.permute(p);
-
     for (size_t i = 0; i < m_rule.get_n_sequences(); i++) {
-
         p.apply(m_rule[i]);
     }
 }

@@ -59,7 +59,7 @@ symmetry_operation_impl< so_merge<N, M, K, T>, se_perm<N, T> >::do_perform(
     adapter_t g1(params.grp1);
     permutation_group<N, T> grp1(g1);
     permutation_group<N, T> grp2;
-    grp1.stabilize(params.msk, grp2);
+//    grp1.stabilize(params.msk, grp2);
 
     symmetry_element_set<N, T> set(element_t::k_sym_type);
     grp2.convert(set);

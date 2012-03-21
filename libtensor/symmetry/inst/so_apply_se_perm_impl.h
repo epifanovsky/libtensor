@@ -14,9 +14,7 @@ void symmetry_operation_impl< so_apply<N, T>, se_perm<N, T> >::do_perform(
         symmetry_operation_params_t &params) const {
 
     //	Adapter type for the input group
-    //
-    typedef se_perm<N, T> se_perm_t;
-    typedef symmetry_element_set_adapter<N, T, se_perm_t> adapter_t;
+    typedef symmetry_element_set_adapter<N, T, element_t> adapter_t;
 
     params.grp2.clear();
 
@@ -27,7 +25,7 @@ void symmetry_operation_impl< so_apply<N, T>, se_perm<N, T> >::do_perform(
         for (typename adapter_t::iterator it = adapter.begin();
                 it != adapter.end(); it++) {
 
-            const se_perm_t &el = adapter.get_elem(it);
+            const element_t &el = adapter.get_elem(it);
             if (el.is_symm())
                 group.add_orbit(el.is_symm(), el.get_perm());
         }
@@ -36,7 +34,7 @@ void symmetry_operation_impl< so_apply<N, T>, se_perm<N, T> >::do_perform(
         for (typename adapter_t::iterator it = adapter.begin();
                 it != adapter.end(); it++) {
 
-            const se_perm_t &el = adapter.get_elem(it);
+            const element_t &el = adapter.get_elem(it);
             group.add_orbit(params.sign || el.is_symm(), el.get_perm());
         }
     }

@@ -32,16 +32,19 @@ void so_reduce_se_part_test::test_empty_1() throw(libtest::test_exception) {
 
     typedef se_part<4, double> se4_t;
     typedef se_part<2, double> se2_t;
-    typedef so_reduce<4, 2, 1, double> so_reduce_t;
-    typedef symmetry_operation_impl<so_reduce_t, se4_t> so_reduce_se_t;
+    typedef so_reduce<4, 2, double> so_reduce_t;
+    typedef symmetry_operation_impl<so_reduce_t, se2_t> so_reduce_se_t;
 
     try {
 
         symmetry_element_set<4, double> set1(se4_t::k_sym_type);
         symmetry_element_set<2, double> set2(se2_t::k_sym_type);
 
-        mask<4> msk[1]; msk[0][2] = true; msk[0][3] = true;
-        symmetry_operation_params<so_reduce_t> params(set1, msk, set2);
+        mask<4> msk; msk[2] = msk[3] = true;
+        sequence<4, size_t> seq(0);
+        index<4> ia, ib; ib[2] = ib[3] = 2;
+        index_range<4> ir(ia, ib);
+        symmetry_operation_params<so_reduce_t> params(set1, msk, seq, ir, set2);
 
         so_reduce_se_t().perform(params);
 
@@ -64,18 +67,19 @@ void so_reduce_se_part_test::test_empty_2() throw(libtest::test_exception) {
 
     typedef se_part<5, double> se5_t;
     typedef se_part<2, double> se2_t;
-    typedef so_reduce<5, 3, 2, double> so_reduce_t;
-    typedef symmetry_operation_impl<so_reduce_t, se5_t> so_reduce_se_t;
+    typedef so_reduce<5, 3, double> so_reduce_t;
+    typedef symmetry_operation_impl<so_reduce_t, se2_t> so_reduce_se_t;
 
     try {
 
         symmetry_element_set<5, double> set1(se5_t::k_sym_type);
         symmetry_element_set<2, double> set2(se2_t::k_sym_type);
 
-        mask<5> msk[2];
-        msk[0][2] = true; msk[0][4] = true;
-        msk[1][3] = true;
-        symmetry_operation_params<so_reduce_t> params(set1, msk, set2);
+        mask<5> msk; msk[2] = msk[3] = msk[4] = true;
+        sequence<5, size_t> seq(0); seq[3] = 1;
+        index<5> ia, ib; ib[0] = ib[1] = ib[2] = ib[3] = ib[4] = 4;
+        index_range<5> ir(ia, ib);
+        symmetry_operation_params<so_reduce_t> params(set1, msk, seq, ir, set2);
 
         so_reduce_se_t().perform(params);
 
@@ -99,8 +103,8 @@ throw(libtest::test_exception) {
 
     typedef se_part<2, double> se2_t;
     typedef se_part<1, double> se1_t;
-    typedef so_reduce<2, 1, 1, double> so_reduce_t;
-    typedef symmetry_operation_impl<so_reduce_t, se2_t> so_reduce_se_t;
+    typedef so_reduce<2, 1, double> so_reduce_t;
+    typedef symmetry_operation_impl<so_reduce_t, se1_t> so_reduce_se_t;
 
     try {
 
@@ -142,9 +146,11 @@ throw(libtest::test_exception) {
         seta.insert(ela);
         setb_ref.insert(elb);
 
-        mask<2> m[1];
-        m[0][1] = true;
-        symmetry_operation_params<so_reduce_t> params(seta, m, setb);
+        mask<2> m; m[1] = true;
+        sequence<2, size_t> seq(0);
+        index<2> ia, ib; ib[0] = ib[1] = 3;
+        index_range<2> ir(ia, ib);
+        symmetry_operation_params<so_reduce_t> params(seta, m, seq, ir, setb);
         so_reduce_se_t().perform(params);
 
         if(setb.is_empty()) {
@@ -170,8 +176,8 @@ void so_reduce_se_part_test::test_nm1_2(
 
     typedef se_part<4, double> se4_t;
     typedef se_part<2, double> se2_t;
-    typedef so_reduce<4, 2, 1, double> so_reduce_t;
-    typedef symmetry_operation_impl<so_reduce_t, se4_t> so_reduce_se_t;
+    typedef so_reduce<4, 2, double> so_reduce_t;
+    typedef symmetry_operation_impl<so_reduce_t, se2_t> so_reduce_se_t;
 
     try {
 
@@ -235,8 +241,10 @@ void so_reduce_se_part_test::test_nm1_2(
         seta.insert(ela);
         setb_ref.insert(elb);
 
-        mask<4> msk[1]; msk[0] = m2a;
-        symmetry_operation_params<so_reduce_t> params(seta, msk, setb);
+        sequence<4, size_t> seq(0);
+        index<4> ia, ib; ib[0] = ib[1] = 3; ib[2] = ib[3] = 5;
+        index_range<4> ir(ia, ib);
+        symmetry_operation_params<so_reduce_t> params(seta, m2a, seq, ir, setb);
 
         so_reduce_se_t().perform(params);
 
@@ -265,8 +273,8 @@ void so_reduce_se_part_test::test_nm1_3(
 
     typedef se_part<4, double> se4_t;
     typedef se_part<2, double> se2_t;
-    typedef so_reduce<4, 2, 1, double> so_reduce_t;
-    typedef symmetry_operation_impl<so_reduce_t, se4_t> so_reduce_se_t;
+    typedef so_reduce<4, 2, double> so_reduce_t;
+    typedef symmetry_operation_impl<so_reduce_t, se2_t> so_reduce_se_t;
 
     try {
 
@@ -315,10 +323,11 @@ void so_reduce_se_part_test::test_nm1_3(
         seta.insert(ela);
         setb_ref.insert(elb);
 
-        mask<4> msk[1];
-        msk[0][2] = true; msk[0][3] = true;
-
-        symmetry_operation_params<so_reduce_t> params(seta, msk, setb);
+        mask<4> msk; msk[2] = msk[3] = true;
+        sequence<4, size_t> seq(0);
+        index<4> ia, ib; ib[0] = ib[1] = 3; ib[2] = ib[3] = 5;
+        index_range<4> ir(ia, ib);
+        symmetry_operation_params<so_reduce_t> params(seta, msk, seq, ir, setb);
 
         so_reduce_se_t().perform(params);
 
@@ -345,8 +354,8 @@ void so_reduce_se_part_test::test_nm1_4(
 
     typedef se_part<2, double> se2_t;
     typedef se_part<4, double> se4_t;
-    typedef so_reduce<4, 2, 1, double> so_reduce_t;
-    typedef symmetry_operation_impl<so_reduce_t, se4_t> so_reduce_se_t;
+    typedef so_reduce<4, 2, double> so_reduce_t;
+    typedef symmetry_operation_impl<so_reduce_t, se2_t> so_reduce_se_t;
 
     try {
 
@@ -396,9 +405,11 @@ void so_reduce_se_part_test::test_nm1_4(
         seta.insert(ela);
         setb_ref.insert(elb);
 
-        mask<4> msk[1];
-        msk[0][2] = true; msk[0][3] = true;
-        symmetry_operation_params<so_reduce_t> params(seta, msk, setb);
+        mask<4> msk; msk[2] = msk[3] = true;
+        sequence<4, size_t> seq(0);
+        index<4> ia, ib; ib[0] = 3; ib[1] = ib[2] = ib[3] = 5;
+        index_range<4> ir(ia, ib);
+        symmetry_operation_params<so_reduce_t> params(seta, msk, seq, ir, setb);
 
         so_reduce_se_t().perform(params);
 
@@ -425,8 +436,8 @@ void so_reduce_se_part_test::test_nm1_5(
 
     typedef se_part<2, double> se2_t;
     typedef se_part<4, double> se4_t;
-    typedef so_reduce<4, 2, 1, double> so_reduce_t;
-    typedef symmetry_operation_impl<so_reduce_t, se4_t> so_reduce_se_t;
+    typedef so_reduce<4, 2, double> so_reduce_t;
+    typedef symmetry_operation_impl<so_reduce_t, se2_t> so_reduce_se_t;
 
     try {
 
@@ -477,8 +488,10 @@ void so_reduce_se_part_test::test_nm1_5(
         seta.insert(ela);
         setb_ref.insert(elb);
 
-        mask<4> msk[1]; msk[0] = m1a;
-        symmetry_operation_params<so_reduce_t> params(seta, msk, setb);
+        sequence<4, size_t> seq(0);
+        index<4> ia, ib; ib[0] = ib[1] = 3; ib[2] = ib[3] = 5;
+        index_range<4> ir(ia, ib);
+        symmetry_operation_params<so_reduce_t> params(seta, m1a, seq, ir, setb);
 
         so_reduce_se_t().perform(params);
 
@@ -505,8 +518,8 @@ void so_reduce_se_part_test::test_nm1_6(
 
     typedef se_part<2, double> se2_t;
     typedef se_part<4, double> se4_t;
-    typedef so_reduce<4, 2, 1, double> so_reduce_t;
-    typedef symmetry_operation_impl<so_reduce_t, se4_t> so_reduce_se_t;
+    typedef so_reduce<4, 2, double> so_reduce_t;
+    typedef symmetry_operation_impl<so_reduce_t, se2_t> so_reduce_se_t;
 
     try {
 
@@ -545,9 +558,11 @@ void so_reduce_se_part_test::test_nm1_6(
 
         seta.insert(ela);
 
-        mask<4> msk[1];
-        msk[0][2] = true; msk[0][3] = true;
-        symmetry_operation_params<so_reduce_t> params(seta, msk, setb);
+        mask<4> msk; msk[2] = msk[3] = true;
+        sequence<4, size_t> seq(0);
+        index<4> ia, ib; ib[0] = ib[1] = 3; ib[2] = ib[3] = 5;
+        index_range<4> ir(ia, ib);
+        symmetry_operation_params<so_reduce_t> params(seta, msk, seq, ir, setb);
 
         so_reduce_se_t().perform(params);
 
@@ -571,8 +586,8 @@ void so_reduce_se_part_test::test_nmk_1(
 
     typedef se_part<2, double> se2_t;
     typedef se_part<4, double> se4_t;
-    typedef so_reduce<4, 2, 2, double> so_reduce_t;
-    typedef symmetry_operation_impl<so_reduce_t, se4_t> so_reduce_se_t;
+    typedef so_reduce<4, 2, double> so_reduce_t;
+    typedef symmetry_operation_impl<so_reduce_t, se2_t> so_reduce_se_t;
 
     try {
 
@@ -642,10 +657,11 @@ void so_reduce_se_part_test::test_nmk_1(
         seta.insert(ela);
         setb_ref.insert(elb);
 
-        mask<4> msk[2];
-        msk[0][3] = true;
-        msk[1][1] = true;
-        symmetry_operation_params<so_reduce_t> params(seta, msk, setb);
+        mask<4> msk; msk[3] = msk[1] = true;
+        sequence<4, size_t> seq(0); seq[1] = 1;
+        index<4> ia, ib; ib[0] = ib[1] = 3; ib[2] = ib[3] = 5;
+        index_range<4> ir(ia, ib);
+        symmetry_operation_params<so_reduce_t> params(seta, msk, seq, ir, setb);
 
         so_reduce_se_t().perform(params);
 
@@ -671,8 +687,8 @@ void so_reduce_se_part_test::test_nmk_2(
 
     typedef se_part<6, double> se6_t;
     typedef se_part<2, double> se2_t;
-    typedef so_reduce<6, 4, 2, double> so_reduce_t;
-    typedef symmetry_operation_impl<so_reduce_t, se6_t> so_reduce_se_t;
+    typedef so_reduce<6, 4, double> so_reduce_t;
+    typedef symmetry_operation_impl<so_reduce_t, se2_t> so_reduce_se_t;
 
     try {
 
@@ -828,10 +844,11 @@ void so_reduce_se_part_test::test_nmk_2(
         seta.insert(ela);
         setb_ref.insert(elb);
 
-        mask<6> msk[2];
-        msk[0][1] = true; msk[0][4] = true;
-        msk[1][2] = true; msk[1][5] = true;
-        symmetry_operation_params<so_reduce_t> params(seta, msk, setb);
+        mask<6> msk; msk[1] = true; msk[4] = msk[2] = msk[5] = true;
+        sequence<6, size_t> seq(0); seq[2] = seq[5] = 1;
+        index<6> ia, ib; ib[0] = ib[3] = 3; ib[1] = ib[2] = ib[4] = ib[5] = 5;
+        index_range<6> ir(ia, ib);
+        symmetry_operation_params<so_reduce_t> params(seta, msk, seq, ir, setb);
 
         so_reduce_se_t().perform(params);
 

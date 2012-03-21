@@ -277,6 +277,10 @@ class btod_contract2_symmetry_builder :
 	public btod_contract2_symmetry_builder_base<N, M, K> {
 
 public:
+    typedef btod_contract2_symmetry_builder_base<N, M, K> base_t;
+
+
+public:
     btod_contract2_symmetry_builder(const contraction2<N, M, K> &contr,
                                     block_tensor_i<N + K, double> &bta,
                                     block_tensor_i<M + K, double> &btb);
@@ -294,6 +298,9 @@ public:
 template<size_t N, size_t K>
 class btod_contract2_symmetry_builder<N, N, K> :
 	public btod_contract2_symmetry_builder_base<N, N, K> {
+
+public:
+    typedef btod_contract2_symmetry_builder_base<N, N, K> base_t;
 
 public:
     btod_contract2_symmetry_builder(const contraction2<N, N, K> &contr,

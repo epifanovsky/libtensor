@@ -159,38 +159,43 @@ template<size_t N, typename T>
 void permutation_group<N, T>::stabilize(
         const mask<N> &msk, permutation_group<N, T> &g2) {
 
-    static const char *method =
-            "stabilize<M>(const mask<N>&, permutation_group<M, T>&)";
+    sequence<N, size_t> seq(0);
+    for (register size_t i = 0; i != N; i++) {
+        if (msk[i]) seq[i] = 1;
+    }
 
-    mask<N> msks[1];
-    msks[0] = msk;
-
-    stabilize(msks, g2);
+    stabilize(seq, g2);
 }
 
-template<size_t N, typename T> template<size_t K>
+
+template<size_t N, typename T>
 void permutation_group<N, T>::stabilize(
-        const mask<N> (&msk)[K], permutation_group<N, T> &g2) {
+        const sequence<N, size_t> &seq, permutation_group<N, T> &g2) {
 
-    static const char *method =
-            "stabilize<M>(const mask<N> &[K], permutation_group<N, T>&)";
+    static const char *method = "stabilize<M>(const sequence<N, size_t> &, "
+            "permutation_group<N, T>&)";
 
-    sequence<N, size_t> tm(0);
-    for(register size_t k = 0; k < K; k++) {
-        const mask<N> &msk_k = msk[k];
-        for (register size_t i = 0; i < N; i++) {
-            if (! msk_k[i]) continue;
-            if (tm[i] != 0)
-                throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
-                        "Index masked twice.");
+#ifdef LIBTENSOR_DEBUG
+    // Do basic error checking
+    mask<N> sets;
+    // 1) no value of seq is larger than N (no more than N sets)
+    register size_t i = 0;
+    for (; i < N && seq[i] < N; i++) { sets[seq[i]] = true; }
+    if (i != N)
+        throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__, "seq.");
 
-            tm[i] = k + 1;
-        }
-    }
+    // 2) all sets are numbered consecutively
+    i = 0;
+    for (; i < N && sets[i]; i++) { }
+    for (; i < N && (! sets[i]); i++) { }
+    if (i != N)
+        throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__, "seq.");
+
+#endif
 
     // generating set of G(P)
     perm_list_t gs;
-    make_setstabilizer(m_br, tm, gs);
+    make_setstabilizer(m_br, seq, gs);
 
     for (typename perm_list_t::const_iterator pi = gs.begin();
             pi != gs.end(); pi++) {
@@ -485,25 +490,28 @@ void permutation_group<N, T>::permute_branching(
 }
 
 template<size_t N, typename T>
-void permutation_group<N, T>::make_setstabilizer(
-        const branching &br, const sequence<N, size_t> &msk, perm_list_t &gs) {
+void permutation_group<N, T>::make_setstabilizer(const branching &br,
+        const sequence<N, size_t> &msk, perm_list_t &gs) {
 
-    static const char *method =
-            "make_set_stabilizer(const branching &, const mask<N>&, perm_list_t&)";
+    static const char *method = "make_set_stabilizer(const branching &, "
+            "const mask<N>&, perm_list_t&)";
 
     register size_t m = 0;
     for(register size_t i = 0; i < N; i++) if(msk[i] != 0) m++;
+    // Handle two special cases first:
+    // 1) mask is empty -> no stabilization
     if(m == 0) {
         make_genset(br, gs);
         return;
     }
+    // 2) one index is masked -> point stabilization
     if(m == 1) {
         branching brx;
         perm_list_t gsx;
         make_genset(br, gsx);
 
         size_t i = 0;
-        for(; i < N; i++) if(msk[i]) break;
+        for(; i < N; i++) if (msk[i] != 0) break;
 
         make_branching(brx, i, gsx, gs);
         return;

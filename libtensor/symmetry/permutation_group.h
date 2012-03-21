@@ -118,17 +118,22 @@ public:
      **/
     void stabilize(const mask<N> &msk, permutation_group<N, T> &g2);
 
-    /** \brief Generates a subgroup that set-wise stabilizes the K sets of
-             masked indexes. All masks must be disjoint.
-	 	\param msk K masks of indexes to be stabilized
-		\param g2 Resulting subgroup
+    /** \brief Generates a subgroup that set-wise stabilizes groups of indexes.
+	 	\param seq Sequences to specify the indexes that are stabilized
+		\param g2 Resulting subgroup.
 
-		The resulting subgroup will contain all permutations that map each of
-		the sets of indexes onto itself or onto another set of the same size.
+        The given sequence specifies the sets of indexes which are stabilized:
+        indexes for which \c seq has value 0 are not stabilized and those for
+        which it has value 1, 2, ... belong to the first, second, ... set of
+        stabilized indexes. The values for the sets have to be consecutive
+        starting at 1. The resulting subgroup will contain all permutations
+        that map each of the sets of indexes onto itself or onto another set
+        of the same size.
      **/
-    template<size_t K>
-    void stabilize(const mask<N> (&msk)[K], permutation_group<N, T> &g2);
+    void stabilize(const sequence<N, size_t> &seq, permutation_group<N, T> &g2);
 
+    /** \brief Permute the indexes in the permutation group.
+     **/
     void permute(const permutation<N> &perm);
 
     //@}

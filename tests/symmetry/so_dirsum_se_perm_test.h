@@ -6,7 +6,8 @@
 namespace libtensor {
 
 
-/**	\brief Tests the libtensor::so_dirsum_se_perm class
+/**	\brief Tests the class
+        symmetry_operation_impl< so_dirsum<N, M, T>, se_perm<N + M, T> >
 
 	\ingroup libtensor_tests_sym
  **/

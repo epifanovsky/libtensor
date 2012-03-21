@@ -35,10 +35,10 @@ void so_reduce_test::test_1() throw(libtest::test_exception) {
 	symmetry<4, double> sym1(bis1);
 	symmetry<2, double> sym2(bis2);
 	symmetry<2, double> sym2_ref(bis2);
-	mask<4> msk;
-	msk[0] = true; msk[1] = true;
-	so_reduce<4, 2, 1, double> so(sym1);
-	so.add_mask(msk);
+	mask<4> msk; msk[2] = true; msk[3] = true;
+	sequence<4, size_t> seq(0);
+	index_range<4> ir(i1a, i1b);
+	so_reduce<4, 2, double> so(sym1, msk, seq, ir);
 	so.perform(sym2);
 
 	symmetry<2, double>::iterator i = sym2.begin();
@@ -81,13 +81,10 @@ void so_reduce_test::test_2() throw(libtest::test_exception) {
 
 	symmetry<2, double> sym2(bis2);
 	symmetry<2, double> sym2_ref(bis2);
-	mask<5> msk[2];
-	msk[0][2] = true; msk[0][4] = true;
-	msk[1][3] = true;
-	so_reduce<5, 3, 2, double> so(sym1);
-	so.add_mask(msk[0]);
-	so.add_mask(msk[1]);
-	so.perform(sym2);
+	mask<5> msk; msk[2] = msk[3] = msk[4] = true;
+	sequence<5, size_t> seq(0); seq[3] = 1;
+	index_range<5> ir(i1a, i1b);
+	so_reduce<5, 3, double>(sym1, msk, seq, ir).perform(sym2);
 
 	sym2_ref.insert(se_perm<2, double>(
 		permutation<2>().permute(0, 1), true));
@@ -123,7 +120,10 @@ void so_reduce_test::test_3() throw(libtest::test_exception) {
 
 	symmetry<2, double> sym1(bis1);
 	symmetry<0, double> sym2(bis2);
-	so_reduce<2, 2, 1, double> so(sym1);
+	mask<2> msk; msk[0] = msk[1] = true;
+	sequence<2, size_t> seq(0);
+	index_range<2> ir(i2a, i2b);
+	so_reduce<2, 2, double> so(sym1, msk, seq, ir);
 	so.perform(sym2);
 
 	} catch(exception &e) {
@@ -148,7 +148,10 @@ void so_reduce_test::test_4() throw(libtest::test_exception) {
 
 	symmetry<2, double> sym1(bis1);
 	symmetry<2, double> sym2(bis1);
-	so_reduce<2, 0, 0, double> so(sym1);
+	mask<2> msk;
+	sequence<2, size_t> seq(0);
+	index_range<2> ir(i2a, i2b);
+	so_reduce<2, 0, double> so(sym1, msk, seq, ir);
 	so.perform(sym2);
 
 	symmetry<2, double>::iterator i = sym2.begin();

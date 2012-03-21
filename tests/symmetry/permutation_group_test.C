@@ -968,10 +968,9 @@ throw(libtest::test_exception) {
         set1.insert(se_perm_t(p5, true));
         permutation_group<6, double> pg1(set1), pg2;
 
-        mask<6> msk[2];
-        msk[0][2] = true; msk[0][5] = true;
-        msk[1][1] = true; msk[1][4] = true;
-        pg1.stabilize(msk, pg2);
+        sequence<6, size_t> seq(0);
+        seq[2] = 1; seq[5] = 1; seq[1] = 2; seq[4] = 2;
+        pg1.stabilize(seq, pg2);
 
         if(!pg2.is_member(true, p5)) {
             fail_test(testname, __FILE__, __LINE__,
@@ -1012,10 +1011,9 @@ throw(libtest::test_exception) {
         set1.insert(se_perm_t(p7, true));
         permutation_group<8, double> pg1(set1), pg2;
 
-        mask<8> msk[2];
-        msk[0][2] = true; msk[0][6] = true;
-        msk[1][3] = true; msk[1][7] = true;
-        pg1.stabilize(msk, pg2);
+        sequence<8, size_t> seq(0);
+        seq[2] = 1; seq[6] = 1; seq[3] = 2; seq[7] = 2;
+        pg1.stabilize(seq, pg2);
 
         if(!pg2.is_member(false, p1)) {
             fail_test(testname, __FILE__, __LINE__,

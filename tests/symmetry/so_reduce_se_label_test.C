@@ -40,14 +40,17 @@ void so_reduce_se_label_test::test_empty_1(
 
     typedef se_label<4, double> se4_t;
     typedef se_label<2, double> se2_t;
-    typedef so_reduce<4, 2, 1, double> so_reduce_t;
-    typedef symmetry_operation_impl<so_reduce_t, se4_t> so_reduce_se_t;
+    typedef so_reduce<4, 2, double> so_reduce_t;
+    typedef symmetry_operation_impl<so_reduce_t, se2_t> so_reduce_se_t;
 
     symmetry_element_set<4, double> set1(se4_t::k_sym_type);
     symmetry_element_set<2, double> set2(se2_t::k_sym_type);
 
-    mask<4> msk[1]; msk[0][2] = true; msk[0][3] = true;
-    symmetry_operation_params<so_reduce_t> params(set1, msk, set2);
+    mask<4> msk; msk[2] = msk[3] = true;
+    sequence<4, size_t> seq(0);
+    index<4> ia, ib; ib[2] = ib[3] = 2;
+    index_range<4> ir(ia, ib);
+    symmetry_operation_params<so_reduce_t> params(set1, msk, seq, ir, set2);
 
     so_reduce_se_t().perform(params);
 
@@ -68,16 +71,17 @@ void so_reduce_se_label_test::test_empty_2(
 
     typedef se_label<5, double> se5_t;
     typedef se_label<1, double> se1_t;
-    typedef so_reduce<5, 4, 2, double> so_reduce_t;
-    typedef symmetry_operation_impl<so_reduce_t, se5_t> so_reduce_se_t;
+    typedef so_reduce<5, 4, double> so_reduce_t;
+    typedef symmetry_operation_impl<so_reduce_t, se1_t> so_reduce_se_t;
 
     symmetry_element_set<5, double> set1(se5_t::k_sym_type);
     symmetry_element_set<1, double> set2(se1_t::k_sym_type);
 
-    mask<5> msk[2];
-    msk[0][0] = true; msk[0][1] = true;
-    msk[1][2] = true; msk[1][3] = true;
-    symmetry_operation_params<so_reduce_t> params(set1, msk, set2);
+    mask<5> msk; msk[0] = msk[1] = msk[2] = msk[3] = true;
+    sequence<5, size_t> seq(0); seq[2] = seq[3] = 1;
+    index<5> ia, ib; ib[0] = ib[1] = ib[2] = ib[3] = 2;
+    index_range<5> ir(ia, ib);
+    symmetry_operation_params<so_reduce_t> params(set1, msk, seq, ir, set2);
 
     so_reduce_se_t().perform(params);
 
@@ -98,8 +102,8 @@ void so_reduce_se_label_test::test_nm1_1(
 
     typedef se_label<1, double> se1_t;
     typedef se_label<3, double> se3_t;
-    typedef so_reduce<3, 2, 1, double> so_reduce_t;
-    typedef symmetry_operation_impl<so_reduce_t, se3_t> so_reduce_se_t;
+    typedef so_reduce<3, 2, double> so_reduce_t;
+    typedef symmetry_operation_impl<so_reduce_t, se1_t> so_reduce_se_t;
 
     index<3> i1a, i1b;
     i1b[0] = 3; i1b[1] = 3; i1b[2] = 3;
@@ -118,8 +122,10 @@ void so_reduce_se_label_test::test_nm1_1(
     symmetry_element_set<1, double> set2(se1_t::k_sym_type);
 
     set1.insert(el1);
-    mask<3> m[1]; m[0][1] = m[0][2] = true;
-    symmetry_operation_params<so_reduce_t> params(set1, m, set2);
+    mask<3> m; m[1] = m[2] = true;
+    sequence<3, size_t> seq;
+    index_range<3> ir(i1a, i1b);
+    symmetry_operation_params<so_reduce_t> params(set1, m, seq, ir, set2);
 
     so_reduce_se_t().perform(params);
 
@@ -159,13 +165,12 @@ void so_reduce_se_label_test::test_nm1_2(const std::string &table_id,
 
     typedef se_label<4, double> se4_t;
     typedef se_label<2, double> se2_t;
-    typedef so_reduce<4, 2, 1, double> so_reduce_t;
-    typedef symmetry_operation_impl<so_reduce_t, se4_t> so_reduce_se_t;
+    typedef so_reduce<4, 2, double> so_reduce_t;
+    typedef symmetry_operation_impl<so_reduce_t, se2_t> so_reduce_se_t;
 
     index<4> i1a, i1b;
     i1b[0] = 3; i1b[1] = 3; i1b[2] = 3; i1b[3] = 3;
     dimensions<4> bidims1(index_range<4>(i1a, i1b));
-    mask<4> m[1]; m[0][1] = m[0][2] = true;
 
     se4_t el1(bidims1, table_id);
     {
@@ -186,12 +191,14 @@ void so_reduce_se_label_test::test_nm1_2(const std::string &table_id,
         el1.set_rule(r1);
     }
 
-    // [i x 2] [x j 0] = [i 2] [j 0], [i 3] [j 1], [i 0] [j 2], [i 1] [j 3]
     symmetry_element_set<4, double> set1(se4_t::k_sym_type);
     symmetry_element_set<2, double> set2(se2_t::k_sym_type);
 
     set1.insert(el1);
-    symmetry_operation_params<so_reduce_t> params(set1, m, set2);
+    mask<4> m; m[1] = m[2] = true;
+    sequence<4, size_t> seq(0);
+    index_range<4> ir(i1a, i1b);
+    symmetry_operation_params<so_reduce_t> params(set1, m, seq, ir, set2);
 
     so_reduce_se_t().perform(params);
 
@@ -232,8 +239,8 @@ void so_reduce_se_label_test::test_nmk_1(
 
     typedef se_label<6, double> se6_t;
     typedef se_label<2, double> se2_t;
-    typedef so_reduce<6, 4, 2, double> so_reduce_t;
-    typedef symmetry_operation_impl<so_reduce_t, se6_t> so_reduce_se_t;
+    typedef so_reduce<6, 4, double> so_reduce_t;
+    typedef symmetry_operation_impl<so_reduce_t, se2_t> so_reduce_se_t;
 
     index<6> i1a, i1b;
     i1b[0] = 3; i1b[1] = 3; i1b[2] = 3; i1b[3] = 3; i1b[4] = 3; i1b[5] = 3;
@@ -251,10 +258,11 @@ void so_reduce_se_label_test::test_nmk_1(
     symmetry_element_set<6, double> set1(se6_t::k_sym_type);
     symmetry_element_set<2, double> set2(se2_t::k_sym_type);
     set1.insert(el1);
-    mask<6> m[2];
-    m[0][1] = m[0][3] = true;
-    m[1][2] = m[1][4] = true;
-    symmetry_operation_params<so_reduce_t> params(set1, m, set2);
+
+    mask<6> m; m[1] = m[2] = m[3] = m[4] = true;
+    sequence<6, size_t> seq(0); seq[2] = seq[4] = 1;
+    index_range<6> ir(i1a, i1b);
+    symmetry_operation_params<so_reduce_t> params(set1, m, seq, ir, set2);
 
     so_reduce_se_t().perform(params);
 
@@ -293,8 +301,8 @@ void so_reduce_se_label_test::test_nmk_2(const std::string &table_id,
 
     typedef se_label<6, double> se6_t;
     typedef se_label<2, double> se2_t;
-    typedef so_reduce<6, 4, 2, double> so_reduce_t;
-    typedef symmetry_operation_impl<so_reduce_t, se6_t> so_reduce_se_t;
+    typedef so_reduce<6, 4, double> so_reduce_t;
+    typedef symmetry_operation_impl<so_reduce_t, se2_t> so_reduce_se_t;
 
     index<6> i1a, i1b;
     i1b[0] = 3; i1b[1] = 3; i1b[2] = 3; i1b[3] = 3; i1b[4] = 3; i1b[5] = 3;
@@ -324,10 +332,10 @@ void so_reduce_se_label_test::test_nmk_2(const std::string &table_id,
     symmetry_element_set<2, double> set2(se2_t::k_sym_type);
 
     set1.insert(el1);
-    mask<6> m[2];
-    m[0][1] = m[0][4] = true;
-    m[1][2] = m[1][5] = true;
-    symmetry_operation_params<so_reduce_t> params(set1, m, set2);
+    mask<6> m; m[1] = m[2] = m[4] = m[5] = true;
+    sequence<6, size_t> seq(0); seq[2] = seq[5] = 1;
+    index_range<6> ir(i1a, i1b);
+    symmetry_operation_params<so_reduce_t> params(set1, m, seq, ir, set2);
 
     so_reduce_se_t().perform(params);
 

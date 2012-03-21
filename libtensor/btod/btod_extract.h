@@ -124,9 +124,10 @@ btod_extract<N, M>::btod_extract(block_tensor_i<N, double> &bta,
 	m_sch(m_bis.get_block_index_dims()) {
 
 	block_tensor_ctrl<N, double> ctrla(bta);
-	so_reduce<N, M, 1, double> reduce(ctrla.req_const_symmetry());
-	reduce.add_mask(m_msk);
-	reduce.perform(m_sym);
+
+	so_reduce<N, M, double>(ctrla.req_const_symmetry(),
+	        m_msk, sequence<N, size_t>(0),
+	        index_range<N>(idxbl, idxbl)).perform(m_sym);
 
 	make_schedule();
 }
@@ -147,9 +148,9 @@ btod_extract<N, M>::btod_extract(block_tensor_i<N, double> &bta,
 
 	block_tensor_ctrl<N, double> ctrla(bta);
 	symmetry<k_orderb, double> sym(bisinv);
-	so_reduce<N, M, 1, double> reduce(ctrla.req_const_symmetry());
-	reduce.add_mask(m_msk);
-	reduce.perform(sym);
+	so_reduce<N, M, double>(ctrla.req_const_symmetry(),
+	        m_msk, sequence<N, size_t>(0),
+	        index_range<N>(idxbl, idxbl)).perform(sym);
 	so_permute<k_orderb, double>(sym, perm).perform(m_sym);
 
 	make_schedule();

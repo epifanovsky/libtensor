@@ -16,29 +16,20 @@ template class block_labeling<10>;
 template class block_labeling<11>;
 template class block_labeling<12>;
 
-extern template
-bool operator==(const block_labeling<1> &, const block_labeling<1> &);
-extern template
-bool operator==(const block_labeling<2> &, const block_labeling<2> &);
-extern template
-bool operator==(const block_labeling<3> &, const block_labeling<3> &);
-extern template
-bool operator==(const block_labeling<4> &, const block_labeling<4> &);
-extern template
-bool operator==(const block_labeling<5> &, const block_labeling<5> &);
-extern template
-bool operator==(const block_labeling<6> &, const block_labeling<6> &);
-extern template
-bool operator==(const block_labeling<7> &, const block_labeling<7> &);
-extern template
-bool operator==(const block_labeling<8> &, const block_labeling<8> &);
-extern template
-bool operator==(const block_labeling<9> &, const block_labeling<9> &);
-extern template
+template bool operator==(const block_labeling<1> &, const block_labeling<1> &);
+template bool operator==(const block_labeling<2> &, const block_labeling<2> &);
+template bool operator==(const block_labeling<3> &, const block_labeling<3> &);
+template bool operator==(const block_labeling<4> &, const block_labeling<4> &);
+template bool operator==(const block_labeling<5> &, const block_labeling<5> &);
+template bool operator==(const block_labeling<6> &, const block_labeling<6> &);
+template bool operator==(const block_labeling<7> &, const block_labeling<7> &);
+template bool operator==(const block_labeling<8> &, const block_labeling<8> &);
+template bool operator==(const block_labeling<9> &, const block_labeling<9> &);
+template
 bool operator==(const block_labeling<10> &, const block_labeling<10> &);
-extern template
+template
 bool operator==(const block_labeling<11> &, const block_labeling<11> &);
-extern template
+template
 bool operator==(const block_labeling<12> &, const block_labeling<12> &);
 
 template void transfer_labeling(const block_labeling<1> &,

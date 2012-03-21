@@ -9,100 +9,90 @@
 
 namespace libtensor {
 
-template<size_t N, size_t M, size_t K, typename T>
+template<size_t N, size_t M, typename T>
 const char *
-symmetry_operation_impl< so_reduce<N, M, K, T>, se_part<N, T> >::k_clazz =
-        "symmetry_operation_impl< so_reduce<N, M, K, T>, se_part<N, T> >";
+symmetry_operation_impl< so_reduce<N, M, T>, se_part<N - M, T> >::k_clazz =
+        "symmetry_operation_impl< so_reduce<N, M, T>, se_part<N - M, T> >";
 
-template<size_t N, size_t M, size_t K, typename T>
+template<size_t N, size_t M, typename T>
 void
-symmetry_operation_impl< so_reduce<N, M, K, T>, se_part<N, T> >::do_perform(
+symmetry_operation_impl< so_reduce<N, M, T>, se_part<N - M, T> >::do_perform(
         symmetry_operation_params_t &params) const {
 
     static const char *method =
             "do_perform(const symmetry_operation_params_t&)";
 
-    typedef symmetry_element_set_adapter< N, T, element_t> adapter_t;
-    typedef se_part<k_order2, T> el2_t;
-    typedef std::list< index<N> > ilist_t;
+    typedef symmetry_element_set_adapter<k_order1, T, el1_t> adapter_t;
 
-    //	Verify that the projection masks are correct
-    //
-    mask<N> tm, rm;
-    size_t nm = 0;
-    for (size_t k = 0; k < K; k++) {
-        const mask<N> &m = params.msk[k];
-        for(size_t i = 0; i < N; i++) {
-            if(! m[i]) { rm[i] = true; continue; }
-            if(tm[i]) {
-                throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
-                        "params.msk[k]");
-            }
-
-            tm[i] = true;
-            nm++;
-        }
-    }
-    if(nm != M) {
-        throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
-                "params.msk");
-    }
+    // Create the inverse of the mask
+    mask<k_order1> invmsk;
+    for (register size_t i = 0; i < k_order1; i++)
+        invmsk[i] = !params.msk[i];
 
     params.grp2.clear();
     if (params.grp1.is_empty()) return;
 
-    // Create a map of indexes
-    sequence<N, size_t> map(0);
-    for (size_t i = 0, j = 0; i < N; i++) {
-        if (tm[i]) {
-            for (register size_t k = 0; k < K; k++) {
-                if (! params.msk[k][i]) continue;
-                map[i] = k_order2 + k;
-            }
+    // Create a map of indexes and a mask of reduction steps
+    sequence<k_order1, size_t> map(0);
+    mask<k_order1> rsteps;
+    for (register size_t i = 0, j = 0; i < k_order1; i++) {
+        if (params.msk[i]) {
+            rsteps[params.rseq[i]] = true;
+            map[i] = k_order2 + params.rseq[i];
         }
         else {
             map[i] = j++;
         }
     }
 
-    combine_part<N, T> cp(params.grp1);
-    element_t el1(cp.get_bis(), cp.get_pdims());
+    combine_part<k_order1, T> cp(params.grp1);
+    el1_t el1(cp.get_bis(), cp.get_pdims());
     cp.perform(el1);
 
-    const dimensions<N> &pdims1 = el1.get_pdims();
+    dimensions<k_order1> bidims = el1.get_bis().get_block_index_dims();
+    const dimensions<k_order1> &pdims1 = el1.get_pdims();
 
-    index<k_order2> ia, ib;
-    index<K> ixa, ixb;
-    mask<K> initialized;
-    for (register size_t i = 0, j = 0; i < N; i++) {
-        if (rm[i]) {
-            ib[map[i]] = pdims1[i] - 1;
-            continue;
+    // Determine the sizes of the reduced dimensions per reduction step
+    // and the reduction length
+    index<k_order1> ixa, ixb, nix;
+    for (register size_t i = 0; i < k_order1 && rsteps[i]; i++) {
+        register size_t j = 0;
+        for (; j < k_order1; j++) {
+            if (params.msk[j] && params.rseq[j] == i) break;
+        }
+        size_t j1 = j;
+        nix[i] = pdims1[j1];
+
+        for (; j < k_order1; j++) {
+            if ((! params.msk[j]) || (params.rseq[j] != i)) continue;
+            if (nix[i] == pdims1[j]) continue;
+
+            size_t d1 = nix[i], d2 = pdims1[j];
+            if (d1 < d2) std::swap(d1, d2);
+
+            nix[i] = (d1 % d2 == 0) ? d2 : 1;
         }
 
-        size_t k = map[i] - k_order2;
-        if (! initialized[k]) {
-            ixb[k] = pdims1[i] - 1;
-            initialized[k] = true;
-            continue;
-        }
-
-        size_t d1 = ixb[k] + 1, d2 = pdims1[i];
-        if (d1 < d2) std::swap(d1, d2);
-
-        ixb[k] = (d1 % d2 == 0) ? d2 - 1 : 0;
+        size_t nbpp = bidims[j1] / nix[i];
+        ixa[i] = params.rrange.get_begin()[j1] / nbpp;
+        ixb[i] = params.rrange.get_end()[j1] / nbpp;
     }
 
-    index<N> ka, kb;
-    for (register size_t i = 0; i < N; i++) {
-        kb[i] = (tm[i] ? pdims1[i] / (ixb[map[i] - k_order2] + 1) - 1 : 0);
+    // Determine the sizes of the remaining dimensions
+    index<k_order2> ia, ib;
+    index<k_order1> ja, jb;
+    for (register size_t i = 0; i < k_order1; i++) {
+        if (params.msk[i])
+            jb[i] = pdims1[i] / nix[params.rseq[i]] - 1;
+        else
+            ib[map[i]] = pdims1[i] - 1;
     }
 
     dimensions<k_order2> pdims2(index_range<k_order2>(ia, ib));
-    dimensions<N> pdims1c(index_range<N>(ka, kb));
-    dimensions<K> pdimsx(index_range<K>(ixa, ixb));
+    dimensions<k_order1> pdims1r(index_range<k_order1>(ixa, ixb));
+    dimensions<k_order1> pdims1ir(index_range<k_order1>(ja, jb));
 
-    block_index_subspace_builder<k_order2, M> bb(el1.get_bis(), rm);
+    block_index_subspace_builder<k_order2, M> bb(el1.get_bis(), invmsk);
     el2_t el2(bb.get_bis(), pdims2);
 
     bool empty = true;
@@ -111,18 +101,21 @@ symmetry_operation_impl< so_reduce<N, M, K, T>, se_part<N, T> >::do_perform(
         const index<k_order2> &i2a = ai2a.get_index();
 
         // Create a list of all possible indexes from the input
-        std::list< index<N> > la;
-        abs_index<K> ai3a(pdimsx);
+        std::list< index<k_order1> > la;
+        abs_index<k_order1> ai3a(pdims1r);
         do {
-            const index<K> &i3a = ai3a.get_index();
+            const index<k_order1> &i3a = ai3a.get_index();
 
-            index<N> i1a;
-            for (size_t i = 0, j = 0; i < N; i++) {
-                if (tm[i]) i1a[i] = i3a[map[i] - k_order2] * pdims1c[i];
-                else i1a[i] = i2a[j++];
+            index<k_order1> i1a;
+            for (register size_t i = 0, j = 0; i < k_order1; i++) {
+                if (params.msk[i])
+                    i1a[i] = (ixa[params.rseq[i]]
+                                  + i3a[params.rseq[i]]) * pdims1ir[i];
+                else
+                    i1a[i] = i2a[j++];
             }
 
-            if (! is_forbidden(el1, i1a, pdims1c)) la.push_back(i1a);
+            if (! is_forbidden(el1, i1a, pdims1ir)) la.push_back(i1a);
 
         } while (ai3a.inc());
 
@@ -138,31 +131,35 @@ symmetry_operation_impl< so_reduce<N, M, K, T>, se_part<N, T> >::do_perform(
 
             const index<k_order2> &i2b = ai2b.get_index();
 
-            std::list< index<N> > lb;
+            std::list< index<k_order1> > lb;
 
-            abs_index<K> ai3b(pdimsx);
+            abs_index<k_order1> ai3b(pdims1r);
             do {
-                const index<K> &i3b = ai3b.get_index();
+                const index<k_order1> &i3b = ai3b.get_index();
 
-                index<N> i1b;
-                for (register size_t i = 0, j = 0; i < N; i++) {
-                    if (tm[i]) i1b[i] = i3b[map[i] - k_order2] * pdims1c[i];
-                    else i1b[i] = i2b[j++];
+                index<k_order1> i1b;
+                for (register size_t i = 0, j = 0; i < k_order1; i++) {
+                    if (params.msk[i])
+                        i1b[i] = (ixa[params.rseq[i]]
+                                      + i3b[params.rseq[i]]) * pdims1ir[i];
+                    else
+                        i1b[i] = i2b[j++];
                 }
 
-                if (! is_forbidden(el1, i1b, pdims1c)) lb.push_back(i1b);
+                if (! is_forbidden(el1, i1b, pdims1ir)) lb.push_back(i1b);
 
             } while (ai3b.inc());
 
             if (lb.empty()) continue;
 
             bool found = false, sign = true;
-            typename std::list< index<N> >::iterator ila = la.begin();
+            typename std::list< index<k_order1> >::iterator ila = la.begin();
             for ( ; ila != la.end(); ila++) {
 
-                typename std::list< index<N> >::iterator ilb = lb.begin();
+                typename std::list< index<k_order1> >::iterator ilb =
+                        lb.begin();
                 for ( ; ilb != lb.end(); ilb++) {
-                    if (map_exists(el1, *ila, *ilb, pdims1c)) break;
+                    if (map_exists(el1, *ila, *ilb, pdims1ir)) break;
                 } // for lb
 
                 if (ilb == lb.end()) break;
@@ -187,19 +184,19 @@ symmetry_operation_impl< so_reduce<N, M, K, T>, se_part<N, T> >::do_perform(
     if (! empty) params.grp2.insert(el2);
 }
 
-template<size_t N, size_t M, size_t K, typename T>
-bool symmetry_operation_impl< so_reduce<N, M, K, T>, se_part<N, T> >::
-is_forbidden(const element_t &el,
-        const index<N> &idx, const dimensions<N> &subdims) {
+template<size_t N, size_t M, typename T>
+bool symmetry_operation_impl< so_reduce<N, M, T>, se_part<N - M, T> >::
+is_forbidden(const el1_t &el,
+        const index<k_order1> &idx, const dimensions<k_order1> &subdims) {
 
     if (! el.is_forbidden(idx)) return false;
 
     bool forbidden = true;
-    abs_index<N> aix(subdims);
+    abs_index<k_order1> aix(subdims);
     while (aix.inc()) {
-        const index<N> &ix = aix.get_index();
-        index<N> ia;
-        for (register size_t i = 0; i < N; i++) ia[i] = idx[i] + ix[i];
+        const index<k_order1> &ix = aix.get_index();
+        index<k_order1> ia;
+        for (register size_t i = 0; i < k_order1; i++) ia[i] = idx[i] + ix[i];
 
         if (! el.is_forbidden(ia)) { forbidden = false; break; }
     }
@@ -207,20 +204,20 @@ is_forbidden(const element_t &el,
     return forbidden;
 }
 
-template<size_t N, size_t M, size_t K, typename T>
-bool symmetry_operation_impl< so_reduce<N, M, K, T>, se_part<N, T> >::
-map_exists(const element_t &el, const index<N> &ia,
-        const index<N> &ib, const dimensions<N> &subdims) {
+template<size_t N, size_t M, typename T>
+bool symmetry_operation_impl< so_reduce<N, M, T>, se_part<N - M, T> >::
+map_exists(const el1_t &el, const index<k_order1> &ia,
+        const index<k_order1> &ib, const dimensions<k_order1> &subdims) {
 
     if (! el.map_exists(ia, ib)) return false;
 
     bool sign = el.get_sign(ia, ib), exists = true;;
 
-    abs_index<N> aix(subdims);
+    abs_index<k_order1> aix(subdims);
     while (aix.inc()) {
-        const index<N> &ix = aix.get_index();
-        index<N> i1a, i1b;
-        for (register size_t i = 0; i < N; i++) {
+        const index<k_order1> &ix = aix.get_index();
+        index<k_order1> i1a, i1b;
+        for (register size_t i = 0; i < k_order1; i++) {
             i1a[i] = ia[i] + ix[i];
             i1b[i] = ib[i] + ix[i];
         }
