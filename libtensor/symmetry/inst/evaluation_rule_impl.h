@@ -1,6 +1,9 @@
 #ifndef LIBTENSOR_EVALUATION_RULE_IMPL_H
 #define LIBTENSOR_EVALUATION_RULE_IMPL_H
 
+#include <list>
+#include <libtensor/core/permutation_generator.h>
+
 namespace libtensor {
 
 template<size_t N>
@@ -71,7 +74,6 @@ void evaluation_rule<N>::optimize() {
         const sequence<N, size_t> &seq = m_sequences[i];
         size_t nidx = 0;
         for (register size_t j = 0; j < N; j++) nidx += seq[j];
-
         marked_seqs[i] = (nidx == 0);
     }
 
@@ -208,6 +210,153 @@ void evaluation_rule<N>::optimize() {
     }
 }
 
+template<size_t N>
+void evaluation_rule<N>::symmetrize(const mask<N> &msk) {
+
+    std::vector<size_t> map;
+    for (register size_t i = 0; i < N; i++) {
+        if (msk[i]) map.push_back(i);
+    }
+    if (map.size() < 2) return;
+
+
+
+    // Step 1: symmetrize sequences
+    size_t nseq = m_sequences.size();
+    std::vector<size_t> done(nseq, false);
+    std::vector<size_t> symseq(nseq, (size_t) -1);
+    for (size_t sno = 0; sno < nseq; sno++) {
+        if (done[sno]) continue;
+
+        permutation_generator pg(map.size());
+        size_t nnseq = 0;
+        while (pg.next()) {
+
+            bool changed = false;
+            const sequence<N, size_t> &curseq = m_sequences[sno];
+            sequence<N, size_t> newseq(curseq);
+            for (register size_t i = 0; i < map.size(); i++) {
+                if (curseq[map[pg[i]]] == curseq[map[i]]) continue;
+
+                newseq[map[pg[i]]] = curseq[map[i]];
+                changed = true;
+            }
+
+            if (! changed) continue;
+
+            size_t sno2 = add_sequence(newseq);
+            nnseq++;
+            if (sno2 < symseq.size()) {
+                symseq[sno2] = sno;
+                done[sno2] = true;
+            }
+            else {
+                symseq.push_back(sno);
+                done.push_back(true);
+            }
+        }
+        if (nnseq != 0) symseq[sno] = sno;
+    }
+
+    // Step 2: add terms for already existing terms that contain sequences
+    //     which have been symmetrized
+    done.assign(m_term_list.size(), false);
+    std::vector<size_t> t2sym(m_term_list.size(), (size_t) -1);
+    std::map<size_t, std::vector<size_t> > sym2t;
+    size_t nterms = m_term_list.size();
+    for (size_t tno = 0; tno < nterms; tno++) {
+        if (done[tno]) continue;
+
+        size_t sno = m_term_list[tno].seqno;
+        if (symseq[sno] == (size_t) -1) continue;
+
+        t2sym[tno] = tno;
+        sym2t[tno].push_back(tno);
+
+        for (size_t sno2 = 0; sno2 < symseq.size(); sno2++) {
+            if (symseq[sno2] != sno || sno2 == sno) continue;
+
+            size_t tno2 = add_term(sno2, m_term_list[tno].intr,
+                    m_term_list[tno].target);
+
+            if (tno2 < t2sym.size()) {
+                t2sym[tno2] = tno;
+                done[tno2] = true;
+            }
+            else {
+                t2sym.push_back(tno);
+                done.push_back(true);
+            }
+            sym2t[tno].push_back(tno2);
+        }
+    }
+    done.clear();
+    symseq.clear();
+
+    // Step 3: symmetrize setup
+    std::vector<product_t> new_setup;
+    for (size_t pno = 0; pno < m_setup.size(); pno++) {
+
+        // Product to be symmetrized
+        const product_t &pr = m_setup[pno];
+        // List of the result products
+        std::list<product_t> la, lb, *lp1 = &la, *lp2 = &lb;
+        la.push_back(product_t());
+
+        // First product in result
+        product_t &pra = la.back();
+        // Terms to be symmetrized
+        std::multiset<size_t> terms2sym;
+        for (iterator it = pr.begin(); it != pr.end(); it++) {
+
+            size_t tno = t2sym[*it];
+            if (tno == (size_t) -1) pra.insert(pra.end(), *it);
+            else terms2sym.insert(tno);
+        }
+
+        // Loop over terms to be symmetrized and add them to the products in
+        // the list
+        std::multiset<size_t>::const_iterator itt = terms2sym.begin();
+        while (itt != terms2sym.end()) {
+            nterms = terms2sym.count(*itt);
+            const std::vector<size_t> &terms = sym2t[*itt];
+            std::vector<size_t> idx(nterms);
+            for (register size_t i = 0; i < nterms; i++) idx[i] = i;
+            for (std::list<product_t>::const_iterator it = lp1->begin();
+                    it != lp1->end(); it++) {
+
+                while (true) {
+                    lp2->push_back(*it);
+                    product_t &prx = lp2->back();
+                    for (register size_t i = 0; i < nterms; i++) {
+                        prx.insert(terms[idx[i]]);
+                    }
+                    size_t j = nterms - 1, dt = terms.size() - nterms;
+                    for (; j > 0; j--) {
+                        idx[j]++;
+                        if (idx[j] <= j + dt) break;
+                    }
+                    if (j == 0) {
+                        idx[0]++;
+                        if (idx[0] > dt) break;
+                    }
+                    j++;
+                    for (; j < nterms; j++) idx[j] = idx[j - 1] + 1;
+                }
+            }
+            std::swap(lp1, lp2);
+            lp2->clear();
+            itt = terms2sym.upper_bound(*itt);
+        }
+
+        for (std::list<product_t>::const_iterator it = lp1->begin();
+                    it != lp1->end(); it++) {
+            new_setup.push_back(*it);
+        }
+        lp1->clear();
+    }
+    m_setup.assign(new_setup.begin(), new_setup.end());
+}
 
 template<size_t N>
 size_t evaluation_rule<N>::add_term(

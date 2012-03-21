@@ -3,7 +3,7 @@
 
 #include <map>
 #include <vector>
-#include <libtensor/core/sequence.h>
+#include <libtensor/core/mask.h>
 #include <libtensor/exception.h>
 #include "product_table_i.h"
 
@@ -105,6 +105,11 @@ public:
         - Find unused sequences and delete them
      **/
     void optimize();
+
+    /** \brief Symmetrizes the evaluation rule with respect to the masked
+            indexes
+     **/
+    void symmetrize(const mask<N> &msk);
 
     /** \brief Delete the list of lists
      **/

@@ -18,6 +18,9 @@ private:
     void test_2() throw(libtest::test_exception);
     void test_opt_1() throw(libtest::test_exception);
     void test_opt_2() throw(libtest::test_exception);
+    void test_sym_1() throw(libtest::test_exception);
+    void test_sym_2() throw(libtest::test_exception);
+    void test_sym_3() throw(libtest::test_exception);
 };
 
 } // namespace libtensor
