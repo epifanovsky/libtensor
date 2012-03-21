@@ -82,6 +82,7 @@ void symmetry_operation_impl< so_merge<N, M, K, T>, se_perm<N, T> >
                 "params.msk");
     }
 
+    params.grp2.clear();
     adapter_t g1(params.grp1);
     permutation_group<N, T> grp1(g1);
     permutation_group<N, T> grp2;
@@ -187,6 +188,7 @@ void symmetry_operation_impl< so_merge<N, N, 1, T>, se_perm<N, T> >
     typedef symmetry_element_set_adapter<N, T, element_t> adapter1_t;
 
     adapter1_t g1(params.grp1);
+    params.grp2.clear();
     for (typename adapter1_t::iterator it = g1.begin(); it != g1.end(); it++) {
 
         const element_t &e1 = g1.get_elem(it);

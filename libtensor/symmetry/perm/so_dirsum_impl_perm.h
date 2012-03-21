@@ -198,6 +198,7 @@ void symmetry_operation_impl< so_dirsum<N, M, T>, se_perm<N + M, T> >
         }
     }
 
+    params.g3.clear();
     group.convert(params.g3);
 }
 

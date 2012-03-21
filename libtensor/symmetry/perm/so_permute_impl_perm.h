@@ -60,6 +60,7 @@ void symmetry_operation_impl< so_permute<N, T>, se_perm<N, T> >::do_perform(
     adapter_t adapter1(params.grp1);
     permutation_group<N, T> group(adapter1);
     group.permute(params.perm);
+    params.grp2.clear();
     group.convert(params.grp2);
 }
 

@@ -75,6 +75,8 @@ void so_merge<N, M, K, T>::perform(symmetry<N - M + K, T> &sym2) {
     }
 #endif
 
+    sym2.clear();
+
     for(typename symmetry<N, T>::iterator i = m_sym1.begin();
             i != m_sym1.end(); i++) {
 

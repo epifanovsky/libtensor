@@ -55,6 +55,8 @@ symmetry_operation_impl< so_dirprod<N, M, T>, se_perm<N + M, T> >::do_perform(
     typedef symmetry_element_set_adapter< N, T, se_perm<N, T> > adapter1_t;
     typedef symmetry_element_set_adapter< M, T, se_perm<M, T> > adapter2_t;
 
+    params.g3.clear();
+
     sequence<N + M, size_t> map(0);
     for (size_t j = 0; j < N + M; j++) map[j] = j;
     permutation<N + M> pinv(params.perm, true);

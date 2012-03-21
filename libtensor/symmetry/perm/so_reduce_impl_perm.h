@@ -86,6 +86,7 @@ void symmetry_operation_impl< so_reduce<N, M, K, T>, se_perm<N, T> >
     grp2.convert(set);
 
     adapter_t g2(set);
+    params.grp2.clear();
     for (typename adapter_t::iterator it = g2.begin(); it != g2.end(); it++) {
         const element_t &e2 = g2.get_elem(it);
 
