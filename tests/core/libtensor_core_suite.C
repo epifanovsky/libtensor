@@ -23,6 +23,7 @@ libtensor_core_suite::libtensor_core_suite() :
     add_test("orbit_list", m_utf_orbit_list);
     add_test("permutation", m_utf_permutation);
     add_test("permutation_builder", m_utf_permutation_builder);
+    add_test("permutation_generator", m_utf_permutation_generator);
     add_test("sequence", m_utf_sequence);
     add_test("symmetry", m_utf_symmetry);
     add_test("symmetry_element_set", m_utf_symmetry_element_set);
