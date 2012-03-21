@@ -1,6 +1,8 @@
 #ifndef LIBTENSOR_SO_DIRPROD_SE_LABEL_IMPL_H
 #define LIBTENSOR_SO_DIRPROD_SE_LABEL_IMPL_H
 
+#include "../combine_label.h"
+
 namespace libtensor {
 
 template<size_t N, size_t M, typename T>
@@ -36,18 +38,29 @@ symmetry_operation_impl< so_dirprod<N, M, T>, se_label<N + M, T> >::do_perform(
 
     dimensions<N + M> bidims = params.bis.get_block_index_dims();
     //	Go over each element in the first source group
+    std::set<std::string> id_done;
     for (typename adapter1_t::iterator it1 = g1.begin();
             it1 != g1.end(); it1++) {
 
         const se_label<N, T> &e1 = g1.get_elem(it1);
+        if (id_done.count(e1.get_table_id()) != 0) continue;
+
+        combine_label<N, T> cl1(e1);
+        id_done.insert(cl1.get_table_id());
+        typename adapter1_t::iterator it1b = it1; it1b++;
+        for (; it1b != g1.end(); it1b++) {
+            const se_label<N, T> &se1b = g1.get_elem(it1b);
+            if (se1b.get_table_id() != cl1.get_table_id()) continue;
+            cl1.add(se1b);
+        }
 
         // Create result se_label
-        se_label<N + M, T> e3(bidims, e1.get_table_id());
-        transfer_labeling(e1.get_labeling(), map1, e3.get_labeling());
+        se_label<N + M, T> e3(bidims, cl1.get_table_id());
+        transfer_labeling(cl1.get_labeling(), map1, e3.get_labeling());
 
         // Transfer the sequences
         evaluation_rule<N + M> r3;
-        const evaluation_rule<N> &r1 = e1.get_rule();
+        const evaluation_rule<N> &r1 = cl1.get_rule();
 
         std::map<size_t, size_t> m1to3;
         for (size_t i = 0; i < r1.get_n_sequences(); i++) {
@@ -86,12 +99,18 @@ symmetry_operation_impl< so_dirprod<N, M, T>, se_label<N + M, T> >::do_perform(
         }
         else {
             // If there is an se_label with the same product table
-            const se_label<M, T> &e2 = g2.get_elem(it2);
-            transfer_labeling(e2.get_labeling(), map2, e3.get_labeling());
+            combine_label<M, T> cl2(g2.get_elem(it2));
+            typename adapter2_t::iterator it2b = it2; it2b++;
+            for (; it2b != g2.end(); it2b++) {
+                const se_label<M, T> &se2b = g2.get_elem(it2b);
+                if (se2b.get_table_id() != cl2.get_table_id()) continue;
+                cl2.add(se2b);
+            }
+            transfer_labeling(cl2.get_labeling(), map2, e3.get_labeling());
             e3.get_labeling().match();
 
             // First transfer the sequences
-            const evaluation_rule<M> &r2 = e2.get_rule();
+            const evaluation_rule<M> &r2 = cl2.get_rule();
 
             std::map<size_t, size_t> m2to3;
             for (size_t i = 0; i < r2.get_n_sequences(); i++) {
@@ -135,21 +154,24 @@ symmetry_operation_impl< so_dirprod<N, M, T>, se_label<N + M, T> >::do_perform(
             it2 != g2.end(); it2++) {
 
         const se_label<M, T> &e2 = g2.get_elem(it2);
+        if (id_done.count(e2.get_table_id()) != 0) continue;
 
-        typename adapter1_t::iterator it1 = g1.begin();
-        for (; it1 != g1.end(); it1++) {
-
-            if (g1.get_elem(it1).get_table_id() == e2.get_table_id()) break;
+        combine_label<M, T> cl2(e2);
+        id_done.insert(cl2.get_table_id());
+        typename adapter2_t::iterator it2b = it2; it2b++;
+        for (; it2b != g2.end(); it2b++) {
+            const se_label<M, T> &se2b = g2.get_elem(it2b);
+            if (se2b.get_table_id() != cl2.get_table_id()) continue;
+            cl2.add(se2b);
         }
-        if (it1 != g1.end()) continue;
 
         // Create result se_label
-        se_label<N + M, T> e3(bidims, e2.get_table_id());
-        transfer_labeling(e2.get_labeling(), map2, e3.get_labeling());
+        se_label<N + M, T> e3(bidims, cl2.get_table_id());
+        transfer_labeling(cl2.get_labeling(), map2, e3.get_labeling());
 
         // Transfer the rule from e2
         evaluation_rule<N + M> r3;
-        const evaluation_rule<M> &r2 = e2.get_rule();
+        const evaluation_rule<M> &r2 = cl2.get_rule();
 
         std::map<size_t, size_t> m2to3;
         for (size_t i = 0; i < r2.get_n_sequences(); i++) {
