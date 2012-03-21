@@ -1,5 +1,3 @@
-#ifdef LIBTENSOR_INSTANTIATE_TEMPLATES
-
 #include "../se_part.h"
 #include "se_part_impl.h"
 
@@ -19,6 +17,4 @@ template class se_part<11, double>;
 template class se_part<12, double>;
 
 } // namespace libtensor
-
-#endif // LIBTENSOR_INSTANTIATE_TEMPLATES
 

@@ -1,5 +1,3 @@
-#ifdef LIBTENSOR_INSTANTIATE_TEMPLATES
-
 #include "../se_label.h"
 #include "se_label_impl.h"
 
@@ -20,6 +18,4 @@ template class se_label<11, double>;
 template class se_label<12, double>;
 
 } // namespace libtensor
-
-#endif // LIBTENSOR_INSTANTIATE_TEMPLATES
 

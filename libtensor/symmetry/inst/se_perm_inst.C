@@ -1,5 +1,3 @@
-#ifdef LIBTENSOR_INSTANTIATE_TEMPLATES
-
 #include <libtensor/btod/transf_double.h>
 #include "../se_perm.h"
 #include "se_perm_impl.h"
@@ -21,6 +19,3 @@ template class se_perm<11, double>;
 template class se_perm<12, double>;
 
 } // namespace libtensor
-
-#endif // LIBTENSOR_INSTANTIATE_TEMPLATES
-

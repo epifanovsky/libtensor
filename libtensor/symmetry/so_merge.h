@@ -8,6 +8,7 @@
 #include "symmetry_operation_base.h"
 #include "symmetry_operation_dispatcher.h"
 #include "symmetry_operation_params.h"
+#include "so_copy.h"
 
 namespace libtensor {
 
@@ -16,7 +17,6 @@ class so_merge;
 
 template<size_t N, size_t M, size_t K, typename T>
 class symmetry_operation_params< so_merge<N, M, K, T> >;
-
 
 /**	\brief Merges multiple dimensions of a %symmetry group into one
 	\tparam N Order of the argument space.
@@ -27,14 +27,19 @@ class symmetry_operation_params< so_merge<N, M, K, T> >;
 	space of order N and produces a group that acts in a %tensor space
 	of order N - M + K.
 
-	The mask indicates the dimensions that are being merged.
-	The permutation permutes the remaining indexes.
+    M dimensions of the original %symmetry group are merged in K steps to
+    yield K dimensions in the result %symmetry group. The dimensions merged
+    in each step are specified by K masks which have to be disjoint (i.e. no
+    two masks can have the same dimension set to true).
+
+    Since merging dimensions only makes sense if each mask comprises at least
+    two dimensions, M should always be large or equal to 2 * K (although this
+    is not explicitly checked).
 
 	\ingroup libtensor_symmetry
  **/
 template<size_t N, size_t M, size_t K, typename T>
-class so_merge :
-public symmetry_operation_base< so_merge<N, M, K, T> > {
+class so_merge : public symmetry_operation_base< so_merge<N, M, K, T> > {
 public:
     static const char *k_clazz; //!< Class name
 
@@ -54,45 +59,47 @@ public:
     so_merge(const symmetry<N, T> &sym1) :
         m_sym1(sym1), m_msk_set(0) { }
 
-    void add_mask(const mask<N> &msk) {  m_msk[m_msk_set++] = msk; }
+    /** \brief Add the next mask.
 
+        This function adds the next mask to the operation. It has to be called
+        exactly K times.
+     **/
+    void add_mask(const mask<N> &msk);
 
     void perform(symmetry<N - M + K, T> &sym2);
-
 };
 
-template<size_t N, size_t M, size_t K, typename T>
-const char *so_merge<N, M, K, T>::k_clazz = "so_merge<N, M, K, T>";
+template<size_t N, size_t M, typename T>
+class so_merge<N, M, M, T> :
+    public symmetry_operation_base< so_merge<N, M, M, T> > {
+public:
+    static const char *k_clazz; //!< Class name
 
-template<size_t N, size_t M, size_t K, typename T>
-void so_merge<N, M, K, T>::perform(symmetry<N - M + K, T> &sym2) {
+private:
+    typedef so_merge<N, M, M, T> operation_t;
+    typedef symmetry_operation_dispatcher<operation_t> dispatcher_t;
 
-#ifdef LIBTENSOR_DEBUG
-    static const char *method = "perform(symmetry<N - M + K, T> &)";
-    if (m_msk_set != K) {
-        throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
-                "Masks not set properly.");
+private:
+    const symmetry<N, T> &m_sym1; //!< Input symmetry.
+
+public:
+    /** \brief Constructor
+        \param sym1 Input symmetry.
+     **/
+    so_merge(const symmetry<N, T> &sym1) :
+        m_sym1(sym1) { }
+
+    /** \brief Add the next mask.
+
+        This function adds the next mask to the operation. It has to be called
+        exactly K times.
+     **/
+    void add_mask(const mask<N> &msk) { }
+
+    void perform(symmetry<N, T> &sym2) {
+        so_copy<N, T>(m_sym1).perform(sym2);
     }
-#endif
-
-    sym2.clear();
-
-    for(typename symmetry<N, T>::iterator i = m_sym1.begin();
-            i != m_sym1.end(); i++) {
-
-        const symmetry_element_set<N, T> &set1 = m_sym1.get_subset(i);
-
-        symmetry_element_set<N - M + K, T> set2(set1.get_id());
-        symmetry_operation_params<operation_t> params(set1, m_msk, set2);
-        dispatcher_t::get_instance().invoke(set1.get_id(), params);
-
-        for(typename symmetry_element_set<N - M + K, T>::iterator j =
-                set2.begin(); j != set2.end(); j++) {
-
-            sym2.insert(set2.get_elem(j));
-        }
-    }
-}
+};
 
 template<size_t N, size_t M, size_t K, typename T>
 class symmetry_operation_params< so_merge<N, M, K, T> > :

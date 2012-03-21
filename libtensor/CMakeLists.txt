@@ -127,6 +127,15 @@ set(SRC_INST
     symmetry/inst/se_label_inst.C
     symmetry/inst/se_part_inst.C
     symmetry/inst/se_perm_inst.C
+    symmetry/inst/so_apply_inst.C
+    symmetry/inst/so_copy_inst.C
+    symmetry/inst/so_dirprod_inst.C
+    symmetry/inst/so_dirsum_inst.C
+    symmetry/inst/so_merge_inst.C
+    symmetry/inst/so_permute_inst.C
+    symmetry/inst/so_reduce_inst.C
+    symmetry/inst/so_symmetrize_inst.C
+    symmetry/inst/so_symmetrize3_inst.C
     symmetry/label/inst/block_labeling.C
     symmetry/label/inst/evaluation_rule.C
     tod/tod_add.C

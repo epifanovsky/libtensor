@@ -51,16 +51,11 @@ public:
     so_reduce(const symmetry<N, T> &sym1) : //, const index_range<N> &bir) :
         m_sym1(sym1), m_msk_set(0) {}
 
-    void add_mask(const mask<N> &msk) {
-        m_msk[m_msk_set++] = msk;
-    }
+    void add_mask(const mask<N> &msk);
 
     void perform(symmetry<N - M, T> &sym2);
 
 };
-
-template<size_t N, size_t M, size_t K, typename T>
-const char *so_reduce<N, M, K, T>::k_clazz = "so_reduce<N, M, K, T>";
 
 /**	\brief Projection of a %symmetry group onto vacuum (specialization)
 	\tparam N Order.
@@ -78,7 +73,6 @@ public:
         sym2.clear();
     }
 };
-
 
 /**	\brief Projection of a %symmetry group onto itself (specialization)
 	\tparam N Order.
@@ -99,39 +93,6 @@ public:
         so_copy<N, T>(m_sym1).perform(sym2);
     }
 };
-
-
-template<size_t N, size_t M, size_t K, typename T>
-void so_reduce<N, M, K, T>::perform(symmetry<N - M, T> &sym2) {
-
-#ifdef LIBTENSOR_DEBUG
-    static const char *method = "perform(symmetry<N - M, T> &)";
-    if (m_msk_set != K) {
-        bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
-                "Masks not set properly.");
-    }
-#endif
-
-    sym2.clear();
-
-    for(typename symmetry<N, T>::iterator i = m_sym1.begin();
-            i != m_sym1.end(); i++) {
-
-        const symmetry_element_set<N, T> &set1 =
-                m_sym1.get_subset(i);
-        symmetry_element_set<N - M, T> set2(set1.get_id());
-        symmetry_operation_params<operation_t> params(
-                set1, m_msk, set2);
-
-        dispatcher_t::get_instance().invoke(set1.get_id(), params);
-
-        for(typename symmetry_element_set<N - M, T>::iterator j =
-                set2.begin(); j != set2.end(); j++) {
-            sym2.insert(set2.get_elem(j));
-        }
-    }
-}
-
 
 template<size_t N, size_t M, size_t K, typename T>
 class symmetry_operation_params< so_reduce<N, M, K, T> > :
