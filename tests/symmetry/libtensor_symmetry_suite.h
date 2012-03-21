@@ -8,7 +8,7 @@
 #include "permutation_group_test.h"
 #include "point_group_table_test.h"
 #include "product_table_container_test.h"
-#include "se_label_test.h"
+//#include "se_label_test.h"
 #include "se_part_test.h"
 #include "se_perm_test.h"
 //#include "so_apply_test.h"
@@ -16,16 +16,16 @@
 //#include "so_apply_impl_part_test.h"
 //#include "so_apply_impl_perm_test.h"
 //#include "so_dirprod_test.h"
-#include "so_dirprod_impl_label_test.h"
+//#include "so_dirprod_impl_label_test.h"
 #include "so_dirprod_impl_part_test.h"
 #include "so_dirprod_impl_perm_test.h"
 #include "so_dirsum_test.h"
-#include "so_dirsum_impl_label_test.h"
+//#include "so_dirsum_impl_label_test.h"
 #include "so_dirsum_impl_part_test.h"
 #include "so_dirsum_impl_perm_test.h"
 #include "so_copy_test.h"
 //#include "so_merge_test.h"
-#include "so_merge_impl_label_test.h"
+//#include "so_merge_impl_label_test.h"
 #include "so_merge_impl_part_test.h"
 #include "so_merge_impl_perm_test.h"
 //#include "so_permute_impl_label_test.h"
@@ -37,7 +37,7 @@
 #include "so_reduce_impl_perm_test.h"
 //#include "so_symmetrize_test.h"
 #include "symmetry_element_set_adapter_test.h"
-#include "transfer_rule_test.h"
+//#include "transfer_rule_test.h"
 
 using libtest::unit_test_factory;
 
@@ -99,7 +99,7 @@ private:
     unit_test_factory<point_group_table_test> m_utf_point_group_table;
     unit_test_factory<product_table_container_test>
         m_utf_product_table_container;
-    unit_test_factory<se_label_test> m_utf_se_label;
+//    unit_test_factory<se_label_test> m_utf_se_label;
     unit_test_factory<se_part_test> m_utf_se_part;
     unit_test_factory<se_perm_test> m_utf_se_perm;
 //	unit_test_factory<so_apply_test> m_utf_so_apply;
@@ -108,15 +108,15 @@ private:
 //	unit_test_factory<so_apply_impl_perm_test> m_utf_so_apply_impl_perm;
     unit_test_factory<so_copy_test> m_utf_so_copy;
 //    unit_test_factory<so_dirprod_test> m_utf_so_dirprod;
-    unit_test_factory<so_dirprod_impl_label_test> m_utf_so_dirprod_impl_label;
+//    unit_test_factory<so_dirprod_impl_label_test> m_utf_so_dirprod_impl_label;
     unit_test_factory<so_dirprod_impl_part_test> m_utf_so_dirprod_impl_part;
     unit_test_factory<so_dirprod_impl_perm_test> m_utf_so_dirprod_impl_perm;
     unit_test_factory<so_dirsum_test> m_utf_so_dirsum;
-    unit_test_factory<so_dirsum_impl_label_test> m_utf_so_dirsum_impl_label;
+//    unit_test_factory<so_dirsum_impl_label_test> m_utf_so_dirsum_impl_label;
     unit_test_factory<so_dirsum_impl_part_test> m_utf_so_dirsum_impl_part;
     unit_test_factory<so_dirsum_impl_perm_test> m_utf_so_dirsum_impl_perm;
 //	unit_test_factory<so_merge_test> m_utf_so_merge;
-	unit_test_factory<so_merge_impl_label_test> m_utf_so_merge_impl_label;
+//	unit_test_factory<so_merge_impl_label_test> m_utf_so_merge_impl_label;
     unit_test_factory<so_merge_impl_part_test> m_utf_so_merge_impl_part;
     unit_test_factory<so_merge_impl_perm_test> m_utf_so_merge_impl_perm;
 //	unit_test_factory<so_permute_impl_label_test> m_utf_so_permute_impl_label;
@@ -129,7 +129,7 @@ private:
 //	unit_test_factory<so_symmetrize_test> m_utf_so_symmetrize;
     unit_test_factory<symmetry_element_set_adapter_test>
         m_utf_symmetry_element_set_adapter;
-    unit_test_factory<transfer_rule_test> m_utf_transfer_rule;
+//    unit_test_factory<transfer_rule_test> m_utf_transfer_rule;
 
 public:
     //!	Creates the suite

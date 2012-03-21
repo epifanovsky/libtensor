@@ -7,67 +7,64 @@ template<size_t N>
 const char *evaluation_rule<N>::k_clazz = "evaluation_rule<N>";
 
 template<size_t N>
-typename evaluation_rule<N>::rule_id_t
-evaluation_rule<N>::add_rule(const basic_rule<N> &br) {
+size_t evaluation_rule<N>::add_sequence(const sequence<N, size_t> &seq) {
 
-    rule_id_t id = new_rule_id();
-    m_rules.insert(typename rule_list_t::value_type(id, br));
-    return id;
+    size_t seqno = 0;
+    for (; seqno < m_sequences.size(); seqno++) {
+        const sequence<N, size_t> &ref = m_sequences[seqno];
+
+        size_t i = 0;
+        for (; i < N; i++) {
+            if (seq[i] != ref[i]) break;
+        }
+        if (i == N) return seqno;
+    }
+
+    m_sequences.push_back(seq);
+    return m_sequences.size() - 1;
 }
 
 template<size_t N>
-size_t evaluation_rule<N>::add_product(rule_id_t rule) {
+size_t evaluation_rule<N>::add_product(size_t seq_no, label_t target) {
+#ifdef LIBTENSOR_DEBUG
+    if (seq_no >= m_sequences.size())
+        throw bad_parameter(g_ns, k_clazz, "add_product(size_t, label_t)",
+                __FILE__, __LINE__, "seq_no.");
+#endif
 
-    rule_iterator it = m_rules.find(rule);
-    if (it == m_rules.end())
-        throw bad_parameter(g_ns, k_clazz,
-                "add_product(rule_id)", __FILE__, __LINE__, "rule");
-
-    m_setup.push_back(rule_product_t());
-    rule_product_t &pr = m_setup.back();
-    pr[rule] = it;
+    m_setup.push_back(product_t());
+    product_t &pr = m_setup.back();
+    pr.insert(product_t::value_type(seq_no, target));
     return m_setup.size() - 1;
 }
 
 template<size_t N>
-void evaluation_rule<N>::add_to_product(size_t no, rule_id_t rule) {
+void evaluation_rule<N>::add_to_product(size_t no,
+        size_t seq_no, label_t target) {
 
-    static const char *method = "add_to_product(size_t, rule_id)";
+    static const char *method = "add_to_product(size_t, size_t, label_t)";
 
 #ifdef LIBTENSOR_DEBUG
     if (no >= m_setup.size())
         throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__, "no");
+    if (seq_no >= m_sequences.size())
+        throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__, "seq_no");
 #endif
 
-    rule_iterator it = m_rules.find(rule);
-    if (it == m_rules.end())
-        throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__, "rule");
-
-    rule_product_t &pr = m_setup[no];
-    pr[rule] = it;
+    product_t &pr = m_setup[no];
+    pr.insert(product_t::value_type(seq_no, target));
 }
 
 template<size_t N>
-bool evaluation_rule<N>::is_valid_rule(rule_iterator it) const {
+bool evaluation_rule<N>::is_valid(iterator it) const {
 
-    for (rule_iterator i = m_rules.begin(); i != m_rules.end(); i++) {
+    for (std::vector<product_t>::const_iterator it1 = m_setup.begin();
+            it1 != m_setup.end(); it1++) {
 
-        if (it == i) return true;
-    }
+        const product_t &pr = *it1;
+        for (iterator it2 = pr.begin(); it2 != pr.end(); it2++) {
 
-    return false;
-}
-
-template<size_t N>
-bool evaluation_rule<N>::is_valid_product_iterator(product_iterator it) const {
-
-    for (typename product_list_t::const_iterator i = m_setup.begin();
-            i != m_setup.end(); i++) {
-
-        const rule_product_t &p = *i;
-        for (product_iterator j = p.begin(); j != p.end(); j++) {
-
-            if (it == j) return true;
+            if (it == it2) return true;
         }
     }
 

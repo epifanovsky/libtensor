@@ -10,7 +10,7 @@ void evaluation_rule_test::perform() throw(libtest::test_exception) {
 
 }
 
-/** \test Add rules to the list of rules
+/** \test Add sequences to the list of sequences
  **/
 void evaluation_rule_test::test_1() throw(libtest::test_exception) {
 
@@ -22,73 +22,41 @@ void evaluation_rule_test::test_1() throw(libtest::test_exception) {
 
         evaluation_rule<3> rules;
 
-        basic_rule<3> br1, br2, br3;
-        br1[0] = br1[1] = br1[2] = 1;
-        br1.set_target(0);
-        br2[0] = br2[1] = br2[2] = 1;
-        br2.set_target(1);
-        br3[0] = br3[1] = br3[2] = 1;
-        br3.set_target(0);
-        br3.set_target(1);
+        sequence<3, size_t> s1, s2, s3;
+        s1[0] = s1[1] = s1[2] = 1;
+        s2[0] = s2[1] = s2[2] = 1;
+        s3[0] = s3[1] = 1; s3[2] = 2;
 
-        evaluation_rule<3>::rule_id_t id1, id2, id3;
-        id1 = rules.add_rule(br1);
-        id2 = rules.add_rule(br2);
-        id3 = rules.add_rule(br3);
+        size_t id1, id2, id3;
+        id1 = rules.add_sequence(s1);
+        id2 = rules.add_sequence(s2);
+        id3 = rules.add_sequence(s3);
 
-        bool done1 = false, done2 = false, done3 = false;
-        for (evaluation_rule<3>::rule_iterator it = rules.begin();
-                it != rules.end(); it++) {
+        if (id1 != id2)
+            fail_test(testname, __FILE__, __LINE__,
+                    "Two different IDs for identical sequences.");
 
-            evaluation_rule<3>::rule_id_t cur_id = rules.get_rule_id(it);
-            const basic_rule<3> &cur = rules.get_rule(it);
+        if (rules.get_n_sequences() != 2)
+            fail_test(testname, __FILE__, __LINE__,
+                    "Wrong number of sequences.");
 
-            if (cur_id == id1) {
-                if (done1)
-                    fail_test(testname, __FILE__, __LINE__,
-                            "Non-unique rule ID");
-
-                if (cur != br1)
-                    fail_test(testname, __FILE__, __LINE__,
-                            "Wrong basic rule.");
-
-                done1 = true;
-            }
-            else if (cur_id == id2) {
-                if (done2)
-                    fail_test(testname, __FILE__, __LINE__,
-                            "Non-unique rule ID");
-
-                if (cur != br2)
-                    fail_test(testname, __FILE__, __LINE__,
-                            "Wrong basic rule.");
-
-                done2 = true;
-            }
-            else if (cur_id == id3) {
-                if (done3)
-                    fail_test(testname, __FILE__, __LINE__,
-                            "Non-unique rule ID");
-
-                if (cur != br3)
-                    fail_test(testname, __FILE__, __LINE__,
-                            "Wrong basic rule.");
-
-                done3 = true;
-            }
-            else {
-                fail_test(testname, __FILE__, __LINE__,
-                        "Unknown ID.");
-            }
-
+        const sequence<3, size_t> &s1_ref = rules[id1];
+        for (size_t i = 0; i < 3; i++) {
+            if (s1[i] != s1_ref[i])
+                fail_test(testname, __FILE__, __LINE__, "s1 != s1_ref.");
         }
 
+        const sequence<3, size_t> &s3_ref = rules[id3];
+        for (size_t i = 0; i < 3; i++) {
+            if (s3[i] != s3_ref[i])
+                fail_test(testname, __FILE__, __LINE__, "s3 != s3_ref.");
+        }
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
     }
 }
 
-/** \test Tests add rules + create setup
+/** \test Tests add sequences + create list of lists
  **/
 void evaluation_rule_test::test_2() throw(libtest::test_exception) {
 
@@ -99,68 +67,56 @@ void evaluation_rule_test::test_2() throw(libtest::test_exception) {
     try {
 
         evaluation_rule<3> rules;
-        basic_rule<3> br1, br2, br3;
-        br1[0] = br1[1] = br1[2] = 1;
-        br1.set_target(0);
-        br2[0] = br2[1] = br2[2] = 1;
-        br2.set_target(1);
-        br3[0] = br3[1] = br3[2] = 1;
-        br3.set_target(0);
-        br3.set_target(1);
+        sequence<3, size_t> s1;
+        s1[0] = s1[1] = s1[2] = 1;
 
-        evaluation_rule<3>::rule_id_t id1, id2, id3;
-        id1 = rules.add_rule(br1);
-        id2 = rules.add_rule(br2);
-        id3 = rules.add_rule(br3);
+        size_t sno = rules.add_sequence(s1);
 
-        size_t pno1 = rules.add_product(id1);
-        rules.add_to_product(pno1, id2);
+        size_t pno1 = rules.add_product(sno, 0);
+        rules.add_to_product(pno1, sno, 1);
 
-        size_t pno2 = rules.add_product(id3);
-        rules.add_to_product(pno2, id2);
+        size_t pno2 = rules.add_product(sno, 0);
+        size_t pno3 = rules.add_product(sno, 1);
 
-        if (rules.get_n_products() != 2)
+        if (rules.get_n_products() != 3)
             fail_test(testname, __FILE__, __LINE__, "Unexpected # products.");
 
-        bool done1 = false, done2 = false;
-        for (evaluation_rule<3>::product_iterator it = rules.begin(pno1);
-                it != rules.end(pno1); it++) {
+        size_t nterms = 0;
+        evaluation_rule<3>::iterator it = rules.begin(pno1);
+        for(; it != rules.end(pno1); it++) {
 
-            evaluation_rule<3>::rule_id_t id = rules.get_rule_id(it);
-            if (id == id1) {
-                done1 = true;
-            }
-            else if (id == id2) {
-                done2 = true;
-            }
-            else {
-                fail_test(testname, __FILE__, __LINE__, "Unknown rule.");
-            }
+            if (rules.get_seq_no(it) != sno)
+                fail_test(testname, __FILE__, __LINE__, "Unknown sequence.");
+
+            const sequence<3, size_t> &s1_ref = rules.get_sequence(it);
+            for (size_t i = 0; i < 3; i++)
+                if (s1_ref[i] != s1[i])
+                fail_test(testname, __FILE__, __LINE__, "Unknown sequence.");
+
+            nterms++;
         }
+        if (nterms != 2)
+            fail_test(testname, __FILE__, __LINE__, "Pairs missing in product");
 
-        if (! (done1 && done2)) {
-            fail_test(testname, __FILE__, __LINE__, "Rules missing in product");
-        }
+        it = rules.begin(pno2);
+        if (rules.get_seq_no(it) != sno)
+            fail_test(testname, __FILE__, __LINE__, "Unknown sequence.");
+        if (rules.get_target(it) != 0)
+            fail_test(testname, __FILE__, __LINE__, "Wrong target.");
+        it++;
+        if (it != rules.end(pno2))
+            fail_test(testname, __FILE__, __LINE__,
+                    "Two many pairs in product.");
 
-        done1 = false, done2 = false;
-        for (evaluation_rule<3>::product_iterator it = rules.begin(pno2);
-                it != rules.end(pno2); it++) {
-
-            evaluation_rule<3>::rule_id_t id = rules.get_rule_id(it);
-            if (id == id3) {
-                done1 = true;
-            }
-            else if (id == id2) {
-                done2 = true;
-            }
-            else {
-                fail_test(testname, __FILE__, __LINE__, "Unknown rule.");
-            }
-        }
-
-        if (! (done1 && done2)) {
-            fail_test(testname, __FILE__, __LINE__, "Rules missing in product");
-        }
+        it = rules.begin(pno3);
+        if (rules.get_seq_no(it) != sno)
+            fail_test(testname, __FILE__, __LINE__, "Unknown sequence.");
+        if (rules.get_target(it) != 1)
+            fail_test(testname, __FILE__, __LINE__, "Wrong target.");
+        it++;
+        if (it != rules.end(pno3))
+            fail_test(testname, __FILE__, __LINE__,
+                    "Two many pairs in product.");
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());

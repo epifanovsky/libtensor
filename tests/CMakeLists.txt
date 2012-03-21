@@ -69,8 +69,8 @@ set(SRC_SYMMETRY
     symmetry/permutation_group_test.C
     symmetry/point_group_table_test.C
     symmetry/product_table_container_test.C
-    symmetry/se_label_test_base.C
-    symmetry/se_label_test.C
+#    symmetry/se_label_test_base.C
+#    symmetry/se_label_test.C
     symmetry/se_part_test.C
     symmetry/se_perm_test.C
 #    symmetry/so_apply_impl_label_test.C
@@ -78,15 +78,15 @@ set(SRC_SYMMETRY
 #    symmetry/so_apply_impl_perm_test.C
 #    symmetry/so_apply_test.C
     symmetry/so_copy_test.C
-    symmetry/so_dirprod_impl_label_test.C
+#    symmetry/so_dirprod_impl_label_test.C
     symmetry/so_dirprod_impl_part_test.C
     symmetry/so_dirprod_impl_perm_test.C
 #    symmetry/so_dirprod_test.C
-    symmetry/so_dirsum_impl_label_test.C
+#    symmetry/so_dirsum_impl_label_test.C
     symmetry/so_dirsum_impl_part_test.C
     symmetry/so_dirsum_impl_perm_test.C
     symmetry/so_dirsum_test.C
-    symmetry/so_merge_impl_label_test.C
+#    symmetry/so_merge_impl_label_test.C
     symmetry/so_merge_impl_part_test.C
     symmetry/so_merge_impl_perm_test.C
 #    symmetry/so_merge_test.C
@@ -99,7 +99,7 @@ set(SRC_SYMMETRY
 #    symmetry/so_reduce_test.C
 #    symmetry/so_symmetrize_test.C
     symmetry/symmetry_element_set_adapter_test.C
-    symmetry/transfer_rule_test.C
+#    symmetry/transfer_rule_test.C
 )
 
 set(SRC_BTOD

@@ -3,20 +3,33 @@
 
 #include <map>
 #include <vector>
+#include "../../core/sequence.h"
 #include "../../exception.h"
-#include "basic_rule.h"
+#include "product_table_i.h"
 
 namespace libtensor {
 
-/** \brief Full evaluation rule to determine allowed blocks of a block %tensor.
+/** \brief Evaluation rule to determine allowed blocks of a block %tensor.
 
-    Every possible rule to determine allowed blocks of a block %tensor by
-    its block labels can be represented as a sum of products of the elementary
-    basic rules. The evaluation rule is the container class for any arbitrarily
-    complex rule.
+    The evaluation rule is the container structure used by se_label to
+    determine allowed blocks of a N-dim block %tensor by its block labels.
+    It comprises
+    - a list of unique N-dim sequences
+    - a list of lists of index-label pairs where the index refers to one of
+      the N-dim sequences.
 
-    For details on how the setup of the evaluation rule determines allowed
-    blocks refer to the documentation of \sa se_label.
+    The list of unique sequences can be setup using the function
+    \c add_sequence() and can be obtained by index access. \c add_sequence()
+    returns the index of the added sequences which should be used when new
+    index-label pairs are added to the list of lists.
+
+    The function \c add_product() allows to add a new list of index-label pairs,
+    thereby also adding the first pair to the list. The return value is the
+    index of the newly added list which should be used to add further
+    index-label pairs to this list via \c add_to_product().
+
+    For details on how the evaluation rule is used to determine allowed
+    blocks please refer to the documentation of \sa se_label.
 
     \ingroup libtensor_symmetry
  **/
@@ -25,138 +38,91 @@ class evaluation_rule {
 public:
     static const char *k_clazz; //!< Class name
 
+private:
+    typedef std::multimap<size_t, product_table_i::label_t> product_t;
+
 public:
-    typedef size_t rule_id_t;
-    typedef typename basic_rule<N>::label_t label_t;
-    typedef typename basic_rule<N>::label_set_t label_set_t;
+    typedef typename product_table_i::label_t label_t;
+    typedef typename product_t::const_iterator iterator;
 
 private:
-    typedef std::map< rule_id_t, basic_rule<N> > rule_list_t;
+    std::vector< sequence<N, size_t> > m_sequences;
+    std::vector<product_t> m_setup;
 
 public:
-    typedef typename rule_list_t::const_iterator rule_iterator;
-
-private:
-    typedef std::map<rule_id_t, rule_iterator> rule_product_t;
-    typedef std::vector<rule_product_t> product_list_t;
-
-public:
-    typedef typename rule_product_t::const_iterator product_iterator;
-
-private:
-    rule_list_t m_rules; //!< List of basic rules
-    product_list_t m_setup; //!< Rules setup
-
-    rule_id_t m_next_rule_id; //!< Next rule ID
-
-public:
-    /** \brief Default constructor
-     **/
-    evaluation_rule() : m_next_rule_id(0) { }
+//    /** \brief Default constructor
+//
+//        Creates an empty evaluation rule.
+//     **/
+//    evaluation_rule() { }
 
     //! \name Manipulation functions
     //@{
 
-    /** \brief Add a new basic rule to the end of the list
-        \param br Basic rule
-        \return Returns the ID of the new rule
+    /** \brief Add a new sequence to the list of sequences.
+        \param seq Sequence to be added.
+        \return Index of the sequence.
+
+        The function checks, if an identical sequence is already present in
+        the list. If this is the case, it returns the number of this sequence
+        without adding a new one.
      **/
-    rule_id_t add_rule(const basic_rule<N> &br);
+    size_t add_sequence(const sequence<N, size_t> &seq);
 
     /** \brief Add a new product to the list of products
-        \param rule ID of the rule to be part of the new product
-        \return Number of the new product
+        \param seq_no Sequence index.
+        \param target Label.
+        \return Index of the new product.
      **/
-    size_t add_product(rule_id_t rule);
+    size_t add_product(size_t seq_no, label_t target);
 
-    /** \brief Add another rule to a product
-
+    /** \brief Add another index-label pair to a product
         \param no Number of the product to add to
-        \param rule ID of the rule to be added
+        \param seq_no Sequence index.
+        \param target Label.
      **/
-    void add_to_product(size_t no, rule_id_t rule);
+    void add_to_product(size_t no, size_t seq_no, label_t target);
 
-    //@}
-
-    //! \name Functions to access the basic rules (read access)
-    //@{
-
-    /** \brief STL-style iterator to the start of the list of basic rules
+    /** \brief Delete the list of lists
      **/
-    rule_iterator begin() const { return m_rules.begin(); }
+    void clear_setup() { m_setup.clear(); }
 
-    /** \brief STL-style iterator to the end of the list of basic rules
+    /** \brief Delete the list of lists and the sequences
      **/
-    rule_iterator end() const { return m_rules.end(); }
-
-    /** \brief Returns the ID of the rule given by iterator
-        \param it Iterator to rule
-        \return Rule ID
-     **/
-    rule_id_t get_rule_id(rule_iterator it) const {
-#ifdef LIBTENSOR_DEBUG
-        if (! is_valid_rule(it))
-            throw bad_parameter(g_ns, k_clazz,
-                    "get_rule_intrinsic(rule_iterator)",
-                    __FILE__, __LINE__, "it");
-#endif
-
-        return it->first;
-    }
-
-    /** \brief Return a basic rule
-        \param id Rule ID
-     **/
-    basic_rule<N> &get_rule(rule_id_t id) {
-
-        typename rule_list_t::iterator it = m_rules.find(id);
-#ifdef LIBTENSOR_DEBUG
-        if (it == m_rules.end()) {
-            throw bad_parameter(g_ns, k_clazz,
-                                "get_rule(rule_id)", __FILE__, __LINE__, "it");
-        }
-#endif
-        return it->second;
-    }
-
-    /** \brief Return a basic rule (const version
-        \param id Rule ID
-     **/
-    const basic_rule<N> &get_rule(rule_id_t id) const {
-
-        rule_iterator it = m_rules.find(id);
-        return get_rule(it);
-    }
-
-
-
-    /** \brief Return a basic rule
-        \param it Iterator pointing to a rule
-     **/
-    const basic_rule<N> &get_rule(rule_iterator it) const {
-#ifdef LIBTENSOR_DEBUG
-        if (! is_valid_rule(it))
-            throw bad_parameter(g_ns, k_clazz,
-                    "get_rule(rule_iterator)", __FILE__, __LINE__, "it");
-#endif
-
-        return it->second;
+    void clear_all() {
+        m_setup.clear(); m_sequences.clear();
     }
 
     //@}
 
-    //! \name Functions to access the rule setup (read access)
+    //! \name Access functions (read only)
     //@{
 
-    /** \brief Return the number of products
+    /** \brief Return the number of sequences.
+     **/
+    size_t get_n_sequences() const { return m_sequences.size(); }
+
+    /** \brief Access a sequence.
+        \param n Sequence index.
+     **/
+    const sequence<N, size_t> operator[](size_t n) const {
+#ifdef LIBTENSOR_DEBUG
+        if (n >= m_sequences.size())
+            throw bad_parameter(g_ns, k_clazz,
+                    "operator[](size_t)", __FILE__, __LINE__, "n");
+#endif
+
+        return m_sequences[n];
+    }
+
+    /** \brief Return the number of products.
      **/
     size_t get_n_products() const { return m_setup.size(); }
 
-    /** \brief STL-style iterator to the 1st rule in a product
+    /** \brief STL-style iterator to the 1st index-label pair in a product
         \param no Product number.
      **/
-    product_iterator begin(size_t no) const {
-
+    iterator begin(size_t no) const {
 #ifdef LIBTENSOR_DEBUG
         if (no >= m_setup.size())
             throw bad_parameter(g_ns, k_clazz,
@@ -169,8 +135,7 @@ public:
     /** \brief STL-style iterator to the end of a product
         \param no Product number
      **/
-    product_iterator end(size_t no) const {
-
+    iterator end(size_t no) const {
 #ifdef LIBTENSOR_DEBUG
         if (no >= m_setup.size())
             throw bad_parameter(g_ns, k_clazz,
@@ -180,50 +145,50 @@ public:
         return m_setup[no].end();
     }
 
-    /** \brief Return the ID of a basic rule
-        \param pit Iterator pointing to a rule
-        \return Rule ID
+    /** \brief Return the sequence index of the current pair
+        \param it Iterator
      **/
-    rule_id_t get_rule_id(product_iterator pit) const {
+    size_t get_seq_no(iterator it) const {
 #ifdef LIBTENSOR_DEBUG
-        if (! is_valid_product_iterator(pit))
-            throw bad_parameter(g_ns, k_clazz,
-                    "get_rule_id(const_product_iterator)",
-                    __FILE__, __LINE__, "pit");
+        if (! is_valid(it))
+            throw bad_parameter(g_ns, k_clazz, "get_seq_no(iterator)",
+                    __FILE__, __LINE__, "it");
 #endif
 
-        return pit->first;
+        return it->first;
+
     }
 
-    /** \brief Return the ID of a basic rule
-        \param pit Iterator pointing to a rule
-        \return Rule ID
+    /** \brief Return the sequence belonging to the current pair
+        \param it Iterator.
      **/
-    const basic_rule<N> &get_rule(product_iterator pit) const {
+     const sequence<N, size_t> &get_sequence(iterator it) const {
 #ifdef LIBTENSOR_DEBUG
-        if (! is_valid_product_iterator(pit))
-            throw bad_parameter(g_ns, k_clazz,
-                    "get_rule(const_product_iterator)",
-                    __FILE__, __LINE__, "pit");
+        if (! is_valid(it))
+            throw bad_parameter(g_ns, k_clazz, "get_sequence(iterator)",
+                    __FILE__, __LINE__, "it");
 #endif
 
-        return pit->second->second;
+        return m_sequences[it->first];
+    }
+
+    /** \brief Return the label belonging to the current pair
+        \param it Iterator pointing to a rule
+        \return Rule ID
+     **/
+    label_t get_target(iterator it) const {
+#ifdef LIBTENSOR_DEBUG
+        if (! is_valid(it))
+            throw bad_parameter(g_ns, k_clazz, "get_target(iterator)",
+                    __FILE__, __LINE__, "it");
+#endif
+
+        return it->second;
     }
     //@}
 
-    /** \brief Delete the rule setup
-     **/
-    void clear_setup() { m_setup.clear(); }
-
-    /** \brief Delete the rule setup as well as the list of rules
-     **/
-    void clear_all() { m_setup.clear(); m_rules.clear(); }
-
 private:
-    rule_id_t new_rule_id() { return m_next_rule_id++; }
-
-    bool is_valid_rule(rule_iterator it) const;
-    bool is_valid_product_iterator(product_iterator it) const;
+    bool is_valid(iterator it) const;
 };
 
 } // namespace libtensor
