@@ -21,17 +21,12 @@ void point_group_table_test::test_1() throw(libtest::test_exception) {
 
     try {
 
-        typedef point_group_table::irrep_label_t irrep_label_t;
-        typedef point_group_table::irrep_set_t irrep_set_t;
-        typedef point_group_table::irrep_group_t irrep_group_t;
-        typedef point_group_table::irrep_map_t irrep_map_t;
+        std::vector<std::string> irreps(4);
+        point_group_table::label_t ag = 0, bg = 1, au = 2, bu = 3;
+        irreps[ag] = "Ag"; irreps[bg] = "Bg";
+        irreps[au] = "Au"; irreps[bu] = "Bu";
 
-        irrep_label_t ag = 0, bg = 1, au = 2, bu = 3;
-        irrep_map_t irrep_names;
-        irrep_names[ag] = "Ag"; irrep_names[bg] = "Bg";
-        irrep_names[au] = "Au"; irrep_names[bu] = "Bu";
-
-        point_group_table pg(testname, irrep_names, ag);
+        point_group_table pg(testname, irreps, "Ag");
         pg.add_product(ag, ag, ag);
         pg.add_product(ag, bg, bg);
         pg.add_product(ag, au, au);
@@ -54,11 +49,22 @@ void point_group_table_test::test_1() throw(libtest::test_exception) {
         if (id.compare(testname) != 0)
             fail_test(testname, __FILE__, __LINE__, "Wrong id.");
 
-        irrep_set_t irs = pg.get_complete_set();
-        if (irs.size() != irrep_names.size())
+        if (pg.get_n_labels() != 4)
             fail_test(testname, __FILE__, __LINE__, "Wrong number of labels.");
 
-        irrep_group_t lg;
+        if (pg.get_irrep_name(point_group_table::k_identity) != "Ag")
+            fail_test(testname, __FILE__, __LINE__, "Name of identity irrep.");
+        if (pg.get_label("Ag") != point_group_table::k_identity)
+            fail_test(testname, __FILE__, __LINE__, "Label of identity irrep.");
+
+        for (size_t i = 1; i < 4; i++) {
+            point_group_table::label_t il = pg.get_label(irreps[i]);
+            if (pg.get_irrep_name(il) != irreps[i])
+                fail_test(testname, __FILE__, __LINE__,
+                        "Label-name assignment.");
+        }
+
+        product_table_i::label_group_t lg;
         lg.insert(ag); lg.insert(ag);
         if (! pg.is_in_product(lg, ag))
             fail_test(testname, __FILE__, __LINE__,
@@ -84,15 +90,11 @@ void point_group_table_test::test_2() throw(libtest::test_exception) {
 
     try {
 
-        typedef point_group_table::irrep_label_t irrep_label_t;
-        typedef point_group_table::irrep_set_t irrep_set_t;
-        typedef point_group_table::irrep_group_t irrep_group_t;
-        typedef point_group_table::irrep_map_t irrep_map_t;
-
-        irrep_label_t g = 0, u = 1;
-        irrep_map_t irrep_names;
-        irrep_names[g] = "g"; irrep_names[u] = "u";
-        point_group_table pg(testname, irrep_names, g);
+        point_group_table::label_t g = 0, u = 1;
+        std::vector<std::string> irreps(2);
+        irreps[g] = "g"; irreps[u] = "u";
+        point_group_table pg(testname, irreps, "g");
+        pg.add_product(u, u, g);
 
         bool failed = false;
         try {
@@ -121,20 +123,18 @@ void point_group_table_test::test_3() throw(libtest::test_exception) {
 
     try {
 
-        typedef point_group_table::irrep_label_t irrep_label_t;
-        typedef point_group_table::irrep_set_t irrep_set_t;
-        typedef point_group_table::irrep_group_t irrep_group_t;
-        typedef point_group_table::irrep_map_t irrep_map_t;
+        point_group_table::label_t ag = 0, bg = 1, au = 2, bu = 3;
+        std::vector<std::string> irreps(4);
+        irreps[ag] = "Ag"; irreps[bg] = "Bg";
+        irreps[au] = "Au"; irreps[bu] = "Bu";
 
-        irrep_label_t ag = 0, bg = 1, au = 2, bu = 3;
-        irrep_map_t irrep_names;
-        irrep_names[ag] = "Ag"; irrep_names[bg] = "Bg";
-        irrep_names[au] = "Au"; irrep_names[bu] = "Bu";
-
-        point_group_table pg(testname, irrep_names, ag);
+        point_group_table pg(testname, irreps, "Ag");
+        pg.add_product(bg, bg, ag);
         pg.add_product(bg, au, bu);
         pg.add_product(bg, bu, au);
+        pg.add_product(au, au, ag);
         pg.add_product(au, bu, bg);
+        pg.add_product(bu, bu, ag);
         pg.check();
 
         point_group_table *pg_copy = pg.clone();
@@ -154,42 +154,91 @@ void point_group_table_test::test_4() throw(libtest::test_exception) {
 
     try {
 
-        typedef point_group_table::irrep_label_t irrep_label_t;
-        typedef point_group_table::irrep_set_t irrep_set_t;
-        typedef point_group_table::irrep_group_t irrep_group_t;
-        typedef point_group_table::irrep_map_t irrep_map_t;
-
-        irrep_label_t ag = 0, eg = 1, au = 2, eu = 3;
-        irrep_map_t irrep_names;
-        irrep_names[ag] = "Ag"; irrep_names[eg] = "Eg";
-        irrep_names[au] = "Au"; irrep_names[eu] = "Eu";
-        point_group_table pg(testname, irrep_names, ag);
+        point_group_table::label_t ag = 0, eg = 1, au = 2, eu = 3;
+        std::vector<std::string> irreps(4);
+        irreps[ag] = "Ag"; irreps[eg] = "Eg";
+        irreps[au] = "Au"; irreps[eu] = "Eu";
+        point_group_table pg(testname, irreps, "Ag");
+        pg.add_product(eg, eg, ag);
         pg.add_product(eg, eg, eg);
         pg.add_product(eg, au, eu);
         pg.add_product(eg, eu, au);
         pg.add_product(eg, eu, eu);
+        pg.add_product(au, au, ag);
         pg.add_product(au, eu, eg);
+        pg.add_product(eu, eu, ag);
         pg.add_product(eu, eu, eg);
         pg.check();
 
         // test ag x eu = eu and eu x eg = au + eu
-        irrep_group_t lg1, lg2;
-        lg1.insert(ag); lg1.insert(eu);
-        lg2.insert(eg); lg2.insert(eu);
+        product_table_i::label_set_t::const_iterator ils;
 
-        if (! pg.is_in_product(lg1, eu))
+        product_table_i::label_set_t ls1 = pg.product(ag, eu);
+        if (ls1.size() != 1)
+            fail_test(testname, __FILE__, __LINE__,
+                    "Wrong number of labels in product");
+        if (*(ls1.begin()) != eu)
             fail_test(testname, __FILE__, __LINE__,
                     "Eu is not in product Ag x Eu.");
-        if (! pg.is_in_product(lg2, eu))
+
+        product_table_i::label_set_t ls2 = pg.product(eu, eg);
+        if (ls2.size() != 2)
             fail_test(testname, __FILE__, __LINE__,
-                    "Eu is not in product Eu x Eg.");
-        if (! pg.is_in_product(lg2, au))
+                    "Wrong number of labels in product");
+
+        ils = ls2.begin();
+        if (*ils != au)
             fail_test(testname, __FILE__, __LINE__,
-                    "Au is not in product Eu x Eg.");
+                    "Au is not in product Eg x Eu.");
+        ils++;
+        if (*ils != eu)
+            fail_test(testname, __FILE__, __LINE__,
+                    "Eu is not in product Eg x Eu.");
+
+        product_table_i::label_set_t ls3a, ls3;
+        ls3a.insert(au); ls3a.insert(eu);
+        ls3 = pg.product(eg, ls3a);
+        if (ls3.size() != 2)
+            fail_test(testname, __FILE__, __LINE__,
+                    "Wrong number of labels in product");
+
+        ils = ls3.begin();
+        if (*ils != au)
+            fail_test(testname, __FILE__, __LINE__,
+                    "Au is not in product Eg x (Au + Eu).");
+        ils++;
+        if (*ils != eu)
+            fail_test(testname, __FILE__, __LINE__,
+                    "Eu is not in product Eg x (Au + Eu).");
+
+        product_table_i::label_set_t ls4a, ls4;
+        ls4a.insert(ag); ls4a.insert(au);
+        ls4 = pg.product(ls4a, au);
+        if (ls4.size() != 2)
+            fail_test(testname, __FILE__, __LINE__,
+                    "Wrong number of labels in product");
+
+        ils = ls4.begin();
+        if (*ils != ag)
+            fail_test(testname, __FILE__, __LINE__,
+                    "Ag is not in product (Ag + Au) x Au.");
+        ils++;
+        if (*ils != au)
+            fail_test(testname, __FILE__, __LINE__,
+                    "Au is not in product (Ag + Au) x Au.");
+
+        product_table_i::label_set_t ls5a, ls5b, ls5;
+        ls5a.insert(ag); ls5a.insert(au);
+        ls5b.insert(eg); ls5b.insert(au);
+        ls5 = pg.product(ls5a, ls5b);
+        if (ls5.size() != 4)
+            fail_test(testname, __FILE__, __LINE__,
+                    "Wrong number of labels in product");
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
     }
 }
+
 
 } // namespace libtensor

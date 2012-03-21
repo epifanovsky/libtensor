@@ -2,31 +2,27 @@
 #define LIBTENSOR_PRODUCT_TABLE_I_H
 
 #include <set>
-#include "../../exception.h"
+#include "../bad_symmetry.h"
 
 namespace libtensor {
 
 
 /** \brief Interface for product tables
 
+    This class defines the interface for a product table of a finite set of
+    labels. The provided functions to access the product table enforce that
+    the table is symmetric. Additionally, two special labels are defined as
+    constants: the identity label (0) and an invalid label ((size_t) -1).
+    The identity label is the label for which the product with any other
+    label l yields only l as result.
 
-    - Finite set of labels
-    - each label is of type size_t
-    - maps direct products -> direct sums
-    - no prefactors in direct sum, ony present or non-present
-    - assumptions:
-        - symmetric
-        - special label: identity label \f$ l_x \f$
-        - \f$ l_x \otimes l_i \rightarrow l_i \forall l_i \in S_L \f$
-        - \f$ l_i \otimes \l_i \rightarrow l_x \oplus ... \forall l_i \in S_L \f$
-
-	This interface specifies the functions which se_label and
-	product_table_container use to operate. Any specific implementation of
-	product_table_i needs to provide these functions to work with both
-	classes.
-
-    TODO:
-    - documentation
+    Any class implementing this interface needs to implement
+    - clone() -- Create an identical copy
+    - get_id() -- Return the unique ID of the current table
+    - is_valid() -- Check if the given label is valid
+    - get_n_labels() -- Return the total number of labels
+    - determine_product() -- Compute the product of two labels
+    - do_check() -- Perform additional checks
 
     \ingroup libtensor_symmetry
  **/
@@ -38,21 +34,11 @@ public:
 
     static const char *k_clazz; //!< Class name
     static const label_t k_invalid; //!< Invalid label
-
-private:
-//    typedef std::map<label_t, label_set_t> table_t;
-
-//    const std::string m_id; //!< Table ID
-//    label_set_t m_labels; //!< Complete set of all labels
-//    label_t m_identity; //!< Identity label
-//    table_t m_table; //!< Product table
+    static const label_t k_identity; //!< Identity label
 
 public:
     //! \name Constructors / destructors
     //@{
-
-//    product_table_i(const std::string &id,
-//            const label_set_t &total, label_t ident = 0);
 
     /** \brief Virtual destructor
      **/
@@ -73,56 +59,81 @@ public:
      **/
     virtual bool is_valid(label_t l) const = 0;
 
-    /** \brief Returns the set of all valid labels
+    /** \brief Returns the number of valid labels (which is the smallest label
+            not valid).
      **/
-    virtual label_set_t get_complete_set() const = 0;
-
-    /** \brief Returns the identity label
-     **/
-    virtual label_t get_identity() const = 0;
+    virtual label_t get_n_labels() const = 0;
 
     /** \brief Determines if the label is in the product.
-
 		\param lg Group of labels to take the product of.
 		\param l Label to check against.
 		\return True if label is in the product, else false.
      **/
-    virtual bool is_in_product(const label_group_t &lg, label_t l) const = 0;
+    bool is_in_product(const label_group_t &lg,
+            label_t l) const throw(bad_parameter);
 
     /** \brief Compute the direct product of two labels.
         \param l1 First label
         \param l2 Second label
-        \return Set of labels present in the result
      **/
-    virtual label_set_t product(label_t l1, label_t l2) const = 0;
+    label_set_t product(label_t l1, label_t l2) const throw(bad_parameter);
 
-    /** \brief Compute the direct product of a label and a direct sum of
-            multiple labels
+    /** \brief Compute the direct product of a label and a set of
+            multiple labels.
         \param l1 Label
-        \param ls2 Set of labels in the direct sum
-        \return Set of labels present in result
-     **/
-    virtual label_set_t product(label_t l1, const label_set_t &ls2) const = 0;
+        \param l2 Set of labels.
 
-    /** \brief Compute the direct product of a label and a direct sum of
+        The result is the union of the results of the product of l1 with every
+        label in l2.
+     **/
+    label_set_t product(label_t l1,
+            const label_set_t &l2) const throw(bad_parameter);
+
+    /** \brief Compute the direct product of a label and a set of
             multiple labels
-        \param ls1 Set of labels in the direct sum
+        \param l1 Set of labels in the direct sum
         \param l2 Label
-        \return Set of labels present in result
-     **/
-    virtual label_set_t product(const label_set_t &ls1, label_t l2) const = 0;
 
-    /** \brief Computes the product of two direct sums of labels
-        \param ls1 Set of labels in the first sum
-        \param ls2 Set of labels in the second sum
-        \retun Set of labels present in the result
+        The result is the union of the results of the product of l2 and every
+        label in l1.
      **/
-    virtual label_set_t product(const label_set_t &ls1, const label_set_t &ls2) const = 0;
+    label_set_t product(const label_set_t &l1,
+            label_t l2) const throw(bad_parameter);
+
+    /** \brief Computes the product of two sets of labels
+        \param ls1 First set of labels.
+        \param ls2 Second set of labels.
+
+        The result is the union of the results of the product of every
+        label in l1 with every label in l2.
+     **/
+    label_set_t product(const label_set_t &ls1,
+            const label_set_t &ls2) const throw(bad_parameter);
 
     /** \brief Does a consistency check on the table.
 		\throw exception If product table is not set up properly.
+
+		Checks that the product of any label with the identity label yields the
+		respective label and that all products yield a non-empty set.
      **/
-    virtual void check() const throw(generic_exception);
+    void check() const throw(bad_symmetry);
+
+protected:
+    /** \brief Compute the product of two labels
+        \param l1 Smaller label
+        \param l2 Larger label
+
+        This function is used by all \c product() functions to determine
+        the product. Any implementation can safely assume that l1 < l2.
+     **/
+    virtual label_set_t determine_product(label_t l1, label_t l2) const = 0;
+
+    /** \brief Perform additional consistency check
+
+        This function is called by \c check() to perform additional checks
+        for the child classes.
+     **/
+    virtual void do_check() const = 0;
 };
 
 }

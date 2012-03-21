@@ -25,34 +25,39 @@ size_t evaluation_rule<N>::add_sequence(const sequence<N, size_t> &seq) {
 }
 
 template<size_t N>
-size_t evaluation_rule<N>::add_product(size_t seq_no, label_t target) {
+size_t evaluation_rule<N>::add_product(size_t seq_no,
+        label_t intr, label_t target) {
 #ifdef LIBTENSOR_DEBUG
     if (seq_no >= m_sequences.size())
-        throw bad_parameter(g_ns, k_clazz, "add_product(size_t, label_t)",
+        throw bad_parameter(g_ns, k_clazz,
+                "add_product(size_t, label_t, label_t)",
                 __FILE__, __LINE__, "seq_no.");
 #endif
 
     m_setup.push_back(product_t());
     product_t &pr = m_setup.back();
-    pr.insert(product_t::value_type(seq_no, target));
+    pr.insert(product_t::value_type(seq_no, label_pair_t(intr, target)));
     return m_setup.size() - 1;
 }
 
 template<size_t N>
 void evaluation_rule<N>::add_to_product(size_t no,
-        size_t seq_no, label_t target) {
+        size_t seq_no, label_t intr, label_t target) {
 
-    static const char *method = "add_to_product(size_t, size_t, label_t)";
+    static const char *method =
+            "add_to_product(size_t, size_t, label_t, label_t)";
 
 #ifdef LIBTENSOR_DEBUG
     if (no >= m_setup.size())
-        throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__, "no");
+        throw bad_parameter(g_ns, k_clazz, method,
+                __FILE__, __LINE__, "no");
     if (seq_no >= m_sequences.size())
-        throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__, "seq_no");
+        throw bad_parameter(g_ns, k_clazz, method,
+                __FILE__, __LINE__, "seq_no");
 #endif
 
     product_t &pr = m_setup[no];
-    pr.insert(product_t::value_type(seq_no, target));
+    pr.insert(product_t::value_type(seq_no, label_pair_t(intr, target)));
 }
 
 template<size_t N>

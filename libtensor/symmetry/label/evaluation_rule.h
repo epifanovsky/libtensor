@@ -13,20 +13,20 @@ namespace libtensor {
 
     The evaluation rule is the container structure used by se_label to
     determine allowed blocks of a N-dim block %tensor by its block labels.
-    It comprises
-    - a list of unique N-dim sequences
-    - a list of lists of index-label pairs where the index refers to one of
-      the N-dim sequences.
+    It comprises a list of unique N-dim sequences and a list of "products"
+    where each product is a list of index-label-label triples. In each
+    triple the index refers to one of the N-dim sequences, while the two
+    labels refer to the "intrinsic" and the "target" label.
 
     The list of unique sequences can be setup using the function
     \c add_sequence() and can be obtained by index access. \c add_sequence()
     returns the index of the added sequences which should be used when new
     index-label pairs are added to the list of lists.
 
-    The function \c add_product() allows to add a new list of index-label pairs,
-    thereby also adding the first pair to the list. The return value is the
-    index of the newly added list which should be used to add further
-    index-label pairs to this list via \c add_to_product().
+    The function \c add_product() allows to add a new list of index-label-label
+    triples, thereby also adding the first triple to the list. The return value
+    is the index of the newly added list which should be used to add further
+    index-label-label triples to this list via \c add_to_product().
 
     For details on how the evaluation rule is used to determine allowed
     blocks please refer to the documentation of \sa se_label.
@@ -38,11 +38,14 @@ class evaluation_rule {
 public:
     static const char *k_clazz; //!< Class name
 
-private:
-    typedef std::multimap<size_t, product_table_i::label_t> product_t;
-
 public:
     typedef typename product_table_i::label_t label_t;
+
+private:
+    typedef std::pair<label_t, label_t> label_pair_t;
+    typedef std::multimap<size_t, label_pair_t> product_t;
+
+public:
     typedef typename product_t::const_iterator iterator;
 
 private:
@@ -50,12 +53,6 @@ private:
     std::vector<product_t> m_setup;
 
 public:
-//    /** \brief Default constructor
-//
-//        Creates an empty evaluation rule.
-//     **/
-//    evaluation_rule() { }
-
     //! \name Manipulation functions
     //@{
 
@@ -71,17 +68,23 @@ public:
 
     /** \brief Add a new product to the list of products
         \param seq_no Sequence index.
-        \param target Label.
+        \param intrinsic Intrinsic label
+        \param target Target label.
         \return Index of the new product.
      **/
-    size_t add_product(size_t seq_no, label_t target);
+    size_t add_product(size_t seq_no,
+            label_t intr = product_table_i::k_identity,
+            label_t target = product_table_i::k_identity);
 
     /** \brief Add another index-label pair to a product
         \param no Number of the product to add to
         \param seq_no Sequence index.
-        \param target Label.
+        \param intr Intrinsic label
+        \param target Target label.
      **/
-    void add_to_product(size_t no, size_t seq_no, label_t target);
+    void add_to_product(size_t no, size_t seq_no,
+            label_t intr = product_table_i::k_identity,
+            label_t target = product_table_i::k_identity);
 
     /** \brief Delete the list of lists
      **/
@@ -145,7 +148,7 @@ public:
         return m_setup[no].end();
     }
 
-    /** \brief Return the sequence index of the current pair
+    /** \brief Return the sequence index of the current triplet
         \param it Iterator
      **/
     size_t get_seq_no(iterator it) const {
@@ -159,10 +162,10 @@ public:
 
     }
 
-    /** \brief Return the sequence belonging to the current pair
+    /** \brief Return the sequence belonging to the current triplet
         \param it Iterator.
      **/
-     const sequence<N, size_t> &get_sequence(iterator it) const {
+    const sequence<N, size_t> &get_sequence(iterator it) const {
 #ifdef LIBTENSOR_DEBUG
         if (! is_valid(it))
             throw bad_parameter(g_ns, k_clazz, "get_sequence(iterator)",
@@ -170,6 +173,20 @@ public:
 #endif
 
         return m_sequences[it->first];
+    }
+
+    /** \brief Return the intrinsic label belonging to the current triple
+        \param it Iterator pointing to a rule
+        \return Rule ID
+     **/
+    label_t get_intrinsic(iterator it) const {
+#ifdef LIBTENSOR_DEBUG
+        if (! is_valid(it))
+            throw bad_parameter(g_ns, k_clazz, "get_target(iterator)",
+                    __FILE__, __LINE__, "it");
+#endif
+
+        return it->second.first;
     }
 
     /** \brief Return the label belonging to the current pair
@@ -183,7 +200,7 @@ public:
                     __FILE__, __LINE__, "it");
 #endif
 
-        return it->second;
+        return it->second.second;
     }
     //@}
 

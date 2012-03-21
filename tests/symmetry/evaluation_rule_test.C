@@ -72,36 +72,43 @@ void evaluation_rule_test::test_2() throw(libtest::test_exception) {
 
         size_t sno = rules.add_sequence(s1);
 
-        size_t pno1 = rules.add_product(sno, 0);
-        rules.add_to_product(pno1, sno, 1);
+        size_t pno1 = rules.add_product(sno, 0, 0);
+        rules.add_to_product(pno1, sno, 1, 2);
 
-        size_t pno2 = rules.add_product(sno, 0);
-        size_t pno3 = rules.add_product(sno, 1);
+        size_t pno2 = rules.add_product(sno, 0, 1);
+        size_t pno3 = rules.add_product(sno, 1, 0);
 
         if (rules.get_n_products() != 3)
             fail_test(testname, __FILE__, __LINE__, "Unexpected # products.");
 
-        size_t nterms = 0;
         evaluation_rule<3>::iterator it = rules.begin(pno1);
-        for(; it != rules.end(pno1); it++) {
-
-            if (rules.get_seq_no(it) != sno)
-                fail_test(testname, __FILE__, __LINE__, "Unknown sequence.");
-
-            const sequence<3, size_t> &s1_ref = rules.get_sequence(it);
-            for (size_t i = 0; i < 3; i++)
-                if (s1_ref[i] != s1[i])
-                fail_test(testname, __FILE__, __LINE__, "Unknown sequence.");
-
-            nterms++;
-        }
-        if (nterms != 2)
-            fail_test(testname, __FILE__, __LINE__, "Pairs missing in product");
+        if (rules.get_seq_no(it) != sno)
+            fail_test(testname, __FILE__, __LINE__, "Unknown sequence.");
+        if (rules.get_intrinsic(it) != 0)
+            fail_test(testname, __FILE__, __LINE__, "Wrong intrinsic label.");
+        if (rules.get_target(it) != 0)
+            fail_test(testname, __FILE__, __LINE__, "Wrong target.");
+        it++;
+        if (it == rules.end(pno1))
+            fail_test(testname, __FILE__, __LINE__,
+                    "Term missing in product");
+        if (rules.get_seq_no(it) != sno)
+            fail_test(testname, __FILE__, __LINE__, "Unknown sequence.");
+        if (rules.get_intrinsic(it) != 1)
+            fail_test(testname, __FILE__, __LINE__, "Wrong intrinsic label.");
+        if (rules.get_target(it) != 2)
+            fail_test(testname, __FILE__, __LINE__, "Wrong target.");
+        it++;
+        if (it != rules.end(pno1))
+            fail_test(testname, __FILE__, __LINE__,
+                    "Two many triples in product.");
 
         it = rules.begin(pno2);
         if (rules.get_seq_no(it) != sno)
             fail_test(testname, __FILE__, __LINE__, "Unknown sequence.");
-        if (rules.get_target(it) != 0)
+        if (rules.get_intrinsic(it) != 0)
+            fail_test(testname, __FILE__, __LINE__, "Wrong intrinsic label.");
+        if (rules.get_target(it) != 1)
             fail_test(testname, __FILE__, __LINE__, "Wrong target.");
         it++;
         if (it != rules.end(pno2))
@@ -111,7 +118,9 @@ void evaluation_rule_test::test_2() throw(libtest::test_exception) {
         it = rules.begin(pno3);
         if (rules.get_seq_no(it) != sno)
             fail_test(testname, __FILE__, __LINE__, "Unknown sequence.");
-        if (rules.get_target(it) != 1)
+        if (rules.get_intrinsic(it) != 1)
+            fail_test(testname, __FILE__, __LINE__, "Wrong intrinsic label.");
+        if (rules.get_target(it) != 0)
             fail_test(testname, __FILE__, __LINE__, "Wrong target.");
         it++;
         if (it != rules.end(pno3))

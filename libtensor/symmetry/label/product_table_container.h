@@ -2,6 +2,7 @@
 #define LIBTENSOR_PRODUCT_TABLE_CONTAINER_H
 
 #include <map>
+#include <typeinfo>
 #include <libutil/singleton.h>
 #include "../../exception.h"
 #include "product_table_i.h"
@@ -83,6 +84,10 @@ public:
     const product_table_i &req_const_table(
             const std::string &id) throw (bad_parameter, exception);
 
+
+    template<typename PTT>
+    const PTT &req_const_table(const std::string &id) throw (generic_exception);
+
     /** \brief Return checked out product table
 
         \param id Table id.
@@ -101,6 +106,22 @@ private:
 
 };
 
+template<typename PTT>
+const PTT &product_table_container::req_const_table(
+        const std::string &id) throw (generic_exception) {
+
+       const product_table_i &pt = req_const_table(id);
+       try {
+
+           return dynamic_cast<const PTT &>(pt);
+
+       } catch(std::bad_cast&) {
+           ret_table(id);
+           throw generic_exception(g_ns, k_clazz,
+                   "req_const_table(std::string &) const",
+                   __FILE__, __LINE__, "bad_cast");
+       }
+   }
 }
 
 #endif // LIBTENSOR_PRODUCT_TABLE_CONTAINER_H
