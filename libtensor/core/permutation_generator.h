@@ -6,9 +6,7 @@
 
 namespace libtensor {
 
-/** \brief Generator for all possible permutations of parts of a sequence.
-    \tparam N Length of sequence.
-    \tparam T Sequence value type.
+/** \brief Generator for all possible permutations of a sequence.
 
     This class implements a slighty modified version of the algorithm by
     H. F. Trotter ("Alg. 115: Perm", Commun. of the ACM 5 (8) 434-435,
@@ -17,13 +15,9 @@ namespace libtensor {
 
     \ingroup libtensor_symmetry
  **/
-template<size_t N, typename T>
 class permutation_generator {
 private:
-    sequence<N, T> m_seq; //!< Sequence to be permuted
-    size_t m_n; //!< Number of indexes to permute (m_n <= N)
-
-    std::vector<size_t> m_map; //!< Map of indexes to be permuted
+    std::vector<size_t> m_perm; //!< Current permutation of [0 .. (m_n - 1)]
     std::vector<size_t> m_p; //!< Helper array
     std::vector<bool> m_d; //!< Helper array
     bool m_done; //!< All permutations done
@@ -33,19 +27,17 @@ public:
         \param seq Sequence to permute.
         \param msk Mask of elements to be permuted.
      **/
-    permutation_generator(const sequence<N, T> &seq, const mask<N> &msk) :
-        m_seq(seq), m_n(determine_n(msk)), m_map(m_n),
-        m_p(m_n, 0), m_d(m_n, true), m_done(false) {
+    permutation_generator(size_t n) :
+        m_perm(n, 0), m_p(n, 0), m_d(n, true), m_done(false) {
 
-        for (register size_t i = 0, j = 0; i < N; i++) {
-            if (! msk[i]) continue;
-            m_map[j++] = i;
+        for (register size_t i = 0; i < m_perm.size(); i++) {
+            m_perm[i] = i;
         }
     }
 
     /** \brief Obtain the current permutation of the sequence
      **/
-    const sequence<N, T> &get_sequence() const { return m_seq; }
+    const size_t &operator[](size_t i) const { return m_perm[i]; }
 
     /** \brief Compute next permutation.
         \return True, if this is not the last permutation.
@@ -53,7 +45,7 @@ public:
     bool next() {
         if (m_done) return false;
 
-        register size_t i = m_n - 1, k = 0;
+        register size_t i = m_perm.size() - 1, k = 0;
         for (; i > 0; i--) {
             if (m_d[i]) { m_p[i]++; } else { m_p[i]--; }
             if (m_p[i] == (i + 1)) {
@@ -67,7 +59,7 @@ public:
         if (i == 0) m_done = true;
 
         size_t q = (m_done ? k : m_p[i] - 1 + k);
-        std::swap(m_seq[m_map[q]], m_seq[m_map[q + 1]]);
+        std::swap(m_perm[q], m_perm[q + 1]);
 
         return (! m_done);
     }
@@ -75,13 +67,6 @@ public:
     /** \brief Is this the last permutations.
      **/
     bool is_last() const { return m_done; }
-
-private:
-    static size_t determine_n(const mask<N> &msk) {
-        size_t n = 0;
-        for (register size_t i = 0; i < N; i++) { if (msk[i]) n++; }
-        return n;
-    }
 };
 
 

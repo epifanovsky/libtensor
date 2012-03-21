@@ -12,23 +12,23 @@ void permutation_generator_test::perform() throw(libtest::test_exception) {
 }
 
 
-/**	\test Tests the generation of permutations of a whole sequence
+/**	\test Tests the generation of permutations
  **/
 void permutation_generator_test::test_1() throw(libtest::test_exception) {
 
     static const char *testname = "permutation_generator_test::test_1()";
 
-    sequence<4, double> seq;
-    mask<4> msk;
-    for (size_t i = 0; i < 4; i++) { seq[i] = (double) i; msk[i] = true; }
+    sequence<4, double> seq, pseq;
+    for (size_t i = 0; i < 4; i++) { seq[i] = (double) i; }
 
-    permutation_generator<4, double> pg(seq, msk);
+    permutation_generator pg(4);
     std::vector< sequence<4, double> > res;
 
     try {
 
         do {
-            res.push_back(pg.get_sequence());
+            for (size_t i = 0; i < 4; i++) { pseq[i] = seq[pg[i]]; }
+            res.push_back(seq);
         } while (pg.next());
 
     } catch(exception &e) {
@@ -59,18 +59,19 @@ void permutation_generator_test::test_2() throw(libtest::test_exception) {
 
     static const char *testname = "permutation_generator_test::test_2()";
 
-    sequence<6, double> seq;
-    mask<6> msk;
-    for (size_t i = 0; i < 6; i++) { seq[i] = 1. / (double) i; }
-    msk[1] = msk[3] = msk[4] = true;
+    sequence<6, double> seq, pseq;
+    for (size_t i = 0; i < 6; i++) { pseq[i] = seq[i] = 1. / (double) i; }
+    std::vector<size_t> map(3);
+    map[0] = 1; map[1] = 3; map[2] = 4;
 
-    permutation_generator<6, double> pg(seq, msk);
+    permutation_generator pg(3);
     std::vector< sequence<6, double> > res;
 
     try {
 
         do {
-            res.push_back(pg.get_sequence());
+            for (size_t i = 0; i < 3; i++) { pseq[map[i]] = seq[map[pg[i]]]; }
+            res.push_back(pseq);
         } while (pg.next());
 
     } catch(exception &e) {
