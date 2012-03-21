@@ -198,8 +198,8 @@ symmetry_operation_impl< so_merge<N, M, T>, se_label<N - M, T> >::do_perform(
                     r1.get_intrinsic(ip), r1.get_target(ip));
             ip++;
             for (; ip != r1.end(pno); ip++) {
-                if ((m1to2[r1.get_seq_no(ip)] != (size_t) -1) &&
-                        (r1.get_intrinsic(ip) != product_table_i::k_invalid))
+                if ((m1to2[r1.get_seq_no(ip)] == (size_t) -1) ||
+                        (r1.get_intrinsic(ip) == product_table_i::k_invalid))
                     continue;
 
                 r2.add_to_product(cno, m1to2[r1.get_seq_no(ip)],
