@@ -296,16 +296,16 @@ void so_merge_impl_label_test::test_2n2nn_2(const std::string &table_id,
         mask<4> m1; m1[0] = m1[1] = m1[2] = m1[3] = true;
         for (size_t i = 0; i < 4; i++) bl1.assign(m1, i, i);
         evaluation_rule<4> r1;
-        basic_rule<4> br1a, br1b;
-        br1a[0] = br1a[1] = 1; br1a.set_target(2);
-        br1b[2] = br1b[3] = 1; br1b.set_target(2);
-        evaluation_rule<4>::rule_id_t rid1a = r1.add_rule(br1a);
-        evaluation_rule<4>::rule_id_t rid1b = r1.add_rule(br1b);
-        r1.add_product(rid1a);
+        sequence<4, size_t> seq1a(0), seq1b(0);
+        seq1a[0] = seq1a[1] = 1;
+        seq1b[2] = seq1b[3] = 1;
+        r1.add_sequence(seq1a);
+        r1.add_sequence(seq1b);
+        r1.add_product(0, 2, 0);
         if (product)
-            r1.add_to_product(0, rid1b);
+            r1.add_to_product(0, 1, 2, 0);
         else
-            r1.add_product(rid1b);
+            r1.add_product(1, 2, 0);
         el1.set_rule(r1);
     }
 
@@ -368,17 +368,17 @@ void so_merge_impl_label_test::test_nmk_1(const std::string &table_id,
         for (size_t i = 0; i < 4; i++) bl1.assign(m1, i, i);
 
         evaluation_rule<5> r1;
-        basic_rule<5> br1a, br1b;
-        br1a[0] = br1a[1] = 1; br1a.set_target(2);
-        br1b[2] = br1b[3] = br1b[4] = 1; br1b.set_target(3);
+        sequence<5, size_t> seq1a, seq1b;
+        seq1a[0] = seq1a[1] = 1;
+        seq1b[2] = seq1b[3] = seq1b[4] = 1;
 
-        evaluation_rule<5>::rule_id_t rid1a = r1.add_rule(br1a);
-        evaluation_rule<5>::rule_id_t rid1b = r1.add_rule(br1b);
-        r1.add_product(rid1a);
+        r1.add_sequence(seq1a);
+        r1.add_sequence(seq1b);
+        r1.add_product(0, 2, 0);
         if (product)
-            r1.add_to_product(0, rid1b);
+            r1.add_to_product(0, 1, 3, 0);
         else
-            r1.add_product(rid1b);
+            r1.add_product(1, 3, 0);
 
         el1.set_rule(r1);
     }
@@ -456,16 +456,16 @@ void so_merge_impl_label_test::test_nmk_2(const std::string &table_id,
         for (size_t i = 0; i < 4; i++) bl1.assign(m1, i, i);
 
         evaluation_rule<5> r1;
-        basic_rule<5> br1a, br1b;
-        br1a[0] = br1a[1] = br1a[4] = 1; br1a.set_target(2);
-        br1b[2] = br1b[3] = br1b[4] = 1; br1b.set_target(2);
-        evaluation_rule<5>::rule_id_t rid1a = r1.add_rule(br1a);
-        evaluation_rule<5>::rule_id_t rid1b = r1.add_rule(br1b);
-        r1.add_product(rid1a);
+        sequence<5, size_t> seq1a, seq1b;
+        seq1a[0] = seq1a[1] = seq1a[4] = 1;
+        seq1b[2] = seq1b[3] = seq1b[4] = 1;
+        r1.add_sequence(seq1a);
+        r1.add_sequence(seq1b);
+        r1.add_product(0, 2, 0);
         if (product)
-            r1.add_to_product(0, rid1b);
+            r1.add_to_product(0, 1, 2, 0);
         else
-            r1.add_product(rid1b);
+            r1.add_product(1, 2, 0);
         el1.set_rule(r1);
     }
 
