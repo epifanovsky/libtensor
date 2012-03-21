@@ -1,8 +1,9 @@
 #ifndef LIBTENSOR_ADDITIVE_BTOD_IMPL_H
 #define LIBTENSOR_ADDITIVE_BTOD_IMPL_H
 
-#include "../symmetry/so_add.h"
 #include "../symmetry/so_copy.h"
+#include "../symmetry/so_dirsum.h"
+#include "../symmetry/so_merge.h"
 
 namespace libtensor {
 
@@ -26,27 +27,28 @@ void additive_btod<N>::compute_block(additive_btod<N> &op, bool zero,
 
 template<size_t N>
 void additive_btod<N>::perform(block_tensor_i<N, double> &bt, double c) {
-    // permutation<N + N> p0;
-    // symmetry<N + N, T> symx;
-    // so_dirsum<N, N, T>(get_symmetry(), symcopy, p0).perform(symx);
-    // so_merge<N + N, N + N, N, T> merge(symx);
-    // for (size_t i = 0; i < N; i++) {
-    //     mask<N + N> m;
-    //     m[i] = m[i + N] = true;
-    //     merge.add_mask(m);
-    // }
-    // merge.perform(ctrl.req_symmetry());
+
     if(fabs(c) == 0.0) return;
 
     sync_on();
 
     block_tensor_ctrl<N, double> ctrl(bt);
     ctrl.req_sync_on();
+
     symmetry<N, double> symcopy(bt.get_bis());
     so_copy<N, double>(ctrl.req_const_symmetry()).perform(symcopy);
-    permutation<N> p0;
-    so_add<N, double>(get_symmetry(), p0, symcopy, p0).
-        perform(ctrl.req_symmetry());
+
+    permutation<N + N> p0;
+    block_index_space_product_builder<N, N> bbx(get_bis(), bt.get_bis(), p0);
+    symmetry<N + N, double> symx(bbx.get_bis());
+    so_dirsum<N, N, double>(get_symmetry(), symcopy, p0).perform(symx);
+    so_merge<N + N, N + N, N, double> merge(symx);
+    for (size_t i = 0; i < N; i++) {
+         mask<N + N> m;
+         m[i] = m[i + N] = true;
+         merge.add_mask(m);
+     }
+     merge.perform(ctrl.req_symmetry());
 
     dimensions<N> bidims(bt.get_bis().get_block_index_dims());
     schedule_t sch(get_symmetry(), symcopy);

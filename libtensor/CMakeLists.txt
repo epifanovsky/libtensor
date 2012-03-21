@@ -16,6 +16,7 @@ set(SRC
 #    symmetry/label/evaluation_rule.C
 #    symmetry/label/point_group_table.C
 #    symmetry/label/product_table_container.C
+#    symmetry/label/product_table_i.C
 #    symmetry/label/transfer_rule.C
     tod/loop_list_add.C
     tod/loop_list_copy.C
@@ -132,9 +133,9 @@ set(SRC_INST
     tod/tod_dotprod.C
     tod/tod_ewmult2.C
     tod/tod_import_raw_stream.C
-#	btod/additive_btod.C
-#	btod/basic_btod.C
-#	btod/btod_add.C
+	btod/additive_btod.C
+	btod/basic_btod.C
+	btod/btod_add.C
 #	btod/btod_contract2_1.C
 #	btod/btod_contract2_2.C
 #	btod/btod_contract2_3.C

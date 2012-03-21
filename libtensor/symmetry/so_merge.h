@@ -51,7 +51,7 @@ public:
 		\param msk Mask.
      **/
     so_merge(const symmetry<N, T> &sym1) :
-        m_sym1(sym1) { }
+        m_sym1(sym1), m_msk_set(0) { }
 
     void add_mask(const mask<N> &msk) { m_msk[m_msk_set++] = msk; }
 

@@ -106,7 +106,7 @@ set(SRC_BTOD
     btod/libtensor_btod_tests.C
     btod/libtensor_btod_suite.C
 #	btod/addition_schedule_test.C
-#	btod/btod_add_test.C
+	btod/btod_add_test.C
 #	btod/btod_apply_test.C
 #	btod/btod_compare_test.C
 #	btod/btod_contract2_test.C
