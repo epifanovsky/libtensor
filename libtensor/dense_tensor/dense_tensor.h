@@ -133,7 +133,7 @@ public:
 public:
     typedef T element_t; //!< Tensor element type
     typedef typename Alloc::pointer_type ptr_t; //!< Memory pointer type
-    typedef typename dense_tensor_i<N, T>::handle_t handle_t; //!< Session handle type
+    typedef typename dense_tensor_i<N, T>::session_handle_type handle_t; //!< Session handle type
 
 private:
     dimensions<N> m_dims; //!< Tensor %dimensions
@@ -190,6 +190,7 @@ protected:
     virtual handle_t on_req_open_session();
     virtual void on_req_close_session(const handle_t &h);
     virtual void on_req_prefetch(const handle_t &h);
+    virtual void on_req_priority(const handle_t &h, bool pri);
     virtual T *on_req_dataptr(const handle_t &h);
     virtual void on_ret_dataptr(const handle_t &h, const T *p);
     virtual const T *on_req_const_dataptr(const handle_t &h);

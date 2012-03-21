@@ -8,9 +8,7 @@
 #include "../core/block_index_subspace_builder.h"
 #include "../core/permutation_builder.h"
 #include "../core/transf_list.h"
-#include "../symmetry/so_concat.h"
 #include "../symmetry/so_copy.h"
-#include "../symmetry/so_proj_down.h"
 #include "../symmetry/so_symmetrize3.h"
 #include "additive_btod.h"
 
@@ -256,11 +254,11 @@ void btod_symmetrize3<N>::make_symmetry() {
 		s2(m_op.get_bis());
 
 	so_copy<N, double>(m_op.get_symmetry()).perform(s0);
-	so_add<N, double>(s0, p0, s0, p1).perform(s1);
-	so_add<N, double>(s1, p0, s0, p2).perform(s2);
-	so_add<N, double>(s2, p0, s0, p3).perform(s1);
-	so_add<N, double>(s1, p0, s0, p4).perform(s2);
-	so_add<N, double>(s2, p0, s0, p5).perform(s1);
+//	so_add<N, double>(s0, p0, s0, p1).perform(s1);
+//	so_add<N, double>(s1, p0, s0, p2).perform(s2);
+//	so_add<N, double>(s2, p0, s0, p3).perform(s1);
+//	so_add<N, double>(s1, p0, s0, p4).perform(s2);
+//	so_add<N, double>(s2, p0, s0, p5).perform(s1);
 
 	so_symmetrize3<N, double>(s1, p1, p3, m_symm).perform(m_sym);
 }

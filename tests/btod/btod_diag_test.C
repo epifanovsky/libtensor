@@ -5,7 +5,7 @@
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/symmetry/se_label.h>
 #include <libtensor/symmetry/se_perm.h>
-#include <libtensor/symmetry/point_group_table.h>
+#include <libtensor/symmetry/label/point_group_table.h>
 #include <libtensor/tod/tod_btconv.h>
 #include <libtensor/tod/tod_diag.h>
 #include "btod_diag_test.h"
@@ -942,8 +942,9 @@ void btod_diag_test::test_sym_7(bool add) throw(libtest::test_exception) {
 	try {
 
 	point_group_table::label_t ap = 0, app = 1;
-
-	point_group_table cs(pgtid, 2);
+	std::vector<std::string> irnames(2);
+	irnames[0] = "Ap"; irnames[1] = "App";
+	point_group_table cs(pgtid, irnames, irnames[0]);
 	cs.add_product(ap, ap, ap);
 	cs.add_product(ap, app, app);
 	cs.add_product(app, ap, app);
@@ -970,10 +971,11 @@ void btod_diag_test::test_sym_7(bool add) throw(libtest::test_exception) {
 	bis2.split(msk2, 3); bis2.split(msk2, 6);
 
 	se_label<2, double> elem1(bis2.get_block_index_dims(), pgtid);
-	elem1.assign(msk2, 0, ap);
-	elem1.assign(msk2, 1, ap);
-	elem1.assign(msk2, 2, app);
-	elem1.add_target(ap);
+	block_labeling<2> &bl1 = elem1.get_labeling();
+	bl1.assign(msk2, 0, ap);
+	bl1.assign(msk2, 1, ap);
+	bl1.assign(msk2, 2, app);
+	elem1.set_rule(ap);
 
 	block_tensor<2, double, allocator_t> bta(bis2);
 	block_tensor<1, double, allocator_t> btb(bis1);

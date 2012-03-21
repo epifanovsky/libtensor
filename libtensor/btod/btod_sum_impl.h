@@ -2,7 +2,8 @@
 #define LIBTENSOR_BTOD_SUM_IMPL_H
 
 #include "../core/orbit.h"
-#include "../symmetry/so_add.h"
+#include "../symmetry/so_dirsum.h"
+#include "../symmetry/so_merge.h"
 #include "../symmetry/so_copy.h"
 #include "btod_scale.h"
 
@@ -158,11 +159,19 @@ void btod_sum<N>::add_op(additive_btod<N> &op, double c) {
 	if(m_ops.empty()) {
 		so_copy<N, double>(op.get_symmetry()).perform(m_sym);
 	} else {
-		symmetry<N, double> sym1(m_bis);
-		permutation<N> perm0;
-		so_add<N, double>(m_sym, perm0, op.get_symmetry(), perm0).
-			perform(sym1);
-		so_copy<N, double>(sym1).perform(m_sym);
+		permutation<N + N> perm0;
+        block_index_space_product_builder<N, N> bbx(m_bis, m_bis,
+                perm0);
+
+        symmetry<N + N, double> symx(bbx.get_bis());
+        so_dirsum<N, N, double>(m_sym, op.get_symmetry(), perm0).perform(symx);
+        so_merge<N + N, N + N, N, double> merge(symx);
+        for (register size_t i = 0; i < N; i++) {
+            mask<N + N> m;
+            m[i] = m[i + N] = true;
+            merge.add_mask(m);
+        }
+        merge.perform(m_sym);
 	}
 	m_ops.push_back(node_t(op, c));
 	m_dirty_sch = true;

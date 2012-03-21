@@ -9,7 +9,7 @@
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
 #include "../core/permutation_builder.h"
-#include "../symmetry/so_proj_down.h"
+#include "../symmetry/so_reduce.h"
 #include "../symmetry/so_permute.h"
 #include "../tod/tod_extract.h"
 #include "../tod/tod_set.h"
@@ -124,8 +124,9 @@ btod_extract<N, M>::btod_extract(block_tensor_i<N, double> &bta,
 	m_sch(m_bis.get_block_index_dims()) {
 
 	block_tensor_ctrl<N, double> ctrla(bta);
-	so_proj_down<N, M, double>(ctrla.req_const_symmetry(), m_msk).
-		perform(m_sym);
+	so_reduce<N, M, 1, double> reduce(ctrla.req_const_symmetry());
+	reduce.add_mask(m_msk);
+	reduce.perform(m_sym);
 
 	make_schedule();
 }
@@ -146,8 +147,9 @@ btod_extract<N, M>::btod_extract(block_tensor_i<N, double> &bta,
 
 	block_tensor_ctrl<N, double> ctrla(bta);
 	symmetry<k_orderb, double> sym(bisinv);
-	so_proj_down<N, M, double>(ctrla.req_const_symmetry(), m_msk).
-		perform(sym);
+	so_reduce<N, M, 1, double> reduce(ctrla.req_const_symmetry());
+	reduce.add_mask(m_msk);
+	reduce.perform(sym);
 	so_permute<k_orderb, double>(sym, perm).perform(m_sym);
 
 	make_schedule();

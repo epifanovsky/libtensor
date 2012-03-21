@@ -36,12 +36,14 @@ namespace libtensor {
 	  \endcode
 	3. and implementations of
 	  \code
+	      bool Function::keep_zero();
 		  bool Functor::is_asym();
 		  bool Functor::sign();
 	  \endcode
 
-	The latter two function should yield information about the symmetry of
+	The latter three function should yield information about the symmetry of
 	the functor:
+	- keep_zero() -- should return true, if the functor maps zero to zero.
 	- is_asym() -- should return false, if the functor is symmetric or
 		anti-symmetric w.r.t. the origin, and true otherwise.
 	- sign() -- should return true, if the functor is symmetric w.r.t. the
@@ -152,8 +154,8 @@ btod_apply<N, Functor, Alloc>::btod_apply(
 	m_bidims(m_bis.get_block_index_dims()), m_sym(m_bis), m_sch(m_bidims) {
 
 	block_tensor_ctrl<N, double> ctrla(m_bta);
-	so_apply<N, double>(ctrla.req_const_symmetry(),
-			m_perm, m_fn.is_asym(), m_fn.sign()).perform(m_sym);
+	so_apply<N, double>(ctrla.req_const_symmetry(), m_perm,
+	        m_fn.keep_zero(), m_fn.is_asym(), m_fn.sign()).perform(m_sym);
 	make_schedule();
 }
 
@@ -167,8 +169,8 @@ btod_apply<N, Functor, Alloc>::btod_apply(block_tensor_i<N, double> &bta,
 		m_bidims(m_bis.get_block_index_dims()), m_sym(m_bis), m_sch(m_bidims) {
 
 	block_tensor_ctrl<N, double> ctrla(m_bta);
-	so_apply<N, double>(ctrla.req_const_symmetry(),
-			m_perm, m_fn.is_asym(), m_fn.sign()).perform(m_sym);
+	so_apply<N, double>(ctrla.req_const_symmetry(), m_perm,
+	        m_fn.keep_zero(), m_fn.is_asym(), m_fn.sign()).perform(m_sym);
 	make_schedule();
 }
 

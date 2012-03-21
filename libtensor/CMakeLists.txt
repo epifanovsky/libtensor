@@ -1,5 +1,4 @@
 set(SRC
-    backtrace.C
     defs.C
     exception.C
     version.C
@@ -23,7 +22,9 @@ set(SRC
     tod/kernels/kern_add_generic.C
     tod/kernels/kern_add_i_i_x_x.C
     tod/kernels/kern_add_i_x_i_x.C
+    tod/kernels/kern_copy_generic.C
     tod/kernels/kern_mul_generic.C
+    tod/kernels/kern_mul_i_i_i.C
     tod/kernels/kern_mul_i_i_x.C
     tod/kernels/kern_mul_i_ip_p.C
     tod/kernels/kern_mul_i_ipq_qp.C
@@ -133,20 +134,23 @@ set(SRC_INST
     tod/tod_dotprod.C
     tod/tod_ewmult2.C
     tod/tod_import_raw_stream.C
-	btod/additive_btod.C
-	btod/basic_btod.C
-	btod/btod_add.C
-#	btod/btod_contract2_1.C
-#	btod/btod_contract2_2.C
-#	btod/btod_contract2_3.C
-#	btod/btod_contract2_4.C
-#	btod/btod_contract2_5.C
-#	btod/btod_contract2_6.C
-#	btod/btod_copy.C
-#	btod/btod_dirsum.C
-#	btod/btod_dotprod.C
-#	btod/btod_ewmult2.C
-#	btod/btod_sum.C
+    tod/tod_vmpriority.C
+    btod/additive_btod.C
+    btod/basic_btod.C
+    btod/btod_add.C
+    btod/btod_contract2_1.C
+    btod/btod_contract2_2.C
+    btod/btod_contract2_3.C
+    btod/btod_contract2_4.C
+    btod/btod_contract2_5.C
+    btod/btod_contract2_6.C
+    btod/btod_copy.C
+    btod/btod_dirsum.C
+    btod/btod_dotprod.C
+    btod/btod_ewmult2.C
+    btod/btod_sum.C
+    block_tensor/btod/impl/btod_set.C
+    block_tensor/btod/impl/btod_vmpriority.C
 )
 
 set(SRC_MP
@@ -173,6 +177,11 @@ set_property(TARGET tensor APPEND PROPERTY
 set_property(TARGET tensor APPEND PROPERTY
     COMPILE_DEFINITIONS LIBTENSOR_TIMINGS)
 set_property(TARGET tensor APPEND PROPERTY
-    COMPILE_DEFINITIONS_DEBUG LIBVMM_DEBUG)
-set_property(TARGET tensor APPEND PROPERTY
     COMPILE_DEFINITIONS_DEBUG LIBTENSOR_DEBUG)
+if(HAVE_LIBVMM)
+    set_property(TARGET tensor APPEND PROPERTY
+        COMPILE_DEFINITIONS HAVE_LIBVMM)
+    set_property(TARGET tensor APPEND PROPERTY
+        COMPILE_DEFINITIONS_DEBUG LIBVMM_DEBUG)
+endif(HAVE_LIBVMM)
+

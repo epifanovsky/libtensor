@@ -44,10 +44,12 @@ public:
 private:
     const symmetry<N, T> &m_sym1;
     mask<N> m_msk[K];
+//    index_range<N> m_bir;
     size_t m_msk_set;
 
 public:
-    so_reduce(const symmetry<N, T> &sym1) : m_sym1(sym1), m_msk_set(0) {}
+    so_reduce(const symmetry<N, T> &sym1) : //, const index_range<N> &bir) :
+        m_sym1(sym1), m_msk_set(0) {}
 
     void add_mask(const mask<N> &msk) {
         m_msk[m_msk_set++] = msk;
@@ -68,7 +70,7 @@ const char *so_reduce<N, M, K, T>::k_clazz = "so_reduce<N, M, K, T>";
 template<size_t N, size_t K, typename T>
 class so_reduce<N, N, K, T> {
 public:
-    so_reduce(const symmetry<N, T> &sym1) { }
+    so_reduce(const symmetry<N, T> &sym1) { }//, const index_range<N> &bir) { }
 
     void add_mask(const mask<N> &msk) { }
 
@@ -88,7 +90,7 @@ class so_reduce<N, 0, K, T> {
 private:
     const symmetry<N, T> &m_sym1;
 public:
-    so_reduce(const symmetry<N, T> &sym1) :
+    so_reduce(const symmetry<N, T> &sym1) : //, const index_range<N> &bir) :
         m_sym1(sym1) { }
 
     void add_mask(const mask<N> &msk) { }
@@ -135,12 +137,14 @@ public symmetry_operation_params_i {
 
 public:
     const symmetry_element_set<N, T> &grp1; //!< Symmetry group
+//    index_range<N> bir; //!< Index range
     mask<N> msk[K]; //!< Mask
     symmetry_element_set<N - M, T> &grp2;
 
 public:
     symmetry_operation_params(
             const symmetry_element_set<N, T> &grp1_,
+//            const index_range<N> &bir_,
             const mask<N> (&msk_)[K],
             symmetry_element_set<N - M, T> &grp2_) :
 

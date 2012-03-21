@@ -2,7 +2,6 @@ set(SRC_CORE
     core/libtensor_core_tests.C
     core/libtensor_core_suite.C
     core/abs_index_test.C
-    core/block_index_map_test.C
     core/block_index_space_test.C
     core/block_index_space_product_builder_test.C
     core/block_index_subspace_builder_test.C
@@ -10,14 +9,13 @@ set(SRC_CORE
     core/block_tensor_test.C
     core/dense_tensor_test.C
     core/dimensions_test.C
-#    core/direct_block_tensor_test.C
+    core/direct_block_tensor_test.C
     core/immutable_test.C
     core/index_test.C
     core/index_range_test.C
-    core/mapped_block_tensor_test.C
     core/mask_test.C
     core/mp_safe_tensor_test.C
-#    core/orbit_test.C
+    core/orbit_test.C
     core/orbit_list_test.C
     core/permutation_test.C
     core/permutation_builder_test.C
@@ -25,7 +23,7 @@ set(SRC_CORE
     core/symmetry_test.C
     core/symmetry_element_set_test.C
     core/task_batch_test.C
-#    core/transf_list_test.C
+    core/transf_list_test.C
     core/version_test.C
 )
 
@@ -58,6 +56,7 @@ set(SRC_TOD
     tod/tod_set_test.C
     tod/tod_sum_test.C
     tod/tod_trace_test.C
+    tod/tod_vmpriority_test.C
 )
 
 set(SRC_SYMMETRY
@@ -104,36 +103,37 @@ set(SRC_SYMMETRY
 set(SRC_BTOD
     btod/libtensor_btod_tests.C
     btod/libtensor_btod_suite.C
-#	btod/addition_schedule_test.C
-	btod/btod_add_test.C
-#	btod/btod_apply_test.C
-#	btod/btod_compare_test.C
-#	btod/btod_contract2_test.C
-#	btod/btod_copy_test.C
-#   btod/btod_cholesky_test.C
-#	btod/btod_diag_test.C
-#	btod/btod_diagonalize_test.C
-#	btod/btod_dirsum_test.C
-#	btod/btod_dotprod_test.C
-#	btod/btod_ewmult2_test.C
-#	btod/btod_extract_test.C
-#   btod/btod_import_raw_test.C
-#   btod/btod_import_raw_stream_test.C
-	btod/btod_mult_test.C
-#	btod/btod_mult1_test.C
-#	btod/btod_print_test.C
-#	btod/btod_random_test.C
-#	btod/btod_read_test.C
-#	btod/btod_scale_test.C
-#	btod/btod_select_test.C
-#	btod/btod_set_diag_test.C
-#	btod/btod_set_elem_test.C
-#	btod/btod_set_test.C
-#	btod/btod_sum_test.C
-#	btod/btod_symmetrize_test.C
-#	btod/btod_symmetrize3_test.C
-#	btod/btod_trace_test.C
-#	btod/btod_tridiagonalize_test.C
+    btod/addition_schedule_test.C
+    btod/btod_add_test.C
+    btod/btod_apply_test.C
+#    btod/btod_cholesky_test.C
+    btod/btod_compare_test.C
+    btod/btod_contract2_test.C
+    btod/btod_copy_test.C
+    btod/btod_diag_test.C
+#    btod/btod_diagonalize_test.C
+    btod/btod_dirsum_test.C
+    btod/btod_dotprod_test.C
+    btod/btod_ewmult2_test.C
+    btod/btod_extract_test.C
+    btod/btod_import_raw_test.C
+    btod/btod_import_raw_stream_test.C
+    btod/btod_mult_test.C
+    btod/btod_mult1_test.C
+    btod/btod_print_test.C
+    btod/btod_random_test.C
+    btod/btod_read_test.C
+    btod/btod_scale_test.C
+    btod/btod_select_test.C
+    btod/btod_set_diag_test.C
+    btod/btod_set_elem_test.C
+    btod/btod_set_test.C
+    btod/btod_sum_test.C
+    btod/btod_symmetrize_test.C
+    btod/btod_symmetrize3_test.C
+    btod/btod_trace_test.C
+#    btod/btod_tridiagonalize_test.C
+    btod/btod_vmpriority_test.C
 )
 
 set(SRC_LINALG
@@ -141,6 +141,7 @@ set(SRC_LINALG
     linalg/libtensor_linalg_suite.C
     linalg/linalg_add_i_i_x_x_test.C
     linalg/linalg_x_p_p_test.C
+    linalg/linalg_i_i_i_x_test.C
     linalg/linalg_i_i_x_test.C
     linalg/linalg_x_pq_qp_test.C
     linalg/linalg_i_ip_p_x_test.C
@@ -196,26 +197,25 @@ set(SRC_LINALG
 set(SRC_IFACE
     iface/libtensor_iface_tests.C
     iface/libtensor_iface_suite.C
-#    iface/anon_eval_test.C
+    iface/anon_eval_test.C
     iface/bispace_expr_test.C
     iface/bispace_test.C
     iface/btensor_test.C
-#    iface/contract_test.C
-#    iface/diag_test.C
-#    iface/direct_btensor_test.C
-#    iface/direct_eval_test.C
-#    iface/direct_product_test.C
-#    iface/dirsum_test.C
-#    iface/dot_product_test.C
-#    iface/ewmult_test.C
-#    iface/expr_test.C
-#    iface/labeled_btensor_test.C
-#    iface/letter_expr_test.C
+    iface/contract_test.C
+    iface/diag_test.C
+    iface/direct_btensor_test.C
+    iface/direct_eval_test.C
+    iface/direct_product_test.C
+    iface/dirsum_test.C
+    iface/dot_product_test.C
+    iface/ewmult_test.C
+    iface/expr_test.C
+    iface/labeled_btensor_test.C
+    iface/letter_expr_test.C
     iface/letter_test.C
-#    iface/mapped_btensor_test.C
-#    iface/mult_test.C
-#    iface/symm_test.C
-#    iface/trace_test.C
+    iface/mult_test.C
+    iface/symm_test.C
+    iface/trace_test.C
 )
 
 set(TARGETS
@@ -239,9 +239,13 @@ include(${LIBTEST_DIR}/cmake/SetupLibTest.txt)
 set_property(TARGET ${TARGETS} APPEND PROPERTY
     COMPILE_DEFINITIONS LIBTENSOR_INSTANTIATE_TEMPLATES)
 set_property(TARGET ${TARGETS} APPEND PROPERTY
-    COMPILE_DEFINITIONS_DEBUG LIBVMM_DEBUG)
-set_property(TARGET ${TARGETS} APPEND PROPERTY
     COMPILE_DEFINITIONS_DEBUG LIBTENSOR_DEBUG)
+if(HAVE_LIBVMM)
+    set_property(TARGET ${TARGETS} APPEND PROPERTY
+        COMPILE_DEFINITIONS HAVE_LIBVMM)
+    set_property(TARGET ${TARGETS} APPEND PROPERTY
+        COMPILE_DEFINITIONS_DEBUG LIBVMM_DEBUG)
+endif(HAVE_LIBVMM)
 
 foreach(TARGET ${TARGETS})
 target_link_libraries(${TARGET}

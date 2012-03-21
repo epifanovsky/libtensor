@@ -3,12 +3,14 @@
 
 #include "../defs.h"
 #include "../core/abs_index.h"
+#include "../core/block_index_space_product_builder.h"
 #include "../core/block_tensor_i.h"
 #include "../core/block_tensor_ctrl.h"
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
-#include "../symmetry/so_mult.h"
 #include "../symmetry/so_copy.h"
+#include "../symmetry/so_dirprod.h"
+#include "../symmetry/so_merge.h"
 #include "../tod/tod_copy.h"
 #include "../tod/tod_mult1.h"
 #include "../tod/tod_set.h"
@@ -124,11 +126,37 @@ void btod_mult1<N>::do_perform(
 
 	// Copy sym(A) and permuted sym(B) and install \sym(A) \cap \sym(B) in A
 
-	permutation<N> pa;
-	symmetry<N, double> syma(bta.get_bis());
-	so_copy<N, double>(ctrla.req_const_symmetry()).perform(syma);
-	so_mult<N, double>(syma, pa,
-			ctrlb.req_const_symmetry(), m_pb).perform(ctrla.req_symmetry());
+    symmetry<N, double> syma(bta.get_bis());
+    so_copy<N, double>(ctrla.req_const_symmetry()).perform(syma);
+
+    sequence<N, size_t> seq2a;
+    for (size_t i = 0; i < N; i++) {
+        seq2a[i] = i + N;
+    }
+    m_pb.apply(seq2a);
+
+    sequence<N + N, size_t> seq1b, seq2b;
+    for (size_t i = 0; i < N; i++) {
+        seq1b[i] = seq2b[i] = i;
+    }
+    for (size_t i = N; i < N + N; i++) {
+        seq1b[i] = i; seq2b[i] = seq2a[i - N];
+    }
+    permutation_builder<N + N> pbb(seq2b, seq1b);
+
+    block_index_space_product_builder<N, N> bbx(bta.get_bis(), bta.get_bis(),
+            permutation<N + N>());
+
+    symmetry<N + N, double> symx(bbx.get_bis());
+    so_dirprod<N, N, double>(syma,
+            ctrlb.req_const_symmetry(), pbb.get_perm()).perform(symx);
+    so_merge<N + N, N + N, N, double> merge(symx);
+    for (size_t i = 0; i < N; i++) {
+        mask<N + N> m;
+        m[i] = m[i + N] = true;
+        merge.add_mask(m);
+    }
+    merge.perform(ctrla.req_symmetry());
 
 	// First loop over all orbits in sym(A) \cap sym(B) and copy blocks which
 	// were not canonical in sym(A)

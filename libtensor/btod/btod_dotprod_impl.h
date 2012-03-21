@@ -1,7 +1,9 @@
 #ifndef LIBTENSOR_BTOD_DOTPROD_IMPL_H
 #define LIBTENSOR_BTOD_DOTPROD_IMPL_H
 
-#include "../symmetry/so_mult.h"
+#include "../core/block_index_space_product_builder.h"
+#include "../symmetry/so_dirprod.h"
+#include "../symmetry/so_merge.h"
 #include "../tod/tod_dotprod.h"
 #include "bad_block_index_space.h"
 #include "transf_double.h"
@@ -123,9 +125,35 @@ void btod_dotprod<N>::calculate(std::vector<double> &v) {
 		ctrl2[i] = new block_tensor_ctrl<N, double>(j->bt2);
 		sym[i] = new symmetry<N, double>(block_index_space<N>(
 			j->bt1.get_bis()).permute(j->perm1));
-		so_mult<N, double>(ctrl1[i]->req_const_symmetry(), j->perm1,
-			ctrl2[i]->req_const_symmetry(), j->perm2).
-			perform(*sym[i]);
+
+	    sequence<N, size_t> seq1a, seq2a;
+	    for (register size_t ii = 0; ii < N; ii++) {
+	        seq1a[ii] = ii; seq2a[ii] = ii + N;
+	    }
+	    j->perm1.apply(seq1a);
+	    j->perm2.apply(seq2a);
+        sequence<N + N, size_t> seq1b, seq2b;
+	    for (register size_t ii = 0; ii < N; ii++) {
+	        seq1b[ii] = ii; seq2b[ii] = seq1a[ii];
+	    }
+	    for (register size_t ii = N; ii < N + N; ii++) {
+	        seq1b[ii] = ii; seq2b[ii] = seq2a[ii - N];
+	    }
+	    permutation_builder<N + N> pbb(seq2b, seq1b);
+
+	    block_index_space_product_builder<N, N> bbx(sym[i]->get_bis(),
+	            sym[i]->get_bis(), permutation<N + N>());
+
+	    symmetry<N + N, double> symx(bbx.get_bis());
+	    so_dirprod<N, N, double>(ctrl1[i]->req_const_symmetry(),
+	            ctrl2[i]->req_const_symmetry(), pbb.get_perm()).perform(symx);
+	    so_merge<N + N, N + N, N, double> merge(symx);
+	    for (register size_t ii = 0; ii < N; ii++) {
+	        mask<N + N> m;
+	        m[ii] = m[ii + N] = true;
+	        merge.add_mask(m);
+	    }
+	    merge.perform(*sym[i]);
 	}
 
 	for(i = 0, j = m_args.begin(); i < narg; i++, j++) {

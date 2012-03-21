@@ -21,6 +21,7 @@ class scalar_transf {
 public:
     //! \name Manipulators
     //@{
+
     /** \brief Reset the scalar transformation to identity
      **/
 	void reset() { }

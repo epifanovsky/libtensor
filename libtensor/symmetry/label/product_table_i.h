@@ -2,6 +2,7 @@
 #define LIBTENSOR_PRODUCT_TABLE_I_H
 
 #include <set>
+#include <string>
 #include <vector>
 #include "../bad_symmetry.h"
 

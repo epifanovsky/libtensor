@@ -2,6 +2,7 @@
 #define LIBTENSOR_MP_SAFE_TENSOR_H
 
 #include <libtensor/dense_tensor/dense_tensor.h>
+#include <libtensor/dense_tensor/inst/dense_tensor_impl.h>
 #include "default_sync_policy.h"
 #include "mp_safe_tensor_lock.h"
 
@@ -20,7 +21,7 @@ template<size_t N, typename T, typename Alloc,
 	typename Sync = default_sync_policy>
 class mp_safe_tensor : public dense_tensor<N, T, Alloc> {
 public:
-	typedef typename dense_tensor_i<N, T>::handle_t
+	typedef typename dense_tensor_i<N, T>::session_handle_type
 		handle_t; //!< Session handle type
 
 private:

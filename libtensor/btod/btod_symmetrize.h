@@ -7,7 +7,6 @@
 #include "../core/allocator.h"
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
-#include "../symmetry/so_add.h"
 #include "../symmetry/so_permute.h"
 #include "../symmetry/so_symmetrize.h"
 #include "../tod/tod_set.h"
@@ -261,9 +260,7 @@ void btod_symmetrize<N>::make_symmetry() {
 	permutation<N> perm0;
 
 	symmetry<N, double> sym1(m_bis), sym2(m_bis);
-	so_permute<N, double>(m_op.get_symmetry(), m_perm1).perform(sym1);
-	so_add<N, double>(m_op.get_symmetry(), perm0, sym1, perm0).perform(sym2);
-	so_symmetrize<N, double>(sym2, m_perm1, m_symm).perform(m_sym);
+	so_symmetrize<N, double>(m_op.get_symmetry(), m_perm1, m_symm).perform(m_sym);
 }
 
 

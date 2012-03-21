@@ -5,7 +5,7 @@
 #include <libtensor/btod/btod_copy.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/btod/btod_symmetrize.h>
-#include <libtensor/symmetry/point_group_table.h>
+#include <libtensor/symmetry/label/point_group_table.h>
 #include <libtensor/symmetry/so_copy.h>
 #include <libtensor/tod/tod_btconv.h>
 #include "btod_symmetrize_test.h"
@@ -409,9 +409,9 @@ void btod_symmetrize_test::test_6a(bool symm, bool label,
 	typedef std_allocator<double> allocator_t;
 
 	if (label) {
-		point_group_table pg(tns, 2);
-		pg.add_product(0, 0, 0);
-		pg.add_product(0, 1, 1);
+	    std::vector<std::string> irnames(2);
+	    irnames[0] = "g"; irnames[1] = "u";
+		point_group_table pg(tns, irnames, irnames[0]);
 		pg.add_product(1, 1, 0);
 
 		product_table_container::get_instance().add(pg);
@@ -447,11 +447,12 @@ void btod_symmetrize_test::test_6a(bool symm, bool label,
 
 	if (label) {
 		se_label<2, double> sl(bis.get_block_index_dims(), tns);
-		sl.assign(m, 0, 0);
-		sl.assign(m, 1, 1);
-		sl.assign(m, 2, 0);
-		sl.assign(m, 3, 1);
-		sl.add_target(1);
+		block_labeling<2> &bl = sl.get_labeling();
+		bl.assign(m, 0, 0);
+		bl.assign(m, 1, 1);
+		bl.assign(m, 2, 0);
+		bl.assign(m, 3, 1);
+		sl.set_rule(1);
 		ca.req_symmetry().insert(sl);
 		cb.req_symmetry().insert(sl);
 		sym_ref.insert(sl);
@@ -532,10 +533,10 @@ void btod_symmetrize_test::test_6b(bool symm, bool label,
 	typedef std_allocator<double> allocator_t;
 
 	if (label) {
-		point_group_table pg(tns, 2);
-		pg.add_product(0, 0, 0);
-		pg.add_product(0, 1, 1);
-		pg.add_product(1, 1, 0);
+        std::vector<std::string> irnames(2);
+        irnames[0] = "g"; irnames[1] = "u";
+        point_group_table pg(tns, irnames, irnames[0]);
+        pg.add_product(1, 1, 0);
 
 		product_table_container::get_instance().add(pg);
 	}
@@ -573,12 +574,14 @@ void btod_symmetrize_test::test_6b(bool symm, bool label,
 
 	if (label) {
 		se_label<4, double> sl(bis.get_block_index_dims(), tns);
-		sl.assign(m, 0, 0);
-		sl.assign(m, 1, 1);
-		sl.assign(m, 2, 0);
-		sl.assign(m, 3, 1);
-		sl.add_target(0);
-		sl.add_target(1);
+        block_labeling<4> &bl = sl.get_labeling();
+		bl.assign(m, 0, 0);
+		bl.assign(m, 1, 1);
+		bl.assign(m, 2, 0);
+		bl.assign(m, 3, 1);
+		product_table_i::label_set_t ls;
+		ls.insert(0); ls.insert(1);
+		sl.set_rule(ls);
 		ca.req_symmetry().insert(sl);
 		sym_ref.insert(sl);
 	}

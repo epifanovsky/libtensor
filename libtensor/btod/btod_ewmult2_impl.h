@@ -4,7 +4,8 @@
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
 #include "../tod/tod_ewmult2.h"
-#include "../symmetry/so_concat.h"
+#include "../symmetry/so_dirprod.h"
+#include "../symmetry/so_merge.h"
 #include "bad_block_index_space.h"
 
 namespace libtensor {
@@ -366,8 +367,13 @@ void btod_ewmult2<N, M, K>::compute_block_impl(dense_tensor_i<k_orderc, double> 
 	bool zeroa = ctrla.req_is_zero_block(cidxa.get_index());
 	bool zerob = ctrlb.req_is_zero_block(cidxb.get_index());
 
-	if(zero) tod_set<k_orderc>().perform(cpus, blk);
-	if(zeroa || zerob) return;
+	if(zeroa || zerob) {
+		btod_ewmult2<N, M, K>::start_timer("zero");
+		if(zero) tod_set<k_orderc>().perform(cpus, blk);
+		btod_ewmult2<N, M, K>::stop_timer("zero");
+		btod_ewmult2<N, M, K>::stop_timer();
+		return;
+	}
 
 	dense_tensor_i<k_ordera, double> &blka = ctrla.req_block(cidxa.get_index());
 	dense_tensor_i<k_orderb, double> &blkb = ctrlb.req_block(cidxb.get_index());
@@ -375,7 +381,7 @@ void btod_ewmult2<N, M, K>::compute_block_impl(dense_tensor_i<k_orderc, double> 
 	permc.permute(tr.get_perm());
 	double k = m_d * tra.get_coeff() * trb.get_coeff() * tr.get_coeff();
 	tod_ewmult2<N, M, K>(blka, perma, blkb, permb, permc, k).
-	    perform(cpus, false, d, blk);
+	    perform(cpus, zero, d, blk);
 
 	ctrla.ret_block(cidxa.get_index());
 	ctrlb.ret_block(cidxb.get_index());

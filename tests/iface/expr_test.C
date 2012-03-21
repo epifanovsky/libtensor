@@ -1,7 +1,7 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/btod/btod_set_diag.h>
-#include <libtensor/symmetry/point_group_table.h>
+#include <libtensor/symmetry/label/point_group_table.h>
 #include <libtensor/symmetry/so_copy.h>
 #include <libtensor/tod/tod_btconv.h>
 #include <libtensor/tod/tod_contract2.h>
@@ -504,11 +504,10 @@ void expr_test::test_8() throw(libtest::test_exception) {
 	try {
 
 	point_group_table::label_t ap = 0, app = 1;
+	std::vector<std::string> irnames;
+	irnames[ap] = "A'"; irnames[app] = "A''";
 
-	point_group_table cs(pgtid, 2);
-	cs.add_product(ap, ap, ap);
-	cs.add_product(ap, app, app);
-	cs.add_product(app, ap, app);
+	point_group_table cs(pgtid, irnames, irnames[ap]);
 	cs.add_product(app, app, ap);
 	cs.check();
 	product_table_container::get_instance().add(cs);
@@ -530,22 +529,24 @@ void expr_test::test_8() throw(libtest::test_exception) {
 	m1100[0] = true; m1100[1] = true; m0011[2] = true; m0011[3] = true;
 
 	se_label<2, double> l_oo(soo.get_bis().get_block_index_dims(), pgtid);
-	l_oo.assign(m11, 0, ap);
-	l_oo.assign(m11, 1, app);
-	l_oo.assign(m11, 2, ap);
-	l_oo.assign(m11, 3, app);
-	l_oo.add_target(ap);
+	block_labeling<2> &bl_oo = l_oo.get_labeling();
+	bl_oo.assign(m11, 0, ap);
+	bl_oo.assign(m11, 1, app);
+	bl_oo.assign(m11, 2, ap);
+	bl_oo.assign(m11, 3, app);
+	l_oo.set_rule(ap);
 	se_label<4, double> l_oovv(soovv.get_bis().get_block_index_dims(),
 		pgtid);
-	l_oovv.assign(m1100, 0, ap);
-	l_oovv.assign(m1100, 1, app);
-	l_oovv.assign(m1100, 2, ap);
-	l_oovv.assign(m1100, 3, app);
-	l_oovv.assign(m0011, 0, ap);
-	l_oovv.assign(m0011, 1, app);
-	l_oovv.assign(m0011, 2, ap);
-	l_oovv.assign(m0011, 3, app);
-	l_oovv.add_target(ap);
+	block_labeling<4> &bl_oovv = l_oovv.get_labeling();
+	bl_oovv.assign(m1100, 0, ap);
+	bl_oovv.assign(m1100, 1, app);
+	bl_oovv.assign(m1100, 2, ap);
+	bl_oovv.assign(m1100, 3, app);
+	bl_oovv.assign(m0011, 0, ap);
+	bl_oovv.assign(m0011, 1, app);
+	bl_oovv.assign(m0011, 2, ap);
+	bl_oovv.assign(m0011, 3, app);
+	l_oovv.set_rule(ap);
 
 	{
 		block_tensor_ctrl<2, double> c_f_oo(f_oo);
@@ -598,11 +599,9 @@ void expr_test::test_9() throw(libtest::test_exception) {
 	try {
 
 	point_group_table::label_t ap = 0, app = 1;
-
-	point_group_table cs(pgtid, 2);
-	cs.add_product(ap, ap, ap);
-	cs.add_product(ap, app, app);
-	cs.add_product(app, ap, app);
+	std::vector<std::string> irnames(2);
+	irnames[ap] = "A'"; irnames[app] = "A''";
+	point_group_table cs(pgtid, irnames, irnames[ap]);
 	cs.add_product(app, app, ap);
 	cs.check();
 	product_table_container::get_instance().add(cs);
@@ -618,11 +617,12 @@ void expr_test::test_9() throw(libtest::test_exception) {
 	m11[0] = true; m11[1] = true;
 
 	se_label<2, double> l_oo(soo.get_bis().get_block_index_dims(), pgtid);
-	l_oo.assign(m11, 0, ap);
-	l_oo.assign(m11, 1, app);
-	l_oo.assign(m11, 2, ap);
-	l_oo.assign(m11, 3, app);
-	l_oo.add_target(ap);
+	block_labeling<2> &bl_oo = l_oo.get_labeling();
+	bl_oo.assign(m11, 0, ap);
+	bl_oo.assign(m11, 1, app);
+	bl_oo.assign(m11, 2, ap);
+	bl_oo.assign(m11, 3, app);
+	l_oo.set_rule(ap);
 
 	{
 		block_tensor_ctrl<2, double> c_f_oo(f_oo);

@@ -4,6 +4,7 @@
 #include "../core/mask.h"
 #include "../core/symmetry.h"
 #include "../core/symmetry_element_set.h"
+#include "bad_symmetry.h"
 #include "symmetry_operation_base.h"
 #include "symmetry_operation_dispatcher.h"
 #include "symmetry_operation_params.h"

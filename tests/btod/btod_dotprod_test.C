@@ -5,8 +5,8 @@
 #include <libtensor/core/block_tensor_ctrl.h>
 #include <libtensor/btod/btod_dotprod.h>
 #include <libtensor/btod/btod_random.h>
-#include <libtensor/symmetry/point_group_table.h>
-#include <libtensor/symmetry/product_table_container.h>
+#include <libtensor/symmetry/label/point_group_table.h>
+#include <libtensor/symmetry/label/product_table_container.h>
 #include <libtensor/symmetry/se_label.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/tod/tod_btconv.h>
@@ -671,7 +671,9 @@ void btod_dotprod_test::test_10() throw(libtest::test_exception) {
 	// Setup product table
 	//
 	{
-		point_group_table pg(tnss.str(), 2);
+	    std::vector<std::string> irnames;
+	    irnames[0] = "g"; irnames[1] = "u";
+		point_group_table pg(tnss.str(), irnames, irnames[0]);
 		pg.add_product(0, 0, 0);
 		pg.add_product(0, 1, 1);
 		pg.add_product(1, 1, 0);
@@ -700,11 +702,12 @@ void btod_dotprod_test::test_10() throw(libtest::test_exception) {
 		block_tensor_ctrl<2, double> ctrl1(bt1);
 
 		se_label<2, double> l(bis.get_block_index_dims(), tnss.str());
-		l.assign(m, 0, 0);
-		l.assign(m, 1, 1);
-		l.assign(m, 2, 0);
-		l.assign(m, 3, 1);
-		l.add_target(0);
+		block_labeling<2> &bl = l.get_labeling();
+		bl.assign(m, 0, 0);
+		bl.assign(m, 1, 1);
+		bl.assign(m, 2, 0);
+		bl.assign(m, 3, 1);
+		l.set_rule(0);
 
 		ctrl1.req_symmetry().insert(l);
 	}

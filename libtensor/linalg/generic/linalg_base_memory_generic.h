@@ -6,27 +6,27 @@
 namespace libtensor {
 
 
-/**	\brief Memory buffer allocation (generic)
+/** \brief Memory buffer allocation (generic)
 
-	\ingroup libtensor_linalg
+    \ingroup libtensor_linalg
  **/
 struct linalg_base_memory_generic {
 
-	/**	\brief Allocates a temporary array of doubles
-		\param n Array length.
-		\return Pointer to the array.
-	 **/
-	static double *allocate(size_t n) {
-		return new double[n];
-	}
+    /** \brief Allocates a temporary array of doubles
+        \param n Array length.
+        \return Pointer to the array.
+     **/
+    static double *allocate(size_t n) {
+        return new double[n];
+    }
 
-	/**	\brief Deallocates a temporary array previously allocated
-			using allocate(size_t)
-		\param p Pointer to the array.
-	 **/
-	static void deallocate(double *p) {
-		delete [] p;
-	}
+    /** \brief Deallocates a temporary array previously allocated
+            using allocate(size_t)
+        \param p Pointer to the array.
+     **/
+    static void deallocate(double *p) {
+        delete [] p;
+    }
 
 };
 

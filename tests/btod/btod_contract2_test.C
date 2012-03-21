@@ -1,14 +1,9 @@
 #include <sstream>
-#include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/btod/btod_contract2.h>
 #include <libtensor/btod/btod_copy.h>
 #include <libtensor/btod/btod_random.h>
-#include <libtensor/symmetry/point_group_table.h>
-#include <libtensor/symmetry/product_table_container.h>
-#include <libtensor/symmetry/se_label.h>
-#include <libtensor/symmetry/se_perm.h>
-#include <libtensor/symmetry/se_part.h>
+#include <libtensor/symmetry/label/point_group_table.h>
 #include <libtensor/symmetry/so_copy.h>
 #include <libtensor/tod/tod_btconv.h>
 #include <libtensor/tod/tod_contract2.h>
@@ -2475,7 +2470,9 @@ void btod_contract2_test::test_contr_19()
 	ss << "btod_contract2_test::test_contr_19()";
 	std::string tn = ss.str();
 
-	point_group_table pg(ss.str(), 2);
+	std::vector<std::string> irreps(2);
+	irreps[0] = "g"; irreps[1] = "u";
+	point_group_table pg(ss.str(), irreps, irreps[0]);
 	pg.add_product(0, 0, 0);
 	pg.add_product(0, 1, 1);
 	pg.add_product(1, 1, 0);
@@ -2516,19 +2513,21 @@ void btod_contract2_test::test_contr_19()
 	se_perm<4, double> sp2301(permutation<4>().permute(0, 2).permute(1, 3), true);
 
 	se_label<4, double> sla(bis_iiii.get_block_index_dims(), ss.str());
-	sla.assign(m1, 0, 0);
-	sla.assign(m1, 1, 1);
-	sla.assign(m1, 2, 1);
-	sla.add_target(0);
+	block_labeling<4> &bla = sla.get_labeling();
+	bla.assign(m1, 0, 0);
+	bla.assign(m1, 1, 1);
+	bla.assign(m1, 2, 1);
+	sla.set_rule(0);
 	se_label<4, double> slb(bis_iiaa.get_block_index_dims(), ss.str());
-	slb.assign(m2, 0, 0);
-	slb.assign(m2, 1, 1);
-	slb.assign(m2, 2, 1);
-	slb.assign(m3, 0, 0);
-	slb.assign(m3, 1, 0);
-	slb.assign(m3, 2, 1);
-	slb.assign(m3, 3, 1);
-	slb.add_target(0);
+    block_labeling<4> &blb = slb.get_labeling();
+	blb.assign(m2, 0, 0);
+	blb.assign(m2, 1, 1);
+	blb.assign(m2, 2, 1);
+	blb.assign(m3, 0, 0);
+	blb.assign(m3, 1, 0);
+	blb.assign(m3, 2, 1);
+	blb.assign(m3, 3, 1);
+	slb.set_rule(0);
 
 	block_tensor_ctrl<4, double> ca(bta), cb(btb), cc(btc);
 	ca.req_symmetry().insert(sp1023);
@@ -2738,9 +2737,9 @@ void btod_contract2_test::test_contr_20b()
 
     //  Convert block tensors to regular tensors
 
-    tensor<2, double, allocator_t> ta(bisa.get_dims());
-    tensor<2, double, allocator_t> tb(bisb.get_dims());
-    tensor<2, double, allocator_t> tc(bisa.get_dims()), tc_ref(bisa.get_dims());
+    dense_tensor<2, double, allocator_t> ta(bisa.get_dims());
+    dense_tensor<2, double, allocator_t> tb(bisb.get_dims());
+    dense_tensor<2, double, allocator_t> tc(bisa.get_dims()), tc_ref(bisa.get_dims());
     tod_btconv<2>(bta).perform(ta);
     tod_btconv<2>(btb).perform(tb);
 
@@ -2750,7 +2749,8 @@ void btod_contract2_test::test_contr_20b()
     contr.contract(1, 0);
     btod_contract2<1, 1, 1>(contr, bta, btb).perform(btc);
     tod_btconv<2>(btc).perform(tc);
-    tod_contract2<1, 1, 1>(contr, ta, tb).perform(tc_ref);
+    cpu_pool cpus(1);
+    tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc_ref);
 
     //  Compare against reference
     {

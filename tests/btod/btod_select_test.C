@@ -7,8 +7,8 @@
 #include <libtensor/btod/btod_import_raw.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/btod/btod_select.h>
-#include <libtensor/symmetry/point_group_table.h>
-#include <libtensor/symmetry/product_table_container.h>
+#include <libtensor/symmetry/label/point_group_table.h>
+#include <libtensor/symmetry/label/product_table_container.h>
 #include <libtensor/symmetry/se_label.h>
 #include <libtensor/symmetry/se_part.h>
 #include <libtensor/symmetry/se_perm.h>
@@ -23,9 +23,9 @@ namespace libtensor {
 
 void btod_select_test::perform() throw(libtest::test_exception) {
 
-	point_group_table pg("x", 2);
-	pg.add_product(0, 0, 0);
-	pg.add_product(0, 1, 1);
+    std::vector<std::string> irnames(2);
+    irnames[0] = "g"; irnames[1] = "u";
+	point_group_table pg("cs", irnames, irnames[0]);
 	pg.add_product(1, 1, 0);
 
 	product_table_container::get_instance().add(pg);
@@ -352,11 +352,12 @@ void btod_select_test::test_3b(size_t n) throw(libtest::test_exception) {
 
 	{ // Setup symmetry
 	block_tensor_ctrl<2, double> btc(bt);
-	se_label<2, double> se(bis.get_block_index_dims(), "x");
-	se.assign(m11, 0, 0);
-	se.assign(m11, 1, 0);
-	se.assign(m11, 2, 1);
-	se.add_target(1);
+	se_label<2, double> se(bis.get_block_index_dims(), "cs");
+	block_labeling<2> &bl = se.get_labeling();
+	bl.assign(m11, 0, 0);
+	bl.assign(m11, 1, 0);
+	bl.assign(m11, 2, 1);
+	se.set_rule(1);
 	btc.req_symmetry().insert(se);
 	}
 
@@ -635,11 +636,12 @@ void btod_select_test::test_4b(size_t n) throw(libtest::test_exception) {
 	symmetry<2, double> sym(bis);
 
 	{ // Setup symmetries
-		se_label<2, double> se(bis.get_block_index_dims(), "x");
-		se.assign(m11, 0, 0);
-		se.assign(m11, 1, 1);
-		se.assign(m11, 2, 1);
-		se.add_target(0);
+		se_label<2, double> se(bis.get_block_index_dims(), "cs");
+	    block_labeling<2> &bl = se.get_labeling();
+		bl.assign(m11, 0, 0);
+		bl.assign(m11, 1, 1);
+		bl.assign(m11, 2, 1);
+		se.set_rule(0);
 		sym.insert(se);
 
 		block_tensor_ctrl<2, double> ctrl(bt_ref);
@@ -798,14 +800,14 @@ void btod_select_test::test_5(size_t n) throw(libtest::test_exception) {
 	{
 		se_perm<2, double> se1(permutation<2>().permute(0, 1), true),
 				se2(permutation<2>().permute(0, 1), false);
-		se_label<2, double> sl(bis.get_block_index_dims(), "x");
+		se_label<2, double> sl(bis.get_block_index_dims(), "cs");
 		se_part<2, double> sp1(bis, m11, 2), sp2(bis, m11, 2);
-
-		sl.assign(m11, 0, 0);
-		sl.assign(m11, 1, 1);
-		sl.assign(m11, 2, 0);
-		sl.assign(m11, 3, 1);
-		sl.add_target(1);
+	    block_labeling<2> &bl = sl.get_labeling();
+		bl.assign(m11, 0, 0);
+		bl.assign(m11, 1, 1);
+		bl.assign(m11, 2, 0);
+		bl.assign(m11, 3, 1);
+		sl.set_rule(1);
 
 		index<2> i00, i01, i10, i11;
 		i10[0] = 1; i01[1] = 1;

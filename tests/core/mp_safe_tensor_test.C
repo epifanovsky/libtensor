@@ -1,4 +1,5 @@
-#include <libvmm/thread.h>
+#include <sstream>
+#include <libutil/threads/thread.h>
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include "mp_safe_tensor_test.h"
@@ -16,7 +17,7 @@ void mp_safe_tensor_test::perform() throw(libtest::test_exception) {
 
 namespace mp_safe_tensor_test_ns {
 
-class thread_1 : public libvmm::thread {
+class thread_1 : public libutil::thread {
 private:
 	dense_tensor_i<1, double> &m_t1;
 	dense_tensor_i<1, double> &m_t2;

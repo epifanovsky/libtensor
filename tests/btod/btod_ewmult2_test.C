@@ -4,7 +4,7 @@
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/btod/btod_ewmult2.h>
 #include <libtensor/btod/btod_random.h>
-#include <libtensor/symmetry/point_group_table.h>
+#include <libtensor/symmetry/label/point_group_table.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/symmetry/se_label.h>
 #include <libtensor/symmetry/so_copy.h>
@@ -608,7 +608,9 @@ void btod_ewmult2_test::test_7() throw(libtest::test_exception) {
 	typedef std_allocator<double> allocator_t;
 
 	static const char *pgsym = "cs";
-	point_group_table pgt(pgsym, 2);
+	std::vector<std::string> irnames(2);
+	irnames[0] = "A"; irnames[1] = "B";
+	point_group_table pgt(pgsym, irnames, irnames[0]);
 	pgt.add_product(0, 0, 0);
 	pgt.add_product(0, 1, 1);
 	pgt.add_product(1, 1, 0);
@@ -667,42 +669,48 @@ void btod_ewmult2_test::test_7() throw(libtest::test_exception) {
 	{
 		block_tensor_ctrl<2, double> ca(bta);
 		se_label<2, double> selabel(bisa.get_block_index_dims(), pgsym);
-		selabel.assign(m10, 0, 0);
-		selabel.assign(m10, 1, 1);
-		selabel.assign(m10, 2, 0);
-		selabel.assign(m10, 3, 1);
-		selabel.assign(m01, 0, 0);
-		selabel.assign(m01, 1, 1);
-		selabel.add_target(0);
-		selabel.add_target(1);
+		block_labeling<2> &bl = selabel.get_labeling();
+		bl.assign(m10, 0, 0);
+		bl.assign(m10, 1, 1);
+		bl.assign(m10, 2, 0);
+		bl.assign(m10, 3, 1);
+		bl.assign(m01, 0, 0);
+		bl.assign(m01, 1, 1);
+		product_table_i::label_set_t ls;
+		ls.insert(0); ls.insert(1);
+		selabel.set_rule(ls);
 		ca.req_symmetry().insert(selabel);
 	}
 	{
 		block_tensor_ctrl<2, double> cb(btb);
 		se_label<2, double> selabel(bisb.get_block_index_dims(), pgsym);
-		selabel.assign(m10, 0, 0);
-		selabel.assign(m10, 1, 1);
-		selabel.assign(m10, 2, 0);
-		selabel.assign(m10, 3, 1);
-		selabel.assign(m01, 0, 0);
-		selabel.assign(m01, 1, 1);
-		selabel.add_target(0);
-		selabel.add_target(1);
+        block_labeling<2> &bl = selabel.get_labeling();
+		bl.assign(m10, 0, 0);
+		bl.assign(m10, 1, 1);
+		bl.assign(m10, 2, 0);
+		bl.assign(m10, 3, 1);
+		bl.assign(m01, 0, 0);
+		bl.assign(m01, 1, 1);
+        product_table_i::label_set_t ls;
+        ls.insert(0); ls.insert(1);
+        selabel.set_rule(ls);
 		cb.req_symmetry().insert(selabel);
 	}
 	{
 		se_label<3, double> selabel(bisc_ref.get_block_index_dims(),
 			pgsym);
-		selabel.assign(m100, 0, 0);
-		selabel.assign(m100, 1, 1);
-		selabel.assign(m100, 2, 0);
-		selabel.assign(m100, 3, 1);
-		selabel.assign(m010, 0, 0);
-		selabel.assign(m010, 1, 1);
-		selabel.assign(m001, 0, 0);
-		selabel.assign(m001, 1, 1);
-		selabel.add_target(0);
-		selabel.add_target(1);
+        block_labeling<3> &bl = selabel.get_labeling();
+		bl.assign(m100, 0, 0);
+		bl.assign(m100, 1, 1);
+		bl.assign(m100, 2, 0);
+		bl.assign(m100, 3, 1);
+		bl.assign(m010, 0, 0);
+		bl.assign(m010, 1, 1);
+		bl.assign(m001, 0, 0);
+		bl.assign(m001, 1, 1);
+        product_table_i::label_set_t ls;
+        ls.insert(0); ls.insert(1);
+        selabel.set_rule(ls);
 		symc_ref.insert(selabel);
 	}
 

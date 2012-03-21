@@ -3,7 +3,7 @@
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/btod/btod_apply.h>
 #include <libtensor/btod/btod_random.h>
-#include <libtensor/symmetry/point_group_table.h>
+#include <libtensor/symmetry/label/point_group_table.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/symmetry/se_label.h>
 #include <libtensor/tod/tod_apply.h>
@@ -18,6 +18,7 @@ namespace btod_apply_test_ns {
 struct sin_functor {
 	double operator()(const double &x) { return sin(x); }
 
+    bool keep_zero() const { return true; }
 	bool is_asym() const { return false; }
 	bool sign() const { return false; }
 };
@@ -25,6 +26,7 @@ struct sin_functor {
 struct cos_functor {
 	double operator()(const double &x) { return cos(x); }
 
+	bool keep_zero() const { return false; }
 	bool is_asym() const { return false; }
 	bool sign() const { return true; }
 };
@@ -32,6 +34,7 @@ struct cos_functor {
 struct exp_functor {
 	double operator()(const double &x) { return exp(x); }
 
+    bool keep_zero() const { return false; }
 	bool is_asym() const { return true; }
 	bool sign() const { return true; }
 };
@@ -684,7 +687,10 @@ void btod_apply_test::test_sym_5() throw(libtest::test_exception) {
 
 	try {
 
-	point_group_table pg(testname, 2);
+	product_table_i::label_t g = 0, u = 1;
+	std::vector<std::string> irreps(2);
+	irreps[g] = "g"; irreps[u] = "u";
+	point_group_table pg(testname, irreps, irreps[g]);
 	pg.add_product(0, 0, 0);
 	pg.add_product(0, 1, 1);
 	pg.add_product(1, 1, 0);
@@ -715,21 +721,23 @@ void btod_apply_test::test_sym_5() throw(libtest::test_exception) {
 	permutation<2> perm10; perm10.permute(0, 1);
 	se_perm<2, double> cycle(perm10, true);
 
-	se_label<2, double> irrep(bisa.get_block_index_dims(), testname);
-	irrep.assign(m, 0, 0);
-	irrep.assign(m, 1, 0);
-	irrep.assign(m, 2, 1);
-	irrep.add_target(0);
+	se_label<2, double> ir(bisa.get_block_index_dims(), testname);
+	block_labeling<2> &bl = ir.get_labeling();
+	bl.assign(m, 0, 0);
+	bl.assign(m, 1, 0);
+	bl.assign(m, 2, 1);
+	ir.set_rule(0);
 
 	block_tensor_ctrl<2, double> ctrla(bta), ctrlb(btb);
 	ctrla.req_symmetry().insert(cycle);
-	ctrla.req_symmetry().insert(irrep);
+	ctrla.req_symmetry().insert(ir);
 	ctrlb.req_symmetry().insert(cycle);
-	ctrlb.req_symmetry().insert(irrep);
+	ctrlb.req_symmetry().insert(ir);
 
-	irrep.add_target(1);
+	product_table_i::label_set_t ls; ls.insert(0); ls.insert(1);
+	ir.set_rule(ls);
 	sym_ref.insert(cycle);
-	sym_ref.insert(irrep);
+	sym_ref.insert(ir);
 	}
 
 	//	Load random data for input

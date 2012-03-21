@@ -14,7 +14,7 @@
 #include "../tod/tod_scale.h"
 #include "../tod/tod_scatter.h"
 #include "../tod/tod_set.h"
-#include "../symmetry/so_concat.h"
+#include "../symmetry/so_dirsum.h"
 #include "bad_block_index_space.h"
 #include "additive_btod.h"
 #include "transf_double.h"
@@ -464,8 +464,8 @@ void btod_dirsum_symmetry_builder_base<N, M>::make_symmetry(
 	block_tensor_ctrl<N, double> ca(bta);
 	block_tensor_ctrl<M, double> cb(btb);
 
-	so_concat<N, M, double>(ca.req_const_symmetry(),
-			cb.req_const_symmetry(), permc, true).perform(m_sym);
+	so_dirsum<N, M, double>(ca.req_const_symmetry(),
+			cb.req_const_symmetry(), permc).perform(m_sym);
 }
 
 template<size_t N, size_t M>

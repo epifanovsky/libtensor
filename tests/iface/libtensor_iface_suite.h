@@ -2,26 +2,25 @@
 #define LIBTENSOR_LIBTENSOR_IFACE_SUITE_H
 
 #include <libtest/test_suite.h>
-//#include "anon_eval_test.h"
-//#include "bispace_test.h"
-//#include "bispace_expr_test.h"
-//#include "btensor_test.h"
-//#include "contract_test.h"
-//#include "diag_test.h"
-//#include "direct_btensor_test.h"
-//#include "direct_eval_test.h"
-//#include "direct_product_test.h"
-//#include "dirsum_test.h"
-//#include "dot_product_test.h"
-//#include "ewmult_test.h"
-//#include "expr_test.h"
-//#include "labeled_btensor_test.h"
-//#include "letter_expr_test.h"
-//#include "letter_test.h"
-//#include "mapped_btensor_test.h"
-//#include "mult_test.h"
-//#include "symm_test.h"
-//#include "trace_test.h"
+#include "anon_eval_test.h"
+#include "bispace_test.h"
+#include "bispace_expr_test.h"
+#include "btensor_test.h"
+#include "contract_test.h"
+#include "diag_test.h"
+#include "direct_btensor_test.h"
+#include "direct_eval_test.h"
+#include "direct_product_test.h"
+#include "dirsum_test.h"
+#include "dot_product_test.h"
+#include "ewmult_test.h"
+#include "expr_test.h"
+#include "labeled_btensor_test.h"
+#include "letter_expr_test.h"
+#include "letter_test.h"
+#include "mult_test.h"
+#include "symm_test.h"
+#include "trace_test.h"
 
 using libtest::unit_test_factory;
 
@@ -53,33 +52,31 @@ namespace libtensor {
 	\li libtensor::labeled_btensor_test
 	\li libtensor::letter_test
 	\li libtensor::letter_expr_test
-	\li libtensor::mapped_btensor_test
 	\li libtensor::mult_test
 	\li libtensor::symm_test
 	\li libtensor::trace_test
 **/
 class libtensor_iface_suite : public libtest::test_suite {
 private:
-//	unit_test_factory<anon_eval_test> m_utf_anon_eval;
-//	unit_test_factory<bispace_test> m_utf_bispace;
-//	unit_test_factory<bispace_expr_test> m_utf_bispace_expr;
-//	unit_test_factory<btensor_test> m_utf_btensor;
-//	unit_test_factory<contract_test> m_utf_contract;
-//	unit_test_factory<diag_test> m_utf_diag;
-//	unit_test_factory<direct_btensor_test> m_utf_direct_btensor;
-//	unit_test_factory<direct_eval_test> m_utf_direct_eval;
-//	unit_test_factory<direct_product_test> m_utf_direct_product;
-//	unit_test_factory<dirsum_test> m_utf_dirsum;
-//	unit_test_factory<dot_product_test> m_utf_dot_product;
-//	unit_test_factory<ewmult_test> m_utf_ewmult;
-//	unit_test_factory<expr_test> m_utf_expr;
-//	unit_test_factory<labeled_btensor_test> m_utf_labeled_btensor;
-//	unit_test_factory<letter_test> m_utf_letter;
-//	unit_test_factory<letter_expr_test> m_utf_letter_expr;
-//	unit_test_factory<mapped_btensor_test> m_utf_mapped_btensor;
-//	unit_test_factory<mult_test> m_utf_mult;
-//	unit_test_factory<symm_test> m_utf_symm;
-//	unit_test_factory<trace_test> m_utf_trace;
+	unit_test_factory<anon_eval_test> m_utf_anon_eval;
+	unit_test_factory<bispace_test> m_utf_bispace;
+	unit_test_factory<bispace_expr_test> m_utf_bispace_expr;
+	unit_test_factory<btensor_test> m_utf_btensor;
+	unit_test_factory<contract_test> m_utf_contract;
+	unit_test_factory<diag_test> m_utf_diag;
+	unit_test_factory<direct_btensor_test> m_utf_direct_btensor;
+	unit_test_factory<direct_eval_test> m_utf_direct_eval;
+	unit_test_factory<direct_product_test> m_utf_direct_product;
+	unit_test_factory<dirsum_test> m_utf_dirsum;
+	unit_test_factory<dot_product_test> m_utf_dot_product;
+	unit_test_factory<ewmult_test> m_utf_ewmult;
+	unit_test_factory<expr_test> m_utf_expr;
+	unit_test_factory<labeled_btensor_test> m_utf_labeled_btensor;
+	unit_test_factory<letter_test> m_utf_letter;
+	unit_test_factory<letter_expr_test> m_utf_letter_expr;
+	unit_test_factory<mult_test> m_utf_mult;
+	unit_test_factory<symm_test> m_utf_symm;
+	unit_test_factory<trace_test> m_utf_trace;
 
 public:
 	//!	Creates the suite

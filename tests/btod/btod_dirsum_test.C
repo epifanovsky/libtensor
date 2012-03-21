@@ -7,7 +7,7 @@
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/btod/btod_dirsum.h>
 #include <libtensor/btod/btod_random.h>
-#include <libtensor/symmetry/point_group_table.h>
+#include <libtensor/symmetry/label/point_group_table.h>
 #include <libtensor/symmetry/se_label.h>
 #include <libtensor/symmetry/se_part.h>
 #include <libtensor/tod/tod_btconv.h>
@@ -838,7 +838,9 @@ void btod_dirsum_test::test_ikjl_ij_kl_3c(
     typedef std_allocator<double> allocator;
 
     {
-        point_group_table pg(tns, 2);
+        std::vector<std::string> irnames(2);
+        irnames[0] = "g"; irnames[1] = "u";
+        point_group_table pg(tns, irnames, irnames[0]);
         pg.add_product(0, 0, 0);
         pg.add_product(0, 1, 1);
         pg.add_product(1, 1, 0);
@@ -890,22 +892,25 @@ void btod_dirsum_test::test_ikjl_ij_kl_3c(
         mskc[0] = true; mskc[1] = true; mskc[2] = true; mskc[3] = true;
 
         se_label<2, double> sl(bisa.get_block_index_dims(), tns);
-        sl.assign(msk1, 0, 0);
-        sl.assign(msk1, 1, 1);
-        sl.assign(msk1, 2, 0);
-        sl.assign(msk1, 3, 1);
-        sl.add_target(0);
+        block_labeling<2> &bl = sl.get_labeling();
+        bl.assign(msk1, 0, 0);
+        bl.assign(msk1, 1, 1);
+        bl.assign(msk1, 2, 0);
+        bl.assign(msk1, 3, 1);
+        sl.set_rule(0);
 
         ctrla.req_symmetry().insert(sl);
         ctrlb.req_symmetry().insert(sl);
 
         se_label<4, double> slc(bisc.get_block_index_dims(), tns);
-        slc.assign(mskc, 0, 0);
-        slc.assign(mskc, 1, 1);
-        slc.assign(mskc, 2, 0);
-        slc.assign(mskc, 3, 1);
-        slc.add_target(0);
-        slc.add_target(1);
+        block_labeling<4> &blc = slc.get_labeling();
+        blc.assign(mskc, 0, 0);
+        blc.assign(mskc, 1, 1);
+        blc.assign(mskc, 2, 0);
+        blc.assign(mskc, 3, 1);
+        product_table_i::label_set_t ls;
+        ls.insert(0); ls.insert(1);
+        slc.set_rule(ls);
 
         sym_ref.insert(slc);
         ctrlc.req_symmetry().insert(slc);

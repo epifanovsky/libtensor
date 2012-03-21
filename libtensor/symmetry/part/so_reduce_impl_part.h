@@ -96,6 +96,7 @@ void symmetry_operation_impl< so_reduce<N, M, K, T>, se_part<N, T> >
     element_t el1(cp.get_bis(), cp.get_pdims());
     cp.perform(el1);
 
+    dimensions<N> bidims = el1.get_bis().get_block_index_dims();
     const dimensions<N> &pdims1 = el1.get_pdims();
 
     index<k_order2> ia, ib;

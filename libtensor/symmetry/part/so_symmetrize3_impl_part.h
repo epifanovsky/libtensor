@@ -7,7 +7,7 @@
 #include "../symmetry_operation_impl_base.h"
 #include "../so_symmetrize3.h"
 #include "../se_part.h"
-#include "partition_set.h"
+#include "combine_part.h"
 
 namespace libtensor {
 
@@ -89,7 +89,7 @@ void symmetry_operation_impl< so_symmetrize3<N, T>, se_part<N, T> >::do_perform(
         bool all_forbidden = true;
         mask<6> forbidden;
         for (register size_t i = 0; i < 6; i++) {
-            if (sp1[i].is_forbidden(i1)) continue;
+            if (sp1[i]->is_forbidden(i1)) continue;
 
             all_forbidden = false;
 
@@ -112,7 +112,7 @@ void symmetry_operation_impl< so_symmetrize3<N, T>, se_part<N, T> >::do_perform(
     } while (ai.inc());
 
     params.grp2.clear();
-    p0.convert(params.grp2);
+    params.grp2.insert(sp2);
 }
 
 

@@ -4,6 +4,7 @@
 #include "../defs.h"
 #include "../timings.h"
 #include "../dense_tensor/dense_tensor_i.h"
+#include "../dense_tensor/dense_tensor_ctrl.h"
 #include "loop_list_elem1.h"
 #include "bad_dimensions.h"
 
