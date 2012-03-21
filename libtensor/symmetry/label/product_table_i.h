@@ -65,14 +65,6 @@ public:
      **/
     virtual label_t get_n_labels() const = 0;
 
-    /** \brief Determines if the label is in the product.
-		\param lg Group of labels to take the product of.
-		\param l Label to check against.
-		\return True if label is in the product, else false.
-     **/
-    bool is_in_product(const label_group_t &lg,
-            label_t l) const throw(bad_parameter);
-
     /** \brief Compute the direct product of two labels.
         \param l1 First label
         \param l2 Second label
@@ -110,6 +102,22 @@ public:
      **/
     label_set_t product(const label_set_t &ls1,
             const label_set_t &ls2) const throw(bad_parameter);
+
+    /** \brief Computes the product of a label group
+        \param lg Label group
+
+        The result is the product of all n labels in the group
+        \f$ l_1 \times l_2 \times ... \times l_n \f$
+     **/
+    label_set_t product(const label_group_t &lg) const;
+
+    /** \brief Determines if the label is in the product.
+        \param lg Group of labels to take the product of.
+        \param l Label to check against.
+        \return True if label is in the product, else false.
+     **/
+    bool is_in_product(const label_group_t &lg,
+            label_t l) const throw(bad_parameter);
 
     /** \brief Does a consistency check on the table.
 		\throw exception If product table is not set up properly.

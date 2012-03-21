@@ -9,29 +9,6 @@ const product_table_i::label_t product_table_i::k_invalid =
 
 const product_table_i::label_t product_table_i::k_identity = 0;
 
-bool product_table_i::is_in_product(const label_group_t &lg,
-        label_t l) const throw(bad_parameter) {
-
-
-#ifdef LIBTENSOR_DEBUG
-    static const char *method =
-            "is_in_product(const label_group_t &, label_t)";
-    if (! is_valid(l))
-        throw bad_parameter(g_ns, k_clazz, method,
-                __FILE__, __LINE__, "Invalid irrep l.");
-#endif
-
-    if (lg.empty()) return false;
-
-    label_group_t::const_iterator it = lg.begin();
-    label_set_t ls;
-    ls.insert(*it);
-    it++;
-    for (; it != lg.end(); it++) ls = product(*it, ls);
-
-    return (ls.count(l) != 0);
-}
-
 product_table_i::label_set_t product_table_i::product(label_t l1,
         label_t l2) const throw(bad_parameter) {
 #ifdef LIBTENSOR_DEBUG
@@ -126,6 +103,35 @@ product_table_i::label_set_t product_table_i::product(const label_set_t &l1,
     }
 
     return ls;
+}
+
+product_table_i::label_set_t product_table_i::product(
+        const label_group_t &lg) const {
+
+    if (lg.empty()) return label_set_t();
+
+    label_group_t::const_iterator it = lg.begin();
+    label_set_t ls;
+    ls.insert(*it);
+    it++;
+    for (; it != lg.end(); it++) ls = product(*it, ls);
+
+    return ls;
+}
+
+bool product_table_i::is_in_product(const label_group_t &lg,
+        label_t l) const throw(bad_parameter) {
+
+#ifdef LIBTENSOR_DEBUG
+    static const char *method =
+            "is_in_product(const label_group_t &, label_t)";
+    if (! is_valid(l))
+        throw bad_parameter(g_ns, k_clazz, method,
+                __FILE__, __LINE__, "Invalid irrep l.");
+#endif
+
+    if (lg.empty()) return false;
+    return (product(lg).count(l) != 0);
 }
 
 void product_table_i::check() const throw(bad_symmetry) {
