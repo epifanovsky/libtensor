@@ -505,7 +505,7 @@ void expr_test::test_8() throw(libtest::test_exception) {
 	try {
 
 	point_group_table::label_t ap = 0, app = 1;
-	std::vector<std::string> irnames;
+	std::vector<std::string> irnames(2);
 	irnames[ap] = "A'"; irnames[app] = "A''";
 
 	point_group_table cs(pgtid, irnames, irnames[ap]);
