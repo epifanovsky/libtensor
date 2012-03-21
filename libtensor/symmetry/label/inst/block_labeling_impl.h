@@ -148,6 +148,9 @@ void block_labeling<N>::match() {
             delete labels[jtype];
             labels[jtype] = 0;
             m_type[j] = cur_type;
+            for (k = j + 1; k < N; k++) {
+                if (types[k] == jtype) m_type[k] = cur_type;
+            }
         }
 
         cur_type++;
@@ -250,7 +253,7 @@ void transfer_labeling(const block_labeling<N> &from,
         // 2) mapping of different dimensions on to the same
         for (size_t j = i + 1; j < N; j++) {
             if (map[i] == map[j]) {
-                if (from.get_dim_type(map[i]) != from.get_dim_type(map[j]))
+                if (from.get_dim_type(i) != from.get_dim_type(j))
                     throw bad_symmetry(g_ns, "", method,
                             __FILE__, __LINE__, "Invalid map.");
             }
