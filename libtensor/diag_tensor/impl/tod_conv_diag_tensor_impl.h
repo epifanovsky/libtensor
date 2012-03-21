@@ -2,6 +2,7 @@
 #define LIBTENSOR_TOD_CONV_DIAG_TENSOR_IMPL_H
 
 #include <list>
+#include <memory>
 #include <vector>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/tod/kernels/loop_list_runner.h>

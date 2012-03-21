@@ -1,7 +1,9 @@
 #ifndef LIBTENSOR_DIAG_TOD_ADJUST_SPACE_IMPL_H
 #define LIBTENSOR_DIAG_TOD_ADJUST_SPACE_IMPL_H
 
+#include <cstring> // for memset
 #include <map>
+#include <memory>
 #include <set>
 #include <vector>
 #include <libtensor/diag_tensor/diag_tensor_ctrl.h>
