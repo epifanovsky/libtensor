@@ -6,8 +6,8 @@
 #include "../core/block_tensor_ctrl.h"
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
-#include "../symmetry/so_mult.h"
-#include "../symmetry/so_permute.h"
+#include "../symmetry/so_dirprod.h"
+#include "../symmetry/so_merge.h"
 #include "../tod/tod_mult.h"
 #include "../tod/tod_set.h"
 #include "additive_btod.h"
@@ -130,8 +130,34 @@ btod_mult<N>::btod_mult(block_tensor_i<N, double> &bta,
 	}
 
 	block_tensor_ctrl<N, double> cbta(bta), cbtb(btb);
-	so_mult<N, double>(cbta.req_const_symmetry(), m_pa,
-			cbtb.req_const_symmetry(), m_pb).perform(m_sym);
+    sequence<N, size_t> seq1a, seq2a;
+    sequence<N + N, size_t> seq1b, seq2b;
+    for (size_t i = 0; i < N; i++) {
+        seq1a[i] = i; seq2a[i] = i + N;
+    }
+    m_pa.apply(seq1a);
+    m_pb.apply(seq2a);
+    for (size_t i = 0; i < N; i++) {
+        seq1b[i] = i; seq2b[i] = seq1a[i];
+    }
+    for (size_t i = N; i < N + N; i++) {
+        seq1b[i] = i; seq2b[i] = seq2a[i - N];
+    }
+    permutation_builder<N + N> pbb(seq2b, seq1b);
+
+    block_index_space_product_builder<N, N> bbx(m_bis, m_bis,
+            permutation<N + N>());
+
+    symmetry<N + N, double> symx(bbx.get_bis());
+    so_dirprod<N, N, double>(cbta.req_const_symmetry(),
+            cbtb.req_const_symmetry(), pbb.get_perm()).perform(symx);
+    so_merge<N + N, N + N, N, double> merge(symx);
+    for (size_t i = 0; i < N; i++) {
+        mask<N + N> m;
+        m[i] = m[i + N] = true;
+        merge.add_mask(m);
+    }
+    merge.perform(m_sym);
 
 	make_schedule();
 }
@@ -157,8 +183,35 @@ btod_mult<N>::btod_mult(
 	}
 
 	block_tensor_ctrl<N, double> cbta(bta), cbtb(btb);
-	so_mult<N, double>(cbta.req_const_symmetry(), m_pa,
-			cbtb.req_const_symmetry(), m_pb).perform(m_sym);
+
+    sequence<N, size_t> seq1a, seq2a;
+    sequence<N + N, size_t> seq1b, seq2b;
+    for (size_t i = 0; i < N; i++) {
+        seq1a[i] = i; seq2a[i] = i + N;
+    }
+    m_pa.apply(seq1a);
+    m_pb.apply(seq2a);
+    for (size_t i = 0; i < N; i++) {
+        seq1b[i] = i; seq2b[i] = seq1a[i];
+    }
+    for (size_t i = N; i < N + N; i++) {
+        seq1b[i] = i; seq2b[i] = seq2a[i - N];
+    }
+    permutation_builder<N + N> pbb(seq2b, seq1b);
+
+    block_index_space_product_builder<N, N> bbx(m_bis, m_bis,
+            permutation<N + N>());
+
+    symmetry<N + N, double> symx(bbx.get_bis());
+    so_dirprod<N, N, double>(cbta.req_const_symmetry(),
+            cbtb.req_const_symmetry(), pbb.get_perm()).perform(symx);
+    so_merge<N + N, N + N, N, double> merge(symx);
+    for (size_t i = 0; i < N; i++) {
+        mask<N + N> m;
+        m[i] = m[i + N] = true;
+        merge.add_mask(m);
+    }
+    merge.perform(m_sym);
 
 	make_schedule();
 }

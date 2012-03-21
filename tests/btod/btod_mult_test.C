@@ -1,13 +1,10 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor.h>
-#include <libtensor/core/direct_block_tensor.h>
-#include <libtensor/btod/btod_dirsum.h>
 #include <libtensor/btod/btod_mult.h>
 #include <libtensor/btod/btod_random.h>
-#include <libtensor/btod/btod_symmetrize.h>
-#include <libtensor/symmetry/point_group_table.h>
+//#include <libtensor/btod/btod_symmetrize.h>
+//#include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/tod/tod_btconv.h>
-#include <libtensor/tod/tod_dirsum.h>
 #include <libtensor/tod/tod_mult.h>
 #include <iomanip>
 #include <sstream>
@@ -603,14 +600,14 @@ void btod_mult_test::test_7(bool label, bool part,
 
 	std::string tns = tnss.str();
 
-	if (label) {
-		point_group_table pg(tns, 2);
-		pg.add_product(0, 0, 0);
-		pg.add_product(0, 1, 1);
-		pg.add_product(1, 1, 0);
-
-		product_table_container::get_instance().add(pg);
-	}
+//	if (label) {
+//		point_group_table pg(tns, 2);
+//		pg.add_product(0, 0, 0);
+//		pg.add_product(0, 1, 1);
+//		pg.add_product(1, 1, 0);
+//
+//		product_table_container::get_instance().add(pg);
+//	}
 
 	typedef std_allocator<double> allocator_t;
 
@@ -666,21 +663,21 @@ void btod_mult_test::test_7(bool label, bool part,
 		sym_ref.insert(ap32);
 	}
 
-	if (label) {
-		se_label<4, double> sl(bis.get_block_index_dims(), tns);
-		sl.assign(msk, 0, 0);
-		sl.assign(msk, 1, 1);
-		sl.assign(msk, 2, 0);
-		sl.assign(msk, 3, 1);
-
-		sl.add_target(0);
-		ca.req_symmetry().insert(sl);
-		cc.req_symmetry().insert(sl);
-		sym_ref.insert(sl);
-
-		sl.add_target(1);
-		cb.req_symmetry().insert(sl);
-	}
+//	if (label) {
+//		se_label<4, double> sl(bis.get_block_index_dims(), tns);
+//		sl.assign(msk, 0, 0);
+//		sl.assign(msk, 1, 1);
+//		sl.assign(msk, 2, 0);
+//		sl.assign(msk, 3, 1);
+//
+//		sl.add_target(0);
+//		ca.req_symmetry().insert(sl);
+//		cc.req_symmetry().insert(sl);
+//		sym_ref.insert(sl);
+//
+//		sl.add_target(1);
+//		cb.req_symmetry().insert(sl);
+//	}
 
 	if (part) {
 		se_part<4, double> sp1(bis, msk, 2), sp2(bis, msk, 2);
@@ -762,15 +759,15 @@ void btod_mult_test::test_7(bool label, bool part,
 	compare_ref<4>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 
 	} catch(exception &e) {
-		if (label) product_table_container::get_instance().erase(tns);
+//		if (label) product_table_container::get_instance().erase(tns);
 
 		fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
 	} catch (...) {
-		if (label) product_table_container::get_instance().erase(tns);
+//		if (label) product_table_container::get_instance().erase(tns);
 		throw;
 	}
 
-	if (label) product_table_container::get_instance().erase(tns);
+//	if (label) product_table_container::get_instance().erase(tns);
 }
 
 /**	\test Elementwise division of two 2-order tensors having 1 element blocks.
@@ -784,14 +781,14 @@ void btod_mult_test::test_8a(bool label, bool part)
 	std::string tns = tnss.str();
 
 
-	if (label) {
-		point_group_table pg(tns, 2);
-		pg.add_product(0, 0, 0);
-		pg.add_product(0, 1, 1);
-		pg.add_product(1, 1, 0);
-
-		product_table_container::get_instance().add(pg);
-	}
+//	if (label) {
+//		point_group_table pg(tns, 2);
+//		pg.add_product(0, 0, 0);
+//		pg.add_product(0, 1, 1);
+//		pg.add_product(1, 1, 0);
+//
+//		product_table_container::get_instance().add(pg);
+//	}
 
 	typedef std_allocator<double> allocator_t;
 
@@ -821,18 +818,18 @@ void btod_mult_test::test_8a(bool label, bool part)
 	cb.req_symmetry().insert(sp);
 	sym_ref.insert(ap);
 
-	if (label) {
-		se_label<2, double> sl(bis.get_block_index_dims(), tns);
-		sl.assign(m, 0, 0); sl.assign(m, 1, 1);
-		sl.assign(m, 2, 0); sl.assign(m, 3, 1);
-		sl.add_target(0);
-
-		ca.req_symmetry().insert(sl);
-		sym_ref.insert(sl);
-
-		sl.add_target(1);
-		cb.req_symmetry().insert(sl);
-	}
+//	if (label) {
+//		se_label<2, double> sl(bis.get_block_index_dims(), tns);
+//		sl.assign(m, 0, 0); sl.assign(m, 1, 1);
+//		sl.assign(m, 2, 0); sl.assign(m, 3, 1);
+//		sl.add_target(0);
+//
+//		ca.req_symmetry().insert(sl);
+//		sym_ref.insert(sl);
+//
+//		sl.add_target(1);
+//		cb.req_symmetry().insert(sl);
+//	}
 
 	if (part) {
 		se_part<2, double> spa(bis, m, 2), spb(bis, m, 2);
@@ -878,15 +875,15 @@ void btod_mult_test::test_8a(bool label, bool part)
 	compare_ref<2>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 
 	} catch(exception &e) {
-		if (label) product_table_container::get_instance().erase(tns);
+//		if (label) product_table_container::get_instance().erase(tns);
 
 		fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
 	} catch (...) {
-		if (label) product_table_container::get_instance().erase(tns);
+//		if (label) product_table_container::get_instance().erase(tns);
 		throw;
 	}
 
-	if (label) product_table_container::get_instance().erase(tns);
+//	if (label) product_table_container::get_instance().erase(tns);
 }
 
 
@@ -902,14 +899,14 @@ void btod_mult_test::test_8b(bool label, bool part)
 	std::string tns = tnss.str();
 
 
-	if (label) {
-		point_group_table pg(tns, 2);
-		pg.add_product(0, 0, 0);
-		pg.add_product(0, 1, 1);
-		pg.add_product(1, 1, 0);
-
-		product_table_container::get_instance().add(pg);
-	}
+//	if (label) {
+//		point_group_table pg(tns, 2);
+//		pg.add_product(0, 0, 0);
+//		pg.add_product(0, 1, 1);
+//		pg.add_product(1, 1, 0);
+//
+//		product_table_container::get_instance().add(pg);
+//	}
 
 	typedef std_allocator<double> allocator_t;
 
@@ -947,18 +944,18 @@ void btod_mult_test::test_8b(bool label, bool part)
 	sym_ref.insert(ap10);
 	sym_ref.insert(ap32);
 
-	if (label) {
-		se_label<4, double> sl(bis.get_block_index_dims(), tns);
-		sl.assign(m, 0, 0); sl.assign(m, 1, 1);
-		sl.assign(m, 2, 0); sl.assign(m, 3, 1);
-		sl.add_target(0);
-
-		ca.req_symmetry().insert(sl);
-		sym_ref.insert(sl);
-
-		sl.add_target(1);
-		cb.req_symmetry().insert(sl);
-	}
+//	if (label) {
+//		se_label<4, double> sl(bis.get_block_index_dims(), tns);
+//		sl.assign(m, 0, 0); sl.assign(m, 1, 1);
+//		sl.assign(m, 2, 0); sl.assign(m, 3, 1);
+//		sl.add_target(0);
+//
+//		ca.req_symmetry().insert(sl);
+//		sym_ref.insert(sl);
+//
+//		sl.add_target(1);
+//		cb.req_symmetry().insert(sl);
+//	}
 
 	if (part) {
 		se_part<4, double> spa(bis, m, 2), spb(bis, m, 2);
@@ -1030,15 +1027,15 @@ void btod_mult_test::test_8b(bool label, bool part)
 	compare_ref<4>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 
 	} catch(exception &e) {
-		if (label) product_table_container::get_instance().erase(tns);
+//		if (label) product_table_container::get_instance().erase(tns);
 
 		fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
 	} catch (...) {
-		if (label) product_table_container::get_instance().erase(tns);
+//		if (label) product_table_container::get_instance().erase(tns);
 		throw;
 	}
 
-	if (label) product_table_container::get_instance().erase(tns);
+//	if (label) product_table_container::get_instance().erase(tns);
 }
 
 

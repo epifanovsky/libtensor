@@ -17,7 +17,7 @@
 //#include "btod_extract_test.h"
 //#include "btod_import_raw_test.h"
 //#include "btod_import_raw_stream_test.h"
-//#include "btod_mult_test.h"
+#include "btod_mult_test.h"
 //#include "btod_mult1_test.h"
 //#include "btod_print_test.h"
 //#include "btod_random_test.h"
@@ -96,7 +96,7 @@ private:
 //	unit_test_factory<btod_extract_test> m_utf_btod_extract;
 //	unit_test_factory<btod_import_raw_test> m_utf_btod_import_raw;
 //	unit_test_factory<btod_import_raw_stream_test> m_utf_btod_import_raw_stream;
-//	unit_test_factory<btod_mult_test> m_utf_btod_mult;
+	unit_test_factory<btod_mult_test> m_utf_btod_mult;
 //	unit_test_factory<btod_mult1_test> m_utf_btod_mult1;
 //	unit_test_factory<btod_print_test> m_utf_btod_print;
 //	unit_test_factory<btod_random_test> m_utf_btod_random;

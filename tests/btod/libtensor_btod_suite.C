@@ -20,7 +20,7 @@ libtensor_btod_suite::libtensor_btod_suite() :
 //	add_test("btod_extract", m_utf_btod_extract);
 //	add_test("btod_import_raw", m_utf_btod_import_raw);
 //	add_test("btod_import_raw_stream", m_utf_btod_import_raw_stream);
-//	add_test("btod_mult", m_utf_btod_mult);
+	add_test("btod_mult", m_utf_btod_mult);
 //	add_test("btod_mult1", m_utf_btod_mult1);
 //	add_test("btod_print", m_utf_btod_print);
 //	add_test("btod_random", m_utf_btod_random);
