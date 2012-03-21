@@ -762,14 +762,18 @@ void btod_dirsum_test::test_ikjl_ij_kl_3b(bool rnd,
 		i1000[0] = 1; i0111[1] = 1; i0111[2] = 1; i0111[3] = 1;
 		i1111[0] = 1; i1111[1] = 1; i1111[2] = 1; i1111[3] = 1;
 
-		spc.add_map(i0000, i1010); spc.add_map(i0001, i1011);
-		spc.add_map(i0100, i1110); spc.add_map(i0101, i1111);
-		spc.add_map(i0010, i1000); spc.add_map(i0011, i1001);
-		spc.add_map(i0110, i1100); spc.add_map(i0111, i1101);
-		spc.add_map(i0000, i0101); spc.add_map(i0010, i0111);
-		spc.add_map(i1000, i1101); spc.add_map(i1010, i1111);
-		spc.add_map(i0001, i0100); spc.add_map(i0011, i0110);
-		spc.add_map(i1001, i1100); spc.add_map(i1011, i1110);
+        spc.add_map(i0000, i0101);
+		spc.add_map(i0101, i1010);
+        spc.add_map(i1010, i1111);
+        spc.add_map(i0001, i0100);
+        spc.add_map(i0100, i1011);
+        spc.add_map(i1011, i1110);
+        spc.add_map(i0010, i0111);
+		spc.add_map(i0111, i1000);
+        spc.add_map(i1000, i1101);
+        spc.add_map(i0011, i0110);
+		spc.add_map(i0110, i1001);
+		spc.add_map(i1001, i1100);
 
 		sym_ref.insert(spc);
 		ctrlc.req_symmetry().insert(spc);
@@ -832,7 +836,7 @@ void btod_dirsum_test::test_ikjl_ij_kl_3c(
 
     std::stringstream tnss;
     tnss << "btod_dirsum_test::test_ikjl_ij_kl_3c("
-            << ", " << rnd << ", " << d << ")";
+            << rnd << ", " << d << ")";
     std::string tns = tnss.str();
 
     typedef std_allocator<double> allocator;
@@ -888,7 +892,7 @@ void btod_dirsum_test::test_ikjl_ij_kl_3c(
     {
         block_tensor_ctrl<2, double> ctrla(bta), ctrlb(btb);
         block_tensor_ctrl<4, double> ctrlc(btc);
-        msk1[1] = true;
+        msk1[0] = msk1[1] = true;
         mskc[0] = true; mskc[1] = true; mskc[2] = true; mskc[3] = true;
 
         se_label<2, double> sl(bisa.get_block_index_dims(), tns);
@@ -908,9 +912,15 @@ void btod_dirsum_test::test_ikjl_ij_kl_3c(
         blc.assign(mskc, 1, 1);
         blc.assign(mskc, 2, 0);
         blc.assign(mskc, 3, 1);
-        product_table_i::label_set_t ls;
-        ls.insert(0); ls.insert(1);
-        slc.set_rule(ls);
+        evaluation_rule<4> rc;
+        sequence<4, size_t> sc1(0), sc2(0);
+        sc1[0] = sc1[2] = 1;
+        sc2[1] = sc2[3] = 1;
+        rc.add_sequence(sc1);
+        rc.add_sequence(sc2);
+        rc.add_product(0, 0, 0);
+        rc.add_product(1, 0, 0);
+        slc.set_rule(rc);
 
         sym_ref.insert(slc);
         ctrlc.req_symmetry().insert(slc);
@@ -981,7 +991,7 @@ void btod_dirsum_test::test_iklj_ij_kl_1(bool rnd, double d)
 	// with splits and symmetry
 
 	std::stringstream tnss;
-	tnss << "btod_dirsum_test::test_ikjl_ij_kl_1(" << rnd << ", " << d
+	tnss << "btod_dirsum_test::test_iklj_ij_kl_1(" << rnd << ", " << d
 		<< ")";
 	std::string tns = tnss.str();
 

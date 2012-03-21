@@ -50,30 +50,30 @@ void additive_btod<N>::perform(block_tensor_i<N, double> &bt, double c) {
      }
      merge.perform(ctrl.req_symmetry());
 
-    dimensions<N> bidims(bt.get_bis().get_block_index_dims());
-    schedule_t sch(get_symmetry(), symcopy);
-    sch.build(get_schedule(), ctrl);
+     dimensions<N> bidims(bt.get_bis().get_block_index_dims());
+     schedule_t sch(get_symmetry(), symcopy);
+     sch.build(get_schedule(), ctrl);
 
-    std::vector<task*> tasks;
-    task_batch batch;
+     std::vector<task*> tasks;
+     task_batch batch;
 
-    for(typename schedule_t::iterator igrp = sch.begin(); igrp != sch.end();
-        ++igrp) {
+     for(typename schedule_t::iterator igrp = sch.begin(); igrp != sch.end();
+             ++igrp) {
 
-        task *t = new task(*this, bt, bidims, sch, igrp, c);
-        tasks.push_back(t);
-        batch.push(*t);
-    }
+         task *t = new task(*this, bt, bidims, sch, igrp, c);
+         tasks.push_back(t);
+         batch.push(*t);
+     }
 
-    batch.wait();
-    for(typename std::vector<task*>::iterator i = tasks.begin();
-        i != tasks.end(); i++) {
-        delete *i;
-    }
-    tasks.clear();
+     batch.wait();
+     for(typename std::vector<task*>::iterator i = tasks.begin();
+             i != tasks.end(); i++) {
+         delete *i;
+     }
+     tasks.clear();
 
-    ctrl.req_sync_off();
-    sync_off();
+     ctrl.req_sync_off();
+     sync_off();
 }
 
 

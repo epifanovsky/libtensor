@@ -79,11 +79,11 @@ void btod_select_test::perform() throw(libtest::test_exception) {
 
 	}
 	catch (...) {
-		product_table_container::get_instance().erase("x");
+		product_table_container::get_instance().erase("cs");
 		throw;
 	}
 
-	product_table_container::get_instance().erase("x");
+	product_table_container::get_instance().erase("cs");
 
 }
 
