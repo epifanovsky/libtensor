@@ -39,8 +39,9 @@ void so_symmetrize_test::test_1() throw(libtest::test_exception) {
 	sym2_ref.insert(se_perm<2, double>(
 		permutation<2>().permute(0, 1), true));
 
-	mask<2> msk; msk[0] = msk[1] = true;
-	so_symmetrize<2, double>(sym1, msk, true).perform(sym2);
+	sequence<2, size_t> seq1(0), seq2(1);
+	seq1[0] = 1; seq1[1] = 2;
+	so_symmetrize<2, double>(sym1, seq1, seq2, true).perform(sym2);
 
 	compare_ref<2>::compare(testname, sym2, sym2_ref);
 
@@ -72,8 +73,9 @@ void so_symmetrize_test::test_2() throw(libtest::test_exception) {
 	sym2_ref.insert(se_perm<2, double>(
 		permutation<2>().permute(0, 1), false));
 
-	mask<2> msk; msk[0] = msk[1] = true;
-	so_symmetrize<2, double>(sym1, msk, false).perform(sym2);
+    sequence<2, size_t> seq1(0), seq2(1);
+    seq1[0] = 1; seq1[1] = 2;
+	so_symmetrize<2, double>(sym1, seq1, seq2, false).perform(sym2);
 
 	compare_ref<2>::compare(testname, sym2, sym2_ref);
 
@@ -111,8 +113,9 @@ void so_symmetrize_test::test_3() throw(libtest::test_exception) {
 	sym2_ref.insert(se_perm<4, double>(permutation<4>().permute(0, 1).
 		permute(1, 2).permute(2, 3), true));
 
-	mask<4> msk; msk[1] = msk[2] = true;
-	so_symmetrize<4, double>(sym1, msk, true).perform(sym2);
+    sequence<4, size_t> seq1(0), seq2(0);
+    seq1[1] = 1; seq1[2] = 2; seq2[1] = seq2[2] = 1;
+	so_symmetrize<4, double>(sym1, seq1, seq2, true).perform(sym2);
 
 	compare_ref<4>::compare(testname, sym2, sym2_ref);
 
@@ -153,8 +156,9 @@ void so_symmetrize_test::test_4() throw(libtest::test_exception) {
 	sym2_ref.insert(seperm);
 	sym2_ref.insert(separt);
 
-	mask<2> msk; msk[0] = msk[1] = true;
-	so_symmetrize<2, double>(sym1, msk, true).perform(sym2);
+    sequence<2, size_t> seq1(0), seq2(0);
+    seq1[0] = 1; seq1[1] = 2; seq2[0] = 1; seq2[1] = 1;
+	so_symmetrize<2, double>(sym1, seq1, seq2, true).perform(sym2);
 
 	compare_ref<2>::compare(testname, sym2, sym2_ref);
 
@@ -234,9 +238,9 @@ void so_symmetrize_test::test_5() throw(libtest::test_exception) {
 	sym2_ref.insert(seperm4);
 	sym2_ref.insert(separt4b);
 
-	mask<4> msk;
-	msk[0] = msk[1] = true;
-	so_symmetrize<4, double>(sym1, msk, true).perform(sym2);
+    sequence<4, size_t> seq1(0), seq2(0);
+    seq1[0] = 1; seq1[1] = 2; seq2[0] = 1; seq2[1] = 1;
+	so_symmetrize<4, double>(sym1, seq1, seq2, true).perform(sym2);
 
 	compare_ref<4>::compare(testname, sym2, sym2_ref);
 

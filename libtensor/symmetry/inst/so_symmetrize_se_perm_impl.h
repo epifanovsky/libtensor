@@ -17,32 +17,41 @@ void symmetry_operation_impl< so_symmetrize<N, T>, se_perm<N, T> >::do_perform(
     typedef symmetry_element_set_adapter< N, T, se_perm<N, T> > adapter_t;
 
     adapter_t adapter1(params.grp1);
-    permutation_group<N, T> grp2(adapter1);
+    permutation_group<N, T> grp1(adapter1), grp2;
 
-    permutation<N> pp, cp;
-//    sequence<N, size_t> seq(2);
-    register size_t i = 0;
-    for (; i < N && ! params.msk[i]; i++) ;
-    size_t i1 = i++;
+    size_t ngrp = 0, nidx = 0;
+    for (register size_t i = 0; i < N; i++) {
+        if (params.idxgrp[i] == 0) continue;
 
-    for (; i < N && ! params.msk[i]; i++) ;
-    size_t i2 = i++;
-
-    pp.permute(i1, i2);
-
-    size_t n = 2;
-    while (i < N) {
-        cp.permute(i1, i2);
-        for (; i < N && ! params.msk[i]; i++) ;
-        if (i == N) break;
-
-        i1 = i2; i2 = i++;
-        n++;
+        ngrp = std::max(ngrp, params.idxgrp[i]);
+        nidx = std::max(nidx, params.symidx[i]);
     }
 
-//    grp1.stabilize(seq, grp2);
+    if (ngrp < 2) return;
 
-    if (n > 2) grp2.add_orbit(params.symm || ((n % 2) != 0), cp);
+    permutation<N> pp, cp;
+    for (size_t k = 1; k < ngrp; k++) {
+        for (size_t i = 1 ; i <= nidx; i++) {
+            register size_t j = 0;
+            for (; j < N; j++) {
+                if ((params.idxgrp[j] == k) &&
+                        (params.symidx[j] == i)) break;
+            }
+            size_t i1 = j;
+            for (j = 0; j < N; j++) {
+                if ((params.idxgrp[j] == k + 1) &&
+                        (params.symidx[j] == i)) break;
+            }
+            if (k == 1) pp.permute(i1, j);
+            cp.permute(i1, j);
+        }
+    }
+
+    sequence<N, size_t> stabseq;
+    for (register size_t i = 0; i < N; i++) stabseq[i] = params.symidx[i] + 1;
+    grp1.stabilize(params.symidx, grp2);
+
+    if (ngrp > 2) grp2.add_orbit(params.symm || ((ngrp % 2) != 0), cp);
     grp2.add_orbit(params.symm, pp);
 
     params.grp2.clear();

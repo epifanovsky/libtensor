@@ -256,9 +256,20 @@ void btod_symmetrize<N>::compute_block(bool zero, dense_tensor_i<N, double> &blk
 template<size_t N>
 void btod_symmetrize<N>::make_symmetry() {
 
-//    mask<N> msk;
-//    msk[i1] = msk[i2] = true;
-//	so_symmetrize<N, double>(m_op.get_symmetry(), msk, m_symm).perform(m_sym);
+    sequence<N, size_t> seq2(0), idxgrp(0), symidx(0);
+    for (register size_t i = 0; i < N; i++) seq2[i] = i;
+    m_perm1.apply(seq2);
+
+    size_t idx = 1;
+    for (register size_t i = 0; i < N; i++) {
+        if (seq2[i] <= i) continue;
+
+        idxgrp[i] = 1;
+        idxgrp[seq2[i]] = 2;
+        symidx[i] = symidx[seq2[i]] = idx++;
+    }
+	so_symmetrize<N, double>(m_op.get_symmetry(),
+	        idxgrp, symidx, m_symm).perform(m_sym);
 }
 
 

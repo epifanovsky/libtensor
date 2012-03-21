@@ -261,9 +261,11 @@ void btod_symmetrize3<N>::make_symmetry() {
 //	so_add<N, double>(s2, p0, s0, p5).perform(s1);
 
 //	so_symmetrize3<N, double>(s1, p1, p3, m_symm).perform(m_sym);
-	mask<N> msk;
-	msk[m_i1] = msk[m_i2] = msk[m_i3] = true;
-    so_symmetrize<N, double>(m_op.get_symmetry(), msk, m_symm).perform(m_sym);
+	sequence<N, size_t> seq1, seq2;
+	seq1[m_i1] = 1; seq1[m_i2] = 2; seq1[m_i3] = 3;
+	seq2[m_i1] = seq2[m_i2] = seq2[m_i3] = 1;
+    so_symmetrize<N, double>(m_op.get_symmetry(),
+            seq1, seq2, m_symm).perform(m_sym);
 
 }
 

@@ -211,15 +211,21 @@ void evaluation_rule<N>::optimize() {
 }
 
 template<size_t N>
-void evaluation_rule<N>::symmetrize(const mask<N> &msk) {
+void evaluation_rule<N>::symmetrize(const sequence<N, size_t> &idxgrp,
+        const sequence<N, size_t> &symidx) {
 
-    std::vector<size_t> map;
+    size_t ngrp = 0, nidx = 0;
     for (register size_t i = 0; i < N; i++) {
-        if (msk[i]) map.push_back(i);
+        ngrp = std::max(ngrp, idxgrp[i]);
+        nidx = std::max(nidx, symidx[i]);
     }
-    if (map.size() < 2) return;
+    if (ngrp < 2) return;
 
-
+    std::vector< std::vector<size_t> > map(ngrp, std::vector<size_t>(nidx, 0));
+    for (register size_t i = 0; i < N; i++) {
+        if (idxgrp[i] == 0) continue;
+        map[idxgrp[i] - 1][symidx[i] - 1] = i;
+    }
 
     // Step 1: symmetrize sequences
     size_t nseq = m_sequences.size();
@@ -236,12 +242,14 @@ void evaluation_rule<N>::symmetrize(const mask<N> &msk) {
             const sequence<N, size_t> &curseq = m_sequences[sno];
             sequence<N, size_t> newseq(curseq);
             for (register size_t i = 0; i < map.size(); i++) {
-                if (curseq[map[pg[i]]] == curseq[map[i]]) continue;
+                const std::vector<size_t> &mx = map[i], &my = map[pg[i]];
+                for (register size_t j = 0; j < mx.size(); j++) {
+                    if (curseq[mx[j]] == curseq[my[j]]) continue;
 
-                newseq[map[pg[i]]] = curseq[map[i]];
-                changed = true;
+                    newseq[my[j]] = curseq[mx[j]];
+                    changed = true;
+                }
             }
-
             if (! changed) continue;
 
             size_t sno2 = add_sequence(newseq);

@@ -254,8 +254,9 @@ void evaluation_rule_test::test_sym_1() throw(libtest::test_exception) {
         r1.add_to_product(1, id2, 1, 0);
         r1.add_to_product(1, id3, 1, 0);
 
-        mask<3> msk; msk[0] = msk[1] = msk[2] = true;
-        r1.symmetrize(msk);
+        sequence<3, size_t> seq1(0), seq2(1);
+        seq1[0] = 1; seq1[1] = 2; seq2[2] = 3;
+        r1.symmetrize(seq1, seq2);
 
         if (r1.get_n_sequences() != 4)
             fail_test(testname, __FILE__, __LINE__,
@@ -289,8 +290,9 @@ void evaluation_rule_test::test_sym_2() throw(libtest::test_exception) {
         r1.add_product(id1, 1, 0);
         r1.add_to_product(0, id2, 2, 0);
 
-        mask<3> msk; msk[0] = msk[1] = true;
-        r1.symmetrize(msk);
+        sequence<3, size_t> seq1(0), seq2(1);
+        seq1[0] = 1; seq1[1] = 2; seq2[2] = 0;
+        r1.symmetrize(seq1, seq2);
 
         if (r1.get_n_sequences() != 3)
             fail_test(testname, __FILE__, __LINE__,
@@ -359,8 +361,9 @@ void evaluation_rule_test::test_sym_3() throw(libtest::test_exception) {
         r1.add_product(id1, 2, 0);
         r1.add_to_product(0, id2, 2, 0);
 
-        mask<3> msk; msk[0] = msk[1] = msk[2] = true;
-        r1.symmetrize(msk);
+        sequence<3, size_t> seq1(0), seq2(1);
+        seq1[0] = 1; seq1[1] = 2; seq1[2] = 3;
+        r1.symmetrize(seq1, seq2);
 
         if (r1.get_n_sequences() != 3)
             fail_test(testname, __FILE__, __LINE__,

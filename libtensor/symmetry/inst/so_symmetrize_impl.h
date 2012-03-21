@@ -6,11 +6,81 @@
 namespace libtensor {
 
 template<size_t N, typename T>
+const char *so_symmetrize<N, T>::k_clazz = "so_symmetrize<N, T>";
+
+template<size_t N, typename T>
+so_symmetrize<N, T>::so_symmetrize(
+        const symmetry<N, T> &sym1, const sequence<N, size_t> &idxgrp,
+        const sequence<N, size_t> &symidx, bool symm) :
+        m_sym1(sym1), m_idxgrp(idxgrp), m_symidx(symidx), m_symm(symm) {
+
+#ifdef LIBTENSOR_DEBUG
+    static const char *method = "so_symmetrize(const symmetry<N, T> &, "
+            "const sequence<N, size_t> &, const sequence<N, size_t> &, bool)";
+
+    size_t ngrp = 0, nidx = 0;
+    sequence<N, size_t> nidxs(0), ngrps(0);
+    for (register size_t i = 0; i < N; i++) {
+        if (m_idxgrp[i] == 0 || m_symidx[i] == 0) {
+            if (m_idxgrp[i] != m_symidx[i]) {
+                throw bad_symmetry(g_ns, k_clazz, method,
+                        __FILE__, __LINE__, "Inconsistent sequences.");
+            }
+            continue;
+        }
+
+        if (m_idxgrp[i] > N) {
+            throw bad_symmetry(g_ns, k_clazz, method,
+                    __FILE__, __LINE__, "idxgrp.");
+        }
+        if (m_symidx[i] > N) {
+            throw bad_symmetry(g_ns, k_clazz, method,
+                    __FILE__, __LINE__, "symidx.");
+        }
+
+        ngrp = std::max(ngrp, m_idxgrp[i]);
+        nidx = std::max(nidx, m_symidx[i]);
+
+        nidxs[m_idxgrp[i] - 1]++;
+        ngrps[m_symidx[i] - 1]++;
+    }
+
+    register size_t j = 0;
+    for (; j < N && (ngrps[j] != 0); j++) {
+        if (ngrps[j] != ngrp) {
+            throw bad_symmetry(g_ns, k_clazz, method,
+                    __FILE__, __LINE__, "# groups.");
+        }
+    }
+    for (; j < N && (ngrps[j] == 0); j++) ;
+    if (j < N) {
+        throw bad_symmetry(g_ns, k_clazz, method,
+                __FILE__, __LINE__, "symidx.");
+    }
+
+    for (j = 0; j < N && (nidxs[j] != 0); j++) {
+        if (nidxs[j] != nidx) {
+            throw bad_symmetry(g_ns, k_clazz, method,
+                    __FILE__, __LINE__, "# indexes.");
+        }
+    }
+    for (; j < N && (nidxs[j] == 0); j++) ;
+    if (j < N) {
+        throw bad_symmetry(g_ns, k_clazz, method,
+                __FILE__, __LINE__, "symidx.");
+    }
+#endif
+}
+
+template<size_t N, typename T>
 void so_symmetrize<N, T>::perform(symmetry<N, T> &sym2) {
 
-    size_t n = 0;
-    for (register size_t i = 0; i < N; i++) { if (m_msk[i]) n++; }
-    if (n < 2) {
+    size_t ngrp = 0;
+    for (register size_t i = 0; i < N; i++) {
+        if (m_idxgrp[i] == 0) continue;
+        ngrp = std::max(ngrp, m_idxgrp[i]);
+    }
+    if (ngrp < 2) {
         so_copy<N, T>(m_sym1).perform(sym2);
         return;
     }
@@ -29,7 +99,7 @@ void so_symmetrize<N, T>::perform(symmetry<N, T> &sym2) {
 
         symmetry_element_set<N, T> set2(set1.get_id());
         symmetry_operation_params<operation_t> params(set1,
-                m_msk, m_symm, set2);
+                m_idxgrp, m_symidx, m_symm, set2);
         dispatcher_t::get_instance().invoke(set1.get_id(), params);
 
         for(typename symmetry_element_set<N, T>::iterator j =
@@ -45,7 +115,7 @@ void so_symmetrize<N, T>::perform(symmetry<N, T> &sym2) {
         symmetry_element_set<N, T> set1(se_perm<N, T>::k_sym_type),
                 set2(se_perm<N, T>::k_sym_type);
         symmetry_operation_params<operation_t> params(set1,
-                m_msk, m_symm, set2);
+                m_idxgrp, m_symidx, m_symm, set2);
         dispatcher_t::get_instance().invoke(set1.get_id(), params);
 
         for(typename symmetry_element_set<N, T>::iterator j =

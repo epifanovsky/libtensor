@@ -3,7 +3,7 @@
 
 #include <map>
 #include <vector>
-#include <libtensor/core/mask.h>
+#include <libtensor/core/sequence.h>
 #include <libtensor/exception.h>
 #include "product_table_i.h"
 
@@ -106,10 +106,12 @@ public:
      **/
     void optimize();
 
-    /** \brief Symmetrizes the evaluation rule with respect to the masked
-            indexes
+    /** \brief Symmetrizes the evaluation rule w.r.t the indexes specified
+        \param idxgrp Index groups to be symmetrized.
+        \param symidx Symmetrized indexes from each index group.
      **/
-    void symmetrize(const mask<N> &msk);
+    void symmetrize(const sequence<N, size_t> &idxgrp,
+            const sequence<N, size_t> &symidx);
 
     /** \brief Delete the list of lists
      **/
