@@ -43,121 +43,69 @@ void se_label_test::test_basic_1(
 
     // Simplest rule
     el.set_rule(0);
-    const evaluation_rule &r1 = el.get_rule();
-    evaluation_rule::rule_iterator it = r1.begin();
-    const evaluation_rule::basic_rule &br1 = r1.get_rule(it);
-    if (br1.intr.size() != 1)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# br1.intr");
-    if (br1.intr.count(0) == 0)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br1.intr");
-    if (br1.order.size() != 4)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# br1.order");
-    if (br1.order[0] != 0)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br1.order[0]");
-    if (br1.order[1] != 1)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br1.order[1]");
-    if (br1.order[2] != 2)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br1.order[2]");
-    if (br1.order[3] != evaluation_rule::k_intrinsic)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br1.order[3]");
+    const evaluation_rule<3> &r1 = el.get_rule();
+    evaluation_rule<3>::rule_iterator it = r1.begin();
+    const basic_rule<3> &br1 = r1.get_rule(it);
+    if (br1.get_target().size() != 1)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "# br1.get_target()");
+    if (br1.get_target().count(0) == 0)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "br1.get_target()");
+    if (br1[0] != 1)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "br1[0]");
+    if (br1[1] != 1)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "br1[1]");
+    if (br1[2] != 1)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "br1[2]");
     it++;
     if (it != r1.end())
         fail_test(tns.c_str(), __FILE__, __LINE__, "# rules");
 
     // Simple rule with different order
-    permutation<3> p2; p2.permute(0, 1).permute(1, 2);
-    el.set_rule(2, p2, 1);
-    const evaluation_rule &r2 = el.get_rule();
+    product_table_i::label_set_t lg2;
+    lg2.insert(0); lg2.insert(2);
+    el.set_rule(lg2);
+    const evaluation_rule<3> &r2 = el.get_rule();
     it = r2.begin();
-    const evaluation_rule::basic_rule &br2 = r2.get_rule(it);
-    if (br2.intr.size() != 1)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# br2.intr");
-    if (br2.intr.count(2) == 0)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br2.intr");
-    if (br2.order.size() != 4)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# br2.order");
-    if (br2.order[0] != 1)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br2.order[0]");
-    if (br2.order[1] != evaluation_rule::k_intrinsic)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br2.order[1]");
-    if (br2.order[2] != 2)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br2.order[2]");
-    if (br2.order[3] != 0)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br2.order[3]");
+    const basic_rule<3> &br2 = r2.get_rule(it);
+    if (br2.get_target().size() != 2)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "# br2.get_target()");
+    if (br2.get_target().count(0) == 0)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "br2.get_target()");
+    if (br2.get_target().count(2) == 0)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "br2.get_target()");
+    if (br2[0] != 1)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "br2[0]");
+    if (br2[1] != 1)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "br2[1]");
+    if (br2[2] != 1)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "br2[2]");
     it++;
     if (it != r2.end())
         fail_test(tns.c_str(), __FILE__, __LINE__, "# rules");
 
-    evaluation_rule::label_set lg3;
-    lg3.insert(0); lg3.insert(2);
-    el.set_rule(lg3, p2, 2);
-    const evaluation_rule &r3 = el.get_rule();
-    it = r3.begin();
-    const evaluation_rule::basic_rule &br3 = r3.get_rule(it);
-    if (br3.intr.size() != 2)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# br3.intr");
-    if (br3.intr.count(0) == 0)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br3.intr");
-    if (br3.intr.count(2) == 0)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br3.intr");
-    if (br3.order.size() != 4)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# br3.order");
-    if (br3.order[0] != 1)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br3.order[0]");
-    if (br3.order[1] != 2)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br3.order[1]");
-    if (br3.order[2] != evaluation_rule::k_intrinsic)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br3.order[2]");
-    if (br3.order[3] != 0)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br3.order[3]");
-    it++;
-    if (it != r3.end())
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# rules");
-
-
-    evaluation_rule r4ref;
-    evaluation_rule::label_set lg4a, lg4b;
+    evaluation_rule<3> r4ref;
+    product_table_i::label_set_t lg4a, lg4b;
     lg4a.insert(0); lg4a.insert(2); lg4b.insert(1);
-    std::vector<size_t> v4a(3,0), v4b(2,0); 
-    v4a[0] = 1; v4a[1] = 0; v4a[2] = evaluation_rule::k_intrinsic;
-    v4b[0] = 2; v4b[1] = evaluation_rule::k_intrinsic;
-    evaluation_rule::rule_id rid4a = r4ref.add_rule(lg4a, v4a);
-    evaluation_rule::rule_id rid4b = r4ref.add_rule(lg4b, v4b);
+    basic_rule<3> br4a(lg4a), br4b(lg4b);
+    br4a[0] = br4a[1] = 1;
+    br4b[2] = 1;
+    evaluation_rule<3>::rule_id_t rid4a = r4ref.add_rule(br4a);
+    evaluation_rule<3>::rule_id_t rid4b = r4ref.add_rule(br4b);
     r4ref.add_product(rid4a);
     r4ref.add_to_product(0, rid4b);
     el.set_rule(r4ref);
-    const evaluation_rule &r4 = el.get_rule();
+    const evaluation_rule<3> &r4 = el.get_rule();
     it = r4.begin();
-    const evaluation_rule::basic_rule &br4a = r4.get_rule(it);
-    if (br4a.intr.size() != 2)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# br4a.intr");
-    if (br4a.intr.count(0) == 0)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br4a.intr");
-    if (br4a.intr.count(2) == 0)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br4a.intr");
-    if (br4a.order.size() != 3)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# br4a.order");
-    if (br4a.order[0] != 1)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br4a.order[0]");
-    if (br4a.order[1] != 0)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br4a.order[1]");
-    if (br4a.order[2] != evaluation_rule::k_intrinsic)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br4a.order[2]");
+    const basic_rule<3> &br4a2 = r4.get_rule(it);
     it++;
-    const evaluation_rule::basic_rule &br4b = r4.get_rule(it);
-    if (br4b.intr.size() != 1)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# br4b.intr");
-    if (br4b.intr.count(1) == 0)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br4b.intr");
-    if (br4b.order.size() != 2)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# br4b.order");
-    if (br4b.order[0] != 2)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br4b.order[0]");
-    if (br4b.order[1] != evaluation_rule::k_intrinsic)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "br4b.order[1]");
+    const basic_rule<3> &br4b2 = r4.get_rule(it);
     it++;
     if (it != r4.end())
         fail_test(tns.c_str(), __FILE__, __LINE__, "# rules");
+    if (br4a2 != br4a)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "# br4a2 != br4a");
+    if (br4b2 != br4b)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "# br4b2 != br4b");
 }
 
 /** \test Four blocks, all labeled, different index types, basic rules only
@@ -236,11 +184,10 @@ void se_label_test::test_allowed_2(
 
     el1.set_rule(0);
 
-    evaluation_rule rule;
-    std::vector<size_t> order(2, 0);
-    order[1] = evaluation_rule::k_intrinsic;
-    evaluation_rule::label_set lg; lg.insert(0);
-    evaluation_rule::rule_id rid = rule.add_rule(lg, order);
+    evaluation_rule<2> rule;
+    basic_rule<2> br;
+    br[0] = 1; br.set_target(0);
+    evaluation_rule<2>::rule_id_t rid = rule.add_rule(br);
     rule.add_product(rid);
     el2.set_rule(rule);
 
@@ -281,15 +228,14 @@ void se_label_test::test_allowed_3(
 
     se_label<2, double> el2(el1);        
 
-    evaluation_rule r1, r2;
-    std::vector<size_t> oa(2, 0), ob(2, 1);
-    oa[1] = ob[1] = evaluation_rule::k_intrinsic;
-    evaluation_rule::label_set lga, lgb;
-    lga.insert(0); lgb.insert(1);
-    evaluation_rule::rule_id rid1a = r1.add_rule(lga, oa);
-    evaluation_rule::rule_id rid1b = r1.add_rule(lgb, ob);
-    evaluation_rule::rule_id rid2a = r2.add_rule(lga, oa);
-    evaluation_rule::rule_id rid2b = r2.add_rule(lgb, ob);
+    evaluation_rule<2> r1, r2;
+    basic_rule<2> bra, brb;
+    bra[0] = 1; bra.set_target(0);
+    brb[1] = 1; brb.set_target(1);
+    evaluation_rule<2>::rule_id_t rid1a = r1.add_rule(bra);
+    evaluation_rule<2>::rule_id_t rid1b = r1.add_rule(brb);
+    evaluation_rule<2>::rule_id_t rid2a = r2.add_rule(bra);
+    evaluation_rule<2>::rule_id_t rid2b = r2.add_rule(brb);
     r1.add_product(rid1a);
     r1.add_to_product(0, rid1b);
     r2.add_product(rid2a);
@@ -411,15 +357,14 @@ void se_label_test::test_permute_2(
    
     se_label<2, double> el2(el1);        
 
-    evaluation_rule r1, r2;
-    std::vector<size_t> oa(2, 0), ob(2, 1);
-    oa[1] = ob[1] = evaluation_rule::k_intrinsic;
-    evaluation_rule::label_set lga, lgb;
-    lga.insert(0); lgb.insert(1);
-    evaluation_rule::rule_id rid1a = r1.add_rule(lga, oa);
-    evaluation_rule::rule_id rid1b = r1.add_rule(lgb, ob);
-    evaluation_rule::rule_id rid2a = r2.add_rule(lga, oa);
-    evaluation_rule::rule_id rid2b = r2.add_rule(lgb, ob);
+    evaluation_rule<2> r1, r2;
+    basic_rule<2> bra, brb;
+    bra[0] = 1; bra.set_target(0);
+    brb[1] = 1; brb.set_target(1);
+    evaluation_rule<2>::rule_id_t rid1a = r1.add_rule(bra);
+    evaluation_rule<2>::rule_id_t rid1b = r1.add_rule(brb);
+    evaluation_rule<2>::rule_id_t rid2a = r2.add_rule(bra);
+    evaluation_rule<2>::rule_id_t rid2b = r2.add_rule(brb);
     r1.add_product(rid1a);
     r1.add_to_product(0, rid1b);
     r2.add_product(rid2a);

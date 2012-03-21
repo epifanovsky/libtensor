@@ -19,23 +19,30 @@ namespace libtensor {
     \tparam T Tensor element type.
 
     This %symmetry element establishes a set of allowed blocks on the basis of
-    block labels along each dimension, an evaluation rule for block labels and
-    intrinsic labels, and a product table.
+    block labels along each dimension, an evaluation rule, and a product table.
 
-    The labeling of the blocks in each dimension is setup via the class
-    block_labeling.
+    The construction of \c se_label using the default constructor initializes
+    the class with no block labels and no evaluation rule set. To set the
+    labeling of the blocks in each dimension, first obtain the
+    \c block_labeling object using the member function \c get_labeling(). Then,
+    use the functions provided by the class \c block_labeling to set the labels
+    (for details refer to the documentation of \sa block_labeling). To set the
+    evaluation rule three functions \c set_rule() are provided:
+    - \c set_rule(label_t) --
+    - \c set_rule(const label_set_t &) --
+    - \c set_rule(const evaluation_rule<N> &) --
 
-    Allowed blocks are determined as follows from the evaluation rule:
+    Allowed blocks are determined from the evaluation rule as follows:
     - All blocks are forbidden, if the rule setup of the evaluation rule is
       empty
     - A block is allowed, if it is allowed by any of the products in the rule
       setup
     - A block is allowed by a product, if it is allowed by all basic rules in
       this product
-    - A block is allowed by a basic rule, if any product of labels specified
-      by the rule contains label 0
-    - A product of labels is formed from the block labels and one intrinsic
-      label using the evaluation order parameter of the basic rule.
+    - A block is allowed by a basic rule, if the product of labels specified
+      by the rule contains the target label
+    - The product of labels is formed from the block labels using the sequence
+      of multiplicities of the basic rule.
     - If this is not possible since the evaluation order has zero length or
       no intrinsic labels are set, but the evaluation order comprises the
       intrinsic label index, all blocks are discarded by this rule.
@@ -49,14 +56,14 @@ public:
     static const char *k_clazz; //!< Class name
     static const char *k_sym_type; //!< Symmetry type
 
-    typedef evaluation_rule::label_t label_t;
-    typedef evaluation_rule::label_set label_set;
+    typedef product_table_i::label_t label_t;
+    typedef product_table_i::label_set_t label_set_t;
 
 private:
     block_labeling<N> m_blk_labels; //!< Block index labels
-    const product_table_i &m_pt; //!< Product table
+    evaluation_rule<N> m_rule; //!< Label evaluation rule
 
-    evaluation_rule m_rule; //!< Label evaluation rule
+    const product_table_i &m_pt; //!< Product table
 
 public:
     //!	\name Construction and destruction
@@ -87,30 +94,22 @@ public:
     const block_labeling<N> &get_labeling() const { return m_blk_labels; }
 
     /** \brief Set the evaluation rule to consist of only one basic rule.
-        \param intr Intrinsic or target label.
-        \param p Permutation of indexes.
-        \param pos Position of intrinsic labels.
+        \param lt Target label.
 
         Replaces any existing rule with the basic rule given by the parameters.
      **/
-    void set_rule(const label_t &intr,
-            const permutation<N> &p = permutation<N>(),
-            size_t pos = N) {
+    void set_rule(const label_t &lt) {
 
-        label_set is; is.insert(intr);
-        set_rule(is, p, pos);
+        label_set_t tls; tls.insert(lt);
+        set_rule(tls);
     }
 
     /** \brief Set the evaluation rule to consist of only one basic rule.
-        \param intr Intrinsic or target labels.
-        \param p Permutation of indexes.
-        \param pos Position of intrinsic labels.
+        \param tls Set of target labels.
 
         Replaces any existing rule with a basic rule.
      **/
-    void set_rule(const label_set &intr,
-            const permutation<N> &p = permutation<N>(),
-            size_t pos = N);
+    void set_rule(const label_set_t &tls);
 
     /** \brief Set the evaluation rule to a composite rule.
         \param rule Composite evaluation rule.
@@ -118,7 +117,7 @@ public:
         The function checks the given rule on validity and replaces any
         previously given rule.
      **/
-    void set_rule(const evaluation_rule &rule);
+    void set_rule(const evaluation_rule<N> &rule);
     //@}
 
     //! \name Access functions
@@ -126,7 +125,9 @@ public:
 
     /** \brief Return the current evaluation rule.
      **/
-    const evaluation_rule &get_rule() const { return m_rule; }
+    const evaluation_rule<N> &get_rule() const {
+        return m_rule;
+    }
 
     /** \brief Returns the id of the product table
      **/
@@ -175,207 +176,24 @@ public:
 
 };
 
-template<size_t N, typename T>
-const char *se_label<N, T>::k_clazz = "se_label<N, T>";
+} // namespace libtensor
 
-template<size_t N, typename T>
-const char *se_label<N, T>::k_sym_type = "se_label";
+#ifdef LIBTENSOR_INSTANTIATE_TEMPLATES
 
-template<size_t N, typename T>
-se_label<N, T>::se_label(const dimensions<N> &bidims, const std::string &id) :
-    m_blk_labels(bidims),
-    m_pt(product_table_container::get_instance().req_const_table(id)) {
+namespace libtensor {
 
-}
-
-template<size_t N, typename T>
-se_label<N, T>::se_label(const se_label<N, T> &el) :
-    m_blk_labels(el.m_blk_labels), m_rule(el.m_rule),
-    m_pt(product_table_container::get_instance().req_const_table(
-            el.m_pt.get_id())) {
-
-}
-
-template<size_t N, typename T>
-se_label<N, T>::~se_label() {
-
-    product_table_container::get_instance().ret_table(m_pt.get_id());
-}
-
-template<size_t N, typename T>
-void se_label<N, T>::set_rule(const label_set &intr,
-        const permutation<N> &p, size_t pos) {
-
-    static const char *method =
-            "set_rule(const label_set &, const permutation<N> &, size_t)";
-
-#ifdef LIBTENSOR_DEBUG
-    if (pos > N + 1) {
-        throw bad_parameter(g_ns, k_clazz, method,
-                __FILE__, __LINE__, "pos");
-    }
-
-    // Check the intrinsic labels for duplicates and valid labels
-    for (label_set::const_iterator it = intr.begin(); it != intr.end(); it++) {
-        if (! m_pt.is_valid(*it))
-            throw bad_parameter(g_ns, k_clazz, method,
-                    __FILE__, __LINE__, "intr");
-    }
-#endif
-
-    // Now start updating the evaluation rule by clearing the old
-    m_rule.clear_all();
-
-    // This is a trivial rule => simplify it
-    if (intr.size() == m_pt.nlabels()) {
-
-        // All blocks allowed: one element, only intrinsic in evaluation order
-        label_set is; is.insert(0);
-        evaluation_rule::rule_id id = m_rule.add_rule(is,
-                std::vector<size_t>(1, evaluation_rule::k_intrinsic));
-        m_rule.add_product(id);
-
-        return;
-    }
-    else if (intr.size() == 0) {
-        // No blocks allowed: empty rule
-        return;
-    }
-
-    // Form the evaluation order as required by evaluation_rule
-    sequence<N, size_t> tmp_order;
-    for (size_t i = 0; i < N; i++) tmp_order[i] = i;
-    p.apply(tmp_order);
-
-    // Create the evaluation order as required by evaluation_rule
-    std::vector<size_t> order(N + 1);
-    for (size_t i = 0; i < pos; i++) order[i] = tmp_order[i];
-    order[pos] = evaluation_rule::k_intrinsic;
-    for (size_t i = pos; i < N; i++) order[i + 1] = tmp_order[i];
-
-    evaluation_rule::rule_id id = m_rule.add_rule(intr, order);
-    m_rule.add_product(id);
-}
-
-template<size_t N, typename T>
-void se_label<N, T>::set_rule(const evaluation_rule &rule) {
-
-    static const char *method = "set_rule(const evaluation_rule &)";
-
-    typedef evaluation_rule::rule_id rule_id;
-    typedef std::map<rule_id, rule_id> rule_id_map;
-
-    transfer_rule(rule, N, m_pt.get_id()).perform(m_rule);
-}
-
-
-template<size_t N, typename T>
-void se_label<N, T>::permute(const permutation<N> &p) {
-
-    m_blk_labels.permute(p);
-
-    sequence<N, size_t> dims;
-    for(size_t i = 0; i < N; i++) dims[i] = i;
-    p.apply(dims);
-
-    for (evaluation_rule::rule_iterator it = m_rule.begin();
-            it != m_rule.end(); it++) {
-
-        evaluation_rule::basic_rule &br =
-                m_rule.get_rule(m_rule.get_rule_id(it));
-        for (size_t i = 0; i < br.order.size(); i++) {
-            if (br.order[i] == evaluation_rule::k_intrinsic) continue;
-
-            br.order[i] = dims[br.order[i]];
-        }
-    }
-}
-
-template<size_t N, typename T>
-bool se_label<N, T>::is_valid_bis(const block_index_space<N> &bis) const {
-
-    const dimensions<N> &bidims = m_blk_labels.get_block_index_dims();
-    return bidims.equals(bis.get_block_index_dims());
-}
-
-template<size_t N, typename T>
-bool se_label<N, T>::is_allowed(const index<N> &idx) const {
-
-    static const char *method = "is_allowed(const index<N> &)";
-
-#ifdef LIBTENSOR_DEBUG
-    const dimensions<N> &bidims = m_blk_labels.get_block_index_dims();
-    // Test, if index is valid block index
-    for (size_t i = 0; i < N; i++) {
-        if (idx[i] >= bidims[i]) {
-            throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
-                    "idx.");
-        }
-    }
-#endif
-
-    product_table_i::label_group blk(N);
-    for (size_t i = 0; i < N; i++) {
-        size_t dim_type = m_blk_labels.get_dim_type(i);
-        blk[i] = m_blk_labels.get_label(dim_type, idx[i]);
-    }
-
-    std::map<evaluation_rule::rule_id, bool> allowed;
-    for (evaluation_rule::rule_iterator it = m_rule.begin();
-            it != m_rule.end(); it++) {
-
-        const evaluation_rule::basic_rule &br = m_rule.get_rule(it);
-        evaluation_rule::rule_id rid = m_rule.get_rule_id(it);
-
-        if (br.order.size() == 0) { allowed[rid] = false; continue; }
-
-        product_table_i::label_group lg(br.order.size());
-        size_t pos = (size_t) -1;
-
-        bool has_invalid = false;
-        for (size_t i = 0; i < br.order.size(); i++) {
-            if (br.order[i] == evaluation_rule::k_intrinsic) {
-                pos = i; continue;
-            }
-
-            lg[i] = blk[br.order[i]];
-            if (! m_pt.is_valid(lg[i])) { has_invalid = true; break; }
-        }
-
-        if (has_invalid) { allowed[rid] = true; continue; }
-
-        bool cur = false;
-        if (pos == (size_t) -1) {
-            cur = m_pt.is_in_product(lg, 0);
-        }
-        else {
-            for (label_set::const_iterator ii = br.intr.begin();
-                    ii != br.intr.end(); ii++) {
-                if (! m_pt.is_valid(*ii)) { cur = true; break; }
-                lg[pos] = *ii;
-                cur = cur || m_pt.is_in_product(lg, 0);
-            }
-        }
-        allowed[rid] = cur;
-    }
-
-    // loop over sums in the evaluation rule
-    for (size_t i = 0; i < m_rule.get_n_products(); i++) {
-
-        bool is_allowed = true;
-        for (evaluation_rule::product_iterator it = m_rule.begin(i);
-                it != m_rule.end(i); it++) {
-
-            is_allowed = is_allowed && allowed[m_rule.get_rule_id(it)];
-        }
-
-        if (is_allowed) return true;
-    }
-
-    return false;
-}
+    extern template class se_label<1, double>;
+    extern template class se_label<2, double>;
+    extern template class se_label<3, double>;
+    extern template class se_label<4, double>;
+    extern template class se_label<5, double>;
+    extern template class se_label<6, double>;
 
 } // namespace libtensor
+
+#else // LIBTENSOR_INSTANTIATE_TEMPLATES
+#include "inst/se_label_impl.h"
+#endif // LIBTENSOR_INSTANTIATE_TEMPLATES
 
 #endif // LIBTENSOR_SE_LABEL_H
 

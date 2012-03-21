@@ -215,9 +215,11 @@ void transfer_rule<N>::perform(evaluation_rule<N> &to) {
 
             typename std::map<rule_id_t, rule_id_t>::const_iterator itx =
                     sim.find(*(it2->begin()));
-            if (itx != sim.end() && itx->second == rid_cur)
-                sim2cur.insert(itx->first);
+            if (itx == sim.end() || itx->second != rid_cur) {
+                it2++; continue;
+            }
 
+            sim2cur.insert(itx->first);
             it2 = products.erase(it2);
         }
 

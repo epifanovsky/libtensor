@@ -123,6 +123,7 @@ set(SRC_LINALG
 
 set(SRC_INST
     dense_tensor/inst/dense_tensor_inst.C
+    symmetry/inst/se_label_inst.C
     symmetry/label/inst/basic_rule.C
     symmetry/label/inst/block_labeling.C
     symmetry/label/inst/evaluation_rule.C
