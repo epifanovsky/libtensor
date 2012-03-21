@@ -2,6 +2,7 @@
 #define LIBTENSOR_PRODUCT_TABLE_I_H
 
 #include <set>
+#include <vector>
 #include "../bad_symmetry.h"
 
 namespace libtensor {
@@ -30,7 +31,7 @@ class product_table_i {
 public:
     typedef size_t label_t; //!< Label type
     typedef std::set<label_t> label_set_t; //!< Set of unique labels
-    typedef std::multiset<label_t> label_group_t; //!< Group of labels
+    typedef std::vector<label_t> label_group_t; //!< Group of labels
 
     static const char *k_clazz; //!< Class name
     static const label_t k_invalid; //!< Invalid label

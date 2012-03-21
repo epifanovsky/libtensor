@@ -42,14 +42,22 @@ public:
     typedef typename product_table_i::label_t label_t;
 
 private:
-    typedef std::pair<label_t, label_t> label_pair_t;
-    typedef std::multimap<size_t, label_pair_t> product_t;
+    struct term {
+        size_t seqno;
+        label_t intr;
+        label_t target;
+
+        term(size_t seqno_, label_t intr_, label_t target_) :
+            seqno(seqno_), intr(intr_), target(target_) { }
+    };
+    typedef std::set<size_t> product_t;
 
 public:
     typedef typename product_t::const_iterator iterator;
 
 private:
     std::vector< sequence<N, size_t> > m_sequences;
+    std::vector<term> m_term_list;
     std::vector<product_t> m_setup;
 
 public:
@@ -85,6 +93,18 @@ public:
     void add_to_product(size_t no, size_t seq_no,
             label_t intr = product_table_i::k_identity,
             label_t target = product_table_i::k_identity);
+
+    /** \brief Tries to optimize the current evaluation rule.
+
+        Optimization is attempted by the following steps:
+        - Find always forbidden, always allowed, and duplicate terms in each
+          product
+        - Delete always allowed or duplicate terms in a product
+        - Delete products comprising always forbidden terms
+        - Find duplicate products and delete them
+        - Find unused sequences and delete them
+     **/
+    void optimize();
 
     /** \brief Delete the list of lists
      **/
@@ -158,7 +178,7 @@ public:
                     __FILE__, __LINE__, "it");
 #endif
 
-        return it->first;
+        return m_term_list[*it].seqno;
 
     }
 
@@ -172,7 +192,7 @@ public:
                     __FILE__, __LINE__, "it");
 #endif
 
-        return m_sequences[it->first];
+        return m_sequences[m_term_list[*it].seqno];
     }
 
     /** \brief Return the intrinsic label belonging to the current triple
@@ -186,7 +206,7 @@ public:
                     __FILE__, __LINE__, "it");
 #endif
 
-        return it->second.first;
+        return m_term_list[*it].intr;
     }
 
     /** \brief Return the label belonging to the current pair
@@ -200,11 +220,13 @@ public:
                     __FILE__, __LINE__, "it");
 #endif
 
-        return it->second.second;
+        return m_term_list[*it].target;
     }
     //@}
 
 private:
+    size_t add_term(size_t seq_no, label_t intr, label_t target);
+
     bool is_valid(iterator it) const;
 };
 

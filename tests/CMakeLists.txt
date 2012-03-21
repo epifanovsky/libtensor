@@ -99,7 +99,6 @@ set(SRC_SYMMETRY
 #    symmetry/so_reduce_test.C
 #    symmetry/so_symmetrize_test.C
     symmetry/symmetry_element_set_adapter_test.C
-#    symmetry/transfer_rule_test.C
 )
 
 set(SRC_BTOD
@@ -120,7 +119,7 @@ set(SRC_BTOD
 #	btod/btod_extract_test.C
 #   btod/btod_import_raw_test.C
 #   btod/btod_import_raw_stream_test.C
-#	btod/btod_mult_test.C
+	btod/btod_mult_test.C
 #	btod/btod_mult1_test.C
 #	btod/btod_print_test.C
 #	btod/btod_random_test.C

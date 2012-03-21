@@ -65,13 +65,13 @@ void point_group_table_test::test_1() throw(libtest::test_exception) {
         }
 
         product_table_i::label_group_t lg;
-        lg.insert(ag); lg.insert(ag);
+        lg.push_back(ag); lg.push_back(ag);
         if (! pg.is_in_product(lg, ag))
             fail_test(testname, __FILE__, __LINE__,
                     "Wrong result of product.");
 
         lg.clear();
-        lg.insert(au); lg.insert(bg);
+        lg.push_back(au); lg.push_back(bg);
         if (! pg.is_in_product(lg, bu))
             fail_test(testname, __FILE__, __LINE__,
                     "Wrong result of product.");
