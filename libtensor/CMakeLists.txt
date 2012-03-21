@@ -160,10 +160,6 @@ set(SRC_INST
     symmetry/inst/so_symmetrize_se_label_inst.C
     symmetry/inst/so_symmetrize_se_part_inst.C
     symmetry/inst/so_symmetrize_se_perm_inst.C
-    symmetry/inst/so_symmetrize3_inst.C
-    symmetry/inst/so_symmetrize3_se_label_inst.C
-    symmetry/inst/so_symmetrize3_se_part_inst.C
-    symmetry/inst/so_symmetrize3_se_perm_inst.C
     tod/tod_add.C
     tod/tod_contract2.C
     tod/tod_copy.C
