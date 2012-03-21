@@ -13,6 +13,8 @@ namespace libtensor {
 
 /**	\brief Implementation of so_merge<N, T> for se_label<N, T>
 	\tparam N Tensor order.
+	\tparam M
+	\tparam K
 	\tparam T Tensor element type.
 
 	This implementation sets the target label to all labels.
@@ -52,6 +54,9 @@ void symmetry_operation_impl< so_merge<N, M, K, T>, se_label<N, T> >
 
     typedef symmetry_element_set_adapter<N, T, element_t> adapter_t;
     typedef se_label<k_order2, T> el2_t;
+
+    typedef typename evaluation_rule<N>::rule_id_t rule_id_t;
+    typedef std::map<rule_id_t, rule_id_t> rule_id_map_t;
 
     //	Verify that the projection masks are correct
     size_t nm = 0;
@@ -122,18 +127,31 @@ void symmetry_operation_impl< so_merge<N, M, K, T>, se_label<N, T> >
         transfer_labeling(se1.get_labeling(), map, se2.get_labeling());
 
         // Copy evaluation rule
-        evaluation_rule r2(se1.get_rule());
+        const evaluation_rule<N> r1 = se1.get_rule();
 
-        // Modify the evaluation orders according to merge
-        for (evaluation_rule::rule_iterator ir = r2.begin();
-                ir != r2.end(); ir++) {
+        evaluation_rule<N - M + K> r2;
+        rule_id_map_t m1to2;
 
-            evaluation_rule::rule_id rid = r2.get_rule_id(ir);
-            evaluation_rule::basic_rule &br = r2.get_rule(rid);
-            for (size_t i = 0; i < br.order.size(); i++) {
-                if (br.order[i] == evaluation_rule::k_intrinsic) continue;
+        // Transfer the basic rules
+        for (typename evaluation_rule<N>::rule_iterator ir = r1.begin();
+                ir != r1.end(); ir++) {
 
-                br.order[i] = map[br.order[i]];
+            rule_id_t rid = r1.get_rule_id(ir);
+            const basic_rule<N> &br1 = r1.get_rule(ir);
+            basic_rule<N - M + K> br2(br1.get_target());
+            for (size_t i = 0; i < N; i++) {
+                br2[map[i]] += br1[i];
+            }
+            m1to2[rid] = r2.add_rule(br2);
+        }
+        // Transfer products
+        for (size_t i = 0; i < r1.get_n_products(); i++) {
+
+            typename evaluation_rule<N>::product_iterator ip = r1.begin(i);
+            size_t pno = r2.add_product(m1to2[r1.get_rule_id(ip)]);
+            ip++;
+            for (; ip != r1.end(i); ip++) {
+                r2.add_to_product(pno, m1to2[r1.get_rule_id(ip)]);
             }
         }
 

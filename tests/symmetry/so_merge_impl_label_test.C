@@ -295,14 +295,12 @@ void so_merge_impl_label_test::test_2n2nn_2(const std::string &table_id,
         block_labeling<4> &bl1 = el1.get_labeling();
         mask<4> m1; m1[0] = m1[1] = m1[2] = m1[3] = true;
         for (size_t i = 0; i < 4; i++) bl1.assign(m1, i, i);
-        evaluation_rule r1;
-        evaluation_rule::label_set i1; i1.insert(2);
-        std::vector<size_t> o1a(3), o1b(3);
-        o1a[0] = 0; o1a[1] = 1;
-        o1b[0] = 2; o1b[1] = 3;
-        o1a[2] = o1b[2] = evaluation_rule::k_intrinsic;
-        evaluation_rule::rule_id rid1a = r1.add_rule(i1, o1a);
-        evaluation_rule::rule_id rid1b = r1.add_rule(i1, o1b);
+        evaluation_rule<4> r1;
+        basic_rule<4> br1a, br1b;
+        br1a[0] = br1a[1] = 1; br1a.set_target(2);
+        br1b[2] = br1b[3] = 1; br1b.set_target(2);
+        evaluation_rule<4>::rule_id_t rid1a = r1.add_rule(br1a);
+        evaluation_rule<4>::rule_id_t rid1b = r1.add_rule(br1b);
         r1.add_product(rid1a);
         if (product)
             r1.add_to_product(0, rid1b);
@@ -369,15 +367,13 @@ void so_merge_impl_label_test::test_nmk_1(const std::string &table_id,
         mask<5> m1; m1[0] = m1[1] = m1[2] = m1[3] = m1[4] = true;
         for (size_t i = 0; i < 4; i++) bl1.assign(m1, i, i);
 
-        evaluation_rule r1;
-        evaluation_rule::label_set i1a, i1b;
-        i1a.insert(2); i1b.insert(3);
-        std::vector<size_t> o1a(3), o1b(4);
-        o1a[0] = 0; o1a[1] = 1;
-        o1b[0] = 2; o1b[1] = 3; o1b[2] = 4;
-        o1a[2] = o1b[3] = evaluation_rule::k_intrinsic;
-        evaluation_rule::rule_id rid1a = r1.add_rule(i1a, o1a);
-        evaluation_rule::rule_id rid1b = r1.add_rule(i1b, o1b);
+        evaluation_rule<5> r1;
+        basic_rule<5> br1a, br1b;
+        br1a[0] = br1a[1] = 1; br1a.set_target(2);
+        br1b[2] = br1b[3] = br1b[4] = 1; br1b.set_target(3);
+
+        evaluation_rule<5>::rule_id_t rid1a = r1.add_rule(br1a);
+        evaluation_rule<5>::rule_id_t rid1b = r1.add_rule(br1b);
         r1.add_product(rid1a);
         if (product)
             r1.add_to_product(0, rid1b);
@@ -459,14 +455,12 @@ void so_merge_impl_label_test::test_nmk_2(const std::string &table_id,
         mask<5> m1; m1[0] = m1[1] = m1[2] = m1[3] = m1[4] = true;
         for (size_t i = 0; i < 4; i++) bl1.assign(m1, i, i);
 
-        evaluation_rule r1;
-        evaluation_rule::label_set i1; i1.insert(2);
-        std::vector<size_t> o1a(4), o1b(4);
-        o1a[0] = 0; o1a[1] = 1; o1a[2] = 4;
-        o1b[0] = 2; o1b[1] = 3; o1b[2] = 4;
-        o1a[3] = o1b[3] = evaluation_rule::k_intrinsic;
-        evaluation_rule::rule_id rid1a = r1.add_rule(i1, o1a);
-        evaluation_rule::rule_id rid1b = r1.add_rule(i1, o1b);
+        evaluation_rule<5> r1;
+        basic_rule<5> br1a, br1b;
+        br1a[0] = br1a[1] = br1a[4] = 1; br1a.set_target(2);
+        br1b[2] = br1b[3] = br1b[4] = 1; br1b.set_target(2);
+        evaluation_rule<5>::rule_id_t rid1a = r1.add_rule(br1a);
+        evaluation_rule<5>::rule_id_t rid1b = r1.add_rule(br1b);
         r1.add_product(rid1a);
         if (product)
             r1.add_to_product(0, rid1b);
