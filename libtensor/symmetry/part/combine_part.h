@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_COMBINE_PART_H
 #define LIBTENSOR_COMBINE_PART_H
 
+#include <libtensor/core/abs_index.h>
 #include "../se_part.h"
 #include "../symmetry_element_set_adapter.h"
 

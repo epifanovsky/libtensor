@@ -2,9 +2,10 @@
 #define LIBTENSOR_SO_MERGE_IMPL_PART_H
 
 #include <list>
-#include "../../core/block_index_subspace_builder.h"
 #include "../../defs.h"
 #include "../../exception.h"
+#include "../../core/block_index_subspace_builder.h"
+#include "../../core/abs_index.h"
 #include "../se_part.h"
 #include "../so_merge.h"
 #include "../symmetry_element_set_adapter.h"

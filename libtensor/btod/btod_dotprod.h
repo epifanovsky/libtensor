@@ -6,6 +6,7 @@
 #include "../defs.h"
 #include "../exception.h"
 #include "../timings.h"
+#include "transf_double.h"
 #include "../core/abs_index.h"
 #include "../core/block_tensor_i.h"
 #include "../core/block_tensor_ctrl.h"

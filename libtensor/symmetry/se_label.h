@@ -1,14 +1,9 @@
 #ifndef LIBTENSOR_SE_LABEL_H
 #define LIBTENSOR_SE_LABEL_H
 
-#include "../defs.h"
-#include "../core/dimensions.h"
-#include "../core/mask.h"
-#include "../core/symmetry_element_i.h"
-#include "bad_symmetry.h"
+#include <libtensor/core/symmetry_element_i.h>
 #include "label/block_labeling.h"
 #include "label/evaluation_rule.h"
-#include "label/product_table_container.h"
 #include "label/product_table_i.h"
 
 namespace libtensor {
@@ -178,29 +173,6 @@ public:
 };
 
 } // namespace libtensor
-
-#ifdef LIBTENSOR_INSTANTIATE_TEMPLATES
-
-namespace libtensor {
-
-    extern template class se_label<1, double>;
-    extern template class se_label<2, double>;
-    extern template class se_label<3, double>;
-    extern template class se_label<4, double>;
-    extern template class se_label<5, double>;
-    extern template class se_label<6, double>;
-    extern template class se_label<7, double>;
-    extern template class se_label<8, double>;
-    extern template class se_label<9, double>;
-    extern template class se_label<10, double>;
-    extern template class se_label<11, double>;
-    extern template class se_label<12, double>;
-
-} // namespace libtensor
-
-#else // LIBTENSOR_INSTANTIATE_TEMPLATES
-#include "inst/se_label_impl.h"
-#endif // LIBTENSOR_INSTANTIATE_TEMPLATES
 
 #endif // LIBTENSOR_SE_LABEL_H
 

@@ -4,6 +4,7 @@
 #include <map>
 #include "../../defs.h"
 #include "../../exception.h"
+#include "../../core/abs_index.h"
 #include "../../core/permutation_builder.h"
 #include "../symmetry_element_set_adapter.h"
 #include "../symmetry_operation_impl_base.h"

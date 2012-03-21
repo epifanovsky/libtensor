@@ -5,10 +5,12 @@
 #include <set>
 #include "../../defs.h"
 #include "../../exception.h"
+#include "../../core/abs_index.h"
 #include "../symmetry_element_set_adapter.h"
 #include "../symmetry_operation_impl_base.h"
 #include "../so_reduce.h"
 #include "../se_label.h"
+#include "product_table_container.h"
 
 namespace libtensor {
 

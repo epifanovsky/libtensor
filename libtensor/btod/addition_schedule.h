@@ -3,6 +3,7 @@
 
 #include <list>
 #include <vector>
+#include "transf_double.h"
 #include "../core/abs_index.h"
 #include "../core/block_index_space.h"
 #include "../core/block_index_space_product_builder.h"

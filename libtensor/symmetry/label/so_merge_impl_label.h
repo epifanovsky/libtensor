@@ -7,6 +7,7 @@
 #include "../symmetry_operation_impl_base.h"
 #include "../so_merge.h"
 #include "../se_label.h"
+#include "product_table_container.h"
 
 namespace libtensor {
 
