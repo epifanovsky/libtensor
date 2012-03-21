@@ -62,11 +62,12 @@ void symmetry_operation_impl< so_symmetrize<N, T>, se_label<N, T> >::do_perform(
 	for(typename adapter_t::iterator i = g1.begin(); i != g1.end(); i++) {
 
 		const se_label<N, T> &e1 = g1.get_elem(i);
+		const block_labeling<N> &bl1 = e1.get_labeling();
 
 		for (size_t j = 0; j < N; j++) {
 			if (map[j] > j) {
 
-				if (e1.get_dim_type(j) != e1.get_dim_type(map[j]))
+				if (bl1.get_dim_type(j) != bl1.get_dim_type(map[j]))
 					throw bad_symmetry(g_ns, k_clazz, method,
 						__FILE__, __LINE__, "Incompatible dimensions.");
 			}

@@ -147,6 +147,12 @@ namespace libtensor {
     extern template class block_labeling<4>;
     extern template class block_labeling<5>;
     extern template class block_labeling<6>;
+    extern template class block_labeling<7>;
+    extern template class block_labeling<8>;
+    extern template class block_labeling<9>;
+    extern template class block_labeling<10>;
+    extern template class block_labeling<11>;
+    extern template class block_labeling<12>;
 
     extern template
     bool operator==(const block_labeling<1> &, const block_labeling<1> &);
@@ -160,6 +166,18 @@ namespace libtensor {
     bool operator==(const block_labeling<5> &, const block_labeling<5> &);
     extern template
     bool operator==(const block_labeling<6> &, const block_labeling<6> &);
+    extern template
+    bool operator==(const block_labeling<7> &, const block_labeling<7> &);
+    extern template
+    bool operator==(const block_labeling<8> &, const block_labeling<8> &);
+    extern template
+    bool operator==(const block_labeling<9> &, const block_labeling<9> &);
+    extern template
+    bool operator==(const block_labeling<10> &, const block_labeling<10> &);
+    extern template
+    bool operator==(const block_labeling<11> &, const block_labeling<11> &);
+    extern template
+    bool operator==(const block_labeling<12> &, const block_labeling<12> &);
 
     extern template void transfer_labeling(const block_labeling<1> &,
             const sequence<1, size_t> &, block_labeling<1> &);
@@ -171,6 +189,8 @@ namespace libtensor {
             const sequence<1, size_t> &, block_labeling<5> &);
     extern template void transfer_labeling(const block_labeling<1> &,
             const sequence<1, size_t> &, block_labeling<6> &);
+    extern template void transfer_labeling(const block_labeling<1> &,
+            const sequence<1, size_t> &, block_labeling<7> &);
 
     extern template void transfer_labeling(const block_labeling<2> &,
             const sequence<2, size_t> &, block_labeling<1> &);

@@ -11,10 +11,10 @@
 #include "se_label_test.h"
 #include "se_part_test.h"
 #include "se_perm_test.h"
-//#include "so_apply_test.h"
-//#include "so_apply_impl_label_test.h"
-//#include "so_apply_impl_part_test.h"
-//#include "so_apply_impl_perm_test.h"
+#include "so_apply_test.h"
+#include "so_apply_impl_label_test.h"
+#include "so_apply_impl_part_test.h"
+#include "so_apply_impl_perm_test.h"
 #include "so_dirprod_test.h"
 #include "so_dirprod_impl_label_test.h"
 #include "so_dirprod_impl_part_test.h"
@@ -35,7 +35,7 @@
 #include "so_reduce_impl_label_test.h"
 #include "so_reduce_impl_part_test.h"
 #include "so_reduce_impl_perm_test.h"
-//#include "so_symmetrize_test.h"
+#include "so_symmetrize_test.h"
 #include "symmetry_element_set_adapter_test.h"
 
 using libtest::unit_test_factory;
@@ -100,10 +100,10 @@ private:
     unit_test_factory<se_label_test> m_utf_se_label;
     unit_test_factory<se_part_test> m_utf_se_part;
     unit_test_factory<se_perm_test> m_utf_se_perm;
-    //	unit_test_factory<so_apply_test> m_utf_so_apply;
-    //	unit_test_factory<so_apply_impl_label_test> m_utf_so_apply_impl_label;
-    //	unit_test_factory<so_apply_impl_part_test> m_utf_so_apply_impl_part;
-    //	unit_test_factory<so_apply_impl_perm_test> m_utf_so_apply_impl_perm;
+    unit_test_factory<so_apply_test> m_utf_so_apply;
+    unit_test_factory<so_apply_impl_label_test> m_utf_so_apply_impl_label;
+    unit_test_factory<so_apply_impl_part_test> m_utf_so_apply_impl_part;
+    unit_test_factory<so_apply_impl_perm_test> m_utf_so_apply_impl_perm;
     unit_test_factory<so_copy_test> m_utf_so_copy;
     unit_test_factory<so_dirprod_test> m_utf_so_dirprod;
     unit_test_factory<so_dirprod_impl_label_test> m_utf_so_dirprod_impl_label;
@@ -124,7 +124,7 @@ private:
     unit_test_factory<so_reduce_impl_label_test> m_utf_so_reduce_impl_label;
     unit_test_factory<so_reduce_impl_part_test> m_utf_so_reduce_impl_part;
     unit_test_factory<so_reduce_impl_perm_test> m_utf_so_reduce_impl_perm;
-    //	unit_test_factory<so_symmetrize_test> m_utf_so_symmetrize;
+    unit_test_factory<so_symmetrize_test> m_utf_so_symmetrize;
     unit_test_factory<symmetry_element_set_adapter_test>
         m_utf_symmetry_element_set_adapter;
 

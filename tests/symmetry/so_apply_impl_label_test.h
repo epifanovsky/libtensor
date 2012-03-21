@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_SO_APPLY_IMPL_LABEL_TEST_H
 #define LIBTENSOR_SO_APPLY_IMPL_LABEL_TEST_H
 
-#include <libtest/unit_test.h>
+#include "se_label_test_base.h"
 
 namespace libtensor {
 
@@ -10,14 +10,16 @@ namespace libtensor {
 
 	\ingroup libtensor_tests_sym
  **/
-class so_apply_impl_label_test : public libtest::unit_test {
+class so_apply_impl_label_test : public se_label_test_base {
 public:
 	virtual void perform() throw(libtest::test_exception);
 
 private:
-	static const char *k_table_id;
+	void test_1(const std::string &table_id, bool keep_zero,
+	        bool is_asym, bool sign) throw(libtest::test_exception);
 
-	void test_1(bool even, bool odd) throw(libtest::test_exception);
+	using se_label_test_base::setup_pg_table;
+    using se_label_test_base::check_allowed;
 
 };
 

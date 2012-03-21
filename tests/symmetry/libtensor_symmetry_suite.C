@@ -14,10 +14,10 @@ libtensor_symmetry_suite::libtensor_symmetry_suite() :
     add_test("se_label", m_utf_se_label);
     add_test("se_part", m_utf_se_part);
     add_test("se_perm", m_utf_se_perm);
-    //	add_test("so_apply", m_utf_so_apply);
-    //	add_test("so_apply_impl_label", m_utf_so_apply_impl_label);
-    //	add_test("so_apply_impl_part", m_utf_so_apply_impl_part);
-    //	add_test("so_apply_impl_perm", m_utf_so_apply_impl_perm);
+    add_test("so_apply", m_utf_so_apply);
+    add_test("so_apply_impl_label", m_utf_so_apply_impl_label);
+    add_test("so_apply_impl_part", m_utf_so_apply_impl_part);
+    add_test("so_apply_impl_perm", m_utf_so_apply_impl_perm);
     add_test("so_copy", m_utf_so_copy);
     add_test("so_dirprod", m_utf_so_dirprod);
     add_test("so_dirprod_impl_label", m_utf_so_dirprod_impl_label);
@@ -38,7 +38,7 @@ libtensor_symmetry_suite::libtensor_symmetry_suite() :
     add_test("so_reduce_impl_part", m_utf_so_reduce_impl_part);
     add_test("so_reduce_impl_perm", m_utf_so_reduce_impl_perm);
     add_test("so_reduce", m_utf_so_reduce);
-    //	add_test("so_symmetrize", m_utf_so_symmetrize);
+    add_test("so_symmetrize", m_utf_so_symmetrize);
     add_test("symmetry_element_set_adapter",
             m_utf_symmetry_element_set_adapter);
 }

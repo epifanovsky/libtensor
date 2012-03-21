@@ -7,7 +7,7 @@
 #include "../symmetry_operation_impl_base.h"
 #include "../so_symmetrize.h"
 #include "../se_part.h"
-#include "partition_set.h"
+#include "combine_part.h"
 
 namespace libtensor {
 
@@ -49,15 +49,60 @@ void symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::do_perform(
     static const char *method =
             "do_perform(const symmetry_operation_params_t&)";
 
-    typedef symmetry_element_set_adapter< N, T, se_part<N, T> > adapter_t;
+    combine_part<N, T> cp(params.grp1);
+    se_part<N, T> sp1a(cp.get_bis(), cp.get_pdims());
+    cp.perform(sp1a);
+    se_part<N, T> sp1b(sp1a);
+    sp1b.permute(params.perm);
 
-    adapter_t g1(params.grp1);
-    partition_set<N, T> p1(g1), p2(g1);
-    p2.permute(params.perm);
-    p1.intersect(p2);
 
-    params.grp2.clear();
-    p1.convert(params.grp2);
+    if (sp1b.get_pdims() != cp.get_pdims()) {
+        throw bad_symmetry(g_ns, k_clazz, method,
+                __FILE__, __LINE__, "Incompatible dimensions.");
+    }
+
+    se_part<N, T> sp2(cp.get_bis(), cp.get_pdims());
+
+    abs_index<N> ai(cp.get_pdims());
+    do {
+
+        const index<N> &i1 = ai.get_index();
+        if (sp1a.is_forbidden(i1) && sp1b.is_forbidden(i1)) {
+            sp2.mark_forbidden(i1);
+            continue;
+        }
+
+        if (sp1a.is_forbidden(i1)) {
+            const index<N> &i1b = sp1b.get_direct_map(i1);
+            if (sp1a.is_forbidden(i1b)) {
+                sp2.add_map(i1, i1b, sp1b.get_sign(i1, i1b));
+            }
+        }
+        else if (sp1b.is_forbidden(i1)) {
+            const index<N> &i1a = sp1a.get_direct_map(i1);
+            if (sp1b.is_forbidden(i1a)) {
+                sp2.add_map(i1, i1a, sp1a.get_sign(i1, i1a));
+            }
+        }
+        else {
+            const index<N> &i1a = sp1a.get_direct_map(i1);
+            if (sp1b.map_exists(i1, i1a)) {
+                bool sign = sp1a.get_sign(i1, i1a);
+                if (sign == sp1b.get_sign(i1, i1a)) {
+                    sp2.add_map(i1, i1a, sign);
+                }
+            }
+            const index<N> &i1b = sp1b.get_direct_map(i1);
+            if (sp1a.map_exists(i1, i1b)) {
+                bool sign = sp1b.get_sign(i1, i1b);
+                if (sign == sp1a.get_sign(i1, i1b)) {
+                    sp2.add_map(i1, i1b, sign);
+                }
+            }
+        }
+    } while (ai.inc());
+
+    params.grp2.insert(sp2);
 }
 
 

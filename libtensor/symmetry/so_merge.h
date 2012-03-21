@@ -20,10 +20,11 @@ class symmetry_operation_params< so_merge<N, M, K, T> >;
 /**	\brief Merges multiple dimensions of a %symmetry group into one
 	\tparam N Order of the argument space.
 	\tparam M Dimensions to merge.
+	\tparam K Number of separate merges.
 
 	The operation takes a %symmetry group that is defined for a %tensor
 	space of order N and produces a group that acts in a %tensor space
-	of order N - M + 1.
+	of order N - M + K.
 
 	The mask indicates the dimensions that are being merged.
 	The permutation permutes the remaining indexes.
@@ -48,12 +49,12 @@ private:
 public:
     /** \brief Constructor
 		\param sym1 Input symmetry.
-		\param msk Mask.
      **/
     so_merge(const symmetry<N, T> &sym1) :
         m_sym1(sym1), m_msk_set(0) { }
 
-    void add_mask(const mask<N> &msk) { m_msk[m_msk_set++] = msk; }
+    void add_mask(const mask<N> &msk) {  m_msk[m_msk_set++] = msk; }
+
 
     void perform(symmetry<N - M + K, T> &sym2);
 
@@ -68,7 +69,7 @@ void so_merge<N, M, K, T>::perform(symmetry<N - M + K, T> &sym2) {
 #ifdef LIBTENSOR_DEBUG
     static const char *method = "perform(symmetry<N - M + K, T> &)";
     if (m_msk_set != K) {
-        bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
+        throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
                 "Masks not set properly.");
     }
 #endif
@@ -94,9 +95,9 @@ template<size_t N, size_t M, size_t K, typename T>
 class symmetry_operation_params< so_merge<N, M, K, T> > :
 public symmetry_operation_params_i {
 public:
-    const symmetry_element_set<N, T> &grp1; //!< Symmetry group
+    const symmetry_element_set<N, T> &grp1; //!< Symmetry group (input)
     mask<N> msk[K]; //!< Masks
-    symmetry_element_set<N - M + K, T> &grp2;
+    symmetry_element_set<N - M + K, T> &grp2; //!< Symmetry group (output)
 
 public:
     symmetry_operation_params(
@@ -106,7 +107,9 @@ public:
 
                 grp1(grp1_), grp2(grp2_) {
 
-        for (size_t i = 0; i < K; i++) msk[i] = msk_[i];
+        for (register size_t k = 0; k < K; k++) {
+            msk[k] = msk_[k];
+        }
     }
 
     virtual ~symmetry_operation_params() { }

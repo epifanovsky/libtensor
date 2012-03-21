@@ -30,8 +30,8 @@ namespace libtensor {
 	must turn unity. The agreement is tested upon the creation of the
 	element. If it is not satisfied, an exception is thrown.
 
-        TODO:
-        - replace permutation and even / symm by tensor_transf
+    TODO:
+    - replace permutation and even / symm by tensor_transf
 
 	\ingroup libtensor_symmetry
  **/
@@ -85,6 +85,7 @@ a     **/
         return m_transf;
     }
 
+    //@}
 
     //!	\name Implementation of symmetry_element_i<N, T>
     //@{

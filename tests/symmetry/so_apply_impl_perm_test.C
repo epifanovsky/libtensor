@@ -1,5 +1,5 @@
 #include <sstream>
-#include <libtensor/symmetry/so_apply_impl_perm.h>
+#include <libtensor/symmetry/perm/so_apply_impl_perm.h>
 #include <libtensor/btod/transf_double.h>
 #include "so_apply_impl_perm_test.h"
 
@@ -8,27 +8,35 @@ namespace libtensor {
 
 void so_apply_impl_perm_test::perform() throw(libtest::test_exception) {
 
-	test_1(false, false);
-	test_1(false, true);
-	test_1(true, false);
-	test_2(false, false);
-	test_2(false, true);
-	test_2(true, false);
-	test_3(false, false);
-	test_3(false, true);
-	test_3(true, false);
+	test_1(false, false, false);
+	test_1(false, false,  true);
+	test_1(false,  true, false);
+    test_1( true, false, false);
+    test_1( true, false,  true);
+    test_1( true,  true, false);
+	test_2(false, false, false);
+	test_2(false, false,  true);
+	test_2(false,  true, false);
+    test_2( true, false, false);
+    test_2( true, false,  true);
+    test_2( true,  true, false);
+    test_3(false, false, false);
+    test_3(false, false,  true);
+    test_3(false,  true, false);
+	test_3( true, false, false);
+	test_3( true, false,  true);
+	test_3( true,  true, false);
 }
 
 
 /**	\test Tests that an empty sets yields an empty set
  **/
-void so_apply_impl_perm_test::test_1(
+void so_apply_impl_perm_test::test_1(bool keep_zero,
 		bool is_asym, bool sign) throw(libtest::test_exception) {
 
 	std::ostringstream tnss;
-	tnss << "so_apply_impl_perm_test::test_1("
-			<< (is_asym ? "true" : "false") << ", "
-			<< (sign ? "true" : "false") << ")";
+    tnss << "so_apply_impl_perm_test::test_1(" << keep_zero << ", "
+            << is_asym << ", " << sign << ")";
 
 	typedef se_perm<2, double> se_t;
 	typedef so_apply<2, double> so_t;
@@ -41,7 +49,7 @@ void so_apply_impl_perm_test::test_1(
 	symmetry_element_set<2, double> set2(se_t::k_sym_type);
 
 	permutation<2> p0;
-	params_t params(set1, p0, is_asym, sign, set2);
+	params_t params(set1, p0, keep_zero, is_asym, sign, set2);
 
 	so_apply_impl_perm_t op;
 	op.perform(params);
@@ -68,13 +76,12 @@ void so_apply_impl_perm_test::test_1(
 
 /**	\test Tests the application on a non-empty set
  **/
-void so_apply_impl_perm_test::test_2(
+void so_apply_impl_perm_test::test_2(bool keep_zero,
 		bool is_asym, bool sign) throw(libtest::test_exception) {
 
 	std::ostringstream tnss;
-	tnss << "so_apply_impl_perm_test::test_2("
-			<< (is_asym ? "true" : "false") << ", "
-			<< (sign ? "true" : "false") << ")";
+    tnss << "so_apply_impl_perm_test::test_2(" << keep_zero << ", "
+            << is_asym << ", " << sign << ")";
 
 	typedef se_perm<2, double> se_t;
 	typedef so_apply<2, double> so_t;
@@ -91,7 +98,7 @@ void so_apply_impl_perm_test::test_2(
 	set1.insert(elem1);
 
 	permutation<2> p0;
-	params_t params(set1, p0, is_asym, sign, set2);
+	params_t params(set1, p0, keep_zero, is_asym, sign, set2);
 
 	so_apply_impl_perm_t op;
 	op.perform(params);
@@ -138,13 +145,12 @@ void so_apply_impl_perm_test::test_2(
 
 /**	\test Tests the application on a non-empty set with permutation
  **/
-void so_apply_impl_perm_test::test_3(
+void so_apply_impl_perm_test::test_3(bool keep_zero,
 		bool is_asym, bool sign) throw(libtest::test_exception) {
 
 	std::ostringstream tnss;
-	tnss << "so_apply_impl_perm_test::test_3("
-			<< (is_asym ? "true" : "false") << ", "
-			<< (sign ? "true" : "false") << ")";
+	tnss << "so_apply_impl_perm_test::test_3(" << keep_zero << ", "
+			<< is_asym << ", " << sign << ")";
 
 	typedef se_perm<4, double> se_t;
 	typedef so_apply<4, double> so_t;
@@ -163,7 +169,7 @@ void so_apply_impl_perm_test::test_3(
 	set1.insert(el2);
 
 	permutation<4> perm; perm.permute(0, 1).permute(1, 2);
-	params_t params(set1, perm, is_asym, sign, set2);
+	params_t params(set1, perm, keep_zero, is_asym, sign, set2);
 
 	so_apply_impl_perm_t op;
 	op.perform(params);

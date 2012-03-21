@@ -189,6 +189,12 @@ namespace libtensor {
     extern template class se_label<4, double>;
     extern template class se_label<5, double>;
     extern template class se_label<6, double>;
+    extern template class se_label<7, double>;
+    extern template class se_label<8, double>;
+    extern template class se_label<9, double>;
+    extern template class se_label<10, double>;
+    extern template class se_label<11, double>;
+    extern template class se_label<12, double>;
 
 } // namespace libtensor
 

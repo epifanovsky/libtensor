@@ -10,26 +10,35 @@ namespace libtensor {
 
 void so_apply_test::perform() throw(libtest::test_exception) {
 
-	test_1( true, false);
-	test_1(false, false);
-	test_1(false,  true);
-	test_2( true, false);
-	test_2(false, false);
-	test_2(false,  true);
-	test_3( true, false);
-	test_3(false, false);
-	test_3(false,  true);
+	test_1( true, true, false);
+    test_1(false, true, false);
+	test_1( true, false, false);
+	test_1( true, false,  true);
+    test_1(false, false, false);
+    test_1(false, false,  true);
+	test_2( true, true, false);
+    test_2(false, true, false);
+	test_2( true, false, false);
+	test_2( true, false,  true);
+    test_2(false, false, false);
+    test_2(false, false,  true);
+	test_3( true, true, false);
+    test_3(false, true, false);
+	test_3( true, false, false);
+	test_3( true, false,  true);
+    test_3(false, false, false);
+    test_3(false, false,  true);
 }
 
 
 /**	\test Empty %symmetry in 4-space.
  **/
-void so_apply_test::test_1(
+void so_apply_test::test_1(bool keep_zero,
 		bool is_asym, bool sign) throw(libtest::test_exception) {
 
 	std::ostringstream tnss;
-	tnss << "so_apply_test::test_1(" << (is_asym ? "true" : "false") << ", "
-			<< (sign ? "true" : "false") << ")";
+	tnss << "so_apply_test::test_1(" << keep_zero << ", " << is_asym << ", "
+			<< sign << ")";
 
 	try {
 
@@ -40,7 +49,7 @@ void so_apply_test::test_1(
 	symmetry<4, double> sym1(bis), sym2(bis);
 	permutation<4> perm1;
 
-	so_apply<4, double>(sym1, perm1, is_asym, sign).perform(sym2);
+	so_apply<4, double>(sym1, perm1, keep_zero, is_asym, sign).perform(sym2);
 
 	symmetry<4, double>::iterator j2 = sym2.begin();
 	if(j2 != sym2.end()) {
@@ -56,12 +65,12 @@ void so_apply_test::test_1(
 
 /**	\test Non-empty perm %symmetry in 4-space.
  **/
-void so_apply_test::test_2(
+void so_apply_test::test_2(bool keep_zero,
 		bool is_asym, bool sign) throw(libtest::test_exception) {
 
 	std::ostringstream tnss;
-	tnss << "so_apply_test::test_2(" << (is_asym ? "true" : "false") << ", "
-			<< (sign ? "true" : "false") << ")";
+	tnss << "so_apply_test::test_2(" << keep_zero << ", " << is_asym << ", "
+			<< sign << ")";
 
 	try {
 
@@ -82,7 +91,7 @@ void so_apply_test::test_2(
 				permutation<4>().permute(2, 3), sign ? true : false));
 	}
 
-	so_apply<4, double>(sym1, perm1, is_asym, sign).perform(sym2);
+	so_apply<4, double>(sym1, perm1, keep_zero, is_asym, sign).perform(sym2);
 
 	compare_ref<4>::compare(tnss.str().c_str(), sym2, sym2_ref);
 
@@ -95,12 +104,12 @@ void so_apply_test::test_2(
 
 /**	\test Non-empty perm %symmetry in 4-space with permutation.
  **/
-void so_apply_test::test_3(
+void so_apply_test::test_3(bool keep_zero,
 		bool is_asym, bool sign) throw(libtest::test_exception) {
 
 	std::ostringstream tnss;
-	tnss << "so_apply_test::test_3(" << (is_asym ? "true" : "false") << ", "
-			<< (sign ? "true" : "false") << ")";
+	tnss << "so_apply_test::test_3(" << keep_zero << ", "
+	        << is_asym << ", " << sign << ")";
 
 	try {
 
@@ -124,7 +133,7 @@ void so_apply_test::test_3(
 				permutation<4>().permute(1, 3), sign ? true : false));
 	}
 
-	so_apply<4, double>(sym1, perm1, is_asym, sign).perform(sym2);
+	so_apply<4, double>(sym1, perm1, keep_zero, is_asym, sign).perform(sym2);
 
 	compare_ref<4>::compare(tnss.str().c_str(), sym2, sym2_ref);
 

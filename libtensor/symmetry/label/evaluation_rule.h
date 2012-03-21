@@ -256,6 +256,12 @@ namespace libtensor {
     extern template class evaluation_rule<4>;
     extern template class evaluation_rule<5>;
     extern template class evaluation_rule<6>;
+    extern template class evaluation_rule<7>;
+    extern template class evaluation_rule<8>;
+    extern template class evaluation_rule<9>;
+    extern template class evaluation_rule<10>;
+    extern template class evaluation_rule<11>;
+    extern template class evaluation_rule<12>;
 
 } // namespace libtensor
 

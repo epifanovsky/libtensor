@@ -7,7 +7,6 @@
 #include "../symmetry_operation_impl_base.h"
 #include "../so_apply.h"
 #include "../se_part.h"
-#include "partition_set.h"
 
 namespace libtensor {
 
@@ -67,7 +66,7 @@ void symmetry_operation_impl< so_apply<N, T>, se_part<N, T> >::do_perform(
             abs_index<N> ai(pdims);
             do {
                 const index<N> &i1 = ai.get_index();
-                if (se1.is_forbidden(i1)) {
+                if (se1.is_forbidden(i1) && params.keep_zero) {
                     se2.mark_forbidden(i1); continue;
                 }
 
@@ -96,7 +95,7 @@ void symmetry_operation_impl< so_apply<N, T>, se_part<N, T> >::do_perform(
             abs_index<N> ai(pdims);
             do {
                 const index<N> &i1 = ai.get_index();
-                if (se1.is_forbidden(i1)) {
+                if (se1.is_forbidden(i1) && params.keep_zero) {
                     se2.mark_forbidden(i1); continue;
                 }
 

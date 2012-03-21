@@ -61,9 +61,14 @@ void symmetry_operation_impl< so_apply<N, T>, se_label<N, T> >::do_perform(
         se_label<N, T> e2(g1.get_elem(it1));
         e2.permute(params.perm1);
 
-        e2.delete_target();
-        for (typename element_t::label_t l = 0;
-                l < e2.get_n_labels(); l++) e2.add_target(l);
+        if (! params.keep_zero) {
+            evaluation_rule<N> r2 = e2.get_rule();
+            r2.clear_all();
+            sequence<N, size_t> seq(1);
+            r2.add_sequence(seq);
+            r2.add_product(0, product_table_i::k_invalid, 0);
+            e2.set_rule(r2);
+        }
 
         params.grp2.insert(e2);
     }

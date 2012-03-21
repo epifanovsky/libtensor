@@ -29,6 +29,7 @@ private:
 private:
     const symmetry<N, T> &m_sym1; //!< Symmetry container (A)
     permutation<N> m_perm1; //!< Permutation of the %tensor
+    bool m_keep_zero; //!< Functor maps 0 to 0
     bool m_is_asym; //!< Functor is asymmetric
     bool m_sign; //!< Functor is symmetric or anti-symmetric
 
@@ -41,8 +42,8 @@ public:
 			(ignored if is_asym is true).
      **/
     so_apply(const symmetry<N, T> &sym1, const permutation<N> &perm1,
-            bool is_asym, bool sign) :
-                m_sym1(sym1), m_perm1(perm1),
+            bool keep_zero, bool is_asym, bool sign) :
+                m_sym1(sym1), m_perm1(perm1), m_keep_zero(keep_zero),
                 m_is_asym(is_asym), m_sign(sign)
     { }
 
@@ -70,7 +71,7 @@ void so_apply<N, T>::perform(symmetry<N, T> &sym2) {
         symmetry_element_set<N, T> set2(set1.get_id());
 
         symmetry_operation_params<operation_t> params(
-                set1, m_perm1, m_is_asym, m_sign, set2);
+                set1, m_perm1, m_keep_zero, m_is_asym, m_sign, set2);
         dispatcher_t::get_instance().invoke(set1.get_id(), params);
 
         for(typename symmetry_element_set<N, T>::iterator j =
@@ -88,6 +89,7 @@ public symmetry_operation_params_i {
 public:
     const symmetry_element_set<N, T> &grp1; //!< Symmetry group 1
     permutation<N> perm1; //!< Permutation 1
+    bool keep_zero; //!< Functor maps 0 to 0
     bool is_asym; //!< Functor is asymmetric
     bool sign; //!< Functor is symmetric or anti-symmetric
     symmetry_element_set<N, T> &grp2; //!< Symmetry group 2 (output)
@@ -96,10 +98,10 @@ public:
     symmetry_operation_params(
             const symmetry_element_set<N, T> &grp1_,
             const permutation<N> &perm1_,
-            bool is_asym_, bool sign_,
+            bool keep_zero_, bool is_asym_, bool sign_,
             symmetry_element_set<N, T> &grp2_) :
 
-                grp1(grp1_), perm1(perm1_),
+                grp1(grp1_), perm1(perm1_), keep_zero(keep_zero_),
                 is_asym(is_asym_), sign(sign_), grp2(grp2_) { }
 
     virtual ~symmetry_operation_params() { }

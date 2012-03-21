@@ -15,9 +15,12 @@ public:
 	virtual void perform() throw(libtest::test_exception);
 
 private:
-	void test_1(bool is_asym, bool sign) throw(libtest::test_exception);
-	void test_2(bool is_asym, bool sign) throw(libtest::test_exception);
-	void test_3(bool is_asym, bool sign) throw(libtest::test_exception);
+	void test_1(bool keep_zero,
+	        bool is_asym, bool sign) throw(libtest::test_exception);
+	void test_2(bool keep_zero,
+            bool is_asym, bool sign) throw(libtest::test_exception);
+	void test_3(bool keep_zero,
+            bool is_asym, bool sign) throw(libtest::test_exception);
 
 };
 

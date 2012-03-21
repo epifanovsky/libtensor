@@ -215,7 +215,7 @@ void so_dirprod_impl_label_test::test_empty_3(
         fail_test(tns.c_str(), __FILE__, __LINE__,
                 "Expected a non-empty set.");
     }
-    // [012->120]
+
     symmetry_element_set_adapter<3, double, se3_t> adc(setc);
     symmetry_element_set_adapter<3, double, se3_t>::iterator it =
             adc.begin();
