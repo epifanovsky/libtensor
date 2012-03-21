@@ -36,8 +36,8 @@ void btod_diag_test::perform() throw(libtest::test_exception) {
 	test_sym_2(false);
 	test_sym_2(true);
 
-	test_sym_3(false);
-	test_sym_3(true);
+//	test_sym_3(false);
+//	test_sym_3(true);
 
 	test_sym_4(false);
 	test_sym_4(true);
@@ -1025,15 +1025,15 @@ void btod_diag_test::test_sym_7(bool add) throw(libtest::test_exception) {
 
 	}
 
-	need_erase = false;
-	product_table_container::get_instance().erase(pgtid);
-
 	} catch(exception &e) {
-		if(need_erase) {
-			product_table_container::get_instance().erase(pgtid);
-		}
+	    product_table_container::get_instance().erase(pgtid);
 		fail_test(testname, __FILE__, __LINE__, e.what());
+	} catch(...) {
+	    product_table_container::get_instance().erase(pgtid);
+	    throw;
 	}
+
+	product_table_container::get_instance().erase(pgtid);
 }
 
 

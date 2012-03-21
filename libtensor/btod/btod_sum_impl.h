@@ -165,13 +165,13 @@ void btod_sum<N>::add_op(additive_btod<N> &op, double c) {
 
         symmetry<N + N, double> symx(bbx.get_bis());
         so_dirsum<N, N, double>(m_sym, op.get_symmetry(), perm0).perform(symx);
-        so_merge<N + N, N + N, N, double> merge(symx);
+        mask<N + N> msk;
+        sequence<N + N, size_t> seq;
         for (register size_t i = 0; i < N; i++) {
-            mask<N + N> m;
-            m[i] = m[i + N] = true;
-            merge.add_mask(m);
+            msk[i] = msk[i + N] = true;
+            seq[i] = seq[i + N] = i;
         }
-        merge.perform(m_sym);
+        so_merge<N + N, N, double>(symx, msk, seq).perform(m_sym);
 	}
 	m_ops.push_back(node_t(op, c));
 	m_dirty_sch = true;

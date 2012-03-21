@@ -311,9 +311,8 @@ void btod_diag<N, M>::make_symmetry() {
 	permutation<k_orderb> pinv(m_perm, true);
 	bis.permute(pinv);
 	symmetry<k_orderb, double> symx(bis);
-	so_merge<N, M, 1, double> merge(ca.req_const_symmetry());
-	merge.add_mask(m_msk);
-	merge.perform(symx);
+	so_merge<N, M - 1, double>(ca.req_const_symmetry(),
+	        m_msk, sequence<N, size_t>()).perform(symx);
 	so_permute<k_orderb, double>(symx, m_perm).perform(m_sym);
 
 }

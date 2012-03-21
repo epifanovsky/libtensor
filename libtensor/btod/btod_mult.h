@@ -152,13 +152,13 @@ btod_mult<N>::btod_mult(block_tensor_i<N, double> &bta,
     symmetry<N + N, double> symx(bbx.get_bis());
     so_dirprod<N, N, double>(cbta.req_const_symmetry(),
             cbtb.req_const_symmetry(), pbb.get_perm()).perform(symx);
-    so_merge<N + N, N + N, N, double> merge(symx);
+    mask<N + N> msk;
+    sequence<N + N, size_t> seq;
     for (size_t i = 0; i < N; i++) {
-        mask<N + N> m;
-        m[i] = m[i + N] = true;
-        merge.add_mask(m);
+        msk[i] = msk[i + N] = true;
+        seq[i] = seq[i + N] = i;
     }
-    merge.perform(m_sym);
+    so_merge<N + N, N, double>(symx, msk, seq).perform(m_sym);
 
 	make_schedule();
 }
@@ -206,13 +206,13 @@ btod_mult<N>::btod_mult(
     symmetry<N + N, double> symx(bbx.get_bis());
     so_dirprod<N, N, double>(cbta.req_const_symmetry(),
             cbtb.req_const_symmetry(), pbb.get_perm()).perform(symx);
-    so_merge<N + N, N + N, N, double> merge(symx);
-    for (size_t i = 0; i < N; i++) {
-        mask<N + N> m;
-        m[i] = m[i + N] = true;
-        merge.add_mask(m);
+    mask<N + N> msk;
+    sequence<N + N, size_t> seq;
+    for (register size_t i = 0; i < N; i++) {
+        msk[i] = msk[i + N] = true;
+        seq[i] = seq[i + N] = i;
     }
-    merge.perform(m_sym);
+    so_merge<N + N, N, double>(symx, msk, seq).perform(m_sym);
 
 	make_schedule();
 }

@@ -237,52 +237,42 @@ void transfer_labeling(const block_labeling<N> &from,
             "transfer_labeling(const block_labeling<N> &, "
             "const sequence<N> &, block_labeling<M> &)";
 
-    mask<N> done;
-    // Mark unmapped dimensions as done
-    for (size_t i = 0; i < N; i++) {
-        if (map[i] == (size_t) -1) { done[i] = true; continue; }
-
 #ifdef LIBTENSOR_DEBUG
-        // and do some basic error checking:
-        // 1) mapping outside the target dimensions
+    for (register size_t i = 0; i < N; i++) {
+        if (map[i] == (size_t) -1) continue;
         if (map[i] >= M) {
             throw bad_symmetry(g_ns, "", method,
                     __FILE__, __LINE__, "Invalid map.");
         }
 
-        // 2) mapping of different dimensions on to the same
-        for (size_t j = i + 1; j < N; j++) {
-            if (map[i] == map[j]) {
-                if (from.get_dim_type(i) != from.get_dim_type(j))
-                    throw bad_symmetry(g_ns, "", method,
-                            __FILE__, __LINE__, "Invalid map.");
-            }
+        for (register size_t j = i + 1; j < N; j++) {
+            if (map[i] == map[j])
+                throw bad_symmetry(g_ns, "", method,
+                        __FILE__, __LINE__, "Invalid map.");
         }
-#endif
     }
+#endif
 
-    // Now transfer the mapping
-    for (size_t i = 0; i < N; i++) {
-        if (done[i]) continue;
+    mask<N> done;
+    for (register size_t i = 0; i < N; i++) {
+        if (map[i] == (size_t) -1 || done[i]) continue;
 
-        size_t dim_type = from.get_dim_type(i);
+        size_t typei = from.get_dim_type(i);
         mask<M> m; m[map[i]] = true;
 
-        // Find dimensions that can be transferred together.
-        for (size_t j = i + 1; j < N; j++) {
+        // Find dimensions that can be transferred together with i.
+        for (register size_t j = i + 1; j < N; j++) {
             if (done[j]) continue;
-
-            if (from.get_dim_type(j) != dim_type) continue;
+            if (map[j] == (size_t) -1) { done[j] = true; continue; }
+            if (from.get_dim_type(j) != typei) continue;
 
             m[map[j]] = true;
             done[j] = true;
         }
 
-        for (size_t j = 0; j < from.get_dim(dim_type); j++) {
-            to.assign(m, j, from.get_label(dim_type, j));
+        for (size_t j = 0; j < from.get_dim(typei); j++) {
+            to.assign(m, j, from.get_label(typei, j));
         }
-
-        done[i] = true;
     }
 }
 

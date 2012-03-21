@@ -8,96 +8,94 @@
 
 namespace libtensor {
 
-template<size_t N, size_t M, size_t K, typename T>
+template<size_t N, size_t M, typename T>
 const char *
-symmetry_operation_impl< so_merge<N, M, K, T>, se_perm<N, T> >::k_clazz =
-        "symmetry_operation_impl< so_merge<N, M, K, T>, se_perm<N, T> >";
+symmetry_operation_impl< so_merge<N, M, T>, se_perm<N - M, T> >::k_clazz =
+        "symmetry_operation_impl< so_merge<N, M, T>, se_perm<N - M, T> >";
 
-template<size_t N, size_t M, size_t K, typename T>
+template<size_t N, size_t M, typename T>
 void
-symmetry_operation_impl< so_merge<N, M, K, T>, se_perm<N, T> >::do_perform(
+symmetry_operation_impl< so_merge<N, M, T>, se_perm<N - M, T> >::do_perform(
         symmetry_operation_params_t &params) const {
 
     static const char *method =
             "do_perform(symmetry_operation_params_t&)";
 
     //	Adapter type for the input group
-    //
-    typedef se_perm<N - M + K, T> el2_t;
-    typedef symmetry_element_set_adapter<N, T, element_t> adapter_t;
+    typedef symmetry_element_set_adapter<k_order1, T, el1_t> adapter1_t;
 
-    //	Verify that the projection mask is correct
-    //
-    size_t nm = 0;
-    mask<N> tm, mm; // Total mask and mask of vanishing indexes
-    for(size_t k = 0; k < K; k++) {
-        const mask<N> &m = params.msk[k];
+    // Special case for N - M == 1
+    if (k_order2 == 1) {
+        adapter1_t g1(params.grp1);
+        params.grp2.clear();
+        for (typename adapter1_t::iterator it = g1.begin();
+                it != g1.end(); it++) {
 
-        bool found = false;
-        for (size_t i = 0; i < N; i++) {
-            if (! m[i]) continue;
-
-            if (tm[i]) {
-                throw bad_parameter(g_ns, k_clazz, method,
-                        __FILE__, __LINE__, "Masks overlap.");
+            const el1_t &e1 = g1.get_elem(it);
+            if (! e1.is_symm()) {
+                throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
+                        "Anti-symmetric identity permutation.");
+    //            params.grp2.insert(el2_t(permutation<1>(), e1.is_symm()));
+    //            break;
             }
-
-            tm[i] = true;
-            nm++;
-
-            if (found) mm[i] = true;
-            else found = true;
         }
+        return;
     }
 
-    if(nm != M) {
-        throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
-                "params.msk");
+    // Create the stabilizing sequence for permutation group
+    mask<k_order1> msteps, mm;
+    sequence<k_order1, size_t> sseq(0);
+    for (register size_t i = 0; i < k_order1; i++) {
+        if (! params.msk[i]) continue;
+
+        if (msteps[params.mseq[i]])
+            mm[i] = true;
+        else
+            msteps[params.mseq[i]] = true;
+
+        sseq[i] = params.mseq[i] + 1;
     }
 
     params.grp2.clear();
-    adapter_t g1(params.grp1);
-    permutation_group<N, T> grp1(g1);
-    permutation_group<N, T> grp2;
-//    grp1.stabilize(params.msk, grp2);
+    adapter1_t g1(params.grp1);
+    permutation_group<k_order1, T> grp1(g1);
+    permutation_group<k_order1, T> grp2;
+    grp1.stabilize(sseq, grp2);
 
-    symmetry_element_set<N, T> set(element_t::k_sym_type);
+    symmetry_element_set<k_order1, T> set(el1_t::k_sym_type);
     grp2.convert(set);
 
-    adapter_t g2(set);
-    for (typename adapter_t::iterator it = g2.begin(); it != g2.end(); it++) {
+    adapter1_t g2(set);
+    for (typename adapter1_t::iterator it = g2.begin(); it != g2.end(); it++) {
 
-        const element_t &e2 = g2.get_elem(it);
+        const el1_t &e2 = g2.get_elem(it);
 
-        sequence<N, size_t> seq1a(0), seq2a(0);
-        sequence<N - M + K, size_t> seq1b(0), seq2b(0);
+        sequence<k_order1, size_t> seq1a(0), seq2a(0);
+        sequence<k_order2, size_t> seq1b(0), seq2b(0);
 
-        for (size_t j = 0; j < N; j++) seq1a[j] = seq2a[j] = j;
+        for (register size_t i = 0; i < k_order1; i++)
+            seq1a[i] = seq2a[i] = i;
         e2.get_perm().apply(seq2a);
 
-        for (size_t j = 0, k = 0; j < N; j++) {
-            if (mm[j]) continue;
+        for (size_t i = 0, j = 0; i < k_order1; i++) {
+            if (mm[i]) continue;
 
-            size_t jj = seq2a[j];
-            if (tm[j]) {
-                size_t l = 0;
-                for (; l < K; l++) {
-                    if (params.msk[l][j]) break;
-                }
-                const mask<N> &m = params.msk[l];
-                for (l = j + 1; l < N; l++) {
-                    if (! m[l]) continue;
+            size_t ii = seq2a[i];
+            if (params.msk[i]) {
+                for (size_t k = 0; k < k_order1; k++) {
+                    if (! params.msk[k] || params.mseq[k] != params.mseq[i])
+                        continue;
 
-                    jj = std::min(jj, seq2a[l]);
+                    ii = std::min(ii, seq2a[k]);
                 }
             }
 
-            seq1b[k] = seq1a[j];
-            seq2b[k] = jj;
-            k++;
+            seq1b[j] = seq1a[i];
+            seq2b[j] = ii;
+            j++;
         }
 
-        permutation_builder<N - M + K> pb(seq2b, seq1b);
+        permutation_builder<k_order2> pb(seq2b, seq1b);
         if (pb.get_perm().is_identity()) {
             if (e2.is_symm()) continue;
 
@@ -109,49 +107,6 @@ symmetry_operation_impl< so_merge<N, M, K, T>, se_perm<N, T> >::do_perform(
     }
 }
 
-template<size_t N, typename T>
-const char *
-symmetry_operation_impl< so_merge<N, N, 1, T>, se_perm<N, T> >::k_clazz =
-        "symmetry_operation_impl< so_merge<N, N, 1, T>, se_perm<N, T> >";
-
-template<size_t N, typename T>
-void
-symmetry_operation_impl< so_merge<N, N, 1, T>, se_perm<N, T> >::do_perform(
-        symmetry_operation_params_t &params) const {
-
-    static const char *method =
-            "do_perform(symmetry_operation_params_t&)";
-
-    //	Verify that the projection mask is correct
-    //
-    const mask<N> &m = params.msk[0];
-    size_t nm = 0;
-    for(size_t i = 0; i < N; i++) if(m[i]) nm++;
-
-    if(nm != N) {
-        throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
-                "params.msk");
-    }
-
-    //  Adapter type for the input group
-    //
-    typedef se_perm<1, T> el2_t;
-    typedef symmetry_element_set_adapter<N, T, element_t> adapter1_t;
-
-    adapter1_t g1(params.grp1);
-    params.grp2.clear();
-    for (typename adapter1_t::iterator it = g1.begin(); it != g1.end(); it++) {
-
-        const element_t &e1 = g1.get_elem(it);
-        if (! e1.is_symm()) {
-            throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
-                    "Anti-symmetric identity permutation.");
-//            params.grp2.insert(el2_t(permutation<1>(), e1.is_symm()));
-//            break;
-        }
-    }
-
-}
 
 } // namespace libtensor
 

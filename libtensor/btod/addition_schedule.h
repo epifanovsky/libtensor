@@ -167,13 +167,14 @@ addition_schedule<N, T>::addition_schedule(const symmetry<N, T> &syma,
             m_symb.get_bis(), perm0);
     symmetry<N + N, T> symx(bbx.get_bis());
     so_dirsum<N, N, T>(m_syma, m_symb, perm0).perform(symx);
-    so_merge<N + N, N + N, N, T> merge(symx);
-    for (size_t i = 0; i < N; i++) {
-        mask<N + N> m;
-        m[i] = m[i + N] = true;
-        merge.add_mask(m);
+
+    mask<N + N> msk;
+    sequence<N + N, size_t> seq(0);
+    for (register size_t i = 0; i < N; i++) {
+        msk[i] = msk[i + N] = true;
+        seq[i] = seq[i + N] = i;
     }
-    merge.perform(m_symc);
+    so_merge<N + N, N, T>(symx, msk, seq).perform(m_symc);
 }
 
 

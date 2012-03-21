@@ -14,76 +14,25 @@ namespace libtensor {
 
 	\ingroup libtensor_symmetry
  **/
-template<size_t N, size_t M, size_t K, typename T>
-class symmetry_operation_impl< so_merge<N, M, K, T>, se_perm<N, T> > :
-public symmetry_operation_impl_base< so_merge<N, M, K, T>, se_perm<N, T> > {
-
-public:
-    static const char *k_clazz; //!< Class name
-
-public:
-    typedef so_merge<N, M, K, T> operation_t;
-    typedef se_perm<N, T> element_t;
-    typedef symmetry_operation_params<operation_t>
-        symmetry_operation_params_t;
-
-protected:
-    virtual void do_perform(symmetry_operation_params_t &params) const;
-
-};
-
-/** \brief Implementation of so_merge<N, N, 1, T> for se_perm<1, T>
-    \tparam N Tensor order.
-    \tparam T Tensor element type.
-
-    \ingroup libtensor_symmetry
- **/
-template<size_t N, typename T>
-class symmetry_operation_impl< so_merge<N, N, 1, T>, se_perm<N, T> > :
-public symmetry_operation_impl_base< so_merge<N, N, 1, T>, se_perm<N, T> > {
-
-public:
-    static const char *k_clazz; //!< Class name
-
-public:
-    typedef so_merge<N, N, 1, T> operation_t;
-    typedef se_perm<N, T> element_t;
-    typedef symmetry_operation_params<operation_t>
-    symmetry_operation_params_t;
-
-protected:
-    virtual void do_perform(symmetry_operation_params_t &params) const;
-
-};
-
-/** \brief Implementation of so_merge<N, M, M, T> for se_perm<N, T>
-    \tparam N Tensor order.
-    \tparam T Tensor element type.
-
-    \ingroup libtensor_symmetry
- **/
 template<size_t N, size_t M, typename T>
-class symmetry_operation_impl< so_merge<N, M, M, T>, se_perm<N, T> > :
-public symmetry_operation_impl_base< so_merge<N, M, M, T>, se_perm<N, T> > {
+class symmetry_operation_impl< so_merge<N, M, T>, se_perm<N - M, T> > :
+public symmetry_operation_impl_base< so_merge<N, M, T>, se_perm<N - M, T> > {
 
 public:
     static const char *k_clazz; //!< Class name
+    static const size_t k_order1 = N; //!< Order of input
+    static const size_t k_order2 = N - M; //!< Order of result
 
 public:
-    typedef so_merge<N, M, M, T> operation_t;
-    typedef se_perm<N, T> element_t;
+    typedef so_merge<N, M, T> operation_t;
+    typedef se_perm<N, T> el1_t;
+    typedef se_perm<N - M, T> el2_t;
     typedef symmetry_operation_params<operation_t> symmetry_operation_params_t;
 
 protected:
-    virtual void do_perform(symmetry_operation_params_t &params) const {
-        for (typename symmetry_element_set<N, T>::const_iterator it =
-                params.grp1.begin(); it != params.grp1.end(); it++) {
-            params.grp2.insert(params.grp1.get_elem(it));
-        }
-    }
+    virtual void do_perform(symmetry_operation_params_t &params) const;
 
 };
-
 
 } // namespace libtensor
 

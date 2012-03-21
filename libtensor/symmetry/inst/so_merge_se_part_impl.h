@@ -10,74 +10,48 @@
 
 namespace libtensor {
 
-template<size_t N, size_t M, size_t K, typename T>
+template<size_t N, size_t M, typename T>
 const char *
-symmetry_operation_impl<so_merge<N, M, K, T>, se_part<N, T> >::k_clazz =
-        "symmetry_operation_impl< so_merge<N, M, K, T>, se_part<N, T> >";
+symmetry_operation_impl<so_merge<N, M, T>, se_part<N - M, T> >::k_clazz =
+        "symmetry_operation_impl< so_merge<N, M, T>, se_part<N - M, T> >";
 
-template<size_t N, size_t M, size_t K, typename T>
+template<size_t N, size_t M, typename T>
 void
-symmetry_operation_impl< so_merge<N, M, K, T>, se_part<N, T> >::do_perform(
+symmetry_operation_impl< so_merge<N, M, T>, se_part<N - M, T> >::do_perform(
         symmetry_operation_params_t &params) const {
 
-    static const char *method =
-            "do_perform(symmetry_operation_params_t&)";
-
-    //	Element type for the output group
-    typedef se_part<N - M + K, T> el2_t;
-
-    //	Verify that the projection mask is correct
-    size_t nm = 0;
-    mask<N> tm;
-    for (register size_t k = 0; k < K; k++) {
-        const mask<N> &m = params.msk[k];
-        for(register size_t i = 0; i < N; i++) {
-            if (! m[i]) continue;
-
-            if (tm[i]) {
-                throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
-                        "params.msk[k]");
-            }
-            tm[i] = true;
-            nm++;
-        }
-    }
-    if(nm != M) {
-        throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
-                "params.msk");
-    }
+    static const char *method = "do_perform(symmetry_operation_params_t&)";
 
     params.grp2.clear();
     if (params.grp1.is_empty()) return;
 
-    // Determine index map N -> N - M + K
+    // Determine index map N -> N - M
     mask<N> mm;
-    sequence<N, size_t> map;
-    for (size_t i = 0, j = 0; i < N; i++) {
-        if (tm[i]) {
-            size_t k = 0;
-            for (; k < K; k++) { if (params.msk[k][i]) break; }
+    sequence<N, size_t> map, mmap(N);
+    for (register size_t i = 0, j = 0; i < N; i++) {
+        if (params.msk[i]) {
+            if (mmap[params.mseq[i]] != N) {
+                map[i] = mmap[params.mseq[i]];
+                continue;
+            }
 
-            const mask<N> &m = params.msk[k];
-            for (k = 0; k < i; k++) { if (m[k]) break; }
-            if (k != i) { map[i] = map[k]; continue; }
+            mmap[params.mseq[i]] = j;
         }
-
-        mm[i] = true;
         map[i] = j++;
+        mm[i] = true;
     }
 
     combine_part<N, T> cp(params.grp1);
-    element_t el1(cp.get_bis(), cp.get_pdims());
+    el1_t el1(cp.get_bis(), cp.get_pdims());
     cp.perform(el1);
 
     const dimensions<N> &pdims1 = el1.get_pdims();
 
     // Create result partition dimensions
-    index<N - M + K> ia, ib;
-    mask<N - M + K> initialized;
-    for (size_t i = 0; i < N; i++) {
-        if (initialized[map[i]]) {
+    index<N - M> ia, ib;
+    for (register size_t i = 0; i < N; i++) {
+        if (params.msk[i] && (! mm[i])) {
+
             size_t d1 = (ib[map[i]] + 1), d2 = pdims1[i];
             if (d1 < d2) std::swap(d1, d2);
 
@@ -85,33 +59,31 @@ symmetry_operation_impl< so_merge<N, M, K, T>, se_part<N, T> >::do_perform(
         }
         else {
             ib[map[i]] = pdims1[i] - 1;
-            initialized[map[i]] = true;
         }
     }
-    dimensions<N - M + K> pdims2(index_range<N - M + K>(ia, ib));
+    dimensions<N - M> pdims2(index_range<N - M>(ia, ib));
     if (pdims2.get_size() == 1) return;
 
-    index<N> npdims, ka, kb;
+    index<N> ja, jb;
     for (register size_t i = 0; i < N; i++) {
-        kb[i] = pdims1[i] / (ib[map[i]] + 1) - 1;
+        jb[i] = pdims1[i] / pdims2[map[i]] - 1;
     }
-    dimensions<N> pdims1c(index_range<N>(ka, kb));
+    dimensions<N> pdims1m(index_range<N>(ja, jb));
 
-    block_index_subspace_builder<N - M + K, M - K> bb(el1.get_bis(), mm);
-
+    block_index_subspace_builder<N - M, M> bb(el1.get_bis(), mm);
     el2_t el2(bb.get_bis(), pdims2);
 
     // Merge the partitions
-    abs_index<N - M + K> ai(pdims2);
+    abs_index<N - M> ai(pdims2);
     do {
 
-        const index<N - M + K> &i2a = ai.get_index();
+        const index<N - M> &i2a = ai.get_index();
         index<N> i1a;
         for (register size_t i = 0; i < N; i++)
-            i1a[i] = i2a[map[i]] * pdims1c[i];
+            i1a[i] = i2a[map[i]] * pdims1m[i];
 
-        if (is_forbidden(el1, i1a, pdims1c)) {
-            el2.is_forbidden(i2a);
+        if (is_forbidden(el1, i1a, pdims1m)) {
+            el2.mark_forbidden(i2a);
             continue;
         }
 
@@ -121,14 +93,14 @@ symmetry_operation_impl< so_merge<N, M, K, T>, se_part<N, T> >::do_perform(
             // Check if i1b can be converted into a proper result index
             size_t i = 0;
             for (; i < N; i++) {
-                if (! tm[i]) continue;
+                if (! params.msk[i]) continue;
 
                 size_t j = i + 1;
                 for (; j < N; j++) {
                     if (map[i] != map[j]) continue;
-                    if (i1b[i] / pdims1c[i] != i1b[j] / pdims1c[j] ||
-                            i1b[i] % pdims1c[i] != 0 ||
-                            i1b[j] % pdims1c[j] != 0) break;
+                    if (i1b[i] / pdims1m[i] != i1b[j] / pdims1m[j] ||
+                            i1b[i] % pdims1m[i] != 0 ||
+                            i1b[j] % pdims1m[j] != 0) break;
                 }
                 if (j != N) break;
             }
@@ -137,10 +109,11 @@ symmetry_operation_impl< so_merge<N, M, K, T>, se_part<N, T> >::do_perform(
         }
         if (! found) continue;
 
-        if (map_exists(el1, i1a, i1b, pdims1c)) {
+        if (map_exists(el1, i1a, i1b, pdims1m)) {
 
-            index<N - M + K> i2b;
-            for (size_t i = 0; i < N; i++) i2b[map[i]] = i1b[i] / pdims1c[i];
+            index<N - M> i2b;
+            for (register size_t i = 0; i < N; i++)
+                i2b[map[i]] = i1b[i] / pdims1m[i];
 
             el2.add_map(i2a, i2b, el1.get_sign(i1a, i1b));
         }
@@ -150,10 +123,10 @@ symmetry_operation_impl< so_merge<N, M, K, T>, se_part<N, T> >::do_perform(
     params.grp2.insert(el2);
 }
 
-template<size_t N, size_t M, size_t K, typename T>
-bool symmetry_operation_impl< so_merge<N, M, K, T>, se_part<N, T> >::
-is_forbidden(const element_t &el,
-        const index<N> &idx, const dimensions<N> &subdims) {
+template<size_t N, size_t M, typename T>
+bool symmetry_operation_impl< so_merge<N, M, T>, se_part<N - M, T> >::
+is_forbidden(const el1_t &el, const index<N> &idx,
+        const dimensions<N> &subdims) {
 
     if (! el.is_forbidden(idx)) return false;
 
@@ -162,7 +135,8 @@ is_forbidden(const element_t &el,
     while (aix.inc()) {
         const index<N> &ix = aix.get_index();
         index<N> ia;
-        for (register size_t i = 0; i < N; i++) ia[i] = idx[i] + ix[i];
+        for (register size_t i = 0; i < N; i++)
+            ia[i] = idx[i] + ix[i];
 
         if (! el.is_forbidden(ia)) { forbidden = false; break; }
     }
@@ -170,9 +144,9 @@ is_forbidden(const element_t &el,
     return forbidden;
 }
 
-template<size_t N, size_t M, size_t K, typename T>
-bool symmetry_operation_impl< so_merge<N, M, K, T>, se_part<N, T> >::
-map_exists(const element_t &el, const index<N> &ia,
+template<size_t N, size_t M, typename T>
+bool symmetry_operation_impl< so_merge<N, M, T>, se_part<N - M, T> >::
+map_exists(const el1_t &el, const index<N> &ia,
         const index<N> &ib, const dimensions<N> &subdims) {
 
     if (! el.map_exists(ia, ib)) return false;

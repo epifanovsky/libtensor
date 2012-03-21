@@ -30,8 +30,8 @@ void so_merge_se_part_test::test_empty_1() throw(libtest::test_exception) {
 
     typedef se_part<4, double> se4_t;
     typedef se_part<3, double> se3_t;
-    typedef so_merge<4, 2, 1, double> so_merge_t;
-    typedef symmetry_operation_impl<so_merge_t, se4_t>
+    typedef so_merge<4, 1, double> so_merge_t;
+    typedef symmetry_operation_impl<so_merge_t, se3_t>
     so_merge_se_t;
 
     try {
@@ -39,8 +39,9 @@ void so_merge_se_part_test::test_empty_1() throw(libtest::test_exception) {
         symmetry_element_set<4, double> set1(se4_t::k_sym_type);
         symmetry_element_set<3, double> set2(se3_t::k_sym_type);
 
-        mask<4> msk[1]; msk[0][2] = true; msk[0][3] = true;
-        symmetry_operation_params<so_merge_t> params(set1, msk, set2);
+        mask<4> msk; msk[2] = msk[3] = true;
+        sequence<4, size_t> seq(0);
+        symmetry_operation_params<so_merge_t> params(set1, msk, seq, set2);
 
         so_merge_se_t().perform(params);
 
@@ -63,8 +64,8 @@ void so_merge_se_part_test::test_empty_2() throw(libtest::test_exception) {
 
     typedef se_part<5, double> se5_t;
     typedef se_part<3, double> se3_t;
-    typedef so_merge<5, 4, 2, double> so_merge_t;
-    typedef symmetry_operation_impl<so_merge_t, se5_t>
+    typedef so_merge<5, 2, double> so_merge_t;
+    typedef symmetry_operation_impl<so_merge_t, se3_t>
     so_merge_se_t;
 
     try {
@@ -72,10 +73,9 @@ void so_merge_se_part_test::test_empty_2() throw(libtest::test_exception) {
         symmetry_element_set<5, double> set1(se5_t::k_sym_type);
         symmetry_element_set<3, double> set2(se3_t::k_sym_type);
 
-        mask<5> msk[2];
-        msk[0][0] = true; msk[0][2] = true;
-        msk[1][1] = true; msk[1][3] = true;
-        symmetry_operation_params<so_merge_t> params(set1, msk, set2);
+        mask<5> msk; msk[0] = msk[1] = msk[2] = msk[3] = true;
+        sequence<5, size_t> seq(0); seq[1] = seq[3] = 1;
+        symmetry_operation_params<so_merge_t> params(set1, msk, seq, set2);
 
         so_merge_se_t().perform(params);
 
@@ -99,8 +99,8 @@ throw(libtest::test_exception) {
 
     typedef se_part<3, double> se3_t;
     typedef se_part<2, double> se2_t;
-    typedef so_merge<3, 2, 1, double> so_merge_t;
-    typedef symmetry_operation_impl<so_merge_t, se3_t>
+    typedef so_merge<3, 1, double> so_merge_t;
+    typedef symmetry_operation_impl<so_merge_t, se2_t>
     so_merge_se_t;
 
     try {
@@ -152,8 +152,10 @@ throw(libtest::test_exception) {
         seta.insert(ela);
         setb_ref.insert(elb);
 
-        mask<3> mc[1]; mc[0][0] = true; mc[0][2] = true;
-        symmetry_operation_params<so_merge_t> params(seta, mc, setb);
+        mask<3> mc; mc[1] = mc[2] = true;
+        sequence<3, size_t> seq(0);
+        symmetry_operation_params<so_merge_t> params(seta, mc, seq, setb);
+
         so_merge_se_t().perform(params);
 
         if(setb.is_empty()) {
@@ -178,8 +180,8 @@ throw(libtest::test_exception) {
 
     typedef se_part<3, double> se3_t;
     typedef se_part<1, double> se1_t;
-    typedef so_merge<3, 3, 1, double> so_merge_t;
-    typedef symmetry_operation_impl<so_merge_t, se3_t> so_merge_se_t;
+    typedef so_merge<3, 2, double> so_merge_t;
+    typedef symmetry_operation_impl<so_merge_t, se1_t> so_merge_se_t;
 
     try {
 
@@ -227,9 +229,10 @@ throw(libtest::test_exception) {
         seta.insert(ela);
         setb_ref.insert(elb);
 
-        mask<3> mc[1];
-        mc[0][0] = true; mc[0][1] = true; mc[0][2] = true;
-        symmetry_operation_params<so_merge_t> params(seta, mc, setb);
+        mask<3> msk; msk[0] = msk[1] = msk[2] = true;
+        sequence<3, size_t> seq(0);
+        symmetry_operation_params<so_merge_t> params(seta, msk, seq, setb);
+
         so_merge_se_t().perform(params);
 
         if(setb.is_empty()) {
@@ -254,8 +257,8 @@ throw(libtest::test_exception) {
 
     typedef se_part<4, double> se4_t;
     typedef se_part<2, double> se2_t;
-    typedef so_merge<4, 4, 2, double> so_merge_t;
-    typedef symmetry_operation_impl<so_merge_t, se4_t> so_merge_se_t;
+    typedef so_merge<4, 2, double> so_merge_t;
+    typedef symmetry_operation_impl<so_merge_t, se2_t> so_merge_se_t;
 
     try {
 
@@ -317,10 +320,10 @@ throw(libtest::test_exception) {
         seta.insert(ela);
         setb_ref.insert(elb);
 
-        mask<4> mc[2];
-        mc[0][0] = true; mc[0][2] = true;
-        mc[1][1] = true; mc[1][3] = true;
-        symmetry_operation_params<so_merge_t> params(seta, mc, setb);
+        mask<4> msk; msk[0] = msk[1] = msk[2] = msk[3] = true;
+        sequence<4, size_t> seq(0); seq[1] = seq[3] = 1;
+        symmetry_operation_params<so_merge_t> params(seta, msk, seq, setb);
+
         so_merge_se_t().perform(params);
 
         if(setb.is_empty()) {
@@ -345,8 +348,8 @@ throw(libtest::test_exception) {
 
     typedef se_part<4, double> se4_t;
     typedef se_part<2, double> se2_t;
-    typedef so_merge<4, 4, 2, double> so_merge_t;
-    typedef symmetry_operation_impl<so_merge_t, se4_t>
+    typedef so_merge<4, 2, double> so_merge_t;
+    typedef symmetry_operation_impl<so_merge_t, se2_t>
     so_merge_se_t;
 
     try {
@@ -417,10 +420,10 @@ throw(libtest::test_exception) {
         seta.insert(ela);
         setb_ref.insert(elb);
 
-        mask<4> mc[2];
-        mc[0][0] = true; mc[0][2] = true;
-        mc[1][1] = true; mc[1][3] = true;
-        symmetry_operation_params<so_merge_t> params(seta, mc, setb);
+        mask<4> msk; msk[0] = msk[1] = msk[2] = msk[3] = true;
+        sequence<4, size_t> seq(0); seq[1] = seq[3] = 1;
+        symmetry_operation_params<so_merge_t> params(seta, msk, seq, setb);
+
         so_merge_se_t().perform(params);
 
         if(setb.is_empty()) {
@@ -445,8 +448,8 @@ throw(libtest::test_exception) {
 
     typedef se_part<5, double> se5_t;
     typedef se_part<3, double> se3_t;
-    typedef so_merge<5, 4, 2, double> so_merge_t;
-    typedef symmetry_operation_impl<so_merge_t, se5_t> so_merge_se_t;
+    typedef so_merge<5, 2, double> so_merge_t;
+    typedef symmetry_operation_impl<so_merge_t, se3_t> so_merge_se_t;
 
     try {
 
@@ -538,10 +541,10 @@ throw(libtest::test_exception) {
         seta.insert(ela);
         setb_ref.insert(elb);
 
-        mask<5> mc[2];
-        mc[0][0] = true; mc[0][1] = true;
-        mc[1][2] = true; mc[1][3] = true;
-        symmetry_operation_params<so_merge_t> params(seta, mc, setb);
+        mask<5> msk; msk[0] = msk[1] = msk[2] = msk[3] = true;
+        sequence<5, size_t> seq(0); seq[2] = seq[3] = 1;
+        symmetry_operation_params<so_merge_t> params(seta, msk, seq, setb);
+
         so_merge_se_t().perform(params);
 
         if(setb.is_empty()) {
@@ -577,8 +580,8 @@ throw(libtest::test_exception) {
 
     typedef se_part<6, double> se6_t;
     typedef se_part<4, double> se4_t;
-    typedef so_merge<6, 4, 2, double> so_merge_t;
-    typedef symmetry_operation_impl<so_merge_t, se6_t>
+    typedef so_merge<6, 2, double> so_merge_t;
+    typedef symmetry_operation_impl<so_merge_t, se4_t>
     so_merge_se_t;
 
     try {
@@ -690,10 +693,10 @@ throw(libtest::test_exception) {
         seta.insert(ela);
         setb_ref.insert(elb);
 
-        mask<6> mc[2];
-        mc[0][1] = true; mc[0][4] = true;
-        mc[1][2] = true; mc[1][5] = true;
-        symmetry_operation_params<so_merge_t> params(seta, mc, setb);
+        mask<6> msk; msk[1] = msk[2] = msk[4] = msk[5] = true;
+        sequence<6, size_t> seq(0); seq[2] = seq[5] = 1;
+        symmetry_operation_params<so_merge_t> params(seta, msk, seq, setb);
+
         so_merge_se_t().perform(params);
 
         if(setb.is_empty()) {

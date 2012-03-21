@@ -33,11 +33,9 @@ void so_merge_test::test_1() throw(libtest::test_exception) {
 	symmetry<4, double> sym1(bis1);
 	symmetry<3, double> sym2(bis2);
 	symmetry<3, double> sym2_ref(bis2);
-	mask<4> msk;
-	msk[2] = true; msk[3] = true;
-	so_merge<4, 2, 1, double> so(sym1);
-	so.add_mask(msk);
-	so.perform(sym2);
+	mask<4> msk; msk[2] = true; msk[3] = true;
+	sequence<4, size_t> seq(0);
+	so_merge<4, 1, double>(sym1, msk, seq).perform(sym2);
 
 	symmetry<3, double>::iterator i = sym2.begin();
 	if(i != sym2.end()) {
@@ -79,9 +77,8 @@ void so_merge_test::test_2() throw(libtest::test_exception) {
 	symmetry<3, double> sym2_ref(bis2);
 	mask<5> msk;
 	msk[2] = true; msk[3] = true; msk[4] = true;
-	so_merge<5, 3, 1, double> so(sym1);
-	so.add_mask(msk);
-	so.perform(sym2);
+	sequence<5, size_t> seq(0);
+	so_merge<5, 2, double>(sym1, msk, seq).perform(sym2);
 
 	sym2_ref.insert(se_perm<3, double>(
 		permutation<3>().permute(0, 1).permute(1, 2), true));
@@ -117,11 +114,10 @@ void so_merge_test::test_3() throw(libtest::test_exception) {
 
 	mask<2> m;
 	m[0] = true; m[1] = true;
+	sequence<2, size_t> seq(0);
 	symmetry<2, double> sym1(bis1);
 	symmetry<1, double> sym2(bis2);
-	so_merge<2, 2, 1, double> so(sym1);
-	so.add_mask(m);
-	so.perform(sym2);
+	so_merge<2, 1, double>(sym1, m, seq).perform(sym2);
 
 	} catch(exception &e) {
 		fail_test(testname, __FILE__, __LINE__, e.what());
@@ -144,11 +140,10 @@ void so_merge_test::test_4() throw(libtest::test_exception) {
 
 	mask<2> msk;
 	msk[0] = true;
+	sequence<2, size_t> seq(0);
 	symmetry<2, double> sym1(bis1);
 	symmetry<2, double> sym2(bis1);
-	so_merge<2, 1, 1, double> so(sym1);
-	so.add_mask(msk);
-	so.perform(sym2);
+	so_merge<2, 0, double>(sym1, msk, seq).perform(sym2);
 
 	symmetry<2, double>::iterator i = sym2.begin();
 	if(i == sym2.end()) {

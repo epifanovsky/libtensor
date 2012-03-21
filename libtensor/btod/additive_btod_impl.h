@@ -42,13 +42,13 @@ void additive_btod<N>::perform(block_tensor_i<N, double> &bt, double c) {
     block_index_space_product_builder<N, N> bbx(get_bis(), bt.get_bis(), p0);
     symmetry<N + N, double> symx(bbx.get_bis());
     so_dirsum<N, N, double>(symcopy, get_symmetry(), p0).perform(symx);
-    so_merge<N + N, N + N, N, double> merge(symx);
+    mask<N + N> msk;
+    sequence<N + N, size_t> seq;
     for (register size_t i = 0; i < N; i++) {
-         mask<N + N> m;
-         m[i] = m[i + N] = true;
-         merge.add_mask(m);
-     }
-     merge.perform(ctrl.req_symmetry());
+        msk[i] = msk[i + N] = true;
+        seq[i] = seq[i + N] = i;
+    }
+    so_merge<N + N, N, double>(symx, msk, seq).perform(ctrl.req_symmetry());
 
      dimensions<N> bidims(bt.get_bis().get_block_index_dims());
      schedule_t sch(get_symmetry(), symcopy);

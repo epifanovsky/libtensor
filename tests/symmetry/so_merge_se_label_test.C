@@ -42,15 +42,16 @@ void so_merge_se_label_test::test_empty_1(
     std::string tns(tnss.str());
 
     typedef se_label<4, double> se4_t;
-    typedef se_label<3, double> se2_t;
-    typedef so_merge<4, 2, 1, double> so_merge_t;
-    typedef symmetry_operation_impl<so_merge_t, se4_t> so_merge_se_t;
+    typedef se_label<3, double> se3_t;
+    typedef so_merge<4, 1, double> so_merge_t;
+    typedef symmetry_operation_impl<so_merge_t, se3_t> so_merge_se_t;
 
     symmetry_element_set<4, double> set1(se4_t::k_sym_type);
-    symmetry_element_set<3, double> set2(se2_t::k_sym_type);
+    symmetry_element_set<3, double> set2(se3_t::k_sym_type);
 
-    mask<4> msk[1]; msk[0][2] = true; msk[0][3] = true;
-    symmetry_operation_params<so_merge_t> params(set1, msk, set2);
+    mask<4> msk; msk[2] = true; msk[3] = true;
+    sequence<4, size_t> seq(0);
+    symmetry_operation_params<so_merge_t> params(set1, msk, seq, set2);
 
     so_merge_se_t().perform(params);
 
@@ -71,16 +72,15 @@ void so_merge_se_label_test::test_empty_2(
 
     typedef se_label<5, double> se5_t;
     typedef se_label<3, double> se3_t;
-    typedef so_merge<5, 4, 2, double> so_merge_t;
-    typedef symmetry_operation_impl<so_merge_t, se5_t> so_merge_se_t;
+    typedef so_merge<5, 2, double> so_merge_t;
+    typedef symmetry_operation_impl<so_merge_t, se3_t> so_merge_se_t;
 
     symmetry_element_set<5, double> set1(se5_t::k_sym_type);
     symmetry_element_set<3, double> set2(se3_t::k_sym_type);
 
-    mask<5> msk[2];
-    msk[0][0] = true; msk[0][1] = true;
-    msk[1][2] = true; msk[1][3] = true;
-    symmetry_operation_params<so_merge_t> params(set1, msk, set2);
+    mask<5> msk; msk[0] = msk[1] = msk[2] = msk[3] = true;
+    sequence<5, size_t> seq(0); seq[2] = seq[3] = 1;
+    symmetry_operation_params<so_merge_t> params(set1, msk, seq, set2);
 
     so_merge_se_t().perform(params);
 
@@ -101,8 +101,8 @@ void so_merge_se_label_test::test_nm1_1(
 
     typedef se_label<2, double> se2_t;
     typedef se_label<3, double> se3_t;
-    typedef so_merge<3, 2, 1, double> so_merge_t;
-    typedef symmetry_operation_impl<so_merge_t, se3_t> so_merge_se_t;
+    typedef so_merge<3, 1, double> so_merge_t;
+    typedef symmetry_operation_impl<so_merge_t, se2_t> so_merge_se_t;
 
     index<3> i1a, i1b;
     i1b[0] = 3; i1b[1] = 3; i1b[2] = 3;
@@ -119,8 +119,9 @@ void so_merge_se_label_test::test_nm1_1(
     symmetry_element_set<2, double> set2(se2_t::k_sym_type);
 
     set1.insert(el1);
-    mask<3> m[1]; m[0][1] = m[0][2] = true;
-    symmetry_operation_params<so_merge_t> params(set1, m, set2);
+    mask<3> m; m[1] = m[2] = true;
+    sequence<3, size_t> seq(0);
+    symmetry_operation_params<so_merge_t> params(set1, m, seq, set2);
 
     so_merge_se_t().perform(params);
 
@@ -169,18 +170,18 @@ void so_merge_se_label_test::test_nm1_2(
 
     typedef se_label<3, double> se3_t;
     typedef se_label<1, double> se1_t;
-    typedef so_merge<3, 3, 1, double> so_merge_t;
-    typedef symmetry_operation_impl<so_merge_t, se3_t> so_merge_se_t;
+    typedef so_merge<3, 2, double> so_merge_t;
+    typedef symmetry_operation_impl<so_merge_t, se1_t> so_merge_se_t;
 
     index<3> i1a, i1b;
     i1b[0] = 3; i1b[1] = 3; i1b[2] = 3;
     dimensions<3> bidims1(index_range<3>(i1a, i1b));
-    mask<3> m[1]; m[0][0] = m[0][1] = m[0][2] = true;
+    mask<3> m; m[0] = m[1] = m[2] = true;
 
     se3_t el1(bidims1, table_id);
     {
         block_labeling<3> &bl1 = el1.get_labeling();
-        for (size_t i = 0; i < 4; i++) bl1.assign(m[0], i, i);
+        for (size_t i = 0; i < 4; i++) bl1.assign(m, i, i);
         el1.set_rule(2);
     }
 
@@ -188,7 +189,8 @@ void so_merge_se_label_test::test_nm1_2(
     symmetry_element_set<1, double> set2(se1_t::k_sym_type);
 
     set1.insert(el1);
-    symmetry_operation_params<so_merge_t> params(set1, m, set2);
+    sequence<3, size_t> seq(0);
+    symmetry_operation_params<so_merge_t> params(set1, m, seq, set2);
 
     so_merge_se_t().perform(params);
 
@@ -225,8 +227,8 @@ void so_merge_se_label_test::test_2n2nn_1(
 
     typedef se_label<4, double> se4_t;
     typedef se_label<2, double> se2_t;
-    typedef so_merge<4, 4, 2, double> so_merge_t;
-    typedef symmetry_operation_impl<so_merge_t, se4_t> so_merge_se_t;
+    typedef so_merge<4, 2, double> so_merge_t;
+    typedef symmetry_operation_impl<so_merge_t, se2_t> so_merge_se_t;
 
     index<4> i1a, i1b;
     i1b[0] = 3; i1b[1] = 3; i1b[2] = 3; i1b[3] = 3;
@@ -244,10 +246,9 @@ void so_merge_se_label_test::test_2n2nn_1(
     symmetry_element_set<2, double> set2(se2_t::k_sym_type);
 
     set1.insert(el1);
-    mask<4> m[2];
-    m[0][0] = m[0][2] = true;
-    m[1][1] = m[1][3] = true;
-    symmetry_operation_params<so_merge_t> params(set1, m, set2);
+    mask<4> m; m[0] = m[2] = m[1] = m[3] = true;
+    sequence<4, size_t> seq(0); seq[1] = seq[3] = 1;
+    symmetry_operation_params<so_merge_t> params(set1, m, seq, set2);
 
     so_merge_se_t().perform(params);
 
@@ -284,8 +285,8 @@ void so_merge_se_label_test::test_2n2nn_2(const std::string &table_id,
 
     typedef se_label<4, double> se4_t;
     typedef se_label<2, double> se2_t;
-    typedef so_merge<4, 4, 2, double> so_merge_t;
-    typedef symmetry_operation_impl<so_merge_t, se4_t> so_merge_se_t;
+    typedef so_merge<4, 2, double> so_merge_t;
+    typedef symmetry_operation_impl<so_merge_t, se2_t> so_merge_se_t;
 
     index<4> i1a, i1b;
     i1b[0] = 3; i1b[1] = 3; i1b[2] = 3; i1b[3] = 3;
@@ -314,10 +315,10 @@ void so_merge_se_label_test::test_2n2nn_2(const std::string &table_id,
     symmetry_element_set<2, double> set2(se2_t::k_sym_type);
 
     set1.insert(el1);
-    mask<4> m[2];
-    m[0][0] = m[0][2] = true;
-    m[1][1] = m[1][3] = true;
-    symmetry_operation_params<so_merge_t> params(set1, m, set2);
+    mask<4> m;
+    m[0] = m[1] = m[2] = m[3] = true;
+    sequence<4, size_t> seq(0); seq[1] = seq[3] = 1;
+    symmetry_operation_params<so_merge_t> params(set1, m, seq, set2);
 
     so_merge_se_t().perform(params);
 
@@ -355,8 +356,8 @@ void so_merge_se_label_test::test_nmk_1(const std::string &table_id,
 
     typedef se_label<5, double> se5_t;
     typedef se_label<3, double> se3_t;
-    typedef so_merge<5, 4, 2, double> so_merge_t;
-    typedef symmetry_operation_impl<so_merge_t, se5_t> so_merge_se_t;
+    typedef so_merge<5, 2, double> so_merge_t;
+    typedef symmetry_operation_impl<so_merge_t, se3_t> so_merge_se_t;
 
     index<5> i1a, i1b;
     i1b[0] = 3; i1b[1] = 3; i1b[2] = 3; i1b[3] = 3; i1b[4] = 3;
@@ -388,10 +389,9 @@ void so_merge_se_label_test::test_nmk_1(const std::string &table_id,
     symmetry_element_set<3, double> set2(se3_t::k_sym_type);
 
     set1.insert(el1);
-    mask<5> m[2];
-    m[0][0] = m[0][1] = true;
-    m[1][2] = m[1][3] = true;
-    symmetry_operation_params<so_merge_t> params(set1, m, set2);
+    mask<5> m; m[0] = m[1] = m[2] = m[3] = true;
+    sequence<5, size_t> seq(0); seq[2] = seq[3] = 1;
+    symmetry_operation_params<so_merge_t> params(set1, m, seq, set2);
 
     so_merge_se_t().perform(params);
 
@@ -443,8 +443,8 @@ void so_merge_se_label_test::test_nmk_2(const std::string &table_id,
 
     typedef se_label<5, double> se5_t;
     typedef se_label<3, double> se3_t;
-    typedef so_merge<5, 4, 2, double> so_merge_t;
-    typedef symmetry_operation_impl<so_merge_t, se5_t> so_merge_se_t;
+    typedef so_merge<5, 2, double> so_merge_t;
+    typedef symmetry_operation_impl<so_merge_t, se3_t> so_merge_se_t;
 
     index<5> i1a, i1b;
     i1b[0] = 3; i1b[1] = 3; i1b[2] = 3; i1b[3] = 3; i1b[4] = 3;
@@ -474,10 +474,9 @@ void so_merge_se_label_test::test_nmk_2(const std::string &table_id,
     symmetry_element_set<3, double> set2(se3_t::k_sym_type);
 
     set1.insert(el1);
-    mask<5> m[2];
-    m[0][0] = m[0][1] = true;
-    m[1][2] = m[1][3] = true;
-    symmetry_operation_params<so_merge_t> params(set1, m, set2);
+    mask<5> m; m[0] = m[1] = m[2] = m[3] = true;
+    sequence<5, size_t> seq(0); seq[2] = seq[3] = 1;
+    symmetry_operation_params<so_merge_t> params(set1, m, seq, set2);
 
     so_merge_se_t().perform(params);
 
