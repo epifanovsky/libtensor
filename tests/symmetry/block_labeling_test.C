@@ -357,20 +357,17 @@ void block_labeling_test::test_transfer_2() throw(libtest::test_exception) {
         elema.assign(m001, 2, 1); elema.assign(m001, 3, 2);
         elema.assign(m001, 4, 3); elema.assign(m001, 5, 3);
 
-        sequence<3, size_t> mapa; mapa[0] = mapa[1] = 1; mapa[2] = 0;
+        sequence<3, size_t> mapa;
+        mapa[0] = 1; mapa[1] = (size_t) -1; mapa[2] = 0;
 
         transfer_labeling(elema, mapa, elemb);
 
         mask<3> done;
         for (size_t i = 0; i < 3; i++) {
+            if (mapa[i] == (size_t) -1) continue;
 
             size_t typea = elema.get_dim_type(i);
             size_t typeb = elemb.get_dim_type(mapa[i]);
-
-            for (size_t j = i + 1; j < 3; j++) {
-                if (mapa[j] == mapa[i]) done[j];
-            }
-
 
             if (elema.get_dim(typea) != elemb.get_dim(typeb))
                 fail_test(testname, __FILE__, __LINE__,
@@ -382,8 +379,6 @@ void block_labeling_test::test_transfer_2() throw(libtest::test_exception) {
                     fail_test(testname, __FILE__, __LINE__,
                             "Labels do not match.");
             }
-
-            done[i] = true;
         }
 
     } catch(exception &e) {
