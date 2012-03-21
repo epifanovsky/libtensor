@@ -35,6 +35,10 @@ public:
         }
     }
 
+    /** \brief Return the size of the sequence
+     **/
+    size_t size() const { return m_perm.size(); }
+
     /** \brief Obtain the current permutation of the sequence
      **/
     const size_t &operator[](size_t i) const { return m_perm[i]; }
