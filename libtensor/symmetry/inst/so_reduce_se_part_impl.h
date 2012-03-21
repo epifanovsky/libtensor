@@ -74,8 +74,8 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_part<N - M, T> >::do_perform(
         }
 
         size_t nbpp = bidims[j1] / nix[i];
-        ixa[i] = params.rrange.get_begin()[j1] / nbpp;
-        ixb[i] = params.rrange.get_end()[j1] / nbpp;
+        ixa[i] = params.rblrange.get_begin()[j1] / nbpp;
+        ixb[i] = params.rblrange.get_end()[j1] / nbpp;
     }
 
     // Determine the sizes of the remaining dimensions

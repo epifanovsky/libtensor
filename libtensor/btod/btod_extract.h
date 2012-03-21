@@ -125,9 +125,16 @@ btod_extract<N, M>::btod_extract(block_tensor_i<N, double> &bta,
 
 	block_tensor_ctrl<N, double> ctrla(bta);
 
+	sequence<N, size_t> seq(0);
+	mask<N> invmsk;
+	for (register size_t i = 0, j = 0; i < N; i++) {
+	    invmsk[i] = !m_msk[i];
+	    if (invmsk[i]) seq[i] = j++;
+	}
+
 	so_reduce<N, M, double>(ctrla.req_const_symmetry(),
-	        m_msk, sequence<N, size_t>(0),
-	        index_range<N>(idxbl, idxbl)).perform(m_sym);
+	        invmsk, seq, index_range<N>(idxbl, idxbl),
+	        index_range<N>(idxibl, idxibl)).perform(m_sym);
 
 	make_schedule();
 }
@@ -148,9 +155,17 @@ btod_extract<N, M>::btod_extract(block_tensor_i<N, double> &bta,
 
 	block_tensor_ctrl<N, double> ctrla(bta);
 	symmetry<k_orderb, double> sym(bisinv);
+
+	sequence<N, size_t> seq(0);
+    mask<N> invmsk;
+    for (register size_t i = 0, j = 0; i < N; i++) {
+        invmsk[i] = !m_msk[i];
+        if (invmsk[i]) seq[i] = j++;
+    }
+
 	so_reduce<N, M, double>(ctrla.req_const_symmetry(),
-	        m_msk, sequence<N, size_t>(0),
-	        index_range<N>(idxbl, idxbl)).perform(sym);
+	        invmsk, seq, index_range<N>(idxbl, idxbl),
+	        index_range<N>(idxibl, idxibl)).perform(sym);
 	so_permute<k_orderb, double>(sym, perm).perform(m_sym);
 
 	make_schedule();

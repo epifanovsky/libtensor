@@ -39,7 +39,7 @@ void so_reduce_se_perm_test::test_empty_1() throw(libtest::test_exception) {
 	sequence<4, size_t> seq(0);
 	index<4> i1a, i1b; i1b[0] = i1b[1] = i1b[2] = i1b[3] = 3;
 	index_range<4> ir(i1a, i1b);
-	symmetry_operation_params<so_reduce_t> params(set1, msk, seq, ir, set2);
+	symmetry_operation_params<so_reduce_t> params(set1, msk, seq, ir, ir, set2);
 
 	so_reduce_se_t().perform(params);
 
@@ -74,7 +74,7 @@ void so_reduce_se_perm_test::test_empty_2() throw(libtest::test_exception) {
     sequence<6, size_t> seq(0); seq[1] = seq[3] = 1;
     index<6> ia, ib; ib[0] = ib[1] = ib[2] = ib[3] = ib[4] = ib[5] = 4;
     index_range<6> ir(ia, ib);
-	symmetry_operation_params<so_reduce_t> params(set1, msk, seq, ir, set2);
+	symmetry_operation_params<so_reduce_t> params(set1, msk, seq, ir, ir, set2);
 
 	so_reduce_se_t().perform(params);
 
@@ -117,7 +117,7 @@ void so_reduce_se_perm_test::test_nm1_1(
 	sequence<2, size_t> seq(0);
 	index<2> ia, ib; ib[0] = ib[1] = 2;
 	index_range<2> ir(ia, ib);
-	symmetry_operation_params<so_reduce_t> params(set1, msk, seq, ir, set2);
+	symmetry_operation_params<so_reduce_t> params(set1, msk, seq, ir, ir, set2);
 
 	so_reduce_se_t().perform(params);
 
@@ -158,7 +158,7 @@ void so_reduce_se_perm_test::test_nm1_2(
     sequence<4, size_t> seq(0);
     index<4> ia, ib; ib[0] = ib[1] = ib[2] = ib[3] = 2;
     index_range<4> ir(ia, ib);
-    symmetry_operation_params<so_reduce_t> params(set1, msk, seq, ir, set2);
+    symmetry_operation_params<so_reduce_t> params(set1, msk, seq, ir, ir, set2);
 
     so_reduce_se_t().perform(params);
 
@@ -220,7 +220,7 @@ void so_reduce_se_perm_test::test_nmk_1(
 	sequence<5, size_t> seq(0); seq[4] = 1;
 	index<5> ia, ib; ib[0] = ib[1] = ib[2] = ib[3] = ib[4] = 4;
 	index_range<5> ir(ia, ib);
-	symmetry_operation_params<so_reduce_t> params(set1, msk, seq, ir, set2);
+	symmetry_operation_params<so_reduce_t> params(set1, msk, seq, ir, ir, set2);
 
 	so_reduce_se_t().perform(params);
 
@@ -282,7 +282,7 @@ void so_reduce_se_perm_test::test_nmk_2(
 	sequence<6, size_t> seq; seq[3] = 1; seq[4] = 2;
 	index<6> ia, ib; ib[0] = ib[1] = ib[2] = ib[3] = ib[4] = ib[5] = 4;
 	index_range<6> ir(ia, ib);
-	symmetry_operation_params<so_reduce_t> params(set1, msk, seq, ir, set2);
+	symmetry_operation_params<so_reduce_t> params(set1, msk, seq, ir, ir, set2);
 
 	so_reduce_se_t().perform(params);
 
@@ -350,7 +350,7 @@ void so_reduce_se_perm_test::test_nmk_3(
     index<8> i1, i2;
     i2[0] = i2[1] = i2[2] = i2[3] = i2[4] = i2[5] = i2[6] = i2[7] = 3;
     index_range<8> ir(i1, i2);
-    symmetry_operation_params<so_reduce_t> params(set1, msk, seq, ir, set2);
+    symmetry_operation_params<so_reduce_t> params(set1, msk, seq, ir, ir, set2);
 
     so_reduce_se_t().perform(params);
 

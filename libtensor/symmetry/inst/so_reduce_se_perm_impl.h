@@ -39,16 +39,40 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_perm<N - M, T> >::do_perform(
 
     adapter_t g2(set);
     params.grp2.clear();
+
+    const index<k_order1> &bia = params.rblrange.get_begin();
+    const index<k_order1> &bib = params.rblrange.get_end();
+    const index<k_order1> &ia = params.riblrange.get_begin();
+    const index<k_order1> &ib = params.riblrange.get_end();
+    bool single_blk = (bia == params.rblrange.get_end());
+    bool single_idx = (single_blk && ia == params.riblrange.get_end());
+
     for (typename adapter_t::iterator it = g2.begin(); it != g2.end(); it++) {
+
         const el1_t &e2 = g2.get_elem(it);
+
+        // Exclude all permutations for which the block indexes and in-block
+        // indexes of the reduction range differ
+        index<k_order1> bia2(bia), bib2(bib), ia2(ia), ib2(ib);
+        bia2.permute(e2.get_perm());
+        bib2.permute(e2.get_perm());
+        ia2.permute(e2.get_perm());
+        ib2.permute(e2.get_perm());
+
+        register size_t j = 0;
+        for (; j < k_order1; j++) {
+            if (! params.msk[j]) continue;
+            if (bia2[j] != bia[j] || bib2[j] != bib[j] ||
+                    ia2[j] != ia[j] || ib2[j] != ib[j]) break;
+        }
+        if (j != k_order1) continue;
 
         sequence<k_order1, size_t> seq1a(0), seq2a(0);
         sequence<k_order2, size_t> seq1b(0), seq2b(0);
-
-        for (size_t j = 0; j < k_order1; j++) seq1a[j] = seq2a[j] = j;
+        for (j = 0; j < k_order1; j++) seq1a[j] = seq2a[j] = j;
         e2.get_perm().apply(seq2a);
 
-        for (size_t j = 0, k = 0; j < k_order1; j++) {
+        for (register size_t j = 0, k = 0; j < k_order1; j++) {
             if (params.msk[j]) continue;
 
             seq1b[k] = seq1a[j];
@@ -57,6 +81,7 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_perm<N - M, T> >::do_perform(
         }
 
         permutation_builder<k_order2> pb(seq2b, seq1b);
+
         if (pb.get_perm().is_identity()) {
             if (e2.is_symm()) continue;
 

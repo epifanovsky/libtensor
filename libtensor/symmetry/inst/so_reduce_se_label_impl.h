@@ -51,9 +51,9 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_label<N - M, T> >::do_perform(
     for (size_t i = 0, j = 0; i < k_order1; i++) {
         if (params.msk[i]) {
 #ifdef LIBTENSOR_DEBUG
-            if (params.rrange.get_end()[i] >= bidims1[i]) {
+            if (params.rblrange.get_end()[i] >= bidims1[i]) {
                 throw bad_parameter(g_ns, k_clazz, method,
-                        __FILE__, __LINE__, "rrange.");
+                        __FILE__, __LINE__, "rblrange.");
             }
 #endif
         }
@@ -67,16 +67,16 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_label<N - M, T> >::do_perform(
     std::set<std::string> id_done;
     for (; it1 != g1.end(); it1++) {
 
+        const el1_t &se1 = g1.get_elem(it1);
+
 #ifdef LIBTENSOR_DEBUG
         // Check that the block index dimensions are alright.
-        if (bidims1 !=
-                g1.get_elem(it1).get_labeling().get_block_index_dims()) {
+        if (bidims1 != se1.get_labeling().get_block_index_dims()) {
             throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
                     "Incompatible se_labels in input.");
         }
 #endif
 
-        const el1_t &se1 = g1.get_elem(it1);
         if (id_done.count(se1.get_table_id()) != 0) continue;
 
         combine_label<k_order1, T> cl1(se1);
@@ -88,7 +88,7 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_label<N - M, T> >::do_perform(
 
             cl1.add(se1b);
         }
-        const block_labeling<N> &bl1 = cl1.get_labeling();
+        const block_labeling<k_order1> &bl1 = cl1.get_labeling();
 
         // Create result se_label
         el2_t se2(bidims2, cl1.get_table_id());
@@ -109,8 +109,8 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_label<N - M, T> >::do_perform(
             // Does this dimension contain the invalid label?
             size_t type1 = bl1.get_dim_type(j);
             label_set_t ls;
-            for (register size_t k = params.rrange.get_begin()[j];
-                        k <= params.rrange.get_end()[j] &&
+            for (register size_t k = params.rblrange.get_begin()[j];
+                        k <= params.rblrange.get_end()[j] &&
                                 (! has_invalid[i]); k++) {
                 label_t l = bl1.get_label(type1, k);
                 has_invalid[i] = has_invalid[i] ||
@@ -132,8 +132,8 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_label<N - M, T> >::do_perform(
 
                 size_t type2 = bl1.get_dim_type(j);
                 if (type1 == type2) continue;
-                for (register size_t k = params.rrange.get_begin()[j];
-                            k <= params.rrange.get_end()[j] &&
+                for (register size_t k = params.rblrange.get_begin()[j];
+                            k <= params.rblrange.get_end()[j] &&
                                     (! has_invalid[i]); k++) {
 
                     has_invalid[i] = has_invalid[i] ||

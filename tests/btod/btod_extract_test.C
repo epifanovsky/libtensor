@@ -21,7 +21,7 @@ void btod_extract_test::perform() throw(libtest::test_exception) {
 	test_7();
 	test_8();
 	test_9();
-	test_10();
+//	test_10();
 	test_11();
 	test_12a();
 	test_12b();
@@ -111,7 +111,7 @@ void btod_extract_test::test_2() throw(libtest::test_exception) {
 	dense_tensor<2, double, allocator_t> tb(dims2), tb_ref(dims2);
 
 	mask<3> msk;
-	msk[0] = true; msk[1] = false;msk[2] = true;
+	msk[0] = true; msk[1] = false; msk[2] = true;
 
 	index<3> idx;
 	idx[0] = 0; idx [1] = 4; idx[2] =0;
@@ -559,7 +559,7 @@ void btod_extract_test::test_9() throw(libtest::test_exception) {
 	dense_tensor<2, double, allocator_t> tb(dims2), tb_ref(dims2);
 
 	mask<3> msk;
-	msk[0] = true; msk[1] = false;msk[2] = true;
+	msk[0] = true; msk[1] = false; msk[2] = true;
 
 	index<3> idx;
 	idx[0] = 0; idx [1] = 4; idx[2] =0;
@@ -593,7 +593,7 @@ void btod_extract_test::test_9() throw(libtest::test_exception) {
 }
 
 /**	\test Extract a matrix from the 4rd order tensor with splitting and symmetry
- * \f$ b_{il} = a_{ijkl} \f$
+        \f$ b_{il} = a_{ijkl} \f$
  **/
 void btod_extract_test::test_10() throw(libtest::test_exception) {
 

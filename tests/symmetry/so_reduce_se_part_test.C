@@ -44,7 +44,8 @@ void so_reduce_se_part_test::test_empty_1() throw(libtest::test_exception) {
         sequence<4, size_t> seq(0);
         index<4> ia, ib; ib[2] = ib[3] = 2;
         index_range<4> ir(ia, ib);
-        symmetry_operation_params<so_reduce_t> params(set1, msk, seq, ir, set2);
+        symmetry_operation_params<so_reduce_t> params(set1, msk,
+                seq, ir, ir, set2);
 
         so_reduce_se_t().perform(params);
 
@@ -79,7 +80,8 @@ void so_reduce_se_part_test::test_empty_2() throw(libtest::test_exception) {
         sequence<5, size_t> seq(0); seq[3] = 1;
         index<5> ia, ib; ib[0] = ib[1] = ib[2] = ib[3] = ib[4] = 4;
         index_range<5> ir(ia, ib);
-        symmetry_operation_params<so_reduce_t> params(set1, msk, seq, ir, set2);
+        symmetry_operation_params<so_reduce_t> params(set1, msk,
+                seq, ir, ir, set2);
 
         so_reduce_se_t().perform(params);
 
@@ -148,9 +150,12 @@ throw(libtest::test_exception) {
 
         mask<2> m; m[1] = true;
         sequence<2, size_t> seq(0);
-        index<2> ia, ib; ib[0] = ib[1] = 3;
+        index<2> bia, bib, ia, ib;
+        bib[0] = bib[1] = 3;
+        index_range<2> bir(bia, bib);
         index_range<2> ir(ia, ib);
-        symmetry_operation_params<so_reduce_t> params(seta, m, seq, ir, setb);
+        symmetry_operation_params<so_reduce_t> params(seta, m,
+                seq, bir, ir, setb);
         so_reduce_se_t().perform(params);
 
         if(setb.is_empty()) {
@@ -242,9 +247,11 @@ void so_reduce_se_part_test::test_nm1_2(
         setb_ref.insert(elb);
 
         sequence<4, size_t> seq(0);
-        index<4> ia, ib; ib[0] = ib[1] = 3; ib[2] = ib[3] = 5;
-        index_range<4> ir(ia, ib);
-        symmetry_operation_params<so_reduce_t> params(seta, m2a, seq, ir, setb);
+        index<4> bia, bib; bib[0] = bib[1] = 3; bib[2] = bib[3] = 5;
+        index<4> ia, ib; ib[0] = ib[1] = 0; ib[2] = ib[3] = 1;
+        index_range<4> bir(bia, bib), ir(ia, ib);
+        symmetry_operation_params<so_reduce_t> params(seta, m2a,
+                seq, bir, ir, setb);
 
         so_reduce_se_t().perform(params);
 
@@ -325,9 +332,11 @@ void so_reduce_se_part_test::test_nm1_3(
 
         mask<4> msk; msk[2] = msk[3] = true;
         sequence<4, size_t> seq(0);
-        index<4> ia, ib; ib[0] = ib[1] = 3; ib[2] = ib[3] = 5;
-        index_range<4> ir(ia, ib);
-        symmetry_operation_params<so_reduce_t> params(seta, msk, seq, ir, setb);
+        index<4> bia, bib; bib[0] = bib[1] = 3; bib[2] = bib[3] = 5;
+        index<4> ia, ib; ib[0] = ib[1] = 0; ib[2] = ib[3] = 1;
+        index_range<4> bir(bia, bib), ir(ia, ib);
+        symmetry_operation_params<so_reduce_t> params(seta, msk,
+                seq, bir, ir, setb);
 
         so_reduce_se_t().perform(params);
 
@@ -407,9 +416,11 @@ void so_reduce_se_part_test::test_nm1_4(
 
         mask<4> msk; msk[2] = msk[3] = true;
         sequence<4, size_t> seq(0);
-        index<4> ia, ib; ib[0] = 3; ib[1] = ib[2] = ib[3] = 5;
-        index_range<4> ir(ia, ib);
-        symmetry_operation_params<so_reduce_t> params(seta, msk, seq, ir, setb);
+        index<4> bia, bib; bib[0] = 3; bib[1] = bib[2] = bib[3] = 5;
+        index<4> ia, ib; ib[0] = 0; ib[1] = ib[2] = ib[3] = 1;
+        index_range<4> bir(bia, bib), ir(ia, ib);
+        symmetry_operation_params<so_reduce_t> params(seta, msk,
+                seq, bir, ir, setb);
 
         so_reduce_se_t().perform(params);
 
@@ -489,9 +500,11 @@ void so_reduce_se_part_test::test_nm1_5(
         setb_ref.insert(elb);
 
         sequence<4, size_t> seq(0);
-        index<4> ia, ib; ib[0] = ib[1] = 3; ib[2] = ib[3] = 5;
-        index_range<4> ir(ia, ib);
-        symmetry_operation_params<so_reduce_t> params(seta, m1a, seq, ir, setb);
+        index<4> bia, bib; bib[0] = bib[1] = 3; bib[2] = bib[3] = 5;
+        index<4> ia, ib; ib[0] = ib[1] = 0; ib[2] = ib[3] = 1;
+        index_range<4> bir(bia, bib), ir(ia, ib);
+        symmetry_operation_params<so_reduce_t> params(seta, m1a,
+                seq, bir, ir, setb);
 
         so_reduce_se_t().perform(params);
 
@@ -560,9 +573,11 @@ void so_reduce_se_part_test::test_nm1_6(
 
         mask<4> msk; msk[2] = msk[3] = true;
         sequence<4, size_t> seq(0);
-        index<4> ia, ib; ib[0] = ib[1] = 3; ib[2] = ib[3] = 5;
-        index_range<4> ir(ia, ib);
-        symmetry_operation_params<so_reduce_t> params(seta, msk, seq, ir, setb);
+        index<4> bia, bib; bib[0] = bib[1] = 3; bib[2] = bib[3] = 5;
+        index<4> ia, ib; ib[0] = ib[1] = 0; ib[2] = ib[3] = 1;
+        index_range<4> bir(bia, bib), ir(ia, ib);
+        symmetry_operation_params<so_reduce_t> params(seta, msk,
+                seq, bir, ir, setb);
 
         so_reduce_se_t().perform(params);
 
@@ -659,9 +674,11 @@ void so_reduce_se_part_test::test_nmk_1(
 
         mask<4> msk; msk[3] = msk[1] = true;
         sequence<4, size_t> seq(0); seq[1] = 1;
-        index<4> ia, ib; ib[0] = ib[1] = 3; ib[2] = ib[3] = 5;
-        index_range<4> ir(ia, ib);
-        symmetry_operation_params<so_reduce_t> params(seta, msk, seq, ir, setb);
+        index<4> bia, bib; bib[0] = bib[1] = 3; bib[2] = bib[3] = 5;
+        index<4> ia, ib; ib[0] = ib[1] = 0; ib[2] = ib[3] = 1;
+        index_range<4> bir(bia, bib), ir(ia, ib);
+        symmetry_operation_params<so_reduce_t> params(seta, msk,
+                seq, bir, ir, setb);
 
         so_reduce_se_t().perform(params);
 
@@ -846,9 +863,12 @@ void so_reduce_se_part_test::test_nmk_2(
 
         mask<6> msk; msk[1] = true; msk[4] = msk[2] = msk[5] = true;
         sequence<6, size_t> seq(0); seq[2] = seq[5] = 1;
-        index<6> ia, ib; ib[0] = ib[3] = 3; ib[1] = ib[2] = ib[4] = ib[5] = 5;
-        index_range<6> ir(ia, ib);
-        symmetry_operation_params<so_reduce_t> params(seta, msk, seq, ir, setb);
+        index<6> bia, bib, ia, ib;
+        bib[0] = bib[3] = 3; bib[1] = bib[2] = bib[4] = bib[5] = 5;
+        ib[0] = ib[3] = 0; ib[1] = ib[2] = ib[4] = ib[5] = 1;
+        index_range<6> bir(bia, bib), ir(ia, ib);
+        symmetry_operation_params<so_reduce_t> params(seta, msk,
+                seq, bir, ir, setb);
 
         so_reduce_se_t().perform(params);
 

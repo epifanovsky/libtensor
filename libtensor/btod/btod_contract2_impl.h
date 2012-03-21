@@ -583,7 +583,7 @@ void btod_contract2_symmetry_builder<N, N, K>::make_symmetry(
     block_index_space<2 * (N + K)> xbis(base_t::get_xbis());
     const block_index_space<2 * N> &bis = base_t::get_bis();
 
-    sequence<2 * (N + K), size_t> seq1(0), seq2(0);
+    sequence<2 * (N + K), size_t> seq1(0), seq2(0), seq(0);
     mask<2 * (N + K)> msk;
     for (size_t i = 0, k = 0; i < 2 * (N + K); i++) {
         seq1[i] = i;
@@ -592,11 +592,10 @@ void btod_contract2_symmetry_builder<N, N, K>::make_symmetry(
         }
         else if (i < N + K) { // contracted indexes
             size_t j = 2 * (N + k);
-            msk[j] = true;
+            msk[j] = msk[j + 1] = true;
+            seq[j] = seq[j + 1] = k;
             seq2[j] = i;
-            j++;
-            msk[j] = true;
-            seq2[j] = conn[i + 2 * N] - 2 * N;
+            seq2[j + 1] = conn[i + 2 * N] - 2 * N;
             k++;
         }
     }
@@ -619,12 +618,15 @@ void btod_contract2_symmetry_builder<N, N, K>::make_symmetry(
         xsymab.insert(se_perm<2 * (N + K), double>(permab, true));
     }
 
+    dimensions<2 * (N + K)> bidims = xbis.get_block_index_dims();
+    index<2 * (N + K)> bia, bib;
+    for (register size_t i = 0; i < 2 * (N + K); i++) bib[i] = bidims[i] - 1;
+    dimensions<2 * (N + K)> bdims = xbis.get_block_dims(bib);
     index<2 * (N + K)> ia, ib;
-    for (register size_t i = 0; i < 2 * (N + K); i++) {
-        ib[i] = xbis.get_splits(xbis.get_type(i)).get_num_points();
-    }
-    so_reduce<2 * (N + K), 2 * K, double>(xsymab, msk, seq2,
-            index_range<2 * (N + K)>(ia, ib)).perform(base_t::get_symmetry());
+    for (register size_t i = 0; i < 2 * (N + K); i++) ib[i] = bdims[i] - 1;
+    index_range<2 * (N + K)> bir(bia, bib), ir(ia, ib);
+    so_reduce<2 * (N + K), 2 * K, double>(xsymab, msk,
+            seq, bir, ir).perform(base_t::get_symmetry());
 }
 
 template<size_t N, size_t M, size_t K>
@@ -728,7 +730,7 @@ void btod_contract2_symmetry_builder_base<N, M, K>::make_symmetry(
 
     const sequence<2 * (N + M + K), size_t> &conn = contr.get_conn();
 
-    sequence<N + M + 2 * K, size_t> seq1(0), seq2(0);
+    sequence<N + M + 2 * K, size_t> seq1(0), seq2(0), seq(0);
     mask<N + M + 2 * K> msk;
     for (size_t i = 0, k = 0; i < N + M + 2 * K; i++) {
         seq1[i] = i;
@@ -737,11 +739,10 @@ void btod_contract2_symmetry_builder_base<N, M, K>::make_symmetry(
         }
         else if (i < N + K) { // contracted indexes
             size_t j = N + M + 2 * k;
-            msk[j] = true;
+            msk[j] = msk[j + 1] = true;
+            seq[j] = seq[j + 1] = k;
             seq2[j] = i;
-            j++;
-            msk[j] = true;
-            seq2[j] = conn[i + N + M] - (N + M);
+            seq2[j + 1] = conn[i + N + M] - (N + M);
             k++;
         }
     }
@@ -752,13 +753,15 @@ void btod_contract2_symmetry_builder_base<N, M, K>::make_symmetry(
     so_dirprod<N + K, M + K, double>(ca.req_const_symmetry(),
             cb.req_const_symmetry(), pb.get_perm()).perform(xsymab);
 
-    index<N + M + 2 * K> ia, ib;
-    for (register size_t i = 0; i < N + M + 2 * K; i++) {
-        ib[i] = xbis.get_splits(xbis.get_type(i)).get_num_points();
-    }
-    so_reduce<N + M + 2 * K, 2 * K, double>(xsymab, msk, seq2,
-            index_range<N + M + 2 * K>(ia, ib)).perform(get_symmetry());
+    dimensions<N + M + 2 * K> bidims = xbis.get_block_index_dims();
+    index<N + M + 2 * K> bia, bib, ia, ib;
+    for (register size_t i = 0; i < N + M + 2 * K; i++) bib[i] = bidims[i] - 1;
+    dimensions<N + M + 2 * K> bdims = xbis.get_block_dims(bib);
+    for (register size_t i = 0; i < N + M + 2 * K; i++) ib[i] = bdims[i] - 1;
 
+    index_range<N + M + 2 * K> ir(ia, ib), bir(bia, bib);
+    so_reduce<N + M + 2 * K, 2 * K, double>(xsymab, msk,
+            seq, bir, ir).perform(get_symmetry());
 }
 
 } // namespace libtensor
