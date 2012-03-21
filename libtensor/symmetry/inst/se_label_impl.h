@@ -142,10 +142,11 @@ bool se_label<N, T>::is_allowed(const index<N> &idx) const {
             }
 
             lg.push_back(m_rule.get_intrinsic(it));
-            if (! m_pt.is_in_product(lg, m_rule.get_target(it))) {
-                is_allowed = false; break;
-            }
+            is_allowed = is_allowed &&
+                    m_pt.is_in_product(lg, m_rule.get_target(it));
             lg.pop_back();
+
+            if (! is_allowed) break;
         }
 
         if (is_allowed) return true;
