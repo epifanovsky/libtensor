@@ -52,6 +52,9 @@ symmetry_operation_impl< so_dirsum<N, M, T>, se_label<N + M, T> >::do_perform(
     typedef symmetry_element_set_adapter< N, T, se_label<N, T> > adapter1_t;
     typedef symmetry_element_set_adapter< M, T, se_label<M, T> > adapter2_t;
 
+    typedef typename evaluation_rule<N + M>::rule_id_t rule_id_t;
+    typedef std::map<rule_id_t, rule_id_t> rule_id_map_t;
+
     adapter1_t g1(params.g1);
     adapter2_t g2(params.g2);
     params.g3.clear();
@@ -68,7 +71,7 @@ symmetry_operation_impl< so_dirsum<N, M, T>, se_label<N + M, T> >::do_perform(
     for (size_t j = 0; j < M; j++) map2[j] = map[j + N];
 
     dimensions<N + M> bidims = params.bis.get_block_index_dims();
-    //  Go over each element in the first source group
+    //  Loop over each element in the first source group
     for (typename adapter1_t::iterator it1 = g1.begin();
             it1 != g1.end(); it1++) {
 
@@ -89,34 +92,25 @@ symmetry_operation_impl< so_dirsum<N, M, T>, se_label<N + M, T> >::do_perform(
 
         // If there is none
         if (it2 == g2.end()) {
-            // Transfer the rule from e1
-            evaluation_rule r3(e1.get_rule());
-            for (evaluation_rule::rule_iterator ir = r3.begin();
-                    ir != r3.end(); ir++) {
 
-                evaluation_rule::basic_rule &br3 =
-                        r3.get_rule(r3.get_rule_id(ir));
-                for (size_t i = 0; i < br3.order.size(); i++) {
-                    if (br3.order[i] == evaluation_rule::k_intrinsic) continue;
-                    br3.order[i] = map1[br3.order[i]];
-                }
-            }
+            // Create a fake rule for non-existing e2 that allows all blocks
+            const product_table_i &pt =
+                    product_table_container::get_instance().
+                    req_const_table(e1.get_table_id());
 
-            // Create a fake rule for non-existing e2
-            // There are 2 ways to do this:
-            // 1. create a rule with an evaluation order for all M dims but
-            //    w/o intrinsic label
-            // 2. create a rule with an evaluation order that just has the
-            //    intrinsic label and use 0 (at least) as intrinsic label
-            std::vector<size_t> o3x(M);
-            for (size_t i = 0; i < M; i++) o3x[i] = map2[i];
-            evaluation_rule::label_set i3x; i3x.insert(0);
-            evaluation_rule::rule_id rid = r3.add_rule(i3x, o3x);
+            evaluation_rule<N + M> r3;
+            basic_rule<N + M> br3(pt.get_complete_set());
+            for (size_t i = 0; i < N + M; i++) br3[i] = 1;
+
+            rule_id_t rid = r3.add_rule(br3);
             r3.add_product(rid);
 
             // Set the rule and finish off
             e3.set_rule(r3);
             params.g3.insert(e3);
+
+            product_table_container::get_instance().
+                    ret_table(e1.get_table_id());
 
             continue;
         }
@@ -126,59 +120,47 @@ symmetry_operation_impl< so_dirsum<N, M, T>, se_label<N + M, T> >::do_perform(
         transfer_labeling(e2.get_labeling(), map2, e3.get_labeling());
 
         // Combine the evaluation rules
-        evaluation_rule r3;
-        const evaluation_rule &r1 = e1.get_rule();
-        const evaluation_rule &r2 = e2.get_rule();
+        evaluation_rule<N + M> r3;
+        const evaluation_rule<N> &r1 = e1.get_rule();
+        const evaluation_rule<M> &r2 = e2.get_rule();
 
-        typedef evaluation_rule::rule_id rule_id;
-        typedef std::map<rule_id, rule_id> rule_id_map;
-        typedef std::pair<rule_id, rule_id> rule_id_pair;
-        rule_id_map m1to3, m2to3;
-
-        for (evaluation_rule::rule_iterator ir = r1.begin();
+        // a) Transfer the basic rules
+        rule_id_map_t m1to3, m2to3;
+        for (typename evaluation_rule<N>::rule_iterator ir = r1.begin();
                 ir != r1.end(); ir++) {
 
-            const evaluation_rule::basic_rule &br1 = r1.get_rule(ir);
-
-            rule_id rid3 = r3.add_rule(br1.intr, br1.order);
-            evaluation_rule::basic_rule &br3 = r3.get_rule(rid3);
-            for (size_t i = 0; i < br3.order.size(); i++) {
-                if (br3.order[i] == evaluation_rule::k_intrinsic) continue;
-                br3.order[i] = map1[br3.order[i]];
-            }
-
-            m1to3.insert(rule_id_pair(r1.get_rule_id(ir), rid3));
+            const basic_rule<N> &br1 = r1.get_rule(ir);
+            basic_rule<N + M> br3(br1.get_target());
+            for (size_t i = 0; i < N; i++) br3[map1[i]] = br1[i];
+            m1to3[r1.get_rule_id(ir)] = r3.add_rule(br3);
         }
-
-        for (evaluation_rule::rule_iterator ir = r2.begin();
+        for (typename evaluation_rule<M>::rule_iterator ir = r2.begin();
                 ir != r2.end(); ir++) {
 
-            const evaluation_rule::basic_rule &br2 = r2.get_rule(ir);
-
-            rule_id rid3 = r3.add_rule(br2.intr, br2.order);
-            evaluation_rule::basic_rule &br3 = r3.get_rule(rid3);
-            for (size_t i = 0; i < br3.order.size(); i++) {
-                if (br3.order[i] == evaluation_rule::k_intrinsic) continue;
-                br3.order[i] = map2[br3.order[i]];
-            }
-
-            m2to3.insert(rule_id_pair(r2.get_rule_id(ir), rid3));
+            const basic_rule<M> &br2 = r2.get_rule(ir);
+            basic_rule<N + M> br3(br2.get_target());
+            for (size_t i = 0; i < M; i++) br3[map2[i]] = br2[i];
+            m2to3[r2.get_rule_id(ir)] = r3.add_rule(br3);
         }
 
+        // b) Transfer the products
         for (size_t i = 0; i < r1.get_n_products(); i++) {
-            evaluation_rule::product_iterator ip = r1.begin(i);
+
+            typename evaluation_rule<N>::product_iterator ip = r1.begin(i);
             size_t pno = r3.add_product(m1to3[r1.get_rule_id(ip)]);
             ip++;
-            for (; ip != r1.end(i); ip++)
+            for (; ip != r1.end(i); ip++) {
                 r3.add_to_product(pno, m1to3[r1.get_rule_id(ip)]);
+            }
         }
         for (size_t i = 0; i < r2.get_n_products(); i++) {
 
-            evaluation_rule::product_iterator ip = r2.begin(i);
+            typename evaluation_rule<M>::product_iterator ip = r2.begin(i);
             size_t pno = r3.add_product(m2to3[r2.get_rule_id(ip)]);
             ip++;
-            for (; ip != r2.end(i); ip++)
+            for (; ip != r2.end(i); ip++) {
                 r3.add_to_product(pno, m2to3[r2.get_rule_id(ip)]);
+            }
         }
 
         e3.set_rule(r3);
@@ -203,27 +185,25 @@ symmetry_operation_impl< so_dirsum<N, M, T>, se_label<N + M, T> >::do_perform(
         se_label<N + M, T> e3(bidims, e2.get_table_id());
         transfer_labeling(e2.get_labeling(), map2, e3.get_labeling());
 
-        // Transfer the rule from e2
-        evaluation_rule r3(e2.get_rule());
-        for (evaluation_rule::rule_iterator ir = r3.begin();
-                ir != r3.end(); ir++) {
+        // Create a fake rule that allows all blocks
+        // Create a fake rule for non-existing e2 that allows all blocks
+        const product_table_i &pt =
+                product_table_container::get_instance().
+                req_const_table(e2.get_table_id());
 
-            evaluation_rule::basic_rule &br3 = r3.get_rule(r3.get_rule_id(ir));
-            for (size_t i = 0; i < br3.order.size(); i++) {
-                if (br3.order[i] == evaluation_rule::k_intrinsic) continue;
-                br3.order[i] = map2[br3.order[i]];
-            }
-        }
-        // Create a fake rule for non-existing e1
-        std::vector<size_t> o3x(N);
-        for (size_t i = 0; i < N; i++) o3x[i] = map1[i];
-        evaluation_rule::label_set i3x; i3x.insert(0);
-        evaluation_rule::rule_id rid = r3.add_rule(i3x, o3x);
+        evaluation_rule<N + M> r3;
+        basic_rule<N + M> br3(pt.get_complete_set());
+        for (size_t i = 0; i < N + M; i++) br3[i] = 1;
+
+        rule_id_t rid = r3.add_rule(br3);
         r3.add_product(rid);
 
         // Set the rule and finish off
         e3.set_rule(r3);
         params.g3.insert(e3);
+
+        product_table_container::get_instance().
+                ret_table(e2.get_table_id());
     }
 }
 

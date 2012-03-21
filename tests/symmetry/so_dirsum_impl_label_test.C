@@ -455,13 +455,12 @@ void so_dirsum_impl_label_test::test_nn_3(
     {
         block_labeling<2> &bla = elema.get_labeling();
         for (size_t i = 0; i < 4; i++) bla.assign(ma, i, i);
-        evaluation_rule ra;
-        std::vector<size_t> oa1(2, 0), oa2(2, 1);
-        oa1[1] = oa2[1] = evaluation_rule::k_intrinsic;
-        evaluation_rule::label_set ia1, ia2;
-        ia1.insert(1); ia2.insert(2);
-        evaluation_rule::rule_id ira1 = ra.add_rule(ia1, oa1);
-        evaluation_rule::rule_id ira2 = ra.add_rule(ia2, oa2);
+        evaluation_rule<2> ra;
+        basic_rule<2> bra1, bra2;
+        bra1[0] = 1; bra1.set_target(1);
+        bra2[1] = 1; bra2.set_target(2);
+        evaluation_rule<2>::rule_id_t ira1 = ra.add_rule(bra1);
+        evaluation_rule<2>::rule_id_t ira2 = ra.add_rule(bra2);
         ra.add_product(ira1);
         ra.add_to_product(0, ira2);
         elema.set_rule(ra);
