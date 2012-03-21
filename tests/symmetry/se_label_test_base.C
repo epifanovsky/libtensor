@@ -10,6 +10,13 @@ std::string se_label_test_base::setup_pg_table() throw(libtest::test_exception){
 
     try {
 
+        // S\f$_6\f$ point group - irreps: Ag, Eg, Au, Eu
+        // Product table:
+        //      Ag   Eg      Au   Eu
+        // Ag   Ag   Eg      Au   Eu
+        // Eg   Eg   2Ag+Eg  Eu   2Au+Eu
+        // Au   Au   Eu      Ag   Eg
+        // Eu   Eu   2Au+Eu  Eg   2Ag+Eu
         point_group_table::label_t ag = 0, eg = 1, au = 2, eu = 3;
         std::vector<std::string> im(4);
         im[ag] = "Ag"; im[eg] = "Eg"; im[au] = "Au"; im[eu] = "Eu";

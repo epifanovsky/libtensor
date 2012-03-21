@@ -36,7 +36,8 @@ void so_merge_test::test_1() throw(libtest::test_exception) {
 	symmetry<3, double> sym2_ref(bis2);
 	mask<4> msk;
 	msk[2] = true; msk[3] = true;
-	so_merge<4, 2, double> so(sym1, msk);
+	so_merge<4, 2, 1, double> so(sym1);
+	so.add_mask(msk);
 	so.perform(sym2);
 
 	symmetry<3, double>::iterator i = sym2.begin();
@@ -79,7 +80,8 @@ void so_merge_test::test_2() throw(libtest::test_exception) {
 	symmetry<3, double> sym2_ref(bis2);
 	mask<5> msk;
 	msk[2] = true; msk[3] = true; msk[4] = true;
-	so_merge<5, 3, double> so(sym1, msk);
+	so_merge<5, 3, 1, double> so(sym1);
+	so.add_mask(msk);
 	so.perform(sym2);
 
 	sym2_ref.insert(se_perm<3, double>(
@@ -118,7 +120,8 @@ void so_merge_test::test_3() throw(libtest::test_exception) {
 	m[0] = true; m[1] = true;
 	symmetry<2, double> sym1(bis1);
 	symmetry<1, double> sym2(bis2);
-	so_merge<2, 2, double> so(sym1, m);
+	so_merge<2, 2, 1, double> so(sym1);
+	so.add_mask(m);
 	so.perform(sym2);
 
 	} catch(exception &e) {
@@ -144,7 +147,9 @@ void so_merge_test::test_4() throw(libtest::test_exception) {
 	msk[0] = true;
 	symmetry<2, double> sym1(bis1);
 	symmetry<2, double> sym2(bis1);
-	so_merge<2, 1, double>(sym1, msk).perform(sym2);
+	so_merge<2, 1, 1, double> so(sym1);
+	so.add_mask(msk);
+	so.perform(sym2);
 
 	symmetry<2, double>::iterator i = sym2.begin();
 	if(i == sym2.end()) {

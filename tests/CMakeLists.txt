@@ -81,7 +81,7 @@ set(SRC_SYMMETRY
     symmetry/so_dirprod_impl_label_test.C
     symmetry/so_dirprod_impl_part_test.C
     symmetry/so_dirprod_impl_perm_test.C
-#    symmetry/so_dirprod_test.C
+    symmetry/so_dirprod_test.C
     symmetry/so_dirsum_impl_label_test.C
     symmetry/so_dirsum_impl_part_test.C
     symmetry/so_dirsum_impl_perm_test.C
@@ -89,14 +89,14 @@ set(SRC_SYMMETRY
     symmetry/so_merge_impl_label_test.C
     symmetry/so_merge_impl_part_test.C
     symmetry/so_merge_impl_perm_test.C
-#    symmetry/so_merge_test.C
-#    symmetry/so_permute_impl_label_test.C
+    symmetry/so_merge_test.C
+    symmetry/so_permute_impl_label_test.C
     symmetry/so_permute_impl_part_test.C
     symmetry/so_permute_impl_perm_test.C
     symmetry/so_reduce_impl_label_test.C
     symmetry/so_reduce_impl_part_test.C
     symmetry/so_reduce_impl_perm_test.C
-#    symmetry/so_reduce_test.C
+    symmetry/so_reduce_test.C
 #    symmetry/so_symmetrize_test.C
     symmetry/symmetry_element_set_adapter_test.C
 )

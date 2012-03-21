@@ -1,15 +1,15 @@
-#ifndef LIBTENSOR_SO_STABILIZE_TEST_H
-#define LIBTENSOR_SO_STABILIZE_TEST_H
+#ifndef LIBTENSOR_SO_REDUCE_TEST_H
+#define LIBTENSOR_SO_REDUCE_TEST_H
 
 #include <libtest/unit_test.h>
 
 namespace libtensor {
 
-/**	\brief Tests the libtensor::so_stabilize class
+/**	\brief Tests the libtensor::so_reduce class
 
 	\ingroup libtensor_tests_sym
 **/
-class so_stabilize_test : public libtest::unit_test {
+class so_reduce_test : public libtest::unit_test {
 public:
 	virtual void perform() throw(libtest::test_exception);
 
@@ -23,4 +23,4 @@ private:
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_SO_STABILIZE_TEST_H
+#endif // LIBTENSOR_SO_REDUCE_TEST_H

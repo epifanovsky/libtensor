@@ -1,13 +1,13 @@
 #include <libtensor/symmetry/se_perm.h>
-#include <libtensor/symmetry/so_stabilize.h>
+#include <libtensor/symmetry/so_reduce.h>
 #include <libtensor/btod/transf_double.h>
 #include "../compare_ref.h"
-#include "so_stabilize_test.h"
+#include "so_reduce_test.h"
 
 namespace libtensor {
 
 
-void so_stabilize_test::perform() throw(libtest::test_exception) {
+void so_reduce_test::perform() throw(libtest::test_exception) {
 
 	test_1();
 	test_2();
@@ -18,9 +18,9 @@ void so_stabilize_test::perform() throw(libtest::test_exception) {
 /**	\test Invokes a projection of C1 in 4-space onto 2-space.
 		Expects C1 in 2-space.
  **/
-void so_stabilize_test::test_1() throw(libtest::test_exception) {
+void so_reduce_test::test_1() throw(libtest::test_exception) {
 
-	static const char *testname = "so_stabilize_test::test_1()";
+	static const char *testname = "so_reduce_test::test_1()";
 
 	try {
 
@@ -38,7 +38,7 @@ void so_stabilize_test::test_1() throw(libtest::test_exception) {
 	symmetry<2, double> sym2_ref(bis2);
 	mask<4> msk;
 	msk[0] = true; msk[1] = true;
-	so_stabilize<4, 2, 1, double> so(sym1);
+	so_reduce<4, 2, 1, double> so(sym1);
 	so.add_mask(msk);
 	so.perform(sym2);
 
@@ -58,9 +58,9 @@ void so_stabilize_test::test_1() throw(libtest::test_exception) {
 /**	\test Invokes a double projection of S5(+) in 5-space onto 2-space.
 		Expects S2(+) in 2-space.
  **/
-void so_stabilize_test::test_2() throw(libtest::test_exception) {
+void so_reduce_test::test_2() throw(libtest::test_exception) {
 
-	static const char *testname = "so_stabilize_test::test_2()";
+	static const char *testname = "so_reduce_test::test_2()";
 
 	try {
 
@@ -85,7 +85,7 @@ void so_stabilize_test::test_2() throw(libtest::test_exception) {
 	mask<5> msk[2];
 	msk[0][2] = true; msk[0][4] = true;
 	msk[1][3] = true;
-	so_stabilize<5, 3, 2, double> so(sym1);
+	so_reduce<5, 3, 2, double> so(sym1);
 	so.add_mask(msk[0]);
 	so.add_mask(msk[1]);
 	so.perform(sym2);
@@ -107,9 +107,9 @@ void so_stabilize_test::test_2() throw(libtest::test_exception) {
 
 /**	\test Invokes a projection of S2(+) onto 0-space.
  **/
-void so_stabilize_test::test_3() throw(libtest::test_exception) {
+void so_reduce_test::test_3() throw(libtest::test_exception) {
 
-	static const char *testname = "so_stabilize_test::test_3()";
+	static const char *testname = "so_reduce_test::test_3()";
 
 	try {
 
@@ -124,7 +124,7 @@ void so_stabilize_test::test_3() throw(libtest::test_exception) {
 
 	symmetry<2, double> sym1(bis1);
 	symmetry<0, double> sym2(bis2);
-	so_stabilize<2, 2, 1, double> so(sym1);
+	so_reduce<2, 2, 1, double> so(sym1);
 	so.perform(sym2);
 
 	} catch(exception &e) {
@@ -135,9 +135,9 @@ void so_stabilize_test::test_3() throw(libtest::test_exception) {
 
 /**	\test Invokes a projection of S2(+) onto 2-space.
  **/
-void so_stabilize_test::test_4() throw(libtest::test_exception) {
+void so_reduce_test::test_4() throw(libtest::test_exception) {
 
-	static const char *testname = "so_stabilize_test::test_4()";
+	static const char *testname = "so_reduce_test::test_4()";
 
 	try {
 
@@ -149,7 +149,7 @@ void so_stabilize_test::test_4() throw(libtest::test_exception) {
 
 	symmetry<2, double> sym1(bis1);
 	symmetry<2, double> sym2(bis1);
-	so_stabilize<2, 0, 0, double> so(sym1);
+	so_reduce<2, 0, 0, double> so(sym1);
 	so.perform(sym2);
 
 	symmetry<2, double>::iterator i = sym2.begin();

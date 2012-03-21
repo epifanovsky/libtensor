@@ -18,8 +18,10 @@ void so_dirprod_test::perform() throw(libtest::test_exception) {
     test_se_2(false, true); test_se_2(false, false);
     test_se_3();
     test_se_4();
-    test_perm_1();
-    test_perm_2();
+    test_perm_1( true, true); test_perm_1( true, false);
+    test_perm_1(false, true); test_perm_1(false, false);
+    test_perm_2( true, true); test_perm_2( true, false);
+    test_perm_2(false, true); test_perm_2(false, false);
     test_vac_1();
     test_vac_2();
 }
