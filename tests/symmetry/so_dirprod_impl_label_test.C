@@ -460,15 +460,12 @@ void so_dirprod_impl_label_test::test_nn_3(
         block_labeling<2> &blb = elemb.get_labeling();
         for (size_t i = 0; i < 4; i++) blb.assign(mb, i, i);
 
-        evaluation_rule rb;
-        std::vector<size_t> ob1(2), ob2(3);
-        ob1[0] = 0;
-        ob2[0] = ob2[1] = 1;
-        ob1[1] = ob2[2] = evaluation_rule::k_intrinsic;
-        evaluation_rule::label_set ib1, ib2;
-        ib1.insert(2); ib2.insert(0);
-        evaluation_rule::rule_id irb1 = rb.add_rule(ib1, ob1);
-        evaluation_rule::rule_id irb2 = rb.add_rule(ib2, ob2);
+        evaluation_rule<2> rb;
+        basic_rule<2> br1, br2;
+        br1[0] = 1; br1.set_target(2);
+        br2[1] = 2; br2.set_target(0);
+        evaluation_rule<2>::rule_id_t irb1 = rb.add_rule(br1);
+        evaluation_rule<2>::rule_id_t irb2 = rb.add_rule(br2);
         rb.add_product(irb1);
         rb.add_to_product(0, irb2);
         elemb.set_rule(rb);
