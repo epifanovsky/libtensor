@@ -199,7 +199,7 @@ namespace libtensor {
 } // namespace libtensor
 
 #else // LIBTENSOR_INSTANTIATE_TEMPLATES
-#include "block_labeling_impl.h"
+#include "inst/block_labeling_impl.h"
 #endif // LIBTENSOR_INSTANTIATE_TEMPLATES
 
 #endif // LIBTENSOR_BLOCK_LABELING_H

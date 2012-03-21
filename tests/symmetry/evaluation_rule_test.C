@@ -16,56 +16,43 @@ void evaluation_rule_test::test_1() throw(libtest::test_exception) {
 
     static const char *testname = "evaluation_rule_test::test_1()";
 
-    typedef evaluation_rule::label_set label_set;
+    typedef evaluation_rule<3> eval_rule_t;
+    typedef eval_rule_t::label_set_t label_set_t;
+    typedef eval_rule_t::basic_rule_t basic_rule_t;
 
     try {
 
-        evaluation_rule rules;
+        eval_rule_t rules;
 
-        label_set i1, i2, i3;
-        i1.insert(0); i2.insert(1);
-        i3.insert(0); i3.insert(1);
-        std::vector<size_t> o1(4, 0), o2(3, 0), o3(4, 0);
-        o1[0] = 0; o1[1] = 1; o1[2] = 2; o1[3] = evaluation_rule::k_intrinsic;
-        o2[0] = 1; o2[1] = 0; o2[2] = 2;
-        o3[0] = 1; o1[1] = evaluation_rule::k_intrinsic; o1[2] = 0; o1[3] = 2;
+        basic_rule_t br1, br2, br3;
+        br1[0] = br1[1] = br1[2] = 1;
+        br1.set_target(0);
+        br2[0] = br2[1] = br2[2] = 1;
+        br2.set_target(1);
+        br3[0] = br3[1] = br3[2] = 1;
+        br3.set_target(0);
+        br3.set_target(1);
 
-        evaluation_rule::rule_id id1, id2, id3;
-        id1 = rules.add_rule(i1, o1);
-        id2 = rules.add_rule(i2, o2);
-        id3 = rules.add_rule(i3, o3);
+        eval_rule_t::rule_id_t id1, id2, id3;
+        id1 = rules.add_rule(br1);
+        id2 = rules.add_rule(br2);
+        id3 = rules.add_rule(br3);
 
         bool done1 = false, done2 = false, done3 = false;
-        for (evaluation_rule::rule_iterator it = rules.begin();
+        for (eval_rule_t::rule_iterator it = rules.begin();
                 it != rules.end(); it++) {
 
-            evaluation_rule::rule_id cur_id = rules.get_rule_id(it);
-            const evaluation_rule::basic_rule &cur = rules.get_rule(it);
+            eval_rule_t::rule_id_t cur_id = rules.get_rule_id(it);
+            const basic_rule_t &cur = rules.get_rule(it);
 
             if (cur_id == id1) {
                 if (done1)
                     fail_test(testname, __FILE__, __LINE__,
                             "Non-unique rule ID");
 
-                if (cur.intr.size() != i1.size())
+                if (cur != br1)
                     fail_test(testname, __FILE__, __LINE__,
-                            "Unexpected intrinsic labels");
-
-                label_set::const_iterator it = cur.intr.begin();
-                label_set::const_iterator it1 = i1.begin();
-                for (; it != cur.intr.end(); it++, it1++)
-                    if ((*it) != (*it1))
-                        fail_test(testname, __FILE__, __LINE__,
-                                "Unexpected intrinsic labels");
-
-                if (cur.order.size() != o1.size())
-                    fail_test(testname, __FILE__, __LINE__,
-                            "Unexpected evaluation order");
-
-                for (size_t i = 0; i < cur.order.size(); i++)
-                    if (cur.order[i] != o1[i])
-                        fail_test(testname, __FILE__, __LINE__,
-                                "Unexpected evaluation order");
+                            "Wrong basic rule.");
 
                 done1 = true;
             }
@@ -74,25 +61,9 @@ void evaluation_rule_test::test_1() throw(libtest::test_exception) {
                     fail_test(testname, __FILE__, __LINE__,
                             "Non-unique rule ID");
 
-                if (cur.intr.size() != i2.size())
+                if (cur != br2)
                     fail_test(testname, __FILE__, __LINE__,
-                            "Unexpected intrinsic labels");
-
-                label_set::const_iterator it = cur.intr.begin();
-                label_set::const_iterator it2 = i2.begin();
-                for (; it != cur.intr.end(); it++, it2++)
-                    if ((*it) != (*it2))
-                        fail_test(testname, __FILE__, __LINE__,
-                                "Unexpected intrinsic labels");
-
-                if (cur.order.size() != o2.size())
-                    fail_test(testname, __FILE__, __LINE__,
-                            "Unexpected evaluation order");
-
-                for (size_t i = 0; i < cur.order.size(); i++)
-                    if (cur.order[i] != o2[i])
-                        fail_test(testname, __FILE__, __LINE__,
-                                "Unexpected evaluation order");
+                            "Wrong basic rule.");
 
                 done2 = true;
             }
@@ -101,25 +72,9 @@ void evaluation_rule_test::test_1() throw(libtest::test_exception) {
                     fail_test(testname, __FILE__, __LINE__,
                             "Non-unique rule ID");
 
-                if (cur.intr.size() != i3.size())
+                if (cur != br3)
                     fail_test(testname, __FILE__, __LINE__,
-                            "Unexpected intrinsic labels");
-
-                label_set::const_iterator it = cur.intr.begin();
-                label_set::const_iterator it3 = i3.begin();
-                for (; it != cur.intr.end(); it++, it3++)
-                    if ((*it) != (*it3))
-                        fail_test(testname, __FILE__, __LINE__,
-                                "Unexpected intrinsic labels");
-
-                if (cur.order.size() != o3.size())
-                    fail_test(testname, __FILE__, __LINE__,
-                            "Unexpected evaluation order");
-
-                for (size_t i = 0; i < cur.order.size(); i++)
-                    if (cur.order[i] != o3[i])
-                        fail_test(testname, __FILE__, __LINE__,
-                                "Unexpected evaluation order");
+                            "Wrong basic rule.");
 
                 done3 = true;
             }
@@ -141,24 +96,27 @@ void evaluation_rule_test::test_2() throw(libtest::test_exception) {
 
     static const char *testname = "evaluation_rule_test::test_2()";
 
-    typedef evaluation_rule::label_set label_set;
+    typedef evaluation_rule<3> eval_rule_t;
+    typedef eval_rule_t::label_set_t label_set_t;
+    typedef eval_rule_t::basic_rule_t basic_rule_t;
 
     try {
 
-        evaluation_rule rules;
+        eval_rule_t rules;
 
-        label_set i1, i2, i3;
-        i1.insert(0); i2.insert(1); i3.insert(0); i3.insert(1);
+        basic_rule_t br1, br2, br3;
+        br1[0] = br1[1] = br1[2] = 1;
+        br1.set_target(0);
+        br2[0] = br2[1] = br2[2] = 1;
+        br2.set_target(1);
+        br3[0] = br3[1] = br3[2] = 1;
+        br3.set_target(0);
+        br3.set_target(1);
 
-        std::vector<size_t> o1(4, 0), o2(3, 0), o3(4, 0);
-        o1[0] = 0; o1[1] = 1; o1[2] = 2; o1[3] = evaluation_rule::k_intrinsic;
-        o2[0] = 1; o2[1] = 0; o2[2] = 2;
-        o3[0] = 1; o1[1] = evaluation_rule::k_intrinsic; o1[2] = 0; o1[3] = 2;
-
-        evaluation_rule::rule_id id1, id2, id3;
-        id1 = rules.add_rule(i1, o1);
-        id2 = rules.add_rule(i2, o2);
-        id3 = rules.add_rule(i3, o3);
+        eval_rule_t::rule_id_t id1, id2, id3;
+        id1 = rules.add_rule(br1);
+        id2 = rules.add_rule(br2);
+        id3 = rules.add_rule(br3);
 
         size_t pno1 = rules.add_product(id1);
         rules.add_to_product(pno1, id2);
@@ -170,10 +128,10 @@ void evaluation_rule_test::test_2() throw(libtest::test_exception) {
             fail_test(testname, __FILE__, __LINE__, "Unexpected # products.");
 
         bool done1 = false, done2 = false;
-        for (evaluation_rule::product_iterator it = rules.begin(pno1);
+        for (eval_rule_t::product_iterator it = rules.begin(pno1);
                 it != rules.end(pno1); it++) {
 
-            evaluation_rule::rule_id id = rules.get_rule_id(it);
+            eval_rule_t::rule_id_t id = rules.get_rule_id(it);
             if (id == id1) {
                 done1 = true;
             }
@@ -190,10 +148,10 @@ void evaluation_rule_test::test_2() throw(libtest::test_exception) {
         }
 
         done1 = false, done2 = false;
-        for (evaluation_rule::product_iterator it = rules.begin(pno2);
+        for (eval_rule_t::product_iterator it = rules.begin(pno2);
                 it != rules.end(pno2); it++) {
 
-            evaluation_rule::rule_id id = rules.get_rule_id(it);
+            eval_rule_t::rule_id_t id = rules.get_rule_id(it);
             if (id == id3) {
                 done1 = true;
             }

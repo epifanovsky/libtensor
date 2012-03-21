@@ -63,7 +63,7 @@ set(SRC_TOD
 set(SRC_SYMMETRY
     symmetry/block_labeling_test.C
     symmetry/combine_part_test.C
-#    symmetry/evaluation_rule_test.C
+    symmetry/evaluation_rule_test.C
     symmetry/libtensor_symmetry_tests.C
     symmetry/libtensor_symmetry_suite.C
     symmetry/permutation_group_test.C

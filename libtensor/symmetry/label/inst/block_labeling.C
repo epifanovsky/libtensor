@@ -1,6 +1,6 @@
 #ifdef LIBTENSOR_INSTANTIATE_TEMPLATES
 
-#include "block_labeling.h"
+#include "../block_labeling.h"
 #include "block_labeling_impl.h"
 
 

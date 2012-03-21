@@ -2,90 +2,80 @@
 #define LIBTENSOR_EVALUATION_RULE_H
 
 #include <map>
-#include <set>
+#include <vector>
 #include "../../exception.h"
-#include "product_table_i.h"
+#include "basic_rule.h"
 
 namespace libtensor {
 
-/** \brief Evaluation rule for a sum of products of basic rules.
+/** \brief Full evaluation rule to determine allowed blocks of a block %tensor.
 
-    Every possible label evaluation rule can be expressed as a sum of products
-    of basic rules. This is a container class for such composite label
-    evaluation rules.
+    Every possible rule to determine allowed blocks of a block %tensor by
+    its block labels can be represented as a sum of products of the elementary
+    basic rules. The evaluation rule is the container class for any arbitrarily
+    complex rule.
 
-    TODO:
-    - extend documentation
-    - add template parameter N 
-    - replace std::vector<size_t> by sequence<N, size_t> 
-    - make basic rule a separate class
+    For details on how the setup of the evaluation rule determines allowed
+    blocks refer to the documentation of \sa se_label.
 
     \ingroup libtensor_symmetry
  **/
+template<size_t N>
 class evaluation_rule {
 public:
     static const char *k_clazz; //!< Class name
-    static const size_t k_intrinsic; //!< Dimension refering to intrinsic label
 
 public:
-    typedef product_table_i::label_t label_t;
-    typedef std::set<label_t> label_set;
-
-public:
-    struct basic_rule {
-        std::vector<size_t> order; //!< Evaluation order of dimensions
-        label_set intr; //!< Intrinsic labels
-
-        basic_rule(const label_set &intr_ = label_set(),
-                const std::vector<size_t> order_ = std::vector<size_t>()) :
-            intr(intr_), order(order_) { }
-    };
-
-    typedef size_t rule_id;
+    typedef size_t rule_id_t;
+    typedef basic_rule<N> basic_rule_t;
+    typedef typename basic_rule_t::label_t label_t;
+    typedef typename basic_rule_t::label_set_t label_set_t;
 
 private:
-    typedef std::map<rule_id, basic_rule> rule_list;
+    typedef std::map<rule_id_t, basic_rule_t> rule_list_t;
 
 public:
-    typedef rule_list::const_iterator rule_iterator;
+    typedef typename rule_list_t::const_iterator rule_iterator;
 
 private:
-    typedef std::map<rule_id, rule_iterator> rules_product;
-    typedef std::vector<rules_product> product_list;
+    typedef std::map<rule_id_t, rule_iterator> rule_product_t;
+    typedef std::vector<rule_product_t> product_list_t;
 
 public:
-    typedef rules_product::const_iterator product_iterator;
+    typedef typename rule_product_t::const_iterator product_iterator;
 
 private:
-    rule_list m_rules; //!< List of basic rules
-    rule_id m_next_rule_id; //!< Next rule ID
-    product_list m_setup; //!< Rules setup
+    rule_list_t m_rules; //!< List of basic rules
+    product_list_t m_setup; //!< Rules setup
+
+    rule_id_t m_next_rule_id; //!< Next rule ID
 
 public:
+    /** \brief Default constructor
+     **/
     evaluation_rule() : m_next_rule_id(0) { }
 
     //! \name Manipulation functions
     //@{
 
     /** \brief Add a new basic rule to the end of the list
-        \param intr Intrinsic labels
-        \param order Evaluation order
+        \param br Basic rule
         \return Returns the ID of the new rule
      **/
-    rule_id add_rule(const label_set &intr, const std::vector<size_t> &order);
+    rule_id_t add_rule(const basic_rule_t &br);
 
     /** \brief Add a new product to the list of products
         \param rule ID of the rule to be part of the new product
         \return Number of the new product
      **/
-    size_t add_product(rule_id rule);
+    size_t add_product(rule_id_t rule);
 
     /** \brief Add another rule to a product
 
         \param no Number of the product to add to
         \param rule ID of the rule to be added
      **/
-    void add_to_product(size_t no, rule_id rule);
+    void add_to_product(size_t no, rule_id_t rule);
 
     //@}
 
@@ -104,7 +94,7 @@ public:
         \param it Iterator to rule
         \return Rule ID
      **/
-    rule_id get_rule_id(rule_iterator it) const {
+    rule_id_t get_rule_id(rule_iterator it) const {
 #ifdef LIBTENSOR_DEBUG
         if (! is_valid_rule(it))
             throw bad_parameter(g_ns, k_clazz,
@@ -118,9 +108,9 @@ public:
     /** \brief Return a basic rule
         \param id Rule ID
      **/
-    basic_rule &get_rule(rule_id id) {
+    basic_rule_t &get_rule(rule_id_t id) {
 
-        rule_list::iterator it = m_rules.find(id);
+        typename rule_list_t::iterator it = m_rules.find(id);
 #ifdef LIBTENSOR_DEBUG
         if (it == m_rules.end()) {
             throw bad_parameter(g_ns, k_clazz,
@@ -133,7 +123,7 @@ public:
     /** \brief Return a basic rule (const version
         \param id Rule ID
      **/
-    const basic_rule &get_rule(rule_id id) const {
+    const basic_rule_t &get_rule(rule_id_t id) const {
 
         rule_iterator it = m_rules.find(id);
         return get_rule(it);
@@ -144,7 +134,7 @@ public:
     /** \brief Return a basic rule
         \param it Iterator pointing to a rule
      **/
-    const basic_rule &get_rule(rule_iterator it) const {
+    const basic_rule_t &get_rule(rule_iterator it) const {
 #ifdef LIBTENSOR_DEBUG
         if (! is_valid_rule(it))
             throw bad_parameter(g_ns, k_clazz,
@@ -195,7 +185,7 @@ public:
         \param pit Iterator pointing to a rule
         \return Rule ID
      **/
-    rule_id get_rule_id(product_iterator pit) const {
+    rule_id_t get_rule_id(product_iterator pit) const {
 #ifdef LIBTENSOR_DEBUG
         if (! is_valid_product_iterator(pit))
             throw bad_parameter(g_ns, k_clazz,
@@ -210,7 +200,7 @@ public:
         \param pit Iterator pointing to a rule
         \return Rule ID
      **/
-    const basic_rule &get_rule(product_iterator pit) const {
+    const basic_rule_t &get_rule(product_iterator pit) const {
 #ifdef LIBTENSOR_DEBUG
         if (! is_valid_product_iterator(pit))
             throw bad_parameter(g_ns, k_clazz,
@@ -231,13 +221,31 @@ public:
     void clear_all() { m_setup.clear(); m_rules.clear(); }
 
 private:
-    rule_id new_rule_id() { return m_next_rule_id++; }
+    rule_id_t new_rule_id() { return m_next_rule_id++; }
 
     bool is_valid_rule(rule_iterator it) const;
     bool is_valid_product_iterator(product_iterator it) const;
 };
 
 } // namespace libtensor
+
+
+#ifdef LIBTENSOR_INSTANTIATE_TEMPLATES
+
+namespace libtensor {
+
+    extern template class evaluation_rule<1>;
+    extern template class evaluation_rule<2>;
+    extern template class evaluation_rule<3>;
+    extern template class evaluation_rule<4>;
+    extern template class evaluation_rule<5>;
+    extern template class evaluation_rule<6>;
+
+} // namespace libtensor
+
+#else // LIBTENSOR_INSTANTIATE_TEMPLATES
+#include "inst/evaluation_rule_impl.h"
+#endif // LIBTENSOR_INSTANTIATE_TEMPLATES
 
 #endif // LIBTENSOR_EVALUATION_RULE_H
 

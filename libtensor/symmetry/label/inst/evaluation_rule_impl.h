@@ -1,33 +1,36 @@
-#include "evaluation_rule.h"
+#ifndef LIBTENSOR_EVALUATION_RULE_IMPL_H
+#define LIBTENSOR_EVALUATION_RULE_IMPL_H
 
 namespace libtensor {
 
-const char *evaluation_rule::k_clazz = "evaluation_rule";
+template<size_t N>
+const char *evaluation_rule<N>::k_clazz = "evaluation_rule<N>";
 
-const size_t evaluation_rule::k_intrinsic = (size_t) -1;
+template<size_t N>
+typename evaluation_rule<N>::rule_id_t
+evaluation_rule<N>::add_rule(const basic_rule_t &br) {
 
-evaluation_rule::rule_id evaluation_rule::add_rule(
-        const label_set &intr, const std::vector<size_t> &order) {
-
-    rule_id id = new_rule_id();
-    m_rules.insert(rule_list::value_type(id, basic_rule(intr, order)));
+    rule_id_t id = new_rule_id();
+    m_rules.insert(typename rule_list_t::value_type(id, br));
     return id;
 }
 
-size_t evaluation_rule::add_product(rule_id rule) {
+template<size_t N>
+size_t evaluation_rule<N>::add_product(rule_id_t rule) {
 
     rule_iterator it = m_rules.find(rule);
     if (it == m_rules.end())
         throw bad_parameter(g_ns, k_clazz,
                 "add_product(rule_id)", __FILE__, __LINE__, "rule");
 
-    m_setup.push_back(rules_product());
-    rules_product &pr = m_setup.back();
+    m_setup.push_back(rule_product_t());
+    rule_product_t &pr = m_setup.back();
     pr[rule] = it;
     return m_setup.size() - 1;
 }
 
-void evaluation_rule::add_to_product(size_t no, rule_id rule) {
+template<size_t N>
+void evaluation_rule<N>::add_to_product(size_t no, rule_id_t rule) {
 
     static const char *method = "add_to_product(size_t, rule_id)";
 
@@ -40,11 +43,12 @@ void evaluation_rule::add_to_product(size_t no, rule_id rule) {
     if (it == m_rules.end())
         throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__, "rule");
 
-    rules_product &pr = m_setup[no];
+    rule_product_t &pr = m_setup[no];
     pr[rule] = it;
 }
 
-bool evaluation_rule::is_valid_rule(rule_iterator it) const {
+template<size_t N>
+bool evaluation_rule<N>::is_valid_rule(rule_iterator it) const {
 
     for (rule_iterator i = m_rules.begin(); i != m_rules.end(); i++) {
 
@@ -54,12 +58,13 @@ bool evaluation_rule::is_valid_rule(rule_iterator it) const {
     return false;
 }
 
-bool evaluation_rule::is_valid_product_iterator(product_iterator it) const {
+template<size_t N>
+bool evaluation_rule<N>::is_valid_product_iterator(product_iterator it) const {
 
-    for (product_list::const_iterator i = m_setup.begin();
+    for (typename product_list_t::const_iterator i = m_setup.begin();
             i != m_setup.end(); i++) {
 
-        const rules_product &p = *i;
+        const rule_product_t &p = *i;
         for (product_iterator j = p.begin(); j != p.end(); j++) {
 
             if (it == j) return true;
@@ -72,4 +77,4 @@ bool evaluation_rule::is_valid_product_iterator(product_iterator it) const {
 
 } // namespace libtensor
 
-
+#endif // LIBTENSOR_EVALUATION_RULE_IMPL_H

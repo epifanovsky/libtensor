@@ -12,8 +12,6 @@ set(SRC
 #    btod/cholesky.C
 #    btod/btod_diagonalize.C
 #    btod/btod_tridiagonalize.C
-    symmetry/label/block_labeling.C
-#    symmetry/label/evaluation_rule.C
     symmetry/label/point_group_table.C
     symmetry/label/product_table_container.C
     symmetry/label/product_table_i.C
@@ -126,6 +124,9 @@ set(SRC_LINALG
 
 set(SRC_INST
     dense_tensor/inst/dense_tensor_inst.C
+    symmetry/label/inst/basic_rule.C
+    symmetry/label/inst/block_labeling.C
+    symmetry/label/inst/evaluation_rule.C
     tod/tod_add.C
     tod/tod_contract2.C
     tod/tod_copy.C
