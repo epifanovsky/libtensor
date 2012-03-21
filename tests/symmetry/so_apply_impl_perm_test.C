@@ -1,6 +1,5 @@
 #include <sstream>
-#include <libtensor/symmetry/perm/so_apply_impl_perm.h>
-#include <libtensor/btod/transf_double.h>
+#include <libtensor/symmetry/so_apply_se_perm.h>
 #include "so_apply_impl_perm_test.h"
 
 namespace libtensor {

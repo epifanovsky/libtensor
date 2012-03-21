@@ -3,9 +3,9 @@
 
 #include <map>
 #include <string>
+#include <libtensor/defs.h>
+#include <libtensor/not_implemented.h>
 #include <libutil/singleton.h>
-#include "../defs.h" // for g_ns
-#include "../not_implemented.h"
 #include "symmetry_operation_impl_i.h"
 
 namespace libtensor {

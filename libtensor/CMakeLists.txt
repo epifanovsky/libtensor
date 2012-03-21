@@ -128,6 +128,9 @@ set(SRC_INST
     symmetry/inst/se_part_inst.C
     symmetry/inst/se_perm_inst.C
     symmetry/inst/so_apply_inst.C
+    symmetry/inst/so_apply_se_label_inst.C
+    symmetry/inst/so_apply_se_part_inst.C
+    symmetry/inst/so_apply_se_perm_inst.C
     symmetry/inst/so_copy_inst.C
     symmetry/inst/so_dirprod_inst.C
     symmetry/inst/so_dirsum_inst.C

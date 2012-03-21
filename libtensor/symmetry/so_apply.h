@@ -59,7 +59,7 @@ private:
 
 template<size_t N, typename T>
 class symmetry_operation_params< so_apply<N, T> > :
-public symmetry_operation_params_i {
+    public symmetry_operation_params_i {
 
 public:
     const symmetry_element_set<N, T> &grp1; //!< Symmetry group 1
