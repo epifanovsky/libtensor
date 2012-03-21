@@ -24,25 +24,35 @@ symmetry_operation_impl< so_symmetrize<N, T>, se_label<N, T> >::do_perform(
 	adapter_t g1(params.grp1);
 	params.grp2.clear();
 
-	sequence<N, size_t> map(0);
-	for (size_t j = 0; j < N; j++) map[j] = j;
-	params.perm.apply(map);
+	sequence<N, size_t> map;
+	for (register size_t i = 0; i < N; i++) map[i] = i;
 
-	for(typename adapter_t::iterator i = g1.begin(); i != g1.end(); i++) {
+	for(typename adapter_t::iterator it = g1.begin(); it != g1.end(); it++) {
 
-		const se_label<N, T> &e1 = g1.get_elem(i);
+        const se_label<N, T> &e1 = g1.get_elem(it);
 		const block_labeling<N> &bl1 = e1.get_labeling();
+		const evaluation_rule<N> &r1 = e1.get_rule();
 
-		for (size_t j = 0; j < N; j++) {
-			if (map[j] > j) {
+		register size_t i = 0;
+		for (; i < N && ! params.msk[i]; i++) ;
 
-				if (bl1.get_dim_type(j) != bl1.get_dim_type(map[j]))
-					throw bad_symmetry(g_ns, k_clazz, method,
-						__FILE__, __LINE__, "Incompatible dimensions.");
-			}
+		size_t typei = bl1.get_dim_type(i);
+		i++;
+		for (; i < N; i++) {
+		    if (! params.msk[i]) continue;
+		    if (bl1.get_dim_type(i) != typei)
+		        throw bad_symmetry(g_ns, k_clazz, method,
+		                __FILE__, __LINE__, "Incompatible dimensions.");
 		}
 
-		params.grp2.insert(e1);
+		se_label<N, T> e2(bl1.get_block_index_dims(), e1.get_table_id());
+		block_labeling<N> &bl2 = e2.get_labeling();
+		transfer_labeling(bl1, map, bl2);
+		evaluation_rule<N> r2(r1);
+		r2.symmetrize(params.msk);
+		e2.set_rule(r2);
+
+		params.grp2.insert(e2);
 	}
 }
 

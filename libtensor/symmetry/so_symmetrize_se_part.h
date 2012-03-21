@@ -30,6 +30,19 @@ public:
 
 protected:
     virtual void do_perform(symmetry_operation_params_t &params) const;
+
+private:
+    static bool is_forbidden(const se_part<N, T> &sp,
+            const index<N> &i1, const std::vector<size_t> &map);
+    static void mark_forbidden(se_part<N, T> &sp,
+            const index<N> &i1, const std::vector<size_t> &map);
+
+    static bool map_exists(const se_part<N, T> &sp, const index<N> &i1,
+            const index<N> &i2, const std::vector<size_t> &map, bool symm);
+
+    static void add_map(se_part<N, T> &sp,
+            const index<N> &i1, const index<N> &i2, bool sign,
+            const std::vector<size_t> &map, bool symm);
 };
 
 } // namespace libtensor

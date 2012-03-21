@@ -43,49 +43,49 @@ using libtest::unit_test_factory;
 namespace libtensor {
 
 /** \defgroup libtensor_tests_sym Tests of symmetry components
-        \brief Unit tests of the symmetry components in libtensor
-        \ingroup libtensor_tests
+    \brief Unit tests of the symmetry components in libtensor
+    \ingroup libtensor_tests
  **/
 
 /** \brief Test suite for the symmetry in the tensor library (libtensor)
-        \ingroup libtensor_tests
+    \ingroup libtensor_tests
 
-        This suite runs the following tests:
-        \li libtensor::block_labeling_test
-        \li libtensor::combine_part_test
-        \li libtensor::evaluation_rule_test
-        \li libtensor::partition_set_test
-        \li libtensor::permutation_group_test
-        \li libtensor::point_group_table_test
-        \li libtensor::product_table_container_test
-        \li libtensor::se_label_test
-        \li libtensor::se_part_test
-        \li libtensor::se_perm_test
-        \li libtensor::so_apply_test
-        \li libtensor::so_apply_se_label_test
-        \li libtensor::so_apply_se_part_test
-        \li libtensor::so_apply_se_perm_test
-        \li libtensor::so_copy_test
-        \li libtensor::so_dirprod_test
-        \li libtensor::so_dirprod_se_label_test
-        \li libtensor::so_dirprod_se_part_test
-        \li libtensor::so_dirprod_se_perm_test
-        \li libtensor::so_dirsum_test
-        \li libtensor::so_dirsum_se_part_test
-        \li libtensor::so_dirsum_se_perm_test
-        \li libtensor::so_merge_test
-        \li libtensor::so_merge_se_label_test
-        \li libtensor::so_merge_se_part_test
-        \li libtensor::so_merge_se_perm_test
-        \li libtensor::so_permute_se_label_test
-        \li libtensor::so_permute_se_part_test
-        \li libtensor::so_permute_se_perm_test
-        \li libtensor::so_stabilize_test
-        \li libtensor::so_stabilize_se_label_test
-        \li libtensor::so_reduce_se_part_test
-        \li libtensor::so_reduce_se_perm_test
-        \li libtensor::so_symmetrize_test
-        \li libtensor::symmetry_element_set_adapter_test
+    This suite runs the following tests:
+    \li libtensor::block_labeling_test
+    \li libtensor::combine_part_test
+    \li libtensor::evaluation_rule_test
+    \li libtensor::partition_set_test
+    \li libtensor::permutation_group_test
+    \li libtensor::point_group_table_test
+    \li libtensor::product_table_container_test
+    \li libtensor::se_label_test
+    \li libtensor::se_part_test
+    \li libtensor::se_perm_test
+    \li libtensor::so_apply_test
+    \li libtensor::so_apply_se_label_test
+    \li libtensor::so_apply_se_part_test
+    \li libtensor::so_apply_se_perm_test
+    \li libtensor::so_copy_test
+    \li libtensor::so_dirprod_test
+    \li libtensor::so_dirprod_se_label_test
+    \li libtensor::so_dirprod_se_part_test
+    \li libtensor::so_dirprod_se_perm_test
+    \li libtensor::so_dirsum_test
+    \li libtensor::so_dirsum_se_part_test
+    \li libtensor::so_dirsum_se_perm_test
+    \li libtensor::so_merge_test
+    \li libtensor::so_merge_se_label_test
+    \li libtensor::so_merge_se_part_test
+    \li libtensor::so_merge_se_perm_test
+    \li libtensor::so_permute_se_label_test
+    \li libtensor::so_permute_se_part_test
+    \li libtensor::so_permute_se_perm_test
+    \li libtensor::so_stabilize_test
+    \li libtensor::so_stabilize_se_label_test
+    \li libtensor::so_reduce_se_part_test
+    \li libtensor::so_reduce_se_perm_test
+    \li libtensor::so_symmetrize_test
+    \li libtensor::symmetry_element_set_adapter_test
 
  **/
 class libtensor_symmetry_suite : public libtest::test_suite {

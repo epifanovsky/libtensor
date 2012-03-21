@@ -159,8 +159,7 @@ btod_symmetrize<N>::btod_symmetrize(additive_btod<N> &op,
 
 	permutation<N> p1(perm); p1.permute(perm);
 	if(perm.is_identity() || !p1.is_identity()) {
-		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
-			"perm");
+		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__, "perm");
 	}
 	make_symmetry();
 	make_schedule();
@@ -257,10 +256,9 @@ void btod_symmetrize<N>::compute_block(bool zero, dense_tensor_i<N, double> &blk
 template<size_t N>
 void btod_symmetrize<N>::make_symmetry() {
 
-	permutation<N> perm0;
-
-	symmetry<N, double> sym1(m_bis), sym2(m_bis);
-	so_symmetrize<N, double>(m_op.get_symmetry(), m_perm1, m_symm).perform(m_sym);
+//    mask<N> msk;
+//    msk[i1] = msk[i2] = true;
+//	so_symmetrize<N, double>(m_op.get_symmetry(), msk, m_symm).perform(m_sym);
 }
 
 

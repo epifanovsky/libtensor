@@ -39,8 +39,8 @@ void so_symmetrize_test::test_1() throw(libtest::test_exception) {
 	sym2_ref.insert(se_perm<2, double>(
 		permutation<2>().permute(0, 1), true));
 
-	so_symmetrize<2, double>(sym1, permutation<2>().permute(0, 1), true).
-		perform(sym2);
+	mask<2> msk; msk[0] = msk[1] = true;
+	so_symmetrize<2, double>(sym1, msk, true).perform(sym2);
 
 	compare_ref<2>::compare(testname, sym2, sym2_ref);
 
@@ -72,8 +72,8 @@ void so_symmetrize_test::test_2() throw(libtest::test_exception) {
 	sym2_ref.insert(se_perm<2, double>(
 		permutation<2>().permute(0, 1), false));
 
-	so_symmetrize<2, double>(sym1, permutation<2>().permute(0, 1), false).
-		perform(sym2);
+	mask<2> msk; msk[0] = msk[1] = true;
+	so_symmetrize<2, double>(sym1, msk, false).perform(sym2);
 
 	compare_ref<2>::compare(testname, sym2, sym2_ref);
 
@@ -111,8 +111,8 @@ void so_symmetrize_test::test_3() throw(libtest::test_exception) {
 	sym2_ref.insert(se_perm<4, double>(permutation<4>().permute(0, 1).
 		permute(1, 2).permute(2, 3), true));
 
-	so_symmetrize<4, double>(sym1, permutation<4>().permute(1, 2), true).
-		perform(sym2);
+	mask<4> msk; msk[1] = msk[2] = true;
+	so_symmetrize<4, double>(sym1, msk, true).perform(sym2);
 
 	compare_ref<4>::compare(testname, sym2, sym2_ref);
 
@@ -153,8 +153,8 @@ void so_symmetrize_test::test_4() throw(libtest::test_exception) {
 	sym2_ref.insert(seperm);
 	sym2_ref.insert(separt);
 
-	so_symmetrize<2, double>(sym1, permutation<2>().permute(0, 1), true).
-		perform(sym2);
+	mask<2> msk; msk[0] = msk[1] = true;
+	so_symmetrize<2, double>(sym1, msk, true).perform(sym2);
 
 	compare_ref<2>::compare(testname, sym2, sym2_ref);
 
@@ -234,8 +234,9 @@ void so_symmetrize_test::test_5() throw(libtest::test_exception) {
 	sym2_ref.insert(seperm4);
 	sym2_ref.insert(separt4b);
 
-	so_symmetrize<4, double>(sym1, permutation<4>().permute(0, 1), true).
-		perform(sym2);
+	mask<4> msk;
+	msk[0] = msk[1] = true;
+	so_symmetrize<4, double>(sym1, msk, true).perform(sym2);
 
 	compare_ref<4>::compare(testname, sym2, sym2_ref);
 

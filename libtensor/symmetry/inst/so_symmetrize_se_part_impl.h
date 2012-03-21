@@ -3,6 +3,7 @@
 
 #include <libtensor/defs.h>
 #include <libtensor/core/abs_index.h>
+#include <libtensor/core/permutation_generator.h>
 #include "../bad_symmetry.h"
 #include "../combine_part.h"
 
@@ -21,59 +22,150 @@ void symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::do_perform(
             "do_perform(const symmetry_operation_params_t&)";
 
     combine_part<N, T> cp(params.grp1);
-    se_part<N, T> sp1a(cp.get_bis(), cp.get_pdims());
-    cp.perform(sp1a);
-    se_part<N, T> sp1b(sp1a);
-    sp1b.permute(params.perm);
+    const dimensions<N> &pdims = cp.get_pdims();
 
+    std::vector<size_t> map;
 
-    if (sp1b.get_pdims() != cp.get_pdims()) {
-        throw bad_symmetry(g_ns, k_clazz, method,
-                __FILE__, __LINE__, "Incompatible dimensions.");
+    register size_t i = 0;
+    for (; i < N && ! params.msk[i]; i++) ;
+    size_t idim = pdims[i];
+    map.push_back(i++);
+
+    for (; i < N; i++) {
+        if (! params.msk[i]) continue;
+        if (pdims[i] != idim) {
+            throw bad_symmetry(g_ns, k_clazz, method,
+                    __FILE__, __LINE__, "Incompatible dimensions.");
+        }
+        map.push_back(i);
     }
 
-    se_part<N, T> sp2(cp.get_bis(), cp.get_pdims());
+    se_part<N, T> sp1(cp.get_bis(), pdims);
+    cp.perform(sp1);
 
-    abs_index<N> ai(cp.get_pdims());
+    se_part<N, T> sp2(cp.get_bis(), pdims);
+    abs_index<N> ai(pdims);
     do {
 
         const index<N> &i1 = ai.get_index();
-        if (sp1a.is_forbidden(i1) && sp1b.is_forbidden(i1)) {
-            sp2.mark_forbidden(i1);
+        for (i = 1; i < map.size(); i++) {
+            if (i1[map[i - 1]] > i1[map[i]]) break;
+        }
+        if (i != map.size()) continue;
+
+        if (is_forbidden(sp1, i1, map)) {
+            mark_forbidden(sp2, i1, map);
             continue;
         }
 
-        if (sp1a.is_forbidden(i1)) {
-            const index<N> &i1b = sp1b.get_direct_map(i1);
-            if (sp1a.is_forbidden(i1b)) {
-                sp2.add_map(i1, i1b, sp1b.get_sign(i1, i1b));
-            }
+        index<N> i2 = sp1.get_direct_map(i1);
+        bool found = false;
+        while (!found && i1 < i2) {
+            if (map_exists(sp1, i1, i2, map, params.symm)) found = true;
+            else i2 = sp1.get_direct_map(i2);
         }
-        else if (sp1b.is_forbidden(i1)) {
-            const index<N> &i1a = sp1a.get_direct_map(i1);
-            if (sp1b.is_forbidden(i1a)) {
-                sp2.add_map(i1, i1a, sp1a.get_sign(i1, i1a));
-            }
-        }
-        else {
-            const index<N> &i1a = sp1a.get_direct_map(i1);
-            if (sp1b.map_exists(i1, i1a)) {
-                bool sign = sp1a.get_sign(i1, i1a);
-                if (sign == sp1b.get_sign(i1, i1a)) {
-                    sp2.add_map(i1, i1a, sign);
-                }
-            }
-            const index<N> &i1b = sp1b.get_direct_map(i1);
-            if (sp1a.map_exists(i1, i1b)) {
-                bool sign = sp1b.get_sign(i1, i1b);
-                if (sign == sp1a.get_sign(i1, i1b)) {
-                    sp2.add_map(i1, i1b, sign);
-                }
-            }
-        }
+        if (found)
+            add_map(sp2, i1, i2, sp1.get_sign(i1, i2), map, params.symm);
+
     } while (ai.inc());
 
     params.grp2.insert(sp2);
+}
+
+template<size_t N, typename T>
+bool
+symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::is_forbidden(
+        const se_part<N, T> &sp, const index<N> &i1,
+        const std::vector<size_t> &map) {
+
+    index<N> ix(i1);
+    permutation_generator pg(map.size());
+    do {
+        for (register size_t i = 0; i < map.size(); i++)
+            ix[map[i]] = i1[map[pg[i]]];
+        if (! sp.is_forbidden(ix)) return false;
+    } while (pg.next());
+
+    return true;
+}
+
+template<size_t N, typename T>
+void
+symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::mark_forbidden(
+        se_part<N, T> &sp, const index<N> &i1,
+        const std::vector<size_t> &map) {
+
+    index<N> ix(i1);
+    permutation_generator pg(map.size());
+    do {
+        for (register size_t i = 0; i < map.size(); i++)
+            ix[map[i]] = i1[map[pg[i]]];
+        sp.mark_forbidden(ix);
+    } while (pg.next());
+}
+
+template<size_t N, typename T>
+bool symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::map_exists(
+        const se_part<N, T> &sp, const index<N> &i1, const index<N> &i2,
+        const std::vector<size_t> &map, bool symm) {
+
+    index<N> j1(i1), j2(i2);
+    permutation_generator pg(map.size());
+    size_t n = 0;
+    bool sign;
+    do {
+        for (register size_t i = 0; i < map.size(); i++) {
+            j1[map[i]] = i1[map[pg[i]]];
+            j2[map[i]] = i2[map[pg[i]]];
+        }
+        if (sp.map_exists(j1, j2)) {
+            sign = sp.get_sign(j1, j2);
+            if (n % 2 != 0 && ! symm) sign = ! sign;
+            break;
+        }
+        else if ((! sp.is_forbidden(j1)) || (! sp.is_forbidden(j2))) {
+            return false;
+        }
+        n++;
+    } while (pg.next());
+
+     do {
+         for (register size_t i = 0; i < map.size(); i++) {
+             j1[map[i]] = i1[map[pg[i]]];
+             j2[map[i]] = i2[map[pg[i]]];
+         }
+         if (sp.map_exists(j1, j2)) {
+            bool signx = sp.get_sign(j1, j2);
+            if ((sign == signx && (n % 2 != 0 && ! symm)) ||
+                    (sign != signx && (symm || n % 2 == 0))) return false;
+        }
+        else if ((! sp.is_forbidden(j1)) || (! sp.is_forbidden(j2))) {
+            return false;
+        }
+
+        n++;
+    } while (pg.next());
+
+    return true;
+}
+
+
+template<size_t N, typename T>
+void symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::add_map(
+        se_part<N, T> &sp, const index<N> &i1, const index<N> &i2,
+        bool sign, const std::vector<size_t> &map, bool symm) {
+
+    index<N> j1(i1), j2(i2);
+    permutation_generator pg(map.size());
+    size_t n = 0;
+    do {
+        for (register size_t i = 0; i < map.size(); i++) {
+            j1[map[i]] = i1[map[pg[i]]];
+            j2[map[i]] = i2[map[pg[i]]];
+        }
+        sp.add_map(j1, j2, (n % 2 == 0 || symm ? sign : ! sign));
+        n++;
+    } while (pg.next());
 }
 
 

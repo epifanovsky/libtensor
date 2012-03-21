@@ -1,10 +1,19 @@
 #ifndef LIBTENSOR_SO_SYMMETRIZE_IMPL_H
 #define LIBTENSOR_SO_SYMMETRIZE_IMPL_H
 
+#include "../so_copy.h"
+
 namespace libtensor {
 
 template<size_t N, typename T>
 void so_symmetrize<N, T>::perform(symmetry<N, T> &sym2) {
+
+    size_t n = 0;
+    for (register size_t i = 0; i < N; i++) { if (m_msk[i]) n++; }
+    if (n < 2) {
+        so_copy<N, T>(m_sym1).perform(sym2);
+        return;
+    }
 
     sym2.clear();
 
@@ -19,8 +28,8 @@ void so_symmetrize<N, T>::perform(symmetry<N, T> &sym2) {
         }
 
         symmetry_element_set<N, T> set2(set1.get_id());
-        symmetry_operation_params<operation_t> params(
-                set1, m_perm, m_symm, set2);
+        symmetry_operation_params<operation_t> params(set1,
+                m_msk, m_symm, set2);
         dispatcher_t::get_instance().invoke(set1.get_id(), params);
 
         for(typename symmetry_element_set<N, T>::iterator j =
@@ -32,11 +41,11 @@ void so_symmetrize<N, T>::perform(symmetry<N, T> &sym2) {
     //	If the argument does not have any permutation symmetry
     //	elements, the handler does not get called above. We need to
     //	fix that manually.
-    if(!perm_done) {
+    if(! perm_done) {
         symmetry_element_set<N, T> set1(se_perm<N, T>::k_sym_type),
                 set2(se_perm<N, T>::k_sym_type);
-        symmetry_operation_params<operation_t> params(
-                set1, m_perm, m_symm, set2);
+        symmetry_operation_params<operation_t> params(set1,
+                m_msk, m_symm, set2);
         dispatcher_t::get_instance().invoke(set1.get_id(), params);
 
         for(typename symmetry_element_set<N, T>::iterator j =
