@@ -7,7 +7,7 @@
 #include <libtensor/tod/contraction2.h>
 #include <libtensor/tod/contraction2_list_builder.h>
 #include <libtensor/tod/kernels/loop_list_runner.h>
-#include <libtensor/tod/kernels/kern_add_generic.h>
+#include <libtensor/kernels/kern_dadd2.h>
 #include "../dense_tensor_ctrl.h"
 #include "../tod_dirsum.h"
 
@@ -115,7 +115,7 @@ void tod_dirsum<N, M>::perform(cpu_pool &cpus, bool zero, double d,
 
         {
             std::auto_ptr< kernel_base<2, 1> >kern(
-                kern_add_generic::match(m_ka, m_kb, d, loop_in, loop_out));
+                kern_dadd2::match(m_ka, m_kb, d, loop_in, loop_out));
             tod_dirsum<N, M>::start_timer(kern->get_name());
             loop_list_runner<2, 1>(loop_in).run(r, *kern);
             tod_dirsum<N, M>::stop_timer(kern->get_name());

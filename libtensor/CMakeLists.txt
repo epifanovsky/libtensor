@@ -18,9 +18,6 @@ set(SRC
     tod/loop_list_mul.C
     tod/loop_list_elem.C
     tod/loop_list_elem1.C
-    tod/kernels/kern_add_generic.C
-    tod/kernels/kern_add_i_i_x_x.C
-    tod/kernels/kern_add_i_x_i_x.C
     tod/kernels/kern_mul_generic.C
     tod/kernels/kern_mul_i_i_i.C
     tod/kernels/kern_mul_i_i_x.C
@@ -122,6 +119,9 @@ set(SRC_LINALG
 
 set(SRC_KERNELS
     kernels/dadd1/kern_dadd1.C
+    kernels/dadd2/kern_dadd2.C
+    kernels/dadd2/kern_dadd2_i_i_x_x.C
+    kernels/dadd2/kern_dadd2_i_x_i_x.C
     kernels/dcopy/kern_dcopy.C
 )
 
