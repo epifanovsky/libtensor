@@ -125,6 +125,7 @@ set(SRC_INST
     dense_tensor/inst/dense_tensor_inst.C
     dense_tensor/tod/tod_add.C
     dense_tensor/tod/tod_btconv.C
+    dense_tensor/tod/tod_compare.C
     dense_tensor/tod/tod_contract2.C
     dense_tensor/tod/tod_copy.C
     dense_tensor/tod/tod_diag.C

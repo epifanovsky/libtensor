@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_BTOD_IMPORT_RAW_BASE_H
 #define LIBTENSOR_BTOD_IMPORT_RAW_BASE_H
 
+#include <cmath> // for fabs
 #include <sstream>
 #include "../defs.h"
 #include "../exception.h"
@@ -11,7 +12,7 @@
 #include "../core/orbit_list.h"
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
-#include "../tod/tod_compare.h"
+#include <libtensor/dense_tensor/tod_compare.h>
 #include <libtensor/dense_tensor/tod_copy.h>
 #include "../symmetry/so_copy.h"
 #include "../symmetry/bad_symmetry.h"
