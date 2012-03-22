@@ -7,7 +7,7 @@
 #include <libtensor/btod/btod_symmetrize.h>
 #include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/symmetry/so_copy.h>
-#include <libtensor/tod/tod_btconv.h>
+#include <libtensor/dense_tensor/tod_btconv.h>
 #include "btod_symmetrize_test.h"
 #include "../compare_ref.h"
 

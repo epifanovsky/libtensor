@@ -2,7 +2,7 @@
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/btod/btod_set.h>
 #include <libtensor/btod/btod_random.h>
-#include <libtensor/tod/tod_btconv.h>
+#include <libtensor/dense_tensor/tod_btconv.h>
 #include <libtensor/dense_tensor/tod_set.h>
 #include "btod_set_test.h"
 #include "../compare_ref.h"

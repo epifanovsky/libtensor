@@ -4,7 +4,7 @@
 #include <libtensor/btod/btod_trace.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/symmetry/se_perm.h>
-#include <libtensor/tod/tod_btconv.h>
+#include <libtensor/dense_tensor/tod_btconv.h>
 #include <libtensor/dense_tensor/tod_trace.h>
 #include "btod_trace_test.h"
 #include "../compare_ref.h"

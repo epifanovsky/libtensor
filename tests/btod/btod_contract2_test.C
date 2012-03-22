@@ -10,7 +10,7 @@
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/symmetry/se_part.h>
 #include <libtensor/symmetry/so_copy.h>
-#include <libtensor/tod/tod_btconv.h>
+#include <libtensor/dense_tensor/tod_btconv.h>
 #include <libtensor/dense_tensor/tod_contract2.h>
 #include "../compare_ref.h"
 #include "btod_contract2_test.h"

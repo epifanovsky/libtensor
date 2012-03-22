@@ -10,7 +10,7 @@
 #include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/symmetry/se_label.h>
 #include <libtensor/symmetry/se_part.h>
-#include <libtensor/tod/tod_btconv.h>
+#include <libtensor/dense_tensor/tod_btconv.h>
 #include <libtensor/dense_tensor/tod_dirsum.h>
 #include "../compare_ref.h"
 #include "btod_dirsum_test.h"

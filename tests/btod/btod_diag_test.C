@@ -6,7 +6,7 @@
 #include <libtensor/symmetry/se_label.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/symmetry/point_group_table.h>
-#include <libtensor/tod/tod_btconv.h>
+#include <libtensor/dense_tensor/tod_btconv.h>
 #include <libtensor/dense_tensor/tod_diag.h>
 #include "btod_diag_test.h"
 #include "../compare_ref.h"

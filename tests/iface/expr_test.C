@@ -3,7 +3,7 @@
 #include <libtensor/btod/btod_set_diag.h>
 #include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/symmetry/so_copy.h>
-#include <libtensor/tod/tod_btconv.h>
+#include <libtensor/dense_tensor/tod_btconv.h>
 #include <libtensor/dense_tensor/tod_contract2.h>
 #include <libtensor/iface/iface.h>
 #include "../compare_ref.h"
