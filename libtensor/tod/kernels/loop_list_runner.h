@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_LOOP_LIST_RUNNER_H
 #define LIBTENSOR_LOOP_LIST_RUNNER_H
 
-#include "kernel_base.h"
+#include <libtensor/kernels/kernel_base.h>
 
 namespace libtensor {
 

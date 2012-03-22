@@ -7,7 +7,7 @@
 #include <libtensor/tod/kernels/loop_list_runner.h>
 #include <libtensor/tod/kernels/kern_mul_generic.h>
 #include <libtensor/tod/contraction2_list_builder.h>
-#include <libtensor/tod/kernels/loop_list_node.h>
+#include <libtensor/kernels/loop_list_node.h>
 #include "../tod_contract2.h"
 
 

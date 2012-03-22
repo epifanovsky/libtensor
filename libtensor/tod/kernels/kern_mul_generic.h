@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_KERN_MUL_GENERIC_H
 #define LIBTENSOR_KERN_MUL_GENERIC_H
 
-#include "kernel_base.h"
+#include <libtensor/kernels/kernel_base.h>
 
 namespace libtensor {
 

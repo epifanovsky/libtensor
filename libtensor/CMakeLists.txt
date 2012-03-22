@@ -21,7 +21,6 @@ set(SRC
     tod/kernels/kern_add_generic.C
     tod/kernels/kern_add_i_i_x_x.C
     tod/kernels/kern_add_i_x_i_x.C
-    tod/kernels/kern_copy_generic.C
     tod/kernels/kern_mul_generic.C
     tod/kernels/kern_mul_i_i_i.C
     tod/kernels/kern_mul_i_i_x.C
@@ -121,6 +120,10 @@ set(SRC_LINALG
     linalg/generic/linalg_base_level6_generic.C
 )
 
+set(SRC_KERNELS
+    kernels/dcopy/kern_dcopy.C
+)
+
 set(SRC_INST
     dense_tensor/impl/dense_tensor.C
     dense_tensor/impl/tod_add.C
@@ -177,7 +180,7 @@ set(SRC_QCHEM
     linalg/qchem/linalg_base_level1_qchem.C
 )
 
-add_library(tensor ${SRC} ${SRC_LINALG} ${SRC_INST} ${SRC_MP})
+add_library(tensor ${SRC} ${SRC_LINALG} ${SRC_KERNELS} ${SRC_INST} ${SRC_MP})
 if(QCHEM_SOURCE_DIR)
     add_library(tensor_qchem ${SRC_QCHEM})
     add_dependencies(tensor_qchem tensor)
