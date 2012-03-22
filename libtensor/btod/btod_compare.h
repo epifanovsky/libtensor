@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_BTOD_COMPARE_H
 #define LIBTENSOR_BTOD_COMPARE_H
 
+#include <cmath> // for fabs
 #include <sstream>
 #include "../defs.h"
 #include "../core/block_tensor_ctrl.h"
@@ -9,7 +10,8 @@
 #include "../core/orbit_list.h"
 #include "../core/transf_list.h"
 #include <libtensor/dense_tensor/dense_tensor.h>
-#include "../tod/tod_compare.h"
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
+#include <libtensor/dense_tensor/tod_compare.h>
 #include "bad_block_index_space.h"
 
 namespace libtensor {
@@ -385,7 +387,7 @@ bool btod_compare<N>::compare_data(const abs_index<N> &aidx,
 template<size_t N>
 bool btod_compare<N>::check_zero(dense_tensor_i<N, double> &t) {
 
-	dense_tensor_ctrl<N, double> c(t);
+	dense_tensor_rd_ctrl<N, double> c(t);
 	const double *p = c.req_const_dataptr();
 	size_t sz = t.get_dims().get_size();
 	bool ok = true;

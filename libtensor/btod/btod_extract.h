@@ -11,8 +11,8 @@
 #include "../core/permutation_builder.h"
 #include "../symmetry/so_proj_down.h"
 #include "../symmetry/so_permute.h"
-#include "../tod/tod_extract.h"
-#include "../tod/tod_set.h"
+#include <libtensor/dense_tensor/tod_extract.h>
+#include <libtensor/dense_tensor/tod_set.h>
 #include "bad_block_index_space.h"
 #include "additive_btod.h"
 #include "transf_double.h"

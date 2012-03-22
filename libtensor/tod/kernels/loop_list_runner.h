@@ -1,5 +1,5 @@
-#ifndef LIBTENSOR_LOOP_LIST_H
-#define LIBTENSOR_LOOP_LIST_H
+#ifndef LIBTENSOR_LOOP_LIST_RUNNER_H
+#define LIBTENSOR_LOOP_LIST_RUNNER_H
 
 #include "kernel_base.h"
 
@@ -63,4 +63,4 @@ void loop_list_runner<N, M>::run_loop(const iterator_t &i,
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_LOOP_LIST_H
+#endif // LIBTENSOR_LOOP_LIST_RUNNER_H

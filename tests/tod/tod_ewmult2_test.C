@@ -5,7 +5,7 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/abs_index.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
-#include <libtensor/tod/tod_ewmult2.h>
+#include <libtensor/dense_tensor/tod_ewmult2.h>
 #include "tod_ewmult2_test.h"
 #include "../compare_ref.h"
 

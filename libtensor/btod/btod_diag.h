@@ -12,9 +12,9 @@
 #include "../core/permutation_builder.h"
 #include "../symmetry/so_merge.h"
 #include "../symmetry/so_permute.h"
-#include "../tod/tod_copy.h"
-#include "../tod/tod_diag.h"
-#include "../tod/tod_set.h"
+#include <libtensor/dense_tensor/tod_copy.h>
+#include <libtensor/dense_tensor/tod_diag.h>
+#include <libtensor/dense_tensor/tod_set.h>
 #include "bad_block_index_space.h"
 #include "additive_btod.h"
 #include "transf_double.h"

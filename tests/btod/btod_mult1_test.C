@@ -2,8 +2,8 @@
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/btod/btod_mult1.h>
 #include <libtensor/btod/btod_random.h>
-#include <libtensor/tod/tod_btconv.h>
-#include <libtensor/tod/tod_mult1.h>
+#include <libtensor/dense_tensor/tod_btconv.h>
+#include <libtensor/dense_tensor/tod_mult1.h>
 #include "btod_mult1_test.h"
 #include "../compare_ref.h"
 

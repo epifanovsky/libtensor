@@ -6,9 +6,11 @@
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/symmetry/se_perm.h>
-#include <libtensor/tod/tod_add.h>
-#include <libtensor/tod/tod_btconv.h>
-#include <libtensor/tod/tod_random.h>
+#include <libtensor/dense_tensor/tod_add.h>
+#include <libtensor/dense_tensor/tod_copy.h>
+#include <libtensor/dense_tensor/tod_btconv.h>
+#include <libtensor/dense_tensor/tod_random.h>
+#include <libtensor/btod/transf_double.h>
 #include "../compare_ref.h"
 #include "tod_btconv_test.h"
 

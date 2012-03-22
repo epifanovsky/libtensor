@@ -10,8 +10,8 @@
 #include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/symmetry/se_label.h>
 #include <libtensor/symmetry/se_part.h>
-#include <libtensor/tod/tod_btconv.h>
-#include <libtensor/tod/tod_dirsum.h>
+#include <libtensor/dense_tensor/tod_btconv.h>
+#include <libtensor/dense_tensor/tod_dirsum.h>
 #include "../compare_ref.h"
 #include "btod_dirsum_test.h"
 #include <libtensor/btod/btod_print.h>
@@ -98,6 +98,8 @@ void btod_dirsum_test::test_ij_i_j_1(bool rnd, double d)
 
 	typedef std_allocator<double> allocator;
 
+    cpu_pool cpus(1);
+
 	try {
 
 	size_t ni = 9, nj = 7;
@@ -131,8 +133,11 @@ void btod_dirsum_test::test_ij_i_j_1(bool rnd, double d)
 
 	//	Generate reference data
 
-	if(d == 0.0) tod_dirsum<1, 1>(ta, 1.0, tb, 1.0).perform(tc_ref);
-	else tod_dirsum<1, 1>(ta, 1.0, tb, 1.0).perform(tc_ref, d);
+	if(d == 0.0) {
+	    tod_dirsum<1, 1>(ta, 1.0, tb, 1.0).perform(cpus, true, 1.0, tc_ref);
+	} else {
+	    tod_dirsum<1, 1>(ta, 1.0, tb, 1.0).perform(cpus, false, d, tc_ref);
+	}
 
 	//	Invoke the direct sum routine
 
@@ -159,6 +164,8 @@ void btod_dirsum_test::test_ij_i_j_2(bool rnd, double d)
 	std::string tns = tnss.str();
 
     typedef std_allocator<double> allocator;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -195,8 +202,11 @@ void btod_dirsum_test::test_ij_i_j_2(bool rnd, double d)
 
 	//	Generate reference data
 
-	if(d == 0.0) tod_dirsum<1, 1>(ta, 1.0, ta, 1.0).perform(tc_ref);
-	else tod_dirsum<1, 1>(ta, 1.0, ta, 1.0).perform(tc_ref, d);
+	if(d == 0.0) {
+	    tod_dirsum<1, 1>(ta, 1.0, ta, 1.0).perform(cpus, true, 1.0, tc_ref);
+	} else {
+	    tod_dirsum<1, 1>(ta, 1.0, ta, 1.0).perform(cpus, false, d, tc_ref);
+	}
 
 	// Check the symmetry of the result
 
@@ -242,6 +252,8 @@ void btod_dirsum_test::test_ij_i_j_3(bool rnd, double d)
 
     typedef std_allocator<double> allocator;
 
+    cpu_pool cpus(1);
+
 	try {
 
 	size_t ni = 9;
@@ -277,8 +289,11 @@ void btod_dirsum_test::test_ij_i_j_3(bool rnd, double d)
 
 	//	Generate reference data
 
-	if(d == 0.0) tod_dirsum<1, 1>(ta, 1.0, ta, -1.0).perform(tc_ref);
-	else tod_dirsum<1, 1>(ta, 1.0, ta, -1.0).perform(tc_ref, d);
+	if(d == 0.0) {
+	    tod_dirsum<1, 1>(ta, 1.0, ta, -1.0).perform(cpus, true, 1.0, tc_ref);
+	} else {
+	    tod_dirsum<1, 1>(ta, 1.0, ta, -1.0).perform(cpus, false, d, tc_ref);
+	}
 
 	// Check the symmetry of the result
 
@@ -325,6 +340,8 @@ void btod_dirsum_test::test_ijk_ij_k_1(bool rnd, double d)
 
     typedef std_allocator<double> allocator;
 
+    cpu_pool cpus(1);
+
 	try {
 
 	size_t ni = 9, nj = 9, nk = 7;
@@ -363,9 +380,9 @@ void btod_dirsum_test::test_ijk_ij_k_1(bool rnd, double d)
 	//	Generate reference data
 
 	if(d == 0.0) {
-		tod_dirsum<2, 1>(ta, 1.5, tb, 1.0).perform(tc_ref);
+		tod_dirsum<2, 1>(ta, 1.5, tb, 1.0).perform(cpus, true, 1.0, tc_ref);
 	} else {
-		tod_dirsum<2, 1>(ta, 1.5, tb, 1.0).perform(tc_ref, d);
+		tod_dirsum<2, 1>(ta, 1.5, tb, 1.0).perform(cpus, false, d, tc_ref);
 	}
 
 	//	Invoke the direct sum routine
@@ -397,6 +414,8 @@ void btod_dirsum_test::test_ikjl_ij_kl_1(bool rnd, double d)
 	std::string tns = tnss.str();
 
     typedef std_allocator<double> allocator;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -437,9 +456,11 @@ void btod_dirsum_test::test_ikjl_ij_kl_1(bool rnd, double d)
 	permutation<4> permc;
 	permc.permute(1, 2);
 	if(d == 0.0) {
-		tod_dirsum<2, 2>(ta, 1.5, tb, -1.0, permc).perform(tc_ref);
+		tod_dirsum<2, 2>(ta, 1.5, tb, -1.0, permc).
+		    perform(cpus, true, 1.0, tc_ref);
 	} else {
-		tod_dirsum<2, 2>(ta, 1.5, tb, -1.0, permc).perform(tc_ref, d);
+		tod_dirsum<2, 2>(ta, 1.5, tb, -1.0, permc).
+		    perform(cpus, false, d, tc_ref);
 	}
 
 	//	Invoke the direct sum routine
@@ -472,6 +493,8 @@ void btod_dirsum_test::test_ikjl_ij_kl_2(bool rnd, double d)
 	std::string tns = tnss.str();
 
     typedef std_allocator<double> allocator;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -538,9 +561,11 @@ void btod_dirsum_test::test_ikjl_ij_kl_2(bool rnd, double d)
 	permutation<4> permc;
 	permc.permute(1, 2);
 	if(d == 0.0) {
-		tod_dirsum<2, 2>(ta, 1.5, tb, -1.0, permc).perform(tc_ref);
+		tod_dirsum<2, 2>(ta, 1.5, tb, -1.0, permc).
+		    perform(cpus, true, 1.0, tc_ref);
 	} else {
-		tod_dirsum<2, 2>(ta, 1.5, tb, -1.0, permc).perform(tc_ref, d);
+		tod_dirsum<2, 2>(ta, 1.5, tb, -1.0, permc).
+		    perform(cpus, false, d, tc_ref);
 	}
 
 	//	Invoke the direct sum routine
@@ -573,6 +598,8 @@ void btod_dirsum_test::test_ikjl_ij_kl_3a(bool s1, bool s2,
     std::string tns = tnss.str();
 
     typedef std_allocator<double> allocator;
+
+    cpu_pool cpus(1);
 
     try {
 
@@ -654,9 +681,11 @@ void btod_dirsum_test::test_ikjl_ij_kl_3a(bool s1, bool s2,
     permutation<4> permc;
     permc.permute(1, 2);
     if(d == 0.0) {
-        tod_dirsum<2, 2>(ta, 1.5, tb, -1.0, permc).perform(tc_ref);
+        tod_dirsum<2, 2>(ta, 1.5, tb, -1.0, permc).
+            perform(cpus, true, 1.0, tc_ref);
     } else {
-        tod_dirsum<2, 2>(ta, 1.5, tb, -1.0, permc).perform(tc_ref, d);
+        tod_dirsum<2, 2>(ta, 1.5, tb, -1.0, permc).
+            perform(cpus, false, d, tc_ref);
     }
 
     //  Invoke the direct sum routine
@@ -695,6 +724,8 @@ void btod_dirsum_test::test_ikjl_ij_kl_3b(bool rnd,
 	std::string tns = tnss.str();
 
     typedef std_allocator<double> allocator;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -796,9 +827,11 @@ void btod_dirsum_test::test_ikjl_ij_kl_3b(bool rnd,
 	permutation<4> permc;
 	permc.permute(1, 2);
 	if(d == 0.0) {
-		tod_dirsum<2, 2>(ta, 1.5, tb, -1.0, permc).perform(tc_ref);
+		tod_dirsum<2, 2>(ta, 1.5, tb, -1.0, permc).
+		    perform(cpus, true, 1.0, tc_ref);
 	} else {
-		tod_dirsum<2, 2>(ta, 1.5, tb, -1.0, permc).perform(tc_ref, d);
+		tod_dirsum<2, 2>(ta, 1.5, tb, -1.0, permc).
+		    perform(cpus, false, d, tc_ref);
 	}
 
 	//	Invoke the direct sum routine
@@ -845,6 +878,8 @@ void btod_dirsum_test::test_ikjl_ij_kl_3c(
 
         product_table_container::get_instance().add(pg);
     }
+
+    cpu_pool cpus(1);
 
     try {
 
@@ -932,9 +967,11 @@ void btod_dirsum_test::test_ikjl_ij_kl_3c(
     permutation<4> permc;
     permc.permute(1, 2);
     if(d == 0.0) {
-        tod_dirsum<2, 2>(ta, 1.5, tb, -1.0, permc).perform(tc_ref);
+        tod_dirsum<2, 2>(ta, 1.5, tb, -1.0, permc).
+            perform(cpus, true, 1.0, tc_ref);
     } else {
-        tod_dirsum<2, 2>(ta, 1.5, tb, -1.0, permc).perform(tc_ref, d);
+        tod_dirsum<2, 2>(ta, 1.5, tb, -1.0, permc).
+            perform(cpus, false, d, tc_ref);
     }
 
     //  Invoke the direct sum routine
@@ -981,6 +1018,8 @@ void btod_dirsum_test::test_iklj_ij_kl_1(bool rnd, double d)
 	std::string tns = tnss.str();
 
     typedef std_allocator<double> allocator;
+
+    cpu_pool cpus(1);
 
 	try {
 
@@ -1050,9 +1089,11 @@ void btod_dirsum_test::test_iklj_ij_kl_1(bool rnd, double d)
 	permutation<4> permc;
 	permc.permute(1, 2);
 	if(d == 0.0) {
-		tod_dirsum<2, 2>(ta, -1.0, ta, -1.0, permc).perform(tc_ref);
+		tod_dirsum<2, 2>(ta, -1.0, ta, -1.0, permc).
+		    perform(cpus, true, 1.0, tc_ref);
 	} else {
-		tod_dirsum<2, 2>(ta, -1.0, ta, -1.0, permc).perform(tc_ref, d);
+		tod_dirsum<2, 2>(ta, -1.0, ta, -1.0, permc).
+		    perform(cpus, false, d, tc_ref);
 	}
 
 	// Check symmetry

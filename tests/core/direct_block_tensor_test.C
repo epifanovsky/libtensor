@@ -1,9 +1,9 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/core/direct_block_tensor.h>
-#include <libtensor/tod/tod_btconv.h>
-#include <libtensor/tod/tod_contract2.h>
-#include <libtensor/tod/tod_dirsum.h>
+#include <libtensor/dense_tensor/tod_btconv.h>
+#include <libtensor/dense_tensor/tod_contract2.h>
+#include <libtensor/dense_tensor/tod_dirsum.h>
 #include <libtensor/btod/btod_add.h>
 #include <libtensor/btod/btod_copy.h>
 #include <libtensor/btod/btod_contract2.h>
@@ -238,8 +238,8 @@ void direct_block_tensor_test::test_op_4() throw(libtest::test_exception) {
 
 	dense_tensor<4, double, allocator_t> tb1(dims4), tb2(dims4), tc(dims4),
 		tc_ref(dims4);
-	tod_dirsum<2, 2>(ta5, 1.0, ta6, -2.0).perform(tb1);
-	tod_dirsum<2, 2>(ta5, -2.0, ta6, 1.0).perform(tb2);
+	tod_dirsum<2, 2>(ta5, 1.0, ta6, -2.0).perform(cpus, true, 1.0, tb1);
+	tod_dirsum<2, 2>(ta5, -2.0, ta6, 1.0).perform(cpus, true, 1.0, tb2);
 	tod_contract2<2, 2, 2>(contr, tb1, tb2).perform(cpus, true, 1.0, tc_ref);
 	tod_btconv<4>(btc).perform(tc);
 

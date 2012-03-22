@@ -2,7 +2,7 @@
 #define LIBTENSOR_BTOD_DOTPROD_IMPL_H
 
 #include "../symmetry/so_mult.h"
-#include "../tod/tod_dotprod.h"
+#include <libtensor/dense_tensor/tod_dotprod.h>
 #include "bad_block_index_space.h"
 #include "transf_double.h"
 #include "../mp/task_batch.h"
