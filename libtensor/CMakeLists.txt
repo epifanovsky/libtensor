@@ -121,6 +121,7 @@ set(SRC_LINALG
 )
 
 set(SRC_KERNELS
+    kernels/dadd1/kern_dadd1.C
     kernels/dcopy/kern_dcopy.C
 )
 
