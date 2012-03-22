@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_TOD_DOTPROD_IMPL_H
 #define LIBTENSOR_TOD_DOTPROD_IMPL_H
 
+#include <memory>
 #include <libtensor/mp/auto_cpu_lock.h>
 #include <libtensor/linalg/linalg.h>
 #include <libtensor/tod/kernels/loop_list_runner.h>
