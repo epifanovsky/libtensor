@@ -37,8 +37,6 @@
 #include "tod/contraction2.h"
 #include "tod/processor.h"
 
-#include "tod/tod_additive.h"
-
 
 #include "btod/basic_btod.h"
 #include "btod/additive_btod.h"
