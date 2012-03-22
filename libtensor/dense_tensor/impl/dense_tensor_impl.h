@@ -3,6 +3,7 @@
 
 #include <sstream>
 #include <libtensor/exception.h>
+#include "../dense_tensor.h"
 
 namespace libtensor {
 
