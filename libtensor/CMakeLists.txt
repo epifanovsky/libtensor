@@ -14,7 +14,6 @@ set(SRC
     symmetry/point_group_table.C
     symmetry/product_table_container.C
     tod/loop_list_add.C
-    tod/loop_list_mul.C
     tod/loop_list_elem.C
     tod/loop_list_elem1.C
 )
