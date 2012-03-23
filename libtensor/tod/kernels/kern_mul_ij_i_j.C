@@ -15,7 +15,7 @@ void kern_mul_ij_i_j::run(const loop_registers<2, 1> &r) {
 }
 
 
-kernel_base<2, 1> *kern_mul_ij_i_j::match(const kern_mul_i_i_x &z,
+kernel_base<2, 1> *kern_mul_ij_i_j::match(const kern_dmul2_i_i_x &z,
 	list_t &in, list_t &out) {
 
 	if(in.empty()) return 0;

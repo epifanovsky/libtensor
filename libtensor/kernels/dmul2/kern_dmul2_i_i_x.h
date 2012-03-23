@@ -1,16 +1,16 @@
-#ifndef LIBTENSOR_KERN_MUL_I_I_X_H
-#define LIBTENSOR_KERN_MUL_I_I_X_H
+#ifndef LIBTENSOR_KERN_DMUL2_I_I_X_H
+#define LIBTENSOR_KERN_DMUL2_I_I_X_H
 
-#include "kern_mul_generic.h"
+#include "../kern_dmul2.h"
 
 namespace libtensor {
 
 
-/** \brief Kernel for \f$ c_i = c_i + a_i b \f$
+/** \brief Specialized kernel for \f$ c_i = c_i + a_i b \f$
 
- 	\ingroup libtensor_tod_kernel
+ 	\ingroup libtensor_kernels
  **/
-class kern_mul_i_i_x : public kernel_base<2, 1> {
+class kern_dmul2_i_i_x : public kernel_base<2, 1> {
 	friend class kern_mul_i_pi_p;
 	friend class kern_mul_ij_i_j;
 	friend class kern_mul_ij_j_i;
@@ -24,7 +24,7 @@ private:
 	size_t m_sia, m_sic;
 
 public:
-	virtual ~kern_mul_i_i_x() { }
+	virtual ~kern_dmul2_i_i_x() { }
 
 	virtual const char *get_name() const {
 		return k_clazz;
@@ -32,7 +32,7 @@ public:
 
 	virtual void run(const loop_registers<2, 1> &r);
 
-	static kernel_base<2, 1> *match(const kern_mul_generic &z,
+	static kernel_base<2, 1> *match(const kern_dmul2 &z,
 		list_t &in, list_t &out);
 
 };
@@ -40,4 +40,4 @@ public:
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_KERN_MUL_I_I_X_H
+#endif // LIBTENSOR_KERN_DMUL2_I_I_X_H

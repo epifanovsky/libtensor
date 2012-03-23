@@ -18,15 +18,14 @@ set(SRC
     tod/loop_list_mul.C
     tod/loop_list_elem.C
     tod/loop_list_elem1.C
-    tod/kernels/kern_mul_generic.C
-    tod/kernels/kern_mul_i_i_i.C
-    tod/kernels/kern_mul_i_i_x.C
+)
+
+set(SKIPPED
     tod/kernels/kern_mul_i_ip_p.C
     tod/kernels/kern_mul_i_ipq_qp.C
     tod/kernels/kern_mul_i_p_ip.C
     tod/kernels/kern_mul_i_p_pi.C
     tod/kernels/kern_mul_i_pi_p.C
-    tod/kernels/kern_mul_i_x_i.C
     tod/kernels/kern_mul_ij_i_j.C
     tod/kernels/kern_mul_ij_ip_jp.C
     tod/kernels/kern_mul_ij_ip_pj.C
@@ -103,7 +102,6 @@ set(SRC
     tod/kernels/kern_mul_ijklm_ipkm_jpl.C
     tod/kernels/kern_mul_ijklm_jlp_ipkm.C
     tod/kernels/kern_mul_ijklmn_kjmp_ipln.C
-    tod/kernels/kern_mul_x_p_p.C
     tod/kernels/kern_mul_x_pq_qp.C
 )
 
@@ -123,6 +121,11 @@ set(SRC_KERNELS
     kernels/dadd2/kern_dadd2_i_i_x_x.C
     kernels/dadd2/kern_dadd2_i_x_i_x.C
     kernels/dcopy/kern_dcopy.C
+    kernels/dmul2/kern_dmul2.C
+    kernels/dmul2/kern_dmul2_i_i_i.C
+    kernels/dmul2/kern_dmul2_i_i_x.C
+    kernels/dmul2/kern_dmul2_i_x_i.C
+    kernels/dmul2/kern_dmul2_x_p_p.C
 )
 
 set(SRC_INST

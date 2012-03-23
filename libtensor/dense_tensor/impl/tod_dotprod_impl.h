@@ -5,7 +5,7 @@
 #include <libtensor/mp/auto_cpu_lock.h>
 #include <libtensor/linalg/linalg.h>
 #include <libtensor/tod/kernels/loop_list_runner.h>
-#include <libtensor/tod/kernels/kern_mul_generic.h>
+#include <libtensor/kernels/kern_dmul2.h>
 #include <libtensor/tod/bad_dimensions.h>
 #include "../dense_tensor_ctrl.h"
 #include "../tod_dotprod.h"
@@ -107,7 +107,7 @@ double tod_dotprod<N>::calculate(cpu_pool &cpus) {
             r.m_ptrb_end[0] = &result + 1;
 
             std::auto_ptr< kernel_base<2, 1> > kern(
-                kern_mul_generic::match(1.0, loop_in, loop_out));
+                kern_dmul2::match(1.0, loop_in, loop_out));
             tod_dotprod<N>::start_timer(kern->get_name());
             loop_list_runner<2, 1>(loop_in).run(r, *kern);
             tod_dotprod<N>::stop_timer(kern->get_name());
