@@ -14,7 +14,6 @@ set(SRC
     symmetry/point_group_table.C
     symmetry/product_table_container.C
     tod/loop_list_add.C
-    tod/loop_list_elem.C
 )
 
 set(SKIPPED
@@ -119,14 +118,15 @@ set(SRC_KERNELS
     kernels/dadd2/kern_dadd2_i_x_i_x.C
     kernels/dcopy/kern_dcopy.C
     kernels/ddiv1/kern_ddiv1.C
+    kernels/ddiv2/kern_ddiv2.C
     kernels/ddivadd1/kern_ddivadd1.C
     kernels/dmul1/kern_dmul1.C
-    kernels/dmuladd1/kern_dmuladd1.C
     kernels/dmul2/kern_dmul2.C
     kernels/dmul2/kern_dmul2_i_i_i.C
     kernels/dmul2/kern_dmul2_i_i_x.C
     kernels/dmul2/kern_dmul2_i_x_i.C
     kernels/dmul2/kern_dmul2_x_p_p.C
+    kernels/dmuladd1/kern_dmuladd1.C
 )
 
 set(SRC_INST
