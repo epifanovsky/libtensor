@@ -25,6 +25,12 @@ class tensor_transf {
     permutation<N> m_perm; //!< Permutation
 
 public:
+    /** \brief Constructor
+     **/
+    tensor_transf(const permutation<N> &p = permutation<N>(),
+            const scalar_transf<T> &st = scalar_transf<T>()) :
+        m_perm(p), m_st(st) { }
+
     //! \name Manipulators
     //@{
     /** \brief Reset tensor transformation to identity transformation
