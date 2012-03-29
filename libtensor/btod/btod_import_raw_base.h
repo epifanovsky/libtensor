@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_BTOD_IMPORT_RAW_BASE_H
 #define LIBTENSOR_BTOD_IMPORT_RAW_BASE_H
 
+#include <cmath> // for fabs
 #include <sstream>
 #include "../defs.h"
 #include "../exception.h"

@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_BTOD_COMPARE_H
 #define LIBTENSOR_BTOD_COMPARE_H
 
+#include <cmath> // for fabs
 #include <sstream>
 #include "../defs.h"
 #include "../core/block_tensor_ctrl.h"

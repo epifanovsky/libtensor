@@ -10,8 +10,8 @@
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/symmetry/se_label.h>
 #include <libtensor/symmetry/so_copy.h>
-#include <libtensor/tod/tod_btconv.h>
-#include <libtensor/tod/tod_ewmult2.h>
+#include <libtensor/dense_tensor/tod_btconv.h>
+#include <libtensor/dense_tensor/tod_ewmult2.h>
 #include "btod_ewmult2_test.h"
 #include "../compare_ref.h"
 

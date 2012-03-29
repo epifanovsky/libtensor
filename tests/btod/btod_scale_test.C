@@ -6,7 +6,7 @@
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/btod/btod_scale.h>
 #include <libtensor/symmetry/se_perm.h>
-#include <libtensor/tod/tod_btconv.h>
+#include <libtensor/dense_tensor/tod_btconv.h>
 #include "btod_scale_test.h"
 #include "../compare_ref.h"
 

@@ -7,7 +7,8 @@
 #include "../core/block_tensor_ctrl.h"
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
-#include "../tod/tod_scale.h"
+#include <libtensor/mp/cpu_pool.h>
+#include <libtensor/dense_tensor/tod_scale.h>
 
 namespace libtensor {
 

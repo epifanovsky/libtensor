@@ -4,7 +4,7 @@
 #include "../core/block_index_space_product_builder.h"
 #include "../symmetry/so_dirprod.h"
 #include "../symmetry/so_merge.h"
-#include "../tod/tod_dotprod.h"
+#include <libtensor/dense_tensor/tod_dotprod.h>
 #include "bad_block_index_space.h"
 #include "../mp/task_batch.h"
 
