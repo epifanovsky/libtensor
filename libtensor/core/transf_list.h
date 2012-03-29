@@ -8,7 +8,7 @@
 #include "../timings.h"
 #include "abs_index.h"
 #include "symmetry.h"
-#include "transf.h"
+#include "tensor_transf.h"
 
 namespace libtensor {
 
