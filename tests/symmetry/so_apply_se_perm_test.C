@@ -1,4 +1,5 @@
 #include <sstream>
+#include <libtensor/btod/scalar_transf_double.h>
 #include <libtensor/symmetry/so_apply_se_perm.h>
 #include "so_apply_se_perm_test.h"
 
@@ -48,7 +49,9 @@ void so_apply_se_perm_test::test_1(bool keep_zero,
 	symmetry_element_set<2, double> set2(se_t::k_sym_type);
 
 	permutation<2> p0;
-	params_t params(set1, p0, keep_zero, is_asym, sign, set2);
+	scalar_transf<double> tr0, tr1(-1.0);
+	params_t params(set1, p0, is_asym ? tr0 : tr1,
+	        sign ? tr0 : tr1, keep_zero, set2);
 
 	so_apply_se_perm_t op;
 	op.perform(params);
@@ -58,7 +61,7 @@ void so_apply_se_perm_test::test_1(bool keep_zero,
 	}
 
 	permutation<2> perm; perm.permute(0, 1);
-	se_t elem(perm, true);
+	se_t elem(perm, tr0);
 	set2.insert(elem);
 
 	op.perform(params);
@@ -89,7 +92,9 @@ void so_apply_se_perm_test::test_2(bool keep_zero,
 
 	try {
 
-	se_t elem1(permutation<2>().permute(0, 1), false);
+	permutation<2> p; p.permute(0, 1);
+	scalar_transf<double> tr0, tr1(-1.0);
+	se_t elem1(p, tr0);
 
 	symmetry_element_set<2, double> set1(se_t::k_sym_type);
 	symmetry_element_set<2, double> set2(se_t::k_sym_type);
@@ -97,45 +102,32 @@ void so_apply_se_perm_test::test_2(bool keep_zero,
 	set1.insert(elem1);
 
 	permutation<2> p0;
-	params_t params(set1, p0, keep_zero, is_asym, sign, set2);
+	params_t params(set1, p0, is_asym ? tr0 : tr1,
+	        sign ? tr0 : tr1, keep_zero, set2);
 
 	so_apply_se_perm_t op;
 	op.perform(params);
 
-	if (is_asym) {
-		if(! set2.is_empty())
-			fail_test(tnss.str().c_str(),
-					__FILE__, __LINE__, "! set2.is_empty()");
-	}
-	else {
-		if(set2.is_empty())
-			fail_test(tnss.str().c_str(),
-					__FILE__, __LINE__, "set2.is_empty()");
+    if(set2.is_empty())
+        fail_test(tnss.str().c_str(),
+                __FILE__, __LINE__, "set2.is_empty()");
 
-		symmetry_element_set_adapter<2, double, se_t> adapter(set2);
-		symmetry_element_set_adapter<2, double, se_t>::iterator i =
-				adapter.begin();
-		const se_t &elem2 = adapter.get_elem(i);
-		i++;
-		if(i != adapter.end())
-			fail_test(tnss.str().c_str(), __FILE__, __LINE__,
-					"Expected only one element.");
+    symmetry_element_set_adapter<2, double, se_t> adapter(set2);
+    symmetry_element_set_adapter<2, double, se_t>::iterator i =
+            adapter.begin();
+    const se_t &elem2 = adapter.get_elem(i);
+    i++;
+    if(i != adapter.end())
+        fail_test(tnss.str().c_str(), __FILE__, __LINE__,
+                "Expected only one element.");
 
-		if (sign) {
-			if (! elem2.is_symm())
-				fail_test(tnss.str().c_str(), __FILE__, __LINE__,
-						"!elem2.is_symm()");
-		}
-		else {
-			if(elem2.is_symm())
-				fail_test(tnss.str().c_str(), __FILE__, __LINE__,
-						"elem2.is_symm()");
-		}
+    if (elem2.get_transf() != tr0)
+        fail_test(tnss.str().c_str(), __FILE__, __LINE__,
+                "elem2.get_transf() != tr0");
 
-		if(!elem1.get_perm().equals(elem2.get_perm()))
-			fail_test(tnss.str().c_str(), __FILE__, __LINE__,
-					"elem1 != elem2");
-	}
+    if(!elem1.get_perm().equals(elem2.get_perm()))
+        fail_test(tnss.str().c_str(), __FILE__, __LINE__,
+                "elem1 != elem2");
 
 	} catch(exception &e) {
 		fail_test(tnss.str().c_str(), __FILE__, __LINE__, e.what());
@@ -158,8 +150,9 @@ void so_apply_se_perm_test::test_3(bool keep_zero,
 
 	try {
 
-	se_t el1(permutation<4>().permute(0, 1), false);
-	se_t el2(permutation<4>().permute(2, 3), true);
+	scalar_transf<double> tr0, tr1(-1.);
+	se_t el1(permutation<4>().permute(0, 1), tr1);
+	se_t el2(permutation<4>().permute(2, 3), tr0);
 
 	symmetry_element_set<4, double> set1(se_t::k_sym_type);
 	symmetry_element_set<4, double> set2(se_t::k_sym_type);
@@ -168,7 +161,8 @@ void so_apply_se_perm_test::test_3(bool keep_zero,
 	set1.insert(el2);
 
 	permutation<4> perm; perm.permute(0, 1).permute(1, 2);
-	params_t params(set1, perm, keep_zero, is_asym, sign, set2);
+	params_t params(set1, perm,
+	        is_asym ? tr0 : tr1, sign ? tr0 : tr1, keep_zero, set2);
 
 	so_apply_se_perm_t op;
 	op.perform(params);
@@ -186,9 +180,9 @@ void so_apply_se_perm_test::test_3(bool keep_zero,
 			fail_test(tnss.str().c_str(), __FILE__, __LINE__,
 					"Expected one element.");
 
-		if (! elem1.is_symm())
+		if (elem1.get_transf() != tr0)
 			fail_test(tnss.str().c_str(), __FILE__, __LINE__,
-					"!elem1.is_symm()");
+					"elem1.get_transf() != tr0");
 
 		if (! elem1.get_perm().equals(permutation<4>().permute(1, 3))) {
 			fail_test(tnss.str().c_str(), __FILE__, __LINE__,
@@ -209,21 +203,21 @@ void so_apply_se_perm_test::test_3(bool keep_zero,
 		if (elem1.get_perm().equals(permutation<4>().permute(0, 2))) {
 			is_p02 = true;
 			if (sign) {
-				if (! elem1.is_symm())
+				if (elem1.get_transf() != tr0)
 					fail_test(tnss.str().c_str(), __FILE__, __LINE__,
-							"!elem1.is_symm()");
+							"elem1.get_transf() != tr0");
 			}
 			else {
-				if (elem1.is_symm())
+				if (elem1.get_transf() != tr1)
 					fail_test(tnss.str().c_str(), __FILE__, __LINE__,
-							"elem1.is_symm()");
+							"elem1.get_transf() != tr1");
 			}
 		}
 		else if (elem1.get_perm().equals(permutation<4>().permute(1, 3))) {
 			is_p02 = false;
-			if (! elem1.is_symm())
+			if (elem1.get_transf() != tr0)
 				fail_test(tnss.str().c_str(), __FILE__, __LINE__,
-						"!elem1.is_symm()");
+						"elem1.get_transf() != tr0");
 		}
 		else {
 			fail_test(tnss.str().c_str(), __FILE__, __LINE__,
@@ -235,9 +229,9 @@ void so_apply_se_perm_test::test_3(bool keep_zero,
 				fail_test(tnss.str().c_str(), __FILE__, __LINE__,
 						"Unexpected permutation elem2.");
 
-			if (! elem2.is_symm())
+			if (elem2.get_transf() != tr0)
 				fail_test(tnss.str().c_str(), __FILE__, __LINE__,
-						"!elem2.is_symm()");
+						"elem2.get_transf() !=  tr0");
 		}
 		else {
 			if (! elem2.get_perm().equals(permutation<4>().permute(0, 2)))
@@ -245,14 +239,14 @@ void so_apply_se_perm_test::test_3(bool keep_zero,
 						"Unexpected permutation elem2.");
 
 			if (sign) {
-				if (! elem2.is_symm())
+				if (elem2.get_transf() != tr0)
 					fail_test(tnss.str().c_str(), __FILE__, __LINE__,
-							"!elem2.is_symm()");
+							"elem2.get_transf() != tr0");
 			}
 			else {
-				if(elem2.is_symm())
+				if(elem2.get_transf() != tr1)
 					fail_test(tnss.str().c_str(), __FILE__, __LINE__,
-							"elem2.is_symm()");
+							"elem2.get_transf() != tr1");
 			}
 		}
 	}

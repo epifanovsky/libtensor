@@ -1,3 +1,4 @@
+#include <libtensor/btod/scalar_transf_double.h>
 #include "../so_apply_se_part.h"
 #include "so_apply_se_part_impl.h"
 

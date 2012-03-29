@@ -12,11 +12,10 @@ void so_apply<N, T>::perform(symmetry<N, T> &sym2) {
             i != m_sym1.end(); i++) {
 
         const symmetry_element_set<N, T> &set1 = m_sym1.get_subset(i);
-
         symmetry_element_set<N, T> set2(set1.get_id());
 
         symmetry_operation_params<operation_t> params(
-                set1, m_perm1, m_keep_zero, m_is_asym, m_sign, set2);
+                set1, m_perm1, m_s1, m_s2, m_keep_zero, set2);
         dispatcher_t::get_instance().invoke(set1.get_id(), params);
 
         for(typename symmetry_element_set<N, T>::iterator j =

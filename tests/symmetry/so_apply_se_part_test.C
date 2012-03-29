@@ -1,3 +1,4 @@
+#include <libtensor/btod/scalar_transf_double.h>
 #include <libtensor/symmetry/so_apply_se_part.h>
 #include "../compare_ref.h"
 #include "so_apply_se_part_test.h"
@@ -48,7 +49,9 @@ void so_apply_se_part_test::test_1(bool keep_zero,
 	symmetry_element_set<2, double> set2(se_t::k_sym_type);
 
 	permutation<2> p0;
-	params_t params(set1, p0, keep_zero, is_asym, sign, set2);
+	scalar_transf<double> tr0, tr1(-1.);
+	params_t params(set1, p0, (is_asym ? tr0 : tr1),
+	        (sign ? tr0 : tr1), keep_zero, set2);
 
 	so_se_part_t op;
 
@@ -117,8 +120,10 @@ void so_apply_se_part_test::test_2(bool keep_zero,
 
 	set1.insert(elem1);
 
-	permutation<2> p0;
-	params_t params(set1, p0, keep_zero, is_asym, sign, set2);
+    permutation<2> p0;
+    scalar_transf<double> tr0, tr1(-1.);
+    params_t params(set1, p0,
+            is_asym ? tr0 : tr1, sign ? tr0 : tr1, keep_zero, set2);
 
 	so_se_part_t op;
 	op.perform(params);
@@ -208,8 +213,10 @@ void so_apply_se_part_test::test_3(bool keep_zero,
 
 	set1.insert(elem1);
 
-	permutation<2> p1; p1.permute(0, 1);
-	params_t params(set1, p1, keep_zero, is_asym, sign, set2);
+    permutation<2> p1; p1.permute(0, 1);
+    scalar_transf<double> tr0, tr1(-1.);
+    params_t params(set1, p1,
+            is_asym ? tr0 : tr1, sign ? tr0 : tr1, keep_zero, set2);
 
 	so_se_part_t op;
 	op.perform(params);

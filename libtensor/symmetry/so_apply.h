@@ -18,6 +18,24 @@ class symmetry_operation_params< so_apply<N, T> >;
 	\tparam N Symmetry cardinality (%tensor order).
 	\tparam T Tensor element type.
 
+	The symmetry operation computes the symmetry of a tensor \f$ T \f$ whose
+	elements have been subjected to a function \f$ f(x) \f$:
+	\f[
+	    T'_{ij...} = f\left(T_{ij...}\right)
+	\f]
+	To perform this task the operation requires two types of information
+	about the function:
+	- if the function maps 0 onto 0 (i.e. if elements which were zero due to
+	  symmetry stay zero
+	- if a scalar transformation \f$ \hat{S} \f$ on the tensor elements
+	  results in a scalar transformation \f$ \hat{S}' \f$ of the elements of
+	  the result tensor (i.e. if
+	  \f$ f\left(\hat{S} x\right) = \hat{S}' f(x) \f$).
+
+	If the scalar transformation \f$ \hat{S} \f$ is the identity transformation
+	the function is assumed to be asymmetric.
+
+
 	\ingroup libtensor_symmetry
  **/
 template<size_t N, typename T>
@@ -29,9 +47,9 @@ private:
 private:
     const symmetry<N, T> &m_sym1; //!< Symmetry container (A)
     permutation<N> m_perm1; //!< Permutation of the %tensor
+    scalar_transf<T> m_s1; //!< Scalar transformation \f$ \hat{S} \f$
+    scalar_transf<T> m_s2; //!< Scalar transformation \f$ \hat{S}' \f$
     bool m_keep_zero; //!< Functor maps 0 to 0
-    bool m_is_asym; //!< Functor is asymmetric
-    bool m_sign; //!< Functor is symmetric or anti-symmetric
 
 public:
     /**	\brief Initializes the operation
@@ -42,9 +60,10 @@ public:
 			(ignored if is_asym is true).
      **/
     so_apply(const symmetry<N, T> &sym1, const permutation<N> &perm1,
-            bool keep_zero, bool is_asym, bool sign) :
+            const scalar_transf<T> &s1, const scalar_transf<T> &s2,
+            bool keep_zero) :
                 m_sym1(sym1), m_perm1(perm1), m_keep_zero(keep_zero),
-                m_is_asym(is_asym), m_sign(sign)
+                m_s1(s1), m_s2(s2)
     { }
 
     /**	\brief Performs the operation
@@ -64,20 +83,22 @@ class symmetry_operation_params< so_apply<N, T> > :
 public:
     const symmetry_element_set<N, T> &grp1; //!< Symmetry group 1
     permutation<N> perm1; //!< Permutation 1
+    scalar_transf<T> s1;
+    scalar_transf<T> s2;
     bool keep_zero; //!< Functor maps 0 to 0
-    bool is_asym; //!< Functor is asymmetric
-    bool sign; //!< Functor is symmetric or anti-symmetric
     symmetry_element_set<N, T> &grp2; //!< Symmetry group 2 (output)
 
 public:
     symmetry_operation_params(
             const symmetry_element_set<N, T> &grp1_,
             const permutation<N> &perm1_,
-            bool keep_zero_, bool is_asym_, bool sign_,
+            const scalar_transf<T> &s1_,
+            const scalar_transf<T> &s2_,
+            bool keep_zero_,
             symmetry_element_set<N, T> &grp2_) :
 
                 grp1(grp1_), perm1(perm1_), keep_zero(keep_zero_),
-                is_asym(is_asym_), sign(sign_), grp2(grp2_) { }
+                s1(s1_), s2(s2_), grp2(grp2_) { }
 
     virtual ~symmetry_operation_params() { }
 };

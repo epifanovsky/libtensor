@@ -23,7 +23,7 @@ void symmetry_operation_impl< so_apply<N, T>, se_part<N, T> >::do_perform(
     adapter_t adapter1(params.grp1);
 
     // If functor is asymmetric, only positive mappings survive.
-    if (params.is_asym) {
+    if (params.s1.is_identity()) {
 
         for (typename adapter_t::iterator it1 = adapter1.begin();
                 it1 != adapter1.end(); it1++) {
@@ -52,7 +52,7 @@ void symmetry_operation_impl< so_apply<N, T>, se_part<N, T> >::do_perform(
     }
     // If functor is symmetric with respect to the y-axis all negative
     // mappings become positive
-    else if (params.sign) {
+    else if (params.s2.is_identity()) {
         for (typename adapter_t::iterator it1 = adapter1.begin();
                 it1 != adapter1.end(); it1++) {
 

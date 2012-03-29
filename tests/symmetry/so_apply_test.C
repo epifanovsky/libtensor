@@ -1,4 +1,5 @@
 #include <typeinfo>
+#include <libtensor/btod/scalar_transf_double.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/symmetry/so_apply.h>
 #include "../compare_ref.h"
@@ -47,8 +48,10 @@ void so_apply_test::test_1(bool keep_zero,
 
 	symmetry<4, double> sym1(bis), sym2(bis);
 	permutation<4> perm1;
+	scalar_transf<double> tr0, tr1(-1.);
 
-	so_apply<4, double>(sym1, perm1, keep_zero, is_asym, sign).perform(sym2);
+	so_apply<4, double>(sym1, perm1,
+	        is_asym ? tr0 : tr1, sign ? tr0 : tr1, keep_zero).perform(sym2);
 
 	symmetry<4, double>::iterator j2 = sym2.begin();
 	if(j2 != sym2.end()) {
@@ -79,18 +82,20 @@ void so_apply_test::test_2(bool keep_zero,
 
 	symmetry<4, double> sym1(bis), sym2(bis), sym2_ref(bis);
 	permutation<4> perm1;
+	scalar_transf<double> tr0, tr1(-1.);
 
-	sym2.insert(se_perm<4, double>(permutation<4>().permute(0, 1), true));
-	sym2.insert(se_perm<4, double>(permutation<4>().permute(2, 3), false));
+	sym2.insert(se_perm<4, double>(permutation<4>().permute(0, 1), tr0));
+	sym2.insert(se_perm<4, double>(permutation<4>().permute(2, 3), tr1));
 
 	if (! is_asym) {
 		sym2_ref.insert(se_perm<4, double>(
-				permutation<4>().permute(0, 1), true));
+				permutation<4>().permute(0, 1), tr0));
 		sym2_ref.insert(se_perm<4, double>(
-				permutation<4>().permute(2, 3), sign ? true : false));
+				permutation<4>().permute(2, 3), sign ? tr0 : tr1));
 	}
 
-	so_apply<4, double>(sym1, perm1, keep_zero, is_asym, sign).perform(sym2);
+	so_apply<4, double>(sym1, perm1,
+	        is_asym ? tr0 : tr1, sign ? tr0 : tr1, keep_zero).perform(sym2);
 
 	compare_ref<4>::compare(tnss.str().c_str(), sym2, sym2_ref);
 
@@ -121,18 +126,20 @@ void so_apply_test::test_3(bool keep_zero,
 
 	bis.permute(perm1);
 	symmetry<4, double> sym2(bis), sym2_ref(bis);
+    scalar_transf<double> tr0, tr1(-1.);
 
-	sym1.insert(se_perm<4, double>(permutation<4>().permute(0, 1), true));
-	sym1.insert(se_perm<4, double>(permutation<4>().permute(2, 3), false));
+	sym1.insert(se_perm<4, double>(permutation<4>().permute(0, 1), tr0));
+	sym1.insert(se_perm<4, double>(permutation<4>().permute(2, 3), tr1));
 
 	if (! is_asym) {
 		sym2_ref.insert(se_perm<4, double>(
-				permutation<4>().permute(0, 2), true));
+				permutation<4>().permute(0, 2), tr0));
 		sym2_ref.insert(se_perm<4, double>(
-				permutation<4>().permute(1, 3), sign ? true : false));
+				permutation<4>().permute(1, 3), sign ? tr0 : tr1));
 	}
 
-	so_apply<4, double>(sym1, perm1, keep_zero, is_asym, sign).perform(sym2);
+	so_apply<4, double>(sym1, perm1,
+	        is_asym ? tr0 : tr1, sign ? tr0 : tr1, keep_zero).perform(sym2);
 
 	compare_ref<4>::compare(tnss.str().c_str(), sym2, sym2_ref);
 

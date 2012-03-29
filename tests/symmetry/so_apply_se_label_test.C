@@ -1,3 +1,4 @@
+#include <libtensor/btod/scalar_transf_double.h>
 #include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/symmetry/product_table_container.h>
 #include <libtensor/symmetry/so_apply_se_label.h>
@@ -60,13 +61,14 @@ void so_apply_se_label_test::test_1(
 	el1.set_rule(2);
 
 	permutation<2> p;
+	scalar_transf<double> tr0, tr1(-1.0);
 
 	symmetry_element_set<2, double> set1(se2_t::k_sym_type);
 	symmetry_element_set<2, double> set2(se2_t::k_sym_type);
 
 	set1.insert(el1);
 	symmetry_operation_params<so_t> params(set1, p,
-	        keep_zero, is_asym, sign, set2);
+	        is_asym ? tr0 : tr1, sign ? tr0 : tr1, keep_zero, set2);
 
 	so_se_t().perform(params);
 
