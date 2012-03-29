@@ -67,7 +67,7 @@ void symmetry_operation_impl< so_symmetrize<N, T>, se_perm<N, T> >::do_perform(
 
     // Create a list of all permutations in the group
     adapter_t ad(params.grp1);
-    perm_list_t lst;
+    perm_list_t l0, l1, l2;
     std::set<size_t> done;
     done.insert(0);
     for (typename adapter_t::iterator it = ad.begin(); it != ad.end(); it++) {
@@ -76,39 +76,29 @@ void symmetry_operation_impl< so_symmetrize<N, T>, se_perm<N, T> >::do_perform(
 
         size_t idx = encode(e1.get_perm());
         if (done.count(idx) != 0) continue;
-
-        lst.push_back(gen_perm_t(e1.get_perm(), e1.get_transf()));
         done.insert(idx);
+        l0.push_back(gen_perm_t(e1.get_perm(), e1.get_transf()));
+        l1.push_back(gen_perm_t(e1.get_perm(), e1.get_transf()));
     }
 
-    bool added;
-    do {
-        added = false;
-        perm_list_t append;
-        for(typename adapter_t::iterator it = ad.begin();
-                it != ad.end(); it++) {
+    while (! l1.empty()) {
+        const gen_perm_t &cur = l1.front();
+        for (typename perm_list_t::iterator il = l0.begin();
+                il != l0.end(); il++) {
 
-            const se_perm<N, T> &e1 = ad.get_elem(it);
-            for (typename perm_list_t::iterator il = lst.begin();
-                    il != lst.end(); il++) {
+            permutation<N> p(cur.first);
+            p.permute(il->first);
+            size_t idx = encode(p);
+            if (done.count(idx) != 0) continue;
+            done.insert(idx);
 
-                permutation<N> p(il->first);
-                p.permute(e1.get_perm());
-
-                size_t idx = encode(p);
-                if (done.count(idx) != 0) continue;
-
-                done.insert(idx);
-                scalar_transf<T> tr(il->second);
-                tr.transform(e1.get_transf());
-                append.push_back(gen_perm_t(p, tr));
-                added = true;
-            }
+            scalar_transf<T> tr(cur.second);
+            tr.transform(il->second);
+            l1.push_back(gen_perm_t(p, tr));
         }
-        lst.insert(lst.end(), append.begin(), append.end());
-        append.clear();
-
-    } while (added);
+        l2.push_back(cur);
+        l1.pop_front();
+    }
 
     // Loop through all symmetrizations and check which permutations survive
     permutation_generator<N> pg(msk);
@@ -118,7 +108,7 @@ void symmetry_operation_impl< so_symmetrize<N, T>, se_perm<N, T> >::do_perform(
     while (pg.next()) {
         const permutation<N> &p2 = pg.get_perm();
 
-        if (nidx == 2) {
+        if (ngrp == 2) {
             trx.transform(params.trp);
             px.permute(pp);
         }
@@ -144,30 +134,29 @@ void symmetry_operation_impl< so_symmetrize<N, T>, se_perm<N, T> >::do_perform(
 
         // Permute generating set and create a new permutation group
         permutation_group<N, T> grpx;
-        for (typename adapter_t::iterator it = ad.begin();
-                it != ad.end(); it++) {
+        for (typename perm_list_t::iterator it = l0.begin();
+                it != l0.end(); it++) {
 
-            const element_t &ei = ad.get_elem(it);
             permutation<N> pi(pxinv);
-            pi.permute(ei.get_perm()).permute(px);
+            pi.permute(it->first).permute(px);
             scalar_transf<T> ti(trxinv);
-            ti.transform(ei.get_transf()).transform(trx);
+            ti.transform(it->second).transform(trx);
 
             grpx.add_orbit(ti, pi);
         }
 
         // Test permutations in list against new permutation group
-        typename perm_list_t::iterator it = lst.begin();
-        while (it != lst.end()) {
-            if (! grpx.is_member(it->second, it->first)) it = lst.erase(it);
+        typename perm_list_t::iterator it = l2.begin();
+        while (it != l2.end()) {
+            if (! grpx.is_member(it->second, it->first)) it = l2.erase(it);
             else it++;
         }
     }
 
     // At last, add all elements remaining in the list to grp2
     permutation_group<N, T> grp2;
-    for (typename perm_list_t::iterator it = lst.begin();
-            it != lst.end(); it++) {
+    for (typename perm_list_t::iterator it = l2.begin();
+            it != l2.end(); it++) {
         grp2.add_orbit(it->second, it->first);
     }
 
