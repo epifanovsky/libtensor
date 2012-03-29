@@ -1,3 +1,4 @@
+#include <libtensor/btod/scalar_transf_double.h>
 #include "../so_copy.h"
 #include "so_copy_impl.h"
 

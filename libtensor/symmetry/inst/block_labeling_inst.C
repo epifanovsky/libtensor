@@ -1,3 +1,4 @@
+#include <libtensor/btod/scalar_transf_double.h>
 #include "../block_labeling.h"
 #include "block_labeling_impl.h"
 

@@ -1,3 +1,4 @@
+#include <libtensor/btod/scalar_transf_double.h>
 #include "../so_dirsum.h"
 #include "so_dirsum_impl.h"
 

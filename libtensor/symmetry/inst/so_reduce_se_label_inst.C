@@ -1,3 +1,4 @@
+#include <libtensor/btod/scalar_transf_double.h>
 #include "../so_reduce_se_label.h"
 #include "so_reduce_se_label_impl.h"
 
