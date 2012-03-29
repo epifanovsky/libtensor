@@ -1,15 +1,16 @@
 #ifndef LIBTENSOR_SCALAR_TRANSF_DOUBLE_H
 #define LIBTENSOR_SCALAR_TRANSF_DOUBLE_H
 
+
 #include "../defs.h"
 #include "../exception.h"
 #include "../core/scalar_transf.h"
 
+
 namespace libtensor {
 
-/** \brief Specialization of scalar_transf<T> for T == double
 
-    TODO: Think about restricting m_coeff to 1.0 and -1.0
+/** \brief Specialization of scalar_transf<T> for T == double
  **/
 template<>
 class scalar_transf<double> {
@@ -19,20 +20,40 @@ private:
 public:
 	//! \name Constructors
 	//@{
+
+	/** \brief Default constructor
+	    \param coeff Scaling coefficient (default: 1.0)
+	 **/
 	scalar_transf(double coeff = 1.0) : m_coeff(coeff) { }
+
+	/** \brief Copy constructor
+	 **/
 	scalar_transf(const scalar_transf<double> &tr) : m_coeff(tr.m_coeff) { }
+
+	/** \brief Assigment operator
+	 **/
 	scalar_transf<double> &operator=(const scalar_transf<double> &tr) {
 	    m_coeff = tr.m_coeff;
 	}
 	//@}
 
+	//! \name Manipulating functions
 	//@ {
+
 	void reset() { m_coeff = 1.0; }
-	void transform(const scalar_transf<double> &tr) { m_coeff *= tr.m_coeff; }
-    void apply(double &el) { el *= m_coeff; }
-	void invert() { m_coeff = (m_coeff == 0.0 ? 0.0 : 1.0/m_coeff); }
-	bool is_identity() const { return m_coeff == 1.0; }
-    //@}
+
+	scalar_transf<double> &transform(const scalar_transf<double> &tr) {
+	    m_coeff *= tr.m_coeff; return *this;
+	}
+
+	scalar_transf<double> &invert() {
+	    m_coeff = (m_coeff == 0.0 ? 0.0 : 1.0/m_coeff);
+	    return *this;
+	}
+
+	void apply(double &el) { el *= m_coeff; }
+
+	//@}
 
 	/** \brief Scale coefficient by c
 	 **/
@@ -42,9 +63,12 @@ public:
 	 **/
 	const double& get_coeff() const { return m_coeff; }
 
-	//! Comparison operators
+	//! Comparison functions and operators
 	//@{
-	/** \brief equal comparison
+
+    bool is_identity() const { return m_coeff == 1.0; }
+
+    /** \brief equal comparison
 	 **/
 	bool operator==(const scalar_transf<double>& tr) const {
 		return (m_coeff==tr.m_coeff);
@@ -55,8 +79,33 @@ public:
 	bool operator!=(const scalar_transf<double>& tr) const {
 	    return (!operator==(tr));
 	}
+
 	//@}
 };
+
+
+template<>
+inline scalar_transf<double> &scalar_transf<double>::transform(
+        const scalar_transf<double> &tr) {
+
+    m_coeff *= tr.m_coeff; return *this;
+}
+
+
+template<>
+inline scalar_transf<double> &scalar_transf<double>::invert() {
+
+    m_coeff = (m_coeff == 0.0 ? 0.0 : 1.0/m_coeff);
+    return *this;
+}
+
+
+inline std::ostream &operator<<(std::ostream &os,
+        const scalar_transf<double> &tr) {
+    os << tr.get_coeff();
+    return os;
+}
+
 
 } // namespace libtensor
 

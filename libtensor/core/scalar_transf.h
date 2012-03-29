@@ -3,6 +3,7 @@
 
 #include "../defs.h"
 #include "../exception.h"
+#include "../not_implemented.h"
 #include "index.h"
 
 namespace libtensor {
@@ -23,6 +24,15 @@ public:
     typedef T scalar_t;
 
 public:
+    //! \name Constructors
+    //@{
+
+    scalar_transf();
+
+    scalar_transf(const scalar_transf<T> &tr);
+
+    //@}
+
     //! \name Manipulators
     //@{
 
@@ -32,11 +42,11 @@ public:
 
 	/** \brief Apply scalar transformation st to this transformation
 	 **/
-	void transform(const scalar_transf<T> &st);
+	scalar_transf<T> &transform(const scalar_transf<T> &st);
 
     /** \brief Invert this transformation
      **/
-    void invert();
+    scalar_transf<T> &invert();
 
     //@}
 
@@ -50,15 +60,29 @@ public:
 
 	//! \name Comparison operators
 	//@{
-	void operator==(const scalar_transf<T> &tr) const {
+	bool operator==(const scalar_transf<T> &tr) const {
 	    return true;
 	}
 
-	void operator!=(const scalar_transf<T> &tr) const {
+	bool operator!=(const scalar_transf<T> &tr) const {
 	    return (! operator==(tr));
 	}
 	//@}
 };
+
+
+template<typename T>
+scalar_transf<T>::scalar_transf() {
+    throw not_implemented(g_ns, "scalar_transf<T>",
+            "scalar_transf()", __FILE__, __LINE__);
+}
+
+
+template<typename T>
+scalar_transf<T>::scalar_transf(const scalar_transf<T> &tr) {
+    throw not_implemented(g_ns, "scalar_transf<T>",
+            "scalar_transf(const scalar_transf<T> &)", __FILE__, __LINE__);
+}
 
 
 } // namespace libtensor
