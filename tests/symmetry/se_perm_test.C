@@ -26,17 +26,20 @@ void se_perm_test::test_sym_ab_ba() throw(libtest::test_exception) {
 
         permutation<2> perm;
         perm.permute(0, 1);
-        se_perm<2, double> elem(perm, true);
+        scalar_transf<double> tr0;
+        se_perm<2, double> elem(perm, tr0);
 
-        if(!elem.is_symm()) {
-            fail_test(testname, __FILE__, __LINE__, "!elem.is_symm()");
+        if(elem.get_transf() != tr0) {
+            fail_test(testname, __FILE__, __LINE__, "elem.get_transf() != tr0");
         }
         if(!elem.get_perm().equals(perm)) {
             fail_test(testname, __FILE__, __LINE__,
                     "!elem.get_perm().equals(perm)");
         }
 
-        const tensor_transf<2, double> &tr = elem.get_transf();
+        index<2> ix;
+        tensor_transf<2, double> tr;
+        elem.apply(ix, tr);
 
         if(!tr.get_perm().equals(perm)) {
             fail_test(testname, __FILE__, __LINE__,
@@ -91,17 +94,20 @@ void se_perm_test::test_asym_ab_ba() throw(libtest::test_exception) {
 
         permutation<2> perm;
         perm.permute(0, 1);
-        se_perm<2, double> elem(perm, false);
+        scalar_transf<double> tr1(-1.0);
+        se_perm<2, double> elem(perm, tr1);
 
-        if(elem.is_symm()) {
-            fail_test(testname, __FILE__, __LINE__, "elem.is_symm()");
+        if(elem.get_transf() != tr1) {
+            fail_test(testname, __FILE__, __LINE__, "elem.get_transf() != tr1");
         }
         if(!elem.get_perm().equals(perm)) {
             fail_test(testname, __FILE__, __LINE__,
                     "!elem.get_perm().equals(perm)");
         }
 
-        const tensor_transf<2, double> &tr = elem.get_transf();
+        index<2> ix;
+        tensor_transf<2, double> tr;
+        elem.apply(ix, tr);
 
         if(!tr.get_perm().equals(perm)) {
             fail_test(testname, __FILE__, __LINE__,
@@ -156,17 +162,20 @@ void se_perm_test::test_sym_abc_bca() throw(libtest::test_exception) {
 
         permutation<3> perm;
         perm.permute(0, 1).permute(1, 2);
-        se_perm<3, double> elem(perm, true);
+        scalar_transf<double> tr0;
+        se_perm<3, double> elem(perm, tr0);
 
-        if(!elem.is_symm()) {
-            fail_test(testname, __FILE__, __LINE__, "!elem.is_symm()");
+        if(elem.get_transf() != tr0) {
+            fail_test(testname, __FILE__, __LINE__, "elem.get_transf() != tr0");
         }
         if(!elem.get_perm().equals(perm)) {
             fail_test(testname, __FILE__, __LINE__,
                     "!elem.get_perm().equals(perm)");
         }
 
-        const tensor_transf<3, double> &tr = elem.get_transf();
+        index<3> ix;
+        tensor_transf<3, double> tr;
+        elem.apply(ix, tr);
 
         if(!tr.get_perm().equals(perm)) {
             fail_test(testname, __FILE__, __LINE__,
@@ -217,62 +226,22 @@ void se_perm_test::test_asym_abc_bca() throw(libtest::test_exception) {
 
     static const char *testname = "se_perm_test::test_asym_abc_bca()";
 
+    permutation<3> perm;
+    perm.permute(0, 1).permute(1, 2);
+    scalar_transf<double> tr1(-1.);
+
+    bool failed = false;
     try {
 
-        permutation<3> perm;
-        perm.permute(0, 1).permute(1, 2);
-        se_perm<3, double> elem(perm, false);
-
-        if(elem.is_symm()) {
-            fail_test(testname, __FILE__, __LINE__, "elem.is_symm()");
-        }
-        if(!elem.get_perm().equals(perm)) {
-            fail_test(testname, __FILE__, __LINE__,
-                    "!elem.get_perm().equals(perm)");
-        }
-
-        const tensor_transf<3, double> &tr = elem.get_transf();
-
-        if(!tr.get_perm().equals(perm)) {
-            fail_test(testname, __FILE__, __LINE__,
-                    "!tr.get_perm().equals(perm)");
-        }
-        if(tr.get_scalar_tr().get_coeff() != 1.0) {
-            fail_test(testname, __FILE__, __LINE__,
-                    "tr.get_coeff() != 1.0");
-        }
-
-        index<3> i1, i2;
-        i2[0] = 5; i2[1] = 5; i2[2] = 5;
-        dimensions<3> dims1(index_range<3>(i1, i2));
-        block_index_space<3> bis1(dims1);
-
-        if(!elem.is_valid_bis(bis1)) {
-            fail_test(testname, __FILE__, __LINE__,
-                    "!elem.is_valid_bis(bis1)");
-        }
-
-        mask<3> m1; m1[0] = true; m1[1] = true; m1[2] = true;
-        block_index_space<3> bis2(bis1);
-        bis2.split(m1, 2);
-
-        if(!elem.is_valid_bis(bis2)) {
-            fail_test(testname, __FILE__, __LINE__,
-                    "!elem.is_valid_bis(bis2)");
-        }
-
-        i2[0] = 5; i2[1] = 6; i2[2] = 5;
-        dimensions<3> dims3(index_range<3>(i1, i2));
-        block_index_space<3> bis3(dims3);
-
-        if(elem.is_valid_bis(bis3)) {
-            fail_test(testname, __FILE__, __LINE__,
-                    "elem.is_valid_bis(bis3)");
-        }
+        se_perm<3, double> elem(perm, tr1);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        failed = true;
     }
+    if (! failed) {
+        fail_test(testname, __FILE__, __LINE__, "Illegal transformation.");
+    }
+
 }
 
 
@@ -286,17 +255,20 @@ void se_perm_test::test_sym_abcd_badc() throw(libtest::test_exception) {
 
         permutation<4> perm;
         perm.permute(0, 1).permute(2, 3);
-        se_perm<4, double> elem(perm, true);
+        scalar_transf<double> tr0;
+        se_perm<4, double> elem(perm, tr0);
 
-        if(!elem.is_symm()) {
-            fail_test(testname, __FILE__, __LINE__, "!elem.is_symm()");
+        if(elem.get_transf() != tr0) {
+            fail_test(testname, __FILE__, __LINE__, "elem.get_transf() != tr0");
         }
         if(!elem.get_perm().equals(perm)) {
             fail_test(testname, __FILE__, __LINE__,
                     "!elem.get_perm().equals(perm)");
         }
 
-        const tensor_transf<4, double> &tr = elem.get_transf();
+        index<4> ix;
+        tensor_transf<4, double> tr;
+        elem.apply(ix, tr);
 
         if(!tr.get_perm().equals(perm)) {
             fail_test(testname, __FILE__, __LINE__,
@@ -360,17 +332,20 @@ void se_perm_test::test_asym_abcd_badc() throw(libtest::test_exception) {
 
         permutation<4> perm;
         perm.permute(0, 1).permute(2, 3);
-        se_perm<4, double> elem(perm, false);
+        scalar_transf<double> tr1(-1.);
+        se_perm<4, double> elem(perm, tr1);
 
-        if(elem.is_symm()) {
-            fail_test(testname, __FILE__, __LINE__, "elem.is_symm()");
+        if(elem.get_transf() != tr1) {
+            fail_test(testname, __FILE__, __LINE__, "elem.get_transf() != tr1");
         }
         if(!elem.get_perm().equals(perm)) {
             fail_test(testname, __FILE__, __LINE__,
                     "!elem.get_perm().equals(perm)");
         }
 
-        const tensor_transf<4, double> &tr = elem.get_transf();
+        index<4> ix;
+        tensor_transf<4, double> tr;
+        elem.apply(ix, tr);
 
         if(!tr.get_perm().equals(perm)) {
             fail_test(testname, __FILE__, __LINE__,

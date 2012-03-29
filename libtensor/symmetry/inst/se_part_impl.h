@@ -4,7 +4,6 @@
 #include <algorithm>
 #include <libtensor/defs.h>
 #include <libtensor/core/abs_index.h>
-#include <libtensor/btod/transf_double.h>
 #include "../bad_symmetry.h"
 
 namespace libtensor {

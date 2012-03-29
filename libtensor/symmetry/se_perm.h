@@ -2,7 +2,6 @@
 #define LIBTENSOR_SE_PERM_H
 
 #include <libtensor/core/symmetry_element_i.h>
-#include "bad_symmetry.h"
 
 namespace libtensor {
 
@@ -16,30 +15,25 @@ namespace libtensor {
 	the block as well.
 
 	The element is initialized with a %permutation of %tensor indexes,
-	which also specifies a transformation of %tensor elements. The
-	symmetric/anti-symmetric flag yields the scalar coefficient in
-	the transformation. The permutation and the flag must agree: when
-	the block transformation is applied onto itself multiple times such
-	that the original permutation is recovered, the scalar coefficient
-	must turn unity. The agreement is tested upon the creation of the
+	and a element-wise (scalar) transformation of %tensor elements. The
+	%permutation and the scalar transformation must agree, i.e. if the
+	n-th power of the permutation yields the identity permutation, the
+	n-th power of the scalar transformation also needs to be the identity
+	transformation. The agreement is tested upon the creation of the
 	element. If it is not satisfied, an exception is thrown.
-
-    TODO:
-    - replace permutation and even / symm by tensor_transf
 
 	\ingroup libtensor_symmetry
  **/
-template<size_t N, typename T>
+template< size_t N, typename T>
 class se_perm : public symmetry_element_i<N, T> {
 public:
     static const char *k_clazz; //!< Class name
     static const char *k_sym_type; //!< Symmetry type
 
 private:
-    permutation<N> m_perm; //!< Permutation
-    bool m_even; //!< Even/odd %permutation
-    bool m_symm; //!< Symmetric/anti-symmetric
     tensor_transf<N, T> m_transf; //!< Block transformation
+    size_t m_orderp; //!< Order of permutation
+    size_t m_orderc; //!< Order of scalar transformation
 
 public:
     //!	\name Construction and destruction
@@ -47,15 +41,15 @@ public:
 
     /**	\brief Initializes the %symmetry element
 		\param perm Permutation.
-		\param symm Symmetric/anti-symmetric.
+		\param tr Scalar transformation.
 		\throw bad_symmetry If the permutation and the flag are
 			inconsistent.
-a     **/
-    se_perm(const permutation<N> &perm, bool symm);
+     **/
+    se_perm(const permutation<N> &perm, const scalar_transf<T> &tr);
 
     /**	\brief Copy constructor
      **/
-    se_perm(const se_perm<N, T> &elem);
+    se_perm(const se_perm<N, T> &elem) : m_transf(elem.m_transf) { }
 
     /**	\brief Virtual destructor
      **/
@@ -68,16 +62,16 @@ a     **/
     //@{
 
     const permutation<N> &get_perm() const {
-        return m_perm;
+        return m_transf.get_perm();
     }
 
-    bool is_symm() const {
-        return m_symm;
+    const scalar_transf<T> &get_transf() const {
+        return m_transf.get_scalar_tr();
     }
 
-    const tensor_transf<N, T> &get_transf() const {
-        return m_transf;
-    }
+    size_t get_orderp() const { return m_orderp; }
+
+    size_t get_orderc() const { return m_orderc; }
 
     //@}
 
@@ -120,24 +114,26 @@ a     **/
 };
 
 template<size_t N, typename T>
-inline bool
-se_perm<N, T>::is_valid_bis(const block_index_space<N> &bis) const {
+inline
+bool se_perm<N, T>::is_valid_bis(const block_index_space<N> &bis) const {
 
     block_index_space<N> bis2(bis);
-    bis2.permute(m_perm);
+    bis2.permute(m_transf.get_perm());
     return bis2.equals(bis);
 }
 
 template<size_t N, typename T>
-inline void se_perm<N, T>::apply(index<N> &idx) const {
+inline
+void se_perm<N, T>::apply(index<N> &idx) const {
 
-    idx.permute(m_transf.get_perm());
+    m_transf.apply(idx);
 }
 
 template<size_t N, typename T>
-inline void se_perm<N, T>::apply(index<N> &idx, tensor_transf<N, T> &tr) const {
+inline
+void se_perm<N, T>::apply(index<N> &idx, tensor_transf<N, T> &tr) const {
 
-    idx.permute(m_transf.get_perm());
+    m_transf.apply(idx);
     tr.transform(m_transf);
 }
 
