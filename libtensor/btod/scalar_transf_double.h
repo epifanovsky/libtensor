@@ -23,7 +23,7 @@ public:
 	/** \brief Default constructor
 	    \param coeff Scaling coefficient (default: 1.0)
 	 **/
-	scalar_transf(double coeff = 1.0) : m_coeff(coeff) { }
+	explicit scalar_transf(double coeff = 1.0) : m_coeff(coeff) { }
 
 	/** \brief Copy constructor
 	 **/
