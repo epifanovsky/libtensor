@@ -1,3 +1,4 @@
+#include <libtensor/btod/scalar_transf_double.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/symmetry/so_dirprod.h>
 #include "../compare_ref.h"
@@ -104,8 +105,11 @@ void so_dirprod_test::test_empty_2(bool s) throw(libtest::test_exception) {
         symmetry<1, double> symb(bisb);
         symmetry<3, double> symc(bisc), symc_ref(bisc);
 
-        syma.insert(se_perm<2, double>(permutation<2>().permute(0, 1), s));
-        symc_ref.insert(se_perm<3, double>(permutation<3>().permute(0, 1), s));
+        scalar_transf<double> tr0, tr1(-1.);
+        permutation<2> p1; p1.permute(0, 1);
+        permutation<3> p2; p2.permute(0, 1);
+        syma.insert(se_perm<2, double>(p1, s ? tr0 : tr1));
+        symc_ref.insert(se_perm<3, double>(p2, s ? tr0 : tr1));
 
         so_dirprod<2, 1, double>(syma, symb).perform(symc);
 
@@ -148,8 +152,11 @@ void so_dirprod_test::test_empty_3(bool s) throw(libtest::test_exception) {
         symmetry<2, double> symb(bisb);
         symmetry<3, double> symc(bisc), symc_ref(bisc);
 
-        symb.insert(se_perm<2, double>(permutation<2>().permute(0, 1), s));
-        symc_ref.insert(se_perm<3, double>(permutation<3>().permute(1, 2), s));
+        scalar_transf<double> tr0, tr1(-1.);
+        permutation<2> p1; p1.permute(0, 1);
+        permutation<3> p2; p2.permute(1, 2);
+        symb.insert(se_perm<2, double>(p1, s ? tr0 : tr1));
+        symc_ref.insert(se_perm<3, double>(p2, s ? tr0 : tr1));
 
         so_dirprod<1, 2, double>(syma, symb).perform(symc);
 
@@ -192,16 +199,22 @@ void so_dirprod_test::test_se_1(
         symmetry<2, double> syma(bisa), symb(bisa);
         symmetry<4, double> symc(bisc), symc_ref(bisc);
 
-        syma.insert(se_perm<2, double>(permutation<2>().permute(0, 1), s1));
-        symb.insert(se_perm<2, double>(permutation<2>().permute(0, 1), s2));
-        symc_ref.insert(se_perm<4, double>(permutation<4>().permute(0, 1), s1));
-        symc_ref.insert(se_perm<4, double>(permutation<4>().permute(2, 3), s2));
+        scalar_transf<double> tr1(s1 ? 1.0 : -1.0), tr2(s2 ? 1.0 : -1.0);
+        se_perm<2, double> e1a(permutation<2>().permute(0, 1), tr1);
+        se_perm<2, double> e1b(permutation<2>().permute(0, 1), tr2);
+        se_perm<4, double> e2a(permutation<4>().permute(0, 1), tr1);
+        se_perm<4, double> e2b(permutation<4>().permute(2, 3), tr2);
+        syma.insert(e1a);
+        symb.insert(e1b);
+        symc_ref.insert(e2a);
+        symc_ref.insert(e2b);
 
         so_dirprod<2, 2, double>(syma, symb).perform(symc);
 
         symmetry<4, double>::iterator i = symc.begin();
         if(i == symc.end()) {
-            fail_test(tnss.str().c_str(), __FILE__, __LINE__, "i == symc.end()");
+            fail_test(tnss.str().c_str(),
+                    __FILE__, __LINE__, "i == symc.end()");
         }
 
         compare_ref<4>::compare(tnss.str().c_str(), symc, symc_ref);

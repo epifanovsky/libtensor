@@ -18,8 +18,8 @@ symmetry_operation_impl< so_dirprod<N, M, T>, se_perm<N + M, T> >::do_perform(
     static const char *method = "do_perform(symmetry_operation_params_t&)";
 
     //	Adapter type for the input group
-    typedef symmetry_element_set_adapter< N, T, se_perm<N, T> > adapter1_t;
-    typedef symmetry_element_set_adapter< M, T, se_perm<M, T> > adapter2_t;
+    typedef symmetry_element_set_adapter<N, T, se_perm<N, T> > adapter1_t;
+    typedef symmetry_element_set_adapter<M, T, se_perm<M, T> > adapter2_t;
 
     params.g3.clear();
 
@@ -35,23 +35,18 @@ symmetry_operation_impl< so_dirprod<N, M, T>, se_perm<N + M, T> >::do_perform(
 
         const se_perm<N, T> &e1 = g1.get_elem(i);
 
-        //	Project the combined permutation onto the larger
+        //	Project the permutation onto the larger
         //	space and form a symmetry element
-        sequence<N, size_t> a1(0);
         sequence<N + M, size_t> a2a(0), a2b(0);
-        for (size_t j = 0; j < N; j++) a1[j] = j;
-        e1.get_perm().apply(a1);
 
-        size_t k = 0;
-        for(; k < N; k++) {
-            a2a[map[k]] = k; a2b[map[k]] = a1[k];
+        for(register size_t k = 0; k < N; k++) {
+            a2a[map[k]] = k; a2b[map[k]] = e1.get_perm()[k];
         }
-        for(; k < N + M; k++) {
+        for(register size_t k = N; k < N + M; k++)
             a2a[map[k]] = a2b[map[k]] = k;
-        }
 
         permutation_builder<N + M> pb(a2b, a2a);
-        se_perm<N + M, T> e3(pb.get_perm(), e1.is_symm());
+        se_perm<N + M, T> e3(pb.get_perm(), e1.get_transf());
         params.g3.insert(e3);
     }
 
@@ -62,23 +57,17 @@ symmetry_operation_impl< so_dirprod<N, M, T>, se_perm<N + M, T> >::do_perform(
 
         const se_perm<M, T> &e2 = g2.get_elem(i);
 
-        //	Project the combined permutation onto the larger
+        //	Project the permutation onto the larger
         //	space and form a symmetry element
-        sequence<M, size_t> a1(0);
         sequence<N + M, size_t> a2a(0), a2b(0);
-        for (size_t j = 0; j < M; j++) a1[j] = N + j;
-        e2.get_perm().apply(a1);
+        for(register size_t k = 0; k < N; k++) a2a[map[k]] = a2b[map[k]] = k;
 
-        size_t k = 0;
-        for(; k < N; k++) {
-            a2a[map[k]] = a2b[map[k]] = k;
-        }
-        for(; k < N + M; k++) {
-            a2a[map[k]] = k; a2b[map[k]] = a1[k - N];
+        for(register size_t k = N, l = 0; k < N + M; k++, l++) {
+            a2a[map[k]] = k; a2b[map[k]] = e2.get_perm()[l] + N;
         }
 
         permutation_builder<N + M> pb(a2b, a2a);
-        element_t e3(pb.get_perm(), e2.is_symm());
+        element_t e3(pb.get_perm(), e2.get_transf());
         params.g3.insert(e3);
     }
 
