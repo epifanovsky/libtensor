@@ -12,8 +12,8 @@
 #include "../core/orbit_list.h"
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
-#include "../tod/tod_compare.h"
-#include "../tod/tod_copy.h"
+#include <libtensor/dense_tensor/tod_compare.h>
+#include <libtensor/dense_tensor/tod_copy.h>
 #include "../symmetry/so_copy.h"
 #include "../symmetry/bad_symmetry.h"
 

@@ -32,12 +32,14 @@ void btod_scale_test::test_generic(
     const char *testname, block_tensor_i<N, double> &bt, double c)
     throw(libtest::test_exception) {
 
+    cpu_pool cpus(1);
+
     try {
 
-    dense_tensor<N, double, allocator_t> t(bt.get_bis().get_dims()),
-        t_ref(bt.get_bis().get_dims());
-    tod_btconv<N>(bt).perform(t_ref);
-    tod_scale<N>(t_ref, c).perform();
+	dense_tensor<N, double, allocator_t> t(bt.get_bis().get_dims()),
+		t_ref(bt.get_bis().get_dims());
+	tod_btconv<N>(bt).perform(t_ref);
+	tod_scale<N>(c).perform(cpus, t_ref);
 
     btod_scale<N>(bt, c).perform();
     tod_btconv<N>(bt).perform(t);

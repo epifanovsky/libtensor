@@ -17,18 +17,18 @@ namespace libtensor {
 
 
 /** \brief Creates a schedule for the blockwise addition of two block
-            tensors
-        \tparam N Tensor order.
+        tensors
+    \tparam N Tensor order.
 
-        Given the block index space and symmetries of two block tensors,
-        this routine creates a schedule for the blockwise addition. The schedule
-        is sorted such that the blocks of the first operand are accessed only
-        once.
+    Given the block index space and symmetries of two block tensors,
+    this routine creates a schedule for the blockwise addition. The schedule
+    is sorted such that the blocks of the first operand are accessed only
+    once.
 
-        Block %tensor operations shall use this routine to implement their
-        additive interface.
+    Block %tensor operations shall use this routine to implement their
+    additive interface.
 
-        \ingroup libtensor_btod
+    \ingroup libtensor_btod
  **/
 template<size_t N, typename T>
 class addition_schedule {
@@ -161,8 +161,6 @@ addition_schedule<N, T>::addition_schedule(const symmetry<N, T> &syma,
 
         m_syma(syma), m_symb(symb), m_symc(m_symb.get_bis()) {
 
-//    permutation<N> perm0;
-//    so_add<N, T>(m_syma, perm0, m_symb, perm0).perform(m_symc);
     permutation<N + N> perm0;
     block_index_space_product_builder<N, N> bbx(m_syma.get_bis(),
             m_symb.get_bis(), perm0);

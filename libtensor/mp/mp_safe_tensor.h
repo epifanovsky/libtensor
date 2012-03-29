@@ -2,7 +2,7 @@
 #define LIBTENSOR_MP_SAFE_TENSOR_H
 
 #include <libtensor/dense_tensor/dense_tensor.h>
-#include <libtensor/dense_tensor/inst/dense_tensor_impl.h>
+#include <libtensor/dense_tensor/impl/dense_tensor_impl.h>
 #include "default_sync_policy.h"
 #include "mp_safe_tensor_lock.h"
 

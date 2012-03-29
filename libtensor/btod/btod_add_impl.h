@@ -19,8 +19,8 @@ const char *btod_add<N>::k_clazz = "btod_add<N>";
 template<size_t N>
 btod_add<N>::btod_add(block_tensor_i<N, double> &bt, double c) :
 
-m_bis(bt.get_bis()), m_bidims(m_bis.get_block_index_dims()),
-m_sym(m_bis), m_dirty_sch(true), m_sch(0) {
+    m_bis(bt.get_bis()), m_bidims(m_bis.get_block_index_dims()),
+    m_sym(m_bis), m_dirty_sch(true), m_sch(0) {
 
     m_bis.match_splits();
     add_operand(bt, permutation<N>(), c);

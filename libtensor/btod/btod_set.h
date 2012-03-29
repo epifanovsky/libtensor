@@ -4,7 +4,7 @@
 #include <libtensor/core/block_tensor_i.h>
 #include <libtensor/core/block_tensor_ctrl.h>
 #include <libtensor/dense_tensor/dense_tensor_i.h>
-#include <libtensor/tod/tod_set.h>
+#include <libtensor/dense_tensor/tod_set.h>
 #include <libtensor/block_tensor/bto/bto_set.h>
 
 namespace libtensor {

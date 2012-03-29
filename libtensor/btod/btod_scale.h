@@ -48,9 +48,11 @@ const char *btod_scale<N>::k_clazz = "btod_scale<N>";
 template<size_t N>
 void btod_scale<N>::perform() {
 
-    btod_scale<N>::start_timer();
+	btod_scale<N>::start_timer();
 
-    try {
+	try {
+
+	    cpu_pool cpus(1);
 
         block_tensor_ctrl<N, double> ctrl(m_bt);
 
@@ -64,7 +66,7 @@ void btod_scale<N>::perform() {
                 ctrl.req_zero_block(idx);
             } else {
                 dense_tensor_i<N, double> &blk = ctrl.req_block(idx);
-                tod_scale<N>(blk, m_c).perform();
+                tod_scale<N>(m_c).perform(cpus, blk);
                 ctrl.ret_block(idx);
             }
         }

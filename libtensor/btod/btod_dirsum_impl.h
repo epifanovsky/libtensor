@@ -325,14 +325,9 @@ void btod_dirsum<N, M>::do_block_dirsum(
     dense_tensor_i<k_ordera, double> &blka = ctrla.req_block(ia);
     dense_tensor_i<k_orderb, double> &blkb = ctrlb.req_block(ib);
 
-    if(zero) {
-        tod_dirsum<N, M>(blka, ka, blkb, kb, permc).perform(blkc);
-        if(kc != 1.0) {
-            tod_scale<k_orderc>(blkc, kc).perform();
-        }
-    } else {
-        tod_dirsum<N, M>(blka, ka, blkb, kb, permc).perform(blkc, kc);
-    }
+    cpu_pool cpus(1);
+
+    tod_dirsum<N, M>(blka, ka, blkb, kb, permc).perform(cpus, zero, kc, blkc);
 
     ctrla.ret_block(ia);
     ctrlb.ret_block(ib);
@@ -348,14 +343,16 @@ void btod_dirsum<N, M>::do_block_scatter_a(
 
     dense_tensor_i<k_ordera, double> &blka = ctrla.req_block(ia);
 
-    if(zero) {
-        tod_scatter<N, M>(blka, ka, permc).perform(blkc);
-        if(kc != 1.0) {
-            tod_scale<k_orderc>(blkc, kc).perform();
-        }
-    } else {
-        tod_scatter<N, M>(blka, ka, permc).perform(blkc, kc);
-    }
+    cpu_pool cpus(1);
+
+	if(zero) {
+		tod_scatter<N, M>(blka, ka, permc).perform(blkc);
+		if(kc != 1.0) {
+			tod_scale<k_orderc>(kc).perform(cpus, blkc);
+		}
+	} else {
+		tod_scatter<N, M>(blka, ka, permc).perform(blkc, kc);
+	}
 
     ctrla.ret_block(ia);
 }
@@ -370,14 +367,16 @@ void btod_dirsum<N, M>::do_block_scatter_b(
 
     dense_tensor_i<k_orderb, double> &blkb = ctrlb.req_block(ib);
 
-    if(zero) {
-        tod_scatter<M, N>(blkb, kb, permc).perform(blkc);
-        if(kc != 1.0) {
-            tod_scale<k_orderc>(blkc, kc).perform();
-        }
-    } else {
-        tod_scatter<M, N>(blkb, kb, permc).perform(blkc, kc);
-    }
+    cpu_pool cpus(1);
+
+	if(zero) {
+		tod_scatter<M, N>(blkb, kb, permc).perform(blkc);
+		if(kc != 1.0) {
+			tod_scale<k_orderc>(kc).perform(cpus, blkc);
+		}
+	} else {
+		tod_scatter<M, N>(blkb, kb, permc).perform(blkc, kc);
+	}
 
     ctrlb.ret_block(ib);
 }

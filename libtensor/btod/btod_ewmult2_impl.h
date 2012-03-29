@@ -1,10 +1,10 @@
 #ifndef LIBTENSOR_BTOD_EWMULT2_IMPL_H
 #define LIBTENSOR_BTOD_EWMULT2_IMPL_H
 
+#include <libtensor/dense_tensor/tod_ewmult2.h>
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
 #include "../core/permutation_builder.h"
-#include "../tod/tod_ewmult2.h"
 #include "../symmetry/so_dirprod.h"
 #include "../symmetry/so_merge.h"
 #include "bad_block_index_space.h"

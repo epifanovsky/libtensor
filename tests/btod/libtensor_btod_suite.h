@@ -114,7 +114,6 @@ private:
     unit_test_factory<btod_trace_test> m_utf_btod_trace;
     unit_test_factory<btod_tridiagonalize_test> m_utf_btod_tridiagonalize;
     unit_test_factory<btod_vmpriority_test> m_utf_btod_vmpriority;
-	unit_test_factory<btod_vmpriority_test> m_utf_btod_vmpriority;
 
 public:
     //!    Creates the suite
