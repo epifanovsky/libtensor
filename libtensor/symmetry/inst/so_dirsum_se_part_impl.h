@@ -63,7 +63,7 @@ symmetry_operation_impl< so_dirsum<N, M, T>, se_part<N + M, T> >::do_perform(
             while (i2a < i2b) {
                 scalar_transf<T> tr = se2.get_transf(i2a, i2b);
                 if (tr.is_identity()) {
-                    for (register size_t i = 0, j = 0; i < M; i++, j++) {
+                    for (register size_t i = 0, j = N; i < M; i++, j++) {
                         i3a[j] = i2a[i];
                         i3b[j] = i2b[i];
                     }
@@ -244,7 +244,7 @@ symmetry_operation_impl< so_dirsum<N, M, T>, se_part<N + M, T> >::do_perform(
                     i3b[i] = i1a[i];
                 for (register size_t i = 0, j = N; i < M; i++, j++)
                     i3b[j] = i2b[i];
-                se3.add_map(i3a, i3b, tr2.is_identity());
+                se3.add_map(i3a, i3b, tr2);
 
                 continue;
             }
