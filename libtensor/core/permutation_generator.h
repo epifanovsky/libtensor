@@ -1,21 +1,29 @@
 #ifndef LIBTENSOR_PERMUTATION_GENERATOR_H
 #define LIBTENSOR_PERMUTATION_GENERATOR_H
 
+
 #include <vector>
 #include "mask.h"
 
+
 namespace libtensor {
 
-/** \brief Generator for all possible permutations of a (sub)sequence.
-    \tparam N Length of sequence.
+
+/** \brief Generator for permutations of N items.
+    \tparam N Number of items.
 
     This class implements a slighty modified version of the algorithm by
     H. F. Trotter ("Alg. 115: Perm", Commun. of the ACM 5 (8) 434-435,
     doi:10.1145/368637.368660) to iteratively generate all possible
-    permutations of a sequence of values. The sequence for which to generate
-    the permutations can be either be the full sequence or a smaller
-    sequence given by msk. In each step a new permutation is generated that
-    differs only by a pair permutation from the previous
+    permutations of a sequence of N items.
+
+    A masked can be passed to the constructor of the class to restrict the
+    items which are permuted. The m items (m<=N) for which the mask is set
+    to \c true stay fixed. The number of permutations generated is then
+    \f$ (N-m)!. \f$
+
+    The generated permutations in subsequent steps only differ by one pair
+    permutation of successive items.
 
     \ingroup libtensor_symmetry
  **/
@@ -36,7 +44,9 @@ public:
 
     /** \brief Constructor
         \param seq Sequence to permute.
-        \param msk Mask of elements to be permuted.
+        \param msk Mask to restrict the indexes to be permuted
+
+        Only indexes for which msk is false will be permuted.
      **/
     permutation_generator(const mask<N> &msk);
 
@@ -54,6 +64,7 @@ public:
     bool is_last() const { return m_done; }
 };
 
+
 template<size_t N>
 permutation_generator<N>::permutation_generator() :
     m_map(0), m_p(0), m_done(false), m_n(N) {
@@ -63,6 +74,7 @@ permutation_generator<N>::permutation_generator() :
         m_d[i] = true;
     }
 }
+
 
 template<size_t N>
 permutation_generator<N>::permutation_generator(const mask<N> &msk) :
@@ -75,6 +87,7 @@ permutation_generator<N>::permutation_generator(const mask<N> &msk) :
     }
     m_n = j;
 }
+
 
 template<size_t N>
 bool permutation_generator<N>::next() {

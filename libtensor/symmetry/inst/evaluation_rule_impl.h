@@ -1,13 +1,17 @@
 #ifndef LIBTENSOR_EVALUATION_RULE_IMPL_H
 #define LIBTENSOR_EVALUATION_RULE_IMPL_H
 
+
 #include <list>
 #include <libtensor/core/permutation_generator.h>
 
+
 namespace libtensor {
+
 
 template<size_t N>
 const char *evaluation_rule<N>::k_clazz = "evaluation_rule<N>";
+
 
 template<size_t N>
 size_t evaluation_rule<N>::add_sequence(const sequence<N, size_t> &seq) {
@@ -27,6 +31,7 @@ size_t evaluation_rule<N>::add_sequence(const sequence<N, size_t> &seq) {
     return m_sequences.size() - 1;
 }
 
+
 template<size_t N>
 size_t evaluation_rule<N>::add_product(size_t seq_no,
         label_t intr, label_t target) {
@@ -43,6 +48,7 @@ size_t evaluation_rule<N>::add_product(size_t seq_no,
     pr.insert(add_term(seq_no, intr, target));
     return m_setup.size() - 1;
 }
+
 
 template<size_t N>
 void evaluation_rule<N>::add_to_product(size_t no,
@@ -63,6 +69,7 @@ void evaluation_rule<N>::add_to_product(size_t no,
     product_t &pr = m_setup[no];
     pr.insert(add_term(seq_no, intr, target));
 }
+
 
 template<size_t N>
 void evaluation_rule<N>::optimize() {
@@ -208,6 +215,7 @@ void evaluation_rule<N>::optimize() {
         }
     }
 }
+
 
 template<size_t N>
 void evaluation_rule<N>::symmetrize(const sequence<N, size_t> &idxgrp,
@@ -388,6 +396,7 @@ void evaluation_rule<N>::symmetrize(const sequence<N, size_t> &idxgrp,
     m_setup.assign(new_setup.begin(), new_setup.end());
 }
 
+
 template<size_t N>
 size_t evaluation_rule<N>::add_term(
         size_t seq_no, label_t intr, label_t target) {
@@ -401,6 +410,7 @@ size_t evaluation_rule<N>::add_term(
     m_term_list.push_back(term(seq_no, intr, target));
     return m_term_list.size() - 1;
 }
+
 
 template<size_t N>
 bool evaluation_rule<N>::is_valid(iterator it) const {
@@ -420,5 +430,6 @@ bool evaluation_rule<N>::is_valid(iterator it) const {
 
 
 } // namespace libtensor
+
 
 #endif // LIBTENSOR_EVALUATION_RULE_IMPL_H
