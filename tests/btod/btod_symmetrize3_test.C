@@ -79,10 +79,11 @@ void btod_symmetrize3_test::test_1() throw(libtest::test_exception) {
 	refop.perform(cpus, true, 1.0, tb_ref);
 
 	symmetry<3, double> symb(bis), symb_ref(bis);
+	scalar_transf<double> tr0, tr1(-1.);
 	symb_ref.insert(se_perm<3, double>(
-		permutation<3>().permute(0, 1), true));
+		permutation<3>().permute(0, 1), tr0));
 	symb_ref.insert(se_perm<3, double>(
-		permutation<3>().permute(0, 2), true));
+		permutation<3>().permute(0, 2), tr0));
 
 	//	Run the symmetrization operation
 
@@ -166,10 +167,11 @@ void btod_symmetrize3_test::test_2() throw(libtest::test_exception) {
 		block_tensor_ctrl<3, double> ctrlb(btb);
 		so_copy<3, double>(ctrlb.req_const_symmetry()).perform(symb);
 	}
+    scalar_transf<double> tr0, tr1(-1.);
 	symb_ref.insert(se_perm<3, double>(
-		permutation<3>().permute(0, 1), false));
+		permutation<3>().permute(0, 1), tr1));
 	symb_ref.insert(se_perm<3, double>(
-		permutation<3>().permute(0, 2), false));
+		permutation<3>().permute(0, 2), tr1));
 
 	compare_ref<3>::compare(testname, symb, symb_ref);
 
@@ -205,13 +207,14 @@ void btod_symmetrize3_test::test_3() throw(libtest::test_exception) {
 	bis.split(m, 5);
 
 	block_tensor<3, double, allocator_t> bta(bis), btb(bis), btb_ref(bis);
+    scalar_transf<double> tr0, tr1(-1.);
 
 	//	Set up initial symmetry and fill in random input
 
 	{
 		block_tensor_ctrl<3, double> ctrla(bta);
 		ctrla.req_symmetry().insert(se_perm<3, double>(
-			permutation<3>().permute(1, 2), true));
+			permutation<3>().permute(1, 2), tr0));
 	}
 	btod_random<3>().perform(bta);
 	bta.set_immutable();
@@ -243,9 +246,9 @@ void btod_symmetrize3_test::test_3() throw(libtest::test_exception) {
 		so_copy<3, double>(ctrlb.req_const_symmetry()).perform(symb);
 	}
 	symb_ref.insert(se_perm<3, double>(
-		permutation<3>().permute(0, 1), true));
+		permutation<3>().permute(0, 1), tr0));
 	symb_ref.insert(se_perm<3, double>(
-		permutation<3>().permute(0, 1).permute(1, 2), true));
+		permutation<3>().permute(0, 1).permute(1, 2), tr0));
 
 	compare_ref<3>::compare(testname, symb, symb_ref);
 
@@ -286,8 +289,9 @@ void btod_symmetrize3_test::test_4() throw(libtest::test_exception) {
 
 	{
 		block_tensor_ctrl<4, double> ctrla(bta);
+	    scalar_transf<double> tr0, tr1(-1.);
 		ctrla.req_symmetry().insert(se_perm<4, double>(
-			permutation<4>().permute(2, 3), true));
+			permutation<4>().permute(2, 3), tr0));
 	}
 	btod_random<4>().perform(bta);
 	bta.set_immutable();
@@ -317,10 +321,11 @@ void btod_symmetrize3_test::test_4() throw(libtest::test_exception) {
 		block_tensor_ctrl<4, double> ctrlb(btb);
 		so_copy<4, double>(ctrlb.req_const_symmetry()).perform(symb);
 	}
+    scalar_transf<double> tr0, tr1(-1.);
 	symb_ref.insert(se_perm<4, double>(
-		permutation<4>().permute(0, 1), true));
+		permutation<4>().permute(0, 1), tr0));
 	symb_ref.insert(se_perm<4, double>(
-		permutation<4>().permute(0, 1).permute(1, 2), true));
+		permutation<4>().permute(0, 1).permute(1, 2), tr0));
 
 	compare_ref<4>::compare(testname, symb, symb_ref);
 
@@ -368,10 +373,11 @@ void btod_symmetrize3_test::test_5() throw(libtest::test_exception) {
 		i111[0] = 1; i111[1] = 1; i111[2] = 1;
 		block_tensor_ctrl<3, double> ctrla(bta);
 		se_part<3, double> p(bis, m, 2);
-		p.add_map(i000, i111, true);
-		p.add_map(i001, i110, true);
-		p.add_map(i010, i101, true);
-		p.add_map(i011, i100, true);
+	    scalar_transf<double> tr0, tr1(-1.);
+		p.add_map(i000, i111, tr0);
+		p.add_map(i001, i110, tr0);
+		p.add_map(i010, i101, tr0);
+		p.add_map(i011, i100, tr0);
 		ctrla.req_symmetry().insert(p);
 	}
 	btod_random<3>().perform(bta);
@@ -390,10 +396,11 @@ void btod_symmetrize3_test::test_5() throw(libtest::test_exception) {
 	refop.perform(cpus, true, 1.0, tb_ref);
 
 	symmetry<3, double> symb(bis), symb_ref(bis);
+    scalar_transf<double> tr0, tr1(-1.);
 	symb_ref.insert(se_perm<3, double>(
-		permutation<3>().permute(0, 1), true));
+		permutation<3>().permute(0, 1), tr0));
 	symb_ref.insert(se_perm<3, double>(
-		permutation<3>().permute(0, 2), true));
+		permutation<3>().permute(0, 2), tr0));
 	{
 		index<3> i000, i001, i010, i011, i100, i101, i110, i111;
 		i110[0] = 1; i110[1] = 1; i001[2] = 1;
@@ -402,10 +409,10 @@ void btod_symmetrize3_test::test_5() throw(libtest::test_exception) {
 		i111[0] = 1; i111[1] = 1; i111[2] = 1;
 		block_tensor_ctrl<3, double> ctrla(bta);
 		se_part<3, double> p(bis, m, 2);
-		p.add_map(i000, i111, true);
-		p.add_map(i001, i110, true);
-		p.add_map(i010, i101, true);
-		p.add_map(i011, i100, true);
+		p.add_map(i000, i111, tr0);
+		p.add_map(i001, i110, tr0);
+		p.add_map(i010, i101, tr0);
+		p.add_map(i011, i100, tr0);
 		symb_ref.insert(p);
 	}
 
@@ -455,15 +462,16 @@ void btod_symmetrize3_test::test_6() throw(libtest::test_exception) {
 	block_index_space<6> bis(dims);
 
 	block_tensor<6, double, allocator_t> bta(bis), btb(bis);
+    scalar_transf<double> tr0, tr1(-1.);
 
 	//	Set up initial symmetry and fill in random input
 
 	{
 		block_tensor_ctrl<6, double> ctrla(bta);
 		ctrla.req_symmetry().insert(se_perm<6, double>(
-			permutation<6>().permute(0, 1), false));
+			permutation<6>().permute(0, 1), tr1));
 		ctrla.req_symmetry().insert(se_perm<6, double>(
-			permutation<6>().permute(4, 5), false));
+			permutation<6>().permute(4, 5), tr1));
 	}
 
 	btod_random<6>().perform(bta);
@@ -505,13 +513,13 @@ void btod_symmetrize3_test::test_6() throw(libtest::test_exception) {
 		so_copy<6, double>(ctrlb.req_const_symmetry()).perform(symb);
 	}
 	symb_ref.insert(se_perm<6, double>(
-		permutation<6>().permute(0, 1), false));
+		permutation<6>().permute(0, 1), tr1));
 	symb_ref.insert(se_perm<6, double>(
-		permutation<6>().permute(0, 1).permute(1, 2), false));
+		permutation<6>().permute(0, 1).permute(1, 2), tr0));
 	symb_ref.insert(se_perm<6, double>(
-		permutation<6>().permute(3, 4), false));
+		permutation<6>().permute(3, 4), tr1));
 	symb_ref.insert(se_perm<6, double>(
-		permutation<6>().permute(3, 4).permute(4, 5), false));
+		permutation<6>().permute(3, 4).permute(4, 5), tr0));
 
 	compare_ref<6>::compare(testname, symb, symb_ref);
 
@@ -543,23 +551,24 @@ void btod_symmetrize3_test::test_7() throw(libtest::test_exception) {
 	block_index_space<6> bis(dims);
 
 	block_tensor<6, double, allocator_t> bta(bis), btb(bis);
+    scalar_transf<double> tr0, tr1(-1.);
 
 	//	Set up initial symmetry and fill in random input
 
 	{
 		block_tensor_ctrl<6, double> ctrla(bta), ctrlb(btb);
 		ctrla.req_symmetry().insert(se_perm<6, double>(
-			permutation<6>().permute(0, 1), false));
+			permutation<6>().permute(0, 1), tr1));
 		ctrla.req_symmetry().insert(se_perm<6, double>(
-			permutation<6>().permute(4, 5), false));
+			permutation<6>().permute(4, 5), tr1));
 		ctrlb.req_symmetry().insert(se_perm<6, double>(
-			permutation<6>().permute(0, 1), false));
+			permutation<6>().permute(0, 1), tr1));
 		ctrlb.req_symmetry().insert(se_perm<6, double>(
-			permutation<6>().permute(1, 2), false));
+			permutation<6>().permute(1, 2), tr1));
 		ctrlb.req_symmetry().insert(se_perm<6, double>(
-			permutation<6>().permute(3, 4), false));
+			permutation<6>().permute(3, 4), tr1));
 		ctrlb.req_symmetry().insert(se_perm<6, double>(
-			permutation<6>().permute(4, 5), false));
+			permutation<6>().permute(4, 5), tr1));
 	}
 
 	btod_random<6>().perform(bta);
@@ -603,13 +612,13 @@ void btod_symmetrize3_test::test_7() throw(libtest::test_exception) {
 		so_copy<6, double>(ctrlb.req_const_symmetry()).perform(symb);
 	}
 	symb_ref.insert(se_perm<6, double>(
-		permutation<6>().permute(0, 1), false));
+		permutation<6>().permute(0, 1), tr1));
 	symb_ref.insert(se_perm<6, double>(
-		permutation<6>().permute(0, 1).permute(1, 2), false));
+		permutation<6>().permute(0, 1).permute(1, 2), tr0));
 	symb_ref.insert(se_perm<6, double>(
-		permutation<6>().permute(3, 4), false));
+		permutation<6>().permute(3, 4), tr1));
 	symb_ref.insert(se_perm<6, double>(
-		permutation<6>().permute(3, 4).permute(4, 5), false));
+		permutation<6>().permute(3, 4).permute(4, 5), tr0));
 
 	compare_ref<6>::compare(testname, symb, symb_ref);
 

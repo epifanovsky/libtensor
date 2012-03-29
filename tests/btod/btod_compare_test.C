@@ -89,9 +89,10 @@ void btod_compare_test::test_2a() throw(libtest::test_exception) {
 	block_tensor<4, double, allocator_t> bt1(bis), bt2(bis);
 
 	{
+	    scalar_transf<double> tr0;
 		block_tensor_ctrl<4, double> ctrl1(bt1);
 		ctrl1.req_symmetry().insert(se_perm<4, double>(
-			permutation<4>().permute(0, 1), true));
+			permutation<4>().permute(0, 1), tr0));
 	}
 
 	btod_compare<4> cmp(bt1, bt2);
@@ -131,9 +132,10 @@ void btod_compare_test::test_2b() throw(libtest::test_exception) {
 	block_tensor<4, double, allocator_t> bt1(bis), bt2(bis);
 
 	{
+	    scalar_transf<double> tr0;
 		block_tensor_ctrl<4, double> ctrl2(bt2);
 		ctrl2.req_symmetry().insert(se_perm<4, double>(
-			permutation<4>().permute(0, 1), true));
+			permutation<4>().permute(0, 1), tr0));
 	}
 
 	btod_compare<4> cmp(bt1, bt2);
@@ -174,11 +176,12 @@ void btod_compare_test::test_3a() throw(libtest::test_exception) {
 	block_tensor<4, double, allocator_t> bt1(bis), bt2(bis);
 
 	{
+	    scalar_transf<double> tr0;
 		block_tensor_ctrl<4, double> ctrl1(bt1), ctrl2(bt2);
 		ctrl1.req_symmetry().insert(se_perm<4, double>(
-			permutation<4>().permute(0, 1), true));
+			permutation<4>().permute(0, 1), tr0));
 		ctrl2.req_symmetry().insert(se_perm<4, double>(
-			permutation<4>().permute(2, 3), true));
+			permutation<4>().permute(2, 3), tr0));
 	}
 
 	btod_compare<4> cmp(bt1, bt2);
@@ -230,11 +233,12 @@ void btod_compare_test::test_3b() throw(libtest::test_exception) {
 	block_tensor<4, double, allocator_t> bt1(bis), bt2(bis);
 
 	{
+	    scalar_transf<double> tr0;
 		block_tensor_ctrl<4, double> ctrl1(bt1), ctrl2(bt2);
 		ctrl1.req_symmetry().insert(se_perm<4, double>(
-			permutation<4>().permute(0, 1), true));
+			permutation<4>().permute(0, 1), tr0));
 		ctrl2.req_symmetry().insert(se_perm<4, double>(
-			permutation<4>().permute(2, 3), true));
+			permutation<4>().permute(2, 3), tr0));
 	}
 
 	btod_compare<4> cmp(bt2, bt1);
@@ -287,10 +291,11 @@ void btod_compare_test::test_4a() throw(libtest::test_exception) {
 	block_tensor<4, double, allocator_t> bt1(bis), bt2(bis);
 	symmetry<4, double> sym1(bis), sym2(bis);
 
-	sym1.insert(se_perm<4, double>(permutation<4>().permute(0, 1), true));
-	sym1.insert(se_perm<4, double>(permutation<4>().permute(2, 3), true));
-	sym2.insert(se_perm<4, double>(permutation<4>().permute(0, 2), true));
-	sym2.insert(se_perm<4, double>(permutation<4>().permute(1, 3), true));
+    scalar_transf<double> tr0;
+	sym1.insert(se_perm<4, double>(permutation<4>().permute(0, 1), tr0));
+	sym1.insert(se_perm<4, double>(permutation<4>().permute(2, 3), tr0));
+	sym2.insert(se_perm<4, double>(permutation<4>().permute(0, 2), tr0));
+	sym2.insert(se_perm<4, double>(permutation<4>().permute(1, 3), tr0));
 
 	{
 		block_tensor_ctrl<4, double> ctrl1(bt1), ctrl2(bt2);
@@ -347,10 +352,11 @@ void btod_compare_test::test_4b() throw(libtest::test_exception) {
 	block_tensor<4, double, allocator_t> bt1(bis), bt2(bis);
 	symmetry<4, double> sym1(bis), sym2(bis);
 
-	sym1.insert(se_perm<4, double>(permutation<4>().permute(0, 1), true));
-	sym1.insert(se_perm<4, double>(permutation<4>().permute(2, 3), true));
-	sym2.insert(se_perm<4, double>(permutation<4>().permute(0, 2), true));
-	sym2.insert(se_perm<4, double>(permutation<4>().permute(1, 3), true));
+    scalar_transf<double> tr0;
+	sym1.insert(se_perm<4, double>(permutation<4>().permute(0, 1), tr0));
+	sym1.insert(se_perm<4, double>(permutation<4>().permute(2, 3), tr0));
+	sym2.insert(se_perm<4, double>(permutation<4>().permute(0, 2), tr0));
+	sym2.insert(se_perm<4, double>(permutation<4>().permute(1, 3), tr0));
 
 	{
 		block_tensor_ctrl<4, double> ctrl1(bt1), ctrl2(bt2);
@@ -407,8 +413,9 @@ void btod_compare_test::test_5a() throw(libtest::test_exception) {
 	block_tensor<4, double, allocator_t> bt1(bis), bt2(bis);
 	symmetry<4, double> sym1(bis), sym2(bis);
 
-	sym1.insert(se_perm<4, double>(permutation<4>().permute(0, 1), true));
-	sym2.insert(se_perm<4, double>(permutation<4>().permute(0, 1), false));
+    scalar_transf<double> tr0, tr1(-1.);
+	sym1.insert(se_perm<4, double>(permutation<4>().permute(0, 1), tr0));
+	sym2.insert(se_perm<4, double>(permutation<4>().permute(0, 1), tr1));
 
 	{
 		block_tensor_ctrl<4, double> ctrl1(bt1), ctrl2(bt2);
@@ -465,8 +472,9 @@ void btod_compare_test::test_5b() throw(libtest::test_exception) {
 	block_tensor<4, double, allocator_t> bt1(bis), bt2(bis);
 	symmetry<4, double> sym1(bis), sym2(bis);
 
-	sym1.insert(se_perm<4, double>(permutation<4>().permute(0, 1), true));
-	sym2.insert(se_perm<4, double>(permutation<4>().permute(0, 1), false));
+    scalar_transf<double> tr0, tr1(-1.);
+	sym1.insert(se_perm<4, double>(permutation<4>().permute(0, 1), tr0));
+	sym2.insert(se_perm<4, double>(permutation<4>().permute(0, 1), tr1));
 
 	{
 		block_tensor_ctrl<4, double> ctrl1(bt1), ctrl2(bt2);
@@ -522,16 +530,17 @@ void btod_compare_test::test_6() throw(libtest::test_exception) {
 	block_tensor<4, double, allocator_t> bt1(bis), bt2(bis);
 
 	{
+	    scalar_transf<double> tr0;
 		block_tensor_ctrl<4, double> ctrl1(bt1);
 		block_tensor_ctrl<4, double> ctrl2(bt2);
 		ctrl1.req_symmetry().insert(se_perm<4, double>(
-			permutation<4>().permute(0, 1), true));
+			permutation<4>().permute(0, 1), tr0));
 		ctrl1.req_symmetry().insert(se_perm<4, double>(
-			permutation<4>().permute(0, 1).permute(1, 2), true));
+			permutation<4>().permute(0, 1).permute(1, 2), tr0));
 		ctrl2.req_symmetry().insert(se_perm<4, double>(
-			permutation<4>().permute(0, 1).permute(1, 2), true));
+			permutation<4>().permute(0, 1).permute(1, 2), tr0));
 		ctrl2.req_symmetry().insert(se_perm<4, double>(
-			permutation<4>().permute(0, 1), true));
+			permutation<4>().permute(0, 1), tr0));
 	}
 
 	btod_compare<4> cmp(bt1, bt2);

@@ -203,11 +203,12 @@ void btod_scale_test::test_1() throw(libtest::test_exception) {
 
 	{
 		block_tensor_ctrl<4, double> ctrl1(bt1), ctrl2(bt2);
-		se_perm<4, double> elem1(permutation<4>().permute(1, 2), true);
+        scalar_transf<double> tr0, tr1(-1.);
+		se_perm<4, double> elem1(permutation<4>().permute(1, 2), tr0);
 		se_perm<4, double> elem2(permutation<4>().permute(0, 1).
-			permute(1, 2).permute(2, 3), true);
-		se_perm<4, double> elem3(permutation<4>().permute(0, 1), false);
-		se_perm<4, double> elem4(permutation<4>().permute(2, 3), false);
+			permute(1, 2).permute(2, 3), tr0);
+		se_perm<4, double> elem3(permutation<4>().permute(0, 1), tr1);
+		se_perm<4, double> elem4(permutation<4>().permute(2, 3), tr1);
 		ctrl1.req_symmetry().insert(elem1);
 		ctrl1.req_symmetry().insert(elem2);
 		ctrl2.req_symmetry().insert(elem3);

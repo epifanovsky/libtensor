@@ -152,7 +152,8 @@ void btod_set_elem_test::test_3() throw(libtest::test_exception) {
 	//
 	{
 		block_tensor_ctrl<2, double> ctrl(bt);
-		se_perm<2, double> elem(permutation<2>().permute(0, 1), true);
+        scalar_transf<double> tr0, tr1(-1.);
+		se_perm<2, double> elem(permutation<2>().permute(0, 1), tr0);
 		ctrl.req_symmetry().insert(elem);
 	}
 

@@ -330,7 +330,8 @@ void btod_sum_test::test_6(bool do_add) throw(libtest::test_exception) {
 	permutation<4> p1023, p0132;
 	p1023.permute(0, 1);
 	p0132.permute(2, 3);
-	se_perm<4, double> sp1023(p1023, true), sp0132(p0132, false);
+    scalar_transf<double> tr0, tr1(-1.);
+	se_perm<4, double> sp1023(p1023, tr0), sp0132(p0132, tr1);
 	ctrl_a1.req_symmetry().insert(sp1023);
 	ctrl_a1.req_symmetry().insert(sp0132);
 	ctrl_b1.req_symmetry().insert(sp1023);
@@ -402,15 +403,16 @@ void btod_sum_test::test_7() throw(libtest::test_exception) {
 	mask<2> m;
 	m[0] = true; m[1] = true;
 	bis.split(m, 4);
+    scalar_transf<double> tr0, tr1(-1.);
 
 	block_tensor<2, double, allocator_t> bt1(bis), bt2(bis), bt3(bis),
 		bt3_ref(bis);
 	{
 		block_tensor_ctrl<2, double> ctrl1(bt1), ctrl2(bt2);
 		ctrl1.req_symmetry().insert(se_perm<2, double>(
-			permutation<2>().permute(0, 1), true));
+			permutation<2>().permute(0, 1), tr0));
 		ctrl2.req_symmetry().insert(se_perm<2, double>(
-			permutation<2>().permute(0, 1), true));
+			permutation<2>().permute(0, 1), tr0));
 	}
 	btod_random<2>().perform(bt1);
 	btod_random<2>().perform(bt2);
@@ -429,7 +431,7 @@ void btod_sum_test::test_7() throw(libtest::test_exception) {
 		block_tensor_ctrl<2, double> ctrl3(bt3);
 		so_copy<2, double>(ctrl3.req_const_symmetry()).perform(sym3);
 		sym3_ref.insert(se_perm<2, double>(
-			permutation<2>().permute(0, 1), true));
+			permutation<2>().permute(0, 1), tr0));
 	}
 
 	compare_ref<2>::compare(testname, sym3, sym3_ref);
@@ -465,8 +467,9 @@ void btod_sum_test::test_8() throw(libtest::test_exception) {
 		bt3_ref(bis);
 	{
 		block_tensor_ctrl<2, double> ctrl1(bt1), ctrl2(bt2);
+        scalar_transf<double> tr0, tr1(-1.);
 		ctrl1.req_symmetry().insert(se_perm<2, double>(
-			permutation<2>().permute(0, 1), true));
+			permutation<2>().permute(0, 1), tr0));
 	}
 	btod_random<2>().perform(bt1);
 	btod_random<2>().perform(bt2);
@@ -532,10 +535,11 @@ void btod_sum_test::test_9a() throw(libtest::test_exception) {
 		bt3_ref(bis_ijab);
 	{
 		block_tensor_ctrl<4, double> ctrl2(bt2);
+        scalar_transf<double> tr0, tr1(-1.);
 		ctrl2.req_symmetry().insert(se_perm<4, double>(
-			permutation<4>().permute(0, 1), false));
+			permutation<4>().permute(0, 1), tr1));
 		ctrl2.req_symmetry().insert(se_perm<4, double>(
-			permutation<4>().permute(2, 3), false));
+			permutation<4>().permute(2, 3), tr1));
 	}
 	btod_random<2>().perform(bt1);
 	btod_random<4>().perform(bt2);
@@ -598,10 +602,11 @@ void btod_sum_test::test_9b() throw(libtest::test_exception) {
 		bt3_ref(bis_ijab);
 	{
 		block_tensor_ctrl<4, double> ctrl2(bt2);
+        scalar_transf<double> tr0, tr1(-1.);
 		ctrl2.req_symmetry().insert(se_perm<4, double>(
-			permutation<4>().permute(0, 1), false));
+			permutation<4>().permute(0, 1), tr1));
 		ctrl2.req_symmetry().insert(se_perm<4, double>(
-			permutation<4>().permute(2, 3), false));
+			permutation<4>().permute(2, 3), tr1));
 	}
 	btod_random<2>().perform(bt1);
 	btod_random<4>().perform(bt2);

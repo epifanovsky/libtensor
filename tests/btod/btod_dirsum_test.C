@@ -207,12 +207,13 @@ void btod_dirsum_test::test_ij_i_j_2(bool rnd, double d)
 	{
 		permutation<2> p01;
 		p01.permute(0, 1);
+        scalar_transf<double> tr0, tr1(-1.);
 		const symmetry<2, double> &sym = op.get_symmetry();
 		symmetry<2, double>::iterator is = sym.begin();
 		const symmetry_element_set<2, double> &set = sym.get_subset(is);
 		symmetry_element_set_adapter<2, double, se_perm<2, double> > adapter(set);
 		permutation_group<2, double> grp(set);
-		if (! grp.is_member(true, p01)) {
+		if (! grp.is_member(tr0, p01)) {
 			fail_test(tns.c_str(), __FILE__, __LINE__,
 					"Permutational symmetry (0-1) missing.");
 		}
@@ -289,12 +290,13 @@ void btod_dirsum_test::test_ij_i_j_3(bool rnd, double d)
 	{
 		permutation<2> p01;
 		p01.permute(0, 1);
+        scalar_transf<double> tr0, tr1(-1.);
 		const symmetry<2, double> &sym = op.get_symmetry();
 		symmetry<2, double>::iterator is = sym.begin();
 		const symmetry_element_set<2, double> &set = sym.get_subset(is);
 		symmetry_element_set_adapter<2, double, se_perm<2, double> > adapter(set);
 		permutation_group<2, double> grp(set);
-		if (! grp.is_member(false, p01)) {
+		if (! grp.is_member(tr1, p01)) {
 			fail_test(tns.c_str(), __FILE__, __LINE__,
 					"Permutational symmetry (0-1) missing.");
 		}
@@ -612,26 +614,29 @@ void btod_dirsum_test::test_ikjl_ij_kl_3a(bool s1, bool s2,
         block_tensor_ctrl<2, double> ctrla(bta), ctrlb(btb);
         block_tensor_ctrl<4, double> ctrlc(btc);
 
-        se_perm<2, double> se1(permutation<2>().permute(0, 1), s1);
-        se_perm<2, double> se2(permutation<2>().permute(0, 1), s2);
+        scalar_transf<double> tr0, tr1(-1.);
+        se_perm<2, double> se1(permutation<2>().permute(0, 1), s1 ? tr0 : tr1);
+        se_perm<2, double> se2(permutation<2>().permute(0, 1), s2 ? tr0 : tr1);
 
         ctrla.req_symmetry().insert(se1);
         ctrlb.req_symmetry().insert(se2);
 
         if (s1) {
-            se_perm<4, double> se_ref(permutation<4>().permute(0, 2), s1);
+            se_perm<4, double> se_ref(permutation<4>().permute(0, 2),
+                    s1 ? tr0 : tr1);
             sym_ref.insert(se_ref);
             ctrlc.req_symmetry().insert(se_ref);
         }
         if (s2) {
-            se_perm<4, double> se_ref(permutation<4>().permute(1, 3), s2);
+            se_perm<4, double> se_ref(permutation<4>().permute(1, 3),
+                    s2 ? tr0 : tr1);
             sym_ref.insert(se_ref);
             ctrlc.req_symmetry().insert(se_ref);
         }
         if (!s1 && !s2) {
             permutation<4> p;
             p.permute(0, 2).permute(1, 3);
-            se_perm<4, double> se_ref(p, s1);
+            se_perm<4, double> se_ref(p, s1 ? tr0 : tr1);
             sym_ref.insert(se_ref);
             ctrlc.req_symmetry().insert(se_ref);
         }
@@ -1036,7 +1041,7 @@ void btod_dirsum_test::test_iklj_ij_kl_1(bool rnd, double d)
 
 	// Set symmetry
 	{
-		mska[0] = true;
+		mska[0] = true; mska[1] = true;
 		se_part<2, double> sp(bisa, mska, 2);
 		index<2> i00, i01, i10, i11;
 		i10[0] = 1; i01[1] = 1;
@@ -1080,6 +1085,7 @@ void btod_dirsum_test::test_iklj_ij_kl_1(bool rnd, double d)
 	{
 		permutation<4> p1032;
 		p1032.permute(0, 1).permute(2, 3);
+        scalar_transf<double> tr0, tr1(-1.);
 		const symmetry<4, double> &sym = op.get_symmetry();
 		symmetry<4, double>::iterator is = sym.begin();
 		for (; is != sym.end(); is++)
@@ -1094,7 +1100,7 @@ void btod_dirsum_test::test_iklj_ij_kl_1(bool rnd, double d)
 		const symmetry_element_set<4, double> &set = sym.get_subset(is);
 		symmetry_element_set_adapter<4, double, se_perm<4, double> > adapter(set);
 		permutation_group<4, double> grp(set);
-		if (! grp.is_member(true, p1032)) {
+		if (! grp.is_member(tr0, p1032)) {
 			fail_test(tns.c_str(), __FILE__, __LINE__,
 					"Permutational symmetry () missing.");
 		}

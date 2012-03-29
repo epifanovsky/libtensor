@@ -42,8 +42,9 @@ void btod_random_test::perform() throw(libtest::test_exception)
 	permutation<4> perm1, perm2;
 	perm1.permute(1, 3);
 	perm2.permute(0, 2);
-	se_perm<4, double> cycle1(perm1, true);
-	se_perm<4, double> cycle2(perm2, true);
+    scalar_transf<double> tr0, tr1(-1.);
+	se_perm<4, double> cycle1(perm1, tr0);
+	se_perm<4, double> cycle2(perm2, tr0);
 
 	btactrl.req_symmetry().insert(cycle1);
 	btactrl.req_symmetry().insert(cycle2);

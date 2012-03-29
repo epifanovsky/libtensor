@@ -98,7 +98,8 @@ void orbit_list_test::test_2() throw(libtest::test_exception) {
 	bis.split(msk, 2);
 	symmetry<2, double> sym(bis);
 	permutation<2> perm; perm.permute(0, 1);
-	se_perm<2, double> cycle(perm, 1.0);
+    scalar_transf<double> tr0;
+	se_perm<2, double> cycle(perm, tr0);
 	sym.insert(cycle);
 
 	orbit_list<2, double> orblst(sym);
@@ -159,7 +160,8 @@ void orbit_list_test::test_3() throw(libtest::test_exception) {
 	bis.split(msk, 2);
 	symmetry<4, double> sym(bis);
 	permutation<4> perm; perm.permute(0, 1);
-	se_perm<4, double> cycle(perm, 1.0);
+    scalar_transf<double> tr0;
+	se_perm<4, double> cycle(perm, tr0);
 	sym.insert(cycle);
 
 	orbit_list<4, double> orblst(sym);
@@ -220,7 +222,8 @@ void orbit_list_test::test_4() throw(libtest::test_exception) {
 	bis.split(msk, 2);
 	symmetry<4, double> sym(bis);
 	permutation<4> perm; perm.permute(1, 2);
-	se_perm<4, double> cycle(perm, 1.0);
+    scalar_transf<double> tr0;
+	se_perm<4, double> cycle(perm, tr0);
 	sym.insert(cycle);
 
 	orbit_list<4, double> orblst(sym);
@@ -281,7 +284,8 @@ void orbit_list_test::test_5() throw(libtest::test_exception) {
 	bis.split(msk, 2);
 	symmetry<4, double> sym(bis);
 	permutation<4> perm; perm.permute(0, 1).permute(1, 2);
-	se_perm<4, double> cycle(perm, 1.0);
+    scalar_transf<double> tr0;
+	se_perm<4, double> cycle(perm, tr0);
 	sym.insert(cycle);
 
 	orbit_list<4, double> orblst(sym);
@@ -345,8 +349,9 @@ void orbit_list_test::test_6() throw(libtest::test_exception) {
 	permutation<4> perm1, perm2;
 	perm1.permute(0, 1);
 	perm2.permute(2, 3);
-	se_perm<4, double> cycle1(perm1, 1.0);
-	se_perm<4, double> cycle2(perm2, 1.0);
+    scalar_transf<double> tr0;
+	se_perm<4, double> cycle1(perm1, tr0);
+	se_perm<4, double> cycle2(perm2, tr0);
 	sym.insert(cycle1);
 	sym.insert(cycle2);
 
@@ -410,8 +415,9 @@ void orbit_list_test::test_7() throw(libtest::test_exception) {
 	permutation<4> perm1, perm2;
 	perm1.permute(0, 1).permute(1, 2);
 	perm2.permute(0, 1);
-	se_perm<4, double> cycle1(perm1, 1.0);
-	se_perm<4, double> cycle2(perm2, 1.0);
+    scalar_transf<double> tr0;
+	se_perm<4, double> cycle1(perm1, tr0);
+	se_perm<4, double> cycle2(perm2, tr0);
 	sym.insert(cycle1);
 	sym.insert(cycle2);
 
@@ -475,8 +481,9 @@ void orbit_list_test::test_8() throw(libtest::test_exception) {
 	permutation<4> perm1, perm2;
 	perm1.permute(0, 1).permute(1, 2).permute(2, 3);
 	perm2.permute(0, 1);
-	se_perm<4, double> cycle1(perm1, 1.0);
-	se_perm<4, double> cycle2(perm2, 1.0);
+    scalar_transf<double> tr0;
+	se_perm<4, double> cycle1(perm1, tr0);
+	se_perm<4, double> cycle2(perm2, tr0);
 	sym.insert(cycle1);
 	sym.insert(cycle2);
 
@@ -545,8 +552,9 @@ void orbit_list_test::test_9() throw(libtest::test_exception) {
 	permutation<4> perm1, perm2;
 	perm1.permute(0, 2);
 	perm2.permute(1, 3);
-	se_perm<4, double> cycle1(perm1, 1.0);
-	se_perm<4, double> cycle2(perm2, 1.0);
+    scalar_transf<double> tr0;
+	se_perm<4, double> cycle1(perm1, tr0);
+	se_perm<4, double> cycle2(perm2, tr0);
 	sym.insert(cycle1);
 	sym.insert(cycle2);
 

@@ -218,8 +218,9 @@ void anon_eval_test::test_copy_5() throw(libtest::test_exception) {
 	bispace<4> sijab(si&sj|sa&sb);
 
 	btensor<4> tp(sijab);
-	se_perm<4, double> cycle1(permutation<4>().permute(0, 1), true);
-	se_perm<4, double> cycle2(permutation<4>().permute(2, 3), true);
+    scalar_transf<double> tr0;
+	se_perm<4, double> cycle1(permutation<4>().permute(0, 1), tr0);
+	se_perm<4, double> cycle2(permutation<4>().permute(2, 3), tr0);
 	block_tensor_ctrl<4, double> ctrl(tp);
 	ctrl.req_symmetry().insert(cycle1);
 	ctrl.req_symmetry().insert(cycle2);
@@ -257,8 +258,9 @@ void anon_eval_test::test_copy_6() throw(libtest::test_exception) {
 	bispace<4> sijab(si&sj|sa&sb), siajb(si|sa|sj|sb, si&sj|sa&sb);
 
 	btensor<4> tp(sijab);
-	se_perm<4, double> cycle1(permutation<4>().permute(0, 1), true);
-	se_perm<4, double> cycle2(permutation<4>().permute(2, 3), true);
+    scalar_transf<double> tr0;
+	se_perm<4, double> cycle1(permutation<4>().permute(0, 1), tr0);
+	se_perm<4, double> cycle2(permutation<4>().permute(2, 3), tr0);
 	block_tensor_ctrl<4, double> ctrl(tp);
 	ctrl.req_symmetry().insert(cycle1);
 	ctrl.req_symmetry().insert(cycle2);

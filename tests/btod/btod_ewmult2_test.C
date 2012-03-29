@@ -30,8 +30,8 @@ void btod_ewmult2_test::perform() throw(libtest::test_exception) {
 	test_4(true);
 	test_5(false);
 	test_5(true);
-//	test_6(false);
-//	test_6(true);
+	test_6(false);
+	test_6(true);
 	test_7();
 }
 
@@ -534,19 +534,24 @@ void btod_ewmult2_test::test_6(bool doadd) throw(libtest::test_exception) {
 
 	//	Set up symmetry
 
+    scalar_transf<double> tr0, tr1(-1.);
 	{
 		block_tensor_ctrl<3, double> ca(bta);
-		se_perm<3, double> seperm(permutation<3>().permute(1, 2), true);
+		se_perm<3, double> seperm(permutation<3>().permute(1, 2), tr0);
 		ca.req_symmetry().insert(seperm);
 	}
 	{
 		block_tensor_ctrl<3, double> cb(btb);
-		se_perm<3, double> seperm(permutation<3>().permute(1, 2), true);
+		se_perm<3, double> seperm(permutation<3>().permute(1, 2), tr0);
 		cb.req_symmetry().insert(seperm);
 	}
 	{
-		se_perm<4, double> seperm(permutation<4>().permute(2, 3), true);
+		se_perm<4, double> seperm(permutation<4>().permute(2, 3), tr0);
 		symc_ref.insert(seperm);
+		if (doadd) {
+		    block_tensor_ctrl<4, double> cc(btc);
+		    cc.req_symmetry().insert(seperm);
+		}
 	}
 
 	//	Fill in random data

@@ -634,15 +634,16 @@ void btod_extract_test::test_10() throw(libtest::test_exception) {
 	permutation<4> p30, p21;
 	p30.permute(0, 3);
 	p21.permute(2, 1);
-	se_perm<4, double> sp30(p30, true);
-	se_perm<4, double> ap21(p21, false);
+    scalar_transf<double> tr0, tr1(-1.);
+	se_perm<4, double> sp30(p30, tr0);
+	se_perm<4, double> ap21(p21, tr1);
 	block_tensor_ctrl<4, double> cbta(bta);
 	cbta.req_symmetry().insert(sp30);
 	cbta.req_symmetry().insert(ap21);
 
 	permutation<2> p10;
 	p10.permute(0, 1);
-	se_perm<2, double> sp10(p10, true);
+	se_perm<2, double> sp10(p10, tr0);
 	block_tensor_ctrl<2, double> cbtb(btb);
 	cbtb.req_symmetry().insert(sp10);
 
@@ -711,7 +712,8 @@ void btod_extract_test::test_11() throw(libtest::test_exception) {
 
 	permutation<3> p21;
 	p21.permute(0, 1);
-	se_perm<3, double> ap21(p21, false);
+    scalar_transf<double> tr0, tr1(-1.);
+	se_perm<3, double> ap21(p21, tr1);
 	block_tensor_ctrl<3, double> cbta(bta);
 	cbta.req_symmetry().insert(ap21);
 
@@ -795,10 +797,11 @@ void btod_extract_test::test_12a() throw(libtest::test_exception) {
 	//	Add perm symmetry
 
 	block_tensor_ctrl<4, double> cbta(bta);
+    scalar_transf<double> tr0, tr1(-1.);
 	cbta.req_symmetry().insert(se_perm<4, double>(
-		permutation<4>().permute(2, 3), false));
+		permutation<4>().permute(2, 3), tr1));
 	cbta.req_symmetry().insert(se_perm<4, double>(
-		permutation<4>().permute(0, 2).permute(1, 3), true));
+		permutation<4>().permute(0, 2).permute(1, 3), tr0));
 
 	dense_tensor<4, double, allocator_t> ta(dims4);
 	dense_tensor<2, double, allocator_t> tb(dims2), tb_ref(dims2);
@@ -881,14 +884,15 @@ void btod_extract_test::test_12b() throw(libtest::test_exception) {
 	//	Add perm symmetry
 
 	block_tensor_ctrl<4, double> cbta(bta);
+    scalar_transf<double> tr0, tr1(-1.);
 	cbta.req_symmetry().insert(se_perm<4, double>(
-		permutation<4>().permute(2, 3), false));
+		permutation<4>().permute(2, 3), tr1));
 	cbta.req_symmetry().insert(se_perm<4, double>(
-		permutation<4>().permute(0, 2).permute(1, 3), true));
+		permutation<4>().permute(0, 2).permute(1, 3), tr0));
 
 	block_tensor_ctrl<2, double> cbtb(btb);
 	cbtb.req_symmetry().insert(se_perm<2, double>(
-		permutation<2>().permute(0, 1), true));
+		permutation<2>().permute(0, 1), tr0));
 
 	dense_tensor<4, double, allocator_t> ta(dims4);
 	dense_tensor<2, double, allocator_t> tb(dims2), tb_ref(dims2);
@@ -973,10 +977,11 @@ void btod_extract_test::test_12c() throw(libtest::test_exception) {
 	//	Add perm symmetry
 
 	block_tensor_ctrl<4, double> cbta(bta);
+    scalar_transf<double> tr0, tr1(-1.);
 	cbta.req_symmetry().insert(se_perm<4, double>(
-		permutation<4>().permute(2, 3), false));
+		permutation<4>().permute(2, 3), tr1));
 	cbta.req_symmetry().insert(se_perm<4, double>(
-		permutation<4>().permute(0, 2).permute(1, 3), true));
+		permutation<4>().permute(0, 2).permute(1, 3), tr0));
 
 	dense_tensor<4, double, allocator_t> ta(dims4);
 	dense_tensor<2, double, allocator_t> tb(dims2), tb_ref(dims2);
@@ -1060,8 +1065,9 @@ void btod_extract_test::test_13a() throw(libtest::test_exception) {
 	//	Add perm symmetry
 
 	block_tensor_ctrl<4, double> cbta(bta);
+    scalar_transf<double> tr0, tr1(-1.);
 	cbta.req_symmetry().insert(se_perm<4, double>(
-		permutation<4>().permute(0, 1), false));
+		permutation<4>().permute(0, 1), tr1));
 
 	dense_tensor<4, double, allocator_t> ta(dims4);
 	dense_tensor<2, double, allocator_t> tb(dims2), tb_ref(dims2);

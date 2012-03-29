@@ -426,10 +426,11 @@ void symm_test::test_asymm2_contr_ee_2() throw(libtest::test_exception) {
 
 	permutation<2> p10;
 	p10.permute(0, 1);
-	se_perm<2, double> sp10(p10, true);
+    scalar_transf<double> tr0, tr1(-1.);
+	se_perm<2, double> sp10(p10, tr0);
 	permutation<4> p1023, p0132;
 	p1023.permute(0, 1); p0132.permute(2, 3);
-	se_perm<4, double> sp1023(p1023, false), sp0132(p0132, false);
+	se_perm<4, double> sp1023(p1023, tr1), sp0132(p0132, tr1);
 
 	btod_random<2>().perform(bta);
 	btod_random<4>().perform(btb);

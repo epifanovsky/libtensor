@@ -166,7 +166,8 @@ void btod_mult1_test::test_3(
 	bis.split(msk, 7);
 	dimensions<2> bidims(bis.get_block_index_dims());
 	permutation<2> p10; p10.permute(0, 1);
-	se_perm<2, double> sp10(p10, true), ap10(p10, false);
+    scalar_transf<double> tr0, tr1(-1.);
+	se_perm<2, double> sp10(p10, tr0), ap10(p10, tr1);
 
 	block_tensor<2, double, allocator_t> bta(bis), btb(bis);
 	dense_tensor<2, double, allocator_t> ta(dims), tb(dims), ta_ref(dims);
@@ -242,7 +243,8 @@ void btod_mult1_test::test_4(
 	p10.permute(0, 1);
 	p32.permute(2, 3);
 	p21.permute(1, 2);
-	se_perm<4, double> sp10(p10, true), ap32(p32, false);
+    scalar_transf<double> tr0, tr1(-1.);
+	se_perm<4, double> sp10(p10, tr0), ap32(p32, tr1);
 
 	block_tensor<4, double, allocator_t> bta(bis), btb(bis);
 	dense_tensor<4, double, allocator_t> ta(dims), tb(dims), ta_ref(dims);
@@ -327,12 +329,13 @@ void btod_mult1_test::test_5(bool recip, bool doadd)
 
 	index<2> i00, i01, i10, i11;
 	i10[0] = 1; i01[1] = 1; i11[0] = 1; i11[1] = 1;
+    scalar_transf<double> tr0, tr1(-1.);
 	se_part<2, double> separta(bis, m11, 2), separtb(bis, m11, 2);
-	separta.add_map(i00, i11, false);
-	separta.add_map(i01, i10, true);
-	separtb.add_map(i00, i01, true);
-	separtb.add_map(i01, i10, true);
-	separtb.add_map(i10, i11, true);
+	separta.add_map(i00, i11, tr1);
+	separta.add_map(i01, i10, tr0);
+	separtb.add_map(i00, i01, tr0);
+	separtb.add_map(i01, i10, tr0);
+	separtb.add_map(i10, i11, tr0);
 	syma_ref.insert(separta);
 	{
 		block_tensor_ctrl<2, double> ctrla(bta), ctrlb(btb);

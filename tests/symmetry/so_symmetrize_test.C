@@ -152,12 +152,12 @@ void so_symmetrize_test::test_4() throw(libtest::test_exception) {
 
 	index<2> i00, i01, i10, i11;
 	i10[0] = 1; i01[1] = 1; i11[0] = 1; i11[1] = 1;
+    scalar_transf<double> tr0;
 
 	se_part<2, double> separt(bis, m, 2);
-	separt.add_map(i00, i11, true);
-	separt.add_map(i01, i10, true);
+	separt.add_map(i00, i11, tr0);
+	separt.add_map(i01, i10, tr0);
 
-	scalar_transf<double> tr0;
 	se_perm<2, double> seperm(permutation<2>().permute(0, 1), tr0);
 
 	sym1.insert(separt);

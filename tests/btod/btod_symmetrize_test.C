@@ -111,8 +111,9 @@ void btod_symmetrize_test::test_1() throw(libtest::test_exception) {
 		block_tensor_ctrl<2, double> ctrlb(btb);
 		so_copy<2, double>(ctrlb.req_const_symmetry()).perform(symb);
 	}
+    scalar_transf<double> tr0, tr1(-1.);
 	symb_ref.insert(se_perm<2, double>(
-		permutation<2>().permute(0, 1), true));
+		permutation<2>().permute(0, 1), tr0));
 
 	compare_ref<2>::compare(testname, symb, symb_ref);
 
@@ -174,8 +175,9 @@ void btod_symmetrize_test::test_2() throw(libtest::test_exception) {
 		block_tensor_ctrl<2, double> ctrlb(btb);
 		so_copy<2, double>(ctrlb.req_const_symmetry()).perform(symb);
 	}
+    scalar_transf<double> tr0, tr1(-1.);
 	symb_ref.insert(se_perm<2, double>(
-		permutation<2>().permute(0, 1), false));
+		permutation<2>().permute(0, 1), tr1));
 
 	compare_ref<2>::compare(testname, symb, symb_ref);
 
@@ -216,9 +218,10 @@ void btod_symmetrize_test::test_3() throw(libtest::test_exception) {
 	//	Set up initial symmetry and fill in random input
 
 	{
+        scalar_transf<double> tr0, tr1(-1.);
 		block_tensor_ctrl<4, double> ctrla(bta);
 		ctrla.req_symmetry().insert(se_perm<4, double>(
-			permutation<4>().permute(0, 2), false));
+			permutation<4>().permute(0, 2), tr1));
 	}
 	btod_random<4>().perform(bta);
 	bta.set_immutable();
@@ -245,10 +248,11 @@ void btod_symmetrize_test::test_3() throw(libtest::test_exception) {
 		block_tensor_ctrl<4, double> ctrlb(btb);
 		so_copy<4, double>(ctrlb.req_const_symmetry()).perform(symb);
 	}
+    scalar_transf<double> tr0, tr1(-1.);
 	symb_ref.insert(se_perm<4, double>(
-		permutation<4>().permute(0, 2), false));
+		permutation<4>().permute(0, 2), tr1));
 	symb_ref.insert(se_perm<4, double>(
-		permutation<4>().permute(1, 3), false));
+		permutation<4>().permute(1, 3), tr1));
 
 	compare_ref<4>::compare(testname, symb, symb_ref);
 
@@ -284,13 +288,14 @@ void btod_symmetrize_test::test_4() throw(libtest::test_exception) {
 	block_tensor<4, double, allocator_t> bta(bis), btb(bis), btb_ref(bis);
 
 	//	Set up initial symmetry and fill in random input
+    scalar_transf<double> tr0;
 
 	{
 		block_tensor_ctrl<4, double> ctrla(bta);
 		ctrla.req_symmetry().insert(se_perm<4, double>(
-			permutation<4>().permute(0, 1), true));
+			permutation<4>().permute(0, 1), tr0));
 		ctrla.req_symmetry().insert(se_perm<4, double>(
-			permutation<4>().permute(2, 3), true));
+			permutation<4>().permute(2, 3), tr0));
 	}
 	btod_random<4>().perform(bta);
 	bta.set_immutable();
@@ -318,7 +323,7 @@ void btod_symmetrize_test::test_4() throw(libtest::test_exception) {
 		so_copy<4, double>(ctrlb.req_const_symmetry()).perform(symb);
 	}
 	symb_ref.insert(se_perm<4, double>(
-		permutation<4>().permute(0, 2), true));
+		permutation<4>().permute(0, 2), tr0));
 
 	compare_ref<4>::compare(testname, symb, symb_ref);
 
@@ -384,8 +389,9 @@ void btod_symmetrize_test::test_5(bool symm) throw(libtest::test_exception) {
 		block_tensor_ctrl<4, double> ctrlb(btb);
 		so_copy<4, double>(ctrlb.req_const_symmetry()).perform(symb);
 	}
+    scalar_transf<double> tr0, tr1(-1.);
 	symb_ref.insert(se_perm<4, double>(
-		permutation<4>().permute(0, 2).permute(1, 3), symm));
+		permutation<4>().permute(0, 2).permute(1, 3), symm ? tr0 : tr1));
 
 	compare_ref<4>::compare(testname, symb, symb_ref);
 
@@ -415,7 +421,6 @@ void btod_symmetrize_test::test_6a(bool symm, bool label,
 	    irnames[0] = "g"; irnames[1] = "u";
 		point_group_table pg(tns, irnames, irnames[0]);
 		pg.add_product(1, 1, 0);
-
 		product_table_container::get_instance().add(pg);
 	}
 
@@ -443,7 +448,8 @@ void btod_symmetrize_test::test_6a(bool symm, bool label,
 	{
 	block_tensor_ctrl<2, double> ca(bta), cb(btb);
 
-	se_perm<2, double> se10(p, symm);
+    scalar_transf<double> tr(symm ? 1.0 : -1.0);
+	se_perm<2, double> se10(p, tr);
 	cb.req_symmetry().insert(se10);
 	sym_ref.insert(se10);
 
@@ -569,8 +575,9 @@ void btod_symmetrize_test::test_6b(bool symm, bool label,
 	{
 	block_tensor_ctrl<4, double> ca(bta);
 
-	se_perm<4, double> se1(p1, symm);
-	se_perm<4, double> se2(p2, symm);
+	scalar_transf<double> tr(symm ? 1.0 : -1.0);
+	se_perm<4, double> se1(p1, tr);
+	se_perm<4, double> se2(p2, tr);
 	sym_ref.insert(se1);
 	sym_ref.insert(se2);
 

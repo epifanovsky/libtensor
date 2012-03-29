@@ -71,7 +71,7 @@ void so_apply_se_part_test::test_1(bool keep_zero,
 	index<2> i00, i11;
 	i11[0] = 1; i11[1] = 1;
 	se_t elem(bis, m11, 2);
-	elem.add_map(i00, i11, true);
+	elem.add_map(i00, i11, tr0);
 	set2.insert(elem);
 
 	op.perform(params);

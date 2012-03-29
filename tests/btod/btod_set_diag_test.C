@@ -94,9 +94,10 @@ void btod_set_diag_test::test_4() throw(libtest::test_exception) {
 	bis.split(m, 8);
 
 	symmetry<4, double> sym(bis);
+    scalar_transf<double> tr0, tr1(-1.);
 	se_perm<4, double> elem1(permutation<4>().permute(0, 1).permute(1, 2).
-		permute(2, 3), true);
-	se_perm<4, double> elem2(permutation<4>().permute(0, 1), true);
+		permute(2, 3), tr0);
+	se_perm<4, double> elem2(permutation<4>().permute(0, 1), tr0);
 	sym.insert(elem1);
 	sym.insert(elem2);
 
@@ -125,9 +126,10 @@ void btod_set_diag_test::test_5() throw(libtest::test_exception) {
 	i11[0] = 1; i11[1] = 1;
 
 	symmetry<2, double> sym(bis);
+    scalar_transf<double> tr0, tr1(-1.);
 	se_part<2, double> elem1(bis, m, 2);
-	elem1.add_map(i00, i11, true);
-	elem1.add_map(i01, i10, true);
+	elem1.add_map(i00, i11, tr0);
+	elem1.add_map(i01, i10, tr0);
 	sym.insert(elem1);
 
 	test_generic(testname, bis, sym, 0.0);

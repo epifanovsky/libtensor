@@ -155,7 +155,8 @@ void transf_list_test::test_2() throw(libtest::test_exception) {
 	bis.split(msk, 1);
 	symmetry<2, double> sym(bis);
 
-	se_perm<2, double> se1(permutation<2>().permute(0, 1), true);
+    scalar_transf<double> tr0;
+	se_perm<2, double> se1(permutation<2>().permute(0, 1), tr0);
 	sym.insert(se1);
 
 	//	Reference lists
@@ -216,9 +217,9 @@ void transf_list_test::test_3() throw(libtest::test_exception) {
 	bis.split(msk, 1);
 	symmetry<3, double> sym(bis);
 
-	se_perm<3, double> se1(permutation<3>().permute(0, 1).permute(1, 2),
-		true);
-	se_perm<3, double> se2(permutation<3>().permute(1, 2), true);
+    scalar_transf<double> tr0;
+	se_perm<3, double> se1(permutation<3>().permute(0, 1).permute(1, 2), tr0);
+	se_perm<3, double> se2(permutation<3>().permute(1, 2), tr0);
 	sym.insert(se1);
 	sym.insert(se2);
 
@@ -292,11 +293,12 @@ void transf_list_test::test_4() throw(libtest::test_exception) {
 	index<2> i00, i01, i10, i11;
 	i10[0] = 1; i01[1] = 1;
 	i11[0] = 1; i11[1] = 1;
+    scalar_transf<double> tr0;
 
 	se_part<2, double> se1(bis, msk, 2);
-	se1.add_map(i00, i11, true);
-	se1.add_map(i01, i10, true);
-	se1.add_map(i00, i01, true);
+	se1.add_map(i00, i11, tr0);
+	se1.add_map(i01, i10, tr0);
+	se1.add_map(i00, i01, tr0);
 	sym.insert(se1);
 
 	//	Reference lists
@@ -352,16 +354,18 @@ void transf_list_test::test_5a() throw(libtest::test_exception) {
 	block_index_space<2> bis(dims);
 	bis.split(msk, 1);
 
-	se_perm<2, double> se(permutation<2>().permute(0, 1), true);
+    scalar_transf<double> tr0;
+
+    se_perm<2, double> se(permutation<2>().permute(0, 1), tr0);
 
 	index<2> i00, i01, i10, i11;
 	i10[0] = 1; i01[1] = 1;
 	i11[0] = 1; i11[1] = 1;
 
 	se_part<2, double> sp(bis, msk, 2);
-	sp.add_map(i00, i01, true);
-	sp.add_map(i01, i10, true);
-	sp.add_map(i10, i11, true);
+	sp.add_map(i00, i01, tr0);
+	sp.add_map(i01, i10, tr0);
+	sp.add_map(i10, i11, tr0);
 
 	symmetry<2, double> sym1(bis), sym2(bis);
 	sym1.insert(se); sym1.insert(sp);
@@ -410,9 +414,10 @@ void transf_list_test::test_5b() throw(libtest::test_exception) {
 	dimensions<4> dims(index_range<4>(i1, i2));
 	block_index_space<4> bis(dims);
 	bis.split(msk, 1);
+    scalar_transf<double> tr0;
 
-	se_perm<4, double> se1(permutation<4>().permute(0, 1), true);
-	se_perm<4, double> se2(permutation<4>().permute(2, 3), true);
+	se_perm<4, double> se1(permutation<4>().permute(0, 1), tr0);
+	se_perm<4, double> se2(permutation<4>().permute(2, 3), tr0);
 
 	index<4> i0000, i0001, i0010, i0011, i0100, i0101, i0110, i0111,
 		i1000, i1001, i1010, i1011, i1100, i1101, i1110, i1111;
@@ -426,21 +431,21 @@ void transf_list_test::test_5b() throw(libtest::test_exception) {
 	i1111[0] = 1; i1111[1] = 1; i1111[2] = 1; i1111[3] = 1;
 
 	se_part<4, double> sp(bis, msk, 2);
-	sp.add_map(i0000, i0001, true);
-	sp.add_map(i0001, i0010, true);
-	sp.add_map(i0010, i0011, true);
-	sp.add_map(i0011, i0100, true);
-	sp.add_map(i0100, i0101, true);
-	sp.add_map(i0101, i0110, true);
-	sp.add_map(i0110, i0111, true);
-	sp.add_map(i0111, i1000, true);
-	sp.add_map(i1000, i1001, true);
-	sp.add_map(i1001, i1010, true);
-	sp.add_map(i1010, i1011, true);
-	sp.add_map(i1011, i1100, true);
-	sp.add_map(i1100, i1101, true);
-	sp.add_map(i1101, i1110, true);
-	sp.add_map(i1110, i1111, true);
+	sp.add_map(i0000, i0001, tr0);
+	sp.add_map(i0001, i0010, tr0);
+	sp.add_map(i0010, i0011, tr0);
+	sp.add_map(i0011, i0100, tr0);
+	sp.add_map(i0100, i0101, tr0);
+	sp.add_map(i0101, i0110, tr0);
+	sp.add_map(i0110, i0111, tr0);
+	sp.add_map(i0111, i1000, tr0);
+	sp.add_map(i1000, i1001, tr0);
+	sp.add_map(i1001, i1010, tr0);
+	sp.add_map(i1010, i1011, tr0);
+	sp.add_map(i1011, i1100, tr0);
+	sp.add_map(i1100, i1101, tr0);
+	sp.add_map(i1101, i1110, tr0);
+	sp.add_map(i1110, i1111, tr0);
 
 	symmetry<4, double> sym1(bis), sym2(bis);
 	sym1.insert(se1); sym1.insert(se2); sym1.insert(sp);
@@ -508,8 +513,9 @@ void transf_list_test::test_5c() throw(libtest::test_exception) {
 	bis.split(msk, 4);
 	bis.split(msk, 5); bis.split(msk, 6); bis.split(msk, 7);
 
-	se_perm<4, double> se1(permutation<4>().permute(0, 1), true);
-	se_perm<4, double> se2(permutation<4>().permute(2, 3), true);
+    scalar_transf<double> tr0;
+	se_perm<4, double> se1(permutation<4>().permute(0, 1), tr0);
+	se_perm<4, double> se2(permutation<4>().permute(2, 3), tr0);
 
 	se_label<4, double> sl(bis.get_block_index_dims(), "pg");
 	block_labeling<4> &bl = sl.get_labeling();
@@ -538,21 +544,21 @@ void transf_list_test::test_5c() throw(libtest::test_exception) {
 	i1111[0] = 1; i1111[1] = 1; i1111[2] = 1; i1111[3] = 1;
 
 	se_part<4, double> sp(bis, msk, 2);
-	sp.add_map(i0000, i0001, true);
-	sp.add_map(i0001, i0010, true);
-	sp.add_map(i0010, i0011, true);
-	sp.add_map(i0011, i0100, true);
-	sp.add_map(i0100, i0101, true);
-	sp.add_map(i0101, i0110, true);
-	sp.add_map(i0110, i0111, true);
-	sp.add_map(i0111, i1000, true);
-	sp.add_map(i1000, i1001, true);
-	sp.add_map(i1001, i1010, true);
-	sp.add_map(i1010, i1011, true);
-	sp.add_map(i1011, i1100, true);
-	sp.add_map(i1100, i1101, true);
-	sp.add_map(i1101, i1110, true);
-	sp.add_map(i1110, i1111, true);
+	sp.add_map(i0000, i0001, tr0);
+	sp.add_map(i0001, i0010, tr0);
+	sp.add_map(i0010, i0011, tr0);
+	sp.add_map(i0011, i0100, tr0);
+	sp.add_map(i0100, i0101, tr0);
+	sp.add_map(i0101, i0110, tr0);
+	sp.add_map(i0110, i0111, tr0);
+	sp.add_map(i0111, i1000, tr0);
+	sp.add_map(i1000, i1001, tr0);
+	sp.add_map(i1001, i1010, tr0);
+	sp.add_map(i1010, i1011, tr0);
+	sp.add_map(i1011, i1100, tr0);
+	sp.add_map(i1100, i1101, tr0);
+	sp.add_map(i1101, i1110, tr0);
+	sp.add_map(i1110, i1111, tr0);
 
 	symmetry<4, double> sym1(bis), sym2(bis);
 	sym1.insert(se1); sym1.insert(se2); sym1.insert(sp); sym1.insert(sl);

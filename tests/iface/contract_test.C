@@ -442,10 +442,11 @@ void contract_test::test_tt_8() throw(libtest::test_exception) {
 
 	{
 		block_tensor_ctrl<4, double> c1(t1), c2(t2);
+		scalar_transf<double> tr1(-1.);
 		c1.req_symmetry().insert(se_perm<4, double>(
-			permutation<4>().permute(0, 1), false));
+			permutation<4>().permute(0, 1), tr1));
 		c2.req_symmetry().insert(se_perm<4, double>(
-			permutation<4>().permute(0, 1), false));
+			permutation<4>().permute(0, 1), tr1));
 	}
 
 	btod_random<4>().perform(t1);

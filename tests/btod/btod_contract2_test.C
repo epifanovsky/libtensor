@@ -404,7 +404,8 @@ void btod_contract2_test::test_sym_1() throw(libtest::test_exception) {
         p1230.permute(0, 1).permute(1, 2).permute(2, 3);
         p1023.permute(0, 1);
         p0132.permute(2, 3);
-        se_perm<4, double> cycle4a(p1230, true), cycle2a(p1023, true);
+        scalar_transf<double> tr0;
+        se_perm<4, double> cycle4a(p1230, tr0), cycle2a(p1023, tr0);
         block_tensor_ctrl<4, double> ctrla(bta), ctrlb(btb);
         ctrla.req_symmetry().insert(cycle4a);
         ctrla.req_symmetry().insert(cycle2a);
@@ -412,7 +413,7 @@ void btod_contract2_test::test_sym_1() throw(libtest::test_exception) {
         ctrlb.req_symmetry().insert(cycle2a);
 
         symmetry<4, double> sym_ref(bis_ref);
-        se_perm<4, double> cycle2c_1(p1023, true), cycle2c_2(p0132, true);
+        se_perm<4, double> cycle2c_1(p1023, tr0), cycle2c_2(p0132, tr0);
         sym_ref.insert(cycle2c_1);
         sym_ref.insert(cycle2c_2);
 
@@ -491,8 +492,9 @@ void btod_contract2_test::test_sym_2() throw(libtest::test_exception) {
         p10234.permute(0, 1);
 
         symmetry<3, double> sym_ref(bis_ref);
-        se_perm<4, double> cycle4a_1(p1230, true), cycle4a_2(p1023, true);
-        se_perm<5, double> cycle4b_1(p12304, true), cycle4b_2(p10234, true);
+        scalar_transf<double> tr0;
+        se_perm<4, double> cycle4a_1(p1230, tr0), cycle4a_2(p1023, tr0);
+        se_perm<5, double> cycle4b_1(p12304, tr0), cycle4b_2(p10234, tr0);
 
         block_tensor_ctrl<4, double> ctrla(bta);
         block_tensor_ctrl<5, double> ctrlb(btb);
@@ -561,8 +563,9 @@ void btod_contract2_test::test_sym_3() throw(libtest::test_exception) {
         permutation<2> p10;
         p10.permute(0, 1);
 
-        se_perm<2, double> cycle2(p10, true);
-        se_perm<4, double> cycle4a(p1023, false), cycle4b(p0132, false);
+        scalar_transf<double> tr0, tr1(-1.);
+        se_perm<2, double> cycle2(p10, tr0);
+        se_perm<4, double> cycle4a(p1023, tr1), cycle4b(p0132, tr1);
 
         block_tensor_ctrl<4, double> ctrla(bta);
         block_tensor_ctrl<2, double> ctrlb(btb);
@@ -579,11 +582,11 @@ void btod_contract2_test::test_sym_3() throw(libtest::test_exception) {
         const symmetry_element_set<4, double> &set = sym.get_subset(is);
         symmetry_element_set_adapter<4, double, se_perm<4, double> > adapter(set);
         permutation_group<4, double> grp(set);
-        if (! grp.is_member(false, p1023)) {
+        if (! grp.is_member(tr1, p1023)) {
             fail_test(testname, __FILE__, __LINE__,
                     "Permutational anti-symmetry (0-1) missing.");
         }
-        if (grp.is_member(false, p0132)) {
+        if (grp.is_member(tr1, p0132)) {
             fail_test(testname, __FILE__, __LINE__,
                     "Bad permutational anti-symmetry (2-3).");
         }
@@ -631,7 +634,8 @@ void btod_contract2_test::test_sym_4() throw(libtest::test_exception) {
         p1023.permute(0, 1);
         p2301.permute(0, 2).permute(1, 3);
 
-        se_perm<4, double> cycle4a(p1023, false), cycle4b(p0132, false);
+        scalar_transf<double> tr1(-1.);
+        se_perm<4, double> cycle4a(p1023, tr1), cycle4b(p0132, tr1);
 
         block_tensor_ctrl<4, double> ctrla(bta), ctrlb(btb);
         ctrla.req_symmetry().insert(cycle4a);
@@ -649,11 +653,11 @@ void btod_contract2_test::test_sym_4() throw(libtest::test_exception) {
         const symmetry_element_set<4, double> &set = sym.get_subset(is);
         symmetry_element_set_adapter<4, double, se_perm<4, double> > adapter(set);
         permutation_group<4, double> grp(set);
-        if (! grp.is_member(false, p1023)) {
+        if (! grp.is_member(tr1, p1023)) {
             fail_test(testname, __FILE__, __LINE__,
                     "Permutational anti-symmetry (0-1) missing.");
         }
-        if (! grp.is_member(false, p0132)) {
+        if (! grp.is_member(tr1, p0132)) {
             fail_test(testname, __FILE__, __LINE__,
                     "Permutational anti-symmetry (2-3) missing.");
         }
@@ -1303,7 +1307,8 @@ void btod_contract2_test::test_contr_4() throw(libtest::test_exception) {
         permutation<4> p1023, p0132;
         p1023.permute(0, 1);
         p0132.permute(2, 3);
-        se_perm<4, double> cycle1(p1023, true), cycle2(p0132, true);
+        scalar_transf<double> tr0, tr1(-1.);
+        se_perm<4, double> cycle1(p1023, tr0), cycle2(p0132, tr0);
         block_tensor_ctrl<4, double> ctrla(bta), ctrlb(btb);
         ctrla.req_symmetry().insert(cycle1);
         ctrla.req_symmetry().insert(cycle2);
@@ -1400,7 +1405,8 @@ void btod_contract2_test::test_contr_5() throw(libtest::test_exception) {
         permutation<4> p1023, p0132;
         p1023.permute(0, 1);
         p0132.permute(2, 3);
-        se_perm<4, double> cycle1(p1023, true), cycle2(p0132, true);
+        scalar_transf<double> tr0, tr1(-1.);
+        se_perm<4, double> cycle1(p1023, tr0), cycle2(p0132, tr0);
         block_tensor_ctrl<4, double> ctrla(bta), ctrlb(btb), ctrlc(btc);
         ctrla.req_symmetry().insert(cycle1);
         ctrla.req_symmetry().insert(cycle2);
@@ -1503,7 +1509,8 @@ void btod_contract2_test::test_contr_6() throw(libtest::test_exception) {
         permutation<4> p1023, p0132;
         p1023.permute(0, 1);
         p0132.permute(2, 3);
-        se_perm<4, double> cycle1(p1023, true), cycle2(p0132, true);
+        scalar_transf<double> tr0;
+        se_perm<4, double> cycle1(p1023, tr0), cycle2(p0132, tr0);
         block_tensor_ctrl<4, double> ctrla(bta), ctrlb(btb), ctrlc(btc);
         ctrla.req_symmetry().insert(cycle2);
         ctrlb.req_symmetry().insert(cycle1);
@@ -2322,11 +2329,12 @@ throw(libtest::test_exception) {
 
         //	Install symmetry
         {
+            scalar_transf<double> tr0;
             block_tensor_ctrl<4, double> ca(bta);
             ca.req_symmetry().insert(se_perm<4, double>(permutation<4>().
-                    permute(0, 1), true));
+                    permute(0, 1), tr0));
             ca.req_symmetry().insert(se_perm<4, double>(permutation<4>().
-                    permute(2, 3), true));
+                    permute(2, 3), tr0));
         }
 
         //	Load random data for input
@@ -2510,10 +2518,11 @@ throw(libtest::test_exception) {
     symmetry<4, double> symc_ref(bis_iiaa);
 
     { // set symmetry
-    se_perm<4, double> sp1023(permutation<4>().permute(0, 1), false);
-    se_perm<4, double> sp0132(permutation<4>().permute(2, 3), false);
+    scalar_transf<double> tr0, tr1(-1.);
+    se_perm<4, double> sp1023(permutation<4>().permute(0, 1), tr1);
+    se_perm<4, double> sp0132(permutation<4>().permute(2, 3), tr1);
     se_perm<4, double> sp2301(
-            permutation<4>().permute(0, 2).permute(1, 3), true);
+            permutation<4>().permute(0, 2).permute(1, 3), tr0);
 
     se_label<4, double> sla(bis_iiii.get_block_index_dims(), ss.str());
     block_labeling<4> &bla = sla.get_labeling();
@@ -2631,10 +2640,11 @@ throw(libtest::test_exception) {
         block_tensor<2, double, allocator_t> btc(bisa);
 
         { // set symmetry
-            se_perm<2, double> sp10(permutation<2>().permute(0, 1), true);
+            scalar_transf<double> tr0;
+            se_perm<2, double> sp10(permutation<2>().permute(0, 1), tr0);
             se_part<2, double> spa(bisa, m10, 2);
             index<2> i00, i10; i10[0] = 1;
-            spa.add_map(i00, i10, true);
+            spa.add_map(i00, i10, tr0);
 
             block_tensor_ctrl<2, double> ca(bta), cb(btb);
             ca.req_symmetry().insert(spa);
@@ -2722,15 +2732,16 @@ throw(libtest::test_exception) {
         symmetry<2, double> sym_ref(bisa);
 
         { // Set symmetry
-            se_perm<2, double> sp10(permutation<2>().permute(0, 1), true);
+            scalar_transf<double> tr0;
+            se_perm<2, double> sp10(permutation<2>().permute(0, 1), tr0);
             se_part<2, double> spa(bisa, m11, 2), spb(bisb, m11, 2);
             index<2> i00, i01, i10, i11;
             i10[0] = 1; i01[1] = 1;
             i11[0] = 1; i11[1] = 1;
-            spa.add_map(i00, i11, true);
+            spa.add_map(i00, i11, tr0);
             spa.mark_forbidden(i01);
             spa.mark_forbidden(i10);
-            spb.add_map(i00, i11, true);
+            spb.add_map(i00, i11, tr0);
             spb.mark_forbidden(i01);
             spb.mark_forbidden(i10);
 
@@ -2818,8 +2829,9 @@ void btod_contract2_test::test_contr_21() throw(libtest::test_exception) {
         block_tensor<2, double, allocator_t> btc(bisc);
 
         { // set symmetry
+            scalar_transf<double> tr0;
             se_part<2, double> spa(bisa, m11, 2);
-            spa.add_map(i00, i11, true);
+            spa.add_map(i00, i11, tr0);
             spa.mark_forbidden(i01);
             spa.mark_forbidden(i10);
 
@@ -2926,8 +2938,9 @@ void btod_contract2_test::test_self_1() throw(libtest::test_exception) {
         //	Compute reference symmetry and tensor
 
         symmetry<4, double> symc(bis_ijab), symc_ref(bis_ijab);
-        symc_ref.insert(se_perm<4, double>(permutation<4>().
-                permute(0, 1).permute(2, 3), true));
+        scalar_transf<double> tr0;
+       symc_ref.insert(se_perm<4, double>(permutation<4>().
+                permute(0, 1).permute(2, 3), tr0));
         {
             block_tensor_ctrl<4, double> cc(btc);
             so_copy<4, double>(cc.req_const_symmetry()).perform(symc);
@@ -3003,8 +3016,9 @@ void btod_contract2_test::test_self_2() throw(libtest::test_exception) {
         //	Compute reference symmetry and tensor
 
         symmetry<4, double> symc(bis_ijab), symc_ref(bis_ijab);
+        scalar_transf<double> tr0;
         symc_ref.insert(se_perm<4, double>(permutation<4>().
-                permute(0, 1).permute(2, 3), true));
+                permute(0, 1).permute(2, 3), tr0));
         {
             block_tensor_ctrl<4, double> cc(btc);
             so_copy<4, double>(cc.req_const_symmetry()).perform(symc);
@@ -3064,8 +3078,9 @@ void btod_contract2_test::test_self_3() throw(libtest::test_exception) {
 
         {
             block_tensor_ctrl<3, double> ca(bta);
+            scalar_transf<double> tr0;
             ca.req_symmetry().insert(se_perm<3, double>(
-                    permutation<3>().permute(1, 2), true));
+                    permutation<3>().permute(1, 2), tr0));
         }
 
         //	Load random data for input
@@ -3089,8 +3104,9 @@ void btod_contract2_test::test_self_3() throw(libtest::test_exception) {
         //	Compute reference symmetry and tensor
 
         symmetry<4, double> symc(bis_ijab), symc_ref(bis_ijab);
+        scalar_transf<double> tr0;
         symc_ref.insert(se_perm<4, double>(permutation<4>().
-                permute(0, 1).permute(2, 3), true));
+                permute(0, 1).permute(2, 3), tr0));
         {
             block_tensor_ctrl<4, double> cc(btc);
             so_copy<4, double>(cc.req_const_symmetry()).perform(symc);

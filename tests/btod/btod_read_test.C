@@ -531,7 +531,8 @@ void btod_read_test::test_9() throw(libtest::test_exception) {
 		block_tensor_ctrl<2, double> ctrl(bt);
 		permutation<2> perm;
 		perm.permute(0,1);
-		se_perm<2, double> sp(perm, true);
+        scalar_transf<double> tr0, tr1(-1.);
+		se_perm<2, double> sp(perm, tr0);
 		ctrl.req_symmetry().insert(sp);
 	}
 
@@ -596,7 +597,8 @@ void btod_read_test::test_10() throw(libtest::test_exception) {
 		block_tensor_ctrl<2, double> ctrl(bt);
 		permutation<2> perm;
 		perm.permute(0,1);
-		se_perm<2, double> sp(perm, true);
+        scalar_transf<double> tr0, tr1(-1.);
+		se_perm<2, double> sp(perm, tr0);
 		ctrl.req_symmetry().insert(sp);
 	}
 

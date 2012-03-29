@@ -143,10 +143,11 @@ void expr_test::test_3() throw(libtest::test_exception) {
 	{
 		block_tensor_ctrl<4, double> c_t2(t2);
 		symmetry<4, double> sym_t2(t2.get_bis());
+		scalar_transf<double> tr1(-1.);
 		sym_t2.insert(se_perm<4, double>(permutation<4>().
-			permute(0, 1), false));
+			permute(0, 1), tr1));
 		sym_t2.insert(se_perm<4, double>(permutation<4>().
-			permute(2, 3), false));
+			permute(2, 3), tr1));
 		so_copy<4, double>(sym_t2).perform(c_t2.req_symmetry());
 	}
 
@@ -185,19 +186,21 @@ void expr_test::test_4() throw(libtest::test_exception) {
 
 	{
 		block_tensor_ctrl<4, double> c_i_oovv(i_oovv), c_t2(t2);
+	    scalar_transf<double> tr1(-1.);
 		symmetry<4, double> sym_t2(t2.get_bis());
 		sym_t2.insert(se_perm<4, double>(permutation<4>().
-			permute(0, 1), false));
+			permute(0, 1), tr1));
 		sym_t2.insert(se_perm<4, double>(permutation<4>().
-			permute(2, 3), false));
+			permute(2, 3), tr1));
 		so_copy<4, double>(sym_t2).perform(c_t2.req_symmetry());
 		so_copy<4, double>(sym_t2).perform(c_i_oovv.req_symmetry());
 	}
 	{
+	    scalar_transf<double> tr0;
 		block_tensor_ctrl<4, double> c_i_ovov(i_ovov);
 		symmetry<4, double> sym_i_ovov(i_ovov.get_bis());
 		sym_i_ovov.insert(se_perm<4, double>(permutation<4>().
-			permute(0, 2).permute(1, 3), true));
+			permute(0, 2).permute(1, 3), tr0));
 		so_copy<4, double>(sym_i_ovov).perform(c_i_ovov.req_symmetry());
 	}
 
@@ -233,11 +236,12 @@ void expr_test::test_5() throw(libtest::test_exception) {
 	btensor<2> t3_oo(soo), t3_oo_ref(soo);
 
 	{
+	    scalar_transf<double> tr1(-1.);
 		block_tensor_ctrl<4, double> c_t1_oovv(t1_oovv);
 		c_t1_oovv.req_symmetry().insert(se_perm<4, double>(
-			permutation<4>().permute(0, 1), false));
+			permutation<4>().permute(0, 1), tr1));
 		c_t1_oovv.req_symmetry().insert(se_perm<4, double>(
-			permutation<4>().permute(2, 3), false));
+			permutation<4>().permute(2, 3), tr1));
 	}
 
 	btod_random<4>().perform(t1_oovv);
@@ -282,27 +286,28 @@ void expr_test::test_6() throw(libtest::test_exception) {
 	btensor<4> i4_oooo(soooo), i4_oooo_ref(soooo);
 
 	{
+	    scalar_transf<double> tr1(-1.);
 		block_tensor_ctrl<4, double> c_i_oooo(i_oooo);
 		c_i_oooo.req_symmetry().insert(se_perm<4, double>(
-			permutation<4>().permute(0, 1), false));
+			permutation<4>().permute(0, 1), tr1));
 		c_i_oooo.req_symmetry().insert(se_perm<4, double>(
-			permutation<4>().permute(2, 3), false));
+			permutation<4>().permute(2, 3), tr1));
 
 		block_tensor_ctrl<4, double> c_i_ooov(i_ooov);
 		c_i_ooov.req_symmetry().insert(se_perm<4, double>(
-			permutation<4>().permute(0, 1), false));
+			permutation<4>().permute(0, 1), tr1));
 
 		block_tensor_ctrl<4, double> c_i_oovv(i_oovv);
 		c_i_oovv.req_symmetry().insert(se_perm<4, double>(
-			permutation<4>().permute(0, 1), false));
+			permutation<4>().permute(0, 1), tr1));
 		c_i_oovv.req_symmetry().insert(se_perm<4, double>(
-			permutation<4>().permute(2, 3), false));
+			permutation<4>().permute(2, 3), tr1));
 
 		block_tensor_ctrl<4, double> c_t2(t2);
 		c_t2.req_symmetry().insert(se_perm<4, double>(
-			permutation<4>().permute(0, 1), false));
+			permutation<4>().permute(0, 1), tr1));
 		c_t2.req_symmetry().insert(se_perm<4, double>(
-			permutation<4>().permute(2, 3), false));
+			permutation<4>().permute(2, 3), tr1));
 	}
 
 	btod_random<4>().perform(i_oooo);
@@ -553,17 +558,18 @@ void expr_test::test_8() throw(libtest::test_exception) {
 	{
 		block_tensor_ctrl<2, double> c_f_oo(f_oo);
 		symmetry<2, double> sym_f_oo(f_oo.get_bis());
+	    scalar_transf<double> tr0, tr1(-1.);
 		sym_f_oo.insert(se_perm<2, double>(permutation<2>().
-			permute(0, 1), true));
+			permute(0, 1), tr0));
 		sym_f_oo.insert(l_oo);
 		so_copy<2, double>(sym_f_oo).perform(c_f_oo.req_symmetry());
 
 		block_tensor_ctrl<4, double> c_i_oovv(i_oovv), c_t2(t2);
 		symmetry<4, double> sym_t2(t2.get_bis());
 		sym_t2.insert(se_perm<4, double>(permutation<4>().
-			permute(0, 1), false));
+			permute(0, 1), tr1));
 		sym_t2.insert(se_perm<4, double>(permutation<4>().
-			permute(2, 3), false));
+			permute(2, 3), tr1));
 		sym_t2.insert(l_oovv);
 		so_copy<4, double>(sym_t2).perform(c_t2.req_symmetry());
 		so_copy<4, double>(sym_t2).perform(c_i_oovv.req_symmetry());
@@ -629,8 +635,9 @@ void expr_test::test_9() throw(libtest::test_exception) {
 	{
 		block_tensor_ctrl<2, double> c_f_oo(f_oo);
 		symmetry<2, double> sym_f_oo(f_oo.get_bis());
+	    scalar_transf<double> tr0;
 		sym_f_oo.insert(se_perm<2, double>(permutation<2>().
-			permute(0, 1), true));
+			permute(0, 1), tr0));
 		sym_f_oo.insert(l_oo);
 		so_copy<2, double>(sym_f_oo).perform(c_f_oo.req_symmetry());
 	}

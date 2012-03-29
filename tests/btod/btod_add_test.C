@@ -202,7 +202,8 @@ void btod_add_test::test_3(double ca1, double ca2)
 	block_tensor_ctrl<2, double> ctrl_bta1(bta1), ctrl_bta2(bta2),
 		ctrl_btb(btb);
 
-	se_perm<2, double> cycle(permutation<2>().permute(0, 1), true);
+	scalar_transf<double> tr0;
+	se_perm<2, double> cycle(permutation<2>().permute(0, 1), tr0);
 	ctrl_bta1.req_symmetry().insert(cycle);
 	ctrl_bta2.req_symmetry().insert(cycle);
 	ctrl_btb.req_symmetry().insert(cycle);
@@ -282,9 +283,10 @@ void btod_add_test::test_4(double ca1, double ca2, double ca3, double ca4)
 	block_tensor_ctrl<4, double> ctrl_bta1(bta1), ctrl_bta2(bta2),
 		ctrl_bta3(bta3), ctrl_bta4(bta4), ctrl_btb(btb);
 
+    scalar_transf<double> tr0;
 	se_perm<4, double> cycle1(permutation<4>().permute(0, 1).permute(1, 2).
-		permute(2, 3), true);
-	se_perm<4, double> cycle2(permutation<4>().permute(0, 1), true);
+		permute(2, 3), tr0);
+	se_perm<4, double> cycle2(permutation<4>().permute(0, 1), tr0);
 	ctrl_bta1.req_symmetry().insert(cycle1);
 	ctrl_bta1.req_symmetry().insert(cycle2);
 	ctrl_bta2.req_symmetry().insert(cycle1);
@@ -526,12 +528,13 @@ void btod_add_test::test_8() throw(libtest::test_exception) {
 		tb_ref(dims_iajb);
 	symmetry<4, double> syma_ref(bis_iajb);
 
+    scalar_transf<double> tr0, tr1(-1.);
 	{
 		block_tensor_ctrl<4, double> ca(bta);
 		ca.req_symmetry().insert(se_perm<4, double>(permutation<4>().
-			permute(0, 1), false));
+			permute(0, 1), tr1));
 		ca.req_symmetry().insert(se_perm<4, double>(permutation<4>().
-			permute(2, 3), false));
+			permute(2, 3), tr1));
 	}
 
 	btod_random<4>().perform(bta);
@@ -543,9 +546,9 @@ void btod_add_test::test_8() throw(libtest::test_exception) {
 	tod_copy<4>(ta, permutation<4>().permute(1, 2), 1.0).
 		perform(cpus, false, 1.0, tb_ref);
 	syma_ref.insert(se_perm<4, double>(permutation<4>().
-		permute(0, 2), false));
+		permute(0, 2), tr1));
 	syma_ref.insert(se_perm<4, double>(permutation<4>().
-		permute(1, 3), false));
+		permute(1, 3), tr1));
 
 	btod_add<4> add(bta, permutation<4>().permute(1, 2), 1.0);
 
@@ -597,10 +600,11 @@ void btod_add_test::test_9() throw(libtest::test_exception) {
 		tb_ref(dims_ijab);
 	symmetry<4, double> syma_ref(bis_ijab);
 
+    scalar_transf<double> tr0;
 	{
 		block_tensor_ctrl<4, double> ca(bta);
 		ca.req_symmetry().insert(se_perm<4, double>(permutation<4>().
-			permute(0, 2).permute(1, 3), true));
+			permute(0, 2).permute(1, 3), tr0));
 	}
 
 	btod_random<4>().perform(bta);
@@ -612,7 +616,7 @@ void btod_add_test::test_9() throw(libtest::test_exception) {
 	tod_copy<4>(ta, permutation<4>().permute(2, 1).permute(1, 0), 1.0).
 		perform(cpus, false, 1.0, tb_ref);
 	syma_ref.insert(se_perm<4, double>(permutation<4>().
-		permute(0, 1).permute(2, 3), true));
+		permute(0, 1).permute(2, 3), tr0));
 
 	btod_add<4> add(bta, permutation<4>().permute(2, 1).permute(1, 0), 1.0);
 

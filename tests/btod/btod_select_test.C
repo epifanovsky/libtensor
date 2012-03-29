@@ -244,8 +244,10 @@ void btod_select_test::test_3a(size_t n,
 	dense_tensor<2, double, allocator_t> t_ref(dims);
 	{
 		block_tensor_ctrl<2, double> btc(bt);
+        scalar_transf<double> tr0, tr1(-1.);
 		btc.req_symmetry().insert(
-			se_perm<2, double>(permutation<2>().permute(0, 1), symm));
+			se_perm<2, double>(permutation<2>().permute(0, 1),
+			        symm ? tr0 : tr1));
 	}
 
 	//	Fill in random data
@@ -453,10 +455,11 @@ void btod_select_test::test_3c(size_t n,
 
 	{ // Setup symmetry
 		block_tensor_ctrl<2, double> btc(bt);
+        scalar_transf<double> tr(symm ? 1. : -1.);
 		se_part<2, double> sp(bis, m11, 2);
-		sp.add_map(i00, i01, symm);
-		sp.add_map(i01, i10, symm);
-		sp.add_map(i10, i11, symm);
+		sp.add_map(i00, i01, tr);
+		sp.add_map(i01, i10, tr);
+		sp.add_map(i10, i11, tr);
 		btc.req_symmetry().insert(sp);
 	}
 
@@ -563,7 +566,8 @@ void btod_select_test::test_4a(size_t n,
 	symmetry<2, double> sym(bis);
 
 	{ // Setup symmetries
-		se_perm<2, double> se(permutation<2>().permute(0, 1), symm);
+        scalar_transf<double> tr(symm ? 1. : -1.);
+		se_perm<2, double> se(permutation<2>().permute(0, 1), tr);
 		sym.insert(se);
 
 		block_tensor_ctrl<2, double> ctrl(bt_ref);
@@ -720,8 +724,9 @@ void btod_select_test::test_4c(size_t n,
 		index<2> i00, i01, i10, i11;
 		i10[0] = 1; i01[1] = 1;
 		i11[0] = 1; i11[1] = 1;
-		sp.add_map(i00, i11, symm);
-		sp.add_map(i01, i10, true);
+        scalar_transf<double> tr0, tr1(-1.);
+		sp.add_map(i00, i11, symm ? tr0 : tr1);
+		sp.add_map(i01, i10, tr0);
 		sym.insert(sp);
 
 		block_tensor_ctrl<2, double> ctrl(bt_ref);
@@ -799,8 +804,9 @@ void btod_select_test::test_5(size_t n) throw(libtest::test_exception) {
 	symmetry<2, double> sym(bis);
 
 	{
-		se_perm<2, double> se1(permutation<2>().permute(0, 1), true),
-				se2(permutation<2>().permute(0, 1), false);
+        scalar_transf<double> tr0, tr1(-1.);
+		se_perm<2, double> se1(permutation<2>().permute(0, 1), tr0),
+				se2(permutation<2>().permute(0, 1), tr1);
 		se_label<2, double> sl(bis.get_block_index_dims(), "cs");
 		se_part<2, double> sp1(bis, m11, 2), sp2(bis, m11, 2);
 	    block_labeling<2> &bl = sl.get_labeling();
@@ -813,10 +819,10 @@ void btod_select_test::test_5(size_t n) throw(libtest::test_exception) {
 		index<2> i00, i01, i10, i11;
 		i10[0] = 1; i01[1] = 1;
 		i11[0] = 1; i11[1] = 1;
-		sp1.add_map(i00, i01, false);
-		sp1.add_map(i01, i10, true);
-		sp1.add_map(i10, i11, false);
-		sp2.add_map(i00, i11, true);
+		sp1.add_map(i00, i01, tr1);
+		sp1.add_map(i01, i10, tr0);
+		sp1.add_map(i10, i11, tr1);
+		sp2.add_map(i00, i11, tr0);
 
 		block_tensor_ctrl<2, double> btc(bt);
 		btc.req_symmetry().insert(se1);

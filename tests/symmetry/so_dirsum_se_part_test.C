@@ -28,7 +28,7 @@ void so_dirsum_se_part_test::perform() throw(libtest::test_exception) {
 }
 
 
-/**	\test Tests that the direct product of two empty group yields an empty
+/**	\test Tests that the direct sum of two empty group yields an empty
         group of a higher order
  **/
 void so_dirsum_se_part_test::test_empty_1() throw(libtest::test_exception) {
@@ -74,7 +74,7 @@ void so_dirsum_se_part_test::test_empty_1() throw(libtest::test_exception) {
 }
 
 
-/**	\test Direct product of a group with mapping in 2-space and an empty
+/**	\test Direct sum of a group with mapping in 2-space and an empty
         group (1-space) forming a 3-space.
  **/
 void so_dirsum_se_part_test::test_empty_2(
@@ -159,7 +159,7 @@ void so_dirsum_se_part_test::test_empty_2(
     }
 }
 
-/**	\test Direct product of an empty group (1-space) and a group with mappings
+/**	\test Direct sum of an empty group (1-space) and a group with mappings
         in 2-space forming a 3-space.
  **/
 void so_dirsum_se_part_test::test_empty_3(
@@ -243,7 +243,7 @@ void so_dirsum_se_part_test::test_empty_3(
 }
 
 
-/** \test Direct product of a group in 1-space and a group in 2-space.
+/** \test Direct sum of a group in 1-space and a group in 2-space.
  **/
 void so_dirsum_se_part_test::test_nn_1(
         bool symm1, bool symm2) throw(libtest::test_exception) {
@@ -339,7 +339,7 @@ void so_dirsum_se_part_test::test_nn_1(
     }
 }
 
-/** \test Direct product of a group in 1-space and a group in 2-space. The
+/** \test Direct sum of a group in 1-space and a group in 2-space. The
         result is permuted with [012->120].
  **/
 void so_dirsum_se_part_test::test_nn_2(
@@ -437,7 +437,7 @@ void so_dirsum_se_part_test::test_nn_2(
     }
 }
 
-/** \test Direct product of two groups in 2-space.
+/** \test Direct sum of two groups in 2-space.
  **/
 void so_dirsum_se_part_test::test_nn_3(
         bool symm1, bool symm2) throw(libtest::test_exception) {

@@ -3,6 +3,8 @@
 #include <libtensor/btod/scalar_transf_double.h>
 #include <libtensor/btod/btod_mult.h>
 #include <libtensor/btod/btod_random.h>
+#include <libtensor/symmetry/point_group_table.h>
+#include <libtensor/symmetry/product_table_container.h>
 #include <libtensor/tod/tod_btconv.h>
 #include <libtensor/tod/tod_mult.h>
 #include <iomanip>
@@ -229,7 +231,8 @@ void btod_mult_test::test_3(
 
 	permutation<2> perm;
 	perm.permute(0, 1);
-	se_perm<2, double> sp(perm, true);
+    scalar_transf<double> tr0;
+	se_perm<2, double> sp(perm, tr0);
 	block_tensor<2, double, allocator_t> bta(bis), btb(bis), btc(bis);
 
 	dense_tensor<2, double, allocator_t> ta(dims), tb(dims), tc(dims),
@@ -322,7 +325,8 @@ void btod_mult_test::test_4(
 	permutation<4> p10, p32;
 	p10.permute(0, 1);
 	p32.permute(2, 3);
-	se_perm<4, double> spa(p10, false), spb(p32, true);
+    scalar_transf<double> tr0, tr1(-1.);
+	se_perm<4, double> spa(p10, tr1), spb(p32, tr0);
 
 	block_tensor<4, double, allocator_t> bta(bis), btb(bis), btc(bis);
 	dense_tensor<4, double, allocator_t> ta(dims), tb(dims), tc(dims),
@@ -410,7 +414,8 @@ void btod_mult_test::test_5(bool symm1, bool symm2) throw(libtest::test_exceptio
 
 	permutation<2> p10;
 	p10.permute(0, 1);
-	se_perm<2, double> spa(p10, symm1), spb(p10, symm2);
+    scalar_transf<double> tr1(symm1 ? 1. : -1.), tr2(symm2 ? 1. : -1.);
+	se_perm<2, double> spa(p10, tr1), spb(p10, tr2);
 
 	block_tensor<2, double, allocator_t> bta(bis), btb(bis);
 
@@ -512,8 +517,9 @@ void btod_mult_test::test_6(bool symm1, bool symm2) throw(libtest::test_exceptio
 	permutation<4> p10, p32;
 	p10.permute(0, 1); p32.permute(2, 3);
 
-	se_perm<4, double> spa1(p10, symm1), spa2(p32, symm1);
-	se_perm<4, double> spb(p10, symm2);
+    scalar_transf<double> tr1(symm1 ? 1. : -1.), tr2(symm2 ? 1. : -1.);
+	se_perm<4, double> spa1(p10, tr1), spa2(p32, tr1);
+	se_perm<4, double> spb(p10, tr2);
 
 	block_tensor<4, double, allocator_t> bta(bis), btb(bis);
 
@@ -599,14 +605,14 @@ void btod_mult_test::test_7(bool label, bool part,
 
 	std::string tns = tnss.str();
 
-//	if (label) {
-//		point_group_table pg(tns, 2);
-//		pg.add_product(0, 0, 0);
-//		pg.add_product(0, 1, 1);
-//		pg.add_product(1, 1, 0);
-//
-//		product_table_container::get_instance().add(pg);
-//	}
+	if (label) {
+	    std::vector<std::string> irn(2);
+	    irn[0] = "g"; irn[1] = "u";
+		point_group_table pg(tns, irn, irn[0]);
+		pg.add_product(1, 1, 0);
+
+		product_table_container::get_instance().add(pg);
+	}
 
 	typedef std_allocator<double> allocator_t;
 
@@ -636,10 +642,11 @@ void btod_mult_test::test_7(bool label, bool part,
 	{
 	block_tensor_ctrl<4, double> ca(bta), cb(btb), cc(btc);
 
-	se_perm<4, double> sp10(permutation<4>().permute(0, 1), true);
-	se_perm<4, double> ap10(permutation<4>().permute(0, 1), false);
-	se_perm<4, double> sp32(permutation<4>().permute(0, 1), true);
-	se_perm<4, double> ap32(permutation<4>().permute(0, 1), false);
+    scalar_transf<double> tr0, tr1(-1.);
+	se_perm<4, double> sp10(permutation<4>().permute(0, 1), tr0);
+	se_perm<4, double> ap10(permutation<4>().permute(0, 1), tr1);
+	se_perm<4, double> sp32(permutation<4>().permute(0, 1), tr0);
+	se_perm<4, double> ap32(permutation<4>().permute(0, 1), tr1);
 
 	if (samesym) {
 		ca.req_symmetry().insert(ap10);
@@ -662,21 +669,26 @@ void btod_mult_test::test_7(bool label, bool part,
 		sym_ref.insert(ap32);
 	}
 
-//	if (label) {
-//		se_label<4, double> sl(bis.get_block_index_dims(), tns);
-//		sl.assign(msk, 0, 0);
-//		sl.assign(msk, 1, 1);
-//		sl.assign(msk, 2, 0);
-//		sl.assign(msk, 3, 1);
-//
-//		sl.add_target(0);
-//		ca.req_symmetry().insert(sl);
-//		cc.req_symmetry().insert(sl);
-//		sym_ref.insert(sl);
-//
-//		sl.add_target(1);
-//		cb.req_symmetry().insert(sl);
-//	}
+	if (label) {
+		se_label<4, double> sl(bis.get_block_index_dims(), tns);
+		block_labeling<4> &bl = sl.get_labeling();
+		bl.assign(msk, 0, 0);
+		bl.assign(msk, 1, 1);
+		bl.assign(msk, 2, 0);
+		bl.assign(msk, 3, 1);
+
+		evaluation_rule<4> r1;
+		r1.add_sequence(sequence<4, size_t>(1));
+		r1.add_product(0, 0);
+		sl.set_rule(r1);
+		ca.req_symmetry().insert(sl);
+		cc.req_symmetry().insert(sl);
+		sym_ref.insert(sl);
+
+		r1.add_product(0, 1);
+		sl.set_rule(r1);
+		cb.req_symmetry().insert(sl);
+	}
 
 	if (part) {
 		se_part<4, double> sp1(bis, msk, 2), sp2(bis, msk, 2);
@@ -758,15 +770,15 @@ void btod_mult_test::test_7(bool label, bool part,
 	compare_ref<4>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 
 	} catch(exception &e) {
-//		if (label) product_table_container::get_instance().erase(tns);
+		if (label) product_table_container::get_instance().erase(tns);
 
 		fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
 	} catch (...) {
-//		if (label) product_table_container::get_instance().erase(tns);
+		if (label) product_table_container::get_instance().erase(tns);
 		throw;
 	}
 
-//	if (label) product_table_container::get_instance().erase(tns);
+	if (label) product_table_container::get_instance().erase(tns);
 }
 
 /**	\test Elementwise division of two 2-order tensors having 1 element blocks.
@@ -780,14 +792,14 @@ void btod_mult_test::test_8a(bool label, bool part)
 	std::string tns = tnss.str();
 
 
-//	if (label) {
-//		point_group_table pg(tns, 2);
-//		pg.add_product(0, 0, 0);
-//		pg.add_product(0, 1, 1);
-//		pg.add_product(1, 1, 0);
-//
-//		product_table_container::get_instance().add(pg);
-//	}
+	if (label) {
+	    std::vector<std::string> irn(2);
+	    irn[0] = "g"; irn[1] = "u";
+		point_group_table pg(tns, irn, irn[0]);
+		pg.add_product(1, 1, 0);
+
+		product_table_container::get_instance().add(pg);
+	}
 
 	typedef std_allocator<double> allocator_t;
 
@@ -805,30 +817,36 @@ void btod_mult_test::test_8a(bool label, bool part)
 
 	block_tensor<2, double, allocator_t> bta(bis), btb(bis), btc(bis);
 	symmetry<2, double> sym_ref(bis);
+    scalar_transf<double> tr0, tr1(-1.);
 
 	// set up symmetries
 	{
 	block_tensor_ctrl<2, double> ca(bta), cb(btb);
 
-	se_perm<2, double> sp(permutation<2>().permute(0, 1), true);
-	se_perm<2, double> ap(permutation<2>().permute(0, 1), false);
+	se_perm<2, double> sp(permutation<2>().permute(0, 1), tr0);
+	se_perm<2, double> ap(permutation<2>().permute(0, 1), tr1);
 
 	ca.req_symmetry().insert(ap);
 	cb.req_symmetry().insert(sp);
 	sym_ref.insert(ap);
 
-//	if (label) {
-//		se_label<2, double> sl(bis.get_block_index_dims(), tns);
-//		sl.assign(m, 0, 0); sl.assign(m, 1, 1);
-//		sl.assign(m, 2, 0); sl.assign(m, 3, 1);
-//		sl.add_target(0);
-//
-//		ca.req_symmetry().insert(sl);
-//		sym_ref.insert(sl);
-//
-//		sl.add_target(1);
-//		cb.req_symmetry().insert(sl);
-//	}
+	if (label) {
+		se_label<2, double> sl(bis.get_block_index_dims(), tns);
+		block_labeling<2> &bl = sl.get_labeling();
+		bl.assign(m, 0, 0); bl.assign(m, 1, 1);
+		bl.assign(m, 2, 0); bl.assign(m, 3, 1);
+		evaluation_rule<2> r1;
+		r1.add_sequence(sequence<2, size_t>(1));
+		r1.add_product(0, 0);
+		sl.set_rule(r1);
+
+		ca.req_symmetry().insert(sl);
+		sym_ref.insert(sl);
+
+		r1.add_product(0, 1);
+		sl.set_rule(r1);
+		cb.req_symmetry().insert(sl);
+	}
 
 	if (part) {
 		se_part<2, double> spa(bis, m, 2), spb(bis, m, 2);
@@ -836,15 +854,16 @@ void btod_mult_test::test_8a(bool label, bool part)
 		i10[0] = 1; i01[1] = 1;
 		i11[0] = 1; i11[1] = 1;
 
-		spa.add_map(i00, i11, true);
-		spa.add_map(i01, i10, true);
+
+		spa.add_map(i00, i11, tr0);
+		spa.add_map(i01, i10, tr0);
 
 		ca.req_symmetry().insert(spa);
 		sym_ref.insert(spa);
 
-		spb.add_map(i00, i01, true);
-		spb.add_map(i01, i10, true);
-		spb.add_map(i10, i11, true);
+		spb.add_map(i00, i01, tr0);
+		spb.add_map(i01, i10, tr0);
+		spb.add_map(i10, i11, tr0);
 
 		cb.req_symmetry().insert(spb);
 	}
@@ -874,15 +893,15 @@ void btod_mult_test::test_8a(bool label, bool part)
 	compare_ref<2>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 
 	} catch(exception &e) {
-//		if (label) product_table_container::get_instance().erase(tns);
+		if (label) product_table_container::get_instance().erase(tns);
 
 		fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
 	} catch (...) {
-//		if (label) product_table_container::get_instance().erase(tns);
+		if (label) product_table_container::get_instance().erase(tns);
 		throw;
 	}
 
-//	if (label) product_table_container::get_instance().erase(tns);
+	if (label) product_table_container::get_instance().erase(tns);
 }
 
 
@@ -898,14 +917,14 @@ void btod_mult_test::test_8b(bool label, bool part)
 	std::string tns = tnss.str();
 
 
-//	if (label) {
-//		point_group_table pg(tns, 2);
-//		pg.add_product(0, 0, 0);
-//		pg.add_product(0, 1, 1);
-//		pg.add_product(1, 1, 0);
-//
-//		product_table_container::get_instance().add(pg);
-//	}
+    if (label) {
+        std::vector<std::string> irn(2);
+        irn[0] = "g"; irn[1] = "u";
+        point_group_table pg(tns, irn, irn[0]);
+        pg.add_product(1, 1, 0);
+
+        product_table_container::get_instance().add(pg);
+    }
 
 	typedef std_allocator<double> allocator_t;
 
@@ -928,13 +947,14 @@ void btod_mult_test::test_8b(bool label, bool part)
 	symmetry<4, double> sym_ref(bis);
 
 	// set up symmetries
+	scalar_transf<double> tr0, tr1(-1.);
 	{
 	block_tensor_ctrl<4, double> ca(bta), cb(btb);
 
-	se_perm<4, double> ap10(permutation<4>().permute(0, 1), false);
-	se_perm<4, double> ap32(permutation<4>().permute(2, 3), false);
-	se_perm<4, double> sp10(permutation<4>().permute(0, 1), true);
-	se_perm<4, double> sp32(permutation<4>().permute(2, 3), true);
+	se_perm<4, double> ap10(permutation<4>().permute(0, 1), tr1);
+	se_perm<4, double> ap32(permutation<4>().permute(2, 3), tr1);
+	se_perm<4, double> sp10(permutation<4>().permute(0, 1), tr0);
+	se_perm<4, double> sp32(permutation<4>().permute(2, 3), tr0);
 
 	ca.req_symmetry().insert(ap10);
 	ca.req_symmetry().insert(ap32);
@@ -943,18 +963,23 @@ void btod_mult_test::test_8b(bool label, bool part)
 	sym_ref.insert(ap10);
 	sym_ref.insert(ap32);
 
-//	if (label) {
-//		se_label<4, double> sl(bis.get_block_index_dims(), tns);
-//		sl.assign(m, 0, 0); sl.assign(m, 1, 1);
-//		sl.assign(m, 2, 0); sl.assign(m, 3, 1);
-//		sl.add_target(0);
-//
-//		ca.req_symmetry().insert(sl);
-//		sym_ref.insert(sl);
-//
-//		sl.add_target(1);
-//		cb.req_symmetry().insert(sl);
-//	}
+	if (label) {
+		se_label<4, double> sl(bis.get_block_index_dims(), tns);
+		block_labeling<4> &bl = sl.get_labeling();
+		bl.assign(m, 0, 0); bl.assign(m, 1, 1);
+		bl.assign(m, 2, 0); bl.assign(m, 3, 1);
+		evaluation_rule<4> r1;
+		r1.add_sequence(sequence<4, size_t>(1));
+		r1.add_product(0, 0);
+		sl.set_rule(r1);
+
+		ca.req_symmetry().insert(sl);
+		sym_ref.insert(sl);
+
+		r1.add_product(0, 1);
+        sl.set_rule(r1);
+		cb.req_symmetry().insert(sl);
+	}
 
 	if (part) {
 		se_part<4, double> spa(bis, m, 2), spb(bis, m, 2);
@@ -969,33 +994,33 @@ void btod_mult_test::test_8b(bool label, bool part)
 		i1000[0] = 1; i0111[1] = 1; i0111[2] = 1; i0111[3] = 1;
 		i1111[0] = 1; i1111[1] = 1; i1111[2] = 1; i1111[3] = 1;
 
-		spa.add_map(i0000, i1111, true);
-		spa.add_map(i0001, i1110, true);
-		spa.add_map(i0010, i1101, true);
-		spa.add_map(i0011, i1100, true);
-		spa.add_map(i0100, i1011, true);
-		spa.add_map(i0101, i1010, true);
-		spa.add_map(i0110, i1001, true);
-		spa.add_map(i0111, i1000, true);
+		spa.add_map(i0000, i1111, tr0);
+		spa.add_map(i0001, i1110, tr0);
+		spa.add_map(i0010, i1101, tr0);
+		spa.add_map(i0011, i1100, tr0);
+		spa.add_map(i0100, i1011, tr0);
+		spa.add_map(i0101, i1010, tr0);
+		spa.add_map(i0110, i1001, tr0);
+		spa.add_map(i0111, i1000, tr0);
 
 		ca.req_symmetry().insert(spa);
 		sym_ref.insert(spa);
 
-		spb.add_map(i0000, i0001, true);
-		spb.add_map(i0001, i0010, true);
-		spb.add_map(i0010, i0011, true);
-		spb.add_map(i0011, i0100, true);
-		spb.add_map(i0100, i0101, true);
-		spb.add_map(i0101, i0110, true);
-		spb.add_map(i0110, i0111, true);
-		spb.add_map(i0111, i1000, true);
-		spb.add_map(i1000, i1001, true);
-		spb.add_map(i1001, i1010, true);
-		spb.add_map(i1010, i1011, true);
-		spb.add_map(i1011, i1100, true);
-		spb.add_map(i1100, i1101, true);
-		spb.add_map(i1101, i1110, true);
-		spb.add_map(i1110, i1111, true);
+		spb.add_map(i0000, i0001, tr0);
+		spb.add_map(i0001, i0010, tr0);
+		spb.add_map(i0010, i0011, tr0);
+		spb.add_map(i0011, i0100, tr0);
+		spb.add_map(i0100, i0101, tr0);
+		spb.add_map(i0101, i0110, tr0);
+		spb.add_map(i0110, i0111, tr0);
+		spb.add_map(i0111, i1000, tr0);
+		spb.add_map(i1000, i1001, tr0);
+		spb.add_map(i1001, i1010, tr0);
+		spb.add_map(i1010, i1011, tr0);
+		spb.add_map(i1011, i1100, tr0);
+		spb.add_map(i1100, i1101, tr0);
+		spb.add_map(i1101, i1110, tr0);
+		spb.add_map(i1110, i1111, tr0);
 
 		cb.req_symmetry().insert(spb);
 	}
@@ -1026,15 +1051,15 @@ void btod_mult_test::test_8b(bool label, bool part)
 	compare_ref<4>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 
 	} catch(exception &e) {
-//		if (label) product_table_container::get_instance().erase(tns);
+		if (label) product_table_container::get_instance().erase(tns);
 
 		fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
 	} catch (...) {
-//		if (label) product_table_container::get_instance().erase(tns);
+		if (label) product_table_container::get_instance().erase(tns);
 		throw;
 	}
 
-//	if (label) product_table_container::get_instance().erase(tns);
+	if (label) product_table_container::get_instance().erase(tns);
 }
 
 

@@ -481,7 +481,8 @@ void btod_diag_test::test_sym_1(bool add) throw(libtest::test_exception) {
 
 	permutation<2> perm10;
 	perm10.permute(0, 1);
-	se_perm<2, double> cycle1(perm10, true);
+    scalar_transf<double> tr0, tr1(-1.);
+	se_perm<2, double> cycle1(perm10, tr0);
 	block_tensor_ctrl<2, double> ctrla(bta);
 	ctrla.req_symmetry().insert(cycle1);
 
@@ -563,7 +564,8 @@ void btod_diag_test::test_sym_2(bool add) throw(libtest::test_exception) {
 
 	permutation<3> perm10;
 	perm10.permute(0, 1);
-	se_perm<3, double> cycle1(perm10, true);
+    scalar_transf<double> tr0, tr1(-1.);
+	se_perm<3, double> cycle1(perm10, tr0);
 	block_tensor_ctrl<3, double> ctrla(bta);
 	ctrla.req_symmetry().insert(cycle1);
 
@@ -642,7 +644,8 @@ void btod_diag_test::test_sym_3(bool add) throw(libtest::test_exception) {
 
 	permutation<2> perm10;
 	perm10.permute(0, 1);
-	se_perm<2, double> cycle1(perm10, false);
+    scalar_transf<double> tr0, tr1(-1.);
+	se_perm<2, double> cycle1(perm10, tr1);
 	block_tensor_ctrl<2, double> ctrla(bta);
 	ctrla.req_symmetry().insert(cycle1);
 
@@ -725,7 +728,8 @@ void btod_diag_test::test_sym_4(bool add) throw(libtest::test_exception) {
 
 	permutation<4> perm20;
 	perm20.permute(0, 2);
-	se_perm<4, double> cycle1(perm20, false);
+    scalar_transf<double> tr0, tr1(-1.);
+	se_perm<4, double> cycle1(perm20, tr1);
 	block_tensor_ctrl<4, double> ctrla(bta);
 	ctrla.req_symmetry().insert(cycle1);
 
@@ -808,9 +812,11 @@ void btod_diag_test::test_sym_5(bool add) throw(libtest::test_exception) {
 	dense_tensor<3, double, allocator_t> tb(dims3), tb_ref(dims3);
 
 	{
-	se_perm<4, double> cycle1(permutation<4>().permute(0, 2).permute(1, 3), true);
-	block_tensor_ctrl<4, double> ctrla(bta);
-	ctrla.req_symmetry().insert(cycle1);
+        scalar_transf<double> tr0, tr1(-1.);
+        se_perm<4, double> cycle1(
+                permutation<4>().permute(0, 2).permute(1, 3), tr0);
+        block_tensor_ctrl<4, double> ctrla(bta);
+        ctrla.req_symmetry().insert(cycle1);
 	}
 
 	mask<4> msk;
@@ -893,10 +899,11 @@ void btod_diag_test::test_sym_6(bool add) throw(libtest::test_exception) {
 
 	block_tensor_ctrl<4, double> ctrla(bta);
 
+    scalar_transf<double> tr0, tr1(-1.);
 	ctrla.req_symmetry().insert(se_perm<4, double>(permutation<4>().
-		permute(0, 1), true));
+		permute(0, 1), tr0));
 	ctrla.req_symmetry().insert(se_perm<4, double>(permutation<4>().
-		permute(2, 3), true));
+		permute(2, 3), tr0));
 
 	mask<4> msk;
 	msk[1] = true; msk[3] = true;

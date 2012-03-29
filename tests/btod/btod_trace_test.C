@@ -497,7 +497,8 @@ void btod_trace_test::test_permsym_1() throw(libtest::test_exception) {
 	//	Set up symmetry
 	{
 		block_tensor_ctrl<2, double> ctrl(bta);
-		se_perm<2, double> elem(permutation<2>().permute(0, 1), true);
+	    scalar_transf<double> tr0, tr1(-1.);
+		se_perm<2, double> elem(permutation<2>().permute(0, 1), tr0);
 		ctrl.req_symmetry().insert(elem);
 	}
 
@@ -555,8 +556,9 @@ void btod_trace_test::test_permsym_2() throw(libtest::test_exception) {
 	//	Set up symmetry
 	{
 		block_tensor_ctrl<4, double> ctrl(bta);
-		se_perm<4, double> elem1(permutation<4>().permute(0, 2), true);
-		se_perm<4, double> elem2(permutation<4>().permute(1, 3), true);
+	    scalar_transf<double> tr0, tr1(-1.);
+		se_perm<4, double> elem1(permutation<4>().permute(0, 2), tr0);
+		se_perm<4, double> elem2(permutation<4>().permute(1, 3), tr0);
 		ctrl.req_symmetry().insert(elem1);
 		ctrl.req_symmetry().insert(elem2);
 	}
