@@ -103,7 +103,6 @@ public:
 
 	//@}
 
-
 	//!	\name Manipulations with the %permutation
 	//@{
 
@@ -143,6 +142,14 @@ public:
 
 	//@}
 
+	//! \name Access functions
+	//@{
+
+	/** \brief Access the i-th element of the permutation sequence
+	 **/
+	const size_t &operator[](size_t i) const;
+
+	//@}
 
 	//!	\name Special comparisons
 	//@{
@@ -277,6 +284,17 @@ inline void permutation<N>::apply_mask(const mask<N> &msk) {
 			i++;
 		}
 	}
+}
+
+template<size_t N>
+inline const size_t &operator[](size_t i) const {
+#ifdef LIBTENSOR_DEBUG
+    if(i >= N) {
+        throw out_of_bounds(g_ns, k_clazz, "operator[](size_t)",
+            __FILE__, __LINE__, "Index out of range.");
+    }
+#endif // LIBTENSOR_DEBUG
+    return m_idx[i];
 }
 
 
