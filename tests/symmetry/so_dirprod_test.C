@@ -270,9 +270,10 @@ void so_dirprod_test::test_se_2(
 
         se_part<2, double> ela(bisa, ma, 2);
         index<2> i00a, i01a, i02a, i03a;
+        scalar_transf<double> tr0, tr1(-1.);
         i02a[0] = 1; i01a[1] = 1;
         i03a[0] = 1; i03a[1] = 1;
-        ela.add_map(i00a, i03a, s1);
+        ela.add_map(i00a, i03a, s1 ? tr0 : tr1);
         ela.mark_forbidden(i01a); ela.mark_forbidden(i02a);
 
         se_part<3, double> elb(bisb, mb, 2);
@@ -281,7 +282,7 @@ void so_dirprod_test::test_se_2(
         i05b[0] = 1; i02b[1] = 1; i05b[2] = 1;
         i06b[0] = 1; i06b[1] = 1; i01b[2] = 1;
         i07b[0] = 1; i07b[1] = 1; i07b[2] = 1;
-        elb.add_map(i00b, i07b, s2);
+        elb.add_map(i00b, i07b, s2 ? tr0 : tr1);
         elb.mark_forbidden(i01b); elb.mark_forbidden(i02b);
         elb.mark_forbidden(i03b); elb.mark_forbidden(i04b);
         elb.mark_forbidden(i05b); elb.mark_forbidden(i06b);
@@ -307,9 +308,9 @@ void so_dirprod_test::test_se_2(
         i29c[0] = 1; i29c[1] = 1; i29c[2] = 1; i02c[3] = 1; i29c[4] = 1;
         i30c[0] = 1; i30c[1] = 1; i30c[2] = 1; i30c[3] = 1; i01c[4] = 1;
         i31c[0] = 1; i31c[1] = 1; i31c[2] = 1; i31c[3] = 1; i31c[4] = 1;
-        elc.add_map(i00c, i07c, s2);
-        elc.add_map(i07c, i24c, s1 == s2);
-        elc.add_map(i24c, i31c, s2);
+        elc.add_map(i00c, i07c, s2 ? tr0 : tr1);
+        elc.add_map(i07c, i24c, s1 == s2 ? tr0 : tr1);
+        elc.add_map(i24c, i31c, s2 ? tr0 : tr1);
         elc.mark_forbidden(i01c); elc.mark_forbidden(i02c);
         elc.mark_forbidden(i03c); elc.mark_forbidden(i04c);
         elc.mark_forbidden(i05c); elc.mark_forbidden(i06c);
@@ -420,9 +421,10 @@ void so_dirprod_test::test_perm_1(
 
         se_part<2, double> ela(bisa, ma, 2);
         index<2> i00a, i01a, i02a, i03a;
+        scalar_transf<double> tr0, tr1(-1.);
         i02a[0] = 1; i01a[1] = 1;
         i03a[0] = 1; i03a[1] = 1;
-        ela.add_map(i00a, i03a, s1);
+        ela.add_map(i00a, i03a, s1 ? tr0 : tr1);
         ela.mark_forbidden(i01a); ela.mark_forbidden(i02a);
 
         se_part<3, double> elb(bisb, mb, 2);
@@ -431,7 +433,7 @@ void so_dirprod_test::test_perm_1(
         i05b[0] = 1; i02b[1] = 1; i05b[2] = 1;
         i06b[0] = 1; i06b[1] = 1; i01b[2] = 1;
         i07b[0] = 1; i07b[1] = 1; i07b[2] = 1;
-        elb.add_map(i00b, i07b, s2);
+        elb.add_map(i00b, i07b, s2 ? tr0 : tr1);
         elb.mark_forbidden(i01b); elb.mark_forbidden(i02b);
         elb.mark_forbidden(i03b); elb.mark_forbidden(i04b);
         elb.mark_forbidden(i05b); elb.mark_forbidden(i06b);
@@ -457,9 +459,9 @@ void so_dirprod_test::test_perm_1(
         i29c[0] = 1; i29c[1] = 1; i29c[2] = 1; i02c[3] = 1; i29c[4] = 1;
         i30c[0] = 1; i30c[1] = 1; i30c[2] = 1; i30c[3] = 1; i01c[4] = 1;
         i31c[0] = 1; i31c[1] = 1; i31c[2] = 1; i31c[3] = 1; i31c[4] = 1;
-        elc.add_map(i00c, i07c, s2);
-        elc.add_map(i07c, i24c, s1 == s2);
-        elc.add_map(i24c, i31c, s2);
+        elc.add_map(i00c, i07c, s2 ? tr0 : tr1);
+        elc.add_map(i07c, i24c, s1 == s2 ? tr0 : tr1);
+        elc.add_map(i24c, i31c, s2 ? tr0 : tr1);
         elc.mark_forbidden(i01c); elc.mark_forbidden(i02c);
         elc.mark_forbidden(i03c); elc.mark_forbidden(i04c);
         elc.mark_forbidden(i05c); elc.mark_forbidden(i06c);
@@ -540,10 +542,11 @@ void so_dirprod_test::test_perm_2(
         symmetry<5, double> symc(bisc), symc_ref(bisc);
 
         se_part<2, double> ela(bisa, ma, 2);
+        scalar_transf<double> tr0, tr1(-1.);
         index<2> i00a, i01a, i02a, i03a;
         i02a[0] = 1; i01a[1] = 1;
         i03a[0] = 1; i03a[1] = 1;
-        ela.add_map(i00a, i03a, s1);
+        ela.add_map(i00a, i03a, s1 ? tr0 : tr1);
         ela.mark_forbidden(i01a); ela.mark_forbidden(i02a);
 
         se_part<3, double> elb(bisb, mb, 2);
@@ -552,7 +555,7 @@ void so_dirprod_test::test_perm_2(
         i05b[0] = 1; i02b[1] = 1; i05b[2] = 1;
         i06b[0] = 1; i06b[1] = 1; i01b[2] = 1;
         i07b[0] = 1; i07b[1] = 1; i07b[2] = 1;
-        elb.add_map(i00b, i07b, s2);
+        elb.add_map(i00b, i07b, s2 ? tr0 : tr1);
         elb.mark_forbidden(i01b); elb.mark_forbidden(i02b);
         elb.mark_forbidden(i03b); elb.mark_forbidden(i04b);
         elb.mark_forbidden(i05b); elb.mark_forbidden(i06b);
@@ -578,9 +581,9 @@ void so_dirprod_test::test_perm_2(
         i29c[0] = 1; i29c[1] = 1; i29c[2] = 1; i02c[3] = 1; i29c[4] = 1;
         i30c[0] = 1; i30c[1] = 1; i30c[2] = 1; i30c[3] = 1; i01c[4] = 1;
         i31c[0] = 1; i31c[1] = 1; i31c[2] = 1; i31c[3] = 1; i31c[4] = 1;
-        elc.add_map(i00c, i07c, s2);
-        elc.add_map(i07c, i24c, s1 == s2);
-        elc.add_map(i24c, i31c, s2);
+        elc.add_map(i00c, i07c, s2 ? tr0 : tr1);
+        elc.add_map(i07c, i24c, s1 == s2 ? tr0 : tr1);
+        elc.add_map(i24c, i31c, s2 ? tr0 : tr1);
         elc.mark_forbidden(i01c); elc.mark_forbidden(i02c);
         elc.mark_forbidden(i03c); elc.mark_forbidden(i04c);
         elc.mark_forbidden(i05c); elc.mark_forbidden(i06c);

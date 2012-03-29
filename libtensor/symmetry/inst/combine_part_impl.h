@@ -56,7 +56,7 @@ void combine_part<N, T>::perform(se_t &el) {
             index<N> ix2 = elx.get_direct_map(ix1);
             if (! (ix1 < ix2)) continue;
 
-            bool sx = elx.get_sign(ix1, ix2);
+            scalar_transf<T> trx = elx.get_transf(ix1, ix2);
             for (size_t i = 0; i < N; i++) {
                 if (pdims[i] == 1) { ix2[i] = i1[i]; }
             }
@@ -71,13 +71,13 @@ void combine_part<N, T>::perform(se_t &el) {
             }
 
             if (el.map_exists(i1, ix2)) {
-                bool sign = el.get_sign(i1, ix2);
-                if (sx != sign) {
+                scalar_transf<T> tr = el.get_transf(i1, ix2);
+                if (trx != tr) {
                     el.mark_forbidden(i1);
                 }
             }
             else {
-                el.add_map(i1, ix2, sx);
+                el.add_map(i1, ix2, trx);
             }
         }
 

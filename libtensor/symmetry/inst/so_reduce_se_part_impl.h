@@ -152,7 +152,8 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_part<N - M, T> >::do_perform(
 
             if (lb.empty()) continue;
 
-            bool found = false, sign = true;
+            bool found = false;
+            scalar_transf<T> tr;
             typename std::list< index<k_order1> >::iterator ila = la.begin();
             for ( ; ila != la.end(); ila++) {
 
@@ -164,16 +165,16 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_part<N - M, T> >::do_perform(
 
                 if (ilb == lb.end()) break;
 
-                bool s = el1.get_sign(*ila, *ilb);
-                if (found && sign != s) break;
+                scalar_transf<T> trx = el1.get_transf(*ila, *ilb);
+                if (found && tr != trx) break;
 
-                sign = s;
+                tr = trx;
                 found = true;
                 lb.erase(ilb);
             } // for la
 
             if (ila == la.end()) {
-                el2.add_map(i2a, i2b, sign);
+                el2.add_map(i2a, i2b, tr);
                 empty = false;
                 break;
             }
@@ -186,8 +187,8 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_part<N - M, T> >::do_perform(
 
 template<size_t N, size_t M, typename T>
 bool symmetry_operation_impl< so_reduce<N, M, T>, se_part<N - M, T> >::
-is_forbidden(const el1_t &el,
-        const index<k_order1> &idx, const dimensions<k_order1> &subdims) {
+is_forbidden(const el1_t &el, const index<k_order1> &idx,
+        const dimensions<k_order1> &subdims) {
 
     if (! el.is_forbidden(idx)) return false;
 
@@ -211,10 +212,11 @@ map_exists(const el1_t &el, const index<k_order1> &ia,
 
     if (! el.map_exists(ia, ib)) return false;
 
-    bool sign = el.get_sign(ia, ib), exists = true;;
+    bool exists = true;
+    scalar_transf<T> tr = el.get_transf(ia, ib);
 
     abs_index<k_order1> aix(subdims);
-    while (aix.inc()) {
+    while (aix.inc() && exists) {
         const index<k_order1> &ix = aix.get_index();
         index<k_order1> i1a, i1b;
         for (register size_t i = 0; i < k_order1; i++) {
@@ -222,8 +224,9 @@ map_exists(const el1_t &el, const index<k_order1> &ia,
             i1b[i] = ib[i] + ix[i];
         }
 
-        if (! el.map_exists(i1a, i1b)) { exists = false; break; }
-        if (sign != el.get_sign(i1a, i1b)) { exists = false; break; }
+        if ((! el.map_exists(i1a, i1b)) || (tr != el.get_transf(i1a, i1b))) {
+            exists = false;
+        }
     }
 
     return exists;

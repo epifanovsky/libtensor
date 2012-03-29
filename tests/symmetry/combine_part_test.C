@@ -1,3 +1,4 @@
+#include <libtensor/btod/scalar_transf_double.h>
 #include <libtensor/symmetry/combine_part.h>
 #include "../compare_ref.h"
 #include "combine_part_test.h"
@@ -87,7 +88,8 @@ void combine_part_test::test_2(bool symm) throw(libtest::test_exception) {
         i11[0] = 1; i11[1] = 1;
 
         se_t elem_ref(bis, m, 2);
-        elem_ref.add_map(i00, i11, symm);
+        scalar_transf<double> tr1(2.0), tr2(0.5);
+        elem_ref.add_map(i00, i11, tr1);
         elem_ref.mark_forbidden(i01);
         elem_ref.mark_forbidden(i10);
 
@@ -103,9 +105,13 @@ void combine_part_test::test_2(bool symm) throw(libtest::test_exception) {
             fail_test(tns.c_str(), __FILE__, __LINE__,
                     "Map i00->i11 missing.");
         }
-        if (elem.get_sign(i00, i11) != symm) {
+        if (elem.get_transf(i00, i11) != tr1) {
             fail_test(tns.c_str(), __FILE__, __LINE__,
-                    "Wrong sign at i00->i11.");
+                    "Wrong transformation at i00->i11.");
+        }
+        if (elem.get_transf(i11, i00) != tr2) {
+            fail_test(tns.c_str(), __FILE__, __LINE__,
+                    "Wrong transformation at i11->i00.");
         }
         if (! elem.is_forbidden(i01)) {
             fail_test(tns.c_str(), __FILE__, __LINE__,
@@ -160,16 +166,17 @@ void combine_part_test::test_3(
 
         mask<3> ma, mb; ma[0] = true; mb[1] = true; mb[2] = true;
         se_t elema(bis, ma, 4), elemb(bis, mb, 2), elem_ref(bis, pdims);
-        elema.add_map(i000, i200, symm1);
+        scalar_transf<double> tr1(symm1 ? 1.0 : -1.0), tr2(symm2 ? 1.0 : -1.0);
+        elema.add_map(i000, i200, tr1);
         elema.mark_forbidden(i100);
         elema.mark_forbidden(i300);
-        elemb.add_map(i000, i011, symm2);
+        elemb.add_map(i000, i011, tr2);
         elemb.mark_forbidden(i001);
         elemb.mark_forbidden(i010);
 
-        elem_ref.add_map(i000, i011, symm2);
-        elem_ref.add_map(i000, i200, symm1);
-        elem_ref.add_map(i200, i211, symm2);
+        elem_ref.add_map(i000, i011, tr2);
+        elem_ref.add_map(i000, i200, tr1);
+        elem_ref.add_map(i200, i211, tr2);
         elem_ref.mark_forbidden(i001);
         elem_ref.mark_forbidden(i010);
         elem_ref.mark_forbidden(i100);
@@ -230,17 +237,18 @@ void combine_part_test::test_4a(bool symm1, bool symm2,
         i10[0] = 1; i01[1] = 1;
         i11[0] = 1; i11[1] = 1;
         se_t elema(bis, m, 2), elemb(bis, m, 2), elem_ref(bis, m, 2);
-        elema.add_map(i00, i11, symm1);
-        elema.add_map(i01, i10, symm1);
-        elemb.add_map(i00, i11, symm2);
+        scalar_transf<double> tr1(symm1 ? 1. : -1.), tr2(symm2 ? 1. : -1.);
+        elema.add_map(i00, i11, tr1);
+        elema.add_map(i01, i10, tr1);
+        elemb.add_map(i00, i11, tr2);
 
         if (symm1 == symm2)
-            elem_ref.add_map(i00, i11, symm1);
+            elem_ref.add_map(i00, i11, tr1);
         else {
             elem_ref.mark_forbidden(i00);
             elem_ref.mark_forbidden(i11);
         }
-        elem_ref.add_map(i01, i10, symm1);
+        elem_ref.add_map(i01, i10, tr1);
 
         if (forbidden) {
             elemb.mark_forbidden(i01);
@@ -295,13 +303,14 @@ void combine_part_test::test_4b(bool symm1,
         index<2> i00, i01, i10, i11;
         i10[0] = 1; i01[1] = 1;
         i11[0] = 1; i11[1] = 1;
+        scalar_transf<double> tr1(symm1 ? 1. : -1.), tr2(symm2 ? 1. : -1.);
         se_t elema(bis, m, 2), elemb(bis, m, 2), elem_ref(bis, m, 2);
-        elema.add_map(i00, i11, symm1);
-        elemb.add_map(i00, i01, symm2);
-        elemb.add_map(i10, i11, symm2);
-        elem_ref.add_map(i00, i01, symm2);
-        elem_ref.add_map(i01, i10, symm1);
-        elem_ref.add_map(i10, i11, symm2);
+        elema.add_map(i00, i11, tr1);
+        elemb.add_map(i00, i01, tr2);
+        elemb.add_map(i10, i11, tr2);
+        elem_ref.add_map(i00, i01, tr2);
+        elem_ref.add_map(i01, i10, tr1);
+        elem_ref.add_map(i10, i11, tr2);
 
         symmetry_element_set<2, double> set1(se_t::k_sym_type);
         symmetry_element_set<2, double> set2(se_t::k_sym_type);

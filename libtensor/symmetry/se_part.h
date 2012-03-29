@@ -42,7 +42,7 @@ private:
     dimensions<N> m_pdims; //!< Partition %index dimensions
     size_t *m_fmap; //!< Forward mapping
     size_t *m_rmap; //!< Reverse mapping
-    bool *m_fsign; //!< Sign of the mappings
+    scalar_transf<T> *m_ftr; //!< Transforms of the mappings
 
 public:
     //!	\name Construction and destruction / assignment
@@ -79,7 +79,8 @@ public:
         \param idx2 Second partition %index.
         \param sign Sign of the mapping (true positive, false negative)
     **/
-    void add_map(const index<N> &idx1, const index<N> &idx2, bool sign = true);
+    void add_map(const index<N> &idx1, const index<N> &idx2,
+            const scalar_transf<T> &tr = scalar_transf<T>());
 
     /** \brief Marks a partition as not allowed (i.e. all blocks in it
         are not allowed)
@@ -129,7 +130,7 @@ public:
         \param to Second index.
         \return True for even map, false for odd (-1) map.
     **/
-    bool get_sign(const index<N> &from, const index<N> &to) const;
+    scalar_transf<T> get_transf(const index<N> &from, const index<N> &to) const;
 
     /** \brief Check if there exists a map between two indexes
         \param from First index.
@@ -173,7 +174,7 @@ public:
     virtual void apply(index<N> &idx) const;
 
     /**	\copydoc symmetry_element_i<N, T>::apply(
-        index<N>&, transf<N, T>&)
+            index<N>&, tensor_transf<N, T>&)
     **/
     virtual void apply(index<N> &idx, tensor_transf<N, T> &tr) const;
 
@@ -194,7 +195,7 @@ private:
 
     /** Adds the map a->b to the loop a is in.
      **/
-    void add_to_loop(size_t a, size_t b, bool sign);
+    void add_to_loop(size_t a, size_t b, const scalar_transf<T> &tr);
 
     /**	\brief Returns true if the %index is a valid partition %index,
         false otherwise

@@ -1,3 +1,4 @@
+#include <libtensor/btod/scalar_transf_double.h>
 #include <libtensor/symmetry/so_dirprod_se_part.h>
 #include "../compare_ref.h"
 #include "so_dirprod_se_part_test.h"
@@ -101,9 +102,10 @@ void so_dirprod_se_part_test::test_empty_2(
         index<2> i00, i01, i10, i11;
         i10[0] = 1; i01[1] = 1;
         i11[0] = 1; i11[1] = 1;
+        scalar_transf<double> tr0;
 
         se2_t elema(bisa, ma, 2);
-        elema.add_map(i00, i11, true);
+        elema.add_map(i00, i11, tr0);
         elema.mark_forbidden(i01);
         elema.mark_forbidden(i10);
 
@@ -119,12 +121,12 @@ void so_dirprod_se_part_test::test_empty_2(
 
         se3_t elemc(bisc, mx, 2);
         if (perm) {
-            elemc.add_map(i000, i101, true);
+            elemc.add_map(i000, i101, tr0);
             elemc.mark_forbidden(i001);
             elemc.mark_forbidden(i100);
         }
         else {
-            elemc.add_map(i000, i110, true);
+            elemc.add_map(i000, i110, tr0);
             elemc.mark_forbidden(i010);
             elemc.mark_forbidden(i100);
         }
@@ -187,9 +189,10 @@ void so_dirprod_se_part_test::test_empty_3(
         index<2> i00, i01, i10, i11;
         i10[0] = 1; i01[1] = 1;
         i11[0] = 1; i11[1] = 1;
+        scalar_transf<double> tr1(-1.);
 
         se2_t elemb(bisb, mb, 2);
-        elemb.add_map(i01, i11, false);
+        elemb.add_map(i01, i11, tr1);
         elemb.mark_forbidden(i00);
         elemb.mark_forbidden(i10);
 
@@ -205,12 +208,12 @@ void so_dirprod_se_part_test::test_empty_3(
 
         se3_t elemc(bisc, mx, 2);
         if (perm) {
-            elemc.add_map(i010, i110, false);
+            elemc.add_map(i010, i110, tr1);
             elemc.mark_forbidden(i000);
             elemc.mark_forbidden(i100);
         }
         else {
-            elemc.add_map(i001, i011, false);
+            elemc.add_map(i001, i011, tr1);
             elemc.mark_forbidden(i000);
             elemc.mark_forbidden(i010);
         }
@@ -276,14 +279,15 @@ void so_dirprod_se_part_test::test_nn_1(
         bisc.split(mc, 1); bisc.split(mc, 2); bisc.split(mc, 3);
 
         index<1> i0, i1; i1[0] = 1;
+        scalar_transf<double> tr0, tr1(-1.);
         se1_t elema(bisa, ma, 2);
-        elema.add_map(i0, i1, symm1);
+        elema.add_map(i0, i1, symm1 ? tr0 : tr1);
 
         index<2> i00, i01, i10, i11;
         i10[0] = 1; i01[1] = 1;
         i11[0] = 1; i11[1] = 1;
         se2_t elemb(bisb, mb, 2);
-        elemb.add_map(i00, i11, symm2);
+        elemb.add_map(i00, i11, symm2 ? tr0 : tr1);
         elemb.mark_forbidden(i01);
         elemb.mark_forbidden(i10);
 
@@ -294,9 +298,9 @@ void so_dirprod_se_part_test::test_nn_1(
         i111[0] = 1; i111[1] = 1; i111[2] = 1;
 
         se3_t elemc(bisc, mc, 2);
-        elemc.add_map(i000, i011, symm2);
-        elemc.add_map(i011, i100, symm1 == symm2);
-        elemc.add_map(i100, i111, symm2);
+        elemc.add_map(i000, i011, symm2 ? tr0 : tr1);
+        elemc.add_map(i011, i100, symm1 == symm2 ? tr0 : tr1);
+        elemc.add_map(i100, i111, symm2 ? tr0 : tr1);
         elemc.mark_forbidden(i001);
         elemc.mark_forbidden(i010);
         elemc.mark_forbidden(i101);
@@ -363,14 +367,15 @@ void so_dirprod_se_part_test::test_nn_2(
         bisc.split(mc, 1); bisc.split(mc, 2); bisc.split(mc, 3);
 
         index<1> i0, i1; i1[0] = 1;
+        scalar_transf<double> tr0, tr1(-1.);
         se1_t elema(bisa, ma, 2);
-        elema.add_map(i0, i1, symm1);
+        elema.add_map(i0, i1, symm1 ? tr0 : tr1);
 
         index<2> i00, i01, i10, i11;
         i10[0] = 1; i01[1] = 1;
         i11[0] = 1; i11[1] = 1;
         se2_t elemb(bisb, mb, 2);
-        elemb.add_map(i00, i11, symm2);
+        elemb.add_map(i00, i11, symm2 ? tr0 : tr1);
         elemb.mark_forbidden(i01);
         elemb.mark_forbidden(i10);
 
@@ -381,9 +386,9 @@ void so_dirprod_se_part_test::test_nn_2(
         i111[0] = 1; i111[1] = 1; i111[2] = 1;
 
         se3_t elemc(bisc, mc, 2);
-        elemc.add_map(i000, i001, symm1);
-        elemc.add_map(i001, i110, symm1 == symm2);
-        elemc.add_map(i110, i111, symm1);
+        elemc.add_map(i000, i001, symm1 ? tr0 : tr1);
+        elemc.add_map(i001, i110, symm1 == symm2 ? tr0 : tr1);
+        elemc.add_map(i110, i111, symm1 ? tr0 : tr1);
         elemc.mark_forbidden(i010);
         elemc.mark_forbidden(i011);
         elemc.mark_forbidden(i100);

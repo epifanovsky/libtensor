@@ -115,7 +115,7 @@ symmetry_operation_impl< so_merge<N, M, T>, se_part<N - M, T> >::do_perform(
             for (register size_t i = 0; i < N; i++)
                 i2b[map[i]] = i1b[i] / pdims1m[i];
 
-            el2.add_map(i2a, i2b, el1.get_sign(i1a, i1b));
+            el2.add_map(i2a, i2b, el1.get_transf(i1a, i1b));
         }
 
     } while (ai.inc());
@@ -151,10 +151,11 @@ map_exists(const el1_t &el, const index<N> &ia,
 
     if (! el.map_exists(ia, ib)) return false;
 
-    bool sign = el.get_sign(ia, ib), exists = true;
+    bool exists = true;
+    scalar_transf<T> tr = el.get_transf(ia, ib);
 
     abs_index<N> aix(subdims);
-    while (aix.inc()) {
+    while (aix.inc() && exists) {
         const index<N> &ix = aix.get_index();
         index<N> i1a, i1b;
         for (register size_t i = 0; i < N; i++) {
@@ -162,8 +163,10 @@ map_exists(const el1_t &el, const index<N> &ia,
             i1b[i] = ib[i] + ix[i];
         }
 
-        if (! el.map_exists(i1a, i1b)) { exists = false; break; }
-        if (sign != el.get_sign(i1a, i1b)) { exists = false; break; }
+        if ((! el.map_exists(i1a, i1b)) ||
+                (tr != el.get_transf(i1a, i1b))) {
+            exists = false;
+        }
     }
 
     return exists;

@@ -215,32 +215,32 @@ void so_symmetrize_test::test_5() throw(libtest::test_exception) {
 	i1010[0] = 1; i0101[1] = 1; i1010[2] = 1; i0101[3] = 1;
 	i1001[0] = 1; i0110[1] = 1; i0110[2] = 1; i1001[3] = 1;
 	i1000[0] = 1; i0111[1] = 1; i0111[2] = 1; i0111[3] = 1;
+    scalar_transf<double> tr0, tr1(-1.0);
 
 	se_part<4, double> separt4a(bis4, m4, 2);
-	separt4a.add_map(i0000, i0101, true);
-	separt4a.add_map(i0101, i1010, true);
-	separt4a.add_map(i1010, i1111, true);
-	separt4a.add_map(i0010, i0111, true);
-	separt4a.add_map(i0111, i1000, true);
-	separt4a.add_map(i1000, i1101, true);
-	separt4a.add_map(i0011, i0110, true);
-	separt4a.add_map(i0110, i1001, true);
-	separt4a.add_map(i1001, i1100, true);
-	separt4a.add_map(i0001, i0100, true);
-	separt4a.add_map(i0100, i1011, true);
-	separt4a.add_map(i1011, i1110, true);
+	separt4a.add_map(i0000, i0101, tr0);
+	separt4a.add_map(i0101, i1010, tr0);
+	separt4a.add_map(i1010, i1111, tr0);
+	separt4a.add_map(i0010, i0111, tr0);
+	separt4a.add_map(i0111, i1000, tr0);
+	separt4a.add_map(i1000, i1101, tr0);
+	separt4a.add_map(i0011, i0110, tr0);
+	separt4a.add_map(i0110, i1001, tr0);
+	separt4a.add_map(i1001, i1100, tr0);
+	separt4a.add_map(i0001, i0100, tr0);
+	separt4a.add_map(i0100, i1011, tr0);
+	separt4a.add_map(i1011, i1110, tr0);
 
 	se_part<4, double> separt4b(bis4, m4, 2);
-	separt4b.add_map(i0000, i1111, true);
-	separt4b.add_map(i0001, i1110, true);
-	separt4b.add_map(i0010, i1101, true);
-	separt4b.add_map(i0011, i1100, true);
-	separt4b.add_map(i0100, i1011, true);
-	separt4b.add_map(i0101, i1010, true);
-	separt4b.add_map(i0110, i1001, true);
-	separt4b.add_map(i0111, i1000, true);
+	separt4b.add_map(i0000, i1111, tr0);
+	separt4b.add_map(i0001, i1110, tr0);
+	separt4b.add_map(i0010, i1101, tr0);
+	separt4b.add_map(i0011, i1100, tr0);
+	separt4b.add_map(i0100, i1011, tr0);
+	separt4b.add_map(i0101, i1010, tr0);
+	separt4b.add_map(i0110, i1001, tr0);
+	separt4b.add_map(i0111, i1000, tr0);
 
-	scalar_transf<double> tr0;
 	se_perm<4, double> seperm4(permutation<4>().permute(0, 1), tr0);
 
 	sym1.insert(separt4a);

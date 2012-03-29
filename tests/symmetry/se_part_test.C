@@ -295,8 +295,8 @@ void se_part_test::test_3a() throw(libtest::test_exception) {
 
         se_part<4, double> elem1(bis, m1111, 2);
         elem1.add_map(i0000, i1111);
-        elem1.add_map(i0000, i0011);
-        elem1.add_map(i1100, i1111);
+        elem1.add_map(i0000, i0011, scalar_transf<double>(2.0));
+        elem1.add_map(i1100, i1111, scalar_transf<double>(0.5));
         elem1.add_map(i0110, i1001);
 
         std::set< index<4> > orbit;
@@ -385,8 +385,8 @@ void se_part_test::test_3b() throw(libtest::test_exception) {
 
         se_part<4, double> elem1(bis, m1111, 2);
         elem1.add_map(i0000, i1111);
-        elem1.add_map(i0000, i0011, false);
-        elem1.add_map(i1100, i1111, false);
+        elem1.add_map(i0000, i0011, scalar_transf<double>(-1.));
+        elem1.add_map(i1100, i1111, scalar_transf<double>(-1.));
         elem1.add_map(i0110, i1001);
 
         std::set< index<4> > orbit;
@@ -460,28 +460,29 @@ void se_part_test::test_4() throw(libtest::test_exception) {
         i1100[0] = 1; i1100[1] = 1; i1100[2] = 0; i1100[3] = 0;
         i1111[0] = 1; i1111[1] = 1; i1111[2] = 1; i1111[3] = 1;
 
+        scalar_transf<double> tr0, tr(0.5);
         se_part<4, double> elem(bis, m1111, 2);
-        elem.add_map(i0000, i0011, false);
-        elem.add_map(i1100, i1111, false);
+        elem.add_map(i0000, i0011, tr);
+        elem.add_map(i1111, i1100, tr);
         elem.add_map(i0011, i1100);
 
         if (! elem.map_exists(i0000, i1100)) {
             fail_test(testname, __FILE__, __LINE__, "Missing map: 0000->1100.");
         }
-        if (elem.get_sign(i0000, i1100) != false) {
-            fail_test(testname, __FILE__, __LINE__, "Wrong sign: 0000->1100.");
+        if (elem.get_transf(i0000, i1100) != tr) {
+            fail_test(testname, __FILE__, __LINE__, "Wrong transf: 0000->1100.");
         }
         if (! elem.map_exists(i0000, i1111)) {
             fail_test(testname, __FILE__, __LINE__, "Missing map: 0000->1111.");
         }
-        if (elem.get_sign(i0000, i1111) != true) {
-            fail_test(testname, __FILE__, __LINE__, "Wrong sign: 0000->1100.");
+        if (elem.get_transf(i0000, i1111) != tr0) {
+            fail_test(testname, __FILE__, __LINE__, "Wrong transf: 0000->1100.");
         }
         if (! elem.map_exists(i0011, i1111)) {
             fail_test(testname, __FILE__, __LINE__, "Missing map: 0011->1111.");
         }
-        if (elem.get_sign(i0011, i1111) != false) {
-            fail_test(testname, __FILE__, __LINE__, "Wrong sign: 0000->1100.");
+        if (elem.get_transf(i1111, i0011) != tr) {
+            fail_test(testname, __FILE__, __LINE__, "Wrong transf: 1111->0011.");
         }
 
     } catch(exception &e) {
@@ -621,10 +622,11 @@ void se_part_test::test_6() throw(libtest::test_exception) {
         i01[0] = 0; i01[1] = 1;
         i10[0] = 1; i10[1] = 0;
         i11[0] = 1; i11[1] = 1;
+        scalar_transf<double> tr0, tr1(-1.);
 
         se_part<2, double> elem1(bis, m11, 2), elem2(bis, m11, 2);
-        elem1.add_map(i00, i11, true);
-        elem1.add_map(i01, i10, false);
+        elem1.add_map(i00, i11, tr0);
+        elem1.add_map(i01, i10, tr1);
         elem1.mark_forbidden(i01);
 
         if (elem1.map_exists(i00, i01)) {
@@ -637,8 +639,8 @@ void se_part_test::test_6() throw(libtest::test_exception) {
             fail_test(testname, __FILE__, __LINE__,
                     "Map (i00->i11) does not exist.");
         }
-        if (! elem1.get_sign(i00, i11)) {
-            fail_test(testname, __FILE__, __LINE__, "Map (i00->i10) is asymm.");
+        if (elem1.get_transf(i00, i11) != tr0) {
+            fail_test(testname, __FILE__, __LINE__, "Map (i00->i10) !=  tr0.");
         }
         if (! elem1.is_forbidden(i01)) {
             fail_test(testname, __FILE__, __LINE__, "i01 is not forbidden.");
@@ -657,14 +659,14 @@ void se_part_test::test_6() throw(libtest::test_exception) {
         }
 
 
-        elem1.add_map(i00, i01, false);
+        elem1.add_map(i00, i01, tr1);
 
         if (! elem1.map_exists(i00, i01)) {
             fail_test(testname, __FILE__, __LINE__,
                     "Map (i00->i01) does not exist.");
         }
-        if (elem1.get_sign(i00, i01)) {
-            fail_test(testname, __FILE__, __LINE__, "Map (i00->i01) is symm.");
+        if (elem1.get_transf(i00, i01) != tr1) {
+            fail_test(testname, __FILE__, __LINE__, "Map (i00->i01) != tr1.");
         }
         if (elem1.map_exists(i00, i10)) {
             fail_test(testname, __FILE__, __LINE__, "Map (i00->i10) exists.");
@@ -673,8 +675,8 @@ void se_part_test::test_6() throw(libtest::test_exception) {
             fail_test(testname, __FILE__, __LINE__,
                     "Map (i00->i11) does not exist.");
         }
-        if (! elem1.get_sign(i00, i11)) {
-            fail_test(testname, __FILE__, __LINE__, "Map (i00->i11) is asymm.");
+        if (elem1.get_transf(i00, i11) != tr0) {
+            fail_test(testname, __FILE__, __LINE__, "Map (i00->i11) != tr0.");
         }
         if (elem1.is_forbidden(i01)) {
             fail_test(testname, __FILE__, __LINE__, "i01 is forbidden.");
@@ -686,8 +688,8 @@ void se_part_test::test_6() throw(libtest::test_exception) {
             fail_test(testname, __FILE__, __LINE__,
                     "Map (i01->i11) does not exist.");
         }
-        if (elem1.get_sign(i01, i11)) {
-            fail_test(testname, __FILE__, __LINE__, "Map (i00->i11) is symm.");
+        if (elem1.get_transf(i01, i11) != tr1) {
+            fail_test(testname, __FILE__, __LINE__, "Map (i00->i11) != tr1.");
         }
         if (! elem1.is_forbidden(i10)) {
             fail_test(testname, __FILE__, __LINE__, "i10 is not forbidden.");
@@ -696,28 +698,28 @@ void se_part_test::test_6() throw(libtest::test_exception) {
             fail_test(testname, __FILE__, __LINE__, "Map (i10->i11) exists.");
         }
 
-        elem1.add_map(i10, i11, false);
+        elem1.add_map(i10, i11, tr1);
 
         if (! elem1.map_exists(i00, i01)) {
             fail_test(testname, __FILE__, __LINE__,
                     "Map (i00->i01) does not exist.");
         }
-        if (elem1.get_sign(i00, i01)) {
-            fail_test(testname, __FILE__, __LINE__, "Map (i00->i01) is symm.");
+        if (elem1.get_transf(i00, i01) != tr1) {
+            fail_test(testname, __FILE__, __LINE__, "Map (i00->i01) != tr1.");
         }
         if (! elem1.map_exists(i00, i10)) {
             fail_test(testname, __FILE__, __LINE__,
                     "Map (i00->i10) does not exist.");
         }
-        if (elem1.get_sign(i00, i01)) {
-            fail_test(testname, __FILE__, __LINE__, "Map (i00->i01) is symm.");
+        if (elem1.get_transf(i00, i10) != tr1) {
+            fail_test(testname, __FILE__, __LINE__, "Map (i00->i01) != tr1.");
         }
         if (! elem1.map_exists(i00, i11)) {
             fail_test(testname, __FILE__, __LINE__,
                     "Map (i00->i11) does not exist.");
         }
-        if (! elem1.get_sign(i00, i11)) {
-            fail_test(testname, __FILE__, __LINE__, "Map (i00->i11) is asymm.");
+        if (elem1.get_transf(i00, i11) != tr0) {
+            fail_test(testname, __FILE__, __LINE__, "Map (i00->i11) != tr0.");
         }
         if (elem1.is_forbidden(i01)) {
             fail_test(testname, __FILE__, __LINE__, "i01 is forbidden.");
@@ -726,15 +728,15 @@ void se_part_test::test_6() throw(libtest::test_exception) {
             fail_test(testname, __FILE__, __LINE__,
                     "Map (i01->i10) does not exist.");
         }
-        if (! elem1.get_sign(i01, i10)) {
-            fail_test(testname, __FILE__, __LINE__, "Map (i01->i10) is asymm.");
+        if (elem1.get_transf(i01, i10) != tr0) {
+            fail_test(testname, __FILE__, __LINE__, "Map (i01->i10) != tr0.");
         }
         if (! elem1.map_exists(i01, i11)) {
             fail_test(testname, __FILE__, __LINE__,
                     "Map (i01->i11) does not exist.");
         }
-        if (elem1.get_sign(i01, i11)) {
-            fail_test(testname, __FILE__, __LINE__, "Map (i00->i11) is symm.");
+        if (elem1.get_transf(i01, i11) != tr1) {
+            fail_test(testname, __FILE__, __LINE__, "Map (i00->i11) != tr1.");
         }
         if (elem1.is_forbidden(i10)) {
             fail_test(testname, __FILE__, __LINE__, "i10 is forbidden.");
@@ -743,8 +745,8 @@ void se_part_test::test_6() throw(libtest::test_exception) {
             fail_test(testname, __FILE__, __LINE__,
                     "Map (i10->i11) does not exist.");
         }
-        if (elem1.get_sign(i10, i11)) {
-            fail_test(testname, __FILE__, __LINE__, "Map (i10->i11) is symm.");
+        if (elem1.get_transf(i10, i11) != tr1) {
+            fail_test(testname, __FILE__, __LINE__, "Map (i10->i11) != tr1.");
         }
 
     } catch(exception &e) {
@@ -780,10 +782,11 @@ void se_part_test::test_perm_1() throw(libtest::test_exception) {
 
         index<4> i0000, i0011, i0001, i0010;
         i0011[2] = 1; i0011[3] = 1; i0010[2] = 1; i0001[3] = 1;
+        scalar_transf<double> tr0;
 
         se_part<4, double> elem(bis, m0011, 2);
-        elem.add_map(i0000, i0011, true);
-        elem.add_map(i0001, i0010, true);
+        elem.add_map(i0000, i0011, tr0);
+        elem.add_map(i0001, i0010, tr0);
 
         permutation<4> perm; perm.permute(0, 1); // leaves mask unaffected
 
@@ -843,8 +846,9 @@ void se_part_test::test_perm_2() throw(libtest::test_exception) {
         i0100[1] = 1; i0101[1] = 1; i0101[3] = 1;
 
         se_part<4, double> elem(bis, m0011, 2);
-        elem.add_map(i0000, i0011, true);
-        elem.add_map(i0001, i0010, true);
+        scalar_transf<double> tr0;
+        elem.add_map(i0000, i0011, tr0);
+        elem.add_map(i0001, i0010, tr0);
 
         permutation<4> perm; perm.permute(0, 1).permute(1, 2);
 
@@ -903,9 +907,10 @@ void se_part_test::test_perm_3() throw(libtest::test_exception) {
         index<4> i0000, i0011, i0001, i0010;
         i0011[2] = 1; i0011[3] = 1; i0010[2] = 1; i0001[3] = 1;
 
+        scalar_transf<double> tr0;
         se_part<4, double> elem(bis, m0011, 2);
-        elem.add_map(i0000, i0011, true);
-        elem.add_map(i0001, i0010, true);
+        elem.add_map(i0000, i0011, tr0);
+        elem.add_map(i0001, i0010, tr0);
 
 
         permutation<4> perm; perm.permute(2, 3);
@@ -965,11 +970,12 @@ void se_part_test::test_perm_4() throw(libtest::test_exception) {
         i1001[0] = 1; i0110[1] = 1; i0110[2] = 1; i1001[3] = 1;
         i1010[0] = 1; i0101[1] = 1; i1010[2] = 1; i0101[3] = 1;
         i1111[0] = 1; i1111[1] = 1; i1111[2] = 1; i1111[3] = 1;
+        scalar_transf<double> tr0;
 
         se_part<4, double> elem(bis, m1111, 2);
-        elem.add_map(i0000, i1001, true);
-        elem.add_map(i1001, i0110, true);
-        elem.add_map(i0110, i1111, true);
+        elem.add_map(i0000, i1001, tr0);
+        elem.add_map(i1001, i0110, tr0);
+        elem.add_map(i0110, i1111, tr0);
 
 
         permutation<4> perm; perm.permute(0, 1);
@@ -1028,9 +1034,10 @@ void se_part_test::test_perm_5() throw(libtest::test_exception) {
         index<2> i00, i01, i10, i11;
         i10[0] = 1; i01[1] = 1;
         i11[0] = 1; i11[1] = 1;
+        scalar_transf<double> tr0;
 
         se_part<2, double> elem(bis, m11, 2);
-        elem.add_map(i01, i11, true);
+        elem.add_map(i01, i11, tr0);
         elem.mark_forbidden(i00);
         elem.mark_forbidden(i10);
 

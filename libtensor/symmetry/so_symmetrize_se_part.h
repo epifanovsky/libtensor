@@ -45,8 +45,9 @@ private:
             const mask<N> &msk, const sequence<N, size_t> &map);
 
     static void add_map(se_part<N, T> &sp,
-            const index<N> &i1, const index<N> &i2, bool sign,
-            const mask<N> &msk, const sequence<N, size_t> &map);
+            const index<N> &i1, const index<N> &i2,
+            const scalar_transf<T>& tr, const mask<N> &msk,
+            const sequence<N, size_t> &map);
 };
 
 

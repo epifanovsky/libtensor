@@ -79,7 +79,7 @@ symmetry_operation_impl< so_dirprod<N, M, T>, se_part<N + M, T> >::do_perform(
 
             for (size_t i = 0; i < N; i++) i3b[map[i]] = i1b[i];
 
-            e3.add_map(i3a, i3b, e1.get_sign(i1a, i1b));
+            e3.add_map(i3a, i3b, e1.get_transf(i1a, i1b));
 
         } while (ai.inc());
 
@@ -127,7 +127,7 @@ symmetry_operation_impl< so_dirprod<N, M, T>, se_part<N + M, T> >::do_perform(
             index<N + M> i3b;
             for (size_t i = 0; i < M; i++) i3b[map[i + N]] = i2b[i];
 
-            e3.add_map(i3a, i3b, e2.get_sign(i2a, i2b));
+            e3.add_map(i3a, i3b, e2.get_transf(i2a, i2b));
 
         } while (ai.inc());
 

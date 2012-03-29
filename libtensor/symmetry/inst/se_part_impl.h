@@ -18,7 +18,7 @@ template<size_t N, typename T>
 se_part<N, T>::se_part(const block_index_space<N> &bis,
         const mask<N> &msk, size_t npart) :
         m_bis(bis), m_bidims(m_bis.get_block_index_dims()),
-        m_pdims(make_pdims(bis, msk, npart)), m_fmap(0), m_rmap(0), m_fsign(0) {
+        m_pdims(make_pdims(bis, msk, npart)), m_fmap(0), m_rmap(0), m_ftr(0) {
 
     static const char *method =
         "se_part(const block_index_space<N>&, const mask<N>&, size_t)";
@@ -26,10 +26,9 @@ se_part<N, T>::se_part(const block_index_space<N> &bis,
     size_t mapsz = m_pdims.get_size();
     m_fmap = new size_t[mapsz];
     m_rmap = new size_t[mapsz];
-    m_fsign = new bool[mapsz];
+    m_ftr = new scalar_transf<T>[mapsz];
     for (size_t i = 0; i < mapsz; i++) {
         m_fmap[i] = m_rmap[i] = i;
-        m_fsign[i] = true;
     }
 }
 
@@ -37,7 +36,7 @@ template<size_t N, typename T>
 se_part<N, T>::se_part(const block_index_space<N> &bis,
         const dimensions<N> &pdims) :
         m_bis(bis), m_bidims(m_bis.get_block_index_dims()), m_pdims(pdims),
-        m_fmap(0), m_rmap(0), m_fsign(0) {
+        m_fmap(0), m_rmap(0), m_ftr(0) {
 
     static const char *method =
         "se_part(const block_index_space<N>&, const dimensions<N>&)";
@@ -51,26 +50,25 @@ se_part<N, T>::se_part(const block_index_space<N> &bis,
     size_t mapsz = m_pdims.get_size();
     m_fmap = new size_t[mapsz];
     m_rmap = new size_t[mapsz];
-    m_fsign = new bool[mapsz];
+    m_ftr = new scalar_transf<T>[mapsz];
     for (size_t i = 0; i < mapsz; i++) {
         m_fmap[i] = m_rmap[i] = i;
-        m_fsign[i] = true;
     }
 }
 
 template<size_t N, typename T>
 se_part<N, T>::se_part(const se_part<N, T> &elem) :
     m_bis(elem.m_bis), m_bidims(elem.m_bidims), m_pdims(elem.m_pdims),
-    m_fmap(0), m_fsign(0) {
+    m_fmap(0), m_ftr(0) {
 
     size_t mapsz = m_pdims.get_size();
     m_fmap = new size_t[mapsz];
     m_rmap = new size_t[mapsz];
-    m_fsign = new bool[mapsz];
+    m_ftr = new scalar_transf<T>[mapsz];
     for (size_t i = 0; i < mapsz; i++) {
         m_fmap[i] = elem.m_fmap[i];
         m_rmap[i] = elem.m_rmap[i];
-        m_fsign[i] = elem.m_fsign[i];
+        m_ftr[i] = elem.m_ftr[i];
     }
 }
 
@@ -79,15 +77,15 @@ se_part<N, T>::~se_part() {
 
     delete [] m_fmap; m_fmap = 0;
     delete [] m_rmap; m_rmap = 0;
-    delete [] m_fsign; m_fsign = 0;
+    delete [] m_ftr; m_ftr = 0;
 }
 
 template<size_t N, typename T>
 void se_part<N, T>::add_map(const index<N> &idx1,
-        const index<N> &idx2, bool sign) {
+        const index<N> &idx2, const scalar_transf<T> &tr) {
 
     static const char *method =
-        "add_map(const index<N>&, const index<N>&, bool)";
+        "add_map(const index<N>&, const index<N>&, scalar_transf<T>)";
 
 #ifdef LIBTENSOR_DEBUG
     if(!is_valid_pidx(idx1)) {
@@ -104,41 +102,46 @@ void se_part<N, T>::add_map(const index<N> &idx1,
     size_t a = aidx1.get_abs_index(), b = aidx2.get_abs_index();
 
     if(a == b) return;
-    if(a > b) std::swap(a, b);
+    bool swapped = false;
+    if(a > b) {
+        std::swap(a, b);
+        swapped = true;
+    }
 
     // If a was forbidden allow it (create a one-loop)
     if (m_fmap[a] == (size_t) -1) {
-        m_fmap[a] = a; m_rmap[a] = a;
+        m_fmap[a] = a; m_rmap[a] = a; m_ftr[a].reset();
     }
 
     // If b was forbidden allow it (create a one-loop)
     if (m_fmap[b] == (size_t) -1) {
-        m_fmap[b] = b; m_rmap[b] = b;
+        m_fmap[b] = b; m_rmap[b] = b; m_ftr[b].reset();
     }
 
     // check if b is in the same loop as a
     size_t ax = a, axf = m_fmap[ax];
-    bool sx = true;
+    scalar_transf<T> sx;
     while (ax < axf && ax < b) {
-        sx = (sx == m_fsign[ax]);
+        sx.transform(m_ftr[ax]);
         ax = axf; axf = m_fmap[ax];
     }
     if (ax == b) {
-        if (sx != sign) {
+        if (swapped) sx.invert();
+        if (sx != tr) {
             throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
-                                "Mapping exists with different sign.");
+                    "Mapping exists with different sign.");
         }
-
         return;
     }
 
     size_t br = m_rmap[b], bf = m_fmap[b];
-    bool sab(sign); // cur a -> cur b
+    scalar_transf<T> sab(tr); // cur a -> cur b
+    if (swapped) sab.invert();
     while (b != bf) {
         // remove b from its loop
-        sx = m_fsign[b];
+        sx = m_ftr[b];
         m_fmap[br] = bf; m_rmap[bf] = br;
-        m_fsign[br] = (m_fsign[br] == sx);
+        m_ftr[br].transform(sx);
 
         // add it to the loop of a
         add_to_loop(a, b, sab);
@@ -174,9 +177,11 @@ void se_part<N, T>::mark_forbidden(const index<N> &idx) {
         af = m_fmap[ax];
         m_fmap[ax] = (size_t) -1;
         m_rmap[ax] = (size_t) -1;
+        m_ftr[ax].reset();
     }
     m_fmap[a] = (size_t) -1;
     m_rmap[a] = (size_t) -1;
+    m_ftr[a].reset();
 }
 
 template<size_t N, typename T>
@@ -203,28 +208,30 @@ index<N> se_part<N, T>::get_direct_map(const index<N> &idx) const {
 }
 
 template<size_t N, typename T>
-bool se_part<N, T>::get_sign(const index<N> &from, const index<N> &to) const {
+scalar_transf<T> se_part<N, T>::get_transf(
+        const index<N> &from, const index<N> &to) const {
 
-    static const char *method = "get_sign(const index<N>&, const index<N>&)";
+    static const char *method = "get_transf(const index<N>&, const index<N>&)";
 
     size_t a = abs_index<N>(from, m_pdims).get_abs_index();
     size_t b = abs_index<N>(to, m_pdims).get_abs_index();
 
-    if (a == b) return true;
+    if (a == b) return scalar_transf<T>();
 
-    if (a > b) std::swap(a, b);
+    bool swapped = false;
+    if (a > b) { swapped = true; std::swap(a, b); }
     size_t x = m_fmap[a];
-    bool sign = m_fsign[a];
+    scalar_transf<T> tr(m_ftr[a]);
     while (x != b && a < x) {
-        sign = (sign == m_fsign[x]);
+        tr.transform(m_ftr[x]);
         x = m_fmap[x];
-
     }
     if (x <= a)
         throw bad_symmetry(g_ns, k_clazz, method,
                            __FILE__, __LINE__, "No mapping.");
 
-    return sign;
+    if (swapped) tr.invert();
+    return tr;
 }
 
 template<size_t N, typename T>
@@ -289,12 +296,12 @@ void se_part<N, T>::permute(const permutation<N> &perm) {
         m_pdims.permute(perm);
 
         size_t mapsz = m_pdims.get_size();
+
         size_t *fmap = m_fmap; m_fmap = new size_t[mapsz];
         size_t *rmap = m_rmap; m_rmap = new size_t[mapsz];
-        bool *fsign = m_fsign; m_fsign = new bool[mapsz];
+        scalar_transf<T> *ftr = m_ftr; m_ftr = new scalar_transf<T>[mapsz];
         for (size_t i = 0; i < mapsz; i++) {
             m_fmap[i] = m_rmap[i] = i;
-            m_fsign[i] = true;
         }
 
         for (size_t i = 0; i < mapsz; i++) {
@@ -317,12 +324,12 @@ void se_part<N, T>::permute(const permutation<N> &perm) {
             ib.permute(perm);
             abs_index<N> naib(ib, m_pdims);
 
-            add_map(naia.get_index(), naib.get_index(), fsign[i]);
+            add_map(naia.get_index(), naib.get_index(), ftr[i]);
         }
 
         delete [] fmap; fmap = 0;
         delete [] rmap;	rmap = 0;
-        delete [] fsign; fsign = 0;
+        delete [] ftr; ftr = 0;
     }
 }
 
@@ -356,8 +363,6 @@ void se_part<N, T>::apply(index<N> &idx, tensor_transf<N, T> &tr) const {
     //
     abs_index<N> apidx(pidx, m_pdims);
     if (m_fmap[apidx.get_abs_index()] == (size_t) -1) return;
-    //		throw bad_parameter(g_ns, k_clazz, method,
-    //				__FILE__, __LINE__, "Index is not allowed.");
 
     abs_index<N> apidx_mapped(m_fmap[apidx.get_abs_index()], m_pdims);
     pidx = apidx_mapped.get_index();
@@ -369,8 +374,7 @@ void se_part<N, T>::apply(index<N> &idx, tensor_transf<N, T> &tr) const {
         idx[i] = pidx[i] * n + poff[i];
     }
 
-    if (! m_fsign[apidx.get_abs_index()])
-        tr.transform(scalar_transf<T>(-1.0));
+    tr.transform(m_ftr[apidx.get_abs_index()]);
 }
 
 template<size_t N, typename T>
@@ -441,30 +445,29 @@ bool se_part<N, T>::is_valid_pdims(
 }
 
 template<size_t N, typename T>
-void se_part<N, T>::add_to_loop(size_t a, size_t b, bool sign) {
+void se_part<N, T>::add_to_loop(size_t a, size_t b,
+        const scalar_transf<T> &tr) {
 
+    size_t af = m_fmap[a];
+    scalar_transf<T> tx(tr);
+    tx.invert();
     if (a < b) {
-        size_t af = m_fmap[a];
         while (af < b && a < af) {
-            sign = (sign == m_fsign[a]);
+            tx.transform(m_ftr[a]);
             a = af; af = m_fmap[a];
         }
-        m_fmap[a] = b; m_rmap[b] = a;
-        m_fmap[b] = af; m_rmap[af] = b;
-        m_fsign[b] = (sign == m_fsign[a]);
-        m_fsign[a] = sign;
     }
     else {
-        size_t ar = m_rmap[a];
-        while (ar > b && ar < a) {
-            sign = (m_fsign[ar] == sign);
-            a = ar; ar = m_rmap[a];
+        while ((af > b && af > a) || (af < b && af < a)) {
+            tx.transform(m_ftr[a]);
+            a = af; af = m_fmap[a];
         }
-        m_fmap[ar] = b; m_rmap[b] = ar;
-        m_fmap[b] = a; m_rmap[a] = b;
-        m_fsign[ar] = (sign == m_fsign[a]);
-        m_fsign[b] = sign;
     }
+    tx.transform(m_ftr[a]);
+    m_fmap[a] = b; m_rmap[b] = a;
+    m_fmap[b] = af; m_rmap[af] = b;
+    m_ftr[b] = tx;
+    m_ftr[a].transform(tx.invert());
 }
 
 template<size_t N, typename T>

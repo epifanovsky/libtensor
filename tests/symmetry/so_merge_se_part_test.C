@@ -1,3 +1,4 @@
+#include <libtensor/btod/scalar_transf_double.h>
 #include <libtensor/symmetry/so_merge_se_part.h>
 #include "../compare_ref.h"
 #include "so_merge_se_part_test.h"
@@ -129,9 +130,10 @@ throw(libtest::test_exception) {
         i101[0] = 1; i010[1] = 1; i101[2] = 1;
         i110[0] = 1; i110[1] = 1; i001[2] = 1;
         i111[0] = 1; i111[1] = 1; i111[2] = 1;
-        ela.add_map(i000, i001, true);
-        ela.add_map(i001, i110, sign);
-        ela.add_map(i110, i111, true);
+        scalar_transf<double> tr0, tr1(-1.);
+        ela.add_map(i000, i001, tr0);
+        ela.add_map(i001, i110, sign ? tr0 : tr1);
+        ela.add_map(i110, i111, tr0);
         ela.mark_forbidden(i010);
         ela.mark_forbidden(i011);
         ela.mark_forbidden(i100);
@@ -141,7 +143,7 @@ throw(libtest::test_exception) {
         index<2> i00, i01, i10, i11;
         i10[0] = 1; i01[1] = 1;
         i11[0] = 1; i11[1] = 1;
-        elb.add_map(i00, i11, sign);
+        elb.add_map(i00, i11, sign ? tr0 : tr1);
         elb.mark_forbidden(i01);
         elb.mark_forbidden(i10);
 
@@ -209,9 +211,10 @@ throw(libtest::test_exception) {
         i101[0] = 1; i010[1] = 1; i101[2] = 1;
         i110[0] = 1; i110[1] = 1; i001[2] = 1;
         i111[0] = 1; i111[1] = 1; i111[2] = 1;
-        ela.add_map(i000, i001, true);
-        ela.add_map(i001, i110, sign);
-        ela.add_map(i110, i111, true);
+        scalar_transf<double> tr0, tr1(-1.);
+        ela.add_map(i000, i001, tr0);
+        ela.add_map(i001, i110, sign ? tr0 : tr1);
+        ela.add_map(i110, i111, tr0);
         ela.mark_forbidden(i010);
         ela.mark_forbidden(i011);
         ela.mark_forbidden(i100);
@@ -220,7 +223,7 @@ throw(libtest::test_exception) {
         se1_t elb(bisb, mb, 2);
         index<1> i0, i1;
         i1[0] = 1;
-        elb.add_map(i0, i1, sign);
+        elb.add_map(i0, i1, sign ? tr0 : tr1);
 
         symmetry_element_set<3, double> seta(se3_t::k_sym_type);
         symmetry_element_set<1, double> setb(se1_t::k_sym_type);
@@ -289,9 +292,10 @@ throw(libtest::test_exception) {
         i1101[0] = 1; i1101[1] = 1; i0010[2] = 1; i1101[3] = 1;
         i1110[0] = 1; i1110[1] = 1; i1110[2] = 1; i0001[3] = 1;
         i1111[0] = 1; i1111[1] = 1; i1111[2] = 1; i1111[3] = 1;
-        ela.add_map(i0000, i0011, s2);
-        ela.add_map(i0011, i1100, s1 == s2);
-        ela.add_map(i1100, i1111, s2);
+        scalar_transf<double> tr0, tr1(-1.);
+        ela.add_map(i0000, i0011, s2 ? tr0 : tr1);
+        ela.add_map(i0011, i1100, s1 == s2 ? tr0 : tr1);
+        ela.add_map(i1100, i1111, s2 ? tr0 : tr1);
         ela.mark_forbidden(i0001);
         ela.mark_forbidden(i0010);
         ela.mark_forbidden(i0100);
@@ -309,7 +313,7 @@ throw(libtest::test_exception) {
         index<2> i00, i01, i10, i11;
         i10[0] = 1; i01[1] = 1;
         i11[0] = 1; i11[1] = 1;
-        elb.add_map(i00, i11, s1 == s2);
+        elb.add_map(i00, i11, s1 == s2 ? tr0 : tr1);
         elb.mark_forbidden(i01);
         elb.mark_forbidden(i10);
 
@@ -381,22 +385,22 @@ throw(libtest::test_exception) {
         i1101[0] = 1; i1101[1] = 1; i0010[2] = 1; i1101[3] = 1;
         i1110[0] = 1; i1110[1] = 1; i1110[2] = 1; i0001[3] = 1;
         i1111[0] = 1; i1111[1] = 1; i1111[2] = 1; i1111[3] = 1;
-
+        scalar_transf<double> tr0, tr1(-1.);
         if (s1) {
-            ela.add_map(i0000, i1100, s1);
-            ela.add_map(i0001, i1101, s1);
-            ela.add_map(i0010, i1110, s1);
-            ela.add_map(i0011, i1111, s1);
+            ela.add_map(i0000, i1100, tr0);
+            ela.add_map(i0001, i1101, tr0);
+            ela.add_map(i0010, i1110, tr0);
+            ela.add_map(i0011, i1111, tr0);
         }
         if (s2) {
-            ela.add_map(i0000, i0011, s2);
-            ela.add_map(i0100, i0111, s2);
-            ela.add_map(i1000, i1011, s2);
-            ela.add_map(i1100, i1111, s2);
+            ela.add_map(i0000, i0011, tr0);
+            ela.add_map(i0100, i0111, tr0);
+            ela.add_map(i1000, i1011, tr0);
+            ela.add_map(i1100, i1111, tr0);
         }
         if (s1 == s2 && ! s1) {
-            ela.add_map(i0000, i1111, s1);
-            ela.add_map(i0011, i1100, s1);
+            ela.add_map(i0000, i1111, s1 ? tr0 : tr1);
+            ela.add_map(i0011, i1100, s1 ? tr0 : tr1);
         }
         ela.mark_forbidden(i0101);
         ela.mark_forbidden(i0110);
@@ -408,7 +412,7 @@ throw(libtest::test_exception) {
         i10[0] = 1; i01[1] = 1;
         i11[0] = 1; i11[1] = 1;
         if (s1 == s2)
-            elb.add_map(i00, i11, s1);
+            elb.add_map(i00, i11, s1 ? tr0 : tr1);
 
         elb.mark_forbidden(i01);
         elb.mark_forbidden(i10);
@@ -491,25 +495,26 @@ throw(libtest::test_exception) {
         i29a[0] = 1; i29a[1] = 1; i29a[2] = 1; i02a[3] = 1; i29a[4] = 1; // 11101
         i30a[0] = 1; i30a[1] = 1; i30a[2] = 1; i30a[3] = 1; i01a[4] = 1; // 11110
         i31a[0] = 1; i31a[1] = 1; i31a[2] = 1; i31a[3] = 1; i31a[4] = 1; // 11111
-        ela.add_map(i00a, i01a, sign);
-        ela.add_map(i01a, i10a, sign);
-        ela.add_map(i02a, i03a, sign);
-        ela.add_map(i03a, i08a, true);
-        ela.add_map(i04a, i05a, sign);
-        ela.add_map(i05a, i16a, true);
-        ela.add_map(i08a, i09a, sign);
-        ela.add_map(i10a, i11a, sign);
-        ela.add_map(i11a, i20a, sign);
-        ela.add_map(i14a, i15a, sign);
-        ela.add_map(i15a, i26a, true);
-        ela.add_map(i16a, i17a, sign);
-        ela.add_map(i20a, i21a, sign);
-        ela.add_map(i21a, i30a, sign);
-        ela.add_map(i22a, i23a, sign);
-        ela.add_map(i23a, i28a, true);
-        ela.add_map(i26a, i27a, sign);
-        ela.add_map(i28a, i29a, sign);
-        ela.add_map(i30a, i31a, sign);
+        scalar_transf<double> tr0, tr1(-1.);
+        ela.add_map(i00a, i01a, sign ? tr0 : tr1);
+        ela.add_map(i01a, i10a, sign ? tr0 : tr1);
+        ela.add_map(i02a, i03a, sign ? tr0 : tr1);
+        ela.add_map(i03a, i08a, tr0);
+        ela.add_map(i04a, i05a, sign ? tr0 : tr1);
+        ela.add_map(i05a, i16a, tr0);
+        ela.add_map(i08a, i09a, sign ? tr0 : tr1);
+        ela.add_map(i10a, i11a, sign ? tr0 : tr1);
+        ela.add_map(i11a, i20a, sign ? tr0 : tr1);
+        ela.add_map(i14a, i15a, sign ? tr0 : tr1);
+        ela.add_map(i15a, i26a, tr0);
+        ela.add_map(i16a, i17a, sign ? tr0 : tr1);
+        ela.add_map(i20a, i21a, sign ? tr0 : tr1);
+        ela.add_map(i21a, i30a, sign ? tr0 : tr1);
+        ela.add_map(i22a, i23a, sign ? tr0 : tr1);
+        ela.add_map(i23a, i28a, tr0);
+        ela.add_map(i26a, i27a, sign ? tr0 : tr1);
+        ela.add_map(i28a, i29a, sign ? tr0 : tr1);
+        ela.add_map(i30a, i31a, sign ? tr0 : tr1);
         ela.mark_forbidden(i06a);
         ela.mark_forbidden(i07a);
         ela.mark_forbidden(i12a);
@@ -526,9 +531,9 @@ throw(libtest::test_exception) {
         i06b[0] = 1; i06b[1] = 1; i01b[2] = 1; // 110
         i07b[0] = 1; i07b[1] = 1; i07b[2] = 1; // 111
 
-        elb.add_map(i00b, i01b, sign);
-        elb.add_map(i01b, i06b, sign);
-        elb.add_map(i06b, i07b, sign);
+        elb.add_map(i00b, i01b, sign ? tr0 : tr1);
+        elb.add_map(i01b, i06b, sign ? tr0 : tr1);
+        elb.add_map(i06b, i07b, sign ? tr0 : tr1);
         elb.mark_forbidden(i02b);
         elb.mark_forbidden(i03b);
         elb.mark_forbidden(i04b);
@@ -616,22 +621,22 @@ throw(libtest::test_exception) {
             ia[i][4] = x /  2; x = x %  2;
             ia[i][5] = x;
         }
-        ela.add_map(ia[ 0], ia[ 3], s2);
-        ela.add_map(ia[ 3], ia[ 5], s2);
-        ela.add_map(ia[ 5], ia[ 6], s2);
-        ela.add_map(ia[ 6], ia[24], s1 == s2);
-        ela.add_map(ia[24], ia[27], s2);
-        ela.add_map(ia[27], ia[29], s2);
-        ela.add_map(ia[29], ia[30], s2);
-        ela.add_map(ia[30], ia[40], s1 == s2);
-        ela.add_map(ia[40], ia[43], s2);
-        ela.add_map(ia[43], ia[45], s2);
-        ela.add_map(ia[45], ia[46], s2);
-        ela.add_map(ia[46], ia[48], s1 == s2);
-        ela.add_map(ia[48], ia[51], s2);
-        ela.add_map(ia[51], ia[53], s2);
-        ela.add_map(ia[53], ia[54], s2);
-
+        scalar_transf<double> tr0, tr1(-1.);
+        ela.add_map(ia[ 0], ia[ 3], s2 ? tr0 : tr1);
+        ela.add_map(ia[ 3], ia[ 5], s2 ? tr0 : tr1);
+        ela.add_map(ia[ 5], ia[ 6], s2 ? tr0 : tr1);
+        ela.add_map(ia[ 6], ia[24], s1 == s2 ? tr0 : tr1);
+        ela.add_map(ia[24], ia[27], s2 ? tr0 : tr1);
+        ela.add_map(ia[27], ia[29], s2 ? tr0 : tr1);
+        ela.add_map(ia[29], ia[30], s2 ? tr0 : tr1);
+        ela.add_map(ia[30], ia[40], s1 == s2 ? tr0 : tr1);
+        ela.add_map(ia[40], ia[43], s2 ? tr0 : tr1);
+        ela.add_map(ia[43], ia[45], s2 ? tr0 : tr1);
+        ela.add_map(ia[45], ia[46], s2 ? tr0 : tr1);
+        ela.add_map(ia[46], ia[48], s1 == s2 ? tr0 : tr1);
+        ela.add_map(ia[48], ia[51], s2 ? tr0 : tr1);
+        ela.add_map(ia[51], ia[53], s2 ? tr0 : tr1);
+        ela.add_map(ia[53], ia[54], s2 ? tr0 : tr1);
 
         ela.mark_forbidden(ia[ 1]); ela.mark_forbidden(ia[ 2]);
         ela.mark_forbidden(ia[ 4]); ela.mark_forbidden(ia[ 7]);
@@ -670,9 +675,9 @@ throw(libtest::test_exception) {
         i14b[0] = 1; i14b[1] = 1; i14b[2] = 1; i01b[3] = 1; // 1110
         i15b[0] = 1; i15b[1] = 1; i15b[2] = 1; i14b[3] = 1; // 1111
 
-        elb.add_map(i00b, i06b, s1 == s2);
-        elb.add_map(i06b, i11b, s1);
-        elb.add_map(i11b, i13b, s1 == s2);
+        elb.add_map(i00b, i06b, s1 == s2 ? tr0 : tr1);
+        elb.add_map(i06b, i11b, s1 ? tr0 : tr1);
+        elb.add_map(i11b, i13b, s1 == s2 ? tr0 : tr1);
         elb.mark_forbidden(i01b);
         elb.mark_forbidden(i02b);
         elb.mark_forbidden(i03b);

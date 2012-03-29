@@ -1,3 +1,4 @@
+#include <libtensor/btod/scalar_transf_double.h>
 #include <libtensor/symmetry/so_reduce_se_part.h>
 #include "../compare_ref.h"
 #include "so_reduce_se_part_test.h"
@@ -132,14 +133,15 @@ throw(libtest::test_exception) {
         index<2> i00a, i01a, i02a, i03a;
         i02a[0] = 1; i01a[1] = 1;
         i03a[0] = 1; i03a[1] = 1;
-        ela.add_map(i00a, i03a, sign);
+        scalar_transf<double> tr0, tr1(-1.);
+        ela.add_map(i00a, i03a, sign ? tr0 : tr1);
         ela.mark_forbidden(i01a);
         ela.mark_forbidden(i02a);
 
         se1_t elb(bisb, mb, 2);
         index<1> i00b, i01b;
         i01b[0] = 1;
-        elb.add_map(i00b, i01b, sign);
+        elb.add_map(i00b, i01b, sign ? tr0 : tr1);
 
 
         symmetry_element_set<2, double> seta(se2_t::k_sym_type);
@@ -222,9 +224,10 @@ void so_reduce_se_part_test::test_nm1_2(
         i13a[0] = 1; i13a[1] = 1; i02a[2] = 1; i13a[3] = 1; // 1101
         i14a[0] = 1; i14a[1] = 1; i14a[2] = 1; i01a[3] = 1; // 1110
         i15a[0] = 1; i15a[1] = 1; i15a[2] = 1; i15a[3] = 1; // 1111
-        ela.add_map(i00a, i05a, s2);
-        ela.add_map(i05a, i10a, s1 == s2);
-        ela.add_map(i10a, i15a, s2);
+        scalar_transf<double> tr0, tr1(-1.);
+        ela.add_map(i00a, i05a, s2 ? tr0 : tr1);
+        ela.add_map(i05a, i10a, s1 == s2 ? tr0 : tr1);
+        ela.add_map(i10a, i15a, s2 ? tr0 : tr1);
         ela.mark_forbidden(i01a); ela.mark_forbidden(i02a);
         ela.mark_forbidden(i03a); ela.mark_forbidden(i04a);
         ela.mark_forbidden(i06a); ela.mark_forbidden(i07a);
@@ -236,7 +239,7 @@ void so_reduce_se_part_test::test_nm1_2(
         index<2> i00b, i01b, i02b, i03b;
         i02b[0] = 1; i01b[1] = 1;
         i03b[0] = 1; i03b[1] = 1;
-        elb.add_map(i00b, i03b, s1 == s2);
+        elb.add_map(i00b, i03b, s1 == s2 ? tr0 : tr1);
         elb.mark_forbidden(i01b); elb.mark_forbidden(i02b);
 
         symmetry_element_set<4, double> seta(se4_t::k_sym_type);
@@ -312,15 +315,16 @@ void so_reduce_se_part_test::test_nm1_3(
         index<4> i00a, i04a, i08a, i10a;
         i08a[0] = 1; i04a[1] = 1; // 1000
         i10a[0] = 1; i10a[1] = 1; // 1100
+        scalar_transf<double> tr0, tr1(-1.);
 
-        ela.add_map(i00a, i10a, sign);
+        ela.add_map(i00a, i10a, sign ? tr0 : tr1);
         ela.mark_forbidden(i04a); ela.mark_forbidden(i08a);
 
         se2_t elb(bisb, mb, 2);
         index<2> i00b, i01b, i02b, i03b;
         i02b[0] = 1; i01b[1] = 1;
         i03b[0] = 1; i03b[1] = 1;
-        elb.add_map(i00b, i03b, sign);
+        elb.add_map(i00b, i03b, sign ? tr0 : tr1);
         elb.mark_forbidden(i01b); elb.mark_forbidden(i02b);
 
         symmetry_element_set<4, double> seta(se4_t::k_sym_type);
@@ -399,13 +403,14 @@ void so_reduce_se_part_test::test_nm1_4(
         se4_t ela(bisa, m2a, 2);
         index<4> i00a, i08a;
         i08a[0] = 1;
+        scalar_transf<double> tr0, tr1(-1.);
 
-        ela.add_map(i00a, i08a, sign);
+        ela.add_map(i00a, i08a, sign ? tr0 : tr1);
 
         se2_t elb(bisb, m2b, 2);
         index<2> i00b, i02b;
         i02b[0] = 1;
-        elb.add_map(i00b, i02b, sign);
+        elb.add_map(i00b, i02b, sign ? tr0 : tr1);
 
         symmetry_element_set<4, double> seta(se4_t::k_sym_type);
         symmetry_element_set<2, double> setb(se2_t::k_sym_type);
@@ -482,15 +487,16 @@ void so_reduce_se_part_test::test_nm1_5(
         i05a[1] = 1; i02a[2] = 1; i05a[3] = 1;
         i06a[1] = 1; i06a[2] = 1; i01a[3] = 1;
         i07a[1] = 1; i07a[2] = 1; i07a[3] = 1;
-        ela.add_map(i00a, i04a, sign);
-        ela.add_map(i03a, i07a, sign);
+        scalar_transf<double> tr0, tr1(-1.);
+        ela.add_map(i00a, i04a, sign ? tr0 : tr1);
+        ela.add_map(i03a, i07a, sign ? tr0 : tr1);
         ela.mark_forbidden(i01a); ela.mark_forbidden(i02a);
         ela.mark_forbidden(i05a); ela.mark_forbidden(i06a);
 
         se2_t elb(bisb, m2b, 2);
         index<2> i00b, i01b;
         i01b[1] = 1;
-        elb.add_map(i00b, i01b, sign);
+        elb.add_map(i00b, i01b, sign ? tr0 : tr1);
 
         symmetry_element_set<4, double> seta(se4_t::k_sym_type);
         symmetry_element_set<2, double> setb(se2_t::k_sym_type);
@@ -563,7 +569,8 @@ void so_reduce_se_part_test::test_nm1_6(
         index<4> i00a, i01a, i02a, i03a;
         i02a[2] = 1; i01a[3] = 1;
         i03a[2] = 1; i03a[3] = 1;
-        ela.add_map(i00a, i03a, sign);
+        scalar_transf<double> tr0, tr1(-1.);
+        ela.add_map(i00a, i03a, sign ? tr0 : tr1);
         ela.mark_forbidden(i01a); ela.mark_forbidden(i02a);
 
         symmetry_element_set<4, double> seta(se4_t::k_sym_type);
@@ -648,9 +655,9 @@ void so_reduce_se_part_test::test_nmk_1(
         i13a[0] = 1; i13a[1] = 1; i02a[2] = 1; i13a[3] = 1;
         i14a[0] = 1; i14a[1] = 1; i14a[2] = 1; i01a[3] = 1;
         i15a[0] = 1; i15a[1] = 1; i15a[2] = 1; i15a[3] = 1;
-
-        ela.add_map(i00a, i10a, sign);
-        ela.add_map(i05a, i15a, sign);
+        scalar_transf<double> tr0, tr1(-1.);
+        ela.add_map(i00a, i10a, sign ? tr0 : tr1);
+        ela.add_map(i05a, i15a, sign ? tr0 : tr1);
         ela.mark_forbidden(i01a); ela.mark_forbidden(i02a);
         ela.mark_forbidden(i03a); ela.mark_forbidden(i04a);
         ela.mark_forbidden(i06a); ela.mark_forbidden(i07a);
@@ -662,7 +669,7 @@ void so_reduce_se_part_test::test_nmk_1(
         index<2> i00b, i01b, i02b, i03b;
         i02b[0] = 1; i01b[1] = 1;
         i03b[0] = 1; i03b[1] = 1;
-        elb.add_map(i00b, i03b, sign);
+        elb.add_map(i00b, i03b, sign ? tr0 : tr1);
         elb.mark_forbidden(i01b); elb.mark_forbidden(i02b);
 
         symmetry_element_set<4, double> seta(se4_t::k_sym_type);
@@ -736,6 +743,7 @@ void so_reduce_se_part_test::test_nmk_2(
         bisb.split(mb, 3);
         bisb.split(mb, 5);
 
+        scalar_transf<double> tr0, tr1(-1.);
 
         se6_t ela(bisa, m3a, 2);
         index<6> i00a, i01a, i02a, i03a, i04a, i05a, i06a, i07a,
@@ -812,9 +820,9 @@ void so_reduce_se_part_test::test_nmk_2(
         i63a[0] = 1; i63a[1] = 1; i63a[2] = 1; // 111111
         i63a[3] = 1; i63a[4] = 1; i63a[5] = 1;
 
-        ela.add_map(i00a, i07a, s2);
-        ela.add_map(i07a, i56a, s1 == s2);
-        ela.add_map(i56a, i63a, s2);
+        ela.add_map(i00a, i07a, s2 ? tr0 : tr1);
+        ela.add_map(i07a, i56a, s1 == s2 ? tr0 : tr1);
+        ela.add_map(i56a, i63a, s2 ? tr0 : tr1);
 
         ela.mark_forbidden(i01a); ela.mark_forbidden(i02a);
         ela.mark_forbidden(i03a); ela.mark_forbidden(i04a);
@@ -851,7 +859,7 @@ void so_reduce_se_part_test::test_nmk_2(
         index<2> i00b, i01b, i02b, i03b;
         i02b[0] = 1; i01b[1] = 1;
         i03b[0] = 1; i03b[1] = 1;
-        elb.add_map(i00b, i03b, s1 == s2);
+        elb.add_map(i00b, i03b, s1 == s2 ? tr0 : tr1);
         elb.mark_forbidden(i01b); elb.mark_forbidden(i02b);
 
         symmetry_element_set<6, double> seta(se6_t::k_sym_type);

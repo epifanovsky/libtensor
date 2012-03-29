@@ -1,3 +1,4 @@
+#include <libtensor/btod/scalar_transf_double.h>
 #include <libtensor/symmetry/so_permute_se_part.h>
 #include "../compare_ref.h"
 #include "so_permute_se_part_test.h"
@@ -101,10 +102,11 @@ void so_permute_se_part_test::test_2a() throw(libtest::test_exception) {
 	i1101[0] = 1; i1101[1] = 1; i1101[3] = 1;
 	i1110[0] = 1; i1110[1] = 1; i1110[2] = 1;
 	i1111[0] = 1; i1111[1] = 1; i1111[2] = 1; i1111[3] = 1;
+	scalar_transf<double> tr0;
 
 	se4_t elem(bis4, m1100, 2);
-	elem.add_map(i0000, i1100, true);
-	elem.add_map(i0100, i1000, true);
+	elem.add_map(i0000, i1100, tr0);
+	elem.add_map(i0100, i1000, tr0);
 
 	permutation<4> perm;
 	perm.permute(2, 3);
@@ -169,12 +171,13 @@ void so_permute_se_part_test::test_2b() throw(libtest::test_exception) {
 	i1101[0] = 1; i1101[1] = 1; i1101[3] = 1;
 	i1110[0] = 1; i1110[1] = 1; i1110[2] = 1;
 	i1111[0] = 1; i1111[1] = 1; i1111[2] = 1; i1111[3] = 1;
+	scalar_transf<double> tr0;
 
 	se4_t elem(bis4, m1111, 2);
-	elem.add_map(i0000, i1100, true);
-	elem.add_map(i0100, i1000, true);
-	elem.add_map(i0011, i1111, true);
-	elem.add_map(i0111, i1011, true);
+	elem.add_map(i0000, i1100, tr0);
+	elem.add_map(i0100, i1000, tr0);
+	elem.add_map(i0011, i1111, tr0);
+	elem.add_map(i0111, i1011, tr0);
 
 	permutation<4> perm;
 	perm.permute(2, 3);
@@ -229,20 +232,21 @@ void so_permute_se_part_test::test_3() throw(libtest::test_exception) {
 	i1001[0] = 1; i0110[1] = 1; i0110[2] = 1; i1001[3] = 1;
 	i1010[0] = 1; i0101[1] = 1; i1010[2] = 1; i0101[3] = 1;
 	i1111[0] = 1; i1111[1] = 1; i1111[2] = 1; i1111[3] = 1;
+	scalar_transf<double> tr0;
 
 	se4_t elem(bis4, m4, 2);
-	elem.add_map(i0000, i1111, true);
-	elem.add_map(i0011, i1100, true);
-	elem.add_map(i0110, i1001, true);
+	elem.add_map(i0000, i1111, tr0);
+	elem.add_map(i0011, i1100, tr0);
+	elem.add_map(i0110, i1001, tr0);
 
 	permutation<4> perm;
 	perm.permute(0, 1).permute(1, 2);
 	bis4.permute(perm);
 
 	se4_t elem_ref(bis4, m4, 2);
-	elem_ref.add_map(i0000, i1111, true);
-	elem_ref.add_map(i0101, i1010, true);
-	elem_ref.add_map(i1100, i0011, true);
+	elem_ref.add_map(i0000, i1111, tr0);
+	elem_ref.add_map(i0101, i1010, tr0);
+	elem_ref.add_map(i1100, i0011, tr0);
 
 	symmetry_element_set<4, double> set1(se4_t::k_sym_type);
 	symmetry_element_set<4, double> set2(se4_t::k_sym_type);

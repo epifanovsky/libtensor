@@ -22,73 +22,40 @@ void symmetry_operation_impl< so_apply<N, T>, se_part<N, T> >::do_perform(
 
     adapter_t adapter1(params.grp1);
 
-    // If functor is asymmetric, only positive mappings survive.
-    if (params.s1.is_identity()) {
+    for (typename adapter_t::iterator it1 = adapter1.begin();
+            it1 != adapter1.end(); it1++) {
 
-        for (typename adapter_t::iterator it1 = adapter1.begin();
-                it1 != adapter1.end(); it1++) {
+        const element_t &se1 = adapter1.get_elem(it1);
+        const dimensions<N> &pdims = se1.get_pdims();
+        element_t se2(se1.get_bis(), pdims);
 
-            const element_t &se1 = adapter1.get_elem(it1);
-            const dimensions<N> &pdims = se1.get_pdims();
-            element_t se2(se1.get_bis(), pdims);
+        abs_index<N> ai(pdims);
+        do {
 
-            abs_index<N> ai(pdims);
-            do {
-                const index<N> &i1 = ai.get_index();
-                if (se1.is_forbidden(i1) && params.keep_zero) {
-                    se2.mark_forbidden(i1); continue;
+            const index<N> &i1 = ai.get_index();
+            if (se1.is_forbidden(i1) && params.keep_zero) {
+                se2.mark_forbidden(i1); continue;
+            }
+
+            index<N> i2 = se1.get_direct_map(i1);
+            while (i1 < i2) {
+
+                scalar_transf<T> tr = se1.get_transf(i1, i2);
+                if (tr.is_identity()) {
+                    se2.add_map(i1, i2, tr);
+                    break;
+                }
+                else if (tr == params.s1) {
+                    se2.add_map(i1, i2, params.s2);
+                    break;
                 }
 
-                index<N> i2 = se1.get_direct_map(i1);
-                if (i1 >= i2) continue;
+                i2 = se1.get_direct_map(i2);
+            }
+        } while (ai.inc());
 
-                if (se1.get_sign(i1, i2)) se2.add_map(i1, i2, true);
-
-            } while (ai.inc());
-
-            se2.permute(params.perm1);
-            params.grp2.insert(se2);
-        }
-    }
-    // If functor is symmetric with respect to the y-axis all negative
-    // mappings become positive
-    else if (params.s2.is_identity()) {
-        for (typename adapter_t::iterator it1 = adapter1.begin();
-                it1 != adapter1.end(); it1++) {
-
-            const element_t &se1 = adapter1.get_elem(it1);
-            const dimensions<N> &pdims = se1.get_pdims();
-
-            element_t se2(se1.get_bis(), pdims);
-
-            abs_index<N> ai(pdims);
-            do {
-                const index<N> &i1 = ai.get_index();
-                if (se1.is_forbidden(i1) && params.keep_zero) {
-                    se2.mark_forbidden(i1); continue;
-                }
-
-                index<N> i2 = se1.get_direct_map(i1);
-                if (i1 >= i2) continue;
-
-                se2.add_map(i1, i2, true);
-
-            } while (ai.inc());
-
-            se2.permute(params.perm1);
-            params.grp2.insert(se2);
-        }
-    }
-    else {
-        for (typename adapter_t::iterator it1 = adapter1.begin();
-                it1 != adapter1.end(); it1++) {
-
-            const element_t &se1 = adapter1.get_elem(it1);
-            element_t se2(se1);
-
-            se2.permute(params.perm1);
-            params.grp2.insert(se2);
-        }
+        se2.permute(params.perm1);
+        params.grp2.insert(se2);
     }
 }
 

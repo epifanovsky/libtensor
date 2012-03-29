@@ -111,9 +111,11 @@ void so_apply_se_part_test::test_2(bool keep_zero,
 	index<2> i00, i11, i01, i10;
 	i10[0] = 1; i01[1] = 1;
 	i11[0] = 1; i11[1] = 1;
-	se_t elem1(bis, m11, 2);
-	elem1.add_map(i00, i11, true);
-	elem1.add_map(i01, i10, false);
+    scalar_transf<double> tr0, tr1(-1.);
+
+    se_t elem1(bis, m11, 2);
+	elem1.add_map(i00, i11, tr0);
+	elem1.add_map(i01, i10, tr1);
 
 	symmetry_element_set<2, double> set1(se_t::k_sym_type);
 	symmetry_element_set<2, double> set2(se_t::k_sym_type);
@@ -121,7 +123,6 @@ void so_apply_se_part_test::test_2(bool keep_zero,
 	set1.insert(elem1);
 
     permutation<2> p0;
-    scalar_transf<double> tr0, tr1(-1.);
     params_t params(set1, p0,
             is_asym ? tr0 : tr1, sign ? tr0 : tr1, keep_zero, set2);
 
@@ -143,31 +144,31 @@ void so_apply_se_part_test::test_2(bool keep_zero,
 
 	if (! elem2.map_exists(i00, i11))
 		fail_test(tnss.str().c_str(), __FILE__, __LINE__,
-				"Map [0, 0]->[1, 1] does not exist.");
+				"Map [0,0]->[1,1] does not exist.");
 
-	if (! elem2.get_sign(i00, i11))
+	if (elem2.get_transf(i00, i11) != tr0)
 		fail_test(tnss.str().c_str(), __FILE__, __LINE__,
-				"Wrong sign of map [0, 0]->[1, 1].");
+				"Wrong transformation for [0,0]->[1,1].");
 
 	if (is_asym) {
 		if (elem2.map_exists(i01, i10))
 			fail_test(tnss.str().c_str(), __FILE__, __LINE__,
-					"Map [0, 1]->[1, 0] does exist.");
+					"Map [0,1]->[1,0] does exist.");
 	}
 	else {
 		if (! elem2.map_exists(i01, i10))
 			fail_test(tnss.str().c_str(), __FILE__, __LINE__,
-					"Map [0, 1]->[1, 0] does not exist.");
+					"Map [0,1]->[1,0] does not exist.");
 
 		if (sign) {
-			if (! elem2.get_sign(i01, i10))
+			if (elem2.get_transf(i01, i10) != tr0)
 				fail_test(tnss.str().c_str(), __FILE__, __LINE__,
-						"Wrong sign of map [0, 0]->[1, 1].");
+						"Wrong transformaiton for [0,0]->[1,1].");
 		}
 		else {
-			if (elem2.get_sign(i01, i10))
+			if (elem2.get_transf(i01, i10) != tr1)
 				fail_test(tnss.str().c_str(), __FILE__, __LINE__,
-						"Wrong sign of map [0, 0]->[1, 1].");
+						"Wrong transformation for [0,0]->[1,1].");
 		}
 	}
 
@@ -203,10 +204,11 @@ void so_apply_se_part_test::test_3(bool keep_zero,
 	index<2> i00, i01, i10, i11;
 	i10[0] = 1; i01[1] = 1;
 	i11[0] = 1; i11[1] = 1;
+    scalar_transf<double> tr0, tr1(-1.);
 
 	se_t elem1(bis, m11, 2);
-	elem1.add_map(i00, i01, true);
-	elem1.add_map(i10, i11, false);
+	elem1.add_map(i00, i01, tr0);
+	elem1.add_map(i10, i11, tr1);
 
 	symmetry_element_set<2, double> set1(se_t::k_sym_type);
 	symmetry_element_set<2, double> set2(se_t::k_sym_type);
@@ -214,7 +216,6 @@ void so_apply_se_part_test::test_3(bool keep_zero,
 	set1.insert(elem1);
 
     permutation<2> p1; p1.permute(0, 1);
-    scalar_transf<double> tr0, tr1(-1.);
     params_t params(set1, p1,
             is_asym ? tr0 : tr1, sign ? tr0 : tr1, keep_zero, set2);
 
@@ -236,31 +237,31 @@ void so_apply_se_part_test::test_3(bool keep_zero,
 
 	if (! elem2.map_exists(i00, i10))
 		fail_test(tnss.str().c_str(), __FILE__, __LINE__,
-				"Map [0, 0]->[1, 0] does not exist.");
+				"Map [0,0]->[1,0] does not exist.");
 
-	if (! elem2.get_sign(i00, i10))
+	if (elem2.get_transf(i00, i10) != tr0)
 		fail_test(tnss.str().c_str(), __FILE__, __LINE__,
-				"Wrong sign of map [0, 0]->[1, 0].");
+				"Wrong transformation for [0,0]->[1,0].");
 
 	if (is_asym) {
 		if (elem2.map_exists(i01, i11))
 			fail_test(tnss.str().c_str(), __FILE__, __LINE__,
-					"Map [0, 1]->[1, 1] does exist.");
+					"Map [0,1]->[1,1] does exist.");
 	}
 	else {
 		if (! elem2.map_exists(i01, i11))
 			fail_test(tnss.str().c_str(), __FILE__, __LINE__,
-					"Map [0, 1]->[1, 1] does not exist.");
+					"Map [0,1]->[1,1] does not exist.");
 
 		if (sign) {
-			if (! elem2.get_sign(i01, i11))
+			if (elem2.get_transf(i01, i11) != tr0)
 				fail_test(tnss.str().c_str(), __FILE__, __LINE__,
-						"Wrong sign of map [0, 0]->[1, 0].");
+						"Wrong transformation for [0,0]->[1,0].");
 		}
 		else {
-			if (elem2.get_sign(i01, i11))
+			if (elem2.get_transf(i01, i11) != tr1)
 				fail_test(tnss.str().c_str(), __FILE__, __LINE__,
-						"Wrong sign of map [0, 0]->[1, 0].");
+						"Wrong transformation for [0,0]->[1,0].");
 		}
 	}
 
