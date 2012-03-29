@@ -221,10 +221,12 @@ void evaluation_rule<N>::symmetrize(const sequence<N, size_t> &idxgrp,
     }
     if (ngrp < 2) return;
 
-    std::vector< std::vector<size_t> > map(ngrp, std::vector<size_t>(nidx, 0));
+    sequence<N, size_t> map;
+    mask<N> msk;
     for (register size_t i = 0; i < N; i++) {
         if (idxgrp[i] == 0) continue;
-        map[idxgrp[i] - 1][symidx[i] - 1] = i;
+        map[(idxgrp[i] - 1) * nidx + symidx[i] - 1] = i;
+        msk[i] = (symidx[i] != 1);
     }
 
     // Step 1: symmetrize sequences
@@ -234,25 +236,46 @@ void evaluation_rule<N>::symmetrize(const sequence<N, size_t> &idxgrp,
     for (size_t sno = 0; sno < nseq; sno++) {
         if (done[sno]) continue;
 
-        permutation_generator pg(map.size());
+        permutation_generator<N> pg(msk);
+        permutation<N> pp;
+        sequence<N, size_t> curseq(m_sequences[sno]);
         size_t nnseq = 0;
         while (pg.next()) {
 
             bool changed = false;
-            const sequence<N, size_t> &curseq = m_sequences[sno];
-            sequence<N, size_t> newseq(curseq);
-            for (register size_t i = 0; i < map.size(); i++) {
-                const std::vector<size_t> &mx = map[i], &my = map[pg[i]];
-                for (register size_t j = 0; j < mx.size(); j++) {
-                    if (curseq[mx[j]] == curseq[my[j]]) continue;
+            const permutation<N> &p = pg.get_perm();
+            size_t i = 0, i0, i1;
+            for (; i < N && p[i] == pp[i]; i++) ;
+            i0 = i++;
+            for (; i < N && p[i] == pp[i]; i++) ;
+            i1 = i;
+            pp.permute(i0, i1);
+            if (curseq[i0] != curseq[i1]) {
+                std::swap(curseq[i0], curseq[i1]);
+                changed = true;
+            }
+            if (nidx > 1) {
+                size_t j = i = 0, j0, j1;
+                for (; i < ngrp && map[j] != i0 && map[j] != i1;
+                        i++, j += nidx) ;
+                if (map[j] == i0) j0 = j;
+                else j1 = j;
+                i++;
+                j += nidx;
+                for (; i < ngrp && map[j] != i0 && map[j] != i1;
+                        i++, j += nidx) ;
+                if (map[j] == i0) j0 = j;
+                else j1 = j;
 
-                    newseq[my[j]] = curseq[mx[j]];
+                for (i = 1; i < nidx; i++) {
+                    if (curseq[map[j0 + i]] == curseq[map[j1 + i]]) continue;
+                    std::swap(curseq[map[j0 + i]], curseq[map[j1 + i]]);
                     changed = true;
                 }
             }
             if (! changed) continue;
 
-            size_t sno2 = add_sequence(newseq);
+            size_t sno2 = add_sequence(curseq);
             nnseq++;
             if (sno2 < symseq.size()) {
                 symseq[sno2] = sno;

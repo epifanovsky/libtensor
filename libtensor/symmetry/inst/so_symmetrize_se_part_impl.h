@@ -31,18 +31,21 @@ void symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::do_perform(
         ngrp = std::max(ngrp, params.idxgrp[i]);
         nidx = std::max(nidx, params.symidx[i]);
     }
-    std::vector< std::vector<size_t> > map(ngrp, std::vector<size_t>(nidx, 0));
 
+    sequence<N, size_t> map;
+    mask<N> msk;
     for (register size_t i = 0; i < N; i++) {
         if (params.idxgrp[i] == 0) continue;
 
-        map[params.idxgrp[i] - 1][params.symidx[i] - 1] = i;
+        map[(params.idxgrp[i] - 1) * nidx + params.symidx[i] - 1] = i;
+        msk[i] = (i >= nidx);
     }
 
 #ifdef LIBTENSOR_DEBUG
     for (register size_t i = 1; i < ngrp; i++) {
+        size_t in = i * nidx;
         for (register size_t j = 0; j < nidx; j++) {
-            if (pdims[map[i][j]] != pdims[map[0][j]]) {
+            if (pdims[map[in + j]] != pdims[map[j]]) {
                 throw bad_symmetry(g_ns, k_clazz, method,
                         __FILE__, __LINE__, "Incompatible dimensions.");
             }
@@ -50,36 +53,28 @@ void symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::do_perform(
     }
 #endif // LIBTENSOR_DEBUG
 
-    // A B + sP A B
-    // C D      C D
-
-    // A+sA' B+sC'
-    // C+sB' D+sD'
-
-    // A -> tB, A'-> tA'
     se_part<N, T> sp1(cp.get_bis(), pdims);
     cp.perform(sp1);
 
     se_part<N, T> sp2(cp.get_bis(), pdims);
     abs_index<N> ai(pdims);
     do {
-
         const index<N> &i1 = ai.get_index();
 
-        if (is_forbidden(sp1, i1, map)) {
-            mark_forbidden(sp2, i1, map);
+        if (is_forbidden(sp1, i1, msk, map)) {
+            mark_forbidden(sp2, i1, msk, map);
             continue;
         }
 
         index<N> i2 = sp1.get_direct_map(i1);
         bool found = false;
         while (!found && i1 < i2) {
-            if (map_exists(sp1, i1, i2, map)) found = true;
+            if (map_exists(sp1, i1, i2, msk, map)) found = true;
             else i2 = sp1.get_direct_map(i2);
         }
 
         if (found)
-            add_map(sp2, i1, i2, sp1.get_sign(i1, i2), map);
+            add_map(sp2, i1, i2, sp1.get_sign(i1, i2), msk, map);
 
     } while (ai.inc());
 
@@ -89,15 +84,19 @@ void symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::do_perform(
 template<size_t N, typename T>
 bool
 symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::is_forbidden(
-        const se_part<N, T> &sp, const index<N> &i1, const map_t &map) {
+        const se_part<N, T> &sp, const index<N> &i1, const mask<N> &msk,
+        const sequence<N, size_t> &map) {
 
     index<N> ix(i1);
-    permutation_generator pg(map.size());
+    permutation_generator<N> pg(msk);
     do {
-        for (register size_t i = 0; i < pg.size(); i++) {
-            const std::vector<size_t> &mx = map[i], &my = map[pg[i]];
-            for (register size_t j = 0; j < mx.size(); j++)
-                ix[mx[j]] = i1[my[j]];
+        const permutation<N> &pn = pg.get_perm();
+        register size_t i = 0;
+        for (; i < N && ! msk[i]; i++) ix[map[i]] = i1[map[pn[i]]];
+        size_t nidx = i++, ns = nidx;
+        for (size_t j = 0; i < N && map[i] < N; i++, j++) {
+            ix[map[i]] = i1[map[pn[j] + ns]];
+            if (j == nidx) { j = 0; ns += nidx; }
         }
         if (! sp.is_forbidden(ix)) return false;
     } while (pg.next());
@@ -108,15 +107,19 @@ symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::is_forbidden(
 template<size_t N, typename T>
 void
 symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::mark_forbidden(
-        se_part<N, T> &sp, const index<N> &i1, const map_t &map) {
+        se_part<N, T> &sp, const index<N> &i1, const mask<N> &msk,
+        const sequence<N, size_t> &map) {
 
     index<N> ix(i1);
-    permutation_generator pg(map.size());
+    permutation_generator<N> pg(msk);
     do {
-        for (register size_t i = 0; i < pg.size(); i++) {
-            const std::vector<size_t> &mx = map[i], &my = map[pg[i]];
-            for (register size_t j = 0; j < mx.size(); j++)
-                ix[mx[j]] = i1[my[j]];
+        const permutation<N> &pn = pg.get_perm();
+        register size_t i = 0;
+        for (; i < N && ! msk[i]; i++) ix[map[i]] = i1[map[pn[i]]];
+        size_t nidx = i++, ns = nidx;
+        for (size_t j = 0; i < N && map[i] < N; i++, j++) {
+            ix[map[i]] = i1[map[pn[j] + ns]];
+            if (j == nidx) { j = 0; ns += nidx; }
         }
         sp.mark_forbidden(ix);
     } while (pg.next());
@@ -125,18 +128,23 @@ symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::mark_forbidden(
 template<size_t N, typename T>
 bool symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::map_exists(
         const se_part<N, T> &sp, const index<N> &i1, const index<N> &i2,
-        const map_t &map) {
+        const mask<N> &msk, const sequence<N, size_t> &map) {
 
     index<N> j1(i1), j2(i2);
-    permutation_generator pg(map.size());
+    permutation_generator<N> pg(msk);
     bool sign;
     do {
-        for (register size_t i = 0; i < pg.size(); i++) {
-            const std::vector<size_t> &mx = map[i], &my = map[pg[i]];
-            for (register size_t j = 0; j < mx.size(); j++) {
-                j1[mx[j]] = i1[my[j]];
-                j2[mx[j]] = i2[my[j]];
-            }
+        const permutation<N> &pn = pg.get_perm();
+        register size_t i = 0;
+        for (; i < N && ! msk[i]; i++) {
+            j1[map[i]] = i1[map[pn[i]]];
+            j2[map[i]] = i2[map[pn[i]]];
+        }
+        size_t nidx = i++, ns = nidx;
+        for (size_t j = 0; i < N && map[i] < N; i++, j++) {
+            j1[map[i]] = i1[map[pn[j] + ns]];
+            j2[map[i]] = i2[map[pn[j] + ns]];
+            if (j == nidx) { j = 0; ns += nidx; }
         }
 
         if (sp.map_exists(j1, j2)) {
@@ -149,12 +157,17 @@ bool symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::map_exists(
     } while (pg.next());
 
     while (pg.next()) {
-        for (register size_t i = 0; i < map.size(); i++) {
-            const std::vector<size_t> &mx = map[i], &my = map[pg[i]];
-            for (register size_t j = 0; j < mx.size(); j++) {
-                j1[mx[j]] = i1[my[j]];
-                j2[mx[j]] = i2[my[j]];
-            }
+        const permutation<N> &pn = pg.get_perm();
+        register size_t i = 0;
+        for (; i < N && ! msk[i]; i++) {
+            j1[map[i]] = i1[map[pn[i]]];
+            j2[map[i]] = i2[map[pn[i]]];
+        }
+        size_t nidx = i++, ns = nidx;
+        for (size_t j = 0; i < N && map[i] < N; i++, j++) {
+            j1[map[i]] = i1[map[pn[j] + ns]];
+            j2[map[i]] = i2[map[pn[j] + ns]];
+            if (j == nidx) { j = 0; ns += nidx; }
         }
         if (sp.map_exists(j1, j2)) {
             if (sign != sp.get_sign(j1, j2)) return false;
@@ -171,21 +184,27 @@ bool symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::map_exists(
 template<size_t N, typename T>
 void symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::add_map(
         se_part<N, T> &sp, const index<N> &i1, const index<N> &i2,
-        bool sign, const map_t &map) {
+        bool sign, const mask<N> &msk, const sequence<N, size_t> &map) {
 
     index<N> j1(i1), j2(i2);
-    permutation_generator pg(map.size());
+    permutation_generator<N> pg(msk);
     do {
-        for (register size_t i = 0; i < map.size(); i++) {
-            const std::vector<size_t> &mx = map[i], &my = map[pg[i]];
-            for (register size_t j = 0; j < mx.size(); j++) {
-                j1[mx[j]] = i1[my[j]];
-                j2[mx[j]] = i2[my[j]];
-            }
+        const permutation<N> &pn = pg.get_perm();
+        register size_t i = 0;
+        for (; i < N && ! msk[i]; i++) {
+            j1[map[i]] = i1[map[pn[i]]];
+            j2[map[i]] = i2[map[pn[i]]];
+        }
+        size_t nidx = i++, ns = nidx;
+        for (size_t j = 0; i < N && map[i] < N; i++, j++) {
+            j1[map[i]] = i1[map[pn[j] + ns]];
+            j2[map[i]] = i2[map[pn[j] + ns]];
+            if (j == nidx) { j = 0; ns += nidx; }
         }
         sp.add_map(j1, j2, sign);
     } while (pg.next());
 }
+
 
 
 } // namespace libtensor
