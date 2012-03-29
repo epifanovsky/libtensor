@@ -8,32 +8,32 @@
 namespace libtensor {
 
 /** \defgroup libtensor_tod_kernel Tensor operation kernels (double)
-	\brief Kernels of tensor operations in double precision
-	\ingroup libtensor_tod
+    \brief Kernels of tensor operations in double precision
+    \ingroup libtensor_tod
  **/
 
-/**	\brief Base class for kernels
+/** \brief Base class for kernels
 
-	\ingroup libtensor_tod_kernel
+    \ingroup libtensor_tod_kernel
  **/
 template<size_t N, size_t M>
 class kernel_base {
 public:
-	typedef std::list< loop_list_node<N, M> > list_t;
-	typedef typename list_t::iterator iterator_t;
+    typedef std::list< loop_list_node<N, M> > list_t;
+    typedef typename list_t::iterator iterator_t;
 
 public:
-	/**	\brief Virtual destructor
-	 **/
-	virtual ~kernel_base() { }
+    /** \brief Virtual destructor
+     **/
+    virtual ~kernel_base() { }
 
-	/**	\brief Returns the name of the kernel
-	 **/
-	virtual const char *get_name() const = 0;
+    /** \brief Returns the name of the kernel
+     **/
+    virtual const char *get_name() const = 0;
 
-	/**	\brief Runs the kernel
-	 **/
-	virtual void run(const loop_registers<N, M> &r) = 0;
+    /** \brief Runs the kernel
+     **/
+    virtual void run(const loop_registers<N, M> &r) = 0;
 
 };
 

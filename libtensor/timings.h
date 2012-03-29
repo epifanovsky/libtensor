@@ -10,7 +10,7 @@ namespace libtensor {
  
     The timings class provides timing facilities for each class which
     inherit from it.
- 	
+     
     To obtain the timing facilities a class T has to
      - inherit from timings with the T as the template parameter;
      - friend class timings<T>;

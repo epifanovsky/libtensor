@@ -5,12 +5,12 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
+#include <libtensor/btod/scalar_transf_double.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/dense_tensor/tod_add.h>
 #include <libtensor/dense_tensor/tod_copy.h>
 #include <libtensor/dense_tensor/tod_btconv.h>
 #include <libtensor/dense_tensor/tod_random.h>
-#include <libtensor/btod/transf_double.h>
 #include "../compare_ref.h"
 #include "tod_btconv_test.h"
 
@@ -401,9 +401,10 @@ void tod_btconv_test::test_5() throw(libtest::test_exception) {
 	block_tensor_t bt(bis);
 	block_tensor_ctrl_t btctrl(bt);
 
-	permutation<2> perm1; perm1.permute(0, 1);
-	se_perm<2, double> cycle(perm1, true);
-	btctrl.req_symmetry().insert(cycle);
+    permutation<2> perm1; perm1.permute(0, 1);
+    scalar_transf<double> tr0;
+    se_perm<2, double> cycle(perm1, tr0);
+    btctrl.req_symmetry().insert(cycle);
 
 	tensor_t t(dims), t_ref(dims);
 
@@ -634,9 +635,10 @@ void tod_btconv_test::test_7() throw(libtest::test_exception) {
 	block_tensor_t bt(bis);
 	block_tensor_ctrl_t btctrl(bt);
 
-	permutation<2> perm1; perm1.permute(0, 1);
-	se_perm<2, double> cycle(perm1, true);
-	btctrl.req_symmetry().insert(cycle);
+    permutation<2> perm1; perm1.permute(0, 1);
+    scalar_transf<double> tr0;
+    se_perm<2, double> cycle(perm1, tr0);
+    btctrl.req_symmetry().insert(cycle);
 
 	tensor_t t(dims), t_ref(dims);
 
@@ -736,9 +738,10 @@ void tod_btconv_test::test_8() throw(libtest::test_exception) {
 	block_tensor_t bt(bis);
 	block_tensor_ctrl_t btctrl(bt);
 
-	permutation<2> perm1; perm1.permute(0, 1);
-	se_perm<2, double> cycle(perm1, true);
-	btctrl.req_symmetry().insert(cycle);
+    permutation<2> perm1; perm1.permute(0, 1);
+    scalar_transf<double> tr0;
+    se_perm<2, double> cycle(perm1, tr0);
+    btctrl.req_symmetry().insert(cycle);
 
 	tensor_t t(dims), t_ref(dims);
 
@@ -893,13 +896,14 @@ void tod_btconv_test::test_9() throw(libtest::test_exception) {
 	block_tensor_t bt(bis);
 	block_tensor_ctrl_t btctrl(bt);
 
-	permutation<4> cperm1, cperm2;
-	cperm1.permute(0, 1).permute(1, 2).permute(2, 3);
-	cperm2.permute(0, 1);
-	se_perm<4, double> cycle1(cperm1, true);
-	se_perm<4, double> cycle2(cperm2, true);
-	btctrl.req_symmetry().insert(cycle1);
-	btctrl.req_symmetry().insert(cycle2);
+    permutation<4> cperm1, cperm2;
+    cperm1.permute(0, 1).permute(1, 2).permute(2, 3);
+    cperm2.permute(0, 1);
+    scalar_transf<double> tr0;
+    se_perm<4, double> cycle1(cperm1, tr0);
+    se_perm<4, double> cycle2(cperm2, tr0);
+    btctrl.req_symmetry().insert(cycle1);
+    btctrl.req_symmetry().insert(cycle2);
 
 	tensor_t t(dims), t_ref(dims);
 
@@ -1142,13 +1146,14 @@ void tod_btconv_test::test_11() throw(libtest::test_exception) {
 	block_tensor_t bt(bis);
 	block_tensor_ctrl_t btctrl(bt);
 
-	permutation<4> cperm1, cperm2;
-	cperm1.permute(0, 2);
-	cperm2.permute(1, 3);
-	se_perm<4, double> cycle1(cperm1, true);
-	se_perm<4, double> cycle2(cperm2, true);
-	btctrl.req_symmetry().insert(cycle1);
-	btctrl.req_symmetry().insert(cycle2);
+    permutation<4> cperm1, cperm2;
+    cperm1.permute(0, 2);
+    cperm2.permute(1, 3);
+    scalar_transf<double> tr0;
+    se_perm<4, double> cycle1(cperm1, tr0);
+    se_perm<4, double> cycle2(cperm2, tr0);
+    btctrl.req_symmetry().insert(cycle1);
+    btctrl.req_symmetry().insert(cycle2);
 
 	tensor_t t(dims), t_ref(dims);
 
@@ -1275,12 +1280,13 @@ void tod_btconv_test::test_12() throw(libtest::test_exception) {
 	i210[0] = 2; i210[1] = 1; i210[2] = 0;
 	i220[0] = 2; i220[1] = 2; i220[2] = 0;
 
-	//	Install symmetry in bta
-	//
-	ctrla.req_symmetry().insert(se_perm<3, double>(
-		permutation<3>().permute(0, 1), false));
-	ctrla.req_symmetry().insert(se_perm<3, double>(
-		permutation<3>().permute(1, 2), false));
+    //  Install symmetry in bta
+    //
+    scalar_transf<double> tr1(-1.);
+    ctrla.req_symmetry().insert(se_perm<3, double>(
+        permutation<3>().permute(0, 1), tr1));
+    ctrla.req_symmetry().insert(se_perm<3, double>(
+        permutation<3>().permute(1, 2), tr1));
 
 	//	Prepare symmetrized blocks
 	//

@@ -25,14 +25,14 @@ orbit<N, T>::orbit(const symmetry<N, T> &sym, const index<N> &idx) :
 
 
 template<size_t N, typename T>
-const transf<N, T> &orbit<N, T>::get_transf(const index<N> &idx) const {
+const tensor_transf<N, T> &orbit<N, T>::get_transf(const index<N> &idx) const {
 
     return get_transf(abs_index<N>(idx, m_bidims).get_abs_index());
 }
 
 
 template<size_t N, typename T>
-const transf<N, T> &orbit<N, T>::get_transf(size_t absidx) const {
+const tensor_transf<N, T> &orbit<N, T>::get_transf(size_t absidx) const {
 
     iterator i = m_orb.find(absidx);
     return get_transf(i);
@@ -68,7 +68,7 @@ size_t orbit<N, T>::get_abs_index(iterator &i) const {
 
 
 template<size_t N, typename T>
-const transf<N, T> &orbit<N, T>::get_transf(iterator &i) const {
+const tensor_transf<N, T> &orbit<N, T>::get_transf(iterator &i) const {
 
     static const char *method = "get_transf(iterator&)";
 
@@ -87,9 +87,9 @@ template<size_t N, typename T>
 void orbit<N, T>::build_orbit(const symmetry<N, T> &sym, const index<N> &idx) {
 
     std::vector< index<N> > qi;
-    std::vector< transf<N, T> > qt;
+    std::vector< tensor_transf<N, T> > qt;
     std::vector< index<N> > ti;
-    std::vector< transf<N, T> > tt;
+    std::vector< tensor_transf<N, T> > tt;
 
     qi.reserve(32);
     qt.reserve(32);
@@ -97,15 +97,15 @@ void orbit<N, T>::build_orbit(const symmetry<N, T> &sym, const index<N> &idx) {
     tt.reserve(32);
 
     abs_index<N> aidx0(idx, m_bidims);
-    m_orb.insert(pair_t(aidx0.get_abs_index(), transf<N, T>()));
+    m_orb.insert(pair_t(aidx0.get_abs_index(), tensor_transf<N, T>()));
 
     qi.push_back(idx);
-    qt.push_back(transf<N, T>());
+    qt.push_back(tensor_transf<N, T>());
 
     while(!qi.empty()) {
 
         index<N> idx1(qi.back());
-        transf<N, T> tr1(qt.back());
+        tensor_transf<N, T> tr1(qt.back());
         qi.pop_back();
         qt.pop_back();
 
@@ -128,17 +128,23 @@ void orbit<N, T>::build_orbit(const symmetry<N, T> &sym, const index<N> &idx) {
         }
         for(size_t i = 0; i < ti.size(); i++) {
             abs_index<N> aidx(ti[i], m_bidims);
-            if(m_orb.insert(pair_t(aidx.get_abs_index(),
-                tt[i])).second) {
+            std::pair<typename orbit_map_t::iterator, bool> it =
+                    m_orb.insert(pair_t(aidx.get_abs_index(), tt[i]));
+            if(it.second) {
                 qi.push_back(ti[i]);
                 qt.push_back(tt[i]);
             }
+//            else if (tt[i].get_scalar_tr() !=
+//                    it.first->second.get_scalar_tr()) {
+//
+//                m_allowed = false;
+//            }
         }
         ti.clear();
         tt.clear();
     }
 
-    transf<N, T> tr0(m_orb.begin()->second);
+    tensor_transf<N, T> tr0(m_orb.begin()->second);
     tr0.invert();
     for(typename orbit_map_t::iterator i = m_orb.begin();
         i != m_orb.end(); i++) {

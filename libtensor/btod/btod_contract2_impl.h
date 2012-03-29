@@ -4,8 +4,8 @@
 #include <libtensor/mp/auto_cpu_lock.h>
 #include "../core/block_index_subspace_builder.h"
 #include "../core/mask.h"
-#include "../symmetry/so_concat.h"
-#include "../symmetry/so_stabilize.h"
+#include "../symmetry/so_dirprod.h"
+#include "../symmetry/so_reduce.h"
 #include <libtensor/dense_tensor/tod_contract2.h>
 
 namespace libtensor {
@@ -65,46 +65,10 @@ void btod_contract2<N, M, K>::sync_off() {
 /*
 template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::compute_block(dense_tensor_i<N + M, double> &blk,
-	const index<N + M> &i) {
+    const index<N + M> &i) {
 
-	static const char *method =
-		"compute_block(dense_tensor_i<N + M, double>&, const index<N + M>&)";
-
-	btod_contract2<N, M, K>::start_timer();
-
-	try {
-
-		block_tensor_ctrl<k_ordera, double> ca(m_bta);
-		block_tensor_ctrl<k_orderb, double> cb(m_btb);
-
-		abs_index<k_orderc> aic(i, m_bidimsc);
-		typename schedule_t::iterator isch =
-			m_contr_sch.find(aic.get_abs_index());
-		if(isch == m_contr_sch.end()) {
-			throw bad_parameter(g_ns, k_clazz, method,
-				__FILE__, __LINE__, "i");
-		}
-
-		transf<k_orderc, double> trc0;
-		contract_block(isch->second->first, aic.get_index(), ca, cb,
-			blk, trc0, true, 1.0);
-
-	} catch(...) {
-		btod_contract2<N, M, K>::stop_timer();
-		throw;
-	}
-
-	btod_contract2<N, M, K>::stop_timer();
-}
-*/
-
-template<size_t N, size_t M, size_t K>
-void btod_contract2<N, M, K>::compute_block(bool zero,
-    dense_tensor_i<N + M, double> &blk, const index<N + M> &i,
-    const transf<N + M, double> &tr, double c, cpu_pool &cpus) {
-
-    static const char *method = "compute_block(bool, tensor_i<N + M, double>&, "
-        "const index<N + M>&, const transf<N + M, double>&, double, cpu_pool&)";
+    static const char *method =
+        "compute_block(dense_tensor_i<N + M, double>&, const index<N + M>&)";
 
     btod_contract2<N, M, K>::start_timer();
 
@@ -118,7 +82,43 @@ void btod_contract2<N, M, K>::compute_block(bool zero,
             m_contr_sch.find(aic.get_abs_index());
         if(isch == m_contr_sch.end()) {
             throw bad_parameter(g_ns, k_clazz, method,
-				__FILE__, __LINE__, "i");
+                __FILE__, __LINE__, "i");
+        }
+
+        transf<k_orderc, double> trc0;
+        contract_block(isch->second->first, aic.get_index(), ca, cb,
+            blk, trc0, true, 1.0);
+
+    } catch(...) {
+        btod_contract2<N, M, K>::stop_timer();
+        throw;
+    }
+
+    btod_contract2<N, M, K>::stop_timer();
+}
+*/
+
+template<size_t N, size_t M, size_t K>
+void btod_contract2<N, M, K>::compute_block(bool zero,
+    dense_tensor_i<N + M, double> &blk, const index<N + M> &i,
+    const tensor_transf<N + M, double> &tr, double c, cpu_pool &cpus) {
+
+    static const char *method = "compute_block(bool, tensor_i<N + M, double>&, "
+        "const index<N + M>&, const tensor_transf<N + M, double>&, double, cpu_pool&)";
+
+    btod_contract2<N, M, K>::start_timer();
+
+    try {
+
+        block_tensor_ctrl<k_ordera, double> ca(m_bta);
+        block_tensor_ctrl<k_orderb, double> cb(m_btb);
+
+        abs_index<k_orderc> aic(i, m_bidimsc);
+        typename schedule_t::iterator isch =
+            m_contr_sch.find(aic.get_abs_index());
+        if(isch == m_contr_sch.end()) {
+            throw bad_parameter(g_ns, k_clazz, method,
+                __FILE__, __LINE__, "i");
         }
 
         contract_block(isch->second->first, aic.get_index(), ca, cb,
@@ -158,8 +158,8 @@ void btod_contract2<N, M, K>::make_schedule() {
 
         if(n == nmax) {
             make_schedule_task *t = new make_schedule_task(m_contr,
-                                                           m_bta, m_btb, get_symmetry(), m_bidimsc, ola,
-                                                           ioa1, ioa2, m_contr_sch, m_sch, sch_lock);
+                    m_bta, m_btb, get_symmetry(), m_bidimsc, ola,
+                    ioa1, ioa2, m_contr_sch, m_sch, sch_lock);
             tasklist.push_back(t);
             tb.push(*t);
             n = 0;
@@ -168,8 +168,8 @@ void btod_contract2<N, M, K>::make_schedule() {
     }
     if(ioa1 != ola.end()) {
         make_schedule_task *t = new make_schedule_task(m_contr, m_bta,
-                                                       m_btb, get_symmetry(), m_bidimsc, ola, ioa1, ioa2,
-                                                       m_contr_sch, m_sch, sch_lock);
+                m_btb, get_symmetry(), m_bidimsc, ola, ioa1, ioa2,
+                m_contr_sch, m_sch, sch_lock);
         tasklist.push_back(t);
         tb.push(*t);
     }
@@ -277,7 +277,7 @@ template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::make_schedule_task::make_schedule_a(
     const orbit_list<k_orderc, double> &olc,
     const abs_index<k_ordera> &aia, const abs_index<k_ordera> &acia,
-    const transf<k_ordera, double> &tra) {
+    const tensor_transf<k_ordera, double> &tra) {
 
     const sequence<k_maxconn, size_t> &conn = m_contr.get_conn();
     const index<k_ordera> &ia = aia.get_index();
@@ -326,7 +326,7 @@ void btod_contract2<N, M, K>::make_schedule_task::make_schedule_a(
 
 template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::make_schedule_task::make_schedule_b(
-    const abs_index<k_ordera> &acia, const transf<k_ordera, double> &tra,
+    const abs_index<k_ordera> &acia, const tensor_transf<k_ordera, double> &tra,
     const index<k_orderb> &ib, const abs_index<k_orderc> &acic) {
 
     orbit<k_orderb, double> ob(m_cb.req_const_symmetry(), ib);
@@ -335,9 +335,10 @@ void btod_contract2<N, M, K>::make_schedule_task::make_schedule_b(
     abs_index<k_orderb> acib(ob.get_abs_canonical_index(), m_bidimsb);
     if(m_cb.req_is_zero_block(acib.get_index())) return;
 
-    const transf<k_orderb, double> &trb = ob.get_transf(ib);
+    const tensor_transf<k_orderb, double> &trb = ob.get_transf(ib);
     block_contr_t bc(acia.get_abs_index(), acib.get_abs_index(),
-                     tra.get_coeff() * trb.get_coeff(),
+                     tra.get_scalar_tr().get_coeff() *
+                     trb.get_scalar_tr().get_coeff(),
                      permutation<N + K>(tra.get_perm(), true),
                      permutation<M + K>(trb.get_perm(), true));
     schedule_block_contraction(acic, bc);
@@ -446,7 +447,8 @@ void btod_contract2<N, M, K>::contract_block(
     block_contr_list_t &lst, const index<k_orderc> &idxc,
     block_tensor_ctrl<k_ordera, double> &ca,
     block_tensor_ctrl<k_orderb, double> &cb,
-    dense_tensor_i<k_orderc, double> &tc, const transf<k_orderc, double> &trc,
+    dense_tensor_i<k_orderc, double> &tc,
+    const tensor_transf<k_orderc, double> &trc,
     bool zero, double c, cpu_pool &cpus) {
 
     if(zero) tod_set<k_orderc>().perform(cpus, tc);
@@ -476,14 +478,14 @@ void btod_contract2<N, M, K>::contract_block(
         contr.permute_b(ilst->m_permb);
         contr.permute_c(trc.get_perm());
 
-        double kc = ilst->m_c * trc.get_coeff() * c;
+        double kc = ilst->m_c * trc.get_scalar_tr().get_coeff() * c;
         tod_contract2<N, M, K>(contr, blka, blkb).perform(cpus, false, kc, tc);
     }
 
     for(typename std::list< index<k_ordera> >::const_iterator i =
-        blksa.begin(); i != blksa.end(); i++) ca.ret_block(*i);
+            blksa.begin(); i != blksa.end(); i++) ca.ret_block(*i);
     for(typename std::list< index<k_orderb> >::const_iterator i =
-        blksb.begin(); i != blksb.end(); i++) cb.ret_block(*i);
+            blksb.begin(); i != blksb.end(); i++) cb.ret_block(*i);
 }
 
 
@@ -506,14 +508,11 @@ btod_contract2_symmetry_builder<N, N, K>::btod_contract2_symmetry_builder(
     block_tensor_i<N + K, double> &bta,
     block_tensor_i<N + K, double> &btb) :
 
-    btod_contract2_symmetry_builder_base<N, N, K>(contr,
-                                                  &bta == &btb ? make_xbis(bta.get_bis()) :
-                                                  btod_contract2_symmetry_builder_base<N, N, K>::
-                                                  make_xbis(bta.get_bis(), btb.get_bis())) {
+    base_t(contr, &bta == &btb ? make_xbis(bta.get_bis()) :
+            base_t::make_xbis(bta.get_bis(), btb.get_bis())) {
 
     if(&bta == &btb) make_symmetry(contr, bta);
-    else btod_contract2_symmetry_builder_base<N, N, K>::make_symmetry(
-        contr, bta, btb);
+    else base_t::make_symmetry(contr, bta, btb);
 }
 
 
@@ -565,13 +564,11 @@ void btod_contract2_symmetry_builder<N, N, K>::make_symmetry(
 
     block_tensor_ctrl<N + K, double> ca(bta);
     const sequence<2 * (2 * N + K), size_t> &conn = contr.get_conn();
-    block_index_space<2 * (N + K)> xbis(
-        btod_contract2_symmetry_builder_base<N, N, K>::get_xbis());
-    const block_index_space<2 * N> &bis =
-        btod_contract2_symmetry_builder_base<N, N, K>::get_bis();
+    block_index_space<2 * (N + K)> xbis(base_t::get_xbis());
+    const block_index_space<2 * N> &bis = base_t::get_bis();
 
-    sequence<2 * (N + K), size_t> seq1(0), seq2(0);
-    sequence< K, mask<2 * (N + K)> > msks;
+    sequence<2 * (N + K), size_t> seq1(0), seq2(0), seq(0);
+    mask<2 * (N + K)> msk;
     for (size_t i = 0, k = 0; i < 2 * (N + K); i++) {
         seq1[i] = i;
         if (conn[i + 2 * N] < 2 * N) { // remaining indexes
@@ -579,11 +576,10 @@ void btod_contract2_symmetry_builder<N, N, K>::make_symmetry(
         }
         else if (i < N + K) { // contracted indexes
             size_t j = 2 * (N + k);
-            msks[k][j] = true;
+            msk[j] = msk[j + 1] = true;
+            seq[j] = seq[j + 1] = k;
             seq2[j] = i;
-            j++;
-            msks[k][j] = true;
-            seq2[j] = conn[i + 2 * N] - 2 * N;
+            seq2[j + 1] = conn[i + 2 * N] - 2 * N;
             k++;
         }
     }
@@ -591,11 +587,11 @@ void btod_contract2_symmetry_builder<N, N, K>::make_symmetry(
     xbis.permute(pb.get_perm());
     symmetry<2 * (N + K), double> xsymab(xbis);
 
-    so_concat<N + K, N + K, double>(ca.req_const_symmetry(),
-                                    ca.req_const_symmetry(), pb.get_perm()).perform(xsymab);
+    so_dirprod<N + K, N + K, double>(ca.req_const_symmetry(),
+            ca.req_const_symmetry(), pb.get_perm()).perform(xsymab);
 
-    //	When a tensor is contracted with itself, there is additional
-    //	perm symmetry
+    //  When a tensor is contracted with itself, there is additional
+    //  perm symmetry
 
     permutation<2 * (N + K)> permab(pb.get_perm(), true);
     for(size_t i = 0; i < N + K; i++) {
@@ -603,13 +599,19 @@ void btod_contract2_symmetry_builder<N, N, K>::make_symmetry(
     }
     permab.permute(pb.get_perm());
     if(!permab.is_identity()) {
-        xsymab.insert(se_perm<2 * (N + K), double>(permab, true));
+        scalar_transf<double> tr;
+        xsymab.insert(se_perm<2 * (N + K), double>(permab, tr));
     }
 
-    so_stabilize<2 * (N + K), 2 * K, K, double> so_stab(xsymab);
-    for (size_t k = 0; k < K; k++) so_stab.add_mask(msks[k]);
-    so_stab.perform(
-        btod_contract2_symmetry_builder_base<N, N, K>::get_symmetry());
+    dimensions<2 * (N + K)> bidims = xbis.get_block_index_dims();
+    index<2 * (N + K)> bia, bib;
+    for (register size_t i = 0; i < 2 * (N + K); i++) bib[i] = bidims[i] - 1;
+    dimensions<2 * (N + K)> bdims = xbis.get_block_dims(bib);
+    index<2 * (N + K)> ia, ib;
+    for (register size_t i = 0; i < 2 * (N + K); i++) ib[i] = bdims[i] - 1;
+    index_range<2 * (N + K)> bir(bia, bib), ir(ia, ib);
+    so_reduce<2 * (N + K), 2 * K, double>(xsymab, msk,
+            seq, bir, ir).perform(base_t::get_symmetry());
 }
 
 template<size_t N, size_t M, size_t K>
@@ -713,8 +715,8 @@ void btod_contract2_symmetry_builder_base<N, M, K>::make_symmetry(
 
     const sequence<2 * (N + M + K), size_t> &conn = contr.get_conn();
 
-    sequence<N + M + 2 * K, size_t> seq1(0), seq2(0);
-    sequence< K, mask<N + M + 2 * K> > msks;
+    sequence<N + M + 2 * K, size_t> seq1(0), seq2(0), seq(0);
+    mask<N + M + 2 * K> msk;
     for (size_t i = 0, k = 0; i < N + M + 2 * K; i++) {
         seq1[i] = i;
         if (conn[i + N + M] < N + M) { // remaining indexes
@@ -722,11 +724,10 @@ void btod_contract2_symmetry_builder_base<N, M, K>::make_symmetry(
         }
         else if (i < N + K) { // contracted indexes
             size_t j = N + M + 2 * k;
-            msks[k][j] = true;
+            msk[j] = msk[j + 1] = true;
+            seq[j] = seq[j + 1] = k;
             seq2[j] = i;
-            j++;
-            msks[k][j] = true;
-            seq2[j] = conn[i + N + M] - (N + M);
+            seq2[j + 1] = conn[i + N + M] - (N + M);
             k++;
         }
     }
@@ -734,14 +735,18 @@ void btod_contract2_symmetry_builder_base<N, M, K>::make_symmetry(
     xbis.permute(pb.get_perm());
     symmetry<N + M + 2 * K, double> xsymab(xbis);
 
-    so_concat<N + K, M + K, double>(ca.req_const_symmetry(),
-                                    cb.req_const_symmetry(), pb.get_perm()).perform(xsymab);
+    so_dirprod<N + K, M + K, double>(ca.req_const_symmetry(),
+            cb.req_const_symmetry(), pb.get_perm()).perform(xsymab);
 
-    so_stabilize<N + M + 2 * K, 2 * K, K, double> so_stab(xsymab);
-    for (size_t k = 0; k < K; k++) so_stab.add_mask(msks[k]);
-    so_stab.perform(btod_contract2_symmetry_builder_base<N, M, K>::
-                    get_symmetry());
+    dimensions<N + M + 2 * K> bidims = xbis.get_block_index_dims();
+    index<N + M + 2 * K> bia, bib, ia, ib;
+    for (register size_t i = 0; i < N + M + 2 * K; i++) bib[i] = bidims[i] - 1;
+    dimensions<N + M + 2 * K> bdims = xbis.get_block_dims(bib);
+    for (register size_t i = 0; i < N + M + 2 * K; i++) ib[i] = bdims[i] - 1;
 
+    index_range<N + M + 2 * K> ir(ia, ib), bir(bia, bib);
+    so_reduce<N + M + 2 * K, 2 * K, double>(xsymab, msk,
+            seq, bir, ir).perform(get_symmetry());
 }
 
 } // namespace libtensor

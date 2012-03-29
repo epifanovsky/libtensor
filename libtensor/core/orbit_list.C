@@ -1,7 +1,6 @@
 #ifdef LIBTENSOR_INSTANTIATE_TEMPLATES
 
 #include "orbit_list.h"
-#include "../btod/transf_double.h"
 #include "orbit_list_impl.h"
 
 namespace libtensor {

@@ -5,21 +5,21 @@
 
 namespace libtensor {
 
-/**	\brief Tests the libtensor::tod_mult1 class
+/** \brief Tests the libtensor::tod_mult1 class
 
-	\ingroup libtensor_tests_tod
+    \ingroup libtensor_tests_tod
 **/
 class tod_mult1_test : public libtest::unit_test {
 public:
-	virtual void perform() throw(libtest::test_exception);
+    virtual void perform() throw(libtest::test_exception);
 
 private:
-	void test_pq_pq_1(size_t ni, size_t nj,
-			bool recip) throw(libtest::test_exception);
-	void test_pq_pq_2(size_t ni, size_t nj,
-			bool recip, double coeff) throw(libtest::test_exception);
-	void test_pqrs_qrps(size_t ni, size_t nj, size_t nk, size_t nl,
-			bool recip, double coeff) throw(libtest::test_exception);
+    void test_pq_pq_1(size_t ni, size_t nj,
+            bool recip) throw(libtest::test_exception);
+    void test_pq_pq_2(size_t ni, size_t nj,
+            bool recip, double coeff) throw(libtest::test_exception);
+    void test_pqrs_qrps(size_t ni, size_t nj, size_t nk, size_t nl,
+            bool recip, double coeff) throw(libtest::test_exception);
 };
 
 } // namespace libtensor

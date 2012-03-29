@@ -5,26 +5,26 @@
 
 namespace libtensor {
 
-/**	\brief Tests the libtensor::btod_trace class
+/** \brief Tests the libtensor::btod_trace class
 
-	\ingroup libtensor_tests_btod
+    \ingroup libtensor_tests_btod
  **/
 class btod_trace_test : public libtest::unit_test {
 public:
-	virtual void perform() throw(libtest::test_exception);
+    virtual void perform() throw(libtest::test_exception);
 
 private:
-	void test_zero_1() throw(libtest::test_exception);
-	void test_nosym_1() throw(libtest::test_exception);
-	void test_nosym_1_sp() throw(libtest::test_exception);
-	void test_nosym_2() throw(libtest::test_exception);
-	void test_nosym_3() throw(libtest::test_exception);
-	void test_nosym_4() throw(libtest::test_exception);
-	void test_nosym_5() throw(libtest::test_exception);
-	void test_nosym_6() throw(libtest::test_exception);
-	void test_nosym_7() throw(libtest::test_exception);
-	void test_permsym_1() throw(libtest::test_exception);
-	void test_permsym_2() throw(libtest::test_exception);
+    void test_zero_1() throw(libtest::test_exception);
+    void test_nosym_1() throw(libtest::test_exception);
+    void test_nosym_1_sp() throw(libtest::test_exception);
+    void test_nosym_2() throw(libtest::test_exception);
+    void test_nosym_3() throw(libtest::test_exception);
+    void test_nosym_4() throw(libtest::test_exception);
+    void test_nosym_5() throw(libtest::test_exception);
+    void test_nosym_6() throw(libtest::test_exception);
+    void test_nosym_7() throw(libtest::test_exception);
+    void test_permsym_1() throw(libtest::test_exception);
+    void test_permsym_2() throw(libtest::test_exception);
 };
 
 } // namespace libtensor

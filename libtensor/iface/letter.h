@@ -6,28 +6,28 @@
 
 namespace libtensor {
 
-/**	\brief Identifies a letter %tensor %index
+/** \brief Identifies a letter %tensor %index
 
-	This is an empty class that serves the purpose of identifying
-	%letter indexes of a %tensor in %tensor expressions.
+    This is an empty class that serves the purpose of identifying
+    %letter indexes of a %tensor in %tensor expressions.
 
-	Letter indexes can be combined using the multiplication (*) and the
-	bitwise or (|) operators.
+    Letter indexes can be combined using the multiplication (*) and the
+    bitwise or (|) operators.
 
-	\ingroup libtensor_iface
+    \ingroup libtensor_iface
 **/
 class letter {
 public:
-	bool operator==(const letter &other) const;
-	bool operator!=(const letter &other) const;
+    bool operator==(const letter &other) const;
+    bool operator!=(const letter &other) const;
 };
 
 inline bool letter::operator==(const letter &other) const {
-	return this == &other;
+    return this == &other;
 }
 
 inline bool letter::operator!=(const letter &other) const {
-	return this != &other;
+    return this != &other;
 }
 
 } // namespace libtensor

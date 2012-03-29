@@ -12,22 +12,22 @@
 namespace libtensor {
 
 
-/**	\brief Linear algebra implementation based on
-		AMD Core Math Library (ACML)
+/** \brief Linear algebra implementation based on
+        AMD Core Math Library (ACML)
 
-	\ingroup libtensor_linalg
+    \ingroup libtensor_linalg
  **/
 struct linalg_base_acml :
-	public linalg_base_lowlevel<
-		linalg_base_memory_generic,
-		linalg_base_level1_acml,
-		linalg_base_level2_acml,
-		linalg_base_level3_acml>,
-	public linalg_base_highlevel<
-		linalg_base_memory_generic,
-		linalg_base_level1_acml,
-		linalg_base_level2_acml,
-		linalg_base_level3_acml>
+    public linalg_base_lowlevel<
+        linalg_base_memory_generic,
+        linalg_base_level1_acml,
+        linalg_base_level2_acml,
+        linalg_base_level3_acml>,
+    public linalg_base_highlevel<
+        linalg_base_memory_generic,
+        linalg_base_level1_acml,
+        linalg_base_level2_acml,
+        linalg_base_level3_acml>
 { };
 
 

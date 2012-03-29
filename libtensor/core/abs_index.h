@@ -7,7 +7,7 @@
 namespace libtensor {
 
 
-/**	\brief Absolute value of an %index within %dimensions
+/** \brief Absolute value of an %index within %dimensions
     \tparam N Tensor order.
 
     Tensor dimensions (number of elements along each side of the %tensor)
@@ -39,27 +39,27 @@ private:
     size_t m_aidx; //!< Absolute value of %index
 
 public:
-    //!	\name Construction and destruction
+    //!    \name Construction and destruction
     //@{
 
-    /**	\brief Initializes the first index within dimensions
+    /** \brief Initializes the first index within dimensions
         \param dims Dimensions.
      **/
     abs_index(const dimensions<N> &dims);
 
-    /**	\brief Initializes an index within dimensions
+    /** \brief Initializes an index within dimensions
         \param idx Index.
         \param dims Dimensions.
      **/
     abs_index(const index<N> &idx, const dimensions<N> &dims);
 
-    /**	\brief Initializes an index by its absolute value within dimensions
+    /** \brief Initializes an index by its absolute value within dimensions
         \param aidx Absolute value of the index.
         \param dims Dimensions.
      **/
     abs_index(size_t aidx, const dimensions<N> &dims);
 
-    /**	\brief Copy constructor
+    /** \brief Copy constructor
         \param other Another abs_index object.
      **/
     abs_index(const abs_index<N> &other);
@@ -67,39 +67,39 @@ public:
     //@}
 
 
-    //!	\name Manipulations
+    //!    \name Manipulations
     //@{
 
-    /**	\brief Returns the %dimensions
+    /** \brief Returns the %dimensions
      **/
     const dimensions<N> &get_dims() const {
         return m_dims;
     }
 
-    /**	\brief Returns the %index
+    /** \brief Returns the %index
      **/
     const index<N> &get_index() const {
         return m_idx;
     }
 
-    /**	\brief Returns the absolute %index
+    /** \brief Returns the absolute %index
      **/
     size_t get_abs_index() const {
         return m_aidx;
     }
 
-    /**	\brief Increments the current %index, returns true if success
+    /** \brief Increments the current %index, returns true if success
      **/
     bool inc();
 
-    /**	\brief Returns whether the current value is the last %index
+    /** \brief Returns whether the current value is the last %index
             within the %dimensions
      **/
     bool is_last() const {
         return m_aidx + 1 >= m_dims.get_size();
     }
 
-    /**	\brief Increments the current %index, returns the reference to itself
+    /** \brief Increments the current %index, returns the reference to itself
      **/
     abs_index<N> &operator++() {
         inc();

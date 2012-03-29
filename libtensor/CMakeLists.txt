@@ -13,6 +13,7 @@ set(SRC
     btod/btod_tridiagonalize.C
     symmetry/point_group_table.C
     symmetry/product_table_container.C
+    symmetry/product_table_i.C
     tod/loop_list_add.C
     tod/loop_list_copy.C
     tod/loop_list_mul.C
@@ -146,6 +147,43 @@ set(SRC_INST
     dense_tensor/impl/tod_set_elem.C
     dense_tensor/impl/tod_trace.C
     dense_tensor/impl/tod_vmpriority.C
+    symmetry/inst/block_labeling_inst.C
+    symmetry/inst/combine_part_inst.C
+    symmetry/inst/combine_label_inst.C
+    symmetry/inst/evaluation_rule_inst.C
+    symmetry/inst/permutation_group_inst.C
+    symmetry/inst/se_label_inst.C
+    symmetry/inst/se_part_inst.C
+    symmetry/inst/se_perm_inst.C
+    symmetry/inst/so_apply_inst.C
+    symmetry/inst/so_apply_se_label_inst.C
+    symmetry/inst/so_apply_se_part_inst.C
+    symmetry/inst/so_apply_se_perm_inst.C
+    symmetry/inst/so_copy_inst.C
+    symmetry/inst/so_dirprod_inst.C
+    symmetry/inst/so_dirprod_se_label_inst.C
+    symmetry/inst/so_dirprod_se_part_inst.C
+    symmetry/inst/so_dirprod_se_perm_inst.C
+    symmetry/inst/so_dirsum_inst.C
+    symmetry/inst/so_dirsum_se_label_inst.C
+    symmetry/inst/so_dirsum_se_part_inst.C
+    symmetry/inst/so_dirsum_se_perm_inst.C
+    symmetry/inst/so_merge_inst.C
+    symmetry/inst/so_merge_se_label_inst.C
+    symmetry/inst/so_merge_se_part_inst.C
+    symmetry/inst/so_merge_se_perm_inst.C
+    symmetry/inst/so_permute_inst.C
+    symmetry/inst/so_permute_se_label_inst.C
+    symmetry/inst/so_permute_se_part_inst.C
+    symmetry/inst/so_permute_se_perm_inst.C
+    symmetry/inst/so_reduce_inst.C
+    symmetry/inst/so_reduce_se_label_inst.C
+    symmetry/inst/so_reduce_se_part_inst.C
+    symmetry/inst/so_reduce_se_perm_inst.C
+    symmetry/inst/so_symmetrize_inst.C
+    symmetry/inst/so_symmetrize_se_label_inst.C
+    symmetry/inst/so_symmetrize_se_part_inst.C
+    symmetry/inst/so_symmetrize_se_perm_inst.C
     btod/additive_btod.C
     btod/basic_btod.C
     btod/btod_add.C

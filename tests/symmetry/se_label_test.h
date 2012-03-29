@@ -1,29 +1,35 @@
 #ifndef LIBTENSOR_SE_LABEL_TEST_H
 #define LIBTENSOR_SE_LABEL_TEST_H
 
-#include <libtest/unit_test.h>
+#include "se_label_test_base.h"
+
 
 namespace libtensor {
 
-/**	\brief Tests the libtensor::se_label class
+/** \brief Tests the libtensor::se_label class
 
-	\ingroup libtensor_tests_sym
+    \ingroup libtensor_tests_sym
  **/
-class se_label_test : public libtest::unit_test {
+class se_label_test : public se_label_test_base {
 public:
-	virtual void perform() throw(libtest::test_exception);
+    virtual void perform() throw(libtest::test_exception);
 
 private:
-	static const char *table_id;
+    void test_basic_1(
+            const std::string &table_id) throw(libtest::test_exception);
+    void test_allowed_1(
+            const std::string &table_id) throw(libtest::test_exception);
+    void test_allowed_2(
+            const std::string &table_id) throw(libtest::test_exception);
+    void test_allowed_3(
+            const std::string &table_id) throw(libtest::test_exception);
+    void test_permute_1(
+            const std::string &table_id) throw(libtest::test_exception);
+    void test_permute_2(
+            const std::string &table_id) throw(libtest::test_exception);
 
-	void test_1() throw(libtest::test_exception);
-	void test_2() throw(libtest::test_exception);
-	void test_3() throw(libtest::test_exception);
-	void test_4() throw(libtest::test_exception);
-	void test_5() throw(libtest::test_exception);
-	void test_6() throw(libtest::test_exception);
-	void test_7() throw(libtest::test_exception);
-	void test_8() throw(libtest::test_exception);
+    using se_label_test_base::setup_pg_table;
+    using se_label_test_base::check_allowed;
 };
 
 } // namespace libtensor

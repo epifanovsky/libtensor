@@ -37,7 +37,7 @@ struct btod_set_traits {
 };
 
 
-/**	\brief Sets all elements of a block tensor to a value preserving
+/** \brief Sets all elements of a block tensor to a value preserving
         the symmetry
     \tparam N Tensor order.
 

@@ -1,4 +1,3 @@
-#include <libtensor/libtensor.h>
 #include "libtensor_iface_suite.h"
 
 namespace libtensor {

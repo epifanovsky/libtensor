@@ -13,16 +13,16 @@ class symmetry_operation_handlers_ex;
 template<typename OperT>
 class symmetry_operation_handlers {
 public:
-	static void install_handlers() {
-		symmetry_operation_handlers_ex<OperT>::install_handlers();
-	}
+    static void install_handlers() {
+        symmetry_operation_handlers_ex<OperT>::install_handlers();
+    }
 };
 
 
 template<typename OperT>
 class symmetry_operation_handlers_ex {
 public:
-	static void install_handlers() { }
+    static void install_handlers() { }
 };
 
 

@@ -48,19 +48,19 @@ protected:
     task_dispatcher();
 
 public:
-    //!	\name Interface to task batches
+    //!    \name Interface to task batches
     //@{
 
-    /**	\brief Creates a queue on the top of the stack and returns its
+    /** \brief Creates a queue on the top of the stack and returns its
             identifier
      **/
     queue_id_t create_queue();
 
-    /**	\brief Destroys the queue specified by its identifier
+    /** \brief Destroys the queue specified by its identifier
      **/
     void destroy_queue(queue_id_t &qid);
 
-    /**	\brief Schedules a task in a queue. The queue must be valid and
+    /** \brief Schedules a task in a queue. The queue must be valid and
             no threads should be waiting on it.
      **/
     void push_task(const queue_id_t &qid, task_i &task);
@@ -70,7 +70,7 @@ public:
      **/
     void wait_on_queue(const queue_id_t &qid);
 
-    /**	\brief Waits until all tasks in the queue are over. Once there
+    /** \brief Waits until all tasks in the queue are over. Once there
             is a waiter on a queue, tasks cannot be scheduled there
      **/
     void wait_on_queue(const queue_id_t &qid, cpu_pool &cpus);
@@ -78,18 +78,18 @@ public:
     //@}
 
 
-    //!	\name Interface to the worker pool
+    //!    \name Interface to the worker pool
     //@{
 
-    /**	\brief Wakes up all the threads waiting on the alarm
+    /** \brief Wakes up all the threads waiting on the alarm
      **/
     void set_off_alarm();
 
-    /**	\brief Waits until there is at least one task scheduled
+    /** \brief Waits until there is at least one task scheduled
      **/
     void wait_next();
 
-    /**	\brief Executes the next task in the queue or simply returns
+    /** \brief Executes the next task in the queue or simply returns
         \param cpus Pool of CPUs.
      **/
     void invoke_next(cpu_pool &cpus);
