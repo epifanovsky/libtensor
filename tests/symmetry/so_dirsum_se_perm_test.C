@@ -1,3 +1,4 @@
+#include <libtensor/btod/scalar_transf_double.h>
 #include <libtensor/symmetry/so_dirsum_se_perm.h>
 #include "../compare_ref.h"
 #include "so_dirsum_se_perm_test.h"
@@ -104,8 +105,10 @@ void so_dirsum_se_perm_test::test_empty_2(
         else
             p2.permute(0, 1).permute(1, 2);
 
-        se3_t elema(p1, true);
-        se5_t elemc(p2, true);
+        scalar_transf<double> tr0;
+
+        se3_t elema(p1, tr0);
+        se5_t elemc(p2, tr0);
 
         symmetry_element_set<3, double> seta(se3_t::k_sym_type);
         symmetry_element_set<2, double> setb(se2_t::k_sym_type);
@@ -166,8 +169,9 @@ void so_dirsum_se_perm_test::test_empty_3(
         permutation<5> p2;
         if (perm) p2.permute(0, 2).permute(2, 3);
         else p2.permute(3, 4).permute(2, 3);
-        se3_t elemb(p1, true);
-        se5_t elemc(p2, true);
+        scalar_transf<double> tr0;
+        se3_t elemb(p1, tr0);
+        se5_t elemc(p2, tr0);
 
         symmetry_element_set<2, double> seta(se2_t::k_sym_type);
         symmetry_element_set<3, double> setb(se3_t::k_sym_type);
@@ -223,13 +227,15 @@ void so_dirsum_se_perm_test::test_nn_1(
         bis.split(m, 1);
         bis.split(m, 2);
 
-        se2_t elema(permutation<2>().permute(0, 1), symm1);
-        se3_t elemb1(permutation<3>().permute(0, 1).permute(1, 2), true);
-        se3_t elemb2(permutation<3>().permute(0, 1), symm2);
-        se5_t elemc1(permutation<5>().permute(0, 1), symm1);
-        se5_t elemc2(permutation<5>().permute(2, 3).permute(3, 4), true);
-        se5_t elemc3(permutation<5>().permute(2, 3), symm2);
-        se5_t elemc4(permutation<5>().permute(0, 1).permute(2, 3), false);
+        scalar_transf<double> tr0, tr1(-1.);
+        se2_t elema(permutation<2>().permute(0, 1), symm1 ? tr0 : tr1);
+        se3_t elemb1(permutation<3>().permute(0, 1).permute(1, 2), tr0);
+        se3_t elemb2(permutation<3>().permute(0, 1), symm2 ? tr0 : tr1);
+        se5_t elemc1(permutation<5>().permute(0, 1), symm1 ? tr0 : tr1);
+        se5_t elemc2(permutation<5>().permute(2, 3).permute(3, 4), tr0);
+        se5_t elemc3(permutation<5>().permute(2, 3), symm2 ? tr0 : tr1);
+        se5_t elemc4(permutation<5>().permute(0, 1).permute(2, 3), tr1);
+        se5_t elemc5(permutation<5>().permute(0, 1).permute(2, 3).permute(3, 4).permute(2, 3), tr1);
 
         symmetry_element_set<2, double> seta(se2_t::k_sym_type);
         symmetry_element_set<3, double> setb(se3_t::k_sym_type);
@@ -243,7 +249,10 @@ void so_dirsum_se_perm_test::test_nn_1(
         setc_ref.insert(elemc2);
         if (symm1) setc_ref.insert(elemc1);
         if (symm2) setc_ref.insert(elemc3);
-        if (! symm1 && ! symm2) setc_ref.insert(elemc4);
+        if (! symm1 && ! symm2) {
+            setc_ref.insert(elemc4);
+            setc_ref.insert(elemc5);
+        }
 
         permutation<5> px;
         symmetry_operation_params<so_t> params(seta, setb, px, bis, setc);
@@ -285,13 +294,14 @@ void so_dirsum_se_perm_test::test_nn_2(
         bis.split(m, 1);
         bis.split(m, 2);
 
-        se3_t elema1(permutation<3>().permute(0, 1).permute(1, 2), true);
-        se3_t elema2(permutation<3>().permute(0, 1), symm1);
-        se2_t elemb(permutation<2>().permute(0, 1), symm2);
-        se5_t elemc1(permutation<5>().permute(0, 2).permute(2, 3), true);
-        se5_t elemc2(permutation<5>().permute(0, 3), symm1);
-        se5_t elemc3(permutation<5>().permute(1, 4), symm2);
-        se5_t elemc4(permutation<5>().permute(0, 3).permute(1, 4), false);
+        scalar_transf<double> tr0, tr1(-1.);
+        se3_t elema1(permutation<3>().permute(0, 1).permute(1, 2), tr0);
+        se3_t elema2(permutation<3>().permute(0, 1), symm1 ? tr0 : tr1);
+        se2_t elemb(permutation<2>().permute(0, 1), symm2 ? tr0 : tr1);
+        se5_t elemc1(permutation<5>().permute(0, 2).permute(2, 3), tr0);
+        se5_t elemc2(permutation<5>().permute(0, 3), symm1 ? tr0 : tr1);
+        se5_t elemc3(permutation<5>().permute(1, 4), symm2 ? tr0 : tr1);
+        se5_t elemc4(permutation<5>().permute(0, 3).permute(1, 4), tr1);
 
         symmetry_element_set<3, double> seta(se3_t::k_sym_type);
         symmetry_element_set<2, double> setb(se2_t::k_sym_type);

@@ -1,3 +1,4 @@
+#include <libtensor/btod/scalar_transf_double.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/symmetry/so_dirsum.h>
 #include "../compare_ref.h"
@@ -118,17 +119,23 @@ void so_dirsum_test::test_se_1(bool s1,
 	symmetry<2, double> syma(bisa), symb(bisa);
 	symmetry<4, double> symc(bisc), symc_ref(bisc);
 
-	syma.insert(se_perm<2, double>(permutation<2>().permute(0, 1), s1));
-	symb.insert(se_perm<2, double>(permutation<2>().permute(0, 1), s2));
+	permutation<2> p1; p1.permute(0, 1);
+	permutation<4> p2a, p2b, p2c;
+	p2a.permute(0, 1); p2b.permute(2, 3);
+	p2c.permute(0, 1).permute(2, 3);
+
+	scalar_transf<double> tr0, tr1(-1.);
+
+	syma.insert(se_perm<2, double>(p1, s1 ? tr0 : tr1));
+	symb.insert(se_perm<2, double>(p1, s2 ? tr0 : tr1));
 	if (s1)
 	    symc_ref.insert(
-	            se_perm<4, double>(permutation<4>().permute(0, 1), s1));
+	            se_perm<4, double>(p2a, s1 ? tr0 : tr1));
 	if (s2)
 	    symc_ref.insert(
-	            se_perm<4, double>(permutation<4>().permute(2, 3), s2));
-	if (! s1 && !s2)
-        symc_ref.insert(se_perm<4, double>(
-                permutation<4>().permute(0, 1).permute(2, 3), s1));
+	            se_perm<4, double>(p2b, s2 ? tr0 : tr1));
+	if (! s1 && ! s2)
+        symc_ref.insert(se_perm<4, double>(p2c, s1 ? tr0 : tr1));
 
 	so_dirsum<2, 2, double>(syma, symb).perform(symc);
 
