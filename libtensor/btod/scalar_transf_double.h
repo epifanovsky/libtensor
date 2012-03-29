@@ -3,7 +3,6 @@
 
 
 #include "../defs.h"
-#include "../exception.h"
 #include "../core/scalar_transf.h"
 
 
@@ -35,7 +34,9 @@ public:
 	scalar_transf<double> &operator=(const scalar_transf<double> &tr) {
 	    m_coeff = tr.m_coeff;
 	}
+
 	//@}
+
 
 	//! \name Manipulating functions
 	//@ {
@@ -50,13 +51,16 @@ public:
 
 	//@}
 
+
 	/** \brief Scale coefficient by c
 	 **/
 	void scale(double c) { m_coeff *= c; }
 
+
 	/** \brief Returns the coefficient
 	 **/
 	const double& get_coeff() const { return m_coeff; }
+
 
 	//! Comparison functions and operators
 	//@{
@@ -103,5 +107,6 @@ inline std::ostream &operator<<(std::ostream &os,
 
 
 } // namespace libtensor
+
 
 #endif // LIBTENSOR_SCALAR_TRANSF_DOUBLE_H
