@@ -6,186 +6,186 @@
 namespace libtensor {
 
 
-/**	\brief Level-6 linear algebra operations (adaptive)
-	\tparam M Memory driver.
-	\tparam L1 Level-1 driver.
-	\tparam L2 Level-2 driver.
-	\tparam L3 Level-3 driver.
+/** \brief Level-6 linear algebra operations (adaptive)
+    \tparam M Memory driver.
+    \tparam L1 Level-1 driver.
+    \tparam L2 Level-2 driver.
+    \tparam L3 Level-3 driver.
 
-	\ingroup libtensor_linalg
+    \ingroup libtensor_linalg
  **/
 template<typename M, typename L1, typename L2, typename L3>
 struct linalg_base_level6_adaptive : public linalg_base_level6_generic {
 
 
-	static void ijkl_ikp_jpl_x(
-		size_t ni, size_t nj, size_t nk, size_t nl, size_t np,
-		const double *a, size_t ska, size_t sia,
-		const double *b, size_t spb, size_t sjb,
-		double *c, double d);
+    static void ijkl_ikp_jpl_x(
+        size_t ni, size_t nj, size_t nk, size_t nl, size_t np,
+        const double *a, size_t ska, size_t sia,
+        const double *b, size_t spb, size_t sjb,
+        double *c, double d);
 
 
-	static void ijkl_ipl_jpk_x(
-		size_t ni, size_t nj, size_t nk, size_t nl, size_t np,
-		const double *a, size_t spa, size_t sia,
-		const double *b, size_t spb, size_t sjb,
-		double *c, double d);
+    static void ijkl_ipl_jpk_x(
+        size_t ni, size_t nj, size_t nk, size_t nl, size_t np,
+        const double *a, size_t spa, size_t sia,
+        const double *b, size_t spb, size_t sjb,
+        double *c, double d);
 
 
-	static void ijkl_ipkq_pljq_x(
-		size_t ni, size_t nj, size_t nk,
-		size_t nl, size_t np, size_t nq,
-		const double *a, const double *b, double *c, double d);
+    static void ijkl_ipkq_pljq_x(
+        size_t ni, size_t nj, size_t nk,
+        size_t nl, size_t np, size_t nq,
+        const double *a, const double *b, double *c, double d);
 
 
-	static void ijkl_iplq_kpjq_x(
-		size_t ni, size_t nj, size_t nk,
-		size_t nl, size_t np, size_t nq,
-		const double *a, const double *b, double *c, double d);
+    static void ijkl_iplq_kpjq_x(
+        size_t ni, size_t nj, size_t nk,
+        size_t nl, size_t np, size_t nq,
+        const double *a, const double *b, double *c, double d);
 
 
-	static void ijkl_iplq_pkjq_x(
-		size_t ni, size_t nj, size_t nk,
-		size_t nl, size_t np, size_t nq,
-		const double *a, const double *b, double *c, double d);
+    static void ijkl_iplq_pkjq_x(
+        size_t ni, size_t nj, size_t nk,
+        size_t nl, size_t np, size_t nq,
+        const double *a, const double *b, double *c, double d);
 
 
-	static void ijkl_iplq_pkqj_x(
-		size_t ni, size_t nj, size_t nk,
-		size_t nl, size_t np, size_t nq,
-		const double *a, const double *b, double *c, double d);
+    static void ijkl_iplq_pkqj_x(
+        size_t ni, size_t nj, size_t nk,
+        size_t nl, size_t np, size_t nq,
+        const double *a, const double *b, double *c, double d);
 
 
-	static void ijkl_ipqk_pljq_x(
-		size_t ni, size_t nj, size_t nk,
-		size_t nl, size_t np, size_t nq,
-		const double *a, const double *b, double *c, double d);
+    static void ijkl_ipqk_pljq_x(
+        size_t ni, size_t nj, size_t nk,
+        size_t nl, size_t np, size_t nq,
+        const double *a, const double *b, double *c, double d);
 
 
-	static void ijkl_ipql_pkjq_x(
-		size_t ni, size_t nj, size_t nk,
-		size_t nl, size_t np, size_t nq,
-		const double *a, const double *b, double *c, double d);
+    static void ijkl_ipql_pkjq_x(
+        size_t ni, size_t nj, size_t nk,
+        size_t nl, size_t np, size_t nq,
+        const double *a, const double *b, double *c, double d);
 
 
-	static void ijkl_ipql_pkqj_x(
-		size_t ni, size_t nj, size_t nk,
-		size_t nl, size_t np, size_t nq,
-		const double *a, const double *b, double *c, double d);
+    static void ijkl_ipql_pkqj_x(
+        size_t ni, size_t nj, size_t nk,
+        size_t nl, size_t np, size_t nq,
+        const double *a, const double *b, double *c, double d);
 
 
-	static void ijkl_ipql_qkpj_x(
-		size_t ni, size_t nj, size_t nk,
-		size_t nl, size_t np, size_t nq,
-		const double *a, const double *b, double *c, double d);
+    static void ijkl_ipql_qkpj_x(
+        size_t ni, size_t nj, size_t nk,
+        size_t nl, size_t np, size_t nq,
+        const double *a, const double *b, double *c, double d);
 
 
-	static void ijkl_ipql_qpkj_x(
-		size_t ni, size_t nj, size_t nk,
-		size_t nl, size_t np, size_t nq,
-		const double *a, const double *b, double *c, double d);
+    static void ijkl_ipql_qpkj_x(
+        size_t ni, size_t nj, size_t nk,
+        size_t nl, size_t np, size_t nq,
+        const double *a, const double *b, double *c, double d);
 
 
-	static void ijkl_pikq_pljq_x(
-		size_t ni, size_t nj, size_t nk,
-		size_t nl, size_t np, size_t nq,
-		const double *a, const double *b, double *c, double d);
+    static void ijkl_pikq_pljq_x(
+        size_t ni, size_t nj, size_t nk,
+        size_t nl, size_t np, size_t nq,
+        const double *a, const double *b, double *c, double d);
 
 
-	static void ijkl_pilq_kpjq_x(
-		size_t ni, size_t nj, size_t nk,
-		size_t nl, size_t np, size_t nq,
-		const double *a, const double *b, double *c, double d);
+    static void ijkl_pilq_kpjq_x(
+        size_t ni, size_t nj, size_t nk,
+        size_t nl, size_t np, size_t nq,
+        const double *a, const double *b, double *c, double d);
 
 
-	static void ijkl_pilq_pkjq_x(
-		size_t ni, size_t nj, size_t nk,
-		size_t nl, size_t np, size_t nq,
-		const double *a, const double *b, double *c, double d);
+    static void ijkl_pilq_pkjq_x(
+        size_t ni, size_t nj, size_t nk,
+        size_t nl, size_t np, size_t nq,
+        const double *a, const double *b, double *c, double d);
 
 
-	static void ijkl_piqk_pljq_x(
-		size_t ni, size_t nj, size_t nk,
-		size_t nl, size_t np, size_t nq,
-		const double *a, const double *b, double *c, double d);
+    static void ijkl_piqk_pljq_x(
+        size_t ni, size_t nj, size_t nk,
+        size_t nl, size_t np, size_t nq,
+        const double *a, const double *b, double *c, double d);
 
 
-	static void ijkl_piql_kpqj_x(
-		size_t ni, size_t nj, size_t nk,
-		size_t nl, size_t np, size_t nq,
-		const double *a, const double *b, double *c, double d);
+    static void ijkl_piql_kpqj_x(
+        size_t ni, size_t nj, size_t nk,
+        size_t nl, size_t np, size_t nq,
+        const double *a, const double *b, double *c, double d);
 
 
-	static void ijkl_piql_pkjq_x(
-		size_t ni, size_t nj, size_t nk,
-		size_t nl, size_t np, size_t nq,
-		const double *a, const double *b, double *c, double d);
+    static void ijkl_piql_pkjq_x(
+        size_t ni, size_t nj, size_t nk,
+        size_t nl, size_t np, size_t nq,
+        const double *a, const double *b, double *c, double d);
 
 
-	static void ijkl_piql_pkqj_x(
-		size_t ni, size_t nj, size_t nk,
-		size_t nl, size_t np, size_t nq,
-		const double *a, const double *b, double *c, double d);
+    static void ijkl_piql_pkqj_x(
+        size_t ni, size_t nj, size_t nk,
+        size_t nl, size_t np, size_t nq,
+        const double *a, const double *b, double *c, double d);
 
 
-	static void ijkl_piql_qkpj_x(
-		size_t ni, size_t nj, size_t nk,
-		size_t nl, size_t np, size_t nq,
-		const double *a, const double *b, double *c, double d);
+    static void ijkl_piql_qkpj_x(
+        size_t ni, size_t nj, size_t nk,
+        size_t nl, size_t np, size_t nq,
+        const double *a, const double *b, double *c, double d);
 
 
-	static void ijkl_piql_qpkj_x(
-		size_t ni, size_t nj, size_t nk,
-		size_t nl, size_t np, size_t nq,
-		const double *a, const double *b, double *c, double d);
+    static void ijkl_piql_qpkj_x(
+        size_t ni, size_t nj, size_t nk,
+        size_t nl, size_t np, size_t nq,
+        const double *a, const double *b, double *c, double d);
 
 
-	static void ijkl_pkiq_jplq_x(
-		size_t ni, size_t nj, size_t nk,
-		size_t nl, size_t np, size_t nq,
-		const double *a, const double *b, double *c, double d);
+    static void ijkl_pkiq_jplq_x(
+        size_t ni, size_t nj, size_t nk,
+        size_t nl, size_t np, size_t nq,
+        const double *a, const double *b, double *c, double d);
 
 
-	static void ijkl_pkiq_jpql_x(
-		size_t ni, size_t nj, size_t nk,
-		size_t nl, size_t np, size_t nq,
-		const double *a, const double *b, double *c, double d);
+    static void ijkl_pkiq_jpql_x(
+        size_t ni, size_t nj, size_t nk,
+        size_t nl, size_t np, size_t nq,
+        const double *a, const double *b, double *c, double d);
 
 
-	static void ijkl_pkiq_pjlq_x(
-		size_t ni, size_t nj, size_t nk,
-		size_t nl, size_t np, size_t nq,
-		const double *a, const double *b, double *c, double d);
+    static void ijkl_pkiq_pjlq_x(
+        size_t ni, size_t nj, size_t nk,
+        size_t nl, size_t np, size_t nq,
+        const double *a, const double *b, double *c, double d);
 
 
-	static void ijkl_pkiq_pjql_x(
-		size_t ni, size_t nj, size_t nk,
-		size_t nl, size_t np, size_t nq,
-		const double *a, const double *b, double *c, double d);
+    static void ijkl_pkiq_pjql_x(
+        size_t ni, size_t nj, size_t nk,
+        size_t nl, size_t np, size_t nq,
+        const double *a, const double *b, double *c, double d);
 
 
-	static void ijkl_pliq_jpkq_x(
-		size_t ni, size_t nj, size_t nk,
-		size_t nl, size_t np, size_t nq,
-		const double *a, const double *b, double *c, double d);
+    static void ijkl_pliq_jpkq_x(
+        size_t ni, size_t nj, size_t nk,
+        size_t nl, size_t np, size_t nq,
+        const double *a, const double *b, double *c, double d);
 
 
-	static void ijkl_pliq_jpqk_x(
-		size_t ni, size_t nj, size_t nk,
-		size_t nl, size_t np, size_t nq,
-		const double *a, const double *b, double *c, double d);
+    static void ijkl_pliq_jpqk_x(
+        size_t ni, size_t nj, size_t nk,
+        size_t nl, size_t np, size_t nq,
+        const double *a, const double *b, double *c, double d);
 
 
-	static void ijkl_pliq_pjqk_x(
-		size_t ni, size_t nj, size_t nk,
-		size_t nl, size_t np, size_t nq,
-		const double *a, const double *b, double *c, double d);
+    static void ijkl_pliq_pjqk_x(
+        size_t ni, size_t nj, size_t nk,
+        size_t nl, size_t np, size_t nq,
+        const double *a, const double *b, double *c, double d);
 
 
-	static void ijklm_ipkm_jlp_x(
-		size_t ni, size_t nj, size_t nk,
-		size_t nl, size_t nm, size_t np,
-		const double *a, const double *b, double *c, double d);
+    static void ijklm_ipkm_jlp_x(
+        size_t ni, size_t nj, size_t nk,
+        size_t nl, size_t nm, size_t np,
+        const double *a, const double *b, double *c, double d);
 
 };
 

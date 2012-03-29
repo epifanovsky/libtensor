@@ -38,13 +38,13 @@ public:
     virtual ~worker_pool();
 
 public:
-    /**	\brief Initializes the pool with the given numbers of CPUs and threads
+    /** \brief Initializes the pool with the given numbers of CPUs and threads
         \param ncpus Number of CPUs.
         \param nthreads Number of threads.
      **/
     void init(size_t ncpus, size_t nthreads);
 
-    /**	\brief Shuts down the pool and terminates all the threads
+    /** \brief Shuts down the pool and terminates all the threads
      **/
     void shutdown();
 

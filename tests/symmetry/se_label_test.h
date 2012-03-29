@@ -6,9 +6,9 @@
 
 namespace libtensor {
 
-/**	\brief Tests the libtensor::se_label class
+/** \brief Tests the libtensor::se_label class
 
-	\ingroup libtensor_tests_sym
+    \ingroup libtensor_tests_sym
  **/
 class se_label_test : public se_label_test_base {
 public:

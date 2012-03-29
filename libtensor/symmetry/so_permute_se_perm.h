@@ -8,11 +8,11 @@
 
 namespace libtensor {
 
-/**	\brief Implementation of so_permute<N, T> for se_perm<N, T>
-	\tparam N Tensor order.
-	\tparam T Tensor element type.
+/** \brief Implementation of so_permute<N, T> for se_perm<N, T>
+    \tparam N Tensor order.
+    \tparam T Tensor element type.
 
-	\ingroup libtensor_symmetry
+    \ingroup libtensor_symmetry
  **/
 template<size_t N, typename T>
 class symmetry_operation_impl< so_permute<N, T>, se_perm<N, T> > :

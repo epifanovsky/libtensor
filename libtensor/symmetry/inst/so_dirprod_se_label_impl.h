@@ -37,7 +37,7 @@ symmetry_operation_impl< so_dirprod<N, M, T>, se_label<N + M, T> >::do_perform(
     for (size_t j = 0; j < M; j++) map2[j] = map[j + N];
 
     dimensions<N + M> bidims = params.bis.get_block_index_dims();
-    //	Go over each element in the first source group
+    //  Go over each element in the first source group
     std::set<std::string> id_done;
     for (typename adapter1_t::iterator it1 = g1.begin();
             it1 != g1.end(); it1++) {

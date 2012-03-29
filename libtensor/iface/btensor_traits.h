@@ -8,8 +8,8 @@ namespace libtensor {
 
 template<typename T>
 struct btensor_traits {
-	typedef T element_t;
-	typedef allocator<T> allocator_t;
+    typedef T element_t;
+    typedef allocator<T> allocator_t;
 };
 
 

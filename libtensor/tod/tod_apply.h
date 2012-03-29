@@ -12,97 +12,97 @@
 
 namespace libtensor {
 
-/**	\brief Applies a functor to all %tensor elements and scales / permutes them
-		before, if necessary
-	\tparam N Tensor order.
+/** \brief Applies a functor to all %tensor elements and scales / permutes them
+        before, if necessary
+    \tparam N Tensor order.
 
-	This operation applies the given functor to each %tensor element, scaling
-	and permuting them before. The result can replace or be added to the
-	output %tensor.
+    This operation applies the given functor to each %tensor element, scaling
+    and permuting them before. The result can replace or be added to the
+    output %tensor.
 
-	A class to be used as functor needs to have
-	1. a proper copy constructor
-	\code
-		Functor(const Functor &f);
-	\endcode
-	2. an implementation of the function
-	\code
-		double Functor::operator()(const double &a);
-	\endcode
+    A class to be used as functor needs to have
+    1. a proper copy constructor
+    \code
+        Functor(const Functor &f);
+    \endcode
+    2. an implementation of the function
+    \code
+        double Functor::operator()(const double &a);
+    \endcode
 
-	The latter function should perform the intended operation of the functor
-	on the tensor data.
+    The latter function should perform the intended operation of the functor
+    on the tensor data.
 
-	\ingroup libtensor_tod
+    \ingroup libtensor_tod
  **/
 template<size_t N, typename Functor>
 class tod_apply :
-	public loop_list_apply<Functor>,
-	public tod_additive<N>,
-	public timings< tod_apply<N, Functor> > {
+    public loop_list_apply<Functor>,
+    public tod_additive<N>,
+    public timings< tod_apply<N, Functor> > {
 
 public:
-	static const char *k_clazz; //!< Class name
+    static const char *k_clazz; //!< Class name
 
 private:
-	dense_tensor_i<N, double> &m_ta; //!< Source %tensor
-	Functor m_fn; //!< Functor
-	permutation<N> m_perm; //!< Permutation of elements
-	double m_c; //!< Scaling coefficient
-	dimensions<N> m_dimsb; //!< Dimensions of output %tensor
+    dense_tensor_i<N, double> &m_ta; //!< Source %tensor
+    Functor m_fn; //!< Functor
+    permutation<N> m_perm; //!< Permutation of elements
+    double m_c; //!< Scaling coefficient
+    dimensions<N> m_dimsb; //!< Dimensions of output %tensor
 
 public:
-	//!	\name Construction and destruction
-	//@{
+    //!    \name Construction and destruction
+    //@{
 
-	/**	\brief Prepares the copy operation
-		\param ta Source %tensor.
-		\param c Coefficient.
-	 **/
-	tod_apply(dense_tensor_i<N, double> &ta, const Functor &fn, double c = 1.0);
+    /** \brief Prepares the copy operation
+        \param ta Source %tensor.
+        \param c Coefficient.
+     **/
+    tod_apply(dense_tensor_i<N, double> &ta, const Functor &fn, double c = 1.0);
 
-	/**	\brief Prepares the permute & copy operation
-		\param ta Source %tensor.
-		\param p Permutation of %tensor elements.
-		\param c Coefficient.
-	 **/
-	tod_apply(dense_tensor_i<N, double> &ta, const Functor &fn,
-			const permutation<N> &p, double c = 1.0);
+    /** \brief Prepares the permute & copy operation
+        \param ta Source %tensor.
+        \param p Permutation of %tensor elements.
+        \param c Coefficient.
+     **/
+    tod_apply(dense_tensor_i<N, double> &ta, const Functor &fn,
+            const permutation<N> &p, double c = 1.0);
 
-	/**	\brief Virtual destructor
-	 **/
-	virtual ~tod_apply() { }
+    /** \brief Virtual destructor
+     **/
+    virtual ~tod_apply() { }
 
-	//@}
+    //@}
 
 
-	//!	\name Implementation of libtensor::tod_additive<N>
-	//@{
+    //!    \name Implementation of libtensor::tod_additive<N>
+    //@{
 
-	virtual void prefetch();
+    virtual void prefetch();
 
     virtual void perform(cpu_pool &cpus, bool zero, double c,
         dense_tensor_i<N, double> &t);
 
-	void perform(cpu_pool &cpus, dense_tensor_i<N, double> &t);
-	void perform(cpu_pool &cpus, dense_tensor_i<N, double> &t, double c);
+    void perform(cpu_pool &cpus, dense_tensor_i<N, double> &t);
+    void perform(cpu_pool &cpus, dense_tensor_i<N, double> &t, double c);
 
-	//@}
+    //@}
 
 private:
-	/**	\brief Creates the dimensions of the output using an input
-			%tensor and a permutation of indexes
-	 **/
-	static dimensions<N> mk_dimsb(dense_tensor_i<N, double> &ta,
-		const permutation<N> &perm);
+    /** \brief Creates the dimensions of the output using an input
+            %tensor and a permutation of indexes
+     **/
+    static dimensions<N> mk_dimsb(dense_tensor_i<N, double> &ta,
+        const permutation<N> &perm);
 
-	void do_perform(dense_tensor_i<N, double> &t, double c, bool do_add);
+    void do_perform(dense_tensor_i<N, double> &t, double c, bool do_add);
 
-	void build_loop(typename loop_list_apply<Functor>::list_t &loop,
-			const dimensions<N> &dimsa, const permutation<N> &perma,
-			const dimensions<N> &dimsb);
+    void build_loop(typename loop_list_apply<Functor>::list_t &loop,
+            const dimensions<N> &dimsa, const permutation<N> &perma,
+            const dimensions<N> &dimsb);
 
-	double apply(const double &x) { return m_fn(x); }
+    double apply(const double &x) { return m_fn(x); }
 
 };
 
@@ -113,16 +113,16 @@ const char *tod_apply<N, Functor>::k_clazz = "tod_apply<N, Functor>";
 
 template<size_t N, typename Functor>
 tod_apply<N, Functor>::tod_apply(dense_tensor_i<N, double> &ta,
-		const Functor &fn, double c) :
-	m_ta(ta), m_fn(fn), m_c(c), m_dimsb(mk_dimsb(m_ta, m_perm)) {
+        const Functor &fn, double c) :
+    m_ta(ta), m_fn(fn), m_c(c), m_dimsb(mk_dimsb(m_ta, m_perm)) {
 
 }
 
 
 template<size_t N, typename Functor>
 tod_apply<N, Functor>::tod_apply(dense_tensor_i<N, double> &ta, const Functor &fn,
-		const permutation<N> &p, double c) :
-	m_ta(ta), m_fn(fn), m_perm(p), m_c(c), m_dimsb(mk_dimsb(ta, p)) {
+        const permutation<N> &p, double c) :
+    m_ta(ta), m_fn(fn), m_perm(p), m_c(c), m_dimsb(mk_dimsb(ta, p)) {
 
 }
 
@@ -130,7 +130,7 @@ tod_apply<N, Functor>::tod_apply(dense_tensor_i<N, double> &ta, const Functor &f
 template<size_t N, typename Functor>
 void tod_apply<N, Functor>::prefetch() {
 
-	dense_tensor_ctrl<N, double>(m_ta).req_prefetch();
+    dense_tensor_ctrl<N, double>(m_ta).req_prefetch();
 }
 
 
@@ -207,50 +207,50 @@ void tod_apply<N, Functor>::perform(cpu_pool &cpus, dense_tensor_i<N, double> &t
 
 template<size_t N, typename Functor>
 dimensions<N> tod_apply<N, Functor>::mk_dimsb(
-		dense_tensor_i<N, double> &ta, const permutation<N> &perm) {
+        dense_tensor_i<N, double> &ta, const permutation<N> &perm) {
 
-	dimensions<N> dims(ta.get_dims());
-	dims.permute(perm);
-	return dims;
+    dimensions<N> dims(ta.get_dims());
+    dims.permute(perm);
+    return dims;
 }
 
 
 template<size_t N, typename Functor>
 void tod_apply<N, Functor>::do_perform(
-		dense_tensor_i<N, double> &tb, double c, bool do_add) {
+        dense_tensor_i<N, double> &tb, double c, bool do_add) {
 
 }
 
 
 template<size_t N, typename Functor>
 void tod_apply<N, Functor>::build_loop(
-	typename loop_list_apply<Functor>::list_t &loop,
-	const dimensions<N> &dimsa, const permutation<N> &perma,
-	const dimensions<N> &dimsb) {
+    typename loop_list_apply<Functor>::list_t &loop,
+    const dimensions<N> &dimsa, const permutation<N> &perma,
+    const dimensions<N> &dimsb) {
 
-	typedef typename loop_list_apply<Functor>::iterator_t iterator_t;
-	typedef typename loop_list_apply<Functor>::node node_t;
+    typedef typename loop_list_apply<Functor>::iterator_t iterator_t;
+    typedef typename loop_list_apply<Functor>::node node_t;
 
-	sequence<N, size_t> map;
-	for(register size_t i = 0; i < N; i++) map[i] = i;
-	perma.apply(map);
+    sequence<N, size_t> map;
+    for(register size_t i = 0; i < N; i++) map[i] = i;
+    perma.apply(map);
 
-	//
-	//	Go over indexes in B and connect them with indexes in A
-	//	trying to glue together consecutive indexes
-	//
-	for(size_t idxb = 0; idxb < N;) {
-		size_t len = 1;
-		size_t idxa = map[idxb];
-		do {
-			len *= dimsa.get_dim(idxa);
-			idxa++; idxb++;
-		} while(idxb < N && map[idxb] == idxa);
+    //
+    //  Go over indexes in B and connect them with indexes in A
+    //  trying to glue together consecutive indexes
+    //
+    for(size_t idxb = 0; idxb < N;) {
+        size_t len = 1;
+        size_t idxa = map[idxb];
+        do {
+            len *= dimsa.get_dim(idxa);
+            idxa++; idxb++;
+        } while(idxb < N && map[idxb] == idxa);
 
-		iterator_t inode = loop.insert(loop.end(), node_t(len));
-		inode->stepa(0) = dimsa.get_increment(idxa - 1);
-		inode->stepb(0) = dimsb.get_increment(idxb - 1);
-	}
+        iterator_t inode = loop.insert(loop.end(), node_t(len));
+        inode->stepa(0) = dimsa.get_increment(idxa - 1);
+        inode->stepb(0) = dimsb.get_increment(idxb - 1);
+    }
 }
 
 

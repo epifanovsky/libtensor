@@ -16,7 +16,7 @@
 namespace libtensor {
 
 
-/**	\brief Creates a schedule for the blockwise addition of two block
+/** \brief Creates a schedule for the blockwise addition of two block
             tensors
         \tparam N Tensor order.
 
@@ -65,16 +65,16 @@ private:
     book_t m_booka, m_posta;
 
 public:
-    /**	\brief Initializes the algorithm
+    /** \brief Initializes the algorithm
      **/
     addition_schedule(const symmetry<N, T> &syma,
             const symmetry<N, T> &symb);
 
-    /**	\brief Destructor
+    /** \brief Destructor
      **/
     ~addition_schedule();
 
-    /**	\brief Runs the algorithm
+    /** \brief Runs the algorithm
      **/
     void build(const assignment_schedule<N, T> &asch,
             block_tensor_ctrl<N, T> &ctrlb);
@@ -92,21 +92,21 @@ public:
     }
 
 private:
-    /**	\brief Removes all elements from the schedule
+    /** \brief Removes all elements from the schedule
      **/
     void clean_schedule() throw();
 
-    /**	\brief Puts 2 in the positions corresponding to canonical
+    /** \brief Puts 2 in the positions corresponding to canonical
                 indexes and 1 for non-canonical indexes
      **/
     void mark_orbits(const symmetry<N, T> &sym, std::vector<char> &o);
 
-    /**	\brief Recursive part of mark_orbits()
+    /** \brief Recursive part of mark_orbits()
      **/
     bool mark_orbit(const symmetry<N, T> &sym, const abs_index<N> &aci,
             std::vector<char> &o);
 
-    /**	\brief Returns the canonical %index and a transformation
+    /** \brief Returns the canonical %index and a transformation
                 to a given %index
      **/
     size_t find_canonical(const dimensions<N> &bidims,
@@ -382,13 +382,13 @@ void addition_schedule<N, T>::process_orbit_in_a(const dimensions<N> &bidims,
             acia.get_abs_index() == aia.get_abs_index() ? 2 : 1;
 
     //
-    //	Index in B and C that corresponds to the index in A
+    //  Index in B and C that corresponds to the index in A
     //
     index<N> ib(aia.get_index());
     abs_index<N> aib(ib, bidims);
 
     //
-    //	Skip all unallowed and non-canonical blocks in C
+    //  Skip all unallowed and non-canonical blocks in C
     //
     if(omc[aib.get_abs_index()] == 2) {
 
@@ -427,7 +427,7 @@ void addition_schedule<N, T>::process_orbit_in_a(const dimensions<N> &bidims,
     }
 
     //
-    //	Continue exploring the orbit recursively
+    //  Continue exploring the orbit recursively
     //
     iterate_sym_elements_in_a(bidims, zeroa, ctrlb, acia, aia, tra, oa, ob,
             omb, omc, grp);
@@ -479,13 +479,13 @@ void addition_schedule<N, T>::process_orbit_in_b(const dimensions<N> &bidims,
             acib.get_abs_index() == aib.get_abs_index() ? 2 : 1;
 
     //
-    //	Index in A and C that corresponds to the index in B
+    //  Index in A and C that corresponds to the index in B
     //
     index<N> ia(aib.get_index());
     abs_index<N> aia(ia, bidims);
 
     //
-    //	Skip all non-canonical blocks in C
+    //  Skip all non-canonical blocks in C
     //
     if(omc[aia.get_abs_index()] == 2) {
 
@@ -518,7 +518,7 @@ void addition_schedule<N, T>::process_orbit_in_b(const dimensions<N> &bidims,
     }
 
     //
-    //	Continue exploring the orbit recursively
+    //  Continue exploring the orbit recursively
     //
     iterate_sym_elements_in_b(bidims, zeroa, acib, aib, trb, oa, ob, omb,
             omc, grp);

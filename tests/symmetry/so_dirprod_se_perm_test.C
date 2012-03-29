@@ -24,7 +24,7 @@ void so_dirprod_se_perm_test::perform() throw(libtest::test_exception) {
 }
 
 
-/**	\test Tests that the direct product of two empty group yields an empty
+/** \test Tests that the direct product of two empty group yields an empty
         group of a higher order
  **/
 void so_dirprod_se_perm_test::test_empty_1() throw(libtest::test_exception) {
@@ -70,9 +70,9 @@ void so_dirprod_se_perm_test::test_empty_1() throw(libtest::test_exception) {
 }
 
 
-/**	\test Direct product of a group with one element [012->120](+) and an empty
+/** \test Direct product of a group with one element [012->120](+) and an empty
         group (2-space) forming a 5-space. The result is expected to contain
-		a single element.
+        a single element.
  **/
 void so_dirprod_se_perm_test::test_empty_2(
         bool perm) throw(libtest::test_exception) {
@@ -148,7 +148,7 @@ void so_dirprod_se_perm_test::test_empty_2(
     }
 }
 
-/**	\test Direct product of an empty group (2-space) and a group with one
+/** \test Direct product of an empty group (2-space) and a group with one
         element [012->201](-) forming a 5-space. The result is expected to
         contain a single element.
  **/

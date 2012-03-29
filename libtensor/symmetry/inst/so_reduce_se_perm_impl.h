@@ -21,7 +21,7 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_perm<N - M, T> >::do_perform(
     static const char *method =
             "do_perform(symmetry_operation_params_t&)";
 
-    //	Adapter type for the input group
+    //  Adapter type for the input group
     typedef symmetry_element_set_adapter<k_order1, T, el1_t> adapter_t;
 
     adapter_t adapter1(params.grp1);

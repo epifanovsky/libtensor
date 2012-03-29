@@ -14,29 +14,29 @@ template<size_t N, typename T>
 class symmetry_operation_params< so_apply<N, T> >;
 
 
-/**	\brief Computes the %symmetry of a tensor subjected to some functor
-	\tparam N Symmetry cardinality (%tensor order).
-	\tparam T Tensor element type.
+/** \brief Computes the %symmetry of a tensor subjected to some functor
+    \tparam N Symmetry cardinality (%tensor order).
+    \tparam T Tensor element type.
 
-	The symmetry operation computes the symmetry of a tensor \f$ T \f$ whose
-	elements have been subjected to a function \f$ f(x) \f$:
-	\f[
-	    T'_{ij...} = f\left(T_{ij...}\right)
-	\f]
-	To perform this task the operation requires two types of information
-	about the function:
-	- if the function maps 0 onto 0 (i.e. if elements which were zero due to
-	  symmetry stay zero
-	- if a scalar transformation \f$ \hat{S} \f$ on the tensor elements
-	  results in a scalar transformation \f$ \hat{S}' \f$ of the elements of
-	  the result tensor (i.e. if
-	  \f$ f\left(\hat{S} x\right) = \hat{S}' f(x) \f$).
+    The symmetry operation computes the symmetry of a tensor \f$ T \f$ whose
+    elements have been subjected to a function \f$ f(x) \f$:
+    \f[
+        T'_{ij...} = f\left(T_{ij...}\right)
+    \f]
+    To perform this task the operation requires two types of information
+    about the function:
+    - if the function maps 0 onto 0 (i.e. if elements which were zero due to
+      symmetry stay zero
+    - if a scalar transformation \f$ \hat{S} \f$ on the tensor elements
+      results in a scalar transformation \f$ \hat{S}' \f$ of the elements of
+      the result tensor (i.e. if
+      \f$ f\left(\hat{S} x\right) = \hat{S}' f(x) \f$).
 
-	If the scalar transformation \f$ \hat{S} \f$ is the identity transformation
-	the function is assumed to be asymmetric.
+    If the scalar transformation \f$ \hat{S} \f$ is the identity transformation
+    the function is assumed to be asymmetric.
 
 
-	\ingroup libtensor_symmetry
+    \ingroup libtensor_symmetry
  **/
 template<size_t N, typename T>
 class so_apply : public symmetry_operation_base< so_apply<N, T> > {
@@ -52,12 +52,12 @@ private:
     bool m_keep_zero; //!< Functor maps 0 to 0
 
 public:
-    /**	\brief Initializes the operation
-		\param sym %Symmetry container (A).
-		\param perm Permutation of the %tensor.
-		\param is_asym Functor is asymmetric.
-		\param sign Functor is symmetric or anti-symmetric
-			(ignored if is_asym is true).
+    /** \brief Initializes the operation
+        \param sym %Symmetry container (A).
+        \param perm Permutation of the %tensor.
+        \param is_asym Functor is asymmetric.
+        \param sign Functor is symmetric or anti-symmetric
+            (ignored if is_asym is true).
      **/
     so_apply(const symmetry<N, T> &sym1, const permutation<N> &perm1,
             const scalar_transf<T> &s1, const scalar_transf<T> &s2,
@@ -66,8 +66,8 @@ public:
                 m_s1(s1), m_s2(s2)
     { }
 
-    /**	\brief Performs the operation
-		\param sym Destination %symmetry container.
+    /** \brief Performs the operation
+        \param sym Destination %symmetry container.
      **/
     void perform(symmetry<N, T> &sym);
 

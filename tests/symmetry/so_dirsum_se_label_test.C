@@ -31,7 +31,7 @@ void so_dirsum_se_label_test::perform() throw(libtest::test_exception) {
 }
 
 
-/**	\test Tests that the direct sum of two empty group yields an empty
+/** \test Tests that the direct sum of two empty group yields an empty
         group of a higher order
  **/
 void so_dirsum_se_label_test::test_empty_1(
@@ -73,7 +73,7 @@ void so_dirsum_se_label_test::test_empty_1(
 }
 
 
-/**	\test Direct sum of a group with Au symmetry in 2-space and an empty
+/** \test Direct sum of a group with Au symmetry in 2-space and an empty
         group (1-space) forming a 3-space.
  **/
 void so_dirsum_se_label_test::test_empty_2(const std::string &table_id,
@@ -143,7 +143,7 @@ void so_dirsum_se_label_test::test_empty_2(const std::string &table_id,
     check_allowed(tns.c_str(), "elemc", elemc, rx);
 }
 
-/**	\test Direct sum of an empty group (1-space) and a group with Au symmetry
+/** \test Direct sum of an empty group (1-space) and a group with Au symmetry
         in 2-space forming a 3-space.
  **/
 void so_dirsum_se_label_test::test_empty_3(const std::string &table_id,

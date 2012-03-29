@@ -5,23 +5,23 @@
 
 namespace libtensor {
 
-/**	\brief Tests the libtensor::so_reduce_se_label class
+/** \brief Tests the libtensor::so_reduce_se_label class
 
-	\ingroup libtensor_tests_sym
+    \ingroup libtensor_tests_sym
  **/
 class so_reduce_se_label_test : public se_label_test_base {
 public:
-	virtual void perform() throw(libtest::test_exception);
+    virtual void perform() throw(libtest::test_exception);
 
 private:
-	void test_empty_1(
-	        const std::string &table_id) throw(libtest::test_exception);
+    void test_empty_1(
+            const std::string &table_id) throw(libtest::test_exception);
     void test_empty_2(
             const std::string &table_id) throw(libtest::test_exception);
-	void test_nm1_1(
-	        const std::string &table_id) throw(libtest::test_exception);
-	void test_nm1_2(const std::string &table_id,
-	        bool product) throw(libtest::test_exception);
+    void test_nm1_1(
+            const std::string &table_id) throw(libtest::test_exception);
+    void test_nm1_2(const std::string &table_id,
+            bool product) throw(libtest::test_exception);
     void test_nmk_1(
             const std::string &table_id) throw(libtest::test_exception);
     void test_nmk_2(const std::string &table_id,

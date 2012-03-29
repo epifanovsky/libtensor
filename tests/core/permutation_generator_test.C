@@ -13,7 +13,7 @@ void permutation_generator_test::perform() throw(libtest::test_exception) {
 }
 
 
-/**	\test Tests the generation of permutations
+/** \test Tests the generation of permutations
  **/
 void permutation_generator_test::test_1() throw(libtest::test_exception) {
 

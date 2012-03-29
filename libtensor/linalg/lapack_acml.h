@@ -8,7 +8,7 @@
 namespace libtensor {
 
 
-/**	\brief LAPACK function dgesv (ACML)
+/** \brief LAPACK function dgesv (ACML)
 
     \ingroup libtensor_linalg
  **/
@@ -21,7 +21,7 @@ inline int lapack_dgesv(size_t n, size_t nrhs, double *a, size_t lda, int *ipiv,
 }
 
 
-/**	\brief LAPACK function dgesvd (ACML)
+/** \brief LAPACK function dgesvd (ACML)
 
     \ingroup libtensor_linalg
  **/
@@ -50,7 +50,7 @@ inline int lapack_zgesvd(char jobu, char jobvt, size_t m, size_t n,
 }
 
 
-/**	\brief LAPACK function dsyev (ACML)
+/** \brief LAPACK function dsyev (ACML)
 
     \ingroup libtensor_linalg
  **/
@@ -63,7 +63,7 @@ inline int lapack_dsyev(char jobz, char uplo, size_t n, double *a, size_t lda,
 }
 
 
-/**	\brief LAPACK function dgeev (ACML)
+/** \brief LAPACK function dgeev (ACML)
 
     \ingroup libtensor_linalg
  **/

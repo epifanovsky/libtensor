@@ -15,25 +15,25 @@ const char *tod_ewmult2<N, M, K>::k_clazz = "tod_ewmult2<N, M, K>";
 
 template<size_t N, size_t M, size_t K>
 tod_ewmult2<N, M, K>::tod_ewmult2(dense_tensor_i<k_ordera, double> &ta,
-	dense_tensor_i<k_orderb, double> &tb, double d) :
+    dense_tensor_i<k_orderb, double> &tb, double d) :
 
-	m_ta(ta), m_tb(tb), m_d(d),
-	m_dimsc(make_dimsc(ta.get_dims(), permutation<k_ordera>(),
-		tb.get_dims(), permutation<k_orderb>(),
-		permutation<k_orderc>())) {
+    m_ta(ta), m_tb(tb), m_d(d),
+    m_dimsc(make_dimsc(ta.get_dims(), permutation<k_ordera>(),
+        tb.get_dims(), permutation<k_orderb>(),
+        permutation<k_orderc>())) {
 
 }
 
 
 template<size_t N, size_t M, size_t K>
 tod_ewmult2<N, M, K>::tod_ewmult2(dense_tensor_i<k_ordera, double> &ta,
-	const permutation<k_ordera> &perma, dense_tensor_i<k_orderb, double> &tb,
-	const permutation<k_orderb> &permb, const permutation<k_orderc> &permc,
-	double d) :
+    const permutation<k_ordera> &perma, dense_tensor_i<k_orderb, double> &tb,
+    const permutation<k_orderb> &permb, const permutation<k_orderc> &permc,
+    double d) :
 
-	m_ta(ta), m_perma(perma), m_tb(tb), m_permb(permb), m_permc(permc),
-	m_d(d),
-	m_dimsc(make_dimsc(ta.get_dims(), perma, tb.get_dims(), permb, permc)) {
+    m_ta(ta), m_perma(perma), m_tb(tb), m_permb(permb), m_permc(permc),
+    m_d(d),
+    m_dimsc(make_dimsc(ta.get_dims(), perma, tb.get_dims(), permb, permc)) {
 
 }
 
@@ -165,36 +165,36 @@ void tod_ewmult2<N, M, K>::perform(cpu_pool &cpus, dense_tensor_i<k_orderc, doub
 template<size_t N, size_t M, size_t K>
 void tod_ewmult2<N, M, K>::perform(cpu_pool &cpus, dense_tensor_i<k_orderc, double> &tc, double d) {
 
-	perform(cpus, false, d, tc);
+    perform(cpus, false, d, tc);
 }
 
 
 template<size_t N, size_t M, size_t K>
 dimensions<N + M + K> tod_ewmult2<N, M, K>::make_dimsc(
-	const dimensions<k_ordera> &dimsa, const permutation<k_ordera> &perma,
-	const dimensions<k_orderb> &dimsb, const permutation<k_orderb> &permb,
-	const permutation<k_orderc> &permc) {
+    const dimensions<k_ordera> &dimsa, const permutation<k_ordera> &perma,
+    const dimensions<k_orderb> &dimsb, const permutation<k_orderb> &permb,
+    const permutation<k_orderc> &permc) {
 
-	static const char *method = "make_dimsc()";
+    static const char *method = "make_dimsc()";
 
-	dimensions<k_ordera> dimsa1(dimsa);
-	dimsa1.permute(perma);
-	dimensions<k_orderb> dimsb1(dimsb);
-	dimsb1.permute(permb);
+    dimensions<k_ordera> dimsa1(dimsa);
+    dimsa1.permute(perma);
+    dimensions<k_orderb> dimsb1(dimsb);
+    dimsb1.permute(permb);
 
-	index<k_orderc> i1, i2;
-	for(size_t i = 0; i < N; i++) i2[i] = dimsa1[i] - 1;
-	for(size_t i = 0; i < M; i++) i2[N + i] = dimsb1[i] - 1;
-	for(size_t i = 0; i < K; i++) {
-		if(dimsa1[N + i] != dimsb1[M + i]) {
-			throw bad_dimensions(g_ns, k_clazz, method,
-				__FILE__, __LINE__, "ta,tb");
-		}
-		i2[N + M + i] = dimsa1[N + i] - 1;
-	}
-	dimensions<k_orderc> dimsc(index_range<k_orderc>(i1, i2));
-	dimsc.permute(permc);
-	return dimsc;
+    index<k_orderc> i1, i2;
+    for(size_t i = 0; i < N; i++) i2[i] = dimsa1[i] - 1;
+    for(size_t i = 0; i < M; i++) i2[N + i] = dimsb1[i] - 1;
+    for(size_t i = 0; i < K; i++) {
+        if(dimsa1[N + i] != dimsb1[M + i]) {
+            throw bad_dimensions(g_ns, k_clazz, method,
+                __FILE__, __LINE__, "ta,tb");
+        }
+        i2[N + M + i] = dimsa1[N + i] - 1;
+    }
+    dimensions<k_orderc> dimsc(index_range<k_orderc>(i1, i2));
+    dimsc.permute(permc);
+    return dimsc;
 }
 
 

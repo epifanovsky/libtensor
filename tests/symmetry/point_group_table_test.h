@@ -6,9 +6,9 @@
 namespace libtensor {
 
 
-/**	\brief Tests the libtensor::point_group_table class
+/** \brief Tests the libtensor::point_group_table class
 
-	\ingroup libtensor_tests_sym
+    \ingroup libtensor_tests_sym
  **/
 class point_group_table_test : public libtest::unit_test {
 public:

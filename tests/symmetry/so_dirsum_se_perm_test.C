@@ -24,7 +24,7 @@ void so_dirsum_se_perm_test::perform() throw(libtest::test_exception) {
 }
 
 
-/**	\test Tests that the direct sum of two empty group yields an empty
+/** \test Tests that the direct sum of two empty group yields an empty
         group of a higher order.
  **/
 void so_dirsum_se_perm_test::test_empty_1() throw(libtest::test_exception) {
@@ -69,7 +69,7 @@ void so_dirsum_se_perm_test::test_empty_1() throw(libtest::test_exception) {
     }
 }
 
-/**	\test Direct sum of a group with one element [012->120](+/-) and an
+/** \test Direct sum of a group with one element [012->120](+/-) and an
         empty group (2-space) forming a 5-space. Expected is a group
         containing a single element (+) or an empty group (-).
  **/
@@ -138,7 +138,7 @@ void so_dirsum_se_perm_test::test_empty_2(
     }
 }
 
-/**	\test Direct product of an empty group (2-space) and a group with one
+/** \test Direct product of an empty group (2-space) and a group with one
         element [012->201](+/-) forming a 5-space. Expected is a group
         containing a single element (+) or an empty group (-).
  **/

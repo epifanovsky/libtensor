@@ -145,37 +145,37 @@ private:
     std::vector<size_t> m_session_ptrcount; //!< Per-session data pointer counts
 
 public:
-    //!	\name Construction and destruction
+    //!    \name Construction and destruction
     //@{
 
-    /**	\brief Creates an empty %tensor
+    /** \brief Creates an empty %tensor
         \param dims Non-zero %tensor dimensions.
      **/
     dense_tensor(const dimensions<N> &dims);
 
-    /**	\brief Creates an empty %tensor with the same %dimensions
+    /** \brief Creates an empty %tensor with the same %dimensions
             (data are not copied)
         \param t Another %tensor (dense_tensor_i<N, T>).
      **/
     dense_tensor(const dense_tensor_i<N, T> &t);
 
-    /**	\brief Creates an empty %tensor with the same %dimensions
+    /** \brief Creates an empty %tensor with the same %dimensions
         (data are not copied)
         \param t Another %tensor (tensor<N, T, Alloc).
      **/
     dense_tensor(const dense_tensor<N, T, Alloc> &t);
 
-    /**	\brief Virtual destructor
+    /** \brief Virtual destructor
      **/
     virtual ~dense_tensor();
 
     //@}
 
 
-    //!	\name Implementation of libtensor::dense_tensor_i<N, T>
+    //!    \name Implementation of libtensor::dense_tensor_i<N, T>
     //@{
 
-    /**	\brief Returns the %dimensions of the %tensor
+    /** \brief Returns the %dimensions of the %tensor
 
         Returns the %dimensions of the %tensor.
      **/
@@ -184,7 +184,7 @@ public:
     //@}
 
 protected:
-    //!	\name Implementation of libtensor::dense_tensor_i<N, T>
+    //!    \name Implementation of libtensor::dense_tensor_i<N, T>
     //@{
 
     virtual handle_t on_req_open_session();
@@ -198,7 +198,7 @@ protected:
 
     //@}
 
-    //!	\name Implementation of libtensor::immutable
+    //!    \name Implementation of libtensor::immutable
     //@{
 
     virtual void on_set_immutable() {
@@ -207,10 +207,10 @@ protected:
 
     //@}
 
-    //!	\name Service functions
+    //!    \name Service functions
     //@{
 
-    /**	\brief Verifies that the session identified by a handler
+    /** \brief Verifies that the session identified by a handler
             exists and is open
         \param h Session handler.
         \throw bad_parameter If the handler is invalid or the session

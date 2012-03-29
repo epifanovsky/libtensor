@@ -6,9 +6,9 @@
 namespace libtensor {
 
 
-/**	\brief Tests the class libtensor::combine_part
+/** \brief Tests the class libtensor::combine_part
 
-	\ingroup libtensor_tests_sym
+    \ingroup libtensor_tests_sym
  **/
 class combine_part_test : public libtest::unit_test {
 public:

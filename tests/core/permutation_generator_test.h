@@ -6,9 +6,9 @@
 namespace libtensor {
 
 
-/**	\brief Tests the libtensor::permutation_generator class
+/** \brief Tests the libtensor::permutation_generator class
 
-	\ingroup libtensor_tests_sym
+    \ingroup libtensor_tests_sym
  **/
 class permutation_generator_test : public libtest::unit_test {
 public:

@@ -10,11 +10,11 @@
 namespace libtensor {
 
 
-/**	\brief Implementation of so_reduce<N, T> for se_part<N, T>
-	\tparam N Tensor order.
-	\tparam T Tensor element type.
+/** \brief Implementation of so_reduce<N, T> for se_part<N, T>
+    \tparam N Tensor order.
+    \tparam T Tensor element type.
 
-	\ingroup libtensor_symmetry
+    \ingroup libtensor_symmetry
  **/
 template<size_t N, size_t M, typename T>
 class symmetry_operation_impl< so_reduce<N, M, T>, se_part<N - M, T> > :

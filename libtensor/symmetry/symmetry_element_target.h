@@ -11,8 +11,8 @@ namespace libtensor {
 template<size_t N, typename T>
 class symmetry_element_target_base : public symmetry_element_target_i<N, T> {
 public:
-    //!	\name Implementation of
-    //!		libtensor::symmetry_element_target_i<N, T>
+    //!    \name Implementation of
+    //!        libtensor::symmetry_element_target_i<N, T>
     //@{
     virtual void accept_default(const symmetry_element_i<N, T> &elem)
     throw(exception) { };

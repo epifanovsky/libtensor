@@ -328,7 +328,7 @@ void se_part<N, T>::permute(const permutation<N> &perm) {
         }
 
         delete [] fmap; fmap = 0;
-        delete [] rmap;	rmap = 0;
+        delete [] rmap;    rmap = 0;
         delete [] ftr; ftr = 0;
     }
 }
@@ -345,7 +345,7 @@ void se_part<N, T>::apply(index<N> &idx, tensor_transf<N, T> &tr) const {
 
     static const char *method = "apply(index<N> &, tensor_transf<N, T> &)";
 
-    //	Determine partition index and offset within partition
+    //  Determine partition index and offset within partition
     //
     index<N> pidx, poff;
     for(register size_t i = 0; i < N; i++) {
@@ -359,7 +359,7 @@ void se_part<N, T>::apply(index<N> &idx, tensor_transf<N, T> &tr) const {
         }
     }
 
-    //	Map the partition index
+    //  Map the partition index
     //
     abs_index<N> apidx(pidx, m_pdims);
     if (m_fmap[apidx.get_abs_index()] == (size_t) -1) return;
@@ -367,7 +367,7 @@ void se_part<N, T>::apply(index<N> &idx, tensor_transf<N, T> &tr) const {
     abs_index<N> apidx_mapped(m_fmap[apidx.get_abs_index()], m_pdims);
     pidx = apidx_mapped.get_index();
 
-    //	Construct a mapped block index
+    //  Construct a mapped block index
     //
     for(register size_t i = 0; i < N; i++) {
         register size_t n = m_bidims[i] / m_pdims[i];
@@ -399,7 +399,7 @@ dimensions<N> se_part<N, T>::make_pdims(const block_index_space<N> &bis,
         }
     }
 
-    //	Make sure the partitioning is not trivial
+    //  Make sure the partitioning is not trivial
     //
     if(m == 0) {
         throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__, "msk");

@@ -5,16 +5,16 @@
 
 namespace libtensor {
 
-/**	\brief Tests the libtensor::tod_set_elem class
+/** \brief Tests the libtensor::tod_set_elem class
 
-	\ingroup libtensor_tests_tod
+    \ingroup libtensor_tests_tod
 **/
 class tod_set_elem_test : public libtest::unit_test {
 public:
-	virtual void perform() throw(libtest::test_exception);
+    virtual void perform() throw(libtest::test_exception);
 
 private:
-	void test_1() throw(libtest::test_exception);
+    void test_1() throw(libtest::test_exception);
 };
 
 } // namespace libtensor

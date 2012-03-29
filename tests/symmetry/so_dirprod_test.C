@@ -27,7 +27,7 @@ void so_dirprod_test::perform() throw(libtest::test_exception) {
 }
 
 
-/**	\test Direct product of empty symmetry in 2-space and empty symmetry in
+/** \test Direct product of empty symmetry in 2-space and empty symmetry in
         1-space to form a 3-space. Expects empty symmetry in 3-space.
  **/
 void so_dirprod_test::test_empty_1() throw(libtest::test_exception) {
@@ -168,8 +168,8 @@ void so_dirprod_test::test_empty_3(bool s) throw(libtest::test_exception) {
 
 }
 
-/**	\test Direct product of two S2 symmetries in 2-space forming a 4-space.
-		Expects S2 * S2 in 4-space.
+/** \test Direct product of two S2 symmetries in 2-space forming a 4-space.
+        Expects S2 * S2 in 4-space.
  **/
 void so_dirprod_test::test_se_1(
         bool s1, bool s2) throw(libtest::test_exception) {
@@ -225,7 +225,7 @@ void so_dirprod_test::test_se_1(
 }
 
 
-/**	\test Direct product of a partition symmetry in 2-space and a partition
+/** \test Direct product of a partition symmetry in 2-space and a partition
         symmetry in 3-space to from a 5-space.
  **/
 void so_dirprod_test::test_se_2(
@@ -346,7 +346,7 @@ void so_dirprod_test::test_se_2(
 }
 
 
-/**	\test Direct product of a label symmetry in 2-space and a label symmetry
+/** \test Direct product of a label symmetry in 2-space and a label symmetry
         in 3-space to form a 5-space
  **/
 void so_dirprod_test::test_se_3() throw(libtest::test_exception) {
@@ -376,7 +376,7 @@ void so_dirprod_test::test_se_4() throw(libtest::test_exception) {
 
 }
 
-/**	\test Direct product of a symmetry in 2-space and a symmetry in 3-space
+/** \test Direct product of a symmetry in 2-space and a symmetry in 3-space
         form a 5-space with a permutation [01234->03214].
  **/
 void so_dirprod_test::test_perm_1(

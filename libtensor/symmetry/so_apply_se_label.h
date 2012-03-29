@@ -8,14 +8,14 @@
 
 namespace libtensor {
 
-/**	\brief Implementation of so_apply<N, T> for se_label<N, T>
-	\tparam N Tensor order.
-	\tparam T Tensor element type.
+/** \brief Implementation of so_apply<N, T> for se_label<N, T>
+    \tparam N Tensor order.
+    \tparam T Tensor element type.
 
-	The current implementation of so_apply<N, T> for se_label<N, T> permutes
-	every symmetry element if necessary.
+    The current implementation of so_apply<N, T> for se_label<N, T> permutes
+    every symmetry element if necessary.
 
-	\ingroup libtensor_symmetry
+    \ingroup libtensor_symmetry
  **/
 template<size_t N, typename T>
 class symmetry_operation_impl< so_apply<N, T>, se_label<N, T> > :

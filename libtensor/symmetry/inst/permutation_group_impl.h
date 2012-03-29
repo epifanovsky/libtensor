@@ -115,23 +115,23 @@ void permutation_group<N, T>::project_down(const mask<N> &msk,
 
     for(size_t i = 0; i < N; i++) {
         if(msk[i]) continue;
-        //		std::cout << "genset before branching of " << i << ": <";
-        //		for (typename perm_list_t::const_iterator pi = p1->begin();
-        //				pi != p1->end(); pi++)
-        //			std::cout << " " << *pi;
-        //		std::cout << ">" << std::endl;
+        //      std::cout << "genset before branching of " << i << ": <";
+        //      for (typename perm_list_t::const_iterator pi = p1->begin();
+        //              pi != p1->end(); pi++)
+        //          std::cout << " " << *pi;
+        //      std::cout << ">" << std::endl;
         br.reset();
         make_branching(br, i, *p1, *p2);
         std::swap(p1, p2);
         p2->clear();
     }
-    //	std::cout << "genset1: <";
-    //	for(typename perm_list_t::const_iterator pi = p1->begin();
-    //		pi != p1->end(); pi++) {
-    //		std::cout << " " << *pi;
-    //	}
-    //	std::cout << " >" << std::endl;
-    //	std::cout << "genset2: <";
+    //  std::cout << "genset1: <";
+    //  for(typename perm_list_t::const_iterator pi = p1->begin();
+    //      pi != p1->end(); pi++) {
+    //      std::cout << " " << *pi;
+    //  }
+    //  std::cout << " >" << std::endl;
+    //  std::cout << "genset2: <";
     for(typename perm_list_t::const_iterator pi = p1->begin();
             pi != p1->end(); pi++) {
 
@@ -147,10 +147,10 @@ void permutation_group<N, T>::project_down(const mask<N> &msk,
             j++;
         }
         permutation_builder<M> pb(seq2b, seq1b);
-        //		std::cout << " " << pb.get_perm();
+        //      std::cout << " " << pb.get_perm();
         g2.add_orbit(pi->second, pb.get_perm());
     }
-    //	std::cout << " >" << std::endl;
+    //  std::cout << " >" << std::endl;
 }
 
 
@@ -220,14 +220,14 @@ bool permutation_group<N, T>::is_member(const branching &br, size_t i,
     if(perm.is_identity()) return true;
     if(i >= N - 1) return false;
 
-    //	Find the element pi1 of the right coset representative Ui
-    //	for which rho = pi * pi1^{-1} stabilizes i. (pi == perm).
+    //  Find the element pi1 of the right coset representative Ui
+    //  for which rho = pi * pi1^{-1} stabilizes i. (pi == perm).
 
     if(perm[i] == i) {
         return is_member(br, i + 1, tr, perm);
     }
 
-    //	Go over non-identity members of Ui
+    //  Go over non-identity members of Ui
     //
     for(size_t j = i + 1; j < N; j++) {
 
@@ -543,7 +543,7 @@ void permutation_group<N, T>::make_setstabilizer(const branching &br,
 
             // if g is in G(P), we add it to the list of permutations,
             // skip this level ii and go to the next level
-            if (l == N)	{
+            if (l == N)    {
                 gs.push_back(g);
                 break;
             }
@@ -614,7 +614,7 @@ void permutation_group<N, T>::make_setstabilizer(const branching &br,
                 }
                 if (m != N) break;
             }
-            if (l == N)	gs.push_back(g);
+            if (l == N)    gs.push_back(g);
         }
     }
 }

@@ -18,7 +18,7 @@ do_perform(symmetry_operation_params_t &params) const {
     static const char *method =
             "do_perform(symmetry_operation_params_t&)";
 
-    //	Adapter type for the input group
+    //  Adapter type for the input group
     typedef symmetry_element_set_adapter< N, T, se_perm<N, T> > adapter1_t;
     typedef symmetry_element_set_adapter< M, T, se_perm<M, T> > adapter2_t;
 

@@ -8,15 +8,15 @@
 
 namespace libtensor {
 
-/**	\brief Implementation of so_reduce<N, M, K, T> for se_perm<N, T>
-	\tparam N Input tensor order.
-	\tparam M Reduced dimensions.
+/** \brief Implementation of so_reduce<N, M, K, T> for se_perm<N, T>
+    \tparam N Input tensor order.
+    \tparam M Reduced dimensions.
     \tparam K Reduction steps.
-	\tparam T Tensor element type.
+    \tparam T Tensor element type.
 
-	The implementation reduces masked dimensions setwise.
+    The implementation reduces masked dimensions setwise.
 
-	\ingroup libtensor_symmetry
+    \ingroup libtensor_symmetry
  **/
 template<size_t N, size_t M, typename T>
 class symmetry_operation_impl< so_reduce<N, M, T>, se_perm<N - M, T> > :

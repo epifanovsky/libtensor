@@ -15,11 +15,11 @@ template<size_t N, typename T>
 class symmetry_operation_params< so_permute<N, T> >;
 
 
-/**	\brief Adjusts %symmetry elements to a %permutation of %tensor indexes
-	\tparam N Symmetry cardinality (%tensor order).
-	\tparam T Tensor element type.
+/** \brief Adjusts %symmetry elements to a %permutation of %tensor indexes
+    \tparam N Symmetry cardinality (%tensor order).
+    \tparam T Tensor element type.
 
-	\ingroup libtensor_symmetry
+    \ingroup libtensor_symmetry
  **/
 template<size_t N, typename T>
 class so_permute : public symmetry_operation_base< so_permute<N, T> > {
@@ -32,15 +32,15 @@ private:
     permutation<N> m_perm; //!< Permutation
 
 public:
-    /**	\brief Initializes the operation
-		\param sym1 Source %symmetry container.
-		\param perm Permutation of %tensor indexes.
+    /** \brief Initializes the operation
+        \param sym1 Source %symmetry container.
+        \param perm Permutation of %tensor indexes.
      **/
     so_permute(const symmetry<N, T> &sym1, const permutation<N> &perm) :
         m_sym1(sym1), m_perm(perm) { }
 
-    /**	\brief Performs the operation
-		\param sym2 Destination %symmetry container.
+    /** \brief Performs the operation
+        \param sym2 Destination %symmetry container.
      **/
     void perform(symmetry<N, T> &sym2);
 

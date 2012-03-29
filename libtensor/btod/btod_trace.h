@@ -15,34 +15,34 @@
 namespace libtensor {
 
 
-/**	\brief Computes the trace of a matricized block %tensor
-	\tparam N Tensor diagonal order.
+/** \brief Computes the trace of a matricized block %tensor
+    \tparam N Tensor diagonal order.
 
-	\ingroup libtensor_btod
+    \ingroup libtensor_btod
  **/
 template<size_t N>
 class btod_trace : public timings< btod_trace<N> > {
 public:
-	static const char *k_clazz; //!< Class name
+    static const char *k_clazz; //!< Class name
 
 public:
-	static const size_t k_ordera = 2 * N; //!< Order of the argument
+    static const size_t k_ordera = 2 * N; //!< Order of the argument
 
 private:
-	block_tensor_i<k_ordera, double> &m_bta; //!< Input block %tensor
-	permutation<k_ordera> m_perm; //!< Permutation of the %tensor
+    block_tensor_i<k_ordera, double> &m_bta; //!< Input block %tensor
+    permutation<k_ordera> m_perm; //!< Permutation of the %tensor
 
 public:
-	btod_trace(block_tensor_i<k_ordera, double> &bta);
+    btod_trace(block_tensor_i<k_ordera, double> &bta);
 
-	btod_trace(block_tensor_i<k_ordera, double> &bta,
-		const permutation<k_ordera> &perm);
+    btod_trace(block_tensor_i<k_ordera, double> &bta,
+        const permutation<k_ordera> &perm);
 
-	double calculate();
+    double calculate();
 
 private:
-	btod_trace(const btod_trace<N>&);
-	const btod_trace<N> &operator=(const btod_trace<N>&);
+    btod_trace(const btod_trace<N>&);
+    const btod_trace<N> &operator=(const btod_trace<N>&);
 
 };
 
@@ -59,7 +59,7 @@ btod_trace<N>::btod_trace(block_tensor_i<k_ordera, double> &bta) : m_bta(bta) {
 
 template<size_t N>
 btod_trace<N>::btod_trace(block_tensor_i<k_ordera, double> &bta,
-	const permutation<k_ordera> &perm) : m_bta(bta), m_perm(perm) {
+    const permutation<k_ordera> &perm) : m_bta(bta), m_perm(perm) {
 
 }
 
@@ -67,60 +67,60 @@ btod_trace<N>::btod_trace(block_tensor_i<k_ordera, double> &bta,
 template<size_t N>
 double btod_trace<N>::calculate() {
 
-	static const char *method = "calculate()";
+    static const char *method = "calculate()";
 
-	double tr = 0;
+    double tr = 0;
 
-	btod_trace<N>::start_timer();
+    btod_trace<N>::start_timer();
 
-	try {
+    try {
 
-	dimensions<k_ordera> bidimsa = m_bta.get_bis().get_block_index_dims();
+    dimensions<k_ordera> bidimsa = m_bta.get_bis().get_block_index_dims();
 
-	block_tensor_ctrl<k_ordera, double> ca(m_bta);
+    block_tensor_ctrl<k_ordera, double> ca(m_bta);
 
-	orbit_list<k_ordera, double> ola(ca.req_const_symmetry());
-	for(typename orbit_list<k_ordera, double>::iterator ioa = ola.begin();
-		ioa != ola.end(); ioa++) {
+    orbit_list<k_ordera, double> ola(ca.req_const_symmetry());
+    for(typename orbit_list<k_ordera, double>::iterator ioa = ola.begin();
+        ioa != ola.end(); ioa++) {
 
-	if(ca.req_is_zero_block(ola.get_index(ioa))) continue;
+    if(ca.req_is_zero_block(ola.get_index(ioa))) continue;
 
-	dense_tensor_i<k_ordera, double> *ba = 0;
+    dense_tensor_i<k_ordera, double> *ba = 0;
 
-	orbit<k_ordera, double> oa(ca.req_const_symmetry(), ola.get_index(ioa));
-	for(typename orbit<k_ordera, double>::iterator iia = oa.begin();
-		iia != oa.end(); iia++) {
+    orbit<k_ordera, double> oa(ca.req_const_symmetry(), ola.get_index(ioa));
+    for(typename orbit<k_ordera, double>::iterator iia = oa.begin();
+        iia != oa.end(); iia++) {
 
-		abs_index<k_ordera> aia(oa.get_abs_index(iia), bidimsa);
-		index<k_ordera> ia(aia.get_index()); ia.permute(m_perm);
+        abs_index<k_ordera> aia(oa.get_abs_index(iia), bidimsa);
+        index<k_ordera> ia(aia.get_index()); ia.permute(m_perm);
 
-		bool skip = false;
-		for(register size_t i = 0; i < N; i++) if(ia[i] != ia[N + i]) {
-			skip = true;
-			break;
-		}
-		if(skip) continue;
+        bool skip = false;
+        for(register size_t i = 0; i < N; i++) if(ia[i] != ia[N + i]) {
+            skip = true;
+            break;
+        }
+        if(skip) continue;
 
-		tensor_transf<k_ordera, double> tra(oa.get_transf(iia));
-		tra.permute(m_perm);
+        tensor_transf<k_ordera, double> tra(oa.get_transf(iia));
+        tra.permute(m_perm);
 
-		if(ba == 0) ba = &ca.req_block(ola.get_index(ioa));
-		double tr0 = tod_trace<N>(*ba, tra.get_perm()).calculate();
-		tr += tr0 * tra.get_scalar_tr().get_coeff();
-	}
+        if(ba == 0) ba = &ca.req_block(ola.get_index(ioa));
+        double tr0 = tod_trace<N>(*ba, tra.get_perm()).calculate();
+        tr += tr0 * tra.get_scalar_tr().get_coeff();
+    }
 
-	if(ba != 0) ca.ret_block(ola.get_index(ioa));
+    if(ba != 0) ca.ret_block(ola.get_index(ioa));
 
-	}
+    }
 
-	} catch(...) {
-		btod_trace<N>::stop_timer();
-		throw;
-	}
+    } catch(...) {
+        btod_trace<N>::stop_timer();
+        throw;
+    }
 
-	btod_trace<N>::stop_timer();
+    btod_trace<N>::stop_timer();
 
-	return tr;
+    return tr;
 }
 
 

@@ -116,7 +116,7 @@ private:
     unit_test_factory<btod_vmpriority_test> m_utf_btod_vmpriority;
 
 public:
-    //!	Creates the suite
+    //!    Creates the suite
     libtensor_btod_suite();
 };
 

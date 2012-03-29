@@ -16,7 +16,7 @@ template<size_t N, typename T>
 void symmetry_operation_impl< so_apply<N, T>, se_perm<N, T> >::do_perform(
         symmetry_operation_params_t &params) const {
 
-    //	Adapter type for the input group
+    //  Adapter type for the input group
     typedef symmetry_element_set_adapter<N, T, element_t> adapter_t;
     typedef std::vector<element_t> perm_vec_t;
     typedef std::pair< size_t, scalar_transf<T> > transf_pair_t;

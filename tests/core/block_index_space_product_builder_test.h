@@ -6,16 +6,16 @@
 namespace libtensor {
 
 
-/**	\brief Tests the libtensor::block_index_space_product_builder class
+/** \brief Tests the libtensor::block_index_space_product_builder class
 
-	\ingroup libtensor_tests_core
+    \ingroup libtensor_tests_core
  **/
 class block_index_space_product_builder_test : public libtest::unit_test {
 public:
-	virtual void perform() throw(libtest::test_exception);
+    virtual void perform() throw(libtest::test_exception);
 
 private:
-	void test_0a() throw(libtest::test_exception);
+    void test_0a() throw(libtest::test_exception);
     void test_0b() throw(libtest::test_exception);
     void test_1a() throw(libtest::test_exception);
     void test_1b() throw(libtest::test_exception);

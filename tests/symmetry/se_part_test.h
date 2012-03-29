@@ -5,9 +5,9 @@
 
 namespace libtensor {
 
-/**	\brief Tests the libtensor::se_part class
+/** \brief Tests the libtensor::se_part class
 
-	\ingroup libtensor_tests_sym
+    \ingroup libtensor_tests_sym
  **/
 class se_part_test : public libtest::unit_test {
 public:

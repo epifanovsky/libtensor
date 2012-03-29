@@ -31,7 +31,7 @@ template<size_t N, size_t K> class btod_contract2_symmetry_builder<N, N, K>;
 
 template<size_t N, size_t M, size_t K>
 struct btod_contract2_clazz {
-	static const char *k_clazz;
+    static const char *k_clazz;
 };
 
 
@@ -41,8 +41,8 @@ struct btod_contract2_clazz {
  **/
 template<size_t N, size_t M, size_t K>
 class btod_contract2 :
-	public additive_btod<N + M>,
-	public timings< btod_contract2<N, M, K> > {
+    public additive_btod<N + M>,
+    public timings< btod_contract2<N, M, K> > {
 
 public:
     static const char *k_clazz; //!< Class name
@@ -155,10 +155,10 @@ private:
     assignment_schedule<k_orderc, double> m_sch; //!< Assignment schedule
 
 public:
-    //!	\name Construction and destruction
+    //!    \name Construction and destruction
     //@{
 
-    /**	\brief Initializes the contraction operation
+    /** \brief Initializes the contraction operation
         \param contr Contraction.
         \param bta Block %tensor A (first argument).
         \param btb Block %tensor B (second argument).
@@ -167,14 +167,14 @@ public:
                    block_tensor_i<k_ordera, double> &bta,
                    block_tensor_i<k_orderb, double> &btb);
 
-    /**	\brief Virtual destructor
+    /** \brief Virtual destructor
      **/
     virtual ~btod_contract2();
 
     //@}
 
-    //!	\name Implementation of
-    //		libtensor::direct_block_tensor_operation<N + M, double>
+    //!    \name Implementation of
+    //      libtensor::direct_block_tensor_operation<N + M, double>
     //@{
 
     virtual const block_index_space<N + M> &get_bis() const {
@@ -275,7 +275,7 @@ protected:
 **/
 template<size_t N, size_t M, size_t K>
 class btod_contract2_symmetry_builder :
-	public btod_contract2_symmetry_builder_base<N, M, K> {
+    public btod_contract2_symmetry_builder_base<N, M, K> {
 
 public:
     typedef btod_contract2_symmetry_builder_base<N, M, K> base_t;
@@ -298,7 +298,7 @@ public:
 **/
 template<size_t N, size_t K>
 class btod_contract2_symmetry_builder<N, N, K> :
-	public btod_contract2_symmetry_builder_base<N, N, K> {
+    public btod_contract2_symmetry_builder_base<N, N, K> {
 
 public:
     typedef btod_contract2_symmetry_builder_base<N, N, K> base_t;

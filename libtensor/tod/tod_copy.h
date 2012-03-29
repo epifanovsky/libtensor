@@ -12,7 +12,7 @@
 
 namespace libtensor {
 
-/**	\brief Makes a copy of a %tensor, scales or permutes %tensor elements
+/** \brief Makes a copy of a %tensor, scales or permutes %tensor elements
         if necessary
     \tparam N Tensor order.
 
@@ -70,23 +70,23 @@ private:
     dimensions<N> m_dimsb; //!< Dimensions of output %tensor
 
 public:
-    //!	\name Construction and destruction
+    //!    \name Construction and destruction
     //@{
 
-    /**	\brief Prepares the copy operation
+    /** \brief Prepares the copy operation
         \param ta Source %tensor.
         \param c Coefficient.
      **/
     tod_copy(dense_tensor_i<N,double> &ta, double c = 1.0);
 
-    /**	\brief Prepares the permute & copy operation
+    /** \brief Prepares the permute & copy operation
         \param ta Source %tensor.
         \param p Permutation of %tensor elements.
         \param c Coefficient.
      **/
     tod_copy(dense_tensor_i<N,double> &ta, const permutation<N> &p, double c = 1.0);
 
-    /**	\brief Virtual destructor
+    /** \brief Virtual destructor
      **/
     virtual ~tod_copy() {
     }
@@ -94,7 +94,7 @@ public:
     //@}
 
 
-    //!	\name Implementation of libtensor::tod_additive<N>
+    //!    \name Implementation of libtensor::tod_additive<N>
     //@{
 
     virtual void prefetch();
@@ -105,7 +105,7 @@ public:
     //@}
 
 private:
-    /**	\brief Creates the dimensions of the output using an input
+    /** \brief Creates the dimensions of the output using an input
             %tensor and a permutation of indexes
      **/
     static dimensions<N> mk_dimsb(dense_tensor_i<N,double> &ta,

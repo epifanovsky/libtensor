@@ -22,7 +22,7 @@ void so_merge_se_part_test::perform() throw(libtest::test_exception) {
 }
 
 
-/**	\test Tests that a single merge of 2 dim of an empty partition set yields
+/** \test Tests that a single merge of 2 dim of an empty partition set yields
         an empty partition set of lower order
  **/
 void so_merge_se_part_test::test_empty_1() throw(libtest::test_exception) {
@@ -90,7 +90,7 @@ void so_merge_se_part_test::test_empty_2() throw(libtest::test_exception) {
     }
 }
 
-/**	\test Single merge of 2 dim of a 3-space on a 2-space.
+/** \test Single merge of 2 dim of a 3-space on a 2-space.
  **/
 void so_merge_se_part_test::test_nm1_1(bool sign)
 throw(libtest::test_exception) {

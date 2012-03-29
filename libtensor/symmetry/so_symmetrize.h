@@ -13,18 +13,18 @@ class so_symmetrize;
 template<size_t N, typename T>
 class symmetry_operation_params< so_symmetrize<N, T> >;
 
-/**	\brief Symmetrizes groups of indexes.
-	\tparam N Symmetry cardinality (%tensor order).
-	\tparam T Tensor element type.
+/** \brief Symmetrizes groups of indexes.
+    \tparam N Symmetry cardinality (%tensor order).
+    \tparam T Tensor element type.
 
-	This symmetry operation symmetrizes a number of indexes given by two
-	sequences. The first sequence specifies the groups by which the indexes
-	are symmetrized, while the second sequence yields the indexes in each
-	group that are symmetrized w.r.t to each other. Indexes for which the
-	sequences are zero are not symmetrized. Thus, each non-zero number in
-	the sequences has to occur equally often in a sequences. E.g. given a
-	7-index symmetry object the sequences [0112323] and [0122112] would
-	result in symmetrization of three groups of indexes as follows:
+    This symmetry operation symmetrizes a number of indexes given by two
+    sequences. The first sequence specifies the groups by which the indexes
+    are symmetrized, while the second sequence yields the indexes in each
+    group that are symmetrized w.r.t to each other. Indexes for which the
+    sequences are zero are not symmetrized. Thus, each non-zero number in
+    the sequences has to occur equally often in a sequences. E.g. given a
+    7-index symmetry object the sequences [0112323] and [0122112] would
+    result in symmetrization of three groups of indexes as follows:
         [ijklmno] <-> [ijkonml] <-> [inlojmk]
             <-> [inlkmjo] <-> [imoknjl] <-> [imoljnk]
     In addition to the two sequences also two scalar transformations have
@@ -34,7 +34,7 @@ class symmetry_operation_params< so_symmetrize<N, T> >;
     and cyclic permutation are:
         [0123456->0536142] and [0123456->0532416]
 
-	\ingroup libtensor_symmetry
+    \ingroup libtensor_symmetry
  **/
 template<size_t N, typename T>
 class so_symmetrize : public symmetry_operation_base< so_symmetrize<N, T> > {
@@ -52,12 +52,12 @@ private:
     const scalar_transf<T> &m_trc; //!< Transf for cyclic perm
 
 public:
-    /**	\brief Initializes the operation
-		\param sym1 Symmetry container.
-		\param idxgrp Index groups
-		\param symidx Symmtrization indexes
-		\param pt Scalar transformation for pair permutation
-		\param ct Scalar transformation for cyclic permutation
+    /** \brief Initializes the operation
+        \param sym1 Symmetry container.
+        \param idxgrp Index groups
+        \param symidx Symmtrization indexes
+        \param pt Scalar transformation for pair permutation
+        \param ct Scalar transformation for cyclic permutation
      **/
     so_symmetrize(const symmetry<N, T> &sym1,
             const sequence<N, size_t> &idxgrp,
@@ -65,8 +65,8 @@ public:
             const scalar_transf<T> &pt,
             const scalar_transf<T> &ct);
 
-    /**	\brief Performs the operation
-		\param sym2 Destination %symmetry container.
+    /** \brief Performs the operation
+        \param sym2 Destination %symmetry container.
      **/
     void perform(symmetry<N, T> &sym2);
 

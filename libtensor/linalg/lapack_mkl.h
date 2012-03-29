@@ -132,7 +132,7 @@ inline int lapack_zgeev(char jobvl, char jobvr, size_t n,
     \ingroup libtensor_linalg
  **/
 inline int lapack_dgelss(size_t m, size_t n, size_t nrhs, double *B, size_t lda, double *rhs, size_t ldb, double *S, double rcond, 
-		int *rank, double *work, size_t lwork) {
+        int *rank, double *work, size_t lwork) {
 
     int mkl_m = m;
     int mkl_n = n;
@@ -210,7 +210,7 @@ inline int lapack_dpstrf(char uplo, size_t n, double *a, size_t lda, int *p,
     int mkl_n = n;
     int mkl_lda = lda;
     double mkl_tol = tol;
-	dpotrf(&uplo, &mkl_n, a, &mkl_lda, &mkl_info);
+    dpotrf(&uplo, &mkl_n, a, &mkl_lda, &mkl_info);
     //dpstrf(&uplo, &mkl_n, a, &mkl_lda, p, rank, &mkl_tol, work, &mkl_info);
 //#else // HAVE_LAPACK_DPSTRF
 //    throw not_implemented(g_ns, 0, "lapack_dpstrf", __FILE__, __LINE__);

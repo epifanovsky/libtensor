@@ -20,25 +20,25 @@ template<size_t N, size_t M, typename T>
 class symmetry_operation_params< so_reduce<N, M, T> >;
 
 
-/**	\brief Projection of a %symmetry group onto a subspace
-	\tparam N Order of the argument space.
-	\tparam M Decrement in the order of the result space.
+/** \brief Projection of a %symmetry group onto a subspace
+    \tparam N Order of the argument space.
+    \tparam M Decrement in the order of the result space.
 
-	The operation takes a %symmetry group that is defined for a %tensor
-	space of order N and produces a group that acts in a %tensor space
-	of order N - M by doing a number of reduction steps.
+    The operation takes a %symmetry group that is defined for a %tensor
+    space of order N and produces a group that acts in a %tensor space
+    of order N - M by doing a number of reduction steps.
 
-	The mask specifies the total number of dimensions which are reduced (thus
-	it has to have M entries set to true), while the sequence specifies the
-	dimensions per reduction steps: all dimensions for which the mask is true
-	and the sequence has the same value are reduced together. The reduction
-	steps in the sequence have to be numbered consecutively starting from
-	zero. The %index range specifies the blocks in the tensor over which the
-	reductions are performed, i.e. also here the dimensions for which the mask
-	is false are ignored. The range for dimensions belonging to the same
-	reduction step have to be identical.
+    The mask specifies the total number of dimensions which are reduced (thus
+    it has to have M entries set to true), while the sequence specifies the
+    dimensions per reduction steps: all dimensions for which the mask is true
+    and the sequence has the same value are reduced together. The reduction
+    steps in the sequence have to be numbered consecutively starting from
+    zero. The %index range specifies the blocks in the tensor over which the
+    reductions are performed, i.e. also here the dimensions for which the mask
+    is false are ignored. The range for dimensions belonging to the same
+    reduction step have to be identical.
 
-	\ingroup libtensor_symmetry
+    \ingroup libtensor_symmetry
  **/
 template<size_t N, size_t M, typename T>
 class so_reduce : public symmetry_operation_base< so_reduce<N, M, T> > {
@@ -66,10 +66,10 @@ public:
 
 };
 
-/**	\brief Projection of a %symmetry group onto vacuum (specialization)
-	\tparam N Order.
+/** \brief Projection of a %symmetry group onto vacuum (specialization)
+    \tparam N Order.
 
-	\ingroup libtensor_symmetry
+    \ingroup libtensor_symmetry
  **/
 template<size_t N, typename T>
 class so_reduce<N, N, T> {
@@ -84,10 +84,10 @@ public:
     }
 };
 
-/**	\brief Projection of a %symmetry group onto itself (specialization)
-	\tparam N Order.
+/** \brief Projection of a %symmetry group onto itself (specialization)
+    \tparam N Order.
 
-	\ingroup libtensor_symmetry
+    \ingroup libtensor_symmetry
  **/
 template<size_t N, typename T>
 class so_reduce<N, 0, T> {

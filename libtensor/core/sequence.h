@@ -94,7 +94,7 @@ public:
     //@}
 
 
-    //!	\name Overloaded operators
+    //!    \name Overloaded operators
     //@{
 
     /** \brief Returns the reference to the element at the given position
@@ -110,7 +110,7 @@ public:
 #endif // LIBTENSOR_DEBUG
     }
 
-    /**	\brief Returns the element at the given position (r-value)
+    /** \brief Returns the element at the given position (r-value)
         \param pos Position (not to exceed N).
         \throw out_of_bounds If the position exceeds N (LIBTENSOR_DEBUG only).
      **/
@@ -156,7 +156,7 @@ private:
     T m_dummy;
 
 public:
-    //!	\name Construction and destruction
+    //!    \name Construction and destruction
     //@{
 
     /** \copydoc sequence<N,T>::sequence(const T&)

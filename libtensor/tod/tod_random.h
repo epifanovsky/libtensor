@@ -13,46 +13,46 @@ namespace libtensor {
 
 /** \brief Fills a %tensor with random numbers or adds them to it
 
-	\tparam N Tensor order
+    \tparam N Tensor order
 
-	This operation either fills a %tensor with random numbers equally
-	distributed in the intervall [0;1[ or adds those numbers to the %tensor
-	scaled bei a coefficient
+    This operation either fills a %tensor with random numbers equally
+    distributed in the intervall [0;1[ or adds those numbers to the %tensor
+    scaled bei a coefficient
 
  **/
 template<size_t N>
 class tod_random : public tod_additive<N> {
 private:
-	static void update_seed(); //! updates the seed value by using srand48
+    static void update_seed(); //! updates the seed value by using srand48
 public:
-	//! Constructurs and destructors
-	//@{
+    //! Constructurs and destructors
+    //@{
 
-	//! \brief Prepares the operation
-	tod_random();
+    //! \brief Prepares the operation
+    tod_random();
 
-	//! \brief Virtual destructor
-	virtual ~tod_random();
+    //! \brief Virtual destructor
+    virtual ~tod_random();
 
-	//@}
+    //@}
 
-	//!	\name Implementation of
-	//!		libtensor::direct_tensor_operation<N, double>
-	//@{
-	virtual void prefetch() throw(exception);
+    //!    \name Implementation of
+    //!        libtensor::direct_tensor_operation<N, double>
+    //@{
+    virtual void prefetch() throw(exception);
     virtual void perform(cpu_pool &cpus, bool zero, double c,
         dense_tensor_i<N, double> &t);
-	void perform(cpu_pool &cpus, dense_tensor_i<N, double> &t);
+    void perform(cpu_pool &cpus, dense_tensor_i<N, double> &t);
     void perform(cpu_pool &cpus, dense_tensor_i<N, double> &t, double c);
-	//@}
+    //@}
 
 private:
-	void do_perform( dense_tensor_i<N,double>& t, double c ) throw(exception);
+    void do_perform( dense_tensor_i<N,double>& t, double c ) throw(exception);
 };
 
 template<size_t N>
 inline tod_random<N>::tod_random() {
-	update_seed();
+    update_seed();
 }
 
 template<size_t N>
@@ -61,13 +61,13 @@ tod_random<N>::~tod_random() {
 
 template<size_t N>
 void tod_random<N>::update_seed() {
-	static time_t timestamp=time(NULL);
-	static long seed=timestamp;
-	if ( time(NULL)-timestamp > 60 ) {
-		timestamp=time(NULL);
-		seed+=timestamp+lrand48();
-		srand48(seed);
-	}
+    static time_t timestamp=time(NULL);
+    static long seed=timestamp;
+    if ( time(NULL)-timestamp > 60 ) {
+        timestamp=time(NULL);
+        seed+=timestamp+lrand48();
+        srand48(seed);
+    }
 }
 
 template<size_t N>

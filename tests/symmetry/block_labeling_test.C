@@ -192,7 +192,7 @@ void block_labeling_test::test_copy_1() throw(libtest::test_exception) {
 }
 
 
-/**	\test Permutation of labeling (3-dim)
+/** \test Permutation of labeling (3-dim)
  **/
 void block_labeling_test::test_permute_1() throw(libtest::test_exception) {
 

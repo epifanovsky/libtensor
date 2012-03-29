@@ -5,9 +5,9 @@
 
 namespace libtensor {
 
-/**	\brief Tests the libtensor::block_labeling<N> class
+/** \brief Tests the libtensor::block_labeling<N> class
 
-	\ingroup libtensor_tests_sym
+    \ingroup libtensor_tests_sym
  **/
 class block_labeling_test : public libtest::unit_test {
 public:

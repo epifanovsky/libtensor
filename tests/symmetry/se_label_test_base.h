@@ -10,9 +10,9 @@
 
 namespace libtensor {
 
-/**	\brief Base class for libtensor::se_label related tests
+/** \brief Base class for libtensor::se_label related tests
 
-	\ingroup libtensor_tests_sym
+    \ingroup libtensor_tests_sym
  **/
 class se_label_test_base : public libtest::unit_test {
 protected:

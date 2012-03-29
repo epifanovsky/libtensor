@@ -10,8 +10,8 @@ namespace libtensor {
 /** \brief Product tables for products of irreducible representations of
         a point group
 
-	This implementation of product_table_i provides the product table for
-	the irreducible representations (irreps) of an arbitrary point group.
+    This implementation of product_table_i provides the product table for
+    the irreducible representations (irreps) of an arbitrary point group.
     Upon construction the complete list of irreps is passed to the object
     together with a unique ID of the table (usually the name of the point
     group) and the name of the identity (totally symmetric) irrep. Based
@@ -45,8 +45,8 @@ public:
 
     /** \brief Constructor
         \param id Table ID
-		\param irreps Names of all irreps
-		\param ident Name of the identity irrep
+        \param irreps Names of all irreps
+        \param ident Name of the identity irrep
      **/
     point_group_table(const std::string &id,
             const std::vector<std::string> &irreps,
@@ -58,7 +58,7 @@ public:
 
     //@}
 
-    //!	\name Implementation of product_table_i
+    //!    \name Implementation of product_table_i
     //@{
 
     /** \copydoc product_table_i::clone
@@ -101,14 +101,14 @@ public:
      **/
     label_t get_label(const std::string &irrep) const;
 
-    //!	\name Manipulation functions
+    //!    \name Manipulation functions
     //@{
 
     /** \brief Adds product of two irreps.
-		\param l1 First label
-		\param l2 Second label
-		\param lr Result label
-		\throw out_of_bounds If l1, l2 or lr are not valid.
+        \param l1 First label
+        \param l2 Second label
+        \param lr Result label
+        \throw out_of_bounds If l1, l2 or lr are not valid.
      **/
     void add_product(label_t l1, label_t l2, label_t lr) throw(bad_parameter);
 

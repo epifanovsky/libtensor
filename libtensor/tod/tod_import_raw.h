@@ -82,7 +82,7 @@ private:
     };
 
 public:
-    /**	\brief Initializes the operation
+    /** \brief Initializes the operation
         \param ptr Pointer to data block
         \param dims Dimensions of the data block
         \param ir Index range of the window
@@ -91,7 +91,7 @@ public:
         const index_range<N> &ir) :
         m_ptr(ptr), m_dims(dims), m_ir(ir) { }
 
-    /**	\brief Performs the operation
+    /** \brief Performs the operation
         \param t Output %tensor
     **/
     void perform(dense_tensor_i<N, double> &t);

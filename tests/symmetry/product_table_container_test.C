@@ -13,7 +13,7 @@ void product_table_container_test::perform() throw(libtest::test_exception) {
 }
 
 
-/**	\test Add tables to prodcut_table_container
+/** \test Add tables to prodcut_table_container
  **/
 void product_table_container_test::test_1() throw(libtest::test_exception) {
 
@@ -82,7 +82,7 @@ void product_table_container_test::test_1() throw(libtest::test_exception) {
 }
 
 
-/**	\test Requesting and returning tables
+/** \test Requesting and returning tables
  **/
 void product_table_container_test::test_2() throw(libtest::test_exception) {
 
@@ -182,7 +182,7 @@ void product_table_container_test::test_2() throw(libtest::test_exception) {
 }
 
 
-/**	\test Deleting tables
+/** \test Deleting tables
  **/
 void product_table_container_test::test_3() throw(libtest::test_exception) {
 

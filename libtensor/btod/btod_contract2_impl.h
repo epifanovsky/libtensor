@@ -65,36 +65,36 @@ void btod_contract2<N, M, K>::sync_off() {
 /*
 template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::compute_block(dense_tensor_i<N + M, double> &blk,
-	const index<N + M> &i) {
+    const index<N + M> &i) {
 
-	static const char *method =
-		"compute_block(dense_tensor_i<N + M, double>&, const index<N + M>&)";
+    static const char *method =
+        "compute_block(dense_tensor_i<N + M, double>&, const index<N + M>&)";
 
-	btod_contract2<N, M, K>::start_timer();
+    btod_contract2<N, M, K>::start_timer();
 
-	try {
+    try {
 
-		block_tensor_ctrl<k_ordera, double> ca(m_bta);
-		block_tensor_ctrl<k_orderb, double> cb(m_btb);
+        block_tensor_ctrl<k_ordera, double> ca(m_bta);
+        block_tensor_ctrl<k_orderb, double> cb(m_btb);
 
-		abs_index<k_orderc> aic(i, m_bidimsc);
-		typename schedule_t::iterator isch =
-			m_contr_sch.find(aic.get_abs_index());
-		if(isch == m_contr_sch.end()) {
-			throw bad_parameter(g_ns, k_clazz, method,
-				__FILE__, __LINE__, "i");
-		}
+        abs_index<k_orderc> aic(i, m_bidimsc);
+        typename schedule_t::iterator isch =
+            m_contr_sch.find(aic.get_abs_index());
+        if(isch == m_contr_sch.end()) {
+            throw bad_parameter(g_ns, k_clazz, method,
+                __FILE__, __LINE__, "i");
+        }
 
-		transf<k_orderc, double> trc0;
-		contract_block(isch->second->first, aic.get_index(), ca, cb,
-			blk, trc0, true, 1.0);
+        transf<k_orderc, double> trc0;
+        contract_block(isch->second->first, aic.get_index(), ca, cb,
+            blk, trc0, true, 1.0);
 
-	} catch(...) {
-		btod_contract2<N, M, K>::stop_timer();
-		throw;
-	}
+    } catch(...) {
+        btod_contract2<N, M, K>::stop_timer();
+        throw;
+    }
 
-	btod_contract2<N, M, K>::stop_timer();
+    btod_contract2<N, M, K>::stop_timer();
 }
 */
 
@@ -118,7 +118,7 @@ void btod_contract2<N, M, K>::compute_block(bool zero,
             m_contr_sch.find(aic.get_abs_index());
         if(isch == m_contr_sch.end()) {
             throw bad_parameter(g_ns, k_clazz, method,
-				__FILE__, __LINE__, "i");
+                __FILE__, __LINE__, "i");
         }
 
         contract_block(isch->second->first, aic.get_index(), ca, cb,
@@ -608,8 +608,8 @@ void btod_contract2_symmetry_builder<N, N, K>::make_symmetry(
     so_dirprod<N + K, N + K, double>(ca.req_const_symmetry(),
             ca.req_const_symmetry(), pb.get_perm()).perform(xsymab);
 
-    //	When a tensor is contracted with itself, there is additional
-    //	perm symmetry
+    //  When a tensor is contracted with itself, there is additional
+    //  perm symmetry
 
     permutation<2 * (N + K)> permab(pb.get_perm(), true);
     for(size_t i = 0; i < N + K; i++) {

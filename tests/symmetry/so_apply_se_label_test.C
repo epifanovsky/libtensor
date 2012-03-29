@@ -11,66 +11,66 @@ void so_apply_se_label_test::perform() throw(libtest::test_exception) {
 
     std::string table_id = setup_pg_table();
 
-	try {
+    try {
 
-	test_1(table_id, false,  true, false);
+    test_1(table_id, false,  true, false);
     test_1(table_id, false, false, false);
     test_1(table_id, false, false,  true);
     test_1(table_id,  true,  true, false);
     test_1(table_id,  true, false, false);
     test_1(table_id,  true, false,  true);
 
-	} catch (std::exception &e) {
-		product_table_container::get_instance().erase(table_id);
-		throw;
-	}
+    } catch (std::exception &e) {
+        product_table_container::get_instance().erase(table_id);
+        throw;
+    }
 
-	product_table_container::get_instance().erase(table_id);
+    product_table_container::get_instance().erase(table_id);
 
 }
 
 
-/**	\test Tests application on a group with permutation
+/** \test Tests application on a group with permutation
  **/
 void so_apply_se_label_test::test_1(
         const std::string &table_id, bool keep_zero,
         bool is_asym, bool sign) throw(libtest::test_exception) {
 
-	std::ostringstream tnss;
-	tnss << "so_apply_se_label_test::test_1(" << table_id << ", "
-			<< keep_zero << ", " << is_asym << ", " << sign << ")";
+    std::ostringstream tnss;
+    tnss << "so_apply_se_label_test::test_1(" << table_id << ", "
+            << keep_zero << ", " << is_asym << ", " << sign << ")";
 
-	typedef se_label<2, double> se2_t;
-	typedef so_apply<2, double> so_t;
-	typedef symmetry_operation_impl<so_t, se2_t> so_se_t;
+    typedef se_label<2, double> se2_t;
+    typedef so_apply<2, double> so_t;
+    typedef symmetry_operation_impl<so_t, se2_t> so_se_t;
 
-	index<2> i1, i2;
-	i2[0] = i2[1] = 3;
+    index<2> i1, i2;
+    i2[0] = i2[1] = 3;
 
-	dimensions<2> bidims(index_range<2>(i1, i2));
+    dimensions<2> bidims(index_range<2>(i1, i2));
 
-	mask<2> m;
-	m[0] = m[1] = true;
+    mask<2> m;
+    m[0] = m[1] = true;
 
-	se2_t el1(bidims, table_id);
-	block_labeling<2> &bl1 = el1.get_labeling();
-	for (unsigned int i = 0; i < 4; i++) {
-		bl1.assign(m, i, i);
-	}
+    se2_t el1(bidims, table_id);
+    block_labeling<2> &bl1 = el1.get_labeling();
+    for (unsigned int i = 0; i < 4; i++) {
+        bl1.assign(m, i, i);
+    }
 
-	el1.set_rule(2);
+    el1.set_rule(2);
 
-	permutation<2> p;
-	scalar_transf<double> tr0, tr1(-1.0);
+    permutation<2> p;
+    scalar_transf<double> tr0, tr1(-1.0);
 
-	symmetry_element_set<2, double> set1(se2_t::k_sym_type);
-	symmetry_element_set<2, double> set2(se2_t::k_sym_type);
+    symmetry_element_set<2, double> set1(se2_t::k_sym_type);
+    symmetry_element_set<2, double> set2(se2_t::k_sym_type);
 
-	set1.insert(el1);
-	symmetry_operation_params<so_t> params(set1, p,
-	        is_asym ? tr0 : tr1, sign ? tr0 : tr1, keep_zero, set2);
+    set1.insert(el1);
+    symmetry_operation_params<so_t> params(set1, p,
+            is_asym ? tr0 : tr1, sign ? tr0 : tr1, keep_zero, set2);
 
-	so_se_t().perform(params);
+    so_se_t().perform(params);
 
     if(set2.is_empty()) {
         fail_test(tnss.str().c_str(), __FILE__, __LINE__,

@@ -45,10 +45,10 @@ private:
     scalar_transf<T> *m_ftr; //!< Transforms of the mappings
 
 public:
-    //!	\name Construction and destruction / assignment
+    //!    \name Construction and destruction / assignment
     //@{
 
-    /**	\brief Initializes the %symmetry element
+    /** \brief Initializes the %symmetry element
         \param bis Block %index space.
         \param msk Mask of affected dimensions.
         \param npart Number of partitions along each dimension.
@@ -61,20 +61,20 @@ public:
     **/
     se_part(const block_index_space<N> &bis, const dimensions<N> &pdims);
 
-    /**	\brief Copy constructor
+    /** \brief Copy constructor
      **/
     se_part(const se_part<N, T> &elem);
 
-    /**	\brief Virtual destructor
+    /** \brief Virtual destructor
      **/
     virtual ~se_part();
 
     //@}
 
-    //!	\name Manipulations
+    //!    \name Manipulations
     //@{
 
-    /**	\brief Adds a mapping between two partitions
+    /** \brief Adds a mapping between two partitions
         \param idx1 First partition %index.
         \param idx2 Second partition %index.
         \param sign Sign of the mapping (true positive, false negative)
@@ -146,34 +146,34 @@ public:
 
     //@}
 
-    //!	\name Implementation of symmetry_element_i<N, T>
+    //!    \name Implementation of symmetry_element_i<N, T>
     //@{
 
-    /**	\copydoc symmetry_element_i<N, T>::get_type()
+    /** \copydoc symmetry_element_i<N, T>::get_type()
      **/
     virtual const char *get_type() const {
         return k_sym_type;
     }
 
-    /**	\copydoc symmetry_element_i<N, T>::clone()
+    /** \copydoc symmetry_element_i<N, T>::clone()
      **/
     virtual symmetry_element_i<N, T> *clone() const {
         return new se_part<N, T>(*this);
     }
 
-    /**	\copydoc symmetry_element_i<N, T>::is_valid_bis
+    /** \copydoc symmetry_element_i<N, T>::is_valid_bis
      **/
     virtual bool is_valid_bis(const block_index_space<N> &bis) const;
 
-    /**	\copydoc symmetry_element_i<N, T>::is_allowed
+    /** \copydoc symmetry_element_i<N, T>::is_allowed
      **/
     virtual bool is_allowed(const index<N> &idx) const;
 
-    /**	\copydoc symmetry_element_i<N, T>::apply(index<N>&)
+    /** \copydoc symmetry_element_i<N, T>::apply(index<N>&)
      **/
     virtual void apply(index<N> &idx) const;
 
-    /**	\copydoc symmetry_element_i<N, T>::apply(
+    /** \copydoc symmetry_element_i<N, T>::apply(
             index<N>&, tensor_transf<N, T>&)
     **/
     virtual void apply(index<N> &idx, tensor_transf<N, T> &tr) const;
@@ -181,7 +181,7 @@ public:
     //@}
 
 private:
-    /**	\brief Builds the partition %dimensions, throws an exception
+    /** \brief Builds the partition %dimensions, throws an exception
         if the arguments are invalid
     **/
     static dimensions<N> make_pdims(const block_index_space<N> &bis,
@@ -197,7 +197,7 @@ private:
      **/
     void add_to_loop(size_t a, size_t b, const scalar_transf<T> &tr);
 
-    /**	\brief Returns true if the %index is a valid partition %index,
+    /** \brief Returns true if the %index is a valid partition %index,
         false otherwise
     **/
     bool is_valid_pidx(const index<N> &idx);

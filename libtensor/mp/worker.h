@@ -22,19 +22,19 @@ private:
     volatile bool m_term; //!< Signal to terminate
 
 public:
-    /**	\brief Initializes the worker thread
+    /** \brief Initializes the worker thread
      **/
     worker(cond &started, cpu_pool &cpus);
 
-    /**	\brief Virtual destructor
+    /** \brief Virtual destructor
      **/
     virtual ~worker();
 
-    /**	\brief Runs the worker
+    /** \brief Runs the worker
      **/
     virtual void run();
 
-    /**	\brief Terminates the work cycle
+    /** \brief Terminates the work cycle
      **/
     void terminate();
 

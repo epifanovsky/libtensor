@@ -5,9 +5,9 @@
 
 namespace libtensor {
 
-/**	\brief Tests the libtensor::evaluation_rule class
+/** \brief Tests the libtensor::evaluation_rule class
 
-	\ingroup libtensor_tests_sym
+    \ingroup libtensor_tests_sym
  **/
 class evaluation_rule_test : public libtest::unit_test {
 public:

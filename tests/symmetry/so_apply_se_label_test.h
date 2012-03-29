@@ -6,19 +6,19 @@
 namespace libtensor {
 
 
-/**	\brief Tests the libtensor::so_apply_se_label class
+/** \brief Tests the libtensor::so_apply_se_label class
 
-	\ingroup libtensor_tests_sym
+    \ingroup libtensor_tests_sym
  **/
 class so_apply_se_label_test : public se_label_test_base {
 public:
-	virtual void perform() throw(libtest::test_exception);
+    virtual void perform() throw(libtest::test_exception);
 
 private:
-	void test_1(const std::string &table_id, bool keep_zero,
-	        bool is_asym, bool sign) throw(libtest::test_exception);
+    void test_1(const std::string &table_id, bool keep_zero,
+            bool is_asym, bool sign) throw(libtest::test_exception);
 
-	using se_label_test_base::setup_pg_table;
+    using se_label_test_base::setup_pg_table;
     using se_label_test_base::check_allowed;
 
 };

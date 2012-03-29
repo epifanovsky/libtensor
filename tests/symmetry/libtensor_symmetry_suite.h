@@ -129,7 +129,7 @@ private:
         m_utf_symmetry_element_set_adapter;
 
 public:
-    //!	Creates the suite
+    //!    Creates the suite
     libtensor_symmetry_suite();
 };
 

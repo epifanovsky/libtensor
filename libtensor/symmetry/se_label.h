@@ -45,7 +45,7 @@ namespace libtensor {
       once and the i-th block label n times, if the i-th entry of the sequence
       is n.
 
-	\ingroup libtensor_symmetry
+    \ingroup libtensor_symmetry
  **/
 template<size_t N, typename T>
 class se_label : public symmetry_element_i<N, T> {
@@ -63,23 +63,23 @@ private:
     const product_table_i &m_pt; //!< Product table
 
 public:
-    //!	\name Construction and destruction
+    //!    \name Construction and destruction
     //@{
     /** \brief Initializes the %symmetry element
         \param bidims Block %index dimensions.
      **/
     se_label(const dimensions<N> &bidims, const std::string &id);
 
-    /**	\brief Copy constructor
+    /** \brief Copy constructor
      **/
     se_label(const se_label<N, T> &elem);
 
-    /**	\brief Virtual destructor
+    /** \brief Virtual destructor
      **/
     virtual ~se_label();
     //@}
 
-    //!	\name Manipulating functions
+    //!    \name Manipulating functions
     //@{
 
     /** \brief Obtain the block index labeling
@@ -133,39 +133,39 @@ public:
 
     //@}
 
-    //!	\name Implementation of symmetry_element_i<N, T>
+    //!    \name Implementation of symmetry_element_i<N, T>
     //@{
 
-    /**	\copydoc symmetry_element_i<N, T>::get_type()
+    /** \copydoc symmetry_element_i<N, T>::get_type()
      **/
     virtual const char *get_type() const {
         return k_sym_type;
     }
 
-    /**	\copydoc symmetry_element_i<N, T>::clone()
+    /** \copydoc symmetry_element_i<N, T>::clone()
      **/
     virtual symmetry_element_i<N, T> *clone() const {
         return new se_label<N, T>(*this);
     }
 
-    /**	\copydoc symmetry_element_i<N, T>::permute
+    /** \copydoc symmetry_element_i<N, T>::permute
      **/
     void permute(const permutation<N> &perm);
 
-    /**	\copydoc symmetry_element_i<N, T>::is_valid_bis
+    /** \copydoc symmetry_element_i<N, T>::is_valid_bis
      **/
     virtual bool is_valid_bis(const block_index_space<N> &bis) const;
 
-    /**	\copydoc symmetry_element_i<N, T>::is_allowed
+    /** \copydoc symmetry_element_i<N, T>::is_allowed
      **/
     virtual bool is_allowed(const index<N> &idx) const;
 
-    /**	\copydoc symmetry_element_i<N, T>::apply(index<N>&)
+    /** \copydoc symmetry_element_i<N, T>::apply(index<N>&)
      **/
     virtual void apply(index<N> &idx) const { }
 
-    /**	\copydoc symmetry_element_i<N, T>::apply(
-			index<N>&, transf<N, T>&)
+    /** \copydoc symmetry_element_i<N, T>::apply(
+            index<N>&, transf<N, T>&)
      **/
     virtual void apply(index<N> &idx, tensor_transf<N, T> &tr) const { }
     //@}

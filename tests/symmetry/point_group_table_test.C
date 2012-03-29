@@ -13,7 +13,7 @@ void point_group_table_test::perform() throw(libtest::test_exception) {
 }
 
 
-/**	\test Point group C2h.
+/** \test Point group C2h.
  **/
 void point_group_table_test::test_1() throw(libtest::test_exception) {
 
@@ -82,7 +82,7 @@ void point_group_table_test::test_1() throw(libtest::test_exception) {
 }
 
 
-/**	\test Wrongly setup product table
+/** \test Wrongly setup product table
  **/
 void point_group_table_test::test_2() throw(libtest::test_exception) {
 
@@ -115,7 +115,7 @@ void point_group_table_test::test_2() throw(libtest::test_exception) {
 }
 
 
-/**	\test Clone method
+/** \test Clone method
  **/
 void point_group_table_test::test_3() throw(libtest::test_exception) {
 
@@ -146,7 +146,7 @@ void point_group_table_test::test_3() throw(libtest::test_exception) {
     }
 }
 
-/**	\test Product evaluation for product table
+/** \test Product evaluation for product table
  **/
 void point_group_table_test::test_4() throw(libtest::test_exception) {
 

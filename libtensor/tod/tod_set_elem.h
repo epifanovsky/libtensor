@@ -9,39 +9,39 @@
 
 namespace libtensor {
 
-/**	\brief Assigns a value to a single %tensor element
-	\tparam N Tensor order.
+/** \brief Assigns a value to a single %tensor element
+    \tparam N Tensor order.
 
-	This operation allows access to individual %tensor elements addressed
-	by their %index. It is useful to set one or two elements to a particular
-	value, but too slow to routinely work with %tensors.
+    This operation allows access to individual %tensor elements addressed
+    by their %index. It is useful to set one or two elements to a particular
+    value, but too slow to routinely work with %tensors.
 
-	\ingroup libtensor_tod
+    \ingroup libtensor_tod
  **/
 template<size_t N>
 class tod_set_elem {
 public:
-	//!	\name Operation
-	//@{
+    //!    \name Operation
+    //@{
 
-	/**	\brief Assigns the element of a tensor a value
-		\param t Tensor.
-	 **/
-	void perform(dense_tensor_i<N, double> &t, const index<N> &idx, double d);
+    /** \brief Assigns the element of a tensor a value
+        \param t Tensor.
+     **/
+    void perform(dense_tensor_i<N, double> &t, const index<N> &idx, double d);
 
-	//@}
+    //@}
 };
 
 
 template<size_t N>
 void tod_set_elem<N>::perform(dense_tensor_i<N, double> &t, const index<N> &idx,
-	double d) {
+    double d) {
 
-	abs_index<N> aidx(idx, t.get_dims());
-	dense_tensor_ctrl<N, double> ctrl(t);
-	double *p = ctrl.req_dataptr();
-	p[aidx.get_abs_index()] = d;
-	ctrl.ret_dataptr(p);
+    abs_index<N> aidx(idx, t.get_dims());
+    dense_tensor_ctrl<N, double> ctrl(t);
+    double *p = ctrl.req_dataptr();
+    p[aidx.get_abs_index()] = d;
+    ctrl.ret_dataptr(p);
 }
 
 

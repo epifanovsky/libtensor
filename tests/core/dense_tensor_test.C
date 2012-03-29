@@ -365,7 +365,7 @@ void dense_tensor_test::test_1() throw(libtest::test_exception) {
 }
 
 
-/**	\test Opens and closes 33 sessions with a tensor
+/** \test Opens and closes 33 sessions with a tensor
  **/
 void dense_tensor_test::test_2() throw(libtest::test_exception) {
 

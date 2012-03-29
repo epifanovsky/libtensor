@@ -18,17 +18,17 @@ template<size_t N, size_t M, typename T>
 class symmetry_operation_params< so_dirprod<N, M, T> >;
 
 
-/**	\brief Direct product of two %symmetry groups
-	\tparam N Order of the first %symmetry group.
-	\tparam M Order of the second %symmetry group.
+/** \brief Direct product of two %symmetry groups
+    \tparam N Order of the first %symmetry group.
+    \tparam M Order of the second %symmetry group.
 
-	The operation forms the direct product of two given %symmetry groups.
+    The operation forms the direct product of two given %symmetry groups.
 
-	The operation takes two %symmetry group that are defined for %tensor
-	spaces of order N and M, respectively and produces a group that acts in
-	a %tensor space of order N + M.
+    The operation takes two %symmetry group that are defined for %tensor
+    spaces of order N and M, respectively and produces a group that acts in
+    a %tensor space of order N + M.
 
-	\ingroup libtensor_symmetry
+    \ingroup libtensor_symmetry
  **/
 template<size_t N, size_t M, typename T>
 class so_dirprod : public symmetry_operation_base< so_dirprod<N, M, T> > {
@@ -60,10 +60,10 @@ private:
 };
 
 
-/**	\brief Direct product of vacuum with other symmetry (specialization)
-	\tparam M Order.
+/** \brief Direct product of vacuum with other symmetry (specialization)
+    \tparam M Order.
 
-	\ingroup libtensor_symmetry
+    \ingroup libtensor_symmetry
  **/
 template<size_t M, typename T>
 class so_dirprod<0, M, T> {
@@ -87,10 +87,10 @@ public:
     }
 };
 
-/**	\brief Direct product of %symmetry group with vacuum (specialization)
-	\tparam N Order.
+/** \brief Direct product of %symmetry group with vacuum (specialization)
+    \tparam N Order.
 
-	\ingroup libtensor_symmetry
+    \ingroup libtensor_symmetry
  **/
 template<size_t N, typename T>
 class so_dirprod<N, 0, T> {

@@ -121,10 +121,10 @@ public:
             label_t l) const throw(bad_parameter);
 
     /** \brief Does a consistency check on the table.
-		\throw exception If product table is not set up properly.
+        \throw exception If product table is not set up properly.
 
-		Checks that the product of any label with the identity label yields the
-		respective label and that all products yield a non-empty set.
+        Checks that the product of any label with the identity label yields the
+        respective label and that all products yield a non-empty set.
      **/
     void check() const throw(bad_symmetry);
 

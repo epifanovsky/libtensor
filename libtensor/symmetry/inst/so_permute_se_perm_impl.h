@@ -18,7 +18,7 @@ void symmetry_operation_impl< so_permute<N, T>, se_perm<N, T> >::do_perform(
     static const char *method =
             "do_perform(symmetry_operation_params_t&)";
 
-    //	Adapter type for the input group
+    //  Adapter type for the input group
     //
     typedef symmetry_element_set_adapter< N, T, se_perm<N, T> >
     adapter_t;

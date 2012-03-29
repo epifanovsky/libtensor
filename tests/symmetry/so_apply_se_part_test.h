@@ -6,20 +6,20 @@
 namespace libtensor {
 
 
-/**	\brief Tests the libtensor::so_apply_se_part class
+/** \brief Tests the libtensor::so_apply_se_part class
 
-	\ingroup libtensor_tests_sym
+    \ingroup libtensor_tests_sym
  **/
 class so_apply_se_part_test : public libtest::unit_test {
 public:
-	virtual void perform() throw(libtest::test_exception);
+    virtual void perform() throw(libtest::test_exception);
 
 private:
-	void test_1(bool keep_zero,
-	        bool is_asym, bool sign) throw(libtest::test_exception);
-	void test_2(bool keep_zero,
+    void test_1(bool keep_zero,
             bool is_asym, bool sign) throw(libtest::test_exception);
-	void test_3(bool keep_zero,
+    void test_2(bool keep_zero,
+            bool is_asym, bool sign) throw(libtest::test_exception);
+    void test_3(bool keep_zero,
             bool is_asym, bool sign) throw(libtest::test_exception);
 
 };

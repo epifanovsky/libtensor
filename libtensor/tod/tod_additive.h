@@ -24,11 +24,11 @@ public:
 
     }
 
-    /**	\brief Prefetches the operands
+    /** \brief Prefetches the operands
      **/
     virtual void prefetch() = 0;
 
-    /**	\brief Performs the operation and writes the result to a %tensor
+    /** \brief Performs the operation and writes the result to a %tensor
         \param cpus CPU pool.
         \param zero Whether to zero out before adding the result.
         \param c Coefficient.

@@ -6,9 +6,9 @@
 namespace libtensor {
 
 
-/**	\brief Tests the libtensor::product_table_container class
+/** \brief Tests the libtensor::product_table_container class
 
-	\ingroup libtensor_tests_sym
+    \ingroup libtensor_tests_sym
  **/
 class product_table_container_test : public libtest::unit_test {
 public:

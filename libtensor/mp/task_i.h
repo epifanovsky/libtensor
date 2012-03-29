@@ -13,11 +13,11 @@ namespace libtensor {
  **/
 class task_i {
 public:
-	/**	\brief Virtual destructor
+    /** \brief Virtual destructor
      **/
     virtual ~task_i() { }
 
-    /**	\brief Executes the task on a pool of CPUs
+    /** \brief Executes the task on a pool of CPUs
      **/
     virtual void perform(cpu_pool &cpus) throw(exception) = 0;
 

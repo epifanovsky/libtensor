@@ -11,7 +11,7 @@
 namespace libtensor {
 
 
-/**	\brief Base class for additive block %tensor operations
+/** \brief Base class for additive block %tensor operations
     \tparam N Tensor order.
 
     Additive block %tensor operations are those that can add their result
@@ -59,7 +59,7 @@ public:
     using basic_btod<N>::perform;
 
 public:
-    /**	\brief Computes the result of the operation and adds it to the
+    /** \brief Computes the result of the operation and adds it to the
             output block %tensor
         \param bt Output block %tensor.
         \param c Scaling coefficient.
@@ -74,7 +74,7 @@ public:
     virtual void compute_block(dense_tensor_i<N, double> &blk, const index<N> &i,
         cpu_pool &cpus);
 
-    /**	\brief Computes a single block of the result and adds it to
+    /** \brief Computes a single block of the result and adds it to
             the output %tensor
         \param zero Zero out the output before the computation.
         \param blk Output %tensor.
@@ -88,7 +88,7 @@ public:
         cpu_pool &cpus) = 0;
 
 protected:
-    /**	\brief Invokes compute_block on another additive operation;
+    /** \brief Invokes compute_block on another additive operation;
             allows derived classes to call other additive operations
      **/
     void compute_block(additive_btod<N> &op, bool zero,

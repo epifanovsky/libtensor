@@ -36,7 +36,7 @@ private:
     index_range<N> m_ir; //!< Index range of the window
 
 public:
-    /**	\brief Initializes the operation
+    /** \brief Initializes the operation
         \param is Input stream (must be opened in the binary mode).
         \param dims Dimensions of the tensor contained in the stream.
         \param ir Index range of the window that will be read.
@@ -44,7 +44,7 @@ public:
     tod_import_raw_stream(std::istream &is, const dimensions<N> &dims,
         const index_range<N> &ir) : m_is(is), m_dims(dims), m_ir(ir) { }
 
-    /**	\brief Performs the operation
+    /** \brief Performs the operation
         \param ta Output %tensor.
      **/
     void perform(dense_tensor_i<N, double> &ta);

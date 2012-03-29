@@ -8,10 +8,10 @@
 namespace libtensor {
 
 
-/**	\brief Adapts symmetry_element_set<N, T> to a particular symmetry
-		element type
+/** \brief Adapts symmetry_element_set<N, T> to a particular symmetry
+        element type
 
-	\ingroup libtensor_symmetry
+    \ingroup libtensor_symmetry
  **/
 template<size_t N, typename T, typename ElemT>
 class symmetry_element_set_adapter {
@@ -19,7 +19,7 @@ public:
     static const char *k_clazz; //!< Class name;
 
 public:
-    //!	Iterator type
+    //!    Iterator type
     typedef typename symmetry_element_set<N, T>::const_iterator iterator;
 
 private:

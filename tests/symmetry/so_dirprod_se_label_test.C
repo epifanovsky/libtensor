@@ -32,7 +32,7 @@ void so_dirprod_se_label_test::perform() throw(libtest::test_exception) {
 }
 
 
-/**	\test Tests that the direct product of two empty group yields an empty
+/** \test Tests that the direct product of two empty group yields an empty
         group of a higher order
  **/
 void so_dirprod_se_label_test::test_empty_1(
@@ -75,7 +75,7 @@ void so_dirprod_se_label_test::test_empty_1(
 }
 
 
-/**	\test Direct product of a group with one element of Au symmetry and an
+/** \test Direct product of a group with one element of Au symmetry and an
         empty group (1-space) forming a 3-space.
  **/
 void so_dirprod_se_label_test::test_empty_2(
@@ -161,7 +161,7 @@ void so_dirprod_se_label_test::test_empty_2(
     check_allowed(tns.c_str(), "elemc", elemc, rx);
 }
 
-/**	\test Direct product of an empty group (1-space) and a group with one
+/** \test Direct product of an empty group (1-space) and a group with one
         element of Eu symmetry in 2-space forming a 3-space.
  **/
 void so_dirprod_se_label_test::test_empty_3(

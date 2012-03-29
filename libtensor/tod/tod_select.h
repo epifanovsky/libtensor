@@ -15,27 +15,27 @@ namespace libtensor {
 //@{
 
     struct compare4max {
-	bool operator()(const double &a, const double &b) {
+    bool operator()(const double &a, const double &b) {
             return a > b;
-	}
+    }
     };
 
     struct compare4absmax {
-	bool operator()(const double &a, const double &b) {
+    bool operator()(const double &a, const double &b) {
             return fabs(a) > fabs(b);
-	}
+    }
     };
 
     struct compare4min {
-	bool operator()(const double &a, const double &b) {
+    bool operator()(const double &a, const double &b) {
             return a < b;
-	}
+    }
     };
 
     struct compare4absmin {
-	bool operator()(const double &a, const double &b) {
+    bool operator()(const double &a, const double &b) {
             return fabs(a) < fabs(b);
-	}
+    }
     };
 //@}
 
@@ -119,10 +119,10 @@ public:
 
     //@}
 
-    //!	\name Operation
+    //!    \name Operation
     //@{
 
-    /**	\brief Selects the index-value pairs from the tensor
+    /** \brief Selects the index-value pairs from the tensor
         \param li List of index-value pairs.
         \param n Maximum size of the list.
     **/
@@ -148,7 +148,7 @@ void tod_select<N,ComparePolicy>::perform(list_t &li, size_t n) {
 
     if (i == d.get_size()) {
         ctrl.ret_const_dataptr(p);
-        return;	
+        return;    
     }
 
     if (li.empty()) {

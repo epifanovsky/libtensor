@@ -25,7 +25,7 @@ void se_part_test::perform() throw(libtest::test_exception) {
 }
 
 
-/**	\test Two partitions, one block in each partition (2-dim)
+/** \test Two partitions, one block in each partition (2-dim)
  **/
 void se_part_test::test_1() throw(libtest::test_exception) {
 
@@ -140,7 +140,7 @@ void se_part_test::test_1() throw(libtest::test_exception) {
 }
 
 
-/**	\test Two partitions, two blocks in each partition (2-dim)
+/** \test Two partitions, two blocks in each partition (2-dim)
  **/
 void se_part_test::test_2() throw(libtest::test_exception) {
 
@@ -253,8 +253,8 @@ void se_part_test::test_2() throw(libtest::test_exception) {
 }
 
 
-/**	\test Two partitions, two or three blocks in each partition (4-dim),
-		block sizes vary for different dimensions
+/** \test Two partitions, two or three blocks in each partition (4-dim),
+        block sizes vary for different dimensions
  **/
 void se_part_test::test_3a() throw(libtest::test_exception) {
 
@@ -301,7 +301,7 @@ void se_part_test::test_3a() throw(libtest::test_exception) {
 
         std::set< index<4> > orbit;
 
-        //	[0000]->[2200]->[0033]->[2233]
+        //  [0000]->[2200]->[0033]->[2233]
         orbit.insert(i0000);
         orbit.insert(i2200);
         orbit.insert(i0033);
@@ -320,7 +320,7 @@ void se_part_test::test_3a() throw(libtest::test_exception) {
             }
         }
 
-        //	[0101]->[0134]->[2301]->[2334]
+        //  [0101]->[0134]->[2301]->[2334]
         orbit.insert(i0101);
         orbit.insert(i0134);
         orbit.insert(i2301);
@@ -344,8 +344,8 @@ void se_part_test::test_3a() throw(libtest::test_exception) {
     }
 }
 
-/**	\test Two partitions, two or three blocks in each partition (4-dim),
-		block sizes vary for different dimensions.
+/** \test Two partitions, two or three blocks in each partition (4-dim),
+        block sizes vary for different dimensions.
  **/
 void se_part_test::test_3b() throw(libtest::test_exception) {
 
@@ -391,7 +391,7 @@ void se_part_test::test_3b() throw(libtest::test_exception) {
 
         std::set< index<4> > orbit;
 
-        //	[0000]->[2200]->[0033]->[2233]
+        //  [0000]->[2200]->[0033]->[2233]
         orbit.insert(i0000);
         orbit.insert(i2200);
         orbit.insert(i0023);
@@ -410,7 +410,7 @@ void se_part_test::test_3b() throw(libtest::test_exception) {
             }
         }
 
-        //	[0101]->[0124]->[2301]->[2324]
+        //  [0101]->[0124]->[2301]->[2324]
         orbit.insert(i0101);
         orbit.insert(i0124);
         orbit.insert(i2301);
@@ -434,8 +434,8 @@ void se_part_test::test_3b() throw(libtest::test_exception) {
     }
 }
 
-/**	\test Two partitions, two or three blocks in each partition (4-dim),
-		block sizes vary for different dimensions.
+/** \test Two partitions, two or three blocks in each partition (4-dim),
+        block sizes vary for different dimensions.
  **/
 void se_part_test::test_4() throw(libtest::test_exception) {
 
@@ -490,7 +490,7 @@ void se_part_test::test_4() throw(libtest::test_exception) {
     }
 }
 
-/**	\test Two partitions, two blocks in each partition (2-dim), forbidden
+/** \test Two partitions, two blocks in each partition (2-dim), forbidden
  **/
 void se_part_test::test_5() throw(libtest::test_exception) {
 
@@ -596,8 +596,8 @@ void se_part_test::test_5() throw(libtest::test_exception) {
     }
 }
 
-/**	\test Test creation of maps between forbidden partitions and
-		forbidden partitions in existing maps
+/** \test Test creation of maps between forbidden partitions and
+        forbidden partitions in existing maps
  **/
 void se_part_test::test_6() throw(libtest::test_exception) {
 
@@ -755,8 +755,8 @@ void se_part_test::test_6() throw(libtest::test_exception) {
 }
 
 
-/**	\test Permutation of se_part: two partitions, two or three blocks in
-		each partition (4-dim), block sizes vary for different dimensions
+/** \test Permutation of se_part: two partitions, two or three blocks in
+        each partition (4-dim), block sizes vary for different dimensions
  **/
 void se_part_test::test_perm_1() throw(libtest::test_exception) {
 
@@ -816,8 +816,8 @@ void se_part_test::test_perm_1() throw(libtest::test_exception) {
     }
 }
 
-/**	\test Permutation of se_part: two partitions, two or three blocks in
-		each partition (4-dim), block sizes vary for different dimensions
+/** \test Permutation of se_part: two partitions, two or three blocks in
+        each partition (4-dim), block sizes vary for different dimensions
  **/
 void se_part_test::test_perm_2() throw(libtest::test_exception) {
 
@@ -879,8 +879,8 @@ void se_part_test::test_perm_2() throw(libtest::test_exception) {
     }
 }
 
-/**	\test Permutation of se_part: two partitions, two or three blocks in
-		each partition (4-dim), block sizes vary for different dimensions
+/** \test Permutation of se_part: two partitions, two or three blocks in
+        each partition (4-dim), block sizes vary for different dimensions
  **/
 void se_part_test::test_perm_3() throw(libtest::test_exception) {
 
@@ -941,8 +941,8 @@ void se_part_test::test_perm_3() throw(libtest::test_exception) {
     }
 }
 
-/**	\test Permutation of se_part: two partitions, two or three blocks in
-		each partition (4-dim), block sizes vary for different dimensions
+/** \test Permutation of se_part: two partitions, two or three blocks in
+        each partition (4-dim), block sizes vary for different dimensions
  **/
 void se_part_test::test_perm_4() throw(libtest::test_exception) {
 
@@ -1006,9 +1006,9 @@ void se_part_test::test_perm_4() throw(libtest::test_exception) {
     }
 }
 
-/**	\test Permutation of se_part: two partitions, two blocks in
-		each partition (2-dim), block sizes vary for different dimensions,
-		forbidden partitions
+/** \test Permutation of se_part: two partitions, two blocks in
+        each partition (2-dim), block sizes vary for different dimensions,
+        forbidden partitions
  **/
 void se_part_test::test_perm_5() throw(libtest::test_exception) {
 
@@ -1072,7 +1072,7 @@ void se_part_test::test_perm_5() throw(libtest::test_exception) {
 }
 
 
-/**	\test Two partitions, blocks with unequal size in each partition (2-dim)
+/** \test Two partitions, blocks with unequal size in each partition (2-dim)
  **/
 void se_part_test::test_exc() throw(libtest::test_exception) {
 

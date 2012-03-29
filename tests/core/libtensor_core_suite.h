@@ -76,7 +76,7 @@ private:
     unit_test_factory<abs_index_test> m_utf_abs_index;
     unit_test_factory<block_index_space_test> m_utf_block_index_space;
     unit_test_factory<block_index_subspace_builder_test>
-		m_utf_block_index_subspace_builder;
+        m_utf_block_index_subspace_builder;
     unit_test_factory<block_map_test> m_utf_block_map;
     unit_test_factory<block_tensor_test> m_utf_block_tensor;
     unit_test_factory<dense_tensor_test> m_utf_dense_tensor;
@@ -100,7 +100,7 @@ private:
     unit_test_factory<version_test> m_utf_version;
 
 public:
-    //!	Creates the suite
+    //!    Creates the suite
     libtensor_core_suite();
 };
 

@@ -15,7 +15,7 @@
 namespace libtensor {
 
 
-/**	\brief Calculates the dot product of two tensors
+/** \brief Calculates the dot product of two tensors
     \tparam N Tensor order.
 
     \ingroup libtensor_tod
@@ -85,7 +85,7 @@ private:
     loop_list_t m_list; //!< Loop list
 
 public:
-    //!	\name Construction and destruction
+    //!    \name Construction and destruction
     //@{
 
     tod_dotprod(dense_tensor_i<N, double> &t1, dense_tensor_i<N, double> &t2);
@@ -95,11 +95,11 @@ public:
 
     //@}
 
-    /**	\brief Prefetches the arguments
+    /** \brief Prefetches the arguments
      **/
     void prefetch();
 
-    /**	\brief Computes the dot product
+    /** \brief Computes the dot product
      **/
     double calculate(cpu_pool &cpus);
 

@@ -10,23 +10,23 @@
 namespace libtensor {
 
 
-/**	\brief Stores the reduced representation of a generalized %permutation
+/** \brief Stores the reduced representation of a generalized %permutation
         group
-	\tparam N Tensor order.
-	\tparam T Tensor element type.
+    \tparam N Tensor order.
+    \tparam T Tensor element type.
 
-	This class implements a modified version of the %permutation group
-	container and procedures described in
-	    M. Jerrum, J. Algorithms 7 (1986), 60-78.
-	The modifications are such that each group element has a scalar
-	transformation attached attached to it. The requirement to the
-	scalar transformation S is that it is the generator of a cyclic
-	group of order m (i.e. \f$ S^m = 1 \f$), and that m is a divisor
-	of the order n of the permutation P it is attached to
-	(\f$ P^n = 1 \f$). Both requirements are currently not checked.
-	They are however checked for class \c se_perm<N, T>.
+    This class implements a modified version of the %permutation group
+    container and procedures described in
+        M. Jerrum, J. Algorithms 7 (1986), 60-78.
+    The modifications are such that each group element has a scalar
+    transformation attached attached to it. The requirement to the
+    scalar transformation S is that it is the generator of a cyclic
+    group of order m (i.e. \f$ S^m = 1 \f$), and that m is a divisor
+    of the order n of the permutation P it is attached to
+    (\f$ P^n = 1 \f$). Both requirements are currently not checked.
+    They are however checked for class \c se_perm<N, T>.
 
-	\ingroup libtensor_symmetry
+    \ingroup libtensor_symmetry
  **/
 template<size_t N, typename T>
 class permutation_group {
@@ -38,7 +38,7 @@ private:
     typedef scalar_transf<T> transf_t;
     typedef std::pair<perm_t, transf_t> gen_perm_t;
 
-    //!	Stores one labeled branching
+    //!    Stores one labeled branching
     struct branching {
         gen_perm_t m_sigma[N]; //!< Edge labels (permutation + n)
         gen_perm_t m_tau[N]; //!< Vertex labels (permutation + n)
@@ -67,76 +67,76 @@ private:
     branching m_br; //!< Branching
 
 public:
-    //!	\name Construction and destruction
+    //!    \name Construction and destruction
     //@{
 
-    /**	\brief Creates the C1 group
+    /** \brief Creates the C1 group
      **/
     permutation_group() { }
 
-    /**	\brief Creates a %permutation group from a generating set
-		\param set Generating set.
+    /** \brief Creates a %permutation group from a generating set
+        \param set Generating set.
      **/
     permutation_group(
             const symmetry_element_set_adapter<N, T, se_perm_t> &set);
 
-    /**	\brief Destroys the object
+    /** \brief Destroys the object
      **/
     ~permutation_group() { }
 
     //@}
 
 
-    //!	\name Manipulations
+    //!    \name Manipulations
     //@{
 
-    /**	\brief Augments the group with an %orbit represented by a
-			%permutation.
-		\param tr Scalar transformation
-		\param perm Permutation.
+    /** \brief Augments the group with an %orbit represented by a
+            %permutation.
+        \param tr Scalar transformation
+        \param perm Permutation.
 
-		Does nothing if the subgroup with the same sign already contains
-		the %orbit. Throws bad_symmetry if the subgroup with the
-		opposite sign contains the %orbit.
+        Does nothing if the subgroup with the same sign already contains
+        the %orbit. Throws bad_symmetry if the subgroup with the
+        opposite sign contains the %orbit.
      **/
     void add_orbit(const scalar_transf<T> &tr, const permutation<N> &perm);
 
 
-    /**	\brief Tests the membership of a %permutation in the group
-		\param tr Scalar transformation.
-		\param perm Permutation.
+    /** \brief Tests the membership of a %permutation in the group
+        \param tr Scalar transformation.
+        \param perm Permutation.
      **/
     bool is_member(const scalar_transf<T> &tr,
             const permutation<N> &perm) const;
 
 
-    /**	\brief Converts the %permutation group to a generating set
-			using the standard format
+    /** \brief Converts the %permutation group to a generating set
+            using the standard format
      **/
     void convert(symmetry_element_set<N, T> &set) const;
 
 
-    /**	\brief Generates a subgroup of all permutations which
-			stabilize unmasked elements. The %mask must have M
-			masked elements for the operation to succeed.
+    /** \brief Generates a subgroup of all permutations which
+            stabilize unmasked elements. The %mask must have M
+            masked elements for the operation to succeed.
      **/
     template<size_t M>
     void project_down(const mask<N> &msk, permutation_group<M, T> &g2);
 
 
     /** \brief Generates a subgroup that stabilize the set of masked indexes.
-	 	\param msk Set of elements to be stabilized.
-		\param g2 Resulting subgroup.
+         \param msk Set of elements to be stabilized.
+        \param g2 Resulting subgroup.
 
-		The resulting subgroup will contain all permutations that map the set
-		of masked indexes onto itself.
+        The resulting subgroup will contain all permutations that map the set
+        of masked indexes onto itself.
      **/
     void stabilize(const mask<N> &msk, permutation_group<N, T> &g2);
 
 
     /** \brief Generates a subgroup that set-wise stabilizes groups of indexes.
-	 	\param seq Sequences to specify the indexes that are stabilized
-		\param g2 Resulting subgroup.
+         \param seq Sequences to specify the indexes that are stabilized
+        \param g2 Resulting subgroup.
 
         The given sequence specifies the sets of indexes which are stabilized:
         indexes for which \c seq has value 0 are not stabilized and those for
@@ -156,27 +156,27 @@ public:
     //@}
 
 private:
-    /**	\brief Computes the non-trivial path from node i to node j
-			(j > i). Returns the length of the path or 0 if such
-			path doesn't exist
+    /** \brief Computes the non-trivial path from node i to node j
+            (j > i). Returns the length of the path or 0 if such
+            path doesn't exist
      **/
     size_t get_path(const branching &br, size_t i, size_t j,
             size_t (&path)[N]) const;
 
 
-    /**	\brief Tests the membership of a %permutation in G_{i-1}
-			(or G for i==0)
+    /** \brief Tests the membership of a %permutation in G_{i-1}
+            (or G for i==0)
 
-	    The function modifies the given scalar transformation
-	    T_r to \f$ T_r T^{-1}_{i-1} \f$ where T_{i-1} is the
-	    transformation assigned to the permutation in G_{i-1}.
+        The function modifies the given scalar transformation
+        T_r to \f$ T_r T^{-1}_{i-1} \f$ where T_{i-1} is the
+        transformation assigned to the permutation in G_{i-1}.
      **/
     bool is_member(const branching &br, size_t i, scalar_transf<T> &tr,
             const permutation<N> &perm) const;
 
 
-    /**	\brief Computes a branching using a generating set; returns
-			the generating set of G_{i-1}
+    /** \brief Computes a branching using a generating set; returns
+            the generating set of G_{i-1}
      **/
     void make_branching(branching &br, size_t i, const perm_list_t &gs,
             perm_list_t &gs2);
@@ -188,16 +188,16 @@ private:
     void permute_branching(branching &br, const permutation<N> &perm);
 
 
-    /**	\brief Computes a generating set for the subgroup that stabilizes
-			a set given by msk
-		\param br Branching representing the group
-		\param msk Sequence specifying the sets to stabilize
-		\param gs Generating set for the subgroup
+    /** \brief Computes a generating set for the subgroup that stabilizes
+            a set given by msk
+        \param br Branching representing the group
+        \param msk Sequence specifying the sets to stabilize
+        \param gs Generating set for the subgroup
 
-		The mask indicates set which is to be stabilized as follows
-		- Elements with identical numbers can be permuted
-		- Sets of elements with numbers other than zero can be permuted as a
-		  whole
+        The mask indicates set which is to be stabilized as follows
+        - Elements with identical numbers can be permuted
+        - Sets of elements with numbers other than zero can be permuted as a
+          whole
 
      **/
     void make_setstabilizer(const branching &br,

@@ -17,7 +17,7 @@ symmetry_operation_impl< so_dirprod<N, M, T>, se_perm<N + M, T> >::do_perform(
 
     static const char *method = "do_perform(symmetry_operation_params_t&)";
 
-    //	Adapter type for the input group
+    //  Adapter type for the input group
     typedef symmetry_element_set_adapter<N, T, se_perm<N, T> > adapter1_t;
     typedef symmetry_element_set_adapter<M, T, se_perm<M, T> > adapter2_t;
 
@@ -30,13 +30,13 @@ symmetry_operation_impl< so_dirprod<N, M, T>, se_perm<N + M, T> >::do_perform(
 
     adapter1_t g1(params.g1);
 
-    //	Go over each element in the first source group and project up
+    //  Go over each element in the first source group and project up
     for(typename adapter1_t::iterator i = g1.begin(); i != g1.end(); i++) {
 
         const se_perm<N, T> &e1 = g1.get_elem(i);
 
-        //	Project the permutation onto the larger
-        //	space and form a symmetry element
+        //  Project the permutation onto the larger
+        //  space and form a symmetry element
         sequence<N + M, size_t> a2a(0), a2b(0);
 
         for(register size_t k = 0; k < N; k++) {
@@ -52,13 +52,13 @@ symmetry_operation_impl< so_dirprod<N, M, T>, se_perm<N + M, T> >::do_perform(
 
     adapter2_t g2(params.g2);
 
-    //	Do the same for the second source group
+    //  Do the same for the second source group
     for(typename adapter2_t::iterator i = g2.begin(); i != g2.end(); i++) {
 
         const se_perm<M, T> &e2 = g2.get_elem(i);
 
-        //	Project the permutation onto the larger
-        //	space and form a symmetry element
+        //  Project the permutation onto the larger
+        //  space and form a symmetry element
         sequence<N + M, size_t> a2a(0), a2b(0);
         for(register size_t k = 0; k < N; k++) a2a[map[k]] = a2b[map[k]] = k;
 

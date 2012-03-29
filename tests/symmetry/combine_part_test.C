@@ -30,7 +30,7 @@ void combine_part_test::perform() throw(libtest::test_exception) {
 }
 
 
-/**	\test Tests that calling combine part on an empty set throws an exception
+/** \test Tests that calling combine part on an empty set throws an exception
  **/
 void combine_part_test::test_1() throw(libtest::test_exception) {
 
@@ -64,7 +64,7 @@ void combine_part_test::test_1() throw(libtest::test_exception) {
 }
 
 
-/**	\test Combine a set with a single element in 2-space
+/** \test Combine a set with a single element in 2-space
  **/
 void combine_part_test::test_2(bool symm) throw(libtest::test_exception) {
 
@@ -127,7 +127,7 @@ void combine_part_test::test_2(bool symm) throw(libtest::test_exception) {
     }
 }
 
-/**	\test Combine a set with 2 partitions in 1-space to a partition in 2-space
+/** \test Combine a set with 2 partitions in 1-space to a partition in 2-space
  **/
 void combine_part_test::test_3(
         bool symm1, bool symm2) throw(libtest::test_exception) {

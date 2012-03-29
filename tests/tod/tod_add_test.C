@@ -442,14 +442,14 @@ void tod_add_test::test_add_two_ijkl_kjli(size_t ni, size_t nj, size_t nk,
     double *p2 = ct2.req_dataptr();
     double *p3_ref = ct3_ref.req_dataptr();
 
-    //	Generate random input
+    //  Generate random input
 
     for(size_t i = 0; i < sz; i++) {
         p1[i] = drand48();
         p2[i] = drand48();
     }
 
-    //	Generate output reference data
+    //  Generate output reference data
 
     double t3_max = 0.0;
     abs_index<4> ai(dims_ijkl);
@@ -469,7 +469,7 @@ void tod_add_test::test_add_two_ijkl_kjli(size_t ni, size_t nj, size_t nk,
     ct2.ret_dataptr(p2); p2 = 0;
     ct1.ret_dataptr(p1); p1 = 0;
 
-    //	Invoke the operation
+    //  Invoke the operation
 
     tod_add<4> op(t1, perm, c1);
     op.add_op(t2, c2);

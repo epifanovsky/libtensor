@@ -18,7 +18,7 @@
 
 namespace libtensor {
 
-/**	\brief Base class for importing block tensors from external sources
+/** \brief Base class for importing block tensors from external sources
     \tparam N Tensor order.
     \tparam Alloc Allocator for temporary buffers.
 
@@ -117,10 +117,10 @@ void btod_import_raw_base<N, Alloc>::verify_zero_orbit(
 
     for(iterator_t i = o.begin(); i != o.end(); ++i) {
 
-        //	Skip the canonical block
+        //  Skip the canonical block
         if(o.get_abs_index(i) == o.get_abs_canonical_index()) continue;
 
-        //	Make sure the block is strictly zero
+        //  Make sure the block is strictly zero
         abs_index<N> ai(o.get_abs_index(i), bidims);
         if(!ctrl.req_is_zero_block(ai.get_index())) {
             abs_index<N> aci(o.get_abs_canonical_index(), bidims);
@@ -147,20 +147,20 @@ void btod_import_raw_base<N, Alloc>::verify_nonzero_orbit(
 
     cpu_pool cpus(1);
 
-    //	Get the canonical block
+    //  Get the canonical block
     abs_index<N> aci(o.get_abs_canonical_index(), bidims);
     dense_tensor_i<N, double> &cblk = ctrl.req_block(aci.get_index());
 
     for(iterator_t i = o.begin(); i != o.end(); ++i) {
 
-        //	Skip the canonical block
+        //  Skip the canonical block
         if(o.get_abs_index(i) == o.get_abs_canonical_index()) continue;
 
-        //	Current index and transformation
+        //  Current index and transformation
         abs_index<N> ai(o.get_abs_index(i), bidims);
         const tensor_transf<N, double> &tr = o.get_transf(i);
 
-        //	Compare with the transformed canonical block
+        //  Compare with the transformed canonical block
         dense_tensor_i<N, double> &blk = ctrl.req_block(ai.get_index());
         dense_tensor<N, double, Alloc> tblk(blk.get_dims());
         tod_copy<N> (cblk, tr.get_perm(), tr.get_scalar_tr().get_coeff()).
@@ -184,7 +184,7 @@ void btod_import_raw_base<N, Alloc>::verify_nonzero_orbit(
 
         ctrl.ret_block(ai.get_index());
 
-        //	Zero out the block with proper symmetry
+        //  Zero out the block with proper symmetry
         ctrl.req_zero_block(ai.get_index());
     }
 

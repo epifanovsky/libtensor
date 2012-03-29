@@ -8,11 +8,11 @@
 namespace libtensor {
 
 
-/**	\brief Base class for concrete %symmetry operations
-	\tparam OperT Symmetry operation type.
-	\tparam ElemT Symmetry element type.
+/** \brief Base class for concrete %symmetry operations
+    \tparam OperT Symmetry operation type.
+    \tparam ElemT Symmetry element type.
 
-	\ingroup libtensor_symmetry
+    \ingroup libtensor_symmetry
  **/
 template<typename OperT, typename ElemT>
 class symmetry_operation_impl_base : public symmetry_operation_impl_i {
@@ -26,24 +26,24 @@ public:
     symmetry_operation_params_t;
 
 public:
-    /**	\brief Returns the %symmetry element class id
+    /** \brief Returns the %symmetry element class id
      **/
     virtual const char *get_id() const {
         return element_t::k_sym_type;
     }
 
-    /**	\brief Clones the implementation
+    /** \brief Clones the implementation
      **/
     virtual symmetry_operation_impl_i *clone() const {
         return new symmetry_operation_impl<operation_t, element_t>;
     }
 
-    /**	\brief Invokes the operation
+    /** \brief Invokes the operation
      **/
     virtual void perform(symmetry_operation_params_i &params) const;
 
 protected:
-    /**	\brief Actually performs the operation
+    /** \brief Actually performs the operation
      **/
     virtual void do_perform(symmetry_operation_params_t &params) const = 0;
 

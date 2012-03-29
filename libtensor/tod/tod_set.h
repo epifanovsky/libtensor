@@ -7,7 +7,7 @@
 namespace libtensor {
 
 
-/**	\brief Sets all elements of a tensor to the given value
+/** \brief Sets all elements of a tensor to the given value
     \tparam N Tensor order.
 
     \ingroup libtensor_tod
@@ -18,12 +18,12 @@ private:
     double m_v; //!< Value
 
 public:
-    /**	\brief Initializes the operation
+    /** \brief Initializes the operation
         \param v Value to be assigned to the tensor elements.
      **/
     tod_set(double v = 0.0);
 
-    /**	\brief Performs the operation
+    /** \brief Performs the operation
         \param cpus Pool of CPUs.
         \param t Output tensor.
      **/

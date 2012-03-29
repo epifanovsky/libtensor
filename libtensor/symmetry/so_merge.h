@@ -23,13 +23,13 @@ template<size_t N, size_t M, typename T>
 class symmetry_operation_params< so_merge<N, M, T> >;
 
 
-/**	\brief Merges multiple dimensions of a %symmetry group into one
-	\tparam N Order of the argument space.
-	\tparam M Decrement in dimensions.
+/** \brief Merges multiple dimensions of a %symmetry group into one
+    \tparam N Order of the argument space.
+    \tparam M Decrement in dimensions.
 
-	The operation takes a %symmetry group that is defined for a %tensor
-	space of order N and produces a group that acts in a %tensor space
-	of order N - M by doing a number of merging steps.
+    The operation takes a %symmetry group that is defined for a %tensor
+    space of order N and produces a group that acts in a %tensor space
+    of order N - M by doing a number of merging steps.
 
     The mask specifies the total number of dimensions that are merged, while
     the sequence specifies the dimensions per merging step: all dimensions for
@@ -39,7 +39,7 @@ class symmetry_operation_params< so_merge<N, M, T> >;
     value of the sequence should be k - 1, and the number of masked dimensions
     should be M + k.
 
-	\ingroup libtensor_symmetry
+    \ingroup libtensor_symmetry
  **/
 template<size_t N, size_t M, typename T>
 class so_merge : public symmetry_operation_base< so_merge<N, M, T> > {
@@ -57,9 +57,9 @@ private:
 
 public:
     /** \brief Constructor
-		\param sym1 Input symmetry.
-		\param msk Total mask.
-		\param mseq Sequence of merging steps
+        \param sym1 Input symmetry.
+        \param msk Total mask.
+        \param mseq Sequence of merging steps
      **/
     so_merge(const symmetry<N, T> &sym1, const mask<N> &msk,
             const sequence<N, size_t> &mseq);

@@ -28,7 +28,7 @@ void so_reduce_se_label_test::perform() throw(libtest::test_exception) {
 }
 
 
-/**	\test Tests that a single reduction of 2 dim of an empty group yields an
+/** \test Tests that a single reduction of 2 dim of an empty group yields an
         empty group of lower order
  **/
 void so_reduce_se_label_test::test_empty_1(
@@ -91,7 +91,7 @@ void so_reduce_se_label_test::test_empty_2(
 
 }
 
-/**	\test Reduction of 2 dim of a 3-space on a 1-space in one step.
+/** \test Reduction of 2 dim of a 3-space on a 1-space in one step.
  **/
 void so_reduce_se_label_test::test_nm1_1(
         const std::string &table_id) throw(libtest::test_exception) {
@@ -151,7 +151,7 @@ void so_reduce_se_label_test::test_nm1_1(
 }
 
 
-/**	\test Single reduction of 2 dim of a 4-space on a 2-space.
+/** \test Single reduction of 2 dim of a 4-space on a 2-space.
  **/
 void so_reduce_se_label_test::test_nm1_2(const std::string &table_id,
         bool product) throw(libtest::test_exception) {

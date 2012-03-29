@@ -8,11 +8,11 @@
 
 namespace libtensor {
 
-/**	\brief Implementation of so_dirsum<N, M, T> for se_label<N, T>
-	\tparam N Tensor order.
-	\tparam T Tensor element type.
+/** \brief Implementation of so_dirsum<N, M, T> for se_label<N, T>
+    \tparam N Tensor order.
+    \tparam T Tensor element type.
 
-	\ingroup libtensor_symmetry
+    \ingroup libtensor_symmetry
  **/
 template<size_t N, size_t M, typename T>
 class symmetry_operation_impl< so_dirsum<N, M, T>, se_label<N + M, T> > :

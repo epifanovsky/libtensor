@@ -27,7 +27,7 @@ void btod_contract2_test::perform() throw(libtest::test_exception) {
     test_sym_3();
     test_sym_4();
 
-    //	Tests for zero block structure
+    //  Tests for zero block structure
 
     test_zeroblk_1();
     test_zeroblk_2();
@@ -36,7 +36,7 @@ void btod_contract2_test::perform() throw(libtest::test_exception) {
     test_zeroblk_5();
     test_zeroblk_6();
 
-    //	Tests for contractions
+    //  Tests for contractions
 
     test_contr_1();
     test_contr_2();
@@ -69,7 +69,7 @@ void btod_contract2_test::perform() throw(libtest::test_exception) {
     test_contr_20b();
     test_contr_21();
 
-    //	Tests for the contraction of a block tensor with itself
+    //  Tests for the contraction of a block tensor with itself
 
     test_self_1();
     test_self_2();
@@ -81,13 +81,13 @@ void btod_contract2_test::perform() throw(libtest::test_exception) {
 void btod_contract2_test::test_bis_1() throw(libtest::test_exception) {
 
     //
-    //	c_ijkl = a_ijkp b_lp
-    //	[ij] = 5  (no splits)
-    //	[kl] = 10 (no splits)
-    //	[p]  = 4  (no splits)
+    //  c_ijkl = a_ijkp b_lp
+    //  [ij] = 5  (no splits)
+    //  [kl] = 10 (no splits)
+    //  [p]  = 4  (no splits)
     //
-    //	Expected block index space:
-    //	[ijkl] have correct dimensions, no splits
+    //  Expected block index space:
+    //  [ijkl] have correct dimensions, no splits
     //
 
     static const char *testname = "btod_contract2_test::test_bis_1()";
@@ -132,14 +132,14 @@ void btod_contract2_test::test_bis_1() throw(libtest::test_exception) {
 void btod_contract2_test::test_bis_2() throw(libtest::test_exception) {
 
     //
-    //	c_ijkl = a_ijkp b_lp
-    //	[ij] = 5  (no splits)
-    //	[kl] = 10 (4, 6)
-    //	[p]  = 4  (no splits)
+    //  c_ijkl = a_ijkp b_lp
+    //  [ij] = 5  (no splits)
+    //  [kl] = 10 (4, 6)
+    //  [p]  = 4  (no splits)
     //
-    //	Expected block index space:
-    //	[ijkl] have correct dimensions, [ij] have no splits,
-    //	[kl] split identically
+    //  Expected block index space:
+    //  [ijkl] have correct dimensions, [ij] have no splits,
+    //  [kl] split identically
     //
 
     static const char *testname = "btod_contract2_test::test_bis_2()";
@@ -193,14 +193,14 @@ void btod_contract2_test::test_bis_2() throw(libtest::test_exception) {
 void btod_contract2_test::test_bis_3() throw(libtest::test_exception) {
 
     //
-    //	c_ijkl = a_ijkp b_lp
-    //	[ij] = 5  (2, 3)
-    //	[kl] = 10 (4, 6)
-    //	[p]  = 4  (no splits)
+    //  c_ijkl = a_ijkp b_lp
+    //  [ij] = 5  (2, 3)
+    //  [kl] = 10 (4, 6)
+    //  [p]  = 4  (no splits)
     //
-    //	Expected block index space:
-    //	[ijkl] have correct dimensions,
-    //	spaces in pairs [ij] and [kl] are split identically
+    //  Expected block index space:
+    //  [ijkl] have correct dimensions,
+    //  spaces in pairs [ij] and [kl] are split identically
     //
 
     static const char *testname = "btod_contract2_test::test_bis_3()";
@@ -258,11 +258,11 @@ void btod_contract2_test::test_bis_3() throw(libtest::test_exception) {
 void btod_contract2_test::test_bis_4() throw(libtest::test_exception) {
 
     //
-    //	c_ijkl = a_ijpq b_klpq
-    //	[ijklpq] = 11 (3, 2, 5)
+    //  c_ijkl = a_ijpq b_klpq
+    //  [ijklpq] = 11 (3, 2, 5)
     //
-    //	Expected block index space:
-    //	[ijkl] have correct dimensions, one splitting pattern
+    //  Expected block index space:
+    //  [ijkl] have correct dimensions, one splitting pattern
     //
 
     static const char *testname = "btod_contract2_test::test_bis_4()";
@@ -303,13 +303,13 @@ void btod_contract2_test::test_bis_4() throw(libtest::test_exception) {
 void btod_contract2_test::test_bis_5() throw(libtest::test_exception) {
 
     //
-    //	c_ijk = a_ipqr b_jpqrk
-    //	[ijpqr] = 11 (3, 2, 5)
-    //	[k]     = 9  (4, 5)
+    //  c_ijk = a_ipqr b_jpqrk
+    //  [ijpqr] = 11 (3, 2, 5)
+    //  [k]     = 9  (4, 5)
     //
-    //	Expected block index space:
-    //	[ijk] have correct dimensions,
-    //	[ij] and [k] preserve the splitting pattern
+    //  Expected block index space:
+    //  [ijk] have correct dimensions,
+    //  [ij] and [k] preserve the splitting pattern
     //
 
     static const char *testname = "btod_contract2_test::test_bis_5()";
@@ -437,8 +437,8 @@ void btod_contract2_test::test_sym_1() throw(libtest::test_exception) {
 void btod_contract2_test::test_sym_2() throw(libtest::test_exception) {
 
     //
-    //	c_ijk = a_ipqr b_jpqrk
-    //	Permutational symmetry in ijpqr
+    //  c_ijk = a_ipqr b_jpqrk
+    //  Permutational symmetry in ijpqr
     //
 
     static const char *testname = "btod_contract2_test::test_sym_2()";
@@ -523,8 +523,8 @@ void btod_contract2_test::test_sym_2() throw(libtest::test_exception) {
 void btod_contract2_test::test_sym_3() throw(libtest::test_exception) {
 
     //
-    //	c_ijpq = a_ijpr b_qr
-    //	Permutational symmetry in (i-j) (p-r) (q-r)
+    //  c_ijpq = a_ijpr b_qr
+    //  Permutational symmetry in (i-j) (p-r) (q-r)
     //
 
     static const char *testname = "btod_contract2_test::test_sym_3()";
@@ -604,8 +604,8 @@ void btod_contract2_test::test_sym_3() throw(libtest::test_exception) {
 void btod_contract2_test::test_sym_4() throw(libtest::test_exception) {
 
     //
-    //	c_ijkl = a_klab b_klab
-    //	Permutational symmetry in (i-j) (a-b) (k-l)
+    //  c_ijkl = a_klab b_klab
+    //  Permutational symmetry in (i-j) (a-b) (k-l)
     //
 
     static const char *testname = "btod_contract2_test::test_sym_4()";
@@ -673,7 +673,7 @@ void btod_contract2_test::test_sym_4() throw(libtest::test_exception) {
 }
 
 
-/**	\test Runs \f$ c_{ij} = \sum_p a_{ip} b_{jp} \f$.
+/** \test Runs \f$ c_{ij} = \sum_p a_{ip} b_{jp} \f$.
 Dimensions: [ijp] = 10. No splitting points. No symmetry.
 
 The single block of a is zero, b is non-zero. Initially, c is zero.
@@ -699,20 +699,20 @@ void btod_contract2_test::test_zeroblk_1() throw(libtest::test_exception) {
         block_tensor<2, double, allocator_t> btb(bisb);
         block_tensor<2, double, allocator_t> btc(bisc);
 
-        //	Load random data for input
+        //  Load random data for input
 
         index<2> i_00;
         btod_random<2>().perform(btb, i_00);
         bta.set_immutable();
         btb.set_immutable();
 
-        //	Run contraction and compute the reference
+        //  Run contraction and compute the reference
 
         contraction2<1, 1, 1> contr;
         contr.contract(1, 1);
         btod_contract2<1, 1, 1>(contr, bta, btb).perform(btc);
 
-        //	Check the zero block structure
+        //  Check the zero block structure
 
         block_tensor_ctrl<2, double> btcc(btc);
         if(!btcc.req_is_zero_block(i_00)) {
@@ -726,7 +726,7 @@ void btod_contract2_test::test_zeroblk_1() throw(libtest::test_exception) {
 }
 
 
-/**	\test Runs \f$ c_{ij} = \sum_p a_{ip} b_{jp} \f$.
+/** \test Runs \f$ c_{ij} = \sum_p a_{ip} b_{jp} \f$.
 Dimensions: [ijp] = 10. No splitting points. No symmetry.
 
 The single block of a is zero, b is non-zero. Initially, c is non-zero.
@@ -752,7 +752,7 @@ void btod_contract2_test::test_zeroblk_2() throw(libtest::test_exception) {
         block_tensor<2, double, allocator_t> btb(bisb);
         block_tensor<2, double, allocator_t> btc(bisc);
 
-        //	Load random data for input
+        //  Load random data for input
 
         index<2> i_00;
         btod_random<2>().perform(btb, i_00);
@@ -760,13 +760,13 @@ void btod_contract2_test::test_zeroblk_2() throw(libtest::test_exception) {
         bta.set_immutable();
         btb.set_immutable();
 
-        //	Run contraction and compute the reference
+        //  Run contraction and compute the reference
 
         contraction2<1, 1, 1> contr;
         contr.contract(1, 1);
         btod_contract2<1, 1, 1>(contr, bta, btb).perform(btc);
 
-        //	Check the zero block structure
+        //  Check the zero block structure
 
         block_tensor_ctrl<2, double> btcc(btc);
         if(!btcc.req_is_zero_block(i_00)) {
@@ -780,7 +780,7 @@ void btod_contract2_test::test_zeroblk_2() throw(libtest::test_exception) {
 }
 
 
-/**	\test Runs \f$ c_{ij} = \sum_p a_{ip} b_{jp} \f$.
+/** \test Runs \f$ c_{ij} = \sum_p a_{ip} b_{jp} \f$.
 Dimensions: [ijp] = 10. No splitting points. No symmetry.
 
 The single block of a is non-zero, b is zero. Initially, c is zero.
@@ -806,20 +806,20 @@ void btod_contract2_test::test_zeroblk_3() throw(libtest::test_exception) {
         block_tensor<2, double, allocator_t> btb(bisb);
         block_tensor<2, double, allocator_t> btc(bisc);
 
-        //	Load random data for input
+        //  Load random data for input
 
         index<2> i_00;
         btod_random<2>().perform(bta, i_00);
         bta.set_immutable();
         btb.set_immutable();
 
-        //	Run contraction and compute the reference
+        //  Run contraction and compute the reference
 
         contraction2<1, 1, 1> contr;
         contr.contract(1, 1);
         btod_contract2<1, 1, 1>(contr, bta, btb).perform(btc);
 
-        //	Check the zero block structure
+        //  Check the zero block structure
 
         block_tensor_ctrl<2, double> btcc(btc);
         if(!btcc.req_is_zero_block(i_00)) {
@@ -833,7 +833,7 @@ void btod_contract2_test::test_zeroblk_3() throw(libtest::test_exception) {
 }
 
 
-/**	\test Runs \f$ c_{ij} = \sum_p a_{ip} b_{jp} \f$.
+/** \test Runs \f$ c_{ij} = \sum_p a_{ip} b_{jp} \f$.
 Dimensions: [ijp] = 10. No splitting points. No symmetry.
 
 The single block of a is non-zero, b is zero. Initially, c is non-zero.
@@ -859,7 +859,7 @@ void btod_contract2_test::test_zeroblk_4() throw(libtest::test_exception) {
         block_tensor<2, double, allocator_t> btb(bisb);
         block_tensor<2, double, allocator_t> btc(bisc);
 
-        //	Load random data for input
+        //  Load random data for input
 
         index<2> i_00;
         btod_random<2>().perform(bta, i_00);
@@ -867,13 +867,13 @@ void btod_contract2_test::test_zeroblk_4() throw(libtest::test_exception) {
         bta.set_immutable();
         btb.set_immutable();
 
-        //	Run contraction and compute the reference
+        //  Run contraction and compute the reference
 
         contraction2<1, 1, 1> contr;
         contr.contract(1, 1);
         btod_contract2<1, 1, 1>(contr, bta, btb).perform(btc);
 
-        //	Check the zero block structure
+        //  Check the zero block structure
 
         block_tensor_ctrl<2, double> btcc(btc);
         if(!btcc.req_is_zero_block(i_00)) {
@@ -887,7 +887,7 @@ void btod_contract2_test::test_zeroblk_4() throw(libtest::test_exception) {
 }
 
 
-/**	\test Runs \f$ c_{ij} = \sum_p a_{ip} b_{jp} \f$.
+/** \test Runs \f$ c_{ij} = \sum_p a_{ip} b_{jp} \f$.
 Dimensions: [ijp] = 10. Splitting points: [ijp] = {5}. No symmetry.
 
 Only diagonal blocks in a and b are non-zero. Initially, c is zero.
@@ -916,7 +916,7 @@ void btod_contract2_test::test_zeroblk_5() throw(libtest::test_exception) {
         block_tensor<2, double, allocator_t> btb(bisb);
         block_tensor<2, double, allocator_t> btc(bisc);
 
-        //	Load random data for input
+        //  Load random data for input
 
         index<2> i_00, i_01, i_10, i_11;
         i_01[1] = 1; i_10[0] = 1;
@@ -928,13 +928,13 @@ void btod_contract2_test::test_zeroblk_5() throw(libtest::test_exception) {
         bta.set_immutable();
         btb.set_immutable();
 
-        //	Run contraction and compute the reference
+        //  Run contraction and compute the reference
 
         contraction2<1, 1, 1> contr;
         contr.contract(1, 1);
         btod_contract2<1, 1, 1>(contr, bta, btb).perform(btc);
 
-        //	Check the zero block structure
+        //  Check the zero block structure
 
         block_tensor_ctrl<2, double> btcc(btc);
         if(btcc.req_is_zero_block(i_00)) {
@@ -960,7 +960,7 @@ void btod_contract2_test::test_zeroblk_5() throw(libtest::test_exception) {
 }
 
 
-/**	\test Runs \f$ c_{ij} = \sum_p a_{ip} b_{jp} \f$.
+/** \test Runs \f$ c_{ij} = \sum_p a_{ip} b_{jp} \f$.
 Dimensions: [ijp] = 10. Splitting points: [ijp] = {5}. No symmetry.
 
 Only diagonal blocks in a and b are non-zero. Initially, c is non-zero.
@@ -989,7 +989,7 @@ void btod_contract2_test::test_zeroblk_6() throw(libtest::test_exception) {
         block_tensor<2, double, allocator_t> btb(bisb);
         block_tensor<2, double, allocator_t> btc(bisc);
 
-        //	Load random data for input
+        //  Load random data for input
 
         index<2> i_00, i_01, i_10, i_11;
         i_01[1] = 1; i_10[0] = 1;
@@ -1002,13 +1002,13 @@ void btod_contract2_test::test_zeroblk_6() throw(libtest::test_exception) {
         bta.set_immutable();
         btb.set_immutable();
 
-        //	Run contraction and compute the reference
+        //  Run contraction and compute the reference
 
         contraction2<1, 1, 1> contr;
         contr.contract(1, 1);
         btod_contract2<1, 1, 1>(contr, bta, btb).perform(btc);
 
-        //	Check the zero block structure
+        //  Check the zero block structure
 
         block_tensor_ctrl<2, double> btcc(btc);
         if(btcc.req_is_zero_block(i_00)) {
@@ -1037,8 +1037,8 @@ void btod_contract2_test::test_zeroblk_6() throw(libtest::test_exception) {
 void btod_contract2_test::test_contr_1() throw(libtest::test_exception) {
 
     //
-    //	c_ijkl = a_ijpq b_klpq
-    //	All dimensions are identical, no symmetry
+    //  c_ijkl = a_ijpq b_klpq
+    //  All dimensions are identical, no symmetry
     //
 
     static const char *testname = "btod_contract2_test::test_contr_1()";
@@ -1062,7 +1062,7 @@ void btod_contract2_test::test_contr_1() throw(libtest::test_exception) {
 
         block_tensor<4, double, allocator_t> bta(bisa), btb(bisb), btc(bisc);
 
-        //	Load random data for input
+        //  Load random data for input
 
         btod_random<4> rand;
         rand.perform(bta);
@@ -1070,7 +1070,7 @@ void btod_contract2_test::test_contr_1() throw(libtest::test_exception) {
         bta.set_immutable();
         btb.set_immutable();
 
-        //	Run contraction
+        //  Run contraction
 
         contraction2<2, 2, 2> contr;
         contr.contract(2, 2);
@@ -1079,7 +1079,7 @@ void btod_contract2_test::test_contr_1() throw(libtest::test_exception) {
         btod_contract2<2, 2, 2> op(contr, bta, btb);
         op.perform(btc);
 
-        //	Convert block tensors to regular tensors
+        //  Convert block tensors to regular tensors
 
         dense_tensor<4, double, allocator_t> ta(dims), tb(dims), tc(dims),
                 tc_ref(dims);
@@ -1090,12 +1090,12 @@ void btod_contract2_test::test_contr_1() throw(libtest::test_exception) {
         tod_btconv<4> convc(btc);
         convc.perform(tc);
 
-        //	Compute reference tensor
+        //  Compute reference tensor
 
         tod_contract2<2, 2, 2> op_ref(contr, ta, tb);
         op_ref.perform(cpus, true, 1.0, tc_ref);
 
-        //	Compare against reference
+        //  Compare against reference
 
         compare_ref<4>::compare(testname, tc, tc_ref, 1e-13);
 
@@ -1108,8 +1108,8 @@ void btod_contract2_test::test_contr_1() throw(libtest::test_exception) {
 void btod_contract2_test::test_contr_2() throw(libtest::test_exception) {
 
     //
-    //	c_ikjl = a_ijpq b_klqp
-    //	All dimensions are identical, no symmetry
+    //  c_ikjl = a_ijpq b_klqp
+    //  All dimensions are identical, no symmetry
     //
 
     static const char *testname = "btod_contract2_test::test_contr_2()";
@@ -1133,7 +1133,7 @@ void btod_contract2_test::test_contr_2() throw(libtest::test_exception) {
 
         block_tensor<4, double, allocator_t> bta(bisa), btb(bisb), btc(bisc);
 
-        //	Load random data for input
+        //  Load random data for input
 
         btod_random<4> rand;
         rand.perform(bta);
@@ -1141,7 +1141,7 @@ void btod_contract2_test::test_contr_2() throw(libtest::test_exception) {
         bta.set_immutable();
         btb.set_immutable();
 
-        //	Run contraction
+        //  Run contraction
 
         permutation<4> permc; permc.permute(1, 2);
         contraction2<2, 2, 2> contr(permc);
@@ -1151,7 +1151,7 @@ void btod_contract2_test::test_contr_2() throw(libtest::test_exception) {
         btod_contract2<2, 2, 2> op(contr, bta, btb);
         op.perform(btc);
 
-        //	Convert block tensors to regular tensors
+        //  Convert block tensors to regular tensors
 
         dense_tensor<4, double, allocator_t> ta(dims), tb(dims), tc(dims),
                 tc_ref(dims);
@@ -1162,12 +1162,12 @@ void btod_contract2_test::test_contr_2() throw(libtest::test_exception) {
         tod_btconv<4> convc(btc);
         convc.perform(tc);
 
-        //	Compute reference tensor
+        //  Compute reference tensor
 
         tod_contract2<2, 2, 2> op_ref(contr, ta, tb);
         op_ref.perform(cpus, true, 1.0, tc_ref);
 
-        //	Compare against reference
+        //  Compare against reference
 
         compare_ref<4>::compare(testname, tc, tc_ref, 1e-13);
 
@@ -1180,8 +1180,8 @@ void btod_contract2_test::test_contr_2() throw(libtest::test_exception) {
 void btod_contract2_test::test_contr_3() throw(libtest::test_exception) {
 
     //
-    //	c_ijkl = a_ijpq b_pqkl
-    //	Dimensions [ij]=10, [kl]=12, [pq]=6, no symmetry
+    //  c_ijkl = a_ijpq b_pqkl
+    //  Dimensions [ij]=10, [kl]=12, [pq]=6, no symmetry
     //
 
     static const char *testname = "btod_contract2_test::test_contr_3()";
@@ -1218,7 +1218,7 @@ void btod_contract2_test::test_contr_3() throw(libtest::test_exception) {
 
         block_tensor<4, double, allocator_t> bta(bisa), btb(bisb), btc(bisc);
 
-        //	Load random data for input
+        //  Load random data for input
 
         btod_random<4> rand;
         rand.perform(bta);
@@ -1226,7 +1226,7 @@ void btod_contract2_test::test_contr_3() throw(libtest::test_exception) {
         bta.set_immutable();
         btb.set_immutable();
 
-        //	Run contraction
+        //  Run contraction
 
         contraction2<2, 2, 2> contr;
         contr.contract(2, 0);
@@ -1235,7 +1235,7 @@ void btod_contract2_test::test_contr_3() throw(libtest::test_exception) {
         btod_contract2<2, 2, 2> op(contr, bta, btb);
         op.perform(btc);
 
-        //	Convert block tensors to regular tensors
+        //  Convert block tensors to regular tensors
 
         dense_tensor<4, double, allocator_t> ta(dimsa), tb(dimsb), tc(dimsc),
                 tc_ref(dimsc);
@@ -1246,12 +1246,12 @@ void btod_contract2_test::test_contr_3() throw(libtest::test_exception) {
         tod_btconv<4> convc(btc);
         convc.perform(tc);
 
-        //	Compute reference tensor
+        //  Compute reference tensor
 
         tod_contract2<2, 2, 2> op_ref(contr, ta, tb);
         op_ref.perform(cpus, true, 1.0, tc_ref);
 
-        //	Compare against reference
+        //  Compare against reference
 
         compare_ref<4>::compare(testname, tc, tc_ref, 1e-13);
 
@@ -1264,8 +1264,8 @@ void btod_contract2_test::test_contr_3() throw(libtest::test_exception) {
 void btod_contract2_test::test_contr_4() throw(libtest::test_exception) {
 
     //
-    //	c_ijkl = a_ijpq b_pqkl
-    //	Dimensions [ij]=10, [kl]=12, [pq]=6, permutational symmetry
+    //  c_ijkl = a_ijpq b_pqkl
+    //  Dimensions [ij]=10, [kl]=12, [pq]=6, permutational symmetry
     //
 
     static const char *testname = "btod_contract2_test::test_contr_4()";
@@ -1302,7 +1302,7 @@ void btod_contract2_test::test_contr_4() throw(libtest::test_exception) {
 
         block_tensor<4, double, allocator_t> bta(bisa), btb(bisb), btc(bisc);
 
-        //	Set up symmetry
+        //  Set up symmetry
 
         permutation<4> p1023, p0132;
         p1023.permute(0, 1);
@@ -1315,7 +1315,7 @@ void btod_contract2_test::test_contr_4() throw(libtest::test_exception) {
         ctrlb.req_symmetry().insert(cycle1);
         ctrlb.req_symmetry().insert(cycle2);
 
-        //	Load random data for input
+        //  Load random data for input
 
         btod_random<4> rand;
         rand.perform(bta);
@@ -1323,7 +1323,7 @@ void btod_contract2_test::test_contr_4() throw(libtest::test_exception) {
         bta.set_immutable();
         btb.set_immutable();
 
-        //	Run contraction
+        //  Run contraction
 
         contraction2<2, 2, 2> contr;
         contr.contract(2, 0);
@@ -1332,7 +1332,7 @@ void btod_contract2_test::test_contr_4() throw(libtest::test_exception) {
         btod_contract2<2, 2, 2> op(contr, bta, btb);
         op.perform(btc);
 
-        //	Convert block tensors to regular tensors
+        //  Convert block tensors to regular tensors
 
         dense_tensor<4, double, allocator_t> ta(dimsa), tb(dimsb), tc(dimsc),
                 tc_ref(dimsc);
@@ -1343,12 +1343,12 @@ void btod_contract2_test::test_contr_4() throw(libtest::test_exception) {
         tod_btconv<4> convc(btc);
         convc.perform(tc);
 
-        //	Compute reference tensor
+        //  Compute reference tensor
 
         tod_contract2<2, 2, 2> op_ref(contr, ta, tb);
         op_ref.perform(cpus, true, 1.0, tc_ref);
 
-        //	Compare against reference
+        //  Compare against reference
 
         compare_ref<4>::compare(testname, tc, tc_ref, 1e-13);
 
@@ -1361,9 +1361,9 @@ void btod_contract2_test::test_contr_4() throw(libtest::test_exception) {
 void btod_contract2_test::test_contr_5() throw(libtest::test_exception) {
 
     //
-    //	c_ijkl = c_ijkl + a_ijpq b_pqkl
-    //	Dimensions [ij]=10, [kl]=12, [pq]=6, permutational symmetry
-    //	Sym(C) = Sym(A*B)
+    //  c_ijkl = c_ijkl + a_ijpq b_pqkl
+    //  Dimensions [ij]=10, [kl]=12, [pq]=6, permutational symmetry
+    //  Sym(C) = Sym(A*B)
     //
 
     static const char *testname = "btod_contract2_test::test_contr_5()";
@@ -1400,7 +1400,7 @@ void btod_contract2_test::test_contr_5() throw(libtest::test_exception) {
 
         block_tensor<4, double, allocator_t> bta(bisa), btb(bisb), btc(bisc);
 
-        //	Set up symmetry
+        //  Set up symmetry
 
         permutation<4> p1023, p0132;
         p1023.permute(0, 1);
@@ -1415,7 +1415,7 @@ void btod_contract2_test::test_contr_5() throw(libtest::test_exception) {
         ctrlc.req_symmetry().insert(cycle1);
         ctrlc.req_symmetry().insert(cycle2);
 
-        //	Load random data for input
+        //  Load random data for input
 
         btod_random<4> rand;
         rand.perform(bta);
@@ -1424,7 +1424,7 @@ void btod_contract2_test::test_contr_5() throw(libtest::test_exception) {
         bta.set_immutable();
         btb.set_immutable();
 
-        //	Convert input block tensors to regular tensors
+        //  Convert input block tensors to regular tensors
 
         dense_tensor<4, double, allocator_t> ta(dimsa), tb(dimsb), tc(dimsc),
                 tc_ref(dimsc);
@@ -1435,7 +1435,7 @@ void btod_contract2_test::test_contr_5() throw(libtest::test_exception) {
         tod_btconv<4> convc_ref(btc);
         convc_ref.perform(tc_ref);
 
-        //	Run contraction
+        //  Run contraction
 
         contraction2<2, 2, 2> contr;
         contr.contract(2, 0);
@@ -1447,12 +1447,12 @@ void btod_contract2_test::test_contr_5() throw(libtest::test_exception) {
         tod_btconv<4> convc(btc);
         convc.perform(tc);
 
-        //	Compute reference tensor
+        //  Compute reference tensor
 
         tod_contract2<2, 2, 2> op_ref(contr, ta, tb);
         op_ref.perform(cpus, false, 2.0, tc_ref);
 
-        //	Compare against reference
+        //  Compare against reference
 
         compare_ref<4>::compare(testname, tc, tc_ref, 1e-13);
 
@@ -1465,9 +1465,9 @@ void btod_contract2_test::test_contr_5() throw(libtest::test_exception) {
 void btod_contract2_test::test_contr_6() throw(libtest::test_exception) {
 
     //
-    //	c_ijkl = c_ijkl + a_ijpq b_pqkl
-    //	Dimensions [ij]=10, [kl]=12, [pq]=6, permutational symmetry
-    //	Sym(C) > Sym(A*B)
+    //  c_ijkl = c_ijkl + a_ijpq b_pqkl
+    //  Dimensions [ij]=10, [kl]=12, [pq]=6, permutational symmetry
+    //  Sym(C) > Sym(A*B)
     //
 
     static const char *testname = "btod_contract2_test::test_contr_6()";
@@ -1504,7 +1504,7 @@ void btod_contract2_test::test_contr_6() throw(libtest::test_exception) {
 
         block_tensor<4, double, allocator_t> bta(bisa), btb(bisb), btc(bisc);
 
-        //	Set up symmetry
+        //  Set up symmetry
 
         permutation<4> p1023, p0132;
         p1023.permute(0, 1);
@@ -1518,7 +1518,7 @@ void btod_contract2_test::test_contr_6() throw(libtest::test_exception) {
         ctrlc.req_symmetry().insert(cycle1);
         ctrlc.req_symmetry().insert(cycle2);
 
-        //	Load random data for input
+        //  Load random data for input
 
         btod_random<4> rand;
         rand.perform(bta);
@@ -1527,7 +1527,7 @@ void btod_contract2_test::test_contr_6() throw(libtest::test_exception) {
         bta.set_immutable();
         btb.set_immutable();
 
-        //	Convert input block tensors to regular tensors
+        //  Convert input block tensors to regular tensors
 
         dense_tensor<4, double, allocator_t> ta(dimsa), tb(dimsb), tc(dimsc),
                 tc_ref(dimsc);
@@ -1538,7 +1538,7 @@ void btod_contract2_test::test_contr_6() throw(libtest::test_exception) {
         tod_btconv<4> convc_ref(btc);
         convc_ref.perform(tc_ref);
 
-        //	Run contraction
+        //  Run contraction
 
         contraction2<2, 2, 2> contr;
         contr.contract(2, 0);
@@ -1550,12 +1550,12 @@ void btod_contract2_test::test_contr_6() throw(libtest::test_exception) {
         tod_btconv<4> convc(btc);
         convc.perform(tc);
 
-        //	Compute reference tensor
+        //  Compute reference tensor
 
         tod_contract2<2, 2, 2> op_ref(contr, ta, tb);
         op_ref.perform(cpus, false, 2.0, tc_ref);
 
-        //	Compare against reference
+        //  Compare against reference
 
         compare_ref<4>::compare(testname, tc, tc_ref, 1e-13);
 
@@ -1568,8 +1568,8 @@ void btod_contract2_test::test_contr_6() throw(libtest::test_exception) {
 void btod_contract2_test::test_contr_7() throw(libtest::test_exception) {
 
     //
-    //	c_ijkl = a_pi b_jklp
-    //	Dimensions [ijkl]=10, [p]=6, no symmetry
+    //  c_ijkl = a_pi b_jklp
+    //  Dimensions [ijkl]=10, [p]=6, no symmetry
     //
 
     static const char *testname = "btod_contract2_test::test_contr_7()";
@@ -1604,14 +1604,14 @@ void btod_contract2_test::test_contr_7() throw(libtest::test_exception) {
         block_tensor<2, double, allocator_t> bta(bisa);
         block_tensor<4, double, allocator_t> btb(bisb), btc(bisc);
 
-        //	Load random data for input
+        //  Load random data for input
 
         btod_random<2>().perform(bta);
         btod_random<4>().perform(btb);
         bta.set_immutable();
         btb.set_immutable();
 
-        //	Run contraction
+        //  Run contraction
 
         contraction2<1, 3, 1> contr;
         contr.contract(0, 3);
@@ -1619,7 +1619,7 @@ void btod_contract2_test::test_contr_7() throw(libtest::test_exception) {
         btod_contract2<1, 3, 1> op(contr, bta, btb);
         op.perform(btc);
 
-        //	Convert block tensors to regular tensors
+        //  Convert block tensors to regular tensors
 
         dense_tensor<2, double, allocator_t> ta(dimsa);
         dense_tensor<4, double, allocator_t> tb(dimsb), tc(dimsc), tc_ref(dimsc);
@@ -1630,12 +1630,12 @@ void btod_contract2_test::test_contr_7() throw(libtest::test_exception) {
         tod_btconv<4> convc(btc);
         convc.perform(tc);
 
-        //	Compute reference tensor
+        //  Compute reference tensor
 
         tod_contract2<1, 3, 1> op_ref(contr, ta, tb);
         op_ref.perform(cpus, true, 1.0, tc_ref);
 
-        //	Compare against reference
+        //  Compare against reference
 
         compare_ref<4>::compare(testname, tc, tc_ref, 1e-13);
 
@@ -1648,8 +1648,8 @@ void btod_contract2_test::test_contr_7() throw(libtest::test_exception) {
 void btod_contract2_test::test_contr_8() throw(libtest::test_exception) {
 
     //
-    //	c_ijkl = a_pi b_jklp
-    //	Dimensions [ijkl]=10, [p]=6, no symmetry
+    //  c_ijkl = a_pi b_jklp
+    //  Dimensions [ijkl]=10, [p]=6, no symmetry
     //
 
     static const char *testname = "btod_contract2_test::test_contr_8()";
@@ -1674,7 +1674,7 @@ void btod_contract2_test::test_contr_8() throw(libtest::test_exception) {
         block_tensor<2, double, allocator_t> bta(bisa);
         block_tensor<4, double, allocator_t> btb(bisb), btc(bisc);
 
-        //	Load random data for input
+        //  Load random data for input
 
         btod_random<2>().perform(bta);
         btod_random<4>().perform(btb);
@@ -1682,7 +1682,7 @@ void btod_contract2_test::test_contr_8() throw(libtest::test_exception) {
         bta.set_immutable();
         btb.set_immutable();
 
-        //	Convert block tensors to regular tensors
+        //  Convert block tensors to regular tensors
 
         dense_tensor<2, double, allocator_t> ta(dimsa);
         dense_tensor<4, double, allocator_t> tb(dimsb), tc(dimsc), tc_ref(dimsc);
@@ -1690,7 +1690,7 @@ void btod_contract2_test::test_contr_8() throw(libtest::test_exception) {
         tod_btconv<4>(btb).perform(tb);
         tod_btconv<4>(btc).perform(tc_ref);
 
-        //	Run contraction
+        //  Run contraction
 
         contraction2<1, 3, 1> contr;
         contr.contract(0, 3);
@@ -1700,12 +1700,12 @@ void btod_contract2_test::test_contr_8() throw(libtest::test_exception) {
 
         tod_btconv<4>(btc).perform(tc);
 
-        //	Compute reference tensor
+        //  Compute reference tensor
 
         tod_contract2<1, 3, 1> op_ref(contr, ta, tb);
         op_ref.perform(cpus, false, 1.0, tc_ref);
 
-        //	Compare against reference
+        //  Compare against reference
 
         compare_ref<4>::compare(testname, tc, tc_ref, 1e-13);
 
@@ -1718,8 +1718,8 @@ void btod_contract2_test::test_contr_8() throw(libtest::test_exception) {
 void btod_contract2_test::test_contr_9() throw(libtest::test_exception) {
 
     //
-    //	c_ijkl = - a_pi b_jklp
-    //	Dimensions [ijkl]=10, [p]=6, no symmetry
+    //  c_ijkl = - a_pi b_jklp
+    //  Dimensions [ijkl]=10, [p]=6, no symmetry
     //
 
     static const char *testname = "btod_contract2_test::test_contr_9()";
@@ -1744,14 +1744,14 @@ void btod_contract2_test::test_contr_9() throw(libtest::test_exception) {
         block_tensor<2, double, allocator_t> bta(bisa);
         block_tensor<4, double, allocator_t> btb(bisb), btc(bisc);
 
-        //	Load random data for input
+        //  Load random data for input
 
         btod_random<2>().perform(bta);
         btod_random<4>().perform(btb);
         bta.set_immutable();
         btb.set_immutable();
 
-        //	Convert block tensors to regular tensors
+        //  Convert block tensors to regular tensors
 
         dense_tensor<2, double, allocator_t> ta(dimsa);
         dense_tensor<4, double, allocator_t> tb(dimsb), tc(dimsc), tc_ref(dimsc);
@@ -1759,7 +1759,7 @@ void btod_contract2_test::test_contr_9() throw(libtest::test_exception) {
         tod_btconv<4>(btb).perform(tb);
         tod_btconv<4>(btc).perform(tc_ref);
 
-        //	Run contraction
+        //  Run contraction
 
         contraction2<1, 3, 1> contr;
         contr.contract(0, 3);
@@ -1769,12 +1769,12 @@ void btod_contract2_test::test_contr_9() throw(libtest::test_exception) {
 
         tod_btconv<4>(btc).perform(tc);
 
-        //	Compute reference tensor
+        //  Compute reference tensor
 
         tod_contract2<1, 3, 1> op_ref(contr, ta, tb);
         op_ref.perform(cpus, false, -1.0, tc_ref);
 
-        //	Compare against reference
+        //  Compare against reference
 
         compare_ref<4>::compare(testname, tc, tc_ref, 1e-13);
 
@@ -1787,9 +1787,9 @@ void btod_contract2_test::test_contr_9() throw(libtest::test_exception) {
 void btod_contract2_test::test_contr_10() throw(libtest::test_exception) {
 
     //
-    //	c_ijkl = - a_pi b_jklp
-    //	Dimensions [ijkl]=10, [p]=6, no symmetry
-    //	Copy with -1.0 vs. a coefficient in btod_contract2
+    //  c_ijkl = - a_pi b_jklp
+    //  Dimensions [ijkl]=10, [p]=6, no symmetry
+    //  Copy with -1.0 vs. a coefficient in btod_contract2
     //
 
     static const char *testname = "btod_contract2_test::test_contr_10()";
@@ -1816,16 +1816,16 @@ void btod_contract2_test::test_contr_10() throw(libtest::test_exception) {
         block_tensor<4, double, allocator_t> btc(bisc), btc_ref(bisc),
                 btc_ref_tmp(bisc);
 
-        //	Load random data for input
+        //  Load random data for input
 
         btod_random<2>().perform(bta);
         btod_random<4>().perform(btb);
         bta.set_immutable();
         btb.set_immutable();
 
-        //	Convert block tensors to regular tensors
+        //  Convert block tensors to regular tensors
 
-        //	Run contraction and compute the reference
+        //  Run contraction and compute the reference
 
         contraction2<1, 3, 1> contr;
         contr.contract(0, 3);
@@ -1834,7 +1834,7 @@ void btod_contract2_test::test_contr_10() throw(libtest::test_exception) {
         btod_contract2<1, 3, 1>(contr, bta, btb).perform(btc_ref_tmp);
         btod_copy<4>(btc_ref_tmp, -1.0).perform(btc_ref);
 
-        //	Compare against reference
+        //  Compare against reference
 
         compare_ref<4>::compare(testname, btc, btc_ref, 1e-13);
 
@@ -1847,8 +1847,8 @@ void btod_contract2_test::test_contr_10() throw(libtest::test_exception) {
 void btod_contract2_test::test_contr_11() throw(libtest::test_exception) {
 
     //
-    //	c_ijkl = a_ij b_kl
-    //	Dimensions [ij] = 10, [kl]=20, no symmetry
+    //  c_ijkl = a_ij b_kl
+    //  Dimensions [ij] = 10, [kl]=20, no symmetry
     //
 
     static const char *testname = "btod_contract2_test::test_contr_11()";
@@ -1875,14 +1875,14 @@ void btod_contract2_test::test_contr_11() throw(libtest::test_exception) {
         block_tensor<4, double, allocator_t> btc(bisc), btc_ref(bisc),
                 btc_ref_tmp(bisc);
 
-        //	Load random data for input
+        //  Load random data for input
 
         btod_random<2>().perform(bta);
         btod_random<2>().perform(btb);
         bta.set_immutable();
         btb.set_immutable();
 
-        //	Convert block tensors to regular tensors
+        //  Convert block tensors to regular tensors
 
         dense_tensor<2, double, allocator_t> ta(dimsa);
         dense_tensor<2, double, allocator_t> tb(dimsb);
@@ -1890,7 +1890,7 @@ void btod_contract2_test::test_contr_11() throw(libtest::test_exception) {
         tod_btconv<2>(bta).perform(ta);
         tod_btconv<2>(btb).perform(tb);
 
-        //	Run contraction and compute the reference
+        //  Run contraction and compute the reference
 
         contraction2<2, 2, 0> contr;
 
@@ -1898,7 +1898,7 @@ void btod_contract2_test::test_contr_11() throw(libtest::test_exception) {
         tod_btconv<4>(btc).perform(tc);
         tod_contract2<2, 2, 0>(contr, ta, tb).perform(cpus, true, 1.0, tc_ref);
 
-        //	Compare against reference
+        //  Compare against reference
 
         compare_ref<4>::compare(testname, tc, tc_ref, 1e-13);
 
@@ -1911,8 +1911,8 @@ void btod_contract2_test::test_contr_11() throw(libtest::test_exception) {
 void btod_contract2_test::test_contr_12() throw(libtest::test_exception) {
 
     //
-    //	c_ijkl = a_ij b_lk
-    //	Dimensions [ij] = 10, [kl]=20, no symmetry
+    //  c_ijkl = a_ij b_lk
+    //  Dimensions [ij] = 10, [kl]=20, no symmetry
     //
 
     static const char *testname = "btod_contract2_test::test_contr_12()";
@@ -1939,14 +1939,14 @@ void btod_contract2_test::test_contr_12() throw(libtest::test_exception) {
         block_tensor<4, double, allocator_t> btc(bisc), btc_ref(bisc),
                 btc_ref_tmp(bisc);
 
-        //	Load random data for input
+        //  Load random data for input
 
         btod_random<2>().perform(bta);
         btod_random<2>().perform(btb);
         bta.set_immutable();
         btb.set_immutable();
 
-        //	Convert block tensors to regular tensors
+        //  Convert block tensors to regular tensors
 
         dense_tensor<2, double, allocator_t> ta(dimsa);
         dense_tensor<2, double, allocator_t> tb(dimsb);
@@ -1954,7 +1954,7 @@ void btod_contract2_test::test_contr_12() throw(libtest::test_exception) {
         tod_btconv<2>(bta).perform(ta);
         tod_btconv<2>(btb).perform(tb);
 
-        //	Run contraction and compute the reference
+        //  Run contraction and compute the reference
 
         permutation<4> permc;
         permc.permute(2, 3);
@@ -1964,7 +1964,7 @@ void btod_contract2_test::test_contr_12() throw(libtest::test_exception) {
         tod_btconv<4>(btc).perform(tc);
         tod_contract2<2, 2, 0>(contr, ta, tb).perform(cpus, true, 1.0, tc_ref);
 
-        //	Compare against reference
+        //  Compare against reference
 
         compare_ref<4>::compare(testname, tc, tc_ref, 1e-13);
 
@@ -1977,8 +1977,8 @@ void btod_contract2_test::test_contr_12() throw(libtest::test_exception) {
 void btod_contract2_test::test_contr_13() throw(libtest::test_exception) {
 
     //
-    //	c_ij = a_kijl b_kl
-    //	Dimensions [ij] = 10, [kl]=20, no symmetry
+    //  c_ij = a_kijl b_kl
+    //  Dimensions [ij] = 10, [kl]=20, no symmetry
     //
 
     static const char *testname = "btod_contract2_test::test_contr_13()";
@@ -2006,14 +2006,14 @@ void btod_contract2_test::test_contr_13() throw(libtest::test_exception) {
         block_tensor<2, double, allocator_t> btc(bisc), btc_ref(bisc),
                 btc_ref_tmp(bisc);
 
-        //	Load random data for input
+        //  Load random data for input
 
         btod_random<4>().perform(bta);
         btod_random<2>().perform(btb);
         bta.set_immutable();
         btb.set_immutable();
 
-        //	Convert block tensors to regular tensors
+        //  Convert block tensors to regular tensors
 
         dense_tensor<4, double, allocator_t> ta(dimsa);
         dense_tensor<2, double, allocator_t> tb(dimsb);
@@ -2021,7 +2021,7 @@ void btod_contract2_test::test_contr_13() throw(libtest::test_exception) {
         tod_btconv<4>(bta).perform(ta);
         tod_btconv<2>(btb).perform(tb);
 
-        //	Run contraction and compute the reference
+        //  Run contraction and compute the reference
 
         contraction2<2, 0, 2> contr;
         contr.contract(0, 0);
@@ -2032,7 +2032,7 @@ void btod_contract2_test::test_contr_13() throw(libtest::test_exception) {
         tod_btconv<2>(btc).perform(tc);
         tod_contract2<2, 0, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc_ref);
 
-        //	Compare against reference
+        //  Compare against reference
 
         compare_ref<2>::compare(testname, tc, tc_ref, 1e-13);
 
@@ -2046,9 +2046,9 @@ void btod_contract2_test::test_contr_14(double c)
 throw(libtest::test_exception) {
 
     //
-    //	c_ijkl = a_ijmn b_klmn
-    //	Dimensions [ijlkmn] = 15 (three blocks), no symmetry
-    //	bis of the operation and the output tensor are not equal
+    //  c_ijkl = a_ijmn b_klmn
+    //  Dimensions [ijlkmn] = 15 (three blocks), no symmetry
+    //  bis of the operation and the output tensor are not equal
     //
 
     std::ostringstream ss;
@@ -2077,7 +2077,7 @@ throw(libtest::test_exception) {
         block_tensor<4, double, allocator_t> btb(bisb);
         block_tensor<4, double, allocator_t> btc(bisc);
 
-        //	Load random data for input
+        //  Load random data for input
 
         btod_random<4>().perform(bta);
         btod_random<4>().perform(btb);
@@ -2085,7 +2085,7 @@ throw(libtest::test_exception) {
         bta.set_immutable();
         btb.set_immutable();
 
-        //	Convert block tensors to regular tensors
+        //  Convert block tensors to regular tensors
 
         dense_tensor<4, double, allocator_t> ta(dims);
         dense_tensor<4, double, allocator_t> tb(dims);
@@ -2094,7 +2094,7 @@ throw(libtest::test_exception) {
         tod_btconv<4>(btb).perform(tb);
         if(c != 0.0) tod_btconv<4>(btc).perform(tc_ref);
 
-        //	Run contraction and compute the reference
+        //  Run contraction and compute the reference
 
         contraction2<2, 2, 2> contr;
         contr.contract(2, 2);
@@ -2106,7 +2106,7 @@ throw(libtest::test_exception) {
         if(c == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc_ref);
         else tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, false, c, tc_ref);
 
-        //	Compare against reference
+        //  Compare against reference
 
         compare_ref<4>::compare(tn.c_str(), tc, tc_ref, 2e-13);
 
@@ -2120,10 +2120,10 @@ void btod_contract2_test::test_contr_15(double c)
 throw(libtest::test_exception) {
 
     //
-    //	c_ijkl = a_ijmn b_klmn
-    //	Dimensions [ijlkmn] = 15 (three blocks), no symmetry,
-    //	only diagonal blocks are non-zero
-    //	bis of the operation and the output tensor are not equal
+    //  c_ijkl = a_ijmn b_klmn
+    //  Dimensions [ijlkmn] = 15 (three blocks), no symmetry,
+    //  only diagonal blocks are non-zero
+    //  bis of the operation and the output tensor are not equal
     //
 
     std::ostringstream ss;
@@ -2152,7 +2152,7 @@ throw(libtest::test_exception) {
         block_tensor<4, double, allocator_t> btb(bisb);
         block_tensor<4, double, allocator_t> btc(bisc);
 
-        //	Load random data for input
+        //  Load random data for input
 
         for(size_t i = 0; i < 3; i++) {
             index<4> blkidx;
@@ -2164,7 +2164,7 @@ throw(libtest::test_exception) {
         bta.set_immutable();
         btb.set_immutable();
 
-        //	Convert block tensors to regular tensors
+        //  Convert block tensors to regular tensors
 
         dense_tensor<4, double, allocator_t> ta(dims);
         dense_tensor<4, double, allocator_t> tb(dims);
@@ -2173,7 +2173,7 @@ throw(libtest::test_exception) {
         tod_btconv<4>(btb).perform(tb);
         if(c != 0.0) tod_btconv<4>(btc).perform(tc_ref);
 
-        //	Run contraction and compute the reference
+        //  Run contraction and compute the reference
 
         contraction2<2, 2, 2> contr;
         contr.contract(2, 2);
@@ -2185,7 +2185,7 @@ throw(libtest::test_exception) {
         if(c == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc_ref);
         else tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, false, c, tc_ref);
 
-        //	Compare against reference
+        //  Compare against reference
 
         compare_ref<4>::compare(tn.c_str(), tc, tc_ref, 2e-13);
 
@@ -2199,9 +2199,9 @@ void btod_contract2_test::test_contr_16(double c)
 throw(libtest::test_exception) {
 
     //
-    //	c_iabc = a_kcad b_ikbd
-    //	Dimensions [ik] = 13 (three blocks), [abcd] = 7 (three blocks),
-    //	no symmetry, all blocks non-zero, empty initial result tensor
+    //  c_iabc = a_kcad b_ikbd
+    //  Dimensions [ik] = 13 (three blocks), [abcd] = 7 (three blocks),
+    //  no symmetry, all blocks non-zero, empty initial result tensor
     //
 
     std::ostringstream ss;
@@ -2240,14 +2240,14 @@ throw(libtest::test_exception) {
         block_tensor<4, double, allocator_t> btb(bis_iiaa);
         block_tensor<4, double, allocator_t> btc(bis_iaaa);
 
-        //	Load random data for input
+        //  Load random data for input
 
         btod_random<4>().perform(bta);
         btod_random<4>().perform(btb);
         bta.set_immutable();
         btb.set_immutable();
 
-        //	Convert block tensors to regular tensors
+        //  Convert block tensors to regular tensors
 
         dense_tensor<4, double, allocator_t> ta(dims_iaaa);
         dense_tensor<4, double, allocator_t> tb(dims_iiaa);
@@ -2256,10 +2256,10 @@ throw(libtest::test_exception) {
         tod_btconv<4>(btb).perform(tb);
         tod_set<4>().perform(cpus, tc_ref);
 
-        //	Run contraction and compute the reference
+        //  Run contraction and compute the reference
 
-        //	iabc = kcad ikbd
-        //	caib->iabc
+        //  iabc = kcad ikbd
+        //  caib->iabc
         contraction2<2, 2, 2> contr(permutation<4>().permute(0, 2).
                 permute(2, 3));
         contr.contract(0, 1);
@@ -2271,7 +2271,7 @@ throw(libtest::test_exception) {
         if(c == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc_ref);
         else tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, false, c, tc_ref);
 
-        //	Compare against reference
+        //  Compare against reference
 
         compare_ref<4>::compare(tn.c_str(), tc, tc_ref, 5e-15);
 
@@ -2285,10 +2285,10 @@ void btod_contract2_test::test_contr_17(double c)
 throw(libtest::test_exception) {
 
     //
-    //	c_ij = a_jkab b_ikab
-    //	Dimensions [ijk] = 13 (three blocks), [ab] = 7 (three blocks),
-    //	Perm anti-symmetry in a, no symmetry in b,
-    //	all blocks non-zero
+    //  c_ij = a_jkab b_ikab
+    //  Dimensions [ijk] = 13 (three blocks), [ab] = 7 (three blocks),
+    //  Perm anti-symmetry in a, no symmetry in b,
+    //  all blocks non-zero
     //
 
     std::ostringstream ss;
@@ -2327,7 +2327,7 @@ throw(libtest::test_exception) {
         block_tensor<4, double, allocator_t> btb(bis_iiaa);
         block_tensor<2, double, allocator_t> btc(bis_ii);
 
-        //	Install symmetry
+        //  Install symmetry
         {
             scalar_transf<double> tr0;
             block_tensor_ctrl<4, double> ca(bta);
@@ -2337,7 +2337,7 @@ throw(libtest::test_exception) {
                     permute(2, 3), tr0));
         }
 
-        //	Load random data for input
+        //  Load random data for input
 
         btod_random<4>().perform(bta);
         btod_random<4>().perform(btb);
@@ -2345,7 +2345,7 @@ throw(libtest::test_exception) {
         bta.set_immutable();
         btb.set_immutable();
 
-        //	Convert block tensors to regular tensors
+        //  Convert block tensors to regular tensors
 
         dense_tensor<4, double, allocator_t> ta(dims_iiaa);
         dense_tensor<4, double, allocator_t> tb(dims_iiaa);
@@ -2354,7 +2354,7 @@ throw(libtest::test_exception) {
         tod_btconv<4>(btb).perform(tb);
         tod_btconv<2>(btc).perform(tc_ref);
 
-        //	Run contraction and compute the reference
+        //  Run contraction and compute the reference
 
         contraction2<1, 1, 3> contr(permutation<2>().permute(0, 1));
         contr.contract(1, 1);
@@ -2367,7 +2367,7 @@ throw(libtest::test_exception) {
         if(c == 0.0) tod_contract2<1, 1, 3>(contr, ta, tb).perform(cpus, true, 1.0, tc_ref);
         else tod_contract2<1, 1, 3>(contr, ta, tb).perform(cpus, false, c, tc_ref);
 
-        //	Compare against reference
+        //  Compare against reference
 
         compare_ref<2>::compare(tn.c_str(), tc, tc_ref, 1e-14);
 
@@ -2381,10 +2381,10 @@ void btod_contract2_test::test_contr_18(double c)
 throw(libtest::test_exception) {
 
     //
-    //	c_ij = a_jkab b_iakb
-    //	Dimensions [ijk] = 13 (two blocks), [ab] = 7 (three blocks),
-    //	no symmetry,
-    //	all blocks non-zero
+    //  c_ij = a_jkab b_iakb
+    //  Dimensions [ijk] = 13 (two blocks), [ab] = 7 (three blocks),
+    //  no symmetry,
+    //  all blocks non-zero
     //
 
     std::ostringstream ss;
@@ -2429,7 +2429,7 @@ throw(libtest::test_exception) {
         block_tensor<4, double, allocator_t> btb(bis_iaia);
         block_tensor<2, double, allocator_t> btc(bis_ii);
 
-        //	Load random data for input
+        //  Load random data for input
 
         btod_random<4>().perform(bta);
         btod_random<4>().perform(btb);
@@ -2437,7 +2437,7 @@ throw(libtest::test_exception) {
         bta.set_immutable();
         btb.set_immutable();
 
-        //	Convert block tensors to regular tensors
+        //  Convert block tensors to regular tensors
 
         dense_tensor<4, double, allocator_t> ta(dims_iiaa);
         dense_tensor<4, double, allocator_t> tb(dims_iaia);
@@ -2446,7 +2446,7 @@ throw(libtest::test_exception) {
         tod_btconv<4>(btb).perform(tb);
         tod_btconv<2>(btc).perform(tc_ref);
 
-        //	Run contraction and compute the reference
+        //  Run contraction and compute the reference
 
         contraction2<1, 1, 3> contr(permutation<2>().permute(0, 1));
         contr.contract(1, 2);
@@ -2459,7 +2459,7 @@ throw(libtest::test_exception) {
         if(c == 0.0) tod_contract2<1, 1, 3>(contr, ta, tb).perform(cpus, true, 1.0, tc_ref);
         else tod_contract2<1, 1, 3>(contr, ta, tb).perform(cpus, false, c, tc_ref);
 
-        //	Compare against reference
+        //  Compare against reference
 
         compare_ref<2>::compare(tn.c_str(), tc, tc_ref, 1e-14);
 
@@ -2472,9 +2472,9 @@ void btod_contract2_test::test_contr_19()
 throw(libtest::test_exception) {
 
     //
-    //	c_ijab = a_ijkl b_klab
-    //	Dimensions [ijkl] = 10 (four blocks), [ab] = 16 (six blocks),
-    //	perm and label symmetry
+    //  c_ijab = a_ijkl b_klab
+    //  Dimensions [ijkl] = 10 (four blocks), [ab] = 16 (six blocks),
+    //  perm and label symmetry
     //
 
     std::ostringstream ss;
@@ -2556,14 +2556,14 @@ throw(libtest::test_exception) {
 
     }
 
-    //	Load random data for input
+    //  Load random data for input
 
     btod_random<4>().perform(bta);
     btod_random<4>().perform(btb);
     bta.set_immutable();
     btb.set_immutable();
 
-    //	Convert block tensors to regular tensors
+    //  Convert block tensors to regular tensors
 
     dense_tensor<4, double, allocator_t> ta(dims_iiii);
     dense_tensor<4, double, allocator_t> tb(dims_iiaa);
@@ -2572,7 +2572,7 @@ throw(libtest::test_exception) {
     tod_btconv<4>(btb).perform(tb);
     tod_btconv<4>(btc).perform(tc_ref);
 
-    //	Run contraction and compute the reference
+    //  Run contraction and compute the reference
 
     contraction2<2, 2, 2> contr;
     contr.contract(2, 0);
@@ -2581,7 +2581,7 @@ throw(libtest::test_exception) {
     tod_btconv<4>(btc).perform(tc);
     tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc_ref);
 
-    //	Compare against reference
+    //  Compare against reference
 
     block_tensor_ctrl<4, double> cc(btc);
     compare_ref<4>::compare(tn.c_str(), cc.req_const_symmetry(), symc_ref);
@@ -2604,9 +2604,9 @@ void btod_contract2_test::test_contr_20a()
 throw(libtest::test_exception) {
 
     //
-    //	c_iy = a_ix b_xy
-    //	Dimensions [i] = 10 (four blocks), [xy] = 16 (two blocks),
-    //	perm and part symmetry
+    //  c_iy = a_ix b_xy
+    //  Dimensions [i] = 10 (four blocks), [xy] = 16 (two blocks),
+    //  perm and part symmetry
     //
 
     std::ostringstream ss;
@@ -2651,14 +2651,14 @@ throw(libtest::test_exception) {
             cb.req_symmetry().insert(sp10);
         }
 
-        //	Load random data for input
+        //  Load random data for input
 
         btod_random<2>().perform(bta);
         btod_random<2>().perform(btb);
         bta.set_immutable();
         btb.set_immutable();
 
-        //	Convert block tensors to regular tensors
+        //  Convert block tensors to regular tensors
 
         dense_tensor<2, double, allocator_t> ta(bisa.get_dims());
         dense_tensor<2, double, allocator_t> tb(bisb.get_dims());
@@ -2666,7 +2666,7 @@ throw(libtest::test_exception) {
         tod_btconv<2>(bta).perform(ta);
         tod_btconv<2>(btb).perform(tb);
 
-        //	Run contraction and compute the reference
+        //  Run contraction and compute the reference
 
         contraction2<1, 1, 1> contr;
         contr.contract(1, 0);
@@ -2674,7 +2674,7 @@ throw(libtest::test_exception) {
         tod_btconv<2>(btc).perform(tc);
         tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc_ref);
 
-        //	Compare against reference
+        //  Compare against reference
 
         compare_ref<2>::compare(tn.c_str(), tc, tc_ref, 1e-14);
 
@@ -2790,7 +2790,7 @@ throw(libtest::test_exception) {
 
 }
 
-/**	\test Tests contraction \f$ c_{ij} = a_{ip} b_{jp} \f$.
+/** \test Tests contraction \f$ c_{ij} = a_{ip} b_{jp} \f$.
 Dimensions [ij] = 10 (two blocks), [p] = 12 (two blocks).
 No symmetry in A, partition symmetry in B.
 Zero non-diagonal blocks.
@@ -2836,11 +2836,11 @@ void btod_contract2_test::test_contr_21() throw(libtest::test_exception) {
             spa.mark_forbidden(i10);
 
             block_tensor_ctrl<2, double> ca(bta), cb(btb);
-            //		ca.req_symmetry().insert(spa);
+            //      ca.req_symmetry().insert(spa);
             cb.req_symmetry().insert(spa);
         }
 
-        //	Load random data for input
+        //  Load random data for input
 
         btod_random<2>().perform(bta);
         btod_random<2>().perform(btb);
@@ -2853,7 +2853,7 @@ void btod_contract2_test::test_contr_21() throw(libtest::test_exception) {
         bta.set_immutable();
         btb.set_immutable();
 
-        //	Convert block tensors to regular tensors
+        //  Convert block tensors to regular tensors
 
         dense_tensor<2, double, allocator_t> ta(bisa.get_dims());
         dense_tensor<2, double, allocator_t> tb(bisa.get_dims());
@@ -2862,7 +2862,7 @@ void btod_contract2_test::test_contr_21() throw(libtest::test_exception) {
         tod_btconv<2>(bta).perform(ta);
         tod_btconv<2>(btb).perform(tb);
 
-        //	Run contraction and compute the reference
+        //  Run contraction and compute the reference
 
         contraction2<1, 1, 1> contr;
         contr.contract(1, 1);
@@ -2870,7 +2870,7 @@ void btod_contract2_test::test_contr_21() throw(libtest::test_exception) {
         tod_btconv<2>(btc).perform(tc);
         tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc_ref);
 
-        //	Compare against reference
+        //  Compare against reference
 
         compare_ref<2>::compare(tn.c_str(), tc, tc_ref, 1e-14);
 
@@ -2881,7 +2881,7 @@ void btod_contract2_test::test_contr_21() throw(libtest::test_exception) {
 }
 
 
-/**	\test Tests \f$ c_{ijab} = a_{ia} a_{jb} \f$, expected perm symmetry
+/** \test Tests \f$ c_{ijab} = a_{ia} a_{jb} \f$, expected perm symmetry
 \f$ c_{ijab} = c_{jiba} \f$.
  **/
 void btod_contract2_test::test_self_1() throw(libtest::test_exception) {
@@ -2918,24 +2918,24 @@ void btod_contract2_test::test_self_1() throw(libtest::test_exception) {
         block_tensor<2, double, allocator_t> bta(bis_ia);
         block_tensor<4, double, allocator_t> btc(bis_ijab);
 
-        //	Load random data for input
+        //  Load random data for input
 
         btod_random<2>().perform(bta);
         bta.set_immutable();
 
-        //	Run contraction
+        //  Run contraction
 
         contraction2<2, 2, 0> contr(permutation<4>().permute(1, 2));
         btod_contract2<2, 2, 0>(contr, bta, bta).perform(btc);
 
-        //	Convert block tensors to regular tensors
+        //  Convert block tensors to regular tensors
 
         dense_tensor<2, double, allocator_t> ta(dims_ia);
         dense_tensor<4, double, allocator_t> tc(dims_ijab), tc_ref(dims_ijab);
         tod_btconv<2>(bta).perform(ta);
         tod_btconv<4>(btc).perform(tc);
 
-        //	Compute reference symmetry and tensor
+        //  Compute reference symmetry and tensor
 
         symmetry<4, double> symc(bis_ijab), symc_ref(bis_ijab);
         scalar_transf<double> tr0;
@@ -2947,7 +2947,7 @@ void btod_contract2_test::test_self_1() throw(libtest::test_exception) {
         }
         tod_contract2<2, 2, 0>(contr, ta, ta).perform(cpus, true, 1.0, tc_ref);
 
-        //	Compare against reference
+        //  Compare against reference
 
         compare_ref<4>::compare(testname, symc, symc_ref);
         compare_ref<4>::compare(testname, tc, tc_ref, 5e-15);
@@ -2958,7 +2958,7 @@ void btod_contract2_test::test_self_1() throw(libtest::test_exception) {
 }
 
 
-/**	\test Tests \f$ c_{ijab} = \sum_c a_{iac} a_{jbc} \f$,
+/** \test Tests \f$ c_{ijab} = \sum_c a_{iac} a_{jbc} \f$,
 expected perm symmetry \f$ c_{ijab} = c_{jiba} \f$.
  **/
 void btod_contract2_test::test_self_2() throw(libtest::test_exception) {
@@ -2995,25 +2995,25 @@ void btod_contract2_test::test_self_2() throw(libtest::test_exception) {
         block_tensor<3, double, allocator_t> bta(bis_iac);
         block_tensor<4, double, allocator_t> btc(bis_ijab);
 
-        //	Load random data for input
+        //  Load random data for input
 
         btod_random<3>().perform(bta);
         bta.set_immutable();
 
-        //	Run contraction
+        //  Run contraction
 
         contraction2<2, 2, 1> contr(permutation<4>().permute(1, 2));
         contr.contract(2, 2);
         btod_contract2<2, 2, 1>(contr, bta, bta).perform(btc);
 
-        //	Convert block tensors to regular tensors
+        //  Convert block tensors to regular tensors
 
         dense_tensor<3, double, allocator_t> ta(dims_iac);
         dense_tensor<4, double, allocator_t> tc(dims_ijab), tc_ref(dims_ijab);
         tod_btconv<3>(bta).perform(ta);
         tod_btconv<4>(btc).perform(tc);
 
-        //	Compute reference symmetry and tensor
+        //  Compute reference symmetry and tensor
 
         symmetry<4, double> symc(bis_ijab), symc_ref(bis_ijab);
         scalar_transf<double> tr0;
@@ -3025,7 +3025,7 @@ void btod_contract2_test::test_self_2() throw(libtest::test_exception) {
         }
         tod_contract2<2, 2, 1>(contr, ta, ta).perform(cpus, true, 1.0, tc_ref);
 
-        //	Compare against reference
+        //  Compare against reference
 
         compare_ref<4>::compare(testname, symc, symc_ref);
         compare_ref<4>::compare(testname, tc, tc_ref, 5e-15);
@@ -3036,7 +3036,7 @@ void btod_contract2_test::test_self_2() throw(libtest::test_exception) {
 }
 
 
-/**	\test Tests \f$ c_{ijab} = \sum_c a_{iac} a_{jcb} \f$,
+/** \test Tests \f$ c_{ijab} = \sum_c a_{iac} a_{jcb} \f$,
 initial perm symmetry \f$ a_{iac} = a_{ica} \f$,
 expected perm symmetry \f$ c_{ijab} = c_{jiba} \f$.
  **/
@@ -3074,7 +3074,7 @@ void btod_contract2_test::test_self_3() throw(libtest::test_exception) {
         block_tensor<3, double, allocator_t> bta(bis_iac);
         block_tensor<4, double, allocator_t> btc(bis_ijab);
 
-        //	Install initial symmetry
+        //  Install initial symmetry
 
         {
             block_tensor_ctrl<3, double> ca(bta);
@@ -3083,25 +3083,25 @@ void btod_contract2_test::test_self_3() throw(libtest::test_exception) {
                     permutation<3>().permute(1, 2), tr0));
         }
 
-        //	Load random data for input
+        //  Load random data for input
 
         btod_random<3>().perform(bta);
         bta.set_immutable();
 
-        //	Run contraction
+        //  Run contraction
 
         contraction2<2, 2, 1> contr(permutation<4>().permute(1, 2));
         contr.contract(2, 1);
         btod_contract2<2, 2, 1>(contr, bta, bta).perform(btc);
 
-        //	Convert block tensors to regular tensors
+        //  Convert block tensors to regular tensors
 
         dense_tensor<3, double, allocator_t> ta(dims_iac);
         dense_tensor<4, double, allocator_t> tc(dims_ijab), tc_ref(dims_ijab);
         tod_btconv<3>(bta).perform(ta);
         tod_btconv<4>(btc).perform(tc);
 
-        //	Compute reference symmetry and tensor
+        //  Compute reference symmetry and tensor
 
         symmetry<4, double> symc(bis_ijab), symc_ref(bis_ijab);
         scalar_transf<double> tr0;
@@ -3113,7 +3113,7 @@ void btod_contract2_test::test_self_3() throw(libtest::test_exception) {
         }
         tod_contract2<2, 2, 1>(contr, ta, ta).perform(cpus, true, 1.0, tc_ref);
 
-        //	Compare against reference
+        //  Compare against reference
 
         compare_ref<4>::compare(testname, symc, symc_ref);
         compare_ref<4>::compare(testname, tc, tc_ref, 5e-15);

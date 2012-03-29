@@ -16,7 +16,7 @@ void se_perm_test::perform() throw(libtest::test_exception) {
 }
 
 
-/**	\test Tests the ab->ba permutational symmetry element
+/** \test Tests the ab->ba permutational symmetry element
  **/
 void se_perm_test::test_sym_ab_ba() throw(libtest::test_exception) {
 
@@ -84,7 +84,7 @@ void se_perm_test::test_sym_ab_ba() throw(libtest::test_exception) {
 }
 
 
-/**	\test Tests the ab->ba permutational anti-symmetry element
+/** \test Tests the ab->ba permutational anti-symmetry element
  **/
 void se_perm_test::test_asym_ab_ba() throw(libtest::test_exception) {
 
@@ -152,7 +152,7 @@ void se_perm_test::test_asym_ab_ba() throw(libtest::test_exception) {
 }
 
 
-/**	\test Tests the abc->bca permutational symmetry element
+/** \test Tests the abc->bca permutational symmetry element
  **/
 void se_perm_test::test_sym_abc_bca() throw(libtest::test_exception) {
 
@@ -220,7 +220,7 @@ void se_perm_test::test_sym_abc_bca() throw(libtest::test_exception) {
 }
 
 
-/**	\test Tests the abc->bca permutational anti-symmetry element.
+/** \test Tests the abc->bca permutational anti-symmetry element.
  **/
 void se_perm_test::test_asym_abc_bca() throw(libtest::test_exception) {
 
@@ -245,7 +245,7 @@ void se_perm_test::test_asym_abc_bca() throw(libtest::test_exception) {
 }
 
 
-/**	\test Tests the abcd->badc permutational symmetry element
+/** \test Tests the abcd->badc permutational symmetry element
  **/
 void se_perm_test::test_sym_abcd_badc() throw(libtest::test_exception) {
 
@@ -322,7 +322,7 @@ void se_perm_test::test_sym_abcd_badc() throw(libtest::test_exception) {
 }
 
 
-/**	\test Tests the abcd->badc permutational anti-symmetry element
+/** \test Tests the abcd->badc permutational anti-symmetry element
  **/
 void se_perm_test::test_asym_abcd_badc() throw(libtest::test_exception) {
 

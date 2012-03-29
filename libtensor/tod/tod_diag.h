@@ -119,14 +119,14 @@ private:
     dimensions<N - M + 1> m_dims; //!< Dimensions of the result
 
 public:
-    /**	\brief Creates the operation
+    /** \brief Creates the operation
         \param t Input %tensor.
         \param m Diagonal mask.
         \param c Scaling coefficient (default 1.0).
     **/
     tod_diag(dense_tensor_i<N, double> &t, const mask<N> &m, double c = 1.0);
 
-    /**	\brief Creates the operation
+    /** \brief Creates the operation
         \param t Input %tensor.
         \param m Diagonal mask.
         \param p Permutation of result.
@@ -135,36 +135,36 @@ public:
     tod_diag(dense_tensor_i<N, double> &t, const mask<N> &m,
              const permutation<N - M + 1> &p, double c = 1.0);
 
-    /**	\brief Performs the operation, replaces the output
+    /** \brief Performs the operation, replaces the output
         \param tb Output %tensor.
     **/
     void perform(dense_tensor_i<k_orderb, double> &tb);
 
-    /**	\brief Performs the operation, adds to the output
+    /** \brief Performs the operation, adds to the output
         \param tb Output %tensor.
         \param c Coefficient.
     **/
     void perform(dense_tensor_i<k_orderb, double> &tb, double c);
 
 private:
-    /**	\brief Forms the %dimensions of the output or throws an
+    /** \brief Forms the %dimensions of the output or throws an
         exception if the input is incorrect
     **/
     static dimensions<N - M + 1> mk_dims(
         const dimensions<N> &dims, const mask<N> &msk);
 
-    /**	\brief Forms the loop and executes the operation
+    /** \brief Forms the loop and executes the operation
      **/
     template<typename CoreOp>
     void do_perform(dense_tensor_i<k_orderb, double> &tb, double c);
 
-    /**	\brief Builds the nested loop list
+    /** \brief Builds the nested loop list
      **/
     template<typename CoreOp>
     void build_list(
         loop_list_t &list, dense_tensor_i<k_orderb, double> &tb, double c);
 
-    /**	\brief Cleans the nested loop list
+    /** \brief Cleans the nested loop list
      **/
     void clean_list(loop_list_t &list);
 };
@@ -235,7 +235,7 @@ dimensions<N - M + 1> tod_diag<N, M>::mk_dims(const dimensions<N> &dims,
     static const char *method =
         "mk_dims(const dimensions<N> &, const mask<N>&)";
 
-    //	Compute output dimensions
+    //  Compute output dimensions
     //
     index<k_orderb> i1, i2;
 
@@ -312,21 +312,21 @@ void tod_diag<N, M>::build_list(
     const dimensions<k_ordera> &dimsa = m_t.get_dims();
     const dimensions<k_orderb> &dimsb = tb.get_dims();
 
-    //	Mapping of unpermuted indexes in b to permuted ones
+    //  Mapping of unpermuted indexes in b to permuted ones
     //
     sequence<k_orderb, size_t> ib(0);
     for(size_t i = 0; i < k_orderb; i++) ib[i] = i;
     permutation<k_orderb> pinv(m_perm, true);
     pinv.apply(ib);
 
-    //	Loop over the indexes and build the list
+    //  Loop over the indexes and build the list
     //
     try { // bad_alloc
 
-	typename loop_list_t::iterator poscore = list.end();
-	bool diag_done = false;
-	size_t iboffs = 0;
-	for(size_t pos = 0; pos < N; pos++) {
+    typename loop_list_t::iterator poscore = list.end();
+    bool diag_done = false;
+    size_t iboffs = 0;
+    for(size_t pos = 0; pos < N; pos++) {
 
             size_t inca = 0, incb = 0, len = 0;
 
@@ -337,7 +337,7 @@ void tod_diag<N, M>::build_list(
                     continue;
                 }
 
-                //	Compute the stride on the diagonal
+                //  Compute the stride on the diagonal
                 //
                 for(size_t j = pos; j < N; j++)
                     if(m_mask[j]) inca += dimsa.get_increment(j);
@@ -347,8 +347,8 @@ void tod_diag<N, M>::build_list(
 
             } else {
 
-                //	Compute the stride off the diagonal
-                //	concatenating indexes if possible
+                //  Compute the stride off the diagonal
+                //  concatenating indexes if possible
                 //
                 len = 1;
                 size_t ibpos = ib[pos - iboffs];
@@ -367,7 +367,7 @@ void tod_diag<N, M>::build_list(
             typename loop_list_t::iterator it = list.insert(
                 list.end(), loop_list_node(len, inca, incb));
 
-            //	Make the loop with incb the last
+            //  Make the loop with incb the last
             //
             if(incb == 1 && poscore == list.end()) {
                 it->m_op = new CoreOp(len, inca, incb, c);
@@ -375,9 +375,9 @@ void tod_diag<N, M>::build_list(
             } else {
                 it->m_op = new op_loop(len, inca, incb);
             }
-	}
+    }
 
-	list.splice(list.end(), list, poscore);
+    list.splice(list.end(), list, poscore);
 
     } catch(std::bad_alloc &e) {
 

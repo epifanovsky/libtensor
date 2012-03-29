@@ -9,13 +9,13 @@
 
 namespace libtensor {
 
-/**	\brief Implementation of so_dirsum<N, M, T> for se_perm<N + M, T>
-	\tparam N Tensor order 1.
-	\tparam M Tensor order 2
-	\tparam T Tensor element type.
-	\tparam CGT Cyclic group traits
+/** \brief Implementation of so_dirsum<N, M, T> for se_perm<N + M, T>
+    \tparam N Tensor order 1.
+    \tparam M Tensor order 2
+    \tparam T Tensor element type.
+    \tparam CGT Cyclic group traits
 
-	\ingroup libtensor_symmetry
+    \ingroup libtensor_symmetry
  **/
 template<size_t N, size_t M, typename T>
 class symmetry_operation_impl< so_dirsum<N, M, T>, se_perm<N + M, T> > :

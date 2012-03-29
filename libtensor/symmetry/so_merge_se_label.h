@@ -9,14 +9,14 @@
 namespace libtensor {
 
 
-/**	\brief Implementation of so_merge<N, T> for se_label<N, T>
-	\tparam N Tensor order.
-	\tparam M Decrement in tensor order
-	\tparam T Tensor element type.
+/** \brief Implementation of so_merge<N, T> for se_label<N, T>
+    \tparam N Tensor order.
+    \tparam M Decrement in tensor order
+    \tparam T Tensor element type.
 
-	This implementation sets the target label to all labels.
+    This implementation sets the target label to all labels.
 
-	\ingroup libtensor_symmetry
+    \ingroup libtensor_symmetry
  **/
 template<size_t N, size_t M, typename T>
 class symmetry_operation_impl< so_merge<N, M, T>, se_label<N - M, T> > :

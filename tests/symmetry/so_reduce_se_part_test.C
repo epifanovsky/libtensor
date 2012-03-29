@@ -24,8 +24,8 @@ void so_reduce_se_part_test::perform() throw(libtest::test_exception) {
 }
 
 
-/**	\test Tests that a projection of an empty group yields an empty group
-		of a lower order
+/** \test Tests that a projection of an empty group yields an empty group
+        of a lower order
  **/
 void so_reduce_se_part_test::test_empty_1() throw(libtest::test_exception) {
 
@@ -60,8 +60,8 @@ void so_reduce_se_part_test::test_empty_1() throw(libtest::test_exception) {
     }
 }
 
-/**	\test Tests that a double projection of an empty group yields an empty group
-		of a lower order
+/** \test Tests that a double projection of an empty group yields an empty group
+        of a lower order
  **/
 void so_reduce_se_part_test::test_empty_2() throw(libtest::test_exception) {
 
@@ -96,7 +96,7 @@ void so_reduce_se_part_test::test_empty_2() throw(libtest::test_exception) {
     }
 }
 
-/**	\test Projection of a 2-space in a single reduction step on a 1-space.
+/** \test Projection of a 2-space in a single reduction step on a 1-space.
  **/
 void so_reduce_se_part_test::test_nm1_1(bool sign)
 throw(libtest::test_exception) {
@@ -173,7 +173,7 @@ throw(libtest::test_exception) {
 }
 
 
-/**	\test Projection of a 4-space in one reduction step onto a 2-space.
+/** \test Projection of a 4-space in one reduction step onto a 2-space.
  **/
 void so_reduce_se_part_test::test_nm1_2(
         bool s1, bool s2) throw(libtest::test_exception) {
@@ -271,8 +271,8 @@ void so_reduce_se_part_test::test_nm1_2(
 }
 
 
-/**	\test Projection of a 4-space onto a 2-space in one step with partial
-		partitioning (only not projected dims are partitioned)
+/** \test Projection of a 4-space onto a 2-space in one step with partial
+        partitioning (only not projected dims are partitioned)
 
  **/
 void so_reduce_se_part_test::test_nm1_3(
@@ -356,8 +356,8 @@ void so_reduce_se_part_test::test_nm1_3(
     }
 }
 
-/**	\test Projection of a 4-space onto a 2-space in one step with partial
-		partitioning (only one partitioned dim, not projected)
+/** \test Projection of a 4-space onto a 2-space in one step with partial
+        partitioning (only one partitioned dim, not projected)
  **/
 void so_reduce_se_part_test::test_nm1_4(
         bool sign) throw(libtest::test_exception) {
@@ -441,8 +441,8 @@ void so_reduce_se_part_test::test_nm1_4(
     }
 }
 
-/**	\test Projection of a 4-space onto a 2-space in one step with partial
-		partitioning (only one partitioned dim, projected)
+/** \test Projection of a 4-space onto a 2-space in one step with partial
+        partitioning (only one partitioned dim, projected)
  **/
 void so_reduce_se_part_test::test_nm1_5(
         bool sign) throw(libtest::test_exception) {
@@ -526,8 +526,8 @@ void so_reduce_se_part_test::test_nm1_5(
     }
 }
 
-/**	\test Projection of a 4-space onto a 2-space in one step with partial
-		partitioning (only projected dims are partitioned)
+/** \test Projection of a 4-space onto a 2-space in one step with partial
+        partitioning (only projected dims are partitioned)
  **/
 void so_reduce_se_part_test::test_nm1_6(
         bool sign) throw(libtest::test_exception) {

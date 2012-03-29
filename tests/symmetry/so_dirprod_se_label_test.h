@@ -6,10 +6,10 @@
 namespace libtensor {
 
 
-/**	\brief Tests the class libtensor::
+/** \brief Tests the class libtensor::
         symmetry_operation< so_dirprod<N, M, T>, se_label<N + M, T> >
 
-	\ingroup libtensor_tests_sym
+    \ingroup libtensor_tests_sym
  **/
 class so_dirprod_se_label_test : public se_label_test_base {
 public:

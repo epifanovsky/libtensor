@@ -8,12 +8,12 @@
 
 namespace libtensor {
 
-/**	\brief Transformation of a tensor element
-	\tparam T Tensor element type.
+/** \brief Transformation of a tensor element
+    \tparam T Tensor element type.
 
-	This template is a structure placeholder. It needs to be specialized for
-	each %tensor element type.
-	Any specialization of this class needs to provide:
+    This template is a structure placeholder. It needs to be specialized for
+    each %tensor element type.
+    Any specialization of this class needs to provide:
     \code
 
     // Default constructor that creates the identity transformation
@@ -45,7 +45,7 @@ namespace libtensor {
     bool operator!=(const scalar_transf<T> &tr) const;
     \endcode
 
-	\ingroup libtensor_core
+    \ingroup libtensor_core
  **/
 template<typename T>
 class scalar_transf {

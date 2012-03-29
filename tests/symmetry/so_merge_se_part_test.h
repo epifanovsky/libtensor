@@ -6,9 +6,9 @@
 namespace libtensor {
 
 
-/**	\brief Tests the libtensor::so_merge_se_part class
+/** \brief Tests the libtensor::so_merge_se_part class
 
-	\ingroup libtensor_tests_sym
+    \ingroup libtensor_tests_sym
  **/
 class so_merge_se_part_test : public libtest::unit_test {
 public:

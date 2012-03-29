@@ -5,9 +5,9 @@
 
 namespace libtensor {
 
-/**	\brief Tests the libtensor::se_perm class
+/** \brief Tests the libtensor::se_perm class
 
-	\ingroup libtensor_tests_sym
+    \ingroup libtensor_tests_sym
  **/
 class se_perm_test : public libtest::unit_test {
 public:

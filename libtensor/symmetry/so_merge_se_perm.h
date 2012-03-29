@@ -8,11 +8,11 @@
 
 namespace libtensor {
 
-/**	\brief Implementation of so_merge<N, M, K, T> for se_perm<N - M + K, T>
-	\tparam N Tensor order.
-	\tparam T Tensor element type.
+/** \brief Implementation of so_merge<N, M, K, T> for se_perm<N - M + K, T>
+    \tparam N Tensor order.
+    \tparam T Tensor element type.
 
-	\ingroup libtensor_symmetry
+    \ingroup libtensor_symmetry
  **/
 template<size_t N, size_t M, typename T>
 class symmetry_operation_impl< so_merge<N, M, T>, se_perm<N - M, T> > :

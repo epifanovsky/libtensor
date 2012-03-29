@@ -120,7 +120,7 @@ private:
     index<N> m_idx;//!< Index for extraction
 
 public:
-    /**	\brief Creates the operation
+    /** \brief Creates the operation
         \param t Input %tensor.
         \param m Extraction mask.
         \param c Scaling coefficient (default 1.0).
@@ -128,45 +128,45 @@ public:
     tod_extract(dense_tensor_i<N, double> &t, const mask<N> &m, const index<N> &idx,
         double c = 1.0);
 
-    /**	\brief Creates the operation
+    /** \brief Creates the operation
         \param t Input %tensor.
         \param m Extraction mask.
         \param p Permutation of result.
         \param c Scaling coefficient (default 1.0)
     **/
     tod_extract(dense_tensor_i<N, double> &t, const mask<N> &m,
-	const permutation<N - M> &p, const index<N> &idx, double c = 1.0);
+    const permutation<N - M> &p, const index<N> &idx, double c = 1.0);
 
-    /**	\brief Performs the operation, replaces the output
+    /** \brief Performs the operation, replaces the output
         \param tb Output %tensor.
     **/
     void perform(dense_tensor_i<k_orderb, double> &tb);
 
-    /**	\brief Performs the operation, adds to the output
+    /** \brief Performs the operation, adds to the output
         \param tb Output %tensor.
         \param c Coefficient.
     **/
     void perform(dense_tensor_i<k_orderb, double> &tb, double c);
 
 private:
-    /**	\brief Forms the %dimensions of the output or throws an
+    /** \brief Forms the %dimensions of the output or throws an
         exception if the input is incorrect
     **/
     static dimensions<N - M > mk_dims(
         const dimensions<N> &dims, const mask<N> &msk);
 
-    /**	\brief Forms the loop and executes the operation
+    /** \brief Forms the loop and executes the operation
      **/
     template<typename CoreOp>
     void do_perform(dense_tensor_i<k_orderb, double> &tb, double c);
 
-    /**	\brief Builds the nested loop list
+    /** \brief Builds the nested loop list
      **/
     template<typename CoreOp>
     void build_list(
         loop_list_t &list, dense_tensor_i<k_orderb, double> &tb, double c);
 
-    /**	\brief Cleans the nested loop list
+    /** \brief Cleans the nested loop list
      **/
     void clean_list(loop_list_t &list);
 };
@@ -243,7 +243,7 @@ dimensions<N - M> tod_extract<N, M>::mk_dims(const dimensions<N> &dims,
     static const char *method =
         "mk_dims(const dimensions<N> &, const mask<N>&)";
 
-    //	Compute output dimensions
+    //  Compute output dimensions
     //
     index<k_orderb> i1, i2;
 
@@ -327,19 +327,19 @@ void tod_extract<N, M>::build_list(
     const dimensions<k_ordera> &dimsa = m_t.get_dims();
     const dimensions<k_orderb> &dimsb = tb.get_dims();
 
-    //	Mapping of unpermuted indexes in b to permuted ones
+    //  Mapping of unpermuted indexes in b to permuted ones
     //
     sequence<k_orderb, size_t> ib(0);
     for(size_t i = 0; i < k_orderb; i++) ib[i] = i;
     m_perm.apply(ib);
 
-    //	Loop over the indexes and build the list
+    //  Loop over the indexes and build the list
     //
     try { // bad_alloc
 
-	typename loop_list_t::iterator poscore = list.end();
-	size_t iboffs = 0;
-	for(size_t pos2 = 0; pos2 < N; pos2++) {
+    typename loop_list_t::iterator poscore = list.end();
+    size_t iboffs = 0;
+    for(size_t pos2 = 0; pos2 < N; pos2++) {
 
             size_t inca = 0, incb = 0, len = 0;
             if(m_mask[pos2]) {
@@ -365,7 +365,7 @@ void tod_extract<N, M>::build_list(
             typename loop_list_t::iterator it = list.insert(
                 list.end(), loop_list_node(len, inca, incb));
 
-            //	Make the loop with incb the last
+            //  Make the loop with incb the last
             //
             if(incb == 1 && poscore == list.end()) {
                 it->m_op = new CoreOp(len, inca, incb, c);
@@ -374,9 +374,9 @@ void tod_extract<N, M>::build_list(
             } else {
                 it->m_op = new op_loop(len, inca, incb);
             }
-	}
+    }
 
-	list.splice(list.end(), list, poscore);
+    list.splice(list.end(), list, poscore);
 
     } catch(std::bad_alloc &e) {
 

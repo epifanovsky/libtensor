@@ -17,17 +17,17 @@ template<size_t N, size_t M, typename T>
 class symmetry_operation_params< so_dirsum<N, M, T> >;
 
 
-/**	\brief Direct sum of two %symmetry groups
-	\tparam N Order of the first argument space.
-	\tparam M Order of the second argument space.
+/** \brief Direct sum of two %symmetry groups
+    \tparam N Order of the first argument space.
+    \tparam M Order of the second argument space.
 
-	The operation forms the direct sum of two given %symmetry groups.
+    The operation forms the direct sum of two given %symmetry groups.
 
-	The operation takes two %symmetry group that are defined for %tensor
-	spaces of order N and M, respectively and produces a group that acts in
-	a %tensor space of order N + M.
+    The operation takes two %symmetry group that are defined for %tensor
+    spaces of order N and M, respectively and produces a group that acts in
+    a %tensor space of order N + M.
 
-	\ingroup libtensor_symmetry
+    \ingroup libtensor_symmetry
  **/
 template<size_t N, size_t M, typename T>
 class so_dirsum :
@@ -58,10 +58,10 @@ private:
 };
 
 
-/**	\brief Concatenate vacuum with other symmetry (specialization)
-	\tparam M Order.
+/** \brief Concatenate vacuum with other symmetry (specialization)
+    \tparam M Order.
 
-	\ingroup libtensor_symmetry
+    \ingroup libtensor_symmetry
  **/
 template<size_t M, typename T>
 class so_dirsum<0, M, T> {
@@ -82,10 +82,10 @@ public:
     }
 };
 
-/**	\brief Concatenate symmetry with vacuum (specialization)
-	\tparam N Order.
+/** \brief Concatenate symmetry with vacuum (specialization)
+    \tparam N Order.
 
-	\ingroup libtensor_symmetry
+    \ingroup libtensor_symmetry
  **/
 template<size_t N, typename T>
 class so_dirsum<N, 0, T> {

@@ -120,9 +120,9 @@ void so_symmetrize<N, T>::perform(symmetry<N, T> &sym2) {
         }
     }
 
-    //	If the argument does not have any permutation symmetry
-    //	elements, the handler does not get called above. We need to
-    //	fix that manually.
+    //  If the argument does not have any permutation symmetry
+    //  elements, the handler does not get called above. We need to
+    //  fix that manually.
     if(! perm_done) {
         symmetry_element_set<N, T> set1(se_perm<N, T>::k_sym_type),
                 set2(se_perm<N, T>::k_sym_type);

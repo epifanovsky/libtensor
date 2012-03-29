@@ -9,10 +9,10 @@ public:
 };
 
 
-/**	\brief Structure template for %symmetry operation parameters
-	\tparam OperT Symmetry operation type.
+/** \brief Structure template for %symmetry operation parameters
+    \tparam OperT Symmetry operation type.
 
-	\ingroup libtensor_symmetry
+    \ingroup libtensor_symmetry
  **/
 template<typename OperT>
 class symmetry_operation_params;
