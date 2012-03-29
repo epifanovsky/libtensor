@@ -86,6 +86,8 @@ permutation_generator<N>::permutation_generator(const mask<N> &msk) :
         m_d[i] = true;
     }
     m_n = j;
+
+    if (m_n < 2) { m_done = true; }
 }
 
 
@@ -108,7 +110,7 @@ bool permutation_generator<N>::next() {
     if (i == 0) m_done = true;
 
     size_t q = (m_done ? k : m_p[i] - 1 + k);
-    m_perm.permute(m_map[q], m_map[q+1]);
+    m_perm.permute(m_map[q], m_map[q + 1]);
 
     return (! m_done);
 }
