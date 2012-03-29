@@ -4,6 +4,7 @@
 #include "../defs.h"
 #include "../not_implemented.h"
 #include "../core/abs_index.h"
+#include "../core/block_index_space.h"
 #include "../core/block_tensor_i.h"
 #include "../core/block_tensor_ctrl.h"
 #include "../core/orbit.h"
@@ -15,9 +16,6 @@
 #include "../tod/tod_set.h"
 #include "bad_block_index_space.h"
 #include "additive_btod.h"
-#include "transf_double.h"
-
-#include "../core/block_index_space.h"
 
 namespace libtensor {
 
@@ -85,7 +83,7 @@ public:
 
 protected:
 	virtual void compute_block(bool zero, dense_tensor_i<k_orderb, double> &blk,
-		const index<k_orderb> &i, const transf<k_orderb, double> &tr,
+		const index<k_orderb> &i, const tensor_transf<k_orderb, double> &tr,
 		double c, cpu_pool &cpus);
 
 private:
@@ -100,7 +98,7 @@ private:
 	void make_schedule();
 
 	void do_compute_block(dense_tensor_i<k_orderb, double> &blk,
-		const index<k_orderb> &i, const transf<k_orderb, double> &tr,
+		const index<k_orderb> &i, const tensor_transf<k_orderb, double> &tr,
 		double c, bool zero, cpu_pool &cpus);
 
 private:
@@ -192,14 +190,14 @@ template<size_t N, size_t M>
 void btod_extract<N, M>::compute_block(dense_tensor_i<k_orderb, double> &blk,
 	const index<k_orderb> &idx) {
 
-	transf<k_orderb, double> tr0;
+	tensor_transf<k_orderb, double> tr0;
 	do_compute_block(blk, idx, tr0, 1.0, true);
 }*/
 
 
 template<size_t N, size_t M>
 void btod_extract<N, M>::compute_block(bool zero, dense_tensor_i<k_orderb, double> &blk,
-	const index<k_orderb> &idx, const transf<k_orderb, double> &tr,
+	const index<k_orderb> &idx, const tensor_transf<k_orderb, double> &tr,
 	double c, cpu_pool &cpus) {
 
 	do_compute_block(blk, idx, tr, c, zero, cpus);
@@ -208,7 +206,7 @@ void btod_extract<N, M>::compute_block(bool zero, dense_tensor_i<k_orderb, doubl
 
 template<size_t N, size_t M>
 void btod_extract<N, M>::do_compute_block(dense_tensor_i<k_orderb, double> &blk,
-	const index<k_orderb> &idx, const transf<k_orderb, double> &tr,
+	const index<k_orderb> &idx, const tensor_transf<k_orderb, double> &tr,
 	double c, bool zero, cpu_pool &cpus) {
 
 	btod_extract<N, M>::start_timer();
@@ -234,7 +232,7 @@ void btod_extract<N, M>::do_compute_block(dense_tensor_i<k_orderb, double> &blk,
 
 	abs_index<k_ordera> cidxa(oa.get_abs_canonical_index(),
 			m_bta.get_bis().get_block_index_dims());
-	transf<k_ordera, double> tra(oa.get_transf(idxa)); tra.invert();
+	tensor_transf<k_ordera, double> tra(oa.get_transf(idxa)); tra.invert();
 
 	mask<k_ordera> msk1(m_msk), msk2(m_msk);
 	msk2.permute(tra.get_perm());
@@ -265,10 +263,10 @@ void btod_extract<N, M>::do_compute_block(dense_tensor_i<k_orderb, double> &blk,
 			cidxa.get_index());
 		if(zero) {
 			tod_extract<N, M>(blka, msk2, permb, idxibl2,
-				tra.get_coeff() * m_c * c).perform(blk);
+				tra.get_scalar_tr().get_coeff() * m_c * c).perform(blk);
 		} else {
 			tod_extract<N, M>(blka, msk2, permb, idxibl2,
-				tra.get_coeff() * m_c).perform(blk, c);
+				tra.get_scalar_tr().get_coeff() * m_c).perform(blk, c);
 		}
 		ctrla.ret_block(cidxa.get_index());
 	} else {

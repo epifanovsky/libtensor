@@ -9,7 +9,6 @@
 
 namespace libtensor {
 
-
 /**	\brief Describes how the canonical block needs to be transformed to
 		 obtain a replica
 	\tparam N Tensor order.
@@ -26,16 +25,6 @@ class tensor_transf {
     permutation<N> m_perm; //!< Permutation
 
 public:
-    //! \name Constructors
-    //@{
-
-    /** \brief Copy constructor
-     **/
-    tensor_transf(const tensor_transf<N, T> &tr) :
-        m_st(tr.m_st), m_perm(tr.m_perm) {
-    }
-    //@}
-
     //! \name Manipulators
     //@{
     /** \brief Reset tensor transformation to identity transformation
@@ -65,18 +54,16 @@ public:
 
 	/** \brief Apply transformation to an tensor block index
 	 **/
-	void apply(index<N> &idx) const {
-	    idx.permute(m_perm);
-	}
+	void apply(index<N> &idx) const { idx.permute(m_perm); }
+
 	//@}
 
 	//! \name Member access functions
 	//@{
-	scalar_transf<T> &get_scalar_tr() { return m_st; }
-	const scalar_transf<T> &get_scalar_tr() const { return m_st; }
 
-	permutation<N> &get_perm() { return m_perm; }
-	const permutation<N> &get_perm() { return m_perm; }
+	const scalar_transf<T> &get_scalar_tr() const { return m_st; }
+	const permutation<N> &get_perm() const { return m_perm; }
+
 	//@}
 
 	/** \brief Check if tensor transformation is identity transformation.
@@ -89,7 +76,7 @@ public:
 	//@{
 
 	bool operator==(const tensor_transf<N, T> &tr) const {
-	    retrun ((m_st == tr.m_st) && (m_perm.equals(tr.m_perm)));
+	    return ((m_st == tr.m_st) && (m_perm.equals(tr.m_perm)));
 	}
 
 	bool operator!=(const tensor_transf<N, T> &tr) const {

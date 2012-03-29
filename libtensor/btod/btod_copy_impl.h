@@ -73,7 +73,7 @@ void btod_copy<N>::compute_block(dense_tensor_i<N, double> &blk, const index<N> 
 	abs_index<N> acia(oa.get_abs_canonical_index(), bidimsa);
 
 	//	Transformation for block from canonical A to B
-	transf<N, double> tra(oa.get_transf(ia));
+	tensor_transf<N, double> tra(oa.get_tensor_transf(ia));
 	tra.permute(m_perm);
 	tra.scale(m_c);
 
@@ -89,7 +89,8 @@ void btod_copy<N>::compute_block(dense_tensor_i<N, double> &blk, const index<N> 
 
 template<size_t N>
 void btod_copy<N>::compute_block(bool zero, dense_tensor_i<N, double> &blk,
-    const index<N> &ib, const transf<N, double> &tr, double c, cpu_pool &cpus) {
+    const index<N> &ib, const tensor_transf<N, double> &tr,
+    double c, cpu_pool &cpus) {
 
 	block_tensor_ctrl<N, double> ctrla(m_bta);
 	dimensions<N> bidimsa = m_bta.get_bis().get_block_index_dims();
@@ -105,15 +106,16 @@ void btod_copy<N>::compute_block(bool zero, dense_tensor_i<N, double> &blk,
 	abs_index<N> acia(oa.get_abs_canonical_index(), bidimsa);
 
 	//	Transformation for block from canonical A to B
-	transf<N, double> tra(oa.get_transf(ia));
+	tensor_transf<N, double> tra(oa.get_transf(ia));
 	tra.permute(m_perm);
-	tra.scale(m_c);
+	tra.transform(scalar_transf<double>(m_c));
 	tra.transform(tr);
 
     if(zero) tod_set<N>().perform(cpus, blk);
 	if(!ctrla.req_is_zero_block(acia.get_index())) {
 		dense_tensor_i<N, double> &blka = ctrla.req_block(acia.get_index());
-		tod_copy<N>(blka, tra.get_perm(), tra.get_coeff()).perform(cpus, false, c, blk);
+		tod_copy<N>(blka, tra.get_perm(),
+		        tra.get_scalar_tr().get_coeff()).perform(cpus, false, c, blk);
 		ctrla.ret_block(acia.get_index());
 	}
 }

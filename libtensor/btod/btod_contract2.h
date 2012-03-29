@@ -72,8 +72,8 @@ private:
             : m_absidxa(aia), m_absidxb(aib), m_c(c), m_perma(perma),
               m_permb(permb)
             { }
-        bool is_same_perm(const transf<k_ordera, double> &tra,
-                          const transf<k_orderb, double> &trb) {
+        bool is_same_perm(const tensor_transf<k_ordera, double> &tra,
+                          const tensor_transf<k_orderb, double> &trb) {
 
             return m_perma.equals(tra.get_perm()) &&
                 m_permb.equals(trb.get_perm());
@@ -128,9 +128,9 @@ private:
         void make_schedule_a(const orbit_list<k_orderc, double> &olc,
                              const abs_index<k_ordera> &aia,
                              const abs_index<k_ordera> &acia,
-                             const transf<k_ordera, double> &tra);
+                             const tensor_transf<k_ordera, double> &tra);
         void make_schedule_b(const abs_index<k_ordera> &acia,
-                             const transf<k_ordera, double> &tra,
+                             const tensor_transf<k_ordera, double> &tra,
                              const index<k_orderb> &ib,
                              const abs_index<k_orderc> &acic);
         void schedule_block_contraction(const abs_index<k_orderc> &acic,
@@ -198,7 +198,8 @@ public:
 
 protected:
     virtual void compute_block(bool zero, dense_tensor_i<N + M, double> &blk,
-                               const index<N + M> &i, const transf<N + M, double> &tr,
+                               const index<N + M> &i,
+                               const tensor_transf<N + M, double> &tr,
                                double c, cpu_pool &cpus);
 
 private:
@@ -211,7 +212,7 @@ private:
         block_tensor_ctrl<k_ordera, double> &ctrla,
         block_tensor_ctrl<k_orderb, double> &ctrlb,
         dense_tensor_i<k_orderc, double> &blkc,
-        const transf<k_orderc, double> &trc,
+        const tensor_transf<k_orderc, double> &trc,
         bool zero, double c, cpu_pool &cpus);
 
 private:

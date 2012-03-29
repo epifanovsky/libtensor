@@ -1,4 +1,3 @@
-#include <libtensor/btod/transf_double.h>
 #include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/symmetry/product_table_container.h>
 #include <libtensor/symmetry/so_dirprod_se_label.h>

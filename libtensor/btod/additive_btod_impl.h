@@ -12,14 +12,14 @@ template<size_t N>
 void additive_btod<N>::compute_block(dense_tensor_i<N, double> &blk,
     const index<N> &i, cpu_pool &cpus) {
 
-    compute_block(true, blk, i, transf<N, double>(), 1.0, cpus);
+    compute_block(true, blk, i, tensor_transf<N, double>(), 1.0, cpus);
 }
 
 
 template<size_t N>
 void additive_btod<N>::compute_block(additive_btod<N> &op, bool zero,
-    dense_tensor_i<N, double> &blk, const index<N> &i, const transf<N, double> &tr,
-    double c, cpu_pool &cpus) {
+    dense_tensor_i<N, double> &blk, const index<N> &i,
+    const tensor_transf<N, double> &tr, double c, cpu_pool &cpus) {
 
     op.compute_block(zero, blk, i, tr, c, cpus);
 }
@@ -124,8 +124,9 @@ void additive_btod<N>::task::perform(cpu_pool &cpus) throw (exception) {
                 tod_set<N>().perform(cpus, blkc);
             } else {
                 dense_tensor_i<N, double> &blkb = ctrl.req_block(aib.get_index());
-                tod_copy<N>(blkb, node.trb.get_perm(), node.trb.get_coeff()).
-                    perform(cpus, true, 1.0, blkc);
+                tod_copy<N>(blkb, node.trb.get_perm(),
+                        node.trb.get_scalar_tr().get_coeff()).
+                        perform(cpus, true, 1.0, blkc);
                 ctrl.ret_block(aib.get_index());
             }
             ctrl.ret_block(aic.get_index());
@@ -143,14 +144,17 @@ void additive_btod<N>::task::perform(cpu_pool &cpus) throw (exception) {
             if(zerob) {
                 abs_index<N> aia(node.cia, m_bidims);
                 tod_copy<N>(*ila->second, node.tra.get_perm(),
-                    node.tra.get_coeff()).perform(cpus, true, 1.0, blkc);
+                        node.tra.get_scalar_tr().get_coeff()).
+                        perform(cpus, true, 1.0, blkc);
             } else {
                 abs_index<N> aia(node.cia, m_bidims);
                 dense_tensor_i<N, double> &blkb = ctrl.req_block(aib.get_index());
                 tod_copy<N>(*ila->second, node.tra.get_perm(),
-                    node.tra.get_coeff()).perform(cpus, true, 1.0, blkc);
-                tod_copy<N>(blkb, node.trb.get_perm(), node.trb.get_coeff()).
-                    perform(cpus, false, 1.0, blkc);
+                        node.tra.get_scalar_tr().get_coeff()).
+                        perform(cpus, true, 1.0, blkc);
+                tod_copy<N>(blkb, node.trb.get_perm(),
+                        node.trb.get_scalar_tr().get_coeff()).
+                        perform(cpus, false, 1.0, blkc);
                 ctrl.ret_block(aib.get_index());
             }
             ctrl.ret_block(aic.get_index());
@@ -173,11 +177,13 @@ void additive_btod<N>::task::perform(cpu_pool &cpus) throw (exception) {
         if(zerob) {
             abs_index<N> aia(node.cia, m_bidims);
             tod_copy<N> (*ila->second, node.tra.get_perm(),
-                node.tra.get_coeff()).perform(cpus, true, 1.0, blkb);
+                    node.tra.get_scalar_tr().get_coeff()).
+                    perform(cpus, true, 1.0, blkb);
         } else {
             abs_index<N> aia(node.cia, m_bidims);
             tod_copy<N> (*ila->second, node.tra.get_perm(),
-                node.tra.get_coeff()).perform(cpus, false, 1.0, blkb);
+                    node.tra.get_scalar_tr().get_coeff()).
+                    perform(cpus, false, 1.0, blkb);
         }
         ctrl.ret_block(aib.get_index());
     }

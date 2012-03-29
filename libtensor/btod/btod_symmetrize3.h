@@ -42,9 +42,9 @@ public:
 private:
 	struct schrec {
 		size_t ai;
-		transf<N, double> tr;
+		tensor_transf<N, double> tr;
 		schrec() : ai(0) { }
-		schrec(size_t ai_, const transf<N, double> &tr_) :
+		schrec(size_t ai_, const tensor_transf<N, double> &tr_) :
 			ai(ai_), tr(tr_) { }
 	};
 	typedef std::pair<size_t, schrec> sym_schedule_pair_t;
@@ -111,7 +111,7 @@ protected:
 	//@{
 
 	virtual void compute_block(bool zero, dense_tensor_i<N, double> &blk,
-	    const index<N> &i, const transf<N, double> &tr, double c,
+	    const index<N> &i, const tensor_transf<N, double> &tr, double c,
 	    cpu_pool &cpus);
 
 	//@}
@@ -171,13 +171,14 @@ void btod_symmetrize3<N>::compute_block(dense_tensor_i<N, double> &blk,
 	make_schedule_blk(ai, sch);
 
 	tod_set<N>().perform(blk);
-	compute_block(blk, i, transf<N, double>(), 1.0);
+	compute_block(blk, i, tensor_transf<N, double>(), 1.0);
 }*/
 
 
 template<size_t N>
-void btod_symmetrize3<N>::compute_block(bool zero, dense_tensor_i<N, double> &blk,
-	const index<N> &i, const transf<N, double> &tr, double c, cpu_pool &cpus) {
+void btod_symmetrize3<N>::compute_block(bool zero,
+        dense_tensor_i<N, double> &blk, const index<N> &i,
+        const tensor_transf<N, double> &tr, double c, cpu_pool &cpus) {
 
 	typedef typename sym_schedule_t::iterator iterator_t;
 
@@ -205,7 +206,7 @@ void btod_symmetrize3<N>::compute_block(bool zero, dense_tensor_i<N, double> &bl
 			if(j->ai == ai.get_abs_index()) n++;
 		}
 		if(n == 1) {
-			transf<N, double> tri(sch1.front().tr);
+			tensor_transf<N, double> tri(sch1.front().tr);
 			tri.transform(tr);
 			additive_btod<N>::compute_block(m_op, false, blk,
 				ai.get_index(), tri, c, cpus);
@@ -218,17 +219,18 @@ void btod_symmetrize3<N>::compute_block(bool zero, dense_tensor_i<N, double> &bl
 			// TODO: replace with "temporary block" feature
 			dense_tensor< N, double, allocator<double> > tmp(dims);
 			additive_btod<N>::compute_block(m_op, true, tmp,
-				ai.get_index(), transf<N, double>(), c, cpus);
+				ai.get_index(), tensor_transf<N, double>(), c, cpus);
 			for(typename std::list<schrec>::iterator j =
 				sch1.begin(); j != sch1.end();) {
 
 				if(j->ai != ai.get_abs_index()) {
 					++j; continue;
 				}
-				transf<N, double> trj(j->tr);
+				tensor_transf<N, double> trj(j->tr);
 				trj.transform(tr);
 				tod_copy<N>(tmp, trj.get_perm(),
-					trj.get_coeff()).perform(cpus, false, 1.0, blk);
+				        trj.get_scalar_tr().get_coeff()).
+				        perform(cpus, false, 1.0, blk);
 				j = sch1.erase(j);
 			}
 		}
@@ -321,35 +323,35 @@ void btod_symmetrize3<N>::make_schedule_blk(const abs_index<N> &ai,
 	//	Form the temporary schedule
 
 	if(sch0.contains(o0.get_abs_canonical_index())) {
-		transf<N, double> tr(o0.get_transf(idx0));
+		tensor_transf<N, double> tr(o0.get_transf(idx0));
 		sch1.push_back(schrec(o0.get_abs_canonical_index(), tr));
 	}
 	if(sch0.contains(o1.get_abs_canonical_index())) {
-		transf<N, double> tr(o1.get_transf(idx1));
+		tensor_transf<N, double> tr(o1.get_transf(idx1));
 		tr.permute(perm1);
-		tr.scale(scal);
+		tr.transform(scalar_transf<double>(scal));
 		sch1.push_back(schrec(o1.get_abs_canonical_index(), tr));
 	}
 	if(sch0.contains(o2.get_abs_canonical_index())) {
-		transf<N, double> tr(o2.get_transf(idx2));
+		tensor_transf<N, double> tr(o2.get_transf(idx2));
 		tr.permute(perm2);
-		tr.scale(scal);
+        tr.transform(scalar_transf<double>(scal));
 		sch1.push_back(schrec(o2.get_abs_canonical_index(), tr));
 	}
 	if(sch0.contains(o3.get_abs_canonical_index())) {
-		transf<N, double> tr(o3.get_transf(idx3));
+		tensor_transf<N, double> tr(o3.get_transf(idx3));
 		tr.permute(perm3);
-		tr.scale(scal);
+        tr.transform(scalar_transf<double>(scal));
 		sch1.push_back(schrec(o3.get_abs_canonical_index(), tr));
 	}
 	if(sch0.contains(o4.get_abs_canonical_index())) {
-		transf<N, double> tr(o4.get_transf(idx4));
+		tensor_transf<N, double> tr(o4.get_transf(idx4));
 		tr.permute(perm1);
 		tr.permute(perm3);
 		sch1.push_back(schrec(o4.get_abs_canonical_index(), tr));
 	}
 	if(sch0.contains(o5.get_abs_canonical_index())) {
-		transf<N, double> tr(o5.get_transf(idx5));
+		tensor_transf<N, double> tr(o5.get_transf(idx5));
 		tr.permute(perm1);
 		tr.permute(perm2);
 		sch1.push_back(schrec(o5.get_abs_canonical_index(), tr));
@@ -362,7 +364,7 @@ void btod_symmetrize3<N>::make_schedule_blk(const abs_index<N> &ai,
 		typename std::list<schrec>::iterator i = sch1.begin();
 		abs_index<N> aidx(i->ai, ai.get_dims());
 		double c = 0.0;
-		transf<N, double> tr0(i->tr);
+		tensor_transf<N, double> tr0(i->tr);
 
 		do {
 			if(i->ai != aidx.get_abs_index()) {
@@ -370,16 +372,16 @@ void btod_symmetrize3<N>::make_schedule_blk(const abs_index<N> &ai,
 				continue;
 			}
 			if(tr0.get_perm().equals(i->tr.get_perm())) {
-				c += i->tr.get_coeff();
+				c += i->tr.get_scalar_tr().get_coeff();
 				i = sch1.erase(i);
 				continue;
 			}
 			++i;
 		} while(i != sch1.end());
 		if(c != 0.0) {
-			transf<N, double> tr;
+			tensor_transf<N, double> tr;
 			tr.permute(tr0.get_perm());
-			tr.scale(c);
+	        tr.transform(scalar_transf<double>(c));
 			sch.insert(sym_schedule_pair_t(ai.get_abs_index(),
 				schrec(aidx.get_abs_index(), tr)));
 		}

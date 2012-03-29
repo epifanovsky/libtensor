@@ -4,6 +4,7 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
+#include <libtensor/btod/scalar_transf_double.h>
 #include <libtensor/btod/btod_import_raw.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/btod/btod_select.h>
@@ -840,12 +841,13 @@ void btod_select_test::test_5(size_t n) throw(libtest::test_exception) {
 			orbit<2, double> oa(ca.req_const_symmetry(), ib);
 			if (! oa.is_allowed()) continue;
 
-			const transf<2, double> &tra = oa.get_transf(ib);
+			const tensor_transf<2, double> &tra = oa.get_transf(ib);
 
 			abs_index<2> ai(oa.get_abs_canonical_index(), bidims);
 			dense_tensor_i<2, double> &ta = ca.req_block(ai.get_index()),
 					&tb = cb.req_block(ib);
-			tod_copy<2>(ta, tra.get_perm(), tra.get_coeff()).perform(cpus, true, 1.0, tb);
+			tod_copy<2>(ta, tra.get_perm(), tra.get_scalar_tr().get_coeff()).
+			        perform(cpus, true, 1.0, tb);
 
 			ca.ret_block(ai.get_index());
 			cb.ret_block(ib);

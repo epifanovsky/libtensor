@@ -3,6 +3,7 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/abs_index.h>
 #include <libtensor/core/block_tensor.h>
+#include <libtensor/btod/scalar_transf_double.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/btod/btod_read.h>
 #include <libtensor/symmetry/se_perm.h>

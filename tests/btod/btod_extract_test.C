@@ -1,5 +1,6 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor.h>
+#include <libtensor/btod/scalar_transf_double.h>
 #include <libtensor/btod/btod_extract.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/tod/tod_btconv.h>
@@ -21,7 +22,7 @@ void btod_extract_test::perform() throw(libtest::test_exception) {
 	test_7();
 	test_8();
 	test_9();
-//	test_10();
+	test_10();
 	test_11();
 	test_12a();
 	test_12b();

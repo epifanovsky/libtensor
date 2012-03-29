@@ -330,14 +330,14 @@ void se_part<N, T>::permute(const permutation<N> &perm) {
 template<size_t N, typename T>
 void se_part<N, T>::apply(index<N> &idx) const {
 
-    transf<N, T> tr;
+    tensor_transf<N, T> tr;
     apply(idx, tr);
 }
 
 template<size_t N, typename T>
-void se_part<N, T>::apply(index<N> &idx, transf<N, T> &tr) const {
+void se_part<N, T>::apply(index<N> &idx, tensor_transf<N, T> &tr) const {
 
-    static const char *method = "apply(index<N> &, transf<N, T> &)";
+    static const char *method = "apply(index<N> &, tensor_transf<N, T> &)";
 
     //	Determine partition index and offset within partition
     //
@@ -370,7 +370,8 @@ void se_part<N, T>::apply(index<N> &idx, transf<N, T> &tr) const {
         idx[i] = pidx[i] * n + poff[i];
     }
 
-    if (! m_fsign[apidx.get_abs_index()]) tr.scale(-1.0);
+    if (! m_fsign[apidx.get_abs_index()])
+        tr.transform(scalar_transf<T>(-1.0));
 }
 
 template<size_t N, typename T>

@@ -1,4 +1,5 @@
 #include <libtensor/core/allocator.h>
+#include <libtensor/btod/scalar_transf_double.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/btod/btod_set_diag.h>
 #include <libtensor/symmetry/point_group_table.h>

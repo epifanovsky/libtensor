@@ -1,5 +1,6 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor.h>
+#include <libtensor/btod/scalar_transf_double.h>
 #include <libtensor/btod/btod_add.h>
 #include <libtensor/btod/btod_contract2.h>
 #include <libtensor/btod/btod_copy.h>
@@ -628,8 +629,8 @@ void btod_sum_test::test_9b() throw(libtest::test_exception) {
 		abs_index<4> ijab(sch.get_abs_index(i),
 			bis_ijab.get_block_index_dims());
 		dense_tensor_i<4, double> &blk = c3.req_block(ijab.get_index());
-		sum.compute_block(true, blk, ijab.get_index(), transf<4, double>(),
-		    1.0, cpus);
+		sum.compute_block(true, blk, ijab.get_index(),
+		        tensor_transf<4, double>(), 1.0, cpus);
 		c3.ret_block(ijab.get_index());
 	}
 

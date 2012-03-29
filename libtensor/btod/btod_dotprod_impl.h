@@ -6,7 +6,6 @@
 #include "../symmetry/so_merge.h"
 #include "../tod/tod_dotprod.h"
 #include "bad_block_index_space.h"
-#include "transf_double.h"
 #include "../mp/task_batch.h"
 
 namespace libtensor {
@@ -231,7 +230,8 @@ void btod_dotprod<N>::dotprod_in_orbit_task::perform(cpu_pool &cpus) throw(excep
     orbit<N, double> orb(m_sym, m_idx);
     double c = 0.0;
     for(typename orbit<N, double>::iterator io = orb.begin();
-            io != orb.end(); io++) c += orb.get_transf(io).get_coeff();
+            io != orb.end(); io++)
+        c += orb.get_transf(io).get_scalar_tr().get_coeff();
 
     if(c == 0.0) return;
 
@@ -246,8 +246,8 @@ void btod_dotprod<N>::dotprod_in_orbit_task::perform(cpu_pool &cpus) throw(excep
     orbit<N, double> orb1(ctrl1.req_const_symmetry(), i1),
             orb2(ctrl2.req_const_symmetry(), i2);
 
-    const transf<N, double> &tr1 = orb1.get_transf(i1);
-    const transf<N, double> &tr2 = orb2.get_transf(i2);
+    const tensor_transf<N, double> &tr1 = orb1.get_transf(i1);
+    const tensor_transf<N, double> &tr2 = orb2.get_transf(i2);
 
     abs_index<N> aci1(orb1.get_abs_canonical_index(), bidims1),
             aci2(orb2.get_abs_canonical_index(), bidims2);
@@ -262,7 +262,7 @@ void btod_dotprod<N>::dotprod_in_orbit_task::perform(cpu_pool &cpus) throw(excep
     perm2.permute(tr2.get_perm()).permute(permutation<N>(m_pinv2, true));
 
     double d = tod_dotprod<N>(blk1, perm1, blk2, perm2).calculate(cpus) *
-            tr1.get_coeff() * tr2.get_coeff();
+            tr1.get_scalar_tr().get_coeff() * tr2.get_scalar_tr().get_coeff();
 
     ctrl1.ret_block(aci1.get_index());
     ctrl2.ret_block(aci2.get_index());

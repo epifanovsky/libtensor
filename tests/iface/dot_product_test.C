@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <sstream>
+#include <libtensor/btod/scalar_transf_double.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/iface/iface.h>
 #include "dot_product_test.h"

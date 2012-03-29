@@ -55,7 +55,7 @@ private:
 	typedef struct {
 		block_tensor_ctrl<N, double> *m_ctrl;
 		index<N> m_idx;
-		transf<N, double> m_tr;
+		tensor_transf<N, double> m_tr;
 	} arg_t;
 
 	struct schrec {
@@ -141,7 +141,7 @@ public:
 	virtual void sync_off();
 
 	virtual void compute_block(bool zero, dense_tensor_i<N, double> &blk,
-	    const index<N> &i, const transf<N, double> &tr, double c,
+	    const index<N> &i, const tensor_transf<N, double> &tr, double c,
 	    cpu_pool &cpus);
 
 	using additive_btod<N>::perform;
@@ -151,7 +151,7 @@ public:
 private:
 	void compute_block(dense_tensor_i<N, double> &blkb,
 		const std::pair<schiterator_t, schiterator_t> ipair, bool zero,
-		const transf<N, double> &trb, double kb, cpu_pool &cpus);
+		const tensor_transf<N, double> &trb, double kb, cpu_pool &cpus);
 
 	void add_operand(block_tensor_i<N, double> &bt,
 		const permutation<N> &perm, double c);

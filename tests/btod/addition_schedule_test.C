@@ -2,7 +2,7 @@
 #include <libtensor/core/orbit_list.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/btod/addition_schedule.h>
-#include <libtensor/btod/transf_double.h>
+#include <libtensor/btod/scalar_transf_double.h>
 #include "addition_schedule_test.h"
 
 namespace libtensor {

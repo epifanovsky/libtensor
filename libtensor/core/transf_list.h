@@ -30,7 +30,7 @@ public:
 	static const char *k_clazz; //!< Class name
 
 private:
-	typedef std::list< transf<N, T> > transf_lst_t;
+	typedef std::list< tensor_transf<N, T> > transf_lst_t;
 	typedef std::map< size_t, transf_lst_t > transf_map_t;
 
 public:
@@ -50,7 +50,7 @@ public:
 	/**	\brief Returns true if the transformation is listed,
 			false otherwise
 	 **/
-	bool is_found(const transf<N, T> &tr) const;
+	bool is_found(const tensor_transf<N, T> &tr) const;
 
 	//!	\name STL-like list iterator
 	//@{
@@ -65,7 +65,7 @@ public:
 		return m_trlist.end();
 	}
 
-	const transf<N, T> &get_transf(iterator &i) const {
+	const tensor_transf<N, T> &get_transf(iterator &i) const {
 
 		return *i;
 	}
@@ -73,12 +73,13 @@ public:
 	//@}
 
 private:
-	bool is_found(const transf_lst_t &trlist, const transf<N, T> &tr) const;
+	bool is_found(const transf_lst_t &trlist,
+	        const tensor_transf<N, T> &tr) const;
 
 	void join_lists(transf_lst_t &l1, transf_lst_t &l2) const;
 
 	void visit(const symmetry<N, T> &sym, const abs_index<N> &aidx,
-		const transf<N, T> &tr, transf_map_t &visited);
+		const tensor_transf<N, T> &tr, transf_map_t &visited);
 
 };
 
@@ -94,7 +95,7 @@ transf_list<N, T>::transf_list(const symmetry<N, T> &sym, const index<N> &idx) {
 
 	abs_index<N> aidx(idx, sym.get_bis().get_block_index_dims());
 	transf_map_t visited;
-	visit(sym, aidx, transf<N, T>(), visited);
+	visit(sym, aidx, tensor_transf<N, T>(), visited);
 	m_trlist.splice(m_trlist.end(), visited[aidx.get_abs_index()]);
 
 	transf_list<N, T>::stop_timer();
@@ -102,7 +103,7 @@ transf_list<N, T>::transf_list(const symmetry<N, T> &sym, const index<N> &idx) {
 
 
 template<size_t N, typename T>
-bool transf_list<N, T>::is_found(const transf<N, T> &tr) const {
+bool transf_list<N, T>::is_found(const tensor_transf<N, T> &tr) const {
 
 	return is_found(m_trlist, tr);
 }
@@ -110,7 +111,7 @@ bool transf_list<N, T>::is_found(const transf<N, T> &tr) const {
 
 template<size_t N, typename T>
 bool transf_list<N, T>::is_found(const transf_lst_t &trlist,
-	const transf<N, T> &tr) const {
+	const tensor_transf<N, T> &tr) const {
 
 	return std::find(trlist.begin(), trlist.end(), tr) != trlist.end();
 }
@@ -134,10 +135,10 @@ void transf_list<N, T>::join_lists(transf_lst_t &l1, transf_lst_t &l2) const {
 
 template<size_t N, typename T>
 void transf_list<N, T>::visit(const symmetry<N, T> &sym,
-	const abs_index<N> &aidx, const transf<N, T> &tr,
+	const abs_index<N> &aidx, const tensor_transf<N, T> &tr,
 	transf_map_t &visited) {
 
-	transf<N, T> tr1(tr);
+	tensor_transf<N, T> tr1(tr);
 	transf_lst_t lst1;
 	do {
 		lst1.push_back(tr1);
@@ -156,7 +157,7 @@ void transf_list<N, T>::visit(const symmetry<N, T> &sym,
 				eset.get_elem(ielem);
 
 			index<N> idx2(aidx.get_index());
-			transf<N, T> tr2(tr);
+			tensor_transf<N, T> tr2(tr);
 			elem.apply(idx2, tr2);
 			abs_index<N> aidx2(idx2, aidx.get_dims());
 

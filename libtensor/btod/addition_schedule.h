@@ -3,11 +3,11 @@
 
 #include <list>
 #include <vector>
-#include "transf_double.h"
 #include "../core/abs_index.h"
 #include "../core/block_index_space.h"
 #include "../core/block_index_space_product_builder.h"
 #include "../core/block_tensor_ctrl.h"
+#include "../core/scalar_transf.h"
 #include "../core/symmetry.h"
 #include "../symmetry/so_dirsum.h"
 #include "../symmetry/so_merge.h"
@@ -36,13 +36,14 @@ public:
     struct schedule_node {
         bool zeroa;
         size_t cia, cib, cic;
-        transf<N, T> tra, trb;
+        tensor_transf<N, T> tra, trb;
         schedule_node(size_t cia_, size_t cib_, size_t cic_,
-                const transf<N, T> &tra_, const transf<N, T> &trb_) :
+                const tensor_transf<N, T> &tra_,
+                const tensor_transf<N, T> &trb_) :
                     zeroa(false), cia(cia_), cib(cib_), cic(cic_),
                     tra(tra_), trb(trb_) { }
         schedule_node(size_t cib_, size_t cic_,
-                const transf<N, T> &trb_) : zeroa(true), cia(0),
+                const tensor_transf<N, T> &trb_) : zeroa(true), cia(0),
                 cib(cib_), cic(cic_), trb(trb_) { }
     };
 
@@ -110,17 +111,17 @@ private:
      **/
     size_t find_canonical(const dimensions<N> &bidims,
             const symmetry<N, T> &sym, const abs_index<N> ai,
-            transf<N, T> &tr, const std::vector<char> &o);
+            tensor_transf<N, T> &tr, const std::vector<char> &o);
 
     size_t find_canonical_iterate(const dimensions<N> &bidims,
             const symmetry<N, T> &sym, const abs_index<N> &ai,
-            transf<N, T> &tr, const std::vector<char> &o,
+            tensor_transf<N, T> &tr, const std::vector<char> &o,
             std::vector<char> &o2);
 
     void process_orbit_in_a(const dimensions<N> &bidims, bool zeroa,
             block_tensor_ctrl<N, double> &ctrlb,
             const abs_index<N> &acia, const abs_index<N> &aia,
-            const transf<N, T> &tra,
+            const tensor_transf<N, T> &tra,
             std::vector<char> &oa, std::vector<char> &ob,
             const std::vector<char> &omb, const std::vector<char> &omc,
             schedule_group &grp);
@@ -128,21 +129,21 @@ private:
     void iterate_sym_elements_in_a(const dimensions<N> &bidims, bool zeroa,
             block_tensor_ctrl<N, double> &ctrlb,
             const abs_index<N> &acia, const abs_index<N> &aia,
-            const transf<N, T> &tra,
+            const tensor_transf<N, T> &tra,
             std::vector<char> &oa, std::vector<char> &ob,
             const std::vector<char> &omb, const std::vector<char> &omc,
             schedule_group &grp);
 
     void process_orbit_in_b(const dimensions<N> &bidims, bool zeroa,
             const abs_index<N> &acib, const abs_index<N> &aib,
-            const transf<N, T> &trb,
+            const tensor_transf<N, T> &trb,
             std::vector<char> &oa, std::vector<char> &ob,
             const std::vector<char> &omb, const std::vector<char> &omc,
             schedule_group &grp);
 
     void iterate_sym_elements_in_b(const dimensions<N> &bidims, bool zeroa,
             const abs_index<N> &acib, const abs_index<N> &aib,
-            const transf<N, T> &trb,
+            const tensor_transf<N, T> &trb,
             std::vector<char> &oa, std::vector<char> &ob,
             const std::vector<char> &omb, const std::vector<char> &omc,
             schedule_group &grp);
@@ -214,7 +215,7 @@ void addition_schedule<N, T>::build(const assignment_schedule<N, T> &asch,
         }
         m_booka.insert(book_pair_t(acia.get_abs_index(), grp));
 
-        transf<N, T> tra0;
+        tensor_transf<N, T> tra0;
         process_orbit_in_a(bidims, false, ctrlb, acia, acia, tra0, oa,
                 ob, omb, omc, *grp);
     }
@@ -223,7 +224,7 @@ void addition_schedule<N, T>::build(const assignment_schedule<N, T> &asch,
             i++) {
 
         abs_index<N> acia(i->first, bidims);
-        transf<N, T> tra0;
+        tensor_transf<N, T> tra0;
         process_orbit_in_a(bidims, true, ctrlb, acia, acia, tra0, oa,
                 ob, omb, omc, *i->second);
     }
@@ -236,7 +237,7 @@ void addition_schedule<N, T>::build(const assignment_schedule<N, T> &asch,
         abs_index<N> acib(i, bidims);
         if(ctrlb.req_is_zero_block(acib.get_index())) continue;
 
-        transf<N, T> trb0;
+        tensor_transf<N, T> trb0;
         process_orbit_in_b(bidims, true, acib, acib, trb0, oa, ob,
                 omb, omc, *extra);
     }
@@ -309,14 +310,14 @@ bool addition_schedule<N, T>::mark_orbit(const symmetry<N, T> &sym,
 
 template<size_t N, typename T>
 size_t addition_schedule<N, T>::find_canonical(const dimensions<N> &bidims,
-        const symmetry<N, T> &sym, const abs_index<N> ai, transf<N, T> &tr,
-        const std::vector<char> &o) {
+        const symmetry<N, T> &sym, const abs_index<N> ai,
+        tensor_transf<N, T> &tr, const std::vector<char> &o) {
 
     if(o[ai.get_abs_index()] == 2) return ai.get_abs_index();
 
     std::vector<char> o2(o.size(), 0);
 
-    transf<N, T> tr1; // From current to canonical
+    tensor_transf<N, T> tr1; // From current to canonical
     size_t ii = find_canonical_iterate(bidims, sym, ai, tr1, o, o2);
     tr1.invert(); // From canonical to current
     tr.transform(tr1);
@@ -327,7 +328,7 @@ size_t addition_schedule<N, T>::find_canonical(const dimensions<N> &bidims,
 template<size_t N, typename T>
 size_t addition_schedule<N, T>::find_canonical_iterate(
         const dimensions<N> &bidims, const symmetry<N, T> &sym,
-        const abs_index<N> &ai, transf<N, T> &tr,
+        const abs_index<N> &ai, tensor_transf<N, T> &tr,
         const std::vector<char> &o, std::vector<char> &o2) {
 
     o2[ai.get_abs_index()] = 1;
@@ -343,7 +344,7 @@ size_t addition_schedule<N, T>::find_canonical_iterate(
 
             const symmetry_element_i<N, T> &e = es.get_elem(ie);
             index<N> i1(ai.get_index());
-            transf<N, T> tr1;
+            tensor_transf<N, T> tr1;
             e.apply(i1, tr1);
             abs_index<N> ai1(i1, bidims);
             if(o[ai1.get_abs_index()] == 2 || o[ai1.get_abs_index()] == 4) {
@@ -370,7 +371,8 @@ template<size_t N, typename T>
 void addition_schedule<N, T>::process_orbit_in_a(const dimensions<N> &bidims,
         bool zeroa, block_tensor_ctrl<N, double> &ctrlb,
         const abs_index<N> &acia, const abs_index<N> &aia,
-        const transf<N, T> &tra, std::vector<char> &oa, std::vector<char> &ob,
+        const tensor_transf<N, T> &tra,
+        std::vector<char> &oa, std::vector<char> &ob,
         const std::vector<char> &omb, const std::vector<char> &omc,
         schedule_group &grp) {
 
@@ -394,7 +396,7 @@ void addition_schedule<N, T>::process_orbit_in_a(const dimensions<N> &bidims,
         bool canb = omb[aib.get_abs_index()] == 2 ||
                 omb[aib.get_abs_index()] == 4;
 
-        transf<N, T> trb;
+        tensor_transf<N, T> trb;
         abs_index<N> acib(canb ? aib.get_abs_index() :
                 find_canonical(bidims, m_symb, aib, trb, omb), bidims);
         bool allowedb = omb[acib.get_abs_index()] == 2;
@@ -436,7 +438,7 @@ template<size_t N, typename T>
 void addition_schedule<N, T>::iterate_sym_elements_in_a(
         const dimensions<N> &bidims, bool zeroa,
         block_tensor_ctrl<N, double> &ctrlb, const abs_index<N> &acia,
-        const abs_index<N> &aia, const transf<N, T> &tra,
+        const abs_index<N> &aia, const tensor_transf<N, T> &tra,
         std::vector<char> &oa, std::vector<char> &ob,
         const std::vector<char> &omb, const std::vector<char> &omc,
         schedule_group &grp) {
@@ -451,7 +453,7 @@ void addition_schedule<N, T>::iterate_sym_elements_in_a(
 
             const symmetry_element_i<N, T> &e = es.get_elem(ie);
             index<N> ia1(aia.get_index());
-            transf<N, T> tra1(tra);
+            tensor_transf<N, T> tra1(tra);
             e.apply(ia1, tra1);
             abs_index<N> aia1(ia1, bidims);
             if(oa[aia1.get_abs_index()] == 0) {
@@ -466,7 +468,8 @@ void addition_schedule<N, T>::iterate_sym_elements_in_a(
 template<size_t N, typename T>
 void addition_schedule<N, T>::process_orbit_in_b(const dimensions<N> &bidims,
         bool zeroa, const abs_index<N> &acib, const abs_index<N> &aib,
-        const transf<N, T> &trb, std::vector<char> &oa, std::vector<char> &ob,
+        const tensor_transf<N, T> &trb,
+        std::vector<char> &oa, std::vector<char> &ob,
         const std::vector<char> &omb, const std::vector<char> &omc,
         schedule_group &grp) {
 
@@ -489,7 +492,7 @@ void addition_schedule<N, T>::process_orbit_in_b(const dimensions<N> &bidims,
         bool cana = oa[aia.get_abs_index()] == 2;
         bool canb = omb[aib.get_abs_index()] == 2;
 
-        transf<N, T> tra;
+        tensor_transf<N, T> tra;
         abs_index<N> acia(cana ? aia.get_abs_index() :
                 find_canonical(bidims, m_syma, aia, tra, oa), bidims);
 
@@ -525,7 +528,7 @@ void addition_schedule<N, T>::process_orbit_in_b(const dimensions<N> &bidims,
 template<size_t N, typename T>
 void addition_schedule<N, T>::iterate_sym_elements_in_b(
         const dimensions<N> &bidims, bool zeroa, const abs_index<N> &acib,
-        const abs_index<N> &aib, const transf<N, T> &trb,
+        const abs_index<N> &aib, const tensor_transf<N, T> &trb,
         std::vector<char> &oa, std::vector<char> &ob,
         const std::vector<char> &omb, const std::vector<char> &omc,
         schedule_group &grp) {
@@ -540,7 +543,7 @@ void addition_schedule<N, T>::iterate_sym_elements_in_b(
 
             const symmetry_element_i<N, T> &e = es.get_elem(ie);
             index<N> ib1(aib.get_index());
-            transf<N, T> trb1(trb);
+            tensor_transf<N, T> trb1(trb);
             e.apply(ib1, trb1);
             abs_index<N> aib1(ib1, bidims);
             if(ob[aib1.get_abs_index()] == 0) {

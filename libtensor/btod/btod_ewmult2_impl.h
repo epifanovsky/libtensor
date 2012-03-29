@@ -74,7 +74,7 @@ template<size_t N, size_t M, size_t K>
 void btod_ewmult2<N, M, K>::compute_block(dense_tensor_i<k_orderc, double> &blk,
 	const index<k_orderc> &bidx) {
 
-	transf<k_orderc, double> tr0;
+	tensor_transf<k_orderc, double> tr0;
 	compute_block_impl(blk, bidx, tr0, true, 1.0);
 }*/
 
@@ -82,7 +82,7 @@ void btod_ewmult2<N, M, K>::compute_block(dense_tensor_i<k_orderc, double> &blk,
 template<size_t N, size_t M, size_t K>
 void btod_ewmult2<N, M, K>::compute_block(bool zero,
     dense_tensor_i<k_orderc, double> &blk, const index<k_orderc> &bidx,
-    const transf<k_orderc, double> &tr, double d, cpu_pool &cpus) {
+    const tensor_transf<k_orderc, double> &tr, double d, cpu_pool &cpus) {
 
 	compute_block_impl(blk, bidx, tr, zero, d, cpus);
 }
@@ -383,7 +383,7 @@ void btod_ewmult2<N, M, K>::make_schedule() {
 
 template<size_t N, size_t M, size_t K>
 void btod_ewmult2<N, M, K>::compute_block_impl(dense_tensor_i<k_orderc, double> &blk,
-	const index<k_orderc> &bidx, const transf<k_orderc, double> &tr,
+	const index<k_orderc> &bidx, const tensor_transf<k_orderc, double> &tr,
 	bool zero, double d, cpu_pool &cpus) {
 
 	block_tensor_ctrl<k_ordera, double> ctrla(m_bta);
@@ -408,11 +408,11 @@ void btod_ewmult2<N, M, K>::compute_block_impl(dense_tensor_i<k_orderc, double> 
 
 	abs_index<k_ordera> cidxa(oa.get_abs_canonical_index(),
 		m_bta.get_bis().get_block_index_dims());
-	const transf<k_ordera, double> &tra = oa.get_transf(bidxa);
+	const tensor_transf<k_ordera, double> &tra = oa.get_transf(bidxa);
 
 	abs_index<k_orderb> cidxb(ob.get_abs_canonical_index(),
 		m_btb.get_bis().get_block_index_dims());
-	const transf<k_orderb, double> &trb = ob.get_transf(bidxb);
+	const tensor_transf<k_orderb, double> &trb = ob.get_transf(bidxb);
 
 	permutation<k_ordera> perma(tra.get_perm());
 	perma.permute(m_perma);
@@ -435,7 +435,8 @@ void btod_ewmult2<N, M, K>::compute_block_impl(dense_tensor_i<k_orderc, double> 
 	dense_tensor_i<k_orderb, double> &blkb = ctrlb.req_block(cidxb.get_index());
 
 	permc.permute(tr.get_perm());
-	double k = m_d * tra.get_coeff() * trb.get_coeff() * tr.get_coeff();
+	double k = m_d * tra.get_scalar_tr().get_coeff() *
+	        trb.get_scalar_tr().get_coeff() * tr.get_scalar_tr().get_coeff();
 	tod_ewmult2<N, M, K>(blka, perma, blkb, permb, permc, k).
 	    perform(cpus, zero, d, blk);
 

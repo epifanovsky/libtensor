@@ -101,10 +101,10 @@ void btod_contract2<N, M, K>::compute_block(dense_tensor_i<N + M, double> &blk,
 template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::compute_block(bool zero,
     dense_tensor_i<N + M, double> &blk, const index<N + M> &i,
-    const transf<N + M, double> &tr, double c, cpu_pool &cpus) {
+    const tensor_transf<N + M, double> &tr, double c, cpu_pool &cpus) {
 
     static const char *method = "compute_block(bool, tensor_i<N + M, double>&, "
-        "const index<N + M>&, const transf<N + M, double>&, double, cpu_pool&)";
+        "const index<N + M>&, const tensor_transf<N + M, double>&, double, cpu_pool&)";
 
     btod_contract2<N, M, K>::start_timer();
 
@@ -158,8 +158,8 @@ void btod_contract2<N, M, K>::make_schedule() {
 
         if(n == nmax) {
             make_schedule_task *t = new make_schedule_task(m_contr,
-                                                           m_bta, m_btb, get_symmetry(), m_bidimsc, ola,
-                                                           ioa1, ioa2, m_contr_sch, m_sch, sch_lock);
+                    m_bta, m_btb, get_symmetry(), m_bidimsc, ola,
+                    ioa1, ioa2, m_contr_sch, m_sch, sch_lock);
             tasklist.push_back(t);
             tb.push(*t);
             n = 0;
@@ -168,8 +168,8 @@ void btod_contract2<N, M, K>::make_schedule() {
     }
     if(ioa1 != ola.end()) {
         make_schedule_task *t = new make_schedule_task(m_contr, m_bta,
-                                                       m_btb, get_symmetry(), m_bidimsc, ola, ioa1, ioa2,
-                                                       m_contr_sch, m_sch, sch_lock);
+                m_btb, get_symmetry(), m_bidimsc, ola, ioa1, ioa2,
+                m_contr_sch, m_sch, sch_lock);
         tasklist.push_back(t);
         tb.push(*t);
     }
@@ -277,7 +277,7 @@ template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::make_schedule_task::make_schedule_a(
     const orbit_list<k_orderc, double> &olc,
     const abs_index<k_ordera> &aia, const abs_index<k_ordera> &acia,
-    const transf<k_ordera, double> &tra) {
+    const tensor_transf<k_ordera, double> &tra) {
 
     const sequence<k_maxconn, size_t> &conn = m_contr.get_conn();
     const index<k_ordera> &ia = aia.get_index();
@@ -326,7 +326,7 @@ void btod_contract2<N, M, K>::make_schedule_task::make_schedule_a(
 
 template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::make_schedule_task::make_schedule_b(
-    const abs_index<k_ordera> &acia, const transf<k_ordera, double> &tra,
+    const abs_index<k_ordera> &acia, const tensor_transf<k_ordera, double> &tra,
     const index<k_orderb> &ib, const abs_index<k_orderc> &acic) {
 
     orbit<k_orderb, double> ob(m_cb.req_const_symmetry(), ib);
@@ -335,9 +335,10 @@ void btod_contract2<N, M, K>::make_schedule_task::make_schedule_b(
     abs_index<k_orderb> acib(ob.get_abs_canonical_index(), m_bidimsb);
     if(m_cb.req_is_zero_block(acib.get_index())) return;
 
-    const transf<k_orderb, double> &trb = ob.get_transf(ib);
+    const tensor_transf<k_orderb, double> &trb = ob.get_transf(ib);
     block_contr_t bc(acia.get_abs_index(), acib.get_abs_index(),
-                     tra.get_coeff() * trb.get_coeff(),
+                     tra.get_scalar_tr().get_coeff() *
+                     trb.get_scalar_tr().get_coeff(),
                      permutation<N + K>(tra.get_perm(), true),
                      permutation<M + K>(trb.get_perm(), true));
     schedule_block_contraction(acic, bc);
@@ -446,7 +447,8 @@ void btod_contract2<N, M, K>::contract_block(
     block_contr_list_t &lst, const index<k_orderc> &idxc,
     block_tensor_ctrl<k_ordera, double> &ca,
     block_tensor_ctrl<k_orderb, double> &cb,
-    dense_tensor_i<k_orderc, double> &tc, const transf<k_orderc, double> &trc,
+    dense_tensor_i<k_orderc, double> &tc,
+    const tensor_transf<k_orderc, double> &trc,
     bool zero, double c, cpu_pool &cpus) {
 
     if(zero) tod_set<k_orderc>().perform(cpus, tc);
@@ -480,7 +482,7 @@ void btod_contract2<N, M, K>::contract_block(
 
         tod_contract2<N, M, K> *controp =
             new tod_contract2<N, M, K>(contr, blka, blkb);
-        double kc = ilst->m_c * trc.get_coeff();
+        double kc = ilst->m_c * trc.get_scalar_tr().get_coeff();
         op_ptrs.push_back(controp);
         if(op_sum == 0) op_sum = new tod_sum<k_orderc>(*controp, kc);
         else op_sum->add_op(*controp, kc);

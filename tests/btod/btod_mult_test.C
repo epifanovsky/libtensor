@@ -1,5 +1,6 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor.h>
+#include <libtensor/btod/scalar_transf_double.h>
 #include <libtensor/btod/btod_mult.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/tod/tod_btconv.h>
@@ -445,7 +446,7 @@ void btod_mult_test::test_5(bool symm1, bool symm2) throw(libtest::test_exceptio
 					"Permutational symmetry missing.");
 
 		index<2> idx;
-		transf<2, double> tr;
+		tensor_transf<2, double> tr;
 		for (symmetry_element_set<2, double>::const_iterator iss =
 				set.begin(); iss != set.end(); iss++) {
 
@@ -459,13 +460,13 @@ void btod_mult_test::test_5(bool symm1, bool symm2) throw(libtest::test_exceptio
 					"Wrong permutational symmetry.");
 
 		if (symm1 == symm2) {
-			if (tr.get_coeff() != 1.0) {
+			if (tr.get_scalar_tr().get_coeff() != 1.0) {
 				fail_test(testname.str().c_str(), __FILE__, __LINE__,
 						"Wrong permutational symmetry.");
 			}
 		}
 		else {
-			if (tr.get_coeff() != -1.0) {
+			if (tr.get_scalar_tr().get_coeff() != -1.0) {
 				fail_test(testname.str().c_str(), __FILE__, __LINE__,
 						"Wrong permutational symmetry.");
 			}
@@ -549,7 +550,7 @@ void btod_mult_test::test_6(bool symm1, bool symm2) throw(libtest::test_exceptio
 					"Permutational symmetry missing.");
 
 		index<4> idx;
-		transf<4, double> tr;
+		tensor_transf<4, double> tr;
 		for (symmetry_element_set<4, double>::const_iterator iss =
 				set.begin(); iss != set.end(); iss++) {
 
@@ -563,13 +564,13 @@ void btod_mult_test::test_6(bool symm1, bool symm2) throw(libtest::test_exceptio
 					"Wrong permutational symmetry.");
 
 		if (symm1 == symm2) {
-			if (tr.get_coeff() != 1.0) {
+			if (tr.get_scalar_tr().get_coeff() != 1.0) {
 				fail_test(testname.str().c_str(), __FILE__, __LINE__,
 						"Wrong symm flag symmetry.");
 			}
 		}
 		else {
-			if (tr.get_coeff() != -1.0) {
+			if (tr.get_scalar_tr().get_coeff() != -1.0) {
 				fail_test(testname.str().c_str(), __FILE__, __LINE__,
 						"Wrong symm flag symmetry.");
 			}

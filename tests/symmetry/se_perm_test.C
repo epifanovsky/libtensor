@@ -1,4 +1,4 @@
-#include <libtensor/btod/transf_double.h>
+#include <libtensor/btod/scalar_transf_double.h>
 #include <libtensor/symmetry/se_perm.h>
 #include "se_perm_test.h"
 
@@ -36,13 +36,13 @@ void se_perm_test::test_sym_ab_ba() throw(libtest::test_exception) {
                     "!elem.get_perm().equals(perm)");
         }
 
-        const transf<2, double> &tr = elem.get_transf();
+        const tensor_transf<2, double> &tr = elem.get_transf();
 
         if(!tr.get_perm().equals(perm)) {
             fail_test(testname, __FILE__, __LINE__,
                     "Incorrect transformation permutation.");
         }
-        if(tr.get_coeff() != 1.0) {
+        if(tr.get_scalar_tr().get_coeff() != 1.0) {
             fail_test(testname, __FILE__, __LINE__,
                     "Incorrect transformation coefficient.");
         }
@@ -101,13 +101,13 @@ void se_perm_test::test_asym_ab_ba() throw(libtest::test_exception) {
                     "!elem.get_perm().equals(perm)");
         }
 
-        const transf<2, double> &tr = elem.get_transf();
+        const tensor_transf<2, double> &tr = elem.get_transf();
 
         if(!tr.get_perm().equals(perm)) {
             fail_test(testname, __FILE__, __LINE__,
                     "Incorrect transformation permutation.");
         }
-        if(tr.get_coeff() != -1.0) {
+        if(tr.get_scalar_tr().get_coeff() != -1.0) {
             fail_test(testname, __FILE__, __LINE__,
                     "Incorrect transformation coefficient.");
         }
@@ -166,13 +166,13 @@ void se_perm_test::test_sym_abc_bca() throw(libtest::test_exception) {
                     "!elem.get_perm().equals(perm)");
         }
 
-        const transf<3, double> &tr = elem.get_transf();
+        const tensor_transf<3, double> &tr = elem.get_transf();
 
         if(!tr.get_perm().equals(perm)) {
             fail_test(testname, __FILE__, __LINE__,
                     "!tr.get_perm().equals(perm)");
         }
-        if(tr.get_coeff() != 1.0) {
+        if(tr.get_scalar_tr().get_coeff() != 1.0) {
             fail_test(testname, __FILE__, __LINE__,
                     "tr.get_coeff() != 1.0");
         }
@@ -231,13 +231,13 @@ void se_perm_test::test_asym_abc_bca() throw(libtest::test_exception) {
                     "!elem.get_perm().equals(perm)");
         }
 
-        const transf<3, double> &tr = elem.get_transf();
+        const tensor_transf<3, double> &tr = elem.get_transf();
 
         if(!tr.get_perm().equals(perm)) {
             fail_test(testname, __FILE__, __LINE__,
                     "!tr.get_perm().equals(perm)");
         }
-        if(tr.get_coeff() != 1.0) {
+        if(tr.get_scalar_tr().get_coeff() != 1.0) {
             fail_test(testname, __FILE__, __LINE__,
                     "tr.get_coeff() != 1.0");
         }
@@ -296,13 +296,13 @@ void se_perm_test::test_sym_abcd_badc() throw(libtest::test_exception) {
                     "!elem.get_perm().equals(perm)");
         }
 
-        const transf<4, double> &tr = elem.get_transf();
+        const tensor_transf<4, double> &tr = elem.get_transf();
 
         if(!tr.get_perm().equals(perm)) {
             fail_test(testname, __FILE__, __LINE__,
                     "!tr.get_perm().equals(perm)");
         }
-        if(tr.get_coeff() != 1.0) {
+        if(tr.get_scalar_tr().get_coeff() != 1.0) {
             fail_test(testname, __FILE__, __LINE__,
                     "tr.get_coeff() != 1.0");
         }
@@ -370,13 +370,13 @@ void se_perm_test::test_asym_abcd_badc() throw(libtest::test_exception) {
                     "!elem.get_perm().equals(perm)");
         }
 
-        const transf<4, double> &tr = elem.get_transf();
+        const tensor_transf<4, double> &tr = elem.get_transf();
 
         if(!tr.get_perm().equals(perm)) {
             fail_test(testname, __FILE__, __LINE__,
                     "!tr.get_perm().equals(perm)");
         }
-        if(tr.get_coeff() != -1.0) {
+        if(tr.get_scalar_tr().get_coeff() != -1.0) {
             fail_test(testname, __FILE__, __LINE__,
                     "tr.get_coeff() != -1.0");
         }

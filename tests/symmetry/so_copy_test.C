@@ -1,6 +1,5 @@
 #include <typeinfo>
 #include <libtensor/symmetry/so_copy.h>
-#include <libtensor/btod/transf_double.h>
 #include "so_copy_test.h"
 
 namespace libtensor {
@@ -37,7 +36,7 @@ public:
 	}
 	virtual bool is_allowed(const index<4>&) const { throw 0; }
 	virtual void apply(index<4>&) const { throw 0; }
-	virtual void apply(index<4>&, transf<4, double>&) const { throw 0; }
+	virtual void apply(index<4>&, tensor_transf<4, double>&) const { throw 0; }
 	size_t get_n() const { return n; }
 };
 
@@ -62,7 +61,7 @@ public:
 	}
 	virtual bool is_allowed(const index<4>&) const { throw 0; }
 	virtual void apply(index<4>&) const { throw 0; }
-	virtual void apply(index<4>&, transf<4, double>&) const { throw 0; }
+	virtual void apply(index<4>&, tensor_transf<4, double>&) const { throw 0; }
 	size_t get_m() const { return m; }
 };
 

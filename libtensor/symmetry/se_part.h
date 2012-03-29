@@ -175,7 +175,7 @@ public:
     /**	\copydoc symmetry_element_i<N, T>::apply(
         index<N>&, transf<N, T>&)
     **/
-    virtual void apply(index<N> &idx, transf<N, T> &tr) const;
+    virtual void apply(index<N> &idx, tensor_transf<N, T> &tr) const;
 
     //@}
 

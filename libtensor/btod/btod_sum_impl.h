@@ -80,7 +80,8 @@ void btod_sum<N>::compute_block(dense_tensor_i<N, double> &blk, const index<N> &
 
 template<size_t N>
 void btod_sum<N>::compute_block(bool zero, dense_tensor_i<N, double> &blk,
-    const index<N> &i, const transf<N, double> &tr, double c, cpu_pool &cpus) {
+    const index<N> &i, const tensor_transf<N, double> &tr,
+    double c, cpu_pool &cpus) {
 
     if(zero) tod_set<N>().perform(cpus, blk);
 
@@ -100,7 +101,7 @@ void btod_sum<N>::compute_block(bool zero, dense_tensor_i<N, double> &blk,
 			abs_index<N> ci(orb.get_abs_canonical_index(), m_bidims);
 
 			if(iop->get_op().get_schedule().contains(ci.get_abs_index())) {
-				transf<N, double> tra(orb.get_transf(i));
+				tensor_transf<N, double> tra(orb.get_transf(i));
 				tra.transform(tr);
 
 				additive_btod<N>::compute_block(iop->get_op(), false, blk,

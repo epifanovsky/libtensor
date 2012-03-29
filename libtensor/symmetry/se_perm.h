@@ -1,7 +1,6 @@
 #ifndef LIBTENSOR_SE_PERM_H
 #define LIBTENSOR_SE_PERM_H
 
-#include <libtensor/btod/transf_double.h>
 #include <libtensor/core/symmetry_element_i.h>
 #include "bad_symmetry.h"
 
@@ -40,7 +39,7 @@ private:
     permutation<N> m_perm; //!< Permutation
     bool m_even; //!< Even/odd %permutation
     bool m_symm; //!< Symmetric/anti-symmetric
-    transf<N, T> m_transf; //!< Block transformation
+    tensor_transf<N, T> m_transf; //!< Block transformation
 
 public:
     //!	\name Construction and destruction
@@ -76,7 +75,7 @@ a     **/
         return m_symm;
     }
 
-    const transf<N, T> &get_transf() const {
+    const tensor_transf<N, T> &get_transf() const {
         return m_transf;
     }
 
@@ -115,45 +114,10 @@ a     **/
     /**	\copydoc symmetry_element_i<N, T>::apply(
 			index<N>&, transf<N, T>&)
      **/
-    virtual void apply(index<N> &idx, transf<N, T> &tr) const;
+    virtual void apply(index<N> &idx, tensor_transf<N, T> &tr) const;
 
     //@}
 };
-
-template<size_t N, typename T>
-const char *se_perm<N, T>::k_clazz = "se_perm<N, T>";
-
-template<size_t N, typename T>
-const char *se_perm<N, T>::k_sym_type = "perm";
-
-template<size_t N, typename T>
-se_perm<N, T>::se_perm(const permutation<N> &perm, bool symm) :
-        m_perm(perm), m_symm(symm) {
-
-    static const char *method = "se_perm(const permutation<N>&, bool)";
-
-    if(perm.is_identity()) {
-        throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
-                "perm.is_identity()");
-    }
-
-    size_t n = 0;
-    permutation<N> p(m_perm);
-    do {
-        p.permute(m_perm); n++;
-    } while(!p.is_identity());
-
-    m_even = n % 2 == 0;
-    m_transf.permute(m_perm);
-    if(!m_even && !m_symm) m_transf.scale(-1);
-}
-
-
-template<size_t N, typename T>
-se_perm<N, T>::se_perm(const se_perm<N, T> &elem) :
-    m_perm(elem.m_perm), m_symm(elem.m_symm), m_transf(elem.m_transf) {
-
-}
 
 template<size_t N, typename T>
 inline bool
@@ -171,7 +135,7 @@ inline void se_perm<N, T>::apply(index<N> &idx) const {
 }
 
 template<size_t N, typename T>
-inline void se_perm<N, T>::apply(index<N> &idx, transf<N, T> &tr) const {
+inline void se_perm<N, T>::apply(index<N> &idx, tensor_transf<N, T> &tr) const {
 
     idx.permute(m_transf.get_perm());
     tr.transform(m_transf);

@@ -182,9 +182,10 @@ void btod_mult1<N>::do_perform(
 		dense_tensor_i<N, double> &blk = ctrla.req_block(idx);
 		dense_tensor_i<N, double> &blka = ctrla.req_block(cidxa.get_index());
 
-		const transf<N, double> &tra = oa.get_transf(idx);
+		const tensor_transf<N, double> &tra = oa.get_transf(idx);
 
-		tod_copy<N>(blka, tra.get_perm(), tra.get_coeff()).perform(cpus, true, 1.0, blk);
+		tod_copy<N>(blka, tra.get_perm(),
+		        tra.get_scalar_tr().get_coeff()).perform(cpus, true, 1.0, blk);
 
 		ctrla.ret_block(cidxa.get_index());
 		ctrla.ret_block(idx);
@@ -223,10 +224,10 @@ void btod_mult1<N>::do_perform(
 		dense_tensor_i<N, double> &blka = ctrla.req_block(idxa);
 		dense_tensor_i<N, double> &blkb = ctrlb.req_block(cidxb.get_index());
 
-		const transf<N, double> &trb = ob.get_transf(idxb);
+		const tensor_transf<N, double> &trb = ob.get_transf(idxb);
 		double k = m_c;
-		if (m_recip) k /= trb.get_coeff();
-		else k *= trb.get_coeff();
+		if (m_recip) k /= trb.get_scalar_tr().get_coeff();
+		else k *= trb.get_scalar_tr().get_coeff();
 
 		permutation<N> pb(trb.get_perm());
 		pb.permute(m_pb);

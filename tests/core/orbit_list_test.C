@@ -1,7 +1,6 @@
 #include <sstream>
 #include <libtensor/core/abs_index.h>
 #include <libtensor/core/orbit_list.h>
-#include <libtensor/btod/transf_double.h>
 #include <libtensor/symmetry/se_perm.h>
 #include "orbit_list_test.h"
 

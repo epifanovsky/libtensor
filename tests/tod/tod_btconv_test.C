@@ -6,6 +6,7 @@
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/symmetry/se_perm.h>
+#include <libtensor/btod/scalar_transf_double.h>
 #include <libtensor/tod/tod_add.h>
 #include <libtensor/tod/tod_btconv.h>
 #include <libtensor/tod/tod_random.h>

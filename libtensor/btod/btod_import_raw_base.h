@@ -15,7 +15,6 @@
 #include "../tod/tod_copy.h"
 #include "../symmetry/so_copy.h"
 #include "../symmetry/bad_symmetry.h"
-#include "transf_double.h"
 
 namespace libtensor {
 
@@ -159,12 +158,12 @@ void btod_import_raw_base<N, Alloc>::verify_nonzero_orbit(
 
         //	Current index and transformation
         abs_index<N> ai(o.get_abs_index(i), bidims);
-        const transf<N, double> &tr = o.get_transf(i);
+        const tensor_transf<N, double> &tr = o.get_transf(i);
 
         //	Compare with the transformed canonical block
         dense_tensor_i<N, double> &blk = ctrl.req_block(ai.get_index());
         dense_tensor<N, double, Alloc> tblk(blk.get_dims());
-        tod_copy<N> (cblk, tr.get_perm(), tr.get_coeff()).
+        tod_copy<N> (cblk, tr.get_perm(), tr.get_scalar_tr().get_coeff()).
             perform(cpus, true, 1.0, tblk);
 
         tod_compare<N> cmp(blk, tblk, sym_thresh);

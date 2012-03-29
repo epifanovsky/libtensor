@@ -7,7 +7,6 @@
 #include "../tod/tod_set.h"
 #include "basic_btod.h"
 #include "addition_schedule.h"
-#include "transf_double.h"
 
 namespace libtensor {
 
@@ -85,7 +84,7 @@ public:
         \param cpus Pool of CPUs.
      **/
     virtual void compute_block(bool zero, dense_tensor_i<N, double> &blk,
-        const index<N> &i, const transf<N, double> &tr, double c,
+        const index<N> &i, const tensor_transf<N, double> &tr, double c,
         cpu_pool &cpus) = 0;
 
 protected:
@@ -94,7 +93,7 @@ protected:
      **/
     void compute_block(additive_btod<N> &op, bool zero,
         dense_tensor_i<N, double> &blk, const index<N> &i,
-        const transf<N, double> &tr, double c, cpu_pool &cpus);
+        const tensor_transf<N, double> &tr, double c, cpu_pool &cpus);
 
 private:
     typedef addition_schedule<N, double> schedule_t;

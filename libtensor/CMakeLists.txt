@@ -131,6 +131,7 @@ set(SRC_INST
     symmetry/inst/permutation_group_inst.C
     symmetry/inst/se_label_inst.C
     symmetry/inst/se_part_inst.C
+    symmetry/inst/se_perm_inst.C
     symmetry/inst/so_apply_inst.C
     symmetry/inst/so_apply_se_label_inst.C
     symmetry/inst/so_apply_se_part_inst.C

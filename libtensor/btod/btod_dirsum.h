@@ -110,7 +110,7 @@ public:
 	virtual void sync_off();
 
 	virtual void compute_block(bool zero, dense_tensor_i<N + M, double> &blk,
-		const index<N + M> &i, const transf<N + M, double> &tr,
+		const index<N + M> &i, const tensor_transf<N + M, double> &tr,
 		double c, cpu_pool &cpus);
 
 	using additive_btod<N + M>::perform;
@@ -122,7 +122,7 @@ private:
 		const orbit_list<k_orderc, double> &olc);
 
 	void compute_block(dense_tensor_i<N + M, double> &blkc,
-		const schrec &rec, const transf<N + M, double> &trc,
+		const schrec &rec, const tensor_transf<N + M, double> &trc,
 		bool zeroc, double kc, cpu_pool &cpus);
 
 	void do_block_dirsum(block_tensor_ctrl<k_ordera, double> &ctrla,

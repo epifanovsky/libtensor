@@ -17,7 +17,6 @@
 #include "../symmetry/so_dirsum.h"
 #include "bad_block_index_space.h"
 #include "additive_btod.h"
-#include "transf_double.h"
 
 namespace libtensor {
 
@@ -96,7 +95,7 @@ void btod_dirsum<N, M>::compute_block(dense_tensor_i<N + M, double> &blkc,
 		if(isch == m_op_sch.end()) {
 			tod_set<k_orderc>().perform(blkc);
 		} else {
-			transf<k_orderc, double> trc0;
+			tensor_transf<k_orderc, double> trc0;
 			compute_block(blkc, isch->second, trc0, true, 1.0);
 		}
 
@@ -110,12 +109,13 @@ void btod_dirsum<N, M>::compute_block(dense_tensor_i<N + M, double> &blkc,
 
 
 template<size_t N, size_t M>
-void btod_dirsum<N, M>::compute_block(bool zero, dense_tensor_i<N + M, double> &blkc,
-	const index<N + M> &ic, const transf<N + M, double> &trc,
-	double kc, cpu_pool &cpus) {
+void btod_dirsum<N, M>::compute_block(bool zero,
+        dense_tensor_i<N + M, double> &blkc, const index<N + M> &ic,
+        const tensor_transf<N + M, double> &trc, double kc, cpu_pool &cpus) {
 
-	static const char *method = "compute_block(bool, tensor_i<N + M, double>&, "
-		"const index<N + M>&, const transf<N + M, double>&, double, cpu_pool&)";
+	static const char *method = "compute_block(bool, "
+	        "dense_tensor_i<N + M, double>&, const index<N + M>&, "
+	        "const tensor_transf<N + M, double>&, double, cpu_pool&)";
 
 	btod_dirsum<N, M>::start_timer();
 
@@ -141,7 +141,7 @@ void btod_dirsum<N, M>::compute_block(bool zero, dense_tensor_i<N + M, double> &
 
 template<size_t N, size_t M>
 void btod_dirsum<N, M>::compute_block(dense_tensor_i<N + M, double> &blkc,
-	const schrec &rec, const transf<N + M, double> &trc, bool zeroc,
+	const schrec &rec, const tensor_transf<N + M, double> &trc, bool zeroc,
 	double kc, cpu_pool &cpus) {
 
 	block_tensor_ctrl<k_ordera, double> ca(m_bta);
@@ -149,7 +149,7 @@ void btod_dirsum<N, M>::compute_block(dense_tensor_i<N + M, double> &blkc,
 
 	abs_index<k_ordera> aia(rec.absidxa, m_bidimsa);
 	abs_index<k_orderb> aib(rec.absidxb, m_bidimsb);
-	double kc1 = kc * trc.get_coeff();
+	double kc1 = kc * trc.get_scalar_tr().get_coeff();
 	permutation<k_orderc> permc1(rec.permc); permc1.permute(trc.get_perm());
 	if(rec.zerob) {
 		permutation<k_orderc> cycc;
@@ -261,7 +261,7 @@ void btod_dirsum<N, M>::make_schedule(const orbit<k_ordera, double> &oa,
 
 		abs_index<k_ordera> aidxa(oa.get_abs_index(ia), m_bidimsa);
 		const index<k_ordera> &idxa = aidxa.get_index();
-		const transf<k_ordera, double> &tra = oa.get_transf(
+		const tensor_transf<k_ordera, double> &tra = oa.get_transf(
 				aidxa.get_abs_index());
 
 		for(size_t i = 0; i < k_ordera; i++) seqa[i] = i;
@@ -272,7 +272,7 @@ void btod_dirsum<N, M>::make_schedule(const orbit<k_ordera, double> &oa,
 
 			abs_index<k_orderb> aidxb(ob.get_abs_index(ib), m_bidimsb);
 			const index<k_orderb> &idxb = aidxb.get_index();
-			const transf<k_orderb, double> &trb = ob.get_transf(
+			const tensor_transf<k_orderb, double> &trb = ob.get_transf(
 					aidxb.get_abs_index());
 
 			for(size_t i = 0; i < k_orderb; i++) seqb[i] = i;
@@ -300,8 +300,8 @@ void btod_dirsum<N, M>::make_schedule(const orbit<k_ordera, double> &oa,
 			rec.absidxb = ob.get_abs_canonical_index();
 			rec.zeroa = zeroa;
 			rec.zerob = zerob;
-			rec.ka = m_ka * tra.get_coeff();
-			rec.kb = m_kb * trb.get_coeff();
+			rec.ka = m_ka * tra.get_scalar_tr().get_coeff();
+			rec.kb = m_kb * trb.get_scalar_tr().get_coeff();
 			rec.permc.permute(pbc.get_perm());
 			m_op_sch.insert(std::pair<size_t, schrec>(
 					aidxc.get_abs_index(), rec));

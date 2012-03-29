@@ -17,7 +17,6 @@
 #include "../tod/tod_set.h"
 #include "bad_block_index_space.h"
 #include "additive_btod.h"
-#include "transf_double.h"
 
 namespace libtensor {
 
@@ -97,7 +96,7 @@ public:
 
 protected:
 	virtual void compute_block(bool zero, dense_tensor_i<k_orderb, double> &blk,
-		const index<k_orderb> &ib, const transf<k_orderb, double> &trb,
+		const index<k_orderb> &ib, const tensor_transf<k_orderb, double> &trb,
 		double c, cpu_pool &cpus);
 
 private:
@@ -116,7 +115,7 @@ private:
 	void make_schedule();
 
 	void compute_block(dense_tensor_i<k_orderb, double> &blk,
-		const index<k_orderb> &ib, const transf<k_orderb, double> &trb,
+		const index<k_orderb> &ib, const tensor_transf<k_orderb, double> &trb,
 		bool zero, double c, cpu_pool &cpus);
 
 private:
@@ -176,15 +175,15 @@ template<size_t N, size_t M>
 void btod_diag<N, M>::compute_block(dense_tensor_i<k_orderb, double> &blk,
 	const index<k_orderb> &ib) {
 
-	transf<k_orderb, double> trb0;
+	tensor_transf<k_orderb, double> trb0;
 	compute_block(blk, ib, trb0, true, 1.0);
 }*/
 
 
 template<size_t N, size_t M>
-void btod_diag<N, M>::compute_block(bool zero, dense_tensor_i<k_orderb, double> &blk,
-	const index<k_orderb> &ib, const transf<k_orderb, double> &trb,
-	double c, cpu_pool &cpus) {
+void btod_diag<N, M>::compute_block(bool zero,
+        dense_tensor_i<k_orderb, double> &blk, const index<k_orderb> &ib,
+        const tensor_transf<k_orderb, double> &trb, double c, cpu_pool &cpus) {
 
 	compute_block(blk, ib, trb, zero, c, cpus);
 }
@@ -192,7 +191,7 @@ void btod_diag<N, M>::compute_block(bool zero, dense_tensor_i<k_orderb, double> 
 
 template<size_t N, size_t M>
 void btod_diag<N, M>::compute_block(dense_tensor_i<k_orderb, double> &blk,
-	const index<k_orderb> &ib, const transf<k_orderb, double> &trb,
+	const index<k_orderb> &ib, const tensor_transf<k_orderb, double> &trb,
 	bool zero, double c, cpu_pool &cpus) {
 
 	btod_diag<N, M>::start_timer();
@@ -225,7 +224,7 @@ void btod_diag<N, M>::compute_block(dense_tensor_i<k_orderb, double> &blk,
 		//
 		orbit<k_ordera, double> oa(ctrla.req_const_symmetry(), ia);
 		abs_index<k_ordera> acia(oa.get_abs_canonical_index(), bidimsa);
-		const transf<k_ordera, double> &tra = oa.get_transf(ia);
+		const tensor_transf<k_ordera, double> &tra = oa.get_transf(ia);
 		permutation<k_ordera> pinva(tra.get_perm(), true);
 
 		//	Build new diagonal mask and permutation in b
@@ -257,7 +256,8 @@ void btod_diag<N, M>::compute_block(dense_tensor_i<k_orderb, double> &blk,
 		//	Invoke the tensor operation
 		//
 		dense_tensor_i<k_ordera, double> &blka = ctrla.req_block(acia.get_index());
-		double k = m_c * c * trb.get_coeff() / tra.get_coeff();
+		double k = m_c * c * trb.get_scalar_tr().get_coeff()
+		        / tra.get_scalar_tr().get_coeff();
 		if(zero) tod_diag<N, M>(blka, m2, permb, k).perform(blk);
 		else tod_diag<N, M>(blka, m2, permb, k).perform(blk, 1.0);
 		ctrla.ret_block(acia.get_index());

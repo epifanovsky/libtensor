@@ -32,7 +32,7 @@ public:
 	}
 	virtual bool is_allowed(const index<N> &idx) const { throw 0; }
 	virtual void apply(index<N> &idx) const { throw 0; }
-	virtual void apply(index<N> &idx, transf<N, double> &tr) const {
+	virtual void apply(index<N> &idx, tensor_transf<N, double> &tr) const {
 		throw 0;
 	}
 	virtual symmetry_element_i<N, double> *clone() const {

@@ -11,7 +11,6 @@
 #include "../core/permutation_builder.h"
 #include "../tod/tod_trace.h"
 #include "bad_block_index_space.h"
-#include "transf_double.h"
 
 namespace libtensor {
 
@@ -102,12 +101,12 @@ double btod_trace<N>::calculate() {
 		}
 		if(skip) continue;
 
-		transf<k_ordera, double> tra(oa.get_transf(iia));
+		tensor_transf<k_ordera, double> tra(oa.get_transf(iia));
 		tra.permute(m_perm);
 
 		if(ba == 0) ba = &ca.req_block(ola.get_index(ioa));
 		double tr0 = tod_trace<N>(*ba, tra.get_perm()).calculate();
-		tr += tr0 * tra.get_coeff();
+		tr += tr0 * tra.get_scalar_tr().get_coeff();
 	}
 
 	if(ba != 0) ca.ret_block(ola.get_index(ioa));

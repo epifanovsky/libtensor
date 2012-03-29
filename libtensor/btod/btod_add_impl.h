@@ -132,7 +132,7 @@ void btod_add<N>::sync_off() {
             if(ipair.first == m_op_sch.end()) {
                 tod_set<N>().perform(blkb);
             } else {
-                transf<N, double> tr0;
+                tensor_transf<N, double> tr0;
                 compute_block(blkb, ipair, true, tr0, 1.0);
             }
 
@@ -147,11 +147,11 @@ void btod_add<N>::sync_off() {
 
 template<size_t N>
 void btod_add<N>::compute_block(bool zero, dense_tensor_i<N, double> &blkb,
-        const index<N> &ib, const transf<N, double> &trb, double kb,
+        const index<N> &ib, const tensor_transf<N, double> &trb, double kb,
         cpu_pool &cpus) {
 
     static const char *method = "compute_block(bool, tensor_i<N, double>&, "
-            "const index<N>&, const transf<N, double>&, double, cpu_pool&)";
+            "const index<N>&, const tensor_transf<N, double>&, double, cpu_pool&)";
 
     btod_add<N>::start_timer();
 
@@ -176,7 +176,7 @@ void btod_add<N>::compute_block(bool zero, dense_tensor_i<N, double> &blkb,
 template<size_t N>
 void btod_add<N>::compute_block(dense_tensor_i<N, double> &blkb,
         const std::pair<schiterator_t, schiterator_t> ipair, bool zero,
-        const transf<N, double> &trb, double kb, cpu_pool &cpus) {
+        const tensor_transf<N, double> &trb, double kb, cpu_pool &cpus) {
 
     size_t narg = m_ops.size();
     std::vector<block_tensor_ctrl<N, double>*> ca(narg);
@@ -190,14 +190,14 @@ void btod_add<N>::compute_block(dense_tensor_i<N, double> &blkb,
     {
         const schrec &rec = iarg->second;
         permutation<N> perm(rec.perm); perm.permute(trb.get_perm());
-        double k = rec.k * kb * trb.get_coeff();
+        double k = rec.k * kb * trb.get_scalar_tr().get_coeff();
         op = new tod_add<N>(ca[rec.iarg]->req_block(rec.idx), perm, k);
     }
 
     for(iarg++; iarg != ipair.second; iarg++) {
         const schrec &rec = iarg->second;
         permutation<N> perm(rec.perm); perm.permute(trb.get_perm());
-        double k = rec.k * kb * trb.get_coeff();
+        double k = rec.k * kb * trb.get_scalar_tr().get_coeff();
         op->add_op(ca[rec.iarg]->req_block(rec.idx), perm, k);
     }
 
@@ -308,13 +308,13 @@ void btod_add<N>::make_schedule() const {
                 if(ca[i]->req_is_zero_block(acia.get_index()))
                     continue;
 
-                const transf<N, double> &tra = oa.get_transf(
+                const tensor_transf<N, double> &tra = oa.get_transf(
                         aia.get_abs_index());
 
                 schrec rec;
                 rec.iarg = i;
                 rec.idx = acia.get_index();
-                rec.k = m_ops[i]->m_c * tra.get_coeff();
+                rec.k = m_ops[i]->m_c * tra.get_scalar_tr().get_coeff();
                 rec.perm.permute(tra.get_perm()).
                         permute(m_ops[i]->m_perm);
                 m_op_sch.insert(std::pair<size_t, schrec>(

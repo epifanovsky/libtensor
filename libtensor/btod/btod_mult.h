@@ -100,7 +100,7 @@ public:
 
 protected:
 	virtual void compute_block(bool zero, dense_tensor_i<N, double> &blk,
-	    const index<N> &idx, const transf<N, double> &tr, double c,
+	    const index<N> &idx, const tensor_transf<N, double> &tr, double c,
 	    cpu_pool &cpus);
 
 private:
@@ -255,12 +255,12 @@ void btod_mult<N>::compute_block(
 	orbit<N, double> oa(ctrla.req_const_symmetry(), idxa);
 	abs_index<N> cidxa(oa.get_abs_canonical_index(),
 			m_bta.get_bis().get_block_index_dims());
-	const transf<N, double> &tra = oa.get_transf(idxa);
+	const tensor_transf<N, double> &tra = oa.get_transf(idxa);
 
 	orbit<N, double> ob(ctrlb.req_const_symmetry(), idxb);
 	abs_index<N> cidxb(ob.get_abs_canonical_index(),
 			m_btb.get_bis().get_block_index_dims());
-	const transf<N, double> &trb = ob.get_transf(idxb);
+	const tensor_transf<N, double> &trb = ob.get_transf(idxb);
 
 	permutation<N> pa(tra.get_perm());
 	pa.permute(m_pa);
@@ -286,7 +286,7 @@ void btod_mult<N>::compute_block(
 
 template<size_t N>
 void btod_mult<N>::compute_block(bool zero, dense_tensor_i<N, double> &blk,
-    const index<N> &idx, const transf<N, double> &tr, double c,
+    const index<N> &idx, const tensor_transf<N, double> &tr, double c,
     cpu_pool &cpus) {
 
 	block_tensor_ctrl<N, double> ctrla(m_bta), ctrlb(m_btb);
@@ -299,12 +299,12 @@ void btod_mult<N>::compute_block(bool zero, dense_tensor_i<N, double> &blk,
 	orbit<N, double> oa(ctrla.req_const_symmetry(), idxa);
 	abs_index<N> cidxa(oa.get_abs_canonical_index(),
 			m_bta.get_bis().get_block_index_dims());
-	const transf<N, double> &tra = oa.get_transf(idxa);
+	const tensor_transf<N, double> &tra = oa.get_transf(idxa);
 
 	orbit<N, double> ob(ctrlb.req_const_symmetry(), idxb);
 	abs_index<N> cidxb(ob.get_abs_canonical_index(),
 			m_btb.get_bis().get_block_index_dims());
-	const transf<N, double> &trb = ob.get_transf(idxb);
+	const tensor_transf<N, double> &trb = ob.get_transf(idxb);
 
 	permutation<N> pa(tra.get_perm());
 	pa.permute(m_pa);
@@ -316,11 +316,12 @@ void btod_mult<N>::compute_block(bool zero, dense_tensor_i<N, double> &blk,
 	dense_tensor_i<N, double> &blka = ctrla.req_block(cidxa.get_index());
 	dense_tensor_i<N, double> &blkb = ctrlb.req_block(cidxb.get_index());
 
-	double k = m_c * tr.get_coeff() * tra.get_coeff();
+	double k = m_c * tr.get_scalar_tr().get_coeff() *
+	        tra.get_scalar_tr().get_coeff();
 	if (m_recip)
-		k /= trb.get_coeff();
+		k /= trb.get_scalar_tr().get_coeff();
 	else
-		k *= trb.get_coeff();
+		k *= trb.get_scalar_tr().get_coeff();
 
 	if(zero) tod_set<N>().perform(cpus, blk);
 	tod_mult<N>(blka, pa, blkb, pb, m_recip, k).perform(cpus, false, c, blk);

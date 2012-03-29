@@ -127,7 +127,7 @@ public:
 
 protected:
 	virtual void compute_block(bool zero, dense_tensor_i<N, double> &blk,
-		const index<N> &ib, const transf<N, double> &tr, double c,
+		const index<N> &ib, const tensor_transf<N, double> &tr, double c,
 		cpu_pool &cpus);
 
 private:
@@ -215,7 +215,7 @@ void btod_apply<N, Functor, Alloc>::compute_block(
 	abs_index<N> acia(oa.get_abs_canonical_index(), bidimsa);
 
 	//	Transformation for block from canonical A to B
-	transf<N, double> tra(oa.get_transf(ia));
+	tensor_transf<N, double> tra(oa.get_transf(ia));
 	tra.permute(m_perm);
 	tra.scale(m_c);
 
@@ -232,12 +232,12 @@ void btod_apply<N, Functor, Alloc>::compute_block(
 
 template<size_t N, typename Functor, typename Alloc>
 void btod_apply<N, Functor, Alloc>::compute_block(bool zero,
-    dense_tensor_i<N, double> &blk, const index<N> &ib, const transf<N, double> &tr,
-    double c, cpu_pool &cpus) {
+    dense_tensor_i<N, double> &blk, const index<N> &ib,
+    const tensor_transf<N, double> &tr, double c, cpu_pool &cpus) {
 
 	static const char *method =
 			"compute_block(bool, tensor_i<N, double> &, const index<N> &, "
-			"const transf<N, double> &, double, cpu_pool&)";
+			"const tensor_transf<N, double> &, double, cpu_pool&)";
 
 	if(zero) tod_set<N>().perform(cpus, blk);
 
@@ -268,19 +268,19 @@ void btod_apply<N, Functor, Alloc>::compute_block(bool zero,
 	abs_index<N> acia(oa.get_abs_canonical_index(), bidimsa);
 
 	//	Transformation for block from canonical A to B
-	transf<N, double> tra(oa.get_transf(ia));
+	tensor_transf<N, double> tra(oa.get_transf(ia));
 	tra.permute(m_perm);
-	tra.scale(m_c);
+	tra.transform(scalar_transf<double>(m_c));
 	tra.transform(tr);
 
 	if(! ctrla.req_is_zero_block(acia.get_index())) {
 		dense_tensor_i<N, double> &blka = ctrla.req_block(acia.get_index());
-		tod_apply<N, Functor>(blka, m_fn,
-				tra.get_perm(), tra.get_coeff()).perform(cpus, false, c, blk);
+		tod_apply<N, Functor>(blka, m_fn, tra.get_perm(),
+		        tra.get_scalar_tr().get_coeff()).perform(cpus, false, c, blk);
 		ctrla.ret_block(acia.get_index());
 	}
 	else {
-		double val = m_fn(0.0) * c * tra.get_coeff();
+		double val = m_fn(0.0) * c * tra.get_scalar_tr().get_coeff();
 		if (val != 0.0) {
 			dense_tensor<N, double, Alloc> tblk(blk.get_dims());
 			tod_set<N>(val).perform(cpus, tblk);

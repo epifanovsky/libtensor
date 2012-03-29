@@ -1,6 +1,6 @@
 #include <sstream>
 #include <set>
-#include <libtensor/btod/transf_double.h>
+#include <libtensor/btod/scalar_transf_double.h>
 #include <libtensor/symmetry/se_part.h>
 #include "se_part_test.h"
 
@@ -84,7 +84,7 @@ void se_part_test::test_1() throw(libtest::test_exception) {
         }
 
         index<2> i00b(i00), i01b(i01), i10b(i10), i11b(i11);
-        transf<2, double> tr00, tr01, tr10, tr11;
+        tensor_transf<2, double> tr00, tr01, tr10, tr11;
         elem1.apply(i00b, tr00);
         elem1.apply(i01b, tr01);
         elem1.apply(i10b, tr10);
@@ -92,7 +92,7 @@ void se_part_test::test_1() throw(libtest::test_exception) {
         if(!i00b.equals(i11)) {
             fail_test(testname, __FILE__, __LINE__, "!i00b.equals(i11)");
         }
-        if(tr00.get_coeff() != 1.0) {
+        if(tr00.get_scalar_tr().get_coeff() != 1.0) {
             fail_test(testname, __FILE__, __LINE__,
                     "tr00.get_coeff() != 1.0");
         }
@@ -103,7 +103,7 @@ void se_part_test::test_1() throw(libtest::test_exception) {
         if(!i01b.equals(i01)) {
             fail_test(testname, __FILE__, __LINE__, "!i01b.equals(i01)");
         }
-        if(tr01.get_coeff() != 1.0) {
+        if(tr01.get_scalar_tr().get_coeff() != 1.0) {
             fail_test(testname, __FILE__, __LINE__,
                     "tr01.get_coeff() != 1.0");
         }
@@ -114,7 +114,7 @@ void se_part_test::test_1() throw(libtest::test_exception) {
         if(!i10b.equals(i10)) {
             fail_test(testname, __FILE__, __LINE__, "!i10b.equals(i10)");
         }
-        if(tr10.get_coeff() != 1.0) {
+        if(tr10.get_scalar_tr().get_coeff() != 1.0) {
             fail_test(testname, __FILE__, __LINE__,
                     "tr10.get_coeff() != 1.0");
         }
@@ -125,7 +125,7 @@ void se_part_test::test_1() throw(libtest::test_exception) {
         if(!i11b.equals(i00)) {
             fail_test(testname, __FILE__, __LINE__, "!i11b.equals(i00)");
         }
-        if(tr11.get_coeff() != 1.0) {
+        if(tr11.get_scalar_tr().get_coeff() != 1.0) {
             fail_test(testname, __FILE__, __LINE__,
                     "tr11.get_coeff() != 1.0");
         }

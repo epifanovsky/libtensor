@@ -7,7 +7,7 @@
 #include "index.h"
 #include "mask.h"
 #include "permutation.h"
-#include "transf.h"
+#include "tensor_transf.h"
 
 namespace libtensor {
 
@@ -66,7 +66,7 @@ public:
 		\param idx Block %index.
 		\param tr Block transformation.
 	 **/
-	virtual void apply(index<N> &idx, transf<N, T> &tr) const = 0;
+	virtual void apply(index<N> &idx, tensor_transf<N, T> &tr) const = 0;
 
 	//@}
 

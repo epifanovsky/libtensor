@@ -8,7 +8,7 @@
 #include "../exception.h"
 #include "../timings.h"
 #include "abs_index.h"
-#include "transf.h"
+#include "tensor_transf.h"
 #include "symmetry.h"
 
 namespace libtensor {
@@ -35,12 +35,12 @@ public:
 	static const char *k_clazz; //!< Class name
 
 public:
-	typedef typename std::map< size_t, transf<N, T> >::const_iterator
+	typedef typename std::map< size_t, tensor_transf<N, T> >::const_iterator
 		iterator; //!< Orbit iterator
 
 private:
-	typedef std::pair< size_t, transf<N, T> > pair_t;
-	typedef std::map< size_t, transf<N, T> > orbit_map_t;
+	typedef std::pair< size_t, tensor_transf<N, T> > pair_t;
+	typedef std::map< size_t, tensor_transf<N, T> > orbit_map_t;
 
 private:
 	dimensions<N> m_bidims; //!< Block %index %dimensions
@@ -78,13 +78,13 @@ public:
 		@param idx Block index
 		@return Transformation to obtain the block at idx from the canonical block
 	 **/
-	const transf<N, T> &get_transf(const index<N> &idx) const;
+	const tensor_transf<N, T> &get_transf(const index<N> &idx) const;
 
 	/** \brief Obtain transformation of canonical block to yield block at absidx.
 		@param absidx Absolute block index
 		@return Transformation to yield block at absidx
 	 **/
-	const transf<N, T> &get_transf(size_t absidx) const;
+	const tensor_transf<N, T> &get_transf(size_t absidx) const;
 
 	/** \brief Checks if orbit contains block at idx.
 		@param idx Block index
@@ -113,7 +113,7 @@ public:
 
 	size_t get_abs_index(iterator &i) const;
 
-	const transf<N, T> &get_transf(iterator &i) const;
+	const tensor_transf<N, T> &get_transf(iterator &i) const;
 
 	//@}
 

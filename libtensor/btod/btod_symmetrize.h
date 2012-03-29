@@ -11,7 +11,6 @@
 #include "../symmetry/so_symmetrize.h"
 #include "../tod/tod_set.h"
 #include "additive_btod.h"
-#include "transf_double.h"
 
 namespace libtensor {
 
@@ -32,9 +31,9 @@ public:
 private:
 	struct schrec {
 		size_t ai;
-		transf<N, double> tr;
+		tensor_transf<N, double> tr;
 		schrec() : ai(0) { }
-		schrec(size_t ai_, const transf<N, double> &tr_) :
+		schrec(size_t ai_, const tensor_transf<N, double> &tr_) :
 			ai(ai_), tr(tr_) { }
 	};
 	typedef std::pair<size_t, schrec> sym_schedule_pair_t;
@@ -102,7 +101,7 @@ protected:
 	//@{
 
 	virtual void compute_block(bool zero, dense_tensor_i<N, double> &blk,
-	    const index<N> &i, const transf<N, double> &tr, double c,
+	    const index<N> &i, const tensor_transf<N, double> &tr, double c,
 	    cpu_pool &cpus);
 
 	//@}
@@ -190,13 +189,13 @@ void btod_symmetrize<N>::compute_block(dense_tensor_i<N, double> &blk,
 	abs_index<N> ai(i, bidims);
 
 	tod_set<N>().perform(blk);
-	compute_block(blk, i, transf<N, double>(), 1.0);
+	compute_block(blk, i, tensor_transf<N, double>(), 1.0);
 }*/
 
 
 template<size_t N>
 void btod_symmetrize<N>::compute_block(bool zero, dense_tensor_i<N, double> &blk,
-	const index<N> &idx, const transf<N, double> &tr, double c,
+	const index<N> &idx, const tensor_transf<N, double> &tr, double c,
 	cpu_pool &cpus) {
 
 	typedef typename sym_schedule_t::iterator iterator_t;
@@ -221,7 +220,7 @@ void btod_symmetrize<N>::compute_block(bool zero, dense_tensor_i<N, double> &blk
 			if(j->ai == ai.get_abs_index()) n++;
 		}
 
-		transf<N, double> tri(sch1.front().tr);
+		tensor_transf<N, double> tri(sch1.front().tr);
 		tri.transform(tr);
 
 		if(n == 1) {
@@ -234,18 +233,19 @@ void btod_symmetrize<N>::compute_block(bool zero, dense_tensor_i<N, double> &blk
 			dense_tensor< N, double, allocator<double> > tmp(dims);
 			additive_btod<N>::compute_block(m_op, true, tmp,
 				ai.get_index(), tri, c, cpus);
-			transf<N, double> tri_inv(tri);
+			tensor_transf<N, double> tri_inv(tri);
 			tri_inv.invert();
 			for(typename std::list<schrec>::iterator j =
 				sch1.begin(); j != sch1.end();) {
 				if(j->ai != ai.get_abs_index()) {
 					++j; continue;
 				}
-				transf<N, double> trj(tri_inv);
+				tensor_transf<N, double> trj(tri_inv);
 				trj.transform(j->tr);
 				trj.transform(tr);
 				tod_copy<N>(tmp, trj.get_perm(),
-					trj.get_coeff()).perform(cpus, false, 1.0, blk);
+				        trj.get_scalar_tr().get_coeff()).
+				        perform(cpus, false, 1.0, blk);
 				j = sch1.erase(j);
 			}
 		}
@@ -299,7 +299,7 @@ void btod_symmetrize<N>::make_schedule() {
 				if(!m_sch.contains(aj1.get_abs_index())) {
 					m_sch.insert(aj1.get_abs_index());
 				}
-				transf<N, double> tr1(o.get_transf(j));
+				tensor_transf<N, double> tr1(o.get_transf(j));
 				m_sym_sch.insert(sym_schedule_pair_t(
 					aj1.get_abs_index(),
 					schrec(ai0.get_abs_index(), tr1)));
@@ -308,9 +308,9 @@ void btod_symmetrize<N>::make_schedule() {
 				if(!m_sch.contains(aj2.get_abs_index())) {
 					m_sch.insert(aj2.get_abs_index());
 				}
-				transf<N, double> tr2(o.get_transf(j));
+				tensor_transf<N, double> tr2(o.get_transf(j));
 				tr2.permute(m_perm1);
-				tr2.scale(m_symm ? 1.0 : -1.0);
+				tr2.transform(scalar_transf<double>(m_symm ? 1.0 : -1.0));
 				m_sym_sch.insert(sym_schedule_pair_t(
 					aj2.get_abs_index(),
 					schrec(ai0.get_abs_index(), tr2)));

@@ -1,6 +1,5 @@
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/symmetry/so_dirsum.h>
-#include <libtensor/btod/transf_double.h>
 #include "../compare_ref.h"
 #include "so_dirsum_test.h"
 

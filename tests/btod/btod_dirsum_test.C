@@ -5,6 +5,7 @@
 #include <libtensor/core/abs_index.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
+#include <libtensor/btod/scalar_transf_double.h>
 #include <libtensor/btod/btod_dirsum.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/symmetry/permutation_group.h>

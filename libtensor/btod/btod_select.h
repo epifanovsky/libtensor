@@ -169,11 +169,12 @@ void btod_select<N, ComparePolicy>::perform(list_t &li, size_t n) {
 		// Obtain block
 		dense_tensor_i<N, double> &t = ctrl.req_block(aib.get_index());
 
-		const transf<N, double> &tra = oa.get_transf(aia.get_index());
+		const tensor_transf<N, double> &tra = oa.get_transf(aia.get_index());
 
 		// Create element list for canonical block (within the symmetry)
 		tod_list_t tlc;
-		tod_select_t(t, tra.get_perm(), tra.get_coeff(), m_cmp).perform(tlc, n);
+		tod_select_t(t, tra.get_perm(),
+		        tra.get_scalar_tr().get_coeff(), m_cmp).perform(tlc, n);
 		merge_lists(li, aia.get_index(), tlc, n);
 
 //		// Loop over whole orbit of imposed symmetry

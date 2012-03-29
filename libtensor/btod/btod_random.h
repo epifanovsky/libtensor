@@ -17,7 +17,6 @@
 #include "../tod/tod_copy.h"
 #include "../tod/tod_random.h"
 #include "../timings.h"
-#include "transf_double.h"
 
 namespace libtensor {
 
@@ -35,7 +34,7 @@ public:
 
 private:
 	typedef timings< btod_random<N> > timings_base;
-	typedef std::list< transf<N, double> > transf_list_t;
+	typedef std::list< tensor_transf<N, double> > transf_list_t;
 	typedef std::map<size_t, transf_list_t> transf_map_t;
 
 public:
@@ -56,7 +55,7 @@ public:
 private:
 	bool make_transf_map(const symmetry<N, double> &sym,
 		const dimensions<N> &bidims, const index<N> &idx,
-		const transf<N, double> &tr, transf_map_t &alltransf);
+		const tensor_transf<N, double> &tr, transf_map_t &alltransf);
 
 	void make_random_blk(cpu_pool &cpus, block_tensor_ctrl<N, double> &ctrl,
 		const dimensions<N> &bidims, const index<N> &idx);
@@ -109,7 +108,7 @@ void btod_random<N>::perform(block_tensor_i<N, double> &bt, const index<N> &idx)
 template<size_t N>
 bool btod_random<N>::make_transf_map(const symmetry<N, double> &sym,
 	const dimensions<N> &bidims, const index<N> &idx,
-	const transf<N, double> &tr, transf_map_t &alltransf) {
+	const tensor_transf<N, double> &tr, transf_map_t &alltransf) {
 
 	size_t absidx = abs_index<N>::get_abs_index(idx, bidims);
 	typename transf_map_t::iterator ilst = alltransf.find(absidx);
@@ -140,7 +139,7 @@ bool btod_random<N>::make_transf_map(const symmetry<N, double> &sym,
 			const symmetry_element_i<N, double> &elem =
 				eset.get_elem(ielem);
 			index<N> idx2(idx);
-			transf<N, double> tr2(tr);
+			tensor_transf<N, double> tr2(tr);
 			if(elem.is_allowed(idx2)) {
 				elem.apply(idx2, tr2);
 				allowed = make_transf_map(sym, bidims,
@@ -165,7 +164,7 @@ void btod_random<N>::make_random_blk(cpu_pool &cpus,
 	size_t absidx = abs_index<N>::get_abs_index(idx, bidims);
 	tod_random<N> randop;
 
-	transf<N, double> tr0;
+	tensor_transf<N, double> tr0;
 	transf_map_t transf_map;
 	bool allowed = make_transf_map(sym, bidims, idx, tr0, transf_map);
 	typename transf_map_t::iterator ilst = transf_map.find(absidx);
@@ -187,12 +186,13 @@ void btod_random<N>::make_random_blk(cpu_pool &cpus,
 		timings_base::start_timer("randop");
 		randop.perform(cpus, true, 1.0, rnd);
 		timings_base::stop_timer("randop");
-		double totcoeff = itr->get_coeff();
+		double totcoeff = itr->get_scalar_tr().get_coeff();
 		tod_add<N> symop(rnd, itr->get_perm(), totcoeff);
 
 		for(itr++; itr != ilst->second.end(); itr++) {
-			symop.add_op(rnd, itr->get_perm(), itr->get_coeff());
-			totcoeff += itr->get_coeff();
+			symop.add_op(rnd, itr->get_perm(),
+			        itr->get_scalar_tr().get_coeff());
+			totcoeff += itr->get_scalar_tr().get_coeff();
 		}
 
 		timings_base::start_timer("symop&copy");

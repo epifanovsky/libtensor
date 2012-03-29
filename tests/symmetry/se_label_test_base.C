@@ -1,5 +1,4 @@
 #include <sstream>
-#include <libtensor/btod/transf_double.h>
 #include <libtensor/core/abs_index.h>
 #include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/symmetry/product_table_container.h>

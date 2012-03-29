@@ -10,7 +10,6 @@
 #include "../core/orbit.h"
 #include "../tod/tod_set.h"
 #include "../tod/tod_set_elem.h"
-#include "transf_double.h"
 
 namespace libtensor {
 
@@ -36,7 +35,7 @@ public:
 	static const char *k_clazz; //!< Class name
 
 private:
-	typedef std::list< transf<N, double> > transf_list_t;
+	typedef std::list< tensor_transf<N, double> > transf_list_t;
 	typedef std::map<size_t, transf_list_t> transf_map_t;
 
 public:
@@ -56,7 +55,7 @@ public:
 private:
 	bool make_transf_map(const symmetry<N, double> &sym,
 		const dimensions<N> &bidims, const index<N> &idx,
-		const transf<N, double> &tr, transf_map_t &alltransf);
+		const tensor_transf<N, double> &tr, transf_map_t &alltransf);
 
 private:
 	btod_set_elem(const btod_set_elem<N> &);
@@ -87,7 +86,7 @@ void btod_set_elem<N>::perform(block_tensor_i<N, double> &bt,
 		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
 				"Block index not allowed by symmetry.");
 
-	const transf<N, double> &tr = o.get_transf(bidx);
+	const tensor_transf<N, double> &tr = o.get_transf(bidx);
 	abs_index<N> abidx(o.get_abs_canonical_index(), bidims);
 
 	bool zero = ctrl.req_is_zero_block(abidx.get_index());
@@ -97,10 +96,10 @@ void btod_set_elem<N>::perform(block_tensor_i<N, double> &bt,
 
 	permutation<N> perm(tr.get_perm(), true);
 	index<N> idx1(idx); idx1.permute(perm);
-	double d1 = d / tr.get_coeff();
+	double d1 = d / tr.get_scalar_tr().get_coeff();
 
 	transf_map_t trmap;
-	transf<N, double> tr0;
+	tensor_transf<N, double> tr0;
 	make_transf_map(ctrl.req_const_symmetry(), bidims, abidx.get_index(),
 		tr0, trmap);
 	typename transf_map_t::iterator ilst =
@@ -110,7 +109,7 @@ void btod_set_elem<N>::perform(block_tensor_i<N, double> &bt,
 
 		index<N> idx2(idx1);
 		idx2.permute(itr->get_perm());
-		double d2 = d1 * itr->get_coeff();
+		double d2 = d1 * itr->get_scalar_tr().get_coeff();
 		tod_set_elem<N>().perform(blk, idx2, d2);
 	}
 
@@ -121,7 +120,7 @@ void btod_set_elem<N>::perform(block_tensor_i<N, double> &bt,
 template<size_t N>
 bool btod_set_elem<N>::make_transf_map(const symmetry<N, double> &sym,
 	const dimensions<N> &bidims, const index<N> &idx,
-	const transf<N, double> &tr, transf_map_t &alltransf) {
+	const tensor_transf<N, double> &tr, transf_map_t &alltransf) {
 
 	size_t absidx = abs_index<N>::get_abs_index(idx, bidims);
 	typename transf_map_t::iterator ilst = alltransf.find(absidx);
@@ -152,7 +151,7 @@ bool btod_set_elem<N>::make_transf_map(const symmetry<N, double> &sym,
 			const symmetry_element_i<N, double> &elem =
 				eset.get_elem(ielem);
 			index<N> idx2(idx);
-			transf<N, double> tr2(tr);
+			tensor_transf<N, double> tr2(tr);
 			if(elem.is_allowed(idx2)) {
 				elem.apply(idx2, tr2);
 				allowed = make_transf_map(sym, bidims,

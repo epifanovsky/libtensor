@@ -28,7 +28,7 @@ void permutation_generator_test::test_1() throw(libtest::test_exception) {
 
         do {
             for (size_t i = 0; i < 4; i++) { pseq[i] = seq[pg[i]]; }
-            res.push_back(seq);
+            res.push_back(pseq);
         } while (pg.next());
 
     } catch(exception &e) {
