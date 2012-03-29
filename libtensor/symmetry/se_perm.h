@@ -49,7 +49,8 @@ public:
 
     /**	\brief Copy constructor
      **/
-    se_perm(const se_perm<N, T> &elem) : m_transf(elem.m_transf) { }
+    se_perm(const se_perm<N, T> &elem) : m_transf(elem.m_transf),
+            m_orderp(elem.m_orderp), m_orderc(elem.m_orderc) { }
 
     /**	\brief Virtual destructor
      **/
