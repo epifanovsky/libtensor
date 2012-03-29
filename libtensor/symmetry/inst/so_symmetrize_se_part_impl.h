@@ -32,14 +32,14 @@ void symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::do_perform(
         nidx = std::max(nidx, params.symidx[i]);
     }
 
-    sequence<N, size_t> map;
-    mask<N> msk;
+    sequence<N, size_t> map(N);
     for (register size_t i = 0; i < N; i++) {
         if (params.idxgrp[i] == 0) continue;
-
-        map[(params.idxgrp[i] - 1) * nidx + params.symidx[i] - 1] = i;
-        msk[i] = (i >= nidx);
+        map[(params.symidx[i] - 1) * ngrp + params.idxgrp[i] - 1] = i;
     }
+
+    mask<N> msk;
+    for (register size_t i = ngrp; i < N; i++) msk[i] = true;
 
 #ifdef LIBTENSOR_DEBUG
     for (register size_t i = 1; i < ngrp; i++) {
@@ -93,10 +93,12 @@ symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::is_forbidden(
         const permutation<N> &pn = pg.get_perm();
         register size_t i = 0;
         for (; i < N && ! msk[i]; i++) ix[map[i]] = i1[map[pn[i]]];
-        size_t nidx = i++, ns = nidx;
-        for (size_t j = 0; i < N && map[i] < N; i++, j++) {
-            ix[map[i]] = i1[map[pn[j] + ns]];
-            if (j == nidx) { j = 0; ns += nidx; }
+        size_t ngrp = i++, ns = ngrp;
+        while (i < N && map[i] < N) {
+            for (register size_t j = 0; j < ngrp; j++, i++) {
+                ix[map[i]] = i1[map[pn[j] + ns]];
+            }
+            ns += ngrp;
         }
         if (! sp.is_forbidden(ix)) return false;
     } while (pg.next());
@@ -116,10 +118,12 @@ symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::mark_forbidden(
         const permutation<N> &pn = pg.get_perm();
         register size_t i = 0;
         for (; i < N && ! msk[i]; i++) ix[map[i]] = i1[map[pn[i]]];
-        size_t nidx = i++, ns = nidx;
-        for (size_t j = 0; i < N && map[i] < N; i++, j++) {
-            ix[map[i]] = i1[map[pn[j] + ns]];
-            if (j == nidx) { j = 0; ns += nidx; }
+        size_t ngrp = i++, ns = ngrp;
+        while (i < N && map[i] < N) {
+            for (register size_t j = 0; j < ngrp; j++, i++) {
+                ix[map[i]] = i1[map[pn[j] + ns]];
+            }
+            ns += ngrp;
         }
         sp.mark_forbidden(ix);
     } while (pg.next());
@@ -140,11 +144,13 @@ bool symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::map_exists(
             j1[map[i]] = i1[map[pn[i]]];
             j2[map[i]] = i2[map[pn[i]]];
         }
-        size_t nidx = i++, ns = nidx;
-        for (size_t j = 0; i < N && map[i] < N; i++, j++) {
-            j1[map[i]] = i1[map[pn[j] + ns]];
-            j2[map[i]] = i2[map[pn[j] + ns]];
-            if (j == nidx) { j = 0; ns += nidx; }
+        size_t ngrp = i++, ns = ngrp;
+        while (i < N && map[i] < N) {
+            for (register size_t j = 0; j < ngrp; j++, i++) {
+                j1[map[i]] = i1[map[pn[j] + ns]];
+                j2[map[i]] = i2[map[pn[j] + ns]];
+            }
+            ns += ngrp;
         }
 
         if (sp.map_exists(j1, j2)) {
@@ -163,11 +169,13 @@ bool symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::map_exists(
             j1[map[i]] = i1[map[pn[i]]];
             j2[map[i]] = i2[map[pn[i]]];
         }
-        size_t nidx = i++, ns = nidx;
-        for (size_t j = 0; i < N && map[i] < N; i++, j++) {
-            j1[map[i]] = i1[map[pn[j] + ns]];
-            j2[map[i]] = i2[map[pn[j] + ns]];
-            if (j == nidx) { j = 0; ns += nidx; }
+        size_t ngrp = i++, ns = ngrp;
+        while (i < N && map[i] < N) {
+            for (register size_t j = 0; j < ngrp; j++, i++) {
+                j1[map[i]] = i1[map[pn[j] + ns]];
+                j2[map[i]] = i2[map[pn[j] + ns]];
+            }
+            ns += ngrp;
         }
         if (sp.map_exists(j1, j2)) {
             if (sign != sp.get_sign(j1, j2)) return false;
@@ -195,11 +203,13 @@ void symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::add_map(
             j1[map[i]] = i1[map[pn[i]]];
             j2[map[i]] = i2[map[pn[i]]];
         }
-        size_t nidx = i++, ns = nidx;
-        for (size_t j = 0; i < N && map[i] < N; i++, j++) {
-            j1[map[i]] = i1[map[pn[j] + ns]];
-            j2[map[i]] = i2[map[pn[j] + ns]];
-            if (j == nidx) { j = 0; ns += nidx; }
+        size_t ngrp = i++, ns = ngrp;
+        while (i < N && map[i] < N) {
+            for (register size_t j = 0; j < ngrp; j++, i++) {
+                j1[map[i]] = i1[map[pn[j] + ns]];
+                j2[map[i]] = i2[map[pn[j] + ns]];
+            }
+            ns += ngrp;
         }
         sp.add_map(j1, j2, sign);
     } while (pg.next());

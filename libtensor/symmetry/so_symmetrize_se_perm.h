@@ -29,6 +29,9 @@ public:
 
 protected:
     virtual void do_perform(symmetry_operation_params_t &params) const;
+
+private:
+    static size_t encode(const permutation<N> &p);
 };
 
 } // namespace libtensor

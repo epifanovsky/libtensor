@@ -1,3 +1,4 @@
+#include <libtensor/btod/scalar_transf_double.h>
 #include "../so_symmetrize.h"
 #include "so_symmetrize_impl.h"
 

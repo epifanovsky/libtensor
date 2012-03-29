@@ -1,3 +1,4 @@
+#include <libtensor/btod/scalar_transf_double.h>
 #include <libtensor/symmetry/so_permute_se_perm.h>
 #include "../compare_ref.h"
 #include "so_permute_se_perm_test.h"
@@ -42,12 +43,13 @@ void so_permute_se_perm_test::test_1() throw(libtest::test_exception) {
 	symmetry_element_set<4, double> set2(se4_t::k_sym_type);
 	symmetry_element_set<4, double> set2_ref(se4_t::k_sym_type);
 
-	set1.insert(se4_t(permutation<4>().permute(0, 1), false));
-	set1.insert(se4_t(permutation<4>().permute(2, 3), false));
-	set1.insert(se4_t(permutation<4>().permute(0, 2).permute(1, 3), false));
-	set2_ref.insert(se4_t(permutation<4>().permute(2, 0), false));
-	set2_ref.insert(se4_t(permutation<4>().permute(1, 3), false));
-	set2_ref.insert(se4_t(permutation<4>().permute(2, 1).permute(0, 3), true));
+	scalar_transf<double> tr0, tr1(-1.0);
+	set1.insert(se4_t(permutation<4>().permute(0, 1), tr1));
+	set1.insert(se4_t(permutation<4>().permute(2, 3), tr1));
+	set1.insert(se4_t(permutation<4>().permute(0, 2).permute(1, 3), tr1));
+	set2_ref.insert(se4_t(permutation<4>().permute(2, 0), tr1));
+	set2_ref.insert(se4_t(permutation<4>().permute(1, 3), tr1));
+	set2_ref.insert(se4_t(permutation<4>().permute(2, 1).permute(0, 3), tr0));
 
 	symmetry_operation_params<so_permute_t> params(set1, perm, set2);
 

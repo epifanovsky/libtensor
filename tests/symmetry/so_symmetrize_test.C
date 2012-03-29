@@ -1,4 +1,5 @@
 #include <typeinfo>
+#include <libtensor/btod/scalar_transf_double.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/symmetry/se_part.h>
 #include <libtensor/symmetry/so_symmetrize.h>
@@ -36,12 +37,13 @@ void so_symmetrize_test::test_1() throw(libtest::test_exception) {
 
 	symmetry<2, double> sym1(bis), sym2(bis), sym2_ref(bis);
 
+	scalar_transf<double> tr0;
 	sym2_ref.insert(se_perm<2, double>(
-		permutation<2>().permute(0, 1), true));
+		permutation<2>().permute(0, 1), tr0));
 
 	sequence<2, size_t> seq1(0), seq2(1);
 	seq1[0] = 1; seq1[1] = 2;
-	so_symmetrize<2, double>(sym1, seq1, seq2, true).perform(sym2);
+	so_symmetrize<2, double>(sym1, seq1, seq2, tr0, tr0).perform(sym2);
 
 	compare_ref<2>::compare(testname, sym2, sym2_ref);
 
@@ -70,12 +72,13 @@ void so_symmetrize_test::test_2() throw(libtest::test_exception) {
 
 	symmetry<2, double> sym1(bis), sym2(bis), sym2_ref(bis);
 
+	scalar_transf<double> tr0, tr1(-1.);
 	sym2_ref.insert(se_perm<2, double>(
-		permutation<2>().permute(0, 1), false));
+		permutation<2>().permute(0, 1), tr1));
 
     sequence<2, size_t> seq1(0), seq2(1);
     seq1[0] = 1; seq1[1] = 2;
-	so_symmetrize<2, double>(sym1, seq1, seq2, false).perform(sym2);
+	so_symmetrize<2, double>(sym1, seq1, seq2, tr1, tr1).perform(sym2);
 
 	compare_ref<2>::compare(testname, sym2, sym2_ref);
 
@@ -104,21 +107,22 @@ void so_symmetrize_test::test_3() throw(libtest::test_exception) {
 
 	symmetry<4, double> sym1(bis), sym2(bis), sym2_ref(bis);
 
+	scalar_transf<double> tr0;
 	sym1.insert(se_perm<4, double>(
-	        permutation<4>().permute(0, 1), true));
+	        permutation<4>().permute(0, 1), tr0));
 	sym1.insert(se_perm<4, double>(
-	        permutation<4>().permute(2, 3), true));
+	        permutation<4>().permute(2, 3), tr0));
 	sym2_ref.insert(se_perm<4, double>(
-	        permutation<4>().permute(0, 1), true));
+	        permutation<4>().permute(0, 1), tr0));
     sym2_ref.insert(se_perm<4, double>(
-            permutation<4>().permute(2, 3), true));
+            permutation<4>().permute(2, 3), tr0));
     sym2_ref.insert(se_perm<4, double>(
-	        permutation<4>().permute(0, 2).permute(1, 3), true));
+	        permutation<4>().permute(0, 2).permute(1, 3), tr0));
 
     sequence<4, size_t> seq1(0), seq2(0);
     seq1[0] = seq1[1] = 1; seq1[2] = seq1[3] = 2;
-    seq2[0] = seq2[3] = 1; seq2[1] = seq2[2] = 2;
-	so_symmetrize<4, double>(sym1, seq1, seq2, true).perform(sym2);
+    seq2[0] = seq2[2] = 1; seq2[1] = seq2[3] = 2;
+	so_symmetrize<4, double>(sym1, seq1, seq2, tr0, tr0).perform(sym2);
 
 	compare_ref<4>::compare(testname, sym2, sym2_ref);
 
@@ -153,7 +157,8 @@ void so_symmetrize_test::test_4() throw(libtest::test_exception) {
 	separt.add_map(i00, i11, true);
 	separt.add_map(i01, i10, true);
 
-	se_perm<2, double> seperm(permutation<2>().permute(0, 1), true);
+	scalar_transf<double> tr0;
+	se_perm<2, double> seperm(permutation<2>().permute(0, 1), tr0);
 
 	sym1.insert(separt);
 	sym2_ref.insert(seperm);
@@ -161,7 +166,7 @@ void so_symmetrize_test::test_4() throw(libtest::test_exception) {
 
     sequence<2, size_t> seq1(0), seq2(0);
     seq1[0] = 1; seq1[1] = 2; seq2[0] = 1; seq2[1] = 1;
-	so_symmetrize<2, double>(sym1, seq1, seq2, true).perform(sym2);
+	so_symmetrize<2, double>(sym1, seq1, seq2, tr0, tr0).perform(sym2);
 
 	compare_ref<2>::compare(testname, sym2, sym2_ref);
 
@@ -235,7 +240,8 @@ void so_symmetrize_test::test_5() throw(libtest::test_exception) {
 	separt4b.add_map(i0110, i1001, true);
 	separt4b.add_map(i0111, i1000, true);
 
-	se_perm<4, double> seperm4(permutation<4>().permute(0, 1), true);
+	scalar_transf<double> tr0;
+	se_perm<4, double> seperm4(permutation<4>().permute(0, 1), tr0);
 
 	sym1.insert(separt4a);
 	sym2_ref.insert(seperm4);
@@ -243,7 +249,7 @@ void so_symmetrize_test::test_5() throw(libtest::test_exception) {
 
     sequence<4, size_t> seq1(0), seq2(0);
     seq1[0] = 1; seq1[1] = 2; seq2[0] = 1; seq2[1] = 1;
-	so_symmetrize<4, double>(sym1, seq1, seq2, true).perform(sym2);
+	so_symmetrize<4, double>(sym1, seq1, seq2, tr0, tr0).perform(sym2);
 
 	compare_ref<4>::compare(testname, sym2, sym2_ref);
 
