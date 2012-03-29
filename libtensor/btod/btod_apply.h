@@ -36,19 +36,16 @@ namespace libtensor {
 	  \endcode
 	3. and implementations of
 	  \code
-	      bool Function::keep_zero();
-		  bool Functor::is_asym();
-		  bool Functor::sign();
+	      bool Functor::keep_zero();
+		  bool Functor::transf(bool arg);
 	  \endcode
 
-	The latter three function should yield information about the symmetry of
+	The latter two functions yield information about the symmetry of
 	the functor:
-	- keep_zero() -- should return true, if the functor maps zero to zero.
-	- is_asym() -- should return false, if the functor is symmetric or
-		anti-symmetric w.r.t. the origin, and true otherwise.
-	- sign() -- should return true, if the functor is symmetric w.r.t. the
-		origin, and false, if it is anti-symmetric. If it is neither the
-		the return value is arbitrary.
+	- keep_zero() -- Return true, if the functor maps zero to zero.
+	- transf(bool) -- Return the two scalar transformations in
+	    \f$ f\left(\hat{T}x\right) = \hat{T}' f(x) \f$ (\f$\hat{T}\f$, if
+	    argument is true).
 
 	The symmetry of the result tensor is determined by the symmetry operation
 	so_apply. The use of this symmetry operation can result in the need to
@@ -154,8 +151,8 @@ btod_apply<N, Functor, Alloc>::btod_apply(
 	m_bidims(m_bis.get_block_index_dims()), m_sym(m_bis), m_sch(m_bidims) {
 
 	block_tensor_ctrl<N, double> ctrla(m_bta);
-	so_apply<N, double>(ctrla.req_const_symmetry(), m_perm,
-	        m_fn.keep_zero(), m_fn.is_asym(), m_fn.sign()).perform(m_sym);
+	so_apply<N, double>(ctrla.req_const_symmetry(), m_perm, m_fn.transf(true),
+	        m_fn.transf(false), m_fn.keep_zero()).perform(m_sym);
 	make_schedule();
 }
 
@@ -169,8 +166,8 @@ btod_apply<N, Functor, Alloc>::btod_apply(block_tensor_i<N, double> &bta,
 		m_bidims(m_bis.get_block_index_dims()), m_sym(m_bis), m_sch(m_bidims) {
 
 	block_tensor_ctrl<N, double> ctrla(m_bta);
-	so_apply<N, double>(ctrla.req_const_symmetry(), m_perm,
-	        m_fn.keep_zero(), m_fn.is_asym(), m_fn.sign()).perform(m_sym);
+	so_apply<N, double>(ctrla.req_const_symmetry(), m_perm, m_fn.transf(true),
+	        m_fn.transf(false), m_fn.keep_zero()).perform(m_sym);
 	make_schedule();
 }
 
