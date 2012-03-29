@@ -1,7 +1,10 @@
+#include <libtensor/btod/scalar_transf_double.h>
 #include "../so_merge_se_perm.h"
 #include "so_merge_se_perm_impl.h"
 
+
 namespace libtensor {
+
 
 template class symmetry_operation_impl< so_merge<2, 1, double>,
     se_perm<1, double> >;
@@ -145,6 +148,7 @@ template class symmetry_operation_impl< so_merge<12, 10, double>,
     se_perm<2, double> >;
 template class symmetry_operation_impl< so_merge<12, 11, double>,
     se_perm<1, double> >;
+
 
 } // namespace libtensor
 

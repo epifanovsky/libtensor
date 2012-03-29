@@ -1,3 +1,4 @@
+#include <libtensor/btod/scalar_transf_double.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/symmetry/so_merge.h>
 #include "../compare_ref.h"
@@ -67,11 +68,12 @@ void so_merge_test::test_2() throw(libtest::test_exception) {
 	block_index_space<3> bis2(dimensions<3>(index_range<3>(i2a, i2b)));
 
 	symmetry<5, double> sym1(bis1);
-	sym1.insert(se_perm<5, double>(
-		permutation<5>().permute(0, 1)
-		.permute(1, 2).permute(2, 3).permute(3, 4), true));
-	sym1.insert(se_perm<5, double>(
-		permutation<5>().permute(0, 1), true));
+	permutation<5> p1a, p1b;
+	p1a.permute(0, 1).permute(1, 2).permute(2, 3).permute(3, 4);
+	p1b.permute(0, 1);
+	scalar_transf<double> tr0;
+	sym1.insert(se_perm<5, double>(p1a, tr0));
+	sym1.insert(se_perm<5, double>(p1b, tr0));
 
 	symmetry<3, double> sym2(bis2);
 	symmetry<3, double> sym2_ref(bis2);
@@ -80,10 +82,11 @@ void so_merge_test::test_2() throw(libtest::test_exception) {
 	sequence<5, size_t> seq(0);
 	so_merge<5, 2, double>(sym1, msk, seq).perform(sym2);
 
-	sym2_ref.insert(se_perm<3, double>(
-		permutation<3>().permute(0, 1).permute(1, 2), true));
-	sym2_ref.insert(se_perm<3, double>(
-		permutation<3>().permute(0, 1), true));
+	permutation<3> p2a, p2b;
+	p2a.permute(0, 1).permute(1, 2);
+	p2b.permute(0, 1);
+	sym2_ref.insert(se_perm<3, double>(p2a, tr0));
+	sym2_ref.insert(se_perm<3, double>(p2b, tr0));
 
 	symmetry<3, double>::iterator i = sym2.begin();
 	if(i == sym2.end()) {

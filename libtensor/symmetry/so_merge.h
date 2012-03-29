@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_SO_MERGE_H
 #define LIBTENSOR_SO_MERGE_H
 
+
 #include "../core/mask.h"
 #include "../core/symmetry.h"
 #include "../core/symmetry_element_set.h"
@@ -10,13 +11,17 @@
 #include "symmetry_operation_params.h"
 #include "so_copy.h"
 
+
 namespace libtensor {
+
 
 template<size_t N, size_t M, typename T>
 class so_merge;
 
+
 template<size_t N, size_t M, typename T>
 class symmetry_operation_params< so_merge<N, M, T> >;
+
 
 /**	\brief Merges multiple dimensions of a %symmetry group into one
 	\tparam N Order of the argument space.
@@ -62,6 +67,7 @@ public:
     void perform(symmetry<N - M, T> &sym2);
 };
 
+
 /** \brief Specialization of so_merge for M = 0 (no merge)
  **/
 template<size_t N, typename T>
@@ -78,6 +84,7 @@ public:
         so_copy<N, T>(m_sym1).perform(sym2);
     }
 };
+
 
 template<size_t N, size_t M, typename T>
 class symmetry_operation_params< so_merge<N, M, T> > :
@@ -104,7 +111,9 @@ public:
 
 } // namespace libtensor
 
+
 #include "so_merge_handlers.h"
+
 
 #endif // LIBTENSOR_SO_MERGE_H
 

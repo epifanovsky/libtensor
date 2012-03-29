@@ -1,3 +1,4 @@
+#include <libtensor/btod/scalar_transf_double.h>
 #include <libtensor/symmetry/so_merge_se_perm.h>
 #include <sstream>
 #include "so_merge_se_perm_test.h"
@@ -141,7 +142,8 @@ void so_merge_se_perm_test::test_nn1(
 
 	try {
 
-	se2_t el1(permutation<2>().permute(0, 1), symm);
+	scalar_transf<double> tr(symm ? 1.0 : -1.0);
+	se2_t el1(permutation<2>().permute(0, 1), tr);
 
 	symmetry_element_set<2, double> seta(se2_t::k_sym_type);
 	symmetry_element_set<1, double> setb(se1_t::k_sym_type);
@@ -199,7 +201,8 @@ void so_merge_se_perm_test::test_nm1_1(
 
 	try {
 
-	se5_t el1(permutation<5>().permute(0, 1), symm);
+	scalar_transf<double> tr(symm ? 1.0 : -1.0);
+	se5_t el1(permutation<5>().permute(0, 1), tr);
 
 	symmetry_element_set<5, double> set1(se5_t::k_sym_type);
 	symmetry_element_set<3, double> set2(se3_t::k_sym_type);
@@ -227,8 +230,9 @@ void so_merge_se_perm_test::test_nm1_1(
 		fail_test(tnss.str().c_str(), __FILE__, __LINE__,
 			"Expected only one element.");
 	}
-	if(el2.is_symm() != symm) {
-		fail_test(tnss.str().c_str(), __FILE__, __LINE__, "Wrong sign");
+	if(el2.get_transf() != tr) {
+		fail_test(tnss.str().c_str(),
+		        __FILE__, __LINE__, "el2.get_transf() != tr");
 	}
 	if(!el2.get_perm().equals(p2)) {
 		fail_test(tnss.str().c_str(), __FILE__, __LINE__,
@@ -258,7 +262,9 @@ void so_merge_se_perm_test::test_nm1_2(
 
 	try {
 
-	se6_t el1(permutation<6>().permute(0, 1).permute(1, 3).permute(3, 4), symm);
+	permutation<6> p; p.permute(0, 1).permute(1, 3).permute(3, 4);
+	scalar_transf<double> tr(symm ? 1.0 : -1.0);
+	se6_t el1(p, tr);
 
 	symmetry_element_set<6, double> set1(se6_t::k_sym_type);
 	symmetry_element_set<4, double> set2(se4_t::k_sym_type);
@@ -281,6 +287,7 @@ void so_merge_se_perm_test::test_nm1_2(
 	}
 }
 
+
 /** \test Merge of 2 dim of a group in a 4-space onto a 3-space.
  **/
 void so_merge_se_perm_test::test_nm1_3(
@@ -297,7 +304,9 @@ void so_merge_se_perm_test::test_nm1_3(
 
     try {
 
-    se4_t el1(permutation<4>().permute(0, 1).permute(2, 3), symm);
+    permutation<4> p; p.permute(0, 1).permute(2, 3);
+    scalar_transf<double> tr(symm ? 1.0 : -1.0);
+    se4_t el1(p, tr);
 
     symmetry_element_set<4, double> set1(se4_t::k_sym_type);
     symmetry_element_set<3, double> set2(se3_t::k_sym_type);
@@ -325,8 +334,9 @@ void so_merge_se_perm_test::test_nm1_3(
         fail_test(tnss.str().c_str(), __FILE__, __LINE__,
             "Expected only one element.");
     }
-    if(el2.is_symm() != symm) {
-        fail_test(tnss.str().c_str(), __FILE__, __LINE__, "Wrong sign");
+    if(el2.get_transf() != tr) {
+        fail_test(tnss.str().c_str(),
+                __FILE__, __LINE__, "el2.get_transf() != tr");
     }
     if(!el2.get_perm().equals(p2)) {
         fail_test(tnss.str().c_str(), __FILE__, __LINE__,
@@ -337,6 +347,7 @@ void so_merge_se_perm_test::test_nm1_3(
         fail_test(tnss.str().c_str(), __FILE__, __LINE__, e.what());
     }
 }
+
 
 /** \test Double merge of a group in a 4-space onto a 2-space.
  **/
@@ -355,8 +366,9 @@ void so_merge_se_perm_test::test_2n2nn_1(
 
     try {
 
-    se4_t el1a(permutation<4>().permute(0, 1), symm1);
-    se4_t el1b(permutation<4>().permute(2, 3), symm2);
+    scalar_transf<double> tr1(symm1 ? 1.0 : -1.0), tr2(symm2 ? 1.0 : -1.0);
+    se4_t el1a(permutation<4>().permute(0, 1), tr1);
+    se4_t el1b(permutation<4>().permute(2, 3), tr2);
 
     symmetry_element_set<4, double> set1(se4_t::k_sym_type);
     symmetry_element_set<2, double> set2(se2_t::k_sym_type);
@@ -376,6 +388,7 @@ void so_merge_se_perm_test::test_2n2nn_1(
     }
 
     permutation<2> p2; p2.permute(0, 1);
+    scalar_transf<double> trx(tr1); trx.transform(tr2);
     symmetry_element_set_adapter<2, double, se2_t> adapter(set2);
     symmetry_element_set_adapter<2, double, se2_t>::iterator i =
         adapter.begin();
@@ -385,7 +398,7 @@ void so_merge_se_perm_test::test_2n2nn_1(
         fail_test(tnss.str().c_str(), __FILE__, __LINE__,
             "Expected only one element.");
     }
-    if(el2.is_symm() != (symm1 == symm2)) {
+    if(el2.get_transf() != trx) {
         fail_test(tnss.str().c_str(), __FILE__, __LINE__, "Wrong sign");
     }
     if(!el2.get_perm().equals(p2)) {
@@ -397,6 +410,7 @@ void so_merge_se_perm_test::test_2n2nn_1(
         fail_test(tnss.str().c_str(), __FILE__, __LINE__, e.what());
     }
 }
+
 
 /** \test Double merge of a group in a 4-space onto a 2-space.
  **/
@@ -414,7 +428,8 @@ void so_merge_se_perm_test::test_2n2nn_2(
 
     try {
 
-    se4_t el1(permutation<4>().permute(0, 1).permute(2, 3), symm);
+    scalar_transf<double> tr0, tr1(-1.);
+    se4_t el1(permutation<4>().permute(0, 1).permute(2, 3), symm ? tr0 : tr1);
 
     symmetry_element_set<4, double> set1(se4_t::k_sym_type);
     symmetry_element_set<2, double> set2(se2_t::k_sym_type);
@@ -442,7 +457,7 @@ void so_merge_se_perm_test::test_2n2nn_2(
         fail_test(tnss.str().c_str(), __FILE__, __LINE__,
             "Expected only one element.");
     }
-    if(el2.is_symm() != symm) {
+    if(el2.get_transf() != (symm ? tr0 : tr1)) {
         fail_test(tnss.str().c_str(), __FILE__, __LINE__, "Wrong sign");
     }
     if(!el2.get_perm().equals(p2)) {
@@ -454,6 +469,7 @@ void so_merge_se_perm_test::test_2n2nn_2(
         fail_test(tnss.str().c_str(), __FILE__, __LINE__, e.what());
     }
 }
+
 
 /** \test Double merge of a group in a 6-space onto 4-space.
  **/
@@ -471,10 +487,11 @@ void so_merge_se_perm_test::test_nmk_1(
 
     try {
 
-    se6_t el1a(permutation<6>().permute(0, 1), true);
-    se6_t el1b(permutation<6>().permute(2, 3), true);
-    se6_t el1c(
-            permutation<6>().permute(0, 2).permute(1, 3).permute(4, 5), symm);
+    scalar_transf<double> tr0, tr1(-1.0);
+    se6_t el1a(permutation<6>().permute(0, 1), tr0);
+    se6_t el1b(permutation<6>().permute(2, 3), tr0);
+    se6_t el1c(permutation<6>().permute(0, 2).permute(1, 3).permute(4, 5),
+            (symm ? tr0 : tr1));
 
     symmetry_element_set<6, double> set1(se6_t::k_sym_type);
     symmetry_element_set<4, double> set2(se4_t::k_sym_type);
@@ -505,7 +522,7 @@ void so_merge_se_perm_test::test_nmk_1(
         fail_test(tnss.str().c_str(), __FILE__, __LINE__,
             "Expected only one element.");
     }
-    if(el2.is_symm() != symm) {
+    if(el2.get_transf() != (symm ? tr0 : tr1)) {
         fail_test(tnss.str().c_str(), __FILE__, __LINE__, "Wrong sign");
     }
     if(!el2.get_perm().equals(p2)) {
@@ -517,6 +534,7 @@ void so_merge_se_perm_test::test_nmk_1(
         fail_test(tnss.str().c_str(), __FILE__, __LINE__, e.what());
     }
 }
+
 
 /** \test Triple merge of a group in a 8-space onto 4-space.
  **/
@@ -534,11 +552,12 @@ void so_merge_se_perm_test::test_nmk_2(
 
     try {
 
-    se8_t el1a(permutation<8>().permute(0, 2), symm);
-    se8_t el1b(permutation<8>().permute(1, 3), symm);
-    se8_t el1c(permutation<8>().permute(4, 5).permute(5, 7), true);
+    scalar_transf<double> tr0, tr1(-1.);
+    se8_t el1a(permutation<8>().permute(0, 2), symm ? tr0 : tr1);
+    se8_t el1b(permutation<8>().permute(1, 3), symm ? tr0 : tr1);
+    se8_t el1c(permutation<8>().permute(4, 5).permute(5, 7), tr0);
     se8_t el1d(permutation<8>().permute(4, 5)
-            .permute(5, 6).permute(6, 7), true);
+            .permute(5, 6).permute(6, 7), tr0);
     symmetry_element_set<8, double> set1(se8_t::k_sym_type);
     symmetry_element_set<4, double> set2(se4_t::k_sym_type);
 
@@ -570,7 +589,7 @@ void so_merge_se_perm_test::test_nmk_2(
         fail_test(tnss.str().c_str(), __FILE__, __LINE__,
             "Expected only one element.");
     }
-    if(el2.is_symm() != true) {
+    if(el2.get_transf() != tr0) {
         fail_test(tnss.str().c_str(), __FILE__, __LINE__, "Wrong sign");
     }
     if(!el2.get_perm().equals(p2)) {
