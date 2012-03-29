@@ -40,7 +40,6 @@ size_t evaluation_rule<N>::add_product(size_t seq_no,
     m_setup.push_back(product_t());
     product_t &pr = m_setup.back();
 
-
     pr.insert(add_term(seq_no, intr, target));
     return m_setup.size() - 1;
 }
@@ -224,7 +223,7 @@ void evaluation_rule<N>::symmetrize(const sequence<N, size_t> &idxgrp,
     sequence<N, size_t> map;
     mask<N> msk;
     for (register size_t i = 0; i < N; i++) {
-        if (idxgrp[i] == 0) continue;
+        if (idxgrp[i] == 0) { msk[i] = true; continue; }
         map[(idxgrp[i] - 1) * nidx + symidx[i] - 1] = i;
         msk[i] = (symidx[i] != 1);
     }
