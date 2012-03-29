@@ -2,7 +2,7 @@
 #include <ctime>
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
-#include <libtensor/dense_tensor/tod_trace.h>
+#include <libtensor/tod/tod_trace.h>
 #include "../compare_ref.h"
 #include "tod_trace_test.h"
 
@@ -10,6 +10,8 @@ namespace libtensor {
 
 
 void tod_trace_test::perform() throw(libtest::test_exception) {
+
+    srand48(time(0));
 
     test_1(1);
     test_1(3);

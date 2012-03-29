@@ -13,6 +13,6 @@ set(SRC
 #set_property(TARGET libtensor_performance_tests APPEND PROPERTY
 #	COMPILE_DEFINITIONS_DEBUG LIBTENSOR_DEBUG)
 
-target_link_libraries(libtensor_performance_tests
-	tensor ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} test)
+#target_link_libraries(libtensor_performance_tests
+#	tensor ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} test)
 

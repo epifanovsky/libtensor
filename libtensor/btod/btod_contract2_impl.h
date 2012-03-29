@@ -1,12 +1,12 @@
 #ifndef LIBTENSOR_BTOD_CONTRACT2_IMPL_H
 #define LIBTENSOR_BTOD_CONTRACT2_IMPL_H
 
-#include <libtensor/mp/auto_cpu_lock.h>
 #include "../core/block_index_subspace_builder.h"
 #include "../core/mask.h"
 #include "../symmetry/so_dirprod.h"
 #include "../symmetry/so_reduce.h"
-#include <libtensor/dense_tensor/tod_contract2.h>
+#include "../tod/tod_contract2.h"
+#include "../tod/tod_sum.h"
 
 namespace libtensor {
 
@@ -455,6 +455,8 @@ void btod_contract2<N, M, K>::contract_block(
 
     std::list< index<k_ordera> > blksa;
     std::list< index<k_orderb> > blksb;
+    std::list< tod_contract2<N, M, K>* > op_ptrs;
+    tod_sum<k_orderc> *op_sum = 0;
 
     for(typename block_contr_list_t::iterator ilst = lst.begin();
         ilst != lst.end(); ilst++) {
@@ -478,14 +480,30 @@ void btod_contract2<N, M, K>::contract_block(
         contr.permute_b(ilst->m_permb);
         contr.permute_c(trc.get_perm());
 
-        double kc = ilst->m_c * trc.get_scalar_tr().get_coeff() * c;
-        tod_contract2<N, M, K>(contr, blka, blkb).perform(cpus, false, kc, tc);
+        tod_contract2<N, M, K> *controp =
+            new tod_contract2<N, M, K>(contr, blka, blkb);
+        double kc = ilst->m_c * trc.get_scalar_tr().get_coeff();
+        op_ptrs.push_back(controp);
+        if(op_sum == 0) op_sum = new tod_sum<k_orderc>(*controp, kc);
+        else op_sum->add_op(*controp, kc);
+    }
+
+    if(op_sum != 0) {
+        op_sum->prefetch();
+        op_sum->perform(cpus, false, c, tc);
+        delete op_sum; op_sum = 0;
+        for(typename std::list< tod_contract2<N, M, K>* >::const_iterator iptr =
+                op_ptrs.begin(); iptr != op_ptrs.end(); iptr++) {
+
+            delete *iptr;
+        }
+        op_ptrs.clear();
     }
 
     for(typename std::list< index<k_ordera> >::const_iterator i =
-        blksa.begin(); i != blksa.end(); i++) ca.ret_block(*i);
+            blksa.begin(); i != blksa.end(); i++) ca.ret_block(*i);
     for(typename std::list< index<k_orderb> >::const_iterator i =
-        blksb.begin(); i != blksb.end(); i++) cb.ret_block(*i);
+            blksb.begin(); i != blksb.end(); i++) cb.ret_block(*i);
 }
 
 
@@ -592,6 +610,7 @@ void btod_contract2_symmetry_builder<N, N, K>::make_symmetry(
 
     //  When a tensor is contracted with itself, there is additional
     //  perm symmetry
+
     permutation<2 * (N + K)> permab(pb.get_perm(), true);
     for(size_t i = 0; i < N + K; i++) {
         permab.permute(i, N + K + i);

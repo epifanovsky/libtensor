@@ -9,7 +9,7 @@
 #include "../core/orbit_list.h"
 #include "../symmetry/so_permute.h"
 #include "../symmetry/so_symmetrize.h"
-#include <libtensor/dense_tensor/tod_set.h>
+#include "../tod/tod_set.h"
 #include "additive_btod.h"
 
 namespace libtensor {

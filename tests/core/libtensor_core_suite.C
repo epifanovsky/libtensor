@@ -7,8 +7,6 @@ libtensor_core_suite::libtensor_core_suite() :
 
     add_test("abs_index", m_utf_abs_index);
     add_test("block_index_space", m_utf_block_index_space);
-    add_test("block_index_space_product_builder",
-        m_utf_block_index_space_product_builder);
     add_test("block_index_subspace_builder",
         m_utf_block_index_subspace_builder);
     add_test("block_map", m_utf_block_map);

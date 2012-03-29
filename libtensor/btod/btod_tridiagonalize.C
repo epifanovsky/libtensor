@@ -231,6 +231,7 @@ void btod_tridiagonalize::perform(block_tensor_i<2, double> &btb,
                 pos = 0;
             }
 
+
             if(cab.req_is_zero_block(idx)==1)
             {
                 cabv.req_zero_block(idx);

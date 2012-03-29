@@ -1,7 +1,7 @@
 #include <sstream>
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
-#include <libtensor/dense_tensor/tod_copy.h>
+#include <libtensor/tod/tod_copy.h>
 #include "../compare_ref.h"
 #include "tod_copy_test.h"
 
@@ -11,19 +11,11 @@ typedef std_allocator<double> allocator_t;
 typedef dense_tensor<4, double, allocator_t> tensor4;
 typedef dense_tensor_ctrl<4,double> tensor4_ctrl;
 
-
 void tod_copy_test::perform() throw(libtest::test_exception) {
     test_exc();
 
     index<2> i2a, i2b; i2b[0]=10; i2b[1]=12;
     index_range<2> ir2(i2a, i2b); dimensions<2> dims2(ir2);
-    permutation<2> perm2, perm2t;
-    perm2t.permute(0, 1);
-    index<2> i2a, i2b;
-    i2b[0] = 10;
-    i2b[1] = 12;
-    index_range<2> ir2(i2a, i2b);
-    dimensions<2> dims2(ir2);
     permutation<2> perm2, perm2t;
     perm2t.permute(0, 1);
 
@@ -89,7 +81,6 @@ void tod_copy_test::perform() throw(libtest::test_exception) {
     test_perm(dims4, perm4c);
 
 }
-
 
 template<size_t N>
 void tod_copy_test::test_plain(const dimensions<N> &dims)
@@ -186,7 +177,6 @@ void tod_copy_test::test_plain_additive(const dimensions<N> &dims, double d)
     }
 }
 
-
 template<size_t N>
 void tod_copy_test::test_scaled(const dimensions<N> &dims, double c)
     throw(libtest::test_exception) {
@@ -235,7 +225,6 @@ void tod_copy_test::test_scaled(const dimensions<N> &dims, double c)
         fail_test(testname, __FILE__, __LINE__, exc.what());
     }
 }
-
 
 template<size_t N>
 void tod_copy_test::test_scaled_additive(const dimensions<N> &dims, double c,
@@ -286,7 +275,6 @@ void tod_copy_test::test_scaled_additive(const dimensions<N> &dims, double c,
         fail_test(testname, __FILE__, __LINE__, exc.what());
     }
 }
-
 
 template<size_t N>
 void tod_copy_test::test_perm(const dimensions<N> &dims,
@@ -343,7 +331,6 @@ void tod_copy_test::test_perm(const dimensions<N> &dims,
         fail_test(testname, __FILE__, __LINE__, exc.what());
     }
 }
-
 
 template<size_t N>
 void tod_copy_test::test_perm_additive(const dimensions<N> &dims,
@@ -402,7 +389,6 @@ void tod_copy_test::test_perm_additive(const dimensions<N> &dims,
     }
 }
 
-
 template<size_t N>
 void tod_copy_test::test_perm_scaled(const dimensions<N> &dims,
     const permutation<N> &perm, double c) throw(libtest::test_exception) {
@@ -458,7 +444,6 @@ void tod_copy_test::test_perm_scaled(const dimensions<N> &dims,
         fail_test(testname, __FILE__, __LINE__, exc.what());
     }
 }
-
 
 template<size_t N>
 void tod_copy_test::test_perm_scaled_additive(const dimensions<N> &dims,

@@ -9,7 +9,7 @@
 #include "../core/block_tensor_i.h"
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include <libtensor/dense_tensor/tod_btconv.h>
+#include "../tod/tod_btconv.h"
 
 namespace libtensor {
 

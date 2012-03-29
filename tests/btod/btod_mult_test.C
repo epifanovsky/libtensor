@@ -5,8 +5,8 @@
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/symmetry/product_table_container.h>
-#include <libtensor/dense_tensor/tod_btconv.h>
-#include <libtensor/dense_tensor/tod_mult.h>
+#include <libtensor/tod/tod_btconv.h>
+#include <libtensor/tod/tod_mult.h>
 #include <iomanip>
 #include <sstream>
 #include "btod_mult_test.h"

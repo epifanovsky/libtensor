@@ -1,7 +1,6 @@
 #ifndef LIBTENSOR_BTOD_IMPORT_RAW_BASE_H
 #define LIBTENSOR_BTOD_IMPORT_RAW_BASE_H
 
-#include <cmath> // for fabs
 #include <sstream>
 #include "../defs.h"
 #include "../exception.h"
@@ -12,8 +11,8 @@
 #include "../core/orbit_list.h"
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
-#include <libtensor/dense_tensor/tod_compare.h>
-#include <libtensor/dense_tensor/tod_copy.h>
+#include "../tod/tod_compare.h"
+#include "../tod/tod_copy.h"
 #include "../symmetry/so_copy.h"
 #include "../symmetry/bad_symmetry.h"
 
@@ -161,11 +160,11 @@ void btod_import_raw_base<N, Alloc>::verify_nonzero_orbit(
         abs_index<N> ai(o.get_abs_index(i), bidims);
         const tensor_transf<N, double> &tr = o.get_transf(i);
 
-<<<     //  Compare with the transformed canonical block
+        //  Compare with the transformed canonical block
         dense_tensor_i<N, double> &blk = ctrl.req_block(ai.get_index());
         dense_tensor<N, double, Alloc> tblk(blk.get_dims());
         tod_copy<N> (cblk, tr.get_perm(), tr.get_scalar_tr().get_coeff()).
-===         perform(cpus, true, 1.0, tblk);
+            perform(cpus, true, 1.0, tblk);
 
         tod_compare<N> cmp(blk, tblk, sym_thresh);
         if(!cmp.compare()) {

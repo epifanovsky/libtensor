@@ -123,30 +123,7 @@ set(SRC_LINALG
 )
 
 set(SRC_INST
-    dense_tensor/impl/dense_tensor.C
-    dense_tensor/impl/tod_add.C
-    dense_tensor/impl/tod_btconv.C
-    dense_tensor/impl/tod_compare.C
-    dense_tensor/impl/tod_contract2.C
-    dense_tensor/impl/tod_copy.C
-    dense_tensor/impl/tod_diag.C
-    dense_tensor/impl/tod_dirsum.C
-    dense_tensor/impl/tod_dotprod.C
-    dense_tensor/impl/tod_ewmult2.C
-    dense_tensor/impl/tod_extract.C
-    dense_tensor/impl/tod_import_raw.C
-    dense_tensor/impl/tod_import_raw_stream.C
-    dense_tensor/impl/tod_mult.C
-    dense_tensor/impl/tod_mult1.C
-    dense_tensor/impl/tod_random.C
-    dense_tensor/impl/tod_scale.C
-    dense_tensor/impl/tod_scatter.C
-    dense_tensor/impl/tod_screen.C
-    dense_tensor/impl/tod_set.C
-    dense_tensor/impl/tod_set_diag.C
-    dense_tensor/impl/tod_set_elem.C
-    dense_tensor/impl/tod_trace.C
-    dense_tensor/impl/tod_vmpriority.C
+    dense_tensor/inst/dense_tensor_inst.C
     symmetry/inst/block_labeling_inst.C
     symmetry/inst/combine_part_inst.C
     symmetry/inst/combine_label_inst.C
@@ -184,6 +161,13 @@ set(SRC_INST
     symmetry/inst/so_symmetrize_se_label_inst.C
     symmetry/inst/so_symmetrize_se_part_inst.C
     symmetry/inst/so_symmetrize_se_perm_inst.C
+    tod/tod_add.C
+    tod/tod_contract2.C
+    tod/tod_copy.C
+    tod/tod_dirsum.C
+    tod/tod_dotprod.C
+    tod/tod_ewmult2.C
+    tod/tod_import_raw_stream.C
     tod/tod_vmpriority.C
     btod/additive_btod.C
     btod/basic_btod.C

@@ -1,7 +1,6 @@
 #ifndef LIBTENSOR_BTOD_COMPARE_H
 #define LIBTENSOR_BTOD_COMPARE_H
 
-#include <cmath> // for fabs
 #include <sstream>
 #include "../defs.h"
 #include "../core/block_tensor_ctrl.h"
@@ -10,8 +9,7 @@
 #include "../core/orbit_list.h"
 #include "../core/transf_list.h"
 #include <libtensor/dense_tensor/dense_tensor.h>
-#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include <libtensor/dense_tensor/tod_compare.h>
+#include "../tod/tod_compare.h"
 #include "bad_block_index_space.h"
 
 namespace libtensor {

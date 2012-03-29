@@ -25,7 +25,6 @@ private:
 
 };
 
-
 } // namespace libtensor
 
 #endif // LIBTENSOR_TOD_TRACE_TEST_H

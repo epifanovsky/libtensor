@@ -13,17 +13,9 @@ namespace libtensor {
 
 template<typename OperT>
 class symmetry_operation_dispatcher :
-<<<<<<< .working
     public libutil::singleton< symmetry_operation_dispatcher<OperT> > {
-=======
-	public libutil::singleton< symmetry_operation_dispatcher<OperT> > {
->>>>>>> .merge-right.r1551
 
-<<<<<<< .working
     friend class libutil::singleton< symmetry_operation_dispatcher<OperT> >;
-=======
-	friend class libutil::singleton< symmetry_operation_dispatcher<OperT> >;
->>>>>>> .merge-right.r1551
 
 public:
     static const char *k_clazz; //!< Class name

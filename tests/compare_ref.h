@@ -5,7 +5,7 @@
 #include <libtest/test_exception.h>
 #include <libtensor/core/orbit.h>
 #include <libtensor/core/orbit_list.h>
-#include <libtensor/dense_tensor/tod_compare.h>
+#include <libtensor/tod/tod_compare.h>
 #include <libtensor/btod/btod_compare.h>
 
 namespace libtensor {

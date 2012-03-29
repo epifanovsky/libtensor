@@ -9,7 +9,7 @@
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
 #include "../core/permutation_builder.h"
-#include <libtensor/dense_tensor/tod_trace.h>
+#include "../tod/tod_trace.h"
 #include "bad_block_index_space.h"
 
 namespace libtensor {

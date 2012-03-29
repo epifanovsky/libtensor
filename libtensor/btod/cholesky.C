@@ -267,6 +267,7 @@ void cholesky::perform(block_tensor_i<2, double> &btb)
 
         if(ctrli.req_is_zero_block(idxi)==false)
         {
+    
         
         dense_tensor_i<2, double> &ti = ctrli.req_block(idxi);
         dense_tensor_ctrl<2, double> cti(ti);

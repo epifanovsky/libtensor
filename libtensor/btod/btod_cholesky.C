@@ -18,10 +18,10 @@
 
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include <libtensor/dense_tensor/tod_btconv.h>
-#include <libtensor/dense_tensor/tod_contract2.h>
-#include <libtensor/dense_tensor/tod_import_raw.h>
-#include <libtensor/dense_tensor/tod_copy.h>
+#include "../tod/tod_btconv.h"
+#include "../tod/tod_contract2.h"
+#include "../tod/tod_import_raw.h"
+#include "../tod/tod_copy.h"
 
 
 
@@ -51,9 +51,9 @@ void btod_cholesky::decompose()
     dense_tensor_i<2, double> &ta(*pta);
 
     // put the data from input matrix to the buffer
-    typedef std_allocator<double> allocator_t;
-    const dimensions<2> &dims = m_bta.get_bis().get_dims();
-    tod_btconv<2>(m_bta).perform(ta);
+        typedef std_allocator<double> allocator_t;
+        const dimensions<2> &dims = m_bta.get_bis().get_dims();
+        tod_btconv<2>(m_bta).perform(ta);
     
     dense_tensor_ctrl<2, double> tnsr_ctrl(ta);
         double *tnsr_ptr = tnsr_ctrl.req_dataptr();

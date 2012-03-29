@@ -8,8 +8,8 @@
 #include <libtensor/symmetry/product_table_container.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/symmetry/se_label.h>
-#include <libtensor/dense_tensor/tod_apply.h>
-#include <libtensor/dense_tensor/tod_btconv.h>
+#include <libtensor/tod/tod_apply.h>
+#include <libtensor/tod/tod_btconv.h>
 #include "../compare_ref.h"
 #include "btod_apply_test.h"
 

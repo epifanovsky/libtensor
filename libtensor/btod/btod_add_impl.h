@@ -6,8 +6,8 @@
 #include "../symmetry/so_dirsum.h"
 #include "../symmetry/so_merge.h"
 #include "../symmetry/so_permute.h"
-#include <libtensor/dense_tensor/tod_add.h>
-#include <libtensor/dense_tensor/tod_copy.h>
+#include "../tod/tod_add.h"
+#include "../tod/tod_copy.h"
 
 namespace libtensor {
 

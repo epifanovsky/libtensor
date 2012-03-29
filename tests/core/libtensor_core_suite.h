@@ -48,7 +48,6 @@ namespace libtensor {
     This suite runs the following tests:
     \li libtensor::abs_index_test
     \li libtensor::block_index_space_test
-    \li libtensor::block_index_space_product_builder_test
     \li libtensor::block_index_subspace_builder_test
     \li libtensor::block_map_test
     \li libtensor::block_tensor_test
@@ -76,8 +75,6 @@ class libtensor_core_suite : public libtest::test_suite {
 private:
     unit_test_factory<abs_index_test> m_utf_abs_index;
     unit_test_factory<block_index_space_test> m_utf_block_index_space;
-    unit_test_factory<block_index_space_product_builder_test>
-        m_utf_block_index_space_product_builder;
     unit_test_factory<block_index_subspace_builder_test>
         m_utf_block_index_subspace_builder;
     unit_test_factory<block_map_test> m_utf_block_map;

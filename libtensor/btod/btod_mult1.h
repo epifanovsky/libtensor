@@ -12,9 +12,9 @@
 #include "../symmetry/so_copy.h"
 #include "../symmetry/so_dirprod.h"
 #include "../symmetry/so_merge.h"
-#include <libtensor/dense_tensor/tod_copy.h>
-#include <libtensor/dense_tensor/tod_mult1.h>
-#include <libtensor/dense_tensor/tod_set.h>
+#include "../tod/tod_copy.h"
+#include "../tod/tod_mult1.h"
+#include "../tod/tod_set.h"
 #include "bad_block_index_space.h"
 
 namespace libtensor {

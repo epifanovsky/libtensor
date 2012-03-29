@@ -13,9 +13,9 @@
 #include "../core/orbit_list.h"
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include <libtensor/dense_tensor/tod_add.h>
-#include <libtensor/dense_tensor/tod_copy.h>
-#include <libtensor/dense_tensor/tod_random.h>
+#include "../tod/tod_add.h"
+#include "../tod/tod_copy.h"
+#include "../tod/tod_random.h"
 #include "../timings.h"
 
 namespace libtensor {

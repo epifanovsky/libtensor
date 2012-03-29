@@ -6,7 +6,7 @@
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/btod/btod_scale.h>
 #include <libtensor/symmetry/se_perm.h>
-#include <libtensor/dense_tensor/tod_btconv.h>
+#include <libtensor/tod/tod_btconv.h>
 #include "btod_scale_test.h"
 #include "../compare_ref.h"
 
@@ -37,7 +37,7 @@ void btod_scale_test::test_generic(
     dense_tensor<N, double, allocator_t> t(bt.get_bis().get_dims()),
         t_ref(bt.get_bis().get_dims());
     tod_btconv<N>(bt).perform(t_ref);
-	tod_scale<N>(c).perform(cpus, t_ref);
+    tod_scale<N>(t_ref, c).perform();
 
     btod_scale<N>(bt, c).perform();
     tod_btconv<N>(bt).perform(t);
