@@ -68,11 +68,11 @@ combine(const permutation<N> &p1, const scalar_transf<T> &tr1,
         permutation_group<N + M, T> &grp) {
 
     typedef se_perm<M, T> se_perm_t;
+    typedef symmetry_element_set_adapter<M, T, se_perm_t> adapter_t;
     typedef std::vector<se_perm_t> perm_vec_t;
     typedef std::list<se_perm_t> perm_lst_t;
-    typedef symmetry_element_set_adapter<M, T, se_perm_t> adapter_t;
-
     typedef std::pair< size_t, scalar_transf<T> > transf_pair_t;
+    typedef std::list<transf_pair_t> tr_list_t;
 
     if (set2.is_empty()) return;
 
@@ -81,87 +81,90 @@ combine(const permutation<N> &p1, const scalar_transf<T> &tr1,
     // - elements with tr_e = 1
     // - all other elements
     adapter_t grp2(set2);
-    perm_lst_t pl1, pl2;
-    perm_vec_t pl3;
+    perm_lst_t plst1, plst2;
+    perm_vec_t plst3;
+    tr_list_t tlst;
     for (typename adapter_t::iterator it = grp2.begin();
             it != grp2.end(); it++) {
 
         const se_perm_t &e2 = grp2.get_elem(it);
-        if (e2.get_transf() == tr1) pl1.push_back(e2);
-        else if (e2.get_transf().is_identity()) pl2.push_back(e2);
-        else pl3.push_back(e2);
+        if (e2.get_transf() == tr1) plst1.push_back(e2);
+        else if (e2.get_transf().is_identity()) plst2.push_back(e2);
+        else {
+            tlst.push_back(transf_pair_t(plst3.size(), e2.get_transf()));
+            plst3.push_back(e2);
+        }
     }
 
     // Find all combinations of elements in the third group that yield
-    // tr1 and add them to pl1
-    if (! pl3.empty()) {
+    // tr1 or 1 and add them to plst1 or plst2, respectively
+    tr_list_t tlst2, *pt1 = &tlst, *pt2 = &tlst2;
+    std::set<size_t> done;
+    size_t nel = plst3.size(), n = 1;
+    while (pt1->size() != 0) {
+        for (typename tr_list_t::iterator it = pt1->begin();
+                it != pt1->end(); it++) {
 
-        size_t nel = pl3.size();
-        std::vector<size_t> order(nel, 1);
-        std::vector<transf_pair_t> s1, s2, *ps1 = &s1, *ps2 = &s2;
-        std::set<size_t> done;
-        for (size_t i = 0; i < nel; i++) {
-            scalar_transf<T> trx(pl3[i].get_transf());
-            while (! trx.is_identity()) {
-                trx.transform(pl3[i].get_transf());
-                order[i]++;
-            }
-            s1.push_back(transf_pair_t(i, pl3[i].get_transf()));
-        }
-
-        size_t max = lcm(order), nf = 1;
-        for (size_t n = 1; n <= max; n++, nf *= nel) {
-            for (size_t i = 0; i < ps1->size(); i++) {
-                size_t idxa = (*ps1)[i].first * nf;
-                for (size_t j = 0; j < nel; j++) {
-                    size_t idxb = idxa + j, k = 1, ix = idxb;
-                    for (; k < n; k++) {
-                        if (done.count(ix % nel)) break;
-                        ix /= nel;
-                    }
-                    if (k != n) continue;
-
-                    scalar_transf<T> &trx = (*ps1)[i].second;
-                    trx.transform(pl3[j].get_transf());
-                    if (trx == tr1) {
-                        done.insert(idxb);
-                        permutation<M> py;
-                        while (idxb != 0) {
-                            py.permute(pl3[idxb % nel].get_perm());
-                            idxb /= nel;
-                        }
-                        py.invert();
-                        pl1.push_back(se_perm_t(py, trx));
-                    }
-                    else {
-                        ps2->push_back(transf_pair_t(idxb, trx));
-                    }
+            size_t idxa = it->first * nel;
+            for (size_t j = 0; j < nel; j++) {
+                size_t idxb = idxa + j, k = 1, ix = idxb;
+                while (idxb != 0) {
+                    if (done.count(ix % nel)) break;
+                    ix /= nel;
                 }
-                std::swap(ps1, ps2);
-                ps2->clear();
+                if (idxb != 0) continue;
 
-                if (ps1->size() == 0) break;
+                scalar_transf<T> &trx = it->second;
+                trx.transform(plst3[j].get_transf());
+                if (trx == tr1 || trx.is_identity()) {
+                    done.insert(idxb);
+                    std::vector<size_t> pidx;
+                    pidx.reserve(n + 1);
+                    while (idxb != 0) {
+                        pidx.push_back(idxb % nel);
+                        idxb /= nel;
+                    }
+
+                    permutation<M> py;
+                    for (std::vector<size_t>::reverse_iterator ip =
+                            pidx.rbegin(); ip != pidx.rend(); ip++) {
+                        py.permute(plst3[*ip].get_perm());
+                    }
+
+                    if (trx == tr1)
+                        plst1.push_back(se_perm_t(py, trx));
+                    else
+                        plst2.push_back(se_perm_t(py, trx));
+                }
+                else {
+                    pt2->push_back(transf_pair_t(idxb, trx));
+                }
             }
         }
-        pl3.clear();
+        std::swap(pt1, pt2);
+        pt2->clear();
+
+        n++;
     }
+    plst3.clear();
+    done.clear();
 
     sequence<N + M, size_t> seq2a, seq2b;
     for (register size_t i = 0; i < N + M; i++) seq2a[i] = i;
     for (register size_t i = 0; i < N; i++) seq2b[i] = p1[i];
 
     // Combine all elements in p1 with all elements in p2
-    if (! pl2.empty()) {
+    if (! plst2.empty()) {
         perm_lst_t p1a;
-        for (typename perm_lst_t::iterator it1 = pl2.begin();
-                it1 != pl2.end(); it1++) {
+        for (typename perm_lst_t::iterator it1 = plst2.begin();
+                it1 != plst2.end(); it1++) {
 
             size_t orderp = it1->get_orderp();
             for (size_t i = 1; i < orderp; i++) {
                 for (size_t j = 0; j < i; j++) {
 
-                    for (typename perm_lst_t::iterator it2 = pl1.begin();
-                            it2 != pl1.end(); it2++) {
+                    for (typename perm_lst_t::iterator it2 = plst1.begin();
+                            it2 != plst1.end(); it2++) {
 
                         permutation<M> px;
                         size_t k = 0;
@@ -181,8 +184,8 @@ combine(const permutation<N> &p1, const scalar_transf<T> &tr1,
     }
     else {
 
-        for (typename perm_lst_t::iterator it = pl1.begin();
-                it != pl1.end(); it++) {
+        for (typename perm_lst_t::iterator it = plst1.begin();
+                it != plst1.end(); it++) {
 
             for (register size_t i = 0, j = N; i < M; i++, j++)
                 seq2b[j] = it->get_perm()[i] + N;
@@ -200,9 +203,11 @@ combine(const symmetry_element_set<N, T> &set1,
         permutation_group<N + M, T> &grp) {
 
     typedef se_perm<N, T> se_perm_t;
+    typedef symmetry_element_set_adapter<N, T, se_perm_t> adapter_t;
     typedef std::vector<se_perm_t> perm_vec_t;
     typedef std::list<se_perm_t> perm_lst_t;
-    typedef symmetry_element_set_adapter<N, T, se_perm_t> adapter_t;
+    typedef std::pair< size_t, scalar_transf<T> > transf_pair_t;
+    typedef std::list<transf_pair_t> tr_list_t;
 
     typedef std::pair< size_t, scalar_transf<T> > transf_pair_t;
 
@@ -213,87 +218,89 @@ combine(const symmetry_element_set<N, T> &set1,
     // - elements with tr_e = 1
     // - all other elements
     adapter_t grp1(set1);
-    perm_lst_t pl1, pl2;
-    perm_vec_t pl3;
+    perm_lst_t plst1, plst2;
+    perm_vec_t plst3;
+    tr_list_t tlst;
     for (typename adapter_t::iterator it = grp1.begin();
             it != grp1.end(); it++) {
 
         const se_perm_t &e1 = grp1.get_elem(it);
-        if (e1.get_transf() == tr2) pl1.push_back(e1);
-        else if (e1.get_transf().is_identity()) pl2.push_back(e1);
-        else pl3.push_back(e1);
+        if (e1.get_transf() == tr2) plst1.push_back(e1);
+        else if (e1.get_transf().is_identity()) plst2.push_back(e1);
+        else {
+            tlst.push_back(transf_pair_t(plst3.size(), e1.get_transf()));
+            plst3.push_back(e1);
+        }
     }
 
     // Find all combinations of elements in the third group that yield
-    // tr_e = tr and add them to p1
-    if (! pl3.empty()) {
+    // tr1 or 1 and add them to plst1 or plst2, respectively
+    tr_list_t tlst2, *pt1 = &tlst, *pt2 = &tlst2;
+    std::set<size_t> done;
+    size_t nel = plst3.size(), n = 1;
+    while (pt1->size() != 0) {
+        for (typename tr_list_t::iterator it = pt1->begin();
+                it != pt1->end(); it++) {
 
-        size_t nel = pl3.size();
-        std::vector<size_t> order(nel, 1);
-        std::vector<transf_pair_t> s1, s2, *ps1 = &s1, *ps2 = &s2;
-        std::set<size_t> done;
-        for (size_t i = 0; i < nel; i++) {
-            scalar_transf<T> trx(pl3[i].get_transf());
-            while (! trx.is_identity()) {
-                trx.transform(pl3[i].get_transf());
-                order[i]++;
-            }
-            s1.push_back(transf_pair_t(i, pl3[i].get_transf()));
-        }
-
-        size_t max = lcm(order), nf = 1;
-        for (size_t n = 1; n <= max; n++, nf *= nel) {
-            for (size_t i = 0; i < ps1->size(); i++) {
-                size_t idxa = (*ps1)[i].first * nf;
-                for (size_t j = 0; j < nel; j++) {
-                    size_t idxb = idxa + j, k = 1, ix = idxb;
-                    for (; k < n; k++) {
-                        if (done.count(ix % nel)) break;
-                        ix /= nel;
-                    }
-                    if (k != n) continue;
-
-                    scalar_transf<T> &trx = (*ps1)[i].second;
-                    trx.transform(pl3[j].get_transf());
-                    if (trx == tr2) {
-                        done.insert(idxb);
-                        permutation<N> py;
-                        while (idxb != 0) {
-                            py.permute(pl3[idxb % nel].get_perm());
-                            idxb /= nel;
-                        }
-                        py.invert();
-                        pl1.push_back(se_perm_t(py, trx));
-                    }
-                    else {
-                        ps2->push_back(transf_pair_t(idxb, trx));
-                    }
+            size_t idxa = it->first * nel;
+            for (size_t j = 0; j < nel; j++) {
+                size_t idxb = idxa + j, k = 1, ix = idxb;
+                while (idxb != 0) {
+                    if (done.count(ix % nel)) break;
+                    ix /= nel;
                 }
-                std::swap(ps1, ps2);
-                ps2->clear();
+                if (idxb != 0) continue;
 
-                if (ps1->size() == 0) break;
+                scalar_transf<T> &trx = it->second;
+                trx.transform(plst3[j].get_transf());
+                if (trx == tr2 || trx.is_identity()) {
+                    done.insert(idxb);
+                    std::vector<size_t> pidx; pidx.reserve(n + 1);
+                    while (idxb != 0) {
+                        pidx.push_back(idxb % nel);
+                        idxb /= nel;
+                    }
+
+                    permutation<N> py;
+                    for (std::vector<size_t>::reverse_iterator ip =
+                            pidx.rbegin(); ip != pidx.rend(); ip++) {
+                        py.permute(plst3[*ip].get_perm());
+                    }
+
+                    if (trx == tr2)
+                        plst1.push_back(se_perm_t(py, trx));
+                    else
+                        plst2.push_back(se_perm_t(py, trx));
+                }
+                else {
+                    pt2->push_back(transf_pair_t(idxb, trx));
+                }
             }
         }
-        pl3.clear();
+        std::swap(pt1, pt2);
+        pt2->clear();
+
+        n++;
     }
+    plst3.clear();
+    done.clear();
 
     sequence<N + M, size_t> seq2a, seq2b;
     for (register size_t i = 0; i < N + M; i++) seq2a[i] = i;
     for (register size_t i = 0, j = N; i < M; i++, j++) seq2b[j] = p2[i] + N;
 
     // Combine all elements in p1 with all elements in p2
-    if (! pl2.empty()) {
+    if (! plst2.empty()) {
         perm_lst_t p1a;
-        for (typename perm_lst_t::iterator it1 = pl2.begin();
-                it1 != pl2.end(); it1++) {
+        for (typename perm_lst_t::iterator it1 = plst2.begin();
+                it1 != plst2.end(); it1++) {
 
             size_t orderp = it1->get_orderp();
             for (size_t i = 1; i < orderp; i++) {
                 for (size_t j = 0; j < i; j++) {
 
-                    for (typename perm_lst_t::iterator it2 = pl1.begin();
-                            it2 != pl1.end(); it2++) {
+                    for (typename perm_lst_t::iterator it2 = plst1.begin();
+                            it2 != plst1.end(); it2++) {
 
                         permutation<N> px;
                         size_t k = 0;
@@ -313,8 +320,8 @@ combine(const symmetry_element_set<N, T> &set1,
     }
     else {
 
-        for (typename perm_lst_t::iterator it = pl1.begin();
-                it != pl1.end(); it++) {
+        for (typename perm_lst_t::iterator it = plst1.begin();
+                it != plst1.end(); it++) {
 
             for (register size_t i = 0; i < N; i++)
                 seq2b[i] = it->get_perm()[i];
@@ -324,39 +331,8 @@ combine(const symmetry_element_set<N, T> &set1,
     }
 }
 
-template<size_t N, size_t M, typename T>
-size_t symmetry_operation_impl< so_dirsum<N, M, T>, se_perm<N + M, T> >::lcm(
-        const std::vector<size_t> &seq) {
-
-    if (seq.size() == 1) return seq[0];
-
-#ifdef LIBTENSOR_DEBUG
-    for (register size_t i = 0; i < N; i++) {
-        if (seq[i] == 0) {
-            throw bad_parameter(g_ns, k_clazz,
-                    "lcm(const std::vector<size_t>&)",
-                    __FILE__, __LINE__, "seq");
-        }
-    }
-#endif
-
-    std::vector<size_t> seq2(seq);
-    do {
-        register size_t i = 1;
-        for (; i < seq2.size() && seq2[i] == seq2[0]; i++) ;
-        if (i == seq2.size()) break;
-
-        size_t imin = 0;
-        for (i = 1; i < seq2.size(); i++) {
-            if (seq2[i] < seq2[imin]) imin = i;
-        }
-        seq2[imin] += seq[i];
-    } while (true);
-
-    return seq2[0];
-}
-
 
 } // namespace libtensor
+
 
 #endif // LIBTENSOR_SO_DIRSUM_SE_PERM_IMPL_H
