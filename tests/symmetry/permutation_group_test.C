@@ -1,6 +1,8 @@
 #include <algorithm>
 #include <sstream>
+#include <libtensor/btod/scalar_transf_double.h>
 #include <libtensor/core/permutation_builder.h>
+#include <libtensor/core/permutation_generator.h>
 #include <libtensor/symmetry/permutation_group.h>
 #include "permutation_group_test.h"
 
@@ -34,7 +36,7 @@ void permutation_group_test::perform() throw(libtest::test_exception) {
     test_stabilize_4();
     test_stabilize_5();
     test_stabilize_6();
-    //	test_stabilize_7();
+    test_stabilize_7();
 
     test_stabilize2_1();
     test_stabilize2_2();
@@ -52,16 +54,17 @@ void permutation_group_test::test_1() throw(libtest::test_exception) {
     static const char *testname = "permutation_group_test::test_1()";
 
     typedef se_perm<4, double> se_perm_t;
-    typedef std::pair<permutation<4>, bool> signed_perm_t;
-    typedef std::list<signed_perm_t> perm_list_t;
+    typedef std::pair<permutation<4>, scalar_transf<double> > gen_perm_t;
+    typedef std::list<gen_perm_t> perm_list_t;
 
     try {
 
+        scalar_transf<double> tr0;
         permutation_group<4, double> pg;
 
         perm_list_t lst_ref;
-        lst_ref.push_back(signed_perm_t(permutation<4>(), true));
-        verify_members(testname, pg, lst_ref);
+        lst_ref.push_back(gen_perm_t(permutation<4>(), tr0));
+        verify_members(testname, pg, tr0, lst_ref);
         verify_genset(testname, pg, lst_ref);
 
     } catch(exception &e) {
@@ -77,21 +80,22 @@ void permutation_group_test::test_2a() throw(libtest::test_exception) {
     static const char *testname = "permutation_group_test::test_2a()";
 
     typedef se_perm<2, double> se_perm_t;
-    typedef std::pair<permutation<2>, bool> signed_perm_t;
-    typedef std::list<signed_perm_t> perm_list_t;
+    typedef std::pair<permutation<2>, scalar_transf<double> > gen_perm_t;
+    typedef std::list<gen_perm_t> perm_list_t;
 
     try {
 
         permutation<2> perm1; perm1.permute(0, 1);
+        scalar_transf<double> tr1;
 
         symmetry_element_set<2, double> set1(se_perm_t::k_sym_type);
-        set1.insert(se_perm_t(perm1, true));
+        set1.insert(se_perm_t(perm1, tr1));
         permutation_group<2, double> pg(set1);
 
         perm_list_t lst_ref;
-        lst_ref.push_back(signed_perm_t(permutation<2>(), true));
-        lst_ref.push_back(signed_perm_t(perm1, true));
-        verify_members(testname, pg, lst_ref);
+        lst_ref.push_back(gen_perm_t(permutation<2>(), tr1));
+        lst_ref.push_back(gen_perm_t(perm1, tr1));
+        verify_members(testname, pg, tr1, lst_ref);
         verify_genset(testname, pg, lst_ref);
 
     } catch(exception &e) {
@@ -107,21 +111,22 @@ void permutation_group_test::test_2b() throw(libtest::test_exception) {
     static const char *testname = "permutation_group_test::test_2b()";
 
     typedef se_perm<2, double> se_perm_t;
-    typedef std::pair<permutation<2>, bool> signed_perm_t;
-    typedef std::list<signed_perm_t> perm_list_t;
+    typedef std::pair<permutation<2>, scalar_transf<double> > gen_perm_t;
+    typedef std::list<gen_perm_t> perm_list_t;
 
     try {
 
         permutation<2> perm1; perm1.permute(0, 1);
+        scalar_transf<double> tr0(1.0), tr1(-1.0);
 
         symmetry_element_set<2, double> set1(se_perm_t::k_sym_type);
-        set1.insert(se_perm_t(perm1, false));
+        set1.insert(se_perm_t(perm1, tr1));
         permutation_group<2, double> pg(set1);
 
         perm_list_t lst_ref;
-        lst_ref.push_back(signed_perm_t(permutation<2>(), true));
-        lst_ref.push_back(signed_perm_t(perm1, false));
-        verify_members(testname, pg, lst_ref);
+        lst_ref.push_back(gen_perm_t(permutation<2>(), tr0));
+        lst_ref.push_back(gen_perm_t(perm1, tr1));
+        verify_members(testname, pg, tr1, lst_ref);
         verify_genset(testname, pg, lst_ref);
 
     } catch(exception &e) {
@@ -138,28 +143,30 @@ void permutation_group_test::test_3() throw(libtest::test_exception) {
     static const char *testname = "permutation_group_test::test_3()";
 
     typedef se_perm<3, double> se_perm_t;
-    typedef std::pair<permutation<3>, bool> signed_perm_t;
-    typedef std::list<signed_perm_t> perm_list_t;
+    typedef std::pair<permutation<3>, scalar_transf<double> > gen_perm_t;
+    typedef std::list<gen_perm_t> perm_list_t;
 
     try {
 
         symmetry_element_set<3, double> set1(se_perm_t::k_sym_type);
 
-        set1.insert(se_perm_t(permutation<3>().permute(0, 1).
-                permute(1, 2), true));
-        set1.insert(se_perm_t(permutation<3>().permute(0, 1), true));
+        scalar_transf<double> tr0;
+        set1.insert(
+                se_perm_t(permutation<3>().permute(0, 1).permute(1, 2), tr0));
+        set1.insert(
+                se_perm_t(permutation<3>().permute(0, 1), tr0));
         permutation_group<3, double> pg(set1);
 
         perm_list_t lst_ref;
-        lst_ref.push_back(signed_perm_t(permutation<3>(), true));
-        lst_ref.push_back(signed_perm_t(permutation<3>().permute(0, 1), true));
-        lst_ref.push_back(signed_perm_t(permutation<3>().permute(0, 2), true));
-        lst_ref.push_back(signed_perm_t(permutation<3>().permute(1, 2), true));
+        lst_ref.push_back(gen_perm_t(permutation<3>(), tr0));
+        lst_ref.push_back(gen_perm_t(permutation<3>().permute(0, 1), tr0));
+        lst_ref.push_back(gen_perm_t(permutation<3>().permute(0, 2), tr0));
+        lst_ref.push_back(gen_perm_t(permutation<3>().permute(1, 2), tr0));
         lst_ref.push_back(
-                signed_perm_t(permutation<3>().permute(0, 1).permute(1, 2), true));
+                gen_perm_t(permutation<3>().permute(0, 1).permute(1, 2), tr0));
         lst_ref.push_back(
-                signed_perm_t(permutation<3>().permute(1, 2).permute(0, 1), true));
-        verify_members(testname, pg, lst_ref);
+                gen_perm_t(permutation<3>().permute(1, 2).permute(0, 1), tr0));
+        verify_members(testname, pg, tr0, lst_ref);
         verify_genset(testname, pg, lst_ref);
 
     } catch(exception &e) {
@@ -174,43 +181,44 @@ void permutation_group_test::test_4() throw(libtest::test_exception) {
 
     static const char *testname = "permutation_group_test::test_4()";
 
-    typedef std::pair<permutation<4>, bool> signed_perm_t;
-    typedef std::list<signed_perm_t> perm_list_t;
+    typedef std::pair<permutation<4>, scalar_transf<double> > gen_perm_t;
+    typedef std::list<gen_perm_t> perm_list_t;
 
     try {
 
+        scalar_transf<double> tr0;
         symmetry_element_set<4, double> set(se_perm<4, double>::k_sym_type);
-        set.insert(se_perm<4, double>(permutation<4>().
-                permute(0, 1).permute(2, 3), true));
-        set.insert(se_perm<4, double>(permutation<4>().
-                permute(0, 1).permute(1, 2), true));
+        set.insert(se_perm<4, double>(
+                permutation<4>().permute(0, 1).permute(2, 3), tr0));
+        set.insert(se_perm<4, double>(
+                permutation<4>().permute(0, 1).permute(1, 2), tr0));
         permutation_group<4, double> pg(set);
 
         perm_list_t lst_ref;
-        lst_ref.push_back(signed_perm_t(permutation<4>(), true));
-        lst_ref.push_back(
-                signed_perm_t(permutation<4>().permute(0, 1).permute(1, 2), true));
-        lst_ref.push_back(
-                signed_perm_t(permutation<4>().permute(1, 2).permute(0, 1), true));
-        lst_ref.push_back(
-                signed_perm_t(permutation<4>().permute(0, 2).permute(2, 3), true));
-        lst_ref.push_back(
-                signed_perm_t(permutation<4>().permute(2, 3).permute(0, 2), true));
-        lst_ref.push_back(
-                signed_perm_t(permutation<4>().permute(0, 1).permute(1, 3), true));
-        lst_ref.push_back(
-                signed_perm_t(permutation<4>().permute(1, 3).permute(0, 1), true));
-        lst_ref.push_back(
-                signed_perm_t(permutation<4>().permute(1, 2).permute(2, 3), true));
-        lst_ref.push_back(
-                signed_perm_t(permutation<4>().permute(2, 3).permute(1, 2), true));
-        lst_ref.push_back(
-                signed_perm_t(permutation<4>().permute(0, 1).permute(2, 3), true));
-        lst_ref.push_back(
-                signed_perm_t(permutation<4>().permute(0, 2).permute(1, 3), true));
-        lst_ref.push_back(
-                signed_perm_t(permutation<4>().permute(0, 3).permute(1, 2), true));
-        verify_members(testname, pg, lst_ref);
+        lst_ref.push_back(gen_perm_t(permutation<4>(), tr0));
+        lst_ref.push_back(gen_perm_t(
+                permutation<4>().permute(0, 1).permute(1, 2), tr0));
+        lst_ref.push_back(gen_perm_t(
+                permutation<4>().permute(1, 2).permute(0, 1), tr0));
+        lst_ref.push_back(gen_perm_t(
+                permutation<4>().permute(0, 2).permute(2, 3), tr0));
+        lst_ref.push_back(gen_perm_t(
+                permutation<4>().permute(2, 3).permute(0, 2), tr0));
+        lst_ref.push_back(gen_perm_t(
+                permutation<4>().permute(0, 1).permute(1, 3), tr0));
+        lst_ref.push_back(gen_perm_t(
+                permutation<4>().permute(1, 3).permute(0, 1), tr0));
+        lst_ref.push_back(gen_perm_t(
+                permutation<4>().permute(1, 2).permute(2, 3), tr0));
+        lst_ref.push_back(gen_perm_t(
+                permutation<4>().permute(2, 3).permute(1, 2), tr0));
+        lst_ref.push_back(gen_perm_t(
+                permutation<4>().permute(0, 1).permute(2, 3), tr0));
+        lst_ref.push_back(gen_perm_t(
+                permutation<4>().permute(0, 2).permute(1, 3), tr0));
+        lst_ref.push_back(gen_perm_t(
+                permutation<4>().permute(0, 3).permute(1, 2), tr0));
+        verify_members(testname, pg, tr0, lst_ref);
         verify_genset(testname, pg, lst_ref);
 
     } catch(exception &e) {
@@ -225,30 +233,33 @@ void permutation_group_test::test_5a() throw(libtest::test_exception) {
 
     static const char *testname = "permutation_group_test::test_5a()";
 
-    typedef std::pair<permutation<4>, bool> signed_perm_t;
-    typedef std::list<signed_perm_t> perm_list_t;
+    typedef std::pair<permutation<4>, scalar_transf<double> > gen_perm_t;
+    typedef std::list<gen_perm_t> perm_list_t;
 
     try {
 
+        scalar_transf<double> tr0;
         symmetry_element_set<4, double> set(se_perm<4, double>::k_sym_type);
-        set.insert(se_perm<4, double>(permutation<4>().
-                permute(0, 1).permute(2, 3), true));
-        set.insert(se_perm<4, double>(permutation<4>().permute(0, 1), true));
+        set.insert(se_perm<4, double>(
+                permutation<4>().permute(0, 1).permute(2, 3), tr0));
+        set.insert(se_perm<4, double>(
+                permutation<4>().permute(0, 1), tr0));
         permutation_group<4, double> pg(set);
 
         perm_list_t lst_ref;
-        lst_ref.push_back(signed_perm_t(permutation<4>(), true));
-        lst_ref.push_back(signed_perm_t(permutation<4>().permute(0, 1), true));
-        lst_ref.push_back(signed_perm_t(permutation<4>().permute(2, 3), true));
+        lst_ref.push_back(gen_perm_t(permutation<4>(), tr0));
+        lst_ref.push_back(gen_perm_t(permutation<4>().permute(0, 1), tr0));
+        lst_ref.push_back(gen_perm_t(permutation<4>().permute(2, 3), tr0));
         lst_ref.push_back(
-                signed_perm_t(permutation<4>().permute(0, 1).permute(2, 3), true));
-        verify_members(testname, pg, lst_ref);
+                gen_perm_t(permutation<4>().permute(0, 1).permute(2, 3), tr0));
+        verify_members(testname, pg, tr0, lst_ref);
         verify_genset(testname, pg, lst_ref);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
     }
 }
+
 
 /**	\test Tests the S2(-)*S2(-) group in a 4-space
  **/
@@ -256,24 +267,26 @@ void permutation_group_test::test_5b() throw(libtest::test_exception) {
 
     static const char *testname = "permutation_group_test::test_5b()";
 
-    typedef std::pair<permutation<4>, bool> signed_perm_t;
-    typedef std::list<signed_perm_t> perm_list_t;
+    typedef std::pair<permutation<4>, scalar_transf<double> > gen_perm_t;
+    typedef std::list<gen_perm_t> perm_list_t;
 
     try {
 
+        scalar_transf<double> tr0, tr1(-1.0);
         symmetry_element_set<4, double> set(se_perm<4, double>::k_sym_type);
-        set.insert(se_perm<4, double>(permutation<4>().
-                permute(0, 1).permute(2, 3), true));
-        set.insert(se_perm<4, double>(permutation<4>().permute(0, 1), false));
+        set.insert(se_perm<4, double>(
+                permutation<4>().permute(0, 1).permute(2, 3), tr0));
+        set.insert(se_perm<4, double>(
+                permutation<4>().permute(0, 1), tr1));
         permutation_group<4, double> pg(set);
 
         perm_list_t lst_ref;
-        lst_ref.push_back(signed_perm_t(permutation<4>(), true));
-        lst_ref.push_back(signed_perm_t(permutation<4>().permute(0, 1), false));
-        lst_ref.push_back(signed_perm_t(permutation<4>().permute(2, 3), false));
+        lst_ref.push_back(gen_perm_t(permutation<4>(), tr0));
+        lst_ref.push_back(gen_perm_t(permutation<4>().permute(0, 1), tr1));
+        lst_ref.push_back(gen_perm_t(permutation<4>().permute(2, 3), tr1));
         lst_ref.push_back(
-                signed_perm_t(permutation<4>().permute(0, 1).permute(2, 3), true));
-        verify_members(testname, pg, lst_ref);
+                gen_perm_t(permutation<4>().permute(0, 1).permute(2, 3), tr0));
+        verify_members(testname, pg, tr1, lst_ref);
         verify_genset(testname, pg, lst_ref);
 
     } catch(exception &e) {
@@ -281,27 +294,32 @@ void permutation_group_test::test_5b() throw(libtest::test_exception) {
     }
 }
 
+
 /**	\test Tests the S4(+) group in a 4-space
  **/
 void permutation_group_test::test_6a() throw(libtest::test_exception) {
 
     static const char *testname = "permutation_group_test::test_6a()";
 
-    typedef std::pair<permutation<4>, bool> signed_perm_t;
-    typedef std::list<signed_perm_t> perm_list_t;
+    typedef std::pair<permutation<4>, scalar_transf<double> > gen_perm_t;
+    typedef std::list<gen_perm_t> perm_list_t;
 
     try {
 
+        scalar_transf<double> tr0;
         symmetry_element_set<4, double> set(se_perm<4, double>::k_sym_type);
         set.insert(se_perm<4, double>(permutation<4>().
-                permute(0, 1).permute(1, 2).permute(2, 3), true));
-        set.insert(se_perm<4, double>(permutation<4>().permute(0, 1), true));
-        permutation_group<4, double> pg(set);
+                permute(0, 1).permute(1, 2).permute(2, 3), tr0));
+        set.insert(se_perm<4, double>(permutation<4>().permute(0, 1), tr0));
+        permutation_group<4, double> grp(set);
 
         perm_list_t lst_ref;
-        all_permutations(true, lst_ref);
-        verify_members(testname, pg, lst_ref);
-        verify_genset(testname, pg, lst_ref);
+        permutation_generator<4> pg;
+        do {
+            lst_ref.push_back(gen_perm_t(pg.get_perm(), tr0));
+        } while (pg.next());
+        verify_members(testname, grp, tr0, lst_ref);
+        verify_genset(testname, grp, lst_ref);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
@@ -315,21 +333,31 @@ void permutation_group_test::test_6b() throw(libtest::test_exception) {
 
     static const char *testname = "permutation_group_test::test_6b()";
 
-    typedef std::pair<permutation<4>, bool> signed_perm_t;
-    typedef std::list<signed_perm_t> perm_list_t;
+    typedef std::pair<permutation<4>, scalar_transf<double> > gen_perm_t;
+    typedef std::list<gen_perm_t> perm_list_t;
 
     try {
 
+        scalar_transf<double> tr0, tr1(-1.0);
         symmetry_element_set<4, double> set(se_perm<4, double>::k_sym_type);
         set.insert(se_perm<4, double>(permutation<4>().
-                permute(0, 1).permute(1, 2).permute(2, 3), false));
-        set.insert(se_perm<4, double>(permutation<4>().permute(0, 1), false));
-        permutation_group<4, double> pg(set);
+                permute(0, 1).permute(1, 2).permute(2, 3), tr1));
+        set.insert(se_perm<4, double>(permutation<4>().permute(0, 1), tr1));
+        permutation_group<4, double> grp(set);
 
         perm_list_t lst_ref;
-        all_permutations(false, lst_ref);
-        verify_members(testname, pg, lst_ref);
-        verify_genset(testname, pg, lst_ref);
+        permutation_generator<4> pg;
+        bool even = true;
+        do {
+            if (even)
+                lst_ref.push_back(gen_perm_t(pg.get_perm(), tr0));
+            else
+                lst_ref.push_back(gen_perm_t(pg.get_perm(), tr1));
+            even = !even;
+        } while (pg.next());
+
+        verify_members(testname, grp, tr1, lst_ref);
+        verify_genset(testname, grp, lst_ref);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
@@ -344,36 +372,39 @@ void permutation_group_test::test_7() throw(libtest::test_exception) {
     static const char *testname = "permutation_group_test::test_7()";
 
     typedef se_perm<4, double> se_perm_t;
-    typedef std::pair<permutation<4>, bool> signed_perm_t;
-    typedef std::list<signed_perm_t> perm_list_t;
+    typedef std::pair<permutation<4>, scalar_transf<double> > gen_perm_t;
+    typedef std::list<gen_perm_t> perm_list_t;
 
     try {
 
+        scalar_transf<double> tr0;
         symmetry_element_set<4, double> set(se_perm<4, double>::k_sym_type);
-        set.insert(se_perm<4, double>(permutation<4>().permute(0, 1), true));
-        set.insert(se_perm<4, double>(permutation<4>().permute(2, 3), true));
-        set.insert(se_perm<4, double>(permutation<4>().permute(0, 2).
-                permute(1, 3), true));
+        set.insert(se_perm<4, double>(
+                permutation<4>().permute(0, 1), tr0));
+        set.insert(se_perm<4, double>(
+                permutation<4>().permute(2, 3), tr0));
+        set.insert(se_perm<4, double>(
+                permutation<4>().permute(0, 2).permute(1, 3), tr0));
         permutation_group<4, double> pg(set);
 
         perm_list_t lst_ref;
-        lst_ref.push_back(signed_perm_t(
-                permutation<4>(), true));
-        lst_ref.push_back(signed_perm_t(
-                permutation<4>().permute(0, 2).permute(1, 3), true));
-        lst_ref.push_back(signed_perm_t(
-                permutation<4>().permute(0, 1), true));
-        lst_ref.push_back(signed_perm_t(
-                permutation<4>().permute(2, 3), true));
-        lst_ref.push_back(signed_perm_t(
-                permutation<4>().permute(0, 1).permute(2, 3), true));
-        lst_ref.push_back(signed_perm_t(
-                permutation<4>().permute(0, 2).permute(1, 3).permute(0, 1), true));
-        lst_ref.push_back(signed_perm_t(
-                permutation<4>().permute(0, 2).permute(1, 3).permute(2, 3), true));
-        lst_ref.push_back(signed_perm_t(
-                permutation<4>().permute(0, 3).permute(1, 2), true));
-        verify_members(testname, pg, lst_ref);
+        lst_ref.push_back(gen_perm_t(
+                permutation<4>(), tr0));
+        lst_ref.push_back(gen_perm_t(
+                permutation<4>().permute(0, 2).permute(1, 3), tr0));
+        lst_ref.push_back(gen_perm_t(
+                permutation<4>().permute(0, 1), tr0));
+        lst_ref.push_back(gen_perm_t(
+                permutation<4>().permute(2, 3), tr0));
+        lst_ref.push_back(gen_perm_t(
+                permutation<4>().permute(0, 1).permute(2, 3), tr0));
+        lst_ref.push_back(gen_perm_t(
+                permutation<4>().permute(0, 2).permute(1, 3).permute(0, 1), tr0));
+        lst_ref.push_back(gen_perm_t(
+                permutation<4>().permute(0, 2).permute(1, 3).permute(2, 3), tr0));
+        lst_ref.push_back(gen_perm_t(
+                permutation<4>().permute(0, 3).permute(1, 2), tr0));
+        verify_members(testname, pg, tr0, lst_ref);
         verify_genset(testname, pg, lst_ref);
 
     } catch(exception &e) {
@@ -388,40 +419,42 @@ void permutation_group_test::test_8() throw(libtest::test_exception) {
 
     static const char *testname = "permutation_group_test::test_8()";
 
-    typedef std::pair<permutation<6>, bool> signed_perm_t;
-    typedef std::list<signed_perm_t> perm_list_t;
+    typedef std::pair<permutation<6>, scalar_transf<double> > gen_perm_t;
+    typedef std::list<gen_perm_t> perm_list_t;
 
     try {
 
+        scalar_transf<double> tr0;
         symmetry_element_set<6, double> set(se_perm<6, double>::k_sym_type);
         set.insert(se_perm<6, double>(permutation<6>().permute(0, 3).
-                permute(1, 4).permute(2, 5), true));
-        set.insert(se_perm<6, double>(permutation<6>().permute(1, 2), true));
-        set.insert(se_perm<6, double>(permutation<6>().permute(4, 5), true));
+                permute(1, 4).permute(2, 5), tr0));
+        set.insert(se_perm<6, double>(permutation<6>().permute(1, 2), tr0));
+        set.insert(se_perm<6, double>(permutation<6>().permute(4, 5), tr0));
         permutation_group<6, double> pg(set);
 
         perm_list_t lst_ref;
         permutation<6> perm;
         perm.permute(0, 3).permute(1, 4).permute(2, 5);
-        lst_ref.push_back(signed_perm_t(permutation<6>(), true));
-        lst_ref.push_back(signed_perm_t(permutation<6>().permute(1, 2), true));
-        lst_ref.push_back(signed_perm_t(permutation<6>().permute(4, 5), true));
-        lst_ref.push_back(signed_perm_t(
-                permutation<6>().permute(1, 2).permute(4, 5), true));
-        lst_ref.push_back(signed_perm_t(perm, true));
-        lst_ref.push_back(signed_perm_t(
-                permutation<6>().permute(perm).permute(1, 2), true));
-        lst_ref.push_back(signed_perm_t(
-                permutation<6>().permute(perm).permute(4, 5), true));
-        lst_ref.push_back(signed_perm_t(
-                permutation<6>().permute(perm).permute(1, 2).permute(4, 5), true));
-        verify_members(testname, pg, lst_ref);
+        lst_ref.push_back(gen_perm_t(permutation<6>(), tr0));
+        lst_ref.push_back(gen_perm_t(permutation<6>().permute(1, 2), tr0));
+        lst_ref.push_back(gen_perm_t(permutation<6>().permute(4, 5), tr0));
+        lst_ref.push_back(gen_perm_t(
+                permutation<6>().permute(1, 2).permute(4, 5), tr0));
+        lst_ref.push_back(gen_perm_t(perm, tr0));
+        lst_ref.push_back(gen_perm_t(
+                permutation<6>().permute(perm).permute(1, 2), tr0));
+        lst_ref.push_back(gen_perm_t(
+                permutation<6>().permute(perm).permute(4, 5), tr0));
+        lst_ref.push_back(gen_perm_t(
+                permutation<6>().permute(perm).permute(1, 2).permute(4, 5), tr0));
+        verify_members(testname, pg, tr0, lst_ref);
         verify_genset(testname, pg, lst_ref);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
     }
 }
+
 
 /**	\test Tests the projection of the S4(+) group in a 4-space onto
 		a 2-space, S2(+)
@@ -439,11 +472,12 @@ throw(libtest::test_exception) {
         permutation<4> perm1; perm1.permute(0, 1).permute(1, 2).permute(2, 3);
         permutation<4> perm2; perm2.permute(0, 1);
 
+        scalar_transf<double> tr0;
         symmetry_element_set<4, double> set1(se_perm_t::k_sym_type),
                 set2(se_perm_t::k_sym_type);
 
-        set1.insert(se_perm_t(perm1, true));
-        set1.insert(se_perm_t(perm2, true));
+        set1.insert(se_perm_t(perm1, tr0));
+        set1.insert(se_perm_t(perm2, tr0));
         permutation_group<4, double> pg4(set1);
 
         permutation_group<2, double> pg2;
@@ -452,13 +486,13 @@ throw(libtest::test_exception) {
 
         permutation<2> p2_1, p2_2; p2_2.permute(0, 1);
 
-        if(!pg2.is_member(true, p2_1)) {
+        if(!pg2.is_member(tr0, p2_1)) {
             fail_test(testname, __FILE__, __LINE__,
-                    "!pg2.is_member(true, p2_1)");
+                    "!pg2.is_member(+1, p2_1)");
         }
-        if(!pg2.is_member(true, p2_2)) {
+        if(!pg2.is_member(tr0, p2_2)) {
             fail_test(testname, __FILE__, __LINE__,
-                    "!pg2.is_member(true, p2_2)");
+                    "!pg2.is_member(+1, p2_2)");
         }
 
     } catch(exception &e) {
@@ -480,10 +514,13 @@ throw(libtest::test_exception) {
 
     try {
 
-        permutation<4> perm1; perm1.permute(0, 1).permute(1, 2).permute(2, 3);
+        permutation<4> perm1;
+        perm1.permute(0, 1).permute(1, 2).permute(2, 3);
+
+        scalar_transf<double> tr0;
 
         symmetry_element_set<4, double> set1(se_perm_t::k_sym_type);
-        set1.insert(se_perm_t(perm1, true));
+        set1.insert(se_perm_t(perm1, tr0));
         permutation_group<4, double> pg4(set1);
 
         permutation_group<2, double> pg2;
@@ -492,13 +529,13 @@ throw(libtest::test_exception) {
 
         permutation<2> p2_1, p2_2; p2_2.permute(0, 1);
 
-        if(!pg2.is_member(true, p2_1)) {
+        if(!pg2.is_member(tr0, p2_1)) {
             fail_test(testname, __FILE__, __LINE__,
-                    "!pg2.is_member(true, p2_1)");
+                    "!pg2.is_member(+1, p2_1)");
         }
-        if(pg2.is_member(true, p2_2)) {
+        if(pg2.is_member(tr0, p2_2)) {
             fail_test(testname, __FILE__, __LINE__,
-                    "pg2.is_member(true, p2_2)");
+                    "pg2.is_member(+1, p2_2)");
         }
 
     } catch(exception &e) {
@@ -523,9 +560,10 @@ throw(libtest::test_exception) {
         permutation<4> perm1; perm1.permute(0, 1).permute(1, 2).permute(2, 3);
         permutation<4> perm2; perm2.permute(0, 1);
 
+        scalar_transf<double> tr0, tr1(-1.0);
         symmetry_element_set<4, double> set1(se_perm_t::k_sym_type);
-        set1.insert(se_perm_t(perm1, false));
-        set1.insert(se_perm_t(perm2, false));
+        set1.insert(se_perm_t(perm1, tr1));
+        set1.insert(se_perm_t(perm2, tr1));
         permutation_group<4, double> pg4(set1);
 
         permutation_group<2, double> pg2;
@@ -534,19 +572,20 @@ throw(libtest::test_exception) {
 
         permutation<2> p2_1, p2_2; p2_2.permute(0, 1);
 
-        if(!pg2.is_member(true, p2_1)) {
+        if(! pg2.is_member(tr0, p2_1)) {
             fail_test(testname, __FILE__, __LINE__,
-                    "!pg2.is_member(true, p2_1)");
+                    "!pg2.is_member(+1, p2_1)");
         }
-        if(!pg2.is_member(false, p2_2)) {
+        if(! pg2.is_member(tr1, p2_2)) {
             fail_test(testname, __FILE__, __LINE__,
-                    "!pg2.is_member(false, p2_2)");
+                    "!pg2.is_member(-1, p2_2)");
         }
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
     }
 }
+
 
 /**	\test Tests the projection of the S2(-) group in a 2-space onto
 		a 1-space
@@ -561,11 +600,11 @@ throw(libtest::test_exception) {
 
     try {
 
-        bool symm = false;
         permutation<2> perm1; perm1.permute(0, 1);
+        scalar_transf<double> tr0, tr1(-1.0);
 
         symmetry_element_set<2, double> set1(se_perm_t::k_sym_type);
-        set1.insert(se_perm_t(perm1, symm));
+        set1.insert(se_perm_t(perm1, tr1));
         permutation_group<2, double> pg2(set1);
 
         permutation_group<1, double> pg1;
@@ -574,9 +613,9 @@ throw(libtest::test_exception) {
 
         permutation<1> p1;
 
-        if(!pg1.is_member(true, p1)) {
+        if(!pg1.is_member(tr0, p1)) {
             fail_test(testname, __FILE__, __LINE__,
-                    "!pg1.is_member(true, p1)");
+                    "!pg1.is_member(+1, p1)");
         }
 
     } catch(exception &e) {
@@ -594,17 +633,18 @@ throw(libtest::test_exception) {
     static const char *testname =
             "permutation_group_test::test_project_down_8a()";
 
-    typedef std::pair<permutation<4>, bool> signed_perm_t;
-    typedef std::list<signed_perm_t> perm_list_t;
+    typedef std::pair< permutation<4>, scalar_transf<double> > gen_perm_t;
+    typedef std::list<gen_perm_t> perm_list_t;
 
     try {
 
+        scalar_transf<double> tr0;
         symmetry_element_set<6, double> set(se_perm<6, double>::k_sym_type);
         set.insert(se_perm<6, double>(permutation<6>().permute(0, 3).
-                permute(1, 4).permute(2, 5), true));
-        set.insert(se_perm<6, double>(permutation<6>().permute(1, 2), true));
-        set.insert(se_perm<6, double>(permutation<6>().permute(4, 5), true));
-        set.insert(se_perm<6, double>(permutation<6>().permute(2, 5), true));
+                permute(1, 4).permute(2, 5), tr0));
+        set.insert(se_perm<6, double>(permutation<6>().permute(1, 2), tr0));
+        set.insert(se_perm<6, double>(permutation<6>().permute(4, 5), tr0));
+        set.insert(se_perm<6, double>(permutation<6>().permute(2, 5), tr0));
         permutation_group<6, double> pg(set);
         permutation_group<4, double> pg2;
         mask<6> m;
@@ -612,15 +652,15 @@ throw(libtest::test_exception) {
         pg.project_down(m, pg2);
 
         perm_list_t lst_ref;
-        lst_ref.push_back(signed_perm_t(
-                permutation<4>(), true));
-        lst_ref.push_back(signed_perm_t(
-                permutation<4>().permute(0, 2), true));
-        lst_ref.push_back(signed_perm_t(
-                permutation<4>().permute(1, 3), true));
-        lst_ref.push_back(signed_perm_t(
-                permutation<4>().permute(0, 2).permute(1, 3), true));
-        verify_members(testname, pg2, lst_ref);
+        lst_ref.push_back(gen_perm_t(
+                permutation<4>(), tr0));
+        lst_ref.push_back(gen_perm_t(
+                permutation<4>().permute(0, 2), tr0));
+        lst_ref.push_back(gen_perm_t(
+                permutation<4>().permute(1, 3), tr0));
+        lst_ref.push_back(gen_perm_t(
+                permutation<4>().permute(0, 2).permute(1, 3), tr0));
+        verify_members(testname, pg2, tr0, lst_ref);
         verify_genset(testname, pg2, lst_ref);
 
     } catch(exception &e) {
@@ -638,17 +678,18 @@ throw(libtest::test_exception) {
     static const char *testname =
             "permutation_group_test::test_project_down_8b()";
 
-    typedef std::pair<permutation<4>, bool> signed_perm_t;
-    typedef std::list<signed_perm_t> perm_list_t;
+    typedef std::pair< permutation<4>, scalar_transf<double> > gen_perm_t;
+    typedef std::list<gen_perm_t> perm_list_t;
 
     try {
 
+        scalar_transf<double> tr0;
         symmetry_element_set<6, double> set(se_perm<6, double>::k_sym_type);
         set.insert(se_perm<6, double>(permutation<6>().permute(0, 3).
-                permute(1, 4).permute(2, 5), true));
-        set.insert(se_perm<6, double>(permutation<6>().permute(1, 2), true));
-        set.insert(se_perm<6, double>(permutation<6>().permute(4, 5), true));
-        set.insert(se_perm<6, double>(permutation<6>().permute(2, 4), true));
+                permute(1, 4).permute(2, 5), tr0));
+        set.insert(se_perm<6, double>(permutation<6>().permute(1, 2), tr0));
+        set.insert(se_perm<6, double>(permutation<6>().permute(4, 5), tr0));
+        set.insert(se_perm<6, double>(permutation<6>().permute(2, 4), tr0));
         permutation_group<6, double> pg(set);
         permutation_group<4, double> pg2;
         mask<6> m;
@@ -656,21 +697,22 @@ throw(libtest::test_exception) {
         pg.project_down(m, pg2);
 
         perm_list_t lst_ref;
-        lst_ref.push_back(signed_perm_t(
-                permutation<4>(), true));
-        lst_ref.push_back(signed_perm_t(
-                permutation<4>().permute(0, 2), true));
-        lst_ref.push_back(signed_perm_t(
-                permutation<4>().permute(1, 3), true));
-        lst_ref.push_back(signed_perm_t(
-                permutation<4>().permute(0, 2).permute(1, 3), true));
-        verify_members(testname, pg2, lst_ref);
+        lst_ref.push_back(gen_perm_t(
+                permutation<4>(), tr0));
+        lst_ref.push_back(gen_perm_t(
+                permutation<4>().permute(0, 2), tr0));
+        lst_ref.push_back(gen_perm_t(
+                permutation<4>().permute(1, 3), tr0));
+        lst_ref.push_back(gen_perm_t(
+                permutation<4>().permute(0, 2).permute(1, 3), tr0));
+        verify_members(testname, pg2, tr0, lst_ref);
         verify_genset(testname, pg2, lst_ref);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
     }
 }
+
 
 /**	\test Stabilize element set {1, 3} in group S6 returning S4.
  **/
@@ -684,14 +726,14 @@ throw(libtest::test_exception) {
 
     try {
 
-        bool symm = true;
+        scalar_transf<double> tr0;
 
         permutation<6> p1, p2;
         p1.permute(0, 1).permute(1, 2).permute(2, 3).permute(3, 4).permute(4, 5);
         p2.permute(0, 1);
         symmetry_element_set<6, double> set1(se_perm_t::k_sym_type);
-        set1.insert(se_perm_t(p1, symm));
-        set1.insert(se_perm_t(p2, symm));
+        set1.insert(se_perm_t(p1, tr0));
+        set1.insert(se_perm_t(p2, tr0));
 
         permutation_group<6, double> pg1(set1), pg2;
         mask<6> msk; msk[1] = true; msk[3] = true;
@@ -702,23 +744,24 @@ throw(libtest::test_exception) {
         p2b.permute(0, 2);
         p3b.permute(2, 4).permute(4, 5);
 
-        if(!pg2.is_member(true, p1b)) {
+        if(!pg2.is_member(tr0, p1b)) {
             fail_test(testname, __FILE__, __LINE__,
-                    "!pg2.is_member(true, p1b)");
+                    "!pg2.is_member(+1, p1b)");
         }
-        if(!pg2.is_member(true, p2b)) {
+        if(!pg2.is_member(tr0, p2b)) {
             fail_test(testname, __FILE__, __LINE__,
-                    "!pg2.is_member(true, p2b)");
+                    "!pg2.is_member(+1, p2b)");
         }
-        if(!pg2.is_member(true, p3b)) {
+        if(!pg2.is_member(tr0, p3b)) {
             fail_test(testname, __FILE__, __LINE__,
-                    "!pg2.is_member(true, p3b)");
+                    "!pg2.is_member(+1, p3b)");
         }
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
     }
 }
+
 
 /**	\test Stabilize element set {1,3} in group [ijkl] = [klij]
  **/
@@ -732,11 +775,11 @@ throw(libtest::test_exception) {
 
     try {
 
-        bool symm = true;
+        scalar_transf<double> tr0;
 
         permutation<4> p1; p1.permute(0, 2).permute(1, 3);
         symmetry_element_set<4, double> set1(se_perm_t::k_sym_type);
-        set1.insert(se_perm_t(p1, symm));
+        set1.insert(se_perm_t(p1, tr0));
 
         permutation_group<4, double> pg1(set1), pg2;
 
@@ -744,15 +787,16 @@ throw(libtest::test_exception) {
         pg1.stabilize(msk, pg2);
 
 
-        if(!pg2.is_member(true, p1)) {
+        if(!pg2.is_member(tr0, p1)) {
             fail_test(testname, __FILE__, __LINE__,
-                    "!pg2.is_member(true, p1)");
+                    "!pg2.is_member(+1, p1)");
         }
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
     }
 }
+
 
 /**	\test Stabilize element set {1,2} in group S2 x S2 with
  	 	 pairwise permutation
@@ -767,16 +811,16 @@ throw(libtest::test_exception) {
 
     try {
 
-        bool symm = true;
+        scalar_transf<double> tr0;
 
         permutation<4> p1, p2, p3;
         p1.permute(0, 1);
         p2.permute(2, 3);
         p3.permute(0, 2).permute(1, 3);
         symmetry_element_set<4, double> set1(se_perm_t::k_sym_type);
-        set1.insert(se_perm_t(p1, symm));
-        set1.insert(se_perm_t(p2, symm));
-        set1.insert(se_perm_t(p3, true));
+        set1.insert(se_perm_t(p1, tr0));
+        set1.insert(se_perm_t(p2, tr0));
+        set1.insert(se_perm_t(p3, tr0));
 
         permutation_group<4, double> pg1(set1), pg2;
 
@@ -786,15 +830,16 @@ throw(libtest::test_exception) {
         permutation<4> p1b;
         p1b.permute(0, 3).permute(1, 2);
 
-        if(! pg2.is_member(true, p1b)) {
+        if(! pg2.is_member(tr0, p1b)) {
             fail_test(testname, __FILE__, __LINE__,
-                    "!pg2.is_member(true, p1b)");
+                    "!pg2.is_member(+1, p1b)");
         }
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
     }
 }
+
 
 /**	\test Stabilize element set {0,2} in group A2 x A2 with
  	 	 pairwise permutation
@@ -809,28 +854,30 @@ throw(libtest::test_exception) {
 
     try {
 
+        scalar_transf<double> tr0, tr1(-1.0);
         permutation<4> p1, p2, p3;
         p1.permute(0, 1);
         p2.permute(2, 3);
         p3.permute(0, 2).permute(1, 3);
         symmetry_element_set<4, double> set1(se_perm_t::k_sym_type);
-        set1.insert(se_perm_t(p1, false));
-        set1.insert(se_perm_t(p2, false));
-        set1.insert(se_perm_t(p3, true));
+        set1.insert(se_perm_t(p1, tr1));
+        set1.insert(se_perm_t(p2, tr1));
+        set1.insert(se_perm_t(p3, tr0));
         permutation_group<4, double> pg1(set1), pg2;
 
         mask<4> msk; msk[0] = true; msk[2] = true;
         pg1.stabilize(msk, pg2);
 
-        if(!pg2.is_member(true, p3)) {
+        if(!pg2.is_member(tr0, p3)) {
             fail_test(testname, __FILE__, __LINE__,
-                    "!pg2.is_member(true, p3)");
+                    "!pg2.is_member(+1, p3)");
         }
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
     }
 }
+
 
 /**	\test Stabilize element set {0,1} in group A2 x A2 with
  	 	 pairwise permutation
@@ -845,31 +892,33 @@ throw(libtest::test_exception) {
 
     try {
 
+        scalar_transf<double> tr0, tr1(-1.0);
         permutation<4> p1, p2, p3;
         p1.permute(0, 1);
         p2.permute(2, 3);
         p3.permute(0, 2).permute(1, 3);
         symmetry_element_set<4, double> set1(se_perm_t::k_sym_type);
-        set1.insert(se_perm_t(p1, false));
-        set1.insert(se_perm_t(p2, false));
-        set1.insert(se_perm_t(p3, true));
+        set1.insert(se_perm_t(p1, tr1));
+        set1.insert(se_perm_t(p2, tr1));
+        set1.insert(se_perm_t(p3, tr0));
         permutation_group<4, double> pg1(set1), pg2;
 
         mask<4> msk; msk[0] = true; msk[1] = true;
 
         pg1.stabilize(msk, pg2);
 
-        if(!pg2.is_member(false, p1)) {
-            fail_test(testname, __FILE__, __LINE__, "!pg2.is_member(true, p1)");
+        if(!pg2.is_member(tr1, p1)) {
+            fail_test(testname, __FILE__, __LINE__, "!pg2.is_member(-1, p1)");
         }
-        if(!pg2.is_member(false, p2)) {
-            fail_test(testname, __FILE__, __LINE__, "!pg2.is_member(true, p2)");
+        if(!pg2.is_member(tr1, p2)) {
+            fail_test(testname, __FILE__, __LINE__, "!pg2.is_member(-1, p2)");
         }
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
     }
 }
+
 
 /**	\test Stabilize element set {2, 3, 4} in group S5
  **/
@@ -883,10 +932,11 @@ throw(libtest::test_exception) {
 
     try {
 
+        scalar_transf<double> tr0;
         symmetry_element_set<5, double> set1(se_perm_t::k_sym_type);
         set1.insert(se_perm_t(permutation<5>().permute(0, 1).permute(1, 2)
-                .permute(2, 3).permute(3, 4), true));
-        set1.insert(se_perm_t(permutation<5>().permute(3, 4), true));
+                .permute(2, 3).permute(3, 4), tr0));
+        set1.insert(se_perm_t(permutation<5>().permute(3, 4), tr0));
         permutation_group<5, double> pg1(set1), pg2;
 
         mask<5> msk; msk[2] = true; msk[3] = true; msk[4] = true;
@@ -895,15 +945,16 @@ throw(libtest::test_exception) {
         permutation<5> p1;
         p1.permute(0, 1);
 
-        if(!pg2.is_member(true, p1)) {
+        if(!pg2.is_member(tr0, p1)) {
             fail_test(testname, __FILE__, __LINE__,
-                    "!pg2.is_member(true, p1)");
+                    "!pg2.is_member(+1, p1)");
         }
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
     }
 }
+
 
 /**	\test Stabilize element set {0,3} in group A2 x A2 with
  	 	 pairwise permutation
@@ -918,14 +969,15 @@ throw(libtest::test_exception) {
 
     try {
 
+        scalar_transf<double> tr0, tr1(-1.0);
         permutation<4> p1, p2, p3;
         p1.permute(0, 1);
         p2.permute(2, 3);
         p3.permute(0, 2).permute(1, 3);
         symmetry_element_set<4, double> set1(se_perm_t::k_sym_type);
-        set1.insert(se_perm_t(p1, false));
-        set1.insert(se_perm_t(p2, false));
-        set1.insert(se_perm_t(p3, true));
+        set1.insert(se_perm_t(p1, tr1));
+        set1.insert(se_perm_t(p2, tr1));
+        set1.insert(se_perm_t(p3, tr0));
         permutation_group<4, double> pg1(set1), pg2;
 
         mask<4> msk; msk[0] = true; msk[3] = true;
@@ -934,15 +986,16 @@ throw(libtest::test_exception) {
         permutation<4> p1b;
         p1b.permute(0, 3).permute(1, 2);
 
-        if(!pg2.is_member(true, p1b)) {
+        if(!pg2.is_member(tr0, p1b)) {
             fail_test(testname, __FILE__, __LINE__,
-                    "!pg2.is_member(true, p1b)");
+                    "!pg2.is_member(+1, p1b)");
         }
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
     }
 }
+
 
 void permutation_group_test::test_stabilize2_1()
 throw(libtest::test_exception) {
@@ -954,6 +1007,7 @@ throw(libtest::test_exception) {
 
     try {
 
+        scalar_transf<double> tr0, tr1(-1.0);
         permutation<6> p1, p2, p3, p4, p5;
         p1.permute(0, 1);
         p2.permute(1, 2);
@@ -961,26 +1015,27 @@ throw(libtest::test_exception) {
         p4.permute(4, 5);
         p5.permute(0, 3).permute(1, 4).permute(2, 5);
         symmetry_element_set<6, double> set1(se_perm_t::k_sym_type);
-        set1.insert(se_perm_t(p1, true));
-        set1.insert(se_perm_t(p2, true));
-        set1.insert(se_perm_t(p3, true));
-        set1.insert(se_perm_t(p4, true));
-        set1.insert(se_perm_t(p5, true));
+        set1.insert(se_perm_t(p1, tr0));
+        set1.insert(se_perm_t(p2, tr0));
+        set1.insert(se_perm_t(p3, tr0));
+        set1.insert(se_perm_t(p4, tr0));
+        set1.insert(se_perm_t(p5, tr0));
         permutation_group<6, double> pg1(set1), pg2;
 
         sequence<6, size_t> seq(0);
         seq[2] = 1; seq[5] = 1; seq[1] = 2; seq[4] = 2;
         pg1.stabilize(seq, pg2);
 
-        if(!pg2.is_member(true, p5)) {
+        if(!pg2.is_member(tr0, p5)) {
             fail_test(testname, __FILE__, __LINE__,
-                    "!pg2.is_member(true, p5)");
+                    "!pg2.is_member(+1, p5)");
         }
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
     }
 }
+
 
 void permutation_group_test::test_stabilize2_2()
 throw(libtest::test_exception) {
@@ -992,6 +1047,7 @@ throw(libtest::test_exception) {
 
     try {
 
+        scalar_transf<double> tr0, tr1(-1.0);
         permutation<8> p1, p2, p3, p4, p5, p6, p7;
         p1.permute(0, 1);
         p2.permute(2, 3);
@@ -1002,36 +1058,37 @@ throw(libtest::test_exception) {
         p7.permute(0, 4).permute(1, 5).permute(2, 6).permute(3, 7);
 
         symmetry_element_set<8, double> set1(se_perm_t::k_sym_type);
-        set1.insert(se_perm_t(p1, false));
-        set1.insert(se_perm_t(p2, false));
-        set1.insert(se_perm_t(p3, true));
-        set1.insert(se_perm_t(p4, false));
-        set1.insert(se_perm_t(p5, false));
-        set1.insert(se_perm_t(p6, true));
-        set1.insert(se_perm_t(p7, true));
+        set1.insert(se_perm_t(p1, tr1));
+        set1.insert(se_perm_t(p2, tr1));
+        set1.insert(se_perm_t(p3, tr0));
+        set1.insert(se_perm_t(p4, tr1));
+        set1.insert(se_perm_t(p5, tr1));
+        set1.insert(se_perm_t(p6, tr0));
+        set1.insert(se_perm_t(p7, tr0));
         permutation_group<8, double> pg1(set1), pg2;
 
         sequence<8, size_t> seq(0);
         seq[2] = 1; seq[6] = 1; seq[3] = 2; seq[7] = 2;
         pg1.stabilize(seq, pg2);
 
-        if(!pg2.is_member(false, p1)) {
+        if(!pg2.is_member(tr1, p1)) {
             fail_test(testname, __FILE__, __LINE__,
-                    "!pg4.is_member(false, p1)");
+                    "!pg4.is_member(-1, p1)");
         }
-        if(!pg2.is_member(false, p4)) {
+        if(!pg2.is_member(tr1, p4)) {
             fail_test(testname, __FILE__, __LINE__,
-                    "!pg4.is_member(false, p4)");
+                    "!pg4.is_member(-1, p4)");
         }
-        if(!pg2.is_member(true, p7)) {
+        if(!pg2.is_member(tr0, p7)) {
             fail_test(testname, __FILE__, __LINE__,
-                    "!pg4.is_member(true, p7)");
+                    "!pg4.is_member(+1, p7)");
         }
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
     }
 }
+
 
 /**	\test Test the identity %permutation on S2(+)*S2(+).
  **/
@@ -1044,26 +1101,27 @@ void permutation_group_test::test_permute_1() throw(libtest::test_exception) {
 
     try {
 
+        scalar_transf<double> tr0;
         permutation<4> perm1; perm1.permute(0, 1);
         permutation<4> perm2; perm2.permute(2, 3);
 
         symmetry_element_set<4, double> set1(se_perm_t::k_sym_type),
                 set2(se_perm_t::k_sym_type);
 
-        set1.insert(se_perm_t(perm1, true));
-        set1.insert(se_perm_t(perm2, true));
+        set1.insert(se_perm_t(perm1, tr0));
+        set1.insert(se_perm_t(perm2, tr0));
         permutation_group<4, double> pg4(set1);
 
         permutation<4> perm0;
         pg4.permute(perm0);
 
-        if(!pg4.is_member(true, perm1)) {
+        if(!pg4.is_member(tr0, perm1)) {
             fail_test(testname, __FILE__, __LINE__,
-                    "!pg4.is_member(true, perm1)");
+                    "!pg4.is_member(+1, perm1)");
         }
-        if(!pg4.is_member(true, perm2)) {
+        if(!pg4.is_member(tr0, perm2)) {
             fail_test(testname, __FILE__, __LINE__,
-                    "!pg4.is_member(true, perm2)");
+                    "!pg4.is_member(+1, perm2)");
         }
 
     } catch(exception &e) {
@@ -1083,14 +1141,15 @@ void permutation_group_test::test_permute_2() throw(libtest::test_exception) {
 
     try {
 
+        scalar_transf<double> tr0;
         permutation<4> perm1; perm1.permute(0, 1);
         permutation<4> perm2; perm2.permute(2, 3);
 
         symmetry_element_set<4, double> set1(se_perm_t::k_sym_type),
                 set2(se_perm_t::k_sym_type);
 
-        set1.insert(se_perm_t(perm1, true));
-        set1.insert(se_perm_t(perm2, true));
+        set1.insert(se_perm_t(perm1, tr0));
+        set1.insert(se_perm_t(perm2, tr0));
         permutation_group<4, double> pg4(set1);
 
         permutation<4> perm0;
@@ -1098,14 +1157,14 @@ void permutation_group_test::test_permute_2() throw(libtest::test_exception) {
         pg4.permute(perm0);
 
         perm1.permute(0, 1).permute(0, 2);
-        if(!pg4.is_member(true, perm1)) {
+        if(!pg4.is_member(tr0, perm1)) {
             fail_test(testname, __FILE__, __LINE__,
-                    "!pg4.is_member(true, perm1)");
+                    "!pg4.is_member(+1, perm1)");
         }
         perm2.permute(2, 3).permute(1, 3);
-        if(!pg4.is_member(true, perm2)) {
+        if(!pg4.is_member(tr0, perm2)) {
             fail_test(testname, __FILE__, __LINE__,
-                    "!pg4.is_member(true, perm2)");
+                    "!pg4.is_member(+1, perm2)");
         }
 
     } catch(exception &e) {
@@ -1125,14 +1184,15 @@ void permutation_group_test::test_permute_3() throw(libtest::test_exception) {
 
     try {
 
+        scalar_transf<double> tr0;
         permutation<4> perm1; perm1.permute(0, 1).permute(1, 2);
         permutation<4> perm2; perm2.permute(0, 1);
 
         symmetry_element_set<4, double> set1(se_perm_t::k_sym_type),
                 set2(se_perm_t::k_sym_type);
 
-        set1.insert(se_perm_t(perm1, true));
-        set1.insert(se_perm_t(perm2, true));
+        set1.insert(se_perm_t(perm1, tr0));
+        set1.insert(se_perm_t(perm2, tr0));
         permutation_group<4, double> pg4(set1);
 
         permutation<4> perm0;
@@ -1141,29 +1201,29 @@ void permutation_group_test::test_permute_3() throw(libtest::test_exception) {
 
         perm1.reset();
         perm1.permute(1, 2).permute(2, 3);
-        if(!pg4.is_member(true, perm1)) {
+        if(!pg4.is_member(tr0, perm1)) {
             fail_test(testname, __FILE__, __LINE__,
-                    "!pg4.is_member(true, perm1)");
+                    "!pg4.is_member(+1, perm1)");
         }
         perm2.reset();
         perm2.permute(2, 3);
-        if(!pg4.is_member(true, perm2)) {
+        if(!pg4.is_member(tr0, perm2)) {
             fail_test(testname, __FILE__, __LINE__,
-                    "!pg4.is_member(true, perm2)");
+                    "!pg4.is_member(+1, perm2)");
         }
 
         permutation<4> perm3;
         perm3.permute(1, 3);
-        if(!pg4.is_member(true, perm3)) {
+        if(!pg4.is_member(tr0, perm3)) {
             fail_test(testname, __FILE__, __LINE__,
-                    "!pg4.is_member(true, perm3)");
+                    "!pg4.is_member(+1, perm3)");
         }
 
         permutation<4> perm4;
         perm4.permute(0, 3);
-        if(pg4.is_member(true, perm4)) {
+        if(pg4.is_member(tr0, perm4)) {
             fail_test(testname, __FILE__, __LINE__,
-                    "pg4.is_member(true, perm4)");
+                    "pg4.is_member(+1, perm4)");
         }
 
     } catch(exception &e) {
@@ -1172,19 +1232,20 @@ void permutation_group_test::test_permute_3() throw(libtest::test_exception) {
 }
 
 
-template<size_t N>
+template<size_t N, typename T>
 void permutation_group_test::verify_group(const char *testname,
-        const std::list< std::pair<permutation<N>, bool> > &lst)
+        const std::list< std::pair<permutation<N>, scalar_transf<T> > > &lst)
 throw(libtest::test_exception) {
 
-    typedef std::pair<permutation<N>, bool> signed_perm_t;
-    typedef std::list<signed_perm_t> perm_list_t;
+    typedef std::pair<permutation<N>, scalar_transf<T> > gen_perm_t;
+    typedef std::list<gen_perm_t> perm_list_t;
     typedef typename perm_list_t::const_iterator const_iterator;
 
     for(const_iterator i = lst.begin(); i != lst.end(); i++) {
         for(const_iterator j = lst.begin(); j != lst.end(); j++) {
 
             permutation<N> p(i->first); p.permute(j->first);
+            scalar_transf<T> tr(i->second); tr.transform(j->second);
 
             const_iterator k = lst.begin();
             for (; k != lst.end(); k++)
@@ -1192,16 +1253,14 @@ throw(libtest::test_exception) {
 
             if (k == lst.end()) {
                 std::ostringstream ss;
-                ss << "Not a group: missing " << p << "("
-                        << (i->first == j->first ? '+' : '-') << ")";
+                ss << "Not a group: missing " << p << "(" << tr << ")";
                 fail_test(testname, __FILE__, __LINE__,
                         ss.str().c_str());
             }
 
-            if (k->second && (i->second != j->first)) {
+            if (k->second != tr) {
                 std::ostringstream ss;
-                ss << "Not a group: " << p << "("
-                        << (i->first == j->first ? '+' : '-') << ") is invalid.";
+                ss << "Not a group: " << p << "(" << tr << ") is invalid.";
                 fail_test(testname, __FILE__, __LINE__,
                         ss.str().c_str());
             }
@@ -1212,20 +1271,58 @@ throw(libtest::test_exception) {
 
 template<size_t N, typename T>
 void permutation_group_test::verify_members(const char *testname,
-        const permutation_group<N, T> &grp,
-        const std::list< std::pair<permutation<N>, bool> > &allowed)
-throw(libtest::test_exception) {
+        const permutation_group<N, T> &grp, const scalar_transf<T> &tr,
+        const std::list< std::pair<permutation<N>, scalar_transf<T> > > &allowed)
+    throw(libtest::test_exception) {
 
-    typedef std::pair<permutation<N>, bool> signed_perm_t;
-    typedef std::list<signed_perm_t> perm_list_t;
+    typedef std::pair<permutation<N>, scalar_transf<T> > gen_perm_t;
+    typedef std::list<gen_perm_t> perm_list_t;
     typedef typename perm_list_t::iterator iterator;
     typedef typename perm_list_t::const_iterator const_iterator;
 
+    // Determine the order of the cyclic group for which the scalar
+    // transformation
+    size_t orderc = 1;
+    scalar_transf<T> trx(tr), tr0;
+    while (! trx.is_identity() && orderc <= N) {
+        trx.transform(tr);
+        orderc++;
+    }
+    if (orderc > N) return;
+
     perm_list_t all;
-    all_permutations(false, all);
-    for(iterator i = all.begin(); i != all.end(); i++) {
-        if (! i->first.is_identity() && ! i->second)
-            all.push_back(signed_perm_t(i->first, true));
+    all.push_back(gen_perm_t(permutation<N>(), tr0));
+
+    permutation_generator<N> pg;
+    while (pg.next()) {
+
+        all.push_back(gen_perm_t(pg.get_perm(), tr0));
+        if (orderc == 1) continue;
+
+        permutation<N> p(pg.get_perm());
+        size_t orderp = 1;
+        while (! p.is_identity() && orderp <= N) {
+            p.permute(pg.get_perm());
+            orderp++;
+        }
+        size_t x, y;
+        if (orderp > orderc) { x = orderp; y = orderc; }
+        else { x = orderc; y = orderp; }
+        while (y != 0) {
+            size_t z = y;
+            y = x % y;
+            x = z;
+        }
+
+        size_t n = orderc/x;
+        scalar_transf<T> trx;
+        for (size_t i = 0; i < n; i++) trx.transform(tr);
+
+        scalar_transf<T> tr1(trx);
+        for (size_t i = 1; i < orderp && ! tr1.is_identity(); i++) {
+            all.push_back(gen_perm_t(pg.get_perm(), tr1));
+            tr1.transform(trx);
+        }
     }
 
     for(iterator i = all.begin(); i != all.end(); i++) {
@@ -1237,8 +1334,7 @@ throw(libtest::test_exception) {
         bool bsp = grp.is_member(i->second, i->first);
         if(bsp != (isp != allowed.end())) {
             std::ostringstream ss;
-            ss << "Inconsistent: " << i->first << "("
-                    << (i->second ? '+' : '-') << ") ";
+            ss << "Inconsistent: " << i->first << "(" << i->second << ") ";
             if(bsp) ss << "should not be allowed.";
             else ss << "should be allowed.";
             fail_test(testname, __FILE__, __LINE__,
@@ -1251,11 +1347,11 @@ throw(libtest::test_exception) {
 template<size_t N, typename T>
 void permutation_group_test::verify_genset(const char *testname,
         const permutation_group<N, T> &grp,
-        const std::list< std::pair<permutation<N>, bool> > &allowed)
+        const std::list< std::pair<permutation<N>, scalar_transf<T> > > &allowed)
 throw(libtest::test_exception) {
 
-    typedef std::pair<permutation<N>, bool> signed_perm_t;
-    typedef std::list<signed_perm_t> perm_list_t;
+    typedef std::pair<permutation<N>, scalar_transf<T> > gen_perm_t;
+    typedef std::list<gen_perm_t> perm_list_t;
     typedef typename perm_list_t::iterator iterator;
     typedef typename perm_list_t::const_iterator const_iterator;
 
@@ -1264,7 +1360,7 @@ throw(libtest::test_exception) {
     symmetry_element_set_adapter< N, T, se_perm<N, T> > adapter(set);
 
     perm_list_t lst;
-    gen_group(adapter, true, permutation<N>(), lst);
+    gen_group(adapter, scalar_transf<T>(), permutation<N>(), lst);
 
     if(lst.size() != allowed.size()) {
         fail_test(testname, __FILE__, __LINE__,
@@ -1280,7 +1376,7 @@ throw(libtest::test_exception) {
 
             std::ostringstream ss;
             ss << "Permutation " << i->first << "("
-                    << (i->second ? '+' : '-') << " is not allowed.";
+                    << i->second << ") is not allowed.";
             fail_test(testname, __FILE__, __LINE__,
                     ss.str().c_str());
         }
@@ -1289,74 +1385,22 @@ throw(libtest::test_exception) {
 }
 
 
-template<size_t N>
-void permutation_group_test::all_permutations(
-        bool sign, std::list< std::pair<permutation<N>, bool> > &lst) {
-
-    typedef std::pair<permutation<N>, bool> signed_perm_t;
-    typedef std::list< std::pair<permutation<N - 1>, bool> > perm_list_t;
-
-    perm_list_t lst2;
-    all_permutations(sign, lst2);
-
-    for(typename perm_list_t::iterator i2 = lst2.begin();
-            i2 != lst2.end(); i2++) {
-
-        sequence<N - 1, size_t> seq2a(0), seq2b(0);
-        for(size_t j = 0; j < N - 1; j++) seq2a[j] = seq2b[j] = j;
-        i2->first.apply(seq2b);
-
-        for(size_t i = 0; i < N; i++) {
-
-            sequence<N, size_t> seq1a(0), seq1b(0);
-
-            for(size_t j = 0, k = 0; j < N; j++) {
-                seq1a[j] = j;
-                if(j == i) seq1b[j] = N - 1;
-                else { seq1b[j] = seq2b[k]; k++; }
-            }
-
-            permutation_builder<N> pb1(seq1b, seq1a);
-            if (sign)
-                lst.push_back(signed_perm_t(pb1.get_perm(), true));
-            else
-                lst.push_back(signed_perm_t(pb1.get_perm(),
-                        ((N - i) % 2 ? i2->second : ! i2->second)));
-        }
-    }
-}
-
-
-void permutation_group_test::all_permutations(
-        bool sign, std::list< std::pair<permutation<1>, bool> > &lst) {
-
-    typedef std::pair<permutation<1>, bool> signed_perm_t;
-
-    lst.push_back(signed_perm_t(permutation<1>(), true));
-}
-
-
-void permutation_group_test::all_permutations(
-        bool sign, std::list< std::pair< permutation<0>, bool> > &lst) {
-
-}
-
-
 template<size_t N, typename T>
 void permutation_group_test::gen_group(
         const symmetry_element_set_adapter< N, T, se_perm<N, T> > &set,
-        bool sign, const permutation<N> &perm0,
-        std::list< std::pair<permutation<N>, bool> > &lst) {
+        const scalar_transf<T> &tr0, const permutation<N> &perm0,
+        std::list< std::pair<permutation<N>, scalar_transf<T> > > &lst) {
 
-    typedef std::pair<permutation<N>, bool> signed_perm_t;
-    typedef std::list<signed_perm_t> perm_list_t;
+    typedef std::pair<permutation<N>, scalar_transf<T> > gen_perm_t;
+    typedef std::list<gen_perm_t> perm_list_t;
     typedef typename perm_list_t::const_iterator const_iterator;
 
     const_iterator p = lst.begin();
     for(; p != lst.end(); p++)
-        if (p->first.equals(perm0) && p->second == sign) return;
+        if (p->first.equals(perm0) && p->second == tr0) return;
 
-    if(sign || ! perm0.is_identity()) lst.push_back(signed_perm_t(perm0, sign));
+    if(tr0.is_identity() || ! perm0.is_identity())
+        lst.push_back(gen_perm_t(perm0, tr0));
 
     typename symmetry_element_set_adapter< N, T, se_perm<N, T> >::iterator i =
             set.begin();
@@ -1364,7 +1408,9 @@ void permutation_group_test::gen_group(
         const se_perm<N, T> &e = set.get_elem(i);
         permutation<N> perm1(perm0);
         perm1.permute(e.get_perm());
-        gen_group(set, (e.is_symm() ? sign : ! sign), perm1, lst);
+        scalar_transf<T> tr1(tr0);
+        tr1.transform(e.get_transf());
+        gen_group(set, tr1, perm1, lst);
     }
 }
 

@@ -52,36 +52,31 @@ private:
     void test_permute_2() throw(libtest::test_exception);
     void test_permute_3() throw(libtest::test_exception);
 
-    template<size_t N>
+private:
+    typedef scalar_transf<double> transf_t;
+
+    template<size_t N, typename T>
     void verify_group(const char *testname,
-            const std::list< std::pair<permutation<N>, bool> > &lst)
+            const std::list< std::pair<permutation<N>, scalar_transf<T> > > &lst)
     throw(libtest::test_exception);
 
     template<size_t N, typename T>
     void verify_members(const char *testname,
-            const permutation_group<N, T> &grp,
-            const std::list< std::pair<permutation<N>, bool> > &allowed)
+            const permutation_group<N, T> &grp, const scalar_transf<T> &tr,
+            const std::list< std::pair<permutation<N>, scalar_transf<T> > > &allowed)
     throw(libtest::test_exception);
 
     template<size_t N, typename T>
     void verify_genset(const char *testname,
             const permutation_group<N, T> &grp,
-            const std::list< std::pair<permutation<N>, bool> > &allowed)
+            const std::list< std::pair<permutation<N>, scalar_transf<T> > > &allowed)
     throw(libtest::test_exception);
-
-    template<size_t N>
-    void all_permutations(bool sign,
-            std::list< std::pair<permutation<N>, bool> > &lst);
-    void all_permutations(bool sign,
-            std::list< std::pair<permutation<1>, bool> > &lst);
-    void all_permutations(bool sign,
-            std::list< std::pair<permutation<0>, bool> > &lst);
 
     template<size_t N, typename T>
     void gen_group(
             const symmetry_element_set_adapter< N, T, se_perm<N, T> > &set,
-            bool sign, const permutation<N> &perm0,
-            std::list< std::pair<permutation<N>, bool> > &lst);
+            const scalar_transf<T> &tr, const permutation<N> &perm0,
+            std::list< std::pair<permutation<N>, scalar_transf<T> > > &lst);
 };
 
 

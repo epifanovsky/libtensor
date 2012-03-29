@@ -1,12 +1,16 @@
+#include <libtensor/btod/scalar_transf_double.h>
 #include "../permutation_group.h"
 #include "permutation_group_impl.h"
 
+
 namespace libtensor {
 
+
 template class permutation_group<1, double>;
+
 template class permutation_group<2, double>;
 template void permutation_group<2, double>::project_down(
-        const mask<2> &msk, permutation_group<1, double> &);
+        const mask<2> &msk, permutation_group<1, double> &g2);
 
 template class permutation_group<3, double>;
 template void permutation_group<3, double>::project_down(
@@ -157,6 +161,7 @@ template void permutation_group<12, double>::project_down(
         const mask<12> &msk, permutation_group<10, double> &);
 template void permutation_group<12, double>::project_down(
         const mask<12> &msk, permutation_group<11, double> &);
+
 
 } // namespace libtensor
 
