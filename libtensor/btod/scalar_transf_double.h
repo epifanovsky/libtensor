@@ -42,14 +42,9 @@ public:
 
 	void reset() { m_coeff = 1.0; }
 
-	scalar_transf<double> &transform(const scalar_transf<double> &tr) {
-	    m_coeff *= tr.m_coeff; return *this;
-	}
+	scalar_transf<double> &transform(const scalar_transf<double> &tr);
 
-	scalar_transf<double> &invert() {
-	    m_coeff = (m_coeff == 0.0 ? 0.0 : 1.0/m_coeff);
-	    return *this;
-	}
+	scalar_transf<double> &invert();
 
 	void apply(double &el) { el *= m_coeff; }
 
@@ -84,16 +79,16 @@ public:
 };
 
 
-template<>
-inline scalar_transf<double> &scalar_transf<double>::transform(
+inline
+scalar_transf<double> &scalar_transf<double>::transform(
         const scalar_transf<double> &tr) {
 
     m_coeff *= tr.m_coeff; return *this;
 }
 
 
-template<>
-inline scalar_transf<double> &scalar_transf<double>::invert() {
+inline
+scalar_transf<double> &scalar_transf<double>::invert() {
 
     m_coeff = (m_coeff == 0.0 ? 0.0 : 1.0/m_coeff);
     return *this;

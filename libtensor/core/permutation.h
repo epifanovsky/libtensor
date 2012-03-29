@@ -287,7 +287,7 @@ inline void permutation<N>::apply_mask(const mask<N> &msk) {
 }
 
 template<size_t N>
-inline const size_t &operator[](size_t i) const {
+inline const size_t &permutation<N>::operator[](size_t i) const {
 #ifdef LIBTENSOR_DEBUG
     if(i >= N) {
         throw out_of_bounds(g_ns, k_clazz, "operator[](size_t)",
