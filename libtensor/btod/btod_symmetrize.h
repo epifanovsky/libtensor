@@ -268,8 +268,9 @@ void btod_symmetrize<N>::make_symmetry() {
         idxgrp[seq2[i]] = 2;
         symidx[i] = symidx[seq2[i]] = idx++;
     }
+    scalar_transf<double> tr(m_symm ? 1. : -1.);
 	so_symmetrize<N, double>(m_op.get_symmetry(),
-	        idxgrp, symidx, m_symm).perform(m_sym);
+	        idxgrp, symidx, tr, tr).perform(m_sym);
 }
 
 

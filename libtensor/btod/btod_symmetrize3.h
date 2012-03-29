@@ -241,33 +241,12 @@ void btod_symmetrize3<N>::compute_block(bool zero,
 template<size_t N>
 void btod_symmetrize3<N>::make_symmetry() {
 
-	//	1. Separate symmetrized dimensions from all other dimensions.
-	//	2. Add perm symmetry to the symmetrized dimensions.
-	//	3. Concatenate back into the full space.
-
-//	permutation<N> p0, p1, p2, p3, p4, p5;
-//	p1.permute(m_i1, m_i2).permute(m_i2, m_i3);
-//	p2.permute(p1).permute(p1);
-//	p3.permute(m_i1, m_i2);
-//	p4.permute(p3).permute(p1);
-//	p5.permute(p3).permute(p2);
-//
-//	symmetry<N, double> s0(m_op.get_bis()), s1(m_op.get_bis()),
-//		s2(m_op.get_bis());
-
-//	so_copy<N, double>(m_op.get_symmetry()).perform(s0);
-//	so_add<N, double>(s0, p0, s0, p1).perform(s1);
-//	so_add<N, double>(s1, p0, s0, p2).perform(s2);
-//	so_add<N, double>(s2, p0, s0, p3).perform(s1);
-//	so_add<N, double>(s1, p0, s0, p4).perform(s2);
-//	so_add<N, double>(s2, p0, s0, p5).perform(s1);
-
-//	so_symmetrize3<N, double>(s1, p1, p3, m_symm).perform(m_sym);
 	sequence<N, size_t> seq1, seq2;
 	seq1[m_i1] = 1; seq1[m_i2] = 2; seq1[m_i3] = 3;
 	seq2[m_i1] = seq2[m_i2] = seq2[m_i3] = 1;
+	scalar_transf<double> tr0, tr1(-1.);
     so_symmetrize<N, double>(m_op.get_symmetry(),
-            seq1, seq2, m_symm).perform(m_sym);
+            seq1, seq2, m_symm ? tr0 : tr1, tr0).perform(m_sym);
 
 }
 

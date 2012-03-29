@@ -512,8 +512,8 @@ void btod_dirsum_symmetry_builder<N, N>::make_symmetry(
 		permc.apply(seq2);
 
 		permutation_builder<N + N> pb(seq2, seq1);
-
-		se_perm<N + N, double> sp(pb.get_perm(), ka == kb);
+		scalar_transf<double> tr(ka == kb ? 1. : -1.);
+		se_perm<N + N, double> sp(pb.get_perm(), tr);
 
 		btod_dirsum_symmetry_builder_base<N, N>::get_sym().insert(sp);
 	}

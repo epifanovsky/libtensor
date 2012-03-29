@@ -617,7 +617,8 @@ void btod_contract2_symmetry_builder<N, N, K>::make_symmetry(
     }
     permab.permute(pb.get_perm());
     if(!permab.is_identity()) {
-        xsymab.insert(se_perm<2 * (N + K), double>(permab, true));
+        scalar_transf<double> tr;
+        xsymab.insert(se_perm<2 * (N + K), double>(permab, tr));
     }
 
     dimensions<2 * (N + K)> bidims = xbis.get_block_index_dims();
