@@ -34,10 +34,6 @@ private:
 
 };
 
-// tt mult / div
-// tt perm 1 / 2
-// tt scaled 1 / 2, div / mult
-
 } // namespace libtensor
 
 #endif // LIBTENSOR_MULT_TEST_H

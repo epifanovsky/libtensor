@@ -24,8 +24,8 @@
 #include "core/block_tensor.h"
 #include "core/direct_block_tensor.h"
 
-#include "core/transf.h"
-#include "btod/transf_double.h"
+#include "core/tensor_transf.h"
+#include "btod/scalar_transf_double.h"
 
 #include "core/orbit.h"
 #include "core/orbit_list.h"
@@ -82,8 +82,8 @@
 #include "btod/btod_sum.h"
 
 
-#include "symmetry/label/point_group_table.h"
-#include "symmetry/label/product_table_container.h"
+#include "symmetry/point_group_table.h"
+#include "symmetry/product_table_container.h"
 #include "symmetry/se_label.h"
 #include "symmetry/se_part.h"
 #include "symmetry/se_perm.h"

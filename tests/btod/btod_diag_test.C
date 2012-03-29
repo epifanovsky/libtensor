@@ -37,9 +37,6 @@ void btod_diag_test::perform() throw(libtest::test_exception) {
     test_sym_2(false);
     test_sym_2(true);
 
-//  test_sym_3(false);
-//  test_sym_3(true);
-
     test_sym_4(false);
     test_sym_4(true);
 
@@ -611,6 +608,11 @@ void btod_diag_test::test_sym_2(bool add) throw(libtest::test_exception) {
 
 /** \test Extract diagonal: \f$ b_i = a_{ii} \f$, permutational anti-symmetry,
      multiple blocks
+
+    This test will always fail, since the formation of the respective symmetry
+    element fails by definition: (p0,-1.) is not valid.
+
+    TODO: Remove this test!!!
  **/
 void btod_diag_test::test_sym_3(bool add) throw(libtest::test_exception) {
 

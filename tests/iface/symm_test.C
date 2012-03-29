@@ -28,13 +28,13 @@ void symm_test::perform() throw(libtest::test_exception) {
 
         test_symm22_t_1();
         test_asymm22_t_1();
-//      test_symm22_t_2();
-//      test_asymm22_t_2();
+        test_symm22_t_2();
+        test_asymm22_t_2();
 
         test_symm22_e_1();
         test_asymm22_e_1();
-//      test_symm22_e_2();
-//      test_asymm22_e_2();
+        test_symm22_e_2();
+        test_asymm22_e_2();
 
         test_symm3_t_1();
 

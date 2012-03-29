@@ -1,6 +1,6 @@
 #include <sstream>
-#include <libtensor/core/transf_list.h>
 #include <libtensor/btod/scalar_transf_double.h>
+#include <libtensor/core/transf_list.h>
 #include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/symmetry/product_table_container.h>
 #include <libtensor/symmetry/se_label.h>
@@ -16,7 +16,7 @@ void transf_list_test::perform() throw(libtest::test_exception) {
     test_1();
     test_2();
     test_3();
-//  test_4();
+    test_4();
     test_5a();
     test_5b();
     test_5c();
@@ -308,9 +308,6 @@ void transf_list_test::test_4() throw(libtest::test_exception) {
 
     trref.reset();
     trlist00_ref.push_back(trref);
-    trref.reset();
-    trref.permute(permutation<2>().permute(0, 1));
-    trlist00_ref.push_back(trref);
 
     trref.reset();
     trlist01_ref.push_back(trref);
@@ -484,8 +481,6 @@ void transf_list_test::test_5b() throw(libtest::test_exception) {
 void transf_list_test::test_5c() throw(libtest::test_exception) {
 
     static const char *testname = "transf_list_test::test_5c()";
-
-    //fail_test(testname, __FILE__, __LINE__, "Test disabled.");
 
     { // Setup point group table
     std::vector<std::string> im(4);

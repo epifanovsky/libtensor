@@ -271,7 +271,6 @@ void combine_part_test::test_4a(bool symm1, bool symm2,
 
         set2.insert(elem);
 
-//        compare_ref<2>::compare(tns.c_str(), bis, set2, set1);
         compare_ref<2>::compare(tns.c_str(), bis, set2, set_ref);
 
     } catch(exception &e) {

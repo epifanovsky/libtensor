@@ -710,7 +710,6 @@ void orbit_test::test_9() throw(libtest::test_exception) {
     typedef point_group_table::label_t label_t;
     label_t ap = 0, app = 1;
 
-    //fail_test(testname, __FILE__, __LINE__, "Test disabled");
     try {
 
     std::vector<std::string> im(2);
@@ -889,8 +888,6 @@ void orbit_test::test_10() throw(libtest::test_exception) {
 
     typedef point_group_table::label_t label_t;
     label_t ap = 0, app = 1;
-
-//    fail_test(testname, __FILE__, __LINE__, "Test disabled");
 
     try {
 

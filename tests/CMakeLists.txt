@@ -107,12 +107,12 @@ set(SRC_BTOD
     btod/addition_schedule_test.C
     btod/btod_add_test.C
     btod/btod_apply_test.C
-#    btod/btod_cholesky_test.C
+    btod/btod_cholesky_test.C
     btod/btod_compare_test.C
     btod/btod_contract2_test.C
     btod/btod_copy_test.C
     btod/btod_diag_test.C
-#    btod/btod_diagonalize_test.C
+    btod/btod_diagonalize_test.C
     btod/btod_dirsum_test.C
     btod/btod_dotprod_test.C
     btod/btod_ewmult2_test.C
@@ -133,7 +133,7 @@ set(SRC_BTOD
     btod/btod_symmetrize_test.C
     btod/btod_symmetrize3_test.C
     btod/btod_trace_test.C
-#    btod/btod_tridiagonalize_test.C
+    btod/btod_tridiagonalize_test.C
     btod/btod_vmpriority_test.C
 )
 

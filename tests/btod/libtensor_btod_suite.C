@@ -8,12 +8,12 @@ libtensor_btod_suite::libtensor_btod_suite() :
     add_test("addition_schedule", m_utf_addition_schedule);
     add_test("btod_add", m_utf_btod_add);
     add_test("btod_apply", m_utf_btod_apply);
-//    add_test("btod_cholesky", m_utf_btod_cholesky);
+    add_test("btod_cholesky", m_utf_btod_cholesky);
     add_test("btod_compare", m_utf_btod_compare);
     add_test("btod_contract2", m_utf_btod_contract2);
     add_test("btod_copy", m_utf_btod_copy);
     add_test("btod_diag", m_utf_btod_diag);
-//    add_test("btod_diagonalize", m_utf_btod_diagonalize);
+    add_test("btod_diagonalize", m_utf_btod_diagonalize);
     add_test("btod_dirsum", m_utf_btod_dirsum);
     add_test("btod_dotprod", m_utf_btod_dotprod);
     add_test("btod_ewmult2", m_utf_btod_ewmult2);
@@ -34,7 +34,7 @@ libtensor_btod_suite::libtensor_btod_suite() :
     add_test("btod_symmetrize", m_utf_btod_symmetrize);
     add_test("btod_symmetrize3", m_utf_btod_symmetrize3);
     add_test("btod_trace", m_utf_btod_trace);
-//    add_test("btod_tridiagonalize", m_utf_btod_tridiagonalize);
+    add_test("btod_tridiagonalize", m_utf_btod_tridiagonalize);
     add_test("btod_vmpriority", m_utf_btod_vmpriority);
 }
 

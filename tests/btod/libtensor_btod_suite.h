@@ -86,12 +86,12 @@ private:
     unit_test_factory<addition_schedule_test> m_utf_addition_schedule;
     unit_test_factory<btod_add_test> m_utf_btod_add;
     unit_test_factory<btod_apply_test> m_utf_btod_apply;
-//    unit_test_factory<btod_cholesky_test> m_utf_btod_cholesky;
+    unit_test_factory<btod_cholesky_test> m_utf_btod_cholesky;
     unit_test_factory<btod_compare_test> m_utf_btod_compare;
     unit_test_factory<btod_contract2_test> m_utf_btod_contract2;
     unit_test_factory<btod_copy_test> m_utf_btod_copy;
     unit_test_factory<btod_diag_test> m_utf_btod_diag;
-//    unit_test_factory<btod_diagonalize_test> m_utf_btod_diagonalize;
+    unit_test_factory<btod_diagonalize_test> m_utf_btod_diagonalize;
     unit_test_factory<btod_dirsum_test> m_utf_btod_dirsum;
     unit_test_factory<btod_dotprod_test> m_utf_btod_dotprod;
     unit_test_factory<btod_ewmult2_test> m_utf_btod_ewmult2;
@@ -112,7 +112,7 @@ private:
     unit_test_factory<btod_symmetrize_test> m_utf_btod_symmetrize;
     unit_test_factory<btod_symmetrize3_test> m_utf_btod_symmetrize3;
     unit_test_factory<btod_trace_test> m_utf_btod_trace;
-//    unit_test_factory<btod_tridiagonalize_test> m_utf_btod_tridiagonalize;
+    unit_test_factory<btod_tridiagonalize_test> m_utf_btod_tridiagonalize;
     unit_test_factory<btod_vmpriority_test> m_utf_btod_vmpriority;
 
 public:

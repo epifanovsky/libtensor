@@ -145,9 +145,6 @@ void dot_product_test::test_et_1() throw(libtest::test_exception) {
 
     try {
 
-//  bispace<1> si(58), sa(102);
-//  si.split(29);
-//  sa.split(51);
     bispace<1> si(10), sa(20);
     si.split(5);
     sa.split(10);
