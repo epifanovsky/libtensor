@@ -8,6 +8,7 @@ void permutation_generator_test::perform() throw(libtest::test_exception) {
 
     test_1();
     test_2();
+    test_3();
 
 }
 
@@ -18,17 +19,12 @@ void permutation_generator_test::test_1() throw(libtest::test_exception) {
 
     static const char *testname = "permutation_generator_test::test_1()";
 
-    sequence<4, double> seq, pseq;
-    for (size_t i = 0; i < 4; i++) { seq[i] = (double) i; }
-
-    permutation_generator pg(4);
-    std::vector< sequence<4, double> > res;
+    permutation_generator<4> pg;
+    std::vector< permutation<4> > res;
 
     try {
-
         do {
-            for (size_t i = 0; i < 4; i++) { pseq[i] = seq[pg[i]]; }
-            res.push_back(pseq);
+            res.push_back(pg.get_perm());
         } while (pg.next());
 
     } catch(exception &e) {
@@ -59,19 +55,16 @@ void permutation_generator_test::test_2() throw(libtest::test_exception) {
 
     static const char *testname = "permutation_generator_test::test_2()";
 
-    sequence<6, double> seq, pseq;
-    for (size_t i = 0; i < 6; i++) { pseq[i] = seq[i] = 1. / (double) i; }
-    std::vector<size_t> map(3);
-    map[0] = 1; map[1] = 3; map[2] = 4;
+    mask<6> msk;
+    msk[1] = msk[3] = msk[4] = true;
 
-    permutation_generator pg(3);
-    std::vector< sequence<6, double> > res;
+    permutation_generator<6> pg(msk);
+    std::vector< permutation<6> > res;
 
     try {
 
         do {
-            for (size_t i = 0; i < 3; i++) { pseq[map[i]] = seq[map[pg[i]]]; }
-            res.push_back(pseq);
+            res.push_back(pg.get_perm());
         } while (pg.next());
 
     } catch(exception &e) {
@@ -96,5 +89,37 @@ void permutation_generator_test::test_2() throw(libtest::test_exception) {
     }
 }
 
+/** \test Tests the generation of permutations
+ **/
+void permutation_generator_test::test_3() throw(libtest::test_exception) {
+
+    static const char *testname = "permutation_generator_test::test_3()";
+
+    permutation_generator<4> pg;
+
+    try {
+
+        permutation<4> p0;
+        while (pg.next()) {
+            const permutation<4> &p1 = pg.get_perm();
+            size_t i = 0;
+            for (; i < 4 && p1[i] == p0[i]; i++) ;
+            if (i == 4) fail_test(testname, __FILE__, __LINE__, "p0 == p1");
+            i++;
+            for (; i < 4 && p1[i] == p0[i]; i++) ;
+            if (i == 4) fail_test(testname, __FILE__, __LINE__, "p1 invalid");
+            i++;
+            for (; i < 4 && p1[i] == p0[i]; i++) ;
+            if (i != 4) fail_test(testname, __FILE__, __LINE__,
+                    "p0^-1 p1 not pair permutation");
+
+            p0.reset();
+            p0.permute(p1);
+        }
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
 
 } // namespace libtensor
