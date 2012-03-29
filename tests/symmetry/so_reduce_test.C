@@ -1,3 +1,4 @@
+#include <libtensor/btod/scalar_transf_double.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/symmetry/so_reduce.h>
 #include "../compare_ref.h"
@@ -75,11 +76,12 @@ void so_reduce_test::test_2() throw(libtest::test_exception) {
 	block_index_space<2> bis2(dims2);
 
 	symmetry<5, double> sym1(bis1);
-	sym1.insert(se_perm<5, double>(
-		permutation<5>().permute(0, 1)
-		.permute(1, 2).permute(2, 3).permute(3, 4), true));
-	sym1.insert(se_perm<5, double>(
-		permutation<5>().permute(0, 1), true));
+	permutation<5> p1, p2;
+	p1.permute(0, 1).permute(1, 2).permute(2, 3).permute(3, 4);
+	p2.permute(0, 1);
+	scalar_transf<double> tr0, tr1(-1.0);
+	sym1.insert(se_perm<5, double>(p1, tr0));
+	sym1.insert(se_perm<5, double>(p2, tr0));
 
 	symmetry<2, double> sym2(bis2);
 	symmetry<2, double> sym2_ref(bis2);
@@ -89,8 +91,7 @@ void so_reduce_test::test_2() throw(libtest::test_exception) {
 	index_range<5> bir(bia, bib), ir(i1a, i1b);
 	so_reduce<5, 3, double>(sym1, msk, seq, bir, ir).perform(sym2);
 
-	sym2_ref.insert(se_perm<2, double>(
-		permutation<2>().permute(0, 1), true));
+	sym2_ref.insert(se_perm<2, double>(permutation<2>().permute(0, 1), tr0));
 
 	symmetry<2, double>::iterator i = sym2.begin();
 	if(i == sym2.end()) {

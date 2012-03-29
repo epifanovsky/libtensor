@@ -83,13 +83,13 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_perm<N - M, T> >::do_perform(
         permutation_builder<k_order2> pb(seq2b, seq1b);
 
         if (pb.get_perm().is_identity()) {
-            if (e2.is_symm()) continue;
+            if (e2.get_transf().is_identity()) continue;
 
             throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
                     "Anti-symmetric identity permutation.");
         }
 
-        params.grp2.insert(el2_t(pb.get_perm(), e2.is_symm()));
+        params.grp2.insert(el2_t(pb.get_perm(), e2.get_transf()));
     }
 }
 

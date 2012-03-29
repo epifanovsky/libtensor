@@ -1,6 +1,8 @@
+#include <libtensor/btod/scalar_transf_double.h>
 #include <libtensor/symmetry/so_reduce_se_perm.h>
 #include "../compare_ref.h"
 #include "so_reduce_se_perm_test.h"
+
 
 namespace libtensor {
 
@@ -106,7 +108,8 @@ void so_reduce_se_perm_test::test_nm1_1(
 	try {
 
 	permutation<2> p1; p1.permute(0, 1);
-	se2_t elem1(p1, symm);
+	scalar_transf<double> tr(symm ? 1.0 : -1.0);
+	se2_t elem1(p1, tr);
 
 	symmetry_element_set<2, double> set1(se2_t::k_sym_type);
 	symmetry_element_set<1, double> set2(se1_t::k_sym_type);
@@ -131,6 +134,7 @@ void so_reduce_se_perm_test::test_nm1_1(
 	}
 }
 
+
 /** \test Projection of S2(+/-) x S2(+/-) in 4-space onto a 2-space in a single
         step. Expected result: C1 in 1-space. Symmetric elements.
  **/
@@ -147,7 +151,8 @@ void so_reduce_se_perm_test::test_nm1_2(
 
     try {
 
-    se4_t el1(permutation<4>().permute(0, 1).permute(2, 3), symm);
+    scalar_transf<double> tr(symm ? 1.0 : -1.0);
+    se4_t el1(permutation<4>().permute(0, 1).permute(2, 3), tr);
 
     symmetry_element_set<4, double> set1(se4_t::k_sym_type);
     symmetry_element_set<2, double> set2(se2_t::k_sym_type);
@@ -177,7 +182,7 @@ void so_reduce_se_perm_test::test_nm1_2(
         fail_test(tnss.str().c_str(), __FILE__, __LINE__,
             "Expected only one element.");
     }
-    if(el2.is_symm() != symm) {
+    if(el2.get_transf() != tr) {
         fail_test(tnss.str().c_str(), __FILE__, __LINE__, "Wrong sign");
     }
     if(!el2.get_perm().equals(p2)) {
@@ -190,6 +195,7 @@ void so_reduce_se_perm_test::test_nm1_2(
         fail_test(tnss.str().c_str(), __FILE__, __LINE__, e.what());
     }
 }
+
 
 /**	\test Projection of a 2-cycle in a 5-space in two reduction steps onto a
         2-space untouched by the masks. Expected result: 2-cycle in 2-space.
@@ -209,7 +215,8 @@ void so_reduce_se_perm_test::test_nmk_1(
 	try {
 
 	permutation<5> p1; p1.permute(0, 1);
-	se5_t el1(p1, symm);
+	scalar_transf<double> tr(symm ? 1.0 : -1.0);
+	se5_t el1(p1, tr);
 
 	symmetry_element_set<5, double> set1(se5_t::k_sym_type);
 	symmetry_element_set<2, double> set2(se2_t::k_sym_type);
@@ -239,8 +246,9 @@ void so_reduce_se_perm_test::test_nmk_1(
 		fail_test(tnss.str().c_str(), __FILE__, __LINE__,
 			"Expected only one element.");
 	}
-	if(el2.is_symm() != symm) {
-		fail_test(tnss.str().c_str(), __FILE__, __LINE__, "Wrong sign.");
+	if(el2.get_transf() != tr) {
+		fail_test(tnss.str().c_str(),
+		        __FILE__, __LINE__, "el2.get_transf() != tr");
 	}
 	if(!el2.get_perm().equals(p2)) {
 		fail_test(tnss.str().c_str(), __FILE__, __LINE__, "el2.perm != p2");
@@ -269,8 +277,9 @@ void so_reduce_se_perm_test::test_nmk_2(
 
 	try {
 
-	se6_t el1a(permutation<6>().permute(0, 1).permute(1, 3), true);
-    se6_t el1b(permutation<6>().permute(0, 1), symm);
+	scalar_transf<double> tr0, tr1(-1.);
+	se6_t el1a(permutation<6>().permute(0, 1).permute(1, 3), tr0);
+    se6_t el1b(permutation<6>().permute(0, 1), symm ? tr0 : tr1);
 
 	symmetry_element_set<6, double> set1(se6_t::k_sym_type);
 	symmetry_element_set<3, double> set2(se3_t::k_sym_type);
@@ -301,7 +310,7 @@ void so_reduce_se_perm_test::test_nmk_2(
         fail_test(tnss.str().c_str(), __FILE__, __LINE__,
             "Expected only one element.");
     }
-    if(el2.is_symm() != symm) {
+    if(el2.get_transf() != (symm ? tr0 : tr1)) {
         fail_test(tnss.str().c_str(), __FILE__, __LINE__, "Wrong sign.");
     }
     if(!el2.get_perm().equals(p2)) {
@@ -312,6 +321,7 @@ void so_reduce_se_perm_test::test_nmk_2(
 		fail_test(tnss.str().c_str(), __FILE__, __LINE__, e.what());
 	}
 }
+
 
 /** \test Projection of a group in 8-space in two reduction steps on to 4-space.
  **/
@@ -330,12 +340,14 @@ void so_reduce_se_perm_test::test_nmk_3(
 
     try {
 
-    se8_t el1a(permutation<8>().permute(0, 1).permute(2, 3), symm1);
-    se8_t el1b(permutation<8>().permute(4, 5).permute(6, 7), symm2);
+    scalar_transf<double> tr1(symm1 ? 1.0 : -1.0), tr2(symm2 ? 1.0 : -1.0);
+    se8_t el1a(permutation<8>().permute(0, 1).permute(2, 3), tr1);
+    se8_t el1b(permutation<8>().permute(4, 5).permute(6, 7), tr2);
 
     permutation<4> p2;
     p2.permute(0, 1).permute(2, 3);
-    se4_t el2(permutation<4>().permute(0, 1).permute(2, 3), symm1 == symm2);
+    scalar_transf<double> trx(tr1); trx.transform(tr2);
+    se4_t el2(permutation<4>().permute(0, 1).permute(2, 3), trx);
 
     symmetry_element_set<8, double> set1(se8_t::k_sym_type);
     symmetry_element_set<4, double> set2(se4_t::k_sym_type);
@@ -374,4 +386,6 @@ void so_reduce_se_perm_test::test_nmk_3(
     }
 }
 
+
 } // namespace libtensor
+
