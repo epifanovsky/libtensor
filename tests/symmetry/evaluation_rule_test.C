@@ -255,7 +255,7 @@ void evaluation_rule_test::test_sym_1() throw(libtest::test_exception) {
         r1.add_to_product(1, id3, 1, 0);
 
         sequence<3, size_t> seq1(0), seq2(1);
-        seq1[0] = 1; seq1[1] = 2; seq2[2] = 3;
+        seq1[0] = 1; seq1[1] = 2; seq1[2] = 3;
         r1.symmetrize(seq1, seq2);
 
         if (r1.get_n_sequences() != 4)
