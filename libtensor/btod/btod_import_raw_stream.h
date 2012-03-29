@@ -2,8 +2,9 @@
 #define LIBTENSOR_BTOD_IMPORT_RAW_STREAM_H
 
 #include <iostream>
-#include "../tod/tod_import_raw_stream.h"
-#include "../tod/tod_set.h"
+#include <libtensor/core/allocator.h>
+#include <libtensor/dense_tensor/tod_import_raw_stream.h>
+#include <libtensor/dense_tensor/tod_set.h>
 #include "btod_import_raw_base.h"
 #include "bad_block_index_space.h"
 

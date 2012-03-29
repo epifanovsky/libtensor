@@ -4,7 +4,7 @@
 #include <sstream>
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
-#include <libtensor/tod/tod_select.h>
+#include <libtensor/dense_tensor/tod_select.h>
 #include "tod_select_test.h"
 
 

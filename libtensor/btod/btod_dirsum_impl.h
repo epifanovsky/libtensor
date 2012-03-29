@@ -10,10 +10,10 @@
 #include "../core/orbit_list.h"
 #include "../core/permutation_builder.h"
 #include "../core/mask.h"
-#include "../tod/tod_dirsum.h"
-#include "../tod/tod_scale.h"
-#include "../tod/tod_scatter.h"
-#include "../tod/tod_set.h"
+#include <libtensor/dense_tensor/tod_dirsum.h>
+#include <libtensor/dense_tensor/tod_scale.h>
+#include <libtensor/dense_tensor/tod_scatter.h>
+#include <libtensor/dense_tensor/tod_set.h>
 #include "../symmetry/so_dirsum.h"
 #include "bad_block_index_space.h"
 #include "additive_btod.h"
@@ -325,14 +325,9 @@ void btod_dirsum<N, M>::do_block_dirsum(
     dense_tensor_i<k_ordera, double> &blka = ctrla.req_block(ia);
     dense_tensor_i<k_orderb, double> &blkb = ctrlb.req_block(ib);
 
-    if(zero) {
-        tod_dirsum<N, M>(blka, ka, blkb, kb, permc).perform(blkc);
-        if(kc != 1.0) {
-            tod_scale<k_orderc>(blkc, kc).perform();
-        }
-    } else {
-        tod_dirsum<N, M>(blka, ka, blkb, kb, permc).perform(blkc, kc);
-    }
+    cpu_pool cpus(1);
+
+    tod_dirsum<N, M>(blka, ka, blkb, kb, permc).perform(cpus, zero, kc, blkc);
 
     ctrla.ret_block(ia);
     ctrlb.ret_block(ib);
@@ -348,6 +343,7 @@ void btod_dirsum<N, M>::do_block_scatter_a(
 
     dense_tensor_i<k_ordera, double> &blka = ctrla.req_block(ia);
 
+    cpu_pool cpus(1);
     if(zero) {
         tod_scatter<N, M>(blka, ka, permc).perform(blkc);
         if(kc != 1.0) {
@@ -370,6 +366,7 @@ void btod_dirsum<N, M>::do_block_scatter_b(
 
     dense_tensor_i<k_orderb, double> &blkb = ctrlb.req_block(ib);
 
+    cpu_pool cpus(1);
     if(zero) {
         tod_scatter<M, N>(blkb, kb, permc).perform(blkc);
         if(kc != 1.0) {

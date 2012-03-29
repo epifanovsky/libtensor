@@ -6,6 +6,7 @@
 
 namespace libtensor {
 
+
 /** \brief Tests the libtensor::tod_copy class
 
     \ingroup libtensor_tests_tod
@@ -73,6 +74,7 @@ private:
     void test_exc() throw(libtest::test_exception);
 
 };
+
 
 } // namespace libtensor
 

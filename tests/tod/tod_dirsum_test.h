@@ -5,6 +5,7 @@
 
 namespace libtensor {
 
+
 /** \brief Tests the libtensor::tod_dirsum class
 
     \ingroup libtensor_tests_tod
@@ -30,7 +31,12 @@ private:
     void test_ikjl_ij_kl_1(size_t ni, size_t nj, size_t nk, size_t nl,
         double d = 0.0) throw(libtest::test_exception);
 
+    // c_{iklj} = a_{ij} + b_{kl}
+    void test_iklj_ij_kl_1(size_t ni, size_t nj, size_t nk, size_t nl,
+        double d = 0.0) throw(libtest::test_exception);
+
 };
+
 
 } // namespace libtensor
 

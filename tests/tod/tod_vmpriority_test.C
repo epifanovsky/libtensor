@@ -1,6 +1,6 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
-#include <libtensor/tod/tod_vmpriority.h>
+#include <libtensor/dense_tensor/tod_vmpriority.h>
 #include "tod_vmpriority_test.h"
 
 namespace libtensor {

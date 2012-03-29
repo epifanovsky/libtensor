@@ -1,13 +1,14 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
-#include <libtensor/tod/tod_random.h>
+#include <libtensor/dense_tensor/tod_random.h>
 #include "../compare_ref.h"
 #include "tod_random_test.h"
 
 namespace libtensor {
 
-void tod_random_test::perform() throw(libtest::test_exception)
-{
+
+void tod_random_test::perform() throw(libtest::test_exception) {
+
     typedef std_allocator<double> allocator;
     typedef dense_tensor<3, double, allocator> tensor3;
     typedef dense_tensor_ctrl<3,double> tensor3_ctrl;
@@ -44,6 +45,7 @@ void tod_random_test::perform() throw(libtest::test_exception)
                 "Random numbers outside specified interval");
     }
 }
+
 
 } // namespace libtensor
 

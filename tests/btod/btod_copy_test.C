@@ -5,7 +5,7 @@
 #include <libtensor/btod/btod_copy.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/symmetry/se_perm.h>
-#include <libtensor/tod/tod_btconv.h>
+#include <libtensor/dense_tensor/tod_btconv.h>
 #include "../compare_ref.h"
 #include "btod_copy_test.h"
 
@@ -533,7 +533,7 @@ void btod_copy_test::test_sym_4() throw(libtest::test_exception) {
     permutation<4> perm1023, perm0132;
     perm1023.permute(0, 1);
     perm0132.permute(2, 3);
-    scalar_transf<double> tr0, tr1(-1.);
+    scalar_transf<double> tr0;
     se_perm<4, double> cycle1(perm1023, tr0), cycle2(perm0132, tr0);
     block_tensor_ctrl<4, double> ctrla(bta), ctrlb(btb);
     ctrla.req_symmetry().insert(cycle1);
@@ -988,7 +988,7 @@ void btod_copy_test::test_add_eqsym_4() throw(libtest::test_exception) {
     permutation<4> perm1023, perm0132;
     perm1023.permute(0, 1);
     perm0132.permute(2, 3);
-    scalar_transf<double> tr0, tr1(-1.);
+    scalar_transf<double> tr0;
     se_perm<4, double> cycle1(perm1023, tr0), cycle2(perm0132, tr0);
     block_tensor_ctrl<4, double> ctrla(bta), ctrlb(btb);
     ctrla.req_symmetry().insert(cycle1);
@@ -1061,7 +1061,7 @@ void btod_copy_test::test_add_eqsym_5() throw(libtest::test_exception) {
     permutation<4> perm1032, perm2301;
     perm1032.permute(0, 1).permute(2, 3);
     perm2301.permute(0, 2).permute(1, 3);
-    scalar_transf<double> tr0, tr1(-1.);
+    scalar_transf<double> tr1(-1.);
     se_perm<4, double> cycle1(perm1032, tr1), cycle2(perm2301, tr1);
     block_tensor_ctrl<4, double> ctrla(bta), ctrlb(btb);
     ctrla.req_symmetry().insert(cycle1);
@@ -1121,7 +1121,7 @@ void btod_copy_test::test_add_nesym_1() throw(libtest::test_exception) {
 
     permutation<2> perm10;
     perm10.permute(0, 1);
-    scalar_transf<double> tr0, tr1(-1.);
+    scalar_transf<double> tr0;
     se_perm<2, double> cycle1(perm10, tr0);
     block_tensor_ctrl<2, double> ctrla(bta), ctrlb(btb);
     ctrla.req_symmetry().insert(cycle1);
@@ -1175,7 +1175,7 @@ void btod_copy_test::test_add_nesym_2() throw(libtest::test_exception) {
 
     permutation<2> perm10;
     perm10.permute(0, 1);
-    scalar_transf<double> tr0, tr1(-1.);
+    scalar_transf<double> tr0;
     se_perm<2, double> cycle1(perm10, tr0);
     block_tensor_ctrl<2, double> ctrla(bta), ctrlb(btb);
     ctrlb.req_symmetry().insert(cycle1);
@@ -1235,7 +1235,7 @@ void btod_copy_test::test_add_nesym_3() throw(libtest::test_exception) {
     perm1230.permute(0, 1).permute(1, 2).permute(2, 3);
     perm1023.permute(0, 1);
     perm1032.permute(0, 1).permute(2, 3);
-    scalar_transf<double> tr0, tr1(-1.);
+    scalar_transf<double> tr0;
     se_perm<4, double> cycle1(perm1230, tr0), cycle2(perm1023, tr0),
         cycle3(perm1032, tr0);
     block_tensor_ctrl<4, double> ctrla(bta), ctrlb(btb);
@@ -1303,7 +1303,7 @@ void btod_copy_test::test_add_nesym_4() throw(libtest::test_exception) {
     perm1230.permute(0, 1).permute(1, 2).permute(2, 3);
     perm1023.permute(0, 1);
     perm1032.permute(0, 1).permute(2, 3);
-    scalar_transf<double> tr0, tr1(-1.);
+    scalar_transf<double> tr0;
     se_perm<4, double> cycle1(perm1230, tr0), cycle2(perm1023, tr0),
         cycle3(perm1032, tr0);
     block_tensor_ctrl<4, double> ctrla(bta), ctrlb(btb);
@@ -1371,7 +1371,7 @@ void btod_copy_test::test_add_nesym_5() throw(libtest::test_exception) {
     perm1230.permute(0, 1).permute(1, 2).permute(2, 3);
     perm1023.permute(0, 1);
     perm1032.permute(0, 1).permute(2, 3);
-    scalar_transf<double> tr0, tr1(-1.);
+    scalar_transf<double> tr0;
     se_perm<4, double> cycle1(perm1230, tr0), cycle2(perm1023, tr0),
         cycle3(perm1032, tr0);
     block_tensor_ctrl<4, double> ctrla(bta), ctrlb(btb);
@@ -1439,7 +1439,7 @@ void btod_copy_test::test_add_nesym_5_sp() throw(libtest::test_exception) {
     perm1230.permute(0, 1).permute(1, 2).permute(2, 3);
     perm1023.permute(0, 1);
     perm1032.permute(0, 1).permute(2, 3);
-    scalar_transf<double> tr0, tr1(-1.);
+    scalar_transf<double> tr0;
     se_perm<4, double> cycle1(perm1230, tr0), cycle2(perm1023, tr0),
         cycle3(perm1032, tr0);
     block_tensor_ctrl<4, double> ctrla(bta), ctrlb(btb);
@@ -1593,7 +1593,7 @@ void btod_copy_test::test_add_nesym_7_sp1() throw(libtest::test_exception) {
     //  Set up symmetry
 
     block_tensor_ctrl<4, double> ctrla(bta), ctrlb(btb);
-    scalar_transf<double> tr0, tr1(-1.);
+    scalar_transf<double> tr0;
     ctrla.req_symmetry().insert(se_perm<4, double>(
         permutation<4>().permute(0, 1).permute(1, 2), tr0));
     ctrla.req_symmetry().insert(se_perm<4, double>(
@@ -1668,7 +1668,7 @@ void btod_copy_test::test_add_nesym_7_sp2() throw(libtest::test_exception) {
     //  Set up symmetry
 
     block_tensor_ctrl<4, double> ctrla(bta), ctrlb(btb);
-    scalar_transf<double> tr0, tr1(-1.);
+    scalar_transf<double> tr0;
     ctrla.req_symmetry().insert(se_perm<4, double>(
         permutation<4>().permute(0, 1).permute(1, 2), tr0));
     ctrla.req_symmetry().insert(se_perm<4, double>(
@@ -1743,7 +1743,7 @@ void btod_copy_test::test_add_nesym_7_sp3() throw(libtest::test_exception) {
     //  Set up symmetry
 
     block_tensor_ctrl<4, double> ctrla(bta), ctrlb(btb);
-    scalar_transf<double> tr0, tr1(-1.);
+    scalar_transf<double> tr0;
     ctrla.req_symmetry().insert(se_perm<4, double>(
         permutation<4>().permute(0, 1), tr0));
     ctrla.req_symmetry().insert(se_perm<4, double>(

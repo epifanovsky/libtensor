@@ -1,7 +1,7 @@
 #include <sstream>
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
-#include <libtensor/tod/tod_apply.h>
+#include <libtensor/dense_tensor/tod_apply.h>
 #include "../compare_ref.h"
 #include "tod_apply_test.h"
 

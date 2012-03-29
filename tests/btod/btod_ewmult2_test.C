@@ -10,8 +10,8 @@
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/symmetry/se_label.h>
 #include <libtensor/symmetry/so_copy.h>
-#include <libtensor/tod/tod_btconv.h>
-#include <libtensor/tod/tod_ewmult2.h>
+#include <libtensor/dense_tensor/tod_btconv.h>
+#include <libtensor/dense_tensor/tod_ewmult2.h>
 #include "btod_ewmult2_test.h"
 #include "../compare_ref.h"
 
@@ -96,10 +96,10 @@ void btod_ewmult2_test::test_1(bool doadd) throw(libtest::test_exception) {
         fail_test(tnss.str().c_str(), __FILE__, __LINE__, "Bad bis.");
     }
     if(doadd) {
-        tod_ewmult2<0, 0, 1>(ta, tb).perform(cpus, tc_ref, d);
+		tod_ewmult2<0, 0, 1>(ta, tb).perform(cpus, false, d, tc_ref);
         op.perform(btc, d);
     } else {
-        tod_ewmult2<0, 0, 1>(ta, tb).perform(cpus, tc_ref);
+		tod_ewmult2<0, 0, 1>(ta, tb).perform(cpus, true, 1.0, tc_ref);
         op.perform(btc);
     }
     tod_btconv<1>(btc).perform(tc);
@@ -180,12 +180,12 @@ void btod_ewmult2_test::test_2(bool doadd) throw(libtest::test_exception) {
         fail_test(tnss.str().c_str(), __FILE__, __LINE__, "Bad bis.");
     }
     if(doadd) {
-        tod_ewmult2<0, 0, 2>(ta, perma, tb, permb, permc).
-            perform(cpus, tc_ref, d);
-        op.perform(btc, d);
+ 		tod_ewmult2<0, 0, 2>(ta, perma, tb, permb, permc).
+			perform(cpus, false, d, tc_ref);
+       op.perform(btc, d);
     } else {
-        tod_ewmult2<0, 0, 2>(ta, perma, tb, permb, permc).
-            perform(cpus, tc_ref);
+		tod_ewmult2<0, 0, 2>(ta, perma, tb, permb, permc).
+			perform(cpus, true, 1.0, tc_ref);
         op.perform(btc);
     }
     tod_btconv<2>(btc).perform(tc);
@@ -265,15 +265,15 @@ void btod_ewmult2_test::test_3(bool doadd) throw(libtest::test_exception) {
     if(!op.get_bis().equals(bisc)) {
         fail_test(tnss.str().c_str(), __FILE__, __LINE__, "Bad bis.");
     }
-    if(doadd) {
-        tod_ewmult2<0, 0, 2>(ta, perma, tb, permb, permc).
-            perform(cpus, tc_ref, d);
-        op.perform(btc, d);
-    } else {
-        tod_ewmult2<0, 0, 2>(ta, perma, tb, permb, permc).
-            perform(cpus, tc_ref);
-        op.perform(btc);
-    }
+	if(doadd) {
+		tod_ewmult2<0, 0, 2>(ta, perma, tb, permb, permc).
+			perform(cpus, false, d, tc_ref);
+		op.perform(btc, d);
+	} else {
+		tod_ewmult2<0, 0, 2>(ta, perma, tb, permb, permc).
+			perform(cpus, true, 1.0, tc_ref);
+		op.perform(btc);
+	}
     tod_btconv<2>(btc).perform(tc);
 
     //  Compare against the reference
@@ -359,15 +359,15 @@ void btod_ewmult2_test::test_4(bool doadd) throw(libtest::test_exception) {
     if(!op.get_bis().equals(bisc)) {
         fail_test(tnss.str().c_str(), __FILE__, __LINE__, "Bad bis.");
     }
-    if(doadd) {
-        tod_ewmult2<1, 2, 1>(ta, perma, tb, permb, permc).
-            perform(cpus, tc_ref, d);
-        op.perform(btc, d);
-    } else {
-        tod_ewmult2<1, 2, 1>(ta, perma, tb, permb, permc).
-            perform(cpus, tc_ref);
-        op.perform(btc);
-    }
+	if(doadd) {
+		tod_ewmult2<1, 2, 1>(ta, perma, tb, permb, permc).
+			perform(cpus, false, d, tc_ref);
+		op.perform(btc, d);
+	} else {
+		tod_ewmult2<1, 2, 1>(ta, perma, tb, permb, permc).
+			perform(cpus, true, 1.0, tc_ref);
+		op.perform(btc);
+	}
     tod_btconv<4>(btc).perform(tc);
 
     //  Compare against the reference
@@ -457,15 +457,15 @@ void btod_ewmult2_test::test_5(bool doadd) throw(libtest::test_exception) {
     if(!op.get_bis().equals(bisc_ref)) {
         fail_test(tnss.str().c_str(), __FILE__, __LINE__, "Bad bis.");
     }
-    if(doadd) {
-        tod_ewmult2<1, 1, 2>(ta, perma, tb, permb, permc).
-            perform(cpus, tc_ref, d);
-        op.perform(btc, d);
-    } else {
-        tod_ewmult2<1, 1, 2>(ta, perma, tb, permb, permc).
-            perform(cpus, tc_ref);
-        op.perform(btc);
-    }
+ 	if(doadd) {
+		tod_ewmult2<1, 1, 2>(ta, perma, tb, permb, permc).
+			perform(cpus, false, d, tc_ref);
+		op.perform(btc, d);
+	} else {
+		tod_ewmult2<1, 1, 2>(ta, perma, tb, permb, permc).
+			perform(cpus, true, 1.0, tc_ref);
+		op.perform(btc);
+	}
     tod_btconv<4>(btc).perform(tc);
 
     //  Compare against the reference
@@ -578,15 +578,15 @@ void btod_ewmult2_test::test_6(bool doadd) throw(libtest::test_exception) {
     if(!op.get_bis().equals(bisc_ref)) {
         fail_test(tnss.str().c_str(), __FILE__, __LINE__, "Bad bis.");
     }
-    if(doadd) {
-        tod_ewmult2<1, 1, 2>(ta, perma, tb, permb, permc).
-            perform(cpus, tc_ref, d);
-        op.perform(btc, d);
-    } else {
-        tod_ewmult2<1, 1, 2>(ta, perma, tb, permb, permc).
-            perform(cpus, tc_ref);
-        op.perform(btc);
-    }
+	if(doadd) {
+		tod_ewmult2<1, 1, 2>(ta, perma, tb, permb, permc).
+			perform(cpus, false, d, tc_ref);
+		op.perform(btc, d);
+	} else {
+		tod_ewmult2<1, 1, 2>(ta, perma, tb, permb, permc).
+			perform(cpus, true, 1.0, tc_ref);
+		op.perform(btc);
+	}
     tod_btconv<4>(btc).perform(tc);
 
     //  Compare against the reference
@@ -683,9 +683,11 @@ void btod_ewmult2_test::test_7() throw(libtest::test_exception) {
         bl.assign(m10, 3, 1);
         bl.assign(m01, 0, 0);
         bl.assign(m01, 1, 1);
-        product_table_i::label_set_t ls;
-        ls.insert(0); ls.insert(1);
-        selabel.set_rule(ls);
+        evaluation_rule<2> ra;
+        ra.add_sequence(sequence<2, size_t>(1));
+        ra.add_product(0, 0);
+        ra.add_product(0, 1);
+        selabel.set_rule(ra);
         ca.req_symmetry().insert(selabel);
     }
     {
@@ -698,9 +700,11 @@ void btod_ewmult2_test::test_7() throw(libtest::test_exception) {
         bl.assign(m10, 3, 1);
         bl.assign(m01, 0, 0);
         bl.assign(m01, 1, 1);
-        product_table_i::label_set_t ls;
-        ls.insert(0); ls.insert(1);
-        selabel.set_rule(ls);
+        evaluation_rule<2> rb;
+        rb.add_sequence(sequence<2, size_t>(1));
+        rb.add_product(0, 0);
+        rb.add_product(0, 1);
+        selabel.set_rule(rb);
         cb.req_symmetry().insert(selabel);
     }
     {
@@ -715,9 +719,11 @@ void btod_ewmult2_test::test_7() throw(libtest::test_exception) {
         bl.assign(m010, 1, 1);
         bl.assign(m001, 0, 0);
         bl.assign(m001, 1, 1);
-        product_table_i::label_set_t ls;
-        ls.insert(0); ls.insert(1);
-        selabel.set_rule(ls);
+        evaluation_rule<3> rc;
+        rc.add_sequence(sequence<3, size_t>(1));
+        rc.add_product(0, 0);
+        rc.add_product(0, 1);
+        selabel.set_rule(rc);
         symc_ref.insert(selabel);
     }
 
@@ -744,7 +750,8 @@ void btod_ewmult2_test::test_7() throw(libtest::test_exception) {
     if(!op.get_bis().equals(bisc_ref)) {
         fail_test(tnss.str().c_str(), __FILE__, __LINE__, "Bad bis.");
     }
-    tod_ewmult2<1, 1, 1>(ta, perma, tb, permb, permc).perform(cpus, tc_ref);
+	tod_ewmult2<1, 1, 1>(ta, perma, tb, permb, permc).
+	    perform(cpus, true, 1.0, tc_ref);
     op.perform(btc);
     tod_btconv<3>(btc).perform(tc);
 
