@@ -16,6 +16,7 @@
 #include <libtensor/dense_tensor/tod_add.h>
 #include <libtensor/dense_tensor/tod_copy.h>
 #include <libtensor/dense_tensor/tod_random.h>
+#include "scalar_transf_double.h"
 #include "../timings.h"
 
 namespace libtensor {

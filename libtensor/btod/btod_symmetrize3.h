@@ -10,6 +10,7 @@
 #include "../core/transf_list.h"
 #include "../symmetry/so_copy.h"
 #include "../symmetry/so_symmetrize.h"
+#include "scalar_transf_double.h"
 #include "additive_btod.h"
 
 namespace libtensor {
