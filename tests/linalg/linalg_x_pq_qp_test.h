@@ -6,17 +6,17 @@
 namespace libtensor {
 
 
-/**	\brief Tests the libtensor::linalg class (x_pq_qp)
+/** \brief Tests the libtensor::linalg class (x_pq_qp)
 
-	\ingroup libtensor_tests_linalg
+    \ingroup libtensor_tests_linalg
  **/
 class linalg_x_pq_qp_test : public linalg_test_base {
 public:
-	virtual void perform() throw(libtest::test_exception);
+    virtual void perform() throw(libtest::test_exception);
 
 private:
-	void test_x_pq_qp(size_t np, size_t nq, size_t spa, size_t sqb)
-		throw(libtest::test_exception);
+    void test_x_pq_qp(size_t np, size_t nq, size_t spa, size_t sqb)
+        throw(libtest::test_exception);
 
 };
 

@@ -43,9 +43,9 @@ typedef linalg_base_generic linalg_base;
 
 namespace libtensor {
 
-/**	\brief Provides basic linear algebra routines
+/** \brief Provides basic linear algebra routines
 
-	\ingroup libtensor_linalg
+    \ingroup libtensor_linalg
  **/
 struct linalg : public linalg_base { };
 

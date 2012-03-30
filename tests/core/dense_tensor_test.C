@@ -1,7 +1,7 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include <libtensor/dense_tensor/inst/dense_tensor_impl.h>
+#include <libtensor/dense_tensor/impl/dense_tensor_impl.h>
 #include "dense_tensor_test.h"
 
 namespace libtensor {
@@ -365,7 +365,7 @@ void dense_tensor_test::test_1() throw(libtest::test_exception) {
 }
 
 
-/**	\test Opens and closes 33 sessions with a tensor
+/** \test Opens and closes 33 sessions with a tensor
  **/
 void dense_tensor_test::test_2() throw(libtest::test_exception) {
 

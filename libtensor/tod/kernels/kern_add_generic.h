@@ -8,30 +8,30 @@ namespace libtensor {
 
 /** \brief Generic kernel for additions
 
- 	\ingroup libtensor_tod_kernel
+     \ingroup libtensor_tod_kernel
  **/
 class kern_add_generic : public kernel_base<2, 1> {
-	friend class kern_add_i_i_x_x;
-	friend class kern_add_i_x_i_x;
+    friend class kern_add_i_i_x_x;
+    friend class kern_add_i_x_i_x;
 
 public:
-	static const char *k_clazz; //!< Kernel name
+    static const char *k_clazz; //!< Kernel name
 
 private:
-	double m_ka, m_kb;
-	double m_d;
+    double m_ka, m_kb;
+    double m_d;
 
 public:
-	virtual ~kern_add_generic() { }
+    virtual ~kern_add_generic() { }
 
-	virtual const char *get_name() const {
-		return k_clazz;
-	}
+    virtual const char *get_name() const {
+        return k_clazz;
+    }
 
-	virtual void run(const loop_registers<2, 1> &r);
+    virtual void run(const loop_registers<2, 1> &r);
 
-	static kernel_base<2, 1> *match(double ka, double kb, double d, list_t &in,
-	    list_t &out);
+    static kernel_base<2, 1> *match(double ka, double kb, double d, list_t &in,
+        list_t &out);
 
 };
 

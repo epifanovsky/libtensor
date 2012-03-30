@@ -1,5 +1,6 @@
 #ifdef LIBTENSOR_INSTANTIATE_TEMPLATES
 
+#include "scalar_transf_double.h"
 #include "basic_btod.h"
 #include "basic_btod_impl.h"
 

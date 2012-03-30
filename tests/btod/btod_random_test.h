@@ -5,13 +5,13 @@
 
 namespace libtensor {
 
-/**	\brief Tests the libtensor::btod_random class
+/** \brief Tests the libtensor::btod_random class
 
-	\ingroup libtensor_tests_btod
+    \ingroup libtensor_tests_btod
 **/
 class btod_random_test : public libtest::unit_test {
 public:
-	virtual void perform() throw(libtest::test_exception);
+    virtual void perform() throw(libtest::test_exception);
 
 };
 

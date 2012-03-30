@@ -1,8 +1,9 @@
 #ifndef LIBTENSOR_ADDITIVE_BTOD_IMPL_H
 #define LIBTENSOR_ADDITIVE_BTOD_IMPL_H
 
-#include "../symmetry/so_add.h"
 #include "../symmetry/so_copy.h"
+#include "../symmetry/so_dirsum.h"
+#include "../symmetry/so_merge.h"
 
 namespace libtensor {
 
@@ -11,14 +12,14 @@ template<size_t N>
 void additive_btod<N>::compute_block(dense_tensor_i<N, double> &blk,
     const index<N> &i, cpu_pool &cpus) {
 
-    compute_block(true, blk, i, transf<N, double>(), 1.0, cpus);
+    compute_block(true, blk, i, tensor_transf<N, double>(), 1.0, cpus);
 }
 
 
 template<size_t N>
 void additive_btod<N>::compute_block(additive_btod<N> &op, bool zero,
-    dense_tensor_i<N, double> &blk, const index<N> &i, const transf<N, double> &tr,
-    double c, cpu_pool &cpus) {
+    dense_tensor_i<N, double> &blk, const index<N> &i,
+    const tensor_transf<N, double> &tr, double c, cpu_pool &cpus) {
 
     op.compute_block(zero, blk, i, tr, c, cpus);
 }
@@ -33,36 +34,46 @@ void additive_btod<N>::perform(block_tensor_i<N, double> &bt, double c) {
 
     block_tensor_ctrl<N, double> ctrl(bt);
     ctrl.req_sync_on();
+
     symmetry<N, double> symcopy(bt.get_bis());
     so_copy<N, double>(ctrl.req_const_symmetry()).perform(symcopy);
-    permutation<N> p0;
-    so_add<N, double>(get_symmetry(), p0, symcopy, p0).
-        perform(ctrl.req_symmetry());
 
-    dimensions<N> bidims(bt.get_bis().get_block_index_dims());
-    schedule_t sch(get_symmetry(), symcopy);
-    sch.build(get_schedule(), ctrl);
-
-    std::vector<task*> tasks;
-    task_batch batch;
-
-    for(typename schedule_t::iterator igrp = sch.begin(); igrp != sch.end();
-        ++igrp) {
-
-        task *t = new task(*this, bt, bidims, sch, igrp, c);
-        tasks.push_back(t);
-        batch.push(*t);
+    permutation<N + N> p0;
+    block_index_space_product_builder<N, N> bbx(get_bis(), bt.get_bis(), p0);
+    symmetry<N + N, double> symx(bbx.get_bis());
+    so_dirsum<N, N, double>(symcopy, get_symmetry(), p0).perform(symx);
+    mask<N + N> msk;
+    sequence<N + N, size_t> seq;
+    for (register size_t i = 0; i < N; i++) {
+        msk[i] = msk[i + N] = true;
+        seq[i] = seq[i + N] = i;
     }
+    so_merge<N + N, N, double>(symx, msk, seq).perform(ctrl.req_symmetry());
 
-    batch.wait();
-    for(typename std::vector<task*>::iterator i = tasks.begin();
-        i != tasks.end(); i++) {
-        delete *i;
-    }
-    tasks.clear();
+     dimensions<N> bidims(bt.get_bis().get_block_index_dims());
+     schedule_t sch(get_symmetry(), symcopy);
+     sch.build(get_schedule(), ctrl);
 
-    ctrl.req_sync_off();
-    sync_off();
+     std::vector<task*> tasks;
+     task_batch batch;
+
+     for(typename schedule_t::iterator igrp = sch.begin(); igrp != sch.end();
+             ++igrp) {
+
+         task *t = new task(*this, bt, bidims, sch, igrp, c);
+         tasks.push_back(t);
+         batch.push(*t);
+     }
+
+     batch.wait();
+     for(typename std::vector<task*>::iterator i = tasks.begin();
+             i != tasks.end(); i++) {
+         delete *i;
+     }
+     tasks.clear();
+
+     ctrl.req_sync_off();
+     sync_off();
 }
 
 
@@ -113,8 +124,9 @@ void additive_btod<N>::task::perform(cpu_pool &cpus) throw (exception) {
                 tod_set<N>().perform(cpus, blkc);
             } else {
                 dense_tensor_i<N, double> &blkb = ctrl.req_block(aib.get_index());
-                tod_copy<N>(blkb, node.trb.get_perm(), node.trb.get_coeff()).
-                    perform(cpus, true, 1.0, blkc);
+                tod_copy<N>(blkb, node.trb.get_perm(),
+                        node.trb.get_scalar_tr().get_coeff()).
+                        perform(cpus, true, 1.0, blkc);
                 ctrl.ret_block(aib.get_index());
             }
             ctrl.ret_block(aic.get_index());
@@ -132,14 +144,17 @@ void additive_btod<N>::task::perform(cpu_pool &cpus) throw (exception) {
             if(zerob) {
                 abs_index<N> aia(node.cia, m_bidims);
                 tod_copy<N>(*ila->second, node.tra.get_perm(),
-                    node.tra.get_coeff()).perform(cpus, true, 1.0, blkc);
+                        node.tra.get_scalar_tr().get_coeff()).
+                        perform(cpus, true, 1.0, blkc);
             } else {
                 abs_index<N> aia(node.cia, m_bidims);
                 dense_tensor_i<N, double> &blkb = ctrl.req_block(aib.get_index());
                 tod_copy<N>(*ila->second, node.tra.get_perm(),
-                    node.tra.get_coeff()).perform(cpus, true, 1.0, blkc);
-                tod_copy<N>(blkb, node.trb.get_perm(), node.trb.get_coeff()).
-                    perform(cpus, false, 1.0, blkc);
+                        node.tra.get_scalar_tr().get_coeff()).
+                        perform(cpus, true, 1.0, blkc);
+                tod_copy<N>(blkb, node.trb.get_perm(),
+                        node.trb.get_scalar_tr().get_coeff()).
+                        perform(cpus, false, 1.0, blkc);
                 ctrl.ret_block(aib.get_index());
             }
             ctrl.ret_block(aic.get_index());
@@ -162,11 +177,13 @@ void additive_btod<N>::task::perform(cpu_pool &cpus) throw (exception) {
         if(zerob) {
             abs_index<N> aia(node.cia, m_bidims);
             tod_copy<N> (*ila->second, node.tra.get_perm(),
-                node.tra.get_coeff()).perform(cpus, true, 1.0, blkb);
+                    node.tra.get_scalar_tr().get_coeff()).
+                    perform(cpus, true, 1.0, blkb);
         } else {
             abs_index<N> aia(node.cia, m_bidims);
             tod_copy<N> (*ila->second, node.tra.get_perm(),
-                node.tra.get_coeff()).perform(cpus, false, 1.0, blkb);
+                    node.tra.get_scalar_tr().get_coeff()).
+                    perform(cpus, false, 1.0, blkb);
         }
         ctrl.ret_block(aib.get_index());
     }

@@ -3,14 +3,14 @@
 
 #include "expr/expr.h"
 
-/**	\defgroup libtensor_btensor_expr Labeled block tensor expressions
-	\ingroup libtensor_iface
+/** \defgroup libtensor_btensor_expr Labeled block tensor expressions
+    \ingroup libtensor_iface
  **/
 
 namespace libtensor {
 
-/**	\brief Labeled block %tensor expressions
-	\ingroup libtensor_btensor_expr
+/** \brief Labeled block %tensor expressions
+    \ingroup libtensor_btensor_expr
  **/
 namespace labeled_btensor_expr {
 

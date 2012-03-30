@@ -5,13 +5,13 @@
 
 namespace libtensor {
 
-/**	\brief Tests the libtensor::version class
+/** \brief Tests the libtensor::version class
 
-	\ingroup libtensor_tests_core
+    \ingroup libtensor_tests_core
 **/
 class version_test : public libtest::unit_test {
 public:
-	virtual void perform() throw(libtest::test_exception);
+    virtual void perform() throw(libtest::test_exception);
 
 };
 

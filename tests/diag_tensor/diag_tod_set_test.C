@@ -1,9 +1,9 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
-#include <libtensor/tod/tod_contract2.h>
-#include <libtensor/tod/tod_scale.h>
-#include <libtensor/tod/tod_set.h>
-#include <libtensor/tod/tod_set_diag.h>
+#include <libtensor/dense_tensor/tod_contract2.h>
+#include <libtensor/dense_tensor/tod_scale.h>
+#include <libtensor/dense_tensor/tod_set.h>
+#include <libtensor/dense_tensor/tod_set_diag.h>
 #include <libtensor/diag_tensor/diag_tensor.h>
 #include <libtensor/diag_tensor/diag_tensor_ctrl.h>
 #include <libtensor/diag_tensor/diag_tod_set.h>
@@ -198,7 +198,7 @@ void diag_tod_set_test::test_3() throw(libtest::test_exception) {
         contraction2<2, 2, 0> contr1(p0213), contr2(p3120);
         tod_contract2<2, 2, 0>(contr1, t66d, t66d).
             perform(cpus, true, 1.0, t_ref);
-        tod_scale<4>(t_ref, -2.5).perform();
+        tod_scale<4>(-2.5).perform(cpus, t_ref);
 
         diag_tod_set<4>(-2.5).perform(dt);
 

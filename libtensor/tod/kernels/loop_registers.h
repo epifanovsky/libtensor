@@ -7,14 +7,14 @@ namespace libtensor {
 
 
 /**
-	\ingroup libtensor_tod_kernel
+    \ingroup libtensor_tod_kernel
  **/
 template<size_t N, size_t M>
 struct loop_registers {
-	const double *m_ptra[N]; //!< Position in argument arrays
-	double *m_ptrb[M]; //!< Position in result arrays
-	const double *m_ptra_end[N]; //!< End of argument arrays
-	double *m_ptrb_end[M]; //!< End of result arrays
+    const double *m_ptra[N]; //!< Position in argument arrays
+    double *m_ptrb[M]; //!< Position in result arrays
+    const double *m_ptra_end[N]; //!< End of argument arrays
+    double *m_ptrb_end[M]; //!< End of result arrays
 };
 
 

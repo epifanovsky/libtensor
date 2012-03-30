@@ -6,7 +6,7 @@
 namespace libtensor {
 
 
-/**	\brief Tests the libtensor::dimensions class
+/** \brief Tests the libtensor::dimensions class
 
     \ingroup libtensor_tests_core
  **/

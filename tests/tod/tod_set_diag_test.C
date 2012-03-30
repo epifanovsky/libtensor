@@ -6,7 +6,7 @@
 #include <libtensor/core/abs_index.h>
 #include <libtensor/core/print_dimensions.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
-#include <libtensor/tod/tod_set_diag.h>
+#include <libtensor/dense_tensor/tod_set_diag.h>
 #include "../compare_ref.h"
 #include "tod_set_diag_test.h"
 

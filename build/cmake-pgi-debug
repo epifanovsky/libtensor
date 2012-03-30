@@ -1,0 +1,3 @@
+#!/bin/sh
+CC=pgcc CXX=pgCC cmake -D CMAKE_BUILD_TYPE=DEBUG ..
+

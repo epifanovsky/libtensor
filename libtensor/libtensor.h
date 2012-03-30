@@ -25,8 +25,9 @@
 #include "core/block_tensor.h"
 #include "core/direct_block_tensor.h"
 
-#include "core/transf.h"
-#include "btod/transf_double.h"
+#include "core/scalar_transf.h"
+#include "btod/scalar_transf_double.h"
+#include "core/tensor_transf.h"
 
 #include "core/orbit.h"
 #include "core/orbit_list.h"
@@ -36,28 +37,6 @@
 
 #include "tod/contraction2.h"
 #include "tod/processor.h"
-
-#include "tod/tod_add.h"
-#include "tod/tod_additive.h"
-#include "tod/tod_apply.h"
-#include "tod/tod_btconv.h"
-#include "tod/tod_compare.h"
-#include "tod/tod_contract2.h"
-#include "tod/tod_copy.h"
-#include "tod/tod_diag.h"
-#include "tod/tod_dirsum.h"
-#include "tod/tod_dotprod.h"
-#include "tod/tod_import_raw.h"
-#include "tod/tod_mult.h"
-#include "tod/tod_mult1.h"
-#include "tod/tod_random.h"
-#include "tod/tod_scale.h"
-#include "tod/tod_scatter.h"
-#include "tod/tod_select.h"
-#include "tod/tod_set.h"
-#include "tod/tod_set_diag.h"
-#include "tod/tod_set_elem.h"
-#include "tod/tod_sum.h"
 
 
 #include "btod/basic_btod.h"

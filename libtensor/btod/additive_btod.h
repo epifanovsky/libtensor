@@ -2,17 +2,16 @@
 #define LIBTENSOR_ADDITIVE_BTOD_H
 
 #include <cmath>
-#include "../tod/tod_add.h"
-#include "../tod/tod_copy.h"
-#include "../tod/tod_set.h"
+#include <libtensor/dense_tensor/tod_add.h>
+#include <libtensor/dense_tensor/tod_copy.h>
+#include <libtensor/dense_tensor/tod_set.h>
 #include "basic_btod.h"
 #include "addition_schedule.h"
-#include "transf_double.h"
 
 namespace libtensor {
 
 
-/**	\brief Base class for additive block %tensor operations
+/** \brief Base class for additive block %tensor operations
     \tparam N Tensor order.
 
     Additive block %tensor operations are those that can add their result
@@ -60,7 +59,7 @@ public:
     using basic_btod<N>::perform;
 
 public:
-    /**	\brief Computes the result of the operation and adds it to the
+    /** \brief Computes the result of the operation and adds it to the
             output block %tensor
         \param bt Output block %tensor.
         \param c Scaling coefficient.
@@ -75,7 +74,7 @@ public:
     virtual void compute_block(dense_tensor_i<N, double> &blk, const index<N> &i,
         cpu_pool &cpus);
 
-    /**	\brief Computes a single block of the result and adds it to
+    /** \brief Computes a single block of the result and adds it to
             the output %tensor
         \param zero Zero out the output before the computation.
         \param blk Output %tensor.
@@ -85,16 +84,16 @@ public:
         \param cpus Pool of CPUs.
      **/
     virtual void compute_block(bool zero, dense_tensor_i<N, double> &blk,
-        const index<N> &i, const transf<N, double> &tr, double c,
+        const index<N> &i, const tensor_transf<N, double> &tr, double c,
         cpu_pool &cpus) = 0;
 
 protected:
-    /**	\brief Invokes compute_block on another additive operation;
+    /** \brief Invokes compute_block on another additive operation;
             allows derived classes to call other additive operations
      **/
     void compute_block(additive_btod<N> &op, bool zero,
         dense_tensor_i<N, double> &blk, const index<N> &i,
-        const transf<N, double> &tr, double c, cpu_pool &cpus);
+        const tensor_transf<N, double> &tr, double c, cpu_pool &cpus);
 
 private:
     typedef addition_schedule<N, double> schedule_t;

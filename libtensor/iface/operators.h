@@ -21,8 +21,8 @@
 #include "dot_product.h"
 #include "trace/trace_operator.h"
 
-/**	\defgroup libtensor_btensor_expr_op Overloaded operators
-	\ingroup libtensor_btensor_expr
+/** \defgroup libtensor_btensor_expr_op Overloaded operators
+    \ingroup libtensor_btensor_expr
  **/
 
 #endif // LIBTENSOR_LABELED_BTENSOR_EXPR_OPERATORS_H

@@ -1,5 +1,6 @@
 #ifdef LIBTENSOR_INSTANTIATE_TEMPLATES
 
+#include "scalar_transf_double.h"
 #include "btod_contract2.h"
 #include "btod_contract2_impl.h"
 
@@ -8,67 +9,67 @@ namespace libtensor {
 
 template<>
 struct btod_contract2_clazz<0, 3, 1> {
-	static const char *k_clazz;
+    static const char *k_clazz;
 };
 template<>
 struct btod_contract2_clazz<0, 3, 2> {
-	static const char *k_clazz;
+    static const char *k_clazz;
 };
 template<>
 struct btod_contract2_clazz<0, 3, 3> {
-	static const char *k_clazz;
+    static const char *k_clazz;
 };
 template<>
 struct btod_contract2_clazz<1, 2, 0> {
-	static const char *k_clazz;
+    static const char *k_clazz;
 };
 template<>
 struct btod_contract2_clazz<1, 2, 1> {
-	static const char *k_clazz;
+    static const char *k_clazz;
 };
 template<>
 struct btod_contract2_clazz<1, 2, 2> {
-	static const char *k_clazz;
+    static const char *k_clazz;
 };
 template<>
 struct btod_contract2_clazz<1, 2, 3> {
-	static const char *k_clazz;
+    static const char *k_clazz;
 };
 template<>
 struct btod_contract2_clazz<1, 2, 4> {
-	static const char *k_clazz;
+    static const char *k_clazz;
 };
 template<>
 struct btod_contract2_clazz<2, 1, 0> {
-	static const char *k_clazz;
+    static const char *k_clazz;
 };
 template<>
 struct btod_contract2_clazz<2, 1, 1> {
-	static const char *k_clazz;
+    static const char *k_clazz;
 };
 template<>
 struct btod_contract2_clazz<2, 1, 2> {
-	static const char *k_clazz;
+    static const char *k_clazz;
 };
 template<>
 struct btod_contract2_clazz<2, 1, 3> {
-	static const char *k_clazz;
+    static const char *k_clazz;
 };
 template<>
 struct btod_contract2_clazz<2, 1, 4> {
-	static const char *k_clazz;
+    static const char *k_clazz;
 };
 template<>
 struct btod_contract2_clazz<3, 0, 1> {
-	static const char *k_clazz;
+    static const char *k_clazz;
 };
 template<>
 struct btod_contract2_clazz<3, 0, 2> {
-	static const char *k_clazz;
+    static const char *k_clazz;
 };
 template<>
 struct btod_contract2_clazz<3, 0, 3> {
-	static const char *k_clazz;
+    static const char *k_clazz;
 };
 
 
