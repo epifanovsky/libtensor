@@ -40,6 +40,9 @@ namespace libtensor {
     // Check if the transformation is the identity transformation
     bool is_identity() const;
 
+    // Check if the transformation maps all elements to zero
+    bool is_zero() const;
+
     bool operator==(const scalar_transf<T> &tr) const;
 
     bool operator!=(const scalar_transf<T> &tr) const;

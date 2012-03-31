@@ -65,7 +65,13 @@ public:
     //! Comparison functions and operators
     //@{
 
+    /** \brief True, if the transformation leaves the elements unchanged
+     **/
     bool is_identity() const { return m_coeff == 1.0; }
+
+    /** \brief True if all elements are mapped to zero.
+     **/
+    bool is_zero() const { return m_coeff == 0.0; }
 
     /** \brief equal comparison
      **/
