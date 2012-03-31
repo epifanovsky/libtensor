@@ -82,9 +82,10 @@ void btod_ewmult2<N, M, K>::compute_block(dense_tensor_i<k_orderc, double> &blk,
 template<size_t N, size_t M, size_t K>
 void btod_ewmult2<N, M, K>::compute_block(bool zero,
     dense_tensor_i<k_orderc, double> &blk, const index<k_orderc> &bidx,
-    const tensor_transf<k_orderc, double> &tr, double d, cpu_pool &cpus) {
+    const tensor_transf<k_orderc, double> &tr, const scalar_transf<double> &d,
+    cpu_pool &cpus) {
 
-    compute_block_impl(blk, bidx, tr, zero, d, cpus);
+    compute_block_impl(blk, bidx, tr, zero, d.get_coeff(), cpus);
 }
 
 

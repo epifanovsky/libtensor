@@ -197,7 +197,7 @@ void btod_diag_test::test_nosym_1(bool add) throw(libtest::test_exception) {
         tod_diag<2, 2>(ta, msk).perform(tb_ref, 1.0);
 
         //  Invoke the operation
-        btod_diag<2, 2>(bta, msk).perform(btb, 1.0);
+        btod_diag<2, 2>(bta, msk).perform(btb, scalar_transf<double>(1.0));;
     }
     else {
         //  Prepare the reference
@@ -273,7 +273,7 @@ void btod_diag_test::test_nosym_2(bool add) throw(libtest::test_exception) {
         tod_diag<4, 2>(ta, msk, pb).perform(tb_ref, 1.0);
 
         //  Invoke the operation
-        btod_diag<4, 2>(bta, msk, pb).perform(btb, 1.0);
+        btod_diag<4, 2>(bta, msk, pb).perform(btb, scalar_transf<double>(1.0));;
 
     } else {
         tod_diag<4, 2>(ta, msk, pb).perform(tb_ref);
@@ -345,7 +345,7 @@ void btod_diag_test::test_nosym_3(bool add) throw(libtest::test_exception) {
         tod_diag<2, 2>(ta, msk).perform(tb_ref, 1.0);
 
         //  Invoke the operation
-        btod_diag<2, 2>(bta, msk).perform(btb, 1.0);
+        btod_diag<2, 2>(bta, msk).perform(btb, scalar_transf<double>(1.0));;
     }
     else {
         tod_diag<2, 2>(ta, msk).perform(tb_ref);
@@ -424,7 +424,7 @@ void btod_diag_test::test_nosym_4(bool add) throw(libtest::test_exception) {
         tod_diag<4, 2>(ta, msk, pb).perform(tb_ref, 1.0);
 
         //  Invoke the operation
-        btod_diag<4, 2>(bta, msk, pb).perform(btb, 1.0);
+        btod_diag<4, 2>(bta, msk, pb).perform(btb, scalar_transf<double>(1.0));;
     }
     else {
         tod_diag<4, 2>(ta, msk, pb).perform(tb_ref);
@@ -503,7 +503,7 @@ void btod_diag_test::test_sym_1(bool add) throw(libtest::test_exception) {
         tod_diag<2, 2>(ta, msk).perform(tb_ref, 1.0);
 
         //  Invoke the operation
-        btod_diag<2, 2>(bta, msk).perform(btb, 1.0);
+        btod_diag<2, 2>(bta, msk).perform(btb, scalar_transf<double>(1.0));;
     }
     else {
         tod_diag<2, 2>(ta, msk).perform(tb_ref);
@@ -587,7 +587,7 @@ void btod_diag_test::test_sym_2(bool add) throw(libtest::test_exception) {
         tod_diag<3, 2>(ta, msk).perform(tb_ref, 1.0);
 
         //  Invoke the operation
-        btod_diag<3, 2>(bta, msk).perform(btb, 1.0);
+        btod_diag<3, 2>(bta, msk).perform(btb, scalar_transf<double>(1.0));;
     }
     else {
         tod_diag<3, 2>(ta, msk).perform(tb_ref);
@@ -671,7 +671,7 @@ void btod_diag_test::test_sym_3(bool add) throw(libtest::test_exception) {
         tod_diag<2, 2>(ta, msk).perform(tb_ref, 1.0);
 
         //  Invoke the operation
-        btod_diag<2, 2>(bta, msk).perform(btb, 1.0);
+        btod_diag<2, 2>(bta, msk).perform(btb, scalar_transf<double>(1.0));;
     }
     else {
         tod_diag<2, 2>(ta, msk).perform(tb_ref);
@@ -758,7 +758,7 @@ void btod_diag_test::test_sym_4(bool add) throw(libtest::test_exception) {
         tod_diag<4, 2>(ta, msk, pb).perform(tb_ref, 1.0);
 
         //  Invoke the operation
-        btod_diag<4, 2>(bta, msk, pb).perform(btb, 1.0);
+        btod_diag<4, 2>(bta, msk, pb).perform(btb, scalar_transf<double>(1.0));;
     }
     else {
         tod_diag<4, 2>(ta, msk, pb).perform(tb_ref);
@@ -843,7 +843,7 @@ void btod_diag_test::test_sym_5(bool add) throw(libtest::test_exception) {
         tod_diag<4, 2>(ta, msk, perm).perform(tb_ref, 1.0);
 
         //  Invoke the operation
-        btod_diag<4, 2>(bta, msk, perm).perform(btb, 1.0);
+        btod_diag<4, 2>(bta, msk, perm).perform(btb, scalar_transf<double>(1.0));;
     }
     else {
         tod_diag<4, 2>(ta, msk, perm).perform(tb_ref);
@@ -921,7 +921,7 @@ void btod_diag_test::test_sym_6(bool add) throw(libtest::test_exception) {
 
     //  Invoke the operation
     if(add) {
-        btod_diag<4, 2>(bta, msk).perform(btb, 1.0);
+        btod_diag<4, 2>(bta, msk).perform(btb, scalar_transf<double>(1.0));;
         tod_diag<4, 2>(ta, msk).perform(tb_ref, 1.0);
     } else {
         btod_diag<4, 2>(bta, msk).perform(btb);
@@ -1019,7 +1019,7 @@ void btod_diag_test::test_sym_7(bool add) throw(libtest::test_exception) {
         tod_diag<2, 2>(ta, msk).perform(tb_ref, 1.0);
 
         //  Invoke the operation
-        btod_diag<2, 2>(bta, msk).perform(btb, 1.0);
+        btod_diag<2, 2>(bta, msk).perform(btb, scalar_transf<double>(1.0));;
     }
     else {
         tod_diag<2, 2>(ta, msk).perform(tb_ref);

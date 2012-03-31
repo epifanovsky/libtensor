@@ -108,7 +108,7 @@ void direct_btensor_test::test_3() throw(libtest::test_exception) {
     btensor<2> bt(sia), bt_ref(sia);
 
     btod_copy<2>(bt1).perform(bt_ref);
-    btod_copy<2>(bt2).perform(bt_ref, -1.0);
+    btod_copy<2>(bt2).perform(bt_ref, scalar_transf<double>(-1.0));
 
     bt(i|a) = dbt(i|a);
 

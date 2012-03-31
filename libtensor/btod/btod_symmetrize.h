@@ -10,7 +10,8 @@
 #include "../symmetry/so_permute.h"
 #include "../symmetry/so_symmetrize.h"
 #include <libtensor/dense_tensor/tod_set.h>
-#include "additive_btod.h"
+#include <libtensor/block_tensor/bto/additive_bto.h>
+#include <libtensor/block_tensor/btod/btod_traits.h>
 
 namespace libtensor {
 
@@ -22,7 +23,7 @@ namespace libtensor {
  **/
 template<size_t N>
 class btod_symmetrize :
-    public additive_btod<N>,
+    public additive_bto<N, bto_traits<double> >,
     public timings< btod_symmetrize<N> > {
 
 public:
@@ -40,7 +41,7 @@ private:
     typedef std::multimap<size_t, schrec> sym_schedule_t;
 
 private:
-    additive_btod<N> &m_op; //!< Symmetrized operation
+    additive_bto<N, bto_traits<double> > &m_op; //!< Symmetrized operation
     permutation<N> m_perm1; //!< First symmetrization permutation
     bool m_symm; //!< Symmetrization sign
     block_index_space<N> m_bis; //!< Block %index space of the result
@@ -58,7 +59,8 @@ public:
         \param i2 Second %tensor %index.
         \param symm True for symmetric, false for anti-symmetric.
      **/
-    btod_symmetrize(additive_btod<N> &op, size_t i1, size_t i2, bool symm);
+    btod_symmetrize(additive_bto<N, bto_traits<double> > &op,
+            size_t i1, size_t i2, bool symm);
 
     /** \brief Initializes the operation using a unitary %permutation
             (P = P^-1)
@@ -66,8 +68,8 @@ public:
         \param perm Unitary %permutation.
         \param symm True for symmetric, false for anti-symmetric.
      **/
-    btod_symmetrize(additive_btod<N> &op, const permutation<N> &perm,
-        bool symm);
+    btod_symmetrize(additive_bto<N, bto_traits<double> > &op,
+            const permutation<N> &perm, bool symm);
 
     /** \brief Virtual destructor
      **/
@@ -97,12 +99,12 @@ public:
     //@}
 
 protected:
-    //!    \brief Implementation of additive_btod<N>
+    //!    \brief Implementation of additive_bto<N, bto_traits<double> >
     //@{
 
     virtual void compute_block(bool zero, dense_tensor_i<N, double> &blk,
-        const index<N> &i, const tensor_transf<N, double> &tr, double c,
-        cpu_pool &cpus);
+        const index<N> &i, const tensor_transf<N, double> &tr,
+        const scalar_transf<double> &c, cpu_pool &cpus);
 
     //@}
 
@@ -127,14 +129,15 @@ const char *btod_symmetrize<N>::k_clazz = "btod_symmetrize<N>";
 
 
 template<size_t N>
-btod_symmetrize<N>::btod_symmetrize(additive_btod<N> &op, size_t i1, size_t i2,
-    bool symm) :
+btod_symmetrize<N>::btod_symmetrize(additive_bto<N, bto_traits<double> > &op,
+        size_t i1, size_t i2, bool symm) :
 
     m_op(op), m_symm(symm), m_bis(op.get_bis()), m_sym(m_bis),
     m_sch(m_bis.get_block_index_dims()) {
 
     static const char *method =
-        "btod_symmetrize(additive_btod<N>&, size_t, size_t, bool)";
+            "btod_symmetrize(additive_bto<N, bto_traits<double> >&, "
+            "size_t, size_t, bool)";
 
     if(i1 == i2) {
         throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
@@ -147,13 +150,13 @@ btod_symmetrize<N>::btod_symmetrize(additive_btod<N> &op, size_t i1, size_t i2,
 
 
 template<size_t N>
-btod_symmetrize<N>::btod_symmetrize(additive_btod<N> &op,
+btod_symmetrize<N>::btod_symmetrize(additive_bto<N, bto_traits<double> > &op,
     const permutation<N> &perm, bool symm) :
 
     m_op(op), m_symm(symm), m_perm1(perm), m_bis(op.get_bis()),
     m_sym(m_bis), m_sch(m_bis.get_block_index_dims()) {
 
-    static const char *method = "btod_symmetrize(additive_btod<N>&, "
+    static const char *method = "btod_symmetrize(additive_bto<N, bto_traits<double> >&, "
         "const permutation<N>&, bool)";
 
     permutation<N> p1(perm); p1.permute(perm);
@@ -194,9 +197,10 @@ void btod_symmetrize<N>::compute_block(dense_tensor_i<N, double> &blk,
 
 
 template<size_t N>
-void btod_symmetrize<N>::compute_block(bool zero, dense_tensor_i<N, double> &blk,
-    const index<N> &idx, const tensor_transf<N, double> &tr, double c,
-    cpu_pool &cpus) {
+void btod_symmetrize<N>::compute_block(bool zero,
+        dense_tensor_i<N, double> &blk, const index<N> &idx,
+        const tensor_transf<N, double> &tr, const scalar_transf<double> &c,
+        cpu_pool &cpus) {
 
     typedef typename sym_schedule_t::iterator iterator_t;
 
@@ -224,15 +228,15 @@ void btod_symmetrize<N>::compute_block(bool zero, dense_tensor_i<N, double> &blk
         tri.transform(tr);
 
         if(n == 1) {
-            additive_btod<N>::compute_block(m_op, false, blk,
-                ai.get_index(), tri, c, cpus);
+            additive_bto<N, bto_traits<double> >::compute_block(m_op, false,
+                    blk, ai.get_index(), tri, c, cpus);
             sch1.pop_front();
         } else {
             dimensions<N> dims(blk.get_dims());
             // TODO: replace with "temporary block" feature
             dense_tensor< N, double, allocator<double> > tmp(dims);
-            additive_btod<N>::compute_block(m_op, true, tmp,
-                ai.get_index(), tri, c, cpus);
+            additive_bto<N, bto_traits<double> >::compute_block(m_op, true,
+                    tmp, ai.get_index(), tri, c, cpus);
             tensor_transf<N, double> tri_inv(tri);
             tri_inv.invert();
             for(typename std::list<schrec>::iterator j =

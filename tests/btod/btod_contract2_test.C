@@ -1442,7 +1442,7 @@ void btod_contract2_test::test_contr_5() throw(libtest::test_exception) {
         contr.contract(3, 1);
 
         btod_contract2<2, 2, 2> op(contr, bta, btb);
-        op.perform(btc, 2.0);
+        op.perform(btc, scalar_transf<double>(2.0));
 
         tod_btconv<4> convc(btc);
         convc.perform(tc);
@@ -1545,7 +1545,7 @@ void btod_contract2_test::test_contr_6() throw(libtest::test_exception) {
         contr.contract(3, 1);
 
         btod_contract2<2, 2, 2> op(contr, bta, btb);
-        op.perform(btc, 2.0);
+        op.perform(btc, scalar_transf<double>(2.0));
 
         tod_btconv<4> convc(btc);
         convc.perform(tc);
@@ -1696,7 +1696,7 @@ void btod_contract2_test::test_contr_8() throw(libtest::test_exception) {
         contr.contract(0, 3);
 
         btod_contract2<1, 3, 1> op(contr, bta, btb);
-        op.perform(btc, 1.0);
+        op.perform(btc, scalar_transf<double>(1.0));
 
         tod_btconv<4>(btc).perform(tc);
 
@@ -1765,7 +1765,7 @@ void btod_contract2_test::test_contr_9() throw(libtest::test_exception) {
         contr.contract(0, 3);
 
         btod_contract2<1, 3, 1> op(contr, bta, btb);
-        op.perform(btc, -1.0);
+        op.perform(btc, scalar_transf<double>(-1.0));
 
         tod_btconv<4>(btc).perform(tc);
 
@@ -1824,15 +1824,16 @@ void btod_contract2_test::test_contr_10() throw(libtest::test_exception) {
         btb.set_immutable();
 
         //  Convert block tensors to regular tensors
+        scalar_transf<double> tr(-1.0);
 
         //  Run contraction and compute the reference
 
         contraction2<1, 3, 1> contr;
         contr.contract(0, 3);
 
-        btod_contract2<1, 3, 1>(contr, bta, btb).perform(btc, -1.0);
+        btod_contract2<1, 3, 1>(contr, bta, btb).perform(btc, tr);
         btod_contract2<1, 3, 1>(contr, bta, btb).perform(btc_ref_tmp);
-        btod_copy<4>(btc_ref_tmp, -1.0).perform(btc_ref);
+        btod_copy<4>(btc_ref_tmp, tr.get_coeff()).perform(btc_ref);
 
         //  Compare against reference
 
@@ -2101,10 +2102,13 @@ throw(libtest::test_exception) {
         contr.contract(3, 3);
 
         if(c == 0.0) btod_contract2<2, 2, 2>(contr, bta, btb).perform(btc);
-        else btod_contract2<2, 2, 2>(contr, bta, btb).perform(btc, c);
+        else btod_contract2<2, 2, 2>(contr, bta, btb).perform(btc,
+                scalar_transf<double>(c));
         tod_btconv<4>(btc).perform(tc);
-        if(c == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc_ref);
-        else tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, false, c, tc_ref);
+        if(c == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus,
+                true, 1.0, tc_ref);
+        else tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus,
+                false, c, tc_ref);
 
         //  Compare against reference
 
@@ -2180,10 +2184,13 @@ throw(libtest::test_exception) {
         contr.contract(3, 3);
 
         if(c == 0.0) btod_contract2<2, 2, 2>(contr, bta, btb).perform(btc);
-        else btod_contract2<2, 2, 2>(contr, bta, btb).perform(btc, c);
+        else btod_contract2<2, 2, 2>(contr, bta, btb).perform(btc,
+                scalar_transf<double>(c));
         tod_btconv<4>(btc).perform(tc);
-        if(c == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc_ref);
-        else tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, false, c, tc_ref);
+        if(c == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus,
+                true, 1.0, tc_ref);
+        else tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus,
+                false, c, tc_ref);
 
         //  Compare against reference
 
@@ -2266,10 +2273,13 @@ throw(libtest::test_exception) {
         contr.contract(3, 3);
 
         if(c == 0.0) btod_contract2<2, 2, 2>(contr, bta, btb).perform(btc);
-        else btod_contract2<2, 2, 2>(contr, bta, btb).perform(btc, c);
+        else btod_contract2<2, 2, 2>(contr, bta, btb).perform(btc,
+                scalar_transf<double>(c));
         tod_btconv<4>(btc).perform(tc);
-        if(c == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc_ref);
-        else tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, false, c, tc_ref);
+        if(c == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus,
+                true, 1.0, tc_ref);
+        else tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus,
+                false, c, tc_ref);
 
         //  Compare against reference
 
@@ -2362,10 +2372,13 @@ throw(libtest::test_exception) {
         contr.contract(3, 3);
 
         if(c == 0.0) btod_contract2<1, 1, 3>(contr, bta, btb).perform(btc);
-        else btod_contract2<1, 1, 3>(contr, bta, btb).perform(btc, c);
+        else btod_contract2<1, 1, 3>(contr, bta, btb).perform(btc,
+                scalar_transf<double>(c));
         tod_btconv<2>(btc).perform(tc);
-        if(c == 0.0) tod_contract2<1, 1, 3>(contr, ta, tb).perform(cpus, true, 1.0, tc_ref);
-        else tod_contract2<1, 1, 3>(contr, ta, tb).perform(cpus, false, c, tc_ref);
+        if(c == 0.0) tod_contract2<1, 1, 3>(contr, ta, tb).perform(cpus,
+                true, 1.0, tc_ref);
+        else tod_contract2<1, 1, 3>(contr, ta, tb).perform(cpus,
+                false, c, tc_ref);
 
         //  Compare against reference
 
@@ -2454,10 +2467,13 @@ throw(libtest::test_exception) {
         contr.contract(3, 3);
 
         if(c == 0.0) btod_contract2<1, 1, 3>(contr, bta, btb).perform(btc);
-        else btod_contract2<1, 1, 3>(contr, bta, btb).perform(btc, c);
+        else btod_contract2<1, 1, 3>(contr, bta, btb).perform(btc,
+                scalar_transf<double>(c));
         tod_btconv<2>(btc).perform(tc);
-        if(c == 0.0) tod_contract2<1, 1, 3>(contr, ta, tb).perform(cpus, true, 1.0, tc_ref);
-        else tod_contract2<1, 1, 3>(contr, ta, tb).perform(cpus, false, c, tc_ref);
+        if(c == 0.0) tod_contract2<1, 1, 3>(contr, ta, tb).perform(cpus,
+                true, 1.0, tc_ref);
+        else tod_contract2<1, 1, 3>(contr, ta, tb).perform(cpus,
+                false, c, tc_ref);
 
         //  Compare against reference
 

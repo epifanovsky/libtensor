@@ -7,8 +7,10 @@
 #include "../exception.h"
 #include "../timings.h"
 #include "../core/abs_index.h"
+#include "scalar_transf_double.h"
 #include "bad_block_index_space.h"
-#include "additive_btod.h"
+#include <libtensor/block_tensor/bto/additive_bto.h>
+#include <libtensor/block_tensor/btod/btod_traits.h>
 #include "../not_implemented.h"
 
 namespace libtensor {
@@ -21,7 +23,9 @@ namespace libtensor {
     \ingroup libtensor_btod
  **/
 template<size_t N>
-class btod_copy : public additive_btod<N>, public timings< btod_copy<N> > {
+class btod_copy :
+    public additive_bto<N, bto_traits<double> >,
+    public timings< btod_copy<N> > {
 public:
     static const char *k_clazz; //!< Class name
 
@@ -68,7 +72,7 @@ public:
         return m_sym;
     }
 
-    using additive_btod<N>::perform;
+    using additive_bto<N, bto_traits<double> >::perform;
 
     virtual void sync_on();
     virtual void sync_off();
@@ -84,7 +88,8 @@ public:
 
 protected:
     virtual void compute_block(bool zero, dense_tensor_i<N, double> &blk,
-        const index<N> &ib, const tensor_transf<N, double> &tr, double c,
+        const index<N> &ib, const tensor_transf<N, double> &tr,
+        const scalar_transf<double> &c,
         cpu_pool &cpus);
 
 private:

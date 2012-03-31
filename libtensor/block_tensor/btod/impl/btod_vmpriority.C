@@ -4,14 +4,14 @@
 namespace libtensor {
 
 
-template class bto_vmpriority<1, btod_vmpriority_traits>;
-template class bto_vmpriority<2, btod_vmpriority_traits>;
-template class bto_vmpriority<3, btod_vmpriority_traits>;
-template class bto_vmpriority<4, btod_vmpriority_traits>;
-template class bto_vmpriority<5, btod_vmpriority_traits>;
-template class bto_vmpriority<6, btod_vmpriority_traits>;
-template class bto_vmpriority<7, btod_vmpriority_traits>;
-template class bto_vmpriority<8, btod_vmpriority_traits>;
+template class bto_vmpriority<1, bto_traits<double> >;
+template class bto_vmpriority<2, bto_traits<double> >;
+template class bto_vmpriority<3, bto_traits<double> >;
+template class bto_vmpriority<4, bto_traits<double> >;
+template class bto_vmpriority<5, bto_traits<double> >;
+template class bto_vmpriority<6, bto_traits<double> >;
+template class bto_vmpriority<7, bto_traits<double> >;
+template class bto_vmpriority<8, bto_traits<double> >;
 
 
 template class btod_vmpriority<1>;

@@ -3,8 +3,8 @@
 
 #include "../defs.h"
 #include "../exception.h"
-#include "block_tensor_i.h"
-#include "direct_block_tensor_operation.h"
+#include <libtensor/block_tensor/bto/bto_traits.h>
+#include <libtensor/block_tensor/bto/direct_bto.h>
 
 namespace libtensor {
 
@@ -24,17 +24,19 @@ public:
 
 public:
     typedef T element_t; //!< Tensor element type
+    typedef direct_bto< N, bto_traits<T> > operation_t;
 
 protected:
     //!    Underlying block tensor operation
-    direct_block_tensor_operation<N, T> &m_op;
+    operation_t &m_op;
 
 public:
     //!    \name Construction and destruction
     //@{
 
-    direct_block_tensor_base(direct_block_tensor_operation<N, T> &op) :
+    direct_block_tensor_base(operation_t &op) :
         m_op(op) { }
+
     virtual ~direct_block_tensor_base() { }
 
     //@}
@@ -47,7 +49,7 @@ public:
     //@}
 
 protected:
-    direct_block_tensor_operation<N, T> &get_op() const {
+    operation_t &get_op() const {
         return m_op;
     }
 

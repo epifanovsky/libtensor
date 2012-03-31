@@ -94,7 +94,7 @@ void cholesky::decompose()
 
     // scale the element
 
-        dense_tensor <1 , double, std_allocator <double> > columnt(column.get_bis().get_dims());
+    dense_tensor <1 , double, std_allocator <double> > columnt(column.get_bis().get_dims());
 
     btod_scale<1>(column,1/sqrt(diag)).perform();
 
@@ -105,7 +105,7 @@ void cholesky::decompose()
     contraction2<1,1,0> contr;
         btod_contract2<1,1,0> opcntr(contr,column,column);
 
-    opcntr.perform(D,-1);
+    opcntr.perform(D, scalar_transf<double>(-1.));
 
     
     //save the vector to the buffer

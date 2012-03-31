@@ -502,7 +502,7 @@ void btod_symmetrize_test::test_6a(bool symm, bool label,
     //  Run the symmetrization operation
 
     btod_copy<2> op_copy(bta);
-    if (doadd) btod_symmetrize<2>(op_copy, p, symm).perform(btb, 0.25);
+    if (doadd) btod_symmetrize<2>(op_copy, p, symm).perform(btb, scalar_transf<double>(0.25));
     else btod_symmetrize<2>(op_copy, p, symm).perform(btb);
 
     tod_btconv<2>(btb).perform(tb);

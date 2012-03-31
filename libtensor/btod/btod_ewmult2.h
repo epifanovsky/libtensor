@@ -1,7 +1,8 @@
 #ifndef LIBTENSOR_BTOD_EWMULT2_H
 #define LIBTENSOR_BTOD_EWMULT2_H
 
-#include "additive_btod.h"
+#include <libtensor/block_tensor/bto/additive_bto.h>
+#include <libtensor/block_tensor/btod/btod_traits.h>
 
 namespace libtensor {
 
@@ -25,7 +26,7 @@ namespace libtensor {
  **/
 template<size_t N, size_t M, size_t K>
 class btod_ewmult2 :
-    public additive_btod<N + M + K>,
+    public additive_bto<N + M + K, bto_traits<double> >,
     public timings< btod_ewmult2<N, M, K> > {
 
 public:
@@ -103,14 +104,14 @@ public:
     virtual void sync_on();
     virtual void sync_off();
 
-    using additive_btod<N + M + K>::perform;
+    using additive_bto<N + M + K, bto_traits<double> >::perform;
 
     //@}
 
 protected:
     virtual void compute_block(bool zero, dense_tensor_i<k_orderc, double> &blk,
         const index<k_orderc> &i, const tensor_transf<k_orderc, double> &tr,
-        double c, cpu_pool &cpus);
+        const scalar_transf<double> &c, cpu_pool &cpus);
 
 private:
     /** \brief Computes the block index space of the result block tensor

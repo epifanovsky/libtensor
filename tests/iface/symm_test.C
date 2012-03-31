@@ -211,7 +211,7 @@ void symm_test::test_asymm2_contr_tt_2() throw(libtest::test_exception) {
     btod_copy<4>(t0).perform(t3_ref);
     btod_copy<4> cp(t3_ref_tmp);
     btod_symmetrize<4>(cp, permutation<4>().permute(2, 3), false).
-        perform(t3_ref, 1.0);
+        perform(t3_ref, scalar_transf<double>());
 
     letter i, j, a, b, c;
     t3(i|j|a|b) = t0(i|j|a|b) +
@@ -331,7 +331,7 @@ void symm_test::test_asymm2_contr_tt_5() throw(libtest::test_exception) {
     btod_symmetrize<4> op_symm(op_contr, 0, 1, false);
     op_symm.perform(tt1);
     btod_copy<4>(t1).perform(t4_ref);
-    btod_copy<4>(tt1).perform(t4_ref, -1.0);
+    btod_copy<4>(tt1).perform(t4_ref, scalar_transf<double>(-1.0));
 
     letter i, j, k, l, a, b, c;
     t4(i|j|k|a) = t1(i|j|k|a) - asymm(i, j, contract(l|c,
@@ -549,8 +549,8 @@ void symm_test::test_symm22_t_2() throw(libtest::test_exception) {
     permutation<4> perm1; perm1.permute(0, 1); // ijka -> jika
     permutation<4> perm2; perm2.permute(0, 2); // ijka -> kjia
     btod_copy<4>(t1).perform(t2_ref);
-    btod_copy<4>(t1, perm1).perform(t2_ref, 1.0);
-    btod_copy<4>(t1, perm2).perform(t2_ref, 1.0);
+    btod_copy<4>(t1, perm1).perform(t2_ref, scalar_transf<double>());
+    btod_copy<4>(t1, perm2).perform(t2_ref, scalar_transf<double>());
 
     letter i, j, k, a;
     t2a(i|j|k|a) = symm(i, j, k, t1(i|j|k|a));
@@ -585,8 +585,8 @@ void symm_test::test_asymm22_t_2() throw(libtest::test_exception) {
     permutation<4> perm1; perm1.permute(0, 1); // ijka -> jika
     permutation<4> perm2; perm2.permute(0, 2); // ijka -> kjia
     btod_copy<4>(t1).perform(t2_ref);
-    btod_copy<4>(t1, perm1).perform(t2_ref, -1.0);
-    btod_copy<4>(t1, perm2).perform(t2_ref, -1.0);
+    btod_copy<4>(t1, perm1).perform(t2_ref, scalar_transf<double>(-1.0));
+    btod_copy<4>(t1, perm2).perform(t2_ref, scalar_transf<double>(-1.0));
 
     letter i, j, k, a;
     t2a(i|j|k|a) = asymm(i, j, k, t1(i|j|k|a));
@@ -623,7 +623,7 @@ void symm_test::test_symm22_e_1() throw(libtest::test_exception) {
     t1b.set_immutable();
 
     btod_copy<4>(t1a).perform(t1);
-    btod_copy<4>(t1b).perform(t1, 1.0);
+    btod_copy<4>(t1b).perform(t1, scalar_transf<double>());
     btod_copy<4> cp1(t1);
     btod_symmetrize<4>(cp1, permutation<4>().permute(0, 1), true).
         perform(t2_ref_tmp);
@@ -664,7 +664,7 @@ void symm_test::test_asymm22_e_1() throw(libtest::test_exception) {
     t1b.set_immutable();
 
     btod_copy<4>(t1a).perform(t1);
-    btod_copy<4>(t1b).perform(t1, 1.0);
+    btod_copy<4>(t1b).perform(t1, scalar_transf<double>());
     btod_copy<4> cp1(t1);
     btod_symmetrize<4>(cp1, permutation<4>().permute(0, 1), false).
         perform(t2_ref_tmp);
@@ -706,10 +706,10 @@ void symm_test::test_symm22_e_2() throw(libtest::test_exception) {
     permutation<4> perm1; perm1.permute(0, 1); // ijka -> jika
     permutation<4> perm2; perm2.permute(0, 2); // ijka -> kjia
     btod_copy<4>(t1a).perform(t1);
-    btod_copy<4>(t1b).perform(t1, 1.0);
+    btod_copy<4>(t1b).perform(t1, scalar_transf<double>());
     btod_copy<4>(t1).perform(t2_ref);
-    btod_copy<4>(t1, perm1).perform(t2_ref, 1.0);
-    btod_copy<4>(t1, perm2).perform(t2_ref, 1.0);
+    btod_copy<4>(t1, perm1).perform(t2_ref, scalar_transf<double>());
+    btod_copy<4>(t1, perm2).perform(t2_ref, scalar_transf<double>());
 
     letter i, j, k, a;
     t2a(i|j|k|a) = symm(i, j, k, t1a(i|j|k|a) + t1b(i|j|k|a));
@@ -747,10 +747,10 @@ void symm_test::test_asymm22_e_2() throw(libtest::test_exception) {
     permutation<4> perm1; perm1.permute(0, 1); // ijka -> jika
     permutation<4> perm2; perm2.permute(0, 2); // ijka -> kjia
     btod_copy<4>(t1a).perform(t1);
-    btod_copy<4>(t1b).perform(t1, 1.0);
+    btod_copy<4>(t1b).perform(t1, scalar_transf<double>());
     btod_copy<4>(t1).perform(t2_ref);
-    btod_copy<4>(t1, perm1).perform(t2_ref, -1.0);
-    btod_copy<4>(t1, perm2).perform(t2_ref, -1.0);
+    btod_copy<4>(t1, perm1).perform(t2_ref, scalar_transf<double>(-1.0));
+    btod_copy<4>(t1, perm2).perform(t2_ref, scalar_transf<double>(-1.0));
 
     letter i, j, k, a;
     t2a(i|j|k|a) = asymm(i, j, k, t1a(i|j|k|a) + t1b(i|j|k|a));
@@ -783,13 +783,16 @@ void symm_test::test_symm3_t_1() throw(libtest::test_exception) {
     t1.set_immutable();
 
     btod_copy<3>(t1).perform(t2_ref);
-    btod_copy<3>(t1, permutation<3>().permute(0, 1)).perform(t2_ref, 1.0);
-    btod_copy<3>(t1, permutation<3>().permute(0, 2)).perform(t2_ref, 1.0);
-    btod_copy<3>(t1, permutation<3>().permute(1, 2)).perform(t2_ref, 1.0);
+    btod_copy<3>(t1, permutation<3>().permute(0, 1)).perform(t2_ref,
+            scalar_transf<double>());
+    btod_copy<3>(t1, permutation<3>().permute(0, 2)).perform(t2_ref,
+            scalar_transf<double>());
+    btod_copy<3>(t1, permutation<3>().permute(1, 2)).perform(t2_ref,
+            scalar_transf<double>());
     btod_copy<3>(t1, permutation<3>().permute(0, 1).permute(0, 2)).
-        perform(t2_ref, 1.0);
+        perform(t2_ref, scalar_transf<double>());
     btod_copy<3>(t1, permutation<3>().permute(0, 1).permute(1, 2)).
-        perform(t2_ref, 1.0);
+        perform(t2_ref, scalar_transf<double>());
 
     letter i, j, k;
     t2(i|j|k) = symm(i, j, k, t1(i|j|k));

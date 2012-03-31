@@ -126,7 +126,8 @@ void ewmult_test::test_te_1() throw(libtest::test_exception) {
     t2b.set_immutable();
 
     btod_copy<3>(t2a).perform(t2);
-    btod_copy<3>(t2b, permutation<3>().permute(0, 2), -1.0).perform(t2, 1.0);
+    btod_copy<3>(t2b, permutation<3>().permute(0, 2), -1.0).perform(t2,
+            scalar_transf<double>());
     permutation<2> perm1;
     perm1.permute(0, 1);
     permutation<3> perm2;
@@ -167,7 +168,8 @@ void ewmult_test::test_et_1() throw(libtest::test_exception) {
     t2.set_immutable();
 
     btod_copy<2>(t1a, permutation<2>().permute(0, 1), 0.5).perform(t1);
-    btod_copy<2>(t1b, permutation<2>(), 1.5).perform(t1, 1.0);
+    btod_copy<2>(t1b, permutation<2>(), 1.5).perform(t1,
+            scalar_transf<double>());
     permutation<2> perm1;
     perm1.permute(0, 1);
     permutation<3> perm2;
@@ -210,10 +212,11 @@ void ewmult_test::test_ee_1() throw(libtest::test_exception) {
     t2b.set_immutable();
 
     btod_copy<2>(t1a, permutation<2>().permute(0, 1), 1.0).perform(t1);
-    btod_copy<2>(t1b, permutation<2>(), 1.0).perform(t1, 1.0);
+    btod_copy<2>(t1b, permutation<2>(), 1.0).perform(t1,
+            scalar_transf<double>());
     btod_copy<3>(t2a, permutation<3>(), 1.0).perform(t2);
     btod_copy<3>(t2b, permutation<3>().permute(0, 1).permute(1, 2), 1.0).
-        perform(t2, 1.0);
+        perform(t2, scalar_transf<double>());
     permutation<2> perm1;
     permutation<3> perm2;
     permutation<4> perm3;

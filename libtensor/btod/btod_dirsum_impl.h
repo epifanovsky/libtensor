@@ -16,7 +16,8 @@
 #include <libtensor/dense_tensor/tod_set.h>
 #include "../symmetry/so_dirsum.h"
 #include "bad_block_index_space.h"
-#include "additive_btod.h"
+#include <libtensor/block_tensor/bto/additive_bto.h>
+#include <libtensor/block_tensor/btod/btod_traits.h>
 
 namespace libtensor {
 
@@ -111,7 +112,8 @@ void btod_dirsum<N, M>::compute_block(dense_tensor_i<N + M, double> &blkc,
 template<size_t N, size_t M>
 void btod_dirsum<N, M>::compute_block(bool zero,
         dense_tensor_i<N + M, double> &blkc, const index<N + M> &ic,
-        const tensor_transf<N + M, double> &trc, double kc, cpu_pool &cpus) {
+        const tensor_transf<N + M, double> &trc,
+        const scalar_transf<double> &kc, cpu_pool &cpus) {
 
     static const char *method = "compute_block(bool, "
             "dense_tensor_i<N + M, double>&, const index<N + M>&, "
@@ -127,7 +129,7 @@ void btod_dirsum<N, M>::compute_block(bool zero,
         if(isch == m_op_sch.end()) {
             if(zero) tod_set<k_orderc>().perform(cpus, blkc);
         } else {
-            compute_block(blkc, isch->second, trc, zero, kc, cpus);
+            compute_block(blkc, isch->second, trc, zero, kc.get_coeff(), cpus);
         }
 
     } catch(...) {
@@ -198,7 +200,7 @@ void btod_dirsum<N, M>::make_schedule() {
             orbit<k_orderb, double> ob(cb.req_const_symmetry(),
                 olb.get_index(iob));
 
-                make_schedule(oa, zeroa, ob, zerob, olc);
+            make_schedule(oa, zeroa, ob, zerob, olc);
         }
     }
 
@@ -339,7 +341,7 @@ void btod_dirsum<N, M>::do_block_scatter_a(
     block_tensor_ctrl<k_ordera, double> &ctrla,
     dense_tensor_i<k_orderc, double> &blkc, double kc,
     const index<k_ordera> &ia, double ka,
-    const permutation<k_orderc> permc, bool zero) {
+    const permutation<k_orderc> &permc, bool zero) {
 
     dense_tensor_i<k_ordera, double> &blka = ctrla.req_block(ia);
 
@@ -363,7 +365,7 @@ void btod_dirsum<N, M>::do_block_scatter_b(
     block_tensor_ctrl<k_orderb, double> &ctrlb,
     dense_tensor_i<k_orderc, double> &blkc, double kc,
     const index<k_orderb> &ib, double kb,
-    const permutation<k_orderc> permc, bool zero) {
+    const permutation<k_orderc> &permc, bool zero) {
 
     dense_tensor_i<k_orderb, double> &blkb = ctrlb.req_block(ib);
 

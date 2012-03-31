@@ -15,7 +15,8 @@
 #include <libtensor/dense_tensor/tod_copy.h>
 #include <libtensor/dense_tensor/tod_set.h>
 #include "bad_block_index_space.h"
-#include "additive_btod.h"
+#include <libtensor/block_tensor/bto/additive_bto.h>
+#include <libtensor/block_tensor/btod/btod_traits.h>
 
 namespace libtensor {
 
@@ -56,7 +57,7 @@ namespace libtensor {
  **/
 template<size_t N, typename Functor, typename Alloc = std_allocator<double> >
 class btod_apply :
-    public additive_btod<N>,
+    public additive_bto<N, bto_traits<double> >,
     public timings< btod_apply<N, Functor, Alloc> > {
 public:
     static const char *k_clazz; //!< Class name
@@ -108,7 +109,7 @@ public:
         return m_sym;
     }
 
-    using additive_btod<N>::perform;
+    using additive_bto<N, bto_traits<double> >::perform;
 
     virtual void sync_on();
     virtual void sync_off();
@@ -124,7 +125,8 @@ public:
 
 protected:
     virtual void compute_block(bool zero, dense_tensor_i<N, double> &blk,
-        const index<N> &ib, const tensor_transf<N, double> &tr, double c,
+        const index<N> &ib, const tensor_transf<N, double> &tr,
+        const scalar_transf<double> &c,
         cpu_pool &cpus);
 
 private:
@@ -230,11 +232,13 @@ void btod_apply<N, Functor, Alloc>::compute_block(
 template<size_t N, typename Functor, typename Alloc>
 void btod_apply<N, Functor, Alloc>::compute_block(bool zero,
     dense_tensor_i<N, double> &blk, const index<N> &ib,
-    const tensor_transf<N, double> &tr, double c, cpu_pool &cpus) {
+    const tensor_transf<N, double> &tr,
+    const scalar_transf<double> &c, cpu_pool &cpus) {
 
     static const char *method =
             "compute_block(bool, tensor_i<N, double> &, const index<N> &, "
-            "const tensor_transf<N, double> &, double, cpu_pool&)";
+            "const tensor_transf<N, double> &, "
+            "const scalar_transf<double>&, cpu_pool&)";
 
     if(zero) tod_set<N>().perform(cpus, blk);
 
@@ -252,7 +256,7 @@ void btod_apply<N, Functor, Alloc>::compute_block(bool zero,
 
     // If the orbit of A is not allowed, we assume it all elements are 0.0
     if (! oa.is_allowed()) {
-        double val = m_fn(0.0) * c;
+        double val = m_fn(0.0) * c.get_coeff();
         if (val != 0.0) {
             dense_tensor<N, double, Alloc> tblk(blk.get_dims());
             tod_set<N>(val).perform(cpus, tblk);
@@ -273,11 +277,13 @@ void btod_apply<N, Functor, Alloc>::compute_block(bool zero,
     if(! ctrla.req_is_zero_block(acia.get_index())) {
         dense_tensor_i<N, double> &blka = ctrla.req_block(acia.get_index());
         tod_apply<N, Functor>(blka, m_fn, tra.get_perm(),
-                tra.get_scalar_tr().get_coeff()).perform(cpus, false, c, blk);
+                tra.get_scalar_tr().get_coeff()).perform(cpus,
+                        false, c.get_coeff(), blk);
         ctrla.ret_block(acia.get_index());
     }
     else {
-        double val = m_fn(0.0) * c * tra.get_scalar_tr().get_coeff();
+        double val = m_fn(0.0) * c.get_coeff()
+                * tra.get_scalar_tr().get_coeff();
         if (val != 0.0) {
             dense_tensor<N, double, Alloc> tblk(blk.get_dims());
             tod_set<N>(val).perform(cpus, tblk);

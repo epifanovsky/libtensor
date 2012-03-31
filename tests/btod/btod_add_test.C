@@ -159,7 +159,7 @@ void btod_add_test::test_2(double ca1, double ca2, double cs)
 
     btod_add<2> op(bta1, perma1, ca1);
     op.add_op(bta2, perma2, ca2);
-    op.perform(btb, cs);
+    op.perform(btb, scalar_transf<double>(cs));
 
     tod_btconv<2>(btb).perform(tb);
 
@@ -379,7 +379,7 @@ void btod_add_test::test_5() throw(libtest::test_exception) {
 
     btod_add<2> add(bt1);
 
-    add.perform(bt3, 1.0);
+    add.perform(bt3, scalar_transf<double>(1.0));
     add.perform(bt3_ref);
 
     compare_ref<2>::compare(testname, bt3, bt3_ref, 1e-15);
@@ -417,7 +417,7 @@ void btod_add_test::test_6() throw(libtest::test_exception) {
     btod_add<2> add(bt1);
     add.add_op(bt2, 2.0);
 
-    add.perform(bt3, 1.0);
+    add.perform(bt3, scalar_transf<double>());
     add.perform(bt3_ref);
 
     compare_ref<2>::compare(testname, bt3, bt3_ref, 1e-15);
@@ -554,7 +554,7 @@ void btod_add_test::test_8() throw(libtest::test_exception) {
 
     compare_ref<4>::compare(testname, add.get_symmetry(), syma_ref);
 
-    add.perform(btb, 1.0);
+    add.perform(btb, scalar_transf<double>(1.0));
     tod_btconv<4>(btb).perform(tb);
 
     compare_ref<4>::compare(testname, tb, tb_ref, 1e-15);
@@ -622,7 +622,7 @@ void btod_add_test::test_9() throw(libtest::test_exception) {
 
     compare_ref<4>::compare(testname, add.get_symmetry(), syma_ref);
 
-    add.perform(btb, 1.0);
+    add.perform(btb, scalar_transf<double>(1.0));
     tod_btconv<4>(btb).perform(tb);
 
     compare_ref<4>::compare(testname, tb, tb_ref, 1e-15);

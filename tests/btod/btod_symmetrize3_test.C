@@ -600,7 +600,7 @@ void btod_symmetrize3_test::test_7() throw(libtest::test_exception) {
 
     btod_copy<6> op_copy(bta);
     btod_symmetrize3<6> op_sym3(op_copy, 0, 1, 2, false);
-    btod_symmetrize3<6>(op_sym3, 3, 4, 5, false).perform(btb, 2.0);
+    btod_symmetrize3<6>(op_sym3, 3, 4, 5, false).perform(btb, scalar_transf<double>(2.0));
 
     tod_btconv<6>(btb).perform(tb);
 

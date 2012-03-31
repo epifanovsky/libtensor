@@ -412,7 +412,8 @@ void contract_test::test_tt_7() throw(libtest::test_exception) {
     contr.contract(0, 1);
     contr.contract(3, 3);
 
-    btod_contract2<2, 2, 2>(contr, t1, t2).perform(t3_ref, 1.0);
+    btod_contract2<2, 2, 2>(contr, t1, t2).perform(t3_ref,
+            scalar_transf<double>());
 
     letter i, k, a, b, c, d;
     t3(i|a|b|c) = contract(k|d, t1(k|c|a|d), t2(i|k|b|d));
@@ -459,7 +460,8 @@ void contract_test::test_tt_8() throw(libtest::test_exception) {
     contr.contract(1, 1);
     contr.contract(2, 2);
 
-    btod_contract2<1, 1, 3>(contr, t1, t2).perform(t3_ref, -0.5);
+    btod_contract2<1, 1, 3>(contr, t1, t2).perform(t3_ref,
+            scalar_transf<double>(-0.5));
 
     letter i, j, k, a, b;
         t3(a|b) =  0.5 * (-contract(i|j|k, t1(k|j|i|b), t2(k|j|i|a)));

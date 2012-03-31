@@ -101,7 +101,8 @@ void btod_contract2<N, M, K>::compute_block(dense_tensor_i<N + M, double> &blk,
 template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::compute_block(bool zero,
     dense_tensor_i<N + M, double> &blk, const index<N + M> &i,
-    const tensor_transf<N + M, double> &tr, double c, cpu_pool &cpus) {
+    const tensor_transf<N + M, double> &tr,
+    const scalar_transf<double> &c, cpu_pool &cpus) {
 
     static const char *method = "compute_block(bool, tensor_i<N + M, double>&, "
         "const index<N + M>&, const tensor_transf<N + M, double>&, double, cpu_pool&)";
@@ -122,7 +123,7 @@ void btod_contract2<N, M, K>::compute_block(bool zero,
         }
 
         contract_block(isch->second->first, aic.get_index(), ca, cb,
-                       blk, tr, zero, c, cpus);
+                       blk, tr, zero, c.get_coeff(), cpus);
     } catch(...) {
         btod_contract2<N, M, K>::stop_timer();
         throw;

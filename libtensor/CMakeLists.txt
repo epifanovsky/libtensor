@@ -185,8 +185,10 @@ set(SRC_INST
     symmetry/inst/so_symmetrize_se_label_inst.C
     symmetry/inst/so_symmetrize_se_part_inst.C
     symmetry/inst/so_symmetrize_se_perm_inst.C
-    btod/additive_btod.C
-    btod/basic_btod.C
+    block_tensor/btod/impl/additive_btod.C
+    block_tensor/btod/impl/basic_btod.C
+    block_tensor/btod/impl/btod_set.C
+    block_tensor/btod/impl/btod_vmpriority.C
     btod/btod_add.C
     btod/btod_contract2_1.C
     btod/btod_contract2_2.C
@@ -199,8 +201,6 @@ set(SRC_INST
     btod/btod_dotprod.C
     btod/btod_ewmult2.C
     btod/btod_sum.C
-    block_tensor/btod/impl/btod_set.C
-    block_tensor/btod/impl/btod_vmpriority.C
     diag_tensor/impl/diag_tensor_space.C
     diag_tensor/impl/diag_tensor.C
     diag_tensor/impl/tod_conv_diag_tensor.C

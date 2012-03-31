@@ -16,7 +16,8 @@
 #include <libtensor/dense_tensor/tod_diag.h>
 #include <libtensor/dense_tensor/tod_set.h>
 #include "bad_block_index_space.h"
-#include "additive_btod.h"
+#include <libtensor/block_tensor/bto/additive_bto.h>
+#include <libtensor/block_tensor/btod/btod_traits.h>
 
 namespace libtensor {
 
@@ -29,7 +30,7 @@ namespace libtensor {
  **/
 template<size_t N, size_t M>
 class btod_diag :
-    public additive_btod<N - M + 1>,
+    public additive_bto<N - M + 1, bto_traits<double> >,
     public timings< btod_diag<N, M> > {
 
 public:
@@ -92,12 +93,12 @@ public:
 
     //@}
 
-    using additive_btod<k_orderb>::perform;
+    using additive_bto<k_orderb, bto_traits<double> >::perform;
 
 protected:
     virtual void compute_block(bool zero, dense_tensor_i<k_orderb, double> &blk,
         const index<k_orderb> &ib, const tensor_transf<k_orderb, double> &trb,
-        double c, cpu_pool &cpus);
+        const scalar_transf<double> &c, cpu_pool &cpus);
 
 private:
     /** \brief Forms the block %index space of the output or throws an
@@ -183,9 +184,10 @@ void btod_diag<N, M>::compute_block(dense_tensor_i<k_orderb, double> &blk,
 template<size_t N, size_t M>
 void btod_diag<N, M>::compute_block(bool zero,
         dense_tensor_i<k_orderb, double> &blk, const index<k_orderb> &ib,
-        const tensor_transf<k_orderb, double> &trb, double c, cpu_pool &cpus) {
+        const tensor_transf<k_orderb, double> &trb,
+        const scalar_transf<double> &c, cpu_pool &cpus) {
 
-    compute_block(blk, ib, trb, zero, c, cpus);
+    compute_block(blk, ib, trb, zero, c.get_coeff(), cpus);
 }
 
 

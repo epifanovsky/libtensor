@@ -5,14 +5,14 @@
 namespace libtensor {
 
 
-template class bto_set<1, btod_set_traits>;
-template class bto_set<2, btod_set_traits>;
-template class bto_set<3, btod_set_traits>;
-template class bto_set<4, btod_set_traits>;
-template class bto_set<5, btod_set_traits>;
-template class bto_set<6, btod_set_traits>;
-template class bto_set<7, btod_set_traits>;
-template class bto_set<8, btod_set_traits>;
+template class bto_set<1, bto_traits<double> >;
+template class bto_set<2, bto_traits<double> >;
+template class bto_set<3, bto_traits<double> >;
+template class bto_set<4, bto_traits<double> >;
+template class bto_set<5, bto_traits<double> >;
+template class bto_set<6, bto_traits<double> >;
+template class bto_set<7, bto_traits<double> >;
+template class bto_set<8, bto_traits<double> >;
 
 
 template class btod_set<1>;

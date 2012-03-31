@@ -597,7 +597,7 @@ void btod_copy_test::test_add_nosym_1() throw(libtest::test_exception) {
 
     //  Make a copy
 
-    btod_copy<2>(bta).perform(btb, 1.0);
+    btod_copy<2>(bta).perform(btb, scalar_transf<double>(1.0));;
 
     //  Compare against the reference
 
@@ -646,7 +646,7 @@ void btod_copy_test::test_add_nosym_2() throw(libtest::test_exception) {
 
     //  Make a copy
 
-    btod_copy<2>(bta, perm10).perform(btb, 2.0);
+    btod_copy<2>(bta, perm10).perform(btb, scalar_transf<double>(2.0));
 
     //  Create the reference
 
@@ -703,7 +703,7 @@ void btod_copy_test::test_add_nosym_3() throw(libtest::test_exception) {
 
     //  Run the operation
 
-    btod_copy<4>(bta, 2.0).perform(btb, 1.0);
+    btod_copy<4>(bta, 2.0).perform(btb, scalar_transf<double>());
     tod_btconv<4>(btb).perform(tb);
 
     //  Compute the reference
@@ -753,7 +753,7 @@ void btod_copy_test::test_add_nosym_4() throw(libtest::test_exception) {
 
     //  Make a copy
 
-    btod_copy<2>(bta, perm10).perform(btb, 2.0);
+    btod_copy<2>(bta, perm10).perform(btb, scalar_transf<double>(2.0));
 
     //  Create the reference
 
@@ -810,7 +810,7 @@ void btod_copy_test::test_add_eqsym_1() throw(libtest::test_exception) {
 
     //  Make a copy
 
-    btod_copy<2>(bta).perform(btb, 1.0);
+    btod_copy<2>(bta).perform(btb, scalar_transf<double>());
     tod_btconv<2>(btb).perform(tb);
 
     //  Compare against the reference
@@ -865,7 +865,7 @@ void btod_copy_test::test_add_eqsym_2() throw(libtest::test_exception) {
 
     //  Make a copy
 
-    btod_copy<2>(bta, perm10).perform(btb, -1.0);
+    btod_copy<2>(bta, perm10).perform(btb, scalar_transf<double>(-1.0));;
     tod_btconv<2>(btb).perform(tb);
 
     //  Create the reference
@@ -936,7 +936,7 @@ void btod_copy_test::test_add_eqsym_3() throw(libtest::test_exception) {
 
     //  Make a copy
 
-    btod_copy<3>(bta, perm210).perform(btb, 0.75);
+    btod_copy<3>(bta, perm210).perform(btb, scalar_transf<double>(0.75));;
     tod_btconv<3>(btb).perform(tb);
 
     //  Create the reference
@@ -1006,7 +1006,7 @@ void btod_copy_test::test_add_eqsym_4() throw(libtest::test_exception) {
 
     //  Run the operation
 
-    btod_copy<4>(bta, 2.0).perform(btb, 1.0);
+    btod_copy<4>(bta, 2.0).perform(btb, scalar_transf<double>());
     tod_btconv<4>(btb).perform(tb);
 
     //  Compute the reference
@@ -1077,7 +1077,7 @@ void btod_copy_test::test_add_eqsym_5() throw(libtest::test_exception) {
 
     //  Run the operation
 
-    btod_copy<4>(bta, perm0213, 1.0).perform(btb, 0.5);
+    btod_copy<4>(bta, perm0213, 1.0).perform(btb, scalar_transf<double>(0.5));
     tod_btconv<4>(btb).perform(tb);
 
     //  Compute the reference
@@ -1132,7 +1132,7 @@ void btod_copy_test::test_add_nesym_1() throw(libtest::test_exception) {
 
     //  Make a copy
 
-    btod_copy<2>(bta).perform(btb, 1.0);
+    btod_copy<2>(bta).perform(btb, scalar_transf<double>());
     tod_btconv<2>(btb).perform(tb);
 
     //  Compare against the reference
@@ -1186,7 +1186,7 @@ void btod_copy_test::test_add_nesym_2() throw(libtest::test_exception) {
 
     //  Make a copy
 
-    btod_copy<2>(bta).perform(btb, 1.0);
+    btod_copy<2>(bta).perform(btb, scalar_transf<double>(1.0));;
     tod_btconv<2>(btb).perform(tb);
 
     //  Compare against the reference
@@ -1253,7 +1253,7 @@ void btod_copy_test::test_add_nesym_3() throw(libtest::test_exception) {
 
     //  Run the operation
 
-    btod_copy<4>(bta).perform(btb, 1.5);
+    btod_copy<4>(bta).perform(btb, scalar_transf<double>(1.5));;
     tod_btconv<4>(btb).perform(tb);
 
     //  Compute the reference
@@ -1321,7 +1321,7 @@ void btod_copy_test::test_add_nesym_4() throw(libtest::test_exception) {
 
     //  Run the operation
 
-    btod_copy<4>(bta).perform(btb, 1.5);
+    btod_copy<4>(bta).perform(btb, scalar_transf<double>(1.5));;
     tod_btconv<4>(btb).perform(tb);
 
     //  Compute the reference
@@ -1389,7 +1389,7 @@ void btod_copy_test::test_add_nesym_5() throw(libtest::test_exception) {
 
     //  Run the operation
 
-    btod_copy<4>(bta).perform(btb, 1.5);
+    btod_copy<4>(bta).perform(btb, scalar_transf<double>(1.5));;
     tod_btconv<4>(btb).perform(tb);
 
     //  Compute the reference
@@ -1472,7 +1472,7 @@ void btod_copy_test::test_add_nesym_5_sp() throw(libtest::test_exception) {
 
     //  Run the operation
 
-    btod_copy<4>(bta).perform(btb, 1.5);
+    btod_copy<4>(bta).perform(btb, scalar_transf<double>(1.5));;
     tod_btconv<4>(btb).perform(tb);
 
     //  Compute the reference
@@ -1541,7 +1541,7 @@ void btod_copy_test::test_add_nesym_6() throw(libtest::test_exception) {
 
     //  Run the operation
 
-    btod_copy<4>(bta, perm3210).perform(btb, -0.1);
+    btod_copy<4>(bta, perm3210).perform(btb, scalar_transf<double>(-0.1));;
     tod_btconv<4>(btb).perform(tb);
 
     //  Compute the reference
@@ -1617,7 +1617,7 @@ void btod_copy_test::test_add_nesym_7_sp1() throw(libtest::test_exception) {
 
     //  Run the operation
 
-    btod_copy<4>(bta).perform(btb, -2.0);
+    btod_copy<4>(bta).perform(btb, scalar_transf<double>(-2.0));;
     tod_btconv<4>(btb).perform(tb);
 
     //  Compute the reference
@@ -1691,7 +1691,7 @@ void btod_copy_test::test_add_nesym_7_sp2() throw(libtest::test_exception) {
 
     //  Run the operation
 
-    btod_copy<4>(bta).perform(btb, -2.0);
+    btod_copy<4>(bta).perform(btb, scalar_transf<double>(-2.0));;
     tod_btconv<4>(btb).perform(tb);
 
     //  Compute the reference
@@ -1767,7 +1767,7 @@ void btod_copy_test::test_add_nesym_7_sp3() throw(libtest::test_exception) {
 
     //  Run the operation
 
-    btod_copy<4>(bta).perform(btb, 2.0);
+    btod_copy<4>(bta).perform(btb, scalar_transf<double>(2.0));;
     tod_btconv<4>(btb).perform(tb);
 
     //  Compute the reference

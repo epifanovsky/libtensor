@@ -12,7 +12,8 @@
 #include <libtensor/dense_tensor/tod_mult.h>
 #include <libtensor/dense_tensor/tod_set.h>
 #include "scalar_transf_double.h"
-#include "additive_btod.h"
+#include <libtensor/block_tensor/bto/additive_bto.h>
+#include <libtensor/block_tensor/btod/btod_traits.h>
 #include "bad_block_index_space.h"
 
 namespace libtensor {
@@ -25,7 +26,7 @@ namespace libtensor {
  **/
 template<size_t N>
 class btod_mult :
-    public additive_btod<N>,
+    public additive_bto<N, bto_traits<double> >,
     public timings< btod_mult<N> > {
 public:
     static const char *k_clazz; //!< Class name
@@ -97,12 +98,12 @@ public:
 
     //@}
 
-    using additive_btod<N>::perform;
+    using additive_bto<N, bto_traits<double> >::perform;
 
 protected:
     virtual void compute_block(bool zero, dense_tensor_i<N, double> &blk,
-        const index<N> &idx, const tensor_transf<N, double> &tr, double c,
-        cpu_pool &cpus);
+        const index<N> &idx, const tensor_transf<N, double> &tr,
+        const scalar_transf<double> &c, cpu_pool &cpus);
 
 private:
     btod_mult(const btod_mult<N> &);
@@ -275,8 +276,8 @@ void btod_mult<N>::compute_block(
 
 template<size_t N>
 void btod_mult<N>::compute_block(bool zero, dense_tensor_i<N, double> &blk,
-    const index<N> &idx, const tensor_transf<N, double> &tr, double c,
-    cpu_pool &cpus) {
+    const index<N> &idx, const tensor_transf<N, double> &tr,
+    const scalar_transf<double> &c, cpu_pool &cpus) {
 
     block_tensor_ctrl<N, double> ctrla(m_bta), ctrlb(m_btb);
 
@@ -313,7 +314,8 @@ void btod_mult<N>::compute_block(bool zero, dense_tensor_i<N, double> &blk,
         k *= trb.get_scalar_tr().get_coeff();
 
     if(zero) tod_set<N>().perform(cpus, blk);
-    tod_mult<N>(blka, pa, blkb, pb, m_recip, k).perform(cpus, false, c, blk);
+    tod_mult<N>(blka, pa, blkb, pb,
+            m_recip, k).perform(cpus, false, c.get_coeff(), blk);
 
     ctrla.ret_block(cidxa.get_index());
     ctrlb.ret_block(cidxb.get_index());
