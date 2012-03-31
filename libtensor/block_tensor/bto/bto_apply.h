@@ -97,6 +97,10 @@ public:
     bto_apply(block_tensor_t &bta, const functor_t &fn,
             const permutation<N> &p, const scalar_tr_t &c = scalar_tr_t());
 
+    /** \brief Destructor
+     **/
+    virtual ~bto_apply() { }
+
     //@}
 
     //!    \name Implementation of

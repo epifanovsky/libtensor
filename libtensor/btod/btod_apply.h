@@ -13,8 +13,6 @@ namespace libtensor {
 template<typename Functor, typename Alloc>
 struct btod_apply_traits : public bto_traits<double> {
 
-    typedef bto_traits<double> additive_bto_traits;
-
     template<size_t N> struct tensor_type {
         typedef dense_tensor<N, double, Alloc> type;
     };
@@ -45,6 +43,8 @@ public:
             const permutation<N> &p, double c = 1.0) :
         bto_apply_t(bta, fn, p, scalar_tr_t(c)) {
     }
+
+    virtual ~btod_apply() { }
 
 private:
     btod_apply(const btod_apply<N, Functor, Alloc>&);

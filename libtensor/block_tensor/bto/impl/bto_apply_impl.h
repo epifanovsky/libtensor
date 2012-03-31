@@ -111,7 +111,8 @@ void bto_apply<N, Traits>::compute_block(bool zero, block_t &blk,
             c.apply(val);
             tensor_t tblk(blk.get_dims());
             to_set_t(val).perform(cpus, tblk);
-            to_copy_t(tblk).perform(cpus, false, scalar_tr_t().get_coeff(), blk);
+            to_copy_t(tblk).perform(cpus, false,
+                    scalar_tr_t().get_coeff(), blk);
         }
         return;
     }
@@ -124,9 +125,9 @@ void bto_apply<N, Traits>::compute_block(bool zero, block_t &blk,
     permutation<N> pa(tra.get_perm());
     pa.permute(m_tr.get_perm());
     pa.permute(tr.get_perm());
-    scalar_tr_t sa(tra.get_scalar_tr()), sb(tr.get_scalar_tr());
+    scalar_tr_t sa(tra.get_scalar_tr()), sb(c);
     sa.transform(m_tr.get_scalar_tr());
-    sb.transform(c);
+    sb.transform(tr.get_scalar_tr());
 
     if(! ctrla.req_is_zero_block(acia.get_index())) {
 
