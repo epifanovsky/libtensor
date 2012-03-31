@@ -1,7 +1,6 @@
 #ifndef LIBTENSOR_BASIC_BTO_H
 #define LIBTENSOR_BASIC_BTO_H
 
-#include <libtensor/core/abs_index.h>
 #include <libtensor/mp/task_batch.h>
 #include "direct_bto.h"
 

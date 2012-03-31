@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_ADDITIVE_BTO_H
 #define LIBTENSOR_ADDITIVE_BTO_H
 
+#include <libtensor/core/tensor_transf.h>
 #include "basic_bto.h"
 #include "addition_schedule.h"
 
