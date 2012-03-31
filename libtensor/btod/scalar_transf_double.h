@@ -47,10 +47,12 @@ public:
 
     scalar_transf<double> &invert();
 
-    void apply(double &el) { el *= m_coeff; }
+    void apply(double &el) const { el *= m_coeff; }
 
     //@}
 
+    //! \name Functions specific for T = double
+    //@{
 
     /** \brief Scale coefficient by c
      **/
@@ -61,6 +63,7 @@ public:
      **/
     const double& get_coeff() const { return m_coeff; }
 
+    //@}
 
     //! Comparison functions and operators
     //@{
