@@ -20,7 +20,6 @@ struct bto_traits {
 
     //! Type of block tensor
     template<size_t N> struct block_tensor_type;
-    };
 
     //! Type of block tensor control
     template<size_t N> struct block_tensor_ctrl_type;

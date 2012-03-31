@@ -6,8 +6,7 @@
 #include <libtensor/core/abs_index.h>
 #include <libtensor/core/block_index_space.h>
 #include <libtensor/core/block_index_space_product_builder.h>
-#include <libtensor/core/block_tensor_ctrl.h>
-#include <libtensor/core/scalar_transf.h>
+#include <libtensor/core/tensor_transf.h>
 #include <libtensor/core/symmetry.h>
 #include <libtensor/symmetry/so_dirsum.h>
 #include <libtensor/symmetry/so_merge.h>

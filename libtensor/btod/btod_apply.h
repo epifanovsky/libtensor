@@ -3,9 +3,9 @@
 
 #include <libtensor/core/allocator.h>
 #include <libtensor/block_tensor/btod/btod_traits.h>
-#include <libtensor/dense_tensor/tod_apply.h>
 #include <libtensor/block_tensor/bto/bto_apply.h>
 #include <libtensor/block_tensor/bto/impl/bto_apply_impl.h>
+#include <libtensor/dense_tensor/tod_apply.h>
 
 namespace libtensor {
 
