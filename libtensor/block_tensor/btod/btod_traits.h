@@ -12,6 +12,10 @@ namespace libtensor {
 
 template<>
 struct bto_traits<double> {
+
+    //! BTO traits type required by additive bto
+    typedef bto_traits<double> additive_bto_traits;
+
     //! Element type
     typedef double element_type;
 

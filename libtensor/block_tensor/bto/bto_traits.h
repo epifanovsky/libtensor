@@ -7,20 +7,23 @@
 
 namespace libtensor {
 
+/** \brief Tempate
+ **/
 template<typename T>
 struct bto_traits {
+
+    //! BTO traits type required by additive_bto
+    typedef bto_traits<T> additive_bto_traits;
+
     //! Element type
     typedef T element_type;
 
     //! Type of block tensor
-    template<size_t N> struct block_tensor_type {
-        typedef block_tensor_i<N, T> type;
+    template<size_t N> struct block_tensor_type;
     };
 
     //! Type of block tensor control
-    template<size_t N> struct block_tensor_ctrl_type {
-        typedef block_tensor_ctrl<N, T> type;
-    };
+    template<size_t N> struct block_tensor_ctrl_type;
 
     //! Type of block of block tensors
     template<size_t N> struct block_type;
