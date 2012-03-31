@@ -33,10 +33,7 @@ void additive_bto<N, Traits>::perform(block_tensor_t &bt,
 
     typedef typename Traits::template block_tensor_ctrl_type<N>::type
         block_tensor_ctrl_t;
-    typedef typename Traits::template to_set_type<N>::type to_set;
-    typedef typename Traits::template to_copy_type<N>::type to_copy;
 
-    // replace by traits
     if(c.is_zero()) return;
 
     sync_on();
@@ -91,8 +88,8 @@ void additive_bto<N, Traits>::task::perform(cpu_pool &cpus) throw (exception) {
 
     typedef typename Traits::template block_tensor_ctrl_type<N>::type
         block_tensor_ctrl_t;
-    typedef typename Traits::template to_set_type<N>::type to_set;
-    typedef typename Traits::template to_copy_type<N>::type to_copy;
+    typedef typename Traits::template to_set_type<N>::type to_set_t;
+    typedef typename Traits::template to_copy_type<N>::type to_copy_t;
 
     block_tensor_ctrl_t ctrl(m_bt);
 
@@ -115,7 +112,7 @@ void additive_bto<N, Traits>::task::perform(cpu_pool &cpus) throw (exception) {
         if(ila == la.end()) {
             abs_index<N> aia(node.cia, m_bidims);
             block_t &blka = ctrl.req_aux_block(aia.get_index());
-            to_set().perform(cpus, blka);
+            to_set_t().perform(cpus, blka);
             m_bto.compute_block(false, blka, aia.get_index(),
                     node.tra, m_c, cpus);
             la.push_back(la_pair_t(node.cia, &blka));
@@ -135,10 +132,10 @@ void additive_bto<N, Traits>::task::perform(cpu_pool &cpus) throw (exception) {
             block_t &blkc = ctrl.req_block(aic.get_index());
             if(zerob) {
                 // this should actually never happen, but just in case
-                to_set().perform(cpus, blkc);
+                to_set_t().perform(cpus, blkc);
             } else {
                 block_t &blkb = ctrl.req_block(aib.get_index());
-                to_copy(blkb, node.trb.get_perm(),
+                to_copy_t(blkb, node.trb.get_perm(),
                         node.trb.get_scalar_tr().get_coeff()).perform(cpus,
                                 true, 1.0, blkc);
                 ctrl.ret_block(aib.get_index());
@@ -157,16 +154,16 @@ void additive_bto<N, Traits>::task::perform(cpu_pool &cpus) throw (exception) {
             block_t &blkc = ctrl.req_block(aic.get_index());
             if(zerob) {
                 abs_index<N> aia(node.cia, m_bidims);
-                to_copy(*ila->second, node.tra.get_perm(),
+                to_copy_t(*ila->second, node.tra.get_perm(),
                         node.tra.get_scalar_tr().get_coeff()).
                         perform(cpus, true, 1.0, blkc);
             } else {
                 abs_index<N> aia(node.cia, m_bidims);
                 block_t &blkb = ctrl.req_block(aib.get_index());
-                to_copy(*ila->second, node.tra.get_perm(),
+                to_copy_t(*ila->second, node.tra.get_perm(),
                         node.tra.get_scalar_tr().get_coeff()).
                         perform(cpus, true, 1.0, blkc);
-                to_copy(blkb, node.trb.get_perm(),
+                to_copy_t(blkb, node.trb.get_perm(),
                         node.trb.get_scalar_tr().get_coeff()).
                         perform(cpus, false, 1.0, blkc);
                 ctrl.ret_block(aib.get_index());
@@ -190,12 +187,12 @@ void additive_bto<N, Traits>::task::perform(cpu_pool &cpus) throw (exception) {
         block_t &blkb = ctrl.req_block(aib.get_index());
         if(zerob) {
             abs_index<N> aia(node.cia, m_bidims);
-            to_copy(*ila->second, node.tra.get_perm(),
+            to_copy_t(*ila->second, node.tra.get_perm(),
                     node.tra.get_scalar_tr().get_coeff()).
                     perform(cpus, true, 1.0, blkb);
         } else {
             abs_index<N> aia(node.cia, m_bidims);
-            to_copy(*ila->second, node.tra.get_perm(),
+            to_copy_t(*ila->second, node.tra.get_perm(),
                     node.tra.get_scalar_tr().get_coeff()).
                     perform(cpus, false, 1.0, blkb);
         }
