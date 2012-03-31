@@ -7,7 +7,6 @@
 #include <libtensor/dense_tensor/dense_tensor_i.h>
 #include <libtensor/dense_tensor/tod_copy.h>
 #include <libtensor/dense_tensor/tod_set.h>
-#include <libtensor/dense_tensor/tod_vmpriority.h>
 
 namespace libtensor {
 
@@ -37,10 +36,6 @@ struct bto_traits<double> {
 
     template<size_t N> struct to_set_type {
         typedef tod_set<N> type;
-    };
-
-    template<size_t N> struct to_vmpriority_type {
-        typedef tod_vmpriority<N> type;
     };
 
     static bool is_zero(double d) {
