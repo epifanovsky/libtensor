@@ -1,8 +1,6 @@
 #ifndef LIBTENSOR_BTO_APPLY_IMPL_H
 #define LIBTENSOR_BTO_APPLY_IMPL_H
 
-#include <libtensor/defs.h>
-#include <libtensor/core/abs_index.h>
 #include <libtensor/core/orbit.h>
 #include <libtensor/core/orbit_list.h>
 #include <libtensor/symmetry/so_apply.h>
@@ -123,17 +121,16 @@ void bto_apply<N, Traits>::compute_block(bool zero, block_t &blk,
     //  Transformation for block from canonical A to B
     const tensor_tr_t &tra = oa.get_transf(ia);
     permutation<N> pa(tra.get_perm());
-    pa.permute(m_tr.get_perm());
-    pa.permute(tr.get_perm());
+    pa.permute(m_tr.get_perm()).permute(permutation<N>(tr.get_perm(), true));
     scalar_tr_t sa(tra.get_scalar_tr()), sb(c);
     sa.transform(m_tr.get_scalar_tr());
-    sb.transform(tr.get_scalar_tr());
+    sb.transform(scalar_tr_t(tr.get_scalar_tr()).invert());
 
     if(! ctrla.req_is_zero_block(acia.get_index())) {
 
         block_t &blka = ctrla.req_block(acia.get_index());
-        to_apply_t(blka, m_fn, pa,
-                sa.get_coeff()).perform(cpus, false, sb.get_coeff(), blk);
+        to_apply_t(blka, m_fn, pa, sa.get_coeff()).perform(cpus,
+                false, sb.get_coeff(), blk);
         ctrla.ret_block(acia.get_index());
     }
     else {
