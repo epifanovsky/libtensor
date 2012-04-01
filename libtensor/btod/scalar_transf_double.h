@@ -33,6 +33,7 @@ public:
      **/
     scalar_transf<double> &operator=(const scalar_transf<double> &tr) {
         m_coeff = tr.m_coeff;
+        return *this;
     }
 
     //@}

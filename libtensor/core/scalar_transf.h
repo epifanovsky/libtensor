@@ -51,11 +51,7 @@ namespace libtensor {
     \ingroup libtensor_core
  **/
 template<typename T>
-class scalar_transf {
-public:
-    typedef T scalar_t;
-
-};
+class scalar_transf;
 
 
 } // namespace libtensor
