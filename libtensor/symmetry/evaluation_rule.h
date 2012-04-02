@@ -115,7 +115,7 @@ public:
 
     /** \brief Delete the list of lists
      **/
-    void clear_setup() { m_setup.clear(); }
+    void clear_setup() { m_setup.clear(); m_term_list.clear(); }
 
     /** \brief Delete the list of lists and the sequences
      **/
