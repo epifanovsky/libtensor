@@ -109,9 +109,10 @@ public:
     //@}
 
 protected:
-    virtual void compute_block(bool zero, dense_tensor_i<k_orderc, double> &blk,
-        const index<k_orderc> &i, const tensor_transf<k_orderc, double> &tr,
-        const scalar_transf<double> &c, cpu_pool &cpus);
+    virtual void compute_block(bool zero,
+            dense_tensor_i<k_orderc, double> &blk, const index<k_orderc> &i,
+            const tensor_transf<k_orderc, double> &tr, const double &c,
+            cpu_pool &cpus);
 
 private:
     /** \brief Computes the block index space of the result block tensor

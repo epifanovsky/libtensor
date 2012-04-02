@@ -199,9 +199,8 @@ public:
 
 protected:
     virtual void compute_block(bool zero, dense_tensor_i<N + M, double> &blk,
-                               const index<N + M> &i,
-                               const tensor_transf<N + M, double> &tr,
-                               const scalar_transf<double> &c, cpu_pool &cpus);
+            const index<N + M> &i, const tensor_transf<N + M, double> &tr,
+            const double &c, cpu_pool &cpus);
 
 private:
     void make_schedule();

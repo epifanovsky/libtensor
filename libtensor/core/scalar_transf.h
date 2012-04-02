@@ -19,6 +19,9 @@ namespace libtensor {
     // Default constructor that creates the identity transformation
     scalar_transf();
 
+    // Constructor that creates a transformation from a tensor element
+    scalar_transf(const T &c);
+
     // Copy constructor
     scalar_transf(const scalar_transf<T> &tr);
 

@@ -104,7 +104,7 @@ protected:
 
     virtual void compute_block(bool zero, dense_tensor_i<N, double> &blk,
         const index<N> &i, const tensor_transf<N, double> &tr,
-        const scalar_transf<double> &c, cpu_pool &cpus);
+        const double &c, cpu_pool &cpus);
 
     //@}
 
@@ -199,8 +199,7 @@ void btod_symmetrize<N>::compute_block(dense_tensor_i<N, double> &blk,
 template<size_t N>
 void btod_symmetrize<N>::compute_block(bool zero,
         dense_tensor_i<N, double> &blk, const index<N> &idx,
-        const tensor_transf<N, double> &tr, const scalar_transf<double> &c,
-        cpu_pool &cpus) {
+        const tensor_transf<N, double> &tr, const double &c, cpu_pool &cpus) {
 
     typedef typename sym_schedule_t::iterator iterator_t;
 

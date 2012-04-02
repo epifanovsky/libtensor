@@ -66,7 +66,7 @@ void bto_diag<N, M, Traits>::sync_off() {
 template<size_t N, size_t M, typename Traits>
 void bto_diag<N, M, Traits>::compute_block(bool zero, blockb_t &blk,
         const index<k_orderb> &ib, const tensorb_tr_t &trb,
-        const scalar_tr_t &c, cpu_pool &cpus) {
+        const element_t &c, cpu_pool &cpus) {
 
     compute_block(blk, ib, trb, zero, c, cpus);
 }
@@ -75,7 +75,7 @@ void bto_diag<N, M, Traits>::compute_block(bool zero, blockb_t &blk,
 template<size_t N, size_t M, typename Traits>
 void bto_diag<N, M, Traits>::compute_block(blockb_t &blk,
     const index<k_orderb> &ib, const tensorb_tr_t &trb,
-    bool zero, const scalar_tr_t &c, cpu_pool &cpus) {
+    bool zero, const element_t &c, cpu_pool &cpus) {
 
     typedef typename Traits::template block_tensor_ctrl_type<N>::type
         block_tensor_ctrl_t;
@@ -148,12 +148,11 @@ void bto_diag<N, M, Traits>::compute_block(blockb_t &blk,
         sa.transform(trb.get_scalar_tr());
 
         if(zero) {
-            sa.transform(c);
+            sa.transform(scalar_tr_t(c));
             to_diag_t(blka, m2, permb, sa.get_coeff()).perform(blk);
         }
         else {
-            to_diag_t(blka, m2, permb,
-                    sa.get_coeff()).perform(blk, c.get_coeff());
+            to_diag_t(blka, m2, permb, sa.get_coeff()).perform(blk, c);
         }
         ctrla.ret_block(acia.get_index());
 

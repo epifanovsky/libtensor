@@ -13,7 +13,7 @@ void additive_bto<N, Traits>::compute_block(block_t &blk,
         const index<N> &i, cpu_pool &cpus) {
 
     compute_block(true, blk, i, tensor_transf<N, element_t>(),
-            scalar_transf<element_t>(), cpus);
+            Traits::identity(), cpus);
 }
 
 
@@ -21,20 +21,19 @@ template<size_t N, typename Traits>
 void additive_bto<N, Traits>::compute_block(additive_bto<N, Traits> &op,
         bool zero, block_t &blk, const index<N> &i,
         const tensor_transf<N, element_t> &tr,
-        const scalar_transf<element_t> &c, cpu_pool &cpus) {
+        const element_t &c, cpu_pool &cpus) {
 
     op.compute_block(zero, blk, i, tr, c, cpus);
 }
 
 
 template<size_t N, typename Traits>
-void additive_bto<N, Traits>::perform(block_tensor_t &bt,
-        const scalar_transf<element_t> &c) {
+void additive_bto<N, Traits>::perform(block_tensor_t &bt, const element_t &c) {
 
     typedef typename Traits::template block_tensor_ctrl_type<N>::type
         block_tensor_ctrl_t;
 
-    if(c.is_zero()) return;
+    if(Traits::is_zero(c)) return;
 
     sync_on();
 

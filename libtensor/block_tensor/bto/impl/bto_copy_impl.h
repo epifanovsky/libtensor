@@ -70,7 +70,7 @@ void bto_copy<N, Traits>::sync_off() {
 template<size_t N, typename Traits>
 void bto_copy<N, Traits>::compute_block(bool zero, block_t &blk,
     const index<N> &ib, const tensor_tr_t &tr,
-    const scalar_tr_t &c, cpu_pool &cpus) {
+    const element_t &c, cpu_pool &cpus) {
 
     typedef typename Traits::template block_tensor_ctrl_type<N>::type
         block_tensor_ctrl_t;

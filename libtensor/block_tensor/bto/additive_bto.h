@@ -44,14 +44,14 @@ private:
         const dimensions<N> &m_bidims;
         const addition_schedule<N, Traits> &m_sch;
         typename addition_schedule<N, Traits>::iterator m_i;
-        const scalar_transf<element_t> &m_c;
+        element_t m_c;
 
     public:
         task(additive_bto<N, Traits> &bto, block_tensor_t &bt,
             const dimensions<N> &bidims,
             const addition_schedule<N, Traits> &sch,
             typename addition_schedule<N, Traits>::iterator &i,
-            const scalar_transf<element_t> &c) :
+            const element_t &c) :
                 m_bto(bto), m_bt(bt), m_bidims(bidims),
                 m_sch(sch), m_i(i), m_c(c) {
         }
@@ -72,10 +72,9 @@ public:
     /** \brief Computes the result of the operation and adds it to the
             output block %tensor
         \param bt Output block %tensor.
-        \param tr Element-wise transformation.
+        \param c Scaling coefficient.
      **/
-    virtual void perform(block_tensor_t &bt,
-            const scalar_transf<element_t> &tr);
+    virtual void perform(block_tensor_t &bt, const element_t &c);
 
     /** \brief Implementation of basic_btod<N>::compute_block
         \param blk Output %tensor.
@@ -91,21 +90,20 @@ public:
         \param blk Output %tensor.
         \param i Index of the block to compute.
         \param tr Transformation of the block.
-        \param c Element-wise transformation.
+        \param c Scaling coefficient.
         \param cpus Pool of CPUs.
      **/
-    virtual void compute_block(bool zero, block_t &blk,
-        const index<N> &i, const tensor_transf<N, element_t> &tr,
-        const scalar_transf<element_t> &c, cpu_pool &cpus) = 0;
+    virtual void compute_block(bool zero, block_t &blk, const index<N> &i,
+            const tensor_transf<N, element_t> &tr, const element_t &c,
+            cpu_pool &cpus) = 0;
 
 protected:
     /** \brief Invokes compute_block on another additive operation;
             allows derived classes to call other additive operations
      **/
-    void compute_block(additive_bto<N, Traits> &op, bool zero,
-        block_t &blk, const index<N> &i,
-        const tensor_transf<N, element_t> &tr,
-        const scalar_transf<element_t> &c, cpu_pool &cpus);
+    void compute_block(additive_bto<N, Traits> &op, bool zero, block_t &blk,
+            const index<N> &i, const tensor_transf<N, element_t> &tr,
+            const element_t &c, cpu_pool &cpus);
 
 private:
     typedef addition_schedule<N, Traits> schedule_t;

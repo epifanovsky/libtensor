@@ -96,7 +96,7 @@ void dot_product_test::test_te_ij_ij_1() throw(libtest::test_exception) {
     btod_random<2>().perform(bt2);
     btod_random<2>().perform(bt3);
     btod_copy<2>(bt2).perform(bt4);
-    btod_copy<2>(bt3).perform(bt4, scalar_transf<double>(0.5));
+    btod_copy<2>(bt3).perform(bt4, 0.5);
     double c_ref = btod_dotprod<2>(bt1, bt4).calculate();
 
     letter i, j;
@@ -126,7 +126,7 @@ void dot_product_test::test_te_ij_ji_1() throw(libtest::test_exception) {
     permutation<2> perm;
     perm.permute(0, 1);
     btod_copy<2>(bt2).perform(bt4);
-    btod_copy<2>(bt3, perm).perform(bt4, scalar_transf<double>(0.5));
+    btod_copy<2>(bt3, perm).perform(bt4, 0.5);
     double c_ref = btod_dotprod<2>(bt1, bt4).calculate();
 
     letter i, j;

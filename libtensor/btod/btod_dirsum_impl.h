@@ -16,8 +16,6 @@
 #include <libtensor/dense_tensor/tod_set.h>
 #include "../symmetry/so_dirsum.h"
 #include "bad_block_index_space.h"
-#include <libtensor/block_tensor/bto/additive_bto.h>
-#include <libtensor/block_tensor/btod/btod_traits.h>
 
 namespace libtensor {
 
@@ -112,8 +110,8 @@ void btod_dirsum<N, M>::compute_block(dense_tensor_i<N + M, double> &blkc,
 template<size_t N, size_t M>
 void btod_dirsum<N, M>::compute_block(bool zero,
         dense_tensor_i<N + M, double> &blkc, const index<N + M> &ic,
-        const tensor_transf<N + M, double> &trc,
-        const scalar_transf<double> &kc, cpu_pool &cpus) {
+        const tensor_transf<N + M, double> &trc, const double &kc,
+        cpu_pool &cpus) {
 
     static const char *method = "compute_block(bool, "
             "dense_tensor_i<N + M, double>&, const index<N + M>&, "
@@ -129,7 +127,7 @@ void btod_dirsum<N, M>::compute_block(bool zero,
         if(isch == m_op_sch.end()) {
             if(zero) tod_set<k_orderc>().perform(cpus, blkc);
         } else {
-            compute_block(blkc, isch->second, trc, zero, kc.get_coeff(), cpus);
+            compute_block(blkc, isch->second, trc, zero, kc, cpus);
         }
 
     } catch(...) {

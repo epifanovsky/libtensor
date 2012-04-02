@@ -145,7 +145,7 @@ void btod_dirsum_test::test_ij_i_j_1(bool rnd, double d)
     //  Invoke the direct sum routine
 
     if(d == 0.0) btod_dirsum<1, 1>(bta, 1.0, btb, 1.0).perform(btc);
-    else btod_dirsum<1, 1>(bta, 1.0, btb, 1.0).perform(btc, scalar_transf<double>(d));
+    else btod_dirsum<1, 1>(bta, 1.0, btb, 1.0).perform(btc, d);
     tod_btconv<2>(btc).perform(tc);
 
     //  Compare against the reference
@@ -232,7 +232,7 @@ void btod_dirsum_test::test_ij_i_j_2(bool rnd, double d)
     //  Invoke the direct sum routine
 
     if(d == 0.0) op.perform(btc);
-    else op.perform(btc, scalar_transf<double>(d));
+    else op.perform(btc, d);
     tod_btconv<2>(btc).perform(tc);
 
     //  Compare against the reference
@@ -320,7 +320,7 @@ void btod_dirsum_test::test_ij_i_j_3(bool rnd, double d)
     //  Invoke the direct sum routine
 
     if(d == 0.0) op.perform(btc);
-    else op.perform(btc, scalar_transf<double>(d));
+    else op.perform(btc, d);
     tod_btconv<2>(btc).perform(tc);
 
     //  Compare against the reference
@@ -395,7 +395,7 @@ void btod_dirsum_test::test_ijk_ij_k_1(bool rnd, double d)
     if(d == 0.0) {
         btod_dirsum<2, 1>(bta, 1.5, btb, 1.0).perform(btc);
     } else {
-        btod_dirsum<2, 1>(bta, 1.5, btb, 1.0).perform(btc, scalar_transf<double>(d));
+        btod_dirsum<2, 1>(bta, 1.5, btb, 1.0).perform(btc, d);
     }
     tod_btconv<3>(btc).perform(tc);
 
@@ -473,7 +473,7 @@ void btod_dirsum_test::test_ikjl_ij_kl_1(bool rnd, double d)
     if(d == 0.0) {
         btod_dirsum<2, 2>(bta, 1.5, btb, -1.0, permc).perform(btc);
     } else {
-        btod_dirsum<2, 2>(bta, 1.5, btb, -1.0, permc).perform(btc, scalar_transf<double>(d));
+        btod_dirsum<2, 2>(bta, 1.5, btb, -1.0, permc).perform(btc, d);
     }
     tod_btconv<4>(btc).perform(tc);
 
@@ -578,7 +578,7 @@ void btod_dirsum_test::test_ikjl_ij_kl_2(bool rnd, double d)
     if(d == 0.0) {
         btod_dirsum<2, 2>(bta, 1.5, btb, -1.0, permc).perform(btc);
     } else {
-        btod_dirsum<2, 2>(bta, 1.5, btb, -1.0, permc).perform(btc, scalar_transf<double>(d));
+        btod_dirsum<2, 2>(bta, 1.5, btb, -1.0, permc).perform(btc, d);
     }
     tod_btconv<4>(btc).perform(tc);
 
@@ -701,7 +701,7 @@ void btod_dirsum_test::test_ikjl_ij_kl_3a(bool s1, bool s2,
     if(d == 0.0) {
         btod_dirsum<2, 2>(bta, 1.5, btb, -1.0, permc).perform(btc);
     } else {
-        btod_dirsum<2, 2>(bta, 1.5, btb, -1.0, permc).perform(btc, scalar_transf<double>(d));
+        btod_dirsum<2, 2>(bta, 1.5, btb, -1.0, permc).perform(btc, d);
     }
 
     // Compare symmetry
@@ -850,7 +850,7 @@ void btod_dirsum_test::test_ikjl_ij_kl_3b(bool rnd,
     if(d == 0.0) {
         btod_dirsum<2, 2>(bta, 1.5, btb, -1.0, permc).perform(btc);
     } else {
-        btod_dirsum<2, 2>(bta, 1.5, btb, -1.0, permc).perform(btc, scalar_transf<double>(d));
+        btod_dirsum<2, 2>(bta, 1.5, btb, -1.0, permc).perform(btc, d);
     }
 
     // Compare symmetry
@@ -1002,7 +1002,7 @@ void btod_dirsum_test::test_ikjl_ij_kl_3c(
     if(d == 0.0) {
         btod_dirsum<2, 2>(bta, 1.5, btb, -1.0, permc).perform(btc);
     } else {
-        btod_dirsum<2, 2>(bta, 1.5, btb, -1.0, permc).perform(btc, scalar_transf<double>(d));
+        btod_dirsum<2, 2>(bta, 1.5, btb, -1.0, permc).perform(btc, d);
     }
 
     // Compare symmetry
@@ -1152,7 +1152,7 @@ void btod_dirsum_test::test_iklj_ij_kl_1(bool rnd, double d)
     if(d == 0.0) {
         op.perform(btc);
     } else {
-        op.perform(btc, scalar_transf<double>(d));
+        op.perform(btc, d);
     }
     tod_btconv<4>(btc).perform(tc);
 

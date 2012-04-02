@@ -74,8 +74,8 @@ void bto_apply<N, Traits>::sync_off() {
 
 template<size_t N, typename Traits>
 void bto_apply<N, Traits>::compute_block(bool zero, block_t &blk,
-        const index<N> &ib, const tensor_tr_t &tr,
-        const scalar_tr_t &c, cpu_pool &cpus) {
+        const index<N> &ib, const tensor_tr_t &tr, const element_t &c,
+        cpu_pool &cpus) {
 
     static const char *method =
             "compute_block(bool, block_t &, const index<N> &, "
@@ -105,10 +105,8 @@ void bto_apply<N, Traits>::compute_block(bool zero, block_t &blk,
     // If the orbit of A is not allowed, we assume it all elements are 0.0
     if (! oa.is_allowed()) {
         if (! m_fn.keep_zero()) {
-            element_t val = m_fn(Traits::zero());
-            c.apply(val);
             tensor_t tblk(blk.get_dims());
-            to_set_t(val).perform(cpus, tblk);
+            to_set_t(m_fn(Traits::zero()) * c).perform(cpus, tblk);
             to_copy_t(tblk).perform(cpus, false,
                     scalar_tr_t().get_coeff(), blk);
         }
@@ -135,10 +133,8 @@ void bto_apply<N, Traits>::compute_block(bool zero, block_t &blk,
     }
     else {
         if (! m_fn.keep_zero()) {
-            element_t val = m_fn(Traits::zero());
-            c.apply(val);
             tensor_t tblk(blk.get_dims());
-            to_set_t(val).perform(cpus, tblk);
+            to_set_t(m_fn(Traits::zero()) * c).perform(cpus, tblk);
             to_copy_t(tblk).perform(cpus, false, sb.get_coeff(), blk);
         }
     }

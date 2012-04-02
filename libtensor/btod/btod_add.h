@@ -143,7 +143,7 @@ public:
 
     virtual void compute_block(bool zero, dense_tensor_i<N, double> &blk,
         const index<N> &i, const tensor_transf<N, double> &tr,
-        const scalar_transf<double> &c, cpu_pool &cpus);
+        const double &c, cpu_pool &cpus);
 
     using additive_bto<N, bto_traits<double> >::perform;
 

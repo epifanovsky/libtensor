@@ -105,7 +105,7 @@ void cholesky::decompose()
     contraction2<1,1,0> contr;
         btod_contract2<1,1,0> opcntr(contr,column,column);
 
-    opcntr.perform(D, scalar_transf<double>(-1.));
+    opcntr.perform(D, -1.0);
 
     
     //save the vector to the buffer

@@ -90,14 +90,13 @@ void btod_ewmult2_test::test_1(bool doadd) throw(libtest::test_exception) {
 
     //  Invoke the operation
 
-	scalar_transf<double> d(drand48());
+	double d = drand48();
 	btod_ewmult2<0, 0, 1> op(bta, btb);
 	if(!op.get_bis().equals(bisc)) {
 		fail_test(tnss.str().c_str(), __FILE__, __LINE__, "Bad bis.");
 	}
 	if(doadd) {
-		tod_ewmult2<0, 0, 1>(ta, tb).perform(cpus, false,
-		        d.get_coeff(), tc_ref);
+		tod_ewmult2<0, 0, 1>(ta, tb).perform(cpus, false, d, tc_ref);
 		op.perform(btc, d);
 	} else {
 		tod_ewmult2<0, 0, 1>(ta, tb).perform(cpus, true, 1.0, tc_ref);
@@ -172,7 +171,7 @@ void btod_ewmult2_test::test_2(bool doadd) throw(libtest::test_exception) {
 
     //  Invoke the operation
 
-	scalar_transf<double> d(drand48());
+	double d = drand48();
 	permutation<2> perma;
 	permutation<2> permb;
 	permutation<2> permc;
@@ -182,7 +181,7 @@ void btod_ewmult2_test::test_2(bool doadd) throw(libtest::test_exception) {
 	}
 	if(doadd) {
 		tod_ewmult2<0, 0, 2>(ta, perma, tb, permb, permc).
-			perform(cpus, false, d.get_coeff(), tc_ref);
+			perform(cpus, false, d, tc_ref);
 		op.perform(btc, d);
 	} else {
 		tod_ewmult2<0, 0, 2>(ta, perma, tb, permb, permc).
@@ -258,7 +257,7 @@ void btod_ewmult2_test::test_3(bool doadd) throw(libtest::test_exception) {
 
     //  Invoke the operation
 
-	scalar_transf<double> d(drand48());
+	double d = drand48();
 	permutation<2> perma;
 	permutation<2> permb; permb.permute(0, 1);
 	permutation<2> permc;
@@ -268,7 +267,7 @@ void btod_ewmult2_test::test_3(bool doadd) throw(libtest::test_exception) {
 	}
 	if(doadd) {
 		tod_ewmult2<0, 0, 2>(ta, perma, tb, permb, permc).
-			perform(cpus, false, d.get_coeff(), tc_ref);
+			perform(cpus, false, d, tc_ref);
 		op.perform(btc, d);
 	} else {
 		tod_ewmult2<0, 0, 2>(ta, perma, tb, permb, permc).
@@ -352,7 +351,7 @@ void btod_ewmult2_test::test_4(bool doadd) throw(libtest::test_exception) {
 
     //  Invoke the operation
 
-    scalar_transf<double> d(drand48());
+	double d = drand48();
 	permutation<2> perma; perma.permute(0, 1); // kj->jk
 	permutation<3> permb; permb.permute(1, 2); // ikl->ilk
 	permutation<4> permc; permc.permute(0, 1).permute(2, 3); // jilk->ijkl
@@ -362,7 +361,7 @@ void btod_ewmult2_test::test_4(bool doadd) throw(libtest::test_exception) {
 	}
 	if(doadd) {
 		tod_ewmult2<1, 2, 1>(ta, perma, tb, permb, permc).
-			perform(cpus, false, d.get_coeff(), tc_ref);
+			perform(cpus, false, d, tc_ref);
 		op.perform(btc, d);
 	} else {
 		tod_ewmult2<1, 2, 1>(ta, perma, tb, permb, permc).
@@ -449,7 +448,7 @@ void btod_ewmult2_test::test_5(bool doadd) throw(libtest::test_exception) {
 
     //  Invoke the operation
 
-    scalar_transf<double> d(drand48());
+	double d = drand48();
 	permutation<3> perma; perma.permute(1, 2).permute(0, 1); // ljk->klj
 	permutation<3> permb; permb.permute(0, 1).permute(1, 2); // jil->ilj
 	permutation<4> permc;
@@ -460,7 +459,7 @@ void btod_ewmult2_test::test_5(bool doadd) throw(libtest::test_exception) {
 	}
 	if(doadd) {
 		tod_ewmult2<1, 1, 2>(ta, perma, tb, permb, permc).
-			perform(cpus, false, d.get_coeff(), tc_ref);
+			perform(cpus, false, d, tc_ref);
 		op.perform(btc, d);
 	} else {
 		tod_ewmult2<1, 1, 2>(ta, perma, tb, permb, permc).
@@ -571,7 +570,7 @@ void btod_ewmult2_test::test_6(bool doadd) throw(libtest::test_exception) {
 
     //  Invoke the operation
 
-    scalar_transf<double> d(drand48());
+	double d = drand48();
 	permutation<3> perma;
 	permutation<3> permb;
 	permutation<4> permc;
@@ -581,7 +580,7 @@ void btod_ewmult2_test::test_6(bool doadd) throw(libtest::test_exception) {
 	}
 	if(doadd) {
 		tod_ewmult2<1, 1, 2>(ta, perma, tb, permb, permc).
-			perform(cpus, false, d.get_coeff(), tc_ref);
+			perform(cpus, false, d, tc_ref);
 		op.perform(btc, d);
 	} else {
 		tod_ewmult2<1, 1, 2>(ta, perma, tb, permb, permc).

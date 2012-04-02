@@ -910,7 +910,6 @@ void btod_extract_test::test_12b() throw(libtest::test_exception) {
 
     //  Fill in random data
 
-    scalar_transf<double> d(drand48());
     btod_random<4>().perform(bta);
     btod_random<2>().perform(btb);
     bta.set_immutable();
@@ -919,11 +918,11 @@ void btod_extract_test::test_12b() throw(libtest::test_exception) {
 
     tod_btconv<4>(bta).perform(ta);
     tod_btconv<2>(btb).perform(tb_ref);
-    tod_extract<4, 2>(ta, msk, idx).perform(tb_ref, d.get_coeff());
+    tod_extract<4, 2>(ta, msk, idx).perform(tb_ref, 2.3);
 
     //  Invoke the operation
 
-    btod_extract<4, 2>(bta, msk, idxbl, idxibl).perform(btb, d);
+    btod_extract<4, 2>(bta, msk, idxbl, idxibl).perform(btb, 2.3);
     tod_btconv<2>(btb).perform(tb);
 
     //  Compare against the reference
@@ -1000,7 +999,6 @@ void btod_extract_test::test_12c() throw(libtest::test_exception) {
 
     //  Fill in random data
 
-    scalar_transf<double> d(drand48());
     btod_random<4>().perform(bta);
     btod_random<2>().perform(btb);
     bta.set_immutable();
@@ -1009,11 +1007,11 @@ void btod_extract_test::test_12c() throw(libtest::test_exception) {
 
     tod_btconv<4>(bta).perform(ta);
     tod_btconv<2>(btb).perform(tb_ref);
-    tod_extract<4, 2>(ta, msk, idx).perform(tb_ref, d.get_coeff());
+    tod_extract<4, 2>(ta, msk, idx).perform(tb_ref, -2.3);
 
     //  Invoke the operation
 
-    btod_extract<4, 2>(bta, msk, idxbl, idxibl).perform(btb, d);
+    btod_extract<4, 2>(bta, msk, idxbl, idxibl).perform(btb, -2.3);
     tod_btconv<2>(btb).perform(tb);
 
     //  Compare against the reference

@@ -225,8 +225,7 @@ void diag_test::test_x_1() throw(libtest::test_exception) {
     msk2[0] = true; msk2[2] = true;
     permutation<2> perm2;
     //perm2.permute(0, 1);
-    btod_diag<3, 2>(tx, msk2, perm2, -1.0).perform(t3_ref,
-            scalar_transf<double>());
+    btod_diag<3, 2>(tx, msk2, perm2, -1.0).perform(t3_ref, 1.0);
 
     letter i, j, a, b;
     t3(i|a) = t1(i|a) - diag(i, i|j, diag(a, a|b, t2(i|a|j|b)));

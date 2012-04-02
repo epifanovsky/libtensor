@@ -93,9 +93,8 @@ public:
     //@}
 
 protected:
-    virtual void compute_block(bool zero, block_t &blk,
-            const index<N> &ib, const tensor_tr_t &tr,
-            const scalar_tr_t &c, cpu_pool &cpus);
+    virtual void compute_block(bool zero, block_t &blk, const index<N> &ib,
+            const tensor_tr_t &tr, const element_t &c, cpu_pool &cpus);
 
 private:
     static block_index_space<N> mk_bis(const block_index_space<N> &bis,

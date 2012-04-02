@@ -83,9 +83,10 @@ public:
     virtual void sync_off();
 
 protected:
-    virtual void compute_block(bool zero, dense_tensor_i<k_orderb, double> &blk,
-        const index<k_orderb> &i, const tensor_transf<k_orderb, double> &tr,
-        const scalar_transf<double> &c, cpu_pool &cpus);
+    virtual void compute_block(bool zero,
+            dense_tensor_i<k_orderb, double> &blk, const index<k_orderb> &i,
+            const tensor_transf<k_orderb, double> &tr, const double &c,
+            cpu_pool &cpus);
 
 private:
     /** \brief Forms the block %index space of the output or throws an
@@ -199,10 +200,10 @@ void btod_extract<N, M>::compute_block(dense_tensor_i<k_orderb, double> &blk,
 template<size_t N, size_t M>
 void btod_extract<N, M>::compute_block(bool zero,
         dense_tensor_i<k_orderb, double> &blk, const index<k_orderb> &idx,
-        const tensor_transf<k_orderb, double> &tr,
-        const scalar_transf<double> &c, cpu_pool &cpus) {
+        const tensor_transf<k_orderb, double> &tr, const double &c,
+        cpu_pool &cpus) {
 
-    do_compute_block(blk, idx, tr, c.get_coeff(), zero, cpus);
+    do_compute_block(blk, idx, tr, c, zero, cpus);
 }
 
 

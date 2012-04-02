@@ -367,13 +367,13 @@ void btod_sum_test::test_6(bool do_add) throw(libtest::test_exception) {
     btod_add<4> op1(bta1), op2(bta2);
     op1.add_op(btb1);
     op2.add_op(btb2);
-    if (do_add) op1.perform(btc_ref, scalar_transf<double>());
+    if (do_add) op1.perform(btc_ref, 1.0);
     else op1.perform(btc_ref);
-    op2.perform(btc_ref, scalar_transf<double>());
+    op2.perform(btc_ref, 1.0);
 
     btod_sum<4> sum(op1);
     sum.add_op(op2);
-    if (do_add) sum.perform(btc, scalar_transf<double>());
+    if (do_add) sum.perform(btc, 1.0);
     else sum.perform(btc);
 
     compare_ref<4>::compare(testname, btc, btc_ref, 1e-14);
@@ -479,7 +479,7 @@ void btod_sum_test::test_8() throw(libtest::test_exception) {
     btod_copy<2> cp1(bt1);
     btod_copy<2> cp2(bt2);
     cp1.perform(bt3_ref);
-    cp2.perform(bt3_ref, scalar_transf<double>());
+    cp2.perform(bt3_ref, 1.0);
 
     btod_sum<2> sum(cp1);
     sum.add_op(cp2);
@@ -552,7 +552,7 @@ void btod_sum_test::test_9a() throw(libtest::test_exception) {
     btod_contract2<2, 2, 0> op2(contr1, bt1, bt1);
 
     op1.perform(bt3_ref);
-    op2.perform(bt3_ref, scalar_transf<double>(-1.0));
+    op2.perform(bt3_ref, -1.0);
 
     btod_sum<4> sum(op1);
     sum.add_op(op2, -1.0);
@@ -619,7 +619,7 @@ void btod_sum_test::test_9b() throw(libtest::test_exception) {
     btod_contract2<2, 2, 0> op2(contr1, bt1, bt1);
 
     op1.perform(bt3_ref);
-    op2.perform(bt3_ref, scalar_transf<double>(-1.0));
+    op2.perform(bt3_ref, -1.0);
 
     btod_sum<4> sum(op1);
     sum.add_op(op2, -1.0);
@@ -635,7 +635,7 @@ void btod_sum_test::test_9b() throw(libtest::test_exception) {
             bis_ijab.get_block_index_dims());
         dense_tensor_i<4, double> &blk = c3.req_block(ijab.get_index());
         sum.compute_block(true, blk, ijab.get_index(),
-                tensor_transf<4, double>(), scalar_transf<double>(), cpus);
+                tensor_transf<4, double>(), 1.0, cpus);
         c3.ret_block(ijab.get_index());
     }
 
@@ -684,7 +684,7 @@ void btod_sum_test::test_10a() throw(libtest::test_exception) {
     sum.perform(bt3);
 
     btod_copy<2>(bt1).perform(bt3_ref);
-    btod_copy<2>(bt2).perform(bt3_ref, scalar_transf<double>());
+    btod_copy<2>(bt2).perform(bt3_ref, 1.0);
 
     compare_ref<2>::compare(testname, bt3, bt3_ref, 1e-14);
 
@@ -733,7 +733,7 @@ void btod_sum_test::test_10b() throw(libtest::test_exception) {
     sum.perform(bt3);
 
     btod_copy<2>(bt1).perform(bt3_ref);
-    btod_copy<2>(bt2, p10).perform(bt3_ref, scalar_transf<double>());
+    btod_copy<2>(bt2, p10).perform(bt3_ref, 1.0);
 
     compare_ref<2>::compare(testname, bt3, bt3_ref, 1e-14);
 

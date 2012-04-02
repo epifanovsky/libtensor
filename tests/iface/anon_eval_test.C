@@ -385,8 +385,7 @@ void anon_eval_test::test_contr_2() throw(libtest::test_exception) {
     contr.contract(2, 2);
     contr.contract(3, 3);
     btod_contract2<2, 2, 2>(contr, tp, tq1).perform(tr_ref);
-    btod_contract2<2, 2, 2>(contr, tp, tq2).perform(tr_ref,
-            scalar_transf<double>());
+    btod_contract2<2, 2, 2>(contr, tp, tq2).perform(tr_ref, 1.0);
 
     letter i, j, k, l, a, b;
     invoke_eval(testname,
@@ -428,7 +427,7 @@ void anon_eval_test::test_mixed_1() throw(libtest::test_exception) {
     contr.contract(2, 2);
     contr.contract(3, 3);
     btod_contract2<2, 2, 2>(contr, tp, tq).perform(ts_ref);
-    btod_copy<4>(tr).perform(ts_ref, scalar_transf<double>());
+    btod_copy<4>(tr).perform(ts_ref, 1.0);
 
     letter i, j, k, l, a, b;
     invoke_eval(testname,

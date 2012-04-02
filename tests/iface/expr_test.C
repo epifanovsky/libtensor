@@ -346,9 +346,9 @@ void expr_test::test_6() throw(libtest::test_exception) {
     btod_contract2<2, 2, 2> op4(contr4, tmp4a, i_oovv);
 
     op1.perform(i4_oooo_ref);
-    op2.perform(i4_oooo_ref, scalar_transf<double>(0.5));
-    op3.perform(i4_oooo_ref, scalar_transf<double>());
-    op4.perform(i4_oooo_ref, scalar_transf<double>());
+    op2.perform(i4_oooo_ref, 0.5);
+    op3.perform(i4_oooo_ref, 1.0);
+    op4.perform(i4_oooo_ref, 1.0);
 
     compare_ref<4>::compare(testname, i4_oooo, i4_oooo_ref, 5e-15);
 
@@ -447,8 +447,7 @@ void expr_test::test_7() throw(libtest::test_exception) {
     contraction2<2, 2, 0> contr4a(permutation<4>().permute(1, 2));
     btensor<4> tmp4a(soovv);
     btod_copy<4>(t2).perform(tmp4a);
-    btod_contract2<2, 2, 0>(contr4a, t1, t1).perform(tmp4a,
-            scalar_transf<double>(2.0));
+    btod_contract2<2, 2, 0>(contr4a, t1, t1).perform(tmp4a, 2.0);
 
     contraction2<2, 2, 2> contr4(permutation<4>().permute(0, 2));
     contr4.contract(1, 1);
@@ -456,9 +455,9 @@ void expr_test::test_7() throw(libtest::test_exception) {
     btod_contract2<2, 2, 2> op4(contr4, tmp4a, i_oovv);
 
     op1.perform(i1_ovov_ref);
-    op2.perform(i1_ovov_ref, scalar_transf<double>(-1.0));
-    op3.perform(i1_ovov_ref, scalar_transf<double>(-1.0));
-    op4.perform(i1_ovov_ref, scalar_transf<double>(0.5));
+    op2.perform(i1_ovov_ref, -1.0);
+    op3.perform(i1_ovov_ref, -1.0);
+    op4.perform(i1_ovov_ref, 0.5);
 
     compare_ref<4>::compare(testname, i1_ovov, i1_ovov_ref, 5e-15);
 

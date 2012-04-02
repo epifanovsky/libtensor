@@ -81,7 +81,7 @@ void btod_sum<N>::compute_block(dense_tensor_i<N, double> &blk, const index<N> &
 template<size_t N>
 void btod_sum<N>::compute_block(bool zero, dense_tensor_i<N, double> &blk,
     const index<N> &i, const tensor_transf<N, double> &tr,
-    const scalar_transf<double> &c, cpu_pool &cpus) {
+    const double &c, cpu_pool &cpus) {
 
     if(zero) tod_set<N>().perform(cpus, blk);
 
@@ -90,11 +90,9 @@ void btod_sum<N>::compute_block(bool zero, dense_tensor_i<N, double> &blk,
     for(typename std::list<node_t>::iterator iop = m_ops.begin();
         iop != m_ops.end(); iop++) {
 
-        scalar_transf<double> cc(iop->get_coeff());
-        cc.transform(c);
         if(iop->get_op().get_schedule().contains(ai.get_abs_index())) {
             additive_bto<N, bto_traits<double> >::compute_block(iop->get_op(),
-                    false, blk, i, tr, cc, cpus);
+                    false, blk, i, tr, c * iop->get_coeff(), cpus);
         }
         else {
             const symmetry<N, double> &sym = iop->get_op().get_symmetry();
@@ -107,8 +105,8 @@ void btod_sum<N>::compute_block(bool zero, dense_tensor_i<N, double> &blk,
                 tra.transform(tr);
 
                 additive_bto<N, bto_traits<double> >::compute_block(
-                        iop->get_op(), false, blk,
-                        ci.get_index(), tra, cc, cpus);
+                        iop->get_op(), false, blk, ci.get_index(), tra,
+                        c * iop->get_coeff(), cpus);
             }
         }
     }
@@ -129,22 +127,19 @@ void btod_sum<N>::perform(block_tensor_i<N, double> &bt) {
             }
             first = false;
         } else {
-            iop->get_op().perform(bt, scalar_transf<double>(iop->get_coeff()));
+            iop->get_op().perform(bt, iop->get_coeff());
         }
     }
 }
 
 
 template<size_t N>
-void btod_sum<N>::perform(block_tensor_i<N, double> &bt,
-        const scalar_transf<double> &c) {
+void btod_sum<N>::perform(block_tensor_i<N, double> &bt, double c) {
 
     for(typename std::list<node_t>::iterator iop = m_ops.begin();
         iop != m_ops.end(); iop++) {
 
-        scalar_transf<double> cc(iop->get_coeff());
-        cc.transform(c);
-        iop->get_op().perform(bt, cc);
+        iop->get_op().perform(bt, c * iop->get_coeff());
     }
 }
 
