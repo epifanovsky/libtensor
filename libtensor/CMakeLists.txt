@@ -190,6 +190,7 @@ set(SRC_INST
     block_tensor/btod/impl/btod_copy.C
     block_tensor/btod/impl/btod_diag.C
     block_tensor/btod/impl/btod_set.C
+    block_tensor/btod/impl/btod_trace.C
     block_tensor/btod/impl/btod_vmpriority.C
     btod/btod_add.C
     btod/btod_contract2_1.C
