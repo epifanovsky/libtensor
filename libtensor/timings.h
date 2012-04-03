@@ -23,15 +23,22 @@ namespace libtensor {
 template<typename T> class timings;
 
 
+/** \brief Tag for all timings in libtensor
+
+    \ingroup libtensor_core
+ **/
+struct libtensor_timings { };
+
+
 #ifdef LIBTENSOR_TIMINGS
 
 template<typename T>
-class timings : public libutil::timings<T, true> { };
+class timings : public libutil::timings<T, libtensor_timings, true> { };
 
 #else
 
 template<typename T>
-class timings : public libutil::timings<T, false> { };
+class timings : public libutil::timings<T, libtensor_timings, false> { };
 
 #endif // LIBTENSOR_TIMINGS
 
