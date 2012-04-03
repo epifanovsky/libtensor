@@ -22,6 +22,7 @@
 #include "permutation_builder_test.h"
 #include "permutation_generator_test.h"
 #include "sequence_test.h"
+#include "sequence_generator_test.h"
 #include "symmetry_test.h"
 #include "symmetry_element_set_test.h"
 #include "task_batch_test.h"
@@ -65,6 +66,7 @@ namespace libtensor {
     \li libtensor::permutation_builder_test
     \li libtensor::permutation_generator_test
     \li libtensor::sequence_test
+    \li libtensor::sequence_generator_test
     \li libtensor::symmetry_test
     \li libtensor::symmetry_element_set_test
     \li libtensor::task_batch_test
@@ -93,6 +95,7 @@ private:
     unit_test_factory<permutation_builder_test> m_utf_permutation_builder;
     unit_test_factory<permutation_generator_test> m_utf_permutation_generator;
     unit_test_factory<sequence_test> m_utf_sequence;
+    unit_test_factory<sequence_generator_test> m_utf_sequence_generator;
     unit_test_factory<symmetry_test> m_utf_symmetry;
     unit_test_factory<symmetry_element_set_test> m_utf_symmetry_element_set;
     unit_test_factory<task_batch_test> m_utf_task_batch;

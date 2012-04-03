@@ -21,6 +21,7 @@ set(SRC_CORE
     core/permutation_builder_test.C
     core/permutation_generator_test.C
     core/sequence_test.C
+    core/sequence_generator_test.C
     core/symmetry_test.C
     core/symmetry_element_set_test.C
     core/task_batch_test.C
