@@ -2103,8 +2103,10 @@ throw(libtest::test_exception) {
         if(c == 0.0) btod_contract2<2, 2, 2>(contr, bta, btb).perform(btc);
         else btod_contract2<2, 2, 2>(contr, bta, btb).perform(btc, c);
         tod_btconv<4>(btc).perform(tc);
-        if(c == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc_ref);
-        else tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, false, c, tc_ref);
+        if(c == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus,
+                true, 1.0, tc_ref);
+        else tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus,
+                false, c, tc_ref);
 
         //  Compare against reference
 
@@ -2182,8 +2184,10 @@ throw(libtest::test_exception) {
         if(c == 0.0) btod_contract2<2, 2, 2>(contr, bta, btb).perform(btc);
         else btod_contract2<2, 2, 2>(contr, bta, btb).perform(btc, c);
         tod_btconv<4>(btc).perform(tc);
-        if(c == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc_ref);
-        else tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, false, c, tc_ref);
+        if(c == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus,
+                true, 1.0, tc_ref);
+        else tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus,
+                false, c, tc_ref);
 
         //  Compare against reference
 
@@ -2268,8 +2272,10 @@ throw(libtest::test_exception) {
         if(c == 0.0) btod_contract2<2, 2, 2>(contr, bta, btb).perform(btc);
         else btod_contract2<2, 2, 2>(contr, bta, btb).perform(btc, c);
         tod_btconv<4>(btc).perform(tc);
-        if(c == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, true, 1.0, tc_ref);
-        else tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus, false, c, tc_ref);
+        if(c == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus,
+                true, 1.0, tc_ref);
+        else tod_contract2<2, 2, 2>(contr, ta, tb).perform(cpus,
+                false, c, tc_ref);
 
         //  Compare against reference
 
@@ -2364,8 +2370,10 @@ throw(libtest::test_exception) {
         if(c == 0.0) btod_contract2<1, 1, 3>(contr, bta, btb).perform(btc);
         else btod_contract2<1, 1, 3>(contr, bta, btb).perform(btc, c);
         tod_btconv<2>(btc).perform(tc);
-        if(c == 0.0) tod_contract2<1, 1, 3>(contr, ta, tb).perform(cpus, true, 1.0, tc_ref);
-        else tod_contract2<1, 1, 3>(contr, ta, tb).perform(cpus, false, c, tc_ref);
+        if(c == 0.0) tod_contract2<1, 1, 3>(contr, ta, tb).perform(cpus,
+                true, 1.0, tc_ref);
+        else tod_contract2<1, 1, 3>(contr, ta, tb).perform(cpus,
+                false, c, tc_ref);
 
         //  Compare against reference
 
@@ -2456,8 +2464,10 @@ throw(libtest::test_exception) {
         if(c == 0.0) btod_contract2<1, 1, 3>(contr, bta, btb).perform(btc);
         else btod_contract2<1, 1, 3>(contr, bta, btb).perform(btc, c);
         tod_btconv<2>(btc).perform(tc);
-        if(c == 0.0) tod_contract2<1, 1, 3>(contr, ta, tb).perform(cpus, true, 1.0, tc_ref);
-        else tod_contract2<1, 1, 3>(contr, ta, tb).perform(cpus, false, c, tc_ref);
+        if(c == 0.0) tod_contract2<1, 1, 3>(contr, ta, tb).perform(cpus,
+                true, 1.0, tc_ref);
+        else tod_contract2<1, 1, 3>(contr, ta, tb).perform(cpus,
+                false, c, tc_ref);
 
         //  Compare against reference
 

@@ -7,7 +7,8 @@
 #include "../core/block_tensor_i.h"
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
-#include "additive_btod.h"
+#include <libtensor/block_tensor/bto/additive_bto.h>
+#include <libtensor/block_tensor/btod/btod_traits.h>
 
 namespace libtensor {
 
@@ -42,7 +43,7 @@ public:
  **/
 template<size_t N, size_t M>
 class btod_dirsum :
-    public additive_btod<N + M>,
+    public additive_bto<N + M, bto_traits<double> >,
     public timings< btod_dirsum<N, M> > {
 
 public:
@@ -110,10 +111,10 @@ public:
     virtual void sync_off();
 
     virtual void compute_block(bool zero, dense_tensor_i<N + M, double> &blk,
-        const index<N + M> &i, const tensor_transf<N + M, double> &tr,
-        double c, cpu_pool &cpus);
+            const index<N + M> &i, const tensor_transf<N + M, double> &tr,
+            const double &c, cpu_pool &cpus);
 
-    using additive_btod<N + M>::perform;
+    using additive_bto<N + M, bto_traits<double> >::perform;
 
 private:
     void make_schedule();
@@ -135,12 +136,12 @@ private:
     void do_block_scatter_a(block_tensor_ctrl<k_ordera, double> &ctrla,
         dense_tensor_i<k_orderc, double> &blkc, double kc,
         const index<k_ordera> &ia, double ka,
-        const permutation<k_orderc> permc, bool zero);
+        const permutation<k_orderc> &permc, bool zero);
 
     void do_block_scatter_b(block_tensor_ctrl<k_orderb, double> &ctrlb,
         dense_tensor_i<k_orderc, double> &blkc, double kc,
         const index<k_orderb> &ib, double kb,
-        const permutation<k_orderc> permc, bool zero);
+        const permutation<k_orderc> &permc, bool zero);
 
 };
 

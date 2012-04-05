@@ -3,8 +3,8 @@
 
 #include <set>
 #include <vector>
-#include "../core/abs_index.h"
-#include "../core/orbit_list.h"
+#include <libtensor/core/abs_index.h>
+#include <libtensor/core/orbit_list.h>
 
 namespace libtensor {
 
@@ -18,7 +18,7 @@ namespace libtensor {
     the same in which indexes are put on the list using insert().
     It should usually be the preferred order of evaluating the blocks.
 
-    \ingroup libtensor_btod
+    \ingroup libtensor_bto
  **/
 template<size_t N, typename T>
 class assignment_schedule {

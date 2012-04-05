@@ -39,8 +39,6 @@
 #include "tod/processor.h"
 
 
-#include "btod/basic_btod.h"
-#include "btod/additive_btod.h"
 #include "btod/btod_add.h"
 #include "btod/btod_apply.h"
 #include "btod/btod_compare.h"

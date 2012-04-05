@@ -10,7 +10,6 @@
 #include "abs_index.h"
 #include "block_map.h"
 #include "direct_block_tensor_base.h"
-#include "direct_block_tensor_operation.h"
 
 namespace libtensor {
 
@@ -27,6 +26,9 @@ template<size_t N, typename T, typename Alloc,
 class direct_block_tensor : public direct_block_tensor_base<N, T> {
 public:
     static const char *k_clazz; //!< Class name
+
+public:
+    typedef typename direct_block_tensor_base<N, T>::operation_t operation_t;
 
 private:
     typedef typename Sync::mutex_t mutex_t; //!< Mutex type
@@ -62,13 +64,13 @@ private:
 
     class task : public task_i {
     private:
-        direct_block_tensor_operation<N, T> &m_op;
+        operation_t &m_op;
         index<N> m_idx;
         dense_tensor_i<N, T> &m_blk;
 
     public:
-        task(direct_block_tensor_operation<N, T> &op, const index<N> &idx,
-            dense_tensor_i<N, T> &blk) : m_op(op), m_idx(idx), m_blk(blk) { }
+        task(operation_t &op, const index<N> &idx, dense_tensor_i<N, T> &blk) :
+            m_op(op), m_idx(idx), m_blk(blk) { }
         virtual ~task() { }
         void perform(cpu_pool &cpus) throw(exception) {
             m_op.compute_block(m_blk, m_idx, cpus);
@@ -93,7 +95,7 @@ public:
     //!    \name Construction and destruction
     //@{
 
-    direct_block_tensor(direct_block_tensor_operation<N, T> &op);
+    direct_block_tensor(operation_t &op);
     virtual ~direct_block_tensor() { }
 
     //@}
@@ -132,7 +134,7 @@ const char *direct_block_tensor<N, T, Alloc, Sync>::k_clazz =
 
 template<size_t N, typename T, typename Alloc, typename Sync>
 direct_block_tensor<N, T, Alloc, Sync>::direct_block_tensor(
-    direct_block_tensor_operation<N, T> &op) :
+    operation_t &op) :
 
     direct_block_tensor_base<N, T>(op),
     m_bidims(get_bis().get_block_index_dims()),

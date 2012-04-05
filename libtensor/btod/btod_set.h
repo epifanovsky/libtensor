@@ -1,41 +1,15 @@
 #ifndef LIBTENSOR_BTOD_SET_H
 #define LIBTENSOR_BTOD_SET_H
 
-#include <libtensor/core/block_tensor_i.h>
-#include <libtensor/core/block_tensor_ctrl.h>
-#include <libtensor/dense_tensor/dense_tensor_i.h>
-#include <libtensor/dense_tensor/tod_set.h>
 #include <libtensor/block_tensor/bto/bto_set.h>
+#include <libtensor/block_tensor/btod/btod_traits.h>
 
 namespace libtensor {
 
 
-struct btod_set_traits {
-
-    typedef double element_type;
-
-    template<size_t N> struct block_tensor_type {
-        typedef block_tensor_i<N, double> type;
-    };
-
-    template<size_t N> struct block_tensor_ctrl_type {
-        typedef block_tensor_ctrl<N, double> type;
-    };
-
-    template<size_t N> struct block_type {
-        typedef dense_tensor_i<N, double> type;
-    };
-
-    template<size_t N> struct to_set_type {
-        typedef tod_set<N> type;
-    };
-
-    static bool is_zero(double d) {
-        return d == 0.0;
-    }
+struct btod_set_traits : public bto_traits<double> {
 
 };
-
 
 /** \brief Sets all elements of a block tensor to a value preserving
         the symmetry

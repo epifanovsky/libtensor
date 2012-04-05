@@ -15,7 +15,8 @@
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
 #include "bad_block_index_space.h"
-#include "additive_btod.h"
+#include <libtensor/block_tensor/bto/additive_bto.h>
+#include <libtensor/block_tensor/btod/btod_traits.h>
 
 namespace libtensor {
 
@@ -33,7 +34,7 @@ namespace libtensor {
  **/
 template<size_t N>
 class btod_add :
-    public additive_btod<N>,
+    public additive_bto<N, bto_traits<double> >,
     public timings< btod_add<N> > {
 
 public:
@@ -141,10 +142,10 @@ public:
     virtual void sync_off();
 
     virtual void compute_block(bool zero, dense_tensor_i<N, double> &blk,
-        const index<N> &i, const tensor_transf<N, double> &tr, double c,
-        cpu_pool &cpus);
+        const index<N> &i, const tensor_transf<N, double> &tr,
+        const double &c, cpu_pool &cpus);
 
-    using additive_btod<N>::perform;
+    using additive_bto<N, bto_traits<double> >::perform;
 
     //@}
 

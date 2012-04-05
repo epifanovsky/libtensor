@@ -3,9 +3,9 @@
 
 #include "../../defs.h"
 #include "../../exception.h"
-#include "../../core/direct_block_tensor_operation.h"
+#include <libtensor/block_tensor/bto/additive_bto.h>
+#include <libtensor/block_tensor/btod/btod_traits.h>
 #include "../../core/permutation.h"
-#include "../../btod/additive_btod.h"
 #include "../btensor_i.h"
 
 namespace libtensor {
@@ -20,12 +20,12 @@ struct arg_traits { };
 template<size_t N, typename T>
 struct arg_traits<N, T, oper_tag> {
     //!    \brief Block tensor operation type
-    typedef direct_block_tensor_operation<N, T> bto_t;
+    typedef direct_bto<N, bto_traits<T> > bto_t;
 };
 
 template<size_t N>
 struct arg_traits<N, double, oper_tag> {
-    typedef additive_btod<N> bto_t;
+    typedef additive_bto<N, bto_traits<double> > bto_t;
 };
 
 /** \brief Generic container for an expression argument

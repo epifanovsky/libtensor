@@ -147,8 +147,8 @@ void btod_add<N>::sync_off() {
 
 template<size_t N>
 void btod_add<N>::compute_block(bool zero, dense_tensor_i<N, double> &blkb,
-        const index<N> &ib, const tensor_transf<N, double> &trb, double kb,
-        cpu_pool &cpus) {
+        const index<N> &ib, const tensor_transf<N, double> &trb,
+        const double &kb, cpu_pool &cpus) {
 
     static const char *method = "compute_block(bool, tensor_i<N, double>&, "
             "const index<N>&, const tensor_transf<N, double>&, double, cpu_pool&)";

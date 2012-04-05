@@ -821,7 +821,8 @@ void btod_apply_test::test_add_nosym_1() throw(libtest::test_exception) {
 
     //  Compute the reference
 
-    tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin).perform(cpus, tb_ref, 1.0);
+    tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin).perform(cpus,
+            tb_ref, 1.0);
 
     //  Compare against the reference
 
@@ -1044,7 +1045,8 @@ void btod_apply_test::test_add_eqsym_1() throw(libtest::test_exception) {
     //  Compare against the reference
 
     tod_btconv<2>(bta).perform(ta);
-    tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin).perform(cpus, tb_ref, 1.0);
+    tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin).perform(cpus,
+            tb_ref, 1.0);
 
     compare_ref<2>::compare(testname, tb, tb_ref, 0.0);
 
@@ -1717,7 +1719,8 @@ void btod_apply_test::test_add_nesym_5_sp() throw(libtest::test_exception) {
 
     //  Compute the reference
 
-    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin).perform(cpus, tb_ref, 1.5);
+    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin).perform(cpus,
+            tb_ref, 1.5);
 
     //  Compare against the reference
 
@@ -1864,7 +1867,8 @@ void btod_apply_test::test_add_nesym_7_sp1() throw(libtest::test_exception) {
 
     //  Compute the reference
 
-    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin).perform(cpus, tb_ref, -2.0);
+    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin).perform(cpus,
+            tb_ref, -2.0);
 
     //  Compare against the reference
 
@@ -1938,7 +1942,8 @@ void btod_apply_test::test_add_nesym_7_sp2() throw(libtest::test_exception) {
 
     //  Compute the reference
 
-    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin).perform(cpus, tb_ref, -2.0);
+    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin).perform(cpus,
+            tb_ref, -2.0);
 
     //  Compare against the reference
 
@@ -2014,7 +2019,8 @@ void btod_apply_test::test_add_nesym_7_sp3() throw(libtest::test_exception) {
 
     //  Compute the reference
 
-    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin).perform(cpus, tb_ref, 2.0);
+    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin).perform(cpus,
+            tb_ref, 2.0);
 
     //  Compare against the reference
 

@@ -38,7 +38,7 @@ diag_tensor<N, T, Alloc>::~diag_tensor() {
 
 
 template<size_t N, typename T, typename Alloc>
-diag_tensor<N, T, Alloc>::session_handle_type
+typename diag_tensor<N, T, Alloc>::session_handle_type
 diag_tensor<N, T, Alloc>::on_req_open_session() {
 
     return 0;

@@ -19,6 +19,9 @@ namespace libtensor {
     // Default constructor that creates the identity transformation
     scalar_transf();
 
+    // Constructor that creates a transformation from a tensor element
+    scalar_transf(const T &c);
+
     // Copy constructor
     scalar_transf(const scalar_transf<T> &tr);
 
@@ -40,6 +43,9 @@ namespace libtensor {
     // Check if the transformation is the identity transformation
     bool is_identity() const;
 
+    // Check if the transformation maps all elements to zero
+    bool is_zero() const;
+
     bool operator==(const scalar_transf<T> &tr) const;
 
     bool operator!=(const scalar_transf<T> &tr) const;
@@ -48,11 +54,7 @@ namespace libtensor {
     \ingroup libtensor_core
  **/
 template<typename T>
-class scalar_transf {
-public:
-    typedef T scalar_t;
-
-};
+class scalar_transf;
 
 
 } // namespace libtensor

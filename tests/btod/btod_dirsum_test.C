@@ -458,7 +458,7 @@ void btod_dirsum_test::test_ikjl_ij_kl_1(bool rnd, double d)
 
     //  Generate reference data
 
-	permutation<4> permc;
+    permutation<4> permc;
 	permc.permute(1, 2);
 	if(d == 0.0) {
 		tod_dirsum<2, 2>(ta, 1.5, tb, -1.0, permc).

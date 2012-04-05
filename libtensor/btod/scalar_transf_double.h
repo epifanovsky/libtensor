@@ -33,6 +33,7 @@ public:
      **/
     scalar_transf<double> &operator=(const scalar_transf<double> &tr) {
         m_coeff = tr.m_coeff;
+        return *this;
     }
 
     //@}
@@ -47,10 +48,12 @@ public:
 
     scalar_transf<double> &invert();
 
-    void apply(double &el) { el *= m_coeff; }
+    void apply(double &el) const { el *= m_coeff; }
 
     //@}
 
+    //! \name Functions specific for T = double
+    //@{
 
     /** \brief Scale coefficient by c
      **/
@@ -61,11 +64,18 @@ public:
      **/
     const double& get_coeff() const { return m_coeff; }
 
+    //@}
 
     //! Comparison functions and operators
     //@{
 
+    /** \brief True, if the transformation leaves the elements unchanged
+     **/
     bool is_identity() const { return m_coeff == 1.0; }
+
+    /** \brief True if all elements are mapped to zero.
+     **/
+    bool is_zero() const { return m_coeff == 0.0; }
 
     /** \brief equal comparison
      **/

@@ -15,7 +15,8 @@
 #include <libtensor/dense_tensor/tod_extract.h>
 #include <libtensor/dense_tensor/tod_set.h>
 #include "bad_block_index_space.h"
-#include "additive_btod.h"
+#include <libtensor/block_tensor/bto/additive_bto.h>
+#include <libtensor/block_tensor/btod/btod_traits.h>
 
 namespace libtensor {
 
@@ -29,7 +30,7 @@ namespace libtensor {
  **/
 template<size_t N, size_t M>
 class btod_extract :
-    public additive_btod<N - M>,
+    public additive_bto<N - M, bto_traits<double> >,
     public timings< btod_extract<N, M> > {
 
 public:
@@ -76,15 +77,16 @@ public:
 
     //@}
 
-    using additive_btod<k_orderb>::perform;
+    using additive_bto<k_orderb, bto_traits<double> >::perform;
 
     virtual void sync_on();
     virtual void sync_off();
 
 protected:
-    virtual void compute_block(bool zero, dense_tensor_i<k_orderb, double> &blk,
-        const index<k_orderb> &i, const tensor_transf<k_orderb, double> &tr,
-        double c, cpu_pool &cpus);
+    virtual void compute_block(bool zero,
+            dense_tensor_i<k_orderb, double> &blk, const index<k_orderb> &i,
+            const tensor_transf<k_orderb, double> &tr, const double &c,
+            cpu_pool &cpus);
 
 private:
     /** \brief Forms the block %index space of the output or throws an
@@ -196,9 +198,10 @@ void btod_extract<N, M>::compute_block(dense_tensor_i<k_orderb, double> &blk,
 
 
 template<size_t N, size_t M>
-void btod_extract<N, M>::compute_block(bool zero, dense_tensor_i<k_orderb, double> &blk,
-    const index<k_orderb> &idx, const tensor_transf<k_orderb, double> &tr,
-    double c, cpu_pool &cpus) {
+void btod_extract<N, M>::compute_block(bool zero,
+        dense_tensor_i<k_orderb, double> &blk, const index<k_orderb> &idx,
+        const tensor_transf<k_orderb, double> &tr, const double &c,
+        cpu_pool &cpus) {
 
     do_compute_block(blk, idx, tr, c, zero, cpus);
 }
