@@ -38,6 +38,7 @@ libtensor_symmetry_suite::libtensor_symmetry_suite() :
     add_test("so_reduce_se_part", m_utf_so_reduce_se_part);
     add_test("so_reduce_se_perm", m_utf_so_reduce_se_perm);
     add_test("so_reduce", m_utf_so_reduce);
+    add_test("so_symmetrize_se_label", m_utf_so_symmetrize_se_label);
     add_test("so_symmetrize", m_utf_so_symmetrize);
     add_test("symmetry_element_set_adapter",
             m_utf_symmetry_element_set_adapter);
