@@ -235,7 +235,7 @@ inline int lapack_dpstrf(char uplo, size_t n, double *a, size_t lda, int *p,
     int gen_lda = lda;
     double gen_tol = tol;
     int gen_info = 0;
-    dpstrf_(&uplo, &gen_n, a, &gen_lda, p, rank, &gen_tol, work, &gen_info);
+//    dpstrf_(&uplo, &gen_n, a, &gen_lda, p, rank, &gen_tol, work, &gen_info);
     return gen_info;
 }
 

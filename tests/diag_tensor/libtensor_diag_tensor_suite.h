@@ -8,6 +8,7 @@
 #include "diag_to_add_space_test.h"
 #include "diag_to_contract2_space_test.h"
 #include "diag_tod_adjust_space_test.h"
+#include "diag_tod_contract2_part_test.h"
 #include "diag_tod_set_test.h"
 #include "tod_conv_diag_tensor_test.h"
 
@@ -30,6 +31,7 @@ namespace libtensor {
      - libtensor::diag_to_add_space_test
      - libtensor::diag_to_contract2_space_test
      - libtensor::diag_tod_adjust_space_test
+     - libtensor::diag_tod_contract2_part_test
      - libtensor::diag_tod_set_test
      - libtensor::tod_conv_diag_tensor_test
 
@@ -44,6 +46,8 @@ private:
     unit_test_factory<diag_to_contract2_space_test>
         m_utf_diag_to_contract2_space;
     unit_test_factory<diag_tod_adjust_space_test> m_utf_diag_tod_adjust_space;
+    unit_test_factory<diag_tod_contract2_part_test>
+        m_utf_diag_tod_contract2_part;
     unit_test_factory<diag_tod_set_test> m_utf_diag_tod_set;
     unit_test_factory<tod_conv_diag_tensor_test> m_utf_tod_conv_diag_tensor;
 
