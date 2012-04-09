@@ -53,10 +53,13 @@ symmetry_operation_impl< so_symmetrize<N, T>, se_label<N, T> >::do_perform(
          for (register size_t i = 0; i < nidx; i++) {
 
              size_t typei = bl1.get_dim_type(map[i]);
-             for (register size_t j = 1, k = nidx; j < ngrp; j++, k+=nidx) {
-                 if (bl1.get_dim_type(k) != typei)
+             size_t k = i + nidx;
+             for (register size_t j = 1; j < ngrp; j++) {
+                 if (bl1.get_dim_type(map[k]) != typei)
                      throw bad_symmetry(g_ns, k_clazz, method,
                              __FILE__, __LINE__, "Incompatible dimensions.");
+
+                 k += nidx;
              }
          }
 
