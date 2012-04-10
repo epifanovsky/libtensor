@@ -22,6 +22,7 @@ private:
     void test_nn_1(bool symm1, bool symm2) throw(libtest::test_exception);
     void test_nn_2(bool symm1, bool symm2) throw(libtest::test_exception);
     void test_nn_3(bool symm1, bool symm2) throw(libtest::test_exception);
+    void test_nn_4(bool symm1, bool symm2) throw(libtest::test_exception);
 
 };
 

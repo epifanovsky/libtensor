@@ -18,7 +18,7 @@ private:
     void test_empty_2() throw(libtest::test_exception);
     void test_empty_3() throw(libtest::test_exception);
     void test_se_1(bool s1, bool s2) throw(libtest::test_exception);
-    void test_se_2() throw(libtest::test_exception);
+    void test_se_2(bool s1, bool s2) throw(libtest::test_exception);
     void test_se_3() throw(libtest::test_exception);
     void test_se_4() throw(libtest::test_exception);
     void test_perm_1() throw(libtest::test_exception);
