@@ -3,7 +3,6 @@
 #include <libtensor/symmetry/so_dirsum.h>
 #include "../compare_ref.h"
 #include "so_dirsum_test.h"
-#include "../../../adcman2/supplement/supplementary_print.h"
 
 namespace libtensor {
 
