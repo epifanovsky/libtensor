@@ -22,6 +22,8 @@ private:
             const std::string &table_id) throw(libtest::test_exception);
     void test_nm1_2(const std::string &table_id,
             bool product) throw(libtest::test_exception);
+    void test_nm1_3(const std::string &table_id,
+            bool product) throw(libtest::test_exception);
     void test_nmk_1(
             const std::string &table_id) throw(libtest::test_exception);
     void test_nmk_2(const std::string &table_id,

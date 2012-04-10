@@ -190,6 +190,8 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_label<N - M, T> >::do_perform(
 
             // Loop over all terms in current product and find the reduction
             // indexes present
+
+            // reduction steps in product
             mask<k_order1> rsteps_in_pr;
             std::vector<bool> pr1to2_ni;
             std::vector<typename evaluation_rule<k_order1>::iterator> pr1to2;
@@ -200,6 +202,7 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_label<N - M, T> >::do_perform(
                     r1.begin(pno); itp != r1.end(pno); itp++) {
 
                 size_t sno = r1.get_seq_no(itp);
+                // Sequence comprises reduction dimension with invalid label
                 if (m1to2[sno] == (size_t) -1) {
                     has_allowed = true;
                     continue;
@@ -215,6 +218,8 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_label<N - M, T> >::do_perform(
                     nk++;
                 }
 
+                // If there only internal dimensions add to pr1to0
+                // else to pr1to2 / pr1to2_ni
                 if (m1to2[sno] == r1.get_n_sequences()) {
                     if (nk > 0) pr1to0.push_back(itp);
                 } else {
@@ -223,7 +228,8 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_label<N - M, T> >::do_perform(
                 }
             } // for itp
 
-            // Stop here if the current product is always allowed
+            // Stop here if the current product is always allowed,
+            // i.e. it contains only "always allowed" terms.
             if (pr1to2.size() == 0 && pr1to0.size() == 0 && has_allowed) break;
 
             // Create the dimensions for the reduction steps
@@ -235,7 +241,7 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_label<N - M, T> >::do_perform(
             }
             dimensions<k_order1> rdims(index_range<k_order1>(i1, i2));
 
-            // No loop over all possible index combinations of the reduced
+            // No loop over all possible index combinations of the reduction
             // dimensions and create possible combinations of result labels
             bool is_allowed = false;
 
@@ -254,6 +260,8 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_label<N - M, T> >::do_perform(
                     const sequence<k_order1, size_t> &seq =
                             r1.get_sequence(itp);
 
+                    // Create a label group that comprises all internal block
+                    // labels of the current index
                     label_group_t lg;
                     for (register size_t i = 0; i < k_order1; i++) {
                         if (seq[i] == 0) continue;
@@ -263,12 +271,16 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_label<N - M, T> >::do_perform(
                     }
                     lg.push_back(r1.get_intrinsic(itp));
 
+                    // If the current term is forbidden stop
                     if (! pt.is_in_product(lg, r1.get_target(itp))) break;
                 } // for sno
+
+                // Skip this product if any of the terms is forbidden
                 if (sno != pr1to0.size()) continue;
 
-                // Stop here if current product is always allowed
-                if (has_allowed && pr1to2.size() == 0) {
+                // Stop here if current product contains only terms that are
+                // always allowed
+                if (pr1to2.size() == 0) {
                     is_allowed = true; break;
                 }
 
@@ -325,16 +337,15 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_label<N - M, T> >::do_perform(
             for (label_set_t::const_iterator ii = tot_intr.begin();
                     ii != tot_intr.end(); ii++) {
 
-                size_t pno = -1;
                 label_t ll = *ii;
-                size_t j = 0;
+                size_t j = 0, ip;
                 if (pr1to2_ni[j]) {
-                    pno = r2.add_product(m1to2[r1.get_seq_no(pr1to2[j])],
+                    ip = r2.add_product(m1to2[r1.get_seq_no(pr1to2[j])],
                             r1.get_intrinsic(pr1to2[j]),
                             r1.get_target(pr1to2[j]));
                 }
                 else {
-                    pno = r2.add_product(m1to2[r1.get_seq_no(pr1to2[j])],
+                    ip = r2.add_product(m1to2[r1.get_seq_no(pr1to2[j])],
                             ll % n_labels, r1.get_target(pr1to2[j]));
                     ll = ll / n_labels;
                 }
@@ -342,12 +353,12 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_label<N - M, T> >::do_perform(
 
                 for (; j < pr1to2.size(); j++) {
                     if (pr1to2_ni[j]) {
-                        r2.add_to_product(pno, m1to2[r1.get_seq_no(pr1to2[j])],
+                        r2.add_to_product(ip, m1to2[r1.get_seq_no(pr1to2[j])],
                                 r1.get_intrinsic(pr1to2[j]),
                                 r1.get_target(pr1to2[j]));
                     }
                     else {
-                        r2.add_to_product(pno, m1to2[r1.get_seq_no(pr1to2[j])],
+                        r2.add_to_product(ip, m1to2[r1.get_seq_no(pr1to2[j])],
                                 ll % n_labels, r1.get_target(pr1to2[j]));
                         ll = ll / n_labels;
                     }

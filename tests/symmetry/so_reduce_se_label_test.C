@@ -15,6 +15,8 @@ void so_reduce_se_label_test::perform() throw(libtest::test_exception) {
         test_nm1_1(table_id);
         test_nm1_2(table_id, true);
         test_nm1_2(table_id, false);
+        test_nm1_3(table_id, true);
+        test_nm1_3(table_id, false);
         test_nmk_1(table_id);
         test_nmk_2(table_id, true);
         test_nmk_2(table_id, false);
@@ -225,6 +227,78 @@ void so_reduce_se_label_test::test_nm1_2(const std::string &table_id,
     }
     check_allowed(tns.c_str(), "el2", el2, rx);
 }
+
+
+/** \test Single reduction of 2 dim of a 4-space on a 2-space (no external
+        dimensions).
+ **/
+void so_reduce_se_label_test::test_nm1_3(const std::string &table_id,
+        bool product) throw(libtest::test_exception) {
+
+    std::ostringstream tnss;
+    tnss << "so_reduce_se_label_test::test_nm1_3(" <<
+            table_id << ", " << product << ")";
+    std::string tns(tnss.str());
+
+    typedef se_label<4, double> se4_t;
+    typedef se_label<2, double> se2_t;
+    typedef so_reduce<4, 2, double> so_reduce_t;
+    typedef symmetry_operation_impl<so_reduce_t, se2_t> so_reduce_se_t;
+
+    index<4> i1a, i1b;
+    i1b[0] = 3; i1b[1] = 3; i1b[2] = 3; i1b[3] = 3;
+    dimensions<4> bidims1(index_range<4>(i1a, i1b));
+
+    se4_t el1(bidims1, table_id);
+    {
+        block_labeling<4> &bl1 = el1.get_labeling();
+        mask<4> m1; m1[0] = m1[1] = m1[2] = m1[3] = true;
+        for (size_t i = 0; i < 4; i++) bl1.assign(m1, i, i);
+        evaluation_rule<4> r1;
+        sequence<4, size_t> seq1a(0), seq1b(0);
+        seq1a[1] = 1;
+        seq1b[2] = 1;
+        r1.add_sequence(seq1a);
+        r1.add_sequence(seq1b);
+        r1.add_product(0, 2, 0);
+        if (product)
+            r1.add_to_product(0, 1, 2, 0);
+        else
+            r1.add_product(1, 2, 0);
+        el1.set_rule(r1);
+    }
+
+    symmetry_element_set<4, double> set1(se4_t::k_sym_type);
+    symmetry_element_set<2, double> set2(se2_t::k_sym_type);
+
+    set1.insert(el1);
+    mask<4> m; m[1] = m[2] = true;
+    sequence<4, size_t> seq(0);
+    index_range<4> ir(i1a, i1b);
+    symmetry_operation_params<so_reduce_t> params(set1, m, seq, ir, ir, set2);
+
+    so_reduce_se_t().perform(params);
+
+    if(set2.is_empty()) {
+        fail_test(tns.c_str(), __FILE__, __LINE__,
+                "Expected a non-empty set.");
+    }
+
+    symmetry_element_set_adapter<2, double, se2_t> adapter(set2);
+    symmetry_element_set_adapter<2, double, se2_t>::iterator it =
+            adapter.begin();
+    const se2_t &el2 = adapter.get_elem(it);
+    it++;
+    if(it != adapter.end()) {
+        fail_test(tns.c_str(), __FILE__, __LINE__,
+                "Expected only one element.");
+    }
+
+    const dimensions<2> &bidims2 = el2.get_labeling().get_block_index_dims();
+    std::vector<bool> rx(bidims2.get_size(), true);
+    check_allowed(tns.c_str(), "el2", el2, rx);
+}
+
 
 /** \test Double reduction of 4 dim of a 6-space on a 2-space (simple rule)
  **/
