@@ -85,8 +85,10 @@ void tod_contract2<N, M, K>::perform(cpu_pool &cpus, bool zero, double d,
 
         std::auto_ptr< kernel_base<2, 1> > kern(
             kern_mul_generic::match(d, loop_in, loop_out));
+        tod_contract2<N, M, K>::start_timer("kernel");
         tod_contract2<N, M, K>::start_timer(kern->get_name());
         loop_list_runner<2, 1>(loop_in).run(r, *kern);
+        tod_contract2<N, M, K>::stop_timer("kernel");
         tod_contract2<N, M, K>::stop_timer(kern->get_name());
     }
 
