@@ -33,6 +33,7 @@ public:
 
 protected:
     virtual void do_perform(symmetry_operation_params_t &params) const;
+
 };
 
 } // namespace libtensor
