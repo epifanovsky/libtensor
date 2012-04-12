@@ -245,7 +245,15 @@ void diag_tod_contract2_part_test::test_ii_ii_ij(size_t ni)
         contraction2<1, 1, 1> contr;
         contr.contract(1, 0);
         tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc_ref);
-        // here need to remove non-diagonal elements
+        {
+            dense_tensor_wr_ctrl<2, double> cc_ref(tc_ref);
+            double *pc = cc_ref.req_dataptr();
+            for(size_t i = 0; i < ni; i++)
+            for(size_t j = 0; j < ni; j++) {
+                if(i != j) pc[i * ni + j] = 0.0;
+            }
+            cc_ref.ret_dataptr(pc);
+        }
 
         diag_tod_contract2_part<1, 1, 1>(contr, dtssa, dimsa, &rda[0], dtssb,
             dimsb, &db[0]).perform(dtssc, dimsc, &rdc[0], 1.0);

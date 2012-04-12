@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_DIAG_TOD_CONTRACT2_PART_H
 #define LIBTENSOR_DIAG_TOD_CONTRACT2_PART_H
 
+#include <deque>
 #include <memory>
 #include <libtensor/tod/contraction2.h>
 #include <libtensor/tod/kernels/loop_list_runner.h>
@@ -125,10 +126,13 @@ void diag_tod_contract2_part<N, M, K>::perform(
 
         size_t w = 0;
         size_t inca = 0, incb = 0, incc = 0;
-        size_t j = i;
-        bool stop = true;
+        std::deque<size_t> nextj;
+        nextj.push_back(i);
 
         do {
+            size_t j = nextj.front();
+            nextj.pop_front();
+
             size_t ia = N + K, ib = M + K, ic = N + M;
             if(j < N + M) ic = j;
             else if(j < (N + M) + (N + K)) ia = j - (N + M);
@@ -139,20 +143,15 @@ void diag_tod_contract2_part<N, M, K>::perform(
 
             if(w == 0) w = (ic < N + M) ? dimsc[ic] : m_dimsa[ia];
 
-            stop = true;
-
             if(ia < N + K) {
                 mask<N + K> mda, ma0, ma;
                 size_t inca1 = get_increment(ia, m_ssa, rdimsa, mda);
                 ma = mda & mdonea;
                 if(ma.equals(ma0)) inca += inca1;
                 mdonea[ia] = true;
-                if(stop) {
-                    for(size_t k = 0; k < N + K; k++) if(mda[k] && !mdonea[k]) {
-                        stop = false;
-                        j = (N + M) + k;
-                        break;
-                    }
+                for(size_t k = 0; k < N + K; k++) if(mda[k] && !mdonea[k]) {
+                    nextj.push_back((N + M) + k);
+                    break;
                 }
             }
 
@@ -162,12 +161,9 @@ void diag_tod_contract2_part<N, M, K>::perform(
                 mb = mdb & mdoneb;
                 if(mb.equals(mb0)) incb += incb1;
                 mdoneb[ib] = true;
-                if(stop) {
-                    for(size_t k = 0; k < M + K; k++) if(mdb[k] && !mdoneb[k]) {
-                        stop = false;
-                        j = (N + M) + (N + K) + k;
-                        break;
-                    }
+                for(size_t k = 0; k < M + K; k++) if(mdb[k] && !mdoneb[k]) {
+                    nextj.push_back((N + M) + (N + K) + k);
+                    break;
                 }
             }
 
@@ -177,16 +173,13 @@ void diag_tod_contract2_part<N, M, K>::perform(
                 mc = mdc & mdonec;
                 if(mc.equals(mc0)) incc += incc1;
                 mdonec[ic] = true;
-                if(stop) {
-                    for(size_t k = 0; k < N + M; k++) if(mdc[k] && !mdonec[k]) {
-                        stop = false;
-                        j = k;
-                        break;
-                    }
+                for(size_t k = 0; k < N + M; k++) if(mdc[k] && !mdonec[k]) {
+                    nextj.push_back(k);
+                    break;
                 }
             }
 
-        } while(!stop);
+        } while(!nextj.empty());
 
         typename std::list< loop_list_node<2, 1> >::iterator inode =
             loop_in.insert(loop_in.end(), loop_list_node<2, 1>(w));
