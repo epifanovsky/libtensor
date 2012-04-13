@@ -179,6 +179,12 @@ const diag_tensor_subspace<N> &diag_tensor_space<N>::get_subspace(
 
 
 template<size_t N>
+void diag_tensor_subspace<N>::simplify() {
+
+}
+
+
+template<size_t N>
 size_t diag_tensor_space<N>::get_subspace_size(size_t n) const {
 
     const diag_tensor_subspace<N> &ss = get_subspace(n);

@@ -47,11 +47,6 @@ private:
         const diag_tensor_subspace<N + K> &ssa,
         const diag_tensor_subspace<M + K> &ssb);
 
-    /** \brief Returns true if the space contains the subspace
-     **/
-    bool contains(const diag_tensor_space<N + M> &dts,
-        const diag_tensor_subspace<N + M> &ss) const;
-
 };
 
 
