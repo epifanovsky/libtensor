@@ -15,7 +15,6 @@ namespace libtensor {
  	executed one after the other.
 
  	\ingroup libtensor_performance_tests
-
  **/
 class performance_test_scenario_i {
 	typedef struct test_data {

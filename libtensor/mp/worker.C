@@ -4,9 +4,12 @@
 namespace libtensor {
 
 
-worker::worker(libvmm::cond &started, libvmm::mutex &cpu_lock) :
+const char *worker::k_clazz = "worker";
 
-	m_started(started), m_cpu_lock(cpu_lock), m_term(false) {
+
+worker::worker(cond &started, cpu_pool &cpus) :
+
+    m_started(started), m_cpus(cpus), m_term(false) {
 
 }
 
@@ -18,19 +21,24 @@ worker::~worker() {
 
 void worker::run() {
 
-	m_started.signal();
-	while(!m_term) {
-		task_dispatcher::get_instance().wait_next();
-		m_cpu_lock.lock();
-		task_dispatcher::get_instance().invoke_next();
-		m_cpu_lock.unlock();
-	}
+    m_started.signal();
+
+    start_timer();
+    while(!m_term) {
+        start_timer("wait");
+        task_dispatcher::get_instance().wait_next();
+        stop_timer("wait");
+        start_timer("work");
+        task_dispatcher::get_instance().invoke_next(m_cpus);
+        stop_timer("work");
+    }
+    stop_timer();
 }
 
 
 void worker::terminate() {
 
-	m_term = true;
+    m_term = true;
 }
 
 

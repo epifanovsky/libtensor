@@ -6,29 +6,29 @@
 namespace libtensor {
 
 
-/**	\brief Exception indicating that a %tensor passed to a %tensor operation
-		has incorrect %dimensions
+/** \brief Exception indicating that a %tensor passed to a %tensor operation
+        has incorrect %dimensions
 
-	\ingroup libtensor_tod
+    \ingroup libtensor_core_exc libtensor_tod
  **/
 class bad_dimensions : public exception_base<bad_dimensions> {
 public:
-	//!	\name Construction and destruction
-	//@{
+    //!    \name Construction and destruction
+    //@{
 
-	/**	\brief Creates an exception
-	 **/
-	bad_dimensions(const char *ns, const char *clazz, const char *method,
-		const char *file, unsigned int line, const char *message)
-		throw() :
-		exception_base<bad_dimensions>(ns, clazz, method, file, line,
-			"bad_dimensions", message) { };
+    /** \brief Creates an exception
+     **/
+    bad_dimensions(const char *ns, const char *clazz, const char *method,
+        const char *file, unsigned int line, const char *message)
+        throw() :
+        exception_base<bad_dimensions>(ns, clazz, method, file, line,
+            "bad_dimensions", message) { };
 
-	/**	\brief Virtual destructor
-	 **/
-	virtual ~bad_dimensions() throw() { };
+    /** \brief Virtual destructor
+     **/
+    virtual ~bad_dimensions() throw() { };
 
-	//@}
+    //@}
 };
 
 

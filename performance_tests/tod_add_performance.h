@@ -3,7 +3,9 @@
 
 
 #include <libtest/libtest.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/libtensor.h>
+#include <libtensor/linalg/linalg.h>
 #include "performance_test.h"
 
 using libtest::unit_test_factory;
@@ -103,7 +105,7 @@ void tod_add_ref<R,DimData>::do_calculate()
 	for ( size_t i=0; i<total_size; i++ ) ptrb[i]=drand48();
 
 	timings<tod_add_ref<R,DimData> >::start_timer();
-	cblas_daxpy(total_size, 2.0,ptrb,1,ptra,1);
+	linalg::i_i_x(total_size, ptrb, 1, 2.0, ptra, 1);
 	timings<tod_add_ref<R,DimData> >::stop_timer();
 
 	delete [] ptra;
@@ -113,10 +115,12 @@ void tod_add_ref<R,DimData>::do_calculate()
 template<size_t R, size_t N, typename DimData>
 void tod_add_p1<R,N,DimData>::do_calculate()
 {
+    cpu_pool cpus(1);
+
 	DimData d;
 	dimensions<N> dim(d.dimA());
-	tensor<N, double, libvmm::std_allocator<double> > ta(dim), tb(dim);
-	tensor_ctrl<N,double> tca(ta), tcb(tb);
+	dense_tensor<N, double, std_allocator<double> > ta(dim), tb(dim);
+	dense_tensor_ctrl<N,double> tca(ta), tcb(tb);
 
 	double *ptra=tca.req_dataptr();
 	double *ptrb=tcb.req_dataptr();
@@ -129,12 +133,14 @@ void tod_add_p1<R,N,DimData>::do_calculate()
 	permutation<N> perm;
 	tod_add<N> add(tb,2.0);
 	add.prefetch();
-	add.perform(ta,1.0);
+	add.perform(cpus, false, 1.0, ta);
 }
 
 template<size_t R, size_t N, typename DimData>
 void tod_add_p2<R,N,DimData>::do_calculate()
 {
+    cpu_pool cpus(1);
+
 	DimData d;
 	dimensions<N> dima(d.dimA()), dimb(d.dimA());
 	permutation<N> permb;
@@ -143,8 +149,8 @@ void tod_add_p2<R,N,DimData>::do_calculate()
 
 	dimb.permute(permb);
 
-	tensor<N, double, libvmm::std_allocator<double> > ta(dima), tb(dimb);
-	tensor_ctrl<N,double> tca(ta), tcb(tb);
+	dense_tensor<N, double, std_allocator<double> > ta(dima), tb(dimb);
+	dense_tensor_ctrl<N,double> tca(ta), tcb(tb);
 
 	double *ptra=tca.req_dataptr();
 	double *ptrb=tcb.req_dataptr();
@@ -156,13 +162,15 @@ void tod_add_p2<R,N,DimData>::do_calculate()
 	// start tod_add calculation
 	tod_add<N> add(tb,permb,2.0);
 	add.prefetch();
-	add.perform(ta,1.0);
+	add.perform(cpus, false, 1.0, ta);
 }
 
 
 template<size_t R, size_t N, typename DimData>
 void tod_add_p3<R,N,DimData>::do_calculate()
 {
+    cpu_pool cpus(1);
+
 	DimData d;
 	dimensions<N> dima(d.dimA()), dimb(d.dimA());
 	permutation<N> permb;
@@ -171,8 +179,8 @@ void tod_add_p3<R,N,DimData>::do_calculate()
 
 	dimb.permute(permb);
 
-	tensor<N, double, libvmm::std_allocator<double> > ta(dima), tb(dimb);
-	tensor_ctrl<N,double> tca(ta), tcb(tb);
+	dense_tensor<N, double, std_allocator<double> > ta(dima), tb(dimb);
+	dense_tensor_ctrl<N,double> tca(ta), tcb(tb);
 
 	double *ptra=tca.req_dataptr();
 	double *ptrb=tcb.req_dataptr();
@@ -184,7 +192,7 @@ void tod_add_p3<R,N,DimData>::do_calculate()
 	// start tod_add calculation
 	tod_add<N> add(tb,permb,2.0);
 	add.prefetch();
-	add.perform(ta,1.0);
+	add.perform(cpus, false, 1.0, ta);
 }
 
 

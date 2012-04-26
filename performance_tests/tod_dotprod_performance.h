@@ -2,7 +2,9 @@
 #define TOD_DOTPROD_PERFORMANCE_H
 
 #include <libtest/libtest.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/libtensor.h>
+#include <libtensor/linalg/linalg.h>
 #include "performance_test.h"
 
 namespace libtensor {
@@ -102,7 +104,7 @@ void tod_dotprod_ref<R,X>::do_calculate()
 	for ( size_t i=0; i<total_size; i++ ) ptrb[i]=drand48();
 
 	timings<tod_dotprod_ref<R,X> >::start_timer();
-	cblas_ddot(total_size,ptra,1,ptrb,1);
+	linalg::x_p_p(total_size, ptra, 1, ptrb, 1);
 	timings<tod_dotprod_ref<R,X> >::stop_timer();
 
 	delete [] ptra;
@@ -112,10 +114,12 @@ void tod_dotprod_ref<R,X>::do_calculate()
 template<size_t R, size_t N, typename X>
 void tod_dotprod_p1<R,N,X>::do_calculate()
 {
+    cpu_pool cpus(1);
+
 	X d;
 	dimensions<N> dim(d.dimA());
-	tensor<N, double, libvmm::std_allocator<double> > ta(dim), tb(dim);
-	tensor_ctrl<N,double> tca(ta), tcb(tb);
+	dense_tensor<N, double, std_allocator<double> > ta(dim), tb(dim);
+	dense_tensor_ctrl<N,double> tca(ta), tcb(tb);
 
 	double *ptra=tca.req_dataptr();
 	double *ptrb=tcb.req_dataptr();
@@ -125,12 +129,14 @@ void tod_dotprod_p1<R,N,X>::do_calculate()
 	tcb.ret_dataptr(ptrb);
 
 	tod_dotprod<N> dotprod(ta,tb);
-	double res=dotprod.calculate();
+	double res=dotprod.calculate(cpus);
 }
 
 template<size_t R, size_t N, typename X>
 void tod_dotprod_p2<R,N,X>::do_calculate()
 {
+    cpu_pool cpus(1);
+
 	X d;
 	dimensions<N> dima(d.dimA()), dimb(d.dimA());
 	permutation<N> perma, permb;
@@ -139,8 +145,8 @@ void tod_dotprod_p2<R,N,X>::do_calculate()
 
 	dimb.permute(permb);
 
-	tensor<N, double, libvmm::std_allocator<double> > ta(dima), tb(dimb);
-	tensor_ctrl<N,double> tca(ta), tcb(tb);
+	dense_tensor<N, double, std_allocator<double> > ta(dima), tb(dimb);
+	dense_tensor_ctrl<N,double> tca(ta), tcb(tb);
 
 	double *ptra=tca.req_dataptr();
 	double *ptrb=tcb.req_dataptr();
@@ -150,12 +156,14 @@ void tod_dotprod_p2<R,N,X>::do_calculate()
 	tcb.ret_dataptr(ptrb);
 
 	tod_dotprod<N> dotprod(ta,perma,tb,permb);
-	double res=dotprod.calculate();
+	double res=dotprod.calculate(cpus);
 }
 
 template<size_t R, size_t N, typename X>
 void tod_dotprod_p3<R,N,X>::do_calculate()
 {
+    cpu_pool cpus(1);
+
 	X d;
 	dimensions<N> dima(d.dimA()), dimb(d.dimA());
 	permutation<N> perma, permb;
@@ -164,8 +172,8 @@ void tod_dotprod_p3<R,N,X>::do_calculate()
 
 	dimb.permute(permb);
 
-	tensor<N, double, libvmm::std_allocator<double> > ta(dima), tb(dimb);
-	tensor_ctrl<N,double> tca(ta), tcb(tb);
+	dense_tensor<N, double, std_allocator<double> > ta(dima), tb(dimb);
+	dense_tensor_ctrl<N,double> tca(ta), tcb(tb);
 
 	double *ptra=tca.req_dataptr();
 	double *ptrb=tcb.req_dataptr();
@@ -175,7 +183,7 @@ void tod_dotprod_p3<R,N,X>::do_calculate()
 	tcb.ret_dataptr(ptrb);
 
 	tod_dotprod<N> dotprod(ta,perma,tb,permb.invert());
-	double res=dotprod.calculate();
+	double res=dotprod.calculate(cpus);
 }
 
 

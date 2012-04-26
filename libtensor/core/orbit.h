@@ -8,216 +8,140 @@
 #include "../exception.h"
 #include "../timings.h"
 #include "abs_index.h"
-#include "transf.h"
+#include "tensor_transf.h"
 #include "symmetry.h"
 
 namespace libtensor {
 
 
-/**	\brief Symmetry-equivalent blocks of a block %tensor
+/** \brief Symmetry-equivalent blocks of a block %tensor
 
-	The action of the %index %symmetry group on the set of all block
-	indexes in a block %tensor generates an %index set partition, each
-	subset being an orbit. The smallest %index in an orbit is its canonical
-	%index. The block %tensor shall only keep the block that corresponds
-	to the canonical %index. All the blocks that are connected with the
-	canonical block via %symmetry elements can be obtained by applying
-	a transformation to the canonical block.
+    The action of the %index %symmetry group on the set of all block
+    indexes in a block %tensor generates an %index set partition, each
+    subset being an orbit. The smallest %index in an orbit is its canonical
+    %index. The block %tensor shall only keep the block that corresponds
+    to the canonical %index. All the blocks that are connected with the
+    canonical block via %symmetry elements can be obtained by applying
+    a transformation to the canonical block.
 
-	<b>Orbit evaluation</b>
-	<b>Orbit iterator</b>
+    <b>Orbit evaluation</b>
+    <b>Orbit iterator</b>
 
-	\ingroup libtensor_core
+    \ingroup libtensor_core
  **/
 template<size_t N, typename T>
 class orbit : public timings<orbit<N, T> > {
 public:
-	static const char *k_clazz; //!< Class name
+    static const char *k_clazz; //!< Class name
 
 public:
-	typedef typename std::map< size_t, transf<N, T> >::const_iterator
-		iterator; //!< Orbit iterator
+    typedef typename std::map< size_t, tensor_transf<N, T> >::const_iterator
+        iterator; //!< Orbit iterator
 
 private:
-	typedef std::pair< size_t, transf<N, T> > pair_t;
-	typedef std::map< size_t, transf<N, T> > orbit_map_t;
+    typedef std::pair< size_t, tensor_transf<N, T> > pair_t;
+    typedef std::map< size_t, tensor_transf<N, T> > orbit_map_t;
 
 private:
-	dimensions<N> m_bidims; //!< Block %index %dimensions
-	orbit_map_t m_orb; //!< Map of %orbit indexes to transformations
-	size_t m_canidx; //!< Absolute %index of the canonical element
-	bool m_allowed; //!< Whether the orbit is allowed by %symmetry
+    dimensions<N> m_bidims; //!< Block %index %dimensions
+    orbit_map_t m_orb; //!< Map of %orbit indexes to transformations
+    bool m_allowed; //!< Whether the orbit is allowed by %symmetry
 
 public:
-	/**	\brief Constructs the %orbit using a %symmetry group and
-			any %index in the %orbit
-	 **/
-	orbit(const symmetry<N, T> &sym, const index<N> &idx);
+    /** \brief Constructs the %orbit using a %symmetry group and
+            any %index in the %orbit
+     **/
+    orbit(const symmetry<N, T> &sym, const index<N> &idx);
 
-	/**	\brief Returns whether the %orbit is allowed by %symmetry
-	 **/
-	bool is_allowed() const {
+    /** \brief Returns whether the %orbit is allowed by %symmetry
+     **/
+    bool is_allowed() const {
 
-		return m_allowed;
-	}
+        return m_allowed;
+    }
 
-	/**	\brief Returns the canonical %index of this %orbit
-	 **/
-	size_t get_abs_canonical_index() const {
+    /** \brief Returns the canonical %index of this %orbit
+     **/
+    size_t get_abs_canonical_index() const {
 
-		return m_canidx;
-	}
+        return m_orb.begin()->first;
+    }
 
-	/**	\brief Returns the number of indexes in the orbit
-	 **/
-	size_t get_size() const {
+    /** \brief Returns the number of indexes in the orbit
+     **/
+    size_t get_size() const {
 
-		return m_orb.size();
-	}
+        return m_orb.size();
+    }
 
-	/** \brief Obtain transformation of canonical block to yield block at idx.
-		@param idx Block index
-		@return Transformation to obtain the block at idx from the canonical block
-	 **/
-	const transf<N, T> &get_transf(const index<N> &idx) const;
+    /** \brief Obtain transformation of canonical block to yield block at idx.
+        @param idx Block index
+        @return Transformation to obtain the block at idx from the canonical block
+     **/
+    const tensor_transf<N, T> &get_transf(const index<N> &idx) const;
 
-	/** \brief Obtain transformation of canonical block to yield block at absidx.
-		@param absidx Absolute block index
-		@return Transformation to yield block at absidx
-	 **/
-	const transf<N, T> &get_transf(size_t absidx) const;
+    /** \brief Obtain transformation of canonical block to yield block at absidx.
+        @param absidx Absolute block index
+        @return Transformation to yield block at absidx
+     **/
+    const tensor_transf<N, T> &get_transf(size_t absidx) const;
 
-	//!	\name STL-like %orbit iterator
-	//@{
+    /** \brief Checks if orbit contains block at idx.
+        @param idx Block index
+        @return True if orbit contains the block
+     **/
+    bool contains(const index<N> &idx) const;
 
-	iterator begin() const {
+    /** \brief Checks if orbit contains block at absidx.
+        @param absidx Absolute block index
+        @return True if orbit contains the block
+     **/
+    bool contains(size_t absidx) const;
 
-		return m_orb.begin();
-	}
+    //!    \name STL-like %orbit iterator
+    //@{
 
-	iterator end() const {
+    iterator begin() const {
 
-		return m_orb.end();
-	}
+        return m_orb.begin();
+    }
 
-	size_t get_abs_index(iterator &i) const;
+    iterator end() const {
 
-	const transf<N, T> &get_transf(iterator &i) const;
+        return m_orb.end();
+    }
 
-	//@}
+    size_t get_abs_index(iterator &i) const;
+
+    const tensor_transf<N, T> &get_transf(iterator &i) const;
+
+    //@}
 
 private:
-	void mark_orbit(const symmetry<N, T> &sym, const index<N> &idx,
-		std::vector<char> &lst, const transf<N, T> &tr);
+    void build_orbit(const symmetry<N, T> &sym, const index<N> &idx);
+
 };
 
 
-template<size_t N, typename T>
-const char *orbit<N, T>::k_clazz = "orbit<N, T>";
+} // namespace libtensor
 
 
-template<size_t N, typename T>
-orbit<N, T>::orbit(const symmetry<N, T> &sym, const index<N> &idx) :
+#ifdef LIBTENSOR_INSTANTIATE_TEMPLATES
 
-	m_bidims(sym.get_bis().get_block_index_dims()) {
+namespace libtensor {
 
-	orbit<N, T>::start_timer();
-
-	m_canidx = abs_index<N>(idx, m_bidims).get_abs_index();
-	m_allowed = true;
-
-	std::vector<char> chk(m_bidims.get_size(), 0);
-	transf<N, T> tr;
-	mark_orbit(sym, idx, chk, tr);
-
-	transf<N, T> tr_can(get_transf(m_canidx));
-	tr_can.invert();
-	typename orbit_map_t::iterator i = m_orb.begin();
-	while(i != m_orb.end()) {
-		i->second.transform(tr_can);
-		i++;
-	}
-
-	orbit<N, T>::stop_timer();
-}
-
-
-template<size_t N, typename T>
-inline const transf<N, T> &orbit<N, T>::get_transf(const index<N> &idx) const {
-
-	return get_transf(abs_index<N>(idx, m_bidims).get_abs_index());
-}
-
-
-template<size_t N, typename T>
-inline const transf<N, T> &orbit<N, T>::get_transf(size_t absidx) const {
-
-	iterator i = m_orb.find(absidx);
-	return get_transf(i);
-}
-
-
-template<size_t N, typename T>
-inline size_t orbit<N, T>::get_abs_index(iterator &i) const {
-
-	static const char *method = "get_abs_index(iterator&)";
-
-#ifdef LIBTENSOR_DEBUG
-	if(i == m_orb.end()) {
-		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
-			"i");
-	}
-#endif // LIBTENSOR_DEBUG
-
-	return i->first;
-}
-
-
-template<size_t N, typename T>
-inline const transf<N, T> &orbit<N, T>::get_transf(iterator &i) const {
-
-	static const char *method = "get_transf(iterator&)";
-
-#ifdef LIBTENSOR_DEBUG
-	if(i == m_orb.end()) {
-		throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
-			"i");
-	}
-#endif // LIBTENSOR_DEBUG
-
-	return i->second;
-}
-
-
-template<size_t N, typename T>
-void orbit<N, T>::mark_orbit(const symmetry<N, T> &sym, const index<N> &idx,
-	std::vector<char> &lst, const transf<N, T> &tr) {
-
-	size_t absidx = abs_index<N>(idx, m_bidims).get_abs_index();
-	if(absidx < m_canidx) m_canidx = absidx;
-	if(lst[absidx] != 0) return;
-
-	lst[absidx] = 1;
-	m_orb.insert(pair_t(absidx, tr));
-	for(typename symmetry<N, T>::iterator iset = sym.begin();
-		iset != sym.end(); iset++) {
-
-		const symmetry_element_set<N, T> &eset = sym.get_subset(iset);
-		for(typename symmetry_element_set<N, T>::const_iterator ielem =
-			eset.begin(); ielem != eset.end(); ielem++) {
-
-			const symmetry_element_i<N, T> &elem =
-				eset.get_elem(ielem);
-			m_allowed = m_allowed && elem.is_allowed(idx);
-			index<N> idx2(idx);
-			transf<N, T> tr2(tr);
-			elem.apply(idx2, tr2);
-			mark_orbit(sym, idx2, lst, tr2);
-		}
-	}
-}
-
+    extern template class orbit<1, double>;
+    extern template class orbit<2, double>;
+    extern template class orbit<3, double>;
+    extern template class orbit<4, double>;
+    extern template class orbit<5, double>;
+    extern template class orbit<6, double>;
 
 } // namespace libtensor
+
+#else // LIBTENSOR_INSTANTIATE_TEMPLATES
+#include "orbit_impl.h"
+#endif // LIBTENSOR_INSTANTIATE_TEMPLATES
+
 
 #endif // LIBTENSOR_ORBIT_H

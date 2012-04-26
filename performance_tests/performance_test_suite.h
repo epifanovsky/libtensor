@@ -6,6 +6,10 @@
 
 namespace libtensor {
 
+/** \defgroup libtensor_performance_tests Performance tests for libtensor
+	\ingroup libtensor
+ **/
+
 /**	\brief Performance test suite for the tensor library (libtensor)
 
  	\ingroup libtensor_performance_tests

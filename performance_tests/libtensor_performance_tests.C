@@ -21,18 +21,20 @@ public:
 		cout.flush();
 
 		// reset timings
-		global_timings::get_instance().reset();
+		libutil::timings_store<libtensor_timings>::get_instance().reset();
 	}
 
 	virtual void on_test_end_success(const char *test) {
 		cout << " ... Test done." << endl;
 		// print timings
-		if ( global_timings::get_instance().ntimings() > 0 ) {
+		if(libutil::timings_store<libtensor_timings>::get_instance().
+		    get_ntimings() > 0 ) {
 			cout << "Timings are: " << endl;
-			cout << global_timings::get_instance() << endl;
-		}
-		else
+			libutil::timings_store<libtensor_timings>::get_instance().
+			    print(cout);
+		} else {
 			cout << "No Timings" << endl;
+		}
 		cout.flush();
 	}
 

@@ -3,7 +3,9 @@
 
 
 #include <libtest/libtest.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/libtensor.h>
+#include <libtensor/linalg/linalg.h>
 #include "performance_test.h"
 
 using libtest::unit_test_factory;
@@ -153,8 +155,8 @@ void tod_contract2_ref<R,N,M,K,DimData>::do_calculate()
 	for ( size_t i=0; i<sizeM*sizeK; i++ ) ptrc[i]=drand48();
 
 	timings<tod_contract2_ref<R,N,M,K,DimData> >::start_timer();
-	cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasTrans, sizeN, sizeM, sizeK,
-				0.5, ptrb, sizeK, ptrc, sizeK, 1.0, ptra, sizeM);
+	linalg::ij_ip_jp_x(sizeN, sizeM, sizeK, ptrb, sizeK, ptrc, sizeK,
+		ptra, sizeM, 0.5);
 	timings<tod_contract2_ref<R,N,M,K,DimData> >::stop_timer();
 
 	delete [] ptra;
@@ -165,17 +167,19 @@ void tod_contract2_ref<R,N,M,K,DimData>::do_calculate()
 template<size_t R, size_t N, size_t M, size_t K, typename DimData>
 void tod_contract2_p1<R,N,M,K,DimData>::do_calculate()
 {
+    cpu_pool cpus(1);
+
 	DimData d;
 
 	dimensions<N+M> dima(d.dimA());
 	dimensions<N+K> dimb(d.dimB());
 	dimensions<M+K> dimc(d.dimC());
-	tensor<N+M, double, libvmm::std_allocator<double> > ta(dima);
-	tensor<N+K, double, libvmm::std_allocator<double> > tb(dimb);
-	tensor<M+K, double, libvmm::std_allocator<double> > tc(dimc);
-	tensor_ctrl<N+M,double> tca(ta);
-	tensor_ctrl<N+K,double> tcb(tb);
-	tensor_ctrl<M+K,double> tcc(tc);
+	dense_tensor<N+M, double, std_allocator<double> > ta(dima);
+	dense_tensor<N+K, double, std_allocator<double> > tb(dimb);
+	dense_tensor<M+K, double, std_allocator<double> > tc(dimc);
+	dense_tensor_ctrl<N+M,double> tca(ta);
+	dense_tensor_ctrl<N+K,double> tcb(tb);
+	dense_tensor_ctrl<M+K,double> tcc(tc);
 
 	double *ptra=tca.req_dataptr();
 	double *ptrb=tcb.req_dataptr();
@@ -192,12 +196,14 @@ void tod_contract2_p1<R,N,M,K,DimData>::do_calculate()
 	contraction2<N,M,K> contr(perm);
 	for (size_t i=0; i<K; i++) contr.contract(i+N,i+M);
 	tod_contract2<N,M,K> op(contr,tb,tc);
-	op.perform(ta,0.5);
+	op.perform(cpus, false, 0.5, ta);
 }
 
 template<size_t R, size_t N, size_t M, size_t K, typename DimData>
 void tod_contract2_p2<R,N,M,K,DimData>::do_calculate()
 {
+    cpu_pool cpus(1);
+
 	DimData d;
 	dimensions<N+M> dima(d.dimA());
 	dimensions<N+K> dimb(d.dimB());
@@ -213,12 +219,12 @@ void tod_contract2_p2<R,N,M,K,DimData>::do_calculate()
 	permutation_builder<M+K> pbc(a,b);
 	dimc.permute(pbc.get_perm());
 
-	tensor<N+M, double, libvmm::std_allocator<double> > ta(dima);
-	tensor<N+K, double, libvmm::std_allocator<double> > tb(dimb);
-	tensor<M+K, double, libvmm::std_allocator<double> > tc(dimc);
-	tensor_ctrl<N+M,double> tca(ta);
-	tensor_ctrl<N+K,double> tcb(tb);
-	tensor_ctrl<M+K,double> tcc(tc);
+	dense_tensor<N+M, double, std_allocator<double> > ta(dima);
+	dense_tensor<N+K, double, std_allocator<double> > tb(dimb);
+	dense_tensor<M+K, double, std_allocator<double> > tc(dimc);
+	dense_tensor_ctrl<N+M,double> tca(ta);
+	dense_tensor_ctrl<N+K,double> tcb(tb);
+	dense_tensor_ctrl<M+K,double> tcc(tc);
 
 	double *ptra=tca.req_dataptr();
 	double *ptrb=tcb.req_dataptr();
@@ -235,13 +241,15 @@ void tod_contract2_p2<R,N,M,K,DimData>::do_calculate()
 	contraction2<N,M,K> contr(perm);
 	for (size_t i=0; i<K; i++) contr.contract(i+N,i);
 	tod_contract2<N,M,K> op(contr,tb,tc);
-	op.perform(ta,0.5);
+	op.perform(cpus, false, 0.5, ta);
 }
 
 
 template<size_t R, size_t N, size_t M, size_t K, typename DimData>
 void tod_contract2_p3<R,N,M,K,DimData>::do_calculate()
 {
+    cpu_pool cpus(1);
+
 	DimData d;
 
 	dimensions<N+M> dima(d.dimA());
@@ -253,12 +261,12 @@ void tod_contract2_p3<R,N,M,K,DimData>::do_calculate()
 	}
 	dima.permute(perma);
 
-	tensor<N+M, double, libvmm::std_allocator<double> > ta(dima);
-	tensor<N+K, double, libvmm::std_allocator<double> > tb(dimb);
-	tensor<M+K, double, libvmm::std_allocator<double> > tc(dimc);
-	tensor_ctrl<N+M,double> tca(ta);
-	tensor_ctrl<N+K,double> tcb(tb);
-	tensor_ctrl<M+K,double> tcc(tc);
+	dense_tensor<N+M, double, std_allocator<double> > ta(dima);
+	dense_tensor<N+K, double, std_allocator<double> > tb(dimb);
+	dense_tensor<M+K, double, std_allocator<double> > tc(dimc);
+	dense_tensor_ctrl<N+M,double> tca(ta);
+	dense_tensor_ctrl<N+K,double> tcb(tb);
+	dense_tensor_ctrl<M+K,double> tcc(tc);
 
 	double *ptra=tca.req_dataptr();
 	double *ptrb=tcb.req_dataptr();
@@ -274,13 +282,15 @@ void tod_contract2_p3<R,N,M,K,DimData>::do_calculate()
 	contraction2<N,M,K> contr(perma);
 	for (size_t i=0; i<K; i++) contr.contract(i+N,i+M);
 	tod_contract2<N,M,K> op(contr,tb,tc);
-	op.perform(ta,1.0);
+	op.perform(cpus, false, 1.0, ta);
 }
 
 
 template<size_t R, size_t N, size_t M, size_t K, typename DimData>
 void tod_contract2_p4<R,N,M,K,DimData>::do_calculate()
 {
+    cpu_pool cpus(1);
+
 	DimData d;
 	dimensions<N+M> dima(d.dimA());
 	dimensions<N+K> dimb(d.dimB());
@@ -291,12 +301,12 @@ void tod_contract2_p4<R,N,M,K,DimData>::do_calculate()
 		permc.permute(M+i,M+K-1-i);
 	dimc.permute(permc);
 
-	tensor<N+M, double, libvmm::std_allocator<double> > ta(dima);
-	tensor<N+K, double, libvmm::std_allocator<double> > tb(dimb);
-	tensor<M+K, double, libvmm::std_allocator<double> > tc(dimc);
-	tensor_ctrl<N+M,double> tca(ta);
-	tensor_ctrl<N+K,double> tcb(tb);
-	tensor_ctrl<N+K,double> tcc(tc);
+	dense_tensor<N+M, double, std_allocator<double> > ta(dima);
+	dense_tensor<N+K, double, std_allocator<double> > tb(dimb);
+	dense_tensor<M+K, double, std_allocator<double> > tc(dimc);
+	dense_tensor_ctrl<N+M,double> tca(ta);
+	dense_tensor_ctrl<N+K,double> tcb(tb);
+	dense_tensor_ctrl<N+K,double> tcc(tc);
 
 	double *ptra=tca.req_dataptr();
 	double *ptrb=tcb.req_dataptr();
@@ -313,7 +323,7 @@ void tod_contract2_p4<R,N,M,K,DimData>::do_calculate()
 	contraction2<N,M,K> contr(perm);
 	for (size_t i=0; i<K; i++) contr.contract(M+i,M+K-1-i);
 	tod_contract2<N,M,K> op(contr,tb,tc);
-	op.perform(ta,1.0);
+	op.perform(cpus, false, 1.0, ta);
 }
 
 

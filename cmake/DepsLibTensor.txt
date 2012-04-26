@@ -2,6 +2,9 @@
 #	Set up third-party dependencies for libtensor
 #
 
+include(CheckCXXSourceCompiles)
+include(${LIBTENSOR_DIR}/cmake/SetupMKL.txt)
+
 #	Detect whether the system is POSIX-compliant
 #
 if(UNIX)
@@ -12,24 +15,28 @@ endif(UNIX)
 #
 string(REGEX MATCH icpc IS_ICPC ${CMAKE_CXX_COMPILER})
 
-#
 #	Detect the linear algebra library
+#
 set(CMAKE_MODULE_PATH_SAVED ${CMAKE_MODULE_PATH})
 set(CMAKE_MODULE_PATH ${LIBTENSOR_DIR}/cmake)
 find_package(MKL)
+find_package(ACML)
 find_package(GSL)
 find_package(CBLAS)
 find_package(LAPACK)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH_SAVED})
 
-#
 #	Set up compilation flags and paths
+#
 if(IS_ICPC AND MKL_FOUND)
-	add_definitions(-DUSE_MKL)
-	include_directories(${MKL_INCLUDE_PATH})
-	set(BLAS_LIBS ${MKL_LIBRARIES})
-	message(STATUS "Using MKL: " ${MKL_INCLUDE_PATH})
+	SetupMKL()
 else(IS_ICPC AND MKL_FOUND)
+if(ACML_FOUND)
+	add_definitions(-DUSE_ACML)
+	include_directories(${ACML_INCLUDE_PATH})
+	set(BLAS_LIBS ${ACML_LIBRARIES})
+	message(STATUS "Using ACML: " ${ACML_PATH})
+else(ACML_FOUND)
 if(GSL_FOUND AND LAPACK_FOUND)
 	add_definitions(-DUSE_GSL)
 	add_definitions(-DUSE_LAPACK)
@@ -52,10 +59,7 @@ if(CBLAS_FOUND)
 	message(STATUS "Using CBLAS: " ${CBLAS_INCLUDE_PATH})
 else(CBLAS_FOUND)
 if(NOT IS_ICPC AND MKL_FOUND)
-	add_definitions(-DUSE_MKL)
-	include_directories(${MKL_INCLUDE_PATH})
-	set(BLAS_LIBS ${MKL_LIBRARIES})
-	message(STATUS "Using MKL: " ${MKL_INCLUDE_PATH})
+	SetupMKL()
 else(NOT IS_ICPC AND MKL_FOUND)
 	message(FATAL_ERROR "Could not find a BLAS library")
 endif(NOT IS_ICPC AND MKL_FOUND)
@@ -71,6 +75,7 @@ endif(LAPACK_FOUND)
 endif(CBLAS_FOUND)
 endif(GSL_FOUND)
 endif(GSL_FOUND AND LAPACK_FOUND)
+endif(ACML_FOUND)
 endif(IS_ICPC AND MKL_FOUND)
 
 #	Libtensor dependencies (libraries)

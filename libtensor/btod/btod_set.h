@@ -1,73 +1,38 @@
 #ifndef LIBTENSOR_BTOD_SET_H
 #define LIBTENSOR_BTOD_SET_H
 
-#include "../defs.h"
-#include "../core/block_tensor_i.h"
-#include "../core/block_tensor_ctrl.h"
-#include "../core/orbit.h"
-#include "../core/orbit_list.h"
-#include "../tod/tod_set.h"
-#include "bad_block_index_space.h"
+#include <libtensor/block_tensor/bto/bto_set.h>
+#include <libtensor/block_tensor/btod/btod_traits.h>
 
 namespace libtensor {
 
 
-/**	\brief Sets all elements of a block %tensor to a value preserving
-		%symmetry
-	\tparam N Tensor order.
+struct btod_set_traits : public bto_traits<double> {
 
-	\ingroup libtensor_btod
+};
+
+/** \brief Sets all elements of a block tensor to a value preserving
+        the symmetry
+    \tparam N Tensor order.
+
+    \ingroup libtensor_btod
  **/
 template<size_t N>
-class btod_set {
+class btod_set : public bto_set<N, btod_set_traits> {
 public:
-	static const char *k_clazz; //!< Class name
-
-private:
-	double m_a; //!< Value
+    static const char *k_clazz; //!< Class name
 
 public:
-	btod_set(double a = 0.0);
-
-	void perform(block_tensor_i<N, double> &btb);
-
-private:
-	btod_set(const btod_set<N> &);
-	const btod_set<N> &operator=(const btod_set<N> &);
+    /** \brief Initializes the operation
+        \param v Value to be assigned to the tensor elements.
+     **/
+    btod_set(double v = 0.0) : bto_set<N, btod_set_traits>(v) { }
 
 };
 
 
 template<size_t N>
 const char *btod_set<N>::k_clazz = "btod_set<N>";
-
-
-template<size_t N>
-btod_set<N>::btod_set(double a) : m_a(a) {
-
-}
-
-
-template<size_t N>
-void btod_set<N>::perform(block_tensor_i<N, double> &btb) {
-
-	block_tensor_ctrl<N, double> ctrlb(btb);
-
-	orbit_list<N, double> olstb(ctrlb.req_symmetry());
-
-	for(typename orbit_list<N, double>::iterator iob = olstb.begin();
-		iob != olstb.end(); iob++) {
-
-		index<N> idxb(olstb.get_index(iob));
-		if(m_a == 0.0) {
-			ctrlb.req_zero_block(idxb);
-		} else {
-			tensor_i<N, double> &blkb = ctrlb.req_block(idxb);
-			tod_set<N>(m_a).perform(blkb);
-			ctrlb.ret_block(idxb);
-		}
-	}
-}
 
 
 } // namespace libtensor

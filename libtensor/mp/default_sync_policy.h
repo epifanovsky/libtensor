@@ -1,18 +1,19 @@
 #ifndef LIBTENSOR_DEFAULT_SYNC_POLICY_H
 #define LIBTENSOR_DEFAULT_SYNC_POLICY_H
 
-#include <libvmm/mutex.h>
+#include "threads.h"
 
 namespace libtensor {
 
 
-/**	\brief Default synchronization policy
+/** \brief Default synchronization policy
 
-	\ingroup libtensor_mp
+    \ingroup libtensor_mp
  **/
 class default_sync_policy {
 public:
-	typedef libvmm::mutex mutex_t; //!< Mutex type
+    typedef mutex mutex_t; //!< Mutex type
+    typedef rwlock rwlock_t; //!< Read-write lock type
 
 };
 

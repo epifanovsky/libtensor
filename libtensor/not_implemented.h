@@ -6,27 +6,27 @@
 namespace libtensor {
 
 
-/**	\brief Indicates that a requested method is not yet implemented
+/** \brief Indicates that a requested method is not yet implemented
 
-	\ingroup libtensor
+    \ingroup libtensor_core_exc
  **/
 class not_implemented : public exception_base<not_implemented> {
 public:
-	//!	\name Construction and destruction
-	//@{
+    //!    \name Construction and destruction
+    //@{
 
-	/**	\brief Creates an exception
-	 **/
-	not_implemented(const char *ns, const char *clazz, const char *method,
-		const char *file, unsigned int line) throw() :
-		exception_base<not_implemented>(ns, clazz, method, file, line,
-			"not_implemented", "NIY") { };
+    /** \brief Creates an exception
+     **/
+    not_implemented(const char *ns, const char *clazz, const char *method,
+        const char *file, unsigned int line) throw() :
+        exception_base<not_implemented>(ns, clazz, method, file, line,
+            "not_implemented", "NIY") { };
 
-	/**	\brief Virtual destructor
-	 **/
-	virtual ~not_implemented() throw() { };
+    /** \brief Virtual destructor
+     **/
+    virtual ~not_implemented() throw() { };
 
-	//@}
+    //@}
 };
 
 

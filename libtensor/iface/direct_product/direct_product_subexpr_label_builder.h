@@ -8,93 +8,93 @@ namespace labeled_btensor_expr {
 template<size_t N, typename T, typename Core> class expr;
 
 
-/**	\brief Label builder for sub-expressions in direct products
+/** \brief Label builder for sub-expressions in direct products
 
-	\ingroup libtensor_iface
+    \ingroup libtensor_btensor_expr
  **/
 template<size_t N, size_t M>
 class direct_product_subexpr_label_builder {
 private:
-	struct letter_array {
-	private:
-		const letter *m_let[N];
-	public:
-		template<typename T, typename Core>
-		letter_array(const letter_expr<N + M> &label_c,
-			const expr<N, T, Core> &e);
-		const letter *at(size_t i) const { return m_let[i]; }
-	};
-	template<size_t L>
-	struct dummy { };
-	letter_array m_let;
-	letter_expr<N> m_label;
+    struct letter_array {
+    private:
+        const letter *m_let[N];
+    public:
+        template<typename T, typename Core>
+        letter_array(const letter_expr<N + M> &label_c,
+            const expr<N, T, Core> &e);
+        const letter *at(size_t i) const { return m_let[i]; }
+    };
+    template<size_t L>
+    struct dummy { };
+    letter_array m_let;
+    letter_expr<N> m_label;
 
 public:
-	template<typename T, typename Core>
-	direct_product_subexpr_label_builder(
-		const letter_expr<N + M> &label_c, const expr<N, T, Core> &e);
+    template<typename T, typename Core>
+    direct_product_subexpr_label_builder(
+        const letter_expr<N + M> &label_c, const expr<N, T, Core> &e);
 
-	const letter_expr<N> &get_label() const { return m_label; }
+    const letter_expr<N> &get_label() const { return m_label; }
 
 protected:
-	template<size_t L>
-	static letter_expr<L> mk_label(
-		const dummy<L>&, const letter_array &let, size_t i);
-	static letter_expr<1> mk_label(
-		const dummy<1>&, const letter_array &let, size_t i);
+    template<size_t L>
+    static letter_expr<L> mk_label(
+        const dummy<L>&, const letter_array &let, size_t i);
+    static letter_expr<1> mk_label(
+        const dummy<1>&, const letter_array &let, size_t i);
 
 };
 
 
 template<size_t N, size_t M> template<typename T, typename Core>
 direct_product_subexpr_label_builder<N, M>::direct_product_subexpr_label_builder(
-	const letter_expr<N + M> &label_c, const expr<N, T, Core> &e) :
+    const letter_expr<N + M> &label_c, const expr<N, T, Core> &e) :
 
-	m_let(label_c, e),
-	m_label(mk_label(dummy<N>(), m_let, N - 1)) {
+    m_let(label_c, e),
+    m_label(mk_label(dummy<N>(), m_let, N - 1)) {
 
 }
 
 
 template<size_t N, size_t M> template<typename T, typename Core>
 direct_product_subexpr_label_builder<N, M>::letter_array::letter_array(
-	const letter_expr<N + M> &label_c, const expr<N, T, Core> &e) {
+    const letter_expr<N + M> &label_c, const expr<N, T, Core> &e) {
 
-	for(size_t i = 0; i < N; i++) m_let[i] = NULL;
+    for(size_t i = 0; i < N; i++) m_let[i] = NULL;
 
-	size_t j = 0;
-	for(size_t i = 0; i < N + M; i++) {
-		const letter &l = label_c.letter_at(i);
-		if(e.contains(l)) {
-			if(j == N) {
-				throw_exc("direct_product_subexpr_label_builder::letter_array",
-					"letter_array()", "Inconsistent expression");
-			}
-			m_let[j] = &l;
-			j++;
-		}
-	}
-	if(j != N) {
-		throw_exc("direct_product_subexpr_label_builder::letter_array",
-			"letter_array()", "Inconsistent expression");
-	}
+    size_t j = 0;
+    for(size_t i = 0; i < N + M; i++) {
+        const letter &l = label_c.letter_at(i);
+        if(e.contains(l)) {
+            if(j == N) {
+                throw_exc("direct_product_subexpr_label_builder::letter_array",
+                    "letter_array()", "Inconsistent expression");
+            }
+            m_let[j] = &l;
+            j++;
+        }
+    }
+    if(j != N) {
+        throw_exc("direct_product_subexpr_label_builder::letter_array",
+            "letter_array()", "Inconsistent expression");
+    }
 }
 
 
 template<size_t N, size_t M> template<size_t L>
 letter_expr<L> direct_product_subexpr_label_builder<N, M>::mk_label(
-	const dummy<L>&, const letter_array &let, size_t i) {
+    const dummy<L>&, const letter_array &let, size_t i) {
 
-	letter_expr<L - 1> sublabel = mk_label(dummy<L - 1>(), let, i - 1);
-	return letter_expr<L>(sublabel, *let.at(i));
+    letter_expr<L - 1> sublabel = mk_label(dummy<L - 1>(), let, i - 1);
+    return letter_expr<L>(sublabel, *let.at(i));
 }
 
 
 template<size_t N, size_t M>
 letter_expr<1> direct_product_subexpr_label_builder<N, M>::mk_label(
-	const dummy<1>&, const letter_array &let, size_t i) {
+    const dummy<1>&, const letter_array &let, size_t i) {
 
-	return letter_expr<1>(*let.at(i));
+    return letter_expr<1>(*let.at(i));
 }
 
 

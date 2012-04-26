@@ -1,3 +1,7 @@
+.project
+.cproject
+.settings
+.svn
 build
 tests/libtensor_tests
 docs

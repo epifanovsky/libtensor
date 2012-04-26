@@ -1,57 +1,248 @@
 set(SRC
-	backtrace.C
-	blas.C
-	defs.C
-	exception.C
-	global_timings.C
-	timer.C
-	version.C
-	btod/btod_diagonalize.C
-	btod/btod_tridiagonalize.C
-	symmetry/point_group_table.C
-	symmetry/product_table_container.C
-	tod/loop_list_add.C
-	tod/loop_list_copy.C
-	tod/loop_list_mul.C
-	tod/loop_list_elem.C
-	tod/loop_list_elem1.C
+    defs.C
+    exception.C
+    version.C
+    core/abs_index.C
+    core/allocator.C
+    core/dimensions.C
+    core/orbit.C
+    core/orbit_list.C
+    btod/btod_cholesky.C
+    btod/cholesky.C
+    btod/btod_diagonalize.C
+    btod/btod_tridiagonalize.C
+    symmetry/point_group_table.C
+    symmetry/product_table_container.C
+    symmetry/product_table_i.C
+    tod/loop_list_add.C
+    tod/loop_list_copy.C
+    tod/loop_list_mul.C
+    tod/loop_list_elem.C
+    tod/loop_list_elem1.C
+    tod/kernels/kern_add_generic.C
+    tod/kernels/kern_add_i_i_x_x.C
+    tod/kernels/kern_add_i_x_i_x.C
+    tod/kernels/kern_copy_generic.C
+    tod/kernels/kern_mul_generic.C
+    tod/kernels/kern_mul_i_i_i.C
+    tod/kernels/kern_mul_i_i_x.C
+    tod/kernels/kern_mul_i_ip_p.C
+    tod/kernels/kern_mul_i_ipq_qp.C
+    tod/kernels/kern_mul_i_p_ip.C
+    tod/kernels/kern_mul_i_p_pi.C
+    tod/kernels/kern_mul_i_pi_p.C
+    tod/kernels/kern_mul_i_x_i.C
+    tod/kernels/kern_mul_ij_i_j.C
+    tod/kernels/kern_mul_ij_ip_jp.C
+    tod/kernels/kern_mul_ij_ip_pj.C
+    tod/kernels/kern_mul_ij_ipq_jqp.C
+    tod/kernels/kern_mul_ij_ipq_pjq.C
+    tod/kernels/kern_mul_ij_j_i.C
+    tod/kernels/kern_mul_ij_jipq_qp.C
+    tod/kernels/kern_mul_ij_jp_ip.C
+    tod/kernels/kern_mul_ij_jp_pi.C
+    tod/kernels/kern_mul_ij_jpq_iqp.C
+    tod/kernels/kern_mul_ij_p_pji.C
+    tod/kernels/kern_mul_ij_pi_jp.C
+    tod/kernels/kern_mul_ij_pi_pj.C
+    tod/kernels/kern_mul_ij_piq_pjq.C
+    tod/kernels/kern_mul_ij_pj_ip.C
+    tod/kernels/kern_mul_ij_pj_pi.C
+    tod/kernels/kern_mul_ij_pji_p.C
+    tod/kernels/kern_mul_ij_pjq_piq.C
+    tod/kernels/kern_mul_ijk_ip_jpk.C
+    tod/kernels/kern_mul_ijk_ip_pkj.C
+    tod/kernels/kern_mul_ijk_ipk_pj.C
+    tod/kernels/kern_mul_ijk_jp_ipk.C
+    tod/kernels/kern_mul_ijk_jpq_ipkq.C
+    tod/kernels/kern_mul_ijk_jpq_pikq.C
+    tod/kernels/kern_mul_ijk_jpq_piqk.C
+    tod/kernels/kern_mul_ijk_kjpq_iqp.C
+    tod/kernels/kern_mul_ijk_kp_ipj.C
+    tod/kernels/kern_mul_ijk_kp_jpi.C
+    tod/kernels/kern_mul_ijk_pi_pkj.C
+    tod/kernels/kern_mul_ijk_pik_pj.C
+    tod/kernels/kern_mul_ijk_piq_jpkq.C
+    tod/kernels/kern_mul_ijk_piq_jpqk.C
+    tod/kernels/kern_mul_ijk_piq_pjkq.C
+    tod/kernels/kern_mul_ijk_piq_pjqk.C
+    tod/kernels/kern_mul_ijk_pj_ipk.C
+    tod/kernels/kern_mul_ijk_pj_pik.C
+    tod/kernels/kern_mul_ijk_pji_pk.C
+    tod/kernels/kern_mul_ijk_pjq_ipqk.C
+    tod/kernels/kern_mul_ijk_pjq_piqk.C
+    tod/kernels/kern_mul_ijk_pjqi_qpk.C
+    tod/kernels/kern_mul_ijk_pkiq_pjq.C
+    tod/kernels/kern_mul_ijk_pkj_ip.C
+    tod/kernels/kern_mul_ijk_pkj_pi.C
+    tod/kernels/kern_mul_ijk_pkq_ipqj.C
+    tod/kernels/kern_mul_ijk_pkq_piqj.C
+    tod/kernels/kern_mul_ijk_pqj_iqpk.C
+    tod/kernels/kern_mul_ijk_pqj_qipk.C
+    tod/kernels/kern_mul_ijk_pqji_pqk.C
+    tod/kernels/kern_mul_ijk_pqji_qpk.C
+    tod/kernels/kern_mul_ijkl_ijp_plk.C
+    tod/kernels/kern_mul_ijkl_ikp_jpl.C
+    tod/kernels/kern_mul_ijkl_ipk_jpl.C
+    tod/kernels/kern_mul_ijkl_ipl_jpk.C
+    tod/kernels/kern_mul_ijkl_jkp_ipl.C
+    tod/kernels/kern_mul_ijkl_jpl_ipk.C
+    tod/kernels/kern_mul_ijkl_pkiq_jplq.C
+    tod/kernels/kern_mul_ijkl_pkiq_jpql.C
+    tod/kernels/kern_mul_ijkl_pkiq_pjlq.C
+    tod/kernels/kern_mul_ijkl_pkiq_pjql.C
+    tod/kernels/kern_mul_ijkl_pkjq_ipql.C
+    tod/kernels/kern_mul_ijkl_pkjq_piql.C
+    tod/kernels/kern_mul_ijkl_pkqj_iqpl.C
+    tod/kernels/kern_mul_ijkl_pkqj_qipl.C
+    tod/kernels/kern_mul_ijkl_pliq_jpkq.C
+    tod/kernels/kern_mul_ijkl_pliq_jpqk.C
+    tod/kernels/kern_mul_ijkl_pliq_pjqk.C
+    tod/kernels/kern_mul_ijkl_pljq_ipkq.C
+    tod/kernels/kern_mul_ijkl_pljq_ipqk.C
+    tod/kernels/kern_mul_ijkl_pljq_pikq.C
+    tod/kernels/kern_mul_ijkl_pljq_piqk.C
+    tod/kernels/kern_mul_ijkl_pqkj_iqpl.C
+    tod/kernels/kern_mul_ijkl_pqkj_qipl.C
+    tod/kernels/kern_mul_ijklm_ikp_jpml.C
+    tod/kernels/kern_mul_ijklm_ipkm_jpl.C
+    tod/kernels/kern_mul_ijklm_jlp_ipkm.C
+    tod/kernels/kern_mul_ijklmn_kjmp_ipln.C
+    tod/kernels/kern_mul_x_p_p.C
+    tod/kernels/kern_mul_x_pq_qp.C
+)
+
+set(SRC_LINALG
+    linalg/generic/linalg_base_level1_generic.C
+    linalg/generic/linalg_base_level2_generic.C
+    linalg/generic/linalg_base_level3_generic.C
+    linalg/generic/linalg_base_level3x_generic.C
+    linalg/generic/linalg_base_level4_generic.C
+    linalg/generic/linalg_base_level5_generic.C
+    linalg/generic/linalg_base_level6_generic.C
 )
 
 set(SRC_INST
-	tod/tod_add.C
-	tod/tod_contract2.C
-	btod/additive_btod.C
-	btod/basic_btod.C
-	btod/btod_add.C
-	btod/btod_contract2_1.C
-	btod/btod_contract2_2.C
-	btod/btod_contract2_3.C
-	btod/btod_contract2_4.C
-	btod/btod_contract2_5.C
-	btod/btod_contract2_6.C
-	btod/btod_copy.C
-	btod/btod_sum.C
+    dense_tensor/impl/dense_tensor.C
+    dense_tensor/impl/to_contract2_dims.C
+    dense_tensor/impl/tod_add.C
+    dense_tensor/impl/tod_btconv.C
+    dense_tensor/impl/tod_compare.C
+    dense_tensor/impl/tod_contract2.C
+    dense_tensor/impl/tod_copy.C
+    dense_tensor/impl/tod_diag.C
+    dense_tensor/impl/tod_dirsum.C
+    dense_tensor/impl/tod_dotprod.C
+    dense_tensor/impl/tod_ewmult2.C
+    dense_tensor/impl/tod_extract.C
+    dense_tensor/impl/tod_import_raw.C
+    dense_tensor/impl/tod_import_raw_stream.C
+    dense_tensor/impl/tod_mult.C
+    dense_tensor/impl/tod_mult1.C
+    dense_tensor/impl/tod_random.C
+    dense_tensor/impl/tod_scale.C
+    dense_tensor/impl/tod_scatter.C
+    dense_tensor/impl/tod_screen.C
+    dense_tensor/impl/tod_set.C
+    dense_tensor/impl/tod_set_diag.C
+    dense_tensor/impl/tod_set_elem.C
+    dense_tensor/impl/tod_trace.C
+    dense_tensor/impl/tod_vmpriority.C
+    symmetry/inst/block_labeling_inst.C
+    symmetry/inst/combine_part_inst.C
+    symmetry/inst/combine_label_inst.C
+    symmetry/inst/evaluation_rule_inst.C
+    symmetry/inst/permutation_group_inst.C
+    symmetry/inst/se_label_inst.C
+    symmetry/inst/se_part_inst.C
+    symmetry/inst/se_perm_inst.C
+    symmetry/inst/so_apply_inst.C
+    symmetry/inst/so_apply_se_label_inst.C
+    symmetry/inst/so_apply_se_part_inst.C
+    symmetry/inst/so_apply_se_perm_inst.C
+    symmetry/inst/so_copy_inst.C
+    symmetry/inst/so_dirprod_inst.C
+    symmetry/inst/so_dirprod_se_label_inst.C
+    symmetry/inst/so_dirprod_se_part_inst.C
+    symmetry/inst/so_dirprod_se_perm_inst.C
+    symmetry/inst/so_dirsum_inst.C
+    symmetry/inst/so_dirsum_se_label_inst.C
+    symmetry/inst/so_dirsum_se_part_inst.C
+    symmetry/inst/so_dirsum_se_perm_inst.C
+    symmetry/inst/so_merge_inst.C
+    symmetry/inst/so_merge_se_label_inst.C
+    symmetry/inst/so_merge_se_part_inst.C
+    symmetry/inst/so_merge_se_perm_inst.C
+    symmetry/inst/so_permute_inst.C
+    symmetry/inst/so_permute_se_label_inst.C
+    symmetry/inst/so_permute_se_part_inst.C
+    symmetry/inst/so_permute_se_perm_inst.C
+    symmetry/inst/so_reduce_inst.C
+    symmetry/inst/so_reduce_se_label_inst.C
+    symmetry/inst/so_reduce_se_part_inst.C
+    symmetry/inst/so_reduce_se_perm_inst.C
+    symmetry/inst/so_symmetrize_inst.C
+    symmetry/inst/so_symmetrize_se_label_inst.C
+    symmetry/inst/so_symmetrize_se_part_inst.C
+    symmetry/inst/so_symmetrize_se_perm_inst.C
+    block_tensor/btod/impl/additive_btod.C
+    block_tensor/btod/impl/basic_btod.C
+    block_tensor/btod/impl/btod_copy.C
+    block_tensor/btod/impl/btod_diag.C
+    block_tensor/btod/impl/btod_set.C
+    block_tensor/btod/impl/btod_trace.C
+    block_tensor/btod/impl/btod_vmpriority.C
+    btod/btod_add.C
+    btod/btod_contract2_1.C
+    btod/btod_contract2_2.C
+    btod/btod_contract2_3.C
+    btod/btod_contract2_4.C
+    btod/btod_contract2_5.C
+    btod/btod_contract2_6.C
+    btod/btod_dirsum.C
+    btod/btod_dotprod.C
+    btod/btod_ewmult2.C
+    btod/btod_sum.C
+    diag_tensor/impl/diag_tensor_space.C
+    diag_tensor/impl/diag_tensor.C
+    diag_tensor/impl/tod_conv_diag_tensor.C
+    diag_tensor/impl/diag_to_add_space.C
+    diag_tensor/impl/diag_to_contract2_space.C
+    diag_tensor/impl/diag_tod_adjust_space.C
+    diag_tensor/impl/diag_tod_contract2.C
+    diag_tensor/impl/diag_tod_copy.C
+    diag_tensor/impl/diag_tod_set.C
 )
 
 set(SRC_MP
-	mp/task_dispatcher.C
-	mp/worker.C
-	mp/worker_group.C
-	mp/worker_pool.C
+    mp/cpu_pool.C
+    mp/task_dispatcher.C
+    mp/task_queue.C
+    mp/worker.C
+    mp/worker_group.C
+    mp/worker_pool.C
 )
 
-add_library(tensor ${SRC} ${SRC_INST} ${SRC_MP})
+set(SRC_QCHEM
+    linalg/qchem/linalg_base_level1_qchem.C
+)
 
-IF(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
-set_property(SOURCE blas.C APPEND PROPERTY
-	COMPILE_FLAGS -msse2)
-ENDIF(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
+add_library(tensor ${SRC} ${SRC_LINALG} ${SRC_INST} ${SRC_MP})
+if(QCHEM_SOURCE_DIR)
+    add_library(tensor_qchem ${SRC_QCHEM})
+    add_dependencies(tensor_qchem tensor)
+endif(QCHEM_SOURCE_DIR)
 
 set_property(TARGET tensor APPEND PROPERTY
-	COMPILE_DEFINITIONS LIBTENSOR_INSTANTIATE_TEMPLATES)
+    COMPILE_DEFINITIONS LIBTENSOR_INSTANTIATE_TEMPLATES)
 set_property(TARGET tensor APPEND PROPERTY
-	COMPILE_DEFINITIONS LIBTENSOR_TIMINGS)
+    COMPILE_DEFINITIONS LIBTENSOR_TIMINGS)
 set_property(TARGET tensor APPEND PROPERTY
-	COMPILE_DEFINITIONS_DEBUG LIBVMM_DEBUG)
-set_property(TARGET tensor APPEND PROPERTY
-	COMPILE_DEFINITIONS_DEBUG LIBTENSOR_DEBUG)
+    COMPILE_DEFINITIONS_DEBUG LIBTENSOR_DEBUG)
+if(HAVE_LIBVMM)
+    set_property(TARGET tensor APPEND PROPERTY
+        COMPILE_DEFINITIONS HAVE_LIBVMM)
+    set_property(TARGET tensor APPEND PROPERTY
+        COMPILE_DEFINITIONS_DEBUG LIBVMM_DEBUG)
+endif(HAVE_LIBVMM)
+

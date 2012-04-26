@@ -1,113 +1,103 @@
 #include "point_group_table.h"
 
-#include <iostream>
-#include <iomanip>
-
 namespace libtensor {
 
 const char *point_group_table::k_clazz = "point_group_table";
-const product_table_i::label_t point_group_table::k_invalid = (label_t) -1;
 
-point_group_table::point_group_table(const std::string &id, size_t nirreps) :
-	m_nirreps(nirreps), m_id(id),
-	m_table(nirreps * (nirreps + 1) / 2)
-{ }
+point_group_table::point_group_table(const std::string &id,
+        const std::vector<std::string> &irreps, const std::string &identity) :
+        m_id(id), m_irreps(irreps.size()),
+        m_table(irreps.size() * (irreps.size() + 1) / 2) {
 
-point_group_table::point_group_table(const point_group_table &pt) :
-	m_id(pt.m_id), m_nirreps(pt.m_nirreps), m_table(pt.m_table) {
+    static const char *method = "point_group_table(const std::string &, "
+            "const std::vector<std::string> &, const std::string &)";
 
+    m_irreps[k_identity] = identity;
+    label_t l = 1;
+    for (size_t i = 0; i < irreps.size(); i++) {
+        if (irreps[i] == identity) continue;
+
+        m_irreps[l] = irreps[i];
+        l++;
+    }
+    if (l != irreps.size()) {
+        throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
+                "Identity irrep not valid.");
+    }
+
+    initialize_table();
 }
 
-bool point_group_table::is_in_product(const label_group &lg, label_t l) const {
+point_group_table::label_t
+point_group_table::get_label(const std::string &irrep) const {
 
-	typedef std::list<label_t> list_t;
-	static const char *method = "is_in_product(const label_group &, label_t)";
+    label_t i = 0;
+    for (std::vector<std::string>::const_iterator it = m_irreps.begin();
+            it != m_irreps.end(); it++, i++) {
+        if (*it == irrep) break;
+    }
+    if (i == m_irreps.size())
+        throw bad_parameter(g_ns, k_clazz,
+                "get_label(const std::string &) const",
+                __FILE__, __LINE__, "Invalid irrep.");
 
-	if (! is_valid(l))
-		throw out_of_bounds(g_ns, k_clazz, method,
-				__FILE__, __LINE__, "Invalid irrep.");
+    return i;
+}
 
-	for (size_t i = 0; i < lg.size(); i++)
-		if (! is_valid(lg[i]))
-			throw out_of_bounds(g_ns, k_clazz, method,
-					__FILE__, __LINE__, "Invalid irrep.");
+void point_group_table::add_product(label_t l1, label_t l2,
+        label_t lr) throw(bad_parameter) {
 
-	list_t l1, l2, *ptr1, *ptr2;
-	label_group::const_reverse_iterator it1 = lg.rbegin();
-	l1.push_back(*it1++);
-	ptr1 = &l1; ptr2 = &l2;
-
-	for (; it1 != lg.rend(); it1++) {
-		for (list_t::iterator it2 = ptr1->begin(); it2 != ptr1->end(); it2++) {
-			const label_group &lr = m_table[abs_index(*it1, *it2)];
+    const char *method = "add_product(label_t, label_t, label_t)";
 
 #ifdef LIBTENSOR_DEBUG
-			if (lr.empty())
-				throw_exc(k_clazz, method, "Table is not setup correctly.");
+    if (! is_valid(l1))
+        throw bad_parameter(g_ns, k_clazz, method,
+                __FILE__, __LINE__, "Invalid irrep l1.");
+    if (! is_valid(l2))
+        throw bad_parameter(g_ns, k_clazz, method,
+                __FILE__, __LINE__, "Invalid irrep l2.");
+    if (! is_valid(lr))
+        throw bad_parameter(g_ns, k_clazz, method,
+                __FILE__, __LINE__, "Invalid irrep lr.");
 #endif
 
-			for (label_group::const_iterator j = lr.begin(); j != lr.end(); j++)
-				ptr2->push_back(*j);
-		}
-		ptr1->clear();
+    if (l1 > l2) std::swap(l1, l2);
+    if (l1 == product_table_i::k_identity) {
+#ifdef LIBTENSOR_DEBUG
+        if (l2 != lr)
+            throw bad_parameter(g_ns, k_clazz, method,
+                    __FILE__, __LINE__, "l2 != lr.");
+#endif
+        return;
+    }
 
-		std::swap(ptr1, ptr2);
-	}
-
-	for (list_t::iterator it = ptr1->begin(); it != ptr1->end(); it++) {
-		if (*it == l) return true;
-	}
-
-	return false;
+    label_set_t &lg = m_table[pair_index(l1, l2)];
+    lg.insert(lr);
 }
 
-void point_group_table::add_product(
-		label_t l1, label_t l2, label_t lr) throw(out_of_bounds) {
+point_group_table::label_set_t
+point_group_table::determine_product(label_t l1, label_t l2) const {
+#ifdef LIBTENSOR_DEBUG
+    if (l1 > l2)
+        throw bad_parameter(g_ns, k_clazz,
+                "determine_product(label_t, label_t) const",
+                __FILE__, __LINE__, "l1 > l2.");
+#endif
 
-	const char *method = "add_product(label_t, label_t, label_t)";
-
-	if (! is_valid(l1) || ! is_valid(l2) || ! is_valid(lr))
-		throw out_of_bounds(g_ns, k_clazz, method,
-				__FILE__, __LINE__, "Invalid irrep.");
-
-	label_group &lg = m_table[abs_index(l1, l2)];
-
-	label_group::iterator i = lg.begin();
-	while (i != lg.end() && *i < lr) i++;
-
-	if (i != lg.end() && *i == lr) return;
-
-	lg.insert(i, lr);
+    return m_table[pair_index(l1, l2)];
 }
 
-void point_group_table::delete_product(
-		label_t l1, label_t l2) throw(out_of_bounds) {
 
-	const char *method = "delete_product(label_t, label_t)";
+void point_group_table::do_check() const {
 
-	if (! is_valid(l1) || ! is_valid(l2))
-		throw out_of_bounds(g_ns, k_clazz, method,
-				__FILE__, __LINE__, "Invalid irrep.");
-
-	m_table[abs_index(l1, l2)].clear();
 }
 
-void point_group_table::check() const throw(exception) {
+void point_group_table::initialize_table() {
 
-	const char *method = "check()";
-
-	typedef std::vector<label_group> table;
-
-	for (table::const_iterator i = m_table.begin(); i != m_table.end(); i++) {
-		if (i->empty())
-			throw_exc(k_clazz, method, "Product table is not setup correctly.");
-
-		for (label_group::const_iterator j = i->begin(); j != i->end(); j++) {
-			if (! is_valid(*j))
-				throw_exc(k_clazz, method,
-						"Invalid irrep found in product table.");
-		}
-	}
+    for (label_t i = 0; i < m_irreps.size(); i++) {
+        label_set_t &ls = m_table[pair_index(k_identity, i)];
+        ls.insert(i);
+    }
 }
 
 } // namespace libtensor

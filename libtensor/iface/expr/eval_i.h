@@ -8,7 +8,7 @@ namespace labeled_btensor_expr {
 template<size_t N, typename T>
 class eval_i {
 public:
-	virtual ~eval_i() { }
+    virtual ~eval_i() { }
 };
 
 

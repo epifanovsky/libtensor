@@ -9,42 +9,42 @@
 namespace libtensor {
 
 
-/**	\brief Block tensor interface
-	\tparam N Block %tensor order.
-	\tparam T Block %tensor element type.
+/** \brief Block tensor interface
+    \tparam N Block %tensor order.
+    \tparam T Block %tensor element type.
 
-	\ingroup libtensor_iface
+    \ingroup libtensor_iface
 **/
 template<size_t N, typename T>
 class btensor_i : public block_tensor_i<N, T> {
 public:
-	/**	\brief Attaches a label to this %tensor and returns it as a
-			labeled %tensor
-	 **/
-	labeled_btensor<N, T, false> operator()(letter_expr<N> expr);
+    /** \brief Attaches a label to this %tensor and returns it as a
+            labeled %tensor
+     **/
+    labeled_btensor<N, T, false> operator()(letter_expr<N> expr);
 };
 
 
 template<typename T>
 class btensor_i<1, T> : public block_tensor_i<1, T> {
 public:
-	labeled_btensor<1, T, false> operator()(const letter &let);
+    labeled_btensor<1, T, false> operator()(const letter &let);
 };
 
 
 template<size_t N, typename T>
 inline labeled_btensor<N, T, false> btensor_i<N, T>::operator()(
-	letter_expr<N> expr) {
+    letter_expr<N> expr) {
 
-	return labeled_btensor<N, T, false>(*this, expr);
+    return labeled_btensor<N, T, false>(*this, expr);
 }
 
 
 template<typename T>
 inline labeled_btensor<1, T, false> btensor_i<1, T>::operator()(
-	const letter &let) {
+    const letter &let) {
 
-	return labeled_btensor<1, T, false>(*this, letter_expr<1>(let));
+    return labeled_btensor<1, T, false>(*this, letter_expr<1>(let));
 }
 
 
