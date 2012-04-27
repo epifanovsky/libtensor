@@ -5,6 +5,7 @@
 #include <map>
 #include <vector>
 #include <libutil/threads/auto_lock.h>
+#include <libutil/thread_pool/thread_pool.h>
 #include "../defs.h"
 #include "../exception.h"
 #include "../timings.h"
@@ -19,7 +20,6 @@
 #include <libtensor/block_tensor/btod/btod_traits.h>
 #include "../not_implemented.h"
 #include "bad_block_index_space.h"
-#include "../mp/task_i.h"
 
 namespace libtensor {
 
@@ -86,7 +86,7 @@ private:
     typedef std::map<size_t, block_contr_list_pair_t*> schedule_t;
 
     class make_schedule_task :
-        public task_i,
+        public libutil::task_i,
         public timings<make_schedule_task> {
 
     public:
@@ -123,7 +123,7 @@ private:
                            assignment_schedule<k_orderc, double> &sch,
                            libutil::mutex &sch_lock);
         virtual ~make_schedule_task() { }
-        virtual void perform(cpu_pool &cpus) throw(exception);
+        virtual void perform();
 
     private:
         void make_schedule_a(const orbit_list<k_orderc, double> &olc,
@@ -142,6 +142,23 @@ private:
         typename block_contr_list_t::iterator merge_node(
             const block_contr_t &bc, block_contr_list_t &lst,
             const typename block_contr_list_t::iterator &begin);
+    };
+
+    class make_schedule_task_iterator : public libutil::task_iterator_i {
+    private:
+        std::vector<make_schedule_task*> &m_tl;
+        typename std::vector<make_schedule_task*>::iterator m_i;
+    public:
+        make_schedule_task_iterator(std::vector<make_schedule_task*> &tl) :
+            m_tl(tl), m_i(m_tl.begin()) { }
+        virtual bool has_more() const;
+        virtual libutil::task_i *get_next();
+    };
+
+    class make_schedule_task_observer : public libutil::task_observer_i {
+    public:
+        virtual void notify_start_task(libutil::task_i *t) { }
+        virtual void notify_finish_task(libutil::task_i *t) { }
     };
 
 private:

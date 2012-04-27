@@ -1,8 +1,7 @@
 #ifndef LIBTENSOR_BTOD_CONTRACT2_IMPL_H
 #define LIBTENSOR_BTOD_CONTRACT2_IMPL_H
 
-#include <libtensor/mp/auto_cpu_lock.h>
-#include <libtensor/mp/task_batch.h>
+#include <libutil/thread_pool/thread_pool.h>
 #include "../core/block_index_subspace_builder.h"
 #include "../core/mask.h"
 #include "../symmetry/so_dirprod.h"
@@ -150,7 +149,6 @@ void btod_contract2<N, M, K>::make_schedule() {
     orbit_list<k_ordera, double> ola(ca.req_const_symmetry());
 
     std::vector<make_schedule_task*> tasklist;
-    task_batch tb;
     libutil::mutex sch_lock;
 
     typename orbit_list<k_ordera, double>::iterator ioa1 = ola.begin(),
@@ -164,7 +162,6 @@ void btod_contract2<N, M, K>::make_schedule() {
                     m_bta, m_btb, get_symmetry(), m_bidimsc, ola,
                     ioa1, ioa2, m_contr_sch, m_sch, sch_lock);
             tasklist.push_back(t);
-            tb.push(*t);
             n = 0;
             ioa1 = ioa2;
         }
@@ -174,18 +171,13 @@ void btod_contract2<N, M, K>::make_schedule() {
                 m_btb, get_symmetry(), m_bidimsc, ola, ioa1, ioa2,
                 m_contr_sch, m_sch, sch_lock);
         tasklist.push_back(t);
-        tb.push(*t);
     }
 
     btod_contract2<N, M, K>::stop_timer("prepare_sch");
 
-    try {
-        tb.wait();
-    } catch(...) {
-        for(size_t i = 0; i < tasklist.size(); i++) delete tasklist[i];
-        btod_contract2<N, M, K>::stop_timer("make_schedule");
-        throw;
-    }
+    make_schedule_task_iterator ti(tasklist);
+    make_schedule_task_observer to;
+    libutil::thread_pool::submit(ti, to);
 
     for(size_t i = 0; i < tasklist.size(); i++) delete tasklist[i];
 
@@ -242,9 +234,7 @@ const char *btod_contract2<N, M, K>::make_schedule_task::k_clazz =
 
 
 template<size_t N, size_t M, size_t K>
-void btod_contract2<N, M, K>::make_schedule_task::perform(cpu_pool &cpus) throw(exception) {
-
-    auto_cpu_lock cpu(cpus);
+void btod_contract2<N, M, K>::make_schedule_task::perform() {
 
     make_schedule_task::start_timer("local");
 
@@ -442,6 +432,22 @@ btod_contract2<N, M, K>::make_schedule_task::merge_node(
     if(!done) lst.insert(ilst, bc);
 
     return ilst;
+}
+
+
+template<size_t N, size_t M, size_t K>
+bool btod_contract2<N, M, K>::make_schedule_task_iterator::has_more() const {
+
+    return m_i != m_tl.end();
+}
+
+
+template<size_t N, size_t M, size_t K>
+libutil::task_i *btod_contract2<N, M, K>::make_schedule_task_iterator::get_next() {
+
+    libutil::task_i *t = *m_i;
+    ++m_i;
+    return t;
 }
 
 
