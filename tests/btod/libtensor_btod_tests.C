@@ -3,12 +3,14 @@
 #include <ctime>
 #include <iostream>
 #include <sstream>
+#include <libutil/thread_pool/thread_pool.h>
 #include <libtensor/version.h>
 #include <libtensor/mp/worker_pool.h>
 #include "libtensor_btod_suite.h"
 
 using namespace libtensor;
 using namespace std;
+using libutil::thread_pool;
 using libtest::test_exception;
 
 
@@ -61,6 +63,9 @@ int main(int argc, char **argv) {
         string separator(std::max(ss1.str().size(), ss2.str().size()), '-');
         cout << separator << endl << ss1.str() << endl << ss2.str() << endl
             << separator << endl;
+
+        thread_pool tp(nthreads, ncpus);
+        tp.associate();
 
         if(!single_threaded) {
             libtensor::worker_pool::get_instance().init(ncpus, nthreads);
