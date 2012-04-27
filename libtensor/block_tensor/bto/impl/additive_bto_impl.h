@@ -60,17 +60,18 @@ void additive_bto<N, Traits>::perform(block_tensor_t &bt, const element_t &c) {
     sch.build(get_schedule(), ctrl);
 
     std::vector<task*> tasks;
-    task_batch batch;
 
     for(typename schedule_t::iterator igrp = sch.begin(); igrp != sch.end();
             ++igrp) {
 
         task *t = new task(*this, bt, bidims, sch, igrp, c);
         tasks.push_back(t);
-        batch.push(*t);
     }
 
-    batch.wait();
+    task_iterator ti(tasks);
+    task_observer to;
+    libutil::thread_pool::submit(ti, to);
+
     for(typename std::vector<task*>::iterator i = tasks.begin();
             i != tasks.end(); i++) {
         delete *i;
@@ -83,7 +84,9 @@ void additive_bto<N, Traits>::perform(block_tensor_t &bt, const element_t &c) {
 
 
 template<size_t N, typename Traits>
-void additive_bto<N, Traits>::task::perform(cpu_pool &cpus) throw (exception) {
+void additive_bto<N, Traits>::task::perform() {
+
+    cpu_pool cpus(1);
 
     typedef typename Traits::template block_tensor_ctrl_type<N>::type
         block_tensor_ctrl_t;
@@ -205,6 +208,22 @@ void additive_bto<N, Traits>::task::perform(cpu_pool &cpus) throw (exception) {
         ctrl.ret_aux_block(aia.get_index());
     }
     la.clear();
+}
+
+
+template<size_t N, typename Traits>
+bool additive_bto<N, Traits>::task_iterator::has_more() const {
+
+    return m_i != m_tl.end();
+}
+
+
+template<size_t N, typename Traits>
+libutil::task_i *additive_bto<N, Traits>::task_iterator::get_next() {
+
+    libutil::task_i *t = *m_i;
+    ++m_i;
+    return t;
 }
 
 
