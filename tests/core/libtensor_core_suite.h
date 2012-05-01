@@ -25,7 +25,6 @@
 #include "sequence_generator_test.h"
 #include "symmetry_test.h"
 #include "symmetry_element_set_test.h"
-#include "task_batch_test.h"
 #include "transf_list_test.h"
 #include "version_test.h"
 
@@ -69,7 +68,6 @@ namespace libtensor {
     \li libtensor::sequence_generator_test
     \li libtensor::symmetry_test
     \li libtensor::symmetry_element_set_test
-    \li libtensor::task_batch_test
     \li libtensor::transf_list_test
     \li libtensor::version_test
 **/
@@ -98,7 +96,6 @@ private:
     unit_test_factory<sequence_generator_test> m_utf_sequence_generator;
     unit_test_factory<symmetry_test> m_utf_symmetry;
     unit_test_factory<symmetry_element_set_test> m_utf_symmetry_element_set;
-    unit_test_factory<task_batch_test> m_utf_task_batch;
     unit_test_factory<transf_list_test> m_utf_transf_list;
     unit_test_factory<version_test> m_utf_version;
 

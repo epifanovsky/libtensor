@@ -216,11 +216,6 @@ set(SRC_INST
 
 set(SRC_MP
     mp/cpu_pool.C
-    mp/task_dispatcher.C
-    mp/task_queue.C
-    mp/worker.C
-    mp/worker_group.C
-    mp/worker_pool.C
 )
 
 set(SRC_QCHEM

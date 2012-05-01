@@ -5,7 +5,6 @@
 #include <sstream>
 #include <libutil/thread_pool/thread_pool.h>
 #include <libtensor/version.h>
-#include <libtensor/mp/worker_pool.h>
 #include "libtensor_core_suite.h"
 
 using namespace libtensor;
@@ -65,10 +64,6 @@ int main(int argc, char **argv) {
         thread_pool tp(nthreads, ncpus);
         tp.associate();
 
-        if(!single_threaded) {
-            libtensor::worker_pool::get_instance().init(ncpus, nthreads);
-        }
-
         suite_handler handler;
         libtensor_core_suite suite;
         suite.set_handler(&handler);
@@ -77,10 +72,6 @@ int main(int argc, char **argv) {
             suite.run_all_tests();
         } else {
             for(int i = 1; i < argc; i++) suite.run_test(argv[i]);
-        }
-
-        if(!single_threaded) {
-            libtensor::worker_pool::get_instance().shutdown();
         }
     }
     }
