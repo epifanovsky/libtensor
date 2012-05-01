@@ -3,12 +3,14 @@
 #include <ctime>
 #include <iostream>
 #include <sstream>
+#include <libutil/thread_pool/thread_pool.h>
 #include <libtensor/version.h>
 #include <libtensor/mp/worker_pool.h>
 #include "libtensor_core_suite.h"
 
 using namespace libtensor;
 using namespace std;
+using libutil::thread_pool;
 using libtest::test_exception;
 
 
@@ -59,6 +61,9 @@ int main(int argc, char **argv) {
         }
         string separator(ss.str().size(), '-');
         cout << separator << endl << ss.str() << endl << separator << endl;
+
+        thread_pool tp(nthreads, ncpus);
+        tp.associate();
 
         if(!single_threaded) {
             libtensor::worker_pool::get_instance().init(ncpus, nthreads);

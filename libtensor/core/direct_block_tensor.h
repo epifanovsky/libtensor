@@ -2,11 +2,10 @@
 #define LIBTENSOR_DIRECT_BLOCK_TENSOR_H
 
 #include <libutil/threads/cond_map.h>
+#include <libutil/thread_pool/thread_pool.h>
 #include "../defs.h"
 #include "../exception.h"
 #include "../mp/default_sync_policy.h"
-#include "../mp/task_i.h"
-#include "../mp/task_batch.h"
 #include "abs_index.h"
 #include "block_map.h"
 #include "direct_block_tensor_base.h"
@@ -62,7 +61,7 @@ private:
         }
     };
 
-    class task : public task_i {
+    class task : public libutil::task_i {
     private:
         operation_t &m_op;
         index<N> m_idx;
@@ -72,9 +71,31 @@ private:
         task(operation_t &op, const index<N> &idx, dense_tensor_i<N, T> &blk) :
             m_op(op), m_idx(idx), m_blk(blk) { }
         virtual ~task() { }
-        void perform(cpu_pool &cpus) throw(exception) {
+        void perform() {
+            cpu_pool cpus(1);
             m_op.compute_block(m_blk, m_idx, cpus);
         }
+    };
+
+    class task_iterator : public libutil::task_iterator_i {
+    private:
+        task &m_t;
+        bool m_done;
+    public:
+        task_iterator(task &t) : m_t(t), m_done(false) { }
+        virtual bool has_more() const {
+            return !m_done;
+        }
+        virtual libutil::task_i *get_next() {
+            m_done = true;
+            return &m_t;
+        }
+    };
+
+    class task_observer : public libutil::task_observer_i {
+    public:
+        virtual void notify_start_task(libutil::task_i *t) { }
+        virtual void notify_finish_task(libutil::task_i *t) { }
     };
 
 public:
@@ -188,9 +209,9 @@ dense_tensor_i<N, T> &direct_block_tensor<N, T, Alloc, Sync>::on_req_block(
             m_inprogress.insert(aidx.get_abs_index()).first;
         lock.unlock();
         task t(get_op(), idx, blk);
-        task_batch tb;
-        tb.push(t);
-        tb.wait();
+        task_iterator ti(t);
+        task_observer to;
+        libutil::thread_pool::submit(ti, to);
         lock.lock();
         m_inprogress.erase(i);
         m_cond.signal(aidx.get_abs_index());
@@ -200,7 +221,9 @@ dense_tensor_i<N, T> &direct_block_tensor<N, T, Alloc, Sync>::on_req_block(
         libutil::loaded_cond<size_t> cond(0);
         m_cond.insert(aidx.get_abs_index(), &cond);
         lock.unlock();
+        libutil::thread_pool::release_cpu();
         cond.wait();
+        libutil::thread_pool::acquire_cpu();
         lock.lock();
         m_cond.erase(aidx.get_abs_index(), &cond);
     }
