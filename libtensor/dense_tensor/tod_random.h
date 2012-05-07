@@ -2,7 +2,6 @@
 #define LIBTENSOR_TOD_RANDOM_H
 
 #include <libtensor/timings.h>
-#include <libtensor/mp/cpu_pool.h>
 #include "dense_tensor_i.h"
 
 namespace libtensor {
@@ -26,10 +25,9 @@ public:
      **/
     tod_random();
 
-    void perform(cpu_pool &cpus, bool zero, double c,
-        dense_tensor_wr_i<N, double> &t);
-    void perform(cpu_pool &cpus, dense_tensor_wr_i<N, double> &t);
-    void perform(cpu_pool &cpus, dense_tensor_wr_i<N, double> &t, double c);
+    void perform(bool zero, double c, dense_tensor_wr_i<N, double> &t);
+    void perform(dense_tensor_wr_i<N, double> &t);
+    void perform(dense_tensor_wr_i<N, double> &t, double c);
 
 private:
     static void update_seed(); //! updates the seed value by using srand48

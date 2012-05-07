@@ -244,8 +244,6 @@ void btod_apply_test::test_nosym_1() throw(libtest::test_exception) {
 
     typedef std_allocator<double> allocator_t;
 
-    cpu_pool cpus(1);
-
     try {
 
     index<2> i1, i2;
@@ -268,7 +266,7 @@ void btod_apply_test::test_nosym_1() throw(libtest::test_exception) {
     //  Create the reference
 
     tod_btconv<2>(bta).perform(ta);
-    tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin).perform(cpus, tb_ref);
+    tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin).perform(tb_ref);
 
     //  Compare against the reference
 
@@ -288,8 +286,6 @@ void btod_apply_test::test_nosym_2() throw(libtest::test_exception) {
     static const char *testname = "btod_apply_test::test_nosym_2()";
 
     typedef std_allocator<double> allocator_t;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -316,8 +312,8 @@ void btod_apply_test::test_nosym_2() throw(libtest::test_exception) {
     //  Create the reference
 
     tod_btconv<2>(bta).perform(ta);
-    tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin,
-            perm10, 2.0).perform(cpus, tb_ref);
+    tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin, perm10, 2.0).
+        perform(tb_ref);
 
     //  Compare against the reference
 
@@ -337,8 +333,6 @@ void btod_apply_test::test_nosym_3() throw(libtest::test_exception) {
     static const char *testname = "btod_apply_test::test_nosym_3()";
 
     typedef std_allocator<double> allocator_t;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -365,7 +359,7 @@ void btod_apply_test::test_nosym_3() throw(libtest::test_exception) {
     //  Create the reference
 
     tod_btconv<2>(bta).perform(ta);
-    tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin).perform(cpus, tb_ref);
+    tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin).perform(tb_ref);
 
     //  Compare against the reference
 
@@ -386,8 +380,6 @@ void btod_apply_test::test_nosym_4() throw(libtest::test_exception) {
     static const char *testname = "btod_apply_test::test_nosym_4()";
 
     typedef std_allocator<double> allocator_t;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -418,8 +410,8 @@ void btod_apply_test::test_nosym_4() throw(libtest::test_exception) {
     //  Create the reference
 
     tod_btconv<2>(bta).perform(ta);
-    tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin,
-            perm10, 2.0).perform(cpus, tb_ref);
+    tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin, perm10, 2.0).
+        perform(tb_ref);
 
     //  Compare against the reference
 
@@ -439,8 +431,6 @@ void btod_apply_test::test_sym_1() throw(libtest::test_exception) {
     static const char *testname = "btod_apply_test::test_sym_1()";
 
     typedef std_allocator<double> allocator_t;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -473,7 +463,7 @@ void btod_apply_test::test_sym_1() throw(libtest::test_exception) {
     //  Create the reference
 
     tod_btconv<2>(bta).perform(ta);
-    tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin).perform(cpus, tb_ref);
+    tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin).perform(tb_ref);
 
     //  Compare against the reference
 
@@ -494,8 +484,6 @@ void btod_apply_test::test_sym_2() throw(libtest::test_exception) {
     static const char *testname = "btod_apply_test::test_sym_2()";
 
     typedef std_allocator<double> allocator_t;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -529,8 +517,8 @@ void btod_apply_test::test_sym_2() throw(libtest::test_exception) {
     //  Create the reference
 
     tod_btconv<2>(bta).perform(ta);
-    tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin,
-            perm10, -2.0).perform(cpus, tb_ref);
+    tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin, perm10, -2.0).
+        perform(tb_ref);
 
     //  Compare against the reference
 
@@ -551,8 +539,6 @@ void btod_apply_test::test_sym_3() throw(libtest::test_exception) {
     static const char *testname = "btod_apply_test::test_sym_3()";
 
     typedef std_allocator<double> allocator_t;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -599,8 +585,8 @@ void btod_apply_test::test_sym_3() throw(libtest::test_exception) {
 
     //  Create the reference
 
-    tod_apply<3, btod_apply_test_ns::sin_functor>(ta, sin,
-            perm210, 0.3).perform(cpus, tb_ref);
+    tod_apply<3, btod_apply_test_ns::sin_functor>(ta, sin, perm210, 0.3).
+        perform(tb_ref);
 
     //  Compare against the reference
 
@@ -620,8 +606,6 @@ void btod_apply_test::test_sym_4() throw(libtest::test_exception) {
     static const char *testname = "btod_apply_test::test_sym_4()";
 
     typedef std_allocator<double> allocator_t;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -670,8 +654,8 @@ void btod_apply_test::test_sym_4() throw(libtest::test_exception) {
 
     //  Compute the reference
 
-    tod_apply<4, btod_apply_test_ns::sin_functor>(ta,
-            sin, -1.0).perform(cpus, tb_ref);
+    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin, -1.0).
+        perform(tb_ref);
 
     //  Compare against the reference
 
@@ -691,8 +675,6 @@ void btod_apply_test::test_sym_5() throw(libtest::test_exception) {
     static const char *testname = "btod_apply_test::test_sym_5()";
 
     typedef std_allocator<double> allocator_t;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -771,8 +753,8 @@ void btod_apply_test::test_sym_5() throw(libtest::test_exception) {
 
     //  Compute the reference
 
-    tod_apply<2, btod_apply_test_ns::exp_functor>(ta,
-            exp, -1.0).perform(cpus, tb_ref);
+    tod_apply<2, btod_apply_test_ns::exp_functor>(ta, exp, -1.0).
+        perform(tb_ref);
 
     //  Compare against the reference
 
@@ -794,8 +776,6 @@ void btod_apply_test::test_add_nosym_1() throw(libtest::test_exception) {
     static const char *testname = "btod_apply_test::test_add_nosym_1()";
 
     typedef std_allocator<double> allocator_t;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -821,8 +801,8 @@ void btod_apply_test::test_add_nosym_1() throw(libtest::test_exception) {
 
     //  Compute the reference
 
-    tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin).perform(cpus,
-            tb_ref, 1.0);
+    tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin).
+        perform(tb_ref, 1.0);
 
     //  Compare against the reference
 
@@ -842,8 +822,6 @@ void btod_apply_test::test_add_nosym_2() throw(libtest::test_exception) {
     static const char *testname = "btod_apply_test::test_add_nosym_2()";
 
     typedef std_allocator<double> allocator_t;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -875,8 +853,8 @@ void btod_apply_test::test_add_nosym_2() throw(libtest::test_exception) {
 
     //  Create the reference
 
-    tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin,
-            perm10).perform(cpus, tb_ref, 2.0);
+    tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin, perm10).
+        perform(tb_ref, 2.0);
 
     //  Compare against the reference
 
@@ -896,8 +874,6 @@ void btod_apply_test::test_add_nosym_3() throw(libtest::test_exception) {
     static const char *testname = "btod_apply_test::test_add_nosym_3()";
 
     typedef std_allocator<double> allocator_t;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -933,8 +909,8 @@ void btod_apply_test::test_add_nosym_3() throw(libtest::test_exception) {
 
     //  Compute the reference
 
-    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin,
-            2.0).perform(cpus, tb_ref, 1.0);
+    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin, 2.0).
+        perform(tb_ref, 1.0);
 
     //  Compare against the reference
 
@@ -954,8 +930,6 @@ void btod_apply_test::test_add_nosym_4() throw(libtest::test_exception) {
     static const char *testname = "btod_apply_test::test_add_nosym_4()";
 
     typedef std_allocator<double> allocator_t;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -986,8 +960,8 @@ void btod_apply_test::test_add_nosym_4() throw(libtest::test_exception) {
     //  Create the reference
 
     tod_btconv<2>(bta).perform(ta);
-    tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin,
-            perm10).perform(cpus, tb_ref, 2.0);
+    tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin, perm10).
+        perform(tb_ref, 2.0);
 
     //  Compare against the reference
 
@@ -1007,8 +981,6 @@ void btod_apply_test::test_add_eqsym_1() throw(libtest::test_exception) {
     static const char *testname = "btod_apply_test::test_add_eqsym_1()";
 
     typedef std_allocator<double> allocator_t;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -1045,8 +1017,7 @@ void btod_apply_test::test_add_eqsym_1() throw(libtest::test_exception) {
     //  Compare against the reference
 
     tod_btconv<2>(bta).perform(ta);
-    tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin).perform(cpus,
-            tb_ref, 1.0);
+    tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin).perform(tb_ref, 1.0);
 
     compare_ref<2>::compare(testname, tb, tb_ref, 0.0);
 
@@ -1063,8 +1034,6 @@ void btod_apply_test::test_add_eqsym_2() throw(libtest::test_exception) {
     static const char *testname = "btod_apply_test::test_add_eqsym_2()";
 
     typedef std_allocator<double> allocator_t;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -1102,8 +1071,8 @@ void btod_apply_test::test_add_eqsym_2() throw(libtest::test_exception) {
     //  Create the reference
 
     tod_btconv<2>(bta).perform(ta);
-    tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin,
-            perm10).perform(cpus, tb_ref, -1.0);
+    tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin, perm10).
+        perform(tb_ref, -1.0);
 
     //  Compare against the reference
 
@@ -1122,8 +1091,6 @@ void btod_apply_test::test_add_eqsym_3() throw(libtest::test_exception) {
     static const char *testname = "btod_copy_test::test_add_eqsym_3()";
 
     typedef std_allocator<double> allocator_t;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -1175,8 +1142,8 @@ void btod_apply_test::test_add_eqsym_3() throw(libtest::test_exception) {
     //  Create the reference
 
     tod_btconv<3>(bta).perform(ta);
-    tod_apply<3, btod_apply_test_ns::sin_functor>(ta, sin,
-            perm210, 1.5).perform(cpus, tb_ref, 0.5);
+    tod_apply<3, btod_apply_test_ns::sin_functor>(ta, sin, perm210, 1.5).
+        perform(tb_ref, 0.5);
 
     //  Compare against the reference
 
@@ -1195,8 +1162,6 @@ void btod_apply_test::test_add_eqsym_4() throw(libtest::test_exception) {
     static const char *testname = "btod_apply_test::test_add_eqsym_4()";
 
     typedef std_allocator<double> allocator_t;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -1246,8 +1211,8 @@ void btod_apply_test::test_add_eqsym_4() throw(libtest::test_exception) {
 
     //  Compute the reference
 
-    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin,
-            2.0).perform(cpus, tb_ref, 1.0);
+    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin, 2.0).
+        perform(tb_ref, 1.0);
 
     //  Compare against the reference
 
@@ -1266,8 +1231,6 @@ void btod_apply_test::test_add_eqsym_5() throw(libtest::test_exception) {
     static const char *testname = "btod_apply_test::test_add_eqsym_5()";
 
     typedef std_allocator<double> allocator_t;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -1319,8 +1282,8 @@ void btod_apply_test::test_add_eqsym_5() throw(libtest::test_exception) {
 
     //  Compute the reference
 
-    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin,
-            perm0213, 1.0).perform(cpus, tb_ref, 0.5);
+    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin, perm0213, 1.0).
+        perform(tb_ref, 0.5);
 
     //  Compare against the reference
 
@@ -1339,8 +1302,6 @@ void btod_apply_test::test_add_nesym_1() throw(libtest::test_exception) {
     static const char *testname = "btod_copy_test::test_add_nesym_1()";
 
     typedef std_allocator<double> allocator_t;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -1376,8 +1337,8 @@ void btod_apply_test::test_add_nesym_1() throw(libtest::test_exception) {
     //  Compare against the reference
 
     tod_btconv<2>(bta).perform(ta);
-    tod_apply<2, btod_apply_test_ns::sin_functor>(ta,
-            sin).perform(cpus, tb_ref, 1.0);
+    tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin).
+        perform(tb_ref, 1.0);
 
     compare_ref<2>::compare(testname, tb, tb_ref, 0.0);
 
@@ -1394,8 +1355,6 @@ void btod_apply_test::test_add_nesym_2() throw(libtest::test_exception) {
     static const char *testname = "btod_apply_test::test_add_nesym_2()";
 
     typedef std_allocator<double> allocator_t;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -1431,8 +1390,8 @@ void btod_apply_test::test_add_nesym_2() throw(libtest::test_exception) {
     //  Compare against the reference
 
     tod_btconv<2>(bta).perform(ta);
-    tod_apply<2, btod_apply_test_ns::sin_functor>(ta,
-            sin).perform(cpus, tb_ref, 1.0);
+    tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin).
+        perform(tb_ref, 1.0);
 
     compare_ref<2>::compare(testname, tb, tb_ref, 0.0);
 
@@ -1449,8 +1408,6 @@ void btod_apply_test::test_add_nesym_3() throw(libtest::test_exception) {
     static const char *testname = "btod_copy_test::test_add_nesym_3()";
 
     typedef std_allocator<double> allocator_t;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -1498,8 +1455,8 @@ void btod_apply_test::test_add_nesym_3() throw(libtest::test_exception) {
 
     //  Compute the reference
 
-    tod_apply<4, btod_apply_test_ns::sin_functor>(ta,
-            sin).perform(cpus, tb_ref, 1.5);
+    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin).
+        perform(tb_ref, 1.5);
 
     //  Compare against the reference
 
@@ -1519,8 +1476,6 @@ void btod_apply_test::test_add_nesym_4() throw(libtest::test_exception) {
 
     typedef std_allocator<double> allocator_t;
 
-    cpu_pool cpus(1);
-
     try {
 
     index<4> i1, i2;
@@ -1567,8 +1522,8 @@ void btod_apply_test::test_add_nesym_4() throw(libtest::test_exception) {
 
     //  Compute the reference
 
-    tod_apply<4, btod_apply_test_ns::sin_functor>(ta,
-            sin).perform(cpus, tb_ref, 1.5);
+    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin).
+        perform(tb_ref, 1.5);
 
     //  Compare against the reference
 
@@ -1588,8 +1543,6 @@ void btod_apply_test::test_add_nesym_5() throw(libtest::test_exception) {
 
     typedef std_allocator<double> allocator_t;
 
-    cpu_pool cpus(1);
-
     try {
 
     index<4> i1, i2;
@@ -1636,7 +1589,7 @@ void btod_apply_test::test_add_nesym_5() throw(libtest::test_exception) {
 
     //  Compute the reference
 
-    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin).perform(cpus, tb_ref, 1.5);
+    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin).perform(tb_ref, 1.5);
 
     //  Compare against the reference
 
@@ -1655,8 +1608,6 @@ void btod_apply_test::test_add_nesym_5_sp() throw(libtest::test_exception) {
     static const char *testname = "btod_apply_test::test_add_nesym_5_sp()";
 
     typedef std_allocator<double> allocator_t;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -1719,8 +1670,8 @@ void btod_apply_test::test_add_nesym_5_sp() throw(libtest::test_exception) {
 
     //  Compute the reference
 
-    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin).perform(cpus,
-            tb_ref, 1.5);
+    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin).
+        perform(tb_ref, 1.5);
 
     //  Compare against the reference
 
@@ -1739,8 +1690,6 @@ void btod_apply_test::test_add_nesym_6() throw(libtest::test_exception) {
     static const char *testname = "btod_apply_test::test_add_nesym_6()";
 
     typedef std_allocator<double> allocator_t;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -1790,8 +1739,8 @@ void btod_apply_test::test_add_nesym_6() throw(libtest::test_exception) {
 
     //  Compute the reference
 
-    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin,
-            perm3210).perform(cpus, tb_ref, -0.1);
+    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin, perm3210).
+        perform(tb_ref, -0.1);
 
     //  Compare against the reference
 
@@ -1815,8 +1764,6 @@ void btod_apply_test::test_add_nesym_7_sp1() throw(libtest::test_exception) {
     static const char *testname = "btod_apply_test::test_add_nesym_7_sp1()";
 
     typedef std_allocator<double> allocator_t;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -1867,8 +1814,8 @@ void btod_apply_test::test_add_nesym_7_sp1() throw(libtest::test_exception) {
 
     //  Compute the reference
 
-    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin).perform(cpus,
-            tb_ref, -2.0);
+    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin).
+        perform(tb_ref, -2.0);
 
     //  Compare against the reference
 
@@ -1891,8 +1838,6 @@ void btod_apply_test::test_add_nesym_7_sp2() throw(libtest::test_exception) {
     static const char *testname = "btod_apply_test::test_add_nesym_7_sp2()";
 
     typedef std_allocator<double> allocator_t;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -1942,8 +1887,8 @@ void btod_apply_test::test_add_nesym_7_sp2() throw(libtest::test_exception) {
 
     //  Compute the reference
 
-    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin).perform(cpus,
-            tb_ref, -2.0);
+    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin).
+        perform(tb_ref, -2.0);
 
     //  Compare against the reference
 
@@ -1967,8 +1912,6 @@ void btod_apply_test::test_add_nesym_7_sp3() throw(libtest::test_exception) {
     static const char *testname = "btod_apply_test::test_add_nesym_7_sp3()";
 
     typedef std_allocator<double> allocator_t;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -2019,8 +1962,8 @@ void btod_apply_test::test_add_nesym_7_sp3() throw(libtest::test_exception) {
 
     //  Compute the reference
 
-    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin).perform(cpus,
-            tb_ref, 2.0);
+    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin).
+        perform(tb_ref, 2.0);
 
     //  Compare against the reference
 
@@ -2030,5 +1973,6 @@ void btod_apply_test::test_add_nesym_7_sp3() throw(libtest::test_exception) {
         fail_test(testname, __FILE__, __LINE__, e.what());
     }
 }
+
 
 } // namespace libtensor

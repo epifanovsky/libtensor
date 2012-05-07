@@ -80,10 +80,9 @@ void btod_sum<N>::compute_block(dense_tensor_i<N, double> &blk, const index<N> &
 
 template<size_t N>
 void btod_sum<N>::compute_block(bool zero, dense_tensor_i<N, double> &blk,
-    const index<N> &i, const tensor_transf<N, double> &tr,
-    const double &c, cpu_pool &cpus) {
+    const index<N> &i, const tensor_transf<N, double> &tr, const double &c) {
 
-    if(zero) tod_set<N>().perform(cpus, blk);
+    if(zero) tod_set<N>().perform(blk);
 
     abs_index<N> ai(i, m_bidims);
 
@@ -92,9 +91,8 @@ void btod_sum<N>::compute_block(bool zero, dense_tensor_i<N, double> &blk,
 
         if(iop->get_op().get_schedule().contains(ai.get_abs_index())) {
             additive_bto<N, bto_traits<double> >::compute_block(iop->get_op(),
-                    false, blk, i, tr, c * iop->get_coeff(), cpus);
-        }
-        else {
+                false, blk, i, tr, c * iop->get_coeff());
+        } else {
             const symmetry<N, double> &sym = iop->get_op().get_symmetry();
             orbit<N, double> orb(sym, i);
             if(!orb.is_allowed()) continue;
@@ -105,8 +103,8 @@ void btod_sum<N>::compute_block(bool zero, dense_tensor_i<N, double> &blk,
                 tra.transform(tr);
 
                 additive_bto<N, bto_traits<double> >::compute_block(
-                        iop->get_op(), false, blk, ci.get_index(), tra,
-                        c * iop->get_coeff(), cpus);
+                    iop->get_op(), false, blk, ci.get_index(), tra,
+                    c * iop->get_coeff());
             }
         }
     }

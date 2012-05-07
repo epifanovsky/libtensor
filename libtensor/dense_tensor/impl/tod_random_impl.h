@@ -3,7 +3,6 @@
 
 #include <ctime>
 #include <cstdlib>
-#include <libtensor/mp/auto_cpu_lock.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include "../tod_random.h"
 
@@ -36,36 +35,31 @@ void tod_random<N>::update_seed() {
 
 
 template<size_t N>
-void tod_random<N>::perform(cpu_pool &cpus, dense_tensor_wr_i<N, double> &t) {
+void tod_random<N>::perform(dense_tensor_wr_i<N, double> &t) {
 
-    perform(cpus, true, 1.0, t);
+    perform(true, 1.0, t);
 }
 
 
 template<size_t N>
-void tod_random<N>::perform(cpu_pool &cpus, dense_tensor_wr_i<N, double> &t,
-    double c) {
+void tod_random<N>::perform(dense_tensor_wr_i<N, double> &t, double c) {
 
-    perform(cpus, false, c, t);
+    perform(false, c, t);
 }
 
 
 template<size_t N>
-void tod_random<N>::perform(cpu_pool &cpus, bool zero, double c,
+void tod_random<N>::perform(bool zero, double c,
     dense_tensor_wr_i<N, double> &t) {
 
     dense_tensor_wr_ctrl<N, double> ctrl(t);
     size_t sz = t.get_dims().get_size();
     double *ptr = ctrl.req_dataptr();
 
-    {
-        auto_cpu_lock cpu(cpus);
-
-        if(zero) {
-            for(size_t i = 0; i < sz; i++) ptr[i] = c * drand48();
-        } else {
-            for(size_t i = 0; i < sz; i++) ptr[i] += c * drand48();
-        }
+    if(zero) {
+        for(size_t i = 0; i < sz; i++) ptr[i] = c * drand48();
+    } else {
+        for(size_t i = 0; i < sz; i++) ptr[i] += c * drand48();
     }
 
     ctrl.ret_dataptr(ptr);

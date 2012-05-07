@@ -65,8 +65,6 @@ void btod_set_diag<N>::perform(block_tensor_i<N, double> &bt) {
 
     static const char *method = "perform(block_tensor_i<N, double>&)";
 
-    cpu_pool cpus(1);
-
     const block_index_space<N> &bis = bt.get_bis();
     size_t t = bis.get_type(0);
     for(size_t i = 1; i < N; i++) {
@@ -94,7 +92,7 @@ void btod_set_diag<N>::perform(block_tensor_i<N, double> &bt) {
         if(ctrl.req_is_zero_block(idx)) {
             if(m_v != 0.0) {
                 dense_tensor_i<N, double> &blk = ctrl.req_block(idx);
-                tod_set<N>(0.0).perform(cpus, blk);
+                tod_set<N>(0.0).perform(blk);
                 tod_set_diag<N>(m_v).perform(blk);
                 ctrl.ret_block(idx);
             }

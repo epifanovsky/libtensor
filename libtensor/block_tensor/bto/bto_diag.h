@@ -104,8 +104,7 @@ public:
 
 protected:
     virtual void compute_block(bool zero, blockb_t &blk,
-            const index<k_orderb> &ib, const tensorb_tr_t &trb,
-            const element_t &c, cpu_pool &cpus);
+        const index<k_orderb> &ib, const tensorb_tr_t &trb, const element_t &c);
 
 private:
     /** \brief Forms the block %index space of the output or throws an
@@ -123,8 +122,7 @@ private:
     void make_schedule();
 
     void compute_block(blockb_t &blk, const index<k_orderb> &ib,
-            const tensorb_tr_t &trb, bool zero,
-            const element_t &c, cpu_pool &cpus);
+        const tensorb_tr_t &trb, bool zero, const element_t &c);
 
 private:
     bto_diag(const bto_diag<N, M, Traits>&);

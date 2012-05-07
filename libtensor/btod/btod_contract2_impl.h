@@ -100,13 +100,12 @@ void btod_contract2<N, M, K>::compute_block(dense_tensor_i<N + M, double> &blk,
 
 template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::compute_block(bool zero,
-        dense_tensor_i<N + M, double> &blk, const index<N + M> &i,
-        const tensor_transf<N + M, double> &tr, const double &c,
-        cpu_pool &cpus) {
+    dense_tensor_i<N + M, double> &blk, const index<N + M> &i,
+    const tensor_transf<N + M, double> &tr, const double &c) {
 
     static const char *method = "compute_block(bool, tensor_i<N + M, double>&, "
-            "const index<N + M>&, const tensor_transf<N + M, double>&, "
-            "const double&, cpu_pool&)";
+        "const index<N + M>&, const tensor_transf<N + M, double>&, "
+        "const double&)";
 
     btod_contract2<N, M, K>::start_timer();
 
@@ -124,7 +123,7 @@ void btod_contract2<N, M, K>::compute_block(bool zero,
         }
 
         contract_block(isch->second->first, aic.get_index(), ca, cb,
-                       blk, tr, zero, c, cpus);
+           blk, tr, zero, c);
     } catch(...) {
         btod_contract2<N, M, K>::stop_timer();
         throw;
@@ -458,9 +457,9 @@ void btod_contract2<N, M, K>::contract_block(
     block_tensor_ctrl<k_orderb, double> &cb,
     dense_tensor_i<k_orderc, double> &tc,
     const tensor_transf<k_orderc, double> &trc,
-    bool zero, double c, cpu_pool &cpus) {
+    bool zero, double c) {
 
-    if(zero) tod_set<k_orderc>().perform(cpus, tc);
+    if(zero) tod_set<k_orderc>().perform(tc);
 
     std::list< index<k_ordera> > blksa;
     std::list< index<k_orderb> > blksb;
@@ -488,7 +487,7 @@ void btod_contract2<N, M, K>::contract_block(
         contr.permute_c(trc.get_perm());
 
         double kc = ilst->m_c * trc.get_scalar_tr().get_coeff() * c;
-        tod_contract2<N, M, K>(contr, blka, blkb).perform(cpus, false, kc, tc);
+        tod_contract2<N, M, K>(contr, blka, blkb).perform(false, kc, tc);
     }
 
     for(typename std::list< index<k_ordera> >::const_iterator i =

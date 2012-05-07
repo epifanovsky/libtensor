@@ -218,8 +218,6 @@ const char *btod_dotprod<N>::dotprod_in_orbit_task::k_clazz =
 template<size_t N>
 void btod_dotprod<N>::dotprod_in_orbit_task::perform() {
 
-    cpu_pool cpus(1);
-
     block_tensor_ctrl<N, double> ctrl1(m_bt1), ctrl2(m_bt2);
 
     orbit<N, double> orb(m_sym, m_idx);
@@ -256,8 +254,8 @@ void btod_dotprod<N>::dotprod_in_orbit_task::perform() {
     perm1.permute(tr1.get_perm()).permute(permutation<N>(m_pinv1, true));
     perm2.permute(tr2.get_perm()).permute(permutation<N>(m_pinv2, true));
 
-    double d = tod_dotprod<N>(blk1, perm1, blk2, perm2).calculate(cpus) *
-            tr1.get_scalar_tr().get_coeff() * tr2.get_scalar_tr().get_coeff();
+    double d = tod_dotprod<N>(blk1, perm1, blk2, perm2).calculate() *
+        tr1.get_scalar_tr().get_coeff() * tr2.get_scalar_tr().get_coeff();
 
     ctrl1.ret_block(aci1.get_index());
     ctrl2.ret_block(aci2.get_index());

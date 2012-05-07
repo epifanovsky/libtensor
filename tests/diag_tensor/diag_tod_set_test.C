@@ -28,8 +28,6 @@ void diag_tod_set_test::test_1() throw(libtest::test_exception) {
 
     typedef std_allocator<double> allocator_t;
 
-    cpu_pool cpus(1);
-
     try {
 
         index<2> i2a, i2b, i2c, i2d;
@@ -58,10 +56,10 @@ void diag_tod_set_test::test_1() throw(libtest::test_exception) {
 
         dense_tensor<2, double, allocator_t> t55(dims55), t66(dims66),
             t55d(dims55), t66d(dims66);
-        tod_set<2>().perform(cpus, t55);
-        tod_set<2>().perform(cpus, t66);
-        tod_set<2>().perform(cpus, t55d);
-        tod_set<2>().perform(cpus, t66d);
+        tod_set<2>().perform(t55);
+        tod_set<2>().perform(t66);
+        tod_set<2>().perform(t55d);
+        tod_set<2>().perform(t66d);
         tod_set_diag<2>(1.0).perform(t55d);
         tod_set_diag<2>(1.0).perform(t66d);
 
@@ -73,9 +71,9 @@ void diag_tod_set_test::test_1() throw(libtest::test_exception) {
         p3120.permute(0, 3);
         contraction2<2, 2, 0> contr1(p0213), contr2(p3120);
         tod_contract2<2, 2, 0>(contr1, t55d, t66).
-            perform(cpus, true, 1.0, t_ref);
+            perform(true, 1.0, t_ref);
         tod_contract2<2, 2, 0>(contr2, t66d, t55).
-            perform(cpus, false, 1.0, t_ref);
+            perform(false, 1.0, t_ref);
 
         diag_tod_set<4>().perform(dt);
 
@@ -94,8 +92,6 @@ void diag_tod_set_test::test_2() throw(libtest::test_exception) {
 
     typedef std_allocator<double> allocator_t;
 
-    cpu_pool cpus(1);
-
     try {
 
         index<2> i2a, i2b, i2c, i2d;
@@ -124,10 +120,10 @@ void diag_tod_set_test::test_2() throw(libtest::test_exception) {
 
         dense_tensor<2, double, allocator_t> t55(dims55), t66(dims66),
             t55d(dims55), t66d(dims66);
-        tod_set<2>(1.0).perform(cpus, t55);
-        tod_set<2>(1.0).perform(cpus, t66);
-        tod_set<2>().perform(cpus, t55d);
-        tod_set<2>().perform(cpus, t66d);
+        tod_set<2>(1.0).perform(t55);
+        tod_set<2>(1.0).perform(t66);
+        tod_set<2>().perform(t55d);
+        tod_set<2>().perform(t66d);
         tod_set_diag<2>(1.0).perform(t55d);
         tod_set_diag<2>(1.0).perform(t66d);
 
@@ -138,10 +134,8 @@ void diag_tod_set_test::test_2() throw(libtest::test_exception) {
         p0213.permute(1, 2);
         p3120.permute(0, 3);
         contraction2<2, 2, 0> contr1(p0213), contr2(p3120);
-        tod_contract2<2, 2, 0>(contr1, t55d, t66).
-            perform(cpus, true, 1.0, t_ref);
-        tod_contract2<2, 2, 0>(contr2, t66d, t55).
-            perform(cpus, false, 1.0, t_ref);
+        tod_contract2<2, 2, 0>(contr1, t55d, t66).perform(true, 1.0, t_ref);
+        tod_contract2<2, 2, 0>(contr2, t66d, t55).perform(false, 1.0, t_ref);
 
         diag_tod_set<4>(1.0).perform(dt);
 
@@ -159,8 +153,6 @@ void diag_tod_set_test::test_3() throw(libtest::test_exception) {
     static const char *testname = "diag_tod_set_test::test_3()";
 
     typedef std_allocator<double> allocator_t;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -185,8 +177,8 @@ void diag_tod_set_test::test_3() throw(libtest::test_exception) {
         size_t sz1 = dts.get_subspace_size(ssn1);
 
         dense_tensor<2, double, allocator_t> t66(dims66), t66d(dims66);
-        tod_set<2>(1.0).perform(cpus, t66);
-        tod_set<2>().perform(cpus, t66d);
+        tod_set<2>(1.0).perform(t66);
+        tod_set<2>().perform(t66d);
         tod_set_diag<2>(1.0).perform(t66d);
 
         diag_tensor<4, double, allocator_t> dt(dts);
@@ -196,9 +188,8 @@ void diag_tod_set_test::test_3() throw(libtest::test_exception) {
         p0213.permute(1, 2);
         p3120.permute(0, 3);
         contraction2<2, 2, 0> contr1(p0213), contr2(p3120);
-        tod_contract2<2, 2, 0>(contr1, t66d, t66d).
-            perform(cpus, true, 1.0, t_ref);
-        tod_scale<4>(-2.5).perform(cpus, t_ref);
+        tod_contract2<2, 2, 0>(contr1, t66d, t66d).perform(true, 1.0, t_ref);
+        tod_scale<4>(-2.5).perform(t_ref);
 
         diag_tod_set<4>(-2.5).perform(dt);
 

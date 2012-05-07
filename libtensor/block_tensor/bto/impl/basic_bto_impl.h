@@ -48,8 +48,6 @@ void basic_bto<N, Traits>::perform(block_tensor_t &bt) {
 template<size_t N, typename Traits>
 void basic_bto<N, Traits>::task::perform() {
 
-    cpu_pool cpus(1);
-
     typedef typename Traits::template block_tensor_ctrl_type<N>::type
         block_tensor_ctrl_t;
     typedef typename Traits::template block_type<N>::type block_t;
@@ -57,7 +55,7 @@ void basic_bto<N, Traits>::task::perform() {
     block_tensor_ctrl_t ctrl(m_bt);
     abs_index<N> ai(m_sch.get_abs_index(m_i), m_bidims);
     block_t &blk = ctrl.req_block(ai.get_index());
-    m_bto.compute_block(blk, ai.get_index(), cpus);
+    m_bto.compute_block(blk, ai.get_index());
     ctrl.ret_block(ai.get_index());
 }
 

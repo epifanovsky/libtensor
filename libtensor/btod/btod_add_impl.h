@@ -147,11 +147,10 @@ void btod_add<N>::sync_off() {
 
 template<size_t N>
 void btod_add<N>::compute_block(bool zero, dense_tensor_i<N, double> &blkb,
-        const index<N> &ib, const tensor_transf<N, double> &trb,
-        const double &kb, cpu_pool &cpus) {
+    const index<N> &ib, const tensor_transf<N, double> &trb, const double &kb) {
 
     static const char *method = "compute_block(bool, tensor_i<N, double>&, "
-            "const index<N>&, const tensor_transf<N, double>&, double, cpu_pool&)";
+        "const index<N>&, const tensor_transf<N, double>&, double)";
 
     btod_add<N>::start_timer();
 
@@ -161,7 +160,7 @@ void btod_add<N>::compute_block(bool zero, dense_tensor_i<N, double> &blkb,
         std::pair<schiterator_t, schiterator_t> ipair =
                 m_op_sch.equal_range(aib.get_abs_index());
         if(ipair.first != m_op_sch.end()) {
-            compute_block(blkb, ipair, zero, trb, kb, cpus);
+            compute_block(blkb, ipair, zero, trb, kb);
         }
 
     } catch(...) {
@@ -175,8 +174,8 @@ void btod_add<N>::compute_block(bool zero, dense_tensor_i<N, double> &blkb,
 
 template<size_t N>
 void btod_add<N>::compute_block(dense_tensor_i<N, double> &blkb,
-        const std::pair<schiterator_t, schiterator_t> ipair, bool zero,
-        const tensor_transf<N, double> &trb, double kb, cpu_pool &cpus) {
+    const std::pair<schiterator_t, schiterator_t> ipair, bool zero,
+    const tensor_transf<N, double> &trb, double kb) {
 
     size_t narg = m_ops.size();
     std::vector<block_tensor_ctrl<N, double>*> ca(narg);
@@ -201,7 +200,7 @@ void btod_add<N>::compute_block(dense_tensor_i<N, double> &blkb,
         op->add_op(ca[rec.iarg]->req_block(rec.idx), perm, k);
     }
 
-    op->perform(cpus, zero, 1.0, blkb);
+    op->perform(zero, 1.0, blkb);
 
     delete op;
 
@@ -216,10 +215,10 @@ void btod_add<N>::compute_block(dense_tensor_i<N, double> &blkb,
 
 template<size_t N>
 void btod_add<N>::add_operand(block_tensor_i<N, double> &bt,
-        const permutation<N> &perm, double c) {
+    const permutation<N> &perm, double c) {
 
     static const char *method = "add_operand(block_tensor_i<N,double>&, "
-            "const permutation<N>&, double)";
+        "const permutation<N>&, double)";
 
     bool first = m_ops.empty();
 
@@ -232,8 +231,7 @@ void btod_add<N>::add_operand(block_tensor_i<N, double> &bt,
 
     block_tensor_ctrl<N, double> ca(bt);
     if(first) {
-        so_permute<N, double>(ca.req_const_symmetry(),
-                perm).perform(m_sym);
+        so_permute<N, double>(ca.req_const_symmetry(), perm).perform(m_sym);
     } else {
 
         sequence<N, size_t> seq2a;
@@ -249,11 +247,11 @@ void btod_add<N>::add_operand(block_tensor_i<N, double> &bt,
         permutation_builder<N + N> pb(seq2b, seq1b);
 
         block_index_space_product_builder<N, N> bbx(m_bis, m_bis,
-                pb.get_perm());
+            pb.get_perm());
 
         symmetry<N + N, double> symx(bbx.get_bis());
-        so_dirsum<N, N, double>(m_sym,
-                ca.req_const_symmetry(), pb.get_perm()).perform(symx);
+        so_dirsum<N, N, double>(m_sym, ca.req_const_symmetry(),
+            pb.get_perm()).perform(symx);
         mask<N + N> msk;
         sequence<N + N, size_t> seq;
         for (register size_t i = 0; i < N; i++) {

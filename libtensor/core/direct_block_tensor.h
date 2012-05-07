@@ -72,8 +72,7 @@ private:
             m_op(op), m_idx(idx), m_blk(blk) { }
         virtual ~task() { }
         void perform() {
-            cpu_pool cpus(1);
-            m_op.compute_block(m_blk, m_idx, cpus);
+            m_op.compute_block(m_blk, m_idx);
         }
     };
 

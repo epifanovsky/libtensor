@@ -119,8 +119,6 @@ void btod_mult1<N>::do_perform(
     static const char *method =
         "do_perform(block_tensor_i<N, double>&, bool, double)";
 
-    cpu_pool cpus(1);
-
     btod_mult1::start_timer();
 
     block_tensor_ctrl<N, double> ctrla(bta), ctrlb(m_btb);
@@ -178,8 +176,8 @@ void btod_mult1<N>::do_perform(
 
         const tensor_transf<N, double> &tra = oa.get_transf(idx);
 
-        tod_copy<N>(blka, tra.get_perm(),
-                tra.get_scalar_tr().get_coeff()).perform(cpus, true, 1.0, blk);
+        tod_copy<N>(blka, tra.get_perm(), tra.get_scalar_tr().get_coeff()).
+            perform(true, 1.0, blk);
 
         ctrla.ret_block(cidxa.get_index());
         ctrla.ret_block(idx);

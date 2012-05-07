@@ -69,8 +69,6 @@ void btod_symmetrize_test::test_1() throw(libtest::test_exception) {
 
     typedef std_allocator<double> allocator_t;
 
-    cpu_pool cpus(1);
-
     try {
 
     index<2> i1, i2;
@@ -95,7 +93,7 @@ void btod_symmetrize_test::test_1() throw(libtest::test_exception) {
     tod_btconv<2>(bta).perform(ta);
     tod_add<2> refop(ta);
     refop.add_op(ta, permutation<2>().permute(0, 1), 1.0);
-    refop.perform(cpus, true, 1.0, tb_ref);
+    refop.perform(true, 1.0, tb_ref);
 
     //  Run the symmetrization operation
 
@@ -133,8 +131,6 @@ void btod_symmetrize_test::test_2() throw(libtest::test_exception) {
 
     typedef std_allocator<double> allocator_t;
 
-    cpu_pool cpus(1);
-
     try {
 
     index<2> i1, i2;
@@ -159,7 +155,7 @@ void btod_symmetrize_test::test_2() throw(libtest::test_exception) {
     tod_btconv<2>(bta).perform(ta);
     tod_add<2> refop(ta);
     refop.add_op(ta, permutation<2>().permute(0, 1), -1.0);
-    refop.perform(cpus, true, 1.0, tb_ref);
+    refop.perform(true, 1.0, tb_ref);
 
     //  Run the symmetrization operation
 
@@ -198,8 +194,6 @@ void btod_symmetrize_test::test_3() throw(libtest::test_exception) {
 
     typedef std_allocator<double> allocator_t;
 
-    cpu_pool cpus(1);
-
     try {
 
     index<4> i1, i2;
@@ -232,7 +226,7 @@ void btod_symmetrize_test::test_3() throw(libtest::test_exception) {
     tod_btconv<4>(bta).perform(ta);
     tod_add<4> refop(ta);
     refop.add_op(ta, permutation<4>().permute(1, 3), -1.0);
-    refop.perform(cpus, true, 1.0, tb_ref);
+    refop.perform(true, 1.0, tb_ref);
 
     //  Run the symmetrization operation
 
@@ -272,8 +266,6 @@ void btod_symmetrize_test::test_4() throw(libtest::test_exception) {
 
     typedef std_allocator<double> allocator_t;
 
-    cpu_pool cpus(1);
-
     try {
 
     index<4> i1, i2;
@@ -306,7 +298,7 @@ void btod_symmetrize_test::test_4() throw(libtest::test_exception) {
     tod_btconv<4>(bta).perform(ta);
     tod_add<4> refop(ta);
     refop.add_op(ta, permutation<4>().permute(0, 2), 1.0);
-    refop.perform(cpus, true, 1.0, tb_ref);
+    refop.perform(true, 1.0, tb_ref);
 
     //  Run the symmetrization operation
 
@@ -344,8 +336,6 @@ void btod_symmetrize_test::test_5(bool symm) throw(libtest::test_exception) {
 
     typedef std_allocator<double> allocator_t;
 
-    cpu_pool cpus(1);
-
     try {
 
     index<4> i1, i2;
@@ -372,7 +362,7 @@ void btod_symmetrize_test::test_5(bool symm) throw(libtest::test_exception) {
     tod_add<4> refop(ta);
     refop.add_op(ta, permutation<4>().permute(0, 2).permute(1, 3),
             (symm ? 1.0 : -1.0));
-    refop.perform(cpus, true, 1.0, tb_ref);
+    refop.perform(true, 1.0, tb_ref);
 
     //  Run the symmetrization operation
 
@@ -423,8 +413,6 @@ void btod_symmetrize_test::test_6a(bool symm, bool label,
         pg.add_product(1, 1, 0);
         product_table_container::get_instance().add(pg);
     }
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -493,10 +481,10 @@ void btod_symmetrize_test::test_6a(bool symm, bool label,
     refop.add_op(ta, p, (symm ? 1.0 : -1.0));
     if (doadd) {
         tod_btconv<2>(btb).perform(tb_ref);
-        refop.perform(cpus, false, 0.25, tb_ref);
+        refop.perform(false, 0.25, tb_ref);
     }
     else {
-        refop.perform(cpus, true, 1.0, tb_ref);
+        refop.perform(true, 1.0, tb_ref);
     }
 
     //  Run the symmetrization operation
@@ -548,8 +536,6 @@ void btod_symmetrize_test::test_6b(bool symm, bool label,
 
         product_table_container::get_instance().add(pg);
     }
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -639,7 +625,7 @@ void btod_symmetrize_test::test_6b(bool symm, bool label,
     refop.add_op(ta, p1, (symm ? 1.0 : -1.0));
     refop.add_op(ta, p2, (symm ? 1.0 : -1.0));
     refop.add_op(ta, permutation<4>().permute(p1).permute(p2), 1.0);
-    refop.perform(cpus, true, 1.0, tb_ref);
+    refop.perform(true, 1.0, tb_ref);
 
     //  Run the symmetrization operation
 

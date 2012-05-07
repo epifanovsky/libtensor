@@ -2,7 +2,6 @@
 #define LIBTENSOR_TOD_DOTPROD_IMPL_H
 
 #include <memory>
-#include <libtensor/mp/auto_cpu_lock.h>
 #include <libtensor/linalg/linalg.h>
 #include <libtensor/tod/kernels/loop_list_runner.h>
 #include <libtensor/tod/kernels/kern_mul_generic.h>
@@ -60,7 +59,7 @@ void tod_dotprod<N>::prefetch() {
 
 
 template<size_t N>
-double tod_dotprod<N>::calculate(cpu_pool &cpus) {
+double tod_dotprod<N>::calculate() {
 
     double result = 0.0;
 
@@ -95,23 +94,19 @@ double tod_dotprod<N>::calculate(cpu_pool &cpus) {
         const double *pa = ca.req_const_dataptr();
         const double *pb = cb.req_const_dataptr();
 
-        {
-            auto_cpu_lock cpu(cpus);
+        loop_registers<2, 1> r;
+        r.m_ptra[0] = pa;
+        r.m_ptra[1] = pb;
+        r.m_ptrb[0] = &result;
+        r.m_ptra_end[0] = pa + dimsa.get_size();
+        r.m_ptra_end[1] = pb + dimsb.get_size();
+        r.m_ptrb_end[0] = &result + 1;
 
-            loop_registers<2, 1> r;
-            r.m_ptra[0] = pa;
-            r.m_ptra[1] = pb;
-            r.m_ptrb[0] = &result;
-            r.m_ptra_end[0] = pa + dimsa.get_size();
-            r.m_ptra_end[1] = pb + dimsb.get_size();
-            r.m_ptrb_end[0] = &result + 1;
-
-            std::auto_ptr< kernel_base<2, 1> > kern(
-                kern_mul_generic::match(1.0, loop_in, loop_out));
-            tod_dotprod<N>::start_timer(kern->get_name());
-            loop_list_runner<2, 1>(loop_in).run(r, *kern);
-            tod_dotprod<N>::stop_timer(kern->get_name());
-        }
+        std::auto_ptr< kernel_base<2, 1> > kern(
+            kern_mul_generic::match(1.0, loop_in, loop_out));
+        tod_dotprod<N>::start_timer(kern->get_name());
+        loop_list_runner<2, 1>(loop_in).run(r, *kern);
+        tod_dotprod<N>::stop_timer(kern->get_name());
 
         ca.ret_const_dataptr(pa);
         cb.ret_const_dataptr(pb);

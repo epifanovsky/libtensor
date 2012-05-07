@@ -96,10 +96,8 @@ public:
     /** \brief Implementation of basic_btod<N>::compute_block
         \param blk Output %tensor.
         \param i Index of the block to compute.
-        \param cpus Pool of CPUs.
      **/
-    virtual void compute_block(block_t &blk,
-            const index<N> &i, cpu_pool &cpus);
+    virtual void compute_block(block_t &blk, const index<N> &i);
 
     /** \brief Computes a single block of the result and adds it to
             the output %tensor
@@ -108,19 +106,17 @@ public:
         \param i Index of the block to compute.
         \param tr Transformation of the block.
         \param c Scaling coefficient.
-        \param cpus Pool of CPUs.
      **/
     virtual void compute_block(bool zero, block_t &blk, const index<N> &i,
-            const tensor_transf<N, element_t> &tr, const element_t &c,
-            cpu_pool &cpus) = 0;
+        const tensor_transf<N, element_t> &tr, const element_t &c) = 0;
 
 protected:
     /** \brief Invokes compute_block on another additive operation;
             allows derived classes to call other additive operations
      **/
     void compute_block(additive_bto<N, Traits> &op, bool zero, block_t &blk,
-            const index<N> &i, const tensor_transf<N, element_t> &tr,
-            const element_t &c, cpu_pool &cpus);
+        const index<N> &i, const tensor_transf<N, element_t> &tr,
+        const element_t &c);
 
 private:
     typedef addition_schedule<N, Traits> schedule_t;

@@ -216,8 +216,8 @@ public:
 
 protected:
     virtual void compute_block(bool zero, dense_tensor_i<N + M, double> &blk,
-            const index<N + M> &i, const tensor_transf<N + M, double> &tr,
-            const double &c, cpu_pool &cpus);
+        const index<N + M> &i, const tensor_transf<N + M, double> &tr,
+        const double &c);
 
 private:
     void make_schedule();
@@ -230,7 +230,7 @@ private:
         block_tensor_ctrl<k_orderb, double> &ctrlb,
         dense_tensor_i<k_orderc, double> &blkc,
         const tensor_transf<k_orderc, double> &trc,
-        bool zero, double c, cpu_pool &cpus);
+        bool zero, double c);
 
 private:
     btod_contract2(const btod_contract2<N, M, K>&);
