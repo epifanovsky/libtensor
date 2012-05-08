@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_BASIC_BTO_H
 #define LIBTENSOR_BASIC_BTO_H
 
-#include <libtensor/mp/task_batch.h>
+#include <libutil/thread_pool/thread_pool.h>
 #include "direct_bto.h"
 
 namespace libtensor {
@@ -39,7 +39,7 @@ public:
     using direct_bto<N, Traits>::sync_off;
 
 private:
-    class task : public task_i {
+    class task : public libutil::task_i {
     private:
         basic_bto<N, Traits> &m_bto;
         block_tensor_t &m_bt;
@@ -55,7 +55,24 @@ private:
             m_bto(bto), m_bt(bt), m_bidims(bidims), m_sch(sch),
             m_i(i) { }
         virtual ~task() { }
-        virtual void perform(cpu_pool &cpus) throw(exception);
+        virtual void perform();
+    };
+
+    class task_iterator : public libutil::task_iterator_i {
+    private:
+        std::vector<task*> &m_tl;
+        typename std::vector<task*>::iterator m_i;
+    public:
+        task_iterator(std::vector<task*> &tl) :
+            m_tl(tl), m_i(m_tl.begin()) { }
+        virtual bool has_more() const;
+        virtual libutil::task_i *get_next();
+    };
+
+    class task_observer : public libutil::task_observer_i {
+    public:
+        virtual void notify_start_task(libutil::task_i *t) { }
+        virtual void notify_finish_task(libutil::task_i *t) { }
     };
 
 public:

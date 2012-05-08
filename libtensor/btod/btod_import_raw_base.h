@@ -146,8 +146,6 @@ void btod_import_raw_base<N, Alloc>::verify_nonzero_orbit(
 
     typedef typename orbit<N, double>::iterator iterator_t;
 
-    cpu_pool cpus(1);
-
     //  Get the canonical block
     abs_index<N> aci(o.get_abs_canonical_index(), bidims);
     dense_tensor_i<N, double> &cblk = ctrl.req_block(aci.get_index());
@@ -165,7 +163,7 @@ void btod_import_raw_base<N, Alloc>::verify_nonzero_orbit(
         dense_tensor_i<N, double> &blk = ctrl.req_block(ai.get_index());
         dense_tensor<N, double, Alloc> tblk(blk.get_dims());
         tod_copy<N> (cblk, tr.get_perm(), tr.get_scalar_tr().get_coeff()).
-            perform(cpus, true, 1.0, tblk);
+            perform(true, 1.0, tblk);
 
         tod_compare<N> cmp(blk, tblk, sym_thresh);
         if(!cmp.compare()) {

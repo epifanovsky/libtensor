@@ -92,10 +92,9 @@ void tod_add<N>::prefetch() {
 
 
 template<size_t N>
-void tod_add<N>::perform(cpu_pool &cpus, bool zero, double c,
-    dense_tensor_wr_i<N, double> &t) {
+void tod_add<N>::perform(bool zero, double c, dense_tensor_wr_i<N, double> &t) {
 
-    static const char *method = "perform(cpu_pool&, bool, double, "
+    static const char *method = "perform(bool, double, "
         "dense_tensor_wr_i<N, double>&)";
 
     //  Check the dimensions of the output tensor
@@ -103,14 +102,14 @@ void tod_add<N>::perform(cpu_pool &cpus, bool zero, double c,
         throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "t");
     }
 
-    if(zero) tod_set<N>().perform(cpus, t);
+    if(zero) tod_set<N>().perform(t);
     if(c == 0.0) return;
 
     tod_add<N>::start_timer();
 
     typename std::list<arg>::iterator i = m_args.begin();
     for(; i != m_args.end(); ++i) {
-        tod_copy<N>(i->t, i->p, i->c).perform(cpus, false, c, t);
+        tod_copy<N>(i->t, i->p, i->c).perform(false, c, t);
     }
 
     tod_add<N>::stop_timer();

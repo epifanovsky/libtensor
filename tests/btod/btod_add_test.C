@@ -55,8 +55,6 @@ void btod_add_test::test_1(double ca1, double ca2)
 
     typedef std_allocator<double> allocator_t;
 
-    cpu_pool cpus(1);
-
     try {
 
     index<2> i0, i1, i2;
@@ -85,7 +83,7 @@ void btod_add_test::test_1(double ca1, double ca2)
     tod_btconv<2>(bta2).perform(ta2);
     tod_add<2> op_ref(ta1, perma1, ca1);
     op_ref.add_op(ta2, perma2, ca2);
-    op_ref.perform(cpus, true, 1.0, tb_ref);
+    op_ref.perform(true, 1.0, tb_ref);
 
     //  Run the addition operation
 
@@ -121,8 +119,6 @@ void btod_add_test::test_2(double ca1, double ca2, double cs)
 
     typedef std_allocator<double> allocator_t;
 
-    cpu_pool cpus(1);
-
     try {
 
     index<2> i0, i1, i2;
@@ -153,7 +149,7 @@ void btod_add_test::test_2(double ca1, double ca2, double cs)
     tod_btconv<2>(btb).perform(tb_ref);
     tod_add<2> op_ref(ta1, perma1, ca1);
     op_ref.add_op(ta2, perma2, ca2);
-    op_ref.perform(cpus, false, cs, tb_ref);
+    op_ref.perform(false, cs, tb_ref);
 
     //  Run the addition operation
 
@@ -186,8 +182,6 @@ void btod_add_test::test_3(double ca1, double ca2)
     tnss << "btod_add_test::test_3(" << ca1 << ", " << ca2 << ")";
 
     typedef std_allocator<double> allocator_t;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -228,7 +222,7 @@ void btod_add_test::test_3(double ca1, double ca2)
 
     tod_add<2> op_ref(ta1, ca1);
     op_ref.add_op(ta2, ca2);
-    op_ref.perform(cpus, true, 1.0, tb_ref);
+    op_ref.perform(true, 1.0, tb_ref);
 
     //  Run the addition operation
 
@@ -265,8 +259,6 @@ void btod_add_test::test_4(double ca1, double ca2, double ca3, double ca4)
         << ", " << ca3 << ", " << ca4 << ")";
 
     typedef std_allocator<double> allocator_t;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -332,7 +324,7 @@ void btod_add_test::test_4(double ca1, double ca2, double ca3, double ca4)
     op_ref.add_op(ta2, ca2);
     op_ref.add_op(ta3, ca3);
     op_ref.add_op(ta4, perm4, ca4);
-    op_ref.perform(cpus, true, 1.0, tb_ref);
+    op_ref.perform(true, 1.0, tb_ref);
 
     //  Run the addition operation
 
@@ -436,8 +428,6 @@ void btod_add_test::test_7() throw(libtest::test_exception) {
 
     typedef std_allocator<double> allocator_t;
 
-    cpu_pool cpus(1);
-
     try {
 
     size_t ni = 13, na = 7;
@@ -483,7 +473,7 @@ void btod_add_test::test_7() throw(libtest::test_exception) {
 
     tod_add<4> addt(t1, p_caib, 1.0);
     addt.add_op(t2, p_baic, -1.0);
-    addt.perform(cpus, true, 1.0, t3_ref);
+    addt.perform(true, 1.0, t3_ref);
 
     compare_ref<4>::compare(testname, t3, t3_ref, 1e-15);
 
@@ -501,8 +491,6 @@ void btod_add_test::test_8() throw(libtest::test_exception) {
     static const char *testname = "btod_add_test::test_8()";
 
     typedef std_allocator<double> allocator_t;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -544,7 +532,7 @@ void btod_add_test::test_8() throw(libtest::test_exception) {
     tod_btconv<4>(bta).perform(ta);
     tod_btconv<4>(btb).perform(tb_ref);
     tod_copy<4>(ta, permutation<4>().permute(1, 2), 1.0).
-        perform(cpus, false, 1.0, tb_ref);
+        perform(false, 1.0, tb_ref);
     syma_ref.insert(se_perm<4, double>(permutation<4>().
         permute(0, 2), tr1));
     syma_ref.insert(se_perm<4, double>(permutation<4>().
@@ -573,8 +561,6 @@ void btod_add_test::test_9() throw(libtest::test_exception) {
     static const char *testname = "btod_add_test::test_9()";
 
     typedef std_allocator<double> allocator_t;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -614,7 +600,7 @@ void btod_add_test::test_9() throw(libtest::test_exception) {
     tod_btconv<4>(bta).perform(ta);
     tod_btconv<4>(btb).perform(tb_ref);
     tod_copy<4>(ta, permutation<4>().permute(2, 1).permute(1, 0), 1.0).
-        perform(cpus, false, 1.0, tb_ref);
+        perform(false, 1.0, tb_ref);
     syma_ref.insert(se_perm<4, double>(permutation<4>().
         permute(0, 1).permute(2, 3), tr0));
 

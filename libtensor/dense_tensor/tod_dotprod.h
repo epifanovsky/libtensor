@@ -3,10 +3,7 @@
 
 #include <list>
 #include <libtensor/timings.h>
-#include <libtensor/mp/cpu_pool.h>
 #include "dense_tensor_i.h"
-
-//#include <libtensor/tod/processor.h>
 
 namespace libtensor {
 
@@ -81,9 +78,8 @@ public:
     void prefetch();
 
     /** \brief Computes the dot product and returns the value
-        \param cpus CPU pool.
      **/
-    double calculate(cpu_pool &cpus);
+    double calculate();
 
 private:
     /** \brief Returns true if the dimensions of A and B are compatible

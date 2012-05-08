@@ -5,7 +5,6 @@
 #include <libtensor/exception.h>
 #include <libtensor/core/block_index_space.h>
 #include <libtensor/core/symmetry.h>
-#include <libtensor/mp/cpu_pool.h>
 #include "assignment_schedule.h"
 
 namespace libtensor {
@@ -54,8 +53,7 @@ public:
 
     /** \brief Computes a single block of the result
      **/
-    virtual void compute_block(block_t &blk,
-            const index<N> &i, cpu_pool &cpus) = 0;
+    virtual void compute_block(block_t &blk, const index<N> &i) = 0;
 
     /** \brief Enables the synchronization of arguments
      **/

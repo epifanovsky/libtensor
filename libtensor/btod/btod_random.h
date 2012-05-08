@@ -58,7 +58,7 @@ private:
         const dimensions<N> &bidims, const index<N> &idx,
         const tensor_transf<N, double> &tr, transf_map_t &alltransf);
 
-    void make_random_blk(cpu_pool &cpus, block_tensor_ctrl<N, double> &ctrl,
+    void make_random_blk(block_tensor_ctrl<N, double> &ctrl,
         const dimensions<N> &bidims, const index<N> &idx);
 
 private:
@@ -74,8 +74,6 @@ const char *btod_random<N>::k_clazz = "btod_random<N>";
 template<size_t N>
 void btod_random<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
 
-    cpu_pool cpus(1);
-
     timings_base::start_timer();
 
     dimensions<N> bidims(bt.get_bis().get_block_index_dims());
@@ -84,7 +82,7 @@ void btod_random<N>::perform(block_tensor_i<N, double> &bt) throw(exception) {
     orbit_list<N, double> orblist(ctrl.req_symmetry());
     typename orbit_list<N, double>::iterator iorbit = orblist.begin();
     for(; iorbit != orblist.end(); iorbit++) {
-        make_random_blk(cpus, ctrl, bidims, orblist.get_index(iorbit));
+        make_random_blk(ctrl, bidims, orblist.get_index(iorbit));
     }
 
     timings_base::stop_timer();
@@ -94,13 +92,11 @@ template<size_t N>
 void btod_random<N>::perform(block_tensor_i<N, double> &bt, const index<N> &idx)
     throw(exception) {
 
-    cpu_pool cpus(1);
-
     timings_base::start_timer();
 
     dimensions<N> bidims(bt.get_bis().get_block_index_dims());
     block_tensor_ctrl<N, double> ctrl(bt);
-    make_random_blk(cpus, ctrl, bidims, idx);
+    make_random_blk(ctrl, bidims, idx);
 
     timings_base::stop_timer();
 }
@@ -155,9 +151,8 @@ bool btod_random<N>::make_transf_map(const symmetry<N, double> &sym,
 
 
 template<size_t N>
-void btod_random<N>::make_random_blk(cpu_pool &cpus,
-    block_tensor_ctrl<N, double> &ctrl, const dimensions<N> &bidims,
-    const index<N> &idx) {
+void btod_random<N>::make_random_blk(block_tensor_ctrl<N, double> &ctrl,
+    const dimensions<N> &bidims, const index<N> &idx) {
 
     typedef std_allocator<double> allocator_t;
 
@@ -179,27 +174,27 @@ void btod_random<N>::make_random_blk(cpu_pool &cpus,
     typename transf_list_t::iterator itr = ilst->second.begin();
     if(itr == ilst->second.end()) {
         timings_base::start_timer("randop");
-        randop.perform(cpus, true, 1.0, blk);
+        randop.perform(true, 1.0, blk);
         timings_base::stop_timer("randop");
     } else {
         dense_tensor<N, double, allocator_t> rnd(blk.get_dims()),
             symrnd(blk.get_dims());
         timings_base::start_timer("randop");
-        randop.perform(cpus, true, 1.0, rnd);
+        randop.perform(true, 1.0, rnd);
         timings_base::stop_timer("randop");
         double totcoeff = itr->get_scalar_tr().get_coeff();
         tod_add<N> symop(rnd, itr->get_perm(), totcoeff);
 
         for(itr++; itr != ilst->second.end(); itr++) {
             symop.add_op(rnd, itr->get_perm(),
-                    itr->get_scalar_tr().get_coeff());
+                itr->get_scalar_tr().get_coeff());
             totcoeff += itr->get_scalar_tr().get_coeff();
         }
 
         timings_base::start_timer("symop&copy");
-        symop.perform(cpus, true, 1.0, symrnd);
+        symop.perform(true, 1.0, symrnd);
         totcoeff = (totcoeff == 0.0) ? 1.0 : 1.0/totcoeff;
-        tod_copy<N>(symrnd, totcoeff).perform(cpus, true, 1.0, blk);
+        tod_copy<N>(symrnd, totcoeff).perform(true, 1.0, blk);
         timings_base::stop_timer("symop&copy");
     }
 

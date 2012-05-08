@@ -7,7 +7,6 @@
 #include "../symmetry/so_merge.h"
 #include <libtensor/dense_tensor/tod_dotprod.h>
 #include "bad_block_index_space.h"
-#include "../mp/task_batch.h"
 
 namespace libtensor {
 
@@ -169,7 +168,6 @@ void btod_dotprod<N>::calculate(std::vector<double> &v) {
             ctrl2[i]->req_sync_on();
 
             std::vector<dotprod_in_orbit_task*> tasklist;
-            task_batch tb;
 
             for(typename orbit_list<N, double>::iterator io = ol.begin();
                     io != ol.end(); io++) {
@@ -182,17 +180,11 @@ void btod_dotprod<N>::calculate(std::vector<double> &v) {
                         j->bt1, ol1, pinv1, j->bt2, ol2, pinv2,
                         *sym[i], bidims, ol.get_index(io));
                 tasklist.push_back(t);
-                tb.push(*t);
             }
 
-            try {
-                tb.wait();
-            } catch(...) {
-                for(size_t k = 0; k < tasklist.size(); k++) {
-                    delete tasklist[k];
-                }
-                throw;
-            }
+            dotprod_task_iterator ti(tasklist);
+            dotprod_task_observer to;
+            libutil::thread_pool::submit(ti, to);
 
             for(size_t k = 0; k < tasklist.size(); k++) {
                 v[i] += tasklist[k]->get_d();
@@ -224,7 +216,7 @@ const char *btod_dotprod<N>::dotprod_in_orbit_task::k_clazz =
 
 
 template<size_t N>
-void btod_dotprod<N>::dotprod_in_orbit_task::perform(cpu_pool &cpus) throw(exception) {
+void btod_dotprod<N>::dotprod_in_orbit_task::perform() {
 
     block_tensor_ctrl<N, double> ctrl1(m_bt1), ctrl2(m_bt2);
 
@@ -262,13 +254,29 @@ void btod_dotprod<N>::dotprod_in_orbit_task::perform(cpu_pool &cpus) throw(excep
     perm1.permute(tr1.get_perm()).permute(permutation<N>(m_pinv1, true));
     perm2.permute(tr2.get_perm()).permute(permutation<N>(m_pinv2, true));
 
-    double d = tod_dotprod<N>(blk1, perm1, blk2, perm2).calculate(cpus) *
-            tr1.get_scalar_tr().get_coeff() * tr2.get_scalar_tr().get_coeff();
+    double d = tod_dotprod<N>(blk1, perm1, blk2, perm2).calculate() *
+        tr1.get_scalar_tr().get_coeff() * tr2.get_scalar_tr().get_coeff();
 
     ctrl1.ret_block(aci1.get_index());
     ctrl2.ret_block(aci2.get_index());
 
     m_d = c * d;
+}
+
+
+template<size_t N>
+bool btod_dotprod<N>::dotprod_task_iterator::has_more() const {
+
+    return m_i != m_tl.end();
+}
+
+
+template<size_t N>
+libutil::task_i *btod_dotprod<N>::dotprod_task_iterator::get_next() {
+
+    libutil::task_i *t = *m_i;
+    ++m_i;
+    return t;
 }
 
 

@@ -24,7 +24,6 @@ set(SRC_CORE
     core/sequence_generator_test.C
     core/symmetry_test.C
     core/symmetry_element_set_test.C
-    core/task_batch_test.C
     core/transf_list_test.C
     core/version_test.C
 )
