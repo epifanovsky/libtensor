@@ -318,8 +318,3 @@ void tod_contract2_p4<R,N,M,K,DimData>::do_calculate()
 } // namespace libtensor
 
 #endif // TOD_CONTRACT2_PERFORMANCE_H
-
-/ namespace libtensor
-
-#endif // TOD_CONTRACT2_PERFORMANCE_H
-

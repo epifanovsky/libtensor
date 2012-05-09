@@ -193,8 +193,3 @@ void tod_add_p3<R,N,DimData>::do_calculate()
 } // namespace libtensor
 
 #endif // TOD_ADD_PERFORMANCE_H
-
-or
-
-#endif // TOD_ADD_PERFORMANCE_H
-

@@ -78,11 +78,3 @@ int main(int argc, char **argv) {
     }
     }
 }
-
-
-        if(!single_threaded) {
-            libtensor::worker_pool::get_instance().shutdown();
-        }
-    }
-    }
-}

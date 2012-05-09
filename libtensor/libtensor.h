@@ -83,27 +83,3 @@
 #include "iface/dot_product.h"
 
 #endif // LIBTENSOR_H
-
-"
-#include "symmetry/se_label.h"
-#include "symmetry/se_part.h"
-#include "symmetry/se_perm.h"
-
-
-#include "iface/bispace.h"
-#include "iface/btensor_i.h"
-#include "iface/btensor.h"
-#include "iface/direct_btensor.h"
-#include "iface/letter.h"
-#include "iface/letter_expr.h"
-#include "iface/labeled_btensor_base.h"
-#include "iface/labeled_btensor.h"
-#include "iface/expr/expr.h"
-#include "iface/expr/eval.h"
-#include "iface/expr/anon_eval.h"
-#include "iface/operators.h"
-#include "iface/labeled_btensor_impl.h"
-#include "iface/dot_product.h"
-
-#endif // LIBTENSOR_H
-

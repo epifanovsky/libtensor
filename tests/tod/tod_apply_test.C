@@ -548,11 +548,3 @@ void tod_apply_test::test_exc() throw(libtest::test_exception) {
 
 
 } // namespace libtensor
-
-apply_test::test_exc()", __FILE__, __LINE__,
-			"Expected an exception with heterogeneous arguments");
-	}
-}
-
-} // namespace libtensor
-

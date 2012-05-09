@@ -697,12 +697,3 @@ void tod_mult_test::test_prsq_qrps(size_t ni, size_t nj, size_t nk, size_t nl,
 
 
 } // namespace libtensor
-tc_ref, 1e-15);
-
-	} catch(exception &e) {
-		fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
-	}
-}
-
-
-} // namespace libtensor

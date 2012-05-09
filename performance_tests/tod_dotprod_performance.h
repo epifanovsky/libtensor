@@ -181,12 +181,3 @@ void tod_dotprod_p3<R,N,X>::do_calculate()
 } // namespace libtensor
 
 #endif // TOD_DOTPROD_PERFORMANCE_H
-
-us);
-}
-
-
-} // namespace libtensor
-
-#endif // TOD_DOTPROD_PERFORMANCE_H
-

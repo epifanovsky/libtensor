@@ -141,8 +141,3 @@ void tod_copy_p2<R,N,X>::do_calculate()
 } // namespace libtensor
 
 #endif // TOD_ADD_P1_H
-
-// namespace libtensor
-
-#endif // TOD_ADD_P1_H
-

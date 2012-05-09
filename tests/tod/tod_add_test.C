@@ -614,12 +614,3 @@ void tod_add_test::test_add_two_pq_qp(size_t p, size_t q)
 
 
 } // namespace libtensor
-k_thresh);
-
-    } catch(exception &e) {
-        fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
-    }
-}
-
-
-} // namespace libtensor
