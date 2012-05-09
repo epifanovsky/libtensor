@@ -6,18 +6,18 @@
 
 namespace libtensor {
 
-/**	\brief Tests the libtensor::tod_import_raw class
+/** \brief Tests the libtensor::tod_import_raw class
 
-	\ingroup libtensor_tests_tod
+    \ingroup libtensor_tests_tod
  **/
 class tod_import_raw_test : public libtest::unit_test {
 public:
-	virtual void perform() throw(libtest::test_exception);
+    virtual void perform() throw(libtest::test_exception);
 
 private:
-	template<size_t N>
-	void test_1(const dimensions<N> &dims, const index_range<N> &ir)
-		throw(libtest::test_exception);
+    template<size_t N>
+    void test_1(const dimensions<N> &dims, const index_range<N> &ir)
+        throw(libtest::test_exception);
 };
 
 } // namespace libtensor

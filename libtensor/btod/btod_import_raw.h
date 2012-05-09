@@ -1,15 +1,16 @@
 #ifndef LIBTENSOR_BTOD_IMPORT_RAW_H
 #define LIBTENSOR_BTOD_IMPORT_RAW_H
 
-#include "../tod/tod_import_raw.h"
-#include "../tod/tod_set.h"
+#include <libtensor/core/allocator.h>
+#include <libtensor/dense_tensor/tod_import_raw.h>
+#include <libtensor/dense_tensor/tod_set.h>
 #include "btod_import_raw_base.h"
 #include "bad_block_index_space.h"
 
 namespace libtensor {
 
 
-/**	\brief Imports block %tensor elements from memory
+/** \brief Imports block %tensor elements from memory
     \tparam N Tensor order.
     \tparam Alloc Allocator for temporary buffers.
 
@@ -36,7 +37,7 @@ private:
     double m_sym_thresh; //!< Symmetry threshold
 
 public:
-	/**	\brief Initializes the operation
+    /** \brief Initializes the operation
         \param ptr Memory pointer.
         \param dims Dimensions of the input.
         \param thresh Threshold for zeros and symmetry detection
@@ -46,7 +47,7 @@ public:
         m_ptr(ptr), m_dims(dims), m_zero_thresh(thresh), m_sym_thresh(thresh) {
     }
 
-    /**	\brief Initializes the operation
+    /** \brief Initializes the operation
         \param ptr Memory pointer.
         \param dims Dimensions of the input.
         \param zero_thresh Threshold for zeros
@@ -58,7 +59,7 @@ public:
             m_sym_thresh(sym_thresh) {
     }
 
-    /**	\brief Performs the operation
+    /** \brief Performs the operation
         \param bt Output block %tensor.
      **/
     void perform(block_tensor_i<N, double> &bt);
@@ -78,10 +79,10 @@ const char *btod_import_raw<N, Alloc>::k_clazz = "btod_import_raw<N, Alloc>";
 template<size_t N, typename Alloc>
 void btod_import_raw<N, Alloc>::perform(block_tensor_i<N, double> &bt) {
 
-	static const char *method = "perform(block_tensor_i<N>&)";
+    static const char *method = "perform(block_tensor_i<N>&)";
 
     //
-    //	Check the block tensor's dimensions
+    //  Check the block tensor's dimensions
     //
 
     const block_index_space<N> &bis = bt.get_bis();
@@ -91,7 +92,7 @@ void btod_import_raw<N, Alloc>::perform(block_tensor_i<N, double> &bt) {
             "bt");
     }
 
-    //	Set up the block tensor
+    //  Set up the block tensor
 
     block_tensor_ctrl<N, double> ctrl(bt);
     symmetry<N, double> sym(bis);
@@ -99,7 +100,7 @@ void btod_import_raw<N, Alloc>::perform(block_tensor_i<N, double> &bt) {
     ctrl.req_symmetry().clear();
     ctrl.req_zero_all_blocks();
 
-    //	Invoke the import operation for each block
+    //  Invoke the import operation for each block
 
     dimensions<N> bdims(bis.get_block_index_dims());
     abs_index<N> bi(bdims);

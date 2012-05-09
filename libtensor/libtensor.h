@@ -25,8 +25,9 @@
 #include "core/block_tensor.h"
 #include "core/direct_block_tensor.h"
 
-#include "core/transf.h"
-#include "btod/transf_double.h"
+#include "core/scalar_transf.h"
+#include "btod/scalar_transf_double.h"
+#include "core/tensor_transf.h"
 
 #include "core/orbit.h"
 #include "core/orbit_list.h"
@@ -37,31 +38,7 @@
 #include "tod/contraction2.h"
 #include "tod/processor.h"
 
-#include "tod/tod_add.h"
-#include "tod/tod_additive.h"
-#include "tod/tod_apply.h"
-#include "tod/tod_btconv.h"
-#include "tod/tod_compare.h"
-#include "tod/tod_contract2.h"
-#include "tod/tod_copy.h"
-#include "tod/tod_diag.h"
-#include "tod/tod_dirsum.h"
-#include "tod/tod_dotprod.h"
-#include "tod/tod_import_raw.h"
-#include "tod/tod_mult.h"
-#include "tod/tod_mult1.h"
-#include "tod/tod_random.h"
-#include "tod/tod_scale.h"
-#include "tod/tod_scatter.h"
-#include "tod/tod_select.h"
-#include "tod/tod_set.h"
-#include "tod/tod_set_diag.h"
-#include "tod/tod_set_elem.h"
-#include "tod/tod_sum.h"
 
-
-#include "btod/basic_btod.h"
-#include "btod/additive_btod.h"
 #include "btod/btod_add.h"
 #include "btod/btod_apply.h"
 #include "btod/btod_compare.h"
@@ -85,6 +62,29 @@
 
 #include "symmetry/point_group_table.h"
 #include "symmetry/product_table_container.h"
+#include "symmetry/se_label.h"
+#include "symmetry/se_part.h"
+#include "symmetry/se_perm.h"
+
+
+#include "iface/bispace.h"
+#include "iface/btensor_i.h"
+#include "iface/btensor.h"
+#include "iface/direct_btensor.h"
+#include "iface/letter.h"
+#include "iface/letter_expr.h"
+#include "iface/labeled_btensor_base.h"
+#include "iface/labeled_btensor.h"
+#include "iface/expr/expr.h"
+#include "iface/expr/eval.h"
+#include "iface/expr/anon_eval.h"
+#include "iface/operators.h"
+#include "iface/labeled_btensor_impl.h"
+#include "iface/dot_product.h"
+
+#endif // LIBTENSOR_H
+
+"
 #include "symmetry/se_label.h"
 #include "symmetry/se_part.h"
 #include "symmetry/se_perm.h"

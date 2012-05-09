@@ -94,7 +94,7 @@ public:
     //@}
 
 
-    //!	\name Overloaded operators
+    //!    \name Overloaded operators
     //@{
 
     /** \brief Returns the reference to the element at the given position
@@ -110,7 +110,7 @@ public:
 #endif // LIBTENSOR_DEBUG
     }
 
-    /**	\brief Returns the element at the given position (r-value)
+    /** \brief Returns the element at the given position (r-value)
         \param pos Position (not to exceed N).
         \throw out_of_bounds If the position exceeds N (LIBTENSOR_DEBUG only).
      **/
@@ -135,7 +135,7 @@ private:
 };
 
 
-/**	\brief Fixed-length array of objects of given type (specialized for zero
+/** \brief Fixed-length array of objects of given type (specialized for zero
         length)
     \tparam T Object type.
 
@@ -152,19 +152,22 @@ class sequence<0, T> {
 public:
     static const char *k_clazz; //!< Class name
 
+private:
+    T m_dummy;
+
 public:
-    //!	\name Construction and destruction
+    //!    \name Construction and destruction
     //@{
 
     /** \copydoc sequence<N,T>::sequence(const T&)
      **/
-    sequence(const T &t = T()) {
+    sequence(const T &t = T()) : m_dummy(t) {
 
     }
 
     /** \copydoc sequence<N,T>::sequence(const sequence<N, T>&)
      **/
-    sequence(const sequence<0, T> &seq) {
+    sequence(const sequence<0, T> &seq) : m_dummy(seq.m_dummy) {
 
     }
 
@@ -178,24 +181,30 @@ public:
      **/
     T &at(size_t pos) {
         throw_out_of_bounds();
+        // Value is never actually returned,
+        // just to prevent annoying compiler warnings
+        return m_dummy;
     }
 
     /** \copydoc sequence<N,T>::at(size_t) const
      **/
     const T &at(size_t pos) const {
         throw_out_of_bounds();
+        // Value is never actually returned,
+        // just to prevent annoying compiler warnings
+        return m_dummy;
     }
 
     /** \copydoc sequence<N,T>::at_nothrow(size_t)
      **/
     T &at_nothrow(size_t pos) {
-
+        return m_dummy;
     }
 
     /** \copydoc sequence<N,T>::at_nothrow(size_t) const
      **/
     const T &at_nothrow(size_t pos) const {
-
+        return m_dummy;
     }
 
     //@}

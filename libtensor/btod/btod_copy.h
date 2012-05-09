@@ -1,38 +1,46 @@
 #ifndef LIBTENSOR_BTOD_COPY_H
 #define LIBTENSOR_BTOD_COPY_H
 
-#include <cmath>
-#include <map>
-#include "../defs.h"
-#include "../exception.h"
-#include "../timings.h"
-#include "../core/abs_index.h"
-#include "bad_block_index_space.h"
-#include "additive_btod.h"
-#include "../not_implemented.h"
+#include "scalar_transf_double.h"
+#include <libtensor/block_tensor/bto/bto_copy.h>
+#include <libtensor/block_tensor/btod/btod_traits.h>
 
 namespace libtensor {
 
 
-/**	\brief Makes a copy of a block %tensor, applying a permutation and
-		a scaling coefficient
-	\tparam N Tensor order.
+struct btod_copy_traits : public bto_traits<double> {
+};
 
-	\ingroup libtensor_btod
- **/
+
 template<size_t N>
-class btod_copy : public additive_btod<N>, public timings< btod_copy<N> > {
+class btod_copy : public bto_copy<N, btod_copy_traits> {
+private:
+    typedef bto_copy<N, btod_copy_traits> bto_copy_t;
+    typedef typename bto_copy_t::scalar_tr_t scalar_tr_t;
+
 public:
-	static const char *k_clazz; //!< Class name
+    btod_copy(block_tensor_i<N, double> &bta, double c = 1.0) :
+        bto_copy_t(bta, scalar_tr_t(c)) {
+    }
+
+    btod_copy(block_tensor_i<N, double> &bta,
+            const permutation<N> &p, double c = 1.0) :
+        bto_copy_t(bta, p, scalar_tr_t(c)) {
+    }
+
+    virtual ~btod_copy() { }
 
 private:
-	block_tensor_i<N, double> &m_bta; //!< Source block %tensor
-	permutation<N> m_perm; //!< Permutation
-	double m_c; //!< Scaling coefficient
-	block_index_space<N> m_bis; //!< Block %index space of output
-	dimensions<N> m_bidims; //!< Block %index dimensions
-	symmetry<N, double> m_sym; //!< Symmetry of output
-	assignment_schedule<N, double> m_sch;
+    btod_copy(const btod_copy<N>&);
+    btod_copy<N> &operator=(const btod_copy<N>&);
+};
+
+
+} // namespace libtensor
+
+
+#endif // LIBTENSOR_BTOD_COPY_H
+t_schedule<N, double> m_sch;
 
 public:
 	//!	\name Construction and destruction
@@ -83,7 +91,7 @@ public:
 	//@}
 
 protected:
-	virtual void compute_block(bool zero, dense_tensor_i<N, double> &blk,
+	virtual void compute_block(bool zero, tensor_i<N, double> &blk,
 		const index<N> &ib, const transf<N, double> &tr, double c,
 		cpu_pool &cpus);
 

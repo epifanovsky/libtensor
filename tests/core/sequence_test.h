@@ -6,7 +6,7 @@
 namespace libtensor {
 
 
-/**	\brief Tests the libtensor::sequence class
+/** \brief Tests the libtensor::sequence class
 
     \sa sequence<N, T>
 

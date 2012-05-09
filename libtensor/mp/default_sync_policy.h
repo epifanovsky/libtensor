@@ -6,14 +6,14 @@
 namespace libtensor {
 
 
-/**	\brief Default synchronization policy
+/** \brief Default synchronization policy
 
-	\ingroup libtensor_mp
+    \ingroup libtensor_mp
  **/
 class default_sync_policy {
 public:
-	typedef mutex mutex_t; //!< Mutex type
-	typedef rwlock rwlock_t; //!< Read-write lock type
+    typedef mutex mutex_t; //!< Mutex type
+    typedef rwlock rwlock_t; //!< Read-write lock type
 
 };
 

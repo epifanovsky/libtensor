@@ -1,56 +1,62 @@
 #ifndef LIBTENSOR_BTOD_APPLY_H
 #define LIBTENSOR_BTOD_APPLY_H
 
-#include <cmath>
-#include <map>
-#include "../defs.h"
-#include "../exception.h"
-#include "../timings.h"
-#include "../core/abs_index.h"
-#include "../core/allocator.h"
-#include "../core/orbit.h"
-#include "../core/orbit_list.h"
-#include "../symmetry/so_apply.h"
-#include "../tod/tod_apply.h"
-#include "../tod/tod_copy.h"
-#include "../tod/tod_set.h"
-#include "bad_block_index_space.h"
-#include "additive_btod.h"
+#include <libtensor/core/allocator.h>
+#include <libtensor/block_tensor/btod/btod_traits.h>
+#include <libtensor/block_tensor/bto/bto_apply.h>
+#include <libtensor/block_tensor/bto/impl/bto_apply_impl.h>
+#include <libtensor/dense_tensor/tod_apply.h>
 
 namespace libtensor {
 
 
-/**	\brief Applies a functor, a permutation and a scaling coefficient
-		to each element of the input tensor.
-	\tparam N Tensor order.
+template<typename Functor, typename Alloc>
+struct btod_apply_traits : public bto_traits<double> {
 
-	The operation scales and permutes the input %tensor and then applies
-	the functor to each element. The functor class needs to have
-	1. a proper copy constructor
-	  \code
-		  Functor(const Functor &f);
-	  \endcode
-	2. an implementation of
-	  \code
-		  double Functor::operator()(const double &a);
-	  \endcode
-	3. and implementations of
-	  \code
-		  bool Functor::is_asym();
-		  bool Functor::sign();
-	  \endcode
+    template<size_t N> struct tensor_type {
+        typedef dense_tensor<N, double, Alloc> type;
+    };
 
-	The latter two function should yield information about the symmetry of
-	the functor:
-	- is_asym() -- should return false, if the functor is symmetric or
-		anti-symmetric w.r.t. the origin, and true otherwise.
-	- sign() -- should return true, if the functor is symmetric w.r.t. the
-		origin, and false, if it is anti-symmetric. If it is neither the
-		the return value is arbitrary.
+    typedef Functor functor_type;
 
-	The symmetry of the result tensor is determined by the symmetry operation
-	so_apply. The use of this symmetry operation can result in the need to
-	construct %tensor blocks from forbidden input %tensor blocks. Forbidden
+    template<size_t N> struct to_apply_type {
+        typedef tod_apply<N, Functor> type;
+    };
+
+    static double zero() { return 0.0; }
+};
+
+
+template<size_t N, typename Functor, typename Alloc = std_allocator<double> >
+class btod_apply : public bto_apply<N, btod_apply_traits<Functor, Alloc> > {
+private:
+    typedef bto_apply<N, btod_apply_traits<Functor, Alloc> > bto_apply_t;
+    typedef typename bto_apply_t::scalar_tr_t scalar_tr_t;
+
+public:
+    btod_apply(block_tensor_i<N, double> &bta,
+            const Functor &fn, double c = 1.0) :
+        bto_apply_t(bta, fn, scalar_tr_t(c)) {
+    }
+
+    btod_apply(block_tensor_i<N, double> &bta, const Functor &fn,
+            const permutation<N> &p, double c = 1.0) :
+        bto_apply_t(bta, fn, p, scalar_tr_t(c)) {
+    }
+
+    virtual ~btod_apply() { }
+
+private:
+    btod_apply(const btod_apply<N, Functor, Alloc>&);
+    btod_apply<N, Functor, Alloc> &
+    operator=(const btod_apply<N, Functor, Alloc>&);
+};
+
+
+} // namespace libtensor
+
+#endif // LIBTENSOR_BTOD_APPLY_H
+from forbidden input %tensor blocks. Forbidden
 	%tensor blocks are then treated as if they where zero.
 
 	\ingroup libtensor_btod
@@ -124,7 +130,7 @@ public:
 	//@}
 
 protected:
-	virtual void compute_block(bool zero, dense_tensor_i<N, double> &blk,
+	virtual void compute_block(bool zero, tensor_i<N, double> &blk,
 		const index<N> &ib, const transf<N, double> &tr, double c,
 		cpu_pool &cpus);
 
@@ -191,7 +197,7 @@ void btod_apply<N, Functor, Alloc>::sync_off() {
 /*
 template<size_t N, typename Functor, typename Alloc>
 void btod_apply<N, Functor, Alloc>::compute_block(
-		dense_tensor_i<N, double> &blk, const index<N> &ib) {
+		tensor_i<N, double> &blk, const index<N> &ib) {
 
 	block_tensor_ctrl<N, double> ctrla(m_bta);
 	dimensions<N> bidimsa = m_bta.get_bis().get_block_index_dims();
@@ -218,7 +224,7 @@ void btod_apply<N, Functor, Alloc>::compute_block(
 	tra.scale(m_c);
 
 	if(!ctrla.req_is_zero_block(acia.get_index())) {
-		dense_tensor_i<N, double> &blka = ctrla.req_block(acia.get_index());
+		tensor_i<N, double> &blka = ctrla.req_block(acia.get_index());
 		tod_apply<N, Functor>(blka, m_fn,
 				tra.get_perm(), tra.get_coeff()).perform(blk);
 		ctrla.ret_block(acia.get_index());
@@ -230,7 +236,7 @@ void btod_apply<N, Functor, Alloc>::compute_block(
 
 template<size_t N, typename Functor, typename Alloc>
 void btod_apply<N, Functor, Alloc>::compute_block(bool zero,
-    dense_tensor_i<N, double> &blk, const index<N> &ib, const transf<N, double> &tr,
+    tensor_i<N, double> &blk, const index<N> &ib, const transf<N, double> &tr,
     double c, cpu_pool &cpus) {
 
 	static const char *method =
@@ -255,7 +261,7 @@ void btod_apply<N, Functor, Alloc>::compute_block(bool zero,
 	if (! oa.is_allowed()) {
 		double val = m_fn(0.0) * c;
 		if (val != 0.0) {
-			dense_tensor<N, double, Alloc> tblk(blk.get_dims());
+			tensor<N, double, Alloc> tblk(blk.get_dims());
 			tod_set<N>(val).perform(cpus, tblk);
 			tod_copy<N>(tblk).perform(cpus, false, 1.0, blk);
 		}
@@ -272,7 +278,7 @@ void btod_apply<N, Functor, Alloc>::compute_block(bool zero,
 	tra.transform(tr);
 
 	if(! ctrla.req_is_zero_block(acia.get_index())) {
-		dense_tensor_i<N, double> &blka = ctrla.req_block(acia.get_index());
+		tensor_i<N, double> &blka = ctrla.req_block(acia.get_index());
 		tod_apply<N, Functor>(blka, m_fn,
 				tra.get_perm(), tra.get_coeff()).perform(cpus, false, c, blk);
 		ctrla.ret_block(acia.get_index());
@@ -280,7 +286,7 @@ void btod_apply<N, Functor, Alloc>::compute_block(bool zero,
 	else {
 		double val = m_fn(0.0) * c * tra.get_coeff();
 		if (val != 0.0) {
-			dense_tensor<N, double, Alloc> tblk(blk.get_dims());
+			tensor<N, double, Alloc> tblk(blk.get_dims());
 			tod_set<N>(val).perform(cpus, tblk);
 			tod_copy<N>(tblk).perform(cpus, false, 1.0, blk);
 		}

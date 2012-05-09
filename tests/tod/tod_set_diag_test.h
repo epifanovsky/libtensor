@@ -6,18 +6,18 @@
 
 namespace libtensor {
 
-/**	\brief Tests the libtensor::tod_set_diag class
+/** \brief Tests the libtensor::tod_set_diag class
 
-	\ingroup libtensor_tests_tod
+    \ingroup libtensor_tests_tod
 **/
 class tod_set_diag_test : public libtest::unit_test {
 public:
-	virtual void perform() throw(libtest::test_exception);
+    virtual void perform() throw(libtest::test_exception);
 
 private:
-	template<size_t N>
-	void run_test(const dimensions<N> &dims, double d)
-		throw(libtest::test_exception);
+    template<size_t N>
+    void run_test(const dimensions<N> &dims, double d)
+        throw(libtest::test_exception);
 
 };
 

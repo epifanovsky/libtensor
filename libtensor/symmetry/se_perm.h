@@ -1,179 +1,143 @@
 #ifndef LIBTENSOR_SE_PERM_H
 #define LIBTENSOR_SE_PERM_H
 
-#include "../defs.h"
-#include "../core/mask.h"
-#include "../core/permutation.h"
-#include "../core/sequence.h"
-#include "../core/symmetry_element_i.h"
-#include "../core/transf.h"
-#include "bad_symmetry.h"
+#include <libtensor/core/symmetry_element_i.h>
 
 namespace libtensor {
 
+/** \brief Permutational %symmetry element
+    \tparam N Tensor order.
+    \tparam T Tensor element type.
 
-/**	\brief Permutational %symmetry element
-	\tparam N Tensor order.
-	\tparam T Tensor element type.
+    Permutation %symmetry elements establish relationships among block
+    %tensor blocks based on permuting the blocks' multi-indexes.
+    An appropriate transformation needs to be applied to the elements in
+    the block as well.
 
-	Permutation %symmetry elements establish relationships among block
-	%tensor blocks based on permuting the blocks' multi-indexes.
-	An appropriate transformation needs to be applied to the elements in
-	the block as well.
+    The element is initialized with a %permutation of %tensor indexes,
+    and a element-wise (scalar) transformation of %tensor elements. The
+    %permutation and the scalar transformation must agree, i.e. if the
+    n-th power of the permutation yields the identity permutation, the
+    n-th power of the scalar transformation also needs to be the identity
+    transformation. The agreement is tested upon the creation of the
+    element. If it is not satisfied, an exception is thrown.
 
-	The element is initialized with a %permutation of %tensor indexes,
-	which also specifies a transformation of %tensor elements. The
-	symmetric/anti-symmetric flag yields the scalar coefficient in
-	the transformation. The permutation and the flag must agree: when
-	the block transformation is applied onto itself multiple times such
-	that the original permutation is recovered, the scalar coefficient
-	must turn unity. The agreement is tested upon the creation of the
-	element. If it is not satisfied, an exception is thrown.
-
-	\ingroup libtensor_symmetry
+    \ingroup libtensor_symmetry
  **/
-template<size_t N, typename T>
+template< size_t N, typename T>
 class se_perm : public symmetry_element_i<N, T> {
 public:
-	static const char *k_clazz; //!< Class name
-	static const char *k_sym_type; //!< Symmetry type
+    static const char *k_clazz; //!< Class name
+    static const char *k_sym_type; //!< Symmetry type
 
 private:
-	permutation<N> m_perm; //!< Permutation
-	bool m_even; //!< Even/odd %permutation
-	bool m_symm; //!< Symmetric/anti-symmetric
-	transf<N, T> m_transf; //!< Block transformation
+    tensor_transf<N, T> m_transf; //!< Block transformation
+    size_t m_orderp; //!< Order of permutation
+    size_t m_orderc; //!< Order of scalar transformation
 
 public:
-	//!	\name Construction and destruction
-	//@{
+    //!    \name Construction and destruction
+    //@{
 
-	/**	\brief Initializes the %symmetry element
-		\param perm Permutation.
-		\param symm Symmetric/anti-symmetric.
-		\throw bad_symmetry If the permutation and the flag are
-			inconsistent.
-	 **/
-	se_perm(const permutation<N> &perm, bool symm);
+    /** \brief Initializes the %symmetry element
+        \param perm Permutation.
+        \param tr Scalar transformation.
+        \throw bad_symmetry If the permutation and the flag are
+            inconsistent.
+     **/
+    se_perm(const permutation<N> &perm, const scalar_transf<T> &tr);
 
-	/**	\brief Copy constructor
-	 **/
-	se_perm(const se_perm<N, T> &elem);
+    /** \brief Copy constructor
+     **/
+    se_perm(const se_perm<N, T> &elem) : m_transf(elem.m_transf),
+            m_orderp(elem.m_orderp), m_orderc(elem.m_orderc) { }
 
-	/**	\brief Virtual destructor
-	 **/
-	virtual ~se_perm() { }
+    /** \brief Virtual destructor
+     **/
+    virtual ~se_perm() { }
 
-	//@}
-
-
-	//!	\name Permutational %symmetry
-	//@{
-
-	const permutation<N> &get_perm() const {
-		return m_perm;
-	}
-
-	bool is_symm() const {
-		return m_symm;
-	}
-
-	const transf<N, T> &get_transf() const {
-		return m_transf;
-	}
+    //@}
 
 
-	//!	\name Implementation of symmetry_element_i<N, T>
-	//@{
+    //!    \name Permutational %symmetry
+    //@{
 
-	/**	\copydoc symmetry_element_i<N, T>::get_type()
-	 **/
-	virtual const char *get_type() const {
-		return k_sym_type;
-	}
+    const permutation<N> &get_perm() const {
+        return m_transf.get_perm();
+    }
 
-	/**	\copydoc symmetry_element_i<N, T>::clone()
-	 **/
-	virtual symmetry_element_i<N, T> *clone() const {
-		return new se_perm<N, T>(*this);
-	}
+    const scalar_transf<T> &get_transf() const {
+        return m_transf.get_scalar_tr();
+    }
 
-	/**	\copydoc symmetry_element_i<N, T>::is_valid_bis
-	 **/
-	virtual bool is_valid_bis(const block_index_space<N> &bis) const;
+    size_t get_orderp() const { return m_orderp; }
 
-	/**	\copydoc symmetry_element_i<N, T>::is_allowed
-	 **/
-	virtual bool is_allowed(const index<N> &idx) const {
+    size_t get_orderc() const { return m_orderc; }
 
-		return true;
-	}
+    //@}
 
-	/**	\copydoc symmetry_element_i<N, T>::apply(index<N>&)
-	 **/
-	virtual void apply(index<N> &idx) const {
+    //!    \name Implementation of symmetry_element_i<N, T>
+    //@{
 
-		idx.permute(m_transf.get_perm());
-	}
+    /** \copydoc symmetry_element_i<N, T>::get_type()
+     **/
+    virtual const char *get_type() const {
+        return k_sym_type;
+    }
 
-	/**	\copydoc symmetry_element_i<N, T>::apply(
-			index<N>&, transf<N, T>&)
-	 **/
-	virtual void apply(index<N> &idx, transf<N, T> &tr) const {
+    /** \copydoc symmetry_element_i<N, T>::clone()
+     **/
+    virtual symmetry_element_i<N, T> *clone() const {
+        return new se_perm<N, T>(*this);
+    }
 
-		idx.permute(m_transf.get_perm());
-		tr.transform(m_transf);
-	}
+    /** \copydoc symmetry_element_i<N, T>::is_valid_bis
+     **/
+    virtual bool is_valid_bis(const block_index_space<N> &bis) const;
 
-	//@}
+    /** \copydoc symmetry_element_i<N, T>::is_allowed
+     **/
+    virtual bool is_allowed(const index<N> &idx) const {
+
+        return true;
+    }
+
+    /** \copydoc symmetry_element_i<N, T>::apply(index<N>&)
+     **/
+    virtual void apply(index<N> &idx) const;
+
+    /** \copydoc symmetry_element_i<N, T>::apply(
+            index<N>&, transf<N, T>&)
+     **/
+    virtual void apply(index<N> &idx, tensor_transf<N, T> &tr) const;
+
+    //@}
 };
 
-
 template<size_t N, typename T>
-const char *se_perm<N, T>::k_clazz = "se_perm<N, T>";
-
-
-template<size_t N, typename T>
-const char *se_perm<N, T>::k_sym_type = "perm";
-
-
-template<size_t N, typename T>
-se_perm<N, T>::se_perm(const permutation<N> &perm, bool symm) :
-	m_perm(perm), m_symm(symm) {
-
-	static const char *method = "se_perm(const permutation<N>&, bool)";
-
-	if(perm.is_identity()) {
-		throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
-			"perm.is_identity()");
-	}
-
-	size_t n = 0;
-	permutation<N> p(m_perm);
-	do {
-		p.permute(m_perm); n++;
-	} while(!p.is_identity());
-
-	m_even = n % 2 == 0;
-	m_transf.permute(m_perm);
-	if(!m_even && !m_symm) m_transf.scale(-1);
-}
-
-
-template<size_t N, typename T>
-se_perm<N, T>::se_perm(const se_perm<N, T> &elem) :
-	m_perm(elem.m_perm), m_symm(elem.m_symm), m_transf(elem.m_transf) {
-
-}
-
-
-template<size_t N, typename T>
+inline
 bool se_perm<N, T>::is_valid_bis(const block_index_space<N> &bis) const {
 
-	block_index_space<N> bis2(bis);
-	bis2.permute(m_perm);
-	return bis2.equals(bis);
+    block_index_space<N> bis2(bis);
+    bis2.permute(m_transf.get_perm());
+    return bis2.equals(bis);
 }
+
+template<size_t N, typename T>
+inline
+void se_perm<N, T>::apply(index<N> &idx) const {
+
+    m_transf.apply(idx);
+}
+
+template<size_t N, typename T>
+inline
+void se_perm<N, T>::apply(index<N> &idx, tensor_transf<N, T> &tr) const {
+
+    m_transf.apply(idx);
+    tr.transform(m_transf);
+}
+
 
 
 } // namespace libtensor

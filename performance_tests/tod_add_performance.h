@@ -115,8 +115,6 @@ void tod_add_ref<R,DimData>::do_calculate()
 template<size_t R, size_t N, typename DimData>
 void tod_add_p1<R,N,DimData>::do_calculate()
 {
-    cpu_pool cpus(1);
-
 	DimData d;
 	dimensions<N> dim(d.dimA());
 	dense_tensor<N, double, std_allocator<double> > ta(dim), tb(dim);
@@ -133,14 +131,12 @@ void tod_add_p1<R,N,DimData>::do_calculate()
 	permutation<N> perm;
 	tod_add<N> add(tb,2.0);
 	add.prefetch();
-	add.perform(cpus, false, 1.0, ta);
+	add.perform(false, 1.0, ta);
 }
 
 template<size_t R, size_t N, typename DimData>
 void tod_add_p2<R,N,DimData>::do_calculate()
 {
-    cpu_pool cpus(1);
-
 	DimData d;
 	dimensions<N> dima(d.dimA()), dimb(d.dimA());
 	permutation<N> permb;
@@ -162,15 +158,13 @@ void tod_add_p2<R,N,DimData>::do_calculate()
 	// start tod_add calculation
 	tod_add<N> add(tb,permb,2.0);
 	add.prefetch();
-	add.perform(cpus, false, 1.0, ta);
+	add.perform(false, 1.0, ta);
 }
 
 
 template<size_t R, size_t N, typename DimData>
 void tod_add_p3<R,N,DimData>::do_calculate()
 {
-    cpu_pool cpus(1);
-
 	DimData d;
 	dimensions<N> dima(d.dimA()), dimb(d.dimA());
 	permutation<N> permb;
@@ -192,11 +186,15 @@ void tod_add_p3<R,N,DimData>::do_calculate()
 	// start tod_add calculation
 	tod_add<N> add(tb,permb,2.0);
 	add.prefetch();
-	add.perform(cpus, false, 1.0, ta);
+	add.perform(false, 1.0, ta);
 }
 
 
 } // namespace libtensor
+
+#endif // TOD_ADD_PERFORMANCE_H
+
+or
 
 #endif // TOD_ADD_PERFORMANCE_H
 

@@ -10,7 +10,7 @@ namespace libtensor {
  
     The timings class provides timing facilities for each class which
     inherit from it.
- 	
+     
     To obtain the timing facilities a class T has to
      - inherit from timings with the T as the template parameter;
      - friend class timings<T>;
@@ -23,15 +23,22 @@ namespace libtensor {
 template<typename T> class timings;
 
 
+/** \brief Tag for all timings in libtensor
+
+    \ingroup libtensor_core
+ **/
+struct libtensor_timings { };
+
+
 #ifdef LIBTENSOR_TIMINGS
 
 template<typename T>
-class timings : public libutil::timings<T, true> { };
+class timings : public libutil::timings<T, libtensor_timings, true> { };
 
 #else
 
 template<typename T>
-class timings : public libutil::timings<T, false> { };
+class timings : public libutil::timings<T, libtensor_timings, false> { };
 
 #endif // LIBTENSOR_TIMINGS
 

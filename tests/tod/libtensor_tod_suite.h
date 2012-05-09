@@ -8,6 +8,7 @@
 #include "tod_apply_test.h"
 #include "tod_btconv_test.h"
 #include "tod_compare_test.h"
+#include "to_contract2_dims_test.h"
 #include "tod_contract2_test.h"
 #include "tod_copy_test.h"
 #include "tod_diag_test.h"
@@ -26,8 +27,8 @@
 #include "tod_set_test.h"
 #include "tod_set_diag_test.h"
 #include "tod_set_elem_test.h"
-#include "tod_sum_test.h"
 #include "tod_trace_test.h"
+#include "tod_vmpriority_test.h"
 
 using libtest::unit_test_factory;
 
@@ -50,6 +51,7 @@ namespace libtensor {
 	\li libtensor::tod_apply_test
 	\li libtensor::tod_btconv_test
 	\li libtensor::tod_compare_test
+	\li libtensor::to_contract2_dims_test
 	\li libtensor::tod_contract2_test
 	\li libtensor::tod_copy_test
 	\li libtensor::tod_diag_test
@@ -68,8 +70,8 @@ namespace libtensor {
 	\li libtensor::tod_set_test
 	\li libtensor::tod_set_diag_test
 	\li libtensor::tod_set_elem_test
-	\li libtensor::tod_sum_test
 	\li libtensor::tod_trace_test
+	\li libtensor::tod_vmpriority_test
 **/
 class libtensor_tod_suite : public libtest::test_suite {
 private:
@@ -80,6 +82,7 @@ private:
 	unit_test_factory<tod_apply_test> m_utf_tod_apply;
 	unit_test_factory<tod_btconv_test> m_utf_tod_btconv;
 	unit_test_factory<tod_compare_test> m_utf_tod_compare;
+	unit_test_factory<to_contract2_dims_test> m_utf_to_contract2_dims;
 	unit_test_factory<tod_contract2_test> m_utf_tod_contract2;
 	unit_test_factory<tod_copy_test> m_utf_tod_copy;
 	unit_test_factory<tod_diag_test> m_utf_tod_diag;
@@ -98,8 +101,8 @@ private:
 	unit_test_factory<tod_set_test> m_utf_tod_set;
 	unit_test_factory<tod_set_diag_test> m_utf_tod_set_diag;
 	unit_test_factory<tod_set_elem_test> m_utf_tod_set_elem;
-	unit_test_factory<tod_sum_test> m_utf_tod_sum;
 	unit_test_factory<tod_trace_test> m_utf_tod_trace;
+	unit_test_factory<tod_vmpriority_test> m_utf_tod_vmpriority;
 
 public:
 	//!	Creates the suite

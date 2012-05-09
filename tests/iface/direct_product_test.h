@@ -5,22 +5,22 @@
 
 namespace libtensor {
 
-/**	\brief Tests the direct product expression
+/** \brief Tests the direct product expression
 
-	\ingroup libtensor_tests_iface
+    \ingroup libtensor_tests_iface
 **/
 class direct_product_test : public libtest::unit_test {
 public:
-	virtual void perform() throw(libtest::test_exception);
+    virtual void perform() throw(libtest::test_exception);
 
 private:
-	void test_label_1() throw(libtest::test_exception);
-	void test_tt_1() throw(libtest::test_exception);
-	void test_tt_2() throw(libtest::test_exception);
-	void test_te_1() throw(libtest::test_exception);
-	void test_et_1() throw(libtest::test_exception);
-	void test_ee_1() throw(libtest::test_exception);
-	void test_ee_2() throw(libtest::test_exception);
+    void test_label_1() throw(libtest::test_exception);
+    void test_tt_1() throw(libtest::test_exception);
+    void test_tt_2() throw(libtest::test_exception);
+    void test_te_1() throw(libtest::test_exception);
+    void test_et_1() throw(libtest::test_exception);
+    void test_ee_1() throw(libtest::test_exception);
+    void test_ee_2() throw(libtest::test_exception);
 
 };
 

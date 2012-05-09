@@ -9,15 +9,15 @@ macro(SetupMKL)
     set(CMAKE_REQUIRED_LIBRARIES ${MKL_LIBRARIES})
 
     check_cxx_source_compiles("
-#include <mkl.h>
+#include <mkl_vml_functions.h>
 int main() {
   double a[10], b[20], c[10]; vdAdd(10, a, b, c);
   return 0;
 }
-" HAVE_MKL_VDADD)
-    if(HAVE_MKL_VDADD)
-        add_definitions(-DHAVE_MKL_VDADD)
-    endif(HAVE_MKL_VDADD)
+" HAVE_MKL_VML)
+    if(HAVE_MKL_VML)
+        add_definitions(-DHAVE_MKL_VML)
+    endif(HAVE_MKL_VML)
 
     check_cxx_source_compiles("
 #include <mkl.h>

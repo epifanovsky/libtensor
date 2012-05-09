@@ -1,44 +1,45 @@
 #ifndef LIBTENSOR_BTOD_DIAG_H
 #define LIBTENSOR_BTOD_DIAG_H
 
-#include "../defs.h"
-#include "../not_implemented.h"
-#include "../core/abs_index.h"
-#include "../core/block_index_subspace_builder.h"
-#include "../core/block_tensor_i.h"
-#include "../core/block_tensor_ctrl.h"
-#include "../core/orbit.h"
-#include "../core/orbit_list.h"
-#include "../core/permutation_builder.h"
-#include "../symmetry/so_merge.h"
-#include "../symmetry/so_permute.h"
-#include "../tod/tod_copy.h"
-#include "../tod/tod_diag.h"
-#include "../tod/tod_set.h"
-#include "bad_block_index_space.h"
-#include "additive_btod.h"
-#include "transf_double.h"
+#include "scalar_transf_double.h"
+#include <libtensor/block_tensor/btod/btod_traits.h>
+#include <libtensor/block_tensor/bto/bto_diag.h>
+#include <libtensor/dense_tensor/tod_diag.h>
 
 namespace libtensor {
 
 
-/**	\brief Extracts a general diagonal from a block %tensor
-	\tparam N Tensor order.
-	\tparam M Diagonal order.
+struct btod_diag_traits : public bto_traits<double> {
 
-	\ingroup libtensor_btod
- **/
+    template<size_t N, size_t M> struct to_diag_type {
+        typedef tod_diag<N, M> type;
+    };
+
+};
+
+
 template<size_t N, size_t M>
-class btod_diag :
-	public additive_btod<N - M + 1>,
-	public timings< btod_diag<N, M> > {
+class btod_diag : public bto_diag<N, M, btod_diag_traits> {
+private:
+    typedef bto_diag<N, M, btod_diag_traits> bto_diag_t;
+    typedef typename bto_diag_t::scalar_tr_t scalar_tr_t;
 
 public:
-	static const char *k_clazz; //!< Class name
+    btod_diag(block_tensor_i<N, double> &bta, const mask<N> &m,
+            double c = 1.0) : bto_diag_t(bta, m, scalar_tr_t(c)) {
+    }
 
-public:
-	static const size_t k_ordera = N; //!< Order of the argument
-	static const size_t k_orderb = N - M + 1; //!< Order of the result
+    btod_diag(block_tensor_i<N, double> &bta, const mask<N> &m,
+            const permutation<N - M + 1> &p, double c = 1.0) :
+        bto_diag_t(bta, m, p, scalar_tr_t(c)) {
+    }
+};
+
+
+} // namespace libtensor
+
+#endif // LIBTENSOR_BTOD_DIAG_H
+ic const size_t k_orderb = N - M + 1; //!< Order of the result
 
 private:
 	block_tensor_i<N, double> &m_bta; //!< Input block %tensor
@@ -96,7 +97,7 @@ public:
 	using additive_btod<k_orderb>::perform;
 
 protected:
-	virtual void compute_block(bool zero, dense_tensor_i<k_orderb, double> &blk,
+	virtual void compute_block(bool zero, tensor_i<k_orderb, double> &blk,
 		const index<k_orderb> &ib, const transf<k_orderb, double> &trb,
 		double c, cpu_pool &cpus);
 
@@ -115,7 +116,7 @@ private:
 	 **/
 	void make_schedule();
 
-	void compute_block(dense_tensor_i<k_orderb, double> &blk,
+	void compute_block(tensor_i<k_orderb, double> &blk,
 		const index<k_orderb> &ib, const transf<k_orderb, double> &trb,
 		bool zero, double c, cpu_pool &cpus);
 
@@ -173,7 +174,7 @@ void btod_diag<N, M>::sync_off() {
 
 /*
 template<size_t N, size_t M>
-void btod_diag<N, M>::compute_block(dense_tensor_i<k_orderb, double> &blk,
+void btod_diag<N, M>::compute_block(tensor_i<k_orderb, double> &blk,
 	const index<k_orderb> &ib) {
 
 	transf<k_orderb, double> trb0;
@@ -182,7 +183,7 @@ void btod_diag<N, M>::compute_block(dense_tensor_i<k_orderb, double> &blk,
 
 
 template<size_t N, size_t M>
-void btod_diag<N, M>::compute_block(bool zero, dense_tensor_i<k_orderb, double> &blk,
+void btod_diag<N, M>::compute_block(bool zero, tensor_i<k_orderb, double> &blk,
 	const index<k_orderb> &ib, const transf<k_orderb, double> &trb,
 	double c, cpu_pool &cpus) {
 
@@ -191,7 +192,7 @@ void btod_diag<N, M>::compute_block(bool zero, dense_tensor_i<k_orderb, double> 
 
 
 template<size_t N, size_t M>
-void btod_diag<N, M>::compute_block(dense_tensor_i<k_orderb, double> &blk,
+void btod_diag<N, M>::compute_block(tensor_i<k_orderb, double> &blk,
 	const index<k_orderb> &ib, const transf<k_orderb, double> &trb,
 	bool zero, double c, cpu_pool &cpus) {
 
@@ -256,7 +257,7 @@ void btod_diag<N, M>::compute_block(dense_tensor_i<k_orderb, double> &blk,
 
 		//	Invoke the tensor operation
 		//
-		dense_tensor_i<k_ordera, double> &blka = ctrla.req_block(acia.get_index());
+		tensor_i<k_ordera, double> &blka = ctrla.req_block(acia.get_index());
 		double k = m_c * c * trb.get_coeff() / tra.get_coeff();
 		if(zero) tod_diag<N, M>(blka, m2, permb, k).perform(blk);
 		else tod_diag<N, M>(blka, m2, permb, k).perform(blk, 1.0);

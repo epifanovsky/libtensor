@@ -10,51 +10,51 @@ namespace libtensor {
 namespace labeled_btensor_expr {
 
 
-/**	\brief Evaluates an expression on the fly
-	\tparam N Tensor order.
-	\tparam T Tensor element type.
-	\tparam Core Expression core type.
+/** \brief Evaluates an expression on the fly
+    \tparam N Tensor order.
+    \tparam T Tensor element type.
+    \tparam Core Expression core type.
 
-	\ingroup libtensor_btensor_expr
+    \ingroup libtensor_btensor_expr
  **/
 template<size_t N, typename T, typename Core>
 class direct_eval {
 public:
-	//!	Expression type
-	typedef expr<N, T, Core> expression_t;
+    //!    Expression type
+    typedef expr<N, T, Core> expression_t;
 
 private:
-	direct_btensor<N, T> m_bt; //!< Direct block %tensor
+    direct_btensor<N, T> m_bt; //!< Direct block %tensor
 
 public:
-	//!	\name Construction and destruction
-	//@{
+    //!    \name Construction and destruction
+    //@{
 
-	direct_eval(const expression_t &expr, const letter_expr<N> &label) :
-		m_bt(label, expr) { }
+    direct_eval(const expression_t &expr, const letter_expr<N> &label) :
+        m_bt(label, expr) { }
 
-	~direct_eval() { }
+    ~direct_eval() { }
 
-	//@}
+    //@}
 
-	//!	\name Evaluation
-	//@{
+    //!    \name Evaluation
+    //@{
 
-	/**	\brief Evaluates the expression
-	 **/
-	void evaluate() { }
+    /** \brief Evaluates the expression
+     **/
+    void evaluate() { }
 
-	/**	\brief Cleans up the temporary block %tensor
-	 **/
-	void clean() { }
+    /** \brief Cleans up the temporary block %tensor
+     **/
+    void clean() { }
 
-	/**	\brief Returns the block %tensor
-	 **/
-	btensor_i<N, T> &get_btensor() {
-		return m_bt;
-	}
+    /** \brief Returns the block %tensor
+     **/
+    btensor_i<N, T> &get_btensor() {
+        return m_bt;
+    }
 
-	//@}
+    //@}
 
 };
 

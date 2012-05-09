@@ -4,7 +4,6 @@
 #include "bispace.h"
 #include "btensor.h"
 #include "direct_btensor.h"
-#include "mapped_btensor.h"
 #include "operators.h"
 #include "labeled_btensor_impl.h"
 

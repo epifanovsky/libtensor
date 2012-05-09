@@ -5,10 +5,12 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
+#include <libtensor/btod/scalar_transf_double.h>
 #include <libtensor/symmetry/se_perm.h>
-#include <libtensor/tod/tod_add.h>
-#include <libtensor/tod/tod_btconv.h>
-#include <libtensor/tod/tod_random.h>
+#include <libtensor/dense_tensor/tod_add.h>
+#include <libtensor/dense_tensor/tod_copy.h>
+#include <libtensor/dense_tensor/tod_btconv.h>
+#include <libtensor/dense_tensor/tod_random.h>
 #include "../compare_ref.h"
 #include "tod_btconv_test.h"
 
@@ -399,9 +401,10 @@ void tod_btconv_test::test_5() throw(libtest::test_exception) {
 	block_tensor_t bt(bis);
 	block_tensor_ctrl_t btctrl(bt);
 
-	permutation<2> perm1; perm1.permute(0, 1);
-	se_perm<2, double> cycle(perm1, true);
-	btctrl.req_symmetry().insert(cycle);
+    permutation<2> perm1; perm1.permute(0, 1);
+    scalar_transf<double> tr0;
+    se_perm<2, double> cycle(perm1, tr0);
+    btctrl.req_symmetry().insert(cycle);
 
 	tensor_t t(dims), t_ref(dims);
 
@@ -632,9 +635,10 @@ void tod_btconv_test::test_7() throw(libtest::test_exception) {
 	block_tensor_t bt(bis);
 	block_tensor_ctrl_t btctrl(bt);
 
-	permutation<2> perm1; perm1.permute(0, 1);
-	se_perm<2, double> cycle(perm1, true);
-	btctrl.req_symmetry().insert(cycle);
+    permutation<2> perm1; perm1.permute(0, 1);
+    scalar_transf<double> tr0;
+    se_perm<2, double> cycle(perm1, tr0);
+    btctrl.req_symmetry().insert(cycle);
 
 	tensor_t t(dims), t_ref(dims);
 
@@ -734,9 +738,10 @@ void tod_btconv_test::test_8() throw(libtest::test_exception) {
 	block_tensor_t bt(bis);
 	block_tensor_ctrl_t btctrl(bt);
 
-	permutation<2> perm1; perm1.permute(0, 1);
-	se_perm<2, double> cycle(perm1, true);
-	btctrl.req_symmetry().insert(cycle);
+    permutation<2> perm1; perm1.permute(0, 1);
+    scalar_transf<double> tr0;
+    se_perm<2, double> cycle(perm1, tr0);
+    btctrl.req_symmetry().insert(cycle);
 
 	tensor_t t(dims), t_ref(dims);
 
@@ -891,13 +896,14 @@ void tod_btconv_test::test_9() throw(libtest::test_exception) {
 	block_tensor_t bt(bis);
 	block_tensor_ctrl_t btctrl(bt);
 
-	permutation<4> cperm1, cperm2;
-	cperm1.permute(0, 1).permute(1, 2).permute(2, 3);
-	cperm2.permute(0, 1);
-	se_perm<4, double> cycle1(cperm1, true);
-	se_perm<4, double> cycle2(cperm2, true);
-	btctrl.req_symmetry().insert(cycle1);
-	btctrl.req_symmetry().insert(cycle2);
+    permutation<4> cperm1, cperm2;
+    cperm1.permute(0, 1).permute(1, 2).permute(2, 3);
+    cperm2.permute(0, 1);
+    scalar_transf<double> tr0;
+    se_perm<4, double> cycle1(cperm1, tr0);
+    se_perm<4, double> cycle2(cperm2, tr0);
+    btctrl.req_symmetry().insert(cycle1);
+    btctrl.req_symmetry().insert(cycle2);
 
 	tensor_t t(dims), t_ref(dims);
 
@@ -1140,13 +1146,14 @@ void tod_btconv_test::test_11() throw(libtest::test_exception) {
 	block_tensor_t bt(bis);
 	block_tensor_ctrl_t btctrl(bt);
 
-	permutation<4> cperm1, cperm2;
-	cperm1.permute(0, 2);
-	cperm2.permute(1, 3);
-	se_perm<4, double> cycle1(cperm1, true);
-	se_perm<4, double> cycle2(cperm2, true);
-	btctrl.req_symmetry().insert(cycle1);
-	btctrl.req_symmetry().insert(cycle2);
+    permutation<4> cperm1, cperm2;
+    cperm1.permute(0, 2);
+    cperm2.permute(1, 3);
+    scalar_transf<double> tr0;
+    se_perm<4, double> cycle1(cperm1, tr0);
+    se_perm<4, double> cycle2(cperm2, tr0);
+    btctrl.req_symmetry().insert(cycle1);
+    btctrl.req_symmetry().insert(cycle2);
 
 	tensor_t t(dims), t_ref(dims);
 
@@ -1245,8 +1252,6 @@ void tod_btconv_test::test_12() throw(libtest::test_exception) {
 
 	typedef std_allocator<double> allocator_t;
 
-	cpu_pool cpus(1);
-
 	try {
 
 	index<3> i1, i2;
@@ -1273,12 +1278,13 @@ void tod_btconv_test::test_12() throw(libtest::test_exception) {
 	i210[0] = 2; i210[1] = 1; i210[2] = 0;
 	i220[0] = 2; i220[1] = 2; i220[2] = 0;
 
-	//	Install symmetry in bta
-	//
-	ctrla.req_symmetry().insert(se_perm<3, double>(
-		permutation<3>().permute(0, 1), false));
-	ctrla.req_symmetry().insert(se_perm<3, double>(
-		permutation<3>().permute(1, 2), false));
+    //  Install symmetry in bta
+    //
+    scalar_transf<double> tr1(-1.);
+    ctrla.req_symmetry().insert(se_perm<3, double>(
+        permutation<3>().permute(0, 1), tr1));
+    ctrla.req_symmetry().insert(se_perm<3, double>(
+        permutation<3>().permute(1, 2), tr1));
 
 	//	Prepare symmetrized blocks
 	//
@@ -1287,57 +1293,57 @@ void tod_btconv_test::test_12() throw(libtest::test_exception) {
 		d022 = bis.get_block_dims(i022);
 	dense_tensor<3, double, allocator_t> t012(d012), t111(d111), t111a(d111),
 		t022(d022), t022a(d022);
-	tod_random<3>().perform(cpus, t012);
-	tod_random<3>().perform(cpus, t111a);
-	tod_random<3>().perform(cpus, t022a);
+	tod_random<3>().perform(t012);
+	tod_random<3>().perform(t111a);
+	tod_random<3>().perform(t022a);
 	tod_add<3> sym111(t111a);
 	sym111.add_op(t111a, permutation<3>().permute(0, 1), -1.0);
 	sym111.add_op(t111a, permutation<3>().permute(0, 2), -1.0);
-	sym111.perform(cpus, true, 1.0, t111);
+	sym111.perform(true, 1.0, t111);
 	tod_add<3> sym022(t022a);
 	sym022.add_op(t022a, permutation<3>().permute(1, 2), -1.0);
-	sym022.perform(cpus, true, 1.0, t022);
+	sym022.perform(true, 1.0, t022);
 
 	//	Copy [0,1,2]
 	//
-	tod_copy<3>(t012).perform(cpus, true, 1.0, ctrla.req_block(i012));
+	tod_copy<3>(t012).perform(true, 1.0, ctrla.req_block(i012));
 	ctrla.ret_block(i012);
-	tod_copy<3>(t012).perform(cpus, true, 1.0, ctrlb.req_block(i012));
+	tod_copy<3>(t012).perform(true, 1.0, ctrlb.req_block(i012));
 	ctrlb.ret_block(i012);
 	tod_copy<3>(t012, permutation<3>().permute(1, 2), -1.0).
-		perform(cpus, true, 1.0, ctrlb.req_block(i021));
+		perform(true, 1.0, ctrlb.req_block(i021));
 	ctrlb.ret_block(i021);
 	tod_copy<3>(t012, permutation<3>().permute(0, 1), -1.0).
-		perform(cpus, true, 1.0, ctrlb.req_block(i102));
+		perform(true, 1.0, ctrlb.req_block(i102));
 	ctrlb.ret_block(i102);
 	tod_copy<3>(t012, permutation<3>().permute(0, 1).permute(1, 2), 1.0).
-		perform(cpus, true, 1.0, ctrlb.req_block(i120));
+		perform(true, 1.0, ctrlb.req_block(i120));
 	ctrlb.ret_block(i120);
 	tod_copy<3>(t012, permutation<3>().permute(0, 2), -1.0).
-		perform(cpus, true, 1.0, ctrlb.req_block(i210));
+		perform(true, 1.0, ctrlb.req_block(i210));
 	ctrlb.ret_block(i210);
 	tod_copy<3>(t012, permutation<3>().permute(1, 2).permute(0, 1), 1.0).
-		perform(cpus, true, 1.0, ctrlb.req_block(i201));
+		perform(true, 1.0, ctrlb.req_block(i201));
 	ctrlb.ret_block(i201);
 
 	//	Copy [0,2,2]
 	//
-	tod_copy<3>(t022).perform(cpus, true, 1.0, ctrla.req_block(i022));
+	tod_copy<3>(t022).perform(true, 1.0, ctrla.req_block(i022));
 	ctrla.ret_block(i022);
-	tod_copy<3>(t022).perform(cpus, true, 1.0, ctrlb.req_block(i022));
+	tod_copy<3>(t022).perform(true, 1.0, ctrlb.req_block(i022));
 	ctrlb.ret_block(i022);
 	tod_copy<3>(t022, permutation<3>().permute(0, 1), -1.0).
-		perform(cpus, true, 1.0, ctrlb.req_block(i202));
+		perform(true, 1.0, ctrlb.req_block(i202));
 	ctrlb.ret_block(i202);
 	tod_copy<3>(t022, permutation<3>().permute(0, 1).permute(1, 2), 1.0).
-		perform(cpus, true, 1.0, ctrlb.req_block(i220));
+		perform(true, 1.0, ctrlb.req_block(i220));
 	ctrlb.ret_block(i220);
 
 	//	Copy [1,1,1]
 	//
-	tod_copy<3>(t111).perform(cpus, true, 1.0, ctrla.req_block(i111));
+	tod_copy<3>(t111).perform(true, 1.0, ctrla.req_block(i111));
 	ctrla.ret_block(i111);
-	tod_copy<3>(t111).perform(cpus, true, 1.0, ctrlb.req_block(i111));
+	tod_copy<3>(t111).perform(true, 1.0, ctrlb.req_block(i111));
 	ctrlb.ret_block(i111);
 
 	bta.set_immutable();

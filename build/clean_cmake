@@ -1,2 +1,0 @@
-#!/bin/bash
-rm -Rf CMakeCache.txt CMakeFiles libtensor tests Makefile

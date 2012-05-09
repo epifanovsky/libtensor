@@ -3,7 +3,7 @@
 #include <sstream>
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
-#include <libtensor/tod/tod_add.h>
+#include <libtensor/dense_tensor/tod_add.h>
 #include "../compare_ref.h"
 #include "tod_add_test.h"
 
@@ -33,8 +33,6 @@ void tod_add_test::test_exc() throw(libtest::test_exception) {
     static const char *testname = "tod_add_test::test_exc()";
 
     typedef std_allocator<double> allocator;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -66,7 +64,7 @@ void tod_add_test::test_exc() throw(libtest::test_exception) {
     ok = false;
     try {
         add.prefetch();
-        add.perform(cpus, true, 1.0, t2);
+        add.perform(true, 1.0, t2);
     } catch(exception& e) {
         ok = true;
     }
@@ -91,8 +89,6 @@ void tod_add_test::test_add_to_self_pqrs(size_t p, size_t q, size_t r, size_t s)
     std::string tn = tnss.str();
 
     typedef std_allocator<double> allocator;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -126,7 +122,7 @@ void tod_add_test::test_add_to_self_pqrs(size_t p, size_t q, size_t r, size_t s)
     tod_add<4> add(ta, 2.0);
     add.add_op(ta, 0.5);
     add.prefetch();
-    add.perform(cpus, true, 1.0, tc);
+    add.perform(true, 1.0, tc);
 
     compare_ref<4>::compare(tn.c_str(), tc, tc_ref, ta_max * k_thresh);
 
@@ -145,8 +141,6 @@ void tod_add_test::test_add_two_pqrs_pqrs(size_t p, size_t q, size_t r,
     std::string tn = tnss.str();
 
     typedef std_allocator<double> allocator;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -184,7 +178,7 @@ void tod_add_test::test_add_two_pqrs_pqrs(size_t p, size_t q, size_t r,
 
     tod_add<4> add(t2, 2.0);
     add.prefetch();
-    add.perform(cpus, false, 1.0, t1);
+    add.perform(false, 1.0, t1);
 
     compare_ref<4>::compare(tn.c_str(), t1, t1_ref, t2_max * k_thresh);
 
@@ -203,8 +197,6 @@ void tod_add_test::test_add_two_pqrs_qprs(size_t p, size_t q, size_t r,
     std::string tn = tnss.str();
 
     typedef std_allocator<double> allocator;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -255,7 +247,7 @@ void tod_add_test::test_add_two_pqrs_qprs(size_t p, size_t q, size_t r,
 
     tod_add<4> add(t2, p2, 0.1);
     add.prefetch();
-    add.perform(cpus, false, 1.0, t1);
+    add.perform(false, 1.0, t1);
 
     compare_ref<4>::compare(tn.c_str(), t1, t1_ref, t2_max * k_thresh);
 
@@ -274,8 +266,6 @@ void tod_add_test::test_add_two_pqrs_prsq(size_t p, size_t q, size_t r,
     std::string tn = tnss.str();
 
     typedef std_allocator<double> allocator;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -326,7 +316,7 @@ void tod_add_test::test_add_two_pqrs_prsq(size_t p, size_t q, size_t r,
 
     tod_add<4> add(t2, p2, 0.1);
     add.prefetch();
-    add.perform(cpus, false, 1.0, t1);
+    add.perform(false, 1.0, t1);
 
     compare_ref<4>::compare(tn.c_str(), t1, t1_ref, t2_max * k_thresh);
 
@@ -345,8 +335,6 @@ void tod_add_test::test_add_two_pqrs_qpsr(size_t p, size_t q, size_t r,
     std::string tn = tnss.str();
 
     typedef std_allocator<double> allocator;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -398,7 +386,7 @@ void tod_add_test::test_add_two_pqrs_qpsr(size_t p, size_t q, size_t r,
 
     tod_add<4> add(t2, p2, 0.1);
     add.prefetch();
-    add.perform(cpus, false, 1.0, t1);
+    add.perform(false, 1.0, t1);
 
     compare_ref<4>::compare(tn.c_str(), t1, t1_ref, t2_max * k_thresh);
 
@@ -417,8 +405,6 @@ void tod_add_test::test_add_two_ijkl_kjli(size_t ni, size_t nj, size_t nk,
     std::string tn = tnss.str();
 
     typedef std_allocator<double> allocator;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -473,7 +459,7 @@ void tod_add_test::test_add_two_ijkl_kjli(size_t ni, size_t nj, size_t nk,
 
     tod_add<4> op(t1, perm, c1);
     op.add_op(t2, c2);
-    op.perform(cpus, true, 1.0, t3);
+    op.perform(true, 1.0, t3);
 
     compare_ref<4>::compare(tn.c_str(), t3, t3_ref, t3_max * k_thresh);
 
@@ -492,8 +478,6 @@ void tod_add_test::test_add_mult(size_t p, size_t q, size_t r, size_t s)
     std::string tn = tnss.str();
 
     typedef std_allocator<double> allocator;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -553,7 +537,7 @@ void tod_add_test::test_add_mult(size_t p, size_t q, size_t r, size_t s)
     add.add_op(t3, p3, -4.0);
     add.add_op(t4, 0.2);
     add.prefetch();
-    add.perform(cpus, false, 0.5, t1);
+    add.perform(false, 0.5, t1);
 
     compare_ref<4>::compare(tn.c_str(), t1, t1_ref, t_max * k_thresh);
 
@@ -571,8 +555,6 @@ void tod_add_test::test_add_two_pq_qp(size_t p, size_t q)
     std::string tn = tnss.str();
 
     typedef std_allocator<double> allocator;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -621,9 +603,18 @@ void tod_add_test::test_add_two_pq_qp(size_t p, size_t q)
     tod_add<2> add(t2, 2.0);
     add.add_op(t3, p3, -1.0);
     add.prefetch();
-    add.perform(cpus, false, 0.5, t1);
+    add.perform(false, 0.5, t1);
 
     compare_ref<2>::compare(tn.c_str(), t1, t1_ref, t_max * k_thresh);
+
+    } catch(exception &e) {
+        fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
+    }
+}
+
+
+} // namespace libtensor
+k_thresh);
 
     } catch(exception &e) {
         fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
