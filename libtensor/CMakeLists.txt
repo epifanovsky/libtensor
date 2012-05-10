@@ -113,7 +113,7 @@ set(SRC
 )
 
 set(SRC_CUDA
-    dense_tensor/inst/dense_tensor_cuda_inst.C
+    dense_tensor/impl/dense_tensor_cuda.C
     tod/kernels/cuda_kern_copy_2d.cu
     tod/kernels/cuda_kern_copy_4d.cu
     tod/kernels/cuda_kern_copy_6d.cu

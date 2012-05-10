@@ -36,8 +36,6 @@ void tod_add_cuda_test::test_exc() throw(libtest::test_exception) {
     typedef std_allocator<double> std_allocator;
     typedef libvmm::cuda_allocator<double> cuda_allocator;
 
-    cpu_pool cpus(1);
-
     try {
 
     index<4> i1, i2;
@@ -69,7 +67,7 @@ void tod_add_cuda_test::test_exc() throw(libtest::test_exception) {
     ok = false;
     try {
         add.prefetch();
-        add.perform(cpus, true, 1.0, d_t2);
+        add.perform(true, 1.0, d_t2);
     } catch(exception& e) {
         ok = true;
     }
@@ -95,8 +93,6 @@ void tod_add_cuda_test::test_add_to_self_pqrs(size_t p, size_t q, size_t r, size
 
     typedef std_allocator<double> std_allocator;
     typedef libvmm::cuda_allocator<double> cuda_allocator;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -133,7 +129,7 @@ void tod_add_cuda_test::test_add_to_self_pqrs(size_t p, size_t q, size_t r, size
     tod_add_cuda<4> add(d_ta, 2.0);
     add.add_op(d_ta, 0.5);
     add.prefetch();
-    add.perform(cpus, true, 1.0, d_tc);
+    add.perform(true, 1.0, d_tc);
 
     copyTensorDeviceToHost(d_tc, h_tc);
 
@@ -155,8 +151,6 @@ void tod_add_cuda_test::test_add_two_pqrs_pqrs(size_t p, size_t q, size_t r,
 
     typedef std_allocator<double> std_allocator;
     typedef libvmm::cuda_allocator<double> cuda_allocator;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -197,7 +191,7 @@ void tod_add_cuda_test::test_add_two_pqrs_pqrs(size_t p, size_t q, size_t r,
 
     tod_add_cuda<4> add(d_t2, 2.0);
     add.prefetch();
-    add.perform(cpus, false, 1.0, d_t1);
+    add.perform(false, 1.0, d_t1);
 
     copyTensorDeviceToHost(d_t1, h_t1);
 
@@ -219,8 +213,6 @@ void tod_add_cuda_test::test_add_two_pqrs_qprs(size_t p, size_t q, size_t r,
 
     typedef std_allocator<double> std_allocator;
     typedef libvmm::cuda_allocator<double> cuda_allocator;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -274,7 +266,7 @@ void tod_add_cuda_test::test_add_two_pqrs_qprs(size_t p, size_t q, size_t r,
 
     tod_add_cuda<4> add(d_t2, p2, 0.1);
     add.prefetch();
-    add.perform(cpus, false, 1.0, d_t1);
+    add.perform(false, 1.0, d_t1);
 
     copyTensorDeviceToHost(d_t1, h_t1);
 
@@ -296,8 +288,6 @@ void tod_add_cuda_test::test_add_two_pqrs_prsq(size_t p, size_t q, size_t r,
 
     typedef std_allocator<double> std_allocator;
     typedef libvmm::cuda_allocator<double> cuda_allocator;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -352,7 +342,7 @@ void tod_add_cuda_test::test_add_two_pqrs_prsq(size_t p, size_t q, size_t r,
 
     tod_add_cuda<4> add(d_t2, p2, 0.1);
     add.prefetch();
-    add.perform(cpus, false, 1.0, d_t1);
+    add.perform(false, 1.0, d_t1);
 
     copyTensorDeviceToHost(d_t1, h_t1);
 
@@ -374,8 +364,6 @@ void tod_add_cuda_test::test_add_two_pqrs_qpsr(size_t p, size_t q, size_t r,
 
     typedef std_allocator<double> std_allocator;
     typedef libvmm::cuda_allocator<double> cuda_allocator;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -431,7 +419,7 @@ void tod_add_cuda_test::test_add_two_pqrs_qpsr(size_t p, size_t q, size_t r,
 
 	tod_add_cuda<4> add(d_t2, p2, 0.1);
 	add.prefetch();
-	add.perform(cpus, false, 1.0, d_t1);
+	add.perform(false, 1.0, d_t1);
 
 	copyTensorDeviceToHost(d_t1, h_t1);
 
@@ -453,8 +441,6 @@ void tod_add_cuda_test::test_add_two_ijkl_kjli(size_t ni, size_t nj, size_t nk,
 
     typedef std_allocator<double> std_allocator;
     typedef libvmm::cuda_allocator<double> cuda_allocator;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -514,7 +500,7 @@ void tod_add_cuda_test::test_add_two_ijkl_kjli(size_t ni, size_t nj, size_t nk,
 
     tod_add_cuda<4> op(d_t1, perm, c1);
     op.add_op(d_t2, c2);
-    op.perform(cpus, true, 1.0, d_t3);
+    op.perform(true, 1.0, d_t3);
 
     copyTensorDeviceToHost(d_t3, h_t3);
 
@@ -536,8 +522,6 @@ void tod_add_cuda_test::test_add_mult(size_t p, size_t q, size_t r, size_t s)
 
     typedef std_allocator<double> std_allocator;
     typedef libvmm::cuda_allocator<double> cuda_allocator;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -603,7 +587,7 @@ void tod_add_cuda_test::test_add_mult(size_t p, size_t q, size_t r, size_t s)
     add.add_op(d_t3, p3, -4.0);
     add.add_op(d_t4, 0.2);
     add.prefetch();
-    add.perform(cpus, false, 0.5, d_t1);
+    add.perform(false, 0.5, d_t1);
 
     copyTensorDeviceToHost(d_t1, h_t1);
 
@@ -624,8 +608,6 @@ void tod_add_cuda_test::test_add_two_pq_qp(size_t p, size_t q)
 
     typedef std_allocator<double> std_allocator;
     typedef libvmm::cuda_allocator<double> cuda_allocator;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -680,7 +662,7 @@ void tod_add_cuda_test::test_add_two_pq_qp(size_t p, size_t q)
     tod_add_cuda<2> add(d_t2, 2.0);
     add.add_op(d_t3, p3, -1.0);
     add.prefetch();
-    add.perform(cpus, false, 0.5, d_t1);
+    add.perform(false, 0.5, d_t1);
 
     copyTensorDeviceToHost(d_t1, h_t1);
 

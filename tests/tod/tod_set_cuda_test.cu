@@ -19,7 +19,6 @@ void tod_set_cuda_test::perform() throw(libtest::test_exception) {
 	 tnss << "tod_set_cuda_test::perform()";
 	 std::string tn = tnss.str();
 
-    cpu_pool cpus(1);
     double set_num = 5.0;
 
     try {
@@ -43,7 +42,7 @@ void tod_set_cuda_test::perform() throw(libtest::test_exception) {
 	}
 
     tod_set_cuda<4> op(set_num);
-	op.perform(cpus, d_t);
+	op.perform(d_t);
 
 	 copyTensorDeviceToHost(d_t, h_t);
 	compare_ref<4>::compare(tn.c_str(), h_t, h_t_ref, ta_max * k_thresh);

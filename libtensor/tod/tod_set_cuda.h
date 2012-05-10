@@ -2,12 +2,11 @@
 #define LIBTENSOR_TOD_SET_CUDA_H
 
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include "../mp/auto_cpu_lock.h"
 
 namespace libtensor {
 
 
-/**	\brief Sets all elements of a tensor to the given value
+/** \brief Sets all elements of a tensor to the given value
     \tparam N Tensor order.
 
     \ingroup libtensor_tod
@@ -24,12 +23,12 @@ public:
     tod_set_cuda(double v = 0.0);
 
     /**	\brief Performs the operation
-        \param cpus Pool of CPUs.
         \param t Output tensor.
      **/
-    void perform(cpu_pool &cpus, dense_tensor_i<N, double> &t);
+    void perform(dense_tensor_i<N, double> &t);
 
 };
+
 
 } // namespace libtensor
 
