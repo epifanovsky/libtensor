@@ -38,6 +38,9 @@ public:
     typedef typename Traits::template block_type<N>::type block_t;
 
 private:
+    typedef addition_schedule<N, Traits> schedule_t;
+
+private:
     class task: public libutil::task_i {
     private:
         additive_bto<N, Traits> &m_bto;
@@ -117,9 +120,6 @@ protected:
     void compute_block(additive_bto<N, Traits> &op, bool zero, block_t &blk,
         const index<N> &i, const tensor_transf<N, element_t> &tr,
         const element_t &c);
-
-private:
-    typedef addition_schedule<N, Traits> schedule_t;
 
 };
 

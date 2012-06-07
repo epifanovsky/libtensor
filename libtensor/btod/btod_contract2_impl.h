@@ -398,10 +398,10 @@ void btod_contract2<N, M, K>::make_schedule_task::merge_lists(
 
 
 template<size_t N, size_t M, size_t K>
-typename btod_contract2<N, M, K>::block_contr_list_t::iterator
+typename btod_contract2<N, M, K>::block_contr_list_iterator_t
 btod_contract2<N, M, K>::make_schedule_task::merge_node(
     const block_contr_t &bc, block_contr_list_t &lst,
-    const typename block_contr_list_t::iterator &begin) {
+    const block_contr_list_iterator_t &begin) {
 
     typename block_contr_list_t::iterator ilst = begin;
 

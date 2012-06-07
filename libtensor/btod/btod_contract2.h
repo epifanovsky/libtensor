@@ -81,6 +81,8 @@ private:
         }
     } block_contr_t;
     typedef std::list<block_contr_t> block_contr_list_t;
+    typedef typename std::list<block_contr_t>::iterator 
+        block_contr_list_iterator_t;
     typedef std::pair<block_contr_list_t, volatile bool>
     block_contr_list_pair_t;
     typedef std::map<size_t, block_contr_list_pair_t*> schedule_t;
@@ -139,9 +141,9 @@ private:
         void merge_schedule();
         void merge_lists(const block_contr_list_t &src,
                          block_contr_list_t &dst);
-        typename block_contr_list_t::iterator merge_node(
+        block_contr_list_iterator_t merge_node(
             const block_contr_t &bc, block_contr_list_t &lst,
-            const typename block_contr_list_t::iterator &begin);
+            const block_contr_list_iterator_t &begin);
     };
 
     class make_schedule_task_iterator : public libutil::task_iterator_i {
