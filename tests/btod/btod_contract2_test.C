@@ -2672,7 +2672,7 @@ throw(libtest::test_exception) {
     ss << "btod_contract2_test::test_contr_20b()";
     std::string tn = ss.str();
 
-    typedef libvmm::std_allocator<double> allocator_t;
+    typedef std_allocator<double> allocator_t;
 
     try {
 
