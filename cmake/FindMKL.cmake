@@ -79,6 +79,12 @@ endif(APPLE)
 #    MKL 10+ x86:       mkl_ia32 + mkl_core + mkl_intel
 #    MKL 10+ x86_64:    mkl_em64t + mkl_core + mkl_intel_lp64
 #
+if(APPLE)
+    set(MKL_LIBRARY_PATH ${MKL_LIB_PATH}/universal)
+    set(MKL_ARCH_A mkl_em64t)
+    set(MKL_INTEL_A mkl_intel_lp64)
+    set(MKL_SOLVER_A mkl_solver_lp64)
+else(APPLE)
 if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86_64")
     set(MKL_LIBRARY_PATH ${MKL_LIB_PATH}/em64t)
     set(MKL_ARCH_A mkl_em64t)
@@ -90,6 +96,7 @@ else(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86_64")
     set(MKL_INTEL_A mkl_intel)
     set(MKL_SOLVER_A mkl_solver)
 endif(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86_64")
+endif(APPLE)
 
 find_library(MKL_CORE_A_PATH mkl_core PATHS ${MKL_LIBRARY_PATH})
 find_library(MKL_ARCH_A_PATH ${MKL_ARCH_A} PATHS ${MKL_LIBRARY_PATH})
