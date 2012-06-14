@@ -2,7 +2,6 @@
 #include <sstream>
 #include <vector>
 #include <libtensor/core/allocator.h>
-#include <libtensor/mp/cpu_pool.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/tod_contract2.h>
 #include <libtensor/dense_tensor/tod_import_raw.h>
@@ -48,8 +47,6 @@ void diag_tod_contract2_part_test::test_ij_ik_kj(size_t ni, size_t nj,
 
     try {
 
-        cpu_pool cpus(1);
-
         index<2> ia1, ia2;
         ia2[0] = ni - 1; ia2[1] = nk - 1;
         dimensions<2> dimsa(index_range<2>(ia1, ia2));
@@ -82,11 +79,11 @@ void diag_tod_contract2_part_test::test_ij_ik_kj(size_t ni, size_t nj,
         dense_tensor<2, double, allocator_t> tc(dimsc), tc_ref(dimsc);
         tod_import_raw<2>(&da[0], dimsa, index_range<2>(ia1, ia2)).perform(ta);
         tod_import_raw<2>(&db[0], dimsb, index_range<2>(ib1, ib2)).perform(tb);
-        tod_set<2>().perform(cpus, tc);
+        tod_set<2>().perform(tc);
 
         contraction2<1, 1, 1> contr;
         contr.contract(1, 0);
-        tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc_ref);
+        tod_contract2<1, 1, 1>(contr, ta, tb).perform(true, 1.0, tc_ref);
 
         diag_tod_contract2_part<1, 1, 1>(contr, dtssa, dimsa, &da[0], dtssb,
             dimsb, &db[0]).perform(dtssc, dimsc, &dc[0], 1.0);
@@ -111,8 +108,6 @@ void diag_tod_contract2_part_test::test_ij_ii_ij(size_t ni, size_t nj)
     typedef std_allocator<double> allocator_t;
 
     try {
-
-        cpu_pool cpus(1);
 
         index<2> ia1, ia2;
         ia2[0] = ni - 1; ia2[1] = ni - 1;
@@ -155,11 +150,11 @@ void diag_tod_contract2_part_test::test_ij_ii_ij(size_t ni, size_t nj)
         dense_tensor<2, double, allocator_t> tc(dimsc), tc_ref(dimsc);
         tod_import_raw<2>(&da[0], dimsa, index_range<2>(ia1, ia2)).perform(ta);
         tod_import_raw<2>(&db[0], dimsb, index_range<2>(ib1, ib2)).perform(tb);
-        tod_set<2>().perform(cpus, tc);
+        tod_set<2>().perform(tc);
 
         contraction2<1, 1, 1> contr;
         contr.contract(1, 0);
-        tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc_ref);
+        tod_contract2<1, 1, 1>(contr, ta, tb).perform(true, 1.0, tc_ref);
 
         diag_tod_contract2_part<1, 1, 1>(contr, dtssa, dimsa, &rda[0], dtssb,
             dimsb, &db[0]).perform(dtssc, dimsc, &dc[0], 1.0);
@@ -183,8 +178,6 @@ void diag_tod_contract2_part_test::test_ii_ii_ij(size_t ni)
     typedef std_allocator<double> allocator_t;
 
     try {
-
-        cpu_pool cpus(1);
 
         index<2> ia1, ia2;
         ia2[0] = ni - 1; ia2[1] = ni - 1;
@@ -240,11 +233,11 @@ void diag_tod_contract2_part_test::test_ii_ii_ij(size_t ni)
         dense_tensor<2, double, allocator_t> tc(dimsc), tc_ref(dimsc);
         tod_import_raw<2>(&da[0], dimsa, index_range<2>(ia1, ia2)).perform(ta);
         tod_import_raw<2>(&db[0], dimsb, index_range<2>(ib1, ib2)).perform(tb);
-        tod_set<2>().perform(cpus, tc);
+        tod_set<2>().perform(tc);
 
         contraction2<1, 1, 1> contr;
         contr.contract(1, 0);
-        tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc_ref);
+        tod_contract2<1, 1, 1>(contr, ta, tb).perform(true, 1.0, tc_ref);
         {
             dense_tensor_wr_ctrl<2, double> cc_ref(tc_ref);
             double *pc = cc_ref.req_dataptr();
@@ -282,8 +275,6 @@ void diag_tod_contract2_part_test::test_ii_ii_ii(size_t ni)
     typedef std_allocator<double> allocator_t;
 
     try {
-
-        cpu_pool cpus(1);
 
         index<2> ia1, ia2;
         ia2[0] = ni - 1; ia2[1] = ni - 1;
@@ -339,11 +330,11 @@ void diag_tod_contract2_part_test::test_ii_ii_ii(size_t ni)
         dense_tensor<2, double, allocator_t> tc(dimsc), tc_ref(dimsc);
         tod_import_raw<2>(&da[0], dimsa, index_range<2>(ia1, ia2)).perform(ta);
         tod_import_raw<2>(&db[0], dimsb, index_range<2>(ib1, ib2)).perform(tb);
-        tod_set<2>().perform(cpus, tc);
+        tod_set<2>().perform(tc);
 
         contraction2<1, 1, 1> contr;
         contr.contract(1, 0);
-        tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc_ref);
+        tod_contract2<1, 1, 1>(contr, ta, tb).perform(true, 1.0, tc_ref);
 
         diag_tod_contract2_part<1, 1, 1>(contr, dtssa, dimsa, &rda[0], dtssb,
             dimsb, &rdb[0]).perform(dtssc, dimsc, &rdc[0], 1.0);

@@ -2,7 +2,6 @@
 #include <sstream>
 #include <vector>
 #include <libtensor/core/allocator.h>
-#include <libtensor/mp/cpu_pool.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/tod_contract2.h>
 #include <libtensor/dense_tensor/tod_import_raw.h>
@@ -53,8 +52,6 @@ void diag_tod_contract2_test::test_1_1_1_01(size_t ni, size_t nj, size_t nk)
     typedef std_allocator<double> allocator_t;
 
     try {
-
-        cpu_pool cpus(1);
 
         index<2> ia1, ia2;
         ia2[0] = ni - 1; ia2[1] = nk - 1;
@@ -120,7 +117,7 @@ void diag_tod_contract2_test::test_1_1_1_01(size_t ni, size_t nj, size_t nk)
         diag_tod_contract2<1, 1, 1>(contr, dta, dtb).perform(dtc);
         tod_conv_diag_tensor<2>(dtc).perform(tc);
 
-        tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc_ref);
+        tod_contract2<1, 1, 1>(contr, ta, tb).perform(true, 1.0, tc_ref);
 
         compare_ref<2>::compare(tn.c_str(), tc, tc_ref, 1e-14);
 
@@ -141,8 +138,6 @@ void diag_tod_contract2_test::test_1_1_1_02(size_t ni, size_t nj, size_t nk)
     typedef std_allocator<double> allocator_t;
 
     try {
-
-        cpu_pool cpus(1);
 
         index<2> ia1, ia2;
         ia2[0] = ni - 1; ia2[1] = nk - 1;
@@ -209,7 +204,7 @@ void diag_tod_contract2_test::test_1_1_1_02(size_t ni, size_t nj, size_t nk)
         diag_tod_contract2<1, 1, 1>(contr, dta, dtb).perform(dtc);
         tod_conv_diag_tensor<2>(dtc).perform(tc);
 
-        tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc_ref);
+        tod_contract2<1, 1, 1>(contr, ta, tb).perform(true, 1.0, tc_ref);
 
         compare_ref<2>::compare(tn.c_str(), tc, tc_ref, 1e-14);
 
@@ -230,8 +225,6 @@ void diag_tod_contract2_test::test_1_1_1_03(size_t ni, size_t nj)
     typedef std_allocator<double> allocator_t;
 
     try {
-
-        cpu_pool cpus(1);
 
         index<2> ia1, ia2;
         ia2[0] = ni - 1; ia2[1] = ni - 1;
@@ -305,7 +298,7 @@ void diag_tod_contract2_test::test_1_1_1_03(size_t ni, size_t nj)
         diag_tod_contract2<1, 1, 1>(contr, dta, dtb).perform(dtc);
         tod_conv_diag_tensor<2>(dtc).perform(tc);
 
-        tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc_ref);
+        tod_contract2<1, 1, 1>(contr, ta, tb).perform(true, 1.0, tc_ref);
 
         compare_ref<2>::compare(tn.c_str(), tc, tc_ref, 1e-14);
 
@@ -325,8 +318,6 @@ void diag_tod_contract2_test::test_1_1_1_04(size_t ni)
     typedef std_allocator<double> allocator_t;
 
     try {
-
-        cpu_pool cpus(1);
 
         index<2> ia1, ia2;
         ia2[0] = ni - 1; ia2[1] = ni - 1;
@@ -408,7 +399,7 @@ void diag_tod_contract2_test::test_1_1_1_04(size_t ni)
         diag_tod_contract2<1, 1, 1>(contr, dta, dtb).perform(dtc);
         tod_conv_diag_tensor<2>(dtc).perform(tc);
 
-        tod_contract2<1, 1, 1>(contr, ta, tb).perform(cpus, true, 1.0, tc_ref);
+        tod_contract2<1, 1, 1>(contr, ta, tb).perform(true, 1.0, tc_ref);
 
         compare_ref<2>::compare(tn.c_str(), tc, tc_ref, 1e-14);
 
