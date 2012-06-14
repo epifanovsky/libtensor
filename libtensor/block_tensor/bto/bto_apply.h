@@ -86,7 +86,7 @@ public:
         \param c Scaling coefficient.
      **/
     bto_apply(block_tensor_t &bta, const functor_t &fn,
-            const scalar_tr_t &c = scalar_tr_t());
+        const scalar_tr_t &c = scalar_tr_t());
 
     /** \brief Initializes the permuted element-wise operation
         \param bt Source block %tensor.
@@ -95,7 +95,7 @@ public:
         \param c Scaling coefficient.
      **/
     bto_apply(block_tensor_t &bta, const functor_t &fn,
-            const permutation<N> &p, const scalar_tr_t &c = scalar_tr_t());
+        const permutation<N> &p, const scalar_tr_t &c = scalar_tr_t());
 
     /** \brief Destructor
      **/
@@ -130,11 +130,11 @@ public:
 
 protected:
     virtual void compute_block(bool zero, block_t &blk, const index<N> &ib,
-            const tensor_tr_t &tr, const element_t &c, cpu_pool &cpus);
+        const tensor_tr_t &tr, const element_t &c);
 
 private:
     static block_index_space<N> mk_bis(const block_index_space<N> &bis,
-            const permutation<N> &perm);
+        const permutation<N> &perm);
     void make_schedule();
 
 private:

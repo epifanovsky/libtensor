@@ -3,7 +3,6 @@
 
 #include <memory>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include <libtensor/mp/auto_cpu_lock.h>
 #include <libtensor/tod/kernels/loop_list_runner.h>
 #include <libtensor/tod/kernels/kern_mul_generic.h>
 #include <libtensor/tod/contraction2_list_builder.h>
@@ -37,7 +36,7 @@ void tod_contract2<N, M, K>::prefetch() {
 
 
 template<size_t N, size_t M, size_t K>
-void tod_contract2<N, M, K>::perform(cpu_pool &cpus, bool zero, double d,
+void tod_contract2<N, M, K>::perform(bool zero, double d,
     dense_tensor_i<k_orderc, double> &tc) {
 
     tod_contract2<N, M, K>::start_timer();
@@ -66,8 +65,6 @@ void tod_contract2<N, M, K>::perform(cpu_pool &cpus, bool zero, double d,
     double *pc = cc.req_dataptr();
 
     {
-        auto_cpu_lock cpu(cpus);
-
         if(zero) {
             tod_contract2<N, M, K>::start_timer("zero");
             size_t szc = tc.get_dims().get_size();
@@ -85,8 +82,10 @@ void tod_contract2<N, M, K>::perform(cpu_pool &cpus, bool zero, double d,
 
         std::auto_ptr< kernel_base<2, 1> > kern(
             kern_mul_generic::match(d, loop_in, loop_out));
+        tod_contract2<N, M, K>::start_timer("kernel");
         tod_contract2<N, M, K>::start_timer(kern->get_name());
         loop_list_runner<2, 1>(loop_in).run(r, *kern);
+        tod_contract2<N, M, K>::stop_timer("kernel");
         tod_contract2<N, M, K>::stop_timer(kern->get_name());
     }
 

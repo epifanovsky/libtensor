@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_BTOD_CONTRACT2_IMPL_H
 #define LIBTENSOR_BTOD_CONTRACT2_IMPL_H
 
-#include <libtensor/mp/auto_cpu_lock.h>
+#include <libutil/thread_pool/thread_pool.h>
 #include "../core/block_index_subspace_builder.h"
 #include "../core/mask.h"
 #include "../symmetry/so_dirprod.h"
@@ -100,13 +100,12 @@ void btod_contract2<N, M, K>::compute_block(dense_tensor_i<N + M, double> &blk,
 
 template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::compute_block(bool zero,
-        dense_tensor_i<N + M, double> &blk, const index<N + M> &i,
-        const tensor_transf<N + M, double> &tr, const double &c,
-        cpu_pool &cpus) {
+    dense_tensor_i<N + M, double> &blk, const index<N + M> &i,
+    const tensor_transf<N + M, double> &tr, const double &c) {
 
     static const char *method = "compute_block(bool, tensor_i<N + M, double>&, "
-            "const index<N + M>&, const tensor_transf<N + M, double>&, "
-            "const double&, cpu_pool&)";
+        "const index<N + M>&, const tensor_transf<N + M, double>&, "
+        "const double&)";
 
     btod_contract2<N, M, K>::start_timer();
 
@@ -124,7 +123,7 @@ void btod_contract2<N, M, K>::compute_block(bool zero,
         }
 
         contract_block(isch->second->first, aic.get_index(), ca, cb,
-                       blk, tr, zero, c, cpus);
+           blk, tr, zero, c);
     } catch(...) {
         btod_contract2<N, M, K>::stop_timer();
         throw;
@@ -149,7 +148,6 @@ void btod_contract2<N, M, K>::make_schedule() {
     orbit_list<k_ordera, double> ola(ca.req_const_symmetry());
 
     std::vector<make_schedule_task*> tasklist;
-    task_batch tb;
     libutil::mutex sch_lock;
 
     typename orbit_list<k_ordera, double>::iterator ioa1 = ola.begin(),
@@ -163,7 +161,6 @@ void btod_contract2<N, M, K>::make_schedule() {
                     m_bta, m_btb, get_symmetry(), m_bidimsc, ola,
                     ioa1, ioa2, m_contr_sch, m_sch, sch_lock);
             tasklist.push_back(t);
-            tb.push(*t);
             n = 0;
             ioa1 = ioa2;
         }
@@ -173,18 +170,13 @@ void btod_contract2<N, M, K>::make_schedule() {
                 m_btb, get_symmetry(), m_bidimsc, ola, ioa1, ioa2,
                 m_contr_sch, m_sch, sch_lock);
         tasklist.push_back(t);
-        tb.push(*t);
     }
 
     btod_contract2<N, M, K>::stop_timer("prepare_sch");
 
-    try {
-        tb.wait();
-    } catch(...) {
-        for(size_t i = 0; i < tasklist.size(); i++) delete tasklist[i];
-        btod_contract2<N, M, K>::stop_timer("make_schedule");
-        throw;
-    }
+    make_schedule_task_iterator ti(tasklist);
+    make_schedule_task_observer to;
+    libutil::thread_pool::submit(ti, to);
 
     for(size_t i = 0; i < tasklist.size(); i++) delete tasklist[i];
 
@@ -241,9 +233,7 @@ const char *btod_contract2<N, M, K>::make_schedule_task::k_clazz =
 
 
 template<size_t N, size_t M, size_t K>
-void btod_contract2<N, M, K>::make_schedule_task::perform(cpu_pool &cpus) throw(exception) {
-
-    auto_cpu_lock cpu(cpus);
+void btod_contract2<N, M, K>::make_schedule_task::perform() {
 
     make_schedule_task::start_timer("local");
 
@@ -408,10 +398,10 @@ void btod_contract2<N, M, K>::make_schedule_task::merge_lists(
 
 
 template<size_t N, size_t M, size_t K>
-typename btod_contract2<N, M, K>::block_contr_list_t::iterator
+typename btod_contract2<N, M, K>::block_contr_list_iterator_t
 btod_contract2<N, M, K>::make_schedule_task::merge_node(
     const block_contr_t &bc, block_contr_list_t &lst,
-    const typename block_contr_list_t::iterator &begin) {
+    const block_contr_list_iterator_t &begin) {
 
     typename block_contr_list_t::iterator ilst = begin;
 
@@ -445,15 +435,31 @@ btod_contract2<N, M, K>::make_schedule_task::merge_node(
 
 
 template<size_t N, size_t M, size_t K>
+bool btod_contract2<N, M, K>::make_schedule_task_iterator::has_more() const {
+
+    return m_i != m_tl.end();
+}
+
+
+template<size_t N, size_t M, size_t K>
+libutil::task_i *btod_contract2<N, M, K>::make_schedule_task_iterator::get_next() {
+
+    libutil::task_i *t = *m_i;
+    ++m_i;
+    return t;
+}
+
+
+template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::contract_block(
     block_contr_list_t &lst, const index<k_orderc> &idxc,
     block_tensor_ctrl<k_ordera, double> &ca,
     block_tensor_ctrl<k_orderb, double> &cb,
     dense_tensor_i<k_orderc, double> &tc,
     const tensor_transf<k_orderc, double> &trc,
-    bool zero, double c, cpu_pool &cpus) {
+    bool zero, double c) {
 
-    if(zero) tod_set<k_orderc>().perform(cpus, tc);
+    if(zero) tod_set<k_orderc>().perform(tc);
 
     std::list< index<k_ordera> > blksa;
     std::list< index<k_orderb> > blksb;
@@ -481,7 +487,7 @@ void btod_contract2<N, M, K>::contract_block(
         contr.permute_c(trc.get_perm());
 
         double kc = ilst->m_c * trc.get_scalar_tr().get_coeff() * c;
-        tod_contract2<N, M, K>(contr, blka, blkb).perform(cpus, false, kc, tc);
+        tod_contract2<N, M, K>(contr, blka, blkb).perform(false, kc, tc);
     }
 
     for(typename std::list< index<k_ordera> >::const_iterator i =

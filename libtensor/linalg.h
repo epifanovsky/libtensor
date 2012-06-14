@@ -12,7 +12,11 @@
 #ifdef USE_ACML
 #include "linalg/lapack_acml.h"
 #else // USE_ACML
+#ifdef USE_ESSL
+#include "linalg/lapack_essl.h"
+#else // USE_ESSL
 #include "linalg/lapack_generic.h"
+#endif // USE_ESSL
 #endif // USE_ACML
 #endif // USE_MKL
 

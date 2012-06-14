@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_ADDITIVE_BTO_H
 #define LIBTENSOR_ADDITIVE_BTO_H
 
+#include <libutil/thread_pool/thread_pool.h>
 #include <libtensor/core/tensor_transf.h>
 #include "basic_bto.h"
 #include "addition_schedule.h"
@@ -37,7 +38,10 @@ public:
     typedef typename Traits::template block_type<N>::type block_t;
 
 private:
-    class task: public task_i {
+    typedef addition_schedule<N, Traits> schedule_t;
+
+private:
+    class task: public libutil::task_i {
     private:
         additive_bto<N, Traits> &m_bto;
         block_tensor_t &m_bt;
@@ -55,9 +59,25 @@ private:
                 m_bto(bto), m_bt(bt), m_bidims(bidims),
                 m_sch(sch), m_i(i), m_c(c) {
         }
-        virtual ~task() {
-        }
-        virtual void perform(cpu_pool &cpus) throw (exception);
+        virtual ~task() { }
+        virtual void perform();
+    };
+
+    class task_iterator : public libutil::task_iterator_i {
+    private:
+        std::vector<task*> &m_tl;
+        typename std::vector<task*>::iterator m_i;
+    public:
+        task_iterator(std::vector<task*> &tl) :
+            m_tl(tl), m_i(m_tl.begin()) { }
+        virtual bool has_more() const;
+        virtual libutil::task_i *get_next();
+    };
+
+    class task_observer : public libutil::task_observer_i {
+    public:
+        virtual void notify_start_task(libutil::task_i *t) { }
+        virtual void notify_finish_task(libutil::task_i *t) { }
     };
 
 public:
@@ -79,10 +99,8 @@ public:
     /** \brief Implementation of basic_btod<N>::compute_block
         \param blk Output %tensor.
         \param i Index of the block to compute.
-        \param cpus Pool of CPUs.
      **/
-    virtual void compute_block(block_t &blk,
-            const index<N> &i, cpu_pool &cpus);
+    virtual void compute_block(block_t &blk, const index<N> &i);
 
     /** \brief Computes a single block of the result and adds it to
             the output %tensor
@@ -91,22 +109,17 @@ public:
         \param i Index of the block to compute.
         \param tr Transformation of the block.
         \param c Scaling coefficient.
-        \param cpus Pool of CPUs.
      **/
     virtual void compute_block(bool zero, block_t &blk, const index<N> &i,
-            const tensor_transf<N, element_t> &tr, const element_t &c,
-            cpu_pool &cpus) = 0;
+        const tensor_transf<N, element_t> &tr, const element_t &c) = 0;
 
 protected:
     /** \brief Invokes compute_block on another additive operation;
             allows derived classes to call other additive operations
      **/
     void compute_block(additive_bto<N, Traits> &op, bool zero, block_t &blk,
-            const index<N> &i, const tensor_transf<N, element_t> &tr,
-            const element_t &c, cpu_pool &cpus);
-
-private:
-    typedef addition_schedule<N, Traits> schedule_t;
+        const index<N> &i, const tensor_transf<N, element_t> &tr,
+        const element_t &c);
 
 };
 

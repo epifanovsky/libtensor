@@ -3,7 +3,6 @@
 
 #include <libtensor/timings.h>
 #include <libtensor/core/permutation.h>
-#include <libtensor/mp/cpu_pool.h>
 #include "diag_tensor_i.h"
 
 namespace libtensor {
@@ -52,13 +51,11 @@ public:
     { }
 
     /** \brief Performs the operation
-        \param cpus Pool of CPUs.
         \param zero Zero output before copying.
         \param c Scaling factor.
         \param tb Output tensor.
      **/
-    void perform(cpu_pool &cpus, bool zero, double c,
-        diag_tensor_wr_i<N, double> &tb);
+    void perform(bool zero, double c, diag_tensor_wr_i<N, double> &tb);
 
 private:
     diag_tod_copy(const diag_tod_copy&);

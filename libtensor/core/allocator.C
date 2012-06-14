@@ -1,5 +1,3 @@
-#ifdef LIBTENSOR_INSTANTIATE_TEMPLATES
-
 #include "allocator.h"
 #include "allocator_impl.h"
 
@@ -14,5 +12,3 @@ template class std_allocator<double>;
 
 
 } // namespace libtensor
-
-#endif // LIBTENSOR_INSTANTIATE_TEMPLATES

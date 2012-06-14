@@ -4,7 +4,6 @@
 #include <libtensor/timings.h>
 #include <libtensor/tod/loop_list_add.h>
 #include <libtensor/tod/loop_list_copy.h>
-#include <libtensor/mp/cpu_pool.h>
 #include "dense_tensor_i.h"
 
 namespace libtensor {
@@ -91,13 +90,11 @@ public:
     void prefetch();
 
     /** \brief Runs the operation
-        \param cpus CPU pool.
         \param zero Overwrite/add to flag.
         \param c Scaling coefficient.
         \param tb Output tensor.
      **/
-    void perform(cpu_pool &cpus, bool zero, double c,
-        dense_tensor_wr_i<N, double> &tb);
+    void perform(bool zero, double c, dense_tensor_wr_i<N, double> &tb);
 
     //@}
 
@@ -109,7 +106,7 @@ private:
         const permutation<N> &perm);
 
     template<typename Base>
-    void do_perform(cpu_pool &cpus, double c, dense_tensor_wr_i<N,double> &t);
+    void do_perform(double c, dense_tensor_wr_i<N,double> &t);
 
     template<typename Base>
     void build_loop(typename Base::list_t &loop, const dimensions<N> &dimsa,

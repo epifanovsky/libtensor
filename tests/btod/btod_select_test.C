@@ -230,8 +230,6 @@ void btod_select_test::test_3a(size_t n,
     typedef tod_select<2, ComparePolicy> tod_select_t;
     typedef btod_select<2, ComparePolicy> btod_select_t;
 
-    cpu_pool cpus(1);
-
     try {
 
     index<2> i1, i2; i2[0] = 8; i2[1] = 8;
@@ -263,7 +261,7 @@ void btod_select_test::test_3a(size_t n,
             dense_tensor_i<2, double> &ta = ca.req_block(ol.get_index(it)),
                     &tb = cb.req_block(ol.get_index(it));
 
-            tod_copy<2>(ta).perform(cpus, true, 1.0, tb);
+            tod_copy<2>(ta).perform(true, 1.0, tb);
 
             ca.ret_block(ol.get_index(it));
             cb.ret_block(ol.get_index(it));
@@ -789,8 +787,6 @@ void btod_select_test::test_5(size_t n) throw(libtest::test_exception) {
     typedef tod_select<2, ComparePolicy> tod_select_t;
     typedef btod_select<2, ComparePolicy> btod_select_t;
 
-    cpu_pool cpus(1);
-
     try {
 
     index<2> i1, i2; i2[0] = 9; i2[1] = 9;
@@ -853,7 +849,7 @@ void btod_select_test::test_5(size_t n) throw(libtest::test_exception) {
             dense_tensor_i<2, double> &ta = ca.req_block(ai.get_index()),
                     &tb = cb.req_block(ib);
             tod_copy<2>(ta, tra.get_perm(), tra.get_scalar_tr().get_coeff()).
-                    perform(cpus, true, 1.0, tb);
+                    perform(true, 1.0, tb);
 
             ca.ret_block(ai.get_index());
             cb.ret_block(ib);

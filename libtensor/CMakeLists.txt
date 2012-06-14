@@ -9,6 +9,7 @@ set(SRC
     core/orbit_list.C
     btod/btod_cholesky.C
     btod/cholesky.C
+    btod/cholesky_ao.C
     btod/btod_diagonalize.C
     btod/btod_tridiagonalize.C
     symmetry/point_group_table.C
@@ -214,20 +215,11 @@ set(SRC_INST
     diag_tensor/impl/diag_tod_set.C
 )
 
-set(SRC_MP
-    mp/cpu_pool.C
-    mp/task_dispatcher.C
-    mp/task_queue.C
-    mp/worker.C
-    mp/worker_group.C
-    mp/worker_pool.C
-)
-
 set(SRC_QCHEM
     linalg/qchem/linalg_base_level1_qchem.C
 )
 
-add_library(tensor ${SRC} ${SRC_LINALG} ${SRC_INST} ${SRC_MP})
+add_library(tensor ${SRC} ${SRC_LINALG} ${SRC_INST})
 if(QCHEM_SOURCE_DIR)
     add_library(tensor_qchem ${SRC_QCHEM})
     add_dependencies(tensor_qchem tensor)
@@ -241,7 +233,7 @@ set_property(TARGET tensor APPEND PROPERTY
     COMPILE_DEFINITIONS_DEBUG LIBTENSOR_DEBUG)
 if(HAVE_LIBVMM)
     set_property(TARGET tensor APPEND PROPERTY
-        COMPILE_DEFINITIONS HAVE_LIBVMM)
+        COMPILE_DEFINITIONS WITH_LIBVMM)
     set_property(TARGET tensor APPEND PROPERTY
         COMPILE_DEFINITIONS_DEBUG LIBVMM_DEBUG)
 endif(HAVE_LIBVMM)

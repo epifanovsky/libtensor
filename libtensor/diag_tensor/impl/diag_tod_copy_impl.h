@@ -10,7 +10,7 @@ const char *diag_tod_copy<N>::k_clazz = "diag_tod_copy<N>";
 
 
 template<size_t N>
-void diag_tod_copy<N>::perform(cpu_pool &cpus, bool zero, double c,
+void diag_tod_copy<N>::perform(bool zero, double c,
     diag_tensor_wr_i<N, double> &tb) {
 
     diag_tod_copy<N>::start_timer();

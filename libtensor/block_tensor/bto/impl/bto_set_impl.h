@@ -2,7 +2,6 @@
 #define LIBTENSOR_BTO_SET_IMPL_H
 
 #include <libtensor/core/orbit_list.h>
-#include <libtensor/mp/cpu_pool.h>
 
 namespace libtensor {
 
@@ -14,8 +13,6 @@ void bto_set<N, Traits>::perform(block_tensor_type &bt) {
         block_tensor_ctrl_type;
     typedef typename Traits::template block_type<N>::type block_type;
     typedef typename Traits::template to_set_type<N>::type to_set;
-
-    cpu_pool cpus(1);
 
     block_tensor_ctrl_type ctrl(bt);
 
@@ -29,7 +26,7 @@ void bto_set<N, Traits>::perform(block_tensor_type &bt) {
             ctrl.req_zero_block(bi);
         } else {
             block_type &blk = ctrl.req_block(bi);
-            to_set(m_v).perform(cpus, blk);
+            to_set(m_v).perform(blk);
             ctrl.ret_block(bi);
         }
     }

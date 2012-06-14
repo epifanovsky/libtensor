@@ -2,7 +2,6 @@
 #define LIBTENSOR_TOD_MULT_H
 
 #include <libtensor/timings.h>
-#include <libtensor/mp/cpu_pool.h>
 #include <libtensor/tod/loop_list_elem.h>
 #include "dense_tensor_i.h"
 
@@ -59,12 +58,11 @@ public:
 
     void prefetch();
 
-    void perform(cpu_pool &cpus, bool zero, double c,
-        dense_tensor_wr_i<N, double> &tc);
+    void perform(bool zero, double c, dense_tensor_wr_i<N, double> &tc);
 
-    void perform(cpu_pool &cpus, dense_tensor_wr_i<N, double> &tc);
+    void perform(dense_tensor_wr_i<N, double> &tc);
 
-    void perform(cpu_pool &cpus, dense_tensor_wr_i<N, double> &tc, double c);
+    void perform(dense_tensor_wr_i<N, double> &tc, double c);
 
 private:
     void do_perform(dense_tensor_wr_i<N, double> &tc, bool doadd, double c);

@@ -2,8 +2,8 @@
 #define LIBTENSOR_TOD_ADD_H
 
 #include <list>
+#include <libtensor/timings.h>
 #include <libtensor/dense_tensor/dense_tensor_i.h>
-#include <libtensor/mp/cpu_pool.h>
 
 namespace libtensor {
 
@@ -74,8 +74,7 @@ public:
 
     /** \brief Performs the operation
      **/
-    void perform(cpu_pool &cpus, bool zero, double c,
-        dense_tensor_wr_i<N, double> &tb);
+    void perform(bool zero, double c, dense_tensor_wr_i<N, double> &tb);
 
 private:
     /** \brief Adds an operand (internal)

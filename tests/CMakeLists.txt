@@ -24,7 +24,6 @@ set(SRC_CORE
     core/sequence_generator_test.C
     core/symmetry_test.C
     core/symmetry_element_set_test.C
-    core/task_batch_test.C
     core/transf_list_test.C
     core/version_test.C
 )
@@ -113,6 +112,7 @@ set(SRC_SYMMETRY
     symmetry/so_reduce_se_part_test.C
     symmetry/so_reduce_se_perm_test.C
     symmetry/so_reduce_test.C
+    symmetry/so_symmetrize_se_label_test.C
     symmetry/so_symmetrize_test.C
     symmetry/symmetry_element_set_adapter_test.C
 )

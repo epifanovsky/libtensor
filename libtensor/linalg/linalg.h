@@ -15,6 +15,12 @@ namespace libtensor {
 typedef linalg_base_acml linalg_base;
 } // namespace libtensor
 
+#elif defined(USE_ESSL)
+#include "essl/linalg_base_essl.h"
+namespace libtensor {
+typedef linalg_base_essl linalg_base;
+} // namespace libtensor
+
 #elif defined(USE_GSL)
 #include "gsl/linalg_base_gsl.h"
 namespace libtensor {

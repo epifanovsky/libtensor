@@ -2,6 +2,7 @@
 
 namespace libtensor {
 
+
 libtensor_core_suite::libtensor_core_suite() :
     libtest::test_suite("libtensor_core") {
 
@@ -28,10 +29,9 @@ libtensor_core_suite::libtensor_core_suite() :
     add_test("sequence_generator", m_utf_sequence_generator);
     add_test("symmetry", m_utf_symmetry);
     add_test("symmetry_element_set", m_utf_symmetry_element_set);
-    add_test("task_batch", m_utf_task_batch);
     add_test("transf_list", m_utf_transf_list);
     add_test("version", m_utf_version);
 }
 
-}
 
+}

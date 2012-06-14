@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_SO_SYMMETRIZE_SE_LABEL_IMPL_H
 #define LIBTENSOR_SO_SYMMETRIZE_SE_LABEL_IMPL_H
 
+#include <libtensor/core/permutation_generator.h>
 #include "../bad_symmetry.h"
 
 namespace libtensor {
@@ -24,43 +25,133 @@ symmetry_operation_impl< so_symmetrize<N, T>, se_label<N, T> >::do_perform(
     adapter_t g1(params.grp1);
     params.grp2.clear();
 
-    size_t nidx = 0;
-    sequence<N, size_t> map;
-    for (register size_t i = 0; i < N; i++) {
-        map[i] = i;
-        nidx = std::max(nidx, params.symidx[i]);
-    }
+    size_t ngrp = 0, nidx = 0;
+     for (register size_t i = 0; i < N; i++) {
+         ngrp = std::max(ngrp, params.idxgrp[i]);
+         nidx = std::max(nidx, params.symidx[i]);
+     }
+     if (ngrp < 2) return;
 
-    for(typename adapter_t::iterator it = g1.begin(); it != g1.end(); it++) {
+     // Mask for permutation generator: permuted are only index groups
+     mask<N> msk;
+     for (register size_t i = ngrp; i < N; i++) msk[i] = true;
 
-        const se_label<N, T> &e1 = g1.get_elem(it);
-        const block_labeling<N> &bl1 = e1.get_labeling();
-        const evaluation_rule<N> &r1 = e1.get_rule();
+     // Maps for symmetrization and transfer of block labels.
+     sequence<N, size_t> map, idmap;
+     for (register size_t i = 0; i < N; i++) {
+         idmap[i] = i;
+         if (params.idxgrp[i] == 0) continue;
+         map[(params.idxgrp[i] - 1) * nidx + params.symidx[i] - 1] = i;
+     }
 
-        for (register size_t i = 1; i <= nidx; i++) {
-            register size_t j = 0;
-            for (; j < N && params.symidx[j] != i; j++) ;
+     for(typename adapter_t::iterator it = g1.begin(); it != g1.end(); it++) {
 
-            size_t typej = bl1.get_dim_type(j);
-            j++;
-            for (; j < N; j++) {
-                if (params.symidx[j] != i) continue;
-                if (bl1.get_dim_type(j) != typej)
-                    throw bad_symmetry(g_ns, k_clazz, method,
-                            __FILE__, __LINE__, "Incompatible dimensions.");
-            }
-        }
+         const se_label<N, T> &e1 = g1.get_elem(it);
+         const block_labeling<N> &bl1 = e1.get_labeling();
+         const evaluation_rule<N> &r1 = e1.get_rule();
 
-        se_label<N, T> e2(bl1.get_block_index_dims(), e1.get_table_id());
-        block_labeling<N> &bl2 = e2.get_labeling();
-        transfer_labeling(bl1, map, bl2);
-        evaluation_rule<N> r2(r1);
-        r2.symmetrize(params.idxgrp, params.symidx);
-        e2.set_rule(r2);
+         for (register size_t i = 0; i < nidx; i++) {
 
-        params.grp2.insert(e2);
-    }
+             size_t typei = bl1.get_dim_type(map[i]);
+             size_t k = i + nidx;
+             for (register size_t j = 1; j < ngrp; j++) {
+                 if (bl1.get_dim_type(map[k]) != typei)
+                     throw bad_symmetry(g_ns, k_clazz, method,
+                             __FILE__, __LINE__, "Incompatible dimensions.");
+
+                 k += nidx;
+             }
+         }
+
+         se_label<N, T> e2(bl1.get_block_index_dims(), e1.get_table_id());
+         block_labeling<N> &bl2 = e2.get_labeling();
+         transfer_labeling(bl1, idmap, bl2);
+
+         evaluation_rule<N> r2;
+         // Symmetrize the sequences
+         std::vector< std::vector<size_t> > perm_seq(r1.get_n_sequences());
+
+         // Add the existing sequences to r2
+         for (size_t sno = 0; sno < r1.get_n_sequences(); sno++) {
+             perm_seq[sno].push_back(r2.add_sequence(r1[sno]));
+         }
+
+         // Now generate all permuted sequences
+         size_t nperm = 1;
+         permutation_generator<N> pg(msk);
+         permutation<N> pprev, px;
+         while (pg.next()) {
+             // Determine pair which was permuted in this step
+             const permutation<N> &p = pg.get_perm();
+             register size_t i = 0, i0, i1;
+             for (; i < N && p[i] == pprev[i]; i++) ;
+             i0 = i++;
+             for (; i < N && p[i] == pprev[i]; i++) ;
+             i1 = i;
+             pprev.permute(i0, i1);
+
+             // Construct index permutation for this step
+             i0 *= nidx; i1 *= nidx;
+             for (i = 0; i < nidx; i++, i0++, i1++)
+                 px.permute(map[i0], map[i1]);
+
+             // Create permuted sequences
+             for (size_t sno = 0; sno < r1.get_n_sequences(); sno++) {
+
+                 const sequence<N, size_t> &seq = r1[sno];
+                 sequence<N, size_t> pseq(seq);
+                 px.apply(pseq);
+                 for (i = 0; i < N; i++) { if (pseq[i] != seq[i]) break; }
+                 if (i == N) {
+                     perm_seq[sno].push_back(perm_seq[sno][0]);
+                 }
+                 else {
+                     perm_seq[sno].push_back(r2.add_sequence(pseq));
+                 }
+             }
+             nperm++;
+         }
+
+         // Symmetrize the products
+         for (size_t pno = 0; pno < r1.get_n_products(); pno++) {
+
+             // Product to be symmetrized
+             typename evaluation_rule<N>::iterator it = r1.begin(pno);
+             size_t iperm = 0;
+             size_t ip = r2.add_product(perm_seq[r1.get_seq_no(it)][iperm],
+                     r1.get_intrinsic(it), r1.get_target(it));
+             it++;
+             for (; it != r1.end(pno); it++) {
+                 r2.add_to_product(ip, perm_seq[r1.get_seq_no(it)][iperm],
+                         r1.get_intrinsic(it), r1.get_target(it));
+             }
+             iperm++;
+             for ( ; iperm != nperm; iperm++) {
+                 // Does the permuted product differ from the original?
+                 for (it = r1.begin(pno); it != r1.end(pno); it++) {
+                     if (perm_seq[r1.get_seq_no(it)][iperm] !=
+                             perm_seq[r1.get_seq_no(it)][0]) break;
+                 }
+                 // If not continue
+                 if (it == r1.end(pno)) continue;
+
+                 it = r1.begin(pno);
+                 ip = r2.add_product(perm_seq[r1.get_seq_no(it)][iperm],
+                         r1.get_intrinsic(it), r1.get_target(it));
+                 it++;
+                 for (; it != r1.end(pno); it++) {
+                     r2.add_to_product(ip, perm_seq[r1.get_seq_no(it)][iperm],
+                             r1.get_intrinsic(it), r1.get_target(it));
+                 }
+             }
+         }
+
+         e2.set_rule(r2);
+
+         params.grp2.insert(e2);
+     }
 }
+
 
 
 } // namespace libtensor

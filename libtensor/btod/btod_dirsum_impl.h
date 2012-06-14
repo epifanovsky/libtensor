@@ -109,13 +109,12 @@ void btod_dirsum<N, M>::compute_block(dense_tensor_i<N + M, double> &blkc,
 
 template<size_t N, size_t M>
 void btod_dirsum<N, M>::compute_block(bool zero,
-        dense_tensor_i<N + M, double> &blkc, const index<N + M> &ic,
-        const tensor_transf<N + M, double> &trc, const double &kc,
-        cpu_pool &cpus) {
+    dense_tensor_i<N + M, double> &blkc, const index<N + M> &ic,
+    const tensor_transf<N + M, double> &trc, const double &kc) {
 
     static const char *method = "compute_block(bool, "
-            "dense_tensor_i<N + M, double>&, const index<N + M>&, "
-            "const tensor_transf<N + M, double>&, double, cpu_pool&)";
+        "dense_tensor_i<N + M, double>&, const index<N + M>&, "
+        "const tensor_transf<N + M, double>&, double)";
 
     btod_dirsum<N, M>::start_timer();
 
@@ -125,9 +124,9 @@ void btod_dirsum<N, M>::compute_block(bool zero,
         typename schedule_t::const_iterator isch =
             m_op_sch.find(aic.get_abs_index());
         if(isch == m_op_sch.end()) {
-            if(zero) tod_set<k_orderc>().perform(cpus, blkc);
+            if(zero) tod_set<k_orderc>().perform(blkc);
         } else {
-            compute_block(blkc, isch->second, trc, zero, kc, cpus);
+            compute_block(blkc, isch->second, trc, zero, kc);
         }
 
     } catch(...) {
@@ -142,7 +141,7 @@ void btod_dirsum<N, M>::compute_block(bool zero,
 template<size_t N, size_t M>
 void btod_dirsum<N, M>::compute_block(dense_tensor_i<N + M, double> &blkc,
     const schrec &rec, const tensor_transf<N + M, double> &trc, bool zeroc,
-    double kc, cpu_pool &cpus) {
+    double kc) {
 
     block_tensor_ctrl<k_ordera, double> ca(m_bta);
     block_tensor_ctrl<k_orderb, double> cb(m_btb);
@@ -325,9 +324,7 @@ void btod_dirsum<N, M>::do_block_dirsum(
     dense_tensor_i<k_ordera, double> &blka = ctrla.req_block(ia);
     dense_tensor_i<k_orderb, double> &blkb = ctrlb.req_block(ib);
 
-    cpu_pool cpus(1);
-
-    tod_dirsum<N, M>(blka, ka, blkb, kb, permc).perform(cpus, zero, kc, blkc);
+    tod_dirsum<N, M>(blka, ka, blkb, kb, permc).perform(zero, kc, blkc);
 
     ctrla.ret_block(ia);
     ctrlb.ret_block(ib);
@@ -343,12 +340,10 @@ void btod_dirsum<N, M>::do_block_scatter_a(
 
     dense_tensor_i<k_ordera, double> &blka = ctrla.req_block(ia);
 
-    cpu_pool cpus(1);
-
 	if(zero) {
 		tod_scatter<N, M>(blka, ka, permc).perform(blkc);
 		if(kc != 1.0) {
-			tod_scale<k_orderc>(kc).perform(cpus, blkc);
+			tod_scale<k_orderc>(kc).perform(blkc);
 		}
 	} else {
 		tod_scatter<N, M>(blka, ka, permc).perform(blkc, kc);
@@ -367,12 +362,10 @@ void btod_dirsum<N, M>::do_block_scatter_b(
 
     dense_tensor_i<k_orderb, double> &blkb = ctrlb.req_block(ib);
 
-    cpu_pool cpus(1);
-
 	if(zero) {
 		tod_scatter<M, N>(blkb, kb, permc).perform(blkc);
 		if(kc != 1.0) {
-			tod_scale<k_orderc>(kc).perform(cpus, blkc);
+			tod_scale<k_orderc>(kc).perform(blkc);
 		}
 	} else {
 		tod_scatter<M, N>(blkb, kb, permc).perform(blkc, kc);

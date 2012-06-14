@@ -29,12 +29,12 @@ public:
         typedef se_part<N + M, T> se_part_t;
         typedef se_perm<N + M, T> se_perm_t;
 
-       dispatcher_t::get_instance().register_impl(
-                symmetry_operation_impl<operation_t, se_label_t>());
         dispatcher_t::get_instance().register_impl(
-                symmetry_operation_impl<operation_t, se_part_t>());
+            symmetry_operation_impl<operation_t, se_label_t>());
         dispatcher_t::get_instance().register_impl(
-                symmetry_operation_impl<operation_t, se_perm_t>());
+            symmetry_operation_impl<operation_t, se_part_t>());
+        dispatcher_t::get_instance().register_impl(
+            symmetry_operation_impl<operation_t, se_perm_t>());
 
         symmetry_operation_handlers_ex<operation_t>::install_handlers();
 

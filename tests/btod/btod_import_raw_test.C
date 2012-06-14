@@ -58,8 +58,6 @@ void btod_import_raw_test::test_1(const block_index_space<N> &bis)
     typedef dense_tensor_ctrl<N, double> tensor_ctrl_t;
     typedef block_tensor<N, double, allocator_t> block_tensor_t;
 
-    cpu_pool cpus(1);
-
     try {
 
     //  Create tensors
@@ -69,11 +67,11 @@ void btod_import_raw_test::test_1(const block_index_space<N> &bis)
 
     //  Fill in random data
 
-    tod_random<N>().perform(cpus, ta);
+    tod_random<N>().perform(ta);
 
     //  Create reference data
 
-    tod_copy<N>(ta).perform(cpus, true, 1.0, tb_ref);
+    tod_copy<N>(ta).perform(true, 1.0, tb_ref);
 
     //  Invoke the operation
 

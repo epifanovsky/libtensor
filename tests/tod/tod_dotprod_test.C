@@ -66,8 +66,6 @@ void tod_dotprod_test::test_i_i(size_t ni) throw(libtest::test_exception) {
 
     typedef std_allocator<double> allocator_t;
 
-    cpu_pool cpus(1);
-
     try {
 
         index<1> ia1, ia2;
@@ -105,8 +103,8 @@ void tod_dotprod_test::test_i_i(size_t ni) throw(libtest::test_exception) {
         // Invoke the operation
 
         permutation<1> pa, pb;
-        double c1 = tod_dotprod<1>(ta, tb).calculate(cpus);
-        double c2 = tod_dotprod<1>(ta, pa, tb, pb).calculate(cpus);
+        double c1 = tod_dotprod<1>(ta, tb).calculate();
+        double c2 = tod_dotprod<1>(ta, pa, tb, pb).calculate();
 
         // Compare against the reference
 
@@ -137,8 +135,6 @@ void tod_dotprod_test::test_ij_ij(size_t ni, size_t nj)
     std::string tn = tnss.str();
 
     typedef std_allocator<double> allocator_t;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -184,11 +180,11 @@ void tod_dotprod_test::test_ij_ij(size_t ni, size_t nj)
         // Invoke the operation
 
         permutation<2> pa, pb;
-        double c1 = tod_dotprod<2>(ta, tb).calculate(cpus);
-        double c2 = tod_dotprod<2>(ta, pa, tb, pb).calculate(cpus);
+        double c1 = tod_dotprod<2>(ta, tb).calculate();
+        double c2 = tod_dotprod<2>(ta, pa, tb, pb).calculate();
         pa.permute(0, 1);
         pb.permute(0, 1);
-        double c3 = tod_dotprod<2>(ta, pa, tb, pb).calculate(cpus);
+        double c3 = tod_dotprod<2>(ta, pa, tb, pb).calculate();
 
         // Compare against the reference
 
@@ -225,8 +221,6 @@ void tod_dotprod_test::test_ij_ji(size_t ni, size_t nj)
     std::string tn = tnss.str();
 
     typedef std_allocator<double> allocator_t;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -276,10 +270,10 @@ void tod_dotprod_test::test_ij_ji(size_t ni, size_t nj)
 
         permutation<2> pa, pb;
         pb.permute(0, 1);
-        double c1 = tod_dotprod<2>(ta, pa, tb, pb).calculate(cpus);
+        double c1 = tod_dotprod<2>(ta, pa, tb, pb).calculate();
         pa.permute(0, 1);
         pb.permute(0, 1);
-        double c2 = tod_dotprod<2>(ta, pa, tb, pb).calculate(cpus);
+        double c2 = tod_dotprod<2>(ta, pa, tb, pb).calculate();
 
         // Compare against the reference
 
@@ -311,8 +305,6 @@ void tod_dotprod_test::test_ijk_ijk(size_t ni, size_t nj, size_t nk)
     std::string tn = tnss.str();
 
     typedef std_allocator<double> allocator_t;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -358,14 +350,14 @@ void tod_dotprod_test::test_ijk_ijk(size_t ni, size_t nj, size_t nk)
         // Invoke the operation
 
         permutation<3> pa, pb;
-        double c1 = tod_dotprod<3>(ta, tb).calculate(cpus);
-        double c2 = tod_dotprod<3>(ta, pa, tb, pb).calculate(cpus);
+        double c1 = tod_dotprod<3>(ta, tb).calculate();
+        double c2 = tod_dotprod<3>(ta, pa, tb, pb).calculate();
         pa.permute(0, 1);
         pb.permute(0, 1);
-        double c3 = tod_dotprod<3>(ta, pa, tb, pb).calculate(cpus);
+        double c3 = tod_dotprod<3>(ta, pa, tb, pb).calculate();
         pa.permute(1, 2);
         pb.permute(1, 2);
-        double c4 = tod_dotprod<3>(ta, pa, tb, pb).calculate(cpus);
+        double c4 = tod_dotprod<3>(ta, pa, tb, pb).calculate();
 
         // Compare against the reference
 
@@ -409,8 +401,6 @@ void tod_dotprod_test::test_ijk_ikj(size_t ni, size_t nj, size_t nk)
     std::string tn = tnss.str();
 
     typedef std_allocator<double> allocator_t;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -460,16 +450,16 @@ void tod_dotprod_test::test_ijk_ikj(size_t ni, size_t nj, size_t nk)
 
         permutation<3> pa, pb;
         pb.permute(1, 2);
-        double c1 = tod_dotprod<3>(ta, pa, tb, pb).calculate(cpus);
+        double c1 = tod_dotprod<3>(ta, pa, tb, pb).calculate();
         pa.permute(0, 1);
         pb.permute(0, 1);
-        double c2 = tod_dotprod<3>(ta, pa, tb, pb).calculate(cpus);
+        double c2 = tod_dotprod<3>(ta, pa, tb, pb).calculate();
         pa.permute(1, 2);
         pb.permute(1, 2);
-        double c3 = tod_dotprod<3>(ta, pa, tb, pb).calculate(cpus);
+        double c3 = tod_dotprod<3>(ta, pa, tb, pb).calculate();
         pa.permute(0, 2);
         pb.permute(0, 2);
-        double c4 = tod_dotprod<3>(ta, pa, tb, pb).calculate(cpus);
+        double c4 = tod_dotprod<3>(ta, pa, tb, pb).calculate();
 
         // Compare against the reference
 
@@ -513,8 +503,6 @@ void tod_dotprod_test::test_ijk_jik(size_t ni, size_t nj, size_t nk)
     std::string tn = tnss.str();
 
     typedef std_allocator<double> allocator_t;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -564,16 +552,16 @@ void tod_dotprod_test::test_ijk_jik(size_t ni, size_t nj, size_t nk)
 
         permutation<3> pa, pb;
         pb.permute(0, 1);
-        double c1 = tod_dotprod<3>(ta, pa, tb, pb).calculate(cpus);
+        double c1 = tod_dotprod<3>(ta, pa, tb, pb).calculate();
         pa.permute(0, 1);
         pb.permute(0, 1);
-        double c2 = tod_dotprod<3>(ta, pa, tb, pb).calculate(cpus);
+        double c2 = tod_dotprod<3>(ta, pa, tb, pb).calculate();
         pa.permute(1, 2);
         pb.permute(1, 2);
-        double c3 = tod_dotprod<3>(ta, pa, tb, pb).calculate(cpus);
+        double c3 = tod_dotprod<3>(ta, pa, tb, pb).calculate();
         pa.permute(0, 2);
         pb.permute(0, 2);
-        double c4 = tod_dotprod<3>(ta, pa, tb, pb).calculate(cpus);
+        double c4 = tod_dotprod<3>(ta, pa, tb, pb).calculate();
 
         // Compare against the reference
 
@@ -617,8 +605,6 @@ void tod_dotprod_test::test_ijk_jki(size_t ni, size_t nj, size_t nk)
     std::string tn = tnss.str();
 
     typedef std_allocator<double> allocator_t;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -668,16 +654,16 @@ void tod_dotprod_test::test_ijk_jki(size_t ni, size_t nj, size_t nk)
 
         permutation<3> pa, pb;
         pb.permute(1, 2).permute(0, 1); // jki -> ijk
-        double c1 = tod_dotprod<3>(ta, pa, tb, pb).calculate(cpus);
+        double c1 = tod_dotprod<3>(ta, pa, tb, pb).calculate();
         pa.permute(0, 1);
         pb.permute(0, 1);
-        double c2 = tod_dotprod<3>(ta, pa, tb, pb).calculate(cpus);
+        double c2 = tod_dotprod<3>(ta, pa, tb, pb).calculate();
         pa.permute(1, 2);
         pb.permute(1, 2);
-        double c3 = tod_dotprod<3>(ta, pa, tb, pb).calculate(cpus);
+        double c3 = tod_dotprod<3>(ta, pa, tb, pb).calculate();
         pa.permute(0, 2);
         pb.permute(0, 2);
-        double c4 = tod_dotprod<3>(ta, pa, tb, pb).calculate(cpus);
+        double c4 = tod_dotprod<3>(ta, pa, tb, pb).calculate();
 
         // Compare against the reference
 

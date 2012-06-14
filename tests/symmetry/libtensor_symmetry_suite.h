@@ -36,6 +36,7 @@
 #include "so_reduce_se_part_test.h"
 #include "so_reduce_se_perm_test.h"
 #include "so_symmetrize_test.h"
+#include "so_symmetrize_se_label_test.h"
 #include "symmetry_element_set_adapter_test.h"
 
 using libtest::unit_test_factory;
@@ -80,11 +81,12 @@ namespace libtensor {
     \li libtensor::so_permute_se_label_test
     \li libtensor::so_permute_se_part_test
     \li libtensor::so_permute_se_perm_test
-    \li libtensor::so_stabilize_test
-    \li libtensor::so_stabilize_se_label_test
+    \li libtensor::so_reduce_test
+    \li libtensor::so_reduce_se_label_test
     \li libtensor::so_reduce_se_part_test
     \li libtensor::so_reduce_se_perm_test
     \li libtensor::so_symmetrize_test
+    \li libtensor::so_symmetrize_se_label_test
     \li libtensor::symmetry_element_set_adapter_test
 
  **/
@@ -125,6 +127,7 @@ private:
     unit_test_factory<so_reduce_se_part_test> m_utf_so_reduce_se_part;
     unit_test_factory<so_reduce_se_perm_test> m_utf_so_reduce_se_perm;
     unit_test_factory<so_symmetrize_test> m_utf_so_symmetrize;
+    unit_test_factory<so_symmetrize_se_label_test> m_utf_so_symmetrize_se_label;
     unit_test_factory<symmetry_element_set_adapter_test>
         m_utf_symmetry_element_set_adapter;
 

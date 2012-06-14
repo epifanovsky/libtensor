@@ -73,9 +73,7 @@ void btod_set_elem<N>::perform(block_tensor_i<N, double> &bt,
     const index<N> &bidx, const index<N> &idx, double d) {
 
     static const char *method = "perform(block_tensor_i<N, double> &, "
-            "const index<N> &, const index<N> &, double)";
-
-    cpu_pool cpus(1);
+        "const index<N> &, const index<N> &, double)";
 
     block_tensor_ctrl<N, double> ctrl(bt);
 
@@ -92,7 +90,7 @@ void btod_set_elem<N>::perform(block_tensor_i<N, double> &bt,
     bool zero = ctrl.req_is_zero_block(abidx.get_index());
     dense_tensor_i<N, double> &blk = ctrl.req_block(abidx.get_index());
 
-    if(zero) tod_set<N>().perform(cpus, blk);
+    if(zero) tod_set<N>().perform(blk);
 
     permutation<N> perm(tr.get_perm(), true);
     index<N> idx1(idx); idx1.permute(perm);

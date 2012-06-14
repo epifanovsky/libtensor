@@ -3,6 +3,7 @@
 
 #include <list>
 #include <vector>
+#include <libutil/thread_pool/thread_pool.h>
 #include "../defs.h"
 #include "../exception.h"
 #include "../timings.h"
@@ -12,7 +13,6 @@
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
 #include "../core/permutation.h"
-#include "../mp/task_i.h"
 
 namespace libtensor {
 
@@ -53,7 +53,7 @@ private:
     };
 
     class dotprod_in_orbit_task:
-        public task_i,
+        public libutil::task_i,
         public timings<dotprod_in_orbit_task> {
 
     public:
@@ -85,9 +85,28 @@ private:
             m_sym(sym), m_bidims(bidims), m_idx(idx), m_d(0.0) { }
 
         virtual ~dotprod_in_orbit_task() { }
-        virtual void perform(cpu_pool &cpus) throw(exception);
+        virtual void perform();
 
         double get_d() const { return m_d; }
+    };
+
+    class dotprod_task_iterator : public libutil::task_iterator_i {
+    private:
+        std::vector<dotprod_in_orbit_task*> &m_tl;
+        typename std::vector<dotprod_in_orbit_task*>::iterator m_i;
+
+    public:
+        dotprod_task_iterator(std::vector<dotprod_in_orbit_task*> &tl) :
+            m_tl(tl), m_i(m_tl.begin()) { }
+        virtual ~dotprod_task_iterator() { }
+        virtual bool has_more() const;
+        virtual libutil::task_i *get_next();
+    };
+
+    class dotprod_task_observer : public libutil::task_observer_i {
+    public:
+        virtual void notify_start_task(libutil::task_i *t) { }
+        virtual void notify_finish_task(libutil::task_i *t) { }
     };
 
 private:

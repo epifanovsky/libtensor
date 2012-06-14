@@ -84,9 +84,8 @@ public:
 
 protected:
     virtual void compute_block(bool zero,
-            dense_tensor_i<k_orderb, double> &blk, const index<k_orderb> &i,
-            const tensor_transf<k_orderb, double> &tr, const double &c,
-            cpu_pool &cpus);
+        dense_tensor_i<k_orderb, double> &blk, const index<k_orderb> &i,
+        const tensor_transf<k_orderb, double> &tr, const double &c);
 
 private:
     /** \brief Forms the block %index space of the output or throws an
@@ -101,7 +100,7 @@ private:
 
     void do_compute_block(dense_tensor_i<k_orderb, double> &blk,
         const index<k_orderb> &i, const tensor_transf<k_orderb, double> &tr,
-        double c, bool zero, cpu_pool &cpus);
+        double c, bool zero);
 
 private:
     btod_extract(const btod_extract<N, M>&);
@@ -199,18 +198,17 @@ void btod_extract<N, M>::compute_block(dense_tensor_i<k_orderb, double> &blk,
 
 template<size_t N, size_t M>
 void btod_extract<N, M>::compute_block(bool zero,
-        dense_tensor_i<k_orderb, double> &blk, const index<k_orderb> &idx,
-        const tensor_transf<k_orderb, double> &tr, const double &c,
-        cpu_pool &cpus) {
+    dense_tensor_i<k_orderb, double> &blk, const index<k_orderb> &idx,
+    const tensor_transf<k_orderb, double> &tr, const double &c) {
 
-    do_compute_block(blk, idx, tr, c, zero, cpus);
+    do_compute_block(blk, idx, tr, c, zero);
 }
 
 
 template<size_t N, size_t M>
 void btod_extract<N, M>::do_compute_block(dense_tensor_i<k_orderb, double> &blk,
     const index<k_orderb> &idx, const tensor_transf<k_orderb, double> &tr,
-    double c, bool zero, cpu_pool &cpus) {
+    double c, bool zero) {
 
     btod_extract<N, M>::start_timer();
 
@@ -274,7 +272,7 @@ void btod_extract<N, M>::do_compute_block(dense_tensor_i<k_orderb, double> &blk,
         ctrla.ret_block(cidxa.get_index());
     } else {
 
-        if(zero) tod_set<N - M>().perform(cpus, blk);
+        if(zero) tod_set<N - M>().perform(blk);
     }
 
     btod_extract<N, M>::stop_timer();
