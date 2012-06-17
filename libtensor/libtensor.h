@@ -46,6 +46,7 @@
 #include "btod/btod_copy.h"
 #include "btod/btod_diag.h"
 #include "btod/btod_dirsum.h"
+#include "btod/btod_extract.h"
 #include "btod/btod_import_raw.h"
 #include "btod/btod_mult.h"
 #include "btod/btod_mult1.h"
