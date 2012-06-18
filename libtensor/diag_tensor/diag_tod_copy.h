@@ -53,9 +53,21 @@ public:
     /** \brief Performs the operation
         \param zero Zero output before copying.
         \param c Scaling factor.
-        \param tb Output tensor.
+        \param dtb Output tensor.
      **/
-    void perform(bool zero, double c, diag_tensor_wr_i<N, double> &tb);
+    void perform(bool zero, double c, diag_tensor_wr_i<N, double> &dtb);
+
+private:
+    void constrained_copy(const dimensions<N> &dims,
+        const diag_tensor_subspace<N> &ss1, const double *p1, size_t sz1,
+        const permutation<N> &perm, double d,
+        const diag_tensor_subspace<N> &ss2, double *p2, size_t sz2);
+
+    void mark_diags(const mask<N> &m0, const diag_tensor_subspace<N> &ss,
+        mask<N> &m1);
+
+    size_t get_increment(const dimensions<N> &dims,
+        const diag_tensor_subspace<N> &ss, const mask<N> &m) const;
 
 private:
     diag_tod_copy(const diag_tod_copy&);
