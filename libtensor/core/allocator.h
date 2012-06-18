@@ -1,11 +1,11 @@
 #ifndef LIBTENSOR_ALLOCATOR_H
 #define LIBTENSOR_ALLOCATOR_H
 
-#ifdef WITH_LIBVMM
+#ifndef WITHOUT_LIBVMM
 #include <libvmm/ec_allocator.h>
 #include <libvmm/vm_allocator.h>
 #include <libvmm/evmm/evmm.h>
-#endif // WITH_LIBVMM
+#endif // WITHOUT_LIBVMM
 
 #include "std_allocator.h"
 
@@ -80,15 +80,15 @@ public:
  **/
 template<typename T>
 class allocator :
-#ifdef WITH_LIBVMM
+#ifdef WITHOUT_LIBVMM
+    public std_allocator<T> {
+#else // WITHOUT_LIBVMM
 #ifdef LIBTENSOR_DEBUG
     public ec_allocator_base<T> {
 #else // LIBTENSOR_DEBUG
     public vm_allocator_base<T> {
 #endif // LIBTENSOR_DEBUG
-#else // WITH_LIBVMM
-    public std_allocator<T> {
-#endif // WITH_LIBVMM
+#endif // WITHOUT_LIBVMM
 
 };
 
