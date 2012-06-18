@@ -12,7 +12,7 @@
 namespace libtensor {
 
 
-#ifdef WITH_LIBVMM
+#ifndef WITHOUT_LIBVMM
 
 /** \brief Virtual memory allocator used in the tensor library
 
@@ -65,7 +65,7 @@ public:
 
 };
 
-#endif // WITH_LIBVMM
+#endif // WITHOUT_LIBVMM
 
 
 /** \brief Memory allocator used in the tensor library
