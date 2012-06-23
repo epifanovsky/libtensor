@@ -9,10 +9,10 @@ namespace libtensor {
 template<typename SymOp>
 class symmetry_operation_base {
 public:
-	symmetry_operation_base() {
+    symmetry_operation_base() {
 
-		symmetry_operation_handlers<SymOp>::install_handlers();
-	}
+        symmetry_operation_handlers<SymOp>::install_handlers();
+    }
 };
 
 

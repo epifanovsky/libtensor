@@ -88,8 +88,6 @@ void tod_dirsum_test::test_ij_i_j_1(size_t ni, size_t nj, double d)
 
     typedef std_allocator<double> allocator;
 
-    cpu_pool cpus(1);
-
     try {
 
     index<1> ia1, ia2; ia2[0] = ni - 1;
@@ -149,9 +147,9 @@ void tod_dirsum_test::test_ij_i_j_1(size_t ni, size_t nj, double d)
     //    Invoke the direct sum routine
 
     if(d == 0.0) {
-        tod_dirsum<1, 1>(ta, 1.0, tb, 1.0).perform(cpus, true, 1.0, tc);
+        tod_dirsum<1, 1>(ta, 1.0, tb, 1.0).perform(true, 1.0, tc);
     } else {
-        tod_dirsum<1, 1>(ta, 1.0, tb, 1.0).perform(cpus, false, d, tc);
+        tod_dirsum<1, 1>(ta, 1.0, tb, 1.0).perform(false, d, tc);
     }
 
     //    Compare against the reference
@@ -174,8 +172,6 @@ void tod_dirsum_test::test_ij_i_j_2(size_t ni, size_t nj, double d)
     std::string tns = tnss.str();
 
     typedef std_allocator<double> allocator;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -236,9 +232,9 @@ void tod_dirsum_test::test_ij_i_j_2(size_t ni, size_t nj, double d)
     //  Invoke the direct sum routine
 
     if(d == 0.0) {
-        tod_dirsum<1, 1>(ta, 1.0, tb, -1.0).perform(cpus, true, 1.0, tc);
+        tod_dirsum<1, 1>(ta, 1.0, tb, -1.0).perform(true, 1.0, tc);
     } else {
-        tod_dirsum<1, 1>(ta, 1.0, tb, -1.0).perform(cpus, false, d, tc);
+        tod_dirsum<1, 1>(ta, 1.0, tb, -1.0).perform(false, d, tc);
     }
 
     //  Compare against the reference
@@ -261,8 +257,6 @@ void tod_dirsum_test::test_ikj_ij_k_1(size_t ni, size_t nj, size_t nk,
     std::string tns = tnss.str();
 
     typedef std_allocator<double> allocator;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -331,9 +325,9 @@ void tod_dirsum_test::test_ikj_ij_k_1(size_t ni, size_t nj, size_t nk,
     permutation<3> permc;
     permc.permute(1, 2); // ijk -> ikj
     if(d == 0.0) {
-        tod_dirsum<2, 1>(ta, 1.0, tb, 1.0, permc).perform(cpus, true, 1.0, tc);
+        tod_dirsum<2, 1>(ta, 1.0, tb, 1.0, permc).perform(true, 1.0, tc);
     } else {
-        tod_dirsum<2, 1>(ta, 1.0, tb, 1.0, permc).perform(cpus, false, d, tc);
+        tod_dirsum<2, 1>(ta, 1.0, tb, 1.0, permc).perform(false, d, tc);
     }
 
     //    Compare against the reference
@@ -357,8 +351,6 @@ void tod_dirsum_test::test_ikjl_ij_kl_1(size_t ni, size_t nj, size_t nk,
     std::string tns = tnss.str();
 
     typedef std_allocator<double> allocator;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -428,9 +420,9 @@ void tod_dirsum_test::test_ikjl_ij_kl_1(size_t ni, size_t nj, size_t nk,
     permutation<4> permc;
     permc.permute(1, 2); // ijkl -> ikjl
     if(d == 0.0) {
-        tod_dirsum<2, 2>(ta, 1.0, tb, 1.0, permc).perform(cpus, true, 1.0, tc);
+        tod_dirsum<2, 2>(ta, 1.0, tb, 1.0, permc).perform(true, 1.0, tc);
     } else {
-        tod_dirsum<2, 2>(ta, 1.0, tb, 1.0, permc).perform(cpus, false, d, tc);
+        tod_dirsum<2, 2>(ta, 1.0, tb, 1.0, permc).perform(false, d, tc);
     }
 
     //    Compare against the reference
@@ -454,8 +446,6 @@ void tod_dirsum_test::test_iklj_ij_kl_1(size_t ni, size_t nj, size_t nk,
     std::string tns = tnss.str();
 
     typedef std_allocator<double> allocator;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -525,9 +515,9 @@ void tod_dirsum_test::test_iklj_ij_kl_1(size_t ni, size_t nj, size_t nk,
     permutation<4> permc;
     permc.permute(1, 2).permute(2, 3); // ijkl -> iklj
     if(d == 0.0) {
-        tod_dirsum<2, 2>(ta, 1.0, tb, 1.0, permc).perform(cpus, true, 1.0, tc);
+        tod_dirsum<2, 2>(ta, 1.0, tb, 1.0, permc).perform(true, 1.0, tc);
     } else {
-        tod_dirsum<2, 2>(ta, 1.0, tb, 1.0, permc).perform(cpus, false, d, tc);
+        tod_dirsum<2, 2>(ta, 1.0, tb, 1.0, permc).perform(false, d, tc);
     }
 
     //    Compare against the reference

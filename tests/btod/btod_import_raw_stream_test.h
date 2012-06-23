@@ -7,7 +7,7 @@
 namespace libtensor {
 
 
-/**	\brief Tests the libtensor::btod_import_raw_stream class
+/** \brief Tests the libtensor::btod_import_raw_stream class
 
     \ingroup libtensor_tests_btod
  **/

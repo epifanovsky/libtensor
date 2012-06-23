@@ -1,5 +1,6 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor.h>
+#include <libtensor/btod/scalar_transf_double.h>
 #include <libtensor/btod/btod_vmpriority.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/dense_tensor/tod_btconv.h>
@@ -20,8 +21,6 @@ void btod_vmpriority_test::test_1() throw(libtest::test_exception) {
     static const char *testname = "btod_vmpriority_test::test_1()";
 
     typedef std_allocator<double> allocator_t;
-
-    cpu_pool cpus(1);
 
     try {
 

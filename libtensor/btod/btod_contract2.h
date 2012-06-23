@@ -5,6 +5,7 @@
 #include <map>
 #include <vector>
 #include <libutil/threads/auto_lock.h>
+#include <libutil/thread_pool/thread_pool.h>
 #include "../defs.h"
 #include "../exception.h"
 #include "../timings.h"
@@ -15,10 +16,10 @@
 #include "../core/orbit_list.h"
 #include "../core/sequence.h"
 #include "../tod/contraction2.h"
-#include "additive_btod.h"
+#include <libtensor/block_tensor/bto/additive_bto.h>
+#include <libtensor/block_tensor/btod/btod_traits.h>
 #include "../not_implemented.h"
 #include "bad_block_index_space.h"
-#include "../mp/task_i.h"
 
 namespace libtensor {
 
@@ -31,7 +32,7 @@ template<size_t N, size_t K> class btod_contract2_symmetry_builder<N, N, K>;
 
 template<size_t N, size_t M, size_t K>
 struct btod_contract2_clazz {
-	static const char *k_clazz;
+    static const char *k_clazz;
 };
 
 
@@ -41,8 +42,8 @@ struct btod_contract2_clazz {
  **/
 template<size_t N, size_t M, size_t K>
 class btod_contract2 :
-	public additive_btod<N + M>,
-	public timings< btod_contract2<N, M, K> > {
+    public additive_bto<N + M, bto_traits<double> >,
+    public timings< btod_contract2<N, M, K> > {
 
 public:
     static const char *k_clazz; //!< Class name
@@ -72,20 +73,22 @@ private:
             : m_absidxa(aia), m_absidxb(aib), m_c(c), m_perma(perma),
               m_permb(permb)
             { }
-        bool is_same_perm(const transf<k_ordera, double> &tra,
-                          const transf<k_orderb, double> &trb) {
+        bool is_same_perm(const tensor_transf<k_ordera, double> &tra,
+                          const tensor_transf<k_orderb, double> &trb) {
 
             return m_perma.equals(tra.get_perm()) &&
                 m_permb.equals(trb.get_perm());
         }
     } block_contr_t;
     typedef std::list<block_contr_t> block_contr_list_t;
+    typedef typename std::list<block_contr_t>::iterator 
+        block_contr_list_iterator_t;
     typedef std::pair<block_contr_list_t, volatile bool>
     block_contr_list_pair_t;
     typedef std::map<size_t, block_contr_list_pair_t*> schedule_t;
 
     class make_schedule_task :
-        public task_i,
+        public libutil::task_i,
         public timings<make_schedule_task> {
 
     public:
@@ -122,15 +125,15 @@ private:
                            assignment_schedule<k_orderc, double> &sch,
                            libutil::mutex &sch_lock);
         virtual ~make_schedule_task() { }
-        virtual void perform(cpu_pool &cpus) throw(exception);
+        virtual void perform();
 
     private:
         void make_schedule_a(const orbit_list<k_orderc, double> &olc,
                              const abs_index<k_ordera> &aia,
                              const abs_index<k_ordera> &acia,
-                             const transf<k_ordera, double> &tra);
+                             const tensor_transf<k_ordera, double> &tra);
         void make_schedule_b(const abs_index<k_ordera> &acia,
-                             const transf<k_ordera, double> &tra,
+                             const tensor_transf<k_ordera, double> &tra,
                              const index<k_orderb> &ib,
                              const abs_index<k_orderc> &acic);
         void schedule_block_contraction(const abs_index<k_orderc> &acic,
@@ -138,9 +141,26 @@ private:
         void merge_schedule();
         void merge_lists(const block_contr_list_t &src,
                          block_contr_list_t &dst);
-        typename block_contr_list_t::iterator merge_node(
+        block_contr_list_iterator_t merge_node(
             const block_contr_t &bc, block_contr_list_t &lst,
-            const typename block_contr_list_t::iterator &begin);
+            const block_contr_list_iterator_t &begin);
+    };
+
+    class make_schedule_task_iterator : public libutil::task_iterator_i {
+    private:
+        std::vector<make_schedule_task*> &m_tl;
+        typename std::vector<make_schedule_task*>::iterator m_i;
+    public:
+        make_schedule_task_iterator(std::vector<make_schedule_task*> &tl) :
+            m_tl(tl), m_i(m_tl.begin()) { }
+        virtual bool has_more() const;
+        virtual libutil::task_i *get_next();
+    };
+
+    class make_schedule_task_observer : public libutil::task_observer_i {
+    public:
+        virtual void notify_start_task(libutil::task_i *t) { }
+        virtual void notify_finish_task(libutil::task_i *t) { }
     };
 
 private:
@@ -155,10 +175,10 @@ private:
     assignment_schedule<k_orderc, double> m_sch; //!< Assignment schedule
 
 public:
-    //!	\name Construction and destruction
+    //!    \name Construction and destruction
     //@{
 
-    /**	\brief Initializes the contraction operation
+    /** \brief Initializes the contraction operation
         \param contr Contraction.
         \param bta Block %tensor A (first argument).
         \param btb Block %tensor B (second argument).
@@ -167,14 +187,14 @@ public:
                    block_tensor_i<k_ordera, double> &bta,
                    block_tensor_i<k_orderb, double> &btb);
 
-    /**	\brief Virtual destructor
+    /** \brief Virtual destructor
      **/
     virtual ~btod_contract2();
 
     //@}
 
-    //!	\name Implementation of
-    //		libtensor::direct_block_tensor_operation<N + M, double>
+    //!    \name Implementation of
+    //      libtensor::direct_block_tensor_operation<N + M, double>
     //@{
 
     virtual const block_index_space<N + M> &get_bis() const {
@@ -194,12 +214,12 @@ public:
 
     //@}
 
-    using additive_btod<N + M>::perform;
+    using additive_bto<N + M, bto_traits<double> >::perform;
 
 protected:
     virtual void compute_block(bool zero, dense_tensor_i<N + M, double> &blk,
-                               const index<N + M> &i, const transf<N + M, double> &tr,
-                               double c, cpu_pool &cpus);
+        const index<N + M> &i, const tensor_transf<N + M, double> &tr,
+        const double &c);
 
 private:
     void make_schedule();
@@ -211,8 +231,8 @@ private:
         block_tensor_ctrl<k_ordera, double> &ctrla,
         block_tensor_ctrl<k_orderb, double> &ctrlb,
         dense_tensor_i<k_orderc, double> &blkc,
-        const transf<k_orderc, double> &trc,
-        bool zero, double c, cpu_pool &cpus);
+        const tensor_transf<k_orderc, double> &trc,
+        bool zero, double c);
 
 private:
     btod_contract2(const btod_contract2<N, M, K>&);
@@ -274,7 +294,11 @@ protected:
 **/
 template<size_t N, size_t M, size_t K>
 class btod_contract2_symmetry_builder :
-	public btod_contract2_symmetry_builder_base<N, M, K> {
+    public btod_contract2_symmetry_builder_base<N, M, K> {
+
+public:
+    typedef btod_contract2_symmetry_builder_base<N, M, K> base_t;
+
 
 public:
     btod_contract2_symmetry_builder(const contraction2<N, M, K> &contr,
@@ -293,7 +317,10 @@ public:
 **/
 template<size_t N, size_t K>
 class btod_contract2_symmetry_builder<N, N, K> :
-	public btod_contract2_symmetry_builder_base<N, N, K> {
+    public btod_contract2_symmetry_builder_base<N, N, K> {
+
+public:
+    typedef btod_contract2_symmetry_builder_base<N, N, K> base_t;
 
 public:
     btod_contract2_symmetry_builder(const contraction2<N, N, K> &contr,

@@ -34,8 +34,6 @@ void tod_scale_test::test_generic(const char *testname,
 
     typedef std_allocator<double> allocator_t;
 
-    cpu_pool cpus(1);
-
     try {
 
     dense_tensor<N, double, allocator_t> t(d), t_ref(d);
@@ -55,7 +53,7 @@ void tod_scale_test::test_generic(const char *testname,
     tc_ref.ret_dataptr(p_ref); p_ref = 0;
     }
 
-    tod_scale<N>(c).perform(cpus, t);
+    tod_scale<N>(c).perform(t);
 
     compare_ref<N>::compare(testname, t, t_ref, 1e-15);
 

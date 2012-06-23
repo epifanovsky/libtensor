@@ -25,8 +25,9 @@
 #include "core/block_tensor.h"
 #include "core/direct_block_tensor.h"
 
-#include "core/transf.h"
-#include "btod/transf_double.h"
+#include "core/scalar_transf.h"
+#include "btod/scalar_transf_double.h"
+#include "core/tensor_transf.h"
 
 #include "core/orbit.h"
 #include "core/orbit_list.h"
@@ -38,8 +39,6 @@
 #include "tod/processor.h"
 
 
-#include "btod/basic_btod.h"
-#include "btod/additive_btod.h"
 #include "btod/btod_add.h"
 #include "btod/btod_apply.h"
 #include "btod/btod_compare.h"
@@ -47,6 +46,7 @@
 #include "btod/btod_copy.h"
 #include "btod/btod_diag.h"
 #include "btod/btod_dirsum.h"
+#include "btod/btod_extract.h"
 #include "btod/btod_import_raw.h"
 #include "btod/btod_mult.h"
 #include "btod/btod_mult1.h"

@@ -5,13 +5,13 @@
 
 namespace libtensor {
 
-/**	\brief Tests the libtensor::letter class
+/** \brief Tests the libtensor::letter class
 
-	\ingroup libtensor_tests_iface
+    \ingroup libtensor_tests_iface
 **/
 class letter_test : public libtest::unit_test {
 public:
-	virtual void perform() throw(libtest::test_exception);
+    virtual void perform() throw(libtest::test_exception);
 
 };
 

@@ -5,26 +5,26 @@
 
 namespace libtensor {
 
-/**	\brief Tests the libtensor::index class
+/** \brief Tests the libtensor::index class
 
-	\ingroup libtensor_tests_core
+    \ingroup libtensor_tests_core
 **/
 class index_test : public libtest::unit_test {
 public:
-	virtual void perform() throw(libtest::test_exception);
+    virtual void perform() throw(libtest::test_exception);
 
 private:
-	//!	Tests the constructors
-	void test_ctor() throw(libtest::test_exception);
+    //!    Tests the constructors
+    void test_ctor() throw(libtest::test_exception);
 
-	//!	Tests the index::less() method
-	void test_less() throw(libtest::test_exception);
+    //!    Tests the index::less() method
+    void test_less() throw(libtest::test_exception);
 
-	//!	Tests the operator<<
-	void test_print() throw(libtest::test_exception);
+    //!    Tests the operator<<
+    void test_print() throw(libtest::test_exception);
 
-	//!	Tests comparison operators
-	void test_op() throw(libtest::test_exception);
+    //!    Tests comparison operators
+    void test_op() throw(libtest::test_exception);
 };
 
 } // namespace libtensor

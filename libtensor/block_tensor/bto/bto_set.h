@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_BTO_SET_H
 #define LIBTENSOR_BTO_SET_H
 
-#include <libtensor/core/block_tensor_i.h>
+#include <libtensor/defs.h>
 
 namespace libtensor {
 

@@ -3,6 +3,7 @@ set(SRC_CORE
     core/libtensor_core_suite.C
     core/abs_index_test.C
     core/block_index_space_test.C
+    core/block_index_space_product_builder_test.C
     core/block_index_subspace_builder_test.C
     core/block_map_test.C
     core/block_tensor_test.C
@@ -18,10 +19,11 @@ set(SRC_CORE
     core/orbit_list_test.C
     core/permutation_test.C
     core/permutation_builder_test.C
+    core/permutation_generator_test.C
     core/sequence_test.C
+    core/sequence_generator_test.C
     core/symmetry_test.C
     core/symmetry_element_set_test.C
-    core/task_batch_test.C
     core/transf_list_test.C
     core/version_test.C
 )
@@ -35,6 +37,7 @@ set(SRC_TOD
     tod/tod_apply_test.C
     tod/tod_btconv_test.C
     tod/tod_compare_test.C
+    tod/to_contract2_dims_test.C
     tod/tod_contract2_test.C
     tod/tod_copy_test.C
     tod/tod_diag_test.C
@@ -57,52 +60,57 @@ set(SRC_TOD
     tod/tod_vmpriority_test.C
 )
 
+set(SRC_DIAG_TENSOR
+    diag_tensor/libtensor_diag_tensor_tests.C
+    diag_tensor/libtensor_diag_tensor_suite.C
+    diag_tensor/diag_tensor_test.C
+    diag_tensor/diag_tensor_space_test.C
+    diag_tensor/diag_tensor_subspace_test.C
+    diag_tensor/diag_to_add_space_test.C
+    diag_tensor/diag_to_contract2_space_test.C
+    diag_tensor/diag_tod_adjust_space_test.C
+    diag_tensor/diag_tod_set_test.C
+    diag_tensor/tod_conv_diag_tensor_test.C
+)
+
 set(SRC_SYMMETRY
+    symmetry/block_labeling_test.C
+    symmetry/combine_part_test.C
+    symmetry/evaluation_rule_test.C
     symmetry/libtensor_symmetry_tests.C
     symmetry/libtensor_symmetry_suite.C
-    symmetry/partition_set_test.C
     symmetry/permutation_group_test.C
     symmetry/point_group_table_test.C
     symmetry/product_table_container_test.C
+    symmetry/se_label_test_base.C
     symmetry/se_label_test.C
     symmetry/se_part_test.C
     symmetry/se_perm_test.C
-    symmetry/so_add_impl_label_test.C
-    symmetry/so_add_impl_part_test.C
-    symmetry/so_add_impl_perm_test.C
-    symmetry/so_add_test.C
-    symmetry/so_apply_impl_label_test.C
-    symmetry/so_apply_impl_part_test.C
-    symmetry/so_apply_impl_perm_test.C
+    symmetry/so_apply_se_label_test.C
+    symmetry/so_apply_se_part_test.C
+    symmetry/so_apply_se_perm_test.C
     symmetry/so_apply_test.C
-    symmetry/so_concat_impl_label_test.C
-    symmetry/so_concat_impl_part_test.C
-    symmetry/so_concat_impl_perm_test.C
-    symmetry/so_concat_test.C
     symmetry/so_copy_test.C
-    symmetry/so_merge_impl_label_test.C
-    symmetry/so_merge_impl_part_test.C
-    symmetry/so_merge_impl_perm_test.C
+    symmetry/so_dirprod_se_label_test.C
+    symmetry/so_dirprod_se_part_test.C
+    symmetry/so_dirprod_se_perm_test.C
+    symmetry/so_dirprod_test.C
+    symmetry/so_dirsum_se_label_test.C
+    symmetry/so_dirsum_se_part_test.C
+    symmetry/so_dirsum_se_perm_test.C
+    symmetry/so_dirsum_test.C
+    symmetry/so_merge_se_label_test.C
+    symmetry/so_merge_se_part_test.C
+    symmetry/so_merge_se_perm_test.C
     symmetry/so_merge_test.C
-    symmetry/so_mult_impl_label_test.C
-    symmetry/so_mult_impl_part_test.C
-    symmetry/so_mult_impl_perm_test.C
-    symmetry/so_mult_test.C
-    symmetry/so_permute_impl_label_test.C
-    symmetry/so_permute_impl_part_test.C
-    symmetry/so_permute_impl_perm_test.C
-    symmetry/so_proj_down_impl_label_test.C
-    symmetry/so_proj_down_impl_part_test.C
-    symmetry/so_proj_down_impl_perm_test.C
-    symmetry/so_proj_down_test.C
-    symmetry/so_proj_up_impl_label_test.C
-    symmetry/so_proj_up_impl_part_test.C
-    symmetry/so_proj_up_impl_perm_test.C
-    symmetry/so_proj_up_test.C
-    symmetry/so_stabilize_impl_label_test.C
-    symmetry/so_stabilize_impl_part_test.C
-    symmetry/so_stabilize_impl_perm_test.C
-    symmetry/so_stabilize_test.C
+    symmetry/so_permute_se_label_test.C
+    symmetry/so_permute_se_part_test.C
+    symmetry/so_permute_se_perm_test.C
+    symmetry/so_reduce_se_label_test.C
+    symmetry/so_reduce_se_part_test.C
+    symmetry/so_reduce_se_perm_test.C
+    symmetry/so_reduce_test.C
+    symmetry/so_symmetrize_se_label_test.C
     symmetry/so_symmetrize_test.C
     symmetry/symmetry_element_set_adapter_test.C
 )
@@ -228,6 +236,7 @@ set(SRC_IFACE
 set(TARGETS
     libtensor_core_tests
     libtensor_tod_tests
+    libtensor_diag_tensor_tests
     libtensor_btod_tests
     libtensor_iface_tests
     libtensor_linalg_tests
@@ -240,6 +249,7 @@ add_executable(libtensor_iface_tests ${SRC_IFACE})
 add_executable(libtensor_linalg_tests ${SRC_LINALG})
 add_executable(libtensor_symmetry_tests ${SRC_SYMMETRY})
 add_executable(libtensor_tod_tests ${SRC_TOD})
+add_executable(libtensor_diag_tensor_tests ${SRC_DIAG_TENSOR})
 
 include(${LIBTEST_DIR}/cmake/SetupLibTest.txt)
 
@@ -249,9 +259,10 @@ set_property(TARGET ${TARGETS} APPEND PROPERTY
     COMPILE_DEFINITIONS_DEBUG LIBTENSOR_DEBUG)
 if(HAVE_LIBVMM)
     set_property(TARGET ${TARGETS} APPEND PROPERTY
-        COMPILE_DEFINITIONS HAVE_LIBVMM)
-    set_property(TARGET ${TARGETS} APPEND PROPERTY
         COMPILE_DEFINITIONS_DEBUG LIBVMM_DEBUG)
+else(HAVE_LIBVMM)
+    set_property(TARGET ${TARGETS} APPEND PROPERTY
+        COMPILE_DEFINITIONS WITHOUT_LIBVMM)
 endif(HAVE_LIBVMM)
 
 foreach(TARGET ${TARGETS})

@@ -177,30 +177,30 @@ void abs_index_test::test_inc_1() throw(libtest::test_exception) {
 
 void abs_index_test::test_inc_2() throw(libtest::test_exception) {
 
-	static const char *testname = "abs_index_test::test_inc_2()";
+    static const char *testname = "abs_index_test::test_inc_2()";
 
-	try {
+    try {
 
-	index<4> i1, i2;
-	i2[0] = 1; i2[1] = 1; i2[2] = 1; i2[3] = 1;
-	dimensions<4> dims(index_range<4>(i1, i2));
+    index<4> i1, i2;
+    i2[0] = 1; i2[1] = 1; i2[2] = 1; i2[3] = 1;
+    dimensions<4> dims(index_range<4>(i1, i2));
     index<4> i;
     i[0] = 1; i[1] = 1; i[2] = 0; i[3] = 0;
     abs_index<4> ai(i, dims);
 
-	if(!ai.inc()) {
-		fail_test(testname, __FILE__, __LINE__,
-		    "inc(1,1,0,0) doesn't return true.");
-	}
-	i[0] = 1; i[1] = 1; i[2] = 0; i[3] = 1;
-	if(!i.equals(ai.get_index())) {
-		fail_test(testname, __FILE__, __LINE__,
-			"inc(1,1,0,0) doesn't return (1,1,0,1).");
-	}
-	if(ai.get_abs_index() != 13) {
-		fail_test(testname, __FILE__, __LINE__,
-			"inc(1,1,0,0) doesn't return 13.");
-	}
+    if(!ai.inc()) {
+        fail_test(testname, __FILE__, __LINE__,
+            "inc(1,1,0,0) doesn't return true.");
+    }
+    i[0] = 1; i[1] = 1; i[2] = 0; i[3] = 1;
+    if(!i.equals(ai.get_index())) {
+        fail_test(testname, __FILE__, __LINE__,
+            "inc(1,1,0,0) doesn't return (1,1,0,1).");
+    }
+    if(ai.get_abs_index() != 13) {
+        fail_test(testname, __FILE__, __LINE__,
+            "inc(1,1,0,0) doesn't return 13.");
+    }
     if(!ai.inc()) {
         fail_test(testname, __FILE__, __LINE__,
             "inc(1,1,0,1) doesn't return true.");
@@ -240,9 +240,9 @@ void abs_index_test::test_inc_2() throw(libtest::test_exception) {
             "inc(1,1,1,1) doesn't preserve the absolute index.");
     }
 
-	} catch(exception &e) {
-		fail_test(testname, __FILE__, __LINE__, e.what());
-	}
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
 }
 
 
@@ -371,33 +371,33 @@ void abs_index_test::test_inc_5() throw(libtest::test_exception) {
 
 void abs_index_test::test_last_1() throw(libtest::test_exception) {
 
-	static const char *testname = "abs_index_test::test_last_1()";
+    static const char *testname = "abs_index_test::test_last_1()";
 
-	try {
+    try {
 
-	index<4> i1, i2;
-	i2[0] = 1; i2[1] = 1; i2[2] = 1; i2[3] = 1;
-	dimensions<4> dims(index_range<4>(i1, i2));
+    index<4> i1, i2;
+    i2[0] = 1; i2[1] = 1; i2[2] = 1; i2[3] = 1;
+    dimensions<4> dims(index_range<4>(i1, i2));
 
-	i1[0] = 1; i1[1] = 1; i1[2] = 0; i1[3] = 0;
-	abs_index<4> ii1(i1, dims);
+    i1[0] = 1; i1[1] = 1; i1[2] = 0; i1[3] = 0;
+    abs_index<4> ii1(i1, dims);
 
-	if(ii1.is_last()) {
-		fail_test(testname, __FILE__, __LINE__,
-			"[1,1,0,0] returns is_last() = true in [2,2,2,2]");
-	}
+    if(ii1.is_last()) {
+        fail_test(testname, __FILE__, __LINE__,
+            "[1,1,0,0] returns is_last() = true in [2,2,2,2]");
+    }
 
-	i1[0] = 1; i1[1] = 1; i1[2] = 1; i1[3] = 1;
-	abs_index<4> ii2(i1, dims);
+    i1[0] = 1; i1[1] = 1; i1[2] = 1; i1[3] = 1;
+    abs_index<4> ii2(i1, dims);
 
-	if(!ii2.is_last()) {
-		fail_test(testname, __FILE__, __LINE__,
-			"[1,1,1,1] returns is_last() = false in [2,2,2,2]");
-	}
+    if(!ii2.is_last()) {
+        fail_test(testname, __FILE__, __LINE__,
+            "[1,1,1,1] returns is_last() = false in [2,2,2,2]");
+    }
 
-	} catch(exception &e) {
-		fail_test(testname, __FILE__, __LINE__, e.what());
-	}
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
 }
 
 

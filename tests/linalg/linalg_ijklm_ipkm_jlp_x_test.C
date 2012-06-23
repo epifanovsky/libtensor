@@ -8,126 +8,126 @@ namespace libtensor {
 
 void linalg_ijklm_ipkm_jlp_x_test::perform() throw(libtest::test_exception) {
 
-	test_ijklm_ipkm_jlp_x(1, 1, 1, 1, 1, 1);
-	test_ijklm_ipkm_jlp_x(2, 1, 1, 1, 1, 1);
-	test_ijklm_ipkm_jlp_x(1, 2, 1, 1, 1, 1);
-	test_ijklm_ipkm_jlp_x(1, 1, 2, 1, 1, 1);
-	test_ijklm_ipkm_jlp_x(1, 1, 1, 2, 1, 1);
-	test_ijklm_ipkm_jlp_x(1, 1, 1, 1, 2, 1);
-	test_ijklm_ipkm_jlp_x(1, 1, 1, 1, 1, 2);
-	test_ijklm_ipkm_jlp_x(2, 3, 2, 3, 2, 3);
-	test_ijklm_ipkm_jlp_x(3, 5, 1, 7, 13, 11);
-	test_ijklm_ipkm_jlp_x(5, 5, 5, 5, 5, 5);
-	test_ijklm_ipkm_jlp_x(16, 16, 16, 16, 16, 16);
-	test_ijklm_ipkm_jlp_x(17, 16, 17, 16, 17, 16);
+    test_ijklm_ipkm_jlp_x(1, 1, 1, 1, 1, 1);
+    test_ijklm_ipkm_jlp_x(2, 1, 1, 1, 1, 1);
+    test_ijklm_ipkm_jlp_x(1, 2, 1, 1, 1, 1);
+    test_ijklm_ipkm_jlp_x(1, 1, 2, 1, 1, 1);
+    test_ijklm_ipkm_jlp_x(1, 1, 1, 2, 1, 1);
+    test_ijklm_ipkm_jlp_x(1, 1, 1, 1, 2, 1);
+    test_ijklm_ipkm_jlp_x(1, 1, 1, 1, 1, 2);
+    test_ijklm_ipkm_jlp_x(2, 3, 2, 3, 2, 3);
+    test_ijklm_ipkm_jlp_x(3, 5, 1, 7, 13, 11);
+    test_ijklm_ipkm_jlp_x(5, 5, 5, 5, 5, 5);
+    test_ijklm_ipkm_jlp_x(16, 16, 16, 16, 16, 16);
+    test_ijklm_ipkm_jlp_x(17, 16, 17, 16, 17, 16);
 }
 
 
 void linalg_ijklm_ipkm_jlp_x_test::test_ijklm_ipkm_jlp_x(size_t ni, size_t nj,
-	size_t nk, size_t nl, size_t nm, size_t np)
-	throw(libtest::test_exception) {
+    size_t nk, size_t nl, size_t nm, size_t np)
+    throw(libtest::test_exception) {
 
-	std::ostringstream ss;
-	ss << "linalg_ijklm_ipkm_jlp_x_test::test_ijklm_ipkm_jlp_x("
-		<< ni << ", " << nj << ", " << nk << ", " << nl << ", "
-		<< nm << ", " << np << ")";
-	std::string tnss = ss.str();
+    std::ostringstream ss;
+    ss << "linalg_ijklm_ipkm_jlp_x_test::test_ijklm_ipkm_jlp_x("
+        << ni << ", " << nj << ", " << nk << ", " << nl << ", "
+        << nm << ", " << np << ")";
+    std::string tnss = ss.str();
 
-	double *a = 0, *b = 0, *c = 0, *c_ref = 0;
-	double d = 0.0;
+    double *a = 0, *b = 0, *c = 0, *c_ref = 0;
+    double d = 0.0;
 
-	try {
+    try {
 
-	size_t sza = ni * np * nk * nm, szb = nj * nl * np,
-		szc = ni * nj * nk * nl * nm;
+    size_t sza = ni * np * nk * nm, szb = nj * nl * np,
+        szc = ni * nj * nk * nl * nm;
 
-	a = new double[sza];
-	b = new double[szb];
-	c = new double[szc];
-	c_ref = new double[szc];
+    a = new double[sza];
+    b = new double[szb];
+    c = new double[szc];
+    c_ref = new double[szc];
 
-	for(size_t i = 0; i < sza; i++) a[i] = drand48();
-	for(size_t i = 0; i < szb; i++) b[i] = drand48();
-	for(size_t i = 0; i < szc; i++) c[i] = c_ref[i] = drand48();
+    for(size_t i = 0; i < sza; i++) a[i] = drand48();
+    for(size_t i = 0; i < szb; i++) b[i] = drand48();
+    for(size_t i = 0; i < szc; i++) c[i] = c_ref[i] = drand48();
 
-	d = 0.0;
-	linalg::ijklm_ipkm_jlp_x(ni, nj, nk, nl, nm, np, a, b, c, d);
-	linalg_base_generic::ijklm_ipkm_jlp_x(ni, nj, nk, nl, nm, np,
-		a, b, c_ref, d);
+    d = 0.0;
+    linalg::ijklm_ipkm_jlp_x(ni, nj, nk, nl, nm, np, a, b, c, d);
+    linalg_base_generic::ijklm_ipkm_jlp_x(ni, nj, nk, nl, nm, np,
+        a, b, c_ref, d);
 
-	for(size_t i = 0; i < szc; i++) {
-		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
-			fail_test(tnss.c_str(), __FILE__, __LINE__,
-				"Incorrect result (d = 0.0).");
-		}
-	}
+    for(size_t i = 0; i < szc; i++) {
+        if(!cmp(c[i] - c_ref[i], c_ref[i])) {
+            fail_test(tnss.c_str(), __FILE__, __LINE__,
+                "Incorrect result (d = 0.0).");
+        }
+    }
 
-	d = 1.0;
-	linalg::ijklm_ipkm_jlp_x(ni, nj, nk, nl, nm, np, a, b, c, d);
-	linalg_base_generic::ijklm_ipkm_jlp_x(ni, nj, nk, nl, nm, np,
-		a, b, c_ref, d);
+    d = 1.0;
+    linalg::ijklm_ipkm_jlp_x(ni, nj, nk, nl, nm, np, a, b, c, d);
+    linalg_base_generic::ijklm_ipkm_jlp_x(ni, nj, nk, nl, nm, np,
+        a, b, c_ref, d);
 
-	for(size_t i = 0; i < szc; i++) {
-		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
-			fail_test(tnss.c_str(), __FILE__, __LINE__,
-				"Incorrect result (d = 1.0).");
-		}
-	}
+    for(size_t i = 0; i < szc; i++) {
+        if(!cmp(c[i] - c_ref[i], c_ref[i])) {
+            fail_test(tnss.c_str(), __FILE__, __LINE__,
+                "Incorrect result (d = 1.0).");
+        }
+    }
 
-	d = -1.0;
-	linalg::ijklm_ipkm_jlp_x(ni, nj, nk, nl, nm, np, a, b, c, d);
-	linalg_base_generic::ijklm_ipkm_jlp_x(ni, nj, nk, nl, nm, np,
-		a, b, c_ref, d);
+    d = -1.0;
+    linalg::ijklm_ipkm_jlp_x(ni, nj, nk, nl, nm, np, a, b, c, d);
+    linalg_base_generic::ijklm_ipkm_jlp_x(ni, nj, nk, nl, nm, np,
+        a, b, c_ref, d);
 
-	for(size_t i = 0; i < szc; i++) {
-		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
-			fail_test(tnss.c_str(), __FILE__, __LINE__,
-				"Incorrect result (d = -1.0).");
-		}
-	}
+    for(size_t i = 0; i < szc; i++) {
+        if(!cmp(c[i] - c_ref[i], c_ref[i])) {
+            fail_test(tnss.c_str(), __FILE__, __LINE__,
+                "Incorrect result (d = -1.0).");
+        }
+    }
 
-	d = drand48();
-	linalg::ijklm_ipkm_jlp_x(ni, nj, nk, nl, nm, np, a, b, c, d);
-	linalg_base_generic::ijklm_ipkm_jlp_x(ni, nj, nk, nl, nm, np,
-		a, b, c_ref, d);
+    d = drand48();
+    linalg::ijklm_ipkm_jlp_x(ni, nj, nk, nl, nm, np, a, b, c, d);
+    linalg_base_generic::ijklm_ipkm_jlp_x(ni, nj, nk, nl, nm, np,
+        a, b, c_ref, d);
 
-	for(size_t i = 0; i < szc; i++) {
-		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
-			fail_test(tnss.c_str(), __FILE__, __LINE__,
-				"Incorrect result (d = rnd).");
-		}
-	}
+    for(size_t i = 0; i < szc; i++) {
+        if(!cmp(c[i] - c_ref[i], c_ref[i])) {
+            fail_test(tnss.c_str(), __FILE__, __LINE__,
+                "Incorrect result (d = rnd).");
+        }
+    }
 
-	d = -drand48();
-	linalg::ijklm_ipkm_jlp_x(ni, nj, nk, nl, nm, np, a, b, c, d);
-	linalg_base_generic::ijklm_ipkm_jlp_x(ni, nj, nk, nl, nm, np,
-		a, b, c_ref, d);
+    d = -drand48();
+    linalg::ijklm_ipkm_jlp_x(ni, nj, nk, nl, nm, np, a, b, c, d);
+    linalg_base_generic::ijklm_ipkm_jlp_x(ni, nj, nk, nl, nm, np,
+        a, b, c_ref, d);
 
-	for(size_t i = 0; i < szc; i++) {
-		if(!cmp(c[i] - c_ref[i], c_ref[i])) {
-			fail_test(tnss.c_str(), __FILE__, __LINE__,
-				"Incorrect result (d = -rnd).");
-		}
-	}
+    for(size_t i = 0; i < szc; i++) {
+        if(!cmp(c[i] - c_ref[i], c_ref[i])) {
+            fail_test(tnss.c_str(), __FILE__, __LINE__,
+                "Incorrect result (d = -rnd).");
+        }
+    }
 
-	delete [] a; a = 0;
-	delete [] b; b = 0;
-	delete [] c; c = 0;
-	delete [] c_ref; c_ref = 0;
+    delete [] a; a = 0;
+    delete [] b; b = 0;
+    delete [] c; c = 0;
+    delete [] c_ref; c_ref = 0;
 
-	} catch(exception &e) {
-		delete [] a; a = 0;
-		delete [] b; b = 0;
-		delete [] c; c = 0;
-		delete [] c_ref; c_ref = 0;
-		fail_test(tnss.c_str(), __FILE__, __LINE__, e.what());
-	} catch(...) {
-		delete [] a; a = 0;
-		delete [] b; b = 0;
-		delete [] c; c = 0;
-		delete [] c_ref; c_ref = 0;
-		throw;
-	}
+    } catch(exception &e) {
+        delete [] a; a = 0;
+        delete [] b; b = 0;
+        delete [] c; c = 0;
+        delete [] c_ref; c_ref = 0;
+        fail_test(tnss.c_str(), __FILE__, __LINE__, e.what());
+    } catch(...) {
+        delete [] a; a = 0;
+        delete [] b; b = 0;
+        delete [] c; c = 0;
+        delete [] c_ref; c_ref = 0;
+        throw;
+    }
 }
 
 

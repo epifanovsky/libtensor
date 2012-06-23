@@ -27,8 +27,6 @@ void tod_set_test::test_1(double d) throw(libtest::test_exception) {
 
     try {
 
-        cpu_pool cpus(1);
-
         index<1> i1, i2;
         i2[0] = 10;
         dimensions<1> dims(index_range<1>(i1, i2));
@@ -36,7 +34,7 @@ void tod_set_test::test_1(double d) throw(libtest::test_exception) {
 
         dense_tensor<1, double, allocator_t> t1(dims), t2(dims);
 
-        tod_set<1>().perform(cpus, t1);
+        tod_set<1>().perform(t1);
         {
             dense_tensor_rd_ctrl<1, double> c1(t1);
             const double *p = c1.req_const_dataptr();
@@ -48,7 +46,7 @@ void tod_set_test::test_1(double d) throw(libtest::test_exception) {
             c1.ret_const_dataptr(p);
         }
 
-        tod_set<1>(d).perform(cpus, t2);
+        tod_set<1>(d).perform(t2);
         {
             dense_tensor_rd_ctrl<1, double> c2(t2);
             const double *p = c2.req_const_dataptr();
@@ -76,8 +74,6 @@ void tod_set_test::test_2(double d) throw(libtest::test_exception) {
 
     try {
 
-        cpu_pool cpus(1);
-
         index<2> i1, i2;
         i2[0] = 10; i2[1] = 3;
         dimensions<2> dims(index_range<2>(i1, i2));
@@ -85,7 +81,7 @@ void tod_set_test::test_2(double d) throw(libtest::test_exception) {
 
         dense_tensor<2, double, allocator_t> t1(dims), t2(dims);
 
-        tod_set<2>().perform(cpus, t1);
+        tod_set<2>().perform(t1);
         {
             dense_tensor_rd_ctrl<2, double> c1(t1);
             const double *p = c1.req_const_dataptr();
@@ -97,7 +93,7 @@ void tod_set_test::test_2(double d) throw(libtest::test_exception) {
             c1.ret_const_dataptr(p);
         }
 
-        tod_set<2>(d).perform(cpus, t2);
+        tod_set<2>(d).perform(t2);
         {
             dense_tensor_rd_ctrl<2, double> c2(t2);
             const double *p = c2.req_const_dataptr();
@@ -125,8 +121,6 @@ void tod_set_test::test_3(double d) throw(libtest::test_exception) {
 
     try {
 
-        cpu_pool cpus(1);
-
         index<3> i1, i2;
         i2[0] = 10; i2[1] = 2; i2[2] = 21;
         dimensions<3> dims(index_range<3>(i1, i2));
@@ -134,7 +128,7 @@ void tod_set_test::test_3(double d) throw(libtest::test_exception) {
 
         dense_tensor<3, double, allocator_t> t1(dims), t2(dims);
 
-        tod_set<3>().perform(cpus, t1);
+        tod_set<3>().perform(t1);
         {
             dense_tensor_rd_ctrl<3, double> c1(t1);
             const double *p = c1.req_const_dataptr();
@@ -146,7 +140,7 @@ void tod_set_test::test_3(double d) throw(libtest::test_exception) {
             c1.ret_const_dataptr(p);
         }
 
-        tod_set<3>(d).perform(cpus, t2);
+        tod_set<3>(d).perform(t2);
         {
             dense_tensor_rd_ctrl<3, double> c2(t2);
             const double *p = c2.req_const_dataptr();
@@ -174,8 +168,6 @@ void tod_set_test::test_4(double d) throw(libtest::test_exception) {
 
     try {
 
-        cpu_pool cpus(1);
-
         index<4> i1, i2;
         i2[0] = 1; i2[1] = 4; i2[2] = 9; i2[3] = 1;
         dimensions<4> dims(index_range<4>(i1, i2));
@@ -183,7 +175,7 @@ void tod_set_test::test_4(double d) throw(libtest::test_exception) {
 
         dense_tensor<4, double, allocator_t> t1(dims), t2(dims);
 
-        tod_set<4>().perform(cpus, t1);
+        tod_set<4>().perform(t1);
         {
             dense_tensor_rd_ctrl<4, double> c1(t1);
             const double *p = c1.req_const_dataptr();
@@ -195,7 +187,7 @@ void tod_set_test::test_4(double d) throw(libtest::test_exception) {
             c1.ret_const_dataptr(p);
         }
 
-        tod_set<4>(d).perform(cpus, t2);
+        tod_set<4>(d).perform(t2);
         {
             dense_tensor_rd_ctrl<4, double> c2(t2);
             const double *p = c2.req_const_dataptr();

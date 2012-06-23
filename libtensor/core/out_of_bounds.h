@@ -6,28 +6,28 @@
 namespace libtensor {
 
 
-/**	\brief Exception indicating that an %index is out of bounds
+/** \brief Exception indicating that an %index is out of bounds
 
-	\ingroup libtensor_core_exc
+    \ingroup libtensor_core_exc
  **/
 class out_of_bounds : public exception_base<out_of_bounds> {
 public:
-	//!	\name Construction and destruction
-	//@{
+    //!    \name Construction and destruction
+    //@{
 
-	/**	\brief Creates an exception
-	 **/
-	out_of_bounds(const char *ns, const char *clazz, const char *method,
-		const char *file, unsigned int line, const char *message)
-		throw()
-		: exception_base<out_of_bounds>(ns, clazz, method, file, line,
-			"out_of_bounds", message) { };
+    /** \brief Creates an exception
+     **/
+    out_of_bounds(const char *ns, const char *clazz, const char *method,
+        const char *file, unsigned int line, const char *message)
+        throw()
+        : exception_base<out_of_bounds>(ns, clazz, method, file, line,
+            "out_of_bounds", message) { };
 
-	/**	\brief Virtual destructor
-	 **/
-	virtual ~out_of_bounds() throw() { };
+    /** \brief Virtual destructor
+     **/
+    virtual ~out_of_bounds() throw() { };
 
-	//@}
+    //@}
 };
 
 

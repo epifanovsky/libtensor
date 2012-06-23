@@ -15,6 +15,12 @@ namespace libtensor {
 typedef linalg_base_acml linalg_base;
 } // namespace libtensor
 
+#elif defined(USE_ESSL)
+#include "essl/linalg_base_essl.h"
+namespace libtensor {
+typedef linalg_base_essl linalg_base;
+} // namespace libtensor
+
 #elif defined(USE_GSL)
 #include "gsl/linalg_base_gsl.h"
 namespace libtensor {
@@ -43,9 +49,9 @@ typedef linalg_base_generic linalg_base;
 
 namespace libtensor {
 
-/**	\brief Provides basic linear algebra routines
+/** \brief Provides basic linear algebra routines
 
-	\ingroup libtensor_linalg
+    \ingroup libtensor_linalg
  **/
 struct linalg : public linalg_base { };
 

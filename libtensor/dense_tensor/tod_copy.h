@@ -2,7 +2,6 @@
 #define LIBTENSOR_TOD_COPY_H
 
 #include <libtensor/timings.h>
-#include <libtensor/mp/cpu_pool.h>
 #include "dense_tensor_i.h"
 
 namespace libtensor {
@@ -86,13 +85,11 @@ public:
     void prefetch();
 
     /** \brief Runs the operation
-        \param cpus CPU pool.
         \param zero Overwrite/add to flag.
         \param c Scaling coefficient.
         \param tb Output tensor.
      **/
-    void perform(cpu_pool &cpus, bool zero, double c,
-        dense_tensor_wr_i<N, double> &tb);
+    void perform(bool zero, double c, dense_tensor_wr_i<N, double> &tb);
 
     //@}
 

@@ -1,5 +1,6 @@
 #ifdef LIBTENSOR_INSTANTIATE_TEMPLATES
 
+#include "scalar_transf_double.h"
 #include "btod_contract2.h"
 #include "btod_contract2_impl.h"
 
@@ -8,43 +9,43 @@ namespace libtensor {
 
 template<>
 struct btod_contract2_clazz<0, 1, 1> {
-	static const char *k_clazz;
+    static const char *k_clazz;
 };
 template<> 
 struct btod_contract2_clazz<0, 1, 2> {
-	static const char *k_clazz;
+    static const char *k_clazz;
 };
 template<>
 struct btod_contract2_clazz<0, 1, 3> {
-	static const char *k_clazz;
+    static const char *k_clazz;
 };
 template<>
 struct btod_contract2_clazz<0, 1, 4> {
-	static const char *k_clazz;
+    static const char *k_clazz;
 };
 template<>
 struct btod_contract2_clazz<0, 1, 5> {
-	static const char *k_clazz;
+    static const char *k_clazz;
 };
 template<>
 struct btod_contract2_clazz<1, 0, 1> {
-	static const char *k_clazz;
+    static const char *k_clazz;
 };
 template<>
 struct btod_contract2_clazz<1, 0, 2> {
-	static const char *k_clazz;
+    static const char *k_clazz;
 };
 template<>
 struct btod_contract2_clazz<1, 0, 3> {
-	static const char *k_clazz;
+    static const char *k_clazz;
 };
 template<>
 struct btod_contract2_clazz<1, 0, 4> {
-	static const char *k_clazz;
+    static const char *k_clazz;
 };
 template<>
 struct btod_contract2_clazz<1, 0, 5> {
-	static const char *k_clazz;
+    static const char *k_clazz;
 };
 
 

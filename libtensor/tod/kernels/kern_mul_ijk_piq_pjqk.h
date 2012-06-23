@@ -7,30 +7,30 @@ namespace libtensor {
 
 
 /**
-	\ingroup libtensor_tod_kernel
+    \ingroup libtensor_tod_kernel
  **/
 class kern_mul_ijk_piq_pjqk : public kernel_base<2, 1> {
-	friend class kern_mul_ijkl_pkiq_pjql;
+    friend class kern_mul_ijkl_pkiq_pjql;
 
 public:
-	static const char *k_clazz; //!< Kernel name
+    static const char *k_clazz; //!< Kernel name
 
 private:
-	double m_d;
-	size_t m_ni, m_nj, m_nk, m_np, m_nq;
-	size_t m_spa, m_sia, m_spb, m_sjb, m_sqb, m_sic, m_sjc;
+    double m_d;
+    size_t m_ni, m_nj, m_nk, m_np, m_nq;
+    size_t m_spa, m_sia, m_spb, m_sjb, m_sqb, m_sic, m_sjc;
 
 public:
-	virtual ~kern_mul_ijk_piq_pjqk() { }
+    virtual ~kern_mul_ijk_piq_pjqk() { }
 
-	virtual const char *get_name() const {
-		return k_clazz;
-	}
+    virtual const char *get_name() const {
+        return k_clazz;
+    }
 
-	virtual void run(const loop_registers<2, 1> &r);
+    virtual void run(const loop_registers<2, 1> &r);
 
-	static kernel_base<2, 1> *match(const kern_mul_ijk_ip_jpk &z,
-		list_t &in, list_t &out);
+    static kernel_base<2, 1> *match(const kern_mul_ijk_ip_jpk &z,
+        list_t &in, list_t &out);
 
 };
 

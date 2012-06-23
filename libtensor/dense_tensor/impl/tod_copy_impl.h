@@ -1,7 +1,6 @@
 #ifndef LIBTENSOR_TOD_COPY_IMPL_H
 #define LIBTENSOR_TOD_COPY_IMPL_H
 
-#include <libtensor/mp/auto_cpu_lock.h>
 #include <libtensor/tod/bad_dimensions.h>
 #include <libtensor/kernels/kern_dadd1.h>
 #include <libtensor/kernels/kern_dcopy.h>
@@ -43,11 +42,11 @@ void tod_copy<N>::prefetch() {
 
 
 template<size_t N>
-void tod_copy<N>::perform(cpu_pool &cpus, bool zero, double c,
+void tod_copy<N>::perform(bool zero, double c,
     dense_tensor_wr_i<N, double> &tb) {
 
     static const char *method =
-        "perform(cpu_pool&, bool, double, dense_tensor_wr_i<N, double>&)";
+        "perform(bool, double, dense_tensor_wr_i<N, double>&)";
 
     if(!tb.get_dims().equals(m_dimsb)) {
         throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "tb");
@@ -57,13 +56,11 @@ void tod_copy<N>::perform(cpu_pool &cpus, bool zero, double c,
     if(c == 0.0) {
         if(zero) {
             tod_copy<N>::start_timer("zero");
-            tod_set<N>().perform(cpus, tb);
+            tod_set<N>().perform(tb);
             tod_copy<N>::stop_timer("zero");
         }
         return;
     }
-
-    tod_copy<N>::start_timer();
 
     try {
 
@@ -103,24 +100,21 @@ void tod_copy<N>::perform(cpu_pool &cpus, bool zero, double c,
         double *pb = cb.req_dataptr();
 
         //  Invoke the appropriate kernel
+
+        loop_registers<1, 1> r;
+        r.m_ptra[0] = pa;
+        r.m_ptrb[0] = pb;
+        r.m_ptra_end[0] = pa + dimsa.get_size();
+        r.m_ptrb_end[0] = pb + dimsb.get_size();
+
         {
-            auto_cpu_lock cpu(cpus);
-
-            loop_registers<1, 1> r;
-            r.m_ptra[0] = pa;
-            r.m_ptrb[0] = pb;
-            r.m_ptra_end[0] = pa + dimsa.get_size();
-            r.m_ptrb_end[0] = pb + dimsb.get_size();
-
-            {
-                std::auto_ptr< kernel_base<1, 1> >kern(
-                    zero ?
-                        kern_dcopy::match(m_c * c, loop_in, loop_out) :
-                        kern_dadd1::match(m_c * c, loop_in, loop_out));
-                tod_copy<N>::start_timer(kern->get_name());
-                loop_list_runner<1, 1>(loop_in).run(r, *kern);
-                tod_copy<N>::stop_timer(kern->get_name());
-            }
+            std::auto_ptr< kernel_base<1, 1> >kern(
+                zero ?
+                    kern_dcopy::match(m_c * c, loop_in, loop_out) :
+                    kern_dadd1::match(m_c * c, loop_in, loop_out));
+            tod_copy<N>::start_timer(kern->get_name());
+            loop_list_runner<1, 1>(loop_in).run(r, *kern);
+            tod_copy<N>::stop_timer(kern->get_name());
         }
 
         ca.ret_const_dataptr(pa);

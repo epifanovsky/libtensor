@@ -6,7 +6,7 @@
 namespace libtensor {
 
 
-/**	\brief Tests the libtensor::abs_index class
+/** \brief Tests the libtensor::abs_index class
 
     \ingroup libtensor_tests_core
  **/

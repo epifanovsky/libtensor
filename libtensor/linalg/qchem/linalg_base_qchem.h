@@ -13,21 +13,21 @@
 namespace libtensor {
 
 
-/**	\brief Linear algebra implementation based on Q-Chem's imported BLAS
+/** \brief Linear algebra implementation based on Q-Chem's imported BLAS
 
-	\ingroup libtensor_linalg
+    \ingroup libtensor_linalg
  **/
 struct linalg_base_qchem :
-	public linalg_base_lowlevel<
-		linalg_base_memory_qchem,
-		linalg_base_level1_qchem,
-		linalg_base_level2_qchem,
-		linalg_base_level3_qchem>,
-	public linalg_base_highlevel<
-		linalg_base_memory_qchem,
-		linalg_base_level1_qchem,
-		linalg_base_level2_qchem,
-		linalg_base_level3_qchem>
+    public linalg_base_lowlevel<
+        linalg_base_memory_qchem,
+        linalg_base_level1_qchem,
+        linalg_base_level2_qchem,
+        linalg_base_level3_qchem>,
+    public linalg_base_highlevel<
+        linalg_base_memory_qchem,
+        linalg_base_level1_qchem,
+        linalg_base_level2_qchem,
+        linalg_base_level3_qchem>
 { };
 
 

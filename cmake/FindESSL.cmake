@@ -1,0 +1,17 @@
+set(ESSL_FOUND FALSE)
+
+find_path(ESSL_INCLUDE_PATH essl.h)
+find_library(ESSL_LIBRARY_PATH essl)
+
+if(ESSL_LIBRARY_PATH)
+
+set(ESSL_FOUND TRUE)
+
+set(ESSL_LIBRARIES essl)
+
+if(NOT ESSL_FIND_QUIETLY)
+    message(STATUS "Found ESSL: " ${ESSL_LIBRARY_PATH})
+endif(NOT ESSL_FIND_QUIETLY)
+
+endif(ESSL_LIBRARY_PATH)
+

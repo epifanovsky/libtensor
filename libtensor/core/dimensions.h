@@ -10,7 +10,7 @@
 namespace libtensor {
 
 
-/**	\brief Tensor %dimensions
+/** \brief Tensor %dimensions
     \tparam N Tensor order.
 
     Stores the number of %tensor elements along each dimension.
@@ -27,7 +27,7 @@ private:
     size_t m_size; //!< Total size
 
 public:
-    //!	\name Construction and destruction
+    //!    \name Construction and destruction
     //@{
 
     /** \brief Converts a range of indexes to the dimensions object
@@ -35,7 +35,7 @@ public:
      **/
     dimensions(const index_range<N> &ir);
 
-    /**	\brief Copy constructor
+    /** \brief Copy constructor
         \param d Another dimensions object.
      **/
     dimensions(const dimensions<N> &d);
@@ -43,36 +43,36 @@ public:
     //@}
 
 
-    //!	\name Dimensions manipulations, comparison, etc.
+    //!    \name Dimensions manipulations, comparison, etc.
     //@{
 
-    /**	\brief Returns the total number of elements
+    /** \brief Returns the total number of elements
      **/
     size_t get_size() const {
         return m_size;
     }
 
-    /**	\brief Returns the number of elements along a given dimension
+    /** \brief Returns the number of elements along a given dimension
      **/
     size_t get_dim(size_t i) const {
         return m_dims[i];
     }
 
-    /**	\brief Returns the linear increment along a given dimension
+    /** \brief Returns the linear increment along a given dimension
      **/
     size_t get_increment(size_t i) const {
         return m_incs[i];
     }
 
-    /**	\brief Returns true if an %index is within the %dimensions
+    /** \brief Returns true if an %index is within the %dimensions
      **/
     bool contains(const index<N> &idx) const;
 
-    /**	\brief Returns true if two %dimensions objects are equal
+    /** \brief Returns true if two %dimensions objects are equal
      **/
     bool equals(const dimensions<N> &other) const;
 
-    /**	\brief Permutes the %dimensions
+    /** \brief Permutes the %dimensions
         \return The reference to the current %dimensions object
      **/
     dimensions<N> &permute(const permutation<N> &p);
@@ -80,22 +80,22 @@ public:
     //@}
 
 
-    //!	\name Overloaded operators
+    //!    \name Overloaded operators
     //@{
 
-    /**	\brief Returns the number of elements along a given dimension
+    /** \brief Returns the number of elements along a given dimension
      **/
     size_t operator[](size_t i) const {
         return get_dim(i);
     }
 
-    /**	\brief Returns true if two %dimensions objects are equal
+    /** \brief Returns true if two %dimensions objects are equal
      **/
     bool operator==(const dimensions<N> &other) const {
         return equals(other);
     }
 
-    /**	\brief Returns true if two %dimensions objects are different
+    /** \brief Returns true if two %dimensions objects are different
      **/
     bool operator!=(const dimensions<N> &other) const {
         return !equals(other);
@@ -105,7 +105,7 @@ public:
 
 
 private:
-    /**	\brief Updates the linear increments for each dimension
+    /** \brief Updates the linear increments for each dimension
      **/
     void update_increments();
 

@@ -12,22 +12,22 @@
 namespace libtensor {
 
 
-/**	\brief Linear algebra implementation based on
-		GNU Scientific Library (GSL)
+/** \brief Linear algebra implementation based on
+        GNU Scientific Library (GSL)
 
-	\ingroup libtensor_linalg
+    \ingroup libtensor_linalg
  **/
 struct linalg_base_gsl :
-	public linalg_base_lowlevel<
-		linalg_base_memory_generic,
-		linalg_base_level1_cblas,
-		linalg_base_level2_cblas,
-		linalg_base_level3_cblas>,
-	public linalg_base_highlevel<
-		linalg_base_memory_generic,
-		linalg_base_level1_cblas,
-		linalg_base_level2_cblas,
-		linalg_base_level3_cblas>
+    public linalg_base_lowlevel<
+        linalg_base_memory_generic,
+        linalg_base_level1_cblas,
+        linalg_base_level2_cblas,
+        linalg_base_level3_cblas>,
+    public linalg_base_highlevel<
+        linalg_base_memory_generic,
+        linalg_base_level1_cblas,
+        linalg_base_level2_cblas,
+        linalg_base_level3_cblas>
 { };
 
 

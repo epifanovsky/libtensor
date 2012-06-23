@@ -2,7 +2,6 @@
 #define LIBTENSOR_TOD_DIRSUM_IMPL_H
 
 #include <memory>
-#include <libtensor/mp/auto_cpu_lock.h>
 #include <libtensor/tod/bad_dimensions.h>
 #include <libtensor/tod/contraction2.h>
 #include <libtensor/tod/contraction2_list_builder.h>
@@ -40,10 +39,10 @@ tod_dirsum<N, M>::tod_dirsum(dense_tensor_rd_i<k_ordera, double> &ta, double ka,
 
 
 template<size_t N, size_t M>
-void tod_dirsum<N, M>::perform(cpu_pool &cpus, bool zero, double d,
+void tod_dirsum<N, M>::perform(bool zero, double d,
     dense_tensor_wr_i<k_orderc, double> &tc) {
 
-    static const char *method = "perform(cpu_pool&, bool, double, "
+    static const char *method = "perform(bool, double, "
         "dense_tensor_wr_i<N + M, double>&)";
 
     if(!m_dimsc.equals(tc.get_dims())) {

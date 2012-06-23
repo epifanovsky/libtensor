@@ -6,30 +6,16 @@
 #include <libtensor/dense_tensor/dense_tensor_i.h>
 #include <libtensor/dense_tensor/tod_vmpriority.h>
 #include <libtensor/block_tensor/bto/bto_vmpriority.h>
+#include <libtensor/block_tensor/btod/btod_traits.h>
 
 namespace libtensor {
 
 
-struct btod_vmpriority_traits {
-
-    typedef double element_type;
-
-    template<size_t N> struct block_tensor_type {
-        typedef block_tensor_i<N, double> type;
-    };
-
-    template<size_t N> struct block_tensor_ctrl_type {
-        typedef block_tensor_ctrl<N, double> type;
-    };
-
-    template<size_t N> struct block_type {
-        typedef dense_tensor_i<N, double> type;
-    };
+struct btod_vmpriority_traits : public bto_traits<double> {
 
     template<size_t N> struct to_vmpriority_type {
         typedef tod_vmpriority<N> type;
     };
-
 };
 
 

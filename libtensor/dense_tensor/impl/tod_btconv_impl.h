@@ -6,7 +6,6 @@
 #include <libtensor/core/orbit.h>
 #include <libtensor/core/orbit_list.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include <libtensor/btod/transf_double.h>
 #include "../tod_btconv.h"
 
 namespace libtensor {
@@ -64,11 +63,11 @@ void tod_btconv<N>::perform(dense_tensor_wr_i<N, double> &t) {
         typename orbit<N, double>::iterator i = orb.begin();
         while(i != orb.end()) {
             abs_index<N> aidx(i->first, bidims);
-            const transf<N, double> &tr = i->second;
+            const tensor_transf<N, double> &tr = i->second;
             index<N> dst_offset = bis.get_block_start(aidx.get_index());
             copy_block(dst_ptr, t.get_dims(), dst_offset,
                 src_ptr, blk.get_dims(),
-                tr.get_perm(), tr.get_coeff());
+                tr.get_perm(), tr.get_scalar_tr().get_coeff());
             i++;
         }
 

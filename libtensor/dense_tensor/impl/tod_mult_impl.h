@@ -2,7 +2,6 @@
 #define LIBTENSOR_TOD_MULT_IMPL_H
 
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include <libtensor/mp/auto_cpu_lock.h>
 #include <libtensor/tod/kernels/loop_list_runner.h>
 #include <libtensor/kernels/kern_ddiv2.h>
 #include <libtensor/kernels/kern_dmul2.h>
@@ -64,25 +63,24 @@ void tod_mult<N>::prefetch() {
 
 
 template<size_t N>
-void tod_mult<N>::perform(cpu_pool &cpus, dense_tensor_wr_i<N, double> &tc) {
+void tod_mult<N>::perform(dense_tensor_wr_i<N, double> &tc) {
 
-    perform(cpus, true, 1.0, tc);
+    perform(true, 1.0, tc);
 }
 
 
 template<size_t N>
-void tod_mult<N>::perform(cpu_pool &cpus, dense_tensor_wr_i<N, double> &tc,
-    double c) {
+void tod_mult<N>::perform(dense_tensor_wr_i<N, double> &tc, double c) {
 
-    perform(cpus, false, c, tc);
+    perform(false, c, tc);
 }
 
 
 template<size_t N>
-void tod_mult<N>::perform(cpu_pool &cpus, bool zero, double c,
+void tod_mult<N>::perform(bool zero, double c,
     dense_tensor_wr_i<N, double> &tc) {
 
-    static const char *method = "perform(cpu_pool&, bool, double, "
+    static const char *method = "perform(bool, double, "
         "dense_tensor_wr_i<N, double>&)";
 
     if(!m_dimsc.equals(tc.get_dims())) {
@@ -129,32 +127,28 @@ void tod_mult<N>::perform(cpu_pool &cpus, bool zero, double c,
     const double *pb = cb.req_const_dataptr();
     double *pc = cc.req_dataptr();
 
-    {
-        auto_cpu_lock cpu(cpus);
-
-        if(zero) {
-            tod_mult<N>::start_timer("zero");
-            size_t sz = dimsc.get_size();
-            for(size_t i = 0; i < sz; i++) pc[i] = 0.0;
-            tod_mult<N>::stop_timer("zero");
-        }
-
-        loop_registers<2, 1> r;
-        r.m_ptra[0] = pa;
-        r.m_ptra[1] = pb;
-        r.m_ptrb[0] = pc;
-        r.m_ptra_end[0] = pa + dimsa.get_size();
-        r.m_ptra_end[1] = pb + dimsb.get_size();
-        r.m_ptrb_end[0] = pc + dimsc.get_size();
-
-        std::auto_ptr< kernel_base<2, 1> > kern(
-            m_recip ?
-                kern_ddiv2::match(m_c * c, loop_in, loop_out) :
-                kern_dmul2::match(m_c * c, loop_in, loop_out));
-        tod_mult<N>::start_timer(kern->get_name());
-        loop_list_runner<2, 1>(loop_in).run(r, *kern);
-        tod_mult<N>::stop_timer(kern->get_name());
+    if(zero) {
+        tod_mult<N>::start_timer("zero");
+        size_t sz = dimsc.get_size();
+        for(size_t i = 0; i < sz; i++) pc[i] = 0.0;
+        tod_mult<N>::stop_timer("zero");
     }
+
+    loop_registers<2, 1> r;
+    r.m_ptra[0] = pa;
+    r.m_ptra[1] = pb;
+    r.m_ptrb[0] = pc;
+    r.m_ptra_end[0] = pa + dimsa.get_size();
+    r.m_ptra_end[1] = pb + dimsb.get_size();
+    r.m_ptrb_end[0] = pc + dimsc.get_size();
+
+    std::auto_ptr< kernel_base<2, 1> > kern(
+        m_recip ?
+            kern_ddiv2::match(m_c * c, loop_in, loop_out) :
+            kern_dmul2::match(m_c * c, loop_in, loop_out));
+    tod_mult<N>::start_timer(kern->get_name());
+    loop_list_runner<2, 1>(loop_in).run(r, *kern);
+    tod_mult<N>::stop_timer(kern->get_name());
 
     cc.ret_dataptr(pc); pc = 0;
     cb.ret_const_dataptr(pb); pb = 0;

@@ -5,18 +5,18 @@
 
 namespace libtensor {
 
-/**	\brief Tests the libtensor::tod_scatter class
+/** \brief Tests the libtensor::tod_scatter class
 
-	\ingroup libtensor_tests_tod
+    \ingroup libtensor_tests_tod
 **/
 class tod_scatter_test : public libtest::unit_test {
 public:
-	virtual void perform() throw(libtest::test_exception);
+    virtual void perform() throw(libtest::test_exception);
 
 private:
-	// c_{ij} = a_j
-	void test_ij_j(size_t ni, size_t nj, double d = 0.0)
-		throw(libtest::test_exception);
+    // c_{ij} = a_j
+    void test_ij_j(size_t ni, size_t nj, double d = 0.0)
+        throw(libtest::test_exception);
 
 };
 

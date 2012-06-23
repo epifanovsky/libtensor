@@ -13,6 +13,7 @@ set(SRC
     btod/btod_tridiagonalize.C
     symmetry/point_group_table.C
     symmetry/product_table_container.C
+    symmetry/product_table_i.C
     tod/loop_list_add.C
 )
 
@@ -131,6 +132,7 @@ set(SRC_KERNELS
 
 set(SRC_INST
     dense_tensor/impl/dense_tensor.C
+    dense_tensor/impl/to_contract2_dims.C
     dense_tensor/impl/tod_add.C
     dense_tensor/impl/tod_btconv.C
     dense_tensor/impl/tod_compare.C
@@ -154,8 +156,50 @@ set(SRC_INST
     dense_tensor/impl/tod_set_elem.C
     dense_tensor/impl/tod_trace.C
     dense_tensor/impl/tod_vmpriority.C
-    btod/additive_btod.C
-    btod/basic_btod.C
+    symmetry/inst/block_labeling_inst.C
+    symmetry/inst/combine_part_inst.C
+    symmetry/inst/combine_label_inst.C
+    symmetry/inst/evaluation_rule_inst.C
+    symmetry/inst/permutation_group_inst.C
+    symmetry/inst/se_label_inst.C
+    symmetry/inst/se_part_inst.C
+    symmetry/inst/se_perm_inst.C
+    symmetry/inst/so_apply_inst.C
+    symmetry/inst/so_apply_se_label_inst.C
+    symmetry/inst/so_apply_se_part_inst.C
+    symmetry/inst/so_apply_se_perm_inst.C
+    symmetry/inst/so_copy_inst.C
+    symmetry/inst/so_dirprod_inst.C
+    symmetry/inst/so_dirprod_se_label_inst.C
+    symmetry/inst/so_dirprod_se_part_inst.C
+    symmetry/inst/so_dirprod_se_perm_inst.C
+    symmetry/inst/so_dirsum_inst.C
+    symmetry/inst/so_dirsum_se_label_inst.C
+    symmetry/inst/so_dirsum_se_part_inst.C
+    symmetry/inst/so_dirsum_se_perm_inst.C
+    symmetry/inst/so_merge_inst.C
+    symmetry/inst/so_merge_se_label_inst.C
+    symmetry/inst/so_merge_se_part_inst.C
+    symmetry/inst/so_merge_se_perm_inst.C
+    symmetry/inst/so_permute_inst.C
+    symmetry/inst/so_permute_se_label_inst.C
+    symmetry/inst/so_permute_se_part_inst.C
+    symmetry/inst/so_permute_se_perm_inst.C
+    symmetry/inst/so_reduce_inst.C
+    symmetry/inst/so_reduce_se_label_inst.C
+    symmetry/inst/so_reduce_se_part_inst.C
+    symmetry/inst/so_reduce_se_perm_inst.C
+    symmetry/inst/so_symmetrize_inst.C
+    symmetry/inst/so_symmetrize_se_label_inst.C
+    symmetry/inst/so_symmetrize_se_part_inst.C
+    symmetry/inst/so_symmetrize_se_perm_inst.C
+    block_tensor/btod/impl/additive_btod.C
+    block_tensor/btod/impl/basic_btod.C
+    block_tensor/btod/impl/btod_copy.C
+    block_tensor/btod/impl/btod_diag.C
+    block_tensor/btod/impl/btod_set.C
+    block_tensor/btod/impl/btod_trace.C
+    block_tensor/btod/impl/btod_vmpriority.C
     btod/btod_add.C
     btod/btod_contract2_1.C
     btod/btod_contract2_2.C
@@ -163,22 +207,19 @@ set(SRC_INST
     btod/btod_contract2_4.C
     btod/btod_contract2_5.C
     btod/btod_contract2_6.C
-    btod/btod_copy.C
     btod/btod_dirsum.C
     btod/btod_dotprod.C
     btod/btod_ewmult2.C
     btod/btod_sum.C
-    block_tensor/btod/impl/btod_set.C
-    block_tensor/btod/impl/btod_vmpriority.C
-)
-
-set(SRC_MP
-    mp/cpu_pool.C
-    mp/task_dispatcher.C
-    mp/task_queue.C
-    mp/worker.C
-    mp/worker_group.C
-    mp/worker_pool.C
+    diag_tensor/impl/diag_tensor_space.C
+    diag_tensor/impl/diag_tensor.C
+    diag_tensor/impl/tod_conv_diag_tensor.C
+    diag_tensor/impl/diag_to_add_space.C
+    diag_tensor/impl/diag_to_contract2_space.C
+    diag_tensor/impl/diag_tod_adjust_space.C
+    diag_tensor/impl/diag_tod_contract2.C
+    diag_tensor/impl/diag_tod_copy.C
+    diag_tensor/impl/diag_tod_set.C
 )
 
 set(SRC_QCHEM
@@ -199,8 +240,9 @@ set_property(TARGET tensor APPEND PROPERTY
     COMPILE_DEFINITIONS_DEBUG LIBTENSOR_DEBUG)
 if(HAVE_LIBVMM)
     set_property(TARGET tensor APPEND PROPERTY
-        COMPILE_DEFINITIONS HAVE_LIBVMM)
-    set_property(TARGET tensor APPEND PROPERTY
         COMPILE_DEFINITIONS_DEBUG LIBVMM_DEBUG)
+else(HAVE_LIBVMM)
+    set_property(TARGET tensor APPEND PROPERTY
+        COMPILE_DEFINITIONS WITHOUT_LIBVMM)
 endif(HAVE_LIBVMM)
 
