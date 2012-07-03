@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_LINALG_BASE_LEVEL1_QCHEM_H
 #define LIBTENSOR_LINALG_BASE_LEVEL1_QCHEM_H
 
+#include <libtensor/timings.h>
 #include "../generic/linalg_base_level1_generic.h"
 
 namespace libtensor {
@@ -10,9 +11,14 @@ namespace libtensor {
 
     \ingroup libtensor_linalg
  **/
-struct linalg_base_level1_qchem : public linalg_base_level1_generic {
+class linalg_base_level1_qchem :
+    public linalg_base_level1_generic,
+    public timings<linalg_base_level1_qchem> {
 
+public:
+    static const char *k_clazz; //!< Class name
 
+public:
     static void add_i_i_x_x(
         size_t ni,
         const double *a, size_t sia, double ka,

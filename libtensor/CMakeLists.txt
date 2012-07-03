@@ -216,6 +216,8 @@ set(SRC_INST
 
 set(SRC_QCHEM
     linalg/qchem/linalg_base_level1_qchem.C
+    linalg/qchem/linalg_base_level2_qchem.C
+    linalg/qchem/linalg_base_level3_qchem.C
 )
 
 add_library(tensor ${SRC} ${SRC_LINALG} ${SRC_INST})

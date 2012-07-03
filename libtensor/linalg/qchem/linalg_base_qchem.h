@@ -1,8 +1,6 @@
 #ifndef LIBTENSOR_LINALG_BASE_QCHEM_H
 #define LIBTENSOR_LINALG_BASE_QCHEM_H
 
-#include <qchem.h>
-#include <libmathtools/general/blas_include.h>
 #include "../generic/linalg_base_lowlevel.h"
 #include "../adaptive/linalg_base_highlevel.h"
 #include "linalg_base_memory_qchem.h"
