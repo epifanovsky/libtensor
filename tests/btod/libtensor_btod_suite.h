@@ -3,6 +3,7 @@
 
 #include <libtest/test_suite.h>
 #include "addition_schedule_test.h"
+#include "bto_contract2_bis_test.h"
 #include "btod_add_test.h"
 #include "btod_apply_test.h"
 #include "btod_cholesky_test.h"
@@ -49,6 +50,7 @@ namespace libtensor {
 
     This suite runs the following tests:
     \li libtensor::addition_schedule_test
+    \li libtensor::bto_contract2_bis_test
     \li libtensor::btod_add_test
     \li libtensor::btod_apply_test
     \li libtensor::btod_cholesky_test
@@ -84,6 +86,7 @@ namespace libtensor {
 class libtensor_btod_suite : public libtest::test_suite {
 private:
     unit_test_factory<addition_schedule_test> m_utf_addition_schedule;
+    unit_test_factory<bto_contract2_bis_test> m_utf_bto_contract2_bis;
     unit_test_factory<btod_add_test> m_utf_btod_add;
     unit_test_factory<btod_apply_test> m_utf_btod_apply;
     unit_test_factory<btod_cholesky_test> m_utf_btod_cholesky;
@@ -119,6 +122,7 @@ public:
     //!    Creates the suite
     libtensor_btod_suite();
 };
+
 
 } // namespace libtensor
 
