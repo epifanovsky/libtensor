@@ -1,4 +1,4 @@
-#include <libtensor/btod/scalar_transf_double.h>
+#include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/symmetry/product_table_container.h>
 #include <libtensor/symmetry/so_symmetrize_se_label.h>
 #include "so_symmetrize_se_label_test.h"
