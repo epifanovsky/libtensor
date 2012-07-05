@@ -53,22 +53,33 @@ public:
 
     /** \brief Apply permutation perm to this transformation
      **/
-    void permute(const permutation<N> &perm) { m_perm.permute(perm); }
+    tensor_transf<N, T> &permute(const permutation<N> &perm) {
+        m_perm.permute(perm);
+        return *this;
+    }
 
     /** \brief Apply scalar transformation st to this transformation
      **/
-    void transform(const scalar_transf<T> &st) { m_st.transform(st); }
+    tensor_transf<N, T> &transform(const scalar_transf<T> &st) {
+        m_st.transform(st);
+        return *this;
+    }
 
     /** \brief Apply tr to this transformation
      **/
-    void transform(const tensor_transf<N, T> &tr) {
+    tensor_transf<N, T> &transform(const tensor_transf<N, T> &tr) {
         m_st.transform(tr.m_st);
         m_perm.permute(tr.m_perm);
+        return *this;
     }
 
     /** \brief Invert this transformation
      **/
-    void invert() { m_st.invert(); m_perm.invert(); }
+    tensor_transf<N, T> &invert() {
+        m_st.invert();
+        m_perm.invert();
+        return *this;
+    }
 
     /** \brief Apply transformation to a tensor index
      **/
