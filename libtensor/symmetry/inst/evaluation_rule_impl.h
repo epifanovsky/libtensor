@@ -1,9 +1,9 @@
 #ifndef LIBTENSOR_EVALUATION_RULE_IMPL_H
 #define LIBTENSOR_EVALUATION_RULE_IMPL_H
 
-
 #include <list>
 #include <libtensor/core/permutation_generator.h>
+#include <libtensor/core/sequence_generator.h>
 
 
 namespace libtensor {
@@ -221,114 +221,16 @@ template<size_t N>
 void evaluation_rule<N>::symmetrize(const sequence<N, size_t> &idxgrp,
         const sequence<N, size_t> &symidx) {
 
-    size_t ngrp = 0, nidx = 0;
-    for (register size_t i = 0; i < N; i++) {
-        ngrp = std::max(ngrp, idxgrp[i]);
-        nidx = std::max(nidx, symidx[i]);
-    }
-    if (ngrp < 2) return;
-
-    sequence<N, size_t> map;
-    mask<N> msk;
-    for (register size_t i = 0; i < N; i++) {
-        if (idxgrp[i] == 0) { msk[i] = true; continue; }
-        map[(idxgrp[i] - 1) * nidx + symidx[i] - 1] = i;
-        msk[i] = (symidx[i] != 1);
-    }
-
     // Step 1: symmetrize sequences
-    size_t nseq = m_sequences.size();
-    std::vector<size_t> done(nseq, false);
-    std::vector<size_t> symseq(nseq, (size_t) -1);
-    for (size_t sno = 0; sno < nseq; sno++) {
-        if (done[sno]) continue;
-
-        permutation_generator<N> pg(msk);
-        permutation<N> pp;
-        sequence<N, size_t> curseq(m_sequences[sno]);
-        size_t nnseq = 0;
-        while (pg.next()) {
-
-            bool changed = false;
-            const permutation<N> &p = pg.get_perm();
-            size_t i = 0, i0, i1;
-            for (; i < N && p[i] == pp[i]; i++) ;
-            i0 = i++;
-            for (; i < N && p[i] == pp[i]; i++) ;
-            i1 = i;
-            pp.permute(i0, i1);
-            if (curseq[i0] != curseq[i1]) {
-                std::swap(curseq[i0], curseq[i1]);
-                changed = true;
-            }
-            if (nidx > 1) {
-                size_t j = i = 0, j0, j1;
-                for (; i < ngrp && map[j] != i0 && map[j] != i1;
-                        i++, j += nidx) ;
-                if (map[j] == i0) j0 = j;
-                else j1 = j;
-                i++;
-                j += nidx;
-                for (; i < ngrp && map[j] != i0 && map[j] != i1;
-                        i++, j += nidx) ;
-                if (map[j] == i0) j0 = j;
-                else j1 = j;
-
-                for (i = 1; i < nidx; i++) {
-                    if (curseq[map[j0 + i]] == curseq[map[j1 + i]]) continue;
-                    std::swap(curseq[map[j0 + i]], curseq[map[j1 + i]]);
-                    changed = true;
-                }
-            }
-            if (! changed) continue;
-
-            size_t sno2 = add_sequence(curseq);
-            nnseq++;
-            if (sno2 < symseq.size()) {
-                symseq[sno2] = sno;
-                done[sno2] = true;
-            }
-            else {
-                symseq.push_back(sno);
-                done.push_back(true);
-            }
-        }
-        if (nnseq != 0) symseq[sno] = sno;
-    }
+    std::vector<size_t> symseq;
+    symmetrize_seq(idxgrp, symidx, symseq);
 
     // Step 2: add terms for already existing terms that contain sequences
     //     which have been symmetrized
-    done.assign(m_term_list.size(), false);
-    std::vector<size_t> t2sym(m_term_list.size(), (size_t) -1);
+    std::vector<size_t> t2sym;
     std::map<size_t, std::vector<size_t> > sym2t;
-    size_t nterms = m_term_list.size();
-    for (size_t tno = 0; tno < nterms; tno++) {
-        if (done[tno]) continue;
+    symmetrize_terms(symseq, t2sym, sym2t);
 
-        size_t sno = m_term_list[tno].seqno;
-        if (symseq[sno] == (size_t) -1) continue;
-
-        t2sym[tno] = tno;
-        sym2t[tno].push_back(tno);
-
-        for (size_t sno2 = 0; sno2 < symseq.size(); sno2++) {
-            if (symseq[sno2] != sno || sno2 == sno) continue;
-
-            size_t tno2 = add_term(sno2, m_term_list[tno].intr,
-                    m_term_list[tno].target);
-
-            if (tno2 < t2sym.size()) {
-                t2sym[tno2] = tno;
-                done[tno2] = true;
-            }
-            else {
-                t2sym.push_back(tno);
-                done.push_back(true);
-            }
-            sym2t[tno].push_back(tno2);
-        }
-    }
-    done.clear();
     symseq.clear();
 
     // Step 3: symmetrize setup
@@ -356,31 +258,19 @@ void evaluation_rule<N>::symmetrize(const sequence<N, size_t> &idxgrp,
         // the list
         std::multiset<size_t>::const_iterator itt = terms2sym.begin();
         while (itt != terms2sym.end()) {
-            nterms = terms2sym.count(*itt);
+            size_t nterms = terms2sym.count(*itt);
             const std::vector<size_t> &terms = sym2t[*itt];
-            std::vector<size_t> idx(nterms);
-            for (register size_t i = 0; i < nterms; i++) idx[i] = i;
             for (std::list<product_t>::const_iterator it = lp1->begin();
                     it != lp1->end(); it++) {
 
-                while (true) {
+                sequence_generator gen(nterms, terms.size());
+                do {
                     lp2->push_back(*it);
                     product_t &prx = lp2->back();
-                    for (register size_t i = 0; i < nterms; i++) {
+                    const std::vector<size_t> &idx = gen.get_seq();
+                    for (register size_t i = 0; i < nterms; i++)
                         prx.insert(terms[idx[i]]);
-                    }
-                    size_t j = nterms - 1, dt = terms.size() - nterms;
-                    for (; j > 0; j--) {
-                        idx[j]++;
-                        if (idx[j] <= j + dt) break;
-                    }
-                    if (j == 0) {
-                        idx[0]++;
-                        if (idx[0] > dt) break;
-                    }
-                    j++;
-                    for (; j < nterms; j++) idx[j] = idx[j - 1] + 1;
-                }
+                } while (gen.next());
             }
             std::swap(lp1, lp2);
             lp2->clear();
@@ -426,6 +316,126 @@ bool evaluation_rule<N>::is_valid(iterator it) const {
     }
 
     return false;
+}
+
+
+template<size_t N>
+void evaluation_rule<N>::symmetrize_seq(const sequence<N, size_t> &idxgrp,
+        const sequence<N, size_t> &symidx, std::vector<size_t> &symseq) {
+
+    size_t ngrp = 0, nidx = 0;
+    for (register size_t i = 0; i < N; i++) {
+        ngrp = std::max(ngrp, idxgrp[i]);
+        nidx = std::max(nidx, symidx[i]);
+    }
+    if (ngrp < 2) return;
+
+    sequence<N, size_t> map;
+    mask<N> msk;
+    for (register size_t i = 0; i < N; i++) {
+        if (idxgrp[i] == 0) { msk[i] = true; continue; }
+        map[(idxgrp[i] - 1) * nidx + symidx[i] - 1] = i;
+        msk[i] = (symidx[i] != 1);
+    }
+
+    size_t nseq = m_sequences.size();
+    symseq.assign(nseq, (size_t) -1);
+    std::vector<bool> done(nseq, false);
+    for (size_t sno = 0; sno < nseq; sno++) {
+        if (done[sno]) continue;
+
+        permutation_generator<N> pg(msk);
+        sequence<N, size_t> curseq(m_sequences[sno]);
+
+        size_t nnseq = 0;
+        permutation<N> pp;
+        while (pg.next()) {
+
+            bool changed = false;
+            const permutation<N> &p = pg.get_perm();
+            size_t i = 0, i0, i1;
+            for (; i < N && p[i] == pp[i]; i++) ;
+            i0 = i++;
+            for (; i < N && p[i] == pp[i]; i++) ;
+            i1 = i;
+            pp.permute(i0, i1);
+            if (curseq[i0] != curseq[i1]) {
+                std::swap(curseq[i0], curseq[i1]);
+                changed = true;
+            }
+            if (nidx > 1) {
+                size_t j = i = 0, j0, j1;
+                for (; i < ngrp && map[j] != i0 && map[j] != i1;
+                        i++, j += nidx) ;
+                if (map[j] == i0) j0 = j;
+                else j1 = j;
+
+                j += nidx; i++;
+                for (; i < ngrp && map[j] != i0 && map[j] != i1;
+                        i++, j += nidx) ;
+                if (map[j] == i0) j0 = j;
+                else j1 = j;
+
+                for (i = 1; i < nidx; i++) {
+                    if (curseq[map[j0 + i]] == curseq[map[j1 + i]]) continue;
+                    std::swap(curseq[map[j0 + i]], curseq[map[j1 + i]]);
+                    changed = true;
+                }
+            }
+            if (! changed) continue;
+
+            size_t sno2 = add_sequence(curseq);
+            nnseq++;
+            if (sno2 < symseq.size()) {
+                symseq[sno2] = sno;
+                done[sno2] = true;
+            }
+            else {
+                symseq.push_back(sno);
+                done.push_back(true);
+            }
+        }
+        if (nnseq != 0) { symseq[sno] = sno; }
+    }
+}
+
+template<size_t N>
+void evaluation_rule<N>::symmetrize_terms(
+        const std::vector<size_t> &symseq, std::vector<size_t> &t2sym,
+        std::map< size_t, std::vector<size_t> > &sym2t) {
+
+    size_t nterms = m_term_list.size();
+
+    t2sym.assign(nterms, (size_t) -1);
+    sym2t.clear();
+
+    std::vector<bool> done(nterms, false);
+    for (size_t tno = 0; tno < nterms; tno++) {
+        if (done[tno]) continue;
+
+        size_t sno = m_term_list[tno].seqno;
+        if (symseq[sno] == (size_t) -1) continue;
+
+        sym2t[tno].push_back(tno);
+        t2sym[tno] = tno;
+
+        for (size_t sno2 = 0; sno2 < symseq.size(); sno2++) {
+            if (symseq[sno2] != sno || sno2 == sno) continue;
+
+            size_t tno2 = add_term(sno2, m_term_list[tno].intr,
+                    m_term_list[tno].target);
+
+            if (tno2 < t2sym.size()) {
+                t2sym[tno2] = tno;
+                done[tno2] = true;
+            }
+            else {
+                t2sym.push_back(tno);
+                done.push_back(true);
+            }
+            sym2t[tno].push_back(tno2);
+        }
+    }
 }
 
 

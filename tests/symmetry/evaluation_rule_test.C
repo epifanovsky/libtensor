@@ -3,6 +3,7 @@
 
 namespace libtensor {
 
+
 void evaluation_rule_test::perform() throw(libtest::test_exception) {
 
     test_1();
@@ -13,6 +14,7 @@ void evaluation_rule_test::perform() throw(libtest::test_exception) {
     test_sym_2();
     test_sym_3();
 }
+
 
 /** \test Add sequences to the list of sequences
  **/
@@ -57,6 +59,7 @@ void evaluation_rule_test::test_1() throw(libtest::test_exception) {
         fail_test(testname, __FILE__, __LINE__, e.what());
     }
 }
+
 
 /** \test Tests add sequences + create list of lists
  **/
@@ -134,6 +137,7 @@ void evaluation_rule_test::test_2() throw(libtest::test_exception) {
     }
 }
 
+
 /** \test Tests optimization of rules: all forbidden and all allowed rules
  **/
 void evaluation_rule_test::test_opt_1() throw(libtest::test_exception) {
@@ -184,6 +188,7 @@ void evaluation_rule_test::test_opt_1() throw(libtest::test_exception) {
     }
 }
 
+
 /** \test Tests optimization of rules: unused sequences
  **/
 void evaluation_rule_test::test_opt_2() throw(libtest::test_exception) {
@@ -230,6 +235,7 @@ void evaluation_rule_test::test_opt_2() throw(libtest::test_exception) {
     }
 }
 
+
 /** \test Tests symmetrization of rules: already symmetric rule
  **/
 void evaluation_rule_test::test_sym_1() throw(libtest::test_exception) {
@@ -269,6 +275,7 @@ void evaluation_rule_test::test_sym_1() throw(libtest::test_exception) {
         fail_test(testname, __FILE__, __LINE__, e.what());
     }
 }
+
 
 /** \test Tests symmetrization of rules: unsymmetric rule
  **/
@@ -341,6 +348,7 @@ void evaluation_rule_test::test_sym_2() throw(libtest::test_exception) {
     }
 }
 
+
 /** \test Tests symmetrization of rules: unsymmetric rule
  **/
 void evaluation_rule_test::test_sym_3() throw(libtest::test_exception) {
@@ -398,5 +406,6 @@ void evaluation_rule_test::test_sym_3() throw(libtest::test_exception) {
         fail_test(testname, __FILE__, __LINE__, e.what());
     }
 }
+
 
 } // namespace libtensor
