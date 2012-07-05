@@ -105,13 +105,14 @@ void bto_copy<N, Traits>::compute_block(bool zero, block_t &blk,
 
 
     //  Transformation for block from canonical A to B
-    tensor_transf_t tra(oa.get_transf(ia)), trinv(tr, true);
-    tra.transform(m_tr).transform(scalar_transf_t(c)).transform(trinv);
+    tensor_transf_t tra(oa.get_transf(ia));
+    tra.transform(m_tr).transform(scalar_transf_t(c));
+    tra.transform(tensor_transf_t(tr, true));
 
     if(zero) to_set_t().perform(cpus, blk);
     if(!ctrla.req_is_zero_block(acia.get_index())) {
         block_t &blka = ctrla.req_block(acia.get_index());
-        to_copy_t(blka, tra).perform(cpus, false, 1.0, blk);
+        to_copy_t(blka, tra).perform(cpus, false, Traits::identity(), blk);
         ctrla.ret_block(acia.get_index());
     }
 }
