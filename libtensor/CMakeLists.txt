@@ -189,6 +189,7 @@ set(SRC_INST
     block_tensor/btod/impl/basic_btod.C
     block_tensor/btod/impl/btod_copy.C
     block_tensor/btod/impl/btod_diag.C
+    block_tensor/btod/impl/btod_dotprod.C
     block_tensor/btod/impl/btod_set.C
     block_tensor/btod/impl/btod_trace.C
     block_tensor/btod/impl/btod_vmpriority.C
@@ -200,7 +201,6 @@ set(SRC_INST
     btod/btod_contract2_5.C
     btod/btod_contract2_6.C
     btod/btod_dirsum.C
-    btod/btod_dotprod.C
     btod/btod_ewmult2.C
     btod/btod_sum.C
     diag_tensor/impl/diag_tensor_space.C

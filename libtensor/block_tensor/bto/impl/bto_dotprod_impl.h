@@ -1,33 +1,32 @@
 #ifndef LIBTENSOR_BTOD_DOTPROD_IMPL_H
 #define LIBTENSOR_BTOD_DOTPROD_IMPL_H
 
-#include "../core/block_index_space_product_builder.h"
-#include "../core/permutation_builder.h"
-#include "../symmetry/so_dirprod.h"
-#include "../symmetry/so_merge.h"
-#include <libtensor/dense_tensor/tod_dotprod.h>
-#include "bad_block_index_space.h"
-#include "../mp/task_batch.h"
+#include <libtensor/core/block_index_space_product_builder.h>
+#include <libtensor/core/permutation_builder.h>
+#include <libtensor/btod/bad_block_index_space.h>
+#include <libtensor/symmetry/so_dirprod.h>
+#include <libtensor/symmetry/so_merge.h>
+#include <libtensor/mp/task_batch.h>
 
 namespace libtensor {
 
 
-template<size_t N>
-const char *btod_dotprod<N>::k_clazz = "btod_dotprod<N>";
+template<size_t N, typename Traits>
+const char *bto_dotprod<N, Traits>::k_clazz = "bto_dotprod<N, Traits>";
 
 
-template<size_t N>
-btod_dotprod<N>::btod_dotprod(block_tensor_i<N, double> &bt1,
-        block_tensor_i<N, double> &bt2) : m_bis(bt1.get_bis()) {
+template<size_t N, typename Traits>
+bto_dotprod<N, Traits>::bto_dotprod(block_tensor_t &bt1,
+        block_tensor_t &bt2) : m_bis(bt1.get_bis()) {
 
     m_bis.match_splits();
     add_arg(bt1, bt2);
 }
 
 
-template<size_t N>
-btod_dotprod<N>::btod_dotprod(block_tensor_i<N, double> &bt1,
-        const permutation<N> &perm1, block_tensor_i<N, double> &bt2,
+template<size_t N, typename Traits>
+bto_dotprod<N, Traits>::bto_dotprod(block_tensor_t &bt1,
+        const permutation<N> &perm1, block_tensor_t &bt2,
         const permutation<N> &perm2) : m_bis(bt1.get_bis()) {
 
     m_bis.match_splits();
@@ -36,12 +35,12 @@ btod_dotprod<N>::btod_dotprod(block_tensor_i<N, double> &bt1,
 }
 
 
-template<size_t N>
-void btod_dotprod<N>::add_arg(block_tensor_i<N, double> &bt1,
-        block_tensor_i<N, double> &bt2) {
+template<size_t N, typename Traits>
+void bto_dotprod<N, Traits>::add_arg(block_tensor_t &bt1,
+        block_tensor_t &bt2) {
 
-    static const char *method = "add_arg(block_tensor_i<N, double>&, "
-            "block_tensor_i<N, double>&)";
+    static const char *method = "add_arg(block_tensor_t&, "
+            "block_tensor_t&)";
 
     block_index_space<N> bis1(bt1.get_bis()), bis2(bt2.get_bis());
     bis1.match_splits();
@@ -59,13 +58,13 @@ void btod_dotprod<N>::add_arg(block_tensor_i<N, double> &bt1,
 }
 
 
-template<size_t N>
-void btod_dotprod<N>::add_arg(block_tensor_i<N, double> &bt1,
-        const permutation<N> &perm1, block_tensor_i<N, double> &bt2,
+template<size_t N, typename Traits>
+void bto_dotprod<N, Traits>::add_arg(block_tensor_t &bt1,
+        const permutation<N> &perm1, block_tensor_t &bt2,
         const permutation<N> &perm2) {
 
-    static const char *method = "add_arg(block_tensor_i<N, double>&, "
-            "const permutation<N>&, block_tensor_i<N, double>&, "
+    static const char *method = "add_arg(block_tensor_t&, "
+            "const permutation<N>&, block_tensor_t&, "
             "const permutation<N>&)";
 
     block_index_space<N> bis1(bt1.get_bis()), bis2(bt2.get_bis());
@@ -86,19 +85,24 @@ void btod_dotprod<N>::add_arg(block_tensor_i<N, double> &bt1,
 }
 
 
-template<size_t N>
-double btod_dotprod<N>::calculate() {
+template<size_t N, typename Traits>
+typename Traits::element_type bto_dotprod<N, Traits>::calculate() {
 
-    std::vector<double> v(1);
+    std::vector<element_t> v(1);
     calculate(v);
     return v[0];
 }
 
 
-template<size_t N>
-void btod_dotprod<N>::calculate(std::vector<double> &v) {
+template<size_t N, typename Traits>
+void bto_dotprod<N, Traits>::calculate(std::vector<element_t> &v) {
 
-    static const char *method = "calculate(std::vector<double>&)";
+    static const char *method = "calculate(std::vector<element_t>&)";
+
+    typedef typename Traits::template block_tensor_ctrl_type<N>::type
+        block_tensor_ctrl_t;
+    typedef typename Traits::template to_dotprod_type<N>::type
+        to_dotprod_t;
 
     size_t narg = m_args.size(), i;
 
@@ -106,23 +110,23 @@ void btod_dotprod<N>::calculate(std::vector<double> &v) {
         throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__, "v");
     }
 
-    btod_dotprod<N>::start_timer();
+    bto_dotprod<N, Traits>::start_timer();
 
     try {
 
         dimensions<N> bidims(m_bis.get_block_index_dims());
 
-        std::vector< block_tensor_ctrl<N, double>* > ctrl1(narg), ctrl2(narg);
-        std::vector< symmetry<N, double>* > sym(narg);
-        std::vector< tod_dotprod<N>* > tod(narg, (tod_dotprod<N>*)0);
+        std::vector< block_tensor_ctrl_t* > ctrl1(narg), ctrl2(narg);
+        std::vector< symmetry<N, element_t>* > sym(narg);
+        std::vector< to_dotprod_t* > tod(narg, (to_dotprod_t*)0);
 
         typename std::list<arg>::const_iterator j;
 
         for(i = 0, j = m_args.begin(); i < narg; i++, j++) {
             v[i] = 0.0;
-            ctrl1[i] = new block_tensor_ctrl<N, double>(j->bt1);
-            ctrl2[i] = new block_tensor_ctrl<N, double>(j->bt2);
-            sym[i] = new symmetry<N, double>(block_index_space<N>(
+            ctrl1[i] = new block_tensor_ctrl_t(j->bt1);
+            ctrl2[i] = new block_tensor_ctrl_t(j->bt2);
+            sym[i] = new symmetry<N, element_t>(block_index_space<N>(
                     j->bt1.get_bis()).permute(j->perm1));
 
             sequence<N, size_t> seq1a, seq2a;
@@ -143,8 +147,8 @@ void btod_dotprod<N>::calculate(std::vector<double> &v) {
             block_index_space_product_builder<N, N> bbx(j->bt1.get_bis(),
                     j->bt2.get_bis(), pbb.get_perm());
 
-            symmetry<N + N, double> symx(bbx.get_bis());
-            so_dirprod<N, N, double>(ctrl1[i]->req_const_symmetry(),
+            symmetry<N + N, element_t> symx(bbx.get_bis());
+            so_dirprod<N, N, element_t>(ctrl1[i]->req_const_symmetry(),
                     ctrl2[i]->req_const_symmetry(),
                     pbb.get_perm()).perform(symx);
 
@@ -154,14 +158,14 @@ void btod_dotprod<N>::calculate(std::vector<double> &v) {
                 msk[ii] = msk[ii + N] = true;
                 seq[ii] = seq[ii + N] = ii;
             }
-            so_merge<N + N, N, double>(symx, msk, seq).perform(*sym[i]);
+            so_merge<N + N, N, element_t>(symx, msk, seq).perform(*sym[i]);
         }
 
         for(i = 0, j = m_args.begin(); i < narg; i++, j++) {
 
-            orbit_list<N, double> ol1(ctrl1[i]->req_const_symmetry());
-            orbit_list<N, double> ol2(ctrl2[i]->req_const_symmetry());
-            orbit_list<N, double> ol(*sym[i]);
+            orbit_list<N, element_t> ol1(ctrl1[i]->req_const_symmetry());
+            orbit_list<N, element_t> ol2(ctrl2[i]->req_const_symmetry());
+            orbit_list<N, element_t> ol(*sym[i]);
 
             permutation<N> pinv1(j->perm1, true), pinv2(j->perm2, true);
 
@@ -171,7 +175,7 @@ void btod_dotprod<N>::calculate(std::vector<double> &v) {
             std::vector<dotprod_in_orbit_task*> tasklist;
             task_batch tb;
 
-            for(typename orbit_list<N, double>::iterator io = ol.begin();
+            for(typename orbit_list<N, element_t>::iterator io = ol.begin();
                     io != ol.end(); io++) {
 
                 index<N> i1(ol.get_index(io)), i2(ol.get_index(io));
@@ -210,31 +214,38 @@ void btod_dotprod<N>::calculate(std::vector<double> &v) {
         }
 
     } catch(...) {
-        btod_dotprod<N>::stop_timer();
+        bto_dotprod<N, Traits>::stop_timer();
         throw;
     }
 
-    btod_dotprod<N>::stop_timer();
+    bto_dotprod<N, Traits>::stop_timer();
 }
 
 
-template<size_t N>
-const char *btod_dotprod<N>::dotprod_in_orbit_task::k_clazz =
-        "btod_dotprod<N>::dotprod_in_orbit_task";
+template<size_t N, typename Traits>
+const char *bto_dotprod<N, Traits>::dotprod_in_orbit_task::k_clazz =
+        "bto_dotprod<N, Traits>::dotprod_in_orbit_task";
 
 
-template<size_t N>
-void btod_dotprod<N>::dotprod_in_orbit_task::perform(cpu_pool &cpus) throw(exception) {
+template<size_t N, typename Traits>
+void bto_dotprod<N, Traits>::dotprod_in_orbit_task::perform(
+        cpu_pool &cpus) throw(exception) {
 
-    block_tensor_ctrl<N, double> ctrl1(m_bt1), ctrl2(m_bt2);
+    typedef typename Traits::template block_tensor_ctrl_type<N>::type
+        block_tensor_ctrl_t;
+    typedef typename Traits::template block_type<N>::type block_t;
+    typedef typename Traits::template to_dotprod_type<N>::type
+        to_dotprod_t;
 
-    orbit<N, double> orb(m_sym, m_idx);
-    double c = 0.0;
-    for(typename orbit<N, double>::iterator io = orb.begin();
+    block_tensor_ctrl_t ctrl1(m_bt1), ctrl2(m_bt2);
+
+    orbit<N, element_t> orb(m_sym, m_idx);
+    element_t c = Traits::zero();
+    for(typename orbit<N, element_t>::iterator io = orb.begin();
             io != orb.end(); io++)
         c += orb.get_transf(io).get_scalar_tr().get_coeff();
 
-    if(c == 0.0) return;
+    if(Traits::is_zero(c)) return;
 
     dimensions<N> bidims1(m_bidims), bidims2(m_bidims);
     bidims1.permute(m_pinv1);
@@ -244,25 +255,25 @@ void btod_dotprod<N>::dotprod_in_orbit_task::perform(cpu_pool &cpus) throw(excep
     i1.permute(m_pinv1);
     i2.permute(m_pinv2);
 
-    orbit<N, double> orb1(ctrl1.req_const_symmetry(), i1),
+    orbit<N, element_t> orb1(ctrl1.req_const_symmetry(), i1),
             orb2(ctrl2.req_const_symmetry(), i2);
 
-    const tensor_transf<N, double> &tr1 = orb1.get_transf(i1);
-    const tensor_transf<N, double> &tr2 = orb2.get_transf(i2);
+    const tensor_transf<N, element_t> &tr1 = orb1.get_transf(i1);
+    const tensor_transf<N, element_t> &tr2 = orb2.get_transf(i2);
 
     abs_index<N> aci1(orb1.get_abs_canonical_index(), bidims1),
             aci2(orb2.get_abs_canonical_index(), bidims2);
     if(ctrl1.req_is_zero_block(aci1.get_index()) ||
             ctrl2.req_is_zero_block(aci2.get_index())) return;
 
-    dense_tensor_i<N, double> &blk1 = ctrl1.req_block(aci1.get_index());
-    dense_tensor_i<N, double> &blk2 = ctrl2.req_block(aci2.get_index());
+    block_t &blk1 = ctrl1.req_block(aci1.get_index());
+    block_t &blk2 = ctrl2.req_block(aci2.get_index());
 
     permutation<N> perm1, perm2;
     perm1.permute(tr1.get_perm()).permute(permutation<N>(m_pinv1, true));
     perm2.permute(tr2.get_perm()).permute(permutation<N>(m_pinv2, true));
 
-    double d = tod_dotprod<N>(blk1, perm1, blk2, perm2).calculate(cpus) *
+    element_t d = to_dotprod_t(blk1, perm1, blk2, perm2).calculate(cpus) *
             tr1.get_scalar_tr().get_coeff() * tr2.get_scalar_tr().get_coeff();
 
     ctrl1.ret_block(aci1.get_index());

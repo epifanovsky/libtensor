@@ -82,6 +82,10 @@ struct bto_traits {
      **/
     static bool is_zero(const element_type& d);
 
+    /** \brief Returns the zero element
+     **/
+    static element_type zero();
+
     /** \brief Returns the one/identity element
      **/
     static element_type identity();
