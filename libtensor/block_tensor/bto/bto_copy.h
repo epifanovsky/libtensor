@@ -28,16 +28,16 @@ public:
     //! Type of blocks of a block tensor
     typedef typename Traits::template block_type<N>::type block_t;
 
-    typedef tensor_transf<N, element_t> tensor_tr_t;
+    typedef tensor_transf<N, element_t> tensor_transf_t;
 
-    typedef scalar_transf<element_t> scalar_tr_t;
+    typedef scalar_transf<element_t> scalar_transf_t;
 
 public:
     static const char *k_clazz; //!< Class name
 
 private:
     block_tensor_t &m_bta; //!< Source block %tensor
-    tensor_tr_t m_tr; //!< Tensor transformation
+    tensor_transf_t m_tr; //!< Tensor transformation
     block_index_space<N> m_bis; //!< Block %index space of output
     dimensions<N> m_bidims; //!< Block %index dimensions
     symmetry<N, double> m_sym; //!< Symmetry of output
@@ -49,17 +49,24 @@ public:
 
     /** \brief Initializes the copy operation
         \param bt Source block %tensor.
-        \param c Scaling coefficient.
+        \param tr Transformation.
      **/
-    bto_copy(block_tensor_t &bta, const scalar_tr_t &c = scalar_tr_t());
+    bto_copy(block_tensor_t &bta, const tensor_transf_t &tr =
+            tensor_transf_t());
+
+    /** \brief Initializes the copy operation
+        \param bt Source block %tensor.
+        \param c Element-wise transformation.
+     **/
+    bto_copy(block_tensor_t &bta, const scalar_transf_t &c);
 
     /** \brief Initializes the permuted copy operation
         \param bt Source block %tensor.
         \param p Permutation.
-        \param c Scaling coefficient.
+        \param c Element-wise transformation.
      **/
     bto_copy(block_tensor_t &bta, const permutation<N> &p,
-            const scalar_tr_t &c = scalar_tr_t());
+            const scalar_transf_t &c = scalar_transf_t());
 
     /** \brief Virtual destructor
      **/
@@ -94,11 +101,12 @@ public:
 
 protected:
     virtual void compute_block(bool zero, block_t &blk, const index<N> &ib,
-            const tensor_tr_t &tr, const element_t &c, cpu_pool &cpus);
+            const tensor_transf_t &tr, const element_t &c, cpu_pool &cpus);
 
 private:
     static block_index_space<N> mk_bis(const block_index_space<N> &bis,
             const permutation<N> &perm);
+
     void make_schedule();
 
 private:

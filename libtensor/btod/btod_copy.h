@@ -16,16 +16,16 @@ template<size_t N>
 class btod_copy : public bto_copy<N, btod_copy_traits> {
 private:
     typedef bto_copy<N, btod_copy_traits> bto_copy_t;
-    typedef typename bto_copy_t::scalar_tr_t scalar_tr_t;
+    typedef typename bto_copy_t::scalar_transf_t scalar_transf_t;
 
 public:
     btod_copy(block_tensor_i<N, double> &bta, double c = 1.0) :
-        bto_copy_t(bta, scalar_tr_t(c)) {
+        bto_copy_t(bta, scalar_transf_t(c)) {
     }
 
     btod_copy(block_tensor_i<N, double> &bta,
             const permutation<N> &p, double c = 1.0) :
-        bto_copy_t(bta, p, scalar_tr_t(c)) {
+        bto_copy_t(bta, p, scalar_transf_t(c)) {
     }
 
     virtual ~btod_copy() { }
