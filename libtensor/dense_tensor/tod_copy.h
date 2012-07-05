@@ -2,6 +2,8 @@
 #define LIBTENSOR_TOD_COPY_H
 
 #include <libtensor/timings.h>
+#include <libtensor/btod/scalar_transf_double.h>
+#include <libtensor/core/tensor_transf.h>
 #include <libtensor/tod/loop_list_add.h>
 #include <libtensor/tod/loop_list_copy.h>
 #include <libtensor/mp/cpu_pool.h>
@@ -14,9 +16,8 @@ namespace libtensor {
         necessary
     \tparam N Tensor order.
 
-    This operation makes a scaled and permuted copy of a %tensor.
+    This operation makes a transformed copy of a %tensor.
     The result can replace or be added to the output %tensor.
-
 
     <b>Examples</b>
 
@@ -49,6 +50,14 @@ namespace libtensor {
     tod_copy<2> cp(t1, perm, 0.5);
     cp.perform(t2); // Copies transposed t1 scaled by 0.5 to t2
     \endcode
+    or
+    \code
+    dense_tensor_i<2, double> &t1(...), &t2(...);
+    permutation<2> perm; perm.permute(0, 1); // Sets up a permutation
+    tensor_transf<2, double> tr(perm, 0.5);
+    tod_copy<2> cp(t1, tr);
+    cp.perform(t2); // Copies transposed t1 scaled by 0.5 to t2
+    \endcode
 
     \ingroup libtensor_dense_tensor_tod
  **/
@@ -62,9 +71,8 @@ public:
     static const char *k_clazz; //!< Class name
 
 private:
-    dense_tensor_rd_i<N,double> &m_ta; //!< Source tensor
-    permutation<N> m_perm; //!< Permutation of indexes
-    double m_c; //!< Scaling coefficient
+    dense_tensor_rd_i<N, double> &m_ta; //!< Source tensor
+    tensor_transf<N, double> m_tr; //!< Permutation of indexes
     dimensions<N> m_dimsb; //!< Dimensions of output tensor
 
 public:
@@ -72,15 +80,22 @@ public:
         \param ta Source tensor.
         \param c Coefficient.
      **/
-    tod_copy(dense_tensor_rd_i<N,double> &ta, double c = 1.0);
+    tod_copy(dense_tensor_rd_i<N, double> &ta, double c = 1.0);
 
     /** \brief Prepares the permute & copy operation
         \param ta Source tensor.
         \param p Permutation of tensor indexes.
         \param c Coefficient.
      **/
-    tod_copy(dense_tensor_rd_i<N,double> &ta, const permutation<N> &p,
+    tod_copy(dense_tensor_rd_i<N, double> &ta, const permutation<N> &p,
         double c = 1.0);
+
+    /** \brief Prepares the permute & copy operation
+        \param ta Source tensor.
+        \param tr Tensor transformation.
+     **/
+    tod_copy(dense_tensor_rd_i<N, double> &ta,
+            const tensor_transf<N, double> &tr);
 
     /** \brief Virtual destructor
      **/
@@ -105,7 +120,7 @@ private:
     /** \brief Creates the dimensions of the output using an input
             tensor and a permutation of indexes
      **/
-    static dimensions<N> mk_dimsb(dense_tensor_rd_i<N,double> &ta,
+    static dimensions<N> mk_dimsb(dense_tensor_rd_i<N, double> &ta,
         const permutation<N> &perm);
 
     template<typename Base>
@@ -119,7 +134,6 @@ private:
     /** \brief Private copy constructor
      **/
     tod_copy(const tod_copy&);
-
 };
 
 

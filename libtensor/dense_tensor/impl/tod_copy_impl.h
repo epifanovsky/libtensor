@@ -18,7 +18,8 @@ const char *tod_copy<N>::k_clazz = "tod_copy<N>";
 template<size_t N>
 tod_copy<N>::tod_copy(dense_tensor_rd_i<N, double> &ta, double c) :
 
-    m_ta(ta), m_c(c), m_dimsb(mk_dimsb(m_ta, m_perm)) {
+    m_ta(ta), m_tr(permutation<N>(), scalar_transf<double>(c)),
+    m_dimsb(mk_dimsb(m_ta, m_tr.get_perm())) {
 
 }
 
@@ -27,7 +28,16 @@ template<size_t N>
 tod_copy<N>::tod_copy(dense_tensor_rd_i<N, double> &ta, const permutation<N> &p,
     double c) :
 
-    m_ta(ta), m_perm(p), m_c(c), m_dimsb(mk_dimsb(ta, p)) {
+    m_ta(ta), m_tr(p, scalar_transf<double>(c)), m_dimsb(mk_dimsb(ta, p)) {
+
+}
+
+
+template<size_t N>
+tod_copy<N>::tod_copy(dense_tensor_rd_i<N, double> &ta,
+        const tensor_transf<N, double> &tr) :
+
+    m_ta(ta), m_tr(tr), m_dimsb(mk_dimsb(ta, m_tr.get_perm())) {
 
 }
 
@@ -99,7 +109,7 @@ void tod_copy<N>::do_perform(cpu_pool &cpus, double c,
         auto_cpu_lock cpu(cpus);
 
         list_t loop;
-        build_loop<Base>(loop, dimsa, m_perm, dimsb);
+        build_loop<Base>(loop, dimsa, m_tr.get_perm(), dimsb);
 
         registers_t r;
         r.m_ptra[0] = pa;
@@ -107,7 +117,7 @@ void tod_copy<N>::do_perform(cpu_pool &cpus, double c,
         r.m_ptra_end[0] = pa + dimsa.get_size();
         r.m_ptrb_end[0] = pb + dimsb.get_size();
 
-        Base::run_loop(loop, r, m_c * c);
+        Base::run_loop(loop, r, m_tr.get_scalar_tr().get_coeff() * c);
     }
 
     ca.ret_const_dataptr(pa);
