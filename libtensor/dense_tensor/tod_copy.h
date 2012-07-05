@@ -70,17 +70,26 @@ class tod_copy :
 public:
     static const char *k_clazz; //!< Class name
 
+    typedef tensor_transf<N, double> tensor_transf_t;
+
 private:
     dense_tensor_rd_i<N, double> &m_ta; //!< Source tensor
-    tensor_transf<N, double> m_tr; //!< Permutation of indexes
+    tensor_transf_t m_tr; //!< Permutation of indexes
     dimensions<N> m_dimsb; //!< Dimensions of output tensor
 
 public:
+    /** \brief Prepares the permute & copy operation
+        \param ta Source tensor.
+        \param tr Tensor transformation.
+     **/
+    tod_copy(dense_tensor_rd_i<N, double> &ta,
+            const tensor_transf_t &tr = tensor_transf_t());
+
     /** \brief Prepares the copy operation
         \param ta Source tensor.
         \param c Coefficient.
      **/
-    tod_copy(dense_tensor_rd_i<N, double> &ta, double c = 1.0);
+    tod_copy(dense_tensor_rd_i<N, double> &ta, double c);
 
     /** \brief Prepares the permute & copy operation
         \param ta Source tensor.
@@ -90,12 +99,6 @@ public:
     tod_copy(dense_tensor_rd_i<N, double> &ta, const permutation<N> &p,
         double c = 1.0);
 
-    /** \brief Prepares the permute & copy operation
-        \param ta Source tensor.
-        \param tr Tensor transformation.
-     **/
-    tod_copy(dense_tensor_rd_i<N, double> &ta,
-            const tensor_transf<N, double> &tr);
 
     /** \brief Virtual destructor
      **/
