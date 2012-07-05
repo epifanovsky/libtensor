@@ -109,13 +109,6 @@ public:
      **/
     void optimize();
 
-    /** \brief Symmetrizes the evaluation rule w.r.t the indexes specified
-        \param idxgrp Index groups to be symmetrized.
-        \param symidx Symmetrized indexes from each index group.
-     **/
-    void symmetrize(const sequence<N, size_t> &idxgrp,
-            const sequence<N, size_t> &symidx);
-
     /** \brief Delete the list of lists
      **/
     void clear_setup() { m_setup.clear(); m_term_list.clear(); }
@@ -251,13 +244,6 @@ private:
     size_t add_term(size_t seq_no, label_t intr, label_t target);
 
     bool is_valid(iterator it) const;
-
-    void symmetrize_seq(const sequence<N, size_t> &idxgrp,
-            const sequence<N, size_t> &symidx, std::vector<size_t> &symseq);
-
-    void symmetrize_terms(const std::vector<size_t> &symseq,
-            std::vector<size_t> &t2sym,
-            std::map< size_t, std::vector<size_t> > &sym2t);
 };
 
 
