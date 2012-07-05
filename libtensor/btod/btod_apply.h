@@ -31,17 +31,17 @@ template<size_t N, typename Functor, typename Alloc = std_allocator<double> >
 class btod_apply : public bto_apply<N, btod_apply_traits<Functor, Alloc> > {
 private:
     typedef bto_apply<N, btod_apply_traits<Functor, Alloc> > bto_apply_t;
-    typedef typename bto_apply_t::scalar_tr_t scalar_tr_t;
+    typedef typename bto_apply_t::scalar_transf_t scalar_transf_t;
 
 public:
     btod_apply(block_tensor_i<N, double> &bta,
             const Functor &fn, double c = 1.0) :
-        bto_apply_t(bta, fn, scalar_tr_t(c)) {
+        bto_apply_t(bta, fn, scalar_transf_t(c)) {
     }
 
     btod_apply(block_tensor_i<N, double> &bta, const Functor &fn,
             const permutation<N> &p, double c = 1.0) :
-        bto_apply_t(bta, fn, p, scalar_tr_t(c)) {
+        bto_apply_t(bta, fn, p, scalar_transf_t(c)) {
     }
 
     virtual ~btod_apply() { }

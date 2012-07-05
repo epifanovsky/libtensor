@@ -13,10 +13,32 @@ const char *bto_apply<N, Traits>::k_clazz = "bto_apply<N, Traits>";
 
 
 template<size_t N, typename Traits>
-bto_apply<N, Traits>::bto_apply(block_tensor_t &bta,
-        const functor_t &fn, const scalar_tr_t &c) :
+bto_apply<N, Traits>::bto_apply(block_tensor_t &bta, const functor_t &fn,
+        const tensor_transf_t &tr1, const tensor_transf_t &tr2) :
 
-    m_bta(bta), m_fn(fn), m_tr(permutation<N>(), c), m_bis(m_bta.get_bis()),
+    m_bta(bta), m_fn(fn), m_tr1(tr1), m_tr2(tr2), m_bis(m_bta.get_bis()),
+    m_bidims(m_bis.get_block_index_dims()), m_sym(m_bis), m_sch(m_bidims) {
+
+    //! Type of block tensor control object
+    typedef typename Traits::template block_tensor_ctrl_type<N>::type
+        block_tensor_ctrl_t;
+
+    m_tr1.permute(m_tr2.get_perm());
+    m_tr2.get_perm().reset();
+
+    block_tensor_ctrl_t ctrla(m_bta);
+    so_apply<N, element_t>(ctrla.req_const_symmetry(), m_tr1.get_perm(),
+            m_fn.transf(true), m_fn.transf(false),
+            m_fn.keep_zero()).perform(m_sym);
+    make_schedule();
+}
+
+
+template<size_t N, typename Traits>
+bto_apply<N, Traits>::bto_apply(block_tensor_t &bta,
+        const functor_t &fn, const scalar_transf_t &c) :
+
+    m_bta(bta), m_fn(fn), m_tr1(permutation<N>(), c), m_bis(m_bta.get_bis()),
     m_bidims(m_bis.get_block_index_dims()), m_sym(m_bis), m_sch(m_bidims) {
 
     //! Type of block tensor control object
@@ -24,7 +46,7 @@ bto_apply<N, Traits>::bto_apply(block_tensor_t &bta,
         block_tensor_ctrl_t;
 
     block_tensor_ctrl_t ctrla(m_bta);
-    so_apply<N, element_t>(ctrla.req_const_symmetry(), m_tr.get_perm(),
+    so_apply<N, element_t>(ctrla.req_const_symmetry(), m_tr1.get_perm(),
             m_fn.transf(true), m_fn.transf(false),
             m_fn.keep_zero()).perform(m_sym);
     make_schedule();
@@ -33,9 +55,9 @@ bto_apply<N, Traits>::bto_apply(block_tensor_t &bta,
 
 template<size_t N, typename Traits>
 bto_apply<N, Traits>::bto_apply(block_tensor_t &bta, const functor_t &fn,
-        const permutation<N> &p, const scalar_tr_t &c) :
+        const permutation<N> &p, const scalar_transf_t &c) :
 
-        m_bta(bta), m_fn(fn), m_tr(p, c), m_bis(mk_bis(m_bta.get_bis(), p)),
+        m_bta(bta), m_fn(fn), m_tr1(p, c), m_bis(mk_bis(m_bta.get_bis(), p)),
         m_bidims(m_bis.get_block_index_dims()), m_sym(m_bis), m_sch(m_bidims) {
 
     //! Type of block tensor control object
@@ -43,7 +65,7 @@ bto_apply<N, Traits>::bto_apply(block_tensor_t &bta, const functor_t &fn,
         block_tensor_ctrl_t;
 
     block_tensor_ctrl_t ctrla(m_bta);
-    so_apply<N, element_t>(ctrla.req_const_symmetry(), m_tr.get_perm(),
+    so_apply<N, element_t>(ctrla.req_const_symmetry(), m_tr1.get_perm(),
             m_fn.transf(true), m_fn.transf(false),
             m_fn.keep_zero()).perform(m_sym);
     make_schedule();
@@ -74,12 +96,12 @@ void bto_apply<N, Traits>::sync_off() {
 
 template<size_t N, typename Traits>
 void bto_apply<N, Traits>::compute_block(bool zero, block_t &blk,
-        const index<N> &ib, const tensor_tr_t &tr, const element_t &c,
+        const index<N> &ib, const tensor_transf_t &tr, const element_t &c,
         cpu_pool &cpus) {
 
     static const char *method =
             "compute_block(bool, block_t &, const index<N> &, "
-            "const tensor_tr_t &, const scalar_tr_t&, cpu_pool&)";
+            "const tensor_transf_t &, const scalar_transf_t&, cpu_pool&)";
 
     typedef typename Traits::template block_tensor_ctrl_type<N>::type
         block_tensor_ctrl_t;
@@ -93,7 +115,7 @@ void bto_apply<N, Traits>::compute_block(bool zero, block_t &blk,
     block_tensor_ctrl_t ctrla(m_bta);
     dimensions<N> bidimsa = m_bta.get_bis().get_block_index_dims();
 
-    permutation<N> pinv(m_tr.get_perm(), true);
+    permutation<N> pinv(m_tr1.get_perm(), true);
 
     //  Corresponding index in A
     index<N> ia(ib);
@@ -107,8 +129,7 @@ void bto_apply<N, Traits>::compute_block(bool zero, block_t &blk,
         if (! m_fn.keep_zero()) {
             tensor_t tblk(blk.get_dims());
             to_set_t(m_fn(Traits::zero()) * c).perform(cpus, tblk);
-            to_copy_t(tblk).perform(cpus, false,
-                    scalar_tr_t().get_coeff(), blk);
+            to_copy_t(tblk).perform(cpus, false, Traits::identity(), blk);
         }
         return;
     }
@@ -117,25 +138,24 @@ void bto_apply<N, Traits>::compute_block(bool zero, block_t &blk,
     abs_index<N> acia(oa.get_abs_canonical_index(), bidimsa);
 
     //  Transformation for block from canonical A to B
-    const tensor_tr_t &tra = oa.get_transf(ia);
-    permutation<N> pa(tra.get_perm());
-    pa.permute(m_tr.get_perm()).permute(permutation<N>(tr.get_perm(), true));
-    scalar_tr_t sa(tra.get_scalar_tr()), sb(c);
-    sa.transform(m_tr.get_scalar_tr());
-    sb.transform(scalar_tr_t(tr.get_scalar_tr()).invert());
+    tensor_transf_t tr1(oa.get_transf(ia)), tr2(m_tr2);
+    tr1.transform(m_tr1);
+    tr2.transform(scalar_transf_t(c)).transform(tensor_transf_t(tr, true));
 
     if(! ctrla.req_is_zero_block(acia.get_index())) {
 
         block_t &blka = ctrla.req_block(acia.get_index());
-        to_apply_t(blka, m_fn, pa, sa.get_coeff()).perform(cpus,
-                false, sb.get_coeff(), blk);
+        to_apply_t(blka, m_fn, tr1, tr2).perform(cpus, 
+                false, Traits::identity(), blk);
         ctrla.ret_block(acia.get_index());
     }
     else {
         if (! m_fn.keep_zero()) {
             tensor_t tblk(blk.get_dims());
-            to_set_t(m_fn(Traits::zero()) * c).perform(cpus, tblk);
-            to_copy_t(tblk).perform(cpus, false, sb.get_coeff(), blk);
+            element_t val = m_fn(Traits::zero());
+            tr2.apply(val);
+            to_set_t(val).perform(cpus, tblk);
+            to_copy_t(tblk).perform(cpus, false, Traits::identity(), blk);
         }
     }
 }
@@ -150,7 +170,7 @@ void bto_apply<N, Traits>::make_schedule() {
     block_tensor_ctrl_t ctrla(m_bta);
     dimensions<N> bidimsa = m_bta.get_bis().get_block_index_dims();
 
-    permutation<N> pinv(m_tr.get_perm(), ! m_tr.get_perm().is_identity());
+    permutation<N> pinv(m_tr1.get_perm(), ! m_tr1.get_perm().is_identity());
 
     orbit_list<N, element_t> ol(m_sym);
     for(typename orbit_list<N, element_t>::iterator io = ol.begin();
