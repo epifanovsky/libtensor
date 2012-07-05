@@ -4,7 +4,7 @@
 #include <libtensor/dense_tensor/tod_btconv.h>
 #include <libtensor/dense_tensor/tod_contract2.h>
 #include <libtensor/dense_tensor/tod_dirsum.h>
-#include <libtensor/btod/scalar_transf_double.h>
+#include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/btod/btod_add.h>
 #include <libtensor/btod/btod_copy.h>
 #include <libtensor/btod/btod_contract2.h>

@@ -1,4 +1,4 @@
-#include <libtensor/btod/scalar_transf_double.h>
+#include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/symmetry/so_dirsum_se_perm.h>
 #include "../compare_ref.h"
 #include "so_dirsum_se_perm_test.h"

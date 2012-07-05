@@ -26,7 +26,7 @@
 #include "core/direct_block_tensor.h"
 
 #include "core/scalar_transf.h"
-#include "btod/scalar_transf_double.h"
+#include "core/scalar_transf_double.h"
 #include "core/tensor_transf.h"
 
 #include "core/orbit.h"

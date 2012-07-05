@@ -2,7 +2,7 @@
 #define LIBTENSOR_TOD_ADD_H
 
 #include <list>
-#include <libtensor/btod/scalar_transf_double.h>
+#include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/core/tensor_transf.h>
 #include <libtensor/dense_tensor/dense_tensor_i.h>
 #include <libtensor/mp/cpu_pool.h>

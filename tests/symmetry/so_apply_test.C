@@ -1,5 +1,5 @@
 #include <typeinfo>
-#include <libtensor/btod/scalar_transf_double.h>
+#include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/symmetry/so_apply.h>
 #include "../compare_ref.h"

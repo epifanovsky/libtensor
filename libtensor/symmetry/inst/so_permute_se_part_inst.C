@@ -1,4 +1,4 @@
-#include <libtensor/btod/scalar_transf_double.h>
+#include <libtensor/core/scalar_transf_double.h>
 #include "../so_permute_se_part.h"
 #include "so_permute_se_part_impl.h"
 

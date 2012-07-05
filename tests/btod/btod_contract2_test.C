@@ -1,6 +1,6 @@
 #include <sstream>
 #include <libtensor/core/block_tensor.h>
-#include <libtensor/btod/scalar_transf_double.h>
+#include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/btod/btod_contract2.h>
 #include <libtensor/btod/btod_copy.h>
 #include <libtensor/btod/btod_random.h>

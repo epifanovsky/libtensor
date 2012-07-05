@@ -2,7 +2,7 @@
 #include "../core/allocator.h"
 #include "../core/block_tensor_ctrl.h"
 #include "../core/block_tensor.h"
-#include "scalar_transf_double.h"
+#include <libtensor/core/scalar_transf_double.h>
 #include "btod_add.h"
 #include "btod_contract2.h"
 #include "btod_copy.h"

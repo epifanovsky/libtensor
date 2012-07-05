@@ -1,6 +1,6 @@
 #ifdef LIBTENSOR_INSTANTIATE_TEMPLATES
 
-#include "../btod/scalar_transf_double.h"
+#include "../core/scalar_transf_double.h"
 #include "orbit.h"
 #include "orbit_impl.h"
 

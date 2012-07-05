@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_BTOD_DIAG_H
 #define LIBTENSOR_BTOD_DIAG_H
 
-#include "scalar_transf_double.h"
+#include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/block_tensor/btod/btod_traits.h>
 #include <libtensor/block_tensor/bto/bto_diag.h>
 #include <libtensor/dense_tensor/tod_diag.h>

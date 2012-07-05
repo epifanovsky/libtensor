@@ -1,4 +1,4 @@
-#include <libtensor/btod/scalar_transf_double.h>
+#include <libtensor/core/scalar_transf_double.h>
 #include "../so_symmetrize_se_perm.h"
 #include "so_symmetrize_se_perm_impl.h"
 

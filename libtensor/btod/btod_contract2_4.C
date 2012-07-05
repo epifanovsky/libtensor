@@ -1,6 +1,6 @@
 #ifdef LIBTENSOR_INSTANTIATE_TEMPLATES
 
-#include "scalar_transf_double.h"
+#include <libtensor/core/scalar_transf_double.h>
 #include "btod_contract2.h"
 #include "btod_contract2_impl.h"
 

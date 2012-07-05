@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_BTOD_TRACE_H
 #define LIBTENSOR_BTOD_TRACE_H
 
-#include <libtensor/btod/scalar_transf_double.h>
+#include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/block_tensor/btod/btod_traits.h>
 #include <libtensor/block_tensor/bto/bto_trace.h>
 #include <libtensor/dense_tensor/tod_trace.h>

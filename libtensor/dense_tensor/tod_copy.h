@@ -2,7 +2,7 @@
 #define LIBTENSOR_TOD_COPY_H
 
 #include <libtensor/timings.h>
-#include <libtensor/btod/scalar_transf_double.h>
+#include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/core/tensor_transf.h>
 #include <libtensor/tod/loop_list_add.h>
 #include <libtensor/tod/loop_list_copy.h>

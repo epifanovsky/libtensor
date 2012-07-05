@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_BTOD_COPY_H
 #define LIBTENSOR_BTOD_COPY_H
 
-#include "scalar_transf_double.h"
+#include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/block_tensor/bto/bto_copy.h>
 #include <libtensor/block_tensor/btod/btod_traits.h>
 

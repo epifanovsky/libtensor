@@ -1,4 +1,4 @@
-#include <libtensor/btod/scalar_transf_double.h>
+#include <libtensor/core/scalar_transf_double.h>
 #include "../evaluation_rule.h"
 #include "evaluation_rule_impl.h"
 
