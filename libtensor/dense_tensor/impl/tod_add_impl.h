@@ -16,11 +16,22 @@ const char* tod_add<N>::k_clazz = "tod_add<N>";
 
 
 template<size_t N>
+tod_add<N>::tod_add(
+        dense_tensor_rd_i<N, double> &t, const tensor_transf_t &tr) :
+    m_dims(t.get_dims()) {
+
+    m_dims.permute(tr.get_perm());
+    add_operand(t, tr);
+}
+
+
+template<size_t N>
 tod_add<N>::tod_add(dense_tensor_rd_i<N, double> &t, double c) :
 
     m_dims(t.get_dims()) {
 
-    add_operand(t, permutation<N>(), c);
+    add_operand(t,
+            tensor_transf_t(permutation<N>(), scalar_transf<double>(c)));
 }
 
 
@@ -31,7 +42,7 @@ tod_add<N>::tod_add(dense_tensor_rd_i<N, double> &t, const permutation<N> &p,
     m_dims(t.get_dims()) {
 
     m_dims.permute(p);
-    add_operand(t, p, c);
+    add_operand(t, tensor_transf_t(p, scalar_transf<double>(c)));
 }
 
 
@@ -46,7 +57,8 @@ void tod_add<N>::add_op(dense_tensor_rd_i<N, double> &t, double c) {
         throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "t");
     }
 
-    add_operand(t, permutation<N>(), c);
+    add_operand(t, tensor_transf_t(permutation<N>(),
+            scalar_transf<double>(c)));
 }
 
 
@@ -65,18 +77,36 @@ void tod_add<N>::add_op(dense_tensor_rd_i<N, double> &t,
         throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "t");
     }
 
-    add_operand(t, perm, c);
+    add_operand(t, tensor_transf_t(perm, scalar_transf<double>(c)));
 }
 
 
 template<size_t N>
+void tod_add<N>::add_op(dense_tensor_rd_i<N, double> &t,
+        const tensor_transf_t &tr) {
+
+    static const char *method = "add_op(dense_tensor_rd_i<N, double>&, "
+            "const tensor_transf<N, double> &)";
+
+    if(tr.get_scalar_tr().get_coeff() == 0) return;
+
+    dimensions<N> dims(t.get_dims());
+    dims.permute(tr.get_perm());
+    if(!dims.equals(m_dims)) {
+        throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "t");
+    }
+
+    add_operand(t, tr);
+}
+
+template<size_t N>
 void tod_add<N>::add_operand(dense_tensor_rd_i<N, double> &t,
-    const permutation<N> &perm, double c) {
+    const tensor_transf_t &tr) {
 
     static const char *method = "add_operand(dense_tensor_rd_i<N, double>&, "
-        "const permutation<N>&, double)";
+        "const tensor_transf<N, double>&)";
 
-    m_args.push_back(arg(t, perm, c));
+    m_args.push_back(arg(t, tr));
 }
 
 
@@ -110,7 +140,7 @@ void tod_add<N>::perform(cpu_pool &cpus, bool zero, double c,
 
     typename std::list<arg>::iterator i = m_args.begin();
     for(; i != m_args.end(); ++i) {
-        tod_copy<N>(i->t, i->p, i->c).perform(cpus, false, c, t);
+        tod_copy<N>(i->t, i->tr).perform(cpus, false, c, t);
     }
 
     tod_add<N>::stop_timer();

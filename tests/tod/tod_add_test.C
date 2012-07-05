@@ -324,7 +324,8 @@ void tod_add_test::test_add_two_pqrs_prsq(size_t p, size_t q, size_t r,
         ctrl1_ref.ret_dataptr(ptr1_ref); ptr1_ref = 0;
     }
 
-    tod_add<4> add(t2, p2, 0.1);
+    tod_add<4> add(t2,
+            tensor_transf<4, double>(p2, scalar_transf<double>(0.1)));
     add.prefetch();
     add.perform(cpus, false, 1.0, t1);
 
@@ -551,7 +552,8 @@ void tod_add_test::test_add_mult(size_t p, size_t q, size_t r, size_t s)
 
     tod_add<4> add(t2, 1.0);
     add.add_op(t3, p3, -4.0);
-    add.add_op(t4, 0.2);
+    add.add_op(t4, tensor_transf<4, double>(permutation<4>(),
+            scalar_transf<double>(0.2)));
     add.prefetch();
     add.perform(cpus, false, 0.5, t1);
 
