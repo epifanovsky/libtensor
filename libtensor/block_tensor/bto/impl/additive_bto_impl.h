@@ -134,9 +134,7 @@ void additive_bto<N, Traits>::task::perform(cpu_pool &cpus) throw (exception) {
                 to_set_t().perform(cpus, blkc);
             } else {
                 block_t &blkb = ctrl.req_block(aib.get_index());
-                to_copy_t(blkb, node.trb.get_perm(),
-                        node.trb.get_scalar_tr().get_coeff()).perform(cpus,
-                                true, 1.0, blkc);
+                to_copy_t(blkb, node.trb).perform(cpus, true, 1.0, blkc);
                 ctrl.ret_block(aib.get_index());
             }
             ctrl.ret_block(aic.get_index());
@@ -153,18 +151,15 @@ void additive_bto<N, Traits>::task::perform(cpu_pool &cpus) throw (exception) {
             block_t &blkc = ctrl.req_block(aic.get_index());
             if(zerob) {
                 abs_index<N> aia(node.cia, m_bidims);
-                to_copy_t(*ila->second, node.tra.get_perm(),
-                        node.tra.get_scalar_tr().get_coeff()).
-                        perform(cpus, true, 1.0, blkc);
+                to_copy_t(*ila->second,
+                        node.tra).perform(cpus, true, 1.0, blkc);
             } else {
                 abs_index<N> aia(node.cia, m_bidims);
                 block_t &blkb = ctrl.req_block(aib.get_index());
-                to_copy_t(*ila->second, node.tra.get_perm(),
-                        node.tra.get_scalar_tr().get_coeff()).
-                        perform(cpus, true, 1.0, blkc);
-                to_copy_t(blkb, node.trb.get_perm(),
-                        node.trb.get_scalar_tr().get_coeff()).
-                        perform(cpus, false, 1.0, blkc);
+                to_copy_t(*ila->second, node.tra).perform(cpus,
+                        true, 1.0, blkc);
+                to_copy_t(blkb, node.trb).perform(cpus,
+                        false, 1.0, blkc);
                 ctrl.ret_block(aib.get_index());
             }
             ctrl.ret_block(aic.get_index());
@@ -186,14 +181,10 @@ void additive_bto<N, Traits>::task::perform(cpu_pool &cpus) throw (exception) {
         block_t &blkb = ctrl.req_block(aib.get_index());
         if(zerob) {
             abs_index<N> aia(node.cia, m_bidims);
-            to_copy_t(*ila->second, node.tra.get_perm(),
-                    node.tra.get_scalar_tr().get_coeff()).
-                    perform(cpus, true, 1.0, blkb);
+            to_copy_t(*ila->second, node.tra).perform(cpus, true, 1.0, blkb);
         } else {
             abs_index<N> aia(node.cia, m_bidims);
-            to_copy_t(*ila->second, node.tra.get_perm(),
-                    node.tra.get_scalar_tr().get_coeff()).
-                    perform(cpus, false, 1.0, blkb);
+            to_copy_t(*ila->second, node.tra).perform(cpus, false, 1.0, blkb);
         }
         ctrl.ret_block(aib.get_index());
     }
