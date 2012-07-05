@@ -2,6 +2,8 @@
 #define LIBTENSOR_TOD_APPLY_H
 
 #include <libtensor/timings.h>
+#include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/core/tensor_transf.h>
 #include <libtensor/mp/auto_cpu_lock.h>
 #include <libtensor/tod/loop_list_apply.h>
 #include <libtensor/tod/bad_dimensions.h>
@@ -41,20 +43,27 @@ class tod_apply :
 public:
     static const char *k_clazz; //!< Class name
 
+    typedef tensor_transf<N, double> tensor_transf_t;
+
 private:
     dense_tensor_rd_i<N, double> &m_ta; //!< Source %tensor
     Functor m_fn; //!< Functor
-    permutation<N> m_perm; //!< Permutation of elements
-    double m_c; //!< Scaling coefficient
+    tensor_transf<N, double> m_tr; //!< Tensor transformation
     dimensions<N> m_dimsb; //!< Dimensions of output %tensor
 
 public:
+    /** \brief Initializes the addition operation
+        \param t First tensor in the series.
+        \param tr Tensor transformation
+     **/
+    tod_apply(dense_tensor_rd_i<N, double> &ta, const Functor &fn,
+            const tensor_transf_t &tr = tensor_transf_t());
+
     /** \brief Prepares the copy operation
         \param ta Source tensor.
         \param c Coefficient.
      **/
-    tod_apply(dense_tensor_rd_i<N, double> &ta, const Functor &fn,
-        double c = 1.0);
+    tod_apply(dense_tensor_rd_i<N, double> &ta, const Functor &fn, double c);
 
     /** \brief Prepares the permute & copy operation
         \param ta Source tensor.
@@ -64,11 +73,14 @@ public:
     tod_apply(dense_tensor_rd_i<N, double> &ta, const Functor &fn,
         const permutation<N> &p, double c = 1.0);
 
-    void perform(cpu_pool &cpus, bool zero, double c,
-        dense_tensor_wr_i<N, double> &t);
-
-    void perform(cpu_pool &cpus, dense_tensor_wr_i<N, double> &t);
-    void perform(cpu_pool &cpus, dense_tensor_wr_i<N, double> &t, double c);
+    /** \brief Performs the operation
+        \param cpus CPUs to perform the operation on
+        \param zero Zero result first
+        \param c Scaling factor
+        \param tb Add result to
+     **/
+    void perform(cpu_pool &cpus, bool zero,
+            double c, dense_tensor_wr_i<N, double> &t);
 
 private:
     /** \brief Creates the dimensions of the output using an input
@@ -90,9 +102,19 @@ const char *tod_apply<N, Functor>::k_clazz = "tod_apply<N, Functor>";
 
 template<size_t N, typename Functor>
 tod_apply<N, Functor>::tod_apply(dense_tensor_rd_i<N, double> &ta,
+    const Functor &fn, const tensor_transf_t &tr) :
+
+    m_ta(ta), m_fn(fn), m_tr(tr), m_dimsb(mk_dimsb(m_ta, m_tr.get_perm())) {
+
+}
+
+
+template<size_t N, typename Functor>
+tod_apply<N, Functor>::tod_apply(dense_tensor_rd_i<N, double> &ta,
     const Functor &fn, double c) :
 
-    m_ta(ta), m_fn(fn), m_c(c), m_dimsb(mk_dimsb(m_ta, m_perm)) {
+    m_ta(ta), m_fn(fn), m_tr(permutation<N>(), scalar_transf<double>(c)),
+    m_dimsb(mk_dimsb(m_ta, m_tr.get_perm())) {
 
 }
 
@@ -101,7 +123,8 @@ template<size_t N, typename Functor>
 tod_apply<N, Functor>::tod_apply(dense_tensor_rd_i<N, double> &ta,
     const Functor &fn, const permutation<N> &p, double c) :
 
-    m_ta(ta), m_fn(fn), m_perm(p), m_c(c), m_dimsb(mk_dimsb(ta, p)) {
+    m_ta(ta), m_fn(fn), m_tr(p, scalar_transf<double>(c)),
+    m_dimsb(mk_dimsb(ta, p)) {
 
 }
 
@@ -116,7 +139,7 @@ void tod_apply<N, Functor>::perform(cpu_pool &cpus, bool zero, double c,
     if(!tb.get_dims().equals(m_dimsb)) {
         throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "tb");
     }
-    if(!zero && c == 0) return;
+    if(! zero && c == 0) return;
 
     typedef typename loop_list_apply<Functor>::list_t list_t;
     typedef typename loop_list_apply<Functor>::registers registers_t;
@@ -135,7 +158,7 @@ void tod_apply<N, Functor>::perform(cpu_pool &cpus, bool zero, double c,
     const dimensions<N> &dimsb = tb.get_dims();
 
     list_t loop;
-    build_loop(loop, dimsa, m_perm, dimsb);
+    build_loop(loop, dimsa, m_tr.get_perm(), dimsb);
 
     const double *pa = ca.req_const_dataptr();
     double *pb = cb.req_dataptr();
@@ -149,7 +172,8 @@ void tod_apply<N, Functor>::perform(cpu_pool &cpus, bool zero, double c,
         r.m_ptra_end[0] = pa + dimsa.get_size();
         r.m_ptrb_end[0] = pb + dimsb.get_size();
 
-        loop_list_apply<Functor>::run_loop(loop, r, m_fn, c, m_c, !zero);
+        loop_list_apply<Functor>::run_loop(loop, r, m_fn, c,
+                m_tr.get_scalar_tr().get_coeff(), !zero);
     }
 
     ca.ret_const_dataptr(pa);
@@ -160,22 +184,6 @@ void tod_apply<N, Functor>::perform(cpu_pool &cpus, bool zero, double c,
         throw;
     }
     tod_apply<N, Functor>::stop_timer();
-}
-
-
-template<size_t N, typename Functor>
-void tod_apply<N, Functor>::perform(cpu_pool &cpus,
-    dense_tensor_wr_i<N, double> &tb) {
-
-    perform(cpus, true, 1.0, tb);
-}
-
-
-template<size_t N, typename Functor>
-void tod_apply<N, Functor>::perform(cpu_pool &cpus,
-    dense_tensor_wr_i<N, double> &tb, double c) {
-
-    perform(cpus, false, c, tb);
 }
 
 
