@@ -1,5 +1,3 @@
-#ifdef LIBTENSOR_INSTANTIATE_TEMPLATES
-
 #include "../core/scalar_transf_double.h"
 #include "orbit.h"
 #include "orbit_impl.h"
@@ -18,5 +16,3 @@ template class orbit<8, double>;
 
 
 } // namespace libtensor
-
-#endif // LIBTENSOR_INSTANTIATE_TEMPLATES

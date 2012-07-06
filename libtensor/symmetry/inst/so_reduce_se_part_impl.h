@@ -9,14 +9,14 @@
 
 namespace libtensor {
 
-template<size_t N, size_t M, typename T>
+template<size_t N, size_t M, size_t NM, typename T>
 const char *
-symmetry_operation_impl< so_reduce<N, M, T>, se_part<N - M, T> >::k_clazz =
-        "symmetry_operation_impl< so_reduce<N, M, T>, se_part<N - M, T> >";
+symmetry_operation_impl< so_reduce<N, M, T>, se_part<NM, T> >::k_clazz =
+        "symmetry_operation_impl< so_reduce<N, M, T>, se_part<NM, T> >";
 
-template<size_t N, size_t M, typename T>
+template<size_t N, size_t M, size_t NM, typename T>
 void
-symmetry_operation_impl< so_reduce<N, M, T>, se_part<N - M, T> >::do_perform(
+symmetry_operation_impl< so_reduce<N, M, T>, se_part<NM, T> >::do_perform(
         symmetry_operation_params_t &params) const {
 
     static const char *method =
@@ -185,8 +185,8 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_part<N - M, T> >::do_perform(
     if (! empty) params.grp2.insert(el2);
 }
 
-template<size_t N, size_t M, typename T>
-bool symmetry_operation_impl< so_reduce<N, M, T>, se_part<N - M, T> >::
+template<size_t N, size_t M, size_t NM, typename T>
+bool symmetry_operation_impl< so_reduce<N, M, T>, se_part<NM, T> >::
 is_forbidden(const el1_t &el, const index<k_order1> &idx,
         const dimensions<k_order1> &subdims) {
 
@@ -205,8 +205,8 @@ is_forbidden(const el1_t &el, const index<k_order1> &idx,
     return forbidden;
 }
 
-template<size_t N, size_t M, typename T>
-bool symmetry_operation_impl< so_reduce<N, M, T>, se_part<N - M, T> >::
+template<size_t N, size_t M, size_t NM, typename T>
+bool symmetry_operation_impl< so_reduce<N, M, T>, se_part<NM, T> >::
 map_exists(const el1_t &el, const index<k_order1> &ia,
         const index<k_order1> &ib, const dimensions<k_order1> &subdims) {
 

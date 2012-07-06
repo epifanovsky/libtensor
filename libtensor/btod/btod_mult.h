@@ -102,8 +102,8 @@ public:
 
 protected:
     virtual void compute_block(bool zero, dense_tensor_i<N, double> &blk,
-            const index<N> &idx, const tensor_transf<N, double> &tr,
-            const double &c, cpu_pool &cpus);
+        const index<N> &idx, const tensor_transf<N, double> &tr,
+        const double &c);
 
 private:
     btod_mult(const btod_mult<N> &);
@@ -276,8 +276,8 @@ void btod_mult<N>::compute_block(
 
 template<size_t N>
 void btod_mult<N>::compute_block(bool zero, dense_tensor_i<N, double> &blk,
-        const index<N> &idx, const tensor_transf<N, double> &tr,
-        const double &c, cpu_pool &cpus) {
+    const index<N> &idx, const tensor_transf<N, double> &tr,
+    const double &c) {
 
     block_tensor_ctrl<N, double> ctrla(m_bta), ctrlb(m_btb);
 
@@ -313,8 +313,8 @@ void btod_mult<N>::compute_block(bool zero, dense_tensor_i<N, double> &blk,
     else
         k *= trb.get_scalar_tr().get_coeff();
 
-    if(zero) tod_set<N>().perform(cpus, blk);
-    tod_mult<N>(blka, pa, blkb, pb, m_recip, k).perform(cpus, false, c, blk);
+    if(zero) tod_set<N>().perform(blk);
+    tod_mult<N>(blka, pa, blkb, pb, m_recip, k).perform(false, c, blk);
 
     ctrla.ret_block(cidxa.get_index());
     ctrlb.ret_block(cidxb.get_index());

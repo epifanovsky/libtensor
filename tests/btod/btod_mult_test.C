@@ -85,8 +85,6 @@ void btod_mult_test::test_1(
 
     typedef std_allocator<double> allocator_t;
 
-    cpu_pool cpus(1);
-
     try {
 
     index<2> i1, i2;
@@ -115,11 +113,11 @@ void btod_mult_test::test_1(
 
     //  Invoke the operation
     if (doadd) {
-        tod_mult<2>(ta, tb, recip).perform(cpus, tc_ref, 0.5);
+        tod_mult<2>(ta, tb, recip).perform(tc_ref, 0.5);
         btod_mult<2>(bta, btb, recip).perform(btc, 0.5);
     }
     else {
-        tod_mult<2>(ta, tb, recip).perform(cpus, tc_ref);
+        tod_mult<2>(ta, tb, recip).perform(tc_ref);
         btod_mult<2>(bta, btb, recip).perform(btc);
     }
 
@@ -148,8 +146,6 @@ void btod_mult_test::test_2(
             << (doadd ? "true" : "false") << ")";
 
     typedef std_allocator<double> allocator_t;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -182,11 +178,11 @@ void btod_mult_test::test_2(
 
     //  Invoke the operation
     if (doadd) {
-        tod_mult<2>(ta, pa, tb, pb, recip).perform(cpus, tc_ref, 0.5);
+        tod_mult<2>(ta, pa, tb, pb, recip).perform(tc_ref, 0.5);
         btod_mult<2>(bta, pa, btb, pb, recip).perform(btc, 0.5);
     }
     else {
-        tod_mult<2>(ta, pa, tb, pb, recip).perform(cpus, tc_ref);
+        tod_mult<2>(ta, pa, tb, pb, recip).perform(tc_ref);
         btod_mult<2>(bta, pa, btb, pb, recip).perform(btc);
     }
     tod_btconv<2>(btc).perform(tc);
@@ -214,8 +210,6 @@ void btod_mult_test::test_3(
             << (doadd ? "true" : "false") << ")";
 
     typedef std_allocator<double> allocator_t;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -273,11 +267,11 @@ void btod_mult_test::test_3(
     //  Invoke the operation
 
     if (doadd) {
-        tod_mult<2>(ta, tb, recip).perform(cpus, tc_ref, -0.5);
+        tod_mult<2>(ta, tb, recip).perform(tc_ref, -0.5);
         btod_mult<2>(bta, btb, recip).perform(btc, -0.5);
     }
     else {
-        tod_mult<2>(ta, tb, recip).perform(cpus, tc_ref);
+        tod_mult<2>(ta, tb, recip).perform(tc_ref);
         btod_mult<2>(bta, btb, recip).perform(btc);
     }
     tod_btconv<2>(btc).perform(tc);
@@ -305,8 +299,6 @@ void btod_mult_test::test_4(
             << (doadd ? "true" : "false") << ")";
 
     typedef std_allocator<double> allocator_t;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -366,11 +358,11 @@ void btod_mult_test::test_4(
     //  Invoke the operation
 
     if (doadd) {
-        tod_mult<4>(ta, tb, recip).perform(cpus, tc_ref, 0.5);
+        tod_mult<4>(ta, tb, recip).perform(tc_ref, 0.5);
         btod_mult<4>(bta, btb, recip).perform(btc, 0.5);
     }
     else {
-        tod_mult<4>(ta, tb, recip).perform(cpus, tc_ref);
+        tod_mult<4>(ta, tb, recip).perform(tc_ref);
         btod_mult<4>(bta, btb, recip).perform(btc);
     }
 
@@ -397,8 +389,6 @@ void btod_mult_test::test_5(bool symm1, bool symm2) throw(libtest::test_exceptio
             << (symm2 ? "true" : "false") << ")";
 
     typedef std_allocator<double> allocator_t;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -616,8 +606,6 @@ void btod_mult_test::test_7(bool label, bool part,
 
     typedef std_allocator<double> allocator_t;
 
-    cpu_pool cpus(1);
-
     try {
 
     index<4> i1, i2;
@@ -753,11 +741,11 @@ void btod_mult_test::test_7(bool label, bool part,
 
     if (doadd) {
         tod_btconv<4>(btc).perform(tc_ref);
-        tod_mult<4>(ta, tb, recip).perform(cpus, tc_ref, 0.5);
+        tod_mult<4>(ta, tb, recip).perform(tc_ref, 0.5);
         btod_mult<4>(bta, btb, recip).perform(btc, 0.5);
     }
     else {
-        tod_mult<4>(ta, tb, recip).perform(cpus, tc_ref);
+        tod_mult<4>(ta, tb, recip).perform(tc_ref);
         btod_mult<4>(bta, btb, recip).perform(btc);
     }
 
@@ -802,8 +790,6 @@ void btod_mult_test::test_8a(bool label, bool part)
     }
 
     typedef std_allocator<double> allocator_t;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -881,7 +867,7 @@ void btod_mult_test::test_8a(bool label, bool part)
     tod_btconv<2>(bta).perform(ta);
     tod_btconv<2>(btb).perform(tb);
 
-    tod_mult<2>(ta, tb, true, 4.0).perform(cpus, tc_ref);
+    tod_mult<2>(ta, tb, true, 4.0).perform(tc_ref);
     btod_mult<2> mult(bta, btb, true, 4.0);
     compare_ref<2>::compare(tns.c_str(), mult.get_symmetry(), sym_ref);
 
@@ -927,8 +913,6 @@ void btod_mult_test::test_8b(bool label, bool part)
     }
 
     typedef std_allocator<double> allocator_t;
-
-    cpu_pool cpus(1);
 
     try {
 
@@ -1038,7 +1022,7 @@ void btod_mult_test::test_8b(bool label, bool part)
     tod_btconv<4>(bta).perform(ta);
     tod_btconv<4>(btb).perform(tb);
 
-    tod_mult<4>(ta, tb, true, 4.0).perform(cpus, tc_ref);
+    tod_mult<4>(ta, tb, true, 4.0).perform(tc_ref);
     btod_mult<4> mult(bta, btb, true, 4.0);
     compare_ref<4>::compare(tns.c_str(), mult.get_symmetry(), sym_ref);
 

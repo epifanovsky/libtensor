@@ -2,10 +2,10 @@
 #define LIBTENSOR_TOD_ADD_H
 
 #include <list>
+#include <libtensor/timings.h>
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/core/tensor_transf.h>
 #include <libtensor/dense_tensor/dense_tensor_i.h>
-#include <libtensor/mp/cpu_pool.h>
 
 namespace libtensor {
 
@@ -96,8 +96,7 @@ public:
         \param c Scaling factor
         \param tb Add result to
      **/
-    void perform(cpu_pool &cpus, bool zero, double c,
-        dense_tensor_wr_i<N, double> &tb);
+    void perform(bool zero, double c, dense_tensor_wr_i<N, double> &tb);
 
 private:
     /** \brief Adds an operand (internal)

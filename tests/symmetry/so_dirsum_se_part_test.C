@@ -25,6 +25,10 @@ void so_dirsum_se_part_test::perform() throw(libtest::test_exception) {
     test_nn_3(true, false);
     test_nn_3(false, true);
     test_nn_3(false, false);
+    test_nn_4(true, true);
+    test_nn_4(true, false);
+    test_nn_4(false, true);
+    test_nn_4(false, false);
 }
 
 
@@ -158,6 +162,7 @@ void so_dirsum_se_part_test::test_empty_2(
         fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
 }
+
 
 /** \test Direct sum of an empty group (1-space) and a group with mappings
         in 2-space forming a 3-space.
@@ -339,6 +344,7 @@ void so_dirsum_se_part_test::test_nn_1(
     }
 }
 
+
 /** \test Direct sum of a group in 1-space and a group in 2-space. The
         result is permuted with [012->120].
  **/
@@ -437,6 +443,7 @@ void so_dirsum_se_part_test::test_nn_2(
     }
 }
 
+
 /** \test Direct sum of two groups in 2-space.
  **/
 void so_dirsum_se_part_test::test_nn_3(
@@ -521,6 +528,118 @@ void so_dirsum_se_part_test::test_nn_3(
         setc_ref.insert(elemc);
 
         permutation<4> px;
+        symmetry_operation_params<so_t> params(seta, setb, px, bisc, setc);
+
+        so_se_t().perform(params);
+
+        compare_ref<4>::compare(tns.c_str(), bisc, setc, setc_ref);
+
+        if(setc.is_empty()) {
+            fail_test(tns.c_str(), __FILE__, __LINE__,
+                    "Expected a non-empty set.");
+        }
+
+    } catch(exception &e) {
+        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+    }
+}
+
+
+/** \test Direct sum of two groups in 2-space.
+ **/
+void so_dirsum_se_part_test::test_nn_4(
+        bool symm1, bool symm2) throw(libtest::test_exception) {
+
+    std::ostringstream tnss;
+    tnss << "so_dirsum_se_part_test::test_nn_4(" << symm1 << ", "
+            << symm2 << ")";
+    std::string tns = tnss.str();
+
+    typedef se_part<2, double> se2_t;
+    typedef se_part<4, double> se4_t;
+    typedef so_dirsum<2, 2, double> so_t;
+    typedef symmetry_operation_impl<so_t, se4_t> so_se_t;
+
+    try {
+
+        index<2> i1a, i2a; i2a[0] = 3; i2a[1] = 3;
+        index<4> i1c, i2c; i2c[0] = 3; i2c[1] = 3; i2c[2] = 3; i2c[3] = 3;
+
+        block_index_space<2> bisa(dimensions<2>(index_range<2>(i1a, i2a)));
+        block_index_space<4> bisc(dimensions<4>(index_range<4>(i1c, i2c)));
+
+        mask<2> ma; ma[0] = true; ma[1] = true;
+        bisa.split(ma, 1); bisa.split(ma, 2); bisa.split(ma, 3);
+        mask<4> mc; mc[0] = true; mc[1] = true; mc[2] = true; mc[3] = true;
+        bisc.split(mc, 1); bisc.split(mc, 2); bisc.split(mc, 3);
+
+        index<2> i00, i01, i10, i11;
+        i10[0] = 1; i01[1] = 1;
+        i11[0] = 1; i11[1] = 1;
+        scalar_transf<double> tr0, tr1(-1.);
+        se2_t elema(bisa, ma, 2), elemb(bisa, ma, 2);
+        elema.add_map(i00, i11, symm1 ? tr0 : tr1);
+        elema.add_map(i01, i10, symm1 ? tr0 : tr1);
+
+        elemb.add_map(i00, i11, symm2 ? tr0 : tr1);
+        elemb.add_map(i01, i10, symm2 ? tr0 : tr1);
+
+        index<4> i0000, i0001, i0010, i0011, i0100, i0101, i0110, i0111;
+        index<4> i1000, i1001, i1010, i1011, i1100, i1101, i1110, i1111;
+        i1110[0] = 1; i1110[1] = 1; i1110[2] = 1; i0001[3] = 1;
+        i1101[0] = 1; i1101[1] = 1; i0010[2] = 1; i1101[3] = 1;
+        i1100[0] = 1; i1100[1] = 1; i0011[2] = 1; i0011[3] = 1;
+        i1011[0] = 1; i0100[1] = 1; i1011[2] = 1; i1011[3] = 1;
+        i1010[0] = 1; i0101[1] = 1; i1010[2] = 1; i0101[3] = 1;
+        i1001[0] = 1; i0110[1] = 1; i0110[2] = 1; i1001[3] = 1;
+        i1000[0] = 1; i0111[1] = 1; i0111[2] = 1; i0111[3] = 1;
+        i1111[0] = 1; i1111[1] = 1; i1111[2] = 1; i1111[3] = 1;
+
+        se4_t elemc(bisc, mc, 2);
+        if (symm1) {
+            elemc.add_map(i0000, i1010, tr0);
+            elemc.add_map(i0001, i1011, tr0);
+            elemc.add_map(i0100, i1110, tr0);
+            elemc.add_map(i0101, i1111, tr0);
+
+            elemc.add_map(i0010, i1000, tr0);
+            elemc.add_map(i0011, i1001, tr0);
+            elemc.add_map(i0110, i1100, tr0);
+            elemc.add_map(i0111, i1101, tr0);
+        }
+        if (symm2) {
+            elemc.add_map(i0000, i0101, tr0);
+            elemc.add_map(i0010, i0111, tr0);
+            elemc.add_map(i1000, i1101, tr0);
+            elemc.add_map(i1010, i1111, tr0);
+
+            elemc.add_map(i0001, i0100, tr0);
+            elemc.add_map(i0011, i0110, tr0);
+            elemc.add_map(i1001, i1100, tr0);
+            elemc.add_map(i1011, i1110, tr0);
+        }
+
+        if (! symm1 && symm1 == symm2) {
+            elemc.add_map(i0000, i1111, tr1);
+            elemc.add_map(i0001, i1110, tr1);
+            elemc.add_map(i0100, i1011, tr1);
+            elemc.add_map(i0101, i1010, tr1);
+            elemc.add_map(i0010, i1101, tr1);
+            elemc.add_map(i0011, i1100, tr1);
+            elemc.add_map(i0110, i1001, tr1);
+            elemc.add_map(i0111, i1000, tr1);
+        }
+
+        symmetry_element_set<2, double> seta(se2_t::k_sym_type);
+        symmetry_element_set<2, double> setb(se2_t::k_sym_type);
+        symmetry_element_set<4, double> setc(se4_t::k_sym_type);
+        symmetry_element_set<4, double> setc_ref(se4_t::k_sym_type);
+
+        seta.insert(elema);
+        setb.insert(elemb);
+        setc_ref.insert(elemc);
+
+        permutation<4> px; px.permute(1, 2);
         symmetry_operation_params<so_t> params(seta, setb, px, bisc, setc);
 
         so_se_t().perform(params);

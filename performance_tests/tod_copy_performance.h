@@ -96,8 +96,6 @@ void tod_copy_ref<R,X>::do_calculate()
 template<size_t R, size_t N, typename X>
 void tod_copy_p1<R,N,X>::do_calculate()
 {
-    cpu_pool cpus(1);
-
 	X d;
 	dimensions<N> dim(d.dimA());
 	dense_tensor<N, double, std_allocator<double> > ta(dim), tb(dim);
@@ -111,15 +109,12 @@ void tod_copy_p1<R,N,X>::do_calculate()
 	tcb.ret_dataptr(ptrb);
 
 	// start tod_add calculation
-	tod_copy<N> todcopy(tb,2.0);
-	todcopy.perform(cpus, true, 1.0, ta);
+	tod_copy<N>(tb,2.0).perform(true, 1.0, ta);
 }
 
 template<size_t R, size_t N, typename X>
 void tod_copy_p2<R,N,X>::do_calculate()
 {
-    cpu_pool cpus(1);
-
 	X d;
 	dimensions<N> dima(d.dimA()), dimb(d.dimA());
 	permutation<N> permb;
@@ -139,8 +134,7 @@ void tod_copy_p2<R,N,X>::do_calculate()
 	tcb.ret_dataptr(ptrb);
 
 	// start tod_add calculation
-	tod_copy<N> todcopy(tb,permb,2.0);
-	todcopy.perform(cpus, true, 1.0, ta);
+	tod_copy<N>(tb,permb,2.0).perform(true, 1.0, ta);
 }
 
 

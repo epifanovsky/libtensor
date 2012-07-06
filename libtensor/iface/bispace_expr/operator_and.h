@@ -8,10 +8,10 @@
 namespace libtensor {
 namespace bispace_expr {
 
-template<size_t N, size_t K, typename C>
+template<size_t N, size_t K, size_t NK, typename C>
 expr< N * (K + 1), sym< N, K + 1, expr<N, C> > >
 inline operator&(
-    expr< N * K, sym< N, K, expr<N, C> > > lhs,
+    expr< NK, sym< N, K, expr<N, C> > > lhs,
     expr<N, C> rhs) {
 
     typedef expr<N, C> core_t;
@@ -36,10 +36,10 @@ inline operator&(
 }
 
 
-template<size_t N, size_t K>
+template<size_t N, size_t K, size_t NK>
 expr< N * (K + 1), sym< N, K + 1, expr< N, ident<N> > > >
 inline operator&(
-    expr< N * K, sym< N, K, expr< N, ident<N> > > > lhs,
+    expr< NK, sym< N, K, expr< N, ident<N> > > > lhs,
     const bispace<N> &rhs) {
 
     typedef expr< N, ident<N> > core_t;

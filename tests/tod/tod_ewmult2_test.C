@@ -108,8 +108,6 @@ void tod_ewmult2_test::test_i_i_i(size_t ni, double d)
 
 	typedef std_allocator<double> allocator;
 
-	cpu_pool cpus(1);
-
 	try {
 
 	index<1> ia1, ia2; ia2[0] = ni - 1;
@@ -169,8 +167,8 @@ void tod_ewmult2_test::test_i_i_i(size_t ni, double d)
 	//	Invoke the routine
 
 	tod_ewmult2<0, 0, 1> op(ta, tb);
-	if(d == 0.0) op.perform(cpus, true, 1.0, tc);
-	else op.perform(cpus, false, d, tc);
+	if(d == 0.0) op.perform(true, 1.0, tc);
+	else op.perform(false, d, tc);
 
 	//	Compare against the reference
 
@@ -193,8 +191,6 @@ void tod_ewmult2_test::test_ij_ij_ij(size_t ni, size_t nj, double d)
 	std::string tns = tnss.str();
 
 	typedef std_allocator<double> allocator;
-
-    cpu_pool cpus(1);
 
 	try {
 
@@ -258,8 +254,8 @@ void tod_ewmult2_test::test_ij_ij_ij(size_t ni, size_t nj, double d)
 	//	Invoke the routine
 
 	tod_ewmult2<0, 0, 2> op(ta, tb, d2);
-	if(d == 0.0) op.perform(cpus, true, 1.0, tc);
-	else op.perform(cpus, false, d, tc);
+	if(d == 0.0) op.perform(true, 1.0, tc);
+	else op.perform(false, d, tc);
 
 	//	Compare against the reference
 
@@ -282,8 +278,6 @@ void tod_ewmult2_test::test_ij_ij_ji(size_t ni, size_t nj, double d)
 	std::string tns = tnss.str();
 
 	typedef std_allocator<double> allocator;
-
-    cpu_pool cpus(1);
 
 	try {
 
@@ -350,8 +344,8 @@ void tod_ewmult2_test::test_ij_ij_ji(size_t ni, size_t nj, double d)
 	permutation<2> permb; permb.permute(0, 1);
 	permutation<2> permc;
 	tod_ewmult2<0, 0, 2> op(ta, perma, tb, permb, permc, d2);
-	if(d == 0.0) op.perform(cpus, true, 1.0, tc);
-	else op.perform(cpus, false, d, tc);
+	if(d == 0.0) op.perform(true, 1.0, tc);
+	else op.perform(false, d, tc);
 
 	//	Compare against the reference
 
@@ -374,8 +368,6 @@ void tod_ewmult2_test::test_ijk_jki_kij(size_t ni, size_t nj, size_t nk,
 	std::string tns = tnss.str();
 
 	typedef std_allocator<double> allocator;
-
-    cpu_pool cpus(1);
 
 	try {
 
@@ -444,8 +436,8 @@ void tod_ewmult2_test::test_ijk_jki_kij(size_t ni, size_t nj, size_t nk,
 	permutation<3> permb; // kij
 	permutation<3> permc; permc.permute(0, 1).permute(1, 2); // kij->ijk
 	tod_ewmult2<0, 0, 3> op(ta, perma, tb, permb, permc, d2);
-	if(d == 0.0) op.perform(cpus, true, 1.0, tc);
-	else op.perform(cpus, false, d, tc);
+	if(d == 0.0) op.perform(true, 1.0, tc);
+	else op.perform(false, d, tc);
 
 	//	Compare against the reference
 
@@ -468,8 +460,6 @@ void tod_ewmult2_test::test_ijk_ik_kj(size_t ni, size_t nj, size_t nk,
 	std::string tns = tnss.str();
 
 	typedef std_allocator<double> allocator;
-
-    cpu_pool cpus(1);
 
 	try {
 
@@ -539,8 +529,8 @@ void tod_ewmult2_test::test_ijk_ik_kj(size_t ni, size_t nj, size_t nk,
 	permutation<2> permb; permb.permute(0, 1); // kj->jk
 	permutation<3> permc; // ijk
 	tod_ewmult2<1, 1, 1> op(ta, perma, tb, permb, permc, d2);
-	if(d == 0.0) op.perform(cpus, true, 1.0, tc);
-	else op.perform(cpus, false, d, tc);
+	if(d == 0.0) op.perform(true, 1.0, tc);
+	else op.perform(false, d, tc);
 
 	//	Compare against the reference
 
@@ -563,8 +553,6 @@ void tod_ewmult2_test::test_ijkl_kj_ikl(size_t ni, size_t nj, size_t nk,
 	std::string tns = tnss.str();
 
 	typedef std_allocator<double> allocator;
-
-    cpu_pool cpus(1);
 
 	try {
 
@@ -638,8 +626,8 @@ void tod_ewmult2_test::test_ijkl_kj_ikl(size_t ni, size_t nj, size_t nk,
 	permutation<3> permb; permb.permute(1, 2); // ikl->ilk
 	permutation<4> permc; permc.permute(0, 1).permute(2, 3); // jilk->ijkl
 	tod_ewmult2<1, 2, 1> op(ta, perma, tb, permb, permc, d2);
-	if(d == 0.0) op.perform(cpus, true, 1.0, tc);
-	else op.perform(cpus, false, d, tc);
+	if(d == 0.0) op.perform(true, 1.0, tc);
+	else op.perform(false, d, tc);
 
 	//	Compare against the reference
 
@@ -662,8 +650,6 @@ void tod_ewmult2_test::test_ijkl_ljk_jil(size_t ni, size_t nj, size_t nk,
 	std::string tns = tnss.str();
 
 	typedef std_allocator<double> allocator;
-
-    cpu_pool cpus(1);
 
 	try {
 
@@ -738,8 +724,8 @@ void tod_ewmult2_test::test_ijkl_ljk_jil(size_t ni, size_t nj, size_t nk,
 	permutation<4> permc;
 	permc.permute(2, 3).permute(1, 2).permute(0, 2); // kilj->ijkl
 	tod_ewmult2<1, 1, 2> op(ta, perma, tb, permb, permc, d2);
-	if(d == 0.0) op.perform(cpus, true, 1.0, tc);
-	else op.perform(cpus, false, d, tc);
+	if(d == 0.0) op.perform(true, 1.0, tc);
+	else op.perform(false, d, tc);
 
 	//	Compare against the reference
 

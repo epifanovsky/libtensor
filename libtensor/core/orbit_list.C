@@ -1,5 +1,3 @@
-#ifdef LIBTENSOR_INSTANTIATE_TEMPLATES
-
 #include "orbit_list.h"
 #include "orbit_list_impl.h"
 
@@ -17,5 +15,3 @@ template class orbit_list<8, double>;
 
 
 } // namespace libtensor
-
-#endif // LIBTENSOR_INSTANTIATE_TEMPLATES

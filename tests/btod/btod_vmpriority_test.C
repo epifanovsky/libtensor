@@ -22,8 +22,6 @@ void btod_vmpriority_test::test_1() throw(libtest::test_exception) {
 
     typedef std_allocator<double> allocator_t;
 
-    cpu_pool cpus(1);
-
     try {
 
     index<2> i1, i2;

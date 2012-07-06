@@ -1,26 +1,36 @@
 #
-#    Locates the Intel Math Kernel Library
+#   Locates the Intel Math Kernel Library
 #
-#    Output:
+#   Input:
 #
-#    MKL_FOUND - TRUE/FALSE - Whether the library has been found.
-#        If FALSE, all other output variables are not defined.
+#   MKLROOT (CMake or environment) - Preferred MKL path.
+#   STATIC_LINK                    - Static (true)/dynamic (false) linking.
+#   WITH_OPENMP                    - Enables OpenMP parallel MKL libraries.
+#   WITH_SCALAPACK                 - Enables ScaLAPACK/BLACS libraries.
+#   WITH_MPI                       - Specifies MPI library.
+#                                    (openmpi, mpich, ...)
 #
-#    MKL_PATH         - Library home.
-#    MKL_INCLUDE_PATH - Path to the library's header files.
-#    MKL_LIBRARY_PATH - Path to the library's binaries.
-#    MKL_LIBRARIES    - Line for the linker.
+#   Output:
 #
-#    The following locations are searched:
-#    1. CMake MKLROOT
-#    2. Environment MKLROOT
-#    3. LD_LIBRARY_PATH/DYLD_LIBRARY_PATH/PATH
-#    4. Default MKL installation directories
-#    
+#   MKL_FOUND - TRUE/FALSE - Whether the library has been found.
+#       If FALSE, all other output variables are not defined.
+#
+#   MKL_PATH         - Library home.
+#   MKL_INCLUDE_PATH - Path to the library's header files.
+#   MKL_LIBRARY_PATH - Path to the library's binaries.
+#   MKL_LIBRARIES    - Line for the linker.
+#
+#   The following locations are searched:
+#   1. CMake MKLROOT
+#   2. Environment MKLROOT
+#   3. Intel Compiler directory
+#   4. LD_LIBRARY_PATH/DYLD_LIBRARY_PATH/PATH
+#   5. Default MKL installation directories
+#	
 set(MKL_FOUND FALSE)
 
 #
-#    Set up search locations
+#   Set up search locations
 #
 if(APPLE)
     set(LD_LIBRARY_PATH_NAME DYLD_LIBRARY_PATH)
@@ -32,17 +42,30 @@ else(WIN32)
 endif(WIN32)
 endif(APPLE)
 
+if(NOT MKLROOT)
+    set(MKLROOT $ENV{MKLROOT})
+endif(NOT MKLROOT)
 if(MKLROOT)
-    find_path(MKL_PATH_MKLROOT mkl.h PATHS ${MKLROOT}/include)
+    find_path(MKL_PATH_MKLROOT mkl.h PATHS ${MKLROOT}/include NO_DEFAULT_PATH)
 endif(MKLROOT)
-if(NOT MKL_PATH_MKLROOT)
-    find_path(MKL_PATH_MKLROOT mkl.h PATHS $ENV{MKLROOT}/include)
-endif(NOT MKL_PATH_MKLROOT)
+
+if(CMAKE_C_COMPILER_ID STREQUAL "Intel")
+    get_filename_component(MKL_PATH_ICC ${CMAKE_C_COMPILER}/../../.. ABSOLUTE)
+    find_path(MKL_PATH_ICC1 mkl.h PATHS ${MKL_PATH_ICC}/mkl/include
+        NO_DEFAULT_PATH)
+    unset(MKL_PATH_ICC)
+    if(MKL_PATH_ICC1)
+        get_filename_component(MKL_PATH_ICC ${MKL_PATH_ICC1}/.. ABSOLUTE)
+    endif(MKL_PATH_ICC1)
+    unset(MKL_PATH_ICC1)
+endif(CMAKE_C_COMPILER_ID STREQUAL "Intel")
 
 find_library(MKL_PATH_LD NAMES mkl mkl_core PATHS ENV ${LD_LIBRARY_PATH_NAME})
 
 find_path(MKL_PATH_GUESS mkl.h
     PATHS
+    $ENV{HOME}/intel/composerxe*/mkl/include
+    /opt/intel/composerxe*/mkl/include
     $ENV{HOME}/intel/Compiler/*/mkl/include
     /opt/intel/Compiler/*/mkl/include
     $ENV{HOME}/intel/mkl/*/include
@@ -52,6 +75,10 @@ if(MKL_PATH_MKLROOT)
     get_filename_component(MKL_PATH ${MKL_PATH_MKLROOT}/.. ABSOLUTE)
     set(MKL_FOUND TRUE)
 endif(MKL_PATH_MKLROOT)
+if(NOT MKL_FOUND AND MKL_PATH_ICC)
+    set(MKL_PATH ${MKL_PATH_ICC})
+    set(MKL_FOUND TRUE)
+endif(NOT MKL_FOUND AND MKL_PATH_ICC)
 if(NOT MKL_FOUND AND MKL_PATH_LD)
     get_filename_component(MKL_PATH ${MKL_PATH_LD}/../../.. ABSOLUTE)
     set(MKL_FOUND TRUE)
@@ -63,63 +90,237 @@ endif(NOT MKL_FOUND AND MKL_PATH_GUESS)
 
 if(MKL_FOUND)
 
-if(APPLE)
-    set(MKL_INCLUDE_PATH ${MKL_PATH}/Headers)
-    set(MKL_LIB_PATH ${MKL_PATH}/Versions/Current/lib)
-else(APPLE)
+#if(APPLE)
+#    set(MKL_INCLUDE_PATH ${MKL_PATH}/Headers)
+#    set(MKL_LIB_PATH ${MKL_PATH}/Versions/Current/lib)
+#else(APPLE)
     set(MKL_INCLUDE_PATH ${MKL_PATH}/include)
     set(MKL_LIB_PATH ${MKL_PATH}/lib)
-endif(APPLE)
+#endif(APPLE)
 
-#
-#    MKL version is detected by the library binaries found
-#
-#    MKL pre-10 x86:    mkl_ia32
-#    MKL pre-10 x86_64: mkl_em64t
-#    MKL 10+ x86:       mkl_ia32 + mkl_core + mkl_intel
-#    MKL 10+ x86_64:    mkl_em64t + mkl_core + mkl_intel_lp64
-#
-if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86_64")
-    set(MKL_LIBRARY_PATH ${MKL_LIB_PATH}/em64t)
-    set(MKL_ARCH_A mkl_em64t)
-    set(MKL_INTEL_A mkl_intel_lp64)
-    set(MKL_SOLVER_A mkl_solver_lp64)
-else(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86_64")
-    set(MKL_LIBRARY_PATH ${MKL_LIB_PATH}/32)
-    set(MKL_ARCH_A mkl_ia32)
-    set(MKL_INTEL_A mkl_intel)
-    set(MKL_SOLVER_A mkl_solver)
-endif(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86_64")
 
-find_library(MKL_CORE_A_PATH mkl_core PATHS ${MKL_LIBRARY_PATH})
-find_library(MKL_ARCH_A_PATH ${MKL_ARCH_A} PATHS ${MKL_LIBRARY_PATH})
-find_library(MKL_INTEL_A_PATH ${MKL_INTEL_A} PATHS ${MKL_LIBRARY_PATH})
-find_library(MKL_SOLVER_A_PATH ${MKL_SOLVER_A} PATHS ${MKL_LIBRARY_PATH})
-find_library(MKL_LAPACK_A_PATH mkl_lapack PATHS ${MKL_LIBRARY_PATH})
+#   32-bit or 64-bit?
 
-if(MKL_ARCH_A_PATH)
-    if(MKL_INTEL_A_PATH)
-#        Version 10+
-        set(MKL_LIBRARIES
-            ${MKL_INTEL_A_PATH} mkl_intel_thread mkl_core
-            guide pthread) 
-    else(MKL_INTEL_A_PATH)
-#        Version pre-10
-        set(MKL_LIBRARIES
-            ${MKL_LAPACK_A_PATH} ${MKL_ARCH_A_PATH} guide pthread)
-    endif(MKL_INTEL_A_PATH)
-endif(MKL_ARCH_A_PATH)
+if(APPLE OR (${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86_64"))
+    set(MKL_32 0)
+    if(EXISTS ${MKL_LIB_PATH}/intel64)
+        set(MKL_LIBRARY_PATH ${MKL_LIB_PATH}/intel64)
+        set(MKL_2011 TRUE)
+    else()
+        set(MKL_LIBRARY_PATH ${MKL_LIB_PATH}/em64t)
+        set(MKL_2011 FALSE)
+    endif()
+else()
+    set(MKL_32 1)
+    if(EXISTS ${MKL_LIB_PATH}/ia32)
+        set(MKL_LIBRARY_PATH ${MKL_LIB_PATH}/ia32)
+        set(MKL_2011 TRUE)
+    else()
+        set(MKL_LIBRARY_PATH ${MKL_LIB_PATH}/32)
+        set(MKL_2011 FALSE)
+    endif()
+endif()
 
-#    MKL 10.2
-if(MKL_SOLVER_A_PATH AND NOT MKL_ARCH_A_PATH)
-    set(MKL_LIBRARIES
-        -L${MKL_LIBRARY_PATH}
-        ${MKL_SOLVER_A} ${MKL_INTEL_A} mkl_intel_thread mkl_core
-        guide pthread)
-endif(MKL_SOLVER_A_PATH AND NOT MKL_ARCH_A_PATH)
+set(SAVED_CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_FIND_LIBRARY_SUFFIXES})
+set(CMAKE_FIND_LIBRARY_SUFFIXES ".a;.lib")
+
+#   Determine the version of MKL
+
+if(MKL_32)
+    find_library(MKL_ARCH_PATH mkl_ia32 PATHS ${MKL_LIBRARY_PATH})
+    find_library(MKL_LAPACK_PATH mkl_lapack PATHS ${MKL_LIBRARY_PATH})
+    find_library(MKL_INTEL_PATH mkl_intel PATHS ${MKL_LIBRARY_PATH})
+    if(WITH_OPENMP)
+        find_library(MKL_SOLVER_PATH mkl_solver PATHS ${MKL_LIBRARY_PATH})
+    else(WITH_OPENMP)
+        find_library(MKL_SOLVER_PATH mkl_solver_sequential
+            PATHS ${MKL_LIBRARY_PATH})
+    endif(WITH_OPENMP)
+else(MKL_32)
+    find_library(MKL_ARCH_PATH mkl_em64t PATHS ${MKL_LIBRARY_PATH})
+    find_library(MKL_LAPACK_PATH mkl_lapack PATHS ${MKL_LIBRARY_PATH})
+    find_library(MKL_INTEL_PATH mkl_intel_lp64 PATHS ${MKL_LIBRARY_PATH})
+    if(WITH_OPENMP)
+        find_library(MKL_SOLVER_PATH mkl_solver_lp64 PATHS ${MKL_LIBRARY_PATH})
+    else(WITH_OPENMP)
+        find_library(MKL_SOLVER_PATH mkl_solver_lp64_sequential
+            PATHS ${MKL_LIBRARY_PATH})
+    endif(WITH_OPENMP)
+endif(MKL_32)
+if(MKL_ARCH_PATH AND MKL_LAPACK_PATH)
+    if(MKL_INTEL_PATH)
+        set(MKL_VERSION "10.1")
+    else(MKL_INTEL_PATH)
+        set(MKL_VERSION "9.1")
+    endif(MKL_INTEL_PATH)
+endif(MKL_ARCH_PATH AND MKL_LAPACK_PATH)
+if(NOT MKL_ARCH_PATH AND MKL_SOLVER_PATH)
+    if(MKL_2011)
+        set(MKL_VERSION "10.3")
+    else(MKL_2011)
+        set(MKL_VERSION "10.2")
+    endif(MKL_2011)
+endif(NOT MKL_ARCH_PATH AND MKL_SOLVER_PATH)
+if(MKL_VERSION VERSION_GREATER "10.0")
+    find_library(MKL_CORE_PATH mkl_core PATHS ${MKL_LIBRARY_PATH})
+    if(WITH_OPENMP)
+        if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+            find_library(MKL_THREAD_PATH mkl_gnu_thread
+                PATHS ${MKL_LIBRARY_PATH})
+        elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+            find_library(MKL_THREAD_PATH mkl_intel_thread
+                PATHS ${MKL_LIBRARY_PATH})
+        elseif(CMAKE_CXX_COMPILER_ID STREQUAL "PGI")
+            find_library(MKL_THREAD_PATH mkl_pgi_thread
+                PATHS ${MKL_LIBRARY_PATH})
+        endif()
+    else(WITH_OPENMP)
+        find_library(MKL_THREAD_PATH mkl_sequential PATHS ${MKL_LIBRARY_PATH})
+    endif(WITH_OPENMP)
+    if(WITH_SCALAPACK)
+        if(WITH_MPI STREQUAL "openmpi")
+            if(MKL_32)
+                find_library(MKL_SCALAPACK_PATH mkl_scalapack_core
+                    PATHS ${MKL_LIBRARY_PATH})
+                find_library(MKL_BLACS_PATH mkl_blacs_openmpi
+                    PATHS ${MKL_LIBRARY_PATH})
+            else(MKL_32)
+                find_library(MKL_SCALAPACK_PATH mkl_scalapack_lp64
+                    PATHS ${MKL_LIBRARY_PATH})
+                find_library(MKL_BLACS_PATH mkl_blacs_openmpi_lp64
+                    PATHS ${MKL_LIBRARY_PATH})
+            endif(MKL_32)
+        else()
+            if(MKL_32)
+                find_library(MKL_SCALAPACK_PATH mkl_scalapack_core
+                    PATHS ${MKL_LIBRARY_PATH})
+                find_library(MKL_BLACS_PATH mkl_blacs PATHS ${MKL_LIBRARY_PATH})
+            else(MKL_32)
+                find_library(MKL_SCALAPACK_PATH mkl_scalapack_lp64
+                    PATHS ${MKL_LIBRARY_PATH})
+                find_library(MKL_BLACS_PATH mkl_blacs_lp64
+                    PATHS ${MKL_LIBRARY_PATH})
+            endif(MKL_32)
+        endif()
+        if(MKL_SCALAPACK_PATH)
+            set(MKL_SCALAPACK TRUE)
+        endif(MKL_SCALAPACK_PATH)
+    endif(WITH_SCALAPACK)
+endif(MKL_VERSION VERSION_GREATER "10.0")
+
+set(CMAKE_FIND_LIBRARY_SUFFIXES ${SAVED_CMAKE_FIND_LIBRARY_SUFFIXES})
+unset(SAVED_CMAKE_FIND_LIBRARY_SUFFIXES)
+
+#   Compose the linker line
+
+if(MKL_VERSION VERSION_EQUAL "9.1")
+    add_library(mkl_lapack STATIC IMPORTED)
+    set_target_properties(mkl_lapack PROPERTIES
+        IMPORTED_LOCATION ${MKL_LAPACK_PATH})
+    add_library(mkl_arch STATIC IMPORTED)
+    set_target_properties(mkl_arch PROPERTIES
+        IMPORTED_LOCATION ${MKL_ARCH_PATH})
+    set(MKL_LIBRARIES mkl_lapack mkl_arch)
+endif(MKL_VERSION VERSION_EQUAL "9.1")
+
+if(MKL_VERSION VERSION_EQUAL "10.1")
+    add_library(mkl_solver STATIC IMPORTED)
+    set_target_properties(mkl_solver PROPERTIES
+        IMPORTED_LOCATION ${MKL_SOLVER_PATH})
+    add_library(mkl_intel STATIC IMPORTED)
+    set_target_properties(mkl_intel PROPERTIES
+        IMPORTED_LOCATION ${MKL_INTEL_PATH})
+    add_library(mkl_thread STATIC IMPORTED)
+    set_target_properties(mkl_thread PROPERTIES
+        IMPORTED_LOCATION ${MKL_THREAD_PATH})
+    add_library(mkl_core STATIC IMPORTED)
+    set_target_properties(mkl_core PROPERTIES
+        IMPORTED_LOCATION ${MKL_CORE_PATH})
+    if(APPLE)
+        set(MKL_LIBRARIES mkl_intel mkl_thread mkl_core) 
+    else(APPLE)
+        set(MKL_LIBRARIES mkl_solver -Wl,--start-group mkl_intel mkl_thread
+            mkl_core -Wl,--end-group) 
+    endif(APPLE)
+endif(MKL_VERSION VERSION_EQUAL "10.1")
+
+if(MKL_VERSION VERSION_EQUAL "10.2")
+    add_library(mkl_solver STATIC IMPORTED)
+    set_target_properties(mkl_solver PROPERTIES
+        IMPORTED_LOCATION ${MKL_SOLVER_PATH})
+    add_library(mkl_intel STATIC IMPORTED)
+    set_target_properties(mkl_intel PROPERTIES
+        IMPORTED_LOCATION ${MKL_INTEL_PATH})
+    add_library(mkl_thread STATIC IMPORTED)
+    set_target_properties(mkl_thread PROPERTIES
+        IMPORTED_LOCATION ${MKL_THREAD_PATH})
+    add_library(mkl_core STATIC IMPORTED)
+    set_target_properties(mkl_core PROPERTIES
+        IMPORTED_LOCATION ${MKL_CORE_PATH})
+    if(MKL_SCALAPACK)
+        add_library(mkl_scalapack STATIC IMPORTED)
+        set_target_properties(mkl_scalapack PROPERTIES
+            IMPORTED_LOCATION ${MKL_SCALAPACK_PATH})
+        add_library(mkl_blacs STATIC IMPORTED)
+        set_target_properties(mkl_blacs PROPERTIES
+            IMPORTED_LOCATION ${MKL_BLACS_PATH})
+        set(MKL_LIBRARIES mkl_scalapack mkl_solver -Wl,--start-group mkl_intel
+            mkl_thread mkl_core mkl_blacs -Wl,--end-group)
+    else(MKL_SCALAPACK)
+        if(APPLE)
+            set(MKL_LIBRARIES mkl_intel mkl_thread mkl_core)
+        else(APPLE)
+            set(MKL_LIBRARIES mkl_solver -Wl,--start-group mkl_intel mkl_thread
+                mkl_core -Wl,--end-group)
+        endif(APPLE)
+    endif(MKL_SCALAPACK)
+endif(MKL_VERSION VERSION_EQUAL "10.2")
+
+if(MKL_VERSION VERSION_EQUAL "10.3")
+    add_library(mkl_intel STATIC IMPORTED)
+    set_target_properties(mkl_intel PROPERTIES
+        IMPORTED_LOCATION ${MKL_INTEL_PATH})
+    add_library(mkl_thread STATIC IMPORTED)
+    set_target_properties(mkl_thread PROPERTIES
+        IMPORTED_LOCATION ${MKL_THREAD_PATH})
+    add_library(mkl_core STATIC IMPORTED)
+    set_target_properties(mkl_core PROPERTIES
+        IMPORTED_LOCATION ${MKL_CORE_PATH})
+    if(MKL_SCALAPACK)
+        add_library(mkl_scalapack STATIC IMPORTED)
+        set_target_properties(mkl_scalapack PROPERTIES
+            IMPORTED_LOCATION ${MKL_SCALAPACK_PATH})
+        add_library(mkl_blacs STATIC IMPORTED)
+        set_target_properties(mkl_blacs PROPERTIES
+            IMPORTED_LOCATION ${MKL_BLACS_PATH})
+        set(MKL_LIBRARIES mkl_scalapack -Wl,--start-group mkl_intel mkl_thread
+            mkl_core mkl_blacs -Wl,--end-group) 
+    else(MKL_SCALAPACK)
+        if(APPLE)
+            set(MKL_LIBRARIES mkl_intel mkl_thread mkl_core)
+        else(APPLE)
+            set(MKL_LIBRARIES -Wl,--start-group mkl_intel mkl_thread mkl_core
+                -Wl,--end-group)
+        endif(APPLE)
+    endif(MKL_SCALAPACK)
+endif(MKL_VERSION VERSION_EQUAL "10.3")
+
+if(WITH_SCALAPACK AND (NOT MKL_SCALAPACK))
+    find_library(ScaLAPACK)
+    set(MKL_LIBRARIES ${SCALAPACK_LIBRARIES} ${MKL_LIBRARIES})
+else()
+    set(SCALAPACK_FOUND TRUE)
+endif()
+
+#   Done!
 
 if(NOT MKL_FIND_QUIETLY)
-    message(STATUS "Found Intel MKL: " ${MKL_PATH})
+    message(STATUS "Found Intel MKL " ${MKL_VERSION} ": " ${MKL_PATH})
+    foreach(LIB ${MKL_LIBRARIES})
+        set(MKL_LIBRARIES_FRIENDLY "${MKL_LIBRARIES_FRIENDLY}${LIB} ")
+    endforeach(LIB)
+    message(STATUS "MKL libraries: " ${MKL_LIBRARIES_FRIENDLY})
+    unset(MKL_LIBRARIES_FRIENDLY)
 endif(NOT MKL_FIND_QUIETLY)
 
 else(MKL_FOUND)

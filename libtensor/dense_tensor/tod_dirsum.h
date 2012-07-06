@@ -3,7 +3,6 @@
 
 #include <list>
 #include <libtensor/timings.h>
-#include <libtensor/mp/cpu_pool.h>
 #include "dense_tensor_i.h"
 
 namespace libtensor {
@@ -55,13 +54,11 @@ public:
         const permutation<k_orderc> &permc);
 
     /** \brief Performs the operation
-        \param cpus Pool of CPUs.
         \param zero Zero the output array before running the operation.
         \param d Scaling coefficient for the result.
         \param tc Output tensor.
      **/
-    void perform(cpu_pool &cpus, bool zero, double d,
-        dense_tensor_wr_i<k_orderc, double> &tc);
+    void perform(bool zero, double d, dense_tensor_wr_i<k_orderc, double> &tc);
 
 private:
     static dimensions<N + M> mk_dimsc(dense_tensor_rd_i<k_ordera, double> &ta,

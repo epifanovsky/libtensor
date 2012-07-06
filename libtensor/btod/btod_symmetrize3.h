@@ -114,7 +114,7 @@ protected:
 
     virtual void compute_block(bool zero, dense_tensor_i<N, double> &blk,
         const index<N> &i, const tensor_transf<N, double> &tr,
-        const double &c, cpu_pool &cpus);
+        const double &c);
 
     //@}
 
@@ -179,12 +179,12 @@ void btod_symmetrize3<N>::compute_block(dense_tensor_i<N, double> &blk,
 
 template<size_t N>
 void btod_symmetrize3<N>::compute_block(bool zero,
-        dense_tensor_i<N, double> &blk, const index<N> &i,
-        const tensor_transf<N, double> &tr, const double &c, cpu_pool &cpus) {
+    dense_tensor_i<N, double> &blk, const index<N> &i,
+    const tensor_transf<N, double> &tr, const double &c) {
 
     typedef typename sym_schedule_t::iterator iterator_t;
 
-    if(zero) tod_set<N>().perform(cpus, blk);
+    if(zero) tod_set<N>().perform(blk);
 
     dimensions<N> bidims(m_op.get_bis().get_block_index_dims());
     abs_index<N> ai(i, bidims);
@@ -211,7 +211,7 @@ void btod_symmetrize3<N>::compute_block(bool zero,
             tensor_transf<N, double> tri(sch1.front().tr);
             tri.transform(tr);
             additive_bto<N, bto_traits<double> >::compute_block(m_op, false,
-                    blk, ai.get_index(), tri, c, cpus);
+                blk, ai.get_index(), tri, c);
             sch1.pop_front();
         } else {
             dimensions<N> dims(blk.get_dims());
@@ -221,7 +221,7 @@ void btod_symmetrize3<N>::compute_block(bool zero,
             // TODO: replace with "temporary block" feature
             dense_tensor< N, double, allocator<double> > tmp(dims);
             additive_bto<N, bto_traits<double> >::compute_block(m_op, true, tmp,
-                ai.get_index(), tensor_transf<N, double>(), c, cpus);
+                ai.get_index(), tensor_transf<N, double>(), c);
             for(typename std::list<schrec>::iterator j =
                 sch1.begin(); j != sch1.end();) {
 
@@ -231,8 +231,7 @@ void btod_symmetrize3<N>::compute_block(bool zero,
                 tensor_transf<N, double> trj(j->tr);
                 trj.transform(tr);
                 tod_copy<N>(tmp, trj.get_perm(),
-                        trj.get_scalar_tr().get_coeff()).
-                        perform(cpus, false, 1.0, blk);
+                    trj.get_scalar_tr().get_coeff()).perform(false, 1.0, blk);
                 j = sch1.erase(j);
             }
         }

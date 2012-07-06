@@ -4,7 +4,6 @@
 #include <libtensor/timings.h>
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/core/tensor_transf.h>
-#include <libtensor/mp/auto_cpu_lock.h>
 #include <libtensor/tod/loop_list_apply.h>
 #include <libtensor/tod/bad_dimensions.h>
 #include "dense_tensor_ctrl.h"
@@ -77,13 +76,11 @@ public:
         const permutation<N> &p, double c = 1.0);
 
     /** \brief Performs the operation
-        \param cpus CPUs to perform the operation on
         \param zero Zero result first
         \param c Scaling factor
         \param tb Add result to
      **/
-    void perform(cpu_pool &cpus, bool zero,
-            double c, dense_tensor_wr_i<N, double> &t);
+    void perform(bool zero, double c, dense_tensor_wr_i<N, double> &t);
 
 private:
     /** \brief Creates the dimensions of the output using an input
@@ -136,11 +133,11 @@ tod_apply<N, Functor>::tod_apply(dense_tensor_rd_i<N, double> &ta,
 
 
 template<size_t N, typename Functor>
-void tod_apply<N, Functor>::perform(cpu_pool &cpus, bool zero, double c,
+void tod_apply<N, Functor>::perform(bool zero, double c,
     dense_tensor_wr_i<N, double> &tb) {
 
     static const char *method =
-        "perform(cpu_pool&, bool, double, dense_tensor_wr_i<N, double>&)";
+        "perform(bool, double, dense_tensor_wr_i<N, double>&)";
 
     if(!tb.get_dims().equals(m_dimsb)) {
         throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "tb");
@@ -169,19 +166,15 @@ void tod_apply<N, Functor>::perform(cpu_pool &cpus, bool zero, double c,
     const double *pa = ca.req_const_dataptr();
     double *pb = cb.req_dataptr();
 
-    {
-        auto_cpu_lock cpu(cpus);
+    registers_t r;
+    r.m_ptra[0] = pa;
+    r.m_ptrb[0] = pb;
+    r.m_ptra_end[0] = pa + dimsa.get_size();
+    r.m_ptrb_end[0] = pb + dimsb.get_size();
 
-        registers_t r;
-        r.m_ptra[0] = pa;
-        r.m_ptrb[0] = pb;
-        r.m_ptra_end[0] = pa + dimsa.get_size();
-        r.m_ptrb_end[0] = pb + dimsb.get_size();
-
-        loop_list_apply<Functor>::run_loop(loop, r, m_fn,
-                c * m_tr2.get_scalar_tr().get_coeff(),
-                m_tr1.get_scalar_tr().get_coeff(), !zero);
-    }
+    loop_list_apply<Functor>::run_loop(loop, r, m_fn,
+        c * m_tr2.get_scalar_tr().get_coeff(),
+        m_tr1.get_scalar_tr().get_coeff(), !zero);
 
     ca.ret_const_dataptr(pa);
     cb.ret_dataptr(pb);

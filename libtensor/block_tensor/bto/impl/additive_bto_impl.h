@@ -9,21 +9,19 @@ namespace libtensor {
 
 
 template<size_t N, typename Traits>
-void additive_bto<N, Traits>::compute_block(block_t &blk,
-        const index<N> &i, cpu_pool &cpus) {
+void additive_bto<N, Traits>::compute_block(block_t &blk, const index<N> &i) {
 
     compute_block(true, blk, i, tensor_transf<N, element_t>(),
-            Traits::identity(), cpus);
+        Traits::identity());
 }
 
 
 template<size_t N, typename Traits>
 void additive_bto<N, Traits>::compute_block(additive_bto<N, Traits> &op,
-        bool zero, block_t &blk, const index<N> &i,
-        const tensor_transf<N, element_t> &tr,
-        const element_t &c, cpu_pool &cpus) {
+    bool zero, block_t &blk, const index<N> &i,
+    const tensor_transf<N, element_t> &tr, const element_t &c) {
 
-    op.compute_block(zero, blk, i, tr, c, cpus);
+    op.compute_block(zero, blk, i, tr, c);
 }
 
 
@@ -60,17 +58,18 @@ void additive_bto<N, Traits>::perform(block_tensor_t &bt, const element_t &c) {
     sch.build(get_schedule(), ctrl);
 
     std::vector<task*> tasks;
-    task_batch batch;
 
     for(typename schedule_t::iterator igrp = sch.begin(); igrp != sch.end();
-            ++igrp) {
+        ++igrp) {
 
         task *t = new task(*this, bt, bidims, sch, igrp, c);
         tasks.push_back(t);
-        batch.push(*t);
     }
 
-    batch.wait();
+    task_iterator ti(tasks);
+    task_observer to;
+    libutil::thread_pool::submit(ti, to);
+
     for(typename std::vector<task*>::iterator i = tasks.begin();
             i != tasks.end(); i++) {
         delete *i;
@@ -83,7 +82,7 @@ void additive_bto<N, Traits>::perform(block_tensor_t &bt, const element_t &c) {
 
 
 template<size_t N, typename Traits>
-void additive_bto<N, Traits>::task::perform(cpu_pool &cpus) throw (exception) {
+void additive_bto<N, Traits>::task::perform() {
 
     typedef typename Traits::template block_tensor_ctrl_type<N>::type
         block_tensor_ctrl_t;
@@ -98,7 +97,7 @@ void additive_bto<N, Traits>::task::perform(cpu_pool &cpus) throw (exception) {
     std::list<la_pair_t> la;
 
     for(typename std::list<typename schedule_t::schedule_node>::const_iterator
-            inode = grp.lst.begin(); inode != grp.lst.end(); ++inode) {
+        inode = grp.lst.begin(); inode != grp.lst.end(); ++inode) {
 
         const typename schedule_t::schedule_node &node = *inode;
 
@@ -111,15 +110,14 @@ void additive_bto<N, Traits>::task::perform(cpu_pool &cpus) throw (exception) {
         if(ila == la.end()) {
             abs_index<N> aia(node.cia, m_bidims);
             block_t &blka = ctrl.req_aux_block(aia.get_index());
-            to_set_t().perform(cpus, blka);
-            m_bto.compute_block(false, blka, aia.get_index(),
-                    node.tra, m_c, cpus);
+            to_set_t().perform(blka);
+            m_bto.compute_block(false, blka, aia.get_index(), node.tra, m_c);
             la.push_back(la_pair_t(node.cia, &blka));
         }
     }
 
     for(typename std::list<typename schedule_t::schedule_node>::const_iterator
-            inode = grp.lst.begin(); inode != grp.lst.end(); ++inode) {
+        inode = grp.lst.begin(); inode != grp.lst.end(); ++inode) {
 
         const typename schedule_t::schedule_node &node = *inode;
         if(node.cib == node.cic) continue;
@@ -131,10 +129,10 @@ void additive_bto<N, Traits>::task::perform(cpu_pool &cpus) throw (exception) {
             block_t &blkc = ctrl.req_block(aic.get_index());
             if(zerob) {
                 // this should actually never happen, but just in case
-                to_set_t().perform(cpus, blkc);
+                to_set_t().perform(blkc);
             } else {
                 block_t &blkb = ctrl.req_block(aib.get_index());
-                to_copy_t(blkb, node.trb).perform(cpus, true, 1.0, blkc);
+                to_copy_t(blkb, node.trb).perform(true, 1.0, blkc);
                 ctrl.ret_block(aib.get_index());
             }
             ctrl.ret_block(aic.get_index());
@@ -152,14 +150,12 @@ void additive_bto<N, Traits>::task::perform(cpu_pool &cpus) throw (exception) {
             if(zerob) {
                 abs_index<N> aia(node.cia, m_bidims);
                 to_copy_t(*ila->second,
-                        node.tra).perform(cpus, true, 1.0, blkc);
+                        node.tra).perform(true, 1.0, blkc);
             } else {
                 abs_index<N> aia(node.cia, m_bidims);
                 block_t &blkb = ctrl.req_block(aib.get_index());
-                to_copy_t(*ila->second, node.tra).perform(cpus,
-                        true, 1.0, blkc);
-                to_copy_t(blkb, node.trb).perform(cpus,
-                        false, 1.0, blkc);
+                to_copy_t(*ila->second, node.tra).perform(true, 1.0, blkc);
+                to_copy_t(blkb, node.trb).perform(false, 1.0, blkc);
                 ctrl.ret_block(aib.get_index());
             }
             ctrl.ret_block(aic.get_index());
@@ -167,7 +163,7 @@ void additive_bto<N, Traits>::task::perform(cpu_pool &cpus) throw (exception) {
     }
 
     for(typename std::list<typename schedule_t::schedule_node>::const_iterator
-            inode = grp.lst.begin(); inode != grp.lst.end(); ++inode) {
+        inode = grp.lst.begin(); inode != grp.lst.end(); ++inode) {
 
         const typename schedule_t::schedule_node &node = *inode;
         if(node.cib != node.cic) continue;
@@ -181,21 +177,37 @@ void additive_bto<N, Traits>::task::perform(cpu_pool &cpus) throw (exception) {
         block_t &blkb = ctrl.req_block(aib.get_index());
         if(zerob) {
             abs_index<N> aia(node.cia, m_bidims);
-            to_copy_t(*ila->second, node.tra).perform(cpus, true, 1.0, blkb);
+            to_copy_t(*ila->second, node.tra).perform(true, 1.0, blkb);
         } else {
             abs_index<N> aia(node.cia, m_bidims);
-            to_copy_t(*ila->second, node.tra).perform(cpus, false, 1.0, blkb);
+            to_copy_t(*ila->second, node.tra).perform(false, 1.0, blkb);
         }
         ctrl.ret_block(aib.get_index());
     }
 
     for(typename std::list<la_pair_t>::iterator ila = la.begin();
-            ila != la.end(); ++ila) {
+        ila != la.end(); ++ila) {
 
         abs_index<N> aia(ila->first, m_bidims);
         ctrl.ret_aux_block(aia.get_index());
     }
     la.clear();
+}
+
+
+template<size_t N, typename Traits>
+bool additive_bto<N, Traits>::task_iterator::has_more() const {
+
+    return m_i != m_tl.end();
+}
+
+
+template<size_t N, typename Traits>
+libutil::task_i *additive_bto<N, Traits>::task_iterator::get_next() {
+
+    libutil::task_i *t = *m_i;
+    ++m_i;
+    return t;
 }
 
 

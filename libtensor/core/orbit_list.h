@@ -43,23 +43,4 @@ private:
 
 } // namespace libtensor
 
-
-#ifdef LIBTENSOR_INSTANTIATE_TEMPLATES
-
-namespace libtensor {
-
-    extern template class orbit_list<1, double>;
-    extern template class orbit_list<2, double>;
-    extern template class orbit_list<3, double>;
-    extern template class orbit_list<4, double>;
-    extern template class orbit_list<5, double>;
-    extern template class orbit_list<6, double>;
-
-} // namespace libtensor
-
-#else // LIBTENSOR_INSTANTIATE_TEMPLATES
-#include "orbit_list_impl.h"
-#endif // LIBTENSOR_INSTANTIATE_TEMPLATES
-
-
 #endif // LIBTENSOR_ORBIT_LIST_H

@@ -142,7 +142,7 @@ public:
 
 protected:
     virtual void compute_block(bool zero, block_t &blk, const index<N> &ib,
-            const tensor_transf_t &tr, const element_t &c, cpu_pool &cpus);
+            const tensor_transf_t &tr, const element_t &c);
 
 private:
     static block_index_space<N> mk_bis(const block_index_space<N> &bis,

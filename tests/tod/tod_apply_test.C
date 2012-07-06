@@ -96,8 +96,6 @@ void tod_apply_test::test_plain(Functor &fn, const dimensions<N> &dims)
 
 	typedef std_allocator<double> allocator;
 
-    cpu_pool cpus(1);
-
 	try {
 
 	dense_tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
@@ -128,7 +126,7 @@ void tod_apply_test::test_plain(Functor &fn, const dimensions<N> &dims)
 	// Invoke the operation
 
 	tod_apply<N, Functor> cp(ta, fn);
-	cp.perform(cpus, true, 1.0, tb);
+	cp.perform(true, 1.0, tb);
 
 	// Compare against the reference
 
@@ -146,8 +144,6 @@ void tod_apply_test::test_plain_additive(Functor &fn,
 	static const char *testname = "tod_apply_test::test_plain_additive()";
 
     typedef std_allocator<double> allocator;
-
-    cpu_pool cpus(1);
 
 	try {
 
@@ -179,7 +175,7 @@ void tod_apply_test::test_plain_additive(Functor &fn,
 	// Invoke the operation
 
 	tod_apply<N, Functor> cp(ta, fn);
-	cp.perform(cpus, false, d, tb);
+	cp.perform(false, d, tb);
 
 	// Compare against the reference
 
@@ -199,8 +195,6 @@ void tod_apply_test::test_scaled(Functor &fn,
 	static const char *testname = "tod_apply_test::test_scaled()";
 
     typedef std_allocator<double> allocator;
-
-    cpu_pool cpus(1);
 
 	try {
 
@@ -232,7 +226,7 @@ void tod_apply_test::test_scaled(Functor &fn,
 	// Invoke the operation
 
 	tod_apply<N, Functor> cp(ta, fn, c);
-	cp.perform(cpus, true, 1.0, tb);
+	cp.perform(true, 1.0, tb);
 
 	// Compare against the reference
 
@@ -252,8 +246,6 @@ void tod_apply_test::test_scaled_additive(Functor &fn,
 	static const char *testname = "tod_apply_test::test_scaled_additive()";
 
     typedef std_allocator<double> allocator;
-
-    cpu_pool cpus(1);
 
 	try {
 
@@ -285,7 +277,7 @@ void tod_apply_test::test_scaled_additive(Functor &fn,
 	// Invoke the operation
 
 	tod_apply<N, Functor> cp(ta, fn, c);
-	cp.perform(cpus, false, d, tb);
+	cp.perform(false, d, tb);
 
 	// Compare against the reference
 
@@ -305,8 +297,6 @@ void tod_apply_test::test_perm(Functor &fn, const dimensions<N> &dims,
 	static const char *testname = "tod_apply_test::test_perm()";
 
     typedef std_allocator<double> allocator;
-
-    cpu_pool cpus(1);
 
 	try {
 
@@ -346,7 +336,7 @@ void tod_apply_test::test_perm(Functor &fn, const dimensions<N> &dims,
 	// Invoke the operation
 
 	tod_apply<N, Functor> cp(ta, fn, perm);
-	cp.perform(cpus, true, 1.0, tb);
+	cp.perform(true, 1.0, tb);
 
 	// Compare against the reference
 
@@ -364,8 +354,6 @@ void tod_apply_test::test_perm_additive(Functor &fn, const dimensions<N> &dims,
 	static const char *testname = "tod_apply_test::test_perm_additive()";
 
     typedef std_allocator<double> allocator;
-
-    cpu_pool cpus(1);
 
 	try {
 
@@ -405,7 +393,7 @@ void tod_apply_test::test_perm_additive(Functor &fn, const dimensions<N> &dims,
 	// Invoke the operation
 
 	tod_apply<N, Functor> cp(ta, fn, perm);
-	cp.perform(cpus, false, d, tb);
+	cp.perform(false, d, tb);
 
 	// Compare against the reference
 
@@ -423,8 +411,6 @@ void tod_apply_test::test_perm_scaled(Functor &fn, const dimensions<N> &dims,
 	static const char *testname = "tod_apply_test::test_perm_scaled()";
 
     typedef std_allocator<double> allocator;
-
-    cpu_pool cpus(1);
 
 	try {
 
@@ -465,7 +451,7 @@ void tod_apply_test::test_perm_scaled(Functor &fn, const dimensions<N> &dims,
 
 	tensor_transf<N, double> tr(perm, scalar_transf<double>(c));
 	tod_apply<N, Functor> cp(ta, fn, tr);
-	cp.perform(cpus, true, 1.0, tb);
+	cp.perform(true, 1.0, tb);
 
 	// Compare against the reference
 
@@ -485,8 +471,6 @@ void tod_apply_test::test_perm_scaled_additive(Functor &fn,
 		"tod_apply_test::test_perm_scaled_additive()";
 
     typedef std_allocator<double> allocator;
-
-    cpu_pool cpus(1);
 
 	try {
 
@@ -525,9 +509,9 @@ void tod_apply_test::test_perm_scaled_additive(Functor &fn,
 
 	// Invoke the operation
 
-    tensor_transf<N, double> tr(perm, scalar_transf<double>(c));
+        tensor_transf<N, double> tr(perm, scalar_transf<double>(c));
 	tod_apply<N, Functor> cp(ta, fn, tr);
-	cp.perform(cpus, false, d, tb);
+	cp.perform(false, d, tb);
 
 	// Compare against the reference
 
@@ -549,13 +533,11 @@ void tod_apply_test::test_exc() throw(libtest::test_exception) {
 	dimensions<4> dim1(ir1), dim2(ir2);
 	dense_tensor<4, double, allocator> t1(dim1), t2(dim2);
 
-    cpu_pool cpus(1);
-
 	bool ok = false;
 	try {
 		tod_apply_test_ns::sin_functor sin;
 		tod_apply<4, tod_apply_test_ns::sin_functor> tc(t1, sin);
-		tc.perform(cpus, true, 1.0, t2);
+		tc.perform(true, 1.0, t2);
 	} catch(exception &e) {
 		ok = true;
 	}
@@ -565,6 +547,7 @@ void tod_apply_test::test_exc() throw(libtest::test_exception) {
 			"Expected an exception with heterogeneous arguments");
 	}
 }
+
 
 } // namespace libtensor
 

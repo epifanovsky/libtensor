@@ -2,7 +2,6 @@
 #define LIBTENSOR_TOD_MULT_IMPL_H
 
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include <libtensor/mp/auto_cpu_lock.h>
 #include <libtensor/tod/bad_dimensions.h>
 #include "../tod_mult.h"
 
@@ -61,25 +60,24 @@ void tod_mult<N>::prefetch() {
 
 
 template<size_t N>
-void tod_mult<N>::perform(cpu_pool &cpus, dense_tensor_wr_i<N, double> &tc) {
+void tod_mult<N>::perform(dense_tensor_wr_i<N, double> &tc) {
 
-    perform(cpus, true, 1.0, tc);
+    perform(true, 1.0, tc);
 }
 
 
 template<size_t N>
-void tod_mult<N>::perform(cpu_pool &cpus, dense_tensor_wr_i<N, double> &tc,
-    double c) {
+void tod_mult<N>::perform(dense_tensor_wr_i<N, double> &tc, double c) {
 
-    perform(cpus, false, c, tc);
+    perform(false, c, tc);
 }
 
 
 template<size_t N>
-void tod_mult<N>::perform(cpu_pool &cpus, bool zero, double c,
+void tod_mult<N>::perform(bool zero, double c,
     dense_tensor_wr_i<N, double> &tc) {
 
-    static const char *method = "perform(cpu_pool&, bool, double, "
+    static const char *method = "perform(bool, double, "
         "dense_tensor_wr_i<N, double>&)";
 
     if(!m_dimsc.equals(tc.get_dims())) {
@@ -111,19 +109,15 @@ void tod_mult<N>::perform(cpu_pool &cpus, bool zero, double c,
     const double *pb = cb.req_const_dataptr();
     double *pc = cc.req_dataptr();
 
-    {
-        auto_cpu_lock cpu(cpus);
+    registers_t r;
+    r.m_ptra[0] = pa;
+    r.m_ptra[1] = pb;
+    r.m_ptrb[0] = pc;
+    r.m_ptra_end[0] = pa + dimsa.get_size();
+    r.m_ptra_end[1] = pb + dimsb.get_size();
+    r.m_ptrb_end[0] = pc + dimsc.get_size();
 
-        registers_t r;
-        r.m_ptra[0] = pa;
-        r.m_ptra[1] = pb;
-        r.m_ptrb[0] = pc;
-        r.m_ptra_end[0] = pa + dimsa.get_size();
-        r.m_ptra_end[1] = pb + dimsb.get_size();
-        r.m_ptrb_end[0] = pc + dimsc.get_size();
-
-        loop_list_elem::run_loop(loop, r, m_c * c, !zero, m_recip);
-    }
+    loop_list_elem::run_loop(loop, r, m_c * c, !zero, m_recip);
 
     cc.ret_dataptr(pc); pc = 0;
     cb.ret_const_dataptr(pb); pb = 0;

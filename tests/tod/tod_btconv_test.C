@@ -1252,8 +1252,6 @@ void tod_btconv_test::test_12() throw(libtest::test_exception) {
 
 	typedef std_allocator<double> allocator_t;
 
-	cpu_pool cpus(1);
-
 	try {
 
 	index<3> i1, i2;
@@ -1295,57 +1293,57 @@ void tod_btconv_test::test_12() throw(libtest::test_exception) {
 		d022 = bis.get_block_dims(i022);
 	dense_tensor<3, double, allocator_t> t012(d012), t111(d111), t111a(d111),
 		t022(d022), t022a(d022);
-	tod_random<3>().perform(cpus, t012);
-	tod_random<3>().perform(cpus, t111a);
-	tod_random<3>().perform(cpus, t022a);
+	tod_random<3>().perform(t012);
+	tod_random<3>().perform(t111a);
+	tod_random<3>().perform(t022a);
 	tod_add<3> sym111(t111a);
 	sym111.add_op(t111a, permutation<3>().permute(0, 1), -1.0);
 	sym111.add_op(t111a, permutation<3>().permute(0, 2), -1.0);
-	sym111.perform(cpus, true, 1.0, t111);
+	sym111.perform(true, 1.0, t111);
 	tod_add<3> sym022(t022a);
 	sym022.add_op(t022a, permutation<3>().permute(1, 2), -1.0);
-	sym022.perform(cpus, true, 1.0, t022);
+	sym022.perform(true, 1.0, t022);
 
 	//	Copy [0,1,2]
 	//
-	tod_copy<3>(t012).perform(cpus, true, 1.0, ctrla.req_block(i012));
+	tod_copy<3>(t012).perform(true, 1.0, ctrla.req_block(i012));
 	ctrla.ret_block(i012);
-	tod_copy<3>(t012).perform(cpus, true, 1.0, ctrlb.req_block(i012));
+	tod_copy<3>(t012).perform(true, 1.0, ctrlb.req_block(i012));
 	ctrlb.ret_block(i012);
 	tod_copy<3>(t012, permutation<3>().permute(1, 2), -1.0).
-		perform(cpus, true, 1.0, ctrlb.req_block(i021));
+		perform(true, 1.0, ctrlb.req_block(i021));
 	ctrlb.ret_block(i021);
 	tod_copy<3>(t012, permutation<3>().permute(0, 1), -1.0).
-		perform(cpus, true, 1.0, ctrlb.req_block(i102));
+		perform(true, 1.0, ctrlb.req_block(i102));
 	ctrlb.ret_block(i102);
 	tod_copy<3>(t012, permutation<3>().permute(0, 1).permute(1, 2), 1.0).
-		perform(cpus, true, 1.0, ctrlb.req_block(i120));
+		perform(true, 1.0, ctrlb.req_block(i120));
 	ctrlb.ret_block(i120);
 	tod_copy<3>(t012, permutation<3>().permute(0, 2), -1.0).
-		perform(cpus, true, 1.0, ctrlb.req_block(i210));
+		perform(true, 1.0, ctrlb.req_block(i210));
 	ctrlb.ret_block(i210);
 	tod_copy<3>(t012, permutation<3>().permute(1, 2).permute(0, 1), 1.0).
-		perform(cpus, true, 1.0, ctrlb.req_block(i201));
+		perform(true, 1.0, ctrlb.req_block(i201));
 	ctrlb.ret_block(i201);
 
 	//	Copy [0,2,2]
 	//
-	tod_copy<3>(t022).perform(cpus, true, 1.0, ctrla.req_block(i022));
+	tod_copy<3>(t022).perform(true, 1.0, ctrla.req_block(i022));
 	ctrla.ret_block(i022);
-	tod_copy<3>(t022).perform(cpus, true, 1.0, ctrlb.req_block(i022));
+	tod_copy<3>(t022).perform(true, 1.0, ctrlb.req_block(i022));
 	ctrlb.ret_block(i022);
 	tod_copy<3>(t022, permutation<3>().permute(0, 1), -1.0).
-		perform(cpus, true, 1.0, ctrlb.req_block(i202));
+		perform(true, 1.0, ctrlb.req_block(i202));
 	ctrlb.ret_block(i202);
 	tod_copy<3>(t022, permutation<3>().permute(0, 1).permute(1, 2), 1.0).
-		perform(cpus, true, 1.0, ctrlb.req_block(i220));
+		perform(true, 1.0, ctrlb.req_block(i220));
 	ctrlb.ret_block(i220);
 
 	//	Copy [1,1,1]
 	//
-	tod_copy<3>(t111).perform(cpus, true, 1.0, ctrla.req_block(i111));
+	tod_copy<3>(t111).perform(true, 1.0, ctrla.req_block(i111));
 	ctrla.ret_block(i111);
-	tod_copy<3>(t111).perform(cpus, true, 1.0, ctrlb.req_block(i111));
+	tod_copy<3>(t111).perform(true, 1.0, ctrlb.req_block(i111));
 	ctrlb.ret_block(i111);
 
 	bta.set_immutable();

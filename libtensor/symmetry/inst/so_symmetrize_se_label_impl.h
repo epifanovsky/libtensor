@@ -42,7 +42,6 @@ symmetry_operation_impl< so_symmetrize<N, T>, se_label<N, T> >::do_perform(
          idmap[i] = i;
          if (params.idxgrp[i] == 0) continue;
          map[(params.idxgrp[i] - 1) * nidx + params.symidx[i] - 1] = i;
-         msk[i] = (params.symidx[i] != 1);
      }
 
      for(typename adapter_t::iterator it = g1.begin(); it != g1.end(); it++) {
@@ -54,10 +53,13 @@ symmetry_operation_impl< so_symmetrize<N, T>, se_label<N, T> >::do_perform(
          for (register size_t i = 0; i < nidx; i++) {
 
              size_t typei = bl1.get_dim_type(map[i]);
-             for (register size_t j = 1, k = nidx; j < ngrp; j++, k+=nidx) {
-                 if (bl1.get_dim_type(k) != typei)
+             size_t k = i + nidx;
+             for (register size_t j = 1; j < ngrp; j++) {
+                 if (bl1.get_dim_type(map[k]) != typei)
                      throw bad_symmetry(g_ns, k_clazz, method,
                              __FILE__, __LINE__, "Incompatible dimensions.");
+
+                 k += nidx;
              }
          }
 
@@ -65,7 +67,7 @@ symmetry_operation_impl< so_symmetrize<N, T>, se_label<N, T> >::do_perform(
          block_labeling<N> &bl2 = e2.get_labeling();
          transfer_labeling(bl1, idmap, bl2);
 
-         evaluation_rule<N> r2(r1);
+         evaluation_rule<N> r2;
          // Symmetrize the sequences
          std::vector< std::vector<size_t> > perm_seq(r1.get_n_sequences());
 
@@ -75,7 +77,7 @@ symmetry_operation_impl< so_symmetrize<N, T>, se_label<N, T> >::do_perform(
          }
 
          // Now generate all permuted sequences
-         size_t nperm = 0;
+         size_t nperm = 1;
          permutation_generator<N> pg(msk);
          permutation<N> pprev, px;
          while (pg.next()) {

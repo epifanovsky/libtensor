@@ -624,7 +624,6 @@ void btod_sum_test::test_9b() throw(libtest::test_exception) {
     btod_sum<4> sum(op1);
     sum.add_op(op2, -1.0);
 
-    cpu_pool cpus(1);
     const assignment_schedule<4, double> &sch = sum.get_schedule();
     block_tensor_ctrl<4, double> c3(bt3);
     so_copy<4, double>(sum.get_symmetry()).perform(c3.req_symmetry());
@@ -635,7 +634,7 @@ void btod_sum_test::test_9b() throw(libtest::test_exception) {
             bis_ijab.get_block_index_dims());
         dense_tensor_i<4, double> &blk = c3.req_block(ijab.get_index());
         sum.compute_block(true, blk, ijab.get_index(),
-                tensor_transf<4, double>(), 1.0, cpus);
+                tensor_transf<4, double>(), 1.0);
         c3.ret_block(ijab.get_index());
     }
 

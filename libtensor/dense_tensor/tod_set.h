@@ -2,7 +2,6 @@
 #define LIBTENSOR_TOD_SET_H
 
 #include <libtensor/timings.h>
-#include <libtensor/mp/cpu_pool.h>
 #include "dense_tensor_i.h"
 
 namespace libtensor {
@@ -28,10 +27,9 @@ public:
     tod_set(double v = 0.0) : m_v(v) { }
 
     /** \brief Performs the operation
-        \param cpus Pool of CPUs.
         \param ta Tensor.
      **/
-    void perform(cpu_pool &cpus, dense_tensor_wr_i<N, double> &ta);
+    void perform(dense_tensor_wr_i<N, double> &ta);
 
 private:
     /** \brief Private copy constructor

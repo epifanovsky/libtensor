@@ -96,12 +96,11 @@ void bto_apply<N, Traits>::sync_off() {
 
 template<size_t N, typename Traits>
 void bto_apply<N, Traits>::compute_block(bool zero, block_t &blk,
-        const index<N> &ib, const tensor_transf_t &tr, const element_t &c,
-        cpu_pool &cpus) {
+    const index<N> &ib, const tensor_transf_t &tr, const element_t &c) {
 
     static const char *method =
-            "compute_block(bool, block_t &, const index<N> &, "
-            "const tensor_transf_t &, const scalar_transf_t&, cpu_pool&)";
+            "compute_block(bool, block_t&, const index<N>&, "
+            "const tensor_transf_t&, const scalar_transf_t&)";
 
     typedef typename Traits::template block_tensor_ctrl_type<N>::type
         block_tensor_ctrl_t;
@@ -110,7 +109,7 @@ void bto_apply<N, Traits>::compute_block(bool zero, block_t &blk,
     typedef typename Traits::template to_copy_type<N>::type to_copy_t;
     typedef typename Traits::template to_apply_type<N>::type to_apply_t;
 
-    if(zero) to_set_t().perform(cpus, blk);
+    if(zero) to_set_t().perform(blk);
 
     block_tensor_ctrl_t ctrla(m_bta);
     dimensions<N> bidimsa = m_bta.get_bis().get_block_index_dims();
@@ -128,8 +127,8 @@ void bto_apply<N, Traits>::compute_block(bool zero, block_t &blk,
     if (! oa.is_allowed()) {
         if (! m_fn.keep_zero()) {
             tensor_t tblk(blk.get_dims());
-            to_set_t(m_fn(Traits::zero()) * c).perform(cpus, tblk);
-            to_copy_t(tblk).perform(cpus, false, Traits::identity(), blk);
+            to_set_t(m_fn(Traits::zero()) * c).perform(tblk);
+            to_copy_t(tblk).perform(false, Traits::identity(), blk);
         }
         return;
     }
@@ -145,8 +144,8 @@ void bto_apply<N, Traits>::compute_block(bool zero, block_t &blk,
     if(! ctrla.req_is_zero_block(acia.get_index())) {
 
         block_t &blka = ctrla.req_block(acia.get_index());
-        to_apply_t(blka, m_fn, tr1, tr2).perform(cpus, 
-                false, Traits::identity(), blk);
+        to_apply_t(blka, m_fn, tr1, tr2).
+            perform(false, Traits::identity(), blk);
         ctrla.ret_block(acia.get_index());
     }
     else {
@@ -154,8 +153,8 @@ void bto_apply<N, Traits>::compute_block(bool zero, block_t &blk,
             tensor_t tblk(blk.get_dims());
             element_t val = m_fn(Traits::zero());
             tr2.apply(val);
-            to_set_t(val).perform(cpus, tblk);
-            to_copy_t(tblk).perform(cpus, false, Traits::identity(), blk);
+            to_set_t(val).perform(tblk);
+            to_copy_t(tblk).perform(false, Traits::identity(), blk);
         }
     }
 }

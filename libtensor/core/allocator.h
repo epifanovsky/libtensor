@@ -1,17 +1,23 @@
 #ifndef LIBTENSOR_ALLOCATOR_H
 #define LIBTENSOR_ALLOCATOR_H
 
+#ifndef WITHOUT_LIBVMM
 #include <libvmm/ec_allocator.h>
-#include <libvmm/std_allocator.h>
 #include <libvmm/vm_allocator.h>
 #include <libvmm/evmm/evmm.h>
+#endif // WITHOUT_LIBVMM
+
+#include "std_allocator.h"
 
 namespace libtensor {
 
 
+#ifndef WITHOUT_LIBVMM
+
 /** \brief Virtual memory allocator used in the tensor library
 
-    This memory allocator uses libvmm::vm_allocator.
+    This memory allocator uses libvmm::vm_allocator or std_allocator if
+    libvmm is unavailable.
 
     \sa ec_allocator_base
 
@@ -44,7 +50,7 @@ public:
 template<typename T>
 class ec_allocator_base :
     public libvmm::ec_allocator< T, libvmm::vm_allocator< T, libvmm::evmm<T> >,
-        libvmm::std_allocator<T> > {
+        std_allocator<T> > {
 
 public:
     typedef libvmm::evmm<T> vmm_type;
@@ -59,6 +65,8 @@ public:
 
 };
 
+#endif // WITHOUT_LIBVMM
+
 
 /** \brief Memory allocator used in the tensor library
 
@@ -66,51 +74,25 @@ public:
     LIBTENSOR_DEBUG is defined or the regular virtual memory allocator
     otherwise.
 
-    \sa ec_allocator_base, vm_allocator_base
+    \sa ec_allocator_base, vm_allocator_base, std_allocator
 
     \ingroup libtensor_core
  **/
 template<typename T>
 class allocator :
+#ifdef WITHOUT_LIBVMM
+    public std_allocator<T> {
+#else // WITHOUT_LIBVMM
 #ifdef LIBTENSOR_DEBUG
     public ec_allocator_base<T> {
-#else
+#else // LIBTENSOR_DEBUG
     public vm_allocator_base<T> {
 #endif // LIBTENSOR_DEBUG
-
-};
-
-
-/** \brief Proxy allocator that uses the new/delete
-
-    This memory allocator uses libvmm::std_allocator.
-
-    \ingroup libtensor_core
- **/
-template<typename T>
-class std_allocator : public libvmm::std_allocator<T> {
+#endif // WITHOUT_LIBVMM
 
 };
 
 
 } // namespace libtensor
-
-
-#ifdef LIBTENSOR_INSTANTIATE_TEMPLATES
-
-namespace libtensor {
-
-    extern template class allocator<int>;
-    extern template class allocator<double>;
-
-    extern template class std_allocator<int>;
-    extern template class std_allocator<double>;
-
-} // namespace libtensor
-
-#else // LIBTENSOR_INSTANTIATE_TEMPLATES
-#include "allocator_impl.h"
-#endif // LIBTENSOR_INSTANTIATE_TEMPLATES
-
 
 #endif // LIBTENSOR_ALLOCATOR_H

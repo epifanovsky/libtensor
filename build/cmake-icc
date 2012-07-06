@@ -1,3 +1,0 @@
-#!/bin/sh
-CC=icc CXX=icpc cmake ..
-

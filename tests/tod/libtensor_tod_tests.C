@@ -3,12 +3,13 @@
 #include <ctime>
 #include <iostream>
 #include <sstream>
+#include <libutil/thread_pool/thread_pool.h>
 #include <libtensor/version.h>
-#include <libtensor/mp/worker_pool.h>
 #include "libtensor_tod_suite.h"
 
 using namespace libtensor;
 using namespace std;
+using libutil::thread_pool;
 using libtest::test_exception;
 
 
@@ -62,9 +63,8 @@ int main(int argc, char **argv) {
         cout << separator << endl << ss1.str() << endl << ss2.str() << endl
             << separator << endl;
 
-        if(!single_threaded) {
-            libtensor::worker_pool::get_instance().init(ncpus, nthreads);
-        }
+        thread_pool tp(nthreads, ncpus);
+        tp.associate();
 
         suite_handler handler;
         libtensor_tod_suite suite;
@@ -74,10 +74,6 @@ int main(int argc, char **argv) {
             suite.run_all_tests();
         } else {
             for(int i = 1; i < argc; i++) suite.run_test(argv[i]);
-        }
-
-        if(!single_threaded) {
-            libtensor::worker_pool::get_instance().shutdown();
         }
     }
     }

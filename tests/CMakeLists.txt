@@ -24,7 +24,6 @@ set(SRC_CORE
     core/sequence_generator_test.C
     core/symmetry_test.C
     core/symmetry_element_set_test.C
-    core/task_batch_test.C
     core/transf_list_test.C
     core/version_test.C
 )
@@ -260,9 +259,10 @@ set_property(TARGET ${TARGETS} APPEND PROPERTY
     COMPILE_DEFINITIONS_DEBUG LIBTENSOR_DEBUG)
 if(HAVE_LIBVMM)
     set_property(TARGET ${TARGETS} APPEND PROPERTY
-        COMPILE_DEFINITIONS HAVE_LIBVMM)
-    set_property(TARGET ${TARGETS} APPEND PROPERTY
         COMPILE_DEFINITIONS_DEBUG LIBVMM_DEBUG)
+else(HAVE_LIBVMM)
+    set_property(TARGET ${TARGETS} APPEND PROPERTY
+        COMPILE_DEFINITIONS WITHOUT_LIBVMM)
 endif(HAVE_LIBVMM)
 
 foreach(TARGET ${TARGETS})

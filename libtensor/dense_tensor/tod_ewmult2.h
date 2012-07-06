@@ -2,7 +2,6 @@
 #define LIBTENSOR_TOD_EWMULT2_H
 
 #include <libtensor/timings.h>
-#include <libtensor/mp/cpu_pool.h>
 #include "dense_tensor_i.h"
 
 namespace libtensor {
@@ -94,13 +93,11 @@ public:
     void prefetch();
 
     /** \brief Performs the operation
-        \param cpus Pool of CPUs.
         \param zero Zero output before computing.
         \param d Scaling factor.
         \param tc Output tensor C.
      **/
-    void perform(cpu_pool &cpus, bool zero, double d,
-        dense_tensor_wr_i<k_orderc, double> &tc);
+    void perform(bool zero, double d, dense_tensor_wr_i<k_orderc, double> &tc);
 
 private:
     /**    \brief Computes the dimensions of the result tensor

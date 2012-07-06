@@ -81,11 +81,10 @@ void btod_ewmult2<N, M, K>::compute_block(dense_tensor_i<k_orderc, double> &blk,
 
 template<size_t N, size_t M, size_t K>
 void btod_ewmult2<N, M, K>::compute_block(bool zero,
-        dense_tensor_i<k_orderc, double> &blk, const index<k_orderc> &bidx,
-        const tensor_transf<k_orderc, double> &tr, const double &d,
-        cpu_pool &cpus) {
+    dense_tensor_i<k_orderc, double> &blk, const index<k_orderc> &bidx,
+    const tensor_transf<k_orderc, double> &tr, const double &d) {
 
-    compute_block_impl(blk, bidx, tr, zero, d, cpus);
+    compute_block_impl(blk, bidx, tr, zero, d);
 }
 
 
@@ -294,9 +293,9 @@ void btod_ewmult2<N, M, K>::make_schedule() {
 
 
 template<size_t N, size_t M, size_t K>
-void btod_ewmult2<N, M, K>::compute_block_impl(dense_tensor_i<k_orderc, double> &blk,
-    const index<k_orderc> &bidx, const tensor_transf<k_orderc, double> &tr,
-    bool zero, double d, cpu_pool &cpus) {
+void btod_ewmult2<N, M, K>::compute_block_impl(
+    dense_tensor_i<k_orderc, double> &blk, const index<k_orderc> &bidx,
+    const tensor_transf<k_orderc, double> &tr, bool zero, double d) {
 
     block_tensor_ctrl<k_ordera, double> ctrla(m_bta);
     block_tensor_ctrl<k_orderb, double> ctrlb(m_btb);
@@ -337,7 +336,7 @@ void btod_ewmult2<N, M, K>::compute_block_impl(dense_tensor_i<k_orderc, double> 
 
     if(zeroa || zerob) {
         btod_ewmult2<N, M, K>::start_timer("zero");
-        if(zero) tod_set<k_orderc>().perform(cpus, blk);
+        if(zero) tod_set<k_orderc>().perform(blk);
         btod_ewmult2<N, M, K>::stop_timer("zero");
         btod_ewmult2<N, M, K>::stop_timer();
         return;
@@ -350,7 +349,7 @@ void btod_ewmult2<N, M, K>::compute_block_impl(dense_tensor_i<k_orderc, double> 
     double k = m_d * tra.get_scalar_tr().get_coeff() *
             trb.get_scalar_tr().get_coeff() * tr.get_scalar_tr().get_coeff();
     tod_ewmult2<N, M, K>(blka, perma, blkb, permb, permc, k).
-        perform(cpus, zero, d, blk);
+        perform(zero, d, blk);
 
     ctrla.ret_block(cidxa.get_index());
     ctrlb.ret_block(cidxb.get_index());

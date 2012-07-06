@@ -84,8 +84,7 @@ void bto_copy<N, Traits>::sync_off() {
 
 template<size_t N, typename Traits>
 void bto_copy<N, Traits>::compute_block(bool zero, block_t &blk,
-    const index<N> &ib, const tensor_transf_t &tr, const element_t &c,
-    cpu_pool &cpus) {
+    const index<N> &ib, const tensor_transf_t &tr, const element_t &c) {
 
     typedef typename Traits::template block_tensor_ctrl_type<N>::type
         block_tensor_ctrl_t;
@@ -109,10 +108,10 @@ void bto_copy<N, Traits>::compute_block(bool zero, block_t &blk,
     tra.transform(m_tr).transform(scalar_transf_t(c));
     tra.transform(tensor_transf_t(tr, true));
 
-    if(zero) to_set_t().perform(cpus, blk);
+    if(zero) to_set_t().perform(blk);
     if(!ctrla.req_is_zero_block(acia.get_index())) {
         block_t &blka = ctrla.req_block(acia.get_index());
-        to_copy_t(blka, tra).perform(cpus, false, Traits::identity(), blk);
+        to_copy_t(blka, tra).perform(false, Traits::identity(), blk);
         ctrla.ret_block(acia.get_index());
     }
 }

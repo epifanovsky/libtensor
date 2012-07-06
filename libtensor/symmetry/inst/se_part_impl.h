@@ -283,12 +283,9 @@ void se_part<N, T>::permute(const permutation<N> &perm) {
     m_bis.permute(perm);
     m_bidims.permute(perm);
 
-    sequence<N, size_t> seq(0);
-    for (size_t i = 0; i < N; i++) seq[i] = i;
-    perm.apply(seq);
     bool affects_map = false;
     for (size_t i = 0; i < N; i++) {
-        if (m_pdims[i] != 0 && seq[i] != i) { affects_map = true; break; }
+        if (m_pdims[i] != 1 && perm[i] != i) { affects_map = true; break; }
     }
 
     if (affects_map) {
@@ -458,7 +455,7 @@ void se_part<N, T>::add_to_loop(size_t a, size_t b,
         }
     }
     else {
-        while ((af > b && af > a) || (af < b && af < a)) {
+        while ((af < b && b < a) || (a < af && af < b) || (b < a && a < af)) {
             tx.transform(m_ftr[a]);
             a = af; af = m_fmap[a];
         }
