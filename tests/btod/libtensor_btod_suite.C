@@ -8,6 +8,7 @@ libtensor_btod_suite::libtensor_btod_suite() :
 
     add_test("addition_schedule", m_utf_addition_schedule);
     add_test("bto_contract2_bis", m_utf_bto_contract2_bis);
+    add_test("bto_contract2_sym", m_utf_bto_contract2_sym);
     add_test("btod_add", m_utf_btod_add);
     add_test("btod_apply", m_utf_btod_apply);
     add_test("btod_cholesky", m_utf_btod_cholesky);

@@ -201,5 +201,49 @@ template class bto_contract2_bis<6, 2, 2>;
 template class bto_contract2_bis<7, 1, 0>;
 template class bto_contract2_bis<7, 1, 1>;
 
+template class bto_contract2_bis<1, 8, 0>;
+template class bto_contract2_bis<2, 7, 0>;
+template class bto_contract2_bis<3, 6, 0>;
+template class bto_contract2_bis<4, 5, 0>;
+template class bto_contract2_bis<5, 4, 0>;
+template class bto_contract2_bis<6, 3, 0>;
+template class bto_contract2_bis<7, 2, 0>;
+template class bto_contract2_bis<8, 1, 0>;
+
+template class bto_contract2_bis<2, 8, 0>;
+template class bto_contract2_bis<3, 7, 0>;
+template class bto_contract2_bis<4, 6, 0>;
+template class bto_contract2_bis<5, 5, 0>;
+template class bto_contract2_bis<6, 4, 0>;
+template class bto_contract2_bis<7, 3, 0>;
+template class bto_contract2_bis<8, 2, 0>;
+
+template class bto_contract2_bis<3, 8, 0>;
+template class bto_contract2_bis<4, 7, 0>;
+template class bto_contract2_bis<5, 6, 0>;
+template class bto_contract2_bis<6, 5, 0>;
+template class bto_contract2_bis<7, 4, 0>;
+template class bto_contract2_bis<8, 3, 0>;
+
+template class bto_contract2_bis<4, 8, 0>;
+template class bto_contract2_bis<5, 7, 0>;
+template class bto_contract2_bis<6, 6, 0>;
+template class bto_contract2_bis<7, 5, 0>;
+template class bto_contract2_bis<8, 4, 0>;
+
+template class bto_contract2_bis<5, 8, 0>;
+template class bto_contract2_bis<6, 7, 0>;
+template class bto_contract2_bis<7, 6, 0>;
+template class bto_contract2_bis<8, 5, 0>;
+
+template class bto_contract2_bis<6, 8, 0>;
+template class bto_contract2_bis<7, 7, 0>;
+template class bto_contract2_bis<8, 6, 0>;
+
+template class bto_contract2_bis<7, 8, 0>;
+template class bto_contract2_bis<8, 7, 0>;
+
+template class bto_contract2_bis<8, 8, 0>;
+
 
 } // namespace libtensor

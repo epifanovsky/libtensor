@@ -120,6 +120,7 @@ set(SRC_BTOD
     btod/libtensor_btod_suite.C
     btod/addition_schedule_test.C
     btod/bto_contract2_bis_test.C
+    btod/bto_contract2_sym_test.C
     btod/btod_add_test.C
     btod/btod_apply_test.C
     btod/btod_cholesky_test.C

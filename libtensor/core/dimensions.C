@@ -29,6 +29,10 @@ template class dimensions<9>;
 template class dimensions<10>;
 template class dimensions<11>;
 template class dimensions<12>;
+template class dimensions<13>;
+template class dimensions<14>;
+template class dimensions<15>;
+template class dimensions<16>;
 
 
 } // namespace libtensor

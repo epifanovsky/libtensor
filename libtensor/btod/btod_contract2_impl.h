@@ -7,6 +7,7 @@
 #include "../symmetry/so_dirprod.h"
 #include "../symmetry/so_reduce.h"
 #include <libtensor/dense_tensor/tod_contract2.h>
+#include <libtensor/block_tensor/bto/bto_contract2_sym.h>
 
 namespace libtensor {
 
@@ -628,59 +629,9 @@ btod_contract2_symmetry_builder_base<N, M, K>::make_xbis(
     const block_index_space<N + K> &bisa,
     const block_index_space<M + K> &bisb) {
 
-    const dimensions<N + K> &dimsa = bisa.get_dims();
-    const dimensions<M + K> &dimsb = bisb.get_dims();
-
-    index<N + M + 2 * K> xi1, xi2;
-    for(size_t i = 0; i < N + K; i++) xi2[i] = dimsa[i] - 1;
-    for(size_t i = 0; i < M + K; i++) xi2[N + K + i] = dimsb[i] - 1;
-    dimensions<N + M + 2 * K> xdimsab(index_range<N + M + 2 * K>(xi1, xi2));
-    block_index_space<N + M + 2 * K> xbisab(xdimsab);
-
-    mask<N + K> ma;
-    mask<M + K> mb;
-
-    size_t ia = 0, ib = 0;
-    while(true) {
-        while(ia < N + K && ma[ia]) ia++;
-        if(ia == N + K) break;
-        size_t typ = bisa.get_type(ia);
-
-        mask<N + K> ma_split;
-        mask<N + M + 2 * K> mab_split;
-        for(size_t i = ia; i < N + K; i++) {
-            mab_split[i] = ma_split[i] = bisa.get_type(i) == typ;
-        }
-
-        const split_points &pts = bisa.get_splits(typ);
-        size_t npts = pts.get_num_points();
-        for(size_t ipt = 0; ipt < npts; ipt++)
-            xbisab.split(mab_split, pts[ipt]);
-
-        ma |= ma_split;
-    }
-    while(true) {
-        while(ib < M + K && mb[ib]) ib++;
-        if(ib == M + K) break;
-        size_t typ = bisb.get_type(ib);
-
-        mask<M + K> mb_split;
-        mask<N + M + 2 * K> mab_split;
-        for(size_t i = ib; i < M + K; i++) {
-            mab_split[N + K + i] = mb_split[i] =
-                bisb.get_type(i) == typ;
-        }
-
-        const split_points &pts = bisb.get_splits(typ);
-        size_t npts = pts.get_num_points();
-        for(size_t ipt = 0; ipt < npts; ipt++)
-            xbisab.split(mab_split, pts[ipt]);
-
-        mb |= mb_split;
-    }
-    xbisab.match_splits();
-
-    return xbisab;
+    contraction2<N + K, M + K, 0> contr2;
+    bto_contract2_bis<N + K, M + K, 0> xbis(contr2, bisa, bisb);
+    return block_index_space<N + M + 2 * K>(xbis.get_bisc());
 }
 
 
@@ -719,43 +670,12 @@ void btod_contract2_symmetry_builder_base<N, M, K>::make_symmetry(
 
     block_tensor_ctrl<N + K, double> ca(bta);
     block_tensor_ctrl<M + K, double> cb(btb);
-    block_index_space<N + M + 2 * K> xbis(m_xbis);
 
-    const sequence<2 * (N + M + K), size_t> &conn = contr.get_conn();
-
-    sequence<N + M + 2 * K, size_t> seq1(0), seq2(0), seq(0);
-    mask<N + M + 2 * K> msk;
-    for (size_t i = 0, k = 0; i < N + M + 2 * K; i++) {
-        seq1[i] = i;
-        if (conn[i + N + M] < N + M) { // remaining indexes
-            seq2[conn[i + N + M]] = i;
-        }
-        else if (i < N + K) { // contracted indexes
-            size_t j = N + M + 2 * k;
-            msk[j] = msk[j + 1] = true;
-            seq[j] = seq[j + 1] = k;
-            seq2[j] = i;
-            seq2[j + 1] = conn[i + N + M] - (N + M);
-            k++;
-        }
-    }
-    permutation_builder<N + M + 2 * K> pb(seq2, seq1);
-    xbis.permute(pb.get_perm());
-    symmetry<N + M + 2 * K, double> xsymab(xbis);
-
-    so_dirprod<N + K, M + K, double>(ca.req_const_symmetry(),
-            cb.req_const_symmetry(), pb.get_perm()).perform(xsymab);
-
-    dimensions<N + M + 2 * K> bidims = xbis.get_block_index_dims();
-    index<N + M + 2 * K> bia, bib, ia, ib;
-    for (register size_t i = 0; i < N + M + 2 * K; i++) bib[i] = bidims[i] - 1;
-    dimensions<N + M + 2 * K> bdims = xbis.get_block_dims(bib);
-    for (register size_t i = 0; i < N + M + 2 * K; i++) ib[i] = bdims[i] - 1;
-
-    index_range<N + M + 2 * K> ir(ia, ib), bir(bia, bib);
-    so_reduce<N + M + 2 * K, 2 * K, double>(xsymab, msk,
-            seq, bir, ir).perform(get_symmetry());
+    bto_contract2_sym<N, M, K, double> symc(contr, bta.get_bis(),
+        ca.req_const_symmetry(), btb.get_bis(), cb.req_const_symmetry());
+    so_copy<N + M, double>(symc.get_symc()).perform(get_symmetry());
 }
+
 
 } // namespace libtensor
 
