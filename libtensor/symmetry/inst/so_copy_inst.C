@@ -4,12 +4,16 @@
 
 namespace libtensor {
 
+
 template class so_copy<1, double>;
 template class so_copy<2, double>;
 template class so_copy<3, double>;
 template class so_copy<4, double>;
 template class so_copy<5, double>;
 template class so_copy<6, double>;
+template class so_copy<7, double>;
+template class so_copy<8, double>;
+
 
 } // namespace libtensor
 

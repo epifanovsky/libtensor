@@ -4,6 +4,7 @@
 
 namespace libtensor {
 
+
 template class evaluation_rule<1>;
 template class evaluation_rule<2>;
 template class evaluation_rule<3>;
@@ -16,6 +17,11 @@ template class evaluation_rule<9>;
 template class evaluation_rule<10>;
 template class evaluation_rule<11>;
 template class evaluation_rule<12>;
+template class evaluation_rule<13>;
+template class evaluation_rule<14>;
+template class evaluation_rule<15>;
+template class evaluation_rule<16>;
+
 
 } // namespace libtensor
 

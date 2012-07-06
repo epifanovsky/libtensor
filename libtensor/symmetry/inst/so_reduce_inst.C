@@ -4,6 +4,7 @@
 
 namespace libtensor {
 
+
 template class so_reduce<2, 1, double>;
 
 template class so_reduce<3, 1, double>;
@@ -48,7 +49,6 @@ template class so_reduce<9, 6, double>;
 template class so_reduce<9, 7, double>;
 template class so_reduce<9, 8, double>;
 
-template class so_reduce<10, 1, double>;
 template class so_reduce<10, 2, double>;
 template class so_reduce<10, 3, double>;
 template class so_reduce<10, 4, double>;
@@ -58,8 +58,6 @@ template class so_reduce<10, 7, double>;
 template class so_reduce<10, 8, double>;
 template class so_reduce<10, 9, double>;
 
-template class so_reduce<11, 1, double>;
-template class so_reduce<11, 2, double>;
 template class so_reduce<11, 3, double>;
 template class so_reduce<11, 4, double>;
 template class so_reduce<11, 5, double>;
@@ -69,9 +67,6 @@ template class so_reduce<11, 8, double>;
 template class so_reduce<11, 9, double>;
 template class so_reduce<11, 10, double>;
 
-template class so_reduce<12, 1, double>;
-template class so_reduce<12, 2, double>;
-template class so_reduce<12, 3, double>;
 template class so_reduce<12, 4, double>;
 template class so_reduce<12, 5, double>;
 template class so_reduce<12, 6, double>;
@@ -80,6 +75,43 @@ template class so_reduce<12, 8, double>;
 template class so_reduce<12, 9, double>;
 template class so_reduce<12, 10, double>;
 template class so_reduce<12, 11, double>;
+
+template class so_reduce<13, 5, double>;
+template class so_reduce<13, 6, double>;
+template class so_reduce<13, 7, double>;
+template class so_reduce<13, 8, double>;
+template class so_reduce<13, 9, double>;
+template class so_reduce<13, 10, double>;
+template class so_reduce<13, 11, double>;
+template class so_reduce<13, 12, double>;
+
+template class so_reduce<14, 6, double>;
+template class so_reduce<14, 7, double>;
+template class so_reduce<14, 8, double>;
+template class so_reduce<14, 9, double>;
+template class so_reduce<14, 10, double>;
+template class so_reduce<14, 11, double>;
+template class so_reduce<14, 12, double>;
+template class so_reduce<14, 13, double>;
+
+template class so_reduce<15, 7, double>;
+template class so_reduce<15, 8, double>;
+template class so_reduce<15, 9, double>;
+template class so_reduce<15, 10, double>;
+template class so_reduce<15, 11, double>;
+template class so_reduce<15, 12, double>;
+template class so_reduce<15, 13, double>;
+template class so_reduce<15, 14, double>;
+
+template class so_reduce<16, 8, double>;
+template class so_reduce<16, 9, double>;
+template class so_reduce<16, 10, double>;
+template class so_reduce<16, 11, double>;
+template class so_reduce<16, 12, double>;
+template class so_reduce<16, 13, double>;
+template class so_reduce<16, 14, double>;
+template class so_reduce<16, 15, double>;
+
 
 } // namespace libtensor
 
