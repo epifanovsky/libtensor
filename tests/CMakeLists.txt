@@ -124,6 +124,7 @@ set(SRC_BTOD
     btod/btod_cholesky_test.C
     btod/btod_compare_test.C
     btod/btod_contract2_test.C
+    btod/btod_contract3_test.C
     btod/btod_copy_test.C
     btod/btod_diag_test.C
     btod/btod_diagonalize_test.C

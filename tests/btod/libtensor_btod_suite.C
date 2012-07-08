@@ -11,6 +11,7 @@ libtensor_btod_suite::libtensor_btod_suite() :
     add_test("btod_cholesky", m_utf_btod_cholesky);
     add_test("btod_compare", m_utf_btod_compare);
     add_test("btod_contract2", m_utf_btod_contract2);
+    add_test("btod_contract3", m_utf_btod_contract3);
     add_test("btod_copy", m_utf_btod_copy);
     add_test("btod_diag", m_utf_btod_diag);
     add_test("btod_diagonalize", m_utf_btod_diagonalize);
