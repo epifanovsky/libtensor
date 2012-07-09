@@ -1,21 +1,21 @@
-#include "../../linalg/linalg.h"
-#include "kern_mul_x_pq_qp.h"
-#include "kern_mul_i_ipq_qp.h"
+#include <libtensor/linalg/linalg.h>
+#include "kern_dmul2_x_pq_qp.h"
+//#include "kern_mul_i_ipq_qp.h"
 
 namespace libtensor {
 
 
-const char *kern_mul_x_pq_qp::k_clazz = "kern_mul_x_pq_qp";
+const char *kern_dmul2_x_pq_qp::k_clazz = "kern_dmul2_x_pq_qp";
 
 
-void kern_mul_x_pq_qp::run(const loop_registers<2, 1> &r) {
+void kern_dmul2_x_pq_qp::run(const loop_registers<2, 1> &r) {
 
     r.m_ptrb[0][0] += linalg::x_pq_qp(m_np, m_nq, r.m_ptra[0], m_spa,
         r.m_ptra[1], m_sqb) * m_d;
 }
 
 
-kernel_base<2, 1> *kern_mul_x_pq_qp::match(const kern_dmul2_x_p_p &z,
+kernel_base<2, 1> *kern_dmul2_x_pq_qp::match(const kern_dmul2_x_p_p &z,
     list_t &in, list_t &out) {
 
     if(in.empty()) return 0;
@@ -40,7 +40,7 @@ kernel_base<2, 1> *kern_mul_x_pq_qp::match(const kern_dmul2_x_p_p &z,
     }
     if(iq == in.end()) return 0;
 
-    kern_mul_x_pq_qp zz;
+    kern_dmul2_x_pq_qp zz;
     zz.m_d = z.m_d;
     zz.m_np = z.m_np;
     zz.m_nq = iq->weight();
@@ -50,9 +50,9 @@ kernel_base<2, 1> *kern_mul_x_pq_qp::match(const kern_dmul2_x_p_p &z,
 
     kernel_base<2, 1> *kern = 0;
 
-    if(kern = kern_mul_i_ipq_qp::match(zz, in, out)) return kern;
+//    if(kern = kern_mul_i_ipq_qp::match(zz, in, out)) return kern;
 
-    return new kern_mul_x_pq_qp(zz);
+    return new kern_dmul2_x_pq_qp(zz);
 }
 
 

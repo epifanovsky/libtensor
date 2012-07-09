@@ -18,27 +18,13 @@ set(SRC
 )
 
 set(SKIPPED
-    tod/kernels/kern_mul_i_ip_p.C
     tod/kernels/kern_mul_i_ipq_qp.C
-    tod/kernels/kern_mul_i_p_ip.C
-    tod/kernels/kern_mul_i_p_pi.C
-    tod/kernels/kern_mul_i_pi_p.C
-    tod/kernels/kern_mul_ij_i_j.C
-    tod/kernels/kern_mul_ij_ip_jp.C
-    tod/kernels/kern_mul_ij_ip_pj.C
     tod/kernels/kern_mul_ij_ipq_jqp.C
     tod/kernels/kern_mul_ij_ipq_pjq.C
-    tod/kernels/kern_mul_ij_j_i.C
     tod/kernels/kern_mul_ij_jipq_qp.C
-    tod/kernels/kern_mul_ij_jp_ip.C
-    tod/kernels/kern_mul_ij_jp_pi.C
     tod/kernels/kern_mul_ij_jpq_iqp.C
     tod/kernels/kern_mul_ij_p_pji.C
-    tod/kernels/kern_mul_ij_pi_jp.C
-    tod/kernels/kern_mul_ij_pi_pj.C
     tod/kernels/kern_mul_ij_piq_pjq.C
-    tod/kernels/kern_mul_ij_pj_ip.C
-    tod/kernels/kern_mul_ij_pj_pi.C
     tod/kernels/kern_mul_ij_pji_p.C
     tod/kernels/kern_mul_ij_pjq_piq.C
     tod/kernels/kern_mul_ijk_ip_jpk.C
@@ -99,7 +85,6 @@ set(SKIPPED
     tod/kernels/kern_mul_ijklm_ipkm_jpl.C
     tod/kernels/kern_mul_ijklm_jlp_ipkm.C
     tod/kernels/kern_mul_ijklmn_kjmp_ipln.C
-    tod/kernels/kern_mul_x_pq_qp.C
 )
 
 set(SRC_LINALG
@@ -127,6 +112,21 @@ set(SRC_KERNELS
     kernels/dmul2/kern_dmul2_i_i_x.C
     kernels/dmul2/kern_dmul2_i_x_i.C
     kernels/dmul2/kern_dmul2_x_p_p.C
+    kernels/dmul2/kern_dmul2_i_ip_p.C
+    kernels/dmul2/kern_dmul2_i_p_ip.C
+    kernels/dmul2/kern_dmul2_i_p_pi.C
+    kernels/dmul2/kern_dmul2_i_pi_p.C
+    kernels/dmul2/kern_dmul2_x_pq_qp.C
+    kernels/dmul2/kern_dmul2_ij_i_j.C
+    kernels/dmul2/kern_dmul2_ij_j_i.C
+    kernels/dmul2/kern_dmul2_ij_ip_jp.C
+    kernels/dmul2/kern_dmul2_ij_ip_pj.C
+    kernels/dmul2/kern_dmul2_ij_jp_ip.C
+    kernels/dmul2/kern_dmul2_ij_jp_pi.C
+    kernels/dmul2/kern_dmul2_ij_pi_jp.C
+    kernels/dmul2/kern_dmul2_ij_pi_pj.C
+    kernels/dmul2/kern_dmul2_ij_pj_ip.C
+    kernels/dmul2/kern_dmul2_ij_pj_pi.C
     kernels/dmuladd1/kern_dmuladd1.C
 )
 

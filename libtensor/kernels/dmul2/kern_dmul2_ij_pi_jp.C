@@ -1,20 +1,20 @@
-#include "../../linalg/linalg.h"
-#include "kern_mul_ij_pi_jp.h"
+#include <libtensor/linalg/linalg.h>
+#include "kern_dmul2_ij_pi_jp.h"
 
 namespace libtensor {
 
 
-const char *kern_mul_ij_pi_jp::k_clazz = "kern_mul_ij_pi_jp";
+const char *kern_dmul2_ij_pi_jp::k_clazz = "kern_dmul2_ij_pi_jp";
 
 
-void kern_mul_ij_pi_jp::run(const loop_registers<2, 1> &r) {
+void kern_dmul2_ij_pi_jp::run(const loop_registers<2, 1> &r) {
 
     linalg::ij_pi_jp_x(m_ni, m_nj, m_np, r.m_ptra[0], m_spa, r.m_ptra[1],
         m_sjb, r.m_ptrb[0], m_sic, m_d);
 }
 
 
-kernel_base<2, 1> *kern_mul_ij_pi_jp::match(const kern_mul_i_pi_p &z,
+kernel_base<2, 1> *kern_dmul2_ij_pi_jp::match(const kern_dmul2_i_pi_p &z,
     list_t &in, list_t &out) {
 
     if(in.empty()) return 0;
@@ -45,7 +45,7 @@ kernel_base<2, 1> *kern_mul_ij_pi_jp::match(const kern_mul_i_pi_p &z,
     }
     if(ij == in.end()) return 0;
 
-    kern_mul_ij_pi_jp zz;
+    kern_dmul2_ij_pi_jp zz;
     zz.m_d = z.m_d;
     zz.m_ni = z.m_ni;
     zz.m_nj = ij->weight();
@@ -57,7 +57,7 @@ kernel_base<2, 1> *kern_mul_ij_pi_jp::match(const kern_mul_i_pi_p &z,
 
     kernel_base<2, 1> *kern = 0;
 
-    return new kern_mul_ij_pi_jp(zz);
+    return new kern_dmul2_ij_pi_jp(zz);
 }
 
 

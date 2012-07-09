@@ -31,7 +31,7 @@ public:
 
     virtual void run(const loop_registers<2, 1> &r);
 
-    static kernel_base<2, 1> *match(const kern_mul_x_pq_qp &z,
+    static kernel_base<2, 1> *match(const kern_dmul2_x_pq_qp &z,
         list_t &in, list_t &out);
 
 };

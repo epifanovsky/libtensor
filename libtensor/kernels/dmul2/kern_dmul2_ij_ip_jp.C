@@ -1,22 +1,22 @@
-#include "../../linalg/linalg.h"
-#include "kern_mul_ij_ip_jp.h"
-#include "kern_mul_ij_ipq_pjq.h"
-#include "kern_mul_ij_piq_pjq.h"
+#include <libtensor/linalg/linalg.h>
+#include "kern_dmul2_ij_ip_jp.h"
+//#include "kern_mul_ij_ipq_pjq.h"
+//#include "kern_mul_ij_piq_pjq.h"
 
 namespace libtensor {
 
 
-const char *kern_mul_ij_ip_jp::k_clazz = "kern_mul_ij_ip_jp";
+const char *kern_dmul2_ij_ip_jp::k_clazz = "kern_dmul2_ij_ip_jp";
 
 
-void kern_mul_ij_ip_jp::run(const loop_registers<2, 1> &r) {
+void kern_dmul2_ij_ip_jp::run(const loop_registers<2, 1> &r) {
 
     linalg::ij_ip_jp_x(m_ni, m_nj, m_np, r.m_ptra[0], m_sia, r.m_ptra[1],
         m_sjb, r.m_ptrb[0], m_sic, m_d);
 }
 
 
-kernel_base<2, 1> *kern_mul_ij_ip_jp::match(const kern_mul_i_p_ip &z,
+kernel_base<2, 1> *kern_dmul2_ij_ip_jp::match(const kern_dmul2_i_p_ip &z,
     list_t &in, list_t &out) {
 
     if(in.empty()) return 0;
@@ -49,7 +49,7 @@ kernel_base<2, 1> *kern_mul_ij_ip_jp::match(const kern_mul_i_p_ip &z,
     }
     if(ii == in.end()) return 0;
 
-    kern_mul_ij_ip_jp zz;
+    kern_dmul2_ij_ip_jp zz;
     zz.m_d = z.m_d;
     zz.m_ni = ii->weight();
     zz.m_nj = z.m_ni;
@@ -61,10 +61,10 @@ kernel_base<2, 1> *kern_mul_ij_ip_jp::match(const kern_mul_i_p_ip &z,
 
     kernel_base<2, 1> *kern = 0;
 
-    if(kern = kern_mul_ij_ipq_pjq::match(zz, in, out)) return kern;
-    if(kern = kern_mul_ij_piq_pjq::match(zz, in, out)) return kern;
+//    if(kern = kern_mul_ij_ipq_pjq::match(zz, in, out)) return kern;
+//    if(kern = kern_mul_ij_piq_pjq::match(zz, in, out)) return kern;
 
-    return new kern_mul_ij_ip_jp(zz);
+    return new kern_dmul2_ij_ip_jp(zz);
 }
 
 

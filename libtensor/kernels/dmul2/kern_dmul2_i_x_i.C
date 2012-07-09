@@ -1,6 +1,6 @@
 #include <libtensor/linalg/linalg.h>
 #include "kern_dmul2_i_x_i.h"
-//#include "kern_mul_i_p_pi.h"
+#include "kern_dmul2_i_p_pi.h"
 
 namespace libtensor {
 
@@ -47,7 +47,7 @@ kernel_base<2, 1> *kern_dmul2_i_x_i::match(const kern_dmul2 &z,
 
     kernel_base<2, 1> *kern = 0;
 
-//    if(kern = kern_mul_i_p_pi::match(zz, in, out)) return kern;
+    if(kern = kern_dmul2_i_p_pi::match(zz, in, out)) return kern;
 
     return new kern_dmul2_i_x_i(zz);
 }

@@ -11,9 +11,9 @@ namespace libtensor {
 	\ingroup libtensor_kernels
  **/
 class kern_dmul2_x_p_p : public kernel_base<2, 1> {
-	friend class kern_mul_i_ip_p;
-	friend class kern_mul_i_p_ip;
-	friend class kern_mul_x_pq_qp;
+	friend class kern_dmul2_i_ip_p;
+	friend class kern_dmul2_i_p_ip;
+	friend class kern_dmul2_x_pq_qp;
 
 public:
 	static const char *k_clazz; //!< Kernel name

@@ -1,26 +1,26 @@
-#include "../../linalg/linalg.h"
-#include "kern_mul_i_pi_p.h"
-#include "kern_mul_ij_pi_jp.h"
-#include "kern_mul_ij_pi_pj.h"
-#include "kern_mul_ij_pj_ip.h"
-#include "kern_mul_ij_pj_pi.h"
-#include "kern_mul_ij_pji_p.h"
-#include "kern_mul_ijk_pi_pkj.h"
+#include <libtensor/linalg/linalg.h>
+#include "kern_dmul2_i_pi_p.h"
+#include "kern_dmul2_ij_pi_jp.h"
+#include "kern_dmul2_ij_pi_pj.h"
+#include "kern_dmul2_ij_pj_ip.h"
+#include "kern_dmul2_ij_pj_pi.h"
+//#include "kern_mul_ij_pji_p.h"
+//#include "kern_mul_ijk_pi_pkj.h"
 
 namespace libtensor {
 
 
-const char *kern_mul_i_pi_p::k_clazz = "kern_mul_i_pi_p";
+const char *kern_dmul2_i_pi_p::k_clazz = "kern_dmul2_i_pi_p";
 
 
-void kern_mul_i_pi_p::run(const loop_registers<2, 1> &r) {
+void kern_dmul2_i_pi_p::run(const loop_registers<2, 1> &r) {
 
     linalg::i_pi_p_x(m_ni, m_np, r.m_ptra[0], m_spa, r.m_ptra[1], m_spb,
         r.m_ptrb[0], m_sic, m_d);
 }
 
 
-kernel_base<2, 1> *kern_mul_i_pi_p::match(const kern_dmul2_i_i_x &z,
+kernel_base<2, 1> *kern_dmul2_i_pi_p::match(const kern_dmul2_i_i_x &z,
     list_t &in, list_t &out) {
 
     if(in.empty()) return 0;
@@ -45,7 +45,7 @@ kernel_base<2, 1> *kern_mul_i_pi_p::match(const kern_dmul2_i_i_x &z,
     }
     if(ip == in.end()) return 0;
 
-    kern_mul_i_pi_p zz;
+    kern_dmul2_i_pi_p zz;
     zz.m_d = z.m_d;
     zz.m_ni = z.m_ni;
     zz.m_np = ip->weight();
@@ -56,14 +56,14 @@ kernel_base<2, 1> *kern_mul_i_pi_p::match(const kern_dmul2_i_i_x &z,
 
     kernel_base<2, 1> *kern = 0;
 
-    if(kern = kern_mul_ij_pi_jp::match(zz, in, out)) return kern;
-    if(kern = kern_mul_ij_pi_pj::match(zz, in, out)) return kern;
-    if(kern = kern_mul_ij_pj_ip::match(zz, in, out)) return kern;
-    if(kern = kern_mul_ij_pj_pi::match(zz, in, out)) return kern;
-    if(kern = kern_mul_ij_pji_p::match(zz, in, out)) return kern;
-    if(kern = kern_mul_ijk_pi_pkj::match(zz, in, out)) return kern;
+    if(kern = kern_dmul2_ij_pi_jp::match(zz, in, out)) return kern;
+    if(kern = kern_dmul2_ij_pi_pj::match(zz, in, out)) return kern;
+    if(kern = kern_dmul2_ij_pj_ip::match(zz, in, out)) return kern;
+    if(kern = kern_dmul2_ij_pj_pi::match(zz, in, out)) return kern;
+//    if(kern = kern_mul_ij_pji_p::match(zz, in, out)) return kern;
+//    if(kern = kern_mul_ijk_pi_pkj::match(zz, in, out)) return kern;
 
-    return new kern_mul_i_pi_p(zz);
+    return new kern_dmul2_i_pi_p(zz);
 }
 
 

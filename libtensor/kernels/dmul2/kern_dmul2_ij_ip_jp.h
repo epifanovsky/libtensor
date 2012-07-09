@@ -1,15 +1,16 @@
-#ifndef LIBTENSOR_KERN_MUL_IJ_IP_JP_H
-#define LIBTENSOR_KERN_MUL_IJ_IP_JP_H
+#ifndef LIBTENSOR_KERN_DMUL2_IJ_IP_JP_H
+#define LIBTENSOR_KERN_DMUL2_IJ_IP_JP_H
 
-#include "kern_mul_i_p_ip.h"
+#include "kern_dmul2_i_p_ip.h"
 
 namespace libtensor {
 
 
-/**
-    \ingroup libtensor_tod_kernel
+/** \brief Specialized kernel for \f$ c_{ij} = c_{ij} + a_{ip} b_{jp} d \f$
+
+     \ingroup libtensor_kernels
  **/
-class kern_mul_ij_ip_jp : public kernel_base<2, 1> {
+class kern_dmul2_ij_ip_jp : public kernel_base<2, 1> {
     friend class kern_mul_ij_ipq_pjq;
     friend class kern_mul_ij_piq_pjq;
 
@@ -22,7 +23,7 @@ private:
     size_t m_sia, m_sjb, m_sic;
 
 public:
-    virtual ~kern_mul_ij_ip_jp() { }
+    virtual ~kern_dmul2_ij_ip_jp() { }
 
     virtual const char *get_name() const {
         return k_clazz;
@@ -30,7 +31,7 @@ public:
 
     virtual void run(const loop_registers<2, 1> &r);
 
-    static kernel_base<2, 1> *match(const kern_mul_i_p_ip &z,
+    static kernel_base<2, 1> *match(const kern_dmul2_i_p_ip &z,
         list_t &in, list_t &out);
 
 };
@@ -38,4 +39,4 @@ public:
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_KERN_MUL_IJ_IP_JP_H
+#endif // LIBTENSOR_KERN_DMUL2_IJ_IP_JP_H

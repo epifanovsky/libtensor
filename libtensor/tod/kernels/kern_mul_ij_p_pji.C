@@ -17,7 +17,7 @@ void kern_mul_ij_p_pji::run(const loop_registers<2, 1> &r) {
 }
 
 
-kernel_base<2, 1> *kern_mul_ij_p_pji::match(const kern_mul_i_p_pi &z,
+kernel_base<2, 1> *kern_mul_ij_p_pji::match(const kern_dmul2_i_p_pi &z,
     list_t &in, list_t &out) {
 
     if(in.empty()) return 0;

@@ -1,17 +1,17 @@
-#ifndef LIBTENSOR_KERN_MUL_IJ_I_J_H
-#define LIBTENSOR_KERN_MUL_IJ_I_J_H
+#ifndef LIBTENSOR_KERN_DMUL2_IJ_I_J_H
+#define LIBTENSOR_KERN_DMUL2_IJ_I_J_H
 
-#include "kern_mul_i_i_x.h"
+#include "kern_dmul2_i_i_x.h"
 
 namespace libtensor {
 
 
-/** \brief Kernel for \f$ c_{ij} = c_{ij} + a_i b_j \f$
+/** \brief Specialized kernel for \f$ c_{ij} = c_{ij} + a_i b_j d \f$
 
-     \ingroup libtensor_tod_kernel
+     \ingroup libtensor_kernels
  **/
-class kern_mul_ij_i_j : public kernel_base<2, 1> {
-    friend class kern_mul_ij_ip_pj;
+class kern_dmul2_ij_i_j : public kernel_base<2, 1> {
+    friend class kern_dmul2_ij_ip_pj;
 
 public:
     static const char *k_clazz; //!< Kernel name
@@ -22,7 +22,7 @@ private:
     size_t m_sia, m_sjb, m_sic;
 
 public:
-    virtual ~kern_mul_ij_i_j() { }
+    virtual ~kern_dmul2_ij_i_j() { }
 
     virtual const char *get_name() const {
         return k_clazz;
@@ -38,4 +38,4 @@ public:
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_KERN_MUL_IJ_I_J_H
+#endif // LIBTENSOR_KERN_DMUL2_IJ_I_J_H

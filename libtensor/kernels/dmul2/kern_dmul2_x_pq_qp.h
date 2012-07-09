@@ -1,15 +1,16 @@
-#ifndef LIBTENSOR_KERN_MUL_X_PQ_QP_H
-#define LIBTENSOR_KERN_MUL_X_PQ_QP_H
+#ifndef LIBTENSOR_KERN_DMUL2_X_PQ_QP_H
+#define LIBTENSOR_KERN_DMUL2_X_PQ_QP_H
 
-#include "kern_mul_x_p_p.h"
+#include "kern_dmul2_x_p_p.h"
 
 namespace libtensor {
 
 
-/**
-    \ingroup libtensor_tod_kernel
+/** \brief Specialized kernel for \f$ c = c + a_{pq} b_{qp} \f$
+
+    \ingroup libtensor_kernels
  **/
-class kern_mul_x_pq_qp : public kernel_base<2, 1> {
+class kern_dmul2_x_pq_qp : public kernel_base<2, 1> {
     friend class kern_mul_i_ipq_qp;
 
 public:
@@ -21,7 +22,7 @@ private:
     size_t m_spa, m_sqb;
 
 public:
-    virtual ~kern_mul_x_pq_qp() { }
+    virtual ~kern_dmul2_x_pq_qp() { }
 
     virtual const char *get_name() const {
         return k_clazz;
@@ -37,4 +38,4 @@ public:
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_KERN_MUL_X_PQ_QP_H
+#endif // LIBTENSOR_KERN_DMUL2_X_PQ_QP_H
