@@ -15,23 +15,14 @@ set(SRC
     symmetry/product_table_container.C
     symmetry/product_table_i.C
     tod/loop_list_add.C
-    tod/loop_list_copy.C
-    tod/loop_list_mul.C
-    tod/loop_list_elem.C
-    tod/loop_list_elem1.C
-    tod/kernels/kern_add_generic.C
-    tod/kernels/kern_add_i_i_x_x.C
-    tod/kernels/kern_add_i_x_i_x.C
-    tod/kernels/kern_copy_generic.C
-    tod/kernels/kern_mul_generic.C
-    tod/kernels/kern_mul_i_i_i.C
-    tod/kernels/kern_mul_i_i_x.C
+)
+
+set(SKIPPED
     tod/kernels/kern_mul_i_ip_p.C
     tod/kernels/kern_mul_i_ipq_qp.C
     tod/kernels/kern_mul_i_p_ip.C
     tod/kernels/kern_mul_i_p_pi.C
     tod/kernels/kern_mul_i_pi_p.C
-    tod/kernels/kern_mul_i_x_i.C
     tod/kernels/kern_mul_ij_i_j.C
     tod/kernels/kern_mul_ij_ip_jp.C
     tod/kernels/kern_mul_ij_ip_pj.C
@@ -108,7 +99,6 @@ set(SRC
     tod/kernels/kern_mul_ijklm_ipkm_jpl.C
     tod/kernels/kern_mul_ijklm_jlp_ipkm.C
     tod/kernels/kern_mul_ijklmn_kjmp_ipln.C
-    tod/kernels/kern_mul_x_p_p.C
     tod/kernels/kern_mul_x_pq_qp.C
 )
 
@@ -120,6 +110,24 @@ set(SRC_LINALG
     linalg/generic/linalg_base_level4_generic.C
     linalg/generic/linalg_base_level5_generic.C
     linalg/generic/linalg_base_level6_generic.C
+)
+
+set(SRC_KERNELS
+    kernels/dadd1/kern_dadd1.C
+    kernels/dadd2/kern_dadd2.C
+    kernels/dadd2/kern_dadd2_i_i_x_x.C
+    kernels/dadd2/kern_dadd2_i_x_i_x.C
+    kernels/dcopy/kern_dcopy.C
+    kernels/ddiv1/kern_ddiv1.C
+    kernels/ddiv2/kern_ddiv2.C
+    kernels/ddivadd1/kern_ddivadd1.C
+    kernels/dmul1/kern_dmul1.C
+    kernels/dmul2/kern_dmul2.C
+    kernels/dmul2/kern_dmul2_i_i_i.C
+    kernels/dmul2/kern_dmul2_i_i_x.C
+    kernels/dmul2/kern_dmul2_i_x_i.C
+    kernels/dmul2/kern_dmul2_x_p_p.C
+    kernels/dmuladd1/kern_dmuladd1.C
 )
 
 set(SRC_INST
@@ -221,7 +229,7 @@ set(SRC_QCHEM
     linalg/qchem/linalg_base_level3_qchem.C
 )
 
-add_library(tensor ${SRC} ${SRC_LINALG} ${SRC_INST})
+add_library(tensor ${SRC} ${SRC_LINALG} ${SRC_KERNELS} ${SRC_INST} ${SRC_MP})
 if(QCHEM_SOURCE_DIR)
     add_library(tensor_qchem ${SRC_QCHEM})
     add_dependencies(tensor_qchem tensor)

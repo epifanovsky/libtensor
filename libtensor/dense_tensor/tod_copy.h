@@ -2,8 +2,6 @@
 #define LIBTENSOR_TOD_COPY_H
 
 #include <libtensor/timings.h>
-#include <libtensor/tod/loop_list_add.h>
-#include <libtensor/tod/loop_list_copy.h>
 #include "dense_tensor_i.h"
 
 namespace libtensor {
@@ -52,10 +50,7 @@ namespace libtensor {
     \ingroup libtensor_dense_tensor_tod
  **/
 template<size_t N>
-class tod_copy :
-    public loop_list_add,
-    public loop_list_copy,
-    public timings< tod_copy<N> > {
+class tod_copy : public timings< tod_copy<N> > {
 
 public:
     static const char *k_clazz; //!< Class name
@@ -104,13 +99,6 @@ private:
      **/
     static dimensions<N> mk_dimsb(dense_tensor_rd_i<N,double> &ta,
         const permutation<N> &perm);
-
-    template<typename Base>
-    void do_perform(double c, dense_tensor_wr_i<N,double> &t);
-
-    template<typename Base>
-    void build_loop(typename Base::list_t &loop, const dimensions<N> &dimsa,
-        const permutation<N> &perma, const dimensions<N> &dimsb);
 
 private:
     /** \brief Private copy constructor

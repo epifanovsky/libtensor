@@ -4,7 +4,7 @@
 #include <list>
 #include <libtensor/timings.h>
 #include <libtensor/tod/contraction2.h>
-#include <libtensor/tod/kernels/loop_list_node.h>
+#include <libtensor/kernels/loop_list_node.h>
 
 
 namespace libtensor {
