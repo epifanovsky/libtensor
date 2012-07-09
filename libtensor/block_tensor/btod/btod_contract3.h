@@ -2,6 +2,7 @@
 #define LIBTENSOR_BTOD_CONTRACT3_H
 
 #include <vector>
+#include <libutil/thread_pool/thread_pool.h>
 #include <libtensor/tod/contraction2.h>
 #include <libtensor/core/block_tensor_i.h>
 #include <libtensor/btod/btod_contract2.h>
@@ -17,10 +18,6 @@ namespace libtensor {
     \tparam K2 Second contraction degree.
 
     This algorithm computes the contraction of three linearly connected tensors.
-    In this train of tensors, the first tensor may only be connected (have
-    shared inner indexes) with the second, and the second tensor may only be
-    connected with the third. No connections between the first and the third
-    tensors are allowed.
 
     The contraction is performed as follows. The first tensor is contracted
     with the second tensor to form an intermediate, which is then contracted
@@ -45,6 +42,42 @@ private:
     block_tensor_i<N1 + K1, double> &m_bta; //!< First argument (A)
     block_tensor_i<N2 + K1 + K2, double> &m_btb; //!< Second argument (B)
     block_tensor_i<N3 + K2, double> &m_btc; //!< Third argument (C)
+
+private:
+    class batch_ab_task : public libutil::task_i {
+    private:
+        btod_contract2<N1, N2 + K2, K1> &m_contr;
+        index<N1 + N2 + K2> m_idx;
+        block_tensor_i<N1 + N2 + K2, double> &m_btab;
+
+    public:
+        batch_ab_task(
+            btod_contract2<N1, N2 + K2, K1> &contr,
+            const index<N1 + N2 + K2> &idx,
+            block_tensor_i<N1 + N2 + K2, double> &btab) :
+            m_contr(contr), m_idx(idx), m_btab(btab) { }
+        virtual ~batch_ab_task() { }
+        virtual void perform();
+    };
+
+    class batch_ab_task_iterator : public libutil::task_iterator_i {
+    private:
+        std::vector<batch_ab_task*> &m_tl;
+        typename std::vector<batch_ab_task*>::iterator m_i;
+
+    public:
+        batch_ab_task_iterator(std::vector<batch_ab_task*> &tl) :
+            m_tl(tl), m_i(m_tl.begin()) { }
+        virtual ~batch_ab_task_iterator() { }
+        virtual bool has_more() const;
+        virtual libutil::task_i *get_next();
+    };
+
+    class batch_ab_task_observer : public libutil::task_observer_i {
+    public:
+        virtual void notify_start_task(libutil::task_i *t) { }
+        virtual void notify_finish_task(libutil::task_i *t) { }
+    };
 
 public:
     /** \brief Initializes the contraction

@@ -35,6 +35,16 @@ template<size_t N1, size_t N2, size_t N3, size_t K1, size_t K2>
 void btod_contract3<N1, N2, N3, K1, K2>::perform(
     block_tensor_i<N1 + N2 + N3, double> &btd) {
 
+    block_tensor_ctrl<N1 + K1, double> ca(m_bta);
+    block_tensor_ctrl<N2 + K1 + K2, double> cb(m_btb);
+    block_tensor_ctrl<N3 + K2, double> cc(m_btc);
+    block_tensor_ctrl<N1 + N2 + N3, double> cd(btd);
+
+    ca.req_sync_on();
+    cb.req_sync_on();
+    cc.req_sync_on();
+    cd.req_sync_on();
+
     //  Operation and buffer for the intermediate (AB)
 
     btod_contract2<N1, N2 + K2, K1> contrab(m_contr1, m_bta, m_btb);
@@ -69,6 +79,11 @@ void btod_contract3<N1, N2, N3, K1, K2>::perform(
         }
         btod_set<N1 + N2 + K2>().perform(btab);
     }
+
+    ca.req_sync_off();
+    cb.req_sync_off();
+    cc.req_sync_off();
+    cd.req_sync_off();
 }
 
 
@@ -82,15 +97,49 @@ void btod_contract3<N1, N2, N3, K1, K2>::compute_batch_ab(
     dimensions<N1 + N2 + K2> bidims(btab.get_bis().get_block_index_dims());
     tensor_transf<N1 + N2 + K2, double> tr0;
 
+    std::vector<batch_ab_task*> tl;
+
     for(typename std::vector<size_t>::const_iterator i = blst.begin();
         i != blst.end(); ++i) {
 
         abs_index<N1 + N2 + K2> aidx(*i, bidims);
-        dense_tensor_i<N1 + N2 + K2, double> &blkab =
-            cab.req_block(aidx.get_index());
-        contr.compute_block(true, blkab, aidx.get_index(), tr0, 1.0);
-        cab.ret_block(aidx.get_index());
+        tl.push_back(new batch_ab_task(contr, aidx.get_index(), btab));
     }
+
+    batch_ab_task_iterator ti(tl);
+    batch_ab_task_observer to;
+    libutil::thread_pool::submit(ti, to);
+
+    for(size_t i = 0; i < tl.size(); i++) delete tl[i];
+}
+
+
+template<size_t N1, size_t N2, size_t N3, size_t K1, size_t K2>
+void btod_contract3<N1, N2, N3, K1, K2>::batch_ab_task::perform() {
+
+    block_tensor_ctrl<N1 + N2 + K2, double> cab(m_btab);
+    tensor_transf<N1 + N2 + K2, double> tr0;
+    dense_tensor_i<N1 + N2 + K2, double> &blkab = cab.req_block(m_idx);
+    m_contr.compute_block(true, blkab, m_idx, tr0, 1.0);
+    cab.ret_block(m_idx);
+}
+
+
+template<size_t N1, size_t N2, size_t N3, size_t K1, size_t K2>
+bool
+btod_contract3<N1, N2, N3, K1, K2>::batch_ab_task_iterator::has_more() const {
+
+    return m_i != m_tl.end();
+}
+
+
+template<size_t N1, size_t N2, size_t N3, size_t K1, size_t K2>
+libutil::task_i*
+btod_contract3<N1, N2, N3, K1, K2>::batch_ab_task_iterator::get_next() {
+
+    batch_ab_task *t = *m_i;
+    ++m_i;
+    return t;
 }
 
 
