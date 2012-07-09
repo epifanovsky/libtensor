@@ -37,21 +37,14 @@ void btod_contract3<N1, N2, N3, K1, K2>::perform(
 
     block_tensor_ctrl<N1 + K1, double> ca(m_bta);
     block_tensor_ctrl<N2 + K1 + K2, double> cb(m_btb);
-    block_tensor_ctrl<N3 + K2, double> cc(m_btc);
-    block_tensor_ctrl<N1 + N2 + N3, double> cd(btd);
-
-    ca.req_sync_on();
-    cb.req_sync_on();
-    cc.req_sync_on();
-    cd.req_sync_on();
 
     //  Operation and buffer for the intermediate (AB)
 
     btod_contract2<N1, N2 + K2, K1> contrab(m_contr1, m_bta, m_btb);
     block_index_space<N1 + N2 + K2> bisab(contrab.get_bis());
     block_tensor< N1 + N2 + K2, double, allocator<double> > btab(bisab);
+    block_tensor_ctrl<N1 + N2 + K2, double> cab(btab);
     {
-        block_tensor_ctrl<N1 + N2 + K2, double> cab(btab);
         so_copy<N1 + N2 + K2, double>(contrab.get_symmetry()).
             perform(cab.req_symmetry());
     }
@@ -65,11 +58,20 @@ void btod_contract3<N1, N2, N3, K1, K2>::perform(
     typename assignment_schedule<N1 + N2 + K2, double>::iterator isch =
         schab.begin();
     while(isch != schab.end()) {
+
         std::vector<size_t> batch;
         for(size_t i = 0; i < batch_size && isch != schab.end(); i++, ++isch) {
             batch.push_back(schab.get_abs_index(isch));
         }
+
+        ca.req_sync_on();
+        cb.req_sync_on();
+        cab.req_sync_on();
         compute_batch_ab(contrab, batch, btab);
+        ca.req_sync_off();
+        cb.req_sync_off();
+        cab.req_sync_off();
+
         if(first_batch) {
             btod_contract2<N1 + N2, N3, K2>(m_contr2, btab, m_btc).
                 perform(btd);
@@ -79,11 +81,6 @@ void btod_contract3<N1, N2, N3, K1, K2>::perform(
         }
         btod_set<N1 + N2 + K2>().perform(btab);
     }
-
-    ca.req_sync_off();
-    cb.req_sync_off();
-    cc.req_sync_off();
-    cd.req_sync_off();
 }
 
 
