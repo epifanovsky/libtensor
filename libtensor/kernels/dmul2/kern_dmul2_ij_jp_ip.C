@@ -1,6 +1,5 @@
 #include <libtensor/linalg/linalg.h>
 #include "kern_dmul2_ij_jp_ip.h"
-//#include "kern_mul_ij_pjq_piq.h"
 
 namespace libtensor {
 
@@ -59,8 +58,6 @@ kernel_base<2, 1> *kern_dmul2_ij_jp_ip::match(const kern_dmul2_i_ip_p &z,
     in.splice(out.begin(), out, ii);
 
     kernel_base<2, 1> *kern = 0;
-
-//    if(kern = kern_mul_ij_pjq_piq::match(zz, in, out)) return kern;
 
     return new kern_dmul2_ij_jp_ip(zz);
 }

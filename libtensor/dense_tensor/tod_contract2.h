@@ -88,6 +88,16 @@ public:
      **/
     void perform(bool zero, double d, dense_tensor_i<k_orderc, double> &tc);
 
+private:
+    void align(const sequence<2 * (N + M + K), size_t> &conn,
+        permutation<N + K> &perma, permutation<M + K> &permb,
+        permutation<N + M> &permc);
+    void perform_internal(bool zero, double d,
+        dense_tensor_i<k_orderc, double> &tc);
+
+private:
+    tod_contract2(const tod_contract2&);
+
 };
 
 
