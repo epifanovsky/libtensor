@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <qchem.h>
 #include <libmathtools/general/blas_include.h>
 #include "linalg_base_level1_qchem.h"
@@ -24,6 +25,23 @@ void linalg_base_level1_qchem::add_i_i_x_x(
         for(size_t i = 0; i < ni; i++) c[i * sic] += db;
     }
     stop_timer("daxpy");
+}
+
+
+void linalg_base_level1_qchem::i_i(
+    size_t ni,
+    const double *a, size_t sia,
+    double *c, size_t sic) {
+
+    if(sia == 1 && sic == 1) {
+        start_timer("memcpy");
+        memcpy(c, a, ni * sizeof(double));
+        stop_timer("memcpy");
+    } else {
+        start_timer("dcopy");
+        CL_DCOPY(ni, (double*)a, sia, c, sic);
+        stop_timer("dcopy");
+    }
 }
 
 

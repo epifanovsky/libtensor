@@ -1,4 +1,5 @@
 #include "../kern_dadd1.h"
+#include "kern_dadd1_i_i_x.h"
 
 namespace libtensor {
 
@@ -18,6 +19,8 @@ kernel_base<1, 1> *kern_dadd1::match(double d, list_t &in, list_t &out) {
 
     kern_dadd1 zz;
     zz.m_d = d;
+
+    if(kern = kern_dadd1_i_i_x::match(zz, in, out)) return kern;
 
     return new kern_dadd1(zz);
 }

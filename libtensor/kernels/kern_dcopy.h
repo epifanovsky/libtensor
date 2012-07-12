@@ -17,6 +17,8 @@ namespace libtensor {
     \ingroup libtensor_kernels
  **/
 class kern_dcopy : public kernel_base<1, 1> {
+    friend class kern_dcopy_i_i_x;
+
 public:
     static const char *k_clazz; //!< Kernel name
 

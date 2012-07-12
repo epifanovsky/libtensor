@@ -26,6 +26,11 @@ public:
         double *c, size_t sic,
         double d);
 
+    static void i_i(
+        size_t ni,
+        const double *a, size_t sia,
+        double *c, size_t sic);
+
     static void i_x(
         size_t ni,
         double a,

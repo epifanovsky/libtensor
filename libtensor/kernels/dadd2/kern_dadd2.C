@@ -1,6 +1,6 @@
+#include "../kern_dadd2.h"
 #include "kern_dadd2_i_i_x_x.h"
 #include "kern_dadd2_i_x_i_x.h"
-#include "../kern_dadd2.h"
 
 namespace libtensor {
 
