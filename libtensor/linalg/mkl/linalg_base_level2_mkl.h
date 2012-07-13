@@ -1,11 +1,8 @@
 #ifndef LIBTENSOR_LINALG_BASE_LEVEL2_MKL_H
 #define LIBTENSOR_LINALG_BASE_LEVEL2_MKL_H
 
-#if defined(HAVE_MKL_DOMATCOPY)
-#include <mkl_trans.h>
-#endif
-
-#include "../cblas/linalg_base_level2_cblas.h"
+#include <libtensor/timings.h>
+#include "../generic/linalg_base_level2_generic.h"
 
 namespace libtensor {
 
@@ -14,21 +11,39 @@ namespace libtensor {
 
     \ingroup libtensor_linalg
  **/
-struct linalg_base_level2_mkl : public linalg_base_level2_cblas {
+class linalg_base_level2_mkl :
+    public linalg_base_level2_generic,
+    public timings<linalg_base_level2_mkl> {
 
+public:
+    static const char *k_clazz; //!< Class name
+
+public:
+    static void i_ip_p_x(
+        size_t ni, size_t np,
+        const double *a, size_t sia,
+        const double *b, size_t spb,
+        double *c, size_t sic,
+        double d);
+
+    static void i_pi_p_x(
+        size_t ni, size_t np,
+        const double *a, size_t spa,
+        const double *b, size_t spb,
+        double *c, size_t sic,
+        double d);
+
+    static void ij_i_j_x(
+        size_t ni, size_t nj,
+        const double *a, size_t sia,
+        const double *b, size_t sjb,
+        double *c, size_t sic,
+        double d);
 
     static void ij_ji(
         size_t ni, size_t nj,
         const double *a, size_t sja,
-        double *c, size_t sic) {
-
-#if defined(HAVE_MKL_DOMATCOPY)
-        mkl_domatcopy('R', 'T', nj, ni, 1.0, a, sja, c, sic);
-#else
-        linalg_base_level2_cblas::ij_ji(ni, nj, a, sja, c, sic);
-#endif
-    }
-
+        double *c, size_t sic);
 
 };
 

@@ -87,6 +87,12 @@ set(SKIPPED
     tod/kernels/kern_mul_ijklmn_kjmp_ipln.C
 )
 
+set(SRC_LINALG_MKL
+    linalg/mkl/linalg_base_level1_mkl.C
+    linalg/mkl/linalg_base_level2_mkl.C
+    linalg/mkl/linalg_base_level3_mkl.C
+)
+
 set(SRC_LINALG
     linalg/generic/linalg_base_level1_generic.C
     linalg/generic/linalg_base_level2_generic.C
@@ -232,6 +238,10 @@ set(SRC_QCHEM
     linalg/qchem/linalg_base_level2_qchem.C
     linalg/qchem/linalg_base_level3_qchem.C
 )
+
+if(USE_MKL)
+    set(SRC_LINALG ${SRC_LINALG} ${SRC_LINALG_MKL})
+endif(USE_MKL)
 
 add_library(tensor ${SRC} ${SRC_LINALG} ${SRC_KERNELS} ${SRC_INST} ${SRC_MP})
 if(QCHEM_SOURCE_DIR)
