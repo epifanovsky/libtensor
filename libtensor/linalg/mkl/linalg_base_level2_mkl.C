@@ -51,6 +51,27 @@ void linalg_base_level2_mkl::ij_i_j_x(
 }
 
 
+void linalg_base_level2_mkl::ij_ij_x(
+    size_t ni, size_t nj,
+    const double *a, size_t sia,
+    double b,
+    double *c, size_t sic) {
+
+#ifdef HAVE_MKL_DOMATCOPY
+    start_timer("mkl_domatcopy");
+    mkl_domatcopy('R', 'N', ni, nj, b, a, sia, c, sic);
+    stop_timer("mkl_domatcopy");
+#else // HAVE_MKL_DOMATCOPY
+    start_timer("dcopy+dscal");
+    for(size_t i = 0; i < ni; i++) {
+        cblas_dcopy(nj, a + i * sia, 1, c + i * sic, 1);
+        cblas_dscal(nj, b, c + i * sic, 1);
+    }
+    stop_timer("dcopy+dscal");
+#endif // HAVE_MKL_DOMATCOPY
+}
+
+
 void linalg_base_level2_mkl::ij_ji(
     size_t ni, size_t nj,
     const double *a, size_t sja,
@@ -74,6 +95,27 @@ void linalg_base_level2_mkl::ij_ji(
         }
     }
     stop_timer("dcopy");
+#endif // HAVE_MKL_DOMATCOPY
+}
+
+
+void linalg_base_level2_mkl::ij_ji_x(
+    size_t ni, size_t nj,
+    const double *a, size_t sja,
+    double b,
+    double *c, size_t sic) {
+
+#ifdef HAVE_MKL_DOMATCOPY
+    start_timer("mkl_domatcopy");
+    mkl_domatcopy('R', 'T', nj, ni, b, a, sja, c, sic);
+    stop_timer("mkl_domatcopy");
+#else // HAVE_MKL_DOMATCOPY
+    start_timer("dcopy+dscal");
+    for(size_t i = 0; i < ni; i++) {
+        cblas_dcopy(nj, a + i, sja, c + i * sic, 1);
+        cblas_dscal(nj, b, c + i * sic, 1);
+    }
+    stop_timer("dcopy+dscal");
 #endif // HAVE_MKL_DOMATCOPY
 }
 

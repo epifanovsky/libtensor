@@ -40,9 +40,21 @@ public:
         double *c, size_t sic,
         double d);
 
+    static void ij_ij_x(
+        size_t ni, size_t nj,
+        const double *a, size_t sia,
+        double b,
+        double *c, size_t sic);
+
     static void ij_ji(
         size_t ni, size_t nj,
         const double *a, size_t sja,
+        double *c, size_t sic);
+
+    static void ij_ji_x(
+        size_t ni, size_t nj,
+        const double *a, size_t sja,
+        double b,
         double *c, size_t sic);
 
 };
