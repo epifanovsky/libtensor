@@ -7,9 +7,10 @@
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/dense_tensor/to_contract2_dims.h>
-#include <libtensor/dense_tensor/tod_copy.h>
 #include <libtensor/tod/bad_dimensions.h>
 #include <libtensor/tod/kernels/loop_list_runner.h>
+#include <libtensor/kernels/kern_dadd1.h>
+#include <libtensor/kernels/kern_dcopy.h>
 #include <libtensor/kernels/kern_dmul2.h>
 #include <libtensor/tod/contraction2_list_builder.h>
 #include <libtensor/kernels/loop_list_node.h>
@@ -57,39 +58,7 @@ void tod_contract2<N, M, K>::perform(bool zero, double d,
     permutation<k_orderb> permb;
     permutation<k_orderc> permc;
     align(m_contr.get_conn(), perma, permb, permc);
-
-    contraction2<N, M, K> contr2(m_contr);
-    contr2.permute_a(perma);
-    contr2.permute_b(permb);
-    contr2.permute_c(permc);
-
-    dimensions<k_ordera> dimsa2(m_ta.get_dims());
-    dimensions<k_orderb> dimsb2(m_tb.get_dims());
-    dimensions<k_orderc> dimsc2(tc.get_dims());
-    dimsa2.permute(perma);
-    dimsb2.permute(permb);
-    dimsc2.permute(permc);
-
-    dense_tensor< k_ordera, double, allocator<double> > ta2(dimsa2);
-    dense_tensor< k_orderb, double, allocator<double> > tb2(dimsb2);
-    dense_tensor< k_orderc, double, allocator<double> > tc2(dimsc2);
-
-    bool origa = perma.is_identity(), origb = permb.is_identity(),
-        origc = permc.is_identity();
-
-    if(!origa) tod_copy<k_ordera>(m_ta, perma).perform(true, 1.0, ta2);
-    if(!origb) tod_copy<k_orderb>(m_tb, permb).perform(true, 1.0, tb2);
-
-    dense_tensor_i<k_ordera, double> &ta0 = origa ? m_ta : ta2;
-    dense_tensor_i<k_orderb, double> &tb0 = origb ? m_tb : tb2;
-
-    if(origc) {
-        tod_contract2<N, M, K>(contr2, ta0, tb0).perform_internal(zero, d, tc);
-    } else {
-        tod_contract2<N, M, K>(contr2, ta0, tb0).perform_internal(true, d, tc2);
-        tod_copy<k_orderc>(tc2, permutation<k_orderc>(permc, true)).
-            perform(zero, 1.0, tc);
-    }
+    perform_internal(zero, d, perma, permb, permc, tc);
 }
 
 
@@ -260,11 +229,14 @@ void tod_contract2<N, M, K>::align(
 
 template<size_t N, size_t M, size_t K>
 void tod_contract2<N, M, K>::perform_internal(bool zero, double d,
-    dense_tensor_i<k_orderc, double> &tc) {
+    const permutation<k_ordera> &perma, const permutation<k_orderb> &permb,
+    const permutation<k_orderc> &permc, dense_tensor_i<k_orderc, double> &tc) {
 
     tod_contract2<N, M, K>::start_timer();
 
     try {
+
+    permutation<k_orderc> pinvc(permc, true);
 
     dense_tensor_ctrl<k_ordera, double> ca(m_ta);
     dense_tensor_ctrl<k_orderb, double> cb(m_tb);
@@ -278,30 +250,145 @@ void tod_contract2<N, M, K>::perform_internal(bool zero, double d,
     const dimensions<k_orderb> &dimsb = m_tb.get_dims();
     const dimensions<k_orderc> &dimsc = tc.get_dims();
 
-    std::list< loop_list_node<2, 1> > loop_in, loop_out;
-    loop_list_adapter list_adapter(loop_in);
-    contraction2_list_builder<N, M, K, loop_list_adapter>(m_contr).
-        populate(list_adapter, dimsa, dimsb, dimsc);
+    dimensions<k_ordera> dimsa1(dimsa); dimsa1.permute(perma);
+    dimensions<k_orderb> dimsb1(dimsb); dimsb1.permute(permb);
+    dimensions<k_orderc> dimsc1(dimsc); dimsc1.permute(permc);
 
-    const double *pa = ca.req_const_dataptr();
-    const double *pb = cb.req_const_dataptr();
-    double *pc = cc.req_dataptr();
+    const double *pa = 0, *pb = 0;
+    double *pc = 0;
+    double *pa1 = 0, *pb1 = 0, *pc1 = 0;
+    const double *pa2 = 0, *pb2 = 0;
+    double *pc2 = 0;
 
-    {
-        if(zero) {
-            tod_contract2<N, M, K>::start_timer("zero");
-            size_t szc = tc.get_dims().get_size();
-            for(size_t i = 0; i < szc; i++) pc[i] = 0.0;
-            tod_contract2<N, M, K>::stop_timer("zero");
+    typename allocator<double>::pointer_type vpa, vpb, vpc;
+
+    pa2 = pa = ca.req_const_dataptr();
+    if(!perma.is_identity()) {
+
+        vpa = allocator<double>::allocate(dimsa1.get_size());
+        pa1 = allocator<double>::lock_rw(vpa);
+
+        sequence<k_ordera, size_t> seqa(0);
+        for(size_t i = 0; i < k_ordera; i++) seqa[i] = i;
+        perma.apply(seqa);
+
+        std::list< loop_list_node<1, 1> > loop_in, loop_out;
+        typename std::list< loop_list_node<1, 1> >::iterator inode =
+            loop_in.end();
+
+        for(size_t idxa1 = 0; idxa1 < k_ordera;) {
+            size_t len = 1;
+            size_t idxa = seqa[idxa1];
+            do {
+                len *= dimsa.get_dim(idxa);
+                idxa++; idxa1++;
+            } while(idxa1 < k_ordera && seqa[idxa1] == idxa);
+
+            inode = loop_in.insert(loop_in.end(), loop_list_node<1, 1>(len));
+            inode->stepa(0) = dimsa.get_increment(idxa - 1);
+            inode->stepb(0) = dimsa1.get_increment(idxa1 - 1);
         }
 
-        loop_registers<2, 1> r;
+        loop_registers<1, 1> r;
         r.m_ptra[0] = pa;
-        r.m_ptra[1] = pb;
-        r.m_ptrb[0] = pc;
+        r.m_ptrb[0] = pa1;
         r.m_ptra_end[0] = pa + dimsa.get_size();
-        r.m_ptra_end[1] = pb + dimsb.get_size();
-        r.m_ptrb_end[0] = pc + dimsc.get_size();
+        r.m_ptrb_end[0] = pa1 + dimsa1.get_size();
+
+        {
+            std::auto_ptr< kernel_base<1, 1> >kern(
+                kern_dcopy::match(1.0, loop_in, loop_out));
+            tod_contract2<N, M, K>::start_timer("perma");
+            tod_contract2<N, M, K>::start_timer(kern->get_name());
+            loop_list_runner<1, 1>(loop_in).run(r, *kern);
+            tod_contract2<N, M, K>::stop_timer(kern->get_name());
+            tod_contract2<N, M, K>::stop_timer("perma");
+        }
+
+        pa2 = pa1;
+    }
+
+    pb2 = pb = cb.req_const_dataptr();
+    if(!permb.is_identity()) {
+
+        vpb = allocator<double>::allocate(dimsb1.get_size());
+        pb1 = allocator<double>::lock_rw(vpb);
+
+        sequence<k_orderb, size_t> seqb(0);
+        for(size_t i = 0; i < k_orderb; i++) seqb[i] = i;
+        permb.apply(seqb);
+
+        std::list< loop_list_node<1, 1> > loop_in, loop_out;
+        typename std::list< loop_list_node<1, 1> >::iterator inode =
+            loop_in.end();
+
+        for(size_t idxb1 = 0; idxb1 < k_orderb;) {
+            size_t len = 1;
+            size_t idxb = seqb[idxb1];
+            do {
+                len *= dimsb.get_dim(idxb);
+                idxb++; idxb1++;
+            } while(idxb1 < k_orderb && seqb[idxb1] == idxb);
+
+            inode = loop_in.insert(loop_in.end(), loop_list_node<1, 1>(len));
+            inode->stepa(0) = dimsb.get_increment(idxb - 1);
+            inode->stepb(0) = dimsb1.get_increment(idxb1 - 1);
+        }
+
+        loop_registers<1, 1> r;
+        r.m_ptra[0] = pb;
+        r.m_ptrb[0] = pb1;
+        r.m_ptra_end[0] = pb + dimsb.get_size();
+        r.m_ptrb_end[0] = pb1 + dimsb1.get_size();
+
+        {
+            std::auto_ptr< kernel_base<1, 1> >kern(
+                kern_dcopy::match(1.0, loop_in, loop_out));
+            tod_contract2<N, M, K>::start_timer("permb");
+            tod_contract2<N, M, K>::start_timer(kern->get_name());
+            loop_list_runner<1, 1>(loop_in).run(r, *kern);
+            tod_contract2<N, M, K>::stop_timer(kern->get_name());
+            tod_contract2<N, M, K>::stop_timer("permb");
+        }
+
+        pb2 = pb1;
+    }
+
+    pc2 = pc = cc.req_dataptr();
+    if(!permc.is_identity()) {
+
+        vpc = allocator<double>::allocate(dimsc1.get_size());
+        pc2 = pc1 = allocator<double>::lock_rw(vpc);
+    }
+
+    contraction2<N, M, K> contr1(m_contr);
+    contr1.permute_a(perma);
+    contr1.permute_b(permb);
+    contr1.permute_c(permc);
+
+    std::list< loop_list_node<2, 1> > loop_in, loop_out;
+    loop_list_adapter list_adapter(loop_in);
+    contraction2_list_builder<N, M, K, loop_list_adapter>(contr1).
+        populate(list_adapter, dimsa1, dimsb1, dimsc1);
+
+    if(pc1) {
+        tod_contract2<N, M, K>::start_timer("zeroc1");
+        memset(pc1, 0, sizeof(double) * dimsc1.get_size());
+        tod_contract2<N, M, K>::stop_timer("zeroc1");
+    } else if(zero) {
+        tod_contract2<N, M, K>::start_timer("zeroc");
+        memset(pc, 0, sizeof(double) * dimsc.get_size());
+        tod_contract2<N, M, K>::stop_timer("zeroc");
+    }
+
+    {
+        loop_registers<2, 1> r;
+        r.m_ptra[0] = pa2;
+        r.m_ptra[1] = pb2;
+        r.m_ptrb[0] = pc2;
+        r.m_ptra_end[0] = pa2 + dimsa1.get_size();
+        r.m_ptra_end[1] = pb2 + dimsb1.get_size();
+        r.m_ptrb_end[0] = pc2 + dimsc1.get_size();
 
         std::auto_ptr< kernel_base<2, 1> > kern(
             kern_dmul2::match(d, loop_in, loop_out));
@@ -312,8 +399,62 @@ void tod_contract2<N, M, K>::perform_internal(bool zero, double d,
         tod_contract2<N, M, K>::stop_timer(kern->get_name());
     }
 
+    if(pa1) {
+        allocator<double>::unlock_rw(vpa); pa1 = 0;
+        allocator<double>::deallocate(vpa);
+    }
     ca.ret_const_dataptr(pa);
+
+    if(pb1) {
+        allocator<double>::unlock_rw(vpb); pb1 = 0;
+        allocator<double>::deallocate(vpb);
+    }
     cb.ret_const_dataptr(pb);
+
+    if(pc1) {
+
+        sequence<k_orderc, size_t> seqc1(0);
+        for(size_t i = 0; i < k_orderc; i++) seqc1[i] = i;
+        pinvc.apply(seqc1);
+
+        std::list< loop_list_node<1, 1> > loop_in, loop_out;
+        typename std::list< loop_list_node<1, 1> >::iterator inode =
+            loop_in.end();
+
+        for(size_t idxc = 0; idxc < k_orderc;) {
+            size_t len = 1;
+            size_t idxc1 = seqc1[idxc];
+            do {
+                len *= dimsc1.get_dim(idxc1);
+                idxc1++; idxc++;
+            } while(idxc < k_orderc && seqc1[idxc] == idxc1);
+
+            inode = loop_in.insert(loop_in.end(), loop_list_node<1, 1>(len));
+            inode->stepa(0) = dimsc1.get_increment(idxc1 - 1);
+            inode->stepb(0) = dimsc.get_increment(idxc - 1);
+        }
+
+        loop_registers<1, 1> r;
+        r.m_ptra[0] = pc1;
+        r.m_ptrb[0] = pc;
+        r.m_ptra_end[0] = pc1 + dimsc1.get_size();
+        r.m_ptrb_end[0] = pc + dimsc.get_size();
+
+        {
+            std::auto_ptr< kernel_base<1, 1> >kern(
+                zero ?
+                    kern_dcopy::match(1.0, loop_in, loop_out) :
+                    kern_dadd1::match(1.0, loop_in, loop_out));
+            tod_contract2<N, M, K>::start_timer("permc");
+            tod_contract2<N, M, K>::start_timer(kern->get_name());
+            loop_list_runner<1, 1>(loop_in).run(r, *kern);
+            tod_contract2<N, M, K>::stop_timer(kern->get_name());
+            tod_contract2<N, M, K>::stop_timer("permc");
+        }
+
+        allocator<double>::unlock_rw(vpc); pc1 = 0;
+        allocator<double>::deallocate(vpc);
+    }
     cc.ret_dataptr(pc);
 
     } catch(...) {

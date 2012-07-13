@@ -31,7 +31,6 @@ namespace libtensor {
 **/
 template<size_t N, size_t M, size_t K>
 class tod_contract2 : public timings< tod_contract2<N, M, K> > {
-
 public:
     static const char *k_clazz;
 
@@ -93,6 +92,8 @@ private:
         permutation<N + K> &perma, permutation<M + K> &permb,
         permutation<N + M> &permc);
     void perform_internal(bool zero, double d,
+        const permutation<k_ordera> &perma, const permutation<k_orderb> &permb,
+        const permutation<k_orderc> &permc,
         dense_tensor_i<k_orderc, double> &tc);
 
 private:
