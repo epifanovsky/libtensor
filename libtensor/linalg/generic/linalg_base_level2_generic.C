@@ -60,6 +60,32 @@ void linalg_base_level2_generic::ij_ji(
 }
 
 
+void linalg_base_level2_generic::ij_ij_x(
+    size_t ni, size_t nj,
+    const double *a, size_t sia,
+    double b,
+    double *c, size_t sic) {
+
+    for(size_t i = 0; i < ni; i++)
+    for(size_t j = 0; j < nj; j++) {
+        c[i * sic + j] = a[i * sia + j] * b;
+    }
+}
+
+
+void linalg_base_level2_generic::ij_ji_x(
+    size_t ni, size_t nj,
+    const double *a, size_t sja,
+    double b,
+    double *c, size_t sic) {
+
+    for(size_t j = 0; j < nj; j++)
+    for(size_t i = 0; i < ni; i++) {
+        c[i * sic + j] = a[j * sja + i] * b;
+    }
+}
+
+
 double linalg_base_level2_generic::x_pq_qp(
     size_t np, size_t nq,
     const double *a, size_t spa,

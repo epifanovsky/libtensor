@@ -84,6 +84,22 @@ struct linalg_base_level2_generic {
         double *c, size_t sic);
 
 
+    /** \brief \f$ c_{ij} = c_{ij} + a_{ij} b \f$
+        \param ni Number of elements i.
+        \param nj Number of elements j.
+        \param a Pointer to a.
+        \param sia Step of i in a.
+        \param b Scalar b.
+        \param c Pointer to c.
+        \param sic Step of i in c.
+     **/
+    static void ij_ij_x(
+        size_t ni, size_t nj,
+        const double *a, size_t sia,
+        double b,
+        double *c, size_t sic);
+
+
     /** \brief \f$ c_{ij} = c_{ij} + a_{ji} b \f$
         \param ni Number of elements i.
         \param nj Number of elements j.

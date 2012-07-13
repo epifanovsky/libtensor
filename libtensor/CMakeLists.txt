@@ -105,6 +105,8 @@ set(SRC_KERNELS
     kernels/dadd2/kern_dadd2_i_x_i_x.C
     kernels/dcopy/kern_dcopy.C
     kernels/dcopy/kern_dcopy_i_i_x.C
+    kernels/dcopy/kern_dcopy_ij_ij_x.C
+    kernels/dcopy/kern_dcopy_ij_ji_x.C
     kernels/ddiv1/kern_ddiv1.C
     kernels/ddiv2/kern_ddiv2.C
     kernels/ddivadd1/kern_ddivadd1.C

@@ -8,9 +8,12 @@ namespace libtensor {
 
 /** \brief Specialized kernel for \f$ b_i = a_i d \f$
 
-     \ingroup libtensor_kernels
+    \ingroup libtensor_kernels
  **/
 class kern_dcopy_i_i_x : public kernel_base<1, 1> {
+    friend class kern_dcopy_ij_ij_x;
+    friend class kern_dcopy_ij_ji_x;
+
 public:
     static const char *k_clazz; //!< Kernel name
 

@@ -1,5 +1,7 @@
 #include <libtensor/linalg/linalg.h>
 #include "kern_dcopy_i_i_x.h"
+#include "kern_dcopy_ij_ij_x.h"
+#include "kern_dcopy_ij_ji_x.h"
 
 namespace libtensor {
 
@@ -46,6 +48,9 @@ kernel_base<1, 1> *kern_dcopy_i_i_x::match(const kern_dcopy &z,
     in.splice(out.begin(), out, ii);
 
     kernel_base<1, 1> *kern = 0;
+
+    if(kern = kern_dcopy_ij_ij_x::match(zz, in, out)) return kern;
+    if(kern = kern_dcopy_ij_ji_x::match(zz, in, out)) return kern;
 
     return new kern_dcopy_i_i_x(zz);
 }
