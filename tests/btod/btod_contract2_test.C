@@ -1,4 +1,5 @@
 #include <sstream>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/btod/scalar_transf_double.h>
 #include <libtensor/btod/btod_contract2.h>
@@ -16,6 +17,10 @@
 namespace libtensor {
 
 void btod_contract2_test::perform() throw(libtest::test_exception) {
+
+    allocator<double>::vmm().init(16, 16, 16777216, 16777216);
+
+    try {
 
     test_bis_1();
     test_bis_2();
@@ -75,6 +80,12 @@ void btod_contract2_test::perform() throw(libtest::test_exception) {
     test_self_2();
     test_self_3();
 
+    } catch(...) {
+        allocator<double>::vmm().shutdown();
+        throw;
+    }
+
+    allocator<double>::vmm().shutdown();
 }
 
 
