@@ -10,6 +10,56 @@ namespace libtensor {
 const char *linalg_base_level2_mkl::k_clazz = "mkl";
 
 
+void linalg_base_level2_mkl::add1_ij_ij_x(
+    size_t ni, size_t nj,
+    const double *a, size_t sia,
+    double b,
+    double *c, size_t sic) {
+
+#ifdef HAVE_MKL_DOMATCOPY
+    if(ni * nj <= 256 * 256 && sic == nj) {
+        start_timer("mkl_domatadd");
+        double t[256 * 256];
+        mkl_domatadd('R', 'N', 'N', ni, nj, b, a, sia, 1.0, c, sic, t, nj);
+        memcpy(c, t, sizeof(double) * ni * nj);
+        stop_timer("mkl_domatadd");
+    } else
+#endif // HAVE_MKL_DOMATCOPY
+    {
+        start_timer("daxpy");
+        for(size_t i = 0; i < ni; i++) {
+            cblas_daxpy(nj, b, a + i * sia, 1, c + i * sic, 1);
+        }
+        stop_timer("daxpy");
+    }
+}
+
+
+void linalg_base_level2_mkl::add1_ij_ji_x(
+    size_t ni, size_t nj,
+    const double *a, size_t sja,
+    double b,
+    double *c, size_t sic) {
+
+#ifdef HAVE_MKL_DOMATCOPY
+    if(ni * nj <= 256 * 256 && sic == nj) {
+        start_timer("mkl_domatadd");
+        double t[256 * 256];
+        mkl_domatadd('R', 'T', 'N', ni, nj, b, a, sja, 1.0, c, sic, t, nj);
+        memcpy(c, t, sizeof(double) * ni * nj);
+        stop_timer("mkl_domatadd");
+    } else
+#endif // HAVE_MKL_DOMATCOPY
+    {
+        start_timer("daxpy");
+        for(size_t i = 0; i < ni; i++) {
+            cblas_daxpy(nj, b, a + i, sja, c + i * sic, 1);
+        }
+        stop_timer("daxpy");
+    }
+}
+
+
 void linalg_base_level2_mkl::i_ip_p_x(
     size_t ni, size_t np,
     const double *a, size_t sia,
