@@ -17,11 +17,17 @@ void linalg_base_level2_mkl::add1_ij_ij_x(
     double *c, size_t sic) {
 
 #ifdef HAVE_MKL_DOMATCOPY
-    if(ni * nj <= 256 * 256 && sic == nj) {
+    if(ni * nj <= 256 * 256) {
         start_timer("mkl_domatadd");
         double t[256 * 256];
         mkl_domatadd('R', 'N', 'N', ni, nj, b, a, sia, 1.0, c, sic, t, nj);
-        memcpy(c, t, sizeof(double) * ni * nj);
+        if(sic == nj) {
+            memcpy(c, t, sizeof(double) * ni * nj);
+        } else {
+            for(size_t i = 0; i < ni; i++) {
+                memcpy(c + i * sic, t + i * nj, sizeof(double) * nj);
+            }
+        }
         stop_timer("mkl_domatadd");
     } else
 #endif // HAVE_MKL_DOMATCOPY
