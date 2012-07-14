@@ -18,11 +18,22 @@ namespace libtensor {
 
 void btod_cholesky_test::perform() throw(libtest::test_exception) {
 
+    allocator<double>::vmm().init(16, 16, 16777216, 16777216);
+
+    try {
+
     test_1();
     test_2();
     test_3();
     test_4();
     test_5(); //this test fail for dpstrf
+
+    } catch(...) {
+        allocator<double>::vmm().shutdown();
+        throw;
+    }
+
+    allocator<double>::vmm().shutdown();
 }
 
 
