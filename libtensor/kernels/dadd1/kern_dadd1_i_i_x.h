@@ -11,6 +11,9 @@ namespace libtensor {
      \ingroup libtensor_kernels
  **/
 class kern_dadd1_i_i_x : public kernel_base<1, 1> {
+    friend class kern_dadd1_ij_ij_x;
+    friend class kern_dadd1_ij_ji_x;
+
 public:
     static const char *k_clazz; //!< Kernel name
 
