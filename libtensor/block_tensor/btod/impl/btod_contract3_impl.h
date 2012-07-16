@@ -75,6 +75,7 @@ void btod_contract3<N1, N2, N3, K1, K2>::perform(
         if(first_batch) {
             btod_contract2<N1 + N2, N3, K2>(m_contr2, btab, m_btc).
                 perform(btd);
+            first_batch = false;
         } else {
             btod_contract2<N1 + N2, N3, K2>(m_contr2, btab, m_btc).
                 perform(btd, 1.0);
