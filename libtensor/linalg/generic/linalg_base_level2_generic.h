@@ -13,6 +13,38 @@ namespace libtensor {
 struct linalg_base_level2_generic {
 
 
+    /** \brief \f$ c_{ij} = c_{ij} + a_{ij} b \f$
+        \param ni Number of elements i.
+        \param nj Number of elements j.
+        \param a Pointer to a.
+        \param sia Step of i in a.
+        \param b Scalar b.
+        \param c Pointer to c.
+        \param sic Step of i in c.
+     **/
+    static void add1_ij_ij_x(
+        size_t ni, size_t nj,
+        const double *a, size_t sia,
+        double b,
+        double *c, size_t sic);
+
+
+    /** \brief \f$ c_{ij} = c_{ij} + a_{ji} b \f$
+        \param ni Number of elements i.
+        \param nj Number of elements j.
+        \param a Pointer to a.
+        \param sja Step of j in a.
+        \param b Scalar b.
+        \param c Pointer to c.
+        \param sic Step of i in c.
+     **/
+    static void add1_ij_ji_x(
+        size_t ni, size_t nj,
+        const double *a, size_t sja,
+        double b,
+        double *c, size_t sic);
+
+
     /** \brief \f$ c_i = c_i + \sum_p a_{ip} b_p d \f$
         \param ni Number of elements i.
         \param np Number of elements p.
@@ -84,7 +116,23 @@ struct linalg_base_level2_generic {
         double *c, size_t sic);
 
 
-    /** \brief \f$ c_{ij} = c_{ij} + a_{ji} b \f$
+    /** \brief \f$ c_{ij} = a_{ij} b \f$
+        \param ni Number of elements i.
+        \param nj Number of elements j.
+        \param a Pointer to a.
+        \param sia Step of i in a.
+        \param b Scalar b.
+        \param c Pointer to c.
+        \param sic Step of i in c.
+     **/
+    static void ij_ij_x(
+        size_t ni, size_t nj,
+        const double *a, size_t sia,
+        double b,
+        double *c, size_t sic);
+
+
+    /** \brief \f$ c_{ij} = a_{ji} b \f$
         \param ni Number of elements i.
         \param nj Number of elements j.
         \param a Pointer to a.

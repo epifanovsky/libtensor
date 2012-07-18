@@ -15,39 +15,16 @@ set(SRC
     symmetry/product_table_container.C
     symmetry/product_table_i.C
     tod/loop_list_add.C
-    tod/loop_list_copy.C
-    tod/loop_list_mul.C
-    tod/loop_list_elem.C
-    tod/loop_list_elem1.C
-    tod/kernels/kern_add_generic.C
-    tod/kernels/kern_add_i_i_x_x.C
-    tod/kernels/kern_add_i_x_i_x.C
-    tod/kernels/kern_copy_generic.C
-    tod/kernels/kern_mul_generic.C
-    tod/kernels/kern_mul_i_i_i.C
-    tod/kernels/kern_mul_i_i_x.C
-    tod/kernels/kern_mul_i_ip_p.C
+)
+
+set(SKIPPED
     tod/kernels/kern_mul_i_ipq_qp.C
-    tod/kernels/kern_mul_i_p_ip.C
-    tod/kernels/kern_mul_i_p_pi.C
-    tod/kernels/kern_mul_i_pi_p.C
-    tod/kernels/kern_mul_i_x_i.C
-    tod/kernels/kern_mul_ij_i_j.C
-    tod/kernels/kern_mul_ij_ip_jp.C
-    tod/kernels/kern_mul_ij_ip_pj.C
     tod/kernels/kern_mul_ij_ipq_jqp.C
     tod/kernels/kern_mul_ij_ipq_pjq.C
-    tod/kernels/kern_mul_ij_j_i.C
     tod/kernels/kern_mul_ij_jipq_qp.C
-    tod/kernels/kern_mul_ij_jp_ip.C
-    tod/kernels/kern_mul_ij_jp_pi.C
     tod/kernels/kern_mul_ij_jpq_iqp.C
     tod/kernels/kern_mul_ij_p_pji.C
-    tod/kernels/kern_mul_ij_pi_jp.C
-    tod/kernels/kern_mul_ij_pi_pj.C
     tod/kernels/kern_mul_ij_piq_pjq.C
-    tod/kernels/kern_mul_ij_pj_ip.C
-    tod/kernels/kern_mul_ij_pj_pi.C
     tod/kernels/kern_mul_ij_pji_p.C
     tod/kernels/kern_mul_ij_pjq_piq.C
     tod/kernels/kern_mul_ijk_ip_jpk.C
@@ -108,8 +85,18 @@ set(SRC
     tod/kernels/kern_mul_ijklm_ipkm_jpl.C
     tod/kernels/kern_mul_ijklm_jlp_ipkm.C
     tod/kernels/kern_mul_ijklmn_kjmp_ipln.C
-    tod/kernels/kern_mul_x_p_p.C
-    tod/kernels/kern_mul_x_pq_qp.C
+)
+
+set(SRC_LINALG_ACML
+    linalg/acml/linalg_base_level1_acml.C
+    linalg/acml/linalg_base_level2_acml.C
+    linalg/acml/linalg_base_level3_acml.C
+)
+
+set(SRC_LINALG_MKL
+    linalg/mkl/linalg_base_level1_mkl.C
+    linalg/mkl/linalg_base_level2_mkl.C
+    linalg/mkl/linalg_base_level3_mkl.C
 )
 
 set(SRC_LINALG
@@ -120,6 +107,45 @@ set(SRC_LINALG
     linalg/generic/linalg_base_level4_generic.C
     linalg/generic/linalg_base_level5_generic.C
     linalg/generic/linalg_base_level6_generic.C
+)
+
+set(SRC_KERNELS
+    kernels/dadd1/kern_dadd1.C
+    kernels/dadd1/kern_dadd1_i_i_x.C
+    kernels/dadd1/kern_dadd1_ij_ij_x.C
+    kernels/dadd1/kern_dadd1_ij_ji_x.C
+    kernels/dadd2/kern_dadd2.C
+    kernels/dadd2/kern_dadd2_i_i_x_x.C
+    kernels/dadd2/kern_dadd2_i_x_i_x.C
+    kernels/dcopy/kern_dcopy.C
+    kernels/dcopy/kern_dcopy_i_i_x.C
+    kernels/dcopy/kern_dcopy_ij_ij_x.C
+    kernels/dcopy/kern_dcopy_ij_ji_x.C
+    kernels/ddiv1/kern_ddiv1.C
+    kernels/ddiv2/kern_ddiv2.C
+    kernels/ddivadd1/kern_ddivadd1.C
+    kernels/dmul1/kern_dmul1.C
+    kernels/dmul2/kern_dmul2.C
+    kernels/dmul2/kern_dmul2_i_i_i.C
+    kernels/dmul2/kern_dmul2_i_i_x.C
+    kernels/dmul2/kern_dmul2_i_x_i.C
+    kernels/dmul2/kern_dmul2_x_p_p.C
+    kernels/dmul2/kern_dmul2_i_ip_p.C
+    kernels/dmul2/kern_dmul2_i_p_ip.C
+    kernels/dmul2/kern_dmul2_i_p_pi.C
+    kernels/dmul2/kern_dmul2_i_pi_p.C
+    kernels/dmul2/kern_dmul2_x_pq_qp.C
+    kernels/dmul2/kern_dmul2_ij_i_j.C
+    kernels/dmul2/kern_dmul2_ij_j_i.C
+    kernels/dmul2/kern_dmul2_ij_ip_jp.C
+    kernels/dmul2/kern_dmul2_ij_ip_pj.C
+    kernels/dmul2/kern_dmul2_ij_jp_ip.C
+    kernels/dmul2/kern_dmul2_ij_jp_pi.C
+    kernels/dmul2/kern_dmul2_ij_pi_jp.C
+    kernels/dmul2/kern_dmul2_ij_pi_pj.C
+    kernels/dmul2/kern_dmul2_ij_pj_ip.C
+    kernels/dmul2/kern_dmul2_ij_pj_pi.C
+    kernels/dmuladd1/kern_dmuladd1.C
 )
 
 set(SRC_INST
@@ -189,6 +215,7 @@ set(SRC_INST
     block_tensor/btod/impl/additive_btod.C
     block_tensor/btod/impl/basic_btod.C
     block_tensor/btod/impl/btod_contract2_sym.C
+    block_tensor/btod/impl/btod_contract3.C
     block_tensor/btod/impl/btod_copy.C
     block_tensor/btod/impl/btod_diag.C
     block_tensor/btod/impl/btod_dotprod.C
@@ -222,7 +249,13 @@ set(SRC_QCHEM
     linalg/qchem/linalg_base_level3_qchem.C
 )
 
-add_library(tensor ${SRC} ${SRC_LINALG} ${SRC_INST})
+if(USE_ACML)
+    set(SRC_LINALG ${SRC_LINALG} ${SRC_LINALG_ACML})
+elseif(USE_MKL)
+    set(SRC_LINALG ${SRC_LINALG} ${SRC_LINALG_MKL})
+endif()
+
+add_library(tensor ${SRC} ${SRC_LINALG} ${SRC_KERNELS} ${SRC_INST} ${SRC_MP})
 if(QCHEM_SOURCE_DIR)
     add_library(tensor_qchem ${SRC_QCHEM})
     add_dependencies(tensor_qchem tensor)
@@ -230,8 +263,6 @@ endif(QCHEM_SOURCE_DIR)
 
 set_property(TARGET tensor APPEND PROPERTY
     COMPILE_DEFINITIONS LIBTENSOR_INSTANTIATE_TEMPLATES)
-set_property(TARGET tensor APPEND PROPERTY
-    COMPILE_DEFINITIONS LIBTENSOR_TIMINGS)
 set_property(TARGET tensor APPEND PROPERTY
     COMPILE_DEFINITIONS_DEBUG LIBTENSOR_DEBUG)
 if(HAVE_LIBVMM)

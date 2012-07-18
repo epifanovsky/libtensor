@@ -10,6 +10,7 @@
 #include "btod_cholesky_test.h"
 #include "btod_compare_test.h"
 #include "btod_contract2_test.h"
+#include "btod_contract3_test.h"
 #include "btod_copy_test.h"
 #include "btod_diag_test.h"
 #include "btod_diagonalize_test.h"
@@ -58,6 +59,7 @@ namespace libtensor {
     \li libtensor::btod_cholesky_test
     \li libtensor::btod_compare_test
     \li libtensor::btod_contract2_test
+    \li libtensor::btod_contract3_test
     \li libtensor::btod_copy_test
     \li libtensor::btod_diag_test
     \li libtensor::btod_diagonalize_test
@@ -95,6 +97,7 @@ private:
     unit_test_factory<btod_cholesky_test> m_utf_btod_cholesky;
     unit_test_factory<btod_compare_test> m_utf_btod_compare;
     unit_test_factory<btod_contract2_test> m_utf_btod_contract2;
+    unit_test_factory<btod_contract3_test> m_utf_btod_contract3;
     unit_test_factory<btod_copy_test> m_utf_btod_copy;
     unit_test_factory<btod_diag_test> m_utf_btod_diag;
     unit_test_factory<btod_diagonalize_test> m_utf_btod_diagonalize;

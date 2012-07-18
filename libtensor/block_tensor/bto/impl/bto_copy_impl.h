@@ -91,6 +91,8 @@ void bto_copy<N, Traits>::compute_block(bool zero, block_t &blk,
     typedef typename Traits::template to_set_type<N>::type to_set_t;
     typedef typename Traits::template to_copy_type<N>::type to_copy_t;
 
+    bto_copy<N, Traits>::start_timer("compute_block");
+
     block_tensor_ctrl_t ctrla(m_bta);
     dimensions<N> bidimsa = m_bta.get_bis().get_block_index_dims();
 
@@ -114,6 +116,8 @@ void bto_copy<N, Traits>::compute_block(bool zero, block_t &blk,
         to_copy_t(blka, tra).perform(false, Traits::identity(), blk);
         ctrla.ret_block(acia.get_index());
     }
+
+    bto_copy<N, Traits>::stop_timer("compute_block");
 }
 
 
@@ -122,6 +126,8 @@ void bto_copy<N, Traits>::make_schedule() {
 
     typedef typename Traits::template block_tensor_ctrl_type<N>::type
         block_tensor_ctrl_t;
+
+    bto_copy<N, Traits>::start_timer("make_schedule");
 
     block_tensor_ctrl_t ctrla(m_bta);
     dimensions<N> bidimsa = m_bta.get_bis().get_block_index_dims();
@@ -142,6 +148,8 @@ void bto_copy<N, Traits>::make_schedule() {
             m_sch.insert(ola.get_abs_index(ioa));
         }
     }
+
+    bto_copy<N, Traits>::stop_timer("make_schedule");
 }
 
 

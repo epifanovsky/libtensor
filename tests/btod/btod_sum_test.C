@@ -15,6 +15,10 @@ namespace libtensor {
 
 void btod_sum_test::perform() throw(libtest::test_exception) {
 
+    allocator<double>::vmm().init(16, 16, 16777216, 16777216);
+
+    try {
+
     test_1();
     test_2();
     test_3();
@@ -28,6 +32,13 @@ void btod_sum_test::perform() throw(libtest::test_exception) {
     test_9b();
     test_10a();
     test_10b();
+
+    } catch(...) {
+        allocator<double>::vmm().shutdown();
+        throw;
+    }
+
+    allocator<double>::vmm().shutdown();
 }
 
 

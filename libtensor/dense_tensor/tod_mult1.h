@@ -2,7 +2,6 @@
 #define LIBTENSOR_TOD_MULT1_H
 
 #include <libtensor/timings.h>
-#include <libtensor/tod/loop_list_elem1.h>
 #include "dense_tensor_i.h"
 
 namespace libtensor {
@@ -24,9 +23,7 @@ namespace libtensor {
     \ingroup libtensor_dense_tensor_tod
  **/
 template<size_t N>
-class tod_mult1 :
-    public loop_list_elem1,
-    public timings< tod_mult1<N> > {
+class tod_mult1 : public timings< tod_mult1<N> > {
 public:
     static const char *k_clazz; //!< Class name
 
@@ -73,10 +70,6 @@ public:
 
 private:
     void do_perform(dense_tensor_wr_i<N, double> &ta, bool doadd, double c);
-
-    void build_loop(typename loop_list_elem1::list_t &loop,
-            const dimensions<N> &dimsa, const dimensions<N> &dimsb,
-            const permutation<N> &permb);
 
 private:
     tod_mult1(const tod_mult1&);

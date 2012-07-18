@@ -27,7 +27,7 @@ public:
 
     virtual void run(const loop_registers<2, 1> &r);
 
-    static kernel_base<2, 1> *match(const kern_mul_ij_pj_pi &z,
+    static kernel_base<2, 1> *match(const kern_dmul2_ij_pj_pi &z,
         list_t &in, list_t &out);
 
 };

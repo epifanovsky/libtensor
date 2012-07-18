@@ -4,38 +4,77 @@
 #include <list>
 #include <libtensor/timings.h>
 #include <libtensor/tod/contraction2.h>
-#include <libtensor/tod/kernels/loop_list_node.h>
+#include <libtensor/kernels/loop_list_node.h>
+#include "to_contract2_dims.h"
 
 
 namespace libtensor {
 
 
-/** \brief Contracts two tensors (double)
+/** \brief General contraction two dense tensors
+    \tparam N Order of first tensor (A) less contraction degree.
+    \tparam M Order of second tensor (B) less contraction degree.
+    \tparam K Contraction degree (number of inner indexes).
 
-    \tparam N Order of the first %tensor (a) less the contraction degree
-    \tparam M Order of the second %tensor (b) less the contraction degree
-    \tparam K Contraction degree (the number of indexes over which the
-        tensors are contracted)
+    This operation performs the contraction of two tensors. The result is
+    scaled by the given factor and added to the output tensor.
 
-    This operation contracts %tensor T1 permuted as P1 with %tensor T2
-    permuted as P2 over n last indexes. The result is permuted as Pres
-    and written or added to the resulting %tensor.
+    The contraction is specified by passing an initialized contraction2 object.
 
-    Although it is convenient to define a contraction through permutations,
-    it is not the most efficient way of calculating it. This class seeks
-    to use algorithms tailored for different tensors to get the best
-    performance. For more information, read the wiki section on %tensor
-    contractions.
+    Contractions can be done in the streaming mode, which allows for multiple
+    contractions to be accumulated into one result. Such contraction is
+    initialized by passing the first set of arguments upon construction and
+    adding further sets by calling add_args(). When running multiple
+    contractions at once, the algorithm makes more efficient use of internal
+    buffers, which leads to higher performance.
 
-    \ingroup libtensor_tod
-**/
+    \sa dense_tensor_i, contraction2
+
+    \ingroup libtensor_dense_tensor_tod
+ **/
 template<size_t N, size_t M, size_t K>
 class tod_contract2 : public timings< tod_contract2<N, M, K> > {
-
 public:
     static const char *k_clazz;
 
+public:
+    enum {
+        k_ordera = N + K, //!< Order of first argument (A)
+        k_orderb = M + K, //!< Order of second argument (B)
+        k_orderc = N + M //!< Order of result (C)
+    };
+
 private:
+    struct args {
+        contraction2<N, M, K> contr; //!< Contraction
+        dense_tensor_i<k_ordera, double> &ta; //!< First tensor (A)
+        dense_tensor_i<k_orderb, double> &tb; //!< Second tensor (B)
+        double d; //!< Scaling factor
+
+        args(
+            const contraction2<N, M, K> &contr_,
+            dense_tensor_i<k_ordera, double> &ta_,
+            dense_tensor_i<k_orderb, double> &tb_,
+            double d_) :
+            contr(contr_), ta(ta_), tb(tb_), d(d_) { }
+    };
+
+    struct aligned_args : public args {
+        permutation<k_ordera> perma;
+        permutation<k_orderb> permb;
+        permutation<k_orderc> permc;
+
+        aligned_args(
+            const args &ar_) :
+            args(ar_) { }
+        aligned_args(
+            const args &ar_,
+            const permutation<k_ordera> &perma_,
+            const permutation<k_orderb> &permb_,
+            const permutation<k_orderc> &permc_) :
+            args(ar_), perma(perma_), permb(permb_), permc(permc_) { }
+    };
+
     class loop_list_adapter {
     private:
         typedef std::list< loop_list_node<2, 1> > list_t;
@@ -54,28 +93,34 @@ private:
         }
     };
 
-public:
-    enum {
-        k_ordera = N + K, //!< Order of first argument (A)
-        k_orderb = M + K, //!< Order of second argument (B)
-        k_orderc = N + M //!< Order of result (C)
-    };
-
 private:
-    contraction2<N, M, K> m_contr; //!< Contraction
-    dense_tensor_i<k_ordera, double> &m_ta; //!< First tensor (a)
-    dense_tensor_i<k_orderb, double> &m_tb; //!< Second tensor (b)
+    to_contract2_dims<N, M, K> m_dimsc; //!< Dimensions of result
+    std::list<args> m_argslst; //!< List of arguments
 
 public:
     /** \brief Initializes the contraction operation
-
         \param contr Contraction.
-        \param ta Tensor a (first argument).
-        \param tb Tensor b (second argument).
+        \param ta First contracted tensor A.
+        \param tb Second contracted tensor B.
+        \param d Scaling factor d (default 1.0).
      **/
-    tod_contract2(const contraction2<N, M, K> &contr,
+    tod_contract2(
+        const contraction2<N, M, K> &contr,
         dense_tensor_i<k_ordera, double> &ta,
-        dense_tensor_i<k_orderb, double> &tb);
+        dense_tensor_i<k_orderb, double> &tb,
+        double d = 1.0);
+
+    /** \brief Adds a set of arguments to the argument list
+        \param contr Contraction.
+        \param ta First contracted tensor A.
+        \param tb Second contracted tensor B.
+        \param d Scaling factor d.
+     **/
+    void add_args(
+        const contraction2<N, M, K> &contr,
+        dense_tensor_i<k_ordera, double> &ta,
+        dense_tensor_i<k_orderb, double> &tb,
+        double d);
 
     /** \brief Prefetches the arguments
      **/
@@ -87,6 +132,17 @@ public:
         \param tc Output tensor.
      **/
     void perform(bool zero, double d, dense_tensor_i<k_orderc, double> &tc);
+
+private:
+    void align(const sequence<2 * (N + M + K), size_t> &conn,
+        permutation<N + K> &perma, permutation<M + K> &permb,
+        permutation<N + M> &permc);
+
+    void perform_internal(aligned_args &ar, double d, double *pc,
+        const dimensions<k_orderc> &dimsc);
+
+private:
+    tod_contract2(const tod_contract2&);
 
 };
 

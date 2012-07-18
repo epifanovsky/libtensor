@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_BTOD_CONTRACT2_IMPL_H
 #define LIBTENSOR_BTOD_CONTRACT2_IMPL_H
 
+#include <memory>
 #include <libutil/thread_pool/thread_pool.h>
 #include "../core/block_index_subspace_builder.h"
 #include "../core/mask.h"
@@ -460,10 +461,10 @@ void btod_contract2<N, M, K>::contract_block(
     const tensor_transf<k_orderc, double> &trc,
     bool zero, double c) {
 
-    if(zero) tod_set<k_orderc>().perform(tc);
-
     std::list< index<k_ordera> > blksa;
     std::list< index<k_orderb> > blksb;
+
+    std::auto_ptr< tod_contract2<N, M, K> > op;
 
     for(typename block_contr_list_t::iterator ilst = lst.begin();
         ilst != lst.end(); ilst++) {
@@ -487,9 +488,16 @@ void btod_contract2<N, M, K>::contract_block(
         contr.permute_b(ilst->m_permb);
         contr.permute_c(trc.get_perm());
 
-        double kc = ilst->m_c * trc.get_scalar_tr().get_coeff() * c;
-        tod_contract2<N, M, K>(contr, blka, blkb).perform(false, kc, tc);
+        double kc = ilst->m_c * trc.get_scalar_tr().get_coeff();
+        if(op.get() == 0) {
+            op = std::auto_ptr< tod_contract2<N, M, K> >(
+                new tod_contract2<N, M, K>(contr, blka, blkb, kc));
+        } else {
+            op->add_args(contr, blka, blkb, kc);
+        }
     }
+
+    op->perform(zero, c, tc);
 
     for(typename std::list< index<k_ordera> >::const_iterator i =
             blksa.begin(); i != blksa.end(); i++) ca.ret_block(*i);
