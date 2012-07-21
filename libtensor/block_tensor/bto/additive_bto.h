@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_ADDITIVE_BTO_H
 #define LIBTENSOR_ADDITIVE_BTO_H
 
+#include <vector>
 #include <libutil/thread_pool/thread_pool.h>
 #include <libtensor/core/tensor_transf.h>
 #include "basic_bto.h"
@@ -90,11 +91,20 @@ public:
 
 public:
     /** \brief Computes the result of the operation and adds it to the
-            output block %tensor
-        \param bt Output block %tensor.
+            output block tensor
+        \param bt Output block tensor.
         \param c Scaling coefficient.
      **/
     virtual void perform(block_tensor_t &bt, const element_t &c);
+
+    /** \brief Partially computes the result of the operation and adds it to the
+            output block tensor
+        \param bt Output block tensor.
+        \param c Scaling coefficient.
+        \param blst List of canonical blocks to compute.
+     **/
+    virtual void perform(block_tensor_t &bt, const element_t &c,
+        const std::vector<size_t> &blst);
 
     /** \brief Implementation of basic_btod<N>::compute_block
         \param blk Output %tensor.
@@ -120,6 +130,10 @@ protected:
     void compute_block(additive_bto<N, Traits> &op, bool zero, block_t &blk,
         const index<N> &i, const tensor_transf<N, element_t> &tr,
         const element_t &c);
+
+private:
+    void perform_inner(block_tensor_t &bt, const element_t &c, bool filter,
+        const std::vector<size_t> &blst);
 
 };
 

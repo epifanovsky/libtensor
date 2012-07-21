@@ -145,18 +145,33 @@ void btod_contract2<N, M, K>::perform(block_tensor_i<N + M, double> &btc,
     batsza = nbata > 0 ? (nblka + nbata - 1) / nbata : 1;
     batszb = nbatb > 0 ? (nblkb + nbatb - 1) / nbatb : 1;
 
-    //  Temporary partial A and B
+    //  Temporary partial A, B, and C
 
     block_tensor< k_ordera, double, allocator<double> > btat(m_bta.get_bis());
     block_tensor< k_orderb, double, allocator<double> > btbt(m_btb.get_bis());
+    block_tensor< k_orderc, double, allocator<double> > btct1(m_symc.get_bisc()),
+        btct2(m_symc.get_bisc());
     block_tensor_ctrl<k_ordera, double> cat(btat);
     block_tensor_ctrl<k_orderb, double> cbt(btbt);
+    block_tensor_ctrl<k_orderc, double> cct1(btct1), cct2(btct2);
     so_copy<k_ordera, double>(ca.req_const_symmetry()).perform(
         cat.req_symmetry());
     so_copy<k_orderb, double>(cb.req_const_symmetry()).perform(
         cbt.req_symmetry());
+    so_copy<k_orderc, double>(m_symc.get_symc()).perform(cct2.req_symmetry());
+
+    //  List of canonical blocks in C
+    //  Required for cases when batching breaks symmetry
+
+    std::vector<size_t> blst;
+    for(typename assignment_schedule<k_orderc, double>::iterator i =
+        m_sch.begin(); i != m_sch.end(); ++i) {
+        blst.push_back(m_sch.get_abs_index(i));
+    }
 
     //  Batching
+
+    dimensions<k_orderc> bidimsc = m_symc.get_bisc().get_block_index_dims();
 
     typename orbit_list<k_ordera, double>::iterator ioa = ola.begin();
     while(ioa != ola.end()) {
@@ -198,27 +213,44 @@ void btod_contract2<N, M, K>::perform(block_tensor_i<N + M, double> &btc,
 
             if(nbb == 0) continue;
 
+            btod_set<k_orderc>().perform(btct1);
+            so_copy<k_orderc, double>(m_symc.get_symc()).
+                perform(cct1.req_symmetry());
+            //  Calling this may break the symmetry of final result
+            //  in some cases, e.g. self-contraction
             btod_contract2<N, M, K>(m_contr, btat, btbt).
-                perform_inner(btc, d);
+                perform_inner(btct1, 1.0, blst);
+
+            btod_contract2<N, M, K>::start_timer("copy_c");
+            for(size_t i = 0; i < blst.size(); i++) {
+                abs_index<k_orderc> aic(blst[i], bidimsc);
+                if(!cct1.req_is_zero_block(aic.get_index())) {
+                    bool zero = cct2.req_is_zero_block(aic.get_index());
+                    dense_tensor_i<k_orderc, double> &blkc0 =
+                        cct1.req_block(aic.get_index());
+                    dense_tensor_i<k_orderc, double> &blkc =
+                        cct2.req_block(aic.get_index());
+                    tod_copy<k_orderc>(blkc0).perform(zero, 1.0, blkc);
+                    cct1.ret_block(aic.get_index());
+                    cct2.ret_block(aic.get_index());
+                }
+            }
+            btod_contract2<N, M, K>::stop_timer("copy_c");
         }
     }
+
+    btod_copy<k_orderc>(btct2).perform(btc, d);
+
     btod_contract2<N, M, K>::stop_timer("perform");
 }
 
 
 template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::perform_inner(
-    block_tensor_i<N + M, double> &btc) {
+    block_tensor_i<N + M, double> &btc, double d,
+    const std::vector<size_t> &blst) {
 
-    additive_bto< N + M, bto_traits<double> >::perform(btc);
-}
-
-
-template<size_t N, size_t M, size_t K>
-void btod_contract2<N, M, K>::perform_inner(
-    block_tensor_i<N + M, double> &btc, double d) {
-
-    additive_bto< N + M, bto_traits<double> >::perform(btc, d);
+    additive_bto< N + M, bto_traits<double> >::perform(btc, d, blst);
 }
 
 

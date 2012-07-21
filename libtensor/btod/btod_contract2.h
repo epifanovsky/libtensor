@@ -215,8 +215,8 @@ public:
         const double &c);
 
 private:
-    void perform_inner(block_tensor_i<N + M, double> &btc);
-    void perform_inner(block_tensor_i<N + M, double> &btc, double d);
+    void perform_inner(block_tensor_i<N + M, double> &btc, double d,
+        const std::vector<size_t> &blst);
 
     void make_schedule();
 
