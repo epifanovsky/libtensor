@@ -47,6 +47,28 @@ btod_contract2<N, M, K>::~btod_contract2() {
 
 
 template<size_t N, size_t M, size_t K>
+const block_index_space<N + M> &btod_contract2<N, M, K>::get_bis() const {
+
+    return m_symc.get_bisc();
+}
+
+
+template<size_t N, size_t M, size_t K>
+const symmetry<N + M, double> &btod_contract2<N, M, K>::get_symmetry() const {
+
+    return m_symc.get_symc();
+}
+
+
+template<size_t N, size_t M, size_t K>
+const assignment_schedule<N + M, double>&
+btod_contract2<N, M, K>::get_schedule() const {
+
+    return m_sch;
+}
+
+
+template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::sync_on() {
 
     block_tensor_ctrl<k_ordera, double> ctrla(m_bta);
@@ -64,6 +86,22 @@ void btod_contract2<N, M, K>::sync_off() {
     ctrla.req_sync_off();
     ctrlb.req_sync_off();
 }
+
+
+template<size_t N, size_t M, size_t K>
+void btod_contract2<N, M, K>::perform(block_tensor_i<N + M, double> &btc) {
+
+    additive_bto< N + M, bto_traits<double> >::perform(btc);
+}
+
+
+template<size_t N, size_t M, size_t K>
+void btod_contract2<N, M, K>::perform(block_tensor_i<N + M, double> &btc,
+    double d) {
+
+    additive_bto< N + M, bto_traits<double> >::perform(btc, d);
+}
+
 
 /*
 template<size_t N, size_t M, size_t K>

@@ -199,24 +199,16 @@ public:
     //      libtensor::direct_block_tensor_operation<N + M, double>
     //@{
 
-    virtual const block_index_space<N + M> &get_bis() const {
-        return m_symc.get_bisc();
-    }
-
-    virtual const symmetry<N + M, double> &get_symmetry() const {
-        return m_symc.get_symc();
-    }
-
-    virtual const assignment_schedule<N + M, double> &get_schedule() const {
-        return m_sch;
-    }
-
+    virtual const block_index_space<N + M> &get_bis() const;
+    virtual const symmetry<N + M, double> &get_symmetry() const;
+    virtual const assignment_schedule<N + M, double> &get_schedule() const;
     virtual void sync_on();
     virtual void sync_off();
 
     //@}
 
-    using additive_bto<N + M, bto_traits<double> >::perform;
+    virtual void perform(block_tensor_i<N + M, double> &btc);
+    virtual void perform(block_tensor_i<N + M, double> &btc, double d);
 
     virtual void compute_block(bool zero, dense_tensor_i<N + M, double> &blk,
         const index<N + M> &i, const tensor_transf<N + M, double> &tr,
