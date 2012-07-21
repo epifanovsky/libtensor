@@ -21,6 +21,7 @@
 #include <libtensor/block_tensor/bto/bto_contract2_sym.h>
 #include "../not_implemented.h"
 #include "bad_block_index_space.h"
+#include <libtensor/core/scalar_transf_double.h>
 
 namespace libtensor {
 
@@ -242,110 +243,5 @@ private:
 
 
 } // namespace libtensor
-
-
-#ifdef LIBTENSOR_INSTANTIATE_TEMPLATES
-
-namespace libtensor {
-
-    extern template class btod_contract2<0, 1, 1>;
-    extern template class btod_contract2<0, 1, 2>;
-    extern template class btod_contract2<0, 1, 3>;
-    extern template class btod_contract2<0, 1, 4>;
-    extern template class btod_contract2<0, 1, 5>;
-    extern template class btod_contract2<1, 0, 1>;
-    extern template class btod_contract2<1, 0, 2>;
-    extern template class btod_contract2<1, 0, 3>;
-    extern template class btod_contract2<1, 0, 4>;
-    extern template class btod_contract2<1, 0, 5>;
-
-    extern template class btod_contract2<0, 2, 1>;
-    extern template class btod_contract2<0, 2, 2>;
-    extern template class btod_contract2<0, 2, 3>;
-    extern template class btod_contract2<0, 2, 4>;
-    extern template class btod_contract2<1, 1, 0>;
-    extern template class btod_contract2<1, 1, 1>;
-    extern template class btod_contract2<1, 1, 2>;
-    extern template class btod_contract2<1, 1, 3>;
-    extern template class btod_contract2<1, 1, 4>;
-    extern template class btod_contract2<1, 1, 5>;
-    extern template class btod_contract2<2, 0, 1>;
-    extern template class btod_contract2<2, 0, 2>;
-    extern template class btod_contract2<2, 0, 3>;
-    extern template class btod_contract2<2, 0, 4>;
-
-    extern template class btod_contract2<0, 3, 1>;
-    extern template class btod_contract2<0, 3, 2>;
-    extern template class btod_contract2<0, 3, 3>;
-    extern template class btod_contract2<1, 2, 0>;
-    extern template class btod_contract2<1, 2, 1>;
-    extern template class btod_contract2<1, 2, 2>;
-    extern template class btod_contract2<1, 2, 3>;
-    extern template class btod_contract2<1, 2, 4>;
-    extern template class btod_contract2<2, 1, 0>;
-    extern template class btod_contract2<2, 1, 1>;
-    extern template class btod_contract2<2, 1, 2>;
-    extern template class btod_contract2<2, 1, 3>;
-    extern template class btod_contract2<2, 1, 4>;
-    extern template class btod_contract2<3, 0, 1>;
-    extern template class btod_contract2<3, 0, 2>;
-    extern template class btod_contract2<3, 0, 3>;
-
-    extern template class btod_contract2<0, 4, 1>;
-    extern template class btod_contract2<0, 4, 2>;
-    extern template class btod_contract2<1, 3, 0>;
-    extern template class btod_contract2<1, 3, 1>;
-    extern template class btod_contract2<1, 3, 2>;
-    extern template class btod_contract2<1, 3, 3>;
-    extern template class btod_contract2<2, 2, 0>;
-    extern template class btod_contract2<2, 2, 1>;
-    extern template class btod_contract2<2, 2, 2>;
-    extern template class btod_contract2<2, 2, 3>;
-    extern template class btod_contract2<2, 2, 4>;
-    extern template class btod_contract2<3, 1, 0>;
-    extern template class btod_contract2<3, 1, 1>;
-    extern template class btod_contract2<3, 1, 2>;
-    extern template class btod_contract2<3, 1, 3>;
-    extern template class btod_contract2<4, 0, 1>;
-    extern template class btod_contract2<4, 0, 2>;
-
-    extern template class btod_contract2<0, 5, 1>;
-    extern template class btod_contract2<1, 4, 0>;
-    extern template class btod_contract2<1, 4, 1>;
-    extern template class btod_contract2<1, 4, 2>;
-    extern template class btod_contract2<2, 3, 0>;
-    extern template class btod_contract2<2, 3, 1>;
-    extern template class btod_contract2<2, 3, 2>;
-    extern template class btod_contract2<2, 3, 3>;
-    extern template class btod_contract2<3, 2, 0>;
-    extern template class btod_contract2<3, 2, 1>;
-    extern template class btod_contract2<3, 2, 2>;
-    extern template class btod_contract2<3, 2, 3>;
-    extern template class btod_contract2<4, 1, 0>;
-    extern template class btod_contract2<4, 1, 1>;
-    extern template class btod_contract2<4, 1, 2>;
-    extern template class btod_contract2<5, 0, 1>;
-
-    extern template class btod_contract2<1, 5, 0>;
-    extern template class btod_contract2<1, 5, 1>;
-    extern template class btod_contract2<2, 4, 0>;
-    extern template class btod_contract2<2, 4, 1>;
-    extern template class btod_contract2<2, 4, 2>;
-    extern template class btod_contract2<3, 3, 0>;
-    extern template class btod_contract2<3, 3, 1>;
-    extern template class btod_contract2<3, 3, 2>;
-    extern template class btod_contract2<3, 3, 3>;
-    extern template class btod_contract2<4, 2, 0>;
-    extern template class btod_contract2<4, 2, 1>;
-    extern template class btod_contract2<4, 2, 2>;
-    extern template class btod_contract2<5, 1, 0>;
-    extern template class btod_contract2<5, 1, 1>;
-
-} // namespace libtensor
-
-#else // LIBTENSOR_INSTANTIATE_TEMPLATES
-#include "btod_contract2_impl.h"
-#endif // LIBTENSOR_INSTANTIATE_TEMPLATES
-
 
 #endif // LIBTENSOR_BTOD_CONTRACT2_H

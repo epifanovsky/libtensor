@@ -3,6 +3,7 @@
 
 #include <list>
 #include <libtensor/timings.h>
+#include <libtensor/dense_tensor/dense_tensor_i.h>
 #include <libtensor/tod/contraction2.h>
 #include <libtensor/kernels/loop_list_node.h>
 #include "to_contract2_dims.h"

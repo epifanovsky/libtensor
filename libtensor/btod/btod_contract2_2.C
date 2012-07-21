@@ -1,7 +1,3 @@
-#ifdef LIBTENSOR_INSTANTIATE_TEMPLATES
-
-#include <libtensor/core/scalar_transf_double.h>
-#include "btod_contract2.h"
 #include "btod_contract2_impl.h"
 
 namespace libtensor {
@@ -98,5 +94,3 @@ template class btod_contract2<2, 0, 4>;
 
 
 } // namespace libtensor
-
-#endif // LIBTENSOR_INSTANTIATE_TEMPLATES

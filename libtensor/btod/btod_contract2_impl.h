@@ -9,6 +9,7 @@
 #include "../symmetry/so_reduce.h"
 #include <libtensor/dense_tensor/tod_contract2.h>
 #include <libtensor/block_tensor/bto/bto_contract2_sym.h>
+#include "btod_contract2.h"
 
 namespace libtensor {
 
