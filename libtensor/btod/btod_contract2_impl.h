@@ -3,12 +3,16 @@
 
 #include <memory>
 #include <libutil/thread_pool/thread_pool.h>
-#include "../core/block_index_subspace_builder.h"
+#include <libtensor/core/allocator.h>
 #include "../core/mask.h"
 #include "../symmetry/so_dirprod.h"
 #include "../symmetry/so_reduce.h"
 #include <libtensor/dense_tensor/tod_contract2.h>
+#include <libtensor/dense_tensor/tod_copy.h>
+#include <libtensor/core/block_tensor.h>
 #include <libtensor/block_tensor/bto/bto_contract2_sym.h>
+#include <libtensor/btod/btod_copy.h>
+#include <libtensor/btod/btod_set.h>
 #include "btod_contract2.h"
 
 namespace libtensor {
@@ -91,13 +95,128 @@ void btod_contract2<N, M, K>::sync_off() {
 template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::perform(block_tensor_i<N + M, double> &btc) {
 
-    additive_bto< N + M, bto_traits<double> >::perform(btc);
+    block_tensor_ctrl<k_orderc, double> cc(btc);
+
+    //  Prepare output tensor
+
+    btod_set<k_orderc>().perform(btc);
+    so_copy<k_orderc, double>(m_symc.get_symc()).perform(cc.req_symmetry());
+
+    //  Compute
+
+    perform(btc, 1.0);
 }
 
 
 template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::perform(block_tensor_i<N + M, double> &btc,
     double d) {
+
+    btod_contract2<N, M, K>::start_timer("perform");
+
+    block_tensor_ctrl<k_ordera, double> ca(m_bta);
+    block_tensor_ctrl<k_orderb, double> cb(m_btb);
+
+    //  Compute the number of blocks in A and B
+
+    size_t nblka = 0, nblkb = 0;
+    orbit_list<k_ordera, double> ola(ca.req_const_symmetry());
+    for(typename orbit_list<k_ordera, double>::iterator ioa = ola.begin();
+        ioa != ola.end(); ++ioa) {
+        if(!ca.req_is_zero_block(ola.get_index(ioa))) nblka++;
+    }
+    orbit_list<k_orderb, double> olb(cb.req_const_symmetry());
+    for(typename orbit_list<k_orderb, double>::iterator iob = olb.begin();
+        iob != olb.end(); ++iob) {
+        if(!cb.req_is_zero_block(olb.get_index(iob))) nblkb++;
+    }
+
+    if(nblka == 0 || nblkb == 0) {
+        btod_contract2<N, M, K>::stop_timer("perform");
+        return;
+    }
+
+    //  Number and size of batches in A and B
+
+    size_t batsz = 128; // XXX: arbitrary batch size!
+    size_t nbata, nbatb, batsza, batszb;
+    nbata = (nblka + batsz - 1) / batsz;
+    nbatb = (nblkb + batsz - 1) / batsz;
+    batsza = nbata > 0 ? (nblka + nbata - 1) / nbata : 1;
+    batszb = nbatb > 0 ? (nblkb + nbatb - 1) / nbatb : 1;
+
+    //  Temporary partial A and B
+
+    block_tensor< k_ordera, double, allocator<double> > btat(m_bta.get_bis());
+    block_tensor< k_orderb, double, allocator<double> > btbt(m_btb.get_bis());
+    block_tensor_ctrl<k_ordera, double> cat(btat);
+    block_tensor_ctrl<k_orderb, double> cbt(btbt);
+    so_copy<k_ordera, double>(ca.req_const_symmetry()).perform(
+        cat.req_symmetry());
+    so_copy<k_orderb, double>(cb.req_const_symmetry()).perform(
+        cbt.req_symmetry());
+
+    //  Batching
+
+    typename orbit_list<k_ordera, double>::iterator ioa = ola.begin();
+    while(ioa != ola.end()) {
+
+        btod_set<k_ordera>().perform(btat);
+        btod_contract2<N, M, K>::start_timer("copy_a");
+        size_t nba;
+        for(nba = 0; ioa != ola.end() && nba < batsza; ++ioa) {
+            const index<k_ordera> &ia = ola.get_index(ioa);
+            if(ca.req_is_zero_block(ia)) continue;
+            dense_tensor_i<k_ordera, double> &blka0 = ca.req_block(ia);
+            dense_tensor_i<k_ordera, double> &blka = cat.req_block(ia);
+            tod_copy<k_ordera>(blka0).perform(true, 1.0, blka);
+            cat.ret_block(ia);
+            ca.ret_block(ia);
+            nba++;
+        }
+        btod_contract2<N, M, K>::stop_timer("copy_a");
+
+        if(nba == 0) continue;
+
+        typename orbit_list<k_orderb, double>::iterator iob = olb.begin();
+        while(iob != olb.end()) {
+
+            btod_set<k_orderb>().perform(btbt);
+            btod_contract2<N, M, K>::start_timer("copy_b");
+            size_t nbb;
+            for(nbb = 0; iob != olb.end() && nbb < batszb; ++iob) {
+                const index<k_orderb> &ib = olb.get_index(iob);
+                if(cb.req_is_zero_block(ib)) continue;
+                dense_tensor_i<k_orderb, double> &blkb0 = cb.req_block(ib);
+                dense_tensor_i<k_orderb, double> &blkb = cbt.req_block(ib);
+                tod_copy<k_orderb>(blkb0).perform(true, 1.0, blkb);
+                cbt.ret_block(ib);
+                cb.ret_block(ib);
+                nbb++;
+            }
+            btod_contract2<N, M, K>::stop_timer("copy_b");
+
+            if(nbb == 0) continue;
+
+            btod_contract2<N, M, K>(m_contr, btat, btbt).
+                perform_inner(btc, d);
+        }
+    }
+    btod_contract2<N, M, K>::stop_timer("perform");
+}
+
+
+template<size_t N, size_t M, size_t K>
+void btod_contract2<N, M, K>::perform_inner(
+    block_tensor_i<N + M, double> &btc) {
+
+    additive_bto< N + M, bto_traits<double> >::perform(btc);
+}
+
+
+template<size_t N, size_t M, size_t K>
+void btod_contract2<N, M, K>::perform_inner(
+    block_tensor_i<N + M, double> &btc, double d) {
 
     additive_bto< N + M, bto_traits<double> >::perform(btc, d);
 }
@@ -148,7 +267,7 @@ void btod_contract2<N, M, K>::compute_block(bool zero,
         "const index<N + M>&, const tensor_transf<N + M, double>&, "
         "const double&)";
 
-    btod_contract2<N, M, K>::start_timer();
+    btod_contract2<N, M, K>::start_timer("compute_block");
 
     try {
 
@@ -166,11 +285,11 @@ void btod_contract2<N, M, K>::compute_block(bool zero,
         contract_block(isch->second->first, aic.get_index(), ca, cb,
            blk, tr, zero, c);
     } catch(...) {
-        btod_contract2<N, M, K>::stop_timer();
+        btod_contract2<N, M, K>::stop_timer("compute_block");
         throw;
     }
 
-    btod_contract2<N, M, K>::stop_timer();
+    btod_contract2<N, M, K>::stop_timer("compute_block");
 }
 
 
