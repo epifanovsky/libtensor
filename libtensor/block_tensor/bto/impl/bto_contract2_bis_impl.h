@@ -63,6 +63,7 @@ bto_contract2_bis<N, M, 0>::bto_contract2_bis(
     m_dimsc(contr, bisa.get_dims(), bisb.get_dims()),
     m_bisc(m_dimsc.get_dimsc()) {
 
+    const sequence<2 * (N + M), size_t> &conn = contr.get_conn();
     const dimensions<N> &dimsa = bisa.get_dims();
     const dimensions<M> &dimsb = bisb.get_dims();
 
@@ -74,7 +75,9 @@ bto_contract2_bis<N, M, 0>::bto_contract2_bis(
         mask<N> ma;
         mask<N + M> mc;
         for(size_t i = ia; i < N; i++) {
-            mc[i] = ma[i] = (bisa.get_type(i) == typ);
+            ma[i] = (bisa.get_type(i) == typ);
+            size_t ic = conn[N + M + i];
+            if(ic < N + M) mc[ic] = ma[i];
         }
         const split_points &pts = bisa.get_splits(typ);
         for(size_t ipt = 0; ipt < pts.get_num_points(); ipt++) {
@@ -87,7 +90,9 @@ bto_contract2_bis<N, M, 0>::bto_contract2_bis(
         mask<M> mb;
         mask<N + M> mc;
         for(size_t i = ib; i < M; i++) {
-            mc[N + i] = mb[i] = (bisb.get_type(i) == typ);
+            mb[i] = (bisb.get_type(i) == typ);
+            size_t ic = conn[N + M + N + i];
+            if(ic < N + M) mc[ic] = mb[i];
         }
         const split_points &pts = bisb.get_splits(typ);
         for(size_t ipt = 0; ipt < pts.get_num_points(); ipt++) {

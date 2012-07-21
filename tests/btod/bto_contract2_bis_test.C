@@ -12,6 +12,7 @@ void bto_contract2_bis_test::perform() throw(libtest::test_exception) {
     test_3();
     test_4();
     test_5();
+    test_6();
 }
 
 
@@ -275,6 +276,57 @@ void bto_contract2_bis_test::test_5() throw(libtest::test_exception) {
         contr.contract(3, 3);
 
         bto_contract2_bis<1, 2, 3> op(contr, bisa, bisb);
+
+        if(!op.get_bisc().equals(bisc_ref)) {
+            fail_test(testname, __FILE__, __LINE__,
+                "Invalid output block index space.");
+        }
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void bto_contract2_bis_test::test_6() throw(libtest::test_exception) {
+
+    //
+    //  c_{ijab} = a_{ia} a_{jb}
+    //  [ij] = 11 (3, 5)
+    //  [ab] = 21 (10, 14)
+    //
+
+    static const char *testname = "bto_contract2_bis_test::test_6()";
+
+    try {
+
+        index<2> ia1, ia2;
+        ia2[0] = 10; ia2[1] = 20;
+        dimensions<2> dimsa(index_range<2>(ia1, ia2));
+        block_index_space<2> bisa(dimsa);
+        mask<2> ma10, ma01;
+        ma10[0] = true; ma01[1] = true;
+        bisa.split(ma10, 3);
+        bisa.split(ma10, 5);
+        bisa.split(ma01, 10);
+        bisa.split(ma01, 14);
+
+        block_index_space<2> bisb(bisa);
+
+        index<4> ic1, ic2;
+        ic2[0] = 10; ic2[1] = 10; ic2[2] = 20; ic2[3] = 20;
+        dimensions<4> dimsc(index_range<4>(ic1, ic2));
+        block_index_space<4> bisc_ref(dimsc);
+        mask<4> mc1100, mc0011;
+        mc1100[0] = true; mc1100[1] = true; mc0011[2] = true; mc0011[3] = true;
+        bisc_ref.split(mc1100, 3);
+        bisc_ref.split(mc1100, 5);
+        bisc_ref.split(mc0011, 10);
+        bisc_ref.split(mc0011, 14);
+
+        contraction2<2, 2, 0> contr(permutation<4>().permute(1, 2));
+
+        bto_contract2_bis<2, 2, 0> op(contr, bisa, bisb);
 
         if(!op.get_bisc().equals(bisc_ref)) {
             fail_test(testname, __FILE__, __LINE__,
