@@ -99,7 +99,6 @@ public:
     }
     //@}
 
-protected:
     virtual void compute_block(bool zero, block_t &blk, const index<N> &ib,
         const tensor_transf_t &tr, const element_t &c);
 

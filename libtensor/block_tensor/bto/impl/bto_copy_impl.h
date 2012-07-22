@@ -96,9 +96,11 @@ void bto_copy<N, Traits>::compute_block(bool zero, block_t &blk,
     block_tensor_ctrl_t ctrla(m_bta);
     dimensions<N> bidimsa = m_bta.get_bis().get_block_index_dims();
 
+    tensor_transf_t trinv(m_tr, true);
+
     //  Corresponding index in A
     index<N> ia(ib);
-    ia.permute(m_tr.get_perm());
+    ia.permute(trinv.get_perm());
 
     //  Find the canonical index in A
     orbit<N, double> oa(ctrla.req_const_symmetry(), ia);
@@ -108,7 +110,7 @@ void bto_copy<N, Traits>::compute_block(bool zero, block_t &blk,
     //  Transformation for block from canonical A to B
     tensor_transf_t tra(oa.get_transf(ia));
     tra.transform(m_tr).transform(scalar_transf_t(c));
-    tra.transform(tensor_transf_t(tr, true));
+    tra.transform(tr);
 
     if(zero) to_set_t().perform(blk);
     if(!ctrla.req_is_zero_block(acia.get_index())) {

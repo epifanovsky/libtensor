@@ -200,7 +200,6 @@ void btod_symmetrize<N>::compute_block(bool zero,
         dense_tensor_i<N, double> &blk, const index<N> &idx,
         const tensor_transf<N, double> &tr, const double &c) {
 
-try {
     typedef typename sym_schedule_t::iterator iterator_t;
 
     if(zero) tod_set<N>().perform(blk);
@@ -252,9 +251,6 @@ try {
             }
         }
     }
-} catch(std::exception &e) {
-	std::cout << e.what() << std::endl;
-}
 }
 
 
