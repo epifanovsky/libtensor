@@ -214,6 +214,7 @@ set(SRC_INST
     block_tensor/bto/impl/bto_contract2_bis.C
     block_tensor/btod/impl/additive_btod.C
     block_tensor/btod/impl/basic_btod.C
+    block_tensor/btod/impl/btod_contract2_nzorb.C
     block_tensor/btod/impl/btod_contract2_sym.C
     block_tensor/btod/impl/btod_contract3.C
     block_tensor/btod/impl/btod_copy.C
