@@ -2,6 +2,7 @@
 #define LIBTENSOR_BTO_CONTRACT2_NZORB_H
 
 #include <vector>
+#include <libtensor/timings.h>
 #include <libtensor/core/block_tensor_i.h>
 #include <libtensor/core/symmetry.h>
 #include <libtensor/tod/contraction2.h>
@@ -15,7 +16,7 @@ namespace libtensor {
     \ingroup libtensor_block_tensor
  **/
 template<size_t N, size_t M, size_t K, typename T>
-class bto_contract2_nzorb {
+class bto_contract2_nzorb : public timings< bto_contract2_nzorb<N, M, K, T> > {
 public:
     static const char *k_clazz; //!< Class name
 

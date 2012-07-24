@@ -11,6 +11,7 @@
 #include <libtensor/dense_tensor/tod_copy.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/block_tensor/bto/bto_contract2_sym.h>
+#include <libtensor/block_tensor/bto/bto_contract2_nzorb.h>
 #include <libtensor/btod/btod_copy.h>
 #include <libtensor/btod/btod_set.h>
 #include "btod_contract2.h"
@@ -381,6 +382,10 @@ void btod_contract2<N, M, K>::make_schedule() {
     }
 
     btod_contract2<N, M, K>::stop_timer("make_schedule");
+
+//    bto_contract2_nzorb<N, M, K, double> nzorb(m_contr, m_bta, m_btb,
+//        m_symc.get_symc());
+//    nzorb.build();
 }
 
 
