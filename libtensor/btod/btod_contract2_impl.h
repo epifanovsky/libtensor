@@ -352,7 +352,7 @@ void btod_contract2<N, M, K>::make_schedule() {
         if(n == nmax) {
             make_schedule_task *t = new make_schedule_task(m_contr,
                     m_bta, m_btb, get_symmetry(), m_bidimsc, ola,
-                    ioa1, ioa2, m_contr_sch, m_sch, sch_lock);
+                    ioa1, ioa2, m_contr_sch, sch_lock);
             tasklist.push_back(t);
             n = 0;
             ioa1 = ioa2;
@@ -361,7 +361,7 @@ void btod_contract2<N, M, K>::make_schedule() {
     if(ioa1 != ola.end()) {
         make_schedule_task *t = new make_schedule_task(m_contr, m_bta,
                 m_btb, get_symmetry(), m_bidimsc, ola, ioa1, ioa2,
-                m_contr_sch, m_sch, sch_lock);
+                m_contr_sch, sch_lock);
         tasklist.push_back(t);
     }
 
@@ -376,16 +376,20 @@ void btod_contract2<N, M, K>::make_schedule() {
     ca.req_sync_off();
     cb.req_sync_off();
 
-    for(typename schedule_t::iterator i = m_contr_sch.begin();
-        i != m_contr_sch.end(); i++) {
-        m_sch.insert(i->first);
+//    for(typename schedule_t::iterator i = m_contr_sch.begin();
+//        i != m_contr_sch.end(); i++) {
+//        m_sch.insert(i->first);
+//    }
+
+    bto_contract2_nzorb<N, M, K, double> nzorb(m_contr, m_bta, m_btb,
+        m_symc.get_symc());
+    nzorb.build();
+    for(typename std::vector<size_t>::const_iterator i = nzorb.get_blst().begin();
+        i != nzorb.get_blst().end(); ++i) {
+        m_sch.insert(*i);
     }
 
     btod_contract2<N, M, K>::stop_timer("make_schedule");
-
-//    bto_contract2_nzorb<N, M, K, double> nzorb(m_contr, m_bta, m_btb,
-//        m_symc.get_symc());
-//    nzorb.build();
 }
 
 
@@ -411,15 +415,14 @@ btod_contract2<N, M, K>::make_schedule_task::make_schedule_task(
     const orbit_list<k_ordera, double> &ola,
     const typename orbit_list<k_ordera, double>::iterator &ioa1,
     const typename orbit_list<k_ordera, double>::iterator &ioa2,
-    schedule_t &contr_sch, assignment_schedule<k_orderc, double> &sch,
-    libutil::mutex &sch_lock) :
+    schedule_t &contr_sch, libutil::mutex &sch_lock) :
 
     m_contr(contr),
     m_ca(bta), m_bidimsa(bta.get_bis().get_block_index_dims()),
     m_cb(btb), m_bidimsb(btb.get_bis().get_block_index_dims()),
     m_symc(symc), m_bidimsc(bidimsc),
     m_ola(ola), m_ioa1(ioa1), m_ioa2(ioa2),
-    m_contr_sch(contr_sch), m_sch(sch), m_sch_lock(sch_lock) {
+    m_contr_sch(contr_sch), m_sch_lock(sch_lock) {
 
 }
 

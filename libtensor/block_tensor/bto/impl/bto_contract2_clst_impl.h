@@ -155,7 +155,7 @@ void bto_contract2_clst<N, M, K, T>::build_list(bool testzero) {
         //  In the abbreviated version of the algorithm, if the list is
         //  not empty, there is no need to continue: the block is non-zero
 
-        if(testzero && clst_empty) break;
+        if(testzero && !clst_empty) break;
     }
 }
 

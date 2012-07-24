@@ -40,6 +40,12 @@ public:
      **/
     bto_contract2_clst_base() { }
 
+    /** \brief Returns true if the list of contractions is empty
+     **/
+    bool is_empty() const {
+        return m_clst.empty();
+    }
+
     /** \brief Returns the list of contractions
      **/
     const contr_list &get_clst() const {

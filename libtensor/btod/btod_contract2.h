@@ -109,7 +109,6 @@ private:
         typename orbit_list<k_ordera, double>::iterator m_ioa2;
         schedule_t &m_contr_sch;
         schedule_t m_contr_sch_local;
-        assignment_schedule<k_orderc, double> &m_sch;
         libutil::mutex &m_sch_lock;
 
     public:
@@ -124,7 +123,6 @@ private:
                            const typename orbit_list<k_ordera,
                            double>::iterator &ioa2,
                            schedule_t &contr_sch,
-                           assignment_schedule<k_orderc, double> &sch,
                            libutil::mutex &sch_lock);
         virtual ~make_schedule_task() { }
         virtual void perform();
