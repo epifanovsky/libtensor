@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_BTOD_CONTRACT2_IMPL_H
 #define LIBTENSOR_BTOD_CONTRACT2_IMPL_H
 
+#include <map>
 #include <memory>
 #include <libutil/thread_pool/thread_pool.h>
 #include <libtensor/core/allocator.h>
@@ -10,8 +11,9 @@
 #include <libtensor/dense_tensor/tod_contract2.h>
 #include <libtensor/dense_tensor/tod_copy.h>
 #include <libtensor/core/block_tensor.h>
-#include <libtensor/block_tensor/bto/bto_contract2_sym.h>
+#include <libtensor/block_tensor/bto/bto_contract2_clst.h>
 #include <libtensor/block_tensor/bto/bto_contract2_nzorb.h>
+#include <libtensor/block_tensor/bto/bto_contract2_sym.h>
 #include <libtensor/btod/btod_copy.h>
 #include <libtensor/btod/btod_set.h>
 #include "btod_contract2.h"
@@ -304,19 +306,18 @@ void btod_contract2<N, M, K>::compute_block(bool zero,
 
     try {
 
-        block_tensor_ctrl<k_ordera, double> ca(m_bta);
-        block_tensor_ctrl<k_orderb, double> cb(m_btb);
-
+//        block_tensor_ctrl<k_ordera, double> ca(m_bta);
+//        block_tensor_ctrl<k_orderb, double> cb(m_btb);
+//
         abs_index<k_orderc> aic(i, m_bidimsc);
-        typename schedule_t::iterator isch =
-            m_contr_sch.find(aic.get_abs_index());
-        if(isch == m_contr_sch.end()) {
-            throw bad_parameter(g_ns, k_clazz, method,
-                __FILE__, __LINE__, "i");
-        }
+//        typename schedule_t::iterator isch =
+//            m_contr_sch.find(aic.get_abs_index());
+//        if(isch == m_contr_sch.end()) {
+//            throw bad_parameter(g_ns, k_clazz, method,
+//                __FILE__, __LINE__, "i");
+//        }
 
-        contract_block(isch->second->first, aic.get_index(), ca, cb,
-           blk, tr, zero, c);
+        contract_block(aic.get_index(), blk, tr, zero, c);
     } catch(...) {
         btod_contract2<N, M, K>::stop_timer("compute_block");
         throw;
@@ -652,55 +653,90 @@ libutil::task_i *btod_contract2<N, M, K>::make_schedule_task_iterator::get_next(
 
 template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::contract_block(
-    block_contr_list_t &lst, const index<k_orderc> &idxc,
-    block_tensor_ctrl<k_ordera, double> &ca,
-    block_tensor_ctrl<k_orderb, double> &cb,
+    const index<k_orderc> &idxc,
     dense_tensor_i<k_orderc, double> &tc,
     const tensor_transf<k_orderc, double> &trc,
     bool zero, double c) {
 
-    std::list< index<k_ordera> > blksa;
-    std::list< index<k_orderb> > blksb;
+    typedef typename bto_contract2_clst<N, M, K, double>::contr_list contr_list;
 
+    block_tensor_ctrl<k_ordera, double> ca(m_bta);
+    block_tensor_ctrl<k_orderb, double> cb(m_btb);
+
+    //  Prepare contraction list
+    bto_contract2_clst<N, M, K, double> clstop(m_contr, m_bta, m_btb, m_bidimsa,
+        m_bidimsb, m_bidimsc, idxc);
+    clstop.build_list(false); // Build full contraction list
+    const contr_list &clst = clstop.get_clst();
+
+    //  Keep track of checked out blocks
+    typedef std::map<size_t, dense_tensor_i<k_ordera, double>*> coba_map;
+    typedef std::map<size_t, dense_tensor_i<k_orderb, double>*> cobb_map;
+    coba_map coba;
+    cobb_map cobb;
+
+    //  Tensor contraction operation
     std::auto_ptr< tod_contract2<N, M, K> > op;
 
-    for(typename block_contr_list_t::iterator ilst = lst.begin();
-        ilst != lst.end(); ilst++) {
+    //  Go through the contraction list and prepare the contraction
+    for(typename contr_list::const_iterator i = clst.begin();
+        i != clst.end(); ++i) {
 
-        abs_index<k_ordera> aia(ilst->m_absidxa, m_bidimsa);
-        abs_index<k_orderb> aib(ilst->m_absidxb, m_bidimsb);
-        const index<k_ordera> &ia = aia.get_index();
-        const index<k_orderb> &ib = aib.get_index();
+        index<k_ordera> ia;
+        index<k_orderb> ib;
+        abs_index<k_ordera>::get_index(i->aia, m_bidimsa, ia);
+        abs_index<k_orderb>::get_index(i->aib, m_bidimsb, ib);
 
         bool zeroa = ca.req_is_zero_block(ia);
         bool zerob = cb.req_is_zero_block(ib);
         if(zeroa || zerob) continue;
 
-        dense_tensor_i<k_ordera, double> &blka = ca.req_block(ia);
-        dense_tensor_i<k_orderb, double> &blkb = cb.req_block(ib);
-        blksa.push_back(ia);
-        blksb.push_back(ib);
+        if(coba.find(i->aia) == coba.end()) {
+            dense_tensor_i<k_ordera, double> &ta = ca.req_block(ia);
+            coba[i->aia] = &ta;
+        }
+        if(cobb.find(i->aib) == cobb.end()) {
+            dense_tensor_i<k_orderb, double> &tb = cb.req_block(ib);
+            cobb[i->aib] = &tb;
+        }
+        dense_tensor_i<k_ordera, double> &ta = *coba[i->aia];
+        dense_tensor_i<k_orderb, double> &tb = *cobb[i->aib];
 
         contraction2<N, M, K> contr(m_contr);
-        contr.permute_a(ilst->m_perma);
-        contr.permute_b(ilst->m_permb);
+        contr.permute_a(i->tra.get_perm());
+        contr.permute_b(i->trb.get_perm());
         contr.permute_c(trc.get_perm());
 
-        double kc = ilst->m_c * trc.get_scalar_tr().get_coeff();
+        double kc = i->tra.get_scalar_tr().get_coeff() *
+            i->trb.get_scalar_tr().get_coeff() *
+            trc.get_scalar_tr().get_coeff();
+
         if(op.get() == 0) {
             op = std::auto_ptr< tod_contract2<N, M, K> >(
-                new tod_contract2<N, M, K>(contr, blka, blkb, kc));
+                new tod_contract2<N, M, K>(contr, ta, tb, kc));
         } else {
-            op->add_args(contr, blka, blkb, kc);
+            op->add_args(contr, ta, tb, kc);
         }
     }
 
-    op->perform(zero, c, tc);
+    //  Execute the contraction
+    if(op.get() == 0) {
+        if(zero) tod_set<k_orderc>().perform(tc);
+    } else {
+        op->perform(zero, c, tc);
+    }
 
-    for(typename std::list< index<k_ordera> >::const_iterator i =
-            blksa.begin(); i != blksa.end(); i++) ca.ret_block(*i);
-    for(typename std::list< index<k_orderb> >::const_iterator i =
-            blksb.begin(); i != blksb.end(); i++) cb.ret_block(*i);
+    //  Return input blocks
+    for(typename coba_map::iterator i = coba.begin(); i != coba.end(); ++i) {
+        index<k_ordera> ia;
+        abs_index<k_ordera>::get_index(i->first, m_bidimsa, ia);
+        ca.ret_block(ia);
+    }
+    for(typename cobb_map::iterator i = cobb.begin(); i != cobb.end(); ++i) {
+        index<k_orderb> ib;
+        abs_index<k_orderb>::get_index(i->first, m_bidimsb, ib);
+        cb.ret_block(ib);
+    }
 }
 
 

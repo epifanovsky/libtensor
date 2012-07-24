@@ -221,9 +221,7 @@ private:
     void clear_schedule(schedule_t &sch);
 
     void contract_block(
-        block_contr_list_t &lst, const index<k_orderc> &idxc,
-        block_tensor_ctrl<k_ordera, double> &ctrla,
-        block_tensor_ctrl<k_orderb, double> &ctrlb,
+        const index<k_orderc> &idxc,
         dense_tensor_i<k_orderc, double> &blkc,
         const tensor_transf<k_orderc, double> &trc,
         bool zero, double c);
