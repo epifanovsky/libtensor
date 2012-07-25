@@ -211,25 +211,29 @@ set(SRC_INST
     symmetry/inst/so_symmetrize_se_label_inst.C
     symmetry/inst/so_symmetrize_se_part_inst.C
     symmetry/inst/so_symmetrize_se_perm_inst.C
+    block_tensor/bto/impl/bto_contract2_bis.C
     block_tensor/btod/impl/additive_btod.C
     block_tensor/btod/impl/basic_btod.C
+    block_tensor/btod/impl/btod_add.C
+    block_tensor/btod/impl/btod_contract2_clst.C
+    block_tensor/btod/impl/btod_contract2_nzorb.C
+    block_tensor/btod/impl/btod_contract2_sym.C
+    block_tensor/btod/impl/btod_contract2_1.C
+    block_tensor/btod/impl/btod_contract2_2.C
+    block_tensor/btod/impl/btod_contract2_3.C
+    block_tensor/btod/impl/btod_contract2_4.C
+    block_tensor/btod/impl/btod_contract2_5.C
+    block_tensor/btod/impl/btod_contract2_6.C
     block_tensor/btod/impl/btod_contract3.C
     block_tensor/btod/impl/btod_copy.C
     block_tensor/btod/impl/btod_diag.C
+    block_tensor/btod/impl/btod_dirsum.C
+    block_tensor/btod/impl/btod_dotprod.C
+    block_tensor/btod/impl/btod_ewmult2.C
     block_tensor/btod/impl/btod_set.C
+    block_tensor/btod/impl/btod_sum.C
     block_tensor/btod/impl/btod_trace.C
     block_tensor/btod/impl/btod_vmpriority.C
-    btod/btod_add.C
-    btod/btod_contract2_1.C
-    btod/btod_contract2_2.C
-    btod/btod_contract2_3.C
-    btod/btod_contract2_4.C
-    btod/btod_contract2_5.C
-    btod/btod_contract2_6.C
-    btod/btod_dirsum.C
-    btod/btod_dotprod.C
-    btod/btod_ewmult2.C
-    btod/btod_sum.C
     diag_tensor/impl/diag_tensor_space.C
     diag_tensor/impl/diag_tensor.C
     diag_tensor/impl/tod_conv_diag_tensor.C

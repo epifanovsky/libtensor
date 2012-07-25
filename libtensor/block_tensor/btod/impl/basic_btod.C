@@ -1,4 +1,4 @@
-#include <libtensor/btod/scalar_transf_double.h>
+#include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/block_tensor/bto/basic_bto.h>
 #include <libtensor/block_tensor/bto/impl/basic_bto_impl.h>
 #include <libtensor/block_tensor/btod/btod_traits.h>

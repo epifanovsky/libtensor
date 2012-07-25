@@ -1,11 +1,11 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor.h>
-#include <libtensor/btod/scalar_transf_double.h>
-#include <libtensor/btod/btod_add.h>
-#include <libtensor/btod/btod_contract2.h>
-#include <libtensor/btod/btod_copy.h>
+#include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/block_tensor/btod/btod_add.h>
+#include <libtensor/block_tensor/btod/btod_contract2.h>
+#include <libtensor/block_tensor/btod/btod_copy.h>
 #include <libtensor/btod/btod_random.h>
-#include <libtensor/btod/btod_sum.h>
+#include <libtensor/block_tensor/btod/btod_sum.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/symmetry/so_copy.h>
 #include "btod_sum_test.h"

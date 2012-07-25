@@ -8,9 +8,10 @@
 #include "../core/block_index_subspace_builder.h"
 #include "../core/permutation_builder.h"
 #include "../core/transf_list.h"
+#include <libtensor/core/orbit.h>
 #include "../symmetry/so_copy.h"
 #include "../symmetry/so_symmetrize.h"
-#include "scalar_transf_double.h"
+#include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/block_tensor/bto/additive_bto.h>
 #include <libtensor/block_tensor/btod/btod_traits.h>
 

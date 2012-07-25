@@ -19,6 +19,10 @@ template class abs_index<9>;
 template class abs_index<10>;
 template class abs_index<11>;
 template class abs_index<12>;
+template class abs_index<13>;
+template class abs_index<14>;
+template class abs_index<15>;
+template class abs_index<16>;
 
 
 } // namespace libtensor

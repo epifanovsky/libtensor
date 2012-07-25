@@ -201,6 +201,50 @@ template class to_contract2_dims<6, 2, 2>;
 template class to_contract2_dims<7, 1, 0>;
 template class to_contract2_dims<7, 1, 1>;
 
+template class to_contract2_dims<1, 8, 0>;
+template class to_contract2_dims<2, 7, 0>;
+template class to_contract2_dims<3, 6, 0>;
+template class to_contract2_dims<4, 5, 0>;
+template class to_contract2_dims<5, 4, 0>;
+template class to_contract2_dims<6, 3, 0>;
+template class to_contract2_dims<7, 2, 0>;
+template class to_contract2_dims<8, 1, 0>;
+
+template class to_contract2_dims<2, 8, 0>;
+template class to_contract2_dims<3, 7, 0>;
+template class to_contract2_dims<4, 6, 0>;
+template class to_contract2_dims<5, 5, 0>;
+template class to_contract2_dims<6, 4, 0>;
+template class to_contract2_dims<7, 3, 0>;
+template class to_contract2_dims<8, 2, 0>;
+
+template class to_contract2_dims<3, 8, 0>;
+template class to_contract2_dims<4, 7, 0>;
+template class to_contract2_dims<5, 6, 0>;
+template class to_contract2_dims<6, 5, 0>;
+template class to_contract2_dims<7, 4, 0>;
+template class to_contract2_dims<8, 3, 0>;
+
+template class to_contract2_dims<4, 8, 0>;
+template class to_contract2_dims<5, 7, 0>;
+template class to_contract2_dims<6, 6, 0>;
+template class to_contract2_dims<7, 5, 0>;
+template class to_contract2_dims<8, 4, 0>;
+
+template class to_contract2_dims<5, 8, 0>;
+template class to_contract2_dims<6, 7, 0>;
+template class to_contract2_dims<7, 6, 0>;
+template class to_contract2_dims<8, 5, 0>;
+
+template class to_contract2_dims<6, 8, 0>;
+template class to_contract2_dims<7, 7, 0>;
+template class to_contract2_dims<8, 6, 0>;
+
+template class to_contract2_dims<7, 8, 0>;
+template class to_contract2_dims<8, 7, 0>;
+
+template class to_contract2_dims<8, 8, 0>;
+
 
 } // namespace libtensor
 

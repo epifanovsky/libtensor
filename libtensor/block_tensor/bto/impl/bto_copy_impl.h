@@ -14,7 +14,22 @@ const char *bto_copy<N, Traits>::k_clazz = "bto_copy<N, Traits>";
 
 
 template<size_t N, typename Traits>
-bto_copy<N, Traits>::bto_copy(block_tensor_t &bta, const scalar_tr_t &c) :
+bto_copy<N, Traits>::bto_copy(block_tensor_t &bta, const tensor_transf_t &tr) :
+
+    m_bta(bta), m_tr(tr), m_bis(m_bta.get_bis()),
+    m_bidims(m_bis.get_block_index_dims()), m_sym(m_bis), m_sch(m_bidims) {
+
+    typedef typename Traits::template block_tensor_ctrl_type<N>::type
+        block_tensor_ctrl_t;
+
+    block_tensor_ctrl_t ctrla(m_bta);
+    so_copy<N, element_t>(ctrla.req_const_symmetry()).perform(m_sym);
+    make_schedule();
+}
+
+
+template<size_t N, typename Traits>
+bto_copy<N, Traits>::bto_copy(block_tensor_t &bta, const scalar_transf_t &c) :
 
     m_bta(bta), m_tr(permutation<N>(), c), m_bis(m_bta.get_bis()),
     m_bidims(m_bis.get_block_index_dims()), m_sym(m_bis), m_sch(m_bidims) {
@@ -30,7 +45,7 @@ bto_copy<N, Traits>::bto_copy(block_tensor_t &bta, const scalar_tr_t &c) :
 
 template<size_t N, typename Traits>
 bto_copy<N, Traits>::bto_copy(block_tensor_t &bta, const permutation<N> &p,
-    const scalar_tr_t &c) :
+    const scalar_transf_t &c) :
 
     m_bta(bta), m_tr(p, c), m_bis(mk_bis(m_bta.get_bis(), p)),
     m_bidims(m_bis.get_block_index_dims()), m_sym(m_bis), m_sch(m_bidims) {
@@ -69,7 +84,7 @@ void bto_copy<N, Traits>::sync_off() {
 
 template<size_t N, typename Traits>
 void bto_copy<N, Traits>::compute_block(bool zero, block_t &blk,
-    const index<N> &ib, const tensor_tr_t &tr, const element_t &c) {
+    const index<N> &ib, const tensor_transf_t &tr, const element_t &c) {
 
     typedef typename Traits::template block_tensor_ctrl_type<N>::type
         block_tensor_ctrl_t;
@@ -81,29 +96,26 @@ void bto_copy<N, Traits>::compute_block(bool zero, block_t &blk,
     block_tensor_ctrl_t ctrla(m_bta);
     dimensions<N> bidimsa = m_bta.get_bis().get_block_index_dims();
 
-    permutation<N> pinv(m_tr.get_perm(), true);
+    tensor_transf_t trinv(m_tr, true);
 
     //  Corresponding index in A
     index<N> ia(ib);
-    ia.permute(pinv);
+    ia.permute(trinv.get_perm());
 
     //  Find the canonical index in A
     orbit<N, double> oa(ctrla.req_const_symmetry(), ia);
     abs_index<N> acia(oa.get_abs_canonical_index(), bidimsa);
 
+
     //  Transformation for block from canonical A to B
-    const tensor_tr_t &tra = oa.get_transf(ia);
-    permutation<N> pa(tra.get_perm());
-    pa.permute(m_tr.get_perm());
-    pa.permute(tr.get_perm());
-    scalar_tr_t sa(tra.get_scalar_tr()), sb(c);
-    sa.transform(m_tr.get_scalar_tr());
-    sb.transform(tr.get_scalar_tr());
+    tensor_transf_t tra(oa.get_transf(ia));
+    tra.transform(m_tr).transform(scalar_transf_t(c));
+    tra.transform(tr);
 
     if(zero) to_set_t().perform(blk);
     if(!ctrla.req_is_zero_block(acia.get_index())) {
         block_t &blka = ctrla.req_block(acia.get_index());
-        to_copy_t(blka, pa, sa.get_coeff()).perform(false, sb.get_coeff(), blk);
+        to_copy_t(blka, tra).perform(false, Traits::identity(), blk);
         ctrla.ret_block(acia.get_index());
     }
 

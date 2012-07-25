@@ -11,8 +11,9 @@ namespace libtensor {
         to each element of the input tensor.
     \tparam N Tensor order.
 
-    The operation scales and permutes the input %tensor and then applies
-    the functor to each element. The functor class needs to have
+    The operation transforms the input %tensor using \c tr1, then applies
+    the functor to each element, and at last transforms the tensor using
+    \c tr2. The functor class needs to have
     1. a proper copy constructor
       \code
           Functor(const Functor &f);
@@ -60,9 +61,9 @@ public:
     //! Type of functor
     typedef typename Traits::functor_type functor_t;
 
-    typedef tensor_transf<N, element_t> tensor_tr_t;
+    typedef tensor_transf<N, element_t> tensor_transf_t;
 
-    typedef scalar_transf<element_t> scalar_tr_t;
+    typedef scalar_transf<element_t> scalar_transf_t;
 
 public:
     static const char *k_clazz; //!< Class name
@@ -70,7 +71,8 @@ public:
 private:
     functor_t m_fn; //!< Functor to apply to each element
     block_tensor_t &m_bta; //!< Source block %tensor
-    tensor_tr_t m_tr; //!< Tensor transformation
+    tensor_transf_t m_tr1; //!< Tensor transformation before
+    tensor_transf_t m_tr2; //!< Tensor transformation after
     block_index_space<N> m_bis; //!< Block %index space of output
     dimensions<N> m_bidims; //!< Block %index dimensions
     symmetry<N, element_t> m_sym; //!< Symmetry of output
@@ -82,20 +84,30 @@ public:
 
     /** \brief Initializes the element-wise operation
         \param bt Source block %tensor.
-        \param f Functor instance.
-        \param c Scaling coefficient.
+        \param fn Functor instance.
+        \param tr Tensor transformation.
      **/
     bto_apply(block_tensor_t &bta, const functor_t &fn,
-        const scalar_tr_t &c = scalar_tr_t());
+            const tensor_transf_t &tr1 = tensor_transf_t(),
+            const tensor_transf_t &tr2 = tensor_transf_t());
+
+    /** \brief Initializes the element-wise operation
+        \param bt Source block %tensor.
+        \param fn Functor instance.
+        \param c Element-wise transformation (apply before).
+     **/
+    bto_apply(block_tensor_t &bta, const functor_t &fn,
+            const scalar_transf_t &c);
 
     /** \brief Initializes the permuted element-wise operation
         \param bt Source block %tensor.
-        \param f Functor instance.
-        \param p Permutation.
-        \param c Scaling coefficient.
+        \param fn Functor instance.
+        \param p Permutation (apply before).
+        \param c Scaling coefficient (apply before).
      **/
-    bto_apply(block_tensor_t &bta, const functor_t &fn,
-        const permutation<N> &p, const scalar_tr_t &c = scalar_tr_t());
+    bto_apply(block_tensor_t &bta,
+            const functor_t &fn, const permutation<N> &p,
+            const scalar_transf_t &c = scalar_transf_t());
 
     /** \brief Destructor
      **/
@@ -130,11 +142,11 @@ public:
 
 protected:
     virtual void compute_block(bool zero, block_t &blk, const index<N> &ib,
-        const tensor_tr_t &tr, const element_t &c);
+            const tensor_transf_t &tr, const element_t &c);
 
 private:
     static block_index_space<N> mk_bis(const block_index_space<N> &bis,
-        const permutation<N> &perm);
+            const permutation<N> &perm);
     void make_schedule();
 
 private:

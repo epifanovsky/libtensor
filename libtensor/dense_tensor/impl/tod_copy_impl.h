@@ -21,7 +21,8 @@ const char *tod_copy<N>::k_clazz = "tod_copy<N>";
 template<size_t N>
 tod_copy<N>::tod_copy(dense_tensor_rd_i<N, double> &ta, double c) :
 
-    m_ta(ta), m_c(c), m_dimsb(mk_dimsb(m_ta, m_perm)) {
+    m_ta(ta), m_tr(permutation<N>(), scalar_transf<double>(c)),
+    m_dimsb(mk_dimsb(m_ta, m_tr.get_perm())) {
 
 }
 
@@ -30,7 +31,16 @@ template<size_t N>
 tod_copy<N>::tod_copy(dense_tensor_rd_i<N, double> &ta, const permutation<N> &p,
     double c) :
 
-    m_ta(ta), m_perm(p), m_c(c), m_dimsb(mk_dimsb(ta, p)) {
+    m_ta(ta), m_tr(p, scalar_transf<double>(c)), m_dimsb(mk_dimsb(ta, p)) {
+
+}
+
+
+template<size_t N>
+tod_copy<N>::tod_copy(dense_tensor_rd_i<N, double> &ta,
+        const tensor_transf<N, double> &tr) :
+
+    m_ta(ta), m_tr(tr), m_dimsb(mk_dimsb(ta, m_tr.get_perm())) {
 
 }
 
@@ -78,7 +88,7 @@ void tod_copy<N>::perform(bool zero, double c,
 
         sequence<N, size_t> seqa(0);
         for(register size_t i = 0; i < N; i++) seqa[i] = i;
-        m_perm.apply(seqa);
+        m_tr.get_perm().apply(seqa);
 
         std::list< loop_list_node<1, 1> > loop_in, loop_out;
         typename std::list< loop_list_node<1, 1> >::iterator inode =
@@ -111,10 +121,11 @@ void tod_copy<N>::perform(bool zero, double c,
         r.m_ptrb_end[0] = pb + dimsb.get_size();
 
         {
+            double k = m_tr.get_scalar_tr().get_coeff() * c;
             std::auto_ptr< kernel_base<1, 1> >kern(
                 zero ?
-                    kern_dcopy::match(m_c * c, loop_in, loop_out) :
-                    kern_dadd1::match(m_c * c, loop_in, loop_out));
+                    kern_dcopy::match(k, loop_in, loop_out) :
+                    kern_dadd1::match(k, loop_in, loop_out));
             tod_copy<N>::start_timer(kern->get_name());
             loop_list_runner<1, 1>(loop_in).run(r, *kern);
             tod_copy<N>::stop_timer(kern->get_name());
