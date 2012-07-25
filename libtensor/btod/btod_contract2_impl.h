@@ -400,10 +400,12 @@ void btod_contract2<N, M, K>::contract_block(
     block_tensor_ctrl<k_orderb, double> cb(m_btb);
 
     //  Prepare contraction list
+    start_timer("contract_block::clst");
     bto_contract2_clst<N, M, K, double> clstop(m_contr, m_bta, m_btb, m_bidimsa,
         m_bidimsb, m_bidimsc, idxc);
     clstop.build_list(false); // Build full contraction list
     const contr_list &clst = clstop.get_clst();
+    stop_timer("contract_block::clst");
 
     //  Keep track of checked out blocks
     typedef std::map<size_t, dense_tensor_i<k_ordera, double>*> coba_map;

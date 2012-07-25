@@ -77,7 +77,8 @@ public:
     static const char *k_clazz; //!< Class name
 
 public:
-    using typename bto_contract2_clst_base<N, M, K, T>::contr_list;
+    typedef typename bto_contract2_clst_base<N, M, K, T>::contr_pair contr_pair;
+    typedef typename bto_contract2_clst_base<N, M, K, T>::contr_list contr_list;
 
 private:
     contraction2<N, M, K> m_contr; //!< Contraction descriptor
@@ -123,7 +124,8 @@ public:
     static const char *k_clazz; //!< Class name
 
 public:
-    using typename bto_contract2_clst_base<N, M, 0, T>::contr_list;
+    typedef typename bto_contract2_clst_base<N, M, 0, T>::contr_pair contr_pair;
+    typedef typename bto_contract2_clst_base<N, M, 0, T>::contr_list contr_list;
 
 private:
     contraction2<N, M, 0> m_contr; //!< Contraction descriptor
