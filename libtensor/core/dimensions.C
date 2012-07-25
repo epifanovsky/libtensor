@@ -1,20 +1,9 @@
-#include "dimensions.h"
+#include "dimensions_impl.h"
 
 namespace libtensor {
 
 
 const char *dimensions<0>::k_clazz = "dimensions<0>";
-
-
-} // namespace libtensor
-
-
-#ifdef LIBTENSOR_INSTANTIATE_TEMPLATES
-
-#include "dimensions.h"
-#include "dimensions_impl.h"
-
-namespace libtensor {
 
 
 template class dimensions<1>;
@@ -36,5 +25,3 @@ template class dimensions<16>;
 
 
 } // namespace libtensor
-
-#endif // LIBTENSOR_INSTANTIATE_TEMPLATES
