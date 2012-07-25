@@ -2,7 +2,7 @@
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/core/mask.h>
 #include <libtensor/core/scalar_transf_double.h>
-#include <libtensor/btod/btod_diag.h>
+#include <libtensor/block_tensor/btod/btod_diag.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/symmetry/product_table_container.h>

@@ -1,5 +1,5 @@
 #include <libtensor/core/allocator.h>
-#include <libtensor/btod/btod_copy.h>
+#include <libtensor/block_tensor/btod/btod_copy.h>
 #include <libtensor/btod/btod_print.h>
 #include <libtensor/btod/btod_import_raw.h>
 #include <libtensor/btod/btod_cholesky.h>

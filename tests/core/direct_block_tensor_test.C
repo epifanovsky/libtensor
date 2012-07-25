@@ -6,7 +6,7 @@
 #include <libtensor/dense_tensor/tod_dirsum.h>
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/block_tensor/btod/btod_add.h>
-#include <libtensor/btod/btod_copy.h>
+#include <libtensor/block_tensor/btod/btod_copy.h>
 #include <libtensor/block_tensor/btod/btod_contract2.h>
 #include <libtensor/block_tensor/btod/btod_dirsum.h>
 #include <libtensor/btod/btod_random.h>

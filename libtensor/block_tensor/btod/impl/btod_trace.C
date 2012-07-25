@@ -1,6 +1,6 @@
 #include <libtensor/block_tensor/bto/bto_trace.h>
 #include <libtensor/block_tensor/bto/impl/bto_trace_impl.h>
-#include <libtensor/btod/btod_trace.h>
+#include "../btod_trace.h"
 
 namespace libtensor {
 

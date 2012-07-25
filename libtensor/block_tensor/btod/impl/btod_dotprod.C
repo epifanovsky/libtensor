@@ -1,6 +1,6 @@
 #include <libtensor/block_tensor/bto/bto_dotprod.h>
 #include <libtensor/block_tensor/bto/impl/bto_dotprod_impl.h>
-#include <libtensor/btod/btod_dotprod.h>
+#include "../btod_dotprod.h"
 
 namespace libtensor {
 

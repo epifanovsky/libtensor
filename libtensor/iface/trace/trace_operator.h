@@ -4,7 +4,7 @@
 #include "../../defs.h"
 #include "../../exception.h"
 #include "../../core/permutation_builder.h"
-#include "../../btod/btod_trace.h"
+#include <libtensor/block_tensor/btod/btod_trace.h>
 #include "../labeled_btensor.h"
 #include "../letter.h"
 #include "../letter_expr.h"

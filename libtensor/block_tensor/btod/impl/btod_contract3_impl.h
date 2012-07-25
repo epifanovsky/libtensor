@@ -7,7 +7,7 @@
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/symmetry/so_copy.h>
 #include <libtensor/block_tensor/btod/btod_contract2.h>
-#include <libtensor/btod/btod_set.h>
+#include <libtensor/block_tensor/btod/btod_set.h>
 #include "../btod_contract3.h"
 
 namespace libtensor {
