@@ -1,13 +1,16 @@
 #ifndef LIBTENSOR_BTOD_ADD_IMPL_H
 #define LIBTENSOR_BTOD_ADD_IMPL_H
 
-#include "../core/block_index_space_product_builder.h"
-#include "../core/permutation_builder.h"
-#include "../symmetry/so_dirsum.h"
-#include "../symmetry/so_merge.h"
-#include "../symmetry/so_permute.h"
+#include <libtensor/core/block_index_space_product_builder.h>
+#include <libtensor/core/permutation_builder.h>
+#include <libtensor/core/orbit.h>
+#include <libtensor/symmetry/so_dirsum.h>
+#include <libtensor/symmetry/so_merge.h>
+#include <libtensor/symmetry/so_permute.h>
 #include <libtensor/dense_tensor/tod_add.h>
 #include <libtensor/dense_tensor/tod_copy.h>
+#include <libtensor/btod/bad_block_index_space.h>
+#include "../btod_add.h"
 
 namespace libtensor {
 

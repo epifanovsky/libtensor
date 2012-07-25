@@ -2,13 +2,9 @@
 #define LIBTENSOR_BTOD_SUM_H
 
 #include <list>
-#include "../defs.h"
-#include "../exception.h"
-#include "../timings.h"
+#include <libtensor/timings.h>
 #include <libtensor/block_tensor/bto/additive_bto.h>
 #include <libtensor/block_tensor/btod/btod_traits.h>
-#include "../not_implemented.h"
-#include "bad_block_index_space.h"
 
 namespace libtensor {
 
@@ -126,12 +122,6 @@ private:
 
 
 } // namespace libtensor
-
-
-#ifndef LIBTENSOR_INSTANTIATE_TEMPLATES
-#include "btod_sum_impl.h"
-#endif // LIBTENSOR_INSTANTIATE_TEMPLATES
-
 
 #endif // LIBTENSOR_BTOD_SUM_H
 

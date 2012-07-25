@@ -19,8 +19,8 @@
 #include <libtensor/block_tensor/bto/bto_contract2_sym.h>
 #include <libtensor/btod/btod_copy.h>
 #include <libtensor/btod/btod_set.h>
-#include "bad_block_index_space.h"
-#include "btod_contract2.h"
+#include <libtensor/btod/bad_block_index_space.h>
+#include "../btod_contract2.h"
 
 namespace libtensor {
 

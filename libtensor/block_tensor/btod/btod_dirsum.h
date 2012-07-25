@@ -2,11 +2,10 @@
 #define LIBTENSOR_BTOD_DIRSUM_H
 
 #include <map>
-#include "../defs.h"
-#include "../timings.h"
-#include "../core/block_tensor_i.h"
-#include "../core/orbit.h"
-#include "../core/orbit_list.h"
+#include <libtensor/timings.h>
+#include <libtensor/core/block_tensor_i.h>
+#include <libtensor/core/orbit.h>
+#include <libtensor/core/orbit_list.h>
 #include <libtensor/block_tensor/bto/additive_bto.h>
 #include <libtensor/block_tensor/btod/btod_traits.h>
 
@@ -222,34 +221,7 @@ private:
             const permutation<N + N> &permc);
 };
 
-} // namespace libtensor
-
-#ifdef LIBTENSOR_INSTANTIATE_TEMPLATES
-
-namespace libtensor {
-
-    extern template class btod_dirsum<1, 1>;
-    extern template class btod_dirsum<1, 2>;
-    extern template class btod_dirsum<1, 3>;
-    extern template class btod_dirsum<1, 4>;
-    extern template class btod_dirsum<1, 5>;
-    extern template class btod_dirsum<2, 1>;
-    extern template class btod_dirsum<2, 2>;
-    extern template class btod_dirsum<2, 3>;
-    extern template class btod_dirsum<2, 4>;
-    extern template class btod_dirsum<3, 1>;
-    extern template class btod_dirsum<3, 2>;
-    extern template class btod_dirsum<3, 3>;
-    extern template class btod_dirsum<4, 1>;
-    extern template class btod_dirsum<4, 2>;
-    extern template class btod_dirsum<5, 1>;
 
 } // namespace libtensor
-
-#else // LIBTENSOR_INSTANTIATE_TEMPLATES
-#include "btod_dirsum_impl.h"
-#endif // LIBTENSOR_INSTANTIATE_TEMPLATES
-
-
 
 #endif // LIBTENOSR_BTOD_DIRSUM_H

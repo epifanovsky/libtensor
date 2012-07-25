@@ -1,11 +1,13 @@
 #ifndef LIBTENSOR_BTOD_SUM_IMPL_H
 #define LIBTENSOR_BTOD_SUM_IMPL_H
 
-#include "../core/orbit.h"
-#include "../symmetry/so_dirsum.h"
-#include "../symmetry/so_merge.h"
-#include "../symmetry/so_copy.h"
-#include "btod_scale.h"
+#include <libtensor/core/orbit.h>
+#include <libtensor/symmetry/so_dirsum.h>
+#include <libtensor/symmetry/so_merge.h>
+#include <libtensor/symmetry/so_copy.h>
+#include <libtensor/btod/btod_scale.h>
+#include <libtensor/btod/bad_block_index_space.h>
+#include "../btod_sum.h"
 
 namespace libtensor {
 

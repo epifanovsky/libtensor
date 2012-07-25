@@ -3,8 +3,8 @@
 #include "../core/block_tensor_ctrl.h"
 #include "../core/block_tensor.h"
 #include <libtensor/core/scalar_transf_double.h>
-#include "btod_add.h"
-#include "btod_contract2.h"
+#include <libtensor/block_tensor/btod/btod_add.h>
+#include <libtensor/block_tensor/btod/btod_contract2.h>
 #include "btod_copy.h"
 #include "btod_diag.h"
 #include "cholesky.h"

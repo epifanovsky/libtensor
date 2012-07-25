@@ -6,15 +6,9 @@
 #include <new>
 #include <vector>
 #include <utility>
-#include "../defs.h"
-#include "../exception.h"
-#include "../not_implemented.h"
-#include "../timings.h"
-#include "../core/block_tensor_i.h"
-#include "../core/block_tensor_ctrl.h"
-#include "../core/orbit.h"
-#include "../core/orbit_list.h"
-#include "bad_block_index_space.h"
+#include <libtensor/timings.h>
+#include <libtensor/core/block_tensor_i.h>
+#include <libtensor/core/block_tensor_ctrl.h>
 #include <libtensor/block_tensor/bto/additive_bto.h>
 #include <libtensor/block_tensor/btod/btod_traits.h>
 
@@ -166,24 +160,5 @@ private:
 
 
 } // namespace libtensor
-
-
-#ifdef LIBTENSOR_INSTANTIATE_TEMPLATES
-
-namespace libtensor {
-
-    extern template class btod_add<1>;
-    extern template class btod_add<2>;
-    extern template class btod_add<3>;
-    extern template class btod_add<4>;
-    extern template class btod_add<5>;
-    extern template class btod_add<6>;
-
-} // namespace libtensor
-
-#else // LIBTENSOR_INSTANTIATE_TEMPLATES
-#include "btod_add_impl.h"
-#endif // LIBTENSOR_INSTANTIATE_TEMPLATES
-
 
 #endif // LIBTENSOR_BTOD_ADD_H

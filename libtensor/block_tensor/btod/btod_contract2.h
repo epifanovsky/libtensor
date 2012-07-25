@@ -13,12 +13,6 @@
 
 namespace libtensor {
 
-template<size_t N, size_t M, size_t K>
-class btod_contract2_symmetry_builder_base;
-
-template<size_t N, size_t M, size_t K> class btod_contract2_symmetry_builder;
-
-template<size_t N, size_t K> class btod_contract2_symmetry_builder<N, N, K>;
 
 template<size_t N, size_t M, size_t K>
 struct btod_contract2_clazz {

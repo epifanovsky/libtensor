@@ -6,7 +6,7 @@
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/core/scalar_transf_double.h>
-#include <libtensor/btod/btod_dirsum.h>
+#include <libtensor/block_tensor/btod/btod_dirsum.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/symmetry/permutation_group.h>
 #include <libtensor/symmetry/point_group_table.h>

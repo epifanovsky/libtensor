@@ -39,13 +39,10 @@
 #include "tod/processor.h"
 
 
-#include "btod/btod_add.h"
 #include "btod/btod_apply.h"
 #include "btod/btod_compare.h"
-#include "btod/btod_contract2.h"
 #include "btod/btod_copy.h"
 #include "btod/btod_diag.h"
-#include "btod/btod_dirsum.h"
 #include "btod/btod_extract.h"
 #include "btod/btod_import_raw.h"
 #include "btod/btod_mult.h"
@@ -58,7 +55,6 @@
 #include "btod/btod_set.h"
 #include "btod/btod_set_diag.h"
 #include "btod/btod_set_elem.h"
-#include "btod/btod_sum.h"
 
 
 #include "symmetry/point_group_table.h"

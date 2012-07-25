@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_EWMULT_EVAL_FUNCTOR_H
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_EWMULT_EVAL_FUNCTOR_H
 
-#include "../../btod/btod_ewmult2.h"
+#include <libtensor/block_tensor/btod/btod_ewmult2.h>
 #include "../expr/anon_eval.h"
 #include "../expr/direct_eval.h"
 #include "ewmult_core.h"

@@ -1,21 +1,16 @@
 #ifndef LIBTENSOR_BTOD_DIRSUM_IMPL_H
 #define LIBTENSOR_BTOD_DIRSUM_IMPL_H
 
-#include "../defs.h"
-#include "../exception.h"
-#include "../timings.h"
-#include "../core/block_tensor_i.h"
-#include "../core/block_tensor_ctrl.h"
-#include "../core/orbit.h"
-#include "../core/orbit_list.h"
-#include "../core/permutation_builder.h"
-#include "../core/mask.h"
+#include <libtensor/core/block_tensor_ctrl.h>
+#include <libtensor/core/permutation_builder.h>
+#include <libtensor/core/mask.h>
 #include <libtensor/dense_tensor/tod_dirsum.h>
 #include <libtensor/dense_tensor/tod_scale.h>
 #include <libtensor/dense_tensor/tod_scatter.h>
 #include <libtensor/dense_tensor/tod_set.h>
-#include "../symmetry/so_dirsum.h"
-#include "bad_block_index_space.h"
+#include <libtensor/symmetry/so_dirsum.h>
+#include <libtensor/btod/bad_block_index_space.h>
+#include "../btod_dirsum.h"
 
 namespace libtensor {
 

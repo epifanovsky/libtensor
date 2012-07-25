@@ -3,12 +3,12 @@
 
 #include "../../defs.h"
 #include "../../exception.h"
-#include "../../btod/btod_add.h"
+#include <libtensor/block_tensor/btod/btod_add.h>
 #include <libtensor/block_tensor/bto/additive_bto.h>
 #include <libtensor/block_tensor/btod/btod_traits.h>
 #include "../../btod/btod_copy.h"
 #include "../../btod/btod_set.h"
-#include "../../btod/btod_sum.h"
+#include <libtensor/block_tensor/btod/btod_sum.h>
 
 namespace libtensor {
 namespace labeled_btensor_expr {
