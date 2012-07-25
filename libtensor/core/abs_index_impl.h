@@ -2,6 +2,7 @@
 #define LIBTENSOR_ABS_INDEX_IMPL_H
 
 #include "out_of_bounds.h"
+#include "abs_index.h"
 
 namespace libtensor {
 

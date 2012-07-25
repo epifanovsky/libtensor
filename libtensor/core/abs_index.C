@@ -1,6 +1,3 @@
-#ifdef LIBTENSOR_INSTANTIATE_TEMPLATES
-
-#include "abs_index.h"
 #include "abs_index_impl.h"
 
 namespace libtensor {
@@ -26,5 +23,3 @@ template class abs_index<16>;
 
 
 } // namespace libtensor
-
-#endif // LIBTENSOR_INSTANTIATE_TEMPLATES
