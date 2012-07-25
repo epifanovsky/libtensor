@@ -38,6 +38,7 @@ public:
         const index<N + M> &ic,
         std::vector<size_t> &blst,
         libutil::mutex &mtx);
+
     virtual ~bto_contract2_nzorb_task() { }
     virtual void perform();
 
