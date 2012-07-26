@@ -3,6 +3,7 @@
 
 #include <libtensor/timings.h>
 #include <libtensor/block_tensor/bto/additive_bto.h>
+#include "bto_stream_i.h"
 
 namespace libtensor {
 
@@ -19,24 +20,26 @@ class bto_copy :
     public timings< bto_copy<N, Traits> > {
 public:
     //! Type of tensor elements
-    typedef typename Traits::element_type element_t;
+    typedef typename Traits::element_type element_type;
 
     //! Type of block tensors
     typedef typename Traits::template block_tensor_type<N>::type
-        block_tensor_t;
+        block_tensor_type;
 
     //! Type of blocks of a block tensor
-    typedef typename Traits::template block_type<N>::type block_t;
+    typedef typename Traits::template block_type<N>::type block_type;
 
-    typedef tensor_transf<N, element_t> tensor_transf_t;
+    typedef bto_stream_i<N, Traits> bto_stream_type;
 
-    typedef scalar_transf<element_t> scalar_transf_t;
+    typedef tensor_transf<N, element_type> tensor_transf_t;
+
+    typedef scalar_transf<element_type> scalar_transf_t;
 
 public:
     static const char *k_clazz; //!< Class name
 
 private:
-    block_tensor_t &m_bta; //!< Source block %tensor
+    block_tensor_type &m_bta; //!< Source block %tensor
     tensor_transf_t m_tr; //!< Tensor transformation
     block_index_space<N> m_bis; //!< Block %index space of output
     dimensions<N> m_bidims; //!< Block %index dimensions
@@ -51,21 +54,21 @@ public:
         \param bt Source block %tensor.
         \param tr Transformation.
      **/
-    bto_copy(block_tensor_t &bta, const tensor_transf_t &tr =
+    bto_copy(block_tensor_type &bta, const tensor_transf_t &tr =
             tensor_transf_t());
 
     /** \brief Initializes the copy operation
         \param bt Source block %tensor.
         \param c Element-wise transformation.
      **/
-    bto_copy(block_tensor_t &bta, const scalar_transf_t &c);
+    bto_copy(block_tensor_type &bta, const scalar_transf_t &c);
 
     /** \brief Initializes the permuted copy operation
         \param bt Source block %tensor.
         \param p Permutation.
         \param c Element-wise transformation.
      **/
-    bto_copy(block_tensor_t &bta, const permutation<N> &p,
+    bto_copy(block_tensor_type &bta, const permutation<N> &p,
             const scalar_transf_t &c = scalar_transf_t());
 
     /** \brief Virtual destructor
@@ -81,9 +84,12 @@ public:
         return m_bis;
     }
 
-    virtual const symmetry<N, element_t> &get_symmetry() const {
+    virtual const symmetry<N, element_type> &get_symmetry() const {
         return m_sym;
     }
+
+    virtual void perform(block_tensor_type &bt);
+    virtual void perform(bto_stream_type &out);
 
     using additive_bto<N, typename Traits::additive_bto_traits>::perform;
 
@@ -94,13 +100,13 @@ public:
 
     //!    \name Implementation of libtensor::btod_additive<N>
     //@{
-    virtual const assignment_schedule<N, element_t> &get_schedule() const {
+    virtual const assignment_schedule<N, element_type> &get_schedule() const {
         return m_sch;
     }
     //@}
 
-    virtual void compute_block(bool zero, block_t &blk, const index<N> &ib,
-        const tensor_transf_t &tr, const element_t &c);
+    virtual void compute_block(bool zero, block_type &blk, const index<N> &ib,
+        const tensor_transf_t &tr, const element_type &c);
 
 private:
     static block_index_space<N> mk_bis(const block_index_space<N> &bis,
