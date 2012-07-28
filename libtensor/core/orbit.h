@@ -49,6 +49,7 @@ private:
     typedef tensor_transf<N, T> tensor_transf_type;
     typedef std::pair<size_t, tensor_transf_type> pair_type;
     typedef std::map<size_t, tensor_transf_type> orbit_map_type;
+    typedef typename orbit_map_type::iterator orbit_map_iterator_type;
 
 public:
     typedef typename orbit_map_type::const_iterator

@@ -177,9 +177,7 @@ void orbit<N, T>::build_orbit(const symmetry<N, T> &sym,
     //  T(0->i) = Tinv(i->0) = [ T(s->0) Tinv(s->i) ]^(-1)
 
     tensor_transf_type tr0(m_orb.begin()->second); // T(s->0)
-    for(typename orbit_map_type::iterator i = m_orb.begin();
-        i != m_orb.end(); ++i) {
-        index<N> idx; abs_index<N>::get_index(i->first, m_bidims, idx);
+    for(orbit_map_iterator_type i = m_orb.begin(); i != m_orb.end(); ++i) {
         i->second.invert();
         i->second.transform(tr0);
         i->second.invert();
