@@ -1,4 +1,3 @@
-#include "allocator.h"
 #include "allocator_impl.h"
 
 namespace libtensor {

@@ -2,11 +2,11 @@ set(SRC
     defs.C
     exception.C
     version.C
-    core/abs_index.C
-    core/allocator.C
-    core/dimensions.C
-    core/orbit.C
-    core/orbit_list.C
+    core/impl/abs_index.C
+    core/impl/allocator.C
+    core/impl/dimensions.C
+    core/impl/orbit.C
+    core/impl/orbit_list.C
     btod/btod_cholesky.C
     btod/cholesky.C
     btod/btod_diagonalize.C

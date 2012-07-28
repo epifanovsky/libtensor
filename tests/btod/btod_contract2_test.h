@@ -19,10 +19,6 @@ private:
     void test_bis_3() throw(libtest::test_exception);
     void test_bis_4() throw(libtest::test_exception);
     void test_bis_5() throw(libtest::test_exception);
-    void test_sym_1() throw(libtest::test_exception);
-    void test_sym_2() throw(libtest::test_exception);
-    void test_sym_3() throw(libtest::test_exception);
-    void test_sym_4() throw(libtest::test_exception);
 
     void test_zeroblk_1() throw(libtest::test_exception);
     void test_zeroblk_2() throw(libtest::test_exception);
@@ -53,6 +49,7 @@ private:
     void test_contr_20a() throw(libtest::test_exception);
     void test_contr_20b() throw(libtest::test_exception);
     void test_contr_21() throw(libtest::test_exception);
+    void test_contr_22();
 
     void test_self_1() throw(libtest::test_exception);
     void test_self_2() throw(libtest::test_exception);
