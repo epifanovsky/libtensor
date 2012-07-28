@@ -5,6 +5,7 @@
 
 namespace libtensor {
 
+
 /** \brief Tests the libtensor::orbit class
 
     \ingroup libtensor_tests_core
@@ -14,18 +15,20 @@ public:
     virtual void perform() throw(libtest::test_exception);
 
 private:
-    void test_1() throw(libtest::test_exception);
-    void test_2() throw(libtest::test_exception);
-    void test_3() throw(libtest::test_exception);
-    void test_4() throw(libtest::test_exception);
-    void test_5() throw(libtest::test_exception);
-    void test_6() throw(libtest::test_exception);
-    void test_7() throw(libtest::test_exception);
-    void test_8() throw(libtest::test_exception);
-    void test_9() throw(libtest::test_exception);
-    void test_10() throw(libtest::test_exception);
+    void test_1();
+    void test_2();
+    void test_3();
+    void test_4();
+    void test_5();
+    void test_6();
+    void test_7();
+    void test_8();
+    void test_9();
+    void test_10();
+    void test_11();
 
 };
+
 
 } // namespace libtensor
 
