@@ -1,8 +1,8 @@
 #ifndef LIBTENSOR_ABS_INDEX_IMPL_H
 #define LIBTENSOR_ABS_INDEX_IMPL_H
 
-#include "out_of_bounds.h"
-#include "abs_index.h"
+#include <libtensor/core/out_of_bounds.h>
+#include "../abs_index.h"
 
 namespace libtensor {
 

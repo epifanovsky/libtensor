@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_ORBIT_IMPL_H
 #define LIBTENSOR_ORBIT_IMPL_H
 
-#include "orbit.h"
+#include "../orbit.h"
 
 namespace libtensor {
 

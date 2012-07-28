@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_DIMENSIONS_IMPL_H
 #define LIBTENSOR_DIMENSIONS_IMPL_H
 
-#include "dimensions.h"
+#include "../dimensions.h"
 
 namespace libtensor {
 

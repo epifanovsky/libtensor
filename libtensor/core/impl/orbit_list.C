@@ -1,4 +1,3 @@
-#include "orbit_list.h"
 #include "orbit_list_impl.h"
 
 namespace libtensor {

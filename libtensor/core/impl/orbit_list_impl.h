@@ -1,8 +1,8 @@
 #ifndef LIBTENSOR_ORBIT_LIST_IMPL_H
 #define LIBTENSOR_ORBIT_LIST_IMPL_H
 
-#include "abs_index.h"
-#include "orbit_list.h"
+#include <libtensor/core/abs_index.h>
+#include "../orbit_list.h"
 
 namespace libtensor {
 

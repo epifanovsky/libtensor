@@ -1,5 +1,4 @@
-#include "../core/scalar_transf_double.h"
-#include "orbit.h"
+#include <libtensor/core/scalar_transf_double.h>
 #include "orbit_impl.h"
 
 namespace libtensor {
