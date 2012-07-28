@@ -4,6 +4,7 @@
 #include <libtensor/symmetry/permutation_group.h>
 #include <libtensor/symmetry/symmetry_element_set_adapter.h>
 #include <libtensor/block_tensor/bto/bto_contract2_sym.h>
+#include "../compare_ref.h"
 #include "bto_contract2_sym_test.h"
 
 namespace libtensor {
@@ -28,17 +29,13 @@ void bto_contract2_sym_test::test_1() throw(libtest::test_exception) {
         i2[0] = 10; i2[1] = 10; i2[2] = 10; i2[3] = 10;
         dimensions<4> dims(index_range<4>(i1, i2));
         block_index_space<4> bisa(dims), bis_ref(dims);
-        mask<4> msk, msk1, msk2;
+        mask<4> msk;
         msk[0] = true; msk[1] = true; msk[2] = true; msk[3] = true;
-        msk1[0] = true; msk1[1] = true;
-        msk2[2] = true; msk2[3] = true;
 
         bisa.split(msk, 3);
         bisa.split(msk, 5);
-        bis_ref.split(msk1, 3);
-        bis_ref.split(msk1, 5);
-        bis_ref.split(msk2, 3);
-        bis_ref.split(msk2, 5);
+        bis_ref.split(msk, 3);
+        bis_ref.split(msk, 5);
 
         block_index_space<4> bisb(bisa);
         dimensions<4> bidimsa(bisa.get_block_index_dims()),
@@ -69,10 +66,7 @@ void bto_contract2_sym_test::test_1() throw(libtest::test_exception) {
 
         bto_contract2_sym<2, 2, 2, double> op(contr, bisa, syma, bisb, symb);
 
-//        if(!op.get_symc().equals(symc_ref)) {
-//            fail_test(testname, __FILE__, __LINE__,
-//                "Symmetry does not match reference.");
-//        }
+        compare_ref<4>::compare(testname, op.get_symc(), symc_ref);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
@@ -105,8 +99,8 @@ void bto_contract2_sym_test::test_2() throw(libtest::test_exception) {
         block_index_space<5> bisb(dims5);
         block_index_space<3> bis_ref(dims3);
 
-        mask<3> msk3_1, msk3_2, msk3_3;
-        msk3_1[0] = true; msk3_2[1] = true; msk3_3[2] = true;
+        mask<3> msk3_1, msk3_2;
+        msk3_1[0] = true; msk3_1[1] = true; msk3_2[2] = true;
         mask<4> msk4;
         msk4[0] = true; msk4[1] = true; msk4[2] = true; msk4[3] = true;
         mask<5> msk5_1, msk5_2;
@@ -120,9 +114,7 @@ void bto_contract2_sym_test::test_2() throw(libtest::test_exception) {
         bisb.split(msk5_2, 4);
         bis_ref.split(msk3_1, 3);
         bis_ref.split(msk3_1, 5);
-        bis_ref.split(msk3_2, 3);
-        bis_ref.split(msk3_2, 5);
-        bis_ref.split(msk3_3, 4);
+        bis_ref.split(msk3_2, 4);
 
         symmetry<4, double> syma(bisa);
         symmetry<5, double> symb(bisb);
@@ -152,10 +144,7 @@ void bto_contract2_sym_test::test_2() throw(libtest::test_exception) {
 
         bto_contract2_sym<1, 2, 3, double> op(contr, bisa, syma, bisb, symb);
 
-//        if(!op.get_symc().equals(symc_ref)) {
-//            fail_test(testname, __FILE__, __LINE__,
-//                "Symmetry does not match reference.");
-//        }
+        compare_ref<3>::compare(testname, op.get_symc(), symc_ref);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());

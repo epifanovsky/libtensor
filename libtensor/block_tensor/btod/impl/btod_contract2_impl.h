@@ -440,13 +440,18 @@ void btod_contract2<N, M, K>::contract_block(
         dense_tensor_i<k_ordera, double> &ta = *coba[i->aia];
         dense_tensor_i<k_orderb, double> &tb = *cobb[i->aib];
 
+        tensor_transf<k_ordera, double> trainv(i->tra);
+        trainv.invert();
+        tensor_transf<k_orderb, double> trbinv(i->trb);
+        trbinv.invert();
+
         contraction2<N, M, K> contr(m_contr);
-        contr.permute_a(i->tra.get_perm());
-        contr.permute_b(i->trb.get_perm());
+        contr.permute_a(trainv.get_perm());
+        contr.permute_b(trbinv.get_perm());
         contr.permute_c(trc.get_perm());
 
-        double kc = i->tra.get_scalar_tr().get_coeff() *
-            i->trb.get_scalar_tr().get_coeff() *
+        double kc = trainv.get_scalar_tr().get_coeff() *
+            trbinv.get_scalar_tr().get_coeff() *
             trc.get_scalar_tr().get_coeff();
 
         if(op.get() == 0) {
