@@ -13,6 +13,9 @@ namespace libtensor {
  **/
 template<size_t N, size_t M, size_t K>
 class to_contract2_dims {
+public:
+    static const char *k_clazz; //!< Class name
+
 private:
     dimensions<N + M> m_dimsc; //!< Dimensions of result
 
