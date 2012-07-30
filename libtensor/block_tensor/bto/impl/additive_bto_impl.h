@@ -4,6 +4,8 @@
 #include <libtensor/symmetry/so_copy.h>
 #include <libtensor/symmetry/so_dirsum.h>
 #include <libtensor/symmetry/so_merge.h>
+#include "addition_schedule_impl.h"
+#include "../additive_bto.h"
 
 namespace libtensor {
 
@@ -121,10 +123,10 @@ void additive_bto<N, Traits>::task::perform() {
     typedef std::pair<size_t, block_t*> la_pair_t;
     std::list<la_pair_t> la;
 
-    for(typename std::list<typename schedule_t::schedule_node>::const_iterator
-        inode = grp.lst.begin(); inode != grp.lst.end(); ++inode) {
+    for(typename std::list<typename schedule_t::node>::const_iterator
+        inode = grp.begin(); inode != grp.end(); ++inode) {
 
-        const typename schedule_t::schedule_node &node = *inode;
+        const typename schedule_t::node &node = *inode;
 
         if(node.zeroa) continue;
 
@@ -141,10 +143,10 @@ void additive_bto<N, Traits>::task::perform() {
         }
     }
 
-    for(typename std::list<typename schedule_t::schedule_node>::const_iterator
-        inode = grp.lst.begin(); inode != grp.lst.end(); ++inode) {
+    for(typename std::list<typename schedule_t::node>::const_iterator
+        inode = grp.begin(); inode != grp.end(); ++inode) {
 
-        const typename schedule_t::schedule_node &node = *inode;
+        const typename schedule_t::node &node = *inode;
         if(node.cib == node.cic) continue;
 
         if(node.zeroa) {
@@ -187,10 +189,10 @@ void additive_bto<N, Traits>::task::perform() {
         }
     }
 
-    for(typename std::list<typename schedule_t::schedule_node>::const_iterator
-        inode = grp.lst.begin(); inode != grp.lst.end(); ++inode) {
+    for(typename std::list<typename schedule_t::node>::const_iterator
+        inode = grp.begin(); inode != grp.end(); ++inode) {
 
-        const typename schedule_t::schedule_node &node = *inode;
+        const typename schedule_t::node &node = *inode;
         if(node.cib != node.cic) continue;
         if(node.zeroa) continue;
 

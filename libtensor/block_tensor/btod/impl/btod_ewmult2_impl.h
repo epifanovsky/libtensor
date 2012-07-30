@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_BTOD_EWMULT2_IMPL_H
 #define LIBTENSOR_BTOD_EWMULT2_IMPL_H
 
+#include <libtensor/core/block_index_space_product_builder.h>
 #include <libtensor/core/orbit.h>
 #include <libtensor/core/orbit_list.h>
 #include <libtensor/core/permutation_builder.h>
