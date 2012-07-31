@@ -6,6 +6,7 @@
 #include <libtensor/core/orbit_list.h>
 #include <libtensor/symmetry/so_copy.h>
 #include <libtensor/symmetry/so_permute.h>
+#include "bto_aux_add_impl.h"
 #include "bto_aux_copy_impl.h"
 #include "../bto_copy.h"
 
@@ -172,6 +173,19 @@ template<size_t N, typename Traits>
 void bto_copy<N, Traits>::perform(block_tensor_type &btb) {
 
     bto_aux_copy<N, Traits> out(m_sym, btb);
+    perform(out);
+}
+
+
+template<size_t N, typename Traits>
+void bto_copy<N, Traits>::perform(block_tensor_type &btb,
+    const element_type &c) {
+
+    block_tensor_ctrl_type cb(btb);
+    addition_schedule<N, Traits> asch(m_sym, cb.req_const_symmetry());
+    asch.build(m_sch, cb);
+
+    bto_aux_add<N, Traits> out(m_sym, asch, btb, c);
     perform(out);
 }
 

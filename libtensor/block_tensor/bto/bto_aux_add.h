@@ -1,6 +1,10 @@
 #ifndef LIBTENSOR_BTO_AUX_ADD_H
 #define LIBTENSOR_BTO_AUX_ADD_H
 
+#include <map>
+#include <set>
+#include <libutil/threads/mutex.h>
+#include "addition_schedule.h"
 #include "bto_stream_i.h"
 
 namespace libtensor {
@@ -36,19 +40,31 @@ public:
     typedef tensor_transf<N, element_type> tensor_transf_type;
 
 private:
+    block_index_space<N> m_bis; //!< Block index space
+    dimensions<N> m_bidims; //!< Block index dimensions
     symmetry_type m_syma; //!< Symmetry of source
+    const addition_schedule<N, Traits> &m_asch; //!< Addition schedule
     block_tensor_type &m_btb; //!< Target block tensor
+    element_type m_c; //!< Scaling coefficient
     block_tensor_ctrl_type m_cb; //!< Control on target block tensor
     bool m_open; //!< Open state
+    size_t m_grpcount; //!< Group count
+    std::map<size_t, size_t> m_grpmap; //!< Maps index in A to group number
+    libutil::mutex m_mtx; //!< Global mutex
+    std::vector<libutil::mutex*> m_grpmtx; //!< Per-group mutexes
 
 public:
     /** \brief Constructs the operation
         \brief syma Symmetry of the source block tensor.
+        \brief asch Addition schedule.
         \brief btb Target block tensor.
+        \brief c Scaling coefficient for addition.
      **/
     bto_aux_add(
         const symmetry_type &syma,
-        block_tensor_type &btb);
+        const addition_schedule<N, Traits> &asch,
+        block_tensor_type &btb,
+        const element_type &c);
 
     /** \brief Virtual destructor
      **/

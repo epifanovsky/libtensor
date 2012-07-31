@@ -18,21 +18,17 @@ template<size_t N, typename Traits>
 class bto_copy :
     public additive_bto<N, typename Traits::additive_bto_traits>,
     public timings< bto_copy<N, Traits> > {
-public:
-    //! Type of tensor elements
-    typedef typename Traits::element_type element_type;
 
-    //! Type of block tensors
+public:
+    typedef typename Traits::element_type element_type;
+    typedef typename Traits::template block_type<N>::type block_type;
     typedef typename Traits::template block_tensor_type<N>::type
         block_tensor_type;
-
-    //! Type of blocks of a block tensor
-    typedef typename Traits::template block_type<N>::type block_type;
+    typedef typename Traits::template block_tensor_ctrl_type<N>::type
+        block_tensor_ctrl_type;
 
     typedef bto_stream_i<N, Traits> bto_stream_type;
-
     typedef tensor_transf<N, element_type> tensor_transf_t;
-
     typedef scalar_transf<element_type> scalar_transf_t;
 
 public:
@@ -89,6 +85,7 @@ public:
     }
 
     virtual void perform(block_tensor_type &bt);
+    virtual void perform(block_tensor_type &bt, const element_type &c);
     virtual void perform(bto_stream_type &out);
 
     using additive_bto<N, typename Traits::additive_bto_traits>::perform;
