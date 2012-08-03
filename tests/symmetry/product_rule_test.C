@@ -57,7 +57,7 @@ void product_rule_test::test_1() throw(libtest::test_exception) {
     if (it == pr.end()) {
         fail_test(testname, __FILE__, __LINE__, "it (1)");
     }
-    if (pr.get_intrinsic(it) != 0) {
+    if (pr.get_intrinsic(it) != 1) {
         fail_test(testname, __FILE__, __LINE__, "intrinsic (1)");
     }
     it++;

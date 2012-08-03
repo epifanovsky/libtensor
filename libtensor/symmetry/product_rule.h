@@ -114,7 +114,7 @@ bool product_rule<N>::operator==(const product_rule<N> &pr) const {
         if (it1->second != it2->second) return false;
     }
 
-    if (it1 != m_terms.end() || it2 != m_terms.end()) return false;
+    if (it1 != m_terms.end() || it2 != pr.m_terms.end()) return false;
 
     return true;
 }
