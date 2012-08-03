@@ -30,55 +30,52 @@ void combine_label<N, T>::add(const se_label<N, T> &el) throw(bad_parameter) {
     }
 #endif
 
-    typedef typename evaluation_rule<N>::iterator product_iterator;
-    typedef typename evaluation_rule<N>::const_iterator product_const_iterator;
-    typedef typename evaluation_rule<N>::product_rule_t product_rule_t;
-
     const evaluation_rule<N> &rule = el.get_rule();
 
     // No products means all forbidden => m_rule becomes empty as well.
     if (rule.begin() == rule.end()) {
-        m_rule.clear(); return;
+        m_rule.clear();
+        return;
     }
 
     // Transfer products
-    for (product_iterator ii = m_rule.begin(); ii != m_rule.end(); ii++) {
+    typename evaluation_rule<N>::const_iterator ij = rule.begin();
 
-        // Current product
-        product_rule_t &pra = m_rule.get_product(ii);
-        product_rule_t pra_copy(pra);
+    std::list< product_rule<N> > prlist;
+    for (typename evaluation_rule<N>::iterator ii = m_rule.begin();
+            ii != m_rule.end(); ii++) {
 
-        product_const_iterator ij = rule.begin();
-        {
-            const product_rule_t &prb = rule.get_product(ij);
-            // Amend the product by prb
-            for (typename product_rule_t::iterator ip = prb.begin();
-                    ip != prb.end(); ip++) {
+        product_rule<N> &pra = m_rule.get_product(ii);
+        prlist.push_back(pra);
 
-                pra.add(prb.get_sequence(ip), prb.get_intrinsic(ip));
-            }
-            ij++;
+        // Amend the product by prb
+        const product_rule<N> &prb = rule.get_product(ij);
+        for (typename product_rule<N>::iterator ip = prb.begin();
+                ip != prb.end(); ip++) {
+
+            pra.add(prb.get_sequence(ip), prb.get_intrinsic(ip));
         }
-
-        for (; ij != rule.end(); ij++) {
-
-            product_rule_t &prx = m_rule.new_product();
-
-            for (typename product_rule_t::iterator ip = pra_copy.begin();
-                    ip != pra_copy.end(); ip++) {
-
-                prx.add(pra_copy.get_sequence(ip), pra_copy.get_intrinsic(ip));
-            }
-
-            const product_rule_t &prb = rule.get_product(ij);
-            for (typename product_rule_t::iterator ip = prb.begin();
-                    ip != ij->end(); ip++) {
-
-                prx.add(prb.get_sequence(ip), prb.get_intrinsic(ip));
-            }
-        }
-
     }
+    ij++;
+    for (; ij != rule.end(); ij++) {
+
+        const product_rule<N> &prb = rule.get_product(ij);
+        typename std::list< product_rule<N> >::iterator it = prlist.begin();
+        for (; it != prlist.end(); it++) {
+
+            product_rule<N> &pra = m_rule.new_product();
+            for (typename product_rule<N>::iterator ipa = it->begin();
+                    ipa != it->end(); ipa++) {
+                pra.add(it->get_sequence(ipa), it->get_intrinsic(ipa));
+            }
+
+            for (typename product_rule<N>::iterator ipb = prb.begin();
+                    ipb != prb.end(); ipb++) {
+                pra.add(prb.get_sequence(ipb), prb.get_intrinsic(ipb));
+            }
+        }
+    }
+    m_rule.optimize();
 }
 
 
