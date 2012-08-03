@@ -2,8 +2,10 @@
 #define LIBTENSOR_EVALUATION_RULE_IMPL_H
 
 #include <list>
+#include <libtensor/core/abs_index.h>
 #include <libtensor/core/permutation_generator.h>
 #include <libtensor/core/sequence_generator.h>
+#include "../bad_symmetry.h"
 
 
 namespace libtensor {
@@ -14,234 +16,396 @@ const char *evaluation_rule<N>::k_clazz = "evaluation_rule<N>";
 
 
 template<size_t N>
-size_t evaluation_rule<N>::add_sequence(const sequence<N, size_t> &seq) {
-
-    size_t seqno = 0;
-    for (; seqno < m_sequences.size(); seqno++) {
-        const sequence<N, size_t> &ref = m_sequences[seqno];
-
-        register size_t i = 0;
-        for (; i < N; i++) {
-            if (seq[i] != ref[i]) break;
-        }
-        if (i == N) return seqno;
-    }
-
-    m_sequences.push_back(seq);
-    return m_sequences.size() - 1;
-}
-
-
-template<size_t N>
-size_t evaluation_rule<N>::add_product(size_t seq_no,
-        label_t intr, label_t target) {
-#ifdef LIBTENSOR_DEBUG
-    if (seq_no >= m_sequences.size())
-        throw bad_parameter(g_ns, k_clazz,
-                "add_product(size_t, label_t, label_t)",
-                __FILE__, __LINE__, "seq_no.");
-#endif
-
-    m_setup.push_back(product_t());
-    product_t &pr = m_setup.back();
-
-    pr.insert(add_term(seq_no, intr, target));
-    return m_setup.size() - 1;
-}
-
-
-template<size_t N>
-void evaluation_rule<N>::add_to_product(size_t no,
-        size_t seq_no, label_t intr, label_t target) {
-
-    static const char *method =
-            "add_to_product(size_t, size_t, label_t, label_t)";
-
-#ifdef LIBTENSOR_DEBUG
-    if (no >= m_setup.size())
-        throw bad_parameter(g_ns, k_clazz, method,
-                __FILE__, __LINE__, "no");
-    if (seq_no >= m_sequences.size())
-        throw bad_parameter(g_ns, k_clazz, method,
-                __FILE__, __LINE__, "seq_no");
-#endif
-
-    product_t &pr = m_setup[no];
-    pr.insert(add_term(seq_no, intr, target));
-}
-
-
-template<size_t N>
 void evaluation_rule<N>::optimize() {
 
-    // Determine zero sequences
-    std::vector<bool> marked_seqs(m_sequences.size(), false);
-    for (size_t i = 0; i < m_sequences.size(); i++) {
-        const sequence<N, size_t> &seq = m_sequences[i];
-        size_t nidx = 0;
-        for (register size_t j = 0; j < N; j++) nidx += seq[j];
-        marked_seqs[i] = (nidx == 0);
-    }
+    typedef typename eval_sequence_list<N>::eval_sequence_t eval_sequence_t;
 
-    // Determine allowed and forbidden terms
-    std::vector<bool> marked_terms(m_term_list.size(), false);
-    for (size_t i = 0; i < m_term_list.size(); i++) {
-        const term &ct = m_term_list[i];
-        marked_terms[i] = (marked_seqs[ct.seqno] ||
-                ct.target == product_table_i::k_invalid ||
-                ct.intr == product_table_i::k_invalid);
-    }
-    marked_seqs.clear();
+    std::list<product_rule_t> new_rules;
+    eval_sequence_list<N> new_slist;
 
     // Loop over all products
-    typename std::vector<product_t>::iterator itp = m_setup.begin();
-    while (itp != m_setup.end()) {
+    typename std::list<product_rule_t>::iterator it1 = m_rules.begin();
+    for (; it1 != m_rules.end(); it1++) {
 
-        product_t &pr = *itp;
-        bool has_allowed = false;
-        typename product_t::iterator itt = pr.begin();
-        while (itt != pr.end()) {
+        product_rule_t &pr = *it1;
+        // Delete empty products
+        if (pr.empty()) continue;
 
-            // Term is forbidden or allowed
-            if (marked_terms[*itt]) {
-                if (m_term_list[*itt].intr != product_table_i::k_invalid)
-                    break;
+        product_rule_t prx(&new_slist);
 
-                product_t::iterator itt2 = itt;
-                itt++;
-                pr.erase(itt2);
-                has_allowed = true;
+        // Look for products with 'all allowed' rules
+        size_t nallowed = 0;
+        typename product_rule_t::iterator ip1 = pr.begin();
+        for (; ip1 != pr.end(); ip1++) {
+
+            if (pr.get_intrinsic(ip1) == product_table_i::k_invalid) {
+                nallowed++;
                 continue;
             }
 
-            itt++;
-        }
-        // If there was one forbidden term the product can be deleted
-        if (itt != pr.end()) {
-            itp = m_setup.erase(itp);
-            continue;
-        }
-
-        // If there were only allowed terms in the product the whole rule
-        // can be simplified
-        if (has_allowed && pr.size() == 0) break;
-
-        // Check if this is a duplicate product
-        typename std::vector<product_t>::iterator itp2 = m_setup.begin();
-        for (; itp2 != itp; itp2++) {
-            if (itp2->size() != itp->size()) continue;
-
-            typename product_t::iterator it1 = itp->begin(),
-                    it2 = itp2->begin();
-            for (; it1 != itp->end(); it1++, it2++) {
-                if (*it1 != *it2) break;
+            const eval_sequence_t &seq = pr.get_sequence(ip1);
+            size_t nidx = 0;
+            for (register size_t j = 0; j < N; j++) nidx += seq[j];
+            if (nidx == 0) {
+                if (pr.get_intrinsic(ip1) == product_table_i::k_identity) {
+                    nallowed++;
+                    continue;
+                }
+                else {
+                    break;
+                }
             }
-            if (it1 == itp->end()) break;
-        }
-        if (itp2 != itp) {
-            itp = m_setup.erase(itp);
-            continue;
+
+            prx.add(pr.get_sequence(ip1), pr.get_intrinsic(ip1));
         }
 
-        itp++;
+        // If there was one forbidden term the product can be deleted
+        if (ip1 != it1->end()) continue;
+
+        if (prx.empty()) {
+            if (nallowed != 0) break;
+            else continue;
+        }
+
+        new_rules.push_back(prx);
     }
-    marked_terms.clear();
 
     // All blocks are allowed by this rule
-    if (itp != m_setup.end()) {
-        m_sequences.clear();
-        m_term_list.clear();
-        m_setup.clear();
+    if (it1 != m_rules.end()) {
+        m_slist.clear();
+        m_rules.clear();
 
-        sequence<N, size_t> seq(1);
-        term t(0, product_table_i::k_invalid, 0);
-        m_sequences.push_back(seq);
-        m_term_list.push_back(t);
-        m_setup.push_back(product_t());
-        m_setup.back().insert(0);
+        eval_sequence_t seq(1);
+        product_rule_t pr(&m_slist);
+        pr.add(seq, product_table_i::k_invalid);
+        m_rules.push_back(pr);
         return;
     }
 
-    // Loop over all products and collect used terms
-    std::set<size_t> used_terms;
-    for (size_t i = 0; i < m_setup.size(); i++) {
-        used_terms.insert(m_setup[i].begin(), m_setup[i].end());
+    // Remove duplicate products
+    for (it1 = new_rules.begin(); it1 != new_rules.end(); it1++) {
+
+        typename std::list<product_rule_t>::iterator it2 = it1;
+        it2++;
+        while (it2 != new_rules.end()) {
+            if (*it1 == *it2) it2 = new_rules.erase(it2);
+            else it2++;
+        }
     }
 
-    // Loop over term list and delete unused terms (if there are any)
-    if (used_terms.size() != m_term_list.size()) {
-        std::vector<term> term_list(used_terms.size(), term(0, 0, 0));
-        std::map<size_t, size_t> term_map;
-        size_t ii = 0;
-        for (std::set<size_t>::const_iterator it = used_terms.begin();
-                it != used_terms.end(); it++, ii++) {
-            term_list[ii] = m_term_list[*it];
-            term_map[*it] = ii;
-        }
-        m_term_list.assign(term_list.begin(), term_list.end());
+    // Clear the member lists
+    m_rules.clear();
+    m_slist.clear();
 
-        // Loop again over product and modify the term ids accordingly
-        for (size_t i = 0; i < m_setup.size(); i++) {
-            product_t new_pr;
-            for (typename product_t::iterator it = m_setup[i].begin();
-                    it != m_setup[i].end(); it++) {
-                new_pr.insert(term_map[*it]);
+    // Copy from new lists to member lists
+    for (it1 = new_rules.begin(); it1 != new_rules.end(); it1++) {
+
+        product_rule<N> &pr = new_product();
+        for (typename product_rule<N>::iterator ip1 = it1->begin();
+                ip1 != it1->end(); ip1++) {
+            pr.add(it1->get_sequence(ip1), it1->get_intrinsic(ip1));
+        }
+    }
+}
+
+
+template<size_t N> template<size_t M>
+void evaluation_rule<N>::reduce(evaluation_rule<N - M> &res,
+        const sequence<N, size_t> &rmap,
+        const sequence<M, label_group_t> &rdims,
+        const product_table_i &pt) const {
+
+    typedef typename eval_sequence_list<N>::eval_sequence_t eval_sequence_t;
+    typedef typename product_rule_t::iterator term_iterator;
+
+#ifdef LIBTENSOR_DEBUG
+    size_t nrsteps = 0;
+    for (; nrsteps < M && rdims[nrsteps].size() > 0; nrsteps++) ;
+    for (size_t i = 0; i < N; i++) {
+        if (rmap[i] < N - M) continue;
+        if (rmap[i] - (N - M) >= nrsteps) {
+            throw bad_symmetry(g_ns, k_clazz, "reduce(...)",
+                    __FILE__, __LINE__, "rmap");
+        }
+    }
+#endif
+    res.clear();
+
+    // Loop over products
+    for (const_iterator it = m_rules.begin(); it != m_rules.end(); it++) {
+
+        const product_rule_t &pra = *it;
+
+        // Determine rsteps present in product and sequences contributing to
+        // rstep
+        sequence<M, size_t> rsteps_in_pr(0);
+        sequence<M, std::set<size_t> > terms_in_rstep;
+        std::vector<term_iterator> terms;
+
+        size_t iterm = 0;
+        for (term_iterator ip = pra.begin(); ip != pra.end(); ip++, iterm++) {
+
+            const eval_sequence_t &seq = pra.get_sequence(ip);
+            terms.push_back(ip);
+
+            for (size_t i = 0; i < N; i++) {
+
+                if (seq[i] == 0 || rmap[i] < N - M) continue;
+
+                size_t rstep = rmap[i] - (N - M);
+                rsteps_in_pr[rstep] += seq[i];
+                terms_in_rstep[rstep].insert(iterm);
             }
-            m_setup[i] = new_pr;
+        }
+
+        // Loop over all rsteps and find lists of terms that can be merged
+        mask<M> rsteps_to_do;
+        std::vector< std::set<size_t> > s2c;
+        for (size_t i = 0; i < M && ! rdims[i].empty(); i++) {
+            if (rsteps_in_pr[i] == 0) continue;
+            if (rsteps_in_pr[i] != 2 || terms_in_rstep[i].size() != 2 ||
+                    rdims[i].size() != pt.get_n_labels()) {
+                rsteps_to_do[i] = true;
+                continue;
+            }
+
+            std::set<size_t>::iterator it1, it2;
+            it1 = it2 = terms_in_rstep[i].begin();
+            it2++;
+
+            typename std::vector< std::set<size_t> >::iterator j1 = s2c.end();
+            typename std::vector< std::set<size_t> >::iterator j2 = s2c.end();
+            for (typename std::vector< std::set<size_t> >::iterator j =
+                    s2c.begin(); j != s2c.end(); j++) {
+                if (j1 != s2c.end() && j2 != s2c.end()) break;
+                if (j1 == s2c.end() && j->count(*it1) != 0) { j1 = j; }
+                if (j2 == s2c.end() && j->count(*it2) != 0) { j2 = j; }
+            }
+
+            if (j1 == s2c.end() && j2 == s2c.end()) {
+                std::set<size_t> its;
+                its.insert(*it1);
+                its.insert(*it2);
+                s2c.push_back(its);
+            }
+            else if (j2 == s2c.end()) {
+                j1->insert(*it2);
+            }
+            else if (j1 == s2c.end()) {
+                j2->insert(*it1);
+            }
+            else if (j1 != j2) {
+                j1->insert(j2->begin(), j2->end());
+                s2c.erase(j2);
+            }
+        }
+
+        // Combine terms
+        eval_sequence_list<N> seq_list;
+        std::list<label_group_t> intr_list;
+        intr_list.push_back(label_group_t());
+
+        std::set<size_t> terms_done;
+        for (typename std::vector< std::set<size_t> >::iterator itsl =
+                s2c.begin(); itsl != s2c.end(); itsl++) {
+
+            eval_sequence_t seq2(0);
+
+            label_group_t lg;
+            for (typename std::set<size_t>::iterator its = itsl->begin();
+                    its != itsl->end(); its++) {
+
+                term_iterator itx = terms[*its];
+                const eval_sequence_t &seq1 = pra.get_sequence(itx);
+                for (size_t i = 0; i < N; i++) seq2[rmap[i]] += seq1[i];
+
+                lg.push_back(pra.get_intrinsic(itx));
+                terms_done.insert(*its);
+            }
+            seq_list.add(seq2);
+
+            label_set_t ls(pt.product(lg));
+            std::list<label_group_t>::iterator iti = intr_list.begin();
+            while (iti != intr_list.end()) {
+                if (ls.size() != 1) {
+                    std::list<label_group_t>::iterator itj = iti;
+                    itj++;
+                    intr_list.insert(itj, ls.size() - 1, *iti);
+                }
+
+                for (label_set_t::iterator il =  ls.begin();
+                        il != ls.end(); il++, iti++) {
+                    iti->push_back(*il);
+                }
+            }
+        }
+
+        // Add remaining terms to lists
+        iterm = 0;
+        for (term_iterator ip = pra.begin(); ip != pra.end(); ip++, iterm++) {
+
+            if (terms_done.count(iterm) != 0) continue;
+
+            eval_sequence_t seq2(0);
+            const eval_sequence_t &seq1 = pra.get_sequence(ip);
+            for (size_t i = 0; i < N; i++) seq2[rmap[i]] += seq1[i];
+
+            seq_list.add(seq2);
+            for (std::list<label_group_t>::iterator iti = intr_list.begin();
+                    iti != intr_list.end(); iti++) {
+                iti->push_back(pra.get_intrinsic(ip));
+            }
+        }
+
+        // Loop over all remaining reduction indexes
+        index<M> idx1, idx2;
+        for (size_t i = 0; i < M; i++) {
+            if (! rsteps_to_do[i]) continue;
+
+            idx2[i] = rdims[i].size() - 1;
+        }
+
+
+        abs_index<M> aridx(dimensions<M>(index_range<M>(idx1, idx2)));
+        std::list<label_group_t> intr2_list;
+        do {
+
+            const index<M> &ridx = aridx.get_index();
+
+            // Loop over all reduction sequences
+            std::list<label_group_t> new_intr(intr_list);
+            for (size_t i = 0; i < seq_list.size(); i++) {
+
+                // Get current sequence
+                const sequence<N, size_t> &cur_seq = seq_list[i];
+
+                // Create label group from reduction sequence at current index
+                label_group_t lg;
+                for (size_t j = 0; j < M; j++) {
+                    if (! rsteps_to_do[j]) continue;
+                    lg.insert(lg.end(), cur_seq[j + N - M], rdims[j][ridx[j]]);
+                }
+
+                // Loop over all intrinsic label lists
+                std::list<label_group_t>::iterator iti = new_intr.begin();
+                while (iti != new_intr.end()) {
+
+                    lg.push_back(iti->at(i));
+                    label_set_t ls(pt.product(lg));
+                    lg.pop_back();
+
+                    if (ls.size() != 1) {
+                        std::list<label_group_t>::iterator itj = iti;
+                        itj++;
+                        new_intr.insert(itj, ls.size() - 1, *iti);
+                    }
+                    for (label_set_t::iterator is = ls.begin();
+                            is != ls.end(); is++, iti++) {
+                        iti->at(i) = *is;
+                    }
+                }
+            }
+            intr2_list.insert(intr2_list.end(),
+                    new_intr.begin(), new_intr.end());
+
+        } while (aridx.inc());
+
+        intr_list.clear();
+
+        eval_sequence_list<N - M> seq2_list;
+        for (size_t i = 0; i < seq_list.size(); i++) {
+            sequence<N - M, size_t> seq2(0);
+            for (register size_t j = 0; j < N - M; j++)
+                seq2[j] = seq_list[i][j];
+            seq2_list.add(seq2);
+        }
+        for (std::list<label_group_t>::const_iterator it = intr2_list.begin();
+                it != intr2_list.end(); it++) {
+
+            product_rule<N - M> &pr = res.new_product();
+            for (size_t i = 0; i < seq2_list.size(); i++) {
+                pr.add(seq2_list[i], it->at(i));
+            }
         }
     }
+    res.optimize();
+}
 
-    // Loop over term list and collect used sequences
-    std::set<size_t> used_seqs;
-    for (size_t i = 0; i < m_term_list.size(); i++) {
-        used_seqs.insert(m_term_list[i].seqno);
-    }
 
-    // Loop over sequence list and delete unused sequences (if there are any)
-    if (used_seqs.size() != m_sequences.size()) {
-        std::vector< sequence<N, size_t> > seq_list(used_seqs.size());
-        std::map<size_t, size_t> seq_map;
-        size_t ii = 0;
-        for (std::set<size_t>::const_iterator it = used_seqs.begin();
-                it != used_seqs.end(); it++, ii++) {
-            seq_list[ii] = m_sequences[*it];
-            seq_map[*it] = ii;
+template<size_t N> template<size_t M>
+void evaluation_rule<N>::merge(evaluation_rule<M> &res,
+        const sequence<N, size_t> &mmap,
+        const mask<M> &smsk) const {
+
+    // Loop over products
+    for (const_iterator it = m_rules.begin(); it != m_rules.end(); it++) {
+
+        const product_rule_t &pra = *it;
+        product_rule<M> &prb = res.new_product();
+
+        for (typename product_rule_t::iterator ip = pra.begin();
+                ip != pra.end(); ip++) {
+
+            const sequence<N, size_t> &seq1 = pra.get_sequence(ip);
+            sequence<M, size_t> seq2(0);
+            for (register size_t i = 0; i < N; i++) {
+                seq2[mmap[i]] += seq1[i];
+            }
+
+            size_t nidx = 0;
+            for (register size_t i = 0; i < M; i++) {
+                if (! smsk[i]) continue;
+
+                seq2[i] = seq2[i] % 2;
+            }
+
+            prb.add(seq2, pra.get_intrinsic(ip));
         }
-        m_sequences.assign(seq_list.begin(), seq_list.end());
-
-        // Loop again over term list and modify the seq nos accordingly
-        for (size_t i = 0; i < m_term_list.size(); i++) {
-            m_term_list[i].seqno = seq_map[m_term_list[i].seqno];
-        }
     }
+    res.optimize();
 }
 
 
 template<size_t N>
-size_t evaluation_rule<N>::add_term(
-        size_t seq_no, label_t intr, label_t target) {
+bool evaluation_rule<N>::is_allowed(const sequence<N, label_t> &blk_labels,
+        const product_table_i &pt) const {
 
-    for (size_t i = 0; i < m_term_list.size(); i++) {
-        const term &ct = m_term_list[i];
-        if (seq_no == ct.seqno && intr == ct.intr && target == ct.target)
-            return i;
+    // Loop over all sequences in rule and determine result labels
+    std::vector<label_set_t> ls(m_slist.size());
+    for (size_t i = 0; i < m_slist.size(); i++) {
+        const sequence<N, size_t> &seq = m_slist[i];
+        label_group_t lg;
+        register size_t j = 0;
+        for (; j < N; j++) {
+            if (seq[j] == 0) continue;
+            if (blk_labels[j] == product_table_i::k_invalid) break;
+
+            lg.insert(lg.end(), seq[j], blk_labels[j]);
+        }
+        if (j != N) {
+            for (label_t ll = 0; ll < pt.get_n_labels(); ll++)
+                ls[i].insert(ll);
+        }
+        else if (lg.size() != 0) {
+            ls[i] = pt.product(lg);
+        }
     }
 
-    m_term_list.push_back(term(seq_no, intr, target));
-    return m_term_list.size() - 1;
-}
+    // Loop over all products in the evaluation rule
+    for (const_iterator it = m_rules.begin(); it != m_rules.end(); it++) {
 
+        // Loop over all terms in the current product
+        typename product_rule<N>::iterator ip = it->begin();
+        for (; ip != it->end(); ip++) {
 
-template<size_t N>
-bool evaluation_rule<N>::is_valid(iterator it) const {
+            // Invalid intrinsic label
+            if (ip->second == product_table_i::k_invalid) continue;
 
-    for (std::vector<product_t>::const_iterator it1 = m_setup.begin();
-            it1 != m_setup.end(); it1++) {
+            if (ls[ip->first].count(ip->second) == 0) break;
+        }
 
-        const product_t &pr = *it1;
-        for (iterator it2 = pr.begin(); it2 != pr.end(); it2++) {
-
-            if (it == it2) return true;
+        if (ip == it->end()) {
+            return true;
         }
     }
 
