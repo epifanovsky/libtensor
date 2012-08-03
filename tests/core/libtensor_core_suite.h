@@ -10,7 +10,7 @@
 #include "block_tensor_test.h"
 #include "dense_tensor_test.h"
 #include "dimensions_test.h"
-//#include "direct_block_tensor_test.h"
+#include "direct_block_tensor_test.h"
 #include "immutable_test.h"
 #include "index_test.h"
 #include "index_range_test.h"
@@ -81,7 +81,7 @@ private:
     unit_test_factory<block_tensor_test> m_utf_block_tensor;
     unit_test_factory<dense_tensor_test> m_utf_dense_tensor;
     unit_test_factory<dimensions_test> m_utf_dimensions;
-//    unit_test_factory<direct_block_tensor_test> m_utf_direct_block_tensor;
+    unit_test_factory<direct_block_tensor_test> m_utf_direct_block_tensor;
     unit_test_factory<immutable_test> m_utf_immutable;
     unit_test_factory<index_test> m_utf_index;
     unit_test_factory<index_range_test> m_utf_index_range;

@@ -666,14 +666,16 @@ void btod_mult_test::test_7(bool label, bool part,
         bl.assign(msk, 3, 1);
 
         evaluation_rule<4> r1;
-        r1.add_sequence(sequence<4, size_t>(1));
-        r1.add_product(0, 0);
+        sequence<4, size_t> seq(1);
+        product_rule<4> &pr1 = r1.new_product();
+        pr1.add(seq, 0);
         sl.set_rule(r1);
         ca.req_symmetry().insert(sl);
         cc.req_symmetry().insert(sl);
         sym_ref.insert(sl);
 
-        r1.add_product(0, 1);
+        product_rule<4> &pr2 = r1.new_product();
+        pr2.add(seq, 1);
         sl.set_rule(r1);
         cb.req_symmetry().insert(sl);
     }
@@ -822,14 +824,16 @@ void btod_mult_test::test_8a(bool label, bool part)
         bl.assign(m, 0, 0); bl.assign(m, 1, 1);
         bl.assign(m, 2, 0); bl.assign(m, 3, 1);
         evaluation_rule<2> r1;
-        r1.add_sequence(sequence<2, size_t>(1));
-        r1.add_product(0, 0);
+        sequence<2, size_t> seq(1);
+        product_rule<2> &pr1 = r1.new_product();
+        pr1.add(seq, 0);
         sl.set_rule(r1);
 
         ca.req_symmetry().insert(sl);
         sym_ref.insert(sl);
 
-        r1.add_product(0, 1);
+        product_rule<2> &pr2 = r1.new_product();
+        pr2.add(seq, 1);
         sl.set_rule(r1);
         cb.req_symmetry().insert(sl);
     }
@@ -953,14 +957,16 @@ void btod_mult_test::test_8b(bool label, bool part)
         bl.assign(m, 0, 0); bl.assign(m, 1, 1);
         bl.assign(m, 2, 0); bl.assign(m, 3, 1);
         evaluation_rule<4> r1;
-        r1.add_sequence(sequence<4, size_t>(1));
-        r1.add_product(0, 0);
+        sequence<4, size_t> seq(1);
+        product_rule<4> &pr1 = r1.new_product();
+        pr1.add(seq, 0);
         sl.set_rule(r1);
 
         ca.req_symmetry().insert(sl);
         sym_ref.insert(sl);
 
-        r1.add_product(0, 1);
+        product_rule<4> &pr2 = r1.new_product();
+        pr2.add(seq, 1);
         sl.set_rule(r1);
         cb.req_symmetry().insert(sl);
     }

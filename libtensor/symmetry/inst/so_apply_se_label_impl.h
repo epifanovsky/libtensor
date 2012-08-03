@@ -22,11 +22,10 @@ void symmetry_operation_impl< so_apply<N, T>, se_label<N, T> >::do_perform(
         e2.permute(params.perm1);
 
         if (! params.keep_zero) {
-            evaluation_rule<N> r2 = e2.get_rule();
-            r2.clear_all();
+            evaluation_rule<N> r2;
             sequence<N, size_t> seq(1);
-            r2.add_sequence(seq);
-            r2.add_product(0, product_table_i::k_invalid, 0);
+            product_rule<N> &pr2 = r2.new_product();
+            pr2.add(seq, product_table_i::k_invalid);
             e2.set_rule(r2);
         }
 
