@@ -69,10 +69,10 @@ symmetry_operation_impl< so_symmetrize<N, T>, se_label<N, T> >::do_perform(
          transfer_labeling(bl1, idmap, bl2);
 
          evaluation_rule<N> r2;
-         for (typename evaluation_rule<N>::const_iterator it = r1.begin();
-                 it != r1.end(); it++) {
+         for (typename evaluation_rule<N>::const_iterator ir = r1.begin();
+                 ir != r1.end(); ir++) {
 
-             const product_rule<N> &pr1 = r1.get_product(it);
+             const product_rule<N> &pr1 = r1.get_product(ir);
 
              permutation_generator<N> pg(msk);
              do {
