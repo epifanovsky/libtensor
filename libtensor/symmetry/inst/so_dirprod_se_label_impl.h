@@ -208,7 +208,7 @@ symmetry_operation_impl< so_dirprod<N, M, T>, se_label<NM, T> >::do_perform(
                     ip2 != pr2.end(); ip2++) {
 
                 const sequence<M, size_t> &seq2 = pr2.get_sequence(ip2);
-                for (register size_t j = 0; j < N; j++)
+                for (register size_t j = 0; j < M; j++)
                     seq3[map2[j]] = seq2[j];
 
                 pr3.add(seq3, ip2->second);
