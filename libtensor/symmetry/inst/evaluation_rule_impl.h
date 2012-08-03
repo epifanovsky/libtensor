@@ -194,7 +194,10 @@ void evaluation_rule<N>::reduce(evaluation_rule<N - M> &res,
             else if (j1 == s2c.end()) {
                 j2->insert(*it1);
             }
-            else if (j1 != j2) {
+            else if (j1 == j2) {
+                rsteps_to_do[i] = true;
+            }
+            else {
                 j1->insert(j2->begin(), j2->end());
                 s2c.erase(j2);
             }

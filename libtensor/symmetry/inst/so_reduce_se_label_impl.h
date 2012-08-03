@@ -37,9 +37,9 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_label<NM, T> >::do_perform(
     size_t nrsteps = 0;
     for (register size_t i = 0, j = 0; i < k_order1; i++) {
         if (params.msk[i]) {
-            map[i] = params.rseq[i];
-            rmap[i] = map[i] + k_order2;
-            nrsteps = std::max(nrsteps, map[i]);
+            map[i] = -1;
+            rmap[i] = params.rseq[i] + k_order2;
+            nrsteps = std::max(nrsteps, params.rseq[i]);
         }
         else {
             rmap[i] = map[i] = j++;
