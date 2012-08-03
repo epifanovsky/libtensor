@@ -15,8 +15,8 @@ class btod_cholesky {
 public:
     btod_cholesky(block_tensor_i<2, double> &bta, double tol = 1e-4);
     //!< bta - input symmetric matrix
-    ~btod_cholesky();
-        void decompose();
+    virtual ~btod_cholesky();
+    void decompose();
     //!<perform cholesky decomposition and save data to buffer
     int get_rank(){return m_rank;}; 
     virtual void perform(block_tensor_i<2, double> &btb);

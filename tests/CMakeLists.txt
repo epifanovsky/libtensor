@@ -86,7 +86,7 @@ set(SRC_SYMMETRY
     symmetry/product_rule_test.C
     symmetry/product_table_container_test.C
     symmetry/se_label_test_base.C
-#    symmetry/se_label_test.C
+    symmetry/se_label_test.C
     symmetry/se_part_test.C
     symmetry/se_perm_test.C
 #    symmetry/so_apply_se_label_test.C
