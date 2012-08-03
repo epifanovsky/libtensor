@@ -13,7 +13,8 @@ void so_symmetrize_se_label_test::perform() throw(libtest::test_exception) {
 
     test_empty(table_id);
     test_sym2_1(table_id);
-    test_sym2_1(table_id);
+    test_sym2_2(table_id);
+    test_sym2_3(table_id);
     test_sym3_1(table_id);
 
     } catch (libtest::test_exception) {
@@ -192,8 +193,8 @@ void so_symmetrize_se_label_test::test_sym2_2(
     set1.insert(el1);
 
     sequence<4, size_t> idxgrp(0), symidx(0);
-    idxgrp[0] = idxgrp[2] = 1; idxgrp[1] = idxgrp[3] = 2;
-    symidx[0] = symidx[1] = 1; symidx[2] = symidx[3] = 2;
+    idxgrp[0] = idxgrp[1] = 1; idxgrp[2] = idxgrp[3] = 2;
+    symidx[0] = symidx[2] = 1; symidx[1] = symidx[3] = 2;
 
     scalar_transf<double> trp, trc;
     symmetry_operation_params<so_symmetrize_t> params(set1, idxgrp,
@@ -223,19 +224,21 @@ void so_symmetrize_se_label_test::test_sym2_2(
         const index<4> &idx = ai.get_index();
         bool xij = (idx[0] == 0 && idx[1] == 1) ||
                 (idx[0] == 1 && idx[1] == 0) ||
+                (idx[0] == 1 && idx[1] == 1) ||
                 (idx[0] == 2 && idx[1] == 3) ||
                 (idx[0] == 3 && idx[1] == 2) ||
                 (idx[0] == 3 && idx[1] == 3);
         bool ykl = (idx[2] == 0 && idx[3] == 2) ||
-                (idx[2] == 2 && idx[3] == 0) ||
                 (idx[2] == 1 && idx[3] == 3) ||
+                (idx[2] == 2 && idx[3] == 0) ||
                 (idx[2] == 3 && idx[3] == 1);
         bool yij = (idx[0] == 0 && idx[1] == 2) ||
-                (idx[0] == 2 && idx[1] == 0) ||
                 (idx[0] == 1 && idx[1] == 3) ||
+                (idx[0] == 2 && idx[1] == 0) ||
                 (idx[0] == 3 && idx[1] == 1);
         bool xkl = (idx[2] == 0 && idx[3] == 1) ||
                 (idx[2] == 1 && idx[3] == 0) ||
+                (idx[2] == 1 && idx[3] == 1) ||
                 (idx[2] == 2 && idx[3] == 3) ||
                 (idx[2] == 3 && idx[3] == 2) ||
                 (idx[2] == 3 && idx[3] == 3);

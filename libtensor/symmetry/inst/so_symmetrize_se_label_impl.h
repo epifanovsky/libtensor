@@ -81,8 +81,9 @@ symmetry_operation_impl< so_symmetrize<N, T>, se_label<N, T> >::do_perform(
                  for (register size_t i = 0; i < N; i++) seq1[i] = seq2[i] = i;
 
                  for (register size_t i = 0, k = 0; i < ngrp; i++) {
-                     for (register size_t j = 0; j < nidx; j++, k++) {
-                         seq2[p[map[k]]] = seq1[map[k]];
+                     for (register size_t j = 0, kk = p[i] * nidx;
+                             j < nidx; j++, k++, kk++) {
+                         seq2[map[kk]] = seq1[map[k]];
                      }
                  }
                  permutation_builder<N> pb(seq2, seq1);
