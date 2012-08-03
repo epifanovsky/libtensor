@@ -39,6 +39,7 @@
 #include "so_reduce_se_perm_test.h"
 #include "so_reduce_test.h"
 #include "so_symmetrize_se_label_test.h"
+#include "so_symmetrize_se_part_test.h"
 #include "so_symmetrize_test.h"
 #include "symmetry_element_set_adapter_test.h"
 
@@ -137,6 +138,7 @@ private:
     unit_test_factory<so_reduce_se_perm_test> m_utf_so_reduce_se_perm;
     unit_test_factory<so_reduce_test> m_utf_so_reduce;
     unit_test_factory<so_symmetrize_se_label_test> m_utf_so_symmetrize_se_label;
+    unit_test_factory<so_symmetrize_se_part_test> m_utf_so_symmetrize_se_part;
     unit_test_factory<so_symmetrize_test> m_utf_so_symmetrize;
     unit_test_factory<symmetry_element_set_adapter_test>
         m_utf_symmetry_element_set_adapter;

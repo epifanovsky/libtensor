@@ -114,6 +114,7 @@ set(SRC_SYMMETRY
     symmetry/so_reduce_se_perm_test.C
     symmetry/so_reduce_test.C
     symmetry/so_symmetrize_se_label_test.C
+    symmetry/so_symmetrize_se_part_test.C
     symmetry/so_symmetrize_test.C
     symmetry/symmetry_element_set_adapter_test.C
 )
