@@ -144,13 +144,8 @@ symmetry_operation_impl< so_merge<N, M, T>, se_label<NM, T> >::do_perform(
         // Transfer the rule
         const evaluation_rule<N> &r1 = cl1.get_rule();
         evaluation_rule<N - M> r2;
-
         r1.merge(r2, mmap, smsk);
-
-        r2.optimize();
-
         se2.set_rule(r2);
-
         params.grp2.insert(se2);
 
     } // Loop it1
