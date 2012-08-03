@@ -4,6 +4,7 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <libtensor/timings.h>
 #include "bad_symmetry.h"
 
 namespace libtensor {
@@ -28,7 +29,7 @@ namespace libtensor {
 
     \ingroup libtensor_symmetry
  **/
-class product_table_i {
+class product_table_i : public timings<product_table_i> {
 public:
     typedef size_t label_t; //!< Label type
     typedef std::set<label_t> label_set_t; //!< Set of unique labels
@@ -70,7 +71,7 @@ public:
         \param l1 First label
         \param l2 Second label
      **/
-    label_set_t product(label_t l1, label_t l2) const throw(bad_parameter);
+    virtual label_set_t product(label_t l1, label_t l2) const = 0;
 
     /** \brief Compute the direct product of a label and a set of
             multiple labels.
@@ -80,8 +81,7 @@ public:
         The result is the union of the results of the product of l1 with every
         label in l2.
      **/
-    label_set_t product(label_t l1,
-            const label_set_t &l2) const throw(bad_parameter);
+    virtual label_set_t product(label_t l1, const label_set_t &l2) const = 0;
 
     /** \brief Compute the direct product of a label and a set of
             multiple labels
@@ -91,8 +91,7 @@ public:
         The result is the union of the results of the product of l2 and every
         label in l1.
      **/
-    label_set_t product(const label_set_t &l1,
-            label_t l2) const throw(bad_parameter);
+    virtual label_set_t product(const label_set_t &l1, label_t l2) const = 0;
 
     /** \brief Computes the product of two sets of labels
         \param ls1 First set of labels.
@@ -101,8 +100,8 @@ public:
         The result is the union of the results of the product of every
         label in l1 with every label in l2.
      **/
-    label_set_t product(const label_set_t &ls1,
-            const label_set_t &ls2) const throw(bad_parameter);
+    virtual label_set_t product(const label_set_t &ls1, 
+                                const label_set_t &ls2) const = 0;
 
     /** \brief Computes the product of a label group
         \param lg Label group
@@ -110,15 +109,14 @@ public:
         The result is the product of all n labels in the group
         \f$ l_1 \times l_2 \times ... \times l_n \f$
      **/
-    label_set_t product(const label_group_t &lg) const;
+    virtual label_set_t product(const label_group_t &lg) const = 0;
 
     /** \brief Determines if the label is in the product.
         \param lg Group of labels to take the product of.
         \param l Label to check against.
         \return True if label is in the product, else false.
      **/
-    bool is_in_product(const label_group_t &lg,
-            label_t l) const throw(bad_parameter);
+    virtual bool is_in_product(const label_group_t &lg, label_t l) const = 0;
 
     /** \brief Does a consistency check on the table.
         \throw exception If product table is not set up properly.
@@ -129,15 +127,6 @@ public:
     void check() const throw(bad_symmetry);
 
 protected:
-    /** \brief Compute the product of two labels
-        \param l1 Smaller label
-        \param l2 Larger label
-
-        This function is used by all \c product() functions to determine
-        the product. Any implementation can safely assume that l1 < l2.
-     **/
-    virtual label_set_t determine_product(label_t l1, label_t l2) const = 0;
-
     /** \brief Perform additional consistency check
 
         This function is called by \c check() to perform additional checks
