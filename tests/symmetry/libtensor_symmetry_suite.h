@@ -4,9 +4,11 @@
 #include <libtest/test_suite.h>
 #include "block_labeling_test.h"
 #include "combine_part_test.h"
+#include "eval_sequence_list_test.h"
 #include "evaluation_rule_test.h"
 #include "permutation_group_test.h"
 #include "point_group_table_test.h"
+#include "product_rule_test.h"
 #include "product_table_container_test.h"
 #include "se_label_test.h"
 #include "se_part_test.h"
@@ -54,10 +56,12 @@ namespace libtensor {
     This suite runs the following tests:
     \li libtensor::block_labeling_test
     \li libtensor::combine_part_test
+    \li libtensor::eval_sequence_list_test
     \li libtensor::evaluation_rule_test
     \li libtensor::partition_set_test
     \li libtensor::permutation_group_test
     \li libtensor::point_group_table_test
+    \li libtensor::product_rule_test
     \li libtensor::product_table_container_test
     \li libtensor::se_label_test
     \li libtensor::se_part_test
@@ -94,9 +98,11 @@ class libtensor_symmetry_suite : public libtest::test_suite {
 private:
     unit_test_factory<block_labeling_test> m_utf_block_labeling;
     unit_test_factory<combine_part_test> m_utf_combine_part;
+    unit_test_factory<eval_sequence_list_test> m_utf_eval_sequence_list;
     unit_test_factory<evaluation_rule_test> m_utf_evaluation_rule;
     unit_test_factory<permutation_group_test> m_utf_permutation_group;
     unit_test_factory<point_group_table_test> m_utf_point_group_table;
+    unit_test_factory<product_rule_test> m_utf_product_rule;
     unit_test_factory<product_table_container_test>
         m_utf_product_table_container;
     unit_test_factory<se_label_test> m_utf_se_label;

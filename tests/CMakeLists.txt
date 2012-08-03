@@ -76,11 +76,13 @@ set(SRC_DIAG_TENSOR
 set(SRC_SYMMETRY
     symmetry/block_labeling_test.C
     symmetry/combine_part_test.C
+    symmetry/eval_sequence_list_test.C
     symmetry/evaluation_rule_test.C
     symmetry/libtensor_symmetry_tests.C
     symmetry/libtensor_symmetry_suite.C
     symmetry/permutation_group_test.C
     symmetry/point_group_table_test.C
+    symmetry/product_rule_test.C
     symmetry/product_table_container_test.C
     symmetry/se_label_test_base.C
     symmetry/se_label_test.C
