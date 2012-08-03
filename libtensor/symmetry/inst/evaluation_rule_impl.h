@@ -14,6 +14,40 @@ namespace libtensor {
 template<size_t N>
 const char *evaluation_rule<N>::k_clazz = "evaluation_rule<N>";
 
+template<size_t N>
+evaluation_rule<N>::evaluation_rule(const evaluation_rule<N> &other) {
+
+    m_slist = new eval_sequence_list<N>();
+    for (const_iterator it = other.begin(); it != other.end(); it++) {
+        const product_rule<N> &pr = other.get_product(it);
+
+        m_rules.push_back(product_rule<N>(m_slist));
+        product_rule<N> &prx = m_rules.back();
+        for (typename product_rule<N>::iterator ip = pr.begin();
+                ip != pr.end(); ip++) {
+            prx.add(pr.get_sequence(ip), pr.get_intrinsic(ip));
+        }
+    }
+}
+
+template<size_t N>
+const evaluation_rule<N> &evaluation_rule<N>::operator=(
+        const evaluation_rule<N> &other) {
+
+    m_slist->clear();
+    m_rules.clear();
+
+    for (const_iterator it = other.begin(); it != other.end(); it++) {
+        const product_rule<N> &pr = other.get_product(it);
+
+        m_rules.push_back(product_rule<N>(m_slist));
+        product_rule<N> &prx = m_rules.back();
+        for (typename product_rule<N>::iterator ip = pr.begin();
+                ip != pr.end(); ip++) {
+            prx.add(pr.get_sequence(ip), pr.get_intrinsic(ip));
+        }
+    }
+}
 
 template<size_t N>
 void evaluation_rule<N>::optimize() {
@@ -72,13 +106,12 @@ void evaluation_rule<N>::optimize() {
 
     // All blocks are allowed by this rule
     if (it1 != m_rules.end()) {
-        m_slist.clear();
+        m_slist->clear();
         m_rules.clear();
 
         eval_sequence_t seq(1);
-        product_rule_t pr(&m_slist);
+        product_rule_t &pr = new_product();
         pr.add(seq, product_table_i::k_invalid);
-        m_rules.push_back(pr);
         return;
     }
 
@@ -95,7 +128,7 @@ void evaluation_rule<N>::optimize() {
 
     // Clear the member lists
     m_rules.clear();
-    m_slist.clear();
+    m_slist->clear();
 
     // Copy from new lists to member lists
     for (it1 = new_rules.begin(); it1 != new_rules.end(); it1++) {
@@ -374,9 +407,9 @@ bool evaluation_rule<N>::is_allowed(const sequence<N, label_t> &blk_labels,
         const product_table_i &pt) const {
 
     // Loop over all sequences in rule and determine result labels
-    std::vector<label_set_t> ls(m_slist.size());
-    for (size_t i = 0; i < m_slist.size(); i++) {
-        const sequence<N, size_t> &seq = m_slist[i];
+    std::vector<label_set_t> ls(m_slist->size());
+    for (size_t i = 0; i < m_slist->size(); i++) {
+        const sequence<N, size_t> &seq = (*m_slist)[i];
         label_group_t lg;
         register size_t j = 0;
         for (; j < N; j++) {

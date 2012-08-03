@@ -61,20 +61,32 @@ public:
     typedef typename std::list<product_rule_t>::const_iterator const_iterator;
 
 private:
-    eval_sequence_list<N> m_slist;
+    eval_sequence_list<N> *m_slist;
     std::list<product_rule_t> m_rules;
 
 public:
+    evaluation_rule() {
+        m_slist = new eval_sequence_list<N>();
+    }
+
+    ~evaluation_rule() {
+        delete m_slist;
+    }
+
+    evaluation_rule(const evaluation_rule<N> &other);
+
+    const evaluation_rule<N> &operator=(const evaluation_rule<N> &other);
+
     /** \brief Create a new (empty) product in rule setup
      **/
     product_rule_t &new_product() {
-        m_rules.push_back(product_rule_t(&m_slist));
+        m_rules.push_back(product_rule_t(m_slist));
         return m_rules.back();
     }
 
     /** \brief Delete the list of lists
      **/
-    void clear() { m_rules.clear(); m_slist.clear(); }
+    void clear() { m_rules.clear(); m_slist->clear(); }
 
     /** \brief Checks if sequence of block labels is allowed by the rule
         \param blk_labels Block labels
@@ -85,11 +97,11 @@ public:
 
     /** \brief Obtain list of sequences
      **/
-    eval_sequence_list<N> &get_sequences() { return m_slist; }
+    eval_sequence_list<N> &get_sequences() { return *m_slist; }
 
     /** \brief Obtain constant list of sequences
      **/
-    const eval_sequence_list<N> &get_sequences() const { return m_slist; }
+    const eval_sequence_list<N> &get_sequences() const { return *m_slist; }
 
     /** \brief STL-style iterator to the 1st product in the setup
      **/
@@ -158,7 +170,6 @@ public:
     template<size_t M>
     void merge(evaluation_rule<M> &res, const sequence<N, size_t> &mmap,
             const mask<M>& smsk) const;
-
 };
 
 
