@@ -64,6 +64,31 @@ symmetry_operation_impl< so_dirsum<N, M, T>, se_label<NM, T> >::do_perform(
         transfer_labeling(cl1.get_labeling(), map1, e3.get_labeling());
         evaluation_rule<N + M> r3;
 
+        // Transfer r1
+        const evaluation_rule<N> &r1 = cl1.get_rule();
+
+        for (typename evaluation_rule<N>::const_iterator ir1 = r1.begin();
+                ir1 != r1.end(); ir1++) {
+
+            const product_rule<N> &pr1 = r1.get_product(ir1);
+            if (pr1.empty()) continue;
+
+            // Create new product in r3
+            product_rule<N + M> &pr3 = r3.new_product();
+
+            // Loop over terms in product of r1
+            for (typename product_rule<N>::iterator ip1 = pr1.begin();
+                    ip1 != pr1.end(); ip1++) {
+
+                sequence<N + M, size_t> seq3(0);
+                const sequence<N, size_t> &seq1 = pr1.get_sequence(ip1);
+                for (register size_t j = 0; j < N; j++)
+                    seq3[map1[j]] = seq1[j];
+
+                pr3.add(seq3, pr1.get_intrinsic(ip1));
+            }
+        }
+
         // Look for an element in the second source group that has the
         // same product table
         typename adapter2_t::iterator it2 = g2.begin();
@@ -75,7 +100,7 @@ symmetry_operation_impl< so_dirsum<N, M, T>, se_label<NM, T> >::do_perform(
         if (it2 == g2.end()) {
             // Create a fake rule for non-existing e2 that allows all blocks
             sequence<N + M, size_t> seq3(0);
-            for (register size_t i = 0; i < N; i++) seq3[map1[i]] = 1;
+            for (register size_t i = 0; i < M; i++) seq3[map2[i]] = 1;
 
             product_rule<N + M> &pr3 = r3.new_product();
             pr3.add(seq3, product_table_i::k_invalid);
@@ -96,35 +121,8 @@ symmetry_operation_impl< so_dirsum<N, M, T>, se_label<NM, T> >::do_perform(
             transfer_labeling(cl2.get_labeling(), map2, e3.get_labeling());
             e3.get_labeling().match();
 
-            // Combine the evaluation rules
-            // First transfer r1
-            const evaluation_rule<N> &r1 = cl1.get_rule();
-
-            for (typename evaluation_rule<N>::const_iterator ir1 = r1.begin();
-                    ir1 != r1.end(); ir1++) {
-
-                const product_rule<N> &pr1 = r1.get_product(ir1);
-                if (pr1.empty()) continue;
-
-                // Create new product in r3
-                product_rule<N + M> &pr3 = r3.new_product();
-
-                // Loop over terms in product of r1
-                for (typename product_rule<N>::iterator ip1 = pr1.begin();
-                        ip1 != pr1.end(); ip1++) {
-
-                    sequence<N + M, size_t> seq3(0);
-                    const sequence<N, size_t> &seq1 = pr1.get_sequence(ip1);
-                    for (register size_t j = 0; j < N; j++)
-                        seq3[map1[j]] = seq1[j];
-
-                    pr3.add(seq3, ip1->second);
-                }
-            }
-
-            // Then transfer r2
+            // Transfer r2
             const evaluation_rule<M> &r2 = cl2.get_rule();
-
             for (typename evaluation_rule<M>::const_iterator ir2 = r2.begin();
                     ir2 != r2.end(); ir2++) {
 
@@ -132,7 +130,7 @@ symmetry_operation_impl< so_dirsum<N, M, T>, se_label<NM, T> >::do_perform(
                 if (pr2.empty()) continue;
 
                 // Create new product in r3
-                product_rule<N + M> pr3 = r3.new_product();
+                product_rule<N + M> &pr3 = r3.new_product();
 
                 // Loop over terms in product of r2
                 for (typename product_rule<M>::iterator ip2 = pr2.begin();
@@ -143,10 +141,11 @@ symmetry_operation_impl< so_dirsum<N, M, T>, se_label<NM, T> >::do_perform(
                     for (register size_t j = 0; j < M; j++)
                         seq3[map2[j]] = seq2[j];
 
-                    pr3.add(seq3, ip2->second);
+                    pr3.add(seq3, pr2.get_intrinsic(ip2));
                 }
             }
         }
+        r3.optimize();
 
         e3.set_rule(r3);
         params.g3.insert(e3);
@@ -178,12 +177,37 @@ symmetry_operation_impl< so_dirsum<N, M, T>, se_label<NM, T> >::do_perform(
 
         evaluation_rule<N + M> r3;
 
-        // Create a fake rule that allows all blocks
+        // Create a fake rule for non-existing r1
         sequence<N + M, size_t> seq3(0);
-        for (register size_t i = 0; i < M; i++) seq3[map2[i]] = 1;
+        for (register size_t i = 0; i < N; i++) seq3[map2[i]] = 1;
 
         product_rule<N + M> &pr3 = r3.new_product();
         pr3.add(seq3, product_table_i::k_invalid);
+
+        // Transfer r2
+        const evaluation_rule<M> &r2 = cl2.get_rule();
+        for (typename evaluation_rule<M>::const_iterator ir2 = r2.begin();
+                ir2 != r2.end(); ir2++) {
+
+            const product_rule<M> &pr2 = r2.get_product(ir2);
+            if (pr2.empty()) continue;
+
+            // Create new product in r3
+            product_rule<N + M> &pr3 = r3.new_product();
+
+            // Loop over terms in product of r2
+            for (typename product_rule<M>::iterator ip2 = pr2.begin();
+                    ip2 != pr2.end(); ip2++) {
+
+                sequence<N + M, size_t> seq3(0);
+                const sequence<M, size_t> &seq2 = pr2.get_sequence(ip2);
+                for (register size_t j = 0; j < M; j++)
+                    seq3[map2[j]] = seq2[j];
+
+                pr3.add(seq3, pr2.get_intrinsic(ip2));
+            }
+        }
+        r3.optimize();
 
         // Set the rule and finish off
         e3.set_rule(r3);
