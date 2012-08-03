@@ -17,7 +17,7 @@ public:
 
 public:
     typedef typename product_table_i::label_t label_t;
-    typedef typename std::map<size_t, label_t>::const_iterator iterator;
+    typedef typename std::multimap<size_t, label_t>::const_iterator iterator;
 
     typedef typename eval_sequence_list<N>::eval_sequence_t eval_sequence_t;
 
@@ -90,15 +90,19 @@ void product_rule<N>::add(const eval_sequence_t &seq, label_t intr) {
     size_t seqno = m_slist->add(seq);
 
     // Check if sequence already exists in product
-    std::map<size_t, label_t>::iterator it = m_terms.find(seqno);
-    if (it == m_terms.end()) {
-        m_terms.insert(std::pair<size_t, label_t>(seqno, intr));
+    std::multimap<size_t, label_t>::iterator it = m_terms.find(seqno);
+    if (it != m_terms.end()) {
+        if (it->second == intr || intr == product_table_i::k_invalid) {
+            return;
+        }
+
+        if (it->second == product_table_i::k_invalid) {
+            it->second = intr;
+            return;
+        }
+
     }
-    else {
-        throw bad_parameter(g_ns, k_clazz,
-                "add(const eval_sequence_t &, label_t)", __FILE__, __LINE__,
-                "seq exists in product.");
-    }
+    m_terms.insert(std::pair<size_t, label_t>(seqno, intr));
 }
 
 
