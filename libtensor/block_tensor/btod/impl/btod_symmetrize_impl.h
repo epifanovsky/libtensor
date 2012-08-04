@@ -9,6 +9,8 @@
 #include <libtensor/dense_tensor/tod_set.h>
 #include <libtensor/symmetry/so_permute.h>
 #include <libtensor/symmetry/so_symmetrize.h>
+#include "../../bto/impl/bto_aux_add_impl.h"
+#include "../../bto/impl/bto_aux_symmetrize_impl.h"
 #include "../btod_symmetrize.h"
 
 namespace libtensor {
@@ -71,19 +73,58 @@ void btod_symmetrize<N>::sync_off() {
     m_op.sync_off();
 }
 
-/*
+
 template<size_t N>
-void btod_symmetrize<N>::compute_block(dense_tensor_i<N, double> &blk,
-    const index<N> &i) {
+void btod_symmetrize<N>::perform1(block_tensor_i<N, double> &bt) {
 
-    typedef typename sym_schedule_t::iterator iterator_t;
+    typedef bto_traits<double> Traits;
 
-    dimensions<N> bidims(m_bis.get_block_index_dims());
-    abs_index<N> ai(i, bidims);
+    block_tensor_ctrl<N, double> ctrl(bt);
+    ctrl.req_zero_all_blocks();
+    so_copy<N, double>(m_sym).perform(ctrl.req_symmetry());
 
-    tod_set<N>().perform(blk);
-    compute_block(blk, i, tensor_transf<N, double>(), 1.0);
-}*/
+    addition_schedule<N, Traits> asch(m_sym, m_sym);
+    asch.build(m_sch, ctrl);
+
+    bto_aux_add<N, Traits> out(m_sym, asch, bt, 1.0);
+    perform1(out);
+}
+
+
+template<size_t N>
+void btod_symmetrize<N>::perform1(block_tensor_i<N, double> &bt, double d) {
+
+    typedef bto_traits<double> Traits;
+
+    block_tensor_ctrl<N, double> ctrl(bt);
+
+    addition_schedule<N, Traits> asch(m_sym, ctrl.req_const_symmetry());
+    asch.build(m_sch, ctrl);
+
+    bto_aux_add<N, Traits> out(m_sym, asch, bt, d);
+    perform1(out);
+}
+
+
+template<size_t N>
+void btod_symmetrize<N>::perform1(bto_stream_i< N, bto_traits<double> > &out) {
+
+    typedef bto_traits<double> Traits;
+
+    btod_symmetrize<N>::start_timer();
+
+    try {
+
+        bto_aux_symmetrize<N, Traits> out2(m_sym, out);
+        // m_op.perform(out2);
+
+    } catch(...) {
+        btod_symmetrize<N>::stop_timer();
+        throw;
+    }
+
+    btod_symmetrize<N>::stop_timer();
+}
 
 
 template<size_t N>

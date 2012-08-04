@@ -91,6 +91,10 @@ public:
 
     //@}
 
+    virtual void perform1(block_tensor_i<N, double> &btc);
+    virtual void perform1(block_tensor_i<N, double> &btc, double d);
+    virtual void perform1(bto_stream_i< N, bto_traits<double> > &out);
+
 protected:
     //!    \brief Implementation of additive_bto<N, bto_traits<double> >
     //@{
