@@ -91,12 +91,14 @@ set(SRC_LINALG_ACML
     linalg/acml/linalg_base_level1_acml.C
     linalg/acml/linalg_base_level2_acml.C
     linalg/acml/linalg_base_level3_acml.C
+    linalg/acml/lapack_acml.C
 )
 
 set(SRC_LINALG_MKL
     linalg/mkl/linalg_base_level1_mkl.C
     linalg/mkl/linalg_base_level2_mkl.C
     linalg/mkl/linalg_base_level3_mkl.C
+    linalg/mkl/lapack_mkl.C
 )
 
 set(SRC_LINALG
