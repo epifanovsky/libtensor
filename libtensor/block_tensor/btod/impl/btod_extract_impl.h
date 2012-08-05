@@ -1,112 +1,19 @@
-#ifndef LIBTENSOR_BTOD_EXTRACT_H
-#define LIBTENSOR_BTOD_EXTRACT_H
+#ifndef LIBTENSOR_BTOD_EXTRACT_IMPL_H
+#define LIBTENSOR_BTOD_EXTRACT_IMPL_H
 
-#include "../defs.h"
-#include "../not_implemented.h"
-#include "../core/abs_index.h"
-#include "../core/block_index_space.h"
-#include "../core/block_tensor_i.h"
-#include "../core/block_tensor_ctrl.h"
-#include "../core/orbit.h"
-#include "../core/orbit_list.h"
-#include "../core/permutation_builder.h"
-#include "../symmetry/so_reduce.h"
-#include "../symmetry/so_permute.h"
+#include <libtensor/core/abs_index.h>
+#include <libtensor/core/block_tensor_ctrl.h>
+#include <libtensor/core/orbit.h>
+#include <libtensor/core/orbit_list.h>
+#include <libtensor/core/permutation_builder.h>
 #include <libtensor/dense_tensor/tod_extract.h>
 #include <libtensor/dense_tensor/tod_set.h>
-#include "bad_block_index_space.h"
-#include <libtensor/block_tensor/bto/additive_bto.h>
-#include <libtensor/block_tensor/btod/btod_traits.h>
+#include <libtensor/symmetry/so_reduce.h>
+#include <libtensor/symmetry/so_permute.h>
+#include <libtensor/btod/bad_block_index_space.h>
+#include "../btod_extract.h"
 
 namespace libtensor {
-
-
-/** \brief Extracts a tensor with smaller dimension from the %tensor
-    \tparam N Tensor order.
-    \tparam M Number of fixed dimensions.
-    \tparam N - M result tensor order.
-
-    \ingroup libtensor_btod
- **/
-template<size_t N, size_t M>
-class btod_extract :
-    public additive_bto<N - M, bto_traits<double> >,
-    public timings< btod_extract<N, M> > {
-
-public:
-    static const char *k_clazz; //!< Class name
-
-public:
-    static const size_t k_ordera = N; //!< Order of the argument
-    static const size_t k_orderb = N - M; //!< Order of the result
-
-private:
-    block_tensor_i<N, double> &m_bta; //!< Input block %tensor
-    mask<N> m_msk;//!< Mask for extraction
-    permutation<k_orderb> m_perm; //!< Permutation of the result
-    double m_c; //!< Scaling coefficient
-    block_index_space<k_orderb> m_bis; //!< Block %index space of the result
-    index<N> m_idxbl;//!< Index for extraction of the block
-    index<N> m_idxibl;//!< Index for extraction inside the block
-    symmetry<k_orderb, double> m_sym; //!< Symmetry of the result
-    assignment_schedule<k_orderb, double> m_sch; //!< Assignment schedule
-
-public:
-    btod_extract(block_tensor_i<N, double> &bta, const mask<N> &m,
-        const index<N> &idxbl, const index<N> &idxibl, double c = 1.0);
-
-    btod_extract(block_tensor_i<N, double> &bta, const mask<N> &m,
-        const permutation<N - M> &perm, const index<N> &idxbl,
-        const index<N> &idxibl, double c = 1.0);
-
-    //!    \name Implementation of
-    //      libtensor::direct_tensor_operation<N - M + 1, double>
-    //@{
-
-    virtual const block_index_space<k_orderb> &get_bis() const {
-        return m_bis;
-    }
-
-    virtual const symmetry<k_orderb, double> &get_symmetry() const {
-        return m_sym;
-    }
-
-    virtual const assignment_schedule<k_orderb, double> &get_schedule() const {
-        return m_sch;
-    }
-
-    //@}
-
-    using additive_bto<k_orderb, bto_traits<double> >::perform;
-
-    virtual void sync_on();
-    virtual void sync_off();
-
-protected:
-    virtual void compute_block(bool zero,
-        dense_tensor_i<k_orderb, double> &blk, const index<k_orderb> &i,
-        const tensor_transf<k_orderb, double> &tr, const double &c);
-
-private:
-    /** \brief Forms the block %index space of the output or throws an
-            exception if the input is incorrect
-     **/
-    static block_index_space<N - M> mk_bis(const block_index_space<N> &bis,
-        const mask<N> &msk, const permutation<N - M> &perm);
-
-    /** \brief Sets up the assignment schedule for the operation.
-     **/
-    void make_schedule();
-
-    void do_compute_block(dense_tensor_i<k_orderb, double> &blk,
-        const index<k_orderb> &i, const tensor_transf<k_orderb, double> &tr,
-        double c, bool zero);
-
-private:
-    btod_extract(const btod_extract<N, M>&);
-    const btod_extract<N, M> &operator=(const btod_extract<N, M>&);
-
-};
 
 
 template<size_t N, size_t M>
@@ -386,4 +293,4 @@ void btod_extract<N, M>::make_schedule() {
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_BTOD_EXTRACT_H
+#endif // LIBTENSOR_BTOD_EXTRACT_IMPL_H

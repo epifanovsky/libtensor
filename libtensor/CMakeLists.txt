@@ -230,6 +230,7 @@ set(SRC_INST
     block_tensor/btod/impl/btod_dirsum.C
     block_tensor/btod/impl/btod_dotprod.C
     block_tensor/btod/impl/btod_ewmult2.C
+    block_tensor/btod/impl/btod_extract.C
     block_tensor/btod/impl/btod_set.C
     block_tensor/btod/impl/btod_sum.C
     block_tensor/btod/impl/btod_symmetrize.C
