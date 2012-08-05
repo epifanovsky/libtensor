@@ -17,6 +17,7 @@ void evaluation_rule_test::perform() throw(libtest::test_exception) {
     test_reduce_3();
     test_reduce_4();
     test_reduce_5();
+    test_reduce_6();
     test_merge_1();
     test_merge_2();
 }
@@ -883,6 +884,129 @@ void evaluation_rule_test::test_reduce_5() throw(libtest::test_exception) {
     ip2++;
     if (ip2 != pr2.end()) {
         fail_test(testname, __FILE__, __LINE__, "Too many terms in pr2.");
+    }
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+/** \brief Reduction of four dimensions in two steps (non-complete dims)
+ **/
+void evaluation_rule_test::test_reduce_6() throw(libtest::test_exception) {
+
+
+    static const char *testname = "evaluation_rule_test::test_reduce_6()";
+
+    typedef product_table_i::label_t label_t;
+    typedef product_table_i::label_set_t label_set_t;
+    typedef product_table_i::label_group_t label_group_t;
+
+    try {
+
+    // C\f$_{2v}\f$ point group - irreps: A1, A2, B1, B2
+    // Product table:
+    //      A1   A2   B1   B2
+    // A1   A1   A2   B1   B2
+    // A2   A2   A1   B2   B1
+    // B1   B1   B2   A1   A2
+    // B2   B2   B1   A2   A1
+    point_group_table::label_t a1 = 0, a2 = 1, b1 = 2, b2 = 3;
+    std::vector<std::string> im(4);
+    im[a1] = "A1"; im[a2] = "A2"; im[b1] = "B1"; im[b2] = "B2";
+    point_group_table c2v("c2v", im, "A1");
+    c2v.add_product(a2, a2, a1);
+    c2v.add_product(a2, b1, b2);
+    c2v.add_product(a2, b2, b1);
+    c2v.add_product(b1, b1, a1);
+    c2v.add_product(b1, b2, a2);
+    c2v.add_product(b2, b2, a1);
+    c2v.check();
+
+    evaluation_rule<6> r1;
+    {
+        sequence<6, size_t> seq1(0), seq2(0), seq3(1), seq4(1), seq5(0);
+        seq1[2] = 1; seq2[4] = 1; seq3[2] = seq3[4] = 0;
+        seq4[2] = seq4[3] = seq4[4] = 0; seq5[3] = 1;
+        product_rule<6> &pr1a = r1.new_product();
+        pr1a.add(seq1, a1);
+        pr1a.add(seq2, a1);
+        pr1a.add(seq3, a1);
+        product_rule<6> &pr1b = r1.new_product();
+        pr1b.add(seq1, a2);
+        pr1b.add(seq2, a2);
+        pr1b.add(seq3, a1);
+        product_rule<6> &pr1c = r1.new_product();
+        pr1c.add(seq1, b1);
+        pr1c.add(seq2, b1);
+        pr1c.add(seq3, a1);
+        product_rule<6> &pr1d = r1.new_product();
+        pr1d.add(seq1, b2);
+        pr1d.add(seq2, b2);
+        pr1d.add(seq3, a1);
+        product_rule<6> &pr2a = r1.new_product();
+        pr2a.add(seq1, a1);
+        pr2a.add(seq2, a1);
+        pr2a.add(seq4, a1);
+        pr2a.add(seq5, a1);
+        product_rule<6> &pr2b = r1.new_product();
+        pr2b.add(seq1, a2);
+        pr2b.add(seq2, a2);
+        pr2b.add(seq4, a1);
+        pr2b.add(seq5, a1);
+        product_rule<6> &pr2c = r1.new_product();
+        pr2c.add(seq1, b1);
+        pr2c.add(seq2, b1);
+        pr2c.add(seq4, a1);
+        pr2c.add(seq5, a1);
+        product_rule<6> &pr2d = r1.new_product();
+        pr2d.add(seq1, b2);
+        pr2d.add(seq2, b2);
+        pr2d.add(seq4, a1);
+        pr2d.add(seq5, a1);
+    }
+
+    sequence<6, size_t> rmap(0);
+    rmap[0] = 0; rmap[1] = 1; rmap[2] = 2; rmap[3] = 2; rmap[4] = rmap[5] = 3;
+    sequence<4, label_group_t> rdims;
+    rdims[0].push_back(a1);
+    rdims[0].push_back(b1);
+    rdims[0].push_back(b2);
+    rdims[1].push_back(a1);
+    rdims[1].push_back(a2);
+    rdims[1].push_back(b1);
+    rdims[1].push_back(b2);
+
+    evaluation_rule<2> r2;
+    r1.reduce(r2, rmap, rdims, c2v);
+
+    // Check sequence list
+    const eval_sequence_list<2> &sl = r2.get_sequences();
+    if (sl.size() != 1) {
+        fail_test(testname, __FILE__, __LINE__, "# seq.");
+    }
+    if (sl[0][0] != 1 || sl[0][1] != 1) {
+        fail_test(testname, __FILE__, __LINE__, "seq.");
+    }
+
+    // Check product list
+    evaluation_rule<2>::const_iterator it = r2.begin();
+    if (it == r2.end()) {
+        fail_test(testname, __FILE__, __LINE__, "Empty product list.");
+    }
+
+    const product_rule<2> &pr1 = r2.get_product(it);
+    it++;
+    if (it != r2.end()) {
+        fail_test(testname, __FILE__, __LINE__, "More than one product.");
+    }
+    product_rule<2>::iterator ip1 = pr1.begin();
+    if (ip1 == pr1.end()) {
+        fail_test(testname, __FILE__, __LINE__, "Empty product pr1.");
+    }
+    if (pr1.get_intrinsic(ip1) != a1) {
+        fail_test(testname, __FILE__, __LINE__, "Intrinsic label.");
     }
 
     } catch(exception &e) {

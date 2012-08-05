@@ -237,7 +237,9 @@ void evaluation_rule<N>::reduce(evaluation_rule<N - M> &res,
         }
 
         // Combine terms
-        eval_sequence_list<N> seq_list;
+        std::vector< sequence<N - M, size_t> > seq_list;
+        std::vector< sequence<M, size_t> > rseq_list;
+        std::vector<bool> zero_seq;
         std::list<label_group_t> intr_list;
         intr_list.push_back(label_group_t());
 
@@ -245,20 +247,33 @@ void evaluation_rule<N>::reduce(evaluation_rule<N - M> &res,
         for (typename std::vector< std::set<size_t> >::iterator itsl =
                 s2c.begin(); itsl != s2c.end(); itsl++) {
 
-            eval_sequence_t seq2(0);
+            seq_list.push_back(sequence<N - M, size_t>(0));
+            sequence<N - M, size_t> &seq = seq_list.back();
+
+            rseq_list.push_back(sequence<M, size_t>(0));
+            sequence<M, size_t> &rseq = rseq_list.back();
+
+            size_t nidx = 0;
 
             label_group_t lg;
             for (typename std::set<size_t>::iterator its = itsl->begin();
                     its != itsl->end(); its++) {
 
                 term_iterator itx = terms[*its];
-                const eval_sequence_t &seq1 = pra.get_sequence(itx);
-                for (size_t i = 0; i < N; i++) seq2[rmap[i]] += seq1[i];
+                const sequence<N, size_t> &seqx = pra.get_sequence(itx);
+
+                for (size_t i = 0; i < N; i++)
+                    if (rmap[i] < N - M) {
+                        nidx += seqx[i];
+                        seq[rmap[i]] += seqx[i];
+                    }
+                    else
+                        rseq[rmap[i] - (N - M)] += seqx[i];
 
                 lg.push_back(pra.get_intrinsic(itx));
                 terms_done.insert(*its);
             }
-            seq_list.add(seq2);
+            zero_seq.push_back(nidx == 0);
 
             label_set_t ls(pt.product(lg));
             std::list<label_group_t>::iterator iti = intr_list.begin();
@@ -282,11 +297,25 @@ void evaluation_rule<N>::reduce(evaluation_rule<N - M> &res,
 
             if (terms_done.count(iterm) != 0) continue;
 
-            eval_sequence_t seq2(0);
-            const eval_sequence_t &seq1 = pra.get_sequence(ip);
-            for (size_t i = 0; i < N; i++) seq2[rmap[i]] += seq1[i];
+            seq_list.push_back(sequence<N - M, size_t>(0));
+            sequence<N - M, size_t> &seq = seq_list.back();
 
-            seq_list.add(seq2);
+            rseq_list.push_back(sequence<M, size_t>(0));
+            sequence<M, size_t> &rseq = rseq_list.back();
+
+            size_t nidx = 0;
+
+            const sequence<N, size_t> &seqx = pra.get_sequence(ip);
+            for (size_t i = 0; i < N; i++) {
+                if (rmap[i] < N - M) {
+                    nidx += seqx[i];
+                    seq[rmap[i]] += seqx[i];
+                }
+                else
+                    rseq[rmap[i] - (N - M)] += seqx[i];
+            }
+            zero_seq.push_back(nidx == 0);
+
             for (std::list<label_group_t>::iterator iti = intr_list.begin();
                     iti != intr_list.end(); iti++) {
                 iti->push_back(pra.get_intrinsic(ip));
@@ -313,13 +342,13 @@ void evaluation_rule<N>::reduce(evaluation_rule<N - M> &res,
             for (size_t i = 0; i < seq_list.size(); i++) {
 
                 // Get current sequence
-                const sequence<N, size_t> &cur_seq = seq_list[i];
+                const sequence<M, size_t> &rseq = rseq_list[i];
 
                 // Create label group from reduction sequence at current index
                 label_group_t lg;
                 for (size_t j = 0; j < M; j++) {
                     if (! rsteps_to_do[j]) continue;
-                    lg.insert(lg.end(), cur_seq[j + N - M], rdims[j][ridx[j]]);
+                    lg.insert(lg.end(), rseq[j], rdims[j][ridx[j]]);
                 }
 
                 // Loop over all intrinsic label lists
@@ -330,14 +359,24 @@ void evaluation_rule<N>::reduce(evaluation_rule<N - M> &res,
                     label_set_t ls(pt.product(lg));
                     lg.pop_back();
 
-                    if (ls.size() != 1) {
-                        std::list<label_group_t>::iterator itj = iti;
-                        itj++;
-                        new_intr.insert(itj, ls.size() - 1, *iti);
+                    if (zero_seq[i]) {
+                        if (ls.count(product_table_i::k_identity) == 0)
+                            iti = new_intr.erase(iti);
+                        else {
+                            iti->at(i) = product_table_i::k_identity;
+                            iti++;
+                        }
                     }
-                    for (label_set_t::iterator is = ls.begin();
-                            is != ls.end(); is++, iti++) {
-                        iti->at(i) = *is;
+                    else {
+                        if (ls.size() != 1) {
+                            std::list<label_group_t>::iterator itj = iti;
+                            itj++;
+                            new_intr.insert(itj, ls.size() - 1, *iti);
+                        }
+                        for (label_set_t::iterator is = ls.begin();
+                                is != ls.end(); is++, iti++) {
+                            iti->at(i) = *is;
+                        }
                     }
                 }
             }
@@ -348,19 +387,14 @@ void evaluation_rule<N>::reduce(evaluation_rule<N - M> &res,
 
         intr_list.clear();
 
-        eval_sequence_list<N - M> seq2_list;
-        for (size_t i = 0; i < seq_list.size(); i++) {
-            sequence<N - M, size_t> seq2(0);
-            for (register size_t j = 0; j < N - M; j++)
-                seq2[j] = seq_list[i][j];
-            seq2_list.add(seq2);
-        }
         for (std::list<label_group_t>::const_iterator it = intr2_list.begin();
                 it != intr2_list.end(); it++) {
 
             product_rule<N - M> &pr = res.new_product();
-            for (size_t i = 0; i < seq2_list.size(); i++) {
-                pr.add(seq2_list[i], it->at(i));
+            for (size_t i = 0; i < seq_list.size(); i++) {
+                if (zero_seq[i]) continue;
+
+                pr.add(seq_list[i], it->at(i));
             }
         }
     }
