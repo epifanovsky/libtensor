@@ -6,6 +6,7 @@
 #include <libtensor/core/block_index_space.h>
 #include <libtensor/core/symmetry.h>
 #include "assignment_schedule.h"
+#include "bto_stream_i.h"
 
 namespace libtensor {
 
@@ -45,6 +46,10 @@ public:
     /** \brief Invoked to execute the operation
      **/
     virtual void perform(block_tensor_t &bt) = 0;
+
+    /** \brief Runs the operation and writes the result into the output stream
+     **/
+//    virtual void perform(bto_stream_i<N, Traits> &out) = 0;
 
     /** \brief Returns the assignment schedule -- the preferred order
             of computing blocks

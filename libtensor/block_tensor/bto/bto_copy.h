@@ -28,15 +28,15 @@ public:
         block_tensor_ctrl_type;
 
     typedef bto_stream_i<N, Traits> bto_stream_type;
-    typedef tensor_transf<N, element_type> tensor_transf_t;
-    typedef scalar_transf<element_type> scalar_transf_t;
+    typedef tensor_transf<N, element_type> tensor_transf_type;
+    typedef scalar_transf<element_type> scalar_transf_type;
 
 public:
     static const char *k_clazz; //!< Class name
 
 private:
     block_tensor_type &m_bta; //!< Source block %tensor
-    tensor_transf_t m_tr; //!< Tensor transformation
+    tensor_transf_type m_tr; //!< Tensor transformation
     block_index_space<N> m_bis; //!< Block %index space of output
     dimensions<N> m_bidims; //!< Block %index dimensions
     symmetry<N, double> m_sym; //!< Symmetry of output
@@ -50,14 +50,14 @@ public:
         \param bt Source block %tensor.
         \param tr Transformation.
      **/
-    bto_copy(block_tensor_type &bta, const tensor_transf_t &tr =
-            tensor_transf_t());
+    bto_copy(block_tensor_type &bta, const tensor_transf_type &tr =
+        tensor_transf_type());
 
     /** \brief Initializes the copy operation
         \param bt Source block %tensor.
         \param c Element-wise transformation.
      **/
-    bto_copy(block_tensor_type &bta, const scalar_transf_t &c);
+    bto_copy(block_tensor_type &bta, const scalar_transf_type &c);
 
     /** \brief Initializes the permuted copy operation
         \param bt Source block %tensor.
@@ -65,7 +65,7 @@ public:
         \param c Element-wise transformation.
      **/
     bto_copy(block_tensor_type &bta, const permutation<N> &p,
-            const scalar_transf_t &c = scalar_transf_t());
+        const scalar_transf_type &c = scalar_transf_type());
 
     /** \brief Virtual destructor
      **/
@@ -103,7 +103,7 @@ public:
     //@}
 
     virtual void compute_block(bool zero, block_type &blk, const index<N> &ib,
-        const tensor_transf_t &tr, const element_type &c);
+        const tensor_transf_type &tr, const element_type &c);
 
 private:
     static block_index_space<N> mk_bis(const block_index_space<N> &bis,
@@ -112,8 +112,8 @@ private:
     void make_schedule();
 
 private:
-    bto_copy(const bto_copy<N, Traits>&);
-    bto_copy<N, Traits> &operator=(const bto_copy<N, Traits>&);
+    bto_copy(const bto_copy&);
+    bto_copy &operator=(const bto_copy&);
 
 };
 

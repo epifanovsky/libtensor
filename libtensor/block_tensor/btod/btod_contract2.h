@@ -10,6 +10,7 @@
 #include <libtensor/block_tensor/bto/additive_bto.h>
 #include <libtensor/block_tensor/btod/btod_traits.h>
 #include <libtensor/block_tensor/bto/bto_contract2_sym.h>
+#include <libtensor/block_tensor/bto/bto_stream_i.h>
 
 namespace libtensor {
 
@@ -84,6 +85,7 @@ public:
 
     virtual void perform(block_tensor_i<N + M, double> &btc);
     virtual void perform(block_tensor_i<N + M, double> &btc, double d);
+    virtual void perform(bto_stream_i< N + M, bto_traits<double> > &out);
 
     virtual void compute_block(bool zero, dense_tensor_i<N + M, double> &blk,
         const index<N + M> &i, const tensor_transf<N + M, double> &tr,

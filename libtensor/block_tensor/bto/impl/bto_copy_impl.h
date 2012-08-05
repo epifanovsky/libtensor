@@ -101,30 +101,32 @@ public:
 
 
 template<size_t N, typename Traits>
-bto_copy<N, Traits>::bto_copy(block_tensor_type &bta, const tensor_transf_t &tr) :
+bto_copy<N, Traits>::bto_copy(block_tensor_type &bta,
+    const tensor_transf_type &tr) :
 
     m_bta(bta), m_tr(tr), m_bis(mk_bis(m_bta.get_bis(), tr.get_perm())),
     m_bidims(m_bis.get_block_index_dims()), m_sym(m_bis), m_sch(m_bidims) {
 
     typedef typename Traits::template block_tensor_ctrl_type<N>::type
-        block_tensor_ctrl_t;
+        block_tensor_ctrl_type;
 
-    block_tensor_ctrl_t ctrla(m_bta);
+    block_tensor_ctrl_type ctrla(m_bta);
     so_copy<N, element_type>(ctrla.req_const_symmetry()).perform(m_sym);
     make_schedule();
 }
 
 
 template<size_t N, typename Traits>
-bto_copy<N, Traits>::bto_copy(block_tensor_type &bta, const scalar_transf_t &c) :
+bto_copy<N, Traits>::bto_copy(block_tensor_type &bta,
+    const scalar_transf_type &c) :
 
     m_bta(bta), m_tr(permutation<N>(), c), m_bis(m_bta.get_bis()),
     m_bidims(m_bis.get_block_index_dims()), m_sym(m_bis), m_sch(m_bidims) {
 
     typedef typename Traits::template block_tensor_ctrl_type<N>::type
-        block_tensor_ctrl_t;
+        block_tensor_ctrl_type;
 
-    block_tensor_ctrl_t ctrla(m_bta);
+    block_tensor_ctrl_type ctrla(m_bta);
     so_copy<N, element_type>(ctrla.req_const_symmetry()).perform(m_sym);
     make_schedule();
 }
@@ -132,17 +134,17 @@ bto_copy<N, Traits>::bto_copy(block_tensor_type &bta, const scalar_transf_t &c) 
 
 template<size_t N, typename Traits>
 bto_copy<N, Traits>::bto_copy(block_tensor_type &bta, const permutation<N> &p,
-    const scalar_transf_t &c) :
+    const scalar_transf_type &c) :
 
     m_bta(bta), m_tr(p, c), m_bis(mk_bis(m_bta.get_bis(), p)),
     m_bidims(m_bis.get_block_index_dims()), m_sym(m_bis), m_sch(m_bidims) {
 
     typedef typename Traits::template block_tensor_ctrl_type<N>::type
-        block_tensor_ctrl_t;
+        block_tensor_ctrl_type;
 
-    block_tensor_ctrl_t ctrla(m_bta);
-    so_permute<N, element_type>(ctrla.req_const_symmetry(),
-            m_tr.get_perm()).perform(m_sym);
+    block_tensor_ctrl_type ctrla(m_bta);
+    so_permute<N, element_type>(ctrla.req_const_symmetry(), m_tr.get_perm()).
+        perform(m_sym);
     make_schedule();
 }
 
@@ -151,9 +153,9 @@ template<size_t N, typename Traits>
 void bto_copy<N, Traits>::sync_on() {
 
     typedef typename Traits::template block_tensor_ctrl_type<N>::type
-        block_tensor_ctrl_t;
+        block_tensor_ctrl_type;
 
-    block_tensor_ctrl_t ctrla(m_bta);
+    block_tensor_ctrl_type ctrla(m_bta);
     ctrla.req_sync_on();
 }
 
@@ -162,9 +164,9 @@ template<size_t N, typename Traits>
 void bto_copy<N, Traits>::sync_off() {
 
     typedef typename Traits::template block_tensor_ctrl_type<N>::type
-        block_tensor_ctrl_t;
+        block_tensor_ctrl_type;
 
-    block_tensor_ctrl_t ctrla(m_bta);
+    block_tensor_ctrl_type ctrla(m_bta);
     ctrla.req_sync_off();
 }
 
@@ -216,19 +218,19 @@ void bto_copy<N, Traits>::perform(bto_stream_type &out) {
 
 template<size_t N, typename Traits>
 void bto_copy<N, Traits>::compute_block(bool zero, block_type &blk,
-    const index<N> &ib, const tensor_transf_t &tr, const element_type &c) {
+    const index<N> &ib, const tensor_transf_type &tr, const element_type &c) {
 
     typedef typename Traits::template block_tensor_ctrl_type<N>::type
-        block_tensor_ctrl_t;
-    typedef typename Traits::template to_set_type<N>::type to_set_t;
-    typedef typename Traits::template to_copy_type<N>::type to_copy_t;
+        block_tensor_ctrl_type;
+    typedef typename Traits::template to_set_type<N>::type to_set_type;
+    typedef typename Traits::template to_copy_type<N>::type to_copy_type;
 
     bto_copy<N, Traits>::start_timer("compute_block");
 
-    block_tensor_ctrl_t ctrla(m_bta);
+    block_tensor_ctrl_type ctrla(m_bta);
     dimensions<N> bidimsa = m_bta.get_bis().get_block_index_dims();
 
-    tensor_transf_t trinv(m_tr, true);
+    tensor_transf_type trinv(m_tr, true);
 
     //  Corresponding index in A
     index<N> ia(ib);
@@ -240,14 +242,14 @@ void bto_copy<N, Traits>::compute_block(bool zero, block_type &blk,
 
 
     //  Transformation for block from canonical A to B
-    tensor_transf_t tra(oa.get_transf(ia));
-    tra.transform(m_tr).transform(scalar_transf_t(c));
+    tensor_transf_type tra(oa.get_transf(ia));
+    tra.transform(m_tr).transform(scalar_transf_type(c));
     tra.transform(tr);
 
-    if(zero) to_set_t().perform(blk);
+    if(zero) to_set_type().perform(blk);
     if(!ctrla.req_is_zero_block(acia.get_index())) {
         block_type &blka = ctrla.req_block(acia.get_index());
-        to_copy_t(blka, tra).perform(false, Traits::identity(), blk);
+        to_copy_type(blka, tra).perform(false, Traits::identity(), blk);
         ctrla.ret_block(acia.get_index());
     }
 
@@ -259,11 +261,11 @@ template<size_t N, typename Traits>
 void bto_copy<N, Traits>::make_schedule() {
 
     typedef typename Traits::template block_tensor_ctrl_type<N>::type
-        block_tensor_ctrl_t;
+        block_tensor_ctrl_type;
 
     bto_copy<N, Traits>::start_timer("make_schedule");
 
-    block_tensor_ctrl_t ctrla(m_bta);
+    block_tensor_ctrl_type ctrla(m_bta);
     dimensions<N> bidimsa = m_bta.get_bis().get_block_index_dims();
 
     bool identity = m_tr.get_perm().is_identity();
@@ -289,7 +291,7 @@ void bto_copy<N, Traits>::make_schedule() {
 
 template<size_t N, typename Traits>
 block_index_space<N> bto_copy<N, Traits>::mk_bis(
-        const block_index_space<N> &bis, const permutation<N> &perm) {
+    const block_index_space<N> &bis, const permutation<N> &perm) {
 
     block_index_space<N> bis1(bis);
     bis1.permute(perm);

@@ -8,31 +8,29 @@
 namespace libtensor {
 
 
-struct btod_copy_traits : public bto_traits<double> {
-};
-
-
 template<size_t N>
-class btod_copy : public bto_copy<N, btod_copy_traits> {
-private:
-    typedef bto_copy<N, btod_copy_traits> bto_copy_t;
-    typedef typename bto_copy_t::scalar_transf_t scalar_transf_t;
+class btod_copy : public bto_copy< N, bto_traits<double> > {
+public:
+    typedef bto_traits<double> traits_type;
+    typedef bto_copy<N, traits_type> bto_copy_type;
+    typedef typename bto_copy_type::scalar_transf_type scalar_transf_type;
 
 public:
     btod_copy(block_tensor_i<N, double> &bta, double c = 1.0) :
-        bto_copy_t(bta, scalar_transf_t(c)) {
+        bto_copy_type(bta, scalar_transf_type(c)) {
     }
 
-    btod_copy(block_tensor_i<N, double> &bta,
-            const permutation<N> &p, double c = 1.0) :
-        bto_copy_t(bta, p, scalar_transf_t(c)) {
+    btod_copy(block_tensor_i<N, double> &bta, const permutation<N> &p,
+        double c = 1.0) :
+        bto_copy_type(bta, p, scalar_transf_type(c)) {
     }
 
     virtual ~btod_copy() { }
 
 private:
-    btod_copy(const btod_copy<N>&);
-    btod_copy<N> &operator=(const btod_copy<N>&);
+    btod_copy(const btod_copy&);
+    btod_copy &operator=(const btod_copy&);
+
 };
 
 
