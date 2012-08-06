@@ -27,7 +27,7 @@ namespace libtensor {
  **/
 template<size_t N>
 class btod_symmetrize3 :
-    public additive_bto<N, bto_traits<double> >,
+    public additive_bto<N, btod_traits>,
     public timings< btod_symmetrize3<N> > {
 
 public:
@@ -45,7 +45,7 @@ private:
     typedef std::multimap<size_t, schrec> sym_schedule_t;
 
 private:
-    additive_bto<N, bto_traits<double> > &m_op; //!< Symmetrized operation
+    additive_bto<N, btod_traits> &m_op; //!< Symmetrized operation
     size_t m_i1; //!< First %index
     size_t m_i2; //!< Second %index
     size_t m_i3; //!< Third %index
@@ -65,7 +65,7 @@ public:
         \param symm True for symmetrization, false for
             anti-symmetrization.
      **/
-    btod_symmetrize3(additive_bto<N, bto_traits<double> > &op,
+    btod_symmetrize3(additive_bto<N, btod_traits> &op,
             size_t i1, size_t i2, size_t i3, bool symm);
 
     /** \brief Virtual destructor
@@ -98,10 +98,13 @@ public:
         m_op.sync_off();
     }
 
+    using additive_bto<N, btod_traits>::perform;
+    virtual void perform(bto_stream_i<N, btod_traits> &out);
+
     //@}
 
 protected:
-    //!    \brief Implementation of additive_bto<N, bto_traits<double> >
+    //!    \brief Implementation of additive_bto<N, btod_traits>
     //@{
 
     virtual void compute_block(bool zero, dense_tensor_i<N, double> &blk,

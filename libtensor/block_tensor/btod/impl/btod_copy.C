@@ -13,4 +13,3 @@ template class btod_copy<6>;
 
 
 } // namespace libtensor
-

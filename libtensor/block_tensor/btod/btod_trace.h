@@ -9,23 +9,15 @@
 namespace libtensor {
 
 
-struct btod_trace_traits : public bto_traits<double> {
-
-    template<size_t N> struct to_trace_type {
-        typedef tod_trace<N> type;
-    };
-
-};
-
 /** \brief Computes the trace of a matricized block %tensor
     \tparam N Tensor diagonal order.
 
     \ingroup libtensor_btod
  **/
 template<size_t N>
-class btod_trace : public bto_trace<N, btod_trace_traits> {
+class btod_trace : public bto_trace<N, btod_traits> {
 public:
-    typedef bto_trace<N, btod_trace_traits> bto_trace_t;
+    typedef bto_trace<N, btod_traits> bto_trace_t;
 
 public:
     btod_trace(block_tensor_i<bto_trace_t::k_ordera, double> &bta) :
@@ -38,8 +30,8 @@ public:
     }
 
 private:
-    btod_trace(const btod_trace<N>&);
-    const btod_trace<N> &operator=(const btod_trace<N>&);
+    btod_trace(const btod_trace&);
+    const btod_trace &operator=(const btod_trace&);
 
 };
 

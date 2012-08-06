@@ -49,7 +49,7 @@ public:
 
     /** \brief Runs the operation and writes the result into the output stream
      **/
-//    virtual void perform(bto_stream_i<N, Traits> &out) = 0;
+    virtual void perform(bto_stream_i<N, Traits> &out) = 0;
 
     /** \brief Returns the assignment schedule -- the preferred order
             of computing blocks

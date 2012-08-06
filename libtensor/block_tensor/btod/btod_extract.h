@@ -18,7 +18,7 @@ namespace libtensor {
  **/
 template<size_t N, size_t M>
 class btod_extract :
-    public additive_bto<N - M, bto_traits<double> >,
+    public additive_bto<N - M, btod_traits>,
     public timings< btod_extract<N, M> > {
 
 public:
@@ -65,10 +65,12 @@ public:
 
     //@}
 
-    using additive_bto<k_orderb, bto_traits<double> >::perform;
+    using additive_bto<k_orderb, btod_traits>::perform;
 
     virtual void sync_on();
     virtual void sync_off();
+
+    virtual void perform(bto_stream_i<N - M, btod_traits> &out);
 
 protected:
     virtual void compute_block(bool zero,

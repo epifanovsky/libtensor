@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_BTOD_EWMULT2_IMPL_H
 #define LIBTENSOR_BTOD_EWMULT2_IMPL_H
 
+#include <libtensor/not_implemented.h>
 #include <libtensor/core/block_index_space_product_builder.h>
 #include <libtensor/core/orbit.h>
 #include <libtensor/core/orbit_list.h>
@@ -71,14 +72,13 @@ void btod_ewmult2<N, M, K>::sync_off() {
     block_tensor_ctrl<k_orderb, double>(m_btb).req_sync_off();
 }
 
-/*
-template<size_t N, size_t M, size_t K>
-void btod_ewmult2<N, M, K>::compute_block(dense_tensor_i<k_orderc, double> &blk,
-    const index<k_orderc> &bidx) {
 
-    tensor_transf<k_orderc, double> tr0;
-    compute_block_impl(blk, bidx, tr0, true, 1.0);
-}*/
+template<size_t N, size_t M, size_t K>
+void btod_ewmult2<N, M, K>::perform(bto_stream_i<N + M + K, btod_traits> &out) {
+
+    throw not_implemented(g_ns, k_clazz, "perform(bto_stream_i&)",
+        __FILE__, __LINE__);
+}
 
 
 template<size_t N, size_t M, size_t K>

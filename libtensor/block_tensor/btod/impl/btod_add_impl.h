@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_BTOD_ADD_IMPL_H
 #define LIBTENSOR_BTOD_ADD_IMPL_H
 
+#include <libtensor/not_implemented.h>
 #include <libtensor/core/block_index_space_product_builder.h>
 #include <libtensor/core/permutation_builder.h>
 #include <libtensor/core/orbit.h>
@@ -118,34 +119,13 @@ void btod_add<N>::sync_off() {
     }
 }
 
-/*
-    template<size_t N>
-    void btod_add<N>::compute_block(dense_tensor_i<N, double> &blkb, const index<N> &ib) {
 
-        static const char *method =
-            "compute_block(dense_tensor_i<N, double>&, const index<N>&)";
+template<size_t N>
+void btod_add<N>::perform(bto_stream_i<N, btod_traits> &out) {
 
-        btod_add<N>::start_timer();
-
-        try {
-
-            abs_index<N> aib(ib, m_bidims);
-            std::pair<schiterator_t, schiterator_t> ipair =
-                m_op_sch.equal_range(aib.get_abs_index());
-            if(ipair.first == m_op_sch.end()) {
-                tod_set<N>().perform(blkb);
-            } else {
-                tensor_transf<N, double> tr0;
-                compute_block(blkb, ipair, true, tr0, 1.0);
-            }
-
-        } catch(...) {
-            btod_add<N>::stop_timer();
-            throw;
-        }
-
-        btod_add<N>::stop_timer();
-    }*/
+    throw not_implemented(g_ns, k_clazz, "perform(bto_stream_i&)",
+        __FILE__, __LINE__);
+}
 
 
 template<size_t N>

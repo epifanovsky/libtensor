@@ -2,6 +2,7 @@
 #define LIBTENSOR_BTOD_MULT_H
 
 #include "../defs.h"
+#include <libtensor/not_implemented.h>
 #include "../core/block_tensor_i.h"
 #include "../core/block_tensor_ctrl.h"
 #include "../core/orbit.h"
@@ -27,8 +28,9 @@ namespace libtensor {
  **/
 template<size_t N>
 class btod_mult :
-    public additive_bto<N, bto_traits<double> >,
+    public additive_bto<N, btod_traits>,
     public timings< btod_mult<N> > {
+
 public:
     static const char *k_clazz; //!< Class name
 
@@ -99,7 +101,8 @@ public:
 
     //@}
 
-    using additive_bto<N, bto_traits<double> >::perform;
+    using additive_bto<N, btod_traits>::perform;
+    virtual void perform(bto_stream_i<N, btod_traits> &out);
 
 protected:
     virtual void compute_block(bool zero, dense_tensor_i<N, double> &blk,
@@ -231,48 +234,13 @@ void btod_mult<N>::sync_off() {
     ctrlb.req_sync_off();
 }
 
-/*
+
 template<size_t N>
-void btod_mult<N>::compute_block(
-        dense_tensor_i<N, double> &blk, const index<N> &idx) {
+void btod_mult<N>::perform(bto_stream_i<N, btod_traits> &out) {
 
-    block_tensor_ctrl<N, double> ctrla(m_bta), ctrlb(m_btb);
-
-    permutation<N> pinva(m_pa, true), pinvb(m_pb, true);
-    index<N> idxa(idx), idxb(idx);
-    idxa.permute(pinva);
-    idxb.permute(pinvb);
-
-    orbit<N, double> oa(ctrla.req_const_symmetry(), idxa);
-    abs_index<N> cidxa(oa.get_abs_canonical_index(),
-            m_bta.get_bis().get_block_index_dims());
-    const tensor_transf<N, double> &tra = oa.get_transf(idxa);
-
-    orbit<N, double> ob(ctrlb.req_const_symmetry(), idxb);
-    abs_index<N> cidxb(ob.get_abs_canonical_index(),
-            m_btb.get_bis().get_block_index_dims());
-    const tensor_transf<N, double> &trb = ob.get_transf(idxb);
-
-    permutation<N> pa(tra.get_perm());
-    pa.permute(m_pa);
-    permutation<N> pb(trb.get_perm());
-    pb.permute(m_pb);
-
-    dense_tensor_i<N, double> &blka = ctrla.req_block(cidxa.get_index());
-    dense_tensor_i<N, double> &blkb = ctrlb.req_block(cidxb.get_index());
-
-    double k = m_c * tra.get_coeff();
-    if (m_recip)
-        k /= trb.get_coeff();
-    else
-        k *= trb.get_coeff();
-
-    tod_mult<N>(blka, pa, blkb, pb, m_recip, k).perform(blk);
-
-    ctrla.ret_block(cidxa.get_index());
-    ctrlb.ret_block(cidxb.get_index());
-}*/
-
+    throw not_implemented(g_ns, k_clazz, "perform(bto_stream_i&)",
+        __FILE__, __LINE__);
+}
 
 
 template<size_t N>

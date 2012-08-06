@@ -22,8 +22,7 @@ namespace libtensor {
     \ingroup libtensor_btod
  **/
 template<size_t N, typename Traits>
-class basic_bto :
-    public direct_bto<N, Traits> {
+class basic_bto : public direct_bto<N, Traits> {
 public:
     //! Type of tensor elements
     typedef typename Traits::element_type element_t;
@@ -81,6 +80,7 @@ public:
         \param bt Output block %tensor.
      **/
     virtual void perform(block_tensor_t &bt);
+    using direct_bto<N, Traits>::perform;
 
 protected:
     using direct_bto<N, Traits>::compute_block;

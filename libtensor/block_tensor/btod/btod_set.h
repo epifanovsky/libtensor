@@ -7,10 +7,6 @@
 namespace libtensor {
 
 
-struct btod_set_traits : public bto_traits<double> {
-
-};
-
 /** \brief Sets all elements of a block tensor to a value preserving
         the symmetry
     \tparam N Tensor order.
@@ -18,7 +14,7 @@ struct btod_set_traits : public bto_traits<double> {
     \ingroup libtensor_btod
  **/
 template<size_t N>
-class btod_set : public bto_set<N, btod_set_traits> {
+class btod_set : public bto_set<N, btod_traits> {
 public:
     static const char *k_clazz; //!< Class name
 
@@ -26,7 +22,11 @@ public:
     /** \brief Initializes the operation
         \param v Value to be assigned to the tensor elements.
      **/
-    btod_set(double v = 0.0) : bto_set<N, btod_set_traits>(v) { }
+    btod_set(double v = 0.0) : bto_set<N, btod_traits>(v) { }
+
+    /** \brief Virtual destructor
+     **/
+    virtual ~btod_set() { }
 
 };
 

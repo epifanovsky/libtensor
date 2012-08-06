@@ -26,7 +26,7 @@ namespace libtensor {
  **/
 template<size_t N, size_t M, size_t K>
 class btod_ewmult2 :
-    public additive_bto<N + M + K, bto_traits<double> >,
+    public additive_bto<N + M + K, btod_traits>,
     public timings< btod_ewmult2<N, M, K> > {
 
 public:
@@ -104,7 +104,8 @@ public:
     virtual void sync_on();
     virtual void sync_off();
 
-    using additive_bto<N + M + K, bto_traits<double> >::perform;
+    using additive_bto<N + M + K, btod_traits>::perform;
+    virtual void perform(bto_stream_i<N + M + K, btod_traits> &out);
 
     //@}
 

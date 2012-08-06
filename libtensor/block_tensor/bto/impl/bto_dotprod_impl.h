@@ -1,11 +1,12 @@
-#ifndef LIBTENSOR_BTOD_DOTPROD_IMPL_H
-#define LIBTENSOR_BTOD_DOTPROD_IMPL_H
+#ifndef LIBTENSOR_BTO_DOTPROD_IMPL_H
+#define LIBTENSOR_BTO_DOTPROD_IMPL_H
 
 #include <libtensor/core/block_index_space_product_builder.h>
 #include <libtensor/core/permutation_builder.h>
 #include <libtensor/btod/bad_block_index_space.h>
 #include <libtensor/symmetry/so_dirprod.h>
 #include <libtensor/symmetry/so_merge.h>
+#include "../bto_dotprod.h"
 
 namespace libtensor {
 
@@ -292,4 +293,4 @@ libutil::task_i *bto_dotprod<N, Traits>::dotprod_task_iterator::get_next() {
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_BTOD_DOTPROD_IMPL_H
+#endif // LIBTENSOR_BTO_DOTPROD_IMPL_H

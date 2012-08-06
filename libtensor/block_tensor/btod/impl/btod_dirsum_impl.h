@@ -71,35 +71,13 @@ void btod_dirsum<N, M>::sync_off() {
     ctrlb.req_sync_off();
 }
 
-/*
+
 template<size_t N, size_t M>
-void btod_dirsum<N, M>::compute_block(dense_tensor_i<N + M, double> &blkc,
-    const index<N + M> &ic) {
+void btod_dirsum<N, M>::perform(bto_stream_i<N + M, btod_traits> &out) {
 
-    static const char *method =
-        "compute_block(dense_tensor_i<N + M, double>&, const index<N + M>&)";
-
-    btod_dirsum<N, M>::start_timer();
-
-    try {
-
-        abs_index<k_orderc> aic(ic, m_bidimsc);
-        typename schedule_t::const_iterator isch =
-            m_op_sch.find(aic.get_abs_index());
-        if(isch == m_op_sch.end()) {
-            tod_set<k_orderc>().perform(blkc);
-        } else {
-            tensor_transf<k_orderc, double> trc0;
-            compute_block(blkc, isch->second, trc0, true, 1.0);
-        }
-
-    } catch(...) {
-        btod_dirsum<N, M>::stop_timer();
-        throw;
-    }
-
-    btod_dirsum<N, M>::stop_timer();
-}*/
+    throw not_implemented(g_ns, k_clazz, "perform(bto_stream_i&)",
+        __FILE__, __LINE__);
+}
 
 
 template<size_t N, size_t M>

@@ -27,7 +27,7 @@ struct btod_contract2_clazz {
  **/
 template<size_t N, size_t M, size_t K>
 class btod_contract2 :
-    public additive_bto<N + M, bto_traits<double> >,
+    public additive_bto<N + M, btod_traits>,
     public timings< btod_contract2<N, M, K> > {
 
 public:
@@ -85,7 +85,7 @@ public:
 
     virtual void perform(block_tensor_i<N + M, double> &btc);
     virtual void perform(block_tensor_i<N + M, double> &btc, double d);
-    virtual void perform(bto_stream_i< N + M, bto_traits<double> > &out);
+    virtual void perform(bto_stream_i< N + M, btod_traits> &out);
 
     virtual void compute_block(bool zero, dense_tensor_i<N + M, double> &blk,
         const index<N + M> &i, const tensor_transf<N + M, double> &tr,

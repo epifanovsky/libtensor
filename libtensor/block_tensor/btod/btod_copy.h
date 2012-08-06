@@ -2,17 +2,16 @@
 #define LIBTENSOR_BTOD_COPY_H
 
 #include <libtensor/core/scalar_transf_double.h>
-#include <libtensor/block_tensor/bto/bto_copy.h>
 #include <libtensor/block_tensor/btod/btod_traits.h>
+#include <libtensor/block_tensor/bto/bto_copy.h>
 
 namespace libtensor {
 
 
 template<size_t N>
-class btod_copy : public bto_copy< N, bto_traits<double> > {
+class btod_copy : public bto_copy<N, btod_traits> {
 public:
-    typedef bto_traits<double> traits_type;
-    typedef bto_copy<N, traits_type> bto_copy_type;
+    typedef bto_copy<N, btod_traits> bto_copy_type;
     typedef typename bto_copy_type::scalar_transf_type scalar_transf_type;
 
 public:

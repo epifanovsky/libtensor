@@ -28,7 +28,7 @@ namespace libtensor {
  **/
 template<size_t N>
 class btod_add :
-    public additive_bto<N, bto_traits<double> >,
+    public additive_bto<N, btod_traits>,
     public timings< btod_add<N> > {
 
 public:
@@ -138,7 +138,9 @@ public:
     virtual void compute_block(bool zero, dense_tensor_i<N, double> &blk,
         const index<N> &i, const tensor_transf<N, double> &tr, const double &c);
 
-    using additive_bto<N, bto_traits<double> >::perform;
+    using additive_bto<N, btod_traits>::perform;
+
+    virtual void perform(bto_stream_i<N, btod_traits> &out);
 
     //@}
 

@@ -341,7 +341,7 @@ void btod_contract2<N, M, K>::perform_inner(
     block_tensor_i<N + M, double> &btc, double d,
     const std::vector<size_t> &blst) {
 
-    additive_bto< N + M, bto_traits<double> >::perform(btc, d, blst);
+    additive_bto<N + M, btod_traits>::perform(btc, d, blst);
 }
 
 

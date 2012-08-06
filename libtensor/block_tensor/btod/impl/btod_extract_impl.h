@@ -11,6 +11,7 @@
 #include <libtensor/symmetry/so_reduce.h>
 #include <libtensor/symmetry/so_permute.h>
 #include <libtensor/btod/bad_block_index_space.h>
+#include <libtensor/not_implemented.h>
 #include "../btod_extract.h"
 
 namespace libtensor {
@@ -93,14 +94,13 @@ void btod_extract<N, M>::sync_off() {
     ctrla.req_sync_off();
 }
 
-/*
-template<size_t N, size_t M>
-void btod_extract<N, M>::compute_block(dense_tensor_i<k_orderb, double> &blk,
-    const index<k_orderb> &idx) {
 
-    tensor_transf<k_orderb, double> tr0;
-    do_compute_block(blk, idx, tr0, 1.0, true);
-}*/
+template<size_t N, size_t M>
+void btod_extract<N, M>::perform(bto_stream_i<N - M, btod_traits> &out) {
+
+    throw not_implemented(g_ns, k_clazz, "perform(bto_stream_i&)",
+        __FILE__, __LINE__);
+}
 
 
 template<size_t N, size_t M>

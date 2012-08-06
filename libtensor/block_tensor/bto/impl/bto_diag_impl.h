@@ -1,12 +1,14 @@
 #ifndef LIBTENSOR_BTO_DIAG_IMPL_H
 #define LIBTENSOR_BTO_DIAG_IMPL_H
 
+#include <libtensor/not_implemented.h>
 #include <libtensor/core/block_index_subspace_builder.h>
 #include <libtensor/core/orbit.h>
 #include <libtensor/core/orbit_list.h>
 #include <libtensor/core/permutation_builder.h>
 #include <libtensor/symmetry/so_merge.h>
 #include <libtensor/symmetry/so_permute.h>
+#include "../bto_diag.h"
 
 namespace libtensor {
 
@@ -60,6 +62,14 @@ void bto_diag<N, M, Traits>::sync_off() {
 
     block_tensor_ctrl_t ctrla(m_bta);
     ctrla.req_sync_off();
+}
+
+
+template<size_t N, size_t M, typename Traits>
+void bto_diag<N, M, Traits>::perform(bto_stream_i<N - M + 1, Traits> &out) {
+
+    throw not_implemented(g_ns, k_clazz, "perform(bto_stream_i&)",
+        __FILE__, __LINE__);
 }
 
 

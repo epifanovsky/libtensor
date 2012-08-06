@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_BTO_APPLY_IMPL_H
 #define LIBTENSOR_BTO_APPLY_IMPL_H
 
+#include <libtensor/not_implemented.h>
 #include <libtensor/core/orbit.h>
 #include <libtensor/core/orbit_list.h>
 #include <libtensor/symmetry/so_apply.h>
@@ -8,13 +9,15 @@
 namespace libtensor {
 
 
-template<size_t N, typename Traits>
-const char *bto_apply<N, Traits>::k_clazz = "bto_apply<N, Traits>";
+template<size_t N, typename Functor, typename Traits>
+const char *bto_apply<N, Functor, Traits>::k_clazz =
+    "bto_apply<N, Functor, Traits>";
 
 
-template<size_t N, typename Traits>
-bto_apply<N, Traits>::bto_apply(block_tensor_t &bta, const functor_t &fn,
-        const tensor_transf_t &tr1, const tensor_transf_t &tr2) :
+template<size_t N, typename Functor, typename Traits>
+bto_apply<N, Functor, Traits>::bto_apply(block_tensor_t &bta,
+    const functor_t &fn, const tensor_transf_t &tr1,
+    const tensor_transf_t &tr2) :
 
     m_bta(bta), m_fn(fn), m_tr1(tr1), m_tr2(tr2), m_bis(m_bta.get_bis()),
     m_bidims(m_bis.get_block_index_dims()), m_sym(m_bis), m_sch(m_bidims) {
@@ -34,9 +37,9 @@ bto_apply<N, Traits>::bto_apply(block_tensor_t &bta, const functor_t &fn,
 }
 
 
-template<size_t N, typename Traits>
-bto_apply<N, Traits>::bto_apply(block_tensor_t &bta,
-        const functor_t &fn, const scalar_transf_t &c) :
+template<size_t N, typename Functor, typename Traits>
+bto_apply<N, Functor, Traits>::bto_apply(block_tensor_t &bta,
+    const functor_t &fn, const scalar_transf_t &c) :
 
     m_bta(bta), m_fn(fn), m_tr1(permutation<N>(), c), m_bis(m_bta.get_bis()),
     m_bidims(m_bis.get_block_index_dims()), m_sym(m_bis), m_sch(m_bidims) {
@@ -53,12 +56,12 @@ bto_apply<N, Traits>::bto_apply(block_tensor_t &bta,
 }
 
 
-template<size_t N, typename Traits>
-bto_apply<N, Traits>::bto_apply(block_tensor_t &bta, const functor_t &fn,
-        const permutation<N> &p, const scalar_transf_t &c) :
+template<size_t N, typename Functor, typename Traits>
+bto_apply<N, Functor, Traits>::bto_apply(block_tensor_t &bta,
+    const functor_t &fn, const permutation<N> &p, const scalar_transf_t &c) :
 
-        m_bta(bta), m_fn(fn), m_tr1(p, c), m_bis(mk_bis(m_bta.get_bis(), p)),
-        m_bidims(m_bis.get_block_index_dims()), m_sym(m_bis), m_sch(m_bidims) {
+    m_bta(bta), m_fn(fn), m_tr1(p, c), m_bis(mk_bis(m_bta.get_bis(), p)),
+    m_bidims(m_bis.get_block_index_dims()), m_sym(m_bis), m_sch(m_bidims) {
 
     //! Type of block tensor control object
     typedef typename Traits::template block_tensor_ctrl_type<N>::type
@@ -72,8 +75,8 @@ bto_apply<N, Traits>::bto_apply(block_tensor_t &bta, const functor_t &fn,
 }
 
 
-template<size_t N, typename Traits>
-void bto_apply<N, Traits>::sync_on() {
+template<size_t N, typename Functor, typename Traits>
+void bto_apply<N, Functor, Traits>::sync_on() {
 
     typedef typename Traits::template block_tensor_ctrl_type<N>::type
         block_tensor_ctrl_t;
@@ -83,8 +86,8 @@ void bto_apply<N, Traits>::sync_on() {
 }
 
 
-template<size_t N, typename Traits>
-void bto_apply<N, Traits>::sync_off() {
+template<size_t N, typename Functor, typename Traits>
+void bto_apply<N, Functor, Traits>::sync_off() {
 
     typedef typename Traits::template block_tensor_ctrl_type<N>::type
         block_tensor_ctrl_t;
@@ -94,8 +97,16 @@ void bto_apply<N, Traits>::sync_off() {
 }
 
 
-template<size_t N, typename Traits>
-void bto_apply<N, Traits>::compute_block(bool zero, block_t &blk,
+template<size_t N, typename Functor, typename Traits>
+void bto_apply<N, Functor, Traits>::perform(bto_stream_i<N, Traits> &out) {
+
+    throw not_implemented(g_ns, k_clazz, "perform(bto_stream_i&)",
+        __FILE__, __LINE__);
+}
+
+
+template<size_t N, typename Functor, typename Traits>
+void bto_apply<N, Functor, Traits>::compute_block(bool zero, block_t &blk,
     const index<N> &ib, const tensor_transf_t &tr, const element_t &c) {
 
     static const char *method =
@@ -104,10 +115,11 @@ void bto_apply<N, Traits>::compute_block(bool zero, block_t &blk,
 
     typedef typename Traits::template block_tensor_ctrl_type<N>::type
         block_tensor_ctrl_t;
-    typedef typename Traits::template tensor_type<N>::type tensor_t;
+    typedef typename Traits::template temp_block_type<N>::type tensor_t;
     typedef typename Traits::template to_set_type<N>::type to_set_t;
     typedef typename Traits::template to_copy_type<N>::type to_copy_t;
-    typedef typename Traits::template to_apply_type<N>::type to_apply_t;
+    typedef typename Traits::template to_apply_type<N, Functor>::type
+        to_apply_t;
 
     if(zero) to_set_t().perform(blk);
 
@@ -160,8 +172,8 @@ void bto_apply<N, Traits>::compute_block(bool zero, block_t &blk,
 }
 
 
-template<size_t N, typename Traits>
-void bto_apply<N, Traits>::make_schedule() {
+template<size_t N, typename Functor, typename Traits>
+void bto_apply<N, Functor, Traits>::make_schedule() {
 
     typedef typename Traits::template block_tensor_ctrl_type<N>::type
         block_tensor_ctrl_t;
@@ -195,9 +207,9 @@ void bto_apply<N, Traits>::make_schedule() {
 }
 
 
-template<size_t N, typename Traits>
-block_index_space<N> bto_apply<N, Traits>::mk_bis(
-        const block_index_space<N> &bis, const permutation<N> &perm) {
+template<size_t N, typename Functor, typename Traits>
+block_index_space<N> bto_apply<N, Functor, Traits>::mk_bis(
+    const block_index_space<N> &bis, const permutation<N> &perm) {
 
     block_index_space<N> bis1(bis);
     bis1.permute(perm);

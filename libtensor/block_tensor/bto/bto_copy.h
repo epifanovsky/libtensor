@@ -16,7 +16,7 @@ namespace libtensor {
  **/
 template<size_t N, typename Traits>
 class bto_copy :
-    public additive_bto<N, typename Traits::additive_bto_traits>,
+    public additive_bto<N, Traits>,
     public timings< bto_copy<N, Traits> > {
 
 public:
@@ -88,7 +88,7 @@ public:
     virtual void perform(block_tensor_type &bt, const element_type &c);
     virtual void perform(bto_stream_type &out);
 
-    using additive_bto<N, typename Traits::additive_bto_traits>::perform;
+    using additive_bto<N, Traits>::perform;
 
     virtual void sync_on();
     virtual void sync_off();

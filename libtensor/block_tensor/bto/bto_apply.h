@@ -42,10 +42,10 @@ namespace libtensor {
 
     \ingroup libtensor_btod
  **/
-template<size_t N, typename Traits>
+template<size_t N, typename Functor, typename Traits>
 class bto_apply :
-    public additive_bto<N, typename Traits::additive_bto_traits>,
-    public timings< bto_apply<N, Traits> > {
+    public additive_bto<N, Traits>,
+    public timings< bto_apply<N, Functor, Traits> > {
 
 public:
     //! Type of tensor elements
@@ -59,7 +59,7 @@ public:
     typedef typename Traits::template block_type<N>::type block_t;
 
     //! Type of functor
-    typedef typename Traits::functor_type functor_t;
+    typedef Functor functor_t;
 
     typedef tensor_transf<N, element_t> tensor_transf_t;
 
@@ -126,10 +126,12 @@ public:
         return m_sym;
     }
 
-    using additive_bto<N, typename Traits::additive_bto_traits>::perform;
+    using additive_bto<N, Traits>::perform;
 
     virtual void sync_on();
     virtual void sync_off();
+
+    virtual void perform(bto_stream_i<N, Traits> &out);
 
     //@}
 
@@ -150,8 +152,8 @@ private:
     void make_schedule();
 
 private:
-    bto_apply(const bto_apply<N, Traits>&);
-    bto_apply<N, Traits> &operator=(const bto_apply<N, Traits>&);
+    bto_apply(const bto_apply&);
+    bto_apply &operator=(const bto_apply&);
 
 };
 
