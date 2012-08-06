@@ -116,7 +116,12 @@ void btod_symmetrize<N>::perform(bto_stream_i<N, btod_traits> &out) {
 
     try {
 
-        bto_aux_symmetrize<N, Traits> out2(m_sym, out);
+        tensor_transf<N, double> tr0;
+        tensor_transf<N, double> tr1(m_perm1,
+            scalar_transf<double>(m_symm ? 1.0 : -1.0));
+        bto_aux_symmetrize<N, Traits> out2(m_op.get_symmetry(), m_sym, out);
+        out2.add_transf(tr0);
+        out2.add_transf(tr1);
         m_op.perform(out2);
 
     } catch(...) {

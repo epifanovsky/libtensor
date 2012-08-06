@@ -1,6 +1,8 @@
 #ifndef LIBTENSOR_BTO_AUX_SYMMETRIZE_H
 #define LIBTENSOR_BTO_AUX_SYMMETRIZE_H
 
+#include <list>
+#include <libtensor/core/orbit_list.h>
 #include "bto_stream_i.h"
 
 namespace libtensor {
@@ -36,22 +38,31 @@ public:
     typedef tensor_transf<N, element_type> tensor_transf_type;
 
 private:
-    symmetry_type m_sym; //!< Target symmetry
+    symmetry_type m_syma; //!< Initial symmetry
+    symmetry_type m_symb; //!< Target (symmetrized) symmetry
+    orbit_list<N, element_type> m_olb; //!< List of target orbits
+    std::list<tensor_transf_type> m_trlst; //!< List of transformations
     bto_stream_i<N, Traits> &m_out; //!< Output stream
     bool m_open; //!< Open state
 
 public:
     /** \brief Constructs the operation
-        \brief sym Target symmetry.
+        \brief syma Initial symmetry.
+        \brief symb Target symmetry.
         \brief out Output stream.
      **/
     bto_aux_symmetrize(
-        const symmetry_type &sym,
+        const symmetry_type &syma,
+        const symmetry_type &symb,
         bto_stream_i<N, Traits> &out);
 
     /** \brief Virtual destructor
      **/
     virtual ~bto_aux_symmetrize();
+
+    /** \brief Add a transformation to the symmetrizer
+     **/
+    void add_transf(const tensor_transf_type &tr);
 
     /** \brief Implements bto_stream_i::open(). Prepares the symmetrization
             operation
