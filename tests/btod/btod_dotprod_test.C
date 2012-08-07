@@ -705,6 +705,8 @@ void btod_dotprod_test::test_10() throw(libtest::test_exception) {
 
     double d = btod_dotprod<2>(bt1, bt2).calculate();
 
+    libutil::timings_store<libtensor_timings>::get_instance().print(std::cout);
+
     //  Compute the reference
 
     dense_tensor<2, double, allocator_t> t1(dims), t2(dims);

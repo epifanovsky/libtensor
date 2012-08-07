@@ -12,30 +12,44 @@ const char *orbit<N, T>::k_clazz = "orbit<N, T>";
 
 
 template<size_t N, typename T>
-orbit<N, T>::orbit(const symmetry<N, T> &sym, const index<N> &idx) :
+orbit<N, T>::orbit(const symmetry<N, T> &sym, const index<N> &idx,
+    bool compute_allowed) :
 
     m_bidims(sym.get_bis().get_block_index_dims()), m_allowed(true) {
 
     orbit<N, T>::start_timer();
 
+    //  Setting m_allowed to false will disable further calls to
+    //  symmetry_element_i::is_allowed
+    if(!compute_allowed) m_allowed = false;
+
     abs_index<N> aidx0(idx, m_bidims);
     build_orbit(sym, aidx0);
     abs_index<N>::get_index(m_orb.begin()->first, m_bidims, m_cidx);
+
+    if(!compute_allowed) m_allowed = true;
 
     orbit<N, T>::stop_timer();
 }
 
 
 template<size_t N, typename T>
-orbit<N, T>::orbit(const symmetry<N, T> &sym, size_t aidx) :
+orbit<N, T>::orbit(const symmetry<N, T> &sym, size_t aidx,
+    bool compute_allowed) :
 
     m_bidims(sym.get_bis().get_block_index_dims()), m_allowed(true) {
 
     orbit<N, T>::start_timer();
 
+    //  Setting m_allowed to false will disable further calls to
+    //  symmetry_element_i::is_allowed
+    if(!compute_allowed) m_allowed = false;
+
     abs_index<N> aidx0(aidx, m_bidims);
     build_orbit(sym, aidx0);
     abs_index<N>::get_index(m_orb.begin()->first, m_bidims, m_cidx);
+
+    if(!compute_allowed) m_allowed = true;
 
     orbit<N, T>::stop_timer();
 }
@@ -106,7 +120,7 @@ const tensor_transf<N, T> &orbit<N, T>::get_transf(const iterator &i) const {
 
 template<size_t N, typename T>
 void orbit<N, T>::build_orbit(const symmetry<N, T> &sym,
-    const abs_index<N> &aidx) {
+const abs_index<N> &aidx) {
 
     typedef index<N> index_type;
 
@@ -147,7 +161,7 @@ void orbit<N, T>::build_orbit(const symmetry<N, T> &sym,
                 eset.begin(); ielem != eset.end(); ++ielem) {
 
                 const symmetry_element_i<N, T> &elem = eset.get_elem(ielem);
-                m_allowed = m_allowed && elem.is_allowed(idx);
+                if(m_allowed) m_allowed = elem.is_allowed(idx);
                 ti.push_back(idx);
                 tt.push_back(tr);
                 elem.apply(ti.back(), tt.back());

@@ -38,6 +38,7 @@ class tod_contract2_ref
 	  public timings<tod_contract2_ref<Repeats,N,M,K,DimData> >
 {
 	friend class timings<tod_contract2_ref<Repeats,N,M,K,DimData> >;
+public:
 	static const char* k_clazz;
 protected:
 	virtual void do_calculate();

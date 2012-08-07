@@ -459,10 +459,9 @@ void so_dirsum_se_label_test::test_nn_3(
         evaluation_rule<2> ra;
         sequence<2, size_t> seq1, seq2;
         seq1[0] = seq2[1] = 1;
-        ra.add_sequence(seq1);
-        ra.add_sequence(seq2);
-        ra.add_product(0, 1, 0);
-        ra.add_to_product(0, 1, 2, 0);
+        product_rule<2> &pra = ra.new_product();
+        pra.add(seq1, 1);
+        pra.add(seq2, 2);
         elema.set_rule(ra);
     }
 

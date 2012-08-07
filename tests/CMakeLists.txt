@@ -75,12 +75,15 @@ set(SRC_DIAG_TENSOR
 
 set(SRC_SYMMETRY
     symmetry/block_labeling_test.C
+    symmetry/combine_label_test.C
     symmetry/combine_part_test.C
+    symmetry/eval_sequence_list_test.C
     symmetry/evaluation_rule_test.C
     symmetry/libtensor_symmetry_tests.C
     symmetry/libtensor_symmetry_suite.C
     symmetry/permutation_group_test.C
     symmetry/point_group_table_test.C
+    symmetry/product_rule_test.C
     symmetry/product_table_container_test.C
     symmetry/se_label_test_base.C
     symmetry/se_label_test.C
@@ -111,6 +114,7 @@ set(SRC_SYMMETRY
     symmetry/so_reduce_se_perm_test.C
     symmetry/so_reduce_test.C
     symmetry/so_symmetrize_se_label_test.C
+    symmetry/so_symmetrize_se_part_test.C
     symmetry/so_symmetrize_test.C
     symmetry/symmetry_element_set_adapter_test.C
 )
@@ -123,7 +127,6 @@ set(SRC_BTOD
     btod/bto_contract2_sym_test.C
     btod/btod_add_test.C
     btod/btod_apply_test.C
-    btod/btod_cholesky_test.C
     btod/btod_compare_test.C
     btod/btod_contract2_test.C
     btod/btod_contract3_test.C

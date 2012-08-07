@@ -38,7 +38,7 @@ public:
     //!< Exctracts eigenvalue number k
     virtual void get_eigenvector(block_tensor_i <2, double> &eigvector,size_t k,
             block_tensor_i <1, double> &output);
-    //!< Exctracts eigenvector number k
+    //!< Extracts eigenvector number k
     double get_tol(){return m_tol;};
     //!< Show the tolerance
     int get_maxiter(){return m_maxiter;};

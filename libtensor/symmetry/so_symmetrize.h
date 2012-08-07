@@ -17,22 +17,39 @@ class symmetry_operation_params< so_symmetrize<N, T> >;
     \tparam N Symmetry cardinality (%tensor order).
     \tparam T Tensor element type.
 
-    This symmetry operation symmetrizes a number of indexes given by two
-    sequences. The first sequence specifies the groups by which the indexes
-    are symmetrized, while the second sequence yields the indexes in each
-    group that are symmetrized w.r.t to each other. Indexes for which the
-    sequences are zero are not symmetrized. Thus, each non-zero number in
-    the sequences has to occur equally often in a sequences. E.g. given a
-    7-index symmetry object the sequences [0112323] and [0122112] would
-    result in symmetrization of three groups of indexes as follows:
-        [ijklmno] <-> [ijkonml] <-> [inlojmk]
-            <-> [inlkmjo] <-> [imoknjl] <-> [imoljnk]
+    This symmetry operation symmetrizes a set of dimensions as specified by two
+    sequences, \c idxgrp and \c symidx. The first sequence defines groups of
+    dimensions such that the dimensions within in a group are not permuted by
+    the symmetrization, but one index group is permuted with other index groups
+    as whole. The second sequences defines the order of the dimensions within
+    each group, i.e. it defines which dimension is first, second, third, ...
+    in a group (and for each group). The dimensions are then symmetrized so
+    that the dimensions which are marked first in the groups are permuted among
+    each other, as well as those which are marked second, third, etc. Indexes
+    for which the sequences are zero are not symmetrized. As consequence,
+    all non-zero numbers have to occur equally often in any sequence.
+
+    For illustration two examples:
+    Example 1:
+        Symmetrization of \c [ijkl]<->[klij] would require as sequences
+        \c idxgrp=[1122] and \c symidx=[1212].
+
+    Example 2:
+        The symmetrization of a 7-index symmetry object given by the sequences
+        \c idxgrp=[0112323] and \c symidx=[0122112]
+        would result in:
+        \c [ijklmno]<->[ijkonml]<->[inlojmk]
+        \c <->[inlkmjo]<->[imoknjl]<->[imoljnk]
+
     In addition to the two sequences also two scalar transformations have
-    to be specified. These are associated to the pair permutations and the
+    to be specified. These are associated to pair permutations and the
     cyclic permutation, respectively, which form a generating set of the
-    symmetry group for the symmetrization. In the above example, the pair
-    and cyclic permutation are:
-        [0123456->0536142] and [0123456->0532416]
+    symmetry group for the symmetrization. In example 2, the pair
+    and cyclic permutation would be:
+        \c [0123456->0536142] and \c [0123456->0532416]
+
+    (Example 1 does not have a cyclic permutation, but only a pair
+    permutation!)
 
     \ingroup libtensor_symmetry
  **/

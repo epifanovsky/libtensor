@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_SO_SYMMETRIZE_SE_LABEL_IMPL_H
 #define LIBTENSOR_SO_SYMMETRIZE_SE_LABEL_IMPL_H
 
+#include <libtensor/core/permutation_builder.h>
 #include <libtensor/core/permutation_generator.h>
 #include "../bad_symmetry.h"
 
@@ -68,83 +69,37 @@ symmetry_operation_impl< so_symmetrize<N, T>, se_label<N, T> >::do_perform(
          transfer_labeling(bl1, idmap, bl2);
 
          evaluation_rule<N> r2;
-         // Symmetrize the sequences
-         std::vector< std::vector<size_t> > perm_seq(r1.get_n_sequences());
+         for (typename evaluation_rule<N>::const_iterator ir = r1.begin();
+                 ir != r1.end(); ir++) {
 
-         // Add the existing sequences to r2
-         for (size_t sno = 0; sno < r1.get_n_sequences(); sno++) {
-             perm_seq[sno].push_back(r2.add_sequence(r1[sno]));
+             const product_rule<N> &pr1 = r1.get_product(ir);
+
+             permutation_generator<N> pg(msk);
+             do {
+                 const permutation<N> &p = pg.get_perm();
+                 sequence<N, size_t> seq1(0), seq2(0);
+                 for (register size_t i = 0; i < N; i++) seq1[i] = seq2[i] = i;
+
+                 for (register size_t i = 0, k = 0; i < ngrp; i++) {
+                     for (register size_t j = 0, kk = p[i] * nidx;
+                             j < nidx; j++, k++, kk++) {
+                         seq2[map[kk]] = seq1[map[k]];
+                     }
+                 }
+                 permutation_builder<N> pb(seq2, seq1);
+
+                 product_rule<N> &pr2 = r2.new_product();
+                 for (typename product_rule<N>::iterator ip = pr1.begin();
+                         ip != pr1.end(); ip++) {
+
+                     sequence<N, size_t> seq(pr1.get_sequence(ip));
+                     pb.get_perm().apply(seq);
+                     pr2.add(seq, pr1.get_intrinsic(ip));
+                 }
+
+             } while (pg.next());
          }
-
-         // Now generate all permuted sequences
-         size_t nperm = 1;
-         permutation_generator<N> pg(msk);
-         permutation<N> pprev, px;
-         while (pg.next()) {
-             // Determine pair which was permuted in this step
-             const permutation<N> &p = pg.get_perm();
-             register size_t i = 0, i0, i1;
-             for (; i < N && p[i] == pprev[i]; i++) ;
-             i0 = i++;
-             for (; i < N && p[i] == pprev[i]; i++) ;
-             i1 = i;
-             pprev.permute(i0, i1);
-
-             // Construct index permutation for this step
-             i0 *= nidx; i1 *= nidx;
-             for (i = 0; i < nidx; i++, i0++, i1++)
-                 px.permute(map[i0], map[i1]);
-
-             // Create permuted sequences
-             for (size_t sno = 0; sno < r1.get_n_sequences(); sno++) {
-
-                 const sequence<N, size_t> &seq = r1[sno];
-                 sequence<N, size_t> pseq(seq);
-                 px.apply(pseq);
-                 for (i = 0; i < N; i++) { if (pseq[i] != seq[i]) break; }
-                 if (i == N) {
-                     perm_seq[sno].push_back(perm_seq[sno][0]);
-                 }
-                 else {
-                     perm_seq[sno].push_back(r2.add_sequence(pseq));
-                 }
-             }
-             nperm++;
-         }
-
-         // Symmetrize the products
-         for (size_t pno = 0; pno < r1.get_n_products(); pno++) {
-
-             // Product to be symmetrized
-             typename evaluation_rule<N>::iterator it = r1.begin(pno);
-             size_t iperm = 0;
-             size_t ip = r2.add_product(perm_seq[r1.get_seq_no(it)][iperm],
-                     r1.get_intrinsic(it), r1.get_target(it));
-             it++;
-             for (; it != r1.end(pno); it++) {
-                 r2.add_to_product(ip, perm_seq[r1.get_seq_no(it)][iperm],
-                         r1.get_intrinsic(it), r1.get_target(it));
-             }
-             iperm++;
-             for ( ; iperm != nperm; iperm++) {
-                 // Does the permuted product differ from the original?
-                 for (it = r1.begin(pno); it != r1.end(pno); it++) {
-                     if (perm_seq[r1.get_seq_no(it)][iperm] !=
-                             perm_seq[r1.get_seq_no(it)][0]) break;
-                 }
-                 // If not continue
-                 if (it == r1.end(pno)) continue;
-
-                 it = r1.begin(pno);
-                 ip = r2.add_product(perm_seq[r1.get_seq_no(it)][iperm],
-                         r1.get_intrinsic(it), r1.get_target(it));
-                 it++;
-                 for (; it != r1.end(pno); it++) {
-                     r2.add_to_product(ip, perm_seq[r1.get_seq_no(it)][iperm],
-                             r1.get_intrinsic(it), r1.get_target(it));
-                 }
-             }
-         }
+         r2.optimize();
 
          e2.set_rule(r2);
 

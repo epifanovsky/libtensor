@@ -67,11 +67,13 @@ public:
         return new point_group_table(*this);
     }
 
+
     /** \copydoc product_table_i::get_id
      **/
     virtual const std::string &get_id() const {
         return m_id;
     }
+
 
     /** \copydoc product_table_i::is_valid
      **/
@@ -79,9 +81,51 @@ public:
         return l < m_irreps.size();
     }
 
+
+    /** \copydoc product_table_i::get_n_labels
+     **/
     virtual label_t get_n_labels() const {
         return m_irreps.size();
     }
+
+
+    /** \copydoc product_table_i::product
+     **/
+    virtual label_set_t product(label_t l1, label_t l2) const {
+#ifdef LIBTENSOR_DEBUG
+        if (! is_valid(l1) || ! is_valid(l2))
+            throw bad_parameter(g_ns, k_clazz, "product(label_t,label_t)",
+                __FILE__, __LINE__, "Invalid label.");
+#endif
+        return m_table[l1 < l2 ? pair_index(l1, l2) : pair_index(l2, l1)];
+    }
+
+
+    /** \copydoc product_table_i::product
+     **/
+    virtual label_set_t product(label_t l1, const label_set_t &l2) const;
+
+
+    /** \copydoc product_table_i::product
+     **/
+    virtual label_set_t product(const label_set_t &l1, label_t l2) const;
+
+
+    /** \copydoc product_table_i::product
+     **/
+    virtual label_set_t product(
+        const label_set_t &l1, const label_set_t &l2) const;
+
+
+    /** \copydoc product_table_i::product
+     **/
+    virtual void product(const label_group_t &lg, label_set_t &prod) const;
+
+
+    /** \copydoc product_table_i::is_in_product
+     **/
+    virtual bool is_in_product(const label_group_t &lg,
+                       label_t l) const;
 
     //@}
 
@@ -100,6 +144,7 @@ public:
     /** \brief Return the label for a given irrep name
      **/
     label_t get_label(const std::string &irrep) const;
+
 
     //!    \name Manipulation functions
     //@{
@@ -123,9 +168,7 @@ public:
     //@}
 
 protected:
-    virtual label_set_t determine_product(label_t l1, label_t l2) const;
-
-    virtual void do_check() const;
+    virtual void do_check() const { }
 
 private:
     label_t pair_index(label_t l1, label_t l2) const {

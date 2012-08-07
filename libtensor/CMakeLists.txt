@@ -7,8 +7,6 @@ set(SRC
     core/impl/dimensions.C
     core/impl/orbit.C
     core/impl/orbit_list.C
-    btod/btod_cholesky.C
-    btod/cholesky.C
     btod/btod_diagonalize.C
     btod/btod_tridiagonalize.C
     symmetry/point_group_table.C
@@ -91,12 +89,14 @@ set(SRC_LINALG_ACML
     linalg/acml/linalg_base_level1_acml.C
     linalg/acml/linalg_base_level2_acml.C
     linalg/acml/linalg_base_level3_acml.C
+    linalg/acml/lapack_acml.C
 )
 
 set(SRC_LINALG_MKL
     linalg/mkl/linalg_base_level1_mkl.C
     linalg/mkl/linalg_base_level2_mkl.C
     linalg/mkl/linalg_base_level3_mkl.C
+    linalg/mkl/lapack_mkl.C
 )
 
 set(SRC_LINALG

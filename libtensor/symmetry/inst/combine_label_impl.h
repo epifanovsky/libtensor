@@ -18,6 +18,7 @@ void combine_label<N, T>::add(const se_label<N, T> &el) throw(bad_parameter) {
 
     static const char *method = "add(const se_label<N, T> &)";
 
+#ifdef LIBTENSOR_DEBUG
     if (el.get_table_id() != m_table_id) {
         throw bad_parameter(g_ns, k_clazz, method,
                 __FILE__, __LINE__, "Table ID.");
@@ -27,47 +28,56 @@ void combine_label<N, T>::add(const se_label<N, T> &el) throw(bad_parameter) {
         throw bad_parameter(g_ns, k_clazz, method,
                 __FILE__, __LINE__, "Block labels.");
     }
+#endif
 
     const evaluation_rule<N> &rule = el.get_rule();
 
     // No products means all forbidden => m_rule becomes empty as well.
-    if (rule.get_n_products() == 0) m_rule.clear_all();
-
-    // Transfer sequences
-    std::vector<size_t> seqno(rule.get_n_sequences());
-    for (size_t i = 0; i < rule.get_n_sequences(); i++) {
-        seqno[i] = m_rule.add_sequence(rule[i]);
+    if (rule.begin() == rule.end()) {
+        m_rule.clear();
+        return;
     }
 
     // Transfer products
-    for (size_t i = 0; i < m_rule.get_n_products(); i++) {
+    typename evaluation_rule<N>::const_iterator ij = rule.begin();
 
-        size_t j = 0;
-        for (typename evaluation_rule<N>::iterator it = rule.begin(j);
-                it != rule.end(j); it++) {
-            m_rule.add_to_product(i, seqno[rule.get_seq_no(it)],
-                    rule.get_intrinsic(it), rule.get_target(it));
+    std::list< product_rule<N> > prlist;
+    for (typename evaluation_rule<N>::iterator ii = m_rule.begin();
+            ii != m_rule.end(); ii++) {
+
+        product_rule<N> &pra = m_rule.get_product(ii);
+        prlist.push_back(pra);
+
+        // Amend the product by prb
+        const product_rule<N> &prb = rule.get_product(ij);
+        for (typename product_rule<N>::iterator ip = prb.begin();
+                ip != prb.end(); ip++) {
+
+            pra.add(prb.get_sequence(ip), prb.get_intrinsic(ip));
         }
-        j++;
+    }
+    ij++;
+    for (; ij != rule.end(); ij++) {
 
-        for (; j < m_rule.get_n_products(); j++) {
-            typename evaluation_rule<N>::iterator it = m_rule.begin(i);
-            size_t pno = m_rule.add_product(m_rule.get_seq_no(it),
-                    rule.get_intrinsic(it), rule.get_target(it));
-            it++;
-            for (; it != m_rule.end(i); it++) {
-                m_rule.add_to_product(pno, m_rule.get_seq_no(it),
-                        m_rule.get_intrinsic(it), m_rule.get_target(it));
+        const product_rule<N> &prb = rule.get_product(ij);
+        typename std::list< product_rule<N> >::iterator it = prlist.begin();
+        for (; it != prlist.end(); it++) {
+
+            product_rule<N> &pra = m_rule.new_product();
+            for (typename product_rule<N>::iterator ipa = it->begin();
+                    ipa != it->end(); ipa++) {
+                pra.add(it->get_sequence(ipa), it->get_intrinsic(ipa));
             }
-            for (it = rule.begin(j); it != rule.end(j); j++) {
-                m_rule.add_to_product(pno, seqno[rule.get_seq_no(it)],
-                        rule.get_intrinsic(it), rule.get_target(it));
+
+            for (typename product_rule<N>::iterator ipb = prb.begin();
+                    ipb != prb.end(); ipb++) {
+                pra.add(prb.get_sequence(ipb), prb.get_intrinsic(ipb));
             }
         }
     }
-
     m_rule.optimize();
 }
+
 
 } // namespace libtensor
 

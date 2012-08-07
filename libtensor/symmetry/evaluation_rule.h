@@ -1,10 +1,12 @@
 #ifndef LIBTENSOR_EVALUATION_RULE_H
 #define LIBTENSOR_EVALUATION_RULE_H
 
-#include <map>
-#include <vector>
-#include <libtensor/core/sequence.h>
+#include <list>
 #include <libtensor/exception.h>
+#include <libtensor/timings.h>
+#include <libtensor/core/mask.h>
+#include "eval_sequence_list.h"
+#include "product_rule.h"
 #include "product_table_i.h"
 
 
@@ -13,237 +15,162 @@ namespace libtensor {
 
 /** \brief Evaluation rule to determine allowed blocks of a block %tensor.
 
-    The evaluation rule is the container structure used by se_label to
-    determine allowed blocks of a N-dim block %tensor by its block labels.
-    It comprises a list of unique N-dim sequences and a list of "products"
-    where each product is a list of index-label-label triples. In each
-    triple the index refers to one of the N-dim sequences, while the two
-    labels refer to the "intrinsic" and the "target" label.
+    The evaluation rule determines allowed blocks of a N-dim block %tensor
+    from its block labels and the product table. It consists of a
+    collection of N-dim sequences and a list of product rules
+    (\sa product_rule).
 
-    The list of unique sequences can be setup using the function
-    \c add_sequence() and can be obtained by index access. \c add_sequence()
-    returns the index of the added sequences which should be used when new
-    index-label pairs are added to the list of lists.
+    The function \c new_product() adds a new empty product rule to the
+    evaluation rule. The product_rule object which is returned can be used to
+    add terms to the new product. The list of product rules can be transversed
+    using iterators and get_product() functions.
 
-    The function \c add_product() allows to add a new list of index-label-label
-    triples, thereby also adding the first triple to the list. The return value
-    is the index of the newly added list which should be used to add further
-    index-label-label triples to this list via \c add_to_product().
-
-    For details on how the evaluation rule is used to determine allowed
-    blocks please refer to the documentation of \sa se_label.
+    The evaluation rule consists of a set of elementary rules each of which
+    comprises a sequence of N integers and a set of intrinsic labels.
+    Allowed blocks are determined from the evaluation rule as follows:
+    - All blocks are forbidden, if the rule setup is empty.
+    - A block is allowed, if it is allowed by any product in the rule setup.
+    - A block is allowed by a product, if it is allowed by all elementary rules
+      in this product.
+    - If a product is empty, all blocks are forbidden by this product.
+    - An elementary rule allows all blocks, if the intrinsic label
+      consists only of the invalid label
+    - An elementary rule forbids all blocks, if the sequence contains only
+      zeroes
+    - An elementary rule allows a block, if
+        - one of the block labels for which the sequence is non-zero is the
+          invalid label.
+        - the product of labels specified by the sequence contains the
+          intrinsic label.
+    - The product of labels is a list of labels containing the i-th block label
+      n times, if the i-th entry of the sequence is n.
 
     \ingroup libtensor_symmetry
  **/
 template<size_t N>
-class evaluation_rule {
+class evaluation_rule : public timings< evaluation_rule<N> > {
 public:
     static const char *k_clazz; //!< Class name
 
 public:
     typedef typename product_table_i::label_t label_t;
+    typedef typename product_table_i::label_group_t label_group_t;
+    typedef typename product_table_i::label_set_t label_set_t;
+
+    typedef product_rule<N> product_rule_t;
+    typedef typename std::list<product_rule_t>::iterator iterator;
+    typedef typename std::list<product_rule_t>::const_iterator const_iterator;
 
 private:
-    struct term {
-        size_t seqno;
-        label_t intr;
-        label_t target;
-
-        term(size_t seqno_, label_t intr_, label_t target_) :
-            seqno(seqno_), intr(intr_), target(target_) { }
-    };
-    typedef sequence<N, size_t> sequence_t;
-    typedef std::set<size_t> product_t;
+    eval_sequence_list<N> *m_slist;
+    std::list<product_rule_t> m_rules;
 
 public:
-    typedef typename product_t::const_iterator iterator;
+    evaluation_rule() {
+        m_slist = new eval_sequence_list<N>();
+    }
 
-private:
-    std::vector<sequence_t> m_sequences;
-    std::vector<term> m_term_list;
-    std::vector<product_t> m_setup;
+    ~evaluation_rule() {
+        delete m_slist;
+    }
 
-public:
-    //! \name Manipulation functions
-    //@{
+    evaluation_rule(const evaluation_rule<N> &other);
 
-    /** \brief Add a new sequence to the list of sequences.
-        \param seq Sequence to be added.
-        \return Index of the sequence.
+    const evaluation_rule<N> &operator=(const evaluation_rule<N> &other);
 
-        The function checks, if an identical sequence is already present in
-        the list. If this is the case, it returns the number of this sequence
-        without adding a new one.
+    /** \brief Create a new (empty) product in rule setup
      **/
-    size_t add_sequence(const sequence<N, size_t> &seq);
+    product_rule_t &new_product() {
+        m_rules.push_back(product_rule_t(m_slist));
+        return m_rules.back();
+    }
 
-    /** \brief Add a new product to the list of products
-        \param seq_no Sequence index.
-        \param intrinsic Intrinsic label
-        \param target Target label.
-        \return Index of the new product.
+    /** \brief Delete the list of lists
      **/
-    size_t add_product(size_t seq_no,
-            label_t intr = product_table_i::k_identity,
-            label_t target = product_table_i::k_identity);
+    void clear() { m_rules.clear(); m_slist->clear(); }
 
-    /** \brief Add another index-label pair to a product
-        \param no Number of the product to add to
-        \param seq_no Sequence index.
-        \param intr Intrinsic label
-        \param target Target label.
+    /** \brief Checks if sequence of block labels is allowed by the rule
+        \param blk_labels Block labels
+        \param pt Product table
      **/
-    void add_to_product(size_t no, size_t seq_no,
-            label_t intr = product_table_i::k_identity,
-            label_t target = product_table_i::k_identity);
+    bool is_allowed(const sequence<N, label_t> &blk_labels,
+            const product_table_i &pt) const;
+
+    /** \brief Obtain list of sequences
+     **/
+    eval_sequence_list<N> &get_sequences() { return *m_slist; }
+
+    /** \brief Obtain constant list of sequences
+     **/
+    const eval_sequence_list<N> &get_sequences() const { return *m_slist; }
+
+    /** \brief STL-style iterator to the 1st product in the setup
+     **/
+    iterator begin() { return m_rules.begin(); }
+
+    /** \brief STL-style iterator to the 1st product in the setup (const)
+     **/
+    const_iterator begin() const { return m_rules.begin(); }
+
+    /** \brief STL-style iterator to the end of the product list
+     **/
+    iterator end() { return m_rules.end(); }
+
+    /** \brief STL-style iterator to the end of the product list (const)
+     **/
+    const_iterator end() const { return m_rules.end(); }
+
+    /** \brief Return the product pointed to by iterator
+     **/
+    product_rule_t &get_product(iterator it) { return *it; }
+
+    /** \brief Return the product pointed to by iterator (const)
+     **/
+    const product_rule_t &get_product(const_iterator it) const { return *it; }
 
     /** \brief Tries to optimize the current evaluation rule.
 
         Optimization is attempted by the following steps:
-        - Find always forbidden, always allowed, and duplicate terms in each
-          product
-        - Delete always allowed or duplicate terms in a product
+        - Find always forbidden, always allowed terms in each product
+        - Delete always allowed terms in a product (unless it is the only term)
         - Delete products comprising always forbidden terms
         - Find duplicate products and delete them
         - Find unused sequences and delete them
      **/
     void optimize();
 
-    /** \brief Delete the list of lists
+    /** \brief Perform a dimension reduction (by sum) of the current rule
+        \param res Result rule
+        \param rmap Index map input->output
+        \param rdims Labels of the reduction steps
+        \param pt Product table
+
+        The reduction is performed according to rmap and rdim. rmap specifies
+        which input dimensions end up at which output dimensions, as well as
+        the input dimensions which are going to be reduced. The latter
+        dimensions are given by values larger than N - M in rmap. Since
+        the reduction can be performed in multiple steps the value also
+        indicates the reduction step (i.e. value N - M refers to the first
+        reduction step, N - M + 1 to the second, ...).
+
      **/
-    void clear_setup() { m_setup.clear(); m_term_list.clear(); }
+    template<size_t M>
+    void reduce(evaluation_rule<N - M> &res, const sequence<N, size_t> &rmap,
+            const sequence<M, label_group_t> &rdims,
+            const product_table_i &pt) const;
 
-    /** \brief Delete the list of lists and the sequences
+    /** \brief Perform merge of two or more dimensions for the current rule
+        \param res Result rule
+        \param mmap Index map input->output
+        \param smsk Mask for merged dimensions that can be simplified
+
+        The merge is performed according to mmap and smsk. mmap specifies
+        which input dimensions end up at which output dimensions. smsk
+        specifies, if the merged dimensions can be simplified.
      **/
-    void clear_all() {
-        m_setup.clear(); m_sequences.clear();
-    }
-
-    //@}
-
-    //! \name Access functions (read only)
-    //@{
-
-    /** \brief Return the number of sequences.
-     **/
-    size_t get_n_sequences() const { return m_sequences.size(); }
-
-    /** \brief Access a sequence.
-        \param n Sequence index.
-     **/
-    const sequence<N, size_t> &operator[](size_t n) const {
-#ifdef LIBTENSOR_DEBUG
-        if (n >= m_sequences.size())
-            throw bad_parameter(g_ns, k_clazz,
-                    "operator[](size_t)", __FILE__, __LINE__, "n");
-#endif
-
-        return m_sequences[n];
-    }
-
-    /** \brief Access a sequence.
-        \param n Sequence index.
-     **/
-    sequence<N, size_t> &operator[](size_t n) {
-#ifdef LIBTENSOR_DEBUG
-        if (n >= m_sequences.size())
-            throw bad_parameter(g_ns, k_clazz,
-                    "operator[](size_t)", __FILE__, __LINE__, "n");
-#endif
-
-        return m_sequences[n];
-    }
-
-    /** \brief Return the number of products.
-     **/
-    size_t get_n_products() const { return m_setup.size(); }
-
-    /** \brief STL-style iterator to the 1st index-label pair in a product
-        \param no Product number.
-     **/
-    iterator begin(size_t no) const {
-#ifdef LIBTENSOR_DEBUG
-        if (no >= m_setup.size())
-            throw bad_parameter(g_ns, k_clazz,
-                    "begin(size_t)", __FILE__, __LINE__, "no");
-#endif
-
-        return m_setup[no].begin();
-    }
-
-    /** \brief STL-style iterator to the end of a product
-        \param no Product number
-     **/
-    iterator end(size_t no) const {
-#ifdef LIBTENSOR_DEBUG
-        if (no >= m_setup.size())
-            throw bad_parameter(g_ns, k_clazz,
-                    "end(size_t)", __FILE__, __LINE__, "no");
-#endif
-
-        return m_setup[no].end();
-    }
-
-    /** \brief Return the sequence index of the current triplet
-        \param it Iterator
-     **/
-    size_t get_seq_no(iterator it) const {
-#ifdef LIBTENSOR_DEBUG
-        if (! is_valid(it))
-            throw bad_parameter(g_ns, k_clazz, "get_seq_no(iterator)",
-                    __FILE__, __LINE__, "it");
-#endif
-
-        return m_term_list[*it].seqno;
-
-    }
-
-    /** \brief Return the sequence belonging to the current triplet
-        \param it Iterator.
-     **/
-    const sequence<N, size_t> &get_sequence(iterator it) const {
-#ifdef LIBTENSOR_DEBUG
-        if (! is_valid(it))
-            throw bad_parameter(g_ns, k_clazz, "get_sequence(iterator)",
-                    __FILE__, __LINE__, "it");
-#endif
-
-        return m_sequences[m_term_list[*it].seqno];
-    }
-
-    /** \brief Return the intrinsic label belonging to the current triple
-        \param it Iterator pointing to a rule
-        \return Rule ID
-     **/
-    label_t get_intrinsic(iterator it) const {
-#ifdef LIBTENSOR_DEBUG
-        if (! is_valid(it))
-            throw bad_parameter(g_ns, k_clazz, "get_target(iterator)",
-                    __FILE__, __LINE__, "it");
-#endif
-
-        return m_term_list[*it].intr;
-    }
-
-    /** \brief Return the label belonging to the current pair
-        \param it Iterator pointing to a rule
-        \return Rule ID
-     **/
-    label_t get_target(iterator it) const {
-#ifdef LIBTENSOR_DEBUG
-        if (! is_valid(it))
-            throw bad_parameter(g_ns, k_clazz, "get_target(iterator)",
-                    __FILE__, __LINE__, "it");
-#endif
-
-        return m_term_list[*it].target;
-    }
-    //@}
-
-private:
-    size_t add_term(size_t seq_no, label_t intr, label_t target);
-
-    bool is_valid(iterator it) const;
+    template<size_t M>
+    void merge(evaluation_rule<M> &res, const sequence<N, size_t> &mmap,
+            const mask<M>& smsk) const;
 };
 
 

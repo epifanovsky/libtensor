@@ -66,15 +66,20 @@ public:
             in the orbit
         \param sym Symmetry group.
         \param idx Starter block index.
+        \param compute_allowed If true (default), compute whether the orbit is
+            allowed, false skips this computation
      **/
-    orbit(const symmetry<N, T> &sym, const index<N> &idx);
+    orbit(const symmetry<N, T> &sym, const index<N> &idx,
+        bool compute_allowed = true);
 
     /** \brief Constructs the orbit using a symmetry group and the absolute
             value of any starter index in the orbit
         \param sym Symmetry group.
         \param aidx Absolute value of the starter block index.
+        \param compute_allowed If true (default), compute whether the orbit is
+            allowed, false skips this computation
      **/
-    orbit(const symmetry<N, T> &sym, size_t aidx);
+    orbit(const symmetry<N, T> &sym, size_t aidx, bool compute_allowed = true);
 
     /** \brief Returns whether the orbit is allowed by symmetry
      **/

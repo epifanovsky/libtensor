@@ -33,11 +33,17 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_label<NM, T> >::do_perform(
     if (params.grp1.is_empty()) return;
 
     // Create a map of remaining indexes
-    sequence<k_order1, size_t> map((size_t) -1);
+    sequence<k_order1, size_t> map(0), rmap(0);
     size_t nrsteps = 0;
     for (register size_t i = 0, j = 0; i < k_order1; i++) {
-        if (params.msk[i]) nrsteps = std::max(nrsteps, params.rseq[i]);
-        else map[i] = j++;
+        if (params.msk[i]) {
+            map[i] = -1;
+            rmap[i] = params.rseq[i] + k_order2;
+            nrsteps = std::max(nrsteps, params.rseq[i]);
+        }
+        else {
+            rmap[i] = map[i] = j++;
+        }
     }
     nrsteps++;
 
@@ -65,7 +71,7 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_label<NM, T> >::do_perform(
     dimensions<k_order2> bidims2(index_range<k_order2>(idx1, idx2));
 
     // Loop over all se_label elements and do the reduction in each one
-    std::set<std::string> id_done;
+    std::set<std::string> table_ids;
     for (; it1 != g1.end(); it1++) {
 
         const el1_t &se1 = g1.get_elem(it1);
@@ -78,17 +84,20 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_label<NM, T> >::do_perform(
         }
 #endif
 
-        if (id_done.count(se1.get_table_id()) != 0) continue;
+        if (table_ids.count(se1.get_table_id()) != 0) continue;
 
         // Combine all sym elements with the same product table
         combine_label<k_order1, T> cl1(se1);
-        id_done.insert(cl1.get_table_id());
-        typename adapter_t::iterator it2 = it1; it2++;
-        for (; it2 != g1.end(); it2++) {
-            const el1_t &se1b = g1.get_elem(it2);
-            if (se1b.get_table_id() != cl1.get_table_id()) continue;
+        table_ids.insert(cl1.get_table_id());
 
-            cl1.add(se1b);
+        { // Look for other se_label elements with the same table id
+            typename adapter_t::iterator it2 = it1; it2++;
+            for (; it2 != g1.end(); it2++) {
+                const el1_t &se1b = g1.get_elem(it2);
+                if (se1b.get_table_id() != cl1.get_table_id()) continue;
+
+                cl1.add(se1b);
+            }
         }
 
         // Create result se_label
@@ -104,7 +113,7 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_label<NM, T> >::do_perform(
         label_t n_labels = pt.get_n_labels();
 
         // Collect the labels for each reduction step!
-        std::vector<label_group_t> blk_labels(nrsteps);
+        sequence<M, label_group_t> blk_labels;
         for (size_t i = 0; i < nrsteps; i++) {
 
             // Find first dimensions of the current reduction step
@@ -140,8 +149,8 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_label<NM, T> >::do_perform(
                     else if (ibl[l] == product_table_i::k_invalid) ibl[l] = ll;
                     else {
 #ifdef LIBTENSOR_DEBUG
-                    throw bad_symmetry(g_ns, k_clazz, method, __FILE__,
-                            __LINE__, "Incompatible block labels.");
+                        throw bad_symmetry(g_ns, k_clazz, method, __FILE__,
+                                __LINE__, "Incompatible block labels.");
 #endif
                     }
                 }
@@ -171,235 +180,7 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_label<NM, T> >::do_perform(
         const evaluation_rule<N> &r1 = cl1.get_rule();
         evaluation_rule<k_order2> r2;
 
-        // Map of sequences:
-        // - if m1to2 == -1: no dimensions
-        // - if m1to2 == r1.get_n_sequences(): only internal dimensions
-        // - else sequence number in r2
-        std::vector<size_t> m1to2(r1.get_n_sequences(), (size_t) -1);
-        for (size_t sno = 0; sno < r1.get_n_sequences(); sno++) {
-
-            const sequence<k_order1, size_t> &seq1 = r1[sno];
-            sequence<k_order2, size_t> seq2(0);
-            bool has_external = false, has_internal = false;
-            for (register size_t i = 0; i < k_order1; i++) {
-                if (seq1[i] == 0) continue;
-                if (! params.msk[i]) {
-                    has_external = true;
-                    seq2[map[i]] = seq1[i];
-                }
-                else {
-                    has_internal = true;
-                }
-            }
-
-            if (has_external) m1to2[sno] = r2.add_sequence(seq2);
-            else if (has_internal) m1to2[sno] = r1.get_n_sequences();
-        }
-
-        // Loop over the products
-        size_t pno = 0;
-        for (; pno < r1.get_n_products(); pno++) {
-
-            // Loop over all terms in current product and find the reduction
-            // indexes present
-
-            // Reduction steps in product
-            std::vector<bool> rsteps_in_pr(nrsteps, false);
-            std::vector<bool> pr1to2_ni;
-            std::vector<typename evaluation_rule<k_order1>::iterator> pr1to2;
-            std::vector<typename evaluation_rule<k_order1>::iterator> pr1to0;
-
-            bool product_forbidden = false, has_allowed = false;
-            for (typename evaluation_rule<k_order1>::iterator itp =
-                    r1.begin(pno); itp != r1.end(pno); itp++) {
-
-                size_t sno = r1.get_seq_no(itp);
-                // If the intrinsic label is the invalid label mark the product
-                // as having an always allowed term and continue
-                if (r1.get_intrinsic(itp) == product_table_i::k_invalid) {
-                    has_allowed = true;
-                    continue;
-                }
-
-                // If there the sequence is empty and not always allowed ...
-                if (m1to2[sno] == (size_t) -1) {
-                    // ... skip the product
-                    product_forbidden = true;
-                    break;
-                }
-
-                // Analyse how much internal dimensions there are
-                const sequence<k_order1, size_t> &seq = r1.get_sequence(itp);
-                size_t nk = 0;
-                for (register size_t i = 0; i < k_order1; i++) {
-                    if (! params.msk[i] || seq[i] == 0) continue;
-
-                    rsteps_in_pr[params.rseq[i]] = true;
-                    nk++;
-                }
-
-                // If there only internal dimensions add to pr1to0
-                // else to pr1to2 / pr1to2_ni
-                if (m1to2[sno] == r1.get_n_sequences()) {
-                    if (nk > 0) pr1to0.push_back(itp);
-                } else {
-                    pr1to2.push_back(itp);
-                    pr1to2_ni.push_back(nk == 0);
-                }
-            } // for itp
-
-            // Skip the current product if one term is forbidden
-            if (product_forbidden) continue;
-
-            // If there are only always allowed terms in this product,
-            // no further work has to be done
-            if (pr1to2.size() == 0 && pr1to0.size() == 0 && has_allowed) {
-                break;
-            }
-
-            // Create the dimensions for the reduction steps
-            index<M> i1, i2;
-            for (register size_t i = 0; i < nrsteps; i++) {
-                if (! rsteps_in_pr[i]) continue;
-
-                i2[i] = blk_labels[i].size() - 1;
-            }
-            dimensions<M> rdims(index_range<M>(i1, i2));
-
-            // No loop over all possible index combinations of the reduction
-            // dimensions and create possible combinations of result labels
-            bool is_allowed = false;
-
-            label_set_t tot_intr;
-            abs_index<M> rx(rdims);
-            do { // rx.inc()
-                const index<M> &idx = rx.get_index();
-
-                // Loop over terms w/o external indexes and check,
-                // if they are allowed. If not skip the index
-                size_t sno = 0;
-                for (; sno < pr1to0.size(); sno++) {
-
-                    typename evaluation_rule<k_order1>::iterator itp =
-                            pr1to0[sno];
-                    const sequence<k_order1, size_t> &seq =
-                            r1.get_sequence(itp);
-
-                    // Create a label group that comprises all internal block
-                    // labels of the current index
-                    label_group_t lg;
-                    for (register size_t i = 0; i < k_order1; i++) {
-                        if (seq[i] == 0) continue;
-
-                        size_t k = params.rseq[i];
-                        lg.insert(lg.end(), seq[i], blk_labels[k][idx[k]]);
-                    }
-                    lg.push_back(r1.get_intrinsic(itp));
-
-                    // If the current term is forbidden stop
-                    if (! pt.is_in_product(lg, r1.get_target(itp))) break;
-                } // for sno
-
-                // Skip this product if any of the terms is forbidden
-                if (sno != pr1to0.size()) continue;
-
-                // Stop here if current product contains only terms that are
-                // always allowed
-                if (pr1to2.size() == 0) {
-                    is_allowed = true;
-                    break;
-                }
-
-                // Loop over all other rules
-                label_set_t cur_intr1, cur_intr2;
-                cur_intr1.insert(product_table_i::k_identity);
-                label_set_t *pi1 = &cur_intr1, *pi2 = &cur_intr2;
-                label_t nlx = 1;
-                for (size_t sno = 0; sno < pr1to2.size(); sno++) {
-
-                    // Skip those w/o internal dims for now
-                    if (pr1to2_ni[sno]) continue;
-
-                    typename evaluation_rule<k_order1>::iterator itp =
-                            pr1to2[sno];
-                    const sequence<k_order1, size_t> &seq =
-                            r1.get_sequence(itp);
-
-                    // Create the label group of block labels of internal dims
-                    // and intrinsic label
-                    label_group_t lg;
-                    for (register size_t i = 0; i < k_order1; i++) {
-                        if (! params.msk[i] || seq[i] == 0) continue;
-
-                        size_t k = params.rseq[i];
-                        lg.insert(lg.end(), seq[i], blk_labels[k][idx[k]]);
-                    }
-                    lg.push_back(r1.get_intrinsic(itp));
-
-                    // Compute the product and add all labels in the product
-                    // to the combined label set tot_intr
-                    label_set_t ls = pt.product(lg);
-                    for (label_set_t::const_iterator ils1 = ls.begin();
-                            ils1 != ls.end(); ils1++) {
-                        label_t lx = *ils1 * nlx;
-                        for (label_set_t::const_iterator ils2 = pi1->begin();
-                                ils2 != pi1->end(); ils2++)
-                            pi2->insert(*ils2 + lx);
-                    }
-                    std::swap(pi1, pi2);
-                    pi2->clear();
-
-                    nlx *= n_labels;
-                } // for sno
-
-                tot_intr.insert(pi1->begin(), pi1->end());
-            } while (rx.inc());
-
-            // If the product is unconditionally allowed stop here
-            if (is_allowed) break;
-
-            // Otherwise loop over all "total" intrinsic labels, decompose
-            // each and set the respective product
-            for (label_set_t::const_iterator ii = tot_intr.begin();
-                    ii != tot_intr.end(); ii++) {
-
-                label_t ll = *ii;
-                size_t j = 0, ip;
-                if (pr1to2_ni[j]) {
-                    ip = r2.add_product(m1to2[r1.get_seq_no(pr1to2[j])],
-                            r1.get_intrinsic(pr1to2[j]),
-                            r1.get_target(pr1to2[j]));
-                }
-                else {
-                    ip = r2.add_product(m1to2[r1.get_seq_no(pr1to2[j])],
-                            ll % n_labels, r1.get_target(pr1to2[j]));
-                    ll = ll / n_labels;
-                }
-                j++;
-
-                for (; j < pr1to2.size(); j++) {
-                    if (pr1to2_ni[j]) {
-                        r2.add_to_product(ip, m1to2[r1.get_seq_no(pr1to2[j])],
-                                r1.get_intrinsic(pr1to2[j]),
-                                r1.get_target(pr1to2[j]));
-                    }
-                    else {
-                        r2.add_to_product(ip, m1to2[r1.get_seq_no(pr1to2[j])],
-                                ll % n_labels, r1.get_target(pr1to2[j]));
-                        ll = ll / n_labels;
-                    }
-                } // for j
-            } // for it
-        } // for pno
-
-        // This only happens if the result is an all allowed rule
-        if (pno != r1.get_n_products()) {
-
-            r2.clear_all();
-            sequence<k_order2, size_t> seq(1);
-            r2.add_sequence(seq);
-            r2.add_product(0, product_table_i::k_invalid, 0);
-        }
+        r1.reduce(r2, rmap, blk_labels, pt);
 
         // Return the product table
         product_table_container::get_instance().ret_table(cl1.get_table_id());
@@ -409,7 +190,6 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_label<NM, T> >::do_perform(
 
     } // Loop it1
 }
-
 
 } // namespace libtensor
 

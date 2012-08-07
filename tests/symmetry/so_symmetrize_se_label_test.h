@@ -20,6 +20,8 @@ private:
             const std::string &table_id) throw(libtest::test_exception);
     void test_sym2_2(
             const std::string &table_id) throw(libtest::test_exception);
+    void test_sym2_3(
+            const std::string &table_id) throw(libtest::test_exception);
     void test_sym3_1(
             const std::string &table_id) throw(libtest::test_exception);
 
