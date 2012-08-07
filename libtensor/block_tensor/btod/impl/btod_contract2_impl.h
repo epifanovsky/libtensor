@@ -184,7 +184,7 @@ void btod_contract2<N, M, K>::perform(block_tensor_i<N + M, double> &btc) {
     }
 
     if(nblka == 0 || nblkb == 0) {
-        btod_contract2<N, M, K>::stop_timer("perform");
+        btod_contract2<N, M, K>::stop_timer();
         return;
     }
 
