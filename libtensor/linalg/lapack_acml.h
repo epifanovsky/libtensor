@@ -1,6 +1,8 @@
 #ifndef LIBTENSOR_LAPACK_ACML_H
 #define LIBTENSOR_LAPACK_ACML_H
 
+#include <complex>
+
 namespace libtensor {
 
 
