@@ -4,6 +4,13 @@
 namespace libtensor {
 
 
+template class bto_copy<1, btod_traits>;
+template class bto_copy<2, btod_traits>;
+template class bto_copy<3, btod_traits>;
+template class bto_copy<4, btod_traits>;
+template class bto_copy<5, btod_traits>;
+template class bto_copy<6, btod_traits>;
+
 template class btod_copy<1>;
 template class btod_copy<2>;
 template class btod_copy<3>;
