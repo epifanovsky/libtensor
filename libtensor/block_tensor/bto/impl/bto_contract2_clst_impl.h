@@ -65,6 +65,9 @@ void bto_contract2_clst<N, M, K, T>::build_list(bool testzero) {
     const symmetry<N + K, T> &syma = ca.req_const_symmetry();
     const symmetry<M + K, T> &symb = cb.req_const_symmetry();
 
+    orbit_list<N + K, T> ola(syma);
+    orbit_list<M + K, T> olb(symb);
+
     index<K> ik1, ik2;
     for(size_t i = 0, j = 0; i < N + K; i++) {
         if(conn[N + M + i] > N + M) {
@@ -104,10 +107,12 @@ void bto_contract2_clst<N, M, K, T>::build_list(bool testzero) {
 
         orbit<N + K, T> oa(syma, ia);
         orbit<M + K, T> ob(symb, ib);
-        bool zero = !oa.is_allowed() || !ob.is_allowed();
+//        bool zero = !oa.is_allowed() || !ob.is_allowed();
+        bool zero = !ola.contains(oa.get_acindex()) ||
+            !olb.contains(ob.get_acindex());
 
-        abs_index<N + K> acia(oa.get_abs_canonical_index(), m_bidimsa);
-        abs_index<M + K> acib(ob.get_abs_canonical_index(), m_bidimsb);
+        abs_index<N + K> acia(oa.get_acindex(), m_bidimsa);
+        abs_index<M + K> acib(ob.get_acindex(), m_bidimsb);
         if(!zero) {
             zero = ca.req_is_zero_block(acia.get_index()) ||
                 cb.req_is_zero_block(acib.get_index());
@@ -141,9 +146,8 @@ void bto_contract2_clst<N, M, K, T>::build_list(bool testzero) {
             }
             if(!ic1.equals(ic)) continue;
             if(!zero) {
-                clst.push_back(contr_pair(oa.get_abs_canonical_index(),
-                    ob.get_abs_canonical_index(), oa.get_transf(ja),
-                    ob.get_transf(jb)));
+                clst.push_back(contr_pair(oa.get_acindex(), ob.get_acindex(),
+                    oa.get_transf(ja), ob.get_transf(jb)));
             }
             ikset.erase(abs_index<K>::get_abs_index(ika, bidimsk));
         }
@@ -178,6 +182,9 @@ void bto_contract2_clst<N, M, 0, T>::build_list(bool testzero) {
     const symmetry<N, T> &syma = ca.req_const_symmetry();
     const symmetry<M, T> &symb = cb.req_const_symmetry();
 
+    orbit_list<N, T> ola(syma);
+    orbit_list<M, T> olb(symb);
+
     index<N> ia;
     index<M> ib;
     const index<N + M> &ic = m_ic;
@@ -190,12 +197,14 @@ void bto_contract2_clst<N, M, 0, T>::build_list(bool testzero) {
         ib[i] = ic[conn[2 * N + M + i]];
     }
 
-    orbit<N, T> oa(syma, ia);
-    orbit<M, T> ob(symb, ib);
-    bool zero = !oa.is_allowed() || !ob.is_allowed();
+    orbit<N, T> oa(syma, ia, false);
+    orbit<M, T> ob(symb, ib, false);
+//    bool zero = !oa.is_allowed() || !ob.is_allowed();
+    bool zero = !ola.contains(oa.get_acindex()) ||
+        !olb.contains(ob.get_acindex());
 
-    abs_index<N> acia(oa.get_abs_canonical_index(), m_bidimsa);
-    abs_index<M> acib(ob.get_abs_canonical_index(), m_bidimsb);
+    abs_index<N> acia(oa.get_acindex(), m_bidimsa);
+    abs_index<M> acib(ob.get_acindex(), m_bidimsb);
     if(!zero) {
         zero = ca.req_is_zero_block(acia.get_index()) ||
             cb.req_is_zero_block(acib.get_index());
@@ -223,9 +232,8 @@ void bto_contract2_clst<N, M, 0, T>::build_list(bool testzero) {
         }
         if(!ic1.equals(ic)) continue;
         if(!zero) {
-            clst.push_back(contr_pair(oa.get_abs_canonical_index(),
-                ob.get_abs_canonical_index(), oa.get_transf(ja),
-                ob.get_transf(jb)));
+            clst.push_back(contr_pair(oa.get_acindex(), ob.get_acindex(),
+                oa.get_transf(ja), ob.get_transf(jb)));
         }
     }
 
