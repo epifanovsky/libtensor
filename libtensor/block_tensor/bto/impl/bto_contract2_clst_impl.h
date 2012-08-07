@@ -105,8 +105,8 @@ void bto_contract2_clst<N, M, K, T>::build_list(bool testzero) {
             }
         }
 
-        orbit<N + K, T> oa(syma, ia);
-        orbit<M + K, T> ob(symb, ib);
+        orbit<N + K, T> oa(syma, ia, false);
+        orbit<M + K, T> ob(symb, ib, false);
 //        bool zero = !oa.is_allowed() || !ob.is_allowed();
         bool zero = !ola.contains(oa.get_acindex()) ||
             !olb.contains(ob.get_acindex());
