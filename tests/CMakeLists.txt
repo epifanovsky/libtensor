@@ -127,7 +127,6 @@ set(SRC_BTOD
     btod/bto_contract2_sym_test.C
     btod/btod_add_test.C
     btod/btod_apply_test.C
-    btod/btod_cholesky_test.C
     btod/btod_compare_test.C
     btod/btod_contract2_test.C
     btod/btod_contract3_test.C

@@ -7,7 +7,6 @@
 #include "bto_contract2_sym_test.h"
 #include "btod_add_test.h"
 #include "btod_apply_test.h"
-#include "btod_cholesky_test.h"
 #include "btod_compare_test.h"
 #include "btod_contract2_test.h"
 #include "btod_contract3_test.h"
@@ -56,7 +55,6 @@ namespace libtensor {
     \li libtensor::bto_contract2_sym_test
     \li libtensor::btod_add_test
     \li libtensor::btod_apply_test
-    \li libtensor::btod_cholesky_test
     \li libtensor::btod_compare_test
     \li libtensor::btod_contract2_test
     \li libtensor::btod_contract3_test
@@ -94,7 +92,6 @@ private:
     unit_test_factory<bto_contract2_sym_test> m_utf_bto_contract2_sym;
     unit_test_factory<btod_add_test> m_utf_btod_add;
     unit_test_factory<btod_apply_test> m_utf_btod_apply;
-    unit_test_factory<btod_cholesky_test> m_utf_btod_cholesky;
     unit_test_factory<btod_compare_test> m_utf_btod_compare;
     unit_test_factory<btod_contract2_test> m_utf_btod_contract2;
     unit_test_factory<btod_contract3_test> m_utf_btod_contract3;
