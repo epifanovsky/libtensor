@@ -29,6 +29,7 @@ class tod_add_ref
 	  public timings<tod_add_ref<Repeats,DimData> >
 {
 	friend class timings<tod_add_ref<Repeats,DimData> >;
+public:
 	static const char* k_clazz;
 protected:
 	virtual void do_calculate();
