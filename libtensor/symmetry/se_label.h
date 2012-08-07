@@ -1,7 +1,6 @@
 #ifndef LIBTENSOR_SE_LABEL_H
 #define LIBTENSOR_SE_LABEL_H
 
-#include <libtensor/timings.h>
 #include <libtensor/core/symmetry_element_i.h>
 #include "block_labeling.h"
 #include "evaluation_rule.h"
@@ -35,9 +34,7 @@ namespace libtensor {
     \ingroup libtensor_symmetry
  **/
 template<size_t N, typename T>
-class se_label :
-    public symmetry_element_i<N, T>, public timings< se_label<N, T> > {
-
+class se_label : public symmetry_element_i<N, T> {
 public:
     static const char *k_clazz; //!< Class name
     static const char *k_sym_type; //!< Symmetry type

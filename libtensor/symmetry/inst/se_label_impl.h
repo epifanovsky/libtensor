@@ -96,8 +96,6 @@ bool se_label<N, T>::is_allowed(const index<N> &idx) const {
 
     static const char *method = "is_allowed(const index<N> &)";
 
-    se_label<N, T>::start_timer(method);
-
 #ifdef LIBTENSOR_DEBUG
     const dimensions<N> &bidims = m_blk_labels.get_block_index_dims();
     // Test, if index is valid block index
@@ -117,7 +115,6 @@ bool se_label<N, T>::is_allowed(const index<N> &idx) const {
 
     bool allowed = m_rule.is_allowed(blk, m_pt);
 
-    se_label<N, T>::stop_timer(method);
     return allowed;
 }
 

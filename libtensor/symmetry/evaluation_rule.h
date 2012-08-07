@@ -3,6 +3,7 @@
 
 #include <list>
 #include <libtensor/exception.h>
+#include <libtensor/timings.h>
 #include <libtensor/core/mask.h>
 #include "eval_sequence_list.h"
 #include "product_rule.h"
@@ -47,7 +48,7 @@ namespace libtensor {
     \ingroup libtensor_symmetry
  **/
 template<size_t N>
-class evaluation_rule {
+class evaluation_rule : public timings< evaluation_rule<N> > {
 public:
     static const char *k_clazz; //!< Class name
 

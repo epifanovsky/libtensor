@@ -54,6 +54,8 @@ void evaluation_rule<N>::optimize() {
 
     typedef typename eval_sequence_list<N>::eval_sequence_t eval_sequence_t;
 
+    evaluation_rule<N>::start_timer("optimize");
+
     std::list<product_rule_t> new_rules;
     eval_sequence_list<N> new_slist;
 
@@ -112,6 +114,8 @@ void evaluation_rule<N>::optimize() {
         eval_sequence_t seq(1);
         product_rule_t &pr = new_product();
         pr.add(seq, product_table_i::k_invalid);
+
+        evaluation_rule<N>::stop_timer("optimize");
         return;
     }
 
@@ -139,6 +143,8 @@ void evaluation_rule<N>::optimize() {
             pr.add(it1->get_sequence(ip1), it1->get_intrinsic(ip1));
         }
     }
+
+    evaluation_rule<N>::stop_timer("optimize");
 }
 
 
@@ -162,6 +168,9 @@ void evaluation_rule<N>::reduce(evaluation_rule<N - M> &res,
         }
     }
 #endif
+
+    evaluation_rule<N>::start_timer("reduce");
+
     res.clear();
 
     // Loop over products
@@ -447,6 +456,8 @@ void evaluation_rule<N>::reduce(evaluation_rule<N - M> &res,
         }
     }
     res.optimize();
+
+    evaluation_rule<N>::stop_timer("reduce");
 }
 
 
@@ -454,6 +465,8 @@ template<size_t N> template<size_t M>
 void evaluation_rule<N>::merge(evaluation_rule<M> &res,
         const sequence<N, size_t> &mmap,
         const mask<M> &smsk) const {
+
+    evaluation_rule<N>::start_timer("merge");
 
     // Loop over products
     for (const_iterator it = m_rules.begin(); it != m_rules.end(); it++) {
@@ -481,12 +494,18 @@ void evaluation_rule<N>::merge(evaluation_rule<M> &res,
         }
     }
     res.optimize();
+
+    evaluation_rule<N>::stop_timer("merge");
 }
 
 
 template<size_t N>
 bool evaluation_rule<N>::is_allowed(const sequence<N, label_t> &blk_labels,
         const product_table_i &pt) const {
+
+    bool allowed = false;
+
+    evaluation_rule<N>::start_timer("is_allowed");
 
     // Loop over all sequences in rule and determine result labels
     std::vector<label_set_t> ls(m_slist->size());
@@ -523,11 +542,14 @@ bool evaluation_rule<N>::is_allowed(const sequence<N, label_t> &blk_labels,
         }
 
         if (ip == it->end()) {
-            return true;
+            allowed = true;
+            break;
         }
     }
 
-    return false;
+    evaluation_rule<N>::stop_timer("is_allowed");
+
+    return allowed;
 }
 
 
