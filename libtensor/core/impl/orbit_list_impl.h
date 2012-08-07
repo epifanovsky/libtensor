@@ -23,8 +23,7 @@ orbit_list<N, T>::orbit_list(const symmetry<N, T> &sym) :
         size_t absidx = aidx.get_abs_index();
         if(chk[absidx] == 0) {
             if(mark_orbit(sym, aidx.get_index(), chk)) {
-                m_orb.insert(std::pair< size_t, index<N> >(absidx,
-                    aidx.get_index()));
+                m_orb.insert(std::make_pair(absidx, aidx.get_index()));
             }
         }
     } while(aidx.inc());
@@ -93,18 +92,18 @@ bool orbit_list<N, T>::mark_orbit(const symmetry<N, T> &sym,
     chk[absidx] = 1;
 
     for(typename symmetry<N, T>::iterator iset = sym.begin();
-        iset != sym.end(); iset++) {
+        iset != sym.end(); ++iset) {
 
         const symmetry_element_set<N, T> &eset = sym.get_subset(iset);
         for(typename symmetry_element_set<N, T>::const_iterator ielem =
-            eset.begin(); ielem != eset.end(); ielem++) {
+            eset.begin(); ielem != eset.end(); ++ielem) {
 
-            const symmetry_element_i<N, T> &elem =
-                eset.get_elem(ielem);
-            allowed = allowed && elem.is_allowed(idx);
+            const symmetry_element_i<N, T> &elem = eset.get_elem(ielem);
+            if(allowed) allowed = elem.is_allowed(idx);
             index<N> idx2(idx);
             elem.apply(idx2);
-            allowed = allowed && mark_orbit(sym, idx2, chk);
+            bool allowed2 = mark_orbit(sym, idx2, chk);
+            allowed = allowed && allowed2;
         }
     }
     return allowed;

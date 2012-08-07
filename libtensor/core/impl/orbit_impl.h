@@ -106,7 +106,7 @@ const tensor_transf<N, T> &orbit<N, T>::get_transf(const iterator &i) const {
 
 template<size_t N, typename T>
 void orbit<N, T>::build_orbit(const symmetry<N, T> &sym,
-    const abs_index<N> &aidx) {
+const abs_index<N> &aidx) {
 
     typedef index<N> index_type;
 
@@ -147,7 +147,7 @@ void orbit<N, T>::build_orbit(const symmetry<N, T> &sym,
                 eset.begin(); ielem != eset.end(); ++ielem) {
 
                 const symmetry_element_i<N, T> &elem = eset.get_elem(ielem);
-                m_allowed = m_allowed && elem.is_allowed(idx);
+                if(m_allowed) m_allowed = elem.is_allowed(idx);
                 ti.push_back(idx);
                 tt.push_back(tr);
                 elem.apply(ti.back(), tt.back());
