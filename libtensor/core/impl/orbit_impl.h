@@ -12,30 +12,44 @@ const char *orbit<N, T>::k_clazz = "orbit<N, T>";
 
 
 template<size_t N, typename T>
-orbit<N, T>::orbit(const symmetry<N, T> &sym, const index<N> &idx) :
+orbit<N, T>::orbit(const symmetry<N, T> &sym, const index<N> &idx,
+    bool compute_allowed) :
 
     m_bidims(sym.get_bis().get_block_index_dims()), m_allowed(true) {
 
     orbit<N, T>::start_timer();
 
+    //  Setting m_allowed to false will disable further calls to
+    //  symmetry_element_i::is_allowed
+    if(!compute_allowed) m_allowed = false;
+
     abs_index<N> aidx0(idx, m_bidims);
     build_orbit(sym, aidx0);
     abs_index<N>::get_index(m_orb.begin()->first, m_bidims, m_cidx);
+
+    if(!compute_allowed) m_allowed = true;
 
     orbit<N, T>::stop_timer();
 }
 
 
 template<size_t N, typename T>
-orbit<N, T>::orbit(const symmetry<N, T> &sym, size_t aidx) :
+orbit<N, T>::orbit(const symmetry<N, T> &sym, size_t aidx,
+    bool compute_allowed) :
 
     m_bidims(sym.get_bis().get_block_index_dims()), m_allowed(true) {
 
     orbit<N, T>::start_timer();
 
+    //  Setting m_allowed to false will disable further calls to
+    //  symmetry_element_i::is_allowed
+    if(!compute_allowed) m_allowed = false;
+
     abs_index<N> aidx0(aidx, m_bidims);
     build_orbit(sym, aidx0);
     abs_index<N>::get_index(m_orb.begin()->first, m_bidims, m_cidx);
+
+    if(!compute_allowed) m_allowed = true;
 
     orbit<N, T>::stop_timer();
 }
