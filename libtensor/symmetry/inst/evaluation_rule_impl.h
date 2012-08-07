@@ -338,7 +338,8 @@ void evaluation_rule<N>::reduce(evaluation_rule<N - M> &res,
             }
             zero_seq.push_back(nidx == 0);
 
-            label_set_t ls(pt.product(lg));
+            label_set_t ls;
+            pt.product(lg, ls);
             std::list<label_group_t>::iterator iti = intr_list.begin();
             while (iti != intr_list.end()) {
                 if (ls.size() != 1) {
@@ -419,7 +420,8 @@ void evaluation_rule<N>::reduce(evaluation_rule<N - M> &res,
                 while (iti != new_intr.end()) {
 
                     lg.push_back(iti->at(i));
-                    label_set_t ls(pt.product(lg));
+                    label_set_t ls;
+                    pt.product(lg, ls);
                     lg.pop_back();
 
                     if (zero_seq[i]) {
@@ -529,7 +531,7 @@ bool evaluation_rule<N>::is_allowed(const sequence<N, label_t> &blk_labels,
                 ls[i].insert(ll);
         }
         else if (lg.size() != 0) {
-            ls[i] = pt.product(lg);
+            pt.product(lg, ls[i]);
         }
     }
 

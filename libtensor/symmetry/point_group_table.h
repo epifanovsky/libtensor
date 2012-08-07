@@ -119,7 +119,7 @@ public:
 
     /** \copydoc product_table_i::product
      **/
-    virtual label_set_t product(const label_group_t &lg) const;
+    virtual void product(const label_group_t &lg, label_set_t &prod) const;
 
 
     /** \copydoc product_table_i::is_in_product

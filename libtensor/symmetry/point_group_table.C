@@ -159,10 +159,11 @@ point_group_table::label_set_t point_group_table::product(const label_set_t &l1,
     return ls;
 }
 
-point_group_table::label_set_t point_group_table::product(
-        const label_group_t &lg) const {
+void point_group_table::product(const label_group_t &lg,
+        label_set_t &prod) const {
 
-    if (lg.empty()) return label_set_t();
+    prod.clear();
+    if (lg.empty()) return;
 
     label_set_t pr1, pr2, *ip1 = &pr1, *ip2 = &pr2;
     label_group_t::const_iterator it = lg.begin();
@@ -179,7 +180,7 @@ point_group_table::label_set_t point_group_table::product(
         std::swap(ip1, ip2);
         ip2->clear();
     }
-    return *ip1;
+    prod.swap(*ip1);
 }
 
 bool point_group_table::is_in_product(const label_group_t &lg,

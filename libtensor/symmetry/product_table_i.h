@@ -104,12 +104,13 @@ public:
                                 const label_set_t &ls2) const = 0;
 
     /** \brief Computes the product of a label group
-        \param lg Label group
+        \param lg Label group.
+        \param[out] prod Computed product.
 
         The result is the product of all n labels in the group
         \f$ l_1 \times l_2 \times ... \times l_n \f$
      **/
-    virtual label_set_t product(const label_group_t &lg) const = 0;
+    virtual void product(const label_group_t &lg, label_set_t &prod) const = 0;
 
     /** \brief Determines if the label is in the product.
         \param lg Group of labels to take the product of.
