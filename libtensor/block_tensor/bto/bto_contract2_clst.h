@@ -3,6 +3,7 @@
 
 #include <list>
 #include <libtensor/core/block_tensor_i.h>
+#include <libtensor/core/orbit_list.h>
 #include <libtensor/tod/contraction2.h>
 
 namespace libtensor {
@@ -84,6 +85,8 @@ private:
     contraction2<N, M, K> m_contr; //!< Contraction descriptor
     block_tensor_i<N + K, T> &m_bta; //!< First block tensor (A)
     block_tensor_i<M + K, T> &m_btb; //!< Second block tensor (B)
+    const orbit_list<N + K, T> &m_ola; //!< List of orbits in A
+    const orbit_list<M + K, T> &m_olb; //!< List of orbits in B
     dimensions<N + K> m_bidimsa; //!< Block index dimensions (A)
     dimensions<M + K> m_bidimsb; //!< Block index dimensions (B)
     dimensions<N + M> m_bidimsc; //!< Block index dimensions (C)
@@ -94,6 +97,8 @@ public:
         const contraction2<N, M, K> &contr,
         block_tensor_i<N + K, T> &bta,
         block_tensor_i<M + K, T> &btb,
+        const orbit_list<N + K, T> &ola,
+        const orbit_list<M + K, T> &olb,
         const dimensions<N + K> &bidimsa,
         const dimensions<M + K> &bidimsb,
         const dimensions<N + M> &bidimsc,
@@ -131,6 +136,8 @@ private:
     contraction2<N, M, 0> m_contr; //!< Contraction descriptor
     block_tensor_i<N, T> &m_bta; //!< First block tensor (A)
     block_tensor_i<M, T> &m_btb; //!< Second block tensor (B)
+    const orbit_list<N, T> &m_ola; //!< List of orbits in A
+    const orbit_list<M, T> &m_olb; //!< List of orbits in B
     dimensions<N> m_bidimsa; //!< Block index dimensions (A)
     dimensions<M> m_bidimsb; //!< Block index dimensions (B)
     dimensions<N + M> m_bidimsc; //!< Block index dimensions (C)
@@ -141,6 +148,8 @@ public:
         const contraction2<N, M, 0> &contr,
         block_tensor_i<N, T> &bta,
         block_tensor_i<M, T> &btb,
+        const orbit_list<N, T> &ola,
+        const orbit_list<M, T> &olb,
         const dimensions<N> &bidimsa,
         const dimensions<M> &bidimsb,
         const dimensions<N + M> &bidimsc,

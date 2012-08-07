@@ -24,12 +24,13 @@ const char *bto_contract2_clst<N, M, 0, T>::k_clazz =
 template<size_t N, size_t M, size_t K, typename T>
 bto_contract2_clst<N, M, K, T>::bto_contract2_clst(
     const contraction2<N, M, K> &contr, block_tensor_i<N + K, T> &bta,
-    block_tensor_i<M + K, T> &btb, const dimensions<N + K> &bidimsa,
+    block_tensor_i<M + K, T> &btb, const orbit_list<N + K, T> &ola,
+    const orbit_list<M + K, T> &olb, const dimensions<N + K> &bidimsa,
     const dimensions<M + K> &bidimsb, const dimensions<N + M> &bidimsc,
     const index<N + M> &ic) :
 
-    m_contr(contr), m_bta(bta), m_btb(btb), m_bidimsa(bidimsa),
-    m_bidimsb(bidimsb), m_bidimsc(bidimsc), m_ic(ic) {
+    m_contr(contr), m_bta(bta), m_btb(btb), m_ola(ola), m_olb(olb),
+    m_bidimsa(bidimsa), m_bidimsb(bidimsb), m_bidimsc(bidimsc), m_ic(ic) {
 
 }
 
@@ -37,12 +38,13 @@ bto_contract2_clst<N, M, K, T>::bto_contract2_clst(
 template<size_t N, size_t M, typename T>
 bto_contract2_clst<N, M, 0, T>::bto_contract2_clst(
     const contraction2<N, M, 0> &contr, block_tensor_i<N, T> &bta,
-    block_tensor_i<M, T> &btb, const dimensions<N> &bidimsa,
+    block_tensor_i<M, T> &btb, const orbit_list<N, T> &ola,
+    const orbit_list<M, T> &olb, const dimensions<N> &bidimsa,
     const dimensions<M> &bidimsb, const dimensions<N + M> &bidimsc,
     const index<N + M> &ic) :
 
-    m_contr(contr), m_bta(bta), m_btb(btb), m_bidimsa(bidimsa),
-    m_bidimsb(bidimsb), m_bidimsc(bidimsc), m_ic(ic) {
+    m_contr(contr), m_bta(bta), m_btb(btb), m_ola(ola), m_olb(olb),
+    m_bidimsa(bidimsa), m_bidimsb(bidimsb), m_bidimsc(bidimsc), m_ic(ic) {
 
 }
 
@@ -64,9 +66,6 @@ void bto_contract2_clst<N, M, K, T>::build_list(bool testzero) {
     const sequence<2 * (N + M + K), size_t> &conn = m_contr.get_conn();
     const symmetry<N + K, T> &syma = ca.req_const_symmetry();
     const symmetry<M + K, T> &symb = cb.req_const_symmetry();
-
-    orbit_list<N + K, T> ola(syma);
-    orbit_list<M + K, T> olb(symb);
 
     index<K> ik1, ik2;
     for(size_t i = 0, j = 0; i < N + K; i++) {
@@ -107,9 +106,9 @@ void bto_contract2_clst<N, M, K, T>::build_list(bool testzero) {
 
         orbit<N + K, T> oa(syma, ia, false);
         orbit<M + K, T> ob(symb, ib, false);
-//        bool zero = !oa.is_allowed() || !ob.is_allowed();
-        bool zero = !ola.contains(oa.get_acindex()) ||
-            !olb.contains(ob.get_acindex());
+
+        bool zero = !m_ola.contains(oa.get_acindex()) ||
+            !m_olb.contains(ob.get_acindex());
 
         abs_index<N + K> acia(oa.get_acindex(), m_bidimsa);
         abs_index<M + K> acib(ob.get_acindex(), m_bidimsb);
@@ -182,9 +181,6 @@ void bto_contract2_clst<N, M, 0, T>::build_list(bool testzero) {
     const symmetry<N, T> &syma = ca.req_const_symmetry();
     const symmetry<M, T> &symb = cb.req_const_symmetry();
 
-    orbit_list<N, T> ola(syma);
-    orbit_list<M, T> olb(symb);
-
     index<N> ia;
     index<M> ib;
     const index<N + M> &ic = m_ic;
@@ -199,9 +195,9 @@ void bto_contract2_clst<N, M, 0, T>::build_list(bool testzero) {
 
     orbit<N, T> oa(syma, ia, false);
     orbit<M, T> ob(symb, ib, false);
-//    bool zero = !oa.is_allowed() || !ob.is_allowed();
-    bool zero = !ola.contains(oa.get_acindex()) ||
-        !olb.contains(ob.get_acindex());
+
+    bool zero = !m_ola.contains(oa.get_acindex()) ||
+        !m_olb.contains(ob.get_acindex());
 
     abs_index<N> acia(oa.get_acindex(), m_bidimsa);
     abs_index<M> acib(ob.get_acindex(), m_bidimsb);

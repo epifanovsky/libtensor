@@ -85,19 +85,27 @@ public:
 
     virtual void perform(block_tensor_i<N + M, double> &btc);
     virtual void perform(block_tensor_i<N + M, double> &btc, double d);
-    virtual void perform(bto_stream_i< N + M, btod_traits> &out);
+    virtual void perform(bto_stream_i<N + M, btod_traits> &out);
 
     virtual void compute_block(bool zero, dense_tensor_i<N + M, double> &blk,
         const index<N + M> &i, const tensor_transf<N + M, double> &tr,
         const double &c);
 
 private:
-    void perform_inner(block_tensor_i<N + M, double> &btc, double d,
+    void perform_inner(
+        block_tensor_i<N + K, double> &bta,
+        block_tensor_i<M + K, double> &btb,
+        block_tensor_i<N + M, double> &btc,
+        double d,
         const std::vector<size_t> &blst);
 
     void make_schedule();
 
     void contract_block(
+        block_tensor_i<N + K, double> &bta,
+        const orbit_list<N + K, double> &ola,
+        block_tensor_i<M + K, double> &btb,
+        const orbit_list<M + K, double> &olb,
         const index<k_orderc> &idxc,
         dense_tensor_i<k_orderc, double> &blkc,
         const tensor_transf<k_orderc, double> &trc,
