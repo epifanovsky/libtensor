@@ -205,6 +205,54 @@ void evaluation_rule<N>::reduce(evaluation_rule<N - M> &res,
             std::set<size_t>::iterator it1, it2;
             it1 = it2 = terms_in_rstep[i].begin();
             it2++;
+//
+//            // Look for other rsteps that comprise the same terms
+//            std::set<size_t> other_rsteps;
+//            for (size_t j = 0; j < M && !rdims[j].empty(); j++) {
+//
+//                if (rsteps_in_pr[j] != 2 || terms_in_rstep[j].size() != 2)
+//                    continue;
+//
+//                std::set<size_t>::iterator it3, it4;
+//                it3 = it4 = terms_in_rstep[j].begin();
+//                it4++;
+//                if (*it3 != *it1 && *it4 != *it2) continue;
+//
+//                other_rsteps.insert(j);
+//            }
+//
+//            if (other_rsteps.size() == 0) {
+//                if (rdims[i].size() != pt.get_n_labels()) {
+//                    rsteps_to_do[i] = true;
+//                    continue;
+//                }
+//            }
+//            else {
+//                label_set_t ls1, ls2;
+//                for (size_t k = 0; k < rdims[i].size(); k++)
+//                    ls1.insert(rdims[i][k]);
+//
+//                for (std::set<size_t>::iterator ior = other_rsteps.begin();
+//                        ior != other_rsteps.end(); ior++) {
+//                    for (size_t k = 0; k < rdims[*ior].size(); k++)
+//                        ls2.insert(rdims[*ior][k]);
+//
+//                    label_set_t ls(pt.product(ls1, ls2));
+//                    ls1.clear();
+//                    ls1.insert(ls.begin(), ls.end());
+//                }
+//
+//                if (ls1.size() == pt.get_n_labels()) {
+//                    for (std::set<size_t>::iterator ior = other_rsteps.begin();
+//                            ior != other_rsteps.end(); ior++) {
+//                        rsteps_in_pr[*ior] = 0;
+//                    }
+//                }
+//                else if (rdims[i].size() != pt.get_n_labels()) {
+//                    rsteps_to_do[i] = true;
+//                    continue;
+//                }
+//            }
 
             typename std::vector< std::set<size_t> >::iterator j1 = s2c.end();
             typename std::vector< std::set<size_t> >::iterator j2 = s2c.end();
@@ -229,6 +277,7 @@ void evaluation_rule<N>::reduce(evaluation_rule<N - M> &res,
             }
             else if (j1 == j2) {
                 rsteps_to_do[i] = true;
+                continue;
             }
             else {
                 j1->insert(j2->begin(), j2->end());
@@ -392,7 +441,6 @@ void evaluation_rule<N>::reduce(evaluation_rule<N - M> &res,
 
             product_rule<N - M> &pr = res.new_product();
             for (size_t i = 0; i < seq_list.size(); i++) {
-                if (zero_seq[i]) continue;
 
                 pr.add(seq_list[i], it->at(i));
             }
