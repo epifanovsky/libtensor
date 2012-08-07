@@ -9,6 +9,7 @@ void evaluation_rule_test::perform() throw(libtest::test_exception) {
 
     test_1();
     test_2();
+    test_copy_1();
     test_opt_1();
     test_opt_2();
     test_opt_3();
@@ -153,6 +154,34 @@ void evaluation_rule_test::test_2() throw(libtest::test_exception) {
         fail_test(testname, __FILE__, __LINE__, "is_allowed (5)");
     }
 
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+/** \test Copy constructor, operator=
+ **/
+void evaluation_rule_test::test_copy_1() throw(libtest::test_exception) {
+
+    static const char *testname = "evaluation_rule_test::test_copy_1()";
+
+    typedef product_table_i::label_set_t label_set_t;
+
+    try {
+
+    evaluation_rule<3> rule1, rule2, rule3;
+    product_rule<3> &pr1 = rule1.new_product();
+    product_rule<3> &pr2 = rule1.new_product();
+    sequence<3, size_t> seq1(1), seq2(1);
+    seq2[0] = 0;
+
+    pr1.add(seq1, 0);
+    pr2.add(seq1, 1);
+    pr1.add(seq2, 1);
+
+    rule3 = rule2 = rule1;
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());

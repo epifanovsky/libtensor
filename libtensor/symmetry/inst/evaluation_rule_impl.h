@@ -14,6 +14,7 @@ namespace libtensor {
 template<size_t N>
 const char *evaluation_rule<N>::k_clazz = "evaluation_rule<N>";
 
+
 template<size_t N>
 evaluation_rule<N>::evaluation_rule(const evaluation_rule<N> &other) {
 
@@ -29,6 +30,7 @@ evaluation_rule<N>::evaluation_rule(const evaluation_rule<N> &other) {
         }
     }
 }
+
 
 template<size_t N>
 const evaluation_rule<N> &evaluation_rule<N>::operator=(
@@ -47,7 +49,10 @@ const evaluation_rule<N> &evaluation_rule<N>::operator=(
             prx.add(pr.get_sequence(ip), pr.get_intrinsic(ip));
         }
     }
+
+    return *this;
 }
+
 
 template<size_t N>
 void evaluation_rule<N>::optimize() {
