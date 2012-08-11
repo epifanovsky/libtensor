@@ -70,7 +70,6 @@ void er_merge<N, M>::perform(evaluation_rule<M> &rule) const {
             prb.add(seq2, pra.get_intrinsic(ip));
         }
     }
-    rule.optimize();
 
     er_merge<N, M>::stop_timer();
 }

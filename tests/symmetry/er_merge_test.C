@@ -1,4 +1,5 @@
 #include <libtensor/symmetry/er_merge.h>
+#include <libtensor/symmetry/er_optimize.h>
 #include <libtensor/symmetry/point_group_table.h>
 #include "er_merge_test.h"
 
@@ -40,8 +41,9 @@ void er_merge_test::test_1() throw(libtest::test_exception) {
     mask<2> smsk;
     smsk[0] = smsk[1] = true;
 
-    evaluation_rule<2> r2;
-    er_merge<4, 2>(r1, mmap, smsk).perform(r2);
+    evaluation_rule<2> r2, tmp;
+    er_merge<4, 2>(r1, mmap, smsk).perform(tmp);
+    er_optimize<2>(tmp).perform(r2);
 
     // Check sequence list
     const eval_sequence_list<2> &sl = r2.get_sequences();
@@ -110,8 +112,9 @@ void er_merge_test::test_2() throw(libtest::test_exception) {
     mask<3> smsk;
     smsk[0] = true;
 
-    evaluation_rule<3> r2;
-    er_merge<5, 3>(r1, mmap, smsk).perform(r2);
+    evaluation_rule<3> r2, tmp;
+    er_merge<5, 3>(r1, mmap, smsk).perform(tmp);
+    er_optimize<3>(tmp).perform(r2);
 
     // Check sequence list
     const eval_sequence_list<3> &sl = r2.get_sequences();
