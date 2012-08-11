@@ -6,6 +6,7 @@
 #include "combine_label_test.h"
 #include "combine_part_test.h"
 #include "eval_sequence_list_test.h"
+#include "er_merge_test.h"
 #include "er_reduce_test.h"
 #include "evaluation_rule_test.h"
 #include "permutation_group_test.h"
@@ -61,6 +62,7 @@ namespace libtensor {
     \li libtensor::combine_label_test
     \li libtensor::combine_part_test
     \li libtensor::eval_sequence_list_test
+    \li libtensor::er_merge_test
     \li libtensor::er_reduce_test
     \li libtensor::evaluation_rule_test
     \li libtensor::partition_set_test
@@ -106,6 +108,7 @@ private:
     unit_test_factory<combine_label_test> m_utf_combine_label;
     unit_test_factory<combine_part_test> m_utf_combine_part;
     unit_test_factory<eval_sequence_list_test> m_utf_eval_sequence_list;
+    unit_test_factory<evaluation_rule_test> m_utf_er_merge;
     unit_test_factory<evaluation_rule_test> m_utf_er_reduce;
     unit_test_factory<evaluation_rule_test> m_utf_evaluation_rule;
     unit_test_factory<permutation_group_test> m_utf_permutation_group;
