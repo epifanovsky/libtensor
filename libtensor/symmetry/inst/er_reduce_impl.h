@@ -1,7 +1,6 @@
-#ifndef LIBTENSOR_EVALUATION_RULE_IMPL_H
-#define LIBTENSOR_EVALUATION_RULE_IMPL_H
+#ifndef LIBTENSOR_ER_REDUCE_IMPL_H
+#define LIBTENSOR_ER_REDUCE_IMPL_H
 
-#include <list>
 #include <libtensor/core/abs_index.h>
 #include "../product_table_container.h"
 #include "../bad_symmetry.h"

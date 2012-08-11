@@ -1,12 +1,7 @@
-#ifndef LIBTENSOR_EVALUATION_RULE_IMPL_H
-#define LIBTENSOR_EVALUATION_RULE_IMPL_H
+#ifndef LIBTENSOR_ER_MERGE_IMPL_H
+#define LIBTENSOR_ER_MERGE_IMPL_H
 
-#include <list>
-#include <libtensor/core/abs_index.h>
-#include <libtensor/core/permutation_generator.h>
-#include <libtensor/core/sequence_generator.h>
 #include "../bad_symmetry.h"
-
 
 namespace libtensor {
 

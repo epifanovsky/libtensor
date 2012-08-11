@@ -1,4 +1,3 @@
-#include <libtensor/core/scalar_transf_double.h>
 #include "../er_merge.h"
 #include "er_merge_impl.h"
 
