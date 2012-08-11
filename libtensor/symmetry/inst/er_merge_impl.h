@@ -42,6 +42,8 @@ void er_merge<N, M>::perform(evaluation_rule<M> &rule) const {
 
     er_merge<N, M>::start_timer();
 
+    rule.clear();
+
     // Loop over products
     for (typename evaluation_rule<N>::const_iterator it = m_rule.begin();
             it != m_rule.end(); it++) {
