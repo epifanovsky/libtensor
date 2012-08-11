@@ -178,6 +178,7 @@ set(SRC_INST
     symmetry/inst/combine_part_inst.C
     symmetry/inst/combine_label_inst.C
     symmetry/inst/er_merge_inst.C
+    symmetry/inst/er_optimize_inst.C
     symmetry/inst/er_reduce_inst.C
     symmetry/inst/evaluation_rule_inst.C
     symmetry/inst/permutation_group_inst.C

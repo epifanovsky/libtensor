@@ -10,6 +10,7 @@ libtensor_symmetry_suite::libtensor_symmetry_suite() :
     add_test("combine_part", m_utf_combine_part);
     add_test("eval_sequence_list", m_utf_eval_sequence_list);
     add_test("er_merge", m_utf_er_merge);
+    add_test("er_optimize", m_utf_er_optimize);
     add_test("er_reduce", m_utf_er_reduce);
     add_test("evaluation_rule", m_utf_evaluation_rule);
     add_test("permutation_group", m_utf_permutation_group);
