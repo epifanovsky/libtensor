@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_ER_REDUCE_H
 #define LIBTENSOR_ER_REDUCE_H
 
-#include <libtensor/core/sequence.h>
+#include <libtensor/timings.h>
 #include "evaluation_rule.h"
 #include "product_table_i.h"
 
