@@ -8,8 +8,11 @@
 namespace libtensor {
 
 
-/** \brief Reduce dimension of evaluation rule by merge.
+/** \brief Reduce dimension of evaluation rule by merging dimensions.
 
+    Merging is performed according to \c m_mmap and \c m_smsk. \c m_mmap
+    specifies which input dimensions end up at which output dimensions.
+    \c m_smsk specifies, if the merged dimensions can be simplified.
 
     \ingroup libtensor_symmetry
  **/
@@ -24,9 +27,17 @@ private:
     mask<M> m_smsk; //!< Mask of dimensions that can be simplified.
 
 public:
+    /** \brief Constructor
+        \param rule Input rule
+        \param mmap Index map input->output
+        \param smsk Mask for merged dimensions that can be simplified
+     **/
     er_merge(const evaluation_rule<N> &rule,
             const sequence<N, size_t> &mmap, const mask<M> &smsk);
 
+    /** \brief Perform merging
+        \param rule Resulting rule
+     **/
     void perform(evaluation_rule<M> &rule) const;
 };
 
