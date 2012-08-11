@@ -1,3 +1,4 @@
+#include <libtensor/symmetry/er_optimize.h>
 #include <libtensor/symmetry/er_reduce.h>
 #include <libtensor/symmetry/point_group_table.h>
 #include "er_reduce_test.h"
@@ -52,26 +53,29 @@ void er_reduce_test::test_1(
     typedef product_table_i::label_set_t label_set_t;
     typedef product_table_i::label_group_t label_group_t;
 
+    evaluation_rule<4> r1;
+    evaluation_rule<2> r2;
+
     try {
 
-    evaluation_rule<4> r1;
-    {
         sequence<4, size_t> seq1(1), seq2(1);
         seq1[2] = 0; seq1[3] = 0;
         seq2[0] = 0; seq2[1] = 0;
         product_rule<4> &pr1 = r1.new_product();
         pr1.add(seq1, 1);
         pr1.add(seq2, 3);
+
+        sequence<4, size_t> rmap(0);
+        rmap[0] = 0; rmap[1] = 2; rmap[2] = 1; rmap[3] = 2;
+        sequence<2, label_group_t> rdims;
+        rdims[0].push_back(0); rdims[0].push_back(1);
+        rdims[0].push_back(2); rdims[0].push_back(3);
+
+        er_reduce<4, 2>(r1, rmap, rdims, id).perform(r2);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
     }
-
-    sequence<4, size_t> rmap(0);
-    rmap[0] = 0; rmap[1] = 2; rmap[2] = 1; rmap[3] = 2;
-    sequence<2, label_group_t> rdims;
-    rdims[0].push_back(0); rdims[0].push_back(1);
-    rdims[0].push_back(2); rdims[0].push_back(3);
-
-    evaluation_rule<2> r2;
-    er_reduce<4, 2>(r1, rmap, rdims, id).perform(r2);
 
     // Check sequence list
     const eval_sequence_list<2> &sl = r2.get_sequences();
@@ -116,11 +120,6 @@ void er_reduce_test::test_1(
     }
     if (ip2 != pr2.end()) {
         fail_test(testname, __FILE__, __LINE__, "Multiple terms in pr2.");
-    }
-
-
-    } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
     }
 }
 
@@ -136,29 +135,34 @@ void er_reduce_test::test_2(
     typedef product_table_i::label_set_t label_set_t;
     typedef product_table_i::label_group_t label_group_t;
 
+    evaluation_rule<6> r1;
+    evaluation_rule<2> r2;
+
     try {
 
-    evaluation_rule<6> r1;
-    {
         sequence<6, size_t> seq1(1), seq2(1);
         seq1[3] = 0; seq1[4] = 0; seq1[5] = 0;
         seq2[0] = 0; seq2[1] = 0; seq2[2] = 0;
         product_rule<6> &pr1 = r1.new_product();
         pr1.add(seq1, 1);
         pr1.add(seq2, 3);
+
+        sequence<6, size_t> rmap(0);
+        rmap[0] = 0; rmap[1] = 2; rmap[2] = 3;
+        rmap[3] = 1; rmap[4] = 3; rmap[5] = 2;
+        sequence<4, label_group_t> rdims;
+        rdims[0].push_back(0); rdims[0].push_back(1);
+        rdims[0].push_back(2); rdims[0].push_back(3);
+        rdims[1].push_back(0); rdims[1].push_back(1);
+        rdims[1].push_back(2); rdims[1].push_back(3);
+
+        evaluation_rule<2> tmp;
+        er_reduce<6, 4>(r1, rmap, rdims, id).perform(tmp);
+        er_optimize<2>(tmp).perform(r2);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
     }
-
-    sequence<6, size_t> rmap(0);
-    rmap[0] = 0; rmap[1] = 2; rmap[2] = 3;
-    rmap[3] = 1; rmap[4] = 3; rmap[5] = 2;
-    sequence<4, label_group_t> rdims;
-    rdims[0].push_back(0); rdims[0].push_back(1);
-    rdims[0].push_back(2); rdims[0].push_back(3);
-    rdims[1].push_back(0); rdims[1].push_back(1);
-    rdims[1].push_back(2); rdims[1].push_back(3);
-
-    evaluation_rule<2> r2;
-    er_reduce<6, 4>(r1, rmap, rdims, id).perform(r2);
 
     // Check sequence list
     const eval_sequence_list<2> &sl = r2.get_sequences();
@@ -204,11 +208,6 @@ void er_reduce_test::test_2(
     if (ip2 != pr2.end()) {
         fail_test(testname, __FILE__, __LINE__, "Multiple terms in pr2.");
     }
-
-
-    } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
-    }
 }
 
 
@@ -223,10 +222,11 @@ void er_reduce_test::test_3(
     typedef product_table_i::label_set_t label_set_t;
     typedef product_table_i::label_group_t label_group_t;
 
+    evaluation_rule<8> r1;
+    evaluation_rule<2> r2;
+
     try {
 
-    evaluation_rule<8> r1;
-    {
         sequence<8, size_t> seq1(0), seq2(0), seq3(0), seq4(0);
         seq1[0] = 1; seq1[1] = 1; seq2[2] = 1; seq2[3] = 1;
         seq3[4] = 1; seq3[5] = 1; seq4[6] = 1; seq4[7] = 1;
@@ -234,22 +234,24 @@ void er_reduce_test::test_3(
         pr1.add(seq1, 0);
         pr1.add(seq2, 1);
         pr1.add(seq3, 2);
-        pr1.add(seq4, 3);
+        pr1.add(seq4, 0);
+
+        sequence<8, size_t> rmap(0);
+        rmap[0] = 0; rmap[1] = 2; rmap[2] = 4; rmap[3] = 2;
+        rmap[4] = 4; rmap[5] = 3; rmap[6] = 3; rmap[7] = 1;
+        sequence<6, label_group_t> rdims;
+        rdims[0].push_back(0); rdims[0].push_back(1);
+        rdims[0].push_back(2); rdims[0].push_back(3);
+        rdims[1].push_back(0); rdims[1].push_back(1);
+        rdims[1].push_back(2); rdims[1].push_back(3);
+        rdims[2].push_back(0); rdims[2].push_back(1);
+        rdims[2].push_back(2); rdims[2].push_back(3);
+
+        er_reduce<8, 6>(r1, rmap, rdims, id).perform(r2);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
     }
-
-    sequence<8, size_t> rmap(0);
-    rmap[0] = 0; rmap[1] = 2; rmap[2] = 4; rmap[3] = 2;
-    rmap[4] = 4; rmap[5] = 3; rmap[6] = 3; rmap[7] = 1;
-    sequence<6, label_group_t> rdims;
-    rdims[0].push_back(0); rdims[0].push_back(1);
-    rdims[0].push_back(2); rdims[0].push_back(3);
-    rdims[1].push_back(0); rdims[1].push_back(1);
-    rdims[1].push_back(2); rdims[1].push_back(3);
-    rdims[2].push_back(0); rdims[2].push_back(1);
-    rdims[2].push_back(2); rdims[2].push_back(3);
-
-    evaluation_rule<2> r2;
-    er_reduce<8, 6>(r1, rmap, rdims, id).perform(r2);
 
     // Check sequence list
     const eval_sequence_list<2> &sl = r2.get_sequences();
@@ -283,9 +285,6 @@ void er_reduce_test::test_3(
     }
 
 
-    } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
-    }
 }
 
 
@@ -301,10 +300,11 @@ void er_reduce_test::test_4(
     typedef product_table_i::label_set_t label_set_t;
     typedef product_table_i::label_group_t label_group_t;
 
+    evaluation_rule<6> r1;
+    evaluation_rule<2> r2;
+
     try {
 
-    evaluation_rule<6> r1;
-    {
         sequence<6, size_t> seq1(0), seq2(0), seq3(0);
         seq1[0] = 1; seq1[1] = 1;
         seq2[2] = 1; seq2[3] = 1;
@@ -313,19 +313,23 @@ void er_reduce_test::test_4(
         pr1.add(seq1, 0);
         pr1.add(seq2, 1);
         pr1.add(seq3, 2);
+
+        sequence<6, size_t> rmap(0);
+        rmap[0] = 0; rmap[1] = 2; rmap[2] = 3;
+        rmap[3] = 2; rmap[4] = 3; rmap[5] = 1;
+
+        sequence<4, label_group_t> rdims;
+        rdims[0].push_back(0); rdims[0].push_back(1);
+        rdims[0].push_back(2); rdims[0].push_back(3);
+        rdims[1].push_back(0); rdims[1].push_back(2);
+
+        evaluation_rule<2> tmp;
+        er_reduce<6, 4>(r1, rmap, rdims, id).perform(tmp);
+        er_optimize<2>(tmp).perform(r2);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
     }
-
-    sequence<6, size_t> rmap(0);
-    rmap[0] = 0; rmap[1] = 2; rmap[2] = 3;
-    rmap[3] = 2; rmap[4] = 3; rmap[5] = 1;
-
-    sequence<4, label_group_t> rdims;
-    rdims[0].push_back(0); rdims[0].push_back(1);
-    rdims[0].push_back(2); rdims[0].push_back(3);
-    rdims[1].push_back(0); rdims[1].push_back(2);
-
-    evaluation_rule<2> r2;
-    er_reduce<6, 4>(r1, rmap, rdims, id).perform(r2);
 
     // Check sequence list
     const eval_sequence_list<2> &sl = r2.get_sequences();
@@ -400,9 +404,6 @@ void er_reduce_test::test_4(
         fail_test(testname, __FILE__, __LINE__, "Too many terms in pr2.");
     }
 
-    } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
-    }
 }
 
 
@@ -417,23 +418,28 @@ void er_reduce_test::test_5(
     typedef product_table_i::label_set_t label_set_t;
     typedef product_table_i::label_group_t label_group_t;
 
+    evaluation_rule<4> r1;
+    evaluation_rule<2> r2;
+
     try {
 
-    evaluation_rule<4> r1;
-    {
         sequence<4, size_t> seq1(1);
         product_rule<4> &pr1 = r1.new_product();
         pr1.add(seq1, 2);
+
+        sequence<4, size_t> rmap(0);
+        rmap[0] = 0; rmap[1] = 1; rmap[2] = 2; rmap[3] = 2;
+        sequence<2, label_group_t> rdims;
+        rdims[0].push_back(0); rdims[0].push_back(1);
+        rdims[0].push_back(2); rdims[0].push_back(3);
+
+        evaluation_rule<2> tmp;
+        er_reduce<4, 2>(r1, rmap, rdims, id).perform(tmp);
+        er_optimize<2>(tmp).perform(r2);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
     }
-
-    sequence<4, size_t> rmap(0);
-    rmap[0] = 0; rmap[1] = 1; rmap[2] = 2; rmap[3] = 2;
-    sequence<2, label_group_t> rdims;
-    rdims[0].push_back(0); rdims[0].push_back(1);
-    rdims[0].push_back(2); rdims[0].push_back(3);
-
-    evaluation_rule<2> r2;
-    er_reduce<4, 2>(r1, rmap, rdims, id).perform(r2);
 
     // Check sequence list
     const eval_sequence_list<2> &sl = r2.get_sequences();
@@ -480,10 +486,6 @@ void er_reduce_test::test_5(
     if (ip2 != pr2.end()) {
         fail_test(testname, __FILE__, __LINE__, "Too many terms in pr2.");
     }
-
-    } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
-    }
 }
 
 
@@ -499,10 +501,11 @@ void er_reduce_test::test_6(
     typedef product_table_i::label_set_t label_set_t;
     typedef product_table_i::label_group_t label_group_t;
 
+    evaluation_rule<6> r1;
+    evaluation_rule<2> r2;
+
     try {
 
-    evaluation_rule<6> r1;
-    {
         sequence<6, size_t> seq1(0), seq2(0), seq3(1), seq4(1), seq5(0);
         seq1[2] = 1; seq2[4] = 1; seq3[2] = seq3[4] = 0;
         seq4[2] = seq4[3] = seq4[4] = 0; seq5[3] = 1;
@@ -542,21 +545,25 @@ void er_reduce_test::test_6(
         pr2d.add(seq2, 3);
         pr2d.add(seq4, 0);
         pr2d.add(seq5, 0);
+
+        sequence<6, size_t> rmap(0);
+        rmap[0] = 0; rmap[1] = 1; rmap[2] = 2; rmap[3] = 2; rmap[4] = rmap[5] = 3;
+        sequence<4, label_group_t> rdims;
+        rdims[0].push_back(0);
+        rdims[0].push_back(2);
+        rdims[0].push_back(3);
+        rdims[1].push_back(0);
+        rdims[1].push_back(1);
+        rdims[1].push_back(2);
+        rdims[1].push_back(3);
+
+        evaluation_rule<2> tmp;
+        er_reduce<6, 4>(r1, rmap, rdims, id).perform(tmp);
+        er_optimize<2>(tmp).perform(r2);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
     }
-
-    sequence<6, size_t> rmap(0);
-    rmap[0] = 0; rmap[1] = 1; rmap[2] = 2; rmap[3] = 2; rmap[4] = rmap[5] = 3;
-    sequence<4, label_group_t> rdims;
-    rdims[0].push_back(0);
-    rdims[0].push_back(2);
-    rdims[0].push_back(3);
-    rdims[1].push_back(0);
-    rdims[1].push_back(1);
-    rdims[1].push_back(2);
-    rdims[1].push_back(3);
-
-    evaluation_rule<2> r2;
-    er_reduce<6, 4>(r1, rmap, rdims, id).perform(r2);
 
     // Check sequence list
     const eval_sequence_list<2> &sl = r2.get_sequences();
@@ -584,10 +591,6 @@ void er_reduce_test::test_6(
     }
     if (pr1.get_intrinsic(ip1) != 0) {
         fail_test(testname, __FILE__, __LINE__, "Intrinsic label.");
-    }
-
-    } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
     }
 }
 

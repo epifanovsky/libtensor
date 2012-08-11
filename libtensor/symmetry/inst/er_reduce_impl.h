@@ -35,6 +35,11 @@ er_reduce<N, M>::er_reduce(
 }
 
 
+template<size_t N, size_t M>
+er_reduce<N, M>::~er_reduce() {
+
+    product_table_container::get_instance().ret_table(m_pt.get_id());
+}
 
 template<size_t N, size_t M>
 void er_reduce<N, M>::perform(evaluation_rule<N - M> &rule) const {
@@ -47,7 +52,7 @@ void er_reduce<N, M>::perform(evaluation_rule<N - M> &rule) const {
     for (typename evaluation_rule<N>::const_iterator it = m_rule.begin();
             it != m_rule.end(); it++) {
 
-        const product_rule<N> &pra = *it;
+        const product_rule<N> &pra = m_rule.get_product(it);
 
         // Determine rsteps present in product and sequences contributing to
         // rstep
@@ -282,7 +287,6 @@ void er_reduce<N, M>::perform(evaluation_rule<N - M> &rule) const {
             }
         }
     }
-    rule.optimize();
 
     er_reduce<N, M>::stop_timer();
 }
