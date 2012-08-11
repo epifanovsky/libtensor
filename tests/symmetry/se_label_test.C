@@ -8,7 +8,8 @@ namespace libtensor {
 
 void se_label_test::perform() throw(libtest::test_exception) {
 
-    std::string s6 = setup_pg_table();
+    std::string s6("S6");
+    setup_pg_table(s6);
     try {
 
          test_basic_1(s6);
@@ -18,12 +19,12 @@ void se_label_test::perform() throw(libtest::test_exception) {
          test_permute_1(s6);
          test_permute_2(s6);
 
-    } catch (libtest::test_exception) {
-        product_table_container::get_instance().erase(s6);
+    } catch (libtest::test_exception &e) {
+        clear_pg_table(s6);
         throw;
     }
 
-    product_table_container::get_instance().erase(s6);
+    clear_pg_table(s6);
 }
 
 /** \test Tests setting evaluation rules

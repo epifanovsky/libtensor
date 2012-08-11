@@ -6,18 +6,20 @@ namespace libtensor {
 
 void combine_label_test::perform() throw(libtest::test_exception) {
 
-    std::string s6 = setup_pg_table();
+    std::string s6("S6");
+    setup_pg_table(s6);
+
     try {
 
          test_1(s6);
          test_2(s6);
 
     } catch (libtest::test_exception) {
-        product_table_container::get_instance().erase(s6);
+        clear_pg_table(s6);
         throw;
     }
 
-    product_table_container::get_instance().erase(s6);
+    clear_pg_table(s6);
 }
 
 /** \test Tests setting evaluation rules
