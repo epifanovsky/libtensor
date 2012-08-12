@@ -2,6 +2,7 @@
 #define LIBTENSOR_ER_OPTIMIZE_IMPL_H
 
 #include "../bad_symmetry.h"
+#include "../product_table_container.h"
 
 namespace libtensor {
 
@@ -11,7 +12,23 @@ const char *er_optimize<N>::k_clazz = "er_optimize<N>";
 
 
 template<size_t N>
-er_optimize<N>::er_optimize(const evaluation_rule<N> &from) : m_rule(from) {
+er_optimize<N>::er_optimize(const evaluation_rule<N> &from,
+        const std::string &id) :
+        m_rule(from), m_mergable(true) {
+
+    product_table_container &ptc = product_table_container::get_instance();
+    const product_table_i &pt = ptc.req_const_table(id);
+
+    for (product_table_i::label_t l = 0; l < pt.get_n_labels(); l++) {
+        product_table_i::label_group_t lg(2, l);
+        product_table_i::label_set_t ls;
+        pt.product(lg, ls);
+        if (ls.size() != 1 || ls.count(product_table_i::k_identity) != 1) {
+            m_mergable = false; break;
+        }
+    }
+
+    ptc.ret_table(id);
 }
 
 
@@ -46,9 +63,16 @@ void er_optimize<N>::perform(evaluation_rule<N> &to) const {
                 continue;
             }
 
-            const sequence<N, size_t> &seq = pr.get_sequence(ip);
+            sequence<N, size_t> seq(pr.get_sequence(ip));
             size_t nidx = 0;
-            for (register size_t j = 0; j < N; j++) nidx += seq[j];
+            if (m_mergable) {
+                for (register size_t j = 0; j < N; j++) {
+                    seq[j] %= 2; nidx += seq[j];
+                }
+            }
+            else {
+                for (register size_t j = 0; j < N; j++) nidx += seq[j];
+            }
             if (nidx == 0) {
                 if (pr.get_intrinsic(ip) == product_table_i::k_identity) {
                     nallowed++; continue;
@@ -56,7 +80,7 @@ void er_optimize<N>::perform(evaluation_rule<N> &to) const {
                 else break;
             }
 
-            prx.add(pr.get_sequence(ip), pr.get_intrinsic(ip));
+            prx.add(seq, pr.get_intrinsic(ip));
         }
 
         // If there was one forbidden term the product can be deleted

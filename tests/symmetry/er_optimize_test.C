@@ -6,15 +6,29 @@ namespace libtensor {
 
 void er_optimize_test::perform() throw(libtest::test_exception) {
 
-    test_1();
-    test_2();
-    test_3();
+    std::string s6 = "S6", c2v = "C2v";
+    setup_pg_table(c2v);
+
+    try {
+
+        test_1(c2v);
+        test_2(c2v);
+        test_3(c2v);
+
+    } catch (libtest::test_exception &e) {
+        clear_pg_table(c2v);
+        throw;
+    }
+
+    clear_pg_table(c2v);
+
 }
 
 
 /** \test Optimization: remove all allowed terms from product rules
  **/
-void er_optimize_test::test_1() throw(libtest::test_exception) {
+void er_optimize_test::test_1(
+        const std::string &id) throw(libtest::test_exception) {
 
     static const char *testname = "er_optimize_test::test_1()";
 
@@ -31,7 +45,7 @@ void er_optimize_test::test_1() throw(libtest::test_exception) {
         pr.add(seq2, product_table_i::k_invalid);
     }
 
-    er_optimize<2>(from).perform(to);
+    er_optimize<2>(from, id).perform(to);
 
     // Check sequence list
     const eval_sequence_list<2> &sl = to.get_sequences();
@@ -73,7 +87,8 @@ void er_optimize_test::test_1() throw(libtest::test_exception) {
 
 /** \test Optimization: Rule simplification due to a sole all-allowed term
  **/
-void er_optimize_test::test_2() throw(libtest::test_exception) {
+void er_optimize_test::test_2(
+        const std::string &id) throw(libtest::test_exception) {
 
     static const char *testname = "er_optimize_test::test_2()";
 
@@ -91,7 +106,7 @@ void er_optimize_test::test_2() throw(libtest::test_exception) {
         pr2.add(seq2, product_table_i::k_invalid);
     }
 
-    er_optimize<2>(from).perform(to);
+    er_optimize<2>(from, id).perform(to);
 
     // Check sequence list
     const eval_sequence_list<2> &sl = to.get_sequences();
@@ -134,7 +149,8 @@ void er_optimize_test::test_2() throw(libtest::test_exception) {
 
 /** \test Optimization: remove products with all forbidden rules
  **/
-void er_optimize_test::test_3() throw(libtest::test_exception) {
+void er_optimize_test::test_3(
+        const std::string &id) throw(libtest::test_exception) {
 
     static const char *testname = "er_optimize_test::test_3()";
 
@@ -153,7 +169,7 @@ void er_optimize_test::test_3() throw(libtest::test_exception) {
         pr2.add(seq2, 2);
     }
 
-    er_optimize<2>(from).perform(to);
+    er_optimize<2>(from, id).perform(to);
 
     // Check sequence list
     const eval_sequence_list<2> &sl = to.get_sequences();

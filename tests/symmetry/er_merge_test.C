@@ -8,15 +8,40 @@ namespace libtensor {
 
 void er_merge_test::perform() throw(libtest::test_exception) {
 
-    test_1();
-    test_2();
+    std::string s6 = "S6", c2v = "C2v";
+    setup_pg_table(c2v);
+
+    try {
+
+        test_1(c2v);
+
+    } catch (libtest::test_exception &e) {
+        clear_pg_table(c2v);
+        throw;
+    }
+
+    clear_pg_table(c2v);
+
+    setup_pg_table(s6);
+
+    try {
+
+        test_2(s6);
+
+    } catch (libtest::test_exception &e) {
+        clear_pg_table(s6);
+        throw;
+    }
+
+    clear_pg_table(s6);
 
 }
 
 
 /** \brief Merge 4 dimensions in 2 steps (merge dims can be simplified)
  **/
-void er_merge_test::test_1() throw(libtest::test_exception) {
+void er_merge_test::test_1(
+        const std::string &id) throw(libtest::test_exception) {
 
     static const char *testname = "er_merge_test::test_1()";
 
@@ -43,7 +68,7 @@ void er_merge_test::test_1() throw(libtest::test_exception) {
 
     evaluation_rule<2> r2, tmp;
     er_merge<4, 2>(r1, mmap, smsk).perform(tmp);
-    er_optimize<2>(tmp).perform(r2);
+    er_optimize<2>(tmp, id).perform(r2);
 
     // Check sequence list
     const eval_sequence_list<2> &sl = r2.get_sequences();
@@ -84,7 +109,8 @@ void er_merge_test::test_1() throw(libtest::test_exception) {
 
 /** \brief Merge 4 dimensions in 2 steps (1 merge cannot be simplified)
  **/
-void er_merge_test::test_2() throw(libtest::test_exception) {
+void er_merge_test::test_2(
+        const std::string &id) throw(libtest::test_exception) {
 
 
     static const char *testname = "er_merge_test::test_2()";
@@ -114,7 +140,7 @@ void er_merge_test::test_2() throw(libtest::test_exception) {
 
     evaluation_rule<3> r2, tmp;
     er_merge<5, 3>(r1, mmap, smsk).perform(tmp);
-    er_optimize<3>(tmp).perform(r2);
+    er_optimize<3>(tmp, id).perform(r2);
 
     // Check sequence list
     const eval_sequence_list<3> &sl = r2.get_sequences();

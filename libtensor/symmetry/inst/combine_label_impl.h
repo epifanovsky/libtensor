@@ -71,7 +71,7 @@ void combine_label<N, T>::add(const se_label<N, T> &el) throw(bad_parameter) {
         }
     }
     m_rule.clear();
-    er_optimize<N>(r2).perform(m_rule);
+    er_optimize<N>(r2, m_table_id).perform(m_rule);
 }
 
 

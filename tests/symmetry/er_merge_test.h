@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_ER_MERGE_TEST_H
 #define LIBTENSOR_ER_MERGE_TEST_H
 
-#include <libtest/unit_test.h>
+#include "se_label_test_base.h"
 
 namespace libtensor {
 
@@ -9,13 +9,13 @@ namespace libtensor {
 
     \ingroup libtensor_tests_sym
  **/
-class er_merge_test : public libtest::unit_test {
+class er_merge_test : public se_label_test_base {
 public:
     virtual void perform() throw(libtest::test_exception);
 
 private:
-    void test_1() throw(libtest::test_exception);
-    void test_2() throw(libtest::test_exception);
+    void test_1(const std::string &id) throw(libtest::test_exception);
+    void test_2(const std::string &id) throw(libtest::test_exception);
 };
 
 } // namespace libtensor

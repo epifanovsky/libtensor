@@ -26,12 +26,14 @@ public:
 
 private:
     const evaluation_rule<N> &m_rule; //!< Input rule
+    bool m_mergable;
 
 public:
     /** \brief Constructor
         \param from Input rule
+        \param id Product table ID
      **/
-    er_optimize(const evaluation_rule<N> &from);
+    er_optimize(const evaluation_rule<N> &from, const std::string &id);
 
     /** \brief Perform optimization
         \param to Optimized copy of input rule.

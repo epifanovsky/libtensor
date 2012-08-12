@@ -158,7 +158,7 @@ void er_reduce_test::test_2(
 
         evaluation_rule<2> tmp;
         er_reduce<6, 4>(r1, rmap, rdims, id).perform(tmp);
-        er_optimize<2>(tmp).perform(r2);
+        er_optimize<2>(tmp, id).perform(r2);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
@@ -325,7 +325,7 @@ void er_reduce_test::test_4(
 
         evaluation_rule<2> tmp;
         er_reduce<6, 4>(r1, rmap, rdims, id).perform(tmp);
-        er_optimize<2>(tmp).perform(r2);
+        er_optimize<2>(tmp, id).perform(r2);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
@@ -435,7 +435,7 @@ void er_reduce_test::test_5(
 
         evaluation_rule<2> tmp;
         er_reduce<4, 2>(r1, rmap, rdims, id).perform(tmp);
-        er_optimize<2>(tmp).perform(r2);
+        er_optimize<2>(tmp, id).perform(r2);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
@@ -559,7 +559,7 @@ void er_reduce_test::test_6(
 
         evaluation_rule<2> tmp;
         er_reduce<6, 4>(r1, rmap, rdims, id).perform(tmp);
-        er_optimize<2>(tmp).perform(r2);
+        er_optimize<2>(tmp, id).perform(r2);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
