@@ -119,6 +119,8 @@ set(SRC_BTOD
     btod/libtensor_btod_tests.C
     btod/libtensor_btod_suite.C
     btod/addition_schedule_test.C
+    btod/bto_contract2_bis_test.C
+    btod/bto_contract2_sym_test.C
     btod/btod_add_test.C
     btod/btod_apply_test.C
     btod/btod_cholesky_test.C
@@ -254,8 +256,6 @@ add_executable(libtensor_diag_tensor_tests ${SRC_DIAG_TENSOR})
 
 include(${LIBTEST_DIR}/cmake/SetupLibTest.txt)
 
-set_property(TARGET ${TARGETS} APPEND PROPERTY
-    COMPILE_DEFINITIONS LIBTENSOR_INSTANTIATE_TEMPLATES)
 set_property(TARGET ${TARGETS} APPEND PROPERTY
     COMPILE_DEFINITIONS_DEBUG LIBTENSOR_DEBUG)
 if(HAVE_LIBVMM)

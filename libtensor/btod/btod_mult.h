@@ -11,7 +11,7 @@
 #include "../symmetry/so_merge.h"
 #include <libtensor/dense_tensor/tod_mult.h>
 #include <libtensor/dense_tensor/tod_set.h>
-#include "scalar_transf_double.h"
+#include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/block_tensor/bto/additive_bto.h>
 #include <libtensor/block_tensor/btod/btod_traits.h>
 #include "bad_block_index_space.h"

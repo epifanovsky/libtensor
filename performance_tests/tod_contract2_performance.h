@@ -6,6 +6,7 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/libtensor.h>
 #include <libtensor/linalg/linalg.h>
+#include <libtensor/dense_tensor/tod_contract2.h>
 #include "performance_test.h"
 
 using libtest::unit_test_factory;

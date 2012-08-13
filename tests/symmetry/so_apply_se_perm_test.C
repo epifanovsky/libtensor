@@ -1,5 +1,5 @@
 #include <sstream>
-#include <libtensor/btod/scalar_transf_double.h>
+#include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/symmetry/so_apply_se_perm.h>
 #include "so_apply_se_perm_test.h"
 

@@ -1,6 +1,6 @@
 #include <algorithm>
 #include <sstream>
-#include <libtensor/btod/scalar_transf_double.h>
+#include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/core/permutation_builder.h>
 #include <libtensor/core/permutation_generator.h>
 #include <libtensor/symmetry/permutation_group.h>

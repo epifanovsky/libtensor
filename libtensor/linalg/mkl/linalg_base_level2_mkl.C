@@ -1,6 +1,7 @@
 #include <mkl.h>
 #ifdef HAVE_MKL_DOMATCOPY
 #include <mkl_trans.h>
+#include <cstring>
 #endif // HAVE_MKL_DOMATCOPY
 #include "linalg_base_level2_mkl.h"
 

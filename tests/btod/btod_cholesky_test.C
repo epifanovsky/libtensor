@@ -1,12 +1,12 @@
 #include <libtensor/core/allocator.h>
-#include <libtensor/btod/btod_copy.h>
+#include <libtensor/block_tensor/btod/btod_copy.h>
 #include <libtensor/btod/btod_print.h>
 #include <libtensor/btod/btod_import_raw.h>
 #include <libtensor/btod/btod_cholesky.h>
+#include <libtensor/block_tensor/btod/btod_contract2.h>
 #include <libtensor/core/block_tensor.h>
 #include "btod_cholesky_test.h"
 #include "../compare_ref.h"
-#include "libtensor/btod/btod_contract2.h"
 
 // for our custom cholesky
 #include "libtensor/btod/cholesky.h"

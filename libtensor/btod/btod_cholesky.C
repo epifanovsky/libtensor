@@ -2,16 +2,16 @@
 #include "../core/allocator.h"
 #include "../core/block_tensor_ctrl.h"
 #include "../core/block_tensor.h"
-#include "scalar_transf_double.h"
-#include "btod_add.h"
-#include "btod_contract2.h"
-#include "btod_copy.h"
-#include "btod_diag.h"
+#include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/block_tensor/btod/btod_add.h>
+#include <libtensor/block_tensor/btod/btod_contract2.h>
+#include <libtensor/block_tensor/btod/btod_copy.h>
+#include <libtensor/block_tensor/btod/btod_diag.h>
 #include "btod_extract.h"
 #include "btod_scale.h"
 #include "btod_set_diag.h"
 #include "btod_set_elem.h"
-#include "btod_set.h"
+#include <libtensor/block_tensor/btod/btod_set.h>
 #include "btod_cholesky.h"
 #include "btod_import_raw.h"
 #include <libtensor/linalg.h> //necessary to include LAPACK functions

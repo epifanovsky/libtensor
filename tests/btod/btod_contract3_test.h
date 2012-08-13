@@ -19,6 +19,7 @@ private:
     void test_contr_2();
     void test_contr_3();
     void test_contr_4();
+    void test_contr_5();
 
 };
 

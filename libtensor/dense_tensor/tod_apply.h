@@ -2,6 +2,8 @@
 #define LIBTENSOR_TOD_APPLY_H
 
 #include <libtensor/timings.h>
+#include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/core/tensor_transf.h>
 #include <libtensor/tod/loop_list_apply.h>
 #include <libtensor/tod/bad_dimensions.h>
 #include "dense_tensor_ctrl.h"
@@ -13,9 +15,9 @@ namespace libtensor {
         before, if necessary
     \tparam N Tensor order.
 
-    This operation applies the given functor to each tensor element, scaling
-    and permuting them before. The result can replace or be added to the
-    output tensor.
+    This operation applies the given functor to each tensor element,
+    transforming the tensor before and after applying the functor.
+    The result can replace or be added to the output tensor.
 
     A class to be used as functor needs to have
     1. a proper copy constructor
@@ -40,40 +42,52 @@ class tod_apply :
 public:
     static const char *k_clazz; //!< Class name
 
+    typedef tensor_transf<N, double> tensor_transf_t;
+
 private:
     dense_tensor_rd_i<N, double> &m_ta; //!< Source %tensor
     Functor m_fn; //!< Functor
-    permutation<N> m_perm; //!< Permutation of elements
-    double m_c; //!< Scaling coefficient
+    tensor_transf<N, double> m_tr1; //!< Tensor transformation before
+    tensor_transf<N, double> m_tr2; //!< Tensor transformation after
     dimensions<N> m_dimsb; //!< Dimensions of output %tensor
 
 public:
-    /** \brief Prepares the copy operation
-        \param ta Source tensor.
-        \param c Coefficient.
+    /** \brief Initializes the addition operation
+        \param t First tensor in the series.
+        \param tr1 Tensor transformation before
+        \param tr2 Tensor transformation after
      **/
     tod_apply(dense_tensor_rd_i<N, double> &ta, const Functor &fn,
-        double c = 1.0);
+            const tensor_transf_t &tr1 = tensor_transf_t(),
+            const tensor_transf_t &tr2 = tensor_transf_t());
+
+    /** \brief Prepares the copy operation
+        \param ta Source tensor.
+        \param c Coefficient (apply before).
+     **/
+    tod_apply(dense_tensor_rd_i<N, double> &ta, const Functor &fn, double c);
 
     /** \brief Prepares the permute & copy operation
         \param ta Source tensor.
-        \param p Permutation of tensor elements.
-        \param c Coefficient.
+        \param p Permutation of tensor elements (apply before).
+        \param c Coefficient (apply before).
      **/
     tod_apply(dense_tensor_rd_i<N, double> &ta, const Functor &fn,
         const permutation<N> &p, double c = 1.0);
 
+    /** \brief Performs the operation
+        \param zero Zero result first
+        \param c Scaling factor
+        \param tb Add result to
+     **/
     void perform(bool zero, double c, dense_tensor_wr_i<N, double> &t);
-
-    void perform(dense_tensor_wr_i<N, double> &t);
-    void perform(dense_tensor_wr_i<N, double> &t, double c);
 
 private:
     /** \brief Creates the dimensions of the output using an input
             tensor and a permutation of indexes
      **/
     static dimensions<N> mk_dimsb(dense_tensor_rd_i<N, double> &ta,
-        const permutation<N> &perm);
+        const permutation<N> &perm1, const permutation<N> &perm2);
 
     void build_loop(typename loop_list_apply<Functor>::list_t &loop,
             const dimensions<N> &dimsa, const permutation<N> &perma,
@@ -88,9 +102,22 @@ const char *tod_apply<N, Functor>::k_clazz = "tod_apply<N, Functor>";
 
 template<size_t N, typename Functor>
 tod_apply<N, Functor>::tod_apply(dense_tensor_rd_i<N, double> &ta,
+    const Functor &fn, const tensor_transf_t &tr1, const tensor_transf_t &tr2) :
+
+    m_ta(ta), m_fn(fn), m_tr1(tr1), m_tr2(tr2),
+    m_dimsb(mk_dimsb(m_ta, m_tr1.get_perm(), m_tr2.get_perm())) {
+
+    m_tr1.permute(m_tr2.get_perm());
+    m_tr2.get_perm().reset();
+}
+
+
+template<size_t N, typename Functor>
+tod_apply<N, Functor>::tod_apply(dense_tensor_rd_i<N, double> &ta,
     const Functor &fn, double c) :
 
-    m_ta(ta), m_fn(fn), m_c(c), m_dimsb(mk_dimsb(m_ta, m_perm)) {
+    m_ta(ta), m_fn(fn), m_tr1(permutation<N>(), scalar_transf<double>(c)),
+    m_dimsb(m_ta.get_dims()) {
 
 }
 
@@ -99,7 +126,8 @@ template<size_t N, typename Functor>
 tod_apply<N, Functor>::tod_apply(dense_tensor_rd_i<N, double> &ta,
     const Functor &fn, const permutation<N> &p, double c) :
 
-    m_ta(ta), m_fn(fn), m_perm(p), m_c(c), m_dimsb(mk_dimsb(ta, p)) {
+    m_ta(ta), m_fn(fn), m_tr1(p, scalar_transf<double>(c)),
+    m_dimsb(mk_dimsb(ta, p, permutation<N>())) {
 
 }
 
@@ -114,7 +142,7 @@ void tod_apply<N, Functor>::perform(bool zero, double c,
     if(!tb.get_dims().equals(m_dimsb)) {
         throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "tb");
     }
-    if(!zero && c == 0) return;
+    if(! zero && c == 0) return;
 
     typedef typename loop_list_apply<Functor>::list_t list_t;
     typedef typename loop_list_apply<Functor>::registers registers_t;
@@ -133,7 +161,7 @@ void tod_apply<N, Functor>::perform(bool zero, double c,
     const dimensions<N> &dimsb = tb.get_dims();
 
     list_t loop;
-    build_loop(loop, dimsa, m_perm, dimsb);
+    build_loop(loop, dimsa, m_tr1.get_perm(), dimsb);
 
     const double *pa = ca.req_const_dataptr();
     double *pb = cb.req_dataptr();
@@ -144,7 +172,9 @@ void tod_apply<N, Functor>::perform(bool zero, double c,
     r.m_ptra_end[0] = pa + dimsa.get_size();
     r.m_ptrb_end[0] = pb + dimsb.get_size();
 
-    loop_list_apply<Functor>::run_loop(loop, r, m_fn, c, m_c, !zero);
+    loop_list_apply<Functor>::run_loop(loop, r, m_fn,
+        c * m_tr2.get_scalar_tr().get_coeff(),
+        m_tr1.get_scalar_tr().get_coeff(), !zero);
 
     ca.ret_const_dataptr(pa);
     cb.ret_dataptr(pb);
@@ -158,26 +188,12 @@ void tod_apply<N, Functor>::perform(bool zero, double c,
 
 
 template<size_t N, typename Functor>
-void tod_apply<N, Functor>::perform(dense_tensor_wr_i<N, double> &tb) {
-
-    perform(true, 1.0, tb);
-}
-
-
-template<size_t N, typename Functor>
-void tod_apply<N, Functor>::perform(dense_tensor_wr_i<N, double> &tb,
-    double c) {
-
-    perform(false, c, tb);
-}
-
-
-template<size_t N, typename Functor>
-dimensions<N> tod_apply<N, Functor>::mk_dimsb(
-    dense_tensor_rd_i<N, double> &ta, const permutation<N> &perm) {
+dimensions<N> tod_apply<N, Functor>::mk_dimsb(dense_tensor_rd_i<N, double> &ta,
+    const permutation<N> &perm1, const permutation<N> &perm2) {
 
     dimensions<N> dims(ta.get_dims());
-    dims.permute(perm);
+    dims.permute(perm1);
+    dims.permute(perm2);
     return dims;
 }
 

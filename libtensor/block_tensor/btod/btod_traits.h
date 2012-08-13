@@ -46,6 +46,10 @@ struct bto_traits<double> {
         return d == 0.0;
     }
 
+    static double zero() {
+        return 0.0;
+    }
+
     static double identity() {
         return 1.0;
     }

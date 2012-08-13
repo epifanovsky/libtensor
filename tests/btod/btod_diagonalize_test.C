@@ -1,6 +1,6 @@
 #include <libtensor/core/allocator.h>
-#include <libtensor/btod/scalar_transf_double.h>
-#include <libtensor/btod/btod_copy.h>
+#include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/block_tensor/btod/btod_copy.h>
 #include <libtensor/btod/btod_diagonalize.h>
 #include <libtensor/btod/btod_import_raw.h>
 #include <libtensor/btod/btod_tridiagonalize.h>

@@ -4,10 +4,10 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/core/block_tensor_ctrl.h>
+#include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/symmetry/so_copy.h>
-#include <libtensor/btod/btod_contract2.h>
-#include <libtensor/btod/btod_set.h>
-#include <libtensor/btod/scalar_transf_double.h>
+#include <libtensor/block_tensor/btod/btod_contract2.h>
+#include <libtensor/block_tensor/btod/btod_set.h>
 #include "../btod_contract3.h"
 
 namespace libtensor {
