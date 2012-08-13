@@ -23,7 +23,7 @@ public:
 
 private:
     eval_sequence_list<N> *m_slist; //!< Reference to list of sequences
-    std::map<size_t, label_t> m_terms; //!< Terms in product
+    std::multimap<size_t, label_t> m_terms; //!< Terms in product
 
 public:
     /** \brief Constructor

@@ -14,6 +14,7 @@ void er_merge_test::perform() throw(libtest::test_exception) {
     try {
 
         test_1(c2v);
+        test_2(c2v);
 
     } catch (libtest::test_exception &e) {
         clear_pg_table(c2v);
@@ -26,7 +27,7 @@ void er_merge_test::perform() throw(libtest::test_exception) {
 
     try {
 
-        test_2(s6);
+        test_3(s6);
 
     } catch (libtest::test_exception &e) {
         clear_pg_table(s6);
@@ -107,13 +108,86 @@ void er_merge_test::test_1(
 }
 
 
-/** \brief Merge 4 dimensions in 2 steps (1 merge cannot be simplified)
+/** \brief Merge 4 dimensions in 2 steps (merge dims can be simplified)
  **/
 void er_merge_test::test_2(
         const std::string &id) throw(libtest::test_exception) {
 
-
     static const char *testname = "er_merge_test::test_2()";
+
+    typedef product_table_i::label_set_t label_set_t;
+    typedef product_table_i::label_group_t label_group_t;
+
+    try {
+
+    evaluation_rule<4> r1;
+    {
+        sequence<4, size_t> seq1(0), seq2(0);
+        seq1[0] = seq1[1] = 1; seq2[2] = seq2[3] = 1;
+        product_rule<4> &pr1 = r1.new_product();
+        pr1.add(seq1, 2);
+        pr1.add(seq2, 1);
+    }
+
+    sequence<4, size_t> mmap(0);
+    mmap[0] = 0; mmap[1] = 1; mmap[2] = 0; mmap[3] = 1;
+    mask<2> smsk;
+    smsk[0] = smsk[1] = true;
+
+    evaluation_rule<2> r2, tmp;
+    er_merge<4, 2>(r1, mmap, smsk).perform(tmp);
+    er_optimize<2>(tmp, id).perform(r2);
+
+    // Check sequence list
+    const eval_sequence_list<2> &sl = r2.get_sequences();
+    if (sl.size() != 1) {
+        fail_test(testname, __FILE__, __LINE__, "# seq.");
+    }
+    if (sl[0][0] != 1 || sl[0][1] != 1) {
+        fail_test(testname, __FILE__, __LINE__, "seq.");
+    }
+
+    // Check product list
+    evaluation_rule<2>::const_iterator it = r2.begin();
+    if (it == r2.end()) {
+        fail_test(testname, __FILE__, __LINE__, "Empty product list.");
+    }
+    const product_rule<2> &pr1 = r2.get_product(it);
+    it++;
+    if (it != r2.end()) {
+        fail_test(testname, __FILE__, __LINE__, "More than one products.");
+    }
+
+    product_rule<2>::iterator ip1 = pr1.begin(), ip2 = pr1.begin();
+    if (ip1 == pr1.end()) {
+        fail_test(testname, __FILE__, __LINE__, "Empty product pr1.");
+    }
+    ip2++;
+    if (ip2 == pr1.end()) {
+        fail_test(testname, __FILE__, __LINE__, "# terms in pr1.");
+    }
+    if ((pr1.get_intrinsic(ip1) != 1 || pr1.get_intrinsic(ip2) != 2) &&
+            (pr1.get_intrinsic(ip1) != 2 || pr1.get_intrinsic(ip2) != 1)) {
+        fail_test(testname, __FILE__, __LINE__, "Intrinsic label.");
+    }
+    ip2++;
+    if (ip2 != pr1.end()) {
+        fail_test(testname, __FILE__, __LINE__, "Too many terms in pr1.");
+    }
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+/** \brief Merge 4 dimensions in 2 steps (1 merge cannot be simplified)
+ **/
+void er_merge_test::test_3(
+        const std::string &id) throw(libtest::test_exception) {
+
+
+    static const char *testname = "er_merge_test::test_3()";
 
     typedef product_table_i::label_set_t label_set_t;
     typedef product_table_i::label_group_t label_group_t;
