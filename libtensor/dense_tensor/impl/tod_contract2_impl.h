@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_TOD_CONTRACT2_IMPL_H
 #define LIBTENSOR_TOD_CONTRACT2_IMPL_H
 
+#include <cstring> // for memset
 #include <memory>
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/permutation_builder.h>
