@@ -35,12 +35,46 @@ er_optimize<N>::er_optimize(const evaluation_rule<N> &from,
 template<size_t N>
 void er_optimize<N>::perform(evaluation_rule<N> &to) const {
 
+    typedef std::multimap<size_t, product_table_i::label_t> product_map_t;
+
     er_optimize<N>::start_timer();
 
     to.clear();
 
-    std::list< product_rule<N> > plst;
-    eval_sequence_list<N> slst;
+    // Find zero sequences
+    const eval_sequence_list<N> &slist = m_rule.get_sequences();
+    std::vector< sequence<N, size_t> > new_seq;
+
+    std::vector<const sequence<N, size_t> *> seq_ptr(slist.size(), 0);
+
+    for (size_t i = 0; i < slist.size(); i++) {
+
+        const sequence<N, size_t> &seq = slist[i];
+
+        if (m_mergable) {
+            size_t nidx = 0, nidx0 = 0;
+            for (register size_t j = 0; j < N; j++) {
+                nidx0 += seq[j]; nidx += (seq[j] % 2);
+            }
+            if (nidx != 0) {
+                if (nidx0 == nidx) seq_ptr[i] = &seq;
+                else {
+                    new_seq.push_back(sequence<N, size_t>());
+                    sequence<N, size_t> &seq2 = new_seq.back();
+                    for (register size_t j = 0; j < N; j++)
+                        seq2[j] = seq[j] % 2;
+                    seq_ptr[i] = &seq2;
+                }
+            }
+        }
+        else {
+            size_t nidx = 0;
+            for (register size_t j = 0; j < N; j++) nidx += seq[j];
+            if (nidx != 0) seq_ptr[i] = &seq;
+        }
+    }
+
+    std::list<product_map_t> plst;
 
     // Loop over all products
     typename evaluation_rule<N>::const_iterator it = m_rule.begin();
@@ -51,7 +85,8 @@ void er_optimize<N>::perform(evaluation_rule<N> &to) const {
         // Delete empty products
         if (pr.empty()) continue;
 
-        product_rule<N> prx(&slst);
+        plst.push_back(product_map_t());
+        product_map_t &pmap = plst.back();
 
         // Look for products with 'all allowed' rules
         size_t nallowed = 0;
@@ -63,35 +98,32 @@ void er_optimize<N>::perform(evaluation_rule<N> &to) const {
                 continue;
             }
 
-            sequence<N, size_t> seq(pr.get_sequence(ip));
-            size_t nidx = 0;
-            if (m_mergable) {
-                for (register size_t j = 0; j < N; j++) {
-                    seq[j] %= 2; nidx += seq[j];
-                }
-            }
-            else {
-                for (register size_t j = 0; j < N; j++) nidx += seq[j];
-            }
-            if (nidx == 0) {
+            if (seq_ptr[pr.get_seqno(ip)] == 0) {
                 if (pr.get_intrinsic(ip) == product_table_i::k_identity) {
-                    nallowed++; continue;
+                    nallowed++;
+                    continue;
                 }
-                else break;
+                else {
+                    break;
+                }
             }
 
-            prx.add(seq, pr.get_intrinsic(ip));
+            pmap.insert(product_map_t::value_type(pr.get_seqno(ip),
+                    pr.get_intrinsic(ip)));
         }
 
         // If there was one forbidden term the product can be deleted
-        if (ip != pr.end()) continue;
+        if (ip != pr.end()) {
+            plst.pop_back();
+            continue;
+        }
 
-        if (prx.empty()) {
+        if (pmap.empty()) {
+            plst.pop_back();
+
             if (nallowed != 0) break;
             else continue;
         }
-
-        plst.push_back(prx);
     }
 
     // All blocks are allowed by this rule
@@ -106,25 +138,35 @@ void er_optimize<N>::perform(evaluation_rule<N> &to) const {
     }
 
     // Remove duplicate products
-    for (typename std::list< product_rule<N> >::iterator it1 = plst.begin();
+    for (typename std::list<product_map_t>::iterator it1 = plst.begin();
             it1 != plst.end(); it1++) {
 
-        typename std::list< product_rule<N> >::iterator it2 = it1;
+        typename std::list<product_map_t>::iterator it2 = it1;
         it2++;
         while (it2 != plst.end()) {
-            if (*it1 == *it2) it2 = plst.erase(it2);
-            else it2++;
+            if (it1->size() == it2->size()) {
+                product_map_t::iterator ip1 = it1->begin(), ip2 = it2->begin();
+                for (; ip1 != it1->end(); ip1++, ip2++) {
+                    if (ip1->first != ip2->first || ip1->second != ip2->second)
+                        break;
+                }
+                if (ip1 == it1->end()) {
+                    it2 = plst.erase(it2);
+                    continue;
+                }
+            }
+            it2++;
         }
     }
 
     // Copy from new lists to member lists
-    for (typename std::list< product_rule<N> >::iterator it1 = plst.begin();
+    for (typename std::list<product_map_t>::iterator it1 = plst.begin();
             it1 != plst.end(); it1++) {
 
         product_rule<N> &pr = to.new_product();
-        for (typename product_rule<N>::iterator ip1 = it1->begin();
+        for (typename product_map_t::iterator ip1 = it1->begin();
                 ip1 != it1->end(); ip1++) {
-            pr.add(it1->get_sequence(ip1), it1->get_intrinsic(ip1));
+            pr.add(*(seq_ptr[ip1->first]), ip1->second);
         }
     }
 

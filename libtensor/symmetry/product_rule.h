@@ -48,6 +48,12 @@ public:
         return (*m_slist)[it->first];
     }
 
+    /** \brief Return the number of the sequence in the sequence list
+     **/
+    size_t get_seqno(iterator it) const {
+        return it->first;
+    }
+
     /** \brief Return intrinsic label for term pointed to by it
      **/
     label_t get_intrinsic(iterator it) const { return it->second; }
