@@ -38,37 +38,66 @@ er_merge<N, M>::er_merge(const evaluation_rule<N> &rule,
 
 
 template<size_t N, size_t M>
-void er_merge<N, M>::perform(evaluation_rule<M> &rule) const {
+void er_merge<N, M>::perform(evaluation_rule<M> &to) const {
 
     er_merge<N, M>::start_timer();
 
-    rule.clear();
+    to.clear();
+
+    // Merge sequences
+    const eval_sequence_list<N> &slist1 = m_rule.get_sequences();
+    eval_sequence_list<M> slist2;
+    std::vector<size_t> smap(slist1.size(), 0);
+    for (size_t i = 0; i < slist1.size(); i++) {
+
+        const sequence<N, size_t> &seq1 = slist1[i];
+        sequence<M, size_t> seq2(0);
+
+        for (register size_t j = 0; j < N; j++) {
+            seq2[m_mmap[j]] += seq1[j];
+        }
+
+        size_t nidx = 0;
+        for (register size_t j = 0; j < M; j++) {
+            if (m_smsk[j]) seq2[j] = seq2[j] % 2;
+
+            nidx += seq2[j];
+        }
+        smap[i] = (nidx == 0 ? slist1.size() : slist2.add(seq2));
+    }
 
     // Loop over products
-    for (typename evaluation_rule<N>::const_iterator it = m_rule.begin();
-            it != m_rule.end(); it++) {
+    typename evaluation_rule<N>::const_iterator it = m_rule.begin();
+    for (; it != m_rule.end(); it++) {
 
         const product_rule<N> &pra = *it;
-        product_rule<M> &prb = rule.new_product();
 
-        for (typename product_rule<N>::iterator ip = pra.begin();
-                ip != pra.end(); ip++) {
+        bool all_allowed = true;
 
-            const sequence<N, size_t> &seq1 = pra.get_sequence(ip);
-            sequence<M, size_t> seq2(0);
-            for (register size_t i = 0; i < N; i++) {
-                seq2[m_mmap[i]] += seq1[i];
+        typename product_rule<N>::iterator ip = pra.begin();
+        for (; ip != pra.end(); ip++) {
+
+            // Zero sequence
+            if (smap[pra.get_seqno(ip)] != slist1.size()) {
+                all_allowed = false; continue;
             }
 
-            size_t nidx = 0;
-            for (register size_t i = 0; i < M; i++) {
-                if (! m_smsk[i]) continue;
-
-                seq2[i] = seq2[i] % 2;
-            }
-
-            prb.add(seq2, pra.get_intrinsic(ip));
+            if (pra.get_intrinsic(ip) != product_table_i::k_identity) break;
         }
+        if (ip != pra.end()) continue;
+
+        if (all_allowed) break;
+
+        product_rule<M> &prb = to.new_product();
+        for (typename product_rule<N>::iterator ip = pra.begin();
+                    ip != pra.end(); ip++) {
+            prb.add(slist2[smap[pra.get_seqno(ip)]], pra.get_intrinsic(ip));
+        }
+    }
+    if (it != m_rule.end()) {
+        to.clear();
+        product_rule<M> &pr = to.new_product();
+        pr.add(sequence<M, size_t>(1), product_table_i::k_invalid);
     }
 
     er_merge<N, M>::stop_timer();

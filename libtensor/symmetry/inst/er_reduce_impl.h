@@ -219,9 +219,9 @@ void er_reduce<N, M>::perform(evaluation_rule<N - M> &rule) const {
             idx2[i] = m_rdims[i].size() - 1;
         }
 
+        std::list<label_group_t> intr2_list;
 
         abs_index<M> aridx(dimensions<M>(index_range<M>(idx1, idx2)));
-        std::list<label_group_t> intr2_list;
         do {
 
             const index<M> &ridx = aridx.get_index();

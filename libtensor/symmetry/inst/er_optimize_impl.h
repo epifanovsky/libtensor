@@ -74,9 +74,9 @@ void er_optimize<N>::perform(evaluation_rule<N> &to) const {
         }
     }
 
+    // Loop over all products
     std::list<product_map_t> plst;
 
-    // Loop over all products
     typename evaluation_rule<N>::const_iterator it = m_rule.begin();
     for (; it != m_rule.end(); it++) {
 
