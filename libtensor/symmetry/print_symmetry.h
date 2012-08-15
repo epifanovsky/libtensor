@@ -70,21 +70,21 @@ std::ostream &operator<<(std::ostream &os, const symmetry<N, T> &sym) {
             adapter1_t g(set);
             for (typename adapter1_t::iterator its = g.begin();
                     its != g.end(); its++) {
-                os << g.get_elem(its);
+                os << g.get_elem(its) << std::endl;
             }
         }
         else if (set.get_id().compare(se2_t::k_sym_type) == 0) {
             adapter2_t g(set);
             for (typename adapter2_t::iterator its = g.begin();
                     its != g.end(); its++) {
-                os << g.get_elem(its);
+                os << g.get_elem(its) << std::endl;
             }
         }
         else if (set.get_id().compare(se3_t::k_sym_type) == 0) {
             adapter3_t g(set);
             for (typename adapter3_t::iterator its = g.begin();
                     its != g.end(); its++) {
-                os << g.get_elem(its);
+                os << g.get_elem(its) << std::endl;
             }
         }
     }
@@ -97,7 +97,7 @@ std::ostream &operator<<(std::ostream &os, const se_label<N, T> &se) {
 	
 	os << "Table ID: " << se.get_table_id() << std::endl;
     os << "Block labels: " << se.get_labeling() << std::endl;
-    os << "Rule: " << std::endl << se.get_rule() << std::endl;
+    os << "Rule: " << std::endl << se.get_rule();
     return os;
 }
 
@@ -106,20 +106,21 @@ std::ostream &operator<<(std::ostream &os, const se_part<N, T> &se) {
 	
 	const dimensions<N> &pdims = se.get_pdims();
 	os << "Partition dims: " << pdims << std::endl;
-	os << "Mappings:" << std::endl;
+	os << "Mappings:";
 	abs_index<N> ai(pdims);
 	do {
 	    if (se.is_forbidden(ai.get_index())) {
-	        os << ai.get_index() << " (x)";
+	        os << std::endl << " " << ai.get_index() << " (x)";
 	        continue;
 	    }
 
 		abs_index<N> aix(se.get_direct_map(ai.get_index()), pdims);
 		if (aix.get_abs_index() <= ai.get_abs_index()) continue;
 		
-		os << " " << ai.get_index() << " -> " << aix.get_index() << " ("
-			<< se.get_transf(ai.get_index(), aix.get_index())
-			<< ")" << std::endl;
+		os << std::endl
+		        << " " << ai.get_index() << " -> " << aix.get_index() << " ("
+		        << se.get_transf(ai.get_index(), aix.get_index())
+		        << ")" << std::endl;
 	} while (ai.inc());
 
 	return os;
@@ -128,7 +129,7 @@ std::ostream &operator<<(std::ostream &os, const se_part<N, T> &se) {
 template<size_t N> 
 std::ostream &operator<<(std::ostream &out, const se_perm<N, double> &sp) {
 	
-	out << sp.get_perm() << " " << sp.get_transf() << std::endl;
+	out << sp.get_perm() << " " << sp.get_transf();
 	return out;
 }
 
@@ -153,7 +154,7 @@ std::ostream &operator<<(std::ostream &os, const evaluation_rule<N> &er) {
     for (typename evaluation_rule<N>::const_iterator it = er.begin();
             it != er.end(); it++) {
 
-        os << er.get_product(it) << std::endl;
+        os << std::endl << er.get_product(it);
     }
     return os;
 }
