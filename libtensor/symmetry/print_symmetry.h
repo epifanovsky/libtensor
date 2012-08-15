@@ -1,10 +1,14 @@
 #ifndef LIBTENSOR_PRINT_SYMMETRY_H
 #define LIBTENSOR_PRINT_SYMMETRY_H
 
+#include <iomanip>
+#include <libtensor/core/abs_index.h>
 #include <libtensor/core/print_dimensions.h>
+#include <libtensor/core/symmetry.h>
 #include <libtensor/symmetry/se_label.h>
 #include <libtensor/symmetry/se_part.h>
 #include <libtensor/symmetry/se_perm.h>
+#include <libtensor/symmetry/symmetry_element_set_adapter.h>
 
 /** \file print_symmetry.h
 
@@ -164,13 +168,6 @@ std::ostream &operator<<(std::ostream &os, const product_rule<N> &pr) {
         for (register size_t j = 0; j < N; j++) os << seq[j];
         os << "]," << pr.get_intrinsic(it) << ")";
     }
-    return os;
-}
-
-template<>
-std::ostream &operator<<(std::ostream &os, const scalar_transf<double> &tr) {
-
-    os << tr.get_coeff();
     return os;
 }
 
