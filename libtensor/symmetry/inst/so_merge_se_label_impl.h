@@ -5,6 +5,7 @@
 #include "../bad_symmetry.h"
 #include "../combine_label.h"
 #include "../er_merge.h"
+#include "../er_optimize.h"
 #include "../product_table_container.h"
 
 namespace libtensor {
@@ -144,9 +145,10 @@ symmetry_operation_impl< so_merge<N, M, T>, se_label<NM, T> >::do_perform(
 
         // Transfer the rule
         const evaluation_rule<N> &r1 = cl1.get_rule();
-        evaluation_rule<N - M> r2;
-        er_merge<N, N - M>(r1, mmap, smsk).perform(r2);
-        se2.set_rule(r2);
+        evaluation_rule<N - M> r2a, r2b;
+        er_merge<N, N - M>(r1, mmap, smsk).perform(r2a);
+        er_optimize<N - M>(r2a, cl1.get_table_id()).perform(r2b);
+        se2.set_rule(r2b);
         params.grp2.insert(se2);
 
     } // Loop it1

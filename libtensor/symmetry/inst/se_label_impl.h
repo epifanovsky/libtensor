@@ -67,8 +67,8 @@ void se_label<N, T>::set_rule(const label_set_t &intr) {
 template<size_t N, typename T>
 void se_label<N, T>::set_rule(const evaluation_rule<N> &rule) {
 
-    m_rule.clear();
-    er_optimize<N>(rule, m_pt.get_id()).perform(m_rule);
+    m_rule = rule;
+//    er_optimize<N>(rule, m_pt.get_id()).perform(m_rule);
 }
 
 

@@ -33,13 +33,14 @@ evaluation_rule<N>::evaluation_rule(const evaluation_rule<N> &other) {
 
 
 template<size_t N>
-const evaluation_rule<N> &evaluation_rule<N>::operator=(
-        const evaluation_rule<N> &other) {
+const evaluation_rule<N> &
+evaluation_rule<N>::operator=(const evaluation_rule<N> &other) {
 
     m_slist->clear();
     m_rules.clear();
 
     for (const_iterator it = other.begin(); it != other.end(); it++) {
+
         const product_rule<N> &pr = other.get_product(it);
 
         m_rules.push_back(product_rule<N>(m_slist));
