@@ -137,6 +137,7 @@ set(SRC_LINALG
 set(SRC_INST
     dense_tensor/impl/dense_tensor.C
     dense_tensor/impl/to_contract2_dims.C
+    dense_tensor/impl/to_contract2_perms.C
     dense_tensor/impl/tod_add.C
     dense_tensor/impl/tod_btconv.C
     dense_tensor/impl/tod_compare.C
