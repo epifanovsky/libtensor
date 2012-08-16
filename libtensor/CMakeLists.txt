@@ -2,52 +2,27 @@ set(SRC
     defs.C
     exception.C
     version.C
-    core/abs_index.C
-    core/allocator.C
-    core/dimensions.C
-    core/orbit.C
-    core/orbit_list.C
-    btod/btod_cholesky.C
-    btod/cholesky.C
+    core/impl/abs_index.C
+    core/impl/allocator.C
+    core/impl/dimensions.C
+    core/impl/orbit.C
+    core/impl/orbit_list.C
     btod/btod_diagonalize.C
     btod/btod_tridiagonalize.C
     symmetry/point_group_table.C
     symmetry/product_table_container.C
     symmetry/product_table_i.C
     tod/loop_list_add.C
-    tod/loop_list_copy.C
-    tod/loop_list_mul.C
-    tod/loop_list_elem.C
-    tod/loop_list_elem1.C
-    tod/kernels/kern_add_generic.C
-    tod/kernels/kern_add_i_i_x_x.C
-    tod/kernels/kern_add_i_x_i_x.C
-    tod/kernels/kern_copy_generic.C
-    tod/kernels/kern_mul_generic.C
-    tod/kernels/kern_mul_i_i_i.C
-    tod/kernels/kern_mul_i_i_x.C
-    tod/kernels/kern_mul_i_ip_p.C
+)
+
+set(SKIPPED
     tod/kernels/kern_mul_i_ipq_qp.C
-    tod/kernels/kern_mul_i_p_ip.C
-    tod/kernels/kern_mul_i_p_pi.C
-    tod/kernels/kern_mul_i_pi_p.C
-    tod/kernels/kern_mul_i_x_i.C
-    tod/kernels/kern_mul_ij_i_j.C
-    tod/kernels/kern_mul_ij_ip_jp.C
-    tod/kernels/kern_mul_ij_ip_pj.C
     tod/kernels/kern_mul_ij_ipq_jqp.C
     tod/kernels/kern_mul_ij_ipq_pjq.C
-    tod/kernels/kern_mul_ij_j_i.C
     tod/kernels/kern_mul_ij_jipq_qp.C
-    tod/kernels/kern_mul_ij_jp_ip.C
-    tod/kernels/kern_mul_ij_jp_pi.C
     tod/kernels/kern_mul_ij_jpq_iqp.C
     tod/kernels/kern_mul_ij_p_pji.C
-    tod/kernels/kern_mul_ij_pi_jp.C
-    tod/kernels/kern_mul_ij_pi_pj.C
     tod/kernels/kern_mul_ij_piq_pjq.C
-    tod/kernels/kern_mul_ij_pj_ip.C
-    tod/kernels/kern_mul_ij_pj_pi.C
     tod/kernels/kern_mul_ij_pji_p.C
     tod/kernels/kern_mul_ij_pjq_piq.C
     tod/kernels/kern_mul_ijk_ip_jpk.C
@@ -108,8 +83,6 @@ set(SRC
     tod/kernels/kern_mul_ijklm_ipkm_jpl.C
     tod/kernels/kern_mul_ijklm_jlp_ipkm.C
     tod/kernels/kern_mul_ijklmn_kjmp_ipln.C
-    tod/kernels/kern_mul_x_p_p.C
-    tod/kernels/kern_mul_x_pq_qp.C
 )
 
 set(SRC_CUDA
@@ -124,6 +97,20 @@ set(SRC_CUDA
     tod/tod_add_cuda.C
 )
 
+set(SRC_LINALG_ACML
+    linalg/acml/linalg_base_level1_acml.C
+    linalg/acml/linalg_base_level2_acml.C
+    linalg/acml/linalg_base_level3_acml.C
+    linalg/acml/lapack_acml.C
+)
+
+set(SRC_LINALG_MKL
+    linalg/mkl/linalg_base_level1_mkl.C
+    linalg/mkl/linalg_base_level2_mkl.C
+    linalg/mkl/linalg_base_level3_mkl.C
+    linalg/mkl/lapack_mkl.C
+)
+
 set(SRC_LINALG
     linalg/generic/linalg_base_level1_generic.C
     linalg/generic/linalg_base_level2_generic.C
@@ -132,6 +119,45 @@ set(SRC_LINALG
     linalg/generic/linalg_base_level4_generic.C
     linalg/generic/linalg_base_level5_generic.C
     linalg/generic/linalg_base_level6_generic.C
+)
+
+set(SRC_KERNELS
+    kernels/dadd1/kern_dadd1.C
+    kernels/dadd1/kern_dadd1_i_i_x.C
+    kernels/dadd1/kern_dadd1_ij_ij_x.C
+    kernels/dadd1/kern_dadd1_ij_ji_x.C
+    kernels/dadd2/kern_dadd2.C
+    kernels/dadd2/kern_dadd2_i_i_x_x.C
+    kernels/dadd2/kern_dadd2_i_x_i_x.C
+    kernels/dcopy/kern_dcopy.C
+    kernels/dcopy/kern_dcopy_i_i_x.C
+    kernels/dcopy/kern_dcopy_ij_ij_x.C
+    kernels/dcopy/kern_dcopy_ij_ji_x.C
+    kernels/ddiv1/kern_ddiv1.C
+    kernels/ddiv2/kern_ddiv2.C
+    kernels/ddivadd1/kern_ddivadd1.C
+    kernels/dmul1/kern_dmul1.C
+    kernels/dmul2/kern_dmul2.C
+    kernels/dmul2/kern_dmul2_i_i_i.C
+    kernels/dmul2/kern_dmul2_i_i_x.C
+    kernels/dmul2/kern_dmul2_i_x_i.C
+    kernels/dmul2/kern_dmul2_x_p_p.C
+    kernels/dmul2/kern_dmul2_i_ip_p.C
+    kernels/dmul2/kern_dmul2_i_p_ip.C
+    kernels/dmul2/kern_dmul2_i_p_pi.C
+    kernels/dmul2/kern_dmul2_i_pi_p.C
+    kernels/dmul2/kern_dmul2_x_pq_qp.C
+    kernels/dmul2/kern_dmul2_ij_i_j.C
+    kernels/dmul2/kern_dmul2_ij_j_i.C
+    kernels/dmul2/kern_dmul2_ij_ip_jp.C
+    kernels/dmul2/kern_dmul2_ij_ip_pj.C
+    kernels/dmul2/kern_dmul2_ij_jp_ip.C
+    kernels/dmul2/kern_dmul2_ij_jp_pi.C
+    kernels/dmul2/kern_dmul2_ij_pi_jp.C
+    kernels/dmul2/kern_dmul2_ij_pi_pj.C
+    kernels/dmul2/kern_dmul2_ij_pj_ip.C
+    kernels/dmul2/kern_dmul2_ij_pj_pi.C
+    kernels/dmuladd1/kern_dmuladd1.C
 )
 
 set(SRC_INST
@@ -164,8 +190,12 @@ set(SRC_INST
     symmetry/inst/block_labeling_inst.C
     symmetry/inst/combine_part_inst.C
     symmetry/inst/combine_label_inst.C
+    symmetry/inst/er_merge_inst.C
+    symmetry/inst/er_optimize_inst.C
+    symmetry/inst/er_reduce_inst.C
     symmetry/inst/evaluation_rule_inst.C
     symmetry/inst/permutation_group_inst.C
+    symmetry/inst/print_symmetry_inst.C
     symmetry/inst/se_label_inst.C
     symmetry/inst/se_part_inst.C
     symmetry/inst/se_perm_inst.C
@@ -198,24 +228,29 @@ set(SRC_INST
     symmetry/inst/so_symmetrize_se_label_inst.C
     symmetry/inst/so_symmetrize_se_part_inst.C
     symmetry/inst/so_symmetrize_se_perm_inst.C
+    block_tensor/bto/impl/bto_contract2_bis.C
     block_tensor/btod/impl/additive_btod.C
     block_tensor/btod/impl/basic_btod.C
+    block_tensor/btod/impl/btod_add.C
+    block_tensor/btod/impl/btod_contract2_clst.C
+    block_tensor/btod/impl/btod_contract2_nzorb.C
+    block_tensor/btod/impl/btod_contract2_sym.C
+    block_tensor/btod/impl/btod_contract2_1.C
+    block_tensor/btod/impl/btod_contract2_2.C
+    block_tensor/btod/impl/btod_contract2_3.C
+    block_tensor/btod/impl/btod_contract2_4.C
+    block_tensor/btod/impl/btod_contract2_5.C
+    block_tensor/btod/impl/btod_contract2_6.C
+    block_tensor/btod/impl/btod_contract3.C
     block_tensor/btod/impl/btod_copy.C
     block_tensor/btod/impl/btod_diag.C
+    block_tensor/btod/impl/btod_dirsum.C
+    block_tensor/btod/impl/btod_dotprod.C
+    block_tensor/btod/impl/btod_ewmult2.C
     block_tensor/btod/impl/btod_set.C
+    block_tensor/btod/impl/btod_sum.C
     block_tensor/btod/impl/btod_trace.C
     block_tensor/btod/impl/btod_vmpriority.C
-    btod/btod_add.C
-    btod/btod_contract2_1.C
-    btod/btod_contract2_2.C
-    btod/btod_contract2_3.C
-    btod/btod_contract2_4.C
-    btod/btod_contract2_5.C
-    btod/btod_contract2_6.C
-    btod/btod_dirsum.C
-    btod/btod_dotprod.C
-    btod/btod_ewmult2.C
-    btod/btod_sum.C
     diag_tensor/impl/diag_tensor_space.C
     diag_tensor/impl/diag_tensor.C
     diag_tensor/impl/tod_conv_diag_tensor.C
@@ -229,12 +264,22 @@ set(SRC_INST
 
 set(SRC_QCHEM
     linalg/qchem/linalg_base_level1_qchem.C
+    linalg/qchem/linalg_base_level2_qchem.C
+    linalg/qchem/linalg_base_level3_qchem.C
 )
 
+if(USE_ACML)
+    set(SRC_LINALG ${SRC_LINALG} ${SRC_LINALG_ACML})
+elseif(USE_MKL)
+    set(SRC_LINALG ${SRC_LINALG} ${SRC_LINALG_MKL})
+endif()
+
 if(CUDA_FOUND)
-    cuda_add_library(tensor ${SRC_CUDA} ${SRC} ${SRC_LINALG} ${SRC_INST} ${SRC_MP})
+    cuda_add_library(tensor ${SRC_CUDA} ${SRC} ${SRC_LINALG} ${SRC_KERNELS} 
+        ${SRC_INST} ${SRC_MP})
 else(CUDA_FOUND)
-    add_library(tensor ${SRC} ${SRC_LINALG} ${SRC_INST} ${SRC_MP})
+    add_library(tensor ${SRC} ${SRC_LINALG} ${SRC_KERNELS} ${SRC_INST} 
+        ${SRC_MP})
     if(QCHEM_SOURCE_DIR)
         add_library(tensor_qchem ${SRC_QCHEM})
         add_dependencies(tensor_qchem tensor)
@@ -242,15 +287,12 @@ else(CUDA_FOUND)
 endif(CUDA_FOUND)
 
 set_property(TARGET tensor APPEND PROPERTY
-    COMPILE_DEFINITIONS LIBTENSOR_INSTANTIATE_TEMPLATES)
-set_property(TARGET tensor APPEND PROPERTY
-    COMPILE_DEFINITIONS LIBTENSOR_TIMINGS)
-set_property(TARGET tensor APPEND PROPERTY
     COMPILE_DEFINITIONS_DEBUG LIBTENSOR_DEBUG)
 if(HAVE_LIBVMM)
     set_property(TARGET tensor APPEND PROPERTY
-        COMPILE_DEFINITIONS HAVE_LIBVMM)
-    set_property(TARGET tensor APPEND PROPERTY
         COMPILE_DEFINITIONS_DEBUG LIBVMM_DEBUG)
+else(HAVE_LIBVMM)
+    set_property(TARGET tensor APPEND PROPERTY
+        COMPILE_DEFINITIONS WITHOUT_LIBVMM)
 endif(HAVE_LIBVMM)
 

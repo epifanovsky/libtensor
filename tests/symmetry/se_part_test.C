@@ -1,6 +1,6 @@
 #include <sstream>
 #include <set>
-#include <libtensor/btod/scalar_transf_double.h>
+#include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/symmetry/se_part.h>
 #include "se_part_test.h"
 

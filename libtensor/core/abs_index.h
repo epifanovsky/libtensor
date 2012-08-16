@@ -136,30 +136,4 @@ public:
 
 } // namespace libtensor
 
-
-#ifdef LIBTENSOR_INSTANTIATE_TEMPLATES
-
-namespace libtensor {
-
-    extern template class abs_index<0>;
-    extern template class abs_index<1>;
-    extern template class abs_index<2>;
-    extern template class abs_index<3>;
-    extern template class abs_index<4>;
-    extern template class abs_index<5>;
-    extern template class abs_index<6>;
-    extern template class abs_index<7>;
-    extern template class abs_index<8>;
-    extern template class abs_index<9>;
-    extern template class abs_index<10>;
-    extern template class abs_index<11>;
-    extern template class abs_index<12>;
-
-} // namespace libtensor
-
-#else // LIBTENSOR_INSTANTIATE_TEMPLATES
-#include "abs_index_impl.h"
-#endif // LIBTENSOR_INSTANTIATE_TEMPLATES
-
-
 #endif // LIBTENSOR_ABS_INDEX_H

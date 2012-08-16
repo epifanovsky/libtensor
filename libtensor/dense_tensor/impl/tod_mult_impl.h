@@ -1,7 +1,11 @@
 #ifndef LIBTENSOR_TOD_MULT_IMPL_H
 #define LIBTENSOR_TOD_MULT_IMPL_H
 
+#include <memory>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
+#include <libtensor/tod/kernels/loop_list_runner.h>
+#include <libtensor/kernels/kern_ddiv2.h>
+#include <libtensor/kernels/kern_dmul2.h>
 #include <libtensor/tod/bad_dimensions.h>
 #include "../tod_mult.h"
 
@@ -84,10 +88,6 @@ void tod_mult<N>::perform(bool zero, double c,
         throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "tc");
     }
 
-    typedef typename loop_list_elem::list_t list_t;
-    typedef typename loop_list_elem::registers registers_t;
-    typedef typename loop_list_elem::node node_t;
-
     tod_mult<N>::start_timer();
 
     try {
@@ -102,14 +102,40 @@ void tod_mult<N>::perform(bool zero, double c,
     const dimensions<N> &dimsb = m_tb.get_dims();
     const dimensions<N> &dimsc = tc.get_dims();
 
-    list_t loop;
-    build_loop(loop, dimsa, m_perma, dimsb, m_permb, dimsc);
+    sequence<N, size_t> mapa(0), mapb(0);
+    for(size_t i = 0; i < N; i++) mapa[i] = mapb[i] = i;
+    m_perma.apply(mapa);
+    m_permb.apply(mapb);
+
+    std::list< loop_list_node<2, 1> > loop_in, loop_out;
+    typename std::list< loop_list_node<2, 1> >::iterator inode = loop_in.end();
+    for (size_t idxc = 0; idxc < N; ) {
+        size_t len = 1;
+        size_t idxa = mapa[idxc], idxb = mapb[idxc];
+
+        do {
+            len *= dimsa.get_dim(idxa);
+            idxa++; idxb++; idxc++;
+        } while (idxc < N && mapa[idxc] == idxa && mapb[idxc] == idxb);
+
+        inode = loop_in.insert(loop_in.end(), loop_list_node<2, 1>(len));
+        inode->stepa(0) = dimsa.get_increment(idxa - 1);
+        inode->stepa(1) = dimsb.get_increment(idxb - 1);
+        inode->stepb(0) = dimsc.get_increment(idxc - 1);
+    }
 
     const double *pa = ca.req_const_dataptr();
     const double *pb = cb.req_const_dataptr();
     double *pc = cc.req_dataptr();
 
-    registers_t r;
+    if(zero) {
+        tod_mult<N>::start_timer("zero");
+        size_t sz = dimsc.get_size();
+        for(size_t i = 0; i < sz; i++) pc[i] = 0.0;
+        tod_mult<N>::stop_timer("zero");
+    }
+
+    loop_registers<2, 1> r;
     r.m_ptra[0] = pa;
     r.m_ptra[1] = pb;
     r.m_ptrb[0] = pc;
@@ -117,7 +143,13 @@ void tod_mult<N>::perform(bool zero, double c,
     r.m_ptra_end[1] = pb + dimsb.get_size();
     r.m_ptrb_end[0] = pc + dimsc.get_size();
 
-    loop_list_elem::run_loop(loop, r, m_c * c, !zero, m_recip);
+    std::auto_ptr< kernel_base<2, 1> > kern(
+        m_recip ?
+            kern_ddiv2::match(m_c * c, loop_in, loop_out) :
+            kern_dmul2::match(m_c * c, loop_in, loop_out));
+    tod_mult<N>::start_timer(kern->get_name());
+    loop_list_runner<2, 1>(loop_in).run(r, *kern);
+    tod_mult<N>::stop_timer(kern->get_name());
 
     cc.ret_dataptr(pc); pc = 0;
     cb.ret_const_dataptr(pb); pb = 0;
@@ -129,38 +161,6 @@ void tod_mult<N>::perform(bool zero, double c,
     }
 
     tod_mult<N>::stop_timer();
-}
-
-
-template<size_t N>
-void tod_mult<N>::build_loop(typename loop_list_elem::list_t &loop,
-    const dimensions<N> &dimsa, const permutation<N> &perma,
-    const dimensions<N> &dimsb, const permutation<N> &permb,
-    const dimensions<N> &dimsc) {
-
-    typedef typename loop_list_elem::iterator_t iterator_t;
-    typedef typename loop_list_elem::node node_t;
-
-    sequence<N, size_t> mapa(0), mapb(0);
-    for(size_t i = 0; i < N; i++) mapa[i] = mapb[i] = i;
-    perma.apply(mapa);
-    permb.apply(mapb);
-
-    for (size_t idxc = 0; idxc < N; ) {
-        size_t len = 1;
-        size_t idxa = mapa[idxc], idxb = mapb[idxc];
-
-        do {
-            len *= dimsa.get_dim(idxa);
-            idxa++; idxb++; idxc++;
-        } while (idxc < N && mapa[idxc] == idxa && mapb[idxc] == idxb);
-
-        iterator_t inode = loop.insert(loop.end(), node_t(len));
-        inode->stepa(0) = dimsa.get_increment(idxa - 1);
-        inode->stepa(1) = dimsb.get_increment(idxb - 1);
-        inode->stepb(0) = dimsc.get_increment(idxc - 1);
-    }
-
 }
 
 

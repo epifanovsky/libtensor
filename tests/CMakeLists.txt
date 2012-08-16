@@ -76,12 +76,18 @@ set(SRC_DIAG_TENSOR
 
 set(SRC_SYMMETRY
     symmetry/block_labeling_test.C
+    symmetry/combine_label_test.C
     symmetry/combine_part_test.C
+    symmetry/eval_sequence_list_test.C
+    symmetry/er_merge_test.C
+    symmetry/er_optimize_test.C
+    symmetry/er_reduce_test.C
     symmetry/evaluation_rule_test.C
     symmetry/libtensor_symmetry_tests.C
     symmetry/libtensor_symmetry_suite.C
     symmetry/permutation_group_test.C
     symmetry/point_group_table_test.C
+    symmetry/product_rule_test.C
     symmetry/product_table_container_test.C
     symmetry/se_label_test_base.C
     symmetry/se_label_test.C
@@ -112,6 +118,7 @@ set(SRC_SYMMETRY
     symmetry/so_reduce_se_perm_test.C
     symmetry/so_reduce_test.C
     symmetry/so_symmetrize_se_label_test.C
+    symmetry/so_symmetrize_se_part_test.C
     symmetry/so_symmetrize_test.C
     symmetry/symmetry_element_set_adapter_test.C
 )
@@ -120,11 +127,13 @@ set(SRC_BTOD
     btod/libtensor_btod_tests.C
     btod/libtensor_btod_suite.C
     btod/addition_schedule_test.C
+    btod/bto_contract2_bis_test.C
+    btod/bto_contract2_sym_test.C
     btod/btod_add_test.C
     btod/btod_apply_test.C
-    btod/btod_cholesky_test.C
     btod/btod_compare_test.C
     btod/btod_contract2_test.C
+    btod/btod_contract3_test.C
     btod/btod_copy_test.C
     btod/btod_diag_test.C
     btod/btod_diagonalize_test.C
@@ -268,14 +277,13 @@ if(CUDA_FOUND)
 endif(CUDA_FOUND)
 
 set_property(TARGET ${TARGETS} APPEND PROPERTY
-    COMPILE_DEFINITIONS LIBTENSOR_INSTANTIATE_TEMPLATES)
-set_property(TARGET ${TARGETS} APPEND PROPERTY
     COMPILE_DEFINITIONS_DEBUG LIBTENSOR_DEBUG)
 if(HAVE_LIBVMM)
     set_property(TARGET ${TARGETS} APPEND PROPERTY
-        COMPILE_DEFINITIONS HAVE_LIBVMM)
-    set_property(TARGET ${TARGETS} APPEND PROPERTY
         COMPILE_DEFINITIONS_DEBUG LIBVMM_DEBUG)
+else(HAVE_LIBVMM)
+    set_property(TARGET ${TARGETS} APPEND PROPERTY
+        COMPILE_DEFINITIONS WITHOUT_LIBVMM)
 endif(HAVE_LIBVMM)
 
 foreach(TARGET ${TARGETS})

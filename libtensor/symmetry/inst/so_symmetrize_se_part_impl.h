@@ -21,6 +21,9 @@ void symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::do_perform(
     static const char *method =
             "do_perform(const symmetry_operation_params_t&)";
 
+    params.grp2.clear();
+    if (params.grp1.is_empty()) return;
+
     combine_part<N, T> cp(params.grp1);
     const dimensions<N> &pdims = cp.get_pdims();
 
@@ -93,7 +96,7 @@ symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::is_forbidden(
         const permutation<N> &pn = pg.get_perm();
         register size_t i = 0;
         for (; i < N && ! msk[i]; i++) ix[map[i]] = i1[map[pn[i]]];
-        size_t ngrp = i++, ns = ngrp;
+        size_t ngrp = i, ns = ngrp;
         while (i < N && map[i] < N) {
             for (register size_t j = 0; j < ngrp; j++, i++) {
                 ix[map[i]] = i1[map[pn[j] + ns]];
@@ -118,7 +121,7 @@ symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::mark_forbidden(
         const permutation<N> &pn = pg.get_perm();
         register size_t i = 0;
         for (; i < N && ! msk[i]; i++) ix[map[i]] = i1[map[pn[i]]];
-        size_t ngrp = i++, ns = ngrp;
+        size_t ngrp = i, ns = ngrp;
         while (i < N && map[i] < N) {
             for (register size_t j = 0; j < ngrp; j++, i++) {
                 ix[map[i]] = i1[map[pn[j] + ns]];
@@ -144,7 +147,7 @@ bool symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::map_exists(
             j1[map[i]] = i1[map[pn[i]]];
             j2[map[i]] = i2[map[pn[i]]];
         }
-        size_t ngrp = i++, ns = ngrp;
+        size_t ngrp = i, ns = ngrp;
         while (i < N && map[i] < N) {
             for (register size_t j = 0; j < ngrp; j++, i++) {
                 j1[map[i]] = i1[map[pn[j] + ns]];
@@ -169,7 +172,7 @@ bool symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::map_exists(
             j1[map[i]] = i1[map[pn[i]]];
             j2[map[i]] = i2[map[pn[i]]];
         }
-        size_t ngrp = i++, ns = ngrp;
+        size_t ngrp = i, ns = ngrp;
         while (i < N && map[i] < N) {
             for (register size_t j = 0; j < ngrp; j++, i++) {
                 j1[map[i]] = i1[map[pn[j] + ns]];
@@ -204,7 +207,7 @@ void symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::add_map(
             j1[map[i]] = i1[map[pn[i]]];
             j2[map[i]] = i2[map[pn[i]]];
         }
-        size_t ngrp = i++, ns = ngrp;
+        size_t ngrp = i, ns = ngrp;
         while (i < N && map[i] < N) {
             for (register size_t j = 0; j < ngrp; j++, i++) {
                 j1[map[i]] = i1[map[pn[j] + ns]];

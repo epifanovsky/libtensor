@@ -1006,6 +1006,7 @@ void block_index_space_test::test_exc_1() throw(libtest::test_exception) {
     block_index_space<1> bis(d_10);
     bool ok;
 
+#ifdef LIBTENSOR_DEBUG
     ok = false;
     try {
         bis.get_block_start(i_1);
@@ -1049,10 +1050,12 @@ void block_index_space_test::test_exc_1() throw(libtest::test_exception) {
         fail_test(testname, __FILE__, __LINE__,
             "(2) Index out of bounds in get_block_dims()");
     }
+#endif // LIBTENSOR_DEBUG
 
     mask<1> splmsk; splmsk[0] = true;
     bis.split(splmsk, 5);
 
+#ifdef LIBTENSOR_DEBUG
     ok = false;
     try {
         bis.get_block_start(i_2);
@@ -1096,6 +1099,7 @@ void block_index_space_test::test_exc_1() throw(libtest::test_exception) {
         fail_test(testname, __FILE__, __LINE__,
             "(4) Index out of bounds in get_block_dims()");
     }
+#endif // LIBTENSOR_DEBUG
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
@@ -1143,6 +1147,7 @@ void block_index_space_test::test_exc_2() throw(libtest::test_exception) {
     block_index_space<2> bis(d_66);
     bool ok;
 
+#ifdef LIBTENSOR_DEBUG
     ok = false;
     try {
         bis.get_block_start(i_11);
@@ -1164,11 +1169,13 @@ void block_index_space_test::test_exc_2() throw(libtest::test_exception) {
         fail_test(testname, __FILE__, __LINE__,
             "(1) Index out of bounds in get_block_dims()");
     }
+#endif // LIBTENSOR_DEBUG
 
     mask<2> splmsk1, splmsk2;
     splmsk1[0] = true; splmsk2[1] = true;
     bis.split(splmsk1, 1);
 
+#ifdef LIBTENSOR_DEBUG
     ok = false;
     try {
         bis.get_block_start(i_21);
@@ -1190,9 +1197,11 @@ void block_index_space_test::test_exc_2() throw(libtest::test_exception) {
         fail_test(testname, __FILE__, __LINE__,
             "(2) Index out of bounds in get_block_dims()");
     }
+#endif // LIBTENSOR_DEBUG
 
     bis.split(splmsk1, 3);
 
+#ifdef LIBTENSOR_DEBUG
     ok = false;
     try {
         bis.get_block_start(i_31);
@@ -1236,9 +1245,11 @@ void block_index_space_test::test_exc_2() throw(libtest::test_exception) {
         fail_test(testname, __FILE__, __LINE__,
             "(4) Index out of bounds in get_block_dims()");
     }
+#endif // LIBTENSOR_DEBUG
 
     bis.split(splmsk2, 1);
 
+#ifdef LIBTENSOR_DEBUG
     ok = false;
     try {
         bis.get_block_start(i_32);
@@ -1260,9 +1271,11 @@ void block_index_space_test::test_exc_2() throw(libtest::test_exception) {
         fail_test(testname, __FILE__, __LINE__,
             "(5) Index out of bounds in get_block_dims()");
     }
+#endif // LIBTENSOR_DEBUG
 
     bis.split(splmsk2, 3);
 
+#ifdef LIBTENSOR_DEBUG
     ok = false;
     try {
         bis.get_block_start(i_33);
@@ -1328,6 +1341,7 @@ void block_index_space_test::test_exc_2() throw(libtest::test_exception) {
         fail_test(testname, __FILE__, __LINE__,
             "(8) Index out of bounds in get_block_dims()");
     }
+#endif // LIBTENSOR_DEBUG
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());

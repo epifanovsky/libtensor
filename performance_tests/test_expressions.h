@@ -26,7 +26,9 @@ class test_expression_simple_add
 	typedef btensor<4,double> btensor_t;
 	std::auto_ptr<btensor_t> m_v_ovov, m_w_ovov, m_res_ovov;
 
+public:
 	static const char* k_clazz;
+
 public:
 	virtual ~test_expression_simple_add() {}
 	virtual void calculate() {
@@ -74,7 +76,7 @@ class test_expression_permute_add
 
 	typedef btensor<4,double> btensor_t;
 	std::auto_ptr<btensor_t> m_i_ovov, m_i_oovv, m_res_ovov;
-
+public:
 	static const char* k_clazz;
 public:
 	virtual ~test_expression_permute_add() {}
@@ -100,7 +102,7 @@ class test_expression_simple_copy
 
 	typedef btensor<4,double> btensor_t;
 	std::auto_ptr<btensor_t> m_v_ovov, m_res_ovov;
-
+public:
 	static const char* k_clazz;
 public:
 	virtual ~test_expression_simple_copy() {}
@@ -126,7 +128,7 @@ class test_expression_permute_copy
 
 	typedef btensor<4,double> btensor_t;
 	std::auto_ptr<btensor_t> m_v_oovv, m_res_ovov;
-
+public:
 	static const char* k_clazz;
 public:
 	virtual ~test_expression_permute_copy() {}
@@ -158,7 +160,7 @@ class test_expression_adc
 	typedef btensor<4,double> btensor_t;
 	std::auto_ptr<btensor_t> m_v_ovov, m_res_ovov,
 		m_i_vvvv, m_i_oooo, m_i_oovv;
-
+public:
 	static const char* k_clazz;
 public:
 	virtual ~test_expression_adc() {}

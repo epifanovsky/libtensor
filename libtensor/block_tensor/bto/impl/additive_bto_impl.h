@@ -24,9 +24,25 @@ void additive_bto<N, Traits>::compute_block(additive_bto<N, Traits> &op,
     op.compute_block(zero, blk, i, tr, c);
 }
 
-
 template<size_t N, typename Traits>
 void additive_bto<N, Traits>::perform(block_tensor_t &bt, const element_t &c) {
+
+    std::vector<size_t> blst;
+    perform_inner(bt, c, false, blst);
+}
+
+
+template<size_t N, typename Traits>
+void additive_bto<N, Traits>::perform(block_tensor_t &bt, const element_t &c,
+    const std::vector<size_t> &blst) {
+
+    perform_inner(bt, c, true, blst);
+}
+
+
+template<size_t N, typename Traits>
+void additive_bto<N, Traits>::perform_inner(block_tensor_t &bt,
+    const element_t &c, bool filter, const std::vector<size_t> &blst) {
 
     typedef typename Traits::template block_tensor_ctrl_type<N>::type
         block_tensor_ctrl_t;
@@ -47,7 +63,7 @@ void additive_bto<N, Traits>::perform(block_tensor_t &bt, const element_t &c) {
     so_dirsum<N, N, element_t>(symcopy, get_symmetry(), p0).perform(symx);
     mask<N + N> msk;
     sequence<N + N, size_t> seq;
-    for (register size_t i = 0; i < N; i++) {
+    for(size_t i = 0; i < N; i++) {
         msk[i] = msk[i + N] = true;
         seq[i] = seq[i + N] = i;
     }
@@ -55,7 +71,16 @@ void additive_bto<N, Traits>::perform(block_tensor_t &bt, const element_t &c) {
 
     dimensions<N> bidims(bt.get_bis().get_block_index_dims());
     schedule_t sch(get_symmetry(), symcopy);
-    sch.build(get_schedule(), ctrl);
+    if(filter) {
+        assignment_schedule<N, element_t> asch(bidims);
+        const assignment_schedule<N, element_t> &asch0 = get_schedule();
+        for(size_t i = 0; i < blst.size(); i++) {
+            if(asch0.contains(blst[i])) asch.insert(blst[i]);
+        }
+        sch.build(asch, ctrl);
+    } else {
+        sch.build(get_schedule(), ctrl);
+    }
 
     std::vector<task*> tasks;
 
@@ -132,9 +157,7 @@ void additive_bto<N, Traits>::task::perform() {
                 to_set_t().perform(blkc);
             } else {
                 block_t &blkb = ctrl.req_block(aib.get_index());
-                to_copy_t(blkb, node.trb.get_perm(),
-                    node.trb.get_scalar_tr().get_coeff()).
-                    perform(true, 1.0, blkc);
+                to_copy_t(blkb, node.trb).perform(true, 1.0, blkc);
                 ctrl.ret_block(aib.get_index());
             }
             ctrl.ret_block(aic.get_index());
@@ -151,18 +174,13 @@ void additive_bto<N, Traits>::task::perform() {
             block_t &blkc = ctrl.req_block(aic.get_index());
             if(zerob) {
                 abs_index<N> aia(node.cia, m_bidims);
-                to_copy_t(*ila->second, node.tra.get_perm(),
-                    node.tra.get_scalar_tr().get_coeff()).
-                    perform(true, 1.0, blkc);
+                to_copy_t(*ila->second,
+                        node.tra).perform(true, 1.0, blkc);
             } else {
                 abs_index<N> aia(node.cia, m_bidims);
                 block_t &blkb = ctrl.req_block(aib.get_index());
-                to_copy_t(*ila->second, node.tra.get_perm(),
-                    node.tra.get_scalar_tr().get_coeff()).
-                    perform(true, 1.0, blkc);
-                to_copy_t(blkb, node.trb.get_perm(),
-                    node.trb.get_scalar_tr().get_coeff()).
-                    perform(false, 1.0, blkc);
+                to_copy_t(*ila->second, node.tra).perform(true, 1.0, blkc);
+                to_copy_t(blkb, node.trb).perform(false, 1.0, blkc);
                 ctrl.ret_block(aib.get_index());
             }
             ctrl.ret_block(aic.get_index());
@@ -184,14 +202,10 @@ void additive_bto<N, Traits>::task::perform() {
         block_t &blkb = ctrl.req_block(aib.get_index());
         if(zerob) {
             abs_index<N> aia(node.cia, m_bidims);
-            to_copy_t(*ila->second, node.tra.get_perm(),
-                node.tra.get_scalar_tr().get_coeff()).
-                perform(true, 1.0, blkb);
+            to_copy_t(*ila->second, node.tra).perform(true, 1.0, blkb);
         } else {
             abs_index<N> aia(node.cia, m_bidims);
-            to_copy_t(*ila->second, node.tra.get_perm(),
-                node.tra.get_scalar_tr().get_coeff()).
-                perform(false, 1.0, blkb);
+            to_copy_t(*ila->second, node.tra).perform(false, 1.0, blkb);
         }
         ctrl.ret_block(aib.get_index());
     }

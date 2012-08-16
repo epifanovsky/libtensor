@@ -209,29 +209,4 @@ public:
 
 } // namespace libtensor
 
-
-#ifdef LIBTENSOR_INSTANTIATE_TEMPLATES
-
-namespace libtensor {
-
-    extern template class dimensions<1>;
-    extern template class dimensions<2>;
-    extern template class dimensions<3>;
-    extern template class dimensions<4>;
-    extern template class dimensions<5>;
-    extern template class dimensions<6>;
-    extern template class dimensions<7>;
-    extern template class dimensions<8>;
-    extern template class dimensions<9>;
-    extern template class dimensions<10>;
-    extern template class dimensions<11>;
-    extern template class dimensions<12>;
-
-} // namespace libtensor
-
-#else // LIBTENSOR_INSTANTIATE_TEMPLATES
-#include "dimensions_impl.h"
-#endif // LIBTENSOR_INSTANTIATE_TEMPLATES
-
-
 #endif // LIBTENSOR_DIMENSIONS_H

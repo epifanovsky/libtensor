@@ -9,7 +9,8 @@ void so_dirsum_se_label_test::perform() throw(libtest::test_exception) {
 
     static const char *testname = "so_dirsum_se_label_test::perform()";
 
-    std::string table_id = setup_pg_table();
+    std::string table_id = "S6";
+    setup_pg_table(table_id);
 
     try {
 
@@ -22,8 +23,8 @@ void so_dirsum_se_label_test::perform() throw(libtest::test_exception) {
         test_nn_2(table_id);
         test_nn_3(table_id);
 
-    } catch (libtest::test_exception) {
-        product_table_container::get_instance().erase(table_id);
+    } catch (libtest::test_exception &e) {
+        clear_pg_table(table_id);
         throw;
     }
 
@@ -459,10 +460,9 @@ void so_dirsum_se_label_test::test_nn_3(
         evaluation_rule<2> ra;
         sequence<2, size_t> seq1, seq2;
         seq1[0] = seq2[1] = 1;
-        ra.add_sequence(seq1);
-        ra.add_sequence(seq2);
-        ra.add_product(0, 1, 0);
-        ra.add_to_product(0, 1, 2, 0);
+        product_rule<2> &pra = ra.new_product();
+        pra.add(seq1, 1);
+        pra.add(seq2, 2);
         elema.set_rule(ra);
     }
 

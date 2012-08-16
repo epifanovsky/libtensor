@@ -1,6 +1,6 @@
 #include <libtensor/block_tensor/bto/bto_copy.h>
 #include <libtensor/block_tensor/bto/impl/bto_copy_impl.h>
-#include <libtensor/btod/btod_copy.h>
+#include "../btod_copy.h"
 
 namespace libtensor {
 

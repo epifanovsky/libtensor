@@ -1,11 +1,11 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor.h>
-#include <libtensor/btod/scalar_transf_double.h>
-#include <libtensor/btod/btod_add.h>
-#include <libtensor/btod/btod_contract2.h>
-#include <libtensor/btod/btod_copy.h>
+#include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/block_tensor/btod/btod_add.h>
+#include <libtensor/block_tensor/btod/btod_contract2.h>
+#include <libtensor/block_tensor/btod/btod_copy.h>
 #include <libtensor/btod/btod_random.h>
-#include <libtensor/btod/btod_sum.h>
+#include <libtensor/block_tensor/btod/btod_sum.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/symmetry/so_copy.h>
 #include "btod_sum_test.h"
@@ -14,6 +14,10 @@
 namespace libtensor {
 
 void btod_sum_test::perform() throw(libtest::test_exception) {
+
+    allocator<double>::vmm().init(16, 16, 16777216, 16777216);
+
+    try {
 
     test_1();
     test_2();
@@ -28,6 +32,13 @@ void btod_sum_test::perform() throw(libtest::test_exception) {
     test_9b();
     test_10a();
     test_10b();
+
+    } catch(...) {
+        allocator<double>::vmm().shutdown();
+        throw;
+    }
+
+    allocator<double>::vmm().shutdown();
 }
 
 

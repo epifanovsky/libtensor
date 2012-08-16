@@ -1,6 +1,6 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/tod_btconv.h>
-#include <libtensor/btod/scalar_transf_double.h>
+#include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/iface/iface.h>
 #include <libtensor/symmetry/so_copy.h>

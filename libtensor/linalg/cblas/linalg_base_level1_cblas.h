@@ -30,6 +30,15 @@ struct linalg_base_level1_cblas : public linalg_base_level1_generic {
     }
 
 
+    static void i_i(
+        size_t ni,
+        const double *a, size_t sia,
+        double *c, size_t sic) {
+
+        cblas_dcopy(ni, a, sia, c, sic);
+    }
+
+
     static void i_x(
         size_t ni,
         double a,

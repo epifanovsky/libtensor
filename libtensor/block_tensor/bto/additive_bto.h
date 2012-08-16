@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_ADDITIVE_BTO_H
 #define LIBTENSOR_ADDITIVE_BTO_H
 
+#include <vector>
 #include <libutil/thread_pool/thread_pool.h>
 #include <libtensor/core/tensor_transf.h>
 #include "basic_bto.h"
@@ -36,6 +37,9 @@ public:
 
     //! Type of blocks of block tensors
     typedef typename Traits::template block_type<N>::type block_t;
+
+private:
+    typedef addition_schedule<N, Traits> schedule_t;
 
 private:
     class task: public libutil::task_i {
@@ -87,11 +91,20 @@ public:
 
 public:
     /** \brief Computes the result of the operation and adds it to the
-            output block %tensor
-        \param bt Output block %tensor.
+            output block tensor
+        \param bt Output block tensor.
         \param c Scaling coefficient.
      **/
     virtual void perform(block_tensor_t &bt, const element_t &c);
+
+    /** \brief Partially computes the result of the operation and adds it to the
+            output block tensor
+        \param bt Output block tensor.
+        \param c Scaling coefficient.
+        \param blst List of canonical blocks to compute.
+     **/
+    virtual void perform(block_tensor_t &bt, const element_t &c,
+        const std::vector<size_t> &blst);
 
     /** \brief Implementation of basic_btod<N>::compute_block
         \param blk Output %tensor.
@@ -119,7 +132,8 @@ protected:
         const element_t &c);
 
 private:
-    typedef addition_schedule<N, Traits> schedule_t;
+    void perform_inner(block_tensor_t &bt, const element_t &c, bool filter,
+        const std::vector<size_t> &blst);
 
 };
 

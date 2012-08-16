@@ -3,12 +3,12 @@
 namespace libtensor {
 
 
-template class tod_contract2<0, 0, 1>;
-template class tod_contract2<0, 0, 2>;
-template class tod_contract2<0, 0, 3>;
-template class tod_contract2<0, 0, 4>;
-template class tod_contract2<0, 0, 5>;
-template class tod_contract2<0, 0, 6>;
+//template class tod_contract2<0, 0, 1>;
+//template class tod_contract2<0, 0, 2>;
+//template class tod_contract2<0, 0, 3>;
+//template class tod_contract2<0, 0, 4>;
+//template class tod_contract2<0, 0, 5>;
+//template class tod_contract2<0, 0, 6>;
 
 template class tod_contract2<0, 1, 1>;
 template class tod_contract2<0, 1, 2>;

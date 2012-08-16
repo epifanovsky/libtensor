@@ -16,10 +16,10 @@ namespace libtensor {
 
     \ingroup libtensor_symmetry
  **/
-template<size_t N, size_t M, typename T>
-class symmetry_operation_impl< so_reduce<N, M, T>, se_label<N - M, T> > :
+template<size_t N, size_t M, size_t NM, typename T>
+class symmetry_operation_impl< so_reduce<N, M, T>, se_label<NM, T> > :
     public symmetry_operation_impl_base< so_reduce<N, M, T>,
-        se_label<N - M, T> > {
+        se_label<NM, T> > {
 public:
     static const char *k_clazz; //!< Class name
     static const size_t k_order1 = N; //!< Dimension of input

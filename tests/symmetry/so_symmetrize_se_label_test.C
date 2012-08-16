@@ -1,4 +1,4 @@
-#include <libtensor/btod/scalar_transf_double.h>
+#include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/symmetry/product_table_container.h>
 #include <libtensor/symmetry/so_symmetrize_se_label.h>
 #include "so_symmetrize_se_label_test.h"
@@ -7,7 +7,8 @@ namespace libtensor {
 
 void so_symmetrize_se_label_test::perform() throw(libtest::test_exception) {
 
-    std::string table_id = setup_pg_table();
+    std::string table_id = "S6";
+    setup_pg_table(table_id);
 
     try {
 
@@ -17,12 +18,12 @@ void so_symmetrize_se_label_test::perform() throw(libtest::test_exception) {
     test_sym2_3(table_id);
     test_sym3_1(table_id);
 
-    } catch (libtest::test_exception) {
-        product_table_container::get_instance().erase(table_id);
+    } catch (libtest::test_exception &e) {
+        clear_pg_table(table_id);
         throw;
     }
 
-    product_table_container::get_instance().erase(table_id);
+    clear_pg_table(table_id);
 }
 
 
@@ -92,12 +93,14 @@ void so_symmetrize_se_label_test::test_sym2_1(
     sequence<4, size_t> s1(0), s2(0);
     s1[0] = s1[1] = s1[2] = 1; s2[3] = 1;
     evaluation_rule<4> r1;
-    r1.add_sequence(s1);
-    r1.add_sequence(s2);
-    r1.add_product(0, 0, 0); r1.add_to_product(0, 1, 0, 0);
-    r1.add_product(0, 1, 0); r1.add_to_product(1, 1, 1, 0);
-    r1.add_product(0, 2, 0); r1.add_to_product(2, 1, 2, 0);
-    r1.add_product(0, 3, 0); r1.add_to_product(3, 1, 3, 0);
+    product_rule<4> &pr1a = r1.new_product();
+    pr1a.add(s1, 0); pr1a.add(s2, 0);
+    product_rule<4> &pr1b = r1.new_product();
+    pr1b.add(s1, 1); pr1b.add(s2, 1);
+    product_rule<4> &pr1c = r1.new_product();
+    pr1c.add(s1, 2); pr1c.add(s2, 2);
+    product_rule<4> &pr1d = r1.new_product();
+    pr1d.add(s1, 3); pr1d.add(s2, 3);
     el1.set_rule(r1);
     }
 
@@ -181,10 +184,8 @@ void so_symmetrize_se_label_test::test_sym2_2(
     sequence<4, size_t> s1(0), s2(0);
     s1[0] = s1[1] = 1; s2[2] = s2[3] = 1;
     evaluation_rule<4> r1;
-    r1.add_sequence(s1);
-    r1.add_sequence(s2);
-    r1.add_product(0, 1, 0);
-    r1.add_to_product(0, 1, 2, 0);
+    product_rule<4> &pr1 = r1.new_product();
+    pr1.add(s1, 1); pr1.add(s2, 2);
     el1.set_rule(r1);
     }
 
@@ -193,8 +194,8 @@ void so_symmetrize_se_label_test::test_sym2_2(
     set1.insert(el1);
 
     sequence<4, size_t> idxgrp(0), symidx(0);
-    idxgrp[0] = idxgrp[2] = 1; idxgrp[1] = idxgrp[3] = 2;
-    symidx[0] = symidx[1] = 1; symidx[2] = symidx[3] = 2;
+    idxgrp[0] = idxgrp[1] = 1; idxgrp[2] = idxgrp[3] = 2;
+    symidx[0] = symidx[2] = 1; symidx[1] = symidx[3] = 2;
 
     scalar_transf<double> trp, trc;
     symmetry_operation_params<so_symmetrize_t> params(set1, idxgrp,
@@ -222,14 +223,28 @@ void so_symmetrize_se_label_test::test_sym2_2(
     abs_index<4> ai(bidims2);
     do {
         const index<4> &idx = ai.get_index();
-        if (el1.is_allowed(idx)) {
+        bool xij = (idx[0] == 0 && idx[1] == 1) ||
+                (idx[0] == 1 && idx[1] == 0) ||
+                (idx[0] == 1 && idx[1] == 1) ||
+                (idx[0] == 2 && idx[1] == 3) ||
+                (idx[0] == 3 && idx[1] == 2) ||
+                (idx[0] == 3 && idx[1] == 3);
+        bool ykl = (idx[2] == 0 && idx[3] == 2) ||
+                (idx[2] == 1 && idx[3] == 3) ||
+                (idx[2] == 2 && idx[3] == 0) ||
+                (idx[2] == 3 && idx[3] == 1);
+        bool yij = (idx[0] == 0 && idx[1] == 2) ||
+                (idx[0] == 1 && idx[1] == 3) ||
+                (idx[0] == 2 && idx[1] == 0) ||
+                (idx[0] == 3 && idx[1] == 1);
+        bool xkl = (idx[2] == 0 && idx[3] == 1) ||
+                (idx[2] == 1 && idx[3] == 0) ||
+                (idx[2] == 1 && idx[3] == 1) ||
+                (idx[2] == 2 && idx[3] == 3) ||
+                (idx[2] == 3 && idx[3] == 2) ||
+                (idx[2] == 3 && idx[3] == 3);
 
-            rx[ai.get_abs_index()] = true;
-            index<4> idx2(idx);
-            std::swap(idx2[0], idx2[1]);
-            std::swap(idx2[2], idx2[3]);
-            rx[abs_index<4>(idx2, bidims2).get_abs_index()] = true;
-        }
+        rx[ai.get_abs_index()] = ((xij && ykl) || (yij && xkl));
 
     } while (ai.inc());
 
@@ -268,10 +283,8 @@ void so_symmetrize_se_label_test::test_sym2_3(
     sequence<4, size_t> s1(0), s2(0);
     s1[0] = s1[2] = 1; s2[1] = s2[3] = 1;
     evaluation_rule<4> r1;
-    r1.add_sequence(s1);
-    r1.add_sequence(s2);
-    r1.add_product(0, 0, 0);
-    r1.add_to_product(0, 1, 0, 0);
+    product_rule<4> &pr1 = r1.new_product();
+    pr1.add(s1, 0); pr1.add(s2, 0);
     el1.set_rule(r1);
     }
 
@@ -369,10 +382,8 @@ void so_symmetrize_se_label_test::test_sym3_1(
     sequence<3, size_t> seq1a(0), seq1b(0);
     seq1a[0] = seq1a[1] = 1;
     seq1b[1] = seq1b[2] = 1;
-    r1.add_sequence(seq1a);
-    r1.add_sequence(seq1b);
-    r1.add_product(0, 0, 0);
-    r1.add_to_product(0, 1, 0, 0);
+    product_rule<3> &pr1 = r1.new_product();
+    pr1.add(seq1a, 0); pr1.add(seq1b, 0);
     el1.set_rule(r1);
     }
 

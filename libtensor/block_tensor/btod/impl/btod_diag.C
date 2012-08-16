@@ -1,6 +1,6 @@
 #include <libtensor/block_tensor/bto/bto_diag.h>
 #include <libtensor/block_tensor/bto/impl/bto_diag_impl.h>
-#include <libtensor/btod/btod_diag.h>
+#include "../btod_diag.h"
 
 namespace libtensor {
 

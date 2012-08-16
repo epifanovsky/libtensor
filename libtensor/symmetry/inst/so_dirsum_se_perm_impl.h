@@ -6,13 +6,13 @@
 namespace libtensor {
 
 
-template<size_t N, size_t M, typename T>
-const char *symmetry_operation_impl< so_dirsum<N, M, T>, se_perm<N + M, T> >::
+template<size_t N, size_t M, size_t NM, typename T>
+const char *symmetry_operation_impl< so_dirsum<N, M, T>, se_perm<NM, T> >::
 k_clazz = "symmetry_operation_impl< so_dirsum<N, M, T>, se_perm<N + M, T> >";
 
 
-template<size_t N, size_t M, typename T>
-void symmetry_operation_impl< so_dirsum<N, M, T>, se_perm<N + M, T> >::
+template<size_t N, size_t M, size_t NM, typename T>
+void symmetry_operation_impl< so_dirsum<N, M, T>, se_perm<NM, T> >::
 do_perform(symmetry_operation_params_t &params) const {
 
     static const char *method =
@@ -61,8 +61,8 @@ do_perform(symmetry_operation_params_t &params) const {
 }
 
 
-template<size_t N, size_t M, typename T>
-void symmetry_operation_impl< so_dirsum<N, M, T>, se_perm<N + M, T> >::
+template<size_t N, size_t M, size_t NM, typename T>
+void symmetry_operation_impl< so_dirsum<N, M, T>, se_perm<NM, T> >::
 combine(const permutation<N> &p1, const scalar_transf<T> &tr1,
         const symmetry_element_set<M, T> &set2,
         permutation_group<N + M, T> &grp) {
@@ -196,8 +196,8 @@ combine(const permutation<N> &p1, const scalar_transf<T> &tr1,
 }
 
 
-template<size_t N, size_t M, typename T>
-void symmetry_operation_impl< so_dirsum<N, M, T>, se_perm<N + M, T> >::
+template<size_t N, size_t M, size_t NM, typename T>
+void symmetry_operation_impl< so_dirsum<N, M, T>, se_perm<NM, T> >::
 combine(const symmetry_element_set<N, T> &set1,
         const permutation<M> &p2, const scalar_transf<T> &tr2,
         permutation_group<N + M, T> &grp) {

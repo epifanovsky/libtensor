@@ -1,6 +1,7 @@
 macro(SetupMKL)
 
     add_definitions(-DUSE_MKL)
+    set(USE_MKL TRUE)
     include_directories(${MKL_INCLUDE_PATH})
     set(BLAS_LIBS ${MKL_LIBRARIES})
     message(STATUS "Using MKL: " ${MKL_INCLUDE_PATH})

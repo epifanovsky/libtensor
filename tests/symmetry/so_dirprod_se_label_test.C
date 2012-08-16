@@ -10,7 +10,8 @@ void so_dirprod_se_label_test::perform() throw(libtest::test_exception) {
 
     static const char *testname = "so_dirprod_se_label_test::perform()";
 
-    std::string table_id = setup_pg_table();
+    std::string table_id("S6");
+    setup_pg_table(table_id);
 
     try {
 
@@ -23,12 +24,12 @@ void so_dirprod_se_label_test::perform() throw(libtest::test_exception) {
         test_nn_2(table_id);
         test_nn_3(table_id);
 
-    } catch (libtest::test_exception) {
-        product_table_container::get_instance().erase(table_id);
+    } catch (libtest::test_exception &e) {
+        clear_pg_table(table_id);
         throw;
     }
 
-    product_table_container::get_instance().erase(table_id);
+    clear_pg_table(table_id);
 }
 
 
@@ -463,10 +464,9 @@ void so_dirprod_se_label_test::test_nn_3(
         evaluation_rule<2> rb;
         sequence<2, size_t> seq1, seq2;
         seq1[0] = 1; seq2[1] = 2;
-        rb.add_sequence(seq1);
-        rb.add_sequence(seq2);
-        rb.add_product(0, 2, 0);
-        rb.add_to_product(0, 1, 0, 0);
+        product_rule<2> &prb = rb.new_product();
+        prb.add(seq1, 2);
+        prb.add(seq2, 0);
         elemb.set_rule(rb);
     }
     symmetry_element_set<1, double> seta(se1_t::k_sym_type);

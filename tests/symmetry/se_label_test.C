@@ -8,7 +8,8 @@ namespace libtensor {
 
 void se_label_test::perform() throw(libtest::test_exception) {
 
-    std::string s6 = setup_pg_table();
+    std::string s6("S6");
+    setup_pg_table(s6);
     try {
 
          test_basic_1(s6);
@@ -18,12 +19,12 @@ void se_label_test::perform() throw(libtest::test_exception) {
          test_permute_1(s6);
          test_permute_2(s6);
 
-    } catch (libtest::test_exception) {
-        product_table_container::get_instance().erase(s6);
+    } catch (libtest::test_exception &e) {
+        clear_pg_table(s6);
         throw;
     }
 
-    product_table_container::get_instance().erase(s6);
+    clear_pg_table(s6);
 }
 
 /** \test Tests setting evaluation rules
@@ -44,76 +45,90 @@ void se_label_test::test_basic_1(
     // Simplest rule
     el.set_rule(1);
     const evaluation_rule<3> &r1 = el.get_rule();
-    if (r1.get_n_sequences() != 1)
+    const eval_sequence_list<3> &sl1 = r1.get_sequences();
+    if (sl1.size() != 1)
         fail_test(tns.c_str(), __FILE__, __LINE__, "# sequences (r1).");
-    if (r1[0][0] != 1)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "r1[0][0]");
-    if (r1[0][1] != 1)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "r1[0][1]");
-    if (r1[0][2] != 1)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "r1[0][2]");
+    if (sl1[0][0] != 1 || sl1[0][1] != 1 || sl1[0][2] != 1)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "seq[0] (r1).");
 
-    if (r1.get_n_products() != 1)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# products (r1).");
-    evaluation_rule<3>::iterator it = r1.begin(0);
-    if (r1.get_intrinsic(it) != 1)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "Intrisic label (r1).");
-    if (r1.get_target(it) != 0)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "Target label (r1).");
+    evaluation_rule<3>::const_iterator it = r1.begin();
+    const product_rule<3> &pr1 = r1.get_product(it);
     it++;
-    if (it != r1.end(0))
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# terms (r1).");
+    if (it != r1.end())
+        fail_test(tns.c_str(), __FILE__, __LINE__, "# products (r1)");
+    product_rule<3>::iterator ip = pr1.begin();
+    if (ip == pr1.end())
+        fail_test(tns.c_str(), __FILE__, __LINE__, "Product empty (r1).");
+    if (pr1.get_intrinsic(ip) != 1)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "Intrisic label (pr1).");
+    ip++;
+    if (ip != pr1.end())
+        fail_test(tns.c_str(), __FILE__, __LINE__, "# terms (pr1).");
 
     // Simple rule with multiple intrinsic labels
     product_table_i::label_set_t lg2;
     lg2.insert(0); lg2.insert(2);
     el.set_rule(lg2);
     const evaluation_rule<3> &r2 = el.get_rule();
+    const eval_sequence_list<3> &sl2 = r2.get_sequences();
 
-    if (r2.get_n_sequences() != 1)
+    if (sl2.size() != 1)
         fail_test(tns.c_str(), __FILE__, __LINE__, "# sequences (r2).");
-    if (r2[0][0] != 1)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "r2[0][0]");
-    if (r2[0][1] != 1)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "r2[0][1]");
-    if (r2[0][2] != 1)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "r2[0][2]");
+    if (sl2[0][0] != 1 || sl2[0][1] != 1 || sl2[0][2] != 1)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "sl2[0].");
 
-    if (r2.get_n_products() != 2)
+    it = r2.begin();
+    const product_rule<3> &pr2a = r2.get_product(it);
+    it++;
+    if (it == r2.end())
         fail_test(tns.c_str(), __FILE__, __LINE__, "# products (r2).");
-    it = r2.begin(0);
-    if (r2.get_intrinsic(it) != 0)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "Intrisic label (r2,0).");
-    if (r2.get_target(it) != 0)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "Target label (r2,0).");
+    const product_rule<3> &pr2b = r2.get_product(it);
     it++;
-    if (it != r2.end(0))
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# terms (r2,0).");
-    it = r2.begin(1);
-    if (r2.get_intrinsic(it) != 2)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "Intrisic label (r2,1).");
-    if (r2.get_target(it) != 0)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "Target label (r2,1).");
-    it++;
-    if (it != r2.end(1))
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# terms (r2,1).");
+    if (it != r2.end())
+        fail_test(tns.c_str(), __FILE__, __LINE__, "# products (r2).");
+
+    ip = pr2a.begin();
+    if (ip == pr2a.end())
+        fail_test(tns.c_str(), __FILE__, __LINE__, "Product empty (pr2a).");
+    if (pr2a.get_intrinsic(ip) != 0)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "Intrisic label (pr2a).");
+    ip++;
+    if (ip != pr2a.end())
+        fail_test(tns.c_str(), __FILE__, __LINE__, "# terms (pr2a).");
+
+    ip = pr2b.begin();
+    if (ip == pr2b.end())
+        fail_test(tns.c_str(), __FILE__, __LINE__, "Product empty (pr2b).");
+    if (pr2b.get_intrinsic(ip) != 2)
+        fail_test(tns.c_str(), __FILE__, __LINE__, "Intrisic label (pr2b).");
+    ip++;
+    if (ip != pr2b.end())
+        fail_test(tns.c_str(), __FILE__, __LINE__, "# terms (pr2b).");
 
     evaluation_rule<3> r3ref;
     sequence<3, size_t> seq3a(1), seq3b(0);
     seq3a[2] = 0; seq3b[2] = 1;
-    size_t sno3a = r3ref.add_sequence(seq3a);
-    size_t sno3b = r3ref.add_sequence(seq3b);
-
-    size_t pno3a = r3ref.add_product(sno3a, 0, 0);
-    size_t pno3b = r3ref.add_product(sno3a, 2, 0);
-    r3ref.add_to_product(pno3a, sno3b, 1, 0);
-    r3ref.add_to_product(pno3b, sno3b, 1, 0);
+    product_rule<3> &pr3a = r3ref.new_product();
+    pr3a.add(seq3a, 0);
+    pr3a.add(seq3b, 1);
+    product_rule<3> &pr3b = r3ref.new_product();
+    pr3b.add(seq3a, 2);
+    pr3b.add(seq3b, 1);
 
     el.set_rule(r3ref);
     const evaluation_rule<3> &r3 = el.get_rule();
-    if (r3.get_n_sequences() != 2)
+    const eval_sequence_list<3> &sl3 = r3.get_sequences();
+    if (sl3.size() != 2)
         fail_test(tns.c_str(), __FILE__, __LINE__, "# sequences (r3).");
-    if (r3.get_n_products() != 2)
+
+    it = r3.begin();
+    if (it == r3.end())
+        fail_test(tns.c_str(), __FILE__, __LINE__, "Empty rule (r3).");
+    it++;
+    if (it == r3.end())
+        fail_test(tns.c_str(), __FILE__, __LINE__, "# products (r3).");
+    it++;
+    if (it != r3.end())
         fail_test(tns.c_str(), __FILE__, __LINE__, "# products (r3).");
 }
 
@@ -196,8 +211,8 @@ void se_label_test::test_allowed_2(
     evaluation_rule<2> rule;
     sequence<2, size_t> seq(0);
     seq[0] = 1;
-    size_t seqno = rule.add_sequence(seq);
-    rule.add_product(seqno, 0, 0);
+    product_rule<2> &pr = rule.new_product();
+    pr.add(seq, 0);
     el2.set_rule(rule);
 
     std::vector<bool> ex1(bidims.get_size(), true);
@@ -240,14 +255,13 @@ void se_label_test::test_allowed_3(
     evaluation_rule<2> r1, r2;
     sequence<2, size_t> seqa(0), seqb(0);
     seqa[0] = seqb[1] = 1;
-    size_t sno1a = r1.add_sequence(seqa);
-    size_t sno1b = r1.add_sequence(seqb);
-    size_t sno2a = r2.add_sequence(seqa);
-    size_t sno2b = r2.add_sequence(seqb);
-    size_t pno1 = r1.add_product(sno1a, 0, 0);
-    r1.add_to_product(pno1, sno1b, 1, 0);
-    r2.add_product(sno1a, 0, 0);
-    r2.add_product(sno1b, 1, 0);
+    product_rule<2> &pr1 = r1.new_product();
+    pr1.add(seqa, 0);
+    pr1.add(seqb, 1);
+    product_rule<2> &pr2a = r2.new_product();
+    pr2a.add(seqa, 0);
+    product_rule<2> &pr2b = r2.new_product();
+    pr2b.add(seqb, 1);
 
     el1.set_rule(r1);
     el2.set_rule(r2);
@@ -368,14 +382,13 @@ void se_label_test::test_permute_2(
     evaluation_rule<2> r1, r2;
     sequence<2, size_t> seqa(0), seqb(0);
     seqa[0] = seqb[1] = 1;
-    size_t sno1a = r1.add_sequence(seqa);
-    size_t sno1b = r1.add_sequence(seqb);
-    size_t sno2a = r2.add_sequence(seqa);
-    size_t sno2b = r2.add_sequence(seqb);
-    size_t pno1 = r1.add_product(sno1a, 0, 0);
-    r1.add_to_product(pno1, sno1b, 1, 0);
-    r2.add_product(sno1a, 0, 0);
-    r2.add_product(sno1b, 1, 0);
+    product_rule<2> &pr1 = r1.new_product();
+    pr1.add(seqa, 0);
+    pr1.add(seqb, 1);
+    product_rule<2> &pr2a = r2.new_product();
+    pr2a.add(seqa, 0);
+    product_rule<2> &pr2b = r2.new_product();
+    pr2b.add(seqb, 1);
 
     el1.set_rule(r1);
     el2.set_rule(r2);

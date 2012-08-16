@@ -1,5 +1,5 @@
 #include <sstream>
-#include <libtensor/btod/scalar_transf_double.h>
+#include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/core/transf_list.h>
 #include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/symmetry/product_table_container.h>
@@ -520,11 +520,14 @@ void transf_list_test::test_5c() throw(libtest::test_exception) {
     bl.assign(msk, 6, 2); bl.assign(msk, 7, 3);
     evaluation_rule<4> r1;
     sequence<4, size_t> seq(1);
-    r1.add_sequence(seq);
-    r1.add_product(0, 0);
-    r1.add_product(0, 1);
-    r1.add_product(0, 2);
-    r1.add_product(0, 3);
+    product_rule<4> &pr1a = r1.new_product();
+    pr1a.add(seq, 0);
+    product_rule<4> &pr1b = r1.new_product();
+    pr1b.add(seq, 1);
+    product_rule<4> &pr1c = r1.new_product();
+    pr1c.add(seq, 2);
+    product_rule<4> &pr1d = r1.new_product();
+    pr1d.add(seq, 3);
     sl.set_rule(r1);
 
     index<4> i0000, i0001, i0010, i0011, i0100, i0101, i0110, i0111,

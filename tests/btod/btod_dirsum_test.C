@@ -5,8 +5,8 @@
 #include <libtensor/core/abs_index.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
-#include <libtensor/btod/scalar_transf_double.h>
-#include <libtensor/btod/btod_dirsum.h>
+#include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/block_tensor/btod/btod_dirsum.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/symmetry/permutation_group.h>
 #include <libtensor/symmetry/point_group_table.h>
@@ -933,10 +933,10 @@ void btod_dirsum_test::test_ikjl_ij_kl_3c(
         sequence<4, size_t> sc1(0), sc2(0);
         sc1[0] = sc1[2] = 1;
         sc2[1] = sc2[3] = 1;
-        rc.add_sequence(sc1);
-        rc.add_sequence(sc2);
-        rc.add_product(0, 0, 0);
-        rc.add_product(1, 0, 0);
+        product_rule<4> &prc1 = rc.new_product();
+        prc1.add(sc1, 0);
+        product_rule<4> &prc2 = rc.new_product();
+        prc2.add(sc2, 0);
         slc.set_rule(rc);
 
         sym_ref.insert(slc);

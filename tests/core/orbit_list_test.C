@@ -1,5 +1,5 @@
 #include <sstream>
-#include <libtensor/btod/scalar_transf_double.h>
+#include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/core/abs_index.h>
 #include <libtensor/core/orbit_list.h>
 #include <libtensor/symmetry/se_perm.h>

@@ -39,6 +39,8 @@ while [ $# -gt 0 ]; do
               ;;
     pgi )     set_compilers "pgcc" "pgCC"
               ;;
+    ibm )     set_compilers "xlc" "xlC"
+              ;;
     debug )   set_build_type "DEBUG"
               ;;
     release ) set_build_type "RELEASE"

@@ -1,5 +1,5 @@
 #include <libtensor/block_tensor/bto/impl/bto_vmpriority_impl.h>
-#include <libtensor/btod/btod_vmpriority.h>
+#include "../btod_vmpriority.h"
 
 namespace libtensor {
 

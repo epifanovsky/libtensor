@@ -4,7 +4,7 @@
 #include "../../defs.h"
 #include "../../exception.h"
 #include "../../core/permutation_builder.h"
-#include "../../btod/btod_trace.h"
+#include <libtensor/block_tensor/btod/btod_trace.h>
 #include "../labeled_btensor.h"
 #include "../letter.h"
 #include "../letter_expr.h"
@@ -40,11 +40,11 @@ double trace(
 
     \ingroup libtensor_btensor_expr_op
  **/
-template<size_t N, typename T, bool A>
+template<size_t N, size_t N2, typename T, bool A>
 double trace(
     letter_expr<N> le1,
     letter_expr<N> le2,
-    labeled_btensor<2 * N, T, A> bt) {
+    labeled_btensor<N2, T, A> bt) {
 
     size_t seq1[2 * N], seq2[2 * N];
     for(size_t i = 0; i < N; i++) {
@@ -80,11 +80,11 @@ double trace(
 
     \ingroup libtensor_btensor_expr_op
  **/
-template<size_t N, typename T, typename E>
+template<size_t N, size_t N2, typename T, typename E>
 double trace(
     letter_expr<N> le1,
     letter_expr<N> le2,
-    expr<2 * N, T, E> expr) {
+    expr<N2, T, E> expr) {
 
     trace_subexpr_label_builder<N> lb(le1, le2);
     anon_eval<2 * N, T, E> eval(expr, lb.get_label());

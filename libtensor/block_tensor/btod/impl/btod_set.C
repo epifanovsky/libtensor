@@ -1,6 +1,6 @@
 #include <libtensor/block_tensor/bto/bto_set.h>
 #include <libtensor/block_tensor/bto/impl/bto_set_impl.h>
-#include <libtensor/btod/btod_set.h>
+#include "../btod_set.h"
 
 namespace libtensor {
 

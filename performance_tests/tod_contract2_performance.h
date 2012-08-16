@@ -6,6 +6,7 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/libtensor.h>
 #include <libtensor/linalg/linalg.h>
+#include <libtensor/dense_tensor/tod_contract2.h>
 #include "performance_test.h"
 
 using libtest::unit_test_factory;
@@ -37,6 +38,7 @@ class tod_contract2_ref
 	  public timings<tod_contract2_ref<Repeats,N,M,K,DimData> >
 {
 	friend class timings<tod_contract2_ref<Repeats,N,M,K,DimData> >;
+public:
 	static const char* k_clazz;
 protected:
 	virtual void do_calculate();

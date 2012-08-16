@@ -24,7 +24,7 @@ void kern_mul_ijk_kp_ipj::run(const loop_registers<2, 1> &r) {
 }
 
 
-kernel_base<2, 1> *kern_mul_ijk_kp_ipj::match(const kern_mul_ij_jp_pi &z,
+kernel_base<2, 1> *kern_mul_ijk_kp_ipj::match(const kern_dmul2_ij_jp_pi &z,
     list_t &in, list_t &out) {
 
     if(in.empty()) return 0;

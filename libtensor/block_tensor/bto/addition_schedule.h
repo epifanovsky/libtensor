@@ -30,7 +30,7 @@ namespace libtensor {
 
     \ingroup libtensor_bto
  **/
-template<size_t N, typename Traits>
+template<size_t N, class Traits>
 class addition_schedule {
 public:
     //! Type of tensor elements
@@ -156,9 +156,9 @@ private:
             schedule_group &grp);
 
 private:
-    addition_schedule(const addition_schedule<N, element_t>&);
-    const addition_schedule<N, element_t> &operator=(
-            const addition_schedule<N, element_t>&);
+    addition_schedule(const addition_schedule&);
+    const addition_schedule<N, Traits> &operator=(const addition_schedule&);
+
 };
 
 
@@ -185,8 +185,8 @@ addition_schedule<N, Traits>::addition_schedule(
 }
 
 
-template<size_t N, typename element_t>
-addition_schedule<N, element_t>::~addition_schedule() {
+template<size_t N, typename Traits>
+addition_schedule<N, Traits>::~addition_schedule() {
 
     clean_schedule();
 }

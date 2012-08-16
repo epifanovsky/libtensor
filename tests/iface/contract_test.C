@@ -1,4 +1,4 @@
-#include <libtensor/btod/scalar_transf_double.h>
+#include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/iface/iface.h>
 #include "../compare_ref.h"
@@ -49,10 +49,10 @@ using labeled_btensor_expr::expr;
 using labeled_btensor_expr::core_contract;
 using labeled_btensor_expr::contract_subexpr_labels;
 
-template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2>
+template<size_t N, size_t M, size_t NM, size_t K, typename T, typename E1, typename E2>
 void test_subexpr_labels_tpl(
-    expr<N + M, T, core_contract<N, M, K, T, E1, E2> > e,
-    letter_expr<N + M> label_c) {
+    expr<NM, T, core_contract<N, M, K, T, E1, E2> > e,
+    letter_expr<NM> label_c) {
 
     contract_subexpr_labels<N, M, K, T, E1, E2> subexpr_labels(e, label_c);
 }

@@ -30,6 +30,7 @@ class tod_copy_ref
 	  public timings<tod_copy_ref<Repeats,X> >
 {
 	friend class timings<tod_copy_ref<Repeats,X> >;
+public:
 	static const char* k_clazz;
 protected:
 	virtual void do_calculate();

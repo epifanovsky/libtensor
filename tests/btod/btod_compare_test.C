@@ -5,9 +5,9 @@
 #include <libtensor/core/orbit.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/symmetry/so_copy.h>
-#include <libtensor/btod/scalar_transf_double.h>
+#include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/btod/btod_compare.h>
-#include <libtensor/btod/btod_copy.h>
+#include <libtensor/block_tensor/btod/btod_copy.h>
 #include <libtensor/btod/btod_random.h>
 #include "btod_compare_test.h"
 
