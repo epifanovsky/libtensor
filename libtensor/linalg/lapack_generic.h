@@ -30,6 +30,7 @@ extern "C" {
     int dpotrf_(char*, int*, double*, int*, int*);
 #endif // USE_QCHEM
     int dpstrf_(char*, int*, double*, int*, int*, int*, double*, double*, int*);
+    int dpteqr_(char*, int*, double*, double*, double*, int*, double*, int*);
 }
 
 
@@ -236,6 +237,21 @@ inline int lapack_dpstrf(char uplo, size_t n, double *a, size_t lda, int *p,
     double gen_tol = tol;
     int gen_info = 0;
     //dpstrf_(&uplo, &gen_n, a, &gen_lda, p, rank, &gen_tol, work, &gen_info);
+    return gen_info;
+}
+
+
+/** \brief LAPACK function dpteqr (generic)
+
+    \ingroup libtensor_linalg
+ **/
+inline int lapack_dpteqr(char compz, size_t n, double *d, double *e, double *z,
+    size_t ldz, double *work) {
+
+    int gen_n = n;
+    int gen_ldz = ldz;
+    int gen_info = 0;
+    dpteqr_(&compz, &gen_n, d, e, z, &gen_ldz, work, &gen_info);
     return gen_info;
 }
 

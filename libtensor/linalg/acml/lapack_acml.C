@@ -116,4 +116,13 @@ int lapack_dpstrf(char uplo, size_t n, double *a, size_t lda, int *p,
 }
 
 
+int lapack_dpteqr(char compz, size_t n, double *d, double *e, double *z,
+    size_t ldz, double *work) {
+
+    int info = 0;
+    dpteqr(compz, n, d, e, z, ldz, &info);
+
+    return info;
+}
+
 } // namespace libtensor
