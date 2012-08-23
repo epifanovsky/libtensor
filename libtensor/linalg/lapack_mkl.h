@@ -109,6 +109,14 @@ int lapack_dpteqr(char compz, size_t n, double *d, double *e, double *z,
     size_t ldz, double *work);
 
 
+/** \brief LAPACK function dsteqr (Intel MKL)
+
+    \ingroup libtensor_linalg
+ **/
+int lapack_dsteqr(char compz, size_t n, double *d, double *e, double *z,
+    size_t ldz, double *work);
+
+
 } // namespace libtensor
 
 #endif // LIBTENSOR_LAPACK_MKL_H

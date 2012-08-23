@@ -31,6 +31,7 @@ extern "C" {
 #endif // USE_QCHEM
     int dpstrf_(char*, int*, double*, int*, int*, int*, double*, double*, int*);
     int dpteqr_(char*, int*, double*, double*, double*, int*, double*, int*);
+    int dsteqr_(char*, int*, double*, double*, double*, int*, double*, int*);
 }
 
 
@@ -252,6 +253,21 @@ inline int lapack_dpteqr(char compz, size_t n, double *d, double *e, double *z,
     int gen_ldz = ldz;
     int gen_info = 0;
     dpteqr_(&compz, &gen_n, d, e, z, &gen_ldz, work, &gen_info);
+    return gen_info;
+}
+
+
+/** \brief LAPACK function dsteqr (generic)
+
+    \ingroup libtensor_linalg
+ **/
+inline int lapack_dsteqr(char compz, size_t n, double *d, double *e, double *z,
+    size_t ldz, double *work) {
+
+    int gen_n = n;
+    int gen_ldz = ldz;
+    int gen_info = 0;
+    dsteqr_(&compz, &gen_n, d, e, z, &gen_ldz, work, &gen_info);
     return gen_info;
 }
 
