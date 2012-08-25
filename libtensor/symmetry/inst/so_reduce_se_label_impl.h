@@ -129,14 +129,10 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_label<NM, T> >::do_perform(
             size_t imin = params.rblrange.get_begin()[j];
             size_t imax = params.rblrange.get_end()[j] + 1;
 
-            label_group_t ibl(imax - imin, product_table_i::k_invalid);
+            bool is_complete = (imin == 0 && imax == bidims1[j]);
             bool has_invalid = false;
-            for (size_t k = imin, l = 0; k < imax; k++, l++) {
-                ibl[l] = bl1.get_label(itype, k);
-                if (ibl[l] == product_table_i::k_invalid) has_invalid = true;
-            }
 
-            // Check all other dimensions in the current reduction step.
+            // Compare all dimensions in the current reduction step w.r.t itype
             j++;
             for (; j < k_order1; j++) {
                 if (! params.msk[j] || params.rseq[j] != i) continue;
@@ -144,11 +140,14 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_label<NM, T> >::do_perform(
                 size_t jtype = bl1.get_dim_type(j);
                 if (itype == jtype) continue;
 
-                for (size_t k = imin, l = 0; k < imax; k++, l++) {
-                    label_t ll = bl1.get_label(jtype, k);
-                    if (ll == ibl[l]) continue;
-                    if (ll == product_table_i::k_invalid) has_invalid = true;
-                    else if (ibl[l] == product_table_i::k_invalid) ibl[l] = ll;
+                for (size_t k = imin; k < imax; k++) {
+                    if (bl1.get_label(itype, k) == bl1.get_label(jtype, k)) {
+                        continue;
+                    }
+                    if (bl1.get_label(itype, k) == product_table_i::k_invalid &&
+                            bl1.get_label(jtype, k) == product_table_i::k_invalid) {
+                        has_invalid = true;
+                    }
                     else {
 #ifdef LIBTENSOR_DEBUG
                         throw bad_symmetry(g_ns, k_clazz, method, __FILE__,
@@ -161,15 +160,13 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_label<NM, T> >::do_perform(
             // Transfer the vector of block labels into a sorted vector of
             // unique labels
             label_group_t &cbl = blk_labels[i];
-            if (has_invalid) {
-                for (label_t ll = 0; ll < n_labels; ll++)
-                    cbl.push_back(ll);
+            if (is_complete || has_invalid) {
+                for (label_t l = 0; l < n_labels; l++) cbl.push_back(l);
             }
             else {
                 label_set_t ls;
-                for (label_group_t::const_iterator il = ibl.begin();
-                        il != ibl.end(); il++) {
-                    ls.insert(*il);
+                for (size_t k = imin; k < imax; k++) {
+                    ls.insert(bl1.get_label(itype, k));
                 }
                 for (label_set_t::const_iterator is = ls.begin();
                         is != ls.end(); is++) {
