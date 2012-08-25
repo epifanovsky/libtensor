@@ -7,7 +7,8 @@ namespace libtensor {
 
 void so_symmetrize_se_label_test::perform() throw(libtest::test_exception) {
 
-    std::string table_id = setup_pg_table();
+    std::string table_id = "S6";
+    setup_pg_table(table_id);
 
     try {
 
@@ -17,12 +18,12 @@ void so_symmetrize_se_label_test::perform() throw(libtest::test_exception) {
     test_sym2_3(table_id);
     test_sym3_1(table_id);
 
-    } catch (libtest::test_exception) {
-        product_table_container::get_instance().erase(table_id);
+    } catch (libtest::test_exception &e) {
+        clear_pg_table(table_id);
         throw;
     }
 
-    product_table_container::get_instance().erase(table_id);
+    clear_pg_table(table_id);
 }
 
 

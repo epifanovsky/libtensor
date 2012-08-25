@@ -4,6 +4,7 @@
 #include <libtensor/defs.h>
 #include <libtensor/core/abs_index.h>
 #include "../bad_symmetry.h"
+#include "../er_optimize.h"
 #include "../product_table_container.h"
 
 
@@ -67,7 +68,7 @@ template<size_t N, typename T>
 void se_label<N, T>::set_rule(const evaluation_rule<N> &rule) {
 
     m_rule = rule;
-    m_rule.optimize();
+//    er_optimize<N>(rule, m_pt.get_id()).perform(m_rule);
 }
 
 

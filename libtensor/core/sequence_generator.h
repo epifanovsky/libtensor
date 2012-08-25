@@ -12,7 +12,7 @@ namespace libtensor {
         \f$ \left[0:m\right[ \f$ .
 
     Constructs all possible sequences of n ordered non-identical numbers
-    from the interval \f$ \left[0:m\right \f$ starting with
+    from the interval \f$ \left[0:m\right[ \f$ starting with
     \f$ \left[0,1,2, ..., n\right] \f$ .
 
     \ingroup libtensor_core

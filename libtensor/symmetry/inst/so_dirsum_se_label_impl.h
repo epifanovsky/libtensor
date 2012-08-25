@@ -145,7 +145,6 @@ symmetry_operation_impl< so_dirsum<N, M, T>, se_label<NM, T> >::do_perform(
                 }
             }
         }
-        r3.optimize();
 
         e3.set_rule(r3);
         params.g3.insert(e3);
@@ -207,7 +206,6 @@ symmetry_operation_impl< so_dirsum<N, M, T>, se_label<NM, T> >::do_perform(
                 pr3.add(seq3, pr2.get_intrinsic(ip2));
             }
         }
-        r3.optimize();
 
         // Set the rule and finish off
         e3.set_rule(r3);

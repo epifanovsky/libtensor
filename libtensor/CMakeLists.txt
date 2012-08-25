@@ -177,8 +177,12 @@ set(SRC_INST
     symmetry/inst/block_labeling_inst.C
     symmetry/inst/combine_part_inst.C
     symmetry/inst/combine_label_inst.C
+    symmetry/inst/er_merge_inst.C
+    symmetry/inst/er_optimize_inst.C
+    symmetry/inst/er_reduce_inst.C
     symmetry/inst/evaluation_rule_inst.C
     symmetry/inst/permutation_group_inst.C
+    symmetry/inst/print_symmetry_inst.C
     symmetry/inst/se_label_inst.C
     symmetry/inst/se_part_inst.C
     symmetry/inst/se_perm_inst.C

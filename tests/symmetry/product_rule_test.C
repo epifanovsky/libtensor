@@ -8,6 +8,7 @@ void product_rule_test::perform() throw(libtest::test_exception) {
 
     test_1();
     test_2();
+    test_3();
 }
 
 
@@ -72,11 +73,72 @@ void product_rule_test::test_1() throw(libtest::test_exception) {
 }
 
 
-/** \test Compare to product rules
+/** \test Add terms with identical sequence to product rule
  **/
 void product_rule_test::test_2() throw(libtest::test_exception) {
 
     static const char *testname = "product_rule_test::test_2()";
+
+    typedef product_table_i::label_set_t label_set_t;
+
+    try {
+
+    eval_sequence_list<3> sl;
+
+    product_rule<3> pr(&sl);
+
+    if (! pr.empty()) {
+        fail_test(testname, __FILE__, __LINE__, "! pr.empty()");
+    }
+
+    sequence<3, size_t> seq(1);
+
+    pr.add(seq, 0);
+    pr.add(seq, 1);
+
+    if (pr.empty()) {
+        fail_test(testname, __FILE__, __LINE__, "pr.empty()");
+    }
+
+    if (sl.size() != 1) {
+        fail_test(testname, __FILE__, __LINE__, "# seq");
+    }
+    if (! sl.has_sequence(seq)) {
+        fail_test(testname, __FILE__, __LINE__, "seq");
+    }
+
+
+    product_rule<3>::iterator it = pr.begin();
+    if (it == pr.end()) {
+        fail_test(testname, __FILE__, __LINE__, "it (0)");
+    }
+    if (pr.get_intrinsic(it) != 0) {
+        fail_test(testname, __FILE__, __LINE__, "intrinsic (0)");
+    }
+    it++;
+    if (it == pr.end()) {
+        fail_test(testname, __FILE__, __LINE__, "it (1)");
+    }
+    if (pr.get_intrinsic(it) != 1) {
+        fail_test(testname, __FILE__, __LINE__, "intrinsic (1)");
+    }
+    it++;
+    if (it != pr.end()) {
+        fail_test(testname, __FILE__, __LINE__, "it (2)");
+    }
+
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+/** \test Compare to product rules
+ **/
+void product_rule_test::test_3() throw(libtest::test_exception) {
+
+    static const char *testname = "product_rule_test::test_3()";
 
     typedef product_table_i::label_set_t label_set_t;
 

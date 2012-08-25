@@ -99,7 +99,6 @@ symmetry_operation_impl< so_symmetrize<N, T>, se_label<N, T> >::do_perform(
 
              } while (pg.next());
          }
-         r2.optimize();
 
          e2.set_rule(r2);
 

@@ -24,10 +24,6 @@ namespace libtensor {
     correctly from partition to partition. That is, if the partitions must
     have the same block structure.
 
-    TODO: 
-    - separate class definition and implementation
-    - replace sign by scalar_transf
-
     \ingroup libtensor_symmetry
 **/
 template<size_t N, typename T>

@@ -162,6 +162,28 @@ inline int lapack_dpstrf(char uplo, size_t n, double *a, size_t lda, int *p,
 }
 
 
+/** \brief LAPACK function dpteqr (ESSL)
+
+    \ingroup libtensor_linalg
+ **/
+inline int lapack_dpteqr(char compz, size_t n, double *d, double *e, double *z,
+    size_t ldz, double *work) {
+
+    throw not_implemented(g_ns, 0, "lapack_dpteqr", __FILE__, __LINE__);
+}
+
+
+/** \brief LAPACK function dsteqr (ESSL)
+
+    \ingroup libtensor_linalg
+ **/
+inline int lapack_dsteqr(char compz, size_t n, double *d, double *e, double *z,
+    size_t ldz, double *work) {
+
+    throw not_implemented(g_ns, 0, "lapack_dsteqr", __FILE__, __LINE__);
+}
+
+
 } // namespace libtensor
 
 #endif // LIBTENSOR_LAPACK_ESSL_H

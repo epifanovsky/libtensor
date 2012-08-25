@@ -127,50 +127,6 @@ public:
     /** \brief Return the product pointed to by iterator (const)
      **/
     const product_rule_t &get_product(const_iterator it) const { return *it; }
-
-    /** \brief Tries to optimize the current evaluation rule.
-
-        Optimization is attempted by the following steps:
-        - Find always forbidden, always allowed terms in each product
-        - Delete always allowed terms in a product (unless it is the only term)
-        - Delete products comprising always forbidden terms
-        - Find duplicate products and delete them
-        - Find unused sequences and delete them
-     **/
-    void optimize();
-
-    /** \brief Perform a dimension reduction (by sum) of the current rule
-        \param res Result rule
-        \param rmap Index map input->output
-        \param rdims Labels of the reduction steps
-        \param pt Product table
-
-        The reduction is performed according to rmap and rdim. rmap specifies
-        which input dimensions end up at which output dimensions, as well as
-        the input dimensions which are going to be reduced. The latter
-        dimensions are given by values larger than N - M in rmap. Since
-        the reduction can be performed in multiple steps the value also
-        indicates the reduction step (i.e. value N - M refers to the first
-        reduction step, N - M + 1 to the second, ...).
-
-     **/
-    template<size_t M>
-    void reduce(evaluation_rule<N - M> &res, const sequence<N, size_t> &rmap,
-            const sequence<M, label_group_t> &rdims,
-            const product_table_i &pt) const;
-
-    /** \brief Perform merge of two or more dimensions for the current rule
-        \param res Result rule
-        \param mmap Index map input->output
-        \param smsk Mask for merged dimensions that can be simplified
-
-        The merge is performed according to mmap and smsk. mmap specifies
-        which input dimensions end up at which output dimensions. smsk
-        specifies, if the merged dimensions can be simplified.
-     **/
-    template<size_t M>
-    void merge(evaluation_rule<M> &res, const sequence<N, size_t> &mmap,
-            const mask<M>& smsk) const;
 };
 
 

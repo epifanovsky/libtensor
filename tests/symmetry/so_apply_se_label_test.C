@@ -9,7 +9,8 @@ namespace libtensor {
 
 void so_apply_se_label_test::perform() throw(libtest::test_exception) {
 
-    std::string table_id = setup_pg_table();
+    std::string table_id = "S6";
+    setup_pg_table(table_id);
 
     try {
 
@@ -21,11 +22,11 @@ void so_apply_se_label_test::perform() throw(libtest::test_exception) {
     test_1(table_id,  true, false,  true);
 
     } catch (std::exception &e) {
-        product_table_container::get_instance().erase(table_id);
+        clear_pg_table(table_id);
         throw;
     }
 
-    product_table_container::get_instance().erase(table_id);
+    clear_pg_table(table_id);
 
 }
 

@@ -7,6 +7,8 @@
 #include <libtensor/core/abs_index.h>
 #include "../bad_symmetry.h"
 #include "../combine_label.h"
+#include "../er_reduce.h"
+#include "../er_optimize.h"
 #include "../product_table_container.h"
 
 namespace libtensor {
@@ -176,16 +178,15 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_label<NM, T> >::do_perform(
             }
         }
 
-        // Copy evaluation rule
-        const evaluation_rule<N> &r1 = cl1.get_rule();
-        evaluation_rule<k_order2> r2;
-
-        r1.reduce(r2, rmap, blk_labels, pt);
-
         // Return the product table
         product_table_container::get_instance().ret_table(cl1.get_table_id());
 
-        se2.set_rule(r2);
+        // Copy evaluation rule
+        const evaluation_rule<N> &r1 = cl1.get_rule();
+        evaluation_rule<k_order2> r2a, r2b;
+        er_reduce<N, M>(r1, rmap, blk_labels, cl1.get_table_id()).perform(r2a);
+        er_optimize<k_order2>(r2a, cl1.get_table_id()).perform(r2b);
+        se2.set_rule(r2b);
         params.grp2.insert(se2);
 
     } // Loop it1

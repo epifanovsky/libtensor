@@ -23,7 +23,7 @@ public:
 
 private:
     eval_sequence_list<N> *m_slist; //!< Reference to list of sequences
-    std::map<size_t, label_t> m_terms; //!< Terms in product
+    std::multimap<size_t, label_t> m_terms; //!< Terms in product
 
 public:
     /** \brief Constructor
@@ -46,6 +46,12 @@ public:
      **/
     const eval_sequence_t &get_sequence(iterator it) const {
         return (*m_slist)[it->first];
+    }
+
+    /** \brief Return the number of the sequence in the sequence list
+     **/
+    size_t get_seqno(iterator it) const {
+        return it->first;
     }
 
     /** \brief Return intrinsic label for term pointed to by it

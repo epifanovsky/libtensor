@@ -16,9 +16,10 @@ public:
 private:
     void test_1() throw(libtest::test_exception);
     void test_2() throw(libtest::test_exception);
+    void test_3() throw(libtest::test_exception);
 };
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_EVALUATION_RULE_TEST_H
+#endif // LIBTENSOR_PRODUCT_RULE_TEST_H
 

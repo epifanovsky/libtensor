@@ -78,6 +78,9 @@ set(SRC_SYMMETRY
     symmetry/combine_label_test.C
     symmetry/combine_part_test.C
     symmetry/eval_sequence_list_test.C
+    symmetry/er_merge_test.C
+    symmetry/er_optimize_test.C
+    symmetry/er_reduce_test.C
     symmetry/evaluation_rule_test.C
     symmetry/libtensor_symmetry_tests.C
     symmetry/libtensor_symmetry_suite.C
