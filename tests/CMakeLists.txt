@@ -74,6 +74,7 @@ set(SRC_DIAG_TENSOR
 )
 
 set(SRC_SYMMETRY
+    symmetry/adjacency_list_test.C
     symmetry/block_labeling_test.C
     symmetry/combine_label_test.C
     symmetry/combine_part_test.C
