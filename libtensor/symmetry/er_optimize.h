@@ -26,7 +26,7 @@ public:
 
 private:
     const evaluation_rule<N> &m_rule; //!< Input rule
-    bool m_mergable;
+    bool m_mergable, m_single;
 
 public:
     /** \brief Constructor
