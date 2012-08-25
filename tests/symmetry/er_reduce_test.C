@@ -407,7 +407,7 @@ void er_reduce_test::test_4(
 }
 
 
-/** \brief Reduction of two dimensions in one steps (complete dims)
+/** \brief Reduction of two dimensions in one step (complete dims)
  **/
 void er_reduce_test::test_5(
         const std::string &id) throw(libtest::test_exception) {
