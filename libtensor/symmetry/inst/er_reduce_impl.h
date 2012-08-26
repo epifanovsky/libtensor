@@ -61,7 +61,12 @@ void er_reduce<N, M>::perform(evaluation_rule<N - M> &to) const {
 
         const product_rule<N> &pra = m_rule.get_product(it);
 
-        reduce_product(pra, slist, rsteps_in_seq, to);
+        if (! reduce_product(pra, slist, rsteps_in_seq, to)) {
+            to.clear();
+            product_rule<N - M> &pr = to.new_product();
+            pr.add(sequence<N - M, size_t>(1), product_table_i::k_invalid);
+            return;
+        }
     } // End for it
 
     er_reduce<N, M>::stop_timer();
@@ -88,7 +93,7 @@ void er_reduce<N, M>::build_rsteps_in_seq(const eval_sequence_list<N> &slist,
 
 
 template<size_t N, size_t M>
-void er_reduce<N, M>::reduce_product(const product_rule<N> &pr,
+bool er_reduce<N, M>::reduce_product(const product_rule<N> &pr,
         const eval_sequence_list<N> &slist,
         const std::vector<size_t> &rsteps_in_seq,
         evaluation_rule<N - M> &to) const {
@@ -209,9 +214,9 @@ void er_reduce<N, M>::reduce_product(const product_rule<N> &pr,
 
             const index<M> &ridx = aridx.get_index();
 
-            // Create a vector labels by which the intrisic labels have to be
-            // amended
-            std::vector<label_group_t> rsll(red_seqs.size());
+            // Create a vector of labels by which the intrisic labels have to
+            // be amended
+            std::vector<label_group_t> rstep_labels(red_seqs.size());
             for (size_t i = 0; i < red_seqs.size(); i++) {
 
                 const sequence<M, size_t> &rseq = red_seqs[i];
@@ -219,7 +224,8 @@ void er_reduce<N, M>::reduce_product(const product_rule<N> &pr,
                 for (size_t j = 0; j < m_nrsteps; j++) {
                     if (! rsteps_to_do[j]) continue;
 
-                    rsll[i].insert(rsll[i].end(), rseq[j], m_rdims[j][ridx[j]]);
+                    rstep_labels[i].insert(rstep_labels[i].end(),
+                            rseq[j], m_rdims[j][ridx[j]]);
                 }
             }
 
@@ -231,7 +237,7 @@ void er_reduce<N, M>::reduce_product(const product_rule<N> &pr,
                     std::vector<label_set_t> rvec;
                     for (size_t i = 0; i < red_seqs.size(); i++) {
 
-                        label_group_t &intr = rsll[i];
+                        label_group_t &intr = rstep_labels[i];
                         for (label_set_t::iterator it = il->at(i).begin();
                                 it != il->at(i).end(); it++) {
 
@@ -250,6 +256,8 @@ void er_reduce<N, M>::reduce_product(const product_rule<N> &pr,
                         ir != rlist.end(); ir++) {
 
                     std::vector<label_set_t> cur(red_seqs.size());
+                    size_t length = 0;
+
                     for (size_t i = 0, j = 0; i < red_seqs.size(); i++) {
 
                         if (zero_seqs[i]) {
@@ -259,22 +267,26 @@ void er_reduce<N, M>::reduce_product(const product_rule<N> &pr,
                                         ir->at(j) != product_table_i::k_invalid)
                                     break;
                             }
-
                             if (it != il->at(i).end()) {
                                 cur.clear();
                                 break;
                             }
-                        }
-                        else {
-                            for (label_set_t::iterator it = il->at(i).begin();
-                                    it != il->at(i).end(); it++, j++) {
 
-                                cur[i].insert(ir->at(j));
-                            }
+                            continue;
+                        }
+
+                        for (label_set_t::iterator it = il->at(i).begin();
+                                it != il->at(i).end(); it++, j++, length++) {
+
+                            cur[i].insert(ir->at(j));
                         }
                     }
 
+                    // All forbidden product
                     if (cur.empty()) continue;
+                    // All allowed product
+                    if (length == 0) return false;
+
 
                     product_rule<N - M> &pr = to.new_product();
                     for (size_t i = 0; i < cur.size(); i++) {
@@ -289,31 +301,33 @@ void er_reduce<N, M>::reduce_product(const product_rule<N> &pr,
         } while (aridx.inc());
     }
     else {
+
         for (std::list< std::vector<label_set_t> >::iterator il =
                 intr_list.begin(); il != intr_list.end(); il++) {
 
             std::vector<label_set_t> cur(il->size());
+            size_t length = 0;
+
             for (size_t i = 0; i < il->size(); i++) {
 
                 label_set_t &ls = il->at(i);
+
                 if (zero_seqs[i]) {
-                    label_set_t::iterator it = ls.begin();
-                    for (; it != ls.end(); it++) {
-                        if (*it != product_table_i::k_identity &&
-                                *it != product_table_i::k_invalid)
-                            break;
-                    }
-                    if (it != ls.end()) {
+                    if (ls.count(product_table_i::k_identity) == 0 &&
+                            ls.count(product_table_i::k_invalid) == 0) {
+
                         cur.clear();
                         break;
                     }
+                    continue;
                 }
-                else {
-                    cur[i].insert(ls.begin(), ls.end());
-                }
+
+                cur[i].insert(ls.begin(), ls.end());
+                length += ls.size();
             }
 
             if (cur.empty()) continue;
+            if (length == 0) return false;
 
             product_rule<N - M> &pr = to.new_product();
             for (size_t i = 0; i < cur.size(); i++) {
@@ -322,11 +336,10 @@ void er_reduce<N, M>::reduce_product(const product_rule<N> &pr,
                     pr.add(pr_seqs[i], *it);
                 }
             }
-
         }
-
     }
 
+    return true;
 }
 
 

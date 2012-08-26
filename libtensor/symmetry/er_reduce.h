@@ -63,7 +63,7 @@ private:
     void build_rsteps_in_seq(const eval_sequence_list<N> &slist,
             std::vector<size_t> &rsteps_in_seq) const;
 
-    void reduce_product(const product_rule<N> &pr,
+    bool reduce_product(const product_rule<N> &pr,
             const eval_sequence_list<N> &slist,
             const std::vector<size_t> &rsteps_in_seq,
             evaluation_rule<N - M> &to) const;
