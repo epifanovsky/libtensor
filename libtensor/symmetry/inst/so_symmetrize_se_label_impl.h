@@ -4,6 +4,7 @@
 #include <libtensor/core/permutation_builder.h>
 #include <libtensor/core/permutation_generator.h>
 #include "../bad_symmetry.h"
+#include "../er_optimize.h"
 
 namespace libtensor {
 
@@ -68,7 +69,7 @@ symmetry_operation_impl< so_symmetrize<N, T>, se_label<N, T> >::do_perform(
          block_labeling<N> &bl2 = e2.get_labeling();
          transfer_labeling(bl1, idmap, bl2);
 
-         evaluation_rule<N> r2;
+         evaluation_rule<N> r2a, r2b;
          for (typename evaluation_rule<N>::const_iterator ir = r1.begin();
                  ir != r1.end(); ir++) {
 
@@ -88,7 +89,7 @@ symmetry_operation_impl< so_symmetrize<N, T>, se_label<N, T> >::do_perform(
                  }
                  permutation_builder<N> pb(seq2, seq1);
 
-                 product_rule<N> &pr2 = r2.new_product();
+                 product_rule<N> &pr2 = r2a.new_product();
                  for (typename product_rule<N>::iterator ip = pr1.begin();
                          ip != pr1.end(); ip++) {
 
@@ -99,8 +100,8 @@ symmetry_operation_impl< so_symmetrize<N, T>, se_label<N, T> >::do_perform(
 
              } while (pg.next());
          }
-
-         e2.set_rule(r2);
+         er_optimize<N>(r2a, e1.get_table_id()).perform(r2b);
+         e2.set_rule(r2b);
 
          params.grp2.insert(e2);
      }

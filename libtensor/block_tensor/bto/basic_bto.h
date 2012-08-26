@@ -31,6 +31,9 @@ public:
     typedef typename Traits::template block_tensor_type<N>::type
         block_tensor_t;
 
+    //! Type of blocks
+    typedef typename Traits::template block_type<N>::type block_t;
+
     using direct_bto<N, Traits>::get_bis;
     using direct_bto<N, Traits>::get_symmetry;
     using direct_bto<N, Traits>::get_schedule;
@@ -82,8 +85,7 @@ public:
     virtual void perform(block_tensor_t &bt);
     using direct_bto<N, Traits>::perform;
 
-protected:
-    using direct_bto<N, Traits>::compute_block;
+    virtual void compute_block(block_t &blk, const index<N> &i) = 0;
 
 };
 

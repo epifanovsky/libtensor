@@ -101,10 +101,9 @@ public:
     //@}
 
     using additive_bto<k_orderb, Traits>::perform;
-
     virtual void perform(bto_stream_i<N - M + 1, Traits> &out);
 
-protected:
+    using additive_bto<k_orderb, Traits>::compute_block;
     virtual void compute_block(bool zero, blockb_t &blk,
         const index<k_orderb> &ib, const tensorb_tr_t &trb, const element_t &c);
 

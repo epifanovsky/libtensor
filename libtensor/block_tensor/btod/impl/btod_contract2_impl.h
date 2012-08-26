@@ -207,7 +207,7 @@ void btod_contract2<N, M, K>::perform(block_tensor_i<N + M, double> &btc) {
 
 template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::perform(block_tensor_i<N + M, double> &btc,
-    double d) {
+    const double &d) {
 
     block_tensor_ctrl<N + M, double> cc(btc);
     addition_schedule<N + M, btod_traits> asch(m_symc.get_symc(),
