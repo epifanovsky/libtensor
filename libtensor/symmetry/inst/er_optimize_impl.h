@@ -156,29 +156,7 @@ void er_optimize<N>::perform(evaluation_rule<N> &to) const {
         return;
     }
 
-    // Remove duplicate products
-    for (typename std::list<product_map_t>::iterator it1 = plst.begin();
-            it1 != plst.end(); it1++) {
-
-        typename std::list<product_map_t>::iterator it2 = it1;
-        it2++;
-        while (it2 != plst.end()) {
-            if (it1->size() == it2->size()) {
-                product_map_t::iterator ip1 = it1->begin(), ip2 = it2->begin();
-                for (; ip1 != it1->end(); ip1++, ip2++) {
-                    if (ip1->first != ip2->first || ip1->second != ip2->second)
-                        break;
-                }
-                if (ip1 == it1->end()) {
-                    it2 = plst.erase(it2);
-                    continue;
-                }
-            }
-            it2++;
-        }
-    }
-
-    // Copy from new lists to member lists
+    // Copy to result rule and remove duplicate products
     for (typename std::list<product_map_t>::iterator it1 = plst.begin();
             it1 != plst.end(); it1++) {
 
@@ -186,6 +164,23 @@ void er_optimize<N>::perform(evaluation_rule<N> &to) const {
         for (typename product_map_t::iterator ip1 = it1->begin();
                 ip1 != it1->end(); ip1++) {
             pr.add(*(seq_ptr[ip1->first]), ip1->second);
+        }
+
+        typename std::list<product_map_t>::iterator it2 = it1;
+        it2++;
+        while (it2 != plst.end()) {
+            if (it1->size() != it2->size()) { it2++; continue; }
+
+            product_map_t::iterator ip1 = it1->begin(), ip2 = it2->begin();
+            for (; ip1 != it1->end(); ip1++, ip2++) {
+                if (ip1->first != ip2->first || ip1->second != ip2->second)
+                    break;
+            }
+            if (ip1 == it1->end()) {
+                it2 = plst.erase(it2);
+                continue;
+            }
+            it2++;
         }
     }
 

@@ -182,7 +182,7 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_label<NM, T> >::do_perform(
         const evaluation_rule<N> &r1 = cl1.get_rule();
         evaluation_rule<k_order2> r2a, r2b;
         er_reduce<N, M>(r1, rmap, blk_labels, cl1.get_table_id()).perform(r2a);
-        er_optimize<k_order2>(r2a, cl1.get_table_id()).perform(r2b);
+        er_optimize<N - M>(r2a, cl1.get_table_id()).perform(r2b);
         se2.set_rule(r2b);
         params.grp2.insert(se2);
 
