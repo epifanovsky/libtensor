@@ -135,6 +135,7 @@ public:
     virtual void sync_on();
     virtual void sync_off();
 
+    using additive_bto<N, bto_traits<double> >::compute_block;
     virtual void compute_block(bool zero, dense_tensor_i<N, double> &blk,
         const index<N> &i, const tensor_transf<N, double> &tr, const double &c);
 

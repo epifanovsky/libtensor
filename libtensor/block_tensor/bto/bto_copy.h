@@ -99,6 +99,7 @@ public:
     }
     //@}
 
+    using additive_bto<N, typename Traits::additive_bto_traits>::compute_block;
     virtual void compute_block(bool zero, block_t &blk, const index<N> &ib,
         const tensor_transf_t &tr, const element_t &c);
 

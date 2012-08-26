@@ -87,9 +87,10 @@ public:
     using basic_bto<N, Traits>::get_symmetry;
     using basic_bto<N, Traits>::sync_on;
     using basic_bto<N, Traits>::sync_off;
-    using basic_bto<N, Traits>::perform;
 
 public:
+    virtual void perform(block_tensor_t &bt);
+
     /** \brief Computes the result of the operation and adds it to the
             output block tensor
         \param bt Output block tensor.

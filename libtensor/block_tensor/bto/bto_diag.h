@@ -102,7 +102,8 @@ public:
 
     using additive_bto<k_orderb, typename Traits::additive_bto_traits>::perform;
 
-protected:
+    using additive_bto<N - M + 1, typename Traits::additive_bto_traits>::
+        compute_block;
     virtual void compute_block(bool zero, blockb_t &blk,
         const index<k_orderb> &ib, const tensorb_tr_t &trb, const element_t &c);
 

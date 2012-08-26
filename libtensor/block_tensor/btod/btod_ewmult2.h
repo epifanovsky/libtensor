@@ -108,7 +108,7 @@ public:
 
     //@}
 
-protected:
+    using additive_bto<N + M + K, bto_traits<double> >::compute_block;
     virtual void compute_block(bool zero,
         dense_tensor_i<k_orderc, double> &blk, const index<k_orderc> &i,
         const tensor_transf<k_orderc, double> &tr, const double &c);

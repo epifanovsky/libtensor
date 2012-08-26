@@ -83,8 +83,14 @@ public:
     //@}
 
     virtual void perform(block_tensor_i<N + M, double> &btc);
-    virtual void perform(block_tensor_i<N + M, double> &btc, double d);
+    virtual void perform(block_tensor_i<N + M, double> &btc, const double &d);
 
+    virtual void perform(block_tensor_i<N + M, double> &bt, const double &d,
+        const std::vector<size_t> &blst) {
+        additive_bto<N + M, bto_traits<double> >::perform(bt, d, blst);
+    }
+
+    using additive_bto<N + M, bto_traits<double> >::compute_block;
     virtual void compute_block(bool zero, dense_tensor_i<N + M, double> &blk,
         const index<N + M> &i, const tensor_transf<N + M, double> &tr,
         const double &c);

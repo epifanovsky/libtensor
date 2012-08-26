@@ -328,7 +328,7 @@ void btod_contract2<N, M, K>::perform(block_tensor_i<N + M, double> &btc) {
 
 template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::perform(block_tensor_i<N + M, double> &btc,
-    double d) {
+    const double &d) {
 
     block_tensor< k_orderc, double, allocator<double> > btct(m_symc.get_bisc());
     perform(btct);

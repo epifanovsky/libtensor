@@ -24,6 +24,14 @@ void additive_bto<N, Traits>::compute_block(additive_bto<N, Traits> &op,
     op.compute_block(zero, blk, i, tr, c);
 }
 
+
+template<size_t N, typename Traits>
+void additive_bto<N, Traits>::perform(block_tensor_t &bt) {
+
+    basic_bto<N, Traits>::perform(bt);
+}
+
+
 template<size_t N, typename Traits>
 void additive_bto<N, Traits>::perform(block_tensor_t &bt, const element_t &c) {
 

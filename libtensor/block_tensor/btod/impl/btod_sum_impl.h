@@ -134,7 +134,7 @@ void btod_sum<N>::perform(block_tensor_i<N, double> &bt) {
 
 
 template<size_t N>
-void btod_sum<N>::perform(block_tensor_i<N, double> &bt, double c) {
+void btod_sum<N>::perform(block_tensor_i<N, double> &bt, const double &c) {
 
     for(typename std::list<node_t>::iterator iop = m_ops.begin();
         iop != m_ops.end(); iop++) {
