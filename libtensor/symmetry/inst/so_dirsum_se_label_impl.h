@@ -67,7 +67,7 @@ symmetry_operation_impl< so_dirsum<N, M, T>, se_label<NM, T> >::do_perform(
         // Transfer r1
         const evaluation_rule<N> &r1 = cl1.get_rule();
 
-        for (typename evaluation_rule<N>::const_iterator ir1 = r1.begin();
+        for (typename evaluation_rule<N>::iterator ir1 = r1.begin();
                 ir1 != r1.end(); ir1++) {
 
             const product_rule<N> &pr1 = r1.get_product(ir1);
@@ -123,7 +123,7 @@ symmetry_operation_impl< so_dirsum<N, M, T>, se_label<NM, T> >::do_perform(
 
             // Transfer r2
             const evaluation_rule<M> &r2 = cl2.get_rule();
-            for (typename evaluation_rule<M>::const_iterator ir2 = r2.begin();
+            for (typename evaluation_rule<M>::iterator ir2 = r2.begin();
                     ir2 != r2.end(); ir2++) {
 
                 const product_rule<M> &pr2 = r2.get_product(ir2);
@@ -185,7 +185,7 @@ symmetry_operation_impl< so_dirsum<N, M, T>, se_label<NM, T> >::do_perform(
 
         // Transfer r2
         const evaluation_rule<M> &r2 = cl2.get_rule();
-        for (typename evaluation_rule<M>::const_iterator ir2 = r2.begin();
+        for (typename evaluation_rule<M>::iterator ir2 = r2.begin();
                 ir2 != r2.end(); ir2++) {
 
             const product_rule<M> &pr2 = r2.get_product(ir2);

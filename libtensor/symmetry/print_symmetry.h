@@ -151,7 +151,7 @@ std::ostream &operator<<(std::ostream &os, const block_labeling<N> &bl) {
 template<size_t N>
 std::ostream &operator<<(std::ostream &os, const evaluation_rule<N> &er) {
 
-    for (typename evaluation_rule<N>::const_iterator it = er.begin();
+    for (typename evaluation_rule<N>::iterator it = er.begin();
             it != er.end(); it++) {
 
         os << std::endl << er.get_product(it);

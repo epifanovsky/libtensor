@@ -48,7 +48,7 @@ namespace libtensor {
     \ingroup libtensor_symmetry
  **/
 template<size_t N>
-class evaluation_rule : public timings< evaluation_rule<N> > {
+class evaluation_rule {
 public:
     static const char *k_clazz; //!< Class name
 
@@ -58,8 +58,7 @@ public:
     typedef typename product_table_i::label_set_t label_set_t;
 
     typedef product_rule<N> product_rule_t;
-    typedef typename std::list<product_rule_t>::iterator iterator;
-    typedef typename std::list<product_rule_t>::const_iterator const_iterator;
+    typedef typename std::list<product_rule_t>::const_iterator iterator;
 
 private:
     eval_sequence_list<N> *m_slist;
@@ -104,29 +103,17 @@ public:
      **/
     const eval_sequence_list<N> &get_sequences() const { return *m_slist; }
 
-    /** \brief STL-style iterator to the 1st product in the setup
-     **/
-    iterator begin() { return m_rules.begin(); }
-
     /** \brief STL-style iterator to the 1st product in the setup (const)
      **/
-    const_iterator begin() const { return m_rules.begin(); }
-
-    /** \brief STL-style iterator to the end of the product list
-     **/
-    iterator end() { return m_rules.end(); }
+    iterator begin() const { return m_rules.begin(); }
 
     /** \brief STL-style iterator to the end of the product list (const)
      **/
-    const_iterator end() const { return m_rules.end(); }
-
-    /** \brief Return the product pointed to by iterator
-     **/
-    product_rule_t &get_product(iterator it) { return *it; }
+    iterator end() const { return m_rules.end(); }
 
     /** \brief Return the product pointed to by iterator (const)
      **/
-    const product_rule_t &get_product(const_iterator it) const { return *it; }
+    const product_rule_t &get_product(iterator it) const { return *it; }
 };
 
 
