@@ -109,6 +109,12 @@ public:
         \throw out_of_bounds If the dimension type is out of bounds.
      **/
     label_t get_label(size_t type, size_t pos) const throw(out_of_bounds);
+    
+    /** \brief Returns the labels of a block index
+        \param idx Index for which the block labels are requested
+        \param[out] labels Block labels for index idx
+     **/
+    void get_labels(const index<N> &idx, sequence<N, label_t> &labels) const;
 
     //@}
 };
@@ -133,6 +139,108 @@ bool operator==(const block_labeling<N> &a, const block_labeling<N> &b);
 template<size_t N, size_t M>
 void transfer_labeling(const block_labeling<N> &from,
         const sequence<N, size_t> &map, block_labeling<M> &to);
+
+
+
+template<size_t N>
+inline
+block_labeling<N>::block_labeling(const block_labeling<N> &bl) :
+    m_bidims(bl.m_bidims), m_type(bl.m_type), m_labels(0) {
+
+    for (register size_t i = 0; i < N && bl.m_labels[i] != 0; i++) {
+
+        m_labels[i] = new blk_label_t(*(bl.m_labels[i]));
+    }
+}
+
+
+template<size_t N>
+inline
+block_labeling<N>::~block_labeling() {
+
+    for (register size_t i = 0; i < N && m_labels[i] != 0; i++) {
+        delete m_labels[i]; m_labels[i] = 0;
+    }
+}
+
+
+template<size_t N>
+void block_labeling<N>::permute(const permutation<N> &p) {
+
+    m_bidims.permute(p);
+    p.apply(m_type);
+}
+
+
+template<size_t N>
+size_t block_labeling<N>::get_dim_type(size_t dim) const {
+
+#ifdef LIBTENSOR_DEBUG
+    static const char *method = "get_dim_type(size_t)";
+
+    if (dim > N) {
+        throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__, "dim");
+    }
+#endif
+
+    return m_type[dim];
+}
+
+
+template<size_t N>
+inline
+size_t block_labeling<N>::get_dim(size_t type) const throw(out_of_bounds) {
+
+#ifdef LIBTENSOR_DEBUG
+    if (type > N || m_labels[type] == 0)
+        throw out_of_bounds(g_ns, k_clazz, "get_dim(size_t)",
+                __FILE__, __LINE__, "Invalid type.");
+#endif
+
+    return m_labels[type]->size();
+
+}
+
+
+template<size_t N>
+inline
+typename block_labeling<N>::label_t block_labeling<N>::get_label(size_t type,
+        size_t blk) const throw (out_of_bounds) {
+
+#ifdef LIBTENSOR_DEBUG
+    static const char *method = "get_label(size_t, size_t)";
+
+    if (type > N || m_labels[type] == 0) {
+        throw out_of_bounds(g_ns, k_clazz, method, __FILE__, __LINE__, "dim");
+    }
+    if (m_labels[type]->size() <= blk) {
+        throw out_of_bounds(g_ns, k_clazz, method, __FILE__, __LINE__, "blk");
+    }
+#endif
+
+    return m_labels[type]->at(blk);
+}
+
+
+template<size_t N>
+inline
+void block_labeling<N>::get_labels(const index<N> &idx, 
+    sequence<N, label_t> &labels) const {
+
+    for (register size_t i = 0; i < N; i++) {
+
+#ifdef LIBTENSOR_DEBUG
+        if (idx[i] >= m_bidims[i]) {
+            throw out_of_bounds(g_ns, k_clazz, 
+                    "get_labels(const index<N> &, sequence<N, label_t> &)", 
+                    __FILE__, __LINE__, "idx");
+        } 
+#endif 
+
+        labels[i] = m_labels[m_type[i]]->at(idx[i]);
+    }        
+}
+
 
 } // namespace libtensor
 
