@@ -2,6 +2,7 @@
 #define LIBTENSOR_SE_PART_H
 
 #include <libtensor/core/symmetry_element_i.h>
+#include <libtensor/core/abs_index.h>
 
 namespace libtensor {
 
@@ -199,6 +200,25 @@ private:
     bool is_valid_pidx(const index<N> &idx);
 
 };
+
+
+template<size_t N, typename T>
+inline
+bool se_part<N, T>::is_forbidden(const index<N> &idx) const {
+
+    abs_index<N> apidx(idx, m_pdims);
+    return (m_fmap[apidx.get_abs_index()] == (size_t) -1);
+}
+
+
+template<size_t N, typename T>
+inline
+void se_part<N, T>::apply(index<N> &idx) const {
+
+    tensor_transf<N, T> tr;
+    apply(idx, tr);
+}
+
 
 } // namespace libtensor
 
