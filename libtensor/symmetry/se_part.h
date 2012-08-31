@@ -36,7 +36,8 @@ public:
 private:
     block_index_space<N> m_bis; //!< Block %index space
     dimensions<N> m_bidims; //!< Block %index space dimensions
-    dimensions<N> m_pdims; //!< Partition %index dimensions
+    dimensions<N> m_bipdims; //!< Block %index space dimensions of one partition
+    dimensions<N> m_pdims; //!< Partition dimensions
     size_t *m_fmap; //!< Forward mapping
     size_t *m_rmap; //!< Reverse mapping
     scalar_transf<T> *m_ftr; //!< Transforms of the mappings
@@ -180,13 +181,19 @@ public:
 private:
     /** \brief Builds the partition %dimensions, throws an exception
         if the arguments are invalid
-    **/
+     **/
     static dimensions<N> make_pdims(const block_index_space<N> &bis,
             const mask<N> &msk, size_t npart);
 
+    /** \brief Builds the block %index %dimensions of one partition,
+            throws an exception if the arguments are invalid
+     **/
+    static dimensions<N> make_bipdims(
+            const dimensions<N> &bidims, const dimensions<N> &pdims);
+
     /** \brief Returns true if the partition %dimensions are valid in the
         block index space
-    **/
+     **/
     static bool is_valid_pdims(const block_index_space<N> &bis,
             const dimensions<N> &d);
 
@@ -196,7 +203,7 @@ private:
 
     /** \brief Returns true if the %index is a valid partition %index,
         false otherwise
-    **/
+     **/
     bool is_valid_pidx(const index<N> &idx);
 
 };
