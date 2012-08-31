@@ -104,8 +104,15 @@ public:
     virtual void sync_on();
     virtual void sync_off();
 
-    using additive_bto<N + M + K, btod_traits>::perform;
     virtual void perform(bto_stream_i<N + M + K, btod_traits> &out);
+    virtual void perform(block_tensor_i<N + M + K, double> &btc);
+    virtual void perform(block_tensor_i<N + M + K, double> &btc,
+        const double &d);
+
+    virtual void perform(block_tensor_i<N + M + K, double> &bt, const double &d,
+        const std::vector<size_t> &blst) {
+        additive_bto<N + M + K, btod_traits>::perform(bt, d, blst);
+    }
 
     //@}
 
