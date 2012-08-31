@@ -117,10 +117,8 @@ std::ostream &operator<<(std::ostream &os, const se_part<N, T> &se) {
 		abs_index<N> aix(se.get_direct_map(ai.get_index()), pdims);
 		if (aix.get_abs_index() <= ai.get_abs_index()) continue;
 		
-		os << std::endl
-		        << " " << ai.get_index() << " -> " << aix.get_index() << " ("
-		        << se.get_transf(ai.get_index(), aix.get_index())
-		        << ")" << std::endl;
+		os << std::endl << " " << ai.get_index() << " -> " << aix.get_index();
+		os << " (" << se.get_transf(ai.get_index(), aix.get_index()) << ")";
 	} while (ai.inc());
 
 	return os;
@@ -153,8 +151,7 @@ std::ostream &operator<<(std::ostream &os, const evaluation_rule<N> &er) {
 
     for (typename evaluation_rule<N>::iterator it = er.begin();
             it != er.end(); it++) {
-
-        os << std::endl << er.get_product(it);
+        os << er.get_product(it) << std::endl;
     }
     return os;
 }
