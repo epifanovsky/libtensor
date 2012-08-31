@@ -2,7 +2,6 @@
 #define LIBTENSOR_BTOD_EWMULT2_IMPL_H
 
 #include <libutil/thread_pool/thread_pool.h>
-#include <libtensor/not_implemented.h>
 #include <libtensor/core/block_index_space_product_builder.h>
 #include <libtensor/core/orbit.h>
 #include <libtensor/core/orbit_list.h>
