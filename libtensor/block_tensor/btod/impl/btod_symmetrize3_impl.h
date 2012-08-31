@@ -2,13 +2,14 @@
 #define LIBTENSOR_BTOD_SYMMETRIZE3_IMPL_H
 
 #include <algorithm> // for std::swap
-#include <libtensor/not_implemented.h>
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/orbit.h>
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/symmetry/so_copy.h>
 #include <libtensor/symmetry/so_symmetrize.h>
+#include "../../bto/impl/bto_aux_add_impl.h"
+#include "../../bto/impl/bto_aux_symmetrize_impl.h"
 #include "../btod_symmetrize3.h"
 
 namespace libtensor {
@@ -47,8 +48,69 @@ btod_symmetrize3<N>::btod_symmetrize3(additive_bto<N, btod_traits> &op,
 template<size_t N>
 void btod_symmetrize3<N>::perform(bto_stream_i<N, btod_traits> &out) {
 
-    throw not_implemented(g_ns, k_clazz, "perform(bto_stream_i&)",
-        __FILE__, __LINE__);
+    typedef btod_traits Traits;
+
+    try {
+
+        permutation<N> perm1, perm2, perm3;
+        perm1.permute(m_i1, m_i2);
+        perm2.permute(m_i1, m_i3);
+        perm3.permute(m_i2, m_i3);
+
+        scalar_transf<double> str(m_symm ? 1.0 : -1.0);
+
+        tensor_transf<N, double> tr0;
+        tensor_transf<N, double> tr1(perm1, str);
+        tensor_transf<N, double> tr2(perm2, str);
+        tensor_transf<N, double> tr3(perm3, str);
+        tensor_transf<N, double> tr4(tr1), tr5(tr1);
+        tr4.transform(tr2);
+        tr5.transform(tr3);
+
+        bto_aux_symmetrize<N, Traits> out2(m_op.get_symmetry(), m_sym, out);
+        out2.add_transf(tr0);
+        out2.add_transf(tr1);
+        out2.add_transf(tr2);
+        out2.add_transf(tr3);
+        out2.add_transf(tr4);
+        out2.add_transf(tr5);
+        m_op.perform(out2);
+
+    } catch(...) {
+        throw;
+    }
+}
+
+
+template<size_t N>
+void btod_symmetrize3<N>::perform(block_tensor_i<N, double> &bt) {
+
+    typedef btod_traits Traits;
+
+    block_tensor_ctrl<N, double> ctrl(bt);
+    ctrl.req_zero_all_blocks();
+    so_copy<N, double>(m_sym).perform(ctrl.req_symmetry());
+
+    addition_schedule<N, Traits> asch(m_sym, m_sym);
+    asch.build(m_sch, ctrl);
+
+    bto_aux_add<N, Traits> out(m_sym, asch, bt, 1.0);
+    perform(out);
+}
+
+
+template<size_t N>
+void btod_symmetrize3<N>::perform(block_tensor_i<N, double> &bt, double d) {
+
+    typedef btod_traits Traits;
+
+    block_tensor_ctrl<N, double> ctrl(bt);
+
+    addition_schedule<N, Traits> asch(m_sym, ctrl.req_const_symmetry());
+    asch.build(m_sch, ctrl);
+
+    bto_aux_add<N, Traits> out(m_sym, asch, bt, d);
+    perform(out);
 }
 
 

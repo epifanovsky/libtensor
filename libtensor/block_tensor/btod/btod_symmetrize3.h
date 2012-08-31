@@ -98,8 +98,9 @@ public:
         m_op.sync_off();
     }
 
-    using additive_bto<N, btod_traits>::perform;
     virtual void perform(bto_stream_i<N, btod_traits> &out);
+    virtual void perform(block_tensor_i<N, double> &btc);
+    virtual void perform(block_tensor_i<N, double> &btc, double d);
 
     //@}
 
