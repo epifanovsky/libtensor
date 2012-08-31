@@ -115,7 +115,7 @@ void product_rule<N>::add(const eval_sequence_t &seq, label_t intr) {
 template<size_t N>
 bool product_rule<N>::operator==(const product_rule<N> &pr) const {
 
-    if (pr.m_slist != m_slist) return false;
+    if (&(pr.m_slist) != &m_slist) return false;
 
     std::map<size_t, label_t>::const_iterator it1 = m_terms.begin();
     std::map<size_t, label_t>::const_iterator it2 = pr.m_terms.begin();

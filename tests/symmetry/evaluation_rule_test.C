@@ -48,7 +48,7 @@ void evaluation_rule_test::test_1() throw(libtest::test_exception) {
     }
 
     // Check products
-    evaluation_rule<3>::const_iterator it = rule.begin();
+    evaluation_rule<3>::iterator it = rule.begin();
     if (rule.get_product(it) != pr1) {
         fail_test(testname, __FILE__, __LINE__, "1st product rule.");
     }
