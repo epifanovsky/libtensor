@@ -100,8 +100,9 @@ public:
 
     //@}
 
-    using additive_bto<k_orderb, Traits>::perform;
     virtual void perform(bto_stream_i<N - M + 1, Traits> &out);
+    virtual void perform(block_tensorb_t &btb);
+    virtual void perform(block_tensorb_t &btb, const element_t &c);
 
     using additive_bto<k_orderb, Traits>::compute_block;
     virtual void compute_block(bool zero, blockb_t &blk,
