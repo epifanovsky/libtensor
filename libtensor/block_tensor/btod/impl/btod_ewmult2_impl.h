@@ -31,12 +31,14 @@ private:
     btod_ewmult2<N, M, K> &m_bto;
     block_tensor_i<N + M + K, T> &m_btc;
     index<N + M + K> m_idx;
+    bto_stream_i<N + M + K, btod_traits> &m_out;
 
 public:
     btod_ewmult2_task(
         btod_ewmult2<N, M, K> &bto,
         block_tensor_i<N + M + K, T> &btc,
-        const index<N + M + K> &idx);
+        const index<N + M + K> &idx,
+        bto_stream_i<N + M + K, btod_traits> &out);
 
     virtual ~btod_ewmult2_task() { }
     virtual void perform();
@@ -49,13 +51,15 @@ class btod_ewmult2_task_iterator : public libutil::task_iterator_i {
 private:
     btod_ewmult2<N, M, K> &m_bto;
     block_tensor_i<N + M + K, T> &m_btc;
+    bto_stream_i<N + M + K, btod_traits> &m_out;
     const assignment_schedule<N + M + K, double> &m_sch;
     typename assignment_schedule<N + M + K, double>::iterator m_i;
 
 public:
     btod_ewmult2_task_iterator(
         btod_ewmult2<N, M, K> &bto,
-        block_tensor_i<N + M + K, T> &btc);
+        block_tensor_i<N + M + K, T> &btc,
+        bto_stream_i<N + M + K, btod_traits> &out);
 
     virtual bool has_more() const;
     virtual libutil::task_i *get_next();
@@ -130,37 +134,42 @@ template<size_t N, size_t M, size_t K>
 void btod_ewmult2<N, M, K>::perform(bto_stream_i<N + M + K, btod_traits> &out) {
 
     typedef allocator<double> allocator_type;
-    block_tensor<N + M + K, double, allocator_type> btc(m_bisc);
-    perform(btc);
-    btod_copy<N + M + K>(btc).perform(out);
+
+    try {
+
+        out.open();
+
+        block_tensor<N + M + K, double, allocator_type> btc(m_bisc);
+        block_tensor_ctrl<N + M + K, double> cc(btc);
+        cc.req_sync_on();
+        sync_on();
+
+        btod_ewmult2_task_iterator<N, M, K, double> ti(*this, btc, out);
+        btod_ewmult2_task_observer<N, M, K, double> to;
+        libutil::thread_pool::submit(ti, to);
+
+        cc.req_sync_off();
+        sync_off();
+
+        out.close();
+
+    } catch(...) {
+        throw;
+    }
 }
 
 
 template<size_t N, size_t M, size_t K>
 void btod_ewmult2<N, M, K>::perform(block_tensor_i<N + M + K, double> &btc) {
 
-    sync_on();
-
-    block_tensor_ctrl<N + M + K, double> cc(btc);
-    cc.req_zero_all_blocks();
-    so_copy<N + M + K, double>(m_symc).perform(cc.req_symmetry());
-    cc.req_sync_on();
-
-    btod_ewmult2_task_iterator<N, M, K, double> ti(*this, btc);
-    btod_ewmult2_task_observer<N, M, K, double> to;
-    libutil::thread_pool::submit(ti, to);
-
-    cc.req_sync_off();
-
-    sync_off();
+    bto_aux_copy<N + M + K, btod_traits> out(m_symc, btc);
+    perform(out);
 }
 
 
 template<size_t N, size_t M, size_t K>
 void btod_ewmult2<N, M, K>::perform(block_tensor_i<N + M + K, double> &btc,
     const double &d) {
-
-    sync_on();
 
     block_tensor_ctrl<N + M + K, double> cc(btc);
     addition_schedule<N + M + K, btod_traits> asch(m_symc,
@@ -169,8 +178,6 @@ void btod_ewmult2<N, M, K>::perform(block_tensor_i<N + M + K, double> &btc,
 
     bto_aux_add<N + M + K, btod_traits> out(m_symc, asch, btc, d);
     perform(out);
-
-    sync_off();
 }
 
 
@@ -455,9 +462,10 @@ void btod_ewmult2<N, M, K>::compute_block_impl(
 
 template<size_t N, size_t M, size_t K, typename T>
 btod_ewmult2_task<N, M, K, T>::btod_ewmult2_task(btod_ewmult2<N, M, K> &bto,
-    block_tensor_i<N + M + K, T> &btc, const index<N + M + K> &idx) :
+    block_tensor_i<N + M + K, T> &btc, const index<N + M + K> &idx,
+    bto_stream_i<N + M + K, btod_traits> &out) :
 
-    m_bto(bto), m_btc(btc), m_idx(idx) {
+    m_bto(bto), m_btc(btc), m_idx(idx), m_out(out) {
 
 }
 
@@ -469,15 +477,19 @@ void btod_ewmult2_task<N, M, K, T>::perform() {
     dense_tensor_i<N + M + K, T> &blk = cc.req_block(m_idx);
     tensor_transf<N + M + K, T> tr0;
     m_bto.compute_block(true, blk, m_idx, tr0, 1.0);
+    m_out.put(m_idx, blk, tr0);
     cc.ret_block(m_idx);
+    cc.req_zero_block(m_idx);
 }
 
 
 template<size_t N, size_t M, size_t K, typename T>
 btod_ewmult2_task_iterator<N, M, K, T>::btod_ewmult2_task_iterator(
-    btod_ewmult2<N, M, K> &bto, block_tensor_i<N + M + K, T> &btc) :
+    btod_ewmult2<N, M, K> &bto, block_tensor_i<N + M + K, T> &btc,
+    bto_stream_i<N + M + K, btod_traits> &out) :
 
-    m_bto(bto), m_btc(btc), m_sch(m_bto.get_schedule()), m_i(m_sch.begin()) {
+    m_bto(bto), m_btc(btc), m_out(out), m_sch(m_bto.get_schedule()),
+    m_i(m_sch.begin()) {
 
 }
 
@@ -496,7 +508,7 @@ libutil::task_i *btod_ewmult2_task_iterator<N, M, K, T>::get_next() {
     index<N + M + K> idx;
     abs_index<N + M + K>::get_index(m_sch.get_abs_index(m_i), bidims, idx);
     btod_ewmult2_task<N, M, K, T> *t =
-        new btod_ewmult2_task<N, M, K, T>(m_bto, m_btc, idx);
+        new btod_ewmult2_task<N, M, K, T>(m_bto, m_btc, idx, m_out);
     ++m_i;
     return t;
 }
