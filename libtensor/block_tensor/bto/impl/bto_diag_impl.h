@@ -22,7 +22,7 @@ const char *bto_diag<N, M, Traits>::k_clazz = "bto_diag<N, M, Traits>";
 
 
 template<size_t N, size_t M, typename Traits>
-class btod_diag_task : public libutil::task_i {
+class bto_diag_task : public libutil::task_i {
 public:
     typedef typename Traits::element_type element_type;
     typedef typename Traits::template block_tensor_type<N - M + 1>::type
@@ -35,20 +35,20 @@ private:
     bto_stream_i<N - M + 1, Traits> &m_out;
 
 public:
-    btod_diag_task(
+    bto_diag_task(
         bto_diag<N, M, Traits> &bto,
         block_tensor_b_type &btb,
         const index<N - M + 1> &idx,
         bto_stream_i<N - M + 1, Traits> &out);
 
-    virtual ~btod_diag_task() { }
+    virtual ~bto_diag_task() { }
     virtual void perform();
 
 };
 
 
 template<size_t N, size_t M, typename Traits>
-class btod_diag_task_iterator : public libutil::task_iterator_i {
+class bto_diag_task_iterator : public libutil::task_iterator_i {
 public:
     typedef typename Traits::element_type element_type;
     typedef typename Traits::template block_tensor_type<N - M + 1>::type
@@ -62,7 +62,7 @@ private:
     typename assignment_schedule<N - M + 1, element_type>::iterator m_i;
 
 public:
-    btod_diag_task_iterator(
+    bto_diag_task_iterator(
         bto_diag<N, M, Traits> &bto,
         block_tensor_b_type &btb,
         bto_stream_i<N - M + 1, Traits> &out);
@@ -74,7 +74,7 @@ public:
 
 
 template<size_t N, size_t M, typename Traits>
-class btod_diag_task_observer : public libutil::task_observer_i {
+class bto_diag_task_observer : public libutil::task_observer_i {
 public:
     virtual void notify_start_task(libutil::task_i *t) { }
     virtual void notify_finish_task(libutil::task_i *t);
@@ -145,8 +145,8 @@ void bto_diag<N, M, Traits>::perform(bto_stream_i<N - M + 1, Traits> &out) {
         cb.req_sync_on();
         sync_on();
 
-        btod_diag_task_iterator<N, M, Traits> ti(*this, btb, out);
-        btod_diag_task_observer<N, M, Traits> to;
+        bto_diag_task_iterator<N, M, Traits> ti(*this, btb, out);
+        bto_diag_task_observer<N, M, Traits> to;
         libutil::thread_pool::submit(ti, to);
 
         cb.req_sync_off();
@@ -380,7 +380,7 @@ void bto_diag<N, M, Traits>::make_schedule() {
 
 
 template<size_t N, size_t M, typename Traits>
-btod_diag_task<N, M, Traits>::btod_diag_task(bto_diag<N, M, Traits> &bto,
+bto_diag_task<N, M, Traits>::bto_diag_task(bto_diag<N, M, Traits> &bto,
     block_tensor_b_type &btb, const index<N - M + 1> &idx,
     bto_stream_i<N - M + 1, Traits> &out) :
 
@@ -390,7 +390,7 @@ btod_diag_task<N, M, Traits>::btod_diag_task(bto_diag<N, M, Traits> &bto,
 
 
 template<size_t N, size_t M, typename Traits>
-void btod_diag_task<N, M, Traits>::perform() {
+void bto_diag_task<N, M, Traits>::perform() {
 
     typedef typename Traits::template block_tensor_ctrl_type<N - M + 1>::type
         block_tensor_ctrl_b_type;
@@ -408,7 +408,7 @@ void btod_diag_task<N, M, Traits>::perform() {
 
 
 template<size_t N, size_t M, typename Traits>
-btod_diag_task_iterator<N, M, Traits>::btod_diag_task_iterator(
+bto_diag_task_iterator<N, M, Traits>::bto_diag_task_iterator(
     bto_diag<N, M, Traits> &bto, block_tensor_b_type &btb,
     bto_stream_i<N - M + 1, Traits> &out) :
 
@@ -419,27 +419,27 @@ btod_diag_task_iterator<N, M, Traits>::btod_diag_task_iterator(
 
 
 template<size_t N, size_t M, typename Traits>
-bool btod_diag_task_iterator<N, M, Traits>::has_more() const {
+bool bto_diag_task_iterator<N, M, Traits>::has_more() const {
 
     return m_i != m_sch.end();
 }
 
 
 template<size_t N, size_t M, typename Traits>
-libutil::task_i *btod_diag_task_iterator<N, M, Traits>::get_next() {
+libutil::task_i *bto_diag_task_iterator<N, M, Traits>::get_next() {
 
     dimensions<N - M + 1> bidims = m_btb.get_bis().get_block_index_dims();
     index<N - M + 1> idx;
     abs_index<N - M + 1>::get_index(m_sch.get_abs_index(m_i), bidims, idx);
-    btod_diag_task<N, M, Traits> *t =
-        new btod_diag_task<N, M, Traits>(m_bto, m_btb, idx, m_out);
+    bto_diag_task<N, M, Traits> *t =
+        new bto_diag_task<N, M, Traits>(m_bto, m_btb, idx, m_out);
     ++m_i;
     return t;
 }
 
 
 template<size_t N, size_t M, typename Traits>
-void btod_diag_task_observer<N, M, Traits>::notify_finish_task(
+void bto_diag_task_observer<N, M, Traits>::notify_finish_task(
     libutil::task_i *t) {
 
     delete t;
