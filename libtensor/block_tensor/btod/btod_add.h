@@ -142,6 +142,8 @@ public:
     using additive_bto<N, btod_traits>::perform;
 
     virtual void perform(bto_stream_i<N, btod_traits> &out);
+    virtual void perform(block_tensor_i<N, double> &btb);
+    virtual void perform(block_tensor_i<N, double> &btb, const double &c);
 
     //@}
 

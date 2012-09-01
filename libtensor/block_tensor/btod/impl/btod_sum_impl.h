@@ -1,7 +1,6 @@
 #ifndef LIBTENSOR_BTOD_SUM_IMPL_H
 #define LIBTENSOR_BTOD_SUM_IMPL_H
 
-#include <libtensor/not_implemented.h>
 #include <libtensor/core/block_index_space_product_builder.h>
 #include <libtensor/core/orbit.h>
 #include <libtensor/symmetry/so_dirsum.h>
