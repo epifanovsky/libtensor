@@ -114,8 +114,13 @@ public:
         const index<N + M> &i, const tensor_transf<N + M, double> &tr,
         const double &c);
 
-    using additive_bto<N + M, btod_traits>::perform;
     virtual void perform(bto_stream_i<N + M, btod_traits> &out);
+    virtual void perform(block_tensor_i<N + M, double> &btb);
+    virtual void perform(block_tensor_i<N + M, double> &btb, const double &c);
+    virtual void perform(block_tensor_i<N + M, double> &btb, const double &c,
+        const std::vector<size_t> &blst) {
+        additive_bto<N + M, btod_traits>::perform(btb, c, blst);
+    }
 
 private:
     void make_schedule();

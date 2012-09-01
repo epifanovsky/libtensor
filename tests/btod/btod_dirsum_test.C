@@ -24,7 +24,9 @@ namespace libtensor {
 
 void btod_dirsum_test::perform() throw(libtest::test_exception) {
 
-    srand48(time(0));
+    allocator<double>::vmm().init(16, 16, 16777216, 16777216);
+
+    try {
 
     test_ij_i_j_1(true);
     test_ij_i_j_1(true, -0.5);
@@ -88,6 +90,12 @@ void btod_dirsum_test::perform() throw(libtest::test_exception) {
     test_iklj_ij_kl_1(false);
     test_iklj_ij_kl_1(false, -1.25);
 
+    } catch(...) {
+        allocator<double>::vmm().shutdown();
+        throw;
+    }
+
+    allocator<double>::vmm().shutdown();
 }
 
 void btod_dirsum_test::test_ij_i_j_1(bool rnd, double d)
