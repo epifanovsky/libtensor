@@ -14,6 +14,10 @@ namespace libtensor {
 
 void btod_extract_test::perform() throw(libtest::test_exception) {
 
+    allocator<double>::vmm().init(16, 16, 16777216, 16777216);
+
+    try {
+
     test_1();
     test_2();
     test_3();
@@ -29,6 +33,13 @@ void btod_extract_test::perform() throw(libtest::test_exception) {
     test_12b();
     test_12c();
     test_13a();
+
+    } catch(...) {
+        allocator<double>::vmm().shutdown();
+        throw;
+    }
+
+    allocator<double>::vmm().shutdown();
 }
 
 
