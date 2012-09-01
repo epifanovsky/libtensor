@@ -12,6 +12,8 @@ template class basic_bto<3, btod_traits>;
 template class basic_bto<4, btod_traits>;
 template class basic_bto<5, btod_traits>;
 template class basic_bto<6, btod_traits>;
+template class basic_bto<7, btod_traits>;
+template class basic_bto<8, btod_traits>;
 
 
 } // namespace libtensor

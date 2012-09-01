@@ -149,7 +149,11 @@ template class symmetry_operation_impl< so_merge<12, 10, double>,
 template class symmetry_operation_impl< so_merge<12, 11, double>,
     se_perm<1, double> >;
 
+template class symmetry_operation_impl< so_merge<14, 7, double>,
+    se_perm<7, double> >;
+
+template class symmetry_operation_impl< so_merge<16, 8, double>,
+    se_perm<8, double> >;
+
 
 } // namespace libtensor
-
-
