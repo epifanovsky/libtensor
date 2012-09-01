@@ -144,7 +144,7 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_label<NM, T> >::do_perform(
                     if (bl1.get_label(itype, k) == bl1.get_label(jtype, k)) {
                         continue;
                     }
-                    if (bl1.get_label(itype, k) == product_table_i::k_invalid &&
+                    if (bl1.get_label(itype, k) == product_table_i::k_invalid ||
                             bl1.get_label(jtype, k) == product_table_i::k_invalid) {
                         has_invalid = true;
                     }
