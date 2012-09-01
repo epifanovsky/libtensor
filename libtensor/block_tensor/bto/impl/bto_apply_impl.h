@@ -1,10 +1,12 @@
 #ifndef LIBTENSOR_BTO_APPLY_IMPL_H
 #define LIBTENSOR_BTO_APPLY_IMPL_H
 
-#include <libtensor/not_implemented.h>
 #include <libtensor/core/orbit.h>
 #include <libtensor/core/orbit_list.h>
 #include <libtensor/symmetry/so_apply.h>
+#include "bto_aux_add_impl.h"
+#include "bto_aux_copy_impl.h"
+#include "../bto_apply.h"
 
 namespace libtensor {
 
@@ -12,6 +14,67 @@ namespace libtensor {
 template<size_t N, typename Functor, typename Traits>
 const char *bto_apply<N, Functor, Traits>::k_clazz =
     "bto_apply<N, Functor, Traits>";
+
+
+template<size_t N, typename Functor, typename Traits>
+class bto_apply_task : public libutil::task_i {
+public:
+    typedef typename Traits::element_type element_type;
+    typedef typename Traits::template block_tensor_type<N>::type
+        block_tensor_type;
+
+private:
+    bto_apply<N, Functor, Traits> &m_bto;
+    block_tensor_type &m_btb;
+    index<N> m_idx;
+    bto_stream_i<N, Traits> &m_out;
+
+public:
+    bto_apply_task(
+        bto_apply<N, Functor, Traits> &bto,
+        block_tensor_type &btb,
+        const index<N> &idx,
+        bto_stream_i<N, Traits> &out);
+
+    virtual ~bto_apply_task() { }
+    virtual void perform();
+
+};
+
+
+template<size_t N, typename Functor, typename Traits>
+class bto_apply_task_iterator : public libutil::task_iterator_i {
+public:
+    typedef typename Traits::element_type element_type;
+    typedef typename Traits::template block_tensor_type<N>::type
+        block_tensor_type;
+
+private:
+    bto_apply<N, Functor, Traits> &m_bto;
+    block_tensor_type &m_btb;
+    bto_stream_i<N, Traits> &m_out;
+    const assignment_schedule<N, element_type> &m_sch;
+    typename assignment_schedule<N, element_type>::iterator m_i;
+
+public:
+    bto_apply_task_iterator(
+        bto_apply<N, Functor, Traits> &bto,
+        block_tensor_type &btb,
+        bto_stream_i<N, Traits> &out);
+
+    virtual bool has_more() const;
+    virtual libutil::task_i *get_next();
+
+};
+
+
+template<size_t N, typename Functor, typename Traits>
+class bto_apply_task_observer : public libutil::task_observer_i {
+public:
+    virtual void notify_start_task(libutil::task_i *t) { }
+    virtual void notify_finish_task(libutil::task_i *t);
+
+};
 
 
 template<size_t N, typename Functor, typename Traits>
@@ -100,8 +163,54 @@ void bto_apply<N, Functor, Traits>::sync_off() {
 template<size_t N, typename Functor, typename Traits>
 void bto_apply<N, Functor, Traits>::perform(bto_stream_i<N, Traits> &out) {
 
-    throw not_implemented(g_ns, k_clazz, "perform(bto_stream_i&)",
-        __FILE__, __LINE__);
+    typedef allocator<element_t> allocator_type;
+
+    try {
+
+        out.open();
+
+        // TODO: replace with temporary block tensor from traits
+        block_tensor<N, element_t, allocator_type> btb(m_bis);
+        block_tensor_ctrl<N, element_t> cb(btb);
+        cb.req_sync_on();
+        sync_on();
+
+        bto_apply_task_iterator<N, Functor, Traits> ti(*this, btb, out);
+        bto_apply_task_observer<N, Functor, Traits> to;
+        libutil::thread_pool::submit(ti, to);
+
+        cb.req_sync_off();
+        sync_off();
+
+        out.close();
+
+    } catch(...) {
+        throw;
+    }
+}
+
+
+template<size_t N, typename Functor, typename Traits>
+void bto_apply<N, Functor, Traits>::perform(block_tensor_t &btb) {
+
+    bto_aux_copy<N, Traits> out(m_sym, btb);
+    perform(out);
+}
+
+
+template<size_t N, typename Functor, typename Traits>
+void bto_apply<N, Functor, Traits>::perform(block_tensor_t &btb,
+    const element_t &c) {
+
+    typedef typename Traits::template block_tensor_ctrl_type<N>::type
+        block_tensor_ctrl_type;
+
+    block_tensor_ctrl_type cb(btb);
+    addition_schedule<N, Traits> asch(m_sym, cb.req_const_symmetry());
+    asch.build(m_sch, cb);
+
+    bto_aux_add<N, Traits> out(m_sym, asch, btb, c);
+    perform(out);
 }
 
 
@@ -216,6 +325,72 @@ block_index_space<N> bto_apply<N, Functor, Traits>::mk_bis(
     return bis1;
 }
 
+
+template<size_t N, typename Functor, typename Traits>
+bto_apply_task<N, Functor, Traits>::bto_apply_task(
+    bto_apply<N, Functor, Traits> &bto, block_tensor_type &btb,
+    const index<N> &idx, bto_stream_i<N, Traits> &out) :
+
+    m_bto(bto), m_btb(btb), m_idx(idx), m_out(out) {
+
+}
+
+
+template<size_t N, typename Functor, typename Traits>
+void bto_apply_task<N, Functor, Traits>::perform() {
+
+    typedef typename Traits::template block_tensor_ctrl_type<N>::type
+        block_tensor_ctrl_type;
+    typedef typename Traits::template block_type<N>::type block_type;
+    typedef tensor_transf<N, element_type> tensor_transf_type;
+
+    block_tensor_ctrl_type cb(m_btb);
+    block_type &blk = cb.req_block(m_idx);
+    tensor_transf_type tr0;
+    m_bto.compute_block(true, blk, m_idx, tr0, Traits::identity());
+    m_out.put(m_idx, blk, tr0);
+    cb.ret_block(m_idx);
+    cb.req_zero_block(m_idx);
+}
+
+
+template<size_t N, typename Functor, typename Traits>
+bto_apply_task_iterator<N, Functor, Traits>::bto_apply_task_iterator(
+    bto_apply<N, Functor, Traits> &bto, block_tensor_type &btb,
+    bto_stream_i<N, Traits> &out) :
+
+    m_bto(bto), m_btb(btb), m_out(out), m_sch(m_bto.get_schedule()),
+    m_i(m_sch.begin()) {
+
+}
+
+
+template<size_t N, typename Functor, typename Traits>
+bool bto_apply_task_iterator<N, Functor, Traits>::has_more() const {
+
+    return m_i != m_sch.end();
+}
+
+
+template<size_t N, typename Functor, typename Traits>
+libutil::task_i *bto_apply_task_iterator<N, Functor, Traits>::get_next() {
+
+    dimensions<N> bidims = m_btb.get_bis().get_block_index_dims();
+    index<N> idx;
+    abs_index<N>::get_index(m_sch.get_abs_index(m_i), bidims, idx);
+    bto_apply_task<N, Functor, Traits> *t =
+        new bto_apply_task<N, Functor, Traits>(m_bto, m_btb, idx, m_out);
+    ++m_i;
+    return t;
+}
+
+
+template<size_t N, typename Functor, typename Traits>
+void bto_apply_task_observer<N, Functor, Traits>::notify_finish_task(
+    libutil::task_i *t) {
+
+    delete t;
+}
 
 
 } // namespace libtensor

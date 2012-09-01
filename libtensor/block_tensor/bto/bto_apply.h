@@ -126,12 +126,12 @@ public:
         return m_sym;
     }
 
-    using additive_bto<N, Traits>::perform;
-
     virtual void sync_on();
     virtual void sync_off();
 
     virtual void perform(bto_stream_i<N, Traits> &out);
+    virtual void perform(block_tensor_t &btb);
+    virtual void perform(block_tensor_t &btb, const element_t &c);
 
     //@}
 
@@ -142,7 +142,6 @@ public:
     }
     //@}
 
-protected:
     virtual void compute_block(bool zero, block_t &blk, const index<N> &ib,
             const tensor_transf_t &tr, const element_t &c);
 
