@@ -20,6 +20,10 @@ namespace libtensor {
 
 void btod_mult_test::perform() throw(libtest::test_exception) {
 
+    allocator<double>::vmm().init(16, 16, 16777216, 16777216);
+
+    try {
+
     test_1(false, false); test_1(false, true);
     test_1(true, false);  test_1(true, true);
     test_2(false, false); test_2(false, true);
@@ -72,6 +76,13 @@ void btod_mult_test::perform() throw(libtest::test_exception) {
     test_8b(false, true);
     test_8b(true, false);
     test_8b(true, true);
+
+    } catch(...) {
+        allocator<double>::vmm().shutdown();
+        throw;
+    }
+
+    allocator<double>::vmm().shutdown();
 }
 
 

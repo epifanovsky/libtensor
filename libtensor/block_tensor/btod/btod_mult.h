@@ -89,10 +89,10 @@ public:
 
     //@}
 
-    using additive_bto<N, btod_traits>::perform;
     virtual void perform(bto_stream_i<N, btod_traits> &out);
+    virtual void perform(block_tensor_i<N, double> &btc);
+    virtual void perform(block_tensor_i<N, double> &btc, const double &d);
 
-protected:
     virtual void compute_block(bool zero, dense_tensor_i<N, double> &blk,
         const index<N> &idx, const tensor_transf<N, double> &tr,
         const double &c);
