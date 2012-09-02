@@ -55,18 +55,17 @@ protected:
     //!    \name Implementation of libtensor::block_tensor_i<N, T>
     //@{
 
-    virtual symmetry<N, T> &on_req_symmetry() throw(exception);
-    virtual const symmetry<N, T> &on_req_const_symmetry() throw(exception);
+    virtual symmetry<N, T> &on_req_symmetry();
+    virtual const symmetry<N, T> &on_req_const_symmetry();
 
-    virtual void on_req_zero_block(const index<N> &idx)
-        throw(exception);
-    virtual void on_req_zero_all_blocks() throw(exception);
+    virtual void on_req_zero_block(const index<N> &idx);
+    virtual void on_req_zero_all_blocks();
 
-    virtual bool on_req_is_zero_block(const index<N> &idx)
-        throw(exception) = 0;
-    virtual dense_tensor_i<N, T> &on_req_block(const index<N> &idx)
-        throw(exception) = 0;
-    virtual void on_ret_block(const index<N> &idx) throw(exception) = 0;
+    virtual bool on_req_is_zero_block(const index<N> &idx) = 0;
+    virtual dense_tensor_i<N, T> &on_req_const_block(const index<N> &idx) = 0;
+    virtual void on_ret_const_block(const index<N> &idx) = 0;
+    virtual dense_tensor_i<N, T> &on_req_block(const index<N> &idx) = 0;
+    virtual void on_ret_block(const index<N> &idx) = 0;
 
     //@}
 };
@@ -85,8 +84,7 @@ const block_index_space<N> &direct_block_tensor_base<N, T>::get_bis() const {
 
 
 template<size_t N, typename T>
-symmetry<N, T> &direct_block_tensor_base<N, T>::on_req_symmetry()
-    throw(exception) {
+symmetry<N, T> &direct_block_tensor_base<N, T>::on_req_symmetry() {
 
     static const char *method = "on_req_const_symmetry()";
 
@@ -96,16 +94,14 @@ symmetry<N, T> &direct_block_tensor_base<N, T>::on_req_symmetry()
 
 
 template<size_t N, typename T>
-const symmetry<N, T> &direct_block_tensor_base<N, T>::on_req_const_symmetry()
-    throw(exception) {
+const symmetry<N, T> &direct_block_tensor_base<N, T>::on_req_const_symmetry() {
 
     return m_op.get_symmetry();
 }
 
 
 template<size_t N, typename T>
-void direct_block_tensor_base<N, T>::on_req_zero_block(const index<N> &idx)
-    throw(exception) {
+void direct_block_tensor_base<N, T>::on_req_zero_block(const index<N> &idx) {
 
     static const char *method = "on_req_zero_block(const index<N>&)";
 
@@ -115,8 +111,7 @@ void direct_block_tensor_base<N, T>::on_req_zero_block(const index<N> &idx)
 
 
 template<size_t N, typename T>
-void direct_block_tensor_base<N, T>::on_req_zero_all_blocks()
-    throw(exception) {
+void direct_block_tensor_base<N, T>::on_req_zero_all_blocks() {
 
     static const char *method = "on_req_zero_all_blocks()";
 

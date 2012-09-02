@@ -124,16 +124,15 @@ protected:
     //!    \name Implementation of libtensor::block_tensor_i<N, T>
     //@{
 
-    virtual bool on_req_is_zero_block(const index<N> &idx)
-        throw(exception);
-    virtual dense_tensor_i<N, T> &on_req_block(const index<N> &idx)
-        throw(exception);
-    virtual void on_ret_block(const index<N> &idx) throw(exception);
-    virtual dense_tensor_i<N, T> &on_req_aux_block(const index<N> &idx)
-        throw(exception);
-    virtual void on_ret_aux_block(const index<N> &idx) throw(exception);
-    virtual void on_req_sync_on() throw(exception);
-    virtual void on_req_sync_off() throw(exception);
+    virtual bool on_req_is_zero_block(const index<N> &idx);
+    virtual dense_tensor_i<N, T> &on_req_const_block(const index<N> &idx);
+    virtual void on_ret_const_block(const index<N> &idx);
+    virtual dense_tensor_i<N, T> &on_req_block(const index<N> &idx);
+    virtual void on_ret_block(const index<N> &idx);
+    virtual dense_tensor_i<N, T> &on_req_aux_block(const index<N> &idx);
+    virtual void on_ret_aux_block(const index<N> &idx);
+    virtual void on_req_sync_on();
+    virtual void on_req_sync_off();
 
     //@}
 
@@ -141,7 +140,7 @@ protected:
 
 private:
     //! \brief Performs calculation of the given block
-    void perform(const index<N>& idx) throw(exception);
+    void perform(const index<N>& idx);
 };
 
 
@@ -163,7 +162,7 @@ direct_block_tensor<N, T, Alloc, Sync>::direct_block_tensor(
 
 template<size_t N, typename T, typename Alloc, typename Sync>
 bool direct_block_tensor<N, T, Alloc, Sync>::on_req_is_zero_block(
-    const index<N> &idx) throw(exception) {
+    const index<N> &idx) {
 
     auto_lock lock(m_lock);
 
@@ -172,8 +171,24 @@ bool direct_block_tensor<N, T, Alloc, Sync>::on_req_is_zero_block(
 
 
 template<size_t N, typename T, typename Alloc, typename Sync>
+dense_tensor_i<N, T> &direct_block_tensor<N, T, Alloc, Sync>::on_req_const_block(
+    const index<N> &idx) {
+
+    return on_req_block(idx);
+}
+
+
+template<size_t N, typename T, typename Alloc, typename Sync>
+void direct_block_tensor<N, T, Alloc, Sync>::on_ret_const_block(
+    const index<N> &idx) {
+
+    on_ret_block(idx);
+}
+
+
+template<size_t N, typename T, typename Alloc, typename Sync>
 dense_tensor_i<N, T> &direct_block_tensor<N, T, Alloc, Sync>::on_req_block(
-    const index<N> &idx) throw(exception) {
+    const index<N> &idx) {
 
     static const char *method = "on_req_block(const index<N>&)";
 
@@ -230,8 +245,7 @@ dense_tensor_i<N, T> &direct_block_tensor<N, T, Alloc, Sync>::on_req_block(
 
 
 template<size_t N, typename T, typename Alloc, typename Sync>
-void direct_block_tensor<N, T, Alloc, Sync>::on_ret_block(const index<N> &idx)
-    throw(exception) {
+void direct_block_tensor<N, T, Alloc, Sync>::on_ret_block(const index<N> &idx) {
 
     static const char *method = "on_ret_block(const index<N>&)";
 
@@ -254,7 +268,7 @@ void direct_block_tensor<N, T, Alloc, Sync>::on_ret_block(const index<N> &idx)
 
 template<size_t N, typename T, typename Alloc, typename Sync>
 dense_tensor_i<N, T> &direct_block_tensor<N, T, Alloc, Sync>::on_req_aux_block(
-    const index<N> &idx) throw(exception) {
+    const index<N> &idx) {
 
     static const char *method = "on_req_aux_block(const index<N>&)";
 
@@ -265,7 +279,7 @@ dense_tensor_i<N, T> &direct_block_tensor<N, T, Alloc, Sync>::on_req_aux_block(
 
 template<size_t N, typename T, typename Alloc, typename Sync>
 void direct_block_tensor<N, T, Alloc, Sync>::on_ret_aux_block(
-    const index<N> &idx) throw(exception) {
+    const index<N> &idx) {
 
     static const char *method = "on_ret_aux_block(const index<N>&)";
 
@@ -275,7 +289,7 @@ void direct_block_tensor<N, T, Alloc, Sync>::on_ret_aux_block(
 
 
 template<size_t N, typename T, typename Alloc, typename Sync>
-void direct_block_tensor<N, T, Alloc, Sync>::on_req_sync_on() throw(exception) {
+void direct_block_tensor<N, T, Alloc, Sync>::on_req_sync_on() {
 
     if(m_lock == 0) m_lock = new mutex_t;
     get_op().sync_on();
@@ -283,8 +297,7 @@ void direct_block_tensor<N, T, Alloc, Sync>::on_req_sync_on() throw(exception) {
 
 
 template<size_t N, typename T, typename Alloc, typename Sync>
-void direct_block_tensor<N, T, Alloc, Sync>::on_req_sync_off()
-    throw(exception) {
+void direct_block_tensor<N, T, Alloc, Sync>::on_req_sync_off() {
 
     delete m_lock; m_lock = 0;
     get_op().sync_off();

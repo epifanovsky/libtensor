@@ -4,10 +4,30 @@
 #include <libtensor/core/block_index_space.h>
 #include <libtensor/core/symmetry.h>
 #include <libtensor/dense_tensor/dense_tensor_i.h>
+#include <libtensor/gen_block_tensor/gen_block_tensor_i.h>
 
 namespace libtensor {
 
 template<size_t N, typename T> class block_tensor_ctrl;
+
+
+template<typename T>
+struct block_tensor_traits {
+
+    typedef T element_type;
+
+    template<size_t N>
+    struct rd_block_type {
+        typedef dense_tensor_i<N, T> type;
+    };
+
+    template<size_t N>
+    struct wr_block_type {
+        typedef dense_tensor_i<N, T> type;
+    };
+
+};
+
 
 /** \brief Block %tensor interface
     \tparam N Tensor order.
@@ -47,7 +67,9 @@ template<size_t N, typename T> class block_tensor_ctrl;
     \ingroup libtensor_core
  **/
 template<size_t N, typename T>
-class block_tensor_i {
+class block_tensor_i :
+    virtual public gen_block_tensor_i< N, block_tensor_traits<T> > {
+
     friend class block_tensor_ctrl<N, T>;
 
 public:
@@ -66,13 +88,12 @@ protected:
     /** \brief Request to obtain the constant reference to the block
             %tensor's %symmetry
      **/
-    virtual const symmetry<N, T> &on_req_const_symmetry()
-        throw(exception) = 0;
+    virtual const symmetry<N, T> &on_req_const_symmetry() = 0;
 
     /** \brief Request to obtain the reference to the block %tensor's
             %symmetry
      **/
-    virtual symmetry<N, T> &on_req_symmetry() throw(exception) = 0;
+    virtual symmetry<N, T> &on_req_symmetry() = 0;
 
     //@}
 
@@ -80,53 +101,52 @@ protected:
     //!    \name Event handling
     //@{
 
+    virtual dense_tensor_i<N, T> &on_req_const_block(const index<N> &idx) = 0;
+    virtual void on_ret_const_block(const index<N> &idx) = 0;
+
     /** \brief Invoked when a canonical block is requested
         \param idx Block %index.
         \return Reference to the requested block.
      **/
-    virtual dense_tensor_i<N, T> &on_req_block(const index<N> &idx)
-        throw(exception) = 0;
+    virtual dense_tensor_i<N, T> &on_req_block(const index<N> &idx) = 0;
 
     /** \brief Invoked to return a canonical block
         \param idx Block %index.
      **/
-    virtual void on_ret_block(const index<N> &idx) throw(exception) = 0;
+    virtual void on_ret_block(const index<N> &idx) = 0;
 
     /** \brief Invoked when an auxiliary canonical block is requested
         \param idx Block %index.
         \return Reference to the requested block.
      **/
-    virtual dense_tensor_i<N, T> &on_req_aux_block(const index<N> &idx)
-        throw(exception) = 0;
+    virtual dense_tensor_i<N, T> &on_req_aux_block(const index<N> &idx) = 0;
 
     /** \brief Invoked to return an auxiliary canonical block
         \param idx Block %index.
      **/
-    virtual void on_ret_aux_block(const index<N> &idx) throw(exception) = 0;
+    virtual void on_ret_aux_block(const index<N> &idx) = 0;
 
     /** \brief Invoked to check whether a canonical block is zero
         \param idx Block %index.
      **/
-    virtual bool on_req_is_zero_block(const index<N> &idx)
-        throw(exception) = 0;
+    virtual bool on_req_is_zero_block(const index<N> &idx) = 0;
 
     /** \brief Invoked to make a canonical block zero
         \param idx Block %index.
      **/
-    virtual void on_req_zero_block(const index<N> &idx)
-        throw(exception) = 0;
+    virtual void on_req_zero_block(const index<N> &idx) = 0;
 
     /** \brief Invoked to make all blocks zero
      **/
-    virtual void on_req_zero_all_blocks() throw(exception) = 0;
+    virtual void on_req_zero_all_blocks() = 0;
 
     /** \brief Enables multi-processor synchronization
      **/
-    virtual void on_req_sync_on() throw(exception) = 0;
+    virtual void on_req_sync_on() = 0;
 
     /** \brief Disables multi-processor synchronization
      **/
-    virtual void on_req_sync_off() throw(exception) = 0;
+    virtual void on_req_sync_off() = 0;
 
     //@}
 };
