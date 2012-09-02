@@ -15,7 +15,7 @@ namespace libtensor {
  **/
 template<size_t N, size_t M, typename Traits>
 class bto_diag :
-    public additive_bto<N - M + 1, typename Traits::additive_bto_traits>,
+    public additive_bto<N - M + 1, Traits>,
     public timings< bto_diag<N, M, Traits> > {
 
 public:
@@ -100,10 +100,11 @@ public:
 
     //@}
 
-    using additive_bto<k_orderb, typename Traits::additive_bto_traits>::perform;
+    virtual void perform(bto_stream_i<N - M + 1, Traits> &out);
+    virtual void perform(block_tensorb_t &btb);
+    virtual void perform(block_tensorb_t &btb, const element_t &c);
 
-    using additive_bto<N - M + 1, typename Traits::additive_bto_traits>::
-        compute_block;
+    using additive_bto<k_orderb, Traits>::compute_block;
     virtual void compute_block(bool zero, blockb_t &blk,
         const index<k_orderb> &ib, const tensorb_tr_t &trb, const element_t &c);
 

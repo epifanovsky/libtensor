@@ -4,6 +4,7 @@
 
 namespace libtensor {
 
+
 template class so_merge<2, 1, double>;
 
 template class so_merge<3, 1, double>;
@@ -81,6 +82,9 @@ template class so_merge<12, 9, double>;
 template class so_merge<12, 10, double>;
 template class so_merge<12, 11, double>;
 
+template class so_merge<14, 7, double>;
+
+template class so_merge<16, 8, double>;
+
+
 } // namespace libtensor
-
-

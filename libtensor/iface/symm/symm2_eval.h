@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_SYMM2_EVAL_H
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_SYMM2_EVAL_H
 
-#include "../../btod/btod_symmetrize.h"
+#include <libtensor/block_tensor/btod/btod_symmetrize.h>
 #include "../expr/eval_i.h"
 #include "../expr/evalfunctor.h"
 

@@ -10,27 +10,10 @@
 namespace libtensor {
 
 
-template<typename Functor, typename Alloc>
-struct btod_apply_traits : public bto_traits<double> {
-
-    template<size_t N> struct tensor_type {
-        typedef dense_tensor<N, double, Alloc> type;
-    };
-
-    typedef Functor functor_type;
-
-    template<size_t N> struct to_apply_type {
-        typedef tod_apply<N, Functor> type;
-    };
-
-    static double zero() { return 0.0; }
-};
-
-
 template<size_t N, typename Functor, typename Alloc = std_allocator<double> >
-class btod_apply : public bto_apply<N, btod_apply_traits<Functor, Alloc> > {
+class btod_apply : public bto_apply< N, Functor, btod_traits> {
 private:
-    typedef bto_apply<N, btod_apply_traits<Functor, Alloc> > bto_apply_t;
+    typedef bto_apply<N, Functor, btod_traits> bto_apply_t;
     typedef typename bto_apply_t::scalar_transf_t scalar_transf_t;
 
 public:
@@ -47,9 +30,9 @@ public:
     virtual ~btod_apply() { }
 
 private:
-    btod_apply(const btod_apply<N, Functor, Alloc>&);
-    btod_apply<N, Functor, Alloc> &
-    operator=(const btod_apply<N, Functor, Alloc>&);
+    btod_apply(const btod_apply&);
+    btod_apply &operator=(const btod_apply&);
+
 };
 
 

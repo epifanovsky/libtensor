@@ -1,10 +1,11 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/core/scalar_transf_double.h>
-#include <libtensor/btod/btod_extract.h>
+#include <libtensor/block_tensor/btod/btod_extract.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/dense_tensor/tod_btconv.h>
 #include <libtensor/dense_tensor/tod_extract.h>
+#include <libtensor/symmetry/se_perm.h>
 #include "btod_extract_test.h"
 #include "../compare_ref.h"
 
@@ -12,6 +13,10 @@ namespace libtensor {
 
 
 void btod_extract_test::perform() throw(libtest::test_exception) {
+
+    allocator<double>::vmm().init(16, 16, 16777216, 16777216);
+
+    try {
 
     test_1();
     test_2();
@@ -28,6 +33,13 @@ void btod_extract_test::perform() throw(libtest::test_exception) {
     test_12b();
     test_12c();
     test_13a();
+
+    } catch(...) {
+        allocator<double>::vmm().shutdown();
+        throw;
+    }
+
+    allocator<double>::vmm().shutdown();
 }
 
 

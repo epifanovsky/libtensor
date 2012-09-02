@@ -1,126 +1,19 @@
-#ifndef LIBTENSOR_BTOD_SYMMETRIZE_H
-#define LIBTENSOR_BTOD_SYMMETRIZE_H
+#ifndef LIBTENSOR_BTOD_SYMMETRIZE_IMPL_H
+#define LIBTENSOR_BTOD_SYMMETRIZE_IMPL_H
 
 #include <list>
-#include <map>
-#include "../timings.h"
-#include "../core/allocator.h"
-#include "../core/orbit.h"
-#include "../core/orbit_list.h"
-#include "../symmetry/so_permute.h"
-#include "../symmetry/so_symmetrize.h"
+#include <libtensor/core/allocator.h>
+#include <libtensor/core/orbit.h>
+#include <libtensor/core/orbit_list.h>
+#include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/tod_set.h>
-#include <libtensor/block_tensor/bto/additive_bto.h>
-#include <libtensor/block_tensor/btod/btod_traits.h>
+#include <libtensor/symmetry/so_permute.h>
+#include <libtensor/symmetry/so_symmetrize.h>
+#include "../../bto/impl/bto_aux_add_impl.h"
+#include "../../bto/impl/bto_aux_symmetrize_impl.h"
+#include "../btod_symmetrize.h"
 
 namespace libtensor {
-
-
-/** \brief Symmetrizes the result of another block %tensor operation
-    \tparam N Tensor order.
-
-    \ingroup libtensor_btod
- **/
-template<size_t N>
-class btod_symmetrize :
-    public additive_bto<N, bto_traits<double> >,
-    public timings< btod_symmetrize<N> > {
-
-public:
-    static const char *k_clazz; //!< Class name
-
-private:
-    struct schrec {
-        size_t ai;
-        tensor_transf<N, double> tr;
-        schrec() : ai(0) { }
-        schrec(size_t ai_, const tensor_transf<N, double> &tr_) :
-            ai(ai_), tr(tr_) { }
-    };
-    typedef std::pair<size_t, schrec> sym_schedule_pair_t;
-    typedef std::multimap<size_t, schrec> sym_schedule_t;
-
-private:
-    additive_bto<N, bto_traits<double> > &m_op; //!< Symmetrized operation
-    permutation<N> m_perm1; //!< First symmetrization permutation
-    bool m_symm; //!< Symmetrization sign
-    block_index_space<N> m_bis; //!< Block %index space of the result
-    symmetry<N, double> m_sym; //!< Symmetry of the result
-    assignment_schedule<N, double> m_sch; //!< Schedule
-    sym_schedule_t m_sym_sch; //!< Symmetrization schedule
-
-public:
-    //!    \name Construction and destruction
-    //@{
-
-    /** \brief Initializes the operation to symmetrize two indexes
-        \param op Symmetrized operation.
-        \param i1 First %tensor %index.
-        \param i2 Second %tensor %index.
-        \param symm True for symmetric, false for anti-symmetric.
-     **/
-    btod_symmetrize(additive_bto<N, bto_traits<double> > &op,
-            size_t i1, size_t i2, bool symm);
-
-    /** \brief Initializes the operation using a unitary %permutation
-            (P = P^-1)
-        \param op Symmetrized operation.
-        \param perm Unitary %permutation.
-        \param symm True for symmetric, false for anti-symmetric.
-     **/
-    btod_symmetrize(additive_bto<N, bto_traits<double> > &op,
-            const permutation<N> &perm, bool symm);
-
-    /** \brief Virtual destructor
-     **/
-    virtual ~btod_symmetrize() { }
-
-    //@}
-
-
-    //!    \name Implementation of direct_block_tensor_operation<N, double>
-    //@{
-
-    virtual const block_index_space<N> &get_bis() const {
-        return m_bis;
-    }
-
-    virtual const symmetry<N, double> &get_symmetry() const {
-        return m_sym;
-    }
-
-    virtual const assignment_schedule<N, double> &get_schedule() const {
-        return m_sch;
-    }
-
-    virtual void sync_on();
-    virtual void sync_off();
-
-    //@}
-
-protected:
-    //!    \brief Implementation of additive_bto<N, bto_traits<double> >
-    //@{
-
-    virtual void compute_block(bool zero, dense_tensor_i<N, double> &blk,
-        const index<N> &i, const tensor_transf<N, double> &tr, const double &c);
-
-    //@}
-
-private:
-    /** \brief Constructs the %symmetry of the result
-     **/
-    void make_symmetry();
-
-    /** \brief Constructs the assignment schedule of the operation
-     **/
-    void make_schedule();
-
-private:
-    btod_symmetrize(const btod_symmetrize<N>&);
-    const btod_symmetrize<N> &operator=(const btod_symmetrize<N>&);
-
-};
 
 
 template<size_t N>
@@ -128,14 +21,14 @@ const char *btod_symmetrize<N>::k_clazz = "btod_symmetrize<N>";
 
 
 template<size_t N>
-btod_symmetrize<N>::btod_symmetrize(additive_bto<N, bto_traits<double> > &op,
+btod_symmetrize<N>::btod_symmetrize(additive_bto<N, btod_traits> &op,
         size_t i1, size_t i2, bool symm) :
 
     m_op(op), m_symm(symm), m_bis(op.get_bis()), m_sym(m_bis),
     m_sch(m_bis.get_block_index_dims()) {
 
     static const char *method =
-            "btod_symmetrize(additive_bto<N, bto_traits<double> >&, "
+            "btod_symmetrize(additive_bto<N, btod_traits>&, "
             "size_t, size_t, bool)";
 
     if(i1 == i2) {
@@ -149,13 +42,14 @@ btod_symmetrize<N>::btod_symmetrize(additive_bto<N, bto_traits<double> > &op,
 
 
 template<size_t N>
-btod_symmetrize<N>::btod_symmetrize(additive_bto<N, bto_traits<double> > &op,
+btod_symmetrize<N>::btod_symmetrize(additive_bto<N, btod_traits> &op,
     const permutation<N> &perm, bool symm) :
 
     m_op(op), m_symm(symm), m_perm1(perm), m_bis(op.get_bis()),
     m_sym(m_bis), m_sch(m_bis.get_block_index_dims()) {
 
-    static const char *method = "btod_symmetrize(additive_bto<N, bto_traits<double> >&, "
+    static const char *method =
+        "btod_symmetrize(additive_bto<N, btod_traits>&, "
         "const permutation<N>&, bool)";
 
     permutation<N> p1(perm); p1.permute(perm);
@@ -180,19 +74,64 @@ void btod_symmetrize<N>::sync_off() {
     m_op.sync_off();
 }
 
-/*
+
 template<size_t N>
-void btod_symmetrize<N>::compute_block(dense_tensor_i<N, double> &blk,
-    const index<N> &i) {
+void btod_symmetrize<N>::perform(block_tensor_i<N, double> &bt) {
 
-    typedef typename sym_schedule_t::iterator iterator_t;
+    typedef btod_traits Traits;
 
-    dimensions<N> bidims(m_bis.get_block_index_dims());
-    abs_index<N> ai(i, bidims);
+    block_tensor_ctrl<N, double> ctrl(bt);
+    ctrl.req_zero_all_blocks();
+    so_copy<N, double>(m_sym).perform(ctrl.req_symmetry());
 
-    tod_set<N>().perform(blk);
-    compute_block(blk, i, tensor_transf<N, double>(), 1.0);
-}*/
+    addition_schedule<N, Traits> asch(m_sym, m_sym);
+    asch.build(m_sch, ctrl);
+
+    bto_aux_add<N, Traits> out(m_sym, asch, bt, 1.0);
+    perform(out);
+}
+
+
+template<size_t N>
+void btod_symmetrize<N>::perform(block_tensor_i<N, double> &bt,
+    const double &d) {
+
+    typedef btod_traits Traits;
+
+    block_tensor_ctrl<N, double> ctrl(bt);
+
+    addition_schedule<N, Traits> asch(m_sym, ctrl.req_const_symmetry());
+    asch.build(m_sch, ctrl);
+
+    bto_aux_add<N, Traits> out(m_sym, asch, bt, d);
+    perform(out);
+}
+
+
+template<size_t N>
+void btod_symmetrize<N>::perform(bto_stream_i<N, btod_traits> &out) {
+
+    typedef btod_traits Traits;
+
+    btod_symmetrize<N>::start_timer();
+
+    try {
+
+        tensor_transf<N, double> tr0;
+        tensor_transf<N, double> tr1(m_perm1,
+            scalar_transf<double>(m_symm ? 1.0 : -1.0));
+        bto_aux_symmetrize<N, Traits> out2(m_op.get_symmetry(), m_sym, out);
+        out2.add_transf(tr0);
+        out2.add_transf(tr1);
+        m_op.perform(out2);
+
+    } catch(...) {
+        btod_symmetrize<N>::stop_timer();
+        throw;
+    }
+
+    btod_symmetrize<N>::stop_timer();
+}
 
 
 template<size_t N>
@@ -226,14 +165,14 @@ void btod_symmetrize<N>::compute_block(bool zero,
         tri.transform(tr);
 
         if(n == 1) {
-            additive_bto<N, bto_traits<double> >::compute_block(m_op, false,
+            additive_bto<N, btod_traits>::compute_block(m_op, false,
                 blk, ai.get_index(), tri, c);
             sch1.pop_front();
         } else {
             dimensions<N> dims(blk.get_dims());
             // TODO: replace with "temporary block" feature
             dense_tensor< N, double, allocator<double> > tmp(dims);
-            additive_bto<N, bto_traits<double> >::compute_block(m_op, true,
+            additive_bto<N, btod_traits>::compute_block(m_op, true,
                 tmp, ai.get_index(), tri, c);
             tensor_transf<N, double> tri_inv(tri);
             tri_inv.invert();
@@ -326,4 +265,4 @@ void btod_symmetrize<N>::make_schedule() {
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_BTOD_SYMMETRIZE_H
+#endif // LIBTENSOR_BTOD_SYMMETRIZE_IMPL_H

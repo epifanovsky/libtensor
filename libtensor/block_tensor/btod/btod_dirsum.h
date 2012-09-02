@@ -42,7 +42,7 @@ public:
  **/
 template<size_t N, size_t M>
 class btod_dirsum :
-    public additive_bto<N + M, bto_traits<double> >,
+    public additive_bto<N + M, btod_traits>,
     public timings< btod_dirsum<N, M> > {
 
 public:
@@ -109,12 +109,14 @@ public:
     virtual void sync_on();
     virtual void sync_off();
 
-    using additive_bto<N + M, bto_traits<double> >::compute_block;
+    using additive_bto<N + M, btod_traits>::compute_block;
     virtual void compute_block(bool zero, dense_tensor_i<N + M, double> &blk,
         const index<N + M> &i, const tensor_transf<N + M, double> &tr,
         const double &c);
 
-    using additive_bto<N + M, bto_traits<double> >::perform;
+    virtual void perform(bto_stream_i<N + M, btod_traits> &out);
+    virtual void perform(block_tensor_i<N + M, double> &btb);
+    virtual void perform(block_tensor_i<N + M, double> &btb, const double &c);
 
 private:
     void make_schedule();

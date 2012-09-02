@@ -10,6 +10,7 @@
 #include <libtensor/block_tensor/bto/additive_bto.h>
 #include <libtensor/block_tensor/btod/btod_traits.h>
 #include <libtensor/block_tensor/bto/bto_contract2_sym.h>
+#include <libtensor/block_tensor/bto/bto_stream_i.h>
 
 namespace libtensor {
 
@@ -26,7 +27,7 @@ struct btod_contract2_clazz {
  **/
 template<size_t N, size_t M, size_t K>
 class btod_contract2 :
-    public additive_bto<N + M, bto_traits<double> >,
+    public additive_bto<N + M, btod_traits>,
     public timings< btod_contract2<N, M, K> > {
 
 public:
@@ -84,24 +85,28 @@ public:
 
     virtual void perform(block_tensor_i<N + M, double> &btc);
     virtual void perform(block_tensor_i<N + M, double> &btc, const double &d);
+    virtual void perform(bto_stream_i<N + M, btod_traits> &out);
 
-    virtual void perform(block_tensor_i<N + M, double> &bt, const double &d,
-        const std::vector<size_t> &blst) {
-        additive_bto<N + M, bto_traits<double> >::perform(bt, d, blst);
-    }
-
-    using additive_bto<N + M, bto_traits<double> >::compute_block;
+    using additive_bto<N + M, btod_traits>::compute_block;
     virtual void compute_block(bool zero, dense_tensor_i<N + M, double> &blk,
         const index<N + M> &i, const tensor_transf<N + M, double> &tr,
         const double &c);
 
 private:
-    void perform_inner(block_tensor_i<N + M, double> &btc, double d,
+    void perform_inner(
+        block_tensor_i<N + K, double> &bta,
+        block_tensor_i<M + K, double> &btb,
+        block_tensor_i<N + M, double> &btc,
+        double d,
         const std::vector<size_t> &blst);
 
     void make_schedule();
 
     void contract_block(
+        block_tensor_i<N + K, double> &bta,
+        const orbit_list<N + K, double> &ola,
+        block_tensor_i<M + K, double> &btb,
+        const orbit_list<M + K, double> &olb,
         const index<k_orderc> &idxc,
         dense_tensor_i<k_orderc, double> &blkc,
         const tensor_transf<k_orderc, double> &trc,

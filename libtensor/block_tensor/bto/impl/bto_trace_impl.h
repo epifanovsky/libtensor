@@ -4,6 +4,7 @@
 #include <libtensor/core/orbit.h>
 #include <libtensor/core/orbit_list.h>
 #include <libtensor/core/permutation_builder.h>
+#include "../bto_trace.h"
 
 namespace libtensor {
 

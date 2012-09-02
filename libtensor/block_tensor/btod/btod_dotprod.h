@@ -9,19 +9,10 @@
 namespace libtensor {
 
 
-struct btod_dotprod_traits : public bto_traits<double> {
-
-    template<size_t N> struct to_dotprod_type {
-        typedef tod_dotprod<N> type;
-    };
-
-};
-
-
 template<size_t N>
-class btod_dotprod : public bto_dotprod<N, btod_dotprod_traits> {
+class btod_dotprod : public bto_dotprod<N, btod_traits> {
 private:
-    typedef bto_dotprod<N, btod_dotprod_traits> bto_dotprod_t;
+    typedef bto_dotprod<N, btod_traits> bto_dotprod_t;
 
 public:
     /** \brief Initializes the first argument pair

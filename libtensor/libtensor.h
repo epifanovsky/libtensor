@@ -40,10 +40,7 @@
 
 
 #include "btod/btod_compare.h"
-#include "btod/btod_extract.h"
 #include "btod/btod_import_raw.h"
-#include "btod/btod_mult.h"
-#include "btod/btod_mult1.h"
 #include "btod/btod_print.h"
 #include "btod/btod_random.h"
 #include "btod/btod_read.h"

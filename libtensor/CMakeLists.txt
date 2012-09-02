@@ -218,7 +218,6 @@ set(SRC_INST
     symmetry/inst/so_symmetrize_se_perm_inst.C
     block_tensor/bto/impl/bto_contract2_bis.C
     block_tensor/btod/impl/additive_btod.C
-    block_tensor/btod/impl/basic_btod.C
     block_tensor/btod/impl/btod_add.C
     block_tensor/btod/impl/btod_contract2_clst.C
     block_tensor/btod/impl/btod_contract2_nzorb.C
@@ -235,8 +234,13 @@ set(SRC_INST
     block_tensor/btod/impl/btod_dirsum.C
     block_tensor/btod/impl/btod_dotprod.C
     block_tensor/btod/impl/btod_ewmult2.C
+    block_tensor/btod/impl/btod_extract.C
+    block_tensor/btod/impl/btod_mult.C
+    block_tensor/btod/impl/btod_mult1.C
     block_tensor/btod/impl/btod_set.C
     block_tensor/btod/impl/btod_sum.C
+    block_tensor/btod/impl/btod_symmetrize.C
+    block_tensor/btod/impl/btod_symmetrize3.C
     block_tensor/btod/impl/btod_trace.C
     block_tensor/btod/impl/btod_vmpriority.C
     diag_tensor/impl/diag_tensor_space.C

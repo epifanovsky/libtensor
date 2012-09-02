@@ -18,6 +18,10 @@ namespace libtensor {
 
 void btod_diag_test::perform() throw(libtest::test_exception) {
 
+    allocator<double>::vmm().init(16, 16, 16777216, 16777216);
+
+    try {
+
     test_zero_1();
     test_zero_2();
 
@@ -48,6 +52,13 @@ void btod_diag_test::perform() throw(libtest::test_exception) {
 
     test_sym_7(false);
     test_sym_7(true);
+
+    } catch(...) {
+        allocator<double>::vmm().shutdown();
+        throw;
+    }
+
+    allocator<double>::vmm().shutdown();
 }
 
 /** \test Extract diagonal: \f$ b_i = a_{ii} \f$, zero tensor, one block

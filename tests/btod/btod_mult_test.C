@@ -1,10 +1,13 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor.h>
 #include <libtensor/core/scalar_transf_double.h>
-#include <libtensor/btod/btod_mult.h>
+#include <libtensor/block_tensor/btod/btod_mult.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/symmetry/product_table_container.h>
+#include <libtensor/symmetry/se_label.h>
+#include <libtensor/symmetry/se_part.h>
+#include <libtensor/symmetry/se_perm.h>
 #include <libtensor/dense_tensor/tod_btconv.h>
 #include <libtensor/dense_tensor/tod_mult.h>
 #include <iomanip>
@@ -16,6 +19,10 @@ namespace libtensor {
 
 
 void btod_mult_test::perform() throw(libtest::test_exception) {
+
+    allocator<double>::vmm().init(16, 16, 16777216, 16777216);
+
+    try {
 
     test_1(false, false); test_1(false, true);
     test_1(true, false);  test_1(true, true);
@@ -69,6 +76,13 @@ void btod_mult_test::perform() throw(libtest::test_exception) {
     test_8b(false, true);
     test_8b(true, false);
     test_8b(true, true);
+
+    } catch(...) {
+        allocator<double>::vmm().shutdown();
+        throw;
+    }
+
+    allocator<double>::vmm().shutdown();
 }
 
 
@@ -633,28 +647,51 @@ void btod_mult_test::test_7(bool label, bool part,
     scalar_transf<double> tr0, tr1(-1.);
     se_perm<4, double> sp10(permutation<4>().permute(0, 1), tr0);
     se_perm<4, double> ap10(permutation<4>().permute(0, 1), tr1);
-    se_perm<4, double> sp32(permutation<4>().permute(0, 1), tr0);
-    se_perm<4, double> ap32(permutation<4>().permute(0, 1), tr1);
+    se_perm<4, double> sp32(permutation<4>().permute(2, 3), tr0);
+    se_perm<4, double> ap32(permutation<4>().permute(2, 3), tr1);
 
-    if (samesym) {
-        ca.req_symmetry().insert(ap10);
-        ca.req_symmetry().insert(ap32);
-        cb.req_symmetry().insert(ap10);
-        cb.req_symmetry().insert(ap32);
-        cc.req_symmetry().insert(sp10);
-        cc.req_symmetry().insert(sp32);
-        sym_ref.insert(sp10);
-        sym_ref.insert(sp32);
-    }
-    else {
-        ca.req_symmetry().insert(ap10);
-        ca.req_symmetry().insert(ap32);
-        cb.req_symmetry().insert(sp10);
-        cb.req_symmetry().insert(sp32);
-        cc.req_symmetry().insert(ap10);
-        cc.req_symmetry().insert(ap32);
-        sym_ref.insert(ap10);
-        sym_ref.insert(ap32);
+    if(recip) {
+        //  For A/B, B cannot be asymmetric
+        if(samesym) {
+            ca.req_symmetry().insert(sp10);
+            ca.req_symmetry().insert(sp32);
+            cb.req_symmetry().insert(sp10);
+            cb.req_symmetry().insert(sp32);
+            cc.req_symmetry().insert(sp10);
+            cc.req_symmetry().insert(sp32);
+            sym_ref.insert(sp10);
+            sym_ref.insert(sp32);
+        } else {
+            ca.req_symmetry().insert(ap10);
+            ca.req_symmetry().insert(ap32);
+            cb.req_symmetry().insert(sp10);
+            cb.req_symmetry().insert(sp32);
+            cc.req_symmetry().insert(ap10);
+            cc.req_symmetry().insert(ap32);
+            sym_ref.insert(ap10);
+            sym_ref.insert(ap32);
+        }
+    } else {
+        //  For A*B, A and B can be symmetric or asymmetric
+        if(samesym) {
+            ca.req_symmetry().insert(ap10);
+            ca.req_symmetry().insert(ap32);
+            cb.req_symmetry().insert(ap10);
+            cb.req_symmetry().insert(ap32);
+            cc.req_symmetry().insert(sp10);
+            cc.req_symmetry().insert(sp32);
+            sym_ref.insert(sp10);
+            sym_ref.insert(sp32);
+        } else {
+            ca.req_symmetry().insert(ap10);
+            ca.req_symmetry().insert(ap32);
+            cb.req_symmetry().insert(sp10);
+            cb.req_symmetry().insert(sp32);
+            cc.req_symmetry().insert(ap10);
+            cc.req_symmetry().insert(ap32);
+            sym_ref.insert(ap10);
+            sym_ref.insert(ap32);
+        }
     }
 
     if (label) {

@@ -48,6 +48,10 @@ struct exp_functor {
 
 void btod_apply_test::perform() throw(libtest::test_exception) {
 
+    allocator<double>::vmm().init(16, 16, 16777216, 16777216);
+
+    try {
+
     test_zero_1();
     test_zero_2();
     test_zero_3();
@@ -81,6 +85,13 @@ void btod_apply_test::perform() throw(libtest::test_exception) {
     test_add_nesym_7_sp1();
     test_add_nesym_7_sp2();
     test_add_nesym_7_sp3();
+
+    } catch(...) {
+        allocator<double>::vmm().shutdown();
+        throw;
+    }
+
+    allocator<double>::vmm().shutdown();
 }
 
 /** \test \f$ b_{ij} = sin(a_{ij}) \f$, zero tensor to zero tensor

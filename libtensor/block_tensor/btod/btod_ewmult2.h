@@ -26,7 +26,7 @@ namespace libtensor {
  **/
 template<size_t N, size_t M, size_t K>
 class btod_ewmult2 :
-    public additive_bto<N + M + K, bto_traits<double> >,
+    public additive_bto<N + M + K, btod_traits>,
     public timings< btod_ewmult2<N, M, K> > {
 
 public:
@@ -104,11 +104,14 @@ public:
     virtual void sync_on();
     virtual void sync_off();
 
-    using additive_bto<N + M + K, bto_traits<double> >::perform;
+    virtual void perform(bto_stream_i<N + M + K, btod_traits> &out);
+    virtual void perform(block_tensor_i<N + M + K, double> &btc);
+    virtual void perform(block_tensor_i<N + M + K, double> &btc,
+        const double &d);
 
     //@}
 
-    using additive_bto<N + M + K, bto_traits<double> >::compute_block;
+    using additive_bto<N + M + K, btod_traits>::compute_block;
     virtual void compute_block(bool zero,
         dense_tensor_i<k_orderc, double> &blk, const index<k_orderc> &i,
         const tensor_transf<k_orderc, double> &tr, const double &c);

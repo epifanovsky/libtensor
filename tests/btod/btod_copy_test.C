@@ -1785,7 +1785,7 @@ void btod_copy_test::test_dir_2() throw(libtest::test_exception) {
     typedef std_allocator<double> allocator_t;
     typedef tensor<2, double, allocator_t> tensor_t;
     typedef dense_tensor_ctrl<2, double> tensor_ctrl_t;
-    typedef block_tensor<2, double, allocator_t> block_tensor_t;
+    typedef block_tensor<2, double, allocator_t> block_tensor_type;
     typedef block_tensor_ctrl<2, double> block_tensor_ctrl_t;
 
     try {

@@ -1,12 +1,17 @@
 #ifndef LIBTENSOR_BTOD_SUM_IMPL_H
 #define LIBTENSOR_BTOD_SUM_IMPL_H
 
+#include <libtensor/core/block_index_space_product_builder.h>
 #include <libtensor/core/orbit.h>
 #include <libtensor/symmetry/so_dirsum.h>
 #include <libtensor/symmetry/so_merge.h>
 #include <libtensor/symmetry/so_copy.h>
+#include <libtensor/block_tensor/btod/btod_copy.h>
 #include <libtensor/btod/btod_scale.h>
 #include <libtensor/btod/bad_block_index_space.h>
+#include <libtensor/core/block_tensor.h>
+#include <libtensor/block_tensor/bto/impl/bto_aux_add_impl.h>
+#include <libtensor/block_tensor/bto/impl/bto_aux_copy_impl.h>
 #include "../btod_sum.h"
 
 namespace libtensor {
@@ -17,7 +22,7 @@ const char* btod_sum<N>::k_clazz = "btod_sum<N>";
 
 
 template<size_t N>
-inline btod_sum<N>::btod_sum(additive_bto<N, bto_traits<double> > &op, double c) :
+inline btod_sum<N>::btod_sum(additive_bto<N, btod_traits> &op, double c) :
     m_bis(op.get_bis()), m_bidims(m_bis.get_block_index_dims()),
     m_sym(m_bis), m_dirty_sch(true), m_sch(0) {
 
@@ -48,36 +53,27 @@ void btod_sum<N>::sync_off() {
         iop != m_ops.end(); iop++) iop->get_op().sync_off();
 }
 
-/*
+
 template<size_t N>
-void btod_sum<N>::compute_block(dense_tensor_i<N, double> &blk, const index<N> &i) {
+void btod_sum<N>::perform(bto_stream_i<N, btod_traits> &out) {
 
-    abs_index<N> ai(i, m_bidims);
-    transf<N, double> tr0;
+    if(m_ops.empty()) return;
 
-    tod_set<N>().perform(blk);
+    block_tensor< N, double, allocator<double> > bt(m_bis);
 
     for(typename std::list<node_t>::iterator iop = m_ops.begin();
-        iop != m_ops.end(); iop++) {
+        iop != m_ops.end(); ++iop) {
 
-        if(iop->get_op().get_schedule().contains(ai.get_abs_index())) {
-            additive_bto<N, bto_traits<double> >::compute_block(iop->get_op(), blk, i,
-                tr0, iop->get_coeff());
+        if(iop == m_ops.begin()) {
+            block_tensor_ctrl<N, double> ctrl(bt);
+            so_copy<N, double>(iop->get_op().get_symmetry()).
+                perform(ctrl.req_symmetry());
         }
-        else {
-            const symmetry<N, double> &sym = iop->get_op().get_symmetry();
-            orbit<N, double> orb(sym, i);
-            if(!orb.is_allowed()) continue;
-            abs_index<N> ci(orb.get_abs_canonical_index(), m_bidims);
-
-            if(iop->get_op().get_schedule().contains(ci.get_abs_index())) {
-                const transf<N, double> &tr = orb.get_transf(i);
-                additive_bto<N, bto_traits<double> >::compute_block(iop->get_op(), blk, ci.get_index(),
-                    tr, iop->get_coeff());
-            }
-        }
+        iop->get_op().perform(bt, iop->get_coeff());
     }
-}*/
+
+    bto_copy<N, btod_traits>(bt).perform(out);
+}
 
 
 template<size_t N>
@@ -92,7 +88,7 @@ void btod_sum<N>::compute_block(bool zero, dense_tensor_i<N, double> &blk,
         iop != m_ops.end(); iop++) {
 
         if(iop->get_op().get_schedule().contains(ai.get_abs_index())) {
-            additive_bto<N, bto_traits<double> >::compute_block(iop->get_op(),
+            additive_bto<N, btod_traits>::compute_block(iop->get_op(),
                 false, blk, i, tr, c * iop->get_coeff());
         } else {
             const symmetry<N, double> &sym = iop->get_op().get_symmetry();
@@ -104,7 +100,7 @@ void btod_sum<N>::compute_block(bool zero, dense_tensor_i<N, double> &blk,
                 tensor_transf<N, double> tra(orb.get_transf(i));
                 tra.transform(tr);
 
-                additive_bto<N, bto_traits<double> >::compute_block(
+                additive_bto<N, btod_traits>::compute_block(
                     iop->get_op(), false, blk, ci.get_index(), tra,
                     c * iop->get_coeff());
             }
@@ -114,8 +110,9 @@ void btod_sum<N>::compute_block(bool zero, dense_tensor_i<N, double> &blk,
 
 
 template<size_t N>
-void btod_sum<N>::perform(block_tensor_i<N, double> &bt) {
+void btod_sum<N>::perform(block_tensor_i<N, double> &btb) {
 
+/*
     bool first = true;
     for(typename std::list<node_t>::iterator iop = m_ops.begin();
         iop != m_ops.end(); iop++) {
@@ -130,25 +127,39 @@ void btod_sum<N>::perform(block_tensor_i<N, double> &bt) {
             iop->get_op().perform(bt, iop->get_coeff());
         }
     }
+ */
+    bto_aux_copy<N, btod_traits> out(m_sym, btb);
+    perform(out);
 }
 
 
 template<size_t N>
-void btod_sum<N>::perform(block_tensor_i<N, double> &bt, const double &c) {
+void btod_sum<N>::perform(block_tensor_i<N, double> &btb, const double &c) {
 
+/*
     for(typename std::list<node_t>::iterator iop = m_ops.begin();
         iop != m_ops.end(); iop++) {
 
         iop->get_op().perform(bt, c * iop->get_coeff());
     }
+ */
+
+    typedef block_tensor_ctrl<N, double> block_tensor_ctrl_type;
+
+    block_tensor_ctrl_type cb(btb);
+    addition_schedule<N, btod_traits> asch(m_sym, cb.req_const_symmetry());
+    asch.build(get_schedule(), cb);
+
+    bto_aux_add<N, btod_traits> out(m_sym, asch, btb, c);
+    perform(out);
 }
 
 
 template<size_t N>
-void btod_sum<N>::add_op(additive_bto<N, bto_traits<double> > &op, double c) {
+void btod_sum<N>::add_op(additive_bto<N, btod_traits> &op, double c) {
 
     static const char *method =
-            "add_op(additive_bto<N, bto_traits<double> >&, double)";
+            "add_op(additive_bto<N, btod_traits>&, double)";
 
     block_index_space<N> bis(m_bis), bis1(op.get_bis());
     bis.match_splits();

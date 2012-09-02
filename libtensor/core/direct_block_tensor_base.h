@@ -3,8 +3,8 @@
 
 #include "../defs.h"
 #include "../exception.h"
-#include <libtensor/block_tensor/bto/bto_traits.h>
 #include <libtensor/block_tensor/bto/direct_bto.h>
+#include <libtensor/block_tensor/btod/btod_traits.h>
 
 namespace libtensor {
 
@@ -24,7 +24,7 @@ public:
 
 public:
     typedef T element_t; //!< Tensor element type
-    typedef direct_bto< N, bto_traits<T> > operation_t;
+    typedef direct_bto<N, btod_traits> operation_t;
 
 protected:
     //!    Underlying block tensor operation

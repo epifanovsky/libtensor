@@ -29,14 +29,14 @@ class schedule_comparator {
 public:
     typedef typename addition_schedule<N, T>::schedule_node_t
         schedule_node_t;
-    typedef std::list<schedule_node_t> schedule_t;
+    typedef std::list<schedule_node_t> schedule_type;
 
 public:
     static void compare(const addition_schedule<N, T> &sch,
-        const schedule_t &sch_ref) throw(std::string) {
+        const schedule_type &sch_ref) throw(std::string) {
 
         typename addition_schedule<N, T>::iterator isch = sch.begin();
-        typename schedule_t::const_iterator iref = sch_ref.begin();
+        typename schedule_type::const_iterator iref = sch_ref.begin();
         while(iref != sch_ref.end()) {
             if(isch == sch.end()) {
                 throw std::string("Premature end of schedule");

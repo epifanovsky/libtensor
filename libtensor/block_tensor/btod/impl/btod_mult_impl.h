@@ -1,120 +1,77 @@
-#ifndef LIBTENSOR_BTOD_MULT_H
-#define LIBTENSOR_BTOD_MULT_H
+#ifndef LIBTENSOR_BTOD_MULT_IMPL_H
+#define LIBTENSOR_BTOD_MULT_IMPL_H
 
-#include "../defs.h"
-#include "../core/block_tensor_i.h"
-#include "../core/block_tensor_ctrl.h"
-#include "../core/orbit.h"
-#include "../core/orbit_list.h"
-#include "../core/permutation_builder.h"
-#include "../symmetry/so_dirprod.h"
-#include "../symmetry/so_merge.h"
+#include <libtensor/core/block_tensor_ctrl.h>
+#include <libtensor/core/orbit.h>
+#include <libtensor/core/orbit_list.h>
+#include <libtensor/core/permutation_builder.h>
+#include <libtensor/core/block_tensor.h>
+#include <libtensor/symmetry/so_dirprod.h>
+#include <libtensor/symmetry/so_merge.h>
 #include <libtensor/dense_tensor/tod_mult.h>
 #include <libtensor/dense_tensor/tod_set.h>
-#include <libtensor/core/scalar_transf_double.h>
-#include <libtensor/block_tensor/bto/additive_bto.h>
-#include <libtensor/block_tensor/btod/btod_traits.h>
-#include "bad_block_index_space.h"
+#include <libtensor/core/block_index_space_product_builder.h>
+#include <libtensor/btod/bad_block_index_space.h>
+#include "../../bto/impl/bto_aux_add_impl.h"
+#include "../../bto/impl/bto_aux_copy_impl.h"
+#include "../btod_mult.h"
 
 namespace libtensor {
 
 
-/** \brief Elementwise multiplication of two block tensors
-    \tparam N Tensor order.
-
-    \ingroup libtensor_btod
- **/
 template<size_t N>
-class btod_mult :
-    public additive_bto<N, bto_traits<double> >,
-    public timings< btod_mult<N> > {
-public:
-    static const char *k_clazz; //!< Class name
+const char *btod_mult<N>::k_clazz = "btod_mult<N>";
 
+
+template<size_t N, typename T>
+class btod_mult_task : public libutil::task_i {
 private:
-    block_tensor_i<N, double> &m_bta; //!< First argument
-    block_tensor_i<N, double> &m_btb; //!< Second argument
-    permutation<N> m_pa; //!< Permutation of bta
-    permutation<N> m_pb; //!< Permutation of btb
-    bool m_recip; //!< Reciprocal
-    double m_c; //!< Scaling coefficient
-
-    block_index_space<N> m_bis; //!< Block %index space of the result
-    symmetry<N, double> m_sym; //!< Result symmetry
-    assignment_schedule<N, double> m_sch; //!< Schedule
+    btod_mult<N> &m_bto;
+    block_tensor_i<N, T> &m_btc;
+    index<N> m_idx;
+    bto_stream_i<N, btod_traits> &m_out;
 
 public:
-    //! \name Constructors / destructor
-    //@{
+    btod_mult_task(
+        btod_mult<N> &bto,
+        block_tensor_i<N, T> &btc,
+        const index<N> &idx,
+        bto_stream_i<N, btod_traits> &out);
 
-    /** \brief Constructor
-        \param bta First argument
-        \param btb Second argument
-        \param recip \c false (default) sets up multiplication and
-            \c true sets up element-wise division.
-        \param c Coefficient
-     **/
-    btod_mult(block_tensor_i<N, double> &bta, block_tensor_i<N, double> &btb,
-            bool recip = false, double c = 1.0);
+    virtual ~btod_mult_task() { }
+    virtual void perform();
 
-    /** \brief Constructor
-        \param bta First argument
-        \param pa Permutation of first argument
-        \param btb Second argument
-        \param pb Permutation of second argument
-        \param recip \c false (default) sets up multiplication and
-            \c true sets up element-wise division.
-        \param c Coefficient
-     **/
-    btod_mult(block_tensor_i<N, double> &bta, const permutation<N> &pa,
-            block_tensor_i<N, double> &btb, const permutation<N> &pb,
-            bool recip = false, double c = 1.0);
-
-    /** \brief Virtual destructor
-     **/
-    virtual ~btod_mult();
-
-    //@}
-
-
-
-    //!    \name Implementation of
-    //      libtensor::direct_block_tensor_operation<N, double>
-    //@{
-    virtual const block_index_space<N> &get_bis() const {
-        return m_bta.get_bis();
-    }
-
-    virtual const symmetry<N, double> &get_symmetry() const {
-        return m_sym;
-    }
-
-    virtual const assignment_schedule<N, double> &get_schedule() const {
-        return m_sch;
-    }
-
-    virtual void sync_on();
-    virtual void sync_off();
-
-    //@}
-
-    using additive_bto<N, bto_traits<double> >::perform;
-
-protected:
-    virtual void compute_block(bool zero, dense_tensor_i<N, double> &blk,
-        const index<N> &idx, const tensor_transf<N, double> &tr,
-        const double &c);
-
-private:
-    btod_mult(const btod_mult<N> &);
-    const btod_mult<N> &operator=(const btod_mult<N> &);
-
-    void make_schedule();
 };
 
 
-template<size_t N>
-const char *btod_mult<N>::k_clazz = "btod_mult<N>";
+template<size_t N, typename T>
+class btod_mult_task_iterator : public libutil::task_iterator_i {
+private:
+    btod_mult<N> &m_bto;
+    block_tensor_i<N, T> &m_btc;
+    bto_stream_i<N, btod_traits> &m_out;
+    const assignment_schedule<N, double> &m_sch;
+    typename assignment_schedule<N, double>::iterator m_i;
+
+public:
+    btod_mult_task_iterator(
+        btod_mult<N> &bto,
+        block_tensor_i<N, T> &btc,
+        bto_stream_i<N, btod_traits> &out);
+
+    virtual bool has_more() const;
+    virtual libutil::task_i *get_next();
+
+};
+
+
+template<size_t N, typename T>
+class btod_mult_task_observer : public libutil::task_observer_i {
+public:
+    virtual void notify_start_task(libutil::task_i *t) { }
+    virtual void notify_finish_task(libutil::task_i *t);
+
+};
 
 
 template<size_t N>
@@ -230,48 +187,59 @@ void btod_mult<N>::sync_off() {
     ctrlb.req_sync_off();
 }
 
-/*
+
 template<size_t N>
-void btod_mult<N>::compute_block(
-        dense_tensor_i<N, double> &blk, const index<N> &idx) {
+void btod_mult<N>::perform(bto_stream_i<N, btod_traits> &out) {
 
-    block_tensor_ctrl<N, double> ctrla(m_bta), ctrlb(m_btb);
+    typedef allocator<double> allocator_type;
 
-    permutation<N> pinva(m_pa, true), pinvb(m_pb, true);
-    index<N> idxa(idx), idxb(idx);
-    idxa.permute(pinva);
-    idxb.permute(pinvb);
+    try {
 
-    orbit<N, double> oa(ctrla.req_const_symmetry(), idxa);
-    abs_index<N> cidxa(oa.get_abs_canonical_index(),
-            m_bta.get_bis().get_block_index_dims());
-    const tensor_transf<N, double> &tra = oa.get_transf(idxa);
+        out.open();
 
-    orbit<N, double> ob(ctrlb.req_const_symmetry(), idxb);
-    abs_index<N> cidxb(ob.get_abs_canonical_index(),
-            m_btb.get_bis().get_block_index_dims());
-    const tensor_transf<N, double> &trb = ob.get_transf(idxb);
+        block_tensor<N, double, allocator_type> btc(m_bis);
+        block_tensor_ctrl<N, double> cc(btc);
+        cc.req_sync_on();
+        sync_on();
 
-    permutation<N> pa(tra.get_perm());
-    pa.permute(m_pa);
-    permutation<N> pb(trb.get_perm());
-    pb.permute(m_pb);
+        btod_mult_task_iterator<N, double> ti(*this, btc, out);
+        btod_mult_task_observer<N, double> to;
+        libutil::thread_pool::submit(ti, to);
 
-    dense_tensor_i<N, double> &blka = ctrla.req_block(cidxa.get_index());
-    dense_tensor_i<N, double> &blkb = ctrlb.req_block(cidxb.get_index());
+        cc.req_sync_off();
+        sync_off();
 
-    double k = m_c * tra.get_coeff();
-    if (m_recip)
-        k /= trb.get_coeff();
-    else
-        k *= trb.get_coeff();
+        out.close();
 
-    tod_mult<N>(blka, pa, blkb, pb, m_recip, k).perform(blk);
+    } catch(...) {
+        throw;
+    }
+}
 
-    ctrla.ret_block(cidxa.get_index());
-    ctrlb.ret_block(cidxb.get_index());
-}*/
 
+template<size_t N>
+void btod_mult<N>::perform(block_tensor_i<N, double> &btc) {
+
+    typedef btod_traits Traits;
+
+    bto_aux_copy<N, Traits> out(m_sym, btc);
+    perform(out);
+}
+
+
+template<size_t N>
+void btod_mult<N>::perform(block_tensor_i<N, double> &btc, const double &d) {
+
+    typedef btod_traits Traits;
+
+    block_tensor_ctrl<N, double> ctrl(btc);
+
+    addition_schedule<N, Traits> asch(m_sym, ctrl.req_const_symmetry());
+    asch.build(m_sch, ctrl);
+
+    bto_aux_add<N, Traits> out(m_sym, asch, btc, d);
+    perform(out);
+}
 
 
 template<size_t N>
@@ -373,8 +341,67 @@ void btod_mult<N>::make_schedule() {
 }
 
 
+template<size_t N, typename T>
+btod_mult_task<N, T>::btod_mult_task(btod_mult<N> &bto,
+    block_tensor_i<N, T> &btc, const index<N> &idx,
+    bto_stream_i<N, btod_traits> &out) :
+
+    m_bto(bto), m_btc(btc), m_idx(idx), m_out(out) {
+
+}
+
+
+template<size_t N, typename T>
+void btod_mult_task<N, T>::perform() {
+
+    block_tensor_ctrl<N, T> cc(m_btc);
+    dense_tensor_i<N, T> &blk = cc.req_block(m_idx);
+    tensor_transf<N, T> tr0;
+    m_bto.compute_block(true, blk, m_idx, tr0, 1.0);
+    m_out.put(m_idx, blk, tr0);
+    cc.ret_block(m_idx);
+    cc.req_zero_block(m_idx);
+}
+
+
+template<size_t N, typename T>
+btod_mult_task_iterator<N, T>::btod_mult_task_iterator(btod_mult<N> &bto,
+    block_tensor_i<N, T> &btc, bto_stream_i<N, btod_traits> &out) :
+
+    m_bto(bto), m_btc(btc), m_out(out), m_sch(m_bto.get_schedule()),
+    m_i(m_sch.begin()) {
+
+}
+
+
+template<size_t N, typename T>
+bool btod_mult_task_iterator<N, T>::has_more() const {
+
+    return m_i != m_sch.end();
+}
+
+
+template<size_t N, typename T>
+libutil::task_i *btod_mult_task_iterator<N, T>::get_next() {
+
+    dimensions<N> bidims = m_btc.get_bis().get_block_index_dims();
+    index<N> idx;
+    abs_index<N>::get_index(m_sch.get_abs_index(m_i), bidims, idx);
+    btod_mult_task<N, T> *t =
+        new btod_mult_task<N, T>(m_bto, m_btc, idx, m_out);
+    ++m_i;
+    return t;
+}
+
+
+template<size_t N, typename T>
+void btod_mult_task_observer<N, T>::notify_finish_task(
+    libutil::task_i *t) {
+
+    delete t;
+}
 
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_BTOD_MULT_H
+#endif // LIBTENSOR_BTOD_MULT_IMPL_H

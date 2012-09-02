@@ -5,7 +5,10 @@
 #include <libtensor/block_tensor/btod/btod_add.h>
 #include <libtensor/block_tensor/btod/btod_copy.h>
 #include <libtensor/btod/btod_random.h>
-#include <libtensor/btod/btod_symmetrize3.h>
+#include <libtensor/block_tensor/btod/btod_symmetrize3.h>
+#include <libtensor/symmetry/se_perm.h>
+#include <libtensor/symmetry/se_label.h>
+#include <libtensor/symmetry/se_part.h>
 #include <libtensor/symmetry/so_copy.h>
 #include <libtensor/dense_tensor/tod_btconv.h>
 #include "btod_symmetrize3_test.h"

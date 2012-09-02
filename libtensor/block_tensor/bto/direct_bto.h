@@ -6,6 +6,7 @@
 #include <libtensor/core/block_index_space.h>
 #include <libtensor/core/symmetry.h>
 #include "assignment_schedule.h"
+#include "bto_stream_i.h"
 
 namespace libtensor {
 
@@ -22,14 +23,14 @@ template<size_t N, typename Traits>
 class direct_bto {
 public:
     //! Type of tensor elements
-    typedef typename Traits::element_type element_t;
+    typedef typename Traits::element_type element_type;
 
     //! Type of block tensors
     typedef typename Traits::template block_tensor_type<N>::type
-            block_tensor_t;
+            block_tensor_type;
 
     //! Type of blocks
-    typedef typename Traits::template block_type<N>::type block_t;
+    typedef typename Traits::template block_type<N>::type block_type;
 
 public:
     virtual ~direct_bto() { }
@@ -40,20 +41,13 @@ public:
 
     /** \brief Returns the symmetry of the result
      **/
-    virtual const symmetry<N, element_t> &get_symmetry() const = 0;
-
-    /** \brief Invoked to execute the operation
-     **/
-    virtual void perform(block_tensor_t &bt) = 0;
+    virtual const symmetry<N, element_type> &get_symmetry() const = 0;
 
     /** \brief Returns the assignment schedule -- the preferred order
             of computing blocks
      **/
-    virtual const assignment_schedule<N, element_t> &get_schedule() const = 0;
-
-    /** \brief Computes a single block of the result
-     **/
-    virtual void compute_block(block_t &blk, const index<N> &i) = 0;
+    virtual const assignment_schedule<N, element_type> &get_schedule() const
+        = 0;
 
     /** \brief Enables the synchronization of arguments
      **/
@@ -62,6 +56,18 @@ public:
     /** \brief Disables the synchronization of arguments
      **/
     virtual void sync_off() = 0;
+
+    /** \brief Invoked to execute the operation
+     **/
+    virtual void perform(block_tensor_type &bt) = 0;
+
+    /** \brief Runs the operation and writes the result into the output stream
+     **/
+    virtual void perform(bto_stream_i<N, Traits> &out) = 0;
+
+    /** \brief Computes one block
+     **/
+    virtual void compute_block(block_type &blk, const index<N> &idx) = 0;
 
 };
 

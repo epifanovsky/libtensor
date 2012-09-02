@@ -1,45 +1,82 @@
 #ifndef LIBTENSOR_BTOD_TRAITS_H
 #define LIBTENSOR_BTOD_TRAITS_H
 
-#include <libtensor/block_tensor/bto/bto_traits.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/block_tensor_i.h>
 #include <libtensor/core/block_tensor_ctrl.h>
 #include <libtensor/dense_tensor/dense_tensor_i.h>
+#include <libtensor/dense_tensor/dense_tensor.h>
+#include <libtensor/dense_tensor/tod_apply.h>
 #include <libtensor/dense_tensor/tod_copy.h>
+#include <libtensor/dense_tensor/tod_diag.h>
+#include <libtensor/dense_tensor/tod_dotprod.h>
 #include <libtensor/dense_tensor/tod_set.h>
+#include <libtensor/dense_tensor/tod_trace.h>
+#include <libtensor/dense_tensor/tod_vmpriority.h>
 
 namespace libtensor {
 
-template<>
-struct bto_traits<double> {
-
-    //! BTO traits type required by additive bto
-    typedef bto_traits<double> additive_bto_traits;
+struct btod_traits {
 
     //! Element type
     typedef double element_type;
 
     //! Type of block tensor
-    template<size_t N> struct block_tensor_type {
+    template<size_t N>
+    struct block_tensor_type {
         typedef block_tensor_i<N, double> type;
     };
 
     //! Type of block tensor control
-    template<size_t N> struct block_tensor_ctrl_type {
+    template<size_t N>
+    struct block_tensor_ctrl_type {
         typedef block_tensor_ctrl<N, double> type;
     };
 
     //! Type of block of block tensors
-    template<size_t N> struct block_type {
+    template<size_t N>
+    struct block_type {
         typedef dense_tensor_i<N, double> type;
     };
 
-    template<size_t N> struct to_copy_type {
+    template<size_t N>
+    struct temp_block_type {
+        typedef dense_tensor< N, double, allocator<double> > type;
+    };
+
+    template<size_t N, typename Functor>
+    struct to_apply_type {
+        typedef tod_apply<N, Functor> type;
+    };
+
+    template<size_t N>
+    struct to_copy_type {
         typedef tod_copy<N> type;
     };
 
-    template<size_t N> struct to_set_type {
+    template<size_t N, size_t M>
+    struct to_diag_type {
+        typedef tod_diag<N, M> type;
+    };
+
+    template<size_t N>
+    struct to_dotprod_type {
+        typedef tod_dotprod<N> type;
+    };
+
+    template<size_t N>
+    struct to_set_type {
         typedef tod_set<N> type;
+    };
+
+    template<size_t N>
+    struct to_trace_type {
+        typedef tod_trace<N> type;
+    };
+
+    template<size_t N>
+    struct to_vmpriority_type {
+        typedef tod_vmpriority<N> type;
     };
 
     static bool is_zero(double d) {
@@ -53,6 +90,7 @@ struct bto_traits<double> {
     static double identity() {
         return 1.0;
     }
+
 };
 
 

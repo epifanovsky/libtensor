@@ -2,6 +2,7 @@
 #define LIBTENSOR_BTO_SET_IMPL_H
 
 #include <libtensor/core/orbit_list.h>
+#include "../bto_set.h"
 
 namespace libtensor {
 

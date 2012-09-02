@@ -1,116 +1,78 @@
-#ifndef LIBTENSOR_BTOD_EXTRACT_H
-#define LIBTENSOR_BTOD_EXTRACT_H
+#ifndef LIBTENSOR_BTOD_EXTRACT_IMPL_H
+#define LIBTENSOR_BTOD_EXTRACT_IMPL_H
 
-#include "../defs.h"
-#include "../not_implemented.h"
-#include "../core/abs_index.h"
-#include "../core/block_index_space.h"
-#include "../core/block_tensor_i.h"
-#include "../core/block_tensor_ctrl.h"
-#include "../core/orbit.h"
-#include "../core/orbit_list.h"
-#include "../core/permutation_builder.h"
-#include "../symmetry/so_reduce.h"
-#include "../symmetry/so_permute.h"
+#include <libtensor/core/abs_index.h>
+#include <libtensor/core/block_tensor_ctrl.h>
+#include <libtensor/core/orbit.h>
+#include <libtensor/core/orbit_list.h>
+#include <libtensor/core/permutation_builder.h>
+#include <libtensor/core/block_tensor.h>
+#include <libtensor/core/block_tensor_ctrl.h>
 #include <libtensor/dense_tensor/tod_extract.h>
 #include <libtensor/dense_tensor/tod_set.h>
-#include "bad_block_index_space.h"
-#include <libtensor/block_tensor/bto/additive_bto.h>
-#include <libtensor/block_tensor/btod/btod_traits.h>
+#include <libtensor/symmetry/so_reduce.h>
+#include <libtensor/symmetry/so_permute.h>
+#include <libtensor/btod/bad_block_index_space.h>
+#include <libtensor/block_tensor/bto/impl/bto_aux_add_impl.h>
+#include <libtensor/block_tensor/bto/impl/bto_aux_copy_impl.h>
+#include "../btod_extract.h"
 
 namespace libtensor {
 
 
-/** \brief Extracts a tensor with smaller dimension from the %tensor
-    \tparam N Tensor order.
-    \tparam M Number of fixed dimensions.
-    \tparam N - M result tensor order.
-
-    \ingroup libtensor_btod
- **/
 template<size_t N, size_t M>
-class btod_extract :
-    public additive_bto<N - M, bto_traits<double> >,
-    public timings< btod_extract<N, M> > {
+const char *btod_extract<N, M>::k_clazz = "btod_extract<N, M>";
+
+
+template<size_t N, size_t M, typename T>
+class btod_extract_task : public libutil::task_i {
+private:
+    btod_extract<N, M> &m_bto;
+    block_tensor_i<N - M, T> &m_btc;
+    index<N - M> m_idx;
+    bto_stream_i<N - M, btod_traits> &m_out;
 
 public:
-    static const char *k_clazz; //!< Class name
+    btod_extract_task(
+        btod_extract<N, M> &bto,
+        block_tensor_i<N - M, T> &btc,
+        const index<N - M> &idx,
+        bto_stream_i<N - M, btod_traits> &out);
 
-public:
-    static const size_t k_ordera = N; //!< Order of the argument
-    static const size_t k_orderb = N - M; //!< Order of the result
-
-private:
-    block_tensor_i<N, double> &m_bta; //!< Input block %tensor
-    mask<N> m_msk;//!< Mask for extraction
-    permutation<k_orderb> m_perm; //!< Permutation of the result
-    double m_c; //!< Scaling coefficient
-    block_index_space<k_orderb> m_bis; //!< Block %index space of the result
-    index<N> m_idxbl;//!< Index for extraction of the block
-    index<N> m_idxibl;//!< Index for extraction inside the block
-    symmetry<k_orderb, double> m_sym; //!< Symmetry of the result
-    assignment_schedule<k_orderb, double> m_sch; //!< Assignment schedule
-
-public:
-    btod_extract(block_tensor_i<N, double> &bta, const mask<N> &m,
-        const index<N> &idxbl, const index<N> &idxibl, double c = 1.0);
-
-    btod_extract(block_tensor_i<N, double> &bta, const mask<N> &m,
-        const permutation<N - M> &perm, const index<N> &idxbl,
-        const index<N> &idxibl, double c = 1.0);
-
-    //!    \name Implementation of
-    //      libtensor::direct_tensor_operation<N - M + 1, double>
-    //@{
-
-    virtual const block_index_space<k_orderb> &get_bis() const {
-        return m_bis;
-    }
-
-    virtual const symmetry<k_orderb, double> &get_symmetry() const {
-        return m_sym;
-    }
-
-    virtual const assignment_schedule<k_orderb, double> &get_schedule() const {
-        return m_sch;
-    }
-
-    //@}
-
-    using additive_bto<k_orderb, bto_traits<double> >::perform;
-
-    virtual void sync_on();
-    virtual void sync_off();
-
-protected:
-    virtual void compute_block(bool zero,
-        dense_tensor_i<k_orderb, double> &blk, const index<k_orderb> &i,
-        const tensor_transf<k_orderb, double> &tr, const double &c);
-
-private:
-    /** \brief Forms the block %index space of the output or throws an
-            exception if the input is incorrect
-     **/
-    static block_index_space<N - M> mk_bis(const block_index_space<N> &bis,
-        const mask<N> &msk, const permutation<N - M> &perm);
-
-    /** \brief Sets up the assignment schedule for the operation.
-     **/
-    void make_schedule();
-
-    void do_compute_block(dense_tensor_i<k_orderb, double> &blk,
-        const index<k_orderb> &i, const tensor_transf<k_orderb, double> &tr,
-        double c, bool zero);
-
-private:
-    btod_extract(const btod_extract<N, M>&);
-    const btod_extract<N, M> &operator=(const btod_extract<N, M>&);
+    virtual ~btod_extract_task() { }
+    virtual void perform();
 
 };
 
 
-template<size_t N, size_t M>
-const char *btod_extract<N, M>::k_clazz = "btod_extract<N, M>";
+template<size_t N, size_t M, typename T>
+class btod_extract_task_iterator : public libutil::task_iterator_i {
+private:
+    btod_extract<N, M> &m_bto;
+    block_tensor_i<N - M, T> &m_btc;
+    bto_stream_i<N - M, btod_traits> &m_out;
+    const assignment_schedule<N - M, double> &m_sch;
+    typename assignment_schedule<N - M, double>::iterator m_i;
+
+public:
+    btod_extract_task_iterator(
+        btod_extract<N, M> &bto,
+        block_tensor_i<N - M, T> &btc,
+        bto_stream_i<N - M, btod_traits> &out);
+
+    virtual bool has_more() const;
+    virtual libutil::task_i *get_next();
+
+};
+
+
+template<size_t N, size_t M, typename T>
+class btod_extract_task_observer : public libutil::task_observer_i {
+public:
+    virtual void notify_start_task(libutil::task_i *t) { }
+    virtual void notify_finish_task(libutil::task_i *t);
+
+};
 
 
 template<size_t N, size_t M>
@@ -186,14 +148,57 @@ void btod_extract<N, M>::sync_off() {
     ctrla.req_sync_off();
 }
 
-/*
-template<size_t N, size_t M>
-void btod_extract<N, M>::compute_block(dense_tensor_i<k_orderb, double> &blk,
-    const index<k_orderb> &idx) {
 
-    tensor_transf<k_orderb, double> tr0;
-    do_compute_block(blk, idx, tr0, 1.0, true);
-}*/
+template<size_t N, size_t M>
+void btod_extract<N, M>::perform(bto_stream_i<N - M, btod_traits> &out) {
+
+    typedef allocator<double> allocator_type;
+
+    try {
+
+        out.open();
+
+        block_tensor<N - M, double, allocator_type> btc(m_bis);
+        block_tensor_ctrl<N - M, double> cc(btc);
+        cc.req_sync_on();
+        sync_on();
+
+        btod_extract_task_iterator<N, M, double> ti(*this, btc, out);
+        btod_extract_task_observer<N, M, double> to;
+        libutil::thread_pool::submit(ti, to);
+
+        cc.req_sync_off();
+        sync_off();
+
+        out.close();
+
+    } catch(...) {
+        throw;
+    }
+}
+
+
+template<size_t N, size_t M>
+void btod_extract<N, M>::perform(block_tensor_i<N - M, double> &btb) {
+
+    bto_aux_copy<N - M, btod_traits> out(m_sym, btb);
+    perform(out);
+}
+
+
+template<size_t N, size_t M>
+void btod_extract<N, M>::perform(block_tensor_i<N - M, double> &btb,
+    const double &c) {
+
+    typedef block_tensor_ctrl<N - M, double> block_tensor_ctrl_type;
+
+    block_tensor_ctrl_type cb(btb);
+    addition_schedule<N - M, btod_traits> asch(m_sym, cb.req_const_symmetry());
+    asch.build(get_schedule(), cb);
+
+    bto_aux_add<N - M, btod_traits> out(m_sym, asch, btb, c);
+    perform(out);
+}
 
 
 template<size_t N, size_t M>
@@ -384,6 +389,68 @@ void btod_extract<N, M>::make_schedule() {
 }
 
 
+template<size_t N, size_t M, typename T>
+btod_extract_task<N, M, T>::btod_extract_task(btod_extract<N, M> &bto,
+    block_tensor_i<N - M, T> &btc, const index<N - M> &idx,
+    bto_stream_i<N - M, btod_traits> &out) :
+
+    m_bto(bto), m_btc(btc), m_idx(idx), m_out(out) {
+
+}
+
+
+template<size_t N, size_t M, typename T>
+void btod_extract_task<N, M, T>::perform() {
+
+    block_tensor_ctrl<N - M, T> cc(m_btc);
+    dense_tensor_i<N - M, T> &blk = cc.req_block(m_idx);
+    tensor_transf<N - M, T> tr0;
+    m_bto.compute_block(true, blk, m_idx, tr0, 1.0);
+    m_out.put(m_idx, blk, tr0);
+    cc.ret_block(m_idx);
+    cc.req_zero_block(m_idx);
+}
+
+
+template<size_t N, size_t M, typename T>
+btod_extract_task_iterator<N, M, T>::btod_extract_task_iterator(
+    btod_extract<N, M> &bto, block_tensor_i<N - M, T> &btc,
+    bto_stream_i<N - M, btod_traits> &out) :
+
+    m_bto(bto), m_btc(btc), m_out(out), m_sch(m_bto.get_schedule()),
+    m_i(m_sch.begin()) {
+
+}
+
+
+template<size_t N, size_t M, typename T>
+bool btod_extract_task_iterator<N, M, T>::has_more() const {
+
+    return m_i != m_sch.end();
+}
+
+
+template<size_t N, size_t M, typename T>
+libutil::task_i *btod_extract_task_iterator<N, M, T>::get_next() {
+
+    dimensions<N - M> bidims = m_btc.get_bis().get_block_index_dims();
+    index<N - M> idx;
+    abs_index<N - M>::get_index(m_sch.get_abs_index(m_i), bidims, idx);
+    btod_extract_task<N, M, T> *t =
+        new btod_extract_task<N, M, T>(m_bto, m_btc, idx, m_out);
+    ++m_i;
+    return t;
+}
+
+
+template<size_t N, size_t M, typename T>
+void btod_extract_task_observer<N, M, T>::notify_finish_task(
+    libutil::task_i *t) {
+
+    delete t;
+}
+
+
 } // namespace libtensor
 
-#endif // LIBTENSOR_BTOD_EXTRACT_H
+#endif // LIBTENSOR_BTOD_EXTRACT_IMPL_H
