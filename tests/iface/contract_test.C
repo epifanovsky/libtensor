@@ -1,5 +1,6 @@
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/btod/btod_random.h>
+#include <libtensor/symmetry/se_perm.h>
 #include <libtensor/iface/iface.h>
 #include "../compare_ref.h"
 #include "contract_test.h"

@@ -43,6 +43,7 @@ private:
 
 public:
     virtual void perform(bto_stream_i<N, Traits> &out) = 0;
+    virtual void perform(block_tensor_t &bt) = 0;
 
     /** \brief Computes the result of the operation and adds it to the
             output block tensor
@@ -61,6 +62,10 @@ public:
      **/
     virtual void compute_block(bool zero, block_t &blk, const index<N> &i,
         const tensor_transf<N, element_t> &tr, const element_t &c) = 0;
+    virtual void compute_block(block_t &blk, const index<N> &idx) {
+        compute_block(true, blk, idx, tensor_transf<N, element_t>(),
+            Traits::identity());
+    }
 
 protected:
     /** \brief Invokes compute_block on another additive operation;
