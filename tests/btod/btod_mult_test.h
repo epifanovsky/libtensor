@@ -20,7 +20,7 @@ private:
     void test_4(bool recip, bool doadd) throw(libtest::test_exception);
     void test_5(bool symm1, bool symm2) throw(libtest::test_exception);
     void test_6(bool symm1, bool symm2) throw(libtest::test_exception);
-    void test_7(bool label, bool part, bool samesym,
+    void test_7(bool label, bool part, bool asymm,
             bool recip, bool add) throw(libtest::test_exception);
     void test_8a(bool label, bool part) throw(libtest::test_exception);
     void test_8b(bool label, bool part) throw(libtest::test_exception);

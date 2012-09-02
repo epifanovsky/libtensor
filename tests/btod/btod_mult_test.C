@@ -647,28 +647,51 @@ void btod_mult_test::test_7(bool label, bool part,
     scalar_transf<double> tr0, tr1(-1.);
     se_perm<4, double> sp10(permutation<4>().permute(0, 1), tr0);
     se_perm<4, double> ap10(permutation<4>().permute(0, 1), tr1);
-    se_perm<4, double> sp32(permutation<4>().permute(0, 1), tr0);
-    se_perm<4, double> ap32(permutation<4>().permute(0, 1), tr1);
+    se_perm<4, double> sp32(permutation<4>().permute(2, 3), tr0);
+    se_perm<4, double> ap32(permutation<4>().permute(2, 3), tr1);
 
-    if (samesym) {
-        ca.req_symmetry().insert(ap10);
-        ca.req_symmetry().insert(ap32);
-        cb.req_symmetry().insert(ap10);
-        cb.req_symmetry().insert(ap32);
-        cc.req_symmetry().insert(sp10);
-        cc.req_symmetry().insert(sp32);
-        sym_ref.insert(sp10);
-        sym_ref.insert(sp32);
-    }
-    else {
-        ca.req_symmetry().insert(ap10);
-        ca.req_symmetry().insert(ap32);
-        cb.req_symmetry().insert(sp10);
-        cb.req_symmetry().insert(sp32);
-        cc.req_symmetry().insert(ap10);
-        cc.req_symmetry().insert(ap32);
-        sym_ref.insert(ap10);
-        sym_ref.insert(ap32);
+    if(recip) {
+        //  For A/B, B cannot be asymmetric
+        if(samesym) {
+            ca.req_symmetry().insert(sp10);
+            ca.req_symmetry().insert(sp32);
+            cb.req_symmetry().insert(sp10);
+            cb.req_symmetry().insert(sp32);
+            cc.req_symmetry().insert(sp10);
+            cc.req_symmetry().insert(sp32);
+            sym_ref.insert(sp10);
+            sym_ref.insert(sp32);
+        } else {
+            ca.req_symmetry().insert(ap10);
+            ca.req_symmetry().insert(ap32);
+            cb.req_symmetry().insert(sp10);
+            cb.req_symmetry().insert(sp32);
+            cc.req_symmetry().insert(ap10);
+            cc.req_symmetry().insert(ap32);
+            sym_ref.insert(ap10);
+            sym_ref.insert(ap32);
+        }
+    } else {
+        //  For A*B, A and B can be symmetric or asymmetric
+        if(samesym) {
+            ca.req_symmetry().insert(ap10);
+            ca.req_symmetry().insert(ap32);
+            cb.req_symmetry().insert(ap10);
+            cb.req_symmetry().insert(ap32);
+            cc.req_symmetry().insert(sp10);
+            cc.req_symmetry().insert(sp32);
+            sym_ref.insert(sp10);
+            sym_ref.insert(sp32);
+        } else {
+            ca.req_symmetry().insert(ap10);
+            ca.req_symmetry().insert(ap32);
+            cb.req_symmetry().insert(sp10);
+            cb.req_symmetry().insert(sp32);
+            cc.req_symmetry().insert(ap10);
+            cc.req_symmetry().insert(ap32);
+            sym_ref.insert(ap10);
+            sym_ref.insert(ap32);
+        }
     }
 
     if (label) {
