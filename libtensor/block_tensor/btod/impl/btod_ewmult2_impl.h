@@ -8,10 +8,10 @@
 #include <libtensor/core/permutation_builder.h>
 #include <libtensor/dense_tensor/tod_ewmult2.h>
 #include <libtensor/core/block_tensor.h>
-#include <libtensor/core/block_tensor_ctrl.h>
 #include <libtensor/symmetry/so_dirprod.h>
 #include <libtensor/symmetry/so_merge.h>
 #include <libtensor/btod/bad_block_index_space.h>
+#include <libtensor/block_tensor/block_tensor_ctrl.h>
 #include <libtensor/block_tensor/bto/impl/bto_aux_add_impl.h>
 #include <libtensor/block_tensor/bto/impl/bto_aux_copy_impl.h>
 #include "../btod_copy.h"

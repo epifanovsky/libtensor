@@ -20,7 +20,6 @@
 #include "dense_tensor/dense_tensor.h"
 
 #include "core/block_map.h"
-#include "core/block_tensor_ctrl.h"
 #include "core/block_tensor.h"
 #include "core/direct_block_tensor.h"
 

@@ -2,17 +2,16 @@
 #define LIBTENSOR_BTOD_EXTRACT_IMPL_H
 
 #include <libtensor/core/abs_index.h>
-#include <libtensor/core/block_tensor_ctrl.h>
 #include <libtensor/core/orbit.h>
 #include <libtensor/core/orbit_list.h>
 #include <libtensor/core/permutation_builder.h>
 #include <libtensor/core/block_tensor.h>
-#include <libtensor/core/block_tensor_ctrl.h>
 #include <libtensor/dense_tensor/tod_extract.h>
 #include <libtensor/dense_tensor/tod_set.h>
 #include <libtensor/symmetry/so_reduce.h>
 #include <libtensor/symmetry/so_permute.h>
 #include <libtensor/btod/bad_block_index_space.h>
+#include <libtensor/block_tensor/block_tensor_ctrl.h>
 #include <libtensor/block_tensor/bto/impl/bto_aux_add_impl.h>
 #include <libtensor/block_tensor/bto/impl/bto_aux_copy_impl.h>
 #include "../btod_extract.h"

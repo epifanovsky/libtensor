@@ -4,7 +4,6 @@
 #include <cmath> // for fabs
 #include <sstream>
 #include "../defs.h"
-#include "../core/block_tensor_ctrl.h"
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
 #include "../core/transf_list.h"
@@ -12,6 +11,7 @@
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/dense_tensor/tod_compare.h>
 #include <libtensor/block_tensor/block_tensor_i.h>
+#include <libtensor/block_tensor/block_tensor_ctrl.h>
 #include "bad_block_index_space.h"
 
 namespace libtensor {

@@ -5,8 +5,8 @@
 #include "../exception.h"
 #include "../core/block_index_space.h"
 #include "../core/block_tensor.h"
-#include "../core/block_tensor_ctrl.h"
 #include "../core/immutable.h"
+#include <libtensor/block_tensor/block_tensor_ctrl.h>
 #include "bispace.h"
 #include "btensor_i.h"
 #include "btensor_traits.h"

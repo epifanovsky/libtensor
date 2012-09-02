@@ -3,7 +3,6 @@
 
 #include <libtensor/core/abs_index.h>
 #include <libtensor/core/block_index_space_product_builder.h>
-#include <libtensor/core/block_tensor_ctrl.h>
 #include <libtensor/core/orbit.h>
 #include <libtensor/core/orbit_list.h>
 #include <libtensor/core/permutation_builder.h>
@@ -13,6 +12,7 @@
 #include <libtensor/dense_tensor/tod_copy.h>
 #include <libtensor/dense_tensor/tod_mult1.h>
 #include <libtensor/dense_tensor/tod_set.h>
+#include <libtensor/block_tensor/block_tensor_ctrl.h>
 #include <libtensor/btod/bad_block_index_space.h>
 #include "../btod_mult1.h"
 

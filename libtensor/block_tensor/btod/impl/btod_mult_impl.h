@@ -1,7 +1,6 @@
 #ifndef LIBTENSOR_BTOD_MULT_IMPL_H
 #define LIBTENSOR_BTOD_MULT_IMPL_H
 
-#include <libtensor/core/block_tensor_ctrl.h>
 #include <libtensor/core/orbit.h>
 #include <libtensor/core/orbit_list.h>
 #include <libtensor/core/permutation_builder.h>
@@ -11,6 +10,7 @@
 #include <libtensor/dense_tensor/tod_mult.h>
 #include <libtensor/dense_tensor/tod_set.h>
 #include <libtensor/core/block_index_space_product_builder.h>
+#include <libtensor/block_tensor/block_tensor_ctrl.h>
 #include <libtensor/btod/bad_block_index_space.h>
 #include "../../bto/impl/bto_aux_add_impl.h"
 #include "../../bto/impl/bto_aux_copy_impl.h"

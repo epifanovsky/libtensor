@@ -11,7 +11,7 @@
 #include <libtensor/core/orbit.h>
 #include <libtensor/core/orbit_list.h>
 #include <libtensor/symmetry/so_copy.h>
-#include <libtensor/core/block_tensor_ctrl.h>
+#include <libtensor/block_tensor/block_tensor_ctrl.h>
 #include "../bto_contract2_clst.h"
 #include "../bto_contract2_nzorb.h"
 

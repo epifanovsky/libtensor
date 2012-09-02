@@ -1,10 +1,10 @@
 #ifndef LIBTENSOR_BTO_CONTRACT2_SYM_IMPL_H
 #define LIBTENSOR_BTO_CONTRACT2_SYM_IMPL_H
 
-#include <libtensor/core/block_tensor_ctrl.h>
 #include <libtensor/core/permutation_builder.h>
 #include <libtensor/symmetry/so_dirprod.h>
 #include <libtensor/symmetry/so_reduce.h>
+#include <libtensor/block_tensor/block_tensor_ctrl.h>
 #include "../bto_contract2_sym.h"
 
 namespace libtensor {

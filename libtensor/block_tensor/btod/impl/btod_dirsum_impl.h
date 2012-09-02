@@ -2,16 +2,15 @@
 #define LIBTENSOR_BTOD_DIRSUM_IMPL_H
 
 #include <libutil/thread_pool/thread_pool.h>
-#include <libtensor/core/block_tensor_ctrl.h>
 #include <libtensor/core/permutation_builder.h>
 #include <libtensor/core/mask.h>
 #include <libtensor/core/block_tensor.h>
-#include <libtensor/core/block_tensor_ctrl.h>
 #include <libtensor/dense_tensor/tod_dirsum.h>
 #include <libtensor/dense_tensor/tod_scale.h>
 #include <libtensor/dense_tensor/tod_scatter.h>
 #include <libtensor/dense_tensor/tod_set.h>
 #include <libtensor/symmetry/so_dirsum.h>
+#include <libtensor/block_tensor/block_tensor_ctrl.h>
 #include <libtensor/btod/bad_block_index_space.h>
 #include <libtensor/block_tensor/bto/impl/bto_aux_add_impl.h>
 #include <libtensor/block_tensor/bto/impl/bto_aux_copy_impl.h>

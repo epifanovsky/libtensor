@@ -10,7 +10,7 @@
 #include <libtensor/dense_tensor/tod_add.h>
 #include <libtensor/dense_tensor/tod_copy.h>
 #include <libtensor/core/block_tensor.h>
-#include <libtensor/core/block_tensor_ctrl.h>
+#include <libtensor/block_tensor/block_tensor_ctrl.h>
 #include <libtensor/block_tensor/bto/impl/bto_aux_add_impl.h>
 #include <libtensor/block_tensor/bto/impl/bto_aux_copy_impl.h>
 #include <libtensor/btod/bad_block_index_space.h>

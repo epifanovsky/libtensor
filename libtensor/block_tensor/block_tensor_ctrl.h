@@ -1,11 +1,7 @@
 #ifndef LIBTENSOR_BLOCK_TENSOR_CTRL_H
 #define LIBTENSOR_BLOCK_TENSOR_CTRL_H
 
-#include "../defs.h"
-#include "../exception.h"
-#include <libtensor/block_tensor/block_tensor_i.h>
-#include "block_tensor_ctrl.h"
-#include "index.h"
+#include "block_tensor_i.h"
 
 namespace libtensor {
 
@@ -41,14 +37,14 @@ public:
     /** \brief Request to obtain the constant reference to the block
             %tensor's %symmetry
      **/
-    const symmetry<N, T> &req_const_symmetry() throw(exception) {
+    const symmetry<N, T> &req_const_symmetry() {
         return m_bt.on_req_const_symmetry();
     }
 
     /** \brief Request to obtain the reference to the block %tensor's
             %symmetry
      **/
-    symmetry<N, T> &req_symmetry() throw(exception) {
+    symmetry<N, T> &req_symmetry() {
         return m_bt.on_req_symmetry();
     }
 
@@ -56,19 +52,19 @@ public:
 
     //!    \name Block events
     //@{
-    dense_tensor_i<N, T> &req_block(const index<N> &idx) throw(exception);
-    void ret_block(const index<N> &idx) throw(exception);
-    dense_tensor_i<N, T> &req_aux_block(const index<N> &idx) throw(exception);
-    void ret_aux_block(const index<N> &idx) throw(exception);
-    bool req_is_zero_block(const index<N> &idx) throw(exception);
-    void req_zero_block(const index<N> &idx) throw(exception);
-    void req_zero_all_blocks() throw(exception);
+    dense_tensor_i<N, T> &req_block(const index<N> &idx);
+    void ret_block(const index<N> &idx);
+    dense_tensor_i<N, T> &req_aux_block(const index<N> &idx);
+    void ret_aux_block(const index<N> &idx);
+    bool req_is_zero_block(const index<N> &idx);
+    void req_zero_block(const index<N> &idx);
+    void req_zero_all_blocks();
     //@}
 
     //!    \name Synchronization events
     //@{
-    void req_sync_on() throw(exception);
-    void req_sync_off() throw(exception);
+    void req_sync_on();
+    void req_sync_off();
     //@}
 };
 
@@ -83,61 +79,56 @@ block_tensor_ctrl<N, T>::~block_tensor_ctrl() {
 
 
 template<size_t N, typename T>
-inline dense_tensor_i<N, T> &block_tensor_ctrl<N, T>::req_block(const index<N> &idx)
-    throw(exception) {
+inline dense_tensor_i<N, T> &block_tensor_ctrl<N, T>::req_block(const index<N> &idx) {
 
     return m_bt.on_req_block(idx);
 }
 
 template<size_t N, typename T>
-inline void block_tensor_ctrl<N, T>::ret_block(const index<N> &idx)
-    throw(exception) {
+inline void block_tensor_ctrl<N, T>::ret_block(const index<N> &idx) {
 
     return m_bt.on_ret_block(idx);
 }
 
 template<size_t N, typename T>
 inline dense_tensor_i<N, T> &block_tensor_ctrl<N, T>::req_aux_block(
-    const index<N> &idx) throw(exception) {
+    const index<N> &idx) {
 
     return m_bt.on_req_aux_block(idx);
 }
 
 template<size_t N, typename T>
-inline void block_tensor_ctrl<N, T>::ret_aux_block(const index<N> &idx)
-    throw(exception) {
+inline void block_tensor_ctrl<N, T>::ret_aux_block(const index<N> &idx) {
 
     return m_bt.on_ret_aux_block(idx);
 }
 
 template<size_t N, typename T>
-inline bool block_tensor_ctrl<N, T>::req_is_zero_block(const index<N> &idx)
-    throw(exception) {
+inline bool block_tensor_ctrl<N, T>::req_is_zero_block(const index<N> &idx) {
 
     return m_bt.on_req_is_zero_block(idx);
 }
 
 template<size_t N, typename T>
-inline void block_tensor_ctrl<N, T>::req_zero_block(const index<N> &idx)
-    throw(exception) {
+inline void block_tensor_ctrl<N, T>::req_zero_block(const index<N> &idx) {
 
     m_bt.on_req_zero_block(idx);
 }
 
 template<size_t N, typename T>
-inline void block_tensor_ctrl<N, T>::req_zero_all_blocks() throw(exception) {
+inline void block_tensor_ctrl<N, T>::req_zero_all_blocks() {
 
     m_bt.on_req_zero_all_blocks();
 }
 
 template<size_t N, typename T>
-inline void block_tensor_ctrl<N, T>::req_sync_on() throw(exception) {
+inline void block_tensor_ctrl<N, T>::req_sync_on() {
 
     m_bt.on_req_sync_on();
 }
 
 template<size_t N, typename T>
-inline void block_tensor_ctrl<N, T>::req_sync_off() throw(exception) {
+inline void block_tensor_ctrl<N, T>::req_sync_off() {
 
     m_bt.on_req_sync_off();
 }

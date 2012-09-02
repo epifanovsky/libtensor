@@ -3,11 +3,11 @@
 
 #include "../defs.h"
 #include "../timings.h"
-#include "../core/block_tensor_ctrl.h"
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
 #include <libtensor/dense_tensor/tod_scale.h>
 #include <libtensor/block_tensor/block_tensor_i.h>
+#include <libtensor/block_tensor/block_tensor_ctrl.h>
 
 namespace libtensor {
 
