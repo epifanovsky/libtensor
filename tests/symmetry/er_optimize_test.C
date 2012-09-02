@@ -57,7 +57,7 @@ void er_optimize_test::test_1(
     }
 
     // Check product list
-    evaluation_rule<2>::const_iterator it = to.begin();
+    evaluation_rule<2>::iterator it = to.begin();
     if (it == to.end()) {
         fail_test(testname, __FILE__, __LINE__, "Empty product list.");
     }
@@ -118,7 +118,7 @@ void er_optimize_test::test_2(
     }
 
     // Check product list
-    evaluation_rule<2>::const_iterator it = to.begin();
+    evaluation_rule<2>::iterator it = to.begin();
     if (it == to.end()) {
         fail_test(testname, __FILE__, __LINE__, "Empty product list.");
     }
@@ -181,7 +181,7 @@ void er_optimize_test::test_3(
     }
 
     // Check product list
-    evaluation_rule<2>::const_iterator it = to.begin();
+    evaluation_rule<2>::iterator it = to.begin();
     if (it == to.end()) {
         fail_test(testname, __FILE__, __LINE__, "Empty product list.");
     }

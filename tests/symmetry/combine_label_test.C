@@ -57,7 +57,7 @@ void combine_label_test::test_1(
     if (sl.size() != 3)
         fail_test(tns.c_str(), __FILE__, __LINE__, "# seq.");
 
-    evaluation_rule<2>::const_iterator it = rule.begin();
+    evaluation_rule<2>::iterator it = rule.begin();
     if (it == rule.end())
         fail_test(tns.c_str(), __FILE__, __LINE__, "Empty rule");
     const product_rule<2> &pr = rule.get_product(it);
@@ -123,7 +123,7 @@ void combine_label_test::test_2(
     if (sl.size() != 8)
         fail_test(tns.c_str(), __FILE__, __LINE__, "# seq.");
 
-    evaluation_rule<4>::const_iterator it = rule.begin();
+    evaluation_rule<4>::iterator it = rule.begin();
     if (it == rule.end())
         fail_test(tns.c_str(), __FILE__, __LINE__, "Empty rule.");
     it++;

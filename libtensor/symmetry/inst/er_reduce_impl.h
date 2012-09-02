@@ -56,7 +56,7 @@ void er_reduce<N, M>::perform(evaluation_rule<N - M> &to) const {
     build_rsteps_in_seq(slist, rsteps_in_seq);
 
     // Loop over products
-    for (typename evaluation_rule<N>::const_iterator it = m_rule.begin();
+    for (typename evaluation_rule<N>::iterator it = m_rule.begin();
             it != m_rule.end(); it++) {
 
         const product_rule<N> &pra = m_rule.get_product(it);

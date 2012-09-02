@@ -1,6 +1,7 @@
 #include <libtensor/symmetry/er_merge.h>
 #include <libtensor/symmetry/er_optimize.h>
 #include <libtensor/symmetry/point_group_table.h>
+#include <libtensor/symmetry/print_symmetry.h>
 #include "er_merge_test.h"
 
 namespace libtensor {
@@ -14,7 +15,6 @@ void er_merge_test::perform() throw(libtest::test_exception) {
     try {
 
         test_1(c2v);
-        test_2(c2v);
 
     } catch (libtest::test_exception &e) {
         clear_pg_table(c2v);
@@ -27,6 +27,7 @@ void er_merge_test::perform() throw(libtest::test_exception) {
 
     try {
 
+        test_2(s6);
         test_3(s6);
 
     } catch (libtest::test_exception &e) {
@@ -81,7 +82,7 @@ void er_merge_test::test_1(
     }
 
     // Check product list
-    evaluation_rule<2>::const_iterator it = r2.begin();
+    evaluation_rule<2>::iterator it = r2.begin();
     if (it == r2.end()) {
         fail_test(testname, __FILE__, __LINE__, "Empty product list.");
     }
@@ -148,7 +149,7 @@ void er_merge_test::test_2(
     }
 
     // Check product list
-    evaluation_rule<2>::const_iterator it = r2.begin();
+    evaluation_rule<2>::iterator it = r2.begin();
     if (it == r2.end()) {
         fail_test(testname, __FILE__, __LINE__, "Empty product list.");
     }
@@ -232,7 +233,7 @@ void er_merge_test::test_3(
     }
 
     // Check product list
-    evaluation_rule<3>::const_iterator it = r2.begin();
+    evaluation_rule<3>::iterator it = r2.begin();
     if (it == r2.end()) {
         fail_test(testname, __FILE__, __LINE__, "Empty product list.");
     }
