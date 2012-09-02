@@ -93,7 +93,8 @@ void btod_symmetrize<N>::perform(block_tensor_i<N, double> &bt) {
 
 
 template<size_t N>
-void btod_symmetrize<N>::perform(block_tensor_i<N, double> &bt, double d) {
+void btod_symmetrize<N>::perform(block_tensor_i<N, double> &bt,
+    const double &d) {
 
     typedef btod_traits Traits;
 

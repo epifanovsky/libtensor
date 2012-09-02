@@ -56,10 +56,6 @@ public:
      **/
     virtual const assignment_schedule<N, element_t> &get_schedule() const = 0;
 
-    /** \brief Computes a single block of the result
-     **/
-    virtual void compute_block(block_t &blk, const index<N> &i) = 0;
-
     /** \brief Enables the synchronization of arguments
      **/
     virtual void sync_on() = 0;

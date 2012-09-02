@@ -218,7 +218,6 @@ set(SRC_INST
     symmetry/inst/so_symmetrize_se_perm_inst.C
     block_tensor/bto/impl/bto_contract2_bis.C
     block_tensor/btod/impl/additive_btod.C
-    block_tensor/btod/impl/basic_btod.C
     block_tensor/btod/impl/btod_add.C
     block_tensor/btod/impl/btod_contract2_clst.C
     block_tensor/btod/impl/btod_contract2_nzorb.C

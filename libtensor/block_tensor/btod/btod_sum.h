@@ -99,10 +99,6 @@ public:
     virtual void perform(block_tensor_i<N, double> &btb);
     virtual void perform(block_tensor_i<N, double> &btb, const double &c);
     virtual void perform(bto_stream_i<N, btod_traits> &out);
-    virtual void perform(block_tensor_i<N, double> &btb, const double &c,
-        const std::vector<size_t> &blst) {
-        additive_bto<N, btod_traits>::perform(btb, c, blst);
-    }
 
     //@}
 

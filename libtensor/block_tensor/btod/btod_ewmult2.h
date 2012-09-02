@@ -109,11 +109,6 @@ public:
     virtual void perform(block_tensor_i<N + M + K, double> &btc,
         const double &d);
 
-    virtual void perform(block_tensor_i<N + M + K, double> &bt, const double &d,
-        const std::vector<size_t> &blst) {
-        additive_bto<N + M + K, btod_traits>::perform(bt, d, blst);
-    }
-
     //@}
 
     using additive_bto<N + M + K, btod_traits>::compute_block;

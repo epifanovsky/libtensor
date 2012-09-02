@@ -92,7 +92,7 @@ public:
     //@}
 
     virtual void perform(block_tensor_i<N, double> &btc);
-    virtual void perform(block_tensor_i<N, double> &btc, double d);
+    virtual void perform(block_tensor_i<N, double> &btc, const double &d);
     virtual void perform(bto_stream_i<N, btod_traits> &out);
 
 protected:
