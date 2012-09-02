@@ -2,7 +2,6 @@
 #define LIBTENSOR_BTOD_TRAITS_H
 
 #include <libtensor/core/allocator.h>
-#include <libtensor/core/block_tensor_i.h>
 #include <libtensor/core/block_tensor_ctrl.h>
 #include <libtensor/dense_tensor/dense_tensor_i.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
@@ -13,6 +12,7 @@
 #include <libtensor/dense_tensor/tod_set.h>
 #include <libtensor/dense_tensor/tod_trace.h>
 #include <libtensor/dense_tensor/tod_vmpriority.h>
+#include <libtensor/block_tensor/block_tensor_i.h>
 
 namespace libtensor {
 

@@ -3,9 +3,9 @@
 
 #include <list>
 #include <libtensor/timings.h>
-#include <libtensor/core/block_tensor_i.h>
 #include <libtensor/tod/bad_dimensions.h>
 #include <libtensor/tod/processor.h>
+#include <libtensor/block_tensor/block_tensor_i.h>
 #include "dense_tensor_i.h"
 
 namespace libtensor {

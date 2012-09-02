@@ -3,9 +3,9 @@
 
 #include <map>
 #include <libtensor/timings.h>
-#include <libtensor/core/block_tensor_i.h>
 #include <libtensor/core/orbit.h>
 #include <libtensor/core/orbit_list.h>
+#include <libtensor/block_tensor/block_tensor_i.h>
 #include <libtensor/block_tensor/bto/additive_bto.h>
 #include <libtensor/block_tensor/btod/btod_traits.h>
 

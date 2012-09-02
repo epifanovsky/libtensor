@@ -7,11 +7,11 @@
 #include "abs_index.h"
 #include "block_index_space.h"
 #include "block_map.h"
-#include "block_tensor_i.h"
 #include "immutable.h"
 #include "orbit_list.h"
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
+#include <libtensor/block_tensor/block_tensor_i.h>
 
 namespace libtensor {
 

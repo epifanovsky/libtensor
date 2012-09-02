@@ -2,8 +2,8 @@
 #define LIBTENSOR_BTO_CONTRACT2_CLST_H
 
 #include <list>
-#include <libtensor/core/block_tensor_i.h>
 #include <libtensor/core/orbit_list.h>
+#include <libtensor/block_tensor/block_tensor_i.h>
 #include <libtensor/tod/contraction2.h>
 
 namespace libtensor {

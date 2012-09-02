@@ -1,12 +1,9 @@
 #ifndef LIBTENSOR_BLOCK_TENSOR_I_H
 #define LIBTENSOR_BLOCK_TENSOR_I_H
 
-#include "../defs.h"
-#include "../exception.h"
-#include "block_index_space.h"
-#include "index.h"
-#include "symmetry.h"
-#include "../dense_tensor/dense_tensor_i.h"
+#include <libtensor/core/block_index_space.h>
+#include <libtensor/core/symmetry.h>
+#include <libtensor/dense_tensor/dense_tensor_i.h>
 
 namespace libtensor {
 

@@ -3,8 +3,8 @@
 
 #include <vector>
 #include <libtensor/timings.h>
-#include <libtensor/core/block_tensor_i.h>
 #include <libtensor/core/symmetry.h>
+#include <libtensor/block_tensor/block_tensor_i.h>
 #include <libtensor/tod/contraction2.h>
 
 namespace libtensor {

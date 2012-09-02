@@ -1,8 +1,8 @@
 #ifndef LIBTENSOR_BTOD_MULT_H
 #define LIBTENSOR_BTOD_MULT_H
 
-#include <libtensor/core/block_tensor_i.h>
 #include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/block_tensor/block_tensor_i.h>
 #include <libtensor/block_tensor/bto/additive_bto.h>
 #include <libtensor/block_tensor/btod/btod_traits.h>
 

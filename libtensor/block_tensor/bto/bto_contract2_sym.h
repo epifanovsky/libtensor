@@ -1,8 +1,8 @@
 #ifndef LIBTENSOR_BTO_CONTRACT2_SYM_H
 #define LIBTENSOR_BTO_CONTRACT2_SYM_H
 
-#include <libtensor/core/block_tensor_i.h>
 #include <libtensor/core/symmetry.h>
+#include <libtensor/block_tensor/block_tensor_i.h>
 #include "bto_contract2_bis.h"
 
 namespace libtensor {

@@ -3,7 +3,7 @@
 
 #include "../defs.h"
 #include "../exception.h"
-#include "block_tensor_i.h"
+#include <libtensor/block_tensor/block_tensor_i.h>
 #include "block_tensor_ctrl.h"
 #include "index.h"
 

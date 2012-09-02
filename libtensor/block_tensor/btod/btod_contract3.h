@@ -4,7 +4,7 @@
 #include <vector>
 #include <libutil/thread_pool/thread_pool.h>
 #include <libtensor/tod/contraction2.h>
-#include <libtensor/core/block_tensor_i.h>
+#include <libtensor/block_tensor/block_tensor_i.h>
 #include <libtensor/block_tensor/btod/btod_contract2.h>
 
 namespace libtensor {

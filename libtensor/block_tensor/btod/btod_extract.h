@@ -2,7 +2,7 @@
 #define LIBTENSOR_BTOD_EXTRACT_H
 
 #include <libtensor/timings.h>
-#include <libtensor/core/block_tensor_i.h>
+#include <libtensor/block_tensor/block_tensor_i.h>
 #include <libtensor/block_tensor/bto/additive_bto.h>
 #include <libtensor/block_tensor/btod/btod_traits.h>
 
