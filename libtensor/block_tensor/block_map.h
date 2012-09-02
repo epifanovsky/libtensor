@@ -2,11 +2,9 @@
 #define LIBTENSOR_BLOCK_MAP_H
 
 #include <map>
-#include "../defs.h"
-#include "../exception.h"
-#include "dimensions.h"
-#include "immutable.h"
-#include "../mp/mp_safe_tensor.h"
+#include <libtensor/core/dimensions.h>
+#include <libtensor/core/immutable.h>
+#include <libtensor/mp/mp_safe_tensor.h>
 
 namespace libtensor {
 

@@ -1,10 +1,10 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/block_tensor/block_tensor.h>
 #include <libtensor/block_tensor/btod/btod_copy.h>
 #include <libtensor/btod/btod_diagonalize.h>
 #include <libtensor/btod/btod_import_raw.h>
 #include <libtensor/btod/btod_tridiagonalize.h>
-#include <libtensor/core/block_tensor.h>
 #include "btod_diagonalize_test.h"
 #include "../compare_ref.h"
 

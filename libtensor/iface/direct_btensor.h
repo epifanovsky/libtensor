@@ -3,7 +3,7 @@
 
 #include "../defs.h"
 #include "../exception.h"
-#include "../core/direct_block_tensor.h"
+#include <libtensor/block_tensor/direct_block_tensor.h>
 #include <libtensor/block_tensor/block_tensor_ctrl.h>
 #include "btensor_i.h"
 #include "btensor_traits.h"

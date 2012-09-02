@@ -1,10 +1,10 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/abs_index.h>
-#include <libtensor/core/block_tensor.h>
 #include <libtensor/core/orbit.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/symmetry/so_copy.h>
 #include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/block_tensor/block_tensor.h>
 #include <libtensor/block_tensor/block_tensor_ctrl.h>
 #include <libtensor/btod/btod_compare.h>
 #include <libtensor/block_tensor/btod/btod_copy.h>

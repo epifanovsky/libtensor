@@ -19,10 +19,6 @@
 #include "dense_tensor/dense_tensor_ctrl.h"
 #include "dense_tensor/dense_tensor.h"
 
-#include "core/block_map.h"
-#include "core/block_tensor.h"
-#include "core/direct_block_tensor.h"
-
 #include "core/scalar_transf.h"
 #include "core/scalar_transf_double.h"
 #include "core/tensor_transf.h"

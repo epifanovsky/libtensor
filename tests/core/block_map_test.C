@@ -1,5 +1,5 @@
 #include <libtensor/core/allocator.h>
-#include <libtensor/core/block_map.h>
+#include <libtensor/block_tensor/block_map.h>
 #include "block_map_test.h"
 
 namespace libtensor {

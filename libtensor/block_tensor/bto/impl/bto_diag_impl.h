@@ -3,12 +3,12 @@
 
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/block_index_subspace_builder.h>
-#include <libtensor/core/block_tensor.h>
 #include <libtensor/core/orbit.h>
 #include <libtensor/core/orbit_list.h>
 #include <libtensor/core/permutation_builder.h>
 #include <libtensor/symmetry/so_merge.h>
 #include <libtensor/symmetry/so_permute.h>
+#include <libtensor/block_tensor/block_tensor.h>
 #include <libtensor/block_tensor/block_tensor_ctrl.h>
 #include "bto_aux_add_impl.h"
 #include "bto_aux_copy_impl.h"

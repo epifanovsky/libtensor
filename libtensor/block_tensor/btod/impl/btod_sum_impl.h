@@ -6,10 +6,10 @@
 #include <libtensor/symmetry/so_dirsum.h>
 #include <libtensor/symmetry/so_merge.h>
 #include <libtensor/symmetry/so_copy.h>
+#include <libtensor/block_tensor/block_tensor.h>
 #include <libtensor/block_tensor/btod/btod_copy.h>
 #include <libtensor/btod/btod_scale.h>
 #include <libtensor/btod/bad_block_index_space.h>
-#include <libtensor/core/block_tensor.h>
 #include <libtensor/block_tensor/bto/impl/bto_aux_add_impl.h>
 #include <libtensor/block_tensor/bto/impl/bto_aux_copy_impl.h>
 #include "../btod_sum.h"

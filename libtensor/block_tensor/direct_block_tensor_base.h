@@ -1,8 +1,6 @@
 #ifndef LIBTENSOR_DIRECT_BLOCK_TENSOR_BASE_H
 #define LIBTENSOR_DIRECT_BLOCK_TENSOR_BASE_H
 
-#include "../defs.h"
-#include "../exception.h"
 #include <libtensor/block_tensor/bto/direct_bto.h>
 #include <libtensor/block_tensor/btod/btod_traits.h>
 

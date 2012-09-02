@@ -4,12 +4,12 @@
 #include <libtensor/core/orbit.h>
 #include <libtensor/core/orbit_list.h>
 #include <libtensor/core/permutation_builder.h>
-#include <libtensor/core/block_tensor.h>
 #include <libtensor/symmetry/so_dirprod.h>
 #include <libtensor/symmetry/so_merge.h>
 #include <libtensor/dense_tensor/tod_mult.h>
 #include <libtensor/dense_tensor/tod_set.h>
 #include <libtensor/core/block_index_space_product_builder.h>
+#include <libtensor/block_tensor/block_tensor.h>
 #include <libtensor/block_tensor/block_tensor_ctrl.h>
 #include <libtensor/btod/bad_block_index_space.h>
 #include "../../bto/impl/bto_aux_add_impl.h"

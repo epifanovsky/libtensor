@@ -11,8 +11,8 @@
 #include <libtensor/symmetry/so_reduce.h>
 #include <libtensor/dense_tensor/tod_contract2.h>
 #include <libtensor/dense_tensor/tod_copy.h>
-#include <libtensor/core/block_tensor.h>
 #include <libtensor/core/orbit_list.h>
+#include <libtensor/block_tensor/block_tensor.h>
 #include <libtensor/block_tensor/block_tensor_ctrl.h>
 #include <libtensor/block_tensor/bto/bto_contract2_clst.h>
 #include <libtensor/block_tensor/bto/bto_contract2_nzorb.h>

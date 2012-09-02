@@ -3,10 +3,8 @@
 
 #include <libutil/threads/cond_map.h>
 #include <libutil/thread_pool/thread_pool.h>
-#include "../defs.h"
-#include "../exception.h"
-#include "../mp/default_sync_policy.h"
-#include "abs_index.h"
+#include <libtensor/mp/default_sync_policy.h>
+#include <libtensor/core/abs_index.h>
 #include "block_map.h"
 #include "direct_block_tensor_base.h"
 
