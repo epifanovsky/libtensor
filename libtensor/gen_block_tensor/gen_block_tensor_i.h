@@ -46,7 +46,8 @@ protected:
 
     See gen_block_tensor_i for full documentation.
 
-    \sa gen_block_tensor_base_i, gen_block_tensor_wr_i, gen_block_tensor_i
+    \sa gen_block_tensor_base_i, gen_block_tensor_wr_i, gen_block_tensor_i,
+        symmetry
 
     \ingroup libtensor_gen_block_tensor
  **/
@@ -59,7 +60,7 @@ public:
     typedef typename Traits::element_type element_type;
 
     //! Type of read-only blocks
-    typedef typename Traits::template rd_block_type<N>::type rd_block_type;
+    typedef typename Traits::rd_block_type rd_block_type;
 
 public:
     /** \brief Virtual destructor
@@ -97,7 +98,8 @@ protected:
 
     See gen_block_tensor_i for full documentation.
 
-    \sa gen_block_tensor_base_i, gen_block_tensor_rd_i, gen_block_tensor_i
+    \sa gen_block_tensor_base_i, gen_block_tensor_rd_i, gen_block_tensor_i,
+        symmetry
 
     \ingroup libtensor_gen_block_tensor
  **/
@@ -110,7 +112,7 @@ public:
     typedef typename Traits::element_type element_type;
 
     //! Type of read-write blocks
-    typedef typename Traits::template wr_block_type<N>::type wr_block_type;
+    typedef typename Traits::wr_block_type wr_block_type;
 
 public:
     /** \brief Virtual destructor
@@ -158,6 +160,19 @@ protected:
     This generalized block tensor abstract class serves as a specification of
     the block tensor interface and protocol used by block tensor algorithms.
 
+    This interface does not impose any restrictions on how the implementations
+    shall operate. However, it defines a set of events for which the
+    implementation shall provide reactors.
+
+    The reactor functions are defined as protected members. They are not
+    intended to be accessed by the end user. Instead, the user shall employ
+    a special control object, which provides the functionality in the form of
+    transactions. The control object mediates the user's requests to
+    block tensors and ensures the completeness of the session.
+
+    \sa gen_block_tensor_base_i, gen_block_tensor_rd_i, gen_block_tensor_wr_i,
+        symmetry
+
     \ingroup libtensor_gen_block_tensor
  **/
 template<size_t N, typename Traits>
@@ -170,10 +185,10 @@ public:
     typedef typename Traits::element_type element_type;
 
     //! Type of read-only blocks
-    typedef typename Traits::template rd_block_type<N>::type rd_block_type;
+    typedef typename Traits::rd_block_type rd_block_type;
 
     //! Type of read-write blocks
-    typedef typename Traits::template wr_block_type<N>::type wr_block_type;
+    typedef typename Traits::wr_block_type wr_block_type;
 
 public:
     /** \brief Virtual destructor

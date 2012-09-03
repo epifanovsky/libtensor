@@ -1,74 +1,105 @@
 #ifndef LIBTENSOR_BLOCK_TENSOR_I_H
 #define LIBTENSOR_BLOCK_TENSOR_I_H
 
-#include <libtensor/core/block_index_space.h>
-#include <libtensor/core/symmetry.h>
-#include <libtensor/dense_tensor/dense_tensor_i.h>
 #include <libtensor/gen_block_tensor/gen_block_tensor_i.h>
+#include "block_tensor_i_traits.h"
 
 namespace libtensor {
+
 
 template<size_t N, typename T> class block_tensor_ctrl;
 
 
-template<typename T>
-struct block_tensor_traits {
+/** \brief Block tensor base interface
+    \tparam N Tensor order.
+    \tparam T Tensor element type.
 
-    typedef T element_type;
+    See block_tensor_i for full documentation.
 
-    template<size_t N>
-    struct rd_block_type {
-        typedef dense_tensor_i<N, T> type;
-    };
+    \sa block_tensor_rd_i, block_tensor_wr_i, block_tensor_i, gen_block_tensor_i
 
-    template<size_t N>
-    struct wr_block_type {
-        typedef dense_tensor_i<N, T> type;
-    };
+    \ingroup libtensor_block_tensor
+ **/
+template<size_t N, typename T>
+class block_tensor_base_i :
+    virtual public gen_block_tensor_base_i< N, block_tensor_i_traits<N, T> > {
+
+    friend class block_tensor_ctrl<N, T>;
+
+public:
+    /** \brief Virtual destructor
+     **/
+    virtual ~block_tensor_base_i() { }
 
 };
 
 
-/** \brief Block %tensor interface
+/** \brief Block tensor read-only interface
     \tparam N Tensor order.
     \tparam T Tensor element type.
 
-    Block tensors break down the whole %tensor into small blocks and
-    implement %symmetry relations between them. Each individual block is
-    a small %tensor itself and can be addressed using the dense_tensor_i<N, T>
-    interface.
+    See block_tensor_i for full documentation.
 
-    The block %tensor interface does not impose any restrictions on how
-    a particular implementation operates. However, it defines a set of
-    events which have to reacted upon. The overall mechanism is the same
-    as for regular tensors (see dense_tensor_i<N, T>): a control object (an
-    instance of block_tensor_ctrl<N, T>) mediates requests to the block
-    %tensor object and ensures the completeness of the interaction session.
+    \sa block_tensor_base_i, block_tensor_wr_i, block_tensor_i,
+        gen_block_tensor_i
 
-    <b>Block %tensor events</b>
+    \ingroup libtensor_block_tensor
+ **/
+template<size_t N, typename T>
+class block_tensor_rd_i :
+    virtual public block_tensor_base_i<N, T>,
+    virtual public gen_block_tensor_rd_i< N, block_tensor_i_traits<N, T> > {
 
-    <b>req_symmetry</b> The request for %symmetry is invoked when the client
-    requires access to the %symmetry object. The handler returns a reference
-    to %symmetry.
+    friend class block_tensor_ctrl<N, T>;
 
-    <b>req_orbits</b> Invoked to obtain an iterator over all non-zero
-    orbits (%symmetry-unique blocks) in the block %tensor. The handler
-    returns an instance of orbit_iterator<N, T>.
+public:
+    /** \brief Virtual destructor
+     **/
+    virtual ~block_tensor_rd_i() { }
 
-    <b>req_block</b> Invoked to obtain a canonical block with a given
-    %index.
+};
 
-    <b>ret_block</b> Invoked to indicate that a canonical block with a
-    given %index is not required anymore.
 
-    <b>req_zero_block</b> Invoked to inform that a canonical block has all
-    its elements equal to zero.
+/** \brief Block tensor read-write interface
+    \tparam N Tensor order.
+    \tparam T Tensor element type.
 
-    \ingroup libtensor_core
+    See block_tensor_i for full documentation.
+
+    \sa block_tensor_base_i, block_tensor_rd_i, block_tensor_i,
+        gen_block_tensor_i
+
+    \ingroup libtensor_block_tensor
+ **/
+template<size_t N, typename T>
+class block_tensor_wr_i :
+    virtual public block_tensor_base_i<N, T>,
+    virtual public gen_block_tensor_wr_i< N, block_tensor_i_traits<N, T> > {
+
+    friend class block_tensor_ctrl<N, T>;
+
+public:
+    /** \brief Virtual destructor
+     **/
+    virtual ~block_tensor_wr_i() { }
+
+};
+
+
+/** \brief Block tensor interface
+    \tparam N Tensor order.
+    \tparam T Tensor element type.
+
+    See gen_block_tensor_i for a general description of block tensors and
+    block_tensor_i for the type of block tensors with dense blocks.
+
+    \ingroup libtensor_block_tensor
  **/
 template<size_t N, typename T>
 class block_tensor_i :
-    virtual public gen_block_tensor_i< N, block_tensor_traits<T> > {
+    virtual public block_tensor_rd_i<N, T>,
+    virtual public block_tensor_wr_i<N, T>,
+    virtual public gen_block_tensor_i< N, block_tensor_i_traits<N, T> > {
 
     friend class block_tensor_ctrl<N, T>;
 
@@ -77,79 +108,8 @@ public:
      **/
     virtual ~block_tensor_i() { }
 
-    /** \brief Returns the block %index space of the block %tensor
-     **/
-    virtual const block_index_space<N> &get_bis() const = 0;
-
-protected:
-    //!    \name Symmetry event handlers
-    //@{
-
-    /** \brief Request to obtain the constant reference to the block
-            %tensor's %symmetry
-     **/
-    virtual const symmetry<N, T> &on_req_const_symmetry() = 0;
-
-    /** \brief Request to obtain the reference to the block %tensor's
-            %symmetry
-     **/
-    virtual symmetry<N, T> &on_req_symmetry() = 0;
-
-    //@}
-
-
-    //!    \name Event handling
-    //@{
-
-    virtual dense_tensor_i<N, T> &on_req_const_block(const index<N> &idx) = 0;
-    virtual void on_ret_const_block(const index<N> &idx) = 0;
-
-    /** \brief Invoked when a canonical block is requested
-        \param idx Block %index.
-        \return Reference to the requested block.
-     **/
-    virtual dense_tensor_i<N, T> &on_req_block(const index<N> &idx) = 0;
-
-    /** \brief Invoked to return a canonical block
-        \param idx Block %index.
-     **/
-    virtual void on_ret_block(const index<N> &idx) = 0;
-
-    /** \brief Invoked when an auxiliary canonical block is requested
-        \param idx Block %index.
-        \return Reference to the requested block.
-     **/
-    virtual dense_tensor_i<N, T> &on_req_aux_block(const index<N> &idx) = 0;
-
-    /** \brief Invoked to return an auxiliary canonical block
-        \param idx Block %index.
-     **/
-    virtual void on_ret_aux_block(const index<N> &idx) = 0;
-
-    /** \brief Invoked to check whether a canonical block is zero
-        \param idx Block %index.
-     **/
-    virtual bool on_req_is_zero_block(const index<N> &idx) = 0;
-
-    /** \brief Invoked to make a canonical block zero
-        \param idx Block %index.
-     **/
-    virtual void on_req_zero_block(const index<N> &idx) = 0;
-
-    /** \brief Invoked to make all blocks zero
-     **/
-    virtual void on_req_zero_all_blocks() = 0;
-
-    /** \brief Enables multi-processor synchronization
-     **/
-    virtual void on_req_sync_on() = 0;
-
-    /** \brief Disables multi-processor synchronization
-     **/
-    virtual void on_req_sync_off() = 0;
-
-    //@}
 };
+
 
 } // namespace libtensor
 
