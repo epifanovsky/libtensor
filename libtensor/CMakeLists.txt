@@ -229,7 +229,6 @@ set(SRC_INST
     block_tensor/btod/impl/btod_contract2_5.C
     block_tensor/btod/impl/btod_contract2_6.C
     block_tensor/btod/impl/btod_contract3.C
-    block_tensor/btod/impl/btod_copy.C
     block_tensor/btod/impl/btod_diag.C
     block_tensor/btod/impl/btod_dirsum.C
     block_tensor/btod/impl/btod_dotprod.C
@@ -254,6 +253,7 @@ set(SRC_INST
 )
 
 set(SRC_BTOD
+    block_tensor/impl/btod_copy.C
     block_tensor/impl/btod_set.C
 )
 

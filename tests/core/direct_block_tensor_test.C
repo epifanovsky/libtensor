@@ -6,7 +6,7 @@
 #include <libtensor/block_tensor/block_tensor.h>
 #include <libtensor/block_tensor/direct_block_tensor.h>
 #include <libtensor/block_tensor/btod/btod_add.h>
-#include <libtensor/block_tensor/btod/btod_copy.h>
+#include <libtensor/block_tensor/btod_copy.h>
 #include <libtensor/block_tensor/btod/btod_contract2.h>
 #include <libtensor/block_tensor/btod/btod_dirsum.h>
 #include <libtensor/btod/btod_random.h>

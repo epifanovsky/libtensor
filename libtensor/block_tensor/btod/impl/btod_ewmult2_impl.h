@@ -15,7 +15,7 @@
 #include <libtensor/block_tensor/block_tensor_ctrl.h>
 #include <libtensor/block_tensor/bto/impl/bto_aux_add_impl.h>
 #include <libtensor/block_tensor/bto/impl/bto_aux_copy_impl.h>
-#include "../btod_copy.h"
+#include <libtensor/block_tensor/btod_copy.h>
 #include "../btod_ewmult2.h"
 
 namespace libtensor {

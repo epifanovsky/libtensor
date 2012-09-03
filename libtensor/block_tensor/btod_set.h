@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_BTOD_SET_H
 #define LIBTENSOR_BTOD_SET_H
 
+#include <libtensor/core/noncopyable.h>
 #include <libtensor/gen_block_tensor/gen_bto_set.h>
 #include "btod/btod_traits.h"
 
@@ -16,7 +17,7 @@ namespace libtensor {
     \ingroup libtensor_btod
  **/
 template<size_t N>
-class btod_set {
+class btod_set : public noncopyable {
 public:
     static const char *k_clazz; //!< Class name
 

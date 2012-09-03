@@ -8,7 +8,7 @@
 #include <libtensor/symmetry/so_merge.h>
 #include <libtensor/symmetry/so_copy.h>
 #include <libtensor/block_tensor/block_tensor.h>
-#include <libtensor/block_tensor/btod/btod_copy.h>
+#include <libtensor/block_tensor/btod_copy.h>
 #include <libtensor/btod/btod_scale.h>
 #include <libtensor/btod/bad_block_index_space.h>
 #include <libtensor/block_tensor/bto/impl/bto_aux_add_impl.h>
@@ -73,7 +73,7 @@ void btod_sum<N>::perform(bto_stream_i<N, btod_traits> &out) {
         iop->get_op().perform(bt, iop->get_coeff());
     }
 
-    bto_copy<N, btod_traits>(bt).perform(out);
+    btod_copy<N>(bt).perform(out);
 }
 
 

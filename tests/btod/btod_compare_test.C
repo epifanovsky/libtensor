@@ -7,7 +7,7 @@
 #include <libtensor/block_tensor/block_tensor.h>
 #include <libtensor/block_tensor/block_tensor_ctrl.h>
 #include <libtensor/btod/btod_compare.h>
-#include <libtensor/block_tensor/btod/btod_copy.h>
+#include <libtensor/block_tensor/btod_copy.h>
 #include <libtensor/btod/btod_random.h>
 #include "btod_compare_test.h"
 

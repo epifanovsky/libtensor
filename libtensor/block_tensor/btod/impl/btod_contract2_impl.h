@@ -20,7 +20,7 @@
 #include <libtensor/block_tensor/bto/bto_contract2_sym.h>
 #include <libtensor/block_tensor/bto/impl/bto_aux_add_impl.h>
 #include <libtensor/block_tensor/bto/impl/bto_aux_copy_impl.h>
-#include <libtensor/block_tensor/btod/btod_copy.h>
+#include <libtensor/block_tensor/btod_copy.h>
 #include <libtensor/block_tensor/btod_set.h>
 #include <libtensor/btod/bad_block_index_space.h>
 #include "../btod_contract2.h"

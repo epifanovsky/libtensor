@@ -12,7 +12,7 @@ template<size_t N, typename Traits, typename Timed>
 void gen_bto_set<N, Traits, Timed>::perform(
     gen_block_tensor_wr_i<N, bti_traits> &bta) {
 
-    typedef typename Traits::template wr_block_type<N>::type wr_block_type;
+    typedef typename bti_traits::template wr_block_type<N>::type wr_block_type;
     typedef typename Traits::template to_set_type<N>::type to_set;
 
     gen_bto_set::start_timer();

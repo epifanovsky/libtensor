@@ -18,17 +18,23 @@ template<size_t N, typename T> class dense_tensor_i;
 
     \ingroup libtensor_block_tensor
  **/
-template<size_t N, typename T>
+template<typename T>
 struct block_tensor_i_traits {
 
     //! Type of tensor elements
     typedef T element_type;
 
     //! Type of read-only blocks as returned by the block tensor
-    typedef dense_tensor_i<N, T> rd_block_type;
+    template<size_t N>
+    struct rd_block_type {
+        typedef dense_tensor_i<N, T> type;
+    };
 
     //! Type of read-write blocks as returned by the block tensor
-    typedef dense_tensor_i<N, T> wr_block_type;
+    template<size_t N>
+    struct wr_block_type {
+        typedef dense_tensor_i<N, T> type;
+    };
 
 };
 

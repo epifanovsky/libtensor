@@ -26,10 +26,7 @@ struct btod_traits {
     typedef double element_type;
 
     //! Block tensor interface traits
-    template<size_t N>
-    struct bti_traits {
-        typedef block_tensor_i_traits<N, double> traits;
-    };
+    typedef block_tensor_i_traits<double> bti_traits;
 
     //! Type of block tensor
     template<size_t N>

@@ -8,26 +8,26 @@ namespace libtensor {
 
 /** \brief Generalized block tensor control (base)
     \tparam N Tensor order.
-    \tparam Traits Block tensor traits.
+    \tparam BtiTraits Block tensor interface traits.
 
     \sa gen_block_tensor_rd_ctrl, gen_block_tensor_wr_ctrl,
         gen_block_tensor_ctrl
 
     \ingroup libtensor_gen_block_tensor
 **/
-template<size_t N, typename Traits>
+template<size_t N, typename BtiTraits>
 class gen_block_tensor_base_ctrl {
 public:
     //! Type of tensor elements
-    typedef typename Traits::element_type element_type;
+    typedef typename BtiTraits::element_type element_type;
 
 private:
-    gen_block_tensor_base_i<N, Traits> &m_bt; //!< Controlled block tensor
+    gen_block_tensor_base_i<N, BtiTraits> &m_bt; //!< Controlled block tensor
 
 public:
     /** \brief Initializes the control object
      **/
-    gen_block_tensor_base_ctrl(gen_block_tensor_base_i<N, Traits> &bt) :
+    gen_block_tensor_base_ctrl(gen_block_tensor_base_i<N, BtiTraits> &bt) :
         m_bt(bt)
     { }
 
@@ -58,32 +58,32 @@ public:
 
 /** \brief Generalized read-only block tensor control
     \tparam N Tensor order.
-    \tparam Traits Block tensor traits.
+    \tparam BtiTraits Block tensor interface traits.
 
     \sa gen_block_tensor_base_ctrl, gen_block_tensor_wr_ctrl,
         gen_block_tensor_ctrl
 
     \ingroup libtensor_gen_block_tensor
 **/
-template<size_t N, typename Traits>
+template<size_t N, typename BtiTraits>
 class gen_block_tensor_rd_ctrl :
-    virtual public gen_block_tensor_base_ctrl<N, Traits> {
+    virtual public gen_block_tensor_base_ctrl<N, BtiTraits> {
 
 public:
     //! Type of tensor elements
-    typedef typename Traits::element_type element_type;
+    typedef typename BtiTraits::element_type element_type;
 
     //! Type of read-only blocks
-    typedef typename Traits::rd_block_type rd_block_type;
+    typedef typename BtiTraits::template rd_block_type<N>::type rd_block_type;
 
 private:
-    gen_block_tensor_rd_i<N, Traits> &m_bt; //!< Controlled block tensor
+    gen_block_tensor_rd_i<N, BtiTraits> &m_bt; //!< Controlled block tensor
 
 public:
     /** \brief Initializes the control object
      **/
-    gen_block_tensor_rd_ctrl(gen_block_tensor_rd_i<N, Traits> &bt) :
-        gen_block_tensor_base_ctrl<N, Traits>(bt),
+    gen_block_tensor_rd_ctrl(gen_block_tensor_rd_i<N, BtiTraits> &bt) :
+        gen_block_tensor_base_ctrl<N, BtiTraits>(bt),
         m_bt(bt)
     { }
 
@@ -117,32 +117,32 @@ public:
 
 /** \brief Generalized read-write block tensor control
     \tparam N Tensor order.
-    \tparam Traits Block tensor traits.
+    \tparam BtiTraits Block tensor interface traits.
 
     \sa gen_block_tensor_base_ctrl, gen_block_tensor_rd_ctrl,
         gen_block_tensor_ctrl
 
     \ingroup libtensor_gen_block_tensor
 **/
-template<size_t N, typename Traits>
+template<size_t N, typename BtiTraits>
 class gen_block_tensor_wr_ctrl :
-    virtual public gen_block_tensor_base_ctrl<N, Traits> {
+    virtual public gen_block_tensor_base_ctrl<N, BtiTraits> {
 
 public:
     //! Type of tensor elements
-    typedef typename Traits::element_type element_type;
+    typedef typename BtiTraits::element_type element_type;
 
     //! Type of read-write blocks
-    typedef typename Traits::wr_block_type wr_block_type;
+    typedef typename BtiTraits::template wr_block_type<N>::type wr_block_type;
 
 private:
-    gen_block_tensor_wr_i<N, Traits> &m_bt; //!< Controlled block tensor
+    gen_block_tensor_wr_i<N, BtiTraits> &m_bt; //!< Controlled block tensor
 
 public:
     /** \brief Initializes the control object
      **/
-    gen_block_tensor_wr_ctrl(gen_block_tensor_wr_i<N, Traits> &bt) :
-        gen_block_tensor_base_ctrl<N, Traits>(bt),
+    gen_block_tensor_wr_ctrl(gen_block_tensor_wr_i<N, BtiTraits> &bt) :
+        gen_block_tensor_base_ctrl<N, BtiTraits>(bt),
         m_bt(bt)
     { }
 
@@ -190,35 +190,35 @@ public:
 
 /** \brief Generalized block tensor control
     \tparam N Tensor order.
-    \tparam Traits Block tensor traits.
+    \tparam BtiTraits Block tensor interface traits.
 
     \sa gen_block_tensor_base_ctrl, gen_block_tensor_rd_ctrl,
         gen_block_tensor_wr_ctrl
 
     \ingroup libtensor_gen_block_tensor
 **/
-template<size_t N, typename Traits>
+template<size_t N, typename BtiTraits>
 class gen_block_tensor_ctrl :
-    virtual public gen_block_tensor_rd_ctrl<N, Traits>,
-    virtual public gen_block_tensor_wr_ctrl<N, Traits> {
+    virtual public gen_block_tensor_rd_ctrl<N, BtiTraits>,
+    virtual public gen_block_tensor_wr_ctrl<N, BtiTraits> {
 
 public:
     //! Type of tensor elements
-    typedef typename Traits::element_type element_type;
+    typedef typename BtiTraits::element_type element_type;
 
     //! Type of read-write blocks
-    typedef typename Traits::wr_block_type wr_block_type;
+    typedef typename BtiTraits::template wr_block_type<N>::type wr_block_type;
 
 private:
-    gen_block_tensor_i<N, Traits> &m_bt; //!< Controlled block tensor
+    gen_block_tensor_i<N, BtiTraits> &m_bt; //!< Controlled block tensor
 
 public:
     /** \brief Initializes the control object
      **/
-    gen_block_tensor_ctrl(gen_block_tensor_i<N, Traits> &bt) :
-        gen_block_tensor_base_ctrl<N, Traits>(bt),
-        gen_block_tensor_rd_ctrl<N, Traits>(bt),
-        gen_block_tensor_wr_ctrl<N, Traits>(bt),
+    gen_block_tensor_ctrl(gen_block_tensor_i<N, BtiTraits> &bt) :
+        gen_block_tensor_base_ctrl<N, BtiTraits>(bt),
+        gen_block_tensor_rd_ctrl<N, BtiTraits>(bt),
+        gen_block_tensor_wr_ctrl<N, BtiTraits>(bt),
         m_bt(bt)
     { }
 

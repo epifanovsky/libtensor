@@ -2,6 +2,7 @@
 #define LIBTENSOR_GEN_BTO_SET_H
 
 #include <libtensor/timings.h>
+#include <libtensor/core/noncopyable.h>
 #include "gen_block_tensor_i.h"
 
 namespace libtensor {
@@ -25,13 +26,13 @@ namespace libtensor {
     \ingroup libtensor_gen_bto
  **/
 template<size_t N, typename Traits, typename Timed>
-class gen_bto_set : public timings<Timed> {
+class gen_bto_set : public timings<Timed>, public noncopyable {
 public:
     //! Type of tensor elements
     typedef typename Traits::element_type element_type;
 
     //! Block tensor interface traits
-    typedef typename Traits::template bti_traits<N>::traits bti_traits;
+    typedef typename Traits::bti_traits bti_traits;
 
 private:
     element_type m_v; //!< Value
@@ -46,11 +47,6 @@ public:
         \param bta Output block tensor.
      **/
     void perform(gen_block_tensor_wr_i<N, bti_traits> &bta);
-
-private:
-    /** \brief Private copy constructor
-     **/
-    gen_bto_set(const gen_bto_set&);
 
 };
 

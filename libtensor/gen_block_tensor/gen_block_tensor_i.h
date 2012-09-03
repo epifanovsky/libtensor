@@ -7,15 +7,15 @@
 namespace libtensor {
 
 
-template<size_t N, typename Traits> class gen_block_tensor_base_ctrl;
-template<size_t N, typename Traits> class gen_block_tensor_rd_ctrl;
-template<size_t N, typename Traits> class gen_block_tensor_wr_ctrl;
-template<size_t N, typename Traits> class gen_block_tensor_ctrl;
+template<size_t N, typename BtiTraits> class gen_block_tensor_base_ctrl;
+template<size_t N, typename BtiTraits> class gen_block_tensor_rd_ctrl;
+template<size_t N, typename BtiTraits> class gen_block_tensor_wr_ctrl;
+template<size_t N, typename BtiTraits> class gen_block_tensor_ctrl;
 
 
 /** \brief Generalized block tensor base interface
     \tparam N Tensor order.
-    \tparam Traits Block tensor traits.
+    \tparam BtiTraits Block tensor interface traits.
 
     See gen_block_tensor_i for full documentation.
 
@@ -23,13 +23,13 @@ template<size_t N, typename Traits> class gen_block_tensor_ctrl;
 
     \ingroup libtensor_gen_block_tensor
  **/
-template<size_t N, typename Traits>
+template<size_t N, typename BtiTraits>
 class gen_block_tensor_base_i {
-    friend class gen_block_tensor_base_ctrl<N, Traits>;
+    friend class gen_block_tensor_base_ctrl<N, BtiTraits>;
 
 public:
     //! Type of tensor elements
-    typedef typename Traits::element_type element_type;
+    typedef typename BtiTraits::element_type element_type;
 
 public:
     /** \brief Virtual destructor
@@ -59,7 +59,7 @@ protected:
 
 /** \brief Generalized block tensor read-only interface
     \tparam N Tensor order.
-    \tparam Traits Block tensor traits.
+    \tparam BtiTraits Block tensor interface traits.
 
     See gen_block_tensor_i for full documentation.
 
@@ -68,18 +68,18 @@ protected:
 
     \ingroup libtensor_gen_block_tensor
  **/
-template<size_t N, typename Traits>
+template<size_t N, typename BtiTraits>
 class gen_block_tensor_rd_i :
-    virtual public gen_block_tensor_base_i<N, Traits> {
+    virtual public gen_block_tensor_base_i<N, BtiTraits> {
 
-    friend class gen_block_tensor_rd_ctrl<N, Traits>;
+    friend class gen_block_tensor_rd_ctrl<N, BtiTraits>;
 
 public:
     //! Type of tensor elements
-    typedef typename Traits::element_type element_type;
+    typedef typename BtiTraits::element_type element_type;
 
     //! Type of read-only blocks
-    typedef typename Traits::rd_block_type rd_block_type;
+    typedef typename BtiTraits::template rd_block_type<N>::type rd_block_type;
 
 public:
     /** \brief Virtual destructor
@@ -108,7 +108,7 @@ protected:
 
 /** \brief Generalized block tensor read-write interface
     \tparam N Tensor order.
-    \tparam Traits Block tensor traits.
+    \tparam BtiTraits Block tensor interface traits.
 
     See gen_block_tensor_i for full documentation.
 
@@ -117,18 +117,18 @@ protected:
 
     \ingroup libtensor_gen_block_tensor
  **/
-template<size_t N, typename Traits>
+template<size_t N, typename BtiTraits>
 class gen_block_tensor_wr_i :
-    virtual public gen_block_tensor_base_i<N, Traits> {
+    virtual public gen_block_tensor_base_i<N, BtiTraits> {
 
-    friend class gen_block_tensor_wr_ctrl<N, Traits>;
+    friend class gen_block_tensor_wr_ctrl<N, BtiTraits>;
 
 public:
     //! Type of tensor elements
-    typedef typename Traits::element_type element_type;
+    typedef typename BtiTraits::element_type element_type;
 
     //! Type of read-write blocks
-    typedef typename Traits::wr_block_type wr_block_type;
+    typedef typename BtiTraits::template wr_block_type<N>::type wr_block_type;
 
 public:
     /** \brief Virtual destructor
@@ -167,7 +167,7 @@ protected:
 
 /** \brief Generalized block tensor interface
     \tparam N Tensor order.
-    \tparam Traits Block tensor traits.
+    \tparam BtiTraits Block tensor interface traits.
 
     The block tensor format assumes a divide-and-conquer approach to tensor
     storage and operations. Tensors are split along each mode into small blocks
@@ -191,22 +191,22 @@ protected:
 
     \ingroup libtensor_gen_block_tensor
  **/
-template<size_t N, typename Traits>
+template<size_t N, typename BtiTraits>
 class gen_block_tensor_i :
-    virtual public gen_block_tensor_rd_i<N, Traits>,
-    virtual public gen_block_tensor_wr_i<N, Traits> {
+    virtual public gen_block_tensor_rd_i<N, BtiTraits>,
+    virtual public gen_block_tensor_wr_i<N, BtiTraits> {
 
-    friend class gen_block_tensor_ctrl<N, Traits>;
+    friend class gen_block_tensor_ctrl<N, BtiTraits>;
 
 public:
     //! Type of tensor elements
-    typedef typename Traits::element_type element_type;
+    typedef typename BtiTraits::element_type element_type;
 
     //! Type of read-only blocks
-    typedef typename Traits::rd_block_type rd_block_type;
+    typedef typename BtiTraits::template rd_block_type<N>::type rd_block_type;
 
     //! Type of read-write blocks
-    typedef typename Traits::wr_block_type wr_block_type;
+    typedef typename BtiTraits::template wr_block_type<N>::type wr_block_type;
 
 public:
     /** \brief Virtual destructor

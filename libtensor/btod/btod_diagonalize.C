@@ -5,7 +5,7 @@
 #include <libtensor/block_tensor/block_tensor_ctrl.h>
 #include <libtensor/block_tensor/btod/btod_add.h>
 #include <libtensor/block_tensor/btod/btod_contract2.h>
-#include <libtensor/block_tensor/btod/btod_copy.h>
+#include <libtensor/block_tensor/btod_copy.h>
 #include <libtensor/block_tensor/btod/btod_diag.h>
 #include "btod_diagonalize.h"
 #include <libtensor/block_tensor/btod/btod_extract.h>
