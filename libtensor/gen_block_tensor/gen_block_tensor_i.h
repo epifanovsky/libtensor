@@ -28,6 +28,10 @@ class gen_block_tensor_base_i {
     friend class gen_block_tensor_base_ctrl<N, Traits>;
 
 public:
+    //! Type of tensor elements
+    typedef typename Traits::element_type element_type;
+
+public:
     /** \brief Virtual destructor
      **/
     virtual ~gen_block_tensor_base_i() { }
@@ -37,6 +41,11 @@ public:
     virtual const block_index_space<N> &get_bis() const = 0;
 
 protected:
+    /** \brief Request for the constant reference to the block tensor's symmetry
+            container
+     **/
+    virtual const symmetry<N, element_type> &on_req_const_symmetry() = 0;
+
     /** \brief Turns on synchronization for thread safety
      **/
     virtual void on_req_sync_on() = 0;
@@ -78,11 +87,6 @@ public:
     virtual ~gen_block_tensor_rd_i() { }
 
 protected:
-    /** \brief Request for the constant reference to the block tensor's symmetry
-            container
-     **/
-    virtual const symmetry<N, element_type> &on_req_const_symmetry() = 0;
-
     /** \brief Request for the read-only reference to a canonical block
         \param idx Index of the block.
         \return Reference to the requested block.

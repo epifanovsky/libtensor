@@ -3,6 +3,7 @@
 
 #include <libtensor/core/block_index_space_product_builder.h>
 #include <libtensor/core/orbit.h>
+#include <libtensor/dense_tensor/tod_set.h>
 #include <libtensor/symmetry/so_dirsum.h>
 #include <libtensor/symmetry/so_merge.h>
 #include <libtensor/symmetry/so_copy.h>

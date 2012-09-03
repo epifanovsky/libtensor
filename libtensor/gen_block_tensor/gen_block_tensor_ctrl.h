@@ -17,6 +17,10 @@ namespace libtensor {
 **/
 template<size_t N, typename Traits>
 class gen_block_tensor_base_ctrl {
+public:
+    //! Type of tensor elements
+    typedef typename Traits::element_type element_type;
+
 private:
     gen_block_tensor_base_i<N, Traits> &m_bt; //!< Controlled block tensor
 
@@ -26,6 +30,14 @@ public:
     gen_block_tensor_base_ctrl(gen_block_tensor_base_i<N, Traits> &bt) :
         m_bt(bt)
     { }
+
+    /** \brief Returns the constant reference to the block tensor's symmetry
+            container
+     **/
+    const symmetry<N, element_type> &req_const_symmetry() {
+
+        return m_bt.on_req_const_symmetry();
+    }
 
     /** \brief Turns on synchronization for thread safety
      **/
@@ -74,14 +86,6 @@ public:
         gen_block_tensor_base_ctrl<N, Traits>(bt),
         m_bt(bt)
     { }
-
-    /** \brief Returns the constant reference to the block tensor's symmetry
-            container
-     **/
-    const symmetry<N, element_type> &req_const_symmetry() {
-
-        return m_bt.on_req_const_symmetry();
-    }
 
     /** \brief Returns the read-only reference to a canonical block
         \param idx Index of the block.
@@ -197,6 +201,13 @@ template<size_t N, typename Traits>
 class gen_block_tensor_ctrl :
     virtual public gen_block_tensor_rd_ctrl<N, Traits>,
     virtual public gen_block_tensor_wr_ctrl<N, Traits> {
+
+public:
+    //! Type of tensor elements
+    typedef typename Traits::element_type element_type;
+
+    //! Type of read-write blocks
+    typedef typename Traits::wr_block_type wr_block_type;
 
 private:
     gen_block_tensor_i<N, Traits> &m_bt; //!< Controlled block tensor

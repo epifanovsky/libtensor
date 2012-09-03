@@ -13,6 +13,7 @@
 #include <libtensor/symmetry/so_copy.h>
 #include <libtensor/dense_tensor/tod_btconv.h>
 #include <libtensor/dense_tensor/tod_contract2.h>
+#include <libtensor/dense_tensor/tod_set.h>
 #include "../compare_ref.h"
 #include "btod_contract2_test.h"
 

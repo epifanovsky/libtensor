@@ -7,10 +7,11 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/mask.h>
 #include <libtensor/core/scalar_transf_double.h>
-#include <libtensor/symmetry/so_dirprod.h>
-#include <libtensor/symmetry/so_reduce.h>
 #include <libtensor/dense_tensor/tod_contract2.h>
 #include <libtensor/dense_tensor/tod_copy.h>
+#include <libtensor/dense_tensor/tod_set.h>
+#include <libtensor/symmetry/so_dirprod.h>
+#include <libtensor/symmetry/so_reduce.h>
 #include <libtensor/core/orbit_list.h>
 #include <libtensor/block_tensor/block_tensor.h>
 #include <libtensor/block_tensor/block_tensor_ctrl.h>
@@ -20,7 +21,7 @@
 #include <libtensor/block_tensor/bto/impl/bto_aux_add_impl.h>
 #include <libtensor/block_tensor/bto/impl/bto_aux_copy_impl.h>
 #include <libtensor/block_tensor/btod/btod_copy.h>
-#include <libtensor/block_tensor/btod/btod_set.h>
+#include <libtensor/block_tensor/btod_set.h>
 #include <libtensor/btod/bad_block_index_space.h>
 #include "../btod_contract2.h"
 

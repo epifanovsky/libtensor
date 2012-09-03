@@ -12,7 +12,7 @@
 #include "btod_scale.h"
 #include "btod_set_diag.h"
 #include "btod_set_elem.h"
-#include <libtensor/block_tensor/btod/btod_set.h>
+#include <libtensor/block_tensor/btod_set.h>
 
 namespace libtensor
 {

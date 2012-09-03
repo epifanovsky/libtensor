@@ -8,18 +8,28 @@
 #include <libtensor/dense_tensor/tod_copy.h>
 #include <libtensor/dense_tensor/tod_diag.h>
 #include <libtensor/dense_tensor/tod_dotprod.h>
-#include <libtensor/dense_tensor/tod_set.h>
 #include <libtensor/dense_tensor/tod_trace.h>
 #include <libtensor/dense_tensor/tod_vmpriority.h>
 #include <libtensor/block_tensor/block_tensor_i.h>
 #include <libtensor/block_tensor/block_tensor_ctrl.h>
+#include <libtensor/block_tensor/block_tensor_i_traits.h>
 
 namespace libtensor {
+
+
+template<size_t N> class tod_set;
+
 
 struct btod_traits {
 
     //! Element type
     typedef double element_type;
+
+    //! Block tensor interface traits
+    template<size_t N>
+    struct bti_traits {
+        typedef block_tensor_i_traits<N, double> traits;
+    };
 
     //! Type of block tensor
     template<size_t N>
@@ -36,6 +46,12 @@ struct btod_traits {
     //! Type of block of block tensors
     template<size_t N>
     struct block_type {
+        typedef dense_tensor_i<N, double> type;
+    };
+
+    //! Type of block of block tensors
+    template<size_t N>
+    struct wr_block_type {
         typedef dense_tensor_i<N, double> type;
     };
 

@@ -6,6 +6,7 @@
 #include <libtensor/block_tensor/bto/bto_apply.h>
 #include <libtensor/block_tensor/bto/impl/bto_apply_impl.h>
 #include <libtensor/dense_tensor/tod_apply.h>
+#include <libtensor/dense_tensor/tod_set.h>
 
 namespace libtensor {
 

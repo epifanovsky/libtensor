@@ -7,7 +7,7 @@
 #include <libtensor/block_tensor/block_tensor.h>
 #include <libtensor/block_tensor/block_tensor_ctrl.h>
 #include <libtensor/block_tensor/btod/btod_contract2.h>
-#include <libtensor/block_tensor/btod/btod_set.h>
+#include <libtensor/block_tensor/btod_set.h>
 #include "../btod_contract3.h"
 
 namespace libtensor {

@@ -7,7 +7,7 @@
 #include <libtensor/block_tensor/bto/additive_bto.h>
 #include <libtensor/block_tensor/btod/btod_traits.h>
 #include <libtensor/block_tensor/btod/btod_copy.h>
-#include <libtensor/block_tensor/btod/btod_set.h>
+#include <libtensor/block_tensor/btod_set.h>
 #include <libtensor/block_tensor/btod/btod_sum.h>
 
 namespace libtensor {

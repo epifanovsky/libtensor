@@ -1,8 +1,8 @@
 #ifndef LIBTENSOR_BTOD_SET_H
 #define LIBTENSOR_BTOD_SET_H
 
-#include <libtensor/block_tensor/bto/bto_set.h>
-#include <libtensor/block_tensor/btod/btod_traits.h>
+#include <libtensor/gen_block_tensor/gen_bto_set.h>
+#include "btod/btod_traits.h"
 
 namespace libtensor {
 
@@ -11,28 +11,35 @@ namespace libtensor {
         the symmetry
     \tparam N Tensor order.
 
+    \sa gen_bto_set
+
     \ingroup libtensor_btod
  **/
 template<size_t N>
-class btod_set : public bto_set<N, btod_traits> {
+class btod_set {
 public:
     static const char *k_clazz; //!< Class name
+
+private:
+    gen_bto_set< N, btod_traits, btod_set<N> > m_gbto;
 
 public:
     /** \brief Initializes the operation
         \param v Value to be assigned to the tensor elements.
      **/
-    btod_set(double v = 0.0) : bto_set<N, btod_traits>(v) { }
+    btod_set(double v = 0.0) :
+        m_gbto(v)
+    { }
 
-    /** \brief Virtual destructor
+    /** \brief Performs the operation
+        \param bta Output block tensor.
      **/
-    virtual ~btod_set() { }
+    void perform(block_tensor_i<N, double> &bta) {
+
+        m_gbto.perform(bta);
+    }
 
 };
-
-
-template<size_t N>
-const char *btod_set<N>::k_clazz = "btod_set<N>";
 
 
 } // namespace libtensor

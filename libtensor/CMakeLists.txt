@@ -237,7 +237,6 @@ set(SRC_INST
     block_tensor/btod/impl/btod_extract.C
     block_tensor/btod/impl/btod_mult.C
     block_tensor/btod/impl/btod_mult1.C
-    block_tensor/btod/impl/btod_set.C
     block_tensor/btod/impl/btod_sum.C
     block_tensor/btod/impl/btod_symmetrize.C
     block_tensor/btod/impl/btod_symmetrize3.C
@@ -254,6 +253,10 @@ set(SRC_INST
     diag_tensor/impl/diag_tod_set.C
 )
 
+set(SRC_BTOD
+    block_tensor/impl/btod_set.C
+)
+
 set(SRC_QCHEM
     linalg/qchem/linalg_base_level1_qchem.C
     linalg/qchem/linalg_base_level2_qchem.C
@@ -266,7 +269,8 @@ elseif(USE_MKL)
     set(SRC_LINALG ${SRC_LINALG} ${SRC_LINALG_MKL})
 endif()
 
-add_library(tensor ${SRC} ${SRC_LINALG} ${SRC_KERNELS} ${SRC_INST} ${SRC_MP})
+add_library(tensor ${SRC} ${SRC_LINALG} ${SRC_KERNELS} ${SRC_BTOD} ${SRC_INST}
+    ${SRC_MP})
 if(QCHEM_SOURCE_DIR)
     add_library(tensor_qchem ${SRC_QCHEM})
     add_dependencies(tensor_qchem tensor)

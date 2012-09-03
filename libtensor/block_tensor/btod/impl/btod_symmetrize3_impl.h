@@ -6,6 +6,7 @@
 #include <libtensor/core/orbit.h>
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
+#include <libtensor/dense_tensor/tod_set.h>
 #include <libtensor/symmetry/so_copy.h>
 #include <libtensor/symmetry/so_symmetrize.h>
 #include "../../bto/impl/bto_aux_add_impl.h"
