@@ -7,6 +7,12 @@
 namespace libtensor {
 
 
+template<size_t N, typename Traits> class gen_block_tensor_base_ctrl;
+template<size_t N, typename Traits> class gen_block_tensor_rd_ctrl;
+template<size_t N, typename Traits> class gen_block_tensor_wr_ctrl;
+template<size_t N, typename Traits> class gen_block_tensor_ctrl;
+
+
 /** \brief Generalized block tensor base interface
     \tparam N Tensor order.
     \tparam Traits Block tensor traits.
@@ -19,6 +25,8 @@ namespace libtensor {
  **/
 template<size_t N, typename Traits>
 class gen_block_tensor_base_i {
+    friend class gen_block_tensor_base_ctrl<N, Traits>;
+
 public:
     /** \brief Virtual destructor
      **/
@@ -54,6 +62,8 @@ protected:
 template<size_t N, typename Traits>
 class gen_block_tensor_rd_i :
     virtual public gen_block_tensor_base_i<N, Traits> {
+
+    friend class gen_block_tensor_rd_ctrl<N, Traits>;
 
 public:
     //! Type of tensor elements
@@ -106,6 +116,8 @@ protected:
 template<size_t N, typename Traits>
 class gen_block_tensor_wr_i :
     virtual public gen_block_tensor_base_i<N, Traits> {
+
+    friend class gen_block_tensor_wr_ctrl<N, Traits>;
 
 public:
     //! Type of tensor elements
@@ -179,6 +191,8 @@ template<size_t N, typename Traits>
 class gen_block_tensor_i :
     virtual public gen_block_tensor_rd_i<N, Traits>,
     virtual public gen_block_tensor_wr_i<N, Traits> {
+
+    friend class gen_block_tensor_ctrl<N, Traits>;
 
 public:
     //! Type of tensor elements
