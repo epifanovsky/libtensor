@@ -1,5 +1,6 @@
+#include <cmath>
 #include <iostream>
-#include "../core/allocator.h"
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/block_tensor/block_tensor.h>
 #include <libtensor/block_tensor/block_tensor_ctrl.h>

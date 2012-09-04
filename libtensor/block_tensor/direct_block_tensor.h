@@ -174,7 +174,7 @@ template<size_t N, typename T, typename Alloc, typename Sync>
 dense_tensor_i<N, T> &direct_block_tensor<N, T, Alloc, Sync>::on_req_const_block(
     const index<N> &idx) {
 
-    return on_req_block(idx);
+    return direct_block_tensor::on_req_block(idx);
 }
 
 
@@ -182,7 +182,7 @@ template<size_t N, typename T, typename Alloc, typename Sync>
 void direct_block_tensor<N, T, Alloc, Sync>::on_ret_const_block(
     const index<N> &idx) {
 
-    on_ret_block(idx);
+    direct_block_tensor::on_ret_block(idx);
 }
 
 
