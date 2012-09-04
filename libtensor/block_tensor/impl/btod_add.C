@@ -1,4 +1,3 @@
-#include <libtensor/core/scalar_transf_double.h>
 #include "btod_add_impl.h"
 
 namespace libtensor {

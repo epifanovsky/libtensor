@@ -1,8 +1,8 @@
-#ifndef LIBTENSOR_BTOD_COPY_H
-#define LIBTENSOR_BTOD_COPY_H
+#ifndef LIBTENSOR_BTOD_ADD_H
+#define LIBTENSOR_BTOD_ADD_H
 
 #include <libtensor/core/scalar_transf_double.h>
-#include <libtensor/gen_block_tensor/gen_bto_copy.h>
+#include <libtensor/gen_block_tensor/gen_bto_add.h>
 #include <libtensor/block_tensor/bto/additive_bto.h>
 #include <libtensor/block_tensor/bto/bto_stream_i.h>
 #include <libtensor/block_tensor/btod/btod_traits.h>
@@ -10,27 +10,27 @@
 namespace libtensor {
 
 
-/** \brief Copies a block tensor with an optional transformation
+/** \brief Linear combination of multiple block tensors
     \tparam N Tensor order.
 
-    \sa gen_bto_copy
+    \sa gen_bto_add
 
     \ingroup libtensor_btod
  **/
 template<size_t N>
-class btod_copy : public additive_bto<N, btod_traits>, public noncopyable {
+class btod_add : public additive_bto<N, btod_traits>, public noncopyable {
 public:
     static const char *k_clazz; //!< Class name
 
 private:
-    gen_bto_copy< N, btod_traits, btod_copy<N> > m_gbto;
+    gen_bto_add< N, btod_traits, btod_add<N> > m_gbto;
 
 public:
     /** \brief Initializes the operation
         \param bta Source block tensor (A).
         \param c Scaling coefficient.
      **/
-    btod_copy(
+    btod_add(
         block_tensor_rd_i<N, double> &bta,
         double c = 1.0) :
 
@@ -44,7 +44,7 @@ public:
         \param perma Permutation of A.
         \param c Scaling coefficient.
      **/
-    btod_copy(
+    btod_add(
         block_tensor_i<N, double> &bta,
         const permutation<N> &perma,
         double c = 1.0) :
@@ -53,7 +53,28 @@ public:
 
     }
 
-    virtual ~btod_copy() { }
+    virtual ~btod_add() { }
+
+    /** \brief Adds another argument to the linear combination sequence
+     **/
+    void add_op(
+        block_tensor_i<N, double> &bta,
+        double c = 1.0) {
+
+        m_gbto.add_op(bta, tensor_transf<N, double>(permutation<N>(),
+            scalar_transf<double>(c)));
+    }
+
+    /** \brief Adds another argument to the linear combination sequence
+     **/
+    void add_op(
+        block_tensor_i<N, double> &bta,
+        const permutation<N> &perma,
+        double c = 1.0) {
+
+        m_gbto.add_op(bta, tensor_transf<N, double>(perma,
+            scalar_transf<double>(c)));
+    }
 
     virtual const block_index_space<N> &get_bis() const {
 
@@ -96,4 +117,4 @@ public:
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_BTOD_COPY_H
+#endif // LIBTENSOR_BTOD_ADD_H

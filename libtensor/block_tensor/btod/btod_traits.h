@@ -10,7 +10,7 @@
 #include <libtensor/dense_tensor/tod_dotprod.h>
 #include <libtensor/dense_tensor/tod_trace.h>
 #include <libtensor/dense_tensor/tod_vmpriority.h>
-#include <libtensor/block_tensor/block_tensor_i.h>
+#include <libtensor/block_tensor/block_tensor.h>
 #include <libtensor/block_tensor/block_tensor_ctrl.h>
 #include <libtensor/block_tensor/block_tensor_i_traits.h>
 
@@ -38,6 +38,12 @@ struct btod_traits {
     template<size_t N>
     struct block_tensor_ctrl_type {
         typedef block_tensor_ctrl<N, double> type;
+    };
+
+    //! Type of temporary block tensor
+    template<size_t N>
+    struct temp_block_tensor_type {
+        typedef block_tensor< N, double, allocator<double> > type;
     };
 
     //! Type of block of block tensors
