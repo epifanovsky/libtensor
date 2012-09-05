@@ -110,12 +110,6 @@ public:
      **/
     label_t get_label(size_t type, size_t pos) const throw(out_of_bounds);
     
-    /** \brief Returns the labels of a block index
-        \param idx Index for which the block labels are requested
-        \param[out] labels Block labels for index idx
-     **/
-    void get_labels(const index<N> &idx, sequence<N, label_t> &labels) const;
-
     //@}
 };
 
@@ -219,26 +213,6 @@ typename block_labeling<N>::label_t block_labeling<N>::get_label(size_t type,
 #endif
 
     return m_labels[type]->at(blk);
-}
-
-
-template<size_t N>
-inline
-void block_labeling<N>::get_labels(const index<N> &idx, 
-    sequence<N, label_t> &labels) const {
-
-    for (register size_t i = 0; i < N; i++) {
-
-#ifdef LIBTENSOR_DEBUG
-        if (idx[i] >= m_bidims[i]) {
-            throw out_of_bounds(g_ns, k_clazz, 
-                    "get_labels(const index<N> &, sequence<N, label_t> &)", 
-                    __FILE__, __LINE__, "idx");
-        } 
-#endif 
-
-        labels[i] = m_labels[m_type[i]]->at(idx[i]);
-    }        
 }
 
 

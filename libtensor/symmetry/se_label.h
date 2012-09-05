@@ -179,17 +179,6 @@ bool se_label<N, T>::is_valid_bis(const block_index_space<N> &bis) const {
 }
 
 
-template<size_t N, typename T>
-inline
-bool se_label<N, T>::is_allowed(const index<N> &idx) const {
-
-    // Construct the block label
-    sequence<N, label_t> blk;
-    m_blk_labels.get_labels(idx, blk);
-    return m_rule.is_allowed(blk, m_pt);
-}
-
-
 } // namespace libtensor
 
 #endif // LIBTENSOR_SE_LABEL_H

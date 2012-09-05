@@ -82,13 +82,6 @@ public:
      **/
     void clear() { m_rules.clear(); m_slist.clear(); }
 
-    /** \brief Checks if sequence of block labels is allowed by the rule
-        \param blk_labels Block labels
-        \param pt Product table
-     **/
-    bool is_allowed(const sequence<N, label_t> &blk_labels,
-            const product_table_i &pt) const;
-
     /** \brief Obtain list of sequences
      **/
     eval_sequence_list<N> &get_sequences() { return m_slist; }

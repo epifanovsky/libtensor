@@ -8,7 +8,6 @@ namespace libtensor {
 void evaluation_rule_test::perform() throw(libtest::test_exception) {
 
     test_1();
-    test_2();
     test_copy_1();
 }
 
@@ -64,83 +63,6 @@ void evaluation_rule_test::test_1() throw(libtest::test_exception) {
     if (sl.size() != 0) {
         fail_test(testname, __FILE__, __LINE__,
                 "Evaluation sequences not cleared.");
-    }
-
-
-    } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
-    }
-}
-
-
-/** \test Create products and test is_allowed() function
- **/
-void evaluation_rule_test::test_2() throw(libtest::test_exception) {
-
-    static const char *testname = "evaluation_rule_test::test_2()";
-
-    typedef product_table_i::label_set_t label_set_t;
-
-    try {
-
-     // S\f$_6\f$ point group - irreps: Ag, Eg, Au, Eu
-     // Product table:
-     //      Ag   Eg      Au   Eu
-     // Ag   Ag   Eg      Au   Eu
-     // Eg   Eg   2Ag+Eg  Eu   2Au+Eu
-     // Au   Au   Eu      Ag   Eg
-     // Eu   Eu   2Au+Eu  Eg   2Ag+Eg
-     point_group_table::label_t ag = 0, eg = 1, au = 2, eu = 3;
-     std::vector<std::string> im(4);
-     im[ag] = "Ag"; im[eg] = "Eg"; im[au] = "Au"; im[eu] = "Eu";
-     point_group_table s6("s6", im, "Ag");
-     s6.add_product(eg, eg, ag);
-     s6.add_product(eg, eg, eg);
-     s6.add_product(eg, au, eu);
-     s6.add_product(eg, eu, au);
-     s6.add_product(eg, eu, eu);
-     s6.add_product(au, au, ag);
-     s6.add_product(au, eu, eg);
-     s6.add_product(eu, eu, ag);
-     s6.add_product(eu, eu, eg);
-     s6.check();
-
-    evaluation_rule<3> rule;
-    product_rule<3> &pr1 = rule.new_product();
-    product_rule<3> &pr2 = rule.new_product();
-    sequence<3, size_t> seq1(1);
-    sequence<3, size_t> seq2(1);
-    seq2[0] = 0;
-
-    pr1.add(seq1, ag);
-    pr2.add(seq1, eg);
-    pr2.add(seq2, au);
-
-    sequence<3, product_table_i::label_t> blk(ag);
-    // Block allowed by both product rules
-    blk[0] = eu; blk[1] = eg; blk[2] = eu;
-    if (! rule.is_allowed(blk, s6)) {
-        fail_test(testname, __FILE__, __LINE__, "is_allowed (1)");
-    }
-    // Block allowed by 1st product rule only
-    blk[0] = eg; blk[1] = eu; blk[2] = au;
-    if (! rule.is_allowed(blk, s6)) {
-        fail_test(testname, __FILE__, __LINE__, "is_allowed (2)");
-    }
-    // Block allowed by 2nd product rule only
-    blk[0] = eu; blk[1] = au; blk[2] = ag;
-    if (! rule.is_allowed(blk, s6)) {
-        fail_test(testname, __FILE__, __LINE__, "is_allowed (3)");
-    }
-    // Block allowed by non of the product rules
-    blk[0] = eg; blk[1] = ag; blk[2] = au;
-    if (rule.is_allowed(blk, s6)) {
-        fail_test(testname, __FILE__, __LINE__, "is_allowed (4)");
-    }
-    // Invalid block label
-    blk[0] = product_table_i::k_invalid; blk[1] = ag; blk[2] = au;
-    if (! rule.is_allowed(blk, s6)) {
-        fail_test(testname, __FILE__, __LINE__, "is_allowed (5)");
     }
 
 
