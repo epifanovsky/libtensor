@@ -104,6 +104,12 @@ set(SRC_LINALG_ACML
     linalg/acml/lapack_acml.C
 )
 
+set(SRC_LINALG_CUBLAS
+    linalg/cublas/linalg_level1_cublas.C
+    linalg/cublas/linalg_level2_cublas.C
+    linalg/cublas/linalg_level3_cublas.C
+)
+
 set(SRC_LINALG_MKL
     linalg/mkl/linalg_base_level1_mkl.C
     linalg/mkl/linalg_base_level2_mkl.C
@@ -275,8 +281,8 @@ elseif(USE_MKL)
 endif()
 
 if(CUDA_FOUND)
-    cuda_add_library(tensor ${SRC_CUDA} ${SRC} ${SRC_LINALG} ${SRC_KERNELS} 
-        ${SRC_INST} ${SRC_MP})
+    cuda_add_library(tensor ${SRC_CUDA} ${SRC} ${SRC_LINALG}
+        ${SRC_LINALG_CUBLAS} ${SRC_KERNELS} ${SRC_INST} ${SRC_MP})
 else(CUDA_FOUND)
     add_library(tensor ${SRC} ${SRC_LINALG} ${SRC_KERNELS} ${SRC_INST} 
         ${SRC_MP})
