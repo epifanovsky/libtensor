@@ -526,24 +526,28 @@ void er_reduce<N, M>::get_product_labels(size_t n, label_set_t &ls) const {
 
     if (n == 1) return;
 
+    std::vector<label_set_t::const_iterator> vls(n);
+    for (size_t i = 0; i < n; i++) vls[i] = ls.begin();
 
-    label_set_t ls1, ls2;
-    label_set_t *p1 = &ls1, *p2 = &ls2;
+    label_set_t ls2;
+    while (vls[n - 1] != ls.end()) {
 
-    ls1.insert(ls.begin(), ls.end());
-    for (size_t i = 0; i < n - 1; i++) {
+        label_group_t lg(n);
+        for (size_t i = 0; i < n; i++) lg[i] = *(vls[i]);
 
-        for (label_set_t::iterator it = ls.begin(); it != ls.end(); it++) {
+        label_set_t lsx;
+        m_pt.product(lg, lsx);
+        ls2.insert(lsx.begin(), lsx.end());
 
-            label_set_t lsx(m_pt.product(*p1, *it));
-            p2->insert(lsx.begin(), lsx.end());
+        for (size_t i = 0; i < n; i++) {
+            vls[i]++;
+            if (vls[i] == ls.end()) vls[i] = ls.begin();
+            else break;
         }
-        std::swap(p1, p2);
-        p2->clear();
     }
 
     ls.clear();
-    ls.insert(p1->begin(), p1->end());
+    ls.insert(ls2.begin(), ls2.end());
 }
 
 } // namespace libtensor

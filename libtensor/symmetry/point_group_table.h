@@ -37,7 +37,7 @@ public:
 private:
     const std::string m_id; //!< Table id
     std::vector<std::string> m_irreps; //!< Maximum number of labels
-    std::vector<label_set_t> m_table; //!< The product table
+    std::vector<size_t> m_table; //!< The product table
 
 public:
     //! \name Constructors / destructor
@@ -91,41 +91,12 @@ public:
 
     /** \copydoc product_table_i::product
      **/
-    virtual label_set_t product(label_t l1, label_t l2) const {
-#ifdef LIBTENSOR_DEBUG
-        if (! is_valid(l1) || ! is_valid(l2))
-            throw bad_parameter(g_ns, k_clazz, "product(label_t,label_t)",
-                __FILE__, __LINE__, "Invalid label.");
-#endif
-        return m_table[l1 < l2 ? pair_index(l1, l2) : pair_index(l2, l1)];
-    }
-
-
-    /** \copydoc product_table_i::product
-     **/
-    virtual label_set_t product(label_t l1, const label_set_t &l2) const;
-
-
-    /** \copydoc product_table_i::product
-     **/
-    virtual label_set_t product(const label_set_t &l1, label_t l2) const;
-
-
-    /** \copydoc product_table_i::product
-     **/
-    virtual label_set_t product(
-        const label_set_t &l1, const label_set_t &l2) const;
-
-
-    /** \copydoc product_table_i::product
-     **/
     virtual void product(const label_group_t &lg, label_set_t &prod) const;
 
 
     /** \copydoc product_table_i::is_in_product
      **/
-    virtual bool is_in_product(const label_group_t &lg,
-                       label_t l) const;
+    virtual bool is_in_product(const label_group_t &lg, label_t l) const;
 
     //@}
 
@@ -171,7 +142,7 @@ protected:
     virtual void do_check() const { }
 
 private:
-    label_t pair_index(label_t l1, label_t l2) const {
+    static label_t pair_index(label_t l1, label_t l2) {
         return l2 * (l2 + 1) / 2 + l1;
     }
 

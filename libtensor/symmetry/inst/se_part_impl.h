@@ -342,24 +342,23 @@ void se_part<N, T>::apply(index<N> &idx, tensor_transf<N, T> &tr) const {
 
     //  Determine partition index and offset within partition
     //
-    index<N> pidx, poff;
+    index<N> pidx1;
     for(register size_t i = 0; i < N; i++) {
-        pidx[i] = idx[i] / m_bipdims[i];
-        poff[i] = idx[i] % m_bipdims[i];
+        pidx1[i] = idx[i] / m_bipdims[i];
     }
 
     //  Map the partition index
     //
-    abs_index<N> apidx(pidx, m_pdims);
+    abs_index<N> apidx(pidx1, m_pdims);
     if (m_fmap[apidx.get_abs_index()] == (size_t) -1) return;
 
     abs_index<N> apidx_mapped(m_fmap[apidx.get_abs_index()], m_pdims);
-    pidx = apidx_mapped.get_index();
+    const index<N> &pidx2 = apidx_mapped.get_index();
 
     //  Construct a mapped block index
     //
     for(register size_t i = 0; i < N; i++) {
-        idx[i] = pidx[i] * m_bipdims[i] + poff[i];
+        idx[i] -= (pidx1[i] - pidx2[i]) * m_bipdims[i];
     }
 
     tr.transform(m_ftr[apidx.get_abs_index()]);

@@ -120,7 +120,9 @@ symmetry_operation_impl< so_merge<N, M, T>, se_label<NM, T> >::do_perform(
                     if (l == product_table_i::k_invalid ||
                             l == product_table_i::k_identity) continue;
 
-                    product_table_i::label_set_t ls = pt.product(l, l);
+                    product_table_i::label_group_t lg(2, l);
+                    product_table_i::label_set_t ls;
+                    pt.product(lg, ls);
                     if (ls.size() != 1 ||
                             *(ls.begin()) != product_table_i::k_identity) break;
                 }

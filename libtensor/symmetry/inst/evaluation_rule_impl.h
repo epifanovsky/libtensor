@@ -54,43 +54,6 @@ evaluation_rule<N>::operator=(const evaluation_rule<N> &other) {
 }
 
 
-template<size_t N>
-bool evaluation_rule<N>::is_allowed(const sequence<N, label_t> &blk_labels,
-        const product_table_i &pt) const {
-
-    // Loop over all products in the evaluation rule
-    for (iterator it = m_rules.begin(); it != m_rules.end(); it++) {
-
-    	const product_rule<N> &pr = *it;
-
-        // Loop over all terms in the current product
-        typename product_rule<N>::iterator ip = pr.begin();
-        for (; ip != pr.end(); ip++) {
-
-            if (pr.get_intrinsic(ip) == product_table_i::k_invalid) continue;
-
-            // Construct product
-            const sequence<N, size_t> &seq = pr.get_sequence(ip);
-
-            label_group_t lg;
-            register size_t i = 0;
-            for (; i < N; i++) {
-                if (seq[i] == 0) continue;
-                if (blk_labels[i] == product_table_i::k_invalid) break;
-                lg.insert(lg.end(), seq[i], blk_labels[i]);
-            }
-            if (i != N) continue;
-
-            if (! pt.is_in_product(lg, pr.get_intrinsic(ip))) break;
-        }
-
-        if (ip == pr.end()) { return true; }
-    }
-
-    return false;
-}
-
-
 } // namespace libtensor
 
 

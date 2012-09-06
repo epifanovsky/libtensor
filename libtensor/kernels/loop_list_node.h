@@ -1,6 +1,8 @@
 #ifndef LIBTENSOR_LOOP_LIST_NODE_H
 #define LIBTENSOR_LOOP_LIST_NODE_H
 
+#include <cstdlib> // for size_t
+
 namespace libtensor {
 
 
