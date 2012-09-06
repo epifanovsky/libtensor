@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_ADJACENCY_LIST_H
 #define LIBTENSOR_ADJACENCY_LIST_H
 
+#include <cstdlib> // for size_t
 #include <map>
 #include <vector>
 

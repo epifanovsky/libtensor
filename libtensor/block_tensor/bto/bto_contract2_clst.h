@@ -106,6 +106,10 @@ public:
 
     void build_list(bool testzero);
 
+protected:
+    using bto_contract2_clst_base<N, M, K, T>::coalesce;
+    using bto_contract2_clst_base<N, M, K, T>::merge;
+
 private:
     /** \brief Private copy constructor
      **/
@@ -156,6 +160,10 @@ public:
         const index<N + M> &ic);
 
     void build_list(bool testzero);
+
+protected:
+    using bto_contract2_clst_base<N, M, 0, T>::coalesce;
+    using bto_contract2_clst_base<N, M, 0, T>::merge;
 
 private:
     /** \brief Private copy constructor

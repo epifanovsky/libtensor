@@ -64,6 +64,10 @@ public:
      **/
     void perform(block_tensor_i<N, double> &bt);
 
+protected:
+    using btod_import_raw_base<N, Alloc>::verify_and_set_symmetry;
+    using btod_import_raw_base<N, Alloc>::check_zero;
+
 private:
     btod_import_raw(const btod_import_raw<N, Alloc>&);
     const btod_import_raw<N, Alloc>
