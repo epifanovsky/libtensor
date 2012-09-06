@@ -5,6 +5,7 @@
 #include <libtensor/core/contraction2.h>
 #include <libtensor/core/noncopyable.h>
 #include <libtensor/core/tensor_transf.h>
+#include <libtensor/block_tensor/bto/bto_contract2_sym.h>
 #include "assignment_schedule.h"
 #include "gen_block_stream_i.h"
 #include "gen_block_tensor_i.h"
@@ -50,10 +51,7 @@ private:
     contraction2<N, M, K> m_contr; //!< Contraction
     gen_block_tensor_rd_i<NA, bti_traits> &m_bta; //!< First block tensor (A)
     gen_block_tensor_rd_i<NB, bti_traits> &m_btb; //!< Second block tensor (B)
-    tensor_transf<N, element_type> m_tra; //!< Tensor transformation (A to B)
-    block_index_space<N> m_bisb; //!< Block index space of B
-    symmetry<N, element_type> m_symb; //!< Symmetry of B
-    assignment_schedule<N, element_type> m_schb; //!< Non-zero list of B
+    bto_contract2_sym<N, M, K, element_type> m_symc; //!< Symmetry of result (C)
 
 public:
     /** \brief Initializes the contraction operation
@@ -65,27 +63,27 @@ public:
         const contraction2<N, M, K> &contr,
         gen_block_tensor_rd_i<NA, bti_traits> &bta,
         gen_block_tensor_rd_i<NB, bti_traits> &btb);
-#if 0
+
     /** \brief Returns the block index space of the result
      **/
-    const block_index_space<N> &get_bis() const {
+    const block_index_space<NC> &get_bis() const {
 
-        return m_bisb;
+        return m_symc.get_bisc();
     }
 
     /** \brief Returns the symmetry of the result
      **/
     const symmetry<N, element_type> &get_symmetry() const {
 
-        return m_symb;
+        return m_symc.get_symc();
     }
 
     /** \brief Returns the list of canonical non-zero blocks of the result
      **/
-    const assignment_schedule<N, element_type> &get_schedule() const {
-
-        return m_schb;
-    }
+//    const assignment_schedule<N, element_type> &get_schedule() const {
+//
+//        return m_schb;
+//    }
 
     /** \brief Turns on synchronization on all arguments
      **/
@@ -98,17 +96,17 @@ public:
     /** \brief Writes the blocks of the result to an output stream
         \param out Output stream.
      **/
-    void perform(gen_block_stream_i<N, bti_traits> &out);
+//    void perform(gen_block_stream_i<N, bti_traits> &out);
 
     /** \brief Computes one block of the result
      **/
-    void compute_block(
-        bool zero,
-        wr_block_type &blkb,
-        const index<N> &ib,
-        const tensor_transf<N, element_type> &trb,
-        const element_type &c);
-#endif
+//    void compute_block(
+//        bool zero,
+//        wr_block_type &blkb,
+//        const index<N> &ib,
+//        const tensor_transf<N, element_type> &trb,
+//        const element_type &c);
+
     /** \brief Computes and writes the blocks of the result to an output stream
         \param blst List of absolute indexes of canonical blocks to be computed.
         \param out Output stream.
@@ -116,6 +114,14 @@ public:
     void perform(
         const std::vector<size_t> &blst,
         gen_block_stream_i<NC, bti_traits> &out);
+
+    /** \brief Computes one block of the result and writes it to a tensor
+        \param aic Absolute index of the block.
+        \param[out] blkc Output tensor.
+     */
+    void compute_block(
+        size_t aic,
+        wr_block_type &blkc);
 
 private:
     void make_schedule();
