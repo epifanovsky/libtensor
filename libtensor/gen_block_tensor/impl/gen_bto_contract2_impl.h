@@ -2,6 +2,7 @@
 #define LIBTENSOR_GEN_BTO_CONTRACT2_IMPL_H
 
 #include <libutil/thread_pool/thread_pool.h>
+#include "gen_bto_contract2_block.h"
 #include "../gen_block_tensor_ctrl.h"
 #include "../gen_bto_contract2.h"
 
@@ -17,17 +18,17 @@ public:
         temp_block_tensor_c_type;
 
 private:
-    gen_bto_contract2<N, M, K, Traits, Timed> &m_bto;
+    gen_bto_contract2_block<N, M, K, Traits, Timed> &m_bto;
     temp_block_tensor_c_type &m_btc;
-    size_t m_bi;
-    gen_block_stream_i<N, bti_traits> &m_out;
+    index<N + M> m_idxc;
+    gen_block_stream_i<N + M, bti_traits> &m_out;
 
 public:
     gen_bto_contract2_task(
-        gen_bto_contract2<N, M, K, Traits, Timed> &bto,
+        gen_bto_contract2_block<N, M, K, Traits, Timed> &bto,
         temp_block_tensor_c_type &btc,
-        size_t bi,
-        gen_block_stream_i<N, bti_traits> &out);
+        const index<N + M> &idxc,
+        gen_block_stream_i<N + M, bti_traits> &out);
 
     virtual ~gen_bto_contract2_task() { }
     virtual void perform();
@@ -44,18 +45,19 @@ public:
         temp_block_tensor_c_type;
 
 private:
-    gen_bto_contract2<N, M, K, Traits, Timed> &m_bto;
+    gen_bto_contract2_block<N, M, K, Traits, Timed> &m_bto;
     temp_block_tensor_c_type &m_btc;
-    gen_block_stream_i<N, bti_traits> &m_out;
+    dimensions<N + M> m_bidimsc;
+    gen_block_stream_i<N + M, bti_traits> &m_out;
     const std::vector<size_t> &m_blst;
     typename std::vector<size_t>::const_iterator m_i;
 
 public:
     gen_bto_contract2_task_iterator(
-        gen_bto_contract2<N, M, K, Traits, Timed> &bto,
+        gen_bto_contract2_block<N, M, K, Traits, Timed> &bto,
         temp_block_tensor_c_type &btc,
         const std::vector<size_t> &blst,
-        gen_block_stream_i<N, bti_traits> &out);
+        gen_block_stream_i<N + M, bti_traits> &out);
 
     virtual bool has_more() const;
     virtual libutil::task_i *get_next();
@@ -113,7 +115,7 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
 
         out.open();
 
-        temp_block_tensor_type btc(m_bisc.get_bisc());
+        temp_block_tensor_type btc(m_symc.get_bisc());
         gen_block_tensor_ctrl<NC, bti_traits> cc(btc);
 
         cc.req_sync_on();
@@ -140,20 +142,43 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
 
 template<size_t N, size_t M, size_t K, typename Traits, typename Timed>
 void gen_bto_contract2<N, M, K, Traits, Timed>::compute_block(
-    size_t aic,
+    bool zero,
+    const index<NC> &idxc,
+    const tensor_transf<NC, element_type> &trc,
     wr_block_type &blkc) {
 
+    gen_bto_contract2::start_timer("compute_block");
+
+    try {
+
+        gen_block_tensor_ctrl<NA, bti_traits> ca(m_bta);
+        gen_block_tensor_ctrl<NB, bti_traits> cb(m_btb);
+
+        const symmetry<NA, element_type> &syma = ca.req_const_symmetry();
+        const symmetry<NB, element_type> &symb = cb.req_const_symmetry();
+
+        orbit_list<NA, element_type> ola(syma);
+        orbit_list<NB, element_type> olb(symb);
+
+//        contract_block(m_bta, ola, m_btb, olb, idxc, zero, trc, blkc);
+
+    } catch(...) {
+        gen_bto_contract2::stop_timer("compute_block");
+        throw;
+    }
+
+    gen_bto_contract2::stop_timer("compute_block");
 }
 
 
 template<size_t N, size_t M, size_t K, typename Traits, typename Timed>
 gen_bto_contract2_task<N, M, K, Traits, Timed>::gen_bto_contract2_task(
-    gen_bto_contract2<N, M, K, Traits, Timed> &bto,
+    gen_bto_contract2_block<N, M, K, Traits, Timed> &bto,
     temp_block_tensor_c_type &btc,
-    size_t bi,
-    gen_block_stream_i<N, bti_traits> &out) :
+    const index<N + M> &idxc,
+    gen_block_stream_i<N + M, bti_traits> &out) :
 
-    m_bto(bto), m_btc(btc), m_bi(bi), m_out(out) {
+    m_bto(bto), m_btc(btc), m_idxc(idxc), m_out(out) {
 
 }
 
@@ -167,34 +192,35 @@ void gen_bto_contract2_task<N, M, K, Traits, Timed>::perform() {
         wr_block_type;
     typedef tensor_transf<N, element_type> tensor_transf_type;
 
-    tensor_transf<N, element_type> tr0;
+    tensor_transf<N + M, element_type> tr0;
     gen_block_tensor_ctrl<N + M, bti_traits> cc(m_btc);
 
     {
-        wr_block_type &blkc = cc.req_block(m_idx);
-        m_bto.compute_block(m_bi, blkc);
-        cc.ret_block(m_idx);
+        wr_block_type &blkc = cc.req_block(m_idxc);
+        m_bto.compute_block(true, m_idxc, tr0, blkc);
+        cc.ret_block(m_idxc);
     }
 
     {
-        rd_block_type &blkc = cc.req_const_block(m_idx);
-        m_out.put(m_idx, blkc, tr0);
-        cc.ret_const_block(m_idx);
+        rd_block_type &blkc = cc.req_const_block(m_idxc);
+        m_out.put(m_idxc, blkc, tr0);
+        cc.ret_const_block(m_idxc);
     }
 
-    cc.req_zero_block(m_idx);
+    cc.req_zero_block(m_idxc);
 }
 
 
 template<size_t N, size_t M, size_t K, typename Traits, typename Timed>
 gen_bto_contract2_task_iterator<N, M, K, Traits, Timed>::
-    gen_bto_copy_task_iterator(
-    gen_bto_contract2<N, M, K, Traits, Timed> &bto,
+gen_bto_contract2_task_iterator(
+    gen_bto_contract2_block<N, M, K, Traits, Timed> &bto,
     temp_block_tensor_c_type &btc,
     const std::vector<size_t> &blst,
-    gen_block_stream_i<N, bti_traits> &out) :
+    gen_block_stream_i<N + M, bti_traits> &out) :
 
-    m_bto(bto), m_btc(btc), m_blst(blst), m_out(out), m_i(m_blst.begin()) {
+    m_bto(bto), m_btc(btc), m_bidimsc(m_btc.get_bis().get_block_index_dims()),
+    m_blst(blst), m_out(out), m_i(m_blst.begin()) {
 
 }
 
@@ -207,10 +233,13 @@ bool gen_bto_contract2_task_iterator<N, M, K, Traits, Timed>::has_more() const {
 
 
 template<size_t N, size_t M, size_t K, typename Traits, typename Timed>
-libutil::task_i *gen_bto_copy_task_iterator<N, Traits>::get_next() {
+libutil::task_i *gen_bto_contract2_task_iterator<N, M, K, Traits, Timed>::
+get_next() {
 
+    abs_index<N + M> aidxc(*m_i, m_bidimsc);
     gen_bto_contract2_task<N, M, K, Traits, Timed> *t =
-        new gen_bto_contract2_task<N, M, K, Traits, Timed>(m_bto, *m_i, m_out);
+        new gen_bto_contract2_task<N, M, K, Traits, Timed>(m_bto,
+            m_btc, aidxc.get_index(), m_out);
     ++m_i;
     return t;
 }

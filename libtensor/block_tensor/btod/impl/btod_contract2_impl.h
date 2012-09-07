@@ -23,6 +23,7 @@
 #include <libtensor/block_tensor/btod_copy.h>
 #include <libtensor/block_tensor/btod_set.h>
 #include <libtensor/btod/bad_block_index_space.h>
+#include <libtensor/gen_block_tensor/impl/gen_bto_contract2_impl.h>
 #include "../btod_contract2.h"
 
 namespace libtensor {

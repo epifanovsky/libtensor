@@ -28,6 +28,13 @@ namespace libtensor {
 template<size_t N, size_t M, size_t K, typename Traits, typename Timed>
 class gen_bto_contract2 : public timings<Timed>, public noncopyable {
 public:
+    enum {
+        NA = N + K, //!< Order of first argument (A)
+        NB = M + K, //!< Order of second argument (B)
+        NC = N + M  //!< Order of result (C)
+    };
+
+public:
     //! Type of tensor elements
     typedef typename Traits::element_type element_type;
 
@@ -39,13 +46,6 @@ public:
 
     //! Type of write-only block
     typedef typename bti_traits::template wr_block_type<N>::type wr_block_type;
-
-public:
-    enum {
-        NA = N + K, //!< Order of first argument (A)
-        NB = M + K, //!< Order of second argument (B)
-        NC = N + M  //!< Order of result (C)
-    };
 
 private:
     contraction2<N, M, K> m_contr; //!< Contraction
@@ -116,11 +116,17 @@ public:
         gen_block_stream_i<NC, bti_traits> &out);
 
     /** \brief Computes one block of the result and writes it to a tensor
-        \param aic Absolute index of the block.
+        \param zero Whether to zero out the contents of output before adding
+            the contraction
+        \param idxc Index of the computed block, must be a canonical block in
+            the output tensor's symmetry
+        \param trc Transformation to be applied to the computed block.
         \param[out] blkc Output tensor.
      */
     void compute_block(
-        size_t aic,
+        bool zero,
+        const index<NC> &idxc,
+        const tensor_transf<NC, element_type> &trc,
         wr_block_type &blkc);
 
 private:
