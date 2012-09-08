@@ -541,7 +541,7 @@ void er_reduce<N, M>::get_product_labels(size_t n, label_set_t &ls) const {
 
         for (size_t i = 0; i < n; i++) {
             vls[i]++;
-            if (vls[i] == ls.end()) vls[i] = ls.begin();
+            if (vls[i] == ls.end() && i != n - 1) vls[i] = ls.begin();
             else break;
         }
     }
