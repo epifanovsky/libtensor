@@ -216,11 +216,10 @@ set(SRC_INST
     symmetry/inst/so_symmetrize_se_label_inst.C
     symmetry/inst/so_symmetrize_se_part_inst.C
     symmetry/inst/so_symmetrize_se_perm_inst.C
-    block_tensor/bto/impl/bto_contract2_bis.C
     block_tensor/btod/impl/additive_btod.C
-    block_tensor/btod/impl/btod_contract2_clst.C
+#    block_tensor/btod/impl/btod_contract2_clst.C
     block_tensor/btod/impl/btod_contract2_nzorb.C
-    block_tensor/btod/impl/btod_contract2_sym.C
+#    block_tensor/btod/impl/btod_contract2_sym.C
     block_tensor/btod/impl/btod_contract2_1.C
     block_tensor/btod/impl/btod_contract2_2.C
     block_tensor/btod/impl/btod_contract2_3.C
@@ -251,6 +250,10 @@ set(SRC_INST
     diag_tensor/impl/diag_tod_set.C
 )
 
+set(SRC_GEN_BTOD
+    gen_block_tensor/impl/gen_bto_contract2_bis.C
+)
+
 set(SRC_BTOD
     block_tensor/impl/btod_add.C
     block_tensor/impl/btod_copy.C
@@ -269,8 +272,8 @@ elseif(USE_MKL)
     set(SRC_LINALG ${SRC_LINALG} ${SRC_LINALG_MKL})
 endif()
 
-add_library(tensor ${SRC} ${SRC_LINALG} ${SRC_KERNELS} ${SRC_BTOD} ${SRC_INST}
-    ${SRC_MP})
+add_library(tensor ${SRC} ${SRC_LINALG} ${SRC_KERNELS} ${SRC_GEN_BTOD}
+    ${SRC_BTOD} ${SRC_INST} ${SRC_MP})
 if(QCHEM_SOURCE_DIR)
     add_library(tensor_qchem ${SRC_QCHEM})
     add_dependencies(tensor_qchem tensor)

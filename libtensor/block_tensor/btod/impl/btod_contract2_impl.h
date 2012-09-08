@@ -15,15 +15,17 @@
 #include <libtensor/core/orbit_list.h>
 #include <libtensor/block_tensor/block_tensor.h>
 #include <libtensor/block_tensor/block_tensor_ctrl.h>
-#include <libtensor/block_tensor/bto/bto_contract2_clst.h>
 #include <libtensor/block_tensor/bto/bto_contract2_nzorb.h>
-#include <libtensor/block_tensor/bto/bto_contract2_sym.h>
 #include <libtensor/block_tensor/bto/impl/bto_aux_add_impl.h>
 #include <libtensor/block_tensor/bto/impl/bto_aux_copy_impl.h>
 #include <libtensor/block_tensor/btod_copy.h>
 #include <libtensor/block_tensor/btod_set.h>
 #include <libtensor/btod/bad_block_index_space.h>
+#include <libtensor/gen_block_tensor/impl/gen_bto_contract2_clst_impl.h>
+#include <libtensor/gen_block_tensor/impl/gen_bto_contract2_sym_impl.h>
 #include <libtensor/gen_block_tensor/impl/gen_bto_contract2_impl.h>
+#include <libtensor/block_tensor/bto/impl/bto_aux_copy_impl.h>
+#include <libtensor/block_tensor/impl/bto_stream_adapter.h>
 #include "../btod_contract2.h"
 
 namespace libtensor {
@@ -362,7 +364,7 @@ void btod_contract2<N, M, K>::perform(bto_stream_i<N + M, btod_traits> &out) {
 
                     //  Calling this may break the symmetry of final result
                     //  in some cases, e.g. self-contraction
-                    perform_inner(btat, btbt, btct, 1.0, batchc1);
+                    perform_inner(btat, btbt, btct, batchc1);
 
                     btod_contract2<N, M, K>::start_timer("copy_c");
                     for(size_t i = 0; i < batchc1.size(); i++) {
@@ -399,28 +401,34 @@ void btod_contract2<N, M, K>::perform(bto_stream_i<N + M, btod_traits> &out) {
 template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::perform_inner(
     block_tensor_i<N + K, double> &bta, block_tensor_i<M + K, double> &btb,
-    block_tensor_i<N + M, double> &btc, double d,
+    block_tensor_i<N + M, double> &btc,
     const std::vector<size_t> &blst) {
 
-    typedef double T;
+    gen_bto_contract2<N, M, K, btod_traits, btod_contract2<N, M, K> > bto(
+        m_contr, bta, btb);
+    bto_aux_copy<N + M, btod_traits> out(m_symc.get_symc(), btc);
+    bto_stream_adapter<N + M, btod_traits> aout(out);
+    bto.perform(blst, aout);
 
-    block_tensor_ctrl<N + K, T> ca(m_bta);
-    block_tensor_ctrl<M + K, T> cb(m_btb);
-    block_tensor_ctrl<N + M, T> cc(btc);
-
-    const symmetry<N + K, T> &syma = ca.req_const_symmetry();
-    const symmetry<M + K, T> &symb = cb.req_const_symmetry();
-
-    orbit_list<N + K, T> ola(syma);
-    orbit_list<M + K, T> olb(symb);
-
-    tensor_transf<k_orderc, double> trc;
-    for(size_t iblk = 0; iblk < blst.size(); iblk++) {
-        abs_index<k_orderc> aic(blst[iblk], m_bidimsc);
-        dense_tensor_i<k_orderc, double> &blk = cc.req_block(aic.get_index());
-        contract_block(bta, ola, btb, olb, aic.get_index(), blk, trc, true, d);
-        cc.ret_block(aic.get_index());
-    }
+//    typedef double T;
+//
+//    block_tensor_ctrl<N + K, T> ca(m_bta);
+//    block_tensor_ctrl<M + K, T> cb(m_btb);
+//    block_tensor_ctrl<N + M, T> cc(btc);
+//
+//    const symmetry<N + K, T> &syma = ca.req_const_symmetry();
+//    const symmetry<M + K, T> &symb = cb.req_const_symmetry();
+//
+//    orbit_list<N + K, T> ola(syma);
+//    orbit_list<M + K, T> olb(symb);
+//
+//    tensor_transf<k_orderc, double> trc;
+//    for(size_t iblk = 0; iblk < blst.size(); iblk++) {
+//        abs_index<k_orderc> aic(blst[iblk], m_bidimsc);
+//        dense_tensor_i<k_orderc, double> &blk = cc.req_block(aic.get_index());
+//        contract_block(bta, ola, btb, olb, aic.get_index(), blk, trc, true, d);
+//        cc.ret_block(aic.get_index());
+//    }
 }
 
 
@@ -489,14 +497,14 @@ void btod_contract2<N, M, K>::contract_block(
     const tensor_transf<k_orderc, double> &trc,
     bool zero, double c) {
 
-    typedef typename bto_contract2_clst<N, M, K, double>::contr_list contr_list;
+    typedef typename gen_bto_contract2_clst<N, M, K, btod_traits>::contr_list contr_list;
 
     block_tensor_ctrl<k_ordera, double> ca(bta);
     block_tensor_ctrl<k_orderb, double> cb(btb);
 
     //  Prepare contraction list
     btod_contract2<N, M, K>::start_timer("contract_block::clst");
-    bto_contract2_clst<N, M, K, double> clstop(m_contr, bta, btb, ola, olb,
+    gen_bto_contract2_clst<N, M, K, btod_traits> clstop(m_contr, bta, btb, ola, olb,
         m_bidimsa, m_bidimsb, m_bidimsc, idxc);
     clstop.build_list(false); // Build full contraction list
     const contr_list &clst = clstop.get_clst();

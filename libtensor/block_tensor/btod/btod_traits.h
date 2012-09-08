@@ -17,6 +17,7 @@
 namespace libtensor {
 
 
+template<size_t N, size_t M, size_t K> class tod_contract2;
 template<size_t N> class tod_set;
 
 
@@ -66,6 +67,11 @@ struct btod_traits {
     template<size_t N, typename Functor>
     struct to_apply_type {
         typedef tod_apply<N, Functor> type;
+    };
+
+    template<size_t N, size_t M, size_t K>
+    struct to_contract2_type {
+        typedef tod_contract2<N, M, K> type;
     };
 
     template<size_t N>

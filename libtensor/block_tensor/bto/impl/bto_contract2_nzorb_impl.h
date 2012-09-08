@@ -12,7 +12,8 @@
 #include <libtensor/core/orbit_list.h>
 #include <libtensor/symmetry/so_copy.h>
 #include <libtensor/block_tensor/block_tensor_ctrl.h>
-#include "../bto_contract2_clst.h"
+#include <libtensor/gen_block_tensor/impl/gen_bto_contract2_clst_impl.h>
+#include <libtensor/block_tensor/btod/btod_traits.h>
 #include "../bto_contract2_nzorb.h"
 
 namespace libtensor {
@@ -21,7 +22,7 @@ namespace libtensor {
 template<size_t N, size_t M, size_t K, typename T>
 class bto_contract2_nzorb_task : public libutil::task_i {
 private:
-    bto_contract2_clst<N, M, K, T> m_clst;
+    gen_bto_contract2_clst<N, M, K, btod_traits> m_clst;
     dimensions<N + M> m_bidimsc;
     index<N + M> m_ic;
     std::vector<size_t> &m_blst;

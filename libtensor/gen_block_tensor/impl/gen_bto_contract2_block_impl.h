@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_GEN_BTO_CONTRACT2_BLOCK_IMPL_H
 #define LIBTENSOR_GEN_BTO_CONTRACT2_BLOCK_IMPL_H
 
-#include <libtensor/block_tensor/bto/impl/bto_contract2_clst_impl.h>
+#include "gen_bto_contract2_clst.h"
 #include "gen_bto_contract2_block.h"
 
 namespace libtensor {
@@ -17,8 +17,8 @@ gen_bto_contract2_block<N, M, K, Traits, Timed>::gen_bto_contract2_block(
     const block_index_space<NC> &bisc) :
 
     m_contr(contr),
-    m_bta(bta), m_bidimsa(m_bta.get_bis().get_block_index_space()), m_ola(syma),
-    m_btb(btb), m_bidimsb(m_btb.get_bis().get_block_index_space()), m_olb(symb),
+    m_bta(bta), m_bidimsa(m_bta.get_bis().get_block_index_dims()), m_ola(syma),
+    m_btb(btb), m_bidimsb(m_btb.get_bis().get_block_index_dims()), m_olb(symb),
     m_bidimsc(bisc.get_block_index_dims()) {
 
 }
@@ -31,18 +31,18 @@ void gen_bto_contract2_block<N, M, K, Traits, Timed>::compute_block(
     const tensor_transf<NC, element_type> &trc,
     wr_block_c_type &blkc) {
 
-    typedef typename bto_contract2_clst<N, M, K, element_Type>::contr_list
+    typedef typename gen_bto_contract2_clst<N, M, K, Traits>::contr_list
         contr_list;
     typedef typename Traits::template to_contract2_type<N, M, K>::type
         to_contract2;
     typedef typename Traits::template to_set_type<NC>::type to_set;
 
-    gen_block_tensor_rd_ctrl<NA, element_type> ca(bta);
-    gen_block_tensor_rd_ctrl<NB, element_type> cb(btb);
+    gen_block_tensor_rd_ctrl<NA, bti_traits> ca(m_bta);
+    gen_block_tensor_rd_ctrl<NB, bti_traits> cb(m_btb);
 
     //  Prepare contraction list
     gen_bto_contract2_block::start_timer("contract_block::clst");
-    bto_contract2_clst<N, M, K, element_type> clstop(m_contr, m_bta, m_btb,
+    gen_bto_contract2_clst<N, M, K, Traits> clstop(m_contr, m_bta, m_btb,
         m_ola, m_olb, m_bidimsa, m_bidimsb, m_bidimsc, idxc);
     clstop.build_list(false); // Build full contraction list
     const contr_list &clst = clstop.get_clst();
@@ -107,7 +107,7 @@ void gen_bto_contract2_block<N, M, K, Traits, Timed>::compute_block(
     if(op.get() == 0) {
         if(zero) to_set().perform(blkc);
     } else {
-        op->perform(zero, c, blkc);
+        op->perform(zero, Traits::identity(), blkc);
     }
 
     //  Return input blocks

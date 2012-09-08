@@ -9,7 +9,7 @@
 #include <libtensor/block_tensor/block_tensor_i.h>
 #include <libtensor/block_tensor/bto/additive_bto.h>
 #include <libtensor/block_tensor/btod/btod_traits.h>
-#include <libtensor/block_tensor/bto/bto_contract2_sym.h>
+#include <libtensor/gen_block_tensor/impl/gen_bto_contract2_sym.h>
 #include <libtensor/block_tensor/bto/bto_stream_i.h>
 
 namespace libtensor {
@@ -46,7 +46,7 @@ private:
     contraction2<N, M, K> m_contr; //!< Contraction
     block_tensor_i<k_ordera, double> &m_bta; //!< First argument (A)
     block_tensor_i<k_orderb, double> &m_btb; //!< Second argument (B)
-    bto_contract2_sym<N, M, K, double> m_symc; //!< Symmetry of result (C)
+    gen_bto_contract2_sym<N, M, K, btod_traits> m_symc; //!< Symmetry of result (C)
     dimensions<k_ordera> m_bidimsa; //!< Block %index dims of A
     dimensions<k_orderb> m_bidimsb; //!< Block %index dims of B
     dimensions<k_orderc> m_bidimsc; //!< Block %index dims of the result
@@ -97,7 +97,6 @@ private:
         block_tensor_i<N + K, double> &bta,
         block_tensor_i<M + K, double> &btb,
         block_tensor_i<N + M, double> &btc,
-        double d,
         const std::vector<size_t> &blst);
 
     void make_schedule();

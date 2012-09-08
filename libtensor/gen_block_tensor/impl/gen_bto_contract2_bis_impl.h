@@ -1,14 +1,15 @@
-#ifndef LIBTENSOR_BTO_CONTRACT2_BIS_IMPL_H
-#define LIBTENSOR_BTO_CONTRACT2_BIS_IMPL_H
+#ifndef LIBTENSOR_GEN_BTO_CONTRACT2_BIS_IMPL_H
+#define LIBTENSOR_GEN_BTO_CONTRACT2_BIS_IMPL_H
 
-#include "../bto_contract2_bis.h"
+#include "gen_bto_contract2_bis.h"
 
 namespace libtensor {
 
 
 template<size_t N, size_t M, size_t K>
-bto_contract2_bis<N, M, K>::bto_contract2_bis(
-    const contraction2<N, M, K> &contr, const block_index_space<N + K> &bisa,
+gen_bto_contract2_bis<N, M, K>::gen_bto_contract2_bis(
+    const contraction2<N, M, K> &contr,
+    const block_index_space<N + K> &bisa,
     const block_index_space<M + K> &bisb) :
 
     m_dimsc(contr, bisa.get_dims(), bisb.get_dims()),
@@ -56,8 +57,9 @@ bto_contract2_bis<N, M, K>::bto_contract2_bis(
 
 
 template<size_t N, size_t M>
-bto_contract2_bis<N, M, 0>::bto_contract2_bis(
-    const contraction2<N, M, 0> &contr, const block_index_space<N> &bisa,
+gen_bto_contract2_bis<N, M, 0>::gen_bto_contract2_bis(
+    const contraction2<N, M, 0> &contr,
+    const block_index_space<N> &bisa,
     const block_index_space<M> &bisb) :
 
     m_dimsc(contr, bisa.get_dims(), bisb.get_dims()),
@@ -106,4 +108,4 @@ bto_contract2_bis<N, M, 0>::bto_contract2_bis(
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_BTO_CONTRACT2_BIS_IMPL_H
+#endif // LIBTENSOR_GEN_BTO_CONTRACT2_BIS_IMPL_H

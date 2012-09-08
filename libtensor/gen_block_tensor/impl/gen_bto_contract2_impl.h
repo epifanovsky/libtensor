@@ -2,7 +2,7 @@
 #define LIBTENSOR_GEN_BTO_CONTRACT2_IMPL_H
 
 #include <libutil/thread_pool/thread_pool.h>
-#include "gen_bto_contract2_block.h"
+#include "gen_bto_contract2_block_impl.h"
 #include "../gen_block_tensor_ctrl.h"
 #include "../gen_bto_contract2.h"
 
@@ -106,8 +106,8 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
     const std::vector<size_t> &blst,
     gen_block_stream_i<NC, bti_traits> &out) {
 
-    typedef typename Traits::template temp_block_tensor_type<N>::type
-        temp_block_tensor_type;
+    typedef typename Traits::template temp_block_tensor_type<NC>::type
+        temp_block_tensor_c_type;
 
     gen_bto_contract2::start_timer();
 
@@ -115,14 +115,22 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
 
         out.open();
 
-        temp_block_tensor_type btc(m_symc.get_bisc());
-        gen_block_tensor_ctrl<NC, bti_traits> cc(btc);
+        temp_block_tensor_c_type btc(m_symc.get_bisc());
+
+        gen_block_tensor_rd_ctrl<NA, bti_traits> ca(m_bta);
+        gen_block_tensor_rd_ctrl<NB, bti_traits> cb(m_btb);
+        gen_block_tensor_wr_ctrl<NC, bti_traits> cc(btc);
+
+        const symmetry<NA, element_type> &syma = ca.req_const_symmetry();
+        const symmetry<NB, element_type> &symb = cb.req_const_symmetry();
 
         cc.req_sync_on();
         sync_on();
 
-        gen_bto_contract2_task_iterator<N, M, K, Traits, Timed> ti(*this, blst,
-            btc, out);
+        gen_bto_contract2_block<N, M, K, Traits, Timed> bto(m_contr, m_bta,
+            syma, m_btb, symb, m_symc.get_bisc());
+        gen_bto_contract2_task_iterator<N, M, K, Traits, Timed> ti(bto, btc,
+            blst, out);
         gen_bto_contract2_task_observer<N, M, K> to;
         libutil::thread_pool::submit(ti, to);
 
@@ -137,37 +145,6 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
     }
 
     gen_bto_contract2::stop_timer();
-}
-
-
-template<size_t N, size_t M, size_t K, typename Traits, typename Timed>
-void gen_bto_contract2<N, M, K, Traits, Timed>::compute_block(
-    bool zero,
-    const index<NC> &idxc,
-    const tensor_transf<NC, element_type> &trc,
-    wr_block_type &blkc) {
-
-    gen_bto_contract2::start_timer("compute_block");
-
-    try {
-
-        gen_block_tensor_ctrl<NA, bti_traits> ca(m_bta);
-        gen_block_tensor_ctrl<NB, bti_traits> cb(m_btb);
-
-        const symmetry<NA, element_type> &syma = ca.req_const_symmetry();
-        const symmetry<NB, element_type> &symb = cb.req_const_symmetry();
-
-        orbit_list<NA, element_type> ola(syma);
-        orbit_list<NB, element_type> olb(symb);
-
-//        contract_block(m_bta, ola, m_btb, olb, idxc, zero, trc, blkc);
-
-    } catch(...) {
-        gen_bto_contract2::stop_timer("compute_block");
-        throw;
-    }
-
-    gen_bto_contract2::stop_timer("compute_block");
 }
 
 

@@ -1,7 +1,8 @@
-#ifndef LIBTENSOR_BTO_CONTRACT2_BIS_H
-#define LIBTENSOR_BTO_CONTRACT2_BIS_H
+#ifndef LIBTENSOR_GEN_BTO_CONTRACT2_BIS_H
+#define LIBTENSOR_GEN_BTO_CONTRACT2_BIS_H
 
 #include <libtensor/core/block_index_space.h>
+#include <libtensor/core/noncopyable.h>
 #include <libtensor/dense_tensor/to_contract2_dims.h>
 
 namespace libtensor {
@@ -13,10 +14,10 @@ namespace libtensor {
     the contraction descriptor, this class builds the block index space of
     the result.
 
-    \ingroup libtensor
+    \ingroup libtensor_gen_bto
  **/
 template<size_t N, size_t M, size_t K>
-class bto_contract2_bis {
+class gen_bto_contract2_bis : public noncopyable {
 private:
     to_contract2_dims<N, M, K> m_dimsc; //!< Builder of dimensions of C
     block_index_space<N + M> m_bisc; //!< Block index space of result
@@ -27,7 +28,8 @@ public:
         \param bisa Block index space of A.
         \param bisb Block index space of B.
      **/
-    bto_contract2_bis(const contraction2<N, M, K> &contr,
+    gen_bto_contract2_bis(
+        const contraction2<N, M, K> &contr,
         const block_index_space<N + K> &bisa,
         const block_index_space<M + K> &bisb);
 
@@ -37,21 +39,16 @@ public:
         return m_bisc;
     }
 
-private:
-    /** \brief Private copy constructor
-     **/
-    bto_contract2_bis(const bto_contract2_bis&);
-
 };
 
 
 /** \brief Computes the block index space of the result of a contraction
         (specialized for no contracted indexes, i.e. direct product)
 
-    \ingroup libtensor
+    \ingroup libtensor_gen_bto
  **/
 template<size_t N, size_t M>
-class bto_contract2_bis<N, M, 0> {
+class gen_bto_contract2_bis<N, M, 0> : public noncopyable {
 private:
     to_contract2_dims<N, M, 0> m_dimsc; //!< Builder of dimensions of C
     block_index_space<N + M> m_bisc; //!< Block index space of result
@@ -62,7 +59,8 @@ public:
         \param bisa Block index space of A.
         \param bisb Block index space of B.
      **/
-    bto_contract2_bis(const contraction2<N, M, 0> &contr,
+    gen_bto_contract2_bis(
+        const contraction2<N, M, 0> &contr,
         const block_index_space<N> &bisa,
         const block_index_space<M> &bisb);
 
@@ -72,14 +70,9 @@ public:
         return m_bisc;
     }
 
-private:
-    /** \brief Private copy constructor
-     **/
-    bto_contract2_bis(const bto_contract2_bis&);
-
 };
 
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_BTO_CONTRACT2_BIS_H
+#endif // LIBTENSOR_GEN_BTO_CONTRACT2_BIS_H

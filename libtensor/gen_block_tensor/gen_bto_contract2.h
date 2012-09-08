@@ -5,7 +5,7 @@
 #include <libtensor/core/contraction2.h>
 #include <libtensor/core/noncopyable.h>
 #include <libtensor/core/tensor_transf.h>
-#include <libtensor/block_tensor/bto/bto_contract2_sym.h>
+#include "impl/gen_bto_contract2_sym.h"
 #include "assignment_schedule.h"
 #include "gen_block_stream_i.h"
 #include "gen_block_tensor_i.h"
@@ -51,7 +51,7 @@ private:
     contraction2<N, M, K> m_contr; //!< Contraction
     gen_block_tensor_rd_i<NA, bti_traits> &m_bta; //!< First block tensor (A)
     gen_block_tensor_rd_i<NB, bti_traits> &m_btb; //!< Second block tensor (B)
-    bto_contract2_sym<N, M, K, element_type> m_symc; //!< Symmetry of result (C)
+    gen_bto_contract2_sym<N, M, K, Traits> m_symc; //!< Symmetry of result (C)
 
 public:
     /** \brief Initializes the contraction operation
