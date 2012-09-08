@@ -15,13 +15,13 @@
 #include <libtensor/core/orbit_list.h>
 #include <libtensor/block_tensor/block_tensor.h>
 #include <libtensor/block_tensor/block_tensor_ctrl.h>
-#include <libtensor/block_tensor/bto/bto_contract2_nzorb.h>
 #include <libtensor/block_tensor/bto/impl/bto_aux_add_impl.h>
 #include <libtensor/block_tensor/bto/impl/bto_aux_copy_impl.h>
 #include <libtensor/block_tensor/btod_copy.h>
 #include <libtensor/block_tensor/btod_set.h>
 #include <libtensor/btod/bad_block_index_space.h>
 #include <libtensor/gen_block_tensor/impl/gen_bto_contract2_clst_impl.h>
+#include <libtensor/gen_block_tensor/impl/gen_bto_contract2_nzorb_impl.h>
 #include <libtensor/gen_block_tensor/impl/gen_bto_contract2_sym_impl.h>
 #include <libtensor/gen_block_tensor/impl/gen_bto_contract2_impl.h>
 #include <libtensor/block_tensor/bto/impl/bto_aux_copy_impl.h>
@@ -474,7 +474,7 @@ void btod_contract2<N, M, K>::make_schedule() {
 
     btod_contract2<N, M, K>::start_timer("make_schedule");
 
-    bto_contract2_nzorb<N, M, K, double> nzorb(m_contr, m_bta, m_btb,
+    gen_bto_contract2_nzorb<N, M, K, btod_traits, btod_contract2<N, M, K> > nzorb(m_contr, m_bta, m_btb,
         m_symc.get_symc());
     nzorb.build();
     for(typename std::vector<size_t>::const_iterator i =
