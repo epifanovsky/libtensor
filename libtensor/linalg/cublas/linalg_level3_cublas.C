@@ -14,8 +14,9 @@ void linalg_level3_cublas::ij_ip_jp_x(
     double *c, size_t sic,
     double d) {
 
+	cublasHandle_t h;
     start_timer("dgemm");
-    dgemm('T', 'N', nj, ni, np, d, (double*)b, sjb, (double*)a, sia,
+    cublasDgemm(h, 'T', 'N', nj, ni, np, d, (double*)b, sjb, (double*)a, sia,
         1.0, c, sic);
     stop_timer("dgemm");
 }
@@ -28,8 +29,9 @@ void linalg_level3_cublas::ij_ip_pj_x(
     double *c, size_t sic,
     double d) {
 
+	cublasHandle_t h;
     start_timer("dgemm");
-    dgemm('N', 'N', nj, ni, np, d, (double*)b, spb, (double*)a, sia,
+    cublasDgemm(h, 'N', 'N', nj, ni, np, d, (double*)b, spb, (double*)a, sia,
         1.0, c, sic);
     stop_timer("dgemm");
 }
@@ -42,8 +44,9 @@ void linalg_level3_cublas::ij_pi_jp_x(
     double *c, size_t sic,
     double d) {
 
+	cublasHandle_t h;
     start_timer("dgemm");
-    dgemm('T', 'T', nj, ni, np, d, (double*)b, sjb, (double*)a, spa,
+    cublasDgemm(h, 'T', 'T', nj, ni, np, d, (double*)b, sjb, (double*)a, spa,
         1.0, c, sic);
     stop_timer("dgemm");
 }
@@ -56,8 +59,9 @@ void linalg_level3_cublas::ij_pi_pj_x(
     double *c, size_t sic,
     double d) {
 
+	cublasHandle_t h;
     start_timer("dgemm");
-    dgemm('N', 'T', nj, ni, np, d, (double*)b, spb, (double*)a, spa,
+    cublasDgemm(h, 'N', 'T', nj, ni, np, d, (double*)b, spb, (double*)a, spa,
         1.0, c, sic);
     stop_timer("dgemm");
 }

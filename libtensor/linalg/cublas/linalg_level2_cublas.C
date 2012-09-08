@@ -14,9 +14,10 @@ void linalg_level2_cublas::i_ip_p_x(
     double *c, size_t sic,
     double d) {
 
-    start_timer("dgemv");
-    dgemv('T', np, ni, d, (double*)a, sia, (double*)b, spb, 1.0, c, sic);
-    stop_timer("dgemv");
+	cublasHandle_t h;
+	start_timer("dgemv");
+	cublasDgemv(h, 'T', np, ni, d, (double*)a, sia, (double*)b, spb, 1.0, c, sic);
+	stop_timer("dgemv");
 }
 
 
@@ -27,9 +28,10 @@ void linalg_level2_cublas::i_pi_p_x(
     double *c, size_t sic,
     double d) {
 
-    start_timer("dgemv");
-    dgemv('N', ni, np, d, (double*)a, spa, (double*)b, spb, 1.0, c, sic);
-    stop_timer("dgemv");
+	cublasHandle_t h;
+	start_timer("dgemv");
+	cublasDgemv(h, 'N', ni, np, d, (double*)a, spa, (double*)b, spb, 1.0, c, sic);
+	stop_timer("dgemv");
 }
 
 
@@ -40,9 +42,10 @@ void linalg_level2_cublas::ij_i_j_x(
     double *c, size_t sic,
     double d) {
 
-    start_timer("dger");
-    dger(nj, ni, d, (double*)b, sjb, (double*)a, sia, c, sic);
-    stop_timer("dger");
+	cublasHandle_t h;
+	start_timer("dger");
+	cublasDger(h, nj, ni, d, (double*)b, sjb, (double*)a, sia, c, sic);
+	stop_timer("dger");
 }
 
 
@@ -51,16 +54,17 @@ void linalg_level2_cublas::ij_ji(
     const double *a, size_t sja,
     double *c, size_t sic) {
 
+	cublasHandle_t h;
     start_timer("dcopy");
     if(ni < nj) {
         double *c1 = c;
         for(size_t i = 0; i < ni; i++, c1 += sic) {
-            dcopy(nj, (double*)a + i, sja, c1, 1);
+        	cublasDcopy(h, nj, (double*)a + i, sja, c1, 1);
         }
     } else {
         const double *a1 = a;
         for(size_t j = 0; j < nj; j++, a1 += sja) {
-            dcopy(ni, (double*)a1, 1, c + j, sic);
+        	cublasDcopy(h, nj, (double*)a + i, sja, c1, 1);
         }
     }
     stop_timer("dcopy");
