@@ -4,7 +4,6 @@
 #include <set>
 #include <string>
 #include <vector>
-#include <libtensor/timings.h>
 #include "bad_symmetry.h"
 
 namespace libtensor {
@@ -29,7 +28,7 @@ namespace libtensor {
 
     \ingroup libtensor_symmetry
  **/
-class product_table_i : public timings<product_table_i> {
+class product_table_i {
 public:
     typedef size_t label_t; //!< Label type
     typedef std::set<label_t> label_set_t; //!< Set of unique labels
