@@ -288,6 +288,7 @@ void se_part<N, T>::permute(const permutation<N> &perm) {
 
     m_bis.permute(perm);
     m_bidims.permute(perm);
+    m_bipdims.permute(perm);
 
     bool affects_map = false;
     for (size_t i = 0; i < N; i++) {
