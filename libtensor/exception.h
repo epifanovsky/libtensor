@@ -2,6 +2,7 @@
 #define LIBTENSOR_EXCEPTION_H
 
 #include <exception>
+#include <libutil/exceptions/rethrowable_i.h>
 #include "defs.h"
 
 namespace libtensor {
@@ -27,7 +28,7 @@ namespace libtensor {
 
     \ingroup libtensor_core_exc
  **/
-class exception : public std::exception {
+class exception : public std::exception, public libutil::rethrowable_i {
 private:
     char m_ns[128]; //!< Namespace name
     char m_clazz[128]; //!< Class name
@@ -73,11 +74,11 @@ public:
 
     /** \brief Clones the exception
      **/
-    virtual exception *clone() const throw() = 0;
+    virtual libutil::rethrowable_i *clone() const throw() = 0;
 
     /** \brief Throws itself
      **/
-    virtual void rethrow() = 0;
+    virtual void rethrow() const = 0;
 
 };
 
@@ -92,11 +93,11 @@ public:
 
     virtual ~exception_base() throw() { }
 
-    virtual exception *clone() const throw() {
+    virtual libutil::rethrowable_i *clone() const throw() {
         return new T(dynamic_cast<const T&>(*this));
     }
 
-    virtual void rethrow() {
+    virtual void rethrow() const {
         throw T(dynamic_cast<const T&>(*this));
     }
 
