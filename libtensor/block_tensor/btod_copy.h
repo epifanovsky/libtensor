@@ -81,8 +81,16 @@ public:
     }
 
     virtual void perform(bto_stream_i<N, btod_traits> &out);
+
     virtual void perform(block_tensor_i<N, double> &btb);
-    virtual void perform(block_tensor_i<N, double> &btb, const double &c);
+
+    virtual void perform(
+        block_tensor_i<N, double> &btb,
+        const double &c);
+
+    virtual void compute_block(
+        dense_tensor_i<N, double> &blkb,
+        const index<N> &ib);
 
     virtual void compute_block(
         bool zero,

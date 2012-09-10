@@ -34,7 +34,9 @@ void btod_copy<N>::perform(block_tensor_i<N, double> &btb) {
 
 
 template<size_t N>
-void btod_copy<N>::perform(block_tensor_i<N, double> &btb, const double &c) {
+void btod_copy<N>::perform(
+    block_tensor_i<N, double> &btb,
+    const double &c) {
 
     block_tensor_ctrl<N, double> cb(btb);
     addition_schedule<N, btod_traits> asch(get_symmetry(),
@@ -47,8 +49,21 @@ void btod_copy<N>::perform(block_tensor_i<N, double> &btb, const double &c) {
 
 
 template<size_t N>
-void btod_copy<N>::compute_block(bool zero, dense_tensor_i<N, double> &blkb,
-    const index<N> &ib, const tensor_transf<N, double> &trb, const double &c) {
+void btod_copy<N>::compute_block(
+    dense_tensor_i<N, double> &blkb,
+    const index<N> &ib) {
+
+    m_gbto.compute_block(true, blkb, ib, tensor_transf<N, double>(), 1.0);
+}
+
+
+template<size_t N>
+void btod_copy<N>::compute_block(
+    bool zero,
+    dense_tensor_i<N, double> &blkb,
+    const index<N> &ib,
+    const tensor_transf<N, double> &trb,
+    const double &c) {
 
     m_gbto.compute_block(zero, blkb, ib, trb, c);
 }
