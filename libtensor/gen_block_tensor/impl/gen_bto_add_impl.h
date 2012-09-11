@@ -231,7 +231,7 @@ void gen_bto_add<N, Traits, Timed>::compute_block_untimed(
         ia.permute(trainv.get_perm());
 
         //  Canonical index in A
-        orbit<N, double> oa(ca.req_const_symmetry(), ia);
+        orbit<N, element_type> oa(ca.req_const_symmetry(), ia);
         const index<N> &cia = oa.get_cindex();
 
         if(!oa.is_allowed()) continue;
@@ -270,7 +270,7 @@ void gen_bto_add<N, Traits, Timed>::add_operand(
     if(first) {
 
         gen_block_tensor_rd_ctrl<N, bti_traits> ca(bta);
-        so_permute<N, double>(ca.req_const_symmetry(), tra.get_perm()).
+        so_permute<N, element_type>(ca.req_const_symmetry(), tra.get_perm()).
             perform(m_symb);
 
     } else {
