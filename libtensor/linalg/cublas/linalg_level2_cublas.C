@@ -14,10 +14,11 @@ void linalg_level2_cublas::i_ip_p_x(
     double *c, size_t sic,
     double d) {
 
-	cublasHandle_t h;
-	start_timer("dgemv");
-	cublasDgemv(h, 'T', np, ni, d, (double*)a, sia, (double*)b, spb, 1.0, c, sic);
-	stop_timer("dgemv");
+    cublasHandle_t h;
+    const double one = 1.0;
+    start_timer("dgemv");
+    cublasDgemv(h, CUBLAS_OP_T, np, ni, &d, a, sia, b, spb, &one, c, sic);
+    stop_timer("dgemv");
 }
 
 
@@ -28,10 +29,11 @@ void linalg_level2_cublas::i_pi_p_x(
     double *c, size_t sic,
     double d) {
 
-	cublasHandle_t h;
-	start_timer("dgemv");
-	cublasDgemv(h, 'N', ni, np, d, (double*)a, spa, (double*)b, spb, 1.0, c, sic);
-	stop_timer("dgemv");
+    cublasHandle_t h;
+    const double one = 1.0;
+    start_timer("dgemv");
+    cublasDgemv(h, CUBLAS_OP_N, ni, np, &d, a, spa, b, spb, &one, c, sic);
+    stop_timer("dgemv");
 }
 
 
@@ -42,32 +44,26 @@ void linalg_level2_cublas::ij_i_j_x(
     double *c, size_t sic,
     double d) {
 
-	cublasHandle_t h;
-	start_timer("dger");
-	cublasDger(h, nj, ni, d, (double*)b, sjb, (double*)a, sia, c, sic);
-	stop_timer("dger");
+    cublasHandle_t h;
+    start_timer("dger");
+    cublasDger(h, nj, ni, &d, b, sjb, a, sia, c, sic);
+    stop_timer("dger");
 }
 
 
-void linalg_level2_cublas::ij_ji(
+void linalg_level2_cublas::ij_ji_x(
     size_t ni, size_t nj,
     const double *a, size_t sja,
+    double b,
     double *c, size_t sic) {
 
-	cublasHandle_t h;
-    start_timer("dcopy");
-    if(ni < nj) {
-        double *c1 = c;
-        for(size_t i = 0; i < ni; i++, c1 += sic) {
-        	cublasDcopy(h, nj, (double*)a + i, sja, c1, 1);
-        }
-    } else {
-        const double *a1 = a;
-        for(size_t j = 0; j < nj; j++, a1 += sja) {
-        	cublasDcopy(h, nj, (double*)a + i, sja, c1, 1);
-        }
+    cublasHandle_t h;
+    start_timer("dcopy+dscal");
+    for(size_t i = 0; i < ni; i++) {
+        cublasDcopy(h, nj, a + i, sja, c + i * sic, 1);
+        cublasDscal(h, nj, &b, c + i * sic, 1);
     }
-    stop_timer("dcopy");
+    stop_timer("dcopy+dscal");
 }
 
 

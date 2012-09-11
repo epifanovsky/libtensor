@@ -1,4 +1,4 @@
-#include <cublas_v3.h>
+#include <cublas_v2.h>
 #include "linalg_level3_cublas.h"
 
 namespace libtensor {
@@ -14,10 +14,11 @@ void linalg_level3_cublas::ij_ip_jp_x(
     double *c, size_t sic,
     double d) {
 
-	cublasHandle_t h;
+    cublasHandle_t h;
+    const double one = 1.0;
     start_timer("dgemm");
-    cublasDgemm(h, 'T', 'N', nj, ni, np, d, (double*)b, sjb, (double*)a, sia,
-        1.0, c, sic);
+    cublasDgemm(h, CUBLAS_OP_T, CUBLAS_OP_N, nj, ni, np, &d, b, sjb, a, sia,
+        &one, c, sic);
     stop_timer("dgemm");
 }
 
@@ -29,10 +30,11 @@ void linalg_level3_cublas::ij_ip_pj_x(
     double *c, size_t sic,
     double d) {
 
-	cublasHandle_t h;
+    cublasHandle_t h;
+    const double one = 1.0;
     start_timer("dgemm");
-    cublasDgemm(h, 'N', 'N', nj, ni, np, d, (double*)b, spb, (double*)a, sia,
-        1.0, c, sic);
+    cublasDgemm(h, CUBLAS_OP_N, CUBLAS_OP_N, nj, ni, np, &d, b, spb, a, sia,
+        &one, c, sic);
     stop_timer("dgemm");
 }
 
@@ -44,10 +46,11 @@ void linalg_level3_cublas::ij_pi_jp_x(
     double *c, size_t sic,
     double d) {
 
-	cublasHandle_t h;
+    cublasHandle_t h;
+    const double one = 1.0;
     start_timer("dgemm");
-    cublasDgemm(h, 'T', 'T', nj, ni, np, d, (double*)b, sjb, (double*)a, spa,
-        1.0, c, sic);
+    cublasDgemm(h, CUBLAS_OP_T, CUBLAS_OP_T, nj, ni, np, &d, b, sjb, a, spa,
+        &one, c, sic);
     stop_timer("dgemm");
 }
 
@@ -59,10 +62,11 @@ void linalg_level3_cublas::ij_pi_pj_x(
     double *c, size_t sic,
     double d) {
 
-	cublasHandle_t h;
+    cublasHandle_t h;
+    const double one = 1.0;
     start_timer("dgemm");
-    cublasDgemm(h, 'N', 'T', nj, ni, np, d, (double*)b, spb, (double*)a, spa,
-        1.0, c, sic);
+    cublasDgemm(h, CUBLAS_OP_N, CUBLAS_OP_T, nj, ni, np, &d, b, spb, a, spa,
+        &one, c, sic);
     stop_timer("dgemm");
 }
 
