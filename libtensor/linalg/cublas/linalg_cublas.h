@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_LINALG_CUBLAS_H
 #define LIBTENSOR_LINALG_CUBLAS_H
 
+#include <cublas_v2.h>
 #include "../generic/linalg_base_lowlevel.h"
 #include "../generic/linalg_base_memory_generic.h"
 #include "linalg_level1_cublas.h"

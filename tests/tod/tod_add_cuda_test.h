@@ -3,7 +3,7 @@
 
 #include <libtest/unit_test.h>
 //#include <libvmm/std_allocator.h>
-#include <libvmm/cuda_allocator.cu>
+#include <libvmm/cuda_allocator.h>
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 

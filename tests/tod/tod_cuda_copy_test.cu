@@ -1,5 +1,5 @@
 #include <sstream>
-#include <libvmm/cuda_allocator.cu>
+#include <libvmm/cuda_allocator.h>
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>

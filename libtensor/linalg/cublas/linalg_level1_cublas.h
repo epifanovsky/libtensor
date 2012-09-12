@@ -15,19 +15,13 @@ public:
     static const char *k_clazz; //!< Class name
 
 public:
-    static void add_i_i_x_x(
-        size_t ni,
-        const double *a, size_t sia, double ka,
-        double b, double kb,
-        double *c, size_t sic,
-        double d);
-
     static void i_x(
         size_t ni,
         double a,
         double *c, size_t sic);
 
     static double x_p_p(
+        cublasHandle_t h,
         size_t np,
         const double *a, size_t spa,
         const double *b, size_t spb);

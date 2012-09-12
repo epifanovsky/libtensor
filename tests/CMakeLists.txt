@@ -219,6 +219,12 @@ set(SRC_LINALG
     linalg/linalg_ijklm_ipkm_jlp_x_test.C
 )
 
+set(SRC_LINALG_CUBLAS
+    linalg_cublas/libtensor_linalg_cublas_tests.C
+    linalg_cublas/libtensor_linalg_cublas_suite.C
+    linalg_cublas/linalg_cublas_x_p_p_test.C
+)
+
 set(SRC_IFACE
     iface/libtensor_iface_tests.C
     iface/libtensor_iface_suite.C
@@ -272,8 +278,13 @@ add_executable(libtensor_diag_tensor_tests ${SRC_DIAG_TENSOR})
 include(${LIBTEST_DIR}/cmake/SetupLibTest.txt)
 
 if(CUDA_FOUND)
-    set(TARGETS ${TARGETS} libtensor_cuda_tests)
+    set(TARGETS
+        ${TARGETS}
+        libtensor_linalg_cublas_tests
+        libtensor_cuda_tests)
+    add_executable(libtensor_linalg_cublas_tests ${SRC_LINALG_CUBLAS})
     cuda_add_executable(libtensor_cuda_tests ${SRC_CUDA})
+    cuda_add_cublas_to_target(libtensor_linalg_cublas_tests)
 endif(CUDA_FOUND)
 
 set_property(TARGET ${TARGETS} APPEND PROPERTY
