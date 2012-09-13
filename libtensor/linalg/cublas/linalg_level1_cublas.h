@@ -16,6 +16,7 @@ public:
 
 public:
     static void i_x(
+        cublasHandle_t h,
         size_t ni,
         double a,
         double *c, size_t sic);
@@ -27,6 +28,7 @@ public:
         const double *b, size_t spb);
 
     static void i_i_x(
+        cublasHandle_t h,
         size_t ni,
         const double *a, size_t sia,
         double b,

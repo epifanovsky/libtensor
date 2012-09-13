@@ -223,6 +223,7 @@ set(SRC_LINALG_CUBLAS
     linalg_cublas/libtensor_linalg_cublas_tests.C
     linalg_cublas/libtensor_linalg_cublas_suite.C
     linalg_cublas/linalg_cublas_x_p_p_test.C
+    linalg_cublas/linalg_cublas_i_i_x_test.C
 )
 
 set(SRC_IFACE

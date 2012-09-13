@@ -8,11 +8,11 @@ const char *linalg_level1_cublas::k_clazz = "cublas";
 
 
 void linalg_level1_cublas::i_x(
+    cublasHandle_t h,
     size_t ni,
     double a,
     double *c, size_t sic) {
 
-    cublasHandle_t h;
     start_timer("dscal");
     cublasStatus_t ec = cublasDscal(h, ni, &a, c, sic);
     stop_timer("dscal");
@@ -34,12 +34,12 @@ double linalg_level1_cublas::x_p_p(
 
 
 void linalg_level1_cublas::i_i_x(
+    cublasHandle_t h,
     size_t ni,
     const double *a, size_t sia,
     double b,
     double *c, size_t sic) {
 
-    cublasHandle_t h;
     start_timer("daxpy");
     cublasStatus_t ec = cublasDaxpy(h, ni, &b, a, sia, c, sic);
     stop_timer("daxpy");
