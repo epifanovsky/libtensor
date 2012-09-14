@@ -3,7 +3,8 @@
 
 #include <vector>
 #include <libutil/thread_pool/thread_pool.h>
-#include <libtensor/tod/contraction2.h>
+#include <libtensor/core/contraction2.h>
+#include <libtensor/core/noncopyable.h>
 #include <libtensor/block_tensor/block_tensor_i.h>
 #include <libtensor/block_tensor/btod_contract2.h>
 
@@ -32,7 +33,7 @@ namespace libtensor {
     \ingroup libtensor_block_tensor
  **/
 template<size_t N1, size_t N2, size_t N3, size_t K1, size_t K2>
-class btod_contract3 {
+class btod_contract3 : public noncopyable {
 public:
     static const char *k_clazz; //!< Class name
 
@@ -103,9 +104,6 @@ private:
         btod_contract2<N1, N2 + K2, K1> &contr,
         const std::vector<size_t> &blst,
         block_tensor_i<N1 + N2 + K2, double> &btab);
-
-private:
-    btod_contract3(const btod_contract3&);
 
 };
 
