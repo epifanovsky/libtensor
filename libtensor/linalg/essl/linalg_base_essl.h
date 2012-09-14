@@ -3,7 +3,6 @@
 
 #include "essl_h.h"
 #include "../generic/linalg_base_lowlevel.h"
-#include "../adaptive/linalg_base_highlevel.h"
 #include "../generic/linalg_base_memory_generic.h"
 #include "linalg_base_level1_essl.h"
 #include "linalg_base_level2_essl.h"
@@ -19,11 +18,6 @@ namespace libtensor {
  **/
 struct linalg_base_essl :
     public linalg_base_lowlevel<
-        linalg_base_memory_generic,
-        linalg_base_level1_essl,
-        linalg_base_level2_essl,
-        linalg_base_level3_essl>,
-    public linalg_base_highlevel<
         linalg_base_memory_generic,
         linalg_base_level1_essl,
         linalg_base_level2_essl,
