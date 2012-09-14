@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_GEN_BTO_COPY_H
 #define LIBTENSOR_GEN_BTO_COPY_H
 
+#include <vector>
 #include <libtensor/timings.h>
 #include <libtensor/core/noncopyable.h>
 #include <libtensor/core/tensor_transf.h>
@@ -85,7 +86,16 @@ public:
     /** \brief Writes the blocks of the result to an output stream
         \param out Output stream.
      **/
-    void perform(gen_block_stream_i<N, bti_traits> &out);
+    void perform(
+        gen_block_stream_i<N, bti_traits> &out);
+
+    /** \brief Writes a subset of blocks of the result to an output stream
+        \param blst List of absolute indexes of canonical blocks to be computed.
+        \param out Output stream.
+     **/
+    void perform(
+        const std::vector<size_t> &blst,
+        gen_block_stream_i<N, bti_traits> &out);
 
     /** \brief Computes one block of the result
      **/
