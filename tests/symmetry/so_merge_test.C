@@ -1,5 +1,8 @@
 #include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/symmetry/se_perm.h>
+#include <libtensor/symmetry/so_copy.h>
+#include <libtensor/symmetry/so_dirsum.h>
 #include <libtensor/symmetry/so_merge.h>
 #include "../compare_ref.h"
 #include "so_merge_test.h"
@@ -9,9 +12,22 @@ namespace libtensor {
 
 void so_merge_test::perform() throw(libtest::test_exception) {
 
-    test_1();
-    test_2();
-    test_3();
+    setup_pg_table("cs");
+
+    try {
+
+        test_1();
+        test_2();
+        test_3();
+        //test_4();
+        test_5();
+
+    } catch(...) {
+        clear_pg_table("cs");
+        throw;
+    }
+
+    clear_pg_table("cs");
 }
 
 
@@ -158,6 +174,75 @@ void so_merge_test::test_4() throw(libtest::test_exception) {
         fail_test(testname, __FILE__, __LINE__, e.what());
     }
 
+}
+
+/** \test Computes the symmetry of the sum of two tensors
+ **/
+void so_merge_test::test_5() throw(libtest::test_exception) {
+
+    static const char *testname = "so_merge_test::test_5()";
+
+    try {
+
+    point_group_table::label_t ap = 0, app = 1;
+
+    index<4> i4a, i4b;
+    i4b[0] = 9; i4b[1] = 9; i4b[2] = 9; i4b[3] = 9;
+    dimensions<4> dims4(index_range<4>(i4a, i4b));
+    block_index_space<4> bis4(dims4);
+
+    mask<4> m1111;
+    m1111[0] = true; m1111[1] = true; m1111[2] = true; m1111[3] = true;
+    bis4.split(m1111, 2);
+    bis4.split(m1111, 5);
+    bis4.split(m1111, 7);
+
+    index<8> i8a, i8b;
+    i8b[0] = 9; i8b[1] = 9; i8b[2] = 9; i8b[3] = 9;
+    i8b[4] = 9; i8b[5] = 9; i8b[6] = 9; i8b[7] = 9;
+    dimensions<8> dims8(index_range<8>(i8a, i8b));
+    block_index_space<8> bis8(dims8);
+
+    mask<8> m11111111;
+    m11111111[0] = true; m11111111[1] = true;
+    m11111111[2] = true; m11111111[3] = true;
+    m11111111[4] = true; m11111111[5] = true;
+    m11111111[6] = true; m11111111[7] = true;
+    bis8.split(m11111111, 2);
+    bis8.split(m11111111, 5);
+    bis8.split(m11111111, 7);
+
+    scalar_transf<double> trs(1.0), tras(-1.0);
+    se_perm<4, double> sel1(permutation<4>().permute(0, 1).permute(2, 3), trs);
+    se_perm<4, double> sel2(permutation<4>().permute(0, 2).permute(1, 3), trs);
+    se_perm<4, double> sel3(permutation<4>().permute(2, 3), tras);
+    se_label<4, double> sel4(bis4.get_block_index_dims(), "cs");
+    block_labeling<4> &bl4 = sel4.get_labeling();
+    bl4.assign(m1111, 0, ap);
+    bl4.assign(m1111, 1, app);
+    bl4.assign(m1111, 2, ap);
+    bl4.assign(m1111, 3, app);
+    sel4.set_rule(ap);
+
+    symmetry<4, double> sym1(bis4), sym2(bis4), sym3(bis4), sym3_ref(bis4);
+    sym1.insert(sel1);
+    sym1.insert(sel2);
+    sym1.insert(sel3);
+    sym1.insert(sel4);
+    so_copy<4, double>(sym1).perform(sym2);
+    so_copy<4, double>(sym1).perform(sym3_ref);
+
+    symmetry<8, double> symx(bis8);
+    so_dirsum<4, 4, double>(sym1, sym2, permutation<8>()).perform(symx);
+    sequence<8, size_t> seq(0);
+    for(size_t i = 0; i < 4; i++) seq[i] = seq[4 + i] = i;
+    so_merge<8, 4, double>(symx, m11111111, seq).perform(sym3);
+
+    compare_ref<4>::compare(testname, sym3, sym3_ref);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
 }
 
 } // namespace libtensor
