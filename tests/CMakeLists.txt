@@ -165,19 +165,19 @@ set(SRC_LINALG
     linalg/libtensor_linalg_tests.C
     linalg/libtensor_linalg_suite.C
     linalg/linalg_add_i_i_x_x_test.C
-    linalg/linalg_x_p_p_test.C
-    linalg/linalg_i_i_i_x_test.C
-    linalg/linalg_i_i_x_test.C
-    linalg/linalg_x_pq_qp_test.C
-    linalg/linalg_i_ip_p_x_test.C
-    linalg/linalg_i_pi_p_x_test.C
-    linalg/linalg_ij_i_j_x_test.C
-    linalg/linalg_ij_ji_test.C
-    linalg/linalg_i_ipq_qp_x_test.C
-    linalg/linalg_ij_ip_jp_x_test.C
-    linalg/linalg_ij_ip_pj_x_test.C
-    linalg/linalg_ij_pi_jp_x_test.C
-    linalg/linalg_ij_pi_pj_x_test.C
+    linalg/linalg_copy_ij_ji_test.C
+    linalg/linalg_mul2_x_p_p_test.C
+    linalg/linalg_mul2_i_i_i_x_test.C
+    linalg/linalg_mul2_i_i_x_test.C
+    linalg/linalg_mul2_x_pq_qp_test.C
+    linalg/linalg_mul2_i_ip_p_x_test.C
+    linalg/linalg_mul2_i_pi_p_x_test.C
+    linalg/linalg_mul2_ij_i_j_x_test.C
+    linalg/linalg_mul2_i_ipq_qp_x_test.C
+    linalg/linalg_mul2_ij_ip_jp_x_test.C
+    linalg/linalg_mul2_ij_ip_pj_x_test.C
+    linalg/linalg_mul2_ij_pi_jp_x_test.C
+    linalg/linalg_mul2_ij_pi_pj_x_test.C
 )
 
 set(SRC_IFACE
