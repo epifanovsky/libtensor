@@ -3,11 +3,11 @@
 
 #include <memory>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include <libtensor/tod/kernels/loop_list_runner.h>
 #include <libtensor/kernels/kern_ddiv1.h>
 #include <libtensor/kernels/kern_ddivadd1.h>
 #include <libtensor/kernels/kern_dmul1.h>
 #include <libtensor/kernels/kern_dmuladd1.h>
+#include <libtensor/kernels/loop_list_runner.h>
 #include <libtensor/tod/bad_dimensions.h>
 #include "../tod_mult1.h"
 

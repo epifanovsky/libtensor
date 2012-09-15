@@ -1,13 +1,14 @@
 #ifndef LIBTENSOR_LOOP_LIST_RUNNER_H
 #define LIBTENSOR_LOOP_LIST_RUNNER_H
 
-#include <libtensor/kernels/kernel_base.h>
+#include "kernel_base.h"
 
 namespace libtensor {
 
 
-/**
-    \ingroup libtensor_tod_kernel
+/** \brief Runs a series of nested loops
+
+    \ingroup libtensor_kernels
  **/
 template<size_t N, size_t M>
 class loop_list_runner {
@@ -31,7 +32,7 @@ private:
 
 
 template<size_t N, size_t M>
-inline void loop_list_runner<N, M>::run(const loop_registers<N, M> &r,
+void loop_list_runner<N, M>::run(const loop_registers<N, M> &r,
     kernel_base<N, M> &k) {
 
     run_loop(m_list.begin(), r, k);

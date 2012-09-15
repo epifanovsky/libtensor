@@ -3,9 +3,9 @@
 
 #include <memory>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include <libtensor/tod/kernels/loop_list_runner.h>
 #include <libtensor/kernels/kern_ddiv2.h>
 #include <libtensor/kernels/kern_dmul2.h>
+#include <libtensor/kernels/loop_list_runner.h>
 #include <libtensor/tod/bad_dimensions.h>
 #include "../tod_mult.h"
 

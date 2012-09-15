@@ -6,7 +6,7 @@
 #include <vector>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/kernels/kern_dadd1.h>
-#include <libtensor/tod/kernels/loop_list_runner.h>
+#include <libtensor/kernels/loop_list_runner.h>
 #include "../diag_tensor_ctrl.h"
 #include "../tod_conv_diag_tensor.h"
 

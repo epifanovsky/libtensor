@@ -8,12 +8,12 @@
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/tod/bad_dimensions.h>
-#include <libtensor/tod/kernels/loop_list_runner.h>
 #include <libtensor/kernels/kern_dadd1.h>
 #include <libtensor/kernels/kern_dcopy.h>
 #include <libtensor/kernels/kern_dmul2.h>
-#include <libtensor/tod/contraction2_list_builder.h>
 #include <libtensor/kernels/loop_list_node.h>
+#include <libtensor/kernels/loop_list_runner.h>
+#include <libtensor/tod/contraction2_list_builder.h>
 #include "../tod_contract2.h"
 
 

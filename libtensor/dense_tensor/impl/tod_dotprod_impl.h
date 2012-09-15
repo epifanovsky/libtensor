@@ -3,8 +3,8 @@
 
 #include <memory>
 #include <libtensor/linalg/linalg.h>
-#include <libtensor/tod/kernels/loop_list_runner.h>
 #include <libtensor/kernels/kern_dmul2.h>
+#include <libtensor/kernels/loop_list_runner.h>
 #include <libtensor/tod/bad_dimensions.h>
 #include "../dense_tensor_ctrl.h"
 #include "../tod_dotprod.h"
