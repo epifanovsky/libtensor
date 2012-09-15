@@ -4,7 +4,7 @@
 namespace libtensor {
 
 
-static const char *linalg_cblas_level1::k_clazz = "cblas";
+const char *linalg_cblas_level1::k_clazz = "cblas";
 
 
 void linalg_cblas_level1::add_i_i_x_x(

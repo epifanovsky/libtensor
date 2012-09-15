@@ -4,7 +4,7 @@
 namespace libtensor {
 
 
-static const char *linalg_cblas_level2::k_clazz = "cblas";
+const char *linalg_cblas_level2::k_clazz = "cblas";
 
 
 void linalg_cblas_level2::i_ip_p_x(
@@ -59,9 +59,6 @@ void linalg_cblas_level2::ij_ji(
         }
     }
 }
-
-
-};
 
 
 } // namespace libtensor
