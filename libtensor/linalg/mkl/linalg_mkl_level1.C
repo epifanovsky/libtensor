@@ -3,7 +3,7 @@
 #ifdef HAVE_MKL_VML
 #include <mkl_vml_functions.h>
 #endif // HAVE_MKL_VML
-#include "linalg_base_level1_mkl.h"
+#include "linalg_mkl_level1.h"
 
 namespace libtensor {
 

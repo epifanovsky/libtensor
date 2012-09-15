@@ -106,9 +106,9 @@ set(SRC_LINALG_ESSL
 )
 
 set(SRC_LINALG_MKL
-    linalg/mkl/linalg_base_level1_mkl.C
-    linalg/mkl/linalg_base_level2_mkl.C
-    linalg/mkl/linalg_base_level3_mkl.C
+    linalg/mkl/linalg_mkl_level1.C
+    linalg/mkl/linalg_mkl_level2.C
+    linalg/mkl/linalg_mkl_level3.C
     linalg/mkl/lapack_mkl.C
 )
 

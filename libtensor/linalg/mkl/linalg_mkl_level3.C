@@ -1,5 +1,5 @@
 #include <mkl.h>
-#include "linalg_base_level3_mkl.h"
+#include "linalg_mkl_level3.h"
 
 namespace libtensor {
 

@@ -3,7 +3,7 @@
 #include <mkl_trans.h>
 #include <cstring>
 #endif // HAVE_MKL_DOMATCOPY
-#include "linalg_base_level2_mkl.h"
+#include "linalg_mkl_level2.h"
 
 namespace libtensor {
 
