@@ -12,16 +12,18 @@ const char *kern_dmul2_ij_i_j<LA>::k_clazz = "kern_dmul2_ij_i_j";
 
 
 template<typename LA>
-void kern_dmul2_ij_i_j<LA>::run(const loop_registers<2, 1> &r) {
+void kern_dmul2_ij_i_j<LA>::run(
+    device_context_ref ctx,
+    const loop_registers<2, 1> &r) {
 
-    LA::mul2_ij_i_j_x(0, m_ni, m_nj, r.m_ptra[0], m_sia, r.m_ptra[1], m_sjb,
+    LA::mul2_ij_i_j_x(ctx, m_ni, m_nj, r.m_ptra[0], m_sia, r.m_ptra[1], m_sjb,
         r.m_ptrb[0], m_sic, m_d);
 }
 
 
 template<typename LA>
-kernel_base<2, 1> *kern_dmul2_ij_i_j<LA>::match(const kern_dmul2_i_i_x<LA> &z,
-    list_t &in, list_t &out) {
+kernel_base<LA, 2, 1> *kern_dmul2_ij_i_j<LA>::match(
+    const kern_dmul2_i_i_x<LA> &z, list_t &in, list_t &out) {
 
     if(in.empty()) return 0;
 
@@ -54,7 +56,7 @@ kernel_base<2, 1> *kern_dmul2_ij_i_j<LA>::match(const kern_dmul2_i_i_x<LA> &z,
     zz.m_sic = z.m_sic;
     in.splice(out.begin(), out, ij);
 
-    kernel_base<2, 1> *kern = 0;
+    kernel_base<LA, 2, 1> *kern = 0;
 
     return new kern_dmul2_ij_i_j(zz);
 }

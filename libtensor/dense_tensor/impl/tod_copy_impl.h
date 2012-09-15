@@ -123,12 +123,12 @@ void tod_copy<N>::perform(bool zero, double c,
 
         {
             double k = m_tr.get_scalar_tr().get_coeff() * c;
-            std::auto_ptr< kernel_base<1, 1> >kern(
+            std::auto_ptr< kernel_base<linalg, 1, 1> >kern(
                 zero ?
                     kern_dcopy<linalg>::match(k, loop_in, loop_out) :
                     kern_dadd1<linalg>::match(k, loop_in, loop_out));
             tod_copy<N>::start_timer(kern->get_name());
-            loop_list_runner<1, 1>(loop_in).run(r, *kern);
+            loop_list_runner<linalg, 1, 1>(loop_in).run(0, r, *kern);
             tod_copy<N>::stop_timer(kern->get_name());
         }
 

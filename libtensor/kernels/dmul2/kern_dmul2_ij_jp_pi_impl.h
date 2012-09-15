@@ -11,15 +11,17 @@ const char *kern_dmul2_ij_jp_pi<LA>::k_clazz = "kern_dmul2_ij_jp_pi";
 
 
 template<typename LA>
-void kern_dmul2_ij_jp_pi<LA>::run(const loop_registers<2, 1> &r) {
+void kern_dmul2_ij_jp_pi<LA>::run(
+    device_context_ref ctx,
+    const loop_registers<2, 1> &r) {
 
-    LA::mul2_ij_pi_jp_x(0, m_ni, m_nj, m_np, r.m_ptra[1], m_spb,
+    LA::mul2_ij_pi_jp_x(ctx, m_ni, m_nj, m_np, r.m_ptra[1], m_spb,
         r.m_ptra[0], m_sja, r.m_ptrb[0], m_sic, m_d);
 }
 
 
 template<typename LA>
-kernel_base<2, 1> *kern_dmul2_ij_jp_pi<LA>::match(
+kernel_base<LA, 2, 1> *kern_dmul2_ij_jp_pi<LA>::match(
     const kern_dmul2_i_p_pi<LA> &z, list_t &in, list_t &out) {
 
     if(in.empty()) return 0;
@@ -57,7 +59,7 @@ kernel_base<2, 1> *kern_dmul2_ij_jp_pi<LA>::match(
     zz.m_sic = z.m_sic;
     in.splice(out.begin(), out, ij);
 
-    kernel_base<2, 1> *kern = 0;
+    kernel_base<LA, 2, 1> *kern = 0;
 
     return new kern_dmul2_ij_jp_pi(zz);
 }

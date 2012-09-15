@@ -14,15 +14,17 @@ const char *kern_dmul2_x_p_p<LA>::k_clazz = "kern_dmul2_x_p_p";
 
 
 template<typename LA>
-void kern_dmul2_x_p_p<LA>::run(const loop_registers<2, 1> &r) {
+void kern_dmul2_x_p_p<LA>::run(
+    device_context_ref ctx,
+    const loop_registers<2, 1> &r) {
 
-    r.m_ptrb[0][0] += LA::mul2_x_p_p(0, m_np, r.m_ptra[0], m_spa,
+    r.m_ptrb[0][0] += LA::mul2_x_p_p(ctx, m_np, r.m_ptra[0], m_spa,
         r.m_ptra[1], m_spb) * m_d;
 }
 
 
 template<typename LA>
-kernel_base<2, 1> *kern_dmul2_x_p_p<LA>::match(const kern_dmul2<LA> &z,
+kernel_base<LA, 2, 1> *kern_dmul2_x_p_p<LA>::match(const kern_dmul2<LA> &z,
     list_t &in, list_t &out) {
 
     if(in.empty()) return 0;
@@ -52,7 +54,7 @@ kernel_base<2, 1> *kern_dmul2_x_p_p<LA>::match(const kern_dmul2<LA> &z,
     zz.m_spb = 1;
     in.splice(out.begin(), out, ip);
 
-    kernel_base<2, 1> *kern = 0;
+    kernel_base<LA, 2, 1> *kern = 0;
 
     if(kern = kern_dmul2_i_ip_p<LA>::match(zz, in, out)) return kern;
     if(kern = kern_dmul2_i_p_ip<LA>::match(zz, in, out)) return kern;

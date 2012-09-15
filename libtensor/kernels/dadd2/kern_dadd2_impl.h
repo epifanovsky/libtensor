@@ -13,7 +13,9 @@ const char *kern_dadd2<LA>::k_clazz = "kern_dadd2";
 
 
 template<typename LA>
-void kern_dadd2<LA>::run(const loop_registers<2, 1> &r) {
+void kern_dadd2<LA>::run(
+    device_context_ref ctx,
+    const loop_registers<2, 1> &r) {
 
     r.m_ptrb[0][0] += (r.m_ptra[0][0] * m_ka + r.m_ptra[1][0] * m_kb) * m_d;
 
@@ -21,10 +23,10 @@ void kern_dadd2<LA>::run(const loop_registers<2, 1> &r) {
 
 
 template<typename LA>
-kernel_base<2, 1> *kern_dadd2<LA>::match(double ka, double kb, double d,
+kernel_base<LA, 2, 1> *kern_dadd2<LA>::match(double ka, double kb, double d,
     list_t &in, list_t &out) {
 
-    kernel_base<2, 1> *kern = 0;
+    kernel_base<LA, 2, 1> *kern = 0;
 
     kern_dadd2 zz;
     zz.m_ka = ka;

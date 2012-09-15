@@ -182,12 +182,12 @@ void diag_tod_adjust_space<N>::constrained_copy(const dimensions<N> &dims,
 
         {
             diag_tod_adjust_space<N>::start_timer("copy");
-            std::auto_ptr< kernel_base<1, 1> > kern_add(
+            std::auto_ptr< kernel_base<linalg, 1, 1> > kern_add(
                 kern_dadd1<linalg>::match(1.0, lpadd1, lpadd2));
-            loop_list_runner<1, 1>(lpadd1).run(radd, *kern_add);
-            std::auto_ptr< kernel_base<1, 1> > kern_set(
+            loop_list_runner<linalg, 1, 1>(lpadd1).run(0, radd, *kern_add);
+            std::auto_ptr< kernel_base<linalg, 1, 1> > kern_set(
                 kern_dcopy<linalg>::match(1.0, lpset1, lpset2));
-            loop_list_runner<1, 1>(lpset1).run(rset, *kern_set);
+            loop_list_runner<linalg, 1, 1>(lpset1).run(0, rset, *kern_set);
             diag_tod_adjust_space<N>::stop_timer("copy");
         }
 

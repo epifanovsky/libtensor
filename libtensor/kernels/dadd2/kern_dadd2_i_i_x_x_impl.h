@@ -11,15 +11,17 @@ const char *kern_dadd2_i_i_x_x<LA>::k_clazz = "kern_dadd2_i_i_x_x";
 
 
 template<typename LA>
-void kern_dadd2_i_i_x_x<LA>::run(const loop_registers<2, 1> &r) {
+void kern_dadd2_i_i_x_x<LA>::run(
+    device_context_ref ctx,
+    const loop_registers<2, 1> &r) {
 
-    LA::add_i_i_x_x(0, m_ni, r.m_ptra[0], m_sia, m_ka, r.m_ptra[1][0], m_kb,
+    LA::add_i_i_x_x(ctx, m_ni, r.m_ptra[0], m_sia, m_ka, r.m_ptra[1][0], m_kb,
         r.m_ptrb[0], m_sic, m_d);
 }
 
 
 template<typename LA>
-kernel_base<2, 1> *kern_dadd2_i_i_x_x<LA>::match(const kern_dadd2<LA> &z,
+kernel_base<LA, 2, 1> *kern_dadd2_i_i_x_x<LA>::match(const kern_dadd2<LA> &z,
     list_t &in, list_t &out) {
 
     if(in.empty()) return 0;
@@ -51,7 +53,7 @@ kernel_base<2, 1> *kern_dadd2_i_i_x_x<LA>::match(const kern_dadd2<LA> &z,
     zz.m_sic = ii->stepb(0);
     in.splice(out.begin(), out, ii);
 
-    kernel_base<2, 1> *kern = 0;
+    kernel_base<LA, 2, 1> *kern = 0;
 
     return new kern_dadd2_i_i_x_x(zz);
 }

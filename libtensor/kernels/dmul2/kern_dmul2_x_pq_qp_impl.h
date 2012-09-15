@@ -11,16 +11,18 @@ const char *kern_dmul2_x_pq_qp<LA>::k_clazz = "kern_dmul2_x_pq_qp";
 
 
 template<typename LA>
-void kern_dmul2_x_pq_qp<LA>::run(const loop_registers<2, 1> &r) {
+void kern_dmul2_x_pq_qp<LA>::run(
+    device_context_ref ctx,
+    const loop_registers<2, 1> &r) {
 
-    r.m_ptrb[0][0] += LA::mul2_x_pq_qp(0, m_np, m_nq, r.m_ptra[0], m_spa,
+    r.m_ptrb[0][0] += LA::mul2_x_pq_qp(ctx, m_np, m_nq, r.m_ptra[0], m_spa,
         r.m_ptra[1], m_sqb) * m_d;
 }
 
 
 template<typename LA>
-kernel_base<2, 1> *kern_dmul2_x_pq_qp<LA>::match(const kern_dmul2_x_p_p<LA> &z,
-    list_t &in, list_t &out) {
+kernel_base<LA, 2, 1> *kern_dmul2_x_pq_qp<LA>::match(
+    const kern_dmul2_x_p_p<LA> &z, list_t &in, list_t &out) {
 
     if(in.empty()) return 0;
 
@@ -52,7 +54,7 @@ kernel_base<2, 1> *kern_dmul2_x_pq_qp<LA>::match(const kern_dmul2_x_p_p<LA> &z,
     zz.m_sqb = iq->stepa(1);
     in.splice(out.begin(), out, iq);
 
-    kernel_base<2, 1> *kern = 0;
+    kernel_base<LA, 2, 1> *kern = 0;
 
     return new kern_dmul2_x_pq_qp(zz);
 }

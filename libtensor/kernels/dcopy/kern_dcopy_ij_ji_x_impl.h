@@ -11,16 +11,18 @@ const char *kern_dcopy_ij_ji_x<LA>::k_clazz = "kern_dcopy_ij_ji_x";
 
 
 template<typename LA>
-void kern_dcopy_ij_ji_x<LA>::run(const loop_registers<1, 1> &r) {
+void kern_dcopy_ij_ji_x<LA>::run(
+    device_context_ref ctx,
+    const loop_registers<1, 1> &r) {
 
-    LA::copy_ij_ji_x(0, m_ni, m_nj, r.m_ptra[0], m_sja, m_d, r.m_ptrb[0],
+    LA::copy_ij_ji_x(ctx, m_ni, m_nj, r.m_ptra[0], m_sja, m_d, r.m_ptrb[0],
         m_sib);
 }
 
 
 template<typename LA>
-kernel_base<1, 1> *kern_dcopy_ij_ji_x<LA>::match(const kern_dcopy_i_i_x<LA> &z,
-    list_t &in, list_t &out) {
+kernel_base<LA, 1, 1> *kern_dcopy_ij_ji_x<LA>::match(
+    const kern_dcopy_i_i_x<LA> &z, list_t &in, list_t &out) {
 
     if(in.empty()) return 0;
     if(z.m_sib != 1) return 0;
@@ -53,7 +55,7 @@ kernel_base<1, 1> *kern_dcopy_ij_ji_x<LA>::match(const kern_dcopy_i_i_x<LA> &z,
     zz.m_sib = ii->stepb(0);
     in.splice(out.begin(), out, ii);
 
-    kernel_base<1, 1> *kern = 0;
+    kernel_base<LA, 1, 1> *kern = 0;
 
     return new kern_dcopy_ij_ji_x(zz);
 }
