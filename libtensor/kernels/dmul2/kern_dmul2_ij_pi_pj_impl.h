@@ -1,21 +1,26 @@
-#include <libtensor/linalg/linalg.h>
+#ifndef LIBTENSOR_KERN_DMUL2_IJ_PI_PJ_IMPL_H
+#define LIBTENSOR_KERN_DMUL2_IJ_PI_PJ_IMPL_H
+
 #include "kern_dmul2_ij_pi_pj.h"
 
 namespace libtensor {
 
 
-const char *kern_dmul2_ij_pi_pj::k_clazz = "kern_dmul2_ij_pi_pj";
+template<typename LA>
+const char *kern_dmul2_ij_pi_pj<LA>::k_clazz = "kern_dmul2_ij_pi_pj";
 
 
-void kern_dmul2_ij_pi_pj::run(const loop_registers<2, 1> &r) {
+template<typename LA>
+void kern_dmul2_ij_pi_pj<LA>::run(const loop_registers<2, 1> &r) {
 
-    linalg::mul2_ij_pi_pj_x(0, m_ni, m_nj, m_np, r.m_ptra[0], m_spa,
+    LA::mul2_ij_pi_pj_x(0, m_ni, m_nj, m_np, r.m_ptra[0], m_spa,
         r.m_ptra[1], m_spb, r.m_ptrb[0], m_sic, m_d);
 }
 
 
-kernel_base<2, 1> *kern_dmul2_ij_pi_pj::match(const kern_dmul2_i_p_pi &z,
-    list_t &in, list_t &out) {
+template<typename LA>
+kernel_base<2, 1> *kern_dmul2_ij_pi_pj<LA>::match(
+    const kern_dmul2_i_p_pi<LA> &z, list_t &in, list_t &out) {
 
     if(in.empty()) return 0;
     if(z.m_sic != 1) return 0;
@@ -60,8 +65,9 @@ kernel_base<2, 1> *kern_dmul2_ij_pi_pj::match(const kern_dmul2_i_p_pi &z,
 }
 
 
-kernel_base<2, 1> *kern_dmul2_ij_pi_pj::match(const kern_dmul2_i_pi_p &z,
-    list_t &in, list_t &out) {
+template<typename LA>
+kernel_base<2, 1> *kern_dmul2_ij_pi_pj<LA>::match(
+    const kern_dmul2_i_pi_p<LA> &z, list_t &in, list_t &out) {
 
     if(in.empty()) return 0;
 
@@ -101,3 +107,5 @@ kernel_base<2, 1> *kern_dmul2_ij_pi_pj::match(const kern_dmul2_i_pi_p &z,
 
 
 } // namespace libtensor
+
+#endif // LIBTENSOR_KERN_DMUL2_IJ_PI_PJ_IMPL_H

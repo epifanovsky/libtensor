@@ -1,20 +1,25 @@
-#include <libtensor/linalg/linalg.h>
+#ifndef LIBTENSOR_KERN_DMUL2_X_PQ_QP_IMPL_H
+#define LIBTENSOR_KERN_DMUL2_X_PQ_QP_IMPL_H
+
 #include "kern_dmul2_x_pq_qp.h"
 
 namespace libtensor {
 
 
-const char *kern_dmul2_x_pq_qp::k_clazz = "kern_dmul2_x_pq_qp";
+template<typename LA>
+const char *kern_dmul2_x_pq_qp<LA>::k_clazz = "kern_dmul2_x_pq_qp";
 
 
-void kern_dmul2_x_pq_qp::run(const loop_registers<2, 1> &r) {
+template<typename LA>
+void kern_dmul2_x_pq_qp<LA>::run(const loop_registers<2, 1> &r) {
 
-    r.m_ptrb[0][0] += linalg::mul2_x_pq_qp(0, m_np, m_nq, r.m_ptra[0], m_spa,
+    r.m_ptrb[0][0] += LA::mul2_x_pq_qp(0, m_np, m_nq, r.m_ptra[0], m_spa,
         r.m_ptra[1], m_sqb) * m_d;
 }
 
 
-kernel_base<2, 1> *kern_dmul2_x_pq_qp::match(const kern_dmul2_x_p_p &z,
+template<typename LA>
+kernel_base<2, 1> *kern_dmul2_x_pq_qp<LA>::match(const kern_dmul2_x_p_p<LA> &z,
     list_t &in, list_t &out) {
 
     if(in.empty()) return 0;
@@ -54,3 +59,5 @@ kernel_base<2, 1> *kern_dmul2_x_pq_qp::match(const kern_dmul2_x_p_p &z,
 
 
 } // namespace libtensor
+
+#endif // LIBTENSOR_KERN_DMUL2_X_PQ_QP_IMPL_H

@@ -1,21 +1,26 @@
-#include <libtensor/linalg/linalg.h>
+#ifndef LIBTENSOR_KERN_DMUL2_I_X_I_IMPL_H
+#define LIBTENSOR_KERN_DMUL2_I_X_I_IMPL_H
+
 #include "kern_dmul2_i_x_i.h"
 #include "kern_dmul2_i_p_pi.h"
 
 namespace libtensor {
 
 
-const char *kern_dmul2_i_x_i::k_clazz = "kern_dmul2_i_x_i";
+template<typename LA>
+const char *kern_dmul2_i_x_i<LA>::k_clazz = "kern_dmul2_i_x_i";
 
 
-void kern_dmul2_i_x_i::run(const loop_registers<2, 1> &r) {
+template<typename LA>
+void kern_dmul2_i_x_i<LA>::run(const loop_registers<2, 1> &r) {
 
-    linalg::mul2_i_i_x(0, m_ni, r.m_ptra[1], m_sib, r.m_ptra[0][0] * m_d,
+    LA::mul2_i_i_x(0, m_ni, r.m_ptra[1], m_sib, r.m_ptra[0][0] * m_d,
         r.m_ptrb[0], m_sic);
 }
 
 
-kernel_base<2, 1> *kern_dmul2_i_x_i::match(const kern_dmul2 &z,
+template<typename LA>
+kernel_base<2, 1> *kern_dmul2_i_x_i<LA>::match(const kern_dmul2<LA> &z,
     list_t &in, list_t &out) {
 
     if(in.empty()) return 0;
@@ -47,10 +52,12 @@ kernel_base<2, 1> *kern_dmul2_i_x_i::match(const kern_dmul2 &z,
 
     kernel_base<2, 1> *kern = 0;
 
-    if(kern = kern_dmul2_i_p_pi::match(zz, in, out)) return kern;
+    if(kern = kern_dmul2_i_p_pi<LA>::match(zz, in, out)) return kern;
 
     return new kern_dmul2_i_x_i(zz);
 }
 
 
 } // namespace libtensor
+
+#endif // LIBTENSOR_KERN_DMUL2_I_X_I_IMPL_H

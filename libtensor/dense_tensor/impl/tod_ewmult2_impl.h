@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
+#include <libtensor/linalg/linalg.h>
 #include <libtensor/kernels/kern_dmul2.h>
 #include <libtensor/kernels/loop_list_runner.h>
 #include <libtensor/tod/bad_dimensions.h>
@@ -134,7 +135,7 @@ void tod_ewmult2<N, M, K>::perform(bool zero, double d,
     r.m_ptrb_end[0] = pc + dimsc.get_size();
 
     std::auto_ptr< kernel_base<2, 1> > kern(
-        kern_dmul2::match(m_d * d, loop_in, loop_out));
+        kern_dmul2<linalg>::match(m_d * d, loop_in, loop_out));
     tod_ewmult2<N, M, K>::start_timer(kern->get_name());
     loop_list_runner<2, 1>(loop_in).run(r, *kern);
     tod_ewmult2<N, M, K>::stop_timer(kern->get_name());

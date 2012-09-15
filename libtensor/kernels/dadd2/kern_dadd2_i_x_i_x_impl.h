@@ -1,20 +1,25 @@
-#include <libtensor/linalg/linalg.h>
+#ifndef LIBTENSOR_KERN_DADD2_I_X_I_X_IMPL_H
+#define LIBTENSOR_KERN_DADD2_I_X_I_X_IMPL_H
+
 #include "kern_dadd2_i_x_i_x.h"
 
 namespace libtensor {
 
 
-const char *kern_dadd2_i_x_i_x::k_clazz = "kern_dadd2_i_x_i_x";
+template<typename LA>
+const char *kern_dadd2_i_x_i_x<LA>::k_clazz = "kern_dadd2_i_x_i_x";
 
 
-void kern_dadd2_i_x_i_x::run(const loop_registers<2, 1> &r) {
+template<typename LA>
+void kern_dadd2_i_x_i_x<LA>::run(const loop_registers<2, 1> &r) {
 
-    linalg::add_i_i_x_x(0, m_ni, r.m_ptra[1], m_sib, m_kb, r.m_ptra[0][0], m_ka,
+    LA::add_i_i_x_x(0, m_ni, r.m_ptra[1], m_sib, m_kb, r.m_ptra[0][0], m_ka,
         r.m_ptrb[0], m_sic, m_d);
 }
 
 
-kernel_base<2, 1> *kern_dadd2_i_x_i_x::match(const kern_dadd2 &z,
+template<typename LA>
+kernel_base<2, 1> *kern_dadd2_i_x_i_x<LA>::match(const kern_dadd2<LA> &z,
     list_t &in, list_t &out) {
 
     if(in.empty()) return 0;
@@ -53,3 +58,5 @@ kernel_base<2, 1> *kern_dadd2_i_x_i_x::match(const kern_dadd2 &z,
 
 
 } // namespace libtensor
+
+#endif // LIBTENSOR_KERN_DADD2_I_X_I_X_IMPL_H

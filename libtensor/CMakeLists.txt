@@ -56,40 +56,13 @@ set(SRC_LINALG_GENERIC
 
 set(SRC_KERNELS
     kernels/dadd1/kern_dadd1.C
-    kernels/dadd1/kern_dadd1_i_i_x.C
-    kernels/dadd1/kern_dadd1_ij_ij_x.C
-    kernels/dadd1/kern_dadd1_ij_ji_x.C
     kernels/dadd2/kern_dadd2.C
-    kernels/dadd2/kern_dadd2_i_i_x_x.C
-    kernels/dadd2/kern_dadd2_i_x_i_x.C
     kernels/dcopy/kern_dcopy.C
-    kernels/dcopy/kern_dcopy_i_i_x.C
-    kernels/dcopy/kern_dcopy_ij_ij_x.C
-    kernels/dcopy/kern_dcopy_ij_ji_x.C
     kernels/ddiv1/kern_ddiv1.C
     kernels/ddiv2/kern_ddiv2.C
     kernels/ddivadd1/kern_ddivadd1.C
     kernels/dmul1/kern_dmul1.C
     kernels/dmul2/kern_dmul2.C
-    kernels/dmul2/kern_dmul2_i_i_i.C
-    kernels/dmul2/kern_dmul2_i_i_x.C
-    kernels/dmul2/kern_dmul2_i_x_i.C
-    kernels/dmul2/kern_dmul2_x_p_p.C
-    kernels/dmul2/kern_dmul2_i_ip_p.C
-    kernels/dmul2/kern_dmul2_i_p_ip.C
-    kernels/dmul2/kern_dmul2_i_p_pi.C
-    kernels/dmul2/kern_dmul2_i_pi_p.C
-    kernels/dmul2/kern_dmul2_x_pq_qp.C
-    kernels/dmul2/kern_dmul2_ij_i_j.C
-    kernels/dmul2/kern_dmul2_ij_j_i.C
-    kernels/dmul2/kern_dmul2_ij_ip_jp.C
-    kernels/dmul2/kern_dmul2_ij_ip_pj.C
-    kernels/dmul2/kern_dmul2_ij_jp_ip.C
-    kernels/dmul2/kern_dmul2_ij_jp_pi.C
-    kernels/dmul2/kern_dmul2_ij_pi_jp.C
-    kernels/dmul2/kern_dmul2_ij_pi_pj.C
-    kernels/dmul2/kern_dmul2_ij_pj_ip.C
-    kernels/dmul2/kern_dmul2_ij_pj_pi.C
     kernels/dmuladd1/kern_dmuladd1.C
 )
 

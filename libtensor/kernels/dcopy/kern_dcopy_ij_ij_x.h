@@ -7,9 +7,11 @@ namespace libtensor {
 
 
 /** \brief Specialized kernel for \f$ b_{ij} = a_{ij} d \f$
+    \tparam LA Linear algebra.
 
     \ingroup libtensor_kernels
  **/
+template<typename LA>
 class kern_dcopy_ij_ij_x : public kernel_base<1, 1> {
 public:
     static const char *k_clazz; //!< Kernel name
@@ -28,7 +30,7 @@ public:
 
     virtual void run(const loop_registers<1, 1> &r);
 
-    static kernel_base<1, 1> *match(const kern_dcopy_i_i_x &z,
+    static kernel_base<1, 1> *match(const kern_dcopy_i_i_x<LA> &z,
         list_t &in, list_t &out);
 
 };

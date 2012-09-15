@@ -1,20 +1,25 @@
-#include <libtensor/linalg/linalg.h>
+#ifndef LIBTENSOR_KERN_DMUL2_IJ_J_I_IMPL_H
+#define LIBTENSOR_KERN_DMUL2_IJ_J_I_IMPL_H
+
 #include "kern_dmul2_ij_j_i.h"
 
 namespace libtensor {
 
 
-const char *kern_dmul2_ij_j_i::k_clazz = "kern_dmul2_ij_j_i";
+template<typename LA>
+const char *kern_dmul2_ij_j_i<LA>::k_clazz = "kern_dmul2_ij_j_i";
 
 
-void kern_dmul2_ij_j_i::run(const loop_registers<2, 1> &r) {
+template<typename LA>
+void kern_dmul2_ij_j_i<LA>::run(const loop_registers<2, 1> &r) {
 
-    linalg::mul2_ij_i_j_x(0, m_ni, m_nj, r.m_ptra[1], m_sib, r.m_ptra[0], m_sja,
+    LA::mul2_ij_i_j_x(0, m_ni, m_nj, r.m_ptra[1], m_sib, r.m_ptra[0], m_sja,
         r.m_ptrb[0], m_sic, m_d);
 }
 
 
-kernel_base<2, 1> *kern_dmul2_ij_j_i::match(const kern_dmul2_i_i_x &z,
+template<typename LA>
+kernel_base<2, 1> *kern_dmul2_ij_j_i<LA>::match(const kern_dmul2_i_i_x<LA> &z,
     list_t &in, list_t &out) {
 
     if(in.empty()) return 0;
@@ -58,3 +63,5 @@ kernel_base<2, 1> *kern_dmul2_ij_j_i::match(const kern_dmul2_i_i_x &z,
 
 
 } // namespace libtensor
+
+#endif // LIBTENSOR_KERN_DMUL2_IJ_J_I_IMPL_H

@@ -7,12 +7,12 @@ namespace libtensor {
 
 
 /** \brief Specialized kernel for \f$ c = c + a_{pq} b_{qp} \f$
+    \tparam LA Linear algebra.
 
     \ingroup libtensor_kernels
  **/
+template<typename LA>
 class kern_dmul2_x_pq_qp : public kernel_base<2, 1> {
-    friend class kern_mul_i_ipq_qp;
-
 public:
     static const char *k_clazz; //!< Kernel name
 
@@ -30,7 +30,7 @@ public:
 
     virtual void run(const loop_registers<2, 1> &r);
 
-    static kernel_base<2, 1> *match(const kern_dmul2_x_p_p &z,
+    static kernel_base<2, 1> *match(const kern_dmul2_x_p_p<LA> &z,
         list_t &in, list_t &out);
 
 };

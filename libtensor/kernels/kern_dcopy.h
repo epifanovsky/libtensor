@@ -6,7 +6,11 @@
 namespace libtensor {
 
 
+template<typename LA> class kern_dcopy_i_i_x;
+
+
 /** \brief Generic copy kernel (double)
+    \tparam LA Linear algebra.
 
     This kernel copies a multidimensional array with optional scaling:
     \f[
@@ -16,8 +20,9 @@ namespace libtensor {
 
     \ingroup libtensor_kernels
  **/
+template<typename LA>
 class kern_dcopy : public kernel_base<1, 1> {
-    friend class kern_dcopy_i_i_x;
+    friend class kern_dcopy_i_i_x<LA>;
 
 public:
     static const char *k_clazz; //!< Kernel name

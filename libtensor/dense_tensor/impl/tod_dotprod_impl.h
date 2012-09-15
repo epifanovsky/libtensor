@@ -103,7 +103,7 @@ double tod_dotprod<N>::calculate() {
         r.m_ptrb_end[0] = &result + 1;
 
         std::auto_ptr< kernel_base<2, 1> > kern(
-            kern_dmul2::match(1.0, loop_in, loop_out));
+            kern_dmul2<linalg>::match(1.0, loop_in, loop_out));
         tod_dotprod<N>::start_timer(kern->get_name());
         loop_list_runner<2, 1>(loop_in).run(r, *kern);
         tod_dotprod<N>::stop_timer(kern->get_name());

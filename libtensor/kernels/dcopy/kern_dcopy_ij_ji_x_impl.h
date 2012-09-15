@@ -1,20 +1,25 @@
-#include <libtensor/linalg/linalg.h>
-#include "kern_dadd1_ij_ji_x.h"
+#ifndef LIBTENSOR_KERN_DCOPY_IJ_JI_X_IMPL_H
+#define LIBTENSOR_KERN_DCOPY_IJ_JI_X_IMPL_H
+
+#include "kern_dcopy_ij_ji_x.h"
 
 namespace libtensor {
 
 
-const char *kern_dadd1_ij_ji_x::k_clazz = "kern_dadd1_ij_ji_x";
+template<typename LA>
+const char *kern_dcopy_ij_ji_x<LA>::k_clazz = "kern_dcopy_ij_ji_x";
 
 
-void kern_dadd1_ij_ji_x::run(const loop_registers<1, 1> &r) {
+template<typename LA>
+void kern_dcopy_ij_ji_x<LA>::run(const loop_registers<1, 1> &r) {
 
-    linalg::add1_ij_ji_x(0, m_ni, m_nj, r.m_ptra[0], m_sja, m_d,
-        r.m_ptrb[0], m_sib);
+    LA::copy_ij_ji_x(0, m_ni, m_nj, r.m_ptra[0], m_sja, m_d, r.m_ptrb[0],
+        m_sib);
 }
 
 
-kernel_base<1, 1> *kern_dadd1_ij_ji_x::match(const kern_dadd1_i_i_x &z,
+template<typename LA>
+kernel_base<1, 1> *kern_dcopy_ij_ji_x<LA>::match(const kern_dcopy_i_i_x<LA> &z,
     list_t &in, list_t &out) {
 
     if(in.empty()) return 0;
@@ -40,7 +45,7 @@ kernel_base<1, 1> *kern_dadd1_ij_ji_x::match(const kern_dadd1_i_i_x &z,
     }
     if(ii == in.end()) return 0;
 
-    kern_dadd1_ij_ji_x zz;
+    kern_dcopy_ij_ji_x zz;
     zz.m_d = z.m_d;
     zz.m_ni = ii->weight();
     zz.m_nj = z.m_ni;
@@ -50,8 +55,10 @@ kernel_base<1, 1> *kern_dadd1_ij_ji_x::match(const kern_dadd1_i_i_x &z,
 
     kernel_base<1, 1> *kern = 0;
 
-    return new kern_dadd1_ij_ji_x(zz);
+    return new kern_dcopy_ij_ji_x(zz);
 }
 
 
 } // namespace libtensor
+
+#endif // LIBTENSOR_KERN_DCOPY_IJ_JI_X_IMPL_H

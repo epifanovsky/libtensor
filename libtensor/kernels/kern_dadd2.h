@@ -6,7 +6,12 @@
 namespace libtensor {
 
 
+template<typename LA> class kern_dadd2_i_i_x_x;
+template<typename LA> class kern_dadd2_i_x_i_x;
+
+
 /** \brief Generic addition kernel (double)
+    \tparam LA Linear algebra.
 
     This kernel adds two multidimensional arrays with optional scaling:
     \f[
@@ -16,9 +21,10 @@ namespace libtensor {
 
     \ingroup libtensor_kernels
  **/
+template<typename LA>
 class kern_dadd2 : public kernel_base<2, 1> {
-    friend class kern_dadd2_i_i_x_x;
-    friend class kern_dadd2_i_x_i_x;
+    friend class kern_dadd2_i_i_x_x<LA>;
+    friend class kern_dadd2_i_x_i_x<LA>;
 
 public:
     static const char *k_clazz; //!< Kernel name

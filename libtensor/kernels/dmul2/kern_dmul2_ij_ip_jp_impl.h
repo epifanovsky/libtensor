@@ -1,21 +1,26 @@
-#include <libtensor/linalg/linalg.h>
+#ifndef LIBTENSOR_KERN_DMUL2_IJ_IP_JP_IMPL_H
+#define LIBTENSOR_KERN_DMUL2_IJ_IP_JP_IMPL_H
+
 #include "kern_dmul2_ij_ip_jp.h"
 
 namespace libtensor {
 
 
-const char *kern_dmul2_ij_ip_jp::k_clazz = "kern_dmul2_ij_ip_jp";
+template<typename LA>
+const char *kern_dmul2_ij_ip_jp<LA>::k_clazz = "kern_dmul2_ij_ip_jp";
 
 
-void kern_dmul2_ij_ip_jp::run(const loop_registers<2, 1> &r) {
+template<typename LA>
+void kern_dmul2_ij_ip_jp<LA>::run(const loop_registers<2, 1> &r) {
 
-    linalg::mul2_ij_ip_jp_x(0, m_ni, m_nj, m_np, r.m_ptra[0], m_sia,
+    LA::mul2_ij_ip_jp_x(0, m_ni, m_nj, m_np, r.m_ptra[0], m_sia,
         r.m_ptra[1], m_sjb, r.m_ptrb[0], m_sic, m_d);
 }
 
 
-kernel_base<2, 1> *kern_dmul2_ij_ip_jp::match(const kern_dmul2_i_p_ip &z,
-    list_t &in, list_t &out) {
+template<typename LA>
+kernel_base<2, 1> *kern_dmul2_ij_ip_jp<LA>::match(
+    const kern_dmul2_i_p_ip<LA> &z, list_t &in, list_t &out) {
 
     if(in.empty()) return 0;
     if(z.m_spa != 1 || z.m_sic != 1) return 0;
@@ -64,3 +69,5 @@ kernel_base<2, 1> *kern_dmul2_ij_ip_jp::match(const kern_dmul2_i_p_ip &z,
 
 
 } // namespace libtensor
+
+#endif // LIBTENSOR_KERN_DMUL2_IJ_IP_JP_IMPL_H

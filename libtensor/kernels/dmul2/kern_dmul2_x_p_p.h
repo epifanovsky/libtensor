@@ -6,14 +6,21 @@
 namespace libtensor {
 
 
+template<typename LA> class kern_dmul2_i_ip_p;
+template<typename LA> class kern_dmul2_i_p_ip;
+template<typename LA> class kern_dmul2_x_pq_qp;
+
+
 /** \brief Specialized kernel for \f$ c = c + a_p b_p \f$
+    \tparam LA Linear algebra.
 
 	\ingroup libtensor_kernels
  **/
+template<typename LA>
 class kern_dmul2_x_p_p : public kernel_base<2, 1> {
-	friend class kern_dmul2_i_ip_p;
-	friend class kern_dmul2_i_p_ip;
-	friend class kern_dmul2_x_pq_qp;
+	friend class kern_dmul2_i_ip_p<LA>;
+	friend class kern_dmul2_i_p_ip<LA>;
+	friend class kern_dmul2_x_pq_qp<LA>;
 
 public:
 	static const char *k_clazz; //!< Kernel name
@@ -32,7 +39,7 @@ public:
 
 	virtual void run(const loop_registers<2, 1> &r);
 
-	static kernel_base<2, 1> *match(const kern_dmul2 &z,
+	static kernel_base<2, 1> *match(const kern_dmul2<LA> &z,
 		list_t &in, list_t &out);
 
 };

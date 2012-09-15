@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
+#include <libtensor/linalg/linalg.h>
 #include <libtensor/kernels/kern_ddiv2.h>
 #include <libtensor/kernels/kern_dmul2.h>
 #include <libtensor/kernels/loop_list_runner.h>
@@ -146,7 +147,7 @@ void tod_mult<N>::perform(bool zero, double c,
     std::auto_ptr< kernel_base<2, 1> > kern(
         m_recip ?
             kern_ddiv2::match(m_c * c, loop_in, loop_out) :
-            kern_dmul2::match(m_c * c, loop_in, loop_out));
+            kern_dmul2<linalg>::match(m_c * c, loop_in, loop_out));
     tod_mult<N>::start_timer(kern->get_name());
     loop_list_runner<2, 1>(loop_in).run(r, *kern);
     tod_mult<N>::stop_timer(kern->get_name());

@@ -8,14 +8,12 @@ namespace libtensor {
 
 
 /** \brief Specialized kernel for \f$ c_{ij} = c_{ij} + a_{pi} b_{pj} d \f$
+    \tparam LA Linear algebra.
 
-     \ingroup libtensor_kernels
+    \ingroup libtensor_kernels
  **/
+template<typename LA>
 class kern_dmul2_ij_pi_pj : public kernel_base<2, 1> {
-    friend class kern_mul_ijk_pj_ipk;
-    friend class kern_mul_ijk_pj_pik;
-    friend class kern_mul_ijk_pji_pk;
-
 public:
     static const char *k_clazz; //!< Kernel name
 
@@ -33,9 +31,9 @@ public:
 
     virtual void run(const loop_registers<2, 1> &r);
 
-    static kernel_base<2, 1> *match(const kern_dmul2_i_p_pi &z,
+    static kernel_base<2, 1> *match(const kern_dmul2_i_p_pi<LA> &z,
         list_t &in, list_t &out);
-    static kernel_base<2, 1> *match(const kern_dmul2_i_pi_p &z,
+    static kernel_base<2, 1> *match(const kern_dmul2_i_pi_p<LA> &z,
         list_t &in, list_t &out);
 
 };
