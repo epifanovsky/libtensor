@@ -16,6 +16,7 @@ public:
 
 public:
     static void i_ip_p_x(
+    	cublasHandle_t h,
         size_t ni, size_t np,
         const double *a, size_t sia,
         const double *b, size_t spb,
@@ -23,6 +24,7 @@ public:
         double d);
 
     static void i_pi_p_x(
+    	cublasHandle_t h,
         size_t ni, size_t np,
         const double *a, size_t spa,
         const double *b, size_t spb,
@@ -30,6 +32,7 @@ public:
         double d);
 
     static void ij_i_j_x(
+    	cublasHandle_t h,
         size_t ni, size_t nj,
         const double *a, size_t sia,
         const double *b, size_t sjb,
@@ -37,6 +40,7 @@ public:
         double d);
 
     static void ij_ji_x(
+        cublasHandle_t h,
         size_t ni, size_t nj,
         const double *a, size_t sja,
         double b,

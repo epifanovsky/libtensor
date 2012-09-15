@@ -1,4 +1,5 @@
 #include <cublas_v2.h>
+#include <cuda_runtime.h>
 #include "linalg_level1_cublas.h"
 
 namespace libtensor {
@@ -15,6 +16,10 @@ void linalg_level1_cublas::i_x(
 
     start_timer("dscal");
     cublasStatus_t ec = cublasDscal(h, ni, &a, c, sic);
+    cudaStream_t stream;
+    ec = cublasGetStream(h, &stream);
+    cudaStreamSynchronize(stream);
+
     stop_timer("dscal");
 }
 
@@ -28,6 +33,9 @@ double linalg_level1_cublas::x_p_p(
     start_timer("ddot");
     double d = 0.0;
     cublasStatus_t ec = cublasDdot(h, np, a, spa, b, spb, &d);
+    cudaStream_t stream;
+    ec = cublasGetStream(h, &stream);
+    cudaStreamSynchronize(stream);
     stop_timer("ddot");
     return d;
 }
@@ -42,6 +50,9 @@ void linalg_level1_cublas::i_i_x(
 
     start_timer("daxpy");
     cublasStatus_t ec = cublasDaxpy(h, ni, &b, a, sia, c, sic);
+    cudaStream_t stream;
+    ec = cublasGetStream(h, &stream);
+    cudaStreamSynchronize(stream);
     stop_timer("daxpy");
 }
 
