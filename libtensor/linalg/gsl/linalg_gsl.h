@@ -1,7 +1,6 @@
 #ifndef LIBTENSOR_LINALG_GSL_H
 #define LIBTENSOR_LINALG_GSL_H
 
-#include <gsl/gsl_cblas.h>
 #include "../cblas/linalg_cblas_level1.h"
 #include "../cblas/linalg_cblas_level2.h"
 #include "../cblas/linalg_cblas_level3.h"
