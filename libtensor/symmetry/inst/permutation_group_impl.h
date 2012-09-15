@@ -481,9 +481,20 @@ void permutation_group<N, T>::make_setstabilizer(const branching &br,
         return;
     }
 
-    // loop over all stabilizers G_i starting from G_{N-1} since G_N = <()>
+    // Backtrack search for group elements that fulfill the set stabilizing
+    // criterion P. These elements form a subgroup G(P).
+
+    // The algorithm is as follows:
+    // Loop over all stabilizer subgroups starting from G_N = <()> to G_0
+    // In each step compute (G_i \ G_{i+1}) \cap G(P) and add to gs
+
+    // Loop over all stabilizers G_i starting from G_{N-1} since G_N = <()>
     for (size_t i = N - 1, ii = i - 1; i > 0; i--, ii--) {
         // ii is the proper index!!!
+
+//        std::cout << ii << std::endl;
+
+        // Compute all elements of G_i \cap G(P)
 
         // we need N - ii permutations to build permutation
         // g = u_{N - 1} ... u_{ii}
@@ -509,6 +520,7 @@ void permutation_group<N, T>::make_setstabilizer(const branching &br,
 
         // loop over all possible sequences u_{N-1} ... u_{ii}
         while (ui[0] != N) {
+
             gen_perm_t g;
 
             // build the permutation g = u_{N-1} ... u_{ii}
@@ -523,6 +535,11 @@ void permutation_group<N, T>::make_setstabilizer(const branching &br,
             for (size_t k = 0; k < N; k++) seq[k] = k;
             g.first.apply(seq);
 
+//            std::cout << "g: [";
+//            for (size_t k = 0; k < N; k++) std::cout << seq[k];
+//            std::cout << "]" << std::endl;
+
+            // Check if g stabilizes the set
             mask<N> done;
             size_t l = 0;
             for (; l < N; l++) {
@@ -541,14 +558,10 @@ void permutation_group<N, T>::make_setstabilizer(const branching &br,
                 if (m != N) break;
             }
 
-            // if g is in G(P), we add it to the list of permutations,
-            // skip this level ii and go to the next level
-            if (l == N)    {
-                gs.push_back(g);
-                break;
-            }
+            // If g is in G(P), we add it to the list of permutations
+            if (l == N) gs.push_back(g);
 
-            // else go to the next sequence u_{N-1} ... u_ii
+            // Now, go to the next sequence u_{N-1} ... u_ii
             for (size_t k = ui.size(), k1 = k - 1; k > 0; k--, k1--) {
                 ui[k1]++;
                 for (; ui[k1] < N; ui[k1]++) {
@@ -569,52 +582,6 @@ void permutation_group<N, T>::make_setstabilizer(const branching &br,
                 pu[k1].first.reset();
                 pu[k1].second.reset();
             }
-        }
-
-        // if we broke off in the middle since we found a proper g
-        // we still have to test all elements G_i \ G_{i+1}
-        while (ui[0] != N) {
-            ui[0]++;
-            for (; ui[0] < N; ui[0]++) {
-                size_t k = br.m_edges[ui[0]];
-                while (k != ii && k != N) k = br.m_edges[k];
-                if (k == N) continue;
-                pu[0].first.reset();
-                pu[0].first.permute(br.m_tau[ui[0]].first);
-                pu[0].first.permute(perm_t(br.m_tau[k].first, true));
-                transf_t tr_tkinv(br.m_tau[k].second); tr_tkinv.invert();
-                pu[0].second.reset();
-                pu[0].second.transform(br.m_tau[ui[0]].second);
-                pu[0].second.transform(tr_tkinv);
-                break;
-            }
-            if (ui[0] == N) break;
-
-            // here g = u_i
-            gen_perm_t &g = pu[0];
-            // check whether g is in G(P)
-            sequence<N, size_t> seq(0);
-            for (size_t k = 0; k < N; k++) seq[k] = k;
-            g.first.apply(seq);
-
-            mask<N> done;
-            size_t l = 0;
-            for (; l < N; l++) {
-                if (done[l]) continue;
-                if (msk[seq[l]] == 0) {
-                    if (msk[l] != 0) break;
-                    else continue;
-                }
-
-                size_t m = l + 1;
-                for (; m < N; m++) {
-                    if (msk[m] != msk[l]) continue;
-                    done[m] = true;
-                    if (msk[seq[m]] != msk[seq[l]]) break;
-                }
-                if (m != N) break;
-            }
-            if (l == N)    gs.push_back(g);
         }
     }
 }
