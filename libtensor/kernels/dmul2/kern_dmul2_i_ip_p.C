@@ -10,7 +10,7 @@ const char *kern_dmul2_i_ip_p::k_clazz = "kern_dmul2_i_ip_p";
 
 void kern_dmul2_i_ip_p::run(const loop_registers<2, 1> &r) {
 
-    linalg::i_ip_p_x(m_ni, m_np, r.m_ptra[0], m_sia, r.m_ptra[1], m_spb,
+    linalg::mul2_i_ip_p_x(m_ni, m_np, r.m_ptra[0], m_sia, r.m_ptra[1], m_spb,
         r.m_ptrb[0], m_sic, m_d);
 }
 

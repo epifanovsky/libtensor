@@ -40,8 +40,8 @@ void linalg_i_i_i_x_test::test_i_i_i_x(size_t ni, size_t sia, size_t sib,
     for(size_t i = 0; i < szb; i++) b[i] = drand48();
     for(size_t i = 0; i < szc; i++) c[i] = c_ref[i] = drand48();
 
-    linalg::i_i_i_x(ni, &a[0], sia, &b[0], sib, &c[0], sic, d);
-    linalg_generic::i_i_i_x(ni, &a[0], sia, &b[0], sib, &c_ref[0], sic, d);
+    linalg::mul2_i_i_i_x(ni, &a[0], sia, &b[0], sib, &c[0], sic, d);
+    linalg_generic::mul2_i_i_i_x(ni, &a[0], sia, &b[0], sib, &c_ref[0], sic, d);
 
     for(size_t i = 0; i < szc; i++) {
         if(!cmp(c[i] - c_ref[i], c_ref[i])) {

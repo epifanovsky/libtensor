@@ -3,6 +3,9 @@
 namespace libtensor {
 
 
+const char *linalg_generic_level2::k_clazz = "generic";
+
+
 void linalg_generic_level2::add1_ij_ij_x(
     size_t ni, size_t nj,
     const double *a, size_t sia,
@@ -29,7 +32,45 @@ void linalg_generic_level2::add1_ij_ji_x(
 }
 
 
-void linalg_generic_level2::i_ip_p_x(
+void linalg_generic_level2::copy_ij_ij_x(
+    size_t ni, size_t nj,
+    const double *a, size_t sia,
+    double b,
+    double *c, size_t sic) {
+
+    for(size_t i = 0; i < ni; i++)
+    for(size_t j = 0; j < nj; j++) {
+        c[i * sic + j] = a[i * sia + j] * b;
+    }
+}
+
+
+void linalg_generic_level2::copy_ij_ji(
+    size_t ni, size_t nj,
+    const double *a, size_t sja,
+    double *c, size_t sic) {
+
+    for(size_t j = 0; j < nj; j++)
+    for(size_t i = 0; i < ni; i++) {
+        c[i * sic + j] = a[j * sja + i];
+    }
+}
+
+
+void linalg_generic_level2::copy_ij_ji_x(
+    size_t ni, size_t nj,
+    const double *a, size_t sja,
+    double b,
+    double *c, size_t sic) {
+
+    for(size_t j = 0; j < nj; j++)
+    for(size_t i = 0; i < ni; i++) {
+        c[i * sic + j] = a[j * sja + i] * b;
+    }
+}
+
+
+void linalg_generic_level2::mul2_i_ip_p_x(
     size_t ni, size_t np,
     const double *a, size_t sia,
     const double *b, size_t spb,
@@ -46,7 +87,7 @@ void linalg_generic_level2::i_ip_p_x(
 }
 
 
-void linalg_generic_level2::i_pi_p_x(
+void linalg_generic_level2::mul2_i_pi_p_x(
     size_t ni, size_t np,
     const double *a, size_t spa,
     const double *b, size_t spb,
@@ -60,7 +101,7 @@ void linalg_generic_level2::i_pi_p_x(
 }
 
 
-void linalg_generic_level2::ij_i_j_x(
+void linalg_generic_level2::mul2_ij_i_j_x(
     size_t ni, size_t nj,
     const double *a, size_t sia,
     const double *b, size_t sjb,
@@ -74,45 +115,7 @@ void linalg_generic_level2::ij_i_j_x(
 }
 
 
-void linalg_generic_level2::ij_ji(
-    size_t ni, size_t nj,
-    const double *a, size_t sja,
-    double *c, size_t sic) {
-
-    for(size_t j = 0; j < nj; j++)
-    for(size_t i = 0; i < ni; i++) {
-        c[i * sic + j] = a[j * sja + i];
-    }
-}
-
-
-void linalg_generic_level2::ij_ij_x(
-    size_t ni, size_t nj,
-    const double *a, size_t sia,
-    double b,
-    double *c, size_t sic) {
-
-    for(size_t i = 0; i < ni; i++)
-    for(size_t j = 0; j < nj; j++) {
-        c[i * sic + j] = a[i * sia + j] * b;
-    }
-}
-
-
-void linalg_generic_level2::ij_ji_x(
-    size_t ni, size_t nj,
-    const double *a, size_t sja,
-    double b,
-    double *c, size_t sic) {
-
-    for(size_t j = 0; j < nj; j++)
-    for(size_t i = 0; i < ni; i++) {
-        c[i * sic + j] = a[j * sja + i] * b;
-    }
-}
-
-
-double linalg_generic_level2::x_pq_qp(
+double linalg_generic_level2::mul2_x_pq_qp(
     size_t np, size_t nq,
     const double *a, size_t spa,
     const double *b, size_t sqb) {

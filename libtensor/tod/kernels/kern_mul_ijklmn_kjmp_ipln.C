@@ -13,7 +13,7 @@ void kern_mul_ijklmn_kjmp_ipln::run(const loop_registers<2, 1> &r) {
     for(size_t j = 0; j < m_nj; j++)
     for(size_t k = 0; k < m_nk; k++)
     for(size_t l = 0; l < m_nl; l++) {
-        linalg::ij_ip_pj_x(m_nm, m_nn, m_np,
+        linalg::mul2_ij_ip_pj_x(m_nm, m_nn, m_np,
             r.m_ptra[0] + k * m_ska + j * m_sja, m_sma,
             r.m_ptra[1] + i * m_sib + l * m_slb, m_spb,
             r.m_ptrb[0] + i * m_sic + j * m_sjc + k * m_skc +

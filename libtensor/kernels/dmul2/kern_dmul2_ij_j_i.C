@@ -9,7 +9,7 @@ const char *kern_dmul2_ij_j_i::k_clazz = "kern_dmul2_ij_j_i";
 
 void kern_dmul2_ij_j_i::run(const loop_registers<2, 1> &r) {
 
-    linalg::ij_i_j_x(m_ni, m_nj, r.m_ptra[1], m_sib, r.m_ptra[0], m_sja,
+    linalg::mul2_ij_i_j_x(m_ni, m_nj, r.m_ptra[1], m_sib, r.m_ptra[0], m_sja,
         r.m_ptrb[0], m_sic, m_d);
 }
 

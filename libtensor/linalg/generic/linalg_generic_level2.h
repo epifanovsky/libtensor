@@ -1,5 +1,5 @@
-#ifndef LIBTENSOR_LINALG_BASE_LEVEL2_GENERIC_H
-#define LIBTENSOR_LINALG_BASE_LEVEL2_GENERIC_H
+#ifndef LIBTENSOR_LINALG_GENERIC_LEVEL2_H
+#define LIBTENSOR_LINALG_GENERIC_LEVEL2_H
 
 #include <cstdlib> // for size_t
 
@@ -10,9 +10,11 @@ namespace libtensor {
 
     \ingroup libtensor_linalg
  **/
-struct linalg_generic_level2 {
+class linalg_generic_level2 {
+public:
+    static const char *k_clazz; //!< Class name
 
-
+public:
     /** \brief \f$ c_{ij} = c_{ij} + a_{ij} b \f$
         \param ni Number of elements i.
         \param nj Number of elements j.
@@ -27,7 +29,6 @@ struct linalg_generic_level2 {
         const double *a, size_t sia,
         double b,
         double *c, size_t sic);
-
 
     /** \brief \f$ c_{ij} = c_{ij} + a_{ji} b \f$
         \param ni Number of elements i.
@@ -44,6 +45,48 @@ struct linalg_generic_level2 {
         double b,
         double *c, size_t sic);
 
+    /** \brief \f$ c_{ij} = a_{ij} b \f$
+        \param ni Number of elements i.
+        \param nj Number of elements j.
+        \param a Pointer to a.
+        \param sia Step of i in a.
+        \param b Scalar b.
+        \param c Pointer to c.
+        \param sic Step of i in c.
+     **/
+    static void copy_ij_ij_x(
+        size_t ni, size_t nj,
+        const double *a, size_t sia,
+        double b,
+        double *c, size_t sic);
+
+    /** \brief \f$ c_{ij} = a_{ji} \f$
+        \param ni Number of elements i.
+        \param nj Number of elements j.
+        \param a Pointer to a.
+        \param sja Step of j in a.
+        \param c Pointer to c.
+        \param sic Step of i in c.
+     **/
+    static void copy_ij_ji(
+        size_t ni, size_t nj,
+        const double *a, size_t sja,
+        double *c, size_t sic);
+
+    /** \brief \f$ c_{ij} = a_{ji} b \f$
+        \param ni Number of elements i.
+        \param nj Number of elements j.
+        \param a Pointer to a.
+        \param sja Step of j in a.
+        \param b Scalar b.
+        \param c Pointer to c.
+        \param sic Step of i in c.
+     **/
+    static void copy_ij_ji_x(
+        size_t ni, size_t nj,
+        const double *a, size_t sja,
+        double b,
+        double *c, size_t sic);
 
     /** \brief \f$ c_i = c_i + \sum_p a_{ip} b_p d \f$
         \param ni Number of elements i.
@@ -56,13 +99,12 @@ struct linalg_generic_level2 {
         \param sic Step of i in c (sic >= 1).
         \param d Scalar d.
      **/
-    static void i_ip_p_x(
+    static void mul2_i_ip_p_x(
         size_t ni, size_t np,
         const double *a, size_t sia,
         const double *b, size_t spb,
         double *c, size_t sic,
         double d);
-
 
     /** \brief \f$ c_i = c_i + \sum_p a_{pi} b_p d \f$
         \param ni Number of elements i.
@@ -75,13 +117,12 @@ struct linalg_generic_level2 {
         \param sic Step of i in c (sic >= 1).
         \param d Scalar d.
      **/
-    static void i_pi_p_x(
+    static void mul2_i_pi_p_x(
         size_t ni, size_t np,
         const double *a, size_t spa,
         const double *b, size_t spb,
         double *c, size_t sic,
         double d);
-
 
     /** \brief \f$ c_{ij} = c_{ij} + a_i b_j d \f$
         \param ni Number of elements i.
@@ -94,59 +135,12 @@ struct linalg_generic_level2 {
         \param sic Step of i in c (sic >= nj).
         \param d Scalar d.
      **/
-    static void ij_i_j_x(
+    static void mul2_ij_i_j_x(
         size_t ni, size_t nj,
         const double *a, size_t sia,
         const double *b, size_t sjb,
         double *c, size_t sic,
         double d);
-
-
-    /** \brief \f$ c_{ij} = a_{ji} \f$
-        \param ni Number of elements i.
-        \param nj Number of elements j.
-        \param a Pointer to a.
-        \param sja Step of j in a.
-        \param c Pointer to c.
-        \param sic Step of i in c.
-     **/
-    static void ij_ji(
-        size_t ni, size_t nj,
-        const double *a, size_t sja,
-        double *c, size_t sic);
-
-
-    /** \brief \f$ c_{ij} = a_{ij} b \f$
-        \param ni Number of elements i.
-        \param nj Number of elements j.
-        \param a Pointer to a.
-        \param sia Step of i in a.
-        \param b Scalar b.
-        \param c Pointer to c.
-        \param sic Step of i in c.
-     **/
-    static void ij_ij_x(
-        size_t ni, size_t nj,
-        const double *a, size_t sia,
-        double b,
-        double *c, size_t sic);
-
-
-    /** \brief \f$ c_{ij} = a_{ji} b \f$
-        \param ni Number of elements i.
-        \param nj Number of elements j.
-        \param a Pointer to a.
-        \param sja Step of j in a.
-        \param b Scalar b.
-        \param c Pointer to c.
-        \param sic Step of i in c.
-     **/
-    static void ij_ji_x(
-        size_t ni, size_t nj,
-        const double *a, size_t sja,
-        double b,
-        double *c, size_t sic);
-
 
     /** \brief \f$ c = \sum_{pq} a_{pq} b_{qp} \f$
         \param np Number of elements p.
@@ -157,7 +151,7 @@ struct linalg_generic_level2 {
         \param sqb Step of q in b (sqb >= np).
         \return c.
      **/
-    static double x_pq_qp(
+    static double mul2_x_pq_qp(
         size_t np, size_t nq,
         const double *a, size_t spa,
         const double *b, size_t sqb);
@@ -167,4 +161,4 @@ struct linalg_generic_level2 {
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_LINALG_BASE_LEVEL2_GENERIC_H
+#endif // LIBTENSOR_LINALG_GENERIC_LEVEL2_H

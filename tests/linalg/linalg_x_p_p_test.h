@@ -6,7 +6,7 @@
 namespace libtensor {
 
 
-/** \brief Tests the libtensor::linalg class (x_p_p)
+/** \brief Tests the libtensor::linalg class (mul2_x_p_p)
 
     \ingroup libtensor_tests_linalg
  **/

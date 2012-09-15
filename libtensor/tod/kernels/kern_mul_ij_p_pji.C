@@ -11,7 +11,7 @@ const char *kern_mul_ij_p_pji::k_clazz = "kern_mul_ij_p_pji";
 void kern_mul_ij_p_pji::run(const loop_registers<2, 1> &r) {
 
     for(size_t j = 0; j < m_nj; j++) {
-        linalg::i_pi_p_x(m_ni, m_np, r.m_ptra[1] + j * m_sjb, m_spb,
+        linalg::mul2_i_pi_p_x(m_ni, m_np, r.m_ptra[1] + j * m_sjb, m_spb,
             r.m_ptra[0], m_spa, r.m_ptrb[0] + j, m_sic, m_d);
     }
 }

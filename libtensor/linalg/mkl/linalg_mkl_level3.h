@@ -19,28 +19,28 @@ public:
     static const char *k_clazz; //!< Class name
 
 public:
-    static void ij_ip_jp_x(
+    static void mul2_ij_ip_jp_x(
         size_t ni, size_t nj, size_t np,
         const double *a, size_t sia,
         const double *b, size_t sjb,
         double *c, size_t sic,
         double d);
 
-    static void ij_ip_pj_x(
+    static void mul2_ij_ip_pj_x(
         size_t ni, size_t nj, size_t np,
         const double *a, size_t sia,
         const double *b, size_t spb,
         double *c, size_t sic,
         double d);
 
-    static void ij_pi_jp_x(
+    static void mul2_ij_pi_jp_x(
         size_t ni, size_t nj, size_t np,
         const double *a, size_t spa,
         const double *b, size_t sjb,
         double *c, size_t sic,
         double d);
 
-    static void ij_pi_pj_x(
+    static void mul2_ij_pi_pj_x(
         size_t ni, size_t nj, size_t np,
         const double *a, size_t spa,
         const double *b, size_t spb,

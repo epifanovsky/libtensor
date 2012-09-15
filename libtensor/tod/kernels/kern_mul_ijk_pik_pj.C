@@ -10,7 +10,7 @@ const char *kern_mul_ijk_pik_pj::k_clazz = "kern_mul_ijk_pik_pj";
 void kern_mul_ijk_pik_pj::run(const loop_registers<2, 1> &r) {
 
     for(size_t i = 0; i < m_ni; i++) {
-        linalg::ij_pi_pj_x(m_nj, m_nk, m_np,
+        linalg::mul2_ij_pi_pj_x(m_nj, m_nk, m_np,
             r.m_ptra[1], m_spb,
             r.m_ptra[0] + i * m_sia, m_spa,
             r.m_ptrb[0] + i * m_sic, m_sjc, m_d);

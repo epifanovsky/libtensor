@@ -6,7 +6,7 @@
 namespace libtensor {
 
 
-/** \brief Tests the libtensor::linalg class (ij_ji)
+/** \brief Tests the libtensor::linalg class (copy_ij_ji)
 
     \ingroup libtensor_tests_linalg
  **/

@@ -26,38 +26,38 @@ public:
         double *c, size_t sic,
         double d);
 
-    static void i_i(
+    static void copy_i_i(
         size_t ni,
         const double *a, size_t sia,
         double *c, size_t sic);
 
-    static void i_x(
+    static void mul1_i_x(
         size_t ni,
         double a,
         double *c, size_t sic);
 
-    static double x_p_p(
+    static double mul2_x_p_p(
         size_t np,
         const double *a, size_t spa,
         const double *b, size_t spb);
 
-    static void i_i_x(
+    static void mul2_i_i_x(
         size_t ni,
         const double *a, size_t sia,
         double b,
         double *c, size_t sic);
 
 private:
-    static void mul_i_i_x_p11(size_t ni,
+    static void mul2_i_i_x_p11(size_t ni,
         const double *a, double b, double *c);
 
-    static void mul_i_i_x_pxx(size_t ni,
+    static void mul2_i_i_x_pxx(size_t ni,
         const double *a, size_t sia, double b, double *c, size_t sic);
 
-    static void mul_i_i_x_m11(size_t ni,
+    static void mul2_i_i_x_m11(size_t ni,
         const double *a, double b, double *c);
 
-    static void mul_i_i_x_mxx(size_t ni,
+    static void mul2_i_i_x_mxx(size_t ni,
         const double *a, size_t sia, double b, double *c, size_t sic);
 
 };

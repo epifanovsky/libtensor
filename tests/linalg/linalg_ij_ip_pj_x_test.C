@@ -45,8 +45,8 @@ void linalg_ij_ip_pj_x_test::test_ij_ip_pj_x(size_t ni, size_t nj, size_t np,
     for(size_t i = 0; i < szc; i++) c[i] = c_ref[i] = drand48();
 
     d = 0.0;
-    linalg::ij_ip_pj_x(ni, nj, np, a, sia, b, spb, c, sic, d);
-    linalg_generic::ij_ip_pj_x(ni, nj, np, a, sia, b, spb, c_ref, sic,
+    linalg::mul2_ij_ip_pj_x(ni, nj, np, a, sia, b, spb, c, sic, d);
+    linalg_generic::mul2_ij_ip_pj_x(ni, nj, np, a, sia, b, spb, c_ref, sic,
         d);
 
     for(size_t i = 0; i < szc; i++) {
@@ -57,8 +57,8 @@ void linalg_ij_ip_pj_x_test::test_ij_ip_pj_x(size_t ni, size_t nj, size_t np,
     }
 
     d = 1.0;
-    linalg::ij_ip_pj_x(ni, nj, np, a, sia, b, spb, c, sic, d);
-    linalg_generic::ij_ip_pj_x(ni, nj, np, a, sia, b, spb, c_ref, sic,
+    linalg::mul2_ij_ip_pj_x(ni, nj, np, a, sia, b, spb, c, sic, d);
+    linalg_generic::mul2_ij_ip_pj_x(ni, nj, np, a, sia, b, spb, c_ref, sic,
         d);
 
     for(size_t i = 0; i < szc; i++) {
@@ -69,8 +69,8 @@ void linalg_ij_ip_pj_x_test::test_ij_ip_pj_x(size_t ni, size_t nj, size_t np,
     }
 
     d = -1.0;
-    linalg::ij_ip_pj_x(ni, nj, np, a, sia, b, spb, c, sic, d);
-    linalg_generic::ij_ip_pj_x(ni, nj, np, a, sia, b, spb, c_ref, sic,
+    linalg::mul2_ij_ip_pj_x(ni, nj, np, a, sia, b, spb, c, sic, d);
+    linalg_generic::mul2_ij_ip_pj_x(ni, nj, np, a, sia, b, spb, c_ref, sic,
         d);
 
     for(size_t i = 0; i < szc; i++) {
@@ -81,8 +81,8 @@ void linalg_ij_ip_pj_x_test::test_ij_ip_pj_x(size_t ni, size_t nj, size_t np,
     }
 
     d = drand48();
-    linalg::ij_ip_pj_x(ni, nj, np, a, sia, b, spb, c, sic, d);
-    linalg_generic::ij_ip_pj_x(ni, nj, np, a, sia, b, spb, c_ref, sic,
+    linalg::mul2_ij_ip_pj_x(ni, nj, np, a, sia, b, spb, c, sic, d);
+    linalg_generic::mul2_ij_ip_pj_x(ni, nj, np, a, sia, b, spb, c_ref, sic,
         d);
 
     for(size_t i = 0; i < szc; i++) {
@@ -93,8 +93,8 @@ void linalg_ij_ip_pj_x_test::test_ij_ip_pj_x(size_t ni, size_t nj, size_t np,
     }
 
     d = -drand48();
-    linalg::ij_ip_pj_x(ni, nj, np, a, sia, b, spb, c, sic, d);
-    linalg_generic::ij_ip_pj_x(ni, nj, np, a, sia, b, spb, c_ref, sic,
+    linalg::mul2_ij_ip_pj_x(ni, nj, np, a, sia, b, spb, c, sic, d);
+    linalg_generic::mul2_ij_ip_pj_x(ni, nj, np, a, sia, b, spb, c_ref, sic,
         d);
 
     for(size_t i = 0; i < szc; i++) {

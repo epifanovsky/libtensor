@@ -38,8 +38,8 @@ void linalg_x_p_p_test::test_x_p_p(size_t np, size_t spa, size_t spb)
     for(size_t i = 0; i < sza; i++) a[i] = drand48();
     for(size_t i = 0; i < szb; i++) b[i] = drand48();
 
-    double c = linalg::x_p_p(np, a, spa, b, spb);
-    double c_ref = linalg_generic::x_p_p(np, a, spa, b, spb);
+    double c = linalg::mul2_x_p_p(np, a, spa, b, spb);
+    double c_ref = linalg_generic::mul2_x_p_p(np, a, spa, b, spb);
 
     if(!cmp(c - c_ref, c_ref)) {
         fail_test(tnss.c_str(), __FILE__, __LINE__,

@@ -40,8 +40,8 @@ void linalg_x_pq_qp_test::test_x_pq_qp(size_t np, size_t nq, size_t spa, size_t 
     for(size_t i = 0; i < sza; i++) a[i] = drand48();
     for(size_t i = 0; i < szb; i++) b[i] = drand48();
 
-    double c = linalg::x_pq_qp(np, nq, a, spa, b, sqb);
-    double c_ref = linalg_generic::x_pq_qp(np, nq, a, spa, b, sqb);
+    double c = linalg::mul2_x_pq_qp(np, nq, a, spa, b, sqb);
+    double c_ref = linalg_generic::mul2_x_pq_qp(np, nq, a, spa, b, sqb);
 
     if(!cmp(c - c_ref, c_ref)) {
         fail_test(tnss.c_str(), __FILE__, __LINE__,

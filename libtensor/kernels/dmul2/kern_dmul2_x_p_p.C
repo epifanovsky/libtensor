@@ -12,7 +12,7 @@ const char *kern_dmul2_x_p_p::k_clazz = "kern_dmul2_x_p_p";
 
 void kern_dmul2_x_p_p::run(const loop_registers<2, 1> &r) {
 
-    r.m_ptrb[0][0] += linalg::x_p_p(m_np, r.m_ptra[0], m_spa, r.m_ptra[1],
+    r.m_ptrb[0][0] += linalg::mul2_x_p_p(m_np, r.m_ptra[0], m_spa, r.m_ptra[1],
         m_spb) * m_d;
 }
 
@@ -27,7 +27,7 @@ kernel_base<2, 1> *kern_dmul2_x_p_p::match(const kern_dmul2 &z,
     //    w   a   b  c
     //    np  k1  1  0  -->  c_# = a_p# b_p
     //    ------------       sz(p) = np, sz(#) = k1
-    //                       [x_p_p]
+    //                       [mul2_x_p_p]
 
     iterator_t ip = in.end();
     size_t k1_min = 0;

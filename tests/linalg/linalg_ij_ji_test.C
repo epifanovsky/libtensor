@@ -42,8 +42,8 @@ void linalg_ij_ji_test::test_ij_ji(size_t ni, size_t nj, size_t sja,
     for(size_t i = 0; i < szc; i++) c[i] = c_ref[i] = drand48();
 
     d = 0.0;
-    linalg::ij_ji(ni, nj, a, sja, c, sic);
-    linalg_generic::ij_ji(ni, nj, a, sja, c_ref, sic);
+    linalg::copy_ij_ji(ni, nj, a, sja, c, sic);
+    linalg_generic::copy_ij_ji(ni, nj, a, sja, c_ref, sic);
 
     for(size_t i = 0; i < szc; i++) {
         if(!cmp(c[i] - c_ref[i], c_ref[i])) {

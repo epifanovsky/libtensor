@@ -45,8 +45,8 @@ void linalg_i_pi_p_x_test::test_i_pi_p_x(size_t ni, size_t np, size_t sic,
     for(size_t i = 0; i < szc; i++) c[i] = c_ref[i] = drand48();
 
     d = 0.0;
-    linalg::i_pi_p_x(ni, np, a, spa, b, spb, c, sic, d);
-    linalg_generic::i_pi_p_x(ni, np, a, spa, b, spb, c_ref, sic, d);
+    linalg::mul2_i_pi_p_x(ni, np, a, spa, b, spb, c, sic, d);
+    linalg_generic::mul2_i_pi_p_x(ni, np, a, spa, b, spb, c_ref, sic, d);
 
     for(size_t i = 0; i < szc; i++) {
         if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -56,8 +56,8 @@ void linalg_i_pi_p_x_test::test_i_pi_p_x(size_t ni, size_t np, size_t sic,
     }
 
     d = 1.0;
-    linalg::i_pi_p_x(ni, np, a, spa, b, spb, c, sic, d);
-    linalg_generic::i_pi_p_x(ni, np, a, spa, b, spb, c_ref, sic, d);
+    linalg::mul2_i_pi_p_x(ni, np, a, spa, b, spb, c, sic, d);
+    linalg_generic::mul2_i_pi_p_x(ni, np, a, spa, b, spb, c_ref, sic, d);
 
     for(size_t i = 0; i < szc; i++) {
         if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -67,8 +67,8 @@ void linalg_i_pi_p_x_test::test_i_pi_p_x(size_t ni, size_t np, size_t sic,
     }
 
     d = -1.0;
-    linalg::i_pi_p_x(ni, np, a, spa, b, spb, c, sic, d);
-    linalg_generic::i_pi_p_x(ni, np, a, spa, b, spb, c_ref, sic, d);
+    linalg::mul2_i_pi_p_x(ni, np, a, spa, b, spb, c, sic, d);
+    linalg_generic::mul2_i_pi_p_x(ni, np, a, spa, b, spb, c_ref, sic, d);
 
     for(size_t i = 0; i < szc; i++) {
         if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -78,8 +78,8 @@ void linalg_i_pi_p_x_test::test_i_pi_p_x(size_t ni, size_t np, size_t sic,
     }
 
     d = drand48();
-    linalg::i_pi_p_x(ni, np, a, spa, b, spb, c, sic, d);
-    linalg_generic::i_pi_p_x(ni, np, a, spa, b, spb, c_ref, sic, d);
+    linalg::mul2_i_pi_p_x(ni, np, a, spa, b, spb, c, sic, d);
+    linalg_generic::mul2_i_pi_p_x(ni, np, a, spa, b, spb, c_ref, sic, d);
 
     for(size_t i = 0; i < szc; i++) {
         if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -89,8 +89,8 @@ void linalg_i_pi_p_x_test::test_i_pi_p_x(size_t ni, size_t np, size_t sic,
     }
 
     d = -drand48();
-    linalg::i_pi_p_x(ni, np, a, spa, b, spb, c, sic, d);
-    linalg_generic::i_pi_p_x(ni, np, a, spa, b, spb, c_ref, sic, d);
+    linalg::mul2_i_pi_p_x(ni, np, a, spa, b, spb, c, sic, d);
+    linalg_generic::mul2_i_pi_p_x(ni, np, a, spa, b, spb, c_ref, sic, d);
 
     for(size_t i = 0; i < szc; i++) {
         if(!cmp(c[i] - c_ref[i], c_ref[i])) {

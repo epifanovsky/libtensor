@@ -11,7 +11,7 @@ const char *kern_dadd1_i_i_x::k_clazz = "kern_dadd1_i_i_x";
 
 void kern_dadd1_i_i_x::run(const loop_registers<1, 1> &r) {
 
-    linalg::i_i_x(m_ni, r.m_ptra[0], m_sia, m_d, r.m_ptrb[0], 1);
+    linalg::mul2_i_i_x(m_ni, r.m_ptra[0], m_sia, m_d, r.m_ptrb[0], 1);
 }
 
 
@@ -24,7 +24,7 @@ kernel_base<1, 1> *kern_dadd1_i_i_x::match(const kern_dadd1 &z,
     //    ----------
     //    w   a   b
     //    ni  sia 1   -->  b_i = a_i# d
-    //    ----------       [i_i_x]
+    //    ----------       [mul2_i_i_x]
 
     iterator_t ii = in.end();
     size_t sia_min = 0;

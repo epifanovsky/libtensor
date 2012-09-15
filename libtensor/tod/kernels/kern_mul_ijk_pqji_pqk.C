@@ -16,7 +16,7 @@ void kern_mul_ijk_pqji_pqk::run(const loop_registers<2, 1> &r) {
         const double *pa1 = pa;
         double *pc1 = r.m_ptrb[0];
         for(size_t j = 0; j < m_nj; j++) {
-            linalg::ij_pi_pj_x(m_ni, m_nk, m_nq, pa1, m_sqa,
+            linalg::mul2_ij_pi_pj_x(m_ni, m_nk, m_nq, pa1, m_sqa,
                 pb, m_sqb, pc1, m_sic, m_d);
             pa1 += m_sja;
             pc1 += m_sjc;

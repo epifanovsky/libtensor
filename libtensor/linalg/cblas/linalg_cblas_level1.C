@@ -24,7 +24,7 @@ void linalg_cblas_level1::add_i_i_x_x(
 }
 
 
-void linalg_cblas_level1::i_i(
+void linalg_cblas_level1::copy_i_i(
     size_t ni,
     const double *a, size_t sia,
     double *c, size_t sic) {
@@ -33,7 +33,7 @@ void linalg_cblas_level1::i_i(
 }
 
 
-void linalg_cblas_level1::i_x(
+void linalg_cblas_level1::mul1_i_x(
     size_t ni,
     double a,
     double *c, size_t sic) {
@@ -42,7 +42,7 @@ void linalg_cblas_level1::i_x(
 }
 
 
-double linalg_cblas_level1::x_p_p(
+double linalg_cblas_level1::mul2_x_p_p(
     size_t np,
     const double *a, size_t spa,
     const double *b, size_t spb) {
@@ -51,7 +51,7 @@ double linalg_cblas_level1::x_p_p(
 }
 
 
-void linalg_cblas_level1::i_i_x(
+void linalg_cblas_level1::mul2_i_i_x(
     size_t ni,
     const double *a, size_t sia,
     double b,

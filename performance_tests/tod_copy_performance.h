@@ -86,8 +86,8 @@ void tod_copy_ref<R,X>::do_calculate()
 	for ( size_t i=0; i<total_size; i++ ) ptrb[i]=drand48();
 
 	timings<tod_copy_ref<R,X> >::start_timer();
-	linalg::i_i(total_size, ptrb, 1, ptra, 1);
-	linalg::i_x(total_size, 2.0, ptra,1);
+	linalg::copy_i_i(total_size, ptrb, 1, ptra, 1);
+	linalg::mul1_i_x(total_size, 2.0, ptra,1);
 	timings<tod_copy_ref<R,X> >::stop_timer();
 
 	delete [] ptra;

@@ -28,7 +28,7 @@ void linalg_qchem_level1::add_i_i_x_x(
 }
 
 
-void linalg_qchem_level1::i_i(
+void linalg_qchem_level1::copy_i_i(
     size_t ni,
     const double *a, size_t sia,
     double *c, size_t sic) {
@@ -45,7 +45,7 @@ void linalg_qchem_level1::i_i(
 }
 
 
-void linalg_qchem_level1::i_x(
+void linalg_qchem_level1::mul1_i_x(
     size_t ni,
     double a,
     double *c, size_t sic) {
@@ -56,7 +56,7 @@ void linalg_qchem_level1::i_x(
 }
 
 
-double linalg_qchem_level1::x_p_p(
+double linalg_qchem_level1::mul2_x_p_p(
     size_t np,
     const double *a, size_t spa,
     const double *b, size_t spb) {
@@ -68,7 +68,7 @@ double linalg_qchem_level1::x_p_p(
 }
 
 
-void linalg_qchem_level1::i_i_x(
+void linalg_qchem_level1::mul2_i_i_x(
     size_t ni,
     const double *a, size_t sia,
     double b,
@@ -78,24 +78,24 @@ void linalg_qchem_level1::i_i_x(
         start_timer("nonblas");
         if(sia == 1) {
             if(sic == 1) {
-                mul_i_i_x_p11(ni, a, b, c);
+                mul2_i_i_x_p11(ni, a, b, c);
             } else {
-                mul_i_i_x_pxx(ni, a, sia, b, c, sic);
+                mul2_i_i_x_pxx(ni, a, sia, b, c, sic);
             }
         } else {
-            mul_i_i_x_pxx(ni, a, sia, b, c, sic);
+            mul2_i_i_x_pxx(ni, a, sia, b, c, sic);
         }
         stop_timer("nonblas");
     } else if(b == -1.0) {
         start_timer("nonblas");
         if(sia == 1) {
             if(sic == 1) {
-                mul_i_i_x_m11(ni, a, b, c);
+                mul2_i_i_x_m11(ni, a, b, c);
             } else {
-                mul_i_i_x_mxx(ni, a, sia, b, c, sic);
+                mul2_i_i_x_mxx(ni, a, sia, b, c, sic);
             }
         } else {
-            mul_i_i_x_mxx(ni, a, sia, b, c, sic);
+            mul2_i_i_x_mxx(ni, a, sia, b, c, sic);
         }
         stop_timer("nonblas");
     } else {
@@ -106,7 +106,7 @@ void linalg_qchem_level1::i_i_x(
 }
 
 
-void linalg_qchem_level1::mul_i_i_x_p11(size_t ni,
+void linalg_qchem_level1::mul2_i_i_x_p11(size_t ni,
     const double *a, double b, double *c) {
 
     #pragma ivdep
@@ -116,7 +116,7 @@ void linalg_qchem_level1::mul_i_i_x_p11(size_t ni,
 }
 
 
-void linalg_qchem_level1::mul_i_i_x_pxx(size_t ni,
+void linalg_qchem_level1::mul2_i_i_x_pxx(size_t ni,
     const double *a, size_t sia, double b, double *c, size_t sic) {
 
     for(size_t i = 0; i < ni; i++) {
@@ -125,7 +125,7 @@ void linalg_qchem_level1::mul_i_i_x_pxx(size_t ni,
 }
 
 
-void linalg_qchem_level1::mul_i_i_x_m11(size_t ni,
+void linalg_qchem_level1::mul2_i_i_x_m11(size_t ni,
     const double *a, double b, double *c) {
 
     #pragma ivdep
@@ -135,7 +135,7 @@ void linalg_qchem_level1::mul_i_i_x_m11(size_t ni,
 }
 
 
-void linalg_qchem_level1::mul_i_i_x_mxx(size_t ni,
+void linalg_qchem_level1::mul2_i_i_x_mxx(size_t ni,
     const double *a, size_t sia, double b, double *c, size_t sic) {
 
     for(size_t i = 0; i < ni; i++) {

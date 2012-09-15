@@ -9,7 +9,7 @@ const char *kern_dcopy_ij_ij_x::k_clazz = "kern_dcopy_ij_ij_x";
 
 void kern_dcopy_ij_ij_x::run(const loop_registers<1, 1> &r) {
 
-    linalg::ij_ij_x(m_ni, m_nj, r.m_ptra[0], m_sia, m_d, r.m_ptrb[0], m_sib);
+    linalg::copy_ij_ij_x(m_ni, m_nj, r.m_ptra[0], m_sia, m_d, r.m_ptrb[0], m_sib);
 }
 
 
@@ -26,7 +26,7 @@ kernel_base<1, 1> *kern_dcopy_ij_ij_x::match(const kern_dcopy_i_i_x &z,
     //    w   a   b
     //    nj  1   1
     //    ni  sia sib  -->  b_i#j = a_i%j d
-    //    ----------        [ij_ij_x]
+    //    ----------        [copy_ij_ij_x]
 
     iterator_t ii = in.end();
     size_t sia_min = 0;

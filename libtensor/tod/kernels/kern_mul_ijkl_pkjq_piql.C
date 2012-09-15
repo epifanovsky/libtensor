@@ -31,7 +31,7 @@ void kern_mul_ijkl_pkjq_piql::run(const loop_registers<2, 1> &r) {
             double *pc2 = pc1;
 
             for(size_t k = 0; k < m_nk; k++) {
-                linalg::ij_ip_pj_x(m_nj, m_nl, m_nq, pa2, m_sja,
+                linalg::mul2_ij_ip_pj_x(m_nj, m_nl, m_nq, pa2, m_sja,
                     pb2, m_sqb, pc2, m_sjc, m_d);
                 pa2 += m_ska;
                 pc2 += m_skc;

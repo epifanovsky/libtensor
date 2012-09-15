@@ -9,7 +9,7 @@ const char *kern_dmul2_ij_pj_pi::k_clazz = "kern_dmul2_ij_pj_pi";
 
 void kern_dmul2_ij_pj_pi::run(const loop_registers<2, 1> &r) {
 
-    linalg::ij_pi_pj_x(m_ni, m_nj, m_np, r.m_ptra[1], m_spb, r.m_ptra[0],
+    linalg::mul2_ij_pi_pj_x(m_ni, m_nj, m_np, r.m_ptra[1], m_spb, r.m_ptra[0],
         m_spa, r.m_ptrb[0], m_sic, m_d);
 }
 

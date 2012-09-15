@@ -1,5 +1,5 @@
-#ifndef LIBTENSOR_LINALG_BASE_LEVEL1_GENERIC_H
-#define LIBTENSOR_LINALG_BASE_LEVEL1_GENERIC_H
+#ifndef LIBTENSOR_LINALG_GENERIC_LEVEL1_H
+#define LIBTENSOR_LINALG_GENERIC_LEVEL1_H
 
 #include <cstdlib> // for size_t
 
@@ -10,8 +10,11 @@ namespace libtensor {
 
     \ingroup libtensor_linalg
  **/
-struct linalg_generic_level1 {
+class linalg_generic_level1 {
+public:
+    static const char *k_clazz; //!< Class name
 
+public:
     /** \brief \f$ c_i = c_i + (a_i + b) d \f$
         \param ni Number of elements i.
         \param a Pointer to a.
@@ -35,7 +38,7 @@ struct linalg_generic_level1 {
         \param c Pointer to c.
         \param sic Step of i in c.
      **/
-    static void i_i(
+    static void copy_i_i(
         size_t ni,
         const double *a, size_t sia,
         double *c, size_t sic);
@@ -46,7 +49,7 @@ struct linalg_generic_level1 {
         \param c Pointer to c.
         \param sic Step of i in c.
      **/
-    static void i_x(
+    static void mul1_i_x(
         size_t ni,
         double a,
         double *c, size_t sic);
@@ -58,7 +61,7 @@ struct linalg_generic_level1 {
         \param b Pointer to b.
         \param spb Step of p in b.
      **/
-    static double x_p_p(
+    static double mul2_x_p_p(
         size_t np,
         const double *a, size_t spa,
         const double *b, size_t spb);
@@ -71,7 +74,7 @@ struct linalg_generic_level1 {
         \param c Pointer to c.
         \param sic Step of i in c.
      **/
-    static void i_i_x(
+    static void mul2_i_i_x(
         size_t ni,
         const double *a, size_t sia,
         double b,
@@ -87,7 +90,7 @@ struct linalg_generic_level1 {
         \param sic Step of i in c.
         \param d Scalar d
      **/
-    static void i_i_i_x(
+    static void mul2_i_i_i_x(
         size_t ni,
         const double *a, size_t sia,
         const double *b, size_t sib,
@@ -99,4 +102,4 @@ struct linalg_generic_level1 {
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_LINALG_BASE_LEVEL1_GENERIC_H
+#endif // LIBTENSOR_LINALG_GENERIC_LEVEL1_H

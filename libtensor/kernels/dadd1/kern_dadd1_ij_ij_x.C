@@ -27,7 +27,7 @@ kernel_base<1, 1> *kern_dadd1_ij_ij_x::match(const kern_dadd1_i_i_x &z,
     //    w   a   b
     //    nj  1   1
     //    ni  sia sib  -->  b_i#j = a_i%j d
-    //    ----------        [ij_ij_x]
+    //    ----------        [copy_ij_ij_x]
 
     iterator_t ii = in.end();
     size_t sia_min = 0;

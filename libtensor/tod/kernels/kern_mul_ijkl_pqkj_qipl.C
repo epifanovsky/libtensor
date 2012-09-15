@@ -23,7 +23,7 @@ void kern_mul_ijkl_pqkj_qipl::run(const loop_registers<2, 1> &r) {
     for(size_t k = 0; k < m_nk; k++) {
     for(size_t p = 0; p < m_np; p++) {
 
-        linalg::ij_pi_pj_x(m_nj, m_nl, m_nq,
+        linalg::mul2_ij_pi_pj_x(m_nj, m_nl, m_nq,
             r.m_ptra[0] + p * m_spa + k * m_ska, m_sqa,
             r.m_ptra[1] + i * m_sib + p * m_spb, m_sqb,
             r.m_ptrb[0] + i * m_sic + k * m_skc, m_sjc,

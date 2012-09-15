@@ -29,7 +29,7 @@ void kern_mul_ijkl_pkjq_ipql::run(const loop_registers<2, 1> &r) {
             const double *pa2 = pa1, *pb2 = pb1;
             double *pc2 = pc1;
             for(size_t i = 0; i < m_ni; i++) {
-                linalg::ij_ip_pj_x(m_nj, m_nl, m_nq, pa2, m_sja,
+                linalg::mul2_ij_ip_pj_x(m_nj, m_nl, m_nq, pa2, m_sja,
                     pb2, m_sqb, pc2, m_sjc, m_d);
                 pb2 += m_sib;
                 pc2 += m_sic;

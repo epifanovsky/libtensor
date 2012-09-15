@@ -45,8 +45,8 @@ void linalg_ij_i_j_x_test::test_ij_i_j_x(size_t ni, size_t nj, size_t sia,
     for(size_t i = 0; i < szc; i++) c[i] = c_ref[i] = drand48();
 
     d = 0.0;
-    linalg::ij_i_j_x(ni, nj, a, sia, b, sjb, c, sic, d);
-    linalg_generic::ij_i_j_x(ni, nj, a, sia, b, sjb, c_ref, sic, d);
+    linalg::mul2_ij_i_j_x(ni, nj, a, sia, b, sjb, c, sic, d);
+    linalg_generic::mul2_ij_i_j_x(ni, nj, a, sia, b, sjb, c_ref, sic, d);
 
     for(size_t i = 0; i < szc; i++) {
         if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -56,8 +56,8 @@ void linalg_ij_i_j_x_test::test_ij_i_j_x(size_t ni, size_t nj, size_t sia,
     }
 
     d = 1.0;
-    linalg::ij_i_j_x(ni, nj, a, sia, b, sjb, c, sic, d);
-    linalg_generic::ij_i_j_x(ni, nj, a, sia, b, sjb, c_ref, sic, d);
+    linalg::mul2_ij_i_j_x(ni, nj, a, sia, b, sjb, c, sic, d);
+    linalg_generic::mul2_ij_i_j_x(ni, nj, a, sia, b, sjb, c_ref, sic, d);
 
     for(size_t i = 0; i < szc; i++) {
         if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -67,8 +67,8 @@ void linalg_ij_i_j_x_test::test_ij_i_j_x(size_t ni, size_t nj, size_t sia,
     }
 
     d = -1.0;
-    linalg::ij_i_j_x(ni, nj, a, sia, b, sjb, c, sic, d);
-    linalg_generic::ij_i_j_x(ni, nj, a, sia, b, sjb, c_ref, sic, d);
+    linalg::mul2_ij_i_j_x(ni, nj, a, sia, b, sjb, c, sic, d);
+    linalg_generic::mul2_ij_i_j_x(ni, nj, a, sia, b, sjb, c_ref, sic, d);
 
     for(size_t i = 0; i < szc; i++) {
         if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -78,8 +78,8 @@ void linalg_ij_i_j_x_test::test_ij_i_j_x(size_t ni, size_t nj, size_t sia,
     }
 
     d = drand48();
-    linalg::ij_i_j_x(ni, nj, a, sia, b, sjb, c, sic, d);
-    linalg_generic::ij_i_j_x(ni, nj, a, sia, b, sjb, c_ref, sic, d);
+    linalg::mul2_ij_i_j_x(ni, nj, a, sia, b, sjb, c, sic, d);
+    linalg_generic::mul2_ij_i_j_x(ni, nj, a, sia, b, sjb, c_ref, sic, d);
 
     for(size_t i = 0; i < szc; i++) {
         if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -89,8 +89,8 @@ void linalg_ij_i_j_x_test::test_ij_i_j_x(size_t ni, size_t nj, size_t sia,
     }
 
     d = -drand48();
-    linalg::ij_i_j_x(ni, nj, a, sia, b, sjb, c, sic, d);
-    linalg_generic::ij_i_j_x(ni, nj, a, sia, b, sjb, c_ref, sic, d);
+    linalg::mul2_ij_i_j_x(ni, nj, a, sia, b, sjb, c, sic, d);
+    linalg_generic::mul2_ij_i_j_x(ni, nj, a, sia, b, sjb, c_ref, sic, d);
 
     for(size_t i = 0; i < szc; i++) {
         if(!cmp(c[i] - c_ref[i], c_ref[i])) {

@@ -24,7 +24,7 @@ void kern_mul_ijk_jpq_ipkq::run(const loop_registers<2, 1> &r) {
     for(size_t i = 0; i < m_ni; i++) {
         const double *pa1 = r.m_ptra[0], *pb1 = pb;
         for(size_t p = 0; p < m_np; p++) {
-            linalg::ij_ip_jp_x(m_nj, m_nk, m_nq, pa1, m_sja,
+            linalg::mul2_ij_ip_jp_x(m_nj, m_nk, m_nq, pa1, m_sja,
                 pb1, m_skb, pc, m_sjc, m_d);
             pa1 += m_spa;
             pb1 += m_spb;

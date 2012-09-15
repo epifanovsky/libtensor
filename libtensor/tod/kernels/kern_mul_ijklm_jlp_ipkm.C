@@ -24,7 +24,7 @@ void kern_mul_ijklm_jlp_ipkm::run(const loop_registers<2, 1> &r) {
     for(size_t i = 0; i < m_ni; i++)
     for(size_t j = 0; j < m_nj; j++)
     for(size_t k = 0; k < m_nk; k++) {
-        linalg::ij_ip_pj_x(m_nl, m_nm, m_np,
+        linalg::mul2_ij_ip_pj_x(m_nl, m_nm, m_np,
             r.m_ptra[0] + j * m_sja, m_sla,
             r.m_ptra[1] + i * m_sib + k * m_skb, m_spb,
             r.m_ptrb[0] + i * m_sic + j * m_sjc + k * m_skc, m_slc,

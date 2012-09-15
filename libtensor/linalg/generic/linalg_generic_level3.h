@@ -1,5 +1,5 @@
-#ifndef LIBTENSOR_LINALG_BASE_LEVEL3_GENERIC_H
-#define LIBTENSOR_LINALG_BASE_LEVEL3_GENERIC_H
+#ifndef LIBTENSOR_LINALG_GENERIC_LEVEL3_H
+#define LIBTENSOR_LINALG_GENERIC_LEVEL3_H
 
 #include <cstdlib> // for size_t
 
@@ -10,9 +10,11 @@ namespace libtensor {
 
     \ingroup libtensor_linalg
  **/
-struct linalg_generic_level3 {
+class linalg_generic_level3 {
+public:
+    static const char *k_clazz; //!< Class name
 
-
+public:
     /** \brief \f$ c_i = \sum_{pq} a_{ipq} b_{qp} d \f$
         \param a Pointer to a.
         \param b Pointer to b.
@@ -26,13 +28,12 @@ struct linalg_generic_level3 {
         \param spa Step of p in a (spa >= nq).
         \param sqb Step of q in b (sqb >= np).
      **/
-    static void i_ipq_qp_x(
+    static void mul2_i_ipq_qp_x(
         size_t ni, size_t np, size_t nq,
         const double *a, size_t spa, size_t sia,
         const double *b, size_t sqb,
         double *c, size_t sic,
         double d);
-
 
     /** \brief \f$ c_{ij} = c_{ij} + \sum_p a_{ip} b_{jp} d \f$
         \param ni Number of elements i.
@@ -46,13 +47,12 @@ struct linalg_generic_level3 {
         \param sic Step of i in c (sic >= nj).
         \param d Scalar d.
      **/
-    static void ij_ip_jp_x(
+    static void mul2_ij_ip_jp_x(
         size_t ni, size_t nj, size_t np,
         const double *a, size_t sia,
         const double *b, size_t sjb,
         double *c, size_t sic,
         double d);
-
 
     /** \brief \f$ c_{ij} = c_{ij} + \sum_p a_{ip} b_{pj} d \f$
         \param ni Number of elements i.
@@ -66,13 +66,12 @@ struct linalg_generic_level3 {
         \param sic Step of i in c (sic >= nj).
         \param d Scalar d.
      **/
-    static void ij_ip_pj_x(
+    static void mul2_ij_ip_pj_x(
         size_t ni, size_t nj, size_t np,
         const double *a, size_t sia,
         const double *b, size_t spb,
         double *c, size_t sic,
         double d);
-
 
     /** \brief \f$ c_{ij} = c_{ij} + \sum_p a_{pi} b_{jp} d \f$
         \param ni Number of elements i.
@@ -86,13 +85,12 @@ struct linalg_generic_level3 {
         \param sic Step of i in c (sic >= nj).
         \param d Value of d.
      **/
-    static void ij_pi_jp_x(
+    static void mul2_ij_pi_jp_x(
         size_t ni, size_t nj, size_t np,
         const double *a, size_t spa,
         const double *b, size_t sjb,
         double *c, size_t sic,
         double d);
-
 
     /** \brief \f$ c_{ij} = c_{ij} + \sum_p a_{pi} b_{pj} d \f$
         \param ni Number of elements i.
@@ -106,7 +104,7 @@ struct linalg_generic_level3 {
         \param sic Step of i in c (sic >= nj).
         \param d Value of d.
      **/
-    static void ij_pi_pj_x(
+    static void mul2_ij_pi_pj_x(
         size_t ni, size_t nj, size_t np,
         const double *a, size_t spa,
         const double *b, size_t spb,
@@ -118,4 +116,4 @@ struct linalg_generic_level3 {
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_LINALG_BASE_LEVEL3_GENERIC_H
+#endif // LIBTENSOR_LINALG_GENERIC_LEVEL3_H

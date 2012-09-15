@@ -33,7 +33,7 @@ void kern_mul_ijkl_pliq_jpqk::run(const loop_registers<2, 1> &r) {
             const double *pa2 = pa, *pb2 = pb1;
 
             for(size_t p = 0; p < m_np; p++) {
-                linalg::ij_pi_jp_x(m_nk, m_nl, m_nq, pb2, m_sqb,
+                linalg::mul2_ij_pi_jp_x(m_nk, m_nl, m_nq, pb2, m_sqb,
                     pa2, m_sla, pc1, m_skc, m_d);
                 pa2 += m_spa;
                 pb2 += m_spb;

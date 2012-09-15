@@ -12,7 +12,7 @@ const char *kern_dmul2_i_i_x::k_clazz = "kern_dmul2_i_i_x";
 
 void kern_dmul2_i_i_x::run(const loop_registers<2, 1> &r) {
 
-    linalg::i_i_x(m_ni, r.m_ptra[0], m_sia, r.m_ptra[1][0] * m_d,
+    linalg::mul2_i_i_x(m_ni, r.m_ptra[0], m_sia, r.m_ptra[1][0] * m_d,
         r.m_ptrb[0], m_sic);
 }
 
@@ -26,7 +26,7 @@ kernel_base<2, 1> *kern_dmul2_i_i_x::match(const kern_dmul2 &z,
     //    -------------
     //    w   a  b  c
     //    ni  1  0  sic  -->  c_i# = a_i b
-    //    -------------       [i_i_x]
+    //    -------------       [mul2_i_i_x]
     //
 
     iterator_t ii = in.end();

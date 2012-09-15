@@ -7,7 +7,7 @@ namespace libtensor {
 const char *linalg_essl_level3::k_clazz = "essl";
 
 
-void linalg_essl_level3::ij_ip_jp_x(
+void linalg_essl_level3::mul2_ij_ip_jp_x(
     size_t ni, size_t nj, size_t np,
     const double *a, size_t sia,
     const double *b, size_t sjb,
@@ -19,7 +19,7 @@ void linalg_essl_level3::ij_ip_jp_x(
 }
 
 
-void linalg_essl_level3::ij_ip_pj_x(
+void linalg_essl_level3::mul2_ij_ip_pj_x(
     size_t ni, size_t nj, size_t np,
     const double *a, size_t sia,
     const double *b, size_t spb,
@@ -31,7 +31,7 @@ void linalg_essl_level3::ij_ip_pj_x(
 }
 
 
-void linalg_essl_level3::ij_pi_jp_x(
+void linalg_essl_level3::mul2_ij_pi_jp_x(
     size_t ni, size_t nj, size_t np,
     const double *a, size_t spa,
     const double *b, size_t sjb,
@@ -43,7 +43,7 @@ void linalg_essl_level3::ij_pi_jp_x(
 }
 
 
-void linalg_essl_level3::ij_pi_pj_x(
+void linalg_essl_level3::mul2_ij_pi_pj_x(
     size_t ni, size_t nj, size_t np,
     const double *a, size_t spa,
     const double *b, size_t spb,
