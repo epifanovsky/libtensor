@@ -9,7 +9,30 @@ namespace libtensor {
 void se_label_test_base::setup_pg_table(
         const std::string &id) throw(libtest::test_exception){
 
-    if (id == "C2v" || id == "c2v") {
+    if (id == "Cs" || id == "cs") {
+
+        try {
+
+            // C\f$_s\f$ point group - irreps: A', A''
+            // Product table:
+            //      A'   A''
+            // A'   A'   A''
+            // A''  A''  A'
+            point_group_table::label_t ap = 0, app = 1;
+            std::vector<std::string> im(2);
+            im[ap] = "A'"; im[app] = "A''";
+            point_group_table cs(id, im, "A'");
+            cs.add_product(app, app, ap);
+            cs.check();
+            product_table_container::get_instance().add(cs);
+
+        } catch (exception &e) {
+            fail_test("se_label_test_base::setup_pg_table()",
+                    __FILE__, __LINE__, e.what());
+        }
+
+    }
+    else if (id == "C2v" || id == "c2v") {
 
         try {
 

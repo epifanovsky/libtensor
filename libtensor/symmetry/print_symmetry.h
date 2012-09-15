@@ -135,11 +135,14 @@ std::ostream &operator<<(std::ostream &out, const se_perm<N, double> &sp) {
 template<size_t N>
 std::ostream &operator<<(std::ostream &os, const block_labeling<N> &bl) {
 
+    typedef product_table_i::label_t label_type;
     for (size_t i = 0; i < N; i++) {
         size_t itype = bl.get_dim_type(i);
         os << " [" << i << "(" << itype << "):";
         for (size_t j = 0; j < bl.get_dim(itype); j++) {
-            os << " " << bl.get_label(itype, j);
+            label_type l = bl.get_label(itype, j);
+            if (l == product_table_i::k_invalid) os << " *";
+            else os << " " << l;
         }
         os << "]";
     }

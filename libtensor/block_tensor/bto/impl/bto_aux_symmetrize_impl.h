@@ -56,27 +56,28 @@ void bto_aux_symmetrize<N, Traits>::close() {
 
 
 template<size_t N, typename Traits>
-void bto_aux_symmetrize<N, Traits>::put(const index<N> &idx, block_type &blk,
+void bto_aux_symmetrize<N, Traits>::put(const index<N> &idxa, block_type &blk,
     const tensor_transf_type &tr) {
 
-    orbit<N, element_type> oa(m_syma, idx);
+    orbit<N, element_type> oa(m_syma, idxa, false);
+    tensor_transf_type tra0inv(oa.get_transf(idxa), true);
     dimensions<N> bidims = m_syma.get_bis().get_block_index_dims();
 
     for(typename orbit<N, element_type>::iterator i = oa.begin();
         i != oa.end(); ++i) {
 
-        tensor_transf_type tr1inv(oa.get_transf(i), true);
+        const tensor_transf_type &tra1 = oa.get_transf(i);
         for(typename std::list<tensor_transf_type>::const_iterator j =
             m_trlst.begin(); j != m_trlst.end(); ++j) {
 
-            index<N> idx2;
-            abs_index<N>::get_index(oa.get_abs_index(i), bidims, idx2);
-            j->apply(idx2);
-            if(!m_olb.contains(idx2)) continue;
+            index<N> idxb;
+            abs_index<N>::get_index(oa.get_abs_index(i), bidims, idxb);
+            j->apply(idxb);
+            if(!m_olb.contains(idxb)) continue;
 
-            tensor_transf<N, double> tr2(tr);
-            tr2.transform(tr1inv).transform(*j);
-            m_out.put(idx2, blk, tr2);
+            tensor_transf<N, double> trb(tr);
+            trb.transform(tra0inv).transform(tra1).transform(*j);
+            m_out.put(idxb, blk, trb);
         }
     }
 }
