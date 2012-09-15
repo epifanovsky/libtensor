@@ -4,7 +4,7 @@
 namespace libtensor {
 
 
-const char *linalg_essl_level2::clazz = "essl";
+const char *linalg_essl_level2::k_clazz = "essl";
 
 
 void linalg_essl_level2::mul2_i_ip_p_x(
@@ -46,6 +46,7 @@ void linalg_essl_level2::mul2_ij_i_j_x(
 
 
 void linalg_essl_level2::copy_ij_ji(
+    void*,
     size_t ni, size_t nj,
     const double *a, size_t sja,
     double *c, size_t sic) {
