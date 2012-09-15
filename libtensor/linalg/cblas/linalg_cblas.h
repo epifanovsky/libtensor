@@ -17,6 +17,11 @@ class linalg_cblas :
     public linalg_cblas_level2,
     public linalg_cblas_level3 {
 
+public:
+    typedef double element_type; //!< Data type
+    typedef void *device_context_type; //!< Device context
+    typedef void *device_context_ref; //!< Reference type to device context
+
 };
 
 

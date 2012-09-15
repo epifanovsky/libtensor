@@ -18,6 +18,11 @@ class linalg_essl :
     public linalg_essl_level2,
     public linalg_essl_level3 {
 
+public:
+    typedef double element_type; //!< Data type
+    typedef void *device_context_type; //!< Device context
+    typedef void *device_context_ref; //!< Reference type to device context
+
 };
 
 
