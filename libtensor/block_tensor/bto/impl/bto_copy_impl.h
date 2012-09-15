@@ -175,7 +175,7 @@ template<size_t N, typename Traits>
 void bto_copy<N, Traits>::perform(block_tensor_type &btb) {
 
     bto_aux_copy<N, Traits> out(m_sym, btb);
-    perform(out);
+    bto_copy::perform(out);
 }
 
 
@@ -188,7 +188,7 @@ void bto_copy<N, Traits>::perform(block_tensor_type &btb,
     asch.build(m_sch, cb);
 
     bto_aux_add<N, Traits> out(m_sym, asch, btb, c);
-    perform(out);
+    bto_copy::perform(out);
 }
 
 
