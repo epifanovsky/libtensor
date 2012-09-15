@@ -1,6 +1,5 @@
 #include <libtensor/linalg/linalg.h>
 #include "kern_dmul2_x_pq_qp.h"
-//#include "kern_mul_i_ipq_qp.h"
 
 namespace libtensor {
 
@@ -49,8 +48,6 @@ kernel_base<2, 1> *kern_dmul2_x_pq_qp::match(const kern_dmul2_x_p_p &z,
     in.splice(out.begin(), out, iq);
 
     kernel_base<2, 1> *kern = 0;
-
-//    if(kern = kern_mul_i_ipq_qp::match(zz, in, out)) return kern;
 
     return new kern_dmul2_x_pq_qp(zz);
 }

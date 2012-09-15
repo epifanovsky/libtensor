@@ -4,8 +4,6 @@
 #include "kern_dmul2_ij_pi_pj.h"
 #include "kern_dmul2_ij_pj_ip.h"
 #include "kern_dmul2_ij_pj_pi.h"
-//#include "kern_mul_ij_pji_p.h"
-//#include "kern_mul_ijk_pi_pkj.h"
 
 namespace libtensor {
 
@@ -60,8 +58,6 @@ kernel_base<2, 1> *kern_dmul2_i_pi_p::match(const kern_dmul2_i_i_x &z,
     if(kern = kern_dmul2_ij_pi_pj::match(zz, in, out)) return kern;
     if(kern = kern_dmul2_ij_pj_ip::match(zz, in, out)) return kern;
     if(kern = kern_dmul2_ij_pj_pi::match(zz, in, out)) return kern;
-//    if(kern = kern_mul_ij_pji_p::match(zz, in, out)) return kern;
-//    if(kern = kern_mul_ijk_pi_pkj::match(zz, in, out)) return kern;
 
     return new kern_dmul2_i_pi_p(zz);
 }
