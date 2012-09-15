@@ -7,12 +7,20 @@ namespace libtensor {
 
 
 /** \brief Kernel for \f$ c_i = c_i + (a + b_i) d \f$
+    \tparam LA Linear algebra.
 
      \ingroup libtensor_kernels
  **/
-class kern_dadd2_i_x_i_x : public kernel_base<2, 1> {
+template<typename LA>
+class kern_dadd2_i_x_i_x : public kernel_base<LA, 2, 1> {
 public:
     static const char *k_clazz; //!< Kernel name
+
+public:
+    typedef typename kernel_base<LA, 2, 1>::device_context_ref
+        device_context_ref;
+    typedef typename kernel_base<LA, 2, 1>::list_t list_t;
+    typedef typename kernel_base<LA, 2, 1>::iterator_t iterator_t;
 
 private:
     double m_ka, m_kb;
@@ -27,9 +35,9 @@ public:
         return k_clazz;
     }
 
-    virtual void run(const loop_registers<2, 1> &r);
+    virtual void run(device_context_ref ctx, const loop_registers<2, 1> &r);
 
-    static kernel_base<2, 1> *match(const kern_dadd2 &z,
+    static kernel_base<LA, 2, 1> *match(const kern_dadd2<LA> &z,
         list_t &in, list_t &out);
 
 };

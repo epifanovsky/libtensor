@@ -157,7 +157,7 @@ void tod_contract2_ref<R,N,M,K,DimData>::do_calculate()
 	for ( size_t i=0; i<sizeM*sizeK; i++ ) ptrc[i]=drand48();
 
 	timings<tod_contract2_ref<R,N,M,K,DimData> >::start_timer();
-	linalg::ij_ip_jp_x(sizeN, sizeM, sizeK, ptrb, sizeK, ptrc, sizeK,
+	linalg::mul2_ij_ip_jp_x(0, sizeN, sizeM, sizeK, ptrb, sizeK, ptrc, sizeK,
 		ptra, sizeM, 0.5);
 	timings<tod_contract2_ref<R,N,M,K,DimData> >::stop_timer();
 

@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_KERN_DDIV2_H
 #define LIBTENSOR_KERN_DDIV2_H
 
+#include <libtensor/linalg/linalg.h>
 #include "kernel_base.h"
 
 namespace libtensor {
@@ -16,7 +17,7 @@ namespace libtensor {
 
     \ingroup libtensor_kernels
  **/
-class kern_ddiv2 : public kernel_base<2, 1> {
+class kern_ddiv2 : public kernel_base<linalg, 2, 1> {
 public:
     static const char *k_clazz; //!< Kernel name
 
@@ -30,9 +31,9 @@ public:
         return k_clazz;
     }
 
-    virtual void run(const loop_registers<2, 1> &r);
+    virtual void run(void*, const loop_registers<2, 1> &r);
 
-    static kernel_base<2, 1> *match(double d, list_t &in, list_t &out);
+    static kernel_base<linalg, 2, 1> *match(double d, list_t &in, list_t &out);
 
 };
 

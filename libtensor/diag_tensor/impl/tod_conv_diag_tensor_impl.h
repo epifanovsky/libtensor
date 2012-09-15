@@ -4,9 +4,10 @@
 #include <list>
 #include <memory>
 #include <vector>
-#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
+#include <libtensor/linalg/linalg.h>
 #include <libtensor/kernels/kern_dadd1.h>
-#include <libtensor/tod/kernels/loop_list_runner.h>
+#include <libtensor/kernels/loop_list_runner.h>
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include "../diag_tensor_ctrl.h"
 #include "../tod_conv_diag_tensor.h"
 
@@ -92,9 +93,9 @@ void tod_conv_diag_tensor<N>::perform(dense_tensor_wr_i<N, double> &tb) {
         r.m_ptrb_end[0] = pb + dims.get_size();
 
         {
-            std::auto_ptr< kernel_base<1, 1> >kern(
-                kern_dadd1::match(1.0, loop_in, loop_out));
-            loop_list_runner<1, 1>(loop_in).run(r, *kern);
+            std::auto_ptr< kernel_base<linalg, 1, 1> >kern(
+                kern_dadd1<linalg>::match(1.0, loop_in, loop_out));
+            loop_list_runner<linalg, 1, 1>(loop_in).run(0, r, *kern);
         }
 
         ca.ret_const_dataptr(ssn, pa); pa = 0;

@@ -15,16 +15,21 @@ namespace libtensor {
 
 
 /** \brief Base class for kernels
+    \tparam LA Linear algebra.
     \tparam N Number of input arrays.
     \tparam M Number of output arrays.
 
     \ingroup libtensor_kernels
  **/
-template<size_t N, size_t M>
+template<typename LA, size_t N, size_t M>
 class kernel_base {
 public:
+    //! Reference type to device context
+    typedef typename LA::device_context_ref device_context_ref;
+
     typedef std::list< loop_list_node<N, M> > list_t;
     typedef typename list_t::iterator iterator_t;
+    typedef typename list_t::const_iterator const_iterator_t;
 
 public:
     /** \brief Virtual destructor
@@ -37,7 +42,7 @@ public:
 
     /** \brief Runs the kernel
      **/
-    virtual void run(const loop_registers<N, M> &r) = 0;
+    virtual void run(device_context_ref ctx, const loop_registers<N, M> &r) = 0;
 
 };
 
