@@ -99,6 +99,12 @@ set(SRC_LINALG_CBLAS
     linalg/cblas/linalg_cblas_level3.C
 )
 
+set(SRC_LINALG_ESSL
+    linalg/essl/linalg_essl_level1.C
+    linalg/essl/linalg_essl_level2.C
+    linalg/essl/linalg_essl_level3.C
+)
+
 set(SRC_LINALG_MKL
     linalg/mkl/linalg_base_level1_mkl.C
     linalg/mkl/linalg_base_level2_mkl.C
@@ -264,9 +270,11 @@ set(SRC_INST
 
 if(USE_ACML)
     set(SRC_LINALG ${SRC_LINALG_GENERIC} ${SRC_LINALG_ACML})
+elseif(USE_ESSL)
+    set(SRC_LINALG ${SRC_LINALG_GENERIC} ${SRC_LINALG_ESSL})
 elseif(USE_MKL)
     set(SRC_LINALG ${SRC_LINALG_GENERIC} ${SRC_LINALG_MKL})
-endif()
+endif(USE_ACML)
 
 add_library(tensor ${SRC} ${SRC_LINALG} ${SRC_KERNELS} ${SRC_INST} ${SRC_MP})
 if(QCHEM_SOURCE_DIR)
