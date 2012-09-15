@@ -222,7 +222,7 @@ void btod_add<N>::perform(block_tensor_i<N, double> &btb) {
     typedef btod_traits Traits;
 
     bto_aux_copy<N, Traits> out(m_sym, btb);
-    perform(out);
+    btod_add::perform(out);
 }
 
 
@@ -238,7 +238,7 @@ void btod_add<N>::perform(block_tensor_i<N, double> &btb, const double &c) {
     asch.build(get_schedule(), cb);
 
     bto_aux_add<N, Traits> out(m_sym, asch, btb, c);
-    perform(out);
+    btod_add::perform(out);
 }
 
 
