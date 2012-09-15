@@ -30,14 +30,13 @@ void linalg_mul2_x_p_p_test::test_mul2_x_p_p(size_t np, size_t spa,
     try {
 
     size_t sza = np * spa, szb = np * spb;
-
     std::vector<double> a(sza, 0.0), b(szb, 0.0);
 
     for(size_t i = 0; i < sza; i++) a[i] = drand48();
     for(size_t i = 0; i < szb; i++) b[i] = drand48();
 
-    double c = linalg::mul2_x_p_p(np, &a[0], spa, &b[0], spb);
-    double c_ref = linalg_generic::mul2_x_p_p(np, &a[0], spa, &b[0], spb);
+    double c = linalg::mul2_x_p_p(0, np, &a[0], spa, &b[0], spb);
+    double c_ref = linalg_generic::mul2_x_p_p(0, np, &a[0], spa, &b[0], spb);
 
     if(!cmp(c - c_ref, c_ref)) {
         fail_test(tnss.c_str(), __FILE__, __LINE__, "Incorrect result.");

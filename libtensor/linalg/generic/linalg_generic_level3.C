@@ -8,6 +8,7 @@ const char *linalg_generic_level3::k_clazz = "generic";
 
 
 void linalg_generic_level3::mul2_i_ipq_qp_x(
+    void *ctx,
     size_t ni, size_t np, size_t nq,
     const double *a, size_t spa, size_t sia,
     const double *b, size_t sqb,
@@ -15,13 +16,14 @@ void linalg_generic_level3::mul2_i_ipq_qp_x(
     double d) {
 
     for(size_t i = 0; i < ni; i++) {
-        c[i * sic] += d * linalg_generic_level2::mul2_x_pq_qp(
-            np, nq, a + i * sia, spa, b, sqb);
+        c[i * sic] += d * linalg_generic_level2::mul2_x_pq_qp(ctx, np, nq,
+            a + i * sia, spa, b, sqb);
     }
 }
 
 
 void linalg_generic_level3::mul2_ij_ip_jp_x(
+    void*,
     size_t ni, size_t nj, size_t np,
     const double *a, size_t sia,
     const double *b, size_t sjb,
@@ -40,6 +42,7 @@ void linalg_generic_level3::mul2_ij_ip_jp_x(
 
 
 void linalg_generic_level3::mul2_ij_ip_pj_x(
+    void*,
     size_t ni, size_t nj, size_t np,
     const double *a, size_t sia,
     const double *b, size_t spb,
@@ -57,6 +60,7 @@ void linalg_generic_level3::mul2_ij_ip_pj_x(
 
 
 void linalg_generic_level3::mul2_ij_pi_jp_x(
+    void*,
     size_t ni, size_t nj, size_t np,
     const double *a, size_t spa,
     const double *b, size_t sjb,
@@ -72,6 +76,7 @@ void linalg_generic_level3::mul2_ij_pi_jp_x(
 
 
 void linalg_generic_level3::mul2_ij_pi_pj_x(
+    void*,
     size_t ni, size_t nj, size_t np,
     const double *a, size_t spa,
     const double *b, size_t spb,

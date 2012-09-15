@@ -9,7 +9,8 @@ const char *kern_dcopy_ij_ij_x::k_clazz = "kern_dcopy_ij_ij_x";
 
 void kern_dcopy_ij_ij_x::run(const loop_registers<1, 1> &r) {
 
-    linalg::copy_ij_ij_x(m_ni, m_nj, r.m_ptra[0], m_sia, m_d, r.m_ptrb[0], m_sib);
+    linalg::copy_ij_ij_x(0, m_ni, m_nj, r.m_ptra[0], m_sia, m_d, r.m_ptrb[0],
+        m_sib);
 }
 
 

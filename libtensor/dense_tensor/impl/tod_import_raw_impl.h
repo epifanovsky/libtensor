@@ -80,7 +80,7 @@ template<size_t N>
 void tod_import_raw<N>::op_dcopy::exec(processor_t &proc, registers &regs)
     throw(exception) {
 
-    linalg::copy_i_i(m_len, regs.m_ptra, 1, regs.m_ptrb, 1);
+    linalg::copy_i_i(0, m_len, regs.m_ptra, 1, regs.m_ptrb, 1);
 }
 
 

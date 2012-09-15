@@ -12,6 +12,7 @@ const char *linalg_mkl_level1::k_clazz = "mkl";
 
 
 void linalg_mkl_level1::add_i_i_x_x(
+    void*,
     size_t ni,
     const double *a, size_t sia, double ka,
     double b, double kb,
@@ -31,6 +32,7 @@ void linalg_mkl_level1::add_i_i_x_x(
 
 
 void linalg_mkl_level1::copy_i_i(
+    void*,
     size_t ni,
     const double *a, size_t sia,
     double *c, size_t sic) {
@@ -48,6 +50,7 @@ void linalg_mkl_level1::copy_i_i(
 
 
 void linalg_mkl_level1::mul1_i_x(
+    void*,
     size_t ni,
     double a,
     double *c, size_t sic) {
@@ -59,6 +62,7 @@ void linalg_mkl_level1::mul1_i_x(
 
 
 double linalg_mkl_level1::mul2_x_p_p(
+    void*,
     size_t np,
     const double *a, size_t spa,
     const double *b, size_t spb) {
@@ -71,6 +75,7 @@ double linalg_mkl_level1::mul2_x_p_p(
 
 
 void linalg_mkl_level1::mul2_i_i_x(
+    void*,
     size_t ni,
     const double *a, size_t sia,
     double b,
@@ -83,6 +88,7 @@ void linalg_mkl_level1::mul2_i_i_x(
 
 
 void linalg_mkl_level1::mul2_i_i_i_x(
+    void*,
     size_t ni,
     const double *a, size_t sia,
     const double *b, size_t sib,

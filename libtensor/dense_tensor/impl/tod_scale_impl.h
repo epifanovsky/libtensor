@@ -23,7 +23,7 @@ void tod_scale<N>::perform(dense_tensor_wr_i<N, double> &ta) {
         double *p = ca.req_dataptr();
 
         size_t sz = ta.get_dims().get_size();
-        linalg::mul1_i_x(sz, m_c, p, 1);
+        linalg::mul1_i_x(0, sz, m_c, p, 1);
 
         ca.ret_dataptr(p); p = 0;
 

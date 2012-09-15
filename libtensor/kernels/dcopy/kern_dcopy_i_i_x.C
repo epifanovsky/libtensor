@@ -11,9 +11,9 @@ const char *kern_dcopy_i_i_x::k_clazz = "kern_dcopy_i_i_x";
 
 void kern_dcopy_i_i_x::run(const loop_registers<1, 1> &r) {
 
-    linalg::copy_i_i(m_ni, r.m_ptra[0], m_sia, r.m_ptrb[0], 1);
+    linalg::copy_i_i(0, m_ni, r.m_ptra[0], m_sia, r.m_ptrb[0], 1);
     if(m_d != 1.0) {
-        linalg::mul1_i_x(m_ni, m_d, r.m_ptrb[0], 1);
+        linalg::mul1_i_x(0, m_ni, m_d, r.m_ptrb[0], 1);
     }
 }
 

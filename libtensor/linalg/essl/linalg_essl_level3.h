@@ -16,6 +16,7 @@ public:
 
 public:
     static void mul2_ij_ip_jp_x(
+        void*,
         size_t ni, size_t nj, size_t np,
         const double *a, size_t sia,
         const double *b, size_t sjb,
@@ -23,6 +24,7 @@ public:
         double d);
 
     static void mul2_ij_ip_pj_x(
+        void*,
         size_t ni, size_t nj, size_t np,
         const double *a, size_t sia,
         const double *b, size_t spb,
@@ -30,6 +32,7 @@ public:
         double d);
 
     static void mul2_ij_pi_jp_x(
+        void*,
         size_t ni, size_t nj, size_t np,
         const double *a, size_t spa,
         const double *b, size_t sjb,
@@ -37,6 +40,7 @@ public:
         double d);
 
     static void mul2_ij_pi_pj_x(
+        void*,
         size_t ni, size_t nj, size_t np,
         const double *a, size_t spa,
         const double *b, size_t spb,

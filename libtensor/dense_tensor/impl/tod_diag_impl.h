@@ -265,8 +265,8 @@ void tod_diag<N, M>::op_dcopy::exec(processor_t &proc, registers &regs)
     if(m_len == 0) return;
 
     op_dcopy::start_timer();
-    linalg::copy_i_i(m_len, regs.m_ptra, m_inca, regs.m_ptrb, m_incb);
-    if(m_c != 1.0) linalg::mul1_i_x(m_len, m_c, regs.m_ptrb, m_incb);
+    linalg::copy_i_i(0, m_len, regs.m_ptra, m_inca, regs.m_ptrb, m_incb);
+    if(m_c != 1.0) linalg::mul1_i_x(0, m_len, m_c, regs.m_ptrb, m_incb);
     op_dcopy::stop_timer();
 }
 
@@ -278,7 +278,7 @@ void tod_diag<N, M>::op_daxpy::exec(processor_t &proc, registers &regs)
     if(m_len == 0) return;
 
     op_daxpy::start_timer();
-    linalg::mul2_i_i_x(m_len, regs.m_ptra, m_inca, m_c, regs.m_ptrb, m_incb);
+    linalg::mul2_i_i_x(0, m_len, regs.m_ptra, m_inca, m_c, regs.m_ptrb, m_incb);
     op_daxpy::stop_timer();
 }
 

@@ -20,35 +20,41 @@ public:
 
 public:
     static void add1_ij_ij_x(
+        void*,
         size_t ni, size_t nj,
         const double *a, size_t sia,
         double b,
         double *c, size_t sic);
 
     static void add1_ij_ji_x(
+        void*,
         size_t ni, size_t nj,
         const double *a, size_t sja,
         double b,
         double *c, size_t sic);
 
     static void copy_ij_ij_x(
+        void*,
         size_t ni, size_t nj,
         const double *a, size_t sia,
         double b,
         double *c, size_t sic);
 
     static void copy_ij_ji(
+        void*,
         size_t ni, size_t nj,
         const double *a, size_t sja,
         double *c, size_t sic);
 
     static void copy_ij_ji_x(
+        void*,
         size_t ni, size_t nj,
         const double *a, size_t sja,
         double b,
         double *c, size_t sic);
 
     static void mul2_i_ip_p_x(
+        void*,
         size_t ni, size_t np,
         const double *a, size_t sia,
         const double *b, size_t spb,
@@ -56,6 +62,7 @@ public:
         double d);
 
     static void mul2_i_pi_p_x(
+        void*,
         size_t ni, size_t np,
         const double *a, size_t spa,
         const double *b, size_t spb,
@@ -63,6 +70,7 @@ public:
         double d);
 
     static void mul2_ij_i_j_x(
+        void*,
         size_t ni, size_t nj,
         const double *a, size_t sia,
         const double *b, size_t sjb,

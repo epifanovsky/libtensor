@@ -16,6 +16,7 @@ public:
 
 public:
     /** \brief \f$ c_i = \sum_{pq} a_{ipq} b_{qp} d \f$
+        \param ctx Context of computational device (unused for CPUs).
         \param a Pointer to a.
         \param b Pointer to b.
         \param c Pointer to c.
@@ -29,6 +30,7 @@ public:
         \param sqb Step of q in b (sqb >= np).
      **/
     static void mul2_i_ipq_qp_x(
+        void *ctx,
         size_t ni, size_t np, size_t nq,
         const double *a, size_t spa, size_t sia,
         const double *b, size_t sqb,
@@ -36,6 +38,7 @@ public:
         double d);
 
     /** \brief \f$ c_{ij} = c_{ij} + \sum_p a_{ip} b_{jp} d \f$
+        \param ctx Context of computational device (unused for CPUs).
         \param ni Number of elements i.
         \param nj Number of elements j.
         \param np Number of elements p.
@@ -48,6 +51,7 @@ public:
         \param d Scalar d.
      **/
     static void mul2_ij_ip_jp_x(
+        void *ctx,
         size_t ni, size_t nj, size_t np,
         const double *a, size_t sia,
         const double *b, size_t sjb,
@@ -55,6 +59,7 @@ public:
         double d);
 
     /** \brief \f$ c_{ij} = c_{ij} + \sum_p a_{ip} b_{pj} d \f$
+        \param ctx Context of computational device (unused for CPUs).
         \param ni Number of elements i.
         \param nj Number of elements j.
         \param np Number of elements p.
@@ -67,6 +72,7 @@ public:
         \param d Scalar d.
      **/
     static void mul2_ij_ip_pj_x(
+        void *ctx,
         size_t ni, size_t nj, size_t np,
         const double *a, size_t sia,
         const double *b, size_t spb,
@@ -74,6 +80,7 @@ public:
         double d);
 
     /** \brief \f$ c_{ij} = c_{ij} + \sum_p a_{pi} b_{jp} d \f$
+        \param ctx Context of computational device (unused for CPUs).
         \param ni Number of elements i.
         \param nj Number of elements j.
         \param np Number of elements p.
@@ -86,6 +93,7 @@ public:
         \param d Value of d.
      **/
     static void mul2_ij_pi_jp_x(
+        void *ctx,
         size_t ni, size_t nj, size_t np,
         const double *a, size_t spa,
         const double *b, size_t sjb,
@@ -93,6 +101,7 @@ public:
         double d);
 
     /** \brief \f$ c_{ij} = c_{ij} + \sum_p a_{pi} b_{pj} d \f$
+        \param ctx Context of computational device (unused for CPUs).
         \param ni Number of elements i.
         \param nj Number of elements j.
         \param np Number of elements p.
@@ -105,6 +114,7 @@ public:
         \param d Value of d.
      **/
     static void mul2_ij_pi_pj_x(
+        void *ctx,
         size_t ni, size_t nj, size_t np,
         const double *a, size_t spa,
         const double *b, size_t spb,

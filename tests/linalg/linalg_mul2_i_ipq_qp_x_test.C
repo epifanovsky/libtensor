@@ -34,7 +34,6 @@ void linalg_mul2_i_ipq_qp_x_test::test_mul2_i_ipq_qp_x(size_t ni, size_t np,
     try {
 
     size_t sza = ni * sia, szb = nq * sqb, szc = ni * sic;
-
     std::vector<double> a(sza, 0.0), b(szb, 0.0), c(szc, 0.0), c_ref(szc, 0.0);
     double d = 0.0;
 
@@ -43,10 +42,10 @@ void linalg_mul2_i_ipq_qp_x_test::test_mul2_i_ipq_qp_x(size_t ni, size_t np,
     for(size_t i = 0; i < szc; i++) c[i] = c_ref[i] = drand48();
 
     d = 0.0;
-    linalg::mul2_i_ipq_qp_x(ni, np, nq, &a[0], spa, sia, &b[0], sqb, &c[0], sic,
-        d);
-    linalg_generic::mul2_i_ipq_qp_x(ni, np, nq, &a[0], spa, sia, &b[0], sqb,
-        &c_ref[0], sic, d);
+    linalg::mul2_i_ipq_qp_x(0, ni, np, nq, &a[0], spa, sia, &b[0], sqb, &c[0],
+        sic, d);
+    linalg_generic::mul2_i_ipq_qp_x(0, ni, np, nq, &a[0], spa, sia, &b[0],
+        sqb, &c_ref[0], sic, d);
 
     for(size_t i = 0; i < szc; i++) {
         if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -56,10 +55,10 @@ void linalg_mul2_i_ipq_qp_x_test::test_mul2_i_ipq_qp_x(size_t ni, size_t np,
     }
 
     d = 1.0;
-    linalg::mul2_i_ipq_qp_x(ni, np, nq, &a[0], spa, sia, &b[0], sqb, &c[0], sic,
-        d);
-    linalg_generic::mul2_i_ipq_qp_x(ni, np, nq, &a[0], spa, sia, &b[0], sqb,
-        &c_ref[0], sic, d);
+    linalg::mul2_i_ipq_qp_x(0, ni, np, nq, &a[0], spa, sia, &b[0], sqb, &c[0],
+        sic, d);
+    linalg_generic::mul2_i_ipq_qp_x(0, ni, np, nq, &a[0], spa, sia, &b[0],
+        sqb, &c_ref[0], sic, d);
 
     for(size_t i = 0; i < szc; i++) {
         if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -69,10 +68,10 @@ void linalg_mul2_i_ipq_qp_x_test::test_mul2_i_ipq_qp_x(size_t ni, size_t np,
     }
 
     d = -1.0;
-    linalg::mul2_i_ipq_qp_x(ni, np, nq, &a[0], spa, sia, &b[0], sqb, &c[0], sic,
-        d);
-    linalg_generic::mul2_i_ipq_qp_x(ni, np, nq, &a[0], spa, sia, &b[0], sqb,
-        &c_ref[0], sic, d);
+    linalg::mul2_i_ipq_qp_x(0, ni, np, nq, &a[0], spa, sia, &b[0], sqb, &c[0],
+        sic, d);
+    linalg_generic::mul2_i_ipq_qp_x(0, ni, np, nq, &a[0], spa, sia, &b[0],
+        sqb, &c_ref[0], sic, d);
 
     for(size_t i = 0; i < szc; i++) {
         if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -82,10 +81,10 @@ void linalg_mul2_i_ipq_qp_x_test::test_mul2_i_ipq_qp_x(size_t ni, size_t np,
     }
 
     d = drand48();
-    linalg::mul2_i_ipq_qp_x(ni, np, nq, &a[0], spa, sia, &b[0], sqb, &c[0], sic,
-        d);
-    linalg_generic::mul2_i_ipq_qp_x(ni, np, nq, &a[0], spa, sia, &b[0], sqb,
-        &c_ref[0], sic, d);
+    linalg::mul2_i_ipq_qp_x(0, ni, np, nq, &a[0], spa, sia, &b[0], sqb, &c[0],
+        sic, d);
+    linalg_generic::mul2_i_ipq_qp_x(0, ni, np, nq, &a[0], spa, sia, &b[0],
+        sqb, &c_ref[0], sic, d);
 
     for(size_t i = 0; i < szc; i++) {
         if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -95,10 +94,10 @@ void linalg_mul2_i_ipq_qp_x_test::test_mul2_i_ipq_qp_x(size_t ni, size_t np,
     }
 
     d = -drand48();
-    linalg::mul2_i_ipq_qp_x(ni, np, nq, &a[0], spa, sia, &b[0], sqb, &c[0], sic,
-        d);
-    linalg_generic::mul2_i_ipq_qp_x(ni, np, nq, &a[0], spa, sia, &b[0], sqb,
-        &c_ref[0], sic, d);
+    linalg::mul2_i_ipq_qp_x(0, ni, np, nq, &a[0], spa, sia, &b[0], sqb, &c[0],
+        sic, d);
+    linalg_generic::mul2_i_ipq_qp_x(0, ni, np, nq, &a[0], spa, sia, &b[0],
+        sqb, &c_ref[0], sic, d);
 
     for(size_t i = 0; i < szc; i++) {
         if(!cmp(c[i] - c_ref[i], c_ref[i])) {

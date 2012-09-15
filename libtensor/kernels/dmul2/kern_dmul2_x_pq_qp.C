@@ -10,7 +10,7 @@ const char *kern_dmul2_x_pq_qp::k_clazz = "kern_dmul2_x_pq_qp";
 
 void kern_dmul2_x_pq_qp::run(const loop_registers<2, 1> &r) {
 
-    r.m_ptrb[0][0] += linalg::mul2_x_pq_qp(m_np, m_nq, r.m_ptra[0], m_spa,
+    r.m_ptrb[0][0] += linalg::mul2_x_pq_qp(0, m_np, m_nq, r.m_ptra[0], m_spa,
         r.m_ptra[1], m_sqb) * m_d;
 }
 

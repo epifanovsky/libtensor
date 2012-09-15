@@ -33,15 +33,15 @@ void linalg_mul2_i_i_i_x_test::test_mul2_i_i_i_x(size_t ni, size_t sia,
     try {
 
     size_t sza = ni * sia, szb = ni * sib, szc = ni * sic;
-
     std::vector<double> a(sza, 0.0), b(szb, 0.0), c(szc, 0.0), c_ref(szc, 0.0);
 
     for(size_t i = 0; i < sza; i++) a[i] = drand48();
     for(size_t i = 0; i < szb; i++) b[i] = drand48();
     for(size_t i = 0; i < szc; i++) c[i] = c_ref[i] = drand48();
 
-    linalg::mul2_i_i_i_x(ni, &a[0], sia, &b[0], sib, &c[0], sic, d);
-    linalg_generic::mul2_i_i_i_x(ni, &a[0], sia, &b[0], sib, &c_ref[0], sic, d);
+    linalg::mul2_i_i_i_x(0, ni, &a[0], sia, &b[0], sib, &c[0], sic, d);
+    linalg_generic::mul2_i_i_i_x(0, ni, &a[0], sia, &b[0], sib, &c_ref[0],
+        sic, d);
 
     for(size_t i = 0; i < szc; i++) {
         if(!cmp(c[i] - c_ref[i], c_ref[i])) {

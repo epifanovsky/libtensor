@@ -8,6 +8,7 @@ const char *linalg_acml_level1::k_clazz = "acml";
 
 
 void linalg_acml_level1::add_i_i_x_x(
+    void*,
     size_t ni,
     const double *a, size_t sia, double ka,
     double b, double kb,
@@ -27,6 +28,7 @@ void linalg_acml_level1::add_i_i_x_x(
 
 
 void linalg_acml_level1::mul1_i_x(
+    void*,
     size_t ni,
     double a,
     double *c, size_t sic) {
@@ -38,6 +40,7 @@ void linalg_acml_level1::mul1_i_x(
 
 
 double linalg_acml_level1::mul2_x_p_p(
+    void*,
     size_t np,
     const double *a, size_t spa,
     const double *b, size_t spb) {
@@ -50,6 +53,7 @@ double linalg_acml_level1::mul2_x_p_p(
 
 
 void linalg_acml_level1::mul2_i_i_x(
+    void*,
     size_t ni,
     const double *a, size_t sia,
     double b,
