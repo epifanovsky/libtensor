@@ -1,6 +1,7 @@
 #include <sstream>
 #include <libtensor/exception.h>
 #include <libtensor/linalg/linalg.h>
+#include <libtensor/linalg/generic/linalg_generic.h>
 #include "linalg_i_ipq_qp_x_test.h"
 
 namespace libtensor {
@@ -48,7 +49,7 @@ void linalg_i_ipq_qp_x_test::test_i_ipq_qp_x(size_t ni, size_t np, size_t nq,
 
     d = 0.0;
     linalg::i_ipq_qp_x(ni, np, nq, a, spa, sia, b, sqb, c, sic, d);
-    linalg_base_generic::i_ipq_qp_x(ni, np, nq, a, spa, sia, b, sqb, c_ref,
+    linalg_generic::i_ipq_qp_x(ni, np, nq, a, spa, sia, b, sqb, c_ref,
         sic, d);
 
     for(size_t i = 0; i < szc; i++) {
@@ -60,7 +61,7 @@ void linalg_i_ipq_qp_x_test::test_i_ipq_qp_x(size_t ni, size_t np, size_t nq,
 
     d = 1.0;
     linalg::i_ipq_qp_x(ni, np, nq, a, spa, sia, b, sqb, c, sic, d);
-    linalg_base_generic::i_ipq_qp_x(ni, np, nq, a, spa, sia, b, sqb, c_ref,
+    linalg_generic::i_ipq_qp_x(ni, np, nq, a, spa, sia, b, sqb, c_ref,
         sic, d);
 
     for(size_t i = 0; i < szc; i++) {
@@ -72,7 +73,7 @@ void linalg_i_ipq_qp_x_test::test_i_ipq_qp_x(size_t ni, size_t np, size_t nq,
 
     d = -1.0;
     linalg::i_ipq_qp_x(ni, np, nq, a, spa, sia, b, sqb, c, sic, d);
-    linalg_base_generic::i_ipq_qp_x(ni, np, nq, a, spa, sia, b, sqb, c_ref,
+    linalg_generic::i_ipq_qp_x(ni, np, nq, a, spa, sia, b, sqb, c_ref,
         sic, d);
 
     for(size_t i = 0; i < szc; i++) {
@@ -84,7 +85,7 @@ void linalg_i_ipq_qp_x_test::test_i_ipq_qp_x(size_t ni, size_t np, size_t nq,
 
     d = drand48();
     linalg::i_ipq_qp_x(ni, np, nq, a, spa, sia, b, sqb, c, sic, d);
-    linalg_base_generic::i_ipq_qp_x(ni, np, nq, a, spa, sia, b, sqb, c_ref,
+    linalg_generic::i_ipq_qp_x(ni, np, nq, a, spa, sia, b, sqb, c_ref,
         sic, d);
 
     for(size_t i = 0; i < szc; i++) {
@@ -96,7 +97,7 @@ void linalg_i_ipq_qp_x_test::test_i_ipq_qp_x(size_t ni, size_t np, size_t nq,
 
     d = -drand48();
     linalg::i_ipq_qp_x(ni, np, nq, a, spa, sia, b, sqb, c, sic, d);
-    linalg_base_generic::i_ipq_qp_x(ni, np, nq, a, spa, sia, b, sqb, c_ref,
+    linalg_generic::i_ipq_qp_x(ni, np, nq, a, spa, sia, b, sqb, c_ref,
         sic, d);
 
     for(size_t i = 0; i < szc; i++) {

@@ -1,6 +1,7 @@
 #include <sstream>
 #include <libtensor/exception.h>
 #include <libtensor/linalg/linalg.h>
+#include <libtensor/linalg/generic/linalg_generic.h>
 #include "linalg_ij_ji_test.h"
 
 namespace libtensor {
@@ -42,7 +43,7 @@ void linalg_ij_ji_test::test_ij_ji(size_t ni, size_t nj, size_t sja,
 
     d = 0.0;
     linalg::ij_ji(ni, nj, a, sja, c, sic);
-    linalg_base_generic::ij_ji(ni, nj, a, sja, c_ref, sic);
+    linalg_generic::ij_ji(ni, nj, a, sja, c_ref, sic);
 
     for(size_t i = 0; i < szc; i++) {
         if(!cmp(c[i] - c_ref[i], c_ref[i])) {

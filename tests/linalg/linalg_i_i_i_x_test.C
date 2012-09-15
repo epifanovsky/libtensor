@@ -2,6 +2,7 @@
 #include <vector>
 #include <libtensor/exception.h>
 #include <libtensor/linalg/linalg.h>
+#include <libtensor/linalg/generic/linalg_generic.h>
 #include "linalg_i_i_i_x_test.h"
 
 namespace libtensor {
@@ -40,7 +41,7 @@ void linalg_i_i_i_x_test::test_i_i_i_x(size_t ni, size_t sia, size_t sib,
     for(size_t i = 0; i < szc; i++) c[i] = c_ref[i] = drand48();
 
     linalg::i_i_i_x(ni, &a[0], sia, &b[0], sib, &c[0], sic, d);
-    linalg_base_generic::i_i_i_x(ni, &a[0], sia, &b[0], sib, &c_ref[0], sic, d);
+    linalg_generic::i_i_i_x(ni, &a[0], sia, &b[0], sib, &c_ref[0], sic, d);
 
     for(size_t i = 0; i < szc; i++) {
         if(!cmp(c[i] - c_ref[i], c_ref[i])) {

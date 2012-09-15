@@ -87,10 +87,16 @@ set(SKIPPED
 )
 
 set(SRC_LINALG_ACML
-    linalg/acml/linalg_base_level1_acml.C
-    linalg/acml/linalg_base_level2_acml.C
-    linalg/acml/linalg_base_level3_acml.C
+    linalg/acml/linalg_acml_level1.C
+    linalg/acml/linalg_acml_level2.C
+    linalg/acml/linalg_acml_level3.C
     linalg/acml/lapack_acml.C
+)
+
+set(SRC_LINALG_CBLAS
+    linalg/cblas/linalg_cblas_level1.C
+    linalg/cblas/linalg_cblas_level2.C
+    linalg/cblas/linalg_cblas_level3.C
 )
 
 set(SRC_LINALG_MKL
@@ -100,14 +106,16 @@ set(SRC_LINALG_MKL
     linalg/mkl/lapack_mkl.C
 )
 
-set(SRC_LINALG
-    linalg/generic/linalg_base_level1_generic.C
-    linalg/generic/linalg_base_level2_generic.C
-    linalg/generic/linalg_base_level3_generic.C
-    linalg/generic/linalg_base_level3x_generic.C
-    linalg/generic/linalg_base_level4_generic.C
-    linalg/generic/linalg_base_level5_generic.C
-    linalg/generic/linalg_base_level6_generic.C
+set(SRC_LINALG_QCHEM
+    linalg/qchem/linalg_qchem_level1.C
+    linalg/qchem/linalg_qchem_level2.C
+    linalg/qchem/linalg_qchem_level3.C
+)
+
+set(SRC_LINALG_GENERIC
+    linalg/generic/linalg_generic_level1.C
+    linalg/generic/linalg_generic_level2.C
+    linalg/generic/linalg_generic_level3.C
 )
 
 set(SRC_KERNELS
@@ -254,21 +262,15 @@ set(SRC_INST
     diag_tensor/impl/diag_tod_set.C
 )
 
-set(SRC_QCHEM
-    linalg/qchem/linalg_base_level1_qchem.C
-    linalg/qchem/linalg_base_level2_qchem.C
-    linalg/qchem/linalg_base_level3_qchem.C
-)
-
 if(USE_ACML)
-    set(SRC_LINALG ${SRC_LINALG} ${SRC_LINALG_ACML})
+    set(SRC_LINALG ${SRC_LINALG_GENERIC} ${SRC_LINALG_ACML})
 elseif(USE_MKL)
-    set(SRC_LINALG ${SRC_LINALG} ${SRC_LINALG_MKL})
+    set(SRC_LINALG ${SRC_LINALG_GENERIC} ${SRC_LINALG_MKL})
 endif()
 
 add_library(tensor ${SRC} ${SRC_LINALG} ${SRC_KERNELS} ${SRC_INST} ${SRC_MP})
 if(QCHEM_SOURCE_DIR)
-    add_library(tensor_qchem ${SRC_QCHEM})
+    add_library(tensor_qchem ${SRC_LINALG_QCHEM})
     add_dependencies(tensor_qchem tensor)
 endif(QCHEM_SOURCE_DIR)
 

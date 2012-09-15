@@ -1,6 +1,7 @@
 #include <sstream>
 #include <libtensor/exception.h>
 #include <libtensor/linalg/linalg.h>
+#include <libtensor/linalg/generic/linalg_generic.h>
 #include "linalg_add_i_i_x_x_test.h"
 
 namespace libtensor {
@@ -44,7 +45,7 @@ void linalg_add_i_i_x_x_test::test_add_i_i_x_x(size_t ni, size_t sia,
     d = drand48();
 
     linalg::add_i_i_x_x(ni, a, sia, ka, b, kb, c, sic, d);
-    linalg_base_generic::add_i_i_x_x(ni, a, sia, ka, b, kb, c_ref, sic, d);
+    linalg_generic::add_i_i_x_x(ni, a, sia, ka, b, kb, c_ref, sic, d);
 
     for(size_t i = 0; i < szc; i++) {
         if(!cmp(c[i] - c_ref[i], c_ref[i])) {

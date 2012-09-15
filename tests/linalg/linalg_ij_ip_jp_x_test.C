@@ -1,6 +1,7 @@
 #include <sstream>
 #include <libtensor/exception.h>
 #include <libtensor/linalg/linalg.h>
+#include <libtensor/linalg/generic/linalg_generic.h>
 #include "linalg_ij_ip_jp_x_test.h"
 
 namespace libtensor {
@@ -45,7 +46,7 @@ void linalg_ij_ip_jp_x_test::test_ij_ip_jp_x(size_t ni, size_t nj, size_t np,
 
     d = 0.0;
     linalg::ij_ip_jp_x(ni, nj, np, a, sia, b, sjb, c, sic, d);
-    linalg_base_generic::ij_ip_jp_x(ni, nj, np, a, sia, b, sjb, c_ref, sic,
+    linalg_generic::ij_ip_jp_x(ni, nj, np, a, sia, b, sjb, c_ref, sic,
         d);
 
     for(size_t i = 0; i < szc; i++) {
@@ -57,7 +58,7 @@ void linalg_ij_ip_jp_x_test::test_ij_ip_jp_x(size_t ni, size_t nj, size_t np,
 
     d = 1.0;
     linalg::ij_ip_jp_x(ni, nj, np, a, sia, b, sjb, c, sic, d);
-    linalg_base_generic::ij_ip_jp_x(ni, nj, np, a, sia, b, sjb, c_ref, sic,
+    linalg_generic::ij_ip_jp_x(ni, nj, np, a, sia, b, sjb, c_ref, sic,
         d);
 
     for(size_t i = 0; i < szc; i++) {
@@ -69,7 +70,7 @@ void linalg_ij_ip_jp_x_test::test_ij_ip_jp_x(size_t ni, size_t nj, size_t np,
 
     d = -1.0;
     linalg::ij_ip_jp_x(ni, nj, np, a, sia, b, sjb, c, sic, d);
-    linalg_base_generic::ij_ip_jp_x(ni, nj, np, a, sia, b, sjb, c_ref, sic,
+    linalg_generic::ij_ip_jp_x(ni, nj, np, a, sia, b, sjb, c_ref, sic,
         d);
 
     for(size_t i = 0; i < szc; i++) {
@@ -81,7 +82,7 @@ void linalg_ij_ip_jp_x_test::test_ij_ip_jp_x(size_t ni, size_t nj, size_t np,
 
     d = drand48();
     linalg::ij_ip_jp_x(ni, nj, np, a, sia, b, sjb, c, sic, d);
-    linalg_base_generic::ij_ip_jp_x(ni, nj, np, a, sia, b, sjb, c_ref, sic,
+    linalg_generic::ij_ip_jp_x(ni, nj, np, a, sia, b, sjb, c_ref, sic,
         d);
 
     for(size_t i = 0; i < szc; i++) {
@@ -93,7 +94,7 @@ void linalg_ij_ip_jp_x_test::test_ij_ip_jp_x(size_t ni, size_t nj, size_t np,
 
     d = -drand48();
     linalg::ij_ip_jp_x(ni, nj, np, a, sia, b, sjb, c, sic, d);
-    linalg_base_generic::ij_ip_jp_x(ni, nj, np, a, sia, b, sjb, c_ref, sic,
+    linalg_generic::ij_ip_jp_x(ni, nj, np, a, sia, b, sjb, c_ref, sic,
         d);
 
     for(size_t i = 0; i < szc; i++) {

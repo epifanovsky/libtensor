@@ -1,6 +1,7 @@
 #include <sstream>
 #include <libtensor/exception.h>
 #include <libtensor/linalg/linalg.h>
+#include <libtensor/linalg/generic/linalg_generic.h>
 #include "linalg_i_ip_p_x_test.h"
 
 namespace libtensor {
@@ -45,7 +46,7 @@ void linalg_i_ip_p_x_test::test_i_ip_p_x(size_t ni, size_t np, size_t sia,
 
     d = 0.0;
     linalg::i_ip_p_x(ni, np, a, sia, b, spb, c, sic, d);
-    linalg_base_generic::i_ip_p_x(ni, np, a, sia, b, spb, c_ref, sic, d);
+    linalg_generic::i_ip_p_x(ni, np, a, sia, b, spb, c_ref, sic, d);
 
     for(size_t i = 0; i < szc; i++) {
         if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -56,7 +57,7 @@ void linalg_i_ip_p_x_test::test_i_ip_p_x(size_t ni, size_t np, size_t sia,
 
     d = 1.0;
     linalg::i_ip_p_x(ni, np, a, sia, b, spb, c, sic, d);
-    linalg_base_generic::i_ip_p_x(ni, np, a, sia, b, spb, c_ref, sic, d);
+    linalg_generic::i_ip_p_x(ni, np, a, sia, b, spb, c_ref, sic, d);
 
     for(size_t i = 0; i < szc; i++) {
         if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -67,7 +68,7 @@ void linalg_i_ip_p_x_test::test_i_ip_p_x(size_t ni, size_t np, size_t sia,
 
     d = -1.0;
     linalg::i_ip_p_x(ni, np, a, sia, b, spb, c, sic, d);
-    linalg_base_generic::i_ip_p_x(ni, np, a, sia, b, spb, c_ref, sic, d);
+    linalg_generic::i_ip_p_x(ni, np, a, sia, b, spb, c_ref, sic, d);
 
     for(size_t i = 0; i < szc; i++) {
         if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -78,7 +79,7 @@ void linalg_i_ip_p_x_test::test_i_ip_p_x(size_t ni, size_t np, size_t sia,
 
     d = drand48();
     linalg::i_ip_p_x(ni, np, a, sia, b, spb, c, sic, d);
-    linalg_base_generic::i_ip_p_x(ni, np, a, sia, b, spb, c_ref, sic, d);
+    linalg_generic::i_ip_p_x(ni, np, a, sia, b, spb, c_ref, sic, d);
 
     for(size_t i = 0; i < szc; i++) {
         if(!cmp(c[i] - c_ref[i], c_ref[i])) {
@@ -89,7 +90,7 @@ void linalg_i_ip_p_x_test::test_i_ip_p_x(size_t ni, size_t np, size_t sia,
 
     d = -drand48();
     linalg::i_ip_p_x(ni, np, a, sia, b, spb, c, sic, d);
-    linalg_base_generic::i_ip_p_x(ni, np, a, sia, b, spb, c_ref, sic, d);
+    linalg_generic::i_ip_p_x(ni, np, a, sia, b, spb, c_ref, sic, d);
 
     for(size_t i = 0; i < szc; i++) {
         if(!cmp(c[i] - c_ref[i], c_ref[i])) {

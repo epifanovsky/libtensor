@@ -1,6 +1,7 @@
 #include <sstream>
 #include <libtensor/exception.h>
 #include <libtensor/linalg/linalg.h>
+#include <libtensor/linalg/generic/linalg_generic.h>
 #include "linalg_x_p_p_test.h"
 
 namespace libtensor {
@@ -38,7 +39,7 @@ void linalg_x_p_p_test::test_x_p_p(size_t np, size_t spa, size_t spb)
     for(size_t i = 0; i < szb; i++) b[i] = drand48();
 
     double c = linalg::x_p_p(np, a, spa, b, spb);
-    double c_ref = linalg_base_generic::x_p_p(np, a, spa, b, spb);
+    double c_ref = linalg_generic::x_p_p(np, a, spa, b, spb);
 
     if(!cmp(c - c_ref, c_ref)) {
         fail_test(tnss.c_str(), __FILE__, __LINE__,

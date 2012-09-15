@@ -1,6 +1,7 @@
 #include <sstream>
 #include <libtensor/exception.h>
 #include <libtensor/linalg/linalg.h>
+#include <libtensor/linalg/generic/linalg_generic.h>
 #include "linalg_x_pq_qp_test.h"
 
 namespace libtensor {
@@ -40,7 +41,7 @@ void linalg_x_pq_qp_test::test_x_pq_qp(size_t np, size_t nq, size_t spa, size_t 
     for(size_t i = 0; i < szb; i++) b[i] = drand48();
 
     double c = linalg::x_pq_qp(np, nq, a, spa, b, sqb);
-    double c_ref = linalg_base_generic::x_pq_qp(np, nq, a, spa, b, sqb);
+    double c_ref = linalg_generic::x_pq_qp(np, nq, a, spa, b, sqb);
 
     if(!cmp(c - c_ref, c_ref)) {
         fail_test(tnss.c_str(), __FILE__, __LINE__,
