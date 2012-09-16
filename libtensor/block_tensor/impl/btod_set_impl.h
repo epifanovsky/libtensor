@@ -2,7 +2,6 @@
 #define LIBTENSOR_BTOD_SET_IMPL_H
 
 #include <libtensor/dense_tensor/tod_set.h>
-#include <libtensor/gen_block_tensor/impl/gen_bto_set_impl.h>
 #include "../btod_set.h"
 
 namespace libtensor {

@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_GEN_BTO_DIAG_IMPL_H
 #define LIBTENSOR_GEN_BTO_DIAG_IMPL_H
 
+#include <libutil/thread_pool/thread_pool.h>
 #include <libtensor/core/block_index_subspace_builder.h>
 #include <libtensor/core/orbit.h>
 #include <libtensor/core/orbit_list.h>

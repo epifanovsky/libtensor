@@ -3,7 +3,7 @@
 
 #include <libtensor/block_tensor/bto/bto_aux_add.h>
 #include <libtensor/block_tensor/bto/bto_aux_copy.h>
-#include <libtensor/gen_block_tensor/impl/gen_bto_diag_impl.h>
+#include <libtensor/gen_block_tensor/gen_bto_diag.h>
 #include "bto_stream_adapter.h"
 #include "../btod_diag.h"
 
