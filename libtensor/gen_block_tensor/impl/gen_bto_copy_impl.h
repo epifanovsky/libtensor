@@ -391,7 +391,7 @@ void gen_bto_part_copy_task<N, Traits>::perform() {
         orbit<N, element_type> oa(ca.req_const_symmetry(), ia, false);
         abs_index<N> acia(oa.get_acindex(), m_bidimsa);
         tensor_transf<N, element_type> trb(oa.get_transf(ia));
-        trb.transform(trainv);
+        trb.transform(m_tra);
         if(!ca.req_is_zero_block(acia.get_index())) {
             rd_block_type &ba = ca.req_const_block(acia.get_index());
             m_out.put(m_ib, ba, trb);
