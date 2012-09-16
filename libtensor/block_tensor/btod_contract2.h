@@ -125,6 +125,10 @@ public:
 private:
     void make_schedule();
 
+    void align(const sequence<2 * (N + M + K), size_t> &conn,
+        permutation<N + K> &perma, permutation<M + K> &permb,
+        permutation<N + M> &permc);
+
     void contract_block(
         block_tensor_rd_i<N + K, double> &bta,
         const orbit_list<N + K, double> &ola,
