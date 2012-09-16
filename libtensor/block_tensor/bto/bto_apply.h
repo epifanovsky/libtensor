@@ -61,6 +61,7 @@ public:
     //! Type of functor
     typedef Functor functor_type;
 
+    typedef scalar_transf<element_type> scalar_transf_type;
     typedef tensor_transf<N, element_type> tensor_transf_type;
 
 public:
@@ -69,7 +70,7 @@ public:
 private:
     functor_type m_fn; //!< Functor to apply to each element
     block_tensor_type &m_bta; //!< Source block %tensor
-    tensor_transf_type m_tr1; //!< Tensor transformation before
+    scalar_transf_type m_tr1; //!< Scalar transformation before
     tensor_transf_type m_tr2; //!< Tensor transformation after
     block_index_space<N> m_bis; //!< Block %index space of output
     dimensions<N> m_bidims; //!< Block %index dimensions
@@ -83,19 +84,12 @@ public:
     /** \brief Initializes the element-wise operation
         \param bt Source block %tensor.
         \param fn Functor instance.
-        \param tr Tensor transformation.
+        \param tr1 Scalar transformation applied before functor.
+        \param tr2 Tensor transformation applied after functor.
      **/
     bto_apply(block_tensor_type &bta, const functor_type &fn,
-            const tensor_transf_type &tr1 = tensor_transf_type(),
+            const scalar_transf_type &tr1 = scalar_transf_type(),
             const tensor_transf_type &tr2 = tensor_transf_type());
-
-    /** \brief Initializes the element-wise operation
-        \param bt Source block %tensor.
-        \param fn Functor instance.
-        \param c Element-wise transformation (apply before).
-     **/
-    bto_apply(block_tensor_type &bta, const functor_type &fn,
-            const scalar_transf<element_type> &c);
 
     /** \brief Initializes the permuted element-wise operation
         \param bt Source block %tensor.
@@ -105,8 +99,7 @@ public:
      **/
     bto_apply(block_tensor_type &bta,
             const functor_type &fn, const permutation<N> &p,
-            const scalar_transf<element_type> &c =
-                    scalar_transf<element_type>());
+            const scalar_transf_type &c = scalar_transf_type());
 
     /** \brief Destructor
      **/

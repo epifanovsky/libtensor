@@ -79,7 +79,7 @@ public:
 
 template<size_t N, typename Functor, typename Traits>
 bto_apply<N, Functor, Traits>::bto_apply(block_tensor_type &bta,
-    const functor_type &fn, const tensor_transf_type &tr1,
+    const functor_type &fn, const scalar_transf_type &tr1,
     const tensor_transf_type &tr2) :
 
     m_bta(bta), m_fn(fn), m_tr1(tr1), m_tr2(tr2), m_bis(m_bta.get_bis()),
@@ -89,30 +89,8 @@ bto_apply<N, Functor, Traits>::bto_apply(block_tensor_type &bta,
     typedef typename Traits::template block_tensor_ctrl_type<N>::type
         block_tensor_ctrl_type;
 
-    m_tr1.permute(m_tr2.get_perm());
-    m_tr2.get_perm().reset();
-
     block_tensor_ctrl_type ctrla(m_bta);
-    so_apply<N, element_type>(ctrla.req_const_symmetry(), m_tr1.get_perm(),
-            m_fn.transf(true), m_fn.transf(false),
-            m_fn.keep_zero()).perform(m_sym);
-    make_schedule();
-}
-
-
-template<size_t N, typename Functor, typename Traits>
-bto_apply<N, Functor, Traits>::bto_apply(block_tensor_type &bta,
-    const functor_type &fn, const scalar_transf<element_type> &c) :
-
-    m_bta(bta), m_fn(fn), m_tr1(permutation<N>(), c), m_bis(m_bta.get_bis()),
-    m_bidims(m_bis.get_block_index_dims()), m_sym(m_bis), m_sch(m_bidims) {
-
-    //! Type of block tensor control object
-    typedef typename Traits::template block_tensor_ctrl_type<N>::type
-        block_tensor_ctrl_type;
-
-    block_tensor_ctrl_type ctrla(m_bta);
-    so_apply<N, element_type>(ctrla.req_const_symmetry(), m_tr1.get_perm(),
+    so_apply<N, element_type>(ctrla.req_const_symmetry(), m_tr2.get_perm(),
             m_fn.transf(true), m_fn.transf(false),
             m_fn.keep_zero()).perform(m_sym);
     make_schedule();
@@ -122,9 +100,9 @@ bto_apply<N, Functor, Traits>::bto_apply(block_tensor_type &bta,
 template<size_t N, typename Functor, typename Traits>
 bto_apply<N, Functor, Traits>::bto_apply(
         block_tensor_type &bta, const functor_type &fn,
-        const permutation<N> &p, const scalar_transf<element_type> &c) :
+        const permutation<N> &p, const scalar_transf_type &c) :
 
-    m_bta(bta), m_fn(fn), m_tr1(p, c), m_bis(mk_bis(m_bta.get_bis(), p)),
+    m_bta(bta), m_fn(fn), m_tr1(c), m_tr2(p), m_bis(mk_bis(m_bta.get_bis(), p)),
     m_bidims(m_bis.get_block_index_dims()), m_sym(m_bis), m_sch(m_bidims) {
 
     //! Type of block tensor control object
@@ -132,7 +110,7 @@ bto_apply<N, Functor, Traits>::bto_apply(
         block_tensor_ctrl_type;
 
     block_tensor_ctrl_type ctrla(m_bta);
-    so_apply<N, element_type>(ctrla.req_const_symmetry(), m_tr1.get_perm(),
+    so_apply<N, element_type>(ctrla.req_const_symmetry(), m_tr2.get_perm(),
             m_fn.transf(true), m_fn.transf(false),
             m_fn.keep_zero()).perform(m_sym);
     make_schedule();
@@ -236,7 +214,7 @@ void bto_apply<N, Functor, Traits>::compute_block(bool zero, block_type &blk,
     block_tensor_ctrl_type ctrla(m_bta);
     dimensions<N> bidimsa = m_bta.get_bis().get_block_index_dims();
 
-    permutation<N> pinv(m_tr1.get_perm(), true);
+    permutation<N> pinv(m_tr2.get_perm(), true);
 
     //  Corresponding index in A
     index<N> ia(ib);
@@ -259,10 +237,15 @@ void bto_apply<N, Functor, Traits>::compute_block(bool zero, block_type &blk,
     abs_index<N> acia(oa.get_abs_canonical_index(), bidimsa);
 
     //  Transformation for block from canonical A to B
-    tensor_transf_type tr1(oa.get_transf(ia)), tr2(m_tr2);
+
+    const tensor_transf_type &tra = oa.get_transf(ia);
+    scalar_transf_type tr1(tra.get_scalar_tr());
+    tensor_transf_type tr2(tra.get_perm());
+
     tr1.transform(m_tr1);
-    tr2.transform(scalar_transf<element_type>(c)).transform(
-            tensor_transf_type(tr, true));
+    tr2.transform(m_tr2);
+    tr2.transform(scalar_transf_type(c)).
+            transform(tensor_transf_type(tr, true));
 
     if(! ctrla.req_is_zero_block(acia.get_index())) {
 
@@ -291,7 +274,7 @@ void bto_apply<N, Functor, Traits>::make_schedule() {
     block_tensor_ctrl_type ctrla(m_bta);
     dimensions<N> bidimsa = m_bta.get_bis().get_block_index_dims();
 
-    permutation<N> pinv(m_tr1.get_perm(), ! m_tr1.get_perm().is_identity());
+    permutation<N> pinv(m_tr2.get_perm(), ! m_tr2.get_perm().is_identity());
 
     orbit_list<N, element_type> ol(m_sym);
     for(typename orbit_list<N, element_type>::iterator io = ol.begin();
