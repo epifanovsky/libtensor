@@ -167,7 +167,7 @@ public:
      **/
     void ret_block(const index<N> &idx) {
 
-        return m_bt.on_ret_block(idx);
+        m_bt.on_ret_block(idx);
     }
 
     /** \brief Makes a canonical block zero
@@ -237,7 +237,7 @@ public:
      **/
     void ret_aux_block(const index<N> &idx) {
 
-        return m_bt.on_ret_aux_block(idx);
+        m_bt.on_ret_aux_block(idx);
     }
 
 };
