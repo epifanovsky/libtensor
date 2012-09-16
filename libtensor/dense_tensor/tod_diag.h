@@ -6,6 +6,7 @@
 #include <libtensor/timings.h>
 #include <libtensor/core/mask.h>
 #include <libtensor/core/permutation.h>
+#include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/tod/processor.h>
 #include "dense_tensor_i.h"
 
@@ -111,18 +112,10 @@ private:
 private:
     dense_tensor_rd_i<N, double> &m_t; //!< Input %tensor
     mask<N> m_mask; //!< Diagonal mask
-    permutation<N - M + 1> m_perm; //!< Permutation of the result
-    double m_c; //!< Scaling coefficient
-    dimensions<N - M + 1> m_dims; //!< Dimensions of the result
+    permutation<k_orderb> m_perm; //!< Permutation of the result
+    dimensions<k_orderb> m_dims; //!< Dimensions of the result
 
 public:
-    /** \brief Creates the operation
-        \param t Input %tensor.
-        \param m Diagonal mask.
-        \param c Scaling coefficient (default 1.0).
-     **/
-    tod_diag(dense_tensor_rd_i<N, double> &t, const mask<N> &m, double c = 1.0);
-
     /** \brief Creates the operation
         \param t Input %tensor.
         \param m Diagonal mask.
@@ -130,18 +123,15 @@ public:
         \param c Scaling coefficient (default 1.0)
      **/
     tod_diag(dense_tensor_rd_i<N, double> &t, const mask<N> &m,
-             const permutation<N - M + 1> &p, double c = 1.0);
-
-    /** \brief Performs the operation, replaces the output
-        \param tb Output %tensor.
-     **/
-    void perform(dense_tensor_wr_i<k_orderb, double> &tb);
+             const permutation<k_orderb> &p = permutation<k_orderb>());
 
     /** \brief Performs the operation, adds to the output
+        \param zero Zero result first
+        \param c Scalar transformation to apply before adding to result
         \param tb Output %tensor.
-        \param c Coefficient.
      **/
-    void perform(dense_tensor_wr_i<k_orderb, double> &tb, double c);
+    void perform(bool zero, const scalar_transf<double> &c,
+            dense_tensor_wr_i<k_orderb, double> &tb);
 
 private:
     /** \brief Forms the %dimensions of the output or throws an

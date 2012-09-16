@@ -265,14 +265,9 @@ void bto_diag<N, M, Traits>::compute_block(blockb_t &blk,
         scalar_tr_t sa(tra.get_scalar_tr());
         sa.invert().transform(m_tr.get_scalar_tr());
         sa.transform(trb.get_scalar_tr());
+        sa.transform(scalar_tr_t(c));
 
-        if(zero) {
-            sa.transform(scalar_tr_t(c));
-            to_diag_t(blka, m2, permb, sa.get_coeff()).perform(blk);
-        }
-        else {
-            to_diag_t(blka, m2, permb, sa.get_coeff()).perform(blk, c);
-        }
+        to_diag_t(blka, m2, permb).perform(zero, sa, blk);
         ctrla.ret_block(acia.get_index());
 
     }

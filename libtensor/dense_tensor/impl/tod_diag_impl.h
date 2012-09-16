@@ -2,6 +2,7 @@
 #define LIBTENSOR_TOD_DIAG_IMPL_H
 
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
+#include <libtensor/dense_tensor/tod_set.h>
 #include <libtensor/tod/bad_dimensions.h>
 #include "../tod_diag.h"
 
@@ -22,50 +23,31 @@ const char *tod_diag<N, M>::op_daxpy::k_clazz = "tod_diag<N, M>::op_daxpy";
 
 template<size_t N, size_t M>
 tod_diag<N, M>::tod_diag(dense_tensor_rd_i<N, double> &t, const mask<N> &m,
-    double c) :
+    const permutation<k_orderb> &p) :
 
-    m_t(t), m_mask(m), m_c(c), m_dims(mk_dims(t.get_dims(), m_mask)) {
-
-}
-
-
-template<size_t N, size_t M>
-tod_diag<N, M>::tod_diag(dense_tensor_rd_i<N, double> &t, const mask<N> &m,
-    const permutation<N - M + 1> &p, double c) :
-
-    m_t(t), m_mask(m), m_perm(p), m_c(c),
-    m_dims(mk_dims(t.get_dims(), m_mask)) {
+    m_t(t), m_mask(m), m_perm(p), m_dims(mk_dims(t.get_dims(), m_mask)) {
 
     m_dims.permute(p);
 }
 
 
 template<size_t N, size_t M>
-void tod_diag<N, M>::perform(dense_tensor_wr_i<k_orderb, double> &tb) {
+void tod_diag<N, M>::perform(bool zero, const scalar_transf<double> &c,
+        dense_tensor_wr_i<k_orderb, double> &tb) {
 
-    static const char *method =
-        "perform(dense_tensor_wr_i<N - M + 1, double> &)";
+    static const char *method = "perform(bool, const scalar_transf<double> &, "
+            "dense_tensor_wr_i<N - M + 1, double> &)";
 
+#ifdef LIBTENSOR_DEBUG
     if(!tb.get_dims().equals(m_dims)) {
         throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "t");
     }
+#endif
 
-    do_perform<op_dcopy>(tb, 1.0);
-}
+    if(zero) tod_set<k_orderb>().perform(tb);
+    if(c.get_coeff() == 0) return;
 
-
-template<size_t N, size_t M>
-void tod_diag<N, M>::perform(dense_tensor_wr_i<k_orderb, double> &tb,
-    double c) {
-
-    static const char *method =
-        "perform(dense_tensor_wr_i<N - M + 1, double> &, double)";
-
-    if(!tb.get_dims().equals(m_dims)) {
-        throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "t");
-    }
-
-    do_perform<op_daxpy>(tb, c);
+    do_perform<op_daxpy>(tb, c.get_coeff());
 }
 
 
@@ -121,7 +103,7 @@ void tod_diag<N, M>::do_perform(dense_tensor_wr_i<k_orderb, double> &tb,
     double *pb = cb.req_dataptr();
 
     loop_list_t lst;
-    build_list<CoreOp>(lst, tb, c * m_c);
+    build_list<CoreOp>(lst, tb, c);
 
     registers regs;
     regs.m_ptra = pa;
