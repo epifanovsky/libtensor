@@ -126,7 +126,7 @@ void tod_apply_test::test_plain(Functor &fn, const dimensions<N> &dims)
 	// Invoke the operation
 
 	tod_apply<N, Functor> cp(ta, fn);
-	cp.perform(true, 1.0, tb);
+	cp.perform(true, tb);
 
 	// Compare against the reference
 
@@ -174,8 +174,11 @@ void tod_apply_test::test_plain_additive(Functor &fn,
 
 	// Invoke the operation
 
-	tod_apply<N, Functor> cp(ta, fn);
-	cp.perform(false, d, tb);
+	permutation<N> p;
+	tensor_transf<N, double> tr1;
+	tensor_transf<N, double> tr2(p, scalar_transf<double>(d));
+	tod_apply<N, Functor> cp(ta, fn, tr1, tr2);
+	cp.perform(false, tb);
 
 	// Compare against the reference
 
@@ -225,8 +228,11 @@ void tod_apply_test::test_scaled(Functor &fn,
 
 	// Invoke the operation
 
-	tod_apply<N, Functor> cp(ta, fn, c);
-	cp.perform(true, 1.0, tb);
+	permutation<N> p;
+    tensor_transf<N, double> tr1(p, scalar_transf<double>(c));
+    tensor_transf<N, double> tr2;
+	tod_apply<N, Functor> cp(ta, fn, tr1, tr2);
+	cp.perform(true, tb);
 
 	// Compare against the reference
 
@@ -276,8 +282,11 @@ void tod_apply_test::test_scaled_additive(Functor &fn,
 
 	// Invoke the operation
 
-	tod_apply<N, Functor> cp(ta, fn, c);
-	cp.perform(false, d, tb);
+	permutation<N> p;
+    tensor_transf<N, double> tr1(p, scalar_transf<double>(c));
+    tensor_transf<N, double> tr2(p, scalar_transf<double>(d));
+	tod_apply<N, Functor> cp(ta, fn, tr1, tr2);
+	cp.perform(false, tb);
 
 	// Compare against the reference
 
@@ -335,8 +344,9 @@ void tod_apply_test::test_perm(Functor &fn, const dimensions<N> &dims,
 
 	// Invoke the operation
 
+    tensor_transf<N, double> tr1(perm), tr2;
 	tod_apply<N, Functor> cp(ta, fn, perm);
-	cp.perform(true, 1.0, tb);
+	cp.perform(true, tb);
 
 	// Compare against the reference
 
@@ -392,8 +402,10 @@ void tod_apply_test::test_perm_additive(Functor &fn, const dimensions<N> &dims,
 
 	// Invoke the operation
 
-	tod_apply<N, Functor> cp(ta, fn, perm);
-	cp.perform(false, d, tb);
+	permutation<N> p;
+    tensor_transf<N, double> tr1(perm), tr2(p, scalar_transf<double>(d));
+	tod_apply<N, Functor> cp(ta, fn, tr1, tr2);
+	cp.perform(false, tb);
 
 	// Compare against the reference
 
@@ -449,9 +461,9 @@ void tod_apply_test::test_perm_scaled(Functor &fn, const dimensions<N> &dims,
 
 	// Invoke the operation
 
-	tensor_transf<N, double> tr(perm, scalar_transf<double>(c));
-	tod_apply<N, Functor> cp(ta, fn, tr);
-	cp.perform(true, 1.0, tb);
+	tensor_transf<N, double> tr1(perm, scalar_transf<double>(c)), tr2;
+	tod_apply<N, Functor> cp(ta, fn, tr1, tr2);
+	cp.perform(true, tb);
 
 	// Compare against the reference
 
@@ -509,9 +521,11 @@ void tod_apply_test::test_perm_scaled_additive(Functor &fn,
 
 	// Invoke the operation
 
-        tensor_transf<N, double> tr(perm, scalar_transf<double>(c));
-	tod_apply<N, Functor> cp(ta, fn, tr);
-	cp.perform(false, d, tb);
+	permutation<N> p;
+    tensor_transf<N, double> tr1(perm, scalar_transf<double>(c));
+    tensor_transf<N, double> tr2(p, scalar_transf<double>(d));
+	tod_apply<N, Functor> cp(ta, fn, tr1, tr2);
+	cp.perform(false, tb);
 
 	// Compare against the reference
 
@@ -537,7 +551,7 @@ void tod_apply_test::test_exc() throw(libtest::test_exception) {
 	try {
 		tod_apply_test_ns::sin_functor sin;
 		tod_apply<4, tod_apply_test_ns::sin_functor> tc(t1, sin);
-		tc.perform(true, 1.0, t2);
+		tc.perform(true, t2);
 	} catch(exception &e) {
 		ok = true;
 	}

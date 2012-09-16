@@ -14,18 +14,17 @@ namespace libtensor {
 template<size_t N, typename Functor, typename Alloc = std_allocator<double> >
 class btod_apply : public bto_apply< N, Functor, btod_traits> {
 private:
-    typedef bto_apply<N, Functor, btod_traits> bto_apply_t;
-    typedef typename bto_apply_t::scalar_transf_t scalar_transf_t;
+    typedef bto_apply<N, Functor, btod_traits> bto_apply_type;
 
 public:
     btod_apply(block_tensor_i<N, double> &bta,
             const Functor &fn, double c = 1.0) :
-        bto_apply_t(bta, fn, scalar_transf_t(c)) {
+        bto_apply_type(bta, fn, scalar_transf<double>(c)) {
     }
 
     btod_apply(block_tensor_i<N, double> &bta, const Functor &fn,
             const permutation<N> &p, double c = 1.0) :
-        bto_apply_t(bta, fn, p, scalar_transf_t(c)) {
+        bto_apply_type(bta, fn, p, scalar_transf<double>(c)) {
     }
 
     virtual ~btod_apply() { }
