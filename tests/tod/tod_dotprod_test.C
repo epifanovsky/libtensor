@@ -1,4 +1,5 @@
 #include <cmath> // for fabs()
+#include <cstdlib> // for drand48()
 #include <sstream>
 #include <libtensor/core/abs_index.h>
 #include <libtensor/core/allocator.h>

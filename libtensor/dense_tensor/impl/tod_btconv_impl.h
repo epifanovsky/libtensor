@@ -142,8 +142,8 @@ void tod_btconv<N>::op_loop::exec(processor_t &proc, registers &regs)
 template<size_t N>
 void tod_btconv<N>::op_dcopy::exec(processor_t &proc, registers &regs)
     throw(exception) {
-    linalg::i_i(m_len, regs.m_ptra, m_inca, regs.m_ptrb, m_incb);
-    if(m_c != 1.0) linalg::i_x(m_len, m_c, regs.m_ptrb, m_incb);
+    linalg::copy_i_i(0, m_len, regs.m_ptra, m_inca, regs.m_ptrb, m_incb);
+    if(m_c != 1.0) linalg::mul1_i_x(0, m_len, m_c, regs.m_ptrb, m_incb);
 }
 
 

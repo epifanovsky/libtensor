@@ -3,11 +3,11 @@
 
 #include <memory>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include <libtensor/tod/kernels/loop_list_runner.h>
 #include <libtensor/kernels/kern_ddiv1.h>
 #include <libtensor/kernels/kern_ddivadd1.h>
 #include <libtensor/kernels/kern_dmul1.h>
 #include <libtensor/kernels/kern_dmuladd1.h>
+#include <libtensor/kernels/loop_list_runner.h>
 #include <libtensor/tod/bad_dimensions.h>
 #include "../tod_mult1.h"
 
@@ -97,7 +97,7 @@ void tod_mult1<N>::do_perform(dense_tensor_wr_i<N, double> &ta, bool doadd,
     r.m_ptra_end[0] = pb + dimsb.get_size();
     r.m_ptrb_end[0] = pa + dimsa.get_size();
 
-    std::auto_ptr< kernel_base<1, 1> > kern(
+    std::auto_ptr< kernel_base<linalg, 1, 1> > kern(
         m_recip ?
             (doadd ?
                 kern_ddivadd1::match(m_c * c, loop_in, loop_out) :
@@ -106,7 +106,7 @@ void tod_mult1<N>::do_perform(dense_tensor_wr_i<N, double> &ta, bool doadd,
                 kern_dmuladd1::match(m_c * c, loop_in, loop_out) :
                 kern_dmul1::match(m_c * c, loop_in, loop_out)));
     tod_mult1<N>::start_timer(kern->get_name());
-    loop_list_runner<1, 1>(loop_in).run(r, *kern);
+    loop_list_runner<linalg, 1, 1>(loop_in).run(0, r, *kern);
     tod_mult1<N>::stop_timer(kern->get_name());
 
     cb.ret_const_dataptr(pb); pb = 0;

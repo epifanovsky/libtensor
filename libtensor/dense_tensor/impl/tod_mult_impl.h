@@ -3,9 +3,10 @@
 
 #include <memory>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include <libtensor/tod/kernels/loop_list_runner.h>
+#include <libtensor/linalg/linalg.h>
 #include <libtensor/kernels/kern_ddiv2.h>
 #include <libtensor/kernels/kern_dmul2.h>
+#include <libtensor/kernels/loop_list_runner.h>
 #include <libtensor/tod/bad_dimensions.h>
 #include "../tod_mult.h"
 
@@ -143,12 +144,12 @@ void tod_mult<N>::perform(bool zero, double c,
     r.m_ptra_end[1] = pb + dimsb.get_size();
     r.m_ptrb_end[0] = pc + dimsc.get_size();
 
-    std::auto_ptr< kernel_base<2, 1> > kern(
+    std::auto_ptr< kernel_base<linalg, 2, 1> > kern(
         m_recip ?
             kern_ddiv2::match(m_c * c, loop_in, loop_out) :
-            kern_dmul2::match(m_c * c, loop_in, loop_out));
+            kern_dmul2<linalg>::match(m_c * c, loop_in, loop_out));
     tod_mult<N>::start_timer(kern->get_name());
-    loop_list_runner<2, 1>(loop_in).run(r, *kern);
+    loop_list_runner<linalg, 2, 1>(loop_in).run(0, r, *kern);
     tod_mult<N>::stop_timer(kern->get_name());
 
     cc.ret_dataptr(pc); pc = 0;

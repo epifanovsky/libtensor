@@ -15,8 +15,7 @@ public:
     virtual void perform() throw(libtest::test_exception);
 
 private:
-    void test_add_i_i_x_x(size_t ni, size_t sia, size_t sic)
-        throw(libtest::test_exception);
+    void test_add_i_i_x_x(size_t ni, size_t sia, size_t sic);
 
 };
 
