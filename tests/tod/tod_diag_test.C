@@ -68,8 +68,7 @@ void tod_diag_test::test_1() throw(libtest::test_exception) {
 	}
 
 	mask<2> m; m[0] = true; m[1] = true;
-	scalar_transf<double> tr(1.0);
-	tod_diag<2, 2>(ta, m).perform(true, tr, tb);
+	tod_diag<2, 2>(ta, m).perform(true, tb);
 
 	compare_ref<1>::compare(testname, tb, tb_ref, 1e-15);
 
@@ -129,8 +128,7 @@ void tod_diag_test::test_2() throw(libtest::test_exception) {
 	}
 
 	mask<3> m; m[0] = true; m[1] = true; m[2] = false;
-	scalar_transf<double> tr(1.0);
-	tod_diag<3, 2>(ta, m).perform(true, tr, tb);
+	tod_diag<3, 2>(ta, m).perform(true, tb);
 
 	compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
 
@@ -190,8 +188,7 @@ void tod_diag_test::test_3() throw(libtest::test_exception) {
 	}
 
 	mask<3> m; m[0] = true; m[1] = false; m[2] = true;
-	scalar_transf<double> tr(1.0);
-	tod_diag<3, 2>(ta, m).perform(true, tr, tb);
+	tod_diag<3, 2>(ta, m).perform(true, tb);
 
 	compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
 
@@ -251,8 +248,7 @@ void tod_diag_test::test_4() throw(libtest::test_exception) {
 	}
 
 	mask<3> m; m[0] = false; m[1] = true; m[2] = true;
-	scalar_transf<double> tr(1.0);
-	tod_diag<3, 2>(ta, m).perform(true, tr, tb);
+	tod_diag<3, 2>(ta, m).perform(true, tb);
 
 	compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
 
@@ -313,8 +309,8 @@ void tod_diag_test::test_5() throw(libtest::test_exception) {
 
 	mask<3> m; m[0] = false; m[1] = true; m[2] = true;
 	permutation<2> permb; permb.permute(0, 1);
-	scalar_transf<double> tr(1.0);
-	tod_diag<3, 2>(ta, m, permb).perform(true, tr, tb);
+	tensor_transf<2, double> tr(permb);
+	tod_diag<3, 2>(ta, m, tr).perform(true, tb);
 
 	compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
 
@@ -376,8 +372,8 @@ void tod_diag_test::test_6() throw(libtest::test_exception) {
 
 	mask<4> m; m[0] = false; m[1] = true; m[2] = false; m[3] = true;
 	permutation<3> permb; permb.permute(0, 1).permute(0, 2);
-	scalar_transf<double> tr(1.0);
-	tod_diag<4, 2>(ta, m, permb).perform(true, tr, tb);
+	tensor_transf<3, double> tr(permb);
+	tod_diag<4, 2>(ta, m, tr).perform(true, tb);
 
 	compare_ref<3>::compare(testname, tb, tb_ref, 1e-15);
 

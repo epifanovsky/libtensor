@@ -7,6 +7,7 @@
 #include <libtensor/core/mask.h>
 #include <libtensor/core/permutation.h>
 #include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/core/tensor_transf.h>
 #include <libtensor/tod/processor.h>
 #include "dense_tensor_i.h"
 
@@ -48,6 +49,8 @@ public:
     static const size_t k_ordera = N; //!< Order of the source %tensor
     static const size_t k_orderb =
         N - M + 1; //!< Order of the destination %tensor
+
+    typedef tensor_transf<k_orderb, double> tensor_transf_type;
 
 private:
     struct registers {
@@ -112,7 +115,7 @@ private:
 private:
     dense_tensor_rd_i<N, double> &m_t; //!< Input %tensor
     mask<N> m_mask; //!< Diagonal mask
-    permutation<k_orderb> m_perm; //!< Permutation of the result
+    tensor_transf_type m_tr; //!< Transformation of the result
     dimensions<k_orderb> m_dims; //!< Dimensions of the result
 
 public:
@@ -123,15 +126,14 @@ public:
         \param c Scaling coefficient (default 1.0)
      **/
     tod_diag(dense_tensor_rd_i<N, double> &t, const mask<N> &m,
-             const permutation<k_orderb> &p = permutation<k_orderb>());
+            const tensor_transf_type &tr = tensor_transf_type());
 
     /** \brief Performs the operation, adds to the output
         \param zero Zero result first
         \param c Scalar transformation to apply before adding to result
         \param tb Output %tensor.
      **/
-    void perform(bool zero, const scalar_transf<double> &c,
-            dense_tensor_wr_i<k_orderb, double> &tb);
+    void perform(bool zero, dense_tensor_wr_i<k_orderb, double> &tb);
 
 private:
     /** \brief Forms the %dimensions of the output or throws an
@@ -143,13 +145,12 @@ private:
     /** \brief Forms the loop and executes the operation
      **/
     template<typename CoreOp>
-    void do_perform(dense_tensor_wr_i<k_orderb, double> &tb, double c);
+    void do_perform(dense_tensor_wr_i<k_orderb, double> &tb);
 
     /** \brief Builds the nested loop list
      **/
     template<typename CoreOp>
-    void build_list(loop_list_t &list, dense_tensor_wr_i<k_orderb, double> &tb,
-        double c);
+    void build_list(loop_list_t &list, dense_tensor_wr_i<k_orderb, double> &tb);
 
     /** \brief Cleans the nested loop list
      **/
