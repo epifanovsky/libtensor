@@ -1,6 +1,8 @@
 #ifndef LIBTENSOR_BTO_STREAM_ADAPTER_H
 #define LIBTENSOR_BTO_STREAM_ADAPTER_H
 
+#include <libtensor/gen_block_tensor/gen_block_stream_i.h>
+
 namespace libtensor {
 
 
