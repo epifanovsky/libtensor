@@ -84,7 +84,7 @@ public:
 
     /** \brief Returns the list of canonical non-zero blocks of the result
      **/
-   const assignment_schedule<k_orderb, element_type> &get_schedule() const {
+    const assignment_schedule<k_orderb, element_type> &get_schedule() const {
         return m_sch;
     }
 

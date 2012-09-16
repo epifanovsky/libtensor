@@ -2,10 +2,10 @@
 #define LIBTENSOR_BTOD_DIAG_H
 
 #include <libtensor/core/scalar_transf_double.h>
-#include <libtensor/gen_block_tensor/gen_bto_diag.h>
 #include <libtensor/block_tensor/bto/additive_bto.h>
 #include <libtensor/block_tensor/bto/bto_stream_i.h>
 #include <libtensor/block_tensor/btod/btod_traits.h>
+#include <libtensor/gen_block_tensor/gen_bto_diag.h>
 
 namespace libtensor {
 
@@ -85,24 +85,17 @@ public:
         m_gbto.sync_off();
     }
 
-    //@}
-
     virtual void perform(bto_stream_i<N - M + 1, btod_traits> &out);
     virtual void perform(block_tensor_i<N - M + 1, double> &btb);
-    virtual void perform(
-            block_tensor_i<N - M + 1, double> &btb,
+    virtual void perform(block_tensor_i<N - M + 1, double> &btb,
             const double &c);
 
-    virtual void compute_block(
-            dense_tensor_i<N - M + 1, double> &blkb,
+    virtual void compute_block(dense_tensor_i<N - M + 1, double> &blkb,
             const index<N - M + 1> &ib);
 
-    virtual void compute_block(
-            bool zero,
-            dense_tensor_i<N - M + 1, double> &blkb,
-            const index<N - M + 1> &ib,
-            const tensor_transf<N - M + 1, double> &trb,
-            const double &c);
+    virtual void compute_block(bool zero,
+            dense_tensor_i<N - M + 1, double> &blkb, const index<N - M + 1> &ib,
+            const tensor_transf<N - M + 1, double> &trb, const double &c);
 };
 
 

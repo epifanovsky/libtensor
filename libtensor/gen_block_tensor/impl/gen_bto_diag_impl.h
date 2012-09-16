@@ -123,7 +123,6 @@ void gen_bto_diag<N, M, Traits, Timed>::perform(
 
         out.open();
 
-
         temp_block_tensor_type btb(m_bis);
         gen_block_tensor_ctrl<N - M + 1, bti_traits> cb(btb);
         cb.req_sync_on();
@@ -174,84 +173,71 @@ void gen_bto_diag<N, M, Traits, Timed>::compute_block_untimed(bool zero,
 
     typedef typename Traits::template to_diag_type<N, M>::type to_diag;
 
-    gen_bto_diag<N, M, Traits, Timed>::start_timer();
+    gen_block_tensor_rd_ctrl<N, bti_traits> ctrla(m_bta);
+    dimensions<N> bidimsa = m_bta.get_bis().get_block_index_dims();
 
-    try {
-
-        gen_block_tensor_rd_ctrl<N, bti_traits> ctrla(m_bta);
-        dimensions<N> bidimsa = m_bta.get_bis().get_block_index_dims();
-
-        //  Build ia from ib
-        //
-        sequence<N, size_t> map(0);
-        size_t j = 0, jd; // Current index, index on diagonal
-        bool b = false;
-        for(size_t i = 0; i < N; i++) {
-            if(m_msk[i]) {
-                if(!b) { map[i] = jd = j++; b = true; }
-                else { map[i] = jd; }
-            } else {
-                map[i] = j++;
-            }
+    //  Build ia from ib
+    //
+    sequence<N, size_t> map(0);
+    size_t j = 0, jd; // Current index, index on diagonal
+    bool b = false;
+    for(size_t i = 0; i < N; i++) {
+        if(m_msk[i]) {
+            if(!b) { map[i] = jd = j++; b = true; }
+            else { map[i] = jd; }
+        } else {
+            map[i] = j++;
         }
-        index<N> ia;
-        index<N - M + 1> ib2(ib);
-        permutation<N - M + 1> pinvb(m_tr.get_perm(), true);
-        ib2.permute(pinvb);
-        for(size_t i = 0; i < N; i++) ia[i] = ib2[map[i]];
-
-        //  Find canonical index cia, transformation cia->ia
-        //
-        orbit<N, element_type> oa(ctrla.req_const_symmetry(), ia);
-        abs_index<N> acia(oa.get_abs_canonical_index(), bidimsa);
-        const tensor_transf<N, element_type> &tra = oa.get_transf(ia);
-
-        //  Build new diagonal mask and permutation in b
-        //
-        mask<N> m1(m_msk), m2(m_msk);
-        sequence<N, size_t> map1(map), map2(map);
-        m2.permute(tra.get_perm());
-        tra.get_perm().apply(map2);
-
-        sequence<N - M, size_t> seq1(0), seq2(0);
-        sequence<N - M + 1, size_t> seqb1(0), seqb2(0);
-        for(register size_t i = 0, j1 = 0, j2 = 0; i < N; i++) {
-            if(!m1[i]) seq1[j1++] = map1[i];
-            if(!m2[i]) seq2[j2++] = map2[i];
-        }
-        bool b1 = false, b2 = false;
-        for(register size_t i = 0, j1 = 0, j2 = 0; i < N - M + 1; i++) {
-            if(m1[i] && !b1) { seqb1[i] = N - M + 1; b1 = true; }
-            else { seqb1[i] = seq1[j1++]; }
-            if(m2[i] && !b2) { seqb2[i] = N - M + 1; b2 = true; }
-            else { seqb2[i] = seq2[j2++]; }
-        }
-
-        permutation_builder<N - M + 1> pb(seqb2, seqb1);
-        permutation<N - M + 1> permb(pb.get_perm());
-        permb.permute(m_tr.get_perm());
-        permb.permute(permutation<N - M + 1>(trb.get_perm(), true));
-
-        scalar_transf<element_type> sa(tra.get_scalar_tr());
-        sa.invert().transform(m_tr.get_scalar_tr());
-        sa.transform(trb.get_scalar_tr());
-
-        tensor_transf<N - M + 1, element_type> tr(permb, sa);
-
-        //  Invoke the tensor operation
-        //
-        rd_block_type &blka = ctrla.req_const_block(acia.get_index());
-        to_diag(blka, m2, tr).perform(zero, blkb);
-        ctrla.ret_const_block(acia.get_index());
-
     }
-    catch (...) {
-        gen_bto_diag<N, M, Traits, Timed>::stop_timer();
-        throw;
+    index<N> ia;
+    index<N - M + 1> ib2(ib);
+    permutation<N - M + 1> pinvb(m_tr.get_perm(), true);
+    ib2.permute(pinvb);
+    for(size_t i = 0; i < N; i++) ia[i] = ib2[map[i]];
+
+    //  Find canonical index cia, transformation cia->ia
+    //
+    orbit<N, element_type> oa(ctrla.req_const_symmetry(), ia);
+    abs_index<N> acia(oa.get_abs_canonical_index(), bidimsa);
+    const tensor_transf<N, element_type> &tra = oa.get_transf(ia);
+
+    //  Build new diagonal mask and permutation in b
+    //
+    mask<N> m1(m_msk), m2(m_msk);
+    sequence<N, size_t> map1(map), map2(map);
+    m2.permute(tra.get_perm());
+    tra.get_perm().apply(map2);
+
+    sequence<N - M, size_t> seq1(0), seq2(0);
+    sequence<N - M + 1, size_t> seqb1(0), seqb2(0);
+    for(register size_t i = 0, j1 = 0, j2 = 0; i < N; i++) {
+        if(!m1[i]) seq1[j1++] = map1[i];
+        if(!m2[i]) seq2[j2++] = map2[i];
+    }
+    bool b1 = false, b2 = false;
+    for(register size_t i = 0, j1 = 0, j2 = 0; i < N - M + 1; i++) {
+        if(m1[i] && !b1) { seqb1[i] = N - M + 1; b1 = true; }
+        else { seqb1[i] = seq1[j1++]; }
+        if(m2[i] && !b2) { seqb2[i] = N - M + 1; b2 = true; }
+        else { seqb2[i] = seq2[j2++]; }
     }
 
-    gen_bto_diag<N, M, Traits, Timed>::stop_timer();
+    permutation_builder<N - M + 1> pb(seqb2, seqb1);
+    permutation<N - M + 1> permb(pb.get_perm());
+    permb.permute(m_tr.get_perm());
+    permb.permute(permutation<N - M + 1>(trb.get_perm(), true));
 
+    scalar_transf<element_type> sa(tra.get_scalar_tr());
+    sa.invert().transform(m_tr.get_scalar_tr());
+    sa.transform(trb.get_scalar_tr());
+
+    tensor_transf<N - M + 1, element_type> tr(permb, sa);
+
+    //  Invoke the tensor operation
+    //
+    rd_block_type &blka = ctrla.req_const_block(acia.get_index());
+    to_diag(blka, m2, tr).perform(zero, blkb);
+    ctrla.ret_const_block(acia.get_index());
 }
 
 
