@@ -127,7 +127,7 @@ void btod_contract2<N, M, K>::perform(bto_stream_i<NC, btod_traits> &out) {
 
         //  Number and size of batches in A, B and C
 
-        size_t batsz = 1280000000; // XXX: arbitrary batch size!
+        size_t batsz = 4096; // XXX: arbitrary batch size!
         size_t nbata, nbatb, nbatc, batsza, batszb, batszc;
         nbata = (nblka + batsz - 1) / batsz;
         nbatb = (nblkb + batsz - 1) / batsz;
