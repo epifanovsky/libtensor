@@ -51,7 +51,7 @@ void btod_contract3<N1, N2, N3, K1, K2>::perform(
 
     //  Form batches of AB
 
-    size_t batch_size = 64; // FIXME: arbitrary and hard-coded!
+    size_t batch_size = 4096; // FIXME: arbitrary and hard-coded!
     bool first_batch = true;
     const assignment_schedule<N1 + N2 + K2, double> &schab =
         contrab.get_schedule();
