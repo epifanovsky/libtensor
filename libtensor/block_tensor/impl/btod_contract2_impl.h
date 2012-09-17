@@ -185,42 +185,80 @@ void btod_contract2<N, M, K>::perform(bto_stream_i<NC, btod_traits> &out) {
         batchc2.reserve(batszc);
 
         typename orbit_list<NA, double>::iterator ioa = ola.begin();
+        bool first_batch_a = true;
         while(ioa != ola.end()) {
 
-            btod_contract2<N, M, K>::start_timer("copy_a");
             batcha.clear();
-            for(; ioa != ola.end() && batcha.size() < batsza; ++ioa) {
-                index<NA> ia = ola.get_index(ioa);
-                if(ca.req_is_zero_block(ia)) continue;
-                ia.permute(perma);
-                orbit<NA, double> oat(symat, ia, false);
-                batcha.push_back(oat.get_acindex());
+            if(perma.is_identity()) {
+                for(; ioa != ola.end() && batcha.size() < batsza; ++ioa) {
+                    const index<NA> &ia = ola.get_index(ioa);
+                    if(ca.req_is_zero_block(ia)) continue;
+                    batcha.push_back(ola.get_abs_index(ioa));
+                }
+            } else {
+                for(; ioa != ola.end() && batcha.size() < batsza; ++ioa) {
+                    index<NA> ia = ola.get_index(ioa);
+                    if(ca.req_is_zero_block(ia)) continue;
+                    ia.permute(perma);
+                    orbit<NA, double> oat(symat, ia, false);
+                    batcha.push_back(oat.get_acindex());
+                }
             }
-            tensor_transf<NA, double> tra(perma);
-            bto_aux_copy<NA, btod_traits> cpaout(symat, btat);
-            bto_stream_adapter<NA, btod_traits> cpaout1(cpaout);
-            gen_bto_copy_a_type(m_bta, tra).perform(batcha, cpaout1);
-            btod_contract2<N, M, K>::stop_timer("copy_a");
+
+            //  If A need not be permuted and fits in one batch entirely,
+            //  do not make a copy; use the original tensor
+            bool use_orig_a = (first_batch_a && ioa == ola.end() &&
+                perma.is_identity());
+            first_batch_a = false;
+
+            if(!use_orig_a) {
+                btod_contract2<N, M, K>::start_timer("copy_a");
+                tensor_transf<NA, double> tra(perma);
+                bto_aux_copy<NA, btod_traits> cpaout(symat, btat);
+                bto_stream_adapter<NA, btod_traits> cpaout1(cpaout);
+                gen_bto_copy_a_type(m_bta, tra).perform(batcha, cpaout1);
+                btod_contract2<N, M, K>::stop_timer("copy_a");
+            }
+
+            block_tensor_rd_i<NA, double> &bta = use_orig_a ? m_bta : btat;
 
             if(batcha.size() == 0) continue;
 
             typename orbit_list<NB, double>::iterator iob = olb.begin();
+            bool first_batch_b = true;
             while(iob != olb.end()) {
 
-                btod_contract2<N, M, K>::start_timer("copy_b");
                 batchb.clear();
-                for(; iob != olb.end() && batchb.size() < batszb; ++iob) {
-                    index<NB> ib = olb.get_index(iob);
-                    if(cb.req_is_zero_block(ib)) continue;
-                    ib.permute(permb);
-                    orbit<NB, double> obt(symbt, ib, false);
-                    batchb.push_back(obt.get_acindex());
+                if(permb.is_identity()) {
+                    for(; iob != olb.end() && batchb.size() < batszb; ++iob) {
+                        const index<NB> &ib = olb.get_index(iob);
+                        if(cb.req_is_zero_block(ib)) continue;
+                        batchb.push_back(olb.get_abs_index(iob));
+                    }
+                } else {
+                    for(; iob != olb.end() && batchb.size() < batszb; ++iob) {
+                        index<NB> ib = olb.get_index(iob);
+                        if(cb.req_is_zero_block(ib)) continue;
+                        ib.permute(permb);
+                        orbit<NB, double> obt(symbt, ib, false);
+                        batchb.push_back(obt.get_acindex());
+                    }
                 }
-                tensor_transf<NB, double> trb(permb);
-                bto_aux_copy<NB, btod_traits> cpbout(symbt, btbt);
-                bto_stream_adapter<NB, btod_traits> cpbout1(cpbout);
-                gen_bto_copy_b_type(m_btb, trb).perform(batchb, cpbout1);
-                btod_contract2<N, M, K>::stop_timer("copy_b");
+
+                bool use_orig_b = (first_batch_b && iob == olb.end() &&
+                    permb.is_identity());
+                first_batch_b = false;
+
+                if(!use_orig_b) {
+                    btod_contract2<N, M, K>::start_timer("copy_b");
+                    tensor_transf<NB, double> trb(permb);
+                    bto_aux_copy<NB, btod_traits> cpbout(symbt, btbt);
+                    bto_stream_adapter<NB, btod_traits> cpbout1(cpbout);
+                    gen_bto_copy_b_type(m_btb, trb).perform(batchb, cpbout1);
+                    btod_contract2<N, M, K>::stop_timer("copy_b");
+                }
+
+                block_tensor_rd_i<NB, double> &btb = use_orig_b ? m_btb : btbt;
 
                 if(batchb.size() == 0) continue;
 
@@ -245,7 +283,7 @@ void btod_contract2<N, M, K>::perform(bto_stream_i<NC, btod_traits> &out) {
                     //  Calling this may break the symmetry of final result
                     //  in some cases, e.g. self-contraction
                     gen_bto_contract2<N, M, K, btod_traits, btod_contract2> bto(
-                        contr, btat, btbt);
+                        contr, bta, btb);
                     bto_aux_copy<NC, btod_traits> ctcout(symct, btct);
                     bto_stream_adapter<NC, btod_traits> ctcout1(ctcout);
                     bto.perform(batchc1, ctcout1);
