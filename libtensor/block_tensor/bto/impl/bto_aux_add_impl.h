@@ -143,7 +143,7 @@ void bto_aux_add<N, Traits>::put(const index<N> &idx, block_type &blk,
 
         bool contains = false;
         for(group_iterator inode = grp.begin(); inode != grp.end(); ++inode) {
-            if(inode->cia == aia.get_abs_index()) {
+            if(!inode->zeroa && inode->cia == aia.get_abs_index()) {
                 contains = true;
                 break;
             }
@@ -172,24 +172,29 @@ void bto_aux_add<N, Traits>::put(const index<N> &idx, block_type &blk,
         //  Touch the group if necessary; group mutex is locked already
         if(touch) {
 
-            for(group_iterator inode = grp.begin(); inode != grp.end();
-                ++inode) {
+            try {
+                for(group_iterator inode = grp.begin(); inode != grp.end();
+                    ++inode) {
 
-                //  Skip the canonical block in B
-                if(inode->cib == inode->cic) continue;
+                    //  Skip the canonical block in B
+                    if(inode->cib == inode->cic) continue;
 
-                abs_index<N> aib(inode->cib, m_bidims),
-                    aic(inode->cic, m_bidims);
+                    abs_index<N> aib(inode->cib, m_bidims),
+                        aic(inode->cic, m_bidims);
 
-                //  Skip zero blocks
-                if(m_cb.req_is_zero_block(aib.get_index())) continue;
+                    //  Skip zero blocks
+                    if(m_cb.req_is_zero_block(aib.get_index())) continue;
 
-                block_type &blkb = m_cb.req_block(aib.get_index());
-                block_type &blkc = m_cb.req_block(aic.get_index());
-                to_copy_type(blkb, inode->trb).perform(true, Traits::identity(),
-                    blkc);
-                m_cb.ret_block(aib.get_index());
-                m_cb.ret_block(aic.get_index());
+                    block_type &blkb = m_cb.req_block(aib.get_index());
+                    block_type &blkc = m_cb.req_block(aic.get_index());
+                    to_copy_type(blkb, inode->trb).perform(true,
+                        Traits::identity(), blkc);
+                    m_cb.ret_block(aib.get_index());
+                    m_cb.ret_block(aic.get_index());
+                }
+            } catch(...) {
+                mtx->unlock();
+                throw;
             }
 
             mtx->unlock();
