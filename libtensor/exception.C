@@ -102,6 +102,19 @@ exception::exception(const char *ns, const char *clazz, const char *method,
 }
 
 
+exception::exception(const exception &e) throw() : m_bt(e.m_bt) {
+
+    strcpy(m_ns, e.m_ns);
+    strcpy(m_clazz, e.m_clazz);
+    strcpy(m_method, e.m_method);
+    strcpy(m_file, e.m_file);
+    m_line = e.m_line;
+    strcpy(m_type, e.m_type);
+    strcpy(m_message, e.m_message);
+    strcpy(m_what, e.m_what);
+}
+
+
 const char *exception::what() const throw() {
 
     return m_what;

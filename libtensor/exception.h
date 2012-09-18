@@ -2,6 +2,7 @@
 #define LIBTENSOR_EXCEPTION_H
 
 #include <exception>
+#include <libutil/exceptions/backtrace.h>
 #include <libutil/exceptions/rethrowable_i.h>
 #include "defs.h"
 
@@ -38,6 +39,7 @@ private:
     char m_type[128]; //!< Exception type
     char m_message[256]; //!< Exception message
     char m_what[1024]; //!< Composed message available via what()
+    libutil::backtrace m_bt; //!< Stack trace
 
 public:
     //!    \name Construction and destruction
@@ -56,6 +58,10 @@ public:
         const char *file, unsigned int line, const char *type,
         const char *message) throw();
 
+    /** \brief Copy constructor
+     **/
+    exception(const exception &e) throw();
+
     /** \brief Virtual destructor
      **/
     virtual ~exception() throw() { };
@@ -71,6 +77,13 @@ public:
     virtual const char *what() const throw();
 
     //@}
+
+    /** \brief Returns the stack trace
+     **/
+    const libutil::backtrace &get_backtrace() const {
+
+        return m_bt;
+    }
 
     /** \brief Clones the exception
      **/
