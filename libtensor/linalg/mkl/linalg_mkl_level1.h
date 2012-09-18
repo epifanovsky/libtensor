@@ -18,6 +18,9 @@ class linalg_mkl_level1 :
 public:
     static const char *k_clazz; //!< Class name
 
+private:
+    typedef linalg_timings<linalg_mkl_level1> timings_base;
+
 public:
     static void add_i_i_x_x(
         void*,

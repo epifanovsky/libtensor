@@ -18,6 +18,9 @@ class linalg_mkl_level3 :
 public:
     static const char *k_clazz; //!< Class name
 
+private:
+    typedef linalg_timings<linalg_mkl_level3> timings_base;
+
 public:
     static void mul2_ij_ip_jp_x(
         void*,
