@@ -19,7 +19,7 @@ void linalg_mkl_level1::add_i_i_x_x(
     double *c, size_t sic,
     double d) {
 
-    start_timer("daxpy");
+    timings_base::start_timer("daxpy");
     cblas_daxpy(ni, d * ka, a, sia, c, sic);
     double db = d * kb * b;
     if(sic == 1) {
@@ -27,7 +27,7 @@ void linalg_mkl_level1::add_i_i_x_x(
     } else {
         for(size_t i = 0; i < ni; i++) c[i * sic] += db;
     }
-    stop_timer("daxpy");
+    timings_base::stop_timer("daxpy");
 }
 
 
@@ -38,13 +38,13 @@ void linalg_mkl_level1::copy_i_i(
     double *c, size_t sic) {
 
     if(sia == 1 && sic == 1) {
-        start_timer("memcpy");
+        timings_base::start_timer("memcpy");
         ::memcpy(c, a, ni * sizeof(double));
-        stop_timer("memcpy");
+        timings_base::stop_timer("memcpy");
     } else {
-        start_timer("dcopy");
+        timings_base::start_timer("dcopy");
         cblas_dcopy(ni, a, sia, c, sic);
-        stop_timer("dcopy");
+        timings_base::stop_timer("dcopy");
     }
 }
 
@@ -55,9 +55,9 @@ void linalg_mkl_level1::mul1_i_x(
     double a,
     double *c, size_t sic) {
 
-    start_timer("dscal");
+    timings_base::start_timer("dscal");
     cblas_dscal(ni, a, c, sic);
-    stop_timer("dscal");
+    timings_base::stop_timer("dscal");
 }
 
 
@@ -67,9 +67,9 @@ double linalg_mkl_level1::mul2_x_p_p(
     const double *a, size_t spa,
     const double *b, size_t spb) {
 
-    start_timer("ddot");
+    timings_base::start_timer("ddot");
     double d = cblas_ddot(np, a, spa, b, spb);
-    stop_timer("ddot");
+    timings_base::stop_timer("ddot");
     return d;
 }
 
@@ -81,9 +81,9 @@ void linalg_mkl_level1::mul2_i_i_x(
     double b,
     double *c, size_t sic) {
 
-    start_timer("daxpy");
+    timings_base::start_timer("daxpy");
     cblas_daxpy(ni, b, a, sia, c, sic);
-    stop_timer("daxpy");
+    timings_base::stop_timer("daxpy");
 }
 
 
@@ -97,7 +97,7 @@ void linalg_mkl_level1::mul2_i_i_i_x(
 
 #if defined(HAVE_MKL_VML)
     if(sia == 1 && sib == 1) {
-        start_timer("vdmul+daxpy");
+        timings_base::start_timer("vdmul+daxpy");
         double buf[256];
         size_t len = 256;
         while(ni > 0) {
@@ -109,15 +109,15 @@ void linalg_mkl_level1::mul2_i_i_i_x(
             b += len;
             c += len * sic;
         }
-        stop_timer("vdmul+daxpy");
+        timings_base::stop_timer("vdmul+daxpy");
     } else
 #endif
     {
-        start_timer("nonblas");
+        timings_base::start_timer("nonblas");
         for(size_t i = 0; i < ni; i++) {
             c[i * sic] += d * a[i * sia] * b[i * sib];
         }
-        stop_timer("nonblas");
+        timings_base::stop_timer("nonblas");
     }
 }
 

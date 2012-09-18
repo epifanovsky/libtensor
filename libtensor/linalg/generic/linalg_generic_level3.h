@@ -2,6 +2,7 @@
 #define LIBTENSOR_LINALG_GENERIC_LEVEL3_H
 
 #include <cstdlib> // for size_t
+#include "../linalg_timings.h"
 
 namespace libtensor {
 
@@ -10,9 +11,12 @@ namespace libtensor {
 
     \ingroup libtensor_linalg
  **/
-class linalg_generic_level3 {
+class linalg_generic_level3 : public linalg_timings<linalg_generic_level3> {
 public:
     static const char *k_clazz; //!< Class name
+
+private:
+    typedef linalg_timings<linalg_generic_level3> timings_base;
 
 public:
     /** \brief \f$ c_i = \sum_{pq} a_{ipq} b_{qp} d \f$

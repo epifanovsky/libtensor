@@ -13,7 +13,7 @@ void linalg_acml_level2::copy_ij_ji(
     const double *a, size_t sja,
     double *c, size_t sic) {
 
-    start_timer("dcopy");
+    timings_base::start_timer("dcopy");
     if(ni < nj) {
         double *c1 = c;
         for(size_t i = 0; i < ni; i++, c1 += sic) {
@@ -25,7 +25,7 @@ void linalg_acml_level2::copy_ij_ji(
             dcopy(ni, (double*)a1, 1, c + j, sic);
         }
     }
-    stop_timer("dcopy");
+    timings_base::stop_timer("dcopy");
 }
 
 
@@ -37,9 +37,9 @@ void linalg_acml_level2::mul2_i_ip_p_x(
     double *c, size_t sic,
     double d) {
 
-    start_timer("dgemv");
+    timings_base::start_timer("dgemv");
     dgemv('T', np, ni, d, (double*)a, sia, (double*)b, spb, 1.0, c, sic);
-    stop_timer("dgemv");
+    timings_base::stop_timer("dgemv");
 }
 
 
@@ -51,9 +51,9 @@ void linalg_acml_level2::mul2_i_pi_p_x(
     double *c, size_t sic,
     double d) {
 
-    start_timer("dgemv");
+    timings_base::start_timer("dgemv");
     dgemv('N', ni, np, d, (double*)a, spa, (double*)b, spb, 1.0, c, sic);
-    stop_timer("dgemv");
+    timings_base::stop_timer("dgemv");
 }
 
 
@@ -65,9 +65,9 @@ void linalg_acml_level2::mul2_ij_i_j_x(
     double *c, size_t sic,
     double d) {
 
-    start_timer("dger");
+    timings_base::start_timer("dger");
     dger(nj, ni, d, (double*)b, sjb, (double*)a, sia, c, sic);
-    stop_timer("dger");
+    timings_base::stop_timer("dger");
 }
 
 

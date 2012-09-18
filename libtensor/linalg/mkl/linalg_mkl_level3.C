@@ -15,10 +15,10 @@ void linalg_mkl_level3::mul2_ij_ip_jp_x(
     double *c, size_t sic,
     double d) {
 
-    start_timer("dgemm");
+    timings_base::start_timer("dgemm");
     cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasTrans, ni, nj, np,
         d, a, sia, b, sjb, 1.0, c, sic);
-    stop_timer("dgemm");
+    timings_base::stop_timer("dgemm");
 }
 
 
@@ -30,10 +30,10 @@ void linalg_mkl_level3::mul2_ij_ip_pj_x(
     double *c, size_t sic,
     double d) {
 
-    start_timer("dgemm");
+    timings_base::start_timer("dgemm");
     cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, ni, nj,
         np, d, a, sia, b, spb, 1.0, c, sic);
-    stop_timer("dgemm");
+    timings_base::stop_timer("dgemm");
 }
 
 
@@ -45,10 +45,10 @@ void linalg_mkl_level3::mul2_ij_pi_jp_x(
     double *c, size_t sic,
     double d) {
 
-    start_timer("dgemm");
+    timings_base::start_timer("dgemm");
     cblas_dgemm(CblasRowMajor, CblasTrans, CblasTrans, ni, nj, np,
         d, a, spa, b, sjb, 1.0, c, sic);
-    stop_timer("dgemm");
+    timings_base::stop_timer("dgemm");
 }
 
 
@@ -60,10 +60,10 @@ void linalg_mkl_level3::mul2_ij_pi_pj_x(
     double *c, size_t sic,
     double d) {
 
-    start_timer("dgemm");
+    timings_base::start_timer("dgemm");
     cblas_dgemm(CblasRowMajor, CblasTrans, CblasNoTrans, ni, nj, np,
         d, a, spa, b, spb, 1.0, c, sic);
-    stop_timer("dgemm");
+    timings_base::stop_timer("dgemm");
 }
 
 
