@@ -15,10 +15,12 @@ void linalg_generic_level3::mul2_i_ipq_qp_x(
     double *c, size_t sic,
     double d) {
 
+    timings_base::start_timer("mul2_i_ipq_qp_x");
     for(size_t i = 0; i < ni; i++) {
         c[i * sic] += d * linalg_generic_level2::mul2_x_pq_qp(ctx, np, nq,
             a + i * sia, spa, b, sqb);
     }
+    timings_base::stop_timer("mul2_i_ipq_qp_x");
 }
 
 
@@ -30,6 +32,7 @@ void linalg_generic_level3::mul2_ij_ip_jp_x(
     double *c, size_t sic,
     double d) {
 
+    timings_base::start_timer("mul2_ij_ip_jp_x");
     for(size_t i = 0; i < ni; i++)
     for(size_t j = 0; j < nj; j++) {
         double cij = 0.0;
@@ -38,6 +41,7 @@ void linalg_generic_level3::mul2_ij_ip_jp_x(
         }
         c[i * sic + j] += d * cij;
     }
+    timings_base::stop_timer("mul2_ij_ip_jp_x");
 }
 
 
@@ -49,6 +53,7 @@ void linalg_generic_level3::mul2_ij_ip_pj_x(
     double *c, size_t sic,
     double d) {
 
+    timings_base::start_timer("mul2_ij_ip_pj_x");
     for(size_t i = 0; i < ni; i++)
     for(size_t p = 0; p < np; p++) {
         double aip = a[i * sia + p];
@@ -56,6 +61,7 @@ void linalg_generic_level3::mul2_ij_ip_pj_x(
             c[i * sic + j] += d * aip * b[p * spb + j];
         }
     }
+    timings_base::stop_timer("mul2_ij_ip_pj_x");
 }
 
 
@@ -67,11 +73,13 @@ void linalg_generic_level3::mul2_ij_pi_jp_x(
     double *c, size_t sic,
     double d) {
 
+    timings_base::start_timer("mul2_ij_pi_jp_x");
     for(size_t i = 0; i < ni; i++)
     for(size_t j = 0; j < nj; j++)
     for(size_t p = 0; p < np; p++) {
         c[i * sic + j] += d * a[p * spa + i] * b[j * sjb + p];
     }
+    timings_base::stop_timer("mul2_ij_pi_jp_x");
 }
 
 
@@ -83,11 +91,13 @@ void linalg_generic_level3::mul2_ij_pi_pj_x(
     double *c, size_t sic,
     double d) {
 
+    timings_base::start_timer("mul2_ij_pi_pj_x");
     for(size_t p = 0; p < np; p++)
     for(size_t i = 0; i < ni; i++)
     for(size_t j = 0; j < nj; j++) {
         c[i * sic + j] += d * a[p * spa + i] * b[p * spb + j];
     }
+    timings_base::stop_timer("mul2_ij_pi_pj_x");
 }
 
 

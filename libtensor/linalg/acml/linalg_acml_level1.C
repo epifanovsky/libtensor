@@ -15,7 +15,7 @@ void linalg_acml_level1::add_i_i_x_x(
     double *c, size_t sic,
     double d) {
 
-    start_timer("daxpy+nonblas");
+    timings_base::start_timer("daxpy+nonblas");
     daxpy(ni, d * ka, (double*)a, sia, c, sic);
     double db = d * kb * b;
     if(sic == 1) {
@@ -23,7 +23,7 @@ void linalg_acml_level1::add_i_i_x_x(
     } else {
         for(size_t i = 0; i < ni; i++) c[i * sic] += db;
     }
-    stop_timer("daxpy+nonblas");
+    timings_base::stop_timer("daxpy+nonblas");
 }
 
 
@@ -33,9 +33,9 @@ void linalg_acml_level1::mul1_i_x(
     double a,
     double *c, size_t sic) {
 
-    start_timer("dscal");
+    timings_base::start_timer("dscal");
     dscal(ni, a, c, sic);
-    stop_timer("dscal");
+    timings_base::stop_timer("dscal");
 }
 
 
@@ -45,9 +45,9 @@ double linalg_acml_level1::mul2_x_p_p(
     const double *a, size_t spa,
     const double *b, size_t spb) {
 
-    start_timer("ddot");
+    timings_base::start_timer("ddot");
     double d = ddot(np, (double*)a, spa, (double*)b, spb);
-    stop_timer("ddot");
+    timings_base::stop_timer("ddot");
     return d;
 }
 
@@ -59,9 +59,9 @@ void linalg_acml_level1::mul2_i_i_x(
     double b,
     double *c, size_t sic) {
 
-    start_timer("daxpy");
+    timings_base::start_timer("daxpy");
     daxpy(ni, b, (double*)a, sia, c, sic);
-    stop_timer("daxpy");
+    timings_base::stop_timer("daxpy");
 }
 
 

@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_LINALG_MKL_LEVEL1_H
 #define LIBTENSOR_LINALG_MKL_LEVEL1_H
 
-#include <libtensor/timings.h>
+#include "../linalg_timings.h"
 #include "../generic/linalg_generic_level1.h"
 
 namespace libtensor {
@@ -13,7 +13,7 @@ namespace libtensor {
  **/
 class linalg_mkl_level1 :
     public linalg_generic_level1,
-    public timings<linalg_mkl_level1> {
+    public linalg_timings<linalg_mkl_level1> {
 
 public:
     static const char *k_clazz; //!< Class name
