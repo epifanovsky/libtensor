@@ -2,6 +2,8 @@
 #define LIBTENSOR_TOD_MULT_H
 
 #include <libtensor/timings.h>
+#include <libtensor/core/noncopyable.h>
+#include <libtensor/core/scalar_transf_double.h>
 #include "dense_tensor_i.h"
 
 namespace libtensor {
@@ -18,7 +20,7 @@ namespace libtensor {
     \ingroup libtensor_dense_tensor_tod
  **/
 template<size_t N>
-class tod_mult : public timings< tod_mult<N> > {
+class tod_mult : public timings< tod_mult<N> >, public noncopyable {
 public:
     static const char *k_clazz; //!< Class name
 
@@ -28,10 +30,25 @@ private:
     permutation<N> m_perma; //!< Permutation of first argument
     permutation<N> m_permb; //!< Permutation of second argument
     bool m_recip; //!< Reciprocal (multiplication by 1/bi)
-    double m_c; //!< Scaling coefficient
+    scalar_transf<double> m_trc; //!< Scaling coefficient
     dimensions<N> m_dimsc; //!< Result dimensions
 
 public:
+    /** \brief Initializes the operation
+        \param ta First argument.
+        \param pa Permutation of ta with respect to result.
+        \param tb Second argument.
+        \param pb Permutation of tb with respect to result.
+        \param recip \c false (default) sets up multiplication and
+            \c true sets up element-wise division.
+        \param trc Scalar transformation
+     **/
+    tod_mult(
+            dense_tensor_rd_i<N, double> &ta, const permutation<N> &pa,
+            dense_tensor_rd_i<N, double> &tb, const permutation<N> &pb,
+            bool recip,
+            const scalar_transf<double> &trc = scalar_transf<double>());
+
     /** \brief Creates the operation
         \param ta First argument.
         \param tb Second argument.
@@ -42,33 +59,9 @@ public:
     tod_mult(dense_tensor_rd_i<N, double> &ta, dense_tensor_rd_i<N, double> &tb,
         bool recip = false, double c = 1.0);
 
-    /** \brief Creates the operation
-        \param ta First argument.
-        \param pa Permutation of ta with respect to result.
-        \param tb Second argument.
-        \param pb Permutation of tb with respect to result.
-        \param recip \c false (default) sets up multiplication and
-            \c true sets up element-wise division.
-        \param coeff Scaling coefficient
-     **/
-    tod_mult(dense_tensor_rd_i<N, double> &ta, const permutation<N> &pa,
-            dense_tensor_rd_i<N, double> &tb, const permutation<N> &pb,
-            bool recip = false, double c = 1.0);
-
     void prefetch();
 
-    void perform(bool zero, double c, dense_tensor_wr_i<N, double> &tc);
-
-    void perform(dense_tensor_wr_i<N, double> &tc);
-
-    void perform(dense_tensor_wr_i<N, double> &tc, double c);
-
-private:
-    void do_perform(dense_tensor_wr_i<N, double> &tc, bool doadd, double c);
-
-private:
-    tod_mult(const tod_mult&);
-
+    void perform(bool zero, dense_tensor_wr_i<N, double> &tc);
 };
 
 
