@@ -192,8 +192,7 @@ void btod_mult_test::test_2(
 
     //  Invoke the operation
     if (doadd) {
-        tod_mult<2>(ta, pa, tb, pb, recip,
-                scalar_transf<double>(0.5)).perform(false, tc_ref);
+        tod_mult<2>(ta, pa, tb, pb, recip, 0.5).perform(false, tc_ref);
         btod_mult<2>(bta, pa, btb, pb, recip).perform(btc, 0.5);
     }
     else {

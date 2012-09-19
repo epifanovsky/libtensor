@@ -258,8 +258,7 @@ void btod_mult<N>::compute_block(bool zero, dense_tensor_i<N, double> &blk,
         k *= trb.get_scalar_tr().get_coeff();
 
     if(zero) tod_set<N>().perform(blk);
-    tod_mult<N>(blka, pa, blkb, pb, m_recip,
-            scalar_transf<double>(k * c)).perform(false, blk);
+    tod_mult<N>(blka, pa, blkb, pb, m_recip, k * c).perform(false, blk);
 
     ctrla.ret_block(cidxa.get_index());
     ctrlb.ret_block(cidxb.get_index());
