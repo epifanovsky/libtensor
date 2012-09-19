@@ -1,7 +1,7 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/block_tensor/block_factory.h>
-#include <libtensor/gen_block_tensor/block_map.h>
+#include <libtensor/gen_block_tensor/impl/block_map_impl.h>
 #include <libtensor/block_tensor/block_tensor_i_traits.h>
 #include "block_map_test.h"
 
