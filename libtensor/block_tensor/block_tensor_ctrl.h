@@ -56,8 +56,6 @@ public:
     void ret_block(const index<N> &idx);
     dense_tensor_i<N, T> &req_const_block(const index<N> &idx);
     void ret_const_block(const index<N> &idx);
-    dense_tensor_i<N, T> &req_aux_block(const index<N> &idx);
-    void ret_aux_block(const index<N> &idx);
     bool req_is_zero_block(const index<N> &idx);
     void req_zero_block(const index<N> &idx);
     void req_zero_all_blocks();
@@ -104,19 +102,6 @@ template<size_t N, typename T>
 inline void block_tensor_ctrl<N, T>::ret_block(const index<N> &idx) {
 
     return m_bt.on_ret_block(idx);
-}
-
-template<size_t N, typename T>
-inline dense_tensor_i<N, T> &block_tensor_ctrl<N, T>::req_aux_block(
-    const index<N> &idx) {
-
-    return m_bt.on_req_aux_block(idx);
-}
-
-template<size_t N, typename T>
-inline void block_tensor_ctrl<N, T>::ret_aux_block(const index<N> &idx) {
-
-    return m_bt.on_ret_aux_block(idx);
 }
 
 template<size_t N, typename T>

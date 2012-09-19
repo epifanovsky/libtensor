@@ -203,42 +203,13 @@ class gen_block_tensor_ctrl :
     virtual public gen_block_tensor_wr_ctrl<N, BtiTraits> {
 
 public:
-    //! Type of tensor elements
-    typedef typename BtiTraits::element_type element_type;
-
-    //! Type of read-write blocks
-    typedef typename BtiTraits::template wr_block_type<N>::type wr_block_type;
-
-private:
-    gen_block_tensor_i<N, BtiTraits> &m_bt; //!< Controlled block tensor
-
-public:
     /** \brief Initializes the control object
      **/
     gen_block_tensor_ctrl(gen_block_tensor_i<N, BtiTraits> &bt) :
         gen_block_tensor_base_ctrl<N, BtiTraits>(bt),
         gen_block_tensor_rd_ctrl<N, BtiTraits>(bt),
-        gen_block_tensor_wr_ctrl<N, BtiTraits>(bt),
-        m_bt(bt)
+        gen_block_tensor_wr_ctrl<N, BtiTraits>(bt)
     { }
-
-    /** \brief Returns the read-write reference to an auxiliary (temporary)
-            canonical block
-        \param idx Index of the block.
-        \return Reference to the requested block.
-     **/
-    wr_block_type &req_aux_block(const index<N> &idx) {
-
-        return m_bt.on_req_aux_block(idx);
-    }
-
-    /** \brief Checks in an auxiliary (temporary) canonical block
-        \param idx Index of the block.
-     **/
-    void ret_aux_block(const index<N> &idx) {
-
-        m_bt.on_ret_aux_block(idx);
-    }
 
 };
 

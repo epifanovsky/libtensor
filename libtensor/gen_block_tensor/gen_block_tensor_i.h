@@ -199,32 +199,9 @@ class gen_block_tensor_i :
     friend class gen_block_tensor_ctrl<N, BtiTraits>;
 
 public:
-    //! Type of tensor elements
-    typedef typename BtiTraits::element_type element_type;
-
-    //! Type of read-only blocks
-    typedef typename BtiTraits::template rd_block_type<N>::type rd_block_type;
-
-    //! Type of read-write blocks
-    typedef typename BtiTraits::template wr_block_type<N>::type wr_block_type;
-
-public:
     /** \brief Virtual destructor
      **/
     virtual ~gen_block_tensor_i() { }
-
-protected:
-    /** \brief Request for the read-write reference to an auxiliary (temporary)
-            canonical block
-        \param idx Index of the block.
-        \return Reference to the requested block.
-     **/
-    virtual wr_block_type &on_req_aux_block(const index<N> &idx) = 0;
-
-    /** \brief Invoked to return an auxiliary (temporary) canonical block
-        \param idx Index of the block.
-     **/
-    virtual void on_ret_aux_block(const index<N> &idx) = 0;
 
 };
 

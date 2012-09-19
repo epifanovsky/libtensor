@@ -101,8 +101,6 @@ protected:
     virtual void on_ret_const_block(const index<N> &idx);
     virtual dense_tensor_i<N, T> &on_req_block(const index<N> &idx);
     virtual void on_ret_block(const index<N> &idx);
-    virtual dense_tensor_i<N, T> &on_req_aux_block(const index<N> &idx);
-    virtual void on_ret_aux_block(const index<N> &idx);
     virtual void on_req_sync_on();
     virtual void on_req_sync_off();
 
@@ -244,28 +242,6 @@ void direct_block_tensor<N, T, Alloc>::on_ret_block(const index<N> &idx) {
         m_map.remove(idx);
         m_count.erase(icnt);
     }
-}
-
-
-template<size_t N, typename T, typename Alloc>
-dense_tensor_i<N, T> &direct_block_tensor<N, T, Alloc>::on_req_aux_block(
-    const index<N> &idx) {
-
-    static const char *method = "on_req_aux_block(const index<N>&)";
-
-    throw immut_violation(g_ns, k_clazz, method, __FILE__, __LINE__,
-        "invalid_req");
-}
-
-
-template<size_t N, typename T, typename Alloc>
-void direct_block_tensor<N, T, Alloc>::on_ret_aux_block(
-    const index<N> &idx) {
-
-    static const char *method = "on_ret_aux_block(const index<N>&)";
-
-    throw immut_violation(g_ns, k_clazz, method, __FILE__, __LINE__,
-        "invalid_req");
 }
 
 

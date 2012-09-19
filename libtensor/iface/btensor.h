@@ -69,8 +69,6 @@ protected:
     virtual void on_ret_const_block(const index<N> &idx);
     virtual dense_tensor_i<N, T> &on_req_block(const index<N> &idx);
     virtual void on_ret_block(const index<N> &idx);
-    virtual dense_tensor_i<N, T> &on_req_aux_block(const index<N> &idx);
-    virtual void on_ret_aux_block(const index<N> &idx);
     virtual bool on_req_is_zero_block(const index<N> &idx);
     virtual void on_req_zero_block(const index<N> &idx);
     virtual void on_req_zero_all_blocks();
@@ -185,21 +183,6 @@ template<size_t N, typename T, typename Traits>
 void btensor_base<N, T, Traits>::on_ret_block(const index<N> &idx) {
 
     m_ctrl.ret_block(idx);
-}
-
-
-template<size_t N, typename T, typename Traits>
-dense_tensor_i<N, T> &btensor_base<N, T, Traits>::on_req_aux_block(
-    const index<N> &idx) {
-
-    return m_ctrl.req_aux_block(idx);
-}
-
-
-template<size_t N, typename T, typename Traits>
-void btensor_base<N, T, Traits>::on_ret_aux_block(const index<N> &idx) {
-
-    m_ctrl.ret_aux_block(idx);
 }
 
 

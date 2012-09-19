@@ -37,7 +37,6 @@ public:
     orbit_list<N, T> *m_orblst; //!< Orbit list
     bool m_orblst_dirty; //!< Whether the orbit list needs to be updated
     block_map<N, T, bt_traits> m_map; //!< Block map
-    block_map<N, T, bt_traits> m_aux_map; //!< Auxiliary block map
     libutil::rwlock *m_lock; //!< Read-write lock
     libutil::mutex *m_locku; //!< Upgrade lock
 
@@ -63,8 +62,6 @@ protected:
     virtual void on_ret_const_block(const index<N> &idx);
     virtual dense_tensor_i<N, T> &on_req_block(const index<N> &idx);
     virtual void on_ret_block(const index<N> &idx);
-    virtual dense_tensor_i<N, T> &on_req_aux_block(const index<N> &idx);
-    virtual void on_ret_aux_block(const index<N> &idx);
     virtual bool on_req_is_zero_block(const index<N> &idx);
     virtual void on_req_zero_block(const index<N> &idx);
     virtual void on_req_zero_all_blocks();
@@ -94,7 +91,6 @@ block_tensor<N, T, Alloc>::block_tensor(const block_index_space<N> &bis) :
     m_orblst(0),
     m_orblst_dirty(true),
     m_map(m_bis),
-    m_aux_map(m_bis),
     m_lock(0), m_locku(0) {
 
 }
@@ -109,7 +105,6 @@ block_tensor<N, T, Alloc>::block_tensor(const block_tensor<N, T, Alloc> &bt) :
     m_orblst(0),
     m_orblst_dirty(true),
     m_map(m_bis),
-    m_aux_map(m_bis),
     m_lock(0), m_locku(0) {
 
 }
@@ -197,40 +192,6 @@ dense_tensor_i<N, T> &block_tensor<N, T, Alloc>::on_req_block(
 template<size_t N, typename T, typename Alloc>
 void block_tensor<N, T, Alloc>::on_ret_block(const index<N> &idx) {
 
-}
-
-
-template<size_t N, typename T, typename Alloc>
-dense_tensor_i<N, T> &block_tensor<N, T, Alloc>::on_req_aux_block(
-    const index<N> &idx) {
-
-    static const char *method = "on_req_aux_block(const index<N>&)";
-
-    auto_rwlock lock(m_lock, m_locku, true);
-
-    update_orblst(lock);
-    if(!m_orblst->contains(idx)) {
-        throw symmetry_violation(g_ns, k_clazz, method,
-            __FILE__, __LINE__,
-            "Index does not correspond to a canonical block.");
-    }
-    if(m_aux_map.contains(idx)) {
-        throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
-            "Duplicate aux request.");
-    }
-
-    m_aux_map.create(idx);
-
-    return m_aux_map.get(idx);
-}
-
-
-template<size_t N, typename T, typename Alloc>
-void block_tensor<N, T, Alloc>::on_ret_aux_block(const index<N> &idx) {
-
-    auto_rwlock lock(m_lock, m_locku, true);
-
-    m_aux_map.remove(idx);
 }
 
 
