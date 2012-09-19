@@ -9,7 +9,6 @@
 #include <libtensor/symmetry/so_merge.h>
 #include <libtensor/symmetry/so_permute.h>
 #include "../gen_block_tensor_ctrl.h"
-#include "../gen_block_stream_i.h"
 #include "../gen_bto_diag.h"
 
 namespace libtensor {
