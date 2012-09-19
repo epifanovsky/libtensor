@@ -63,8 +63,6 @@ protected:
     virtual bool on_req_is_zero_block(const index<N> &idx);
     virtual void on_req_zero_block(const index<N> &idx);
     virtual void on_req_zero_all_blocks();
-    virtual void on_req_sync_on();
-    virtual void on_req_sync_off();
     //@}
 
     //!    \name Implementation of libtensor::immutable
@@ -240,18 +238,6 @@ void block_tensor<N, T, Alloc>::on_req_zero_all_blocks() {
     }
     lock.upgrade();
     m_map.clear();
-}
-
-
-template<size_t N, typename T, typename Alloc>
-void block_tensor<N, T, Alloc>::on_req_sync_on() {
-
-}
-
-
-template<size_t N, typename T, typename Alloc>
-void block_tensor<N, T, Alloc>::on_req_sync_off() {
-
 }
 
 

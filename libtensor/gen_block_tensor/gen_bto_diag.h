@@ -88,14 +88,6 @@ public:
         return m_sch;
     }
 
-    /** \brief Turns on synchronization on all arguments
-     **/
-    void sync_on();
-
-    /** \brief Turns off synchronization on all arguments
-     **/
-    void sync_off();
-
     /** \brief Computes and writes the blocks of the result to an output stream
         \param out Output stream.
      **/

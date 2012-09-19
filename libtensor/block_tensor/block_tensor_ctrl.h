@@ -61,11 +61,6 @@ public:
     void req_zero_all_blocks();
     //@}
 
-    //!    \name Synchronization events
-    //@{
-    void req_sync_on();
-    void req_sync_off();
-    //@}
 };
 
 template<size_t N, typename T>
@@ -120,18 +115,6 @@ template<size_t N, typename T>
 inline void block_tensor_ctrl<N, T>::req_zero_all_blocks() {
 
     m_bt.on_req_zero_all_blocks();
-}
-
-template<size_t N, typename T>
-inline void block_tensor_ctrl<N, T>::req_sync_on() {
-
-    m_bt.on_req_sync_on();
-}
-
-template<size_t N, typename T>
-inline void block_tensor_ctrl<N, T>::req_sync_off() {
-
-    m_bt.on_req_sync_off();
 }
 
 } // namespace libtensor

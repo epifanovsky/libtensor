@@ -60,26 +60,6 @@ btod_contract2<N, M, K>::~btod_contract2() {
 
 
 template<size_t N, size_t M, size_t K>
-void btod_contract2<N, M, K>::sync_on() {
-
-    typedef block_tensor_i_traits<double> bti_traits;
-
-    gen_block_tensor_rd_ctrl<NA, bti_traits>(m_bta).req_sync_on();
-    gen_block_tensor_rd_ctrl<NB, bti_traits>(m_btb).req_sync_on();
-}
-
-
-template<size_t N, size_t M, size_t K>
-void btod_contract2<N, M, K>::sync_off() {
-
-    typedef block_tensor_i_traits<double> bti_traits;
-
-    gen_block_tensor_rd_ctrl<NA, bti_traits>(m_bta).req_sync_off();
-    gen_block_tensor_rd_ctrl<NB, bti_traits>(m_btb).req_sync_off();
-}
-
-
-template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::perform(bto_stream_i<NC, btod_traits> &out) {
 
     typedef block_tensor_i_traits<double> bti_traits;

@@ -84,9 +84,6 @@ public:
         return m_sch;
     }
 
-    virtual void sync_on();
-    virtual void sync_off();
-
     //@}
 
     virtual void perform(bto_stream_i<N, btod_traits> &out);

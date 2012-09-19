@@ -35,9 +35,6 @@ template<size_t N1, size_t N2, size_t N3, size_t K1, size_t K2>
 void btod_contract3<N1, N2, N3, K1, K2>::perform(
     block_tensor_i<N1 + N2 + N3, double> &btd) {
 
-    block_tensor_ctrl<N1 + K1, double> ca(m_bta);
-    block_tensor_ctrl<N2 + K1 + K2, double> cb(m_btb);
-
     //  Operation and buffer for the intermediate (AB)
 
     btod_contract2<N1, N2 + K2, K1> contrab(m_contr1, m_bta, m_btb);
@@ -64,13 +61,7 @@ void btod_contract3<N1, N2, N3, K1, K2>::perform(
             batch.push_back(schab.get_abs_index(isch));
         }
 
-        ca.req_sync_on();
-        cb.req_sync_on();
-        cab.req_sync_on();
         compute_batch_ab(contrab, batch, btab);
-        ca.req_sync_off();
-        cb.req_sync_off();
-        cab.req_sync_off();
 
         if(first_batch) {
             btod_contract2<N1 + N2, N3, K2>(m_contr2, btab, m_btc).

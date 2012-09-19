@@ -115,22 +115,6 @@ btod_ewmult2<N, M, K>::~btod_ewmult2() {
 
 
 template<size_t N, size_t M, size_t K>
-void btod_ewmult2<N, M, K>::sync_on() {
-
-    block_tensor_ctrl<k_ordera, double>(m_bta).req_sync_on();
-    block_tensor_ctrl<k_orderb, double>(m_btb).req_sync_on();
-}
-
-
-template<size_t N, size_t M, size_t K>
-void btod_ewmult2<N, M, K>::sync_off() {
-
-    block_tensor_ctrl<k_ordera, double>(m_bta).req_sync_off();
-    block_tensor_ctrl<k_orderb, double>(m_btb).req_sync_off();
-}
-
-
-template<size_t N, size_t M, size_t K>
 void btod_ewmult2<N, M, K>::perform(bto_stream_i<N + M + K, btod_traits> &out) {
 
     typedef allocator<double> allocator_type;
@@ -140,16 +124,10 @@ void btod_ewmult2<N, M, K>::perform(bto_stream_i<N + M + K, btod_traits> &out) {
         out.open();
 
         block_tensor<N + M + K, double, allocator_type> btc(m_bisc);
-        block_tensor_ctrl<N + M + K, double> cc(btc);
-        cc.req_sync_on();
-        sync_on();
 
         btod_ewmult2_task_iterator<N, M, K, double> ti(*this, btc, out);
         btod_ewmult2_task_observer<N, M, K, double> to;
         libutil::thread_pool::submit(ti, to);
-
-        cc.req_sync_off();
-        sync_off();
 
         out.close();
 

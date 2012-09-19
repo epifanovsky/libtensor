@@ -98,22 +98,6 @@ gen_bto_apply<N, Functor, Traits, Timed>::gen_bto_apply(
 }
 
 
-
-
-template<size_t N, typename Functor, typename Traits, typename Timed>
-void gen_bto_apply<N, Functor, Traits, Timed>::sync_on() {
-
-    gen_block_tensor_rd_ctrl<N, bti_traits>(m_bta).req_sync_on();
-}
-
-
-template<size_t N, typename Functor, typename Traits, typename Timed>
-void gen_bto_apply<N, Functor, Traits, Timed>::sync_off() {
-
-    gen_block_tensor_rd_ctrl<N, bti_traits>(m_bta).req_sync_off();
-}
-
-
 template<size_t N, typename Functor, typename Traits, typename Timed>
 void gen_bto_apply<N, Functor, Traits, Timed>::perform(
         gen_block_stream_i<N, bti_traits> &out) {
@@ -129,17 +113,11 @@ void gen_bto_apply<N, Functor, Traits, Timed>::perform(
 
         // TODO: replace with temporary block tensor from traits
         temp_block_tensor_type btb(m_bis);
-        gen_block_tensor_ctrl<N, bti_traits> cb(btb);
-        cb.req_sync_on();
-        sync_on();
 
         gen_bto_apply_task_iterator<N, Functor, Traits, Timed> ti(*this,
                 btb, out);
         gen_bto_apply_task_observer<N, Functor, Traits> to;
         libutil::thread_pool::submit(ti, to);
-
-        cb.req_sync_off();
-        sync_off();
 
         out.close();
 

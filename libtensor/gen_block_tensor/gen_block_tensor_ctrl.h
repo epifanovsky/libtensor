@@ -39,20 +39,6 @@ public:
         return m_bt.on_req_const_symmetry();
     }
 
-    /** \brief Turns on synchronization for thread safety
-     **/
-    void req_sync_on() {
-
-        m_bt.on_req_sync_on();
-    }
-
-    /** \brief Turns off synchronization for thread safety
-     **/
-    void req_sync_off() {
-
-        m_bt.on_req_sync_off();
-    }
-
 };
 
 

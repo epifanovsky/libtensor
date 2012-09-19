@@ -72,8 +72,6 @@ protected:
     virtual bool on_req_is_zero_block(const index<N> &idx);
     virtual void on_req_zero_block(const index<N> &idx);
     virtual void on_req_zero_all_blocks();
-    virtual void on_req_sync_on();
-    virtual void on_req_sync_off();
     //@}
 
     //!    \name Implementation of libtensor::immutable
@@ -203,20 +201,6 @@ template<size_t N, typename T, typename Traits>
 void btensor_base<N, T, Traits>::on_req_zero_all_blocks() {
 
     m_ctrl.req_zero_all_blocks();
-}
-
-
-template<size_t N, typename T, typename Traits>
-void btensor_base<N, T, Traits>::on_req_sync_on() {
-
-    m_ctrl.req_sync_on();
-}
-
-
-template<size_t N, typename T, typename Traits>
-void btensor_base<N, T, Traits>::on_req_sync_off() {
-
-    m_ctrl.req_sync_off();
 }
 
 

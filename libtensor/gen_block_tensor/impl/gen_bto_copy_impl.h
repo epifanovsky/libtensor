@@ -161,20 +161,6 @@ gen_bto_copy<N, Traits, Timed>::gen_bto_copy(
 
 
 template<size_t N, typename Traits, typename Timed>
-void gen_bto_copy<N, Traits, Timed>::sync_on() {
-
-    gen_block_tensor_rd_ctrl<N, bti_traits>(m_bta).req_sync_on();
-}
-
-
-template<size_t N, typename Traits, typename Timed>
-void gen_bto_copy<N, Traits, Timed>::sync_off() {
-
-    gen_block_tensor_rd_ctrl<N, bti_traits>(m_bta).req_sync_off();
-}
-
-
-template<size_t N, typename Traits, typename Timed>
 void gen_bto_copy<N, Traits, Timed>::perform(
     gen_block_stream_i<N, bti_traits> &out) {
 
@@ -184,14 +170,10 @@ void gen_bto_copy<N, Traits, Timed>::perform(
 
         out.open();
 
-        sync_on();
-
         gen_bto_full_copy_task_iterator<N, Traits> ti(m_bta, m_tra, m_symb,
             out);
         gen_bto_copy_task_observer<N, Traits> to;
         libutil::thread_pool::submit(ti, to);
-
-        sync_off();
 
         out.close();
 
@@ -215,14 +197,10 @@ void gen_bto_copy<N, Traits, Timed>::perform(
 
         out.open();
 
-        sync_on();
-
         gen_bto_part_copy_task_iterator<N, Traits> ti(m_bta, m_tra, m_symb,
             blst, out);
         gen_bto_copy_task_observer<N, Traits> to;
         libutil::thread_pool::submit(ti, to);
-
-        sync_off();
 
         out.close();
 

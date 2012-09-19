@@ -171,24 +171,6 @@ btod_mult<N>::~btod_mult() {
 
 
 template<size_t N>
-void btod_mult<N>::sync_on() {
-
-    block_tensor_ctrl<N, double> ctrla(m_bta), ctrlb(m_btb);
-    ctrla.req_sync_on();
-    ctrlb.req_sync_on();
-}
-
-
-template<size_t N>
-void btod_mult<N>::sync_off() {
-
-    block_tensor_ctrl<N, double> ctrla(m_bta), ctrlb(m_btb);
-    ctrla.req_sync_off();
-    ctrlb.req_sync_off();
-}
-
-
-template<size_t N>
 void btod_mult<N>::perform(bto_stream_i<N, btod_traits> &out) {
 
     typedef allocator<double> allocator_type;
@@ -198,16 +180,10 @@ void btod_mult<N>::perform(bto_stream_i<N, btod_traits> &out) {
         out.open();
 
         block_tensor<N, double, allocator_type> btc(m_bis);
-        block_tensor_ctrl<N, double> cc(btc);
-        cc.req_sync_on();
-        sync_on();
 
         btod_mult_task_iterator<N, double> ti(*this, btc, out);
         btod_mult_task_observer<N, double> to;
         libutil::thread_pool::submit(ti, to);
-
-        cc.req_sync_off();
-        sync_off();
 
         out.close();
 

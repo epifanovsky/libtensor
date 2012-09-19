@@ -101,9 +101,6 @@ public:
         return m_sch;
     }
 
-    virtual void sync_on();
-    virtual void sync_off();
-
     virtual void perform(bto_stream_i<N + M + K, btod_traits> &out);
     virtual void perform(block_tensor_i<N + M + K, double> &btc);
     virtual void perform(block_tensor_i<N + M + K, double> &btc,

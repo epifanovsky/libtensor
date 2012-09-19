@@ -86,22 +86,6 @@ gen_bto_contract2<N, M, K, Traits, Timed>::gen_bto_contract2(
 
 
 template<size_t N, size_t M, size_t K, typename Traits, typename Timed>
-void gen_bto_contract2<N, M, K, Traits, Timed>::sync_on() {
-
-    gen_block_tensor_rd_ctrl<NA, bti_traits>(m_bta).req_sync_on();
-    gen_block_tensor_rd_ctrl<NB, bti_traits>(m_btb).req_sync_on();
-}
-
-
-template<size_t N, size_t M, size_t K, typename Traits, typename Timed>
-void gen_bto_contract2<N, M, K, Traits, Timed>::sync_off() {
-
-    gen_block_tensor_rd_ctrl<NA, bti_traits>(m_bta).req_sync_off();
-    gen_block_tensor_rd_ctrl<NB, bti_traits>(m_btb).req_sync_off();
-}
-
-
-template<size_t N, size_t M, size_t K, typename Traits, typename Timed>
 void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
     const std::vector<size_t> &blst,
     gen_block_stream_i<NC, bti_traits> &out) {
@@ -119,13 +103,9 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
 
         gen_block_tensor_rd_ctrl<NA, bti_traits> ca(m_bta);
         gen_block_tensor_rd_ctrl<NB, bti_traits> cb(m_btb);
-        gen_block_tensor_wr_ctrl<NC, bti_traits> cc(btc);
 
         const symmetry<NA, element_type> &syma = ca.req_const_symmetry();
         const symmetry<NB, element_type> &symb = cb.req_const_symmetry();
-
-        cc.req_sync_on();
-        sync_on();
 
         gen_bto_contract2_block<N, M, K, Traits, Timed> bto(m_contr, m_bta,
             syma, m_btb, symb, m_symc.get_bisc());
@@ -133,9 +113,6 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
             blst, out);
         gen_bto_contract2_task_observer<N, M, K> to;
         libutil::thread_pool::submit(ti, to);
-
-        cc.req_sync_off();
-        sync_off();
 
         out.close();
 

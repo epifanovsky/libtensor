@@ -40,22 +40,6 @@ btod_sum<N>::~btod_sum() {
 
 
 template<size_t N>
-void btod_sum<N>::sync_on() {
-
-    for(typename std::list<node_t>::iterator iop = m_ops.begin();
-        iop != m_ops.end(); iop++) iop->get_op().sync_on();
-}
-
-
-template<size_t N>
-void btod_sum<N>::sync_off() {
-
-    for(typename std::list<node_t>::iterator iop = m_ops.begin();
-        iop != m_ops.end(); iop++) iop->get_op().sync_off();
-}
-
-
-template<size_t N>
 void btod_sum<N>::perform(bto_stream_i<N, btod_traits> &out) {
 
     if(m_ops.empty()) return;

@@ -91,16 +91,6 @@ public:
         return m_gbto.get_schedule();
     }
 
-    virtual void sync_on() {
-
-        m_gbto.sync_on();
-    }
-
-    virtual void sync_off() {
-
-        m_gbto.sync_off();
-    }
-
     virtual void perform(bto_stream_i<N, btod_traits> &out);
 
     virtual void perform(block_tensor_i<N, double> &btb);

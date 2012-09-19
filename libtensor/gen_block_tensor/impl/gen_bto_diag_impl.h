@@ -98,20 +98,6 @@ gen_bto_diag<N, M, Traits, Timed>::gen_bto_diag(
 
 
 template<size_t N, size_t M, typename Traits, typename Timed>
-void gen_bto_diag<N, M, Traits, Timed>::sync_on() {
-
-    gen_block_tensor_rd_ctrl<N, bti_traits>(m_bta).req_sync_on();
-}
-
-
-template<size_t N, size_t M, typename Traits, typename Timed>
-void gen_bto_diag<N, M, Traits, Timed>::sync_off() {
-
-    gen_block_tensor_rd_ctrl<N, bti_traits>(m_bta).req_sync_off();
-}
-
-
-template<size_t N, size_t M, typename Traits, typename Timed>
 void gen_bto_diag<N, M, Traits, Timed>::perform(
         gen_block_stream_i<N - M + 1, bti_traits> &out) {
 
@@ -125,16 +111,10 @@ void gen_bto_diag<N, M, Traits, Timed>::perform(
         out.open();
 
         temp_block_tensor_type btb(m_bis);
-        gen_block_tensor_ctrl<N - M + 1, bti_traits> cb(btb);
-        cb.req_sync_on();
-        sync_on();
 
         gen_bto_diag_task_iterator<N, M, Traits, Timed> ti(*this, btb, out);
         gen_bto_diag_task_observer<N, M, Traits> to;
         libutil::thread_pool::submit(ti, to);
-
-        cb.req_sync_off();
-        sync_off();
 
         out.close();
 

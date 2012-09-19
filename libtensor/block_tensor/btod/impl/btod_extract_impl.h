@@ -133,22 +133,6 @@ btod_extract<N, M>::btod_extract(block_tensor_i<N, double> &bta,
 
 
 template<size_t N, size_t M>
-void btod_extract<N, M>::sync_on() {
-
-    block_tensor_ctrl<N, double> ctrla(m_bta);
-    ctrla.req_sync_on();
-}
-
-
-template<size_t N, size_t M>
-void btod_extract<N, M>::sync_off() {
-
-    block_tensor_ctrl<N, double> ctrla(m_bta);
-    ctrla.req_sync_off();
-}
-
-
-template<size_t N, size_t M>
 void btod_extract<N, M>::perform(bto_stream_i<N - M, btod_traits> &out) {
 
     typedef allocator<double> allocator_type;
@@ -158,16 +142,10 @@ void btod_extract<N, M>::perform(bto_stream_i<N - M, btod_traits> &out) {
         out.open();
 
         block_tensor<N - M, double, allocator_type> btc(m_bis);
-        block_tensor_ctrl<N - M, double> cc(btc);
-        cc.req_sync_on();
-        sync_on();
 
         btod_extract_task_iterator<N, M, double> ti(*this, btc, out);
         btod_extract_task_observer<N, M, double> to;
         libutil::thread_pool::submit(ti, to);
-
-        cc.req_sync_off();
-        sync_off();
 
         out.close();
 

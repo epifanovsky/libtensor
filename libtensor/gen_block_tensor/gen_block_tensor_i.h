@@ -46,14 +46,6 @@ protected:
      **/
     virtual const symmetry<N, element_type> &on_req_const_symmetry() = 0;
 
-    /** \brief Turns on synchronization for thread safety
-     **/
-    virtual void on_req_sync_on() = 0;
-
-    /** \brief Turns off synchronization for thread safety
-     **/
-    virtual void on_req_sync_off() = 0;
-
 };
 
 

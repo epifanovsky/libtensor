@@ -145,16 +145,10 @@ void gen_bto_contract2_nzorb<N, M, K, Traits, Timed>::build() {
         orbit_list<NB, element_type> olb(cb.req_const_symmetry());
         orbit_list<NC, element_type> olc(m_symc);
 
-        ca.req_sync_on();
-        cb.req_sync_on();
-
         gen_bto_contract2_nzorb_task_iterator<N, M, K, Traits> ti(m_contr,
             m_bta, m_btb, m_symc, ola, olb, olc, m_blst);
         gen_bto_contract2_nzorb_task_observer<N, M, K> to;
         libutil::thread_pool::submit(ti, to);
-
-        ca.req_sync_off();
-        cb.req_sync_off();
 
     } catch(...) {
         gen_bto_contract2_nzorb::stop_timer();

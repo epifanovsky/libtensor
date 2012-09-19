@@ -90,14 +90,6 @@ public:
         return m_sch;
     }
 
-    /** \brief Turns on synchronization on all arguments
-     **/
-    virtual void sync_on();
-
-    /** \brief Turns off synchronization on all arguments
-     **/
-    virtual void sync_off();
-
     /** \brief Computes the contraction into an output stream
      **/
     virtual void perform(bto_stream_i<NC, btod_traits> &out);

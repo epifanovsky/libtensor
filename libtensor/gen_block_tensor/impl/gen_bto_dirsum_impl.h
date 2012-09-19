@@ -92,22 +92,6 @@ gen_bto_dirsum<N, M, Traits, Timed>::gen_bto_dirsum(
 
 
 template<size_t N, size_t M, typename Traits, typename Timed>
-void gen_bto_dirsum<N, M, Traits, Timed>::sync_on() {
-
-    gen_block_tensor_rd_ctrl<NA, bti_traits>(m_bta).req_sync_on();
-    gen_block_tensor_rd_ctrl<NB, bti_traits>(m_btb).req_sync_on();
-}
-
-
-template<size_t N, size_t M, typename Traits, typename Timed>
-void gen_bto_dirsum<N, M, Traits, Timed>::sync_off() {
-
-    gen_block_tensor_rd_ctrl<NA, bti_traits>(m_bta).req_sync_off();
-    gen_block_tensor_rd_ctrl<NB, bti_traits>(m_btb).req_sync_off();
-}
-
-
-template<size_t N, size_t M, typename Traits, typename Timed>
 void gen_bto_dirsum<N, M, Traits, Timed>::perform(
         gen_block_stream_i<NC, bti_traits> &out) {
 
@@ -121,16 +105,10 @@ void gen_bto_dirsum<N, M, Traits, Timed>::perform(
         out.open();
 
         temp_block_tensor_type btc(m_symc.get_bis());
-        gen_block_tensor_wr_ctrl<NC, bti_traits> cc(btc);
-        cc.req_sync_on();
-        sync_on();
 
         gen_bto_dirsum_task_iterator<N, M, Traits, Timed> ti(*this, btc, out);
         gen_bto_dirsum_task_observer<N, M, Traits> to;
         libutil::thread_pool::submit(ti, to);
-
-        cc.req_sync_off();
-        sync_off();
 
         out.close();
 

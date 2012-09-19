@@ -49,14 +49,6 @@ public:
     virtual const assignment_schedule<N, element_type> &get_schedule() const
         = 0;
 
-    /** \brief Enables the synchronization of arguments
-     **/
-    virtual void sync_on() = 0;
-
-    /** \brief Disables the synchronization of arguments
-     **/
-    virtual void sync_off() = 0;
-
     /** \brief Invoked to execute the operation
      **/
     virtual void perform(block_tensor_type &bt) = 0;

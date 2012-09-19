@@ -57,7 +57,6 @@ void bto_aux_add<N, Traits>::open() {
     so_merge<N + N, N, element_type>(symx, msk, seq).
         perform(m_cb.req_symmetry());
 
-    m_cb.req_sync_on();
     m_open = true;
 }
 
@@ -118,7 +117,6 @@ void bto_aux_add<N, Traits>::close() {
     m_grpmap.clear();
     m_grpmtx.clear();
 
-    m_cb.req_sync_off();
     m_open = false;
 }
 
