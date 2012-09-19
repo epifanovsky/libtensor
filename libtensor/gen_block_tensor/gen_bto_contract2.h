@@ -73,7 +73,7 @@ public:
 
     /** \brief Returns the symmetry of the result
      **/
-    const symmetry<N, element_type> &get_symmetry() const {
+    const symmetry<NC, element_type> &get_symmetry() const {
 
         return m_symc.get_symc();
     }
