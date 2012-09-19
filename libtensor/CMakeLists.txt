@@ -157,6 +157,7 @@ set(SRC_INST
 )
 
 set(SRC_GEN_BTOD
+    gen_block_tensor/impl/auto_rwlock.C
     gen_block_tensor/impl/gen_bto_contract2_bis.C
 )
 
