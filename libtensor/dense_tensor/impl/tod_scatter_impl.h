@@ -13,57 +13,17 @@ const char *tod_scatter<N, M>::k_clazz = "tod_scatter<N, M>";
 
 
 template<size_t N, size_t M>
-void tod_scatter<N, M>::perform(dense_tensor_wr_i<k_orderc, double> &tc) {
+void tod_scatter<N, M>::perform(bool zero,
+        dense_tensor_wr_i<k_orderc, double> &tc) {
 
     check_dimsc(tc);
-    do_perform(tc, true, 1.0);
-}
-
-
-template<size_t N, size_t M>
-void tod_scatter<N, M>::perform(dense_tensor_wr_i<k_orderc, double> &tc,
-    double kc) {
-
-    check_dimsc(tc);
-    do_perform(tc, false, kc);
-}
-
-
-template<size_t N, size_t M>
-void tod_scatter<N, M>::check_dimsc(dense_tensor_wr_i<k_orderc, double> &tc) {
-
-    static const char *method =
-        "check_dimsc(dense_tensor_wr_i<N + M, double>&)";
-
-    permutation<k_orderc> pinv(m_permc, true);
-    dimensions<k_orderc> dimsc(tc.get_dims());
-    dimsc.permute(pinv);
-
-    bool bad_dims = false;
-    const dimensions<k_ordera> &dimsa = m_ta.get_dims();
-    for(size_t i = 0; i < k_ordera; i++) {
-        if(dimsc[k_orderc - k_ordera + i] != dimsa[i]) {
-            bad_dims = true;
-            break;
-        }
-    }
-    if(bad_dims) {
-        throw bad_dimensions(g_ns, k_clazz, method,
-            __FILE__, __LINE__, "tc");
-    }
-}
-
-
-template<size_t N, size_t M>
-void tod_scatter<N, M>::do_perform(dense_tensor_wr_i<k_orderc, double> &tc,
-    bool zero, double kc) {
 
     tod_scatter<N, M>::start_timer();
 
     sequence<k_orderc, size_t> seq(0);
     for(size_t i = 0; i < k_orderc - k_ordera; i++) seq[i] = k_ordera;
     for(size_t i = 0; i < k_ordera; i++) seq[k_orderc - k_ordera + i] = i;
-    m_permc.apply(seq);
+    m_trc.get_perm().apply(seq);
 
     const dimensions<k_ordera> &dimsa = m_ta.get_dims();
     const dimensions<k_orderc> &dimsc = tc.get_dims();
@@ -100,7 +60,7 @@ void tod_scatter<N, M>::do_perform(dense_tensor_wr_i<k_orderc, double> &tc,
     while(i1 != m_list.end() && i1->m_inca != 1) i1++;
     if(i1 != m_list.end()) {
         i1->m_fn = &tod_scatter<N, M>::fn_scatter;
-        m_scatter.m_kc = kc;
+        m_scatter.m_kc = m_trc.get_scalar_tr().get_coeff();
         m_scatter.m_n = i1->m_weight;
         m_scatter.m_stepc = i1->m_incc;
         m_list.splice(m_list.end(), m_list, i1);
@@ -124,6 +84,31 @@ void tod_scatter<N, M>::do_perform(dense_tensor_wr_i<k_orderc, double> &tc,
     ctrlc.ret_dataptr(ptrc);
 
     tod_scatter<N, M>::stop_timer();
+}
+
+
+template<size_t N, size_t M>
+void tod_scatter<N, M>::check_dimsc(dense_tensor_wr_i<k_orderc, double> &tc) {
+
+    static const char *method =
+        "check_dimsc(dense_tensor_wr_i<N + M, double>&)";
+
+    permutation<k_orderc> pinv(m_trc.get_perm(), true);
+    dimensions<k_orderc> dimsc(tc.get_dims());
+    dimsc.permute(pinv);
+
+    bool bad_dims = false;
+    const dimensions<k_ordera> &dimsa = m_ta.get_dims();
+    for(size_t i = 0; i < k_ordera; i++) {
+        if(dimsc[k_orderc - k_ordera + i] != dimsa[i]) {
+            bad_dims = true;
+            break;
+        }
+    }
+    if(bad_dims) {
+        throw bad_dimensions(g_ns, k_clazz, method,
+            __FILE__, __LINE__, "tc");
+    }
 }
 
 
@@ -163,10 +148,8 @@ void tod_scatter<N, M>::fn_scatter(registers &r) {
     const double *ptra = r.m_ptra;
     double *ptrc = r.m_ptrc;
 
-    double kc = m_scatter.m_kc * m_ka;
-
     for(size_t k = 0; k < m_scatter.m_n; k++) {
-        ptrc[0] += kc * ptra[k];
+        ptrc[0] += m_scatter.m_kc * ptra[k];
         ptrc += m_scatter.m_stepc;
     }
 }

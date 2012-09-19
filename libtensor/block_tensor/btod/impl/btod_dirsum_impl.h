@@ -421,12 +421,12 @@ void btod_dirsum<N, M>::do_block_scatter_a(
     dense_tensor_i<k_ordera, double> &blka = ctrla.req_block(ia);
 
 	if(zero) {
-		tod_scatter<N, M>(blka, ka, permc).perform(blkc);
+		tod_scatter<N, M>(blka, ka, permc).perform(true, blkc);
 		if(kc != 1.0) {
 			tod_scale<k_orderc>(kc).perform(blkc);
 		}
 	} else {
-		tod_scatter<N, M>(blka, ka, permc).perform(blkc, kc);
+		tod_scatter<N, M>(blka, ka * kc, permc).perform(false, blkc);
 	}
 
     ctrla.ret_block(ia);
@@ -443,12 +443,12 @@ void btod_dirsum<N, M>::do_block_scatter_b(
     dense_tensor_i<k_orderb, double> &blkb = ctrlb.req_block(ib);
 
 	if(zero) {
-		tod_scatter<M, N>(blkb, kb, permc).perform(blkc);
+		tod_scatter<M, N>(blkb, kb, permc).perform(true, blkc);
 		if(kc != 1.0) {
 			tod_scale<k_orderc>(kc).perform(blkc);
 		}
 	} else {
-		tod_scatter<M, N>(blkb, kb, permc).perform(blkc, kc);
+		tod_scatter<M, N>(blkb, kb * kc, permc).perform(false, blkc);
 	}
 
     ctrlb.ret_block(ib);
