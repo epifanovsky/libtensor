@@ -9,6 +9,7 @@
 #include <libtensor/dense_tensor/tod_diag.h>
 #include <libtensor/dense_tensor/tod_dirsum.h>
 #include <libtensor/dense_tensor/tod_dotprod.h>
+#include <libtensor/dense_tensor/tod_mult.h>
 #include <libtensor/dense_tensor/tod_scatter.h>
 #include <libtensor/dense_tensor/tod_trace.h>
 #include <libtensor/dense_tensor/tod_vmpriority.h>
@@ -94,6 +95,11 @@ struct btod_traits {
     template<size_t N>
     struct to_dotprod_type {
         typedef tod_dotprod<N> type;
+    };
+
+    template<size_t N>
+    struct to_mult_type {
+        typedef tod_mult<N> type;
     };
 
     template<size_t N>

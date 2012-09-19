@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_MULT_EVAL_FUNCTOR_H
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_MULT_EVAL_FUNCTOR_H
 
-#include <libtensor/block_tensor/btod/btod_mult.h>
+#include <libtensor/block_tensor/btod_mult.h>
 #include "../expr/anon_eval.h"
 #include "../expr/direct_eval.h"
 #include "core_mult.h"

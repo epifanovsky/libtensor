@@ -137,7 +137,6 @@ set(SRC_INST
     block_tensor/btod/impl/btod_dotprod.C
     block_tensor/btod/impl/btod_ewmult2.C
     block_tensor/btod/impl/btod_extract.C
-    block_tensor/btod/impl/btod_mult.C
     block_tensor/btod/impl/btod_mult1.C
     block_tensor/btod/impl/btod_sum.C
     block_tensor/btod/impl/btod_symmetrize.C
@@ -173,6 +172,7 @@ set(SRC_BTOD
     block_tensor/impl/btod_copy.C
     block_tensor/impl/btod_diag.C
     block_tensor/impl/btod_dirsum.C
+    block_tensor/impl/btod_mult.C
     block_tensor/impl/btod_set.C
 )
 
