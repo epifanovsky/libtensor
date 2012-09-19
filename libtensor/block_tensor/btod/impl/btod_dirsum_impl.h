@@ -400,7 +400,11 @@ void btod_dirsum<N, M>::do_block_dirsum(
     dense_tensor_i<k_ordera, double> &blka = ctrla.req_block(ia);
     dense_tensor_i<k_orderb, double> &blkb = ctrlb.req_block(ib);
 
-    tod_dirsum<N, M>(blka, ka, blkb, kb, permc).perform(zero, kc, blkc);
+    tod_dirsum<N, M>(
+            blka, scalar_transf<double>(ka),
+            blkb, scalar_transf<double>(kb),
+            tensor_transf<k_orderc, double>(permc,
+                    scalar_transf<double>(kc))).perform(zero, blkc);
 
     ctrla.ret_block(ia);
     ctrlb.ret_block(ib);
