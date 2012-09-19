@@ -1,9 +1,11 @@
 #ifndef LIBTENSOR_GEN_BTO_DIRSUM_SYM_H
 #define LIBTENSOR_GEN_BTO_DIRSUM_SYM_H
 
-#include <map>
 #include <libtensor/timings.h>
 #include <libtensor/core/noncopyable.h>
+#include <libtensor/core/scalar_transf.h>
+#include <libtensor/core/symmetry.h>
+#include "../gen_block_tensor_i.h"
 #include "gen_bto_dirsum_bis.h"
 
 namespace libtensor {
@@ -56,8 +58,8 @@ public:
     gen_bto_dirsum_sym(
             const block_index_space<N> &bisa,
             const symmetry<N, element_type> &syma,
-            const block_index_space<N> &bisb,
-            const symmetry<N, element_type> &symb,
+            const block_index_space<M> &bisb,
+            const symmetry<M, element_type> &symb,
             const permutation<NC> &permc);
 
 

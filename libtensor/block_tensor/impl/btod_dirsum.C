@@ -1,4 +1,5 @@
-#include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/dense_tensor/tod_set.h>
+#include <libtensor/gen_block_tensor/impl/gen_bto_dirsum_impl.h>
 #include "btod_dirsum_impl.h"
 
 namespace libtensor {

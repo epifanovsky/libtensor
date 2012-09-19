@@ -3,7 +3,6 @@
 
 #include <libtensor/block_tensor/bto/bto_aux_add.h>
 #include <libtensor/block_tensor/bto/bto_aux_copy.h>
-#include <libtensor/gen_block_tensor/gen_bto_diag.h>
 #include "bto_stream_adapter.h"
 #include "../btod_diag.h"
 
@@ -64,7 +63,7 @@ void btod_diag<N, M>::compute_block(
     tensor_transf<N - M + 1, double> trx(trb);
     trx.transform(scalar_transf<double>(c));
 
-    m_gbto.compute_block(zero, blkb, ib, trb);
+    m_gbto.compute_block(zero, blkb, ib, trx);
 }
 
 

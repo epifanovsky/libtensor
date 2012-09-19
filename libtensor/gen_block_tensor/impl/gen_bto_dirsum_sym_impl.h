@@ -2,6 +2,7 @@
 #define LIBTENSOR_GEN_BTO_DIRSUM_SYM_IMPL_H
 
 #include <libtensor/symmetry/so_dirsum.h>
+#include "../gen_block_tensor_ctrl.h"
 #include "gen_bto_dirsum_sym.h"
 
 namespace libtensor {
@@ -27,12 +28,10 @@ gen_bto_dirsum_sym<N, M, Traits>::gen_bto_dirsum_sym(
 
 template<size_t N, size_t M, typename Traits>
 gen_bto_dirsum_sym<N, M, Traits>::gen_bto_dirsum_sym(
-        block_index_space<N> &bisa,
+        const block_index_space<N> &bisa,
         const symmetry<N, element_type> &syma,
-        const scalar_transf<element_type> &ka,
-        block_index_space<M> &bisb,
+        const block_index_space<M> &bisb,
         const symmetry<M, element_type> &symb,
-        const scalar_transf<element_type> &kb,
         const permutation<NC> &permc) :
         m_bisc(bisa, bisb, permc), m_symc(m_bisc.get_bis()) {
 
@@ -59,13 +58,13 @@ gen_bto_dirsum_sym<N, N, Traits>::gen_bto_dirsum_sym(
 
 template<size_t N, typename Traits>
 gen_bto_dirsum_sym<N, N, Traits>::gen_bto_dirsum_sym(
-        block_index_space<N> &bisa,
+        const block_index_space<N> &bisa,
         const symmetry<N, element_type> &syma,
         const scalar_transf<element_type> &ka,
-        block_index_space<N> &bisb,
+        const block_index_space<N> &bisb,
         const symmetry<N, element_type> &symb,
         const scalar_transf<element_type> &kb,
-        const permutation<NC> &permc) :
+        const permutation<NC> &permc, bool self) :
         m_bisc(bisa, bisb, permc),
         m_symc(m_bisc.get_bis()) {
 
