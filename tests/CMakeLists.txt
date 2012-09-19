@@ -224,6 +224,15 @@ set(SRC_LINALG_CUBLAS
     linalg_cublas/libtensor_linalg_cublas_suite.C
     linalg_cublas/linalg_cublas_x_p_p_test.C
     linalg_cublas/linalg_cublas_i_i_x_test.C
+    linalg_cublas/linalg_cublas_i_x_test.C
+    linalg_cublas/linalg_cublas_i_ip_p_x_test.C
+    linalg_cublas/linalg_cublas_i_pi_p_x_test.C
+    linalg_cublas/linalg_cublas_ij_i_j_x_test.C
+    linalg_cublas/linalg_cublas_ij_ji_x_test.C
+    linalg_cublas/linalg_cublas_ij_ip_jp_x_test.C
+    linalg_cublas/linalg_cublas_ij_ip_pj_x_test.C
+    linalg_cublas/linalg_cublas_ij_pi_jp_x_test.C
+    linalg_cublas/linalg_cublas_ij_pi_pj_x_test.C
 )
 
 set(SRC_IFACE
