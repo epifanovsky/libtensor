@@ -35,10 +35,8 @@ public:
     dimensions<N> m_bidims; //!< Block %index %dimensions
     symmetry<N, T> m_symmetry; //!< Block %tensor symmetry
     orbit_list<N, T> *m_orblst; //!< Orbit list
-    bool m_orblst_dirty; //!< Whether the orbit list needs to be updated
     block_map<N, T, bt_traits> m_map; //!< Block map
-    libutil::rwlock *m_lock; //!< Read-write lock
-    libutil::mutex *m_locku; //!< Upgrade lock
+    libutil::rwlock m_lock; //!< Read-write lock
 
 public:
     //!    \name Construction and destruction
@@ -89,9 +87,7 @@ block_tensor<N, T, Alloc>::block_tensor(const block_index_space<N> &bis) :
     m_bidims(bis.get_block_index_dims()),
     m_symmetry(m_bis),
     m_orblst(0),
-    m_orblst_dirty(true),
-    m_map(m_bis),
-    m_lock(0), m_locku(0) {
+    m_map(m_bis) {
 
 }
 
@@ -103,9 +99,7 @@ block_tensor<N, T, Alloc>::block_tensor(const block_tensor<N, T, Alloc> &bt) :
     m_bidims(bt.m_bidims),
     m_symmetry(bt.get_bis()),
     m_orblst(0),
-    m_orblst_dirty(true),
-    m_map(m_bis),
-    m_lock(0), m_locku(0) {
+    m_map(m_bis) {
 
 }
 
@@ -113,8 +107,6 @@ block_tensor<N, T, Alloc>::block_tensor(const block_tensor<N, T, Alloc> &bt) :
 template<size_t N, typename T, typename Alloc>
 block_tensor<N, T, Alloc>::~block_tensor() {
 
-    delete m_lock;
-    delete m_locku;
     delete m_orblst;
 }
 
@@ -139,13 +131,16 @@ symmetry<N, T> &block_tensor<N, T, Alloc>::on_req_symmetry() {
 
     static const char *method = "on_req_symmetry()";
 
-    auto_rwlock lock(m_lock, m_locku, true);
+    auto_rwlock lock(m_lock);
 
     if(is_immutable()) {
         throw immut_violation(g_ns, k_clazz, method, __FILE__, __LINE__,
             "symmetry");
     }
-    m_orblst_dirty = true;
+
+    lock.upgrade();
+    delete m_orblst;
+    m_orblst = 0;
 
     return m_symmetry;
 }
@@ -172,18 +167,16 @@ dense_tensor_i<N, T> &block_tensor<N, T, Alloc>::on_req_block(
 
     static const char *method = "on_req_block(const index<N>&)";
 
-    auto_rwlock lock(m_lock, m_locku, false);
+    auto_rwlock lock(m_lock);
 
     update_orblst(lock);
     if(!m_orblst->contains(idx)) {
-        throw symmetry_violation(g_ns, k_clazz, method,
-            __FILE__, __LINE__,
+        throw symmetry_violation(g_ns, k_clazz, method, __FILE__, __LINE__,
             "Index does not correspond to a canonical block.");
     }
     if(!m_map.contains(idx)) {
         lock.upgrade();
         m_map.create(idx);
-        lock.downgrade();
     }
     return m_map.get(idx);
 }
@@ -201,7 +194,7 @@ bool block_tensor<N, T, Alloc>::on_req_is_zero_block(
 
     static const char *method = "on_req_is_zero_block(const index<N>&)";
 
-    auto_rwlock lock(m_lock, m_locku, false);
+    auto_rwlock lock(m_lock);
 
     update_orblst(lock);
     if(!m_orblst->contains(idx)) {
@@ -218,7 +211,7 @@ void block_tensor<N, T, Alloc>::on_req_zero_block(const index<N> &idx) {
 
     static const char *method = "on_req_zero_block(const index<N>&)";
 
-    auto_rwlock lock(m_lock, m_locku, true);
+    auto_rwlock lock(m_lock);
 
     if(is_immutable()) {
         throw immut_violation(g_ns, k_clazz, method, __FILE__, __LINE__,
@@ -226,10 +219,10 @@ void block_tensor<N, T, Alloc>::on_req_zero_block(const index<N> &idx) {
     }
     update_orblst(lock);
     if(!m_orblst->contains(idx)) {
-        throw symmetry_violation(g_ns, k_clazz, method,
-            __FILE__, __LINE__,
+        throw symmetry_violation(g_ns, k_clazz, method, __FILE__, __LINE__,
             "Index does not correspond to a canonical block.");
     }
+    lock.upgrade();
     m_map.remove(idx);
 }
 
@@ -239,12 +232,13 @@ void block_tensor<N, T, Alloc>::on_req_zero_all_blocks() {
 
     static const char *method = "on_req_zero_all_blocks()";
 
-    auto_rwlock lock(m_lock, m_locku, true);
+    auto_rwlock lock(m_lock);
 
     if(is_immutable()) {
         throw immut_violation(g_ns, k_clazz, method, __FILE__, __LINE__,
             "Immutable object cannot be modified.");
     }
+    lock.upgrade();
     m_map.clear();
 }
 
@@ -252,26 +246,21 @@ void block_tensor<N, T, Alloc>::on_req_zero_all_blocks() {
 template<size_t N, typename T, typename Alloc>
 void block_tensor<N, T, Alloc>::on_req_sync_on() {
 
-    if(m_lock == 0) {
-        m_lock = new libutil::rwlock;
-        m_locku = new libutil::mutex;
-    }
 }
 
 
 template<size_t N, typename T, typename Alloc>
 void block_tensor<N, T, Alloc>::on_req_sync_off() {
 
-    delete m_lock; m_lock = 0;
-    delete m_locku; m_locku = 0;
 }
 
 
 template<size_t N, typename T, typename Alloc>
 inline void block_tensor<N, T, Alloc>::on_set_immutable() {
 
-    auto_rwlock lock(m_lock, m_locku, true);
+    auto_rwlock lock(m_lock);
 
+    lock.upgrade();
     m_map.set_immutable();
 }
 
@@ -279,11 +268,11 @@ inline void block_tensor<N, T, Alloc>::on_set_immutable() {
 template<size_t N, typename T, typename Alloc>
 void block_tensor<N, T, Alloc>::update_orblst(auto_rwlock &lock) {
 
-    if(m_orblst == 0 || m_orblst_dirty) {
+    if(m_orblst == 0) {
         lock.upgrade();
-        delete m_orblst;
-        m_orblst = new orbit_list<N, T>(m_symmetry);
-        m_orblst_dirty = false;
+        //  We may have waited long enough here that the orbit has been updated
+        //  in another thread already. Need to double check.
+        if(m_orblst == 0) m_orblst = new orbit_list<N, T>(m_symmetry);
         lock.downgrade();
     }
 }

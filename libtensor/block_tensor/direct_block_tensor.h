@@ -75,7 +75,7 @@ public:
 
 private:
     dimensions<N> m_bidims; //!< Block %index dims
-    libutil::mutex *m_lock; //!< Mutex lock
+    libutil::mutex m_lock; //!< Mutex lock
     block_map<N, T, bt_traits> m_map; //!< Block map
     std::map<size_t, size_t> m_count; //!< Block count
     std::set<size_t> m_inprogress; //!< Computations in progress
@@ -125,7 +125,6 @@ direct_block_tensor<N, T, Alloc>::direct_block_tensor(
 
     direct_block_tensor_base<N, T>(op),
     m_bidims(get_bis().get_block_index_dims()),
-    m_lock(0),
     m_map(get_bis()) {
 
 }
@@ -135,7 +134,7 @@ template<size_t N, typename T, typename Alloc>
 bool direct_block_tensor<N, T, Alloc>::on_req_is_zero_block(
     const index<N> &idx) {
 
-    libutil::auto_lock<libutil::mutex> lock(*m_lock);
+    libutil::auto_lock<libutil::mutex> lock(m_lock);
 
     return !get_op().get_schedule().contains(idx);
 }
@@ -163,7 +162,7 @@ dense_tensor_i<N, T> &direct_block_tensor<N, T, Alloc>::on_req_block(
 
     static const char *method = "on_req_block(const index<N>&)";
 
-    libutil::auto_lock<libutil::mutex> lock(*m_lock);
+    libutil::auto_lock<libutil::mutex> lock(m_lock);
 
 #ifdef LIBTENSOR_DEBUG
     if(!get_op().get_schedule().contains(idx)) {
@@ -188,17 +187,17 @@ dense_tensor_i<N, T> &direct_block_tensor<N, T, Alloc>::on_req_block(
 
         std::set<size_t>::iterator i =
             m_inprogress.insert(aidx.get_abs_index()).first;
-        m_lock->unlock();
+        m_lock.unlock();
         try {
             task t(get_op(), idx, blk);
             task_iterator ti(t);
             task_observer to;
             libutil::thread_pool::submit(ti, to);
         } catch(...) {
-            m_lock->lock();
+            m_lock.lock();
             throw;
         }
-        m_lock->lock();
+        m_lock.lock();
         m_inprogress.erase(i);
         m_cond.signal(aidx.get_abs_index());
 
@@ -206,16 +205,16 @@ dense_tensor_i<N, T> &direct_block_tensor<N, T, Alloc>::on_req_block(
 
         libutil::loaded_cond<size_t> cond(0);
         m_cond.insert(aidx.get_abs_index(), &cond);
-        m_lock->unlock();
+        m_lock.unlock();
         try {
             libutil::thread_pool::release_cpu();
             cond.wait();
             libutil::thread_pool::acquire_cpu();
         } catch(...) {
-            m_lock->lock();
+            m_lock.lock();
             throw;
         }
-        m_lock->lock();
+        m_lock.lock();
         m_cond.erase(aidx.get_abs_index(), &cond);
     }
 
@@ -228,7 +227,7 @@ void direct_block_tensor<N, T, Alloc>::on_ret_block(const index<N> &idx) {
 
     static const char *method = "on_ret_block(const index<N>&)";
 
-    libutil::auto_lock<libutil::mutex> lock(*m_lock);
+    libutil::auto_lock<libutil::mutex> lock(m_lock);
 
     abs_index<N> aidx(idx, m_bidims);
     typename std::map<size_t, size_t>::iterator icnt =
@@ -248,7 +247,6 @@ void direct_block_tensor<N, T, Alloc>::on_ret_block(const index<N> &idx) {
 template<size_t N, typename T, typename Alloc>
 void direct_block_tensor<N, T, Alloc>::on_req_sync_on() {
 
-    if(m_lock == 0) m_lock = new libutil::mutex;
     get_op().sync_on();
 }
 
@@ -256,7 +254,6 @@ void direct_block_tensor<N, T, Alloc>::on_req_sync_on() {
 template<size_t N, typename T, typename Alloc>
 void direct_block_tensor<N, T, Alloc>::on_req_sync_off() {
 
-    delete m_lock; m_lock = 0;
     get_op().sync_off();
 }
 

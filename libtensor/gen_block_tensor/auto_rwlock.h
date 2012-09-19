@@ -2,7 +2,6 @@
 #define LIBTENSOR_AUTO_RWLOCK_H
 
 #include <libutil/threads/rwlock.h>
-#include <libutil/threads/mutex.h>
 
 namespace libtensor {
 
@@ -12,18 +11,21 @@ namespace libtensor {
     This lock protects its scope and provides a multiple reader-exclusive
     writer facility.
 
+    Upon creation, auto_rwlock acquires a read-only lock from the underlying
+    libutil::rwlock object. It can be later upgrade()ed to a read-write lock,
+    which in turn can be downgrade()ed back to the read-only lock.
+
     \ingroup libtensor_gen_block_tensor
  **/
 class auto_rwlock {
 private:
-    libutil::rwlock *m_lock;
-    libutil::mutex *m_locku;
+    libutil::rwlock &m_lock;
     bool m_wr;
 
 public:
     /** \brief Initializes the lock
      **/
-    auto_rwlock(libutil::rwlock *lock, libutil::mutex *locku, bool wr);
+    auto_rwlock(libutil::rwlock &lock);
 
     /** \brief Destroys the lock
      **/
