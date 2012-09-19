@@ -5,7 +5,8 @@
 #include <libutil/thread_pool/thread_pool.h>
 #include <libtensor/mp/default_sync_policy.h>
 #include <libtensor/core/abs_index.h>
-#include "block_map.h"
+#include "../gen_block_tensor/impl/block_map_impl.h"
+#include "block_tensor_traits.h"
 #include "direct_block_tensor_base.h"
 
 namespace libtensor {
@@ -96,7 +97,10 @@ private:
     };
 
 public:
-    typedef direct_block_tensor_base<N,T> base_t; //!< Base class type
+    typedef block_tensor_traits<T, Alloc> bt_traits;
+
+public:
+    typedef direct_block_tensor_base<N, T> base_t; //!< Base class type
     typedef T element_t; //!< Tensor element type
     typedef std::map<size_t,unsigned char> map_t;
     typedef std::pair<size_t,unsigned char> pair_t;
@@ -104,7 +108,7 @@ public:
 private:
     dimensions<N> m_bidims; //!< Block %index dims
     mutex_t *m_lock; //!< Mutex lock
-    block_map<N, T, Alloc> m_map; //!< Block map
+    block_map<N, T, bt_traits> m_map; //!< Block map
     std::map<size_t, size_t> m_count; //!< Block count
     std::set<size_t> m_inprogress; //!< Computations in progress
     libutil::cond_map<size_t, size_t> m_cond; //!< Conditionals
@@ -155,7 +159,8 @@ direct_block_tensor<N, T, Alloc, Sync>::direct_block_tensor(
 
     direct_block_tensor_base<N, T>(op),
     m_bidims(get_bis().get_block_index_dims()),
-    m_lock(0) {
+    m_lock(0),
+    m_map(get_bis()) {
 
 }
 
@@ -203,17 +208,15 @@ dense_tensor_i<N, T> &direct_block_tensor<N, T, Alloc, Sync>::on_req_block(
 
     abs_index<N> aidx(idx, m_bidims);
     typename std::map<size_t, size_t>::iterator icnt =
-        m_count.insert(std::pair<size_t, size_t>(
-            aidx.get_abs_index(), 0)).first;
+        m_count.insert(std::make_pair(aidx.get_abs_index(), size_t(0))).first;
     bool newblock = icnt->second++ == 0;
     bool inprogress = m_inprogress.count(aidx.get_abs_index()) > 0;
 
     if(newblock) {
-        dimensions<N> blkdims = get_op().get_bis().get_block_dims(idx);
-        m_map.create(aidx.get_abs_index(), blkdims);
+        m_map.create(idx);
     }
 
-    dense_tensor_i<N, T> &blk = m_map.get(aidx.get_abs_index());
+    dense_tensor_i<N, T> &blk = m_map.get(idx);
 
     if(newblock) {
 
@@ -260,7 +263,7 @@ void direct_block_tensor<N, T, Alloc, Sync>::on_ret_block(const index<N> &idx) {
     }
 
     if(--icnt->second == 0) {
-        m_map.remove(aidx.get_abs_index());
+        m_map.remove(idx);
         m_count.erase(icnt);
     }
 }

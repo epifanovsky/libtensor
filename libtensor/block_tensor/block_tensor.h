@@ -9,7 +9,8 @@
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/block_tensor/block_tensor_i.h>
-#include "block_map.h"
+#include "../gen_block_tensor/impl/block_map_impl.h"
+#include "block_tensor_traits.h"
 
 namespace libtensor {
 
@@ -78,13 +79,16 @@ private:
     };
 
 public:
+    typedef block_tensor_traits<T, Alloc> bt_traits;
+
+public:
     block_index_space<N> m_bis; //!< Block %index space
     dimensions<N> m_bidims; //!< Block %index %dimensions
     symmetry<N, T> m_symmetry; //!< Block %tensor symmetry
     orbit_list<N, T> *m_orblst; //!< Orbit list
     bool m_orblst_dirty; //!< Whether the orbit list needs to be updated
-    block_map<N, T, Alloc> m_map; //!< Block map
-    block_map<N, T, Alloc> m_aux_map; //!< Auxiliary block map
+    block_map<N, T, bt_traits> m_map; //!< Block map
+    block_map<N, T, bt_traits> m_aux_map; //!< Auxiliary block map
     rwlock_t *m_lock; //!< Read-write lock
     mutex_t *m_locku; //!< Upgrade lock
 
@@ -141,6 +145,8 @@ block_tensor<N, T, Alloc, Sync>::block_tensor(const block_index_space<N> &bis) :
     m_symmetry(m_bis),
     m_orblst(0),
     m_orblst_dirty(true),
+    m_map(m_bis),
+    m_aux_map(m_bis),
     m_lock(0), m_locku(0) {
 
 }
@@ -155,6 +161,8 @@ block_tensor<N, T, Alloc, Sync>::block_tensor(
     m_symmetry(bt.get_bis()),
     m_orblst(0),
     m_orblst_dirty(true),
+    m_map(m_bis),
+    m_aux_map(m_bis),
     m_lock(0), m_locku(0) {
 
 }
@@ -225,19 +233,17 @@ dense_tensor_i<N, T> &block_tensor<N, T, Alloc, Sync>::on_req_block(
     auto_lock lock(m_lock, m_locku, false);
 
     update_orblst(lock);
-    abs_index<N> aidx(idx, m_bidims);
-    if(!m_orblst->contains(aidx.get_abs_index())) {
+    if(!m_orblst->contains(idx)) {
         throw symmetry_violation(g_ns, k_clazz, method,
             __FILE__, __LINE__,
             "Index does not correspond to a canonical block.");
     }
-    if(!m_map.contains(aidx.get_abs_index())) {
+    if(!m_map.contains(idx)) {
         lock.upgrade();
-        dimensions<N> blkdims = m_bis.get_block_dims(idx);
-        m_map.create(aidx.get_abs_index(), blkdims);
+        m_map.create(idx);
         lock.downgrade();
     }
-    return m_map.get(aidx.get_abs_index());
+    return m_map.get(idx);
 }
 
 
@@ -256,21 +262,19 @@ dense_tensor_i<N, T> &block_tensor<N, T, Alloc, Sync>::on_req_aux_block(
     auto_lock lock(m_lock, m_locku, true);
 
     update_orblst(lock);
-    abs_index<N> aidx(idx, m_bidims);
-    if(!m_orblst->contains(aidx.get_abs_index())) {
+    if(!m_orblst->contains(idx)) {
         throw symmetry_violation(g_ns, k_clazz, method,
             __FILE__, __LINE__,
             "Index does not correspond to a canonical block.");
     }
-    if(m_aux_map.contains(aidx.get_abs_index())) {
+    if(m_aux_map.contains(idx)) {
         throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
             "Duplicate aux request.");
     }
 
-    dimensions<N> blkdims = m_bis.get_block_dims(idx);
-    m_aux_map.create(aidx.get_abs_index(), blkdims);
+    m_aux_map.create(idx);
 
-    return m_aux_map.get(aidx.get_abs_index());
+    return m_aux_map.get(idx);
 }
 
 
@@ -279,8 +283,7 @@ void block_tensor<N, T, Alloc, Sync>::on_ret_aux_block(const index<N> &idx) {
 
     auto_lock lock(m_lock, m_locku, true);
 
-    abs_index<N> aidx(idx, m_bidims);
-    m_aux_map.remove(aidx.get_abs_index());
+    m_aux_map.remove(idx);
 }
 
 
@@ -293,13 +296,12 @@ bool block_tensor<N, T, Alloc, Sync>::on_req_is_zero_block(
     auto_lock lock(m_lock, m_locku, false);
 
     update_orblst(lock);
-    abs_index<N> aidx(idx, m_bidims);
-    if(!m_orblst->contains(aidx.get_abs_index())) {
+    if(!m_orblst->contains(idx)) {
         throw symmetry_violation(g_ns, k_clazz, method,
             __FILE__, __LINE__,
             "Index does not correspond to a canonical block.");
     }
-    return !m_map.contains(aidx.get_abs_index());
+    return !m_map.contains(idx);
 }
 
 
@@ -315,13 +317,12 @@ void block_tensor<N, T, Alloc, Sync>::on_req_zero_block(const index<N> &idx) {
             "Immutable object cannot be modified.");
     }
     update_orblst(lock);
-    abs_index<N> aidx(idx, m_bidims);
-    if(!m_orblst->contains(aidx.get_abs_index())) {
+    if(!m_orblst->contains(idx)) {
         throw symmetry_violation(g_ns, k_clazz, method,
             __FILE__, __LINE__,
             "Index does not correspond to a canonical block.");
     }
-    m_map.remove(aidx.get_abs_index());
+    m_map.remove(idx);
 }
 
 
