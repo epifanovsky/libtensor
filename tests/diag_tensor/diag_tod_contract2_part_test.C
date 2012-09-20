@@ -15,6 +15,10 @@ namespace libtensor {
 
 void diag_tod_contract2_part_test::perform() throw(libtest::test_exception) {
 
+    allocator<double>::vmm().init(16, 16, 16777216, 16777216);
+
+    try {
+
     test_ij_ik_kj(1, 1, 1);
     test_ij_ik_kj(1, 1, 4);
     test_ij_ik_kj(4, 1, 1);
@@ -32,6 +36,13 @@ void diag_tod_contract2_part_test::perform() throw(libtest::test_exception) {
     test_ii_ii_ii(1);
     test_ii_ii_ii(4);
     test_ii_ii_ii(10);
+
+    } catch(...) {
+        allocator<double>::vmm().shutdown();
+        throw;
+    }
+
+    allocator<double>::vmm().shutdown();
 }
 
 
