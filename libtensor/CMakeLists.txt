@@ -143,15 +143,6 @@ set(SRC_INST
     block_tensor/btod/impl/btod_symmetrize3.C
     block_tensor/btod/impl/btod_trace.C
     block_tensor/btod/impl/btod_vmpriority.C
-    diag_tensor/impl/diag_tensor_space.C
-    diag_tensor/impl/diag_tensor.C
-    diag_tensor/impl/tod_conv_diag_tensor.C
-    diag_tensor/impl/diag_to_add_space.C
-    diag_tensor/impl/diag_to_contract2_space.C
-    diag_tensor/impl/diag_tod_adjust_space.C
-    diag_tensor/impl/diag_tod_contract2.C
-    diag_tensor/impl/diag_tod_copy.C
-    diag_tensor/impl/diag_tod_set.C
 )
 
 set(SRC_GEN_BTOD
@@ -177,6 +168,19 @@ set(SRC_BTOD
     block_tensor/impl/btod_set.C
 )
 
+set(SRC_DIAG_TENSOR
+    diag_block_tensor/impl/diag_block_tensor.C
+    diag_tensor/impl/diag_tensor_space.C
+    diag_tensor/impl/diag_tensor.C
+    diag_tensor/impl/tod_conv_diag_tensor.C
+    diag_tensor/impl/diag_to_add_space.C
+    diag_tensor/impl/diag_to_contract2_space.C
+    diag_tensor/impl/diag_tod_adjust_space.C
+    diag_tensor/impl/diag_tod_contract2.C
+    diag_tensor/impl/diag_tod_copy.C
+    diag_tensor/impl/diag_tod_set.C
+)
+
 if(USE_ACML)
     set(SRC_LINALG ${SRC_LINALG_GENERIC} ${SRC_LINALG_ACML})
 elseif(USE_CBLAS OR USE_GSL)
@@ -188,7 +192,7 @@ elseif(USE_MKL)
 endif(USE_ACML)
 
 add_library(tensor ${SRC} ${SRC_LINALG} ${SRC_KERNELS} ${SRC_GEN_BTOD}
-    ${SRC_BTOD} ${SRC_INST} ${SRC_MP})
+    ${SRC_BTOD} ${SRC_DIAG_TENSOR} ${SRC_INST} ${SRC_MP})
 if(QCHEM_SOURCE_DIR)
     add_library(tensor_qchem ${SRC_LINALG_QCHEM})
     add_dependencies(tensor_qchem tensor)
