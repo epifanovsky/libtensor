@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_DIRECT_PRODUCT_EVAL_FUNCTOR_H
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_DIRECT_PRODUCT_EVAL_FUNCTOR_H
 
-#include <libtensor/block_tensor/btod/btod_contract2.h>
+#include <libtensor/block_tensor/btod_contract2.h>
 #include "../expr/anon_eval.h"
 #include "core_direct_product.h"
 #include "direct_product_subexpr_labels.h"

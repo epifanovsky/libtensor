@@ -1,9 +1,9 @@
 #include <libtensor/core/allocator.h>
-#include <libtensor/core/block_tensor.h>
-#include <libtensor/core/block_tensor_ctrl.h>
 #include <libtensor/core/scalar_transf_double.h>
-#include <libtensor/block_tensor/btod/btod_add.h>
-#include <libtensor/block_tensor/btod/btod_copy.h>
+#include <libtensor/block_tensor/block_tensor.h>
+#include <libtensor/block_tensor/block_tensor_ctrl.h>
+#include <libtensor/block_tensor/btod_add.h>
+#include <libtensor/block_tensor/btod_copy.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/block_tensor/btod/btod_symmetrize3.h>
 #include <libtensor/symmetry/se_perm.h>

@@ -86,8 +86,8 @@ void tod_scatter_test::test_ij_j(size_t ni, size_t nj, double d)
 
 	//	Invoke the contraction routine
 
-	if(d == 0.0) tod_scatter<1, 1>(ta, 1.0).perform(tc);
-	else tod_scatter<1, 1>(ta, 1.0).perform(tc, d);
+	if(d == 0.0) tod_scatter<1, 1>(ta, 1.0).perform(true, tc);
+	else tod_scatter<1, 1>(ta, d).perform(false, tc);
 
 	//	Compare against the reference
 

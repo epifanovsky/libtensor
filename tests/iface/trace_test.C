@@ -1,3 +1,4 @@
+#include <cmath>
 #include <sstream>
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/btod/btod_random.h>

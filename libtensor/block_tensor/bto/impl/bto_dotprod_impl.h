@@ -169,9 +169,6 @@ void bto_dotprod<N, Traits>::calculate(std::vector<element_t> &v) {
 
             permutation<N> pinv1(j->perm1, true), pinv2(j->perm2, true);
 
-            ctrl1[i]->req_sync_on();
-            ctrl2[i]->req_sync_on();
-
             std::vector<dotprod_in_orbit_task*> tasklist;
 
             for(typename orbit_list<N, element_t>::iterator io = ol.begin();
@@ -195,9 +192,6 @@ void bto_dotprod<N, Traits>::calculate(std::vector<element_t> &v) {
                 v[i] += tasklist[k]->get_d();
                 delete tasklist[k];
             }
-
-            ctrl1[i]->req_sync_off();
-            ctrl2[i]->req_sync_off();
         }
 
         for(i = 0; i < narg; i++) {

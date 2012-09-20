@@ -62,20 +62,6 @@ btod_symmetrize<N>::btod_symmetrize(additive_bto<N, btod_traits> &op,
 
 
 template<size_t N>
-void btod_symmetrize<N>::sync_on() {
-
-    m_op.sync_on();
-}
-
-
-template<size_t N>
-void btod_symmetrize<N>::sync_off() {
-
-    m_op.sync_off();
-}
-
-
-template<size_t N>
 void btod_symmetrize<N>::perform(block_tensor_i<N, double> &bt) {
 
     typedef btod_traits Traits;

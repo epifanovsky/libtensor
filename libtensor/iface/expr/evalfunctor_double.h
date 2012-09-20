@@ -3,11 +3,11 @@
 
 #include "../../defs.h"
 #include "../../exception.h"
-#include <libtensor/block_tensor/btod/btod_add.h>
 #include <libtensor/block_tensor/bto/additive_bto.h>
 #include <libtensor/block_tensor/btod/btod_traits.h>
-#include <libtensor/block_tensor/btod/btod_copy.h>
-#include <libtensor/block_tensor/btod/btod_set.h>
+#include <libtensor/block_tensor/btod_add.h>
+#include <libtensor/block_tensor/btod_copy.h>
+#include <libtensor/block_tensor/btod_set.h>
 #include <libtensor/block_tensor/btod/btod_sum.h>
 
 namespace libtensor {

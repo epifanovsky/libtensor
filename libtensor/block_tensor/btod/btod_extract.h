@@ -2,7 +2,7 @@
 #define LIBTENSOR_BTOD_EXTRACT_H
 
 #include <libtensor/timings.h>
-#include <libtensor/core/block_tensor_i.h>
+#include <libtensor/block_tensor/block_tensor_i.h>
 #include <libtensor/block_tensor/bto/additive_bto.h>
 #include <libtensor/block_tensor/btod/btod_traits.h>
 
@@ -64,9 +64,6 @@ public:
     }
 
     //@}
-
-    virtual void sync_on();
-    virtual void sync_off();
 
     virtual void perform(bto_stream_i<N - M, btod_traits> &out);
     virtual void perform(block_tensor_i<N - M, double> &btb);

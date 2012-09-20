@@ -3,13 +3,14 @@
 
 #include <libtensor/core/block_index_space_product_builder.h>
 #include <libtensor/core/orbit.h>
+#include <libtensor/dense_tensor/tod_set.h>
 #include <libtensor/symmetry/so_dirsum.h>
 #include <libtensor/symmetry/so_merge.h>
 #include <libtensor/symmetry/so_copy.h>
-#include <libtensor/block_tensor/btod/btod_copy.h>
+#include <libtensor/block_tensor/block_tensor.h>
+#include <libtensor/block_tensor/btod_copy.h>
 #include <libtensor/btod/btod_scale.h>
 #include <libtensor/btod/bad_block_index_space.h>
-#include <libtensor/core/block_tensor.h>
 #include <libtensor/block_tensor/bto/impl/bto_aux_add_impl.h>
 #include <libtensor/block_tensor/bto/impl/bto_aux_copy_impl.h>
 #include "../btod_sum.h"
@@ -39,22 +40,6 @@ btod_sum<N>::~btod_sum() {
 
 
 template<size_t N>
-void btod_sum<N>::sync_on() {
-
-    for(typename std::list<node_t>::iterator iop = m_ops.begin();
-        iop != m_ops.end(); iop++) iop->get_op().sync_on();
-}
-
-
-template<size_t N>
-void btod_sum<N>::sync_off() {
-
-    for(typename std::list<node_t>::iterator iop = m_ops.begin();
-        iop != m_ops.end(); iop++) iop->get_op().sync_off();
-}
-
-
-template<size_t N>
 void btod_sum<N>::perform(bto_stream_i<N, btod_traits> &out) {
 
     if(m_ops.empty()) return;
@@ -72,7 +57,7 @@ void btod_sum<N>::perform(bto_stream_i<N, btod_traits> &out) {
         iop->get_op().perform(bt, iop->get_coeff());
     }
 
-    bto_copy<N, btod_traits>(bt).perform(out);
+    btod_copy<N>(bt).perform(out);
 }
 
 

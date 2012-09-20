@@ -2,6 +2,7 @@
 #define LIBTENSOR_TOD_DIAG_IMPL_H
 
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
+#include <libtensor/dense_tensor/tod_set.h>
 #include <libtensor/tod/bad_dimensions.h>
 #include "../tod_diag.h"
 
@@ -22,50 +23,30 @@ const char *tod_diag<N, M>::op_daxpy::k_clazz = "tod_diag<N, M>::op_daxpy";
 
 template<size_t N, size_t M>
 tod_diag<N, M>::tod_diag(dense_tensor_rd_i<N, double> &t, const mask<N> &m,
-    double c) :
+    const tensor_transf<k_orderb, double> &tr) :
 
-    m_t(t), m_mask(m), m_c(c), m_dims(mk_dims(t.get_dims(), m_mask)) {
+    m_t(t), m_mask(m), m_tr(tr), m_dims(mk_dims(t.get_dims(), m_mask)) {
 
+    m_dims.permute(tr.get_perm());
 }
 
 
 template<size_t N, size_t M>
-tod_diag<N, M>::tod_diag(dense_tensor_rd_i<N, double> &t, const mask<N> &m,
-    const permutation<N - M + 1> &p, double c) :
-
-    m_t(t), m_mask(m), m_perm(p), m_c(c),
-    m_dims(mk_dims(t.get_dims(), m_mask)) {
-
-    m_dims.permute(p);
-}
-
-
-template<size_t N, size_t M>
-void tod_diag<N, M>::perform(dense_tensor_wr_i<k_orderb, double> &tb) {
+void tod_diag<N, M>::perform(bool zero, dense_tensor_wr_i<k_orderb, double> &tb) {
 
     static const char *method =
-        "perform(dense_tensor_wr_i<N - M + 1, double> &)";
+            "perform(bool, dense_tensor_wr_i<N - M + 1, double> &)";
 
+#ifdef LIBTENSOR_DEBUG
     if(!tb.get_dims().equals(m_dims)) {
         throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "t");
     }
+#endif
 
-    do_perform<op_dcopy>(tb, 1.0);
-}
+    if(zero) tod_set<k_orderb>().perform(tb);
+    if(m_tr.get_scalar_tr().get_coeff() == 0.0) return;
 
-
-template<size_t N, size_t M>
-void tod_diag<N, M>::perform(dense_tensor_wr_i<k_orderb, double> &tb,
-    double c) {
-
-    static const char *method =
-        "perform(dense_tensor_wr_i<N - M + 1, double> &, double)";
-
-    if(!tb.get_dims().equals(m_dims)) {
-        throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "t");
-    }
-
-    do_perform<op_daxpy>(tb, c);
+    do_perform<op_daxpy>(tb);
 }
 
 
@@ -107,11 +88,10 @@ dimensions<N - M + 1> tod_diag<N, M>::mk_dims(const dimensions<N> &dims,
 
 
 template<size_t N, size_t M> template<typename CoreOp>
-void tod_diag<N, M>::do_perform(dense_tensor_wr_i<k_orderb, double> &tb,
-    double c) {
+void tod_diag<N, M>::do_perform(dense_tensor_wr_i<k_orderb, double> &tb) {
 
     static const char *method =
-        "do_perform(dense_tensor_wr_i<N - M + 1, double>&, double)";
+        "do_perform(dense_tensor_wr_i<N - M + 1, double>&)";
 
     tod_diag<N, M>::start_timer();
 
@@ -121,7 +101,7 @@ void tod_diag<N, M>::do_perform(dense_tensor_wr_i<k_orderb, double> &tb,
     double *pb = cb.req_dataptr();
 
     loop_list_t lst;
-    build_list<CoreOp>(lst, tb, c * m_c);
+    build_list<CoreOp>(lst, tb);
 
     registers regs;
     regs.m_ptra = pa;
@@ -146,10 +126,10 @@ void tod_diag<N, M>::do_perform(dense_tensor_wr_i<k_orderb, double> &tb,
 
 template<size_t N, size_t M> template<typename CoreOp>
 void tod_diag<N, M>::build_list(loop_list_t &list,
-    dense_tensor_wr_i<k_orderb, double> &tb, double c) {
+    dense_tensor_wr_i<k_orderb, double> &tb) {
 
     static const char *method = "build_list(loop_list_t&, "
-        "dense_tensor_wr_i<N - M + 1, double>&, double)";
+        "dense_tensor_wr_i<N - M + 1, double>&)";
 
     const dimensions<k_ordera> &dimsa = m_t.get_dims();
     const dimensions<k_orderb> &dimsb = tb.get_dims();
@@ -158,7 +138,7 @@ void tod_diag<N, M>::build_list(loop_list_t &list,
     //
     sequence<k_orderb, size_t> ib(0);
     for(size_t i = 0; i < k_orderb; i++) ib[i] = i;
-    permutation<k_orderb> pinv(m_perm, true);
+    permutation<k_orderb> pinv(m_tr.get_perm(), true);
     pinv.apply(ib);
 
     //  Loop over the indexes and build the list
@@ -212,7 +192,8 @@ void tod_diag<N, M>::build_list(loop_list_t &list,
             //  Make the loop with incb the last
             //
             if(incb == 1 && poscore == list.end()) {
-                it->m_op = new CoreOp(len, inca, incb, c);
+                it->m_op = new CoreOp(len, inca, incb,
+                        m_tr.get_scalar_tr().get_coeff());
                 poscore = it;
             } else {
                 it->m_op = new op_loop(len, inca, incb);

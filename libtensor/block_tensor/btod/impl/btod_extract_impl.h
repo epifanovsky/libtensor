@@ -2,17 +2,16 @@
 #define LIBTENSOR_BTOD_EXTRACT_IMPL_H
 
 #include <libtensor/core/abs_index.h>
-#include <libtensor/core/block_tensor_ctrl.h>
 #include <libtensor/core/orbit.h>
 #include <libtensor/core/orbit_list.h>
 #include <libtensor/core/permutation_builder.h>
-#include <libtensor/core/block_tensor.h>
-#include <libtensor/core/block_tensor_ctrl.h>
 #include <libtensor/dense_tensor/tod_extract.h>
 #include <libtensor/dense_tensor/tod_set.h>
 #include <libtensor/symmetry/so_reduce.h>
 #include <libtensor/symmetry/so_permute.h>
 #include <libtensor/btod/bad_block_index_space.h>
+#include <libtensor/block_tensor/block_tensor.h>
+#include <libtensor/block_tensor/block_tensor_ctrl.h>
 #include <libtensor/block_tensor/bto/impl/bto_aux_add_impl.h>
 #include <libtensor/block_tensor/bto/impl/bto_aux_copy_impl.h>
 #include "../btod_extract.h"
@@ -134,22 +133,6 @@ btod_extract<N, M>::btod_extract(block_tensor_i<N, double> &bta,
 
 
 template<size_t N, size_t M>
-void btod_extract<N, M>::sync_on() {
-
-    block_tensor_ctrl<N, double> ctrla(m_bta);
-    ctrla.req_sync_on();
-}
-
-
-template<size_t N, size_t M>
-void btod_extract<N, M>::sync_off() {
-
-    block_tensor_ctrl<N, double> ctrla(m_bta);
-    ctrla.req_sync_off();
-}
-
-
-template<size_t N, size_t M>
 void btod_extract<N, M>::perform(bto_stream_i<N - M, btod_traits> &out) {
 
     typedef allocator<double> allocator_type;
@@ -159,16 +142,10 @@ void btod_extract<N, M>::perform(bto_stream_i<N - M, btod_traits> &out) {
         out.open();
 
         block_tensor<N - M, double, allocator_type> btc(m_bis);
-        block_tensor_ctrl<N - M, double> cc(btc);
-        cc.req_sync_on();
-        sync_on();
 
         btod_extract_task_iterator<N, M, double> ti(*this, btc, out);
         btod_extract_task_observer<N, M, double> to;
         libutil::thread_pool::submit(ti, to);
-
-        cc.req_sync_off();
-        sync_off();
 
         out.close();
 

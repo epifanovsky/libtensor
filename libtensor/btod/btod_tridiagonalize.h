@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_BTOD_TRIDIAGONALIZE_H
 #define LIBTENSOR_BTOD_TRIDIAGONALIZE_H
 
-#include "../core/block_tensor_i.h"
+#include <libtensor/block_tensor/block_tensor_i.h>
 
 namespace libtensor {
 /** \brief Converts a symmetric matrix to the tridiagonal matrix using

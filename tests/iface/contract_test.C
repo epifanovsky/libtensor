@@ -1,6 +1,7 @@
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/symmetry/se_perm.h>
+#include <libtensor/symmetry/so_copy.h>
 #include <libtensor/iface/iface.h>
 #include "../compare_ref.h"
 #include "contract_test.h"
@@ -25,6 +26,7 @@ void contract_test::perform() throw(libtest::test_exception) {
         test_tt_6();
         test_tt_7();
         test_tt_8();
+        test_tt_9();
         test_te_1();
         test_te_2();
         test_te_3();
@@ -466,6 +468,51 @@ void contract_test::test_tt_8() throw(libtest::test_exception) {
         t3(a|b) =  0.5 * (-contract(i|j|k, t1(k|j|i|b), t2(k|j|i|a)));
 
     compare_ref<2>::compare(testname, t3, t3_ref, 1e-14);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void contract_test::test_tt_9() throw(libtest::test_exception) {
+
+    const char *testname = "contract_test::test_tt_9()";
+
+    try {
+
+    bispace<1> sp_i(10), sp_a(20), sp_k(11);
+    sp_i.split(3).split(5);
+    sp_a.split(6).split(13);
+    bispace<4> sp_ijka(sp_i&sp_i|sp_k|sp_a), sp_kija(sp_k|sp_i&sp_i|sp_a);
+    bispace<4> sp_ijab(sp_i&sp_i|sp_a&sp_a);
+
+    btensor<4> t1(sp_kija), t2(sp_ijab), t3(sp_ijka),
+        t3_ref(sp_ijka);
+
+    btod_random<4>().perform(t1);
+    btod_random<4>().perform(t2);
+    t1.set_immutable();
+    t2.set_immutable();
+
+    contraction2<2, 2, 2> contr(permutation<4>().permute(0, 2));
+    contr.contract(1, 1);
+    contr.contract(3, 3);
+    btod_contract2<2, 2, 2>(contr, t1, t2).perform(t3_ref);
+
+    letter i, j, k, l, a, b, c;
+    t3(i|j|k|a) = contract(l|c, t1(k|l|j|c), t2(i|l|a|c));
+
+    {
+        block_tensor_ctrl<4, double> c3(t3), c3_ref(t3_ref);
+        symmetry<4, double> sym3(sp_ijka.get_bis()),
+            sym3_ref(sp_ijka.get_bis());
+        so_copy<4, double>(c3.req_const_symmetry()).perform(sym3);
+        so_copy<4, double>(c3_ref.req_const_symmetry()).perform(sym3_ref);
+        compare_ref<4>::compare(testname, sym3, sym3_ref);
+    }
+
+    compare_ref<4>::compare(testname, t3, t3_ref, 6e-14);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());

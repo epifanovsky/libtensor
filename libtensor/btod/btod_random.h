@@ -8,14 +8,14 @@
 #include "../exception.h"
 #include "../core/abs_index.h"
 #include "../core/allocator.h"
-#include "../core/block_tensor_i.h"
-#include "../core/block_tensor_ctrl.h"
 #include "../core/orbit_list.h"
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/dense_tensor/tod_add.h>
 #include <libtensor/dense_tensor/tod_copy.h>
 #include <libtensor/dense_tensor/tod_random.h>
+#include <libtensor/block_tensor/block_tensor_i.h>
+#include <libtensor/block_tensor/block_tensor_ctrl.h>
 #include <libtensor/core/scalar_transf_double.h>
 #include "../timings.h"
 

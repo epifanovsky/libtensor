@@ -2,10 +2,10 @@
 #define LIBTENSOR_TOD_BTCONV_IMPL_H
 
 #include <libtensor/linalg/linalg.h>
-#include <libtensor/core/block_tensor_ctrl.h>
 #include <libtensor/core/orbit.h>
 #include <libtensor/core/orbit_list.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
+#include <libtensor/block_tensor/block_tensor_ctrl.h>
 #include "../tod_btconv.h"
 
 namespace libtensor {

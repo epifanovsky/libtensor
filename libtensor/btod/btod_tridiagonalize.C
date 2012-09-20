@@ -1,17 +1,18 @@
+#include <cmath>
 #include <iostream>
-#include "../core/allocator.h"
-#include "../core/block_tensor_ctrl.h"
-#include "../core/block_tensor.h"
+#include <libtensor/core/allocator.h>
 #include <libtensor/core/scalar_transf_double.h>
-#include <libtensor/block_tensor/btod/btod_add.h>
-#include <libtensor/block_tensor/btod/btod_contract2.h>
-#include <libtensor/block_tensor/btod/btod_copy.h>
-#include <libtensor/block_tensor/btod/btod_diag.h>
+#include <libtensor/block_tensor/block_tensor.h>
+#include <libtensor/block_tensor/block_tensor_ctrl.h>
+#include <libtensor/block_tensor/btod_add.h>
+#include <libtensor/block_tensor/btod_contract2.h>
+#include <libtensor/block_tensor/btod_copy.h>
+#include <libtensor/block_tensor/btod_diag.h>
 #include <libtensor/block_tensor/btod/btod_extract.h>
 #include "btod_scale.h"
 #include "btod_set_diag.h"
 #include "btod_set_elem.h"
-#include <libtensor/block_tensor/btod/btod_set.h>
+#include <libtensor/block_tensor/btod_set.h>
 #include "btod_tridiagonalize.h"
 
 namespace libtensor

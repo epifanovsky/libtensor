@@ -30,7 +30,6 @@ void bto_aux_copy<N, Traits>::open() {
     if(!m_open) {
         m_ctrl.req_zero_all_blocks();
         so_copy<N, element_type>(m_sym).perform(m_ctrl.req_symmetry());
-        m_ctrl.req_sync_on();
         m_open = true;
     }
 }
@@ -40,7 +39,6 @@ template<size_t N, typename Traits>
 void bto_aux_copy<N, Traits>::close() {
 
     if(m_open) {
-        m_ctrl.req_sync_off();
         m_open = false;
     }
 }

@@ -86,9 +86,6 @@ public:
         return m_sch;
     }
 
-    virtual void sync_on();
-    virtual void sync_off();
-
     //@}
 
     virtual void perform(block_tensor_i<N, double> &btc);
