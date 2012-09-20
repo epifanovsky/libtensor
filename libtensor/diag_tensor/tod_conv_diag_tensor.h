@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_TOD_CONV_DIAG_TENSOR_H
 #define LIBTENSOR_TOD_CONV_DIAG_TENSOR_H
 
+#include <libtensor/core/noncopyable.h>
 #include <libtensor/dense_tensor/dense_tensor_i.h>
 #include "diag_tensor_i.h"
 
@@ -13,7 +14,7 @@ namespace libtensor {
     \ingroup libtensor_diag_tensor
  **/
 template<size_t N>
-class tod_conv_diag_tensor {
+class tod_conv_diag_tensor : public noncopyable {
 private:
     diag_tensor_rd_i<N, double> &m_ta; //!< Diagonal tensor
 
@@ -25,11 +26,6 @@ public:
     /** \brief Performs the conversion
      **/
     void perform(dense_tensor_wr_i<N, double> &tb);
-
-private:
-    /** \brief Private copy constructor
-     **/
-    tod_conv_diag_tensor(const tod_conv_diag_tensor&);
 
 };
 

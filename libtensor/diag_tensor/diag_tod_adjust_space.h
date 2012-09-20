@@ -2,6 +2,7 @@
 #define LIBTENSOR_DIAG_TOD_ADJUST_SPACE_H
 
 #include <libtensor/timings.h>
+#include <libtensor/core/noncopyable.h>
 #include "diag_tensor_space.h"
 #include "diag_tensor_i.h"
 
@@ -14,7 +15,9 @@ namespace libtensor {
     \ingroup libtensor_diag_tensor
  **/
 template<size_t N>
-class diag_tod_adjust_space : public timings< diag_tod_adjust_space<N> > {
+class diag_tod_adjust_space :
+    public timings< diag_tod_adjust_space<N> >, public noncopyable {
+
 public:
     static const char *k_clazz; //!< Class name
 

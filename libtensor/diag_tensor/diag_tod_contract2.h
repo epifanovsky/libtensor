@@ -2,7 +2,8 @@
 #define LIBTENSOR_DIAG_TOD_CONTRACT2_H
 
 #include <libtensor/timings.h>
-#include <libtensor/tod/contraction2.h>
+#include <libtensor/core/contraction2.h>
+#include <libtensor/core/noncopyable.h>
 #include "diag_tensor_i.h"
 
 namespace libtensor {
@@ -18,7 +19,9 @@ namespace libtensor {
     \ingroup libtensor_diag_tensor
  **/
 template<size_t N, size_t M, size_t K>
-class diag_tod_contract2 : public timings< diag_tod_contract2<N, M, K> > {
+class diag_tod_contract2 :
+    public timings< diag_tod_contract2<N, M, K> >, public noncopyable {
+
 public:
     static const char *k_clazz; //!< Class name
 
@@ -43,11 +46,6 @@ public:
         \param dtc Output tensor.
      **/
     void perform(diag_tensor_wr_i<N + M, double> &dtc);
-
-private:
-    /** \brief Private copy constructor
-     **/
-    diag_tod_contract2(const diag_tod_contract2&);
 
 };
 

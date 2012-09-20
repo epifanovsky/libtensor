@@ -2,6 +2,7 @@
 #define LIBTENSOR_DIAG_TOD_COPY_H
 
 #include <libtensor/timings.h>
+#include <libtensor/core/noncopyable.h>
 #include <libtensor/core/permutation.h>
 #include "diag_tensor_i.h"
 
@@ -23,7 +24,7 @@ namespace libtensor {
     \ingroup libtensor_diag_tensor
  **/
 template<size_t N>
-class diag_tod_copy : public timings< diag_tod_copy<N> > {
+class diag_tod_copy : public timings< diag_tod_copy<N> >, public noncopyable {
 public:
     static const char *k_clazz; //!< Class name
 
@@ -68,9 +69,6 @@ private:
 
     size_t get_increment(const dimensions<N> &dims,
         const diag_tensor_subspace<N> &ss, const mask<N> &m) const;
-
-private:
-    diag_tod_copy(const diag_tod_copy&);
 
 };
 

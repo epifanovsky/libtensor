@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_DIAG_TO_CONTRACT2_SPACE_H
 #define LIBTENSOR_DIAG_TO_CONTRACT2_SPACE_H
 
+#include <libtensor/core/noncopyable.h>
 #include <libtensor/dense_tensor/to_contract2_dims.h>
 #include "diag_tensor_space.h"
 
@@ -18,7 +19,7 @@ namespace libtensor {
     \ingroup libtensor_diag_tensor
  **/
 template<size_t N, size_t M, size_t K>
-class diag_to_contract2_space {
+class diag_to_contract2_space : public noncopyable {
 public:
     static const char *k_clazz; //!< Class name
 
