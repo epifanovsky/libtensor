@@ -1,10 +1,13 @@
 #include <libtensor/core/allocator.h>
-#include <libtensor/core/block_tensor.h>
-#include <libtensor/btod/scalar_transf_double.h>
-#include <libtensor/btod/btod_mult.h>
+#include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/block_tensor/block_tensor.h>
+#include <libtensor/block_tensor/btod_mult.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/symmetry/product_table_container.h>
+#include <libtensor/symmetry/se_label.h>
+#include <libtensor/symmetry/se_part.h>
+#include <libtensor/symmetry/se_perm.h>
 #include <libtensor/dense_tensor/tod_btconv.h>
 #include <libtensor/dense_tensor/tod_mult.h>
 #include <iomanip>
@@ -16,6 +19,10 @@ namespace libtensor {
 
 
 void btod_mult_test::perform() throw(libtest::test_exception) {
+
+    allocator<double>::vmm().init(16, 16, 16777216, 16777216);
+
+    try {
 
     test_1(false, false); test_1(false, true);
     test_1(true, false);  test_1(true, true);
@@ -69,6 +76,13 @@ void btod_mult_test::perform() throw(libtest::test_exception) {
     test_8b(false, true);
     test_8b(true, false);
     test_8b(true, true);
+
+    } catch(...) {
+        allocator<double>::vmm().shutdown();
+        throw;
+    }
+
+    allocator<double>::vmm().shutdown();
 }
 
 
@@ -113,11 +127,11 @@ void btod_mult_test::test_1(
 
     //  Invoke the operation
     if (doadd) {
-        tod_mult<2>(ta, tb, recip).perform(tc_ref, 0.5);
+        tod_mult<2>(ta, tb, recip, 0.5).perform(false, tc_ref);
         btod_mult<2>(bta, btb, recip).perform(btc, 0.5);
     }
     else {
-        tod_mult<2>(ta, tb, recip).perform(tc_ref);
+        tod_mult<2>(ta, tb, recip).perform(true, tc_ref);
         btod_mult<2>(bta, btb, recip).perform(btc);
     }
 
@@ -178,11 +192,11 @@ void btod_mult_test::test_2(
 
     //  Invoke the operation
     if (doadd) {
-        tod_mult<2>(ta, pa, tb, pb, recip).perform(tc_ref, 0.5);
+        tod_mult<2>(ta, pa, tb, pb, recip, 0.5).perform(false, tc_ref);
         btod_mult<2>(bta, pa, btb, pb, recip).perform(btc, 0.5);
     }
     else {
-        tod_mult<2>(ta, pa, tb, pb, recip).perform(tc_ref);
+        tod_mult<2>(ta, pa, tb, pb, recip).perform(true, tc_ref);
         btod_mult<2>(bta, pa, btb, pb, recip).perform(btc);
     }
     tod_btconv<2>(btc).perform(tc);
@@ -267,11 +281,11 @@ void btod_mult_test::test_3(
     //  Invoke the operation
 
     if (doadd) {
-        tod_mult<2>(ta, tb, recip).perform(tc_ref, -0.5);
+        tod_mult<2>(ta, tb, recip, -0.5).perform(false, tc_ref);
         btod_mult<2>(bta, btb, recip).perform(btc, -0.5);
     }
     else {
-        tod_mult<2>(ta, tb, recip).perform(tc_ref);
+        tod_mult<2>(ta, tb, recip).perform(true, tc_ref);
         btod_mult<2>(bta, btb, recip).perform(btc);
     }
     tod_btconv<2>(btc).perform(tc);
@@ -358,11 +372,11 @@ void btod_mult_test::test_4(
     //  Invoke the operation
 
     if (doadd) {
-        tod_mult<4>(ta, tb, recip).perform(tc_ref, 0.5);
+        tod_mult<4>(ta, tb, recip, 0.5).perform(false, tc_ref);
         btod_mult<4>(bta, btb, recip).perform(btc, 0.5);
     }
     else {
-        tod_mult<4>(ta, tb, recip).perform(tc_ref);
+        tod_mult<4>(ta, tb, recip).perform(true, tc_ref);
         btod_mult<4>(bta, btb, recip).perform(btc);
     }
 
@@ -633,28 +647,51 @@ void btod_mult_test::test_7(bool label, bool part,
     scalar_transf<double> tr0, tr1(-1.);
     se_perm<4, double> sp10(permutation<4>().permute(0, 1), tr0);
     se_perm<4, double> ap10(permutation<4>().permute(0, 1), tr1);
-    se_perm<4, double> sp32(permutation<4>().permute(0, 1), tr0);
-    se_perm<4, double> ap32(permutation<4>().permute(0, 1), tr1);
+    se_perm<4, double> sp32(permutation<4>().permute(2, 3), tr0);
+    se_perm<4, double> ap32(permutation<4>().permute(2, 3), tr1);
 
-    if (samesym) {
-        ca.req_symmetry().insert(ap10);
-        ca.req_symmetry().insert(ap32);
-        cb.req_symmetry().insert(ap10);
-        cb.req_symmetry().insert(ap32);
-        cc.req_symmetry().insert(sp10);
-        cc.req_symmetry().insert(sp32);
-        sym_ref.insert(sp10);
-        sym_ref.insert(sp32);
-    }
-    else {
-        ca.req_symmetry().insert(ap10);
-        ca.req_symmetry().insert(ap32);
-        cb.req_symmetry().insert(sp10);
-        cb.req_symmetry().insert(sp32);
-        cc.req_symmetry().insert(ap10);
-        cc.req_symmetry().insert(ap32);
-        sym_ref.insert(ap10);
-        sym_ref.insert(ap32);
+    if(recip) {
+        //  For A/B, B cannot be asymmetric
+        if(samesym) {
+            ca.req_symmetry().insert(sp10);
+            ca.req_symmetry().insert(sp32);
+            cb.req_symmetry().insert(sp10);
+            cb.req_symmetry().insert(sp32);
+            cc.req_symmetry().insert(sp10);
+            cc.req_symmetry().insert(sp32);
+            sym_ref.insert(sp10);
+            sym_ref.insert(sp32);
+        } else {
+            ca.req_symmetry().insert(ap10);
+            ca.req_symmetry().insert(ap32);
+            cb.req_symmetry().insert(sp10);
+            cb.req_symmetry().insert(sp32);
+            cc.req_symmetry().insert(ap10);
+            cc.req_symmetry().insert(ap32);
+            sym_ref.insert(ap10);
+            sym_ref.insert(ap32);
+        }
+    } else {
+        //  For A*B, A and B can be symmetric or asymmetric
+        if(samesym) {
+            ca.req_symmetry().insert(ap10);
+            ca.req_symmetry().insert(ap32);
+            cb.req_symmetry().insert(ap10);
+            cb.req_symmetry().insert(ap32);
+            cc.req_symmetry().insert(sp10);
+            cc.req_symmetry().insert(sp32);
+            sym_ref.insert(sp10);
+            sym_ref.insert(sp32);
+        } else {
+            ca.req_symmetry().insert(ap10);
+            ca.req_symmetry().insert(ap32);
+            cb.req_symmetry().insert(sp10);
+            cb.req_symmetry().insert(sp32);
+            cc.req_symmetry().insert(ap10);
+            cc.req_symmetry().insert(ap32);
+            sym_ref.insert(ap10);
+            sym_ref.insert(ap32);
+        }
     }
 
     if (label) {
@@ -666,14 +703,16 @@ void btod_mult_test::test_7(bool label, bool part,
         bl.assign(msk, 3, 1);
 
         evaluation_rule<4> r1;
-        r1.add_sequence(sequence<4, size_t>(1));
-        r1.add_product(0, 0);
+        sequence<4, size_t> seq(1);
+        product_rule<4> &pr1 = r1.new_product();
+        pr1.add(seq, 0);
         sl.set_rule(r1);
         ca.req_symmetry().insert(sl);
         cc.req_symmetry().insert(sl);
         sym_ref.insert(sl);
 
-        r1.add_product(0, 1);
+        product_rule<4> &pr2 = r1.new_product();
+        pr2.add(seq, 1);
         sl.set_rule(r1);
         cb.req_symmetry().insert(sl);
     }
@@ -741,11 +780,11 @@ void btod_mult_test::test_7(bool label, bool part,
 
     if (doadd) {
         tod_btconv<4>(btc).perform(tc_ref);
-        tod_mult<4>(ta, tb, recip).perform(tc_ref, 0.5);
+        tod_mult<4>(ta, tb, recip, 0.5).perform(false, tc_ref);
         btod_mult<4>(bta, btb, recip).perform(btc, 0.5);
     }
     else {
-        tod_mult<4>(ta, tb, recip).perform(tc_ref);
+        tod_mult<4>(ta, tb, recip).perform(true, tc_ref);
         btod_mult<4>(bta, btb, recip).perform(btc);
     }
 
@@ -822,14 +861,16 @@ void btod_mult_test::test_8a(bool label, bool part)
         bl.assign(m, 0, 0); bl.assign(m, 1, 1);
         bl.assign(m, 2, 0); bl.assign(m, 3, 1);
         evaluation_rule<2> r1;
-        r1.add_sequence(sequence<2, size_t>(1));
-        r1.add_product(0, 0);
+        sequence<2, size_t> seq(1);
+        product_rule<2> &pr1 = r1.new_product();
+        pr1.add(seq, 0);
         sl.set_rule(r1);
 
         ca.req_symmetry().insert(sl);
         sym_ref.insert(sl);
 
-        r1.add_product(0, 1);
+        product_rule<2> &pr2 = r1.new_product();
+        pr2.add(seq, 1);
         sl.set_rule(r1);
         cb.req_symmetry().insert(sl);
     }
@@ -867,7 +908,7 @@ void btod_mult_test::test_8a(bool label, bool part)
     tod_btconv<2>(bta).perform(ta);
     tod_btconv<2>(btb).perform(tb);
 
-    tod_mult<2>(ta, tb, true, 4.0).perform(tc_ref);
+    tod_mult<2>(ta, tb, true, 4.0).perform(true, tc_ref);
     btod_mult<2> mult(bta, btb, true, 4.0);
     compare_ref<2>::compare(tns.c_str(), mult.get_symmetry(), sym_ref);
 
@@ -953,14 +994,16 @@ void btod_mult_test::test_8b(bool label, bool part)
         bl.assign(m, 0, 0); bl.assign(m, 1, 1);
         bl.assign(m, 2, 0); bl.assign(m, 3, 1);
         evaluation_rule<4> r1;
-        r1.add_sequence(sequence<4, size_t>(1));
-        r1.add_product(0, 0);
+        sequence<4, size_t> seq(1);
+        product_rule<4> &pr1 = r1.new_product();
+        pr1.add(seq, 0);
         sl.set_rule(r1);
 
         ca.req_symmetry().insert(sl);
         sym_ref.insert(sl);
 
-        r1.add_product(0, 1);
+        product_rule<4> &pr2 = r1.new_product();
+        pr2.add(seq, 1);
         sl.set_rule(r1);
         cb.req_symmetry().insert(sl);
     }
@@ -1022,7 +1065,7 @@ void btod_mult_test::test_8b(bool label, bool part)
     tod_btconv<4>(bta).perform(ta);
     tod_btconv<4>(btb).perform(tb);
 
-    tod_mult<4>(ta, tb, true, 4.0).perform(tc_ref);
+    tod_mult<4>(ta, tb, true, 4.0).perform(true, tc_ref);
     btod_mult<4> mult(bta, btb, true, 4.0);
     compare_ref<4>::compare(tns.c_str(), mult.get_symmetry(), sym_ref);
 

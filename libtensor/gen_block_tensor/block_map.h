@@ -1,0 +1,97 @@
+#ifndef LIBTENSOR_BLOCK_MAP_H
+#define LIBTENSOR_BLOCK_MAP_H
+
+#include <map>
+#include <libtensor/core/block_index_space.h>
+#include <libtensor/core/immutable.h>
+
+namespace libtensor {
+
+/** \brief Stores pointers to blocks as an associative array
+    \tparam N Tensor order.
+    \tparam T Tensor element type.
+    \tparam BtTraits Block tensor traits.
+
+    The block map is an associative array of blocks with absolute indexes as
+    keys. This class maintains such a map and provides facility to create and
+    remove blocks. All the necessary memory management is done here as well.
+
+    This implementation is not thread safe. Calls must be externally
+        synchronized.
+
+    \ingroup libtensor_gen_block_tensor
+ **/
+template<size_t N, typename T, typename BtTraits>
+class block_map : public immutable {
+public:
+    typedef typename BtTraits::allocator_type allocator_type;
+    typedef typename BtTraits::template block_type<N>::type block_type;
+    typedef typename BtTraits::template block_factory_type<N>::type
+        block_factory_type;
+    typedef std::map<size_t, block_type*> map_type;
+
+private:
+    static const char *k_clazz; //!< Class name
+
+public:
+    dimensions<N> m_bidims; //!< Block index dimensions
+    block_factory_type m_bf; //!< Block factory
+    map_type m_map; //!< Map that stores all the pointers
+
+public:
+    /** \brief Constructs the map
+        \param bis Block index space.
+     **/
+    block_map(const block_index_space<N> &bis) :
+        m_bidims(bis.get_block_index_dims()), m_bf(bis)
+    { }
+
+    /** \brief Destroys the map and all the blocks
+     **/
+    virtual ~block_map();
+
+    /** \brief Creates a block with the given index. If the block exists, it is
+            removed and re-created
+        \param idx Index of the block.
+        \throw immut_violation If the object is immutable.
+        \throw out_of_memory If there is not enough memory to create the block.
+     **/
+    void create(const index<N> &idx);
+
+    /** \brief Removes a block
+        \param idx Index of the block.
+        \throw immut_violation If the object is immutable.
+     **/
+    void remove(const index<N> &idx);
+
+    /** \brief Returns whether a block with a given index exists
+        \param idx Index of the block.
+     **/
+    bool contains(const index<N> &idx) const;
+
+    /** \brief Returns the reference to a block identified by the index
+        \param idx Index of the block.
+        \throw block_not_found If the index supplied does not correspond
+            to a block
+     **/
+    block_type &get(const index<N> &idx);
+
+    /** \brief Removes all blocks
+        \throw immut_violation If the object is immutable.
+     **/
+    void clear();
+
+protected:
+    virtual void on_set_immutable();
+
+private:
+    /** \brief Removes all blocks (without checking for immutability)
+     **/
+    void do_clear();
+
+};
+
+
+} // namespace libtensor
+
+#endif // LIBTENSOR_BLOCK_MAP_H

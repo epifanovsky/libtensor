@@ -187,6 +187,7 @@ void permutation_test::test_permute() throw(libtest::test_exception) {
             __LINE__, "[0,1]+[2,3] permutation failed in char");
     }
 
+#ifdef LIBTENSOR_DEBUG
     bool ok = false;
     try {
         p4.permute(1, 5);
@@ -200,6 +201,7 @@ void permutation_test::test_permute() throw(libtest::test_exception) {
         fail_test("permutation_test::test_permute()", __FILE__,
             __LINE__, "Expected an exception, it was missing");
     }
+#endif // LIBTENSOR_DEBUG
 
 }
 

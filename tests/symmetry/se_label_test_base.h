@@ -17,10 +17,19 @@ namespace libtensor {
 class se_label_test_base : public libtest::unit_test {
 protected:
 
-    /** \brief Creates a point group table
-        \return ID to access the table
+    /** \brief Creates a point group table with given ID
+        \param id to access the table
+
+        Valid values of table ID are C2v (abelian point group) and S6.
      **/
-    std::string setup_pg_table() throw(libtest::test_exception);
+    void setup_pg_table(
+            const std::string &id) throw(libtest::test_exception);
+
+    /** \brief Removes point group table with given ID
+        \param id to access the table
+     **/
+    void clear_pg_table(
+            const std::string &id) throw(libtest::test_exception);
 
     /** \brief Checks the allowed blocks of a symmetry element against a
             reference

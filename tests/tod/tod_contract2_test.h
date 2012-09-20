@@ -5,6 +5,7 @@
 
 namespace libtensor {
 
+
 /** \brief Tests the libtensor::tod_contract2 class
 
     \ingroup libtensor_tests_tod
@@ -108,6 +109,14 @@ private:
     // c_{ij} = c_{ij} + d \sum_{pq} a_{pq} b_{ijpq}
     void test_ij_pq_ijpq_a(size_t ni, size_t nj, size_t np, size_t nq,
         double d) throw(libtest::test_exception);
+
+    // c_{ij} = \sum_p a^1_{pi} b^1_{pj} + \sum_q a^2_{qi} b^2_{jq}
+    void test_ij_pi_pj_qi_jq(size_t ni, size_t nj, size_t np, size_t nq,
+        double d = 0.0) throw(libtest::test_exception);
+
+    // c_{ij} = \sum_p a^1_{pi} b^1_{pj} + \sum_q a^2_{qi} b^2_{qj}
+    void test_ij_pi_pj_qi_qj(size_t ni, size_t nj, size_t np, size_t nq,
+        double d = 0.0) throw(libtest::test_exception);
 
     // c_{ijk} = \sum_{pq} a_{ip} b_{pkj}
     void test_ijk_ip_pkj(size_t ni, size_t nj, size_t nk, size_t np,
@@ -228,6 +237,13 @@ private:
         size_t np, size_t nq, double d = 0.0)
         throw(libtest::test_exception);
 
+    // c_{ijkl} = c_{ijkl} + d \sum_{p} a^1_{jpl} b^1_{ipk}
+    //                     + d \sum_{q} a^2_{jiq} b^2_{kql}
+    //                     + d \sum_{r} a^3_{jlr} b^3_{ikr}
+    void test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(size_t ni, size_t nj, size_t nk,
+        size_t nl, size_t np, size_t nq, size_t nr, double d = 0.0)
+        throw(libtest::test_exception);
+
     // c_{ij} = \sum_{pqr} a_{ipqr} b_{jpqr}
     void test_ij_ipqr_jpqr(size_t ni, size_t nj, size_t np, size_t nq,
         size_t nr) throw(libtest::test_exception);
@@ -305,6 +321,7 @@ private:
         throw(libtest::test_exception);
 
 };
+
 
 } // namespace libtensor
 

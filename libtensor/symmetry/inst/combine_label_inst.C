@@ -1,8 +1,9 @@
-#include <libtensor/btod/scalar_transf_double.h>
+#include <libtensor/core/scalar_transf_double.h>
 #include "../combine_label.h"
 #include "combine_label_impl.h"
 
 namespace libtensor {
+
 
 template class combine_label<1, double>;
 template class combine_label<2, double>;
@@ -16,6 +17,11 @@ template class combine_label<9, double>;
 template class combine_label<10, double>;
 template class combine_label<11, double>;
 template class combine_label<12, double>;
+template class combine_label<13, double>;
+template class combine_label<14, double>;
+template class combine_label<15, double>;
+template class combine_label<16, double>;
+
 
 } // namespace libtensor
 

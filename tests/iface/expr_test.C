@@ -1,9 +1,11 @@
 #include <libtensor/core/allocator.h>
-#include <libtensor/btod/scalar_transf_double.h>
+#include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/btod/btod_set_diag.h>
 #include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/symmetry/product_table_container.h>
+#include <libtensor/symmetry/se_label.h>
+#include <libtensor/symmetry/se_perm.h>
 #include <libtensor/symmetry/so_copy.h>
 #include <libtensor/dense_tensor/tod_btconv.h>
 #include <libtensor/dense_tensor/tod_contract2.h>
@@ -29,6 +31,7 @@ void expr_test::perform() throw(libtest::test_exception) {
         test_7();
         test_8();
         test_9();
+        test_10();
 
     } catch(...) {
         allocator<double>::vmm().shutdown();
@@ -646,6 +649,74 @@ void expr_test::test_9() throw(libtest::test_exception) {
 
         d2_oo(i|j) = dirsum(diag(i, i|j, f_oo(i|j)), -diag(j, i|j, f_oo(i|j)))
             + d1_oo(i|j);
+
+    }
+
+    need_erase = false;
+    product_table_container::get_instance().erase(pgtid);
+
+    } catch(exception &e) {
+        if(need_erase) {
+            product_table_container::get_instance().erase(pgtid);
+        }
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void expr_test::test_10() throw(libtest::test_exception) {
+
+    static const char *testname = "expr_test::test_10()";
+
+    bool need_erase = true;
+    const char *pgtid = "point_group_cs";
+
+    try {
+
+    point_group_table::label_t ap = 0, app = 1;
+    std::vector<std::string> irnames(2);
+    irnames[ap] = "A'"; irnames[app] = "A''";
+    point_group_table cs(pgtid, irnames, irnames[ap]);
+    cs.add_product(app, app, ap);
+    cs.check();
+    product_table_container::get_instance().add(cs);
+
+    {
+
+    bispace<1> so(10); so.split(2).split(5).split(7);
+    bispace<1> sx(15); sx.split(4);
+    bispace<3> soox(so&so|sx);
+    bispace<4> soooo(so&so&so&so);
+
+    btensor<3, double> b_oox(soox);
+    btensor<4, double> i_oooo(soooo);
+
+    mask<3> m110;
+    m110[0] = true; m110[1] = true; m110[2] = false;
+
+    se_label<3, double> l_oox(soox.get_bis().get_block_index_dims(), pgtid);
+    block_labeling<3> &bl_oox = l_oox.get_labeling();
+    bl_oox.assign(m110, 0, ap);
+    bl_oox.assign(m110, 1, app);
+    bl_oox.assign(m110, 2, ap);
+    bl_oox.assign(m110, 3, app);
+    l_oox.set_rule(ap);
+
+    {
+        block_tensor_ctrl<3, double> c_b_oox(b_oox);
+        symmetry<3, double> sym_l_oox(soox.get_bis());
+        scalar_transf<double> tr0;
+        sym_l_oox.insert(se_perm<3, double>(permutation<3>().
+            permute(0, 1), tr0));
+        sym_l_oox.insert(l_oox);
+        so_copy<3, double>(sym_l_oox).perform(c_b_oox.req_symmetry());
+    }
+
+    btod_random<3>().perform(b_oox);
+
+    letter p, q, r, s, P;
+
+    i_oooo(p|q|r|s) = asymm(r, s, contract(P, b_oox(p|r|P), b_oox(q|s|P)));
 
     }
 

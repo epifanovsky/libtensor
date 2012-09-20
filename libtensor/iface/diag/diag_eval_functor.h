@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_DIAG_EVAL_FUNCTOR_H
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_DIAG_EVAL_FUNCTOR_H
 
-#include "../../btod/btod_diag.h"
+#include <libtensor/block_tensor/btod_diag.h>
 #include "../expr/direct_eval.h"
 #include "diag_core.h"
 #include "diag_subexpr_label_builder.h"

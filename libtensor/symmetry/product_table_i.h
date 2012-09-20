@@ -66,59 +66,21 @@ public:
      **/
     virtual label_t get_n_labels() const = 0;
 
-    /** \brief Compute the direct product of two labels.
-        \param l1 First label
-        \param l2 Second label
-     **/
-    label_set_t product(label_t l1, label_t l2) const throw(bad_parameter);
-
-    /** \brief Compute the direct product of a label and a set of
-            multiple labels.
-        \param l1 Label
-        \param l2 Set of labels.
-
-        The result is the union of the results of the product of l1 with every
-        label in l2.
-     **/
-    label_set_t product(label_t l1,
-            const label_set_t &l2) const throw(bad_parameter);
-
-    /** \brief Compute the direct product of a label and a set of
-            multiple labels
-        \param l1 Set of labels in the direct sum
-        \param l2 Label
-
-        The result is the union of the results of the product of l2 and every
-        label in l1.
-     **/
-    label_set_t product(const label_set_t &l1,
-            label_t l2) const throw(bad_parameter);
-
-    /** \brief Computes the product of two sets of labels
-        \param ls1 First set of labels.
-        \param ls2 Second set of labels.
-
-        The result is the union of the results of the product of every
-        label in l1 with every label in l2.
-     **/
-    label_set_t product(const label_set_t &ls1,
-            const label_set_t &ls2) const throw(bad_parameter);
-
     /** \brief Computes the product of a label group
-        \param lg Label group
+        \param lg Label group.
+        \param[out] prod Computed product.
 
         The result is the product of all n labels in the group
         \f$ l_1 \times l_2 \times ... \times l_n \f$
      **/
-    label_set_t product(const label_group_t &lg) const;
+    virtual void product(const label_group_t &lg, label_set_t &prod) const = 0;
 
     /** \brief Determines if the label is in the product.
         \param lg Group of labels to take the product of.
         \param l Label to check against.
         \return True if label is in the product, else false.
      **/
-    bool is_in_product(const label_group_t &lg,
-            label_t l) const throw(bad_parameter);
+    virtual bool is_in_product(const label_group_t &lg, label_t l) const = 0;
 
     /** \brief Does a consistency check on the table.
         \throw exception If product table is not set up properly.
@@ -129,15 +91,6 @@ public:
     void check() const throw(bad_symmetry);
 
 protected:
-    /** \brief Compute the product of two labels
-        \param l1 Smaller label
-        \param l2 Larger label
-
-        This function is used by all \c product() functions to determine
-        the product. Any implementation can safely assume that l1 < l2.
-     **/
-    virtual label_set_t determine_product(label_t l1, label_t l2) const = 0;
-
     /** \brief Perform additional consistency check
 
         This function is called by \c check() to perform additional checks

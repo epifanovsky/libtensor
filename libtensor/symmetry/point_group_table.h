@@ -37,7 +37,7 @@ public:
 private:
     const std::string m_id; //!< Table id
     std::vector<std::string> m_irreps; //!< Maximum number of labels
-    std::vector<label_set_t> m_table; //!< The product table
+    std::vector<size_t> m_table; //!< The product table
 
 public:
     //! \name Constructors / destructor
@@ -67,11 +67,13 @@ public:
         return new point_group_table(*this);
     }
 
+
     /** \copydoc product_table_i::get_id
      **/
     virtual const std::string &get_id() const {
         return m_id;
     }
+
 
     /** \copydoc product_table_i::is_valid
      **/
@@ -79,9 +81,22 @@ public:
         return l < m_irreps.size();
     }
 
+
+    /** \copydoc product_table_i::get_n_labels
+     **/
     virtual label_t get_n_labels() const {
         return m_irreps.size();
     }
+
+
+    /** \copydoc product_table_i::product
+     **/
+    virtual void product(const label_group_t &lg, label_set_t &prod) const;
+
+
+    /** \copydoc product_table_i::is_in_product
+     **/
+    virtual bool is_in_product(const label_group_t &lg, label_t l) const;
 
     //@}
 
@@ -100,6 +115,7 @@ public:
     /** \brief Return the label for a given irrep name
      **/
     label_t get_label(const std::string &irrep) const;
+
 
     //!    \name Manipulation functions
     //@{
@@ -123,12 +139,10 @@ public:
     //@}
 
 protected:
-    virtual label_set_t determine_product(label_t l1, label_t l2) const;
-
-    virtual void do_check() const;
+    virtual void do_check() const { }
 
 private:
-    label_t pair_index(label_t l1, label_t l2) const {
+    static label_t pair_index(label_t l1, label_t l2) {
         return l2 * (l2 + 1) / 2 + l1;
     }
 

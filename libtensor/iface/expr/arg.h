@@ -20,12 +20,12 @@ struct arg_traits { };
 template<size_t N, typename T>
 struct arg_traits<N, T, oper_tag> {
     //!    \brief Block tensor operation type
-    typedef direct_bto<N, bto_traits<T> > bto_t;
+    typedef direct_bto<N, btod_traits> bto_t;
 };
 
 template<size_t N>
 struct arg_traits<N, double, oper_tag> {
-    typedef additive_bto<N, bto_traits<double> > bto_t;
+    typedef additive_bto<N, btod_traits> bto_t;
 };
 
 /** \brief Generic container for an expression argument

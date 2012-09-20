@@ -1,8 +1,9 @@
-#include <libtensor/btod/scalar_transf_double.h>
+#include <libtensor/core/scalar_transf_double.h>
 #include "../so_merge_se_label.h"
 #include "so_merge_se_label_impl.h"
 
 namespace libtensor {
+
 
 template class symmetry_operation_impl< so_merge<2, 1, double>,
     se_label<1, double> >;
@@ -146,6 +147,13 @@ template class symmetry_operation_impl< so_merge<12, 10, double>,
     se_label<2, double> >;
 template class symmetry_operation_impl< so_merge<12, 11, double>,
     se_label<1, double> >;
+
+template class symmetry_operation_impl< so_merge<14, 7, double>,
+    se_label<7, double> >;
+
+template class symmetry_operation_impl< so_merge<16, 8, double>,
+    se_label<8, double> >;
+
 
 } // namespace libtensor
 

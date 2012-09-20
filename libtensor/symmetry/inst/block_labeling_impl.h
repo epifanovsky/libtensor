@@ -30,24 +30,6 @@ block_labeling<N>::block_labeling(const dimensions<N> &bidims) :
 
 
 template<size_t N>
-block_labeling<N>::block_labeling(const block_labeling<N> &bl) :
-    m_bidims(bl.m_bidims), m_type(bl.m_type), m_labels(0) {
-
-    for (register size_t i = 0; i < N && bl.m_labels[i] != 0; i++) {
-
-        m_labels[i] = new blk_label_t(*(bl.m_labels[i]));
-    }
-}
-
-template<size_t N>
-block_labeling<N>::~block_labeling() {
-
-    for (register size_t i = 0; i < N && m_labels[i] != 0; i++) {
-        delete m_labels[i]; m_labels[i] = 0;
-    }
-}
-
-template<size_t N>
 void block_labeling<N>::assign(const mask<N> &msk, size_t blk, label_t l) {
 
     static const char *method = "assign(const mask<N> &, size_t, label_t)";
@@ -102,13 +84,6 @@ void block_labeling<N>::assign(const mask<N> &msk, size_t blk, label_t l) {
 
 
 template<size_t N>
-void block_labeling<N>::permute(const permutation<N> &p) {
-
-    m_bidims.permute(p);
-    p.apply(m_type);
-}
-
-template<size_t N>
 void block_labeling<N>::match() {
 
     sequence<N, size_t> types(m_type);
@@ -157,48 +132,6 @@ void block_labeling<N>::match() {
     }
 }
 
-template<size_t N>
-size_t block_labeling<N>::get_dim_type(size_t dim) const {
-
-#ifdef LIBTENSOR_DEBUG
-    static const char *method = "get_dim_type(size_t)";
-
-    if (dim > N) {
-        throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__, "dim");
-    }
-#endif
-
-    return m_type[dim];
-}
-
-template<size_t N>
-size_t block_labeling<N>::get_dim(size_t type) const throw(out_of_bounds) {
-
-    if (type > N || m_labels[type] == 0)
-        throw out_of_bounds(g_ns, k_clazz, "get_dim(size_t)",
-                __FILE__, __LINE__, "Invalid type.");
-
-    return m_labels[type]->size();
-
-}
-
-template<size_t N>
-typename block_labeling<N>::label_t block_labeling<N>::get_label(size_t type,
-        size_t blk) const throw (out_of_bounds) {
-
-#ifdef LIBTENSOR_DEBUG
-    static const char *method = "get_label(size_t, size_t)";
-
-    if (type > N || m_labels[type] == 0) {
-        throw out_of_bounds(g_ns, k_clazz, method, __FILE__, __LINE__, "dim");
-    }
-    if (m_labels[type]->size() <= blk) {
-        throw out_of_bounds(g_ns, k_clazz, method, __FILE__, __LINE__, "blk");
-    }
-#endif
-
-    return m_labels[type]->at(blk);
-}
 
 template<size_t N>
 void block_labeling<N>::clear() {
@@ -211,6 +144,7 @@ void block_labeling<N>::clear() {
 
     match();
 }
+
 
 template<size_t N>
 bool operator==(const block_labeling<N> &a, const block_labeling<N> &b) {
@@ -276,7 +210,9 @@ void transfer_labeling(const block_labeling<N> &from,
     }
 }
 
+
 } // namespace libtensor
+
 
 #endif // LIBTENSOR_BLOCK_LABELING_H
 

@@ -2,12 +2,12 @@
 #define LIBTENSOR_BTOD_SELECT_H
 
 #include "../defs.h"
-#include "../core/block_tensor_i.h"
-#include "../core/block_tensor_ctrl.h"
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
 #include "../symmetry/so_copy.h"
 #include <libtensor/dense_tensor/tod_select.h>
+#include <libtensor/block_tensor/block_tensor_i.h>
+#include <libtensor/block_tensor/block_tensor_ctrl.h>
 
 
 namespace libtensor {

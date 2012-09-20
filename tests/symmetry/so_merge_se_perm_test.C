@@ -1,4 +1,4 @@
-#include <libtensor/btod/scalar_transf_double.h>
+#include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/symmetry/so_merge_se_perm.h>
 #include <sstream>
 #include "so_merge_se_perm_test.h"

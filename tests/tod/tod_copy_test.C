@@ -460,7 +460,9 @@ void tod_copy_test::test_perm_scaled(const dimensions<N> &dims,
 
         // Invoke the copy operation
 
-        tod_copy<N>(ta, perm, c).perform(true, 1.0, tb);
+        tensor_transf<N, double> tr(perm, scalar_transf<double>(c));
+        tod_copy<N> cp(ta, tr);
+        cp.perform(true, 1.0, tb);
 
         // Compare against the reference
 
@@ -520,7 +522,9 @@ void tod_copy_test::test_perm_scaled_additive(const dimensions<N> &dims,
 
         // Invoke the copy operation
 
-        tod_copy<N>(ta, perm, c).perform(false, d, tb);
+        tensor_transf<N, double> tr(perm, scalar_transf<double>(c));
+        tod_copy<N> cp(ta, tr);
+        cp.perform(false, d, tb);
 
         // Compare against the reference
 

@@ -1,8 +1,9 @@
-#include <libtensor/btod/scalar_transf_double.h>
+#include <libtensor/core/scalar_transf_double.h>
 #include "../so_reduce_se_label.h"
 #include "so_reduce_se_label_impl.h"
 
 namespace libtensor {
+
 
 template class symmetry_operation_impl< so_reduce<2, 1, double>,
     se_label<1, double> >;
@@ -84,8 +85,6 @@ template class symmetry_operation_impl< so_reduce<9, 7, double>,
 template class symmetry_operation_impl< so_reduce<9, 8, double>,
     se_label<1, double> >;
 
-template class symmetry_operation_impl< so_reduce<10, 1, double>,
-    se_label<9, double> >;
 template class symmetry_operation_impl< so_reduce<10, 2, double>,
     se_label<8, double> >;
 template class symmetry_operation_impl< so_reduce<10, 3, double>,
@@ -103,10 +102,6 @@ template class symmetry_operation_impl< so_reduce<10, 8, double>,
 template class symmetry_operation_impl< so_reduce<10, 9, double>,
     se_label<1, double> >;
 
-template class symmetry_operation_impl< so_reduce<11, 1, double>,
-    se_label<10, double> >;
-template class symmetry_operation_impl< so_reduce<11, 2, double>,
-    se_label<9, double> >;
 template class symmetry_operation_impl< so_reduce<11, 3, double>,
     se_label<8, double> >;
 template class symmetry_operation_impl< so_reduce<11, 4, double>,
@@ -124,12 +119,6 @@ template class symmetry_operation_impl< so_reduce<11, 9, double>,
 template class symmetry_operation_impl< so_reduce<11, 10, double>,
     se_label<1, double> >;
 
-template class symmetry_operation_impl< so_reduce<12, 1, double>,
-    se_label<11, double> >;
-template class symmetry_operation_impl< so_reduce<12, 2, double>,
-    se_label<10, double> >;
-template class symmetry_operation_impl< so_reduce<12, 3, double>,
-    se_label<9, double> >;
 template class symmetry_operation_impl< so_reduce<12, 4, double>,
     se_label<8, double> >;
 template class symmetry_operation_impl< so_reduce<12, 5, double>,
@@ -146,6 +135,75 @@ template class symmetry_operation_impl< so_reduce<12, 10, double>,
     se_label<2, double> >;
 template class symmetry_operation_impl< so_reduce<12, 11, double>,
     se_label<1, double> >;
+
+template class symmetry_operation_impl< so_reduce<13, 5, double>,
+    se_label<8, double> >;
+template class symmetry_operation_impl< so_reduce<13, 6, double>,
+    se_label<7, double> >;
+template class symmetry_operation_impl< so_reduce<13, 7, double>,
+    se_label<6, double> >;
+template class symmetry_operation_impl< so_reduce<13, 8, double>,
+    se_label<5, double> >;
+template class symmetry_operation_impl< so_reduce<13, 9, double>,
+    se_label<4, double> >;
+template class symmetry_operation_impl< so_reduce<13, 10, double>,
+    se_label<3, double> >;
+template class symmetry_operation_impl< so_reduce<13, 11, double>,
+    se_label<2, double> >;
+template class symmetry_operation_impl< so_reduce<13, 12, double>,
+    se_label<1, double> >;
+
+template class symmetry_operation_impl< so_reduce<14, 6, double>,
+    se_label<8, double> >;
+template class symmetry_operation_impl< so_reduce<14, 7, double>,
+    se_label<7, double> >;
+template class symmetry_operation_impl< so_reduce<14, 8, double>,
+    se_label<6, double> >;
+template class symmetry_operation_impl< so_reduce<14, 9, double>,
+    se_label<5, double> >;
+template class symmetry_operation_impl< so_reduce<14, 10, double>,
+    se_label<4, double> >;
+template class symmetry_operation_impl< so_reduce<14, 11, double>,
+    se_label<3, double> >;
+template class symmetry_operation_impl< so_reduce<14, 12, double>,
+    se_label<2, double> >;
+template class symmetry_operation_impl< so_reduce<14, 13, double>,
+    se_label<1, double> >;
+
+template class symmetry_operation_impl< so_reduce<15, 7, double>,
+    se_label<8, double> >;
+template class symmetry_operation_impl< so_reduce<15, 8, double>,
+    se_label<7, double> >;
+template class symmetry_operation_impl< so_reduce<15, 9, double>,
+    se_label<6, double> >;
+template class symmetry_operation_impl< so_reduce<15, 10, double>,
+    se_label<5, double> >;
+template class symmetry_operation_impl< so_reduce<15, 11, double>,
+    se_label<4, double> >;
+template class symmetry_operation_impl< so_reduce<15, 12, double>,
+    se_label<3, double> >;
+template class symmetry_operation_impl< so_reduce<15, 13, double>,
+    se_label<2, double> >;
+template class symmetry_operation_impl< so_reduce<15, 14, double>,
+    se_label<1, double> >;
+
+template class symmetry_operation_impl< so_reduce<16, 8, double>,
+    se_label<8, double> >;
+template class symmetry_operation_impl< so_reduce<16, 9, double>,
+    se_label<7, double> >;
+template class symmetry_operation_impl< so_reduce<16, 10, double>,
+    se_label<6, double> >;
+template class symmetry_operation_impl< so_reduce<16, 11, double>,
+    se_label<5, double> >;
+template class symmetry_operation_impl< so_reduce<16, 12, double>,
+    se_label<4, double> >;
+template class symmetry_operation_impl< so_reduce<16, 13, double>,
+    se_label<3, double> >;
+template class symmetry_operation_impl< so_reduce<16, 14, double>,
+    se_label<2, double> >;
+template class symmetry_operation_impl< so_reduce<16, 15, double>,
+    se_label<1, double> >;
+
 
 } // namespace libtensor
 

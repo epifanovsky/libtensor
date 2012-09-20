@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_DIRSUM_EVAL_FUNCTOR_H
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_DIRSUM_EVAL_FUNCTOR_H
 
-#include "../../btod/btod_dirsum.h"
+#include <libtensor/block_tensor/btod_dirsum.h>
 #include "../expr/anon_eval.h"
 #include "core_dirsum.h"
 #include "dirsum_permutation_builder.h"

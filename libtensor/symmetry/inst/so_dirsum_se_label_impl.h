@@ -25,33 +25,38 @@ symmetry_operation_impl< so_dirsum<N, M, T>, se_label<NM, T> >::do_perform(
     adapter2_t g2(params.g2);
     params.g3.clear();
 
-    // map result index to input index
-    sequence<N + M, size_t> map(0);
-    for (size_t j = 0; j < N + M; j++) map[j] = j;
-    permutation<N + M> pinv(params.perm, true);
-    pinv.apply(map);
-
     sequence<N, size_t> map1(0);
-    for (size_t j = 0; j < N; j++) map1[j] = map[j];
     sequence<M, size_t> map2(0);
-    for (size_t j = 0; j < M; j++) map2[j] = map[j + N];
+    { // map result index to input index
+        sequence<N + M, size_t> map(0);
+        for (size_t j = 0; j < N + M; j++) map[j] = j;
+        permutation<N + M> pinv(params.perm, true);
+        pinv.apply(map);
+
+        for (size_t j = 0; j < N; j++) map1[j] = map[j];
+        for (size_t j = 0; j < M; j++) map2[j] = map[j + N];
+    }
 
     dimensions<N + M> bidims = params.bis.get_block_index_dims();
+
     //  Loop over each element in the first source group
-    std::set<std::string> id_done;
+    std::set<std::string> table_ids;
     for (typename adapter1_t::iterator it1 = g1.begin();
             it1 != g1.end(); it1++) {
 
         const se_label<N, T> &e1 = g1.get_elem(it1);
-        if (id_done.count(e1.get_table_id()) != 0) continue;
+        if (table_ids.count(e1.get_table_id()) != 0) continue;
 
         combine_label<N, T> cl1(e1);
-        id_done.insert(cl1.get_table_id());
-        typename adapter1_t::iterator it1b = it1; it1b++;
-        for (; it1b != g1.end(); it1b++) {
-            const se_label<N, T> &se1b = g1.get_elem(it1b);
-            if (se1b.get_table_id() != cl1.get_table_id()) continue;
-            cl1.add(se1b);
+        table_ids.insert(cl1.get_table_id());
+
+        { // Look for other se_label elements with the same table id
+            typename adapter1_t::iterator it1b = it1; it1b++;
+            for (; it1b != g1.end(); it1b++) {
+                const se_label<N, T> &se1b = g1.get_elem(it1b);
+                if (se1b.get_table_id() != cl1.get_table_id()) continue;
+                cl1.add(se1b);
+            }
         }
 
         // Create result se_label
@@ -59,85 +64,84 @@ symmetry_operation_impl< so_dirsum<N, M, T>, se_label<NM, T> >::do_perform(
         transfer_labeling(cl1.get_labeling(), map1, e3.get_labeling());
         evaluation_rule<N + M> r3;
 
+        // Transfer r1
+        const evaluation_rule<N> &r1 = cl1.get_rule();
+
+        for (typename evaluation_rule<N>::iterator ir1 = r1.begin();
+                ir1 != r1.end(); ir1++) {
+
+            const product_rule<N> &pr1 = r1.get_product(ir1);
+            if (pr1.empty()) continue;
+
+            // Create new product in r3
+            product_rule<N + M> &pr3 = r3.new_product();
+
+            // Loop over terms in product of r1
+            for (typename product_rule<N>::iterator ip1 = pr1.begin();
+                    ip1 != pr1.end(); ip1++) {
+
+                sequence<N + M, size_t> seq3(0);
+                const sequence<N, size_t> &seq1 = pr1.get_sequence(ip1);
+                for (register size_t j = 0; j < N; j++)
+                    seq3[map1[j]] = seq1[j];
+
+                pr3.add(seq3, pr1.get_intrinsic(ip1));
+            }
+        }
+
         // Look for an element in the second source group that has the
         // same product table
         typename adapter2_t::iterator it2 = g2.begin();
         for (; it2 != g2.end(); it2++) {
-
-            if (e1.get_table_id() == g2.get_elem(it2).get_table_id())
-                break;
+            if (e1.get_table_id() == g2.get_elem(it2).get_table_id()) break;
         }
 
         // If there is none
         if (it2 == g2.end()) {
-
             // Create a fake rule for non-existing e2 that allows all blocks
             sequence<N + M, size_t> seq3(0);
-            for (register size_t i = 0; i < N; i++) seq3[map1[i]] = 1;
+            for (register size_t i = 0; i < M; i++) seq3[map2[i]] = 1;
 
-            size_t seqno = r3.add_sequence(seq3);
-            r3.add_product(seqno, product_table_i::k_invalid);
+            product_rule<N + M> &pr3 = r3.new_product();
+            pr3.add(seq3, product_table_i::k_invalid);
         }
         else {
             // If there is an se_label with the same product table
             combine_label<M, T> cl2(g2.get_elem(it2));
-            typename adapter2_t::iterator it2b = it2; it2b++;
-            for (; it2b != g2.end(); it2b++) {
-                const se_label<M, T> &se2b = g2.get_elem(it2b);
-                if (se2b.get_table_id() != cl2.get_table_id()) continue;
-                cl2.add(se2b);
+
+            { // Look for other se_label elements with the same table id
+                typename adapter2_t::iterator it2b = it2; it2b++;
+                for (; it2b != g2.end(); it2b++) {
+                    const se_label<M, T> &se2b = g2.get_elem(it2b);
+                    if (se2b.get_table_id() != cl2.get_table_id()) continue;
+                    cl2.add(se2b);
+                }
             }
 
             transfer_labeling(cl2.get_labeling(), map2, e3.get_labeling());
             e3.get_labeling().match();
 
-            // Combine the evaluation rules
-
-            // First transfer r1
-            const evaluation_rule<N> &r1 = cl1.get_rule();
-            std::map<size_t, size_t> m1to3;
-            for (size_t i = 0; i < r1.get_n_sequences(); i++) {
-
-                const sequence<N, size_t> &rs1 = r1[i];
-                sequence<N + M, size_t> rs3(0);
-                for (register size_t j = 0; j < N; j++) rs3[map1[j]] = rs1[j];
-
-                m1to3[i] = r3.add_sequence(rs3);
-            }
-            for (size_t i = 0; i < r1.get_n_products(); i++) {
-
-                typename evaluation_rule<N>::iterator ip = r1.begin(i);
-                size_t pno = r3.add_product(m1to3[r1.get_seq_no(ip)],
-                        r1.get_intrinsic(ip), r1.get_target(ip));
-                ip++;
-                for (; ip != r1.end(i); ip++) {
-                    r3.add_to_product(pno, m1to3[r1.get_seq_no(ip)],
-                            r1.get_intrinsic(ip), r1.get_target(ip));
-                }
-            }
-
-            // Then transfer r2
+            // Transfer r2
             const evaluation_rule<M> &r2 = cl2.get_rule();
+            for (typename evaluation_rule<M>::iterator ir2 = r2.begin();
+                    ir2 != r2.end(); ir2++) {
 
-            std::map<size_t, size_t> m2to3;
-            for (size_t i = 0; i < r2.get_n_sequences(); i++) {
+                const product_rule<M> &pr2 = r2.get_product(ir2);
+                if (pr2.empty()) continue;
 
-                const sequence<M, size_t> &rs2 = r2[i];
-                sequence<N + M, size_t> rs3(0);
-                for (register size_t j = 0; j < M; j++) rs3[map2[j]] = rs2[j];
+                // Create new product in r3
+                product_rule<N + M> &pr3 = r3.new_product();
 
-                m2to3[i] = r3.add_sequence(rs3);
-            }
+                // Loop over terms in product of r2
+                for (typename product_rule<M>::iterator ip2 = pr2.begin();
+                        ip2 != pr2.end(); ip2++) {
 
-            for (size_t i = 0; i < r2.get_n_products(); i++) {
+                    sequence<N + M, size_t> seq3(0);
+                    const sequence<M, size_t> &seq2 = pr2.get_sequence(ip2);
+                    for (register size_t j = 0; j < M; j++)
+                        seq3[map2[j]] = seq2[j];
 
-                typename evaluation_rule<M>::iterator ip = r2.begin(i);
-                size_t pno = r3.add_product(m2to3[r2.get_seq_no(ip)],
-                        r2.get_intrinsic(ip), r2.get_target(ip));
-                ip++;
-                for (; ip != r2.end(i); ip++) {
-                    r3.add_to_product(pno, m2to3[r2.get_seq_no(ip)],
-                            r2.get_intrinsic(ip), r2.get_target(ip));
+                    pr3.add(seq3, pr2.get_intrinsic(ip2));
                 }
             }
         }
@@ -152,28 +156,56 @@ symmetry_operation_impl< so_dirsum<N, M, T>, se_label<NM, T> >::do_perform(
             it2 != g2.end(); it2++) {
 
         const se_label<M, T> &e2 = g2.get_elem(it2);
-        if (id_done.count(e2.get_table_id()) != 0) continue;
+        if (table_ids.count(e2.get_table_id()) != 0) continue;
 
         combine_label<M, T> cl2(e2);
-        id_done.insert(cl2.get_table_id());
-        typename adapter2_t::iterator it2b = it2; it2b++;
-        for (; it2b != g2.end(); it2b++) {
-            const se_label<M, T> &se2b = g2.get_elem(it2b);
-            if (se2b.get_table_id() != cl2.get_table_id()) continue;
-            cl2.add(se2b);
+        table_ids.insert(cl2.get_table_id());
+
+        { // Look for other se_label elements with the same table id
+            typename adapter2_t::iterator it2b = it2; it2b++;
+            for (; it2b != g2.end(); it2b++) {
+                const se_label<M, T> &se2b = g2.get_elem(it2b);
+                if (se2b.get_table_id() != cl2.get_table_id()) continue;
+                cl2.add(se2b);
+            }
         }
 
         // Create result se_label
         se_label<N + M, T> e3(bidims, cl2.get_table_id());
         transfer_labeling(cl2.get_labeling(), map2, e3.get_labeling());
 
-        // Create a fake rule that allows all blocks
         evaluation_rule<N + M> r3;
-        sequence<N + M, size_t> seq3(0);
-        for (register size_t i = 0; i < M; i++) seq3[map2[i]] = 1;
 
-        size_t seqno = r3.add_sequence(seq3);
-        r3.add_product(seqno, product_table_i::k_invalid);
+        // Create a fake rule for non-existing r1
+        sequence<N + M, size_t> seq3(0);
+        for (register size_t i = 0; i < N; i++) seq3[map2[i]] = 1;
+
+        product_rule<N + M> &pr3 = r3.new_product();
+        pr3.add(seq3, product_table_i::k_invalid);
+
+        // Transfer r2
+        const evaluation_rule<M> &r2 = cl2.get_rule();
+        for (typename evaluation_rule<M>::iterator ir2 = r2.begin();
+                ir2 != r2.end(); ir2++) {
+
+            const product_rule<M> &pr2 = r2.get_product(ir2);
+            if (pr2.empty()) continue;
+
+            // Create new product in r3
+            product_rule<N + M> &pr3 = r3.new_product();
+
+            // Loop over terms in product of r2
+            for (typename product_rule<M>::iterator ip2 = pr2.begin();
+                    ip2 != pr2.end(); ip2++) {
+
+                sequence<N + M, size_t> seq3(0);
+                const sequence<M, size_t> &seq2 = pr2.get_sequence(ip2);
+                for (register size_t j = 0; j < M; j++)
+                    seq3[map2[j]] = seq2[j];
+
+                pr3.add(seq3, pr2.get_intrinsic(ip2));
+            }
+        }
 
         // Set the rule and finish off
         e3.set_rule(r3);

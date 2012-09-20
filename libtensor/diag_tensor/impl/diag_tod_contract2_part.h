@@ -3,9 +3,10 @@
 
 #include <deque>
 #include <memory>
-#include <libtensor/tod/contraction2.h>
-#include <libtensor/tod/kernels/loop_list_runner.h>
-#include <libtensor/tod/kernels/kern_mul_generic.h>
+#include <libtensor/core/contraction2.h>
+#include <libtensor/linalg/linalg.h>
+#include <libtensor/kernels/loop_list_runner.h>
+#include <libtensor/kernels/kern_dmul2.h>
 #include <libtensor/dense_tensor/to_contract2_dims.h>
 #include <libtensor/tod/bad_dimensions.h>
 #include "../diag_tensor_space.h"
@@ -211,10 +212,10 @@ void diag_tod_contract2_part<N, M, K>::perform(
         r.m_ptra_end[1] = m_pb + rdimsb.get_size();
         r.m_ptrb_end[0] = pc + rdimsc.get_size();
 
-        std::auto_ptr< kernel_base<2, 1> > kern(
-            kern_mul_generic::match(d, loop_in, loop_out));
+        std::auto_ptr< kernel_base<linalg, 2, 1> > kern(
+            kern_dmul2<linalg>::match(d, loop_in, loop_out));
 //        diag_tod_contract2_part<N, M, K>::start_timer(kern->get_name());
-        loop_list_runner<2, 1>(loop_in).run(r, *kern);
+        loop_list_runner<linalg, 2, 1>(loop_in).run(0, r, *kern);
 //        diag_tod_contract2_part<N, M, K>::stop_timer(kern->get_name());
     }
 }

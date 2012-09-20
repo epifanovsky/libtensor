@@ -1,9 +1,9 @@
 #include <iomanip>
 #include <sstream>
 #include <libtensor/core/allocator.h>
-#include <libtensor/core/block_tensor.h>
-#include <libtensor/btod/scalar_transf_double.h>
-#include <libtensor/btod/btod_ewmult2.h>
+#include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/block_tensor/block_tensor.h>
+#include <libtensor/block_tensor/btod/btod_ewmult2.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/symmetry/product_table_container.h>
@@ -20,6 +20,10 @@ namespace libtensor {
 
 void btod_ewmult2_test::perform() throw(libtest::test_exception) {
 
+    allocator<double>::vmm().init(16, 16, 16777216, 16777216);
+
+    try {
+
     test_1(false);
     test_1(true);
     test_2(false);
@@ -33,6 +37,13 @@ void btod_ewmult2_test::perform() throw(libtest::test_exception) {
     test_6(false);
     test_6(true);
     test_7();
+
+    } catch(...) {
+        allocator<double>::vmm().shutdown();
+        throw;
+    }
+
+    allocator<double>::vmm().shutdown();
 }
 
 

@@ -6,7 +6,8 @@ namespace libtensor {
 
 void so_merge_se_label_test::perform() throw(libtest::test_exception) {
 
-    std::string table_id = setup_pg_table();
+    std::string table_id = "S6";
+    setup_pg_table(table_id);
 
     try {
 
@@ -22,12 +23,12 @@ void so_merge_se_label_test::perform() throw(libtest::test_exception) {
         test_nmk_2(table_id, true);
         test_nmk_2(table_id, false);
 
-    } catch (libtest::test_exception) {
-        product_table_container::get_instance().erase(table_id);
+    } catch (libtest::test_exception &e) {
+        clear_pg_table(table_id);
         throw;
     }
 
-    product_table_container::get_instance().erase(table_id);
+    clear_pg_table(table_id);
 }
 
 
@@ -301,13 +302,13 @@ void so_merge_se_label_test::test_2n2nn_2(const std::string &table_id,
         sequence<4, size_t> seq1a(0), seq1b(0);
         seq1a[0] = seq1a[1] = 1;
         seq1b[2] = seq1b[3] = 1;
-        r1.add_sequence(seq1a);
-        r1.add_sequence(seq1b);
-        r1.add_product(0, 2, 0);
-        if (product)
-            r1.add_to_product(0, 1, 2, 0);
-        else
-            r1.add_product(1, 2, 0);
+        product_rule<4> &pr1 = r1.new_product();
+        pr1.add(seq1a, 2);
+        if (product) pr1.add(seq1b, 2);
+        else {
+            product_rule<4> &pr2 = r1.new_product();
+            pr2.add(seq1b, 2);
+        }
         el1.set_rule(r1);
     }
 
@@ -374,13 +375,13 @@ void so_merge_se_label_test::test_nmk_1(const std::string &table_id,
         seq1a[0] = seq1a[1] = 1;
         seq1b[2] = seq1b[3] = seq1b[4] = 1;
 
-        r1.add_sequence(seq1a);
-        r1.add_sequence(seq1b);
-        r1.add_product(0, 2, 0);
-        if (product)
-            r1.add_to_product(0, 1, 3, 0);
-        else
-            r1.add_product(1, 3, 0);
+        product_rule<5> &pr1 = r1.new_product();
+        pr1.add(seq1a, 2);
+        if (product) pr1.add(seq1b, 3);
+        else {
+            product_rule<5> &pr2 = r1.new_product();
+            pr2.add(seq1b, 3);
+        }
 
         el1.set_rule(r1);
     }
@@ -460,13 +461,13 @@ void so_merge_se_label_test::test_nmk_2(const std::string &table_id,
         sequence<5, size_t> seq1a, seq1b;
         seq1a[0] = seq1a[1] = seq1a[4] = 1;
         seq1b[2] = seq1b[3] = seq1b[4] = 1;
-        r1.add_sequence(seq1a);
-        r1.add_sequence(seq1b);
-        r1.add_product(0, 2, 0);
-        if (product)
-            r1.add_to_product(0, 1, 2, 0);
-        else
-            r1.add_product(1, 2, 0);
+        product_rule<5> &pr1 = r1.new_product();
+        pr1.add(seq1a, 2);
+        if (product) pr1.add(seq1b, 2);
+        else {
+            product_rule<5> &pr2 = r1.new_product();
+            pr2.add(seq1b, 2);
+        }
         el1.set_rule(r1);
     }
 

@@ -19,14 +19,8 @@
 #include "dense_tensor/dense_tensor_ctrl.h"
 #include "dense_tensor/dense_tensor.h"
 
-#include "core/block_map.h"
-#include "core/block_tensor_i.h"
-#include "core/block_tensor_ctrl.h"
-#include "core/block_tensor.h"
-#include "core/direct_block_tensor.h"
-
 #include "core/scalar_transf.h"
-#include "btod/scalar_transf_double.h"
+#include "core/scalar_transf_double.h"
 #include "core/tensor_transf.h"
 
 #include "core/orbit.h"
@@ -39,25 +33,15 @@
 #include "tod/processor.h"
 
 
-#include "btod/btod_add.h"
-#include "btod/btod_apply.h"
 #include "btod/btod_compare.h"
-#include "btod/btod_contract2.h"
-#include "btod/btod_copy.h"
-#include "btod/btod_diag.h"
-#include "btod/btod_dirsum.h"
 #include "btod/btod_import_raw.h"
-#include "btod/btod_mult.h"
-#include "btod/btod_mult1.h"
 #include "btod/btod_print.h"
 #include "btod/btod_random.h"
 #include "btod/btod_read.h"
 #include "btod/btod_scale.h"
 #include "btod/btod_select.h"
-#include "btod/btod_set.h"
 #include "btod/btod_set_diag.h"
 #include "btod/btod_set_elem.h"
-#include "btod/btod_sum.h"
 
 
 #include "symmetry/point_group_table.h"

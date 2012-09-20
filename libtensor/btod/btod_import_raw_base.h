@@ -7,7 +7,6 @@
 #include "../exception.h"
 #include "../core/abs_index.h"
 #include "../core/dimensions.h"
-#include "../core/block_tensor_ctrl.h"
 #include "../core/orbit.h"
 #include "../core/orbit_list.h"
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
@@ -16,6 +15,7 @@
 #include <libtensor/dense_tensor/tod_copy.h>
 #include "../symmetry/so_copy.h"
 #include "../symmetry/bad_symmetry.h"
+#include <libtensor/block_tensor/block_tensor_ctrl.h>
 
 namespace libtensor {
 

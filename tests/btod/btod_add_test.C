@@ -1,8 +1,8 @@
 #include <sstream>
 #include <libtensor/core/allocator.h>
-#include <libtensor/core/block_tensor.h>
-#include <libtensor/btod/scalar_transf_double.h>
-#include <libtensor/btod/btod_add.h>
+#include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/block_tensor/block_tensor.h>
+#include <libtensor/block_tensor/btod_add.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/dense_tensor/tod_btconv.h>
@@ -12,6 +12,10 @@
 namespace libtensor {
 
 void btod_add_test::perform() throw(libtest::test_exception) {
+
+    allocator<double>::vmm().init(16, 16, 16777216, 16777216);
+
+    try {
 
     test_1(1.0, 1.0);
     test_1(1.0, 0.5);
@@ -39,6 +43,13 @@ void btod_add_test::perform() throw(libtest::test_exception) {
     test_9();
 
     test_exc();
+
+    } catch(...) {
+        allocator<double>::vmm().shutdown();
+        throw;
+    }
+
+    allocator<double>::vmm().shutdown();
 }
 
 void btod_add_test::test_1(double ca1, double ca2)

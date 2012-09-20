@@ -77,13 +77,20 @@ set(SRC_DIAG_TENSOR
 )
 
 set(SRC_SYMMETRY
+    symmetry/adjacency_list_test.C
     symmetry/block_labeling_test.C
+    symmetry/combine_label_test.C
     symmetry/combine_part_test.C
+    symmetry/eval_sequence_list_test.C
+    symmetry/er_merge_test.C
+    symmetry/er_optimize_test.C
+    symmetry/er_reduce_test.C
     symmetry/evaluation_rule_test.C
     symmetry/libtensor_symmetry_tests.C
     symmetry/libtensor_symmetry_suite.C
     symmetry/permutation_group_test.C
     symmetry/point_group_table_test.C
+    symmetry/product_rule_test.C
     symmetry/product_table_container_test.C
     symmetry/se_label_test_base.C
     symmetry/se_label_test.C
@@ -114,6 +121,7 @@ set(SRC_SYMMETRY
     symmetry/so_reduce_se_perm_test.C
     symmetry/so_reduce_test.C
     symmetry/so_symmetrize_se_label_test.C
+    symmetry/so_symmetrize_se_part_test.C
     symmetry/so_symmetrize_test.C
     symmetry/symmetry_element_set_adapter_test.C
 )
@@ -122,11 +130,13 @@ set(SRC_BTOD
     btod/libtensor_btod_tests.C
     btod/libtensor_btod_suite.C
     btod/addition_schedule_test.C
+    btod/bto_contract2_bis_test.C
+    btod/bto_contract2_sym_test.C
     btod/btod_add_test.C
     btod/btod_apply_test.C
-    btod/btod_cholesky_test.C
     btod/btod_compare_test.C
     btod/btod_contract2_test.C
+    btod/btod_contract3_test.C
     btod/btod_copy_test.C
     btod/btod_diag_test.C
     btod/btod_diagonalize_test.C
@@ -158,58 +168,19 @@ set(SRC_LINALG
     linalg/libtensor_linalg_tests.C
     linalg/libtensor_linalg_suite.C
     linalg/linalg_add_i_i_x_x_test.C
-    linalg/linalg_x_p_p_test.C
-    linalg/linalg_i_i_i_x_test.C
-    linalg/linalg_i_i_x_test.C
-    linalg/linalg_x_pq_qp_test.C
-    linalg/linalg_i_ip_p_x_test.C
-    linalg/linalg_i_pi_p_x_test.C
-    linalg/linalg_ij_i_j_x_test.C
-    linalg/linalg_ij_ji_test.C
-    linalg/linalg_i_ipq_qp_x_test.C
-    linalg/linalg_ij_ip_jp_x_test.C
-    linalg/linalg_ij_ip_pj_x_test.C
-    linalg/linalg_ij_pi_jp_x_test.C
-    linalg/linalg_ij_pi_pj_x_test.C
-    linalg/linalg_ij_pji_p_x_test.C
-    linalg/linalg_ij_ipq_jqp_x_test.C
-    linalg/linalg_ijk_ip_pkj_x_test.C
-    linalg/linalg_ijk_pi_pkj_x_test.C
-    linalg/linalg_ijk_ipq_kjqp_x_test.C
-    linalg/linalg_ijk_ipkq_jpq_x_test.C
-    linalg/linalg_ijk_pikq_jpq_x_test.C
-    linalg/linalg_ijk_piqk_jpq_x_test.C
-    linalg/linalg_ijk_pkiq_pjq_x_test.C
-    linalg/linalg_ijkl_ikp_jpl_x_test.C
-    linalg/linalg_ijkl_ipj_plk_x_test.C
-    linalg/linalg_ijkl_ipl_jpk_x_test.C
-    linalg/linalg_ijkl_ipl_kpj_x_test.C
-    linalg/linalg_ijkl_ipkq_pljq_x_test.C
-    linalg/linalg_ijkl_iplq_kpjq_x_test.C
-    linalg/linalg_ijkl_iplq_pkjq_x_test.C
-    linalg/linalg_ijkl_iplq_pkqj_x_test.C
-    linalg/linalg_ijkl_ipqk_pljq_x_test.C
-    linalg/linalg_ijkl_ipql_pkjq_x_test.C
-    linalg/linalg_ijkl_ipql_pkqj_x_test.C
-    linalg/linalg_ijkl_ipql_qkpj_x_test.C
-    linalg/linalg_ijkl_ipql_qpkj_x_test.C
-    linalg/linalg_ijkl_pilq_kpjq_x_test.C
-    linalg/linalg_ijkl_pilq_pkjq_x_test.C
-    linalg/linalg_ijkl_pikq_pljq_x_test.C
-    linalg/linalg_ijkl_piqk_pljq_x_test.C
-    linalg/linalg_ijkl_piql_kpqj_x_test.C
-    linalg/linalg_ijkl_piql_pkjq_x_test.C
-    linalg/linalg_ijkl_piql_pkqj_x_test.C
-    linalg/linalg_ijkl_piql_qkpj_x_test.C
-    linalg/linalg_ijkl_piql_qpkj_x_test.C
-    linalg/linalg_ijkl_pkiq_jplq_x_test.C
-    linalg/linalg_ijkl_pkiq_jpql_x_test.C
-    linalg/linalg_ijkl_pkiq_pjlq_x_test.C
-    linalg/linalg_ijkl_pkiq_pjql_x_test.C
-    linalg/linalg_ijkl_pliq_jpkq_x_test.C
-    linalg/linalg_ijkl_pliq_jpqk_x_test.C
-    linalg/linalg_ijkl_pliq_pjqk_x_test.C
-    linalg/linalg_ijklm_ipkm_jlp_x_test.C
+    linalg/linalg_copy_ij_ji_test.C
+    linalg/linalg_mul2_x_p_p_test.C
+    linalg/linalg_mul2_i_i_i_x_test.C
+    linalg/linalg_mul2_i_i_x_test.C
+    linalg/linalg_mul2_x_pq_qp_test.C
+    linalg/linalg_mul2_i_ip_p_x_test.C
+    linalg/linalg_mul2_i_pi_p_x_test.C
+    linalg/linalg_mul2_ij_i_j_x_test.C
+    linalg/linalg_mul2_i_ipq_qp_x_test.C
+    linalg/linalg_mul2_ij_ip_jp_x_test.C
+    linalg/linalg_mul2_ij_ip_pj_x_test.C
+    linalg/linalg_mul2_ij_pi_jp_x_test.C
+    linalg/linalg_mul2_ij_pi_pj_x_test.C
 )
 
 set(SRC_IFACE
@@ -257,14 +228,13 @@ add_executable(libtensor_diag_tensor_tests ${SRC_DIAG_TENSOR})
 include(${LIBTEST_DIR}/cmake/SetupLibTest.txt)
 
 set_property(TARGET ${TARGETS} APPEND PROPERTY
-    COMPILE_DEFINITIONS LIBTENSOR_INSTANTIATE_TEMPLATES)
-set_property(TARGET ${TARGETS} APPEND PROPERTY
     COMPILE_DEFINITIONS_DEBUG LIBTENSOR_DEBUG)
 if(HAVE_LIBVMM)
     set_property(TARGET ${TARGETS} APPEND PROPERTY
-        COMPILE_DEFINITIONS HAVE_LIBVMM)
-    set_property(TARGET ${TARGETS} APPEND PROPERTY
         COMPILE_DEFINITIONS_DEBUG LIBVMM_DEBUG)
+else(HAVE_LIBVMM)
+    set_property(TARGET ${TARGETS} APPEND PROPERTY
+        COMPILE_DEFINITIONS WITHOUT_LIBVMM)
 endif(HAVE_LIBVMM)
 
 foreach(TARGET ${TARGETS})

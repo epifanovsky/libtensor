@@ -3,10 +3,10 @@
 #include <sstream>
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/abs_index.h>
-#include <libtensor/core/block_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
-#include <libtensor/btod/scalar_transf_double.h>
-#include <libtensor/btod/btod_dirsum.h>
+#include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/block_tensor/block_tensor.h>
+#include <libtensor/block_tensor/btod_dirsum.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/symmetry/permutation_group.h>
 #include <libtensor/symmetry/point_group_table.h>
@@ -24,7 +24,9 @@ namespace libtensor {
 
 void btod_dirsum_test::perform() throw(libtest::test_exception) {
 
-    srand48(time(0));
+    allocator<double>::vmm().init(16, 16, 16777216, 16777216);
+
+    try {
 
     test_ij_i_j_1(true);
     test_ij_i_j_1(true, -0.5);
@@ -88,6 +90,12 @@ void btod_dirsum_test::perform() throw(libtest::test_exception) {
     test_iklj_ij_kl_1(false);
     test_iklj_ij_kl_1(false, -1.25);
 
+    } catch(...) {
+        allocator<double>::vmm().shutdown();
+        throw;
+    }
+
+    allocator<double>::vmm().shutdown();
 }
 
 void btod_dirsum_test::test_ij_i_j_1(bool rnd, double d)
@@ -135,9 +143,11 @@ void btod_dirsum_test::test_ij_i_j_1(bool rnd, double d)
     //  Generate reference data
 
 	if(d == 0.0) {
-	    tod_dirsum<1, 1>(ta, 1.0, tb, 1.0).perform(true, 1.0, tc_ref);
+	    tod_dirsum<1, 1>(ta, 1.0, tb, 1.0).perform(true, tc_ref);
 	} else {
-	    tod_dirsum<1, 1>(ta, 1.0, tb, 1.0).perform(false, d, tc_ref);
+	    scalar_transf<double> s1, sd(d);
+	    tensor_transf<2, double> trc(permutation<2>(), sd);
+	    tod_dirsum<1, 1>(ta, s1, tb, s1, trc).perform(false, tc_ref);
 	}
 
     //  Invoke the direct sum routine
@@ -202,9 +212,11 @@ void btod_dirsum_test::test_ij_i_j_2(bool rnd, double d)
     //  Generate reference data
 
 	if(d == 0.0) {
-	    tod_dirsum<1, 1>(ta, 1.0, ta, 1.0).perform(true, 1.0, tc_ref);
+	    tod_dirsum<1, 1>(ta, 1.0, ta, 1.0).perform(true, tc_ref);
 	} else {
-	    tod_dirsum<1, 1>(ta, 1.0, ta, 1.0).perform(false, d, tc_ref);
+	    scalar_transf<double> s1, sd(d);
+        tensor_transf<2, double> trc(permutation<2>(), sd);
+	    tod_dirsum<1, 1>(ta, s1, ta, s1, trc).perform(false, tc_ref);
 	}
 
     // Check the symmetry of the result
@@ -288,9 +300,11 @@ void btod_dirsum_test::test_ij_i_j_3(bool rnd, double d)
     //  Generate reference data
 
 	if(d == 0.0) {
-	    tod_dirsum<1, 1>(ta, 1.0, ta, -1.0).perform(true, 1.0, tc_ref);
+	    tod_dirsum<1, 1>(ta, 1.0, ta, -1.0).perform(true, tc_ref);
 	} else {
-	    tod_dirsum<1, 1>(ta, 1.0, ta, -1.0).perform(false, d, tc_ref);
+        scalar_transf<double> s1(1.), s2(-1.), sd(d);
+        tensor_transf<2, double> trc(permutation<2>(), sd);
+	    tod_dirsum<1, 1>(ta, s1, ta, s2, trc).perform(false, tc_ref);
 	}
 
     // Check the symmetry of the result
@@ -377,9 +391,11 @@ void btod_dirsum_test::test_ijk_ij_k_1(bool rnd, double d)
     //  Generate reference data
 
 	if(d == 0.0) {
-		tod_dirsum<2, 1>(ta, 1.5, tb, 1.0).perform(true, 1.0, tc_ref);
+		tod_dirsum<2, 1>(ta, 1.5, tb, 1.0).perform(true, tc_ref);
 	} else {
-		tod_dirsum<2, 1>(ta, 1.5, tb, 1.0).perform(false, d, tc_ref);
+        scalar_transf<double> s1(1.5), s2(1.), sd(d);
+        tensor_transf<3, double> trc(permutation<3>(), sd);
+		tod_dirsum<2, 1>(ta, s1, tb, s2, trc).perform(false, tc_ref);
 	}
 
     //  Invoke the direct sum routine
@@ -451,9 +467,11 @@ void btod_dirsum_test::test_ikjl_ij_kl_1(bool rnd, double d)
     permutation<4> permc;
 	permc.permute(1, 2);
 	if(d == 0.0) {
-		tod_dirsum<2, 2>(ta, 1.5, tb, -1.0, permc).perform(true, 1.0, tc_ref);
+		tod_dirsum<2, 2>(ta, 1.5, tb, -1.0, permc).perform(true, tc_ref);
 	} else {
-		tod_dirsum<2, 2>(ta, 1.5, tb, -1.0, permc).perform(false, d, tc_ref);
+        scalar_transf<double> s1(1.5), s2(-1.), sd(d);
+        tensor_transf<4, double> trc(permc, sd);
+		tod_dirsum<2, 2>(ta, s1, tb, s2, trc).perform(false, tc_ref);
 	}
 
     //  Invoke the direct sum routine
@@ -552,9 +570,11 @@ void btod_dirsum_test::test_ikjl_ij_kl_2(bool rnd, double d)
 	permutation<4> permc;
 	permc.permute(1, 2);
 	if(d == 0.0) {
-		tod_dirsum<2, 2>(ta, 1.5, tb, -1.0, permc).perform(true, 1.0, tc_ref);
+		tod_dirsum<2, 2>(ta, 1.5, tb, -1.0, permc).perform(true, tc_ref);
 	} else {
-		tod_dirsum<2, 2>(ta, 1.5, tb, -1.0, permc).perform(false, d, tc_ref);
+        scalar_transf<double> s1(1.5), s2(-1.), sd(d);
+        tensor_transf<4, double> trc(permc, sd);
+		tod_dirsum<2, 2>(ta, s1, tb, s2, trc).perform(false, tc_ref);
 	}
 
     //  Invoke the direct sum routine
@@ -671,9 +691,11 @@ void btod_dirsum_test::test_ikjl_ij_kl_3a(bool s1, bool s2,
     permutation<4> permc;
     permc.permute(1, 2);
     if(d == 0.0) {
-        tod_dirsum<2, 2>(ta, 1.5, tb, -1.0, permc).perform(true, 1.0, tc_ref);
+        tod_dirsum<2, 2>(ta, 1.5, tb, -1.0, permc).perform(true, tc_ref);
     } else {
-        tod_dirsum<2, 2>(ta, 1.5, tb, -1.0, permc).perform(false, d, tc_ref);
+        scalar_transf<double> s1(1.5), s2(-1.), sd(d);
+        tensor_transf<4, double> trc(permc, sd);
+       tod_dirsum<2, 2>(ta, s1, tb, s2, trc).perform(false, tc_ref);
     }
 
     //  Invoke the direct sum routine
@@ -816,9 +838,11 @@ void btod_dirsum_test::test_ikjl_ij_kl_3b(bool rnd,
 	permutation<4> permc;
 	permc.permute(1, 2);
 	if(d == 0.0) {
-		tod_dirsum<2, 2>(ta, 1.5, tb, -1.0, permc).perform(true, 1.0, tc_ref);
+		tod_dirsum<2, 2>(ta, 1.5, tb, -1.0, permc).perform(true, tc_ref);
 	} else {
-		tod_dirsum<2, 2>(ta, 1.5, tb, -1.0, permc).perform(false, d, tc_ref);
+        scalar_transf<double> s1(1.5), s2(-1.), sd(d);
+        tensor_transf<4, double> trc(permc, sd);
+		tod_dirsum<2, 2>(ta, s1, tb, s2, trc).perform(false, tc_ref);
 	}
 
     //  Invoke the direct sum routine
@@ -933,10 +957,10 @@ void btod_dirsum_test::test_ikjl_ij_kl_3c(
         sequence<4, size_t> sc1(0), sc2(0);
         sc1[0] = sc1[2] = 1;
         sc2[1] = sc2[3] = 1;
-        rc.add_sequence(sc1);
-        rc.add_sequence(sc2);
-        rc.add_product(0, 0, 0);
-        rc.add_product(1, 0, 0);
+        product_rule<4> &prc1 = rc.new_product();
+        prc1.add(sc1, 0);
+        product_rule<4> &prc2 = rc.new_product();
+        prc2.add(sc2, 0);
         slc.set_rule(rc);
 
         sym_ref.insert(slc);
@@ -964,9 +988,11 @@ void btod_dirsum_test::test_ikjl_ij_kl_3c(
     permutation<4> permc;
     permc.permute(1, 2);
     if(d == 0.0) {
-        tod_dirsum<2, 2>(ta, 1.5, tb, -1.0, permc).perform(true, 1.0, tc_ref);
+        tod_dirsum<2, 2>(ta, 1.5, tb, -1.0, permc).perform(true, tc_ref);
     } else {
-        tod_dirsum<2, 2>(ta, 1.5, tb, -1.0, permc).perform(false, d, tc_ref);
+        scalar_transf<double> s1(1.5), s2(-1.), sd(d);
+        tensor_transf<4, double> trc(permc, sd);
+        tod_dirsum<2, 2>(ta, s1, tb, s2, trc).perform(false, tc_ref);
     }
 
     //  Invoke the direct sum routine
@@ -1082,9 +1108,11 @@ void btod_dirsum_test::test_iklj_ij_kl_1(bool rnd, double d)
 	permutation<4> permc;
 	permc.permute(1, 2);
 	if(d == 0.0) {
-		tod_dirsum<2, 2>(ta, -1.0, ta, -1.0, permc).perform(true, 1.0, tc_ref);
+		tod_dirsum<2, 2>(ta, -1.0, ta, -1.0, permc).perform(true, tc_ref);
 	} else {
-		tod_dirsum<2, 2>(ta, -1.0, ta, -1.0, permc).perform(false, d, tc_ref);
+        scalar_transf<double> s1(-1.), sd(d);
+        tensor_transf<4, double> trc(permc, sd);
+		tod_dirsum<2, 2>(ta, s1, ta, s1, trc).perform(false, tc_ref);
 	}
 
     // Check symmetry

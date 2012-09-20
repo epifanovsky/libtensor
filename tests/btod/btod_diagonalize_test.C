@@ -1,10 +1,10 @@
 #include <libtensor/core/allocator.h>
-#include <libtensor/btod/scalar_transf_double.h>
-#include <libtensor/btod/btod_copy.h>
+#include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/block_tensor/block_tensor.h>
+#include <libtensor/block_tensor/btod_copy.h>
 #include <libtensor/btod/btod_diagonalize.h>
 #include <libtensor/btod/btod_import_raw.h>
 #include <libtensor/btod/btod_tridiagonalize.h>
-#include <libtensor/core/block_tensor.h>
 #include "btod_diagonalize_test.h"
 #include "../compare_ref.h"
 
@@ -13,12 +13,22 @@ namespace libtensor {
 
 void btod_diagonalize_test::perform() throw(libtest::test_exception) {
 
+    allocator<double>::vmm().init(16, 16, 16777216, 16777216);
+
+    try {
+
     test_1();
     test_2();
     test_3();
     test_4();
     test_5();
 
+    } catch(...) {
+        allocator<double>::vmm().shutdown();
+        throw;
+    }
+
+    allocator<double>::vmm().shutdown();
 }
 
 

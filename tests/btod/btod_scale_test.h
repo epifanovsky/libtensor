@@ -2,7 +2,7 @@
 #define LIBTENSOR_BTOD_SCALE_TEST_H
 
 #include <libtest/unit_test.h>
-#include <libtensor/core/block_tensor_i.h>
+#include <libtensor/block_tensor/block_tensor_i.h>
 
 namespace libtensor {
 

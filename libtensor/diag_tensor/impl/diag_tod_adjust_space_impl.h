@@ -6,10 +6,11 @@
 #include <memory>
 #include <set>
 #include <vector>
+#include <libtensor/linalg/linalg.h>
+#include <libtensor/kernels/kern_dadd1.h>
+#include <libtensor/kernels/kern_dcopy.h>
+#include <libtensor/kernels/loop_list_runner.h>
 #include <libtensor/diag_tensor/diag_tensor_ctrl.h>
-#include <libtensor/tod/kernels/loop_list_runner.h>
-#include <libtensor/tod/kernels/kern_add_generic.h>
-#include <libtensor/tod/kernels/kern_copy_generic.h>
 #include <libtensor/tod/bad_dimensions.h>
 #include "../diag_tod_adjust_space.h"
 
@@ -135,9 +136,9 @@ void diag_tod_adjust_space<N>::constrained_copy(const dimensions<N> &dims,
     const diag_tensor_subspace<N> &ss1, double *p1, size_t sz1,
     const diag_tensor_subspace<N> &ss2, double *p2, size_t sz2) {
 
-    std::list< loop_list_node<2, 1> > lpadd1, lpadd2;
+    std::list< loop_list_node<1, 1> > lpadd1, lpadd2;
     std::list< loop_list_node<1, 1> > lpset1, lpset2;
-    typename std::list< loop_list_node<2, 1> >::iterator iadd = lpadd1.end();
+    typename std::list< loop_list_node<1, 1> >::iterator iadd = lpadd1.end();
     typename std::list< loop_list_node<1, 1> >::iterator iset = lpset1.end();
 
     double zero = 0.0;
@@ -158,22 +159,19 @@ void diag_tod_adjust_space<N>::constrained_copy(const dimensions<N> &dims,
             m0 |= m2;
         } while(!m1.equals(m2));
 
-        iadd = lpadd1.insert(lpadd1.end(), loop_list_node<2, 1>(dims[i]));
+        iadd = lpadd1.insert(lpadd1.end(), loop_list_node<1, 1>(dims[i]));
         iset = lpset1.insert(lpset1.end(), loop_list_node<1, 1>(dims[i]));
         size_t inc1 = get_increment(dims, ss1, m0);
         size_t inc2 = get_increment(dims, ss2, m0);
         iadd->stepa(0) = inc1;
-        iadd->stepa(1) = 0;
         iadd->stepb(0) = inc2;
         iset->stepa(0) = 0;
         iset->stepb(0) = inc1;
 
-        loop_registers<2, 1> radd;
+        loop_registers<1, 1> radd;
         radd.m_ptra[0] = p1;
-        radd.m_ptra[1] = &zero;
         radd.m_ptrb[0] = p2;
         radd.m_ptra_end[0] = p1 + sz1;
-        radd.m_ptra_end[1] = &zero + 1;
         radd.m_ptrb_end[0] = p2 + sz2;
 
         loop_registers<1, 1> rset;
@@ -184,12 +182,12 @@ void diag_tod_adjust_space<N>::constrained_copy(const dimensions<N> &dims,
 
         {
             diag_tod_adjust_space<N>::start_timer("copy");
-            std::auto_ptr< kernel_base<2, 1> > kern_add(
-                kern_add_generic::match(1.0, 1.0, 1.0, lpadd1, lpadd2));
-            loop_list_runner<2, 1>(lpadd1).run(radd, *kern_add);
-            std::auto_ptr< kernel_base<1, 1> > kern_set(
-                kern_copy_generic::match(1.0, lpset1, lpset2));
-            loop_list_runner<1, 1>(lpset1).run(rset, *kern_set);
+            std::auto_ptr< kernel_base<linalg, 1, 1> > kern_add(
+                kern_dadd1<linalg>::match(1.0, lpadd1, lpadd2));
+            loop_list_runner<linalg, 1, 1>(lpadd1).run(0, radd, *kern_add);
+            std::auto_ptr< kernel_base<linalg, 1, 1> > kern_set(
+                kern_dcopy<linalg>::match(1.0, lpset1, lpset2));
+            loop_list_runner<linalg, 1, 1>(lpset1).run(0, rset, *kern_set);
             diag_tod_adjust_space<N>::stop_timer("copy");
         }
 

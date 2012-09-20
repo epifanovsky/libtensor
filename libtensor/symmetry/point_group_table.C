@@ -71,32 +71,72 @@ void point_group_table::add_product(label_t l1, label_t l2,
         return;
     }
 
-    label_set_t &lg = m_table[pair_index(l1, l2)];
-    lg.insert(lr);
+    m_table[pair_index(l1, l2)] |= (1 << lr);
 }
 
-point_group_table::label_set_t
-point_group_table::determine_product(label_t l1, label_t l2) const {
+
+void point_group_table::product(const label_group_t &lg,
+        label_set_t &prod) const {
+
+    prod.clear();
+    if (lg.empty()) return;
+
+    label_group_t::const_iterator it = lg.begin();
+    register size_t pr1 = (1 << *it);
+    it++;
+    for (; it != lg.end(); it++) {
+        register size_t pr2 = 0;
+        for (register label_t i = 0, bit = 1;
+                i < m_irreps.size(); i++, bit <<= 1) {
+            if ((pr1 & bit) == bit)
+                pr2 |= m_table[*it > i ?
+                        pair_index(i, *it) : pair_index(*it, i)];
+        }
+        pr1 = pr2;
+    }
+
+    for (register label_t i = 0, bit = 1; i < m_irreps.size(); i++, bit <<= 1) {
+        if ((pr1 & bit) == bit) prod.insert(i);
+    }
+}
+
+bool point_group_table::is_in_product(
+        const label_group_t &lg, label_t l) const {
+
+    static const char *method =
+            "is_in_product(const label_group_t &, label_t)";
+
 #ifdef LIBTENSOR_DEBUG
-    if (l1 > l2)
-        throw bad_parameter(g_ns, k_clazz,
-                "determine_product(label_t, label_t) const",
-                __FILE__, __LINE__, "l1 > l2.");
+    if (! is_valid(l))
+        throw bad_parameter(g_ns, k_clazz, method,
+                __FILE__, __LINE__, "Invalid irrep l.");
 #endif
 
-    return m_table[pair_index(l1, l2)];
+    if (lg.empty()) return false;
+
+    label_group_t::const_iterator it = lg.begin();
+    register size_t pr1 = (1 << *it);
+    it++;
+    for (; it != lg.end(); it++) {
+        register size_t pr2 = 0;
+        for (register size_t i = 0, bit = 1;
+                i < m_irreps.size(); i++, bit <<= 1) {
+            if ((pr1 & bit) == bit)
+                pr2 |= m_table[*it > i ?
+                        pair_index(i, *it) : pair_index(*it, i)];
+        }
+        pr1 = pr2;
+    }
+
+    register size_t rbit = (1 << l);
+    return (pr1 & rbit) == rbit;
 }
 
-
-void point_group_table::do_check() const {
-
-}
 
 void point_group_table::initialize_table() {
 
     for (label_t i = 0; i < m_irreps.size(); i++) {
-        label_set_t &ls = m_table[pair_index(k_identity, i)];
-        ls.insert(i);
+        m_table[pair_index(k_identity, i)] = (1 << i);
     }
 }
 

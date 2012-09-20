@@ -4,9 +4,10 @@
 #include <list>
 #include <memory>
 #include <vector>
+#include <libtensor/linalg/linalg.h>
+#include <libtensor/kernels/kern_dadd1.h>
+#include <libtensor/kernels/loop_list_runner.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include <libtensor/tod/kernels/loop_list_runner.h>
-#include <libtensor/tod/kernels/kern_add_generic.h>
 #include "../diag_tensor_ctrl.h"
 #include "../tod_conv_diag_tensor.h"
 
@@ -34,8 +35,6 @@ void tod_conv_diag_tensor<N>::perform(dense_tensor_wr_i<N, double> &tb) {
         for(size_t i = 0; i < sz; i++) pb[i] = 0.0;
     }
 
-    double zero = 0.0;
-
     std::vector<size_t> ssl; // List of subspaces
     dtsa.get_all_subspaces(ssl);
     for(size_t ssi = 0; ssi < ssl.size(); ssi++) {
@@ -44,8 +43,8 @@ void tod_conv_diag_tensor<N>::perform(dense_tensor_wr_i<N, double> &tb) {
 
         const diag_tensor_subspace<N> &ss = dtsa.get_subspace(ssn);
 
-        std::list< loop_list_node<2, 1> > loop_in, loop_out;
-        typename std::list< loop_list_node<2, 1> >::iterator inode =
+        std::list< loop_list_node<1, 1> > loop_in, loop_out;
+        typename std::list< loop_list_node<1, 1> >::iterator inode =
             loop_in.end();
 
         sequence<N, size_t> diags(N); // Diagonal numbers, N for unrestricted
@@ -70,13 +69,12 @@ void tod_conv_diag_tensor<N>::perform(dense_tensor_wr_i<N, double> &tb) {
                 mdone[i] = true;
             }
             size_t w = dims[i];
-            for(typename std::list< loop_list_node<2, 1> >::iterator jnode =
+            for(typename std::list< loop_list_node<1, 1> >::iterator jnode =
                 loop_in.begin(); jnode != loop_in.end(); ++jnode) {
                 jnode->stepa(0) *= w;
             }
-            inode = loop_in.insert(loop_in.end(), loop_list_node<2, 1>(w));
+            inode = loop_in.insert(loop_in.end(), loop_list_node<1, 1>(w));
             inode->stepa(0) = 1;
-            inode->stepa(1) = 0;
             inode->stepb(0) = stepb;
         }
 #ifdef LIBTENSOR_DEBUG
@@ -88,18 +86,16 @@ void tod_conv_diag_tensor<N>::perform(dense_tensor_wr_i<N, double> &tb) {
 
         const double *pa = ca.req_const_dataptr(ssn);
 
-        loop_registers<2, 1> r;
+        loop_registers<1, 1> r;
         r.m_ptra[0] = pa;
-        r.m_ptra[1] = &zero;
         r.m_ptrb[0] = pb;
         r.m_ptra_end[0] = pa + dtsa.get_subspace_size(ssn);
-        r.m_ptra_end[1] = &zero + 1;
         r.m_ptrb_end[0] = pb + dims.get_size();
 
         {
-            std::auto_ptr< kernel_base<2, 1> >kern(
-                kern_add_generic::match(1.0, 1.0, 1.0, loop_in, loop_out));
-            loop_list_runner<2, 1>(loop_in).run(r, *kern);
+            std::auto_ptr< kernel_base<linalg, 1, 1> >kern(
+                kern_dadd1<linalg>::match(1.0, loop_in, loop_out));
+            loop_list_runner<linalg, 1, 1>(loop_in).run(0, r, *kern);
         }
 
         ca.ret_const_dataptr(ssn, pa); pa = 0;

@@ -171,7 +171,7 @@ void loop_list_add::fn_daxpy(registers &r) const {
     }
 #endif // LIBTENSOR_DEBUG
 
-    linalg::i_i_x(m_daxpy.m_n, r.m_ptra[0], m_daxpy.m_stepa, m_daxpy.m_k,
+    linalg::mul2_i_i_x(0, m_daxpy.m_n, r.m_ptra[0], m_daxpy.m_stepa, m_daxpy.m_k,
         r.m_ptrb[0], m_daxpy.m_stepb);
 }
 

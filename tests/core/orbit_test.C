@@ -1,5 +1,5 @@
 #include <sstream>
-#include <libtensor/btod/scalar_transf_double.h>
+#include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/core/orbit.h>
 #include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/symmetry/product_table_container.h>
@@ -22,12 +22,14 @@ void orbit_test::perform() throw(libtest::test_exception) {
     test_8();
     test_9();
     test_10();
+    test_11();
 }
 
 
-void orbit_test::test_1() throw(libtest::test_exception) {
+void orbit_test::test_1() {
 
     static const char *testname = "orbit_test::test_1()";
+
     try {
 
     index<2> i1, i2;
@@ -79,9 +81,10 @@ void orbit_test::test_1() throw(libtest::test_exception) {
 }
 
 
-void orbit_test::test_2() throw(libtest::test_exception) {
+void orbit_test::test_2() {
 
     static const char *testname = "orbit_test::test_2()";
+
     try {
 
     index<2> i1, i2;
@@ -158,9 +161,10 @@ void orbit_test::test_2() throw(libtest::test_exception) {
     }
 }
 
-void orbit_test::test_3() throw(libtest::test_exception) {
+void orbit_test::test_3() {
 
     static const char *testname = "orbit_test::test_3()";
+
     try {
 
     index<4> i1, i2;
@@ -238,9 +242,10 @@ void orbit_test::test_3() throw(libtest::test_exception) {
     }
 }
 
-void orbit_test::test_4() throw(libtest::test_exception) {
+void orbit_test::test_4() {
 
     static const char *testname = "orbit_test::test_4()";
+
     try {
 
     index<4> i1, i2;
@@ -319,9 +324,10 @@ void orbit_test::test_4() throw(libtest::test_exception) {
     }
 }
 
-void orbit_test::test_5() throw(libtest::test_exception) {
+void orbit_test::test_5() {
 
     static const char *testname = "orbit_test::test_5()";
+
     try {
 
     index<4> i1, i2;
@@ -411,9 +417,10 @@ void orbit_test::test_5() throw(libtest::test_exception) {
     }
 }
 
-void orbit_test::test_6() throw(libtest::test_exception) {
+void orbit_test::test_6() {
 
     static const char *testname = "orbit_test::test_6()";
+
     try {
 
     index<4> i1, i2;
@@ -509,9 +516,10 @@ void orbit_test::test_6() throw(libtest::test_exception) {
     }
 }
 
-void orbit_test::test_7() throw(libtest::test_exception) {
+void orbit_test::test_7() {
 
     static const char *testname = "orbit_test::test_7()";
+
     try {
 
     index<4> i1, i2;
@@ -604,9 +612,10 @@ void orbit_test::test_7() throw(libtest::test_exception) {
     }
 }
 
-void orbit_test::test_8() throw(libtest::test_exception) {
+void orbit_test::test_8() {
 
     static const char *testname = "orbit_test::test_8()";
+
     try {
 
     index<4> i1, i2;
@@ -703,7 +712,7 @@ void orbit_test::test_8() throw(libtest::test_exception) {
 }
 
 
-void orbit_test::test_9() throw(libtest::test_exception) {
+void orbit_test::test_9() {
 
     static const char *testname = "orbit_test::test_9()";
 
@@ -876,13 +885,10 @@ void orbit_test::test_9() throw(libtest::test_exception) {
     }
 
     product_table_container::get_instance().erase(testname);
-
-
-
 }
 
 
-void orbit_test::test_10() throw(libtest::test_exception) {
+void orbit_test::test_10() {
 
     static const char *testname = "orbit_test::test_10()";
 
@@ -1060,6 +1066,57 @@ void orbit_test::test_10() throw(libtest::test_exception) {
     }
 
     product_table_container::get_instance().erase(testname);
+}
+
+
+void orbit_test::test_11() {
+
+    static const char *testname = "orbit_test::test_11()";
+
+    try {
+
+    index<4> i1, i2;
+    i2[0] = 11; i2[1] = 11; i2[2] = 11; i2[3] = 11;
+    mask<4> m1111;
+    m1111[0] = true; m1111[1] = true; m1111[2] = true; m1111[3] = true;
+    dimensions<4> dims(index_range<4>(i1, i2));
+    block_index_space<4> bis(dims);
+    bis.split(m1111, 2);
+    bis.split(m1111, 5);
+    dimensions<4> bidims = bis.get_block_index_dims();
+    symmetry<4, double> sym(bis);
+
+    scalar_transf<double> str0;
+    se_perm<4, double> se1(permutation<4>().permute(0, 2), str0);
+    se_perm<4, double> se2(permutation<4>().permute(1, 3), str0);
+    se_perm<4, double> se3(permutation<4>().permute(0, 1).permute(2, 3), str0);
+    sym.insert(se1);
+    sym.insert(se2);
+    sym.insert(se3);
+
+    index<4> idx;
+    idx[0] = 1; idx[1] = 1; idx[2] = 0; idx[3] = 2;
+
+    orbit<4, double> orb(sym, idx);
+    for(orbit<4, double>::iterator i = orb.begin(); i != orb.end(); ++i) {
+        index<4> idx2, idx3(orb.get_cindex());
+        abs_index<4>::get_index(orb.get_abs_index(i), bidims, idx2);
+        const tensor_transf<4, double> &tr = orb.get_transf(i);
+        tr.apply(idx3);
+        if(idx2 != idx3) {
+            std::ostringstream ss;
+            ss << "Incorrect transformation "
+                << orb.get_cindex() << " -> " << idx2
+                << " (" << tr.get_perm() << ", "
+                << tr.get_scalar_tr().get_coeff() << "); "
+                << "expected " << idx3 << ".";
+            fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+        }
+    }
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
 }
 
 

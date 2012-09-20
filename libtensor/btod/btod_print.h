@@ -6,10 +6,10 @@
 #include "../defs.h"
 #include "../exception.h"
 #include "../core/allocator.h"
-#include "../core/block_tensor_i.h"
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/dense_tensor/tod_btconv.h>
+#include <libtensor/block_tensor/block_tensor_i.h>
 
 namespace libtensor {
 

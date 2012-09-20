@@ -1,10 +1,14 @@
 #include <libtensor/core/allocator.h>
-#include <libtensor/core/block_tensor.h>
-#include <libtensor/btod/scalar_transf_double.h>
-#include <libtensor/btod/btod_mult1.h>
+#include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/block_tensor/block_tensor.h>
+#include <libtensor/block_tensor/btod/btod_mult1.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/dense_tensor/tod_btconv.h>
 #include <libtensor/dense_tensor/tod_mult1.h>
+#include <libtensor/symmetry/se_label.h>
+#include <libtensor/symmetry/se_part.h>
+#include <libtensor/symmetry/se_perm.h>
+#include <libtensor/symmetry/so_copy.h>
 #include "btod_mult1_test.h"
 #include "../compare_ref.h"
 

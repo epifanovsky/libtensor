@@ -1,12 +1,13 @@
 #include <list>
 #include <vector>
+#include <libtensor/linalg/linalg.h>
+#include <libtensor/kernels/kern_dadd2.h>
+#include <libtensor/kernels/kern_dcopy.h>
+#include <libtensor/kernels/loop_list_runner.h>
 #include <libtensor/diag_tensor/diag_tensor_ctrl.h>
 #include <libtensor/diag_tensor/diag_to_add_space.h>
 #include <libtensor/diag_tensor/diag_tod_adjust_space.h>
 #include <libtensor/diag_tensor/diag_tod_set.h>
-#include <libtensor/tod/kernels/loop_list_runner.h>
-#include <libtensor/tod/kernels/kern_add_generic.h>
-#include <libtensor/tod/kernels/kern_copy_generic.h>
 #include "../diag_tod_copy.h"
 
 namespace libtensor {
@@ -146,9 +147,9 @@ void diag_tod_copy<N>::constrained_copy(const dimensions<N> &dims,
 
     {
         diag_tod_copy<N>::start_timer("copy");
-        std::auto_ptr< kernel_base<2, 1> > kern_add(
-            kern_add_generic::match(d, 1.0, 1.0, lpadd1, lpadd2));
-        loop_list_runner<2, 1>(lpadd1).run(radd, *kern_add);
+        std::auto_ptr< kernel_base<linalg, 2, 1> > kern_add(
+            kern_dadd2<linalg>::match(d, 1.0, 1.0, lpadd1, lpadd2));
+        loop_list_runner<linalg, 2, 1>(lpadd1).run(0, radd, *kern_add);
         diag_tod_copy<N>::stop_timer("copy");
     }
 }

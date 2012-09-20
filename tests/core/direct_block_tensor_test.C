@@ -1,14 +1,14 @@
 #include <libtensor/core/allocator.h>
-#include <libtensor/core/block_tensor.h>
-#include <libtensor/core/direct_block_tensor.h>
 #include <libtensor/dense_tensor/tod_btconv.h>
 #include <libtensor/dense_tensor/tod_contract2.h>
 #include <libtensor/dense_tensor/tod_dirsum.h>
-#include <libtensor/btod/scalar_transf_double.h>
-#include <libtensor/btod/btod_add.h>
-#include <libtensor/btod/btod_copy.h>
-#include <libtensor/btod/btod_contract2.h>
-#include <libtensor/btod/btod_dirsum.h>
+#include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/block_tensor/block_tensor.h>
+#include <libtensor/block_tensor/direct_block_tensor.h>
+#include <libtensor/block_tensor/btod_add.h>
+#include <libtensor/block_tensor/btod_copy.h>
+#include <libtensor/block_tensor/btod_contract2.h>
+#include <libtensor/block_tensor/btod_dirsum.h>
 #include <libtensor/btod/btod_random.h>
 #include "../compare_ref.h"
 #include "direct_block_tensor_test.h"
@@ -18,10 +18,21 @@ namespace libtensor {
 
 void direct_block_tensor_test::perform() throw(libtest::test_exception) {
 
+    allocator<double>::vmm().init(16, 16, 16777216, 16777216);
+
+    try {
+
     test_op_1();
     test_op_2();
     test_op_3();
     test_op_4();
+
+    } catch(...) {
+        allocator<double>::vmm().shutdown();
+        throw;
+    }
+
+    allocator<double>::vmm().shutdown();
 }
 
 
@@ -235,8 +246,8 @@ void direct_block_tensor_test::test_op_4() throw(libtest::test_exception) {
 
 	dense_tensor<4, double, allocator_t> tb1(dims4), tb2(dims4), tc(dims4),
 		tc_ref(dims4);
-	tod_dirsum<2, 2>(ta5, 1.0, ta6, -2.0).perform(true, 1.0, tb1);
-	tod_dirsum<2, 2>(ta5, -2.0, ta6, 1.0).perform(true, 1.0, tb2);
+	tod_dirsum<2, 2>(ta5, 1.0, ta6, -2.0).perform(true, tb1);
+	tod_dirsum<2, 2>(ta5, -2.0, ta6, 1.0).perform(true, tb2);
 	tod_contract2<2, 2, 2>(contr, tb1, tb2).perform(true, 1.0, tc_ref);
 	tod_btconv<4>(btc).perform(tc);
 

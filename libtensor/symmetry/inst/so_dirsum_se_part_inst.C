@@ -1,4 +1,4 @@
-#include <libtensor/btod/scalar_transf_double.h>
+#include <libtensor/core/scalar_transf_double.h>
 #include "../so_dirsum_se_part.h"
 #include "so_dirsum_se_part_impl.h"
 
@@ -77,8 +77,10 @@ template
 class symmetry_operation_impl< so_dirsum<6, 5, double>, se_part<11, double> >;
 template
 class symmetry_operation_impl< so_dirsum<6, 6, double>, se_part<12, double> >;
+template
+class symmetry_operation_impl< so_dirsum<7, 7, double>, se_part<14, double> >;
+template
+class symmetry_operation_impl< so_dirsum<8, 8, double>, se_part<16, double> >;
 
 
 } // namespace libtensor
-
-

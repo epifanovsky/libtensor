@@ -4,7 +4,7 @@
 #include <libtensor/core/symmetry_element_i.h>
 #include "block_labeling.h"
 #include "evaluation_rule.h"
-#include "product_table_i.h"
+#include "product_table_container.h"
 
 namespace libtensor {
 
@@ -21,29 +21,15 @@ namespace libtensor {
     that can be obtained using the function \c get_labeling(). This object
     provides all functions necessary to set the labels. For details refer to
     the documentation of \sa block_labeling. The evaluation rule is also stored
-    as its own object. It be set using one of the \c set_rule() functions
+    as its own object. It can be set using one of the \c set_rule() functions
     provided:
     - \c set_rule(label_t)
     - \c set_rule(const label_set_t &)
     - \c set_rule(const evaluation_rule<N> &)
 
-    Allowed blocks are determined from the evaluation rule as follows:
-    - All blocks are forbidden, if the rule setup is empty.
-    - A block is allowed, if it is allowed by any of the products in the rule
-      setup.
-    - A block is allowed by a product, if it is allowed by all terms in this
-      product.
-    - All blocks are allowed by a term, if the intrinsic label is the invalid
-      label.
-    - A block is forbidden by a term, if the respective sequence contains only
-      zeroes.
-    - A block is allowed by a term, if one of the block labels for which the
-      sequence is non-zero is the invalid label.
-    - A block is allowed by a term, if the product of labels specified
-      by the sequence and the intrinsic label contains the target label.
-    - The product of labels is a list of labels containing the intrinsic label
-      once and the i-th block label n times, if the i-th entry of the sequence
-      is n.
+    The evaluation rule determines allowed blocks from the product table and
+    the sequence of labels of a given block. For details please refer to the
+    documentation of \sa evaluation_rule.
 
     \ingroup libtensor_symmetry
  **/
@@ -63,20 +49,33 @@ private:
     const product_table_i &m_pt; //!< Product table
 
 public:
-    //!    \name Construction and destruction
+    //! \name Construction and destruction
     //@{
     /** \brief Initializes the %symmetry element
         \param bidims Block %index dimensions.
+        \param id Table ID
      **/
-    se_label(const dimensions<N> &bidims, const std::string &id);
+    se_label(const dimensions<N> &bidims, const std::string &id) :
+        m_blk_labels(bidims), 
+        m_pt(product_table_container::get_instance().req_const_table(id)) {
+    }
+
 
     /** \brief Copy constructor
      **/
-    se_label(const se_label<N, T> &elem);
+    se_label(const se_label<N, T> &elem) :
+        m_blk_labels(elem.m_blk_labels), m_rule(elem.m_rule),
+        m_pt(product_table_container::get_instance().req_const_table(
+                elem.m_pt.get_id())) {
+    }
+
 
     /** \brief Virtual destructor
      **/
-    virtual ~se_label();
+    virtual ~se_label() {
+        product_table_container::get_instance().ret_table(m_pt.get_id());
+    }
+
     //@}
 
     //!    \name Manipulating functions
@@ -92,20 +91,18 @@ public:
 
     /** \brief Set the evaluation rule to consist of only one 1-term product.
         \param intr Intrinsic label.
-        \param target Target label
 
         Replaces any existing rules.
      **/
-    void set_rule(label_t intr, label_t target = 0);
+    void set_rule(label_t intr);
 
     /** \brief Set the evaluation rule to consist of several 1-term products
             (one product for each intrinsic label in the set)
         \param intr Set of intrinsic labels.
-        \param target Target label.
 
         Replaces any existing rule.
      **/
-    void set_rule(const label_set_t &intr, label_t target = 0);
+    void set_rule(const label_set_t &intr);
 
     /** \brief Set the evaluation rule to the given rule.
         \param rule Evaluation rule.
@@ -113,7 +110,7 @@ public:
         The function checks the validity of the given rule and replaces any
         previously given rule.
      **/
-    void set_rule(const evaluation_rule<N> &rule);
+    void set_rule(const evaluation_rule<N> &rule) { m_rule = rule; }
     //@}
 
     //! \name Access functions
@@ -171,6 +168,16 @@ public:
     //@}
 
 };
+
+
+template<size_t N, typename T>
+inline
+bool se_label<N, T>::is_valid_bis(const block_index_space<N> &bis) const {
+
+    const dimensions<N> &bidims = m_blk_labels.get_block_index_dims();
+    return bidims.equals(bis.get_block_index_dims());
+}
+
 
 } // namespace libtensor
 

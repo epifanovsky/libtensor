@@ -1,15 +1,19 @@
 #include <sstream>
-#include <libtensor/core/block_tensor.h>
-#include <libtensor/btod/scalar_transf_double.h>
-#include <libtensor/btod/btod_contract2.h>
-#include <libtensor/btod/btod_copy.h>
+#include <libtensor/core/allocator.h>
+#include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/block_tensor/block_tensor.h>
+#include <libtensor/block_tensor/btod_contract2.h>
+#include <libtensor/block_tensor/btod_copy.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/symmetry/permutation_group.h>
 #include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/symmetry/product_table_container.h>
+#include <libtensor/symmetry/se_label.h>
+#include <libtensor/symmetry/se_part.h>
 #include <libtensor/symmetry/so_copy.h>
 #include <libtensor/dense_tensor/tod_btconv.h>
 #include <libtensor/dense_tensor/tod_contract2.h>
+#include <libtensor/dense_tensor/tod_set.h>
 #include "../compare_ref.h"
 #include "btod_contract2_test.h"
 
@@ -17,18 +21,17 @@ namespace libtensor {
 
 void btod_contract2_test::perform() throw(libtest::test_exception) {
 
+    allocator<double>::vmm().init(16, 16, 16777216, 16777216);
+
+    try {
+
     test_bis_1();
     test_bis_2();
     test_bis_3();
     test_bis_4();
     test_bis_5();
-    test_sym_1();
-    test_sym_2();
-    test_sym_3();
-    test_sym_4();
 
     //  Tests for zero block structure
-
     test_zeroblk_1();
     test_zeroblk_2();
     test_zeroblk_3();
@@ -68,6 +71,8 @@ void btod_contract2_test::perform() throw(libtest::test_exception) {
     test_contr_20a();
     test_contr_20b();
     test_contr_21();
+    test_contr_22();
+    test_contr_23();
 
     //  Tests for the contraction of a block tensor with itself
 
@@ -75,6 +80,12 @@ void btod_contract2_test::perform() throw(libtest::test_exception) {
     test_self_2();
     test_self_3();
 
+    } catch(...) {
+        allocator<double>::vmm().shutdown();
+        throw;
+    }
+
+    allocator<double>::vmm().shutdown();
 }
 
 
@@ -362,310 +373,6 @@ void btod_contract2_test::test_bis_5() throw(libtest::test_exception) {
             fail_test(testname, __FILE__, __LINE__,
                     "Invalid output block index space.");
         }
-
-    } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
-    }
-}
-
-
-void btod_contract2_test::test_sym_1() throw(libtest::test_exception) {
-
-    static const char *testname = "btod_contract2_test::test_sym_1()";
-
-    typedef std_allocator<double> allocator_t;
-
-    try {
-
-        index<4> i1, i2;
-        i2[0] = 10; i2[1] = 10; i2[2] = 10; i2[3] = 10;
-        dimensions<4> dims(index_range<4>(i1, i2));
-        block_index_space<4> bisa(dims), bis_ref(dims);
-        mask<4> msk, msk1, msk2;
-        msk[0] = true; msk[1] = true; msk[2] = true; msk[3] = true;
-        msk1[0] = true; msk1[1] = true;
-        msk2[2] = true; msk2[3] = true;
-
-        bisa.split(msk, 3);
-        bisa.split(msk, 5);
-        bis_ref.split(msk1, 3);
-        bis_ref.split(msk1, 5);
-        bis_ref.split(msk2, 3);
-        bis_ref.split(msk2, 5);
-
-        block_index_space<4> bisb(bisa);
-        dimensions<4> bidimsa(bisa.get_block_index_dims()),
-                bidimsb(bisb.get_block_index_dims()),
-                bidimsc(bis_ref.get_block_index_dims());
-
-        block_tensor<4, double, allocator_t> bta(bisa), btb(bisb);
-
-        permutation<4> p1230, p1023, p0132;
-        p1230.permute(0, 1).permute(1, 2).permute(2, 3);
-        p1023.permute(0, 1);
-        p0132.permute(2, 3);
-        scalar_transf<double> tr0;
-        se_perm<4, double> cycle4a(p1230, tr0), cycle2a(p1023, tr0);
-        block_tensor_ctrl<4, double> ctrla(bta), ctrlb(btb);
-        ctrla.req_symmetry().insert(cycle4a);
-        ctrla.req_symmetry().insert(cycle2a);
-        ctrlb.req_symmetry().insert(cycle4a);
-        ctrlb.req_symmetry().insert(cycle2a);
-
-        symmetry<4, double> sym_ref(bis_ref);
-        se_perm<4, double> cycle2c_1(p1023, tr0), cycle2c_2(p0132, tr0);
-        sym_ref.insert(cycle2c_1);
-        sym_ref.insert(cycle2c_2);
-
-        contraction2<2, 2, 2> contr;
-        contr.contract(0, 2);
-        contr.contract(1, 3);
-
-        btod_contract2<2, 2, 2> op(contr, bta, btb);
-
-        //~ if(!op.get_symmetry().equals(sym_ref)) {
-        //~ fail_test(testname, __FILE__, __LINE__,
-        //~ "Symmetry does not match reference.");
-        //~ }
-
-    } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
-    }
-}
-
-
-void btod_contract2_test::test_sym_2() throw(libtest::test_exception) {
-
-    //
-    //  c_ijk = a_ipqr b_jpqrk
-    //  Permutational symmetry in ijpqr
-    //
-
-    static const char *testname = "btod_contract2_test::test_sym_2()";
-
-    typedef std_allocator<double> allocator_t;
-
-    try {
-
-        index<3> i3_1, i3_2;
-        i3_2[0] = 10; i3_2[1] = 10; i3_2[2] = 8;
-        dimensions<3> dims3(index_range<3>(i3_1, i3_2));
-        index<4> i4_1, i4_2;
-        i4_2[0] = 10; i4_2[1] = 10; i4_2[2] = 10; i4_2[3] = 10;
-        dimensions<4> dims4(index_range<4>(i4_1, i4_2));
-        index<5> i5_1, i5_2;
-        i5_2[0] = 10; i5_2[1] = 10; i5_2[2] = 10; i5_2[3] = 10; i5_2[4] = 8;
-        dimensions<5> dims5(index_range<5>(i5_1, i5_2));
-
-        block_index_space<4> bisa(dims4);
-        block_index_space<5> bisb(dims5);
-        block_index_space<3> bis_ref(dims3);
-
-        mask<3> msk3_1, msk3_2, msk3_3;
-        msk3_1[0] = true; msk3_2[1] = true; msk3_3[2] = true;
-        mask<4> msk4;
-        msk4[0] = true; msk4[1] = true; msk4[2] = true; msk4[3] = true;
-        mask<5> msk5_1, msk5_2;
-        msk5_1[0] = true; msk5_1[1] = true; msk5_1[2] = true; msk5_1[3] = true;
-        msk5_2[4] = true;
-
-        bisa.split(msk4, 3);
-        bisa.split(msk4, 5);
-        bisb.split(msk5_1, 3);
-        bisb.split(msk5_1, 5);
-        bisb.split(msk5_2, 4);
-        bis_ref.split(msk3_1, 3);
-        bis_ref.split(msk3_1, 5);
-        bis_ref.split(msk3_2, 3);
-        bis_ref.split(msk3_2, 5);
-        bis_ref.split(msk3_3, 4);
-
-        block_tensor<4, double, allocator_t> bta(bisa);
-        block_tensor<5, double, allocator_t> btb(bisb);
-
-        permutation<4> p1230, p1023;
-        p1230.permute(0, 1).permute(1, 2).permute(2, 3);
-        p1023.permute(0, 1);
-
-        permutation<5> p12304, p10234;
-        p12304.permute(0, 1).permute(1, 2).permute(2, 3);
-        p10234.permute(0, 1);
-
-        symmetry<3, double> sym_ref(bis_ref);
-        scalar_transf<double> tr0;
-        se_perm<4, double> cycle4a_1(p1230, tr0), cycle4a_2(p1023, tr0);
-        se_perm<5, double> cycle4b_1(p12304, tr0), cycle4b_2(p10234, tr0);
-
-        block_tensor_ctrl<4, double> ctrla(bta);
-        block_tensor_ctrl<5, double> ctrlb(btb);
-        ctrla.req_symmetry().insert(cycle4a_1);
-        ctrla.req_symmetry().insert(cycle4a_2);
-        ctrlb.req_symmetry().insert(cycle4b_1);
-        ctrlb.req_symmetry().insert(cycle4b_2);
-
-        contraction2<1, 2, 3> contr;
-        contr.contract(1, 1);
-        contr.contract(2, 2);
-        contr.contract(3, 3);
-
-        btod_contract2<1, 2, 3> op(contr, bta, btb);
-
-        //~ if(!op.get_symmetry().equals(sym_ref)) {
-        //~ fail_test(testname, __FILE__, __LINE__,
-        //~ "Symmetry does not match reference.");
-        //~ }
-
-    } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
-    }
-}
-
-void btod_contract2_test::test_sym_3() throw(libtest::test_exception) {
-
-    //
-    //  c_ijpq = a_ijpr b_qr
-    //  Permutational symmetry in (i-j) (p-r) (q-r)
-    //
-
-    static const char *testname = "btod_contract2_test::test_sym_3()";
-
-    typedef std_allocator<double> allocator_t;
-
-    try {
-
-        index<2> i2_1, i2_2;
-        i2_2[0] = 10; i2_2[1] = 10;
-        dimensions<2> dims2(index_range<2>(i2_1, i2_2));
-        index<4> i4_1, i4_2;
-        i4_2[0] = 8; i4_2[1] = 8; i4_2[2] = 10; i4_2[3] = 10;
-        dimensions<4> dims4(index_range<4>(i4_1, i4_2));
-
-        block_index_space<4> bisa(dims4);
-        block_index_space<2> bisb(dims2);
-
-        mask<2> msk2;
-        msk2[0] = true; msk2[1] = true;
-        mask<4> msk4_1, msk4_2;
-        msk4_1[0] = true; msk4_1[1] = true; msk4_2[2] = true; msk4_2[3] = true;
-
-        bisa.split(msk4_1, 3);
-        bisa.split(msk4_1, 5);
-        bisa.split(msk4_2, 4);
-        bisb.split(msk2, 4);
-
-        block_tensor<4, double, allocator_t> bta(bisa);
-        block_tensor<2, double, allocator_t> btb(bisb);
-
-        permutation<4> p0132, p1023;
-        p0132.permute(2, 3);
-        p1023.permute(0, 1);
-
-        permutation<2> p10;
-        p10.permute(0, 1);
-
-        scalar_transf<double> tr0, tr1(-1.);
-        se_perm<2, double> cycle2(p10, tr0);
-        se_perm<4, double> cycle4a(p1023, tr1), cycle4b(p0132, tr1);
-
-        block_tensor_ctrl<4, double> ctrla(bta);
-        block_tensor_ctrl<2, double> ctrlb(btb);
-        ctrla.req_symmetry().insert(cycle4a);
-        ctrla.req_symmetry().insert(cycle4b);
-        ctrlb.req_symmetry().insert(cycle2);
-
-        contraction2<3, 1, 1> contr;
-        contr.contract(3, 1);
-        btod_contract2<3, 1, 1> op(contr, bta, btb);
-
-        const symmetry<4, double> &sym = op.get_symmetry();
-        symmetry<4, double>::iterator is = sym.begin();
-        const symmetry_element_set<4, double> &set = sym.get_subset(is);
-        symmetry_element_set_adapter<4, double, se_perm<4, double> > adapter(set);
-        permutation_group<4, double> grp(set);
-        if (! grp.is_member(tr1, p1023)) {
-            fail_test(testname, __FILE__, __LINE__,
-                    "Permutational anti-symmetry (0-1) missing.");
-        }
-        if (grp.is_member(tr1, p0132)) {
-            fail_test(testname, __FILE__, __LINE__,
-                    "Bad permutational anti-symmetry (2-3).");
-        }
-
-        //~ if(!op.get_symmetry().equals(sym_ref)) {
-        //~ fail_test(testname, __FILE__, __LINE__,
-        //~ "Symmetry does not match reference.");
-        //~ }
-
-    } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
-    }
-}
-
-void btod_contract2_test::test_sym_4() throw(libtest::test_exception) {
-
-    //
-    //  c_ijkl = a_klab b_klab
-    //  Permutational symmetry in (i-j) (a-b) (k-l)
-    //
-
-    static const char *testname = "btod_contract2_test::test_sym_4()";
-
-    typedef std_allocator<double> allocator_t;
-
-    try {
-
-        index<4> i4_1, i4_2;
-        i4_2[0] = 8; i4_2[1] = 8; i4_2[2] = 10; i4_2[3] = 10;
-        dimensions<4> dims4(index_range<4>(i4_1, i4_2));
-
-        block_index_space<4> bis(dims4);
-
-        mask<4> msk4_1, msk4_2;
-        msk4_1[0] = true; msk4_1[1] = true; msk4_2[2] = true; msk4_2[3] = true;
-
-        bis.split(msk4_1, 4);
-        bis.split(msk4_2, 3);
-        bis.split(msk4_2, 5);
-
-        block_tensor<4, double, allocator_t> bta(bis), btb(bis);
-
-        permutation<4> p0132, p1023, p2301;
-        p0132.permute(2, 3);
-        p1023.permute(0, 1);
-        p2301.permute(0, 2).permute(1, 3);
-
-        scalar_transf<double> tr1(-1.);
-        se_perm<4, double> cycle4a(p1023, tr1), cycle4b(p0132, tr1);
-
-        block_tensor_ctrl<4, double> ctrla(bta), ctrlb(btb);
-        ctrla.req_symmetry().insert(cycle4a);
-        ctrla.req_symmetry().insert(cycle4b);
-        ctrlb.req_symmetry().insert(cycle4a);
-        ctrlb.req_symmetry().insert(cycle4b);
-
-        contraction2<2, 2, 2> contr(p2301);
-        contr.contract(2, 2);
-        contr.contract(3, 3);
-        btod_contract2<2, 2, 2> op(contr, bta, btb);
-
-        const symmetry<4, double> &sym = op.get_symmetry();
-        symmetry<4, double>::iterator is = sym.begin();
-        const symmetry_element_set<4, double> &set = sym.get_subset(is);
-        symmetry_element_set_adapter<4, double, se_perm<4, double> > adapter(set);
-        permutation_group<4, double> grp(set);
-        if (! grp.is_member(tr1, p1023)) {
-            fail_test(testname, __FILE__, __LINE__,
-                    "Permutational anti-symmetry (0-1) missing.");
-        }
-        if (! grp.is_member(tr1, p0132)) {
-            fail_test(testname, __FILE__, __LINE__,
-                    "Permutational anti-symmetry (2-3) missing.");
-        }
-
-        //~ if(!op.get_symmetry().equals(sym_ref)) {
-        //~ fail_test(testname, __FILE__, __LINE__,
-        //~ "Symmetry does not match reference.");
-        //~ }
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
@@ -2850,6 +2557,212 @@ void btod_contract2_test::test_contr_21() throw(libtest::test_exception) {
         fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
     }
 
+}
+
+
+void btod_contract2_test::test_contr_22() {
+
+    //
+    //  c_{ijkl} = a_{kpr} a_{lqr} b_{ijpq}
+    //  [k,l,p,q] = 9, [ij] = 5, [r] = 11
+    //  Permutational antisymmetry between (i,j) and (p,q) in b_{ijpq}
+    //  Permutation symmetry between (k,p) in a_{kpr}
+    //  Contraction is done in two steps
+    //
+
+    static const char *testname = "btod_contract2_test::test_contr_22()";
+
+    typedef std_allocator<double> allocator_t;
+
+    try {
+
+        size_t ni = 5, nj = ni, nk = 9, nl = nk, np = nk, nq = nk, nr = 11;
+
+        index<3> ia;
+        ia[0] = nk - 1; ia[1] = np - 1; ia[2] = nr - 1;
+        dimensions<3> dimsa(index_range<3>(index<3>(), ia));
+        index<4> ib;
+        ib[0] = ni - 1; ib[1] = nj - 1; ib[2] = np - 1; ib[3] = nq - 1;
+        dimensions<4> dimsb(index_range<4>(index<4>(), ib));
+        index<4> ic;
+        ic[0] = ni - 1; ic[1] = nj - 1; ic[2] = nk - 1; ic[3] = nl - 1;
+        dimensions<4> dimsc(index_range<4>(index<4>(), ic));
+        index<4> ii;
+        ii[0] = nk - 1; ii[1] = nl - 1; ii[2] = np - 1; ii[3] = nq - 1;
+        dimensions<4> dimsi(index_range<4>(index<4>(), ii));
+
+        block_index_space<3> bisa(dimsa);
+        mask<3> m110, m001;
+        m110[0] = true; m110[1] = true; m001[2] = true;
+        bisa.split(m110, 3);
+        bisa.split(m110, 7);
+        bisa.split(m001, 5);
+
+        block_index_space<4> bisb(dimsb);
+        mask<4> m1100, m0011;
+        m1100[0] = true; m1100[1] = true; m0011[2] = true; m0011[3] = true;
+        bisb.split(m1100, 2);
+        bisb.split(m1100, 3);
+        bisb.split(m0011, 3);
+        bisb.split(m0011, 7);
+
+        block_index_space<4> bisc(dimsc);
+        bisc.split(m1100, 2);
+        bisc.split(m1100, 3);
+        bisc.split(m0011, 3);
+        bisc.split(m0011, 7);
+
+        block_index_space<4> bisi(dimsi);
+        mask<4> m1111;
+        m1111[0] = true; m1111[1] = true; m1111[2] = true; m1111[3] = true;
+        bisi.split(m1111, 3);
+        bisi.split(m1111, 7);
+
+        block_tensor<3, double, allocator_t> bta(bisa);
+        block_tensor<4, double, allocator_t> btb(bisb), btc(bisc), bti(bisi);
+
+        //  Set symmetry
+
+        se_perm<3, double> seperma1(permutation<3>().permute(0, 1),
+            scalar_transf<double>(1.0));
+        se_perm<4, double> sepermb1(permutation<4>().permute(0, 1),
+            scalar_transf<double>(-1.0));
+        se_perm<4, double> sepermb2(permutation<4>().permute(2, 3),
+            scalar_transf<double>(-1.0));
+        se_perm<4, double> sepermi1(permutation<4>().permute(0, 2),
+            scalar_transf<double>(1.0));
+        se_perm<4, double> sepermi2(permutation<4>().permute(1, 3),
+            scalar_transf<double>(1.0));
+        se_perm<4, double> sepermi3(permutation<4>().permute(0, 1).
+            permute(2, 3), scalar_transf<double>(1.0));
+        symmetry<4, double> symi_ref(bisi);
+
+        {
+            block_tensor_ctrl<3, double> ca(bta);
+            ca.req_symmetry().insert(seperma1);
+
+            block_tensor_ctrl<4, double> cb(btb);
+            cb.req_symmetry().insert(sepermb1);
+            cb.req_symmetry().insert(sepermb2);
+
+            symi_ref.insert(sepermi1);
+            symi_ref.insert(sepermi2);
+            symi_ref.insert(sepermi3);
+        }
+
+        //  Load random data for input
+
+        btod_random<3>().perform(bta);
+        btod_random<4>().perform(btb);
+        bta.set_immutable();
+        btb.set_immutable();
+
+        //  Run contraction
+
+        // a_{kpr} a_{lqr} -> I_{klpq}
+        // kplq -> klpq
+        contraction2<2, 2, 1> contr1(permutation<4>().permute(1, 2));
+        contr1.contract(2, 2);
+        // I_{klpq} b_{ijpq} -> c_{ijkl}
+        // klij -> ijkl
+        contraction2<2, 2, 2> contr2(permutation<4>().permute(0, 2).
+            permute(1, 3));
+        contr2.contract(2, 2);
+        contr2.contract(3, 3);
+
+        btod_contract2<2, 2, 1>(contr1, bta, bta).perform(bti);
+        {
+        block_tensor_ctrl<4, double> ctrli(bti);
+        compare_ref<4>::compare(testname, ctrli.req_const_symmetry(), symi_ref);
+        }
+        btod_contract2<2, 2, 2>(contr2, bti, btb).perform(btc);
+
+        //  Convert block tensors to regular tensors
+
+        dense_tensor<3, double, allocator_t> ta(dimsa);
+        dense_tensor<4, double, allocator_t> tb(dimsb), ti(dimsi),
+            ti_ref(dimsi), tc(dimsc), tc_ref(dimsc);
+        tod_btconv<3>(bta).perform(ta);
+        tod_btconv<4>(btb).perform(tb);
+        tod_btconv<4>(btc).perform(tc);
+        tod_btconv<4>(bti).perform(ti);
+
+        //  Compute reference tensor
+
+        tod_contract2<2, 2, 1>(contr1, ta, ta).perform(true, 1.0, ti_ref);
+        tod_contract2<2, 2, 2>(contr2, ti_ref, tb).perform(true, 1.0, tc_ref);
+
+        //  Compare against reference
+
+        compare_ref<4>::compare(testname, ti, ti_ref, 1e-13);
+        compare_ref<4>::compare(testname, tc, tc_ref, 1e-13);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void btod_contract2_test::test_contr_23() {
+
+    const char *testname = "btod_contract2_test::test_contr_23()";
+
+    typedef std_allocator<double> allocator_t;
+
+    try {
+
+    index<4> i4a, i4b;
+    i4b[0] = 9; i4b[1] = 9; i4b[2] = 10; i4b[3] = 19;
+    dimensions<4> dims_ijka(index_range<4>(i4a, i4b));
+    i4b[0] = 10; i4b[1] = 9; i4b[2] = 9; i4b[3] = 19;
+    dimensions<4> dims_kija(index_range<4>(i4a, i4b));
+    i4b[0] = 9; i4b[1] = 9; i4b[2] = 19; i4b[3] = 19;
+    dimensions<4> dims_ijab(index_range<4>(i4a, i4b));
+
+    block_index_space<4> bis_ijka(dims_ijka), bis_kija(dims_kija),
+        bis_ijab(dims_ijab);
+    mask<4> m0001, m0011, m0110, m1000, m1100;
+    m1000[0] = true; m0001[3] = true;
+    m0110[1] = true; m0110[2] = true;
+    m1100[0] = true; m1100[1] = true; m0011[2] = true; m0011[3] = true;
+    bis_ijka.split(m1100, 3);
+    bis_ijka.split(m1100, 5);
+    bis_ijka.split(m0001, 6);
+    bis_ijka.split(m0001, 13);
+    bis_kija.split(m0110, 3);
+    bis_kija.split(m0110, 5);
+    bis_kija.split(m0001, 6);
+    bis_kija.split(m0001, 13);
+    bis_ijab.split(m1100, 3);
+    bis_ijab.split(m1100, 5);
+    bis_ijab.split(m0011, 6);
+    bis_ijab.split(m0011, 13);
+
+    block_tensor<4, double, allocator_t> bt1(bis_kija), bt2(bis_ijab),
+        bt3(bis_ijka);
+
+    btod_random<4>().perform(bt1);
+    btod_random<4>().perform(bt2);
+    bt1.set_immutable();
+    bt2.set_immutable();
+
+    contraction2<2, 2, 2> contr(permutation<4>().permute(0, 2));
+    contr.contract(1, 1);
+    contr.contract(3, 3);
+    btod_contract2<2, 2, 2>(contr, bt1, bt2).perform(bt3);
+
+    dense_tensor<4, double, allocator_t> t1(dims_kija), t2(dims_ijab),
+        t3(dims_ijka), t3_ref(dims_ijka);
+    tod_btconv<4>(bt1).perform(t1);
+    tod_btconv<4>(bt2).perform(t2);
+    tod_btconv<4>(bt3).perform(t3);
+    tod_contract2<2, 2, 2>(contr, t1, t2).perform(true, 1.0, t3_ref);
+
+    compare_ref<4>::compare(testname, t3, t3_ref, 6e-14);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
 }
 
 

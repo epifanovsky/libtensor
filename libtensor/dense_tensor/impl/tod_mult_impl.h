@@ -1,7 +1,12 @@
 #ifndef LIBTENSOR_TOD_MULT_IMPL_H
 #define LIBTENSOR_TOD_MULT_IMPL_H
 
+#include <memory>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
+#include <libtensor/linalg/linalg.h>
+#include <libtensor/kernels/kern_ddiv2.h>
+#include <libtensor/kernels/kern_dmul2.h>
+#include <libtensor/kernels/loop_list_runner.h>
 #include <libtensor/tod/bad_dimensions.h>
 #include "../tod_mult.h"
 
@@ -13,10 +18,35 @@ const char *tod_mult<N>::k_clazz = "tod_mult<N>";
 
 
 template<size_t N>
+tod_mult<N>::tod_mult(
+        dense_tensor_rd_i<N, double> &ta, const tensor_transf<N, double> &tra,
+        dense_tensor_rd_i<N, double> &tb, const tensor_transf<N, double> &trb,
+        bool recip, const scalar_transf<double> &trc) :
+
+        m_ta(ta), m_tb(tb), m_tra(tra), m_trb(trb),
+        m_dimsc(ta.get_dims()), m_recip(recip), m_trc(trc) {
+
+    static const char *method = "tod_mult("
+            "dense_tensor_rd_i<N, double>&, const tensor_transf<N, double> &, "
+            "dense_tensor_rd_i<N, double>&, const tensor_transf<N, double> &, "
+            "bool, const scalar_transf<double> &)";
+
+    m_dimsc.permute(tra.get_perm());
+    dimensions<N> dimsb(tb.get_dims());
+    dimsb.permute(trb.get_perm());
+
+    if(!m_dimsc.equals(dimsb)) {
+        throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__,
+                "ta, tb");
+    }
+}
+
+
+template<size_t N>
 tod_mult<N>::tod_mult(dense_tensor_rd_i<N, double> &ta,
     dense_tensor_rd_i<N, double> &tb, bool recip, double c) :
 
-    m_ta(ta), m_tb(tb), m_dimsc(ta.get_dims()), m_recip(recip), m_c(c) {
+    m_ta(ta), m_tb(tb), m_dimsc(ta.get_dims()), m_recip(recip), m_trc(c) {
 
     static const char *method = "tod_mult(dense_tensor_rd_i<N, double>&, "
         "dense_tensor_rd_i<N, double>&, bool, double)";
@@ -29,15 +59,18 @@ tod_mult<N>::tod_mult(dense_tensor_rd_i<N, double> &ta,
 
 
 template<size_t N>
-tod_mult<N>::tod_mult(dense_tensor_rd_i<N, double> &ta,
-    const permutation<N> &pa, dense_tensor_rd_i<N, double> &tb,
-    const permutation<N> &pb, bool recip, double c) :
+tod_mult<N>::tod_mult(
+        dense_tensor_rd_i<N, double> &ta, const permutation<N> &pa,
+        dense_tensor_rd_i<N, double> &tb, const permutation<N> &pb,
+        bool recip, double c) :
 
-    m_ta(ta), m_tb(tb), m_perma(pa), m_permb(pb),
-    m_dimsc(ta.get_dims()), m_recip(recip), m_c(c) {
+        m_ta(ta), m_tb(tb), m_tra(pa), m_trb(pb),
+        m_dimsc(ta.get_dims()), m_recip(recip), m_trc(c) {
 
-    static const char *method = "tod_mult(dense_tensor_rd_i<N, double>&,"
-        " permutation<N>, dense_tensor_rd_i<N, double>&, permutation<N>, bool)";
+    static const char *method = "tod_mult("
+            "dense_tensor_rd_i<N, double>&, permutation<N>, "
+            "dense_tensor_rd_i<N, double>&, permutation<N>, "
+            "bool, double)";
 
     m_dimsc.permute(pa);
     dimensions<N> dimsb(tb.get_dims());
@@ -45,7 +78,7 @@ tod_mult<N>::tod_mult(dense_tensor_rd_i<N, double> &ta,
 
     if(!m_dimsc.equals(dimsb)) {
         throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__,
-            "ta, tb");
+                "ta, tb");
     }
 }
 
@@ -60,22 +93,7 @@ void tod_mult<N>::prefetch() {
 
 
 template<size_t N>
-void tod_mult<N>::perform(dense_tensor_wr_i<N, double> &tc) {
-
-    perform(true, 1.0, tc);
-}
-
-
-template<size_t N>
-void tod_mult<N>::perform(dense_tensor_wr_i<N, double> &tc, double c) {
-
-    perform(false, c, tc);
-}
-
-
-template<size_t N>
-void tod_mult<N>::perform(bool zero, double c,
-    dense_tensor_wr_i<N, double> &tc) {
+void tod_mult<N>::perform(bool zero, dense_tensor_wr_i<N, double> &tc) {
 
     static const char *method = "perform(bool, double, "
         "dense_tensor_wr_i<N, double>&)";
@@ -83,10 +101,6 @@ void tod_mult<N>::perform(bool zero, double c,
     if(!m_dimsc.equals(tc.get_dims())) {
         throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "tc");
     }
-
-    typedef typename loop_list_elem::list_t list_t;
-    typedef typename loop_list_elem::registers registers_t;
-    typedef typename loop_list_elem::node node_t;
 
     tod_mult<N>::start_timer();
 
@@ -102,14 +116,40 @@ void tod_mult<N>::perform(bool zero, double c,
     const dimensions<N> &dimsb = m_tb.get_dims();
     const dimensions<N> &dimsc = tc.get_dims();
 
-    list_t loop;
-    build_loop(loop, dimsa, m_perma, dimsb, m_permb, dimsc);
+    sequence<N, size_t> mapa(0), mapb(0);
+    for(size_t i = 0; i < N; i++) mapa[i] = mapb[i] = i;
+    m_tra.get_perm().apply(mapa);
+    m_trb.get_perm().apply(mapb);
+
+    std::list< loop_list_node<2, 1> > loop_in, loop_out;
+    typename std::list< loop_list_node<2, 1> >::iterator inode = loop_in.end();
+    for (size_t idxc = 0; idxc < N; ) {
+        size_t len = 1;
+        size_t idxa = mapa[idxc], idxb = mapb[idxc];
+
+        do {
+            len *= dimsa.get_dim(idxa);
+            idxa++; idxb++; idxc++;
+        } while (idxc < N && mapa[idxc] == idxa && mapb[idxc] == idxb);
+
+        inode = loop_in.insert(loop_in.end(), loop_list_node<2, 1>(len));
+        inode->stepa(0) = dimsa.get_increment(idxa - 1);
+        inode->stepa(1) = dimsb.get_increment(idxb - 1);
+        inode->stepb(0) = dimsc.get_increment(idxc - 1);
+    }
 
     const double *pa = ca.req_const_dataptr();
     const double *pb = cb.req_const_dataptr();
     double *pc = cc.req_dataptr();
 
-    registers_t r;
+    if(zero) {
+        tod_mult<N>::start_timer("zero");
+        size_t sz = dimsc.get_size();
+        for(size_t i = 0; i < sz; i++) pc[i] = 0.0;
+        tod_mult<N>::stop_timer("zero");
+    }
+
+    loop_registers<2, 1> r;
     r.m_ptra[0] = pa;
     r.m_ptra[1] = pb;
     r.m_ptrb[0] = pc;
@@ -117,7 +157,18 @@ void tod_mult<N>::perform(bool zero, double c,
     r.m_ptra_end[1] = pb + dimsb.get_size();
     r.m_ptrb_end[0] = pc + dimsc.get_size();
 
-    loop_list_elem::run_loop(loop, r, m_c * c, !zero, m_recip);
+    double kc = m_tra.get_scalar_tr().get_coeff();
+    if (m_recip) kc /= m_trb.get_scalar_tr().get_coeff();
+    else kc *= m_trb.get_scalar_tr().get_coeff();
+    kc *= m_trc.get_coeff();
+
+    std::auto_ptr< kernel_base<linalg, 2, 1> > kern(
+        m_recip ?
+            kern_ddiv2::match(kc, loop_in, loop_out) :
+            kern_dmul2<linalg>::match(kc, loop_in, loop_out));
+    tod_mult<N>::start_timer(kern->get_name());
+    loop_list_runner<linalg, 2, 1>(loop_in).run(0, r, *kern);
+    tod_mult<N>::stop_timer(kern->get_name());
 
     cc.ret_dataptr(pc); pc = 0;
     cb.ret_const_dataptr(pb); pb = 0;
@@ -129,38 +180,6 @@ void tod_mult<N>::perform(bool zero, double c,
     }
 
     tod_mult<N>::stop_timer();
-}
-
-
-template<size_t N>
-void tod_mult<N>::build_loop(typename loop_list_elem::list_t &loop,
-    const dimensions<N> &dimsa, const permutation<N> &perma,
-    const dimensions<N> &dimsb, const permutation<N> &permb,
-    const dimensions<N> &dimsc) {
-
-    typedef typename loop_list_elem::iterator_t iterator_t;
-    typedef typename loop_list_elem::node node_t;
-
-    sequence<N, size_t> mapa(0), mapb(0);
-    for(size_t i = 0; i < N; i++) mapa[i] = mapb[i] = i;
-    perma.apply(mapa);
-    permb.apply(mapb);
-
-    for (size_t idxc = 0; idxc < N; ) {
-        size_t len = 1;
-        size_t idxa = mapa[idxc], idxb = mapb[idxc];
-
-        do {
-            len *= dimsa.get_dim(idxa);
-            idxa++; idxb++; idxc++;
-        } while (idxc < N && mapa[idxc] == idxa && mapb[idxc] == idxb);
-
-        iterator_t inode = loop.insert(loop.end(), node_t(len));
-        inode->stepa(0) = dimsa.get_increment(idxa - 1);
-        inode->stepa(1) = dimsb.get_increment(idxb - 1);
-        inode->stepb(0) = dimsc.get_increment(idxc - 1);
-    }
-
 }
 
 

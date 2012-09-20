@@ -3,22 +3,28 @@
 
 #include <algorithm>
 #include <libtensor/defs.h>
-#include <libtensor/core/abs_index.h>
 #include "../bad_symmetry.h"
 
+
 namespace libtensor {
+
 
 template<size_t N, typename T>
 const char *se_part<N, T>::k_clazz = "se_part<N, T>";
 
+
 template<size_t N, typename T>
 const char *se_part<N, T>::k_sym_type = "part";
+
 
 template<size_t N, typename T>
 se_part<N, T>::se_part(const block_index_space<N> &bis,
         const mask<N> &msk, size_t npart) :
         m_bis(bis), m_bidims(m_bis.get_block_index_dims()),
-        m_pdims(make_pdims(bis, msk, npart)), m_fmap(0), m_rmap(0), m_ftr(0) {
+        m_pdims(make_pdims(bis, msk, npart)),
+        m_bipdims(make_bipdims(m_bis.get_block_index_dims(),
+                make_pdims(bis, msk, npart))),
+        m_fmap(0), m_rmap(0), m_ftr(0) {
 
     static const char *method =
         "se_part(const block_index_space<N>&, const mask<N>&, size_t)";
@@ -32,10 +38,12 @@ se_part<N, T>::se_part(const block_index_space<N> &bis,
     }
 }
 
+
 template<size_t N, typename T>
 se_part<N, T>::se_part(const block_index_space<N> &bis,
         const dimensions<N> &pdims) :
         m_bis(bis), m_bidims(m_bis.get_block_index_dims()), m_pdims(pdims),
+        m_bipdims(make_bipdims(m_bis.get_block_index_dims(), pdims)),
         m_fmap(0), m_rmap(0), m_ftr(0) {
 
     static const char *method =
@@ -56,10 +64,11 @@ se_part<N, T>::se_part(const block_index_space<N> &bis,
     }
 }
 
+
 template<size_t N, typename T>
 se_part<N, T>::se_part(const se_part<N, T> &elem) :
     m_bis(elem.m_bis), m_bidims(elem.m_bidims), m_pdims(elem.m_pdims),
-    m_fmap(0), m_ftr(0) {
+    m_bipdims(elem.m_bipdims), m_fmap(0), m_ftr(0) {
 
     size_t mapsz = m_pdims.get_size();
     m_fmap = new size_t[mapsz];
@@ -72,6 +81,7 @@ se_part<N, T>::se_part(const se_part<N, T> &elem) :
     }
 }
 
+
 template<size_t N, typename T>
 se_part<N, T>::~se_part() {
 
@@ -79,6 +89,7 @@ se_part<N, T>::~se_part() {
     delete [] m_rmap; m_rmap = 0;
     delete [] m_ftr; m_ftr = 0;
 }
+
 
 template<size_t N, typename T>
 void se_part<N, T>::add_map(const index<N> &idx1,
@@ -155,6 +166,7 @@ void se_part<N, T>::add_map(const index<N> &idx1,
     add_to_loop(a, b, sab);
 }
 
+
 template<size_t N, typename T>
 void se_part<N, T>::mark_forbidden(const index<N> &idx) {
 
@@ -184,12 +196,6 @@ void se_part<N, T>::mark_forbidden(const index<N> &idx) {
     m_ftr[a].reset();
 }
 
-template<size_t N, typename T>
-bool se_part<N, T>::is_forbidden(const index<N> &idx) const {
-
-    abs_index<N> apidx(idx, m_pdims);
-    return (m_fmap[apidx.get_abs_index()] == (size_t) -1);
-}
 
 template<size_t N, typename T>
 index<N> se_part<N, T>::get_direct_map(const index<N> &idx) const {
@@ -207,9 +213,10 @@ index<N> se_part<N, T>::get_direct_map(const index<N> &idx) const {
     return afpidx.get_index();
 }
 
+
 template<size_t N, typename T>
-scalar_transf<T> se_part<N, T>::get_transf(
-        const index<N> &from, const index<N> &to) const {
+scalar_transf<T> se_part<N, T>::get_transf(const index<N> &from,
+        const index<N> &to) const {
 
     static const char *method = "get_transf(const index<N>&, const index<N>&)";
 
@@ -234,6 +241,7 @@ scalar_transf<T> se_part<N, T>::get_transf(
     return tr;
 }
 
+
 template<size_t N, typename T>
 bool se_part<N, T>::map_exists(
     const index<N> &from, const index<N> &to) const {
@@ -253,27 +261,25 @@ bool se_part<N, T>::map_exists(
     return (x == b);
 }
 
+
 template<size_t N, typename T>
 bool se_part<N, T>::is_valid_bis(const block_index_space<N> &bis) const {
 
     return m_bis.equals(bis);
 }
 
+
 template<size_t N, typename T>
 bool se_part<N, T>::is_allowed(const index<N> &idx) const {
 
     index<N> pidx;
     for (register size_t i = 0; i < N; i++) {
-        if (m_pdims[i] == 1) {
-            pidx[i] = 0;
-        }
-        else {
-            register size_t n = m_bidims[i] / m_pdims[i];
-            pidx[i] = idx[i] / n;
-        }
+        pidx[i] = idx[i] / m_bipdims[i];
     }
+    
     return !is_forbidden(pidx);
 }
+
 
 template<size_t N, typename T>
 void se_part<N, T>::permute(const permutation<N> &perm) {
@@ -282,6 +288,7 @@ void se_part<N, T>::permute(const permutation<N> &perm) {
 
     m_bis.permute(perm);
     m_bidims.permute(perm);
+    m_bipdims.permute(perm);
 
     bool affects_map = false;
     for (size_t i = 0; i < N; i++) {
@@ -330,49 +337,34 @@ void se_part<N, T>::permute(const permutation<N> &perm) {
     }
 }
 
-template<size_t N, typename T>
-void se_part<N, T>::apply(index<N> &idx) const {
-
-    tensor_transf<N, T> tr;
-    apply(idx, tr);
-}
 
 template<size_t N, typename T>
 void se_part<N, T>::apply(index<N> &idx, tensor_transf<N, T> &tr) const {
 
-    static const char *method = "apply(index<N> &, tensor_transf<N, T> &)";
-
     //  Determine partition index and offset within partition
     //
-    index<N> pidx, poff;
+    index<N> pidx1;
     for(register size_t i = 0; i < N; i++) {
-        if(m_pdims[i] == 1) {
-            pidx[i] = 0;
-            poff[i] = idx[i];
-        } else {
-            register size_t n = m_bidims[i] / m_pdims[i];
-            pidx[i] = idx[i] / n;
-            poff[i] = idx[i] % n;
-        }
+        pidx1[i] = idx[i] / m_bipdims[i];
     }
 
     //  Map the partition index
     //
-    abs_index<N> apidx(pidx, m_pdims);
+    abs_index<N> apidx(pidx1, m_pdims);
     if (m_fmap[apidx.get_abs_index()] == (size_t) -1) return;
 
     abs_index<N> apidx_mapped(m_fmap[apidx.get_abs_index()], m_pdims);
-    pidx = apidx_mapped.get_index();
+    const index<N> &pidx2 = apidx_mapped.get_index();
 
     //  Construct a mapped block index
     //
     for(register size_t i = 0; i < N; i++) {
-        register size_t n = m_bidims[i] / m_pdims[i];
-        idx[i] = pidx[i] * n + poff[i];
+        idx[i] -= (pidx1[i] - pidx2[i]) * m_bipdims[i];
     }
 
     tr.transform(m_ftr[apidx.get_abs_index()]);
 }
+
 
 template<size_t N, typename T>
 dimensions<N> se_part<N, T>::make_pdims(const block_index_space<N> &bis,
@@ -413,6 +405,30 @@ dimensions<N> se_part<N, T>::make_pdims(const block_index_space<N> &bis,
     return pdims;
 }
 
+
+template<size_t N, typename T>
+dimensions<N> se_part<N, T>::make_bipdims(
+        const dimensions<N> &bidims, const dimensions<N> &pdims) {
+
+    static const char *method = "make_bipdims(const dimensions<N>&, "
+        "const dimensions<N>&)";
+
+    index<N> i1, i2;
+    for(register size_t i = 0; i < N; i++) {
+#ifdef LIBTENSOR_DEBUG
+        if (bidims[i] % pdims[i] != 0) {
+            throw bad_symmetry(g_ns, k_clazz, method,
+                    __FILE__, __LINE__, "pdims");
+        }
+#endif
+
+        i2[i] = bidims[i] / pdims[i] - 1;
+    }
+
+    return dimensions<N>(index_range<N>(i1, i2));
+}
+
+
 template<size_t N, typename T>
 bool se_part<N, T>::is_valid_pdims(
     const block_index_space<N> &bis, const dimensions<N> &d) {
@@ -441,6 +457,7 @@ bool se_part<N, T>::is_valid_pdims(
     return true;
 }
 
+
 template<size_t N, typename T>
 void se_part<N, T>::add_to_loop(size_t a, size_t b,
         const scalar_transf<T> &tr) {
@@ -467,6 +484,7 @@ void se_part<N, T>::add_to_loop(size_t a, size_t b,
     m_ftr[a].transform(tx.invert());
 }
 
+
 template<size_t N, typename T>
 bool se_part<N, T>::is_valid_pidx(const index<N> &idx) {
 
@@ -475,7 +493,9 @@ bool se_part<N, T>::is_valid_pidx(const index<N> &idx) {
     return true;
 }
 
+
 } // namespace libtensor
+
 
 #endif // LIBTENSOR_SE_PART_IMPL_H
 

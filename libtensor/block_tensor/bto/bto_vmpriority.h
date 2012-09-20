@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_BTO_VMPRIORITY_H
 #define LIBTENSOR_BTO_VMPRIORITY_H
 
-#include <libtensor/core/block_tensor_i.h>
+#include <libtensor/block_tensor/block_tensor_i.h>
 
 namespace libtensor {
 

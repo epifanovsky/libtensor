@@ -3,6 +3,8 @@
 
 #include <list>
 #include <libtensor/timings.h>
+#include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/core/tensor_transf.h>
 #include "dense_tensor_i.h"
 
 namespace libtensor {
@@ -33,15 +35,32 @@ public:
         k_orderc = N + M //!< Order of result (C)
     };
 
+    typedef scalar_transf<double> scalar_transf_type;
+    typedef tensor_transf<k_orderc, double> tensor_transf_type;
+
 private:
     dense_tensor_rd_i<k_ordera, double> &m_ta; //!< First %tensor (A)
     dense_tensor_rd_i<k_orderb, double> &m_tb; //!< Second %tensor (B)
-    double m_ka; //!< Coefficient A
-    double m_kb; //!< Coefficient B
-    permutation<k_orderc> m_permc; //!< Permutation of the result
+    scalar_transf_type m_ka; //!< Coefficient A
+    scalar_transf_type m_kb; //!< Coefficient B
+    tensor_transf_type m_trc; //!< Tensor transformation of the result
     dimensions<k_orderc> m_dimsc; //!< Dimensions of the result
 
 public:
+    /** \brief Initializes the operation
+        \param ta First input tensor
+        \param ka Scalar transformation applied to ta
+        \param tb Second input tensor
+        \param kb Scalar transformation applied to tb
+        \param trc Tensor transformation applied to result
+     **/
+    tod_dirsum(
+            dense_tensor_rd_i<k_ordera, double> &ta,
+            const scalar_transf_type &ka,
+            dense_tensor_rd_i<k_orderb, double> &tb,
+            const scalar_transf_type &kb,
+            const tensor_transf_type &trc = tensor_transf_type());
+
     /** \brief Initializes the operation
      **/
     tod_dirsum(dense_tensor_rd_i<k_ordera, double> &ta, double ka,
@@ -58,7 +77,7 @@ public:
         \param d Scaling coefficient for the result.
         \param tc Output tensor.
      **/
-    void perform(bool zero, double d, dense_tensor_wr_i<k_orderc, double> &tc);
+    void perform(bool zero, dense_tensor_wr_i<k_orderc, double> &tc);
 
 private:
     static dimensions<N + M> mk_dimsc(dense_tensor_rd_i<k_ordera, double> &ta,

@@ -6,8 +6,8 @@
 #include "../exception.h"
 #include "../timings.h"
 #include "../core/allocator.h"
-#include "../core/block_tensor_i.h"
 #include "../tod/bad_dimensions.h"
+#include <libtensor/block_tensor/block_tensor_i.h>
 #include "btod_import_raw.h"
 
 namespace libtensor {

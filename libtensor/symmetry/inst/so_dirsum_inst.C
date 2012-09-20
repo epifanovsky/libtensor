@@ -1,8 +1,9 @@
-#include <libtensor/btod/scalar_transf_double.h>
+#include <libtensor/core/scalar_transf_double.h>
 #include "../so_dirsum.h"
 #include "so_dirsum_impl.h"
 
 namespace libtensor {
+
 
 template class so_dirsum<1, 1, double>;
 template class so_dirsum<1, 2, double>;
@@ -40,7 +41,8 @@ template class so_dirsum<6, 3, double>;
 template class so_dirsum<6, 4, double>;
 template class so_dirsum<6, 5, double>;
 template class so_dirsum<6, 6, double>;
+template class so_dirsum<7, 7, double>;
+template class so_dirsum<8, 8, double>;
+
 
 } // namespace libtensor
-
-

@@ -1,8 +1,8 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
-#include <libtensor/core/block_tensor.h>
-#include <libtensor/btod/scalar_transf_double.h>
-#include <libtensor/btod/btod_copy.h>
+#include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/block_tensor/block_tensor.h>
+#include <libtensor/block_tensor/btod_copy.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/dense_tensor/tod_btconv.h>
@@ -50,6 +50,8 @@ void btod_copy_test::perform() throw(libtest::test_exception) {
     //~ test_dir_2();
     //~ test_dir_3();
     //~ test_dir_4();
+
+    test_bug_1();
 }
 
 
@@ -1783,7 +1785,7 @@ void btod_copy_test::test_dir_2() throw(libtest::test_exception) {
     typedef std_allocator<double> allocator_t;
     typedef tensor<2, double, allocator_t> tensor_t;
     typedef dense_tensor_ctrl<2, double> tensor_ctrl_t;
-    typedef block_tensor<2, double, allocator_t> block_tensor_t;
+    typedef block_tensor<2, double, allocator_t> block_tensor_type;
     typedef block_tensor_ctrl<2, double> block_tensor_ctrl_t;
 
     try {
@@ -1976,6 +1978,61 @@ void btod_copy_test::test_dir_4() throw(libtest::test_exception) {
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
     }*/
+}
+
+
+/** \test Test for a bug with incorrect combination of transformations
+ **/
+void btod_copy_test::test_bug_1() throw(libtest::test_exception) {
+
+    static const char *testname = "btod_copy_test::test_bug_1()";
+
+    typedef std_allocator<double> allocator_t;
+
+    try {
+
+    index<4> i1, i2;
+    i2[0] = 10; i2[1] = 10; i2[2] = 10; i2[3] = 10;
+    dimensions<4> dims(index_range<4>(i1, i2));
+    block_index_space<4> bis(dims);
+    mask<4> m;
+    m[0] = true; m[1] = true; m[2] = true; m[3] = true;
+    bis.split(m, 2);
+    bis.split(m, 5);
+
+    i2[0] = 1; i2[1] = 1; i2[2] = 2; i2[3] = 1;
+    dimensions<4> dims0100(index_range<4>(i1, i2));
+
+    block_tensor<4, double, allocator_t> bta(bis);
+
+    //  Set up initial symmetry and fill in random input
+    scalar_transf<double> tr0;
+
+    {
+        block_tensor_ctrl<4, double> ctrla(bta);
+        ctrla.req_symmetry().insert(se_perm<4, double>(
+            permutation<4>().permute(0, 1), tr0));
+        ctrla.req_symmetry().insert(se_perm<4, double>(
+            permutation<4>().permute(2, 3), tr0));
+    }
+    btod_random<4>().perform(bta);
+    bta.set_immutable();
+
+    index<4> i0100;
+    i0100[0] = 0; i0100[1] = 1; i0100[2] = 0; i0100[3] = 0;
+
+    permutation<4> p2013;
+    p2013.permute(0, 2).permute(1, 2); // 0123->2103->2013
+    tensor_transf<4, double> tr0100(p2013);
+
+    dense_tensor<4, double, allocator_t> ta0100(dims0100);
+
+    btod_copy<4> op_copy(bta);
+    op_copy.compute_block(true, ta0100, i0100, tr0100, 1.0);
+
+    } catch(exception &exc) {
+        fail_test(testname, __FILE__, __LINE__, exc.what());
+    }
 }
 
 
