@@ -167,9 +167,9 @@ template<size_t N, size_t M>
 void btod_extract<N, M>::perform(block_tensor_i<N - M, double> &btb,
     const double &c) {
 
-    typedef block_tensor_ctrl<N - M, double> block_tensor_ctrl_type;
+    typedef typename btod_traits::bti_traits bti_traits;
 
-    block_tensor_ctrl_type cb(btb);
+    gen_block_tensor_rd_ctrl<N - M, bti_traits> cb(btb);
     addition_schedule<N - M, btod_traits> asch(m_sym, cb.req_const_symmetry());
     asch.build(get_schedule(), cb);
 

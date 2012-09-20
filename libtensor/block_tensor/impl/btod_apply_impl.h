@@ -36,7 +36,9 @@ template<size_t N, typename Functor>
 void btod_apply<N, Functor>::perform(block_tensor_i<N, double> &btb,
     const double &c) {
 
-    block_tensor_ctrl<N, double> cb(btb);
+    typedef block_tensor_i_traits<double> bti_traits;
+
+    gen_block_tensor_rd_ctrl<N, bti_traits> cb(btb);
     addition_schedule<N, btod_traits> asch(get_symmetry(),
             cb.req_const_symmetry());
     asch.build(get_schedule(), cb);

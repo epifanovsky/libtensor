@@ -6,7 +6,7 @@
 #include <libtensor/symmetry/so_copy.h>
 #include <libtensor/symmetry/so_dirsum.h>
 #include <libtensor/symmetry/so_merge.h>
-#include "addition_schedule_impl.h"
+#include <libtensor/gen_block_tensor/addition_schedule.h>
 #include "../bto_aux_add.h"
 
 namespace libtensor {

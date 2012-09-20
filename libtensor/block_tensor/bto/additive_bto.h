@@ -5,7 +5,6 @@
 #include <libutil/thread_pool/thread_pool.h>
 #include <libtensor/core/tensor_transf.h>
 #include "direct_bto.h"
-#include "addition_schedule.h"
 
 namespace libtensor {
 
@@ -37,9 +36,6 @@ public:
 
     //! Type of blocks of block tensors
     typedef typename Traits::template block_type<N>::type block_t;
-
-private:
-    typedef addition_schedule<N, Traits> schedule_t;
 
 public:
     virtual void perform(bto_stream_i<N, Traits> &out) = 0;

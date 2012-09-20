@@ -33,7 +33,9 @@ void btod_mult<N>::perform(block_tensor_i<N, double> &btc) {
 template<size_t N>
 void btod_mult<N>::perform(block_tensor_i<N, double> &btc, const double &d) {
 
-    block_tensor_ctrl<N, double> cc(btc);
+    typedef block_tensor_i_traits<double> bti_traits;
+
+    gen_block_tensor_rd_ctrl<N, bti_traits> cc(btc);
     addition_schedule<N, btod_traits> asch(get_symmetry(),
             cc.req_const_symmetry());
     asch.build(get_schedule(), cc);

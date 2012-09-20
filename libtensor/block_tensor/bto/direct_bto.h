@@ -5,7 +5,7 @@
 #include <libtensor/exception.h>
 #include <libtensor/core/block_index_space.h>
 #include <libtensor/core/symmetry.h>
-#include "assignment_schedule.h"
+#include <libtensor/gen_block_tensor/assignment_schedule.h>
 #include "bto_stream_i.h"
 
 namespace libtensor {

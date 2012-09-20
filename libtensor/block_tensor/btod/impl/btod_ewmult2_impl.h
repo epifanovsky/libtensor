@@ -149,7 +149,9 @@ template<size_t N, size_t M, size_t K>
 void btod_ewmult2<N, M, K>::perform(block_tensor_i<N + M + K, double> &btc,
     const double &d) {
 
-    block_tensor_ctrl<N + M + K, double> cc(btc);
+    typedef typename btod_traits::bti_traits bti_traits;
+
+    gen_block_tensor_rd_ctrl<N + M + K, bti_traits> cc(btc);
     addition_schedule<N + M + K, btod_traits> asch(m_symc,
         cc.req_const_symmetry());
     asch.build(m_sch, cc);

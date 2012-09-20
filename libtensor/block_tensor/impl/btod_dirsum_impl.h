@@ -37,7 +37,9 @@ template<size_t N, size_t M>
 void btod_dirsum<N, M>::perform(block_tensor_i<N + M, double> &btb,
     const double &c) {
 
-    block_tensor_ctrl<N + M, double> cb(btb);
+    typedef block_tensor_i_traits<double> bti_traits;
+
+    gen_block_tensor_rd_ctrl<N + M, bti_traits> cb(btb);
     addition_schedule<N + M, btod_traits> asch(get_symmetry(),
         cb.req_const_symmetry());
     asch.build(get_schedule(), cb);

@@ -65,8 +65,9 @@ template<size_t N>
 void btod_symmetrize<N>::perform(block_tensor_i<N, double> &bt) {
 
     typedef btod_traits Traits;
+    typedef typename btod_traits::bti_traits bti_traits;
 
-    block_tensor_ctrl<N, double> ctrl(bt);
+    gen_block_tensor_ctrl<N, bti_traits> ctrl(bt);
     ctrl.req_zero_all_blocks();
     so_copy<N, double>(m_sym).perform(ctrl.req_symmetry());
 
@@ -83,8 +84,9 @@ void btod_symmetrize<N>::perform(block_tensor_i<N, double> &bt,
     const double &d) {
 
     typedef btod_traits Traits;
+    typedef typename btod_traits::bti_traits bti_traits;
 
-    block_tensor_ctrl<N, double> ctrl(bt);
+    gen_block_tensor_rd_ctrl<N, bti_traits> ctrl(bt);
 
     addition_schedule<N, Traits> asch(m_sym, ctrl.req_const_symmetry());
     asch.build(m_sch, ctrl);

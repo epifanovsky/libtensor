@@ -129,9 +129,9 @@ void btod_sum<N>::perform(block_tensor_i<N, double> &btb, const double &c) {
     }
  */
 
-    typedef block_tensor_ctrl<N, double> block_tensor_ctrl_type;
+    typedef typename btod_traits::bti_traits bti_traits;
 
-    block_tensor_ctrl_type cb(btb);
+    gen_block_tensor_rd_ctrl<N, bti_traits> cb(btb);
     addition_schedule<N, btod_traits> asch(m_sym, cb.req_const_symmetry());
     asch.build(get_schedule(), cb);
 

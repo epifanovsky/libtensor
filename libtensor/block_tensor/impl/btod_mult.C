@@ -1,4 +1,3 @@
-#include <libtensor/block_tensor/bto/impl/addition_schedule_impl.h>
 #include <libtensor/block_tensor/bto/impl/bto_aux_add_impl.h>
 #include <libtensor/block_tensor/bto/impl/bto_aux_copy_impl.h>
 #include <libtensor/dense_tensor/tod_set.h>

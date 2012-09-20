@@ -4,7 +4,7 @@
 #include <map>
 #include <set>
 #include <libutil/threads/mutex.h>
-#include "addition_schedule.h"
+#include <libtensor/gen_block_tensor/addition_schedule.h>
 #include "bto_stream_i.h"
 
 namespace libtensor {

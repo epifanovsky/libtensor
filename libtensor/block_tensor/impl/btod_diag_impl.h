@@ -33,7 +33,9 @@ template<size_t N, size_t M>
 void btod_diag<N, M>::perform(block_tensor_i<N - M + 1, double> &btb,
         const double &c) {
 
-    block_tensor_ctrl<N - M + 1, double> cb(btb);
+    typedef block_tensor_i_traits<double> bti_traits;
+
+    gen_block_tensor_rd_ctrl<N - M + 1, bti_traits> cb(btb);
     addition_schedule<N - M + 1, btod_traits> asch(get_symmetry(),
             cb.req_const_symmetry());
     asch.build(get_schedule(), cb);

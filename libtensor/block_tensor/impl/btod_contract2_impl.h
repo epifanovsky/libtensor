@@ -310,7 +310,9 @@ void btod_contract2<N, M, K>::perform(
     block_tensor_i<NC, double> &btc,
     const double &d) {
 
-    block_tensor_ctrl<NC, double> cc(btc);
+    typedef block_tensor_i_traits<double> bti_traits;
+
+    gen_block_tensor_rd_ctrl<NC, bti_traits> cc(btc);
     addition_schedule<NC, btod_traits> asch(m_symc.get_symc(),
         cc.req_const_symmetry());
     asch.build(m_sch, cc);

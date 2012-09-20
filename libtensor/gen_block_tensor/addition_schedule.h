@@ -6,8 +6,10 @@
 #include <libtensor/timings.h>
 #include <libtensor/core/abs_index.h>
 #include <libtensor/core/block_index_space.h>
+#include <libtensor/core/noncopyable.h>
 #include <libtensor/core/tensor_transf.h>
 #include <libtensor/core/symmetry.h>
+#include "gen_block_tensor_i.h"
 #include "assignment_schedule.h"
 
 namespace libtensor {
@@ -38,14 +40,15 @@ namespace libtensor {
     \ingroup libtensor_block_tensor_bto
  **/
 template<size_t N, class Traits>
-class addition_schedule : public timings< addition_schedule<N, Traits> > {
+class addition_schedule :
+    public timings< addition_schedule<N, Traits> >, public noncopyable {
+
 public:
     static const char *k_clazz; //!< Class name
 
 public:
     typedef typename Traits::element_type element_type;
-    typedef typename Traits::template block_tensor_ctrl_type<N>::type
-        block_tensor_ctrl_type;
+    typedef typename Traits::bti_traits bti_traits;
 
     typedef symmetry<N, element_type> symmetry_type;
     typedef tensor_transf<N, element_type> tensor_transf_type;
@@ -85,7 +88,9 @@ private:
 public:
     /** \brief Initializes the algorithm
      **/
-    addition_schedule(const symmetry_type &syma, const symmetry_type &symb);
+    addition_schedule(
+        const symmetry_type &syma,
+        const symmetry_type &symb);
 
     /** \brief Destructor
      **/
@@ -93,8 +98,9 @@ public:
 
     /** \brief Runs the algorithm
      **/
-    void build(const assignment_schedule_type &asch,
-        block_tensor_ctrl_type &cb);
+    void build(
+        const assignment_schedule_type &asch,
+        gen_block_tensor_rd_ctrl<N, bti_traits> &cb);
 
     iterator begin() const {
         return m_sch.begin();
@@ -117,56 +123,84 @@ private:
             1 = allowed non-canonical, 2 = allowed canonical,
             3 = forbidden non-canonical, 4 = forbidden canonical
      **/
-    void mark_orbits(const symmetry_type &sym, std::vector<char> &o);
+    void mark_orbits(
+        const symmetry_type &sym,
+        std::vector<char> &o);
 
     /** \brief Recursive part of mark_orbits()
      **/
-    bool mark_orbit_inner(const symmetry_type &sym, const abs_index<N> &aci,
+    bool mark_orbit_inner(
+        const symmetry_type &sym,
+        const abs_index<N> &aci,
         std::vector<char> &o);
 
     /** \brief Returns the canonical index and a transformation to a given index
      **/
-    size_t find_canonical(const dimensions<N> &bidims, const symmetry_type &sym,
-        const abs_index<N> ai, tensor_transf_type &tr,
+    size_t find_canonical(
+        const dimensions<N> &bidims,
+        const symmetry_type &sym,
+        const abs_index<N> ai,
+        tensor_transf_type &tr,
         const std::vector<char> &o);
 
     /** \brief Recursive part of find_canonical()
      **/
-    size_t find_canonical_inner(const dimensions<N> &bidims,
-        const symmetry_type &sym, const abs_index<N> &ai,
-        tensor_transf_type &tr, const std::vector<char> &o,
+    size_t find_canonical_inner(
+        const dimensions<N> &bidims,
+        const symmetry_type &sym,
+        const abs_index<N> &ai,
+        tensor_transf_type &tr,
+        const std::vector<char> &o,
         std::vector<char> &o2);
 
-    void process_orbit_in_a(const dimensions<N> &bidims, bool zeroa,
-        block_tensor_ctrl_type &cb, const abs_index<N> &acia,
-        const abs_index<N> &aia, const tensor_transf_type &tra,
-        std::vector<char> &oa, std::vector<char> &ob,
-        const std::vector<char> &omb, const std::vector<char> &omc,
+    void process_orbit_in_a(
+        const dimensions<N> &bidims,
+        bool zeroa,
+        gen_block_tensor_rd_ctrl<N, bti_traits> &cb,
+        const abs_index<N> &acia,
+        const abs_index<N> &aia,
+        const tensor_transf_type &tra,
+        std::vector<char> &oa,
+        std::vector<char> &ob,
+        const std::vector<char> &omb,
+        const std::vector<char> &omc,
         schedule_group &grp);
 
-    void iterate_sym_elements_in_a(const dimensions<N> &bidims, bool zeroa,
-        block_tensor_ctrl_type &cb, const abs_index<N> &acia,
-        const abs_index<N> &aia, const tensor_transf_type &tra,
-        std::vector<char> &oa, std::vector<char> &ob,
-        const std::vector<char> &omb, const std::vector<char> &omc,
+    void iterate_sym_elements_in_a(
+        const dimensions<N> &bidims,
+        bool zeroa,
+        gen_block_tensor_rd_ctrl<N, bti_traits> &cb,
+        const abs_index<N> &acia,
+        const abs_index<N> &aia,
+        const tensor_transf_type &tra,
+        std::vector<char> &oa,
+        std::vector<char> &ob,
+        const std::vector<char> &omb,
+        const std::vector<char> &omc,
         schedule_group &grp);
 
-    void process_orbit_in_b(const dimensions<N> &bidims, bool zeroa,
-        const abs_index<N> &acib, const abs_index<N> &aib,
-        const tensor_transf_type &trb, std::vector<char> &oa,
-        std::vector<char> &ob, const std::vector<char> &omb,
-        const std::vector<char> &omc, schedule_group &grp);
+    void process_orbit_in_b(
+        const dimensions<N> &bidims,
+        bool zeroa,
+        const abs_index<N> &acib,
+        const abs_index<N> &aib,
+        const tensor_transf_type &trb,
+        std::vector<char> &oa,
+        std::vector<char> &ob,
+        const std::vector<char> &omb,
+        const std::vector<char> &omc,
+        schedule_group &grp);
 
-    void iterate_sym_elements_in_b(const dimensions<N> &bidims, bool zeroa,
-            const abs_index<N> &acib, const abs_index<N> &aib,
-            const tensor_transf<N, element_type> &trb,
-            std::vector<char> &oa, std::vector<char> &ob,
-            const std::vector<char> &omb, const std::vector<char> &omc,
-            schedule_group &grp);
-
-private:
-    addition_schedule(const addition_schedule&);
-    const addition_schedule &operator=(const addition_schedule&);
+    void iterate_sym_elements_in_b(
+        const dimensions<N> &bidims,
+        bool zeroa,
+        const abs_index<N> &acib,
+        const abs_index<N> &aib,
+        const tensor_transf<N, element_type> &trb,
+        std::vector<char> &oa, std::vector<char> &ob,
+        const std::vector<char> &omb,
+        const std::vector<char> &omc,
+        schedule_group &grp);
 
 };
 
