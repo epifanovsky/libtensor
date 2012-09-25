@@ -3,6 +3,7 @@
 
 #include <libtensor/timings.h>
 #include <libtensor/core/noncopyable.h>
+#include <libtensor/core/symmetry.h>
 #include <libtensor/core/tensor_transf.h>
 #include "assignment_schedule.h"
 #include "gen_block_stream_i.h"

@@ -152,8 +152,6 @@ protected:
     /** \brief Invoked to make all blocks zero
      **/
     virtual void on_req_zero_all_blocks() = 0;
-
-
 };
 
 

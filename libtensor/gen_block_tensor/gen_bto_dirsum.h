@@ -3,7 +3,6 @@
 
 #include <map>
 #include <libtensor/timings.h>
-#include <libtensor/core/index.h>
 #include <libtensor/core/noncopyable.h>
 #include <libtensor/core/orbit.h>
 #include <libtensor/core/orbit_list.h>
