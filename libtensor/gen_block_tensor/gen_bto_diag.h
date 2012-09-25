@@ -21,6 +21,13 @@ namespace libtensor {
 
     This block tensor operation extracts a general diagonal of a block tensor.
 
+    The traits class has to provide definitions for
+    - \c element_type -- Type of data elements
+    - \c bti_traits -- Type of block tensor interface traits class
+    - \c template temp_block_type<N>::type -- Type of temporary tensor block
+    - \c template to_diag_type<N, M>::type -- Type of tensor operation to_diag
+
+
     \ingroup libtensor_gen_bto
  **/
 template<size_t N, size_t M, typename Traits, typename Timed>

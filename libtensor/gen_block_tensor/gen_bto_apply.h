@@ -12,9 +12,11 @@
 namespace libtensor {
 
 
-/** \brief Applies a functor, a permutation and a scaling coefficient
-        to each element of the input tensor.
+/** \brief Applies a functor to each element of the input tensor.
     \tparam N Tensor order.
+    \tparam Functor Functor to apply.
+    \tparam Traits Traits class for this block tensor operation.
+    \tparam Timed Class name to identify timer with.
 
     The operation transforms the input %tensor using \c tr1, then applies
     the functor to each element, and at last transforms the tensor using
@@ -25,19 +27,19 @@ namespace libtensor {
       \endcode
     2. an implementation of
       \code
-          double Functor::operator()(const double &a);
+          element_type Functor::operator()(const element_type &a);
       \endcode
     3. and implementations of
       \code
           bool Functor::keep_zero();
-          bool Functor::transf(bool arg);
+          const scalar_transf<element_type> &Functor::transf(bool arg);
       \endcode
 
     The latter two functions yield information about the symmetry of
     the functor:
     - keep_zero() -- Return true, if the functor maps zero to zero.
     - transf(bool) -- Return the two scalar transformations in
-        \f$ f\left(\hat{T}x\right) = \hat{T}' f(x) \f$ (\f$\hat{T}\f$, if
+        \f$ f\left(\hat{T} x\right) = \hat{T}' f(x) \f$ (\f$\hat{T}\f$, if
         argument is true).
 
     The symmetry of the result tensor is determined by the symmetry operation
@@ -45,7 +47,17 @@ namespace libtensor {
     construct %tensor blocks from forbidden input %tensor blocks. Forbidden
     %tensor blocks are then treated as if they where zero.
 
-    \ingroup libtensor_btod
+    The traits class has to provide definitions for
+    - \c element_type -- Type of data elements
+    - \c bti_traits -- Type of block tensor interface traits class
+    - \c template temp_block_type<N>::type -- Type of temporary tensor block
+    - \c template to_set_type<N>::type -- Type of tensor operation to_set
+    - \c template to_copy_type<N>::type -- Type of tensor operation to_copy
+    - \c template to_apply_type<N>::type -- Type of tensor operation to_apply
+
+    \sa so_apply
+
+    \ingroup libtensor_gen_bto
  **/
 template<size_t N, typename Functor, typename Traits, typename Timed>
 class gen_bto_apply : public timings<Timed>, public noncopyable {

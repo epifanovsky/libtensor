@@ -5,9 +5,23 @@
 
     The generalized block tensors and block tensor operations provide
     building blocks for specialized block tensors and operations which employ
-    specific types of tensors and specific data types.
+    specific types of tensors and specific data types. The tensor types
+    and element types have to be provided via traits classes.
 
+    The main traits class which is employed is the block tensor interface
+    traits class. Any specific implementation of block tensors has to define
+    this class with the following member types:
+    - element_type -- Type of the data elements
+    - template<N> rd_block_type::type -- Type of read-only tensor blocks
+    - template<N> wr_block_type::type -- Type of read-write tensor blocks
 
+    The generalized block tensor operations use tensor operations also
+    provided via the traits classes. The tensor operation classes are
+    expected to have the following interfaces ...
+
+    TODO: add generalized interfaces for tensor operations
+
+    \ingroup libtensor_gen_bto
  **/
 
 #include "gen_block_stream_i.h"
