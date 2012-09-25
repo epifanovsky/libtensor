@@ -175,8 +175,6 @@ void gen_bto_dirsum<N, M, Traits, Timed>::compute_block_untimed(
     abs_index<NA> aia(rec.absidxa, m_bidimsa);
     abs_index<NB> aib(rec.absidxb, m_bidimsb);
 
-//    double kc1 = kc * trc.get_scalar_tr().get_coeff();
-//    permutation<NC> permc1(rec.permc); permc1.permute(trc.get_perm());
     if(rec.zerob) {
         permutation<NC> cycc;
         for(size_t i = 0; i < NC - 1; i++) cycc.permute(i, i + 1);
