@@ -242,15 +242,11 @@ void btod_extract<N, M>::do_compute_block(dense_tensor_i<k_orderb, double> &blk,
 
     if(!zeroa) {
 
+        double kc = tra.get_scalar_tr().get_coeff() * m_c * c;
+
         dense_tensor_i<k_ordera, double> &blka = ctrla.req_block(
             cidxa.get_index());
-        if(zero) {
-            tod_extract<N, M>(blka, msk2, permb, idxibl2,
-                tra.get_scalar_tr().get_coeff() * m_c * c).perform(blk);
-        } else {
-            tod_extract<N, M>(blka, msk2, permb, idxibl2,
-                tra.get_scalar_tr().get_coeff() * m_c).perform(blk, c);
-        }
+        tod_extract<N, M>(blka, msk2, idxibl2, permb, kc).perform(zero, blk);
         ctrla.ret_block(cidxa.get_index());
     } else {
 
