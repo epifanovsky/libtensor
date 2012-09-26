@@ -1,7 +1,7 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/block_tensor/block_tensor.h>
-#include <libtensor/block_tensor/btod/btod_extract.h>
+#include <libtensor/block_tensor/btod_extract.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/dense_tensor/tod_btconv.h>
 #include <libtensor/dense_tensor/tod_extract.h>
@@ -594,7 +594,7 @@ void btod_extract_test::test_9() throw(libtest::test_exception) {
     tod_extract<3, 1>(ta, msk, idx, perm).perform(true, tb_ref);
 
     //  Invoke the operation
-    btod_extract<3, 1>(bta, msk,perm, idxbl, idxibl).perform(btb);
+    btod_extract<3, 1>(bta, msk, idxbl, idxibl, perm).perform(btb);
     tod_btconv<2>(btb).perform(tb);
 
     //  Compare against the reference
@@ -755,7 +755,7 @@ void btod_extract_test::test_11() throw(libtest::test_exception) {
     tod_extract<3, 1>(ta, msk, idx, perm).perform(true, tb_ref);
 
     //  Invoke the operation
-    btod_extract<3, 1>(bta, msk,perm, idxbl, idxibl).perform(btb);
+    btod_extract<3, 1>(bta, msk, idxbl, idxibl, perm).perform(btb);
     tod_btconv<2>(btb).perform(tb);
 
     //  Compare against the reference
@@ -1109,7 +1109,7 @@ void btod_extract_test::test_13a() throw(libtest::test_exception) {
 
     //  Invoke the operation
 
-    btod_extract<4, 2>(bta, msk, perm, idxbl, idxibl).perform(btb);
+    btod_extract<4, 2>(bta, msk, idxbl, idxibl, perm).perform(btb);
     tod_btconv<2>(btb).perform(tb);
 
     //  Compare against the reference
