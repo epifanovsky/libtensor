@@ -15,14 +15,6 @@
 namespace libtensor {
 
 
-/** \brief Computes the dot product of one orbit in the product symmetry
-
-    \f[
-    c = \sum_i \hat{T}_i
-        \left< \hat{T}_A \hat{T}_{A,i} A_i, \hat{T}_B \hat{T}_{B,i} B \right>
-    \f]
-
- **/
 template<size_t N, typename Traits, typename Timed>
 class gen_bto_dotprod_in_orbit_task :
 public libutil::task_i, public timings<Timed> {
