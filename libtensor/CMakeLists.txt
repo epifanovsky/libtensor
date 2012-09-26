@@ -140,7 +140,6 @@ set(SRC_INST
     block_tensor/btod/impl/btod_sum.C
     block_tensor/btod/impl/btod_symmetrize.C
     block_tensor/btod/impl/btod_symmetrize3.C
-    block_tensor/btod/impl/btod_trace.C
     block_tensor/btod/impl/btod_vmpriority.C
     diag_tensor/impl/diag_tensor_space.C
     diag_tensor/impl/diag_tensor.C
@@ -176,6 +175,7 @@ set(SRC_BTOD
     block_tensor/impl/btod_dotprod.C
     block_tensor/impl/btod_mult.C
     block_tensor/impl/btod_set.C
+    block_tensor/impl/btod_trace.C
 )
 
 if(USE_ACML)

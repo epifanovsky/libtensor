@@ -2,6 +2,7 @@
 #define LIBTENSOR_GEN_BTO_TRACE_H
 
 #include <libtensor/timings.h>
+#include <libtensor/core/noncopyable.h>
 #include <libtensor/core/permutation.h>
 #include "gen_block_tensor_i.h"
 
