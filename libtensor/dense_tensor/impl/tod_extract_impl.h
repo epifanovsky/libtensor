@@ -30,6 +30,7 @@ tod_extract<N, M>::tod_extract(
     m_t(t), m_mask(m), m_tr(tr), m_dims(mk_dims(t.get_dims(), m_mask)),
     m_idx(idx) {
 
+    m_dims.permute(tr.get_perm());
 }
 
 
