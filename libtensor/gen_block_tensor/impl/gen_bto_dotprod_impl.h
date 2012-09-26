@@ -168,7 +168,7 @@ void gen_bto_dotprod<N, Traits, Timed>::calculate(
         typename std::list<arg>::const_iterator j;
         for(i = 0, j = m_args.begin(); i < narg; i++, j++) {
 
-            v[i] = 0.0;
+            v[i] = Traits::zero();
             ca[i] = new gen_block_tensor_rd_ctrl<N, bti_traits>(j->bt1);
             cb[i] = new gen_block_tensor_rd_ctrl<N, bti_traits>(j->bt2);
             sym[i] = new symmetry<N, element_type>(block_index_space<N>(
