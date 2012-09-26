@@ -49,7 +49,7 @@ public:
             const dimensions<N> &bidimsc, const index<N> &idxc) :
         m_bta(bta), m_ola(ola), m_tra(tra),
         m_btb(btb), m_olb(olb), m_trb(trb),
-        m_symc(symc), m_bidimsc(bidimsc), m_idxc(idxc), m_d(0.0) { }
+        m_symc(symc), m_bidimsc(bidimsc), m_idxc(idxc), m_d(Traits::zero()) { }
 
     virtual ~gen_bto_dotprod_in_orbit_task() { }
     virtual void perform();
