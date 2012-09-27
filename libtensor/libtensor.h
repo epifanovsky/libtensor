@@ -38,7 +38,6 @@
 #include "btod/btod_print.h"
 #include "btod/btod_random.h"
 #include "btod/btod_read.h"
-#include "btod/btod_scale.h"
 #include "btod/btod_select.h"
 #include "btod/btod_set_diag.h"
 #include "btod/btod_set_elem.h"
