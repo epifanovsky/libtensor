@@ -3,6 +3,7 @@
 
 #include <libtensor/timings.h>
 #include <libtensor/core/noncopyable.h>
+#include <libtensor/core/scalar_transf_double.h>
 #include "dense_tensor_i.h"
 
 namespace libtensor {
