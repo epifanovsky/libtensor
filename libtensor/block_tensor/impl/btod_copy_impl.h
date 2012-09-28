@@ -6,7 +6,6 @@
 #include <libtensor/block_tensor/block_tensor_ctrl.h>
 #include <libtensor/block_tensor/bto/impl/bto_aux_add_impl.h>
 #include <libtensor/block_tensor/bto/impl/bto_aux_copy_impl.h>
-#include "bto_stream_adapter.h"
 #include "../btod_copy.h"
 
 namespace libtensor {
@@ -14,14 +13,6 @@ namespace libtensor {
 
 template<size_t N>
 const char *btod_copy<N>::k_clazz = "btod_copy<N>";
-
-
-template<size_t N>
-void btod_copy<N>::perform(bto_stream_i<N, btod_traits> &out) {
-
-    bto_stream_adapter<N, btod_traits> a(out);
-    m_gbto.perform(a);
-}
 
 
 template<size_t N>

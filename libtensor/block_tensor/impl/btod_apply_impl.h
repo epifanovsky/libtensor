@@ -6,7 +6,6 @@
 #include <libtensor/dense_tensor/tod_copy.h>
 #include <libtensor/dense_tensor/tod_set.h>
 #include <libtensor/gen_block_tensor/impl/gen_bto_apply_impl.h>
-#include "bto_stream_adapter.h"
 #include "../btod_apply.h"
 
 namespace libtensor {
@@ -14,14 +13,6 @@ namespace libtensor {
 
 template<size_t N, typename Functor>
 const char *btod_apply<N, Functor>::k_clazz = "btod_apply<N, Functor>";
-
-
-template<size_t N, typename Functor>
-void btod_apply<N, Functor>::perform(bto_stream_i<N, btod_traits> &out) {
-
-    bto_stream_adapter<N, btod_traits> a(out);
-    m_gbto.perform(a);
-}
 
 
 template<size_t N, typename Functor>

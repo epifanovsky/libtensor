@@ -97,7 +97,7 @@ void btod_symmetrize<N>::perform(block_tensor_i<N, double> &bt,
 
 
 template<size_t N>
-void btod_symmetrize<N>::perform(bto_stream_i<N, btod_traits> &out) {
+void btod_symmetrize<N>::perform(gen_block_stream_i<N, bti_traits> &out) {
 
     typedef btod_traits Traits;
 

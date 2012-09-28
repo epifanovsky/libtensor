@@ -6,7 +6,6 @@
 #include <libtensor/block_tensor/block_tensor_ctrl.h>
 #include <libtensor/block_tensor/bto/impl/bto_aux_add_impl.h>
 #include <libtensor/block_tensor/bto/impl/bto_aux_copy_impl.h>
-#include "bto_stream_adapter.h"
 #include "../btod_add.h"
 
 namespace libtensor {
@@ -17,10 +16,9 @@ const char *btod_add<N>::k_clazz = "btod_add<N>";
 
 
 template<size_t N>
-void btod_add<N>::perform(bto_stream_i<N, btod_traits> &out) {
+void btod_add<N>::perform(gen_block_stream_i<N, bti_traits> &out) {
 
-    bto_stream_adapter<N, btod_traits> a(out);
-    m_gbto.perform(a);
+    m_gbto.perform(out);
 }
 
 

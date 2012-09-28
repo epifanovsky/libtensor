@@ -3,7 +3,6 @@
 
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/block_tensor/bto/additive_bto.h>
-#include <libtensor/block_tensor/bto/bto_stream_i.h>
 #include <libtensor/block_tensor/btod/btod_traits.h>
 #include <libtensor/gen_block_tensor/gen_bto_apply.h>
 
@@ -14,6 +13,9 @@ template<size_t N, typename Functor>
 class btod_apply : public additive_bto<N, btod_traits>, public noncopyable {
 public:
     static const char *k_clazz; //!< Class name
+
+public:
+    typedef typename btod_traits::bti_traits bti_traits;
 
 private:
     gen_bto_apply<N, Functor, btod_traits, btod_apply<N, Functor> > m_gbto;
@@ -61,16 +63,25 @@ public:
 
     //@}
 
-    virtual void perform(bto_stream_i<N, btod_traits> &out);
+    virtual void perform(gen_block_stream_i<N, bti_traits> &out) {
+
+        m_gbto.perform(out);
+    }
+
     virtual void perform(block_tensor_i<N, double> &btb);
     virtual void perform(block_tensor_i<N, double> &btb, const double &c);
 
-    virtual void compute_block(dense_tensor_i<N, double> &blkb,
-            const index<N> &ib);
+    virtual void compute_block(
+        dense_tensor_i<N, double> &blkb,
+        const index<N> &ib);
 
-    virtual void compute_block(bool zero,
-            dense_tensor_i<N, double> &blkb, const index<N> &ib,
-            const tensor_transf<N, double> &trb, const double &c);
+    virtual void compute_block(
+        bool zero,
+        dense_tensor_i<N, double> &blkb,
+        const index<N> &ib,
+        const tensor_transf<N, double> &trb,
+        const double &c);
+
 };
 
 

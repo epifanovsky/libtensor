@@ -26,6 +26,7 @@ public:
     static const char *k_clazz; //!< Class name
 
 public:
+    typedef typename btod_traits::bti_traits bti_traits;
     typedef tensor_transf<N - M, double> tensor_transf_type;
 
 private:
@@ -33,24 +34,24 @@ private:
 
 public:
     btod_extract(
-            block_tensor_rd_i<N, double> &bta, const mask<N> &m,
-            const index<N> &idxbl, const index<N> &idxibl,
-            const tensor_transf_type &trb = tensor_transf_type()) :
+        block_tensor_rd_i<N, double> &bta, const mask<N> &m,
+        const index<N> &idxbl, const index<N> &idxibl,
+        const tensor_transf_type &trb = tensor_transf_type()) :
         m_gbto(bta, m, idxbl, idxibl, trb) {
     }
 
     btod_extract(
-            block_tensor_rd_i<N, double> &bta, const mask<N> &m,
-            const index<N> &idxbl, const index<N> &idxibl, double c) :
+        block_tensor_rd_i<N, double> &bta, const mask<N> &m,
+        const index<N> &idxbl, const index<N> &idxibl, double c) :
         m_gbto(bta, m, idxbl, idxibl, tensor_transf_type(permutation<N - M>(),
                 scalar_transf<double>(c))) {
 
     }
 
     btod_extract(
-            block_tensor_rd_i<N, double> &bta, const mask<N> &m,
-            const index<N> &idxbl, const index<N> &idxibl,
-            const permutation<N - M> &perm, double c = 1.0) :
+        block_tensor_rd_i<N, double> &bta, const mask<N> &m,
+        const index<N> &idxbl, const index<N> &idxibl,
+        const permutation<N - M> &perm, double c = 1.0) :
         m_gbto(bta, m, idxbl, idxibl,
                 tensor_transf_type(perm, scalar_transf<double>(c))) {
 
@@ -78,7 +79,10 @@ public:
 
     //@}
 
-    virtual void perform(bto_stream_i<N - M, btod_traits> &out);
+    virtual void perform(gen_block_stream_i<N - M, bti_traits> &out) {
+        m_gbto.perform(out);
+    }
+
     virtual void perform(block_tensor_i<N - M, double> &btb);
     virtual void perform(block_tensor_i<N - M, double> &btb, const double &c);
 

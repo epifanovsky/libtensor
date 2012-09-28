@@ -3,7 +3,6 @@
 
 #include <libtensor/block_tensor/bto/bto_aux_add.h>
 #include <libtensor/block_tensor/bto/bto_aux_copy.h>
-#include "bto_stream_adapter.h"
 #include "../btod_mult.h"
 
 namespace libtensor {
@@ -11,15 +10,6 @@ namespace libtensor {
 
 template<size_t N>
 const char *btod_mult<N>::k_clazz = "btod_mult<N>";
-
-
-
-template<size_t N>
-void btod_mult<N>::perform(bto_stream_i<N, btod_traits> &out) {
-
-    bto_stream_adapter<N, btod_traits> a(out);
-    m_gbto.perform(a);
-}
 
 
 template<size_t N>

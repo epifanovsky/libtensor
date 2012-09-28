@@ -3,7 +3,6 @@
 
 #include <libtensor/block_tensor/bto/bto_aux_add.h>
 #include <libtensor/block_tensor/bto/bto_aux_copy.h>
-#include "bto_stream_adapter.h"
 #include "../btod_extract.h"
 
 namespace libtensor {
@@ -11,14 +10,6 @@ namespace libtensor {
 
 template<size_t N, size_t M>
 const char *btod_extract<N, M>::k_clazz = "btod_extract<N, M>";
-
-
-template<size_t N, size_t M>
-void btod_extract<N, M>::perform(bto_stream_i<N - M, btod_traits> &out) {
-
-    bto_stream_adapter<N - M, btod_traits> a(out);
-    m_gbto.perform(a);
-}
 
 
 template<size_t N, size_t M>

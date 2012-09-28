@@ -8,7 +8,6 @@
 #include <libtensor/block_tensor/block_tensor_i.h>
 #include <libtensor/block_tensor/bto/additive_bto.h>
 #include <libtensor/block_tensor/btod/btod_traits.h>
-#include <libtensor/block_tensor/bto/bto_stream_i.h>
 
 namespace libtensor {
 
@@ -43,6 +42,9 @@ private:
         NB = M + K, //!< Order of second argument (B)
         NC = N + M //!< Order of result (C)
     };
+
+public:
+    typedef typename btod_traits::bti_traits bti_traits;
 
 private:
     contraction2<N, M, K> m_contr; //!< Contraction
@@ -92,7 +94,7 @@ public:
 
     /** \brief Computes the contraction into an output stream
      **/
-    virtual void perform(bto_stream_i<NC, btod_traits> &out);
+    virtual void perform(gen_block_stream_i<NC, bti_traits> &out);
 
     /** \brief Computes the contraction into an output block tensor
      **/

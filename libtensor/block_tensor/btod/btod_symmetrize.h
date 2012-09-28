@@ -22,6 +22,9 @@ class btod_symmetrize :
 public:
     static const char *k_clazz; //!< Class name
 
+public:
+    typedef typename btod_traits::bti_traits bti_traits;
+
 private:
     struct schrec {
         size_t ai;
@@ -90,7 +93,7 @@ public:
 
     virtual void perform(block_tensor_i<N, double> &btc);
     virtual void perform(block_tensor_i<N, double> &btc, const double &d);
-    virtual void perform(bto_stream_i<N, btod_traits> &out);
+    virtual void perform(gen_block_stream_i<N, bti_traits> &out);
 
 protected:
     //!    \brief Implementation of additive_bto<N, btod_traits>

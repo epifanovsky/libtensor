@@ -40,7 +40,7 @@ btod_sum<N>::~btod_sum() {
 
 
 template<size_t N>
-void btod_sum<N>::perform(bto_stream_i<N, btod_traits> &out) {
+void btod_sum<N>::perform(gen_block_stream_i<N, bti_traits> &out) {
 
     if(m_ops.empty()) return;
 

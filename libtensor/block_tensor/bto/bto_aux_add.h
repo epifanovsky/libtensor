@@ -5,7 +5,9 @@
 #include <set>
 #include <libutil/threads/mutex.h>
 #include <libtensor/gen_block_tensor/addition_schedule.h>
-#include "bto_stream_i.h"
+#include <libtensor/gen_block_tensor/gen_block_stream_i.h>
+#include <libtensor/gen_block_tensor/gen_block_tensor_i.h>
+#include <libtensor/gen_block_tensor/gen_block_tensor_ctrl.h>
 
 namespace libtensor {
 
@@ -23,30 +25,25 @@ namespace libtensor {
     between the calls to open() and close(). The blocks pushed through put()
     must be canonical in the source symmetry.
 
-    \sa bto_stream_i
+    \sa gen_block_stream_i
 
     \ingroup libtensor_block_tensor_bto
  **/
 template<size_t N, typename Traits>
-class bto_aux_add : public bto_stream_i<N, Traits> {
+class bto_aux_add : public gen_block_stream_i<N, typename Traits::bti_traits> {
 public:
     typedef typename Traits::element_type element_type;
+    typedef typename Traits::bti_traits bti_traits;
     typedef typename Traits::template block_type<N>::type block_type;
-    typedef typename Traits::template block_tensor_type<N>::type
-        block_tensor_type;
-    typedef typename Traits::template block_tensor_ctrl_type<N>::type
-        block_tensor_ctrl_type;
-    typedef symmetry<N, element_type> symmetry_type;
-    typedef tensor_transf<N, element_type> tensor_transf_type;
 
 private:
     block_index_space<N> m_bis; //!< Block index space
     dimensions<N> m_bidims; //!< Block index dimensions
-    symmetry_type m_syma; //!< Symmetry of source
+    symmetry<N, element_type> m_syma; //!< Symmetry of source
     const addition_schedule<N, Traits> &m_asch; //!< Addition schedule
-    block_tensor_type &m_btb; //!< Target block tensor
+    gen_block_tensor_i<N, bti_traits> &m_btb; //!< Target block tensor
     element_type m_c; //!< Scaling coefficient
-    block_tensor_ctrl_type m_cb; //!< Control on target block tensor
+    gen_block_tensor_ctrl<N, bti_traits> m_cb; //!< Block tensor control
     bool m_open; //!< Open state
     size_t m_grpcount; //!< Group count
     std::map<size_t, size_t> m_grpmap; //!< Maps index in A to group number
@@ -61,9 +58,9 @@ public:
         \brief c Scaling coefficient for addition.
      **/
     bto_aux_add(
-        const symmetry_type &syma,
+        const symmetry<N, element_type> &syma,
         const addition_schedule<N, Traits> &asch,
-        block_tensor_type &btb,
+        gen_block_tensor_i<N, bti_traits> &btb,
         const element_type &c);
 
     /** \brief Virtual destructor
@@ -84,7 +81,7 @@ public:
     virtual void put(
         const index<N> &idx,
         block_type &blk,
-        const tensor_transf_type &tr);
+        const tensor_transf<N, element_type> &tr);
 
 };
 

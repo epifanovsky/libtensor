@@ -6,15 +6,16 @@
 #include <libtensor/symmetry/so_copy.h>
 #include <libtensor/symmetry/so_dirsum.h>
 #include <libtensor/symmetry/so_merge.h>
-#include <libtensor/gen_block_tensor/addition_schedule.h>
 #include "../bto_aux_add.h"
 
 namespace libtensor {
 
 
 template<size_t N, typename Traits>
-bto_aux_add<N, Traits>::bto_aux_add(const symmetry_type &syma,
-    const addition_schedule<N, Traits> &asch, block_tensor_type &btb,
+bto_aux_add<N, Traits>::bto_aux_add(
+    const symmetry<N, element_type> &syma,
+    const addition_schedule<N, Traits> &asch,
+    gen_block_tensor_i<N, bti_traits> &btb,
     const element_type &c) :
 
     m_bis(syma.get_bis()), m_bidims(m_bis.get_block_index_dims()),
@@ -39,7 +40,7 @@ void bto_aux_add<N, Traits>::open() {
 
     //  Compute the symmetry of the result of the addition
 
-    symmetry_type symcopy(m_syma.get_bis());
+    symmetry<N, element_type> symcopy(m_syma.get_bis());
     so_copy<N, element_type>(m_syma).perform(symcopy);
 
     permutation<N + N> p0;
@@ -122,8 +123,10 @@ void bto_aux_add<N, Traits>::close() {
 
 
 template<size_t N, typename Traits>
-void bto_aux_add<N, Traits>::put(const index<N> &idx, block_type &blk,
-    const tensor_transf_type &tr) {
+void bto_aux_add<N, Traits>::put(
+    const index<N> &idx,
+    block_type &blk,
+    const tensor_transf<N, element_type> &tr) {
 
     typedef typename Traits::template to_copy_type<N>::type to_copy_type;
 
@@ -212,7 +215,7 @@ void bto_aux_add<N, Traits>::put(const index<N> &idx, block_type &blk,
                 bool zeroc = m_cb.req_is_zero_block(aic.get_index());
 
                 block_type &blkc = m_cb.req_block(aic.get_index());
-                tensor_transf_type tra(tr);
+                tensor_transf<N, element_type> tra(tr);
                 tra.transform(inode->tra);
                 to_copy_type(blk, tra).perform(zeroc, m_c, blkc);
                 m_cb.ret_block(aic.get_index());

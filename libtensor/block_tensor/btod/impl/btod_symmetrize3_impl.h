@@ -47,7 +47,7 @@ btod_symmetrize3<N>::btod_symmetrize3(additive_bto<N, btod_traits> &op,
 
 
 template<size_t N>
-void btod_symmetrize3<N>::perform(bto_stream_i<N, btod_traits> &out) {
+void btod_symmetrize3<N>::perform(gen_block_stream_i<N, bti_traits> &out) {
 
     typedef btod_traits Traits;
 

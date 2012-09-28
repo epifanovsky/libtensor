@@ -10,7 +10,7 @@ namespace libtensor {
 
 template<size_t N, typename Traits>
 bto_aux_symmetrize<N, Traits>::bto_aux_symmetrize(const symmetry_type &syma,
-    const symmetry_type &symb, bto_stream_i<N, Traits> &out) :
+    const symmetry_type &symb, gen_block_stream_i<N, bti_traits> &out) :
 
     m_syma(syma.get_bis()), m_symb(symb.get_bis()), m_olb(symb), m_out(out),
     m_open(false) {

@@ -30,6 +30,9 @@ public:
     //! Type of tensor elements
     typedef typename Traits::element_type element_t;
 
+    //! Block tensor interface traits
+    typedef typename Traits::bti_traits bti_traits;
+
     //! Type of block tensors
     typedef typename Traits::template block_tensor_type<N>::type
         block_tensor_t;
@@ -38,7 +41,7 @@ public:
     typedef typename Traits::template block_type<N>::type block_t;
 
 public:
-    virtual void perform(bto_stream_i<N, Traits> &out) = 0;
+    virtual void perform(gen_block_stream_i<N, bti_traits> &out) = 0;
     virtual void perform(block_tensor_t &bt) = 0;
 
     /** \brief Computes the result of the operation and adds it to the

@@ -8,8 +8,9 @@ namespace libtensor {
 
 
 template<size_t N, typename Traits>
-bto_aux_copy<N, Traits>::bto_aux_copy(const symmetry_type &sym,
-    block_tensor_type &bt) :
+bto_aux_copy<N, Traits>::bto_aux_copy(
+    const symmetry<N, element_type> &sym,
+    gen_block_tensor_wr_i<N, bti_traits> &bt) :
 
     m_sym(sym.get_bis()), m_bt(bt), m_ctrl(m_bt), m_open(false) {
 
@@ -45,8 +46,10 @@ void bto_aux_copy<N, Traits>::close() {
 
 
 template<size_t N, typename Traits>
-void bto_aux_copy<N, Traits>::put(const index<N> &idx, block_type &blk,
-    const tensor_transf_type &tr) {
+void bto_aux_copy<N, Traits>::put(
+    const index<N> &idx,
+    block_type &blk,
+    const tensor_transf<N, element_type> &tr) {
 
     typedef typename Traits::template to_copy_type<N>::type to_copy_type;
 
