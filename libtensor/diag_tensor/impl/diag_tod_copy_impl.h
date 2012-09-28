@@ -25,6 +25,9 @@ void diag_tod_copy<N>::perform(bool zero, double c,
 
     try {
 
+        const permutation<N> &perma = m_tra.get_perm();
+        double ka = m_tra.get_scalar_tr().get_coeff();
+
         diag_tensor_rd_ctrl<N, double> ca(m_dta);
         diag_tensor_wr_ctrl<N, double> cb(dtb);
 
@@ -32,7 +35,7 @@ void diag_tod_copy<N>::perform(bool zero, double c,
 
         {
             diag_tensor_space<N> dtsb0(m_dta.get_space());
-            dtsb0.permute(m_perma);
+            dtsb0.permute(perma);
             if(zero) cb.req_remove_all_subspaces();
             diag_to_add_space<N> dtsb(dtb.get_space(), dtsb0);
             diag_tod_adjust_space<N>(dtsb.get_dtsc()).perform(dtb);
@@ -52,7 +55,7 @@ void diag_tod_copy<N>::perform(bool zero, double c,
 
             const diag_tensor_subspace<N> &ssa = dtsa.get_subspace(ssla[ssia]);
             diag_tensor_subspace<N> ssb0(ssa);
-            ssb0.permute(m_perma);
+            ssb0.permute(perma);
 
             bool match_found = false;
             for(size_t ssib = 0; !match_found && ssib < sslb.size(); ssib++) {
@@ -80,7 +83,7 @@ void diag_tod_copy<N>::perform(bool zero, double c,
                     const double *pa = ca.req_const_dataptr(ssla[ssia]);
                     double *pb = cb.req_dataptr(sslb[ssib]);
                     constrained_copy(dtsa.get_dims(), ssa, pa,
-                        dtsa.get_subspace_size(ssla[ssia]), m_perma, m_ka * c,
+                        dtsa.get_subspace_size(ssla[ssia]), perma, ka * c,
                         ssb, pb, dtsb.get_subspace_size(sslb[ssib]));
                     cb.ret_dataptr(sslb[ssib], pb);
                     ca.ret_const_dataptr(ssla[ssia], pa);
