@@ -15,6 +15,7 @@ libtensor_diag_tensor_suite::libtensor_diag_tensor_suite() :
     add_test("diag_tod_contract2", m_utf_diag_tod_contract2);
     add_test("diag_tod_contract2_part", m_utf_diag_tod_contract2_part);
     add_test("diag_tod_copy", m_utf_diag_tod_copy);
+    add_test("diag_tod_random", m_utf_diag_tod_random);
     add_test("diag_tod_set", m_utf_diag_tod_set);
     add_test("tod_conv_diag_tensor", m_utf_tod_conv_diag_tensor);
 }
