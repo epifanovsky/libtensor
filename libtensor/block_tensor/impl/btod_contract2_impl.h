@@ -10,6 +10,7 @@
 #include <libtensor/dense_tensor/tod_contract2.h>
 #include <libtensor/dense_tensor/tod_set.h>
 #include <libtensor/gen_block_tensor/gen_block_tensor_ctrl.h>
+#include <libtensor/gen_block_tensor/gen_bto_aux_copy.h>
 #include <libtensor/gen_block_tensor/impl/gen_bto_copy_impl.h>
 #include <libtensor/gen_block_tensor/impl/gen_bto_contract2_clst_impl.h>
 #include <libtensor/gen_block_tensor/impl/gen_bto_contract2_nzorb_impl.h>
@@ -18,8 +19,6 @@
 #include <libtensor/block_tensor/block_tensor.h>
 #include <libtensor/block_tensor/block_tensor_ctrl.h>
 #include <libtensor/block_tensor/bto/impl/bto_aux_add_impl.h>
-#include <libtensor/block_tensor/bto/impl/bto_aux_copy_impl.h>
-#include <libtensor/block_tensor/bto/impl/bto_aux_copy_impl.h>
 #include <libtensor/btod/bad_block_index_space.h>
 #include "../btod_contract2.h"
 
@@ -193,7 +192,7 @@ void btod_contract2<N, M, K>::perform(gen_block_stream_i<NC, bti_traits> &out) {
             if(!use_orig_a) {
                 btod_contract2<N, M, K>::start_timer("copy_a");
                 tensor_transf<NA, double> tra(perma);
-                bto_aux_copy<NA, btod_traits> cpaout(symat, btat);
+                gen_bto_aux_copy<NA, btod_traits> cpaout(symat, btat);
                 gen_bto_copy_a_type(m_bta, tra).perform(batcha, cpaout);
                 btod_contract2<N, M, K>::stop_timer("copy_a");
             }
@@ -230,7 +229,7 @@ void btod_contract2<N, M, K>::perform(gen_block_stream_i<NC, bti_traits> &out) {
                 if(!use_orig_b) {
                     btod_contract2<N, M, K>::start_timer("copy_b");
                     tensor_transf<NB, double> trb(permb);
-                    bto_aux_copy<NB, btod_traits> cpbout(symbt, btbt);
+                    gen_bto_aux_copy<NB, btod_traits> cpbout(symbt, btbt);
                     gen_bto_copy_b_type(m_btb, trb).perform(batchb, cpbout);
                     btod_contract2<N, M, K>::stop_timer("copy_b");
                 }
@@ -261,7 +260,7 @@ void btod_contract2<N, M, K>::perform(gen_block_stream_i<NC, bti_traits> &out) {
                     //  in some cases, e.g. self-contraction
                     gen_bto_contract2<N, M, K, btod_traits, btod_contract2> bto(
                         contr, bta, btb);
-                    bto_aux_copy<NC, btod_traits> ctcout(symct, btct);
+                    gen_bto_aux_copy<NC, btod_traits> ctcout(symct, btct);
                     bto.perform(batchc1, ctcout);
 
                     btod_contract2<N, M, K>::start_timer("copy_c");
@@ -295,7 +294,7 @@ void btod_contract2<N, M, K>::perform(gen_block_stream_i<NC, bti_traits> &out) {
 template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::perform(block_tensor_i<NC, double> &btc) {
 
-    bto_aux_copy<NC, btod_traits> out(m_symc.get_symc(), btc);
+    gen_bto_aux_copy<NC, btod_traits> out(m_symc.get_symc(), btc);
     perform(out);
 }
 

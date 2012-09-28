@@ -2,7 +2,7 @@
 #define LIBTENSOR_BTOD_MULT_IMPL_H
 
 #include <libtensor/block_tensor/bto/bto_aux_add.h>
-#include <libtensor/block_tensor/bto/bto_aux_copy.h>
+#include <libtensor/gen_block_tensor/gen_bto_aux_copy.h>
 #include "../btod_mult.h"
 
 namespace libtensor {
@@ -15,7 +15,7 @@ const char *btod_mult<N>::k_clazz = "btod_mult<N>";
 template<size_t N>
 void btod_mult<N>::perform(block_tensor_i<N, double> &btc) {
 
-    bto_aux_copy<N, btod_traits> out(get_symmetry(), btc);
+    gen_bto_aux_copy<N, btod_traits> out(get_symmetry(), btc);
     perform(out);
 }
 

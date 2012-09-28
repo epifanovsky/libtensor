@@ -5,7 +5,7 @@
 #include <libtensor/dense_tensor/tod_set.h>
 #include <libtensor/block_tensor/block_tensor_ctrl.h>
 #include <libtensor/block_tensor/bto/impl/bto_aux_add_impl.h>
-#include <libtensor/block_tensor/bto/impl/bto_aux_copy_impl.h>
+#include <libtensor/gen_block_tensor/gen_bto_aux_copy.h>
 #include "../btod_add.h"
 
 namespace libtensor {
@@ -25,7 +25,7 @@ void btod_add<N>::perform(gen_block_stream_i<N, bti_traits> &out) {
 template<size_t N>
 void btod_add<N>::perform(block_tensor_i<N, double> &btb) {
 
-    bto_aux_copy<N, btod_traits> out(get_symmetry(), btb);
+    gen_bto_aux_copy<N, btod_traits> out(get_symmetry(), btb);
     perform(out);
 }
 

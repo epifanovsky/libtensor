@@ -2,7 +2,7 @@
 #define LIBTENSOR_BTOD_EXTRACT_IMPL_H
 
 #include <libtensor/block_tensor/bto/bto_aux_add.h>
-#include <libtensor/block_tensor/bto/bto_aux_copy.h>
+#include <libtensor/gen_block_tensor/gen_bto_aux_copy.h>
 #include "../btod_extract.h"
 
 namespace libtensor {
@@ -15,7 +15,7 @@ const char *btod_extract<N, M>::k_clazz = "btod_extract<N, M>";
 template<size_t N, size_t M>
 void btod_extract<N, M>::perform(block_tensor_i<N - M, double> &btb) {
 
-    bto_aux_copy<N - M, btod_traits> out(get_symmetry(), btb);
+    gen_bto_aux_copy<N - M, btod_traits> out(get_symmetry(), btb);
     perform(out);
 }
 

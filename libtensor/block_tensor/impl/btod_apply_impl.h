@@ -2,9 +2,9 @@
 #define LIBTENSOR_BTOD_APPLY_IMPL_H
 
 #include <libtensor/block_tensor/bto/bto_aux_add.h>
-#include <libtensor/block_tensor/bto/bto_aux_copy.h>
 #include <libtensor/dense_tensor/tod_copy.h>
 #include <libtensor/dense_tensor/tod_set.h>
+#include <libtensor/gen_block_tensor/gen_bto_aux_copy.h>
 #include <libtensor/gen_block_tensor/impl/gen_bto_apply_impl.h>
 #include "../btod_apply.h"
 
@@ -18,7 +18,7 @@ const char *btod_apply<N, Functor>::k_clazz = "btod_apply<N, Functor>";
 template<size_t N, typename Functor>
 void btod_apply<N, Functor>::perform(block_tensor_i<N, double> &btb) {
 
-    bto_aux_copy<N, btod_traits> out(get_symmetry(), btb);
+    gen_bto_aux_copy<N, btod_traits> out(get_symmetry(), btb);
     perform(out);
 }
 
