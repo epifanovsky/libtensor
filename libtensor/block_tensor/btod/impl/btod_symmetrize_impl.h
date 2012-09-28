@@ -7,10 +7,11 @@
 #include <libtensor/core/orbit_list.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/tod_set.h>
+#include <libtensor/symmetry/so_copy.h>
 #include <libtensor/symmetry/so_permute.h>
 #include <libtensor/symmetry/so_symmetrize.h>
 #include <libtensor/gen_block_tensor/gen_bto_aux_add.h>
-#include "../../bto/impl/bto_aux_symmetrize_impl.h"
+#include <libtensor/gen_block_tensor/gen_bto_aux_symmetrize.h>
 #include "../btod_symmetrize.h"
 
 namespace libtensor {
@@ -108,7 +109,7 @@ void btod_symmetrize<N>::perform(gen_block_stream_i<N, bti_traits> &out) {
         tensor_transf<N, double> tr0;
         tensor_transf<N, double> tr1(m_perm1,
             scalar_transf<double>(m_symm ? 1.0 : -1.0));
-        bto_aux_symmetrize<N, Traits> out2(m_op.get_symmetry(), m_sym, out);
+        gen_bto_aux_symmetrize<N, Traits> out2(m_op.get_symmetry(), m_sym, out);
         out2.add_transf(tr0);
         out2.add_transf(tr1);
         m_op.perform(out2);

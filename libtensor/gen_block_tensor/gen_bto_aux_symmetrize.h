@@ -1,9 +1,9 @@
-#ifndef LIBTENSOR_BTO_AUX_SYMMETRIZE_H
-#define LIBTENSOR_BTO_AUX_SYMMETRIZE_H
+#ifndef LIBTENSOR_GEN_BTO_AUX_SYMMETRIZE_H
+#define LIBTENSOR_GEN_BTO_AUX_SYMMETRIZE_H
 
 #include <list>
 #include <libtensor/core/orbit_list.h>
-#include <libtensor/gen_block_tensor/gen_block_stream_i.h>
+#include "gen_block_stream_i.h"
 
 namespace libtensor {
 
@@ -26,7 +26,7 @@ namespace libtensor {
     \ingroup libtensor_block_tensor_bto
  **/
 template<size_t N, typename Traits>
-class bto_aux_symmetrize :
+class gen_bto_aux_symmetrize :
     public gen_block_stream_i<N, typename Traits::bti_traits> {
 
 public:
@@ -50,14 +50,14 @@ public:
         \brief symb Target symmetry.
         \brief out Output stream.
      **/
-    bto_aux_symmetrize(
+    gen_bto_aux_symmetrize(
         const symmetry_type &syma,
         const symmetry_type &symb,
         gen_block_stream_i<N, bti_traits> &out);
 
     /** \brief Virtual destructor
      **/
-    virtual ~bto_aux_symmetrize();
+    virtual ~gen_bto_aux_symmetrize();
 
     /** \brief Add a transformation to the symmetrizer
      **/
@@ -85,4 +85,4 @@ public:
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_BTO_AUX_SYMMETRIZE_H
+#endif // LIBTENSOR_GEN_BTO_AUX_SYMMETRIZE_H

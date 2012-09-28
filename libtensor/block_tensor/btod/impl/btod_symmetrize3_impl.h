@@ -10,7 +10,7 @@
 #include <libtensor/symmetry/so_copy.h>
 #include <libtensor/symmetry/so_symmetrize.h>
 #include <libtensor/gen_block_tensor/gen_bto_aux_add.h>
-#include "../../bto/impl/bto_aux_symmetrize_impl.h"
+#include <libtensor/gen_block_tensor/gen_bto_aux_symmetrize.h>
 #include "../btod_symmetrize3.h"
 
 namespace libtensor {
@@ -68,7 +68,7 @@ void btod_symmetrize3<N>::perform(gen_block_stream_i<N, bti_traits> &out) {
         tr4.transform(tr2);
         tr5.transform(tr3);
 
-        bto_aux_symmetrize<N, Traits> out2(m_op.get_symmetry(), m_sym, out);
+        gen_bto_aux_symmetrize<N, Traits> out2(m_op.get_symmetry(), m_sym, out);
         out2.add_transf(tr0);
         out2.add_transf(tr1);
         out2.add_transf(tr2);
