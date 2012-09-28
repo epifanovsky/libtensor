@@ -5,8 +5,8 @@
 #include <libtensor/exception.h>
 #include <libtensor/core/block_index_space.h>
 #include <libtensor/core/symmetry.h>
-#include "assignment_schedule.h"
-#include "bto_stream_i.h"
+#include <libtensor/gen_block_tensor/assignment_schedule.h>
+#include <libtensor/gen_block_tensor/gen_block_stream_i.h>
 
 namespace libtensor {
 
@@ -24,6 +24,9 @@ class direct_bto {
 public:
     //! Type of tensor elements
     typedef typename Traits::element_type element_type;
+
+    //! Block tensor interface traits
+    typedef typename Traits::bti_traits bti_traits;
 
     //! Type of block tensors
     typedef typename Traits::template block_tensor_type<N>::type
@@ -55,7 +58,7 @@ public:
 
     /** \brief Runs the operation and writes the result into the output stream
      **/
-    virtual void perform(bto_stream_i<N, Traits> &out) = 0;
+    virtual void perform(gen_block_stream_i<N, bti_traits> &out) = 0;
 
     /** \brief Computes one block
      **/

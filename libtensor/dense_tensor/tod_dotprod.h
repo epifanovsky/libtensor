@@ -3,6 +3,8 @@
 
 #include <list>
 #include <libtensor/timings.h>
+#include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/core/tensor_transf.h>
 #include "dense_tensor_i.h"
 
 namespace libtensor {
@@ -53,8 +55,8 @@ public:
 private:
     dense_tensor_rd_i<N,double> &m_ta; //!< First tensor (A)
     dense_tensor_rd_i<N,double> &m_tb; //!< Second tensor (B)
-    permutation<N> m_perma; //!< Permutation of the first tensor (A)
-    permutation<N> m_permb; //!< Permutation of the second tensor (B)
+    tensor_transf<N, double> m_tra; //!< Permutation of the first tensor (A)
+    tensor_transf<N, double> m_trb; //!< Permutation of the second tensor (B)
 
 public:
     /** \brief Initializes the operation
@@ -72,6 +74,18 @@ public:
      **/
     tod_dotprod(dense_tensor_rd_i<N, double> &ta, const permutation<N> &perma,
         dense_tensor_rd_i<N, double> &tb, const permutation<N> &permb);
+
+    /** \brief Initializes the operation
+        \param ta First tensor (A)
+        \param tra Transformation of first tensor (A)
+        \param tb Second tensor (B)
+        \param trb Transformation of second tensor (B)
+     **/
+    tod_dotprod(
+            dense_tensor_rd_i<N, double> &ta,
+            const tensor_transf<N, double> &tra,
+            dense_tensor_rd_i<N, double> &tb,
+            const tensor_transf<N, double> &trb);
 
     /** \brief Prefetches the arguments
      **/

@@ -15,7 +15,8 @@ const char *addition_schedule<N, Traits>::k_clazz =
 
 
 template<size_t N, typename Traits>
-addition_schedule<N, Traits>::addition_schedule(const symmetry_type &syma,
+addition_schedule<N, Traits>::addition_schedule(
+    const symmetry_type &syma,
     const symmetry_type &symb) :
 
     m_syma(syma), m_symb(symb), m_symc(m_symb.get_bis()) {
@@ -44,8 +45,9 @@ addition_schedule<N, Traits>::~addition_schedule() {
 
 
 template<size_t N, typename Traits>
-void addition_schedule<N, Traits>::build(const assignment_schedule_type &asch,
-    block_tensor_ctrl_type &cb) {
+void addition_schedule<N, Traits>::build(
+    const assignment_schedule_type &asch,
+    gen_block_tensor_rd_ctrl<N, bti_traits> &cb) {
 
     typedef typename assignment_schedule_type::iterator asgsch_iterator;
 
@@ -123,7 +125,8 @@ void addition_schedule<N, Traits>::clear_schedule() throw() {
 
 
 template<size_t N, typename Traits>
-void addition_schedule<N, Traits>::mark_orbits(const symmetry_type &sym,
+void addition_schedule<N, Traits>::mark_orbits(
+    const symmetry_type &sym,
     std::vector<char> &o) {
 
     dimensions<N> bidims(sym.get_bis().get_block_index_dims());
@@ -140,8 +143,10 @@ void addition_schedule<N, Traits>::mark_orbits(const symmetry_type &sym,
 
 
 template<size_t N, typename Traits>
-bool addition_schedule<N, Traits>::mark_orbit_inner(const symmetry_type &sym,
-    const abs_index<N> &ai, std::vector<char> &o) {
+bool addition_schedule<N, Traits>::mark_orbit_inner(
+    const symmetry_type &sym,
+    const abs_index<N> &ai,
+    std::vector<char> &o) {
 
     typedef symmetry_element_set<N, element_type> seset_type;
     typedef typename symmetry_type::iterator symmetry_iterator;
@@ -170,8 +175,11 @@ bool addition_schedule<N, Traits>::mark_orbit_inner(const symmetry_type &sym,
 
 
 template<size_t N, typename Traits>
-size_t addition_schedule<N, Traits>::find_canonical(const dimensions<N> &bidims,
-    const symmetry_type &sym, const abs_index<N> ai, tensor_transf_type &tr,
+size_t addition_schedule<N, Traits>::find_canonical(
+    const dimensions<N> &bidims,
+    const symmetry_type &sym,
+    const abs_index<N> ai,
+    tensor_transf_type &tr,
     const std::vector<char> &o) {
 
     //  Given the orbit array o previously formed by mark_orbits(), this
@@ -193,8 +201,11 @@ size_t addition_schedule<N, Traits>::find_canonical(const dimensions<N> &bidims,
 
 template<size_t N, typename Traits>
 size_t addition_schedule<N, Traits>::find_canonical_inner(
-    const dimensions<N> &bidims, const symmetry_type &sym,
-    const abs_index<N> &ai, tensor_transf_type &tr, const std::vector<char> &o,
+    const dimensions<N> &bidims,
+    const symmetry_type &sym,
+    const abs_index<N> &ai,
+    tensor_transf_type &tr,
+    const std::vector<char> &o,
     std::vector<char> &o2) {
 
     //  Applies all possible combinations of symmetry elements until it
@@ -237,10 +248,16 @@ size_t addition_schedule<N, Traits>::find_canonical_inner(
 
 template<size_t N, typename Traits>
 void addition_schedule<N, Traits>::process_orbit_in_a(
-    const dimensions<N> &bidims, bool zeroa, block_tensor_ctrl_type &cb,
-    const abs_index<N> &acia, const abs_index<N> &aia,
-    const tensor_transf_type &tra, std::vector<char> &oa, std::vector<char> &ob,
-    const std::vector<char> &omb, const std::vector<char> &omc,
+    const dimensions<N> &bidims,
+    bool zeroa,
+    gen_block_tensor_rd_ctrl<N, bti_traits> &cb,
+    const abs_index<N> &acia,
+    const abs_index<N> &aia,
+    const tensor_transf_type &tra,
+    std::vector<char> &oa,
+    std::vector<char> &ob,
+    const std::vector<char> &omb,
+    const std::vector<char> &omc,
     schedule_group &grp) {
 
     if(oa[aia.get_abs_index()]) return;
@@ -290,10 +307,16 @@ void addition_schedule<N, Traits>::process_orbit_in_a(
 
 template<size_t N, typename Traits>
 void addition_schedule<N, Traits>::iterate_sym_elements_in_a(
-    const dimensions<N> &bidims, bool zeroa, block_tensor_ctrl_type &cb,
-    const abs_index<N> &acia, const abs_index<N> &aia,
-    const tensor_transf_type &tra, std::vector<char> &oa, std::vector<char> &ob,
-    const std::vector<char> &omb, const std::vector<char> &omc,
+    const dimensions<N> &bidims,
+    bool zeroa,
+    gen_block_tensor_rd_ctrl<N, bti_traits> &cb,
+    const abs_index<N> &acia,
+    const abs_index<N> &aia,
+    const tensor_transf_type &tra,
+    std::vector<char> &oa,
+    std::vector<char> &ob,
+    const std::vector<char> &omb,
+    const std::vector<char> &omc,
     schedule_group &grp) {
 
     typedef symmetry_element_set<N, element_type> seset_type;
@@ -319,10 +342,16 @@ void addition_schedule<N, Traits>::iterate_sym_elements_in_a(
 
 template<size_t N, typename Traits>
 void addition_schedule<N, Traits>::process_orbit_in_b(
-    const dimensions<N> &bidims, bool zeroa, const abs_index<N> &acib,
-    const abs_index<N> &aib, const tensor_transf_type &trb,
-    std::vector<char> &oa, std::vector<char> &ob, const std::vector<char> &omb,
-    const std::vector<char> &omc, schedule_group &grp) {
+    const dimensions<N> &bidims,
+    bool zeroa,
+    const abs_index<N> &acib,
+    const abs_index<N> &aib,
+    const tensor_transf_type &trb,
+    std::vector<char> &oa,
+    std::vector<char> &ob,
+    const std::vector<char> &omb,
+    const std::vector<char> &omc,
+    schedule_group &grp) {
 
     if(ob[aib.get_abs_index()]) return;
 
@@ -364,10 +393,16 @@ void addition_schedule<N, Traits>::process_orbit_in_b(
 
 template<size_t N, typename Traits>
 void addition_schedule<N, Traits>::iterate_sym_elements_in_b(
-    const dimensions<N> &bidims, bool zeroa, const abs_index<N> &acib,
-    const abs_index<N> &aib, const tensor_transf_type &trb,
-    std::vector<char> &oa, std::vector<char> &ob, const std::vector<char> &omb,
-    const std::vector<char> &omc, schedule_group &grp) {
+    const dimensions<N> &bidims,
+    bool zeroa,
+    const abs_index<N> &acib,
+    const abs_index<N> &aib,
+    const tensor_transf_type &trb,
+    std::vector<char> &oa,
+    std::vector<char> &ob,
+    const std::vector<char> &omb,
+    const std::vector<char> &omc,
+    schedule_group &grp) {
 
     typedef symmetry_element_set<N, element_type> seset_type;
     typedef typename symmetry_type::iterator symmetry_iterator;

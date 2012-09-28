@@ -1,9 +1,8 @@
 #ifndef LIBTENSOR_BTOD_DIRSUM_IMPL_H
 #define LIBTENSOR_BTOD_DIRSUM_IMPL_H
 
-#include <libtensor/block_tensor/bto/bto_aux_add.h>
-#include <libtensor/block_tensor/bto/bto_aux_copy.h>
-#include "bto_stream_adapter.h"
+#include <libtensor/gen_block_tensor/gen_bto_aux_add.h>
+#include <libtensor/gen_block_tensor/gen_bto_aux_copy.h>
 #include "../btod_dirsum.h"
 
 namespace libtensor {
@@ -18,17 +17,9 @@ const char *btod_dirsum<N, M>::k_clazz = btod_dirsum_clazz<N, M>::k_clazz;
 
 
 template<size_t N, size_t M>
-void btod_dirsum<N, M>::perform(bto_stream_i<N + M, btod_traits> &out) {
-
-    bto_stream_adapter<N + M, btod_traits> a(out);
-    m_gbto.perform(a);
-}
-
-
-template<size_t N, size_t M>
 void btod_dirsum<N, M>::perform(block_tensor_i<N + M, double> &btb) {
 
-    bto_aux_copy<N + M, btod_traits> out(get_symmetry(), btb);
+    gen_bto_aux_copy<N + M, btod_traits> out(get_symmetry(), btb);
     perform(out);
 }
 
@@ -37,12 +28,14 @@ template<size_t N, size_t M>
 void btod_dirsum<N, M>::perform(block_tensor_i<N + M, double> &btb,
     const double &c) {
 
-    block_tensor_ctrl<N + M, double> cb(btb);
+    typedef block_tensor_i_traits<double> bti_traits;
+
+    gen_block_tensor_rd_ctrl<N + M, bti_traits> cb(btb);
     addition_schedule<N + M, btod_traits> asch(get_symmetry(),
         cb.req_const_symmetry());
     asch.build(get_schedule(), cb);
 
-    bto_aux_add<N + M, btod_traits> out(get_symmetry(), asch, btb, c);
+    gen_bto_aux_add<N + M, btod_traits> out(get_symmetry(), asch, btb, c);
     perform(out);
 }
 

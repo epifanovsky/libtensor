@@ -1,7 +1,7 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/block_tensor/block_tensor.h>
-#include <libtensor/block_tensor/btod/btod_extract.h>
+#include <libtensor/block_tensor/btod_extract.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/dense_tensor/tod_btconv.h>
 #include <libtensor/dense_tensor/tod_extract.h>
@@ -83,7 +83,7 @@ void btod_extract_test::test_1() throw(libtest::test_exception) {
 
     //  Prepare the reference
     tod_btconv<2>(bta).perform(ta);
-    tod_extract<2, 1>(ta, msk, idx).perform(tb_ref);
+    tod_extract<2, 1>(ta, msk, idx).perform(true, tb_ref);
 
     //  Invoke the operation
     btod_extract<2, 1>(bta, msk, idxbl, idxibl).perform(btb);
@@ -139,7 +139,7 @@ void btod_extract_test::test_2() throw(libtest::test_exception) {
 
     //  Prepare the reference
     tod_btconv<3>(bta).perform(ta);
-    tod_extract<3, 1>(ta, msk, idx).perform(tb_ref);
+    tod_extract<3, 1>(ta, msk, idx).perform(true, tb_ref);
 
     //  Invoke the operation
     btod_extract<3, 1>(bta, msk, idxbl, idxibl).perform(btb);
@@ -197,7 +197,7 @@ void btod_extract_test::test_3() throw(libtest::test_exception) {
 
     //  Prepare the reference
     tod_btconv<5>(bta).perform(ta);
-    tod_extract<5, 2>(ta, msk, idx).perform(tb_ref);
+    tod_extract<5, 2>(ta, msk, idx).perform(true, tb_ref);
 
     //  Invoke the operation
     btod_extract<5, 2>(bta, msk, idxbl, idxibl).perform(btb);
@@ -253,7 +253,7 @@ void btod_extract_test::test_4() throw(libtest::test_exception) {
 
     //  Prepare the reference
     tod_btconv<5>(bta).perform(ta);
-    tod_extract<5, 3>(ta, msk, idx).perform(tb_ref);
+    tod_extract<5, 3>(ta, msk, idx).perform(true, tb_ref);
 
     //  Invoke the operation
     btod_extract<5, 3>(bta, msk, idxbl, idxibl).perform(btb);
@@ -317,7 +317,7 @@ void btod_extract_test::test_5() throw(libtest::test_exception) {
 
     //  Prepare the reference
     tod_btconv<2>(bta).perform(ta);
-    tod_extract<2, 1>(ta, msk, idx).perform(tb_ref);
+    tod_extract<2, 1>(ta, msk, idx).perform(true, tb_ref);
 
     //  Invoke the operation
     btod_extract<2, 1>(bta, msk, idxbl, idxibl).perform(btb);
@@ -385,7 +385,7 @@ void btod_extract_test::test_6() throw(libtest::test_exception) {
 
     //  Prepare the reference
     tod_btconv<3>(bta).perform(ta);
-    tod_extract<3, 1>(ta, msk, idx).perform(tb_ref);
+    tod_extract<3, 1>(ta, msk, idx).perform(true, tb_ref);
 
     //  Invoke the operation
     btod_extract<3, 1>(bta, msk, idxbl, idxibl).perform(btb);
@@ -459,7 +459,7 @@ void btod_extract_test::test_7() throw(libtest::test_exception) {
 
     //  Prepare the reference
     tod_btconv<4>(bta).perform(ta);
-    tod_extract<4, 2>(ta, msk, idx).perform(tb_ref);
+    tod_extract<4, 2>(ta, msk, idx).perform(true, tb_ref);
 
     //  Invoke the operation
     btod_extract<4, 2>(bta, msk, idxbl, idxibl).perform(btb);
@@ -529,7 +529,7 @@ void btod_extract_test::test_8() throw(libtest::test_exception) {
 
     //  Prepare the reference
     tod_btconv<4>(bta).perform(ta);
-    tod_extract<4, 2>(ta, msk, idx).perform(tb_ref);
+    tod_extract<4, 2>(ta, msk, idx).perform(true, tb_ref);
 
     //  Invoke the operation
     btod_extract<4, 2>(bta, msk, idxbl, idxibl).perform(btb);
@@ -591,10 +591,10 @@ void btod_extract_test::test_9() throw(libtest::test_exception) {
 
     //  Prepare the reference
     tod_btconv<3>(bta).perform(ta);
-    tod_extract<3, 1>(ta, msk, perm, idx).perform(tb_ref);
+    tod_extract<3, 1>(ta, msk, idx, perm).perform(true, tb_ref);
 
     //  Invoke the operation
-    btod_extract<3, 1>(bta, msk,perm, idxbl, idxibl).perform(btb);
+    btod_extract<3, 1>(bta, msk, idxbl, idxibl, perm).perform(btb);
     tod_btconv<2>(btb).perform(tb);
 
     //  Compare against the reference
@@ -681,7 +681,7 @@ void btod_extract_test::test_10() throw(libtest::test_exception) {
     //  Prepare the reference
 
     tod_btconv<4>(bta).perform(ta);
-    tod_extract<4, 2>(ta, msk, idx).perform(tb_ref);
+    tod_extract<4, 2>(ta, msk, idx).perform(true, tb_ref);
 
     //  Invoke the operation
     btod_extract<4, 2>(bta, msk, idxbl, idxibl).perform(btb);
@@ -752,10 +752,10 @@ void btod_extract_test::test_11() throw(libtest::test_exception) {
 
     //  Prepare the reference
     tod_btconv<3>(bta).perform(ta);
-    tod_extract<3, 1>(ta, msk, perm, idx).perform(tb_ref);
+    tod_extract<3, 1>(ta, msk, idx, perm).perform(true, tb_ref);
 
     //  Invoke the operation
-    btod_extract<3, 1>(bta, msk,perm, idxbl, idxibl).perform(btb);
+    btod_extract<3, 1>(bta, msk, idxbl, idxibl, perm).perform(btb);
     tod_btconv<2>(btb).perform(tb);
 
     //  Compare against the reference
@@ -837,7 +837,7 @@ void btod_extract_test::test_12a() throw(libtest::test_exception) {
     //  Prepare the reference
 
     tod_btconv<4>(bta).perform(ta);
-    tod_extract<4, 2>(ta, msk, idx).perform(tb_ref);
+    tod_extract<4, 2>(ta, msk, idx).perform(true, tb_ref);
 
     //  Invoke the operation
 
@@ -930,7 +930,7 @@ void btod_extract_test::test_12b() throw(libtest::test_exception) {
 
     tod_btconv<4>(bta).perform(ta);
     tod_btconv<2>(btb).perform(tb_ref);
-    tod_extract<4, 2>(ta, msk, idx).perform(tb_ref, 2.3);
+    tod_extract<4, 2>(ta, msk, idx, 2.3).perform(false, tb_ref);
 
     //  Invoke the operation
 
@@ -1019,7 +1019,7 @@ void btod_extract_test::test_12c() throw(libtest::test_exception) {
 
     tod_btconv<4>(bta).perform(ta);
     tod_btconv<2>(btb).perform(tb_ref);
-    tod_extract<4, 2>(ta, msk, idx).perform(tb_ref, -2.3);
+    tod_extract<4, 2>(ta, msk, idx, -2.3).perform(false, tb_ref);
 
     //  Invoke the operation
 
@@ -1105,11 +1105,11 @@ void btod_extract_test::test_13a() throw(libtest::test_exception) {
     //  Prepare the reference
 
     tod_btconv<4>(bta).perform(ta);
-    tod_extract<4, 2>(ta, msk, perm, idx).perform(tb_ref);
+    tod_extract<4, 2>(ta, msk, idx, perm).perform(true, tb_ref);
 
     //  Invoke the operation
 
-    btod_extract<4, 2>(bta, msk, perm, idxbl, idxibl).perform(btb);
+    btod_extract<4, 2>(bta, msk, idxbl, idxibl, perm).perform(btb);
     tod_btconv<2>(btb).perform(tb);
 
     //  Compare against the reference

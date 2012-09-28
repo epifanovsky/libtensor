@@ -2,6 +2,9 @@
 #define LIBTENSOR_TOD_MULT1_H
 
 #include <libtensor/timings.h>
+#include <libtensor/core/noncopyable.h>
+#include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/core/tensor_transf.h>
 #include "dense_tensor_i.h"
 
 namespace libtensor {
@@ -23,25 +26,35 @@ namespace libtensor {
     \ingroup libtensor_dense_tensor_tod
  **/
 template<size_t N>
-class tod_mult1 : public timings< tod_mult1<N> > {
+class tod_mult1 : public timings< tod_mult1<N> >, public noncopyable {
 public:
     static const char *k_clazz; //!< Class name
 
 private:
     dense_tensor_rd_i<N, double> &m_tb; //!< Second argument
-    permutation<N> m_pb; //!< Permutation of argument
+    tensor_transf<N, double> m_trb; //!< Tensor transformation of argument
     bool m_recip; //!< Reciprocal (multiplication by 1/bi)
-    double m_c; //!< Scaling coefficient
+    scalar_transf<double> m_c; //!< Scaling coefficient
 
 public:
     /** \brief Creates the operation
         \param tb Second argument.
         \param recip \c false (default) sets up multiplication and
             \c true sets up element-wise division.
+        \param c Scalar transformation
+     **/
+    tod_mult1(dense_tensor_rd_i<N, double> &tb,
+            const tensor_transf<N, double> &trb, bool recip = false,
+            const scalar_transf<double> &c = scalar_transf<double>());
+
+    /** \brief Creates the operation
+        \param tb Second argument.
+        \param recip \c false (default) sets up multiplication and
+            \c true sets up element-wise division.
         \param c Coefficient
      **/
-    tod_mult1(dense_tensor_rd_i<N, double> &tb, bool recip = false,
-        double c = 1.0) :
+    tod_mult1(dense_tensor_rd_i<N, double> &tb,
+            bool recip = false, double c = 1.0) :
         m_tb(tb), m_recip(recip), m_c(c)
     { }
 
@@ -54,26 +67,14 @@ public:
      **/
     tod_mult1(dense_tensor_rd_i<N, double> &tb, const permutation<N> &p,
         bool recip = false, double c = 1.0) :
-        m_tb(tb), m_pb(p), m_recip(recip), m_c(c)
+        m_tb(tb), m_trb(p), m_recip(recip), m_c(c)
     { }
 
     /** \brief Performs the operation, replaces the output.
+        \param zero If true, replace A, otherwise add to A
         \param ta Tensor A.
      **/
-    void perform(dense_tensor_wr_i<N, double> &ta);
-
-    /** \brief Performs the operation, adds to the output.
-        \param ta Tensor A.
-        \param c Coefficient.
-     **/
-    void perform(dense_tensor_wr_i<N, double> &ta, double c);
-
-private:
-    void do_perform(dense_tensor_wr_i<N, double> &ta, bool doadd, double c);
-
-private:
-    tod_mult1(const tod_mult1&);
-
+    void perform(bool zero, dense_tensor_wr_i<N, double> &ta);
 };
 
 

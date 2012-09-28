@@ -93,6 +93,39 @@ public:
 };
 
 
+/** \brief Specialization of scalar_transf_sum<T> for T == double
+ **/
+template<>
+class scalar_transf_sum<double> {
+private:
+    double m_coeff; //!< Coefficient
+
+public:
+    /** \brief Default constructor
+        \param coeff Scaling coefficient (default: 1.0)
+     **/
+    scalar_transf_sum() : m_coeff(0.0) { }
+
+    /** \brief Add scalar transformation to sum
+     */
+    void add(const scalar_transf<double> &tr) {
+        m_coeff += tr.get_coeff();
+    }
+
+    /** \brief Apply sum to element
+     **/
+    void apply(double &el) const { el *= m_coeff; }
+
+    /** \brief True, if the transformation leaves the elements unchanged
+     **/
+    bool is_identity() const { return m_coeff == 1.0; }
+
+    /** \brief True if all elements are mapped to zero.
+     **/
+    bool is_zero() const { return m_coeff == 0.0; }
+};
+
+
 inline
 scalar_transf<double> &scalar_transf<double>::transform(
         const scalar_transf<double> &tr) {

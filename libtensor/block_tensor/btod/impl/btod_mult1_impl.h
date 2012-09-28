@@ -179,11 +179,7 @@ void btod_mult1<N>::do_perform(
         permutation<N> pb(trb.get_perm());
         pb.permute(m_pb);
 
-        if(zero) {
-            tod_mult1<N>(blkb, pb, m_recip, k * c).perform(blka);
-        } else {
-            tod_mult1<N>(blkb, pb, m_recip, k).perform(blka, c);
-        }
+        tod_mult1<N>(blkb, pb, m_recip, k * c).perform(zero, blka);
 
         ctrla.ret_block(idxa);
         ctrlb.ret_block(cidxb.get_index());

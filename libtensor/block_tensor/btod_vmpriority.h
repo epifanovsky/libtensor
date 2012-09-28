@@ -1,12 +1,9 @@
 #ifndef LIBTENSOR_BTOD_VMPRIORITY_H
 #define LIBTENSOR_BTOD_VMPRIORITY_H
 
-#include <libtensor/dense_tensor/dense_tensor_i.h>
-#include <libtensor/dense_tensor/tod_vmpriority.h>
-#include <libtensor/block_tensor/block_tensor_i.h>
-#include <libtensor/block_tensor/block_tensor_ctrl.h>
-#include <libtensor/block_tensor/bto/bto_vmpriority.h>
 #include <libtensor/block_tensor/btod/btod_traits.h>
+#include <libtensor/core/noncopyable.h>
+#include <libtensor/gen_block_tensor/gen_bto_vmpriority.h>
 
 namespace libtensor {
 
@@ -17,18 +14,32 @@ namespace libtensor {
     \ingroup libtensor_btod
  **/
 template<size_t N>
-class btod_vmpriority : public bto_vmpriority<N, btod_traits> {
+class btod_vmpriority : public noncopyable {
 public:
     static const char *k_clazz; //!< Class name
 
+private:
+    gen_bto_vmpriority< N, btod_traits> m_gbto;
+
 public:
     /** \brief Initializes the operation
-        \param v Value to be assigned to the tensor elements.
+        \param bt Block tensor to set priority for
      **/
     btod_vmpriority(block_tensor_i<N, double> &bt) :
-        bto_vmpriority<N, btod_traits>(bt)
+        m_gbto(bt)
     { }
 
+    /** \brief Sets the VM in-core priority
+     **/
+    void set_priority() {
+        m_gbto.set_priority();
+    }
+
+    /** \brief Unsets the VM in-core priority
+     **/
+    void unset_priority() {
+        m_gbto.unset_priority();
+    }
 };
 
 

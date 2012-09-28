@@ -3,10 +3,9 @@
 
 #include <libtensor/dense_tensor/tod_copy.h>
 #include <libtensor/dense_tensor/tod_set.h>
+#include <libtensor/gen_block_tensor/gen_bto_aux_add.h>
+#include <libtensor/gen_block_tensor/gen_bto_aux_copy.h>
 #include <libtensor/block_tensor/block_tensor_ctrl.h>
-#include <libtensor/block_tensor/bto/impl/bto_aux_add_impl.h>
-#include <libtensor/block_tensor/bto/impl/bto_aux_copy_impl.h>
-#include "bto_stream_adapter.h"
 #include "../btod_copy.h"
 
 namespace libtensor {
@@ -17,17 +16,9 @@ const char *btod_copy<N>::k_clazz = "btod_copy<N>";
 
 
 template<size_t N>
-void btod_copy<N>::perform(bto_stream_i<N, btod_traits> &out) {
-
-    bto_stream_adapter<N, btod_traits> a(out);
-    m_gbto.perform(a);
-}
-
-
-template<size_t N>
 void btod_copy<N>::perform(block_tensor_i<N, double> &btb) {
 
-    bto_aux_copy<N, btod_traits> out(get_symmetry(), btb);
+    gen_bto_aux_copy<N, btod_traits> out(get_symmetry(), btb);
     perform(out);
 }
 
@@ -37,12 +28,14 @@ void btod_copy<N>::perform(
     block_tensor_i<N, double> &btb,
     const double &c) {
 
-    block_tensor_ctrl<N, double> cb(btb);
+    typedef block_tensor_i_traits<double> bti_traits;
+
+    gen_block_tensor_rd_ctrl<N, bti_traits> cb(btb);
     addition_schedule<N, btod_traits> asch(get_symmetry(),
         cb.req_const_symmetry());
     asch.build(get_schedule(), cb);
 
-    bto_aux_add<N, btod_traits> out(get_symmetry(), asch, btb, c);
+    gen_bto_aux_add<N, btod_traits> out(get_symmetry(), asch, btb, c);
     perform(out);
 }
 

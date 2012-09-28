@@ -3,7 +3,6 @@
 
 #include <map>
 #include <libtensor/timings.h>
-#include <libtensor/core/index.h>
 #include <libtensor/core/noncopyable.h>
 #include <libtensor/core/orbit.h>
 #include <libtensor/core/orbit_list.h>
@@ -20,15 +19,28 @@ namespace libtensor {
 /** \brief Computes the direct sum of two block tensors
     \tparam N Order of the first %tensor.
     \tparam M Order of the second %tensor.
+    \tparam Traits Block tensor operation traits.
+    \tparam Timed Timed implementation.
 
     Given two tensors \f$ a_{ij\cdots} \f$ and \f$ b_{mn\cdots} \f$,
     the operation computes
-    \f$ c_{ij\cdots mn\cdots} = k_a a_{ij\cdots} + k_b b_{mn\cdots} \f$.
+    \f$ c_{ij\cdots mn\cdots} = \hat{S}_a a_{ij\cdots} + \hat{S}_b b_{mn\cdots} \f$.
+    with \f$ \hat{S}_x \f$ being element-wise transformations.
 
     The order of %tensor indexes in the result can be specified using
-    a permutation.
+    a tensor transformation.
 
-    \ingroup libtensor_btod
+    The traits class has to provide definitions for
+    - \c element_type -- Type of data elements
+    - \c bti_traits -- Type of block tensor interface traits class
+    - \c template temp_block_type<N>::type -- Type of temporary tensor block
+    - \c template to_set_type<N>::type -- Type of tensor operation to_set
+    - \c template to_scatter_type<N, M>::type -- Type of tensor operation
+        to_scatter
+    - \c template to_dirsum_type<N, M>::type -- Type of tensor operation
+        to_dirsum
+
+    \ingroup libtensor_gen_bto
  **/
 template<size_t N, size_t M, typename Traits, typename Timed>
 class gen_bto_dirsum : public timings<Timed>, public noncopyable {
