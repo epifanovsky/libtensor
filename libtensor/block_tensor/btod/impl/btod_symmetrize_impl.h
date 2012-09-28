@@ -9,7 +9,7 @@
 #include <libtensor/dense_tensor/tod_set.h>
 #include <libtensor/symmetry/so_permute.h>
 #include <libtensor/symmetry/so_symmetrize.h>
-#include "../../bto/impl/bto_aux_add_impl.h"
+#include <libtensor/gen_block_tensor/gen_bto_aux_add.h>
 #include "../../bto/impl/bto_aux_symmetrize_impl.h"
 #include "../btod_symmetrize.h"
 
@@ -74,7 +74,7 @@ void btod_symmetrize<N>::perform(block_tensor_i<N, double> &bt) {
     addition_schedule<N, Traits> asch(m_sym, m_sym);
     asch.build(m_sch, ctrl);
 
-    bto_aux_add<N, Traits> out(m_sym, asch, bt, 1.0);
+    gen_bto_aux_add<N, Traits> out(m_sym, asch, bt, 1.0);
     perform(out);
 }
 
@@ -91,7 +91,7 @@ void btod_symmetrize<N>::perform(block_tensor_i<N, double> &bt,
     addition_schedule<N, Traits> asch(m_sym, ctrl.req_const_symmetry());
     asch.build(m_sch, ctrl);
 
-    bto_aux_add<N, Traits> out(m_sym, asch, bt, d);
+    gen_bto_aux_add<N, Traits> out(m_sym, asch, bt, d);
     perform(out);
 }
 

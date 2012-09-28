@@ -10,6 +10,7 @@
 #include <libtensor/dense_tensor/tod_contract2.h>
 #include <libtensor/dense_tensor/tod_set.h>
 #include <libtensor/gen_block_tensor/gen_block_tensor_ctrl.h>
+#include <libtensor/gen_block_tensor/gen_bto_aux_add.h>
 #include <libtensor/gen_block_tensor/gen_bto_aux_copy.h>
 #include <libtensor/gen_block_tensor/impl/gen_bto_copy_impl.h>
 #include <libtensor/gen_block_tensor/impl/gen_bto_contract2_clst_impl.h>
@@ -18,7 +19,6 @@
 #include <libtensor/gen_block_tensor/impl/gen_bto_contract2_impl.h>
 #include <libtensor/block_tensor/block_tensor.h>
 #include <libtensor/block_tensor/block_tensor_ctrl.h>
-#include <libtensor/block_tensor/bto/impl/bto_aux_add_impl.h>
 #include <libtensor/btod/bad_block_index_space.h>
 #include "../btod_contract2.h"
 
@@ -311,7 +311,7 @@ void btod_contract2<N, M, K>::perform(
         cc.req_const_symmetry());
     asch.build(m_sch, cc);
 
-    bto_aux_add<NC, btod_traits> out(m_symc.get_symc(), asch, btc, d);
+    gen_bto_aux_add<NC, btod_traits> out(m_symc.get_symc(), asch, btc, d);
     perform(out);
 }
 

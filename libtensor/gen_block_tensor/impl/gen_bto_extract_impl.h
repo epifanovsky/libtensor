@@ -13,7 +13,6 @@
 //#include <libtensor/btod/bad_block_index_space.h>
 //#include <libtensor/block_tensor/block_tensor.h>
 //#include <libtensor/block_tensor/block_tensor_ctrl.h>
-//#include <libtensor/block_tensor/bto/impl/bto_aux_add_impl.h>
 #include "../gen_bto_extract.h"
 
 namespace libtensor {

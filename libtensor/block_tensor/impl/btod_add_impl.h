@@ -3,8 +3,8 @@
 
 #include <libtensor/dense_tensor/tod_copy.h>
 #include <libtensor/dense_tensor/tod_set.h>
+#include <libtensor/gen_block_tensor/gen_bto_aux_add.h>
 #include <libtensor/block_tensor/block_tensor_ctrl.h>
-#include <libtensor/block_tensor/bto/impl/bto_aux_add_impl.h>
 #include <libtensor/gen_block_tensor/gen_bto_aux_copy.h>
 #include "../btod_add.h"
 
@@ -42,7 +42,7 @@ void btod_add<N>::perform(
         cb.req_const_symmetry());
     asch.build(get_schedule(), cb);
 
-    bto_aux_add<N, btod_traits> out(get_symmetry(), asch, btb, c);
+    gen_bto_aux_add<N, btod_traits> out(get_symmetry(), asch, btb, c);
     perform(out);
 }
 

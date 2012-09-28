@@ -21,7 +21,7 @@ namespace libtensor {
     contributions into one target block, the output stream must process
     blocks under addition.
 
-    \sa gen_block_stream_i, bto_aux_add
+    \sa gen_block_stream_i, gen_bto_aux_add
 
     \ingroup libtensor_block_tensor_bto
  **/

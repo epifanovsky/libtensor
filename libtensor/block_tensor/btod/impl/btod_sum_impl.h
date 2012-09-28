@@ -7,12 +7,12 @@
 #include <libtensor/symmetry/so_dirsum.h>
 #include <libtensor/symmetry/so_merge.h>
 #include <libtensor/symmetry/so_copy.h>
+#include <libtensor/gen_block_tensor/gen_bto_aux_add.h>
 #include <libtensor/gen_block_tensor/gen_bto_aux_copy.h>
 #include <libtensor/block_tensor/block_tensor.h>
 #include <libtensor/block_tensor/btod_copy.h>
 #include <libtensor/block_tensor/btod_scale.h>
 #include <libtensor/btod/bad_block_index_space.h>
-#include <libtensor/block_tensor/bto/impl/bto_aux_add_impl.h>
 #include "../btod_sum.h"
 
 namespace libtensor {
@@ -135,7 +135,7 @@ void btod_sum<N>::perform(block_tensor_i<N, double> &btb, const double &c) {
     addition_schedule<N, btod_traits> asch(m_sym, cb.req_const_symmetry());
     asch.build(get_schedule(), cb);
 
-    bto_aux_add<N, btod_traits> out(m_sym, asch, btb, c);
+    gen_bto_aux_add<N, btod_traits> out(m_sym, asch, btb, c);
     perform(out);
 }
 

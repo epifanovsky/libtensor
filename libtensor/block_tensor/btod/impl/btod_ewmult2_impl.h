@@ -10,11 +10,11 @@
 #include <libtensor/dense_tensor/tod_set.h>
 #include <libtensor/symmetry/so_dirprod.h>
 #include <libtensor/symmetry/so_merge.h>
+#include <libtensor/gen_block_tensor/gen_bto_aux_add.h>
 #include <libtensor/gen_block_tensor/gen_bto_aux_copy.h>
 #include <libtensor/btod/bad_block_index_space.h>
 #include <libtensor/block_tensor/block_tensor.h>
 #include <libtensor/block_tensor/block_tensor_ctrl.h>
-#include <libtensor/block_tensor/bto/impl/bto_aux_add_impl.h>
 #include <libtensor/block_tensor/btod_copy.h>
 #include "../btod_ewmult2.h"
 
@@ -166,7 +166,7 @@ void btod_ewmult2<N, M, K>::perform(block_tensor_i<N + M + K, double> &btc,
         cc.req_const_symmetry());
     asch.build(m_sch, cc);
 
-    bto_aux_add<N + M + K, btod_traits> out(m_symc, asch, btc, d);
+    gen_bto_aux_add<N + M + K, btod_traits> out(m_symc, asch, btc, d);
     perform(out);
 }
 

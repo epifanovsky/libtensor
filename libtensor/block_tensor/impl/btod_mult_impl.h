@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_BTOD_MULT_IMPL_H
 #define LIBTENSOR_BTOD_MULT_IMPL_H
 
-#include <libtensor/block_tensor/bto/bto_aux_add.h>
+#include <libtensor/gen_block_tensor/gen_bto_aux_add.h>
 #include <libtensor/gen_block_tensor/gen_bto_aux_copy.h>
 #include "../btod_mult.h"
 
@@ -30,7 +30,7 @@ void btod_mult<N>::perform(block_tensor_i<N, double> &btc, const double &d) {
             cc.req_const_symmetry());
     asch.build(get_schedule(), cc);
 
-    bto_aux_add<N, btod_traits> out(get_symmetry(), asch, btc, d);
+    gen_bto_aux_add<N, btod_traits> out(get_symmetry(), asch, btc, d);
     perform(out);
 }
 

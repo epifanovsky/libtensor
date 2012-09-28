@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_BTOD_DIRSUM_IMPL_H
 #define LIBTENSOR_BTOD_DIRSUM_IMPL_H
 
-#include <libtensor/block_tensor/bto/bto_aux_add.h>
+#include <libtensor/gen_block_tensor/gen_bto_aux_add.h>
 #include <libtensor/gen_block_tensor/gen_bto_aux_copy.h>
 #include "../btod_dirsum.h"
 
@@ -35,7 +35,7 @@ void btod_dirsum<N, M>::perform(block_tensor_i<N + M, double> &btb,
         cb.req_const_symmetry());
     asch.build(get_schedule(), cb);
 
-    bto_aux_add<N + M, btod_traits> out(get_symmetry(), asch, btb, c);
+    gen_bto_aux_add<N + M, btod_traits> out(get_symmetry(), asch, btb, c);
     perform(out);
 }
 

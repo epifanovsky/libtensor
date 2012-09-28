@@ -1,18 +1,18 @@
-#ifndef LIBTENSOR_BTO_AUX_ADD_IMPL_H
-#define LIBTENSOR_BTO_AUX_ADD_IMPL_H
+#ifndef LIBTENSOR_GEN_BTO_AUX_ADD_IMPL_H
+#define LIBTENSOR_GEN_BTO_AUX_ADD_IMPL_H
 
 #include <libutil/threads/auto_lock.h>
 #include <libtensor/core/block_index_space_product_builder.h>
 #include <libtensor/symmetry/so_copy.h>
 #include <libtensor/symmetry/so_dirsum.h>
 #include <libtensor/symmetry/so_merge.h>
-#include "../bto_aux_add.h"
+#include "../gen_bto_aux_add.h"
 
 namespace libtensor {
 
 
 template<size_t N, typename Traits>
-bto_aux_add<N, Traits>::bto_aux_add(
+gen_bto_aux_add<N, Traits>::gen_bto_aux_add(
     const symmetry<N, element_type> &syma,
     const addition_schedule<N, Traits> &asch,
     gen_block_tensor_i<N, bti_traits> &btb,
@@ -27,14 +27,14 @@ bto_aux_add<N, Traits>::bto_aux_add(
 
 
 template<size_t N, typename Traits>
-bto_aux_add<N, Traits>::~bto_aux_add() {
+gen_bto_aux_add<N, Traits>::~gen_bto_aux_add() {
 
     close();
 }
 
 
 template<size_t N, typename Traits>
-void bto_aux_add<N, Traits>::open() {
+void gen_bto_aux_add<N, Traits>::open() {
 
     if(m_open) return;
 
@@ -63,7 +63,7 @@ void bto_aux_add<N, Traits>::open() {
 
 
 template<size_t N, typename Traits>
-void bto_aux_add<N, Traits>::close() {
+void gen_bto_aux_add<N, Traits>::close() {
 
     typedef typename Traits::template to_copy_type<N>::type to_copy_type;
 
@@ -123,7 +123,7 @@ void bto_aux_add<N, Traits>::close() {
 
 
 template<size_t N, typename Traits>
-void bto_aux_add<N, Traits>::put(
+void gen_bto_aux_add<N, Traits>::put(
     const index<N> &idx,
     block_type &blk,
     const tensor_transf<N, element_type> &tr) {
@@ -227,4 +227,4 @@ void bto_aux_add<N, Traits>::put(
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_BTO_AUX_ADD_IMPL_H
+#endif // LIBTENSOR_GEN_BTO_AUX_ADD_IMPL_H

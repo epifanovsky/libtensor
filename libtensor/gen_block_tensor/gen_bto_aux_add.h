@@ -1,13 +1,13 @@
-#ifndef LIBTENSOR_BTO_AUX_ADD_H
-#define LIBTENSOR_BTO_AUX_ADD_H
+#ifndef LIBTENSOR_GEN_BTO_AUX_ADD_H
+#define LIBTENSOR_GEN_BTO_AUX_ADD_H
 
 #include <map>
-#include <set>
+#include <vector>
 #include <libutil/threads/mutex.h>
-#include <libtensor/gen_block_tensor/addition_schedule.h>
-#include <libtensor/gen_block_tensor/gen_block_stream_i.h>
-#include <libtensor/gen_block_tensor/gen_block_tensor_i.h>
-#include <libtensor/gen_block_tensor/gen_block_tensor_ctrl.h>
+#include "addition_schedule.h"
+#include "gen_block_stream_i.h"
+#include "gen_block_tensor_i.h"
+#include "gen_block_tensor_ctrl.h"
 
 namespace libtensor {
 
@@ -30,7 +30,9 @@ namespace libtensor {
     \ingroup libtensor_block_tensor_bto
  **/
 template<size_t N, typename Traits>
-class bto_aux_add : public gen_block_stream_i<N, typename Traits::bti_traits> {
+class gen_bto_aux_add :
+    public gen_block_stream_i<N, typename Traits::bti_traits> {
+
 public:
     typedef typename Traits::element_type element_type;
     typedef typename Traits::bti_traits bti_traits;
@@ -57,7 +59,7 @@ public:
         \brief btb Target block tensor.
         \brief c Scaling coefficient for addition.
      **/
-    bto_aux_add(
+    gen_bto_aux_add(
         const symmetry<N, element_type> &syma,
         const addition_schedule<N, Traits> &asch,
         gen_block_tensor_i<N, bti_traits> &btb,
@@ -65,7 +67,7 @@ public:
 
     /** \brief Virtual destructor
      **/
-    virtual ~bto_aux_add();
+    virtual ~gen_bto_aux_add();
 
     /** \brief Implements bto_stream_i::open(). Prepares the copy operation
      **/
@@ -88,4 +90,4 @@ public:
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_BTO_AUX_ADD_H
+#endif // LIBTENSOR_GEN_BTO_AUX_ADD_H
