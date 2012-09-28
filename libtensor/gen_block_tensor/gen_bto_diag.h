@@ -2,7 +2,9 @@
 #define LIBTENSOR_GEN_BTO_DIAG_H
 
 #include <libtensor/timings.h>
+#include <libtensor/core/mask.h>
 #include <libtensor/core/noncopyable.h>
+#include <libtensor/core/symmetry.h>
 #include <libtensor/core/tensor_transf.h>
 #include "assignment_schedule.h"
 #include "gen_block_stream_i.h"
@@ -18,6 +20,13 @@ namespace libtensor {
     \tparam Timed Timed implementation.
 
     This block tensor operation extracts a general diagonal of a block tensor.
+
+    The traits class has to provide definitions for
+    - \c element_type -- Type of data elements
+    - \c bti_traits -- Type of block tensor interface traits class
+    - \c template temp_block_type<N>::type -- Type of temporary tensor block
+    - \c template to_diag_type<N, M>::type -- Type of tensor operation to_diag
+
 
     \ingroup libtensor_gen_bto
  **/

@@ -9,8 +9,8 @@
 #include <libtensor/block_tensor/btod_copy.h>
 #include <libtensor/block_tensor/btod_diag.h>
 #include "btod_diagonalize.h"
-#include <libtensor/block_tensor/btod/btod_extract.h>
-#include "btod_scale.h"
+#include <libtensor/block_tensor/btod_extract.h>
+#include <libtensor/block_tensor/btod_scale.h>
 #include "btod_set_diag.h"
 #include "btod_set_elem.h"
 #include <libtensor/block_tensor/btod_set.h>

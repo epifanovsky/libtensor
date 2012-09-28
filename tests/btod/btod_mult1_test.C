@@ -68,11 +68,11 @@ void btod_mult1_test::test_1(
     //  Invoke the operation
 
     if (doadd) {
-        tod_mult1<2>(tb, recip).perform(ta_ref, 0.2);
+        tod_mult1<2>(tb, recip, 0.2).perform(false, ta_ref);
         btod_mult1<2>(btb, recip).perform(bta, 0.2);
     }
     else {
-        tod_mult1<2>(tb, recip).perform(ta_ref);
+        tod_mult1<2>(tb, recip).perform(true, ta_ref);
         btod_mult1<2>(btb, recip).perform(bta);
     }
     tod_btconv<2>(bta).perform(ta);
@@ -127,11 +127,11 @@ void btod_mult1_test::test_2(
     //  Invoke the operation
 
     if (doadd) {
-        tod_mult1<2>(tb, p10, recip).perform(ta_ref, 0.5);
+        tod_mult1<2>(tb, p10, recip, 0.5).perform(false, ta_ref);
         btod_mult1<2>(btb, p10, recip).perform(bta, 0.5);
     }
     else {
-        tod_mult1<2>(tb, p10, recip).perform(ta_ref);
+        tod_mult1<2>(tb, p10, recip).perform(true, ta_ref);
         btod_mult1<2>(btb, p10, recip).perform(bta);
     }
     tod_btconv<2>(bta).perform(ta);
@@ -202,11 +202,11 @@ void btod_mult1_test::test_3(
     //  Invoke the operation
 
     if (doadd) {
-        tod_mult1<2>(tb, recip, 0.7).perform(ta_ref, 0.3);
+        tod_mult1<2>(tb, recip, 0.21).perform(false, ta_ref);
         btod_mult1<2>(btb, recip, 0.7).perform(bta, 0.3);
     }
     else {
-        tod_mult1<2>(tb, recip, 0.7).perform(ta_ref);
+        tod_mult1<2>(tb, recip, 0.7).perform(true, ta_ref);
         btod_mult1<2>(btb,recip, 0.7).perform(bta);
     }
     tod_btconv<2>(bta).perform(ta);
@@ -280,11 +280,11 @@ void btod_mult1_test::test_4(
 
     //  Invoke the operation
     if (doadd) {
-        tod_mult1<4>(tb, p21, recip).perform(ta_ref, 0.5);
+        tod_mult1<4>(tb, p21, recip, 0.5).perform(false, ta_ref);
         btod_mult1<4>(btb, p21, recip).perform(bta, 0.5);
     }
     else {
-        tod_mult1<4>(tb, p21, recip).perform(ta_ref);
+        tod_mult1<4>(tb, p21, recip).perform(true, ta_ref);
         btod_mult1<4>(btb, p21, recip).perform(bta);
     }
     tod_btconv<4>(bta).perform(ta);
@@ -361,10 +361,10 @@ void btod_mult1_test::test_5(bool recip, bool doadd)
     //  Invoke the operation
 
     if(doadd) {
-        tod_mult1<2>(tb, recip).perform(ta_ref, -1.2);
+        tod_mult1<2>(tb, recip, -1.2).perform(false, ta_ref);
         btod_mult1<2>(btb, recip).perform(bta, -1.2);
     } else {
-        tod_mult1<2>(tb, recip).perform(ta_ref);
+        tod_mult1<2>(tb, recip).perform(true, ta_ref);
         btod_mult1<2>(btb, recip).perform(bta);
     }
     tod_btconv<2>(bta).perform(ta);

@@ -9,8 +9,11 @@
 #include <libtensor/dense_tensor/tod_diag.h>
 #include <libtensor/dense_tensor/tod_dirsum.h>
 #include <libtensor/dense_tensor/tod_dotprod.h>
+#include <libtensor/dense_tensor/tod_extract.h>
 #include <libtensor/dense_tensor/tod_mult.h>
+#include <libtensor/dense_tensor/tod_scale.h>
 #include <libtensor/dense_tensor/tod_scatter.h>
+#include <libtensor/dense_tensor/tod_set.h>
 #include <libtensor/dense_tensor/tod_trace.h>
 #include <libtensor/dense_tensor/tod_vmpriority.h>
 #include <libtensor/block_tensor/block_tensor.h>
@@ -97,9 +100,19 @@ struct btod_traits {
         typedef tod_dotprod<N> type;
     };
 
+    template<size_t N, size_t M>
+    struct to_extract_type {
+        typedef tod_extract<N, M> type;
+    };
+
     template<size_t N>
     struct to_mult_type {
         typedef tod_mult<N> type;
+    };
+
+    template<size_t N>
+    struct to_scale_type {
+        typedef tod_scale<N> type;
     };
 
     template<size_t N>

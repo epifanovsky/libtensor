@@ -72,7 +72,7 @@ void tod_mult1_test::test_pq_pq_1(
 	tb.set_immutable();
 	ta_ref.set_immutable();
 
-	tod_mult1<2>(tb, recip).perform(ta);
+	tod_mult1<2>(tb, recip).perform(true, ta);
 
 	compare_ref<2>::compare(tns.c_str(), ta, ta_ref, 1e-15);
 
@@ -130,7 +130,7 @@ void tod_mult1_test::test_pq_pq_2(
 	tb.set_immutable();
 	ta_ref.set_immutable();
 
-	tod_mult1<2>(tb, recip, coeff).perform(ta, 1.0);
+	tod_mult1<2>(tb, recip, coeff).perform(false, ta);
 
 	compare_ref<2>::compare(tns.c_str(), ta, ta_ref, 1e-15);
 
@@ -208,7 +208,7 @@ void tod_mult1_test::test_pqrs_qrps(
 	tb.set_immutable();
 	ta_ref.set_immutable();
 
-	tod_mult1<4>(tb, p, recip, coeff).perform(ta, 1.0);
+	tod_mult1<4>(tb, p, recip, coeff).perform(false, ta);
 
 	compare_ref<4>::compare(tns.c_str(), ta, ta_ref, 1e-15);
 

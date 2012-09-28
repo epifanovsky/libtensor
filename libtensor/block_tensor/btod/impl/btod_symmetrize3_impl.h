@@ -9,8 +9,8 @@
 #include <libtensor/dense_tensor/tod_set.h>
 #include <libtensor/symmetry/so_copy.h>
 #include <libtensor/symmetry/so_symmetrize.h>
-#include "../../bto/impl/bto_aux_add_impl.h"
-#include "../../bto/impl/bto_aux_symmetrize_impl.h"
+#include <libtensor/gen_block_tensor/gen_bto_aux_add.h>
+#include <libtensor/gen_block_tensor/gen_bto_aux_symmetrize.h>
 #include "../btod_symmetrize3.h"
 
 namespace libtensor {
@@ -47,7 +47,7 @@ btod_symmetrize3<N>::btod_symmetrize3(additive_bto<N, btod_traits> &op,
 
 
 template<size_t N>
-void btod_symmetrize3<N>::perform(bto_stream_i<N, btod_traits> &out) {
+void btod_symmetrize3<N>::perform(gen_block_stream_i<N, bti_traits> &out) {
 
     typedef btod_traits Traits;
 
@@ -68,7 +68,7 @@ void btod_symmetrize3<N>::perform(bto_stream_i<N, btod_traits> &out) {
         tr4.transform(tr2);
         tr5.transform(tr3);
 
-        bto_aux_symmetrize<N, Traits> out2(m_op.get_symmetry(), m_sym, out);
+        gen_bto_aux_symmetrize<N, Traits> out2(m_op.get_symmetry(), m_sym, out);
         out2.add_transf(tr0);
         out2.add_transf(tr1);
         out2.add_transf(tr2);
@@ -87,15 +87,16 @@ template<size_t N>
 void btod_symmetrize3<N>::perform(block_tensor_i<N, double> &bt) {
 
     typedef btod_traits Traits;
+    typedef typename btod_traits::bti_traits bti_traits;
 
-    block_tensor_ctrl<N, double> ctrl(bt);
+    gen_block_tensor_ctrl<N, bti_traits> ctrl(bt);
     ctrl.req_zero_all_blocks();
     so_copy<N, double>(m_sym).perform(ctrl.req_symmetry());
 
     addition_schedule<N, Traits> asch(m_sym, m_sym);
     asch.build(m_sch, ctrl);
 
-    bto_aux_add<N, Traits> out(m_sym, asch, bt, 1.0);
+    gen_bto_aux_add<N, Traits> out(m_sym, asch, bt, 1.0);
     perform(out);
 }
 
@@ -105,13 +106,14 @@ void btod_symmetrize3<N>::perform(block_tensor_i<N, double> &bt,
     const double &d) {
 
     typedef btod_traits Traits;
+    typedef typename btod_traits::bti_traits bti_traits;
 
-    block_tensor_ctrl<N, double> ctrl(bt);
+    gen_block_tensor_rd_ctrl<N, bti_traits> ctrl(bt);
 
     addition_schedule<N, Traits> asch(m_sym, ctrl.req_const_symmetry());
     asch.build(m_sch, ctrl);
 
-    bto_aux_add<N, Traits> out(m_sym, asch, bt, d);
+    gen_bto_aux_add<N, Traits> out(m_sym, asch, bt, d);
     perform(out);
 }
 

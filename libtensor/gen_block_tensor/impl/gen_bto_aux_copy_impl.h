@@ -1,15 +1,16 @@
-#ifndef LIBTENSOR_BTO_AUX_COPY_IMPL_H
-#define LIBTENSOR_BTO_AUX_COPY_IMPL_H
+#ifndef LIBTENSOR_GEN_BTO_AUX_COPY_IMPL_H
+#define LIBTENSOR_GEN_BTO_AUX_COPY_IMPL_H
 
 #include <libtensor/symmetry/so_copy.h>
-#include "../bto_aux_copy.h"
+#include "../gen_bto_aux_copy.h"
 
 namespace libtensor {
 
 
 template<size_t N, typename Traits>
-bto_aux_copy<N, Traits>::bto_aux_copy(const symmetry_type &sym,
-    block_tensor_type &bt) :
+gen_bto_aux_copy<N, Traits>::gen_bto_aux_copy(
+    const symmetry<N, element_type> &sym,
+    gen_block_tensor_wr_i<N, bti_traits> &bt) :
 
     m_sym(sym.get_bis()), m_bt(bt), m_ctrl(m_bt), m_open(false) {
 
@@ -18,14 +19,14 @@ bto_aux_copy<N, Traits>::bto_aux_copy(const symmetry_type &sym,
 
 
 template<size_t N, typename Traits>
-bto_aux_copy<N, Traits>::~bto_aux_copy() {
+gen_bto_aux_copy<N, Traits>::~gen_bto_aux_copy() {
 
     if(m_open) close();
 }
 
 
 template<size_t N, typename Traits>
-void bto_aux_copy<N, Traits>::open() {
+void gen_bto_aux_copy<N, Traits>::open() {
 
     if(!m_open) {
         m_ctrl.req_zero_all_blocks();
@@ -36,7 +37,7 @@ void bto_aux_copy<N, Traits>::open() {
 
 
 template<size_t N, typename Traits>
-void bto_aux_copy<N, Traits>::close() {
+void gen_bto_aux_copy<N, Traits>::close() {
 
     if(m_open) {
         m_open = false;
@@ -45,8 +46,10 @@ void bto_aux_copy<N, Traits>::close() {
 
 
 template<size_t N, typename Traits>
-void bto_aux_copy<N, Traits>::put(const index<N> &idx, block_type &blk,
-    const tensor_transf_type &tr) {
+void gen_bto_aux_copy<N, Traits>::put(
+    const index<N> &idx,
+    block_type &blk,
+    const tensor_transf<N, element_type> &tr) {
 
     typedef typename Traits::template to_copy_type<N>::type to_copy_type;
 
@@ -58,4 +61,4 @@ void bto_aux_copy<N, Traits>::put(const index<N> &idx, block_type &blk,
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_BTO_AUX_COPY_IMPL_H
+#endif // LIBTENSOR_GEN_BTO_AUX_COPY_IMPL_H

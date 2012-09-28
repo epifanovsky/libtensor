@@ -30,6 +30,9 @@ class btod_sum :
 public:
     static const char* k_clazz; //!< Class name
 
+public:
+    typedef typename btod_traits::bti_traits bti_traits;
+
 private:
     //!    \brief List node type
     typedef struct node {
@@ -95,7 +98,7 @@ public:
         const index<N> &i, const tensor_transf<N, double> &tr, const double &c);
     virtual void perform(block_tensor_i<N, double> &btb);
     virtual void perform(block_tensor_i<N, double> &btb, const double &c);
-    virtual void perform(bto_stream_i<N, btod_traits> &out);
+    virtual void perform(gen_block_stream_i<N, bti_traits> &out);
 
     //@}
 

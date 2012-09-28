@@ -4,7 +4,6 @@
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/gen_block_tensor/gen_bto_copy.h>
 #include <libtensor/block_tensor/bto/additive_bto.h>
-#include <libtensor/block_tensor/bto/bto_stream_i.h>
 #include <libtensor/block_tensor/btod/btod_traits.h>
 
 namespace libtensor {
@@ -21,6 +20,9 @@ template<size_t N>
 class btod_copy : public additive_bto<N, btod_traits>, public noncopyable {
 public:
     static const char *k_clazz; //!< Class name
+
+public:
+    typedef typename btod_traits::bti_traits bti_traits;
 
 private:
     gen_bto_copy< N, btod_traits, btod_copy<N> > m_gbto;
@@ -70,7 +72,10 @@ public:
         return m_gbto.get_schedule();
     }
 
-    virtual void perform(bto_stream_i<N, btod_traits> &out);
+    virtual void perform(gen_block_stream_i<N, bti_traits> &out) {
+
+        m_gbto.perform(out);
+    }
 
     virtual void perform(block_tensor_i<N, double> &btb);
 

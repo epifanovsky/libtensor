@@ -39,6 +39,9 @@ public:
         k_orderc = N + M + K //!< Order of result (C)
     };
 
+public:
+    typedef typename btod_traits::bti_traits bti_traits;
+
 private:
     block_tensor_i<k_ordera, double> &m_bta; //!< First argument (A)
     permutation<k_ordera> m_perma; //!< Permutation of first argument (A)
@@ -101,7 +104,7 @@ public:
         return m_sch;
     }
 
-    virtual void perform(bto_stream_i<N + M + K, btod_traits> &out);
+    virtual void perform(gen_block_stream_i<N + M + K, bti_traits> &out);
     virtual void perform(block_tensor_i<N + M + K, double> &btc);
     virtual void perform(block_tensor_i<N + M + K, double> &btc,
         const double &d);

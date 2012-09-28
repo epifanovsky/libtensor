@@ -1,9 +1,9 @@
-#ifndef LIBTENSOR_BTO_AUX_SYMMETRIZE_H
-#define LIBTENSOR_BTO_AUX_SYMMETRIZE_H
+#ifndef LIBTENSOR_GEN_BTO_AUX_SYMMETRIZE_H
+#define LIBTENSOR_GEN_BTO_AUX_SYMMETRIZE_H
 
 #include <list>
 #include <libtensor/core/orbit_list.h>
-#include "bto_stream_i.h"
+#include "gen_block_stream_i.h"
 
 namespace libtensor {
 
@@ -21,19 +21,18 @@ namespace libtensor {
     contributions into one target block, the output stream must process
     blocks under addition.
 
-    \sa bto_stream_i, bto_aux_add
+    \sa gen_block_stream_i, gen_bto_aux_add
 
     \ingroup libtensor_block_tensor_bto
  **/
 template<size_t N, typename Traits>
-class bto_aux_symmetrize : public bto_stream_i<N, Traits> {
+class gen_bto_aux_symmetrize :
+    public gen_block_stream_i<N, typename Traits::bti_traits> {
+
 public:
     typedef typename Traits::element_type element_type;
+    typedef typename Traits::bti_traits bti_traits;
     typedef typename Traits::template block_type<N>::type block_type;
-    typedef typename Traits::template block_tensor_type<N>::type
-        block_tensor_type;
-    typedef typename Traits::template block_tensor_ctrl_type<N>::type
-        block_tensor_ctrl_type;
     typedef symmetry<N, element_type> symmetry_type;
     typedef tensor_transf<N, element_type> tensor_transf_type;
 
@@ -42,7 +41,7 @@ private:
     symmetry_type m_symb; //!< Target (symmetrized) symmetry
     orbit_list<N, element_type> m_olb; //!< List of target orbits
     std::list<tensor_transf_type> m_trlst; //!< List of transformations
-    bto_stream_i<N, Traits> &m_out; //!< Output stream
+    gen_block_stream_i<N, bti_traits> &m_out; //!< Output stream
     bool m_open; //!< Open state
 
 public:
@@ -51,14 +50,14 @@ public:
         \brief symb Target symmetry.
         \brief out Output stream.
      **/
-    bto_aux_symmetrize(
+    gen_bto_aux_symmetrize(
         const symmetry_type &syma,
         const symmetry_type &symb,
-        bto_stream_i<N, Traits> &out);
+        gen_block_stream_i<N, bti_traits> &out);
 
     /** \brief Virtual destructor
      **/
-    virtual ~bto_aux_symmetrize();
+    virtual ~gen_bto_aux_symmetrize();
 
     /** \brief Add a transformation to the symmetrizer
      **/
@@ -86,4 +85,4 @@ public:
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_BTO_AUX_SYMMETRIZE_H
+#endif // LIBTENSOR_GEN_BTO_AUX_SYMMETRIZE_H

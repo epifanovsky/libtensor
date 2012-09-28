@@ -13,8 +13,19 @@ namespace libtensor {
 
 /** \brief Elementwise multiplication of two block tensors
     \tparam N Tensor order.
+    \tparam Traits Block tensor operation traits.
+    \tparam Timed Timed implementation.
 
-    \ingroup libtensor_btod
+    Computes the element-wise product of two block tensors.
+
+    The traits class has to provide definitions for
+    - \c element_type -- Type of data elements
+    - \c bti_traits -- Type of block tensor interface traits class
+    - \c template temp_block_type<N>::type -- Type of temporary tensor block
+    - \c template to_set_type<N>::type -- Type of tensor operation to_set
+    - \c template to_mult_type<N>::type -- Type of tensor operation to_mult
+
+    \ingroup libtensor_gen_bto
  **/
 template<size_t N, typename Traits, typename Timed>
 class gen_bto_mult : public timings<Timed>, public noncopyable {

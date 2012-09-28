@@ -1,16 +1,16 @@
-#ifndef LIBTENSOR_BTO_AUX_SYMMETRIZE_IMPL_H
-#define LIBTENSOR_BTO_AUX_SYMMETRIZE_IMPL_H
+#ifndef LIBTENSOR_GEN_BTO_AUX_SYMMETRIZE_IMPL_H
+#define LIBTENSOR_GEN_BTO_AUX_SYMMETRIZE_IMPL_H
 
 #include <libtensor/core/orbit.h>
 #include <libtensor/symmetry/so_copy.h>
-#include "../bto_aux_symmetrize.h"
+#include "../gen_bto_aux_symmetrize.h"
 
 namespace libtensor {
 
 
 template<size_t N, typename Traits>
-bto_aux_symmetrize<N, Traits>::bto_aux_symmetrize(const symmetry_type &syma,
-    const symmetry_type &symb, bto_stream_i<N, Traits> &out) :
+gen_bto_aux_symmetrize<N, Traits>::gen_bto_aux_symmetrize(const symmetry_type &syma,
+    const symmetry_type &symb, gen_block_stream_i<N, bti_traits> &out) :
 
     m_syma(syma.get_bis()), m_symb(symb.get_bis()), m_olb(symb), m_out(out),
     m_open(false) {
@@ -21,21 +21,21 @@ bto_aux_symmetrize<N, Traits>::bto_aux_symmetrize(const symmetry_type &syma,
 
 
 template<size_t N, typename Traits>
-bto_aux_symmetrize<N, Traits>::~bto_aux_symmetrize() {
+gen_bto_aux_symmetrize<N, Traits>::~gen_bto_aux_symmetrize() {
 
     if(m_open) close();
 }
 
 
 template<size_t N, typename Traits>
-void bto_aux_symmetrize<N, Traits>::add_transf(const tensor_transf_type &tr) {
+void gen_bto_aux_symmetrize<N, Traits>::add_transf(const tensor_transf_type &tr) {
 
     m_trlst.push_back(tr);
 }
 
 
 template<size_t N, typename Traits>
-void bto_aux_symmetrize<N, Traits>::open() {
+void gen_bto_aux_symmetrize<N, Traits>::open() {
 
     if(!m_open) {
         m_out.open();
@@ -45,7 +45,7 @@ void bto_aux_symmetrize<N, Traits>::open() {
 
 
 template<size_t N, typename Traits>
-void bto_aux_symmetrize<N, Traits>::close() {
+void gen_bto_aux_symmetrize<N, Traits>::close() {
 
     if(m_open) {
         m_out.close();
@@ -56,7 +56,7 @@ void bto_aux_symmetrize<N, Traits>::close() {
 
 
 template<size_t N, typename Traits>
-void bto_aux_symmetrize<N, Traits>::put(const index<N> &idxa, block_type &blk,
+void gen_bto_aux_symmetrize<N, Traits>::put(const index<N> &idxa, block_type &blk,
     const tensor_transf_type &tr) {
 
     orbit<N, element_type> oa(m_syma, idxa, false);
@@ -85,4 +85,4 @@ void bto_aux_symmetrize<N, Traits>::put(const index<N> &idxa, block_type &blk,
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_BTO_AUX_SYMMETRIZE_IMPL_H
+#endif // LIBTENSOR_GEN_BTO_AUX_SYMMETRIZE_IMPL_H

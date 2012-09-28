@@ -3,7 +3,6 @@
 
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/block_tensor/bto/additive_bto.h>
-#include <libtensor/block_tensor/bto/bto_stream_i.h>
 #include <libtensor/block_tensor/btod/btod_traits.h>
 #include <libtensor/gen_block_tensor/gen_bto_diag.h>
 
@@ -23,6 +22,9 @@ class btod_diag :
 public:
     static const char *k_clazz; //!< Class name
 
+public:
+    typedef typename btod_traits::bti_traits bti_traits;
+
 private:
     gen_bto_diag<N, M, btod_traits, btod_diag<N, M> > m_gbto;
 
@@ -33,12 +35,12 @@ public:
         \param c Scaling factor
      **/
     btod_diag(
-            block_tensor_rd_i<N, double> &bta,
-            const mask<N> &m,
-            double c = 1.0) :
+        block_tensor_rd_i<N, double> &bta,
+        const mask<N> &m,
+        double c = 1.0) :
 
-            m_gbto(bta, m, tensor_transf<N - M + 1, double>(
-                    permutation<N - M + 1>(), scalar_transf<double>(c))) {
+        m_gbto(bta, m, tensor_transf<N - M + 1, double>(
+            permutation<N - M + 1>(), scalar_transf<double>(c))) {
 
     }
 
@@ -49,13 +51,13 @@ public:
         \param c Scaling factor
      **/
     btod_diag(
-            block_tensor_rd_i<N, double> &bta,
-            const mask<N> &m,
-            const permutation<N - M + 1> &p,
-            double c = 1.0) :
+        block_tensor_rd_i<N, double> &bta,
+        const mask<N> &m,
+        const permutation<N - M + 1> &p,
+        double c = 1.0) :
 
-            m_gbto(bta, m, tensor_transf<N - M + 1, double>(
-                    p, scalar_transf<double>(c))) {
+        m_gbto(bta, m, tensor_transf<N - M + 1, double>(
+            p, scalar_transf<double>(c))) {
     }
 
     virtual ~btod_diag() { }
@@ -75,17 +77,29 @@ public:
         return m_gbto.get_schedule();
     }
 
-    virtual void perform(bto_stream_i<N - M + 1, btod_traits> &out);
-    virtual void perform(block_tensor_i<N - M + 1, double> &btb);
-    virtual void perform(block_tensor_i<N - M + 1, double> &btb,
-            const double &c);
+    virtual void perform(gen_block_stream_i<N - M + 1, bti_traits> &out) {
 
-    virtual void compute_block(dense_tensor_i<N - M + 1, double> &blkb,
-            const index<N - M + 1> &ib);
+        m_gbto.perform(out);
+    }
 
-    virtual void compute_block(bool zero,
-            dense_tensor_i<N - M + 1, double> &blkb, const index<N - M + 1> &ib,
-            const tensor_transf<N - M + 1, double> &trb, const double &c);
+    virtual void perform(
+        block_tensor_i<N - M + 1, double> &btb);
+
+    virtual void perform(
+        block_tensor_i<N - M + 1, double> &btb,
+        const double &c);
+
+    virtual void compute_block(
+        dense_tensor_i<N - M + 1, double> &blkb,
+        const index<N - M + 1> &ib);
+
+    virtual void compute_block(
+        bool zero,
+        dense_tensor_i<N - M + 1, double> &blkb,
+        const index<N - M + 1> &ib,
+        const tensor_transf<N - M + 1, double> &trb,
+        const double &c);
+
 };
 
 
