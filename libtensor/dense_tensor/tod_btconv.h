@@ -66,13 +66,13 @@ private:
     };
 
 private:
-    block_tensor_i<N, double> &m_bt; //!< Source block %tensor
+    block_tensor_rd_i<N, double> &m_bt; //!< Source block %tensor
 
 public:
     //!    \name Construction and destruction
     //@{
 
-    tod_btconv(block_tensor_i<N, double> &bt);
+    tod_btconv(block_tensor_rd_i<N, double> &bt);
     ~tod_btconv();
 
     //@}
