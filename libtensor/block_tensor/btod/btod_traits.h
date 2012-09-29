@@ -4,18 +4,7 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor_i.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
-#include <libtensor/dense_tensor/tod_apply.h>
-#include <libtensor/dense_tensor/tod_copy.h>
-#include <libtensor/dense_tensor/tod_diag.h>
-#include <libtensor/dense_tensor/tod_dirsum.h>
-#include <libtensor/dense_tensor/tod_dotprod.h>
-#include <libtensor/dense_tensor/tod_extract.h>
-#include <libtensor/dense_tensor/tod_mult.h>
-#include <libtensor/dense_tensor/tod_scale.h>
-#include <libtensor/dense_tensor/tod_scatter.h>
-#include <libtensor/dense_tensor/tod_set.h>
-#include <libtensor/dense_tensor/tod_trace.h>
-#include <libtensor/dense_tensor/tod_vmpriority.h>
+#include <libtensor/dense_tensor/tod.h>
 #include <libtensor/block_tensor/block_tensor.h>
 #include <libtensor/block_tensor/block_tensor_ctrl.h>
 #include <libtensor/block_tensor/block_tensor_i_traits.h>
@@ -115,14 +104,14 @@ struct btod_traits {
         typedef tod_scale<N> type;
     };
 
-    template<size_t N>
-    struct to_set_type {
-        typedef tod_set<N> type;
-    };
-
     template<size_t N, size_t M>
     struct to_scatter_type {
         typedef tod_scatter<N, M> type;
+    };
+
+    template<size_t N>
+    struct to_set_type {
+        typedef tod_set<N> type;
     };
 
     template<size_t N>
