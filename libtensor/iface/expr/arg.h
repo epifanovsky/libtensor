@@ -20,7 +20,7 @@ struct arg_traits { };
 template<size_t N, typename T>
 struct arg_traits<N, T, oper_tag> {
     //!    \brief Block tensor operation type
-    typedef direct_bto<N, btod_traits> bto_t;
+    typedef direct_gen_bto<N, btod_traits::bti_traits> bto_t;
 };
 
 template<size_t N>

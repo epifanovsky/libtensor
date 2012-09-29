@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_DIRECT_BLOCK_TENSOR_BASE_H
 #define LIBTENSOR_DIRECT_BLOCK_TENSOR_BASE_H
 
-#include <libtensor/block_tensor/bto/direct_bto.h>
+#include <libtensor/gen_block_tensor/direct_gen_bto.h>
 #include <libtensor/block_tensor/btod/btod_traits.h>
 
 namespace libtensor {
@@ -22,7 +22,7 @@ public:
 
 public:
     typedef T element_t; //!< Tensor element type
-    typedef direct_bto<N, btod_traits> operation_t;
+    typedef direct_gen_bto<N, btod_traits::bti_traits> operation_t;
 
 protected:
     //!    Underlying block tensor operation

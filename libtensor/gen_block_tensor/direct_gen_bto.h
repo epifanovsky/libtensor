@@ -43,10 +43,6 @@ public:
      **/
     virtual const assignment_schedule<N, element_type> &get_schedule() const = 0;
 
-    /** \brief Invoked to execute the operation
-     **/
-    virtual void perform(gen_block_tensor_wr_i<N, BtiTraits> &bt) = 0;
-
     /** \brief Runs the operation and writes the result into the output stream
      **/
     virtual void perform(gen_block_stream_i<N, BtiTraits> &out) = 0;
