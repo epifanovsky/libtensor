@@ -39,7 +39,7 @@ public:
     dimensions<N> m_bidims; //!< Block index dimensions
     symmetry<N, element_type> m_symmetry; //!< Block tensor symmetry
     orbit_list<N, element_type> *m_orblst; //!< Orbit list
-    block_map<N, element_type, BtTraits> m_map; //!< Block map
+    block_map<N, BtTraits> m_map; //!< Block map
     libutil::rwlock m_lock; //!< Read-write lock
 
 public:

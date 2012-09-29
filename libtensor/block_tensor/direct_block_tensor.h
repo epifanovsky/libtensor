@@ -76,7 +76,7 @@ public:
 private:
     dimensions<N> m_bidims; //!< Block %index dims
     libutil::mutex m_lock; //!< Mutex lock
-    block_map<N, T, bt_traits> m_map; //!< Block map
+    block_map<N, bt_traits> m_map; //!< Block map
     std::map<size_t, size_t> m_count; //!< Block count
     std::set<size_t> m_inprogress; //!< Computations in progress
     libutil::cond_map<size_t, size_t> m_cond; //!< Conditionals
