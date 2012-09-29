@@ -43,9 +43,9 @@ public:
     typedef typename btod_traits::bti_traits bti_traits;
 
 private:
-    block_tensor_i<k_ordera, double> &m_bta; //!< First argument (A)
+    block_tensor_rd_i<k_ordera, double> &m_bta; //!< First argument (A)
     permutation<k_ordera> m_perma; //!< Permutation of first argument (A)
-    block_tensor_i<k_orderb, double> &m_btb; //!< Second argument (B)
+    block_tensor_rd_i<k_orderb, double> &m_btb; //!< Second argument (B)
     permutation<k_orderb> m_permb; //!< Permutation of second argument (B)
     permutation<k_orderc> m_permc; //!< Permutation of result (C)
     double m_d; //!< Scaling coefficient
@@ -62,8 +62,8 @@ public:
         \param btb Second argument (B).
         \param d Scaling coefficient.
      **/
-    btod_ewmult2(block_tensor_i<k_ordera, double> &bta,
-        block_tensor_i<k_orderb, double> &btb, double d = 1.0);
+    btod_ewmult2(block_tensor_rd_i<k_ordera, double> &bta,
+        block_tensor_rd_i<k_orderb, double> &btb, double d = 1.0);
 
     /** \brief Initializes the operation
         \param bta First argument (A).
@@ -74,9 +74,9 @@ public:
         \param recip Reciprocal flag.
         \param d Scaling coefficient.
      **/
-    btod_ewmult2(block_tensor_i<k_ordera, double> &bta,
+    btod_ewmult2(block_tensor_rd_i<k_ordera, double> &bta,
         const permutation<k_ordera> &perma,
-        block_tensor_i<k_orderb, double> &btb,
+        block_tensor_rd_i<k_orderb, double> &btb,
         const permutation<k_orderb> &permb,
         const permutation<k_orderc> &permc, double d = 1.0);
 

@@ -85,8 +85,8 @@ public:
 
 
 template<size_t N, size_t M, size_t K>
-btod_ewmult2<N, M, K>::btod_ewmult2(block_tensor_i<k_ordera, double> &bta,
-    block_tensor_i<k_orderb, double> &btb, double d) :
+btod_ewmult2<N, M, K>::btod_ewmult2(block_tensor_rd_i<k_ordera, double> &bta,
+    block_tensor_rd_i<k_orderb, double> &btb, double d) :
 
     m_bta(bta), m_btb(btb), m_d(d),
     m_bisc(make_bisc(bta.get_bis(), permutation<k_ordera>(),
@@ -101,9 +101,9 @@ btod_ewmult2<N, M, K>::btod_ewmult2(block_tensor_i<k_ordera, double> &bta,
 
 template<size_t N, size_t M, size_t K>
 btod_ewmult2<N, M, K>::btod_ewmult2(
-    block_tensor_i<k_ordera, double> &bta,
+    block_tensor_rd_i<k_ordera, double> &bta,
     const permutation<k_ordera> &perma,
-    block_tensor_i<k_orderb, double> &btb,
+    block_tensor_rd_i<k_orderb, double> &btb,
     const permutation<k_orderb> &permb, const permutation<k_orderc> &permc,
     double d) :
 
@@ -332,8 +332,8 @@ void btod_ewmult2<N, M, K>::make_symc() {
 
     symmetry<k_ordera + k_orderb, double> symx(bbx.get_bis());
 
-    block_tensor_ctrl<k_ordera, double> ca(m_bta);
-    block_tensor_ctrl<k_orderb, double> cb(m_btb);
+    block_tensor_rd_ctrl<k_ordera, double> ca(m_bta);
+    block_tensor_rd_ctrl<k_orderb, double> cb(m_btb);
     so_dirprod<k_ordera, k_orderb, double>(ca.req_const_symmetry(),
             cb.req_const_symmetry(), pb.get_perm()).perform(symx);
 
@@ -344,8 +344,8 @@ void btod_ewmult2<N, M, K>::make_symc() {
 template<size_t N, size_t M, size_t K>
 void btod_ewmult2<N, M, K>::make_schedule() {
 
-    block_tensor_ctrl<k_ordera, double> ctrla(m_bta);
-    block_tensor_ctrl<k_orderb, double> ctrlb(m_btb);
+    block_tensor_rd_ctrl<k_ordera, double> ctrla(m_bta);
+    block_tensor_rd_ctrl<k_orderb, double> ctrlb(m_btb);
 
     btod_ewmult2<N, M, K>::start_timer("make_schedule");
 
@@ -389,8 +389,8 @@ void btod_ewmult2<N, M, K>::compute_block_impl(
     dense_tensor_i<k_orderc, double> &blk, const index<k_orderc> &bidx,
     const tensor_transf<k_orderc, double> &tr, bool zero, double d) {
 
-    block_tensor_ctrl<k_ordera, double> ctrla(m_bta);
-    block_tensor_ctrl<k_orderb, double> ctrlb(m_btb);
+    block_tensor_rd_ctrl<k_ordera, double> ctrla(m_bta);
+    block_tensor_rd_ctrl<k_orderb, double> ctrlb(m_btb);
 
     btod_ewmult2<N, M, K>::start_timer();
 
@@ -434,8 +434,10 @@ void btod_ewmult2<N, M, K>::compute_block_impl(
         return;
     }
 
-    dense_tensor_i<k_ordera, double> &blka = ctrla.req_block(cidxa.get_index());
-    dense_tensor_i<k_orderb, double> &blkb = ctrlb.req_block(cidxb.get_index());
+    dense_tensor_i<k_ordera, double> &blka =
+            ctrla.req_const_block(cidxa.get_index());
+    dense_tensor_i<k_orderb, double> &blkb =
+            ctrlb.req_const_block(cidxb.get_index());
 
     permc.permute(tr.get_perm());
     double k = m_d * tra.get_scalar_tr().get_coeff() *
@@ -443,8 +445,8 @@ void btod_ewmult2<N, M, K>::compute_block_impl(
     tod_ewmult2<N, M, K>(blka, perma, blkb, permb, permc, k).
         perform(zero, d, blk);
 
-    ctrla.ret_block(cidxa.get_index());
-    ctrlb.ret_block(cidxb.get_index());
+    ctrla.ret_const_block(cidxa.get_index());
+    ctrlb.ret_const_block(cidxb.get_index());
 
     btod_ewmult2<N, M, K>::stop_timer();
 }
