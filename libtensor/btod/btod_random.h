@@ -174,13 +174,13 @@ void btod_random<N>::make_random_blk(block_tensor_ctrl<N, double> &ctrl,
     typename transf_list_t::iterator itr = ilst->second.begin();
     if(itr == ilst->second.end()) {
         timings_base::start_timer("randop");
-        randop.perform(true, 1.0, blk);
+        randop.perform(true, blk);
         timings_base::stop_timer("randop");
     } else {
         dense_tensor<N, double, allocator_t> rnd(blk.get_dims()),
             symrnd(blk.get_dims());
         timings_base::start_timer("randop");
-        randop.perform(true, 1.0, rnd);
+        randop.perform(true, rnd);
         timings_base::stop_timer("randop");
         double totcoeff = itr->get_scalar_tr().get_coeff();
         tod_add<N> symop(rnd, itr->get_perm(), totcoeff);

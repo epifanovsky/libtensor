@@ -14,7 +14,14 @@ const char *tod_random<N>::k_clazz = "tod_random<N>";
 
 
 template<size_t N>
-tod_random<N>::tod_random() {
+tod_random<N>::tod_random(const scalar_transf<double> &c) : m_c(c.get_coeff()) {
+
+    update_seed();
+}
+
+
+template<size_t N>
+tod_random<N>::tod_random(double c) : m_c(c) {
 
     update_seed();
 }
@@ -36,30 +43,21 @@ void tod_random<N>::update_seed() {
 
 template<size_t N>
 void tod_random<N>::perform(dense_tensor_wr_i<N, double> &t) {
-
-    perform(true, 1.0, t);
+    perform(true, t);
 }
 
 
 template<size_t N>
-void tod_random<N>::perform(dense_tensor_wr_i<N, double> &t, double c) {
-
-    perform(false, c, t);
-}
-
-
-template<size_t N>
-void tod_random<N>::perform(bool zero, double c,
-    dense_tensor_wr_i<N, double> &t) {
+void tod_random<N>::perform(bool zero, dense_tensor_wr_i<N, double> &t) {
 
     dense_tensor_wr_ctrl<N, double> ctrl(t);
     size_t sz = t.get_dims().get_size();
     double *ptr = ctrl.req_dataptr();
 
     if(zero) {
-        for(size_t i = 0; i < sz; i++) ptr[i] = c * drand48();
+        for(size_t i = 0; i < sz; i++) ptr[i] = m_c * drand48();
     } else {
-        for(size_t i = 0; i < sz; i++) ptr[i] += c * drand48();
+        for(size_t i = 0; i < sz; i++) ptr[i] += m_c * drand48();
     }
 
     ctrl.ret_dataptr(ptr);
