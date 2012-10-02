@@ -3,7 +3,7 @@
 
 #include <libtensor/linalg/linalg.h>
 #include <libtensor/core/abs_index.h>
-#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
+#include "../dense_tensor_ctrl.h"
 #include "../tod_import_raw.h"
 
 namespace libtensor {

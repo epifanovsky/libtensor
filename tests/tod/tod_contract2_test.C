@@ -1150,8 +1150,8 @@ void tod_contract2_test::test_0_p_p(size_t np, double d)
 
 	contraction2<0, 0, 1> contr;
 	contr.contract(0, 0);
-	if(d == 0.0) tod_contract2<0, 0, 1>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<0, 0, 1>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<0, 0, 1>(contr, ta, tb).perform(true, tc);
+	else tod_contract2<0, 0, 1>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -1238,8 +1238,8 @@ void tod_contract2_test::test_i_p_pi(size_t ni, size_t np, double d)
 
 	contraction2<0, 1, 1> contr;
 	contr.contract(0, 0);
-	if(d == 0.0) tod_contract2<0, 1, 1>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<0, 1, 1>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<0, 1, 1>(contr, ta, tb).perform(true, tc);
+	else tod_contract2<0, 1, 1>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -1325,8 +1325,8 @@ void tod_contract2_test::test_i_p_ip(size_t ni, size_t np, double d)
 
 	contraction2<0, 1, 1> contr;
 	contr.contract(0, 1);
-	if(d == 0.0) tod_contract2<0, 1, 1>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<0, 1, 1>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<0, 1, 1>(contr, ta, tb).perform(true, tc);
+	else tod_contract2<0, 1, 1>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -1412,8 +1412,8 @@ void tod_contract2_test::test_i_pi_p(size_t ni, size_t np, double d)
 
 	contraction2<1, 0, 1> contr;
 	contr.contract(0, 0);
-	if(d == 0.0) tod_contract2<1, 0, 1>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<1, 0, 1>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<1, 0, 1>(contr, ta, tb).perform(true, tc);
+	else tod_contract2<1, 0, 1>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -1499,8 +1499,8 @@ void tod_contract2_test::test_i_ip_p(size_t ni, size_t np, double d)
 
 	contraction2<1, 0, 1> contr;
 	contr.contract(1, 0);
-	if(d == 0.0) tod_contract2<1, 0, 1>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<1, 0, 1>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<1, 0, 1>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<1, 0, 1>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -1585,8 +1585,8 @@ void tod_contract2_test::test_ij_i_j(size_t ni, size_t nj, double d)
 	//	Invoke the contraction routine
 
 	contraction2<1, 1, 0> contr;
-	if(d == 0.0) tod_contract2<1, 1, 0>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<1, 1, 0>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<1, 1, 0>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<1, 1, 0>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -1671,8 +1671,8 @@ void tod_contract2_test::test_ij_j_i(size_t ni, size_t nj, double d)
 	//	Invoke the contraction routine
 
 	contraction2<1, 1, 0> contr(permutation<2>().permute(0, 1));
-	if(d == 0.0) tod_contract2<1, 1, 0>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<1, 1, 0>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<1, 1, 0>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<1, 1, 0>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -1760,8 +1760,8 @@ void tod_contract2_test::test_ij_pi_pj(
 
 	contraction2<1, 1, 1> contr;
 	contr.contract(0, 0);
-	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<1, 1, 1>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<1, 1, 1>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -1849,8 +1849,8 @@ void tod_contract2_test::test_ij_pi_jp(
 
 	contraction2<1, 1, 1> contr;
 	contr.contract(0, 1);
-	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<1, 1, 1>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<1, 1, 1>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -1938,8 +1938,8 @@ void tod_contract2_test::test_ij_ip_pj(
 
 	contraction2<1, 1, 1> contr;
 	contr.contract(1, 0);
-	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<1, 1, 1>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<1, 1, 1>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -2027,8 +2027,8 @@ void tod_contract2_test::test_ij_ip_jp(
 
 	contraction2<1, 1, 1> contr;
 	contr.contract(1, 1);
-	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<1, 1, 1>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<1, 1, 1>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -2117,8 +2117,8 @@ void tod_contract2_test::test_ij_pj_pi(
 	permutation<2> permc; permc.permute(0, 1);
 	contraction2<1, 1, 1> contr(permc);
 	contr.contract(0, 0);
-	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<1, 1, 1>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<1, 1, 1>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -2207,8 +2207,8 @@ void tod_contract2_test::test_ij_pj_ip(
 	permutation<2> permc; permc.permute(0, 1);
 	contraction2<1, 1, 1> contr(permc);
 	contr.contract(0, 1);
-	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<1, 1, 1>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<1, 1, 1>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -2297,8 +2297,8 @@ void tod_contract2_test::test_ij_jp_ip(
 	permutation<2> permc; permc.permute(0, 1);
 	contraction2<1, 1, 1> contr(permc);
 	contr.contract(1, 1);
-	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<1, 1, 1>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<1, 1, 1>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -2387,8 +2387,8 @@ void tod_contract2_test::test_ij_jp_pi(
 	permutation<2> permc; permc.permute(0, 1);
 	contraction2<1, 1, 1> contr(permc);
 	contr.contract(1, 0);
-	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<1, 1, 1>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<1, 1, 1>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -2479,8 +2479,8 @@ void tod_contract2_test::test_ij_p_pji(
 	permutation<2> permc; permc.permute(0, 1);
 	contraction2<0, 2, 1> contr(permc);
 	contr.contract(0, 0);
-	if(d == 0.0) tod_contract2<0, 2, 1>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<0, 2, 1>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<0, 2, 1>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<0, 2, 1>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -2571,8 +2571,8 @@ void tod_contract2_test::test_ij_pji_p(
 	permutation<2> permc; permc.permute(0, 1);
 	contraction2<2, 0, 1> contr(permc);
 	contr.contract(0, 0);
-	if(d == 0.0) tod_contract2<2, 0, 1>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<2, 0, 1>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<2, 0, 1>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<2, 0, 1>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -2699,9 +2699,9 @@ void tod_contract2_test::test_ij_pi_pj_qi_jq(
     } else {
         zero = false; k = d;
     }
-    tod_contract2<1, 1, 1> op(contr1, ta1, tb1, d1);
-    op.add_args(contr2, ta2, tb2, d2);
-    op.perform(zero, k, tc);
+    tod_contract2<1, 1, 1> op(contr1, ta1, tb1, d1 * k);
+    op.add_args(contr2, ta2, tb2, d2 * k);
+    op.perform(zero, tc);
 
     //  Compare against the reference
 
@@ -2828,9 +2828,9 @@ void tod_contract2_test::test_ij_pi_pj_qi_qj(
     } else {
         zero = false; k = d;
     }
-    tod_contract2<1, 1, 1> op(contr1, ta1, tb1, d1);
-    op.add_args(contr2, ta2, tb2, d2);
-    op.perform(zero, k, tc);
+    tod_contract2<1, 1, 1> op(contr1, ta1, tb1, d1 * k);
+    op.add_args(contr2, ta2, tb2, d2 * k);
+    op.perform(zero, tc);
 
     //  Compare against the reference
 
@@ -2924,8 +2924,8 @@ void tod_contract2_test::test_ijk_ip_pkj(
 	permc.permute(1, 2); // ikj -> ijk
 	contraction2<1, 2, 1> contr(permc);
 	contr.contract(1, 0);
-	if(d == 0.0) tod_contract2<1, 2, 1>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<1, 2, 1>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<1, 2, 1>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<1, 2, 1>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -3019,8 +3019,8 @@ void tod_contract2_test::test_ijk_pi_pkj(
 	permc.permute(1, 2); // ikj -> ijk
 	contraction2<1, 2, 1> contr(permc);
 	contr.contract(0, 0);
-	if(d == 0.0) tod_contract2<1, 2, 1>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<1, 2, 1>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<1, 2, 1>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<1, 2, 1>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -3114,8 +3114,8 @@ void tod_contract2_test::test_ijk_pik_pj(
 	permc.permute(1, 2); // ikj -> ijk
 	contraction2<2, 1, 1> contr(permc);
 	contr.contract(0, 0);
-	if(d == 0.0) tod_contract2<2, 1, 1>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<2, 1, 1>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<2, 1, 1>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<2, 1, 1>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -3209,8 +3209,8 @@ void tod_contract2_test::test_ijk_pj_ipk(
 	permc.permute(0, 1); // jik -> ijk
 	contraction2<1, 2, 1> contr(permc);
 	contr.contract(0, 1);
-	if(d == 0.0) tod_contract2<1, 2, 1>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<1, 2, 1>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<1, 2, 1>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<1, 2, 1>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -3304,8 +3304,8 @@ void tod_contract2_test::test_ijk_pj_pik(
 	permc.permute(0, 1); // jik -> ijk
 	contraction2<1, 2, 1> contr(permc);
 	contr.contract(0, 0);
-	if(d == 0.0) tod_contract2<1, 2, 1>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<1, 2, 1>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<1, 2, 1>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<1, 2, 1>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -3399,8 +3399,8 @@ void tod_contract2_test::test_ijk_pkj_ip(
 	permc.permute(0, 2); // kji -> ijk
 	contraction2<2, 1, 1> contr(permc);
 	contr.contract(0, 1);
-	if(d == 0.0) tod_contract2<2, 1, 1>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<2, 1, 1>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<2, 1, 1>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<2, 1, 1>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -3494,8 +3494,8 @@ void tod_contract2_test::test_ijk_pkj_pi(
 	permc.permute(0, 2); // kji -> ijk
 	contraction2<2, 1, 1> contr(permc);
 	contr.contract(0, 0);
-	if(d == 0.0) tod_contract2<2, 1, 1>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<2, 1, 1>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<2, 1, 1>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<2, 1, 1>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -3587,8 +3587,8 @@ void tod_contract2_test::test_ij_pqi_pjq(
 	contraction2<1, 1, 2> contr;
 	contr.contract(0, 0);
 	contr.contract(1, 2);
-	if(d == 0.0) tod_contract2<1, 1, 2>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<1, 1, 2>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<1, 1, 2>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<1, 1, 2>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -3679,8 +3679,8 @@ void tod_contract2_test::test_ij_ipq_jqp(
 	contraction2<1, 1, 2> contr;
 	contr.contract(1, 2);
 	contr.contract(2, 1);
-	if(d == 0.0) tod_contract2<1, 1, 2>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<1, 1, 2>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<1, 1, 2>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<1, 1, 2>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -3771,8 +3771,8 @@ void tod_contract2_test::test_ij_jpq_iqp(
 	contraction2<1, 1, 2> contr(permutation<2>().permute(0, 1));
 	contr.contract(1, 2);
 	contr.contract(2, 1);
-	if(d == 0.0) tod_contract2<1, 1, 2>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<1, 1, 2>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<1, 1, 2>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<1, 1, 2>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -3867,8 +3867,8 @@ void tod_contract2_test::test_ij_jipq_qp(
 	contraction2<2, 0, 2> contr(permutation<2>().permute(0, 1));
 	contr.contract(2, 1);
 	contr.contract(3, 0);
-	if(d == 0.0) tod_contract2<2, 0, 2>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<2, 0, 2>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<2, 0, 2>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<2, 0, 2>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -3956,7 +3956,7 @@ void tod_contract2_test::test_ij_pq_ijpq(size_t ni, size_t nj, size_t np,
 	contr.contract(0, 2);
 	contr.contract(1, 3);
 
-	tod_contract2<0, 2, 2>(contr, ta, tb).perform(true, 1.0, tc);
+	tod_contract2<0, 2, 2>(contr, ta, tb, 1.0).perform(true, tc);
 
 	// Compare against the reference
 
@@ -4040,7 +4040,7 @@ void tod_contract2_test::test_ij_pq_ijpq_a(size_t ni, size_t nj, size_t np,
 	contr.contract(0, 2);
 	contr.contract(1, 3);
 
-	tod_contract2<0, 2, 2>(contr, ta, tb).perform(false, d, tc);
+	tod_contract2<0, 2, 2>(contr, ta, tb, d).perform(false, tc);
 
 	// Compare against the reference
 
@@ -4132,8 +4132,8 @@ void tod_contract2_test::test_ijk_kjpq_iqp(size_t ni, size_t nj, size_t nk,
 	contraction2<2, 1, 2> contr(permutation<3>().permute(0, 2));
 	contr.contract(2, 2);
 	contr.contract(3, 1);
-	if(d == 0.0) tod_contract2<2, 1, 2>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<2, 1, 2>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<2, 1, 2>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<2, 1, 2>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -4231,8 +4231,8 @@ void tod_contract2_test::test_ijk_pkiq_pjq(size_t ni, size_t nj, size_t nk,
 	contraction2<2, 1, 2> contr(permc);
 	contr.contract(0, 0);
 	contr.contract(3, 2);
-	if(d == 0.0) tod_contract2<2, 1, 2>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<2, 1, 2>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<2, 1, 2>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<2, 1, 2>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -4329,8 +4329,8 @@ void tod_contract2_test::test_ijk_pqj_iqpk(size_t ni, size_t nj, size_t nk,
 	contraction2<1, 2, 2> contr(permutation<3>().permute(0, 1));
 	contr.contract(0, 2);
 	contr.contract(1, 1);
-	if(d == 0.0) tod_contract2<1, 2, 2>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<1, 2, 2>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<1, 2, 2>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<1, 2, 2>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -4426,8 +4426,8 @@ void tod_contract2_test::test_ijk_pqji_qpk(size_t ni, size_t nj, size_t nk,
 	contraction2<2, 1, 2> contr(permutation<3>().permute(0, 1));
 	contr.contract(0, 1);
 	contr.contract(1, 0);
-	if(d == 0.0) tod_contract2<2, 1, 2>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<2, 1, 2>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<2, 1, 2>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<2, 1, 2>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -4524,8 +4524,8 @@ void tod_contract2_test::test_ijkl_ikp_jpl(size_t ni, size_t nj, size_t nk,
 	permc.permute(1, 2); // ikjl -> ijkl
 	contraction2<2, 2, 1> contr(permc);
 	contr.contract(2, 1);
-	if(d == 0.0) tod_contract2<2, 2, 1>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<2, 2, 1>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<2, 2, 1>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<2, 2, 1>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -4622,8 +4622,8 @@ void tod_contract2_test::test_ijkl_ipk_jpl(size_t ni, size_t nj, size_t nk,
 	permc.permute(1, 2); // ikjl -> ijkl
 	contraction2<2, 2, 1> contr(permc);
 	contr.contract(1, 1);
-	if(d == 0.0) tod_contract2<2, 2, 1>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<2, 2, 1>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<2, 2, 1>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<2, 2, 1>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -4719,8 +4719,8 @@ void tod_contract2_test::test_ijkl_ipl_jpk(size_t ni, size_t nj, size_t nk,
 	permutation<4> permc; permc.permute(1, 2).permute(2, 3); // iljk->ijkl
 	contraction2<2, 2, 1> contr(permc);
 	contr.contract(1, 1);
-	if(d == 0.0) tod_contract2<2, 2, 1>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<2, 2, 1>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<2, 2, 1>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<2, 2, 1>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -4817,8 +4817,8 @@ void tod_contract2_test::test_ijkl_jkp_ipl(size_t ni, size_t nj, size_t nk,
 	permc.permute(0, 2).permute(1, 2); // jkil -> ijkl
 	contraction2<2, 2, 1> contr(permc);
 	contr.contract(2, 1);
-	if(d == 0.0) tod_contract2<2, 2, 1>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<2, 2, 1>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<2, 2, 1>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<2, 2, 1>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -4916,8 +4916,8 @@ void tod_contract2_test::test_ijkl_jpl_ipk(size_t ni, size_t nj, size_t nk,
 	permc.permute(0, 2).permute(1, 2).permute(2, 3);
 	contraction2<2, 2, 1> contr(permc);
 	contr.contract(1, 1);
-	if(d == 0.0) tod_contract2<2, 2, 1>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<2, 2, 1>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<2, 2, 1>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<2, 2, 1>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -5100,10 +5100,10 @@ void tod_contract2_test::test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(size_t ni, size_t nj,
         zero = false;
         k = d;
     }
-    tod_contract2<2, 2, 1> op(contr1, ta1, tb1, d1);
-    op.add_args(contr2, ta2, tb2, d2);
-    op.add_args(contr3, ta3, tb3, d3);
-    op.perform(zero, k, tc);
+    tod_contract2<2, 2, 1> op(contr1, ta1, tb1, d1 * k);
+    op.add_args(contr2, ta2, tb2, d2 * k);
+    op.add_args(contr3, ta3, tb3, d3 * k);
+    op.perform(zero, tc);
 
     //  Compare against the reference
 
@@ -5207,8 +5207,8 @@ void tod_contract2_test::test_ijklm_ikp_jpml(size_t ni, size_t nj, size_t nk,
 	permc.permute(1, 2).permute(3, 4);
 	contraction2<2, 3, 1> contr(permc);
 	contr.contract(2, 1);
-	if(d == 0.0) tod_contract2<2, 3, 1>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<2, 3, 1>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<2, 3, 1>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<2, 3, 1>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -5312,8 +5312,8 @@ void tod_contract2_test::test_ijklm_ipkm_jpl(size_t ni, size_t nj, size_t nk,
 	permc.permute(1, 3).permute(2, 3).permute(3, 4);
 	contraction2<3, 2, 1> contr(permc);
 	contr.contract(1, 1);
-	if(d == 0.0) tod_contract2<3, 2, 1>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<3, 2, 1>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<3, 2, 1>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<3, 2, 1>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -5417,8 +5417,8 @@ void tod_contract2_test::test_ijklm_jlp_ipkm(size_t ni, size_t nj, size_t nk,
 	permc.permute(0, 2).permute(1, 2).permute(2, 3);
 	contraction2<2, 3, 1> contr(permc);
 	contr.contract(2, 1);
-	if(d == 0.0) tod_contract2<2, 3, 1>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<2, 3, 1>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<2, 3, 1>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<2, 3, 1>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -5525,8 +5525,8 @@ void tod_contract2_test::test_ijklmn_kjmp_ipln(size_t ni, size_t nj, size_t nk,
 	permc.permute(0, 3).permute(2, 3).permute(3, 4);
 	contraction2<3, 3, 1> contr(permc);
 	contr.contract(3, 1);
-	if(d == 0.0) tod_contract2<3, 3, 1>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<3, 3, 1>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<3, 3, 1>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<3, 3, 1>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -5625,8 +5625,8 @@ void tod_contract2_test::test_ijkl_iplq_kpjq(size_t ni, size_t nj, size_t nk,
 	contraction2<2, 2, 2> contr(permutation<4>().permute(1, 3));
 	contr.contract(1, 1);
 	contr.contract(3, 3);
-	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<2, 2, 2>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -5725,8 +5725,8 @@ void tod_contract2_test::test_ijkl_iplq_pkjq(size_t ni, size_t nj, size_t nk,
 	contraction2<2, 2, 2> contr(permutation<4>().permute(1, 3));
 	contr.contract(1, 0);
 	contr.contract(3, 3);
-	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<2, 2, 2>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -5825,8 +5825,8 @@ void tod_contract2_test::test_ijkl_iplq_pkqj(size_t ni, size_t nj, size_t nk,
 	contraction2<2, 2, 2> contr(permutation<4>().permute(1, 3));
 	contr.contract(1, 0);
 	contr.contract(3, 2);
-	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<2, 2, 2>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -5925,8 +5925,8 @@ void tod_contract2_test::test_ijkl_ipql_kpqj(size_t ni, size_t nj, size_t nk,
 	contraction2<2, 2, 2> contr(permutation<4>().permute(1, 3));
 	contr.contract(1, 1);
 	contr.contract(2, 2);
-	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<2, 2, 2>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -6025,8 +6025,8 @@ void tod_contract2_test::test_ijkl_ipql_pkqj(size_t ni, size_t nj, size_t nk,
 	contraction2<2, 2, 2> contr(permutation<4>().permute(1, 3));
 	contr.contract(1, 0);
 	contr.contract(2, 2);
-	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<2, 2, 2>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -6125,8 +6125,8 @@ void tod_contract2_test::test_ijkl_pilq_kpjq(size_t ni, size_t nj, size_t nk,
 	contraction2<2, 2, 2> contr(permutation<4>().permute(1, 3));
 	contr.contract(0, 1);
 	contr.contract(3, 3);
-	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<2, 2, 2>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -6225,8 +6225,8 @@ void tod_contract2_test::test_ijkl_pilq_pkjq(size_t ni, size_t nj, size_t nk,
 	contraction2<2, 2, 2> contr(permutation<4>().permute(1, 3));
 	contr.contract(0, 0);
 	contr.contract(3, 3);
-	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<2, 2, 2>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -6325,8 +6325,8 @@ void tod_contract2_test::test_ijkl_piql_kpqj(size_t ni, size_t nj, size_t nk,
 	contraction2<2, 2, 2> contr(permutation<4>().permute(1, 3));
 	contr.contract(0, 1);
 	contr.contract(2, 2);
-	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<2, 2, 2>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -6425,8 +6425,8 @@ void tod_contract2_test::test_ijkl_piql_pkqj(size_t ni, size_t nj, size_t nk,
 	contraction2<2, 2, 2> contr(permutation<4>().permute(1, 3));
 	contr.contract(0, 0);
 	contr.contract(2, 2);
-	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<2, 2, 2>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -6527,8 +6527,8 @@ void tod_contract2_test::test_ijkl_pqkj_iqpl(size_t ni, size_t nj, size_t nk,
 	contraction2<2, 2, 2> contr(permc);
 	contr.contract(0, 2);
 	contr.contract(1, 1);
-	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<2, 2, 2>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -6629,8 +6629,8 @@ void tod_contract2_test::test_ijkl_pqkj_qipl(size_t ni, size_t nj, size_t nk,
 	contraction2<2, 2, 2> contr(permc);
 	contr.contract(0, 2);
 	contr.contract(1, 0);
-	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<2, 2, 2>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<2, 2, 2>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -6722,7 +6722,7 @@ void tod_contract2_test::test_ij_ipqr_jpqr(size_t ni, size_t nj, size_t np,
 	contr.contract(2, 2);
 	contr.contract(3, 3);
 
-	tod_contract2<1, 1, 3>(contr, ta, tb).perform(true, 1.0, tc);
+	tod_contract2<1, 1, 3>(contr, ta, tb, 1.0).perform(true, tc);
 
 	// Compare against the reference
 
@@ -6809,7 +6809,7 @@ void tod_contract2_test::test_ij_ipqr_jpqr_a(size_t ni, size_t nj, size_t np,
 	contr.contract(2, 2);
 	contr.contract(3, 3);
 
-	tod_contract2<1, 1, 3>(contr, ta, tb).perform(false, d, tc);
+	tod_contract2<1, 1, 3>(contr, ta, tb, d).perform(false, tc);
 
 	// Compare against the reference
 
@@ -6901,8 +6901,8 @@ void tod_contract2_test::test_ij_ipqr_pjrq(
 	contr.contract(1, 0);
 	contr.contract(2, 3);
 	contr.contract(3, 2);
-	if(d == 0.0) tod_contract2<1, 1, 3>(contr, ta, tb).perform(true, 1.0, tc);
-	else tod_contract2<1, 1, 3>(contr, ta, tb).perform(false, d, tc);
+	if(d == 0.0) tod_contract2<1, 1, 3>(contr, ta, tb, 1.0).perform(true, tc);
+	else tod_contract2<1, 1, 3>(contr, ta, tb, d).perform(false, tc);
 
 	//	Compare against the reference
 
@@ -6994,9 +6994,9 @@ void tod_contract2_test::test_ij_jpqr_iprq(size_t ni, size_t nj, size_t np,
 	contr.contract(3, 2);
 
 	//~ tod_contract2<1, 1, 3> op(contr, ta, tb);
-	tod_contract2<1, 1, 3> op(contr, tb, ta);
-	if(d == 0.0) op.perform(true, 1.0, tc);
-	else op.perform(false, d, tc);
+	tod_contract2<1, 1, 3> op(contr, tb, ta, (d != 0 ? d : 1.0));
+	if(d == 0.0) op.perform(true, tc);
+	else op.perform(false, tc);
 
 	// Compare against the reference
 
@@ -7083,7 +7083,7 @@ void tod_contract2_test::test_ij_pqir_pqjr(size_t ni, size_t nj,
 	contr.contract(1, 1);
 	contr.contract(3, 3);
 
-	tod_contract2<1, 1, 3>(contr, ta, tb).perform(true, 1.0, tc);
+	tod_contract2<1, 1, 3>(contr, ta, tb, 1.0).perform(true, tc);
 
 	// Compare against the reference
 
@@ -7170,7 +7170,7 @@ void tod_contract2_test::test_ij_pqir_pqjr_a(size_t ni, size_t nj, size_t np,
 	contr.contract(1, 1);
 	contr.contract(3, 3);
 
-	tod_contract2<1, 1, 3>(contr, ta, tb).perform(false, d, tc);
+	tod_contract2<1, 1, 3>(contr, ta, tb, d).perform(false, tc);
 
 	// Compare against the reference
 
@@ -7270,7 +7270,7 @@ void tod_contract2_test::test_ijkl_pi_jklp(size_t ni, size_t nj,
 	contraction2<1, 3, 1> contr;
 	contr.contract(0, 3);
 
-	tod_contract2<1, 3, 1>(contr, ta, tb).perform(true, 1.0, tc);
+	tod_contract2<1, 3, 1>(contr, ta, tb, 1.0).perform(true, tc);
 
 	//
 	//	Compare against the reference
@@ -7377,7 +7377,7 @@ void tod_contract2_test::test_ijkl_pi_jklp_a(size_t ni, size_t nj, size_t nk,
 	contraction2<1, 3, 1> contr;
 	contr.contract(0, 3);
 
-	tod_contract2<1, 3, 1>(contr, ta, tb).perform(false, d, tc);
+	tod_contract2<1, 3, 1>(contr, ta, tb, d).perform(false, tc);
 
 	//
 	//	Compare against the reference
@@ -7472,7 +7472,7 @@ void tod_contract2_test::test_jikl_pi_jpkl(size_t ni, size_t nj,
 	contraction2<1, 3, 1> contr(permc);
 	contr.contract(0, 1);
 
-	tod_contract2<1, 3, 1>(contr, ta, tb).perform(true, 1.0, tc);
+	tod_contract2<1, 3, 1>(contr, ta, tb, 1.0).perform(true, tc);
 
 	// Compare against the reference
 
@@ -7560,7 +7560,7 @@ void tod_contract2_test::test_jikl_pi_jpkl_a(size_t ni, size_t nj, size_t nk,
 	contraction2<1, 3, 1> contr(permc);
 	contr.contract(0, 1);
 
-	tod_contract2<1, 3, 1>(contr, ta, tb).perform(false, d, tc);
+	tod_contract2<1, 3, 1>(contr, ta, tb, d).perform(false, tc);
 
 	// Compare against the reference
 
@@ -7645,7 +7645,7 @@ void tod_contract2_test::test_ijkl_ijp_klp(size_t ni, size_t nj,
 	contraction2<2, 2, 1> contr(permc);
 	contr.contract(2, 2);
 
-	tod_contract2<2, 2, 1>(contr, ta, tb).perform(true, 1.0, tc);
+	tod_contract2<2, 2, 1>(contr, ta, tb, 1.0).perform(true, tc);
 
 	// Compare against the reference
 
@@ -7730,7 +7730,7 @@ void tod_contract2_test::test_ijkl_ijp_klp_a(size_t ni, size_t nj, size_t nk,
 	contraction2<2, 2, 1> contr(permc);
 	contr.contract(2, 2);
 
-	tod_contract2<2, 2, 1>(contr, ta, tb).perform(false, d, tc);
+	tod_contract2<2, 2, 1>(contr, ta, tb, d).perform(false, tc);
 
 	// Compare against the reference
 
@@ -7826,7 +7826,7 @@ void tod_contract2_test::test_ijkl_ij_kl(size_t ni, size_t nj,
 
 	contraction2<2, 2, 0> contr;
 
-	tod_contract2<2, 2, 0>(contr, ta, tb).perform(true, 1.0, tc);
+	tod_contract2<2, 2, 0>(contr, ta, tb, 1.0).perform(true, tc);
 
 	//
 	//	Compare against the reference
@@ -7931,7 +7931,7 @@ void tod_contract2_test::test_ijkl_ij_lk(size_t ni, size_t nj,
 	permc.permute(2, 3);
 	contraction2<2, 2, 0> contr(permc);
 
-	tod_contract2<2, 2, 0>(contr, ta, tb).perform(true, 1.0, tc);
+	tod_contract2<2, 2, 0>(contr, ta, tb, 1.0).perform(true, tc);
 
 	//
 	//	Compare against the reference

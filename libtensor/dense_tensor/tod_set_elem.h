@@ -2,6 +2,7 @@
 #define LIBTENSOR_TOD_SET_ELEM_H
 
 #include <libtensor/core/index.h>
+#include <libtensor/core/noncopyable.h>
 #include "dense_tensor_i.h"
 
 namespace libtensor {
@@ -17,7 +18,7 @@ namespace libtensor {
     \ingroup libtensor_dense_tensor_tod
  **/
 template<size_t N>
-class tod_set_elem {
+class tod_set_elem : public noncopyable {
 public:
     /** \brief Assigns a value to an element of a tensor
         \param t Tensor.

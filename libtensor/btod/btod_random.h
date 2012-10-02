@@ -192,9 +192,9 @@ void btod_random<N>::make_random_blk(block_tensor_ctrl<N, double> &ctrl,
         }
 
         timings_base::start_timer("symop&copy");
-        symop.perform(true, 1.0, symrnd);
+        symop.perform(true, symrnd);
         totcoeff = (totcoeff == 0.0) ? 1.0 : 1.0/totcoeff;
-        tod_copy<N>(symrnd, totcoeff).perform(true, 1.0, blk);
+        tod_copy<N>(symrnd, totcoeff).perform(true, blk);
         timings_base::stop_timer("symop&copy");
     }
 

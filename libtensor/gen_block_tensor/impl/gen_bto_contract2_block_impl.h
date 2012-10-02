@@ -107,7 +107,7 @@ void gen_bto_contract2_block<N, M, K, Traits, Timed>::compute_block(
     if(op.get() == 0) {
         if(zero) to_set().perform(blkc);
     } else {
-        op->perform(zero, Traits::identity(), blkc);
+        op->perform(zero, blkc);
     }
 
     //  Return input blocks

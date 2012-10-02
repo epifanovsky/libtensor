@@ -2,6 +2,7 @@
 #define LIBTENSOR_TOD_RANDOM_H
 
 #include <libtensor/timings.h>
+#include <libtensor/core/noncopyable.h>
 #include <libtensor/core/scalar_transf_double.h>
 #include "dense_tensor_i.h"
 
@@ -17,7 +18,7 @@ namespace libtensor {
     \ingroup libtensor_dense_tensor_tod
  **/
 template<size_t N>
-class tod_random : public timings< tod_random<N> > {
+class tod_random : public timings< tod_random<N> >, public noncopyable {
 public:
     static const char *k_clazz; //!< Class name
 

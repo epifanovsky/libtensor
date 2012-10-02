@@ -5,6 +5,7 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/tod_select.h>
+#include <libtensor/dense_tensor/impl/tod_select_impl.h>
 #include "tod_select_test.h"
 
 

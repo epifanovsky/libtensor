@@ -608,9 +608,9 @@ void btod_contract2<N, M, K>::contract_block(
 
         if(op.get() == 0) {
             op = std::auto_ptr< tod_contract2<N, M, K> >(
-                new tod_contract2<N, M, K>(contr, ta, tb, kc));
+                new tod_contract2<N, M, K>(contr, ta, tb, kc * c));
         } else {
-            op->add_args(contr, ta, tb, kc);
+            op->add_args(contr, ta, tb, kc * c);
         }
     }
 
@@ -618,7 +618,7 @@ void btod_contract2<N, M, K>::contract_block(
     if(op.get() == 0) {
         if(zero) tod_set<NC>().perform(tc);
     } else {
-        op->perform(zero, c, tc);
+        op->perform(zero, tc);
     }
 
     //  Return input blocks

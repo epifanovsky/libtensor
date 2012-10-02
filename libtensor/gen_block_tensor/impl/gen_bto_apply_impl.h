@@ -155,10 +155,10 @@ void gen_bto_apply<N, Functor, Traits, Timed>::compute_block_untimed(bool zero,
         const tensor_transf_type &trb) {
 
     typedef typename Traits::template temp_block_type<N>::type tensor_type;
-    typedef typename Traits::template to_set_type<N>::type to_set_type;
-    typedef typename Traits::template to_copy_type<N>::type to_copy_type;
+    typedef typename Traits::template to_set_type<N>::type to_set;
+    typedef typename Traits::template to_copy_type<N>::type to_copy;
     typedef typename Traits::template to_apply_type<N, Functor>::type
-        to_apply_type;
+        to_apply;
 
     //if(zero) to_set_type().perform(blk);
 
@@ -181,15 +181,15 @@ void gen_bto_apply<N, Functor, Traits, Timed>::compute_block_untimed(bool zero,
             m_tr2.apply(val);
 
             if (zero)
-                to_set_type(val).perform(blkb);
+                to_set(val).perform(blkb);
             else {
                 tensor_type temp_blk(blkb.get_dims());
-                to_set_type(val).perform(temp_blk);
-                to_copy_type(temp_blk).perform(false, Traits::identity(), blkb);
+                to_set(val).perform(temp_blk);
+                to_copy(temp_blk).perform(false, blkb);
             }
         }
         else {
-            to_set_type().perform(blkb);
+            to_set().perform(blkb);
         }
         return;
     }
@@ -209,7 +209,7 @@ void gen_bto_apply<N, Functor, Traits, Timed>::compute_block_untimed(bool zero,
     if(! ctrla.req_is_zero_block(acia.get_index())) {
 
         rd_block_type &blka = ctrla.req_const_block(acia.get_index());
-        to_apply_type(blka, m_fn, tr1, tr2).perform(zero, blkb);
+        to_apply(blka, m_fn, tr1, tr2).perform(zero, blkb);
         ctrla.ret_const_block(acia.get_index());
     }
     else {
@@ -219,11 +219,11 @@ void gen_bto_apply<N, Functor, Traits, Timed>::compute_block_untimed(bool zero,
             tr2.apply(val);
 
             if (zero)
-                to_set_type(val).perform(blkb);
+                to_set(val).perform(blkb);
             else {
                 tensor_type temp_blk(blkb.get_dims());
-                to_set_type(val).perform(temp_blk);
-                to_copy_type(temp_blk).perform(false, Traits::identity(), blkb);
+                to_set(val).perform(temp_blk);
+                to_copy(temp_blk).perform(false, blkb);
             }
         }
     }

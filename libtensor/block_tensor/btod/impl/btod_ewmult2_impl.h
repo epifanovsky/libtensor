@@ -434,16 +434,16 @@ void btod_ewmult2<N, M, K>::compute_block_impl(
         return;
     }
 
-    dense_tensor_i<k_ordera, double> &blka =
+    dense_tensor_rd_i<k_ordera, double> &blka =
             ctrla.req_const_block(cidxa.get_index());
-    dense_tensor_i<k_orderb, double> &blkb =
+    dense_tensor_rd_i<k_orderb, double> &blkb =
             ctrlb.req_const_block(cidxb.get_index());
 
     permc.permute(tr.get_perm());
-    double k = m_d * tra.get_scalar_tr().get_coeff() *
+    double k = m_d * d * tra.get_scalar_tr().get_coeff() *
             trb.get_scalar_tr().get_coeff() * tr.get_scalar_tr().get_coeff();
     tod_ewmult2<N, M, K>(blka, perma, blkb, permb, permc, k).
-        perform(zero, d, blk);
+            perform(zero, blk);
 
     ctrla.ret_const_block(cidxa.get_index());
     ctrlb.ret_const_block(cidxb.get_index());

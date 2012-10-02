@@ -20,7 +20,7 @@ template<size_t N>
 tod_dotprod<N>::tod_dotprod(dense_tensor_rd_i<N, double> &ta,
     dense_tensor_rd_i<N, double> &tb) :
 
-    m_ta(ta), m_tb(tb) {
+    m_ta(ta), m_tb(tb), m_c(1.0) {
 
     static const char *method = "tod_dotprod(dense_tensor_rd_i<N, double>&, "
         "dense_tensor_rd_i<N, double>&)";
@@ -37,7 +37,7 @@ tod_dotprod<N>::tod_dotprod(dense_tensor_rd_i<N, double> &ta,
     const permutation<N> &perma, dense_tensor_rd_i<N, double> &tb,
     const permutation<N> &permb) :
 
-    m_ta(ta), m_tra(perma), m_tb(tb), m_trb(permb) {
+    m_ta(ta), m_perma(perma), m_tb(tb), m_permb(permb), m_c(1.0) {
 
     static const char *method = "tod_dotprod(dense_tensor_rd_i<N, double>&, "
         "const permutation<N>&, dense_tensor_rd_i<N, double>&, "
@@ -57,7 +57,8 @@ tod_dotprod<N>::tod_dotprod(
         dense_tensor_rd_i<N, double> &tb,
         const tensor_transf<N, double> &trb) :
 
-    m_ta(ta), m_tra(tra), m_tb(tb), m_trb(trb) {
+    m_ta(ta), m_perma(tra.get_perm()), m_tb(tb), m_permb(trb.get_perm()),
+    m_c(tra.get_scalar_tr().get_coeff() * trb.get_scalar_tr().get_coeff()){
 
     static const char *method = "tod_dotprod(dense_tensor_rd_i<N, double>&, "
         "const tensor_transf<N, double>&, dense_tensor_rd_i<N, double>&, "
@@ -93,8 +94,8 @@ double tod_dotprod<N>::calculate() {
 
         sequence<N, size_t> seqa(0), seqb(0);
         for(size_t i = 0; i < N; i++) seqa[i] = seqb[i] = i;
-        m_tra.get_perm().apply(seqa);
-        m_trb.get_perm().apply(seqb);
+        m_perma.apply(seqa);
+        m_permb.apply(seqb);
 
         const dimensions<N> &dimsa(m_ta.get_dims());
         const dimensions<N> &dimsb(m_tb.get_dims());
@@ -131,8 +132,7 @@ double tod_dotprod<N>::calculate() {
         ca.ret_const_dataptr(pa);
         cb.ret_const_dataptr(pb);
 
-        result *= m_tra.get_scalar_tr().get_coeff() *
-                m_trb.get_scalar_tr().get_coeff();
+        result *= m_c;
 
     } catch(...) {
         tod_dotprod<N>::stop_timer();
@@ -150,8 +150,8 @@ bool tod_dotprod<N>::verify_dims() {
 
     dimensions<N> dimsa(m_ta.get_dims());
     dimensions<N> dimsb(m_tb.get_dims());
-    dimsa.permute(m_tra.get_perm());
-    dimsb.permute(m_trb.get_perm());
+    dimsa.permute(m_perma);
+    dimsb.permute(m_permb);
     return dimsa.equals(dimsb);
 }
 

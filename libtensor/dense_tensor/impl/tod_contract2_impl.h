@@ -11,10 +11,10 @@
 #include <libtensor/kernels/kern_dmul2.h>
 #include <libtensor/kernels/loop_list_node.h>
 #include <libtensor/kernels/loop_list_runner.h>
-#include <libtensor/dense_tensor/dense_tensor.h>
-#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/tod/bad_dimensions.h>
 #include <libtensor/tod/contraction2_list_builder.h>
+#include "../dense_tensor.h"
+#include "../dense_tensor_ctrl.h"
 #include "../tod_contract2.h"
 
 
@@ -28,8 +28,21 @@ const char *tod_contract2<N, M, K>::k_clazz = "tod_contract2<N, M, K>";
 template<size_t N, size_t M, size_t K>
 tod_contract2<N, M, K>::tod_contract2(
     const contraction2<N, M, K> &contr,
-    dense_tensor_i<k_ordera, double> &ta,
-    dense_tensor_i<k_orderb, double> &tb,
+    dense_tensor_rd_i<k_ordera, double> &ta,
+    dense_tensor_rd_i<k_orderb, double> &tb,
+    const scalar_transf<double> &d) :
+
+    m_dimsc(contr, ta.get_dims(), tb.get_dims()) {
+
+    add_args(contr, ta, tb, d);
+}
+
+
+template<size_t N, size_t M, size_t K>
+tod_contract2<N, M, K>::tod_contract2(
+    const contraction2<N, M, K> &contr,
+    dense_tensor_rd_i<k_ordera, double> &ta,
+    dense_tensor_rd_i<k_orderb, double> &tb,
     double d) :
 
     m_dimsc(contr, ta.get_dims(), tb.get_dims()) {
@@ -39,10 +52,21 @@ tod_contract2<N, M, K>::tod_contract2(
 
 
 template<size_t N, size_t M, size_t K>
+inline void tod_contract2<N, M, K>::add_args(
+    const contraction2<N, M, K> &contr,
+    dense_tensor_rd_i<k_ordera, double> &ta,
+    dense_tensor_rd_i<k_orderb, double> &tb,
+    const scalar_transf<double> &d) {
+
+    add_args(contr, ta, tb, d.get_coeff());
+}
+
+
+template<size_t N, size_t M, size_t K>
 void tod_contract2<N, M, K>::add_args(
     const contraction2<N, M, K> &contr,
-    dense_tensor_i<k_ordera, double> &ta,
-    dense_tensor_i<k_orderb, double> &tb,
+    dense_tensor_rd_i<k_ordera, double> &ta,
+    dense_tensor_rd_i<k_orderb, double> &tb,
     double d) {
 
     static const char *method = "add_args(const contraction2<N, M, K>&, "
@@ -65,18 +89,18 @@ void tod_contract2<N, M, K>::prefetch() {
     for(typename std::list<args>::iterator i = m_argslst.begin();
         i != m_argslst.end(); ++i) {
 
-        dense_tensor_ctrl<k_ordera, double>(i->ta).req_prefetch();
-        dense_tensor_ctrl<k_orderb, double>(i->tb).req_prefetch();
+        dense_tensor_rd_ctrl<k_ordera, double>(i->ta).req_prefetch();
+        dense_tensor_rd_ctrl<k_orderb, double>(i->tb).req_prefetch();
     }
 }
 
 
 template<size_t N, size_t M, size_t K>
-void tod_contract2<N, M, K>::perform(bool zero, double d,
-    dense_tensor_i<k_orderc, double> &tc) {
+void tod_contract2<N, M, K>::perform(bool zero,
+        dense_tensor_wr_i<k_orderc, double> &tc) {
 
     static const char *method =
-        "perform(bool, double, dense_tensor_i<N + M, double>&)";
+        "perform(bool, dense_tensor_i<N + M, double>&)";
 
     if(!m_dimsc.get_dimsc().equals(tc.get_dims())) {
         throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "tc");
@@ -86,7 +110,7 @@ void tod_contract2<N, M, K>::perform(bool zero, double d,
 
     try {
 
-        dense_tensor_ctrl<k_orderc, double> cc(tc);
+        dense_tensor_wr_ctrl<k_orderc, double> cc(tc);
         double *pc = cc.req_dataptr();
         const dimensions<k_orderc> &dimsc = tc.get_dims();
 
@@ -142,7 +166,7 @@ void tod_contract2<N, M, K>::perform(bool zero, double d,
 
             do {
                 if(iarg->permc.equals(permc)) {
-                    perform_internal(*iarg, d, pc2, dimsc1);
+                    perform_internal(*iarg, pc2, dimsc1);
                     iarg = argslst.erase(iarg);
                 } else {
                     ++iarg;
@@ -374,11 +398,11 @@ void tod_contract2<N, M, K>::align(
 
 
 template<size_t N, size_t M, size_t K>
-void tod_contract2<N, M, K>::perform_internal(aligned_args &ar, double d,
+void tod_contract2<N, M, K>::perform_internal(aligned_args &ar,
     double *pc, const dimensions<k_orderc> &dimsc) {
 
-    dense_tensor_ctrl<k_ordera, double> ca(ar.ta);
-    dense_tensor_ctrl<k_orderb, double> cb(ar.tb);
+    dense_tensor_rd_ctrl<k_ordera, double> ca(ar.ta);
+    dense_tensor_rd_ctrl<k_orderb, double> cb(ar.tb);
 
     const dimensions<k_ordera> &dimsa = ar.ta.get_dims();
     const dimensions<k_orderb> &dimsb = ar.tb.get_dims();
@@ -504,7 +528,7 @@ void tod_contract2<N, M, K>::perform_internal(aligned_args &ar, double d,
         r.m_ptrb_end[0] = pc + dimsc.get_size();
 
         std::auto_ptr< kernel_base<linalg, 2, 1> > kern(
-            kern_dmul2<linalg>::match(ar.d * d, loop_in, loop_out));
+            kern_dmul2<linalg>::match(ar.d, loop_in, loop_out));
         tod_contract2<N, M, K>::start_timer("kernel");
         tod_contract2<N, M, K>::start_timer(kern->get_name());
         loop_list_runner<linalg, 2, 1>(loop_in).run(0, r, *kern);

@@ -64,7 +64,7 @@ void tod_add_test::test_exc() throw(libtest::test_exception) {
     ok = false;
     try {
         add.prefetch();
-        add.perform(true, 1.0, t2);
+        add.perform(true, t2);
     } catch(exception& e) {
         ok = true;
     }
@@ -122,7 +122,7 @@ void tod_add_test::test_add_to_self_pqrs(size_t p, size_t q, size_t r, size_t s)
     tod_add<4> add(ta, 2.0);
     add.add_op(ta, 0.5);
     add.prefetch();
-    add.perform(true, 1.0, tc);
+    add.perform(true, tc);
 
     compare_ref<4>::compare(tn.c_str(), tc, tc_ref, ta_max * k_thresh);
 
@@ -178,7 +178,7 @@ void tod_add_test::test_add_two_pqrs_pqrs(size_t p, size_t q, size_t r,
 
     tod_add<4> add(t2, 2.0);
     add.prefetch();
-    add.perform(false, 1.0, t1);
+    add.perform(false, t1);
 
     compare_ref<4>::compare(tn.c_str(), t1, t1_ref, t2_max * k_thresh);
 
@@ -247,7 +247,7 @@ void tod_add_test::test_add_two_pqrs_qprs(size_t p, size_t q, size_t r,
 
     tod_add<4> add(t2, p2, 0.1);
     add.prefetch();
-    add.perform(false, 1.0, t1);
+    add.perform(false, t1);
 
     compare_ref<4>::compare(tn.c_str(), t1, t1_ref, t2_max * k_thresh);
 
@@ -317,7 +317,7 @@ void tod_add_test::test_add_two_pqrs_prsq(size_t p, size_t q, size_t r,
     tod_add<4> add(t2,
             tensor_transf<4, double>(p2, scalar_transf<double>(0.1)));
     add.prefetch();
-    add.perform(false, 1.0, t1);
+    add.perform(false, t1);
 
     compare_ref<4>::compare(tn.c_str(), t1, t1_ref, t2_max * k_thresh);
 
@@ -387,7 +387,7 @@ void tod_add_test::test_add_two_pqrs_qpsr(size_t p, size_t q, size_t r,
 
     tod_add<4> add(t2, p2, 0.1);
     add.prefetch();
-    add.perform(false, 1.0, t1);
+    add.perform(false, t1);
 
     compare_ref<4>::compare(tn.c_str(), t1, t1_ref, t2_max * k_thresh);
 
@@ -460,7 +460,7 @@ void tod_add_test::test_add_two_ijkl_kjli(size_t ni, size_t nj, size_t nk,
 
     tod_add<4> op(t1, perm, c1);
     op.add_op(t2, c2);
-    op.perform(true, 1.0, t3);
+    op.perform(true, t3);
 
     compare_ref<4>::compare(tn.c_str(), t3, t3_ref, t3_max * k_thresh);
 
@@ -534,12 +534,12 @@ void tod_add_test::test_add_mult(size_t p, size_t q, size_t r, size_t s)
         ctrl4.ret_const_dataptr(cptr4); cptr4 = 0;
     }
 
-    tod_add<4> add(t2, 1.0);
-    add.add_op(t3, p3, -4.0);
+    tod_add<4> add(t2, 0.5);
+    add.add_op(t3, p3, -2.0);
     add.add_op(t4, tensor_transf<4, double>(permutation<4>(),
-            scalar_transf<double>(0.2)));
+            scalar_transf<double>(0.1)));
     add.prefetch();
-    add.perform(false, 0.5, t1);
+    add.perform(false, t1);
 
     compare_ref<4>::compare(tn.c_str(), t1, t1_ref, t_max * k_thresh);
 
@@ -602,10 +602,10 @@ void tod_add_test::test_add_two_pq_qp(size_t p, size_t q)
         ctrl3.ret_const_dataptr(cptr3); cptr3 = 0;
     }
 
-    tod_add<2> add(t2, 2.0);
-    add.add_op(t3, p3, -1.0);
+    tod_add<2> add(t2, 1.0);
+    add.add_op(t3, p3, -0.5);
     add.prefetch();
-    add.perform(false, 0.5, t1);
+    add.perform(false, t1);
 
     compare_ref<2>::compare(tn.c_str(), t1, t1_ref, t_max * k_thresh);
 

@@ -52,7 +52,7 @@ void btod_add<N>::compute_block(
     dense_tensor_i<N, double> &blkb,
     const index<N> &ib) {
 
-    m_gbto.compute_block(true, blkb, ib, tensor_transf<N, double>(), 1.0);
+    m_gbto.compute_block(true, blkb, ib, tensor_transf<N, double>());
 }
 
 
@@ -64,7 +64,9 @@ void btod_add<N>::compute_block(
     const tensor_transf<N, double> &trb,
     const double &c) {
 
-    m_gbto.compute_block(zero, blkb, ib, trb, c);
+    tensor_transf<N, double> trx(trb);
+    trx.transform(scalar_transf<double>(c));
+    m_gbto.compute_block(zero, blkb, ib, trx);
 }
 
 

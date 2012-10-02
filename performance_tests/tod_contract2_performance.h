@@ -195,7 +195,7 @@ void tod_contract2_p1<R,N,M,K,DimData>::do_calculate()
 	permutation<N+M> perm;
 	contraction2<N,M,K> contr(perm);
 	for (size_t i=0; i<K; i++) contr.contract(i+N,i+M);
-	tod_contract2<N,M,K>(contr,tb,tc).perform(false, 0.5, ta);
+	tod_contract2<N,M,K>(contr, tb, tc, 0.5).perform(false, ta);
 }
 
 template<size_t R, size_t N, size_t M, size_t K, typename DimData>
@@ -237,7 +237,7 @@ void tod_contract2_p2<R,N,M,K,DimData>::do_calculate()
 	permutation<N+M> perm;
 	contraction2<N,M,K> contr(perm);
 	for (size_t i=0; i<K; i++) contr.contract(i+N,i);
-	tod_contract2<N,M,K>(contr,tb,tc).perform(false, 0.5, ta);
+	tod_contract2<N,M,K>(contr, tb, tc, 0.5).perform(false, ta);
 }
 
 
@@ -275,7 +275,7 @@ void tod_contract2_p3<R,N,M,K,DimData>::do_calculate()
 	// start tod_contract2 calculation
 	contraction2<N,M,K> contr(perma);
 	for (size_t i=0; i<K; i++) contr.contract(i+N,i+M);
-	tod_contract2<N,M,K>(contr,tb,tc).perform(false, 1.0, ta);
+	tod_contract2<N,M,K>(contr,tb,tc).perform(false, ta);
 }
 
 
@@ -313,7 +313,7 @@ void tod_contract2_p4<R,N,M,K,DimData>::do_calculate()
 	permutation<N+M> perm;
 	contraction2<N,M,K> contr(perm);
 	for (size_t i=0; i<K; i++) contr.contract(M+i,M+K-1-i);
-	tod_contract2<N,M,K>(contr,tb,tc).perform(false, 1.0, ta);
+	tod_contract2<N,M,K>(contr,tb,tc).perform(false, ta);
 }
 
 

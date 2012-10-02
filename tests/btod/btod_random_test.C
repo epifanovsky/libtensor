@@ -61,13 +61,13 @@ void btod_random_test::perform() throw(libtest::test_exception)
     permd.permute(0,2);
     permd.permute(1,3);
 
-    tod_copy<4>(ta, permb, 1.0).perform(true, 1.0, tb);
+    tod_copy<4>(ta, permb, 1.0).perform(true, tb);
     compare_ref<4>::compare("btod_random_test::test_permb",ta,tb,1e-15);
 
-    tod_copy<4>(ta, permc, 1.0).perform(true, 1.0, tc);
+    tod_copy<4>(ta, permc, 1.0).perform(true, tc);
     compare_ref<4>::compare("btod_random_test::test_permb",ta,tc,1e-15);
 
-    tod_copy<4>(ta, permd, 1.0).perform(true, 1.0, td);
+    tod_copy<4>(ta, permd, 1.0).perform(true, td);
     compare_ref<4>::compare("btod_random_test::test_permb",ta,td,1e-15);
 
     } catch(exception &exc) {

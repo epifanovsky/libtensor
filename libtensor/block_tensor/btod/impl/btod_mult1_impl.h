@@ -126,15 +126,15 @@ void btod_mult1<N>::do_perform(
         if (ctrla.req_is_zero_block(cidxa.get_index()))
             continue;
 
-        dense_tensor_i<N, double> &blk = ctrla.req_block(idx);
-        dense_tensor_i<N, double> &blka = ctrla.req_block(cidxa.get_index());
+        dense_tensor_wr_i<N, double> &blk = ctrla.req_block(idx);
+        dense_tensor_rd_i<N, double> &blka =
+                ctrla.req_const_block(cidxa.get_index());
 
         const tensor_transf<N, double> &tra = oa.get_transf(idx);
 
-        tod_copy<N>(blka, tra.get_perm(), tra.get_scalar_tr().get_coeff()).
-            perform(true, 1.0, blk);
+        tod_copy<N>(blka, tra).perform(true, blk);
 
-        ctrla.ret_block(cidxa.get_index());
+        ctrla.ret_const_block(cidxa.get_index());
         ctrla.ret_block(idx);
     }
 

@@ -94,7 +94,7 @@ void btod_add_test::test_1(double ca1, double ca2)
     tod_btconv<2>(bta2).perform(ta2);
     tod_add<2> op_ref(ta1, perma1, ca1);
     op_ref.add_op(ta2, perma2, ca2);
-    op_ref.perform(true, 1.0, tb_ref);
+    op_ref.perform(true, tb_ref);
 
     //  Run the addition operation
 
@@ -158,9 +158,9 @@ void btod_add_test::test_2(double ca1, double ca2, double cs)
     tod_btconv<2>(bta1).perform(ta1);
     tod_btconv<2>(bta2).perform(ta2);
     tod_btconv<2>(btb).perform(tb_ref);
-    tod_add<2> op_ref(ta1, perma1, ca1);
-    op_ref.add_op(ta2, perma2, ca2);
-    op_ref.perform(false, cs, tb_ref);
+    tod_add<2> op_ref(ta1, perma1, ca1 * cs);
+    op_ref.add_op(ta2, perma2, ca2 * cs);
+    op_ref.perform(false, tb_ref);
 
     //  Run the addition operation
 
@@ -233,7 +233,7 @@ void btod_add_test::test_3(double ca1, double ca2)
 
     tod_add<2> op_ref(ta1, ca1);
     op_ref.add_op(ta2, ca2);
-    op_ref.perform(true, 1.0, tb_ref);
+    op_ref.perform(true, tb_ref);
 
     //  Run the addition operation
 
@@ -335,7 +335,7 @@ void btod_add_test::test_4(double ca1, double ca2, double ca3, double ca4)
     op_ref.add_op(ta2, ca2);
     op_ref.add_op(ta3, ca3);
     op_ref.add_op(ta4, perm4, ca4);
-    op_ref.perform(true, 1.0, tb_ref);
+    op_ref.perform(true, tb_ref);
 
     //  Run the addition operation
 
@@ -484,7 +484,7 @@ void btod_add_test::test_7() throw(libtest::test_exception) {
 
     tod_add<4> addt(t1, p_caib, 1.0);
     addt.add_op(t2, p_baic, -1.0);
-    addt.perform(true, 1.0, t3_ref);
+    addt.perform(true, t3_ref);
 
     compare_ref<4>::compare(testname, t3, t3_ref, 1e-15);
 
@@ -543,7 +543,7 @@ void btod_add_test::test_8() throw(libtest::test_exception) {
     tod_btconv<4>(bta).perform(ta);
     tod_btconv<4>(btb).perform(tb_ref);
     tod_copy<4>(ta, permutation<4>().permute(1, 2), 1.0).
-        perform(false, 1.0, tb_ref);
+        perform(false, tb_ref);
     syma_ref.insert(se_perm<4, double>(permutation<4>().
         permute(0, 2), tr1));
     syma_ref.insert(se_perm<4, double>(permutation<4>().
@@ -611,7 +611,7 @@ void btod_add_test::test_9() throw(libtest::test_exception) {
     tod_btconv<4>(bta).perform(ta);
     tod_btconv<4>(btb).perform(tb_ref);
     tod_copy<4>(ta, permutation<4>().permute(2, 1).permute(1, 0), 1.0).
-        perform(false, 1.0, tb_ref);
+        perform(false, tb_ref);
     syma_ref.insert(se_perm<4, double>(permutation<4>().
         permute(0, 1).permute(2, 3), tr0));
 

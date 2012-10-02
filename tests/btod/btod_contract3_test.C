@@ -96,8 +96,8 @@ void btod_contract3_test::test_contr_1() {
 
         //  Compute reference tensor
 
-        tod_contract2<1, 1, 1>(contr1, ta, tb).perform(true, 1.0, tab);
-        tod_contract2<1, 1, 1>(contr2, tab, tc).perform(true, 1.0, td_ref);
+        tod_contract2<1, 1, 1>(contr1, ta, tb).perform(true, tab);
+        tod_contract2<1, 1, 1>(contr2, tab, tc).perform(true, td_ref);
 
         //  Compare against reference
 
@@ -178,8 +178,8 @@ void btod_contract3_test::test_contr_2() {
 
         //  Compute reference tensor
 
-        tod_contract2<1, 2, 1>(contr1, ta, tb).perform(true, 1.0, tab);
-        tod_contract2<2, 1, 1>(contr2, tab, tc).perform(true, 1.0, td_ref);
+        tod_contract2<1, 2, 1>(contr1, ta, tb).perform(true, tab);
+        tod_contract2<2, 1, 1>(contr2, tab, tc).perform(true, td_ref);
 
         //  Compare against reference
 
@@ -277,8 +277,8 @@ void btod_contract3_test::test_contr_3() {
 
         //  Compute reference tensor
 
-        tod_contract2<2, 2, 1>(contr1, ta, ta).perform(true, 1.0, ti);
-        tod_contract2<2, 2, 2>(contr2, ti, tb).perform(true, 1.0, tc_ref);
+        tod_contract2<2, 2, 1>(contr1, ta, ta).perform(true, ti);
+        tod_contract2<2, 2, 2>(contr2, ti, tb).perform(true, tc_ref);
 
         //  Compare against reference
 
@@ -379,8 +379,8 @@ void btod_contract3_test::test_contr_4() {
 
         //  Compute reference tensor
 
-        tod_contract2<2, 2, 1>(contr1, ta1, ta2).perform(true, 1.0, ti);
-        tod_contract2<2, 2, 2>(contr2, ti, tb).perform(true, 1.0, tc_ref);
+        tod_contract2<2, 2, 1>(contr1, ta1, ta2).perform(true, ti);
+        tod_contract2<2, 2, 2>(contr2, ti, tb).perform(true, tc_ref);
 
         //  Compare against reference
 
@@ -498,8 +498,8 @@ void btod_contract3_test::test_contr_5() {
 
         //  Compute reference tensor
 
-        tod_contract2<2, 2, 1>(contr1, ta, ta).perform(true, 1.0, ti);
-        tod_contract2<2, 2, 2>(contr2, ti, tb).perform(true, 1.0, tc_ref);
+        tod_contract2<2, 2, 1>(contr1, ta, ta).perform(true, ti);
+        tod_contract2<2, 2, 2>(contr2, ti, tb).perform(true, tc_ref);
 
         //  Compare against reference
 

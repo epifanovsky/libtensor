@@ -3,7 +3,7 @@
 
 #include <ctime>
 #include <cstdlib>
-#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
+#include "../dense_tensor_ctrl.h"
 #include "../tod_random.h"
 
 namespace libtensor {

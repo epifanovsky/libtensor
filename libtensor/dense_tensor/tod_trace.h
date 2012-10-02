@@ -2,6 +2,7 @@
 #define LIBTENSOR_TOD_TRACE_H
 
 #include <libtensor/timings.h>
+#include <libtensor/core/noncopyable.h>
 #include <libtensor/core/permutation.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/tod/loop_list_add.h>
@@ -22,7 +23,11 @@ namespace libtensor {
     \ingroup libtensor_tod
  **/
 template<size_t N>
-class tod_trace : public loop_list_add, public timings< tod_trace<N> > {
+class tod_trace :
+    public loop_list_add,
+    public timings< tod_trace<N> >,
+    public noncopyable {
+
 public:
     static const char *k_clazz; //!< Class name
 

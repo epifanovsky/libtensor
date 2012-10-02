@@ -28,10 +28,10 @@ public:
 private:
     dense_tensor_rd_i<N, double> &m_ta; //!< First argument
     dense_tensor_rd_i<N, double> &m_tb; //!< Second argument
-    tensor_transf<N, double> m_tra; //!< Tensor transformation of first argument
-    tensor_transf<N, double> m_trb; //!< Tensor transformation of second argument
+    permutation<N> m_perma; //!< Tensor transformation of first argument
+    permutation<N> m_permb; //!< Tensor transformation of second argument
     bool m_recip; //!< Reciprocal (multiplication by 1/bi)
-    scalar_transf<double> m_trc; //!< Scaling coefficient
+    double m_c; //!< Scaling coefficient
     dimensions<N> m_dimsc; //!< Result dimensions
 
 public:

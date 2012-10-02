@@ -110,7 +110,7 @@ void tod_copy_p1<R,N,X>::do_calculate()
 	tcb.ret_dataptr(ptrb);
 
 	// start tod_add calculation
-	tod_copy<N>(tb,2.0).perform(true, 1.0, ta);
+	tod_copy<N>(tb,2.0).perform(true, ta);
 }
 
 template<size_t R, size_t N, typename X>
@@ -135,7 +135,7 @@ void tod_copy_p2<R,N,X>::do_calculate()
 	tcb.ret_dataptr(ptrb);
 
 	// start tod_add calculation
-	tod_copy<N>(tb,permb,2.0).perform(true, 1.0, ta);
+	tod_copy<N>(tb,permb,2.0).perform(true, ta);
 }
 
 

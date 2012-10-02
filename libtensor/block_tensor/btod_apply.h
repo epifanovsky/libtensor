@@ -1,9 +1,9 @@
 #ifndef LIBTENSOR_BTOD_APPLY_H
 #define LIBTENSOR_BTOD_APPLY_H
 
-#include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/block_tensor/bto/additive_bto.h>
 #include <libtensor/block_tensor/btod/btod_traits.h>
+#include <libtensor/dense_tensor/impl/tod_apply_impl.h>
 #include <libtensor/gen_block_tensor/gen_bto_apply.h>
 
 namespace libtensor {
