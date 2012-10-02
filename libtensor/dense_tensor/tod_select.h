@@ -91,9 +91,11 @@ public:
         \param tr Tensor transformation
         \param cmp Compare policy.
     **/
-    tod_select(dense_tensor_rd_i<N, double> &t, tensor_transf<N, double> &tr,
+    tod_select(dense_tensor_rd_i<N, double> &t,
+            const tensor_transf<N, double> &tr,
             compare_t cmp = compare_t()) :
-        m_t(t), m_perm(tr.get_perm()), m_c(tr.get_scalar_tr()), m_cmp(cmp)
+        m_t(t), m_perm(tr.get_perm()),
+        m_c(tr.get_scalar_tr().get_coeff()), m_cmp(cmp)
     { }
 
     /** \brief Constuctor

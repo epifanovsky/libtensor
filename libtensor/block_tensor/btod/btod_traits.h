@@ -129,6 +129,11 @@ struct btod_traits {
         typedef tod_scatter<N, M> type;
     };
 
+    template<size_t N, typename ComparePolicy>
+    struct to_select_type {
+        typedef tod_select<N, ComparePolicy> type;
+    };
+
     template<size_t N>
     struct to_set_diag_type {
         typedef tod_set_diag<N> type;
