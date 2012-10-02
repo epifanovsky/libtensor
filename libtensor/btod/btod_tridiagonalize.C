@@ -11,7 +11,7 @@
 #include <libtensor/block_tensor/btod_extract.h>
 #include <libtensor/block_tensor/btod_scale.h>
 #include "btod_set_diag.h"
-#include "btod_set_elem.h"
+#include <libtensor/block_tensor/btod_set_elem.h>
 #include <libtensor/block_tensor/btod_set.h>
 #include "btod_tridiagonalize.h"
 

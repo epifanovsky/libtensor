@@ -120,6 +120,11 @@ struct btod_traits {
     };
 
     template<size_t N>
+    struct to_set_elem_type {
+        typedef tod_set_elem<N> type;
+    };
+
+    template<size_t N>
     struct to_set_type {
         typedef tod_set<N> type;
     };

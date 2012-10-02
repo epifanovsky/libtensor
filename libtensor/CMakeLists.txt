@@ -177,6 +177,7 @@ set(SRC_BTOD
     block_tensor/impl/btod_extract.C
     block_tensor/impl/btod_mult.C
     block_tensor/impl/btod_mult1.C
+    block_tensor/impl/btod_set_elem.C
     block_tensor/impl/btod_set.C
     block_tensor/impl/btod_trace.C
     block_tensor/impl/btod_vmpriority.C
