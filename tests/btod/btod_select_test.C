@@ -117,29 +117,29 @@ void btod_select_test::test_1(size_t n) throw(libtest::test_exception) {
     btod_select_t(bt, cmp).perform(btlist, n);
 
     // Form reference list
-    typename tod_select_t::list_t tlist;
+    typename tod_select_t::list_type tlist;
     tod_select_t(t_ref, cmp).perform(tlist, n);
 
     // Check result lists
-    typename tod_select_t::list_t::const_iterator it = tlist.begin();
+    typename tod_select_t::list_type::const_iterator it = tlist.begin();
     typename btod_select_t::list_t::const_iterator ibt = btlist.begin();
     while (it != tlist.end() && ibt != btlist.end()) {
-        if (it->value != ibt->value) {
+        if (it->get_value() != ibt->value) {
             std::ostringstream oss;
             oss << "Value of list element does not match reference "
                     << "(found: " << ibt->value
-                    << ", expected: " << it->value << ").";
+                    << ", expected: " << it->get_value() << ").";
             fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
         }
 
         index<2> idx = bis.get_block_start(ibt->bidx);
         idx[0] += ibt->idx[0];
         idx[1] += ibt->idx[1];
-        if (! idx.equals(it->idx)) {
+        if (! idx.equals(it->get_index())) {
             std::ostringstream oss;
             oss << "Index of list element does not match reference "
                     << "(found: " << idx
-                    << ", expected: " << it->idx << ").";
+                    << ", expected: " << it->get_index() << ").";
             fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
         }
 
@@ -182,28 +182,28 @@ void btod_select_test::test_2(size_t n) throw(libtest::test_exception) {
     typename btod_select_t::list_t btlist;
     btod_select_t(bt, cmp).perform(btlist, n);
 
-    typename tod_select_t::list_t tlist;
+    typename tod_select_t::list_type tlist;
     tod_select_t(t_ref, cmp).perform(tlist, n);
 
-    typename tod_select_t::list_t::const_iterator it = tlist.begin();
+    typename tod_select_t::list_type::const_iterator it = tlist.begin();
     typename btod_select_t::list_t::const_iterator ibt = btlist.begin();
     while (it != tlist.end() && ibt != btlist.end()) {
-        if (it->value != ibt->value) {
+        if (it->get_value() != ibt->value) {
             std::ostringstream oss;
             oss << "Value of list element does not match reference "
                     << "(found: " << ibt->value
-                    << ", expected: " << it->value << ").";
+                    << ", expected: " << it->get_value() << ").";
             fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
         }
 
         index<2> idx = bis.get_block_start(ibt->bidx);
         idx[0] += ibt->idx[0];
         idx[1] += ibt->idx[1];
-        if (! idx.equals(it->idx)) {
+        if (! idx.equals(it->get_index())) {
             std::ostringstream oss;
             oss << "Index of list element does not match reference "
                     << "(found: " << idx
-                    << ", expected: " << it->idx << ").";
+                    << ", expected: " << it->get_index() << ").";
             fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
         }
 
@@ -276,7 +276,7 @@ void btod_select_test::test_3a(size_t n,
     btod_select_t(bt, cmp).perform(btlist, n);
 
     // Compute reference list
-    typename tod_select_t::list_t tlist;
+    typename tod_select_t::list_type tlist;
     tod_select_t(t_ref, cmp).perform(tlist, n);
 
     // Compare against reference
@@ -284,8 +284,8 @@ void btod_select_test::test_3a(size_t n,
     for (typename btod_select_t::list_t::const_iterator ibt = btlist.begin();
             ibt != btlist.end(); ibt++) {
 
-        typename tod_select_t::list_t::const_iterator it = tlist.begin();
-        while (it != tlist.end() && it->value != ibt->value) it++;
+        typename tod_select_t::list_type::const_iterator it = tlist.begin();
+        while (it != tlist.end() && it->get_value() != ibt->value) it++;
 
         if (it == tlist.end()) {
             std::ostringstream oss;
@@ -295,17 +295,17 @@ void btod_select_test::test_3a(size_t n,
             fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
         }
 
-        while (it != tlist.end() && it->value == ibt->value) {
+        while (it != tlist.end() && it->get_value() == ibt->value) {
 
             index<2> idx = bis.get_block_start(ibt->bidx);
             idx[0] += ibt->idx[0];
             idx[1] += ibt->idx[1];
-            if (idx.equals(it->idx)) break;
+            if (idx.equals(it->get_index())) break;
 
             it++;
         }
 
-        if (it->value != ibt->value) {
+        if (it->get_value() != ibt->value) {
             std::ostringstream oss;
             oss << "List element not found in reference "
                     << "(" << ibt->bidx << ", "
@@ -372,7 +372,7 @@ void btod_select_test::test_3b(size_t n) throw(libtest::test_exception) {
     btod_select_t(bt, cmp).perform(btlist, n);
 
     // Compute reference list
-    typename tod_select_t::list_t tlist;
+    typename tod_select_t::list_type tlist;
     tod_select_t(t_ref, cmp).perform(tlist, n);
 
     // Compare against reference
@@ -380,8 +380,8 @@ void btod_select_test::test_3b(size_t n) throw(libtest::test_exception) {
     for (typename btod_select_t::list_t::const_iterator ibt = btlist.begin();
             ibt != btlist.end(); ibt++) {
 
-        typename tod_select_t::list_t::const_iterator it = tlist.begin();
-        while (it != tlist.end() && it->value != ibt->value) it++;
+        typename tod_select_t::list_type::const_iterator it = tlist.begin();
+        while (it != tlist.end() && it->get_value() != ibt->value) it++;
 
         if (it == tlist.end()) {
             std::ostringstream oss;
@@ -391,17 +391,17 @@ void btod_select_test::test_3b(size_t n) throw(libtest::test_exception) {
             fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
         }
 
-        while (it != tlist.end() && it->value == ibt->value) {
+        while (it != tlist.end() && it->get_value() == ibt->value) {
 
             index<2> idx = bis.get_block_start(ibt->bidx);
             idx[0] += ibt->idx[0];
             idx[1] += ibt->idx[1];
-            if (idx.equals(it->idx)) break;
+            if (idx.equals(it->get_index())) break;
 
             it++;
         }
 
-        if (it->value != ibt->value) {
+        if (it->get_value() != ibt->value) {
             std::ostringstream oss;
             oss << "List element not found in reference "
                     << "(" << ibt->bidx << ", "
@@ -486,7 +486,7 @@ void btod_select_test::test_3c(size_t n,
     btod_select_t(bt, cmp).perform(btlist, n);
 
     // Compute reference list
-    typename tod_select_t::list_t tlist;
+    typename tod_select_t::list_type tlist;
     tod_select_t(t_ref, cmp).perform(tlist, n);
 
     // Compare against reference
@@ -494,8 +494,8 @@ void btod_select_test::test_3c(size_t n,
     for (typename btod_select_t::list_t::const_iterator ibt = btlist.begin();
             ibt != btlist.end(); ibt++) {
 
-        typename tod_select_t::list_t::const_iterator it = tlist.begin();
-        while (it != tlist.end() && it->value != ibt->value) it++;
+        typename tod_select_t::list_type::const_iterator it = tlist.begin();
+        while (it != tlist.end() && it->get_value() != ibt->value) it++;
 
         if (it == tlist.end()) {
             std::ostringstream oss;
@@ -505,17 +505,17 @@ void btod_select_test::test_3c(size_t n,
             fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
         }
 
-        while (it != tlist.end() && it->value == ibt->value) {
+        while (it != tlist.end() && it->get_value() == ibt->value) {
 
             index<2> idx = bis.get_block_start(ibt->bidx);
             idx[0] += ibt->idx[0];
             idx[1] += ibt->idx[1];
-            if (idx.equals(it->idx)) break;
+            if (idx.equals(it->get_index())) break;
 
             it++;
         }
 
-        if (it->value != ibt->value) {
+        if (it->get_value() != ibt->value) {
             std::ostringstream oss;
             oss << "List element not found in reference "
                     << "(" << ibt->bidx << ", "

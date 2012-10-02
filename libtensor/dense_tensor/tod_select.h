@@ -6,6 +6,7 @@
 #include <libtensor/core/abs_index.h>
 #include <libtensor/core/noncopyable.h>
 #include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/core/tensor_element.h>
 #include <libtensor/core/tensor_transf.h>
 
 namespace libtensor {
@@ -75,14 +76,8 @@ class tod_select : public noncopyable {
 public:
     typedef ComparePolicy compare_t;
 
-    struct elem {
-        index<N> idx;
-        double value;
-
-        elem(const index<N> &idx_, const double &v=0.0) : idx(idx_), value(v) {}
-    };
-    typedef elem elem_t; //!< Tensor index-value pair type
-    typedef std::list<elem_t> list_t; //!< List type for index-value pairs
+    typedef tensor_element<N, double> tensor_element_type;
+    typedef std::list<tensor_element_type> list_type; //!< List type for index-value pairs
 
 private:
     dense_tensor_rd_i<N, double> &m_t; //!< Tensor
@@ -134,7 +129,7 @@ public:
         \param li List of index-value pairs.
         \param n Maximum size of the list.
     **/
-    void perform(list_t &li, size_t n);
+    void perform(list_type &li, size_t n);
 
 };
 

@@ -35,7 +35,7 @@ void tod_select_test::test_1(size_t n, double c)
 	static const char *testname = "tod_select_test::test_1()";
 
 	typedef std_allocator<double> allocator_t;
-	typedef typename tod_select<2, ComparePolicy>::list_t list_t;
+	typedef typename tod_select<2, ComparePolicy>::list_type list_type;
 
 	try {
 
@@ -62,7 +62,7 @@ void tod_select_test::test_1(size_t n, double c)
 
 	// Perform the operation
 	ComparePolicy cmp;
-	list_t li;
+	list_type li;
 	tod_select<2, ComparePolicy> tsel(t, c, cmp);
 	tsel.perform(li, n);
 
@@ -71,7 +71,7 @@ void tod_select_test::test_1(size_t n, double c)
 	dense_tensor_ctrl<2, double> tc(t);
 	const double *cd = tc.req_const_dataptr();
 	// Loop over all list elements
-	for (typename list_t::const_iterator it = li.begin();
+	for (typename list_type::const_iterator it = li.begin();
 			it != li.end(); it++) {
 
 		// Loop over all data elements in tensor
@@ -80,14 +80,14 @@ void tod_select_test::test_1(size_t n, double c)
 			if (cd[i] == 0.0) continue;
 
 			double val = cd[i] * c;
-			if (cmp(val, it->value)) {
+			if (cmp(val, it->get_value())) {
 
 				bool ok = false;
-				for (typename list_t::const_iterator it2 = li.begin();
+				for (typename list_type::const_iterator it2 = li.begin();
 						it2 != it; it2++) {
 
-				    abs_index<2> aidx(it2->idx, dims);
-					if (val == it2->value &&
+				    abs_index<2> aidx(it2->get_index(), dims);
+					if (val == it2->get_value() &&
 							i == aidx.get_abs_index()) {
 						ok = true; break;
 					}
@@ -96,8 +96,8 @@ void tod_select_test::test_1(size_t n, double c)
 				if (! ok) {
 					std::ostringstream oss;
 					abs_index<2> aidx(i, dims);
-					oss << "Unsorted list at element (" << it->idx << ", "
-							<< it->value << "). Found in tensor at "
+					oss << "Unsorted list at element (" << it->get_index() << ", "
+							<< it->get_value() << "). Found in tensor at "
 							<< aidx.get_index() << ", value = " << cd[i] << ".";
 					fail_test(testname, __FILE__, __LINE__,
 							oss.str().c_str());
@@ -120,7 +120,7 @@ void tod_select_test::test_2(size_t n, double c)
 	static const char *testname = "tod_select_test::test_2()";
 
 	typedef std_allocator<double> allocator_t;
-	typedef typename tod_select<3, ComparePolicy>::list_t list_t;
+	typedef typename tod_select<3, ComparePolicy>::list_type list_type;
 
 	try {
 
@@ -149,7 +149,7 @@ void tod_select_test::test_2(size_t n, double c)
 
 	// Perform the operation
 	ComparePolicy cmp;
-	list_t li;
+	list_type li;
 	tod_select<3, ComparePolicy> tsel(t, perm, c, cmp);
 	tsel.perform(li, n);
 
@@ -158,7 +158,7 @@ void tod_select_test::test_2(size_t n, double c)
 	dense_tensor_ctrl<3, double> tc(t);
 	const double *cd = tc.req_const_dataptr();
 	// Loop over all list elements
-	for (typename list_t::const_iterator it = li.begin();
+	for (typename list_type::const_iterator it = li.begin();
 			it != li.end(); it++) {
 
 		// Loop over all data elements in tensor
@@ -167,16 +167,16 @@ void tod_select_test::test_2(size_t n, double c)
 			if (cd[i] == 0.0) continue;
 
 			double val = cd[i] * c;
-			if (cmp(val, it->value)) {
+			if (cmp(val, it->get_value())) {
 
 				bool ok = false;
-				for (typename list_t::const_iterator it2 = li.begin();
+				for (typename list_type::const_iterator it2 = li.begin();
 						it2 != it; it2++) {
 
-					index<3> idx(it2->idx);
+					index<3> idx(it2->get_index());
 					idx.permute(pinv);
 					abs_index<3> aidx(idx, dims);
-					if (val == it2->value &&
+					if (val == it2->get_value() &&
 							i == aidx.get_abs_index()) {
 						ok = true; break;
 					}
@@ -185,9 +185,10 @@ void tod_select_test::test_2(size_t n, double c)
 				if (! ok) {
 					std::ostringstream oss;
 					abs_index<3> aidx(i, dims);
-					oss << "Unsorted list at element (" << it->idx << ", "
-							<< it->value << "). Found in tensor at "
-							<< aidx.get_index() << ", value = " << cd[i] << ".";
+					oss << "Unsorted list at element (" << it->get_index()
+					        << ", " << it->get_value()
+					        << "). Found in tensor at " << aidx.get_index()
+					        << ", value = " << cd[i] << ".";
 					fail_test(testname, __FILE__, __LINE__,
 							oss.str().c_str());
 				}

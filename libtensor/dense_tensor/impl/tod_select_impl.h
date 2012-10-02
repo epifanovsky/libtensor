@@ -8,7 +8,7 @@ namespace libtensor {
 
 
 template<size_t N, typename ComparePolicy>
-void tod_select<N, ComparePolicy>::perform(list_t &li, size_t n) {
+void tod_select<N, ComparePolicy>::perform(list_type &li, size_t n) {
 
     if (n == 0) return;
 
@@ -30,7 +30,7 @@ void tod_select<N, ComparePolicy>::perform(list_t &li, size_t n) {
         abs_index<N> aidx(i, d);
         index<N> idx(aidx.get_index());
         if (do_perm) idx.permute(m_perm);
-        li.insert(li.end(), elem_t(idx, m_c * p[i]));
+        li.insert(li.end(), tensor_element_type(idx, m_c * p[i]));
         i++;
     }
 
@@ -40,23 +40,23 @@ void tod_select<N, ComparePolicy>::perform(list_t &li, size_t n) {
 
         double val = p[i] * m_c;
 
-        if (! m_cmp(val, li.back().value)) {
+        if (! m_cmp(val, li.back().get_value())) {
             if (li.size() < n) {
                 abs_index<N> aidx(i, d);
                 index<N> idx(aidx.get_index());
                 if (do_perm) idx.permute(m_perm);
-                li.push_back(elem_t(idx, val));
+                li.push_back(tensor_element_type(idx, val));
             }
         }
         else {
             if (li.size() == n) li.pop_back();
 
-            typename list_t::iterator it = li.begin();
-            while (it != li.end() && ! m_cmp(val, it->value)) it++;
+            typename list_type::iterator it = li.begin();
+            while (it != li.end() && ! m_cmp(val, it->get_value())) it++;
             abs_index<N> aidx(i, d);
             index<N> idx(aidx.get_index());
             if (do_perm) idx.permute(m_perm);
-            li.insert(it, elem_t(idx, val));
+            li.insert(it, tensor_element_type(idx, val));
         }
     }
 

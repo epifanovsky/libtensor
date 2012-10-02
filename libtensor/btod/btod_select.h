@@ -63,9 +63,9 @@ public:
     typedef std::list<elem_t> list_t; //!< List type for index-value pairs
 
 private:
-    typedef tod_select<N, compare_t> tod_select_t;
-    typedef typename tod_select_t::list_t tod_list_t;
-    typedef typename tod_select_t::elem_t tod_elem_t;
+    typedef tod_select<N, compare_t> tod_select;
+    typedef typename tod_select::list_type tod_list_type;
+    typedef typename tod_select::tensor_element_type tensor_element_type;
 
     block_tensor_i<N, double> &m_bt; //!< Block tensor to select data from
     symmetry<N, double> m_sym; //!< Symmetry imposed on block tensor
@@ -101,7 +101,7 @@ public:
 
 private:
     void merge_lists(list_t &to, const index<N> &bidx,
-            const tod_list_t &from, size_t n);
+            const tod_list_type &from, size_t n);
 
 private:
     btod_select(const btod_select<N, ComparePolicy> &);
@@ -173,8 +173,8 @@ void btod_select<N, ComparePolicy>::perform(list_t &li, size_t n) {
         const tensor_transf<N, double> &tra = oa.get_transf(aia.get_index());
 
         // Create element list for canonical block (within the symmetry)
-        tod_list_t tlc;
-        tod_select_t(t, tra.get_perm(),
+        tod_list_type tlc;
+        tod_select(t, tra.get_perm(),
                 tra.get_scalar_tr().get_coeff(), m_cmp).perform(tlc, n);
         merge_lists(li, aia.get_index(), tlc, n);
 
@@ -212,15 +212,15 @@ void btod_select<N, ComparePolicy>::perform(list_t &li, size_t n) {
 }
 
 template<size_t N, typename ComparePolicy>
-void btod_select<N, ComparePolicy>::merge_lists(
-        list_t &to, const index<N> &bidx, const tod_list_t &from, size_t n) {
+void btod_select<N, ComparePolicy>::merge_lists(list_t &to,
+        const index<N> &bidx, const tod_list_type &from, size_t n) {
 
     typename list_t::iterator ibt = to.begin();
-    for (typename tod_list_t::const_iterator it = from.begin();
+    for (typename tod_list_type::const_iterator it = from.begin();
             it != from.end(); it++) {
 
         while (ibt != to.end()) {
-            if (m_cmp(it->value, ibt->value)) break;
+            if (m_cmp(it->get_value(), ibt->value)) break;
             ibt++;
         }
 
@@ -228,7 +228,7 @@ void btod_select<N, ComparePolicy>::merge_lists(
             return;
         }
 
-        ibt = to.insert(ibt, elem_t(bidx, it->idx, it->value));
+        ibt = to.insert(ibt, elem_t(bidx, it->get_index(), it->get_value()));
         if (to.size() > n) to.pop_back();
         ibt++;
     }
