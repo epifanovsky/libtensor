@@ -99,6 +99,11 @@ struct btod_traits {
         typedef tod_dotprod<N> type;
     };
 
+    template<size_t N, size_t M, size_t K>
+    struct to_ewmult2_type {
+        typedef tod_ewmult2<N, M, K> type;
+    };
+
     template<size_t N, size_t M>
     struct to_extract_type {
         typedef tod_extract<N, M> type;

@@ -3,7 +3,7 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/block_tensor/block_tensor.h>
-#include <libtensor/block_tensor/btod/btod_ewmult2.h>
+#include <libtensor/block_tensor/btod_ewmult2.h>
 #include <libtensor/block_tensor/btod_random.h>
 #include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/symmetry/product_table_container.h>
