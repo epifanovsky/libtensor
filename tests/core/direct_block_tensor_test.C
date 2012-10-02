@@ -9,7 +9,7 @@
 #include <libtensor/block_tensor/btod_copy.h>
 #include <libtensor/block_tensor/btod_contract2.h>
 #include <libtensor/block_tensor/btod_dirsum.h>
-#include <libtensor/btod/btod_random.h>
+#include <libtensor/block_tensor/btod_random.h>
 #include "../compare_ref.h"
 #include "direct_block_tensor_test.h"
 

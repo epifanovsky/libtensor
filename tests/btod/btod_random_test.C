@@ -4,7 +4,7 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/block_tensor/block_tensor.h>
-#include <libtensor/btod/btod_random.h>
+#include <libtensor/block_tensor/btod_random.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/dense_tensor/tod_btconv.h>
 #include "../compare_ref.h"
@@ -14,6 +14,7 @@ namespace libtensor {
 
 void btod_random_test::perform() throw(libtest::test_exception)
 {
+    allocator<double>::vmm().init(16, 16, 65536, 65536);
 
     typedef std_allocator<double> allocator_t;
     typedef dense_tensor<4, double, allocator_t> tensor_t;
@@ -72,7 +73,9 @@ void btod_random_test::perform() throw(libtest::test_exception)
 
     } catch(exception &exc) {
         fail_test("btod_random_test", __FILE__, __LINE__, exc.what());
+        allocator<double>::vmm().shutdown();
     }
+    allocator<double>::vmm().shutdown();
 }
 
 

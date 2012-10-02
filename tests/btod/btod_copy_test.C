@@ -3,7 +3,7 @@
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/block_tensor/block_tensor.h>
 #include <libtensor/block_tensor/btod_copy.h>
-#include <libtensor/btod/btod_random.h>
+#include <libtensor/block_tensor/btod_random.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/dense_tensor/tod_btconv.h>
 #include "../compare_ref.h"
@@ -13,6 +13,10 @@ namespace libtensor {
 
 
 void btod_copy_test::perform() throw(libtest::test_exception) {
+
+    allocator<double>::vmm().init(16, 16, 65536, 65536);
+
+    try {
 
     test_zero_1();
     test_zero_2();
@@ -52,6 +56,13 @@ void btod_copy_test::perform() throw(libtest::test_exception) {
     //~ test_dir_4();
 
     test_bug_1();
+
+    }
+    catch (...) {
+        allocator<double>::vmm().shutdown();
+        throw;
+    }
+    allocator<double>::vmm().shutdown();
 }
 
 

@@ -59,6 +59,11 @@ struct btod_traits {
         typedef dense_tensor< N, double, allocator<double> > type;
     };
 
+    template<size_t N>
+    struct to_add_type {
+        typedef tod_add<N> type;
+    };
+
     template<size_t N, typename Functor>
     struct to_apply_type {
         typedef tod_apply<N, Functor> type;
@@ -110,6 +115,11 @@ struct btod_traits {
     };
 
     template<size_t N>
+    struct to_random_type {
+        typedef tod_random<N> type;
+    };
+
+    template<size_t N>
     struct to_scale_type {
         typedef tod_scale<N> type;
     };
@@ -117,6 +127,11 @@ struct btod_traits {
     template<size_t N, size_t M>
     struct to_scatter_type {
         typedef tod_scatter<N, M> type;
+    };
+
+    template<size_t N>
+    struct to_set_diag_type {
+        typedef tod_set_diag<N> type;
     };
 
     template<size_t N>

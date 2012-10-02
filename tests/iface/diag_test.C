@@ -1,6 +1,6 @@
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/block_tensor/btod_diag.h>
-#include <libtensor/btod/btod_random.h>
+#include <libtensor/block_tensor/btod_random.h>
 #include <libtensor/iface/iface.h>
 #include "../compare_ref.h"
 #include "diag_test.h"

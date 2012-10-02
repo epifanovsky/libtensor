@@ -3,7 +3,7 @@
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/block_tensor/block_tensor.h>
 #include <libtensor/block_tensor/btod_add.h>
-#include <libtensor/btod/btod_random.h>
+#include <libtensor/block_tensor/btod_random.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/dense_tensor/tod_btconv.h>
 #include "btod_add_test.h"

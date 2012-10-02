@@ -4,7 +4,7 @@
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/block_tensor/block_tensor.h>
 #include <libtensor/block_tensor/btod_scale.h>
-#include <libtensor/btod/btod_random.h>
+#include <libtensor/block_tensor/btod_random.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/dense_tensor/tod_btconv.h>
 #include "btod_scale_test.h"
@@ -18,12 +18,21 @@ typedef std_allocator<double> allocator_t;
 
 void btod_scale_test::perform() throw(libtest::test_exception) {
 
+    allocator<double>::vmm().init(16, 16, 65536, 65536);
+    try {
+
     test_0();
     test_i(3);
     test_i(10);
     test_i(32);
 
     test_1();
+
+    } catch (...) {
+        allocator<double>::vmm().shutdown();
+        throw;
+    }
+    allocator<double>::vmm().shutdown();
 }
 
 

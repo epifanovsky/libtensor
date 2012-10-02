@@ -6,7 +6,7 @@
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/block_tensor/block_tensor.h>
 #include <libtensor/btod/btod_import_raw.h>
-#include <libtensor/btod/btod_random.h>
+#include <libtensor/block_tensor/btod_random.h>
 #include <libtensor/btod/btod_select.h>
 #include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/symmetry/product_table_container.h>
@@ -23,6 +23,8 @@ namespace libtensor {
 
 
 void btod_select_test::perform() throw(libtest::test_exception) {
+
+    allocator<double>::vmm().init(16, 16, 65536, 65536);
 
     std::vector<std::string> irnames(2);
     irnames[0] = "g"; irnames[1] = "u";
@@ -81,11 +83,12 @@ void btod_select_test::perform() throw(libtest::test_exception) {
     }
     catch (...) {
         product_table_container::get_instance().erase("cs");
+        allocator<double>::vmm().shutdown();
         throw;
     }
 
     product_table_container::get_instance().erase("cs");
-
+    allocator<double>::vmm().shutdown();
 }
 
 /** \test Selecting elements from random block tensor (1 block)

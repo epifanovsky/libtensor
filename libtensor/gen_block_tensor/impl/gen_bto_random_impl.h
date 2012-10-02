@@ -1,8 +1,9 @@
 #ifndef LIBTENSOR_GEN_BTO_RANDOM_IMPL_H
 #define LIBTENSOR_GEN_BTO_RANDOM_IMPL_H
 
-#include <utility>
 #include <libtensor/core/abs_index.h>
+#include <libtensor/core/orbit_list.h>
+#include "../gen_bto_random.h"
 
 namespace libtensor {
 
@@ -99,14 +100,16 @@ void gen_bto_random<N, Traits, Timed>::make_random_blk(
         gen_block_tensor_wr_ctrl<N, bti_traits> &ctrl,
         const dimensions<N> &bidims, const index<N> &idx) {
 
-    typedef typename Traits::template to_random_type<N>::type to_random_type;
+    typedef typename Traits::template to_add_type<N>::type to_add;
+    typedef typename Traits::template to_copy_type<N>::type to_copy;
+    typedef typename Traits::template to_random_type<N>::type to_random;
     typedef typename Traits::template temp_block_tensor_type<N>::type
             temp_block_tensor_type;
 
     const symmetry<N, element_type> &sym = ctrl.req_const_symmetry();
     size_t absidx = abs_index<N>::get_abs_index(idx, bidims);
 
-    to_random_type randop;
+    to_random randop;
 
     tensor_transf_type tr0;
     transf_map_t transf_map;
@@ -127,7 +130,7 @@ void gen_bto_random<N, Traits, Timed>::make_random_blk(
         gen_bto_random::stop_timer("randop");
         ctrl.ret_block(idx);
     } else {
-        temp_block_tensor_type btrnd(sym.get_bis()), btsymrnd;
+        temp_block_tensor_type btrnd(sym.get_bis()), btsymrnd(sym.get_bis());
         gen_block_tensor_ctrl<N, bti_traits> crnd(btrnd), csymrnd(btsymrnd);
 
         {
@@ -142,8 +145,8 @@ void gen_bto_random<N, Traits, Timed>::make_random_blk(
 
         scalar_transf_sum<element_type> tottr;
         {
-        rd_block_type &rnd = crnd.req_const_block();
-        wr_block_type &symrnd = csymrnd.req_block();
+        rd_block_type &rnd = crnd.req_const_block(idx);
+        wr_block_type &symrnd = csymrnd.req_block(idx);
 
         tottr.add(itr->get_scalar_tr());
         to_add symop(rnd, *itr);
@@ -165,9 +168,10 @@ void gen_bto_random<N, Traits, Timed>::make_random_blk(
         rd_block_type &symrnd = csymrnd.req_const_block(idx);
         wr_block_type &blk = ctrl.req_block(idx);
 
-        scalar_transf<element_type> tr(tottr.get_transf());
-        if (tr.is_zero()) tr = scalar_transf<element_type>();
-        else tr.invert();
+        scalar_transf<element_type> str(tottr.get_transf());
+        if (str.is_zero()) str = scalar_transf<element_type>();
+        else str.invert();
+        tensor_transf<N, element_type> tr(permutation<N>(), str);
 
         gen_bto_random::start_timer("copy");
         to_copy(symrnd, tr).perform(true, blk);

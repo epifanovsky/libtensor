@@ -7,6 +7,7 @@
 #include <libtensor/timings.h>
 #include <libtensor/exception.h>
 #include <libtensor/core/dimensions.h>
+#include <libtensor/core/noncopyable.h>
 #include "gen_block_tensor_i.h"
 #include "gen_block_tensor_ctrl.h"
 

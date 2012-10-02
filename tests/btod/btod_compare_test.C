@@ -8,13 +8,16 @@
 #include <libtensor/block_tensor/block_tensor_ctrl.h>
 #include <libtensor/block_tensor/btod_compare.h>
 #include <libtensor/block_tensor/btod_copy.h>
-#include <libtensor/btod/btod_random.h>
+#include <libtensor/block_tensor/btod_random.h>
 #include "btod_compare_test.h"
 
 namespace libtensor {
 
 
 void btod_compare_test::perform() throw(libtest::test_exception) {
+
+    allocator<double>::vmm().init(16, 16, 65536, 65536);
+    try {
 
     test_1();
     test_2a();
@@ -28,6 +31,12 @@ void btod_compare_test::perform() throw(libtest::test_exception) {
     test_6();
     test_exc();
     test_operation();
+
+    } catch (...) {
+        allocator<double>::vmm().shutdown();
+        throw;
+    }
+    allocator<double>::vmm().shutdown();
 }
 
 

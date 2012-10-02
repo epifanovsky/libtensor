@@ -1,7 +1,7 @@
 #include <cstdlib>
 #include <sstream>
 #include <libtensor/core/scalar_transf_double.h>
-#include <libtensor/btod/btod_random.h>
+#include <libtensor/block_tensor/btod_random.h>
 #include <libtensor/iface/iface.h>
 #include "../compare_ref.h"
 #include "labeled_btensor_test.h"

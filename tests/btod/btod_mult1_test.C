@@ -3,7 +3,7 @@
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/block_tensor/block_tensor.h>
 #include <libtensor/block_tensor/btod_mult1.h>
-#include <libtensor/btod/btod_random.h>
+#include <libtensor/block_tensor/btod_random.h>
 #include <libtensor/dense_tensor/tod_btconv.h>
 #include <libtensor/dense_tensor/tod_mult1.h>
 #include <libtensor/symmetry/se_label.h>
@@ -18,6 +18,10 @@ namespace libtensor {
 
 void btod_mult1_test::perform() throw(libtest::test_exception) {
 
+    allocator<double>::vmm().init(16, 16, 65536, 65536);
+
+    try {
+
     test_1(false, false); test_1(false, true);
     test_1(true, false);  test_1(true, true);
     test_2(false, false); test_2(false, true);
@@ -28,6 +32,12 @@ void btod_mult1_test::perform() throw(libtest::test_exception) {
     test_4(true, false);  test_4(true, true);
     test_5(false, false); test_5(false, true);
     test_5(true, false);  test_5(true, true);
+
+    } catch (...) {
+        allocator<double>::vmm().shutdown();
+        throw;
+    }
+    allocator<double>::vmm().shutdown();
 }
 
 
