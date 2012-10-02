@@ -105,6 +105,11 @@ struct btod_traits {
     };
 
     template<size_t N>
+    struct to_mult1_type {
+        typedef tod_mult1<N> type;
+    };
+
+    template<size_t N>
     struct to_scale_type {
         typedef tod_scale<N> type;
     };

@@ -1,7 +1,8 @@
+#include <iomanip>
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/block_tensor/block_tensor.h>
-#include <libtensor/block_tensor/btod/btod_mult1.h>
+#include <libtensor/block_tensor/btod_mult1.h>
 #include <libtensor/btod/btod_random.h>
 #include <libtensor/dense_tensor/tod_btconv.h>
 #include <libtensor/dense_tensor/tod_mult1.h>
@@ -69,11 +70,11 @@ void btod_mult1_test::test_1(
 
     if (doadd) {
         tod_mult1<2>(tb, recip, 0.2).perform(false, ta_ref);
-        btod_mult1<2>(btb, recip).perform(bta, 0.2);
+        btod_mult1<2>(btb, recip, 0.2).perform(false, bta);
     }
     else {
         tod_mult1<2>(tb, recip).perform(true, ta_ref);
-        btod_mult1<2>(btb, recip).perform(bta);
+        btod_mult1<2>(btb, recip).perform(true, bta);
     }
     tod_btconv<2>(bta).perform(ta);
 
@@ -128,11 +129,11 @@ void btod_mult1_test::test_2(
 
     if (doadd) {
         tod_mult1<2>(tb, p10, recip, 0.5).perform(false, ta_ref);
-        btod_mult1<2>(btb, p10, recip).perform(bta, 0.5);
+        btod_mult1<2>(btb, p10, recip, 0.5).perform(false, bta);
     }
     else {
         tod_mult1<2>(tb, p10, recip).perform(true, ta_ref);
-        btod_mult1<2>(btb, p10, recip).perform(bta);
+        btod_mult1<2>(btb, p10, recip).perform(true, bta);
     }
     tod_btconv<2>(bta).perform(ta);
 
@@ -203,11 +204,11 @@ void btod_mult1_test::test_3(
 
     if (doadd) {
         tod_mult1<2>(tb, recip, 0.21).perform(false, ta_ref);
-        btod_mult1<2>(btb, recip, 0.7).perform(bta, 0.3);
+        btod_mult1<2>(btb, recip, 0.21).perform(false, bta);
     }
     else {
         tod_mult1<2>(tb, recip, 0.7).perform(true, ta_ref);
-        btod_mult1<2>(btb,recip, 0.7).perform(bta);
+        btod_mult1<2>(btb,recip, 0.7).perform(true, bta);
     }
     tod_btconv<2>(bta).perform(ta);
 
@@ -281,11 +282,11 @@ void btod_mult1_test::test_4(
     //  Invoke the operation
     if (doadd) {
         tod_mult1<4>(tb, p21, recip, 0.5).perform(false, ta_ref);
-        btod_mult1<4>(btb, p21, recip).perform(bta, 0.5);
+        btod_mult1<4>(btb, p21, recip, 0.5).perform(false, bta);
     }
     else {
-        tod_mult1<4>(tb, p21, recip).perform(true, ta_ref);
-        btod_mult1<4>(btb, p21, recip).perform(bta);
+        tod_mult1<4>(tb, p21, recip, 0.5).perform(true, ta_ref);
+        btod_mult1<4>(btb, p21, recip, 0.5).perform(true, bta);
     }
     tod_btconv<4>(bta).perform(ta);
 
@@ -362,10 +363,10 @@ void btod_mult1_test::test_5(bool recip, bool doadd)
 
     if(doadd) {
         tod_mult1<2>(tb, recip, -1.2).perform(false, ta_ref);
-        btod_mult1<2>(btb, recip).perform(bta, -1.2);
+        btod_mult1<2>(btb, recip, -1.2).perform(false, bta);
     } else {
         tod_mult1<2>(tb, recip).perform(true, ta_ref);
-        btod_mult1<2>(btb, recip).perform(bta);
+        btod_mult1<2>(btb, recip).perform(true, bta);
     }
     tod_btconv<2>(bta).perform(ta);
 
