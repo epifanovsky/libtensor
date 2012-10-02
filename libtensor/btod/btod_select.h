@@ -1,14 +1,16 @@
 #ifndef LIBTENSOR_BTOD_SELECT_H
 #define LIBTENSOR_BTOD_SELECT_H
 
-#include "../defs.h"
-#include "../core/orbit.h"
-#include "../core/orbit_list.h"
-#include "../symmetry/so_copy.h"
+#include <libtensor/defs.h>
+#include <libtensor/core/block_tensor_element.h>
+#include <libtensor/core/noncopyable.h>
+#include <libtensor/core/orbit.h>
+#include <libtensor/core/orbit_list.h>
 #include <libtensor/dense_tensor/tod_select.h>
 #include <libtensor/dense_tensor/impl/tod_select_impl.h>
 #include <libtensor/block_tensor/block_tensor_i.h>
 #include <libtensor/block_tensor/block_tensor_ctrl.h>
+#include <libtensor/symmetry/so_copy.h>
 
 
 namespace libtensor {
@@ -45,7 +47,7 @@ namespace libtensor {
     \ingroup libtensor_btod
  **/
 template<size_t N, typename ComparePolicy=compare4absmin>
-class btod_select {
+class btod_select : public noncopyable {
 public:
     static const char *k_clazz; //!< Class name
 
@@ -59,8 +61,8 @@ public:
         elem( const index<N> &bidx_, const index<N> &idx_,
                 const double& v ) : bidx(bidx_), idx(idx_), value(v) {}
     };
-    typedef elem elem_t; //!< Tensor index-value pair type
-    typedef std::list<elem_t> list_t; //!< List type for index-value pairs
+    typedef block_tensor_element<N, double> block_tensor_element_type;
+    typedef std::list<block_tensor_element_type> list_type; //!< List type for index-value pairs
 
 private:
     typedef tod_select<N, compare_t> tod_select;
@@ -96,16 +98,13 @@ public:
         \param li List of elements.
         \param n Maximum list size.
      **/
-    void perform(list_t &li, size_t n);
+    void perform(list_type &li, size_t n);
 
 
 private:
-    void merge_lists(list_t &to, const index<N> &bidx,
+    void merge_lists(list_type &to, const index<N> &bidx,
             const tod_list_type &from, size_t n);
 
-private:
-    btod_select(const btod_select<N, ComparePolicy> &);
-    const btod_select<N> &operator=(const btod_select<N, ComparePolicy> &);
 };
 
 template<size_t N, typename ComparePolicy>
@@ -141,9 +140,9 @@ btod_select<N, ComparePolicy>::btod_select(block_tensor_i<N, double> &bt,
 
 
 template<size_t N, typename ComparePolicy>
-void btod_select<N, ComparePolicy>::perform(list_t &li, size_t n) {
+void btod_select<N, ComparePolicy>::perform(list_type &li, size_t n) {
 
-    static const char *method = "perform(list_t &, size_t)";
+    static const char *method = "perform(list_type &, size_t)";
 
     if (n == 0) return;
     li.clear();
@@ -212,15 +211,15 @@ void btod_select<N, ComparePolicy>::perform(list_t &li, size_t n) {
 }
 
 template<size_t N, typename ComparePolicy>
-void btod_select<N, ComparePolicy>::merge_lists(list_t &to,
+void btod_select<N, ComparePolicy>::merge_lists(list_type &to,
         const index<N> &bidx, const tod_list_type &from, size_t n) {
 
-    typename list_t::iterator ibt = to.begin();
+    typename list_type::iterator ibt = to.begin();
     for (typename tod_list_type::const_iterator it = from.begin();
             it != from.end(); it++) {
 
         while (ibt != to.end()) {
-            if (m_cmp(it->get_value(), ibt->value)) break;
+            if (m_cmp(it->get_value(), ibt->get_value())) break;
             ibt++;
         }
 
@@ -228,7 +227,7 @@ void btod_select<N, ComparePolicy>::merge_lists(list_t &to,
             return;
         }
 
-        ibt = to.insert(ibt, elem_t(bidx, it->get_index(), it->get_value()));
+        ibt = to.insert(ibt, block_tensor_element_type(bidx, *it));
         if (to.size() > n) to.pop_back();
         ibt++;
     }
