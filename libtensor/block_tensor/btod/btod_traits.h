@@ -64,6 +64,11 @@ struct btod_traits {
         typedef tod_apply<N, Functor> type;
     };
 
+    template<size_t N>
+    struct to_compare_type {
+        typedef tod_compare<N> type;
+    };
+
     template<size_t N, size_t M, size_t K>
     struct to_contract2_type {
         typedef tod_contract2<N, M, K> type;
