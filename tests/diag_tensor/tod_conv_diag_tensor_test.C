@@ -3,6 +3,7 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
+#include <libtensor/dense_tensor/tod_set.h>
 #include <libtensor/diag_tensor/diag_tensor.h>
 #include <libtensor/diag_tensor/diag_tensor_ctrl.h>
 #include <libtensor/diag_tensor/tod_conv_diag_tensor.h>
@@ -42,6 +43,11 @@ void tod_conv_diag_tensor_test::perform() throw(libtest::test_exception) {
     test_1_ii_ij(1);
     test_1_ii_ij(4);
     test_1_ii_ij(21);
+    test_1_ii_ij_off(1, 2, 1);
+    test_1_ii_ij_off(1, 4, 2);
+    test_1_ii_ij_off(4, 5, 0);
+    test_1_ii_ij_off(4, 5, 1);
+    test_1_ii_ij_off(21, 42, 5);
 
     test_1_iik_iji(1);
     test_1_iik_iji(4);
@@ -87,7 +93,7 @@ void tod_conv_diag_tensor_test::test_1_i(size_t ni)
         }
 
         tod_conv_diag_tensor<1>(dt).perform(t);
-	compare_ref<1>::compare(tn.c_str(), t, t_ref, 1e-15);
+        compare_ref<1>::compare(tn.c_str(), t, t_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
@@ -133,7 +139,7 @@ void tod_conv_diag_tensor_test::test_2_i(size_t ni)
         }
 
         tod_conv_diag_tensor<1>(dt).perform(t);
-	compare_ref<1>::compare(tn.c_str(), t, t_ref, 1e-15);
+        compare_ref<1>::compare(tn.c_str(), t, t_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
@@ -189,7 +195,7 @@ void tod_conv_diag_tensor_test::test_3_i(size_t ni)
         }
 
         tod_conv_diag_tensor<1>(dt).perform(t);
-	compare_ref<1>::compare(tn.c_str(), t, t_ref, 1e-15);
+        compare_ref<1>::compare(tn.c_str(), t, t_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
@@ -231,7 +237,7 @@ void tod_conv_diag_tensor_test::test_1_ij(size_t ni, size_t nj)
         }
 
         tod_conv_diag_tensor<2>(dt).perform(t);
-	compare_ref<2>::compare(tn.c_str(), t, t_ref, 1e-15);
+        compare_ref<2>::compare(tn.c_str(), t, t_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
@@ -277,7 +283,7 @@ void tod_conv_diag_tensor_test::test_2_ij(size_t ni, size_t nj)
         }
 
         tod_conv_diag_tensor<2>(dt).perform(t);
-	compare_ref<2>::compare(tn.c_str(), t, t_ref, 1e-15);
+        compare_ref<2>::compare(tn.c_str(), t, t_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
@@ -334,7 +340,7 @@ void tod_conv_diag_tensor_test::test_1_ii(size_t ni)
         }
 
         tod_conv_diag_tensor<2>(dt).perform(t);
-	compare_ref<2>::compare(tn.c_str(), t, t_ref, 1e-15);
+        compare_ref<2>::compare(tn.c_str(), t, t_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
@@ -394,7 +400,73 @@ void tod_conv_diag_tensor_test::test_1_ii_ij(size_t ni)
         }
 
         tod_conv_diag_tensor<2>(dt).perform(t);
-	compare_ref<2>::compare(tn.c_str(), t, t_ref, 1e-15);
+        compare_ref<2>::compare(tn.c_str(), t, t_ref, 1e-15);
+
+    } catch(exception &e) {
+        fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void tod_conv_diag_tensor_test::test_1_ii_ij_off(size_t ni, size_t mi,
+    size_t oi) throw(libtest::test_exception) {
+
+    std::ostringstream tnss;
+    tnss << "tod_conv_diag_tensor_test::test_1_ii_ij(" << ni << ", " << mi
+        << ", " << oi << ")";
+    std::string tn = tnss.str();
+
+    typedef std_allocator<double> allocator_t;
+
+    try {
+
+        index<2> i1, i2, off;
+        i2[0] = ni - 1; i2[1] = ni - 1;
+        dimensions<2> dimsa(index_range<2>(i1, i2));
+        i2[0] = mi - 1; i2[1] = mi - 1;
+        dimensions<2> dimsb(index_range<2>(i1, i2));
+        off[0] = oi; off[1] = oi;
+
+        mask<2> m11;
+        m11[0] = true; m11[1] = true;
+
+        diag_tensor_space<2> dts(dimsa);
+        diag_tensor_subspace<2> dtss1(1), dtss2(0);
+        dtss1.set_diag_mask(0, m11);
+        size_t ssn1 = dts.add_subspace(dtss1);
+        size_t ssn2 = dts.add_subspace(dtss2);
+
+        diag_tensor<2, double, allocator_t> dt(dts);
+        dense_tensor<2, double, allocator_t> t(dimsb), t_ref(dimsb);
+
+        tod_set<2>().perform(t);
+        tod_set<2>().perform(t_ref);
+
+        {
+            diag_tensor_wr_ctrl<2, double> cdt(dt);
+            dense_tensor_wr_ctrl<2, double> ct(t), ct_ref(t_ref);
+            double *p1 = cdt.req_dataptr(ssn1);
+            double *p2 = cdt.req_dataptr(ssn2);
+            double *p = ct.req_dataptr();
+            double *p_ref = ct_ref.req_dataptr();
+            for(size_t i = 0; i < ni; i++) {
+                size_t ii2 = (oi + i) * mi + oi + i;
+                for(size_t j = 0; j < ni; j++) {
+                    size_t ij1 = i * ni + j;
+                    size_t ij2 = (oi + i) * mi + oi + j;
+                    p2[ij1] = p_ref[ij2] = drand48();
+                }
+                p1[i] = drand48();
+                p_ref[ii2] += p1[i];
+            }
+            cdt.ret_dataptr(ssn1, p1); p1 = 0;
+            cdt.ret_dataptr(ssn2, p2); p2 = 0;
+            ct_ref.ret_dataptr(p_ref); p_ref = 0;
+            ct.ret_dataptr(p); p = 0;
+        }
+
+        tod_conv_diag_tensor<2>(dt).perform(t, off);
+        compare_ref<2>::compare(tn.c_str(), t, t_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
@@ -468,7 +540,7 @@ void tod_conv_diag_tensor_test::test_1_iik_iji(size_t ni)
         }
 
         tod_conv_diag_tensor<3>(dt).perform(t);
-	compare_ref<3>::compare(tn.c_str(), t, t_ref, 1e-15);
+        compare_ref<3>::compare(tn.c_str(), t, t_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
@@ -560,7 +632,7 @@ void tod_conv_diag_tensor_test::test_1_iijj_ijij_ijjk(size_t ni)
         }
 
         tod_conv_diag_tensor<4>(dt).perform(t);
-	compare_ref<4>::compare(tn.c_str(), t, t_ref, 1e-15);
+        compare_ref<4>::compare(tn.c_str(), t, t_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
