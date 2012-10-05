@@ -3,7 +3,7 @@
 
 #include <libtensor/core/allocator.h>
 #include <libtensor/diag_tensor/diag_tensor_i.h>
-#include "diag_block_tensor_i_traits.h"
+#include "diag_block_tensor.h"
 
 namespace libtensor {
 
@@ -22,10 +22,10 @@ struct diag_btod_traits {
     typedef diag_block_tensor_i_traits<double> bti_traits;
 
     //! Type of temporary block tensor
-//    template<size_t N>
-//    struct temp_block_tensor_type {
-//        typedef block_tensor< N, double, allocator<double> > type;
-//    };
+    template<size_t N>
+    struct temp_block_tensor_type {
+        typedef diag_block_tensor< N, double, allocator<double> > type;
+    };
 
     //! Type of block of block tensors
     template<size_t N>

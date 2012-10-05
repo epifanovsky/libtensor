@@ -176,6 +176,7 @@ set(SRC_DIAG_TENSOR
     diag_block_tensor/impl/diag_block_tensor.C
     diag_block_tensor/impl/diag_btod_copy.C
     diag_block_tensor/impl/diag_btod_random.C
+    diag_block_tensor/impl/tod_conv_diag_block_tensor.C
     diag_tensor/impl/diag_tensor_space.C
     diag_tensor/impl/diag_tensor.C
     diag_tensor/impl/tod_conv_diag_tensor.C

@@ -8,6 +8,7 @@ libtensor_diag_block_tensor_suite::libtensor_diag_block_tensor_suite() :
 
     add_test("diag_block_tensor", m_utf_diag_block_tensor);
     add_test("diag_btod_random", m_utf_diag_btod_random);
+    add_test("tod_conv_diag_block_tensor", m_utf_tod_conv_diag_block_tensor);
 }
 
 
