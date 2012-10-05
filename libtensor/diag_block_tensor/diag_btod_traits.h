@@ -3,13 +3,13 @@
 
 #include <libtensor/core/allocator.h>
 #include <libtensor/diag_tensor/diag_tensor_i.h>
+#include <libtensor/diag_tensor/diag_tod_copy.h>
 #include "diag_block_tensor.h"
 
 namespace libtensor {
 
 
 template<size_t N, size_t M, size_t K> class diag_tod_contract2;
-template<size_t N> class diag_tod_copy;
 template<size_t N> class diag_tod_set;
 
 

@@ -174,6 +174,9 @@ set(SRC_BTOD
 
 set(SRC_DIAG_TENSOR
     diag_block_tensor/impl/diag_block_tensor.C
+    diag_block_tensor/impl/diag_btod_addition_schedule.C
+    diag_block_tensor/impl/diag_btod_aux_add.C
+    diag_block_tensor/impl/diag_btod_aux_copy.C
     diag_block_tensor/impl/diag_btod_copy.C
     diag_block_tensor/impl/diag_btod_random.C
     diag_block_tensor/impl/tod_conv_diag_block_tensor.C
