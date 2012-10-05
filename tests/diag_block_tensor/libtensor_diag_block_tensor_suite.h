@@ -3,6 +3,7 @@
 
 #include <libtest/test_suite.h>
 #include "diag_block_tensor_test.h"
+#include "diag_btod_random_test.h"
 
 using libtest::unit_test_factory;
 
@@ -19,12 +20,14 @@ namespace libtensor {
 
     This suite runs the following tests:
      - libtensor::diag_block_tensor_test
+     - libtensor::diag_btod_random_test
 
     \ingroup libtensor_diag_block_tensor_tests
  **/
 class libtensor_diag_block_tensor_suite : public libtest::test_suite {
 private:
     unit_test_factory<diag_block_tensor_test> m_utf_diag_block_tensor;
+    unit_test_factory<diag_btod_random_test> m_utf_diag_btod_random;
 
 public:
     //! Creates the suite

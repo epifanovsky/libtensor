@@ -81,6 +81,7 @@ set(SRC_DIAG_BLOCK_TENSOR
     diag_block_tensor/libtensor_diag_block_tensor_tests.C
     diag_block_tensor/libtensor_diag_block_tensor_suite.C
     diag_block_tensor/diag_block_tensor_test.C
+    diag_block_tensor/diag_btod_random_test.C
 )
 
 set(SRC_SYMMETRY
