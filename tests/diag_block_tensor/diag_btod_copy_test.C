@@ -146,10 +146,10 @@ void diag_btod_copy_test::test_copy_nosym_3() {
     }
 
     diag_btod_random<2>().perform(bta);
-//    diag_btod_copy<2>(bta).perform(btb);
+    diag_btod_copy<2>(bta).perform(btb);
 
     tod_conv_diag_block_tensor<2>(btb).perform(tb);
-//    tod_conv_diag_block_tensor<2>(bta).perform(tb_ref);
+    tod_conv_diag_block_tensor<2>(bta).perform(tb_ref);
 
     compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
 
