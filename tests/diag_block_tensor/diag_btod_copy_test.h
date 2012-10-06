@@ -18,6 +18,12 @@ private:
     void test_copy_nosym_1();
     void test_copy_nosym_2();
     void test_copy_nosym_3();
+    void test_copy_nosym_4();
+    void test_add_nosym_1();
+    void test_add_nosym_2a();
+    void test_add_nosym_2b();
+    void test_add_nosym_3();
+    void test_add_nosym_4();
 
 };
 
