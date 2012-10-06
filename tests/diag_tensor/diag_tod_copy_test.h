@@ -15,10 +15,9 @@ public:
     virtual void perform() throw(libtest::test_exception);
 
 private:
-    void test_ij_1(size_t ni, size_t nj, double d)
-        throw(libtest::test_exception);
-    void test_ij_2(size_t ni, size_t nj, double d)
-        throw(libtest::test_exception);
+    void test_ij_1(size_t ni, size_t nj, double d);
+    void test_ij_2(size_t ni, size_t nj, double d);
+    void test_ij_3(size_t ni, double d);
 
 };
 

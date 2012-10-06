@@ -111,13 +111,14 @@ void diag_tod_copy<N>::constrained_copy(const dimensions<N> &dims,
 
     double zero = 0.0;
 
+    permutation<N> pinv(perm, true);
     dimensions<N> dims1(dims), dims2(dims);
     dims2.permute(perm);
 
     mask<N> mdone;
     for(size_t i = 0; i < N; i++) if(!mdone[i]) {
 
-        mask<N> m01, m02, m1, m1p, m2;
+        mask<N> m01, m02, m1, m1p, m2, m2p;
         m01[i] = true;
         m02[i] = true;
         m02.permute(perm);
@@ -128,6 +129,10 @@ void diag_tod_copy<N>::constrained_copy(const dimensions<N> &dims,
             m02 |= m2;
             m1p = m1;
             m1p.permute(perm);
+            m2p = m2;
+            m2p.permute(pinv);
+            m01 |= m2p;
+            m02 |= m1p;
         } while(!m1p.equals(m2));
 
         iadd = lpadd1.insert(lpadd1.end(), loop_list_node<2, 1>(dims1[i]));
