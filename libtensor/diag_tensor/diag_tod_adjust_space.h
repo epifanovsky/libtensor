@@ -38,6 +38,10 @@ public:
      **/
     void perform(diag_tensor_wr_i<N, double> &ta);
 
+protected:
+    using diag_tod_aux_constr_base<N>::mark_diags;
+    using diag_tod_aux_constr_base<N>::get_increment;
+
 private:
     void constrained_copy(const dimensions<N> &dims,
         const diag_tensor_subspace<N> &ss1, double *p1, size_t sz1,

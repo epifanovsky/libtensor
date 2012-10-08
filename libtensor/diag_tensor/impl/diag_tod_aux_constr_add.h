@@ -72,6 +72,10 @@ public:
         double *pb,
         size_t szb);
 
+protected:
+    using diag_tod_aux_constr_base<N>::mark_diags;
+    using diag_tod_aux_constr_base<N>::get_increment;
+
 };
 
 
