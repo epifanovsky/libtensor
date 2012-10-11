@@ -19,8 +19,8 @@ namespace libtensor {
 template<size_t N, size_t M, size_t K>
 class gen_bto_contract2_bis : public noncopyable {
 private:
-    to_contract2_dims<N, M, K> m_dimsc; //!< Builder of dimensions of C
-    block_index_space<N + M> m_bisc; //!< Block index space of result
+    to_contract2_dims<N, M, K> m_dims; //!< Builder of dimensions of C
+    block_index_space<N + M> m_bis; //!< Block index space of result
 
 public:
     /** \brief Computes the block index space of C
@@ -35,8 +35,8 @@ public:
 
     /** \brief Returns the block index space of C
      **/
-    const block_index_space<N + M> &get_bisc() const {
-        return m_bisc;
+    const block_index_space<N + M> &get_bis() const {
+        return m_bis;
     }
 
 };
@@ -50,8 +50,8 @@ public:
 template<size_t N, size_t M>
 class gen_bto_contract2_bis<N, M, 0> : public noncopyable {
 private:
-    to_contract2_dims<N, M, 0> m_dimsc; //!< Builder of dimensions of C
-    block_index_space<N + M> m_bisc; //!< Block index space of result
+    to_contract2_dims<N, M, 0> m_dims; //!< Builder of dimensions of C
+    block_index_space<N + M> m_bis; //!< Block index space of result
 
 public:
     /** \brief Computes the block index space of C
@@ -66,8 +66,8 @@ public:
 
     /** \brief Returns the block index space of C
      **/
-    const block_index_space<N + M> &get_bisc() const {
-        return m_bisc;
+    const block_index_space<N + M> &get_bis() const {
+        return m_bis;
     }
 
 };

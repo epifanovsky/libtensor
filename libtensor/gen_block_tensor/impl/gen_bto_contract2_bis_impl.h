@@ -12,8 +12,8 @@ gen_bto_contract2_bis<N, M, K>::gen_bto_contract2_bis(
     const block_index_space<N + K> &bisa,
     const block_index_space<M + K> &bisb) :
 
-    m_dimsc(contr, bisa.get_dims(), bisb.get_dims()),
-    m_bisc(m_dimsc.get_dimsc()) {
+    m_dims(contr, bisa.get_dims(), bisb.get_dims()),
+    m_bis(m_dims.get_dims()) {
 
     const sequence<2 * (N + M + K), size_t> &conn = contr.get_conn();
     const dimensions<N + K> &dimsa = bisa.get_dims();
@@ -33,7 +33,7 @@ gen_bto_contract2_bis<N, M, K>::gen_bto_contract2_bis(
         }
         const split_points &pts = bisa.get_splits(typ);
         for(size_t ipt = 0; ipt < pts.get_num_points(); ipt++) {
-            m_bisc.split(mc, pts[ipt]);
+            m_bis.split(mc, pts[ipt]);
         }
         mdonea |= ma;
     }
@@ -48,11 +48,11 @@ gen_bto_contract2_bis<N, M, K>::gen_bto_contract2_bis(
         }
         const split_points &pts = bisb.get_splits(typ);
         for(size_t ipt = 0; ipt < pts.get_num_points(); ipt++) {
-            m_bisc.split(mc, pts[ipt]);
+            m_bis.split(mc, pts[ipt]);
         }
         mdoneb |= mb;
     }
-    m_bisc.match_splits();
+    m_bis.match_splits();
 }
 
 
@@ -62,8 +62,8 @@ gen_bto_contract2_bis<N, M, 0>::gen_bto_contract2_bis(
     const block_index_space<N> &bisa,
     const block_index_space<M> &bisb) :
 
-    m_dimsc(contr, bisa.get_dims(), bisb.get_dims()),
-    m_bisc(m_dimsc.get_dimsc()) {
+    m_dims(contr, bisa.get_dims(), bisb.get_dims()),
+    m_bis(m_dims.get_dims()) {
 
     const sequence<2 * (N + M), size_t> &conn = contr.get_conn();
     const dimensions<N> &dimsa = bisa.get_dims();
@@ -83,7 +83,7 @@ gen_bto_contract2_bis<N, M, 0>::gen_bto_contract2_bis(
         }
         const split_points &pts = bisa.get_splits(typ);
         for(size_t ipt = 0; ipt < pts.get_num_points(); ipt++) {
-            m_bisc.split(mc, pts[ipt]);
+            m_bis.split(mc, pts[ipt]);
         }
         mdonea |= ma;
     }
@@ -98,11 +98,11 @@ gen_bto_contract2_bis<N, M, 0>::gen_bto_contract2_bis(
         }
         const split_points &pts = bisb.get_splits(typ);
         for(size_t ipt = 0; ipt < pts.get_num_points(); ipt++) {
-            m_bisc.split(mc, pts[ipt]);
+            m_bis.split(mc, pts[ipt]);
         }
         mdoneb |= mb;
     }
-    m_bisc.match_splits();
+    m_bis.match_splits();
 }
 
 

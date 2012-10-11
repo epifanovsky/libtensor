@@ -11,6 +11,7 @@ namespace labeled_btensor_expr {
 template<size_t N, typename T, typename Expr> class expr;
 } // namespace labeled_btensor_expr
 
+
 /** \brief Block %tensor with an attached label
     \tparam N Tensor order.
     \tparam T Tensor element type.
@@ -19,10 +20,10 @@ template<size_t N, typename T, typename Expr> class expr;
     \ingroup libtensor_iface
  **/
 template<size_t N, typename T, bool Assignable>
-class labeled_btensor : public labeled_btensor_base<N, T, Assignable> {
+class labeled_btensor : public labeled_btensor_rd_base<N, T> {
 public:
-    labeled_btensor(btensor_i<N, T> &bt, const letter_expr<N> &label)
-    : labeled_btensor_base<N, T, Assignable>(bt, label) { }
+    labeled_btensor(btensor_rd_i<N, T> &bt, const letter_expr<N> &label) :
+        labeled_btensor_rd_base<N, T>(bt, label) { }
 };
 
 /** \brief Partial specialization of the assignable labeled tensor
@@ -30,12 +31,14 @@ public:
     \ingroup libtensor_iface
  **/
 template<size_t N, typename T>
-class labeled_btensor<N, T, true> : public labeled_btensor_base<N, T, true> {
+class labeled_btensor<N, T, true> : public labeled_btensor_rd_base<N, T> {
+private:
+    btensor_i<N, T> &m_bt;
+public:
+    labeled_btensor(btensor_i<N, T> &bt, const letter_expr<N> &label) :
+        labeled_btensor_rd_base<N, T>(bt, label), m_bt(bt) { }
 
-    public:
-        labeled_btensor(btensor_i<N, T> &bt,
-            const letter_expr<N> &label)
-        : labeled_btensor_base<N, T, true>(bt, label) { }
+    btensor_i<N, T> &get_btensor() { return m_bt; }
 
     /** \brief Assigns this %tensor to an expression
      **/

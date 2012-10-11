@@ -3,6 +3,7 @@
 
 #include <list>
 #include <libtensor/timings.h>
+#include <libtensor/core/noncopyable.h>
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/core/tensor_transf.h>
 #include "dense_tensor_i.h"
@@ -25,7 +26,7 @@ namespace libtensor {
     \ingroup libtensor_tod
  **/
 template<size_t N, size_t M>
-class tod_scatter : public timings< tod_scatter<N, M> > {
+class tod_scatter : public timings< tod_scatter<N, M> >, public noncopyable {
 public:
     static const char *k_clazz; //!< Class name
 
@@ -68,7 +69,8 @@ private:
 
 private:
     dense_tensor_rd_i<k_ordera, double> &m_ta; //!< First tensor (A)
-    tensor_transf_type m_trc; //!< Tensor transformation of result
+    permutation<k_orderc> m_permc; //!< Permutation of result
+    double m_ka; //!< Scaling coefficient
     loop_list_t m_list; //!< Loop list
 
 public:
@@ -77,22 +79,16 @@ public:
         \param trc Tensor transformation applied to result
      **/
     tod_scatter(dense_tensor_rd_i<k_ordera, double> &ta,
-            tensor_transf_type &trc) :
-        m_ta(ta), m_trc(trc)
-    { }
+            tensor_transf_type &trc);
 
     /** \brief Initializes the operation
      **/
-    tod_scatter(dense_tensor_rd_i<k_ordera, double> &ta, double ka) :
-        m_ta(ta), m_trc(permutation<k_orderc>(), scalar_transf<double>(ka))
-    { }
+    tod_scatter(dense_tensor_rd_i<k_ordera, double> &ta, double ka);
 
     /** \brief Initializes the operation
      **/
     tod_scatter(dense_tensor_rd_i<k_ordera, double> &ta, double ka,
-        const permutation<k_orderc> &permc) :
-        m_ta(ta), m_trc(permc, scalar_transf<double>(ka))
-    { }
+        const permutation<k_orderc> &permc);
 
     /** \brief Performs the operation
         \param zero Zero result first
@@ -106,10 +102,6 @@ private:
     void exec(loop_list_iterator_t &i, registers &regs);
     void fn_loop(loop_list_iterator_t &i, registers &regs);
     void fn_scatter(registers &regs);
-
-private:
-    tod_scatter(const tod_scatter&);
-
 };
 
 

@@ -2,6 +2,7 @@
 #define LIBTENSOR_TOD_COMPARE_H
 
 #include "dense_tensor_i.h"
+#include <libtensor/core/noncopyable.h>
 
 namespace libtensor {
 
@@ -33,7 +34,7 @@ namespace libtensor {
     \ingroup libtensor_tod
 **/
 template<size_t N>
-class tod_compare {
+class tod_compare : public noncopyable {
 public:
     static const char *k_clazz; //!< Class name
 

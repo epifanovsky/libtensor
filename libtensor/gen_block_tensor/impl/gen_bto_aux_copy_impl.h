@@ -54,7 +54,7 @@ void gen_bto_aux_copy<N, Traits>::put(
     typedef typename Traits::template to_copy_type<N>::type to_copy_type;
 
     block_type &blk_tgt = m_ctrl.req_block(idx);
-    to_copy_type(blk, tr).perform(true, Traits::identity(), blk_tgt);
+    to_copy_type(blk, tr).perform(true, blk_tgt);
     m_ctrl.ret_block(idx);
 }
 

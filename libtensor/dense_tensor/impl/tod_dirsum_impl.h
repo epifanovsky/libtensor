@@ -21,15 +21,16 @@ const char *tod_dirsum<N, M>::k_clazz = "tod_dirsum<N, M>";
 template<size_t N, size_t M>
 tod_dirsum<N, M>::tod_dirsum(
         dense_tensor_rd_i<k_ordera, double> &ta,
-        const scalar_transf_type &ka,
+        const scalar_transf<double> &ka,
         dense_tensor_rd_i<k_orderb, double> &tb,
-        const scalar_transf_type &kb,
+        const scalar_transf<double> &kb,
         const tensor_transf_type &trc) :
 
-    m_ta(ta), m_tb(tb), m_ka(ka), m_kb(kb), m_trc(trc),
+    m_ta(ta), m_tb(tb), m_ka(ka.get_coeff()), m_kb(kb.get_coeff()),
+    m_c(trc.get_scalar_tr().get_coeff()), m_permc(trc.get_perm()),
     m_dimsc(mk_dimsc(ta, tb)) {
 
-    m_dimsc.permute(m_trc.get_perm());
+    m_dimsc.permute(m_permc);
 
 }
 
@@ -39,7 +40,7 @@ tod_dirsum<N, M>::tod_dirsum(
         dense_tensor_rd_i<k_ordera, double> &ta, double ka,
         dense_tensor_rd_i<k_orderb, double> &tb, double kb) :
 
-    m_ta(ta), m_tb(tb), m_ka(ka), m_kb(kb),
+    m_ta(ta), m_tb(tb), m_ka(ka), m_kb(kb), m_c(1.0),
     m_dimsc(mk_dimsc(ta, tb)) {
 
 }
@@ -51,7 +52,7 @@ tod_dirsum<N, M>::tod_dirsum(
         dense_tensor_rd_i<k_orderb, double> &tb, double kb,
         const permutation<k_orderc> &permc) :
 
-    m_ta(ta), m_tb(tb), m_ka(ka), m_kb(kb), m_trc(permc),
+    m_ta(ta), m_tb(tb), m_ka(ka), m_kb(kb), m_permc(permc), m_c(1.0),
     m_dimsc(mk_dimsc(ta, tb)) {
 
     m_dimsc.permute(permc);
@@ -84,7 +85,7 @@ void tod_dirsum<N, M>::perform(bool zero,
 
         sequence<k_orderc, size_t> seqc(0);
         for(size_t i = 0; i < k_orderc; i++) seqc[i] = i;
-        m_trc.get_perm().apply(seqc);
+        m_permc.apply(seqc);
 
         const dimensions<k_ordera> &dimsa = m_ta.get_dims();
         const dimensions<k_orderb> &dimsb = m_tb.get_dims();
@@ -134,8 +135,7 @@ void tod_dirsum<N, M>::perform(bool zero,
 
         {
             std::auto_ptr< kernel_base<linalg, 2, 1> >kern(
-                kern_dadd2<linalg>::match(m_ka.get_coeff(), m_kb.get_coeff(),
-                        m_trc.get_scalar_tr().get_coeff(), loop_in, loop_out));
+                kern_dadd2<linalg>::match(m_ka, m_kb, m_c, loop_in, loop_out));
             tod_dirsum<N, M>::start_timer(kern->get_name());
             loop_list_runner<linalg, 2, 1>(loop_in).run(0, r, *kern);
             tod_dirsum<N, M>::stop_timer(kern->get_name());

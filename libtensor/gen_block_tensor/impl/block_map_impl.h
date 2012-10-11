@@ -7,19 +7,19 @@
 namespace libtensor {
 
 
-template<size_t N, typename T, typename BtTraits>
-const char *block_map<N, T, BtTraits>::k_clazz = "block_map<N, T, BtTraits>";
+template<size_t N, typename BtTraits>
+const char *block_map<N, BtTraits>::k_clazz = "block_map<N, BtTraits>";
 
 
-template<size_t N, typename T, typename BtTraits>
-block_map<N, T, BtTraits>::~block_map() {
+template<size_t N, typename BtTraits>
+block_map<N, BtTraits>::~block_map() {
 
     do_clear();
 }
 
 
-template<size_t N, typename T, typename BtTraits>
-void block_map<N, T, BtTraits>::create(const index<N> &idx) {
+template<size_t N, typename BtTraits>
+void block_map<N, BtTraits>::create(const index<N> &idx) {
 
     static const char *method = "create(const index<N>&)";
 
@@ -40,8 +40,8 @@ void block_map<N, T, BtTraits>::create(const index<N> &idx) {
 }
 
 
-template<size_t N, typename T, typename BtTraits>
-void block_map<N, T, BtTraits>::remove(const index<N> &idx) {
+template<size_t N, typename BtTraits>
+void block_map<N, BtTraits>::remove(const index<N> &idx) {
 
     static const char *method = "remove(const index<N>&)";
 
@@ -59,17 +59,17 @@ void block_map<N, T, BtTraits>::remove(const index<N> &idx) {
 }
 
 
-template<size_t N, typename T, typename BtTraits>
-bool block_map<N, T, BtTraits>::contains(const index<N> &idx) const {
+template<size_t N, typename BtTraits>
+bool block_map<N, BtTraits>::contains(const index<N> &idx) const {
 
     size_t aidx = abs_index<N>::get_abs_index(idx, m_bidims);
     return m_map.find(aidx) != m_map.end();
 }
 
 
-template<size_t N, typename T, typename BtTraits>
-typename block_map<N, T, BtTraits>::block_type&
-block_map<N, T, BtTraits>::get(const index<N> &idx) {
+template<size_t N, typename BtTraits>
+typename block_map<N, BtTraits>::block_type&
+block_map<N, BtTraits>::get(const index<N> &idx) {
 
     static const char *method = "get(const index<N>&)";
 
@@ -84,8 +84,8 @@ block_map<N, T, BtTraits>::get(const index<N> &idx) {
 }
 
 
-template<size_t N, typename T, typename BtTraits>
-void block_map<N, T, BtTraits>::clear() {
+template<size_t N, typename BtTraits>
+void block_map<N, BtTraits>::clear() {
 
     static const char *method = "clear()";
 
@@ -98,8 +98,8 @@ void block_map<N, T, BtTraits>::clear() {
 }
 
 
-template<size_t N, typename T, typename BtTraits>
-void block_map<N, T, BtTraits>::on_set_immutable() {
+template<size_t N, typename BtTraits>
+void block_map<N, BtTraits>::on_set_immutable() {
 
     for(typename map_type::iterator i = m_map.begin(); i != m_map.end(); ++i) {
         i->second->set_immutable();
@@ -107,8 +107,8 @@ void block_map<N, T, BtTraits>::on_set_immutable() {
 }
 
 
-template<size_t N, typename T, typename BtTraits>
-void block_map<N, T, BtTraits>::do_clear() {
+template<size_t N, typename BtTraits>
+void block_map<N, BtTraits>::do_clear() {
 
     for(typename map_type::iterator i = m_map.begin(); i != m_map.end(); ++i) {
         m_bf.destroy_block(i->second);

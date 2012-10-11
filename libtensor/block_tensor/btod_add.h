@@ -47,7 +47,7 @@ public:
         \param c Scaling coefficient.
      **/
     btod_add(
-        block_tensor_i<N, double> &bta,
+        block_tensor_rd_i<N, double> &bta,
         const permutation<N> &perma,
         double c = 1.0) :
 
@@ -60,7 +60,7 @@ public:
     /** \brief Adds another argument to the linear combination sequence
      **/
     void add_op(
-        block_tensor_i<N, double> &bta,
+        block_tensor_rd_i<N, double> &bta,
         double c = 1.0) {
 
         m_gbto.add_op(bta, tensor_transf<N, double>(permutation<N>(),
@@ -70,7 +70,7 @@ public:
     /** \brief Adds another argument to the linear combination sequence
      **/
     void add_op(
-        block_tensor_i<N, double> &bta,
+        block_tensor_rd_i<N, double> &bta,
         const permutation<N> &perma,
         double c = 1.0) {
 

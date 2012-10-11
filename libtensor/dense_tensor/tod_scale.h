@@ -26,12 +26,12 @@ public:
     /** \brief Initializes the operation
         \param c Scaling coefficient.
      **/
-    tod_scale(const scalar_transf<double> &c) : m_c(c.get_coeff()) { }
+    tod_scale(const scalar_transf<double> &c);
 
     /** \brief Initializes the operation
         \param c Scaling coefficient.
      **/
-    tod_scale(double c) : m_c(c) { }
+    tod_scale(double c);
 
     /** \brief Performs the operation
         \param ta Tensor.

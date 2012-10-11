@@ -1,8 +1,8 @@
 #ifndef LIBTENSOR_TOD_SCATTER_IMPL_H
 #define LIBTENSOR_TOD_SCATTER_IMPL_H
 
-#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/tod/bad_dimensions.h>
+#include "../dense_tensor_ctrl.h"
 #include "../tod_scatter.h"
 
 namespace libtensor {
@@ -10,6 +10,29 @@ namespace libtensor {
 
 template<size_t N, size_t M>
 const char *tod_scatter<N, M>::k_clazz = "tod_scatter<N, M>";
+
+
+template<size_t N, size_t M>
+tod_scatter<N, M>::tod_scatter(dense_tensor_rd_i<k_ordera, double> &ta,
+        tensor_transf_type &trc) : m_ta(ta), m_permc(trc.get_perm()),
+        m_ka(trc.get_scalar_tr().get_coeff()) {
+
+}
+
+
+template<size_t N, size_t M>
+tod_scatter<N, M>::tod_scatter(dense_tensor_rd_i<k_ordera, double> &ta,
+        double ka) : m_ta(ta), m_ka(ka) {
+
+}
+
+
+template<size_t N, size_t M>
+tod_scatter<N, M>::tod_scatter(dense_tensor_rd_i<k_ordera, double> &ta,
+        double ka, const permutation<k_orderc> &permc) :
+        m_ta(ta), m_permc(permc), m_ka(ka) {
+
+}
 
 
 template<size_t N, size_t M>
@@ -23,7 +46,7 @@ void tod_scatter<N, M>::perform(bool zero,
     sequence<k_orderc, size_t> seq(0);
     for(size_t i = 0; i < k_orderc - k_ordera; i++) seq[i] = k_ordera;
     for(size_t i = 0; i < k_ordera; i++) seq[k_orderc - k_ordera + i] = i;
-    m_trc.get_perm().apply(seq);
+    m_permc.apply(seq);
 
     const dimensions<k_ordera> &dimsa = m_ta.get_dims();
     const dimensions<k_orderc> &dimsc = tc.get_dims();
@@ -60,7 +83,7 @@ void tod_scatter<N, M>::perform(bool zero,
     while(i1 != m_list.end() && i1->m_inca != 1) i1++;
     if(i1 != m_list.end()) {
         i1->m_fn = &tod_scatter<N, M>::fn_scatter;
-        m_scatter.m_kc = m_trc.get_scalar_tr().get_coeff();
+        m_scatter.m_kc = m_ka;
         m_scatter.m_n = i1->m_weight;
         m_scatter.m_stepc = i1->m_incc;
         m_list.splice(m_list.end(), m_list, i1);
@@ -93,7 +116,7 @@ void tod_scatter<N, M>::check_dimsc(dense_tensor_wr_i<k_orderc, double> &tc) {
     static const char *method =
         "check_dimsc(dense_tensor_wr_i<N + M, double>&)";
 
-    permutation<k_orderc> pinv(m_trc.get_perm(), true);
+    permutation<k_orderc> pinv(m_permc, true);
     dimensions<k_orderc> dimsc(tc.get_dims());
     dimsc.permute(pinv);
 

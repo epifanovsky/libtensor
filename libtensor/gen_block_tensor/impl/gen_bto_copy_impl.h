@@ -250,7 +250,7 @@ void gen_bto_copy<N, Traits, Timed>::compute_block(
         //  Compute block in B
         if(!ca.req_is_zero_block(cia)) {
             rd_block_type &blka = ca.req_const_block(cia);
-            to_copy(blka, tra).perform(zero, Traits::identity(), blkb);
+            to_copy(blka, tra).perform(zero, blkb);
             ca.ret_const_block(cia);
         } else if(zero) {
             to_set().perform(blkb);

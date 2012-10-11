@@ -1,9 +1,10 @@
 #ifndef LIBTENSOR_TOD_EXTRACT_IMPL_H
 #define LIBTENSOR_TOD_EXTRACT_IMPL_H
 
-#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
+#include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/linalg/linalg.h>
 #include <libtensor/tod/bad_dimensions.h>
+#include "../dense_tensor_ctrl.h"
 #include "../tod_extract.h"
 
 namespace libtensor {
@@ -27,10 +28,11 @@ tod_extract<N, M>::tod_extract(
         dense_tensor_rd_i<NA, double> &t, const mask<NA> &m,
         const index<NA> &idx, const tensor_transf_type &tr) :
 
-    m_t(t), m_mask(m), m_tr(tr), m_dims(mk_dims(t.get_dims(), m_mask)),
-    m_idx(idx) {
+    m_t(t), m_mask(m), m_perm(tr.get_perm()),
+    m_c(tr.get_scalar_tr().get_coeff()),
+    m_dims(mk_dims(t.get_dims(), m_mask)), m_idx(idx) {
 
-    m_dims.permute(tr.get_perm());
+    m_dims.permute(m_perm);
 }
 
 
@@ -39,9 +41,7 @@ tod_extract<N, M>::tod_extract(
         dense_tensor_rd_i<NA, double> &t, const mask<NA> &m,
         const index<NA> &idx, double c) :
 
-    m_t(t), m_mask(m), m_tr(permutation<NB>(), scalar_transf<double>(c)),
-    m_dims(mk_dims(t.get_dims(), m_mask)),
-    m_idx(idx) {
+    m_t(t), m_mask(m), m_c(c), m_dims(mk_dims(t.get_dims(), m)), m_idx(idx) {
 
 }
 
@@ -51,8 +51,8 @@ tod_extract<N, M>::tod_extract(
         dense_tensor_rd_i<NA, double> &t, const mask<NA> &m,
         const index<NA> &idx, const permutation<NB> &p, double c) :
 
-    m_t(t), m_mask(m), m_tr(p, scalar_transf<double>(c)),
-    m_dims(mk_dims(t.get_dims(), m_mask)), m_idx(idx) {
+    m_t(t), m_mask(m), m_perm(p), m_c(c),
+    m_dims(mk_dims(t.get_dims(), m)), m_idx(idx) {
 
     m_dims.permute(p);
 }
@@ -154,7 +154,7 @@ void tod_extract<N, M>::build_list(loop_list_t &list,
     //
     sequence<NB, size_t> ib(0);
     for(size_t i = 0; i < NB; i++) ib[i] = i;
-    m_tr.get_perm().apply(ib);
+    m_perm.apply(ib);
 
     //  Loop over the indexes and build the list
     //
@@ -192,11 +192,9 @@ void tod_extract<N, M>::build_list(loop_list_t &list,
         //
         if(incb == 1 && poscore == list.end()) {
             if (zero)
-                it->m_op = new op_dcopy(len, inca, incb,
-                        m_tr.get_scalar_tr().get_coeff());
+                it->m_op = new op_dcopy(len, inca, incb, m_c);
             else
-                it->m_op = new op_daxpy(len, inca, incb,
-                        m_tr.get_scalar_tr().get_coeff());
+                it->m_op = new op_daxpy(len, inca, incb, m_c);
 
             poscore = it;
         } else {

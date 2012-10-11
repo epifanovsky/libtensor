@@ -2,7 +2,7 @@
 #define LIBTENSOR_TOD_SET_ELEM_IMPL_H
 
 #include <libtensor/core/abs_index.h>
-#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
+#include "../dense_tensor_ctrl.h"
 #include "../tod_set_elem.h"
 
 namespace libtensor {

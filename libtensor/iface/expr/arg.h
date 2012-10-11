@@ -20,7 +20,7 @@ struct arg_traits { };
 template<size_t N, typename T>
 struct arg_traits<N, T, oper_tag> {
     //!    \brief Block tensor operation type
-    typedef direct_bto<N, btod_traits> bto_t;
+    typedef direct_gen_bto<N, btod_traits::bti_traits> bto_t;
 };
 
 template<size_t N>
@@ -43,12 +43,12 @@ class arg {
 template<size_t N, typename T>
 class arg<N, T, tensor_tag> {
 private:
-    btensor_i<N, T> &m_bt;
+    btensor_rd_i<N, T> &m_bt;
     permutation<N> m_perm;
     T m_coeff;
 
 public:
-    arg(btensor_i<N, T> &bt, const permutation<N> &perm, T coeff)
+    arg(btensor_rd_i<N, T> &bt, const permutation<N> &perm, T coeff)
     : m_bt(bt), m_perm(perm), m_coeff(coeff) {
     }
 
@@ -56,7 +56,7 @@ public:
         m_coeff *= c;
     }
 
-    btensor_i<N, T> &get_btensor() {
+    btensor_rd_i<N, T> &get_btensor() {
         return m_bt;
     }
 

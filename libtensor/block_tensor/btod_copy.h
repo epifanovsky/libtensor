@@ -47,7 +47,7 @@ public:
         \param c Scaling coefficient.
      **/
     btod_copy(
-        block_tensor_i<N, double> &bta,
+        block_tensor_rd_i<N, double> &bta,
         const permutation<N> &perma,
         double c = 1.0) :
 

@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_TOD_SET_DIAG_H
 #define LIBTENSOR_TOD_SET_DIAG_H
 
+#include <libtensor/core/noncopyable.h>
 #include "dense_tensor_i.h"
 
 namespace libtensor {
@@ -16,7 +17,7 @@ namespace libtensor {
     \ingroup libtensor_dense_tensor_tod
  **/
 template<size_t N>
-class tod_set_diag {
+class tod_set_diag : public noncopyable {
 public:
     static const char *k_clazz; //!< Class name
 

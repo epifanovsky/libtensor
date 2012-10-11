@@ -62,7 +62,7 @@ void block_map_test::test_create() throw(libtest::test_exception) {
     i2[0] = 4; i2[1] = 6;
     dimensions<2> dims2(index_range<2>(i1, i2));
 
-	block_map<2, double, bt_traits> map(bis);
+	block_map<2, bt_traits> map(bis);
 
 	if(map.contains(i00)) {
 		fail_test(testname, __FILE__, __LINE__,
@@ -141,7 +141,7 @@ void block_map_test::test_immutable() throw(libtest::test_exception) {
 	i2[0] = 4; i2[1] = 6;
 	dimensions<2> dims2(index_range<2>(i1, i2));
 
-    block_map<2, double, bt_traits> map(bis);
+    block_map<2, bt_traits> map(bis);
 
 	map.create(i00);
 	map.create(i11);

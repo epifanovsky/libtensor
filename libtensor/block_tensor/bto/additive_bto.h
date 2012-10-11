@@ -4,7 +4,7 @@
 #include <vector>
 #include <libutil/thread_pool/thread_pool.h>
 #include <libtensor/core/tensor_transf.h>
-#include "direct_bto.h"
+#include <libtensor/gen_block_tensor/direct_gen_bto.h>
 
 namespace libtensor {
 
@@ -25,7 +25,7 @@ namespace libtensor {
     \ingroup libtensor_btod
  **/
 template<size_t N, typename Traits>
-class additive_bto: public direct_bto<N, Traits> {
+class additive_bto: public direct_gen_bto<N, typename Traits::bti_traits> {
 public:
     //! Type of tensor elements
     typedef typename Traits::element_type element_t;

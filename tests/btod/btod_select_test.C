@@ -6,7 +6,7 @@
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/block_tensor/block_tensor.h>
 #include <libtensor/btod/btod_import_raw.h>
-#include <libtensor/btod/btod_random.h>
+#include <libtensor/block_tensor/btod_random.h>
 #include <libtensor/btod/btod_select.h>
 #include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/symmetry/product_table_container.h>
@@ -16,6 +16,7 @@
 #include <libtensor/dense_tensor/tod_btconv.h>
 #include <libtensor/dense_tensor/tod_set.h>
 #include <libtensor/dense_tensor/tod_select.h>
+#include <libtensor/dense_tensor/impl/tod_select_impl.h>
 #include "btod_select_test.h"
 
 
@@ -23,6 +24,8 @@ namespace libtensor {
 
 
 void btod_select_test::perform() throw(libtest::test_exception) {
+
+    allocator<double>::vmm().init(16, 16, 65536, 65536);
 
     std::vector<std::string> irnames(2);
     irnames[0] = "g"; irnames[1] = "u";
@@ -81,11 +84,12 @@ void btod_select_test::perform() throw(libtest::test_exception) {
     }
     catch (...) {
         product_table_container::get_instance().erase("cs");
+        allocator<double>::vmm().shutdown();
         throw;
     }
 
     product_table_container::get_instance().erase("cs");
-
+    allocator<double>::vmm().shutdown();
 }
 
 /** \test Selecting elements from random block tensor (1 block)
@@ -113,33 +117,34 @@ void btod_select_test::test_1(size_t n) throw(libtest::test_exception) {
 
     // Form list
     ComparePolicy cmp;
-    typename btod_select_t::list_t btlist;
+    typename btod_select_t::list_type btlist;
     btod_select_t(bt, cmp).perform(btlist, n);
 
     // Form reference list
-    typename tod_select_t::list_t tlist;
+    typename tod_select_t::list_type tlist;
     tod_select_t(t_ref, cmp).perform(tlist, n);
 
     // Check result lists
-    typename tod_select_t::list_t::const_iterator it = tlist.begin();
-    typename btod_select_t::list_t::const_iterator ibt = btlist.begin();
+    typename tod_select_t::list_type::const_iterator it = tlist.begin();
+    typename btod_select_t::list_type::const_iterator ibt = btlist.begin();
     while (it != tlist.end() && ibt != btlist.end()) {
-        if (it->value != ibt->value) {
+        if (it->get_value() != ibt->get_value()) {
             std::ostringstream oss;
             oss << "Value of list element does not match reference "
-                    << "(found: " << ibt->value
-                    << ", expected: " << it->value << ").";
+                    << "(found: " << ibt->get_value()
+                    << ", expected: " << it->get_value() << ").";
             fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
         }
 
-        index<2> idx = bis.get_block_start(ibt->bidx);
-        idx[0] += ibt->idx[0];
-        idx[1] += ibt->idx[1];
-        if (! idx.equals(it->idx)) {
+        index<2> idx = bis.get_block_start(ibt->get_block_index());
+        const index<2> &iblidx = ibt->get_in_block_index();
+        idx[0] += iblidx[0];
+        idx[1] += iblidx[1];
+        if (! idx.equals(it->get_index())) {
             std::ostringstream oss;
             oss << "Index of list element does not match reference "
                     << "(found: " << idx
-                    << ", expected: " << it->idx << ").";
+                    << ", expected: " << it->get_index() << ").";
             fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
         }
 
@@ -179,31 +184,32 @@ void btod_select_test::test_2(size_t n) throw(libtest::test_exception) {
 
     // Compute list
     ComparePolicy cmp;
-    typename btod_select_t::list_t btlist;
+    typename btod_select_t::list_type btlist;
     btod_select_t(bt, cmp).perform(btlist, n);
 
-    typename tod_select_t::list_t tlist;
+    typename tod_select_t::list_type tlist;
     tod_select_t(t_ref, cmp).perform(tlist, n);
 
-    typename tod_select_t::list_t::const_iterator it = tlist.begin();
-    typename btod_select_t::list_t::const_iterator ibt = btlist.begin();
+    typename tod_select_t::list_type::const_iterator it = tlist.begin();
+    typename btod_select_t::list_type::const_iterator ibt = btlist.begin();
     while (it != tlist.end() && ibt != btlist.end()) {
-        if (it->value != ibt->value) {
+        if (it->get_value() != ibt->get_value()) {
             std::ostringstream oss;
             oss << "Value of list element does not match reference "
-                    << "(found: " << ibt->value
-                    << ", expected: " << it->value << ").";
+                    << "(found: " << ibt->get_value()
+                    << ", expected: " << it->get_value() << ").";
             fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
         }
 
-        index<2> idx = bis.get_block_start(ibt->bidx);
-        idx[0] += ibt->idx[0];
-        idx[1] += ibt->idx[1];
-        if (! idx.equals(it->idx)) {
+        index<2> idx = bis.get_block_start(ibt->get_block_index());
+        const index<2> &iblidx = ibt->get_in_block_index();
+        idx[0] += iblidx[0];
+        idx[1] += iblidx[1];
+        if (! idx.equals(it->get_index())) {
             std::ostringstream oss;
             oss << "Index of list element does not match reference "
                     << "(found: " << idx
-                    << ", expected: " << it->idx << ").";
+                    << ", expected: " << it->get_index() << ").";
             fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
         }
 
@@ -261,7 +267,7 @@ void btod_select_test::test_3a(size_t n,
             dense_tensor_i<2, double> &ta = ca.req_block(ol.get_index(it)),
                     &tb = cb.req_block(ol.get_index(it));
 
-            tod_copy<2>(ta).perform(true, 1.0, tb);
+            tod_copy<2>(ta).perform(true, tb);
 
             ca.ret_block(ol.get_index(it));
             cb.ret_block(ol.get_index(it));
@@ -272,56 +278,59 @@ void btod_select_test::test_3a(size_t n,
 
     // Compute list
     ComparePolicy cmp;
-    typename btod_select_t::list_t btlist;
+    typename btod_select_t::list_type btlist;
     btod_select_t(bt, cmp).perform(btlist, n);
 
     // Compute reference list
-    typename tod_select_t::list_t tlist;
+    typename tod_select_t::list_type tlist;
     tod_select_t(t_ref, cmp).perform(tlist, n);
 
     // Compare against reference
     double last_value = 0.0;
-    for (typename btod_select_t::list_t::const_iterator ibt = btlist.begin();
+    for (typename btod_select_t::list_type::const_iterator ibt = btlist.begin();
             ibt != btlist.end(); ibt++) {
 
-        typename tod_select_t::list_t::const_iterator it = tlist.begin();
-        while (it != tlist.end() && it->value != ibt->value) it++;
+        typename tod_select_t::list_type::const_iterator it = tlist.begin();
+        while (it != tlist.end() && it->get_value() != ibt->get_value()) it++;
 
         if (it == tlist.end()) {
             std::ostringstream oss;
             oss << "List element not found in reference "
-                    << "(" << ibt->bidx << ", "
-                    << ibt->idx << ": " << ibt->value << ").";
+                    << "(" << ibt->get_block_index() << ", "
+                    << ibt->get_in_block_index() << ": "
+                    << ibt->get_value() << ").";
             fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
         }
 
-        while (it != tlist.end() && it->value == ibt->value) {
+        while (it != tlist.end() && it->get_value() == ibt->get_value()) {
 
-            index<2> idx = bis.get_block_start(ibt->bidx);
-            idx[0] += ibt->idx[0];
-            idx[1] += ibt->idx[1];
-            if (idx.equals(it->idx)) break;
+            index<2> idx = bis.get_block_start(ibt->get_block_index());
+            const index<2> &iblidx = ibt->get_in_block_index();
+            idx[0] += iblidx[0];
+            idx[1] += iblidx[1];
+            if (idx.equals(it->get_index())) break;
 
             it++;
         }
 
-        if (it->value != ibt->value) {
+        if (it->get_value() != ibt->get_value()) {
             std::ostringstream oss;
             oss << "List element not found in reference "
-                    << "(" << ibt->bidx << ", "
-                    << ibt->idx << ": " << ibt->value << ").";
+                    << "(" << ibt->get_block_index() << ", "
+                    << ibt->get_in_block_index() << ": "
+                    << ibt->get_value() << ").";
             fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
         }
 
-        if (ibt != btlist.begin() && cmp(ibt->value, last_value)) {
+        if (ibt != btlist.begin() && cmp(ibt->get_value(), last_value)) {
             std::ostringstream oss;
             oss << "Invalid ordering of values "
-                    << "(" << last_value << " before " << ibt->value
+                    << "(" << last_value << " before " << ibt->get_value()
                     << " in list).";
             fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
 
         }
-        last_value = ibt->value;
+        last_value = ibt->get_value();
     }
 
     } catch(exception &e) {
@@ -368,56 +377,59 @@ void btod_select_test::test_3b(size_t n) throw(libtest::test_exception) {
 
     // Compute list
     ComparePolicy cmp;
-    typename btod_select_t::list_t btlist;
+    typename btod_select_t::list_type btlist;
     btod_select_t(bt, cmp).perform(btlist, n);
 
     // Compute reference list
-    typename tod_select_t::list_t tlist;
+    typename tod_select_t::list_type tlist;
     tod_select_t(t_ref, cmp).perform(tlist, n);
 
     // Compare against reference
     double last_value = 0.0;
-    for (typename btod_select_t::list_t::const_iterator ibt = btlist.begin();
+    for (typename btod_select_t::list_type::const_iterator ibt = btlist.begin();
             ibt != btlist.end(); ibt++) {
 
-        typename tod_select_t::list_t::const_iterator it = tlist.begin();
-        while (it != tlist.end() && it->value != ibt->value) it++;
+        typename tod_select_t::list_type::const_iterator it = tlist.begin();
+        while (it != tlist.end() && it->get_value() != ibt->get_value()) it++;
 
         if (it == tlist.end()) {
             std::ostringstream oss;
             oss << "List element not found in reference "
-                    << "(" << ibt->bidx << ", "
-                    << ibt->idx << ": " << ibt->value << ").";
+                    << "(" << ibt->get_block_index() << ", "
+                    << ibt->get_in_block_index() << ": "
+                    << ibt->get_value() << ").";
             fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
         }
 
-        while (it != tlist.end() && it->value == ibt->value) {
+        while (it != tlist.end() && it->get_value() == ibt->get_value()) {
 
-            index<2> idx = bis.get_block_start(ibt->bidx);
-            idx[0] += ibt->idx[0];
-            idx[1] += ibt->idx[1];
-            if (idx.equals(it->idx)) break;
+            index<2> idx = bis.get_block_start(ibt->get_block_index());
+            const index<2> &iblidx = ibt->get_in_block_index();
+            idx[0] += iblidx[0];
+            idx[1] += iblidx[1];
+            if (idx.equals(it->get_index())) break;
 
             it++;
         }
 
-        if (it->value != ibt->value) {
+        if (it->get_value() != ibt->get_value()) {
             std::ostringstream oss;
             oss << "List element not found in reference "
-                    << "(" << ibt->bidx << ", "
-                    << ibt->idx << ": " << ibt->value << ").";
+                    << "(" << ibt->get_block_index() << ", "
+                    << ibt->get_in_block_index() << ": "
+                    << ibt->get_value() << ").";
             fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
         }
 
-        if (ibt != btlist.begin() && cmp(ibt->value, last_value)) {
+        if (ibt != btlist.begin() && cmp(ibt->get_value(), last_value)) {
             std::ostringstream oss;
             oss << "Invalid ordering of values "
-                    << "(" << last_value << " before " << ibt->value
+                    << "(" << last_value << " before " << ibt->get_value()
                     << " in list).";
             fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
 
         }
-        last_value = ibt->value;
+        last_value = ibt->get_value();
     }
 
     } catch(exception &e) {
@@ -482,56 +494,59 @@ void btod_select_test::test_3c(size_t n,
 
     // Compute list
     ComparePolicy cmp;
-    typename btod_select_t::list_t btlist;
+    typename btod_select_t::list_type btlist;
     btod_select_t(bt, cmp).perform(btlist, n);
 
     // Compute reference list
-    typename tod_select_t::list_t tlist;
+    typename tod_select_t::list_type tlist;
     tod_select_t(t_ref, cmp).perform(tlist, n);
 
     // Compare against reference
     double last_value = 0.0;
-    for (typename btod_select_t::list_t::const_iterator ibt = btlist.begin();
+    for (typename btod_select_t::list_type::const_iterator ibt = btlist.begin();
             ibt != btlist.end(); ibt++) {
 
-        typename tod_select_t::list_t::const_iterator it = tlist.begin();
-        while (it != tlist.end() && it->value != ibt->value) it++;
+        typename tod_select_t::list_type::const_iterator it = tlist.begin();
+        while (it != tlist.end() && it->get_value() != ibt->get_value()) it++;
 
         if (it == tlist.end()) {
             std::ostringstream oss;
             oss << "List element not found in reference "
-                    << "(" << ibt->bidx << ", "
-                    << ibt->idx << ": " << ibt->value << ").";
+                    << "(" << ibt->get_block_index() << ", "
+                    << ibt->get_in_block_index() << ": "
+                    << ibt->get_value() << ").";
             fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
         }
 
-        while (it != tlist.end() && it->value == ibt->value) {
+        while (it != tlist.end() && it->get_value() == ibt->get_value()) {
 
-            index<2> idx = bis.get_block_start(ibt->bidx);
-            idx[0] += ibt->idx[0];
-            idx[1] += ibt->idx[1];
-            if (idx.equals(it->idx)) break;
+            index<2> idx = bis.get_block_start(ibt->get_block_index());
+            const index<2> &iblidx = ibt->get_in_block_index();
+            idx[0] += iblidx[0];
+            idx[1] += iblidx[1];
+            if (idx.equals(it->get_index())) break;
 
             it++;
         }
 
-        if (it->value != ibt->value) {
+        if (it->get_value() != ibt->get_value()) {
             std::ostringstream oss;
             oss << "List element not found in reference "
-                    << "(" << ibt->bidx << ", "
-                    << ibt->idx << ": " << ibt->value << ").";
+                    << "(" << ibt->get_block_index() << ", "
+                    << ibt->get_in_block_index() << ": "
+                    << ibt->get_value() << ").";
             fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
         }
 
-        if (ibt != btlist.begin() && cmp(ibt->value, last_value)) {
+        if (ibt != btlist.begin() && cmp(ibt->get_value(), last_value)) {
             std::ostringstream oss;
             oss << "Invalid ordering of values "
-                    << "(" << last_value << " before " << ibt->value
+                    << "(" << last_value << " before " << ibt->get_value()
                     << " in list).";
             fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
 
         }
-        last_value = ibt->value;
+        last_value = ibt->get_value();
     }
 
     } catch(exception &e) {
@@ -585,27 +600,30 @@ void btod_select_test::test_4a(size_t n,
 
     // Compute list
     ComparePolicy cmp;
-    typename btod_select_t::list_t btlist;
+    typename btod_select_t::list_type btlist;
     btod_select_t(bt, sym, cmp).perform(btlist, n);
 
     // Compute reference list
-    typename btod_select_t::list_t btlist_ref;
+    typename btod_select_t::list_type btlist_ref;
     btod_select_t(bt_ref, cmp).perform(btlist_ref, n);
 
     // Compare against reference
-    for (typename btod_select_t::list_t::const_iterator ibt = btlist.begin(),
+    for (typename btod_select_t::list_type::const_iterator ibt = btlist.begin(),
             ibt_ref = btlist_ref.begin();
             ibt != btlist.end(); ibt++, ibt_ref++) {
 
-        if (ibt->value != ibt_ref->value ||
-                ! ibt->bidx.equals(ibt_ref->bidx) ||
-                ! ibt->idx.equals(ibt_ref->idx)) {
+        if (ibt->get_value() != ibt_ref->get_value() ||
+                ! ibt->get_block_index().equals(ibt_ref->get_block_index()) ||
+                ! ibt->get_in_block_index().equals(
+                        ibt_ref->get_in_block_index())) {
 
             std::ostringstream oss;
             oss << "List element does not match reference "
-                    << "(found: " << ibt->bidx << ", " << ibt->idx
-                    << ": " << ibt->value << ", expected: " << ibt_ref->bidx
-                    << ", " << ibt_ref->idx << ": " << ibt->value << ").";
+                    << "(found: " << ibt->get_block_index() << ", "
+                    << ibt->get_in_block_index() << ": " << ibt->get_value()
+                    << ", expected: " << ibt_ref->get_block_index() << ", "
+                    << ibt_ref->get_in_block_index() << ": "
+                    << ibt->get_value() << ").";
             fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
         }
     }
@@ -664,27 +682,30 @@ void btod_select_test::test_4b(size_t n) throw(libtest::test_exception) {
 
     // Compute list
     ComparePolicy cmp;
-    typename btod_select_t::list_t btlist;
+    typename btod_select_t::list_type btlist;
     btod_select_t(bt, sym, cmp).perform(btlist, n);
 
     // Compute reference list
-    typename btod_select_t::list_t btlist_ref;
+    typename btod_select_t::list_type btlist_ref;
     btod_select_t(bt_ref, cmp).perform(btlist_ref, n);
 
     // Compare against reference
-    for (typename btod_select_t::list_t::const_iterator ibt = btlist.begin(),
+    for (typename btod_select_t::list_type::const_iterator ibt = btlist.begin(),
             ibt_ref = btlist_ref.begin();
             ibt != btlist.end(); ibt++, ibt_ref++) {
 
-        if (ibt->value != ibt_ref->value ||
-                ! ibt->bidx.equals(ibt_ref->bidx) ||
-                ! ibt->idx.equals(ibt_ref->idx)) {
+        if (ibt->get_value() != ibt_ref->get_value() ||
+                ! ibt->get_block_index().equals(ibt_ref->get_block_index()) ||
+                ! ibt->get_in_block_index().equals(
+                        ibt_ref->get_in_block_index())) {
 
             std::ostringstream oss;
             oss << "List element does not match reference "
-                    << "(found: " << ibt->bidx << ", " << ibt->idx
-                    << ": " << ibt->value << ", expected: " << ibt_ref->bidx
-                    << ", " << ibt_ref->idx << ": " << ibt->value << ").";
+                    << "(found: " << ibt->get_block_index() << ", "
+                    << ibt->get_in_block_index() << ": " << ibt->get_value()
+                    << ", expected: " << ibt_ref->get_block_index() << ", "
+                    << ibt_ref->get_in_block_index() << ": "
+                    << ibt->get_value() << ").";
             fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
         }
     }
@@ -744,27 +765,30 @@ void btod_select_test::test_4c(size_t n,
 
     // Compute list
     ComparePolicy cmp;
-    typename btod_select_t::list_t btlist;
+    typename btod_select_t::list_type btlist;
     btod_select_t(bt, sym, cmp).perform(btlist, n);
 
     // Compute reference list
-    typename btod_select_t::list_t btlist_ref;
+    typename btod_select_t::list_type btlist_ref;
     btod_select_t(bt_ref, cmp).perform(btlist_ref, n);
 
     // Compare against reference
-    for (typename btod_select_t::list_t::const_iterator ibt = btlist.begin(),
+    for (typename btod_select_t::list_type::const_iterator ibt = btlist.begin(),
             ibt_ref = btlist_ref.begin();
             ibt != btlist.end(); ibt++, ibt_ref++) {
 
-        if (ibt->value != ibt_ref->value ||
-                ! ibt->bidx.equals(ibt_ref->bidx) ||
-                ! ibt->idx.equals(ibt_ref->idx)) {
+        if (ibt->get_value() != ibt_ref->get_value() ||
+                ! ibt->get_block_index().equals(ibt_ref->get_block_index()) ||
+                ! ibt->get_in_block_index().equals(
+                        ibt_ref->get_in_block_index())) {
 
             std::ostringstream oss;
             oss << "List element does not match reference "
-                    << "(found: " << ibt->bidx << ", " << ibt->idx
-                    << ": " << ibt->value << ", expected: " << ibt_ref->bidx
-                    << ", " << ibt_ref->idx << ": " << ibt->value << ").";
+                    << "(found: " << ibt->get_block_index() << ", "
+                    << ibt->get_in_block_index() << ": " << ibt->get_value()
+                    << ", expected: " << ibt_ref->get_block_index() << ", "
+                    << ibt_ref->get_in_block_index() << ": "
+                    << ibt->get_value() << ").";
             fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
         }
     }
@@ -848,8 +872,7 @@ void btod_select_test::test_5(size_t n) throw(libtest::test_exception) {
             abs_index<2> ai(oa.get_abs_canonical_index(), bidims);
             dense_tensor_i<2, double> &ta = ca.req_block(ai.get_index()),
                     &tb = cb.req_block(ib);
-            tod_copy<2>(ta, tra.get_perm(), tra.get_scalar_tr().get_coeff()).
-                    perform(true, 1.0, tb);
+            tod_copy<2>(ta, tra).perform(true, tb);
 
             ca.ret_block(ai.get_index());
             cb.ret_block(ib);
@@ -858,27 +881,30 @@ void btod_select_test::test_5(size_t n) throw(libtest::test_exception) {
 
     // Compute list
     ComparePolicy cmp;
-    typename btod_select_t::list_t btlist;
+    typename btod_select_t::list_type btlist;
     btod_select_t(bt, sym, cmp).perform(btlist, n);
 
     // Compute reference list
-    typename btod_select_t::list_t btlist_ref;
+    typename btod_select_t::list_type btlist_ref;
     btod_select_t(bt_ref, cmp).perform(btlist_ref, n);
 
     // Compare against reference
-    for (typename btod_select_t::list_t::const_iterator ibt = btlist.begin(),
+    for (typename btod_select_t::list_type::const_iterator ibt = btlist.begin(),
             ibt_ref = btlist_ref.begin();
             ibt != btlist.end(); ibt++, ibt_ref++) {
 
-        if (ibt->value != ibt_ref->value ||
-                ! ibt->bidx.equals(ibt_ref->bidx) ||
-                ! ibt->idx.equals(ibt_ref->idx)) {
+        if (ibt->get_value() != ibt_ref->get_value() ||
+                ! ibt->get_block_index().equals(ibt_ref->get_block_index()) ||
+                ! ibt->get_in_block_index().equals(
+                        ibt_ref->get_in_block_index())) {
 
             std::ostringstream oss;
             oss << "List element does not match reference "
-                    << "(found: " << ibt->bidx << ", " << ibt->idx
-                    << ": " << ibt->value << ", expected: " << ibt_ref->bidx
-                    << ", " << ibt_ref->idx << ": " << ibt->value << ").";
+                    << "(found: " << ibt->get_block_index() << ", "
+                    << ibt->get_in_block_index() << ": " << ibt->get_value()
+                    << ", expected: " << ibt_ref->get_block_index() << ", "
+                    << ibt_ref->get_in_block_index() << ": "
+                    << ibt->get_value() << ").";
             fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
         }
     }

@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <libtensor/timings.h>
+#include <libtensor/core/noncopyable.h>
 #include "dense_tensor_i.h"
 
 namespace libtensor {
@@ -20,7 +21,7 @@ namespace libtensor {
     \ingroup libtensor_dense_tensor_tod
  **/
 template<size_t N>
-class tod_screen : public timings< tod_screen<N> > {
+class tod_screen : public timings< tod_screen<N> >, public noncopyable {
 public:
     static const char *k_clazz; //!< Class name
 
@@ -48,11 +49,6 @@ public:
         \return True if a match is found, false otherwise.
      **/
     bool perform_replace(dense_tensor_wr_i<N, double> &t);
-
-private:
-    tod_screen(const tod_screen&);
-    const tod_screen &operator=(const tod_screen&);
-
 };
 
 

@@ -163,7 +163,7 @@ void btod_import_raw_base<N, Alloc>::verify_nonzero_orbit(
         dense_tensor_i<N, double> &blk = ctrl.req_block(ai.get_index());
         dense_tensor<N, double, Alloc> tblk(blk.get_dims());
         tod_copy<N> (cblk, tr.get_perm(), tr.get_scalar_tr().get_coeff()).
-            perform(true, 1.0, tblk);
+            perform(true, tblk);
 
         tod_compare<N> cmp(blk, tblk, sym_thresh);
         if(!cmp.compare()) {

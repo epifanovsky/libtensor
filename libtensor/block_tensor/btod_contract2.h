@@ -4,7 +4,7 @@
 #include <libtensor/timings.h>
 #include <libtensor/core/contraction2.h>
 #include <libtensor/core/noncopyable.h>
-#include <libtensor/gen_block_tensor/impl/gen_bto_contract2_sym.h>
+#include <libtensor/gen_block_tensor/gen_bto_contract2.h>
 #include <libtensor/block_tensor/block_tensor_i.h>
 #include <libtensor/block_tensor/bto/additive_bto.h>
 #include <libtensor/block_tensor/btod/btod_traits.h>
@@ -47,14 +47,7 @@ public:
     typedef typename btod_traits::bti_traits bti_traits;
 
 private:
-    contraction2<N, M, K> m_contr; //!< Contraction
-    block_tensor_rd_i<NA, double> &m_bta; //!< First argument (A)
-    block_tensor_rd_i<NB, double> &m_btb; //!< Second argument (B)
-    gen_bto_contract2_sym<N, M, K, btod_traits> m_symc; //!< Symmetry of result (C)
-    dimensions<NA> m_bidimsa; //!< Block %index dims of A
-    dimensions<NB> m_bidimsb; //!< Block %index dims of B
-    dimensions<NC> m_bidimsc; //!< Block %index dims of the result
-    assignment_schedule<NC, double> m_sch; //!< Assignment schedule
+    gen_bto_contract2< N, M, K, btod_traits, btod_contract2<N, M, K> > m_gbto;
 
 public:
     /** \brief Initializes the contraction operation
@@ -69,27 +62,27 @@ public:
 
     /** \brief Virtual destructor
      **/
-    virtual ~btod_contract2();
+    virtual ~btod_contract2() { }
 
     /** \brief Returns the block index space of the result
      **/
     virtual const block_index_space<NC> &get_bis() const {
 
-        return m_symc.get_bisc();
+        return m_gbto.get_bis();
     }
 
     /** \brief Returns the symmetry of the result
      **/
     virtual const symmetry<N + M, double> &get_symmetry() const {
 
-        return m_symc.get_symc();
+        return m_gbto.get_symmetry();
     }
 
     /** \brief Returns the list of canonical non-zero blocks of the result
      **/
     virtual const assignment_schedule<N + M, double> &get_schedule() const {
 
-        return m_sch;
+        return m_gbto.get_schedule();
     }
 
     /** \brief Computes the contraction into an output stream
@@ -115,24 +108,6 @@ public:
         const index<NC> &i,
         const tensor_transf<NC, double> &tr,
         const double &c);
-
-private:
-    void make_schedule();
-
-    void align(const sequence<2 * (N + M + K), size_t> &conn,
-        permutation<N + K> &perma, permutation<M + K> &permb,
-        permutation<N + M> &permc);
-
-    void contract_block(
-        block_tensor_rd_i<N + K, double> &bta,
-        const orbit_list<N + K, double> &ola,
-        block_tensor_rd_i<M + K, double> &btb,
-        const orbit_list<M + K, double> &olb,
-        const index<NC> &idxc,
-        dense_tensor_i<NC, double> &blkc,
-        const tensor_transf<NC, double> &trc,
-        bool zero, double c);
-
 };
 
 

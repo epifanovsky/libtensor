@@ -1,5 +1,6 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/dense_tensor/tod_random.h>
 #include "../compare_ref.h"
 #include "tod_random_test.h"
@@ -34,7 +35,7 @@ void tod_random_test::perform() throw(libtest::test_exception) {
             "Two identical random number sequences.");
 
 
-    randr.perform(ta3,2.0);
+    tod_random<3>(2.0).perform(false, ta3);
     dense_tensor_ctrl<3,double> ctrla(ta3);
     const double *cptra=ctrla.req_const_dataptr();
     for (size_t i=0; i<ta3.get_dims().get_size(); i++ ) {

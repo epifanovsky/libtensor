@@ -1,10 +1,11 @@
 #ifndef LIBTENSOR_TOD_DIAG_IMPL_H
 #define LIBTENSOR_TOD_DIAG_IMPL_H
 
-#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include <libtensor/dense_tensor/tod_set.h>
+#include <libtensor/linalg/linalg.h>
 #include <libtensor/tod/bad_dimensions.h>
+#include "../dense_tensor_ctrl.h"
 #include "../tod_diag.h"
+#include "../tod_set.h"
 
 namespace libtensor {
 
@@ -25,9 +26,11 @@ template<size_t N, size_t M>
 tod_diag<N, M>::tod_diag(dense_tensor_rd_i<N, double> &t, const mask<N> &m,
     const tensor_transf<k_orderb, double> &tr) :
 
-    m_t(t), m_mask(m), m_tr(tr), m_dims(mk_dims(t.get_dims(), m_mask)) {
+    m_t(t), m_mask(m), m_perm(tr.get_perm()),
+    m_c(tr.get_scalar_tr().get_coeff()),
+    m_dims(mk_dims(t.get_dims(), m_mask)) {
 
-    m_dims.permute(tr.get_perm());
+    m_dims.permute(m_perm);
 }
 
 
@@ -44,7 +47,7 @@ void tod_diag<N, M>::perform(bool zero, dense_tensor_wr_i<k_orderb, double> &tb)
 #endif
 
     if(zero) tod_set<k_orderb>().perform(tb);
-    if(m_tr.get_scalar_tr().get_coeff() == 0.0) return;
+    if(m_c == 0.0) return;
 
     do_perform<op_daxpy>(tb);
 }
@@ -138,7 +141,7 @@ void tod_diag<N, M>::build_list(loop_list_t &list,
     //
     sequence<k_orderb, size_t> ib(0);
     for(size_t i = 0; i < k_orderb; i++) ib[i] = i;
-    permutation<k_orderb> pinv(m_tr.get_perm(), true);
+    permutation<k_orderb> pinv(m_perm, true);
     pinv.apply(ib);
 
     //  Loop over the indexes and build the list
@@ -192,8 +195,7 @@ void tod_diag<N, M>::build_list(loop_list_t &list,
             //  Make the loop with incb the last
             //
             if(incb == 1 && poscore == list.end()) {
-                it->m_op = new CoreOp(len, inca, incb,
-                        m_tr.get_scalar_tr().get_coeff());
+                it->m_op = new CoreOp(len, inca, incb, m_c);
                 poscore = it;
             } else {
                 it->m_op = new op_loop(len, inca, incb);

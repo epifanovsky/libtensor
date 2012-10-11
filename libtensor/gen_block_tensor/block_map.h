@@ -21,9 +21,10 @@ namespace libtensor {
 
     \ingroup libtensor_gen_block_tensor
  **/
-template<size_t N, typename T, typename BtTraits>
+template<size_t N, typename BtTraits>
 class block_map : public immutable {
 public:
+    typedef typename BtTraits::element_type element_type;
     typedef typename BtTraits::allocator_type allocator_type;
     typedef typename BtTraits::template block_type<N>::type block_type;
     typedef typename BtTraits::template block_factory_type<N>::type

@@ -1,5 +1,5 @@
 #ifndef LIBTENSOR_CONTRACTION2_H
-#define    LIBTENSOR_CONTRACTION2_H
+#define LIBTENSOR_CONTRACTION2_H
 
 #include <cstdio>
 #include "../defs.h"

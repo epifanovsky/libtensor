@@ -50,7 +50,7 @@ public:
 
     /** \brief Returns the block %tensor
      **/
-    btensor_i<N, T> &get_btensor() {
+    btensor_rd_i<N, T> &get_btensor() {
         return m_bt;
     }
 

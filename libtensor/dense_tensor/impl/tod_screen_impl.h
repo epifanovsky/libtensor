@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_TOD_SCREEN_IMPL_H
 #define LIBTENSOR_TOD_SCREEN_IMPL_H
 
-#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
+#include "../dense_tensor_ctrl.h"
 #include "../tod_screen.h"
 
 namespace libtensor {

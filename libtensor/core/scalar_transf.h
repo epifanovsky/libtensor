@@ -64,10 +64,13 @@ class scalar_transf;
     It needs to be specialized for each %tensor element type. Any
     specialization of this class needs to provide:
     - the default constructor that creates an empty sum
-      \c scalar_transf();
+      \c scalar_transf_sum();
     - the function
       \c void add(const scalar_transf<T> &tr);
       to add further scalar transformations to the sum
+    - the function
+      \c scalar_transf<T> get_transf() const;
+      to return the resulting scalar transformation
     - the function
       \c void apply(T &x) const;
       to apply the sum of scalar transformations to an element.

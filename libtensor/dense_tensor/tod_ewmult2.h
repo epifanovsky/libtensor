@@ -2,6 +2,9 @@
 #define LIBTENSOR_TOD_EWMULT2_H
 
 #include <libtensor/timings.h>
+#include <libtensor/core/noncopyable.h>
+#include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/core/tensor_transf.h>
 #include "dense_tensor_i.h"
 
 namespace libtensor {
@@ -41,7 +44,9 @@ namespace libtensor {
     \ingroup libtensor_dense_tensor_tod
  **/
 template<size_t N, size_t M, size_t K>
-class tod_ewmult2 : public timings< tod_ewmult2<N, M, K> > {
+class tod_ewmult2 :
+    public timings< tod_ewmult2<N, M, K> >,
+    public noncopyable {
 public:
     static const char *k_clazz; //!< Class name
 
@@ -51,6 +56,9 @@ public:
         k_orderb = M + K, //!< Order of second argument (B)
         k_orderc = N + M + K //!< Order of result (C)
     };
+
+public:
+    typedef tensor_transf<k_orderc, double> tensor_transf_type;
 
 private:
     dense_tensor_rd_i<k_ordera, double> &m_ta; //!< First argument (A)
@@ -62,6 +70,19 @@ private:
     dimensions<k_orderc> m_dimsc; //!< Result dimensions
 
 public:
+    /** \brief Initializes the operation
+        \param ta First argument (A).
+        \param tra Tensor transformation of A.
+        \param tb Second argument (B).
+        \param trb Tensor transformation of B.
+        \param trc Tensor transformation of result (C).
+     **/
+    tod_ewmult2(dense_tensor_rd_i<k_ordera, double> &ta,
+        const tensor_transf<k_ordera, double> &tra,
+        dense_tensor_rd_i<k_orderb, double> &tb,
+        const tensor_transf<k_orderb, double> &trb,
+        const tensor_transf_type &trc = tensor_transf_type());
+
     /** \brief Initializes the operation
         \param ta First argument (A).
         \param tb Second argument (B).
@@ -94,10 +115,9 @@ public:
 
     /** \brief Performs the operation
         \param zero Zero output before computing.
-        \param d Scaling factor.
         \param tc Output tensor C.
      **/
-    void perform(bool zero, double d, dense_tensor_wr_i<k_orderc, double> &tc);
+    void perform(bool zero, dense_tensor_wr_i<k_orderc, double> &tc);
 
 private:
     /**    \brief Computes the dimensions of the result tensor

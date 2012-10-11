@@ -3,6 +3,8 @@
 
 #include <list>
 #include <libtensor/timings.h>
+#include <libtensor/core/noncopyable.h>
+#include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/dense_tensor/dense_tensor_i.h>
 #include <libtensor/tod/contraction2.h>
 #include <libtensor/kernels/loop_list_node.h>
@@ -34,7 +36,9 @@ namespace libtensor {
     \ingroup libtensor_dense_tensor_tod
  **/
 template<size_t N, size_t M, size_t K>
-class tod_contract2 : public timings< tod_contract2<N, M, K> > {
+class tod_contract2 :
+    public timings< tod_contract2<N, M, K> >,
+    public noncopyable {
 public:
     static const char *k_clazz;
 
@@ -48,14 +52,14 @@ public:
 private:
     struct args {
         contraction2<N, M, K> contr; //!< Contraction
-        dense_tensor_i<k_ordera, double> &ta; //!< First tensor (A)
-        dense_tensor_i<k_orderb, double> &tb; //!< Second tensor (B)
+        dense_tensor_rd_i<k_ordera, double> &ta; //!< First tensor (A)
+        dense_tensor_rd_i<k_orderb, double> &tb; //!< Second tensor (B)
         double d; //!< Scaling factor
 
         args(
             const contraction2<N, M, K> &contr_,
-            dense_tensor_i<k_ordera, double> &ta_,
-            dense_tensor_i<k_orderb, double> &tb_,
+            dense_tensor_rd_i<k_ordera, double> &ta_,
+            dense_tensor_rd_i<k_orderb, double> &tb_,
             double d_) :
             contr(contr_), ta(ta_), tb(tb_), d(d_) { }
     };
@@ -102,14 +106,46 @@ public:
     /** \brief Initializes the contraction operation
         \param contr Contraction.
         \param ta First contracted tensor A.
+        \param ka Scalar transformation of A.
+        \param tb Second contracted tensor B.
+        \param kb Scalar transformation of B.
+        \param kc Scalar transformation of result (default 1.0).
+     **/
+    tod_contract2(
+        const contraction2<N, M, K> &contr,
+        dense_tensor_rd_i<k_ordera, double> &ta,
+        const scalar_transf<double> &ka,
+        dense_tensor_rd_i<k_orderb, double> &tb,
+        const scalar_transf<double> &kb,
+        const scalar_transf<double> &kc = scalar_transf<double>());
+
+    /** \brief Initializes the contraction operation
+        \param contr Contraction.
+        \param ta First contracted tensor A.
         \param tb Second contracted tensor B.
         \param d Scaling factor d (default 1.0).
      **/
     tod_contract2(
         const contraction2<N, M, K> &contr,
-        dense_tensor_i<k_ordera, double> &ta,
-        dense_tensor_i<k_orderb, double> &tb,
+        dense_tensor_rd_i<k_ordera, double> &ta,
+        dense_tensor_rd_i<k_orderb, double> &tb,
         double d = 1.0);
+
+    /** \brief Adds a set of arguments to the argument list
+        \param contr Contraction.
+        \param ta First contracted tensor A.
+        \param ka Scalar transformation of A.
+        \param tb Second contracted tensor B.
+        \param kb Scalar transformation of B.
+        \param kc Scalar transformation of result (C).
+     **/
+    void add_args(
+        const contraction2<N, M, K> &contr,
+        dense_tensor_rd_i<k_ordera, double> &ta,
+        const scalar_transf<double> &ka,
+        dense_tensor_rd_i<k_orderb, double> &tb,
+        const scalar_transf<double> &kb,
+        const scalar_transf<double> &kc);
 
     /** \brief Adds a set of arguments to the argument list
         \param contr Contraction.
@@ -119,8 +155,8 @@ public:
      **/
     void add_args(
         const contraction2<N, M, K> &contr,
-        dense_tensor_i<k_ordera, double> &ta,
-        dense_tensor_i<k_orderb, double> &tb,
+        dense_tensor_rd_i<k_ordera, double> &ta,
+        dense_tensor_rd_i<k_orderb, double> &tb,
         double d);
 
     /** \brief Prefetches the arguments
@@ -132,19 +168,15 @@ public:
         \param d Scaling factor.
         \param tc Output tensor.
      **/
-    void perform(bool zero, double d, dense_tensor_i<k_orderc, double> &tc);
+    void perform(bool zero, dense_tensor_wr_i<k_orderc, double> &tc);
 
 private:
     void align(const sequence<2 * (N + M + K), size_t> &conn,
         permutation<N + K> &perma, permutation<M + K> &permb,
         permutation<N + M> &permc);
 
-    void perform_internal(aligned_args &ar, double d, double *pc,
+    void perform_internal(aligned_args &ar, double *pc,
         const dimensions<k_orderc> &dimsc);
-
-private:
-    tod_contract2(const tod_contract2&);
-
 };
 
 

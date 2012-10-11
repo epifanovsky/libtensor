@@ -42,7 +42,7 @@ void to_contract2_dims_test::test_ij_i_j(size_t ni, size_t nj)
     contraction2<1, 1, 0> contr;
 
     to_contract2_dims<1, 1, 0> tocd(contr, dimsa, dimsb);
-    if(!tocd.get_dimsc().equals(dimsc)) {
+    if(!tocd.get_dims().equals(dimsc)) {
         fail_test(tn.c_str(), __FILE__, __LINE__, "Bad dimsc.");
     }
 
@@ -78,7 +78,7 @@ void to_contract2_dims_test::test_ij_j_i(size_t ni, size_t nj)
     contraction2<1, 1, 0> contr(permc);
 
     to_contract2_dims<1, 1, 0> tocd(contr, dimsa, dimsb);
-    if(!tocd.get_dimsc().equals(dimsc)) {
+    if(!tocd.get_dims().equals(dimsc)) {
         fail_test(tn.c_str(), __FILE__, __LINE__, "Bad dimsc.");
     }
 
@@ -114,7 +114,7 @@ void to_contract2_dims_test::test_ij_ik_jk(size_t ni, size_t nj, size_t nk)
     contr.contract(1, 1);
 
     to_contract2_dims<1, 1, 1> tocd(contr, dimsa, dimsb);
-    if(!tocd.get_dimsc().equals(dimsc)) {
+    if(!tocd.get_dims().equals(dimsc)) {
         fail_test(tn.c_str(), __FILE__, __LINE__, "Bad dimsc.");
     }
 
