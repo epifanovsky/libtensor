@@ -51,7 +51,10 @@ public:
 private:
     contraction2<N, M, K> m_contr; //!< Contraction
     gen_block_tensor_rd_i<NA, bti_traits> &m_bta; //!< First argument (A)
+    scalar_transf<element_type> m_ka; //!< Scalar transform of A.
     gen_block_tensor_rd_i<NB, bti_traits> &m_btb; //!< Second argument (B)
+    scalar_transf<element_type> m_kb; //!< Scalar transform of B.
+    scalar_transf<element_type> m_kc; //!< Scalar transform of the result.
     gen_bto_contract2_sym<N, M, K, Traits> m_symc; //!< Symmetry of the result
 
     dimensions<NA> m_bidimsa; //!< Block %index dims of A
@@ -59,20 +62,22 @@ private:
     dimensions<NC> m_bidimsc; //!< Block %index dims of the result
     assignment_schedule<NC, element_type> m_sch; //!< Assignment schedule
 
-    size_t m_batch_size; //!< Batch size to use
-
 public:
     /** \brief Initializes the contraction operation
         \param contr Contraction.
         \param bta Block %tensor A (first argument).
+        \param ka Scalar transform of A.
         \param btb Block %tensor B (second argument).
-        \param batch_size Batch size.
+        \param kb Scalar transform of B.
+        \param kc Scalar transform of the result (C).
     **/
     gen_bto_contract2(
         const contraction2<N, M, K> &contr,
         gen_block_tensor_rd_i<NA, bti_traits> &bta,
+        const scalar_transf<element_type> &ka,
         gen_block_tensor_rd_i<NB, bti_traits> &btb,
-        size_t batch_size = 4096);
+        const scalar_transf<element_type> &kb,
+        const scalar_transf<element_type> &kc);
 
     /** \brief Returns the block index space of the result
      **/

@@ -79,10 +79,14 @@ template<size_t N, size_t M, size_t K, typename Traits, typename Timed>
 gen_bto_contract2_batch<N, M, K, Traits, Timed>::gen_bto_contract2_batch(
     const contraction2<N, M, K> &contr,
     gen_block_tensor_rd_i<NA, bti_traits> &bta,
+    const scalar_transf<element_type> &ka,
     gen_block_tensor_rd_i<NB, bti_traits> &btb,
-    const block_index_space<NC> &bisc) :
+    const scalar_transf<element_type> &kb,
+    const block_index_space<NC> &bisc,
+    const scalar_transf<element_type> &kc) :
 
-    m_contr(contr), m_bta(bta), m_btb(btb), m_bisc(bisc) {
+    m_contr(contr), m_bta(bta), m_ka(ka), m_btb(btb), m_kb(kb),
+    m_bisc(bisc), m_kc(kc) {
 
 }
 
@@ -109,8 +113,8 @@ void gen_bto_contract2_batch<N, M, K, Traits, Timed>::perform(
         const symmetry<NA, element_type> &syma = ca.req_const_symmetry();
         const symmetry<NB, element_type> &symb = cb.req_const_symmetry();
 
-        gen_bto_contract2_block<N, M, K, Traits, Timed> bto(m_contr, m_bta,
-            syma, m_btb, symb, m_bisc);
+        gen_bto_contract2_block<N, M, K, Traits, Timed> bto(m_contr,
+                m_bta, syma, m_ka, m_btb, symb, m_kb, m_bisc, m_kc);
         gen_bto_contract2_task_iterator<N, M, K, Traits, Timed> ti(bto,
                 btc, blst, out);
         gen_bto_contract2_task_observer<N, M, K> to;

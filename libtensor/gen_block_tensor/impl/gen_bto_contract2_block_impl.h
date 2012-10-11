@@ -12,14 +12,19 @@ gen_bto_contract2_block<N, M, K, Traits, Timed>::gen_bto_contract2_block(
     const contraction2<N, M, K> &contr,
     gen_block_tensor_rd_i<NA, bti_traits> &bta,
     const symmetry<NA, element_type> &syma,
+    const scalar_transf<element_type> &ka,
     gen_block_tensor_rd_i<NB, bti_traits> &btb,
     const symmetry<NB, element_type> &symb,
-    const block_index_space<NC> &bisc) :
+    const scalar_transf<element_type> &kb,
+    const block_index_space<NC> &bisc,
+    const scalar_transf<element_type> &kc) :
 
     m_contr(contr),
-    m_bta(bta), m_bidimsa(m_bta.get_bis().get_block_index_dims()), m_ola(syma),
-    m_btb(btb), m_bidimsb(m_btb.get_bis().get_block_index_dims()), m_olb(symb),
-    m_bidimsc(bisc.get_block_index_dims()) {
+    m_bta(bta), m_bidimsa(m_bta.get_bis().get_block_index_dims()),
+    m_ola(syma), m_ka(ka),
+    m_btb(btb), m_bidimsb(m_btb.get_bis().get_block_index_dims()),
+    m_olb(symb), m_kb(kb),
+    m_bidimsc(bisc.get_block_index_dims()), m_kc(kc) {
 
 }
 
@@ -91,15 +96,19 @@ void gen_bto_contract2_block<N, M, K, Traits, Timed>::compute_block(
         contr.permute_b(trbinv.get_perm());
         contr.permute_c(trc.get_perm());
 
-        element_type kc = trainv.get_scalar_tr().get_coeff() *
-            trbinv.get_scalar_tr().get_coeff() *
-            trc.get_scalar_tr().get_coeff();
+        scalar_transf<element_type> ka(trainv.get_scalar_tr());
+        scalar_transf<element_type> kb(trbinv.get_scalar_tr());
+        scalar_transf<element_type> kc(m_kc);
+
+        ka.transform(m_ka);
+        kb.transform(m_kb);
+        kc.transform(trc.get_scalar_tr());
 
         if(op.get() == 0) {
             op = std::auto_ptr<to_contract2>(
-                new to_contract2(contr, blka, blkb, kc));
+                new to_contract2(contr, blka, ka, blkb, kb, kc));
         } else {
-            op->add_args(contr, blka, blkb, kc);
+            op->add_args(contr, blka, ka, blkb, kb, kc);
         }
     }
 

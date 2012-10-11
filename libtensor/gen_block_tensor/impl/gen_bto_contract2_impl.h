@@ -21,15 +21,17 @@ template<size_t N, size_t M, size_t K, typename Traits, typename Timed>
 gen_bto_contract2<N, M, K, Traits, Timed>::gen_bto_contract2(
     const contraction2<N, M, K> &contr,
     gen_block_tensor_rd_i<NA, bti_traits> &bta,
+    const scalar_transf<element_type> &ka,
     gen_block_tensor_rd_i<NB, bti_traits> &btb,
-    size_t batch_size) :
+    const scalar_transf<element_type> &kb,
+    const scalar_transf<element_type> &kc) :
 
-    m_contr(contr), m_bta(bta), m_btb(btb),
-    m_symc(contr, bta, btb),
+    m_contr(contr), m_bta(bta), m_ka(ka), m_btb(btb), m_kb(kb),
+    m_kc(kc), m_symc(contr, bta, btb),
     m_bidimsa(m_bta.get_bis().get_block_index_dims()),
     m_bidimsb(m_btb.get_bis().get_block_index_dims()),
     m_bidimsc(m_symc.get_bisc().get_block_index_dims()),
-    m_sch(m_bidimsc), m_batch_size(batch_size) {
+    m_sch(m_bidimsc) {
 
     make_schedule();
 }
@@ -87,10 +89,11 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
 
         //  Number and size of batches in A, B and C
 
+        size_t batch_size = 4096;
         size_t nbata, nbatb, nbatc, batsza, batszb, batszc;
-        nbata = (nblka + m_batch_size - 1) / m_batch_size;
-        nbatb = (nblkb + m_batch_size - 1) / m_batch_size;
-        nbatc = (nblkc + m_batch_size - 1) / m_batch_size;
+        nbata = (nblka + batch_size - 1) / batch_size;
+        nbatb = (nblkb + batch_size - 1) / batch_size;
+        nbatc = (nblkc + batch_size - 1) / batch_size;
         batsza = nbata > 0 ? (nblka + nbata - 1) / nbata : 1;
         batszb = nbatb > 0 ? (nblkb + nbatb - 1) / nbatb : 1;
         batszc = nbatc > 0 ? (nblkc + nbatc - 1) / nbatc : 1;
@@ -137,8 +140,9 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
 
         //  Batching loops
 
-        dimensions<NC> bidimsc = m_symc.get_bisc().get_block_index_dims();
-        dimensions<NC> bidimsct = bisct.get_block_index_dims();
+        dimensions<NC> bidimsc(m_symc.get_bisc().get_block_index_dims());
+        dimensions<NC> bidimsct(bisct.get_block_index_dims());
+
         std::vector<size_t> batcha, batchb, batchc1, batchc2;
         batcha.reserve(batsza);
         batchb.reserve(batszb);
@@ -206,8 +210,8 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
                     }
                 }
 
-                bool use_orig_b = (first_batch_b && iob == olb.end() &&
-                    permb.is_identity());
+                bool use_orig_b = (first_batch_b &&
+                        iob == olb.end() && permb.is_identity());
                 first_batch_b = false;
 
                 if(!use_orig_b) {
@@ -231,7 +235,7 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
                     batchc2.clear();
 
                     for(; ibc != m_sch.end() && batchc1.size() < batszc;
-                        ++ibc) {
+                            ++ibc) {
                         index<NC> ic;
                         abs_index<NC>::get_index(m_sch.get_abs_index(ibc),
                             bidimsc, ic);
@@ -245,7 +249,7 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
                     //  in some cases, e.g. self-contraction
                     gen_bto_aux_copy<NC, Traits> ctcout(symct, btct);
                     gen_bto_contract2_batch<N, M, K, Traits, Timed> bto(contr,
-                            bta, btb, symct.get_bis());
+                            bta, m_ka, btb, m_kb, symct.get_bis(), m_kc);
                     bto.perform(batchc1, ctcout);
 
                     gen_bto_contract2::start_timer("copy_c");
@@ -291,7 +295,7 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::compute_block(
     const symmetry<NB, element_type> &symb = cb.req_const_symmetry();
 
     gen_bto_contract2_block<N, M, K, Traits, Timed> bto(m_contr, m_bta,
-        syma, m_btb, symb, m_symc.get_bisc());
+        syma, m_ka, m_btb, symb, m_kb, m_symc.get_bisc(), m_kc);
 
     bto.compute_block(zero, idxc, trc, blkc);
 

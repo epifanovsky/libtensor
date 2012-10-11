@@ -49,21 +49,30 @@ public:
 private:
     contraction2<N, M, K> m_contr; //!< Contraction
     gen_block_tensor_rd_i<NA, bti_traits> &m_bta; //!< First block tensor (A)
+    scalar_transf<element_type> m_ka; //!< Scalar transformation of A
     gen_block_tensor_rd_i<NB, bti_traits> &m_btb; //!< Second block tensor (B)
+    scalar_transf<element_type> m_kb; //!< Scalar transformation of B
     block_index_space<NC> m_bisc; //!< Block index space of result (C)
+    scalar_transf<element_type> m_kc; //!< Scalar transformation of C
 
 public:
     /** \brief Initializes the contraction operation
         \param contr Contraction.
         \param bta First block tensor (A).
+        \param ka Scalar transform of A.
         \param btb Second block tensor (B).
+        \param kb Scalar transform of B.
         \param bisc Block index space of result (C).
+        \param kc Scalar transform of C.
      **/
     gen_bto_contract2_batch(
         const contraction2<N, M, K> &contr,
         gen_block_tensor_rd_i<NA, bti_traits> &bta,
+        const scalar_transf<element_type> &ka,
         gen_block_tensor_rd_i<NB, bti_traits> &btb,
-        const block_index_space<NC> &bisc);
+        const scalar_transf<element_type> &kb,
+        const block_index_space<NC> &bisc,
+        const scalar_transf<element_type> &kc);
 
     /** \brief Computes and writes the blocks of the result to an output stream
         \param blst List of absolute indexes of canonical blocks to be computed.

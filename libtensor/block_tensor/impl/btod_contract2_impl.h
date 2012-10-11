@@ -23,7 +23,10 @@ btod_contract2<N, M, K>::btod_contract2(
     block_tensor_rd_i<NA, double> &bta,
     block_tensor_rd_i<NB, double> &btb) :
 
-    m_gbto(contr, bta, btb) {
+    m_gbto(contr,
+            bta, scalar_transf<double>(),
+            btb, scalar_transf<double>(),
+            scalar_transf<double>()) {
 
 }
 
