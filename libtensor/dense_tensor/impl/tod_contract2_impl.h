@@ -29,12 +29,14 @@ template<size_t N, size_t M, size_t K>
 tod_contract2<N, M, K>::tod_contract2(
     const contraction2<N, M, K> &contr,
     dense_tensor_rd_i<k_ordera, double> &ta,
+    const scalar_transf<double> &ka,
     dense_tensor_rd_i<k_orderb, double> &tb,
-    const scalar_transf<double> &d) :
+    const scalar_transf<double> &kb,
+    const scalar_transf<double> &kc) :
 
     m_dimsc(contr, ta.get_dims(), tb.get_dims()) {
 
-    add_args(contr, ta, tb, d);
+    add_args(contr, ta, ka, tb, kb, kc);
 }
 
 
@@ -55,10 +57,13 @@ template<size_t N, size_t M, size_t K>
 inline void tod_contract2<N, M, K>::add_args(
     const contraction2<N, M, K> &contr,
     dense_tensor_rd_i<k_ordera, double> &ta,
+    const scalar_transf<double> &ka,
     dense_tensor_rd_i<k_orderb, double> &tb,
-    const scalar_transf<double> &d) {
+    const scalar_transf<double> &kb,
+    const scalar_transf<double> &kc) {
 
-    add_args(contr, ta, tb, d.get_coeff());
+    double d = ka.get_coeff() * kb.get_coeff() * kc.get_coeff();
+    add_args(contr, ta, tb, d);
 }
 
 

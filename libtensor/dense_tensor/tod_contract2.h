@@ -106,6 +106,22 @@ public:
     /** \brief Initializes the contraction operation
         \param contr Contraction.
         \param ta First contracted tensor A.
+        \param ka Scalar transformation of A.
+        \param tb Second contracted tensor B.
+        \param kb Scalar transformation of B.
+        \param kc Scalar transformation of result (default 1.0).
+     **/
+    tod_contract2(
+        const contraction2<N, M, K> &contr,
+        dense_tensor_rd_i<k_ordera, double> &ta,
+        const scalar_transf<double> &ka,
+        dense_tensor_rd_i<k_orderb, double> &tb,
+        const scalar_transf<double> &kb,
+        const scalar_transf<double> &kc = scalar_transf<double>());
+
+    /** \brief Initializes the contraction operation
+        \param contr Contraction.
+        \param ta First contracted tensor A.
         \param tb Second contracted tensor B.
         \param d Scaling factor d (default 1.0).
      **/
@@ -113,31 +129,23 @@ public:
         const contraction2<N, M, K> &contr,
         dense_tensor_rd_i<k_ordera, double> &ta,
         dense_tensor_rd_i<k_orderb, double> &tb,
-        const scalar_transf<double> &d = scalar_transf<double>());
-
-    /** \brief Initializes the contraction operation
-        \param contr Contraction.
-        \param ta First contracted tensor A.
-        \param tb Second contracted tensor B.
-        \param d Scaling factor d.
-     **/
-    tod_contract2(
-        const contraction2<N, M, K> &contr,
-        dense_tensor_rd_i<k_ordera, double> &ta,
-        dense_tensor_rd_i<k_orderb, double> &tb,
-        double d);
+        double d = 1.0);
 
     /** \brief Adds a set of arguments to the argument list
         \param contr Contraction.
         \param ta First contracted tensor A.
+        \param ka Scalar transformation of A.
         \param tb Second contracted tensor B.
-        \param d Scaling factor d.
+        \param kb Scalar transformation of B.
+        \param kc Scalar transformation of result (C).
      **/
     void add_args(
         const contraction2<N, M, K> &contr,
         dense_tensor_rd_i<k_ordera, double> &ta,
+        const scalar_transf<double> &ka,
         dense_tensor_rd_i<k_orderb, double> &tb,
-        const scalar_transf<double> &d);
+        const scalar_transf<double> &kb,
+        const scalar_transf<double> &kc);
 
     /** \brief Adds a set of arguments to the argument list
         \param contr Contraction.
