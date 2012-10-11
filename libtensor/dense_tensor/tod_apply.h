@@ -35,7 +35,6 @@ namespace libtensor {
  **/
 template<size_t N, typename Functor>
 class tod_apply :
-    public loop_list_apply<Functor>,
     public timings< tod_apply<N, Functor> >,
     public noncopyable {
 

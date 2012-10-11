@@ -1,11 +1,60 @@
 #ifndef LIBTENSOR_TOD_APPLY_IMPL_H
 #define LIBTENSOR_TOD_APPLY_IMPL_H
 
+#include <libtensor/kernels/kernel_base.h>
+#include <libtensor/kernels/loop_list_runner.h>
+#include <libtensor/linalg/linalg.h>
 #include <libtensor/tod/bad_dimensions.h>
 #include "../dense_tensor_ctrl.h"
 #include "../tod_apply.h"
 
 namespace libtensor {
+
+
+template<typename Functor>
+class kern_apply : public kernel_base<linalg, 1, 1> {
+public:
+    static const char *k_clazz; //!< Kernel name
+
+private:
+    Functor *m_fn; //!< Functor
+    double m_c1, m_c2;
+
+public:
+    virtual ~kern_apply() { }
+
+    virtual const char *get_name() const {
+        return k_clazz;
+    }
+
+    virtual void run(void *, const loop_registers<1, 1> &r);
+
+    static kernel_base<linalg, 1, 1> *match(Functor &fn,
+            double c1, double c2, list_t &in, list_t &out);
+};
+
+
+template<typename Functor>
+class kern_applyadd : public kernel_base<linalg, 1, 1> {
+public:
+    static const char *k_clazz; //!< Kernel name
+
+private:
+    Functor *m_fn; //!< Functor
+    double m_c1, m_c2;
+
+public:
+    virtual ~kern_applyadd() { }
+
+    virtual const char *get_name() const {
+        return k_clazz;
+    }
+
+    virtual void run(void *, const loop_registers<1, 1> &r);
+
+    static kernel_base<linalg, 1, 1> *match(Functor &fn,
+            double c1, double c2, list_t &in, list_t &out);
+};
 
 
 template<size_t N, typename Functor>
@@ -57,10 +106,6 @@ void tod_apply<N, Functor>::perform(
     }
     if(! zero && m_c2 == 0.0) return;
 
-    typedef typename loop_list_apply<Functor>::list_t list_t;
-    typedef typename loop_list_apply<Functor>::registers registers_t;
-    typedef typename loop_list_apply<Functor>::node node_t;
-
     tod_apply<N, Functor>::start_timer();
 
     try {
@@ -73,19 +118,45 @@ void tod_apply<N, Functor>::perform(
     const dimensions<N> &dimsa = m_ta.get_dims();
     const dimensions<N> &dimsb = tb.get_dims();
 
-    list_t loop;
-    build_loop(loop, dimsa, m_permb, dimsb);
+    sequence<N, size_t> seqa;
+    for(register size_t i = 0; i < N; i++) seqa[i] = i;
+    m_permb.apply(seqa);
+
+
+    std::list< loop_list_node<1, 1> > loop_in, loop_out;
+    typename std::list< loop_list_node<1, 1> >::iterator inode =
+            loop_in.end();
+
+    for(size_t idxb = 0; idxb < N;) {
+        size_t len = 1;
+        size_t idxa = seqa[idxb];
+        do {
+            len *= dimsa.get_dim(idxa);
+            idxa++; idxb++;
+        } while(idxb < N && seqa[idxb] == idxa);
+
+        inode = loop_in.insert(loop_in.end(), loop_list_node<1, 1>(len));
+        inode->stepa(0) = dimsa.get_increment(idxa - 1);
+        inode->stepb(0) = dimsb.get_increment(idxb - 1);
+    }
 
     const double *pa = ca.req_const_dataptr();
     double *pb = cb.req_dataptr();
 
-    registers_t r;
+    loop_registers<1, 1> r;
     r.m_ptra[0] = pa;
     r.m_ptrb[0] = pb;
     r.m_ptra_end[0] = pa + dimsa.get_size();
     r.m_ptrb_end[0] = pb + dimsb.get_size();
 
-    loop_list_apply<Functor>::run_loop(loop, r, m_fn, m_c2, m_c1, ! zero);
+    {
+        std::auto_ptr< kernel_base<linalg, 1, 1> > kern(zero ?
+            kern_apply<Functor>::match(m_fn, m_c1, m_c2, loop_in, loop_out) :
+            kern_applyadd<Functor>::match(m_fn, m_c1, m_c2, loop_in, loop_out));
+        tod_apply<N, Functor>::start_timer(kern->get_name());
+        loop_list_runner<linalg, 1, 1>(loop_in).run(0, r, *kern);
+        tod_apply<N, Functor>::stop_timer(kern->get_name());
+    }
 
     ca.ret_const_dataptr(pa);
     cb.ret_dataptr(pb);
@@ -108,37 +179,56 @@ dimensions<N> tod_apply<N, Functor>::mk_dimsb(dense_tensor_rd_i<N, double> &ta,
 }
 
 
-template<size_t N, typename Functor>
-void tod_apply<N, Functor>::build_loop(
-    typename loop_list_apply<Functor>::list_t &loop,
-    const dimensions<N> &dimsa, const permutation<N> &perma,
-    const dimensions<N> &dimsb) {
+template<typename Functor>
+const char *kern_apply<Functor>::k_clazz = "kern_apply";
 
-    typedef typename loop_list_apply<Functor>::iterator_t iterator_t;
-    typedef typename loop_list_apply<Functor>::node node_t;
 
-    sequence<N, size_t> map;
-    for(register size_t i = 0; i < N; i++) map[i] = i;
-    perma.apply(map);
+template<typename Functor>
+void kern_apply<Functor>::run(void *, const loop_registers<1, 1> &r) {
 
-    //
-    //    Go over indexes in B and connect them with indexes in A
-    //    trying to glue together consecutive indexes
-    //
-    for(size_t idxb = 0; idxb < N;) {
-        size_t len = 1;
-        size_t idxa = map[idxb];
-        do {
-            len *= dimsa.get_dim(idxa);
-            idxa++; idxb++;
-        } while(idxb < N && map[idxb] == idxa);
-
-        iterator_t inode = loop.insert(loop.end(), node_t(len));
-        inode->stepa(0) = dimsa.get_increment(idxa - 1);
-        inode->stepb(0) = dimsb.get_increment(idxb - 1);
-    }
+    r.m_ptrb[0][0] = m_c2 * (*m_fn)(m_c1 * r.m_ptra[0][0]);
 }
 
+
+template<typename Functor>
+kernel_base<linalg, 1, 1> *kern_apply<Functor>::match(Functor &fn,
+        double c1, double c2, list_t &in, list_t &out) {
+
+    kernel_base<linalg, 1, 1> *kern = 0;
+
+    kern_apply zz;
+    zz.m_fn = &fn;
+    zz.m_c1 = c1;
+    zz.m_c2 = c2;
+
+    return new kern_apply(zz);
+}
+
+
+template<typename Functor>
+const char *kern_applyadd<Functor>::k_clazz = "kern_apply";
+
+
+template<typename Functor>
+void kern_applyadd<Functor>::run(void *, const loop_registers<1, 1> &r) {
+
+    r.m_ptrb[0][0] = r.m_ptrb[0][0] + m_c2 * (*m_fn)(m_c1 * r.m_ptra[0][0]);
+}
+
+
+template<typename Functor>
+kernel_base<linalg, 1, 1> *kern_applyadd<Functor>::match(Functor &fn,
+        double c1, double c2, list_t &in, list_t &out) {
+
+    kernel_base<linalg, 1, 1> *kern = 0;
+
+    kern_applyadd zz;
+    zz.m_fn = &fn;
+    zz.m_c1 = c1;
+    zz.m_c2 = c2;
+
+    return new kern_applyadd(zz);
+}
 
 } // namespace libtensor
 
