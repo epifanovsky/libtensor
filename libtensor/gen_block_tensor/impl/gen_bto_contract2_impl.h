@@ -30,10 +30,7 @@ gen_bto_contract2<N, M, K, Traits, Timed>::gen_bto_contract2(
 
     m_contr(contr), m_bta(bta), m_ka(ka), m_btb(btb), m_kb(kb),
     m_kc(kc), m_symc(contr, bta, btb),
-    m_bidimsa(m_bta.get_bis().get_block_index_dims()),
-    m_bidimsb(m_btb.get_bis().get_block_index_dims()),
-    m_bidimsc(m_symc.get_bis().get_block_index_dims()),
-    m_sch(m_bidimsc) {
+    m_sch(m_symc.get_bis().get_block_index_dims()) {
 
     make_schedule();
 }

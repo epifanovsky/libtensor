@@ -56,10 +56,6 @@ private:
     scalar_transf<element_type> m_kb; //!< Scalar transform of B.
     scalar_transf<element_type> m_kc; //!< Scalar transform of the result.
     gen_bto_contract2_sym<N, M, K, Traits> m_symc; //!< Symmetry of the result
-
-    dimensions<NA> m_bidimsa; //!< Block %index dims of A
-    dimensions<NB> m_bidimsb; //!< Block %index dims of B
-    dimensions<NC> m_bidimsc; //!< Block %index dims of the result
     assignment_schedule<NC, element_type> m_sch; //!< Assignment schedule
 
 public:
