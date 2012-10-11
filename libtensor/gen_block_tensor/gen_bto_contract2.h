@@ -121,10 +121,6 @@ public:
 
 private:
     void make_schedule();
-
-    void align(const sequence<2 * (N + M + K), size_t> &conn,
-        permutation<NA> &perma, permutation<NB> &permb,
-        permutation<NC> &permc);
 };
 
 
