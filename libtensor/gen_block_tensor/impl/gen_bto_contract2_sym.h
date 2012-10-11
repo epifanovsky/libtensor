@@ -33,8 +33,8 @@ public:
     typedef typename Traits::bti_traits bti_traits;
 
 private:
-    gen_bto_contract2_bis<N, M, K> m_bisc; //!< Bldr of block index space of C
-    symmetry<NC, element_type> m_symc; //!< Symmetry of result C
+    gen_bto_contract2_bis<N, M, K> m_bis; //!< Builder of block index space of C
+    symmetry<NC, element_type> m_sym; //!< Symmetry of result C
 
 public:
     /** \brief Computes the symmetry of C
@@ -49,36 +49,30 @@ public:
 
     /** \brief Computes the symmetry of C
         \param contr Contraction.
-        \param bisa Block index space of A.
         \param syma Symmetry of A.
-        \param bisb Block index space of B.
         \param symb Symmetry of B.
      **/
     gen_bto_contract2_sym(
         const contraction2<N, M, K> &contr,
-        const block_index_space<NA> &bisa,
         const symmetry<NA, element_type> &syma,
-        const block_index_space<NB> &bisb,
         const symmetry<NB, element_type> &symb);
 
     /** \brief Returns the block index space of C
      **/
-    const block_index_space<N + M> &get_bisc() const {
-        return m_bisc.get_bisc();
+    const block_index_space<N + M> &get_bis() const {
+        return m_bis.get_bis();
     }
 
     /** \brief Returns the symmetry of C
      **/
-    const symmetry<N + M, element_type> &get_symc() const {
-        return m_symc;
+    const symmetry<N + M, element_type> &get_symmetry() const {
+        return m_sym;
     }
 
 private:
     void make_symmetry(
         const contraction2<N, M, K> &contr,
-        const block_index_space<NA> &bisa,
         const symmetry<NA, element_type> &syma,
-        const block_index_space<NB> &bisb,
         const symmetry<NB, element_type> &symb);
 
 };
@@ -109,8 +103,8 @@ public:
     typedef typename Traits::bti_traits bti_traits;
 
 private:
-    gen_bto_contract2_bis<N, N, K> m_bisc; //!< Bldr of block index space of C
-    symmetry<NC, element_type> m_symc; //!< Symmetry of result C
+    gen_bto_contract2_bis<N, N, K> m_bis; //!< Bldr of block index space of C
+    symmetry<NC, element_type> m_sym; //!< Symmetry of result C
 
 public:
     /** \brief Computes the symmetry of C
@@ -133,30 +127,26 @@ public:
      **/
     gen_bto_contract2_sym(
         const contraction2<N, N, K> &contr,
-        const block_index_space<NA> &bisa,
         const symmetry<NA, element_type> &syma,
-        const block_index_space<NB> &bisb,
         const symmetry<NB, element_type> &symb,
         bool self = false);
 
     /** \brief Returns the block index space of C
      **/
-    const block_index_space<N + N> &get_bisc() const {
-        return m_bisc.get_bisc();
+    const block_index_space<N + N> &get_bis() const {
+        return m_bis.get_bis();
     }
 
     /** \brief Returns the symmetry of C
      **/
-    const symmetry<N + N, element_type> &get_symc() const {
-        return m_symc;
+    const symmetry<N + N, element_type> &get_symmetry() const {
+        return m_sym;
     }
 
 private:
     void make_symmetry(
         const contraction2<N, N, K> &contr,
-        const block_index_space<NA> &bisa,
         const symmetry<NA, element_type> &syma,
-        const block_index_space<NB> &bisb,
         const symmetry<NB, element_type> &symb,
         bool self);
 

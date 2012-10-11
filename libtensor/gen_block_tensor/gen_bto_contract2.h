@@ -83,14 +83,14 @@ public:
      **/
     const block_index_space<NC> &get_bis() const {
 
-        return m_symc.get_bisc();
+        return m_symc.get_bis();
     }
 
     /** \brief Returns the symmetry of the result
      **/
     const symmetry<N + M, element_type> &get_symmetry() const {
 
-        return m_symc.get_symc();
+        return m_symc.get_symmetry();
     }
 
     /** \brief Returns the list of canonical non-zero blocks of the result

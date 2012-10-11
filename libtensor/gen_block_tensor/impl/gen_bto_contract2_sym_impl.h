@@ -16,41 +16,38 @@ gen_bto_contract2_sym<N, M, K, Traits>::gen_bto_contract2_sym(
     gen_block_tensor_rd_i<NA, bti_traits> &bta,
     gen_block_tensor_rd_i<NB, bti_traits> &btb) :
 
-    m_bisc(contr, bta.get_bis(), btb.get_bis()), m_symc(m_bisc.get_bisc()) {
+    m_bis(contr, bta.get_bis(), btb.get_bis()), m_sym(m_bis.get_bis()) {
 
     gen_block_tensor_rd_ctrl<NA, bti_traits> ca(bta);
     gen_block_tensor_rd_ctrl<NB, bti_traits> cb(btb);
 
-    make_symmetry(contr, bta.get_bis(), ca.req_const_symmetry(),
-        btb.get_bis(), cb.req_const_symmetry());
+    make_symmetry(contr, ca.req_const_symmetry(), cb.req_const_symmetry());
 }
 
 
 template<size_t N, size_t M, size_t K, typename Traits>
 gen_bto_contract2_sym<N, M, K, Traits>::gen_bto_contract2_sym(
     const contraction2<N, M, K> &contr,
-    const block_index_space<NA> &bisa,
     const symmetry<NA, element_type> &syma,
-    const block_index_space<NB> &bisb,
     const symmetry<NB, element_type> &symb) :
 
-    m_bisc(contr, bisa, bisb), m_symc(m_bisc.get_bisc()) {
+    m_bis(contr, syma.get_bis(), symb.get_bis()),
+    m_sym(m_bis.get_bis()) {
 
-    make_symmetry(contr, bisa, syma, bisb, symb);
+    make_symmetry(contr, syma, symb);
 }
 
 
 template<size_t N, size_t M, size_t K, typename Traits>
 void gen_bto_contract2_sym<N, M, K, Traits>::make_symmetry(
     const contraction2<N, M, K> &contr,
-    const block_index_space<NA> &bisa,
     const symmetry<NA, element_type> &syma,
-    const block_index_space<NB> &bisb,
     const symmetry<NB, element_type> &symb) {
 
     contraction2<NA, NB, 0> contr2;
-    gen_bto_contract2_bis<NA, NB, 0> xbis0(contr2, bisa, bisb);
-    block_index_space<NA + NB> xbis(xbis0.get_bisc());
+    gen_bto_contract2_bis<NA, NB, 0> xbis0(contr2,
+            syma.get_bis(), symb.get_bis());
+    block_index_space<NA + NB> xbis(xbis0.get_bis());
 
     const sequence<NA + NB + NC, size_t> &conn = contr.get_conn();
 
@@ -83,7 +80,7 @@ void gen_bto_contract2_sym<N, M, K, Traits>::make_symmetry(
 
     index_range<NA + NB> ir(ia, ib), bir(bia, bib);
     so_reduce<NA + NB, 2 * K, element_type>(xsymab, msk, seq, bir, ir).
-        perform(m_symc);
+        perform(m_sym);
 }
 
 
@@ -93,16 +90,16 @@ gen_bto_contract2_sym<N, N, K, Traits>::gen_bto_contract2_sym(
     gen_block_tensor_rd_i<NA, bti_traits> &bta,
     gen_block_tensor_rd_i<NB, bti_traits> &btb) :
 
-    m_bisc(contr, bta.get_bis(), btb.get_bis()), m_symc(m_bisc.get_bisc()) {
+    m_bis(contr, bta.get_bis(), btb.get_bis()), m_sym(m_bis.get_bis()) {
 
     if(&bta == &btb) {
         gen_block_tensor_rd_ctrl<NA, bti_traits> ca(bta);
-        make_symmetry(contr, bta.get_bis(), ca.req_const_symmetry(),
-            bta.get_bis(), ca.req_const_symmetry(), true);
+        make_symmetry(contr, ca.req_const_symmetry(),
+            ca.req_const_symmetry(), true);
     } else {
         gen_block_tensor_rd_ctrl<NB, bti_traits> ca(bta), cb(btb);
-        make_symmetry(contr, bta.get_bis(), ca.req_const_symmetry(),
-            btb.get_bis(), cb.req_const_symmetry(), false);
+        make_symmetry(contr, ca.req_const_symmetry(),
+            cb.req_const_symmetry(), false);
     }
 }
 
@@ -110,30 +107,28 @@ gen_bto_contract2_sym<N, N, K, Traits>::gen_bto_contract2_sym(
 template<size_t N, size_t K, typename Traits>
 gen_bto_contract2_sym<N, N, K, Traits>::gen_bto_contract2_sym(
     const contraction2<N, N, K> &contr,
-    const block_index_space<NA> &bisa,
     const symmetry<NA, element_type> &syma,
-    const block_index_space<NB> &bisb,
     const symmetry<NB, element_type> &symb,
     bool self) :
 
-    m_bisc(contr, bisa, bisb), m_symc(m_bisc.get_bisc()) {
+    m_bis(contr, syma.get_bis(), symb.get_bis()),
+    m_sym(m_bis.get_bis()) {
 
-    make_symmetry(contr, bisa, syma, bisb, symb, self);
+    make_symmetry(contr, syma, symb, self);
 }
 
 
 template<size_t N, size_t K, typename Traits>
 void gen_bto_contract2_sym<N, N, K, Traits>::make_symmetry(
     const contraction2<N, N, K> &contr,
-    const block_index_space<NA> &bisa,
     const symmetry<NA, element_type> &syma,
-    const block_index_space<NB> &bisb,
     const symmetry<NB, element_type> &symb,
     bool self) {
 
     contraction2<NA, NB, 0> contr2;
-    gen_bto_contract2_bis<NA, NB, 0> xbis0(contr2, bisa, bisb);
-    block_index_space<NA + NB> xbis(xbis0.get_bisc());
+    gen_bto_contract2_bis<NA, NB, 0> xbis0(contr2,
+            syma.get_bis(), symb.get_bis());
+    block_index_space<NA + NB> xbis(xbis0.get_bis());
 
     const sequence<NA + NB + NC, size_t> &conn = contr.get_conn();
 
@@ -179,7 +174,7 @@ void gen_bto_contract2_sym<N, N, K, Traits>::make_symmetry(
 
     index_range<NA + NB> ir(ia, ib), bir(bia, bib);
     so_reduce<NA + NB, 2 * K, element_type>(xsymab, msk, seq, bir, ir).
-        perform(m_symc);
+        perform(m_sym);
 }
 
 

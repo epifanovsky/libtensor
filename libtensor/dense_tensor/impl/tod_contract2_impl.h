@@ -79,7 +79,7 @@ void tod_contract2<N, M, K>::add_args(
         "double)";
 
     if(!to_contract2_dims<N, M, K>(contr, ta.get_dims(), tb.get_dims()).
-        get_dimsc().equals(m_dimsc.get_dimsc())) {
+        get_dims().equals(m_dimsc.get_dims())) {
         throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__,
             "ta,tb");
     }
@@ -107,7 +107,7 @@ void tod_contract2<N, M, K>::perform(bool zero,
     static const char *method =
         "perform(bool, dense_tensor_i<N + M, double>&)";
 
-    if(!m_dimsc.get_dimsc().equals(tc.get_dims())) {
+    if(!m_dimsc.get_dims().equals(tc.get_dims())) {
         throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "tc");
     }
 

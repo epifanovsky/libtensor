@@ -32,7 +32,7 @@ gen_bto_contract2<N, M, K, Traits, Timed>::gen_bto_contract2(
     m_kc(kc), m_symc(contr, bta, btb),
     m_bidimsa(m_bta.get_bis().get_block_index_dims()),
     m_bidimsb(m_btb.get_bis().get_block_index_dims()),
-    m_bidimsc(m_symc.get_bisc().get_block_index_dims()),
+    m_bidimsc(m_symc.get_bis().get_block_index_dims()),
     m_sch(m_bidimsc) {
 
     make_schedule();
@@ -111,7 +111,7 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
         bisat.permute(perma);
         block_index_space<NB> bisbt(m_btb.get_bis());
         bisbt.permute(permb);
-        block_index_space<NC> bisct(m_symc.get_bisc());
+        block_index_space<NC> bisct(m_symc.get_bis());
         bisct.permute(permc);
 
         symmetry<NA, element_type> symat(bisat);
@@ -122,7 +122,7 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
         so_permute<NB, element_type>(
                 cb.req_const_symmetry(), permb).perform(symbt);
         so_permute<NC, element_type>(
-                m_symc.get_symc(), permc).perform(symct);
+                m_symc.get_symmetry(), permc).perform(symct);
 
         //  Temporary partial A, B, and C
 
@@ -134,7 +134,7 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
 
         //  Batching loops
 
-        dimensions<NC> bidimsc(m_symc.get_bisc().get_block_index_dims());
+        dimensions<NC> bidimsc(m_symc.get_bis().get_block_index_dims());
         dimensions<NC> bidimsct(bisct.get_block_index_dims());
 
         std::vector<size_t> batcha, batchb, batchc1, batchc2;
@@ -257,7 +257,7 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
                         if(!cct.req_is_zero_block(ic)) {
                             ic.permute(permcinv);
                             orbit<NC, element_type> oc(
-                                    m_symc.get_symc(), ic, false);
+                                    m_symc.get_symmetry(), ic, false);
                             batchc2.push_back(oc.get_acindex());
                         }
                     }
@@ -293,7 +293,7 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::compute_block(
     const symmetry<NB, element_type> &symb = cb.req_const_symmetry();
 
     gen_bto_contract2_block<N, M, K, Traits, Timed> bto(m_contr, m_bta,
-        syma, m_ka, m_btb, symb, m_kb, m_symc.get_bisc(), m_kc);
+        syma, m_ka, m_btb, symb, m_kb, m_symc.get_bis(), m_kc);
 
     bto.compute_block(zero, idxc, trc, blkc);
 
@@ -306,7 +306,7 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::make_schedule() {
     gen_bto_contract2::start_timer("make_schedule");
 
     gen_bto_contract2_nzorb<N, M, K, Traits, Timed> nzorb(m_contr,
-        m_bta, m_btb, m_symc.get_symc());
+        m_bta, m_btb, m_symc.get_symmetry());
 
     nzorb.build();
     for(typename std::vector<size_t>::const_iterator i =
