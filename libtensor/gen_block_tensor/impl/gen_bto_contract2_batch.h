@@ -1,26 +1,31 @@
-#ifndef LIBTENSOR_GEN_BTO_CONTRACT2_BLOCK_H
-#define LIBTENSOR_GEN_BTO_CONTRACT2_BLOCK_H
+#ifndef LIBTENSOR_GEN_BTO_CONTRACT2_BATCH_H
+#define LIBTENSOR_GEN_BTO_CONTRACT2_BATCH_H
 
+#include <vector>
 #include <libtensor/timings.h>
 #include <libtensor/core/contraction2.h>
 #include <libtensor/core/noncopyable.h>
-#include <libtensor/core/orbit_list.h>
-#include <libtensor/core/tensor_transf.h>
+#include "../gen_block_stream_i.h"
+#include "../gen_block_tensor_i.h"
 
 namespace libtensor {
 
 
-/** \brief Computes single blocks of the contraction of two block tensors
+/** \brief Computes the requested batches of the contraction of two tensors
     \tparam N Order of first tensor less degree of contraction.
     \tparam M Order of second tensor less degree of contraction.
     \tparam K Order of contraction.
-    \tparam Traits Traits class
-    \tparam Timed Class for timings
+    \tparam Traits Block tensor operation traits.
+    \tparam Timed Timed implementation.
+
+    This algorithm prepares the block index space, symmetry and list of
+    non-zero blocks, as well as the result of the contraction of two block
+    tensors.
 
     \ingroup libtensor_gen_bto
  **/
 template<size_t N, size_t M, size_t K, typename Traits, typename Timed>
-class gen_bto_contract2_block : public timings<Timed>, public noncopyable {
+class gen_bto_contract2_batch : public timings<Timed>, public noncopyable {
 public:
     enum {
         NA = N + K, //!< Order of first argument (A)
@@ -35,51 +40,41 @@ public:
     //! Block tensor interface traits
     typedef typename Traits::bti_traits bti_traits;
 
-    //! Type of read-only block (A)
-    typedef typename bti_traits::template rd_block_type<NA>::type
-        rd_block_a_type;
+    //! Type of read-only block
+    typedef typename bti_traits::template rd_block_type<N>::type rd_block_type;
 
-    //! Type of read-only block (B)
-    typedef typename bti_traits::template rd_block_type<NB>::type
-        rd_block_b_type;
-
-    //! Type of write-only block (C)
-    typedef typename bti_traits::template wr_block_type<NC>::type
-        wr_block_c_type;
+    //! Type of write-only block
+    typedef typename bti_traits::template wr_block_type<N>::type wr_block_type;
 
 private:
     contraction2<N, M, K> m_contr; //!< Contraction
     gen_block_tensor_rd_i<NA, bti_traits> &m_bta; //!< First block tensor (A)
-    dimensions<NA> m_bidimsa; //!< Block index dims in A
-    orbit_list<NA, element_type> m_ola; //!< List of orbits in A
     gen_block_tensor_rd_i<NB, bti_traits> &m_btb; //!< Second block tensor (B)
-    dimensions<NB> m_bidimsb; //!< Block index dims in B
-    orbit_list<NB, element_type> m_olb; //!< List of orbits in B
-    dimensions<NC> m_bidimsc; //!< Block index dims in C
+    block_index_space<NC> m_bisc; //!< Block index space of result (C)
 
 public:
     /** \brief Initializes the contraction operation
         \param contr Contraction.
         \param bta First block tensor (A).
         \param btb Second block tensor (B).
+        \param bisc Block index space of result (C).
      **/
-    gen_bto_contract2_block(
+    gen_bto_contract2_batch(
         const contraction2<N, M, K> &contr,
         gen_block_tensor_rd_i<NA, bti_traits> &bta,
-        const symmetry<NA, element_type> &syma,
         gen_block_tensor_rd_i<NB, bti_traits> &btb,
-        const symmetry<NB, element_type> &symb,
         const block_index_space<NC> &bisc);
 
-    void compute_block(
-        bool zero,
-        const index<NC> &idxc,
-        const tensor_transf<NC, element_type> &trc,
-        wr_block_c_type &blkc);
-
+    /** \brief Computes and writes the blocks of the result to an output stream
+        \param blst List of absolute indexes of canonical blocks to be computed.
+        \param out Output stream.
+     **/
+    void perform(
+        const std::vector<size_t> &blst,
+        gen_block_stream_i<NC, bti_traits> &out);
 };
 
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_GEN_BTO_CONTRACT2_BLOCK_H
+#endif // LIBTENSOR_GEN_BTO_CONTRACT2_BASIC_H

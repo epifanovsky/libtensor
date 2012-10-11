@@ -89,6 +89,40 @@ const char *btod_contract2_clazz<4, 1, 2>::k_clazz = "btod_contract2<4, 1, 2>";
 const char *btod_contract2_clazz<5, 0, 1>::k_clazz = "btod_contract2<5, 0, 1>";
 
 
+template class gen_bto_contract2< 0, 5, 1, btod_traits,
+    btod_contract2<0, 5, 1> >;
+template class gen_bto_contract2< 1, 4, 0, btod_traits,
+    btod_contract2<1, 4, 0> >;
+template class gen_bto_contract2< 1, 4, 1, btod_traits,
+    btod_contract2<1, 4, 1> >;
+template class gen_bto_contract2< 1, 4, 2, btod_traits,
+    btod_contract2<1, 4, 2> >;
+template class gen_bto_contract2< 2, 3, 0, btod_traits,
+    btod_contract2<2, 3, 0> >;
+template class gen_bto_contract2< 2, 3, 1, btod_traits,
+    btod_contract2<2, 3, 1> >;
+template class gen_bto_contract2< 2, 3, 2, btod_traits,
+    btod_contract2<2, 3, 2> >;
+template class gen_bto_contract2< 2, 3, 3, btod_traits,
+    btod_contract2<2, 3, 3> >;
+template class gen_bto_contract2< 3, 2, 0, btod_traits,
+    btod_contract2<3, 2, 0> >;
+template class gen_bto_contract2< 3, 2, 1, btod_traits,
+    btod_contract2<3, 2, 1> >;
+template class gen_bto_contract2< 3, 2, 2, btod_traits,
+    btod_contract2<3, 2, 2> >;
+template class gen_bto_contract2< 3, 2, 3, btod_traits,
+    btod_contract2<3, 2, 3> >;
+template class gen_bto_contract2< 4, 1, 0, btod_traits,
+    btod_contract2<4, 1, 0> >;
+template class gen_bto_contract2< 4, 1, 1, btod_traits,
+    btod_contract2<4, 1, 1> >;
+template class gen_bto_contract2< 4, 1, 2, btod_traits,
+    btod_contract2<4, 1, 2> >;
+template class gen_bto_contract2< 5, 0, 1, btod_traits,
+    btod_contract2<5, 0, 1> >;
+
+
 template class btod_contract2<0, 5, 1>;
 template class btod_contract2<1, 4, 0>;
 template class btod_contract2<1, 4, 1>;
