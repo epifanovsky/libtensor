@@ -13,7 +13,6 @@ set(SRC
     symmetry/point_group_table.C
     symmetry/product_table_container.C
     symmetry/product_table_i.C
-    tod/loop_list_add.C
 )
 
 set(SRC_LINALG_ACML
