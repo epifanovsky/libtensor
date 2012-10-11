@@ -9,6 +9,7 @@
 #include "gen_bto_contract2_nzorb_impl.h"
 #include "gen_bto_contract2_sym_impl.h"
 #include "gen_bto_contract2_batch_impl.h"
+#include "gen_bto_contract2_batching_policy.h"
 #include "../gen_block_tensor_ctrl.h"
 #include "../gen_bto_aux_add.h"
 #include "../gen_bto_aux_copy.h"
@@ -87,16 +88,8 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
             return;
         }
 
-        //  Number and size of batches in A, B and C
-
-        size_t batch_size = 4096;
-        size_t nbata, nbatb, nbatc, batsza, batszb, batszc;
-        nbata = (nblka + batch_size - 1) / batch_size;
-        nbatb = (nblkb + batch_size - 1) / batch_size;
-        nbatc = (nblkc + batch_size - 1) / batch_size;
-        batsza = nbata > 0 ? (nblka + nbata - 1) / nbata : 1;
-        batszb = nbatb > 0 ? (nblkb + nbatb - 1) / nbatb : 1;
-        batszc = nbatc > 0 ? (nblkc + nbatc - 1) / nbatc : 1;
+        gen_bto_contract2_batching_policy<N, M, K, Traits> bp(m_contr,
+                nblka, nblkb, nblkc);
 
         //  Compute optimal permutations of A, B, and C
 
@@ -144,10 +137,10 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
         dimensions<NC> bidimsct(bisct.get_block_index_dims());
 
         std::vector<size_t> batcha, batchb, batchc1, batchc2;
-        batcha.reserve(batsza);
-        batchb.reserve(batszb);
-        batchc1.reserve(batszc);
-        batchc2.reserve(batszc);
+        batcha.reserve(bp.get_bsz_a());
+        batchb.reserve(bp.get_bsz_b());
+        batchc1.reserve(bp.get_bsz_c());
+        batchc2.reserve(bp.get_bsz_c());
 
         typename orbit_list<NA, element_type>::iterator ioa = ola.begin();
         bool first_batch_a = true;
@@ -155,13 +148,15 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
 
             batcha.clear();
             if(perma.is_identity()) {
-                for(; ioa != ola.end() && batcha.size() < batsza; ++ioa) {
+                for(; ioa != ola.end() && batcha.size() < bp.get_bsz_a();
+                        ++ioa) {
                     const index<NA> &ia = ola.get_index(ioa);
                     if(ca.req_is_zero_block(ia)) continue;
                     batcha.push_back(ola.get_abs_index(ioa));
                 }
             } else {
-                for(; ioa != ola.end() && batcha.size() < batsza; ++ioa) {
+                for(; ioa != ola.end() && batcha.size() < bp.get_bsz_a();
+                        ++ioa) {
                     index<NA> ia = ola.get_index(ioa);
                     if(ca.req_is_zero_block(ia)) continue;
                     ia.permute(perma);
@@ -195,13 +190,15 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
 
                 batchb.clear();
                 if(permb.is_identity()) {
-                    for(; iob != olb.end() && batchb.size() < batszb; ++iob) {
+                    for(; iob != olb.end() && batchb.size() < bp.get_bsz_b();
+                            ++iob) {
                         const index<NB> &ib = olb.get_index(iob);
                         if(cb.req_is_zero_block(ib)) continue;
                         batchb.push_back(olb.get_abs_index(iob));
                     }
                 } else {
-                    for(; iob != olb.end() && batchb.size() < batszb; ++iob) {
+                    for(; iob != olb.end() && batchb.size() < bp.get_bsz_b();
+                            ++iob) {
                         index<NB> ib = olb.get_index(iob);
                         if(cb.req_is_zero_block(ib)) continue;
                         ib.permute(permb);
@@ -234,7 +231,7 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
                     batchc1.clear();
                     batchc2.clear();
 
-                    for(; ibc != m_sch.end() && batchc1.size() < batszc;
+                    for(; ibc != m_sch.end() && batchc1.size() < bp.get_bsz_c();
                             ++ibc) {
                         index<NC> ic;
                         abs_index<NC>::get_index(m_sch.get_abs_index(ibc),
