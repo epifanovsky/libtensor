@@ -4,8 +4,7 @@
 #include <libtensor/timings.h>
 #include <libtensor/core/noncopyable.h>
 #include <libtensor/core/permutation.h>
-#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include <libtensor/tod/loop_list_add.h>
+#include "dense_tensor_i.h"
 
 namespace libtensor {
 
@@ -24,7 +23,6 @@ namespace libtensor {
  **/
 template<size_t N>
 class tod_trace :
-    public loop_list_add,
     public timings< tod_trace<N> >,
     public noncopyable {
 

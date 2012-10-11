@@ -5,6 +5,7 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/abs_index.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/dense_tensor/tod_contract2.h>
 #include "../compare_ref.h"
 #include "tod_contract2_test.h"

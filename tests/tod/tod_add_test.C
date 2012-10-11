@@ -3,6 +3,7 @@
 #include <sstream>
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/dense_tensor/tod_add.h>
 #include "../compare_ref.h"
 #include "tod_add_test.h"
