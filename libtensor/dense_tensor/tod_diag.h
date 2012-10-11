@@ -2,8 +2,8 @@
 #define LIBTENSOR_TOD_DIAG_H
 
 #include <list>
-#include <libtensor/linalg/linalg.h>
 #include <libtensor/timings.h>
+#include <libtensor/core/noncopyable.h>
 #include <libtensor/core/mask.h>
 #include <libtensor/core/permutation.h>
 #include <libtensor/core/scalar_transf_double.h>
@@ -41,7 +41,7 @@ namespace libtensor {
     \ingroup libtensor_tod
  **/
 template<size_t N, size_t M>
-class tod_diag : public timings< tod_diag<N, M> > {
+class tod_diag : public timings< tod_diag<N, M> >, public noncopyable {
 public:
     static const char *k_clazz; //!< Class name
 
@@ -115,7 +115,8 @@ private:
 private:
     dense_tensor_rd_i<N, double> &m_t; //!< Input %tensor
     mask<N> m_mask; //!< Diagonal mask
-    tensor_transf_type m_tr; //!< Transformation of the result
+    permutation<k_orderb> m_perm; //!< Permutation of the result
+    double m_c; //!< Scaling coefficient
     dimensions<k_orderb> m_dims; //!< Dimensions of the result
 
 public:

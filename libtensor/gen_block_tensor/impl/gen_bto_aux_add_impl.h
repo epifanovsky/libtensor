@@ -104,8 +104,7 @@ void gen_bto_aux_add<N, Traits>::close() {
 
             block_type &blkb = m_cb.req_block(aib.get_index());
             block_type &blkc = m_cb.req_block(aic.get_index());
-            to_copy_type(blkb, inode->trb).perform(true, Traits::identity(),
-                blkc);
+            to_copy_type(blkb, inode->trb).perform(true, blkc);
             m_cb.ret_block(aib.get_index());
             m_cb.ret_block(aic.get_index());
         }
@@ -188,8 +187,7 @@ void gen_bto_aux_add<N, Traits>::put(
 
                     block_type &blkb = m_cb.req_block(aib.get_index());
                     block_type &blkc = m_cb.req_block(aic.get_index());
-                    to_copy_type(blkb, inode->trb).perform(true,
-                        Traits::identity(), blkc);
+                    to_copy_type(blkb, inode->trb).perform(true, blkc);
                     m_cb.ret_block(aib.get_index());
                     m_cb.ret_block(aic.get_index());
                 }
@@ -217,7 +215,8 @@ void gen_bto_aux_add<N, Traits>::put(
                 block_type &blkc = m_cb.req_block(aic.get_index());
                 tensor_transf<N, element_type> tra(tr);
                 tra.transform(inode->tra);
-                to_copy_type(blk, tra).perform(zeroc, m_c, blkc);
+                tra.transform(scalar_transf<double>(m_c));
+                to_copy_type(blk, tra).perform(zeroc, blkc);
                 m_cb.ret_block(aic.get_index());
             }
         }

@@ -4,7 +4,7 @@
 #include <libtensor/block_tensor/btod_add.h>
 #include <libtensor/block_tensor/btod_contract2.h>
 #include <libtensor/block_tensor/btod_copy.h>
-#include <libtensor/btod/btod_random.h>
+#include <libtensor/block_tensor/btod_random.h>
 #include <libtensor/block_tensor/btod/btod_sum.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/symmetry/so_copy.h>

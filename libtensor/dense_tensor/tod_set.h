@@ -2,6 +2,7 @@
 #define LIBTENSOR_TOD_SET_H
 
 #include <libtensor/timings.h>
+#include <libtensor/core/noncopyable.h>
 #include "dense_tensor_i.h"
 
 namespace libtensor {
@@ -13,7 +14,7 @@ namespace libtensor {
     \ingroup libtensor_dense_tensor_tod
  **/
 template<size_t N>
-class tod_set : public timings< tod_set<N> > {
+class tod_set : public timings< tod_set<N> >, public noncopyable {
 public:
     static const char *k_clazz; //!< Class name
 
@@ -30,12 +31,6 @@ public:
         \param ta Tensor.
      **/
     void perform(dense_tensor_wr_i<N, double> &ta);
-
-private:
-    /** \brief Private copy constructor
-     **/
-    tod_set(const tod_set&);
-
 };
 
 

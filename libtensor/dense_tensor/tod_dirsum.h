@@ -3,6 +3,7 @@
 
 #include <list>
 #include <libtensor/timings.h>
+#include <libtensor/core/noncopyable.h>
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/core/tensor_transf.h>
 #include "dense_tensor_i.h"
@@ -24,7 +25,7 @@ namespace libtensor {
     \ingroup libtensor_dense_tensor_tod
  **/
 template<size_t N, size_t M>
-class tod_dirsum : public timings< tod_dirsum<N, M> > {
+class tod_dirsum : public timings< tod_dirsum<N, M> >, public noncopyable {
 public:
     static const char *k_clazz; //!< Class name
 
@@ -35,15 +36,15 @@ public:
         k_orderc = N + M //!< Order of result (C)
     };
 
-    typedef scalar_transf<double> scalar_transf_type;
     typedef tensor_transf<k_orderc, double> tensor_transf_type;
 
 private:
     dense_tensor_rd_i<k_ordera, double> &m_ta; //!< First %tensor (A)
     dense_tensor_rd_i<k_orderb, double> &m_tb; //!< Second %tensor (B)
-    scalar_transf_type m_ka; //!< Coefficient A
-    scalar_transf_type m_kb; //!< Coefficient B
-    tensor_transf_type m_trc; //!< Tensor transformation of the result
+    double m_ka; //!< Scaling coefficient of A
+    double m_kb; //!< Scaling coefficient of B
+    double m_c; //!< Scaling coefficient of result (C)
+    permutation<k_orderc> m_permc; //!< Permutation of result
     dimensions<k_orderc> m_dimsc; //!< Dimensions of the result
 
 public:
@@ -56,9 +57,9 @@ public:
      **/
     tod_dirsum(
             dense_tensor_rd_i<k_ordera, double> &ta,
-            const scalar_transf_type &ka,
+            const scalar_transf<double> &ka,
             dense_tensor_rd_i<k_orderb, double> &tb,
-            const scalar_transf_type &kb,
+            const scalar_transf<double> &kb,
             const tensor_transf_type &trc = tensor_transf_type());
 
     /** \brief Initializes the operation
@@ -82,12 +83,6 @@ public:
 private:
     static dimensions<N + M> mk_dimsc(dense_tensor_rd_i<k_ordera, double> &ta,
         dense_tensor_rd_i<k_orderb, double> &tb);
-
-private:
-    /** \brief Private copy constructor
-     **/
-    tod_dirsum(const tod_dirsum&);
-
 };
 
 

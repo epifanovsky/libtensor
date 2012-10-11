@@ -3,8 +3,8 @@
 
 #include <cmath> // for fabs
 #include <libtensor/core/abs_index.h>
-#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/tod/bad_dimensions.h>
+#include "../dense_tensor_ctrl.h"
 #include "../tod_compare.h"
 
 namespace libtensor {

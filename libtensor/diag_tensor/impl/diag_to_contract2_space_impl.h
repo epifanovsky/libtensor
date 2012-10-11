@@ -20,7 +20,7 @@ diag_to_contract2_space<N, M, K>::diag_to_contract2_space(
     const diag_tensor_space<M + K> &dtsb) :
 
     m_dimsc(contr, dtsa.get_dims(), dtsb.get_dims()),
-    m_dtsc(m_dimsc.get_dimsc()) {
+    m_dtsc(m_dimsc.get_dims()) {
 
     std::vector<size_t> ssla, sslb;
     dtsa.get_all_subspaces(ssla);

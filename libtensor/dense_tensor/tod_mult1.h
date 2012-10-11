@@ -32,9 +32,9 @@ public:
 
 private:
     dense_tensor_rd_i<N, double> &m_tb; //!< Second argument
-    tensor_transf<N, double> m_trb; //!< Tensor transformation of argument
+    permutation<N> m_permb;
     bool m_recip; //!< Reciprocal (multiplication by 1/bi)
-    scalar_transf<double> m_c; //!< Scaling coefficient
+    double m_c; //!< Scaling coefficient
 
 public:
     /** \brief Creates the operation
@@ -67,7 +67,7 @@ public:
      **/
     tod_mult1(dense_tensor_rd_i<N, double> &tb, const permutation<N> &p,
         bool recip = false, double c = 1.0) :
-        m_tb(tb), m_trb(p), m_recip(recip), m_c(c)
+        m_tb(tb), m_permb(p), m_recip(recip), m_c(c)
     { }
 
     /** \brief Performs the operation, replaces the output.

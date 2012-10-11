@@ -3,6 +3,7 @@
 
 #include <list>
 #include <libtensor/timings.h>
+#include <libtensor/core/noncopyable.h>
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/core/tensor_transf.h>
 #include <libtensor/dense_tensor/dense_tensor_i.h>
@@ -25,7 +26,7 @@ namespace libtensor {
     \ingroup libtensor_dense_tensor_tod
  **/
 template<size_t N>
-class tod_add : public timings< tod_add<N> > {
+class tod_add : public timings< tod_add<N> >, public noncopyable {
 public:
     static const char* k_clazz; //!< Class name
 
@@ -34,9 +35,11 @@ public:
 private:
     struct arg {
         dense_tensor_rd_i<N, double> &t;
-        tensor_transf_t tr;
-        arg(dense_tensor_rd_i<N, double> &t_, const tensor_transf_t &tr_) :
-            t(t_), tr(tr_) { }
+        permutation<N> perm;
+        double c;
+        arg(dense_tensor_rd_i<N, double> &t_,
+                const permutation<N> &perm_, double c_) :
+            t(t_), perm(perm_), c(c_) { }
     };
 
 private:
@@ -91,18 +94,16 @@ public:
     void prefetch();
 
     /** \brief Performs the operation
-        \param cpus CPUs to perform the operation on
         \param zero Zero result first
-        \param c Scaling factor
-        \param tb Add result to
+        \param tb Tensor to add result to
      **/
-    void perform(bool zero, double c, dense_tensor_wr_i<N, double> &tb);
+    void perform(bool zero, dense_tensor_wr_i<N, double> &tb);
 
 private:
     /** \brief Adds an operand (internal)
      **/
     void add_operand(dense_tensor_rd_i<N, double> &t,
-        const tensor_transf_t &tr);
+        const permutation<N> &perm, double c);
 
 };
 

@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_TOD_VMPRIORITY_H
 #define LIBTENSOR_TOD_VMPRIORITY_H
 
+#include <libtensor/core/noncopyable.h>
 #include "dense_tensor_i.h"
 
 namespace libtensor {
@@ -12,7 +13,7 @@ namespace libtensor {
     \ingroup libtensor_tod
  **/
 template<size_t N>
-class tod_vmpriority {
+class tod_vmpriority : public noncopyable {
 private:
     dense_tensor_base_i<N, double> &m_t; //!< Tensor
 
@@ -28,12 +29,6 @@ public:
     /** \brief Unsets in-core priority on tensor data
      **/
     void unset_priority();
-
-private:
-    /** \brief Private copy constructor
-     **/
-    tod_vmpriority(const tod_vmpriority&);
-
 };
 
 

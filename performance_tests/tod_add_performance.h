@@ -132,7 +132,7 @@ void tod_add_p1<R,N,DimData>::do_calculate()
 	permutation<N> perm;
 	tod_add<N> add(tb,2.0);
 	add.prefetch();
-	add.perform(false, 1.0, ta);
+	add.perform(false, ta);
 }
 
 template<size_t R, size_t N, typename DimData>
@@ -159,7 +159,7 @@ void tod_add_p2<R,N,DimData>::do_calculate()
 	// start tod_add calculation
 	tod_add<N> add(tb,permb,2.0);
 	add.prefetch();
-	add.perform(false, 1.0, ta);
+	add.perform(false, ta);
 }
 
 
@@ -187,7 +187,7 @@ void tod_add_p3<R,N,DimData>::do_calculate()
 	// start tod_add calculation
 	tod_add<N> add(tb,permb,2.0);
 	add.prefetch();
-	add.perform(false, 1.0, ta);
+	add.perform(false, ta);
 }
 
 

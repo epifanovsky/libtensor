@@ -4,7 +4,7 @@
 #include <libtensor/core/abs_index.h>
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/block_tensor/block_tensor.h>
-#include <libtensor/btod/btod_random.h>
+#include <libtensor/block_tensor/btod_random.h>
 #include <libtensor/btod/btod_read.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/dense_tensor/tod_btconv.h>
@@ -16,6 +16,10 @@ namespace libtensor {
 
 void btod_read_test::perform() throw(libtest::test_exception) {
 
+    allocator<double>::vmm().init(16, 16, 65536, 65536);
+
+    try {
+
     test_1();
     test_2();
     test_3();
@@ -26,6 +30,12 @@ void btod_read_test::perform() throw(libtest::test_exception) {
     test_8();
     test_9();
     test_10();
+
+    } catch (...) {
+        allocator<double>::vmm().shutdown();
+        throw;
+    }
+    allocator<double>::vmm().shutdown();
 }
 
 

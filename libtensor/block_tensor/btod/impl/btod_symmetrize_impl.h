@@ -173,8 +173,7 @@ void btod_symmetrize<N>::compute_block(bool zero,
                 tensor_transf<N, double> trj(tri_inv);
                 trj.transform(j->tr);
                 trj.transform(tr);
-                tod_copy<N>(tmp, trj.get_perm(),
-                    trj.get_scalar_tr().get_coeff()).perform(false, 1.0, blk);
+                tod_copy<N>(tmp, trj).perform(false, blk);
                 j = sch1.erase(j);
             }
         }

@@ -1,6 +1,6 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/scalar_transf_double.h>
-#include <libtensor/btod/btod_random.h>
+#include <libtensor/block_tensor/btod_random.h>
 #include <libtensor/btod/btod_set_diag.h>
 #include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/symmetry/product_table_container.h>
@@ -366,23 +366,23 @@ void expr_test::test_6() throw(libtest::test_exception) {
 
     tod_copy<4> top1(ti_oooo);
 
-    tod_contract2<2, 2, 2> top2(contr2, tt2, ti_oovv);
+    tod_contract2<2, 2, 2> top2(contr2, tt2, ti_oovv, 0.5);
 
     dense_tensor<4, double, allocator_t> ttmp3a(i_oooo.get_bis().get_dims());
-    tod_contract2<3, 1, 1>(contr3, ti_ooov, tt1).perform(true, 1.0, ttmp3a);
+    tod_contract2<3, 1, 1>(contr3, ti_ooov, tt1).perform(true, ttmp3a);
     tod_add<4> top3(ttmp3a);
     top3.add_op(ttmp3a, permutation<4>().permute(0, 1), -1.0);
 
     dense_tensor<4, double, allocator_t> ttmp4a(i_oovv.get_bis().get_dims());
-    tod_contract2<2, 2, 0>(contr4a, tt1, tt1).perform(true, 1.0, ttmp4a);
+    tod_contract2<2, 2, 0>(contr4a, tt1, tt1).perform(true, ttmp4a);
     tod_contract2<2, 2, 2> top4(contr4, ttmp4a, ti_oovv);
 
     dense_tensor<4, double, allocator_t> ti4_oooo(i4_oooo.get_bis().get_dims()),
         ti4_oooo_ref(i4_oooo.get_bis().get_dims());
-    top1.perform(true, 1.0, ti4_oooo_ref);
-    top2.perform(false, 0.5, ti4_oooo_ref);
-    top3.perform(false, 1.0, ti4_oooo_ref);
-    top4.perform(false, 1.0, ti4_oooo_ref);
+    top1.perform(true, ti4_oooo_ref);
+    top2.perform(false, ti4_oooo_ref);
+    top3.perform(false, ti4_oooo_ref);
+    top4.perform(false, ti4_oooo_ref);
     tod_btconv<4>(i4_oooo).perform(ti4_oooo);
 
     compare_ref<4>::compare(testname, ti4_oooo, ti4_oooo_ref, 5e-15);
@@ -475,21 +475,21 @@ void expr_test::test_7() throw(libtest::test_exception) {
 
     tod_copy<4> top1(ti_ovov);
 
-    tod_contract2<3, 1, 1> top2(contr2, ti_ovvv, tt1);
+    tod_contract2<3, 1, 1> top2(contr2, ti_ovvv, tt1, -1.0);
 
-    tod_contract2<3, 1, 1> top3(contr3, ti_ooov, tt1);
+    tod_contract2<3, 1, 1> top3(contr3, ti_ooov, tt1, -1.0);
 
     dense_tensor<4, double, allocator_t> ttmp4a(i_oovv.get_bis().get_dims());
-    tod_copy<4>(tt2).perform(true, 1.0, ttmp4a);
-    tod_contract2<2, 2, 0>(contr4a, tt1, tt1).perform(false, 2.0, ttmp4a);
-    tod_contract2<2, 2, 2> top4(contr4, ttmp4a, ti_oovv);
+    tod_copy<4>(tt2).perform(true, ttmp4a);
+    tod_contract2<2, 2, 0>(contr4a, tt1, tt1, 2.0).perform(false, ttmp4a);
+    tod_contract2<2, 2, 2> top4(contr4, ttmp4a, ti_oovv, 0.5);
 
     dense_tensor<4, double, allocator_t> ti1_ovov(i1_ovov.get_bis().get_dims()),
         ti1_ovov_ref(i1_ovov.get_bis().get_dims());
-    top1.perform(true, 1.0, ti1_ovov_ref);
-    top2.perform(false, -1.0, ti1_ovov_ref);
-    top3.perform(false, -1.0, ti1_ovov_ref);
-    top4.perform(false, 0.5, ti1_ovov_ref);
+    top1.perform(true, ti1_ovov_ref);
+    top2.perform(false, ti1_ovov_ref);
+    top3.perform(false, ti1_ovov_ref);
+    top4.perform(false, ti1_ovov_ref);
     tod_btconv<4>(i1_ovov).perform(ti1_ovov);
 
     compare_ref<4>::compare(testname, ti1_ovov, ti1_ovov_ref, 5e-15);

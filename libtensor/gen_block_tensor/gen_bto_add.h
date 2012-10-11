@@ -112,8 +112,7 @@ public:
         bool zero,
         wr_block_type &blkb,
         const index<N> &ib,
-        const tensor_transf<N, element_type> &trb,
-        const element_type &c);
+        const tensor_transf<N, element_type> &trb);
 
     /** \brief Same as compute_block(), except it doesn't run a timer
      **/
@@ -121,8 +120,7 @@ public:
         bool zero,
         wr_block_type &blkb,
         const index<N> &ib,
-        const tensor_transf<N, element_type> &trb,
-        const element_type &c);
+        const tensor_transf<N, element_type> &trb);
 
 private:
     void add_operand(

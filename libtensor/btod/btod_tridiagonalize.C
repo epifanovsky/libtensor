@@ -10,9 +10,10 @@
 #include <libtensor/block_tensor/btod_diag.h>
 #include <libtensor/block_tensor/btod_extract.h>
 #include <libtensor/block_tensor/btod_scale.h>
-#include "btod_set_diag.h"
-#include "btod_set_elem.h"
+#include <libtensor/block_tensor/btod_set_diag.h>
+#include <libtensor/block_tensor/btod_set_elem.h>
 #include <libtensor/block_tensor/btod_set.h>
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include "btod_tridiagonalize.h"
 
 namespace libtensor

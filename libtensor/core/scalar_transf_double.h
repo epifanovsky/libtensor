@@ -112,6 +112,12 @@ public:
         m_coeff += tr.get_coeff();
     }
 
+    /** \brief Return the result transformation
+     **/
+    scalar_transf<double> get_transf() const {
+        return scalar_transf<double>(m_coeff);
+    }
+
     /** \brief Apply sum to element
      **/
     void apply(double &el) const { el *= m_coeff; }

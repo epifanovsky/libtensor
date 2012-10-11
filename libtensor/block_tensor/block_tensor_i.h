@@ -7,6 +7,9 @@
 namespace libtensor {
 
 
+template<size_t N, typename T> class block_tensor_base_ctrl;
+template<size_t N, typename T> class block_tensor_rd_ctrl;
+template<size_t N, typename T> class block_tensor_wr_ctrl;
 template<size_t N, typename T> class block_tensor_ctrl;
 
 
@@ -24,7 +27,7 @@ template<size_t N, typename T>
 class block_tensor_base_i :
     virtual public gen_block_tensor_base_i< N, block_tensor_i_traits<T> > {
 
-    friend class block_tensor_ctrl<N, T>;
+    friend class block_tensor_base_ctrl<N, T>;
 
 public:
     /** \brief Virtual destructor
@@ -50,7 +53,7 @@ class block_tensor_rd_i :
     virtual public block_tensor_base_i<N, T>,
     virtual public gen_block_tensor_rd_i< N, block_tensor_i_traits<T> > {
 
-    friend class block_tensor_ctrl<N, T>;
+    friend class block_tensor_rd_ctrl<N, T>;
 
 public:
     /** \brief Virtual destructor
@@ -76,7 +79,7 @@ class block_tensor_wr_i :
     virtual public block_tensor_base_i<N, T>,
     virtual public gen_block_tensor_wr_i< N, block_tensor_i_traits<T> > {
 
-    friend class block_tensor_ctrl<N, T>;
+    friend class block_tensor_wr_ctrl<N, T>;
 
 public:
     /** \brief Virtual destructor

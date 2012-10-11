@@ -4,7 +4,7 @@
 #include <libtensor/block_tensor/block_tensor_ctrl.h>
 #include <libtensor/block_tensor/btod_add.h>
 #include <libtensor/block_tensor/btod_copy.h>
-#include <libtensor/btod/btod_random.h>
+#include <libtensor/block_tensor/btod_random.h>
 #include <libtensor/block_tensor/btod/btod_symmetrize3.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/symmetry/se_label.h>
@@ -77,7 +77,7 @@ void btod_symmetrize3_test::test_1() throw(libtest::test_exception) {
     refop.add_op(ta, permutation<3>().permute(1, 2), 1.0);
     refop.add_op(ta, permutation<3>().permute(0, 1).permute(0, 2), 1.0);
     refop.add_op(ta, permutation<3>().permute(0, 1).permute(1, 2), 1.0);
-    refop.perform(true, 1.0, tb_ref);
+    refop.perform(true, tb_ref);
 
     symmetry<3, double> symb(bis), symb_ref(bis);
     scalar_transf<double> tr0, tr1(-1.);
@@ -150,7 +150,7 @@ void btod_symmetrize3_test::test_2() throw(libtest::test_exception) {
     refop.add_op(ta, permutation<3>().permute(1, 2), -1.0);
     refop.add_op(ta, permutation<3>().permute(0, 1).permute(0, 2), 1.0);
     refop.add_op(ta, permutation<3>().permute(0, 1).permute(1, 2), 1.0);
-    refop.perform(true, 1.0, tb_ref);
+    refop.perform(true, tb_ref);
 
     //  Run the symmetrization operation
 
@@ -226,7 +226,7 @@ void btod_symmetrize3_test::test_3() throw(libtest::test_exception) {
     refop.add_op(ta, permutation<3>().permute(1, 2), 1.0);
     refop.add_op(ta, permutation<3>().permute(0, 1).permute(0, 2), 1.0);
     refop.add_op(ta, permutation<3>().permute(0, 1).permute(1, 2), 1.0);
-    refop.perform(true, 1.0, tb_ref);
+    refop.perform(true, tb_ref);
 
     //  Run the symmetrization operation
 
@@ -301,7 +301,7 @@ void btod_symmetrize3_test::test_4() throw(libtest::test_exception) {
     refop.add_op(ta, permutation<4>().permute(1, 2), 1.0);
     refop.add_op(ta, permutation<4>().permute(0, 1).permute(0, 2), 1.0);
     refop.add_op(ta, permutation<4>().permute(0, 1).permute(1, 2), 1.0);
-    refop.perform(true, 1.0, tb_ref);
+    refop.perform(true, tb_ref);
 
     //  Run the symmetrization operation
 
@@ -386,7 +386,7 @@ void btod_symmetrize3_test::test_5() throw(libtest::test_exception) {
     refop.add_op(ta, permutation<3>().permute(1, 2), 1.0);
     refop.add_op(ta, permutation<3>().permute(0, 1).permute(0, 2), 1.0);
     refop.add_op(ta, permutation<3>().permute(0, 1).permute(1, 2), 1.0);
-    refop.perform(true, 1.0, tb_ref);
+    refop.perform(true, tb_ref);
 
     symmetry<3, double> symb(bis), symb_ref(bis);
     scalar_transf<double> tr0, tr1(-1.);
@@ -479,14 +479,14 @@ void btod_symmetrize3_test::test_6() throw(libtest::test_exception) {
     refop1.add_op(ta, permutation<6>().permute(1, 2), -1.0);
     refop1.add_op(ta, permutation<6>().permute(0, 1).permute(0, 2), 1.0);
     refop1.add_op(ta, permutation<6>().permute(0, 1).permute(1, 2), 1.0);
-    refop1.perform(true, 1.0, ta1);
+    refop1.perform(true, ta1);
     tod_add<6> refop2(ta1);
     refop2.add_op(ta1, permutation<6>().permute(3, 4), -1.0);
     refop2.add_op(ta1, permutation<6>().permute(3, 5), -1.0);
     refop2.add_op(ta1, permutation<6>().permute(4, 5), -1.0);
     refop2.add_op(ta1, permutation<6>().permute(3, 4).permute(3, 5), 1.0);
     refop2.add_op(ta1, permutation<6>().permute(3, 4).permute(4, 5), 1.0);
-    refop2.perform(true, 1.0, tb_ref);
+    refop2.perform(true, tb_ref);
 
     //  Run the symmetrization operation
 
@@ -576,14 +576,14 @@ void btod_symmetrize3_test::test_7() throw(libtest::test_exception) {
     refop1.add_op(ta, permutation<6>().permute(1, 2), -1.0);
     refop1.add_op(ta, permutation<6>().permute(0, 1).permute(0, 2), 1.0);
     refop1.add_op(ta, permutation<6>().permute(0, 1).permute(1, 2), 1.0);
-    refop1.perform(true, 1.0, ta1);
-    tod_add<6> refop2(ta1);
-    refop2.add_op(ta1, permutation<6>().permute(3, 4), -1.0);
-    refop2.add_op(ta1, permutation<6>().permute(3, 5), -1.0);
-    refop2.add_op(ta1, permutation<6>().permute(4, 5), -1.0);
-    refop2.add_op(ta1, permutation<6>().permute(3, 4).permute(3, 5), 1.0);
-    refop2.add_op(ta1, permutation<6>().permute(3, 4).permute(4, 5), 1.0);
-    refop2.perform(false, 2.0, tb_ref);
+    refop1.perform(true, ta1);
+    tod_add<6> refop2(ta1, 2.0);
+    refop2.add_op(ta1, permutation<6>().permute(3, 4), -2.0);
+    refop2.add_op(ta1, permutation<6>().permute(3, 5), -2.0);
+    refop2.add_op(ta1, permutation<6>().permute(4, 5), -2.0);
+    refop2.add_op(ta1, permutation<6>().permute(3, 4).permute(3, 5), 2.0);
+    refop2.add_op(ta1, permutation<6>().permute(3, 4).permute(4, 5), 2.0);
+    refop2.perform(false, tb_ref);
 
     //  Run the symmetrization operation
 

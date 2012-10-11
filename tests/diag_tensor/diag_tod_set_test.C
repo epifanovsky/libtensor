@@ -82,9 +82,9 @@ void diag_tod_set_test::test_1() throw(libtest::test_exception) {
         p3120.permute(0, 3);
         contraction2<2, 2, 0> contr1(p0213), contr2(p3120);
         tod_contract2<2, 2, 0>(contr1, t55d, t66).
-            perform(true, 1.0, t_ref);
+            perform(true, t_ref);
         tod_contract2<2, 2, 0>(contr2, t66d, t55).
-            perform(false, 1.0, t_ref);
+            perform(false, t_ref);
 
         diag_tod_set<4>().perform(dt);
 
@@ -145,8 +145,8 @@ void diag_tod_set_test::test_2() throw(libtest::test_exception) {
         p0213.permute(1, 2);
         p3120.permute(0, 3);
         contraction2<2, 2, 0> contr1(p0213), contr2(p3120);
-        tod_contract2<2, 2, 0>(contr1, t55d, t66).perform(true, 1.0, t_ref);
-        tod_contract2<2, 2, 0>(contr2, t66d, t55).perform(false, 1.0, t_ref);
+        tod_contract2<2, 2, 0>(contr1, t55d, t66).perform(true, t_ref);
+        tod_contract2<2, 2, 0>(contr2, t66d, t55).perform(false, t_ref);
 
         diag_tod_set<4>(1.0).perform(dt);
 
@@ -199,7 +199,7 @@ void diag_tod_set_test::test_3() throw(libtest::test_exception) {
         p0213.permute(1, 2);
         p3120.permute(0, 3);
         contraction2<2, 2, 0> contr1(p0213), contr2(p3120);
-        tod_contract2<2, 2, 0>(contr1, t66d, t66d).perform(true, 1.0, t_ref);
+        tod_contract2<2, 2, 0>(contr1, t66d, t66d).perform(true, t_ref);
         tod_scale<4>(-2.5).perform(t_ref);
 
         diag_tod_set<4>(-2.5).perform(dt);

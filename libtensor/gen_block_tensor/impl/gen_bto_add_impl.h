@@ -157,14 +157,13 @@ void gen_bto_add<N, Traits, Timed>::compute_block(
     bool zero,
     wr_block_type &blkb,
     const index<N> &ib,
-    const tensor_transf<N, element_type> &trb,
-    const element_type &c) {
+    const tensor_transf<N, element_type> &trb) {
 
     gen_bto_add::start_timer("compute_block");
 
     try {
 
-        compute_block_untimed(zero, blkb, ib, trb, c);
+        compute_block_untimed(zero, blkb, ib, trb);
 
     } catch(...) {
         gen_bto_add::stop_timer("compute_block");
@@ -180,8 +179,7 @@ void gen_bto_add<N, Traits, Timed>::compute_block_untimed(
     bool zero,
     wr_block_type &blkb,
     const index<N> &ib,
-    const tensor_transf<N, element_type> &trb,
-    const element_type &c) {
+    const tensor_transf<N, element_type> &trb) {
 
     typedef typename Traits::template to_set_type<N>::type to_set;
     typedef typename Traits::template to_copy_type<N>::type to_copy;
@@ -210,13 +208,12 @@ void gen_bto_add<N, Traits, Timed>::compute_block_untimed(
         //  Transformation for block from canonical A to B
         //  B = c Tr(Bc->B) Tr(A->Bc) Tr(Ac->A) Ac
         tensor_transf<N, element_type> tra1(oa.get_transf(ia));
-        tra1.transform(tra).transform(scalar_transf<element_type>(c)).
-            transform(trb);
+        tra1.transform(tra).transform(trb);
 
         //  Compute block in B
         if(!ca.req_is_zero_block(cia)) {
             rd_block_type &blka = ca.req_const_block(cia);
-            to_copy(blka, tra1).perform(zero1, Traits::identity(), blkb);
+            to_copy(blka, tra1).perform(zero1, blkb);
             ca.ret_const_block(cia);
             zero1 = false;
         }
@@ -346,7 +343,7 @@ void gen_bto_add_task<N, Traits, Timed>::perform() {
 
     {
         wr_block_type &blkb = cb.req_block(m_idx);
-        m_bto.compute_block_untimed(true, blkb, m_idx, tr0, Traits::identity());
+        m_bto.compute_block_untimed(true, blkb, m_idx, tr0);
         cb.ret_block(m_idx);
     }
 

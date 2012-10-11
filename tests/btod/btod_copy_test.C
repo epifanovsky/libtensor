@@ -1,11 +1,12 @@
-#include <libtensor/core/allocator.h>
-#include <libtensor/dense_tensor/dense_tensor.h>
-#include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/block_tensor/block_tensor.h>
 #include <libtensor/block_tensor/btod_copy.h>
-#include <libtensor/btod/btod_random.h>
-#include <libtensor/symmetry/se_perm.h>
+#include <libtensor/block_tensor/btod_random.h>
+#include <libtensor/core/allocator.h>
+#include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/dense_tensor/dense_tensor.h>
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/dense_tensor/tod_btconv.h>
+#include <libtensor/symmetry/se_perm.h>
 #include "../compare_ref.h"
 #include "btod_copy_test.h"
 
@@ -13,6 +14,10 @@ namespace libtensor {
 
 
 void btod_copy_test::perform() throw(libtest::test_exception) {
+
+    allocator<double>::vmm().init(16, 16, 65536, 65536);
+
+    try {
 
     test_zero_1();
     test_zero_2();
@@ -52,6 +57,13 @@ void btod_copy_test::perform() throw(libtest::test_exception) {
     //~ test_dir_4();
 
     test_bug_1();
+
+    }
+    catch (...) {
+        allocator<double>::vmm().shutdown();
+        throw;
+    }
+    allocator<double>::vmm().shutdown();
 }
 
 
@@ -225,7 +237,7 @@ void btod_copy_test::test_nosym_2() throw(libtest::test_exception) {
     //  Create the reference
 
     tod_btconv<2>(bta).perform(ta);
-    tod_copy<2>(ta, perm10, 2.0).perform(true, 1.0, tb_ref);
+    tod_copy<2>(ta, perm10, 2.0).perform(true, tb_ref);
 
     //  Compare against the reference
 
@@ -317,7 +329,7 @@ void btod_copy_test::test_nosym_4() throw(libtest::test_exception) {
     //  Create the reference
 
     tod_btconv<2>(bta).perform(ta);
-    tod_copy<2>(ta, perm10, 2.0).perform(true, 1.0, tb_ref);
+    tod_copy<2>(ta, perm10, 2.0).perform(true, tb_ref);
 
     //  Compare against the reference
 
@@ -418,7 +430,7 @@ void btod_copy_test::test_sym_2() throw(libtest::test_exception) {
     //  Compare against the reference
 
     tod_btconv<2>(bta).perform(ta);
-    tod_copy<2>(ta, 2.0).perform(true, 1.0, tb_ref);
+    tod_copy<2>(ta, 2.0).perform(true, tb_ref);
     tod_btconv<2>(btb).perform(tb);
 
     compare_ref<2>::compare(testname, tb, tb_ref, 0.0);
@@ -480,7 +492,7 @@ void btod_copy_test::test_sym_3() throw(libtest::test_exception) {
     //  Create the reference
 
     tod_btconv<3>(bta).perform(ta);
-    tod_copy<3>(ta, perm210, 0.3).perform(true, 1.0, tb_ref);
+    tod_copy<3>(ta, perm210, 0.3).perform(true, tb_ref);
 
     //  Compare against the reference
 
@@ -548,7 +560,7 @@ void btod_copy_test::test_sym_4() throw(libtest::test_exception) {
 
     //  Compute the reference
 
-    tod_copy<4>(ta, -1.0).perform(true, 1.0, tb_ref);
+    tod_copy<4>(ta, -1.0).perform(true, tb_ref);
 
     //  Compare against the reference
 
@@ -591,7 +603,7 @@ void btod_copy_test::test_add_nosym_1() throw(libtest::test_exception) {
 
     //  Compare against the reference
 
-    tod_copy<2>(ta).perform(false, 1.0, tb_ref);
+    tod_copy<2>(ta).perform(false, tb_ref);
     tod_btconv<2>(btb).perform(tb);
 
     compare_ref<2>::compare(testname, tb, tb_ref, 0.0);
@@ -639,7 +651,7 @@ void btod_copy_test::test_add_nosym_2() throw(libtest::test_exception) {
     //  Create the reference
 
     tod_btconv<2>(bta).perform(ta);
-    tod_copy<2>(ta, perm10, 2.0).perform(false, 1.0, tb_ref);
+    tod_copy<2>(ta, perm10, 2.0).perform(false, tb_ref);
 
     //  Compare against the reference
 
@@ -694,7 +706,7 @@ void btod_copy_test::test_add_nosym_3() throw(libtest::test_exception) {
 
     //  Compute the reference
 
-    tod_copy<4>(ta, 2.0).perform(false, 1.0, tb_ref);
+    tod_copy<4>(ta, 2.0).perform(false, tb_ref);
 
     //  Compare against the reference
 
@@ -742,7 +754,7 @@ void btod_copy_test::test_add_nosym_4() throw(libtest::test_exception) {
     //  Create the reference
 
     tod_btconv<2>(bta).perform(ta);
-    tod_copy<2>(ta, perm10, 2.0).perform(false, 1.0, tb_ref);
+    tod_copy<2>(ta, perm10, 2.0).perform(false, tb_ref);
 
     //  Compare against the reference
 
@@ -798,7 +810,7 @@ void btod_copy_test::test_add_eqsym_1() throw(libtest::test_exception) {
     //  Compare against the reference
 
     tod_btconv<2>(bta).perform(ta);
-    tod_copy<2>(ta).perform(false, 1.0, tb_ref);
+    tod_copy<2>(ta).perform(false, tb_ref);
 
     compare_ref<2>::compare(testname, tb, tb_ref, 0.0);
 
@@ -851,7 +863,7 @@ void btod_copy_test::test_add_eqsym_2() throw(libtest::test_exception) {
     //  Create the reference
 
     tod_btconv<2>(bta).perform(ta);
-    tod_copy<2>(ta, perm10).perform(false, -1.0, tb_ref);
+    tod_copy<2>(ta, perm10, -1.0).perform(false, tb_ref);
 
     //  Compare against the reference
 
@@ -920,7 +932,7 @@ void btod_copy_test::test_add_eqsym_3() throw(libtest::test_exception) {
     //  Create the reference
 
     tod_btconv<3>(bta).perform(ta);
-    tod_copy<3>(ta, perm210, 1.5).perform(false, 0.5, tb_ref);
+    tod_copy<3>(ta, perm210, 0.75).perform(false, tb_ref);
 
     //  Compare against the reference
 
@@ -987,7 +999,7 @@ void btod_copy_test::test_add_eqsym_4() throw(libtest::test_exception) {
 
     //  Compute the reference
 
-    tod_copy<4>(ta).perform(false, 2.0, tb_ref);
+    tod_copy<4>(ta, 2.0).perform(false, tb_ref);
 
     //  Compare against the reference
 
@@ -1056,7 +1068,7 @@ void btod_copy_test::test_add_eqsym_5() throw(libtest::test_exception) {
 
     //  Compute the reference
 
-    tod_copy<4>(ta, perm0213, 0.5).perform(false, 1.0, tb_ref);
+    tod_copy<4>(ta, perm0213, 0.5).perform(false, tb_ref);
 
     //  Compare against the reference
 
@@ -1110,7 +1122,7 @@ void btod_copy_test::test_add_nesym_1() throw(libtest::test_exception) {
     //  Compare against the reference
 
     tod_btconv<2>(bta).perform(ta);
-    tod_copy<2>(ta).perform(false, 1.0, tb_ref);
+    tod_copy<2>(ta).perform(false, tb_ref);
 
     compare_ref<2>::compare(testname, tb, tb_ref, 0.0);
 
@@ -1162,7 +1174,7 @@ void btod_copy_test::test_add_nesym_2() throw(libtest::test_exception) {
     //  Compare against the reference
 
     tod_btconv<2>(bta).perform(ta);
-    tod_copy<2>(ta).perform(false, 1.0, tb_ref);
+    tod_copy<2>(ta).perform(false, tb_ref);
 
     compare_ref<2>::compare(testname, tb, tb_ref, 0.0);
 
@@ -1226,7 +1238,7 @@ void btod_copy_test::test_add_nesym_3() throw(libtest::test_exception) {
 
     //  Compute the reference
 
-    tod_copy<4>(ta).perform(false, 1.5, tb_ref);
+    tod_copy<4>(ta, 1.5).perform(false, tb_ref);
 
     //  Compare against the reference
 
@@ -1292,7 +1304,7 @@ void btod_copy_test::test_add_nesym_4() throw(libtest::test_exception) {
 
     //  Compute the reference
 
-    tod_copy<4>(ta).perform(false, 1.5, tb_ref);
+    tod_copy<4>(ta, 1.5).perform(false, tb_ref);
 
     //  Compare against the reference
 
@@ -1358,7 +1370,7 @@ void btod_copy_test::test_add_nesym_5() throw(libtest::test_exception) {
 
     //  Compute the reference
 
-    tod_copy<4>(ta).perform(false, 1.5, tb_ref);
+    tod_copy<4>(ta, 1.5).perform(false, tb_ref);
 
     //  Compare against the reference
 
@@ -1439,7 +1451,7 @@ void btod_copy_test::test_add_nesym_5_sp() throw(libtest::test_exception) {
 
     //  Compute the reference
 
-    tod_copy<4>(ta).perform(false, 1.5, tb_ref);
+    tod_copy<4>(ta, 1.5).perform(false, tb_ref);
 
     //  Compare against the reference
 
@@ -1506,7 +1518,7 @@ void btod_copy_test::test_add_nesym_6() throw(libtest::test_exception) {
 
     //  Compute the reference
 
-    tod_copy<4>(ta, perm3210).perform(false, -0.1, tb_ref);
+    tod_copy<4>(ta, perm3210, -0.1).perform(false, tb_ref);
 
     //  Compare against the reference
 
@@ -1580,7 +1592,7 @@ void btod_copy_test::test_add_nesym_7_sp1() throw(libtest::test_exception) {
 
     //  Compute the reference
 
-    tod_copy<4>(ta).perform(false, -2.0, tb_ref);
+    tod_copy<4>(ta, -2.0).perform(false, tb_ref);
 
     //  Compare against the reference
 
@@ -1652,7 +1664,7 @@ void btod_copy_test::test_add_nesym_7_sp2() throw(libtest::test_exception) {
 
     //  Compute the reference
 
-    tod_copy<4>(ta).perform(false, -2.0, tb_ref);
+    tod_copy<4>(ta, -2.0).perform(false, tb_ref);
 
     //  Compare against the reference
 
@@ -1726,7 +1738,7 @@ void btod_copy_test::test_add_nesym_7_sp3() throw(libtest::test_exception) {
 
     //  Compute the reference
 
-    tod_copy<4>(ta).perform(false, 2.0, tb_ref);
+    tod_copy<4>(ta, 2.0).perform(false, tb_ref);
 
     //  Compare against the reference
 

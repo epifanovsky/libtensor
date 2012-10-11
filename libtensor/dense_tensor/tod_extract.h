@@ -117,7 +117,8 @@ private:
 private:
     dense_tensor_rd_i<NA, double> &m_t; //!< Input %tensor
     mask<NA> m_mask; //!< Mask for extraction
-    tensor_transf_type m_tr; //!< Transformation of the result
+    permutation<NB> m_perm; //!< Permutation of the result
+    double m_c; //!< Scaling coefficient
     dimensions<NB> m_dims; //!< Dimensions of the result
     index<NA> m_idx;//!< Index for extraction
 

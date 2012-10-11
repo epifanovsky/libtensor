@@ -2,6 +2,7 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/tod_apply.h>
+#include <libtensor/dense_tensor/impl/tod_apply_impl.h>
 #include "../compare_ref.h"
 #include "tod_apply_test.h"
 

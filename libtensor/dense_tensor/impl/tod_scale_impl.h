@@ -13,6 +13,19 @@ const char *tod_scale<N>::k_clazz = "tod_scale<N>";
 
 
 template<size_t N>
+inline tod_scale<N>::tod_scale(const scalar_transf<double> &c) :
+    m_c(c.get_coeff()) {
+
+}
+
+
+template<size_t N>
+inline tod_scale<N>::tod_scale(double c) : m_c(c) {
+
+}
+
+
+template<size_t N>
 void tod_scale<N>::perform(dense_tensor_wr_i<N, double> &ta) {
 
     tod_scale<N>::start_timer();

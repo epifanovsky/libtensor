@@ -17,8 +17,10 @@ namespace libtensor {
 
 template<size_t N, typename Traits, typename Timed>
 class gen_bto_dotprod_in_orbit_task :
-public libutil::task_i, public timings<Timed> {
+    public libutil::task_i,
+    public timings<Timed> {
 
+public:
     typedef typename Traits::element_type element_type;
     typedef typename Traits::bti_traits bti_traits;
 
