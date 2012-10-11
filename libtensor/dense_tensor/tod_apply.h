@@ -5,7 +5,6 @@
 #include <libtensor/core/noncopyable.h>
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/core/tensor_transf.h>
-#include <libtensor/tod/loop_list_apply.h>
 
 namespace libtensor {
 
@@ -89,11 +88,6 @@ private:
      **/
     static dimensions<N> mk_dimsb(dense_tensor_rd_i<N, double> &ta,
             const permutation<N> &perm);
-
-    void build_loop(typename loop_list_apply<Functor>::list_t &loop,
-            const dimensions<N> &dimsa, const permutation<N> &perma,
-            const dimensions<N> &dimsb);
-
 };
 
 
