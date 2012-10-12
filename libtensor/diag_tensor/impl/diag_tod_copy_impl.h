@@ -13,8 +13,7 @@ const char *diag_tod_copy<N>::k_clazz = "diag_tod_copy<N>";
 
 
 template<size_t N>
-void diag_tod_copy<N>::perform(bool zero, double c,
-    diag_tensor_wr_i<N, double> &dtb) {
+void diag_tod_copy<N>::perform(bool zero, diag_tensor_wr_i<N, double> &dtb) {
 
     diag_tod_copy<N>::start_timer();
 
@@ -75,12 +74,10 @@ void diag_tod_copy<N>::perform(bool zero, double c,
                 }
                 if(match) {
                     match_found = true;
-                    tensor_transf<N, double> tra(m_tra);
-                    tra.get_scalar_tr().scale(c);
                     const double *pa = ca.req_const_dataptr(ssla[ssia]);
                     double *pb = cb.req_dataptr(sslb[ssib]);
                     diag_tod_aux_constr_add<N>(dtsa.get_dims(), ssa, pa,
-                        dtsa.get_subspace_size(ssla[ssia]), tra).
+                        dtsa.get_subspace_size(ssla[ssia]), m_tra).
                         perform(ssb, pb, dtsb.get_subspace_size(sslb[ssib]));
                     cb.ret_dataptr(sslb[ssib], pb);
                     ca.ret_const_dataptr(ssla[ssia], pa);

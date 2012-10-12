@@ -37,10 +37,12 @@ private:
 public:
     /** \brief Initializes the operation
         \param dta Source tensor A.
+        \param ka Scaling factor of A.
      **/
     diag_tod_copy(
-        diag_tensor_rd_i<N, double> &dta) :
-        m_dta(dta)
+        diag_tensor_rd_i<N, double> &dta,
+        double ka = 1.0) :
+        m_dta(dta), m_tra(permutation<N>(), scalar_transf<double>(ka))
     { }
 
     /** \brief Initializes the operation
@@ -51,7 +53,7 @@ public:
     diag_tod_copy(
         diag_tensor_rd_i<N, double> &dta,
         const permutation<N> &perma,
-        double ka) :
+        double ka = 1.0) :
         m_dta(dta), m_tra(perma, scalar_transf<double>(ka))
     { }
 
@@ -67,10 +69,9 @@ public:
 
     /** \brief Performs the operation
         \param zero Zero output before copying.
-        \param c Scaling factor.
         \param dtb Output tensor.
      **/
-    void perform(bool zero, double c, diag_tensor_wr_i<N, double> &dtb);
+    void perform(bool zero, diag_tensor_wr_i<N, double> &dtb);
 
 };
 

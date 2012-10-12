@@ -93,10 +93,10 @@ void diag_tod_copy_test::test_ij_1(size_t ni, size_t nj, double d) {
 
         tod_conv_diag_tensor<2>(dta).perform(ta);
 
-        diag_tod_copy<2>(dta).perform(true, d, dtb);
+        diag_tod_copy<2>(dta, d).perform(true, dtb);
         tod_conv_diag_tensor<2>(dtb).perform(tb);
 
-        tod_copy<2>(ta).perform(true, d, tb_ref);
+        tod_copy<2>(ta, d).perform(true, tb_ref);
 
         compare_ref<2>::compare(tn.c_str(), tb, tb_ref, 1e-14);
 
@@ -170,10 +170,10 @@ void diag_tod_copy_test::test_ij_2(size_t ni, size_t nj, double d) {
 
         tod_conv_diag_tensor<2>(dta).perform(ta);
 
-        diag_tod_copy<2>(dta, perm10, d * 2.0).perform(true, 0.5, dtb);
+        diag_tod_copy<2>(dta, perm10, d).perform(true, dtb);
         tod_conv_diag_tensor<2>(dtb).perform(tb);
 
-        tod_copy<2>(ta, perm10, d * 0.5).perform(true, 2.0, tb_ref);
+        tod_copy<2>(ta, perm10, d).perform(true, tb_ref);
 
         compare_ref<2>::compare(tn.c_str(), tb, tb_ref, 1e-14);
 
@@ -250,10 +250,10 @@ void diag_tod_copy_test::test_ij_3(size_t ni, double d) {
 
         tod_conv_diag_tensor<2>(dta).perform(ta);
 
-        diag_tod_copy<2>(dta).perform(true, d, dtb);
+        diag_tod_copy<2>(dta, d).perform(true, dtb);
         tod_conv_diag_tensor<2>(dtb).perform(tb);
 
-        tod_copy<2>(ta).perform(true, d, tb_ref);
+        tod_copy<2>(ta, d).perform(true, tb_ref);
 
         compare_ref<2>::compare(tn.c_str(), tb, tb_ref, 1e-14);
 

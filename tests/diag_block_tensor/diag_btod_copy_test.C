@@ -247,7 +247,7 @@ void diag_btod_copy_test::test_add_nosym_1() {
 
     tod_conv_diag_block_tensor<2>(bta).perform(ta);
     tod_conv_diag_block_tensor<2>(btb).perform(tb_ref);
-    tod_copy<2>(ta).perform(false, -2.0, tb_ref);
+    tod_copy<2>(ta, -2.0).perform(false, tb_ref);
 
     diag_btod_copy<2>(bta).perform(btb, -2.0);
     tod_conv_diag_block_tensor<2>(btb).perform(tb);
@@ -307,7 +307,7 @@ void diag_btod_copy_test::test_add_nosym_2a() {
     diag_btod_random<2>().perform(btb);
     tod_conv_diag_block_tensor<2>(bta).perform(ta);
     tod_conv_diag_block_tensor<2>(btb).perform(tb_ref);
-    tod_copy<2>(ta).perform(false, 0.5, tb_ref);
+    tod_copy<2>(ta, 0.5).perform(false, tb_ref);
 
     diag_btod_copy<2>(bta).perform(btb, 0.5);
     tod_conv_diag_block_tensor<2>(btb).perform(tb);
@@ -369,7 +369,7 @@ void diag_btod_copy_test::test_add_nosym_2b() {
     diag_btod_random<2>().perform(btb);
     tod_conv_diag_block_tensor<2>(bta).perform(ta);
     tod_conv_diag_block_tensor<2>(btb).perform(tb_ref);
-    tod_copy<2>(ta, p10, -0.5).perform(false, 1.0, tb_ref);
+    tod_copy<2>(ta, p10, -0.5).perform(false, tb_ref);
 
     diag_btod_copy<2>(bta, p10, -0.5).perform(btb, 1.0);
     tod_conv_diag_block_tensor<2>(btb).perform(tb);
@@ -430,7 +430,7 @@ void diag_btod_copy_test::test_add_nosym_3() {
     diag_btod_random<2>().perform(btb);
     tod_conv_diag_block_tensor<2>(bta).perform(ta);
     tod_conv_diag_block_tensor<2>(btb).perform(tb_ref);
-    tod_copy<2>(ta).perform(false, 1.2, tb_ref);
+    tod_copy<2>(ta, 1.2).perform(false, tb_ref);
 
     diag_btod_copy<2>(bta).perform(btb, 1.2);
     tod_conv_diag_block_tensor<2>(btb).perform(tb);
@@ -515,7 +515,7 @@ void diag_btod_copy_test::test_add_nosym_4() {
     diag_btod_random<2>().perform(btb);
     tod_conv_diag_block_tensor<2>(bta).perform(ta);
     tod_conv_diag_block_tensor<2>(btb).perform(tb_ref);
-    tod_copy<2>(ta, p10).perform(false, 1.0, tb_ref);
+    tod_copy<2>(ta, p10).perform(false, tb_ref);
 
     diag_btod_copy<2>(bta, p10).perform(btb, 1.0);
     tod_conv_diag_block_tensor<2>(btb).perform(tb);

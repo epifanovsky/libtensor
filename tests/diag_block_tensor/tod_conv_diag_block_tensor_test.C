@@ -2,6 +2,7 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/dense_tensor/tod_set.h>
 #include <libtensor/diag_tensor/diag_tensor_ctrl.h>
 #include <libtensor/symmetry/se_perm.h>

@@ -67,7 +67,7 @@ void diag_tod_contract2_part<N, M, K>::perform(
 
 #ifdef LIBTENSOR_DEBUG
     to_contract2_dims<N, M, K> dimsc2(m_contr, m_dimsa, m_dimsb);
-    if(!dimsc2.get_dimsc().equals(dimsc)) {
+    if(!dimsc2.get_dims().equals(dimsc)) {
         throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__,
             "dimsc");
     }

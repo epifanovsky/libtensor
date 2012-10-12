@@ -50,8 +50,7 @@ void tod_conv_diag_block_tensor<N>::perform(dense_tensor_wr_i<N, double> &tb) {
 
             {
                 diag_tensor_wr_i<N, double> &blkb = cb.req_block(ib);
-                diag_tod_copy<N>(blka, oa.get_transf(ioa)).
-                    perform(true, 1.0, blkb);
+                diag_tod_copy<N>(blka, oa.get_transf(ioa)).perform(true, blkb);
                 cb.ret_block(ib);
             }
             {
