@@ -13,7 +13,7 @@ namespace libtensor {
 
     \ingroup libtensor_gen_bto
  **/
-template<size_t N, size_t M, size_t K, typename Traits>
+template<size_t N, size_t M, size_t K>
 class gen_bto_contract2_batching_policy {
 private:
     enum {
@@ -21,14 +21,6 @@ private:
         NB = M + K, //!< Order of second argument (B)
         NC = N + M //!< Order of result (C)
     };
-
-public:
-    //! Type of tensor elements
-    typedef typename Traits::element_type element_type;
-
-    //! Block tensor interface traits
-    typedef typename Traits::bti_traits bti_traits;
-
 
 private:
     sequence<3, size_t> m_bsz; //!< Batch sizes
@@ -50,8 +42,8 @@ public:
 };
 
 
-template<size_t N, size_t M, size_t K, typename Traits>
-gen_bto_contract2_batching_policy<N, M, K, Traits>::
+template<size_t N, size_t M, size_t K>
+gen_bto_contract2_batching_policy<N, M, K>::
 gen_bto_contract2_batching_policy(const contraction2<N, M, K> &contr,
         size_t nblka, size_t nblkb, size_t nblkc) {
 

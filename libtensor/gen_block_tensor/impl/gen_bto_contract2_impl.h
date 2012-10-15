@@ -1,7 +1,6 @@
 #ifndef LIBTENSOR_GEN_BTO_CONTRACT2_IMPL_H
 #define LIBTENSOR_GEN_BTO_CONTRACT2_IMPL_H
 
-#include <map>
 #include <libtensor/core/orbit_list.h>
 #include <libtensor/symmetry/so_permute.h>
 #include "gen_bto_copy_impl.h"
@@ -86,7 +85,7 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
             return;
         }
 
-        gen_bto_contract2_batching_policy<N, M, K, Traits> bp(m_contr,
+        gen_bto_contract2_batching_policy<N, M, K> bp(m_contr,
                 nblka, nblkb, nblkc);
 
         //  Compute optimal permutations of A, B, and C
