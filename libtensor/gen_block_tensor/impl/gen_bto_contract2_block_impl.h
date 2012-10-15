@@ -47,10 +47,30 @@ void gen_bto_contract2_block<N, M, K, Traits, Timed>::compute_block(
 
     //  Prepare contraction list
     gen_bto_contract2_block::start_timer("contract_block::clst");
+
+    block_list<NA> blsta(m_bta.get_bis().get_block_index_dims());
+    for (typename orbit_list<NA, element_type>::iterator iol = m_ola.begin();
+            iol != m_ola.end(); iol++) {
+        if (ca.req_is_zero_block(m_ola.get_index(iol))) continue;
+
+        blsta.add(m_ola.get_abs_index(iol));
+    }
+
+    block_list<NB> blstb(m_btb.get_bis().get_block_index_dims());
+    for (typename orbit_list<NB, element_type>::iterator iol = m_olb.begin();
+            iol != m_olb.end(); iol++) {
+        if (cb.req_is_zero_block(m_olb.get_index(iol))) continue;
+
+        blstb.add(m_olb.get_abs_index(iol));
+    }
+
     gen_bto_contract2_clst_builder<N, M, K, Traits> clstop(m_contr,
-            m_bta, m_btb, m_ola, m_olb, m_bidimsa, m_bidimsb, m_bidimsc, idxc);
+            ca.req_const_symmetry(), cb.req_const_symmetry(),
+            blsta, blstb, m_bidimsc, idxc);
+
     clstop.build_list(false); // Build full contraction list
     const contr_list &clst = clstop.get_clst();
+
     gen_bto_contract2_block::stop_timer("contract_block::clst");
 
     //  Keep track of checked out blocks

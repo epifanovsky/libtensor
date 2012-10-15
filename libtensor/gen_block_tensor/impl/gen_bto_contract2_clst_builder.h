@@ -7,6 +7,7 @@
 #include <libtensor/core/noncopyable.h>
 #include "../gen_block_tensor_i.h"
 #include "../gen_bto_contract2_clst.h"
+#include "block_list.h"
 
 namespace libtensor {
 
@@ -96,24 +97,20 @@ public:
 
 private:
     contraction2<N, M, K> m_contr; //!< Contraction descriptor
-    gen_block_tensor_rd_i<NA, bti_traits> &m_bta; //!< First block tensor (A)
-    gen_block_tensor_rd_i<NB, bti_traits> &m_btb; //!< Second block tensor (B)
-    const orbit_list<NA, element_type> &m_ola; //!< List of orbits in A
-    const orbit_list<NB, element_type> &m_olb; //!< List of orbits in B
-    dimensions<NA> m_bidimsa; //!< Block index dimensions (A)
-    dimensions<NB> m_bidimsb; //!< Block index dimensions (B)
+    const symmetry<NA, element_type> &m_syma; //!< Symmetry of A
+    const symmetry<NB, element_type> &m_symb; //!< Symmetry of B
+    const block_list<NA> &m_blka; //!< Non-zero canonical blocks in A
+    const block_list<NB> &m_blkb; //!< Non-zero canonical blocks in B
     dimensions<NC> m_bidimsc; //!< Block index dimensions (C)
     index<NC> m_ic; //!< Index in C
 
 public:
     gen_bto_contract2_clst_builder(
         const contraction2<N, M, K> &contr,
-        gen_block_tensor_rd_i<NA, bti_traits> &bta,
-        gen_block_tensor_rd_i<NB, bti_traits> &btb,
-        const orbit_list<NA, element_type> &ola,
-        const orbit_list<NB, element_type> &olb,
-        const dimensions<NA> &bidimsa,
-        const dimensions<NB> &bidimsb,
+        const symmetry<NA, element_type> &syma,
+        const symmetry<NB, element_type> &symb,
+        const block_list<NA> &blka,
+        const block_list<NB> &blkb,
         const dimensions<NC> &bidimsc,
         const index<NC> &ic);
 
@@ -162,24 +159,20 @@ public:
 
 private:
     contraction2<N, M, 0> m_contr; //!< Contraction descriptor
-    gen_block_tensor_rd_i<NA, bti_traits> &m_bta; //!< First block tensor (A)
-    gen_block_tensor_rd_i<NB, bti_traits> &m_btb; //!< Second block tensor (B)
-    const orbit_list<NA, element_type> &m_ola; //!< List of orbits in A
-    const orbit_list<NB, element_type> &m_olb; //!< List of orbits in B
-    dimensions<NA> m_bidimsa; //!< Block index dimensions (A)
-    dimensions<NB> m_bidimsb; //!< Block index dimensions (B)
+    const symmetry<NA, element_type> &m_syma; //!< Symmetry of A
+    const symmetry<NB, element_type> &m_symb; //!< Symmetry of B
+    const block_list<NA> &m_blka; //!< Non-zero canonical blocks in A
+    const block_list<NB> &m_blkb; //!< Non-zero canonical blocks in B
     dimensions<NC> m_bidimsc; //!< Block index dimensions (C)
     index<NC> m_ic; //!< Index in C
 
 public:
     gen_bto_contract2_clst_builder(
         const contraction2<N, M, 0> &contr,
-        gen_block_tensor_rd_i<NA, bti_traits> &bta,
-        gen_block_tensor_rd_i<NB, bti_traits> &btb,
-        const orbit_list<NA, element_type> &ola,
-        const orbit_list<NB, element_type> &olb,
-        const dimensions<NA> &bidimsa,
-        const dimensions<NB> &bidimsb,
+        const symmetry<NA, element_type> &syma,
+        const symmetry<NB, element_type> &symb,
+        const block_list<NA> &blka,
+        const block_list<NB> &blkb,
         const dimensions<NC> &bidimsc,
         const index<NC> &ic);
 

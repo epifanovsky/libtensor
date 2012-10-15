@@ -7,6 +7,7 @@
 #include <libtensor/core/noncopyable.h>
 #include <libtensor/core/symmetry.h>
 #include <libtensor/gen_block_tensor/gen_block_tensor_i.h>
+#include "block_list.h"
 
 namespace libtensor {
 
@@ -34,10 +35,12 @@ public:
 
 private:
     contraction2<N, M, K> m_contr; //!< Contraction descriptor
-    gen_block_tensor_rd_i<NA, bti_traits> &m_bta; //!< First block tensor (A)
-    gen_block_tensor_rd_i<NB, bti_traits> &m_btb; //!< Second block tensor (B)
+    symmetry<NA, element_type> m_syma; //!< Symmetry of A
+    symmetry<NB, element_type> m_symb; //!< Symmetry of B
     symmetry<NC, element_type> m_symc; //!< Symmetry of result (C)
-    std::vector<size_t> m_blst; //!< List of non-zero canonical blocks
+    block_list<NA> m_blsta; //!< List of non-zero canonical blocks in A
+    block_list<NB> m_blstb; //!< List of non-zero canonical blocks in B
+    block_list<NC> m_blstc; //!< List of non-zero canonical blocks in C
 
 public:
     /** \brief Initializes the operation
@@ -52,16 +55,59 @@ public:
         gen_block_tensor_rd_i<NB, bti_traits> &btb,
         const symmetry<NC, element_type> &symc);
 
+    /** \brief Initializes the operation
+        \param contr Contraction descriptor.
+        \param syma Symmetry of first block tensor (A).
+        \param scha Assignment schedule for A
+        \param btb Second block tensor (B).
+        \param symc Symmetry of the result of the contraction (C).
+     **/
+    gen_bto_contract2_nzorb(
+        const contraction2<N, M, K> &contr,
+        const symmetry<NA, element_type> &syma,
+        const assignment_schedule<NA, element_type> &scha,
+        gen_block_tensor_rd_i<NB, bti_traits> &btb,
+        const symmetry<NC, element_type> &symc);
+
+    /** \brief Initializes the operation
+        \param contr Contraction descriptor.
+        \param bta First block tensor (A).
+        \param symb Symmetry of second block tensor (B).
+        \param schb Assignment schedule for B
+        \param symc Symmetry of the result of the contraction (C).
+     **/
+    gen_bto_contract2_nzorb(
+        const contraction2<N, M, K> &contr,
+        gen_block_tensor_rd_i<NA, bti_traits> &bta,
+        const symmetry<NB, element_type> &symb,
+        const assignment_schedule<NB, element_type> &schb,
+        const symmetry<NC, element_type> &symc);
+
+    /** \brief Initializes the operation
+        \param contr Contraction descriptor.
+        \param syma Symmetry of first block tensor (A).
+        \param scha Assignment schedule for A
+        \param symb Symmetry of second block tensor (B).
+        \param schb Assignment schedule for B
+        \param symc Symmetry of the result of the contraction (C).
+     **/
+    gen_bto_contract2_nzorb(
+        const contraction2<N, M, K> &contr,
+        const symmetry<NA, element_type> &syma,
+        const assignment_schedule<NA, element_type> &scha,
+        const symmetry<NB, element_type> &symb,
+        const assignment_schedule<NB, element_type> &schb,
+        const symmetry<NC, element_type> &symc);
+
     /** \brief Returns the list of non-zero canonical blocks
      **/
-    const std::vector<size_t> &get_blst() const {
-        return m_blst;
+    const block_list<NC> &get_blst() const {
+        return m_blstc;
     }
 
     /** \brief Builds the list
      **/
     void build();
-
 };
 
 

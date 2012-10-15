@@ -306,9 +306,10 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::make_schedule() {
         m_bta, m_btb, m_symc.get_symmetry());
 
     nzorb.build();
-    for(typename std::vector<size_t>::const_iterator i =
-        nzorb.get_blst().begin(); i != nzorb.get_blst().end(); ++i) {
-        m_sch.insert(*i);
+    const block_list<NC> &blstc = nzorb.get_blst();
+    for(typename block_list<NC>::iterator i = blstc.begin();
+            i != blstc.end(); ++i) {
+        m_sch.insert(blstc.get_abs_index(i));
     }
 
     gen_bto_contract2::stop_timer("make_schedule");
