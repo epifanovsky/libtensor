@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_GEN_BTO_CONTRACT2_ALIGN_H
 #define LIBTENSOR_GEN_BTO_CONTRACT2_ALIGN_H
 
+#include <libtensor/core/contraction2.h>
 #include <libtensor/core/noncopyable.h>
 #include <libtensor/core/permutation_builder.h>
 

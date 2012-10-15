@@ -1,7 +1,6 @@
 #ifndef LIBTENSOR_BTOD_CONTRACT2_H
 #define LIBTENSOR_BTOD_CONTRACT2_H
 
-#include <libtensor/timings.h>
 #include <libtensor/core/contraction2.h>
 #include <libtensor/core/noncopyable.h>
 #include <libtensor/gen_block_tensor/gen_bto_contract2.h>
@@ -30,7 +29,6 @@ struct btod_contract2_clazz {
 template<size_t N, size_t M, size_t K>
 class btod_contract2 :
     public additive_bto<N + M, btod_traits>,
-    public timings< btod_contract2<N, M, K> >,
     public noncopyable {
 
 public:
