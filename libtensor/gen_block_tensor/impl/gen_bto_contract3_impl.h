@@ -1,13 +1,18 @@
-#ifndef LIBTENSOR_BTOD_CONTRACT3_IMPL_H
-#define LIBTENSOR_BTOD_CONTRACT3_IMPL_H
+#ifndef LIBTENSOR_GEN_BTO_CONTRACT3_IMPL_H
+#define LIBTENSOR_GEN_BTO_CONTRACT3_IMPL_H
 
-#include <libtensor/core/allocator.h>
-#include <libtensor/core/scalar_transf_double.h>
-#include <libtensor/symmetry/so_copy.h>
-#include <libtensor/block_tensor/block_tensor.h>
-#include <libtensor/block_tensor/block_tensor_ctrl.h>
-#include <libtensor/block_tensor/btod_contract2.h>
-#include <libtensor/block_tensor/btod_set.h>
+#include <libtensor/core/orbit_list.h>
+#include <libtensor/symmetry/so_permute.h>
+#include "gen_bto_copy_impl.h"
+#include "gen_bto_contract2_align.h"
+#include "gen_bto_contract2_batch_impl.h"
+#include "gen_bto_contract2_clst_builder_impl.h"
+#include "gen_bto_contract2_nzorb_impl.h"
+#include "gen_bto_contract2_sym_impl.h"
+#include "gen_bto_contract3_batching_policy.h"
+#include "../gen_block_tensor_ctrl.h"
+#include "../gen_bto_aux_add.h"
+#include "../gen_bto_aux_copy.h"
 #include "../gen_bto_contract3.h"
 
 namespace libtensor {
@@ -42,10 +47,6 @@ template<size_t N1, size_t N2, size_t N3, size_t K1, size_t K2,
 void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
     gen_block_stream_i<ND, bti_traits> &out) {
 
-    typedef typename Traits::template temp_block_tensor_type<NA>::type
-            temp_block_tensor_a_type;
-    typedef typename Traits::template temp_block_tensor_type<NB>::type
-            temp_block_tensor_b_type;
     typedef typename Traits::template temp_block_tensor_type<NC>::type
             temp_block_tensor_c_type;
     typedef typename Traits::template temp_block_tensor_type<ND>::type
@@ -69,7 +70,7 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
 
         //  Compute the number of blocks in A, B, C, and D
 
-        size_t nblka = 0, nblkb = 0, nblkc = 0, nblkd = 0;
+        size_t nblka = 0, nblkb = 0, nblkc = 0, nblkab = 0, nblkd = 0;
         orbit_list<NA, element_type> ola(ca.req_const_symmetry());
         for(typename orbit_list<NA, element_type>::iterator ioa = ola.begin();
                 ioa != ola.end(); ++ioa) {
@@ -85,22 +86,29 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
                 ioc != olc.end(); ++ioc) {
             if(!cc.req_is_zero_block(olc.get_index(ioc))) nblkc++;
         }
-        for(typename assignment_schedule<ND, element_type>::iterator i =
-                m_sch.begin(); i != m_sch.end(); ++i) {
+        for(typename assignment_schedule<NAB, element_type>::iterator isch =
+                m_schab.begin(); isch != m_schab.end(); ++isch) {
+            nblkab++;
+        }
+        for(typename assignment_schedule<ND, element_type>::iterator isch =
+                m_schd.begin(); isch != m_schd.end(); ++isch) {
             nblkd++;
         }
 
         //  Quit if either one of the arguments is zero
 
-        if(nblka == 0 || nblkb == 0 || nblkc == 0) {
+        if(nblka == 0 || nblkb == 0 || nblkc == 0 || nblkab == 0) {
             out.close();
             gen_bto_contract3::stop_timer();
             return;
         }
 
+        gen_bto_contract3_batching_policy<N1, N2, N3, K1, K2> bp(
+                m_contr1, m_contr2, nblka, nblkb, nblkc, nblkab, nblkd);
+
         //  Compute optimal permutations of A and B to perform 1st contraction
 
-        gen_bto_contract2_align<N1, N2, K1> align1(m_contr1);
+        gen_bto_contract2_align<N1, N2 + K2, K1> align1(m_contr1);
 
         const permutation<NA> &perma = align1.get_perma();
         const permutation<NB> &permb = align1.get_permb();
@@ -108,7 +116,7 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
 
         // Prepare permuted arguments of 1st contraction
 
-        contraction2<N1, N2, K1> contr1(m_contr1);
+        contraction2<N1, N2 + K2, K1> contr1(m_contr1);
         contr1.permute_a(perma);
         contr1.permute_b(permb);
         contr1.permute_c(permab1);
@@ -137,6 +145,9 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
         const permutation<NAB> &permab2 = align2.get_perma();
         const permutation<NC> &permc = align2.get_permb();
         const permutation<ND> &permd = align2.get_permc();
+        permutation<NAB> permab(permab1, true);
+        permab.permute(permab2);
+        permutation<ND> permdinv(permd, true);
 
         // Prepare permuted arguments of 2nd contraction
 
@@ -154,7 +165,7 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
 
         symmetry<NAB, element_type> symab2(bisab2);
         symmetry<NC, element_type> symct(bisct);
-        symmetry<ND, element_type> symdt(bisct);
+        symmetry<ND, element_type> symdt(bisdt);
         so_permute<NAB, element_type>(
                 m_symab.get_symmetry(), permab2).perform(symab2);
         so_permute<NC, element_type>(
@@ -169,10 +180,11 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
         temp_block_tensor_d_type btdt(bisdt);
 
         gen_block_tensor_rd_ctrl<ND, bti_traits> cdt(btdt);
-        gen_block_tensor_ctrl<NAB, bti_traits> cab(btab);
+        gen_block_tensor_ctrl<NAB, bti_traits> cab(btab1);
 
         dimensions<NAB> bidimsab(m_symab.get_bis().get_block_index_dims());
         dimensions<NAB> bidimsab1(symab1.get_bis().get_block_index_dims());
+        dimensions<ND> bidimsd(m_symd.get_bis().get_block_index_dims());
         dimensions<ND> bidimsdt(bisdt.get_block_index_dims());
 
         scalar_transf<element_type> kab;
@@ -186,14 +198,14 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
 
         typename assignment_schedule<NAB, element_type>::iterator ibab =
             m_schab.begin();
-        while (ibab != schab.end()) {
+        while (ibab != m_schab.end()) {
 
             batchab1.clear();
             batchab2.clear();
             if (permab1.is_identity()) {
                 for(; ibab != m_schab.end() &&
                         batchab1.size() < bp.get_bsz_ab(); ++ibab) {
-                    batchab1.push_back(m_schab.get_abs_index(*i));
+                    batchab1.push_back(m_schab.get_abs_index(ibab));
                 }
             }
             else {
@@ -201,7 +213,7 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
                         batchab1.size() < bp.get_bsz_ab(); ++ibab) {
 
                     index<NAB> iab;
-                    abs_index<NAB>::get_index(*i, bidimsab, iab);
+                    abs_index<NAB>::get_index(*ibab, bidimsab, iab);
                     iab.permute(permab1);
                     orbit<NAB, element_type> oab(symab1, iab, false);
                     batchab1.push_back(oab.get_acindex());
@@ -214,10 +226,10 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
             compute_batch_ab(contr1,
                     ola, perma, symat, bp.get_bsz_a(),
                     olb, permb, symbt, bp.get_bsz_b(),
-                    symab.get_bis(), batchab1, ab1cout);
+                    m_symab.get_bis(), batchab1, ab1cout);
 
             bool use_orig_ab = permab.is_identity();
-            if (! use_orib_ab) {
+            if (! use_orig_ab) {
                 gen_bto_contract3::start_timer("copy_ab");
                 for (size_t i = 0; i < batchab1.size(); i++) {
                     index<NAB> iab;
@@ -230,8 +242,8 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
                 }
                 tensor_transf<NAB, element_type> trab(permab);
                 gen_bto_aux_copy<NAB, Traits> ab2cout(symab2, btab2);
-                gen_bto_copy_ab_type(btab, trab).perform(batchab2, ab2cout);
-                cab.on_req_zero_all_blocks();
+                gen_bto_copy_ab_type(btab1, trab).perform(batchab2, ab2cout);
+                cab.req_zero_all_blocks();
                 gen_bto_contract3::stop_timer("copy_ab");
             }
 
@@ -256,7 +268,7 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
                         index<NC> ic = olc.get_index(ioc);
                         if(cc.req_is_zero_block(ic)) continue;
                         ic.permute(permc);
-                        orbit<NB, element_type> oct(symct, ic, false);
+                        orbit<NC, element_type> oct(symct, ic, false);
                         batchc.push_back(oct.get_acindex());
                     }
                 }
@@ -279,16 +291,16 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
                 if(batchc.size() == 0) continue;
 
                 typename assignment_schedule<ND, element_type>::iterator ibd =
-                    m_sch.begin();
-                while(ibd != m_sch.end()) {
+                    m_schd.begin();
+                while(ibd != m_schd.end()) {
 
                     batchd1.clear();
                     batchd2.clear();
 
-                    for(; ibd != m_sch.end() && batchd1.size() < bp.get_bsz_d();
+                    for(; ibd != m_schd.end() && batchd1.size() < bp.get_bsz_d();
                             ++ibd) {
                         index<ND> id;
-                        abs_index<ND>::get_index(m_sch.get_abs_index(ibd),
+                        abs_index<ND>::get_index(m_schd.get_abs_index(ibd),
                             bidimsd, id);
                         id.permute(permd);
                         orbit<ND, element_type> odt(symdt, id, false);
@@ -300,7 +312,7 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
                     //  in some cases, e.g. self-contraction
                     gen_bto_aux_copy<ND, Traits> dtcout(symdt, btdt);
                     gen_bto_contract2_batch<N1 + N2, N3, K2, Traits, Timed> bto(
-                            contr, btabx, kab, btc, m_kc, symdt.get_bis(), m_kd);
+                            contr2, btabx, kab, btc, m_kc, symdt.get_bis(), m_kd);
                     bto.perform(batchd1, dtcout);
 
                     gen_bto_contract3::start_timer("copy_d");
@@ -342,8 +354,12 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::compute_batch_ab(
         const symmetry<NB, element_type> &symb, size_t batchszb,
         const block_index_space<NAB> &bisab,
         const std::vector<size_t> &blst,
-        gen_block_stream_i<N1 + N2 + K2, bti_traits> &out) {
+        gen_block_stream_i<NAB, bti_traits> &out) {
 
+    typedef typename Traits::template temp_block_tensor_type<NA>::type
+            temp_block_tensor_a_type;
+    typedef typename Traits::template temp_block_tensor_type<NB>::type
+            temp_block_tensor_b_type;
     typedef gen_bto_copy< NA, Traits, Timed> gen_bto_copy_a_type;
     typedef gen_bto_copy< NB, Traits, Timed> gen_bto_copy_b_type;
 
@@ -449,7 +465,7 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::compute_batch_ab(
 
                 //  Calling this may break the symmetry of final result
                 //  in some cases, e.g. self-contraction
-                gen_bto_contract2_batch<N1, N2, K1, Traits, Timed> bto(
+                gen_bto_contract2_batch<N1, N2 + K2, K1, Traits, Timed> bto(
                         contr, bta, m_ka, btb, m_kb, bisab, kab);
                 bto.perform(blst, out);
 
@@ -473,7 +489,7 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::make_schedule() {
 
     gen_bto_contract3::start_timer("make_schedule");
 
-    gen_bto_contract2_nzorb<N1, N2, K1, Traits, Timed> nzorb1(m_contr1,
+    gen_bto_contract2_nzorb<N1, N2 + K2, K1, Traits, Timed> nzorb1(m_contr1,
         m_bta, m_btb, m_symab.get_symmetry());
 
     nzorb1.build();
@@ -500,5 +516,5 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::make_schedule() {
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_BTOD_CONTRACT3_IMPL_H
+#endif // LIBTENSOR_GEN_BTO_CONTRACT3_IMPL_H
 

@@ -2,11 +2,13 @@
 #define LIBTENSOR_GEN_BTO_CONTRACT3_H
 
 #include <vector>
-#include <libutil/thread_pool/thread_pool.h>
+#include <libtensor/timings.h>
 #include <libtensor/core/contraction2.h>
 #include <libtensor/core/noncopyable.h>
-#include <libtensor/block_tensor/block_tensor_i.h>
-#include <libtensor/block_tensor/btod_contract2.h>
+#include "impl/gen_bto_contract2_sym.h"
+#include "assignment_schedule.h"
+#include "gen_block_stream_i.h"
+#include "gen_block_tensor_i.h"
 
 namespace libtensor {
 
@@ -44,6 +46,28 @@ public:
         ND = N1 + N2 + N3 //!< Rank of result tensor (D)
     };
 
+public:
+    //! Type of tensor elements
+    typedef typename Traits::element_type element_type;
+
+    //! Block tensor interface traits
+    typedef typename Traits::bti_traits bti_traits;
+
+    //! Type of read-only block of A
+    typedef typename bti_traits::template rd_block_type<NA>::type
+            rd_block_a_type;
+
+    //! Type of read-only block of B
+    typedef typename bti_traits::template rd_block_type<NB>::type
+            rd_block_b_type;
+
+    //! Type of read-only block of C
+    typedef typename bti_traits::template rd_block_type<NC>::type
+            rd_block_c_type;
+
+    //! Type of write-only block
+    typedef typename bti_traits::template wr_block_type<ND>::type wr_block_type;
+
 private:
     contraction2<N1, N2 + K2, K1> m_contr1; //!< First contraction
     contraction2<N1 + N2, N3, K2> m_contr2; //!< Second contraction
@@ -55,8 +79,8 @@ private:
     scalar_transf<element_type> m_kc; //!< Scalar transformation of C
     scalar_transf<element_type> m_kd; //!< Scalar transformation of result (D)
 
-    gen_bto_contract2_sym<N1, N2, K1> m_symab; //!< Symmetry of intermediate (AB)
-    gen_bto_contract2_sym<N1 + N2, N3, K2> m_symd; //!< Symmetry of result (D)
+    gen_bto_contract2_sym<N1, N2 + K2, K1, Traits> m_symab; //!< Symmetry of intermediate (AB)
+    gen_bto_contract2_sym<N1 + N2, N3, K2, Traits> m_symd; //!< Symmetry of result (D)
 
     assignment_schedule<NAB, element_type> m_schab; //!< Schedule for AB
     assignment_schedule<ND, element_type> m_schd; //!< Schedule for result (D)
@@ -73,9 +97,13 @@ public:
     gen_bto_contract3(
         const contraction2<N1, N2 + K2, K1> &contr1,
         const contraction2<N1 + N2, N3, K2> &contr2,
-        gen_block_tensor_rd_i<NA, double> &bta,
-        gen_block_tensor_rd_i<NB, double> &btb,
-        gen_block_tensor_rd_i<NC, double> &btc);
+        gen_block_tensor_rd_i<NA, bti_traits> &bta,
+        const scalar_transf<element_type> &ka,
+        gen_block_tensor_rd_i<NB, bti_traits> &btb,
+        const scalar_transf<element_type> &kb,
+        gen_block_tensor_rd_i<NC, bti_traits> &btc,
+        const scalar_transf<element_type> &kc,
+        const scalar_transf<element_type> &kd);
 
     /** \brief Returns the block index space of the result
      **/
@@ -103,7 +131,8 @@ public:
     void perform(gen_block_stream_i<ND, bti_traits> &out);
 
 private:
-    void compute_batch_ab(const contraction2<N1, N2 + K2, K1> &contr,
+    void compute_batch_ab(
+            const contraction2<N1, N2 + K2, K1> &contr,
             const orbit_list<NA, element_type> &ola,
             const permutation<NA> &perma,
             const symmetry<NA, element_type> &syma, size_t batchsza,
@@ -120,6 +149,8 @@ private:
         gen_block_tensor_base_ctrl<NC, bti_traits> cc(btc);
         return cc.req_const_symmetry();
     }
+
+    void make_schedule();
 };
 
 
