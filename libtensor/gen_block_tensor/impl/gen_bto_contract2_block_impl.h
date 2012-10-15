@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_GEN_BTO_CONTRACT2_BLOCK_IMPL_H
 #define LIBTENSOR_GEN_BTO_CONTRACT2_BLOCK_IMPL_H
 
-#include "gen_bto_contract2_clst.h"
+#include "gen_bto_contract2_clst_builder_impl.h"
 #include "gen_bto_contract2_block.h"
 
 namespace libtensor {
@@ -36,7 +36,7 @@ void gen_bto_contract2_block<N, M, K, Traits, Timed>::compute_block(
     const tensor_transf<NC, element_type> &trc,
     wr_block_c_type &blkc) {
 
-    typedef typename gen_bto_contract2_clst<N, M, K, Traits>::contr_list
+    typedef typename gen_bto_contract2_clst<N, M, K, element_type>::list_type
         contr_list;
     typedef typename Traits::template to_contract2_type<N, M, K>::type
         to_contract2;
@@ -47,8 +47,8 @@ void gen_bto_contract2_block<N, M, K, Traits, Timed>::compute_block(
 
     //  Prepare contraction list
     gen_bto_contract2_block::start_timer("contract_block::clst");
-    gen_bto_contract2_clst<N, M, K, Traits> clstop(m_contr, m_bta, m_btb,
-        m_ola, m_olb, m_bidimsa, m_bidimsb, m_bidimsc, idxc);
+    gen_bto_contract2_clst_builder<N, M, K, Traits> clstop(m_contr,
+            m_bta, m_btb, m_ola, m_olb, m_bidimsa, m_bidimsb, m_bidimsc, idxc);
     clstop.build_list(false); // Build full contraction list
     const contr_list &clst = clstop.get_clst();
     gen_bto_contract2_block::stop_timer("contract_block::clst");
@@ -68,27 +68,27 @@ void gen_bto_contract2_block<N, M, K, Traits, Timed>::compute_block(
 
         index<NA> ia;
         index<NB> ib;
-        abs_index<NA>::get_index(i->aia, m_bidimsa, ia);
-        abs_index<NB>::get_index(i->aib, m_bidimsb, ib);
+        abs_index<NA>::get_index(i->get_abs_index_a(), m_bidimsa, ia);
+        abs_index<NB>::get_index(i->get_abs_index_b(), m_bidimsb, ib);
 
         bool zeroa = ca.req_is_zero_block(ia);
         bool zerob = cb.req_is_zero_block(ib);
         if(zeroa || zerob) continue;
 
-        if(coba.find(i->aia) == coba.end()) {
+        if(coba.find(i->get_abs_index_a()) == coba.end()) {
             rd_block_a_type &blka = ca.req_const_block(ia);
-            coba[i->aia] = &blka;
+            coba[i->get_abs_index_a()] = &blka;
         }
-        if(cobb.find(i->aib) == cobb.end()) {
+        if(cobb.find(i->get_abs_index_b()) == cobb.end()) {
             rd_block_b_type &blkb = cb.req_const_block(ib);
-            cobb[i->aib] = &blkb;
+            cobb[i->get_abs_index_b()] = &blkb;
         }
-        rd_block_a_type &blka = *coba[i->aia];
-        rd_block_b_type &blkb = *cobb[i->aib];
+        rd_block_a_type &blka = *coba[i->get_abs_index_a()];
+        rd_block_b_type &blkb = *cobb[i->get_abs_index_b()];
 
-        tensor_transf<NA, element_type> trainv(i->tra);
+        tensor_transf<NA, element_type> trainv(i->get_transf_a());
         trainv.invert();
-        tensor_transf<NB, element_type> trbinv(i->trb);
+        tensor_transf<NB, element_type> trbinv(i->get_transf_b());
         trbinv.invert();
 
         contraction2<N, M, K> contr(m_contr);

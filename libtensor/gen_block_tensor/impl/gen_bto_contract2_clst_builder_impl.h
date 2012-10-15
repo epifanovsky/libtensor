@@ -1,28 +1,28 @@
-#ifndef LIBTENSOR_GEN_BTO_CONTRACT2_CLST_IMPL_H
-#define LIBTENSOR_GEN_BTO_CONTRACT2_CLST_IMPL_H
+#ifndef LIBTENSOR_GEN_BTO_CONTRACT2_CLST_BUILDER_IMPL_H
+#define LIBTENSOR_GEN_BTO_CONTRACT2_CLST_BUILDER_IMPL_H
 
 #include <set>
 #include <libtensor/core/abs_index.h>
 #include <libtensor/core/orbit.h>
 #include <libtensor/core/orbit_list.h>
 #include <libtensor/gen_block_tensor/gen_block_tensor_ctrl.h>
-#include "gen_bto_contract2_clst.h"
+#include "gen_bto_contract2_clst_builder.h"
 
 namespace libtensor {
 
 
 template<size_t N, size_t M, size_t K, typename Traits>
-const char *gen_bto_contract2_clst<N, M, K, Traits>::k_clazz =
-    "gen_bto_contract2_clst<N, M, K, T>";
+const char *gen_bto_contract2_clst_builder<N, M, K, Traits>::k_clazz =
+    "gen_bto_contract2_clst_builder<N, M, K, Traits>";
 
 
 template<size_t N, size_t M, typename Traits>
-const char *gen_bto_contract2_clst<N, M, 0, Traits>::k_clazz =
-    "gen_bto_contract2_clst<N, M, 0, T>";
+const char *gen_bto_contract2_clst_builder<N, M, 0, Traits>::k_clazz =
+    "gen_bto_contract2_clst_builder<N, M, 0, Traits>";
 
 
 template<size_t N, size_t M, size_t K, typename Traits>
-gen_bto_contract2_clst<N, M, K, Traits>::gen_bto_contract2_clst(
+gen_bto_contract2_clst_builder<N, M, K, Traits>::gen_bto_contract2_clst_builder(
     const contraction2<N, M, K> &contr,
     gen_block_tensor_rd_i<NA, bti_traits> &bta,
     gen_block_tensor_rd_i<NB, bti_traits> &btb,
@@ -40,7 +40,7 @@ gen_bto_contract2_clst<N, M, K, Traits>::gen_bto_contract2_clst(
 
 
 template<size_t N, size_t M, typename Traits>
-gen_bto_contract2_clst<N, M, 0, Traits>::gen_bto_contract2_clst(
+gen_bto_contract2_clst_builder<N, M, 0, Traits>::gen_bto_contract2_clst_builder(
     const contraction2<N, M, 0> &contr,
     gen_block_tensor_rd_i<NA, bti_traits> &bta,
     gen_block_tensor_rd_i<NB, bti_traits> &btb,
@@ -58,7 +58,7 @@ gen_bto_contract2_clst<N, M, 0, Traits>::gen_bto_contract2_clst(
 
 
 template<size_t N, size_t M, size_t K, typename Traits>
-void gen_bto_contract2_clst<N, M, K, Traits>::build_list(bool testzero) {
+void gen_bto_contract2_clst_builder<N, M, K, Traits>::build_list(bool testzero) {
 
     //  For a specified block in the result block tensor (C),
     //  this algorithm makes a list of contractions of the blocks
@@ -153,8 +153,8 @@ void gen_bto_contract2_clst<N, M, K, Traits>::build_list(bool testzero) {
             }
             if(!ic1.equals(ic)) continue;
             if(!zero) {
-                clst.push_back(contr_pair(oa.get_acindex(), ob.get_acindex(),
-                    oa.get_transf(ja), ob.get_transf(jb)));
+                clst.push_back(contr_pair(oa.get_acindex(), oa.get_transf(ja),
+                        ob.get_acindex(), ob.get_transf(jb)));
             }
             ikset.erase(abs_index<K>::get_abs_index(ika, bidimsk));
         }
@@ -172,7 +172,7 @@ void gen_bto_contract2_clst<N, M, K, Traits>::build_list(bool testzero) {
 
 
 template<size_t N, size_t M, typename Traits>
-void gen_bto_contract2_clst<N, M, 0, Traits>::build_list(bool testzero) {
+void gen_bto_contract2_clst_builder<N, M, 0, Traits>::build_list(bool testzero) {
 
     //  For a specified block in the result block tensor (C),
     //  this algorithm makes a list of contractions of the blocks
@@ -205,13 +205,13 @@ void gen_bto_contract2_clst<N, M, 0, Traits>::build_list(bool testzero) {
     orbit<NB, element_type> ob(symb, ib, false);
 
     bool zero = !m_ola.contains(oa.get_acindex()) ||
-        !m_olb.contains(ob.get_acindex());
+            !m_olb.contains(ob.get_acindex());
 
     abs_index<N> acia(oa.get_acindex(), m_bidimsa);
     abs_index<M> acib(ob.get_acindex(), m_bidimsb);
     if(!zero) {
         zero = ca.req_is_zero_block(acia.get_index()) ||
-            cb.req_is_zero_block(acib.get_index());
+                cb.req_is_zero_block(acib.get_index());
     }
 
     contr_list clst;
@@ -236,8 +236,8 @@ void gen_bto_contract2_clst<N, M, 0, Traits>::build_list(bool testzero) {
         }
         if(!ic1.equals(ic)) continue;
         if(!zero) {
-            clst.push_back(contr_pair(oa.get_acindex(), ob.get_acindex(),
-                oa.get_transf(ja), ob.get_transf(jb)));
+            clst.push_back(contr_pair(oa.get_acindex(), oa.get_transf(ja),
+                    ob.get_acindex(), ob.get_transf(jb)));
         }
     }
 
@@ -247,48 +247,19 @@ void gen_bto_contract2_clst<N, M, 0, Traits>::build_list(bool testzero) {
 
 
 template<size_t N, size_t M, size_t K, typename Traits>
-void gen_bto_contract2_clst_base<N, M, K, Traits>::coalesce(contr_list &clst) {
+void gen_bto_contract2_clst_builder_base<N, M, K, Traits>::coalesce(
+        contr_list &clst) {
 
-    typename contr_list::iterator j1 = clst.begin();
-    while(j1 != clst.end()) {
-        typename contr_list::iterator j2 = j1;
-        ++j2;
-        bool incj1 = true;
-        while(j2 != clst.end()) {
-            if(j1->tra.get_perm().equals(j2->tra.get_perm()) &&
-                j1->trb.get_perm().equals(j2->trb.get_perm())) {
-                // TODO: replace with scalar_transf::combine
-                // TODO: this code is double-specific!
-                double d1 = j1->tra.get_scalar_tr().get_coeff() *
-                    j1->trb.get_scalar_tr().get_coeff();
-                double d2 = j2->tra.get_scalar_tr().get_coeff() *
-                    j2->trb.get_scalar_tr().get_coeff();
-                if(d1 + d2 == 0) {
-                    j1 = clst.erase(j1);
-                    if(j1 == j2) {
-                        j1 = j2 = clst.erase(j2);
-                    } else {
-                        j2 = clst.erase(j2);
-                    }
-                    incj1 = false;
-                    break;
-                } else {
-                    j1->tra.get_scalar_tr().reset();
-                    j1->trb.get_scalar_tr().reset();
-                    j1->tra.get_scalar_tr().scale(d1 + d2);
-                    j2 = clst.erase(j2);
-                }
-            } else {
-                ++j2;
-            }
-        }
-        if(incj1) ++j1;
-    }
+    typedef typename Traits::template to_contract2_type<N, M, K>::clst_optimize_type
+            coalesce_type;
+
+    coalesce_type().perform(clst);
 }
 
 
 template<size_t N, size_t M, size_t K, typename Traits>
-void gen_bto_contract2_clst_base<N, M, K, Traits>::merge(contr_list &clst) {
+void gen_bto_contract2_clst_builder_base<N, M, K, Traits>::merge(
+        contr_list &clst) {
 
     m_clst.splice(m_clst.end(), clst);
 }
@@ -296,4 +267,4 @@ void gen_bto_contract2_clst_base<N, M, K, Traits>::merge(contr_list &clst) {
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_GEN_BTO_CONTRACT2_CLST_IMPL_H
+#endif // LIBTENSOR_GEN_BTO_CONTRACT2_CLST_BUILDER_IMPL_H

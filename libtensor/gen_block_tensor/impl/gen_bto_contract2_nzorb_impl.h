@@ -12,7 +12,7 @@
 #include <libtensor/core/orbit_list.h>
 #include <libtensor/symmetry/so_copy.h>
 #include "../gen_block_tensor_ctrl.h"
-#include "gen_bto_contract2_clst_impl.h"
+#include "gen_bto_contract2_clst_builder_impl.h"
 #include "gen_bto_contract2_nzorb.h"
 
 namespace libtensor {
@@ -35,7 +35,7 @@ public:
     typedef typename Traits::bti_traits bti_traits;
 
 private:
-    gen_bto_contract2_clst<N, M, K, Traits> m_clst;
+    gen_bto_contract2_clst_builder<N, M, K, Traits> m_clst_bld;
     dimensions<NC> m_bidimsc;
     index<NC> m_ic;
     std::vector<size_t> &m_blst;
@@ -173,7 +173,7 @@ gen_bto_contract2_nzorb_task<N, M, K, Traits>::gen_bto_contract2_nzorb_task(
     std::vector<size_t> &blst,
     libutil::mutex &mtx) :
 
-    m_clst(contr, bta, btb, ola, olb, bidimsa, bidimsb, bidimsc, ic),
+    m_clst_bld(contr, bta, btb, ola, olb, bidimsa, bidimsb, bidimsc, ic),
     m_bidimsc(bidimsc), m_ic(ic), m_blst(blst), m_mtx(mtx) {
 
 }
@@ -182,8 +182,8 @@ gen_bto_contract2_nzorb_task<N, M, K, Traits>::gen_bto_contract2_nzorb_task(
 template<size_t N, size_t M, size_t K, typename Traits>
 void gen_bto_contract2_nzorb_task<N, M, K, Traits>::perform() {
 
-    m_clst.build_list(true);
-    if(!m_clst.is_empty()) {
+    m_clst_bld.build_list(true);
+    if(!m_clst_bld.is_empty()) {
         libutil::auto_lock<libutil::mutex> lock(m_mtx);
         m_blst.push_back(abs_index<NC>::get_abs_index(m_ic, m_bidimsc));
     }

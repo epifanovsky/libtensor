@@ -8,7 +8,7 @@
 #include "gen_bto_contract2_align.h"
 #include "gen_bto_contract2_batch_impl.h"
 #include "gen_bto_contract2_batching_policy.h"
-#include "gen_bto_contract2_clst_impl.h"
+#include "gen_bto_contract2_clst_builder_impl.h"
 #include "gen_bto_contract2_nzorb_impl.h"
 #include "gen_bto_contract2_sym_impl.h"
 #include "../gen_block_tensor_ctrl.h"
