@@ -5,29 +5,31 @@
 #include <libtensor/linalg/cublas/linalg_cublas.h>
 #include <libtensor/linalg/generic/linalg_generic.h>
 #include <libtensor/exception.h>
-#include "linalg_cublas_ij_i_j_x_test.h"
+#include "linalg_cublas_mul2_ij_i_j_x_test.h"
 
 namespace libtensor {
 
 
-void linalg_cublas_ij_i_j_x_test::perform() throw(libtest::test_exception) {
-    test_ij_i_j_x(1, 1, 1, 1, 1);
-    test_ij_i_j_x(1, 2, 1, 2, 1);
-    test_ij_i_j_x(2, 1, 1, 1, 1);
-    test_ij_i_j_x(16, 16, 1, 16, 1);
-    test_ij_i_j_x(3, 17, 1, 17, 1);
-    test_ij_i_j_x(2, 2, 2, 3, 4);
-    test_ij_i_j_x(2, 2, 4, 3, 2);
+void linalg_cublas_mul2_ij_i_j_x_test::perform()
+    throw(libtest::test_exception) {
+
+    test_mul2_ij_i_j_x(1, 1, 1, 1, 1);
+    test_mul2_ij_i_j_x(1, 2, 1, 2, 1);
+    test_mul2_ij_i_j_x(2, 1, 1, 1, 1);
+    test_mul2_ij_i_j_x(16, 16, 1, 16, 1);
+    test_mul2_ij_i_j_x(3, 17, 1, 17, 1);
+    test_mul2_ij_i_j_x(2, 2, 2, 3, 4);
+    test_mul2_ij_i_j_x(2, 2, 4, 3, 2);
 }
 
-void linalg_cublas_ij_i_j_x_test::test_ij_i_j_x(size_t ni, size_t nj, size_t sia,
-	    size_t sic, size_t sjb) {
 
-	std::ostringstream ss;
-	ss << "linalg_ij_i_j_x_test::test_ij_i_j_x("
-		<< ni << ", " << nj << ", " << sia << ", " << sic << ", "
-		<< sjb << ")";
-	std::string tnss = ss.str();
+void linalg_cublas_mul2_ij_i_j_x_test::test_mul2_ij_i_j_x(size_t ni, size_t nj,
+    size_t sia, size_t sic, size_t sjb) {
+
+    std::ostringstream ss;
+    ss << "linalg_cublas_mul2_ij_i_j_x_test::test_mul2_ij_i_j_x("
+        << ni << ", " << nj << ", " << sia << ", " << sic << ", " << sjb << ")";
+    std::string tnss = ss.str();
 
     typedef libvmm::cuda_allocator<double> cuda_allocator_type;
     typedef typename cuda_allocator_type::pointer_type cuda_pointer;
@@ -39,16 +41,16 @@ void linalg_cublas_ij_i_j_x_test::test_ij_i_j_x(size_t ni, size_t nj, size_t sia
 
     size_t sza = ni * sia, szb = nj * sjb, szc = ni * sic;
 
-	a = new double[sza];
-	b = new double[szb];
-	c = new double[szc];
-	c_ref = new double[szc];
+    a = new double[sza];
+    b = new double[szb];
+    c = new double[szc];
+    c_ref = new double[szc];
 
-	double d = drand48();
+    double d = drand48();
 
     for(size_t i = 0; i < sza; i++) a[i] = drand48();
-	for(size_t i = 0; i < szb; i++) b[i] = drand48();
-	for(size_t i = 0; i < szc; i++) c[i] = c_ref[i] = drand48();
+    for(size_t i = 0; i < szb; i++) b[i] = drand48();
+    for(size_t i = 0; i < szc; i++) c[i] = c_ref[i] = drand48();
 
     const double *pa = &a[0];
     const double *pb = &b[0];
@@ -71,7 +73,8 @@ void linalg_cublas_ij_i_j_x_test::test_ij_i_j_x(size_t ni, size_t nj, size_t sia
         fail_test(tnss.c_str(), __FILE__, __LINE__, "Failed cublasCreate().");
     }
 
-    linalg_cublas::ij_i_j_x(cbh, ni, nj, padl, sia, pbdl, sjb, pcdl, sic, d);
+    linalg_cublas::mul2_ij_i_j_x(cbh, ni, nj, padl, sia, pbdl, sjb, pcdl, sic,
+        d);
     linalg_generic::mul2_ij_i_j_x(0, ni, nj, a, sia, b, sjb, c_ref, sic, d);
 
     cuda_allocator_type::copy_to_host(pc, pcdl, szc);

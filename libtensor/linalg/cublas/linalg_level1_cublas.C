@@ -8,7 +8,7 @@ namespace libtensor {
 const char *linalg_level1_cublas::k_clazz = "cublas";
 
 
-void linalg_level1_cublas::i_x(
+void linalg_level1_cublas::mul1_i_x(
     cublasHandle_t h,
     size_t ni,
     double a,
@@ -24,7 +24,7 @@ void linalg_level1_cublas::i_x(
 }
 
 
-double linalg_level1_cublas::x_p_p(
+double linalg_level1_cublas::mul2_x_p_p(
     cublasHandle_t h,
     size_t np,
     const double *a, size_t spa,
@@ -41,7 +41,7 @@ double linalg_level1_cublas::x_p_p(
 }
 
 
-void linalg_level1_cublas::i_i_x(
+void linalg_level1_cublas::mul2_i_i_x(
     cublasHandle_t h,
     size_t ni,
     const double *a, size_t sia,

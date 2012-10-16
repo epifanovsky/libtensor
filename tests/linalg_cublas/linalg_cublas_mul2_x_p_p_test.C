@@ -5,26 +5,27 @@
 #include <libtensor/linalg/cublas/linalg_cublas.h>
 #include <libtensor/linalg/generic/linalg_generic.h>
 #include <libtensor/exception.h>
-#include "linalg_cublas_x_p_p_test.h"
+#include "linalg_cublas_mul2_x_p_p_test.h"
 
 namespace libtensor {
 
 
-void linalg_cublas_x_p_p_test::perform() throw(libtest::test_exception) {
+void linalg_cublas_mul2_x_p_p_test::perform() throw(libtest::test_exception) {
 
-    test_x_p_p(1, 1, 1);
-    test_x_p_p(2, 1, 1);
-    test_x_p_p(16, 1, 1);
-    test_x_p_p(17, 1, 1);
-    test_x_p_p(2, 2, 3);
-    test_x_p_p(2, 3, 2);
+    test_mul2_x_p_p(1, 1, 1);
+    test_mul2_x_p_p(2, 1, 1);
+    test_mul2_x_p_p(16, 1, 1);
+    test_mul2_x_p_p(17, 1, 1);
+    test_mul2_x_p_p(2, 2, 3);
+    test_mul2_x_p_p(2, 3, 2);
 }
 
 
-void linalg_cublas_x_p_p_test::test_x_p_p(size_t np, size_t spa, size_t spb) {
+void linalg_cublas_mul2_x_p_p_test::test_mul2_x_p_p(size_t np, size_t spa,
+    size_t spb) {
 
     std::ostringstream ss;
-    ss << "linalg_cublas_x_p_p_test::test_x_p_p("
+    ss << "linalg_cublas_mul2_x_p_p_test::test_mul2_x_p_p("
         << np << ", " << spa << ", " << spb << ")";
     std::string tnss = ss.str();
 
@@ -56,7 +57,7 @@ void linalg_cublas_x_p_p_test::test_x_p_p(size_t np, size_t spa, size_t spb) {
         fail_test(tnss.c_str(), __FILE__, __LINE__, "Failed cublasCreate().");
     }
 
-    double c = linalg_cublas::x_p_p(cbh, np, a1, spa, b1, spb);
+    double c = linalg_cublas::mul2_x_p_p(cbh, np, a1, spa, b1, spb);
     double c_ref = linalg_generic::mul2_x_p_p(0, np, a, spa, b, spb);
 
     cublasDestroy(cbh);

@@ -5,51 +5,57 @@
 #include <libtensor/linalg/cublas/linalg_cublas.h>
 #include <libtensor/linalg/generic/linalg_generic.h>
 #include <libtensor/exception.h>
-#include "linalg_cublas_ij_pi_pj_x_test.h"
+#include "linalg_cublas_mul2_i_pi_p_x_test.h"
 
 namespace libtensor {
 
 
-void linalg_cublas_ij_pi_pj_x_test::perform() throw(libtest::test_exception) {
+void linalg_cublas_mul2_i_pi_p_x_test::perform()
+    throw(libtest::test_exception) {
 
-	 test_ij_pi_pj_x(1, 1, 1, 1, 1, 1);
-	test_ij_pi_pj_x(1, 2, 3, 2, 1, 2);
-	test_ij_pi_pj_x(2, 1, 3, 1, 2, 1);
-	test_ij_pi_pj_x(16, 16, 1, 16, 16, 16);
-	test_ij_pi_pj_x(3, 17, 2, 17, 3, 17);
-	test_ij_pi_pj_x(2, 2, 2, 2, 3, 4);
-	test_ij_pi_pj_x(2, 2, 2, 4, 3, 2);
+    test_mul2_i_pi_p_x(1, 1, 1, 1, 1);
+    test_mul2_i_pi_p_x(1, 2, 1, 1, 1);
+    test_mul2_i_pi_p_x(2, 1, 1, 2, 1);
+    test_mul2_i_pi_p_x(16, 16, 1, 16, 1);
+    test_mul2_i_pi_p_x(17, 3, 1, 17, 1);
+    test_mul2_i_pi_p_x(2, 2, 2, 3, 4);
+    test_mul2_i_pi_p_x(2, 2, 4, 3, 2);
 }
 
 
-void linalg_cublas_ij_pi_pj_x_test::test_ij_pi_pj_x(size_t ni, size_t nj, size_t np,
-	    size_t sic, size_t spa, size_t spb) {
+void linalg_cublas_mul2_i_pi_p_x_test::test_mul2_i_pi_p_x(size_t ni, size_t np,
+    size_t sic, size_t spa, size_t spb) {
 
-	std::ostringstream ss;
-	ss << "linalg_cublas_ij_pi_pj_x_test::test_ij_pi_pj_x("
-		<< ni << ", " << nj << ", " << np << ", " << spa << ", "
-		<< sic << ", " << spb << ")";
-	std::string tnss = ss.str();
+    std::ostringstream ss;
+    ss << "linalg_cublas_mul2_i_pi_p_x_test::test_mul2_i_pi_p_x("
+        << ni << ", " << np << ", " << sic << ", " << spa << ", "
+        << spb << ")";
+    std::string tnss = ss.str();
 
     typedef libvmm::cuda_allocator<double> cuda_allocator_type;
     typedef typename cuda_allocator_type::pointer_type cuda_pointer;
 
+    double *a = 0, *b = 0, *c = 0, *c_ref = 0;
 
     try {
 
     size_t sza = np * spa, szb = np * spb, szc = ni * sic;
 
-    std::vector<double> va(sza, 0.0), vb(szb, 0.0), vc(szc, 0.0), vc_ref(szc, 0.0);
-	double d = drand48();
+    a = new double[sza];
+    b = new double[szb];
+    c = new double[szc];
+    c_ref = new double[szc];
 
-    for(size_t i = 0; i < sza; i++) va[i] = drand48();
-	for(size_t i = 0; i < szb; i++) vb[i] = drand48();
-	for(size_t i = 0; i < szc; i++) vc[i] = vc_ref[i] = drand48();
+    double d = drand48();
 
-    const double *pa = &va[0];
-    const double *pb = &vb[0];
-    double *pc = &vc[0];
-    double *pc_ref = &vc_ref[0];
+    for(size_t i = 0; i < sza; i++) a[i] = drand48();
+    for(size_t i = 0; i < szb; i++) b[i] = drand48();
+    for(size_t i = 0; i < szc; i++) c[i] = c_ref[i] = drand48();
+
+    const double *pa = &a[0];
+    const double *pb = &b[0];
+    double *pc = &c[0];
+    double *pc_ref = &c_ref[0];
 
     cuda_pointer pad = cuda_allocator_type::allocate(sza);
     cuda_pointer pbd = cuda_allocator_type::allocate(szb);
@@ -67,10 +73,9 @@ void linalg_cublas_ij_pi_pj_x_test::test_ij_pi_pj_x(size_t ni, size_t nj, size_t
         fail_test(tnss.c_str(), __FILE__, __LINE__, "Failed cublasCreate().");
     }
 
-    linalg_cublas::ij_pi_pj_x(cbh, ni, nj, np, padl, spa, pbdl, spb, pcdl, sic,
-    		d);
-    linalg_generic::mul2_ij_pi_pj_x(0, ni, nj, np, pa, spa, pb, spb, pc_ref,
-        sic, d);
+    linalg_cublas::mul2_i_pi_p_x(cbh, ni, np, padl, spa, pbdl, spb, pcdl, sic,
+        d);
+    linalg_generic::mul2_i_pi_p_x(0, ni, np, a, spa, b, spb, c_ref, sic, d);
 
     cuda_allocator_type::copy_to_host(pc, pcdl, szc);
 
@@ -84,7 +89,7 @@ void linalg_cublas_ij_pi_pj_x_test::test_ij_pi_pj_x(size_t ni, size_t nj, size_t
     cuda_allocator_type::deallocate(pcd);
 
     for(size_t i = 0; i < szc; i++) {
-        if(!cmp(vc[i] - vc_ref[i], vc_ref[i])) {
+        if(!cmp(c[i] - c_ref[i], c_ref[i])) {
             fail_test(tnss.c_str(), __FILE__, __LINE__, "Incorrect result.");
         }
     }

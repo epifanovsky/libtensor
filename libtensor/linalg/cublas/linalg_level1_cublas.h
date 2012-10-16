@@ -15,19 +15,19 @@ public:
     static const char *k_clazz; //!< Class name
 
 public:
-    static void i_x(
+    static void mul1_i_x(
         cublasHandle_t h,
         size_t ni,
         double a,
         double *c, size_t sic);
 
-    static double x_p_p(
+    static double mul2_x_p_p(
         cublasHandle_t h,
         size_t np,
         const double *a, size_t spa,
         const double *b, size_t spb);
 
-    static void i_i_x(
+    static void mul2_i_i_x(
         cublasHandle_t h,
         size_t ni,
         const double *a, size_t sia,

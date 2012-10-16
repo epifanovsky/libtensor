@@ -5,24 +5,24 @@
 #include <libtensor/linalg/cublas/linalg_cublas.h>
 #include <libtensor/linalg/generic/linalg_generic.h>
 #include <libtensor/exception.h>
-#include "linalg_cublas_i_x_test.h"
+#include "linalg_cublas_mul1_i_x_test.h"
 
 namespace libtensor {
 
 
-void linalg_cublas_i_x_test::perform() throw(libtest::test_exception) {
+void linalg_cublas_mul1_i_x_test::perform() throw(libtest::test_exception) {
 
-    test_i_x(1, 1);
-    test_i_x(2, 1);
-    test_i_x(1, 16);
-    test_i_x(2, 3);
+    test_mul1_i_x(1, 1);
+    test_mul1_i_x(2, 1);
+    test_mul1_i_x(1, 16);
+    test_mul1_i_x(2, 3);
 }
 
 
-void linalg_cublas_i_x_test::test_i_x(size_t ni, size_t sic) {
+void linalg_cublas_mul1_i_x_test::test_mul1_i_x(size_t ni, size_t sic) {
 
     std::ostringstream ss;
-    ss << "linalg_cublas_i_x_test::test_i_x("
+    ss << "linalg_cublas_mul1_i_x_test::test_mul1_i_x("
         << ni  << ", " << sic << ")";
     std::string tnss = ss.str();
 
@@ -52,7 +52,7 @@ void linalg_cublas_i_x_test::test_i_x(size_t ni, size_t sic) {
         fail_test(tnss.c_str(), __FILE__, __LINE__, "Failed cublasCreate().");
     }
 
-    linalg_cublas::i_x(cbh, ni, b, c1, sic);
+    linalg_cublas::mul1_i_x(cbh, ni, b, c1, sic);
     linalg_generic::mul1_i_x(0, ni, b, c_ref, sic);
 
     cuda_allocator_type::copy_to_host(c, pc1, szc);

@@ -5,35 +5,39 @@
 #include <libtensor/linalg/cublas/linalg_cublas.h>
 #include <libtensor/linalg/generic/linalg_generic.h>
 #include <libtensor/exception.h>
-#include "linalg_cublas_i_i_x_test.h"
+#include "linalg_cublas_copy_ij_ji_x_test.h"
 
 namespace libtensor {
 
 
-void linalg_cublas_i_i_x_test::perform() throw(libtest::test_exception) {
+void linalg_cublas_copy_ij_ji_x_test::perform() throw(libtest::test_exception) {
 
-    test_i_i_x(1, 1, 1);
-    test_i_i_x(2, 1, 1);
-    test_i_i_x(16, 1, 1);
-    test_i_i_x(17, 1, 1);
-    test_i_i_x(2, 2, 3);
-    test_i_i_x(2, 3, 2);
+    test_copy_ij_ji_x(1, 1, 1, 1);
+    test_copy_ij_ji_x(1, 2, 1, 2);
+    test_copy_ij_ji_x(2, 1, 2, 1);
+    test_copy_ij_ji_x(16, 16, 16, 16);
+    test_copy_ij_ji_x(3, 17, 5, 17);
+    test_copy_ij_ji_x(2, 2, 2, 3);
+    test_copy_ij_ji_x(2, 2, 4, 3);
 }
 
 
-void linalg_cublas_i_i_x_test::test_i_i_x(size_t ni, size_t sia, size_t sic) {
+void linalg_cublas_copy_ij_ji_x_test::test_copy_ij_ji_x(size_t ni, size_t nj,
+    size_t sja, size_t sic) {
 
     std::ostringstream ss;
-    ss << "linalg_cublas_i_i_x_test::test_i_i_x("
-        << ni << ", " << sia << ", " << sic << ")";
+    ss << "linalg_cublas_copy_ij_ji_x_test::test_copy_ij_ji_x("
+        << ni << ", " << nj << ", " << sja << ", " << sic << ")";
     std::string tnss = ss.str();
 
     typedef libvmm::cuda_allocator<double> cuda_allocator_type;
     typedef typename cuda_allocator_type::pointer_type cuda_pointer;
 
+    double d = 0.0;
+
     try {
 
-    size_t sza = ni * sia, szc = ni * sic;
+    size_t sza = nj * sja, szc = ni * sic;
 
     std::vector<double> va(sza, 0.0), vc(szc, 0.0), vc_ref(szc, 0.0);
     double b;
@@ -59,8 +63,8 @@ void linalg_cublas_i_i_x_test::test_i_i_x(size_t ni, size_t sia, size_t sic) {
         fail_test(tnss.c_str(), __FILE__, __LINE__, "Failed cublasCreate().");
     }
 
-    linalg_cublas::i_i_x(cbh, ni, a1, sia, b, c1, sic);
-    linalg_generic::mul2_i_i_x(0, ni, a, sia, b, c_ref, sic);
+    linalg_cublas::copy_ij_ji_x(cbh, ni, nj, a1, sja, b, c1, sic);
+    linalg_generic::copy_ij_ji_x(0, ni, nj, a, sja, b, c_ref, sic);
 
     cuda_allocator_type::copy_to_host(c, pc1, szc);
 
