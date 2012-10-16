@@ -3,7 +3,7 @@
 #include <cublas_v2.h>
 #include <libvmm/cuda_allocator.h>
 #include <libtensor/linalg/cublas/linalg_cublas.h>
-#include <libtensor/linalg/generic/linalg_base_generic.h>
+#include <libtensor/linalg/generic/linalg_generic.h>
 #include <libtensor/exception.h>
 #include "linalg_cublas_ij_ip_pj_x_test.h"
 
@@ -69,7 +69,8 @@ void linalg_cublas_ij_ip_pj_x_test::test_ij_ip_pj_x(size_t ni, size_t nj, size_t
 
     linalg_cublas::ij_ip_pj_x(cbh, ni, nj, np, padl, sia, pbdl, spb, pcdl, sic,
     		d);
-    linalg_base_generic::ij_ip_pj_x(ni, nj, np, pa, sia, pb, spb, pc_ref, sic, d);
+    linalg_generic::mul2_ij_ip_pj_x(0, ni, nj, np, pa, sia, pb, spb, pc_ref,
+        sic, d);
 
     cuda_allocator_type::copy_to_host(pc, pcdl, szc);
 

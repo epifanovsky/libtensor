@@ -3,7 +3,7 @@
 #include <cublas_v2.h>
 #include <libvmm/cuda_allocator.h>
 #include <libtensor/linalg/cublas/linalg_cublas.h>
-#include <libtensor/linalg/generic/linalg_base_generic.h>
+#include <libtensor/linalg/generic/linalg_generic.h>
 #include <libtensor/exception.h>
 #include "linalg_cublas_x_p_p_test.h"
 
@@ -57,7 +57,7 @@ void linalg_cublas_x_p_p_test::test_x_p_p(size_t np, size_t spa, size_t spb) {
     }
 
     double c = linalg_cublas::x_p_p(cbh, np, a1, spa, b1, spb);
-    double c_ref = linalg_base_generic::x_p_p(np, a, spa, b, spb);
+    double c_ref = linalg_generic::mul2_x_p_p(0, np, a, spa, b, spb);
 
     cublasDestroy(cbh);
 

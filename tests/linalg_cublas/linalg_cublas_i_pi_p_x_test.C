@@ -3,7 +3,7 @@
 #include <cublas_v2.h>
 #include <libvmm/cuda_allocator.h>
 #include <libtensor/linalg/cublas/linalg_cublas.h>
-#include <libtensor/linalg/generic/linalg_base_generic.h>
+#include <libtensor/linalg/generic/linalg_generic.h>
 #include <libtensor/exception.h>
 #include "linalg_cublas_i_pi_p_x_test.h"
 
@@ -74,7 +74,7 @@ void linalg_cublas_i_pi_p_x_test::test_i_pi_p_x(size_t ni, size_t np, size_t sic
        }
 
        linalg_cublas::i_pi_p_x(cbh, ni, np, padl, spa, pbdl, spb, pcdl, sic, d);
-       linalg_base_generic::i_pi_p_x(ni, np, a, spa, b, spb, c_ref, sic, d);
+       linalg_generic::mul2_i_pi_p_x(0, ni, np, a, spa, b, spb, c_ref, sic, d);
 
        cuda_allocator_type::copy_to_host(pc, pcdl, szc);
 
