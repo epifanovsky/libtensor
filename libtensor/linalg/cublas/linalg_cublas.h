@@ -21,7 +21,7 @@ class linalg_cublas :
 public:
     typedef double element_type; //!< Data type
     typedef cublasHandle_t device_context_type; //!< Device context type
-    typedef cublasHandle_t &device_context_ref; //!< Reference to device context
+    typedef const cublasHandle_t &device_context_ref; //!< Reference to context
 
 };
 

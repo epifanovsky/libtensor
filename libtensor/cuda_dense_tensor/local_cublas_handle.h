@@ -28,7 +28,7 @@ public:
 public:
     /** \brief Returns the cuBLAS handle specific to current thread
      **/
-    static cublasHandle_t get() {
+    static const cublasHandle_t &get() {
         return libutil::tls<local_cublas_handle>::get_instance().get().m_handle;
     }
 
