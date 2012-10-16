@@ -3,8 +3,9 @@
 
 #include <list>
 #include <libtensor/timings.h>
-#include <libtensor/tod/contraction2.h>
-#include <libtensor/tod/contraction2_list_builder.h>
+#include <libtensor/core/noncopyable.h>
+#include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/core/tensor_transf.h>
 #include "dense_tensor_i.h"
 
 namespace libtensor {
@@ -25,13 +26,17 @@ namespace libtensor {
     \ingroup libtensor_tod
  **/
 template<size_t N, size_t M>
-class tod_scatter : public timings< tod_scatter<N, M> > {
+class tod_scatter : public timings< tod_scatter<N, M> >, public noncopyable {
 public:
     static const char *k_clazz; //!< Class name
 
 public:
-    static const size_t k_ordera = N; //!< Order of the first %tensor
-    static const size_t k_orderc = N + M; //!< Order of the result
+    enum {
+        k_ordera = N, //!< Order of the first %tensor
+        k_orderc = N + M //!< Order of the result
+    };
+
+    typedef tensor_transf<k_orderc, double> tensor_transf_type;
 
 private:
     struct registers {
@@ -64,45 +69,39 @@ private:
 
 private:
     dense_tensor_rd_i<k_ordera, double> &m_ta; //!< First tensor (A)
-    double m_ka; //!< Coefficient A
-    permutation<k_orderc> m_permc; //!< Permutation of the result
+    permutation<k_orderc> m_permc; //!< Permutation of result
+    double m_ka; //!< Scaling coefficient
     loop_list_t m_list; //!< Loop list
 
 public:
     /** \brief Initializes the operation
+        \param ta Input tensor
+        \param trc Tensor transformation applied to result
      **/
-    tod_scatter(dense_tensor_rd_i<k_ordera, double> &ta, double ka) :
-        m_ta(ta), m_ka(ka)
-    { }
+    tod_scatter(dense_tensor_rd_i<k_ordera, double> &ta,
+            tensor_transf_type &trc);
+
+    /** \brief Initializes the operation
+     **/
+    tod_scatter(dense_tensor_rd_i<k_ordera, double> &ta, double ka);
 
     /** \brief Initializes the operation
      **/
     tod_scatter(dense_tensor_rd_i<k_ordera, double> &ta, double ka,
-        const permutation<k_orderc> &permc) :
-        m_ta(ta), m_ka(ka), m_permc(permc)
-    { }
+        const permutation<k_orderc> &permc);
 
     /** \brief Performs the operation
+        \param zero Zero result first
      **/
-    void perform(dense_tensor_wr_i<k_orderc, double> &tc);
-
-    /** \brief Performs the operation (additive)
-     **/
-    void perform(dense_tensor_wr_i<k_orderc, double> &tc, double kc);
+    void perform(bool zero, dense_tensor_wr_i<k_orderc, double> &tc);
 
 private:
     void check_dimsc(dense_tensor_wr_i<k_orderc, double> &tc);
-    void do_perform(dense_tensor_wr_i<k_orderc, double> &tc, bool zero,
-        double kc);
 
 private:
     void exec(loop_list_iterator_t &i, registers &regs);
     void fn_loop(loop_list_iterator_t &i, registers &regs);
     void fn_scatter(registers &regs);
-
-private:
-    tod_scatter(const tod_scatter&);
-
 };
 
 

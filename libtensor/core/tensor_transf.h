@@ -29,7 +29,7 @@ public:
         \param p Permutation (default: identity permutation).
         \param st Element-wise transformation (default: identity).
      **/
-    tensor_transf(const permutation<N> &p = permutation<N>(),
+    explicit tensor_transf(const permutation<N> &p = permutation<N>(),
             const scalar_transf<T> &st = scalar_transf<T>()) :
         m_perm(p), m_st(st) { }
 

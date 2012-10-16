@@ -2,14 +2,16 @@
 #define LIBTENSOR_TOD_MULT1_IMPL_H
 
 #include <memory>
-#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include <libtensor/tod/kernels/loop_list_runner.h>
+#include <libtensor/exception.h>
 #include <libtensor/kernels/kern_ddiv1.h>
 #include <libtensor/kernels/kern_ddivadd1.h>
 #include <libtensor/kernels/kern_dmul1.h>
 #include <libtensor/kernels/kern_dmuladd1.h>
+#include <libtensor/kernels/loop_list_runner.h>
 #include <libtensor/tod/bad_dimensions.h>
+#include "../dense_tensor_ctrl.h"
 #include "../tod_mult1.h"
+#include "../tod_set.h"
 
 namespace libtensor {
 
@@ -17,46 +19,40 @@ namespace libtensor {
 template<size_t N>
 const char *tod_mult1<N>::k_clazz = "tod_mult1<N>";
 
+template<size_t N>
+tod_mult1<N>::tod_mult1(dense_tensor_rd_i<N, double> &tb,
+        const tensor_transf<N, double> &trb, bool recip,
+        const scalar_transf<double> &c) :
+    m_tb(tb), m_permb(trb.get_perm()), m_recip(recip), m_c(c.get_coeff())
+{
+    if (recip && trb.get_scalar_tr().get_coeff() == 0.0) {
+        throw bad_parameter(g_ns, k_clazz, "tod_mult1()",
+                __FILE__, __LINE__, "trb");
+    }
+
+    m_c = (recip ?
+            m_c / trb.get_scalar_tr().get_coeff() :
+            m_c * trb.get_scalar_tr().get_coeff());
+}
 
 template<size_t N>
-void tod_mult1<N>::perform(dense_tensor_wr_i<N, double> &ta) {
+void tod_mult1<N>::perform(bool zero, dense_tensor_wr_i<N, double> &ta) {
 
     static const char *method = "perform(dense_tensor_wr_i<N, double>&)";
 
-    dimensions<N> dimsb(m_tb.get_dims());
-    dimsb.permute(m_pb);
-
-    if(!dimsb.equals(ta.get_dims())) {
-        throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "ta");
-    }
-
-    do_perform(ta, false, 1.0);
-
-}
-
-
-template<size_t N>
-void tod_mult1<N>::perform(dense_tensor_wr_i<N, double> &ta, double c) {
-
-    static const char *method =
-        "perform(dense_tensor_wr_i<N, double>&, double)";
-
-    dimensions<N> dimsb(m_tb.get_dims());
-    dimsb.permute(m_pb);
-
-    if(!dimsb.equals(ta.get_dims())) {
-        throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "ta");
-    }
-
-    do_perform(ta, true, c);
-}
-
-
-template<size_t N>
-void tod_mult1<N>::do_perform(dense_tensor_wr_i<N, double> &ta, bool doadd,
-    double c) {
-
     tod_mult1<N>::start_timer();
+
+    dimensions<N> dimsb(m_tb.get_dims());
+    dimsb.permute(m_permb);
+
+    if(!dimsb.equals(ta.get_dims())) {
+        throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "ta");
+    }
+
+    if (m_c == 0) {
+        if (zero) tod_set<N>().perform(ta);
+        return;
+    }
 
     try {
 
@@ -70,7 +66,7 @@ void tod_mult1<N>::do_perform(dense_tensor_wr_i<N, double> &ta, bool doadd,
 
     sequence<N, size_t> mapb(0);
     for(register size_t i = 0; i < N; i++) mapb[i] = i;
-    m_pb.apply(mapb);
+    m_permb.apply(mapb);
 
     std::list< loop_list_node<1, 1> > loop_in, loop_out;
     typename std::list< loop_list_node<1, 1> >::iterator inode = loop_in.end();
@@ -97,16 +93,16 @@ void tod_mult1<N>::do_perform(dense_tensor_wr_i<N, double> &ta, bool doadd,
     r.m_ptra_end[0] = pb + dimsb.get_size();
     r.m_ptrb_end[0] = pa + dimsa.get_size();
 
-    std::auto_ptr< kernel_base<1, 1> > kern(
+    std::auto_ptr< kernel_base<linalg, 1, 1> > kern(
         m_recip ?
-            (doadd ?
-                kern_ddivadd1::match(m_c * c, loop_in, loop_out) :
-                kern_ddiv1::match(m_c * c, loop_in, loop_out)) :
-            (doadd ?
-                kern_dmuladd1::match(m_c * c, loop_in, loop_out) :
-                kern_dmul1::match(m_c * c, loop_in, loop_out)));
+            (zero ?
+                kern_ddiv1::match(m_c, loop_in, loop_out) :
+                kern_ddivadd1::match(m_c, loop_in, loop_out)) :
+            (zero ?
+                kern_dmul1::match(m_c, loop_in, loop_out) :
+                kern_dmuladd1::match(m_c, loop_in, loop_out)));
     tod_mult1<N>::start_timer(kern->get_name());
-    loop_list_runner<1, 1>(loop_in).run(r, *kern);
+    loop_list_runner<linalg, 1, 1>(loop_in).run(0, r, *kern);
     tod_mult1<N>::stop_timer(kern->get_name());
 
     cb.ret_const_dataptr(pb); pb = 0;

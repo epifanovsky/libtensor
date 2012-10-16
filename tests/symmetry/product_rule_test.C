@@ -24,7 +24,7 @@ void product_rule_test::test_1() throw(libtest::test_exception) {
 
     eval_sequence_list<3> sl;
 
-    product_rule<3> pr(&sl);
+    product_rule<3> pr(sl);
 
     if (! pr.empty()) {
         fail_test(testname, __FILE__, __LINE__, "! pr.empty()");
@@ -85,7 +85,7 @@ void product_rule_test::test_2() throw(libtest::test_exception) {
 
     eval_sequence_list<3> sl;
 
-    product_rule<3> pr(&sl);
+    product_rule<3> pr(sl);
 
     if (! pr.empty()) {
         fail_test(testname, __FILE__, __LINE__, "! pr.empty()");
@@ -146,7 +146,7 @@ void product_rule_test::test_3() throw(libtest::test_exception) {
 
     eval_sequence_list<3> sl1, sl2;
 
-    product_rule<3> pr1a(&sl1), pr1b(&sl1), pr2(&sl2);
+    product_rule<3> pr1a(sl1), pr1b(sl1), pr2(sl2);
 
     sequence<3, size_t> seq1(1), seq2(1);
     seq2[1] = 0;

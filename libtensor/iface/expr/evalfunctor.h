@@ -3,8 +3,8 @@
 
 #include "../../defs.h"
 #include "../../exception.h"
-#include <libtensor/block_tensor/bto/direct_bto.h>
-#include <libtensor/block_tensor/bto/bto_traits.h>
+#include <libtensor/gen_block_tensor/direct_gen_bto.h>
+#include <libtensor/block_tensor/btod/btod_traits.h>
 #include "expr.h"
 
 namespace libtensor {
@@ -15,7 +15,7 @@ template<size_t N, typename T>
 class evalfunctor_i {
 public:
     virtual ~evalfunctor_i() { }
-    virtual direct_bto< N, bto_traits<T> > &get_bto() = 0;
+    virtual direct_gen_bto<N, btod_traits::bti_traits> &get_bto() = 0;
 };
 
 
@@ -48,8 +48,8 @@ private:
 public:
     evalfunctor(expression_t &expr, eval_container_t &cont);
     virtual ~evalfunctor() { }
-    virtual direct_bto<N, bto_traits<T> > &get_bto();
-    virtual direct_bto<N, bto_traits<T> > &get_clean_bto();
+    virtual direct_gen_bto<N, btod_traits::bti_traits> &get_bto();
+    virtual direct_gen_bto<N, btod_traits::bti_traits> &get_clean_bto();
 };
 
 

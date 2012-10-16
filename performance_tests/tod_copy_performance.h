@@ -86,8 +86,8 @@ void tod_copy_ref<R,X>::do_calculate()
 	for ( size_t i=0; i<total_size; i++ ) ptrb[i]=drand48();
 
 	timings<tod_copy_ref<R,X> >::start_timer();
-	linalg::i_i(total_size, ptrb, 1, ptra, 1);
-	linalg::i_x(total_size, 2.0, ptra,1);
+	linalg::copy_i_i(0, total_size, ptrb, 1, ptra, 1);
+	linalg::mul1_i_x(0, total_size, 2.0, ptra,1);
 	timings<tod_copy_ref<R,X> >::stop_timer();
 
 	delete [] ptra;
@@ -110,7 +110,7 @@ void tod_copy_p1<R,N,X>::do_calculate()
 	tcb.ret_dataptr(ptrb);
 
 	// start tod_add calculation
-	tod_copy<N>(tb,2.0).perform(true, 1.0, ta);
+	tod_copy<N>(tb,2.0).perform(true, ta);
 }
 
 template<size_t R, size_t N, typename X>
@@ -135,7 +135,7 @@ void tod_copy_p2<R,N,X>::do_calculate()
 	tcb.ret_dataptr(ptrb);
 
 	// start tod_add calculation
-	tod_copy<N>(tb,permb,2.0).perform(true, 1.0, ta);
+	tod_copy<N>(tb,permb,2.0).perform(true, ta);
 }
 
 

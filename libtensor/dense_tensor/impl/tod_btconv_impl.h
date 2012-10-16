@@ -2,10 +2,10 @@
 #define LIBTENSOR_TOD_BTCONV_IMPL_H
 
 #include <libtensor/linalg/linalg.h>
-#include <libtensor/core/block_tensor_ctrl.h>
 #include <libtensor/core/orbit.h>
 #include <libtensor/core/orbit_list.h>
-#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
+#include <libtensor/block_tensor/block_tensor_ctrl.h>
+#include "../dense_tensor_ctrl.h"
 #include "../tod_btconv.h"
 
 namespace libtensor {
@@ -16,7 +16,7 @@ const char *tod_btconv<N>::k_clazz = "tod_btconv<N>";
 
 
 template<size_t N>
-tod_btconv<N>::tod_btconv(block_tensor_i<N, double> &bt) : m_bt(bt) {
+tod_btconv<N>::tod_btconv(block_tensor_rd_i<N, double> &bt) : m_bt(bt) {
 
 }
 
@@ -39,7 +39,7 @@ void tod_btconv<N>::perform(dense_tensor_wr_i<N, double> &t) {
         throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "t");
     }
 
-    block_tensor_ctrl<N, double> src_ctrl(m_bt);
+    block_tensor_rd_ctrl<N, double> src_ctrl(m_bt);
     dense_tensor_wr_ctrl<N, double> dst_ctrl(t);
 
     double *dst_ptr = dst_ctrl.req_dataptr();
@@ -55,7 +55,8 @@ void tod_btconv<N>::perform(dense_tensor_wr_i<N, double> &t) {
         abs_index<N> abidx(orb.get_abs_canonical_index(), bidims);
         if(src_ctrl.req_is_zero_block(abidx.get_index())) continue;
 
-        dense_tensor_i<N, double> &blk = src_ctrl.req_block(abidx.get_index());
+        dense_tensor_i<N, double> &blk =
+                src_ctrl.req_const_block(abidx.get_index());
         {
         dense_tensor_rd_ctrl<N, double> blk_ctrl(blk);
         const double *src_ptr = blk_ctrl.req_const_dataptr();
@@ -73,7 +74,7 @@ void tod_btconv<N>::perform(dense_tensor_wr_i<N, double> &t) {
 
         blk_ctrl.ret_const_dataptr(src_ptr);
         }
-        src_ctrl.ret_block(abidx.get_index());
+        src_ctrl.ret_const_block(abidx.get_index());
 
     }
 
@@ -142,8 +143,8 @@ void tod_btconv<N>::op_loop::exec(processor_t &proc, registers &regs)
 template<size_t N>
 void tod_btconv<N>::op_dcopy::exec(processor_t &proc, registers &regs)
     throw(exception) {
-    linalg::i_i(m_len, regs.m_ptra, m_inca, regs.m_ptrb, m_incb);
-    if(m_c != 1.0) linalg::i_x(m_len, m_c, regs.m_ptrb, m_incb);
+    linalg::copy_i_i(0, m_len, regs.m_ptra, m_inca, regs.m_ptrb, m_incb);
+    if(m_c != 1.0) linalg::mul1_i_x(0, m_len, m_c, regs.m_ptrb, m_incb);
 }
 
 

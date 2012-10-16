@@ -1,11 +1,11 @@
 #include <cmath>
 #include <sstream>
 #include <libtensor/core/allocator.h>
-#include <libtensor/core/block_tensor.h>
-#include <libtensor/core/block_tensor_ctrl.h>
 #include <libtensor/core/scalar_transf_double.h>
-#include <libtensor/block_tensor/btod/btod_dotprod.h>
-#include <libtensor/btod/btod_random.h>
+#include <libtensor/block_tensor/block_tensor.h>
+#include <libtensor/block_tensor/block_tensor_ctrl.h>
+#include <libtensor/block_tensor/btod_dotprod.h>
+#include <libtensor/block_tensor/btod_random.h>
 #include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/symmetry/product_table_container.h>
 #include <libtensor/symmetry/se_label.h>
@@ -18,6 +18,9 @@ namespace libtensor {
 
 
 void btod_dotprod_test::perform() throw(libtest::test_exception) {
+
+    allocator<double>::vmm().init(16, 16, 65536, 65536);
+    try {
 
     test_1();
     test_2();
@@ -32,6 +35,13 @@ void btod_dotprod_test::perform() throw(libtest::test_exception) {
     test_10b();
     test_11();
     test_12();
+
+    }
+    catch (...) {
+        allocator<double>::vmm().shutdown();
+        throw;
+    }
+    allocator<double>::vmm().shutdown();
 }
 
 

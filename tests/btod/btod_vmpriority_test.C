@@ -1,8 +1,8 @@
 #include <libtensor/core/allocator.h>
-#include <libtensor/core/block_tensor.h>
 #include <libtensor/core/scalar_transf_double.h>
-#include <libtensor/block_tensor/btod/btod_vmpriority.h>
-#include <libtensor/btod/btod_random.h>
+#include <libtensor/block_tensor/block_tensor.h>
+#include <libtensor/block_tensor/btod_vmpriority.h>
+#include <libtensor/block_tensor/btod_random.h>
 #include <libtensor/dense_tensor/tod_btconv.h>
 #include "btod_vmpriority_test.h"
 #include "../compare_ref.h"
@@ -12,7 +12,16 @@ namespace libtensor {
 
 void btod_vmpriority_test::perform() throw(libtest::test_exception) {
 
+    allocator<double>::vmm().init(16, 16, 65536, 65536);
+    try {
+
     test_1();
+
+    } catch (...) {
+        allocator<double>::vmm().shutdown();
+        throw;
+    }
+    allocator<double>::vmm().shutdown();
 }
 
 

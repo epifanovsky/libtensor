@@ -2,12 +2,13 @@
 #define LIBTENSOR_TOD_EXTRACT_H
 
 #include <list>
-#include <libtensor/linalg/linalg.h>
 #include <libtensor/timings.h>
 #include <libtensor/core/index.h>
 #include <libtensor/core/mask.h>
+#include <libtensor/core/noncopyable.h>
 #include <libtensor/core/permutation.h>
-#include <libtensor/tod/bad_dimensions.h>
+#include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/core/tensor_transf.h>
 #include <libtensor/tod/processor.h>
 #include "dense_tensor_i.h"
 
@@ -40,14 +41,18 @@ namespace libtensor {
     \ingroup libtensor_tod
  **/
 template<size_t N, size_t M>
-class tod_extract : public timings< tod_extract<N, M> > {
+class tod_extract : public timings< tod_extract<N, M> >, public noncopyable {
 public:
     static const char *k_clazz; //!< Class name
 
 public:
-    static const size_t k_ordera = N; //!< Order of the source %tensor
-    static const size_t k_orderb =
-        N - M; //!< Order of the destination %tensor
+    enum {
+        NA = N, //!< Order of the source %tensor
+        NB = N - M //!< Order of the destination %tensor
+    };
+
+public:
+    typedef tensor_transf<NB, double> tensor_transf_type;
 
 private:
     struct registers {
@@ -110,67 +115,64 @@ private:
     };
 
 private:
-    dense_tensor_rd_i<N, double> &m_t; //!< Input %tensor
-    mask<N> m_mask; //!< Mask for extraction
-    permutation<N - M> m_perm; //!< Permutation of the result
+    dense_tensor_rd_i<NA, double> &m_t; //!< Input %tensor
+    mask<NA> m_mask; //!< Mask for extraction
+    permutation<NB> m_perm; //!< Permutation of the result
     double m_c; //!< Scaling coefficient
-    dimensions<N - M> m_dims; //!< Dimensions of the result
-    index<N> m_idx;//!< Index for extraction
+    dimensions<NB> m_dims; //!< Dimensions of the result
+    index<NA> m_idx;//!< Index for extraction
 
 public:
     /** \brief Creates the operation
         \param t Input tensor.
         \param m Extraction mask.
-        \param c Scaling coefficient (default 1.0).
+        \param idx Index for extraction.
+        \param tr Transformation of result (default \f$(P_0,1.0)\f$).
     **/
-    tod_extract(dense_tensor_rd_i<N, double> &t, const mask<N> &m,
-        const index<N> &idx, double c = 1.0);
+    tod_extract(dense_tensor_rd_i<NA, double> &t,
+            const mask<NA> &m, const index<NA> &idx,
+            const tensor_transf_type &tr = tensor_transf_type());
 
     /** \brief Creates the operation
         \param t Input tensor.
         \param m Extraction mask.
+        \param idx Index for extraction.
+        \param c Scaling coefficient.
+    **/
+    tod_extract(dense_tensor_rd_i<NA, double> &t, const mask<NA> &m,
+            const index<NA> &idx, double c);
+
+    /** \brief Creates the operation
+        \param t Input tensor.
+        \param m Extraction mask.
+        \param idx Index for extraction.
         \param p Permutation of result.
         \param c Scaling coefficient (default 1.0)
     **/
-    tod_extract(dense_tensor_rd_i<N, double> &t, const mask<N> &m,
-        const permutation<N - M> &p, const index<N> &idx, double c = 1.0);
+    tod_extract(dense_tensor_rd_i<NA, double> &t, const mask<NA> &m,
+            const index<NA> &idx, const permutation<NB> &p, double c = 1.0);
 
-    /** \brief Performs the operation, replaces the output
+    /** \brief Performs the operation
+        \param zero Zero output first
         \param tb Output tensor.
     **/
-    void perform(dense_tensor_wr_i<k_orderb, double> &tb);
-
-    /** \brief Performs the operation, adds to the output
-        \param tb Output tensor.
-        \param c Coefficient.
-    **/
-    void perform(dense_tensor_wr_i<k_orderb, double> &tb, double c);
+    void perform(bool zero, dense_tensor_wr_i<NB, double> &tb);
 
 private:
     /** \brief Forms the %dimensions of the output or throws an
         exception if the input is incorrect
     **/
-    static dimensions<N - M > mk_dims(
-        const dimensions<N> &dims, const mask<N> &msk);
-
-    /** \brief Forms the loop and executes the operation
-     **/
-    template<typename CoreOp>
-    void do_perform(dense_tensor_wr_i<k_orderb, double> &tb, double c);
+    static dimensions<N - M> mk_dims(
+        const dimensions<NA> &dims, const mask<NA> &msk);
 
     /** \brief Builds the nested loop list
      **/
-    template<typename CoreOp>
-    void build_list(loop_list_t &list, dense_tensor_wr_i<k_orderb, double> &tb,
-        double c);
+    void build_list(loop_list_t &list,
+            dense_tensor_wr_i<NB, double> &tb, bool zero);
 
     /** \brief Cleans the nested loop list
      **/
     void clean_list(loop_list_t &list);
-
-private:
-    tod_extract(const tod_extract&);
-
 };
 
 

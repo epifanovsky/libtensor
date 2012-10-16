@@ -87,7 +87,7 @@ void er_reduce_test::test_1(
     }
 
     // Check product list
-    evaluation_rule<2>::const_iterator it = r2.begin();
+    evaluation_rule<2>::iterator it = r2.begin();
     if (it == r2.end()) {
         fail_test(testname, __FILE__, __LINE__, "Empty product list.");
     }
@@ -174,7 +174,7 @@ void er_reduce_test::test_2(
     }
 
     // Check product list
-    evaluation_rule<2>::const_iterator it = r2.begin();
+    evaluation_rule<2>::iterator it = r2.begin();
     if (it == r2.end()) {
         fail_test(testname, __FILE__, __LINE__, "Empty product list.");
     }
@@ -263,7 +263,7 @@ void er_reduce_test::test_3(
     }
 
     // Check product list
-    evaluation_rule<2>::const_iterator it = r2.begin();
+    evaluation_rule<2>::iterator it = r2.begin();
     if (it == r2.end()) {
         fail_test(testname, __FILE__, __LINE__, "Empty product list.");
     }
@@ -352,7 +352,7 @@ void er_reduce_test::test_4(
     }
 
     // Check product list
-    evaluation_rule<2>::const_iterator it = r2.begin();
+    evaluation_rule<2>::iterator it = r2.begin();
     if (it == r2.end()) {
         fail_test(testname, __FILE__, __LINE__, "Empty product list.");
     }
@@ -407,7 +407,7 @@ void er_reduce_test::test_4(
 }
 
 
-/** \brief Reduction of two dimensions in one steps (complete dims)
+/** \brief Reduction of two dimensions in one step (complete dims)
  **/
 void er_reduce_test::test_5(
         const std::string &id) throw(libtest::test_exception) {
@@ -451,7 +451,7 @@ void er_reduce_test::test_5(
     }
 
     // Check product list
-    evaluation_rule<2>::const_iterator it = r2.begin();
+    evaluation_rule<2>::iterator it = r2.begin();
     if (it == r2.end()) {
         fail_test(testname, __FILE__, __LINE__, "Empty product list.");
     }
@@ -575,7 +575,7 @@ void er_reduce_test::test_6(
     }
 
     // Check product list
-    evaluation_rule<2>::const_iterator it = r2.begin();
+    evaluation_rule<2>::iterator it = r2.begin();
     if (it == r2.end()) {
         fail_test(testname, __FILE__, __LINE__, "Empty product list.");
     }

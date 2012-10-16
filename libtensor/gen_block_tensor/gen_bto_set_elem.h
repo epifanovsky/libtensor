@@ -1,0 +1,75 @@
+#ifndef LIBTENSOR_GEN_BTO_SET_ELEM_H
+#define LIBTENSOR_GEN_BTO_SET_ELEM_H
+
+#include <list>
+#include <map>
+#include <libtensor/defs.h>
+#include <libtensor/core/dimensions.h>
+#include <libtensor/core/noncopyable.h>
+#include <libtensor/core/symmetry.h>
+#include <libtensor/core/tensor_transf.h>
+#include "gen_block_tensor_i.h"
+
+namespace libtensor {
+
+
+/** \brief Sets a single element of a block %tensor to a value
+    \tparam N Tensor order.
+
+    The operation sets one block %tensor element specified by a block
+    %index and an %index within the block. The symmetry is preserved.
+    If the affected block shares an orbit with other blocks, those will
+    be affected accordingly.
+
+    Normally for clarity reasons the block %index used with this operation
+    should be canonical. If it is not, the canonical block is changed using
+    %symmetry rules such that the specified element of the specified block
+    is given the specified value.
+
+    \ingroup libtensor_btod
+ **/
+template<size_t N, typename Traits>
+class gen_bto_set_elem : public noncopyable {
+public:
+    static const char *k_clazz; //!< Class name
+
+public:
+    //! Type of tensor elements
+    typedef typename Traits::element_type element_type;
+
+    //! Block tensor interface traits
+    typedef typename Traits::bti_traits bti_traits;
+
+    //! Type of write-only block
+    typedef typename bti_traits::template wr_block_type<N>::type wr_block_type;
+
+private:
+    typedef std::list< tensor_transf<N, element_type> > transf_list_t;
+    typedef std::map<size_t, transf_list_t> transf_map_t;
+
+public:
+    /** \brief Default constructor
+     **/
+    gen_bto_set_elem() { }
+
+    /** \brief Performs the operation
+        \param bt Block %tensor.
+        \param bidx Block %index.
+        \param idx Element %index within the block.
+        \param d Element value.
+     **/
+    void perform(gen_block_tensor_i<N, bti_traits> &bt,
+            const index<N> &bidx, const index<N> &idx,
+            const element_type &d);
+
+private:
+    bool make_transf_map(const symmetry<N, element_type> &sym,
+        const dimensions<N> &bidims, const index<N> &idx,
+        const tensor_transf<N, element_type> &tr,
+        transf_map_t &alltransf);
+};
+
+
+} // namespace libtensor
+
+#endif // LIBTENSOR_GEN_BTO_SET_ELEM_H

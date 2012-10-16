@@ -2,6 +2,7 @@
 #define LIBTENSOR_TOD_COPY_H
 
 #include <libtensor/timings.h>
+#include <libtensor/core/noncopyable.h>
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/core/tensor_transf.h>
 #include "dense_tensor_i.h"
@@ -59,7 +60,7 @@ namespace libtensor {
     \ingroup libtensor_dense_tensor_tod
  **/
 template<size_t N>
-class tod_copy : public timings< tod_copy<N> > {
+class tod_copy : public timings< tod_copy<N> >, public noncopyable {
 
 public:
     static const char *k_clazz; //!< Class name
@@ -68,7 +69,8 @@ public:
 
 private:
     dense_tensor_rd_i<N, double> &m_ta; //!< Source tensor
-    tensor_transf_t m_tr; //!< Permutation of indexes
+    permutation<N> m_perm; //!< Permutation of indexes
+    double m_c; //!< Scaling coefficient
     dimensions<N> m_dimsb; //!< Dimensions of output tensor
 
 public:
@@ -104,10 +106,10 @@ public:
 
     /** \brief Runs the operation
         \param zero Overwrite/add to flag.
-        \param c Scaling coefficient.
+        \param c Scaling coefficient
         \param tb Output tensor.
      **/
-    void perform(bool zero, double c, dense_tensor_wr_i<N, double> &tb);
+    void perform(bool zero, dense_tensor_wr_i<N, double> &tb);
 
     //@}
 
@@ -117,11 +119,6 @@ private:
      **/
     static dimensions<N> mk_dimsb(dense_tensor_rd_i<N, double> &ta,
         const permutation<N> &perm);
-
-private:
-    /** \brief Private copy constructor
-     **/
-    tod_copy(const tod_copy&);
 };
 
 

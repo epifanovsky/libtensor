@@ -2,6 +2,7 @@
 #define LIBTENSOR_TO_CONTRACT2_DIMS_H
 
 #include <libtensor/core/dimensions.h>
+#include <libtensor/core/noncopyable.h>
 #include <libtensor/tod/contraction2.h>
 
 namespace libtensor {
@@ -12,7 +13,7 @@ namespace libtensor {
     \ingroup libtensor
  **/
 template<size_t N, size_t M, size_t K>
-class to_contract2_dims {
+class to_contract2_dims : public noncopyable {
 public:
     static const char *k_clazz; //!< Class name
 
@@ -32,19 +33,13 @@ public:
 
     /** \brief Returns the dimensions of C
      **/
-    const dimensions<N + M> &get_dimsc() const {
+    const dimensions<N + M> &get_dims() const {
         return m_dimsc;
     }
 
 private:
     static dimensions<N + M> make_dimsc(const contraction2<N, M, K> &contr,
         const dimensions<N + K> &dimsa, const dimensions<M + K> &dimsb);
-
-private:
-    /** \brief Private copy constructor
-     **/
-    to_contract2_dims(const to_contract2_dims&);
-
 };
 
 

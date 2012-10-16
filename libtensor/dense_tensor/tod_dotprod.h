@@ -3,6 +3,9 @@
 
 #include <list>
 #include <libtensor/timings.h>
+#include <libtensor/core/noncopyable.h>
+#include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/core/tensor_transf.h>
 #include "dense_tensor_i.h"
 
 namespace libtensor {
@@ -46,15 +49,16 @@ namespace libtensor {
     \ingroup libtensor_dense_tensor_tod
  **/
 template<size_t N>
-class tod_dotprod : public timings< tod_dotprod<N> > {
+class tod_dotprod : public timings< tod_dotprod<N> >, public noncopyable {
 public:
     static const char *k_clazz; //!< Class name
 
 private:
     dense_tensor_rd_i<N,double> &m_ta; //!< First tensor (A)
     dense_tensor_rd_i<N,double> &m_tb; //!< Second tensor (B)
-    permutation<N> m_perma; //!< Permutation of the first tensor (A)
+    permutation<N> m_perma;//!< Permutation of the first tensor (A)
     permutation<N> m_permb; //!< Permutation of the second tensor (B)
+    double m_c; //!< Scaling coefficient
 
 public:
     /** \brief Initializes the operation
@@ -73,6 +77,18 @@ public:
     tod_dotprod(dense_tensor_rd_i<N, double> &ta, const permutation<N> &perma,
         dense_tensor_rd_i<N, double> &tb, const permutation<N> &permb);
 
+    /** \brief Initializes the operation
+        \param ta First tensor (A)
+        \param tra Transformation of first tensor (A)
+        \param tb Second tensor (B)
+        \param trb Transformation of second tensor (B)
+     **/
+    tod_dotprod(
+            dense_tensor_rd_i<N, double> &ta,
+            const tensor_transf<N, double> &tra,
+            dense_tensor_rd_i<N, double> &tb,
+            const tensor_transf<N, double> &trb);
+
     /** \brief Prefetches the arguments
      **/
     void prefetch();
@@ -85,12 +101,6 @@ private:
     /** \brief Returns true if the dimensions of A and B are compatible
      **/
     bool verify_dims();
-
-private:
-    /** \brief Private copy constructor
-     **/
-    tod_dotprod(const tod_dotprod&);
-
 };
 
 

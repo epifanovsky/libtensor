@@ -1,15 +1,15 @@
 #include <libtensor/core/allocator.h>
-#include <libtensor/core/block_tensor.h>
-#include <libtensor/core/direct_block_tensor.h>
 #include <libtensor/dense_tensor/tod_btconv.h>
 #include <libtensor/dense_tensor/tod_contract2.h>
 #include <libtensor/dense_tensor/tod_dirsum.h>
 #include <libtensor/core/scalar_transf_double.h>
-#include <libtensor/block_tensor/btod/btod_add.h>
-#include <libtensor/block_tensor/btod/btod_copy.h>
-#include <libtensor/block_tensor/btod/btod_contract2.h>
-#include <libtensor/block_tensor/btod/btod_dirsum.h>
-#include <libtensor/btod/btod_random.h>
+#include <libtensor/block_tensor/block_tensor.h>
+#include <libtensor/block_tensor/direct_block_tensor.h>
+#include <libtensor/block_tensor/btod_add.h>
+#include <libtensor/block_tensor/btod_copy.h>
+#include <libtensor/block_tensor/btod_contract2.h>
+#include <libtensor/block_tensor/btod_dirsum.h>
+#include <libtensor/block_tensor/btod_random.h>
 #include "../compare_ref.h"
 #include "direct_block_tensor_test.h"
 
@@ -166,7 +166,7 @@ void direct_block_tensor_test::test_op_3() throw(libtest::test_exception) {
     tod_btconv<4>(bta).perform(ta);
     tod_btconv<4>(btb).perform(tb);
     tod_btconv<4>(btc).perform(tc);
-    tod_contract2<2, 2, 2>(contr, ta, ta).perform(true, 1.0, tc_ref);
+    tod_contract2<2, 2, 2>(contr, ta, ta).perform(true, tc_ref);
 
     compare_ref<4>::compare(testname, tc, tc_ref, 2e-14);
 
@@ -239,16 +239,16 @@ void direct_block_tensor_test::test_op_4() throw(libtest::test_exception) {
     tod_btconv<2>(bta2).perform(ta2);
     tod_btconv<2>(bta3).perform(ta3);
     tod_btconv<2>(bta4).perform(ta4);
-    tod_copy<2>(ta1, 2.0).perform(true, 1.0, ta5);
-    tod_copy<2>(ta2, -2.0).perform(false, 1.0, ta5);
-    tod_copy<2>(ta3, -3.0).perform(true, 1.0, ta6);
-    tod_copy<2>(ta4, 2.5).perform(false, 1.0, ta6);
+    tod_copy<2>(ta1, 2.0).perform(true, ta5);
+    tod_copy<2>(ta2, -2.0).perform(false, ta5);
+    tod_copy<2>(ta3, -3.0).perform(true, ta6);
+    tod_copy<2>(ta4, 2.5).perform(false, ta6);
 
 	dense_tensor<4, double, allocator_t> tb1(dims4), tb2(dims4), tc(dims4),
 		tc_ref(dims4);
-	tod_dirsum<2, 2>(ta5, 1.0, ta6, -2.0).perform(true, 1.0, tb1);
-	tod_dirsum<2, 2>(ta5, -2.0, ta6, 1.0).perform(true, 1.0, tb2);
-	tod_contract2<2, 2, 2>(contr, tb1, tb2).perform(true, 1.0, tc_ref);
+	tod_dirsum<2, 2>(ta5, 1.0, ta6, -2.0).perform(true, tb1);
+	tod_dirsum<2, 2>(ta5, -2.0, ta6, 1.0).perform(true, tb2);
+	tod_contract2<2, 2, 2>(contr, tb1, tb2).perform(true, tc_ref);
 	tod_btconv<4>(btc).perform(tc);
 
     compare_ref<4>::compare(testname, tc, tc_ref, 1e-13);

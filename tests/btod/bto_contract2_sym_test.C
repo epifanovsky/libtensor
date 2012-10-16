@@ -3,7 +3,8 @@
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/symmetry/permutation_group.h>
 #include <libtensor/symmetry/symmetry_element_set_adapter.h>
-#include <libtensor/block_tensor/bto/bto_contract2_sym.h>
+#include <libtensor/gen_block_tensor/impl/gen_bto_contract2_sym_impl.h>
+#include <libtensor/block_tensor/btod/btod_traits.h>
 #include "../compare_ref.h"
 #include "bto_contract2_sym_test.h"
 
@@ -64,9 +65,9 @@ void bto_contract2_sym_test::test_1() throw(libtest::test_exception) {
         contr.contract(0, 2);
         contr.contract(1, 3);
 
-        bto_contract2_sym<2, 2, 2, double> op(contr, bisa, syma, bisb, symb);
+        gen_bto_contract2_sym<2, 2, 2, btod_traits> op(contr, syma, symb);
 
-        compare_ref<4>::compare(testname, op.get_symc(), symc_ref);
+        compare_ref<4>::compare(testname, op.get_symmetry(), symc_ref);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
@@ -142,9 +143,9 @@ void bto_contract2_sym_test::test_2() throw(libtest::test_exception) {
         contr.contract(2, 2);
         contr.contract(3, 3);
 
-        bto_contract2_sym<1, 2, 3, double> op(contr, bisa, syma, bisb, symb);
+        gen_bto_contract2_sym<1, 2, 3, btod_traits> op(contr, syma, symb);
 
-        compare_ref<3>::compare(testname, op.get_symc(), symc_ref);
+        compare_ref<3>::compare(testname, op.get_symmetry(), symc_ref);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
@@ -204,9 +205,9 @@ void bto_contract2_sym_test::test_3() throw(libtest::test_exception) {
         contraction2<3, 1, 1> contr;
         contr.contract(3, 1);
 
-        bto_contract2_sym<3, 1, 1, double> op(contr, bisa, syma, bisb, symb);
+        gen_bto_contract2_sym<3, 1, 1, btod_traits> op(contr, syma, symb);
 
-        const symmetry<4, double> &sym = op.get_symc();
+        const symmetry<4, double> &sym = op.get_symmetry();
         symmetry<4, double>::iterator is = sym.begin();
         const symmetry_element_set<4, double> &set = sym.get_subset(is);
         symmetry_element_set_adapter<4, double, se_perm<4, double> > adapter(set);
@@ -274,9 +275,9 @@ void bto_contract2_sym_test::test_4() throw(libtest::test_exception) {
         contr.contract(2, 2);
         contr.contract(3, 3);
 
-        bto_contract2_sym<2, 2, 2, double> op(contr, bis, syma, bis, symb);
+        gen_bto_contract2_sym<2, 2, 2, btod_traits> op(contr, syma, symb);
 
-        const symmetry<4, double> &sym = op.get_symc();
+        const symmetry<4, double> &sym = op.get_symmetry();
         symmetry<4, double>::iterator is = sym.begin();
         const symmetry_element_set<4, double> &set = sym.get_subset(is);
         symmetry_element_set_adapter<4, double, se_perm<4, double> > adapter(set);

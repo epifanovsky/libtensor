@@ -2,6 +2,7 @@
 #include <ctime>
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/dense_tensor/tod_extract.h>
 #include "../compare_ref.h"
 #include "tod_extract_test.h"
@@ -68,7 +69,7 @@ void tod_extract_test::test_1() throw(libtest::test_exception) {
 
 	mask<2> m; m[0] = true; m[1] = false;
 	index<2> idx; idx[0] = 0; idx[1] = 2;
-	tod_extract<2, 1>(ta, m, idx).perform(tb);
+	tod_extract<2, 1>(ta, m, idx).perform(true, tb);
 
 	compare_ref<1>::compare(testname, tb, tb_ref, 1e-15);
 
@@ -129,7 +130,7 @@ void tod_extract_test::test_2() throw(libtest::test_exception) {
 
 	mask<3> m; m[0] = true; m[1] = false; m[2] = true;
 	index<3> idx; idx[0] = 0; idx[1] = 0; idx[2] = 0;
-	tod_extract<3, 1>(ta, m, idx).perform(tb);
+	tod_extract<3, 1>(ta, m, idx).perform(true, tb);
 
 	compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
 
@@ -193,7 +194,7 @@ void tod_extract_test::test_3() throw(libtest::test_exception) {
 
 	mask<3> m; m[0] = true; m[1] = false; m[2] = true;
 	index<3> idx; idx[0] = 0; idx[1] = 0; idx[2] = 0;
-	tod_extract<3, 1>(ta, m,perm ,idx).perform(tb);
+	tod_extract<3, 1>(ta, m,idx, perm).perform(true, tb);
 
 	compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
 

@@ -6,7 +6,11 @@
 namespace libtensor {
 
 
+template<typename LA> class kern_dadd1_i_i_x;
+
+
 /** \brief Generic addition-to kernel (double)
+    \tparam LA Linear algebra.
 
     This kernel adds to a multidimensional array with optional scaling:
     \f[
@@ -16,11 +20,18 @@ namespace libtensor {
 
     \ingroup libtensor_kernels
  **/
-class kern_dadd1 : public kernel_base<1, 1> {
-    friend class kern_dadd1_i_i_x;
+template<typename LA>
+class kern_dadd1 : public kernel_base<LA, 1, 1> {
+    friend class kern_dadd1_i_i_x<LA>;
 
 public:
     static const char *k_clazz; //!< Kernel name
+
+public:
+    typedef typename kernel_base<LA, 1, 1>::device_context_ref
+        device_context_ref;
+    typedef typename kernel_base<LA, 1, 1>::list_t list_t;
+    typedef typename kernel_base<LA, 1, 1>::iterator_t iterator_t;
 
 private:
     double m_d;
@@ -32,9 +43,9 @@ public:
         return k_clazz;
     }
 
-    virtual void run(const loop_registers<1, 1> &r);
+    virtual void run(device_context_ref ctx, const loop_registers<1, 1> &r);
 
-    static kernel_base<1, 1> *match(double d, list_t &in, list_t &out);
+    static kernel_base<LA, 1, 1> *match(double d, list_t &in, list_t &out);
 
 };
 

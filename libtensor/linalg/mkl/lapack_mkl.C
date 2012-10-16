@@ -177,4 +177,28 @@ int lapack_dpstrf(char uplo, size_t n, double *a, size_t lda, int *p, int *rank,
 }
 
 
+int lapack_dpteqr(char compz, size_t n, double *d, double *e, double *z,
+    size_t ldz, double *work) {
+
+    int mkl_info = 0;
+    int mkl_n = n;
+    int mkl_ldz = ldz;
+    dpteqr(&compz, &mkl_n, d, e, z, &mkl_ldz, work, &mkl_info);
+
+    return mkl_info;
+}
+
+
+int lapack_dsteqr(char compz, size_t n, double *d, double *e, double *z,
+    size_t ldz, double *work) {
+
+    int mkl_info = 0;
+    int mkl_n = n;
+    int mkl_ldz = ldz;
+    dsteqr(&compz, &mkl_n, d, e, z, &mkl_ldz, work, &mkl_info);
+
+    return mkl_info;
+}
+
+
 } // namespace libtensor

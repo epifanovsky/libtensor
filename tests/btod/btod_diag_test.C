@@ -1,9 +1,9 @@
 #include <libtensor/core/allocator.h>
-#include <libtensor/core/block_tensor.h>
 #include <libtensor/core/mask.h>
 #include <libtensor/core/scalar_transf_double.h>
-#include <libtensor/block_tensor/btod/btod_diag.h>
-#include <libtensor/btod/btod_random.h>
+#include <libtensor/block_tensor/block_tensor.h>
+#include <libtensor/block_tensor/btod_diag.h>
+#include <libtensor/block_tensor/btod_random.h>
 #include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/symmetry/product_table_container.h>
 #include <libtensor/symmetry/se_label.h>
@@ -17,6 +17,10 @@ namespace libtensor {
 
 
 void btod_diag_test::perform() throw(libtest::test_exception) {
+
+    allocator<double>::vmm().init(16, 16, 16777216, 16777216);
+
+    try {
 
     test_zero_1();
     test_zero_2();
@@ -48,6 +52,13 @@ void btod_diag_test::perform() throw(libtest::test_exception) {
 
     test_sym_7(false);
     test_sym_7(true);
+
+    } catch(...) {
+        allocator<double>::vmm().shutdown();
+        throw;
+    }
+
+    allocator<double>::vmm().shutdown();
 }
 
 /** \test Extract diagonal: \f$ b_i = a_{ii} \f$, zero tensor, one block
@@ -194,14 +205,14 @@ void btod_diag_test::test_nosym_1(bool add) throw(libtest::test_exception) {
         //  Prepare the reference
         tod_btconv<1>(btb).perform(tb_ref);
 
-        tod_diag<2, 2>(ta, msk).perform(tb_ref, 1.0);
+        tod_diag<2, 2>(ta, msk).perform(false, tb_ref);
 
         //  Invoke the operation
         btod_diag<2, 2>(bta, msk).perform(btb, 1.0);
     }
     else {
         //  Prepare the reference
-        tod_diag<2, 2>(ta, msk).perform(tb_ref);
+        tod_diag<2, 2>(ta, msk).perform(true, tb_ref);
 
         //  Invoke the operation
         btod_diag<2, 2>(bta, msk).perform(btb);
@@ -270,13 +281,15 @@ void btod_diag_test::test_nosym_2(bool add) throw(libtest::test_exception) {
         //  Prepare the reference
         tod_btconv<3>(btb).perform(tb_ref);
 
-        tod_diag<4, 2>(ta, msk, pb).perform(tb_ref, 1.0);
+        tod_diag<4, 2>(ta, msk,
+                tensor_transf<3, double>(pb)).perform(false, tb_ref);
 
         //  Invoke the operation
         btod_diag<4, 2>(bta, msk, pb).perform(btb, 1.0);
 
     } else {
-        tod_diag<4, 2>(ta, msk, pb).perform(tb_ref);
+        tod_diag<4, 2>(ta, msk,
+                tensor_transf<3, double>(pb)).perform(true, tb_ref);
 
         //  Invoke the operation
         btod_diag<4, 2>(bta, msk, pb).perform(btb);
@@ -342,13 +355,13 @@ void btod_diag_test::test_nosym_3(bool add) throw(libtest::test_exception) {
         //  Prepare the reference
         tod_btconv<1>(btb).perform(tb_ref);
 
-        tod_diag<2, 2>(ta, msk).perform(tb_ref, 1.0);
+        tod_diag<2, 2>(ta, msk).perform(false, tb_ref);
 
         //  Invoke the operation
         btod_diag<2, 2>(bta, msk).perform(btb, 1.0);
     }
     else {
-        tod_diag<2, 2>(ta, msk).perform(tb_ref);
+        tod_diag<2, 2>(ta, msk).perform(true, tb_ref);
 
         //  Invoke the operation
         btod_diag<2, 2>(bta, msk).perform(btb);
@@ -421,13 +434,15 @@ void btod_diag_test::test_nosym_4(bool add) throw(libtest::test_exception) {
         //  Prepare the reference
         tod_btconv<3>(btb).perform(tb_ref);
 
-        tod_diag<4, 2>(ta, msk, pb).perform(tb_ref, 1.0);
+        tod_diag<4, 2>(ta, msk,
+                tensor_transf<3, double>(pb)).perform(false, tb_ref);
 
         //  Invoke the operation
         btod_diag<4, 2>(bta, msk, pb).perform(btb, 1.0);
     }
     else {
-        tod_diag<4, 2>(ta, msk, pb).perform(tb_ref);
+        tod_diag<4, 2>(ta, msk,
+                tensor_transf<3, double>(pb)).perform(true, tb_ref);
 
         //  Invoke the operation
         btod_diag<4, 2>(bta, msk, pb).perform(btb);
@@ -500,13 +515,13 @@ void btod_diag_test::test_sym_1(bool add) throw(libtest::test_exception) {
         //  Prepare the reference
         tod_btconv<1>(btb).perform(tb_ref);
 
-        tod_diag<2, 2>(ta, msk).perform(tb_ref, 1.0);
+        tod_diag<2, 2>(ta, msk).perform(false, tb_ref);
 
         //  Invoke the operation
         btod_diag<2, 2>(bta, msk).perform(btb, 1.0);
     }
     else {
-        tod_diag<2, 2>(ta, msk).perform(tb_ref);
+        tod_diag<2, 2>(ta, msk).perform(true, tb_ref);
 
         //  Invoke the operation
         btod_diag<2, 2>(bta, msk).perform(btb);
@@ -583,14 +598,13 @@ void btod_diag_test::test_sym_2(bool add) throw(libtest::test_exception) {
         //  Prepare the reference
         tod_btconv<2>(btb).perform(tb_ref);
 
-
-        tod_diag<3, 2>(ta, msk).perform(tb_ref, 1.0);
+        tod_diag<3, 2>(ta, msk).perform(false, tb_ref);
 
         //  Invoke the operation
         btod_diag<3, 2>(bta, msk).perform(btb, 1.0);
     }
     else {
-        tod_diag<3, 2>(ta, msk).perform(tb_ref);
+        tod_diag<3, 2>(ta, msk).perform(true, tb_ref);
 
         //  Invoke the operation
         btod_diag<3, 2>(bta, msk).perform(btb);
@@ -668,13 +682,13 @@ void btod_diag_test::test_sym_3(bool add) throw(libtest::test_exception) {
         //  Prepare the reference
         tod_btconv<1>(btb).perform(tb_ref);
 
-        tod_diag<2, 2>(ta, msk).perform(tb_ref, 1.0);
+        tod_diag<2, 2>(ta, msk).perform(false, tb_ref);
 
         //  Invoke the operation
         btod_diag<2, 2>(bta, msk).perform(btb, 1.0);
     }
     else {
-        tod_diag<2, 2>(ta, msk).perform(tb_ref);
+        tod_diag<2, 2>(ta, msk).perform(true, tb_ref);
 
         //  Invoke the operation
         btod_diag<2, 2>(bta, msk).perform(btb);
@@ -755,13 +769,15 @@ void btod_diag_test::test_sym_4(bool add) throw(libtest::test_exception) {
         //  Prepare the reference
         tod_btconv<3>(btb).perform(tb_ref);
 
-        tod_diag<4, 2>(ta, msk, pb).perform(tb_ref, 1.0);
+        tod_diag<4, 2>(ta, msk,
+                tensor_transf<3, double>(pb)).perform(false, tb_ref);
 
         //  Invoke the operation
         btod_diag<4, 2>(bta, msk, pb).perform(btb, 1.0);
     }
     else {
-        tod_diag<4, 2>(ta, msk, pb).perform(tb_ref);
+        tod_diag<4, 2>(ta, msk,
+                tensor_transf<3, double>(pb)).perform(true, tb_ref);
 
         //  Invoke the operation
         btod_diag<4, 2>(bta, msk, pb).perform(btb);
@@ -840,13 +856,15 @@ void btod_diag_test::test_sym_5(bool add) throw(libtest::test_exception) {
         //  Prepare the reference
         tod_btconv<3>(btb).perform(tb_ref);
 
-        tod_diag<4, 2>(ta, msk, perm).perform(tb_ref, 1.0);
+        tod_diag<4, 2>(ta, msk,
+                tensor_transf<3, double>(perm)).perform(false, tb_ref);
 
         //  Invoke the operation
         btod_diag<4, 2>(bta, msk, perm).perform(btb, 1.0);
     }
     else {
-        tod_diag<4, 2>(ta, msk, perm).perform(tb_ref);
+        tod_diag<4, 2>(ta, msk,
+                tensor_transf<3, double>(perm)).perform(true, tb_ref);
 
         //  Invoke the operation
         btod_diag<4, 2>(bta, msk, perm).perform(btb);
@@ -922,10 +940,10 @@ void btod_diag_test::test_sym_6(bool add) throw(libtest::test_exception) {
     //  Invoke the operation
     if(add) {
         btod_diag<4, 2>(bta, msk).perform(btb, 1.0);
-        tod_diag<4, 2>(ta, msk).perform(tb_ref, 1.0);
+        tod_diag<4, 2>(ta, msk).perform(false, tb_ref);
     } else {
         btod_diag<4, 2>(bta, msk).perform(btb);
-        tod_diag<4, 2>(ta, msk).perform(tb_ref);
+        tod_diag<4, 2>(ta, msk).perform(true, tb_ref);
     }
     tod_btconv<3>(btb).perform(tb);
 
@@ -1016,13 +1034,13 @@ void btod_diag_test::test_sym_7(bool add) throw(libtest::test_exception) {
         //  Prepare the reference
         tod_btconv<1>(btb).perform(tb_ref);
 
-        tod_diag<2, 2>(ta, msk).perform(tb_ref, 1.0);
+        tod_diag<2, 2>(ta, msk).perform(false, tb_ref);
 
         //  Invoke the operation
         btod_diag<2, 2>(bta, msk).perform(btb, 1.0);
     }
     else {
-        tod_diag<2, 2>(ta, msk).perform(tb_ref);
+        tod_diag<2, 2>(ta, msk).perform(true, tb_ref);
 
         //  Invoke the operation
         btod_diag<2, 2>(bta, msk).perform(btb);

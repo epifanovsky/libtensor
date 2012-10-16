@@ -2,6 +2,7 @@
 #define LIBTENSOR_LIBTENSOR_SYMMETRY_SUITE_H
 
 #include <libtest/test_suite.h>
+#include "adjacency_list_test.h"
 #include "block_labeling_test.h"
 #include "combine_label_test.h"
 #include "combine_part_test.h"
@@ -59,6 +60,7 @@ namespace libtensor {
     \ingroup libtensor_tests
 
     This suite runs the following tests:
+    \li libtensor::adjacency_list_test
     \li libtensor::block_labeling_test
     \li libtensor::combine_label_test
     \li libtensor::combine_part_test
@@ -106,6 +108,7 @@ namespace libtensor {
  **/
 class libtensor_symmetry_suite : public libtest::test_suite {
 private:
+    unit_test_factory<adjacency_list_test> m_utf_adjacency_list;
     unit_test_factory<block_labeling_test> m_utf_block_labeling;
     unit_test_factory<combine_label_test> m_utf_combine_label;
     unit_test_factory<combine_part_test> m_utf_combine_part;

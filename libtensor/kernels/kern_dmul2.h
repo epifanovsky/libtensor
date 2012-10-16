@@ -6,7 +6,14 @@
 namespace libtensor {
 
 
+template<typename LA> class kern_dmul2_i_i_i;
+template<typename LA> class kern_dmul2_i_i_x;
+template<typename LA> class kern_dmul2_i_x_i;
+template<typename LA> class kern_dmul2_x_p_p;
+
+
 /** \brief Generic multiplication kernel (double)
+    \tparam LA Linear algebra.
 
     This kernel multiplies two multidimensional arrays with optional scaling:
     \f[
@@ -16,14 +23,21 @@ namespace libtensor {
 
     \ingroup libtensor_kernels
  **/
-class kern_dmul2 : public kernel_base<2, 1> {
-    friend class kern_dmul2_i_i_i;
-    friend class kern_dmul2_i_i_x;
-    friend class kern_dmul2_i_x_i;
-    friend class kern_dmul2_x_p_p;
+template<typename LA>
+class kern_dmul2 : public kernel_base<LA, 2, 1> {
+    friend class kern_dmul2_i_i_i<LA>;
+    friend class kern_dmul2_i_i_x<LA>;
+    friend class kern_dmul2_i_x_i<LA>;
+    friend class kern_dmul2_x_p_p<LA>;
 
 public:
     static const char *k_clazz; //!< Kernel name
+
+public:
+    typedef typename kernel_base<LA, 2, 1>::device_context_ref
+        device_context_ref;
+    typedef typename kernel_base<LA, 2, 1>::list_t list_t;
+    typedef typename kernel_base<LA, 2, 1>::iterator_t iterator_t;
 
 private:
     double m_d;
@@ -35,9 +49,9 @@ public:
         return k_clazz;
     }
 
-    virtual void run(const loop_registers<2, 1> &r);
+    virtual void run(device_context_ref ctx, const loop_registers<2, 1> &r);
 
-    static kernel_base<2, 1> *match(double d, list_t &in, list_t &out);
+    static kernel_base<LA, 2, 1> *match(double d, list_t &in, list_t &out);
 
 };
 

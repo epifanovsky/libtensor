@@ -106,7 +106,7 @@ void tod_add_ref<R,DimData>::do_calculate()
 	for ( size_t i=0; i<total_size; i++ ) ptrb[i]=drand48();
 
 	timings<tod_add_ref<R,DimData> >::start_timer();
-	linalg::i_i_x(total_size, ptrb, 1, 2.0, ptra, 1);
+	linalg::mul2_i_i_x(0, total_size, ptrb, 1, 2.0, ptra, 1);
 	timings<tod_add_ref<R,DimData> >::stop_timer();
 
 	delete [] ptra;
@@ -132,7 +132,7 @@ void tod_add_p1<R,N,DimData>::do_calculate()
 	permutation<N> perm;
 	tod_add<N> add(tb,2.0);
 	add.prefetch();
-	add.perform(false, 1.0, ta);
+	add.perform(false, ta);
 }
 
 template<size_t R, size_t N, typename DimData>
@@ -159,7 +159,7 @@ void tod_add_p2<R,N,DimData>::do_calculate()
 	// start tod_add calculation
 	tod_add<N> add(tb,permb,2.0);
 	add.prefetch();
-	add.perform(false, 1.0, ta);
+	add.perform(false, ta);
 }
 
 
@@ -187,7 +187,7 @@ void tod_add_p3<R,N,DimData>::do_calculate()
 	// start tod_add calculation
 	tod_add<N> add(tb,permb,2.0);
 	add.prefetch();
-	add.perform(false, 1.0, ta);
+	add.perform(false, ta);
 }
 
 

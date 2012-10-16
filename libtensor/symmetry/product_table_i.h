@@ -4,7 +4,6 @@
 #include <set>
 #include <string>
 #include <vector>
-#include <libtensor/timings.h>
 #include "bad_symmetry.h"
 
 namespace libtensor {
@@ -29,7 +28,7 @@ namespace libtensor {
 
     \ingroup libtensor_symmetry
  **/
-class product_table_i : public timings<product_table_i> {
+class product_table_i {
 public:
     typedef size_t label_t; //!< Label type
     typedef std::set<label_t> label_set_t; //!< Set of unique labels
@@ -66,42 +65,6 @@ public:
             not valid).
      **/
     virtual label_t get_n_labels() const = 0;
-
-    /** \brief Compute the direct product of two labels.
-        \param l1 First label
-        \param l2 Second label
-     **/
-    virtual label_set_t product(label_t l1, label_t l2) const = 0;
-
-    /** \brief Compute the direct product of a label and a set of
-            multiple labels.
-        \param l1 Label
-        \param l2 Set of labels.
-
-        The result is the union of the results of the product of l1 with every
-        label in l2.
-     **/
-    virtual label_set_t product(label_t l1, const label_set_t &l2) const = 0;
-
-    /** \brief Compute the direct product of a label and a set of
-            multiple labels
-        \param l1 Set of labels in the direct sum
-        \param l2 Label
-
-        The result is the union of the results of the product of l2 and every
-        label in l1.
-     **/
-    virtual label_set_t product(const label_set_t &l1, label_t l2) const = 0;
-
-    /** \brief Computes the product of two sets of labels
-        \param ls1 First set of labels.
-        \param ls2 Second set of labels.
-
-        The result is the union of the results of the product of every
-        label in l1 with every label in l2.
-     **/
-    virtual label_set_t product(const label_set_t &ls1, 
-                                const label_set_t &ls2) const = 0;
 
     /** \brief Computes the product of a label group
         \param lg Label group.

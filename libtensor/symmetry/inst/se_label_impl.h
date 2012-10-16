@@ -4,8 +4,6 @@
 #include <libtensor/defs.h>
 #include <libtensor/core/abs_index.h>
 #include "../bad_symmetry.h"
-#include "../er_optimize.h"
-#include "../product_table_container.h"
 
 
 namespace libtensor {
@@ -16,35 +14,13 @@ const char *se_label<N, T>::k_clazz = "se_label<N, T>";
 
 
 template<size_t N, typename T>
-const char *se_label<N, T>::k_sym_type = "se_label";
-
-
-template<size_t N, typename T>
-se_label<N, T>::se_label(const dimensions<N> &bidims, const std::string &id) :
-    m_blk_labels(bidims), 
-    m_pt(product_table_container::get_instance().req_const_table(id)) {
-}
-
-
-template<size_t N, typename T>
-se_label<N, T>::se_label(const se_label<N, T> &el) :
-    m_blk_labels(el.m_blk_labels), m_rule(el.m_rule),
-    m_pt(product_table_container::get_instance().req_const_table(
-            el.m_pt.get_id())) {
-}
-
-
-template<size_t N, typename T>
-se_label<N, T>::~se_label() {
-
-    product_table_container::get_instance().ret_table(m_pt.get_id());
-}
+const char *se_label<N, T>::k_sym_type = "label";
 
 
 template<size_t N, typename T>
 void se_label<N, T>::set_rule(label_t intr) {
-
-    label_set_t ls;
+    
+    label_set_t ls; 
     ls.insert(intr);
     set_rule(ls);
 }
@@ -64,13 +40,6 @@ void se_label<N, T>::set_rule(const label_set_t &intr) {
     }
 }
 
-template<size_t N, typename T>
-void se_label<N, T>::set_rule(const evaluation_rule<N> &rule) {
-
-    m_rule = rule;
-//    er_optimize<N>(rule, m_pt.get_id()).perform(m_rule);
-}
-
 
 template<size_t N, typename T>
 void se_label<N, T>::permute(const permutation<N> &p) {
@@ -85,39 +54,45 @@ void se_label<N, T>::permute(const permutation<N> &p) {
 
 
 template<size_t N, typename T>
-bool se_label<N, T>::is_valid_bis(const block_index_space<N> &bis) const {
-
-    const dimensions<N> &bidims = m_blk_labels.get_block_index_dims();
-    return bidims.equals(bis.get_block_index_dims());
-}
-
-
-template<size_t N, typename T>
 bool se_label<N, T>::is_allowed(const index<N> &idx) const {
 
-    static const char *method = "is_allowed(const index<N> &)";
+    // Loop over all products in the evaluation rule
+    for (typename evaluation_rule<N>::iterator it = m_rule.begin();
+            it != m_rule.end(); it++) {
 
-#ifdef LIBTENSOR_DEBUG
-    const dimensions<N> &bidims = m_blk_labels.get_block_index_dims();
-    // Test, if index is valid block index
-    for (size_t i = 0; i < N; i++) {
-        if (idx[i] >= bidims[i]) {
-            throw bad_parameter(g_ns, k_clazz, method,
-                    __FILE__, __LINE__, "idx.");
+        const product_rule<N> &pr = m_rule.get_product(it);
+        if (pr.empty()) return false;
+
+        // Loop over all terms in the current product
+        typename product_rule<N>::iterator ip = pr.begin();
+        for (; ip != pr.end(); ip++) {
+
+            if (pr.get_intrinsic(ip) == product_table_i::k_invalid) continue;
+
+            // Construct product
+            const sequence<N, size_t> &seq = pr.get_sequence(ip);
+
+            product_table_i::label_group_t lg;
+            register size_t i = 0;
+            for (; i < N; i++) {
+                if (seq[i] == 0) continue;
+                label_t l = m_blk_labels.get_label(
+                        m_blk_labels.get_dim_type(i), idx[i]);
+                if (l == product_table_i::k_invalid) break;
+                lg.insert(lg.end(), seq[i], l);
+            }
+            if (i != N) continue;
+
+            if (! m_pt.is_in_product(lg, pr.get_intrinsic(ip))) break;
         }
-    }
-#endif
 
-    // Construct the block label
-    sequence<N, label_t> blk(product_table_i::k_invalid);
-    for (register size_t i = 0; i < N; i++) {
-        blk[i] = m_blk_labels.get_label(m_blk_labels.get_dim_type(i), idx[i]);
+        if (ip == pr.end()) { return true; }
     }
 
-    bool allowed = m_rule.is_allowed(blk, m_pt);
+    return false;
 
-    return allowed;
 }
+
 
 
 } // namespace libtensor

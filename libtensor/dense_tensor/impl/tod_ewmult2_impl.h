@@ -2,10 +2,11 @@
 #define LIBTENSOR_TOD_EWMULT2_IMPL_H
 
 #include <memory>
-#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include <libtensor/tod/kernels/loop_list_runner.h>
+#include <libtensor/linalg/linalg.h>
 #include <libtensor/kernels/kern_dmul2.h>
+#include <libtensor/kernels/loop_list_runner.h>
 #include <libtensor/tod/bad_dimensions.h>
+#include "../dense_tensor_ctrl.h"
 #include "../tod_ewmult2.h"
 
 
@@ -14,6 +15,22 @@ namespace libtensor {
 
 template<size_t N, size_t M, size_t K>
 const char *tod_ewmult2<N, M, K>::k_clazz = "tod_ewmult2<N, M, K>";
+
+
+template<size_t N, size_t M, size_t K>
+tod_ewmult2<N, M, K>::tod_ewmult2(dense_tensor_rd_i<k_ordera, double> &ta,
+    const tensor_transf<k_ordera, double> &tra,
+    dense_tensor_rd_i<k_orderb, double> &tb,
+    const tensor_transf<k_orderb, double> &trb,
+    const tensor_transf<k_orderc, double> &trc) :
+
+    m_ta(ta), m_perma(tra.get_perm()),
+    m_tb(tb), m_permb(trb.get_perm()),
+    m_permc(trc.get_perm()), m_d(trc.get_scalar_tr().get_coeff()),
+    m_dimsc(make_dimsc(ta.get_dims(), tra.get_perm(),
+            tb.get_dims(), trb.get_perm(), trc.get_perm())) {
+
+}
 
 
 template<size_t N, size_t M, size_t K>
@@ -56,10 +73,10 @@ void tod_ewmult2<N, M, K>::prefetch() {
 
 
 template<size_t N, size_t M, size_t K>
-void tod_ewmult2<N, M, K>::perform(bool zero, double d,
+void tod_ewmult2<N, M, K>::perform(bool zero,
     dense_tensor_wr_i<k_orderc, double> &tc) {
 
-    static const char *method = "perform(bool, double, "
+    static const char *method = "perform(bool, "
         "dense_tensor_wr_i<k_orderc, double>&)";
 
     if(!m_dimsc.equals(tc.get_dims())) {
@@ -133,10 +150,10 @@ void tod_ewmult2<N, M, K>::perform(bool zero, double d,
     r.m_ptra_end[1] = pb + dimsb.get_size();
     r.m_ptrb_end[0] = pc + dimsc.get_size();
 
-    std::auto_ptr< kernel_base<2, 1> > kern(
-        kern_dmul2::match(m_d * d, loop_in, loop_out));
+    std::auto_ptr< kernel_base<linalg, 2, 1> > kern(
+        kern_dmul2<linalg>::match(m_d, loop_in, loop_out));
     tod_ewmult2<N, M, K>::start_timer(kern->get_name());
-    loop_list_runner<2, 1>(loop_in).run(r, *kern);
+    loop_list_runner<linalg, 2, 1>(loop_in).run(0, r, *kern);
     tod_ewmult2<N, M, K>::stop_timer(kern->get_name());
 
     cc.ret_dataptr(pc); pc = 0;

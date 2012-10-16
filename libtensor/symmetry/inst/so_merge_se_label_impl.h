@@ -104,11 +104,15 @@ symmetry_operation_impl< so_merge<N, M, T>, se_label<NM, T> >::do_perform(
                     size_t typej = bl1.get_dim_type(j);
                     if (typei == typej) continue;
 
+#ifdef LIBTENSOR_DEBUG
                     for (size_t k = 0; k < bl1.get_dim(typei); k++) {
-                        if (bl1.get_label(typei, k) == bl1.get_label(typej, k))
+                        if (bl1.get_label(typei, k) != bl1.get_label(typej, k)
+                                && bl1.get_label(typei, k) != product_table_i::k_invalid
+                                && bl1.get_label(typej, k) != product_table_i::k_invalid)
                             throw bad_symmetry(g_ns, k_clazz, method,
                                     __FILE__, __LINE__, "Merge dimensions.");
                     }
+#endif
                 }
 
                 for (size_t j = 0; j < bl1.get_dim(typei); j++) {
@@ -116,7 +120,9 @@ symmetry_operation_impl< so_merge<N, M, T>, se_label<NM, T> >::do_perform(
                     if (l == product_table_i::k_invalid ||
                             l == product_table_i::k_identity) continue;
 
-                    product_table_i::label_set_t ls = pt.product(l, l);
+                    product_table_i::label_group_t lg(2, l);
+                    product_table_i::label_set_t ls;
+                    pt.product(lg, ls);
                     if (ls.size() != 1 ||
                             *(ls.begin()) != product_table_i::k_identity) break;
                 }

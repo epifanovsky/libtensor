@@ -47,12 +47,12 @@ void combine_label<N, T>::add(const se_label<N, T> &el) throw(bad_parameter) {
     evaluation_rule<N> r2;
 
     // Transfer products
-    for (typename evaluation_rule<N>::const_iterator ia = m_rule.begin();
+    for (typename evaluation_rule<N>::iterator ia = m_rule.begin();
             ia != m_rule.end(); ia++) {
 
         const product_rule<N> &pra = m_rule.get_product(ia);
 
-        for (typename evaluation_rule<N>::const_iterator ib = r1.begin();
+        for (typename evaluation_rule<N>::iterator ib = r1.begin();
                 ib != r1.end(); ib++) {
 
             const product_rule<N> &prb = r1.get_product(ib);

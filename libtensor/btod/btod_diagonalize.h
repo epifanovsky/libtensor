@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_BTOD_DIAGONALIZE_H
 #define LIBTENSOR_BTOD_DIAGONALIZE_H
 
-#include "../core/block_tensor_i.h"
+#include <libtensor/block_tensor/block_tensor_i.h>
 
 namespace libtensor {
 

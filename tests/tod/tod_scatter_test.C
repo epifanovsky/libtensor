@@ -4,6 +4,7 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/abs_index.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/dense_tensor/tod_scatter.h>
 #include "../compare_ref.h"
 #include "tod_scatter_test.h"
@@ -86,8 +87,8 @@ void tod_scatter_test::test_ij_j(size_t ni, size_t nj, double d)
 
 	//	Invoke the contraction routine
 
-	if(d == 0.0) tod_scatter<1, 1>(ta, 1.0).perform(tc);
-	else tod_scatter<1, 1>(ta, 1.0).perform(tc, d);
+	if(d == 0.0) tod_scatter<1, 1>(ta, 1.0).perform(true, tc);
+	else tod_scatter<1, 1>(ta, d).perform(false, tc);
 
 	//	Compare against the reference
 

@@ -106,7 +106,7 @@ void tod_dotprod_ref<R,X>::do_calculate()
 	for ( size_t i=0; i<total_size; i++ ) ptrb[i]=drand48();
 
 	timings<tod_dotprod_ref<R,X> >::start_timer();
-	linalg::x_p_p(total_size, ptra, 1, ptrb, 1);
+	linalg::mul2_x_p_p(0, total_size, ptra, 1, ptrb, 1);
 	timings<tod_dotprod_ref<R,X> >::stop_timer();
 
 	delete [] ptra;

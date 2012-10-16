@@ -2,6 +2,8 @@
 #define LIBTENSOR_EXCEPTION_H
 
 #include <exception>
+#include <libutil/exceptions/backtrace.h>
+#include <libutil/exceptions/rethrowable_i.h>
 #include "defs.h"
 
 namespace libtensor {
@@ -27,7 +29,7 @@ namespace libtensor {
 
     \ingroup libtensor_core_exc
  **/
-class exception : public std::exception {
+class exception : public std::exception, public libutil::rethrowable_i {
 private:
     char m_ns[128]; //!< Namespace name
     char m_clazz[128]; //!< Class name
@@ -37,6 +39,7 @@ private:
     char m_type[128]; //!< Exception type
     char m_message[256]; //!< Exception message
     char m_what[1024]; //!< Composed message available via what()
+    libutil::backtrace m_bt; //!< Stack trace
 
 public:
     //!    \name Construction and destruction
@@ -55,6 +58,10 @@ public:
         const char *file, unsigned int line, const char *type,
         const char *message) throw();
 
+    /** \brief Copy constructor
+     **/
+    exception(const exception &e) throw();
+
     /** \brief Virtual destructor
      **/
     virtual ~exception() throw() { };
@@ -71,13 +78,20 @@ public:
 
     //@}
 
+    /** \brief Returns the stack trace
+     **/
+    const libutil::backtrace &get_backtrace() const {
+
+        return m_bt;
+    }
+
     /** \brief Clones the exception
      **/
-    virtual exception *clone() const throw() = 0;
+    virtual libutil::rethrowable_i *clone() const throw() = 0;
 
     /** \brief Throws itself
      **/
-    virtual void rethrow() = 0;
+    virtual void rethrow() const = 0;
 
 };
 
@@ -92,11 +106,11 @@ public:
 
     virtual ~exception_base() throw() { }
 
-    virtual exception *clone() const throw() {
+    virtual libutil::rethrowable_i *clone() const throw() {
         return new T(dynamic_cast<const T&>(*this));
     }
 
-    virtual void rethrow() {
+    virtual void rethrow() const {
         throw T(dynamic_cast<const T&>(*this));
     }
 

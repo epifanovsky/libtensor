@@ -2,6 +2,7 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/abs_index.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/dense_tensor/tod_dirsum.h>
 #include "../compare_ref.h"
 #include "tod_dirsum_test.h"
@@ -147,9 +148,11 @@ void tod_dirsum_test::test_ij_i_j_1(size_t ni, size_t nj, double d)
     //    Invoke the direct sum routine
 
     if(d == 0.0) {
-        tod_dirsum<1, 1>(ta, 1.0, tb, 1.0).perform(true, 1.0, tc);
+        tod_dirsum<1, 1>(ta, 1.0, tb, 1.0).perform(true, tc);
     } else {
-        tod_dirsum<1, 1>(ta, 1.0, tb, 1.0).perform(false, d, tc);
+        scalar_transf<double> s1(1.), sd(d);
+        tensor_transf<2, double> trc(permutation<2>(), sd);
+        tod_dirsum<1, 1>(ta, s1, tb, s1, trc).perform(false, tc);
     }
 
     //    Compare against the reference
@@ -232,9 +235,11 @@ void tod_dirsum_test::test_ij_i_j_2(size_t ni, size_t nj, double d)
     //  Invoke the direct sum routine
 
     if(d == 0.0) {
-        tod_dirsum<1, 1>(ta, 1.0, tb, -1.0).perform(true, 1.0, tc);
+        tod_dirsum<1, 1>(ta, 1.0, tb, -1.0).perform(true, tc);
     } else {
-        tod_dirsum<1, 1>(ta, 1.0, tb, -1.0).perform(false, d, tc);
+        scalar_transf<double> s1(1.), s2(-1.), sd(d);
+        tensor_transf<2, double> trc(permutation<2>(), sd);
+        tod_dirsum<1, 1>(ta, s1, tb, s2, trc).perform(false, tc);
     }
 
     //  Compare against the reference
@@ -325,9 +330,11 @@ void tod_dirsum_test::test_ikj_ij_k_1(size_t ni, size_t nj, size_t nk,
     permutation<3> permc;
     permc.permute(1, 2); // ijk -> ikj
     if(d == 0.0) {
-        tod_dirsum<2, 1>(ta, 1.0, tb, 1.0, permc).perform(true, 1.0, tc);
+        tod_dirsum<2, 1>(ta, 1.0, tb, 1.0, permc).perform(true, tc);
     } else {
-        tod_dirsum<2, 1>(ta, 1.0, tb, 1.0, permc).perform(false, d, tc);
+        scalar_transf<double> s1(1.), sd(d);
+        tensor_transf<3, double> trc(permc, sd);
+        tod_dirsum<2, 1>(ta, s1, tb, s1, trc).perform(false, tc);
     }
 
     //    Compare against the reference
@@ -420,9 +427,11 @@ void tod_dirsum_test::test_ikjl_ij_kl_1(size_t ni, size_t nj, size_t nk,
     permutation<4> permc;
     permc.permute(1, 2); // ijkl -> ikjl
     if(d == 0.0) {
-        tod_dirsum<2, 2>(ta, 1.0, tb, 1.0, permc).perform(true, 1.0, tc);
+        tod_dirsum<2, 2>(ta, 1.0, tb, 1.0, permc).perform(true, tc);
     } else {
-        tod_dirsum<2, 2>(ta, 1.0, tb, 1.0, permc).perform(false, d, tc);
+        scalar_transf<double> s1(1.), sd(d);
+        tensor_transf<4, double> trc(permc, sd);
+        tod_dirsum<2, 2>(ta, s1, tb, s1, trc).perform(false, tc);
     }
 
     //    Compare against the reference
@@ -515,9 +524,11 @@ void tod_dirsum_test::test_iklj_ij_kl_1(size_t ni, size_t nj, size_t nk,
     permutation<4> permc;
     permc.permute(1, 2).permute(2, 3); // ijkl -> iklj
     if(d == 0.0) {
-        tod_dirsum<2, 2>(ta, 1.0, tb, 1.0, permc).perform(true, 1.0, tc);
+        tod_dirsum<2, 2>(ta, 1.0, tb, 1.0, permc).perform(true, tc);
     } else {
-        tod_dirsum<2, 2>(ta, 1.0, tb, 1.0, permc).perform(false, d, tc);
+        scalar_transf<double> s1(1.), sd(d);
+        tensor_transf<4, double> trc(permc, sd);
+        tod_dirsum<2, 2>(ta, s1, tb, s1, trc).perform(false, tc);
     }
 
     //    Compare against the reference

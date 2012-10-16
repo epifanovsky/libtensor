@@ -3,8 +3,8 @@
 
 #include <memory>
 #include <libtensor/linalg/linalg.h>
-#include <libtensor/tod/kernels/loop_list_runner.h>
 #include <libtensor/kernels/kern_dmul2.h>
+#include <libtensor/kernels/loop_list_runner.h>
 #include <libtensor/tod/bad_dimensions.h>
 #include "../dense_tensor_ctrl.h"
 #include "../tod_dotprod.h"
@@ -20,7 +20,7 @@ template<size_t N>
 tod_dotprod<N>::tod_dotprod(dense_tensor_rd_i<N, double> &ta,
     dense_tensor_rd_i<N, double> &tb) :
 
-    m_ta(ta), m_tb(tb) {
+    m_ta(ta), m_tb(tb), m_c(1.0) {
 
     static const char *method = "tod_dotprod(dense_tensor_rd_i<N, double>&, "
         "dense_tensor_rd_i<N, double>&)";
@@ -37,11 +37,32 @@ tod_dotprod<N>::tod_dotprod(dense_tensor_rd_i<N, double> &ta,
     const permutation<N> &perma, dense_tensor_rd_i<N, double> &tb,
     const permutation<N> &permb) :
 
-    m_ta(ta), m_perma(perma), m_tb(tb), m_permb(permb) {
+    m_ta(ta), m_perma(perma), m_tb(tb), m_permb(permb), m_c(1.0) {
 
     static const char *method = "tod_dotprod(dense_tensor_rd_i<N, double>&, "
         "const permutation<N>&, dense_tensor_rd_i<N, double>&, "
         "const permutation<N>&)";
+
+    if(!verify_dims()) {
+        throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__,
+            "ta != tb");
+    }
+}
+
+
+template<size_t N>
+tod_dotprod<N>::tod_dotprod(
+        dense_tensor_rd_i<N, double> &ta,
+        const tensor_transf<N, double> &tra,
+        dense_tensor_rd_i<N, double> &tb,
+        const tensor_transf<N, double> &trb) :
+
+    m_ta(ta), m_perma(tra.get_perm()), m_tb(tb), m_permb(trb.get_perm()),
+    m_c(tra.get_scalar_tr().get_coeff() * trb.get_scalar_tr().get_coeff()){
+
+    static const char *method = "tod_dotprod(dense_tensor_rd_i<N, double>&, "
+        "const tensor_transf<N, double>&, dense_tensor_rd_i<N, double>&, "
+        "const tensor_transf<N, double>&)";
 
     if(!verify_dims()) {
         throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__,
@@ -102,14 +123,16 @@ double tod_dotprod<N>::calculate() {
         r.m_ptra_end[1] = pb + dimsb.get_size();
         r.m_ptrb_end[0] = &result + 1;
 
-        std::auto_ptr< kernel_base<2, 1> > kern(
-            kern_dmul2::match(1.0, loop_in, loop_out));
+        std::auto_ptr< kernel_base<linalg, 2, 1> > kern(
+            kern_dmul2<linalg>::match(1.0, loop_in, loop_out));
         tod_dotprod<N>::start_timer(kern->get_name());
-        loop_list_runner<2, 1>(loop_in).run(r, *kern);
+        loop_list_runner<linalg, 2, 1>(loop_in).run(0, r, *kern);
         tod_dotprod<N>::stop_timer(kern->get_name());
 
         ca.ret_const_dataptr(pa);
         cb.ret_const_dataptr(pb);
+
+        result *= m_c;
 
     } catch(...) {
         tod_dotprod<N>::stop_timer();

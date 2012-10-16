@@ -15,7 +15,7 @@ namespace libtensor {
 
     This operation runs a %sequence of block %tensor operations and
     accumulates their results with given coefficients. All of the operations
-    in the %sequence shall derive from additive_bto<N, bto_traits<double> >.
+    in the %sequence shall derive from additive_bto<N, btod_traits>.
 
     The %sequence must contain at least one operation, which is called the
     base operation.
@@ -24,22 +24,25 @@ namespace libtensor {
  **/
 template<size_t N>
 class btod_sum :
-    public additive_bto<N, bto_traits<double> >,
+    public additive_bto<N, btod_traits>,
     public timings< btod_sum<N> > {
 
 public:
     static const char* k_clazz; //!< Class name
 
+public:
+    typedef typename btod_traits::bti_traits bti_traits;
+
 private:
     //!    \brief List node type
     typedef struct node {
     private:
-        additive_bto<N, bto_traits<double> > *m_op;
+        additive_bto<N, btod_traits> *m_op;
        	double m_c;
     public:
         node() : m_op(NULL), m_c(0.0) { }
-        node(additive_bto<N, bto_traits<double> > &op, double c) : m_op(&op), m_c(c) { }
-        additive_bto<N, bto_traits<double> > &get_op() { return *m_op; }
+        node(additive_bto<N, btod_traits> &op, double c) : m_op(&op), m_c(c) { }
+        additive_bto<N, btod_traits> &get_op() { return *m_op; }
         double get_coeff() const { return m_c; }
     } node_t;
 
@@ -59,7 +62,7 @@ public:
         \param op Operation.
         \param c Coefficient.
      **/
-    btod_sum(additive_bto< N, bto_traits<double> > &op, double c = 1.0);
+    btod_sum(additive_bto<N, btod_traits> &op, double c = 1.0);
 
     /** \brief Virtual destructor
      **/
@@ -84,19 +87,18 @@ public:
         return *m_sch;
     }
 
-    virtual void sync_on();
-    virtual void sync_off();
-
     //@}
 
 
-    //!    \name Implementation of libtensor::additive_bto<N, bto_traits<double> >
+    //!    \name Implementation of libtensor::additive_bto<N, btod_traits>
     //@{
 
+    using additive_bto<N, btod_traits>::compute_block;
     virtual void compute_block(bool zero, dense_tensor_i<N, double> &blk,
         const index<N> &i, const tensor_transf<N, double> &tr, const double &c);
-    virtual void perform(block_tensor_i<N, double> &bt);
-    virtual void perform(block_tensor_i<N, double> &bt, double c);
+    virtual void perform(block_tensor_i<N, double> &btb);
+    virtual void perform(block_tensor_i<N, double> &btb, const double &c);
+    virtual void perform(gen_block_stream_i<N, bti_traits> &out);
 
     //@}
 
@@ -108,7 +110,7 @@ public:
         \param op Operation.
         \param c Coefficient.
      **/
-    void add_op(additive_bto< N, bto_traits<double> > &op, double c = 1.0);
+    void add_op(additive_bto<N, btod_traits> &op, double c = 1.0);
 
     //@}
 

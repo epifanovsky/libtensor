@@ -1,9 +1,9 @@
 #include <libtensor/core/allocator.h>
-#include <libtensor/core/block_tensor.h>
-#include <libtensor/core/block_tensor_ctrl.h>
 #include <libtensor/core/scalar_transf_double.h>
-#include <libtensor/block_tensor/btod/btod_trace.h>
-#include <libtensor/btod/btod_random.h>
+#include <libtensor/block_tensor/block_tensor.h>
+#include <libtensor/block_tensor/block_tensor_ctrl.h>
+#include <libtensor/block_tensor/btod_trace.h>
+#include <libtensor/block_tensor/btod_random.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/dense_tensor/tod_btconv.h>
 #include <libtensor/dense_tensor/tod_trace.h>
@@ -14,6 +14,9 @@ namespace libtensor {
 
 
 void btod_trace_test::perform() throw(libtest::test_exception) {
+
+    allocator<double>::vmm().init(16, 16, 65536, 65536);
+    try {
 
     test_zero_1();
     test_nosym_1();
@@ -26,6 +29,12 @@ void btod_trace_test::perform() throw(libtest::test_exception) {
     test_nosym_7();
     test_permsym_1();
     test_permsym_2();
+
+    } catch (...) {
+        allocator<double>::vmm().shutdown();
+        throw;
+    }
+    allocator<double>::vmm().shutdown();
 }
 
 
@@ -259,7 +268,7 @@ void btod_trace_test::test_nosym_3() throw(libtest::test_exception) {
     double d = btod_trace<2>(bta).calculate();
 
     //  Compare against the reference
-    if(fabs(d - d_ref) > fabs(d_ref * 1e-15)) {
+    if(fabs(d - d_ref) > fabs(d_ref * 1e-14)) {
         std::ostringstream ss;
         ss << "Result doesn't match reference: " << d << " (result), "
             << d_ref << " (reference), " << d - d_ref << " (diff)";

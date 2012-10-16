@@ -4,6 +4,9 @@
 #include <libtensor/core/permutation_builder.h>
 #include <libtensor/core/permutation_generator.h>
 #include <libtensor/symmetry/permutation_group.h>
+#include <libtensor/symmetry/print_symmetry.h>
+#include <libtensor/core/symmetry_element_set.h>
+#include <libtensor/symmetry/symmetry_element_set_adapter.h>
 #include "permutation_group_test.h"
 
 namespace libtensor {
@@ -40,6 +43,7 @@ void permutation_group_test::perform() throw(libtest::test_exception) {
 
     test_stabilize2_1();
     test_stabilize2_2();
+    test_stabilize4_1();
 
     test_permute_1();
     test_permute_2();
@@ -1082,6 +1086,61 @@ throw(libtest::test_exception) {
         if(!pg2.is_member(tr0, p7)) {
             fail_test(testname, __FILE__, __LINE__,
                     "!pg4.is_member(+1, p7)");
+        }
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void permutation_group_test::test_stabilize4_1()
+throw(libtest::test_exception) {
+
+    static const char *testname =
+            "permutation_group_test::test_stabilize4_1()";
+
+    typedef se_perm<8, double> se_perm_t;
+
+    try {
+
+        scalar_transf<double> tr0, tr1(-1.0);
+        permutation<8> p1, p2, p3, p4, p5, p6, p7, p8;
+        p1.permute(0, 1).permute(2, 3);
+        p2.permute(0, 2).permute(1, 3);
+        p3.permute(4, 5).permute(6, 7);
+        p4.permute(4, 6).permute(5, 7);
+        p5.permute(2, 3).permute(4, 5);
+        p6.permute(0, 1).permute(2, 3).permute(4, 5).permute(6, 7);
+        p7.permute(0, 2).permute(1, 3).permute(4, 6).permute(5, 7);
+        p8.permute(2, 3).permute(6, 7);
+
+        symmetry_element_set<8, double> set1(se_perm_t::k_sym_type);
+        set1.insert(se_perm_t(p1, tr0));
+        set1.insert(se_perm_t(p2, tr0));
+        set1.insert(se_perm_t(p3, tr0));
+        set1.insert(se_perm_t(p4, tr0));
+        set1.insert(se_perm_t(p5, tr1));
+        permutation_group<8, double> pg1(set1), pg2;
+
+        sequence<8, size_t> seq(0);
+        seq[0] = 1; seq[4] = 1;
+        seq[1] = 2; seq[5] = 2;
+        seq[2] = 3; seq[6] = 3;
+        seq[3] = 4; seq[7] = 4;
+        pg1.stabilize(seq, pg2);
+
+        if(!pg2.is_member(tr0, p6)) {
+            fail_test(testname, __FILE__, __LINE__,
+                    "!pg2.is_member(+1, p6)");
+        }
+        if(!pg2.is_member(tr0, p7)) {
+            fail_test(testname, __FILE__, __LINE__,
+                    "!pg2.is_member(+1, p7)");
+        }
+        if(!pg2.is_member(tr1, p8)) {
+            fail_test(testname, __FILE__, __LINE__,
+                    "!pg2.is_member(-1, p8)");
         }
 
     } catch(exception &e) {

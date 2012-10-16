@@ -47,6 +47,7 @@ private:
 
     void test_stabilize2_1() throw(libtest::test_exception);
     void test_stabilize2_2() throw(libtest::test_exception);
+    void test_stabilize4_1() throw(libtest::test_exception);
 
     void test_permute_1() throw(libtest::test_exception);
     void test_permute_2() throw(libtest::test_exception);

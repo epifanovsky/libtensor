@@ -1,16 +1,19 @@
 #include <sstream>
 #include <libtensor/core/allocator.h>
-#include <libtensor/core/block_tensor.h>
 #include <libtensor/core/scalar_transf_double.h>
-#include <libtensor/block_tensor/btod/btod_contract2.h>
-#include <libtensor/block_tensor/btod/btod_copy.h>
-#include <libtensor/btod/btod_random.h>
+#include <libtensor/block_tensor/block_tensor.h>
+#include <libtensor/block_tensor/btod_contract2.h>
+#include <libtensor/block_tensor/btod_copy.h>
+#include <libtensor/block_tensor/btod_random.h>
 #include <libtensor/symmetry/permutation_group.h>
 #include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/symmetry/product_table_container.h>
+#include <libtensor/symmetry/se_label.h>
+#include <libtensor/symmetry/se_part.h>
 #include <libtensor/symmetry/so_copy.h>
 #include <libtensor/dense_tensor/tod_btconv.h>
 #include <libtensor/dense_tensor/tod_contract2.h>
+#include <libtensor/dense_tensor/tod_set.h>
 #include "../compare_ref.h"
 #include "btod_contract2_test.h"
 
@@ -69,6 +72,7 @@ void btod_contract2_test::perform() throw(libtest::test_exception) {
     test_contr_20b();
     test_contr_21();
     test_contr_22();
+    test_contr_23();
 
     //  Tests for the contraction of a block tensor with itself
 
@@ -794,7 +798,7 @@ void btod_contract2_test::test_contr_1() throw(libtest::test_exception) {
         //  Compute reference tensor
 
         tod_contract2<2, 2, 2> op_ref(contr, ta, tb);
-        op_ref.perform(true, 1.0, tc_ref);
+        op_ref.perform(true, tc_ref);
 
         //  Compare against reference
 
@@ -864,7 +868,7 @@ void btod_contract2_test::test_contr_2() throw(libtest::test_exception) {
         //  Compute reference tensor
 
         tod_contract2<2, 2, 2> op_ref(contr, ta, tb);
-        op_ref.perform(true, 1.0, tc_ref);
+        op_ref.perform(true, tc_ref);
 
         //  Compare against reference
 
@@ -946,7 +950,7 @@ void btod_contract2_test::test_contr_3() throw(libtest::test_exception) {
         //  Compute reference tensor
 
         tod_contract2<2, 2, 2> op_ref(contr, ta, tb);
-        op_ref.perform(true, 1.0, tc_ref);
+        op_ref.perform(true, tc_ref);
 
         //  Compare against reference
 
@@ -1041,7 +1045,7 @@ void btod_contract2_test::test_contr_4() throw(libtest::test_exception) {
         //  Compute reference tensor
 
         tod_contract2<2, 2, 2> op_ref(contr, ta, tb);
-        op_ref.perform(true, 1.0, tc_ref);
+        op_ref.perform(true, tc_ref);
 
         //  Compare against reference
 
@@ -1142,8 +1146,8 @@ void btod_contract2_test::test_contr_5() throw(libtest::test_exception) {
 
         //  Compute reference tensor
 
-        tod_contract2<2, 2, 2> op_ref(contr, ta, tb);
-        op_ref.perform(false, 2.0, tc_ref);
+        tod_contract2<2, 2, 2> op_ref(contr, ta, tb, 2.0);
+        op_ref.perform(false, tc_ref);
 
         //  Compare against reference
 
@@ -1243,8 +1247,8 @@ void btod_contract2_test::test_contr_6() throw(libtest::test_exception) {
 
         //  Compute reference tensor
 
-        tod_contract2<2, 2, 2> op_ref(contr, ta, tb);
-        op_ref.perform(false, 2.0, tc_ref);
+        tod_contract2<2, 2, 2> op_ref(contr, ta, tb, 2.0);
+        op_ref.perform(false, tc_ref);
 
         //  Compare against reference
 
@@ -1322,7 +1326,7 @@ void btod_contract2_test::test_contr_7() throw(libtest::test_exception) {
         //  Compute reference tensor
 
         tod_contract2<1, 3, 1> op_ref(contr, ta, tb);
-        op_ref.perform(true, 1.0, tc_ref);
+        op_ref.perform(true, tc_ref);
 
         //  Compare against reference
 
@@ -1390,7 +1394,7 @@ void btod_contract2_test::test_contr_8() throw(libtest::test_exception) {
         //  Compute reference tensor
 
         tod_contract2<1, 3, 1> op_ref(contr, ta, tb);
-        op_ref.perform(false, 1.0, tc_ref);
+        op_ref.perform(false, tc_ref);
 
         //  Compare against reference
 
@@ -1456,8 +1460,8 @@ void btod_contract2_test::test_contr_9() throw(libtest::test_exception) {
 
         //  Compute reference tensor
 
-        tod_contract2<1, 3, 1> op_ref(contr, ta, tb);
-        op_ref.perform(false, -1.0, tc_ref);
+        tod_contract2<1, 3, 1> op_ref(contr, ta, tb, -1.0);
+        op_ref.perform(false, tc_ref);
 
         //  Compare against reference
 
@@ -1577,7 +1581,7 @@ void btod_contract2_test::test_contr_11() throw(libtest::test_exception) {
 
         btod_contract2<2, 2, 0>(contr, bta, btb).perform(btc);
         tod_btconv<4>(btc).perform(tc);
-        tod_contract2<2, 2, 0>(contr, ta, tb).perform(true, 1.0, tc_ref);
+        tod_contract2<2, 2, 0>(contr, ta, tb).perform(true, tc_ref);
 
         //  Compare against reference
 
@@ -1641,7 +1645,7 @@ void btod_contract2_test::test_contr_12() throw(libtest::test_exception) {
 
         btod_contract2<2, 2, 0>(contr, bta, btb).perform(btc);
         tod_btconv<4>(btc).perform(tc);
-        tod_contract2<2, 2, 0>(contr, ta, tb).perform(true, 1.0, tc_ref);
+        tod_contract2<2, 2, 0>(contr, ta, tb).perform(true, tc_ref);
 
         //  Compare against reference
 
@@ -1707,7 +1711,7 @@ void btod_contract2_test::test_contr_13() throw(libtest::test_exception) {
         btod_contract2<2, 0, 2> op(contr, bta, btb);
         op.perform(btc);
         tod_btconv<2>(btc).perform(tc);
-        tod_contract2<2, 0, 2>(contr, ta, tb).perform(true, 1.0, tc_ref);
+        tod_contract2<2, 0, 2>(contr, ta, tb).perform(true, tc_ref);
 
         //  Compare against reference
 
@@ -1779,9 +1783,9 @@ throw(libtest::test_exception) {
         else btod_contract2<2, 2, 2>(contr, bta, btb).perform(btc, c);
         tod_btconv<4>(btc).perform(tc);
         if(c == 0.0) {
-            tod_contract2<2, 2, 2>(contr, ta, tb).perform(true, 1.0, tc_ref);
+            tod_contract2<2, 2, 2>(contr, ta, tb).perform(true, tc_ref);
         } else {
-            tod_contract2<2, 2, 2>(contr, ta, tb).perform(false, c, tc_ref);
+            tod_contract2<2, 2, 2>(contr, ta, tb, c).perform(false, tc_ref);
         }
 
         //  Compare against reference
@@ -1859,9 +1863,9 @@ throw(libtest::test_exception) {
         else btod_contract2<2, 2, 2>(contr, bta, btb).perform(btc, c);
         tod_btconv<4>(btc).perform(tc);
         if(c == 0.0) {
-            tod_contract2<2, 2, 2>(contr, ta, tb).perform(true, 1.0, tc_ref);
+            tod_contract2<2, 2, 2>(contr, ta, tb).perform(true, tc_ref);
         } else {
-            tod_contract2<2, 2, 2>(contr, ta, tb).perform(false, c, tc_ref);
+            tod_contract2<2, 2, 2>(contr, ta, tb, c).perform(false, tc_ref);
         }
 
         //  Compare against reference
@@ -1946,9 +1950,9 @@ throw(libtest::test_exception) {
         else btod_contract2<2, 2, 2>(contr, bta, btb).perform(btc, c);
         tod_btconv<4>(btc).perform(tc);
         if(c == 0.0) {
-            tod_contract2<2, 2, 2>(contr, ta, tb).perform(true, 1.0, tc_ref);
+            tod_contract2<2, 2, 2>(contr, ta, tb).perform(true, tc_ref);
         } else {
-            tod_contract2<2, 2, 2>(contr, ta, tb).perform(false, c, tc_ref);
+            tod_contract2<2, 2, 2>(contr, ta, tb, c).perform(false, tc_ref);
         }
 
         //  Compare against reference
@@ -2043,9 +2047,9 @@ throw(libtest::test_exception) {
         else btod_contract2<1, 1, 3>(contr, bta, btb).perform(btc, c);
         tod_btconv<2>(btc).perform(tc);
         if(c == 0.0) {
-            tod_contract2<1, 1, 3>(contr, ta, tb).perform(true, 1.0, tc_ref);
+            tod_contract2<1, 1, 3>(contr, ta, tb).perform(true, tc_ref);
         } else {
-            tod_contract2<1, 1, 3>(contr, ta, tb).perform(false, c, tc_ref);
+            tod_contract2<1, 1, 3>(contr, ta, tb, c).perform(false, tc_ref);
         }
 
         //  Compare against reference
@@ -2136,9 +2140,9 @@ throw(libtest::test_exception) {
         else btod_contract2<1, 1, 3>(contr, bta, btb).perform(btc, c);
         tod_btconv<2>(btc).perform(tc);
         if(c == 0.0) {
-            tod_contract2<1, 1, 3>(contr, ta, tb).perform(true, 1.0, tc_ref);
+            tod_contract2<1, 1, 3>(contr, ta, tb).perform(true, tc_ref);
         } else {
-            tod_contract2<1, 1, 3>(contr, ta, tb).perform(false, c, tc_ref);
+            tod_contract2<1, 1, 3>(contr, ta, tb, c).perform(false, tc_ref);
         }
 
         //  Compare against reference
@@ -2259,7 +2263,7 @@ throw(libtest::test_exception) {
     contr.contract(3, 1);
     btod_contract2<2, 2, 2>(contr, bta, btb).perform(btc);
     tod_btconv<4>(btc).perform(tc);
-    tod_contract2<2, 2, 2>(contr, ta, tb).perform(true, 1.0, tc_ref);
+    tod_contract2<2, 2, 2>(contr, ta, tb).perform(true, tc_ref);
 
     //  Compare against reference
 
@@ -2350,7 +2354,7 @@ throw(libtest::test_exception) {
         contr.contract(1, 0);
         btod_contract2<1, 1, 1>(contr, bta, btb).perform(btc);
         tod_btconv<2>(btc).perform(tc);
-        tod_contract2<1, 1, 1>(contr, ta, tb).perform(true, 1.0, tc_ref);
+        tod_contract2<1, 1, 1>(contr, ta, tb).perform(true, tc_ref);
 
         //  Compare against reference
 
@@ -2451,7 +2455,7 @@ throw(libtest::test_exception) {
         contr.contract(1, 0);
         btod_contract2<1, 1, 1>(contr, bta, btb).perform(btc);
         tod_btconv<2>(btc).perform(tc);
-        tod_contract2<1, 1, 1>(contr, ta, tb).perform(true, 1.0, tc_ref);
+        tod_contract2<1, 1, 1>(contr, ta, tb).perform(true, tc_ref);
 
         //  Compare against reference
         {
@@ -2543,7 +2547,7 @@ void btod_contract2_test::test_contr_21() throw(libtest::test_exception) {
         contr.contract(1, 1);
         btod_contract2<1, 1, 1>(contr, bta, btb).perform(btc);
         tod_btconv<2>(btc).perform(tc);
-        tod_contract2<1, 1, 1>(contr, ta, tb).perform(true, 1.0, tc_ref);
+        tod_contract2<1, 1, 1>(contr, ta, tb).perform(true, tc_ref);
 
         //  Compare against reference
 
@@ -2685,13 +2689,76 @@ void btod_contract2_test::test_contr_22() {
 
         //  Compute reference tensor
 
-        tod_contract2<2, 2, 1>(contr1, ta, ta).perform(true, 1.0, ti_ref);
-        tod_contract2<2, 2, 2>(contr2, ti_ref, tb).perform(true, 1.0, tc_ref);
+        tod_contract2<2, 2, 1>(contr1, ta, ta).perform(true, ti_ref);
+        tod_contract2<2, 2, 2>(contr2, ti_ref, tb).perform(true, tc_ref);
 
         //  Compare against reference
 
         compare_ref<4>::compare(testname, ti, ti_ref, 1e-13);
         compare_ref<4>::compare(testname, tc, tc_ref, 1e-13);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void btod_contract2_test::test_contr_23() {
+
+    const char *testname = "btod_contract2_test::test_contr_23()";
+
+    typedef std_allocator<double> allocator_t;
+
+    try {
+
+    index<4> i4a, i4b;
+    i4b[0] = 9; i4b[1] = 9; i4b[2] = 10; i4b[3] = 19;
+    dimensions<4> dims_ijka(index_range<4>(i4a, i4b));
+    i4b[0] = 10; i4b[1] = 9; i4b[2] = 9; i4b[3] = 19;
+    dimensions<4> dims_kija(index_range<4>(i4a, i4b));
+    i4b[0] = 9; i4b[1] = 9; i4b[2] = 19; i4b[3] = 19;
+    dimensions<4> dims_ijab(index_range<4>(i4a, i4b));
+
+    block_index_space<4> bis_ijka(dims_ijka), bis_kija(dims_kija),
+        bis_ijab(dims_ijab);
+    mask<4> m0001, m0011, m0110, m1000, m1100;
+    m1000[0] = true; m0001[3] = true;
+    m0110[1] = true; m0110[2] = true;
+    m1100[0] = true; m1100[1] = true; m0011[2] = true; m0011[3] = true;
+    bis_ijka.split(m1100, 3);
+    bis_ijka.split(m1100, 5);
+    bis_ijka.split(m0001, 6);
+    bis_ijka.split(m0001, 13);
+    bis_kija.split(m0110, 3);
+    bis_kija.split(m0110, 5);
+    bis_kija.split(m0001, 6);
+    bis_kija.split(m0001, 13);
+    bis_ijab.split(m1100, 3);
+    bis_ijab.split(m1100, 5);
+    bis_ijab.split(m0011, 6);
+    bis_ijab.split(m0011, 13);
+
+    block_tensor<4, double, allocator_t> bt1(bis_kija), bt2(bis_ijab),
+        bt3(bis_ijka);
+
+    btod_random<4>().perform(bt1);
+    btod_random<4>().perform(bt2);
+    bt1.set_immutable();
+    bt2.set_immutable();
+
+    contraction2<2, 2, 2> contr(permutation<4>().permute(0, 2));
+    contr.contract(1, 1);
+    contr.contract(3, 3);
+    btod_contract2<2, 2, 2>(contr, bt1, bt2).perform(bt3);
+
+    dense_tensor<4, double, allocator_t> t1(dims_kija), t2(dims_ijab),
+        t3(dims_ijka), t3_ref(dims_ijka);
+    tod_btconv<4>(bt1).perform(t1);
+    tod_btconv<4>(bt2).perform(t2);
+    tod_btconv<4>(bt3).perform(t3);
+    tod_contract2<2, 2, 2>(contr, t1, t2).perform(true, t3_ref);
+
+    compare_ref<4>::compare(testname, t3, t3_ref, 6e-14);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
@@ -2761,7 +2828,7 @@ void btod_contract2_test::test_self_1() throw(libtest::test_exception) {
             block_tensor_ctrl<4, double> cc(btc);
             so_copy<4, double>(cc.req_const_symmetry()).perform(symc);
         }
-        tod_contract2<2, 2, 0>(contr, ta, ta).perform(true, 1.0, tc_ref);
+        tod_contract2<2, 2, 0>(contr, ta, ta).perform(true, tc_ref);
 
         //  Compare against reference
 
@@ -2837,7 +2904,7 @@ void btod_contract2_test::test_self_2() throw(libtest::test_exception) {
             block_tensor_ctrl<4, double> cc(btc);
             so_copy<4, double>(cc.req_const_symmetry()).perform(symc);
         }
-        tod_contract2<2, 2, 1>(contr, ta, ta).perform(true, 1.0, tc_ref);
+        tod_contract2<2, 2, 1>(contr, ta, ta).perform(true, tc_ref);
 
         //  Compare against reference
 
@@ -2923,7 +2990,7 @@ void btod_contract2_test::test_self_3() throw(libtest::test_exception) {
             block_tensor_ctrl<4, double> cc(btc);
             so_copy<4, double>(cc.req_const_symmetry()).perform(symc);
         }
-        tod_contract2<2, 2, 1>(contr, ta, ta).perform(true, 1.0, tc_ref);
+        tod_contract2<2, 2, 1>(contr, ta, ta).perform(true, tc_ref);
 
         //  Compare against reference
 

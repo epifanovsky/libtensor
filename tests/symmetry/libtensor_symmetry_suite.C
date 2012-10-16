@@ -5,6 +5,7 @@ namespace libtensor {
 libtensor_symmetry_suite::libtensor_symmetry_suite() :
                     libtest::test_suite("libtensor") {
 
+    add_test("adjacency_list", m_utf_adjacency_list);
     add_test("block_labeling", m_utf_block_labeling);
     add_test("combine_label", m_utf_combine_label);
     add_test("combine_part", m_utf_combine_part);

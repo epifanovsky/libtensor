@@ -35,7 +35,7 @@ namespace libtensor {
       \c scalar_transf<T> &invert();
       to invert the current transformation
     - the function
-      \c void apply(scalar_t &x) const;
+      \c void apply(T &x) const;
       to apply the scalar transformation to an element.
     - the function
       \c bool is_identity() const;
@@ -53,6 +53,38 @@ namespace libtensor {
  **/
 template<typename T>
 class scalar_transf;
+
+/** \brief Sum of scalar transformations
+
+    This template is a structure placeholder for a sum of element-wise
+    transformation of tensor elements
+    \f[
+        \hat{\mathcal{S}} = \sum_i \hat{\mathcal{S}}_i
+    \f]
+    It needs to be specialized for each %tensor element type. Any
+    specialization of this class needs to provide:
+    - the default constructor that creates an empty sum
+      \c scalar_transf_sum();
+    - the function
+      \c void add(const scalar_transf<T> &tr);
+      to add further scalar transformations to the sum
+    - the function
+      \c scalar_transf<T> get_transf() const;
+      to return the resulting scalar transformation
+    - the function
+      \c void apply(T &x) const;
+      to apply the sum of scalar transformations to an element.
+    - the function
+      \c bool is_identity() const;
+      to check if the current sum yields the identity transformation
+    - the function
+      \c bool is_zero() const;
+      to check if the current sum yields the zero transformation
+
+    \ingroup libtensor_core
+ **/
+template<typename T>
+class scalar_transf_sum;
 
 
 } // namespace libtensor

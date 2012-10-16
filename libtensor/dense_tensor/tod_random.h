@@ -2,6 +2,8 @@
 #define LIBTENSOR_TOD_RANDOM_H
 
 #include <libtensor/timings.h>
+#include <libtensor/core/noncopyable.h>
+#include <libtensor/core/scalar_transf_double.h>
 #include "dense_tensor_i.h"
 
 namespace libtensor {
@@ -16,18 +18,34 @@ namespace libtensor {
     \ingroup libtensor_dense_tensor_tod
  **/
 template<size_t N>
-class tod_random : public timings< tod_random<N> > {
+class tod_random : public timings< tod_random<N> >, public noncopyable {
 public:
     static const char *k_clazz; //!< Class name
 
+private:
+    double m_c; // Scaling coefficient
+
 public:
     /** \brief Prepares the operation
+        \param Scalar transformation
      **/
-    tod_random();
+    tod_random(const scalar_transf<double> &c = scalar_transf<double>());
 
-    void perform(bool zero, double c, dense_tensor_wr_i<N, double> &t);
+    /** \brief Prepares the operation
+        \param Scaling coefficient
+     **/
+    tod_random(double c);
+
+    /** \brief Perform operation
+        \param zero Zero tensor first
+        \param t Tensor to put random data
+     **/
+    void perform(bool zero, dense_tensor_wr_i<N, double> &t);
+
+    /** \brief Perform operation
+        \param t Tensor to put random data
+     **/
     void perform(dense_tensor_wr_i<N, double> &t);
-    void perform(dense_tensor_wr_i<N, double> &t, double c);
 
 private:
     static void update_seed(); //! updates the seed value by using srand48

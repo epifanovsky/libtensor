@@ -3,8 +3,8 @@
 
 #include "../defs.h"
 #include "../exception.h"
-#include "../core/block_tensor_ctrl.h"
-#include "../core/direct_block_tensor.h"
+#include <libtensor/block_tensor/direct_block_tensor.h>
+#include <libtensor/block_tensor/block_tensor_ctrl.h>
 #include "btensor_i.h"
 #include "btensor_traits.h"
 #include "labeled_btensor.h"
@@ -21,7 +21,7 @@ namespace libtensor {
     \ingroup libtensor_iface
  **/
 template<size_t N, typename T = double, typename Traits = btensor_traits<T> >
-class direct_btensor : public btensor_i<N, T> {
+class direct_btensor : public btensor_rd_i<N, T> {
 private:
     typedef struct {
         labeled_btensor_expr::expr_i<N, T> *m_pexpr;
@@ -33,7 +33,7 @@ private:
     letter_expr<N> m_label;
     ptrs_t m_ptrs;
     direct_block_tensor<N, T, typename Traits::allocator_t> m_bt;
-    block_tensor_ctrl<N, T> m_ctrl;
+    block_tensor_rd_ctrl<N, T> m_ctrl;
 
 public:
     //!    \name Construction and destruction
@@ -70,21 +70,12 @@ public:
 
 protected:
 
-    //!    \name Implementation of block_tensor_i<N, T>
+    //!    \name Implementation of block_tensor_rd_i<N, T>
     //@{
-    virtual symmetry<N, T> &on_req_symmetry() throw(exception);
-    virtual const symmetry<N, T> &on_req_const_symmetry() throw(exception);
-    virtual dense_tensor_i<N, T> &on_req_block(const index<N> &idx)
-        throw(exception);
-    virtual void on_ret_block(const index<N> &idx) throw(exception);
-    virtual dense_tensor_i<N, T> &on_req_aux_block(const index<N> &idx)
-        throw(exception);
-    virtual void on_ret_aux_block(const index<N> &idx) throw(exception);
-    virtual bool on_req_is_zero_block(const index<N> &idx) throw(exception);
-    virtual void on_req_zero_block(const index<N> &idx) throw(exception);
-    virtual void on_req_zero_all_blocks() throw(exception);
-    virtual void on_req_sync_on() throw(exception);
-    virtual void on_req_sync_off() throw(exception);
+    virtual const symmetry<N, T> &on_req_const_symmetry();
+    virtual dense_tensor_i<N, T> &on_req_const_block(const index<N> &idx);
+    virtual void on_ret_const_block(const index<N> &idx);
+    virtual bool on_req_is_zero_block(const index<N> &idx);
     //@}
 
 private:
@@ -155,85 +146,31 @@ const block_index_space<N> &direct_btensor<N, T, Traits>::get_bis() const {
 
 
 template<size_t N, typename T, typename Traits>
-symmetry<N, T> &direct_btensor<N, T, Traits>::on_req_symmetry()
-    throw(exception) {
-
-    return m_ctrl.req_symmetry();
-}
-
-template<size_t N, typename T, typename Traits>
-const symmetry<N, T> &direct_btensor<N, T, Traits>::on_req_const_symmetry()
-    throw(exception) {
+const symmetry<N, T> &direct_btensor<N, T, Traits>::on_req_const_symmetry() {
 
     return m_ctrl.req_const_symmetry();
 }
 
-template<size_t N, typename T, typename Traits>
-dense_tensor_i<N, T> &direct_btensor<N, T, Traits>::on_req_block(const index<N> &idx)
-    throw(exception) {
 
-    return m_ctrl.req_block(idx);
+template<size_t N, typename T, typename Traits>
+dense_tensor_i<N, T> &direct_btensor<N, T, Traits>::on_req_const_block(
+    const index<N> &idx) {
+
+    return m_ctrl.req_const_block(idx);
 }
 
 
 template<size_t N, typename T, typename Traits>
-void direct_btensor<N, T, Traits>::on_ret_block(const index<N> &idx)
-    throw(exception) {
+void direct_btensor<N, T, Traits>::on_ret_const_block(const index<N> &idx) {
 
-    m_ctrl.ret_block(idx);
+    m_ctrl.ret_const_block(idx);
 }
 
 
 template<size_t N, typename T, typename Traits>
-dense_tensor_i<N, T> &direct_btensor<N, T, Traits>::on_req_aux_block(
-    const index<N> &idx) throw(exception) {
-
-    return m_ctrl.req_aux_block(idx);
-}
-
-
-template<size_t N, typename T, typename Traits>
-void direct_btensor<N, T, Traits>::on_ret_aux_block(const index<N> &idx)
-    throw(exception) {
-
-    m_ctrl.ret_aux_block(idx);
-}
-
-
-template<size_t N, typename T, typename Traits>
-bool direct_btensor<N, T, Traits>::on_req_is_zero_block(const index<N> &idx)
-    throw(exception) {
+bool direct_btensor<N, T, Traits>::on_req_is_zero_block(const index<N> &idx) {
 
     return m_ctrl.req_is_zero_block(idx);
-}
-
-
-template<size_t N, typename T, typename Traits>
-void direct_btensor<N, T, Traits>::on_req_zero_block(const index<N> &idx)
-    throw(exception) {
-
-    m_ctrl.req_zero_block(idx);
-}
-
-
-template<size_t N, typename T, typename Traits>
-void direct_btensor<N, T, Traits>::on_req_zero_all_blocks() throw(exception) {
-
-    m_ctrl.req_zero_all_blocks();
-}
-
-
-template<size_t N, typename T, typename Traits>
-void direct_btensor<N, T, Traits>::on_req_sync_on() throw(exception) {
-
-    m_ctrl.req_sync_on();
-}
-
-
-template<size_t N, typename T, typename Traits>
-void direct_btensor<N, T, Traits>::on_req_sync_off() throw(exception) {
-
-    m_ctrl.req_sync_off();
 }
 
 

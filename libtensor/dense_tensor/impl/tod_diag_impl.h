@@ -1,9 +1,11 @@
 #ifndef LIBTENSOR_TOD_DIAG_IMPL_H
 #define LIBTENSOR_TOD_DIAG_IMPL_H
 
-#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
+#include <libtensor/linalg/linalg.h>
 #include <libtensor/tod/bad_dimensions.h>
+#include "../dense_tensor_ctrl.h"
 #include "../tod_diag.h"
+#include "../tod_set.h"
 
 namespace libtensor {
 
@@ -22,50 +24,32 @@ const char *tod_diag<N, M>::op_daxpy::k_clazz = "tod_diag<N, M>::op_daxpy";
 
 template<size_t N, size_t M>
 tod_diag<N, M>::tod_diag(dense_tensor_rd_i<N, double> &t, const mask<N> &m,
-    double c) :
+    const tensor_transf<k_orderb, double> &tr) :
 
-    m_t(t), m_mask(m), m_c(c), m_dims(mk_dims(t.get_dims(), m_mask)) {
-
-}
-
-
-template<size_t N, size_t M>
-tod_diag<N, M>::tod_diag(dense_tensor_rd_i<N, double> &t, const mask<N> &m,
-    const permutation<N - M + 1> &p, double c) :
-
-    m_t(t), m_mask(m), m_perm(p), m_c(c),
+    m_t(t), m_mask(m), m_perm(tr.get_perm()),
+    m_c(tr.get_scalar_tr().get_coeff()),
     m_dims(mk_dims(t.get_dims(), m_mask)) {
 
-    m_dims.permute(p);
+    m_dims.permute(m_perm);
 }
 
 
 template<size_t N, size_t M>
-void tod_diag<N, M>::perform(dense_tensor_wr_i<k_orderb, double> &tb) {
+void tod_diag<N, M>::perform(bool zero, dense_tensor_wr_i<k_orderb, double> &tb) {
 
     static const char *method =
-        "perform(dense_tensor_wr_i<N - M + 1, double> &)";
+            "perform(bool, dense_tensor_wr_i<N - M + 1, double> &)";
 
+#ifdef LIBTENSOR_DEBUG
     if(!tb.get_dims().equals(m_dims)) {
         throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "t");
     }
+#endif
 
-    do_perform<op_dcopy>(tb, 1.0);
-}
+    if(zero) tod_set<k_orderb>().perform(tb);
+    if(m_c == 0.0) return;
 
-
-template<size_t N, size_t M>
-void tod_diag<N, M>::perform(dense_tensor_wr_i<k_orderb, double> &tb,
-    double c) {
-
-    static const char *method =
-        "perform(dense_tensor_wr_i<N - M + 1, double> &, double)";
-
-    if(!tb.get_dims().equals(m_dims)) {
-        throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "t");
-    }
-
-    do_perform<op_daxpy>(tb, c);
+    do_perform<op_daxpy>(tb);
 }
 
 
@@ -107,11 +91,10 @@ dimensions<N - M + 1> tod_diag<N, M>::mk_dims(const dimensions<N> &dims,
 
 
 template<size_t N, size_t M> template<typename CoreOp>
-void tod_diag<N, M>::do_perform(dense_tensor_wr_i<k_orderb, double> &tb,
-    double c) {
+void tod_diag<N, M>::do_perform(dense_tensor_wr_i<k_orderb, double> &tb) {
 
     static const char *method =
-        "do_perform(dense_tensor_wr_i<N - M + 1, double>&, double)";
+        "do_perform(dense_tensor_wr_i<N - M + 1, double>&)";
 
     tod_diag<N, M>::start_timer();
 
@@ -121,7 +104,7 @@ void tod_diag<N, M>::do_perform(dense_tensor_wr_i<k_orderb, double> &tb,
     double *pb = cb.req_dataptr();
 
     loop_list_t lst;
-    build_list<CoreOp>(lst, tb, c * m_c);
+    build_list<CoreOp>(lst, tb);
 
     registers regs;
     regs.m_ptra = pa;
@@ -146,10 +129,10 @@ void tod_diag<N, M>::do_perform(dense_tensor_wr_i<k_orderb, double> &tb,
 
 template<size_t N, size_t M> template<typename CoreOp>
 void tod_diag<N, M>::build_list(loop_list_t &list,
-    dense_tensor_wr_i<k_orderb, double> &tb, double c) {
+    dense_tensor_wr_i<k_orderb, double> &tb) {
 
     static const char *method = "build_list(loop_list_t&, "
-        "dense_tensor_wr_i<N - M + 1, double>&, double)";
+        "dense_tensor_wr_i<N - M + 1, double>&)";
 
     const dimensions<k_ordera> &dimsa = m_t.get_dims();
     const dimensions<k_orderb> &dimsb = tb.get_dims();
@@ -212,7 +195,7 @@ void tod_diag<N, M>::build_list(loop_list_t &list,
             //  Make the loop with incb the last
             //
             if(incb == 1 && poscore == list.end()) {
-                it->m_op = new CoreOp(len, inca, incb, c);
+                it->m_op = new CoreOp(len, inca, incb, m_c);
                 poscore = it;
             } else {
                 it->m_op = new op_loop(len, inca, incb);
@@ -265,8 +248,8 @@ void tod_diag<N, M>::op_dcopy::exec(processor_t &proc, registers &regs)
     if(m_len == 0) return;
 
     op_dcopy::start_timer();
-    linalg::i_i(m_len, regs.m_ptra, m_inca, regs.m_ptrb, m_incb);
-    if(m_c != 1.0) linalg::i_x(m_len, m_c, regs.m_ptrb, m_incb);
+    linalg::copy_i_i(0, m_len, regs.m_ptra, m_inca, regs.m_ptrb, m_incb);
+    if(m_c != 1.0) linalg::mul1_i_x(0, m_len, m_c, regs.m_ptrb, m_incb);
     op_dcopy::stop_timer();
 }
 
@@ -278,7 +261,7 @@ void tod_diag<N, M>::op_daxpy::exec(processor_t &proc, registers &regs)
     if(m_len == 0) return;
 
     op_daxpy::start_timer();
-    linalg::i_i_x(m_len, regs.m_ptra, m_inca, m_c, regs.m_ptrb, m_incb);
+    linalg::mul2_i_i_x(0, m_len, regs.m_ptra, m_inca, m_c, regs.m_ptrb, m_incb);
     op_daxpy::stop_timer();
 }
 

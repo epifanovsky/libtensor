@@ -117,10 +117,8 @@ std::ostream &operator<<(std::ostream &os, const se_part<N, T> &se) {
 		abs_index<N> aix(se.get_direct_map(ai.get_index()), pdims);
 		if (aix.get_abs_index() <= ai.get_abs_index()) continue;
 		
-		os << std::endl
-		        << " " << ai.get_index() << " -> " << aix.get_index() << " ("
-		        << se.get_transf(ai.get_index(), aix.get_index())
-		        << ")" << std::endl;
+		os << std::endl << " " << ai.get_index() << " -> " << aix.get_index();
+		os << " (" << se.get_transf(ai.get_index(), aix.get_index()) << ")";
 	} while (ai.inc());
 
 	return os;
@@ -137,11 +135,14 @@ std::ostream &operator<<(std::ostream &out, const se_perm<N, double> &sp) {
 template<size_t N>
 std::ostream &operator<<(std::ostream &os, const block_labeling<N> &bl) {
 
+    typedef product_table_i::label_t label_type;
     for (size_t i = 0; i < N; i++) {
         size_t itype = bl.get_dim_type(i);
         os << " [" << i << "(" << itype << "):";
         for (size_t j = 0; j < bl.get_dim(itype); j++) {
-            os << " " << bl.get_label(itype, j);
+            label_type l = bl.get_label(itype, j);
+            if (l == product_table_i::k_invalid) os << " *";
+            else os << " " << l;
         }
         os << "]";
     }
@@ -151,10 +152,9 @@ std::ostream &operator<<(std::ostream &os, const block_labeling<N> &bl) {
 template<size_t N>
 std::ostream &operator<<(std::ostream &os, const evaluation_rule<N> &er) {
 
-    for (typename evaluation_rule<N>::const_iterator it = er.begin();
+    for (typename evaluation_rule<N>::iterator it = er.begin();
             it != er.end(); it++) {
-
-        os << std::endl << er.get_product(it);
+        os << er.get_product(it) << std::endl;
     }
     return os;
 }

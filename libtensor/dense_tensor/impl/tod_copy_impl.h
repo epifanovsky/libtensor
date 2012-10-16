@@ -2,10 +2,11 @@
 #define LIBTENSOR_TOD_COPY_IMPL_H
 
 #include <memory>
-#include <libtensor/tod/bad_dimensions.h>
+#include <libtensor/linalg/linalg.h>
 #include <libtensor/kernels/kern_dadd1.h>
 #include <libtensor/kernels/kern_dcopy.h>
-#include <libtensor/tod/kernels/loop_list_runner.h>
+#include <libtensor/kernels/loop_list_runner.h>
+#include <libtensor/tod/bad_dimensions.h>
 #include "../dense_tensor_ctrl.h"
 #include "../tod_set.h"
 #include "../tod_copy.h"
@@ -21,8 +22,7 @@ const char *tod_copy<N>::k_clazz = "tod_copy<N>";
 template<size_t N>
 tod_copy<N>::tod_copy(dense_tensor_rd_i<N, double> &ta, double c) :
 
-    m_ta(ta), m_tr(permutation<N>(), scalar_transf<double>(c)),
-    m_dimsb(mk_dimsb(m_ta, m_tr.get_perm())) {
+    m_ta(ta), m_c(c), m_dimsb(mk_dimsb(m_ta, m_perm)) {
 
 }
 
@@ -31,7 +31,7 @@ template<size_t N>
 tod_copy<N>::tod_copy(dense_tensor_rd_i<N, double> &ta, const permutation<N> &p,
     double c) :
 
-    m_ta(ta), m_tr(p, scalar_transf<double>(c)), m_dimsb(mk_dimsb(ta, p)) {
+    m_ta(ta), m_perm(p), m_c(c), m_dimsb(mk_dimsb(ta, p)) {
 
 }
 
@@ -40,7 +40,8 @@ template<size_t N>
 tod_copy<N>::tod_copy(dense_tensor_rd_i<N, double> &ta,
         const tensor_transf<N, double> &tr) :
 
-    m_ta(ta), m_tr(tr), m_dimsb(mk_dimsb(ta, m_tr.get_perm())) {
+    m_ta(ta), m_perm(tr.get_perm()), m_c(tr.get_scalar_tr().get_coeff()),
+    m_dimsb(mk_dimsb(ta, tr.get_perm())) {
 
 }
 
@@ -53,18 +54,16 @@ void tod_copy<N>::prefetch() {
 
 
 template<size_t N>
-void tod_copy<N>::perform(bool zero, double c,
-    dense_tensor_wr_i<N, double> &tb) {
+void tod_copy<N>::perform(bool zero, dense_tensor_wr_i<N, double> &tb) {
 
-    static const char *method =
-        "perform(bool, double, dense_tensor_wr_i<N, double>&)";
+    static const char *method = "perform(bool, dense_tensor_wr_i<N, double>&)";
 
     if(!tb.get_dims().equals(m_dimsb)) {
         throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "tb");
     }
 
     //  Special case
-    if(c == 0.0) {
+    if(m_c == 0.0) {
         if(zero) {
             tod_copy<N>::start_timer("zero");
             tod_set<N>().perform(tb);
@@ -88,7 +87,7 @@ void tod_copy<N>::perform(bool zero, double c,
 
         sequence<N, size_t> seqa(0);
         for(register size_t i = 0; i < N; i++) seqa[i] = i;
-        m_tr.get_perm().apply(seqa);
+        m_perm.apply(seqa);
 
         std::list< loop_list_node<1, 1> > loop_in, loop_out;
         typename std::list< loop_list_node<1, 1> >::iterator inode =
@@ -121,13 +120,12 @@ void tod_copy<N>::perform(bool zero, double c,
         r.m_ptrb_end[0] = pb + dimsb.get_size();
 
         {
-            double k = m_tr.get_scalar_tr().get_coeff() * c;
-            std::auto_ptr< kernel_base<1, 1> >kern(
+            std::auto_ptr< kernel_base<linalg, 1, 1> >kern(
                 zero ?
-                    kern_dcopy::match(k, loop_in, loop_out) :
-                    kern_dadd1::match(k, loop_in, loop_out));
+                    kern_dcopy<linalg>::match(m_c, loop_in, loop_out) :
+                    kern_dadd1<linalg>::match(m_c, loop_in, loop_out));
             tod_copy<N>::start_timer(kern->get_name());
-            loop_list_runner<1, 1>(loop_in).run(r, *kern);
+            loop_list_runner<linalg, 1, 1>(loop_in).run(0, r, *kern);
             tod_copy<N>::stop_timer(kern->get_name());
         }
 

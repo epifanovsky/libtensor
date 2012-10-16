@@ -8,37 +8,37 @@
 
 namespace libtensor {
 
+template<size_t N, typename T> class btensor_rd_i;
 template<size_t N, typename T> class btensor_i;
 
 /** \brief Block %tensor with an attached label (base class)
     \tparam N Tensor order.
     \tparam T Tensor element type.
-    \tparam Assignable Whether the %tensor can be an l-value.
     \tparam Label Label expression.
 
     \ingroup libtensor_iface
  **/
-template<size_t N, typename T, bool Assignable>
-class labeled_btensor_base {
+template<size_t N, typename T>
+class labeled_btensor_rd_base {
 private:
     typedef T element_t;
     typedef letter_expr<N> label_t;
 
 private:
-    btensor_i<N, T> &m_bt;
+    btensor_rd_i<N, T> &m_bt;
     letter_expr<N> m_label;
 
 public:
     /** \brief Constructs the labeled block %tensor
      **/
-    labeled_btensor_base(btensor_i<N, T> &bt, const letter_expr<N> &label) :
-        m_bt(bt), m_label(label) {
+    labeled_btensor_rd_base(btensor_rd_i<N, T> &bt,
+            const letter_expr<N> &label) : m_bt(bt), m_label(label) {
 
     }
 
     /** \brief Returns the tensor interface
      **/
-    btensor_i<N, T> &get_btensor() const {
+    btensor_rd_i<N, T> &get_btensor() const {
         return m_bt;
     }
 

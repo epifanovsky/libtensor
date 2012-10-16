@@ -20,9 +20,14 @@ void product_table_i::check() const throw(bad_symmetry) {
     static const char *method = "check() const";
 
     // Check identity label products
+    label_group_t lg1(1, k_identity);
     for (label_t l = 0; l < get_n_labels(); l++) {
 
-        label_set_t ls(product(k_identity, l));
+        label_set_t ls;
+        lg1.push_back(l);
+        product(lg1, ls);
+        lg1.pop_back();
+
         if (ls.size() != 1) {
             throw bad_symmetry(g_ns, k_clazz, method,
                     __FILE__, __LINE__, "Size of product with identity.");
@@ -32,9 +37,12 @@ void product_table_i::check() const throw(bad_symmetry) {
                     __FILE__, __LINE__, "Result of product with identity.");
         }
 
+        label_group_t lg2(1, l);
         for (label_t ll = l; ll < get_n_labels(); ll++) {
-            label_set_t lls(product(l, ll));
-            if (lls.empty()) {
+            lg2.push_back(ll);
+            product(lg2, ls);
+            lg2.pop_back();
+            if (ls.empty()) {
                 throw bad_symmetry(g_ns, k_clazz, method, __FILE__,
                         __LINE__, "Product table not properly setup.");
             }

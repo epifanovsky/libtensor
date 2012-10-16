@@ -1,9 +1,11 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/scalar_transf_double.h>
-#include <libtensor/btod/btod_random.h>
+#include <libtensor/block_tensor/btod_random.h>
 #include <libtensor/btod/btod_set_diag.h>
 #include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/symmetry/product_table_container.h>
+#include <libtensor/symmetry/se_label.h>
+#include <libtensor/symmetry/se_perm.h>
 #include <libtensor/symmetry/so_copy.h>
 #include <libtensor/dense_tensor/tod_btconv.h>
 #include <libtensor/dense_tensor/tod_contract2.h>
@@ -29,6 +31,7 @@ void expr_test::perform() throw(libtest::test_exception) {
         test_7();
         test_8();
         test_9();
+        test_10();
 
     } catch(...) {
         allocator<double>::vmm().shutdown();
@@ -363,23 +366,23 @@ void expr_test::test_6() throw(libtest::test_exception) {
 
     tod_copy<4> top1(ti_oooo);
 
-    tod_contract2<2, 2, 2> top2(contr2, tt2, ti_oovv);
+    tod_contract2<2, 2, 2> top2(contr2, tt2, ti_oovv, 0.5);
 
     dense_tensor<4, double, allocator_t> ttmp3a(i_oooo.get_bis().get_dims());
-    tod_contract2<3, 1, 1>(contr3, ti_ooov, tt1).perform(true, 1.0, ttmp3a);
+    tod_contract2<3, 1, 1>(contr3, ti_ooov, tt1).perform(true, ttmp3a);
     tod_add<4> top3(ttmp3a);
     top3.add_op(ttmp3a, permutation<4>().permute(0, 1), -1.0);
 
     dense_tensor<4, double, allocator_t> ttmp4a(i_oovv.get_bis().get_dims());
-    tod_contract2<2, 2, 0>(contr4a, tt1, tt1).perform(true, 1.0, ttmp4a);
+    tod_contract2<2, 2, 0>(contr4a, tt1, tt1).perform(true, ttmp4a);
     tod_contract2<2, 2, 2> top4(contr4, ttmp4a, ti_oovv);
 
     dense_tensor<4, double, allocator_t> ti4_oooo(i4_oooo.get_bis().get_dims()),
         ti4_oooo_ref(i4_oooo.get_bis().get_dims());
-    top1.perform(true, 1.0, ti4_oooo_ref);
-    top2.perform(false, 0.5, ti4_oooo_ref);
-    top3.perform(false, 1.0, ti4_oooo_ref);
-    top4.perform(false, 1.0, ti4_oooo_ref);
+    top1.perform(true, ti4_oooo_ref);
+    top2.perform(false, ti4_oooo_ref);
+    top3.perform(false, ti4_oooo_ref);
+    top4.perform(false, ti4_oooo_ref);
     tod_btconv<4>(i4_oooo).perform(ti4_oooo);
 
     compare_ref<4>::compare(testname, ti4_oooo, ti4_oooo_ref, 5e-15);
@@ -472,21 +475,21 @@ void expr_test::test_7() throw(libtest::test_exception) {
 
     tod_copy<4> top1(ti_ovov);
 
-    tod_contract2<3, 1, 1> top2(contr2, ti_ovvv, tt1);
+    tod_contract2<3, 1, 1> top2(contr2, ti_ovvv, tt1, -1.0);
 
-    tod_contract2<3, 1, 1> top3(contr3, ti_ooov, tt1);
+    tod_contract2<3, 1, 1> top3(contr3, ti_ooov, tt1, -1.0);
 
     dense_tensor<4, double, allocator_t> ttmp4a(i_oovv.get_bis().get_dims());
-    tod_copy<4>(tt2).perform(true, 1.0, ttmp4a);
-    tod_contract2<2, 2, 0>(contr4a, tt1, tt1).perform(false, 2.0, ttmp4a);
-    tod_contract2<2, 2, 2> top4(contr4, ttmp4a, ti_oovv);
+    tod_copy<4>(tt2).perform(true, ttmp4a);
+    tod_contract2<2, 2, 0>(contr4a, tt1, tt1, 2.0).perform(false, ttmp4a);
+    tod_contract2<2, 2, 2> top4(contr4, ttmp4a, ti_oovv, 0.5);
 
     dense_tensor<4, double, allocator_t> ti1_ovov(i1_ovov.get_bis().get_dims()),
         ti1_ovov_ref(i1_ovov.get_bis().get_dims());
-    top1.perform(true, 1.0, ti1_ovov_ref);
-    top2.perform(false, -1.0, ti1_ovov_ref);
-    top3.perform(false, -1.0, ti1_ovov_ref);
-    top4.perform(false, 0.5, ti1_ovov_ref);
+    top1.perform(true, ti1_ovov_ref);
+    top2.perform(false, ti1_ovov_ref);
+    top3.perform(false, ti1_ovov_ref);
+    top4.perform(false, ti1_ovov_ref);
     tod_btconv<4>(i1_ovov).perform(ti1_ovov);
 
     compare_ref<4>::compare(testname, ti1_ovov, ti1_ovov_ref, 5e-15);
@@ -646,6 +649,74 @@ void expr_test::test_9() throw(libtest::test_exception) {
 
         d2_oo(i|j) = dirsum(diag(i, i|j, f_oo(i|j)), -diag(j, i|j, f_oo(i|j)))
             + d1_oo(i|j);
+
+    }
+
+    need_erase = false;
+    product_table_container::get_instance().erase(pgtid);
+
+    } catch(exception &e) {
+        if(need_erase) {
+            product_table_container::get_instance().erase(pgtid);
+        }
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void expr_test::test_10() throw(libtest::test_exception) {
+
+    static const char *testname = "expr_test::test_10()";
+
+    bool need_erase = true;
+    const char *pgtid = "point_group_cs";
+
+    try {
+
+    point_group_table::label_t ap = 0, app = 1;
+    std::vector<std::string> irnames(2);
+    irnames[ap] = "A'"; irnames[app] = "A''";
+    point_group_table cs(pgtid, irnames, irnames[ap]);
+    cs.add_product(app, app, ap);
+    cs.check();
+    product_table_container::get_instance().add(cs);
+
+    {
+
+    bispace<1> so(10); so.split(2).split(5).split(7);
+    bispace<1> sx(15); sx.split(4);
+    bispace<3> soox(so&so|sx);
+    bispace<4> soooo(so&so&so&so);
+
+    btensor<3, double> b_oox(soox);
+    btensor<4, double> i_oooo(soooo);
+
+    mask<3> m110;
+    m110[0] = true; m110[1] = true; m110[2] = false;
+
+    se_label<3, double> l_oox(soox.get_bis().get_block_index_dims(), pgtid);
+    block_labeling<3> &bl_oox = l_oox.get_labeling();
+    bl_oox.assign(m110, 0, ap);
+    bl_oox.assign(m110, 1, app);
+    bl_oox.assign(m110, 2, ap);
+    bl_oox.assign(m110, 3, app);
+    l_oox.set_rule(ap);
+
+    {
+        block_tensor_ctrl<3, double> c_b_oox(b_oox);
+        symmetry<3, double> sym_l_oox(soox.get_bis());
+        scalar_transf<double> tr0;
+        sym_l_oox.insert(se_perm<3, double>(permutation<3>().
+            permute(0, 1), tr0));
+        sym_l_oox.insert(l_oox);
+        so_copy<3, double>(sym_l_oox).perform(c_b_oox.req_symmetry());
+    }
+
+    btod_random<3>().perform(b_oox);
+
+    letter p, q, r, s, P;
+
+    i_oooo(p|q|r|s) = asymm(r, s, contract(P, b_oox(p|r|P), b_oox(q|s|P)));
 
     }
 

@@ -1,5 +1,5 @@
 #include <sstream>
-#include <libtensor/block_tensor/bto/bto_contract2_bis.h>
+#include <libtensor/gen_block_tensor/impl/gen_bto_contract2_bis.h>
 #include "bto_contract2_bis_test.h"
 
 namespace libtensor {
@@ -50,9 +50,9 @@ void bto_contract2_bis_test::test_1() throw(libtest::test_exception) {
         contraction2<3, 1, 1> contr;
         contr.contract(3, 1);
 
-        bto_contract2_bis<3, 1, 1> op(contr, bisa, bisb);
+        gen_bto_contract2_bis<3, 1, 1> op(contr, bisa, bisb);
 
-        if(!op.get_bisc().equals(bisc_ref)) {
+        if(!op.get_bis().equals(bisc_ref)) {
             fail_test(testname, __FILE__, __LINE__,
                 "Incorrect output block index space.");
         }
@@ -107,9 +107,9 @@ void bto_contract2_bis_test::test_2() throw(libtest::test_exception) {
         contraction2<3, 1, 1> contr;
         contr.contract(3, 1);
 
-        bto_contract2_bis<3, 1, 1> op(contr, bisa, bisb);
+        gen_bto_contract2_bis<3, 1, 1> op(contr, bisa, bisb);
 
-        if(!op.get_bisc().equals(bisc_ref)) {
+        if(!op.get_bis().equals(bisc_ref)) {
             fail_test(testname, __FILE__, __LINE__,
                 "Incorrect output block index space.");
         }
@@ -168,9 +168,9 @@ void bto_contract2_bis_test::test_3() throw(libtest::test_exception) {
         contraction2<3, 1, 1> contr;
         contr.contract(3, 1);
 
-        bto_contract2_bis<3, 1, 1> op(contr, bisa, bisb);
+        gen_bto_contract2_bis<3, 1, 1> op(contr, bisa, bisb);
 
-        if(!op.get_bisc().equals(bisc_ref)) {
+        if(!op.get_bis().equals(bisc_ref)) {
             fail_test(testname, __FILE__, __LINE__,
                 "Incorrect output block index space.");
         }
@@ -210,9 +210,9 @@ void bto_contract2_bis_test::test_4() throw(libtest::test_exception) {
         contr.contract(0, 2);
         contr.contract(1, 3);
 
-        bto_contract2_bis<2, 2, 2> op(contr, bisa, bisb);
+        gen_bto_contract2_bis<2, 2, 2> op(contr, bisa, bisb);
 
-        if(!op.get_bisc().equals(bisc_ref)) {
+        if(!op.get_bis().equals(bisc_ref)) {
             fail_test(testname, __FILE__, __LINE__,
                 "Incorrect output block index space.");
         }
@@ -275,9 +275,9 @@ void bto_contract2_bis_test::test_5() throw(libtest::test_exception) {
         contr.contract(2, 2);
         contr.contract(3, 3);
 
-        bto_contract2_bis<1, 2, 3> op(contr, bisa, bisb);
+        gen_bto_contract2_bis<1, 2, 3> op(contr, bisa, bisb);
 
-        if(!op.get_bisc().equals(bisc_ref)) {
+        if(!op.get_bis().equals(bisc_ref)) {
             fail_test(testname, __FILE__, __LINE__,
                 "Invalid output block index space.");
         }
@@ -326,9 +326,9 @@ void bto_contract2_bis_test::test_6() throw(libtest::test_exception) {
 
         contraction2<2, 2, 0> contr(permutation<4>().permute(1, 2));
 
-        bto_contract2_bis<2, 2, 0> op(contr, bisa, bisb);
+        gen_bto_contract2_bis<2, 2, 0> op(contr, bisa, bisb);
 
-        if(!op.get_bisc().equals(bisc_ref)) {
+        if(!op.get_bis().equals(bisc_ref)) {
             fail_test(testname, __FILE__, __LINE__,
                 "Invalid output block index space.");
         }

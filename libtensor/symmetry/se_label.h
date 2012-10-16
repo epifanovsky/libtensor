@@ -4,7 +4,7 @@
 #include <libtensor/core/symmetry_element_i.h>
 #include "block_labeling.h"
 #include "evaluation_rule.h"
-#include "product_table_i.h"
+#include "product_table_container.h"
 
 namespace libtensor {
 
@@ -55,15 +55,27 @@ public:
         \param bidims Block %index dimensions.
         \param id Table ID
      **/
-    se_label(const dimensions<N> &bidims, const std::string &id);
+    se_label(const dimensions<N> &bidims, const std::string &id) :
+        m_blk_labels(bidims), 
+        m_pt(product_table_container::get_instance().req_const_table(id)) {
+    }
+
 
     /** \brief Copy constructor
      **/
-    se_label(const se_label<N, T> &elem);
+    se_label(const se_label<N, T> &elem) :
+        m_blk_labels(elem.m_blk_labels), m_rule(elem.m_rule),
+        m_pt(product_table_container::get_instance().req_const_table(
+                elem.m_pt.get_id())) {
+    }
+
 
     /** \brief Virtual destructor
      **/
-    virtual ~se_label();
+    virtual ~se_label() {
+        product_table_container::get_instance().ret_table(m_pt.get_id());
+    }
+
     //@}
 
     //!    \name Manipulating functions
@@ -98,7 +110,7 @@ public:
         The function checks the validity of the given rule and replaces any
         previously given rule.
      **/
-    void set_rule(const evaluation_rule<N> &rule);
+    void set_rule(const evaluation_rule<N> &rule) { m_rule = rule; }
     //@}
 
     //! \name Access functions
@@ -156,6 +168,16 @@ public:
     //@}
 
 };
+
+
+template<size_t N, typename T>
+inline
+bool se_label<N, T>::is_valid_bis(const block_index_space<N> &bis) const {
+
+    const dimensions<N> &bidims = m_blk_labels.get_block_index_dims();
+    return bidims.equals(bis.get_block_index_dims());
+}
+
 
 } // namespace libtensor
 

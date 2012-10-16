@@ -3,9 +3,10 @@
 
 #include <list>
 #include <libtensor/timings.h>
-#include <libtensor/core/block_tensor_i.h>
+#include <libtensor/core/noncopyable.h>
 #include <libtensor/tod/bad_dimensions.h>
 #include <libtensor/tod/processor.h>
+#include <libtensor/block_tensor/block_tensor_i.h>
 #include "dense_tensor_i.h"
 
 namespace libtensor {
@@ -16,7 +17,7 @@ namespace libtensor {
     \ingroup libtensor_tod
  **/
 template<size_t N>
-class tod_btconv : public timings< tod_btconv<N> > {
+class tod_btconv : public timings< tod_btconv<N> >, public noncopyable {
 public:
     static const char *k_clazz; //!< Class name
 
@@ -66,13 +67,13 @@ private:
     };
 
 private:
-    block_tensor_i<N, double> &m_bt; //!< Source block %tensor
+    block_tensor_rd_i<N, double> &m_bt; //!< Source block %tensor
 
 public:
     //!    \name Construction and destruction
     //@{
 
-    tod_btconv(block_tensor_i<N, double> &bt);
+    tod_btconv(block_tensor_rd_i<N, double> &bt);
     ~tod_btconv();
 
     //@}

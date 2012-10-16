@@ -1,7 +1,7 @@
 #include <sstream>
 #include <libtensor/core/allocator.h>
-#include <libtensor/core/block_tensor.h>
 #include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/block_tensor/block_tensor.h>
 #include <libtensor/btod/btod_import_raw_stream.h>
 #include <libtensor/dense_tensor/tod_add.h>
 #include <libtensor/dense_tensor/tod_btconv.h>
@@ -71,7 +71,7 @@ void btod_import_raw_stream_test::test_1(const block_index_space<N> &bis)
 
     //  Create reference data
 
-    tod_copy<N>(ta).perform(true, 1.0, tb_ref);
+    tod_copy<N>(ta).perform(true, tb_ref);
 
     //  Invoke the operation
 

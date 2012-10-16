@@ -51,7 +51,7 @@ void se_label_test::test_basic_1(
     if (sl1[0][0] != 1 || sl1[0][1] != 1 || sl1[0][2] != 1)
         fail_test(tns.c_str(), __FILE__, __LINE__, "seq[0] (r1).");
 
-    evaluation_rule<3>::const_iterator it = r1.begin();
+    evaluation_rule<3>::iterator it = r1.begin();
     const product_rule<3> &pr1 = r1.get_product(it);
     it++;
     if (it != r1.end())

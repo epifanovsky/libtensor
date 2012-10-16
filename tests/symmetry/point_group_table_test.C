@@ -173,7 +173,11 @@ void point_group_table_test::test_4() throw(libtest::test_exception) {
         // test ag x eu = eu and eu x eg = au + eu
         product_table_i::label_set_t::const_iterator ils;
 
-        product_table_i::label_set_t ls1 = pg.product(ag, eu);
+        product_table_i::label_group_t lg1;
+        lg1.push_back(ag);
+        lg1.push_back(eu);
+        product_table_i::label_set_t ls1;
+        pg.product(lg1, ls1);
         if (ls1.size() != 1)
             fail_test(testname, __FILE__, __LINE__,
                     "Wrong number of labels in product");
@@ -181,7 +185,11 @@ void point_group_table_test::test_4() throw(libtest::test_exception) {
             fail_test(testname, __FILE__, __LINE__,
                     "Eu is not in product Ag x Eu.");
 
-        product_table_i::label_set_t ls2 = pg.product(eu, eg);
+        product_table_i::label_group_t lg2;
+        lg2.push_back(eu);
+        lg2.push_back(eg);
+        product_table_i::label_set_t ls2;
+        pg.product(lg2, ls2);
         if (ls2.size() != 2)
             fail_test(testname, __FILE__, __LINE__,
                     "Wrong number of labels in product");
@@ -194,46 +202,6 @@ void point_group_table_test::test_4() throw(libtest::test_exception) {
         if (*ils != eu)
             fail_test(testname, __FILE__, __LINE__,
                     "Eu is not in product Eg x Eu.");
-
-        product_table_i::label_set_t ls3a, ls3;
-        ls3a.insert(au); ls3a.insert(eu);
-        ls3 = pg.product(eg, ls3a);
-        if (ls3.size() != 2)
-            fail_test(testname, __FILE__, __LINE__,
-                    "Wrong number of labels in product");
-
-        ils = ls3.begin();
-        if (*ils != au)
-            fail_test(testname, __FILE__, __LINE__,
-                    "Au is not in product Eg x (Au + Eu).");
-        ils++;
-        if (*ils != eu)
-            fail_test(testname, __FILE__, __LINE__,
-                    "Eu is not in product Eg x (Au + Eu).");
-
-        product_table_i::label_set_t ls4a, ls4;
-        ls4a.insert(ag); ls4a.insert(au);
-        ls4 = pg.product(ls4a, au);
-        if (ls4.size() != 2)
-            fail_test(testname, __FILE__, __LINE__,
-                    "Wrong number of labels in product");
-
-        ils = ls4.begin();
-        if (*ils != ag)
-            fail_test(testname, __FILE__, __LINE__,
-                    "Ag is not in product (Ag + Au) x Au.");
-        ils++;
-        if (*ils != au)
-            fail_test(testname, __FILE__, __LINE__,
-                    "Au is not in product (Ag + Au) x Au.");
-
-        product_table_i::label_set_t ls5a, ls5b, ls5;
-        ls5a.insert(ag); ls5a.insert(au);
-        ls5b.insert(eg); ls5b.insert(au);
-        ls5 = pg.product(ls5a, ls5b);
-        if (ls5.size() != 4)
-            fail_test(testname, __FILE__, __LINE__,
-                    "Wrong number of labels in product");
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());

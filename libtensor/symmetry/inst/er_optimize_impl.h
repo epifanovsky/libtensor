@@ -14,18 +14,31 @@ const char *er_optimize<N>::k_clazz = "er_optimize<N>";
 template<size_t N>
 er_optimize<N>::er_optimize(const evaluation_rule<N> &from,
         const std::string &id) :
-        m_rule(from), m_mergable(true) {
+        m_rule(from), m_mergable(true), m_single(true) {
 
     product_table_container &ptc = product_table_container::get_instance();
     const product_table_i &pt = ptc.req_const_table(id);
 
-    for (product_table_i::label_t l = 0; l < pt.get_n_labels(); l++) {
-        product_table_i::label_group_t lg(2, l);
+    for (product_table_i::label_t l1 = 0;
+            l1 < pt.get_n_labels() && (m_mergable || m_single); l1++) {
+
+        product_table_i::label_group_t lg(2, l1);
+
         product_table_i::label_set_t ls;
         pt.product(lg, ls);
-        if (ls.size() != 1 || ls.count(product_table_i::k_identity) != 1) {
-            m_mergable = false; break;
+        if (ls.size() != 1) { m_single = m_mergable = false; }
+        else if (ls.count(product_table_i::k_identity) != 1) {
+            m_mergable = false;
         }
+
+        for (product_table_i::label_t l2 = l1 + 1;
+                l2 < pt.get_n_labels() && m_single; l2++) {
+            ls.clear();
+            lg[1] = l2;
+            pt.product(lg, ls);
+            if (ls.size() != 1) { m_single = false; }
+        }
+
     }
 
     ptc.ret_table(id);
@@ -77,7 +90,7 @@ void er_optimize<N>::perform(evaluation_rule<N> &to) const {
     // Loop over all products
     std::list<product_map_t> plst;
 
-    typename evaluation_rule<N>::const_iterator it = m_rule.begin();
+    typename evaluation_rule<N>::iterator it = m_rule.begin();
     for (; it != m_rule.end(); it++) {
 
         const product_rule<N> &pr = m_rule.get_product(it);
@@ -108,8 +121,14 @@ void er_optimize<N>::perform(evaluation_rule<N> &to) const {
                 }
             }
 
-            pmap.insert(product_map_t::value_type(pr.get_seqno(ip),
-                    pr.get_intrinsic(ip)));
+            product_map_t::iterator ix = pmap.find(pr.get_seqno(ip));
+            if (ix != pmap.end() && m_single) {
+                if (ix->second != pr.get_intrinsic(ip)) break;
+            }
+            else {
+                pmap.insert(product_map_t::value_type(pr.get_seqno(ip),
+                        pr.get_intrinsic(ip)));
+            }
         }
 
         // If there was one forbidden term the product can be deleted
@@ -137,29 +156,7 @@ void er_optimize<N>::perform(evaluation_rule<N> &to) const {
         return;
     }
 
-    // Remove duplicate products
-    for (typename std::list<product_map_t>::iterator it1 = plst.begin();
-            it1 != plst.end(); it1++) {
-
-        typename std::list<product_map_t>::iterator it2 = it1;
-        it2++;
-        while (it2 != plst.end()) {
-            if (it1->size() == it2->size()) {
-                product_map_t::iterator ip1 = it1->begin(), ip2 = it2->begin();
-                for (; ip1 != it1->end(); ip1++, ip2++) {
-                    if (ip1->first != ip2->first || ip1->second != ip2->second)
-                        break;
-                }
-                if (ip1 == it1->end()) {
-                    it2 = plst.erase(it2);
-                    continue;
-                }
-            }
-            it2++;
-        }
-    }
-
-    // Copy from new lists to member lists
+    // Copy to result rule and remove duplicate products
     for (typename std::list<product_map_t>::iterator it1 = plst.begin();
             it1 != plst.end(); it1++) {
 
@@ -167,6 +164,23 @@ void er_optimize<N>::perform(evaluation_rule<N> &to) const {
         for (typename product_map_t::iterator ip1 = it1->begin();
                 ip1 != it1->end(); ip1++) {
             pr.add(*(seq_ptr[ip1->first]), ip1->second);
+        }
+
+        typename std::list<product_map_t>::iterator it2 = it1;
+        it2++;
+        while (it2 != plst.end()) {
+            if (it1->size() != it2->size()) { it2++; continue; }
+
+            product_map_t::iterator ip1 = it1->begin(), ip2 = it2->begin();
+            for (; ip1 != it1->end(); ip1++, ip2++) {
+                if (ip1->first != ip2->first || ip1->second != ip2->second)
+                    break;
+            }
+            if (ip1 == it1->end()) {
+                it2 = plst.erase(it2);
+                continue;
+            }
+            it2++;
         }
     }
 

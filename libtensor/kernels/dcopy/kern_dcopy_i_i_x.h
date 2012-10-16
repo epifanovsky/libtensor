@@ -6,16 +6,28 @@
 namespace libtensor {
 
 
+template<typename LA> class kern_dcopy_ij_ij_x;
+template<typename LA> class kern_dcopy_ij_ji_x;
+
+
 /** \brief Specialized kernel for \f$ b_i = a_i d \f$
+    \tparam LA Linear algebra.
 
     \ingroup libtensor_kernels
  **/
-class kern_dcopy_i_i_x : public kernel_base<1, 1> {
-    friend class kern_dcopy_ij_ij_x;
-    friend class kern_dcopy_ij_ji_x;
+template<typename LA>
+class kern_dcopy_i_i_x : public kernel_base<LA, 1, 1> {
+    friend class kern_dcopy_ij_ij_x<LA>;
+    friend class kern_dcopy_ij_ji_x<LA>;
 
 public:
     static const char *k_clazz; //!< Kernel name
+
+public:
+    typedef typename kernel_base<LA, 1, 1>::device_context_ref
+        device_context_ref;
+    typedef typename kernel_base<LA, 1, 1>::list_t list_t;
+    typedef typename kernel_base<LA, 1, 1>::iterator_t iterator_t;
 
 private:
     double m_d;
@@ -29,9 +41,9 @@ public:
         return k_clazz;
     }
 
-    virtual void run(const loop_registers<1, 1> &r);
+    virtual void run(device_context_ref ctx, const loop_registers<1, 1> &r);
 
-    static kernel_base<1, 1> *match(const kern_dcopy &z,
+    static kernel_base<LA, 1, 1> *match(const kern_dcopy<LA> &z,
         list_t &in, list_t &out);
 
 };

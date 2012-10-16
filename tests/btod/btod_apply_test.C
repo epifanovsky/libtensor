@@ -1,9 +1,9 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
-#include <libtensor/core/block_tensor.h>
 #include <libtensor/core/scalar_transf_double.h>
-#include <libtensor/block_tensor/btod/btod_apply.h>
-#include <libtensor/btod/btod_random.h>
+#include <libtensor/block_tensor/block_tensor.h>
+#include <libtensor/block_tensor/btod_apply.h>
+#include <libtensor/block_tensor/btod_random.h>
 #include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/symmetry/product_table_container.h>
 #include <libtensor/symmetry/se_perm.h>
@@ -48,6 +48,10 @@ struct exp_functor {
 
 void btod_apply_test::perform() throw(libtest::test_exception) {
 
+    allocator<double>::vmm().init(16, 16, 16777216, 16777216);
+
+    try {
+
     test_zero_1();
     test_zero_2();
     test_zero_3();
@@ -81,6 +85,13 @@ void btod_apply_test::perform() throw(libtest::test_exception) {
     test_add_nesym_7_sp1();
     test_add_nesym_7_sp2();
     test_add_nesym_7_sp3();
+
+    } catch(...) {
+        allocator<double>::vmm().shutdown();
+        throw;
+    }
+
+    allocator<double>::vmm().shutdown();
 }
 
 /** \test \f$ b_{ij} = sin(a_{ij}) \f$, zero tensor to zero tensor
@@ -267,7 +278,7 @@ void btod_apply_test::test_nosym_1() throw(libtest::test_exception) {
 
     tod_btconv<2>(bta).perform(ta);
     tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin).
-        perform(true, 1.0, tb_ref);
+        perform(true, tb_ref);
 
     //  Compare against the reference
 
@@ -314,7 +325,7 @@ void btod_apply_test::test_nosym_2() throw(libtest::test_exception) {
 
     tod_btconv<2>(bta).perform(ta);
     tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin, perm10, 2.0).
-        perform(true, 1.0, tb_ref);
+        perform(true, tb_ref);
 
     //  Compare against the reference
 
@@ -361,7 +372,7 @@ void btod_apply_test::test_nosym_3() throw(libtest::test_exception) {
 
     tod_btconv<2>(bta).perform(ta);
     tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin).
-        perform(true, 1.0, tb_ref);
+        perform(true, tb_ref);
 
     //  Compare against the reference
 
@@ -413,7 +424,7 @@ void btod_apply_test::test_nosym_4() throw(libtest::test_exception) {
 
     tod_btconv<2>(bta).perform(ta);
     tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin, perm10, 2.0).
-        perform(true, 1.0, tb_ref);
+        perform(true, tb_ref);
 
     //  Compare against the reference
 
@@ -466,7 +477,7 @@ void btod_apply_test::test_sym_1() throw(libtest::test_exception) {
 
     tod_btconv<2>(bta).perform(ta);
     tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin).
-        perform(true, 1.0, tb_ref);
+        perform(true, tb_ref);
 
     //  Compare against the reference
 
@@ -521,7 +532,7 @@ void btod_apply_test::test_sym_2() throw(libtest::test_exception) {
 
     tod_btconv<2>(bta).perform(ta);
     tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin, perm10, -2.0).
-        perform(true, 1.0, tb_ref);
+        perform(true, tb_ref);
 
     //  Compare against the reference
 
@@ -589,7 +600,7 @@ void btod_apply_test::test_sym_3() throw(libtest::test_exception) {
     //  Create the reference
 
     tod_apply<3, btod_apply_test_ns::sin_functor>(ta, sin, perm210, 0.3).
-        perform(true, 1.0, tb_ref);
+        perform(true, tb_ref);
 
     //  Compare against the reference
 
@@ -658,7 +669,7 @@ void btod_apply_test::test_sym_4() throw(libtest::test_exception) {
     //  Compute the reference
 
     tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin, -1.0).
-        perform(true, 1.0, tb_ref);
+        perform(true, tb_ref);
 
     //  Compare against the reference
 
@@ -757,7 +768,7 @@ void btod_apply_test::test_sym_5() throw(libtest::test_exception) {
     //  Compute the reference
 
     tod_apply<2, btod_apply_test_ns::exp_functor>(ta, exp, -1.0).
-        perform(true, 1.0, tb_ref);
+        perform(true, tb_ref);
 
     //  Compare against the reference
 
@@ -805,7 +816,7 @@ void btod_apply_test::test_add_nosym_1() throw(libtest::test_exception) {
     //  Compute the reference
 
     tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin).
-        perform(false, 1.0, tb_ref);
+        perform(false, tb_ref);
 
     //  Compare against the reference
 
@@ -856,8 +867,9 @@ void btod_apply_test::test_add_nosym_2() throw(libtest::test_exception) {
 
     //  Create the reference
 
-    tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin, perm10).
-        perform(false, 2.0, tb_ref);
+    tensor_transf<2, double> tr2(perm10, scalar_transf<double>(2.0));
+    tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin,
+            scalar_transf<double>(), tr2).perform(false, tb_ref);
 
     //  Compare against the reference
 
@@ -913,7 +925,7 @@ void btod_apply_test::test_add_nosym_3() throw(libtest::test_exception) {
     //  Compute the reference
 
     tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin, 2.0).
-        perform(false, 1.0, tb_ref);
+        perform(false, tb_ref);
 
     //  Compare against the reference
 
@@ -962,9 +974,10 @@ void btod_apply_test::test_add_nosym_4() throw(libtest::test_exception) {
 
     //  Create the reference
 
+    tensor_transf<2, double> tr2(perm10, scalar_transf<double>(2.0));
     tod_btconv<2>(bta).perform(ta);
-    tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin, perm10).
-        perform(false, 2.0, tb_ref);
+    tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin,
+            scalar_transf<double>(), tr2).perform(false, tb_ref);
 
     //  Compare against the reference
 
@@ -1021,7 +1034,7 @@ void btod_apply_test::test_add_eqsym_1() throw(libtest::test_exception) {
 
     tod_btconv<2>(bta).perform(ta);
     tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin).
-        perform(false, 1.0, tb_ref);
+        perform(false, tb_ref);
 
     compare_ref<2>::compare(testname, tb, tb_ref, 0.0);
 
@@ -1055,8 +1068,8 @@ void btod_apply_test::test_add_eqsym_2() throw(libtest::test_exception) {
 
     //  Fill the input with random data
 
-    scalar_transf<double> tr1(-1.);
-    se_perm<2, double> cycle1(perm10, tr1);
+    scalar_transf<double> str1(-1.);
+    se_perm<2, double> cycle1(perm10, str1);
     block_tensor_ctrl<2, double> ctrla(bta), ctrlb(btb);
     ctrla.req_symmetry().insert(cycle1);
     ctrlb.req_symmetry().insert(cycle1);
@@ -1074,9 +1087,10 @@ void btod_apply_test::test_add_eqsym_2() throw(libtest::test_exception) {
 
     //  Create the reference
 
+    tensor_transf<2, double> tr2(perm10, scalar_transf<double>(-1.0));
     tod_btconv<2>(bta).perform(ta);
-    tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin, perm10).
-        perform(false, -1.0, tb_ref);
+    tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin,
+            scalar_transf<double>(), tr2).perform(false, tb_ref);
 
     //  Compare against the reference
 
@@ -1145,9 +1159,10 @@ void btod_apply_test::test_add_eqsym_3() throw(libtest::test_exception) {
 
     //  Create the reference
 
+    tensor_transf<3, double> tr2(perm210, scalar_transf<double>(0.5));
     tod_btconv<3>(bta).perform(ta);
-    tod_apply<3, btod_apply_test_ns::sin_functor>(ta, sin, perm210, 1.5).
-        perform(false, 0.5, tb_ref);
+    tod_apply<3, btod_apply_test_ns::sin_functor>(ta, sin,
+            scalar_transf<double>(1.5), tr2).perform(false, tb_ref);
 
     //  Compare against the reference
 
@@ -1216,7 +1231,7 @@ void btod_apply_test::test_add_eqsym_4() throw(libtest::test_exception) {
     //  Compute the reference
 
     tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin, 2.0).
-        perform(false, 1.0, tb_ref);
+        perform(false, tb_ref);
 
     //  Compare against the reference
 
@@ -1263,8 +1278,8 @@ void btod_apply_test::test_add_eqsym_5() throw(libtest::test_exception) {
     permutation<4> perm1032, perm2301;
     perm1032.permute(0, 1).permute(2, 3);
     perm2301.permute(0, 2).permute(1, 3);
-    scalar_transf<double> tr1(-1.);
-    se_perm<4, double> cycle1(perm1032, tr1), cycle2(perm2301, tr1);
+    scalar_transf<double> str1(-1.);
+    se_perm<4, double> cycle1(perm1032, str1), cycle2(perm2301, str1);
     block_tensor_ctrl<4, double> ctrla(bta), ctrlb(btb);
     ctrla.req_symmetry().insert(cycle1);
     ctrlb.req_symmetry().insert(cycle2);
@@ -1286,8 +1301,10 @@ void btod_apply_test::test_add_eqsym_5() throw(libtest::test_exception) {
 
     //  Compute the reference
 
-    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin, perm0213, 1.0).
-        perform(false, 0.5, tb_ref);
+    tensor_transf<4, double> tr2(perm0213, scalar_transf<double>(0.5));
+    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin,
+            scalar_transf<double>(1.0), tr2).
+        perform(false, tb_ref);
 
     //  Compare against the reference
 
@@ -1342,7 +1359,7 @@ void btod_apply_test::test_add_nesym_1() throw(libtest::test_exception) {
 
     tod_btconv<2>(bta).perform(ta);
     tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin).
-        perform(false, 1.0, tb_ref);
+        perform(false, tb_ref);
 
     compare_ref<2>::compare(testname, tb, tb_ref, 0.0);
 
@@ -1395,7 +1412,7 @@ void btod_apply_test::test_add_nesym_2() throw(libtest::test_exception) {
 
     tod_btconv<2>(bta).perform(ta);
     tod_apply<2, btod_apply_test_ns::sin_functor>(ta, sin).
-        perform(false, 1.0, tb_ref);
+        perform(false, tb_ref);
 
     compare_ref<2>::compare(testname, tb, tb_ref, 0.0);
 
@@ -1459,8 +1476,9 @@ void btod_apply_test::test_add_nesym_3() throw(libtest::test_exception) {
 
     //  Compute the reference
 
-    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin).
-        perform(false, 1.5, tb_ref);
+    tensor_transf<4, double> tr2(permutation<4>(), scalar_transf<double>(1.5));
+    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin,
+            scalar_transf<double>(), tr2).perform(false, tb_ref);
 
     //  Compare against the reference
 
@@ -1526,8 +1544,9 @@ void btod_apply_test::test_add_nesym_4() throw(libtest::test_exception) {
 
     //  Compute the reference
 
-    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin).
-        perform(false, 1.5, tb_ref);
+    tensor_transf<4, double> tr2(permutation<4>(), scalar_transf<double>(1.5));
+    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin,
+            scalar_transf<double>(), tr2).perform(false, tb_ref);
 
     //  Compare against the reference
 
@@ -1593,8 +1612,9 @@ void btod_apply_test::test_add_nesym_5() throw(libtest::test_exception) {
 
     //  Compute the reference
 
-    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin).
-        perform(false, 1.5, tb_ref);
+    tensor_transf<4, double> tr2(permutation<4>(), scalar_transf<double>(1.5));
+    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin,
+            scalar_transf<double>(), tr2).perform(false, tb_ref);
 
     //  Compare against the reference
 
@@ -1675,8 +1695,9 @@ void btod_apply_test::test_add_nesym_5_sp() throw(libtest::test_exception) {
 
     //  Compute the reference
 
-    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin).
-        perform(false, 1.5, tb_ref);
+    tensor_transf<4, double> tr2(permutation<4>(), scalar_transf<double>(1.5));
+    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin,
+            scalar_transf<double>(), tr2).perform(false, tb_ref);
 
     //  Compare against the reference
 
@@ -1719,9 +1740,9 @@ void btod_apply_test::test_add_nesym_6() throw(libtest::test_exception) {
     perm1023.permute(0, 1);
     perm1032.permute(0, 1).permute(2, 3);
     perm3210.permute(0, 1).permute(1, 2).permute(2, 3).permute(0, 2);
-    scalar_transf<double> tr0, tr1(-1.);
-    se_perm<4, double> cycle1(perm1230, tr0), cycle2(perm1023, tr0),
-        cycle3(perm1032, tr1);
+    scalar_transf<double> str0, str1(-1.);
+    se_perm<4, double> cycle1(perm1230, str0), cycle2(perm1023, str0),
+        cycle3(perm1032, str1);
     block_tensor_ctrl<4, double> ctrla(bta), ctrlb(btb);
     ctrla.req_symmetry().insert(cycle1);
     ctrla.req_symmetry().insert(cycle2);
@@ -1744,8 +1765,9 @@ void btod_apply_test::test_add_nesym_6() throw(libtest::test_exception) {
 
     //  Compute the reference
 
-    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin, perm3210).
-        perform(false, -0.1, tb_ref);
+    tensor_transf<4, double> tr2(perm3210, scalar_transf<double>(-0.1));
+    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin,
+            scalar_transf<double>(), tr2).perform(false, tb_ref);
 
     //  Compare against the reference
 
@@ -1819,8 +1841,9 @@ void btod_apply_test::test_add_nesym_7_sp1() throw(libtest::test_exception) {
 
     //  Compute the reference
 
-    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin).
-        perform(false, -2.0, tb_ref);
+    tensor_transf<4, double> tr2(permutation<4>(), scalar_transf<double>(-2.));
+    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin,
+            scalar_transf<double>(), tr2).perform(false, tb_ref);
 
     //  Compare against the reference
 
@@ -1892,8 +1915,9 @@ void btod_apply_test::test_add_nesym_7_sp2() throw(libtest::test_exception) {
 
     //  Compute the reference
 
-    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin).
-        perform(false, -2.0, tb_ref);
+    tensor_transf<4, double> tr2(permutation<4>(), scalar_transf<double>(-2.));
+    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin,
+            scalar_transf<double>(), tr2).perform(false, tb_ref);
 
     //  Compare against the reference
 
@@ -1967,8 +1991,9 @@ void btod_apply_test::test_add_nesym_7_sp3() throw(libtest::test_exception) {
 
     //  Compute the reference
 
-    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin).
-        perform(false, 2.0, tb_ref);
+    tensor_transf<4, double> tr2(permutation<4>(), scalar_transf<double>(2.));
+    tod_apply<4, btod_apply_test_ns::sin_functor>(ta, sin,
+            scalar_transf<double>(), tr2).perform(false, tb_ref);
 
     //  Compare against the reference
 
