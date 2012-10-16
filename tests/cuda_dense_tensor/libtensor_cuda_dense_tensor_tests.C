@@ -5,12 +5,13 @@
 #include <sstream>
 #include <libutil/thread_pool/thread_pool.h>
 #include <libtensor/version.h>
-#include "libtensor_tod_cuda_suite.h"
+#include "libtensor_cuda_dense_tensor_suite.h"
 
 using namespace libtensor;
 using namespace std;
 using libutil::thread_pool;
 using libtest::test_exception;
+
 
 class suite_handler : public libtest::suite_event_handler {
 public:
@@ -32,7 +33,9 @@ public:
         const test_exception &e) {
         cout << "FAIL!" << endl << e.what() << endl;
     }
+
 };
+
 
 int main(int argc, char **argv) {
 
@@ -52,7 +55,7 @@ int main(int argc, char **argv) {
             ss1 << "(multi-threaded, " << ncpus << " CPUs, " << nthreads
                 << " threads) ";
         }
-        ss2 << " CUDA tensor operations (double) test suite. ";
+        ss2 << " CUDA dense tensor test suite. ";
         string separator(std::max(ss1.str().size(), ss2.str().size()), '-');
         cout << separator << endl << ss1.str() << endl << ss2.str() << endl
             << separator << endl;
@@ -61,7 +64,7 @@ int main(int argc, char **argv) {
         tp.associate();
 
         suite_handler handler;
-        libtensor_tod_cuda_suite suite;
+        libtensor_cuda_dense_tensor_suite suite;
         suite.set_handler(&handler);
 
         if(argc == 1) {

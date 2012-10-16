@@ -61,6 +61,14 @@ set(SRC_TOD
     tod/tod_vmpriority_test.C
 )
 
+set(SRC_CUDA_DENSE_TENSOR
+    cuda_dense_tensor/libtensor_cuda_dense_tensor_tests.C
+    cuda_dense_tensor/libtensor_cuda_dense_tensor_suite.C
+    cuda_dense_tensor/tod_cuda_copy_test.cu
+    cuda_dense_tensor/tod_set_cuda_test.cu
+    cuda_dense_tensor/tod_add_cuda_test.cu    
+)
+
 set(SRC_DIAG_TENSOR
     diag_tensor/libtensor_diag_tensor_tests.C
     diag_tensor/libtensor_diag_tensor_suite.C
@@ -221,14 +229,6 @@ set(SRC_IFACE
     iface/trace_test.C
 )
 
-set(SRC_CUDA
-    tod/libtensor_tod_cuda_tests.C
-    tod/libtensor_tod_cuda_suite.C
-    tod/tod_cuda_copy_test.cu
-    tod/tod_set_cuda_test.cu
-    tod/tod_add_cuda_test.cu    
-)
-
 set(TARGETS
     libtensor_core_tests
     libtensor_tod_tests
@@ -253,9 +253,10 @@ if(CUDA_FOUND)
     set(TARGETS
         ${TARGETS}
         libtensor_linalg_cublas_tests
-        libtensor_cuda_tests)
+        libtensor_cuda_dense_tensor_tests)
     add_executable(libtensor_linalg_cublas_tests ${SRC_LINALG_CUBLAS})
-    cuda_add_executable(libtensor_cuda_tests ${SRC_CUDA})
+    cuda_add_executable(libtensor_cuda_dense_tensor_tests
+        ${SRC_CUDA_DENSE_TENSOR})
     cuda_add_cublas_to_target(libtensor_linalg_cublas_tests)
 endif(CUDA_FOUND)
 
