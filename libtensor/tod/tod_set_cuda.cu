@@ -12,9 +12,9 @@ tod_set_cuda<N>::tod_set_cuda(const double v) :
 
 
 template<size_t N>
-void tod_set_cuda<N>::perform(dense_tensor_i<N, double> &t) {
+void tod_set_cuda<N>::perform(dense_tensor_wr_i<N, double> &t) {
 
-    dense_tensor_ctrl<N, double> ctrl(t);
+    dense_tensor_wr_ctrl<N, double> ctrl(t);
     double *d = ctrl.req_dataptr();
     double *p = d;
 
