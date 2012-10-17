@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_DIRECT_BLOCK_TENSOR_H
 #define LIBTENSOR_DIRECT_BLOCK_TENSOR_H
 
+#include <libtensor/core/noncopyable.h>
 #include <libtensor/gen_block_tensor/direct_gen_block_tensor.h>
 #include <libtensor/gen_block_tensor/impl/direct_gen_block_tensor_impl.h>
 #include <libtensor/gen_block_tensor/direct_gen_bto.h>
@@ -8,7 +9,8 @@
 
 namespace libtensor {
 
-/** \brief Direct block %tensor
+
+/** \brief Direct block tensor
     \tparam N Tensor order.
     \tparam T Tensor element type.
     \tparam Alloc Memory allocator type.

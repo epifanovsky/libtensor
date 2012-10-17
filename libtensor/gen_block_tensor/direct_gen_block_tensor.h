@@ -3,14 +3,15 @@
 
 #include <libutil/threads/mutex.h>
 #include <libutil/threads/cond_map.h>
+#include "block_map.h"
 #include "direct_gen_block_tensor_base.h"
-
 
 namespace libtensor {
 
-/** \brief Direct generalized block %tensor
+
+/** \brief Direct generalized block tensor
     \tparam N Tensor order.
-    \tparam BtTraits Block %tensor traits.
+    \tparam BtTraits Block tensor traits.
 
     \ingroup libtensor_core
  **/
@@ -25,7 +26,7 @@ public:
     //! Tensor element type
     typedef typename BtTraits::element_type element_type;
 
-    //! Type of block %tensor interface traits
+    //! Type of block tensor interface traits
     typedef typename BtTraits::bti_traits bti_traits;
 
     //! Type of read-only block
@@ -34,7 +35,7 @@ public:
     //! Type of read-write block
     typedef typename bti_traits::template wr_block_type<N>::type wr_block_type;
 
-    //! Type of block %tensor operation
+    //! Type of block tensor operation
     typedef typename direct_gen_block_tensor_base<N, bti_traits>::operation_t
             operation_t;
 
