@@ -4,6 +4,7 @@
 #include <iostream>
 #include <memory>
 #include <libtensor/libtensor.h>
+#include <libtensor/block_tensor/btod_random.h>
 #include "test_expression_i.h"
 
 namespace libtensor {

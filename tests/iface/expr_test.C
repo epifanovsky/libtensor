@@ -1,7 +1,7 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/block_tensor/btod_random.h>
-#include <libtensor/btod/btod_set_diag.h>
+#include <libtensor/block_tensor/btod_set_diag.h>
 #include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/symmetry/product_table_container.h>
 #include <libtensor/symmetry/se_label.h>
