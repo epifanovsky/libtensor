@@ -50,7 +50,7 @@ protected:
     //@{
 
     virtual const symmetry<N, double> &on_req_const_symmetry() {
-        m_ctrl.req_const_symmetry();
+        return m_ctrl.req_const_symmetry();
     }
 
     virtual bool on_req_is_zero_block(const index<N> &idx) {
