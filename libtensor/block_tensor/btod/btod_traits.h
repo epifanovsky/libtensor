@@ -25,34 +25,10 @@ struct btod_traits {
     //! Block tensor interface traits
     typedef block_tensor_i_traits<double> bti_traits;
 
-    //! Type of block tensor
-    template<size_t N>
-    struct block_tensor_type {
-        typedef block_tensor_i<N, double> type;
-    };
-
-    //! Type of block tensor control
-    template<size_t N>
-    struct block_tensor_ctrl_type {
-        typedef block_tensor_ctrl<N, double> type;
-    };
-
     //! Type of temporary block tensor
     template<size_t N>
     struct temp_block_tensor_type {
         typedef block_tensor< N, double, allocator<double> > type;
-    };
-
-    //! Type of block of block tensors
-    template<size_t N>
-    struct block_type {
-        typedef dense_tensor_i<N, double> type;
-    };
-
-    //! Type of block of block tensors
-    template<size_t N>
-    struct wr_block_type {
-        typedef dense_tensor_i<N, double> type;
     };
 
     template<size_t N>
