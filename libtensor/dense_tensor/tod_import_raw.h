@@ -90,7 +90,7 @@ public:
     /**	\brief Performs the operation
         \param t Output %tensor
     **/
-    void perform(dense_tensor_i<N, double> &t);
+    void perform(dense_tensor_wr_i<N, double> &t);
 
 };
 

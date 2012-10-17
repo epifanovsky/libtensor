@@ -49,7 +49,7 @@ void btod_diag<N, M>::compute_block(
         bool zero,
         const index<N - M + 1> &ib,
         const tensor_transf<N - M + 1, double> &trb,
-        dense_tensor_i<N - M + 1, double> &blkb) {
+        dense_tensor_wr_i<N - M + 1, double> &blkb) {
 
     m_gbto.compute_block(zero, ib, trb, blkb);
 }

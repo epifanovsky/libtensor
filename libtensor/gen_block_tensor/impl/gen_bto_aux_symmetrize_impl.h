@@ -59,7 +59,7 @@ void gen_bto_aux_symmetrize<N, Traits>::close() {
 
 template<size_t N, typename Traits>
 void gen_bto_aux_symmetrize<N, Traits>::put(const index<N> &idxa,
-        block_type &blk, const tensor_transf_type &tr) {
+        rd_block_type &blk, const tensor_transf_type &tr) {
 
     orbit<N, element_type> oa(m_syma, idxa, false);
     tensor_transf_type tra0inv(oa.get_transf(idxa), true);

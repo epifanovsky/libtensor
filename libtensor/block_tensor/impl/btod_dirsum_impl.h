@@ -52,7 +52,7 @@ void btod_dirsum<N, M>::compute_block(
         bool zero,
         const index<N + M> &ic,
         const tensor_transf<N + M, double> &trc,
-        dense_tensor_i<N + M, double> &blkc) {
+        dense_tensor_wr_i<N + M, double> &blkc) {
 
     m_gbto.compute_block(zero, ic, trc, blkc);
 }

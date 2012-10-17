@@ -5,7 +5,6 @@
 #include <libtensor/timings.h>
 #include <libtensor/core/orbit.h>
 #include <libtensor/core/orbit_list.h>
-#include <libtensor/block_tensor/btod/btod_traits.h>
 #include "gen_block_tensor_ctrl.h"
 #include "gen_block_tensor_i.h"
 

@@ -159,7 +159,7 @@ void gen_bto_apply<N, Functor, Traits, Timed>::compute_block_untimed(
         const tensor_transf_type &trb,
         wr_block_type &blkb) {
 
-    typedef typename Traits::template temp_block_type<N>::type tensor_type;
+    typedef typename Traits::template temp_block_type<N>::type temp_block_type;
     typedef typename Traits::template to_set_type<N>::type to_set;
     typedef typename Traits::template to_copy_type<N>::type to_copy;
     typedef typename Traits::template to_apply_type<N, Functor>::type
@@ -188,7 +188,7 @@ void gen_bto_apply<N, Functor, Traits, Timed>::compute_block_untimed(
             if (zero)
                 to_set(val).perform(blkb);
             else {
-                tensor_type temp_blk(blkb.get_dims());
+                temp_block_type temp_blk(blkb.get_dims());
                 to_set(val).perform(temp_blk);
                 to_copy(temp_blk).perform(false, blkb);
             }
@@ -226,7 +226,7 @@ void gen_bto_apply<N, Functor, Traits, Timed>::compute_block_untimed(
             if (zero)
                 to_set(val).perform(blkb);
             else {
-                tensor_type temp_blk(blkb.get_dims());
+                temp_block_type temp_blk(blkb.get_dims());
                 to_set(val).perform(temp_blk);
                 to_copy(temp_blk).perform(false, blkb);
             }

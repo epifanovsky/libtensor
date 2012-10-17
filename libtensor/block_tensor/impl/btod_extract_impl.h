@@ -50,7 +50,7 @@ void btod_extract<N, M>::compute_block(
         bool zero,
         const index<N - M> &idxb,
         const tensor_transf_type &trb,
-        dense_tensor_i<N - M, double> &blkb) {
+        dense_tensor_wr_i<N - M, double> &blkb) {
 
     m_gbto.compute_block(zero, idxb, trb, blkb);
 }

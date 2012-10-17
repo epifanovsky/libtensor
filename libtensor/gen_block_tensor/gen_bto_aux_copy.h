@@ -28,9 +28,17 @@ class gen_bto_aux_copy :
     public gen_block_stream_i<N, typename Traits::bti_traits> {
 
 public:
+    //! Type of tensor elements
     typedef typename Traits::element_type element_type;
+
+    //! Block tensor interface traits
     typedef typename Traits::bti_traits bti_traits;
-    typedef typename Traits::template block_type<N>::type block_type;
+
+    //! Type of read-only block
+    typedef typename bti_traits::template rd_block_type<N>::type rd_block_type;
+
+    //! Type of write-only block
+    typedef typename bti_traits::template wr_block_type<N>::type wr_block_type;
 
 private:
     symmetry<N, element_type> m_sym; //!< Symmetry of target block tensor
@@ -64,7 +72,7 @@ public:
      **/
     virtual void put(
         const index<N> &idx,
-        block_type &blk,
+        rd_block_type &blk,
         const tensor_transf<N, element_type> &tr);
 
 };

@@ -94,6 +94,8 @@ typename direct_gen_block_tensor<N, BtTraits>::rd_block_type &
 direct_gen_block_tensor<N, BtTraits>::on_req_const_block(
     const index<N> &idx) {
 
+    typedef typename BtTraits::template block_type<N>::type block_type;
+
     static const char *method = "on_req_const_block(const index<N>&)";
 
     libutil::auto_lock<libutil::mutex> lock(m_lock);
@@ -115,7 +117,7 @@ direct_gen_block_tensor<N, BtTraits>::on_req_const_block(
         m_map.create(idx);
     }
 
-    wr_block_type &blk = m_map.get(idx);
+    block_type &blk = m_map.get(idx);
 
     if(newblock) {
 

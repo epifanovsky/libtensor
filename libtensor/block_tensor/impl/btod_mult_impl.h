@@ -48,7 +48,7 @@ void btod_mult<N>::compute_block(
         bool zero,
         const index<N> &ic,
         const tensor_transf<N, double> &trc,
-        dense_tensor_i<N, double> &blkc) {
+        dense_tensor_wr_i<N, double> &blkc) {
 
     m_gbto.compute_block(zero, ic, trc, blkc);
 }

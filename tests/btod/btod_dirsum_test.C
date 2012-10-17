@@ -17,7 +17,6 @@
 #include <libtensor/dense_tensor/tod_dirsum.h>
 #include "../compare_ref.h"
 #include "btod_dirsum_test.h"
-#include <libtensor/btod/btod_print.h>
 
 namespace libtensor {
 

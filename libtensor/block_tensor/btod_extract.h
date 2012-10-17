@@ -93,7 +93,7 @@ public:
             bool zero,
             const index<N - M> &ib,
             const tensor_transf<N - M, double> &trb,
-            dense_tensor_i<N - M, double> &blkb);
+            dense_tensor_wr_i<N - M, double> &blkb);
 
     //@}
 

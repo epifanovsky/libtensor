@@ -6,7 +6,8 @@
 namespace libtensor {
 
 
-template<size_t N, typename T> class dense_tensor_i;
+template<size_t N, typename T> class dense_tensor_rd_i;
+template<size_t N, typename T> class dense_tensor_wr_i;
 
 
 /** \brief Block tensor interface traits
@@ -29,13 +30,13 @@ struct block_tensor_i_traits {
     //! Type of read-only blocks as returned by the block tensor
     template<size_t N>
     struct rd_block_type {
-        typedef dense_tensor_i<N, T> type;
+        typedef dense_tensor_rd_i<N, T> type;
     };
 
     //! Type of read-write blocks as returned by the block tensor
     template<size_t N>
     struct wr_block_type {
-        typedef dense_tensor_i<N, T> type;
+        typedef dense_tensor_wr_i<N, T> type;
     };
 
 };

@@ -45,7 +45,7 @@ public:
     /**	\brief Performs the operation
         \param ta Output %tensor.
      **/
-    void perform(dense_tensor_i<N, double> &ta);
+    void perform(dense_tensor_wr_i<N, double> &ta);
 
 private:
     template<size_t M>

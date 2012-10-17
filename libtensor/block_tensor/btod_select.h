@@ -85,3 +85,5 @@ public:
 } // namespace libtensor
 
 #endif // LIBTENSOR_BTOD_SELECT_H
+
+#include "impl/btod_select_impl.h"

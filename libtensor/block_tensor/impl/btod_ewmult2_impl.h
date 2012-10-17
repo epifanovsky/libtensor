@@ -89,7 +89,7 @@ void btod_ewmult2<N, M, K>::compute_block(
         bool zero,
         const index<NC> &idx,
         const tensor_transf<NC, double> &tr,
-        dense_tensor_i<NC, double> &blk) {
+        dense_tensor_wr_i<NC, double> &blk) {
 
     m_gbto.compute_block(zero, idx, tr, blk);
 }

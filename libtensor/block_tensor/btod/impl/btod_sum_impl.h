@@ -66,7 +66,7 @@ void btod_sum<N>::compute_block(
         bool zero,
         const index<N> &i,
         const tensor_transf<N, double> &tr,
-        dense_tensor_i<N, double> &blk) {
+        dense_tensor_wr_i<N, double> &blk) {
 
     if(zero) tod_set<N>().perform(blk);
 

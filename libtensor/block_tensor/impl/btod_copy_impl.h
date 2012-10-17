@@ -51,7 +51,7 @@ void btod_copy<N>::compute_block(
     bool zero,
     const index<N> &ib,
     const tensor_transf<N, double> &trb,
-    dense_tensor_i<N, double> &blkb) {
+    dense_tensor_wr_i<N, double> &blkb) {
 
     m_gbto.compute_block(zero, ib, trb, blkb);
 }

@@ -110,19 +110,33 @@ void btod_import_raw<N, Alloc>::perform(block_tensor_i<N, double> &bt) {
     abs_index<N> bi(bdims);
 
     do {
-        dense_tensor_i<N, double> &blk = ctrl.req_block(bi.get_index());
+        {
+            dense_tensor_wr_i<N, double> &blk = ctrl.req_block(bi.get_index());
 
-        index<N> blk_start(bis.get_block_start(bi.get_index()));
-        dimensions<N> blk_dims(bis.get_block_dims(bi.get_index()));
-        index<N> blk_end(blk_start);
-        for(size_t i = 0; i < N; i++) blk_end[i] += blk_dims[i] - 1;
-        index_range<N> ir(blk_start, blk_end);
+            index<N> blk_start(bis.get_block_start(bi.get_index()));
+            dimensions<N> blk_dims(bis.get_block_dims(bi.get_index()));
+            index<N> blk_end(blk_start);
+            for(size_t i = 0; i < N; i++) blk_end[i] += blk_dims[i] - 1;
+            index_range<N> ir(blk_start, blk_end);
 
-        tod_import_raw<N>(m_ptr, m_dims, ir).perform(blk);
-        bool zero = check_zero(blk, m_zero_thresh);
+            tod_import_raw<N>(m_ptr, m_dims, ir).perform(blk);
+            ctrl.ret_block(bi.get_index());
+        }
 
-        ctrl.ret_block(bi.get_index());
-        if(zero) ctrl.req_zero_block(bi.get_index());
+        bool zero;
+        {
+            dense_tensor_rd_i<N, double> &blk =
+                    ctrl.req_const_block(bi.get_index());
+            zero = check_zero(blk, m_zero_thresh);
+
+            ctrl.ret_const_block(bi.get_index());
+        }
+
+        if(zero) {
+            dense_tensor_wr_i<N, double> &blk = ctrl.req_block(bi.get_index());
+            ctrl.req_zero_block(bi.get_index());
+            ctrl.ret_block(bi.get_index());
+        }
     } while(bi.inc());
 
     verify_and_set_symmetry(bt, sym, m_sym_thresh);

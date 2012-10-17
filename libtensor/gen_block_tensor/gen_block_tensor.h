@@ -12,7 +12,7 @@
 namespace libtensor {
 
 
-/** \brief Block tensor
+/** \brief General block tensor
     \tparam N Tensor order.
     \tparam BtTraits Block tensor traits.
 
@@ -32,6 +32,7 @@ public:
     typedef typename BtTraits::bti_traits bti_traits;
     typedef typename bti_traits::template rd_block_type<N>::type rd_block_type;
     typedef typename bti_traits::template wr_block_type<N>::type wr_block_type;
+    typedef typename BtTraits::template block_type<N>::type block_type;
     typedef symmetry<N, element_type> symmetry_type;
 
 public:
@@ -49,13 +50,13 @@ public:
     virtual ~gen_block_tensor();
     //@}
 
-    //!    \name Implementation of libtensor::block_tensor_i<N, T>
+    //!    \name Implementation of libtensor::gen_block_tensor_i<N, bti_traits>
     //@{
     virtual const block_index_space<N> &get_bis() const;
     //@}
 
 protected:
-    //!    \name Implementation of libtensor::block_tensor_i<N, T>
+    //!    \name Implementation of libtensor::gen_block_tensor_i<N, bti_traits>
     //@{
     virtual const symmetry_type &on_req_const_symmetry();
     virtual symmetry_type &on_req_symmetry();
@@ -75,7 +76,7 @@ protected:
 
 private:
     void update_orblst(auto_rwlock &lock);
-
+    block_type &get_block(const index<N> &idx);
 };
 
 

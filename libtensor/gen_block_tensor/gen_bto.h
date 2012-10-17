@@ -32,6 +32,7 @@
     - bti_traits -- Type of block tensor interface traits class
     - template<N> temp_block_tensor_type::type -- Type of a temporary block
         tensor
+    - template<N> temp_block_type::type -- Type of a temporary tensor block
     - template<N> to_add_type::type -- Type of tensor operation for addition
     - template<N, Functor> to_apply_type::type -- Type of tensor operation
         for element-wise application of a function
@@ -370,11 +371,21 @@
 #include "gen_bto_add.h"
 #include "gen_bto_apply.h"
 #include "gen_bto_contract2.h"
+#include "gen_bto_contract3.h"
 #include "gen_bto_copy.h"
 #include "gen_bto_diag.h"
 #include "gen_bto_dirsum.h"
+#include "gen_bto_dotprod.h"
 #include "gen_bto_mult.h"
+#include "gen_bto_mult1.h"
+#include "gen_bto_random.h"
+#include "gen_bto_scale.h"
+#include "gen_bto_select.h"
+#include "gen_bto_set_diag.h"
+#include "gen_bto_set_elem.h"
 #include "gen_bto_set.h"
+#include "gen_bto_trace.h"
+#include "gen_bto_vmpriority.h"
 
 
 #endif // LIBTENSOR_GEN_BTO_H

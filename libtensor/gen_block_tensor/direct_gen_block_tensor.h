@@ -34,12 +34,12 @@ public:
     //! Type of read-write block
     typedef typename bti_traits::template wr_block_type<N>::type wr_block_type;
 
-    //! Type of block %tensor operation
-    typedef typename direct_gen_block_tensor_base<N, bti_traits>::operation_t
-            operation_t;
-
     //! Base class type
     typedef direct_gen_block_tensor_base<N, bti_traits> base_t;
+
+    //! Type of block %tensor operation
+    typedef typename base_t::operation_t operation_t;
+
 
 private:
     dimensions<N> m_bidims; //!< Block %index dims

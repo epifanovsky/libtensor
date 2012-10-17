@@ -75,7 +75,7 @@ void btod_contract2<N, M, K>::compute_block(
     bool zero,
     const index<NC> &ic,
     const tensor_transf<NC, double> &trc,
-    dense_tensor_i<NC, double> &blkc) {
+    dense_tensor_wr_i<NC, double> &blkc) {
 
     m_gbto.compute_block(zero, ic, trc, blkc);
 }

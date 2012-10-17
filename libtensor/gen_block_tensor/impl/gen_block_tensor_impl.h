@@ -71,7 +71,7 @@ template<size_t N, typename BtTraits>
 typename gen_block_tensor<N, BtTraits>::rd_block_type&
 gen_block_tensor<N, BtTraits>::on_req_const_block(const index<N> &idx) {
 
-    return on_req_block(idx);
+    return get_block(idx);
 }
 
 
@@ -86,21 +86,7 @@ template<size_t N, typename BtTraits>
 typename gen_block_tensor<N, BtTraits>::wr_block_type&
 gen_block_tensor<N, BtTraits>::on_req_block(const index<N> &idx) {
 
-    static const char *method = "on_req_block(const index<N>&)";
-
-    auto_rwlock lock(m_lock);
-
-    update_orblst(lock);
-    if(!m_orblst->contains(idx)) {
-        throw symmetry_violation(g_ns, k_clazz, method, __FILE__, __LINE__,
-            "Index does not correspond to a canonical block.");
-    }
-
-    if(!m_map.contains(idx)) {
-        lock.upgrade();
-        if(!m_map.contains(idx)) m_map.create(idx);
-    }
-    return m_map.get(idx);
+    return get_block(idx);
 }
 
 
@@ -187,6 +173,29 @@ void gen_block_tensor<N, BtTraits>::update_orblst(auto_rwlock &lock) {
         lock.downgrade();
     }
 }
+
+
+template<size_t N, typename BtTraits>
+typename gen_block_tensor<N, BtTraits>::block_type&
+gen_block_tensor<N, BtTraits>::get_block(const index<N> &idx) {
+
+    static const char *method = "get_block(const index<N>&)";
+
+    auto_rwlock lock(m_lock);
+
+    update_orblst(lock);
+    if(!m_orblst->contains(idx)) {
+        throw symmetry_violation(g_ns, k_clazz, method, __FILE__, __LINE__,
+            "Index does not correspond to a canonical block.");
+    }
+
+    if(!m_map.contains(idx)) {
+        lock.upgrade();
+        if(!m_map.contains(idx)) m_map.create(idx);
+    }
+    return m_map.get(idx);
+}
+
 
 
 } // namespace libtensor

@@ -130,7 +130,7 @@ public:
             bool zero,
             const index<N> &ic,
             const tensor_transf<N, double> &trc,
-            dense_tensor_i<N, double> &blkc);
+            dense_tensor_wr_i<N, double> &blkc);
 
     //@}
 
