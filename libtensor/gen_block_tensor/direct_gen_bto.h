@@ -48,8 +48,10 @@ public:
     virtual void perform(gen_block_stream_i<N, BtiTraits> &out) = 0;
 
     /** \brief Computes one block
+        \param idx Index of block to compute.
+        \param blk Tensor block to write result to.
      **/
-    virtual void compute_block(wr_block_type &blk, const index<N> &idx) = 0;
+    virtual void compute_block(const index<N> &idx, wr_block_type &blk) = 0;
 
 };
 

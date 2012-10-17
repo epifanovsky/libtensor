@@ -39,7 +39,7 @@ void btod_contract2<N, M, K>::perform(gen_block_stream_i<NC, bti_traits> &out) {
 
 
 template<size_t N, size_t M, size_t K>
-void btod_contract2<N, M, K>::perform(block_tensor_i<NC, double> &btc) {
+void btod_contract2<N, M, K>::perform(gen_block_tensor_i<NC, bti_traits> &btc) {
 
     gen_bto_aux_copy<NC, btod_traits> out(get_symmetry(), btc);
     perform(out);
@@ -47,9 +47,8 @@ void btod_contract2<N, M, K>::perform(block_tensor_i<NC, double> &btc) {
 
 
 template<size_t N, size_t M, size_t K>
-void btod_contract2<N, M, K>::perform(
-    block_tensor_i<NC, double> &btc,
-    const double &d) {
+void btod_contract2<N, M, K>::perform(gen_block_tensor_i<NC, bti_traits> &btc,
+        const scalar_transf<double> &d) {
 
     typedef block_tensor_i_traits<double> bti_traits;
 
@@ -64,16 +63,21 @@ void btod_contract2<N, M, K>::perform(
 
 
 template<size_t N, size_t M, size_t K>
+void btod_contract2<N, M, K>::perform(
+        block_tensor_i<NC, double> &btc, double d) {
+
+    perform(btc, scalar_transf<double>(d));
+}
+
+
+template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::compute_block(
     bool zero,
-    dense_tensor_i<NC, double> &blk,
-    const index<NC> &i,
-    const tensor_transf<NC, double> &tr,
-    const double &c) {
+    const index<NC> &ic,
+    const tensor_transf<NC, double> &trc,
+    dense_tensor_i<NC, double> &blkc) {
 
-    tensor_transf<NC, double> trx(tr);
-    trx.transform(scalar_transf<double>(c));
-    m_gbto.compute_block(zero, i, trx, blk);
+    m_gbto.compute_block(zero, ic, trc, blkc);
 }
 
 

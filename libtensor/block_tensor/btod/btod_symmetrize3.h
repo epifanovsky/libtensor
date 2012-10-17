@@ -3,8 +3,9 @@
 
 #include <map>
 #include <libtensor/timings.h>
-#include <libtensor/block_tensor/bto/additive_bto.h>
 #include <libtensor/block_tensor/btod/btod_traits.h>
+#include <libtensor/core/noncopyable.h>
+#include <libtensor/gen_block_tensor/additive_gen_bto.h>
 
 namespace libtensor {
 
@@ -27,8 +28,9 @@ namespace libtensor {
  **/
 template<size_t N>
 class btod_symmetrize3 :
-    public additive_bto<N, btod_traits>,
-    public timings< btod_symmetrize3<N> > {
+    public additive_gen_bto<N, btod_traits::bti_traits>,
+    public timings< btod_symmetrize3<N> >,
+    public noncopyable {
 
 public:
     static const char *k_clazz; //!< Class name
@@ -48,7 +50,7 @@ private:
     typedef std::multimap<size_t, schrec> sym_schedule_t;
 
 private:
-    additive_bto<N, btod_traits> &m_op; //!< Symmetrized operation
+    additive_gen_bto<N, bti_traits> &m_op; //!< Symmetrized operation
     size_t m_i1; //!< First %index
     size_t m_i2; //!< Second %index
     size_t m_i3; //!< Third %index
@@ -68,7 +70,7 @@ public:
         \param symm True for symmetrization, false for
             anti-symmetrization.
      **/
-    btod_symmetrize3(additive_bto<N, btod_traits> &op,
+    btod_symmetrize3(additive_gen_bto<N, bti_traits> &op,
             size_t i1, size_t i2, size_t i3, bool symm);
 
     /** \brief Virtual destructor
@@ -78,7 +80,7 @@ public:
     //@}
 
 
-    //!    \name Implementation of direct_block_tensor_operation<N, double>
+    //!    \name Implementation of direct_gen_bto<N, bti_traits>
     //@{
 
     virtual const block_index_space<N> &get_bis() const {
@@ -94,18 +96,23 @@ public:
     }
 
     virtual void perform(gen_block_stream_i<N, bti_traits> &out);
-    virtual void perform(block_tensor_i<N, double> &btc);
-    virtual void perform(block_tensor_i<N, double> &btc, const double &d);
+    virtual void perform(gen_block_tensor_i<N, bti_traits> &btc);
+    virtual void perform(gen_block_tensor_i<N, bti_traits> &btc,
+            const scalar_transf<double> &d);
 
     //@}
+
+    virtual void perform(block_tensor_i<N, double> &btc, double d);
 
 protected:
     //!    \brief Implementation of additive_bto<N, btod_traits>
     //@{
 
-    virtual void compute_block(bool zero, dense_tensor_i<N, double> &blk,
-        const index<N> &i, const tensor_transf<N, double> &tr,
-        const double &c);
+    virtual void compute_block(
+            bool zero,
+            const index<N> &i,
+            const tensor_transf<N, double> &tr,
+            dense_tensor_i<N, double> &blk);
 
     //@}
 
@@ -114,11 +121,6 @@ private:
     void make_schedule();
     void make_schedule_blk(const abs_index<N> &ai,
         sym_schedule_t &sch) const;
-
-private:
-    btod_symmetrize3(const btod_symmetrize3<N>&);
-    const btod_symmetrize3<N> &operator=(const btod_symmetrize3<N>&);
-
 };
 
 

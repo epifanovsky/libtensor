@@ -1,10 +1,10 @@
 #ifndef LIBTENSOR_BTOD_ADD_H
 #define LIBTENSOR_BTOD_ADD_H
 
+#include <libtensor/block_tensor/btod/btod_traits.h>
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/gen_block_tensor/gen_bto_add.h>
-#include <libtensor/block_tensor/bto/additive_bto.h>
-#include <libtensor/block_tensor/btod/btod_traits.h>
+#include <libtensor/gen_block_tensor/additive_gen_bto.h>
 
 namespace libtensor {
 
@@ -17,7 +17,10 @@ namespace libtensor {
     \ingroup libtensor_btod
  **/
 template<size_t N>
-class btod_add : public additive_bto<N, btod_traits>, public noncopyable {
+class btod_add :
+    public additive_gen_bto<N, btod_traits::bti_traits>,
+    public noncopyable {
+
 public:
     static const char *k_clazz; //!< Class name
 
@@ -33,8 +36,8 @@ public:
         \param c Scaling coefficient.
      **/
     btod_add(
-        block_tensor_rd_i<N, double> &bta,
-        double c = 1.0) :
+            block_tensor_rd_i<N, double> &bta,
+            double c = 1.0) :
 
         m_gbto(bta, tensor_transf<N, double>(
             permutation<N>(), scalar_transf<double>(c))) {
@@ -47,12 +50,12 @@ public:
         \param c Scaling coefficient.
      **/
     btod_add(
-        block_tensor_rd_i<N, double> &bta,
-        const permutation<N> &perma,
-        double c = 1.0) :
+            block_tensor_rd_i<N, double> &bta,
+            const permutation<N> &perma,
+            double c = 1.0) :
 
-        m_gbto(bta, tensor_transf<N, double>(perma, scalar_transf<double>(c))) {
-
+        m_gbto(bta, tensor_transf<N, double>(perma,
+                scalar_transf<double>(c))) {
     }
 
     virtual ~btod_add() { }
@@ -60,8 +63,8 @@ public:
     /** \brief Adds another argument to the linear combination sequence
      **/
     void add_op(
-        block_tensor_rd_i<N, double> &bta,
-        double c = 1.0) {
+            block_tensor_rd_i<N, double> &bta,
+            double c = 1.0) {
 
         m_gbto.add_op(bta, tensor_transf<N, double>(permutation<N>(),
             scalar_transf<double>(c)));
@@ -70,13 +73,16 @@ public:
     /** \brief Adds another argument to the linear combination sequence
      **/
     void add_op(
-        block_tensor_rd_i<N, double> &bta,
-        const permutation<N> &perma,
-        double c = 1.0) {
+            block_tensor_rd_i<N, double> &bta,
+            const permutation<N> &perma,
+            double c = 1.0) {
 
         m_gbto.add_op(bta, tensor_transf<N, double>(perma,
             scalar_transf<double>(c)));
     }
+
+    //! \name Implementation of libtensor::direct_gen_bto<N, bti_traits>
+    //@{
 
     virtual const block_index_space<N> &get_bis() const {
 
@@ -95,22 +101,27 @@ public:
 
     virtual void perform(gen_block_stream_i<N, bti_traits> &out);
 
-    virtual void perform(block_tensor_i<N, double> &btb);
+    //@}
 
-    virtual void perform(
-        block_tensor_i<N, double> &btb,
-        const double &c);
+    //! \name Implementation of libtensor::additive_gen_bto<N, bti_traits>
+    //@{
+
+    virtual void perform(gen_block_tensor_i<N, bti_traits> &btb);
+
+    virtual void perform(gen_block_tensor_i<N, bti_traits> &btb,
+            const scalar_transf<double> &c);
 
     virtual void compute_block(
-        dense_tensor_i<N, double> &blkb,
-        const index<N> &ib);
+            bool zero,
+            const index<N> &ib,
+            const tensor_transf<N, double> &trb,
+            dense_tensor_i<N, double> &blkb);
 
-    virtual void compute_block(
-        bool zero,
-        dense_tensor_i<N, double> &blkb,
-        const index<N> &ib,
-        const tensor_transf<N, double> &trb,
-        const double &c);
+    //@}
+
+    /** \brief Function for compatability
+     **/
+    void perform(block_tensor_i<N, double> &btb, double c);
 
 };
 

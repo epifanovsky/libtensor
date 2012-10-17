@@ -16,7 +16,7 @@ gen_bto_aux_add<N, Traits>::gen_bto_aux_add(
     const symmetry<N, element_type> &syma,
     const addition_schedule<N, Traits> &asch,
     gen_block_tensor_i<N, bti_traits> &btb,
-    const element_type &c) :
+    const scalar_transf<element_type> &c) :
 
     m_bis(syma.get_bis()), m_bidims(m_bis.get_block_index_dims()),
     m_syma(m_bis), m_asch(asch), m_btb(btb), m_c(c), m_cb(m_btb),
@@ -215,7 +215,7 @@ void gen_bto_aux_add<N, Traits>::put(
                 block_type &blkc = m_cb.req_block(aic.get_index());
                 tensor_transf<N, element_type> tra(tr);
                 tra.transform(inode->tra);
-                tra.transform(scalar_transf<double>(m_c));
+                tra.transform(m_c);
                 to_copy_type(blk, tra).perform(zeroc, blkc);
                 m_cb.ret_block(aic.get_index());
             }

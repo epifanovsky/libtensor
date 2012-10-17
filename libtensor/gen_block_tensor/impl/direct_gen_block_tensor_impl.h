@@ -29,7 +29,7 @@ public:
     virtual ~direct_gen_block_tensor_task() { }
 
     void perform() {
-        m_op.compute_block(m_blk, m_idx);
+        m_op.compute_block(m_idx, m_blk);
     }
 };
 

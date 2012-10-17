@@ -1,9 +1,9 @@
 #ifndef LIBTENSOR_BTOD_DIRSUM_H
 #define LIBTENSOR_BTOD_DIRSUM_H
 
-#include <libtensor/core/scalar_transf_double.h>
-#include <libtensor/block_tensor/bto/additive_bto.h>
 #include <libtensor/block_tensor/btod/btod_traits.h>
+#include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/gen_block_tensor/additive_gen_bto.h>
 #include <libtensor/gen_block_tensor/gen_bto_dirsum.h>
 
 namespace libtensor {
@@ -30,7 +30,8 @@ public:
  **/
 template<size_t N, size_t M>
 class btod_dirsum :
-    public additive_bto<N + M, btod_traits>, public noncopyable {
+    public additive_gen_bto<N + M, btod_traits::bti_traits>,
+    public noncopyable {
 
 public:
     static const char *k_clazz; //!< Class name
@@ -46,9 +47,10 @@ public:
     /** \brief Initializes the operation
      **/
     btod_dirsum(
-        block_tensor_rd_i<N, double> &bta, const scalar_transf<double> &ka,
-        block_tensor_rd_i<M, double> &btb, const scalar_transf<double> &kb,
-        const tensor_transf_type &trc = tensor_transf_type()) :
+            block_tensor_rd_i<N, double> &bta, const scalar_transf<double> &ka,
+            block_tensor_rd_i<M, double> &btb, const scalar_transf<double> &kb,
+            const tensor_transf_type &trc = tensor_transf_type()) :
+
         m_gbto(bta, ka, btb, kb, trc) {
 
     }
@@ -57,17 +59,19 @@ public:
     /** \brief Initializes the operation
      **/
     btod_dirsum(
-        block_tensor_rd_i<N, double> &bta, double ka,
-        block_tensor_rd_i<M, double> &btb, double kb) :
+            block_tensor_rd_i<N, double> &bta, double ka,
+            block_tensor_rd_i<M, double> &btb, double kb) :
+
         m_gbto(bta, scalar_transf<double>(ka), btb, scalar_transf<double>(kb)) {
     }
 
     /** \brief Initializes the operation
      **/
     btod_dirsum(
-        block_tensor_rd_i<N, double> &bta, double ka,
-        block_tensor_rd_i<M, double> &btb, double kb,
-        const permutation<N + M> &permc) :
+            block_tensor_rd_i<N, double> &bta, double ka,
+            block_tensor_rd_i<M, double> &btb, double kb,
+            const permutation<N + M> &permc) :
+
         m_gbto(bta, scalar_transf<double>(ka), btb, scalar_transf<double>(kb),
             tensor_transf<N + M, double>(permc)) {
 
@@ -76,6 +80,9 @@ public:
     /** \brief Virtual destructor
      **/
     virtual ~btod_dirsum() { }
+
+    //! \name Implementation of libtensor::direct_gen_bto<N, bti_traits>
+    //@{
 
     virtual const block_index_space<N + M> &get_bis() const {
 
@@ -97,20 +104,25 @@ public:
         m_gbto.perform(out);
     }
 
-    virtual void perform(block_tensor_i<N + M, double> &btb);
-    virtual void perform(block_tensor_i<N + M, double> &btb, const double &c);
+    //@}
+
+    //! \name Implementation of libtensor::additive_gen_bto<N, bti_traits>
+    //@{
+
+    virtual void perform(gen_block_tensor_i<N + M, bti_traits> &btb);
+
+    virtual void perform(gen_block_tensor_i<N + M, bti_traits> &btb,
+            const scalar_transf<double> &c);
 
     virtual void compute_block(
-        dense_tensor_i<N + M, double> &blkc,
-        const index<N + M> &ic);
+            bool zero,
+            const index<N + M> &ic,
+            const tensor_transf<N + M, double> &trc,
+            dense_tensor_i<N + M, double> &blkc);
 
-    virtual void compute_block(
-        bool zero,
-        dense_tensor_i<N + M, double> &blkc,
-        const index<N + M> &ic,
-        const tensor_transf<N + M, double> &trc,
-        const double &c);
+    //@}
 
+    void perform(block_tensor_i<N + M, double> &btb, double c);
 };
 
 

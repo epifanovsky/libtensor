@@ -2040,7 +2040,7 @@ void btod_copy_test::test_bug_1() throw(libtest::test_exception) {
     dense_tensor<4, double, allocator_t> ta0100(dims0100);
 
     btod_copy<4> op_copy(bta);
-    op_copy.compute_block(true, ta0100, i0100, tr0100, 1.0);
+    op_copy.compute_block(true, i0100, tr0100, ta0100);
 
     } catch(exception &exc) {
         fail_test(testname, __FILE__, __LINE__, exc.what());

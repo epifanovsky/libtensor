@@ -127,15 +127,17 @@ void gen_bto_diag<N, M, Traits, Timed>::perform(
 
 
 template<size_t N, size_t M, typename Traits, typename Timed>
-void gen_bto_diag<N, M, Traits, Timed>::compute_block(bool zero,
-        wr_block_type &blkb, const index<N - M + 1> &ib,
-        const tensor_transf_type &trb) {
+void gen_bto_diag<N, M, Traits, Timed>::compute_block(
+        bool zero,
+        const index<N - M + 1> &ib,
+        const tensor_transf_type &trb,
+        wr_block_type &blkb) {
 
     gen_bto_diag::start_timer("compute_block");
 
     try {
 
-        compute_block_untimed(zero, blkb, ib, trb);
+        compute_block_untimed(zero, ib, trb, blkb);
 
     } catch (...) {
         gen_bto_diag::stop_timer("compute_block");
@@ -147,9 +149,11 @@ void gen_bto_diag<N, M, Traits, Timed>::compute_block(bool zero,
 
 
 template<size_t N, size_t M, typename Traits, typename Timed>
-void gen_bto_diag<N, M, Traits, Timed>::compute_block_untimed(bool zero,
-        wr_block_type &blkb, const index<N - M + 1> &ib,
-        const tensor_transf_type &trb) {
+void gen_bto_diag<N, M, Traits, Timed>::compute_block_untimed(
+        bool zero,
+        const index<N - M + 1> &ib,
+        const tensor_transf_type &trb,
+        wr_block_type &blkb) {
 
     typedef typename Traits::template to_diag_type<N, M>::type to_diag;
 
@@ -333,7 +337,7 @@ void gen_bto_diag_task<N, M, Traits, Timed>::perform() {
     gen_block_tensor_ctrl<N - M + 1, bti_traits> cb(m_btb);
     {
         wr_block_type &blkb = cb.req_block(m_idx);
-        m_bto.compute_block_untimed(true, blkb, m_idx, tr0);
+        m_bto.compute_block_untimed(true, m_idx, tr0, blkb);
         cb.ret_block(m_idx);
     }
 

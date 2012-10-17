@@ -13,7 +13,7 @@ const char *btod_diag<N, M>::k_clazz = "btod_diag<N, M>";
 
 
 template<size_t N, size_t M>
-void btod_diag<N, M>::perform(block_tensor_i<N - M + 1, double> &btb) {
+void btod_diag<N, M>::perform(gen_block_tensor_i<N - M + 1, bti_traits> &btb) {
 
     gen_bto_aux_copy<N - M + 1, btod_traits> out(get_symmetry(), btb);
     perform(out);
@@ -21,8 +21,8 @@ void btod_diag<N, M>::perform(block_tensor_i<N - M + 1, double> &btb) {
 
 
 template<size_t N, size_t M>
-void btod_diag<N, M>::perform(block_tensor_i<N - M + 1, double> &btb,
-        const double &c) {
+void btod_diag<N, M>::perform(gen_block_tensor_i<N - M + 1, bti_traits> &btb,
+        const scalar_transf<double> &c) {
 
     typedef block_tensor_i_traits<double> bti_traits;
 
@@ -37,26 +37,21 @@ void btod_diag<N, M>::perform(block_tensor_i<N - M + 1, double> &btb,
 
 
 template<size_t N, size_t M>
-void btod_diag<N, M>::compute_block(
-        dense_tensor_i<N - M + 1, double> &blkb,
-        const index<N - M + 1> &ib) {
+void btod_diag<N, M>::perform(
+        block_tensor_i<N - M + 1, double> &btb, double c) {
 
-    m_gbto.compute_block(true, blkb, ib, tensor_transf<N - M + 1, double>());
+    perform(btb, scalar_transf<double>(c));
 }
 
 
 template<size_t N, size_t M>
 void btod_diag<N, M>::compute_block(
         bool zero,
-        dense_tensor_i<N - M + 1, double> &blkb,
         const index<N - M + 1> &ib,
         const tensor_transf<N - M + 1, double> &trb,
-        const double &c) {
+        dense_tensor_i<N - M + 1, double> &blkb) {
 
-    tensor_transf<N - M + 1, double> trx(trb);
-    trx.transform(scalar_transf<double>(c));
-
-    m_gbto.compute_block(zero, blkb, ib, trx);
+    m_gbto.compute_block(zero, ib, trb, blkb);
 }
 
 

@@ -216,10 +216,9 @@ void gen_bto_copy<N, Traits, Timed>::perform(
 template<size_t N, typename Traits, typename Timed>
 void gen_bto_copy<N, Traits, Timed>::compute_block(
     bool zero,
-    wr_block_type &blkb,
     const index<N> &ib,
     const tensor_transf<N, element_type> &trb,
-    const element_type &c) {
+    wr_block_type &blkb) {
 
     typedef typename Traits::template to_set_type<N>::type to_set;
     typedef typename Traits::template to_copy_type<N>::type to_copy;
@@ -244,8 +243,7 @@ void gen_bto_copy<N, Traits, Timed>::compute_block(
         //  Transformation for block from canonical A to B
         //  B = c Tr(Bc->B) Tr(A->Bc) Tr(Ac->A) Ac
         tensor_transf<N, element_type> tra(oa.get_transf(ia));
-        tra.transform(m_tra).transform(scalar_transf<element_type>(c)).
-            transform(trb);
+        tra.transform(m_tra).transform(trb);
 
         //  Compute block in B
         if(!ca.req_is_zero_block(cia)) {

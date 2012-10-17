@@ -120,17 +120,17 @@ public:
      **/
     void compute_block(
         bool zero,
-        wr_block_type &blkc,
         const index<N> &ic,
-        const tensor_transf_type &trc);
+        const tensor_transf_type &trc,
+        wr_block_type &blkc);
 
     /** \brief Same as compute_block(), except it doesn't run a timer
      **/
     void compute_block_untimed(
         bool zero,
-        wr_block_type &blkc,
         const index<N> &ic,
-        const tensor_transf_type &trc);
+        const tensor_transf_type &trc,
+        wr_block_type &blkc);
 
 
 private:

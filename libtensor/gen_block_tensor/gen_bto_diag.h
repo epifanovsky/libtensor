@@ -110,17 +110,17 @@ public:
      **/
     void compute_block(
         bool zero,
-        wr_block_type &blkb,
         const index<N - M + 1> &ib,
-        const tensor_transf_type &trb);
+        const tensor_transf_type &trb,
+        wr_block_type &blkb);
 
     /** \brief Same as compute_block(), except it doesn't run a timer
      **/
     void compute_block_untimed(
         bool zero,
-        wr_block_type &blkb,
         const index<N - M + 1> &ib,
-        const tensor_transf_type &trb);
+        const tensor_transf_type &trb,
+        wr_block_type &blkb);
 
 private:
     /** \brief Forms the block %index space of the output or throws an

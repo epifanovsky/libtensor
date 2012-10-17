@@ -1,6 +1,8 @@
 #ifndef LIBTENSOR_BLOCK_TENSOR_I_TRAITS_H
 #define LIBTENSOR_BLOCK_TENSOR_I_TRAITS_H
 
+#include <libtensor/defs.h>
+
 namespace libtensor {
 
 

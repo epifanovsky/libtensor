@@ -1,8 +1,9 @@
 #ifndef LIBTENSOR_BTOD_EWMULT2_H
 #define LIBTENSOR_BTOD_EWMULT2_H
 
-#include <libtensor/block_tensor/bto/additive_bto.h>
 #include <libtensor/block_tensor/btod/btod_traits.h>
+#include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/gen_block_tensor/additive_gen_bto.h>
 #include <libtensor/gen_block_tensor/gen_bto_ewmult2.h>
 
 namespace libtensor {
@@ -27,7 +28,8 @@ namespace libtensor {
  **/
 template<size_t N, size_t M, size_t K>
 class btod_ewmult2 :
-    public additive_bto<N + M + K, btod_traits>, public noncopyable {
+    public additive_gen_bto<N + M + K, btod_traits::bti_traits>,
+    public noncopyable {
 
 public:
     static const char *k_clazz; //!< Class name
@@ -92,8 +94,7 @@ public:
     //@}
 
 
-    //!    \name Implementation of
-    //!        direct_block_tensor_operation<N + M + K, double>
+    //!    \name Implementation of direct_gen_bto<N + M + K, bti_traits>
     //@{
 
     virtual const block_index_space<N + M + K> &get_bis() const {
@@ -110,16 +111,28 @@ public:
     }
 
     virtual void perform(gen_block_stream_i<NC, bti_traits> &out);
-    virtual void perform(block_tensor_i<NC, double> &btc);
-    virtual void perform(block_tensor_i<NC, double> &btc,
-        const double &d);
 
     //@}
 
-    using additive_bto<N + M + K, btod_traits>::compute_block;
-    virtual void compute_block(bool zero,
-        dense_tensor_i<NC, double> &blk, const index<NC> &i,
-        const tensor_transf<NC, double> &tr, const double &c);
+
+    //! \name Implementation of libtensor::additive_gen_bto<N, bti_traits>
+    //@{
+
+    virtual void perform(gen_block_tensor_i<NC, bti_traits> &btc);
+
+    virtual void perform(gen_block_tensor_i<NC, bti_traits> &btc,
+            const scalar_transf<double> &d);
+
+    virtual void compute_block(
+            bool zero,
+            const index<NC> &i,
+            const tensor_transf<NC, double> &tr,
+            dense_tensor_i<NC, double> &blk);
+
+    //@}
+
+    void perform(block_tensor_i<NC, double> &btc, double d);
+
 };
 
 

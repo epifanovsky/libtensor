@@ -17,7 +17,7 @@ const char *btod_dirsum<N, M>::k_clazz = btod_dirsum_clazz<N, M>::k_clazz;
 
 
 template<size_t N, size_t M>
-void btod_dirsum<N, M>::perform(block_tensor_i<N + M, double> &btb) {
+void btod_dirsum<N, M>::perform(gen_block_tensor_i<N + M, bti_traits> &btb) {
 
     gen_bto_aux_copy<N + M, btod_traits> out(get_symmetry(), btb);
     perform(out);
@@ -25,8 +25,8 @@ void btod_dirsum<N, M>::perform(block_tensor_i<N + M, double> &btb) {
 
 
 template<size_t N, size_t M>
-void btod_dirsum<N, M>::perform(block_tensor_i<N + M, double> &btb,
-    const double &c) {
+void btod_dirsum<N, M>::perform(gen_block_tensor_i<N + M, bti_traits> &btb,
+    const scalar_transf<double> &c) {
 
     typedef block_tensor_i_traits<double> bti_traits;
 
@@ -41,26 +41,20 @@ void btod_dirsum<N, M>::perform(block_tensor_i<N + M, double> &btb,
 
 
 template<size_t N, size_t M>
-void btod_dirsum<N, M>::compute_block(
-        dense_tensor_i<N + M, double> &blkc,
-        const index<N + M> &ic) {
+void btod_dirsum<N, M>::perform(block_tensor_i<N + M, double> &btb, double c) {
 
-    m_gbto.compute_block(true, ic, tensor_transf<N + M, double>(), blkc);
+    perform(btb, scalar_transf<double>(c));
 }
 
 
 template<size_t N, size_t M>
 void btod_dirsum<N, M>::compute_block(
         bool zero,
-        dense_tensor_i<N + M, double> &blkc,
         const index<N + M> &ic,
         const tensor_transf<N + M, double> &trc,
-        const double &c) {
+        dense_tensor_i<N + M, double> &blkc) {
 
-    tensor_transf<N + M, double> trx(trc);
-    trx.transform(scalar_transf<double>(c));
-
-    m_gbto.compute_block(zero, ic, trx, blkc);
+    m_gbto.compute_block(zero, ic, trc, blkc);
 }
 
 

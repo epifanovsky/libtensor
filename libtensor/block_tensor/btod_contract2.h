@@ -1,12 +1,11 @@
 #ifndef LIBTENSOR_BTOD_CONTRACT2_H
 #define LIBTENSOR_BTOD_CONTRACT2_H
 
+#include <libtensor/block_tensor/btod/btod_traits.h>
 #include <libtensor/core/contraction2.h>
 #include <libtensor/core/noncopyable.h>
+#include <libtensor/gen_block_tensor/additive_gen_bto.h>
 #include <libtensor/gen_block_tensor/gen_bto_contract2.h>
-#include <libtensor/block_tensor/block_tensor_i.h>
-#include <libtensor/block_tensor/bto/additive_bto.h>
-#include <libtensor/block_tensor/btod/btod_traits.h>
 
 namespace libtensor {
 
@@ -28,7 +27,7 @@ struct btod_contract2_clazz {
  **/
 template<size_t N, size_t M, size_t K>
 class btod_contract2 :
-    public additive_bto<N + M, btod_traits>,
+    public additive_gen_bto<N + M, btod_traits::bti_traits>,
     public noncopyable {
 
 public:
@@ -62,6 +61,9 @@ public:
      **/
     virtual ~btod_contract2() { }
 
+    //! \name Implementation of libtensor::direct_gen_bto<N, bti_traits>
+    //@{
+
     /** \brief Returns the block index space of the result
      **/
     virtual const block_index_space<NC> &get_bis() const {
@@ -87,25 +89,31 @@ public:
      **/
     virtual void perform(gen_block_stream_i<NC, bti_traits> &out);
 
+    //@}
+
+    //! \name Implementation of libtensor::additive_gen_bto<N, bti_traits>
+    //@{
+
     /** \brief Computes the contraction into an output block tensor
      **/
-    virtual void perform(block_tensor_i<NC, double> &btc);
+    virtual void perform(gen_block_tensor_i<NC, bti_traits> &btc);
 
     /** \brief Computes the contraction and adds to an block tensor
         \param btc Output tensor.
-        \param d Scaling coefficient.
+        \param d Scalar transformation
      **/
-    virtual void perform(
-        block_tensor_i<NC, double> &btc,
-        const double &d);
+    virtual void perform(gen_block_tensor_i<NC, bti_traits> &btc,
+        const scalar_transf<double> &d);
 
-    using additive_bto<N + M, btod_traits>::compute_block;
     virtual void compute_block(
         bool zero,
-        dense_tensor_i<NC, double> &blk,
-        const index<NC> &i,
-        const tensor_transf<NC, double> &tr,
-        const double &c);
+        const index<NC> &ic,
+        const tensor_transf<NC, double> &trc,
+        dense_tensor_i<NC, double> &blkc);
+
+    //@}
+
+    void perform(block_tensor_i<NC, double> &btc, double d);
 };
 
 

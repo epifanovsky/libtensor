@@ -1,9 +1,9 @@
 #ifndef LIBTENSOR_BTOD_DIAG_H
 #define LIBTENSOR_BTOD_DIAG_H
 
-#include <libtensor/core/scalar_transf_double.h>
-#include <libtensor/block_tensor/bto/additive_bto.h>
 #include <libtensor/block_tensor/btod/btod_traits.h>
+#include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/gen_block_tensor/additive_gen_bto.h>
 #include <libtensor/gen_block_tensor/gen_bto_diag.h>
 
 namespace libtensor {
@@ -18,7 +18,8 @@ namespace libtensor {
  **/
 template<size_t N, size_t M>
 class btod_diag :
-    public additive_bto<N - M + 1, btod_traits>, public noncopyable {
+    public additive_gen_bto<N - M + 1, btod_traits::bti_traits>,
+    public noncopyable {
 public:
     static const char *k_clazz; //!< Class name
 
@@ -62,6 +63,9 @@ public:
 
     virtual ~btod_diag() { }
 
+    //! \name Implementation of libtensor::direct_gen_bto<N, bti_traits>
+    //@{
+
     virtual const block_index_space<N - M + 1> &get_bis() const {
 
         return m_gbto.get_bis();
@@ -82,23 +86,25 @@ public:
         m_gbto.perform(out);
     }
 
-    virtual void perform(
-        block_tensor_i<N - M + 1, double> &btb);
+    //@}
 
-    virtual void perform(
-        block_tensor_i<N - M + 1, double> &btb,
-        const double &c);
+    //! \name Implementation of libtensor::additive_gen_bto<N, bti_traits>
+    //@{
+
+    virtual void perform(gen_block_tensor_i<N - M + 1, bti_traits> &btb);
+
+    virtual void perform(gen_block_tensor_i<N - M + 1, bti_traits> &btb,
+            const scalar_transf<double> &c);
 
     virtual void compute_block(
-        dense_tensor_i<N - M + 1, double> &blkb,
-        const index<N - M + 1> &ib);
+            bool zero,
+            const index<N - M + 1> &ib,
+            const tensor_transf<N - M + 1, double> &trb,
+            dense_tensor_i<N - M + 1, double> &blkb);
 
-    virtual void compute_block(
-        bool zero,
-        dense_tensor_i<N - M + 1, double> &blkb,
-        const index<N - M + 1> &ib,
-        const tensor_transf<N - M + 1, double> &trb,
-        const double &c);
+    //@}
+
+    void perform(block_tensor_i<N - M + 1, double> &btb, double c);
 
 };
 

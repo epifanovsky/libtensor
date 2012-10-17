@@ -44,7 +44,7 @@ private:
     symmetry<N, element_type> m_syma; //!< Symmetry of source
     const addition_schedule<N, Traits> &m_asch; //!< Addition schedule
     gen_block_tensor_i<N, bti_traits> &m_btb; //!< Target block tensor
-    element_type m_c; //!< Scaling coefficient
+    scalar_transf<element_type> m_c; //!< Scaling coefficient
     gen_block_tensor_ctrl<N, bti_traits> m_cb; //!< Block tensor control
     bool m_open; //!< Open state
     size_t m_grpcount; //!< Group count
@@ -63,7 +63,7 @@ public:
         const symmetry<N, element_type> &syma,
         const addition_schedule<N, Traits> &asch,
         gen_block_tensor_i<N, bti_traits> &btb,
-        const element_type &c);
+        const scalar_transf<element_type> &c);
 
     /** \brief Virtual destructor
      **/

@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_BTO_APPLY_IMPL_H
 #define LIBTENSOR_BTO_APPLY_IMPL_H
 
+#include <libutil/thread_pool/thread_pool.h>
 #include <libtensor/core/orbit.h>
 #include <libtensor/core/orbit_list.h>
 #include <libtensor/symmetry/so_apply.h>
@@ -131,14 +132,16 @@ void gen_bto_apply<N, Functor, Traits, Timed>::perform(
 
 
 template<size_t N, typename Functor, typename Traits, typename Timed>
-void gen_bto_apply<N, Functor, Traits, Timed>::compute_block(bool zero,
-        wr_block_type &blkb, const index<N> &ib,
-        const tensor_transf_type &trb) {
+void gen_bto_apply<N, Functor, Traits, Timed>::compute_block(
+        bool zero,
+        const index<N> &ib,
+        const tensor_transf_type &trb,
+        wr_block_type &blkb) {
 
     gen_bto_apply::start_timer("compute_block");
     try {
 
-        compute_block_untimed(zero, blkb, ib, trb);
+        compute_block_untimed(zero, ib, trb, blkb);
 
     } catch (...) {
         gen_bto_apply::stop_timer("compute_block");
@@ -150,9 +153,11 @@ void gen_bto_apply<N, Functor, Traits, Timed>::compute_block(bool zero,
 
 
 template<size_t N, typename Functor, typename Traits, typename Timed>
-void gen_bto_apply<N, Functor, Traits, Timed>::compute_block_untimed(bool zero,
-        wr_block_type &blkb, const index<N> &ib,
-        const tensor_transf_type &trb) {
+void gen_bto_apply<N, Functor, Traits, Timed>::compute_block_untimed(
+        bool zero,
+        const index<N> &ib,
+        const tensor_transf_type &trb,
+        wr_block_type &blkb) {
 
     typedef typename Traits::template temp_block_type<N>::type tensor_type;
     typedef typename Traits::template to_set_type<N>::type to_set;
@@ -295,7 +300,7 @@ void gen_bto_apply_task<N, Functor, Traits, Timed>::perform() {
     gen_block_tensor_ctrl<N, bti_traits> cb(m_btb);
     {
         wr_block_type &blkb = cb.req_block(m_idx);
-        m_bto.compute_block_untimed(true, blkb, m_idx, tr0);
+        m_bto.compute_block_untimed(true, m_idx, tr0, blkb);
         cb.ret_block(m_idx);
     }
 

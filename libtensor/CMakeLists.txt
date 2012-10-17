@@ -132,7 +132,6 @@ set(SRC_INST
     symmetry/inst/so_symmetrize_se_label_inst.C
     symmetry/inst/so_symmetrize_se_part_inst.C
     symmetry/inst/so_symmetrize_se_perm_inst.C
-    block_tensor/btod/impl/additive_btod.C
     block_tensor/btod/impl/btod_sum.C
     block_tensor/btod/impl/btod_symmetrize.C
     block_tensor/btod/impl/btod_symmetrize3.C
@@ -154,6 +153,7 @@ set(SRC_GEN_BTOD
 )
 
 set(SRC_BTOD
+    block_tensor/impl/additive_btod.C
     block_tensor/impl/block_tensor.C
     block_tensor/impl/btod_addition_schedule.C
     block_tensor/impl/btod_add.C

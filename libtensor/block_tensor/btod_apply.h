@@ -1,16 +1,19 @@
 #ifndef LIBTENSOR_BTOD_APPLY_H
 #define LIBTENSOR_BTOD_APPLY_H
 
-#include <libtensor/block_tensor/bto/additive_bto.h>
 #include <libtensor/block_tensor/btod/btod_traits.h>
-#include <libtensor/dense_tensor/impl/tod_apply_impl.h>
+#include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/gen_block_tensor/additive_gen_bto.h>
 #include <libtensor/gen_block_tensor/gen_bto_apply.h>
 
 namespace libtensor {
 
 
 template<size_t N, typename Functor>
-class btod_apply : public additive_bto<N, btod_traits>, public noncopyable {
+class btod_apply :
+    public additive_gen_bto<N, btod_traits::bti_traits>,
+    public noncopyable {
+
 public:
     static const char *k_clazz; //!< Class name
 
@@ -46,6 +49,9 @@ public:
 
     virtual ~btod_apply() { }
 
+    //! \name Implementation of libtensor::direct_gen_bto<N, bti_traits>
+    //@{
+
     virtual const block_index_space<N> &get_bis() const {
 
         return m_gbto.get_bis();
@@ -61,27 +67,32 @@ public:
         return m_gbto.get_schedule();
     }
 
-    //@}
-
     virtual void perform(gen_block_stream_i<N, bti_traits> &out) {
 
         m_gbto.perform(out);
     }
 
-    virtual void perform(block_tensor_i<N, double> &btb);
-    virtual void perform(block_tensor_i<N, double> &btb, const double &c);
+    //@}
+
+    //! \name Implementation of libtensor::additive_gen_bto<N, bti_traits>
+    //@{
+
+    virtual void perform(gen_block_tensor_i<N, bti_traits> &btb);
+
+    virtual void perform(gen_block_tensor_i<N, bti_traits> &btb,
+            const scalar_transf<double> &c);
 
     virtual void compute_block(
-        dense_tensor_i<N, double> &blkb,
-        const index<N> &ib);
+            bool zero,
+            const index<N> &ib,
+            const tensor_transf<N, double> &trb,
+            dense_tensor_i<N, double> &blkb);
 
-    virtual void compute_block(
-        bool zero,
-        dense_tensor_i<N, double> &blkb,
-        const index<N> &ib,
-        const tensor_transf<N, double> &trb,
-        const double &c);
+    //@}
 
+    /** \brief Function for compatability
+     **/
+    void perform(block_tensor_i<N, double> &btb, double c);
 };
 
 

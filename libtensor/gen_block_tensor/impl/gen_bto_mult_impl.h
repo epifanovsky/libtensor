@@ -168,15 +168,17 @@ void gen_bto_mult<N, Traits, Timed>::perform(
 
 
 template<size_t N, typename Traits, typename Timed>
-void gen_bto_mult<N, Traits, Timed>::compute_block(bool zero,
-        wr_block_type &blkc, const index<N> &ic,
-        const tensor_transf_type &trc) {
+void gen_bto_mult<N, Traits, Timed>::compute_block(
+        bool zero,
+        const index<N> &ic,
+        const tensor_transf_type &trc,
+        wr_block_type &blkc) {
 
     gen_bto_mult::start_timer("compute_block");
 
     try {
 
-        compute_block_untimed(zero, blkc, ic, trc);
+        compute_block_untimed(zero, ic, trc, blkc);
 
     } catch (...) {
         gen_bto_mult::stop_timer("compute_block");
@@ -188,9 +190,11 @@ void gen_bto_mult<N, Traits, Timed>::compute_block(bool zero,
 }
 
 template<size_t N, typename Traits, typename Timed>
-void gen_bto_mult<N, Traits, Timed>::compute_block_untimed(bool zero,
-        wr_block_type &blkc, const index<N> &idxc,
-        const tensor_transf_type &trc) {
+void gen_bto_mult<N, Traits, Timed>::compute_block_untimed(
+        bool zero,
+        const index<N> &idxc,
+        const tensor_transf_type &trc,
+        wr_block_type &blkc) {
 
     typedef typename Traits::template to_mult_type<N>::type to_mult;
     typedef typename Traits::template to_set_type<N>::type to_set;
@@ -306,7 +310,7 @@ void gen_bto_mult_task<N, Traits, Timed>::perform() {
     gen_block_tensor_ctrl<N, bti_traits> cc(m_btc);
     {
         wr_block_type &blkc = cc.req_block(m_idx);
-        m_bto.compute_block_untimed(true, blkc, m_idx, tr0);
+        m_bto.compute_block_untimed(true, m_idx, tr0, blkc);
         cc.ret_block(m_idx);
     }
 

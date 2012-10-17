@@ -93,10 +93,9 @@ public:
      **/
     void compute_block(
         bool zero,
-        wr_block_type &blkb,
         const index<N> &ib,
         const tensor_transf<N, element_type> &trb,
-        const element_type &c);
+        wr_block_type &blkb);
 
 private:
     void make_schedule();
