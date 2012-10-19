@@ -2,11 +2,11 @@
 #define LIBTENSOR_BTOD_READ_H
 
 #include <istream>
-#include "../defs.h"
-#include "../exception.h"
-#include "../timings.h"
-#include "../core/allocator.h"
-#include "../tod/bad_dimensions.h"
+#include <libtensor/defs.h>
+#include <libtensor/exception.h>
+#include <libtensor/timings.h>
+#include <libtensor/core/allocator.h>
+#include <libtensor/tod/bad_dimensions.h>
 #include <libtensor/block_tensor/block_tensor_i.h>
 #include "btod_import_raw.h"
 
