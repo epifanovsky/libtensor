@@ -2,8 +2,6 @@
 #define LIBTENSOR_LIBTENSOR_TOD_SUITE_H
 
 #include <libtest/test_suite.h>
-#include "contraction2_test.h"
-#include "contraction2_list_builder_test.h"
 #include "tod_add_test.h"
 #include "tod_apply_test.h"
 #include "tod_btconv_test.h"
@@ -45,8 +43,6 @@ namespace libtensor {
     \ingroup libtensor_tests
 
     This suite runs the following tests:
-    \li libtensor::contraction2_test
-    \li libtensor::contraction2_list_builder_test
     \li libtensor::tod_add_test
     \li libtensor::tod_apply_test
     \li libtensor::tod_btconv_test
@@ -75,9 +71,6 @@ namespace libtensor {
 **/
 class libtensor_tod_suite : public libtest::test_suite {
 private:
-    unit_test_factory<contraction2_test> m_utf_contraction2;
-    unit_test_factory<contraction2_list_builder_test>
-        m_utf_contraction2_list_builder;
     unit_test_factory<tod_add_test> m_utf_tod_add;
     unit_test_factory<tod_apply_test> m_utf_tod_apply;
     unit_test_factory<tod_btconv_test> m_utf_tod_btconv;

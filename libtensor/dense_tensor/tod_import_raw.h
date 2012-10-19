@@ -3,7 +3,7 @@
 
 #include <list>
 #include <libtensor/core/dimensions.h>
-#include <libtensor/tod/bad_dimensions.h>
+#include <libtensor/core/bad_dimensions.h>
 #include "dense_tensor_i.h"
 
 namespace libtensor {

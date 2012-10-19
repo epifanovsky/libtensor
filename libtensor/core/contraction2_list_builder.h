@@ -2,8 +2,8 @@
 #define LIBTENSOR_CONTRACTION2_LIST_BUILDER_H
 
 #include <sstream>
-#include "../defs.h"
-#include "../exception.h"
+#include <libtensor/defs.h>
+#include <libtensor/exception.h>
 #include "contraction2.h"
 
 namespace libtensor {

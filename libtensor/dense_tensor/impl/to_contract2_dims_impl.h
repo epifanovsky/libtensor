@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_TO_CONTRACT2_DIMS_IMPL_H
 #define LIBTENSOR_TO_CONTRACT2_DIMS_IMPL_H
 
-#include <libtensor/tod/bad_dimensions.h>
+#include <libtensor/core/bad_dimensions.h>
 #include "../to_contract2_dims.h"
 
 namespace libtensor {

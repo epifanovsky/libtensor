@@ -6,7 +6,7 @@
 #include <libtensor/exception.h>
 #include <libtensor/timings.h>
 #include <libtensor/core/allocator.h>
-#include <libtensor/tod/bad_dimensions.h>
+#include <libtensor/core/bad_dimensions.h>
 #include <libtensor/block_tensor/block_tensor_i.h>
 #include "btod_import_raw.h"
 

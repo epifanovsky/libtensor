@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_TOD_IMPORT_RAW_STREAM_IMPL_H
 #define LIBTENSOR_TOD_IMPORT_RAW_STREAM_IMPL_H
 
-#include <libtensor/tod/bad_dimensions.h>
+#include <libtensor/core/bad_dimensions.h>
 #include "../dense_tensor_ctrl.h"
 #include "../tod_import_raw_stream.h"
 
