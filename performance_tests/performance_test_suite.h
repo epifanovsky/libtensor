@@ -7,27 +7,30 @@
 namespace libtensor {
 
 /** \defgroup libtensor_performance_tests Performance tests for libtensor
-	\ingroup libtensor
+    \ingroup libtensor
  **/
 
-/**	\brief Performance test suite for the tensor library (libtensor)
+/** \brief Performance test suite for the tensor library (libtensor)
 
- 	\ingroup libtensor_performance_tests
+    \ingroup libtensor_performance_tests
 **/
 class performance_test_suite : public libtest::test_suite {
-	size_t m_ntests;
+private:
+    size_t m_ntests;
+
 protected:
-	/** \brief adds tests of a performance test scenario to the suite
-	  	\param name Name of performance test scenario
-	  	\param comment Comment to performance test scenario
-	  	\param pts  performance_test_scenario object
-	 **/
-	void add_tests( const char* name, const char* comment,
-			performance_test_scenario_i& pts );
+    /** \brief adds tests of a performance test scenario to the suite
+          \param name Name of performance test scenario
+          \param comment Comment to performance test scenario
+          \param pts  performance_test_scenario object
+     **/
+    void add_tests(const char* name, const char* comment,
+            performance_test_scenario_i& pts);
+
 public:
-	//!	Creates the suite
-	performance_test_suite( const char* name );
-	virtual ~performance_test_suite() {}
+    //!    Creates the suite
+    performance_test_suite(const char* name);
+    virtual ~performance_test_suite() {}
 };
 
 } // namespace libtensor

@@ -7,6 +7,18 @@
 namespace libtensor {
 
 
+/** \brief Generic function application kernel (double)
+    \tparam LA Linear algebra.
+
+    This kernel applies a function to a multidimensional arrays with optional
+    scaling:
+    \f[
+        b = c_2 f(c_1 a)
+    \f]
+    a, b are arrays, c_1, c_2 are scaling factors.
+
+    \ingroup libtensor_kernels
+ **/
 template<typename Functor>
 class kern_apply : public kernel_base<linalg, 1, 1> {
 public:
