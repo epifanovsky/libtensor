@@ -120,7 +120,7 @@ void tod_copy<N>::perform(bool zero, dense_tensor_wr_i<N, double> &tb) {
         r.m_ptrb_end[0] = pb + dimsb.get_size();
 
         {
-            std::auto_ptr< kernel_base<linalg, 1, 1> >kern(
+            std::auto_ptr< kernel_base<linalg, 1, 1> > kern(
                 zero ?
                     kern_dcopy<linalg>::match(m_c, loop_in, loop_out) :
                     kern_dadd1<linalg>::match(m_c, loop_in, loop_out));
