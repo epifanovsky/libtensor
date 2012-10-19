@@ -39,6 +39,7 @@ libtensor_btod_suite::libtensor_btod_suite() :
     add_test("btod_trace", m_utf_btod_trace);
 //    add_test("btod_tridiagonalize", m_utf_btod_tridiagonalize);
     add_test("btod_vmpriority", m_utf_btod_vmpriority);
+    add_test("gen_bto_dirsum_sym", m_utf_gen_bto_dirsum_sym);
 }
 
 

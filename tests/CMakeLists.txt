@@ -159,6 +159,7 @@ set(SRC_BTOD
     btod/btod_trace_test.C
     btod/btod_tridiagonalize_test.C
     btod/btod_vmpriority_test.C
+    btod/gen_bto_dirsum_sym_test.C
 )
 
 set(SRC_LINALG
