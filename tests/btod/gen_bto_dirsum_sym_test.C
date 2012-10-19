@@ -1,5 +1,5 @@
 #include <sstream>
-#include <libtensor/block_tensor/btod/btod_traits.h>
+#include <libtensor/block_tensor/btod_traits.h>
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/gen_block_tensor/impl/gen_bto_dirsum_sym_impl.h>
 #include <libtensor/symmetry/permutation_group.h>

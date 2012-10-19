@@ -3,7 +3,7 @@
 
 #include "../../defs.h"
 #include "../../exception.h"
-#include <libtensor/block_tensor/btod/btod_traits.h>
+#include <libtensor/block_tensor/btod_traits.h>
 #include <libtensor/block_tensor/btod_add.h>
 #include <libtensor/block_tensor/btod_copy.h>
 #include <libtensor/block_tensor/btod_set.h>

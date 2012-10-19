@@ -3,7 +3,7 @@
 
 #include <libtensor/core/noncopyable.h>
 #include <libtensor/gen_block_tensor/gen_bto_compare.h>
-#include <libtensor/block_tensor/btod/btod_traits.h>
+#include <libtensor/block_tensor/btod_traits.h>
 
 namespace libtensor {
 

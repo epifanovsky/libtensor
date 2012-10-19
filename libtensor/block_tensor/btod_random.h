@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_BTOD_RANDOM_H
 #define LIBTENSOR_BTOD_RANDOM_H
 
-#include <libtensor/block_tensor/btod/btod_traits.h>
+#include <libtensor/block_tensor/btod_traits.h>
 #include <libtensor/gen_block_tensor/gen_bto_random.h>
 #include "block_tensor_i.h"
 

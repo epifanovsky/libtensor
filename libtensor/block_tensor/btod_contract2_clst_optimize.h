@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_BTOD_CONTRACT2_CLST_OPTIMIZE_H
 #define LIBTENSOR_BTOD_CONTRACT2_CLST_OPTIMIZE_H
 
-#include <libtensor/block_tensor/btod/btod_traits.h>
+#include <libtensor/block_tensor/btod_traits.h>
 #include <libtensor/gen_block_tensor/gen_bto_contract2_clst.h>
 
 namespace libtensor {

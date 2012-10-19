@@ -4,7 +4,7 @@
 #include "../../defs.h"
 #include "../../exception.h"
 #include <libtensor/gen_block_tensor/direct_gen_bto.h>
-#include <libtensor/block_tensor/btod/btod_traits.h>
+#include <libtensor/block_tensor/btod_traits.h>
 #include "expr.h"
 
 namespace libtensor {

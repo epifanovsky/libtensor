@@ -3,7 +3,7 @@
 
 #include <list>
 #include <libtensor/timings.h>
-#include <libtensor/block_tensor/btod/btod_traits.h>
+#include <libtensor/block_tensor/btod_traits.h>
 #include <libtensor/gen_block_tensor/additive_gen_bto.h>
 
 namespace libtensor {

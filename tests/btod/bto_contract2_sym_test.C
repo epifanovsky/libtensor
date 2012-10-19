@@ -4,7 +4,7 @@
 #include <libtensor/symmetry/permutation_group.h>
 #include <libtensor/symmetry/symmetry_element_set_adapter.h>
 #include <libtensor/gen_block_tensor/impl/gen_bto_contract2_sym_impl.h>
-#include <libtensor/block_tensor/btod/btod_traits.h>
+#include <libtensor/block_tensor/btod_traits.h>
 #include "../compare_ref.h"
 #include "bto_contract2_sym_test.h"
 

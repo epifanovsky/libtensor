@@ -6,7 +6,7 @@
 #include <libtensor/core/contraction2.h>
 #include <libtensor/core/noncopyable.h>
 #include <libtensor/block_tensor/block_tensor_i.h>
-#include <libtensor/block_tensor/btod/btod_traits.h>
+#include <libtensor/block_tensor/btod_traits.h>
 #include <libtensor/gen_block_tensor/gen_bto_contract3.h>
 
 namespace libtensor {
