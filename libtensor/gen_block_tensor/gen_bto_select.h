@@ -12,6 +12,7 @@ namespace libtensor {
 
 /** \brief Selects a number of elements from a block %tensor
     \tparam N Tensor order.
+    \tparam Traits Block tensor operation traits
     \tparam ComparePolicy Policy to select elements.
 
     The operation uses a block %tensor, a %symmetry and a compare policy to
@@ -39,7 +40,15 @@ namespace libtensor {
     the first value is taken to be more optimal with respect to the compare
     policy.
 
-    \ingroup libtensor_btod
+    <b>Traits</b>
+
+    The traits class has to provide definitions for
+    - \c element_type -- Type of data elements
+    - \c bti_traits -- Type of block tensor interface traits class
+    - \c template to_select_type<N, ComparePolicy>::type -- Type of tensor
+        operation to_select
+
+    \ingroup libtensor_gen_bto
  **/
 template<size_t N, typename Traits, typename ComparePolicy=compare4absmin>
 class gen_bto_select : public noncopyable {

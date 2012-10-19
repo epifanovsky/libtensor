@@ -14,11 +14,25 @@
 namespace libtensor {
 
 
-/** \brief Fills a block %tensor with random data without affecting its
-        %symmetry
-    \tparam T Block %tensor order.
+/** \brief Puts random data into block tensor
+    \tparam N Tensor order.
+    \tparam Traits Block tensor operation traits.
+    \tparam Timed Timed implementation.
 
-    \ingroup libtensor_btod
+    Fills a block %tensor with random data without affecting its
+    symmetry.
+
+    <b>Traits</b>
+
+    The traits class has to provide definitions for
+    - \c element_type -- Type of data elements
+    - \c bti_traits -- Type of block tensor interface traits class
+    - \c template temp_block_type<N>::type -- Type of temporary tensor block
+    - \c template to_add_type<N>::type -- Type of tensor operation to_copy
+    - \c template to_copy_type<N>::type -- Type of tensor operation to_add
+    - \c template to_random_type<N>::type -- Type of tensor operation to_random
+
+    \ingroup libtensor_gen_bto
  **/
 template<size_t N, typename Traits, typename Timed>
 class gen_bto_random : public timings<Timed>, public noncopyable {

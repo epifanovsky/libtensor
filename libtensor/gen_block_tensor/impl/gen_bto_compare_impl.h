@@ -176,7 +176,6 @@ bool gen_bto_compare<N, Traits>::compare_data(const abs_index<N> &aidx,
     typedef typename Traits::template temp_block_tensor_type<N>::type
             temp_block_tensor_type;
     typedef typename bti_traits::template rd_block_type<N>::type rd_block_type;
-    typedef typename bti_traits::template wr_block_type<N>::type wr_block_type;
 
 
     const index<N> &idx = aidx.get_index();

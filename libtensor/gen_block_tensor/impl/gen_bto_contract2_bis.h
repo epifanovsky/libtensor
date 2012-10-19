@@ -9,6 +9,9 @@ namespace libtensor {
 
 
 /** \brief Computes the block index space of the result of a contraction
+    \tparam N Order of first tensor less degree of contraction.
+    \tparam M Order of second tensor less degree of contraction.
+    \tparam K Order of contraction.
 
     Given the block index spaces of the arguments of a contraction and
     the contraction descriptor, this class builds the block index space of
@@ -44,6 +47,8 @@ public:
 
 /** \brief Computes the block index space of the result of a contraction
         (specialized for no contracted indexes, i.e. direct product)
+    \tparam N Order of first tensor less degree of contraction.
+    \tparam M Order of second tensor less degree of contraction.
 
     \ingroup libtensor_gen_bto
  **/

@@ -21,6 +21,13 @@ namespace libtensor {
     blocks to produce an exact copy of a block tensor. Blocks are copied
     in parallel to an output stream.
 
+    The traits class has to provide definitions for
+    - \c element_type -- Type of data elements
+    - \c bti_traits -- Type of block tensor interface traits class
+    - \c template temp_block_type<N>::type -- Type of temporary tensor block
+    - \c template to_copy_type<N>::type -- Type of tensor operation to_copy
+    - \c template to_set_type<N>::type -- Type of tensor operation to_set
+
     \ingroup libtensor_gen_bto
  **/
 template<size_t N, typename Traits, typename Timed>

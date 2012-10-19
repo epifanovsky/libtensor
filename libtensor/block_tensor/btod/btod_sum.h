@@ -20,6 +20,8 @@ namespace libtensor {
     The %sequence must contain at least one operation, which is called the
     base operation.
 
+    Marked deprecated!!! Will be removed when interface has been generalized.
+
     \ingroup libtensor_btod
  **/
 template<size_t N>
@@ -38,7 +40,7 @@ private:
     typedef struct node {
     private:
         additive_gen_bto<N, bti_traits> *m_op;
-       	double m_c;
+        double m_c;
     public:
         node() : m_op(NULL), m_c(0.0) { }
         node(additive_gen_bto<N, bti_traits> &op, double c) :

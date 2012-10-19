@@ -23,7 +23,7 @@ namespace libtensor {
 
     \sa gen_block_stream_i, gen_bto_aux_add
 
-    \ingroup libtensor_block_tensor_bto
+    \ingroup libtensor_gen_bto
  **/
 template<size_t N, typename Traits>
 class gen_bto_aux_symmetrize : public gen_block_stream_i<N, typename Traits::bti_traits> {

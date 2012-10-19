@@ -7,7 +7,17 @@
 namespace libtensor {
 
 
-/** \brief Pair of blocks which are contracted to form part of a result block
+/** \brief Contraction pair
+    \tparam N Order of first tensor less degree of contraction.
+    \tparam M Order of second tensor less degree of contraction.
+    \tparam K Order of contraction.
+    \tparam T Element type of block tensor data
+
+    A contraction pair stores the block indexes and block transformations of
+    two blocks which have to be contracted as part of a block tensor
+    contraction operation.
+
+    \ingroup libtensor_gen_bto
  **/
 template<size_t N, size_t M, size_t K, typename T>
 class gen_bto_contract2_pair {
@@ -81,7 +91,13 @@ public:
 };
 
 
-/** \brief Type of list of block contractions
+/** \brief List of contraction pairs.
+    \tparam N Order of first tensor less degree of contraction.
+    \tparam M Order of second tensor less degree of contraction.
+    \tparam K Order of contraction.
+    \tparam T Element type of block tensor data
+
+    Defines types of contraction pair and contraction pair list.
 
     \ingroup libtensor_gen_bto
  **/

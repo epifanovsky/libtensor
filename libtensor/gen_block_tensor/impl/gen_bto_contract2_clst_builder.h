@@ -14,8 +14,17 @@ namespace libtensor {
 
 /** \brief Computes the list of block contractions required to compute
         a block in C (base class)
+    \tparam N Order of first tensor less degree of contraction.
+    \tparam M Order of second tensor less degree of contraction.
+    \tparam K Order of contraction.
+    \tparam Traits Traits class.
 
-    \sa gen_bto_contract2, gen_bto_contract2_clst
+    The traits class has to provide definitions for
+    - \c element_type -- Type of data elements
+    - \c template to_contract2_type<N, M, K>::clst_optimize_type -- Type of
+            contraction pair list optimizer (\sa gen_bto_contract2_clst_builder)
+
+    \sa gen_bto_contract2_block, gen_bto_contract2_clst
 
     \ingroup libtensor_gen_bto
  **/
@@ -63,8 +72,12 @@ protected:
 
 /** \brief Computes the list of block contractions required to compute
         a block in C
+    \tparam N Order of first tensor less degree of contraction.
+    \tparam M Order of second tensor less degree of contraction.
+    \tparam K Order of contraction.
+    \tparam Traits Traits class.
 
-    \sa gen_bto_contract2
+    \sa gen_bto_contract2_clst_builder_base
 
     \ingroup libtensor_gen_bto
  **/
@@ -85,9 +98,6 @@ public:
 public:
     //! Type of tensor elements
     typedef typename Traits::element_type element_type;
-
-    //! Block tensor interface traits
-    typedef typename Traits::bti_traits bti_traits;
 
 public:
     typedef typename gen_bto_contract2_clst<N, M, K, element_type>::pair_type
@@ -125,8 +135,11 @@ protected:
 
 /** \brief Computes the list of block contractions required to compute
         a block in C (specialized for direct product, K = 0)
+    \tparam N Order of first tensor less degree of contraction.
+    \tparam M Order of second tensor less degree of contraction.
+    \tparam Traits Traits class.
 
-    \sa gen_bto_contract2
+    \sa gen_bto_contract2_clst_builder_base
 
     \ingroup libtensor_gen_bto
  **/
@@ -147,9 +160,6 @@ public:
 public:
     //! Type of tensor elements
     typedef typename Traits::element_type element_type;
-
-    //! Block tensor interface traits
-    typedef typename Traits::bti_traits bti_traits;
 
 public:
     typedef typename gen_bto_contract2_clst<N, M, 0, element_type>::pair_type

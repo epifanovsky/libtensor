@@ -10,13 +10,13 @@
 namespace libtensor {
 
 
-/** \brief Underlying operation for direct block tensors
+/** \brief Underlying operation for direct general block tensors
 
     Block %tensor operations that serve as underlying operations for
     direct block tensors take an arbitrary number of arguments, but result
     in one block %tensor.
 
-    \ingroup libtensor_core
+    \ingroup libtensor_gen_bto
  **/
 template<size_t N, typename BtiTraits>
 class direct_gen_bto {

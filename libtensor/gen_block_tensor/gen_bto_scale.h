@@ -16,7 +16,17 @@ namespace libtensor {
     \tparam Traits Block tensor operation traits.
     \tparam Timed Timed implementation.
 
-    \ingroup libtensor_btod
+    <b>Traits</b>
+
+    The traits class has to provide definitions for
+    - \c element_type -- Type of data elements
+    - \c bti_traits -- Type of block tensor interface traits class
+    - \c template temp_block_type<N>::type -- Type of temporary tensor block
+    - \c template to_add_type<N>::type -- Type of tensor operation to_copy
+    - \c template to_copy_type<N>::type -- Type of tensor operation to_add
+    - \c template to_random_type<N>::type -- Type of tensor operation to_random
+
+    \ingroup libtensor_gen_bto
  **/
 template<size_t N, typename Traits, typename Timed>
 class gen_bto_scale : public timings<Timed>, public noncopyable {
@@ -67,9 +77,9 @@ void gen_bto_scale<N, Traits, Timed>::perform() {
 
     typedef typename Traits::template to_scale_type<N>::type to_scale_type;
 
-	gen_bto_scale::start_timer();
+    gen_bto_scale::start_timer();
 
-	try {
+    try {
 
         gen_block_tensor_ctrl<N, bti_traits> ctrl(m_bt);
 

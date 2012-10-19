@@ -10,11 +10,19 @@ namespace libtensor {
 
 
 /** \brief Computes the symmetry of the result of a contraction
+    \tparam N Order of first tensor less degree of contraction.
+    \tparam M Order of second tensor less degree of contraction.
+    \tparam K Order of contraction.
+    \tparam Traits Traits class.
 
     Given the spaces and symmetries of the arguments of a contraction and
     the contraction descriptor, this class builds the symmetry of the result.
 
-    \ingroup libtensor
+    The traits class has to provide definitions for
+    - \c element_type -- Type of data elements
+    - \c bti_traits -- Type of block tensor interface traits class
+
+    \ingroup libtensor_gen_bto
  **/
 template<size_t N, size_t M, size_t K, typename Traits>
 class gen_bto_contract2_sym : public noncopyable {
@@ -80,11 +88,19 @@ private:
 
 /** \brief Computes the symmetry of the result of a contraction (specialized
         for same-order tensors)
+    \tparam N Order of first tensor less degree of contraction.
+    \tparam M Order of second tensor less degree of contraction.
+    \tparam K Order of contraction.
+    \tparam Traits Traits class.
 
     Given the spaces and symmetries of the arguments of a contraction and
     the contraction descriptor, this class builds the symmetry of the result.
 
-    \ingroup libtensor
+    The traits class has to provide definitions for
+    - \c element_type -- Type of data elements
+    - \c bti_traits -- Type of block tensor interface traits class
+
+    \ingroup libtensor_gen_bto
  **/
 template<size_t N, size_t K, typename Traits>
 class gen_bto_contract2_sym<N, N, K, Traits> : public noncopyable {

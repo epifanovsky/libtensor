@@ -15,6 +15,7 @@ namespace libtensor {
 
 /** \brief Sets a single element of a block %tensor to a value
     \tparam N Tensor order.
+    \tparam Traits Block tensor operation traits.
 
     The operation sets one block %tensor element specified by a block
     %index and an %index within the block. The symmetry is preserved.
@@ -25,6 +26,15 @@ namespace libtensor {
     should be canonical. If it is not, the canonical block is changed using
     %symmetry rules such that the specified element of the specified block
     is given the specified value.
+
+    <b>Traits</b>
+
+    The traits class has to provide definitions for
+    - \c element_type -- Type of data elements
+    - \c bti_traits -- Type of block tensor interface traits class
+    - \c template to_set_elem_type<N>::type -- Type of tensor operation
+        to_set_elem
+    - \c template to_set_type<N>::type -- Type of tensor operation to_set
 
     \ingroup libtensor_btod
  **/

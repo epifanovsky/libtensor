@@ -26,13 +26,17 @@ namespace libtensor {
     with the second tensor to form an intermediate, which is then contracted
     with the third tensor to yield the final result.
 
-    The formation of the intermediate is done in batches:
+    The whole operation is performed in batches. A batch of the
+    intermediate if formed from parts of the first two tensor. This batch is
+    then contracted with a part of the third tensor.
     \f[
-        ABC = A(B_1 + B_2 + \dots + B_n)C = \sum_{i=1}^n (AB_i)C \qquad
-        B = \sum_{i=1}^n B_i
+        AB_i = A_j B_k \qquad ABC = \sum_{ij} AB_i C_j
     \f]
 
-    \ingroup libtensor_block_tensor
+    The requirements for the traits class are identical to those of
+    gen_bto_contract2.
+
+    \ingroup libtensor_gen_bto
  **/
 template<size_t N1, size_t N2, size_t N3, size_t K1, size_t K2,
     typename Traits, typename Timed>

@@ -14,6 +14,15 @@ namespace libtensor {
 
 /** \brief Produces the list of non-zero canonical blocks that result from
         a contraction of two block tensors
+    \tparam N Order of first tensor less degree of contraction.
+    \tparam M Order of second tensor less degree of contraction.
+    \tparam K Order of contraction.
+    \tparam Traits Traits class.
+    \tparam Timed Class for timings.
+
+    The traits class has to provide definitions for
+    - \c element_type -- Type of data elements
+    - \c bti_traits -- Type of block tensor interface traits class
 
     \ingroup libtensor_gen_bto
  **/

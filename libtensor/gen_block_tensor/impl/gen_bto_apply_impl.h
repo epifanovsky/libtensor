@@ -179,7 +179,7 @@ void gen_bto_apply<N, Functor, Traits, Timed>::compute_block_untimed(
     // Find the orbit the index belongs to
     orbit<N, element_type> oa(ctrla.req_const_symmetry(), ia);
 
-    // If the orbit of A is not allowed, we assume it all elements are 0.0
+    // If the orbit of A is not allowed, we assume all its elements are 0.0
     if (! oa.is_allowed()) {
         if (! m_fn.keep_zero()) {
             element_type val = m_fn(Traits::zero());

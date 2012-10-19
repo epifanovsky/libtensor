@@ -25,7 +25,6 @@ dimensions<N + M> to_contract2_dims<N, M, K>::make_dimsc(
         if(conn[i + N + M] >= 2 * N + M + K) {
             size_t j = conn[i + N + M] - 2 * N - M - K;
             if(dimsa[i] != dimsb[j]) {
-		std::cout << "exception " << __FILE__ << ": " << __LINE__ << std::endl;
                 throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__,
                     "ta,tb");
             }

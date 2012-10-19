@@ -27,7 +27,6 @@ namespace libtensor {
     - \c template temp_block_type<N>::type -- Type of temporary tensor block
     - \c template to_diag_type<N, M>::type -- Type of tensor operation to_diag
 
-
     \ingroup libtensor_gen_bto
  **/
 template<size_t N, size_t M, typename Traits, typename Timed>
