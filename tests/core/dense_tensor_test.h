@@ -15,13 +15,13 @@ public:
     virtual void perform() throw(libtest::test_exception);
 
 private:
-    //!	Tests the constructor
+    //! Tests the constructor
     void test_ctor() throw(libtest::test_exception);
 
-    //!	Tests immutability
+    //! Tests immutability
     void test_immutable() throw(libtest::test_exception);
 
-    //!	Tests operations
+    //! Tests operations
     void test_operation() throw(libtest::test_exception);
 
     void test_1() throw(libtest::test_exception);

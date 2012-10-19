@@ -141,13 +141,13 @@ void btod_dirsum_test::test_ij_i_j_1(bool rnd, double d)
 
     //  Generate reference data
 
-	if(d == 0.0) {
-	    tod_dirsum<1, 1>(ta, 1.0, tb, 1.0).perform(true, tc_ref);
-	} else {
-	    scalar_transf<double> s1, sd(d);
-	    tensor_transf<2, double> trc(permutation<2>(), sd);
-	    tod_dirsum<1, 1>(ta, s1, tb, s1, trc).perform(false, tc_ref);
-	}
+    if(d == 0.0) {
+        tod_dirsum<1, 1>(ta, 1.0, tb, 1.0).perform(true, tc_ref);
+    } else {
+        scalar_transf<double> s1, sd(d);
+        tensor_transf<2, double> trc(permutation<2>(), sd);
+        tod_dirsum<1, 1>(ta, s1, tb, s1, trc).perform(false, tc_ref);
+    }
 
     //  Invoke the direct sum routine
 
@@ -175,7 +175,7 @@ void btod_dirsum_test::test_ij_i_j_2(bool rnd, double d)
 
     typedef std_allocator<double> allocator;
 
-	try {
+    try {
 
     size_t ni = 9;
 
@@ -210,13 +210,13 @@ void btod_dirsum_test::test_ij_i_j_2(bool rnd, double d)
 
     //  Generate reference data
 
-	if(d == 0.0) {
-	    tod_dirsum<1, 1>(ta, 1.0, ta, 1.0).perform(true, tc_ref);
-	} else {
-	    scalar_transf<double> s1, sd(d);
+    if(d == 0.0) {
+        tod_dirsum<1, 1>(ta, 1.0, ta, 1.0).perform(true, tc_ref);
+    } else {
+        scalar_transf<double> s1, sd(d);
         tensor_transf<2, double> trc(permutation<2>(), sd);
-	    tod_dirsum<1, 1>(ta, s1, ta, s1, trc).perform(false, tc_ref);
-	}
+        tod_dirsum<1, 1>(ta, s1, ta, s1, trc).perform(false, tc_ref);
+    }
 
     // Check the symmetry of the result
 
@@ -263,7 +263,7 @@ void btod_dirsum_test::test_ij_i_j_3(bool rnd, double d)
 
     typedef std_allocator<double> allocator;
 
-	try {
+    try {
 
     size_t ni = 9;
 
@@ -298,13 +298,13 @@ void btod_dirsum_test::test_ij_i_j_3(bool rnd, double d)
 
     //  Generate reference data
 
-	if(d == 0.0) {
-	    tod_dirsum<1, 1>(ta, 1.0, ta, -1.0).perform(true, tc_ref);
-	} else {
+    if(d == 0.0) {
+        tod_dirsum<1, 1>(ta, 1.0, ta, -1.0).perform(true, tc_ref);
+    } else {
         scalar_transf<double> s1(1.), s2(-1.), sd(d);
         tensor_transf<2, double> trc(permutation<2>(), sd);
-	    tod_dirsum<1, 1>(ta, s1, ta, s2, trc).perform(false, tc_ref);
-	}
+        tod_dirsum<1, 1>(ta, s1, ta, s2, trc).perform(false, tc_ref);
+    }
 
     // Check the symmetry of the result
 
@@ -352,7 +352,7 @@ void btod_dirsum_test::test_ijk_ij_k_1(bool rnd, double d)
 
     typedef std_allocator<double> allocator;
 
-	try {
+    try {
 
     size_t ni = 9, nj = 9, nk = 7;
 
@@ -389,13 +389,13 @@ void btod_dirsum_test::test_ijk_ij_k_1(bool rnd, double d)
 
     //  Generate reference data
 
-	if(d == 0.0) {
-		tod_dirsum<2, 1>(ta, 1.5, tb, 1.0).perform(true, tc_ref);
-	} else {
+    if(d == 0.0) {
+        tod_dirsum<2, 1>(ta, 1.5, tb, 1.0).perform(true, tc_ref);
+    } else {
         scalar_transf<double> s1(1.5), s2(1.), sd(d);
         tensor_transf<3, double> trc(permutation<3>(), sd);
-		tod_dirsum<2, 1>(ta, s1, tb, s2, trc).perform(false, tc_ref);
-	}
+        tod_dirsum<2, 1>(ta, s1, tb, s2, trc).perform(false, tc_ref);
+    }
 
     //  Invoke the direct sum routine
 
@@ -427,7 +427,7 @@ void btod_dirsum_test::test_ikjl_ij_kl_1(bool rnd, double d)
 
     typedef std_allocator<double> allocator;
 
-	try {
+    try {
 
     size_t ni = 9, nj = 9, nk = 7, nl = 7;
 
@@ -464,14 +464,14 @@ void btod_dirsum_test::test_ikjl_ij_kl_1(bool rnd, double d)
     //  Generate reference data
 
     permutation<4> permc;
-	permc.permute(1, 2);
-	if(d == 0.0) {
-		tod_dirsum<2, 2>(ta, 1.5, tb, -1.0, permc).perform(true, tc_ref);
-	} else {
+    permc.permute(1, 2);
+    if(d == 0.0) {
+        tod_dirsum<2, 2>(ta, 1.5, tb, -1.0, permc).perform(true, tc_ref);
+    } else {
         scalar_transf<double> s1(1.5), s2(-1.), sd(d);
         tensor_transf<4, double> trc(permc, sd);
-		tod_dirsum<2, 2>(ta, s1, tb, s2, trc).perform(false, tc_ref);
-	}
+        tod_dirsum<2, 2>(ta, s1, tb, s2, trc).perform(false, tc_ref);
+    }
 
     //  Invoke the direct sum routine
 
@@ -504,7 +504,7 @@ void btod_dirsum_test::test_ikjl_ij_kl_2(bool rnd, double d)
 
     typedef std_allocator<double> allocator;
 
-	try {
+    try {
 
     size_t ni = 7, nj = 11, nk = 7, nl = 5;
 
@@ -566,15 +566,15 @@ void btod_dirsum_test::test_ikjl_ij_kl_2(bool rnd, double d)
 
     //  Generate reference data
 
-	permutation<4> permc;
-	permc.permute(1, 2);
-	if(d == 0.0) {
-		tod_dirsum<2, 2>(ta, 1.5, tb, -1.0, permc).perform(true, tc_ref);
-	} else {
+    permutation<4> permc;
+    permc.permute(1, 2);
+    if(d == 0.0) {
+        tod_dirsum<2, 2>(ta, 1.5, tb, -1.0, permc).perform(true, tc_ref);
+    } else {
         scalar_transf<double> s1(1.5), s2(-1.), sd(d);
         tensor_transf<4, double> trc(permc, sd);
-		tod_dirsum<2, 2>(ta, s1, tb, s2, trc).perform(false, tc_ref);
-	}
+        tod_dirsum<2, 2>(ta, s1, tb, s2, trc).perform(false, tc_ref);
+    }
 
     //  Invoke the direct sum routine
 
@@ -734,7 +734,7 @@ void btod_dirsum_test::test_ikjl_ij_kl_3b(bool rnd,
 
     typedef std_allocator<double> allocator;
 
-	try {
+    try {
 
     size_t ni = 8, nj = 16, nk = 8, nl = 10;
 
@@ -834,15 +834,15 @@ void btod_dirsum_test::test_ikjl_ij_kl_3b(bool rnd,
 
     //  Generate reference data
 
-	permutation<4> permc;
-	permc.permute(1, 2);
-	if(d == 0.0) {
-		tod_dirsum<2, 2>(ta, 1.5, tb, -1.0, permc).perform(true, tc_ref);
-	} else {
+    permutation<4> permc;
+    permc.permute(1, 2);
+    if(d == 0.0) {
+        tod_dirsum<2, 2>(ta, 1.5, tb, -1.0, permc).perform(true, tc_ref);
+    } else {
         scalar_transf<double> s1(1.5), s2(-1.), sd(d);
         tensor_transf<4, double> trc(permc, sd);
-		tod_dirsum<2, 2>(ta, s1, tb, s2, trc).perform(false, tc_ref);
-	}
+        tod_dirsum<2, 2>(ta, s1, tb, s2, trc).perform(false, tc_ref);
+    }
 
     //  Invoke the direct sum routine
 
@@ -1039,7 +1039,7 @@ void btod_dirsum_test::test_iklj_ij_kl_1(bool rnd, double d)
 
     typedef std_allocator<double> allocator;
 
-	try {
+    try {
 
     size_t ni = 10, nj = 12;
 
@@ -1104,15 +1104,15 @@ void btod_dirsum_test::test_iklj_ij_kl_1(bool rnd, double d)
 
     //  Generate reference data
 
-	permutation<4> permc;
-	permc.permute(1, 2);
-	if(d == 0.0) {
-		tod_dirsum<2, 2>(ta, -1.0, ta, -1.0, permc).perform(true, tc_ref);
-	} else {
+    permutation<4> permc;
+    permc.permute(1, 2);
+    if(d == 0.0) {
+        tod_dirsum<2, 2>(ta, -1.0, ta, -1.0, permc).perform(true, tc_ref);
+    } else {
         scalar_transf<double> s1(-1.), sd(d);
         tensor_transf<4, double> trc(permc, sd);
-		tod_dirsum<2, 2>(ta, s1, ta, s1, trc).perform(false, tc_ref);
-	}
+        tod_dirsum<2, 2>(ta, s1, ta, s1, trc).perform(false, tc_ref);
+    }
 
     // Check symmetry
 
