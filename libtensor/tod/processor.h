@@ -1,8 +1,8 @@
 #ifndef LIBTENSOR_PROCESSOR_H
 #define LIBTENSOR_PROCESSOR_H
 
-#include "../defs.h"
-#include "../exception.h"
+#include <libtensor/defs.h>
+#include <libtensor/exception.h>
 
 namespace libtensor {
 
