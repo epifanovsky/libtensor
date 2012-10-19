@@ -2,10 +2,10 @@
 #define LIBTENSOR_BTOD_IMPORT_RAW_H
 
 #include <libtensor/core/allocator.h>
+#include <libtensor/core/bad_block_index_space.h>
 #include <libtensor/dense_tensor/tod_import_raw.h>
 #include <libtensor/dense_tensor/tod_set.h>
 #include "btod_import_raw_base.h"
-#include "bad_block_index_space.h"
 
 namespace libtensor {
 

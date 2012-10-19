@@ -9,7 +9,7 @@
 #include <libtensor/symmetry/so_dirsum.h>
 #include <libtensor/symmetry/so_merge.h>
 #include <libtensor/symmetry/so_permute.h>
-#include <libtensor/btod/bad_block_index_space.h>
+#include <libtensor/core/bad_block_index_space.h>
 #include "gen_bto_copy_bis.h"
 #include "../gen_block_tensor_ctrl.h"
 #include "../gen_bto_add.h"

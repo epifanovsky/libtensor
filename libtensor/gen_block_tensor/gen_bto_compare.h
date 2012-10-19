@@ -3,7 +3,7 @@
 
 #include <sstream>
 #include <libtensor/defs.h>
-#include <libtensor/btod/bad_block_index_space.h>
+#include <libtensor/core/bad_block_index_space.h>
 #include <libtensor/core/noncopyable.h>
 #include <libtensor/core/orbit.h>
 #include <libtensor/core/transf_list.h>

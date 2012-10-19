@@ -2,7 +2,7 @@
 #define LIBTENSOR_GEN_BTO_COMPARE_IMPL_H
 
 #include <libtensor/core/orbit_list.h>
-#include <libtensor/btod/bad_block_index_space.h>
+#include <libtensor/core/bad_block_index_space.h>
 #include "../gen_bto_compare.h"
 
 namespace libtensor {

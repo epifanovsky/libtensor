@@ -1,6 +1,10 @@
 #ifndef LIBTENSOR_BTOD_SUM_IMPL_H
 #define LIBTENSOR_BTOD_SUM_IMPL_H
 
+#include <libtensor/block_tensor/block_tensor.h>
+#include <libtensor/block_tensor/btod_copy.h>
+#include <libtensor/block_tensor/btod_scale.h>
+#include <libtensor/core/bad_block_index_space.h>
 #include <libtensor/core/block_index_space_product_builder.h>
 #include <libtensor/core/orbit.h>
 #include <libtensor/dense_tensor/tod_set.h>
@@ -9,10 +13,6 @@
 #include <libtensor/symmetry/so_copy.h>
 #include <libtensor/gen_block_tensor/gen_bto_aux_add.h>
 #include <libtensor/gen_block_tensor/gen_bto_aux_copy.h>
-#include <libtensor/block_tensor/block_tensor.h>
-#include <libtensor/block_tensor/btod_copy.h>
-#include <libtensor/block_tensor/btod_scale.h>
-#include <libtensor/btod/bad_block_index_space.h>
 #include "../btod_sum.h"
 
 namespace libtensor {
