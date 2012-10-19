@@ -1,10 +1,13 @@
 #ifndef LIBTENSOR_TOD_BTCONV_IMPL_H
 #define LIBTENSOR_TOD_BTCONV_IMPL_H
 
-#include <libtensor/linalg/linalg.h>
+#include <list>
+#include <libtensor/block_tensor/block_tensor_ctrl.h>
 #include <libtensor/core/orbit.h>
 #include <libtensor/core/orbit_list.h>
-#include <libtensor/block_tensor/block_tensor_ctrl.h>
+#include <libtensor/linalg/linalg.h>
+#include <libtensor/kernels/kern_dcopy.h>
+#include <libtensor/kernels/loop_list_runner.h>
 #include "../dense_tensor_ctrl.h"
 #include "../tod_btconv.h"
 
@@ -95,56 +98,32 @@ void tod_btconv<N>::copy_block(double *optr, const dimensions<N> &odims,
     for(size_t i = 0; i < N; i++) ib[i] = i;
     inv_perm.apply(ib);
 
-    loop_list_t lst;
+    std::list< loop_list_node<1, 1> > loop_in, loop_out;
+    typename std::list< loop_list_node<1, 1> >::iterator inode = loop_in.end();
+
     for(size_t i = 0; i < N; i++) {
         size_t inca = idims.get_increment(i);
         size_t incb = odims.get_increment(ib[i]);
-        loop_list_node node(idims[i], inca, incb);
-        if(i == N - 1) {
-            node.m_op = new op_dcopy(idims[i], inca, incb, icoeff);
-        } else {
-            node.m_op = new op_loop(idims[i], inca, incb);
-        }
-        lst.push_back(node);
+        inode = loop_in.insert(loop_in.end(), loop_list_node<1, 1>(idims[i]));
+        inode->stepa(0) = idims.get_increment(i);
+        inode->stepb(0) = odims.get_increment(ib[i]);
     }
 
-    registers regs;
-    regs.m_ptra = iptr;
-    regs.m_ptrb = optr + abs_index<N>::get_abs_index(ooffs, odims);
-    processor_t proc(lst, regs);
-    proc.process_next();
+    double *pb = optr + abs_index<N>::get_abs_index(ooffs, odims);
 
-    for(typename loop_list_t::iterator i = lst.begin();
-        i != lst.end(); i++) {
+    loop_registers<1, 1> regs;
+    regs.m_ptra[0] = iptr;
+    regs.m_ptrb[0] = pb;
+    regs.m_ptra_end[0] = iptr + idims.get_size();
+    regs.m_ptrb_end[0] = pb + odims.get_size();
 
-        delete i->m_op;
-        i->m_op = NULL;
+    {
+        std::auto_ptr< kernel_base<linalg, 1, 1> > kern(
+                kern_dcopy<linalg>::match(icoeff, loop_in, loop_out));
+        tod_btconv<N>::start_timer(kern->get_name());
+        loop_list_runner<linalg, 1, 1>(loop_in).run(0, regs, *kern);
+        tod_btconv<N>::stop_timer(kern->get_name());
     }
-}
-
-
-template<size_t N>
-void tod_btconv<N>::op_loop::exec(processor_t &proc, registers &regs)
-    throw(exception) {
-
-    const double *ptra = regs.m_ptra;
-    double *ptrb = regs.m_ptrb;
-
-    for(size_t i=0; i<m_len; i++) {
-        regs.m_ptra = ptra;
-        regs.m_ptrb = ptrb;
-        proc.process_next();
-        ptra += m_inca;
-        ptrb += m_incb;
-    }
-}
-
-
-template<size_t N>
-void tod_btconv<N>::op_dcopy::exec(processor_t &proc, registers &regs)
-    throw(exception) {
-    linalg::copy_i_i(0, m_len, regs.m_ptra, m_inca, regs.m_ptrb, m_incb);
-    if(m_c != 1.0) linalg::mul1_i_x(0, m_len, m_c, regs.m_ptrb, m_incb);
 }
 
 
