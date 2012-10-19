@@ -1,7 +1,8 @@
 #ifndef LIBTENSOR_DEFAULT_SYNC_POLICY_H
 #define LIBTENSOR_DEFAULT_SYNC_POLICY_H
 
-#include "threads.h"
+#include <libutil/threads/mutex.h>
+#include <libutil/threads/rwlock.h>
 
 namespace libtensor {
 
@@ -12,8 +13,8 @@ namespace libtensor {
  **/
 class default_sync_policy {
 public:
-    typedef mutex mutex_t; //!< Mutex type
-    typedef rwlock rwlock_t; //!< Read-write lock type
+    typedef libutil::mutex mutex_t; //!< Mutex type
+    typedef libutil::rwlock rwlock_t; //!< Read-write lock type
 
 };
 
