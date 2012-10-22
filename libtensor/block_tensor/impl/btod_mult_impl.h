@@ -13,7 +13,7 @@ const char *btod_mult<N>::k_clazz = "btod_mult<N>";
 
 
 template<size_t N>
-void btod_mult<N>::perform(block_tensor_i<N, double> &btc) {
+void btod_mult<N>::perform(gen_block_tensor_i<N, bti_traits> &btc) {
 
     gen_bto_aux_copy<N, btod_traits> out(get_symmetry(), btc);
     perform(out);
@@ -21,7 +21,8 @@ void btod_mult<N>::perform(block_tensor_i<N, double> &btc) {
 
 
 template<size_t N>
-void btod_mult<N>::perform(block_tensor_i<N, double> &btc, const double &d) {
+void btod_mult<N>::perform(gen_block_tensor_i<N, bti_traits> &btc,
+        const scalar_transf<double> &d) {
 
     typedef block_tensor_i_traits<double> bti_traits;
 
@@ -36,21 +37,20 @@ void btod_mult<N>::perform(block_tensor_i<N, double> &btc, const double &d) {
 
 
 template<size_t N>
-void btod_mult<N>::compute_block(dense_tensor_i<N, double> &blkc,
-        const index<N> &ic) {
+void btod_mult<N>::perform(block_tensor_i<N, double> &btc, double d) {
 
-    m_gbto.compute_block(true, blkc, ic, tensor_transf<N, double>());
+    perform(btc, scalar_transf<double>(d));
 }
 
+
 template<size_t N>
-void btod_mult<N>::compute_block(bool zero, dense_tensor_i<N, double> &blkc,
-    const index<N> &ic, const tensor_transf<N, double> &trc,
-    const double &c) {
+void btod_mult<N>::compute_block(
+        bool zero,
+        const index<N> &ic,
+        const tensor_transf<N, double> &trc,
+        dense_tensor_wr_i<N, double> &blkc) {
 
-    tensor_transf<N, double> trx(trc);
-    trx.transform(scalar_transf<double>(c));
-
-    m_gbto.compute_block(zero, blkc, ic, trx);
+    m_gbto.compute_block(zero, ic, trc, blkc);
 }
 
 

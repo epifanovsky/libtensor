@@ -1,10 +1,10 @@
 #ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_DIRECT_PRODUCT_CONTRACTION2_BUILDER_H
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_DIRECT_PRODUCT_CONTRACTION2_BUILDER_H
 
-#include "../../defs.h"
-#include "../../exception.h"
-#include "../../core/permutation_builder.h"
-#include "../../tod/contraction2.h"
+#include <libtensor/defs.h>
+#include <libtensor/exception.h>
+#include <libtensor/core/contraction2.h>
+#include <libtensor/core/permutation_builder.h>
 #include "../letter_expr.h"
 
 namespace libtensor {

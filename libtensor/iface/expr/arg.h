@@ -3,8 +3,8 @@
 
 #include "../../defs.h"
 #include "../../exception.h"
-#include <libtensor/block_tensor/bto/additive_bto.h>
-#include <libtensor/block_tensor/btod/btod_traits.h>
+#include <libtensor/block_tensor/btod_traits.h>
+#include <libtensor/gen_block_tensor/additive_gen_bto.h>
 #include "../../core/permutation.h"
 #include "../btensor_i.h"
 
@@ -25,7 +25,7 @@ struct arg_traits<N, T, oper_tag> {
 
 template<size_t N>
 struct arg_traits<N, double, oper_tag> {
-    typedef additive_bto<N, btod_traits> bto_t;
+    typedef additive_gen_bto<N, btod_traits::bti_traits> bto_t;
 };
 
 /** \brief Generic container for an expression argument

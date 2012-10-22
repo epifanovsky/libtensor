@@ -54,7 +54,7 @@ void tod_import_raw_stream_test::test_1(const dimensions<N> &dims,
 
     try {
 
-    //	Create tensors
+    // Create tensors
 
     dimensions<N> dims_wnd(ir);
     size_t sz1 = dims.get_size(), sz2 = dims_wnd.get_size();
@@ -64,7 +64,7 @@ void tod_import_raw_stream_test::test_1(const dimensions<N> &dims,
     {
         tensor_ctrl_t tc1(t1), tc2(t2), tc2_ref(t2_ref);
 
-        //	Fill in random data
+        // Fill in random data
 
         double *p1 = tc1.req_dataptr();
         for(size_t i = 0; i < sz1; i++) p1[i] = drand48();
@@ -75,7 +75,7 @@ void tod_import_raw_stream_test::test_1(const dimensions<N> &dims,
         for(size_t i = 0; i < sz2; i++) p2[i] = drand48();
         tc2.ret_dataptr(p2);
 
-        //	Create reference data
+        // Create reference data
 
         const double *p1_ref = tc1.req_const_dataptr();
         double *p2_ref = tc2_ref.req_dataptr();
@@ -99,12 +99,12 @@ void tod_import_raw_stream_test::test_1(const dimensions<N> &dims,
         ss.write((const char*)p1_ref, sz1 * sizeof(double));
         tc1.ret_const_dataptr(p1_ref);
 
-        //	Invoke the operation
+        // Invoke the operation
 
         tod_import_raw_stream<N>(ss, dims, ir).perform(t2);
     }
 
-    //	Compare against the reference
+    // Compare against the reference
 
     compare_ref<N>::compare(tnss.str().c_str(), t2, t2_ref, 1e-15);
 

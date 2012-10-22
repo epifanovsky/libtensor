@@ -4,7 +4,7 @@
 #include <libtensor/kernels/kern_apply.h>
 #include <libtensor/kernels/kern_applyadd.h>
 #include <libtensor/kernels/loop_list_runner.h>
-#include <libtensor/tod/bad_dimensions.h>
+#include <libtensor/core/bad_dimensions.h>
 #include "../dense_tensor_ctrl.h"
 #include "../tod_apply.h"
 

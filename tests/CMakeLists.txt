@@ -7,6 +7,8 @@ set(SRC_CORE
     core/block_index_subspace_builder_test.C
     core/block_map_test.C
     core/block_tensor_test.C
+    core/contraction2_list_builder_test.C
+    core/contraction2_test.C
     core/dense_tensor_test.C
     core/dimensions_test.C
     core/direct_block_tensor_test.C
@@ -31,8 +33,6 @@ set(SRC_CORE
 set(SRC_TOD
     tod/libtensor_tod_tests.C
     tod/libtensor_tod_suite.C
-    tod/contraction2_list_builder_test.C
-    tod/contraction2_test.C
     tod/tod_add_test.C
     tod/tod_apply_test.C
     tod/tod_btconv_test.C
@@ -159,6 +159,7 @@ set(SRC_BTOD
     btod/btod_trace_test.C
     btod/btod_tridiagonalize_test.C
     btod/btod_vmpriority_test.C
+    btod/gen_bto_dirsum_sym_test.C
 )
 
 set(SRC_LINALG

@@ -27,7 +27,6 @@ namespace libtensor {
     - \c template temp_block_type<N>::type -- Type of temporary tensor block
     - \c template to_diag_type<N, M>::type -- Type of tensor operation to_diag
 
-
     \ingroup libtensor_gen_bto
  **/
 template<size_t N, size_t M, typename Traits, typename Timed>
@@ -110,17 +109,17 @@ public:
      **/
     void compute_block(
         bool zero,
-        wr_block_type &blkb,
         const index<N - M + 1> &ib,
-        const tensor_transf_type &trb);
+        const tensor_transf_type &trb,
+        wr_block_type &blkb);
 
     /** \brief Same as compute_block(), except it doesn't run a timer
      **/
     void compute_block_untimed(
         bool zero,
-        wr_block_type &blkb,
         const index<N - M + 1> &ib,
-        const tensor_transf_type &trb);
+        const tensor_transf_type &trb,
+        wr_block_type &blkb);
 
 private:
     /** \brief Forms the block %index space of the output or throws an

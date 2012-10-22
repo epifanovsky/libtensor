@@ -48,12 +48,12 @@ void gen_bto_aux_copy<N, Traits>::close() {
 template<size_t N, typename Traits>
 void gen_bto_aux_copy<N, Traits>::put(
     const index<N> &idx,
-    block_type &blk,
+    rd_block_type &blk,
     const tensor_transf<N, element_type> &tr) {
 
     typedef typename Traits::template to_copy_type<N>::type to_copy_type;
 
-    block_type &blk_tgt = m_ctrl.req_block(idx);
+    wr_block_type &blk_tgt = m_ctrl.req_block(idx);
     to_copy_type(blk, tr).perform(true, blk_tgt);
     m_ctrl.ret_block(idx);
 }

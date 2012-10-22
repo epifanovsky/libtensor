@@ -12,14 +12,40 @@
 namespace libtensor {
 
 
-/** \brief Computes one batch of the contraction of two block tensors
+/** \brief Computes the contraction of two general block tensors
     \tparam N Order of first tensor less degree of contraction.
     \tparam M Order of second tensor less degree of contraction.
     \tparam K Order of contraction.
+    \tparam Traits Traits class for this block tensor operation.
+    \tparam Timed Class name to identify timer with.
 
-    \sa gen_bto_contract2_basic
+    This algorithm computes the contraction of two general block tensors
+    in batches. It prepares block index space and symmetry
+    (\sa gen_bto_contract2_sym), determines the optimal way of contraction
+    (\sa gen_bto_contract2_align), and collects the tensor blocks which are
+    to be computed in one batch. The calculation of each batch is then
+    handed to gen_bto_contract2_batch.
 
-    \ingroup libtensor_block_tensor_btod
+    The batch-wise formation of the result is done as follows
+    \f[
+      C = \sum_{ij} A_i B_j \qquad
+      A=\sum_i A_i \text{ and } B=\sum_i B_i
+    \f]
+
+    TODO: Improve the way the batches are determined.
+
+    The traits class has to provide definitions for
+    - \c element_type -- Type of data elements
+    - \c bti_traits -- Type of block tensor interface traits class
+    - \c template temp_block_tensor_type<NX>::type -- Type of temporary
+            block tensors
+    - \c template to_set_type<NX>::type -- Type of tensor operation to_set
+    - \c template to_contract2_type<N, M, K>::type -- Type of tensor
+            operation to_contract2
+    - \c template to_contract2_type<N, M, K>::clst_optimize_type -- Type of
+            contraction pair list optimizer (\sa gen_bto_contract2_clst_builder)
+
+    \ingroup libtensor_gen_bto
  **/
 template<size_t N, size_t M, size_t K, typename Traits, typename Timed>
 class gen_bto_contract2 : public timings<Timed>, public noncopyable {
@@ -46,7 +72,8 @@ public:
             rd_block_b_type;
 
     //! Type of write-only block
-    typedef typename bti_traits::template wr_block_type<NC>::type wr_block_type;
+    typedef typename bti_traits::template wr_block_type<NC>::type
+            wr_block_type;
 
 private:
     contraction2<N, M, K> m_contr; //!< Contraction

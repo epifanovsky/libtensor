@@ -87,7 +87,7 @@ void tod_conv_diag_tensor_test::test_1_i(size_t ni)
         }
 
         tod_conv_diag_tensor<1>(dt).perform(t);
-	compare_ref<1>::compare(tn.c_str(), t, t_ref, 1e-15);
+    compare_ref<1>::compare(tn.c_str(), t, t_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
@@ -133,7 +133,7 @@ void tod_conv_diag_tensor_test::test_2_i(size_t ni)
         }
 
         tod_conv_diag_tensor<1>(dt).perform(t);
-	compare_ref<1>::compare(tn.c_str(), t, t_ref, 1e-15);
+    compare_ref<1>::compare(tn.c_str(), t, t_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
@@ -189,7 +189,7 @@ void tod_conv_diag_tensor_test::test_3_i(size_t ni)
         }
 
         tod_conv_diag_tensor<1>(dt).perform(t);
-	compare_ref<1>::compare(tn.c_str(), t, t_ref, 1e-15);
+    compare_ref<1>::compare(tn.c_str(), t, t_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
@@ -231,7 +231,7 @@ void tod_conv_diag_tensor_test::test_1_ij(size_t ni, size_t nj)
         }
 
         tod_conv_diag_tensor<2>(dt).perform(t);
-	compare_ref<2>::compare(tn.c_str(), t, t_ref, 1e-15);
+    compare_ref<2>::compare(tn.c_str(), t, t_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
@@ -277,7 +277,7 @@ void tod_conv_diag_tensor_test::test_2_ij(size_t ni, size_t nj)
         }
 
         tod_conv_diag_tensor<2>(dt).perform(t);
-	compare_ref<2>::compare(tn.c_str(), t, t_ref, 1e-15);
+    compare_ref<2>::compare(tn.c_str(), t, t_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
@@ -334,7 +334,7 @@ void tod_conv_diag_tensor_test::test_1_ii(size_t ni)
         }
 
         tod_conv_diag_tensor<2>(dt).perform(t);
-	compare_ref<2>::compare(tn.c_str(), t, t_ref, 1e-15);
+    compare_ref<2>::compare(tn.c_str(), t, t_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
@@ -394,7 +394,7 @@ void tod_conv_diag_tensor_test::test_1_ii_ij(size_t ni)
         }
 
         tod_conv_diag_tensor<2>(dt).perform(t);
-	compare_ref<2>::compare(tn.c_str(), t, t_ref, 1e-15);
+    compare_ref<2>::compare(tn.c_str(), t, t_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
@@ -468,7 +468,7 @@ void tod_conv_diag_tensor_test::test_1_iik_iji(size_t ni)
         }
 
         tod_conv_diag_tensor<3>(dt).perform(t);
-	compare_ref<3>::compare(tn.c_str(), t, t_ref, 1e-15);
+    compare_ref<3>::compare(tn.c_str(), t, t_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
@@ -560,7 +560,7 @@ void tod_conv_diag_tensor_test::test_1_iijj_ijij_ijjk(size_t ni)
         }
 
         tod_conv_diag_tensor<4>(dt).perform(t);
-	compare_ref<4>::compare(tn.c_str(), t, t_ref, 1e-15);
+    compare_ref<4>::compare(tn.c_str(), t, t_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(tn.c_str(), __FILE__, __LINE__, e.what());

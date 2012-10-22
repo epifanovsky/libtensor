@@ -43,10 +43,10 @@ void btod_scale_test::test_generic(
 
     try {
 
-	dense_tensor<N, double, allocator_t> t(bt.get_bis().get_dims()),
-		t_ref(bt.get_bis().get_dims());
-	tod_btconv<N>(bt).perform(t_ref);
-	tod_scale<N>(c).perform(t_ref);
+    dense_tensor<N, double, allocator_t> t(bt.get_bis().get_dims()),
+        t_ref(bt.get_bis().get_dims());
+    tod_btconv<N>(bt).perform(t_ref);
+    tod_scale<N>(c).perform(t_ref);
 
     btod_scale<N>(bt, c).perform();
     tod_btconv<N>(bt).perform(t);

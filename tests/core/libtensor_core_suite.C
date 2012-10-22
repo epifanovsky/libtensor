@@ -12,6 +12,8 @@ libtensor_core_suite::libtensor_core_suite() :
         m_utf_block_index_subspace_builder);
     add_test("block_map", m_utf_block_map);
     add_test("block_tensor", m_utf_block_tensor);
+    add_test("contraction2", m_utf_contraction2);
+    add_test("contraction2_list_builder", m_utf_contraction2_list_builder);
     add_test("dense_tensor", m_utf_dense_tensor);
     add_test("dimensions", m_utf_dimensions);
     add_test("direct_block_tensor", m_utf_direct_block_tensor);

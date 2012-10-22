@@ -3,9 +3,8 @@
 
 #include <list>
 #include <libtensor/core/dimensions.h>
+#include <libtensor/core/bad_dimensions.h>
 #include "dense_tensor_i.h"
-#include <libtensor/tod/processor.h>
-#include <libtensor/tod/bad_dimensions.h>
 
 namespace libtensor {
 
@@ -34,51 +33,8 @@ private:
     dimensions<N> m_dims; //!< Dimensions of the memory block
     index_range<N> m_ir; //!< Index range of the window
 
-private:
-    struct registers {
-        const double *m_ptra;
-        double *m_ptrb;
-    };
-
-    struct loop_list_node;
-    typedef std::list<loop_list_node> loop_list_t;
-    typedef processor<loop_list_t, registers> processor_t;
-    typedef processor_op_i<loop_list_t, registers> processor_op_i_t;
-
-    struct loop_list_node {
-    public:
-        size_t m_weight;
-        size_t m_inca, m_incb;
-        processor_op_i_t *m_op;
-        loop_list_node()
-            : m_weight(0), m_inca(0), m_incb(0), m_op(NULL) { }
-        loop_list_node(size_t weight, size_t inca, size_t incb)
-            : m_weight(weight), m_inca(inca), m_incb(incb),
-              m_op(NULL) { }
-        processor_op_i_t *op() const { return m_op; }
-    };
-
-    class op_loop : public processor_op_i_t {
-    private:
-        size_t m_len, m_inca, m_incb;
-    public:
-        op_loop(size_t len, size_t inca, size_t incb)
-            : m_len(len), m_inca(inca), m_incb(incb) { }
-        virtual void exec(processor_t &proc, registers &regs)
-            throw(exception);
-    };
-
-    class op_dcopy : public processor_op_i_t {
-    private:
-        size_t m_len;
-    public:
-        op_dcopy(size_t len) : m_len(len) { }
-        virtual void exec(processor_t &proc, registers &regs)
-            throw(exception);
-    };
-
 public:
-    /**	\brief Initializes the operation
+    /** \brief Initializes the operation
         \param ptr Pointer to data block
         \param dims Dimensions of the data block
         \param ir Index range of the window
@@ -87,10 +43,10 @@ public:
         const index_range<N> &ir) :
         m_ptr(ptr), m_dims(dims), m_ir(ir) { }
 
-    /**	\brief Performs the operation
+    /** \brief Performs the operation
         \param t Output %tensor
     **/
-    void perform(dense_tensor_i<N, double> &t);
+    void perform(dense_tensor_wr_i<N, double> &t);
 
 };
 

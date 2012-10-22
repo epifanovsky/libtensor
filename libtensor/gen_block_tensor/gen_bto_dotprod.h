@@ -13,6 +13,8 @@ namespace libtensor {
 
 /** \brief Computes the dot product of two block tensors
     \tparam N Tensor order.
+    \tparam Traits Block tensor operation traits.
+    \tparam Timed Timed implementation.
 
     The dot product of two tensors is defined as the sum of elements of
     the element-wise product:
@@ -21,7 +23,13 @@ namespace libtensor {
 
     This operation computes the dot product for a series of arguments.
 
-    \ingroup libtensor_btod
+    The traits class has to provide definitions for
+    - \c element_type -- Type of data elements
+    - \c bti_traits -- Type of block tensor interface traits class
+    - \c template temp_block_type<N>::type -- Type of temporary tensor block
+    - \c template to_dotprod_type<N>::type -- Type of tensor operation to_dotprod
+
+    \ingroup libtensor_gen_bto
  **/
 template<size_t N, typename Traits, typename Timed>
 class gen_bto_dotprod : public timings<Timed>, public noncopyable {

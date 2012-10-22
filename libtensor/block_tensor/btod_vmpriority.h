@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_BTOD_VMPRIORITY_H
 #define LIBTENSOR_BTOD_VMPRIORITY_H
 
-#include <libtensor/block_tensor/btod/btod_traits.h>
+#include <libtensor/block_tensor/btod_traits.h>
 #include <libtensor/core/noncopyable.h>
 #include <libtensor/gen_block_tensor/gen_bto_vmpriority.h>
 

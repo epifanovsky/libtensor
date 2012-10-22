@@ -2,7 +2,7 @@
 #define LIBTENSOR_BTOD_MULT1_H
 
 #include <libtensor/timings.h>
-#include <libtensor/block_tensor/btod/btod_traits.h>
+#include <libtensor/block_tensor/btod_traits.h>
 #include <libtensor/gen_block_tensor/gen_bto_mult1.h>
 
 namespace libtensor {

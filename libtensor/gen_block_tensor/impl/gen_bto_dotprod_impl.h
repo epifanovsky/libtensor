@@ -7,7 +7,7 @@
 #include <libtensor/core/orbit.h>
 #include <libtensor/core/orbit_list.h>
 #include <libtensor/core/permutation_builder.h>
-#include <libtensor/btod/bad_block_index_space.h>
+#include <libtensor/core/bad_block_index_space.h>
 #include <libtensor/symmetry/so_dirprod.h>
 #include <libtensor/symmetry/so_merge.h>
 #include "../gen_bto_dotprod.h"

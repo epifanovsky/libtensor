@@ -78,7 +78,7 @@ void diag_tod_set_test::test_1() throw(libtest::test_exception) {
         diag_tod_set<4>().perform(dt);
 
         tod_conv_diag_tensor<4>(dt).perform(t);
-	compare_ref<4>::compare(testname, t, t_ref, 1e-15);
+    compare_ref<4>::compare(testname, t, t_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
@@ -140,7 +140,7 @@ void diag_tod_set_test::test_2() throw(libtest::test_exception) {
         diag_tod_set<4>(1.0).perform(dt);
 
         tod_conv_diag_tensor<4>(dt).perform(t);
-	compare_ref<4>::compare(testname, t, t_ref, 1e-15);
+    compare_ref<4>::compare(testname, t, t_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
@@ -194,7 +194,7 @@ void diag_tod_set_test::test_3() throw(libtest::test_exception) {
         diag_tod_set<4>(-2.5).perform(dt);
 
         tod_conv_diag_tensor<4>(dt).perform(t);
-	compare_ref<4>::compare(testname, t, t_ref, 1e-15);
+    compare_ref<4>::compare(testname, t, t_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());

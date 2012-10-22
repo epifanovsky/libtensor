@@ -5,6 +5,7 @@
 #include <libtensor/dense_tensor/dense_tensor_i.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/tod.h>
+#include <libtensor/block_tensor/btod_contract2_clst_optimize.h>
 #include <libtensor/block_tensor/block_tensor.h>
 #include <libtensor/block_tensor/block_tensor_ctrl.h>
 #include <libtensor/block_tensor/block_tensor_i_traits.h>
@@ -24,34 +25,10 @@ struct btod_traits {
     //! Block tensor interface traits
     typedef block_tensor_i_traits<double> bti_traits;
 
-    //! Type of block tensor
-    template<size_t N>
-    struct block_tensor_type {
-        typedef block_tensor_i<N, double> type;
-    };
-
-    //! Type of block tensor control
-    template<size_t N>
-    struct block_tensor_ctrl_type {
-        typedef block_tensor_ctrl<N, double> type;
-    };
-
     //! Type of temporary block tensor
     template<size_t N>
     struct temp_block_tensor_type {
         typedef block_tensor< N, double, allocator<double> > type;
-    };
-
-    //! Type of block of block tensors
-    template<size_t N>
-    struct block_type {
-        typedef dense_tensor_i<N, double> type;
-    };
-
-    //! Type of block of block tensors
-    template<size_t N>
-    struct wr_block_type {
-        typedef dense_tensor_i<N, double> type;
     };
 
     template<size_t N>
@@ -77,6 +54,7 @@ struct btod_traits {
     template<size_t N, size_t M, size_t K>
     struct to_contract2_type {
         typedef tod_contract2<N, M, K> type;
+        typedef btod_contract2_clst_optimize<N, M, K> clst_optimize_type;
     };
 
     template<size_t N>

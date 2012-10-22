@@ -12,6 +12,7 @@ namespace libtensor {
 /** \brief Elementwise multiplication of one block tensors with another
     \tparam N Tensor order.
     \tparam Traits Block tensor operation traits
+    \tparam Timed Timed implementation.
 
     This is a variant to gen_bto_mult. It computes
     \f[
@@ -24,6 +25,17 @@ namespace libtensor {
     \f]
 
     \sa gen_bto_mult
+
+    <b>Traits</b>
+
+    The traits class has to provide definitions for
+    - \c element_type -- Type of data elements
+    - \c bti_traits -- Type of block tensor interface traits class
+    - \c template temp_block_tensor_type<N>::type -- Type of temporary block
+        tensor
+    - \c template to_copy_type<N>::type -- Type of tensor operation to_copy
+    - \c template to_mult_type<N>::type -- Type of tensor operation to_mult
+    - \c template to_mult_type1<N>::type -- Type of tensor operation to_mult1
 
     \ingroup libtensor_gen_bto
  **/

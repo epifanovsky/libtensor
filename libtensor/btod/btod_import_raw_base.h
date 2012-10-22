@@ -3,19 +3,19 @@
 
 #include <cmath> // for fabs
 #include <sstream>
-#include "../defs.h"
-#include "../exception.h"
-#include "../core/abs_index.h"
-#include "../core/dimensions.h"
-#include "../core/orbit.h"
-#include "../core/orbit_list.h"
+#include <libtensor/defs.h>
+#include <libtensor/exception.h>
+#include <libtensor/block_tensor/block_tensor_ctrl.h>
+#include <libtensor/core/abs_index.h>
+#include <libtensor/core/dimensions.h>
+#include <libtensor/core/orbit.h>
+#include <libtensor/core/orbit_list.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/tod_compare.h>
 #include <libtensor/dense_tensor/tod_copy.h>
-#include "../symmetry/so_copy.h"
-#include "../symmetry/bad_symmetry.h"
-#include <libtensor/block_tensor/block_tensor_ctrl.h>
+#include <libtensor/symmetry/so_copy.h>
+#include <libtensor/symmetry/bad_symmetry.h>
 
 namespace libtensor {
 
@@ -54,10 +54,10 @@ protected:
     /** \brief Checks that the given tensor only contains zeros within
             a threshold
      **/
-    bool check_zero(dense_tensor_i<N, double> &t, double thresh);
+    bool check_zero(dense_tensor_rd_i<N, double> &t, double thresh);
 
 private:
-    void verify_zero_orbit(block_tensor_ctrl<N, double> &ctrl,
+    void verify_zero_orbit(block_tensor_rd_ctrl<N, double> &ctrl,
         const dimensions<N> &bidims, orbit<N, double> &o);
     void verify_nonzero_orbit(block_tensor_ctrl<N, double> &ctrl,
         const dimensions<N> &bidims, orbit<N, double> &o, double sym_thresh);
@@ -107,7 +107,7 @@ void btod_import_raw_base<N, Alloc>::verify_and_set_symmetry(
 
 template<size_t N, typename Alloc>
 void btod_import_raw_base<N, Alloc>::verify_zero_orbit(
-    block_tensor_ctrl<N, double> &ctrl, const dimensions<N> &bidims,
+    block_tensor_rd_ctrl<N, double> &ctrl, const dimensions<N> &bidims,
     orbit<N, double> &o) {
 
     static const char *method =
@@ -148,7 +148,7 @@ void btod_import_raw_base<N, Alloc>::verify_nonzero_orbit(
 
     //  Get the canonical block
     abs_index<N> aci(o.get_abs_canonical_index(), bidims);
-    dense_tensor_i<N, double> &cblk = ctrl.req_block(aci.get_index());
+    dense_tensor_rd_i<N, double> &cblk = ctrl.req_const_block(aci.get_index());
 
     for(iterator_t i = o.begin(); i != o.end(); ++i) {
 
@@ -160,7 +160,8 @@ void btod_import_raw_base<N, Alloc>::verify_nonzero_orbit(
         const tensor_transf<N, double> &tr = o.get_transf(i);
 
         //  Compare with the transformed canonical block
-        dense_tensor_i<N, double> &blk = ctrl.req_block(ai.get_index());
+        dense_tensor_rd_i<N, double> &blk =
+                ctrl.req_const_block(ai.get_index());
         dense_tensor<N, double, Alloc> tblk(blk.get_dims());
         tod_copy<N> (cblk, tr.get_perm(), tr.get_scalar_tr().get_coeff()).
             perform(true, tblk);
@@ -168,8 +169,8 @@ void btod_import_raw_base<N, Alloc>::verify_nonzero_orbit(
         tod_compare<N> cmp(blk, tblk, sym_thresh);
         if(!cmp.compare()) {
 
-            ctrl.ret_block(ai.get_index());
-            ctrl.ret_block(aci.get_index());
+            ctrl.ret_const_block(ai.get_index());
+            ctrl.ret_const_block(aci.get_index());
 
             std::ostringstream ss;
             ss << "Asymmetry in block " << aci.get_index() << "->"
@@ -181,21 +182,21 @@ void btod_import_raw_base<N, Alloc>::verify_nonzero_orbit(
                 ss.str().c_str());
         }
 
-        ctrl.ret_block(ai.get_index());
+        ctrl.ret_const_block(ai.get_index());
 
         //  Zero out the block with proper symmetry
         ctrl.req_zero_block(ai.get_index());
     }
 
-    ctrl.ret_block(aci.get_index());
+    ctrl.ret_const_block(aci.get_index());
 }
 
 
 template<size_t N, typename Alloc>
-bool btod_import_raw_base<N, Alloc>::check_zero(dense_tensor_i<N, double> &t,
-    double thresh) {
+bool btod_import_raw_base<N, Alloc>::check_zero(
+        dense_tensor_rd_i<N, double> &t, double thresh) {
 
-    dense_tensor_ctrl<N, double> c(t);
+    dense_tensor_rd_ctrl<N, double> c(t);
     const double *p = c.req_const_dataptr();
     size_t sz = t.get_dims().get_size();
     bool ok = true;

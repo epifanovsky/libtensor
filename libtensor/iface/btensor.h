@@ -65,9 +65,9 @@ protected:
     //@{
     virtual symmetry<N, T> &on_req_symmetry();
     virtual const symmetry<N, T> &on_req_const_symmetry();
-    virtual dense_tensor_i<N, T> &on_req_const_block(const index<N> &idx);
+    virtual dense_tensor_rd_i<N, T> &on_req_const_block(const index<N> &idx);
     virtual void on_ret_const_block(const index<N> &idx);
-    virtual dense_tensor_i<N, T> &on_req_block(const index<N> &idx);
+    virtual dense_tensor_wr_i<N, T> &on_req_block(const index<N> &idx);
     virtual void on_ret_block(const index<N> &idx);
     virtual bool on_req_is_zero_block(const index<N> &idx);
     virtual void on_req_zero_block(const index<N> &idx);
@@ -155,7 +155,7 @@ const symmetry<N, T> &btensor_base<N, T, Traits>::on_req_const_symmetry() {
 
 
 template<size_t N, typename T, typename Traits>
-dense_tensor_i<N, T> &btensor_base<N, T, Traits>::on_req_const_block(
+dense_tensor_rd_i<N, T> &btensor_base<N, T, Traits>::on_req_const_block(
     const index<N> &idx) {
 
     return m_ctrl.req_const_block(idx);
@@ -170,7 +170,7 @@ void btensor_base<N, T, Traits>::on_ret_const_block(const index<N> &idx) {
 
 
 template<size_t N, typename T, typename Traits>
-dense_tensor_i<N, T> &btensor_base<N, T, Traits>::on_req_block(
+dense_tensor_wr_i<N, T> &btensor_base<N, T, Traits>::on_req_block(
     const index<N> &idx) {
 
     return m_ctrl.req_block(idx);

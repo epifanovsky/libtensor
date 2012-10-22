@@ -18,9 +18,8 @@ namespace libtensor {
     \tparam Traits Block tensor operation traits.
     \tparam Timed Timed implementation.
 
-    This algorithm prepares the block index space, symmetry and list of
-    non-zero blocks, as well as the result of the contraction of two block
-    tensors.
+    Computes the requested batches of the contraction of two block tensors
+    in parallel (if applicable).
 
     \ingroup libtensor_gen_bto
  **/

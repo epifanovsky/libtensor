@@ -2,7 +2,7 @@
 #define LIBTENSOR_MP_SAFE_TENSOR_LOCK_H
 
 #include <libutil/singleton.h>
-#include "threads.h"
+#include <libutil/threads/mutex.h>
 
 namespace libtensor {
 
@@ -15,7 +15,7 @@ class mp_safe_tensor_lock : public libutil::singleton<mp_safe_tensor_lock> {
     friend class libutil::singleton<mp_safe_tensor_lock>;
 
 private:
-    mutex m_lock; //!< Lock object
+    libutil::mutex m_lock; //!< Lock object
 
 protected:
     mp_safe_tensor_lock() { }

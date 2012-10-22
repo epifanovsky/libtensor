@@ -59,7 +59,7 @@ protected:
         return m_ctrl.req_is_zero_block(idx);
     }
 
-    virtual dense_tensor_i<N, T> &on_req_const_block(const index<N> &idx) {
+    virtual dense_tensor_rd_i<N, T> &on_req_const_block(const index<N> &idx) {
         return m_ctrl.req_const_block(idx);
     }
 

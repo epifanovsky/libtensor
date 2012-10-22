@@ -16,7 +16,7 @@ gen_bto_aux_add<N, Traits>::gen_bto_aux_add(
     const symmetry<N, element_type> &syma,
     const addition_schedule<N, Traits> &asch,
     gen_block_tensor_i<N, bti_traits> &btb,
-    const element_type &c) :
+    const scalar_transf<element_type> &c) :
 
     m_bis(syma.get_bis()), m_bidims(m_bis.get_block_index_dims()),
     m_syma(m_bis), m_asch(asch), m_btb(btb), m_c(c), m_cb(m_btb),
@@ -102,10 +102,10 @@ void gen_bto_aux_add<N, Traits>::close() {
             //  Skip zero blocks
             if(m_cb.req_is_zero_block(aib.get_index())) continue;
 
-            block_type &blkb = m_cb.req_block(aib.get_index());
-            block_type &blkc = m_cb.req_block(aic.get_index());
+            rd_block_type &blkb = m_cb.req_const_block(aib.get_index());
+            wr_block_type &blkc = m_cb.req_block(aic.get_index());
             to_copy_type(blkb, inode->trb).perform(true, blkc);
-            m_cb.ret_block(aib.get_index());
+            m_cb.ret_const_block(aib.get_index());
             m_cb.ret_block(aic.get_index());
         }
     }
@@ -124,7 +124,7 @@ void gen_bto_aux_add<N, Traits>::close() {
 template<size_t N, typename Traits>
 void gen_bto_aux_add<N, Traits>::put(
     const index<N> &idx,
-    block_type &blk,
+    rd_block_type &blk,
     const tensor_transf<N, element_type> &tr) {
 
     typedef typename Traits::template to_copy_type<N>::type to_copy_type;
@@ -185,10 +185,10 @@ void gen_bto_aux_add<N, Traits>::put(
                     //  Skip zero blocks
                     if(m_cb.req_is_zero_block(aib.get_index())) continue;
 
-                    block_type &blkb = m_cb.req_block(aib.get_index());
-                    block_type &blkc = m_cb.req_block(aic.get_index());
+                    rd_block_type &blkb = m_cb.req_const_block(aib.get_index());
+                    wr_block_type &blkc = m_cb.req_block(aic.get_index());
                     to_copy_type(blkb, inode->trb).perform(true, blkc);
-                    m_cb.ret_block(aib.get_index());
+                    m_cb.ret_const_block(aib.get_index());
                     m_cb.ret_block(aic.get_index());
                 }
             } catch(...) {
@@ -212,10 +212,10 @@ void gen_bto_aux_add<N, Traits>::put(
                 abs_index<N> aic(inode->cic, m_bidims);
                 bool zeroc = m_cb.req_is_zero_block(aic.get_index());
 
-                block_type &blkc = m_cb.req_block(aic.get_index());
+                wr_block_type &blkc = m_cb.req_block(aic.get_index());
                 tensor_transf<N, element_type> tra(tr);
                 tra.transform(inode->tra);
-                tra.transform(scalar_transf<double>(m_c));
+                tra.transform(m_c);
                 to_copy_type(blk, tra).perform(zeroc, blkc);
                 m_cb.ret_block(aic.get_index());
             }

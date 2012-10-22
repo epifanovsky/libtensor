@@ -13,9 +13,22 @@ namespace libtensor {
 /** \brief Extracts a tensor with smaller dimension from the %tensor
     \tparam N Tensor order.
     \tparam M Number of fixed dimensions.
-    \tparam N - M result tensor order.
+    \tparam Traits Block tensor operation traits.
+    \tparam Timed Timed implementation.
 
-    \ingroup libtensor_btod
+    Extracts a general block tensor with dimension N - M from the given
+    block tensor.
+
+    The traits class has to provide definitions for
+    - \c element_type -- Type of data elements
+    - \c bti_traits -- Type of block tensor interface traits class
+    - \c template temp_block_type<N>::type -- Type of temporary tensor block
+    - \c template to_set_type<N>::type -- Type of tensor operation to_set
+    - \c template to_extract_type<N, M>::type -- Type of tensor operation
+        to_extract
+
+
+    \ingroup libtensor_gen_bto
  **/
 template<size_t N, size_t M, typename Traits, typename Timed>
 class gen_bto_extract : public timings<Timed>, public noncopyable {
