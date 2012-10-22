@@ -50,7 +50,7 @@ namespace libtensor {
 
     \ingroup libtensor_gen_bto
  **/
-template<size_t N, typename Traits, typename ComparePolicy=compare4absmin>
+template<size_t N, typename Traits, typename ComparePolicy>
 class gen_bto_select : public noncopyable {
 public:
     static const char *k_clazz; //!< Class name
@@ -93,7 +93,7 @@ public:
 
     /** \brief Constuctor without specific symmetry
          \param bt Block %tensor
-        \param cmp Compare policy object (default: compare4absmin)
+        \param cmp Compare policy object
      **/
     gen_bto_select(gen_block_tensor_rd_i<N, bti_traits> &bt,
             compare_type cmp = compare_type());
@@ -101,7 +101,7 @@ public:
     /** \brief Constuctor using symmetry
          \param bt Block %tensor
          \param sym Symmetry
-        \param cmp Compare policy object (default: compare4absmin)
+        \param cmp Compare policy object
      **/
     gen_bto_select(gen_block_tensor_rd_i<N, bti_traits> &bt,
             const symmetry<N, element_type> &sym,
