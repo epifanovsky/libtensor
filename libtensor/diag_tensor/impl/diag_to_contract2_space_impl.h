@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_DIAG_TO_CONTRACT2_SPACE_IMPL_H
 #define LIBTENSOR_DIAG_TO_CONTRACT2_SPACE_IMPL_H
 
-#include <libtensor/tod/bad_dimensions.h>
+#include <libtensor/core/bad_dimensions.h>
 #include "diag_to_contract2_subspace.h"
 #include "../diag_to_contract2_space.h"
 

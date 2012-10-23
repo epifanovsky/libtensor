@@ -6,7 +6,7 @@
 namespace libtensor {
 
 
-/**	\brief Tests the libtensor::tod_dotprod class
+/** \brief Tests the libtensor::tod_dotprod class
 
     \ingroup libtensor_tests_tod
  **/

@@ -139,3 +139,5 @@ public:
 } // namespace libtensor
 
 #endif // LIBTENSOR_TOD_SELECT_H
+
+#include "impl/tod_select_impl.h"

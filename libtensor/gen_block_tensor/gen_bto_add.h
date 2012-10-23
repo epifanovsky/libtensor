@@ -24,6 +24,14 @@ namespace libtensor {
     construction. Other operands are added using add_op() and must agree in
     their dimensions and block structure.
 
+    The traits class has to provide definitions for
+    - \c element_type -- Type of data elements
+    - \c bti_traits -- Type of block tensor interface traits class
+    - \c template temp_block_tensor_type<N>::type -- Type of temporary
+            block tensor
+    - \c template to_set_type<N, M>::type -- Type of tensor operation to_set
+    - \c template to_copy_type<N, M>::type -- Type of tensor operation to_copy
+
     \sa gen_bto_copy
 
     \ingroup libtensor_gen_bto
@@ -110,17 +118,17 @@ public:
      **/
     void compute_block(
         bool zero,
-        wr_block_type &blkb,
         const index<N> &ib,
-        const tensor_transf<N, element_type> &trb);
+        const tensor_transf<N, element_type> &trb,
+        wr_block_type &blkb);
 
     /** \brief Same as compute_block(), except it doesn't run a timer
      **/
     void compute_block_untimed(
         bool zero,
-        wr_block_type &blkb,
         const index<N> &ib,
-        const tensor_transf<N, element_type> &trb);
+        const tensor_transf<N, element_type> &trb,
+        wr_block_type &blkb);
 
 private:
     void add_operand(

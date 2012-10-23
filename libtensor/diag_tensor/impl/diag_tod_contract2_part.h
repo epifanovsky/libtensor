@@ -4,11 +4,11 @@
 #include <deque>
 #include <memory>
 #include <libtensor/core/contraction2.h>
+#include <libtensor/core/bad_dimensions.h>
 #include <libtensor/linalg/linalg.h>
 #include <libtensor/kernels/loop_list_runner.h>
 #include <libtensor/kernels/kern_dmul2.h>
 #include <libtensor/dense_tensor/to_contract2_dims.h>
-#include <libtensor/tod/bad_dimensions.h>
 #include "../diag_tensor_space.h"
 
 namespace libtensor {

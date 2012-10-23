@@ -1,8 +1,8 @@
 #ifndef LIBTENSOR_DIAG_TO_CONTRACT2_SUBSPACE_H
 #define LIBTENSOR_DIAG_TO_CONTRACT2_SUBSPACE_H
 
-#include <libtensor/tod/contraction2.h>
-#include <libtensor/tod/bad_dimensions.h>
+#include <libtensor/core/contraction2.h>
+#include <libtensor/core/bad_dimensions.h>
 #include "../diag_tensor_space.h"
 
 namespace libtensor {

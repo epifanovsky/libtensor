@@ -1,14 +1,13 @@
 #ifndef LIBTENSOR_GEN_BTO_CONTRACT2_IMPL_H
 #define LIBTENSOR_GEN_BTO_CONTRACT2_IMPL_H
 
-#include <map>
 #include <libtensor/core/orbit_list.h>
 #include <libtensor/symmetry/so_permute.h>
 #include "gen_bto_copy_impl.h"
 #include "gen_bto_contract2_align.h"
 #include "gen_bto_contract2_batch_impl.h"
 #include "gen_bto_contract2_batching_policy.h"
-#include "gen_bto_contract2_clst_impl.h"
+#include "gen_bto_contract2_clst_builder_impl.h"
 #include "gen_bto_contract2_nzorb_impl.h"
 #include "gen_bto_contract2_sym_impl.h"
 #include "../gen_block_tensor_ctrl.h"
@@ -86,7 +85,7 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
             return;
         }
 
-        gen_bto_contract2_batching_policy<N, M, K, Traits> bp(m_contr,
+        gen_bto_contract2_batching_policy<N, M, K> bp(m_contr,
                 nblka, nblkb, nblkc);
 
         //  Compute optimal permutations of A, B, and C
@@ -306,9 +305,10 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::make_schedule() {
         m_bta, m_btb, m_symc.get_symmetry());
 
     nzorb.build();
-    for(typename std::vector<size_t>::const_iterator i =
-        nzorb.get_blst().begin(); i != nzorb.get_blst().end(); ++i) {
-        m_sch.insert(*i);
+    const block_list<NC> &blstc = nzorb.get_blst();
+    for(typename block_list<NC>::iterator i = blstc.begin();
+            i != blstc.end(); ++i) {
+        m_sch.insert(blstc.get_abs_index(i));
     }
 
     gen_bto_contract2::stop_timer("make_schedule");

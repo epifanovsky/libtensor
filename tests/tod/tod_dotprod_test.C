@@ -14,7 +14,7 @@ namespace libtensor {
 void tod_dotprod_test::perform() throw(libtest::test_exception) {
 
     test_i_i(1);
-	test_i_i(4);
+    test_i_i(4);
     test_i_i(16);
     test_i_i(200);
 
@@ -61,7 +61,7 @@ void tod_dotprod_test::perform() throw(libtest::test_exception) {
 
 void tod_dotprod_test::test_i_i(size_t ni) throw(libtest::test_exception) {
 
-	std::ostringstream tnss;
+    std::ostringstream tnss;
     tnss << "tod_dotprod_test::test_i_i(" << ni << ")";
     std::string tn = tnss.str();
 

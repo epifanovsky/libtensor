@@ -53,7 +53,7 @@ void btod_ewmult2<N, M, K>::perform(gen_block_stream_i<NC, bti_traits> &out) {
 
 
 template<size_t N, size_t M, size_t K>
-void btod_ewmult2<N, M, K>::perform(block_tensor_i<NC, double> &btc) {
+void btod_ewmult2<N, M, K>::perform(gen_block_tensor_i<NC, bti_traits> &btc) {
 
     gen_bto_aux_copy<N + M + K, btod_traits> out(get_symmetry(), btc);
     m_gbto.perform(out);
@@ -61,8 +61,8 @@ void btod_ewmult2<N, M, K>::perform(block_tensor_i<NC, double> &btc) {
 
 
 template<size_t N, size_t M, size_t K>
-void btod_ewmult2<N, M, K>::perform(block_tensor_i<NC, double> &btc,
-    const double &d) {
+void btod_ewmult2<N, M, K>::perform(gen_block_tensor_i<NC, bti_traits> &btc,
+        const scalar_transf<double> &d) {
 
     typedef typename btod_traits::bti_traits bti_traits;
 
@@ -77,13 +77,21 @@ void btod_ewmult2<N, M, K>::perform(block_tensor_i<NC, double> &btc,
 
 
 template<size_t N, size_t M, size_t K>
-void btod_ewmult2<N, M, K>::compute_block(bool zero,
-    dense_tensor_i<NC, double> &blk, const index<NC> &bidx,
-    const tensor_transf<NC, double> &tr, const double &d) {
+void btod_ewmult2<N, M, K>::perform(
+        block_tensor_i<NC, double> &btc, double d) {
 
-    tensor_transf<NC, double> trx(tr);
-    trx.transform(scalar_transf<double>(d));
-    m_gbto.compute_block(zero, bidx, trx, blk);
+    perform(btc, scalar_transf<double>(d));
+}
+
+
+template<size_t N, size_t M, size_t K>
+void btod_ewmult2<N, M, K>::compute_block(
+        bool zero,
+        const index<NC> &idx,
+        const tensor_transf<NC, double> &tr,
+        dense_tensor_wr_i<NC, double> &blk) {
+
+    m_gbto.compute_block(zero, idx, tr, blk);
 }
 
 

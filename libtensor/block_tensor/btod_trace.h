@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_BTOD_TRACE_H
 #define LIBTENSOR_BTOD_TRACE_H
 
-#include <libtensor/block_tensor/btod/btod_traits.h>
+#include <libtensor/block_tensor/btod_traits.h>
 #include <libtensor/gen_block_tensor/gen_bto_trace.h>
 
 namespace libtensor {

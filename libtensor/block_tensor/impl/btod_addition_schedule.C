@@ -1,5 +1,5 @@
 #include <libtensor/gen_block_tensor/impl/addition_schedule_impl.h>
-#include <libtensor/block_tensor/btod/btod_traits.h>
+#include <libtensor/block_tensor/btod_traits.h>
 
 namespace libtensor {
 

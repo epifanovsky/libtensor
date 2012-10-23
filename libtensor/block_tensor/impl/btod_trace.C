@@ -4,6 +4,9 @@
 namespace libtensor {
 
 
+template<size_t N>
+const char *btod_trace<N>::k_clazz = "btod_trace<N>";
+
 template class gen_bto_trace< 1, btod_traits, btod_trace<1> >;
 template class gen_bto_trace< 2, btod_traits, btod_trace<2> >;
 template class gen_bto_trace< 3, btod_traits, btod_trace<3> >;

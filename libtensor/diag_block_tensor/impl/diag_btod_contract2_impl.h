@@ -34,7 +34,8 @@ void diag_btod_contract2<N, M, K>::perform(
         cc.req_const_symmetry());
     asch.build(get_schedule(), cc);
 
-    gen_bto_aux_add<NC, diag_btod_traits> out(get_symmetry(), asch, btc, d);
+    gen_bto_aux_add<NC, diag_btod_traits> out(get_symmetry(), asch, btc,
+        scalar_transf<double>(d));
     perform(out);
 }
 

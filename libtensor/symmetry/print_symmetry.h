@@ -94,8 +94,8 @@ std::ostream &operator<<(std::ostream &os, const symmetry<N, T> &sym) {
 
 template<size_t N, typename T>
 std::ostream &operator<<(std::ostream &os, const se_label<N, T> &se) {
-	
-	os << "Table ID: " << se.get_table_id() << std::endl;
+
+    os << "Table ID: " << se.get_table_id() << std::endl;
     os << "Block labels: " << se.get_labeling() << std::endl;
     os << "Rule: " << std::endl << se.get_rule();
     return os;
@@ -103,32 +103,32 @@ std::ostream &operator<<(std::ostream &os, const se_label<N, T> &se) {
 
 template<size_t N, typename T>
 std::ostream &operator<<(std::ostream &os, const se_part<N, T> &se) {
-	
-	const dimensions<N> &pdims = se.get_pdims();
-	os << "Partition dims: " << pdims << std::endl;
-	os << "Mappings:";
-	abs_index<N> ai(pdims);
-	do {
-	    if (se.is_forbidden(ai.get_index())) {
-	        os << std::endl << " " << ai.get_index() << " (x)";
-	        continue;
-	    }
 
-		abs_index<N> aix(se.get_direct_map(ai.get_index()), pdims);
-		if (aix.get_abs_index() <= ai.get_abs_index()) continue;
-		
-		os << std::endl << " " << ai.get_index() << " -> " << aix.get_index();
-		os << " (" << se.get_transf(ai.get_index(), aix.get_index()) << ")";
-	} while (ai.inc());
+    const dimensions<N> &pdims = se.get_pdims();
+    os << "Partition dims: " << pdims << std::endl;
+    os << "Mappings:";
+    abs_index<N> ai(pdims);
+    do {
+        if (se.is_forbidden(ai.get_index())) {
+            os << std::endl << " " << ai.get_index() << " (x)";
+            continue;
+        }
 
-	return os;
+        abs_index<N> aix(se.get_direct_map(ai.get_index()), pdims);
+        if (aix.get_abs_index() <= ai.get_abs_index()) continue;
+
+        os << std::endl << " " << ai.get_index() << " -> " << aix.get_index();
+        os << " (" << se.get_transf(ai.get_index(), aix.get_index()) << ")";
+    } while (ai.inc());
+
+    return os;
 }
 
 template<size_t N> 
 std::ostream &operator<<(std::ostream &out, const se_perm<N, double> &sp) {
-	
-	out << sp.get_perm() << " " << sp.get_transf();
-	return out;
+
+    out << sp.get_perm() << " " << sp.get_transf();
+    return out;
 }
 
 

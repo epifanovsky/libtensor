@@ -35,6 +35,7 @@
 #include "btod_trace_test.h"
 #include "btod_tridiagonalize_test.h"
 #include "btod_vmpriority_test.h"
+#include "gen_bto_dirsum_sym_test.h"
 
 using libtest::unit_test_factory;
 
@@ -83,6 +84,7 @@ namespace libtensor {
     \li libtensor::btod_trace_test
     \li libtensor::btod_tridiagonalize_test
     \li libtensor::btod_vmpriority_test
+    \li libtensor::gen_bto_dirsum_sym_test
 
  **/
 class libtensor_btod_suite : public libtest::test_suite {
@@ -120,6 +122,7 @@ private:
     unit_test_factory<btod_trace_test> m_utf_btod_trace;
     unit_test_factory<btod_tridiagonalize_test> m_utf_btod_tridiagonalize;
     unit_test_factory<btod_vmpriority_test> m_utf_btod_vmpriority;
+    unit_test_factory<gen_bto_dirsum_sym_test> m_utf_gen_bto_dirsum_sym;
 
 public:
     //!    Creates the suite

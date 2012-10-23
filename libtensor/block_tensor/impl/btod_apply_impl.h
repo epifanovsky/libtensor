@@ -16,7 +16,7 @@ const char *btod_apply<N, Functor>::k_clazz = "btod_apply<N, Functor>";
 
 
 template<size_t N, typename Functor>
-void btod_apply<N, Functor>::perform(block_tensor_i<N, double> &btb) {
+void btod_apply<N, Functor>::perform(gen_block_tensor_i<N, bti_traits> &btb) {
 
     gen_bto_aux_copy<N, btod_traits> out(get_symmetry(), btb);
     perform(out);
@@ -24,8 +24,8 @@ void btod_apply<N, Functor>::perform(block_tensor_i<N, double> &btb) {
 
 
 template<size_t N, typename Functor>
-void btod_apply<N, Functor>::perform(block_tensor_i<N, double> &btb,
-    const double &c) {
+void btod_apply<N, Functor>::perform(gen_block_tensor_i<N, bti_traits> &btb,
+        const scalar_transf<double> &c) {
 
     typedef block_tensor_i_traits<double> bti_traits;
 
@@ -40,22 +40,21 @@ void btod_apply<N, Functor>::perform(block_tensor_i<N, double> &btb,
 
 
 template<size_t N, typename Functor>
-void btod_apply<N, Functor>::compute_block(dense_tensor_i<N, double> &blkb,
-        const index<N> &ib) {
+void btod_apply<N, Functor>::perform(
+        block_tensor_i<N, double> &btb, double c) {
 
-    m_gbto.compute_block(true, blkb, ib, tensor_transf<N, double>());
+    perform(btb, scalar_transf<double>(c));
 }
 
 
 template<size_t N, typename Functor>
-void btod_apply<N, Functor>::compute_block(bool zero,
-        dense_tensor_i<N, double> &blkb, const index<N> &ib,
-        const tensor_transf<N, double> &trb, const double &c) {
+void btod_apply<N, Functor>::compute_block(
+        bool zero,
+        const index<N> &ib,
+        const tensor_transf<N, double> &trb,
+        dense_tensor_wr_i<N, double> &blkb) {
 
-    tensor_transf<N, double> trx(trb);
-    trx.transform(scalar_transf<double>(c));
-
-    m_gbto.compute_block(zero, blkb, ib, trb);
+    m_gbto.compute_block(zero, ib, trb, blkb);
 }
 
 

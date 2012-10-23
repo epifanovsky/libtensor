@@ -13,7 +13,7 @@ const char *btod_extract<N, M>::k_clazz = "btod_extract<N, M>";
 
 
 template<size_t N, size_t M>
-void btod_extract<N, M>::perform(block_tensor_i<N - M, double> &btb) {
+void btod_extract<N, M>::perform(gen_block_tensor_i<N - M, bti_traits> &btb) {
 
     gen_bto_aux_copy<N - M, btod_traits> out(get_symmetry(), btb);
     perform(out);
@@ -21,8 +21,8 @@ void btod_extract<N, M>::perform(block_tensor_i<N - M, double> &btb) {
 
 
 template<size_t N, size_t M>
-void btod_extract<N, M>::perform(block_tensor_i<N - M, double> &btb,
-    const double &c) {
+void btod_extract<N, M>::perform(gen_block_tensor_i<N - M, bti_traits> &btb,
+        const scalar_transf<double> &c) {
 
     typedef typename btod_traits::bti_traits bti_traits;
 
@@ -37,25 +37,22 @@ void btod_extract<N, M>::perform(block_tensor_i<N - M, double> &btb,
 
 
 template<size_t N, size_t M>
-void btod_extract<N, M>::compute_block(
-        dense_tensor_i<N - M, double> &blkb, const index<N - M> &idxb) {
+void btod_extract<N, M>::perform(block_tensor_i<N - M, double> &btb,
+        double c) {
 
-    m_gbto.compute_block(true, idxb, tensor_transf_type(), blkb);
+    perform(btb, scalar_transf<double>(c));
+
 }
 
 
 template<size_t N, size_t M>
 void btod_extract<N, M>::compute_block(
         bool zero,
-        dense_tensor_i<N - M, double> &blkb,
         const index<N - M> &idxb,
         const tensor_transf_type &trb,
-        const double &c) {
+        dense_tensor_wr_i<N - M, double> &blkb) {
 
-    tensor_transf_type trx(trb);
-    trx.transform(scalar_transf<double>(c));
-
-    m_gbto.compute_block(zero, idxb, trx, blkb);
+    m_gbto.compute_block(zero, idxb, trb, blkb);
 }
 
 

@@ -244,12 +244,12 @@ void direct_block_tensor_test::test_op_4() throw(libtest::test_exception) {
     tod_copy<2>(ta3, -3.0).perform(true, ta6);
     tod_copy<2>(ta4, 2.5).perform(false, ta6);
 
-	dense_tensor<4, double, allocator_t> tb1(dims4), tb2(dims4), tc(dims4),
-		tc_ref(dims4);
-	tod_dirsum<2, 2>(ta5, 1.0, ta6, -2.0).perform(true, tb1);
-	tod_dirsum<2, 2>(ta5, -2.0, ta6, 1.0).perform(true, tb2);
-	tod_contract2<2, 2, 2>(contr, tb1, tb2).perform(true, tc_ref);
-	tod_btconv<4>(btc).perform(tc);
+    dense_tensor<4, double, allocator_t> tb1(dims4), tb2(dims4), tc(dims4),
+        tc_ref(dims4);
+    tod_dirsum<2, 2>(ta5, 1.0, ta6, -2.0).perform(true, tb1);
+    tod_dirsum<2, 2>(ta5, -2.0, ta6, 1.0).perform(true, tb2);
+    tod_contract2<2, 2, 2>(contr, tb1, tb2).perform(true, tc_ref);
+    tod_btconv<4>(btc).perform(tc);
 
     compare_ref<4>::compare(testname, tc, tc_ref, 1e-13);
 

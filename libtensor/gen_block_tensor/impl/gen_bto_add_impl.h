@@ -9,7 +9,7 @@
 #include <libtensor/symmetry/so_dirsum.h>
 #include <libtensor/symmetry/so_merge.h>
 #include <libtensor/symmetry/so_permute.h>
-#include <libtensor/btod/bad_block_index_space.h>
+#include <libtensor/core/bad_block_index_space.h>
 #include "gen_bto_copy_bis.h"
 #include "../gen_block_tensor_ctrl.h"
 #include "../gen_bto_add.h"
@@ -155,15 +155,15 @@ void gen_bto_add<N, Traits, Timed>::perform(
 template<size_t N, typename Traits, typename Timed>
 void gen_bto_add<N, Traits, Timed>::compute_block(
     bool zero,
-    wr_block_type &blkb,
     const index<N> &ib,
-    const tensor_transf<N, element_type> &trb) {
+    const tensor_transf<N, element_type> &trb,
+    wr_block_type &blkb) {
 
     gen_bto_add::start_timer("compute_block");
 
     try {
 
-        compute_block_untimed(zero, blkb, ib, trb);
+        compute_block_untimed(zero, ib, trb, blkb);
 
     } catch(...) {
         gen_bto_add::stop_timer("compute_block");
@@ -177,9 +177,9 @@ void gen_bto_add<N, Traits, Timed>::compute_block(
 template<size_t N, typename Traits, typename Timed>
 void gen_bto_add<N, Traits, Timed>::compute_block_untimed(
     bool zero,
-    wr_block_type &blkb,
     const index<N> &ib,
-    const tensor_transf<N, element_type> &trb) {
+    const tensor_transf<N, element_type> &trb,
+    wr_block_type &blkb) {
 
     typedef typename Traits::template to_set_type<N>::type to_set;
     typedef typename Traits::template to_copy_type<N>::type to_copy;
@@ -343,7 +343,7 @@ void gen_bto_add_task<N, Traits, Timed>::perform() {
 
     {
         wr_block_type &blkb = cb.req_block(m_idx);
-        m_bto.compute_block_untimed(true, blkb, m_idx, tr0);
+        m_bto.compute_block_untimed(true, m_idx, tr0, blkb);
         cb.ret_block(m_idx);
     }
 

@@ -21,7 +21,7 @@ namespace libtensor {
     \ingroup libtensor_iface
  **/
 template<size_t N, typename T = double, typename Traits = btensor_traits<T> >
-class direct_btensor : public btensor_rd_i<N, T> {
+class direct_btensor : public btensor_i<N, T> {
 private:
     typedef struct {
         labeled_btensor_expr::expr_i<N, T> *m_pexpr;
@@ -73,9 +73,18 @@ protected:
     //!    \name Implementation of block_tensor_rd_i<N, T>
     //@{
     virtual const symmetry<N, T> &on_req_const_symmetry();
-    virtual dense_tensor_i<N, T> &on_req_const_block(const index<N> &idx);
+    virtual dense_tensor_rd_i<N, T> &on_req_const_block(const index<N> &idx);
     virtual void on_ret_const_block(const index<N> &idx);
     virtual bool on_req_is_zero_block(const index<N> &idx);
+    //@}
+
+    //!    \name Implementation of block_tensor_wr_i<N, T>
+    //@{
+    virtual symmetry<N, T> &on_req_symmetry();
+    virtual dense_tensor_i<N, T> &on_req_block(const index<N> &idx);
+    virtual void on_ret_block(const index<N> &idx);
+    virtual void on_req_zero_block(const index<N> &idx);
+    virtual void on_req_zero_all_blocks();
     //@}
 
 private:
@@ -153,7 +162,7 @@ const symmetry<N, T> &direct_btensor<N, T, Traits>::on_req_const_symmetry() {
 
 
 template<size_t N, typename T, typename Traits>
-dense_tensor_i<N, T> &direct_btensor<N, T, Traits>::on_req_const_block(
+dense_tensor_rd_i<N, T> &direct_btensor<N, T, Traits>::on_req_const_block(
     const index<N> &idx) {
 
     return m_ctrl.req_const_block(idx);
@@ -171,6 +180,42 @@ template<size_t N, typename T, typename Traits>
 bool direct_btensor<N, T, Traits>::on_req_is_zero_block(const index<N> &idx) {
 
     return m_ctrl.req_is_zero_block(idx);
+}
+
+
+template<size_t N, typename T, typename Traits>
+symmetry<N, T> &direct_btensor<N, T, Traits>::on_req_symmetry() {
+
+    throw immut_violation(g_ns, "direct_btensor<N, T, Traits>", "on_req_symmetry()", __FILE__, __LINE__, "");
+}
+
+
+template<size_t N, typename T, typename Traits>
+dense_tensor_i<N, T> &direct_btensor<N, T, Traits>::on_req_block(
+    const index<N> &idx) {
+
+    throw immut_violation(g_ns, "direct_btensor<N, T, Traits>", "on_req_block()", __FILE__, __LINE__, "");
+}
+
+
+template<size_t N, typename T, typename Traits>
+void direct_btensor<N, T, Traits>::on_ret_block(const index<N> &idx) {
+
+    throw immut_violation(g_ns, "direct_btensor<N, T, Traits>", "on_ret_block()", __FILE__, __LINE__, "");
+}
+
+
+template<size_t N, typename T, typename Traits>
+void direct_btensor<N, T, Traits>::on_req_zero_block(const index<N> &idx) {
+
+    throw immut_violation(g_ns, "direct_btensor<N, T, Traits>", "on_req_zero_block()", __FILE__, __LINE__, "");
+}
+
+
+template<size_t N, typename T, typename Traits>
+void direct_btensor<N, T, Traits>::on_req_zero_all_blocks() {
+
+    throw immut_violation(g_ns, "direct_btensor<N, T, Traits>", "on_req_zero_all_blocks()", __FILE__, __LINE__, "");
 }
 
 

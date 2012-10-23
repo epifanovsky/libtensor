@@ -12,7 +12,7 @@
 #include <libtensor/core/orbit_list.h>
 #include <libtensor/symmetry/so_copy.h>
 #include "../gen_block_tensor_ctrl.h"
-#include "gen_bto_contract2_clst_impl.h"
+#include "gen_bto_contract2_clst_builder_impl.h"
 #include "gen_bto_contract2_nzorb.h"
 
 namespace libtensor {
@@ -35,24 +35,20 @@ public:
     typedef typename Traits::bti_traits bti_traits;
 
 private:
-    gen_bto_contract2_clst<N, M, K, Traits> m_clst;
-    dimensions<NC> m_bidimsc;
+    gen_bto_contract2_clst_builder<N, M, K, Traits> m_clst_bld;
     index<NC> m_ic;
-    std::vector<size_t> &m_blst;
+    block_list<NC> &m_blstc;
     libutil::mutex &m_mtx;
 
 public:
     gen_bto_contract2_nzorb_task(
         const contraction2<N, M, K> &contr,
-        gen_block_tensor_rd_i<NA, bti_traits> &bta,
-        gen_block_tensor_rd_i<NB, bti_traits> &btb,
-        const orbit_list<NA, element_type> &ola,
-        const orbit_list<NB, element_type> &olb,
-        const dimensions<NA> &bidimsa,
-        const dimensions<NB> &bidimsb,
-        const dimensions<NC> &bidimsc,
+        const symmetry<NA, element_type> &syma,
+        const symmetry<NB, element_type> &symb,
+        const block_list<NA> &blsta,
+        const block_list<NB> &blstb,
         const index<NC> &ic,
-        std::vector<size_t> &blst,
+        block_list<NC> &blstc,
         libutil::mutex &mtx);
 
     virtual ~gen_bto_contract2_nzorb_task() { }
@@ -79,29 +75,24 @@ public:
 
 private:
     const contraction2<N, M, K> &m_contr;
-    gen_block_tensor_rd_i<NA, bti_traits> &m_bta;
-    gen_block_tensor_rd_i<NB, bti_traits> &m_btb;
-    const symmetry<NC, element_type> &m_symc;
-    const orbit_list<NA, element_type> &m_ola;
-    const orbit_list<NB, element_type> &m_olb;
+    const symmetry<NA, element_type> &m_syma;
+    const symmetry<NB, element_type> &m_symb;
+    const block_list<NA> &m_blsta;
+    const block_list<NB> &m_blstb;
     const orbit_list<NC, element_type> &m_olc;
-    dimensions<NA> m_bidimsa;
-    dimensions<NB> m_bidimsb;
-    dimensions<NC> m_bidimsc;
     typename orbit_list<NC, element_type>::iterator m_ioc;
-    std::vector<size_t> &m_blst;
+    block_list<NC> &m_blstc;
     libutil::mutex m_mtx;
 
 public:
     gen_bto_contract2_nzorb_task_iterator(
         const contraction2<N, M, K> &contr,
-        gen_block_tensor_rd_i<NA, bti_traits> &bta,
-        gen_block_tensor_rd_i<NB, bti_traits> &btb,
-        const symmetry<NC, element_type> &symc,
-        const orbit_list<NA, element_type> &ola,
-        const orbit_list<NB, element_type> &olb,
+        const symmetry<NA, element_type> &syma,
+        const symmetry<NB, element_type> &symb,
+        const block_list<NA> &blsta,
+        const block_list<NB> &blstb,
         const orbit_list<NC, element_type> &olc,
-        std::vector<size_t> &blst);
+        block_list<NC> &blstc);
 
     virtual bool has_more() const;
     virtual libutil::task_i *get_next();
@@ -125,9 +116,139 @@ gen_bto_contract2_nzorb<N, M, K, Traits, Timed>::gen_bto_contract2_nzorb(
     gen_block_tensor_rd_i<NB, bti_traits> &btb,
     const symmetry<NC, element_type> &symc) :
 
-    m_contr(contr), m_bta(bta), m_btb(btb), m_symc(symc.get_bis()) {
+    m_contr(contr),
+    m_syma(bta.get_bis()), m_symb(btb.get_bis()), m_symc(symc.get_bis()),
+    m_blsta(bta.get_bis().get_block_index_dims()),
+    m_blstb(btb.get_bis().get_block_index_dims()),
+    m_blstc(symc.get_bis().get_block_index_dims()) {
 
+    gen_block_tensor_rd_ctrl<NA, bti_traits> ca(bta);
+    gen_block_tensor_rd_ctrl<NB, bti_traits> cb(btb);
+
+    so_copy<NA, element_type>(ca.req_const_symmetry()).perform(m_syma);
+    so_copy<NB, element_type>(cb.req_const_symmetry()).perform(m_symb);
     so_copy<NC, element_type>(symc).perform(m_symc);
+
+    orbit_list<NA, element_type> ola(m_syma);
+    for (typename orbit_list<NA, element_type>::iterator iol = ola.begin();
+            iol != ola.end(); iol++) {
+        if (ca.req_is_zero_block(ola.get_index(iol))) continue;
+
+        m_blsta.add(ola.get_abs_index(iol));
+    }
+
+    orbit_list<NB, element_type> olb(m_symb);
+    for (typename orbit_list<NB, element_type>::iterator iol = olb.begin();
+            iol != olb.end(); iol++) {
+        if (cb.req_is_zero_block(olb.get_index(iol))) continue;
+
+        m_blstb.add(olb.get_abs_index(iol));
+    }
+}
+
+
+template<size_t N, size_t M, size_t K, typename Traits, typename Timed>
+gen_bto_contract2_nzorb<N, M, K, Traits, Timed>::gen_bto_contract2_nzorb(
+    const contraction2<N, M, K> &contr,
+    const symmetry<NA, element_type> &syma,
+    const assignment_schedule<NA, element_type> &scha,
+    gen_block_tensor_rd_i<NB, bti_traits> &btb,
+    const symmetry<NC, element_type> &symc) :
+
+    m_contr(contr),
+    m_syma(syma.get_bis()), m_symb(btb.get_bis()), m_symc(symc.get_bis()),
+    m_blsta(syma.get_bis().get_block_index_dims()),
+    m_blstb(btb.get_bis().get_block_index_dims()),
+    m_blstc(symc.get_bis().get_block_index_dims()) {
+
+    gen_block_tensor_rd_ctrl<NB, bti_traits> cb(btb);
+
+    so_copy<NA, element_type>(syma).perform(m_syma);
+    so_copy<NB, element_type>(cb.req_const_symmetry()).perform(m_symb);
+    so_copy<NC, element_type>(symc).perform(m_symc);
+
+    for (typename assignment_schedule<NA, element_type>::iterator ia =
+            scha.begin(); ia != scha.end(); ia++) {
+
+        m_blsta.add(scha.get_abs_index(ia));
+    }
+
+    orbit_list<NB, element_type> olb(m_symb);
+    for (typename orbit_list<NB, element_type>::iterator iol = olb.begin();
+            iol != olb.end(); iol++) {
+        if (cb.req_is_zero_block(olb.get_index(iol))) continue;
+
+        m_blstb.add(olb.get_abs_index(iol));
+    }
+}
+
+
+template<size_t N, size_t M, size_t K, typename Traits, typename Timed>
+gen_bto_contract2_nzorb<N, M, K, Traits, Timed>::gen_bto_contract2_nzorb(
+    const contraction2<N, M, K> &contr,
+    gen_block_tensor_rd_i<NA, bti_traits> &bta,
+    const symmetry<NB, element_type> &symb,
+    const assignment_schedule<NB, element_type> &schb,
+    const symmetry<NC, element_type> &symc) :
+
+    m_contr(contr),
+    m_syma(bta.get_bis()), m_symb(symb.get_bis()), m_symc(symc.get_bis()),
+    m_blsta(bta.get_bis().get_block_index_dims()),
+    m_blstb(symb.get_bis().get_block_index_dims()),
+    m_blstc(symc.get_bis().get_block_index_dims()) {
+
+    gen_block_tensor_rd_ctrl<NA, bti_traits> ca(bta);
+
+    so_copy<NA, element_type>(ca.req_const_symmetry()).perform(m_syma);
+    so_copy<NB, element_type>(symb).perform(m_symb);
+    so_copy<NC, element_type>(symc).perform(m_symc);
+
+    orbit_list<NA, element_type> ola(m_syma);
+    for (typename orbit_list<NA, element_type>::iterator iol = ola.begin();
+            iol != ola.end(); iol++) {
+        if (ca.req_is_zero_block(ola.get_index(iol))) continue;
+
+        m_blsta.add(ola.get_abs_index(iol));
+    }
+
+    for (typename assignment_schedule<NB, element_type>::iterator isch =
+            schb.begin(); isch != schb.end(); isch++) {
+
+        m_blstb.add(schb.get_abs_index(isch));
+    }
+}
+
+
+template<size_t N, size_t M, size_t K, typename Traits, typename Timed>
+gen_bto_contract2_nzorb<N, M, K, Traits, Timed>::gen_bto_contract2_nzorb(
+    const contraction2<N, M, K> &contr,
+    const symmetry<NA, element_type> &syma,
+    const assignment_schedule<NA, element_type> &scha,
+    const symmetry<NB, element_type> &symb,
+    const assignment_schedule<NB, element_type> &schb,
+    const symmetry<NC, element_type> &symc) :
+
+    m_contr(contr),
+    m_syma(syma.get_bis()), m_symb(symb.get_bis()), m_symc(symc.get_bis()),
+    m_blsta(syma.get_bis().get_block_index_dims()),
+    m_blstb(symb.get_bis().get_block_index_dims()),
+    m_blstc(symc.get_bis().get_block_index_dims()) {
+
+    so_copy<NA, element_type>(syma).perform(m_syma);
+    so_copy<NB, element_type>(symb).perform(m_symb);
+    so_copy<NC, element_type>(symc).perform(m_symc);
+
+    for (typename assignment_schedule<NA, element_type>::iterator isch =
+            scha.begin(); isch != scha.end(); isch++) {
+
+        m_blsta.add(scha.get_abs_index(isch));
+    }
+
+    for (typename assignment_schedule<NB, element_type>::iterator isch =
+            schb.begin(); isch != schb.end(); isch++) {
+
+        m_blstb.add(schb.get_abs_index(isch));
+    }
 }
 
 
@@ -138,15 +259,10 @@ void gen_bto_contract2_nzorb<N, M, K, Traits, Timed>::build() {
 
     try {
 
-        gen_block_tensor_rd_ctrl<NA, bti_traits> ca(m_bta);
-        gen_block_tensor_rd_ctrl<NB, bti_traits> cb(m_btb);
-
-        orbit_list<NA, element_type> ola(ca.req_const_symmetry());
-        orbit_list<NB, element_type> olb(cb.req_const_symmetry());
         orbit_list<NC, element_type> olc(m_symc);
 
         gen_bto_contract2_nzorb_task_iterator<N, M, K, Traits> ti(m_contr,
-            m_bta, m_btb, m_symc, ola, olb, olc, m_blst);
+            m_syma, m_symb, m_blsta, m_blstb, olc, m_blstc);
         gen_bto_contract2_nzorb_task_observer<N, M, K> to;
         libutil::thread_pool::submit(ti, to);
 
@@ -162,19 +278,16 @@ void gen_bto_contract2_nzorb<N, M, K, Traits, Timed>::build() {
 template<size_t N, size_t M, size_t K, typename Traits>
 gen_bto_contract2_nzorb_task<N, M, K, Traits>::gen_bto_contract2_nzorb_task(
     const contraction2<N, M, K> &contr,
-    gen_block_tensor_rd_i<NA, bti_traits> &bta,
-    gen_block_tensor_rd_i<NB, bti_traits> &btb,
-    const orbit_list<NA, element_type> &ola,
-    const orbit_list<NB, element_type> &olb,
-    const dimensions<NA> &bidimsa,
-    const dimensions<NB> &bidimsb,
-    const dimensions<NC> &bidimsc,
+    const symmetry<NA, element_type> &syma,
+    const symmetry<NB, element_type> &symb,
+    const block_list<NA> &blsta,
+    const block_list<NB> &blstb,
     const index<NC> &ic,
-    std::vector<size_t> &blst,
+    block_list<NC> &blstc,
     libutil::mutex &mtx) :
 
-    m_clst(contr, bta, btb, ola, olb, bidimsa, bidimsb, bidimsc, ic),
-    m_bidimsc(bidimsc), m_ic(ic), m_blst(blst), m_mtx(mtx) {
+    m_clst_bld(contr, syma, symb, blsta, blstb, blstc.get_dims(), ic),
+    m_ic(ic), m_blstc(blstc), m_mtx(mtx) {
 
 }
 
@@ -182,31 +295,27 @@ gen_bto_contract2_nzorb_task<N, M, K, Traits>::gen_bto_contract2_nzorb_task(
 template<size_t N, size_t M, size_t K, typename Traits>
 void gen_bto_contract2_nzorb_task<N, M, K, Traits>::perform() {
 
-    m_clst.build_list(true);
-    if(!m_clst.is_empty()) {
+    m_clst_bld.build_list(true);
+    if(! m_clst_bld.is_empty()) {
         libutil::auto_lock<libutil::mutex> lock(m_mtx);
-        m_blst.push_back(abs_index<NC>::get_abs_index(m_ic, m_bidimsc));
+        m_blstc.add(m_ic);
     }
 }
 
 
 template<size_t N, size_t M, size_t K, typename Traits>
 gen_bto_contract2_nzorb_task_iterator<N, M, K, Traits>::
-    gen_bto_contract2_nzorb_task_iterator(
-    const contraction2<N, M, K> &contr,
-    gen_block_tensor_rd_i<NA, bti_traits> &bta,
-    gen_block_tensor_rd_i<NB, bti_traits> &btb,
-    const symmetry<NC, element_type> &symc,
-    const orbit_list<NA, element_type> &ola,
-    const orbit_list<NB, element_type> &olb,
-    const orbit_list<NC, element_type> &olc,
-    std::vector<size_t> &blst) :
+gen_bto_contract2_nzorb_task_iterator(
+        const contraction2<N, M, K> &contr,
+        const symmetry<NA, element_type> &syma,
+        const symmetry<NB, element_type> &symb,
+        const block_list<NA> &blsta,
+        const block_list<NB> &blstb,
+        const orbit_list<NC, element_type> &olc,
+        block_list<NC> &blstc) :
 
-    m_contr(contr), m_bta(bta), m_btb(btb), m_symc(symc),
-    m_bidimsa(m_bta.get_bis().get_block_index_dims()),
-    m_bidimsb(m_btb.get_bis().get_block_index_dims()),
-    m_bidimsc(m_symc.get_bis().get_block_index_dims()),
-    m_ola(ola), m_olb(olb), m_olc(olc), m_ioc(m_olc.begin()), m_blst(blst) {
+    m_contr(contr), m_syma(syma), m_symb(symb), m_blsta(blsta), m_blstb(blstb),
+    m_olc(olc), m_ioc(m_olc.begin()), m_blstc(blstc) {
 
 }
 
@@ -223,9 +332,9 @@ libutil::task_i*
 gen_bto_contract2_nzorb_task_iterator<N, M, K, Traits>::get_next() {
 
     gen_bto_contract2_nzorb_task<N, M, K, Traits> *t =
-        new gen_bto_contract2_nzorb_task<N, M, K, Traits>(m_contr, m_bta, m_btb,
-            m_ola, m_olb, m_bidimsa, m_bidimsb, m_bidimsc,
-            m_olc.get_index(m_ioc), m_blst, m_mtx);
+        new gen_bto_contract2_nzorb_task<N, M, K, Traits>(m_contr,
+                m_syma, m_symb, m_blsta, m_blstb, m_olc.get_index(m_ioc),
+                m_blstc, m_mtx);
     ++m_ioc;
     return t;
 }

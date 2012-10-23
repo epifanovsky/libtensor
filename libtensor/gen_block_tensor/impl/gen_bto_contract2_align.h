@@ -1,15 +1,20 @@
 #ifndef LIBTENSOR_GEN_BTO_CONTRACT2_ALIGN_H
 #define LIBTENSOR_GEN_BTO_CONTRACT2_ALIGN_H
 
+#include <libtensor/core/contraction2.h>
 #include <libtensor/core/noncopyable.h>
 #include <libtensor/core/permutation_builder.h>
 
 namespace libtensor {
 
 
-/** \brief Constructs permutations of the tensors in a
-        contraction so that the latter can be performed as matrix-matrix
-        multiplication
+/** \brief Computes optimal contraction scheme
+    \tparam N Order of first tensor less degree of contraction.
+    \tparam M Order of second tensor less degree of contraction.
+    \tparam K Order of contraction.
+
+    Constructs the permutations of the tensors in a contraction such that
+    the latter can be performed as matrix-matrix multiplication.
 
     \ingroup libtensor_gen_bto
  **/

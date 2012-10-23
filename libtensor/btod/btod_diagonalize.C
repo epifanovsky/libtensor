@@ -76,7 +76,7 @@ void btod_diagonalize::perform(block_tensor_i<2, double> &btb,
         double elem;//x i
 
         {
-        dense_tensor_ctrl<2, double> cbtbs(cab.req_block(idxc));
+        dense_tensor_rd_ctrl<2, double> cbtbs(cab.req_const_block(idxc));
         const double *pas = cbtbs.req_const_dataptr();
 
 
@@ -84,8 +84,8 @@ void btod_diagonalize::perform(block_tensor_i<2, double> &btb,
                 get_dim(1));
 
         cbtbs.ret_const_dataptr(pas);
+        cab.ret_const_block(idxc);
         }
-        cab.ret_block(idxc);
 
         if(elem > m_tol)
         {
@@ -142,14 +142,14 @@ void btod_diagonalize::perform(block_tensor_i<2, double> &btb,
         double x;//x i
 
         {
-        dense_tensor_ctrl<2, double> cbtb(cab.req_block(idx));
+        dense_tensor_rd_ctrl<2, double> cbtb(cab.req_const_block(idx));
         const double *pa = cbtb.req_const_dataptr();
 
         x = *(pa + pos + pos * btb.get_bis().get_block_dims(idx).get_dim(1));
 
         cbtb.ret_const_dataptr(pa);
+        cab.ret_const_block(idx);
         }
-        cab.ret_block(idx);
 
         double b;
 
@@ -162,15 +162,15 @@ void btod_diagonalize::perform(block_tensor_i<2, double> &btb,
             pos1=btb.get_bis().get_block_dims(idx).get_dim(1) - 1;
 
             {
-            dense_tensor_ctrl<2, double> cbtb2(cab.req_block(idx));
+            dense_tensor_rd_ctrl<2, double> cbtb2(cab.req_const_block(idx));
             const double *pa2 = cbtb2.req_const_dataptr();
 
             b = *(pa2 + pos1 + pos0 * btb.get_bis().get_block_dims(idx).
                     get_dim(1));
 
             cbtb2.ret_const_dataptr(pa2);
+            cab.ret_const_block(idx);
             }
-            cab.ret_block(idx);
 
         }
         else
@@ -180,16 +180,15 @@ void btod_diagonalize::perform(block_tensor_i<2, double> &btb,
 
 
             {
-            dense_tensor_ctrl<2, double> cbtb2(cab.req_block(idx));
+            dense_tensor_rd_ctrl<2, double> cbtb2(cab.req_const_block(idx));
             const double *pa2 = cbtb2.req_const_dataptr();
 
             b = *(pa2 + pos1 + pos0 * btb.get_bis().get_block_dims(idx).
                     get_dim(1));
 
             cbtb2.ret_const_dataptr(pa2);
+            cab.ret_const_block(idx);
             }
-
-            cab.ret_block(idx);
         }
 
         //get sinus and cosinus
@@ -316,15 +315,15 @@ void btod_diagonalize::perform(block_tensor_i<2, double> &btb,
 
             double elem;//x i
             {
-            dense_tensor_ctrl<2, double> cbtbs(cab.req_block(idxc));
+            dense_tensor_rd_ctrl<2, double> cbtbs(cab.req_const_block(idxc));
             const double *pas = cbtbs.req_const_dataptr();
 
             elem = *(pas + posc1 + posc0 * btb.get_bis().get_block_dims(idxc).
                     get_dim(1));
 
             cbtbs.ret_const_dataptr(pas);
+            cab.ret_const_block(idxc);
             }
-            cab.ret_block(idxc);
 
             if(elem<0)
             {
@@ -394,13 +393,13 @@ block_tensor_i <2, double> &eigvector,block_tensor_i <1, double> &eigvalue)
             if(ctrla.req_is_zero_block(idxi)==false)
             {
                 {
-            dense_tensor_ctrl<2, double> catrl(ctrla.req_block(idxi));
+            dense_tensor_rd_ctrl<2, double> catrl(ctrla.req_const_block(idxi));
             const double *pa = catrl.req_const_dataptr();
             std::cout<<*(pa + pos0 * m_bta.get_bis().get_block_dims(idxi).
                     get_dim(1) + pos1)<<" ";
             catrl.ret_const_dataptr(pa);
                 }
-            ctrla.ret_block(idxi);
+            ctrla.ret_const_block(idxi);
             }
             else
             {
@@ -460,13 +459,14 @@ block_tensor_i <2, double> &eigvector,block_tensor_i <1, double> &eigvalue)
             if(ctrlb.req_is_zero_block(idxi)==false)
             {
                 {
-                    dense_tensor_ctrl<2, double> catrl(ctrlb.req_block(idxi));
+                    dense_tensor_rd_ctrl<2, double> catrl(
+                            ctrlb.req_const_block(idxi));
                     const double *pa = catrl.req_const_dataptr();
                     std::cout<<*(pa + pos0 * btb.get_bis().get_block_dims(idxi).
                             get_dim(1) + pos1)<<" ";
                     catrl.ret_const_dataptr(pa);
                 }
-                ctrlb.ret_block(idxi);
+                ctrlb.ret_const_block(idxi);
             }
             else
             {
@@ -509,13 +509,14 @@ block_tensor_i <2, double> &eigvector,block_tensor_i <1, double> &eigvalue)
             if(ctrlevec.req_is_zero_block(idxi)==false)
             {
                 {
-            dense_tensor_ctrl<2, double> catrl(ctrlevec.req_block(idxi));
+            dense_tensor_rd_ctrl<2, double> catrl(
+                    ctrlevec.req_const_block(idxi));
             const double *pa = catrl.req_const_dataptr();
             std::cout<<*(pa + pos0 * eigvector.get_bis().get_block_dims(idxi).
                     get_dim(1) + pos1)<<" ";
             catrl.ret_const_dataptr(pa);
                 }
-            ctrlevec.ret_block(idxi);
+            ctrlevec.ret_const_block(idxi);
             }
             else
             {
@@ -620,7 +621,8 @@ void btod_diagonalize::check(block_tensor_i <2, double> &bta ,
                         double value;
 
                         {
-                    dense_tensor_ctrl<1, double> cavp2(ctrlzero.req_block(idxv2));
+                    dense_tensor_rd_ctrl<1, double> cavp2(
+                            ctrlzero.req_const_block(idxv2));
 
                     const double *pav2 = cavp2.req_const_dataptr();
 
@@ -638,7 +640,7 @@ void btod_diagonalize::check(block_tensor_i <2, double> &bta ,
 
                 cavp2.ret_const_dataptr(pav2);
                         }
-                ctrlzero.ret_block(idxv2);
+                ctrlzero.ret_const_block(idxv2);
                     }
                 pos2++;
                 }
@@ -689,8 +691,8 @@ void btod_diagonalize::sort(block_tensor_i <1, double> &eigvalue,size_t *map)
                             if(ctrleigvalue.req_is_zero_block(idxv2) == false)
                             {
                                 {
-                            dense_tensor_ctrl<1, double> cavp2(ctrleigvalue.
-                                    req_block(idxv2));
+                            dense_tensor_rd_ctrl<1, double> cavp2(ctrleigvalue.
+                                    req_const_block(idxv2));
 
                             const double *pav2 = cavp2.req_const_dataptr();
 
@@ -698,7 +700,7 @@ void btod_diagonalize::sort(block_tensor_i <1, double> &eigvalue,size_t *map)
 
                         cavp2.ret_const_dataptr(pav2);
                                 }
-                        ctrleigvalue.ret_block(idxv2);
+                        ctrleigvalue.ret_const_block(idxv2);
                             }
                             pos2=map[i+1];
                             idxv2[0]=0;
@@ -721,8 +723,8 @@ void btod_diagonalize::sort(block_tensor_i <1, double> &eigvalue,size_t *map)
                                         false)
                                 {
                                     {
-                                dense_tensor_ctrl<1, double> cavp2(ctrleigvalue.
-                                        req_block(idxv2));
+                                dense_tensor_rd_ctrl<1, double> cavp2(ctrleigvalue.
+                                        req_const_block(idxv2));
 
                                 const double *pav2 = cavp2.req_const_dataptr();
 
@@ -730,7 +732,7 @@ void btod_diagonalize::sort(block_tensor_i <1, double> &eigvalue,size_t *map)
 
                             cavp2.ret_const_dataptr(pav2);
                                 }
-                            ctrleigvalue.ret_block(idxv2);
+                            ctrleigvalue.ret_const_block(idxv2);
                                 }
 
                     if(x1*x1<x2*x2)
@@ -774,14 +776,14 @@ double btod_diagonalize::get_eigenvalue(block_tensor_i <1, double> &eigvalue,
                     if(ctrleigval.req_is_zero_block(idxv) == false)
                     {
                         {
-                    dense_tensor_ctrl<1, double> cavp(ctrleigval.req_block(idxv));
+                    dense_tensor_rd_ctrl<1, double> cavp(ctrleigval.req_const_block(idxv));
 
                     const double *pav = cavp.req_const_dataptr();
 
                     answer=*(pav + pos);
                 cavp.ret_const_dataptr(pav);
                         }
-                ctrleigval.ret_block(idxv);
+                ctrleigval.ret_const_block(idxv);
                     }
                     else
                     {

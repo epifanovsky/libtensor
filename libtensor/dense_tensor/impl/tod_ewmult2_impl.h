@@ -5,7 +5,7 @@
 #include <libtensor/linalg/linalg.h>
 #include <libtensor/kernels/kern_dmul2.h>
 #include <libtensor/kernels/loop_list_runner.h>
-#include <libtensor/tod/bad_dimensions.h>
+#include <libtensor/core/bad_dimensions.h>
 #include "../dense_tensor_ctrl.h"
 #include "../tod_ewmult2.h"
 

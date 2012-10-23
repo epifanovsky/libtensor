@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_OVERFLOW_H
 #define LIBTENSOR_OVERFLOW_H
 
-#include "../exception.h"
+#include <libtensor/exception.h>
 
 namespace libtensor {
 
@@ -17,10 +17,9 @@ public:
     /** \brief Creates an exception
      **/
     overflow(const char *ns, const char *clazz, const char *method,
-        const char *file, unsigned int line, const char *message)
-        throw()
-        : exception_base<overflow>(ns, clazz, method, file, line,
-            "overflow", message) { };
+            const char *file, unsigned int line, const char *message) throw() :
+            exception_base<overflow>(ns, clazz, method, file, line,
+                    "overflow", message) { };
 
     /** \brief Virtual destructor
      **/

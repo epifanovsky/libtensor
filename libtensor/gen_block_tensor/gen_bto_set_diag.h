@@ -9,11 +9,21 @@ namespace libtensor {
 
 /** \brief Assigns the diagonal elements of a block %tensor to a value
     \tparam N Tensor order.
+    \tparam Traits Block tensor operation traits.
 
     This operation sets the diagonal elements of a block %tensor to a value
     without affecting all the off-diagonal elements.
 
-    \ingroup libtensor_btod
+    <b>Traits</b>
+
+    The traits class has to provide definitions for
+    - \c element_type -- Type of data elements
+    - \c bti_traits -- Type of block tensor interface traits class
+    - \c template to_set_diag_type<N>::type -- Type of tensor operation
+        to_set_diag
+    - \c template to_set_type<N>::type -- Type of tensor operation to_set
+
+    \ingroup libtensor_gen_bto
  **/
 template<size_t N, typename Traits>
 class gen_bto_set_diag : public noncopyable {

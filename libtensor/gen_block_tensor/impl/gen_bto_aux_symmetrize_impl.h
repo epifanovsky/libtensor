@@ -9,8 +9,9 @@ namespace libtensor {
 
 
 template<size_t N, typename Traits>
-gen_bto_aux_symmetrize<N, Traits>::gen_bto_aux_symmetrize(const symmetry_type &syma,
-    const symmetry_type &symb, gen_block_stream_i<N, bti_traits> &out) :
+gen_bto_aux_symmetrize<N, Traits>::gen_bto_aux_symmetrize(
+        const symmetry_type &syma, const symmetry_type &symb,
+        gen_block_stream_i<N, bti_traits> &out) :
 
     m_syma(syma.get_bis()), m_symb(symb.get_bis()), m_olb(symb), m_out(out),
     m_open(false) {
@@ -28,7 +29,8 @@ gen_bto_aux_symmetrize<N, Traits>::~gen_bto_aux_symmetrize() {
 
 
 template<size_t N, typename Traits>
-void gen_bto_aux_symmetrize<N, Traits>::add_transf(const tensor_transf_type &tr) {
+void gen_bto_aux_symmetrize<N, Traits>::add_transf(
+        const tensor_transf_type &tr) {
 
     m_trlst.push_back(tr);
 }
@@ -56,8 +58,8 @@ void gen_bto_aux_symmetrize<N, Traits>::close() {
 
 
 template<size_t N, typename Traits>
-void gen_bto_aux_symmetrize<N, Traits>::put(const index<N> &idxa, block_type &blk,
-    const tensor_transf_type &tr) {
+void gen_bto_aux_symmetrize<N, Traits>::put(const index<N> &idxa,
+        rd_block_type &blk, const tensor_transf_type &tr) {
 
     orbit<N, element_type> oa(m_syma, idxa, false);
     tensor_transf_type tra0inv(oa.get_transf(idxa), true);

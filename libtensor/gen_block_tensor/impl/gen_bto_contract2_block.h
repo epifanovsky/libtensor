@@ -14,8 +14,23 @@ namespace libtensor {
     \tparam N Order of first tensor less degree of contraction.
     \tparam M Order of second tensor less degree of contraction.
     \tparam K Order of contraction.
-    \tparam Traits Traits class
-    \tparam Timed Class for timings
+    \tparam Traits Traits class.
+    \tparam Timed Class for timings.
+
+    This algorithm determines the list of required block contractions
+    (\sa gen_bto_contract2_clst_builder) and uses it to compute the
+    requested block.
+
+    The traits class has to provide definitions for
+    - \c element_type -- Type of data elements
+    - \c bti_traits -- Type of block tensor interface traits class
+    - \c template to_set_type<NX>::type -- Type of tensor operation to_set
+    - \c template to_contract2_type<N, M, K>::type -- Type of tensor
+            operation to_contract2
+    - \c template to_contract2_type<N, M, K>::clst_optimize_type -- Type of
+            contraction pair list optimizer (\sa gen_bto_contract2_clst_builder)
+
+    \sa gen_bto_contract2
 
     \ingroup libtensor_gen_bto
  **/

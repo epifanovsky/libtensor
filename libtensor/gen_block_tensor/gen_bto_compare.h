@@ -3,7 +3,7 @@
 
 #include <sstream>
 #include <libtensor/defs.h>
-#include <libtensor/btod/bad_block_index_space.h>
+#include <libtensor/core/bad_block_index_space.h>
 #include <libtensor/core/noncopyable.h>
 #include <libtensor/core/orbit.h>
 #include <libtensor/core/transf_list.h>
@@ -13,8 +13,9 @@
 namespace libtensor {
 
 
-/** \brief Compares two block tensors
+/** \brief Compares two general block tensors
     \tparam N Tensor order.
+    \tparam Traits Traits class for this block tensor operation.
 
     This operation takes two block tensors with the same block %index space,
     compares them, and returns a structure that contains the first
@@ -62,7 +63,15 @@ namespace libtensor {
     Two special static methods tostr() will output the difference structure
     to a stream or a string in a human-readable format.
 
-    \ingroup libtensor_btod
+    The traits class has to provide definitions for
+    - \c element_type -- Type of data elements
+    - \c bti_traits -- Type of block tensor interface traits class
+    - \c template temp_block_tensor_type<N>::type -- Type of temporary
+            block tensor
+    - \c template to_compare_type<N>::type -- Type of tensor
+            operation to_compare
+
+    \ingroup libtensor_gen_bto
  **/
 template<size_t N, typename Traits>
 class gen_bto_compare : public noncopyable {
@@ -112,10 +121,11 @@ public:
         The two block tensors must have compatible block index spaces,
         otherwise an exception will be thrown.
      **/
-    gen_bto_compare(gen_block_tensor_rd_i<N, bti_traits> &bt1,
-        gen_block_tensor_rd_i<N, bti_traits> &bt2,
-        const element_type &thresh = Traits::zero(),
-        bool strict = true);
+    gen_bto_compare(
+            gen_block_tensor_rd_i<N, bti_traits> &bt1,
+            gen_block_tensor_rd_i<N, bti_traits> &bt2,
+            const element_type &thresh = Traits::zero(),
+            bool strict = true);
 
     /** \brief Performs the comparison
         \return \c true if all the elements are equal within

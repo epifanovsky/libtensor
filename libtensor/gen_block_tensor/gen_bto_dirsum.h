@@ -34,11 +34,11 @@ namespace libtensor {
     - \c element_type -- Type of data elements
     - \c bti_traits -- Type of block tensor interface traits class
     - \c template temp_block_type<N>::type -- Type of temporary tensor block
-    - \c template to_set_type<N>::type -- Type of tensor operation to_set
-    - \c template to_scatter_type<N, M>::type -- Type of tensor operation
-        to_scatter
     - \c template to_dirsum_type<N, M>::type -- Type of tensor operation
         to_dirsum
+    - \c template to_scatter_type<N, M>::type -- Type of tensor operation
+        to_scatter
+    - \c template to_set_type<N>::type -- Type of tensor operation to_set
 
     \ingroup libtensor_gen_bto
  **/

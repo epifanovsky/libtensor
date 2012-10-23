@@ -34,7 +34,8 @@ void diag_btod_copy<N>::perform(
         cb.req_const_symmetry());
     asch.build(get_schedule(), cb);
 
-    gen_bto_aux_add<N, diag_btod_traits> out(get_symmetry(), asch, btb, c);
+    gen_bto_aux_add<N, diag_btod_traits> out(get_symmetry(), asch, btb,
+        scalar_transf<double>(c));
     perform(out);
 }
 

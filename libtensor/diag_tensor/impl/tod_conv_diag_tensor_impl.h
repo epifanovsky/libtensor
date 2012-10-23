@@ -4,12 +4,12 @@
 #include <list>
 #include <memory>
 #include <vector>
+#include <libtensor/core/bad_dimensions.h>
 #include <libtensor/linalg/linalg.h>
 #include <libtensor/kernels/kern_dadd1.h>
 #include <libtensor/kernels/kern_dcopy.h>
 #include <libtensor/kernels/loop_list_runner.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include <libtensor/tod/bad_dimensions.h>
 #include "../diag_tensor_ctrl.h"
 #include "../tod_conv_diag_tensor.h"
 

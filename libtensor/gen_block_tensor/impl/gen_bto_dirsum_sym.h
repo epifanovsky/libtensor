@@ -6,7 +6,7 @@
 #include <libtensor/core/scalar_transf.h>
 #include <libtensor/core/symmetry.h>
 #include "../gen_block_tensor_i.h"
-#include "gen_bto_dirsum_bis.h"
+#include "gen_bto_contract2_bis.h"
 
 namespace libtensor {
 
@@ -30,7 +30,7 @@ public:
     typedef typename Traits::bti_traits bti_traits;
 
 private:
-    gen_bto_dirsum_bis<N, M> m_bisc; //!< Block index space of result
+    gen_bto_contract2_bis<N, M, 0> m_bisc; //!< Block index space of result
     symmetry<NC, element_type> m_symc; //!< Symmetry of result
 
 public:
@@ -49,17 +49,17 @@ public:
             const permutation<NC> &permc);
 
     /** \brief Computes the symmetry of a direct sum operation
-        \param bta Block index space of A
         \param syma Symmetry of A
-        \param btb Block index space of B
+        \param ka Scalar transformation of A
         \param symb Symmetry of B
+        \param kb Scalar transformation of B
         \param permc Permutation of result
      **/
     gen_bto_dirsum_sym(
-            const block_index_space<N> &bisa,
             const symmetry<N, element_type> &syma,
-            const block_index_space<M> &bisb,
+            const scalar_transf<element_type> &ka,
             const symmetry<M, element_type> &symb,
+            const scalar_transf<element_type> &kb,
             const permutation<NC> &permc);
 
 
@@ -92,7 +92,7 @@ public:
     typedef typename Traits::bti_traits bti_traits;
 
 private:
-    gen_bto_dirsum_bis<N, N> m_bisc; //!< Block index space of result
+    gen_bto_contract2_bis<N, N, 0> m_bisc; //!< Block index space of result
     symmetry<NC, element_type> m_symc; //!< Symmetry of result
 
 public:
@@ -121,10 +121,8 @@ public:
         \param self True, if A and B are identical.
      **/
     gen_bto_dirsum_sym(
-            const block_index_space<N> &bisa,
             const symmetry<N, element_type> &syma,
             const scalar_transf<element_type> &ka,
-            const block_index_space<N> &bisb,
             const symmetry<N, element_type> &symb,
             const scalar_transf<element_type> &kb,
             const permutation<NC> &permc, bool self);

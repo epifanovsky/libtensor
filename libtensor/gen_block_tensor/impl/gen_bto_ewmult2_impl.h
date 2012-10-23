@@ -8,7 +8,7 @@
 #include <libtensor/core/permutation_builder.h>
 #include <libtensor/symmetry/so_dirprod.h>
 #include <libtensor/symmetry/so_merge.h>
-#include <libtensor/btod/bad_block_index_space.h>
+#include <libtensor/core/bad_block_index_space.h>
 #include "../gen_block_tensor_ctrl.h"
 #include "../gen_bto_ewmult2.h"
 

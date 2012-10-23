@@ -1,5 +1,5 @@
 #include <list>
-#include <libtensor/tod/contraction2_list_builder.h>
+#include <libtensor/core/contraction2_list_builder.h>
 #include "contraction2_list_builder_test.h"
 
 namespace libtensor {

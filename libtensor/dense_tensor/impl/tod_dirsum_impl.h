@@ -2,12 +2,12 @@
 #define LIBTENSOR_TOD_DIRSUM_IMPL_H
 
 #include <memory>
+#include <libtensor/core/bad_dimensions.h>
+#include <libtensor/core/contraction2.h>
+#include <libtensor/core/contraction2_list_builder.h>
 #include <libtensor/linalg/linalg.h>
 #include <libtensor/kernels/kern_dadd2.h>
 #include <libtensor/kernels/loop_list_runner.h>
-#include <libtensor/tod/bad_dimensions.h>
-#include <libtensor/tod/contraction2.h>
-#include <libtensor/tod/contraction2_list_builder.h>
 #include "../dense_tensor_ctrl.h"
 #include "../tod_dirsum.h"
 
