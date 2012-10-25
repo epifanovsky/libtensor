@@ -58,6 +58,7 @@ protected:
     virtual dense_tensor_wr_i<N, T> &on_req_block(const index<N> &idx);
     virtual void on_ret_block(const index<N> &idx);
     virtual bool on_req_is_zero_block(const index<N> &idx);
+    virtual void on_req_nonzero_blocks(std::vector<size_t> &nzlst);
     virtual void on_req_zero_block(const index<N> &idx);
     virtual void on_req_zero_all_blocks();
     //@}
@@ -154,6 +155,14 @@ bool block_tensor<N, T, Alloc>::on_req_is_zero_block(
     const index<N> &idx) {
 
     return m_ctrl.req_is_zero_block(idx);
+}
+
+
+template<size_t N, typename T, typename Alloc>
+void block_tensor<N, T, Alloc>::on_req_nonzero_blocks(
+    std::vector<size_t> &nzlst) {
+
+    m_ctrl.req_nonzero_blocks(nzlst);
 }
 
 

@@ -90,6 +90,15 @@ bool direct_gen_block_tensor<N, BtTraits>::on_req_is_zero_block(
 
 
 template<size_t N, typename BtTraits>
+void direct_gen_block_tensor<N, BtTraits>::on_req_nonzero_blocks(
+    std::vector<size_t> &nzlst) {
+
+    libutil::auto_lock<libutil::mutex> lock(m_lock);
+
+}
+
+
+template<size_t N, typename BtTraits>
 typename direct_gen_block_tensor<N, BtTraits>::rd_block_type &
 direct_gen_block_tensor<N, BtTraits>::on_req_const_block(
     const index<N> &idx) {

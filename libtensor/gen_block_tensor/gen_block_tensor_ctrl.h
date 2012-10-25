@@ -35,7 +35,6 @@ public:
             container
      **/
     const symmetry<N, element_type> &req_const_symmetry() {
-
         return m_bt.on_req_const_symmetry();
     }
 
@@ -78,7 +77,6 @@ public:
         \return Reference to the requested block.
      **/
     rd_block_type &req_const_block(const index<N> &idx) {
-
         return m_bt.on_req_const_block(idx);
     }
 
@@ -86,7 +84,6 @@ public:
         \param idx Index of the block.
      **/
     void ret_const_block(const index<N> &idx) {
-
         m_bt.on_ret_const_block(idx);
     }
 
@@ -94,8 +91,14 @@ public:
         \param idx Index of the block.
      **/
     bool req_is_zero_block(const index<N> &idx) {
-
         return m_bt.on_req_is_zero_block(idx);
+    }
+
+    /** \brief Returns the list of all non-zero canonical blocks
+        \param[out] nzlst Vector to be filled on output.
+     **/
+    void req_nonzero_blocks(std::vector<size_t> &nzlst) {
+        m_bt.on_req_nonzero_blocks(nzlst);
     }
 
 };
@@ -135,7 +138,6 @@ public:
     /** \brief Returns the reference to the block tensor's symmetry container
      **/
     symmetry<N, element_type> &req_symmetry() {
-
         return m_bt.on_req_symmetry();
     }
 
@@ -144,7 +146,6 @@ public:
         \return Reference to the requested block.
      **/
     wr_block_type &req_block(const index<N> &idx) {
-
         return m_bt.on_req_block(idx);
     }
 
@@ -152,7 +153,6 @@ public:
         \param idx Index of the block.
      **/
     void ret_block(const index<N> &idx) {
-
         m_bt.on_ret_block(idx);
     }
 
@@ -160,14 +160,12 @@ public:
         \param idx Index of the block.
      **/
     void req_zero_block(const index<N> &idx) {
-
         m_bt.on_req_zero_block(idx);
     }
 
     /** \brief Make all blocks zero
      **/
     void req_zero_all_blocks() {
-
         m_bt.on_req_zero_all_blocks();
     }
 
