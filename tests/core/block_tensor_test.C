@@ -6,22 +6,21 @@
 
 namespace libtensor {
 
+
 void block_tensor_test::perform() throw(libtest::test_exception) {
 
-    test_orbits_1();
-    test_orbits_2();
-    test_orbits_3();
+    test_nonzero_blocks_1();
+    test_nonzero_blocks_2();
+    test_nonzero_blocks_3();
 }
 
 
-void block_tensor_test::test_orbits_1() throw(libtest::test_exception) {
-/*
-    static const char *testname = "block_tensor_test::test_orbits_1()";
+void block_tensor_test::test_nonzero_blocks_1() {
 
-    typedef std_allocator<double> allocator_t;
-    typedef block_tensor<2, double, allocator_t> block_tensor_type;
-    typedef block_tensor_ctrl<2, double> block_tensor_ctrl_t;
-    typedef orbit_iterator<2, double> orbit_iterator_t;
+    static const char *testname = "block_tensor_test::test_nonzero_blocks_1()";
+
+    typedef std_allocator<double> allocator_type;
+    typedef block_tensor_i_traits<double> bti_traits;
 
     try {
 
@@ -30,23 +29,57 @@ void block_tensor_test::test_orbits_1() throw(libtest::test_exception) {
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
 
-    block_tensor_type bt(bis);
-    block_tensor_ctrl_t ctrl(bt);
-    orbit_iterator_t oi = ctrl.req_orbits();
+    block_tensor<2, double, allocator_type> bta(bis);
+    gen_block_tensor_rd_ctrl<2, bti_traits> ca(bta);
 
-    if(!oi.end()) {
-        fail_test(testname, __FILE__, __LINE__,
-            "Expecting an empty block set for a new block tensor.");
+    std::vector<size_t> nzl1, nzl2;
+    nzl2.push_back(100);
+    nzl2.push_back(200);
+    std::vector<size_t> nzl3(nzl1), nzl4(nzl2);
+
+    ca.req_nonzero_blocks(nzl1);
+    if(!nzl1.empty()) {
+        fail_test(testname, __FILE__, __LINE__, "!nzl1.empty()");
+    }
+
+    ca.req_nonzero_blocks(nzl2);
+    if(!nzl2.empty()) {
+        fail_test(testname, __FILE__, __LINE__, "!nzl2.empty()");
+    }
+
+    {
+        index<2> i00;
+        gen_block_tensor_wr_ctrl<2, bti_traits> ca1(bta);
+        dense_tensor_wr_i<2, double> &b00 = ca1.req_block(i00);
+        tod_random<2>().perform(b00);
+        ca1.ret_block(i00);
+    }
+
+    ca.req_nonzero_blocks(nzl3);
+    if(nzl3.size() != 1) {
+        fail_test(testname, __FILE__, __LINE__, "nzl3.size() != 1");
+    }
+    if(nzl3[0] != 0) {
+        fail_test(testname, __FILE__, __LINE__, "nzl3[0] != 0");
+    }
+
+    ca.req_nonzero_blocks(nzl4);
+    if(nzl4.size() != 1) {
+        fail_test(testname, __FILE__, __LINE__, "nzl4.size() != 1");
+    }
+    if(nzl4[0] != 0) {
+        fail_test(testname, __FILE__, __LINE__, "nzl4[0] != 0");
     }
 
     } catch(exception &exc) {
         fail_test(testname, __FILE__, __LINE__, exc.what());
-    }*/
+    }
 }
 
-void block_tensor_test::test_orbits_2() throw(libtest::test_exception) {
+
+void block_tensor_test::test_nonzero_blocks_2() {
 /*
-    static const char *testname = "block_tensor_test::test_orbits_2()";
+    static const char *testname = "block_tensor_test::test_nonzero_blocks_2()";
 
     typedef std_allocator<double> allocator_t;
     typedef dense_tensor_i<2, double> block_type;
@@ -101,9 +134,10 @@ void block_tensor_test::test_orbits_2() throw(libtest::test_exception) {
     }*/
 }
 
-void block_tensor_test::test_orbits_3() throw(libtest::test_exception) {
+
+void block_tensor_test::test_nonzero_blocks_3() {
 /*
-    static const char *testname = "block_tensor_test::test_orbits_3()";
+    static const char *testname = "block_tensor_test::test_nonzero_blocks_3()";
 
     typedef std_allocator<double> allocator_t;
     typedef dense_tensor_i<2, double> block_type;
@@ -161,5 +195,6 @@ void block_tensor_test::test_orbits_3() throw(libtest::test_exception) {
         fail_test(testname, __FILE__, __LINE__, exc.what());
     }*/
 }
+
 
 } // namespace libtensor
