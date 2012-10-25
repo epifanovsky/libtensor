@@ -17,7 +17,6 @@ public:
 private:
     void test_nonzero_blocks_1();
     void test_nonzero_blocks_2();
-    void test_nonzero_blocks_3();
 
 };
 

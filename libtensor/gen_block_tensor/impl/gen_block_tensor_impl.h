@@ -120,8 +120,7 @@ void gen_block_tensor<N, BtTraits>::on_req_nonzero_blocks(
     auto_rwlock lock(m_lock);
 
     update_orblst(lock);
-
-    //m_map.get_blocks(nzlst);
+    m_map.get_all(nzlst);
 }
 
 
