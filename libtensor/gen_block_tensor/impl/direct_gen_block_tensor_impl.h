@@ -95,6 +95,12 @@ void direct_gen_block_tensor<N, BtTraits>::on_req_nonzero_blocks(
 
     libutil::auto_lock<libutil::mutex> lock(m_lock);
 
+    nzlst.clear();
+    const assignment_schedule<N, element_type> &sch = get_op().get_schedule();
+    for(typename assignment_schedule<N, element_type>::iterator i = sch.begin();
+        i != sch.end(); ++i) {
+        nzlst.push_back(sch.get_abs_index(i));
+    }
 }
 
 
