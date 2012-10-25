@@ -13,9 +13,10 @@ const char *orbit_list<N, T>::k_clazz = "orbit_list<N, T>";
 
 template<size_t N, typename T>
 orbit_list<N, T>::orbit_list(const symmetry<N, T> &sym) :
+
     m_dims(sym.get_bis().get_block_index_dims()) {
 
-    orbit_list<N, T>::start_timer();
+    orbit_list::start_timer();
 
     std::vector<char> chk(m_dims.get_size(), 0);
     abs_index<N> aidx(m_dims);
@@ -28,14 +29,7 @@ orbit_list<N, T>::orbit_list(const symmetry<N, T> &sym) :
         }
     } while(aidx.inc());
 
-    orbit_list<N, T>::stop_timer();
-}
-
-
-template<size_t N, typename T>
-size_t orbit_list<N, T>::get_size() const {
-
-    return m_orb.size();
+    orbit_list::stop_timer();
 }
 
 
@@ -47,37 +41,9 @@ bool orbit_list<N, T>::contains(const index<N> &idx) const {
 
 
 template<size_t N, typename T>
-bool orbit_list<N, T>::contains(size_t absidx) const {
+bool orbit_list<N, T>::contains(size_t aidx) const {
 
-    return m_orb.find(absidx) != m_orb.end();
-}
-
-
-template<size_t N, typename T>
-typename orbit_list<N, T>::iterator orbit_list<N, T>::begin() const {
-
-    return m_orb.begin();
-}
-
-
-template<size_t N, typename T>
-typename orbit_list<N, T>::iterator orbit_list<N, T>::end() const {
-
-    return m_orb.end();
-}
-
-
-template<size_t N, typename T>
-size_t orbit_list<N, T>::get_abs_index(iterator &i) const {
-
-    return i->first;
-}
-
-
-template<size_t N, typename T>
-const index<N> &orbit_list<N, T>::get_index(iterator &i) const {
-
-    return i->second;
+    return m_orb.find(aidx) != m_orb.end();
 }
 
 
