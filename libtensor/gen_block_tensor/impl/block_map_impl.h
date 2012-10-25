@@ -68,6 +68,18 @@ bool block_map<N, BtTraits>::contains(const index<N> &idx) const {
 
 
 template<size_t N, typename BtTraits>
+void block_map<N, BtTraits>::get_all(std::vector<size_t> &blst) const {
+
+    blst.clear();
+    blst.reserve(m_map.size());
+    for(typename map_type::const_iterator i = m_map.begin();
+        i != m_map.end(); ++i) {
+        blst.push_back(i->first);
+    }
+}
+
+
+template<size_t N, typename BtTraits>
 typename block_map<N, BtTraits>::block_type&
 block_map<N, BtTraits>::get(const index<N> &idx) {
 
