@@ -22,10 +22,11 @@ class btensor_base : public btensor_i<N, T>, public immutable {
 private:
     typedef typename Traits::element_t element_t;
     typedef typename Traits::allocator_t allocator_t;
+    typedef block_tensor_i_traits<element_t> bti_traits;
 
 private:
     block_tensor<N, element_t, allocator_t> m_bt;
-    block_tensor_ctrl<N, element_t> m_ctrl;
+    gen_block_tensor_ctrl<N, bti_traits> m_ctrl;
 
 public:
     //!    \name Construction and destruction
