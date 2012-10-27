@@ -69,7 +69,8 @@ private:
     std::list<arg> m_args; //!< List of arguments
     block_index_space<N> m_bisb; //!< Block index space of B
     symmetry<N, element_type> m_symb; //!< Symmetry of B
-    assignment_schedule<N, element_type> m_schb; //!< Non-zero list of B
+    mutable assignment_schedule<N, element_type> m_schb; //!< Non-zero list of B
+    mutable bool m_valid_sch;
 
 public:
     /** \brief Initializes the addition operation
@@ -106,6 +107,7 @@ public:
      **/
     const assignment_schedule<N, element_type> &get_schedule() const {
 
+        if (! m_valid_sch) make_schedule();
         return m_schb;
     }
 
@@ -135,8 +137,7 @@ private:
         gen_block_tensor_rd_i<N, bti_traits> &bta,
         const tensor_transf<N, element_type> &tra);
 
-    void make_schedule();
-
+    void make_schedule() const;
 };
 
 

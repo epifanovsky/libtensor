@@ -24,9 +24,6 @@ public:
     typedef typename Traits::element_type element_type;
     typedef typename Traits::bti_traits bti_traits;
 
-public:
-    static const char *k_clazz;
-
 private:
     gen_block_tensor_rd_i<N, bti_traits> &m_bta;
     const orbit_list<N, element_type> &m_ola;
@@ -254,8 +251,6 @@ void gen_bto_dotprod_in_orbit_task<N, Traits, Timed>::perform() {
     typedef typename Traits::template to_dotprod_type<N>::type to_dotprod_type;
     typedef typename bti_traits::template rd_block_type<N>::type rd_block_type;
 
-    gen_bto_dotprod_in_orbit_task::start_timer();
-
     gen_block_tensor_rd_ctrl<N, bti_traits> ca(m_bta), cb(m_btb);
 
     orbit<N, element_type> orb(m_symc, m_idxc);
@@ -299,8 +294,6 @@ void gen_bto_dotprod_in_orbit_task<N, Traits, Timed>::perform() {
     cb.ret_const_block(acib.get_index());
 
     sum.apply(m_d);
-
-    gen_bto_dotprod_in_orbit_task::stop_timer();
 }
 
 

@@ -68,8 +68,6 @@ protected:
     virtual void on_set_immutable();
     //@}
 
-private:
-    void update_orblst(auto_rwlock &lock);
 };
 
 

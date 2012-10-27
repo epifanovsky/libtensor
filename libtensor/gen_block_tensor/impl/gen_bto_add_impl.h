@@ -92,7 +92,8 @@ gen_bto_add<N, Traits, Timed>::gen_bto_add(
 
     m_bisb(gen_bto_copy_bis<N>(bta.get_bis(), tra.get_perm()).get_bisb()),
     m_symb(m_bisb),
-    m_schb(m_bisb.get_block_index_dims()) {
+    m_schb(m_bisb.get_block_index_dims()),
+    m_valid_sch(false) {
 
     m_bisb.match_splits();
     add_operand(bta, tra);
@@ -237,7 +238,6 @@ void gen_bto_add<N, Traits, Timed>::add_operand(
 
     if(first) {
 
-        gen_block_tensor_rd_ctrl<N, bti_traits> ca(bta);
         so_permute<N, element_type>(ca.req_const_symmetry(), tra.get_perm()).
             perform(m_symb);
 
@@ -271,12 +271,13 @@ void gen_bto_add<N, Traits, Timed>::add_operand(
 
     }
 
-    make_schedule();
+    m_valid_sch = false;
+    //make_schedule();
 }
 
 
 template<size_t N, typename Traits, typename Timed>
-void gen_bto_add<N, Traits, Timed>::make_schedule() {
+void gen_bto_add<N, Traits, Timed>::make_schedule() const {
 
     gen_bto_add::start_timer("make_schedule");
 
@@ -289,7 +290,7 @@ void gen_bto_add<N, Traits, Timed>::make_schedule() {
 
             if(m_schb.contains(olb.get_abs_index(iob))) continue;
 
-            for(typename std::list<arg>::iterator i = m_args.begin();
+            for(typename std::list<arg>::const_iterator i = m_args.begin();
                 i != m_args.end(); ++i) {
 
                 gen_block_tensor_rd_i<N, bti_traits> &bta = i->bta;
@@ -316,6 +317,8 @@ void gen_bto_add<N, Traits, Timed>::make_schedule() {
     }
 
     gen_bto_add::stop_timer("make_schedule");
+    
+    m_valid_sch = true;
 }
 
 
